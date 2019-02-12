@@ -87,7 +87,7 @@ The content for this sample course is provided with permission by <a href="http:
 		<category domain="module" nicename="chords-101-the-building-blocks-of-music"><![CDATA[Chords 101 - The Building Blocks of Music]]></category>
 		<wp:postmeta>
 			<wp:meta_key>_edit_last</wp:meta_key>
-			<wp:meta_value><![CDATA[3]]></wp:meta_value>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:postmeta>
 			<wp:meta_key>_lesson_prerequisite</wp:meta_key>
@@ -178,7 +178,7 @@ The content for this sample course is provided with permission by <a href="http
 		<category domain="module" nicename="rhythm-101-the-heartbeat-of-music"><![CDATA[Rhythm 101 - The Heartbeat of Music]]></category>
 		<wp:postmeta>
 			<wp:meta_key>_edit_last</wp:meta_key>
-			<wp:meta_value><![CDATA[3]]></wp:meta_value>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:postmeta>
 			<wp:meta_key>_lesson_course</wp:meta_key>
@@ -332,7 +332,7 @@ The content for this sample course is provided with permission by <a href="http
 		<category domain="module" nicename="rhythm-101-the-heartbeat-of-music"><![CDATA[Rhythm 101 - The Heartbeat of Music]]></category>
 		<wp:postmeta>
 			<wp:meta_key>_edit_last</wp:meta_key>
-			<wp:meta_value><![CDATA[3]]></wp:meta_value>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:postmeta>
 			<wp:meta_key>_lesson_prerequisite</wp:meta_key>
@@ -486,7 +486,7 @@ The content for this sample course is provided with permission by <a href="http
 		<category domain="module" nicename="your-first-songs"><![CDATA[Your First Songs]]></category>
 		<wp:postmeta>
 			<wp:meta_key>_edit_last</wp:meta_key>
-			<wp:meta_value><![CDATA[3]]></wp:meta_value>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:postmeta>
 			<wp:meta_key>_lesson_course</wp:meta_key>
@@ -632,7 +632,7 @@ The content for this sample course is provided with permission by <a href="http:
 		<category domain="module" nicename="your-first-songs"><![CDATA[Your First Songs]]></category>
 		<wp:postmeta>
 			<wp:meta_key>_edit_last</wp:meta_key>
-			<wp:meta_value><![CDATA[3]]></wp:meta_value>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:postmeta>
 			<wp:meta_key>_lesson_course</wp:meta_key>
@@ -778,7 +778,7 @@ The content for this sample course is provided with permission by <a href="http
 		<category domain="module" nicename="your-first-songs"><![CDATA[Your First Songs]]></category>
 		<wp:postmeta>
 			<wp:meta_key>_edit_last</wp:meta_key>
-			<wp:meta_value><![CDATA[3]]></wp:meta_value>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:postmeta>
 			<wp:meta_key>_lesson_course</wp:meta_key>
@@ -924,7 +924,7 @@ The content for this sample course is provided with permission by <a title="HDp
 		<category domain="module" nicename="your-first-songs"><![CDATA[Your First Songs]]></category>
 		<wp:postmeta>
 			<wp:meta_key>_edit_last</wp:meta_key>
-			<wp:meta_value><![CDATA[3]]></wp:meta_value>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:postmeta>
 			<wp:meta_key>_lesson_course</wp:meta_key>
@@ -1644,1572 +1644,6 @@ The content for this sample course is provided with permission by <a title="HDp
 		</wp:comment>
 	</item>
 	<item>
-				<title>Overview of Question Types Quiz</title>
-		<link>http://demo.sensei.com/quiz/overview-of-question-types-quiz/</link>
-		<pubDate>Wed, 05 Mar 2014 16:11:12 +0000</pubDate>
-		<dc:creator><![CDATA[sensei]]></dc:creator>
-		<guid isPermaLink="false">http://demo.sensei.com/?post_type=quiz&#038;p=5482</guid>
-		<description></description>
-		<content:encoded><![CDATA[]]></content:encoded>
-		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
-		<wp:post_id>5482</wp:post_id>
-		<wp:post_date>2014-03-05 16:11:12</wp:post_date>
-		<wp:post_date_gmt>2014-03-05 16:11:12</wp:post_date_gmt>
-		<wp:comment_status>open</wp:comment_status>
-		<wp:ping_status>open</wp:ping_status>
-		<wp:post_name>overview-of-question-types-quiz</wp:post_name>
-		<wp:status>publish</wp:status>
-		<wp:post_parent>5481</wp:post_parent>
-		<wp:menu_order>0</wp:menu_order>
-		<wp:post_type>quiz</wp:post_type>
-		<wp:post_password></wp:post_password>
-		<wp:is_sticky>0</wp:is_sticky>
-		<category domain="quiz-type" nicename="multiple-choice"><![CDATA[multiple-choice]]></category>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_course</wp:meta_key>
-			<wp:meta_value><![CDATA[5464]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_length</wp:meta_key>
-			<wp:meta_value><![CDATA[5]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_complexity</wp:meta_key>
-			<wp:meta_value><![CDATA[easy]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_lesson</wp:meta_key>
-			<wp:meta_value><![CDATA[5481]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_passmark</wp:meta_key>
-			<wp:meta_value><![CDATA[50]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_show_questions</wp:meta_key>
-			<wp:meta_value><![CDATA[]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_grade_type</wp:meta_key>
-			<wp:meta_value><![CDATA[manual]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_grade_type_disabled</wp:meta_key>
-			<wp:meta_value><![CDATA[disabled]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_question_order</wp:meta_key>
-			<wp:meta_value><![CDATA[a:6:{i:0;s:4:"5490";i:1;s:4:"5491";i:2;s:4:"5492";i:3;s:4:"5494";i:4;s:4:"5564";i:5;s:4:"5495";}]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_pass_required</wp:meta_key>
-			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_enable_quiz_reset</wp:meta_key>
-			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:comment>
-			<wp:comment_id>203135</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2015-01-30 09:33:27</wp:comment_date>
-			<wp:comment_date_gmt>2015-01-30 09:33:27</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5490,5491,5492,5494,5495]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-	</item>
-	<item>
-				<title>Multiple Choice Questions Quiz</title>
-		<link>http://demo.sensei.com/quiz/multiple-choice-questions-quiz/</link>
-		<pubDate>Mon, 10 Mar 2014 16:18:11 +0000</pubDate>
-		<dc:creator><![CDATA[sensei]]></dc:creator>
-		<guid isPermaLink="false">http://demo.sensei.com/?post_type=quiz&#038;p=5486</guid>
-		<description></description>
-		<content:encoded><![CDATA[]]></content:encoded>
-		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
-		<wp:post_id>5486</wp:post_id>
-		<wp:post_date>2014-03-10 16:18:11</wp:post_date>
-		<wp:post_date_gmt>2014-03-10 16:18:11</wp:post_date_gmt>
-		<wp:comment_status>open</wp:comment_status>
-		<wp:ping_status>open</wp:ping_status>
-		<wp:post_name>multiple-choice-questions-quiz</wp:post_name>
-		<wp:status>publish</wp:status>
-		<wp:post_parent>5483</wp:post_parent>
-		<wp:menu_order>0</wp:menu_order>
-		<wp:post_type>quiz</wp:post_type>
-		<wp:post_password></wp:post_password>
-		<wp:is_sticky>0</wp:is_sticky>
-		<category domain="quiz-type" nicename="multiple-choice"><![CDATA[multiple-choice]]></category>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_course</wp:meta_key>
-			<wp:meta_value><![CDATA[5464]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_length</wp:meta_key>
-			<wp:meta_value><![CDATA[5]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_complexity</wp:meta_key>
-			<wp:meta_value><![CDATA[easy]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_lesson</wp:meta_key>
-			<wp:meta_value><![CDATA[5483]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_passmark</wp:meta_key>
-			<wp:meta_value><![CDATA[50]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_show_questions</wp:meta_key>
-			<wp:meta_value><![CDATA[]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_grade_type</wp:meta_key>
-			<wp:meta_value><![CDATA[auto]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_grade_type_disabled</wp:meta_key>
-			<wp:meta_value><![CDATA[enabled]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_random_question_order</wp:meta_key>
-			<wp:meta_value><![CDATA[no]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_pass_required</wp:meta_key>
-			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_enable_quiz_reset</wp:meta_key>
-			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:comment>
-			<wp:comment_id>218085</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2015-01-29 20:39:45</wp:comment_date>
-			<wp:comment_date_gmt>2015-01-29 20:39:45</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5488,5489]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-	</item>
-	<item>
-				<title>True or False Questions Quiz</title>
-		<link>http://demo.sensei.com/quiz/true-or-false-questions-quiz/</link>
-		<pubDate>Mon, 10 Mar 2014 16:18:11 +0000</pubDate>
-		<dc:creator><![CDATA[sensei]]></dc:creator>
-		<guid isPermaLink="false">http://demo.sensei.com/?post_type=quiz&#038;p=5497</guid>
-		<description></description>
-		<content:encoded><![CDATA[]]></content:encoded>
-		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
-		<wp:post_id>5497</wp:post_id>
-		<wp:post_date>2014-03-10 16:18:11</wp:post_date>
-		<wp:post_date_gmt>2014-03-10 16:18:11</wp:post_date_gmt>
-		<wp:comment_status>open</wp:comment_status>
-		<wp:ping_status>open</wp:ping_status>
-		<wp:post_name>true-or-false-questions-quiz</wp:post_name>
-		<wp:status>publish</wp:status>
-		<wp:post_parent>5496</wp:post_parent>
-		<wp:menu_order>0</wp:menu_order>
-		<wp:post_type>quiz</wp:post_type>
-		<wp:post_password></wp:post_password>
-		<wp:is_sticky>0</wp:is_sticky>
-		<category domain="quiz-type" nicename="multiple-choice"><![CDATA[multiple-choice]]></category>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_course</wp:meta_key>
-			<wp:meta_value><![CDATA[5464]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_length</wp:meta_key>
-			<wp:meta_value><![CDATA[2]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_complexity</wp:meta_key>
-			<wp:meta_value><![CDATA[easy]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_lesson</wp:meta_key>
-			<wp:meta_value><![CDATA[5496]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_passmark</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_show_questions</wp:meta_key>
-			<wp:meta_value><![CDATA[]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_grade_type</wp:meta_key>
-			<wp:meta_value><![CDATA[auto]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_grade_type_disabled</wp:meta_key>
-			<wp:meta_value><![CDATA[enabled]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_pass_required</wp:meta_key>
-			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_enable_quiz_reset</wp:meta_key>
-			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:comment>
-			<wp:comment_id>138993</wp:comment_id>
-			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@example.com</wp:comment_author_email>
-			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2014-03-10 16:18:25</wp:comment_date>
-			<wp:comment_date_gmt>2014-03-10 16:18:25</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5580]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>3</wp:comment_user_id>
-		</wp:comment>
-		<wp:comment>
-			<wp:comment_id>191378</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2015-01-15 10:48:50</wp:comment_date>
-			<wp:comment_date_gmt>2015-01-15 10:48:50</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5580]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-	</item>
-	<item>
-				<title>Gap Fill Questions Quiz</title>
-		<link>http://demo.sensei.com/quiz/gap-fill-questions-quiz/</link>
-		<pubDate>Mon, 10 Mar 2014 16:18:11 +0000</pubDate>
-		<dc:creator><![CDATA[sensei]]></dc:creator>
-		<guid isPermaLink="false">http://demo.sensei.com/?post_type=quiz&#038;p=5566</guid>
-		<description></description>
-		<content:encoded><![CDATA[]]></content:encoded>
-		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
-		<wp:post_id>5566</wp:post_id>
-		<wp:post_date>2014-03-10 16:18:11</wp:post_date>
-		<wp:post_date_gmt>2014-03-10 16:18:11</wp:post_date_gmt>
-		<wp:comment_status>open</wp:comment_status>
-		<wp:ping_status>open</wp:ping_status>
-		<wp:post_name>gap-fill-questions-quiz</wp:post_name>
-		<wp:status>publish</wp:status>
-		<wp:post_parent>5561</wp:post_parent>
-		<wp:menu_order>0</wp:menu_order>
-		<wp:post_type>quiz</wp:post_type>
-		<wp:post_password></wp:post_password>
-		<wp:is_sticky>0</wp:is_sticky>
-		<category domain="quiz-type" nicename="multiple-choice"><![CDATA[multiple-choice]]></category>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_course</wp:meta_key>
-			<wp:meta_value><![CDATA[5464]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_lesson</wp:meta_key>
-			<wp:meta_value><![CDATA[5561]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_passmark</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_show_questions</wp:meta_key>
-			<wp:meta_value><![CDATA[]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_grade_type</wp:meta_key>
-			<wp:meta_value><![CDATA[manual]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_grade_type_disabled</wp:meta_key>
-			<wp:meta_value><![CDATA[disabled]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_pass_required</wp:meta_key>
-			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_enable_quiz_reset</wp:meta_key>
-			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:comment>
-			<wp:comment_id>138999</wp:comment_id>
-			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@example.com</wp:comment_author_email>
-			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2014-03-10 16:18:53</wp:comment_date>
-			<wp:comment_date_gmt>2014-03-10 16:18:53</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5579]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>3</wp:comment_user_id>
-		</wp:comment>
-		<wp:comment>
-			<wp:comment_id>179583</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2015-01-15 10:48:39</wp:comment_date>
-			<wp:comment_date_gmt>2015-01-15 10:48:39</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5579]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-		<wp:comment>
-			<wp:comment_id>179763</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2014-07-23 11:11:14</wp:comment_date>
-			<wp:comment_date_gmt>2014-07-23 11:11:14</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5579]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-		<wp:comment>
-			<wp:comment_id>180415</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2014-07-25 16:13:37</wp:comment_date>
-			<wp:comment_date_gmt>2014-07-25 16:13:37</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5579]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-		<wp:comment>
-			<wp:comment_id>180717</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2014-07-26 19:03:30</wp:comment_date>
-			<wp:comment_date_gmt>2014-07-26 19:03:30</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5579]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-		<wp:comment>
-			<wp:comment_id>181426</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2014-07-29 08:19:28</wp:comment_date>
-			<wp:comment_date_gmt>2014-07-29 08:19:28</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5579]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-		<wp:comment>
-			<wp:comment_id>181641</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2014-07-29 22:53:06</wp:comment_date>
-			<wp:comment_date_gmt>2014-07-29 22:53:06</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5579]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-		<wp:comment>
-			<wp:comment_id>182581</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2014-08-02 19:00:10</wp:comment_date>
-			<wp:comment_date_gmt>2014-08-02 19:00:10</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5579]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-		<wp:comment>
-			<wp:comment_id>183168</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2014-08-05 12:31:57</wp:comment_date>
-			<wp:comment_date_gmt>2014-08-05 12:31:57</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5579]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-		<wp:comment>
-			<wp:comment_id>183315</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2014-08-05 16:23:34</wp:comment_date>
-			<wp:comment_date_gmt>2014-08-05 16:23:34</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5579]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-		<wp:comment>
-			<wp:comment_id>184049</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2014-08-08 14:06:43</wp:comment_date>
-			<wp:comment_date_gmt>2014-08-08 14:06:43</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5579]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-		<wp:comment>
-			<wp:comment_id>184301</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2014-08-09 17:44:50</wp:comment_date>
-			<wp:comment_date_gmt>2014-08-09 17:44:50</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5579]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-		<wp:comment>
-			<wp:comment_id>184385</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2014-08-09 19:23:39</wp:comment_date>
-			<wp:comment_date_gmt>2014-08-09 19:23:39</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5579]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-		<wp:comment>
-			<wp:comment_id>184798</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2014-08-11 15:16:51</wp:comment_date>
-			<wp:comment_date_gmt>2014-08-11 15:16:51</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5579]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-		<wp:comment>
-			<wp:comment_id>184800</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2014-08-11 15:16:56</wp:comment_date>
-			<wp:comment_date_gmt>2014-08-11 15:16:56</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5579]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-		<wp:comment>
-			<wp:comment_id>184852</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2014-08-11 18:11:51</wp:comment_date>
-			<wp:comment_date_gmt>2014-08-11 18:11:51</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5579]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-		<wp:comment>
-			<wp:comment_id>185512</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2014-08-13 20:55:12</wp:comment_date>
-			<wp:comment_date_gmt>2014-08-13 20:55:12</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5579]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-	</item>
-	<item>
-				<title>Single Line Questions Quiz</title>
-		<link>http://demo.sensei.com/quiz/single-line-questions-quiz/</link>
-		<pubDate>Mon, 10 Mar 2014 14:47:52 +0000</pubDate>
-		<dc:creator><![CDATA[sensei]]></dc:creator>
-		<guid isPermaLink="false">http://demo.sensei.com/?post_type=quiz&#038;p=5569</guid>
-		<description></description>
-		<content:encoded><![CDATA[]]></content:encoded>
-		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
-		<wp:post_id>5569</wp:post_id>
-		<wp:post_date>2014-03-10 14:47:52</wp:post_date>
-		<wp:post_date_gmt>2014-03-10 14:47:52</wp:post_date_gmt>
-		<wp:comment_status>open</wp:comment_status>
-		<wp:ping_status>open</wp:ping_status>
-		<wp:post_name>single-line-questions-quiz</wp:post_name>
-		<wp:status>publish</wp:status>
-		<wp:post_parent>5567</wp:post_parent>
-		<wp:menu_order>0</wp:menu_order>
-		<wp:post_type>quiz</wp:post_type>
-		<wp:post_password></wp:post_password>
-		<wp:is_sticky>0</wp:is_sticky>
-		<category domain="quiz-type" nicename="multiple-choice"><![CDATA[multiple-choice]]></category>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_course</wp:meta_key>
-			<wp:meta_value><![CDATA[5464]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_lesson</wp:meta_key>
-			<wp:meta_value><![CDATA[5567]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_passmark</wp:meta_key>
-			<wp:meta_value><![CDATA[100]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_show_questions</wp:meta_key>
-			<wp:meta_value><![CDATA[]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_grade_type</wp:meta_key>
-			<wp:meta_value><![CDATA[auto]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_grade_type_disabled</wp:meta_key>
-			<wp:meta_value><![CDATA[enabled]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_pass_required</wp:meta_key>
-			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_enable_quiz_reset</wp:meta_key>
-			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:comment>
-			<wp:comment_id>215413</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2015-01-15 10:48:02</wp:comment_date>
-			<wp:comment_date_gmt>2015-01-15 10:48:02</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5578]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-	</item>
-	<item>
-				<title>File Upload Question Type Quiz</title>
-		<link>http://demo.sensei.com/quiz/file-upload-question-type-quiz/</link>
-		<pubDate>Mon, 10 Mar 2014 16:18:11 +0000</pubDate>
-		<dc:creator><![CDATA[sensei]]></dc:creator>
-		<guid isPermaLink="false">http://demo.sensei.com/?post_type=quiz&#038;p=5572</guid>
-		<description></description>
-		<content:encoded><![CDATA[]]></content:encoded>
-		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
-		<wp:post_id>5572</wp:post_id>
-		<wp:post_date>2014-03-10 16:18:11</wp:post_date>
-		<wp:post_date_gmt>2014-03-10 16:18:11</wp:post_date_gmt>
-		<wp:comment_status>open</wp:comment_status>
-		<wp:ping_status>open</wp:ping_status>
-		<wp:post_name>file-upload-question-type-quiz</wp:post_name>
-		<wp:status>publish</wp:status>
-		<wp:post_parent>5570</wp:post_parent>
-		<wp:menu_order>0</wp:menu_order>
-		<wp:post_type>quiz</wp:post_type>
-		<wp:post_password></wp:post_password>
-		<wp:is_sticky>0</wp:is_sticky>
-		<category domain="quiz-type" nicename="multiple-choice"><![CDATA[multiple-choice]]></category>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_course</wp:meta_key>
-			<wp:meta_value><![CDATA[5464]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_lesson</wp:meta_key>
-			<wp:meta_value><![CDATA[5570]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_passmark</wp:meta_key>
-			<wp:meta_value><![CDATA[100]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_show_questions</wp:meta_key>
-			<wp:meta_value><![CDATA[]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_grade_type</wp:meta_key>
-			<wp:meta_value><![CDATA[auto]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_grade_type_disabled</wp:meta_key>
-			<wp:meta_value><![CDATA[enabled]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_pass_required</wp:meta_key>
-			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_enable_quiz_reset</wp:meta_key>
-			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:comment>
-			<wp:comment_id>211659</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2015-01-27 19:38:09</wp:comment_date>
-			<wp:comment_date_gmt>2015-01-27 19:38:09</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5576]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-	</item>
-	<item>
-				<title>Multi Line question type Quiz</title>
-		<link>http://demo.sensei.com/quiz/multi-line-question-type-quiz/</link>
-		<pubDate>Mon, 10 Mar 2014 16:18:11 +0000</pubDate>
-		<dc:creator><![CDATA[sensei]]></dc:creator>
-		<guid isPermaLink="false">http://demo.sensei.com/?post_type=quiz&#038;p=5575</guid>
-		<description></description>
-		<content:encoded><![CDATA[]]></content:encoded>
-		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
-		<wp:post_id>5575</wp:post_id>
-		<wp:post_date>2014-03-10 16:18:11</wp:post_date>
-		<wp:post_date_gmt>2014-03-10 16:18:11</wp:post_date_gmt>
-		<wp:comment_status>open</wp:comment_status>
-		<wp:ping_status>open</wp:ping_status>
-		<wp:post_name>multi-line-question-type-quiz</wp:post_name>
-		<wp:status>publish</wp:status>
-		<wp:post_parent>5573</wp:post_parent>
-		<wp:menu_order>0</wp:menu_order>
-		<wp:post_type>quiz</wp:post_type>
-		<wp:post_password></wp:post_password>
-		<wp:is_sticky>0</wp:is_sticky>
-		<category domain="quiz-type" nicename="multiple-choice"><![CDATA[multiple-choice]]></category>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_course</wp:meta_key>
-			<wp:meta_value><![CDATA[5464]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_lesson</wp:meta_key>
-			<wp:meta_value><![CDATA[5573]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_passmark</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_show_questions</wp:meta_key>
-			<wp:meta_value><![CDATA[]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_grade_type</wp:meta_key>
-			<wp:meta_value><![CDATA[auto]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_grade_type_disabled</wp:meta_key>
-			<wp:meta_value><![CDATA[enabled]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_pass_required</wp:meta_key>
-			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_enable_quiz_reset</wp:meta_key>
-			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:comment>
-			<wp:comment_id>217310</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2015-01-30 09:34:15</wp:comment_date>
-			<wp:comment_date_gmt>2015-01-30 09:34:15</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5577]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-		<wp:comment>
-			<wp:comment_id>218641</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2015-01-30 09:34:15</wp:comment_date>
-			<wp:comment_date_gmt>2015-01-30 09:34:15</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[0]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_grade</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-	</item>
-	<item>
-				<title>Sensei Certificates Extension Quiz</title>
-		<link>http://demo.sensei.com/quiz/sensei-certificates-extension-quiz/</link>
-		<pubDate>Mon, 10 Mar 2014 16:18:11 +0000</pubDate>
-		<dc:creator><![CDATA[sensei]]></dc:creator>
-		<guid isPermaLink="false">http://demo.sensei.com/?post_type=quiz&#038;p=5584</guid>
-		<description></description>
-		<content:encoded><![CDATA[]]></content:encoded>
-		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
-		<wp:post_id>5584</wp:post_id>
-		<wp:post_date>2014-03-10 16:18:11</wp:post_date>
-		<wp:post_date_gmt>2014-03-10 16:18:11</wp:post_date_gmt>
-		<wp:comment_status>open</wp:comment_status>
-		<wp:ping_status>open</wp:ping_status>
-		<wp:post_name>sensei-certificates-extension-quiz</wp:post_name>
-		<wp:status>publish</wp:status>
-		<wp:post_parent>5581</wp:post_parent>
-		<wp:menu_order>0</wp:menu_order>
-		<wp:post_type>quiz</wp:post_type>
-		<wp:post_password></wp:post_password>
-		<wp:is_sticky>0</wp:is_sticky>
-		<category domain="quiz-type" nicename="multiple-choice"><![CDATA[multiple-choice]]></category>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_course</wp:meta_key>
-			<wp:meta_value><![CDATA[5464]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_length</wp:meta_key>
-			<wp:meta_value><![CDATA[5]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_complexity</wp:meta_key>
-			<wp:meta_value><![CDATA[easy]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_lesson</wp:meta_key>
-			<wp:meta_value><![CDATA[5581]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_passmark</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_show_questions</wp:meta_key>
-			<wp:meta_value><![CDATA[]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_grade_type</wp:meta_key>
-			<wp:meta_value><![CDATA[auto]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_grade_type_disabled</wp:meta_key>
-			<wp:meta_value><![CDATA[enabled]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_pass_required</wp:meta_key>
-			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_enable_quiz_reset</wp:meta_key>
-			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:comment>
-			<wp:comment_id>186199</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2015-01-27 04:26:33</wp:comment_date>
-			<wp:comment_date_gmt>2015-01-27 04:26:33</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5585,5586]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-	</item>
-	<item>
-				<title>Sensei Modules Extension Quiz</title>
-		<link>http://demo.sensei.com/quiz/sensei-modules-extension-quiz/</link>
-		<pubDate>Mon, 10 Mar 2014 16:18:11 +0000</pubDate>
-		<dc:creator><![CDATA[sensei]]></dc:creator>
-		<guid isPermaLink="false">http://demo.sensei.com/?post_type=quiz&#038;p=5588</guid>
-		<description></description>
-		<content:encoded><![CDATA[]]></content:encoded>
-		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
-		<wp:post_id>5588</wp:post_id>
-		<wp:post_date>2014-03-10 16:18:11</wp:post_date>
-		<wp:post_date_gmt>2014-03-10 16:18:11</wp:post_date_gmt>
-		<wp:comment_status>open</wp:comment_status>
-		<wp:ping_status>open</wp:ping_status>
-		<wp:post_name>sensei-modules-extension-quiz</wp:post_name>
-		<wp:status>publish</wp:status>
-		<wp:post_parent>5587</wp:post_parent>
-		<wp:menu_order>0</wp:menu_order>
-		<wp:post_type>quiz</wp:post_type>
-		<wp:post_password></wp:post_password>
-		<wp:is_sticky>0</wp:is_sticky>
-		<category domain="quiz-type" nicename="multiple-choice"><![CDATA[multiple-choice]]></category>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_course</wp:meta_key>
-			<wp:meta_value><![CDATA[5464]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_length</wp:meta_key>
-			<wp:meta_value><![CDATA[5]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_complexity</wp:meta_key>
-			<wp:meta_value><![CDATA[easy]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_lesson</wp:meta_key>
-			<wp:meta_value><![CDATA[5587]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_passmark</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_show_questions</wp:meta_key>
-			<wp:meta_value><![CDATA[]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_grade_type</wp:meta_key>
-			<wp:meta_value><![CDATA[auto]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_grade_type_disabled</wp:meta_key>
-			<wp:meta_value><![CDATA[enabled]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_pass_required</wp:meta_key>
-			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_enable_quiz_reset</wp:meta_key>
-			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:comment>
-			<wp:comment_id>196621</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2015-01-27 04:27:14</wp:comment_date>
-			<wp:comment_date_gmt>2015-01-27 04:27:14</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5590,5591]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-	</item>
-	<item>
-				<title>The Grading Dashboard Quiz</title>
-		<link>http://demo.sensei.com/quiz/the-grading-dashboard-quiz/</link>
-		<pubDate>Mon, 10 Mar 2014 16:18:11 +0000</pubDate>
-		<dc:creator><![CDATA[sensei]]></dc:creator>
-		<guid isPermaLink="false">http://demo.sensei.com/?post_type=quiz&#038;p=5595</guid>
-		<description></description>
-		<content:encoded><![CDATA[]]></content:encoded>
-		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
-		<wp:post_id>5595</wp:post_id>
-		<wp:post_date>2014-03-10 16:18:11</wp:post_date>
-		<wp:post_date_gmt>2014-03-10 16:18:11</wp:post_date_gmt>
-		<wp:comment_status>open</wp:comment_status>
-		<wp:ping_status>open</wp:ping_status>
-		<wp:post_name>the-grading-dashboard-quiz</wp:post_name>
-		<wp:status>publish</wp:status>
-		<wp:post_parent>5593</wp:post_parent>
-		<wp:menu_order>0</wp:menu_order>
-		<wp:post_type>quiz</wp:post_type>
-		<wp:post_password></wp:post_password>
-		<wp:is_sticky>0</wp:is_sticky>
-		<category domain="quiz-type" nicename="multiple-choice"><![CDATA[multiple-choice]]></category>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_course</wp:meta_key>
-			<wp:meta_value><![CDATA[5464]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_length</wp:meta_key>
-			<wp:meta_value><![CDATA[2]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_complexity</wp:meta_key>
-			<wp:meta_value><![CDATA[easy]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_lesson</wp:meta_key>
-			<wp:meta_value><![CDATA[5593]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_passmark</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_show_questions</wp:meta_key>
-			<wp:meta_value><![CDATA[]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_grade_type</wp:meta_key>
-			<wp:meta_value><![CDATA[manual]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_grade_type_disabled</wp:meta_key>
-			<wp:meta_value><![CDATA[disabled]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_pass_required</wp:meta_key>
-			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_enable_quiz_reset</wp:meta_key>
-			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:comment>
-			<wp:comment_id>180969</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2015-01-25 03:07:29</wp:comment_date>
-			<wp:comment_date_gmt>2015-01-25 03:07:29</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5596,5597]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-		<wp:comment>
-			<wp:comment_id>183219</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2014-08-05 12:58:28</wp:comment_date>
-			<wp:comment_date_gmt>2014-08-05 12:58:28</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5596,5597]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-		<wp:comment>
-			<wp:comment_id>183825</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2014-08-07 18:15:07</wp:comment_date>
-			<wp:comment_date_gmt>2014-08-07 18:15:07</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5596,5597]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-		<wp:comment>
-			<wp:comment_id>184340</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2014-08-09 17:47:23</wp:comment_date>
-			<wp:comment_date_gmt>2014-08-09 17:47:23</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5596,5597]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-		<wp:comment>
-			<wp:comment_id>184408</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2014-08-09 20:12:26</wp:comment_date>
-			<wp:comment_date_gmt>2014-08-09 20:12:26</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5596,5597]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-		<wp:comment>
-			<wp:comment_id>184536</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2014-08-10 09:20:17</wp:comment_date>
-			<wp:comment_date_gmt>2014-08-10 09:20:17</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5596,5597]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-		<wp:comment>
-			<wp:comment_id>184892</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2014-08-11 18:16:48</wp:comment_date>
-			<wp:comment_date_gmt>2014-08-11 18:16:48</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5596,5597]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-		<wp:comment>
-			<wp:comment_id>184989</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2014-08-11 19:56:03</wp:comment_date>
-			<wp:comment_date_gmt>2014-08-11 19:56:03</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5596,5597]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-	</item>
-	<item>
-				<title>Grading a Quiz Quiz</title>
-		<link>http://demo.sensei.com/quiz/grading-a-quiz-quiz/</link>
-		<pubDate>Mon, 10 Mar 2014 16:18:11 +0000</pubDate>
-		<dc:creator><![CDATA[sensei]]></dc:creator>
-		<guid isPermaLink="false">http://demo.sensei.com/?post_type=quiz&#038;p=5600</guid>
-		<description></description>
-		<content:encoded><![CDATA[]]></content:encoded>
-		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
-		<wp:post_id>5600</wp:post_id>
-		<wp:post_date>2014-03-10 16:18:11</wp:post_date>
-		<wp:post_date_gmt>2014-03-10 16:18:11</wp:post_date_gmt>
-		<wp:comment_status>open</wp:comment_status>
-		<wp:ping_status>open</wp:ping_status>
-		<wp:post_name>grading-a-quiz-quiz</wp:post_name>
-		<wp:status>publish</wp:status>
-		<wp:post_parent>5598</wp:post_parent>
-		<wp:menu_order>0</wp:menu_order>
-		<wp:post_type>quiz</wp:post_type>
-		<wp:post_password></wp:post_password>
-		<wp:is_sticky>0</wp:is_sticky>
-		<category domain="quiz-type" nicename="multiple-choice"><![CDATA[multiple-choice]]></category>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_course</wp:meta_key>
-			<wp:meta_value><![CDATA[5464]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_length</wp:meta_key>
-			<wp:meta_value><![CDATA[5]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_complexity</wp:meta_key>
-			<wp:meta_value><![CDATA[easy]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_lesson</wp:meta_key>
-			<wp:meta_value><![CDATA[5598]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_passmark</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_show_questions</wp:meta_key>
-			<wp:meta_value><![CDATA[]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_grade_type</wp:meta_key>
-			<wp:meta_value><![CDATA[auto]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_grade_type_disabled</wp:meta_key>
-			<wp:meta_value><![CDATA[enabled]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_pass_required</wp:meta_key>
-			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_enable_quiz_reset</wp:meta_key>
-			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:comment>
-			<wp:comment_id>191907</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2015-01-10 02:08:01</wp:comment_date>
-			<wp:comment_date_gmt>2015-01-10 02:08:01</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5601,5602]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-	</item>
-	<item>
-				<title>Lesson Prerequisites Quiz</title>
-		<link>http://demo.sensei.com/quiz/lesson-prerequisites-quiz/</link>
-		<pubDate>Tue, 18 Mar 2014 13:08:44 +0000</pubDate>
-		<dc:creator><![CDATA[sensei]]></dc:creator>
-		<guid isPermaLink="false">http://demo.sensei.com/?post_type=quiz&#038;p=5673</guid>
-		<description></description>
-		<content:encoded><![CDATA[]]></content:encoded>
-		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
-		<wp:post_id>5673</wp:post_id>
-		<wp:post_date>2014-03-18 13:08:44</wp:post_date>
-		<wp:post_date_gmt>2014-03-18 13:08:44</wp:post_date_gmt>
-		<wp:comment_status>open</wp:comment_status>
-		<wp:ping_status>open</wp:ping_status>
-		<wp:post_name>lesson-prerequisites-quiz</wp:post_name>
-		<wp:status>publish</wp:status>
-		<wp:post_parent>5672</wp:post_parent>
-		<wp:menu_order>0</wp:menu_order>
-		<wp:post_type>quiz</wp:post_type>
-		<wp:post_password></wp:post_password>
-		<wp:is_sticky>0</wp:is_sticky>
-		<category domain="quiz-type" nicename="multiple-choice"><![CDATA[multiple-choice]]></category>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_course</wp:meta_key>
-			<wp:meta_value><![CDATA[5464]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_length</wp:meta_key>
-			<wp:meta_value><![CDATA[5]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_complexity</wp:meta_key>
-			<wp:meta_value><![CDATA[easy]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_lesson</wp:meta_key>
-			<wp:meta_value><![CDATA[5672]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_passmark</wp:meta_key>
-			<wp:meta_value><![CDATA[50]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_show_questions</wp:meta_key>
-			<wp:meta_value><![CDATA[]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_grade_type</wp:meta_key>
-			<wp:meta_value><![CDATA[auto]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_grade_type_disabled</wp:meta_key>
-			<wp:meta_value><![CDATA[enabled]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_pass_required</wp:meta_key>
-			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_enable_quiz_reset</wp:meta_key>
-			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:comment>
-			<wp:comment_id>216172</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2015-01-29 20:48:25</wp:comment_date>
-			<wp:comment_date_gmt>2015-01-29 20:48:25</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5675,5676]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-	</item>
-	<item>
-				<title>Course Prerequisites Quiz</title>
-		<link>http://demo.sensei.com/quiz/course-prerequisites-quiz/</link>
-		<pubDate>Tue, 18 Mar 2014 13:15:43 +0000</pubDate>
-		<dc:creator><![CDATA[sensei]]></dc:creator>
-		<guid isPermaLink="false">http://demo.sensei.com/?post_type=quiz&#038;p=5678</guid>
-		<description></description>
-		<content:encoded><![CDATA[]]></content:encoded>
-		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
-		<wp:post_id>5678</wp:post_id>
-		<wp:post_date>2014-03-18 13:15:43</wp:post_date>
-		<wp:post_date_gmt>2014-03-18 13:15:43</wp:post_date_gmt>
-		<wp:comment_status>open</wp:comment_status>
-		<wp:ping_status>open</wp:ping_status>
-		<wp:post_name>course-prerequisites-quiz</wp:post_name>
-		<wp:status>publish</wp:status>
-		<wp:post_parent>5677</wp:post_parent>
-		<wp:menu_order>0</wp:menu_order>
-		<wp:post_type>quiz</wp:post_type>
-		<wp:post_password></wp:post_password>
-		<wp:is_sticky>0</wp:is_sticky>
-		<category domain="quiz-type" nicename="multiple-choice"><![CDATA[multiple-choice]]></category>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_prerequisite</wp:meta_key>
-			<wp:meta_value><![CDATA[5672]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_course</wp:meta_key>
-			<wp:meta_value><![CDATA[5464]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_lesson</wp:meta_key>
-			<wp:meta_value><![CDATA[5677]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_passmark</wp:meta_key>
-			<wp:meta_value><![CDATA[50]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_show_questions</wp:meta_key>
-			<wp:meta_value><![CDATA[]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_grade_type</wp:meta_key>
-			<wp:meta_value><![CDATA[auto]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_grade_type_disabled</wp:meta_key>
-			<wp:meta_value><![CDATA[enabled]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_length</wp:meta_key>
-			<wp:meta_value><![CDATA[2]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_complexity</wp:meta_key>
-			<wp:meta_value><![CDATA[easy]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_pass_required</wp:meta_key>
-			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_enable_quiz_reset</wp:meta_key>
-			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:comment>
-			<wp:comment_id>213145</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2015-01-29 20:48:50</wp:comment_date>
-			<wp:comment_date_gmt>2015-01-29 20:48:50</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5679]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-	</item>
-	<item>
-				<title>Question Bank Quiz</title>
-		<link>http://demo.sensei.com/quiz/question-bank-quiz/</link>
-		<pubDate>Tue, 18 Mar 2014 15:43:24 +0000</pubDate>
-		<dc:creator><![CDATA[sensei]]></dc:creator>
-		<guid isPermaLink="false">http://demo.sensei.com/?post_type=quiz&#038;p=5683</guid>
-		<description></description>
-		<content:encoded><![CDATA[]]></content:encoded>
-		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
-		<wp:post_id>5683</wp:post_id>
-		<wp:post_date>2014-03-18 15:43:24</wp:post_date>
-		<wp:post_date_gmt>2014-03-18 15:43:24</wp:post_date_gmt>
-		<wp:comment_status>open</wp:comment_status>
-		<wp:ping_status>open</wp:ping_status>
-		<wp:post_name>question-bank-quiz</wp:post_name>
-		<wp:status>publish</wp:status>
-		<wp:post_parent>5681</wp:post_parent>
-		<wp:menu_order>0</wp:menu_order>
-		<wp:post_type>quiz</wp:post_type>
-		<wp:post_password></wp:post_password>
-		<wp:is_sticky>0</wp:is_sticky>
-		<category domain="quiz-type" nicename="multiple-choice"><![CDATA[multiple-choice]]></category>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_course</wp:meta_key>
-			<wp:meta_value><![CDATA[5464]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_length</wp:meta_key>
-			<wp:meta_value><![CDATA[5]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_complexity</wp:meta_key>
-			<wp:meta_value><![CDATA[easy]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_lesson</wp:meta_key>
-			<wp:meta_value><![CDATA[5681]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_passmark</wp:meta_key>
-			<wp:meta_value><![CDATA[50]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_show_questions</wp:meta_key>
-			<wp:meta_value><![CDATA[3]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_grade_type</wp:meta_key>
-			<wp:meta_value><![CDATA[auto]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_grade_type_disabled</wp:meta_key>
-			<wp:meta_value><![CDATA[enabled]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_pass_required</wp:meta_key>
-			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_enable_quiz_reset</wp:meta_key>
-			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:comment>
-			<wp:comment_id>217897</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2015-01-29 20:44:12</wp:comment_date>
-			<wp:comment_date_gmt>2015-01-29 20:44:12</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5684,5685,5688]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-	</item>
-	<item>
-				<title>Question/Answer Ordering Quiz</title>
-		<link>http://demo.sensei.com/quiz/questionanswer-ordering-quiz/</link>
-		<pubDate>Tue, 18 Mar 2014 15:55:39 +0000</pubDate>
-		<dc:creator><![CDATA[sensei]]></dc:creator>
-		<guid isPermaLink="false">http://demo.sensei.com/?post_type=quiz&#038;p=5693</guid>
-		<description></description>
-		<content:encoded><![CDATA[]]></content:encoded>
-		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
-		<wp:post_id>5693</wp:post_id>
-		<wp:post_date>2014-03-18 15:55:39</wp:post_date>
-		<wp:post_date_gmt>2014-03-18 15:55:39</wp:post_date_gmt>
-		<wp:comment_status>open</wp:comment_status>
-		<wp:ping_status>open</wp:ping_status>
-		<wp:post_name>questionanswer-ordering-quiz</wp:post_name>
-		<wp:status>publish</wp:status>
-		<wp:post_parent>5690</wp:post_parent>
-		<wp:menu_order>0</wp:menu_order>
-		<wp:post_type>quiz</wp:post_type>
-		<wp:post_password></wp:post_password>
-		<wp:is_sticky>0</wp:is_sticky>
-		<category domain="quiz-type" nicename="multiple-choice"><![CDATA[multiple-choice]]></category>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_lesson</wp:meta_key>
-			<wp:meta_value><![CDATA[5690]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_passmark</wp:meta_key>
-			<wp:meta_value><![CDATA[50]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_show_questions</wp:meta_key>
-			<wp:meta_value><![CDATA[]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_grade_type</wp:meta_key>
-			<wp:meta_value><![CDATA[auto]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_grade_type_disabled</wp:meta_key>
-			<wp:meta_value><![CDATA[enabled]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_course</wp:meta_key>
-			<wp:meta_value><![CDATA[5464]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_length</wp:meta_key>
-			<wp:meta_value><![CDATA[2]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_complexity</wp:meta_key>
-			<wp:meta_value><![CDATA[easy]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_pass_required</wp:meta_key>
-			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_enable_quiz_reset</wp:meta_key>
-			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:comment>
-			<wp:comment_id>211475</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2015-01-29 20:45:02</wp:comment_date>
-			<wp:comment_date_gmt>2015-01-29 20:45:02</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5694]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-	</item>
-	<item>
-				<title>Adding Media to Questions Quiz</title>
-		<link>http://demo.sensei.com/quiz/adding-media-to-questions-quiz/</link>
-		<pubDate>Tue, 18 Mar 2014 16:24:19 +0000</pubDate>
-		<dc:creator><![CDATA[sensei]]></dc:creator>
-		<guid isPermaLink="false">http://demo.sensei.com/?post_type=quiz&#038;p=5698</guid>
-		<description></description>
-		<content:encoded><![CDATA[]]></content:encoded>
-		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
-		<wp:post_id>5698</wp:post_id>
-		<wp:post_date>2014-03-18 16:24:19</wp:post_date>
-		<wp:post_date_gmt>2014-03-18 16:24:19</wp:post_date_gmt>
-		<wp:comment_status>open</wp:comment_status>
-		<wp:ping_status>open</wp:ping_status>
-		<wp:post_name>adding-media-to-questions-quiz</wp:post_name>
-		<wp:status>publish</wp:status>
-		<wp:post_parent>5697</wp:post_parent>
-		<wp:menu_order>0</wp:menu_order>
-		<wp:post_type>quiz</wp:post_type>
-		<wp:post_password></wp:post_password>
-		<wp:is_sticky>0</wp:is_sticky>
-		<category domain="quiz-type" nicename="multiple-choice"><![CDATA[multiple-choice]]></category>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_course</wp:meta_key>
-			<wp:meta_value><![CDATA[5464]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_length</wp:meta_key>
-			<wp:meta_value><![CDATA[5]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_complexity</wp:meta_key>
-			<wp:meta_value><![CDATA[easy]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_lesson</wp:meta_key>
-			<wp:meta_value><![CDATA[5697]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_passmark</wp:meta_key>
-			<wp:meta_value><![CDATA[45]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_show_questions</wp:meta_key>
-			<wp:meta_value><![CDATA[]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_grade_type</wp:meta_key>
-			<wp:meta_value><![CDATA[manual]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_grade_type_disabled</wp:meta_key>
-			<wp:meta_value><![CDATA[disabled]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_question_order</wp:meta_key>
-			<wp:meta_value><![CDATA[a:1:{i:0;s:4:"5699";}]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_pass_required</wp:meta_key>
-			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_enable_quiz_reset</wp:meta_key>
-			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:comment>
-			<wp:comment_id>218537</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2015-01-29 20:45:51</wp:comment_date>
-			<wp:comment_date_gmt>2015-01-29 20:45:51</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5699]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-	</item>
-	<item>
 				<title>The Key of C</title>
 		<link>http://demo.sensei.com/lesson/the-key-of-c/</link>
 		<pubDate>Fri, 30 Jan 2015 11:20:30 +0000</pubDate>
@@ -3235,7 +1669,7 @@ The content for this sample course is provided with permission by <a href="http
 		<category domain="module" nicename="chords-101-the-building-blocks-of-music"><![CDATA[Chords 101 - The Building Blocks of Music]]></category>
 		<wp:postmeta>
 			<wp:meta_key>_edit_last</wp:meta_key>
-			<wp:meta_value><![CDATA[3]]></wp:meta_value>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:postmeta>
 			<wp:meta_key>_lesson_course</wp:meta_key>
@@ -3354,7 +1788,7 @@ The content for this sample course is provided with permission by <a title="HDpi
 		</wp:postmeta>
 		<wp:postmeta>
 			<wp:meta_key>_edit_last</wp:meta_key>
-			<wp:meta_value><![CDATA[3]]></wp:meta_value>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:postmeta>
 			<wp:meta_key>_course_featured</wp:meta_key>
@@ -5086,206 +3520,6 @@ The content for this sample course is provided with permission by <a title="HDpi
 		</wp:comment>
 	</item>
 	<item>
-				<title>Auto Graded Questions Quiz</title>
-		<link>http://demo.sensei.com/quiz/auto-graded-questions-quiz/</link>
-		<pubDate>Wed, 29 May 2013 13:16:18 +0000</pubDate>
-		<dc:creator><![CDATA[sensei]]></dc:creator>
-		<guid isPermaLink="false">http://demo.sensei.com/quiz/auto-graded-questions-quiz/</guid>
-		<description></description>
-		<content:encoded><![CDATA[]]></content:encoded>
-		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
-		<wp:post_id>3922</wp:post_id>
-		<wp:post_date>2013-05-29 13:16:18</wp:post_date>
-		<wp:post_date_gmt>2013-05-29 13:16:18</wp:post_date_gmt>
-		<wp:comment_status>open</wp:comment_status>
-		<wp:ping_status>open</wp:ping_status>
-		<wp:post_name>auto-graded-questions-quiz</wp:post_name>
-		<wp:status>publish</wp:status>
-		<wp:post_parent>3921</wp:post_parent>
-		<wp:menu_order>0</wp:menu_order>
-		<wp:post_type>quiz</wp:post_type>
-		<wp:post_password></wp:post_password>
-		<wp:is_sticky>0</wp:is_sticky>
-		<category domain="quiz-type" nicename="multiple-choice"><![CDATA[multiple-choice]]></category>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_course</wp:meta_key>
-			<wp:meta_value><![CDATA[3920]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_length</wp:meta_key>
-			<wp:meta_value><![CDATA[5]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_complexity</wp:meta_key>
-			<wp:meta_value><![CDATA[easy]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_lesson</wp:meta_key>
-			<wp:meta_value><![CDATA[3921]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_passmark</wp:meta_key>
-			<wp:meta_value><![CDATA[100]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_grade_type</wp:meta_key>
-			<wp:meta_value><![CDATA[auto]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_grade_type_disabled</wp:meta_key>
-			<wp:meta_value><![CDATA[enabled]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_show_questions</wp:meta_key>
-			<wp:meta_value><![CDATA[]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_pass_required</wp:meta_key>
-			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_enable_quiz_reset</wp:meta_key>
-			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:comment>
-			<wp:comment_id>138805</wp:comment_id>
-			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@example.com</wp:comment_author_email>
-			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2014-03-10 10:05:23</wp:comment_date>
-			<wp:comment_date_gmt>2014-03-10 10:05:23</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[3923,5457]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>3</wp:comment_user_id>
-		</wp:comment>
-		<wp:comment>
-			<wp:comment_id>138806</wp:comment_id>
-			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@example.com</wp:comment_author_email>
-			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2014-03-10 10:05:23</wp:comment_date>
-			<wp:comment_date_gmt>2014-03-10 10:05:23</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[50]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_grade</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>3</wp:comment_user_id>
-		</wp:comment>
-		<wp:comment>
-			<wp:comment_id>138988</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2014-03-10 16:02:27</wp:comment_date>
-			<wp:comment_date_gmt>2014-03-10 16:02:27</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[3923,5457]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-	</item>
-	<item>
-				<title>Manual Grading Quiz</title>
-		<link>http://demo.sensei.com/quiz/manual-grading-quiz/</link>
-		<pubDate>Wed, 29 May 2013 13:24:25 +0000</pubDate>
-		<dc:creator><![CDATA[sensei]]></dc:creator>
-		<guid isPermaLink="false">http://demo.sensei.com/quiz/manual-grading-quiz/</guid>
-		<description></description>
-		<content:encoded><![CDATA[]]></content:encoded>
-		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
-		<wp:post_id>3929</wp:post_id>
-		<wp:post_date>2013-05-29 13:24:25</wp:post_date>
-		<wp:post_date_gmt>2013-05-29 13:24:25</wp:post_date_gmt>
-		<wp:comment_status>open</wp:comment_status>
-		<wp:ping_status>open</wp:ping_status>
-		<wp:post_name>manual-grading-quiz</wp:post_name>
-		<wp:status>publish</wp:status>
-		<wp:post_parent>3926</wp:post_parent>
-		<wp:menu_order>0</wp:menu_order>
-		<wp:post_type>quiz</wp:post_type>
-		<wp:post_password></wp:post_password>
-		<wp:is_sticky>0</wp:is_sticky>
-		<category domain="quiz-type" nicename="multiple-choice"><![CDATA[multiple-choice]]></category>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_course</wp:meta_key>
-			<wp:meta_value><![CDATA[3920]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_lesson</wp:meta_key>
-			<wp:meta_value><![CDATA[3926]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_passmark</wp:meta_key>
-			<wp:meta_value><![CDATA[100]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_grade_type</wp:meta_key>
-			<wp:meta_value><![CDATA[manual]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_grade_type_disabled</wp:meta_key>
-			<wp:meta_value><![CDATA[disabled]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_length</wp:meta_key>
-			<wp:meta_value><![CDATA[10]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_complexity</wp:meta_key>
-			<wp:meta_value><![CDATA[std]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_question_order</wp:meta_key>
-			<wp:meta_value><![CDATA[a:3:{i:0;s:4:"5459";i:1;s:4:"5461";i:2;s:4:"5460";}]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_show_questions</wp:meta_key>
-			<wp:meta_value><![CDATA[]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_pass_required</wp:meta_key>
-			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_enable_quiz_reset</wp:meta_key>
-			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:comment>
-			<wp:comment_id>137256</wp:comment_id>
-			<wp:comment_author><![CDATA[sensei]]></wp:comment_author>
-			<wp:comment_author_email>team@example.com</wp:comment_author_email>
-			<wp:comment_author_url>https://senseilms.com</wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2014-03-05 12:33:19</wp:comment_date>
-			<wp:comment_date_gmt>2014-03-05 12:33:19</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5459,5461,5460]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>3</wp:comment_user_id>
-		</wp:comment>
-		<wp:comment>
-			<wp:comment_id>138867</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2014-03-10 12:26:26</wp:comment_date>
-			<wp:comment_date_gmt>2014-03-10 12:26:26</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5459,5461,5460]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-	</item>
-	<item>
 				<title>Lesson with no Quiz</title>
 		<link>http://demo.sensei.com/lesson/lesson-with-no-quiz/</link>
 		<pubDate>Wed, 23 Oct 2013 14:08:36 +0000</pubDate>
@@ -5310,7 +3544,7 @@ Feel free to complete it.]]></content:encoded>
 		<wp:is_sticky>0</wp:is_sticky>
 		<wp:postmeta>
 			<wp:meta_key>_edit_last</wp:meta_key>
-			<wp:meta_value><![CDATA[3]]></wp:meta_value>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:postmeta>
 			<wp:meta_key>_lesson_course</wp:meta_key>
@@ -5366,11 +3600,11 @@ Feel free to complete it.]]></content:encoded>
 		</wp:comment>
 	</item>
 	<item>
-				<title>Lesson with no Quiz Quiz</title>
-		<link>http://demo.sensei.com/quiz/lesson-with-no-quiz-quiz/</link>
+				<title>Lesson with no Quiz</title>
+		<link>http://demo.sensei.com/quiz/lesson-with-no-quiz/</link>
 		<pubDate>Wed, 23 Oct 2013 14:08:37 +0000</pubDate>
 		<dc:creator><![CDATA[sensei]]></dc:creator>
-		<guid isPermaLink="false">http://demo.sensei.com/quiz/lesson-with-no-quiz-quiz/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/quiz/lesson-with-no-quiz/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -5379,7 +3613,7 @@ Feel free to complete it.]]></content:encoded>
 		<wp:post_date_gmt>2013-10-23 14:08:37</wp:post_date_gmt>
 		<wp:comment_status>open</wp:comment_status>
 		<wp:ping_status>open</wp:ping_status>
-		<wp:post_name>lesson-with-no-quiz-quiz</wp:post_name>
+		<wp:post_name>lesson-with-no-quiz</wp:post_name>
 		<wp:status>publish</wp:status>
 		<wp:post_parent>4864</wp:post_parent>
 		<wp:menu_order>0</wp:menu_order>
@@ -5466,176 +3700,6 @@ Feel free to complete it.]]></content:encoded>
 			<wp:comment_date>2014-04-22 17:24:12</wp:comment_date>
 			<wp:comment_date_gmt>2014-04-22 17:24:12</wp:comment_date_gmt>
 			<wp:comment_content><![CDATA[5163]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-	</item>
-	<item>
-				<title>Auto Graded Questions Quiz</title>
-		<link>http://demo.sensei.com/quiz/auto-graded-questions-quiz-2/</link>
-		<pubDate>Wed, 05 Mar 2014 13:34:04 +0000</pubDate>
-		<dc:creator><![CDATA[sensei]]></dc:creator>
-		<guid isPermaLink="false">http://demo.sensei.com/quiz/auto-graded-questions-quiz-2/</guid>
-		<description></description>
-		<content:encoded><![CDATA[]]></content:encoded>
-		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
-		<wp:post_id>5467</wp:post_id>
-		<wp:post_date>2014-03-05 13:34:04</wp:post_date>
-		<wp:post_date_gmt>2014-03-05 13:34:04</wp:post_date_gmt>
-		<wp:comment_status>open</wp:comment_status>
-		<wp:ping_status>open</wp:ping_status>
-		<wp:post_name>auto-graded-questions-quiz-2</wp:post_name>
-		<wp:status>publish</wp:status>
-		<wp:post_parent>5466</wp:post_parent>
-		<wp:menu_order>0</wp:menu_order>
-		<wp:post_type>quiz</wp:post_type>
-		<wp:post_password></wp:post_password>
-		<wp:is_sticky>0</wp:is_sticky>
-		<category domain="quiz-type" nicename="multiple-choice"><![CDATA[multiple-choice]]></category>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_course</wp:meta_key>
-			<wp:meta_value><![CDATA[5464]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_length</wp:meta_key>
-			<wp:meta_value><![CDATA[5]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_complexity</wp:meta_key>
-			<wp:meta_value><![CDATA[easy]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_passmark</wp:meta_key>
-			<wp:meta_value><![CDATA[100]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_grade_type</wp:meta_key>
-			<wp:meta_value><![CDATA[auto]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_grade_type_disabled</wp:meta_key>
-			<wp:meta_value><![CDATA[enabled]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_show_questions</wp:meta_key>
-			<wp:meta_value><![CDATA[]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_duplicate</wp:meta_key>
-			<wp:meta_value><![CDATA[3922]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_lesson</wp:meta_key>
-			<wp:meta_value><![CDATA[5466]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_question_order</wp:meta_key>
-			<wp:meta_value><![CDATA[a:2:{i:0;s:4:"5469";i:1;s:4:"5468";}]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_pass_required</wp:meta_key>
-			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_enable_quiz_reset</wp:meta_key>
-			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:comment>
-			<wp:comment_id>218140</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2015-01-29 20:35:52</wp:comment_date>
-			<wp:comment_date_gmt>2015-01-29 20:35:52</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5469,5468]]></wp:comment_content>
-			<wp:comment_approved>legacy</wp:comment_approved>
-			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
-			<wp:comment_parent>0</wp:comment_parent>
-			<wp:comment_user_id>600</wp:comment_user_id>
-		</wp:comment>
-	</item>
-	<item>
-				<title>Manually Graded Questions Quiz</title>
-		<link>http://demo.sensei.com/quiz/manual-grading-quiz-2/</link>
-		<pubDate>Wed, 05 Mar 2014 13:41:09 +0000</pubDate>
-		<dc:creator><![CDATA[sensei]]></dc:creator>
-		<guid isPermaLink="false">http://demo.sensei.com/quiz/manual-grading-quiz-2/</guid>
-		<description></description>
-		<content:encoded><![CDATA[]]></content:encoded>
-		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
-		<wp:post_id>5472</wp:post_id>
-		<wp:post_date>2014-03-05 13:41:09</wp:post_date>
-		<wp:post_date_gmt>2014-03-05 13:41:09</wp:post_date_gmt>
-		<wp:comment_status>open</wp:comment_status>
-		<wp:ping_status>open</wp:ping_status>
-		<wp:post_name>manual-grading-quiz-2</wp:post_name>
-		<wp:status>publish</wp:status>
-		<wp:post_parent>5471</wp:post_parent>
-		<wp:menu_order>0</wp:menu_order>
-		<wp:post_type>quiz</wp:post_type>
-		<wp:post_password></wp:post_password>
-		<wp:is_sticky>0</wp:is_sticky>
-		<category domain="quiz-type" nicename="multiple-choice"><![CDATA[multiple-choice]]></category>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_course</wp:meta_key>
-			<wp:meta_value><![CDATA[5464]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_passmark</wp:meta_key>
-			<wp:meta_value><![CDATA[100]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_grade_type</wp:meta_key>
-			<wp:meta_value><![CDATA[manual]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_grade_type_disabled</wp:meta_key>
-			<wp:meta_value><![CDATA[disabled]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_length</wp:meta_key>
-			<wp:meta_value><![CDATA[10]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_lesson_complexity</wp:meta_key>
-			<wp:meta_value><![CDATA[std]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_question_order</wp:meta_key>
-			<wp:meta_value><![CDATA[a:3:{i:0;s:4:"5459";i:1;s:4:"5461";i:2;s:4:"5460";}]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_show_questions</wp:meta_key>
-			<wp:meta_value><![CDATA[]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_duplicate</wp:meta_key>
-			<wp:meta_value><![CDATA[3929]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_quiz_lesson</wp:meta_key>
-			<wp:meta_value><![CDATA[5471]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_pass_required</wp:meta_key>
-			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_enable_quiz_reset</wp:meta_key>
-			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:comment>
-			<wp:comment_id>217970</wp:comment_id>
-			<wp:comment_author><![CDATA[student]]></wp:comment_author>
-			<wp:comment_author_email>student@example.com</wp:comment_author_email>
-			<wp:comment_author_url></wp:comment_author_url>
-			<wp:comment_author_IP></wp:comment_author_IP>
-			<wp:comment_date>2015-01-28 13:21:37</wp:comment_date>
-			<wp:comment_date_gmt>2015-01-28 13:21:37</wp:comment_date_gmt>
-			<wp:comment_content><![CDATA[5475,5473,5474]]></wp:comment_content>
 			<wp:comment_approved>legacy</wp:comment_approved>
 			<wp:comment_type>sensei_quiz_asked</wp:comment_type>
 			<wp:comment_parent>0</wp:comment_parent>
@@ -5792,7 +3856,7 @@ Feel free to complete it.]]></content:encoded>
 		<category domain="course-category" nicename="guitar"><![CDATA[Guitar]]></category>
 		<wp:postmeta>
 			<wp:meta_key>_edit_last</wp:meta_key>
-			<wp:meta_value><![CDATA[3]]></wp:meta_value>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:postmeta>
 			<wp:meta_key>_thumbnail_id</wp:meta_key>
@@ -6203,11 +4267,11 @@ Content Credit: <a href="http://en.wikibooks.org/wiki/Guitar/The_Basics">http://
 		</wp:comment>
 	</item>
 	<item>
-				<title>How to hold the guitar Quiz</title>
-		<link>http://demo.sensei.com/quiz/how-to-hold-the-guitar-quiz/</link>
+				<title>How to hold the guitar</title>
+		<link>http://demo.sensei.com/quiz/how-to-hold-the-guitar/</link>
 		<pubDate>Wed, 16 Jan 2013 11:17:23 +0000</pubDate>
 		<dc:creator><![CDATA[sensei]]></dc:creator>
-		<guid isPermaLink="false">http://demo.sensei.com/quiz/how-to-hold-the-guitar-quiz/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/quiz/how-to-hold-the-guitar/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -6216,7 +4280,7 @@ Content Credit: <a href="http://en.wikibooks.org/wiki/Guitar/The_Basics">http://
 		<wp:post_date_gmt>2013-01-16 11:17:23</wp:post_date_gmt>
 		<wp:comment_status>open</wp:comment_status>
 		<wp:ping_status>open</wp:ping_status>
-		<wp:post_name>how-to-hold-the-guitar-quiz</wp:post_name>
+		<wp:post_name>how-to-hold-the-guitar</wp:post_name>
 		<wp:status>publish</wp:status>
 		<wp:post_parent>2608</wp:post_parent>
 		<wp:menu_order>0</wp:menu_order>
@@ -6515,11 +4579,11 @@ Content Credit: <a href="http://en.wikibooks.org/wiki/Guitar/The_Basics">http://
 		</wp:comment>
 	</item>
 	<item>
-				<title>Using the Fretboard Quiz</title>
-		<link>http://demo.sensei.com/quiz/finger-and-fret-numbers-quiz/</link>
+				<title>Using the Fretboard</title>
+		<link>http://demo.sensei.com/quiz/using-the-fretboard/</link>
 		<pubDate>Wed, 16 Jan 2013 11:18:12 +0000</pubDate>
 		<dc:creator><![CDATA[sensei]]></dc:creator>
-		<guid isPermaLink="false">http://demo.sensei.com/quiz/finger-and-fret-numbers-quiz/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/quiz/using-the-fretboard/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -6528,7 +4592,7 @@ Content Credit: <a href="http://en.wikibooks.org/wiki/Guitar/The_Basics">http://
 		<wp:post_date_gmt>2013-01-16 11:18:12</wp:post_date_gmt>
 		<wp:comment_status>open</wp:comment_status>
 		<wp:ping_status>open</wp:ping_status>
-		<wp:post_name>finger-and-fret-numbers-quiz</wp:post_name>
+		<wp:post_name>using-the-fretboard</wp:post_name>
 		<wp:status>publish</wp:status>
 		<wp:post_parent>2610</wp:post_parent>
 		<wp:menu_order>0</wp:menu_order>
@@ -6783,11 +4847,11 @@ Content Credit: h<a href="http://en.wikibooks.org/wiki/Guitar/Anatomy_of_a_Guita
 		</wp:comment>
 	</item>
 	<item>
-				<title>Parts of the guitar Quiz</title>
-		<link>http://demo.sensei.com/quiz/parts-of-the-guitar-quiz/</link>
+				<title>Parts of the guitar</title>
+		<link>http://demo.sensei.com/quiz/parts-of-the-guitar/</link>
 		<pubDate>Wed, 16 Jan 2013 11:19:07 +0000</pubDate>
 		<dc:creator><![CDATA[sensei]]></dc:creator>
-		<guid isPermaLink="false">http://demo.sensei.com/quiz/parts-of-the-guitar-quiz/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/quiz/parts-of-the-guitar/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -6796,7 +4860,7 @@ Content Credit: h<a href="http://en.wikibooks.org/wiki/Guitar/Anatomy_of_a_Guita
 		<wp:post_date_gmt>2013-01-16 11:19:07</wp:post_date_gmt>
 		<wp:comment_status>open</wp:comment_status>
 		<wp:ping_status>open</wp:ping_status>
-		<wp:post_name>parts-of-the-guitar-quiz</wp:post_name>
+		<wp:post_name>parts-of-the-guitar</wp:post_name>
 		<wp:status>publish</wp:status>
 		<wp:post_parent>2612</wp:post_parent>
 		<wp:menu_order>0</wp:menu_order>
@@ -7018,11 +5082,11 @@ From there, move the appropriate tuning peg either up or down until the needle/l
 		</wp:comment>
 	</item>
 	<item>
-				<title>How to use an electronic tuner Quiz</title>
-		<link>http://demo.sensei.com/quiz/how-to-use-an-electronic-tuner-quiz/</link>
+				<title>How to use an electronic tuner</title>
+		<link>http://demo.sensei.com/quiz/how-to-use-an-electronic-tuner/</link>
 		<pubDate>Wed, 16 Jan 2013 11:22:53 +0000</pubDate>
 		<dc:creator><![CDATA[sensei]]></dc:creator>
-		<guid isPermaLink="false">http://demo.sensei.com/quiz/how-to-use-an-electronic-tuner-quiz/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/quiz/how-to-use-an-electronic-tuner/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -7031,7 +5095,7 @@ From there, move the appropriate tuning peg either up or down until the needle/l
 		<wp:post_date_gmt>2013-01-16 11:22:53</wp:post_date_gmt>
 		<wp:comment_status>open</wp:comment_status>
 		<wp:ping_status>open</wp:ping_status>
-		<wp:post_name>how-to-use-an-electronic-tuner-quiz</wp:post_name>
+		<wp:post_name>how-to-use-an-electronic-tuner</wp:post_name>
 		<wp:status>publish</wp:status>
 		<wp:post_parent>2614</wp:post_parent>
 		<wp:menu_order>0</wp:menu_order>
@@ -7254,11 +5318,11 @@ Content Credit: <a href="http://en.wikibooks.org/wiki/Guitar/">http://en.wikiboo
 		</wp:comment>
 	</item>
 	<item>
-				<title>Right hand guitar technique Quiz</title>
-		<link>http://demo.sensei.com/quiz/right-hand-guitar-technique-quiz/</link>
+				<title>Right hand guitar technique</title>
+		<link>http://demo.sensei.com/quiz/right-hand-guitar-technique/</link>
 		<pubDate>Wed, 16 Jan 2013 11:23:41 +0000</pubDate>
 		<dc:creator><![CDATA[sensei]]></dc:creator>
-		<guid isPermaLink="false">http://demo.sensei.com/quiz/right-hand-guitar-technique-quiz/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/quiz/right-hand-guitar-technique/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -7267,7 +5331,7 @@ Content Credit: <a href="http://en.wikibooks.org/wiki/Guitar/">http://en.wikiboo
 		<wp:post_date_gmt>2013-01-16 11:23:41</wp:post_date_gmt>
 		<wp:comment_status>open</wp:comment_status>
 		<wp:ping_status>open</wp:ping_status>
-		<wp:post_name>right-hand-guitar-technique-quiz</wp:post_name>
+		<wp:post_name>right-hand-guitar-technique</wp:post_name>
 		<wp:status>publish</wp:status>
 		<wp:post_parent>2616</wp:post_parent>
 		<wp:menu_order>0</wp:menu_order>
@@ -7489,11 +5553,11 @@ Content Credit: <a href="http://en.wikibooks.org/wiki/Guitar/Intervals_and_Power
 		</wp:comment>
 	</item>
 	<item>
-				<title>Left hand guitar technique Quiz</title>
-		<link>http://demo.sensei.com/quiz/left-hand-guitar-technique-quiz/</link>
+				<title>Left hand guitar technique</title>
+		<link>http://demo.sensei.com/quiz/left-hand-guitar-technique/</link>
 		<pubDate>Wed, 16 Jan 2013 11:24:50 +0000</pubDate>
 		<dc:creator><![CDATA[sensei]]></dc:creator>
-		<guid isPermaLink="false">http://demo.sensei.com/quiz/left-hand-guitar-technique-quiz/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/quiz/left-hand-guitar-technique/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -7502,7 +5566,7 @@ Content Credit: <a href="http://en.wikibooks.org/wiki/Guitar/Intervals_and_Power
 		<wp:post_date_gmt>2013-01-16 11:24:50</wp:post_date_gmt>
 		<wp:comment_status>open</wp:comment_status>
 		<wp:ping_status>open</wp:ping_status>
-		<wp:post_name>left-hand-guitar-technique-quiz</wp:post_name>
+		<wp:post_name>left-hand-guitar-technique</wp:post_name>
 		<wp:status>publish</wp:status>
 		<wp:post_parent>2618</wp:post_parent>
 		<wp:menu_order>0</wp:menu_order>
@@ -7714,11 +5778,11 @@ Use your first finger on the third string, third finger on the second string, an
 		</wp:comment>
 	</item>
 	<item>
-				<title>G and D major guitar chords Quiz</title>
-		<link>http://demo.sensei.com/quiz/g-and-d-major-guitar-chords-quiz/</link>
+				<title>G and D major guitar chords</title>
+		<link>http://demo.sensei.com/quiz/g-and-d-major-guitar-chords/</link>
 		<pubDate>Wed, 16 Jan 2013 11:25:38 +0000</pubDate>
 		<dc:creator><![CDATA[sensei]]></dc:creator>
-		<guid isPermaLink="false">http://demo.sensei.com/quiz/g-and-d-major-guitar-chords-quiz/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/quiz/g-and-d-major-guitar-chords/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -7727,7 +5791,7 @@ Use your first finger on the third string, third finger on the second string, an
 		<wp:post_date_gmt>2013-01-16 11:25:38</wp:post_date_gmt>
 		<wp:comment_status>open</wp:comment_status>
 		<wp:ping_status>open</wp:ping_status>
-		<wp:post_name>g-and-d-major-guitar-chords-quiz</wp:post_name>
+		<wp:post_name>g-and-d-major-guitar-chords</wp:post_name>
 		<wp:status>publish</wp:status>
 		<wp:post_parent>2620</wp:post_parent>
 		<wp:menu_order>0</wp:menu_order>
@@ -7827,7 +5891,7 @@ Use your first finger on the third string, third finger on the second string, an
 		<wp:is_sticky>0</wp:is_sticky>
 		<wp:postmeta>
 			<wp:meta_key>_edit_last</wp:meta_key>
-			<wp:meta_value><![CDATA[3]]></wp:meta_value>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
 		</wp:postmeta>
 	</item>
 	<item>
@@ -8042,11 +6106,11 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 		</wp:postmeta>
 	</item>
 	<item>
-				<title>Customize the Sensei Templates Quiz</title>
-		<link>http://demo.sensei.com/quiz/customize-the-sensei-templates-quiz/</link>
+				<title>Customize the Sensei Templates</title>
+		<link>http://demo.sensei.com/quiz/customize-the-sensei-templates/</link>
 		<pubDate>Fri, 11 Jan 2013 08:54:01 +0000</pubDate>
 		<dc:creator><![CDATA[sensei]]></dc:creator>
-		<guid isPermaLink="false">http://demo.sensei.com/quiz/customize-the-sensei-templates-quiz/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/quiz/customize-the-sensei-templates/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -8055,7 +6119,7 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 		<wp:post_date_gmt>2013-01-11 08:54:01</wp:post_date_gmt>
 		<wp:comment_status>open</wp:comment_status>
 		<wp:ping_status>open</wp:ping_status>
-		<wp:post_name>customize-the-sensei-templates-quiz</wp:post_name>
+		<wp:post_name>customize-the-sensei-templates</wp:post_name>
 		<wp:status>publish</wp:status>
 		<wp:post_parent>2555</wp:post_parent>
 		<wp:menu_order>0</wp:menu_order>
@@ -8857,7 +6921,7 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 		</wp:postmeta>
 		<wp:postmeta>
 			<wp:meta_key>_question_wrong_answers</wp:meta_key>
-			<wp:meta_value><![CDATA[a:3:{i:0;s:9:"assets";i:1;s:11:"woocommerce";i:2;s:9:"templates";}]]></wp:meta_value>
+			<wp:meta_value><![CDATA[a:3:{i:0;s:6:"assets";i:1;s:11:"woocommerce";i:2;s:9:"templates";}]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:postmeta>
 			<wp:meta_key>_question_grade</wp:meta_key>
@@ -9112,7 +7176,7 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 		</wp:postmeta>
 		<wp:postmeta>
 			<wp:meta_key>_edit_last</wp:meta_key>
-			<wp:meta_value><![CDATA[3]]></wp:meta_value>
+			<wp:meta_value><![CDATA[1]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:postmeta>
 			<wp:meta_key>_wp_old_slug</wp:meta_key>
@@ -9252,11 +7316,11 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 		</wp:comment>
 	</item>
 	<item>
-				<title>Download &amp; Activate Sensei Quiz</title>
-		<link>http://demo.sensei.com/quiz/download-activate-sensei-quiz/</link>
+				<title>Download &amp; Activate Sensei</title>
+		<link>http://demo.sensei.com/quiz/download-activate-sensei/</link>
 		<pubDate>Fri, 11 Jan 2013 07:32:13 +0000</pubDate>
 		<dc:creator><![CDATA[sensei]]></dc:creator>
-		<guid isPermaLink="false">http://demo.sensei.com/quiz/download-activate-sensei-quiz/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/quiz/download-activate-sensei/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -9265,7 +7329,7 @@ sensei_sidebar() - this runs on every single/archive sensei page]]></content:enc
 		<wp:post_date_gmt>2013-01-11 07:32:13</wp:post_date_gmt>
 		<wp:comment_status>open</wp:comment_status>
 		<wp:ping_status>open</wp:ping_status>
-		<wp:post_name>download-activate-sensei-quiz</wp:post_name>
+		<wp:post_name>download-activate-sensei</wp:post_name>
 		<wp:status>publish</wp:status>
 		<wp:post_parent>2540</wp:post_parent>
 		<wp:menu_order>0</wp:menu_order>
@@ -9603,11 +7667,11 @@ Creating courses is an easy process thanks to Sensei. Sensei allows you to creat
 		</wp:comment>
 	</item>
 	<item>
-				<title>Create Course Content Quiz</title>
-		<link>http://demo.sensei.com/quiz/create-course-content-quiz/</link>
+				<title>Create Course Content</title>
+		<link>http://demo.sensei.com/quiz/create-course-content/</link>
 		<pubDate>Fri, 11 Jan 2013 07:36:05 +0000</pubDate>
 		<dc:creator><![CDATA[sensei]]></dc:creator>
-		<guid isPermaLink="false">http://demo.sensei.com/quiz/create-course-content-quiz/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/quiz/create-course-content/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -9616,7 +7680,7 @@ Creating courses is an easy process thanks to Sensei. Sensei allows you to creat
 		<wp:post_date_gmt>2013-01-11 07:36:05</wp:post_date_gmt>
 		<wp:comment_status>open</wp:comment_status>
 		<wp:ping_status>open</wp:ping_status>
-		<wp:post_name>create-course-content-quiz</wp:post_name>
+		<wp:post_name>create-course-content</wp:post_name>
 		<wp:status>publish</wp:status>
 		<wp:post_parent>2543</wp:post_parent>
 		<wp:menu_order>0</wp:menu_order>
@@ -9824,11 +7888,11 @@ Creating courses is an easy process thanks to Sensei. Sensei allows you to creat
 		</wp:comment>
 	</item>
 	<item>
-				<title>User Analytics Quiz</title>
-		<link>http://demo.sensei.com/quiz/user-analytics-quiz/</link>
+				<title>User Analytics</title>
+		<link>http://demo.sensei.com/quiz/user-analytics/</link>
 		<pubDate>Fri, 11 Jan 2013 07:39:20 +0000</pubDate>
 		<dc:creator><![CDATA[sensei]]></dc:creator>
-		<guid isPermaLink="false">http://demo.sensei.com/quiz/user-analytics-quiz/</guid>
+		<guid isPermaLink="false">http://demo.sensei.com/quiz/user-analytics/</guid>
 		<description></description>
 		<content:encoded><![CDATA[]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
@@ -9837,7 +7901,7 @@ Creating courses is an easy process thanks to Sensei. Sensei allows you to creat
 		<wp:post_date_gmt>2013-01-11 07:39:20</wp:post_date_gmt>
 		<wp:comment_status>open</wp:comment_status>
 		<wp:ping_status>open</wp:ping_status>
-		<wp:post_name>user-analytics-quiz</wp:post_name>
+		<wp:post_name>user-analytics</wp:post_name>
 		<wp:status>publish</wp:status>
 		<wp:post_parent>2545</wp:post_parent>
 		<wp:menu_order>0</wp:menu_order>
