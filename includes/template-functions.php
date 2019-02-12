@@ -126,17 +126,6 @@ function sensei_start_course_form( $course_id ) {
 } // End sensei_start_course_form()
 
 	/**
-	 * sensei_check_if_product_is_in_cart function.
-	 *
-	 * @deprecated since 1.9.0
-	 * @param int $wc_post_id (default: 0)
-	 * @return bool
-	 */
-function sensei_check_if_product_is_in_cart( $wc_product_id = 0 ) {
-	return Sensei_WC::is_product_in_cart( $wc_product_id );
-} // End sensei_check_if_product_is_in_cart()
-
-	/**
 	 * sensei_simple_course_price function.
 	 *
 	 * @deprecated 2.0.0 Use `\Sensei_WC_Paid_Courses\Frontend\Courses::output_course_price()` if it exists.
