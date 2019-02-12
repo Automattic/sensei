@@ -99,9 +99,6 @@ class Sensei_Shortcode_User_Messages implements Sensei_Shortcode_Interface {
 		Sensei_Templates::get_part( 'loop', 'message' );
 		$messages_html = ob_get_clean();
 
-		// set back the global query
-		wp_reset_query();
-
 		return $messages_html;
 
 	}//end render()
