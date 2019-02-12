@@ -914,7 +914,18 @@ class Sensei_Frontend {
 
 					break;
 
+				/**
+				 * Handle the Delete Course button. This is deprecated and will
+				 * be removed.
+				 *
+				 * @deprecated 2.0.0
+				 */
 				case __( 'Delete Course', 'woothemes-sensei' ):
+					_doing_it_wrong(
+						'Sensei_Frontend::sensei_complete_course',
+						'Handling for "Delete Course" button will be removed in version 4.0.',
+						'2.0.0'
+					);
 					Sensei_Utils::sensei_remove_user_from_course( $sanitized_course_id, $current_user->ID );
 
 					// Success message.
