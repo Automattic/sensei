@@ -36,7 +36,8 @@ jQuery(document).ready( function() {
 
 		var total_questions = parseInt( jQuery( '#total_questions' ).val() );
 		var quiz_grade_total = parseInt( jQuery( '#quiz_grade_total' ).val() );
-		var percent = 0;
+		var percent = '0';
+
 		if ( 0 < quiz_grade_total ) {
 			percent = parseFloat( total_grade * 100 / quiz_grade_total ).toFixed(2);
 		}
