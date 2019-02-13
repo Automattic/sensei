@@ -1185,20 +1185,6 @@ class Sensei_Main {
 	}
 
 	/**
-	 * Sensei_woocommerce_complete_order description
-	 *
-	 * @deprecated since 1.9.0 use Sensei_WC::complete_order( $order_id );
-	 * @since   1.0.3
-	 * @access  public
-	 * @param   int $order_id WC order ID.
-	 *
-	 * @return  void
-	 */
-	public function sensei_woocommerce_complete_order( $order_id = 0 ) {
-		Sensei_WC::complete_order( $order_id );
-	}
-
-	/**
 	 * Runs when an order is cancelled.
 	 *
 	 * @deprecated since 1.9.0
