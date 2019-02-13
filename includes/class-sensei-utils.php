@@ -1561,8 +1561,6 @@ class Sensei_Utils {
 		 *
 		 * @since 1.9.3
 		 *
-		 * @hooked Sensei_WC::get_subscription_user_started_course
-		 *
 		 * @param bool $user_started_course
 		 * @param integer $course_id
 		 */

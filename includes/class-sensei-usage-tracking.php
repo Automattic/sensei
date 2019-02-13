@@ -16,7 +16,7 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 
 	const SENSEI_SETTING_NAME = 'sensei_usage_tracking_enabled';
 
-	const SENSEI_TRACKING_INFO_URL = 'https://docs.woocommerce.com/document/what-data-does-sensei-track';
+	const SENSEI_TRACKING_INFO_URL = 'https://senseilms.com/documentation/what-data-does-sensei-track/';
 
 	protected function __construct() {
 		parent::__construct();
