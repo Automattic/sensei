@@ -1185,20 +1185,6 @@ class Sensei_Main {
 	}
 
 	/**
-	 * Change order status with virtual products to completed
-	 *
-	 * @deprecated since 1.9.0 use Sensei_WC::virtual_order_payment_complete( $order_status, $order_id )
-	 *
-	 * @since  1.1.0
-	 * @param string $order_status Order Status.
-	 * @param int    $order_id Order ID.
-	 * @return string
-	 **/
-	public function virtual_order_payment_complete( $order_status, $order_id ) {
-		return Sensei_WC::virtual_order_payment_complete( $order_status, $order_id );
-	}
-
-	/**
 	 * Add custom action links on the plugin screen.
 	 *
 	 * @param   mixed $actions Plugin Actions Links.
