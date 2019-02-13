@@ -951,8 +951,6 @@ function sensei_can_user_view_lesson( $lesson_id = '', $user_id = '' ) {
 	 *
 	 * @since 1.9.0
 	 *
-	 * @hooked Sensei_WC::alter_can_user_view_lesson
-	 *
 	 * @param bool $can_user_view_lesson
 	 * @param string $lesson_id
 	 * @param string $user_id
