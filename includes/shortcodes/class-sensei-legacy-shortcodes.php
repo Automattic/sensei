@@ -14,7 +14,7 @@
  */
 class Sensei_Legacy_Shortcodes {
 
-	const DOCS_SHORTCODE_URL = 'https://senseilms.com/documentation/';
+	const DOCS_SHORTCODE_URL = 'https://senseilms.com/documentation/shortcodes/';
 
 	/**
 	 * Add the legacy shortcodes to WordPress
