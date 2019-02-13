@@ -1185,21 +1185,6 @@ class Sensei_Main {
 	}
 
 	/**
-	 * If WooCommerce is activated and the customer has purchased the course, update Sensei to indicate that they are taking the course.
-	 *
-	 * @deprecated since 1.9.0
-	 * @since  1.0.0
-	 * @param  int          $course_id  (default: 0).
-	 * @param  array/Object $order_user (default: array()) Specific user's data.
-	 * @return bool|int
-	 */
-	public function woocommerce_course_update( $course_id = 0, $order_user = array() ) {
-
-		return Sensei_WC::course_update( $course_id, $order_user );
-
-	} // End woocommerce_course_update()
-
-	/**
 	 * Returns the WooCommerce Product Object
 	 *
 	 * The code caters for pre and post WooCommerce 2.2 installations.
