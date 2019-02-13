@@ -6,8 +6,6 @@
  * All functionality pertaining the the shortcodes before
  * version 1.9
  *
- * These shortcodes will soon be deprecated.
- *
  * @package Content
  * @subpackage Shortcode
  * @author Automattic
@@ -15,6 +13,8 @@
  * @since       1.6.0
  */
 class Sensei_Legacy_Shortcodes {
+
+	const DOCS_SHORTCODE_URL = 'https://senseilms.com/documentation/shortcodes/';
 
 	/**
 	 * Add the legacy shortcodes to WordPress
@@ -31,6 +31,63 @@ class Sensei_Legacy_Shortcodes {
 		add_shortcode( 'usercourses', array( __CLASS__, 'user_courses' ) );
 
 	}
+
+	/**
+	 * Call `_doing_it_wrong()` for a deprecated shortcode.
+	 *
+	 * @param string $shortcode Shortcode that was deprecated.
+	 */
+	private static function throw_deprecation_warning( $shortcode ) {
+		$permalink = get_permalink();
+
+		// translators: %s is the name of the shortcode.
+		$caller  = sprintf( __( 'Shortcode `[%s]`', 'woothemes-sensei' ), $shortcode );
+		$message = sprintf(
+			// translators: %1$s is the name of the shortcode; %2$s is page URL with shortcode; %3$s is URL for shortcode documentation.
+			__(
+				'The shortcode `[%1$s]` (used on: %2$s) has been deprecated since Sensei v1.9.0. Check %3$s for alternatives.',
+				'woothemes-sensei'
+			),
+			$shortcode,
+			$permalink,
+			self::DOCS_SHORTCODE_URL
+		);
+
+		_doing_it_wrong( esc_html( $caller ), esc_html( $message ), '2.0.0' );
+	}
+
+	/**
+	 * Output message on frontend to warn those with the privileges on the site.
+	 *
+	 * @param string $shortcode Shortcode that was deprecated.
+	 */
+	private static function output_deprecation_notice( $shortcode ) {
+		if ( ! is_user_logged_in() || ! current_user_can( 'edit_posts' ) ) {
+			return;
+		}
+		echo '<div class="sensei"><div class="sensei-message alert">';
+		$message = sprintf(
+			// translators: %1$s is the name of the shortcode; %2$s is the link to Sensei documentation.
+			__(
+				'The Sensei shortcode <strong>[%1$s]</strong> has been deprecated and will soon be removed. Check <a href="%2$s" rel="noopener">Sensei documentation</a> for alternatives. Only site editors will see this notice.',
+				'woothemes-sensei'
+			),
+			$shortcode,
+			self::DOCS_SHORTCODE_URL
+		);
+		echo wp_kses(
+			$message,
+			array(
+				'a'      => array(
+					'href' => array(),
+					'rel'  => array(),
+				),
+				'strong' => array(),
+			)
+		);
+		echo '</div></div>';
+	}
+
 	/**
 	 * all_courses shortcode output function.
 	 *
@@ -114,6 +171,7 @@ class Sensei_Legacy_Shortcodes {
 	 * @return string
 	 */
 	public static function generate_shortcode_courses( $title, $shortcode_specific_override ) {
+		self::throw_deprecation_warning( $shortcode_specific_override, '1.9.0' );
 
 		global  $shortcode_override, $posts_array;
 
@@ -131,6 +189,9 @@ class Sensei_Legacy_Shortcodes {
 
 		// loop and get all courses html
 		ob_start();
+
+		self::output_deprecation_notice( $shortcode_specific_override );
+
 		self::initialise_legacy_course_loop();
 		$courses = ob_get_clean();
 
@@ -162,11 +223,15 @@ class Sensei_Legacy_Shortcodes {
 	 */
 	public static function user_courses( $atts, $content = null ) {
 		global $shortcode_override;
+		self::throw_deprecation_warning( 'usercourses', '1.9.0' );
+
 		extract( shortcode_atts( array( 'amount' => 0 ), $atts ) );
 
 		$shortcode_override = 'usercourses';
 
 		ob_start();
+
+		self::output_deprecation_notice( 'usercourses' );
 
 		if ( is_user_logged_in() ) {
 
