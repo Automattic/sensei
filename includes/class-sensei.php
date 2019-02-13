@@ -1185,21 +1185,6 @@ class Sensei_Main {
 	}
 
 	/**
-	 * Sensei_woocommerce_email_course_details adds detail to email
-	 *
-	 * @deprecated since 1.9.0 use Sensei_WC::email_course_details
-	 *
-	 * @since   1.4.5
-	 * @access  public
-	 * @param   WC_Order $order Order.
-	 *
-	 * @return  void
-	 */
-	public function sensei_woocommerce_email_course_details( $order ) {
-		Sensei_WC::email_course_details( $order );
-	} // end func email course details
-
-	/**
 	 * Sensei_woocommerce_reactivate_subscription
 	 *
 	 * @deprecated since 1.9.0, moved to Sensei_WC class
