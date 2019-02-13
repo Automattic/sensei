@@ -164,6 +164,7 @@ class Sensei_Shortcode_Loader {
 		$output = $shortcode->render();
 
 		// Restore query and other globals.
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride
 		$wp_query = $current_global_query;
 		wp_reset_postdata();
 
