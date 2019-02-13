@@ -1185,21 +1185,6 @@ class Sensei_Main {
 	}
 
 	/**
-	 * Runs when an order is cancelled.
-	 *
-	 * @deprecated since 1.9.0
-	 *
-	 * @since   1.2.0
-	 * @param   integer $order_id order ID.
-	 * @return  void
-	 */
-	public function sensei_woocommerce_cancel_order( $order_id ) {
-
-		Sensei_WC::cancel_order( $order_id );
-
-	} // End sensei_woocommerce_cancel_order()
-
-	/**
 	 * Sensei_activate_subscription runs when a subscription product is purchased
 	 *
 	 * @deprecated since 1.9.0
