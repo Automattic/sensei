@@ -94,9 +94,6 @@ class Sensei_Shortcode_Lesson_Page implements Sensei_Shortcode_Interface {
 		Sensei_Templates::get_template( 'content-single-lesson.php' );
 		$shortcode_output = ob_get_clean();
 
-		// set back the global query
-		wp_reset_query();
-
 		return $shortcode_output;
 
 	}//end render()

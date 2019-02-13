@@ -135,6 +135,7 @@ class Sensei_Shortcode_Loader {
 	 * @return string
 	 */
 	public function render_shortcode( $attributes = '', $content = '', $code ) {
+		global $wp_query;
 
 		// only respond if the shortcode that we've added shortcode
 		// classes for.
@@ -157,7 +158,17 @@ class Sensei_Shortcode_Loader {
 
 		}
 
-		return $shortcode->render();
+		// Save current query.
+		$current_global_query = $wp_query;
+
+		$output = $shortcode->render();
+
+		// Restore query and other globals.
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride
+		$wp_query = $current_global_query;
+		wp_reset_postdata();
+
+		return $output;
 
 	}
 

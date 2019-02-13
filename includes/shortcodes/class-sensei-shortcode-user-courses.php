@@ -290,9 +290,6 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		// setup the course query that will be used when rendering
 		$this->setup_course_query();
 
-		// keep a reference to old query
-		$current_global_query = $wp_query;
-
 		// assign the query setup in $this-> setup_course_query
 		$wp_query = $this->query;
 
@@ -319,11 +316,6 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		$shortcode_output = ob_get_clean();
 
 		$this->detach_shortcode_hooks();
-
-		// restore old query
-		$wp_query = $current_global_query;
-
-		wp_reset_postdata();
 
 		return $shortcode_output;
 
