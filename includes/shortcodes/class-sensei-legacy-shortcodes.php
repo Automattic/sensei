@@ -40,6 +40,8 @@ class Sensei_Legacy_Shortcodes {
 	private static function throw_deprecation_warning( $shortcode ) {
 		$permalink = get_permalink();
 
+		// translators: %s is the name of the shortcode.
+		$caller  = sprintf( __( 'Shortcode `[%s]`', 'woothemes-sensei' ), $shortcode );
 		$message = sprintf(
 			// translators: %1$s is the name of the shortcode; %2$s is page URL with shortcode; %3$s is URL for shortcode documentation.
 			__(
@@ -51,7 +53,7 @@ class Sensei_Legacy_Shortcodes {
 			self::DOCS_SHORTCODE_URL
 		);
 
-		_doing_it_wrong( __METHOD__, esc_html( $message ), '2.0.0' );
+		_doing_it_wrong( esc_html( $caller ), esc_html( $message ), '2.0.0' );
 	}
 
 	/**
