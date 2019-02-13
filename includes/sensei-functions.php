@@ -167,23 +167,6 @@ if ( ! function_exists( 'sensei_hex_lighter' ) ) {
 }
 
 /**
- * WC Detection for backwards compatibility
- *
- * @since 1.9.0
- * @deprecated since 1.9.0 use  Sensei_WC::is_woocommerce_active()
- */
-if ( ! function_exists( 'is_woocommerce_active' ) ) {
-	function is_woocommerce_active() {
-		// calling is present instead of is active here
-		// as this function can override other is_woocommerce_active
-		// function in other woo plugins and Sensei_WC::is_woocommerce_active
-		// also check the sensei settings for enable WooCommerce support, which
-		// other plugins should not check against.
-		return Sensei_WC::is_woocommerce_present();
-	}
-}
-
-/**
  * Provides an interface to allow us to deprecate hooks while still allowing them
  * to work, but giving the developer an error message.
  *
