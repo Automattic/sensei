@@ -19,3 +19,15 @@ function sensei_woocommerce_prevent_admin_access( $prevent_access ) {
 	return $prevent_access;
 }
 add_filter( 'woocommerce_prevent_admin_access', 'sensei_woocommerce_prevent_admin_access' );
+
+/**
+ * Show admin bar to users who can 'edit_courses'.
+ */
+function sensei_woocommerce_show_admin_bar() {
+	if ( current_user_can( 'edit_courses' ) ) {
+		add_filter( 'woocommerce_disable_admin_bar', '__return_false', 10, 1 );
+	}
+}
+
+// Use WooCommerce filter to show admin bar to Teachers.
+add_action( 'init', 'sensei_woocommerce_show_admin_bar' );
