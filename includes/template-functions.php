@@ -126,18 +126,23 @@ function sensei_start_course_form( $course_id ) {
 } // End sensei_start_course_form()
 
 
-	/**
-	 * sensei_wc_add_to_cart function.
-	 *
-	 * @deprecated since Sensei_WC::the_add_to_cart_button_html( $course_id );
-	 * @access public
-	 * @param mixed $course_id
-	 * @return void
-	 */
+/**
+ * sensei_wc_add_to_cart function.
+ *
+ * @deprecated since Sensei_WC::the_add_to_cart_button_html( $course_id );
+ * @access public
+ *
+ * @param mixed $course_id Course Post ID.
+ * @return void
+ */
 function sensei_wc_add_to_cart( $course_id ) {
+	_deprecated_function( __FUNCTION__, '1.9.0', 'Sensei_WC::the_add_to_cart_button_html' );
+
+	if ( ! method_exists( 'Sensei_WC', 'the_add_to_cart_button_html' ) ) {
+		return;
+	}
 
 	Sensei_WC::the_add_to_cart_button_html( $course_id );
-
 } // End sensei_wc_add_to_cart()
 
 
