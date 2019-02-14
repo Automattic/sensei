@@ -1344,7 +1344,6 @@ class Sensei_Main {
 			return false;
 		}
 
-
 		return Sensei_WC::get_product_object( $wc_product_id, $product_type );
 	} // End sensei_get_woocommerce_product_object()
 
@@ -1352,10 +1351,16 @@ class Sensei_Main {
 	 * Disable guest checkout if a course product is in the cart
 	 *
 	 * @deprecated since 1.9.0
+	 *
 	 * @param  boolean $guest_checkout Current guest checkout setting.
 	 * @return boolean                 Modified guest checkout setting.
 	 */
 	public function disable_guest_checkout( $guest_checkout ) {
+		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_WC::disable_guest_checkout' );
+
+		if ( ! method_exists( 'Sensei_WC', 'disable_guest_checkout' ) ) {
+			return $guest_checkout;
+		}
 
 		return Sensei_WC::disable_guest_checkout( $guest_checkout );
 
