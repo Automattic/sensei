@@ -1329,18 +1329,23 @@ class Sensei_Main {
 	 *
 	 * The code caters for pre and post WooCommerce 2.2 installations.
 	 *
-	 * @deprecated since 1.9.0
+	 * @deprecated since 1.9.0 use Sensei_WC::get_product_object
 	 * @since   1.1.1
 	 *
-	 * @param   integer $wc_product_id Product ID or Variation ID.
-	 * @param   string  $product_type  '' or 'variation'.
+	 * @param   integer $wc_product_id  Product ID or Variation ID.
+	 * @param   string  $product_type   Product type.
 	 *
 	 * @return   WC_Product $wc_product_object
 	 */
 	public function sensei_get_woocommerce_product_object( $wc_product_id = 0, $product_type = '' ) {
+		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_WC::get_product_object' );
+
+		if ( ! method_exists( 'Sensei_WC', 'get_product_object' ) ) {
+			return false;
+		}
+
 
 		return Sensei_WC::get_product_object( $wc_product_id, $product_type );
-
 	} // End sensei_get_woocommerce_product_object()
 
 	/**
