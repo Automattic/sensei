@@ -166,20 +166,20 @@ if ( ! function_exists( 'sensei_hex_lighter' ) ) {
 	}
 }
 
-/**
- * WC Detection for backwards compatibility
- *
- * @since 1.9.0
- * @deprecated since 1.9.0 use  Sensei_WC::is_woocommerce_active()
- */
 if ( ! function_exists( 'is_woocommerce_active' ) ) {
+	/**
+	 * WC Detection for backwards compatibility.
+	 *
+	 * @deprecated since 1.9.0 use  Sensei_WC::is_woocommerce_active().
+	 */
 	function is_woocommerce_active() {
-		// calling is present instead of is active here
-		// as this function can override other is_woocommerce_active
-		// function in other woo plugins and Sensei_WC::is_woocommerce_active
-		// also check the sensei settings for enable WooCommerce support, which
-		// other plugins should not check against.
-		return Sensei_WC::is_woocommerce_present();
+		_deprecated_function( __FUNCTION__, '1.9.0', 'Sensei_WC::is_woocommerce_active' );
+
+		if ( ! method_exists( 'Sensei_WC', 'is_woocommerce_active' ) ) {
+			return false;
+		}
+
+		return Sensei_WC::is_woocommerce_active();
 	}
 }
 
