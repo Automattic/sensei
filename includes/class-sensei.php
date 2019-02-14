@@ -1349,19 +1349,6 @@ class Sensei_Main {
 	} // End sensei_get_woocommerce_product_object()
 
 	/**
-	 * Setup required WooCommerce settings.
-	 *
-	 * @access  public
-	 * @since   1.1.0
-	 * @return  void
-	 */
-	public function set_woocommerce_functionality() {
-
-		_deprecated_function( 'Sensei()->set_woocommerce_functionality', 'Sensei 1.9.0' );
-
-	} // End set_woocommerce_functionality()
-
-	/**
 	 * Disable guest checkout if a course product is in the cart
 	 *
 	 * @deprecated since 1.9.0
