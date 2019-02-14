@@ -1227,10 +1227,17 @@ class Sensei_Main {
 	 * WooCommerce Subscription Ended
 	 *
 	 * @deprecated since 1.9.0, moved to Sensei_WC class
-	 * @param int   $user_id The user id.
+	 *
+	 * @param int   $user_id          The user id.
 	 * @param mixed $subscription_key The sub key.
 	 */
 	public function sensei_woocommerce_subscription_ended( $user_id, $subscription_key ) {
+		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_WC::end_subscription' );
+
+		if ( ! method_exists( 'Sensei_WC', 'end_subscription' ) ) {
+			return;
+		}
+
 		Sensei_WC::end_subscription( $user_id, $subscription_key );
 	}
 
