@@ -270,6 +270,12 @@ class Sensei_Main {
 		add_action( 'init', array( $this, 'load_localisation' ), 0 );
 
 		$this->initialize_global_objects();
+
+		add_action( 'admin_init', array( $this, 'load_email_signup_modal' ) );
+	}
+
+	public function load_email_signup_modal() {
+		require_once dirname( __FILE__ ) . '/email-signup/setup.php';
 	}
 
 	/**
