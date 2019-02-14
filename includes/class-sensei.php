@@ -1196,6 +1196,12 @@ class Sensei_Main {
 	 * @return  void
 	 */
 	public function sensei_woocommerce_email_course_details( $order ) {
+		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_WC::email_course_details' );
+
+		if ( ! method_exists( 'Sensei_WC', 'email_course_details' ) ) {
+			return;
+		}
+
 		Sensei_WC::email_course_details( $order );
 	} // end func email course details
 
@@ -1203,10 +1209,17 @@ class Sensei_Main {
 	 * Sensei_woocommerce_reactivate_subscription
 	 *
 	 * @deprecated since 1.9.0, moved to Sensei_WC class
-	 * @param int   $user_id User ID.
+	 *
+	 * @param int   $user_id          User ID.
 	 * @param mixed $subscription_key Subscription Key.
 	 */
 	public function sensei_woocommerce_reactivate_subscription( $user_id, $subscription_key ) {
+		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_WC::reactivate_subscription' );
+
+		if ( ! method_exists( 'Sensei_WC', 'reactivate_subscription' ) ) {
+			return;
+		}
+
 		Sensei_WC::reactivate_subscription( $user_id, $subscription_key );
 	}
 
@@ -1214,10 +1227,17 @@ class Sensei_Main {
 	 * WooCommerce Subscription Ended
 	 *
 	 * @deprecated since 1.9.0, moved to Sensei_WC class
-	 * @param int   $user_id The user id.
+	 *
+	 * @param int   $user_id          The user id.
 	 * @param mixed $subscription_key The sub key.
 	 */
 	public function sensei_woocommerce_subscription_ended( $user_id, $subscription_key ) {
+		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_WC::end_subscription' );
+
+		if ( ! method_exists( 'Sensei_WC', 'end_subscription' ) ) {
+			return;
+		}
+
 		Sensei_WC::end_subscription( $user_id, $subscription_key );
 	}
 
@@ -1225,61 +1245,83 @@ class Sensei_Main {
 	 * Sensei_woocommerce_complete_order description
 	 *
 	 * @deprecated since 1.9.0 use Sensei_WC::complete_order( $order_id );
+	 *
 	 * @since   1.0.3
 	 * @access  public
-	 * @param   int $order_id WC order ID.
 	 *
+	 * @param   int $order_id WC order ID.
 	 * @return  void
 	 */
 	public function sensei_woocommerce_complete_order( $order_id = 0 ) {
+		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_WC::complete_order' );
+
+		if ( ! method_exists( 'Sensei_WC', 'complete_order' ) ) {
+			return;
+		}
+
 		Sensei_WC::complete_order( $order_id );
 	}
 
 	/**
 	 * Runs when an order is cancelled.
 	 *
-	 * @deprecated since 1.9.0
+	 * @deprecated since 1.9.0 use Sensei_WC::cancel_order
 	 *
 	 * @since   1.2.0
+	 *
 	 * @param   integer $order_id order ID.
 	 * @return  void
 	 */
 	public function sensei_woocommerce_cancel_order( $order_id ) {
+		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_WC::cancel_order' );
+
+		if ( ! method_exists( 'Sensei_WC', 'cancel_order' ) ) {
+			return;
+		}
 
 		Sensei_WC::cancel_order( $order_id );
-
 	} // End sensei_woocommerce_cancel_order()
 
 	/**
 	 * Sensei_activate_subscription runs when a subscription product is purchased
 	 *
-	 * @deprecated since 1.9.0
+	 * @deprecated since 1.9.0 use Sensei_WC::activate_subscription
+	 *
 	 * @since   1.2.0
 	 * @access  public
 	 *
 	 * @param   integer $order_id order ID.
-	 *
 	 * @return  void
 	 */
 	public function sensei_activate_subscription( $order_id = 0 ) {
+		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_WC::activate_subscription' );
+
+		if ( ! method_exists( 'Sensei_WC', 'activate_subscription' ) ) {
+			return;
+		}
 
 		Sensei_WC::activate_subscription( $order_id );
-
 	} // End sensei_activate_subscription()
 
 	/**
 	 * If WooCommerce is activated and the customer has purchased the course, update Sensei to indicate that they are taking the course.
 	 *
-	 * @deprecated since 1.9.0
+	 * @deprecated since 1.9.0 use Sensei_WC::course_update
+	 *
 	 * @since  1.0.0
-	 * @param  int          $course_id  (default: 0).
+	 *
+	 * @param  int          $course_id  (default: 0) Course Post ID.
 	 * @param  array/Object $order_user (default: array()) Specific user's data.
 	 * @return bool|int
 	 */
 	public function woocommerce_course_update( $course_id = 0, $order_user = array() ) {
+		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_WC::course_update' );
+
+		if ( ! method_exists( 'Sensei_WC', 'course_update' ) ) {
+			return false;
+		}
 
 		return Sensei_WC::course_update( $course_id, $order_user );
-
 	} // End woocommerce_course_update()
 
 	/**
@@ -1287,44 +1329,40 @@ class Sensei_Main {
 	 *
 	 * The code caters for pre and post WooCommerce 2.2 installations.
 	 *
-	 * @deprecated since 1.9.0
+	 * @deprecated since 1.9.0 use Sensei_WC::get_product_object
 	 * @since   1.1.1
 	 *
-	 * @param   integer $wc_product_id Product ID or Variation ID.
-	 * @param   string  $product_type  '' or 'variation'.
+	 * @param   integer $wc_product_id  Product ID or Variation ID.
+	 * @param   string  $product_type   Product type.
 	 *
 	 * @return   WC_Product $wc_product_object
 	 */
 	public function sensei_get_woocommerce_product_object( $wc_product_id = 0, $product_type = '' ) {
+		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_WC::get_product_object' );
+
+		if ( ! method_exists( 'Sensei_WC', 'get_product_object' ) ) {
+			return false;
+		}
 
 		return Sensei_WC::get_product_object( $wc_product_id, $product_type );
-
 	} // End sensei_get_woocommerce_product_object()
-
-	/**
-	 * Setup required WooCommerce settings.
-	 *
-	 * @access  public
-	 * @since   1.1.0
-	 * @return  void
-	 */
-	public function set_woocommerce_functionality() {
-
-		_deprecated_function( 'Sensei()->set_woocommerce_functionality', 'Sensei 1.9.0' );
-
-	} // End set_woocommerce_functionality()
 
 	/**
 	 * Disable guest checkout if a course product is in the cart
 	 *
 	 * @deprecated since 1.9.0
+	 *
 	 * @param  boolean $guest_checkout Current guest checkout setting.
 	 * @return boolean                 Modified guest checkout setting.
 	 */
 	public function disable_guest_checkout( $guest_checkout ) {
+		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_WC::disable_guest_checkout' );
+
+		if ( ! method_exists( 'Sensei_WC', 'disable_guest_checkout' ) ) {
+			return $guest_checkout;
+		}
 
 		return Sensei_WC::disable_guest_checkout( $guest_checkout );
-
 	}//end disable_guest_checkout()
 
 	/**
@@ -1333,11 +1371,18 @@ class Sensei_Main {
 	 * @deprecated since 1.9.0 use Sensei_WC::virtual_order_payment_complete( $order_status, $order_id )
 	 *
 	 * @since  1.1.0
+	 *
 	 * @param string $order_status Order Status.
-	 * @param int    $order_id Order ID.
+	 * @param int    $order_id     Order ID.
 	 * @return string
 	 **/
 	public function virtual_order_payment_complete( $order_status, $order_id ) {
+		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_WC::virtual_order_payment_complete' );
+
+		if ( ! method_exists( 'Sensei_WC', 'virtual_order_payment_complete' ) ) {
+			return '';
+		}
+
 		return Sensei_WC::virtual_order_payment_complete( $order_status, $order_id );
 	}
 
