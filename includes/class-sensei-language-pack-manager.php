@@ -51,7 +51,7 @@ class Sensei_Language_Pack_Manager {
 	 * @return string
 	 */
 	protected static function get_settings_uri( $action ) {
-		return wp_nonce_url( admin_url( 'admin.php?page=woothemes-sensei-settings&action=' . $action ), 'language_pack', '_sensei_language_nonce' );
+		return wp_nonce_url( admin_url( 'admin.php?page=sensei-settings&action=' . $action ), 'language_pack', '_sensei_language_nonce' );
 	}
 
 	/**
@@ -168,7 +168,7 @@ class Sensei_Language_Pack_Manager {
 			is_admin()
 			&& current_user_can( 'update_plugins' )
 			&& isset( $_GET['page'] )
-			&& 'woothemes-sensei-settings' === $_GET['page']
+			&& 'sensei-settings' === $_GET['page']
 			&& isset( $_GET['action'] )
 		) {
 
@@ -186,8 +186,8 @@ class Sensei_Language_Pack_Manager {
 	 * Install language pack.
 	 */
 	protected function language_pack_install() {
-		$url          = wp_nonce_url( admin_url( 'admin.php?page=woothemes-sensei-settings&action=language_pack_install' ), 'language_install' );
-		$settings_url = admin_url( 'admin.php?page=woothemes-sensei-settings' );
+		$url          = wp_nonce_url( admin_url( 'admin.php?page=sensei-settings&action=language_pack_install' ), 'language_install' );
+		$settings_url = admin_url( 'admin.php?page=sensei-settings' );
 		$locale       = get_locale();
 
 		if ( ! isset( $_REQUEST['_sensei_language_nonce'] ) && wp_verify_nonce( $_REQUEST['_sensei_language_nonce'], 'language_pack' ) ) {

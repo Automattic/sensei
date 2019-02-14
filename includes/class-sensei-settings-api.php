@@ -14,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Settings_API {
 
 	public $token;
+	public $token_legacy;
 	public $page_slug;
 	public $name;
 	public $menu_label;
@@ -36,8 +37,9 @@ class Sensei_Settings_API {
 	 */
 	public function __construct() {
 
-		$this->token     = 'woothemes-sensei-settings';
-		$this->page_slug = 'woothemes-sensei-settings-api';
+		$this->token        = 'sensei-settings';
+		$this->token_legacy = 'woothemes-sensei-settings';
+		$this->page_slug    = 'sensei-settings-api';
 
 		$this->sections         = array();
 		$this->fields           = array();
@@ -349,7 +351,7 @@ class Sensei_Settings_API {
 		<?php
 		$this->settings_tabs();
 		settings_fields( $this->token );
-		$page = 'woothemes-sensei-settings';
+		$page = 'sensei-settings';
 		foreach ( $this->sections as $section_id => $section ) {
 
 			echo '<section id="' . esc_attr( $section_id ) . '">';
@@ -383,7 +385,7 @@ class Sensei_Settings_API {
 	 */
 	public function get_settings() {
 
-		$this->settings = get_option( $this->token, array() );
+		$this->settings = self::get_settings_raw();
 
 		foreach ( $this->fields as $k => $v ) {
 			if ( ! isset( $this->settings[ $k ] ) && isset( $v['default'] ) ) {
@@ -396,6 +398,26 @@ class Sensei_Settings_API {
 
 		return $this->settings;
 	} // End get_settings()
+
+	/**
+	 * Get the raw settings option.
+	 *
+	 * @return array
+	 */
+	protected function get_settings_raw() {
+		$settings = get_option( $this->token, false );
+		if ( false === $settings
+			 && $this->token_legacy
+			 && false !== get_option( $this->token_legacy, false )
+		) {
+			$settings = get_option( $this->token_legacy, false );
+			update_option( $this->token, $settings );
+		}
+		if ( false === $settings ) {
+			$settings = array();
+		}
+		return $settings;
+	}
 
 	/**
 	 * Register the settings fields.
@@ -986,16 +1008,16 @@ class Sensei_Settings_API {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		wp_enqueue_script( 'farbtastic' );
-		wp_enqueue_script( 'woothemes-sensei-settings', esc_url( Sensei()->plugin_url . 'assets/js/settings' . $suffix . '.js' ), array( 'jquery', 'farbtastic' ), Sensei()->version );
+		wp_enqueue_script( 'sensei-settings', esc_url( Sensei()->plugin_url . 'assets/js/settings' . $suffix . '.js' ), array( 'jquery', 'farbtastic' ), Sensei()->version );
 
 		if ( $this->has_range ) {
-			wp_enqueue_script( 'woothemes-sensei-settings-ranges', esc_url( Sensei()->plugin_url . 'assets/js/ranges' . $suffix . '.js' ), array( 'jquery-ui-slider' ), Sensei()->version );
+			wp_enqueue_script( 'sensei-settings-ranges', esc_url( Sensei()->plugin_url . 'assets/js/ranges' . $suffix . '.js' ), array( 'jquery-ui-slider' ), Sensei()->version );
 		}
 
-		wp_register_script( 'woothemes-sensei-settings-imageselectors', esc_url( Sensei()->plugin_url . 'assets/js/image-selectors' . $suffix . '.js' ), array( 'jquery' ), Sensei()->version );
+		wp_register_script( 'sensei-settings-imageselectors', esc_url( Sensei()->plugin_url . 'assets/js/image-selectors' . $suffix . '.js' ), array( 'jquery' ), Sensei()->version );
 
 		if ( $this->has_imageselector ) {
-			wp_enqueue_script( 'woothemes-sensei-settings-imageselectors' );
+			wp_enqueue_script( 'sensei-settings-imageselectors' );
 		}
 
 	} // End enqueue_scripts()
@@ -1012,7 +1034,7 @@ class Sensei_Settings_API {
 		wp_enqueue_style( $this->token . '-admin' );
 
 		wp_enqueue_style( 'farbtastic' );
-		wp_enqueue_style( 'woothemes-sensei-settings-api', esc_url( Sensei()->plugin_url . 'assets/css/settings.css' ), array( 'farbtastic' ), Sensei()->version );
+		wp_enqueue_style( 'sensei-settings-api', esc_url( Sensei()->plugin_url . 'assets/css/settings.css' ), array( 'farbtastic' ), Sensei()->version );
 
 		$this->enqueue_field_styles();
 	} // End enqueue_styles()
@@ -1027,13 +1049,13 @@ class Sensei_Settings_API {
 	public function enqueue_field_styles() {
 
 		if ( $this->has_range ) {
-			wp_enqueue_style( 'woothemes-sensei-settings-ranges', esc_url( Sensei()->plugin_url . 'assets/css/ranges.css' ), '', Sensei()->version );
+			wp_enqueue_style( 'sensei-settings-ranges', esc_url( Sensei()->plugin_url . 'assets/css/ranges.css' ), '', Sensei()->version );
 		}
 
-		wp_register_style( 'woothemes-sensei-settings-imageselectors', esc_url( Sensei()->plugin_url . 'assets/css/image-selectors.css' ), '', Sensei()->version );
+		wp_register_style( 'sensei-settings-imageselectors', esc_url( Sensei()->plugin_url . 'assets/css/image-selectors.css' ), '', Sensei()->version );
 
 		if ( $this->has_imageselector ) {
-			wp_enqueue_style( 'woothemes-sensei-settings-imageselectors' );
+			wp_enqueue_style( 'sensei-settings-imageselectors' );
 		}
 	} // End enqueue_field_styles()
 } // End Class

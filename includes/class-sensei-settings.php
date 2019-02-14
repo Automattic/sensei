@@ -24,7 +24,9 @@ class Sensei_Settings extends Sensei_Settings_API {
 	public function __construct() {
 		parent::__construct(); // Required in extended classes.
 
-		$this->token = 'woothemes-sensei-settings';
+		$this->token        = 'sensei-settings';
+		$this->token_legacy = 'woothemes-sensei-settings';
+
 		add_action( 'init', array( __CLASS__, 'flush_rewrite_rules' ) );
 
 		// Setup Admin Settings data
@@ -33,7 +35,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			$this->has_tabs   = true;
 			$this->name       = __( 'Sensei Settings', 'woothemes-sensei' );
 			$this->menu_label = __( 'Settings', 'woothemes-sensei' );
-			$this->page_slug  = 'woothemes-sensei-settings';
+			$this->page_slug  = 'sensei-settings';
 
 		} // End If Statement
 
@@ -68,7 +70,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 */
 	public function set( $setting, $new_value ) {
 
-		$settings             = get_option( $this->token, array() );
+		$settings             = self::get_settings_raw();
 		$settings[ $setting ] = $new_value;
 		return update_option( $this->token, $settings );
 
@@ -725,7 +727,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		 * Skipping nonce check because it is already done by WordPress for the Settings page.
 		 * phpcs:disable WordPress.Security.NonceVerification
 		 */
-		if ( isset( $_POST['option_page'] ) && 'woothemes-sensei-settings' === $_POST['option_page']
+		if ( isset( $_POST['option_page'] ) && 'sensei-settings' === $_POST['option_page']
 			&& isset( $_POST['action'] ) && 'update' === $_POST['action'] ) {
 			// phpcs:enable WordPress.Security.NonceVerification
 

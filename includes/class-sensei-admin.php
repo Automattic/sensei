@@ -282,7 +282,7 @@ class Sensei_Admin {
 
 		$allowed_post_types      = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'course', 'question' ) );
 		$allowed_post_type_pages = apply_filters( 'sensei_scripts_allowed_post_type_pages', array( 'edit.php', 'post-new.php', 'post.php', 'edit-tags.php' ) );
-		$allowed_pages           = apply_filters( 'sensei_scripts_allowed_pages', array( 'sensei_grading', 'sensei_analysis', 'sensei_learners', 'sensei_updates', 'woothemes-sensei-settings', $this->lesson_order_page_slug, $this->course_order_page_slug ) );
+		$allowed_pages           = apply_filters( 'sensei_scripts_allowed_pages', array( 'sensei_grading', 'sensei_analysis', 'sensei_learners', 'sensei_updates', 'sensei-settings', $this->lesson_order_page_slug, $this->course_order_page_slug ) );
 
 		// Global Styles for icons and menu items
 		wp_register_style( 'woothemes-sensei-global', Sensei()->plugin_url . 'assets/css/global.css', '', Sensei()->version, 'screen' );
@@ -349,14 +349,14 @@ class Sensei_Admin {
 
 			<p class="submit">
 
-				<a href="<?php echo esc_url( add_query_arg( 'install_sensei_pages', 'true', admin_url( 'admin.php?page=woothemes-sensei-settings' ) ) ); ?>"
+				<a href="<?php echo esc_url( add_query_arg( 'install_sensei_pages', 'true', admin_url( 'admin.php?page=sensei-settings' ) ) ); ?>"
 				   class="button-primary">
 
 					<?php esc_html_e( 'Install Sensei Pages', 'woothemes-sensei' ); ?>
 
 				</a>
 
-				<a class="skip button" href="<?php echo esc_url( add_query_arg( 'skip_install_sensei_pages', 'true', admin_url( 'admin.php?page=woothemes-sensei-settings' ) ) ); ?>">
+				<a class="skip button" href="<?php echo esc_url( add_query_arg( 'skip_install_sensei_pages', 'true', admin_url( 'admin.php?page=sensei-settings' ) ) ); ?>">
 
 					<?php esc_html_e( 'Skip setup', 'woothemes-sensei' ); ?>
 
@@ -383,7 +383,7 @@ class Sensei_Admin {
 			</p>
 
 			<p class="submit">
-				<a href="<?php echo esc_url( admin_url( 'admin.php?page=woothemes-sensei-settings' ) ); ?>" class="button-primary"><?php esc_html_e( 'Settings', 'woothemes-sensei' ); ?></a> <a class="docs button" href="http://www.woothemes.com/sensei-docs/">
+				<a href="<?php echo esc_url( admin_url( 'admin.php?page=sensei-settings' ) ); ?>" class="button-primary"><?php esc_html_e( 'Settings', 'woothemes-sensei' ); ?></a> <a class="docs button" href="http://www.woothemes.com/sensei-docs/">
 					<?php esc_html_e( 'Documentation', 'woothemes-sensei' ); ?>
 				</a>
 			</p>
@@ -447,7 +447,7 @@ class Sensei_Admin {
 
 			if ( get_option( 'skip_install_sensei_pages' ) != 1 && Sensei()->get_page_id( 'course' ) < 1 && ! isset( $_GET['install_sensei_pages'] ) && ! isset( $_GET['skip_install_sensei_pages'] ) ) {
 				add_action( 'admin_notices', array( $this, 'admin_install_notice' ) );
-			} elseif ( ! isset( $_GET['page'] ) || $_GET['page'] != 'woothemes-sensei-settings' ) {
+			} elseif ( ! isset( $_GET['page'] ) || $_GET['page'] !== 'sensei-settings' ) {
 				add_action( 'admin_notices', array( $this, 'admin_installed_notice' ) );
 			} // End If Statement
 		} // End If Statement
@@ -1154,7 +1154,7 @@ class Sensei_Admin {
 	public function course_order_screen() {
 
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-		wp_enqueue_script( 'woothemes-sensei-settings', esc_url( Sensei()->plugin_url . 'assets/js/settings' . $suffix . '.js' ), array( 'jquery', 'jquery-ui-sortable' ), Sensei()->version );
+		wp_enqueue_script( 'sensei-settings', esc_url( Sensei()->plugin_url . 'assets/js/settings' . $suffix . '.js' ), array( 'jquery', 'jquery-ui-sortable' ), Sensei()->version );
 
 		?>
 		<div id="<?php echo esc_attr( $this->course_order_page_slug ); ?>" class="wrap <?php echo esc_attr( $this->course_order_page_slug ); ?>">
@@ -1324,7 +1324,7 @@ class Sensei_Admin {
 	public function lesson_order_screen() {
 
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-		wp_enqueue_script( 'woothemes-sensei-settings', esc_url( Sensei()->plugin_url . 'assets/js/settings' . $suffix . '.js' ), array( 'jquery', 'jquery-ui-sortable' ), Sensei()->version );
+		wp_enqueue_script( 'sensei-settings', esc_url( Sensei()->plugin_url . 'assets/js/settings' . $suffix . '.js' ), array( 'jquery', 'jquery-ui-sortable' ), Sensei()->version );
 
 		?>
 		<div id="<?php echo esc_attr( $this->lesson_order_page_slug ); ?>" class="wrap <?php echo esc_attr( $this->lesson_order_page_slug ); ?>">
@@ -1691,7 +1691,7 @@ class Sensei_Admin {
 
 		// only fire on the settings page
 		if ( ! isset( $_GET['page'] )
-			|| 'woothemes-sensei-settings' != $_GET['page']
+			|| 'sensei-settings' !== $_GET['page']
 			|| 1 == get_option( 'skip_install_sensei_pages' ) ) {
 
 			return;
