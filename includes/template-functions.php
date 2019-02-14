@@ -146,14 +146,21 @@ function sensei_wc_add_to_cart( $course_id ) {
 } // End sensei_wc_add_to_cart()
 
 
-	/**
-	 * sensei_check_if_product_is_in_cart function.
-	 *
-	 * @deprecated since 1.9.0
-	 * @param int $wc_post_id (default: 0)
-	 * @return bool
-	 */
+/**
+ * sensei_check_if_product_is_in_cart function.
+ *
+ * @deprecated since 1.9.0 use is_product_in_cart()
+ *
+ * @param int $wc_post_id Post ID for product (default: 0).
+ * @return bool
+ */
 function sensei_check_if_product_is_in_cart( $wc_product_id = 0 ) {
+	_deprecated_function( __FUNCTION__, '1.9.0', 'Sensei_WC::is_product_in_cart' );
+
+	if ( ! method_exists( 'Sensei_WC', 'is_product_in_cart' ) ) {
+		return false;
+	}
+
 	return Sensei_WC::is_product_in_cart( $wc_product_id );
 } // End sensei_check_if_product_is_in_cart()
 
