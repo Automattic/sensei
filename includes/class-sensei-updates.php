@@ -182,7 +182,7 @@ class Sensei_Updates {
 		);
 
 		$this->updates = apply_filters( 'sensei_upgrade_functions', $this->updates, $this->updates );
-		$this->version = get_option( 'woothemes-sensei-version' );
+		$this->version = get_option( 'sensei-version' );
 
 		// Manual Update Screen
 		add_action( 'admin_menu', array( $this, 'add_update_admin_screen' ), 50 );
