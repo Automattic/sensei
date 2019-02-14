@@ -97,9 +97,6 @@ class Sensei_Frontend {
 		// Only show course & lesson excerpts in search results.
 		add_filter( 'the_content', array( $this, 'sensei_search_results_excerpt' ) );
 
-		// Use WooCommerce filter to show admin bar to Teachers.
-		add_action( 'init', array( $this, 'sensei_show_admin_bar' ) );
-
 		// Lesson tags.
 		add_action( 'sensei_lesson_meta_extra', array( $this, 'lesson_tags_display' ), 10, 1 );
 		add_action( 'pre_get_posts', array( $this, 'lesson_tag_archive_filter' ), 10, 1 );
@@ -1816,22 +1813,6 @@ class Sensei_Frontend {
 			Sensei()->notices->add_notice( $message, 'alert' );
 
 	}//end login_message_process()
-
-
-	/**
-	 * Show admin bar to users who can 'edit_courses'.
-	 *
-	 * @return void redirect
-	 */
-	public function sensei_show_admin_bar() {
-
-		if ( current_user_can( 'edit_courses' ) ) {
-
-			add_filter( 'woocommerce_disable_admin_bar', '__return_false', 10, 1 );
-
-		}
-
-	}
 
 } // End Class
 
