@@ -1363,7 +1363,6 @@ class Sensei_Main {
 		}
 
 		return Sensei_WC::disable_guest_checkout( $guest_checkout );
-
 	}//end disable_guest_checkout()
 
 	/**
@@ -1372,11 +1371,18 @@ class Sensei_Main {
 	 * @deprecated since 1.9.0 use Sensei_WC::virtual_order_payment_complete( $order_status, $order_id )
 	 *
 	 * @since  1.1.0
+	 *
 	 * @param string $order_status Order Status.
-	 * @param int    $order_id Order ID.
+	 * @param int    $order_id     Order ID.
 	 * @return string
 	 **/
 	public function virtual_order_payment_complete( $order_status, $order_id ) {
+		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_WC::virtual_order_payment_complete' );
+
+		if ( ! method_exists( 'Sensei_WC', 'virtual_order_payment_complete' ) ) {
+			return '';
+		}
+
 		return Sensei_WC::virtual_order_payment_complete( $order_status, $order_id );
 	}
 
