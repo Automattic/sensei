@@ -1196,6 +1196,12 @@ class Sensei_Main {
 	 * @return  void
 	 */
 	public function sensei_woocommerce_email_course_details( $order ) {
+		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_WC::email_course_details' );
+
+		if ( ! method_exists( 'Sensei_WC', 'email_course_details' ) ) {
+			return;
+		}
+
 		Sensei_WC::email_course_details( $order );
 	} // end func email course details
 
