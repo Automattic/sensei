@@ -1318,7 +1318,7 @@ class Sensei_Main {
 		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_WC::course_update' );
 
 		if ( ! method_exists( 'Sensei_WC', 'course_update' ) ) {
-			return;
+			return false;
 		}
 
 		return Sensei_WC::course_update( $course_id, $order_user );
