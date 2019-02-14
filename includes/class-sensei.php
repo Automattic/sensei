@@ -1209,10 +1209,17 @@ class Sensei_Main {
 	 * Sensei_woocommerce_reactivate_subscription
 	 *
 	 * @deprecated since 1.9.0, moved to Sensei_WC class
-	 * @param int   $user_id User ID.
+	 *
+	 * @param int   $user_id          User ID.
 	 * @param mixed $subscription_key Subscription Key.
 	 */
 	public function sensei_woocommerce_reactivate_subscription( $user_id, $subscription_key ) {
+		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_WC::reactivate_subscription' );
+
+		if ( ! method_exists( 'Sensei_WC', 'reactivate_subscription' ) ) {
+			return;
+		}
+
 		Sensei_WC::reactivate_subscription( $user_id, $subscription_key );
 	}
 
