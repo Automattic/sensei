@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.1.0
  */
-class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
+class Sensei_Course_Component_Widget extends WP_Widget {
 	protected $woo_widget_cssclass;
 	protected $woo_widget_description;
 	protected $woo_widget_idbase;
