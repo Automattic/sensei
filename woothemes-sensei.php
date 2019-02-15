@@ -11,8 +11,6 @@
  * Tested up to: 4.9
  * Text Domain: woothemes-sensei
  * Domain path: /lang/
- *
- * Woo: 152116:bad2a02a063555b7e2bee59924690763
  */
 
 /*
