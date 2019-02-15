@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @author Automattic
  * @since 1.2.0
  */
-class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
+class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	public $user_id;
 	public $course_id;
 	public $total_lessons;
@@ -459,9 +459,9 @@ class Sensei_Analysis_Course_List_Table extends WooThemes_Sensei_List_Table {
 							'status'   => array( 'graded', 'passed', 'failed' ),
 							'meta_key' => 'grade',
 						);
-						add_filter( 'comments_clauses', array( 'WooThemes_Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
+						add_filter( 'comments_clauses', array( 'Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
 						$lesson_grades = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_grades', $grade_args, $item ), true );
-						remove_filter( 'comments_clauses', array( 'WooThemes_Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
+						remove_filter( 'comments_clauses', array( 'Sensei_Utils', 'comment_total_sum_meta_value_filter' ) );
 
 						$grade_count          = ! empty( $lesson_grades->total ) ? $lesson_grades->total : 1;
 						$grade_total          = ! empty( $lesson_grades->meta_sum ) ? doubleval( $lesson_grades->meta_sum ) : 0;

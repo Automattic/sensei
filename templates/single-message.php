@@ -26,8 +26,8 @@ the_post();
 	 *
 	 * @param integer $message_id
 	 *
-	 * @hooked WooThemes_Sensei_Messages::the_title                 - 20
-	 * @hooked WooThemes_Sensei_Messages::the_message_sent_by_title - 40
+	 * @hooked Sensei_Messages::the_title                 - 20
+	 * @hooked Sensei_Messages::the_message_sent_by_title - 40
 	 */
 	do_action( 'sensei_single_message_content_inside_before', get_the_ID() );
 	?>

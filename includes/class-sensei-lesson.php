@@ -678,7 +678,7 @@ class Sensei_Lesson {
 			'style' => 'width: 100%',
 		);
 
-		$courses         = WooThemes_Sensei_Course::get_all_courses();
+		$courses         = Sensei_Course::get_all_courses();
 		$courses_options = array();
 		foreach ( $courses as $course ) {
 			$courses_options[ $course->ID ] = get_the_title( $course );
@@ -3509,7 +3509,7 @@ class Sensei_Lesson {
 					//
 					// course selection
 					//
-					$courses        = WooThemes_Sensei_Course::get_all_courses();
+					$courses        = Sensei_Course::get_all_courses();
 					$course_options = array();
 					if ( count( $courses ) > 0 ) {
 						foreach ( $courses as $course ) {
@@ -3934,9 +3934,9 @@ class Sensei_Lesson {
 		if ( 'lesson' == get_post_type( get_the_ID() ) ) {
 
 			// remove this hooks to avoid an infinite loop.
-			remove_filter( 'get_the_excerpt', array( 'WooThemes_Sensei_Lesson', 'alter_the_lesson_excerpt' ) );
+			remove_filter( 'get_the_excerpt', array( 'Sensei_Lesson', 'alter_the_lesson_excerpt' ) );
 
-			return WooThemes_Sensei_Lesson::lesson_excerpt( get_post( get_the_ID() ) );
+			return Sensei_Lesson::lesson_excerpt( get_post( get_the_ID() ) );
 		}
 
 		return $excerpt;
@@ -4128,9 +4128,9 @@ class Sensei_Lesson {
 	 */
 	public static function prerequisite_complete_message() {
 
-		$lesson_prerequisite      = WooThemes_Sensei_Lesson::get_lesson_prerequisite_id( get_the_ID() );
+		$lesson_prerequisite      = Sensei_Lesson::get_lesson_prerequisite_id( get_the_ID() );
 		$lesson_has_pre_requisite = $lesson_prerequisite > 0;
-		if ( ! WooThemes_Sensei_Lesson::is_prerequisite_complete( get_the_ID(), get_current_user_id() ) && $lesson_has_pre_requisite ) {
+		if ( ! Sensei_Lesson::is_prerequisite_complete( get_the_ID(), get_current_user_id() ) && $lesson_has_pre_requisite ) {
 
 			$prerequisite_lesson_link = '<a href="'
 				. esc_url( get_permalink( $lesson_prerequisite ) )

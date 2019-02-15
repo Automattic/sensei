@@ -629,7 +629,7 @@ class Sensei_Quiz {
 
 			}
 
-			$lesson_metadata['grade'] = $grade; // Technically already set as part of "WooThemes_Sensei_Utils::sensei_grade_quiz_auto()" above
+			$lesson_metadata['grade'] = $grade; // Technically already set as part of "Sensei_Utils::sensei_grade_quiz_auto()" above
 
 		} // end if ! is_wp_error( $grade ...
 
@@ -1431,7 +1431,7 @@ class Sensei_Quiz {
 		return $merged;
 	}
 
-} // End Class WooThemes_Sensei_Quiz
+} // End Class Sensei_Quiz
 
 
 

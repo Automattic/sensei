@@ -102,7 +102,7 @@ class Sensei_PostTypes {
 		foreach ( $posttypes as $posttype_token => $posttype_name ) {
 
 			// Load the files
-			$class_name                   = 'WooThemes_Sensei_' . $posttype_name;
+			$class_name                   = 'Sensei_' . $posttype_name;
 			$this->$posttype_token        = new $class_name();
 			$this->$posttype_token->token = $posttype_token;
 

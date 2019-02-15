@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.2.0
  */
-class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
+class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 	public $lesson_id;
 	public $course_id;
 	public $page_slug = 'sensei_analysis';

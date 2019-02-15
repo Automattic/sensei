@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 } // Exit if accessed directly
 
-class Sensei_Learners_Admin_Bulk_Actions_View extends WooThemes_Sensei_List_Table {
+class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 
 
 	public $view      = '';

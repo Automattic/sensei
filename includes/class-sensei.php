@@ -49,12 +49,12 @@ class Sensei_Main {
 	public $post_types;
 
 	/**
-	 * @var WooThemes_Sensei_Settings
+	 * @var Sensei_Settings
 	 */
 	public $settings;
 
 	/**
-	 * @var WooThemes_Sensei_Course_Results
+	 * @var Sensei_Course_Results
 	 */
 	public $course_results;
 
@@ -64,32 +64,32 @@ class Sensei_Main {
 	public $updates;
 
 	/**
-	 * @var WooThemes_Sensei_Course
+	 * @var Sensei_Course
 	 */
 	public $course;
 
 	/**
-	 * @var WooThemes_Sensei_Lesson
+	 * @var Sensei_Lesson
 	 */
 	public $lesson;
 
 	/**
-	 * @var WooThemes_Sensei_Quiz
+	 * @var Sensei_Quiz
 	 */
 	public $quiz;
 
 	/**
-	 * @var WooThemes_Sensei_Question
+	 * @var Sensei_Question
 	 */
 	public $question;
 
 	/**
-	 * @var WooThemes_Sensei_Admin
+	 * @var Sensei_Admin
 	 */
 	public $admin;
 
 	/**
-	 * @var WooThemes_Sensei_Frontend
+	 * @var Sensei_Frontend
 	 */
 	public $frontend;
 
@@ -104,17 +104,17 @@ class Sensei_Main {
 	public $theme_integration_loader;
 
 	/**
-	 * @var WooThemes_Sensei_Grading
+	 * @var Sensei_Grading
 	 */
 	public $grading;
 
 	/**
-	 * @var WooThemes_Sensei_Emails
+	 * @var Sensei_Emails
 	 */
 	public $emails;
 
 	/**
-	 * @var WooThemes_Sensei_Learner_Profiles
+	 * @var Sensei_Learner_Profiles
 	 */
 	public $learner_profiles;
 
@@ -124,7 +124,7 @@ class Sensei_Main {
 	public $teacher;
 
 	/**
-	 * @var WooThemes_Sensei_Learners
+	 * @var Sensei_Learners
 	 */
 	public $learners;
 
@@ -280,7 +280,7 @@ class Sensei_Main {
 	 * @since 1.8.0
 	 * @static
 	 * @see WC()
-	 * @return WooThemes_Sensei Instance.
+	 * @return self
 	 */
 	public static function instance( $args ) {
 

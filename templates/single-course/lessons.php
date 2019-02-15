@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		/**
 		 * Actions just before the sensei single course lessons loop begins
 		 *
-		 * @hooked WooThemes_Sensei_Course::load_single_course_lessons_query
+		 * @hooked Sensei_Course::load_single_course_lessons_query
 		 * @since 1.9.0
 		 */
 		do_action( 'sensei_single_course_lessons_before' );
@@ -50,8 +50,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 					 *
 					 * @param $lessons_id
 					 *
-					 * @hooked WooThemes_Sensei_Lesson::the_lesson_meta -  5
-					 * @hooked WooThemes_Sensei_Lesson::the_lesson_thumbnail - 8
+					 * @hooked Sensei_Lesson::the_lesson_meta -  5
+					 * @hooked Sensei_Lesson::the_lesson_thumbnail - 8
 					 */
 					do_action( 'sensei_single_course_inside_before_lesson', get_the_ID() );
 
@@ -91,7 +91,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		/**
 		 * Actions just before the sensei single course lessons loop begins
 		 *
-		 * @hooked WooThemes_Sensei_Course::reset_single_course_query
+		 * @hooked Sensei_Course::reset_single_course_query
 		 *
 		 * @since 1.9.0
 		 */

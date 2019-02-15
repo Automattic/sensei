@@ -512,7 +512,7 @@ class Sensei_Frontend {
 	 */
 	function the_single_title() {
 
-		_deprecated_function( ' WooThemes_Sensei_Frontend::the_single_title', '1.9.0' );
+		_deprecated_function( 'Sensei_Frontend::the_single_title', '1.9.0' );
 
 	} // End sensei_single_title()
 
@@ -594,13 +594,13 @@ class Sensei_Frontend {
 	 *
 	 * @access public
 	 * @since  1.2.0
-	 * @deprecated since 1.9.0 use WooThemes_Sensei_Course::archive_header
+	 * @deprecated since 1.9.0 use Sensei_Course::archive_header
 	 * @return void
 	 */
 	function sensei_course_archive_header() {
 
-		trigger_error( 'This function sensei_course_archive_header has been depricated. Please use: WooThemes_Sensei_Course::course_archive_header ' );
-		WooThemes_Sensei_Course::archive_header( '', '<header class="archive-header"><h1>', '</h1></header>' );
+		trigger_error( 'This function sensei_course_archive_header has been depricated. Please use: Sensei_Course::course_archive_header ' );
+		Sensei_Course::archive_header( '', '<header class="archive-header"><h1>', '</h1></header>' );
 
 	} // sensei_course_archive_header()
 
@@ -613,7 +613,7 @@ class Sensei_Frontend {
 	 * @return void
 	 */
 	public function sensei_lesson_archive_header() {
-		_deprecated_function( 'WooThemes_Sensei_Frontend::sensei_lesson_archive_header', '1.9.0', 'WooThemes_Sensei_Lesson::the_archive_header' );
+		_deprecated_function( 'Sensei_Frontend::sensei_lesson_archive_header', '1.9.0', 'Sensei_Lesson::the_archive_header' );
 		Sensei()->lesson->the_archive_header();
 	} // sensei_course_archive_header()
 
@@ -712,12 +712,12 @@ class Sensei_Frontend {
 	/**
 	 * Outputs the course signup link.
 	 *
-	 * @deprecated since 1.9.0 use WooThemes_Sensei_Lesson::course_signup_link instead
+	 * @deprecated since 1.9.0 use Sensei_Lesson::course_signup_link instead
 	 */
 	public function sensei_lesson_course_signup_link() {
 
-		_deprecated_function( 'sensei_lesson_course_signup_link', '1.9.0', 'WooThemes_Sensei_Lesson::course_signup_link' );
-		WooThemes_Sensei_Lesson::course_signup_link();
+		_deprecated_function( 'sensei_lesson_course_signup_link', '1.9.0', 'Sensei_Lesson::course_signup_link' );
+		Sensei_Lesson::course_signup_link();
 	}
 
 	/**
@@ -942,7 +942,7 @@ class Sensei_Frontend {
 	/**
 	 * Gets the quiz answers for the current user.
 	 *
-	 * @deprecated use WooThemes_Sensei_Quiz::get_user_answers
+	 * @deprecated use Sensei_Quiz::get_user_answers
 	 * @param int $lesson_id Lesson ID.
 	 * @return array Quiz answers for the current user.
 	 */
@@ -981,7 +981,7 @@ class Sensei_Frontend {
 	 * @return bool true if the user has completed the lesson, false otherwise.
 	 */
 	public function sensei_has_user_completed_lesson( $post_id = 0, $user_id = 0 ) {
-		_deprecated_function( __FUNCTION__, '1.7', 'WooThemes_Sensei_Utils::user_completed_lesson()' );
+		_deprecated_function( __FUNCTION__, '1.7', 'Sensei_Utils::user_completed_lesson()' );
 		return Sensei_Utils::user_completed_lesson( $post_id, $user_id );
 	} // End sensei_has_user_completed_lesson()
 
