@@ -193,8 +193,7 @@ class Sensei_Learner_Management {
 	 */
 	public function enqueue_styles() {
 
-		wp_enqueue_style( 'woothemes-sensei-admin' );
-		wp_enqueue_style( 'woothemes-sensei-jquery-ui', Sensei()->plugin_url . 'assets/css/jquery-ui.css', '', Sensei()->version );
+		wp_enqueue_style( 'sensei-jquery-ui', Sensei()->plugin_url . 'assets/css/jquery-ui.css', '', Sensei()->version );
 
 	} // End enqueue_styles()
 

@@ -1167,7 +1167,7 @@ class Sensei_Updates {
 
 	public function update_quiz_settings() {
 
-		$settings = get_option( 'woothemes-sensei-settings', array() );
+		$settings = get_option( 'sensei-settings', get_option( 'woothemes-sensei-settings', array() ) );
 
 		$lesson_completion = false;
 		if ( isset( $settings['lesson_completion'] ) ) {

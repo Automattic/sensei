@@ -32,7 +32,7 @@ class Sensei_Main {
 	/**
 	 * Public token, referencing for the text domain.
 	 */
-	public $token = 'woothemes-sensei';
+	public $token = 'sensei';
 
 	/**
 	 * Plugin url and path for use when access resources.
@@ -1406,7 +1406,7 @@ class Sensei_Main {
 	 * @return string plugin settings URL
 	 */
 	public function get_settings_url( $plugin_id = null ) {
-		return admin_url( 'admin.php?page=woothemes-sensei-settings&tab=general' );
+		return admin_url( 'admin.php?page=sensei-settings&tab=general' );
 	}
 
 		/**
@@ -1442,7 +1442,7 @@ class Sensei_Main {
 		 * @return boolean true if the current page is the admin general configuration page
 		 */
 	public function is_general_configuration_page() {
-		return isset( $_GET['page'] ) && 'woothemes-sensei-settings' === trim( $_GET['page'] ) && ( ! isset( $_GET['tab'] ) || 'general' === trim( $_GET['tab'] ) );
+		return isset( $_GET['page'] ) && 'sensei-settings' === trim( $_GET['page'] ) && ( ! isset( $_GET['tab'] ) || 'general' === trim( $_GET['tab'] ) );
 	}
 
 
@@ -1452,7 +1452,7 @@ class Sensei_Main {
 		 * @return string admin configuration url for the admin general configuration page
 		 */
 	public function get_general_configuration_url() {
-		return admin_url( 'admin.php?page=woothemes-sensei-settings&tab=general' );
+		return admin_url( 'admin.php?page=sensei-settings&tab=general' );
 	}
 
 	/**
