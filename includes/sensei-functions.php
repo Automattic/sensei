@@ -285,15 +285,15 @@ function sensei_does_theme_support_templates() {
 	return in_array( $current_theme, $themes, true ) || current_theme_supports( 'sensei' );
 }
 
-/**
- * Check if WooCommerce version is greater than the one specified
- *
- * @deprecated 2.0.0
- *
- * @param  $version Version to check against
- * @return @boolean
- */
 if ( ! function_exists( 'sensei_check_woocommerce_version' ) ) {
+	/**
+	 * Check if WooCommerce version is greater than the one specified.
+	 *
+	 * @deprecated 2.0.0
+	 *
+	 * @param string $version Version to check against.
+	 * @return boolean
+	 */
 	function sensei_check_woocommerce_version( $version = '2.1' ) {
 		_deprecated_function( __FUNCTION__, '2.0.0' );
 
