@@ -72,8 +72,6 @@ class Sensei_Analysis {
 	 */
 	public function enqueue_styles() {
 
-		wp_enqueue_style( 'sensei-admin' );
-
 		wp_enqueue_style( 'sensei-settings-api', Sensei()->plugin_url . 'assets/css/settings.css', '', Sensei()->version );
 
 	} // End enqueue_styles()
