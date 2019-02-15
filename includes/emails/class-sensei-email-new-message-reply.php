@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-if ( ! class_exists( 'WooThemes_Sensei_Email_New_Message_Reply' ) ) :
+if ( ! class_exists( 'Sensei_Email_New_Message_Reply' ) ) :
 
 	/**
 	 * Teacher New Message
@@ -16,7 +16,7 @@ if ( ! class_exists( 'WooThemes_Sensei_Email_New_Message_Reply' ) ) :
 	 *
 	 * @since       1.6.0
 	 */
-	class WooThemes_Sensei_Email_New_Message_Reply {
+	class Sensei_Email_New_Message_Reply {
 
 		/**
 		 * @var string
@@ -134,4 +134,4 @@ if ( ! class_exists( 'WooThemes_Sensei_Email_New_Message_Reply' ) ) :
 
 endif;
 
-return new WooThemes_Sensei_Email_New_Message_Reply();
+return new Sensei_Email_New_Message_Reply();

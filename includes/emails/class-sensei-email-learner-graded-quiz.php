@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-if ( ! class_exists( 'WooThemes_Sensei_Email_Learner_Graded_Quiz' ) ) :
+if ( ! class_exists( 'Sensei_Email_Learner_Graded_Quiz' ) ) :
 
 	/**
 	 * Learner Graded Quiz
@@ -16,7 +16,7 @@ if ( ! class_exists( 'WooThemes_Sensei_Email_Learner_Graded_Quiz' ) ) :
 	 *
 	 * @since       1.6.0
 	 */
-	class WooThemes_Sensei_Email_Learner_Graded_Quiz {
+	class Sensei_Email_Learner_Graded_Quiz {
 
 		var $template;
 		var $subject;
@@ -107,4 +107,4 @@ if ( ! class_exists( 'WooThemes_Sensei_Email_Learner_Graded_Quiz' ) ) :
 
 endif;
 
-return new WooThemes_Sensei_Email_Learner_Graded_Quiz();
+return new Sensei_Email_Learner_Graded_Quiz();

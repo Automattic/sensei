@@ -4,19 +4,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-if ( ! class_exists( 'WooThemes_Sensei_Email_Teacher_Completed_Course' ) ) :
+if ( ! class_exists( 'Sensei_Email_Teacher_Started_Course' ) ) :
 
 	/**
-	 * Teacher Completed Course
+	 * Teacher Started Course
 	 *
-	 * An email sent to the teacher when one of their students completes a course.
+	 * An email sent to the teacher when one of their students starts a course.
 	 *
 	 * @package Users
 	 * @author Automattic
 	 *
 	 * @since       1.6.0
 	 */
-	class WooThemes_Sensei_Email_Teacher_Completed_Course {
+	class Sensei_Email_Teacher_Started_Course {
 
 		var $template;
 		var $subject;
@@ -27,11 +27,9 @@ if ( ! class_exists( 'WooThemes_Sensei_Email_Teacher_Completed_Course' ) ) :
 
 		/**
 		 * Constructor
-		 *
-		 * @access public
 		 */
 		function __construct() {
-			$this->template = 'teacher-completed-course';
+			$this->template = 'teacher-started-course';
 		}
 
 		/**
@@ -45,9 +43,6 @@ if ( ! class_exists( 'WooThemes_Sensei_Email_Teacher_Completed_Course' ) ) :
 		function trigger( $learner_id = 0, $course_id = 0 ) {
 			global  $sensei_email_data;
 
-			if ( ! Sensei_Utils::user_started_course( $course_id, $learner_id ) ) {
-				return;
-			}
 			// Get learner user object
 			$this->learner = new WP_User( $learner_id );
 
@@ -61,14 +56,8 @@ if ( ! class_exists( 'WooThemes_Sensei_Email_Teacher_Completed_Course' ) ) :
 			do_action( 'sensei_before_mail', $this->recipient );
 
 			// translators: Placeholder is the blog name.
-			$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] Your student has completed a course', 'woothemes-sensei' ), get_bloginfo( 'name' ) ), $this->template );
-			$this->heading = apply_filters( 'sensei_email_heading', __( 'Your student has completed a course', 'woothemes-sensei' ), $this->template );
-
-			// Get passed status
-			$passed = __( 'passed', 'woothemes-sensei' );
-			if ( ! Sensei_Utils::sensei_user_passed_course( $course_id, $learner_id ) ) {
-				$passed = __( 'failed', 'woothemes-sensei' );
-			}
+			$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] Your student has started a course', 'woothemes-sensei' ), get_bloginfo( 'name' ) ), $this->template );
+			$this->heading = apply_filters( 'sensei_email_heading', __( 'Your student has started a course', 'woothemes-sensei' ), $this->template );
 
 			// Construct data array
 			$sensei_email_data = apply_filters(
@@ -80,7 +69,6 @@ if ( ! class_exists( 'WooThemes_Sensei_Email_Teacher_Completed_Course' ) ) :
 					'learner_id'   => $learner_id,
 					'learner_name' => $this->learner->display_name,
 					'course_id'    => $course_id,
-					'passed'       => $passed,
 				),
 				$this->template
 			);
@@ -94,4 +82,4 @@ if ( ! class_exists( 'WooThemes_Sensei_Email_Teacher_Completed_Course' ) ) :
 
 endif;
 
-return new WooThemes_Sensei_Email_Teacher_Completed_Course();
+return new Sensei_Email_Teacher_Started_Course();

@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-if ( ! class_exists( 'WooThemes_Sensei_Email_Teacher_New_Message' ) ) :
+if ( ! class_exists( 'Sensei_Email_Teacher_New_Message' ) ) :
 
 	/**
 	 * Teacher New Message
@@ -16,7 +16,7 @@ if ( ! class_exists( 'WooThemes_Sensei_Email_Teacher_New_Message' ) ) :
 	 *
 	 * @since       1.6.0
 	 */
-	class WooThemes_Sensei_Email_Teacher_New_Message {
+	class Sensei_Email_Teacher_New_Message {
 
 		var $template;
 		var $subject;
@@ -100,4 +100,4 @@ if ( ! class_exists( 'WooThemes_Sensei_Email_Teacher_New_Message' ) ) :
 
 endif;
 
-return new WooThemes_Sensei_Email_Teacher_New_Message();
+return new Sensei_Email_Teacher_New_Message();
