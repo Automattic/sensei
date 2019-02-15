@@ -406,12 +406,12 @@ class Sensei_Settings_API {
 	 */
 	protected function get_settings_raw() {
 		$settings = get_option( $this->token, false );
-		if ( false === $settings
-			 && $this->token_legacy
-			 && false !== get_option( $this->token_legacy, false )
-		) {
+		if ( false === $settings && $this->token_legacy ) {
 			$settings = get_option( $this->token_legacy, false );
-			update_option( $this->token, $settings );
+
+			if ( false !== $settings ) {
+				update_option( $this->token, $settings );
+			}
 		}
 		if ( false === $settings ) {
 			$settings = array();
