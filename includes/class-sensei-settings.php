@@ -24,9 +24,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 	public function __construct() {
 		parent::__construct(); // Required in extended classes.
 
-		$this->token        = 'sensei-settings';
-		$this->token_legacy = 'woothemes-sensei-settings';
-
 		add_action( 'init', array( __CLASS__, 'flush_rewrite_rules' ) );
 
 		// Setup Admin Settings data
