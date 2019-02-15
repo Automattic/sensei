@@ -11,8 +11,6 @@
  * Tested up to: 4.9
  * Text Domain: woothemes-sensei
  * Domain path: /lang/
- *
- * Woo: 152116:bad2a02a063555b7e2bee59924690763
  */
 
 /*
@@ -52,13 +50,6 @@ function Sensei() {
 // backwards compatibility
 global $woothemes_sensei;
 $woothemes_sensei = Sensei();
-
-/**
- * Plugin updates
- *
- * @since  1.0.1
- */
-woothemes_queue_update( plugin_basename( __FILE__ ), 'bad2a02a063555b7e2bee59924690763', 152116 );
 
 /**
  * Sensei Activation Hook registration
