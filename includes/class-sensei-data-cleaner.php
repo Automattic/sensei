@@ -62,6 +62,7 @@ class Sensei_Data_Cleaner {
 		'sensei-version',
 		'woothemes-sensei-version',
 		'sensei_usage_tracking_opt_in_hide',
+		'sensei-upgrades',
 		'woothemes-sensei-upgrades',
 		'woothemes-sensei-settings',
 		'sensei_courses_page_id',
