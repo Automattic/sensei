@@ -198,9 +198,11 @@ class Sensei_Updates {
 	public function get_ran_upgrades_raw() {
 		$upgrades = get_option( $this->token . '-upgrades', array() );
 
-		if ( empty( $upgrades ) && $this->token_legacy && get_option( $this->token_legacy . '-upgrades', false ) ) {
+		if ( empty( $upgrades ) && $this->token_legacy ) {
 			$upgrades = get_option( $this->token_legacy . '-upgrades', false );
-			update_option( $this->token . '-upgrades', $upgrades );
+			if ( false !== $upgrades ) {
+				update_option( $this->token . '-upgrades', $upgrades );
+			}
 		}
 
 		if ( empty( $upgrades ) ) {
