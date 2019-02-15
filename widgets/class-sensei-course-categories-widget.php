@@ -13,10 +13,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.1.0
  */
 class Sensei_Course_Categories_Widget extends WP_Widget {
-	protected $woo_widget_cssclass;
-	protected $woo_widget_description;
-	protected $woo_widget_idbase;
-	protected $woo_widget_title;
+	protected $widget_cssclass;
+	protected $widget_description;
+	protected $widget_idbase;
+	protected $widget_title;
 
 	/**
 	 * Constructor function.
@@ -26,26 +26,26 @@ class Sensei_Course_Categories_Widget extends WP_Widget {
 	 */
 	public function __construct() {
 		/* Widget variable settings. */
-		$this->woo_widget_cssclass    = 'widget_sensei_course_categories';
-		$this->woo_widget_description = __( 'This widget will output a list of Course Categories.', 'woothemes-sensei' );
-		$this->woo_widget_idbase      = 'sensei_course_categories';
-		$this->woo_widget_title       = __( 'Sensei - Course Categories', 'woothemes-sensei' );
+		$this->widget_cssclass    = 'widget_sensei_course_categories';
+		$this->widget_description = __( 'This widget will output a list of Course Categories.', 'woothemes-sensei' );
+		$this->widget_idbase      = 'sensei_course_categories';
+		$this->widget_title       = __( 'Sensei - Course Categories', 'woothemes-sensei' );
 
 		/* Widget settings. */
 		$widget_ops = array(
-			'classname'   => $this->woo_widget_cssclass,
-			'description' => $this->woo_widget_description,
+			'classname'   => $this->widget_cssclass,
+			'description' => $this->widget_description,
 		);
 
 		/* Widget control settings. */
 		$control_ops = array(
 			'width'   => 250,
 			'height'  => 350,
-			'id_base' => $this->woo_widget_idbase,
+			'id_base' => $this->widget_idbase,
 		);
 
 		/* Create the widget. */
-		parent::__construct( $this->woo_widget_idbase, $this->woo_widget_title, $widget_ops, $control_ops );
+		parent::__construct( $this->widget_idbase, $this->widget_title, $widget_ops, $control_ops );
 	} // End __construct()
 
 	/**
@@ -76,12 +76,12 @@ class Sensei_Course_Categories_Widget extends WP_Widget {
 		/*
 		 Widget content. */
 		// Add actions for plugins/themes to hook onto.
-		do_action( $this->woo_widget_cssclass . '_top' );
+		do_action( $this->widget_cssclass . '_top' );
 
 		$this->load_component( $instance );
 
 		// Add actions for plugins/themes to hook onto.
-		do_action( $this->woo_widget_cssclass . '_bottom' );
+		do_action( $this->widget_cssclass . '_bottom' );
 
 		/* After widget (defined by themes). */
 		echo wp_kses_post( $after_widget );
