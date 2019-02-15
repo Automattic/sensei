@@ -297,7 +297,7 @@ if ( ! function_exists( 'sensei_check_woocommerce_version' ) ) {
 	function sensei_check_woocommerce_version( $version = '2.1' ) {
 		_deprecated_function( __FUNCTION__, '2.0.0' );
 
-		if ( class_exists( 'Sensei_WC' ) && Sensei_WC::is_woocommerce_active() ) {
+		if ( method_exists( 'Sensei_WC', 'is_woocommerce_active' ) && Sensei_WC::is_woocommerce_active() ) {
 			global $woocommerce;
 			if ( version_compare( $woocommerce->version, $version, '>=' ) ) {
 				return true;
