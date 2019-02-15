@@ -54,13 +54,6 @@ global $woothemes_sensei;
 $woothemes_sensei = Sensei();
 
 /**
- * Plugin updates
- *
- * @since  1.0.1
- */
-woothemes_queue_update( plugin_basename( __FILE__ ), 'bad2a02a063555b7e2bee59924690763', 152116 );
-
-/**
  * Sensei Activation Hook registration
  *
  * @since 1.8.0
