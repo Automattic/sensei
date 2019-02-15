@@ -49,7 +49,7 @@ function course_single_lessons() {
 	  */
 function lesson_single_meta() {
 
-	_deprecated_function( 'lesson_single_meta', '1.9;0', 'WooThemes_Sensei_Lesson::the_lesson_meta' );
+	_deprecated_function( 'lesson_single_meta', '1.9;0', 'Sensei_Lesson::the_lesson_meta' );
 	sensei_the_single_lesson_meta();
 
 } // End lesson_single_meta()
@@ -437,12 +437,12 @@ function sensei_get_excerpt( $post_id = '' ) {
 }
 
 function sensei_has_user_started_course( $post_id = 0, $user_id = 0 ) {
-	_deprecated_function( __FUNCTION__, '1.7', 'WooThemes_Sensei_Utils::user_started_course()' );
+	_deprecated_function( __FUNCTION__, '1.7', 'Sensei_Utils::user_started_course()' );
 	return Sensei_Utils::user_started_course( $post_id, $user_id );
 } // End sensei_has_user_started_course()
 
 function sensei_has_user_completed_lesson( $post_id = 0, $user_id = 0 ) {
-	_deprecated_function( __FUNCTION__, '1.7', 'WooThemes_Sensei_Utils::user_completed_lesson()' );
+	_deprecated_function( __FUNCTION__, '1.7', 'Sensei_Utils::user_completed_lesson()' );
 	return Sensei_Utils::user_completed_lesson( $post_id, $user_id );
 } // End sensei_has_user_completed_lesson()
 
@@ -457,7 +457,7 @@ function sensei_has_user_completed_lesson( $post_id = 0, $user_id = 0 ) {
  */
 function sensei_has_user_completed_prerequisite_lesson( $current_lesson_id, $user_id ) {
 
-	return WooThemes_Sensei_Lesson::is_prerequisite_complete( $current_lesson_id, $user_id );
+	return Sensei_Lesson::is_prerequisite_complete( $current_lesson_id, $user_id );
 
 } // End sensei_has_user_completed_prerequisite_lesson()
 
@@ -837,7 +837,7 @@ function sensei_the_question_content() {
 	$question_type = Sensei()->question->get_question_type( $sensei_question_loop['current_question']->ID );
 
 	// load the template that displays the question information.
-	WooThemes_Sensei_Question::load_question_template( $question_type );
+	Sensei_Question::load_question_template( $question_type );
 
 }//end sensei_the_question_content()
 
@@ -928,7 +928,7 @@ function sensei_can_user_view_lesson( $lesson_id = '', $user_id = '' ) {
 	}
 
 	// Check for prerequisite lesson completions
-	$pre_requisite_complete = WooThemes_Sensei_Lesson::is_prerequisite_complete( $lesson_id, $user_id );
+	$pre_requisite_complete = Sensei_Lesson::is_prerequisite_complete( $lesson_id, $user_id );
 	$lesson_course_id       = get_post_meta( $lesson_id, '_lesson_course', true );
 	$user_taking_course     = Sensei_Utils::user_started_course( $lesson_course_id, $user_id );
 

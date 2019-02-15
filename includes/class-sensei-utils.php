@@ -565,7 +565,7 @@ class Sensei_Utils {
 	 * This function grades each question automatically if the are auto gradable.
 	 * It store all question grades.
 	 *
-	 * @deprecated since 1.7.4 use WooThemes_Sensei_Grading::grade_quiz_auto instead
+	 * @deprecated since 1.7.4 use Sensei_Grading::grade_quiz_auto instead
 	 *
 	 * @param  integer $quiz_id         ID of quiz
 	 * @param  array   $submitted questions id ans answers {
@@ -616,7 +616,7 @@ class Sensei_Utils {
 	 *
 	 * This function checks the question type and then grades it accordingly.
 	 *
-	 * @deprecated since 1.7.4 use WooThemes_Sensei_Grading::grade_question_auto instead
+	 * @deprecated since 1.7.4 use Sensei_Grading::grade_question_auto instead
 	 *
 	 * @param integer $question_id
 	 * @param string  $question_type of the standard Sensei question types
@@ -627,7 +627,7 @@ class Sensei_Utils {
 	 */
 	public static function sensei_grade_question_auto( $question_id = 0, $question_type = '', $answer = '', $user_id = 0 ) {
 
-		return WooThemes_Sensei_Grading::grade_question_auto( $question_id, $question_type, $answer, $user_id );
+		return Sensei_Grading::grade_question_auto( $question_id, $question_type, $answer, $user_id );
 
 	} // end sensei_grade_question_auto
 

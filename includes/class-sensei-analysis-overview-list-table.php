@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.2.0
  */
-class Sensei_Analysis_Overview_List_Table extends WooThemes_Sensei_List_Table {
+class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	public $type;
 	public $page_slug = 'sensei_analysis';
 

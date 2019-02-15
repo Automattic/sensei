@@ -43,7 +43,7 @@
 						/**
 						 * Action inside before the question content on single-quiz page
 						 *
-						 * @hooked WooThemes_Sensei_Quiz::the_user_status_message  - 10
+						 * @hooked Sensei_Quiz::the_user_status_message  - 10
 						 *
 						 * @param string $the_quiz_id
 						 */
@@ -67,10 +67,10 @@
 								/**
 								 * Action inside before the question content on single-quiz page
 								 *
-								 * @hooked WooThemes_Sensei_Question::the_question_title        - 10
-								 * @hooked WooThemes_Sensei_Question::the_question_description  - 20
-								 * @hooked WooThemes_Sensei_Question::the_question_media        - 30
-								 * @hooked WooThemes_Sensei_Question::the_question_hidden_field - 40
+								 * @hooked Sensei_Question::the_question_title        - 10
+								 * @hooked Sensei_Question::the_question_description  - 20
+								 * @hooked Sensei_Question::the_question_media        - 30
+								 * @hooked Sensei_Question::the_question_hidden_field - 40
 								 *
 								 * @since 1.9.0
 								 * @param string $the_question_id
@@ -86,7 +86,7 @@
 								/**
 								 * Action inside before the question content on single-quiz page
 								 *
-								 * @hooked WooThemes_Sensei_Question::answer_feedback_notes
+								 * @hooked Sensei_Question::answer_feedback_notes
 								 *
 								 * @param string $the_question_id
 								 */

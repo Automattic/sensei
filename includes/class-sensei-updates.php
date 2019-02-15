@@ -2077,7 +2077,7 @@ class Sensei_Updates {
 	}
 
 	 /**
-	  * WooThemes_Sensei_Updates::enhance_teacher_role
+	  * Sensei_Updates::enhance_teacher_role
 	  *
 	  * This runs the update to create the teacher role
 	  *

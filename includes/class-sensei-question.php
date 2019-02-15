@@ -497,7 +497,7 @@ class Sensei_Question {
 	/**
 	 * Echo the sensei question title.
 	 *
-	 * @uses WooThemes_Sensei_Question::get_the_question_title
+	 * @uses Sensei_Question::get_the_question_title
 	 *
 	 * @since 1.9.0
 	 * @param $question_id

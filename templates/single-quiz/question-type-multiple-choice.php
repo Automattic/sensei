@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	 * Get the question data with the current quiz id
 	 * All data is loaded in this array to keep the template clean.
 	 */
-	$question_data = WooThemes_Sensei_Question::get_template_data( sensei_get_the_question_id(), get_the_ID() );
+	$question_data = Sensei_Question::get_template_data( sensei_get_the_question_id(), get_the_ID() );
 
 ?>
 

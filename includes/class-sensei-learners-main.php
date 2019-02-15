@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.3.0
  */
-class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
+class Sensei_Learners_Main extends Sensei_List_Table {
 
 	public $course_id = 0;
 	public $lesson_id = 0;

@@ -536,7 +536,7 @@ class Sensei_Core_Modules {
 				)
 			);
 			if ( ! $is_user_taking_course ) {
-				if ( method_exists( 'WooThemes_Sensei_Frontend', 'sensei_lesson_preview_title_text' ) ) {
+				if ( method_exists( 'Sensei_Frontend', 'sensei_lesson_preview_title_text' ) ) {
 					$title_text = Sensei()->frontend->sensei_lesson_preview_title_text( $course_id );
 					// Remove brackets for display here
 					$title_text = str_replace( '(', '', $title_text );

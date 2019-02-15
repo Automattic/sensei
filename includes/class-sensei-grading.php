@@ -131,7 +131,7 @@ class Sensei_Grading {
 	 */
 	public function load_data_object( $name = '', $data = 0, $optional_data = null ) {
 		// Load Analysis data
-		$object_name = 'WooThemes_Sensei_Grading_' . $name;
+		$object_name = 'Sensei_Grading_' . $name;
 		if ( is_null( $optional_data ) ) {
 			$sensei_grading_object = new $object_name( $data );
 		} else {
@@ -683,7 +683,7 @@ class Sensei_Grading {
 			else {
 				$lesson_status = 'graded';
 			}
-			$lesson_metadata['grade'] = $grade; // Technically already set as part of "WooThemes_Sensei_Utils::sensei_grade_quiz()" above
+			$lesson_metadata['grade'] = $grade; // Technically already set as part of "Sensei_Utils::sensei_grade_quiz()" above
 
 			Sensei_Utils::update_lesson_status( $user_id, $quiz_lesson_id, $lesson_status, $lesson_metadata );
 

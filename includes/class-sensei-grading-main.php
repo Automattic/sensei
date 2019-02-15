@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @author Automattic
  * @since 1.3.0
  */
-class Sensei_Grading_Main extends WooThemes_Sensei_List_Table {
+class Sensei_Grading_Main extends Sensei_List_Table {
 
 	public $user_id;
 	public $course_id;

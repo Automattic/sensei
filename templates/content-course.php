@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 ?>
 
-<li <?php post_class( WooThemes_Sensei_Course::get_course_loop_content_class() ); ?> >
+<li <?php post_class( Sensei_Course::get_course_loop_content_class() ); ?> >
 
 	<?php
 	/**
