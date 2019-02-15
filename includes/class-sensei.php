@@ -32,7 +32,7 @@ class Sensei_Main {
 	/**
 	 * Public token, referencing for the text domain.
 	 */
-	public $token = 'woothemes-sensei';
+	public $token = 'sensei';
 
 	/**
 	 * Plugin url and path for use when access resources.
