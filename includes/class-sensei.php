@@ -611,7 +611,7 @@ class Sensei_Main {
 	 * @return void
 	 */
 	private function register_plugin_version() {
-		if ( $this->version !== '' ) {
+		if ( isset( $this->version ) ) {
 
 			update_option( 'sensei-version', $this->version );
 
