@@ -14,7 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Updates {
 
-	public $token = 'woothemes-sensei';
+	public $token        = 'sensei';
+	public $token_legacy = 'woothemes-sensei';
 	public $version;
 	public $updates_run;
 	public $updates;
@@ -32,7 +33,7 @@ class Sensei_Updates {
 
 		// Setup object data
 		$this->parent      = $parent;
-		$this->updates_run = get_option( 'woothemes-sensei-upgrades', array() );
+		$this->updates_run = self::get_ran_upgrades_raw();
 
 		// The list of upgrades to run
 		$this->updates = array(
@@ -188,6 +189,26 @@ class Sensei_Updates {
 		add_action( 'admin_menu', array( $this, 'add_update_admin_screen' ), 50 );
 
 	} // End __construct()
+
+	/**
+	 * Get the array of upgrades that have executed.
+	 *
+	 * @return array
+	 */
+	public function get_ran_upgrades_raw() {
+		$upgrades = get_option( $this->token . '-upgrades', array() );
+
+		if ( empty( $upgrades ) && $this->token_legacy && get_option( $this->token_legacy . '-upgrades', false ) ) {
+			$upgrades = get_option( $this->token_legacy . '-upgrades', false );
+			update_option( $this->token . '-upgrades', $upgrades );
+		}
+
+		if ( empty( $upgrades ) ) {
+			$upgrades = array();
+		}
+
+		return $upgrades;
+	}
 
 	/**
 	 * add_update_admin_screen Adds admin screen to run manual udpates
@@ -578,7 +599,7 @@ class Sensei_Updates {
 								if ( method_exists( $this, $function_name ) ) {
 
 									$this->updates_run = array_unique( $this->updates_run ); // we only need one reference per update
-									update_option( Sensei()->token . '-upgrades', $this->updates_run );
+									update_option( $this->token . '-upgrades', $this->updates_run );
 									return true;
 
 								} elseif ( $this->function_in_whitelist( $function_name ) ) {
@@ -707,7 +728,7 @@ class Sensei_Updates {
 	private function set_update_run( $update ) {
 		array_push( $this->updates_run, $update );
 		$this->updates_run = array_unique( $this->updates_run ); // we only need one reference per update
-		update_option( Sensei()->token . '-upgrades', $this->updates_run );
+		update_option( $this->token . '-upgrades', $this->updates_run );
 	}
 
 	/**
