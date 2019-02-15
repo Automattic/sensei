@@ -3936,7 +3936,7 @@ class Sensei_Lesson {
 			// remove this hooks to avoid an infinite loop.
 			remove_filter( 'get_the_excerpt', array( 'Sensei_Lesson', 'alter_the_lesson_excerpt' ) );
 
-			return Sensei_Lesson::lesson_excerpt( get_post( get_the_ID() ) );
+			return self::lesson_excerpt( get_post( get_the_ID() ) );
 		}
 
 		return $excerpt;
@@ -4128,9 +4128,9 @@ class Sensei_Lesson {
 	 */
 	public static function prerequisite_complete_message() {
 
-		$lesson_prerequisite      = Sensei_Lesson::get_lesson_prerequisite_id( get_the_ID() );
+		$lesson_prerequisite      = self::get_lesson_prerequisite_id( get_the_ID() );
 		$lesson_has_pre_requisite = $lesson_prerequisite > 0;
-		if ( ! Sensei_Lesson::is_prerequisite_complete( get_the_ID(), get_current_user_id() ) && $lesson_has_pre_requisite ) {
+		if ( ! self::is_prerequisite_complete( get_the_ID(), get_current_user_id() ) && $lesson_has_pre_requisite ) {
 
 			$prerequisite_lesson_link = '<a href="'
 				. esc_url( get_permalink( $lesson_prerequisite ) )
