@@ -12,11 +12,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.1.0
  */
-class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
-	protected $woo_widget_cssclass;
-	protected $woo_widget_description;
-	protected $woo_widget_idbase;
-	protected $woo_widget_title;
+class Sensei_Course_Component_Widget extends WP_Widget {
+	protected $widget_cssclass;
+	protected $widget_description;
+	protected $widget_idbase;
+	protected $widget_title;
 	protected $instance;
 
 	/**
@@ -26,10 +26,10 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 	 */
 	public function __construct() {
 		/* Widget variable settings. */
-		$this->woo_widget_cssclass    = 'widget_sensei_course_component';
-		$this->woo_widget_description = __( 'This widget will output a list of Courses - New, Featured, Free, Paid, Active, Completed.', 'woothemes-sensei' );
-		$this->woo_widget_idbase      = 'sensei_course_component';
-		$this->woo_widget_title       = __( 'Sensei - Course Component', 'woothemes-sensei' );
+		$this->widget_cssclass    = 'widget_sensei_course_component';
+		$this->widget_description = __( 'This widget will output a list of Courses - New, Featured, Free, Paid, Active, Completed.', 'woothemes-sensei' );
+		$this->widget_idbase      = 'sensei_course_component';
+		$this->widget_title       = __( 'Sensei - Course Component', 'woothemes-sensei' );
 
 		/**
 		 * Allows filtering of the widget's component list.
@@ -42,7 +42,7 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 		 *     @type string ${$component_name} Label for the component.
 		 * }
 		 */
-		$this->woo_widget_componentslist = apply_filters(
+		$this->widget_componentslist = apply_filters(
 			'sensei_widget_course_component_components_list',
 			array(
 				'usercourses'      => __( 'New Courses', 'woothemes-sensei' ),
@@ -54,19 +54,19 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 
 		/* Widget settings. */
 		$widget_ops = array(
-			'classname'   => $this->woo_widget_cssclass,
-			'description' => $this->woo_widget_description,
+			'classname'   => $this->widget_cssclass,
+			'description' => $this->widget_description,
 		);
 
 		/* Widget control settings. */
 		$control_ops = array(
 			'width'   => 250,
 			'height'  => 350,
-			'id_base' => $this->woo_widget_idbase,
+			'id_base' => $this->widget_idbase,
 		);
 
 		/* Create the widget. */
-		parent::__construct( $this->woo_widget_idbase, $this->woo_widget_title, $widget_ops, $control_ops );
+		parent::__construct( $this->widget_idbase, $this->widget_title, $widget_ops, $control_ops );
 	} // End __construct()
 
 	/**
@@ -82,7 +82,7 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 		remove_filter( 'pre_get_posts', 'sensei_course_archive_filter', 10, 1 );
 
 		// don't show active or completed course if a user is not logged in
-		if ( ! in_array( $instance['component'], array_keys( $this->woo_widget_componentslist ) )
+		if ( ! in_array( $instance['component'], array_keys( $this->widget_componentslist ) )
 			 || ( ! is_user_logged_in() && ( 'activecourses' == $instance['component'] || 'completedcourses' == $instance['component'] ) ) ) {
 			// No Output
 			return;
@@ -104,14 +104,14 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 		/*
 		 Widget content. */
 		// Add actions for plugins/themes to hook onto.
-		do_action( $this->woo_widget_cssclass . '_top' );
+		do_action( $this->widget_cssclass . '_top' );
 
-		if ( in_array( $instance['component'], array_keys( $this->woo_widget_componentslist ) ) ) {
+		if ( in_array( $instance['component'], array_keys( $this->widget_componentslist ) ) ) {
 			$this->load_component( $instance );
 		}
 
 		// Add actions for plugins/themes to hook onto.
-		do_action( $this->woo_widget_cssclass . '_bottom' );
+		do_action( $this->widget_cssclass . '_bottom' );
 
 		/* After widget (defined by themes). */
 		echo wp_kses_post( $args['after_widget'] );
@@ -173,7 +173,7 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 		<p>
 			<label for="<?php echo esc_attr( $this->get_field_id( 'component' ) ); ?>"><?php esc_html_e( 'Component:', 'woothemes-sensei' ); ?></label>
 			<select name="<?php echo esc_attr( $this->get_field_name( 'component' ) ); ?>" class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'component' ) ); ?>">
-			<?php foreach ( $this->woo_widget_componentslist as $k => $v ) { ?>
+			<?php foreach ( $this->widget_componentslist as $k => $v ) { ?>
 				<option value="<?php echo esc_attr( $k ); ?>"<?php selected( $instance['component'], $k ); ?>><?php echo esc_html( $v ); ?></option>
 			<?php } ?>
 			</select>

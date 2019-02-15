@@ -502,9 +502,9 @@ class Sensei_Main {
 			)
 		);
 		foreach ( $widget_list as $key => $value ) {
-			if ( file_exists( $this->plugin_path . 'widgets/widget-woothemes-sensei-' . $key . '.php' ) ) {
-				require_once $this->plugin_path . 'widgets/widget-woothemes-sensei-' . $key . '.php';
-				register_widget( 'WooThemes_Sensei_' . $value . '_Widget' );
+			if ( file_exists( $this->plugin_path . 'widgets/class-sensei-' . $key . '-widget.php' ) ) {
+				require_once $this->plugin_path . 'widgets/class-sensei-' . $key . '-widget.php';
+				register_widget( 'Sensei_' . $value . '_Widget' );
 			}
 		} // End foreach().
 
