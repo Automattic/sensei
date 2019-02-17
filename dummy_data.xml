@@ -211,10 +211,6 @@ The content for this sample course is provided with permission by <a href="http:
 			<wp:meta_value><![CDATA[7710]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:postmeta>
-			<wp:meta_key>_order_module_132</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
 			<wp:meta_key>_quiz_has_questions</wp:meta_key>
 			<wp:meta_value><![CDATA[1]]></wp:meta_value>
 		</wp:postmeta>
@@ -292,10 +288,6 @@ The content for this sample course is provided with permission by <a href="http
 		<wp:postmeta>
 			<wp:meta_key>_lesson_quiz</wp:meta_key>
 			<wp:meta_value><![CDATA[7712]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_order_module_133</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:postmeta>
 			<wp:meta_key>_quiz_has_questions</wp:meta_key>
@@ -391,10 +383,6 @@ The content for this sample course is provided with permission by <a href="http
 			<wp:meta_value><![CDATA[on]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:postmeta>
-			<wp:meta_key>_order_module_133</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
 			<wp:meta_key>_random_question_order</wp:meta_key>
 			<wp:meta_value><![CDATA[yes]]></wp:meta_value>
 		</wp:postmeta>
@@ -454,10 +442,6 @@ The content for this sample course is provided with permission by <a href="http
 		<wp:postmeta>
 			<wp:meta_key>_lesson_quiz</wp:meta_key>
 			<wp:meta_value><![CDATA[7714]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_order_module_133</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:comment>
 			<wp:comment_id>226326</wp:comment_id>
@@ -548,10 +532,6 @@ The content for this sample course is provided with permission by <a href="http
 			<wp:meta_key>_enable_quiz_reset</wp:meta_key>
 			<wp:meta_value><![CDATA[]]></wp:meta_value>
 		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_order_module_133</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
-		</wp:postmeta>
 	</item>
 	<item>
 				<title>Billie Jean by Michael Jackson</title>
@@ -604,10 +584,6 @@ The content for this sample course is provided with permission by <a href="http
 		<wp:postmeta>
 			<wp:meta_key>_lesson_quiz</wp:meta_key>
 			<wp:meta_value><![CDATA[7716]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_order_module_134</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:comment>
 			<wp:comment_id>226317</wp:comment_id>
@@ -694,10 +670,6 @@ The content for this sample course is provided with permission by <a href="http
 			<wp:meta_key>_enable_quiz_reset</wp:meta_key>
 			<wp:meta_value><![CDATA[]]></wp:meta_value>
 		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_order_module_134</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
-		</wp:postmeta>
 	</item>
 	<item>
 				<title>All of Me by John Legend</title>
@@ -750,10 +722,6 @@ The content for this sample course is provided with permission by <a href="http:
 		<wp:postmeta>
 			<wp:meta_key>_lesson_quiz</wp:meta_key>
 			<wp:meta_value><![CDATA[7718]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_order_module_134</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:comment>
 			<wp:comment_id>226324</wp:comment_id>
@@ -840,10 +808,6 @@ The content for this sample course is provided with permission by <a href="http:
 			<wp:meta_key>_enable_quiz_reset</wp:meta_key>
 			<wp:meta_value><![CDATA[]]></wp:meta_value>
 		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_order_module_134</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
-		</wp:postmeta>
 	</item>
 	<item>
 				<title>A Sky Full of Stars by Coldplay</title>
@@ -896,10 +860,6 @@ The content for this sample course is provided with permission by <a href="http
 		<wp:postmeta>
 			<wp:meta_key>_lesson_quiz</wp:meta_key>
 			<wp:meta_value><![CDATA[7720]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_order_module_134</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:comment>
 			<wp:comment_id>226325</wp:comment_id>
@@ -986,10 +946,6 @@ The content for this sample course is provided with permission by <a href="http
 			<wp:meta_key>_enable_quiz_reset</wp:meta_key>
 			<wp:meta_value><![CDATA[]]></wp:meta_value>
 		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_order_module_134</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
-		</wp:postmeta>
 	</item>
 	<item>
 				<title>Imagine by John Lennon</title>
@@ -1042,10 +998,6 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:postmeta>
 			<wp:meta_key>_lesson_quiz</wp:meta_key>
 			<wp:meta_value><![CDATA[7722]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_order_module_134</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:comment>
 			<wp:comment_id>226318</wp:comment_id>
@@ -1131,10 +1083,6 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:postmeta>
 			<wp:meta_key>_enable_quiz_reset</wp:meta_key>
 			<wp:meta_value><![CDATA[]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_order_module_134</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
 		</wp:postmeta>
 	</item>
 	<item>
@@ -1789,10 +1737,6 @@ The content for this sample course is provided with permission by <a href="http
 			<wp:meta_value><![CDATA[7708]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:postmeta>
-			<wp:meta_key>_order_module_132</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
 			<wp:meta_key>_quiz_has_questions</wp:meta_key>
 			<wp:meta_value><![CDATA[1]]></wp:meta_value>
 		</wp:postmeta>
@@ -2105,10 +2049,6 @@ The content for this sample course is provided with permission by <a title="HDpi
 			<wp:meta_value><![CDATA[on]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:postmeta>
-			<wp:meta_key>_order_module_132</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
 			<wp:meta_key>_random_question_order</wp:meta_key>
 			<wp:meta_value><![CDATA[yes]]></wp:meta_value>
 		</wp:postmeta>
@@ -2182,10 +2122,6 @@ The content for this sample course is provided with permission by <a title="HDpi
 		<wp:postmeta>
 			<wp:meta_key>_enable_quiz_reset</wp:meta_key>
 			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_order_module_132</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:postmeta>
 			<wp:meta_key>_random_question_order</wp:meta_key>
@@ -3648,10 +3584,6 @@ Feel free to complete it.]]></content:encoded>
 			<wp:meta_value><![CDATA[0]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:postmeta>
-			<wp:meta_key>_order_module_</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
 			<wp:meta_key>_lesson_quiz</wp:meta_key>
 			<wp:meta_value><![CDATA[4865]]></wp:meta_value>
 		</wp:postmeta>
@@ -3733,10 +3665,6 @@ Feel free to complete it.]]></content:encoded>
 		<wp:postmeta>
 			<wp:meta_key>_enable_quiz_reset</wp:meta_key>
 			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_order_module_</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:comment>
 			<wp:comment_id>151960</wp:comment_id>
