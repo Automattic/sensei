@@ -101,14 +101,19 @@ class Sensei_Question {
 				break;
 
 			case 'question-category':
-				$terms  = get_the_terms( $id, 'question-category' );
 				$output = '&mdash;';
-				if ( $terms && ! is_wp_error( $terms ) ) {
-					$output = array();
-					foreach ( $terms as $term ) {
-						$output[] = '<a href="' . esc_url( get_edit_tag_link( $term->term_id, 'question-category' ) ) . '">' . esc_html( $term->name ) . '</a>';
+				if ( current_user_can( 'manage_sensei' ) ) {
+					$terms = get_the_terms( $id, 'question-category' );
+					if ( $terms && ! is_wp_error( $terms ) ) {
+						$output = array();
+						foreach ( $terms as $term ) {
+							$output[] = '<a href="' . esc_url( get_edit_tag_link( $term->term_id, 'question-category' ) ) . '">' . esc_html( $term->name ) . '</a>';
+						}
+						$output = join( __( ', ' ), $output );
 					}
-					$output = join( __( ', ' ), $output );
+				} else {
+					// Not display question category edit link for teacher.
+					$output = strip_tags( get_the_term_list( $id, 'question-category', '', ', ', '' ) );
 				}
 				echo wp_kses_post( $output );
 				break;
