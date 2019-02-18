@@ -287,7 +287,7 @@ class Sensei_Main {
 		if ( is_null( self::$_instance ) ) {
 
 			// Sensei requires a reference to the main Sensei plugin file
-			$sensei_main_plugin_file = dirname( dirname( __FILE__ ) ) . '/woothemes-sensei.php';
+			$sensei_main_plugin_file = dirname( dirname( __FILE__ ) ) . '/sensei.php';
 
 			self::$_instance = new self( $sensei_main_plugin_file, $args );
 
@@ -307,7 +307,7 @@ class Sensei_Main {
 	 */
 	public static function activation_flush_rules( $plugin ) {
 
-		if ( strpos( $plugin, '/woothemes-sensei.php' ) > 0 ) {
+		if ( strpos( $plugin, '/sensei.php' ) > 0 ) {
 
 			flush_rewrite_rules( true );
 

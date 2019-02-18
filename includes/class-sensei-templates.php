@@ -145,7 +145,7 @@ class Sensei_Templates {
 
 		global $wp_query, $email_template;
 
-		$find = array( 'woothemes-sensei.php' );
+		$find = array( 'sensei.php' );
 		$file = '';
 
 		if ( isset( $email_template ) && $email_template ) {
