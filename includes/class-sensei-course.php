@@ -765,9 +765,16 @@ class Sensei_Course {
 				break;
 
 			case 'course-category':
-				$output = get_the_term_list( $id, 'course-category', '', ', ', '' );
+				$terms  = get_the_terms( $id, 'course-category' );
+				$output = array();
+				if ( $terms && ! is_wp_error( $terms ) ) {
+					foreach ( $terms as $term ) {
+						$output[] = '<a href="' . esc_url( get_edit_tag_link( $term->term_id, 'course-category' ) ) . '">' . esc_html( $term->name ) . '</a>';
+					}
+					$output = join( __( ', ' ), $output );
+				}
 
-				if ( '' == $output ) {
+				if( empty( $output ) ) {
 					echo esc_html__( 'None', 'woothemes-sensei' );
 				} else {
 					echo wp_kses_post( $output );
