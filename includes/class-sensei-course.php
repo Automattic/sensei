@@ -774,7 +774,7 @@ class Sensei_Course {
 					$output = join( __( ', ' ), $output );
 				}
 
-				if( empty( $output ) ) {
+				if ( empty( $output ) ) {
 					echo esc_html__( 'None', 'woothemes-sensei' );
 				} else {
 					echo wp_kses_post( $output );
