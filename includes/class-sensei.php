@@ -274,6 +274,11 @@ class Sensei_Main {
 		add_action( 'admin_init', array( $this, 'load_email_signup_modal' ) );
 	}
 
+	/**
+	 * Initialize the email signup modal form.
+	 *
+	 * @access private
+	 */
 	public function load_email_signup_modal() {
 		Sensei_Email_Signup_Form::instance()->init();
 	}
