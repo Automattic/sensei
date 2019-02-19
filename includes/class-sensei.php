@@ -275,7 +275,7 @@ class Sensei_Main {
 	}
 
 	public function load_email_signup_modal() {
-		require_once dirname( __FILE__ ) . '/email-signup/setup.php';
+		Sensei_Email_Signup_Form::instance()->init();
 	}
 
 	/**

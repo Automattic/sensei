@@ -1,7 +1,24 @@
+<?php
+/**
+ * File containing the PHP template for the email list signup form.
+ *
+ * @package sensei
+ * @since   2.0.0
+ */
+
+?>
 <div id="mc_embed_signup">
-    <form action="https://senseilms.us19.list-manage.com/subscribe/post?u=7a061a9141b0911d6d9bafe3a&amp;id=278a16a5ed" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
-        <input type="hidden" name="SOURCE" value="PLUGIN">
-        <div id="mc_embed_signup_scroll">
+	<form
+		action="https://senseilms.us19.list-manage.com/subscribe/post?u=<?php echo esc_attr( Sensei_Email_Signup_Form::MC_USER_ID ); ?>&amp;id=<?php echo esc_attr( Sensei_Email_Signup_Form::MC_LIST_ID ); ?>"
+		method="post"
+		id="mc-embedded-subscribe-form"
+		name="mc-embedded-subscribe-form"
+		class="validate"
+		target="_blank"
+		novalidate
+	>
+		<input type="hidden" name="SOURCE" value="PLUGIN">
+		<div id="mc_embed_signup_scroll">
 			<h2>Join Our Mailing List!</h2>
 			<p>
 				We'd love to update you occasionally about the latest developments around Sensei, the latest features and conversations around the upcoming roadmap. You can opt out of these any time.
@@ -27,8 +44,8 @@
 				<a href="#close" id="mc-embedded-cancel" class="button" rel="modal:close">Not Now</a>
 				<input type="submit" value="Yes, please!" name="subscribe" id="mc-embedded-subscribe" class="button-primary">
 			</div>
-        </div>
-    </form>
+		</div>
+	</form>
 </div>
 
 <script type="text/javascript">
