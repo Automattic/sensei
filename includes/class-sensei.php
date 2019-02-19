@@ -459,8 +459,6 @@ class Sensei_Main {
 		// Add plugin action links filter
 		add_filter( 'plugin_action_links_' . plugin_basename( $this->main_plugin_file_name ), array( $this, 'plugin_action_links' ) );
 
-		add_filter( 'jetpack_shortcodes_to_include', array( $this, 'remove_jetpack_shortcodes' ) );
-
 		/**
 		 * Load all Template hooks
 		 */
@@ -1096,32 +1094,6 @@ class Sensei_Main {
 	 */
 	public function wp_quicklatex_support() {
 		$this->maybe_add_latex_support_via( 'quicklatex_parser' );
-	}
-
-	/**
-	 * Overrides the shortcodes that Jetpack loads.
-	 *
-	 * Removes Vimeo and Youtube from the Jetpack shortcodes module to avoid iframes being converted
-	 * to shortcodes.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @param array $shortcodes Array of shortcodes to include.
-	 * @return array Revised array of shortcodes to include.
-	 */
-	public function remove_jetpack_shortcodes( $shortcodes ) {
-		$jetpack_shortcodes_dir = WP_CONTENT_DIR . '/plugins/jetpack/modules/shortcodes/';
-		$shortcodes_to_unload   = array( 'vimeo.php', 'youtube.php' );
-
-		foreach ( $shortcodes_to_unload as $shortcode ) {
-			$key = array_search( $jetpack_shortcodes_dir . $shortcode, $shortcodes, true );
-
-			if ( $key ) {
-				unset( $shortcodes[ $key ] );
-			}
-		}
-
-		return $shortcodes;
 	}
 
 	/**
