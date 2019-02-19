@@ -35,29 +35,57 @@ class Sensei_Email_Signup_Form {
 	 */
 	public function init() {
 		// Add actions for displaying the email signup modal.
-		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_styles' ] );
 		add_action( 'admin_footer', [ $this, 'output_modal' ] );
 	}
 
 	/**
-	 * Enqueue the required JS and CSS assets for the modal dialog.
+	 * Enqueue the required JS assets for the modal dialog.
 	 *
 	 * @access private
 	 */
-	public function enqueue_assets() {
-		wp_enqueue_script(
-			'sensei-modal-js',
+	public function enqueue_scripts() {
+		// Register jQuery Modal JS.
+		wp_register_script(
+			'jquery-modal',
 			'https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js',
 			false,
-			'2.0.0',
+			Sensei()->version,
 			false
 		);
-		wp_enqueue_style(
-			'sensei-modal-css',
+
+		// Load JS for the form.
+		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		wp_enqueue_script(
+			'sensei-email-signup-js',
+			Sensei()->plugin_url . 'assets/js/admin/email-signup' . $suffix . '.js',
+			[ 'jquery-modal' ],
+			Sensei()->version,
+			false
+		);
+	}
+
+	/**
+	 * Enqueue the required CSS assets for the modal dialog.
+	 *
+	 * @access private
+	 */
+	public function enqueue_styles() {
+		// Register jQuery Modal CSS.
+		wp_register_style(
+			'jquery-modal',
 			'https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css',
 			false,
-			'2.0.0',
-			false
+			Sensei()->version
+		);
+
+		// Load CSS for the form.
+		wp_enqueue_style(
+			'sensei-email-signup-css',
+			Sensei()->plugin_url . 'assets/css/admin/email-signup.css',
+			[ 'jquery-modal' ],
+			Sensei()->version
 		);
 	}
 
