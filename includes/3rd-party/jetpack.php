@@ -16,11 +16,11 @@
  * @param array $shortcodes Array of shortcodes to include.
  * @return array Revised array of shortcodes to include.
  */
-function remove_jetpack_shortcodes( $shortcodes ) {
+function sensei_jetpack_remove_shortcodes( $shortcodes ) {
 	unset( $shortcodes['vimeo'] );
 	unset( $shortcodes['youtube'] );
 
 	return $shortcodes;
 }
 
-add_filter( 'jetpack_shortcodes_to_include', 'remove_jetpack_shortcodes' );
+add_filter( 'jetpack_shortcodes_to_include', 'sensei_jetpack_remove_shortcodes' );
