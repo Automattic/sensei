@@ -17,16 +17,8 @@
  * @return array Revised array of shortcodes to include.
  */
 function remove_jetpack_shortcodes( $shortcodes ) {
-	$jetpack_shortcodes_dir = WP_CONTENT_DIR . '/plugins/jetpack/modules/shortcodes/';
-	$shortcodes_to_unload   = array( 'vimeo.php', 'youtube.php' );
-
-	foreach ( $shortcodes_to_unload as $shortcode ) {
-		$key = array_search( $jetpack_shortcodes_dir . $shortcode, $shortcodes, true );
-
-		if ( $key ) {
-			unset( $shortcodes[ $key ] );
-		}
-	}
+	unset( $shortcodes['vimeo'] );
+	unset( $shortcodes['youtube'] );
 
 	return $shortcodes;
 }
