@@ -12,7 +12,7 @@ jQuery( document ).ready( function( $ ) {
 		} );
 	} );
 
-	$( 'body' ).on( 'change', '#mc_embed_signup #gdpr_34447', function( event ) {
+	$( 'body' ).on( 'change', '#mc_embed_signup .gdpr-checkbox input[type=checkbox]', function( event ) {
 		if ( $( event.target ).is( ':checked' ) ) {
 			$( '#mc_embed_signup .email-input' ).show();
 		} else {
