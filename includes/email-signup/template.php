@@ -42,7 +42,7 @@
 			<div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_7a061a9141b0911d6d9bafe3a_278a16a5ed" tabindex="-1" value=""></div>
 			<div class="buttons clear">
 				<a href="#close" id="mc-embedded-cancel" class="button" rel="modal:close">Not Now</a>
-				<input type="submit" value="Yes, please!" name="subscribe" id="mc-embedded-subscribe" class="button-primary">
+				<input type="submit" value="Yes, please!" name="subscribe" id="mc-embedded-subscribe" class="button-primary" disabled>
 			</div>
 		</div>
 	</form>

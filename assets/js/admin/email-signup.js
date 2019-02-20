@@ -15,8 +15,10 @@ jQuery( document ).ready( function( $ ) {
 	$( 'body' ).on( 'change', '#mc_embed_signup .gdpr-checkbox input[type=checkbox]', function( event ) {
 		if ( $( event.target ).is( ':checked' ) ) {
 			$( '#mc_embed_signup .email-input' ).show();
+			$( '#mc_embed_signup #mc-embedded-subscribe' ).prop( 'disabled', false );
 		} else {
 			$( '#mc_embed_signup .email-input' ).hide();
+			$( '#mc_embed_signup #mc-embedded-subscribe' ).prop( 'disabled', true );
 		}
 	} );
 } );
