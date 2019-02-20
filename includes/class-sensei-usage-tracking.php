@@ -79,14 +79,15 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 			return true;
 		}
 		$third_party_plugins = array(
+			'classic-editor',
+			'jetpack',
+			'polylang',
+			'sitepress-multilingual-cms',
 			'woocommerce',
-			'woothemes-updater',
-			'woocommerce-subscriptions',
 			'woocommerce-memberships',
 			'woocommerce-product-vendors',
-			'polylang',
-			'jetpack',
-			'sitepress-multilingual-cms',
+			'woocommerce-subscriptions',
+			'woothemes-updater',
 			'wp-quicklatex',
 		);
 		if ( in_array( $plugin_slug, $third_party_plugins, true ) ) {
