@@ -37,9 +37,7 @@ class Sensei_Admin {
 
 		// register admin scripts
 		add_action( 'admin_enqueue_scripts', array( $this, 'register_scripts' ) );
-		if ( isset( $_GET['page'] ) && 'lesson-order' === $_GET['page'] ) {
-			add_action( 'admin_footer', array( $this, 'init_select2' ) );
-		}
+		add_action( 'admin_footer', array( $this, 'init_select2' ) );
 
 		add_action( 'admin_print_styles', array( $this, 'admin_notices_styles' ) );
 		add_action( 'settings_before_form', array( $this, 'install_pages_output' ) );
@@ -1548,11 +1546,13 @@ class Sensei_Admin {
 	}
 
 	public function init_select2() {
-		?>
-		<script type="text/javascript">
-			jQuery( '#lesson-order-course' ).select2( { width: 'resolve' } );
-		</script>
-		<?php
+		if ( isset( $_GET['page'] ) && 'lesson-order' === $_GET['page'] ) {
+			?>
+			<script type="text/javascript">
+				jQuery( '#lesson-order-course' ).select2( { width: 'resolve' } );
+			</script>
+			<?php
+		}
 	}
 
 	public function get_lesson_order( $course_id = 0 ) {
