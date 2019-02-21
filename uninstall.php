@@ -15,7 +15,7 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit();
 }
 
-require dirname( __FILE__ ) . '/woothemes-sensei.php';
+require dirname( __FILE__ ) . '/sensei.php';
 require dirname( __FILE__ ) . '/includes/class-sensei-data-cleaner.php';
 
 // Cleanup all data.
