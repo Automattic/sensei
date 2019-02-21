@@ -13,7 +13,7 @@
  */
 class Sensei_Email_Signup_Form {
 	const MC_USER_ID = '7a061a9141b0911d6d9bafe3a';
-	const MC_LIST_ID = '278a16a5ed';
+	const MC_LIST_ID = '4fa225a515';
 
 	/**
 	 * Instance of class.
