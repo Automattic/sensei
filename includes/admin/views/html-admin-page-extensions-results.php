@@ -27,7 +27,7 @@ if ( empty( $extensions ) ) {
 				<?php endif; ?>
 				<h2><?php echo esc_html( $extension->title ); ?></h2>
 				<?php
-				if ( isset( $extension->price ) && 0 === $extension->price ) {
+				if ( 0 === $extension->price ) {
 					echo '<div class="price free">' . esc_html__( 'Free', 'woothemes-sensei' ) . '</div>';
 				} else {
 					echo '<div class="price">' . esc_html( $extension->price ) . '</div>';
