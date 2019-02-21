@@ -65,7 +65,7 @@ final class Sensei_Extensions {
 	 * @return array
 	 */
 	private function get_extensions( $type = null, $category = null ) {
-		$raw_extensions = wp_remote_get(
+		$raw_extensions = wp_safe_remote_get(
 			add_query_arg(
 				array(
 					array(
