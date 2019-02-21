@@ -271,16 +271,26 @@ class Sensei_Main {
 
 		$this->initialize_global_objects();
 
-		add_action( 'admin_init', array( $this, 'load_email_signup_modal' ) );
+		$this->maybe_init_email_signup_modal();
 	}
 
 	/**
-	 * Initialize the email signup modal form.
+	 * Load the email signup modal if we haven't already.
+	 */
+	private function maybe_init_email_signup_modal() {
+		if ( ! get_option( 'sensei_email_signup_modal_loaded', false ) ) {
+			add_action( 'admin_init', array( $this, 'load_email_signup_modal' ) );
+		}
+	}
+
+	/**
+	 * Load the email signup modal form.
 	 *
 	 * @access private
 	 */
 	public function load_email_signup_modal() {
 		Sensei_Email_Signup_Form::instance()->init();
+		update_option( 'sensei_email_signup_modal_loaded', true );
 	}
 
 	/**
