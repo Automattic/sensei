@@ -37,27 +37,120 @@
 
 	<wp:author><wp:author_id>1</wp:author_id><wp:author_login>sensei</wp:author_login><wp:author_email>sensei@example.com</wp:author_email><wp:author_display_name><![CDATA[Sensei]]></wp:author_display_name><wp:author_first_name><![CDATA[Sensei]]></wp:author_first_name><wp:author_last_name><![CDATA[]]></wp:author_last_name></wp:author>
 
-	<wp:term><wp:term_id>121</wp:term_id><wp:term_taxonomy>question-type</wp:term_taxonomy><wp:term_slug>boolean</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[boolean]]></wp:term_name></wp:term>
-	<wp:term><wp:term_id>132</wp:term_id><wp:term_taxonomy>module</wp:term_taxonomy><wp:term_slug>chords-101-the-building-blocks-of-music</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Chords 101 - The Building Blocks of Music]]></wp:term_name><wp:term_description><![CDATA[Chords are groups of notes that form harmony. Most songs follow the same, basic chord formulas, and we’ve broken them down here for you to learn.]]></wp:term_description></wp:term>
-	<wp:term><wp:term_id>123</wp:term_id><wp:term_taxonomy>question-type</wp:term_taxonomy><wp:term_slug>essay-paste</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[essay-paste]]></wp:term_name></wp:term>
-	<wp:term><wp:term_id>126</wp:term_id><wp:term_taxonomy>question-type</wp:term_taxonomy><wp:term_slug>file-upload</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[file-upload]]></wp:term_name></wp:term>
-	<wp:term><wp:term_id>122</wp:term_id><wp:term_taxonomy>question-type</wp:term_taxonomy><wp:term_slug>gap-fill</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[gap-fill]]></wp:term_name></wp:term>
-	<wp:term><wp:term_id>128</wp:term_id><wp:term_taxonomy>module</wp:term_taxonomy><wp:term_slug>grading</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Grading]]></wp:term_name></wp:term>
-	<wp:term><wp:term_id>115</wp:term_id><wp:term_taxonomy>course-category</wp:term_taxonomy><wp:term_slug>guitar</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Guitar]]></wp:term_name></wp:term>
-	<wp:term><wp:term_id>125</wp:term_id><wp:term_taxonomy>question-type</wp:term_taxonomy><wp:term_slug>multi-line</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[multi-line]]></wp:term_name></wp:term>
-	<wp:term><wp:term_id>112</wp:term_id><wp:term_taxonomy>question-type</wp:term_taxonomy><wp:term_slug>multiple-choice</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[multiple-choice]]></wp:term_name></wp:term>
-	<wp:term><wp:term_id>135</wp:term_id><wp:term_taxonomy>course-category</wp:term_taxonomy><wp:term_slug>music</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Music]]></wp:term_name></wp:term>
-	<wp:term><wp:term_id>136</wp:term_id><wp:term_taxonomy>course-category</wp:term_taxonomy><wp:term_slug>piano</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Piano]]></wp:term_name></wp:term>
-	<wp:term><wp:term_id>130</wp:term_id><wp:term_taxonomy>module</wp:term_taxonomy><wp:term_slug>prerequisites</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Prerequisites]]></wp:term_name></wp:term>
-	<wp:term><wp:term_id>131</wp:term_id><wp:term_taxonomy>module</wp:term_taxonomy><wp:term_slug>quiz-features</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Quiz Features]]></wp:term_name></wp:term>
-	<wp:term><wp:term_id>127</wp:term_id><wp:term_taxonomy>module</wp:term_taxonomy><wp:term_slug>quizzes-and-question-types</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Quizzes and Question Types]]></wp:term_name></wp:term>
-	<wp:term><wp:term_id>133</wp:term_id><wp:term_taxonomy>module</wp:term_taxonomy><wp:term_slug>rhythm-101-the-heartbeat-of-music</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Rhythm 101 - The Heartbeat of Music]]></wp:term_name><wp:term_description><![CDATA[In this module, we’re going to dig deeper into the beat behind the song, and we’ll learn the rhythmic structures and formulas that all songs follow.]]></wp:term_description></wp:term>
-	<wp:term><wp:term_id>120</wp:term_id><wp:term_taxonomy>course-category</wp:term_taxonomy><wp:term_slug>sensei-2</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Sensei]]></wp:term_name></wp:term>
-	<wp:term><wp:term_id>129</wp:term_id><wp:term_taxonomy>module</wp:term_taxonomy><wp:term_slug>sensei-extensions</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Sensei Extensions]]></wp:term_name></wp:term>
-	<wp:term><wp:term_id>124</wp:term_id><wp:term_taxonomy>question-type</wp:term_taxonomy><wp:term_slug>single-line</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[single-line]]></wp:term_name></wp:term>
-	<wp:term><wp:term_id>117</wp:term_id><wp:term_taxonomy>course-category</wp:term_taxonomy><wp:term_slug>theming</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Theming]]></wp:term_name></wp:term>
-	<wp:term><wp:term_id>119</wp:term_id><wp:term_taxonomy>course-category</wp:term_taxonomy><wp:term_slug>tutorials</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Tutorials]]></wp:term_name></wp:term>
-	<wp:term><wp:term_id>134</wp:term_id><wp:term_taxonomy>module</wp:term_taxonomy><wp:term_slug>your-first-songs</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Your First Songs]]></wp:term_name><wp:term_description><![CDATA[Learn to play a selection of popular songs on the piano using our game-based hybrid video lessons.]]></wp:term_description></wp:term>
+	<wp:term>
+		<wp:term_id>115</wp:term_id>
+		<wp:term_taxonomy>course-category</wp:term_taxonomy>
+		<wp:term_slug>guitar</wp:term_slug>
+		<wp:term_parent></wp:term_parent>
+		<wp:term_name><![CDATA[Guitar]]></wp:term_name>
+	</wp:term>
+	<wp:term>
+		<wp:term_id>117</wp:term_id>
+		<wp:term_taxonomy>course-category</wp:term_taxonomy>
+		<wp:term_slug>theming</wp:term_slug>
+		<wp:term_parent></wp:term_parent>
+		<wp:term_name><![CDATA[Theming]]></wp:term_name>
+	</wp:term>
+	<wp:term>
+		<wp:term_id>119</wp:term_id>
+		<wp:term_taxonomy>course-category</wp:term_taxonomy>
+		<wp:term_slug>tutorials</wp:term_slug>
+		<wp:term_parent></wp:term_parent>
+		<wp:term_name><![CDATA[Tutorials]]></wp:term_name>
+	</wp:term>
+	<wp:term>
+		<wp:term_id>120</wp:term_id>
+		<wp:term_taxonomy>course-category</wp:term_taxonomy>
+		<wp:term_slug>sensei-2</wp:term_slug>
+		<wp:term_parent></wp:term_parent>
+		<wp:term_name><![CDATA[Sensei]]></wp:term_name>
+	</wp:term>
+	<wp:term>
+		<wp:term_id>135</wp:term_id>
+		<wp:term_taxonomy>course-category</wp:term_taxonomy>
+		<wp:term_slug>music</wp:term_slug>
+		<wp:term_parent></wp:term_parent>
+		<wp:term_name><![CDATA[Music]]></wp:term_name>
+	</wp:term>
+	<wp:term>
+		<wp:term_id>136</wp:term_id>
+		<wp:term_taxonomy>course-category</wp:term_taxonomy>
+		<wp:term_slug>piano</wp:term_slug>
+		<wp:term_parent></wp:term_parent>
+		<wp:term_name><![CDATA[Piano]]></wp:term_name>
+	</wp:term>
+	<wp:term>
+		<wp:term_id>132</wp:term_id>
+		<wp:term_taxonomy>module</wp:term_taxonomy>
+		<wp:term_slug>chords-101-the-building-blocks-of-music</wp:term_slug>
+		<wp:term_parent></wp:term_parent>
+		<wp:term_name><![CDATA[Chords 101 - The Building Blocks of Music]]></wp:term_name>
+		<wp:term_description><![CDATA[Chords are groups of notes that form harmony. Most songs follow the same, basic chord formulas, and we’ve broken them down here for you to learn.]]></wp:term_description>
+	</wp:term>
+	<wp:term>
+		<wp:term_id>133</wp:term_id>
+		<wp:term_taxonomy>module</wp:term_taxonomy>
+		<wp:term_slug>rhythm-101-the-heartbeat-of-music</wp:term_slug>
+		<wp:term_parent></wp:term_parent>
+		<wp:term_name><![CDATA[Rhythm 101 - The Heartbeat of Music]]></wp:term_name><wp:term_description><![CDATA[In this module, we’re going to dig deeper into the beat behind the song, and we’ll learn the rhythmic structures and formulas that all songs follow.]]></wp:term_description>
+	</wp:term>
+	<wp:term>
+		<wp:term_id>134</wp:term_id>
+		<wp:term_taxonomy>module</wp:term_taxonomy>
+		<wp:term_slug>your-first-songs</wp:term_slug>
+		<wp:term_parent></wp:term_parent>
+		<wp:term_name><![CDATA[Your First Songs]]></wp:term_name>
+		<wp:term_description><![CDATA[Learn to play a selection of popular songs on the piano using our game-based hybrid video lessons.]]></wp:term_description>
+	</wp:term>
+	<wp:term>
+		<wp:term_id>112</wp:term_id>
+		<wp:term_taxonomy>question-type</wp:term_taxonomy>
+		<wp:term_slug>multiple-choice</wp:term_slug>
+		<wp:term_parent></wp:term_parent>
+		<wp:term_name><![CDATA[multiple-choice]]></wp:term_name>
+	</wp:term>
+	<wp:term>
+		<wp:term_id>121</wp:term_id>
+		<wp:term_taxonomy>question-type</wp:term_taxonomy>
+		<wp:term_slug>boolean</wp:term_slug>
+		<wp:term_parent></wp:term_parent>
+		<wp:term_name><![CDATA[boolean]]></wp:term_name>
+	</wp:term>
+	<wp:term>
+		<wp:term_id>122</wp:term_id>
+		<wp:term_taxonomy>question-type</wp:term_taxonomy>
+		<wp:term_slug>gap-fill</wp:term_slug>
+		<wp:term_parent></wp:term_parent>
+		<wp:term_name><![CDATA[gap-fill]]></wp:term_name>
+	</wp:term>
+	<wp:term>
+		<wp:term_id>123</wp:term_id>
+		<wp:term_taxonomy>question-type</wp:term_taxonomy>
+		<wp:term_slug>essay-paste</wp:term_slug>
+		<wp:term_parent></wp:term_parent>
+		<wp:term_name><![CDATA[essay-paste]]></wp:term_name>
+	</wp:term>
+	<wp:term>
+		<wp:term_id>124</wp:term_id>
+		<wp:term_taxonomy>question-type</wp:term_taxonomy>
+		<wp:term_slug>single-line</wp:term_slug>
+		<wp:term_parent></wp:term_parent>
+		<wp:term_name><![CDATA[single-line]]></wp:term_name>
+	</wp:term>
+	<wp:term>
+		<wp:term_id>125</wp:term_id>
+		<wp:term_taxonomy>question-type</wp:term_taxonomy>
+		<wp:term_slug>multi-line</wp:term_slug>
+		<wp:term_parent></wp:term_parent>
+		<wp:term_name><![CDATA[multi-line]]></wp:term_name>
+	</wp:term>
+	<wp:term>
+		<wp:term_id>126</wp:term_id>
+		<wp:term_taxonomy>question-type</wp:term_taxonomy>
+		<wp:term_slug>file-upload</wp:term_slug>
+		<wp:term_parent></wp:term_parent>
+		<wp:term_name><![CDATA[file-upload]]></wp:term_name>
+	</wp:term>
 
 	<generator>http://wordpress.org/?v=4.1.2</generator>
 
@@ -116,10 +209,6 @@ The content for this sample course is provided with permission by <a href="http:
 		<wp:postmeta>
 			<wp:meta_key>_lesson_quiz</wp:meta_key>
 			<wp:meta_value><![CDATA[7710]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_order_module_132</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:postmeta>
 			<wp:meta_key>_quiz_has_questions</wp:meta_key>
@@ -199,10 +288,6 @@ The content for this sample course is provided with permission by <a href="http
 		<wp:postmeta>
 			<wp:meta_key>_lesson_quiz</wp:meta_key>
 			<wp:meta_value><![CDATA[7712]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_order_module_133</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:postmeta>
 			<wp:meta_key>_quiz_has_questions</wp:meta_key>
@@ -298,10 +383,6 @@ The content for this sample course is provided with permission by <a href="http
 			<wp:meta_value><![CDATA[on]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:postmeta>
-			<wp:meta_key>_order_module_133</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
 			<wp:meta_key>_random_question_order</wp:meta_key>
 			<wp:meta_value><![CDATA[yes]]></wp:meta_value>
 		</wp:postmeta>
@@ -361,10 +442,6 @@ The content for this sample course is provided with permission by <a href="http
 		<wp:postmeta>
 			<wp:meta_key>_lesson_quiz</wp:meta_key>
 			<wp:meta_value><![CDATA[7714]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_order_module_133</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:comment>
 			<wp:comment_id>226326</wp:comment_id>
@@ -455,10 +532,6 @@ The content for this sample course is provided with permission by <a href="http
 			<wp:meta_key>_enable_quiz_reset</wp:meta_key>
 			<wp:meta_value><![CDATA[]]></wp:meta_value>
 		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_order_module_133</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
-		</wp:postmeta>
 	</item>
 	<item>
 				<title>Billie Jean by Michael Jackson</title>
@@ -511,10 +584,6 @@ The content for this sample course is provided with permission by <a href="http
 		<wp:postmeta>
 			<wp:meta_key>_lesson_quiz</wp:meta_key>
 			<wp:meta_value><![CDATA[7716]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_order_module_134</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:comment>
 			<wp:comment_id>226317</wp:comment_id>
@@ -601,10 +670,6 @@ The content for this sample course is provided with permission by <a href="http
 			<wp:meta_key>_enable_quiz_reset</wp:meta_key>
 			<wp:meta_value><![CDATA[]]></wp:meta_value>
 		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_order_module_134</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
-		</wp:postmeta>
 	</item>
 	<item>
 				<title>All of Me by John Legend</title>
@@ -657,10 +722,6 @@ The content for this sample course is provided with permission by <a href="http:
 		<wp:postmeta>
 			<wp:meta_key>_lesson_quiz</wp:meta_key>
 			<wp:meta_value><![CDATA[7718]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_order_module_134</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:comment>
 			<wp:comment_id>226324</wp:comment_id>
@@ -747,10 +808,6 @@ The content for this sample course is provided with permission by <a href="http:
 			<wp:meta_key>_enable_quiz_reset</wp:meta_key>
 			<wp:meta_value><![CDATA[]]></wp:meta_value>
 		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_order_module_134</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
-		</wp:postmeta>
 	</item>
 	<item>
 				<title>A Sky Full of Stars by Coldplay</title>
@@ -803,10 +860,6 @@ The content for this sample course is provided with permission by <a href="http
 		<wp:postmeta>
 			<wp:meta_key>_lesson_quiz</wp:meta_key>
 			<wp:meta_value><![CDATA[7720]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_order_module_134</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:comment>
 			<wp:comment_id>226325</wp:comment_id>
@@ -893,10 +946,6 @@ The content for this sample course is provided with permission by <a href="http
 			<wp:meta_key>_enable_quiz_reset</wp:meta_key>
 			<wp:meta_value><![CDATA[]]></wp:meta_value>
 		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_order_module_134</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
-		</wp:postmeta>
 	</item>
 	<item>
 				<title>Imagine by John Lennon</title>
@@ -949,10 +998,6 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:postmeta>
 			<wp:meta_key>_lesson_quiz</wp:meta_key>
 			<wp:meta_value><![CDATA[7722]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_order_module_134</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:comment>
 			<wp:comment_id>226318</wp:comment_id>
@@ -1038,10 +1083,6 @@ The content for this sample course is provided with permission by <a title="HDp
 		<wp:postmeta>
 			<wp:meta_key>_enable_quiz_reset</wp:meta_key>
 			<wp:meta_value><![CDATA[]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_order_module_134</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
 		</wp:postmeta>
 	</item>
 	<item>
@@ -1696,10 +1737,6 @@ The content for this sample course is provided with permission by <a href="http
 			<wp:meta_value><![CDATA[7708]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:postmeta>
-			<wp:meta_key>_order_module_132</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
 			<wp:meta_key>_quiz_has_questions</wp:meta_key>
 			<wp:meta_value><![CDATA[1]]></wp:meta_value>
 		</wp:postmeta>
@@ -2012,10 +2049,6 @@ The content for this sample course is provided with permission by <a title="HDpi
 			<wp:meta_value><![CDATA[on]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:postmeta>
-			<wp:meta_key>_order_module_132</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
 			<wp:meta_key>_random_question_order</wp:meta_key>
 			<wp:meta_value><![CDATA[yes]]></wp:meta_value>
 		</wp:postmeta>
@@ -2089,10 +2122,6 @@ The content for this sample course is provided with permission by <a title="HDpi
 		<wp:postmeta>
 			<wp:meta_key>_enable_quiz_reset</wp:meta_key>
 			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_order_module_132</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:postmeta>
 			<wp:meta_key>_random_question_order</wp:meta_key>
@@ -3555,10 +3584,6 @@ Feel free to complete it.]]></content:encoded>
 			<wp:meta_value><![CDATA[0]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:postmeta>
-			<wp:meta_key>_order_module_</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
 			<wp:meta_key>_lesson_quiz</wp:meta_key>
 			<wp:meta_value><![CDATA[4865]]></wp:meta_value>
 		</wp:postmeta>
@@ -3640,10 +3665,6 @@ Feel free to complete it.]]></content:encoded>
 		<wp:postmeta>
 			<wp:meta_key>_enable_quiz_reset</wp:meta_key>
 			<wp:meta_value><![CDATA[on]]></wp:meta_value>
-		</wp:postmeta>
-		<wp:postmeta>
-			<wp:meta_key>_order_module_</wp:meta_key>
-			<wp:meta_value><![CDATA[0]]></wp:meta_value>
 		</wp:postmeta>
 		<wp:comment>
 			<wp:comment_id>151960</wp:comment_id>
