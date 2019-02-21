@@ -8,7 +8,7 @@
 /**
  * Attaches modules to lessons for dummy data.
  */
-function sensei_add_modules_to_imported_lessons() {
+function sensei_wordpress_importer_add_modules_to_imported_lessons() {
 	$modules_with_lessons = array(
 		'chords-101-the-building-blocks-of-music' => array( 7706, 7709 ),
 		'rhythm-101-the-heartbeat-of-music'       => array( 7711, 7713 ),
@@ -34,4 +34,4 @@ function sensei_add_modules_to_imported_lessons() {
 	}
 }
 
-add_action( 'import_end', 'sensei_add_modules_to_imported_lessons' );
+add_action( 'import_end', 'sensei_wordpress_importer_add_modules_to_imported_lessons' );
