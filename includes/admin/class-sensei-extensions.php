@@ -65,19 +65,25 @@ final class Sensei_Extensions {
 	 * @return array
 	 */
 	private function get_extensions( $type = null, $category = null ) {
-		$raw_extensions = wp_safe_remote_get(
-			add_query_arg(
-				array(
+		$extension_request_key = md5( $type . $category );
+		$extensions            = get_transient( 'sensei_extensions_' . $extension_request_key );
+
+		if ( false === $extensions ) {
+			$raw_extensions = wp_safe_remote_get(
+				add_query_arg(
 					array(
-						'category' => $category,
-						'type'     => $type,
+						array(
+							'category' => $category,
+							'type'     => $type,
+						),
 					),
-				),
-				self::SENSEILMS_PRODUCTS_API_BASE_URL . '/search'
-			)
-		);
-		if ( ! is_wp_error( $raw_extensions ) ) {
-			$extensions = json_decode( wp_remote_retrieve_body( $raw_extensions ) )->products;
+					self::SENSEILMS_PRODUCTS_API_BASE_URL . '/search'
+				)
+			);
+			if ( ! is_wp_error( $raw_extensions ) ) {
+				$extensions = json_decode( wp_remote_retrieve_body( $raw_extensions ) )->products;
+				set_transient( 'sensei_extensions_' . $extension_request_key, $extensions, DAY_IN_SECONDS );
+			}
 		}
 
 		return $extensions;
