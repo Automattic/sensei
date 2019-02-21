@@ -25,8 +25,8 @@
 			</p>
 			<div>
 				<div class="gdpr-checkbox">
-					<label class="checkbox subfield" for="gdpr_34447">
-						<input type="checkbox" id="gdpr_34447" name="gdpr[34447]" value="Y" class="av-checkbox ">
+					<label class="checkbox subfield" for="gdpr_23563">
+						<input type="checkbox" id="gdpr_23563" name="gdpr[23563]" value="Y" class="av-checkbox ">
 						<span>Yes, please send me occasional emails about Sensei</span>
 					</label>
 				</div>
