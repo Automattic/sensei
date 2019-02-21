@@ -1,4 +1,10 @@
 <?php
+/**
+ * Admin View: Page - Extensions - Category Listings
+ *
+ * @package Sensei\Extensions
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
