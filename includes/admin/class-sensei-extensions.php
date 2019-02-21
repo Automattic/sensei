@@ -65,7 +65,7 @@ final class Sensei_Extensions {
 	 * @return array
 	 */
 	private function get_extensions( $type = null, $category = null ) {
-		$extension_request_key = md5( $type . $category );
+		$extension_request_key = md5( $type . '|' . $category );
 		$extensions            = get_transient( 'sensei_extensions_' . $extension_request_key );
 
 		if ( false === $extensions ) {
