@@ -19,7 +19,7 @@
 	>
 		<input type="hidden" name="SOURCE" value="PLUGIN">
 		<div id="mc_embed_signup_scroll">
-			<h2><?php esc_html_e( 'Join Our Mailing List!', 'woothemes-sensei' ); ?></h2>
+			<h2><?php esc_html_e( 'Join Sensei\'s Mailing List!', 'woothemes-sensei' ); ?></h2>
 			<p>
 				<?php esc_html_e( "We're here for you — get tips, product updates, and inspiration straight to your mailbox.", 'woothemes-sensei' ); ?>
 			</p>
