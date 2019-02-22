@@ -4,7 +4,7 @@ jQuery( document ).ready( function( $ ) {
 			fadeDuration: 250,
 			showClose: false,
 		} );
-	}, 1000 );
+	}, 250 );
 
 	$( 'body' ).on( 'submit', '#mc_embed_signup', function( event ) {
 		setTimeout( function() {
