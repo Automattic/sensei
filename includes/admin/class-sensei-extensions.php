@@ -99,7 +99,15 @@ final class Sensei_Extensions {
 	private function get_categories() {
 		$extension_categories = get_transient( 'sensei_extensions_categories' );
 		if ( false === $extension_categories ) {
-			$raw_categories = wp_safe_remote_get( self::SENSEILMS_PRODUCTS_API_BASE_URL . '/categories' );
+			$raw_categories = wp_safe_remote_get(
+				add_query_arg(
+					array(
+						'version' => Sensei()->version,
+						'lang'    => get_locale(),
+					),
+					self::SENSEILMS_PRODUCTS_API_BASE_URL . '/categories'
+				)
+			);
 			if ( ! is_wp_error( $raw_categories ) ) {
 				$extension_categories = json_decode( wp_remote_retrieve_body( $raw_categories ) );
 				if ( $extension_categories ) {
