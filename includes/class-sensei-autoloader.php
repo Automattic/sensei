@@ -129,6 +129,7 @@ class Sensei_Autoloader {
 			 * Admin
 			 */
 			'Sensei_Learner_Management'                  => 'admin/class-sensei-learner-management.php',
+			'Sensei_Extensions'                          => 'admin/class-sensei-extensions.php',
 
 			/**
 			 * Shortcodes

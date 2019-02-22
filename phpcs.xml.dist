@@ -45,6 +45,7 @@
 				<element value="woothemes"/>
 			</property>
 		</properties>
+		<exclude-pattern>**/views/*</exclude-pattern>
 	</rule>
 
 	<rule ref="WordPress.WP.I18n">

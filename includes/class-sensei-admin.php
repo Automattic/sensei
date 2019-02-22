@@ -80,6 +80,8 @@ class Sensei_Admin {
 		// remove a course from course order when trashed
 		add_action( 'transition_post_status', array( $this, 'remove_trashed_course_from_course_order' ) );
 
+		Sensei_Extensions::instance()->init();
+
 	} // End __construct()
 
 	/**
