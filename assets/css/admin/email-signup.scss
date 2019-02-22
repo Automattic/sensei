@@ -5,10 +5,16 @@ $email_signup_blue: #00ace6;
 	border-radius: 0;
 	font-family: Futura, sans-serif;
 	border: 7px solid $email_signup_blue;
+	font-size: 16px;
+
+	p, input, button, a {
+		font-size: 16px;
+	}
 
 	h2 {
 		text-transform: uppercase;
 		margin-bottom: 2em;
+		font-size: 24px;
 	}
 
 	input[type=email] {
