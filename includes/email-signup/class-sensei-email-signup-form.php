@@ -50,7 +50,7 @@ class Sensei_Email_Signup_Form {
 		wp_register_script(
 			'jquery-modal',
 			'https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js',
-			false,
+			[ 'jquery' ],
 			Sensei()->version,
 			false
 		);
