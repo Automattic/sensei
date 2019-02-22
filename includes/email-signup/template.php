@@ -25,8 +25,8 @@
 			</p>
 			<div>
 				<div class="gdpr-checkbox">
-					<label class="checkbox subfield" for="gdpr_23563">
-						<input type="checkbox" id="gdpr_23563" name="gdpr[23563]" value="Y" class="av-checkbox ">
+					<label class="checkbox subfield" for="gdpr_email">
+						<input type="checkbox" id="gdpr_email" name="gdpr[<?php echo esc_attr( Sensei_Email_Signup_Form::GDPR_EMAIL_FIELD_ID ); ?>]" value="Y" class="av-checkbox ">
 						<span><?php esc_html_e( 'Yes, please send me occasional emails about Sensei', 'woothemes-sensei' ); ?></span>
 					</label>
 				</div>

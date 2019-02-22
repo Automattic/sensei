@@ -12,8 +12,9 @@
  * @class Sensei_Email_Signup_Form
  */
 class Sensei_Email_Signup_Form {
-	const MC_USER_ID = '7a061a9141b0911d6d9bafe3a';
-	const MC_LIST_ID = '4fa225a515';
+	const MC_USER_ID          = '7a061a9141b0911d6d9bafe3a';
+	const MC_LIST_ID          = '4fa225a515';
+	const GDPR_EMAIL_FIELD_ID = '23563';
 
 	/**
 	 * Instance of class.
