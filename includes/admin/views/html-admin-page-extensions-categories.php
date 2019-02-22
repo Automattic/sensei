@@ -36,8 +36,7 @@ if ( ! empty( $resources->types ) ) {
 	foreach ( $resources->types as $product_type ) {
 		?>
 		<li>
-			<a class="<?php echo $current_type === $product_type->slug ? 'current' : ''; ?>"
-			   href="<?php echo esc_url( add_query_arg( array( 'type' => $product_type->slug ), admin_url( 'admin.php?page=sensei-extensions' ) ) ); ?>">
+			<a class="<?php echo $current_type === $product_type->slug ? 'current' : ''; ?>" href="<?php echo esc_url( add_query_arg( array( 'type' => $product_type->slug ), admin_url( 'admin.php?page=sensei-extensions' ) ) ); ?>">
 				<?php echo esc_html( $product_type->label ); ?>
 			</a>
 		</li>
@@ -48,8 +47,7 @@ if ( ! empty( $resources->categories ) ) {
 	foreach ( $resources->categories as $category ) {
 		?>
 		<li>
-			<a class="<?php echo $current_category === $category->slug ? 'current' : ''; ?>"
-			   href="<?php echo esc_url( add_query_arg( array( 'category' => $category->slug ), admin_url( 'admin.php?page=sensei-extensions' ) ) ); ?>">
+			<a class="<?php echo $current_category === $category->slug ? 'current' : ''; ?>" href="<?php echo esc_url( add_query_arg( array( 'category' => $category->slug ), admin_url( 'admin.php?page=sensei-extensions' ) ) ); ?>">
 				<?php echo esc_html( $category->label ); ?>
 			</a>
 		</li>
