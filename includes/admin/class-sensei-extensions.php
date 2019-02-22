@@ -90,33 +90,33 @@ final class Sensei_Extensions {
 	}
 
 	/**
-	 * Get categories for the add-ons screen
+	 * Get resources (such as categories and product types) for the extensions screen.
 	 *
 	 * @since  2.0.0
 	 *
 	 * @return array of objects.
 	 */
-	private function get_categories() {
-		$extension_categories = get_transient( 'sensei_extensions_categories' );
-		if ( false === $extension_categories ) {
-			$raw_categories = wp_safe_remote_get(
+	private function get_resources() {
+		$extension_resources = get_transient( 'sensei_extensions_resources' );
+		if ( false === $extension_resources ) {
+			$raw_resources = wp_safe_remote_get(
 				add_query_arg(
 					array(
 						'version' => Sensei()->version,
 						'lang'    => get_locale(),
 					),
-					self::SENSEILMS_PRODUCTS_API_BASE_URL . '/categories'
+					self::SENSEILMS_PRODUCTS_API_BASE_URL . '/resources'
 				)
 			);
-			if ( ! is_wp_error( $raw_categories ) ) {
-				$extension_categories = json_decode( wp_remote_retrieve_body( $raw_categories ) );
-				if ( $extension_categories ) {
-					set_transient( 'sensei_extensions_categories', $extension_categories, WEEK_IN_SECONDS );
+			if ( ! is_wp_error( $raw_resources ) ) {
+				$extension_resources = json_decode( wp_remote_retrieve_body( $raw_resources ) );
+				if ( $extension_resources ) {
+					set_transient( 'sensei_extensions_resources', $extension_resources, DAY_IN_SECONDS );
 				}
 			}
 		}
 
-		return $extension_categories;
+		return $extension_resources;
 	}
 
 	/**
@@ -141,7 +141,7 @@ final class Sensei_Extensions {
 			if ( ! is_wp_error( $raw_messages ) ) {
 				$extension_messages = json_decode( wp_remote_retrieve_body( $raw_messages ) );
 				if ( $extension_messages ) {
-					set_transient( 'sensei_extensions_messages', $extension_messages, WEEK_IN_SECONDS );
+					set_transient( 'sensei_extensions_messages', $extension_messages, DAY_IN_SECONDS );
 				}
 			}
 		}
@@ -173,7 +173,7 @@ final class Sensei_Extensions {
 		$type = isset( $_GET['type'] ) ? sanitize_text_field( $_GET['type'] ) : null;
 
 		$messages   = $this->get_messages();
-		$categories = $this->get_categories();
+		$resources  = $this->get_resources();
 		$extensions = $this->get_extensions( $type, $category );
 		include_once dirname( __FILE__ ) . '/views/html-admin-page-extensions.php';
 	}

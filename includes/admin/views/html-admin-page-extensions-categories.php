@@ -2,6 +2,8 @@
 /**
  * Admin View: Page - Extensions - Category Listings
  *
+ * @var array $resources Object containing types and categories.
+ *
  * @package Sensei\Extensions
  */
 
@@ -29,25 +31,30 @@ echo '<ul class="subsubsub">';
 		<?php esc_html_e( 'All', 'woothemes-sensei' ); ?>
 	</a>
 </li>
-<li>
-	<a class="<?php echo 'plugin' === $current_type ? 'current' : ''; ?>" href="<?php echo esc_url( add_query_arg( [ 'type' => 'plugin' ], admin_url( 'admin.php?page=sensei-extensions' ) ) ); ?>">
-		<?php esc_html_e( 'All Plugins', 'woothemes-sensei' ); ?>
-	</a>
-</li>
-<li>
-	<a class="<?php echo 'theme' === $current_type ? 'current' : ''; ?>" href="<?php echo esc_url( add_query_arg( [ 'type' => 'theme' ], admin_url( 'admin.php?page=sensei-extensions' ) ) ); ?>">
-		<?php esc_html_e( 'All Themes', 'woothemes-sensei' ); ?>
-	</a>
-</li>
 <?php
-foreach ( $categories as $category ) {
-	?>
-	<li>
-		<a class="<?php echo $current_category === $category->slug ? 'current' : ''; ?>" href="<?php echo esc_url( add_query_arg( [ 'category' => $category->slug ], admin_url( 'admin.php?page=sensei-extensions' ) ) ); ?>">
-			<?php echo esc_html( $category->label ); ?>
-		</a>
-	</li>
-	<?php
+if ( ! empty( $resources->types ) ) {
+	foreach ( $resources->types as $product_type ) {
+		?>
+		<li>
+			<a class="<?php echo $current_type === $product_type->slug ? 'current' : ''; ?>"
+			   href="<?php echo esc_url( add_query_arg( array( 'type' => $product_type->slug ), admin_url( 'admin.php?page=sensei-extensions' ) ) ); ?>">
+				<?php echo esc_html( $product_type->label ); ?>
+			</a>
+		</li>
+		<?php
+	}
+}
+if ( ! empty( $resources->categories ) ) {
+	foreach ( $resources->categories as $category ) {
+		?>
+		<li>
+			<a class="<?php echo $current_category === $category->slug ? 'current' : ''; ?>"
+			   href="<?php echo esc_url( add_query_arg( array( 'category' => $category->slug ), admin_url( 'admin.php?page=sensei-extensions' ) ) ); ?>">
+				<?php echo esc_html( $category->label ); ?>
+			</a>
+		</li>
+		<?php
+	}
 }
 echo '</ul>';
 
