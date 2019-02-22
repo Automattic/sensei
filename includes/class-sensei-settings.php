@@ -30,8 +30,8 @@ class Sensei_Settings extends Sensei_Settings_API {
 		if ( is_admin() ) {
 
 			$this->has_tabs   = true;
-			$this->name       = __( 'Sensei Settings', 'woothemes-sensei' );
-			$this->menu_label = __( 'Settings', 'woothemes-sensei' );
+			$this->name       = __( 'Sensei Settings', 'sensei' );
+			$this->menu_label = __( 'Settings', 'sensei' );
 			$this->page_slug  = 'sensei-settings';
 
 		} // End If Statement
@@ -105,34 +105,34 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$sections = array();
 
 		$sections['default-settings'] = array(
-			'name'        => __( 'General', 'woothemes-sensei' ),
-			'description' => __( 'Settings that apply to the entire plugin.', 'woothemes-sensei' ),
+			'name'        => __( 'General', 'sensei' ),
+			'description' => __( 'Settings that apply to the entire plugin.', 'sensei' ),
 		);
 
 		$sections['course-settings'] = array(
-			'name'        => __( 'Courses', 'woothemes-sensei' ),
-			'description' => __( 'Settings that apply to all Courses.', 'woothemes-sensei' ),
+			'name'        => __( 'Courses', 'sensei' ),
+			'description' => __( 'Settings that apply to all Courses.', 'sensei' ),
 		);
 
 		$sections['lesson-settings'] = array(
-			'name'        => __( 'Lessons', 'woothemes-sensei' ),
-			'description' => __( 'Settings that apply to all Lessons.', 'woothemes-sensei' ),
+			'name'        => __( 'Lessons', 'sensei' ),
+			'description' => __( 'Settings that apply to all Lessons.', 'sensei' ),
 		);
 
 		$sections['email-notification-settings'] = array(
-			'name'        => __( 'Email Notifications', 'woothemes-sensei' ),
-			'description' => __( 'Settings for email notifications sent from your site.', 'woothemes-sensei' ),
+			'name'        => __( 'Email Notifications', 'sensei' ),
+			'description' => __( 'Settings for email notifications sent from your site.', 'sensei' ),
 		);
 
 		$sections['learner-profile-settings'] = array(
-			'name'        => __( 'Learner Profiles', 'woothemes-sensei' ),
-			'description' => __( 'Settings for public Learner Profiles.', 'woothemes-sensei' ),
+			'name'        => __( 'Learner Profiles', 'sensei' ),
+			'description' => __( 'Settings for public Learner Profiles.', 'sensei' ),
 		);
 
 		if ( 'en_US' !== get_locale() ) {
 			$sections['language-settings'] = array(
-				'name'        => __( 'Language', 'woothemes-sensei' ),
-				'description' => __( 'Language options.', 'woothemes-sensei' ),
+				'name'        => __( 'Language', 'sensei' ),
+				'description' => __( 'Language options.', 'sensei' ),
 			);
 		}
 
@@ -175,37 +175,37 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'20' => '20',
 		);
 		$complete_settings    = array(
-			'passed'   => __( 'Once all the course lessons have been completed', 'woothemes-sensei' ),
-			'complete' => __( 'At any time (by clicking the \'Complete Course\' button)', 'woothemes-sensei' ),
+			'passed'   => __( 'Once all the course lessons have been completed', 'sensei' ),
+			'complete' => __( 'At any time (by clicking the \'Complete Course\' button)', 'sensei' ),
 		);
 		$quiz_points_formats  = array(
-			'none'     => __( "Don't show quiz question points", 'woothemes-sensei' ),
-			'number'   => __( 'Number (e.g. 1. Default)', 'woothemes-sensei' ),
-			'brackets' => __( 'Brackets (e.g. [1])', 'woothemes-sensei' ),
-			'text'     => __( 'Text (e.g. Points: 1)', 'woothemes-sensei' ),
-			'full'     => __( 'Text and Brackets (e.g. [Points: 1])', 'woothemes-sensei' ),
+			'none'     => __( "Don't show quiz question points", 'sensei' ),
+			'number'   => __( 'Number (e.g. 1. Default)', 'sensei' ),
+			'brackets' => __( 'Brackets (e.g. [1])', 'sensei' ),
+			'text'     => __( 'Text (e.g. Points: 1)', 'sensei' ),
+			'full'     => __( 'Text and Brackets (e.g. [Points: 1])', 'sensei' ),
 		);
 		$fields               = array();
 
 		$fields['access_permission'] = array(
-			'name'        => __( 'Access Permissions', 'woothemes-sensei' ),
-			'description' => __( 'Users must be logged in to view lesson content.', 'woothemes-sensei' ),
+			'name'        => __( 'Access Permissions', 'sensei' ),
+			'description' => __( 'Users must be logged in to view lesson content.', 'sensei' ),
 			'type'        => 'checkbox',
 			'default'     => true,
 			'section'     => 'default-settings',
 		);
 
 		$fields['messages_disable'] = array(
-			'name'        => __( 'Disable Private Messages', 'woothemes-sensei' ),
-			'description' => __( 'Disable the private message functions between learners and teachers.', 'woothemes-sensei' ),
+			'name'        => __( 'Disable Private Messages', 'sensei' ),
+			'description' => __( 'Disable the private message functions between learners and teachers.', 'sensei' ),
 			'type'        => 'checkbox',
 			'default'     => false,
 			'section'     => 'default-settings',
 		);
 
 		$fields['course_page'] = array(
-			'name'        => __( 'Course Archive Page', 'woothemes-sensei' ),
-			'description' => __( 'The page to use to display courses. If you leave this blank the default custom post type archive will apply.', 'woothemes-sensei' ),
+			'name'        => __( 'Course Archive Page', 'sensei' ),
+			'description' => __( 'The page to use to display courses. If you leave this blank the default custom post type archive will apply.', 'sensei' ),
 			'type'        => 'select',
 			'default'     => get_option( 'woothemes-sensei_courses_page_id', 0 ),
 			'section'     => 'default-settings',
@@ -214,8 +214,8 @@ class Sensei_Settings extends Sensei_Settings_API {
 		);
 
 		$fields['my_course_page'] = array(
-			'name'        => __( 'My Courses Page', 'woothemes-sensei' ),
-			'description' => __( 'The page to use to display the courses that a user is currently taking as well as the courses a user has complete.', 'woothemes-sensei' ),
+			'name'        => __( 'My Courses Page', 'sensei' ),
+			'description' => __( 'The page to use to display the courses that a user is currently taking as well as the courses a user has complete.', 'sensei' ),
 			'type'        => 'select',
 			'default'     => get_option( 'woothemes-sensei_user_dashboard_page_id', 0 ),
 			'section'     => 'default-settings',
@@ -224,23 +224,23 @@ class Sensei_Settings extends Sensei_Settings_API {
 		);
 
 		$fields['placeholder_images_enable'] = array(
-			'name'        => __( 'Use placeholder images', 'woothemes-sensei' ),
-			'description' => __( 'Output a placeholder image when no featured image has been specified for Courses and Lessons.', 'woothemes-sensei' ),
+			'name'        => __( 'Use placeholder images', 'sensei' ),
+			'description' => __( 'Output a placeholder image when no featured image has been specified for Courses and Lessons.', 'sensei' ),
 			'type'        => 'checkbox',
 			'default'     => false,
 			'section'     => 'default-settings',
 		);
 
 		$fields['styles_disable']              = array(
-			'name'        => __( 'Disable Sensei Styles', 'woothemes-sensei' ),
-			'description' => __( 'Prevent the frontend stylesheets from loading. This will remove the default styles for all Sensei elements.', 'woothemes-sensei' ),
+			'name'        => __( 'Disable Sensei Styles', 'sensei' ),
+			'description' => __( 'Prevent the frontend stylesheets from loading. This will remove the default styles for all Sensei elements.', 'sensei' ),
 			'type'        => 'checkbox',
 			'default'     => false,
 			'section'     => 'default-settings',
 		);
 		$fields['quiz_question_points_format'] = array(
-			'name'        => __( 'Quiz question points format', 'woothemes-sensei' ),
-			'description' => __( 'Set the quiz question points format', 'woothemes-sensei' ),
+			'name'        => __( 'Quiz question points format', 'sensei' ),
+			'description' => __( 'Set the quiz question points format', 'sensei' ),
 			'type'        => 'select',
 			'default'     => 'number',
 			'section'     => 'default-settings',
@@ -248,24 +248,24 @@ class Sensei_Settings extends Sensei_Settings_API {
 		);
 
 		$fields['js_disable'] = array(
-			'name'        => __( 'Disable Sensei Javascript', 'woothemes-sensei' ),
-			'description' => __( 'Prevent the frontend javascript from loading. This affects the progress bars and the My Courses tabs.', 'woothemes-sensei' ),
+			'name'        => __( 'Disable Sensei Javascript', 'sensei' ),
+			'description' => __( 'Prevent the frontend javascript from loading. This affects the progress bars and the My Courses tabs.', 'sensei' ),
 			'type'        => 'checkbox',
 			'default'     => false,
 			'section'     => 'default-settings',
 		);
 
 		$fields['sensei_video_embed_html_sanitization_disable'] = array(
-			'name'        => __( 'Disable HTML security', 'woothemes-sensei' ),
-			'description' => __( 'Allow any HTML tags in the Video Embed field. Warning: Enabling this may leave your site more vulnerable to XSS attacks', 'woothemes-sensei' ),
+			'name'        => __( 'Disable HTML security', 'sensei' ),
+			'description' => __( 'Allow any HTML tags in the Video Embed field. Warning: Enabling this may leave your site more vulnerable to XSS attacks', 'sensei' ),
 			'type'        => 'checkbox',
 			'default'     => false,
 			'section'     => 'default-settings',
 		);
 
 		$fields['sensei_delete_data_on_uninstall'] = array(
-			'name'        => __( 'Delete data on uninstall', 'woothemes-sensei' ),
-			'description' => __( 'Delete Sensei data when the plugin is deleted. Once removed, this data cannot be restored.', 'woothemes-sensei' ),
+			'name'        => __( 'Delete data on uninstall', 'sensei' ),
+			'description' => __( 'Delete Sensei data when the plugin is deleted. Once removed, this data cannot be restored.', 'sensei' ),
 			'type'        => 'checkbox',
 			'default'     => false,
 			'section'     => 'default-settings',
@@ -273,8 +273,8 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		// Course Settings
 		$fields['course_completion'] = array(
-			'name'        => __( 'Courses are complete:', 'woothemes-sensei' ),
-			'description' => __( 'This will determine when courses are marked as complete.', 'woothemes-sensei' ),
+			'name'        => __( 'Courses are complete:', 'sensei' ),
+			'description' => __( 'This will determine when courses are marked as complete.', 'sensei' ),
 			'type'        => 'select',
 			'default'     => 'passed',
 			'section'     => 'course-settings',
@@ -283,16 +283,16 @@ class Sensei_Settings extends Sensei_Settings_API {
 		);
 
 		$fields['course_author'] = array(
-			'name'        => __( 'Display Course Author', 'woothemes-sensei' ),
-			'description' => __( 'Output the Course Author on Course archive and My Courses page.', 'woothemes-sensei' ),
+			'name'        => __( 'Display Course Author', 'sensei' ),
+			'description' => __( 'Output the Course Author on Course archive and My Courses page.', 'sensei' ),
 			'type'        => 'checkbox',
 			'default'     => true,
 			'section'     => 'course-settings',
 		);
 
 		$fields['my_course_amount'] = array(
-			'name'        => __( 'My Courses Pagination', 'woothemes-sensei' ),
-			'description' => __( 'The number of courses to output for the my courses page.', 'woothemes-sensei' ),
+			'name'        => __( 'My Courses Pagination', 'sensei' ),
+			'description' => __( 'The number of courses to output for the my courses page.', 'sensei' ),
 			'type'        => 'range',
 			'default'     => '0',
 			'section'     => 'course-settings',
@@ -301,16 +301,16 @@ class Sensei_Settings extends Sensei_Settings_API {
 		);
 
 		$fields['course_archive_image_enable'] = array(
-			'name'        => __( 'Course Archive Image', 'woothemes-sensei' ),
-			'description' => __( 'Output the Course Image on the Course Archive Page.', 'woothemes-sensei' ),
+			'name'        => __( 'Course Archive Image', 'sensei' ),
+			'description' => __( 'Output the Course Image on the Course Archive Page.', 'sensei' ),
 			'type'        => 'checkbox',
 			'default'     => true,
 			'section'     => 'course-settings',
 		);
 
 		$fields['course_archive_image_width'] = array(
-			'name'        => __( 'Image Width - Archive', 'woothemes-sensei' ),
-			'description' => __( 'The width in pixels of the featured image for the Course Archive page.', 'woothemes-sensei' ),
+			'name'        => __( 'Image Width - Archive', 'sensei' ),
+			'description' => __( 'The width in pixels of the featured image for the Course Archive page.', 'sensei' ),
 			'type'        => 'text',
 			'default'     => '100',
 			'section'     => 'course-settings',
@@ -318,8 +318,8 @@ class Sensei_Settings extends Sensei_Settings_API {
 		);
 
 		$fields['course_archive_image_height'] = array(
-			'name'        => __( 'Image Height - Archive', 'woothemes-sensei' ),
-			'description' => __( 'The height in pixels of the featured image for the Course Archive page.', 'woothemes-sensei' ),
+			'name'        => __( 'Image Height - Archive', 'sensei' ),
+			'description' => __( 'The height in pixels of the featured image for the Course Archive page.', 'sensei' ),
 			'type'        => 'text',
 			'default'     => '100',
 			'section'     => 'course-settings',
@@ -327,25 +327,25 @@ class Sensei_Settings extends Sensei_Settings_API {
 		);
 
 		$fields['course_archive_image_hard_crop'] = array(
-			'name'        => __( 'Image Hard Crop - Archive', 'woothemes-sensei' ),
+			'name'        => __( 'Image Hard Crop - Archive', 'sensei' ),
 			// translators: Placeholders are an opening and closing <a> tag linking to the documentation page.
-			'description' => sprintf( __( 'After changing this setting, you may need to %1$sregenerate your thumbnails%2$s.', 'woothemes-sensei' ), '<a href="' . esc_url( 'http://wordpress.org/extend/plugins/regenerate-thumbnails/' ) . '">', '</a>' ),
+			'description' => sprintf( __( 'After changing this setting, you may need to %1$sregenerate your thumbnails%2$s.', 'sensei' ), '<a href="' . esc_url( 'http://wordpress.org/extend/plugins/regenerate-thumbnails/' ) . '">', '</a>' ),
 			'type'        => 'checkbox',
 			'default'     => false,
 			'section'     => 'course-settings',
 		);
 
 		$fields['course_single_image_enable'] = array(
-			'name'        => __( 'Single Course Image', 'woothemes-sensei' ),
-			'description' => __( 'Output the Course Image on the Single Course Page.', 'woothemes-sensei' ),
+			'name'        => __( 'Single Course Image', 'sensei' ),
+			'description' => __( 'Output the Course Image on the Single Course Page.', 'sensei' ),
 			'type'        => 'checkbox',
 			'default'     => false,
 			'section'     => 'course-settings',
 		);
 
 		$fields['course_single_image_width'] = array(
-			'name'        => __( 'Image Width - Single', 'woothemes-sensei' ),
-			'description' => __( 'The width in pixels of the featured image for the Course single post page.', 'woothemes-sensei' ),
+			'name'        => __( 'Image Width - Single', 'sensei' ),
+			'description' => __( 'The width in pixels of the featured image for the Course single post page.', 'sensei' ),
 			'type'        => 'text',
 			'default'     => '100',
 			'section'     => 'course-settings',
@@ -353,8 +353,8 @@ class Sensei_Settings extends Sensei_Settings_API {
 		);
 
 		$fields['course_single_image_height'] = array(
-			'name'        => __( 'Image Height - Single', 'woothemes-sensei' ),
-			'description' => __( 'The height in pixels of the featured image for the Course single post page.', 'woothemes-sensei' ),
+			'name'        => __( 'Image Height - Single', 'sensei' ),
+			'description' => __( 'The height in pixels of the featured image for the Course single post page.', 'sensei' ),
 			'type'        => 'text',
 			'default'     => '100',
 			'section'     => 'course-settings',
@@ -362,59 +362,59 @@ class Sensei_Settings extends Sensei_Settings_API {
 		);
 
 		$fields['course_single_image_hard_crop'] = array(
-			'name'        => __( 'Image Hard Crop - Single', 'woothemes-sensei' ),
+			'name'        => __( 'Image Hard Crop - Single', 'sensei' ),
 			// translators: Placeholders are an opening and closing <a> tag linking to the documentation page.
-			'description' => sprintf( __( 'After changing this setting, you may need to %1$sregenerate your thumbnails%2$s.', 'woothemes-sensei' ), '<a href="' . esc_url( 'http://wordpress.org/extend/plugins/regenerate-thumbnails/' ) . '">', '</a>' ),
+			'description' => sprintf( __( 'After changing this setting, you may need to %1$sregenerate your thumbnails%2$s.', 'sensei' ), '<a href="' . esc_url( 'http://wordpress.org/extend/plugins/regenerate-thumbnails/' ) . '">', '</a>' ),
 			'type'        => 'checkbox',
 			'default'     => false,
 			'section'     => 'course-settings',
 		);
 
 		$fields['course_archive_featured_enable'] = array(
-			'name'        => __( 'Featured Courses Panel', 'woothemes-sensei' ),
-			'description' => __( 'Output the Featured Courses Panel on the Course Archive Page.', 'woothemes-sensei' ),
+			'name'        => __( 'Featured Courses Panel', 'sensei' ),
+			'description' => __( 'Output the Featured Courses Panel on the Course Archive Page.', 'sensei' ),
 			'type'        => 'checkbox',
 			'default'     => true,
 			'section'     => 'course-settings',
 		);
 
 		$fields['course_archive_more_link_text'] = array(
-			'name'        => __( 'More link text', 'woothemes-sensei' ),
-			'description' => __( 'The text that will be displayed on the Course Archive for the more courses link.', 'woothemes-sensei' ),
+			'name'        => __( 'More link text', 'sensei' ),
+			'description' => __( 'The text that will be displayed on the Course Archive for the more courses link.', 'sensei' ),
 			'type'        => 'text',
-			'default'     => __( 'More', 'woothemes-sensei' ),
+			'default'     => __( 'More', 'sensei' ),
 			'section'     => 'course-settings',
 			'required'    => 0,
 		);
 
 		// Lesson Settings
 		$fields['lesson_comments'] = array(
-			'name'        => __( 'Allow Comments for Lessons', 'woothemes-sensei' ),
-			'description' => __( 'This will allow learners to post comments on the single Lesson page, only learner who have access to the Lesson will be allowed to comment.', 'woothemes-sensei' ),
+			'name'        => __( 'Allow Comments for Lessons', 'sensei' ),
+			'description' => __( 'This will allow learners to post comments on the single Lesson page, only learner who have access to the Lesson will be allowed to comment.', 'sensei' ),
 			'type'        => 'checkbox',
 			'default'     => true,
 			'section'     => 'lesson-settings',
 		);
 
 		$fields['lesson_author'] = array(
-			'name'        => __( 'Display Lesson Author', 'woothemes-sensei' ),
-			'description' => __( 'Output the Lesson Author on Course single page & Lesson archive page.', 'woothemes-sensei' ),
+			'name'        => __( 'Display Lesson Author', 'sensei' ),
+			'description' => __( 'Output the Lesson Author on Course single page & Lesson archive page.', 'sensei' ),
 			'type'        => 'checkbox',
 			'default'     => true,
 			'section'     => 'lesson-settings',
 		);
 
 		$fields['course_lesson_image_enable'] = array(
-			'name'        => __( 'Course Lesson Images', 'woothemes-sensei' ),
-			'description' => __( 'Output the Lesson Image on the Single Course Page.', 'woothemes-sensei' ),
+			'name'        => __( 'Course Lesson Images', 'sensei' ),
+			'description' => __( 'Output the Lesson Image on the Single Course Page.', 'sensei' ),
 			'type'        => 'checkbox',
 			'default'     => false,
 			'section'     => 'lesson-settings',
 		);
 
 		$fields['lesson_archive_image_width'] = array(
-			'name'        => __( 'Image Width - Course Lessons', 'woothemes-sensei' ),
-			'description' => __( 'The width in pixels of the featured image for the Lessons on the Course Single page.', 'woothemes-sensei' ),
+			'name'        => __( 'Image Width - Course Lessons', 'sensei' ),
+			'description' => __( 'The width in pixels of the featured image for the Lessons on the Course Single page.', 'sensei' ),
 			'type'        => 'text',
 			'default'     => '100',
 			'section'     => 'lesson-settings',
@@ -422,8 +422,8 @@ class Sensei_Settings extends Sensei_Settings_API {
 		);
 
 		$fields['lesson_archive_image_height'] = array(
-			'name'        => __( 'Image Height - Course Lessons', 'woothemes-sensei' ),
-			'description' => __( 'The height in pixels of the featured image for the Lessons on the Course Single page.', 'woothemes-sensei' ),
+			'name'        => __( 'Image Height - Course Lessons', 'sensei' ),
+			'description' => __( 'The height in pixels of the featured image for the Lessons on the Course Single page.', 'sensei' ),
 			'type'        => 'text',
 			'default'     => '100',
 			'section'     => 'lesson-settings',
@@ -431,25 +431,25 @@ class Sensei_Settings extends Sensei_Settings_API {
 		);
 
 		$fields['lesson_archive_image_hard_crop'] = array(
-			'name'        => __( 'Image Hard Crop - Course Lessons', 'woothemes-sensei' ),
+			'name'        => __( 'Image Hard Crop - Course Lessons', 'sensei' ),
 			// translators: Placeholders are an opening and closing <a> tag linking to the documentation page.
-			'description' => sprintf( __( 'After changing this setting, you may need to %1$sregenerate your thumbnails%2$s.', 'woothemes-sensei' ), '<a href="' . esc_url( 'http://wordpress.org/extend/plugins/regenerate-thumbnails/' ) . '">', '</a>' ),
+			'description' => sprintf( __( 'After changing this setting, you may need to %1$sregenerate your thumbnails%2$s.', 'sensei' ), '<a href="' . esc_url( 'http://wordpress.org/extend/plugins/regenerate-thumbnails/' ) . '">', '</a>' ),
 			'type'        => 'checkbox',
 			'default'     => false,
 			'section'     => 'lesson-settings',
 		);
 
 		$fields['lesson_single_image_enable'] = array(
-			'name'        => __( 'Single Lesson Images', 'woothemes-sensei' ),
-			'description' => __( 'Output the Lesson Image on the Single Lesson Page.', 'woothemes-sensei' ),
+			'name'        => __( 'Single Lesson Images', 'sensei' ),
+			'description' => __( 'Output the Lesson Image on the Single Lesson Page.', 'sensei' ),
 			'type'        => 'checkbox',
 			'default'     => false,
 			'section'     => 'lesson-settings',
 		);
 
 		$fields['lesson_single_image_width'] = array(
-			'name'        => __( 'Image Width - Single', 'woothemes-sensei' ),
-			'description' => __( 'The width in pixels of the featured image for the Lessons single post page.', 'woothemes-sensei' ),
+			'name'        => __( 'Image Width - Single', 'sensei' ),
+			'description' => __( 'The width in pixels of the featured image for the Lessons single post page.', 'sensei' ),
 			'type'        => 'text',
 			'default'     => '100',
 			'section'     => 'lesson-settings',
@@ -457,8 +457,8 @@ class Sensei_Settings extends Sensei_Settings_API {
 		);
 
 		$fields['lesson_single_image_height'] = array(
-			'name'        => __( 'Image Height - Single', 'woothemes-sensei' ),
-			'description' => __( 'The height in pixels of the featured image for the Lessons single post page.', 'woothemes-sensei' ),
+			'name'        => __( 'Image Height - Single', 'sensei' ),
+			'description' => __( 'The height in pixels of the featured image for the Lessons single post page.', 'sensei' ),
 			'type'        => 'text',
 			'default'     => '100',
 			'section'     => 'lesson-settings',
@@ -466,30 +466,30 @@ class Sensei_Settings extends Sensei_Settings_API {
 		);
 
 		$fields['lesson_single_image_hard_crop'] = array(
-			'name'        => __( 'Image Hard Crop - Single', 'woothemes-sensei' ),
+			'name'        => __( 'Image Hard Crop - Single', 'sensei' ),
 			// translators: Placeholders are an opening and closing <a> tag linking to the documentation page.
-			'description' => sprintf( __( 'After changing this setting, you may need to %1$sregenerate your thumbnails%2$s.', 'woothemes-sensei' ), '<a href="' . esc_url( 'http://wordpress.org/extend/plugins/regenerate-thumbnails/' ) . '">', '</a>' ),
+			'description' => sprintf( __( 'After changing this setting, you may need to %1$sregenerate your thumbnails%2$s.', 'sensei' ), '<a href="' . esc_url( 'http://wordpress.org/extend/plugins/regenerate-thumbnails/' ) . '">', '</a>' ),
 			'type'        => 'checkbox',
 			'default'     => false,
 			'section'     => 'lesson-settings',
 		);
 
 		// Learner Profile settings
-		$profile_url_base    = apply_filters( 'sensei_learner_profiles_url_base', __( 'learner', 'woothemes-sensei' ) );
+		$profile_url_base    = apply_filters( 'sensei_learner_profiles_url_base', __( 'learner', 'sensei' ) );
 		$profile_url_example = trailingslashit( get_home_url() ) . $profile_url_base . '/%username%';
 
 		$fields['learner_profile_enable'] = array(
-			'name'        => __( 'Public learner profiles', 'woothemes-sensei' ),
+			'name'        => __( 'Public learner profiles', 'sensei' ),
 			// translators: Placeholder is a profile URL example.
-			'description' => sprintf( __( 'Enable public learner profiles that will be accessible to everyone. Profile URL format: %s', 'woothemes-sensei' ), $profile_url_example ),
+			'description' => sprintf( __( 'Enable public learner profiles that will be accessible to everyone. Profile URL format: %s', 'sensei' ), $profile_url_example ),
 			'type'        => 'checkbox',
 			'default'     => true,
 			'section'     => 'learner-profile-settings',
 		);
 
 		$fields['learner_profile_show_courses'] = array(
-			'name'        => __( 'Show learner\'s courses', 'woothemes-sensei' ),
-			'description' => __( 'Display the learner\'s active and completed courses on their profile.', 'woothemes-sensei' ),
+			'name'        => __( 'Show learner\'s courses', 'sensei' ),
+			'description' => __( 'Display the learner\'s active and completed courses on their profile.', 'sensei' ),
 			'type'        => 'checkbox',
 			'default'     => true,
 			'section'     => 'learner-profile-settings',
@@ -497,25 +497,25 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		// Email notifications
 		$learner_email_options = array(
-			'learner-graded-quiz'      => __( 'Their quiz is graded (auto and manual grading)', 'woothemes-sensei' ),
-			'learner-completed-course' => __( 'They complete a course', 'woothemes-sensei' ),
+			'learner-graded-quiz'      => __( 'Their quiz is graded (auto and manual grading)', 'sensei' ),
+			'learner-completed-course' => __( 'They complete a course', 'sensei' ),
 		);
 
 		$teacher_email_options = array(
-			'teacher-started-course'   => __( 'A learner starts their course', 'woothemes-sensei' ),
-			'teacher-completed-course' => __( 'A learner completes their course', 'woothemes-sensei' ),
-			'teacher-completed-lesson' => __( 'A learner completes a lesson', 'woothemes-sensei' ),
-			'teacher-quiz-submitted'   => __( 'A learner submits a quiz for grading', 'woothemes-sensei' ),
-			'teacher-new-message'      => __( 'A learner sends a private message to a teacher', 'woothemes-sensei' ),
+			'teacher-started-course'   => __( 'A learner starts their course', 'sensei' ),
+			'teacher-completed-course' => __( 'A learner completes their course', 'sensei' ),
+			'teacher-completed-lesson' => __( 'A learner completes a lesson', 'sensei' ),
+			'teacher-quiz-submitted'   => __( 'A learner submits a quiz for grading', 'sensei' ),
+			'teacher-new-message'      => __( 'A learner sends a private message to a teacher', 'sensei' ),
 		);
 
 		$global_email_options = array(
-			'new-message-reply' => __( 'They receive a reply to their private message', 'woothemes-sensei' ),
+			'new-message-reply' => __( 'They receive a reply to their private message', 'sensei' ),
 		);
 
 		$fields['email_learners'] = array(
-			'name'        => __( 'Emails Sent to Learners', 'woothemes-sensei' ),
-			'description' => __( 'Select the notifications that will be sent to learners.', 'woothemes-sensei' ),
+			'name'        => __( 'Emails Sent to Learners', 'sensei' ),
+			'description' => __( 'Select the notifications that will be sent to learners.', 'sensei' ),
 			'type'        => 'multicheck',
 			'options'     => $learner_email_options,
 			'defaults'    => array( 'learner-graded-quiz', 'learner-completed-course' ),
@@ -523,8 +523,8 @@ class Sensei_Settings extends Sensei_Settings_API {
 		);
 
 		$fields['email_teachers'] = array(
-			'name'        => __( 'Emails Sent to Teachers', 'woothemes-sensei' ),
-			'description' => __( 'Select the notifications that will be sent to teachers.', 'woothemes-sensei' ),
+			'name'        => __( 'Emails Sent to Teachers', 'sensei' ),
+			'description' => __( 'Select the notifications that will be sent to teachers.', 'sensei' ),
 			'type'        => 'multicheck',
 			'options'     => $teacher_email_options,
 			'defaults'    => array( 'teacher-completed-course', 'teacher-started-course', 'teacher-quiz-submitted', 'teacher-new-message' ),
@@ -532,8 +532,8 @@ class Sensei_Settings extends Sensei_Settings_API {
 		);
 
 		$fields['email_global'] = array(
-			'name'        => __( 'Emails Sent to All Users', 'woothemes-sensei' ),
-			'description' => __( 'Select the notifications that will be sent to all users.', 'woothemes-sensei' ),
+			'name'        => __( 'Emails Sent to All Users', 'sensei' ),
+			'description' => __( 'Select the notifications that will be sent to all users.', 'sensei' ),
 			'type'        => 'multicheck',
 			'options'     => $global_email_options,
 			'defaults'    => array( 'new-message-reply' ),
@@ -541,8 +541,8 @@ class Sensei_Settings extends Sensei_Settings_API {
 		);
 
 		$fields['email_from_name'] = array(
-			'name'        => __( '"From" Name', 'woothemes-sensei' ),
-			'description' => __( 'The name from which all emails will be sent.', 'woothemes-sensei' ),
+			'name'        => __( '"From" Name', 'sensei' ),
+			'description' => __( 'The name from which all emails will be sent.', 'sensei' ),
 			'type'        => 'text',
 			'default'     => get_bloginfo( 'name' ),
 			'section'     => 'email-notification-settings',
@@ -550,8 +550,8 @@ class Sensei_Settings extends Sensei_Settings_API {
 		);
 
 		$fields['email_from_address'] = array(
-			'name'        => __( '"From" Address', 'woothemes-sensei' ),
-			'description' => __( 'The address from which all emails will be sent.', 'woothemes-sensei' ),
+			'name'        => __( '"From" Address', 'sensei' ),
+			'description' => __( 'The address from which all emails will be sent.', 'sensei' ),
 			'type'        => 'text',
 			'default'     => get_bloginfo( 'admin_email' ),
 			'section'     => 'email-notification-settings',
@@ -559,9 +559,9 @@ class Sensei_Settings extends Sensei_Settings_API {
 		);
 
 		$fields['email_header_image'] = array(
-			'name'        => __( 'Header Image', 'woothemes-sensei' ),
+			'name'        => __( 'Header Image', 'sensei' ),
 			// translators: Placeholders are opening and closing <a> tags linking to the media uploader.
-			'description' => sprintf( __( 'Enter a URL to an image you want to show in the email\'s header. Upload your image using the %1$smedia uploader%2$s.', 'woothemes-sensei' ), '<a href="' . admin_url( 'media-new.php' ) . '">', '</a>' ),
+			'description' => sprintf( __( 'Enter a URL to an image you want to show in the email\'s header. Upload your image using the %1$smedia uploader%2$s.', 'sensei' ), '<a href="' . admin_url( 'media-new.php' ) . '">', '</a>' ),
 			'type'        => 'text',
 			'default'     => '',
 			'section'     => 'email-notification-settings',
@@ -569,19 +569,19 @@ class Sensei_Settings extends Sensei_Settings_API {
 		);
 
 		$fields['email_footer_text'] = array(
-			'name'        => __( 'Email Footer Text', 'woothemes-sensei' ),
-			'description' => __( 'The text to appear in the footer of Sensei emails.', 'woothemes-sensei' ),
+			'name'        => __( 'Email Footer Text', 'sensei' ),
+			'description' => __( 'The text to appear in the footer of Sensei emails.', 'sensei' ),
 			'type'        => 'textarea',
 			// translators: Placeholder is the blog name.
-			'default'     => sprintf( __( '%1$s - Powered by Sensei', 'woothemes-sensei' ), get_bloginfo( 'name' ) ),
+			'default'     => sprintf( __( '%1$s - Powered by Sensei', 'sensei' ), get_bloginfo( 'name' ) ),
 			'section'     => 'email-notification-settings',
 			'required'    => 0,
 		);
 
 		$fields['email_base_color'] = array(
-			'name'        => __( 'Base Colour', 'woothemes-sensei' ),
+			'name'        => __( 'Base Colour', 'sensei' ),
 			// translators: Placeholders are opening and closing <code> tags.
-			'description' => sprintf( __( 'The base colour for Sensei email templates. Default %1$s#557da1%2$s.', 'woothemes-sensei' ), '<code>', '</code>' ),
+			'description' => sprintf( __( 'The base colour for Sensei email templates. Default %1$s#557da1%2$s.', 'sensei' ), '<code>', '</code>' ),
 			'type'        => 'color',
 			'default'     => '#557da1',
 			'section'     => 'email-notification-settings',
@@ -589,9 +589,9 @@ class Sensei_Settings extends Sensei_Settings_API {
 		);
 
 		$fields['email_background_color'] = array(
-			'name'        => __( 'Background Colour', 'woothemes-sensei' ),
+			'name'        => __( 'Background Colour', 'sensei' ),
 			// translators: Placeholders are opening and closing <code> tags.
-			'description' => sprintf( __( 'The background colour for Sensei email templates. Default %1$s#f5f5f5%2$s.', 'woothemes-sensei' ), '<code>', '</code>' ),
+			'description' => sprintf( __( 'The background colour for Sensei email templates. Default %1$s#f5f5f5%2$s.', 'sensei' ), '<code>', '</code>' ),
 			'type'        => 'color',
 			'default'     => '#f5f5f5',
 			'section'     => 'email-notification-settings',
@@ -599,9 +599,9 @@ class Sensei_Settings extends Sensei_Settings_API {
 		);
 
 		$fields['email_body_background_color'] = array(
-			'name'        => __( 'Body Background Colour', 'woothemes-sensei' ),
+			'name'        => __( 'Body Background Colour', 'sensei' ),
 			// translators: Placeholders are opening and closing <code> tags.
-			'description' => sprintf( __( 'The main body background colour for Sensei email templates. Default %1$s#fdfdfd%2$s.', 'woothemes-sensei' ), '<code>', '</code>' ),
+			'description' => sprintf( __( 'The main body background colour for Sensei email templates. Default %1$s#fdfdfd%2$s.', 'sensei' ), '<code>', '</code>' ),
 			'type'        => 'color',
 			'default'     => '#fdfdfd',
 			'section'     => 'email-notification-settings',
@@ -609,9 +609,9 @@ class Sensei_Settings extends Sensei_Settings_API {
 		);
 
 		$fields['email_text_color'] = array(
-			'name'        => __( 'Body Text Colour', 'woothemes-sensei' ),
+			'name'        => __( 'Body Text Colour', 'sensei' ),
 			// translators: Placeholders are opening and closing <code> tags.
-			'description' => sprintf( __( 'The main body text colour for Sensei email templates. Default %1$s#505050%2$s.', 'woothemes-sensei' ), '<code>', '</code>' ),
+			'description' => sprintf( __( 'The main body text colour for Sensei email templates. Default %1$s#505050%2$s.', 'sensei' ), '<code>', '</code>' ),
 			'type'        => 'color',
 			'default'     => '#505050',
 			'section'     => 'email-notification-settings',
@@ -620,12 +620,12 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		if ( 'en_US' !== get_locale() ) {
 			$fields['install_language_pack'] = array(
-				'name'        => __( 'Install Language Pack', 'woothemes-sensei' ),
-				'description' => __( 'Use this action to install or re-install translation for your language if available.', 'woothemes-sensei' ),
+				'name'        => __( 'Install Language Pack', 'sensei' ),
+				'description' => __( 'Use this action to install or re-install translation for your language if available.', 'sensei' ),
 				'type'        => 'button',
 				'section'     => 'language-settings',
 				'target'      => Sensei_Language_Pack_Manager::get_install_uri(),
-				'label'       => __( 'Install', 'woothemes-sensei' ),
+				'label'       => __( 'Install', 'sensei' ),
 			);
 		}
 
@@ -685,7 +685,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$pages_dropdown = str_replace( '</select>', '', $pages_dropdown );
 		$pages_split    = explode( '</option>', $pages_dropdown );
 
-		$page_items[] = __( 'Select a Page:', 'woothemes-sensei' );
+		$page_items[] = __( 'Select a Page:', 'sensei' );
 
 		foreach ( $pages_split as $k => $v ) {
 			$id = '';

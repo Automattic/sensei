@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 do_action( 'sensei_login_form_before' );
 ?>
 
-<h2><?php esc_html_e( 'Login', 'woothemes-sensei' ); ?></h2>
+<h2><?php esc_html_e( 'Login', 'sensei' ); ?></h2>
 
 <form method="post" name="sensi-login-form" id="loginform" class="login sensei">
 
@@ -39,7 +39,7 @@ do_action( 'sensei_login_form_before' );
 
 	<p class="sensei-login-username form-row form-row-wide">
 
-				<label for="sensei_user_login"><?php esc_html_e( 'Username or Email', 'woothemes-sensei' ); ?> </label>
+				<label for="sensei_user_login"><?php esc_html_e( 'Username or Email', 'sensei' ); ?> </label>
 
 				<input type="text" name="log" id="sensei_user_login" class="input" value="" size="20">
 
@@ -47,7 +47,7 @@ do_action( 'sensei_login_form_before' );
 
 	<p class="sensei-login-password form-row form-row-wide">
 
-				<label for="sensei_user_pass"> <?php esc_html_e( 'Password', 'woothemes-sensei' ); ?>  </label>
+				<label for="sensei_user_pass"> <?php esc_html_e( 'Password', 'sensei' ); ?>  </label>
 
 				<input type="password" name="pwd" id="sensei_user_pass" class="input txt text" value="" size="20">
 
@@ -66,9 +66,9 @@ do_action( 'sensei_login_form_before' );
 
 	<p class='sensei-login-submit'>
 
-		<input type="submit" class="button" name="login" value="<?php esc_attr_e( 'Login', 'woothemes-sensei' ); ?>" />
+		<input type="submit" class="button" name="login" value="<?php esc_attr_e( 'Login', 'sensei' ); ?>" />
 
-		<a href="<?php echo esc_url( wp_lostpassword_url() ); ?>"><?php esc_html_e( 'Lost your password?', 'woothemes-sensei' ); ?></a>
+		<a href="<?php echo esc_url( wp_lostpassword_url() ); ?>"><?php esc_html_e( 'Lost your password?', 'sensei' ); ?></a>
 
 	</p>
 
@@ -76,7 +76,7 @@ do_action( 'sensei_login_form_before' );
 
 		<label for="rememberme" class="inline">
 
-			<input name="rememberme" type="checkbox" id="rememberme" value="forever" /> <?php esc_html_e( 'Remember me', 'woothemes-sensei' ); ?>
+			<input name="rememberme" type="checkbox" id="rememberme" value="forever" /> <?php esc_html_e( 'Remember me', 'sensei' ); ?>
 
 		</label>
 

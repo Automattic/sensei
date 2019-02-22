@@ -27,7 +27,7 @@ class Sensei_Grading {
 	 * @param $file
 	 */
 	public function __construct( $file ) {
-		$this->name      = __( 'Grading', 'woothemes-sensei' );
+		$this->name      = __( 'Grading', 'sensei' );
 		$this->file      = $file;
 		$this->page_slug = 'sensei_grading';
 
@@ -63,7 +63,7 @@ class Sensei_Grading {
 		global $menu;
 
 		if ( current_user_can( 'manage_sensei_grades' ) ) {
-			$grading_page = add_submenu_page( 'sensei', __( 'Grading', 'woothemes-sensei' ), __( 'Grading', 'woothemes-sensei' ), 'manage_sensei_grades', $this->page_slug, array( $this, 'grading_page' ) );
+			$grading_page = add_submenu_page( 'sensei', __( 'Grading', 'sensei' ), __( 'Grading', 'sensei' ), 'manage_sensei_grades', $this->page_slug, array( $this, 'grading_page' ) );
 		}
 
 	} // End grading_admin_menu()
@@ -484,7 +484,7 @@ class Sensei_Grading {
 		);
 		$courses     = get_posts( apply_filters( 'sensei_grading_filter_courses', $course_args ) );
 
-		$html .= '<option value="">' . __( 'Select a course', 'woothemes-sensei' ) . '</option>';
+		$html .= '<option value="">' . __( 'Select a course', 'sensei' ) . '</option>';
 		if ( count( $courses ) > 0 ) {
 			foreach ( $courses as $course_id ) {
 				$html .= '<option value="' . esc_attr( absint( $course_id ) ) . '" ' . selected( $course_id, $selected_course_id, false ) . '>' . esc_html( get_the_title( $course_id ) ) . '</option>' . "\n";
@@ -577,7 +577,7 @@ class Sensei_Grading {
 			);
 			$lessons     = get_posts( apply_filters( 'sensei_grading_filter_lessons', $lesson_args ) );
 
-			$html .= '<option value="">' . esc_html__( 'Select a lesson', 'woothemes-sensei' ) . '</option>';
+			$html .= '<option value="">' . esc_html__( 'Select a lesson', 'sensei' ) . '</option>';
 			if ( count( $lessons ) > 0 ) {
 				foreach ( $lessons as $lesson_id ) {
 					$html .= '<option value="' . esc_attr( absint( $lesson_id ) ) . '" ' . selected( $lesson_id, $selected_lesson_id, false ) . '>' . esc_html( get_the_title( $lesson_id ) ) . '</option>' . "\n";
@@ -806,7 +806,7 @@ class Sensei_Grading {
 			if ( 'graded' == $_GET['message'] ) {
 				$msg = array(
 					'updated',
-					__( 'Quiz Graded Successfully!', 'woothemes-sensei' ),
+					__( 'Quiz Graded Successfully!', 'sensei' ),
 				);
 			}
 			?>
@@ -820,7 +820,7 @@ class Sensei_Grading {
 	public function sensei_grading_notices() {
 		if ( isset( $_GET['action'] ) && 'graded' == $_GET['action'] ) {
 			echo '<div class="grading-notice updated">';
-				echo '<p>' . esc_html__( 'Quiz Graded Successfully!', 'woothemes-sensei' ) . '</p>';
+				echo '<p>' . esc_html__( 'Quiz Graded Successfully!', 'sensei' ) . '</p>';
 			echo '</div>';
 		} // End If Statement
 	} // End sensei_grading_notices()
@@ -899,7 +899,7 @@ class Sensei_Grading {
 
 		} else {
 
-			$grade = new WP_Error( 'autograde', __( 'This quiz is not able to be automatically graded.', 'woothemes-sensei' ) );
+			$grade = new WP_Error( 'autograde', __( 'This quiz is not able to be automatically graded.', 'sensei' ) );
 
 		}
 

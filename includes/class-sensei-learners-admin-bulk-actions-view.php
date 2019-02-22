@@ -48,8 +48,8 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	function get_columns() {
 		$columns = array(
 			'cb'       => '<label class="screen-reader-text" for="cb-select-all-1">Select All</label><input id="cb-select-all-1" type="checkbox">',
-			'learner'  => __( 'Learner', 'woothemes-sensei' ),
-			'overview' => __( 'Overview', 'woothemes-sensei' ),
+			'learner'  => __( 'Learner', 'sensei' ),
+			'overview' => __( 'Overview', 'sensei' ),
 		);
 
 		return apply_filters( 'sensei_learners_admin_default_columns', $columns, $this );
@@ -82,7 +82,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		if ( ! $item ) {
 			$row_data = array(
 				'cb'       => '',
-				'learner'  => esc_html__( 'No results found', 'woothemes-sensei' ),
+				'learner'  => esc_html__( 'No results found', 'sensei' ),
 				'overview' => '',
 			);
 		} else {
@@ -146,7 +146,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		$login = $learner->user_login;
 		$title = Sensei_Learner::get_full_name( $learner->user_id );
 		// translators: Placeholder %s is the learner's full name.
-		$a_title = sprintf( esc_html__( 'Edit &#8220;%s&#8221;', 'woothemes-sensei' ), esc_html( $title ) );
+		$a_title = sprintf( esc_html__( 'Edit &#8220;%s&#8221;', 'sensei' ), esc_html( $title ) );
 		$html    = '<strong><a class="row-title" href="' . esc_url( admin_url( 'user-edit.php?user_id=' . $learner->user_id ) ) . '" title="' . esc_attr( $a_title ) . '">' . esc_html( $login ) . '</a></strong>';
 		$html   .= ' <span>(<em>' . esc_html( $title ) . '</em>, ' . esc_html( $learner->user_email ) . ')</span>';
 
@@ -162,13 +162,13 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 
 
 	public function no_items() {
-		$text = __( 'No learners found.', 'woothemes-sensei' );
+		$text = __( 'No learners found.', 'sensei' );
 		echo wp_kses_post( apply_filters( 'sensei_learners_no_items_text', $text ) );
 	}
 
 	private function courses_select( $courses, $selected_course, $select_id = 'course-select', $name = 'course_id', $select_label = null, $multiple = false ) {
 		if ( null === $select_label ) {
-			$select_label = __( 'Select Course', 'woothemes-sensei' );
+			$select_label = __( 'Select Course', 'sensei' );
 		}
 		?>
 
@@ -184,7 +184,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	}
 
 	private function render_bulk_actions_form( $courses ) {
-		$label = __( 'Select Course(s)', 'woothemes-sensei' );
+		$label = __( 'Select Course(s)', 'sensei' );
 
 		?>
 		<form id="bulk-learner-actions-form" action="" method="post">
@@ -194,7 +194,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		<input type="hidden" id="sensei-bulk-action"  name="sensei_bulk_action" value="">
 		<input type="hidden" id="bulk-action-course-ids"  name="bulk_action_course_ids" value="">
 		<?php wp_nonce_field( Sensei_Learners_Admin_Bulk_Actions_Controller::NONCE_SENSEI_BULK_LEARNER_ACTIONS, Sensei_Learners_Admin_Bulk_Actions_Controller::SENSEI_BULK_LEARNER_ACTIONS_NONCE_FIELD ); ?>
-		<button type="submit" id="bulk-learner-action-submit" class="button button-primary action"><?php echo esc_html__( 'Apply', 'woothemes-sensei' ); ?></button>
+		<button type="submit" id="bulk-learner-action-submit" class="button button-primary action"><?php echo esc_html__( 'Apply', 'sensei' ); ?></button>
 		</form>
 		<?php
 	}
@@ -202,7 +202,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	private function render_bulk_action_select_box() {
 		$rendered     =
 			'<select name="sensei_bulk_action_select" id="bulk-action-selector-top">' .
-			'<option value="">' . esc_html__( 'Bulk Learner Actions', 'woothemes-sensei' ) . '</option>';
+			'<option value="">' . esc_html__( 'Bulk Learner Actions', 'sensei' ) . '</option>';
 		$bulk_actions = $this->controller->get_known_bulk_actions();
 		foreach ( $bulk_actions as $value => $translation ) {
 			$rendered .= '<option value="' . esc_attr( $value ) . '">' . esc_html( $translation ) . '</option>';
@@ -238,7 +238,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 					)
 				);
 				?>
-				<button type="submit" id="sensei-bulk-learner-actions-modal-toggle" class="button button-primary action"><?php echo esc_html__( 'Select Courses', 'woothemes-sensei' ); ?></button>
+				<button type="submit" id="sensei-bulk-learner-actions-modal-toggle" class="button button-primary action"><?php echo esc_html__( 'Select Courses', 'sensei' ); ?></button>
 			</div>
 			<div class="alignleft actions">
 				<form action="" method="get">
@@ -249,9 +249,9 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 						}
 						echo '<input type="hidden" name="' . esc_attr( $name ) . '" value="' . esc_attr( $value ) . '">';
 					}
-					$this->courses_select( $courses, $selected_course, 'courses-select-filter', 'filter_by_course_id', __( 'Filter By Course', 'woothemes-sensei' ) );
+					$this->courses_select( $courses, $selected_course, 'courses-select-filter', 'filter_by_course_id', __( 'Filter By Course', 'sensei' ) );
 					?>
-					<button type="submit" id="filt" class="button action"><?php echo esc_html__( 'Filter', 'woothemes-sensei' ); ?></button>
+					<button type="submit" id="filt" class="button action"><?php echo esc_html__( 'Filter', 'sensei' ); ?></button>
 				</form>
 
 			</div>
@@ -260,12 +260,12 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	}
 
 	public function search_button( $text = '' ) {
-		return __( 'Search Learners', 'woothemes-sensei' );
+		return __( 'Search Learners', 'sensei' );
 	}
 
 	private function get_learner_courses_html( $courses ) {
 		if ( empty( $courses ) ) {
-			return '0 ' . esc_html__( 'Courses', 'woothemes-sensei' ) . ' ' . esc_html__( 'In Progress', 'woothemes-sensei' );
+			return '0 ' . esc_html__( 'Courses', 'sensei' ) . ' ' . esc_html__( 'In Progress', 'sensei' );
 		} else {
 			$courses           = explode( ',', $courses );
 			$course_arr        = array();
@@ -285,12 +285,12 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 				$course_arr[] = '<a href="' . esc_url( $this->controller->get_learner_management_course_url( $course_id ) ) . '" class="button' . esc_attr( $span_style ) . '" data-course-id="' . esc_attr( $course_id ) . '">' . esc_html( $course->post_title ) . '</a>';
 			}
 
-			$html = $courses_total - $courses_completed . ' ' . esc_html__( 'Courses', 'woothemes-sensei' ) . ' ' . esc_html__( 'In Progress', 'woothemes-sensei' );
+			$html = $courses_total - $courses_completed . ' ' . esc_html__( 'Courses', 'sensei' ) . ' ' . esc_html__( 'In Progress', 'sensei' );
 			if ( $courses_completed > 0 ) {
-				$html .= ', ' . $courses_completed . ' ' . esc_html__( 'Completed', 'woothemes-sensei' );
+				$html .= ', ' . $courses_completed . ' ' . esc_html__( 'Completed', 'sensei' );
 			}
 			$html   .= ' <a href="#" class="learner-course-overview-detail-btn">...<span>' .
-				esc_html__( 'more', 'woothemes-sensei' ) . '</span></a><br/>';
+				esc_html__( 'more', 'sensei' ) . '</span></a><br/>';
 			$courses = implode( '<br />', $course_arr );
 
 			return $html . '<div class="learner-course-overview-detail" style="display:none">' . $courses . '</div>';

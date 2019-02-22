@@ -242,7 +242,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		<li class="user-completed">
 			<div class="sensei-message info">
 
-				<?php esc_html_e( 'You have not completed any courses yet.', 'woothemes-sensei' ); ?>
+				<?php esc_html_e( 'You have not completed any courses yet.', 'sensei' ); ?>
 
 			</div>
 		</li>
@@ -261,11 +261,11 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		<li class="user-active">
 			<div class="sensei-message info">
 
-				<?php esc_html_e( 'You have no active courses.', 'woothemes-sensei' ); ?>
+				<?php esc_html_e( 'You have no active courses.', 'sensei' ); ?>
 
 				<a href="<?php echo esc_attr( Sensei_Course::get_courses_page_url() ); ?>">
 
-					<?php esc_html_e( 'Start a Course!', 'woothemes-sensei' ); ?>
+					<?php esc_html_e( 'Start a Course!', 'sensei' ); ?>
 
 				</a>
 
@@ -430,9 +430,9 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		}
 
 		$active_filter_options = array(
-			'all'      => __( 'All Courses', 'woothemes-sensei' ),
-			'active'   => __( 'Active Courses', 'woothemes-sensei' ),
-			'complete' => __( 'Completed Courses', 'woothemes-sensei' ),
+			'all'      => __( 'All Courses', 'sensei' ),
+			'active'   => __( 'Active Courses', 'sensei' ),
+			'complete' => __( 'Completed Courses', 'sensei' ),
 		);
 
 		$base_url = get_page_link( $this->page_id );

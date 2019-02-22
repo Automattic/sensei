@@ -94,8 +94,8 @@ if ( ! class_exists( 'Sensei_Email_New_Message_Reply' ) ) :
 			do_action( 'sensei_before_mail', $this->recipient );
 
 			// translators: Placeholder is the blog name.
-			$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] You have a new message', 'woothemes-sensei' ), get_bloginfo( 'name' ) ), $this->template );
-			$this->heading = apply_filters( 'sensei_email_heading', __( 'You have received a reply to your private message', 'woothemes-sensei' ), $this->template );
+			$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] You have a new message', 'sensei' ), get_bloginfo( 'name' ) ), $this->template );
+			$this->heading = apply_filters( 'sensei_email_heading', __( 'You have received a reply to your private message', 'sensei' ), $this->template );
 
 			$content_type  = get_post_meta( $this->message->ID, '_posttype', true );
 			$content_id    = get_post_meta( $this->message->ID, '_post', true );

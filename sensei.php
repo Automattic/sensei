@@ -9,7 +9,7 @@
  * License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * Requires at least: 4.1
  * Tested up to: 4.9
- * Text Domain: woothemes-sensei
+ * Text Domain: sensei
  * Domain path: /lang/
  */
 

@@ -93,7 +93,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 						<header>
 
-							<h3><?php esc_html_e( 'Lessons', 'woothemes-sensei' ); ?></h3>
+							<h3><?php esc_html_e( 'Lessons', 'sensei' ); ?></h3>
 
 						</header>
 

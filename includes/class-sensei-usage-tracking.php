@@ -39,7 +39,7 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 	}
 
 	protected function get_text_domain() {
-		return 'woothemes-sensei';
+		return 'sensei';
 	}
 
 	protected function get_tracking_enabled() {
@@ -68,7 +68,7 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 				"We'd love if you helped us make Sensei better by allowing us to collect
 				<a href=\"%s\" target=\"_blank\">usage tracking data</a>.
 				No sensitive information is collected, and you can opt out at any time.",
-				'woothemes-sensei'
+				'sensei'
 			),
 			self::SENSEI_TRACKING_INFO_URL
 		);
@@ -103,7 +103,7 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 
 	public function add_setting_field( $fields ) {
 		$fields[ self::SENSEI_SETTING_NAME ] = array(
-			'name'        => __( 'Enable usage tracking', 'woothemes-sensei' ),
+			'name'        => __( 'Enable usage tracking', 'sensei' ),
 			'description' => sprintf(
 
 				/*
@@ -114,7 +114,7 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 					'Help us make Sensei better by allowing us to collect
 					<a href="%s" target="_blank">usage tracking data</a>.
 					No sensitive information is collected.',
-					'woothemes-sensei'
+					'sensei'
 				),
 				self::SENSEI_TRACKING_INFO_URL
 			),
