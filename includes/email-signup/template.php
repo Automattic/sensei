@@ -52,7 +52,6 @@
 					</p>
 				</div>
 			</div>
-			<div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_7a061a9141b0911d6d9bafe3a_278a16a5ed" tabindex="-1" value=""></div>
 			<div class="buttons clear">
 				<a href="#close" id="mc-embedded-cancel" class="button" rel="modal:close"><?php esc_html_e( 'Not Now', 'woothemes-sensei' ); ?></a>
 				<input type="submit" value="<?php esc_attr_e( 'Yes, please!', 'woothemes-sensei' ); ?>" name="subscribe" id="mc-embedded-subscribe" class="button-primary" disabled>
