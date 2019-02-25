@@ -60,12 +60,12 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 	 */
 	function get_columns() {
 		$columns = array(
-			'title'       => __( 'Learner', 'woothemes-sensei' ),
-			'course'      => __( 'Course', 'woothemes-sensei' ),
-			'lesson'      => __( 'Lesson', 'woothemes-sensei' ),
-			'updated'     => __( 'Updated', 'woothemes-sensei' ),
-			'user_status' => __( 'Status', 'woothemes-sensei' ),
-			'user_grade'  => __( 'Grade', 'woothemes-sensei' ),
+			'title'       => __( 'Learner', 'sensei' ),
+			'course'      => __( 'Course', 'sensei' ),
+			'lesson'      => __( 'Lesson', 'sensei' ),
+			'updated'     => __( 'Updated', 'sensei' ),
+			'user_status' => __( 'Status', 'sensei' ),
+			'user_grade'  => __( 'Grade', 'sensei' ),
 			'action'      => '',
 		);
 
@@ -241,23 +241,23 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 
 		$grade = '';
 		if ( 'complete' == $item->comment_approved ) {
-			$status_html = '<span class="graded">' . esc_html__( 'Completed', 'woothemes-sensei' ) . '</span>';
-			$grade       = __( 'No Grade', 'woothemes-sensei' );
+			$status_html = '<span class="graded">' . esc_html__( 'Completed', 'sensei' ) . '</span>';
+			$grade       = __( 'No Grade', 'sensei' );
 		} elseif ( 'graded' == $item->comment_approved ) {
-			$status_html = '<span class="graded">' . esc_html__( 'Graded', 'woothemes-sensei' ) . '</span>';
+			$status_html = '<span class="graded">' . esc_html__( 'Graded', 'sensei' ) . '</span>';
 			$grade       = get_comment_meta( $item->comment_ID, 'grade', true ) . '%';
 		} elseif ( 'passed' == $item->comment_approved ) {
-			$status_html = '<span class="passed">' . esc_html__( 'Passed', 'woothemes-sensei' ) . '</span>';
+			$status_html = '<span class="passed">' . esc_html__( 'Passed', 'sensei' ) . '</span>';
 			$grade       = get_comment_meta( $item->comment_ID, 'grade', true ) . '%';
 		} elseif ( 'failed' == $item->comment_approved ) {
-			$status_html = '<span class="failed">' . esc_html__( 'Failed', 'woothemes-sensei' ) . '</span>';
+			$status_html = '<span class="failed">' . esc_html__( 'Failed', 'sensei' ) . '</span>';
 			$grade       = get_comment_meta( $item->comment_ID, 'grade', true ) . '%';
 		} elseif ( 'ungraded' == $item->comment_approved ) {
-			$status_html = '<span class="ungraded">' . esc_html__( 'Ungraded', 'woothemes-sensei' ) . '</span>';
-			$grade       = __( 'N/A', 'woothemes-sensei' );
+			$status_html = '<span class="ungraded">' . esc_html__( 'Ungraded', 'sensei' ) . '</span>';
+			$grade       = __( 'N/A', 'sensei' );
 		} else {
-			$status_html = '<span class="in-progress">' . esc_html__( 'In Progress', 'woothemes-sensei' ) . '</span>';
-			$grade       = __( 'N/A', 'woothemes-sensei' );
+			$status_html = '<span class="in-progress">' . esc_html__( 'In Progress', 'sensei' ) . '</span>';
+			$grade       = __( 'N/A', 'sensei' );
 		}
 
 		$title = Sensei_Learner::get_full_name( $item->user_id );
@@ -276,13 +276,13 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		$grade_link = '';
 		switch ( $item->comment_approved ) {
 			case 'ungraded':
-				$grade_link = '<a class="button-primary button" href="' . esc_url( $quiz_link ) . '">' . esc_html__( 'Grade quiz', 'woothemes-sensei' ) . '</a>';
+				$grade_link = '<a class="button-primary button" href="' . esc_url( $quiz_link ) . '">' . esc_html__( 'Grade quiz', 'sensei' ) . '</a>';
 				break;
 
 			case 'graded':
 			case 'passed':
 			case 'failed':
-				$grade_link = '<a class="button-secondary button" href="' . esc_url( $quiz_link ) . '">' . esc_html__( 'Review grade', 'woothemes-sensei' ) . '</a>';
+				$grade_link = '<a class="button-secondary button" href="' . esc_url( $quiz_link ) . '">' . esc_html__( 'Review grade', 'sensei' ) . '</a>';
 				break;
 		}
 
@@ -352,7 +352,7 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 	 */
 	public function no_items() {
 
-		esc_html_e( 'No submissions found.', 'woothemes-sensei' );
+		esc_html_e( 'No submissions found.', 'sensei' );
 
 	} // End no_items()
 
@@ -388,7 +388,7 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 
 		echo '<div class="select-box">' . "\n";
 
-			echo '<select id="grading-lesson-options" data-placeholder="&larr; ' . esc_attr__( 'Select a course', 'woothemes-sensei' ) . '" name="grading_lesson" class="chosen_select widefat">' . "\n";
+			echo '<select id="grading-lesson-options" data-placeholder="&larr; ' . esc_attr__( 'Select a course', 'sensei' ) . '" name="grading_lesson" class="chosen_select widefat">' . "\n";
 
 				echo wp_kses(
 					Sensei()->grading->lessons_drop_down_html( $this->course_id, $this->lesson_id ),
@@ -408,7 +408,7 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 
 			echo '<div class="select-box reset-filter">' . "\n";
 
-				echo '<a class="button-secondary" href="' . esc_url( remove_query_arg( array( 'lesson_id', 'course_id' ) ) ) . '">' . esc_html__( 'Reset filter', 'woothemes-sensei' ) . '</a>' . "\n";
+				echo '<a class="button-secondary" href="' . esc_url( remove_query_arg( array( 'lesson_id', 'course_id' ) ) ) . '">' . esc_html__( 'Reset filter', 'sensei' ) . '</a>' . "\n";
 
 			echo '</div>' . "\n";
 
@@ -484,10 +484,10 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		$inprogress_args['view'] = 'in-progress';
 
 		$format              = '<a class="%s" href="%s">%s <span class="count">(%s)</span></a>';
-		$menu['all']         = sprintf( $format, $all_class, esc_url( add_query_arg( $all_args, admin_url( 'admin.php' ) ) ), __( 'All', 'woothemes-sensei' ), number_format( (int) $all_lessons_count ) );
-		$menu['ungraded']    = sprintf( $format, $ungraded_class, esc_url( add_query_arg( $ungraded_args, admin_url( 'admin.php' ) ) ), __( 'Ungraded', 'woothemes-sensei' ), number_format( (int) $ungraded_lessons_count ) );
-		$menu['graded']      = sprintf( $format, $graded_class, esc_url( add_query_arg( $graded_args, admin_url( 'admin.php' ) ) ), __( 'Graded', 'woothemes-sensei' ), number_format( (int) $graded_lessons_count ) );
-		$menu['in-progress'] = sprintf( $format, $inprogress_class, esc_url( add_query_arg( $inprogress_args, admin_url( 'admin.php' ) ) ), __( 'In Progress', 'woothemes-sensei' ), number_format( (int) $inprogress_lessons_count ) );
+		$menu['all']         = sprintf( $format, $all_class, esc_url( add_query_arg( $all_args, admin_url( 'admin.php' ) ) ), __( 'All', 'sensei' ), number_format( (int) $all_lessons_count ) );
+		$menu['ungraded']    = sprintf( $format, $ungraded_class, esc_url( add_query_arg( $ungraded_args, admin_url( 'admin.php' ) ) ), __( 'Ungraded', 'sensei' ), number_format( (int) $ungraded_lessons_count ) );
+		$menu['graded']      = sprintf( $format, $graded_class, esc_url( add_query_arg( $graded_args, admin_url( 'admin.php' ) ) ), __( 'Graded', 'sensei' ), number_format( (int) $graded_lessons_count ) );
+		$menu['in-progress'] = sprintf( $format, $inprogress_class, esc_url( add_query_arg( $inprogress_args, admin_url( 'admin.php' ) ) ), __( 'In Progress', 'sensei' ), number_format( (int) $inprogress_lessons_count ) );
 
 		$menu = apply_filters( 'sensei_grading_sub_menu', $menu );
 		if ( ! empty( $menu ) ) {

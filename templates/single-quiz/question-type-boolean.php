@@ -81,11 +81,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 			if ( 'true' == $option ) {
 
-				esc_html_e( 'True', 'woothemes-sensei' );
+				esc_html_e( 'True', 'sensei' );
 
 			} else {
 
-				esc_html_e( 'False', 'woothemes-sensei' );
+				esc_html_e( 'False', 'sensei' );
 
 			}
 

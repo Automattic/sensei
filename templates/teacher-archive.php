@@ -32,7 +32,7 @@
 
 	<?php else : ?>
 
-		<p><?php esc_html_e( 'There are no courses for this teacher.', 'woothemes-sensei' ); ?></p>
+		<p><?php esc_html_e( 'There are no courses for this teacher.', 'sensei' ); ?></p>
 
 	<?php endif; // End If Statement ?>
 

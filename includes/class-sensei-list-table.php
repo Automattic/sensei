@@ -135,7 +135,7 @@ class Sensei_List_Table extends WP_List_Table {
 				}
 			}
 			?>
-			<?php $this->search_box( apply_filters( 'sensei_list_table_search_button_text', __( 'Search Users', 'woothemes-sensei' ) ), 'search_id' ); ?>
+			<?php $this->search_box( apply_filters( 'sensei_list_table_search_button_text', __( 'Search Users', 'sensei' ) ), 'search_id' ); ?>
 		</form>
 		<?php
 	} // End table_search_form()
@@ -259,7 +259,7 @@ class Sensei_List_Table extends WP_List_Table {
 	 */
 	function no_items() {
 
-		esc_html_e( 'No items found.', 'woothemes-sensei' );
+		esc_html_e( 'No items found.', 'sensei' );
 
 	} // End no_items()
 

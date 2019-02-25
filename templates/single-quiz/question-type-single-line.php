@@ -27,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div class="answer">
 
 	<label for="<?php echo esc_attr( 'question_' . $question_data['ID'] ); ?>">
-		<?php esc_html_e( 'Answer:', 'woothemes-sensei' ); ?>
+		<?php esc_html_e( 'Answer:', 'sensei' ); ?>
 	</label>
 
 	<input type="text" id="<?php echo esc_attr( 'question_' . $question_data['ID'] ); ?>"

@@ -75,11 +75,11 @@ class Sensei_Shortcode_User_Messages implements Sensei_Shortcode_Interface {
 
 		if ( ! is_user_logged_in() ) {
 
-			Sensei()->notices->add_notice( __( 'Please login to view your messages.', 'woothemes-sensei' ), 'alert' );
+			Sensei()->notices->add_notice( __( 'Please login to view your messages.', 'sensei' ), 'alert' );
 
 		} elseif ( 0 == $this->messages_query->post_count ) {
 
-			Sensei()->notices->add_notice( __( 'You do not have any messages.', 'woothemes-sensei' ), 'alert' );
+			Sensei()->notices->add_notice( __( 'You do not have any messages.', 'sensei' ), 'alert' );
 		}
 
 		$messages_disabled_in_settings = ! ( ! isset( Sensei()->settings->settings['messages_disable'] )

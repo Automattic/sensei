@@ -82,7 +82,7 @@ gulp.task( 'pot', gulp.series( function() {
 	return gulp.src( [ '**/**.php', '!node_modules/**', '!build/**' ] )
 		.pipe( sort() )
 		.pipe( wpPot( {
-			domain: 'woothemes-sensei',
+			domain: 'sensei',
 			bugReport: 'https://www.transifex.com/woothemes/sensei-by-woothemes/'
 		} ) )
 		.pipe( gulp.dest( 'lang/sensei.pot' ) );
@@ -91,7 +91,7 @@ gulp.task( 'pot', gulp.series( function() {
 gulp.task( 'textdomain', gulp.series( function() {
 	return gulp.src( [ '**/*.php', '!node_modules/**', '!build/**' ] )
 		.pipe( checktextdomain( {
-			text_domain: 'woothemes-sensei',
+			text_domain: 'sensei',
 			keywords: [
 				'__:1,2d',
 				'_e:1,2d',

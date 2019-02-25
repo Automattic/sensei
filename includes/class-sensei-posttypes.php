@@ -128,7 +128,7 @@ class Sensei_PostTypes {
 			'show_in_admin_bar'     => true,
 			'query_var'             => true,
 			'rewrite'               => array(
-				'slug'       => esc_attr( apply_filters( 'sensei_course_slug', _x( 'course', 'post type single url base', 'woothemes-sensei' ) ) ),
+				'slug'       => esc_attr( apply_filters( 'sensei_course_slug', _x( 'course', 'post type single url base', 'sensei' ) ) ),
 				'with_front' => true,
 				'feeds'      => true,
 				'pages'      => true,
@@ -231,7 +231,7 @@ class Sensei_PostTypes {
 			'show_in_menu'          => true,
 			'query_var'             => true,
 			'rewrite'               => array(
-				'slug'       => esc_attr( apply_filters( 'sensei_lesson_slug', _x( 'lesson', 'post type single slug', 'woothemes-sensei' ) ) ),
+				'slug'       => esc_attr( apply_filters( 'sensei_lesson_slug', _x( 'lesson', 'post type single slug', 'sensei' ) ) ),
 				'with_front' => true,
 				'feeds'      => true,
 				'pages'      => true,
@@ -280,7 +280,7 @@ class Sensei_PostTypes {
 			'query_var'           => true,
 			'exclude_from_search' => true,
 			'rewrite'             => array(
-				'slug'       => esc_attr( apply_filters( 'sensei_quiz_slug', _x( 'quiz', 'post type single slug', 'woothemes-sensei' ) ) ),
+				'slug'       => esc_attr( apply_filters( 'sensei_quiz_slug', _x( 'quiz', 'post type single slug', 'sensei' ) ) ),
 				'with_front' => true,
 				'feeds'      => true,
 				'pages'      => true,
@@ -325,7 +325,7 @@ class Sensei_PostTypes {
 			'query_var'           => true,
 			'exclude_from_search' => true,
 			'rewrite'             => array(
-				'slug'       => esc_attr( apply_filters( 'sensei_question_slug', _x( 'question', 'post type single slug', 'woothemes-sensei' ) ) ),
+				'slug'       => esc_attr( apply_filters( 'sensei_question_slug', _x( 'question', 'post type single slug', 'sensei' ) ) ),
 				'with_front' => true,
 				'feeds'      => true,
 				'pages'      => true,
@@ -366,7 +366,7 @@ class Sensei_PostTypes {
 			'query_var'           => false,
 			'exclude_from_search' => true,
 			'rewrite'             => array(
-				'slug'       => esc_attr( apply_filters( 'sensei_multiple_question_slug', _x( 'multiple_question', 'post type single slug', 'woothemes-sensei' ) ) ),
+				'slug'       => esc_attr( apply_filters( 'sensei_multiple_question_slug', _x( 'multiple_question', 'post type single slug', 'sensei' ) ) ),
 				'with_front' => false,
 				'feeds'      => false,
 				'pages'      => false,
@@ -402,7 +402,7 @@ class Sensei_PostTypes {
 				'query_var'           => true,
 				'exclude_from_search' => true,
 				'rewrite'             => array(
-					'slug'       => esc_attr( apply_filters( 'sensei_messages_slug', _x( 'messages', 'post type single slug', 'woothemes-sensei' ) ) ),
+					'slug'       => esc_attr( apply_filters( 'sensei_messages_slug', _x( 'messages', 'post type single slug', 'sensei' ) ) ),
 					'with_front' => false,
 					'feeds'      => false,
 					'pages'      => true,
@@ -435,17 +435,17 @@ class Sensei_PostTypes {
 	public function setup_course_category_taxonomy() {
 		// "Course Categories" Custom Taxonomy
 		$labels = array(
-			'name'              => _x( 'Course Categories', 'taxonomy general name', 'woothemes-sensei' ),
-			'singular_name'     => _x( 'Course Category', 'taxonomy singular name', 'woothemes-sensei' ),
-			'search_items'      => __( 'Search Course Categories', 'woothemes-sensei' ),
-			'all_items'         => __( 'All Course Categories', 'woothemes-sensei' ),
-			'parent_item'       => __( 'Parent Course Category', 'woothemes-sensei' ),
-			'parent_item_colon' => __( 'Parent Course Category:', 'woothemes-sensei' ),
-			'edit_item'         => __( 'Edit Course Category', 'woothemes-sensei' ),
-			'update_item'       => __( 'Update Course Category', 'woothemes-sensei' ),
-			'add_new_item'      => __( 'Add New Course Category', 'woothemes-sensei' ),
-			'new_item_name'     => __( 'New Course Category Name', 'woothemes-sensei' ),
-			'menu_name'         => __( 'Course Categories', 'woothemes-sensei' ),
+			'name'              => _x( 'Course Categories', 'taxonomy general name', 'sensei' ),
+			'singular_name'     => _x( 'Course Category', 'taxonomy singular name', 'sensei' ),
+			'search_items'      => __( 'Search Course Categories', 'sensei' ),
+			'all_items'         => __( 'All Course Categories', 'sensei' ),
+			'parent_item'       => __( 'Parent Course Category', 'sensei' ),
+			'parent_item_colon' => __( 'Parent Course Category:', 'sensei' ),
+			'edit_item'         => __( 'Edit Course Category', 'sensei' ),
+			'update_item'       => __( 'Update Course Category', 'sensei' ),
+			'add_new_item'      => __( 'Add New Course Category', 'sensei' ),
+			'new_item_name'     => __( 'New Course Category Name', 'sensei' ),
+			'menu_name'         => __( 'Course Categories', 'sensei' ),
 			'popular_items'     => null, // Hides the "Popular" section above the "add" form in the admin.
 		);
 
@@ -462,7 +462,7 @@ class Sensei_PostTypes {
 				'delete_terms' => 'manage_categories',
 				'assign_terms' => 'edit_courses',
 			),
-			'rewrite'           => array( 'slug' => esc_attr( apply_filters( 'sensei_course_category_slug', _x( 'course-category', 'taxonomy archive slug', 'woothemes-sensei' ) ) ) ),
+			'rewrite'           => array( 'slug' => esc_attr( apply_filters( 'sensei_course_category_slug', _x( 'course-category', 'taxonomy archive slug', 'sensei' ) ) ) ),
 		);
 
 		register_taxonomy( 'course-category', array( 'course' ), $args );
@@ -479,17 +479,17 @@ class Sensei_PostTypes {
 
 		// "Quiz Types" Custom Taxonomy
 		$labels = array(
-			'name'              => _x( 'Quiz Types', 'taxonomy general name', 'woothemes-sensei' ),
-			'singular_name'     => _x( 'Quiz Type', 'taxonomy singular name', 'woothemes-sensei' ),
-			'search_items'      => __( 'Search Quiz Types', 'woothemes-sensei' ),
-			'all_items'         => __( 'All Quiz Types', 'woothemes-sensei' ),
-			'parent_item'       => __( 'Parent Quiz Type', 'woothemes-sensei' ),
-			'parent_item_colon' => __( 'Parent Quiz Type:', 'woothemes-sensei' ),
-			'edit_item'         => __( 'Edit Quiz Type', 'woothemes-sensei' ),
-			'update_item'       => __( 'Update Quiz Type', 'woothemes-sensei' ),
-			'add_new_item'      => __( 'Add New Quiz Type', 'woothemes-sensei' ),
-			'new_item_name'     => __( 'New Quiz Type Name', 'woothemes-sensei' ),
-			'menu_name'         => __( 'Quiz Types', 'woothemes-sensei' ),
+			'name'              => _x( 'Quiz Types', 'taxonomy general name', 'sensei' ),
+			'singular_name'     => _x( 'Quiz Type', 'taxonomy singular name', 'sensei' ),
+			'search_items'      => __( 'Search Quiz Types', 'sensei' ),
+			'all_items'         => __( 'All Quiz Types', 'sensei' ),
+			'parent_item'       => __( 'Parent Quiz Type', 'sensei' ),
+			'parent_item_colon' => __( 'Parent Quiz Type:', 'sensei' ),
+			'edit_item'         => __( 'Edit Quiz Type', 'sensei' ),
+			'update_item'       => __( 'Update Quiz Type', 'sensei' ),
+			'add_new_item'      => __( 'Add New Quiz Type', 'sensei' ),
+			'new_item_name'     => __( 'New Quiz Type Name', 'sensei' ),
+			'menu_name'         => __( 'Quiz Types', 'sensei' ),
 			'popular_items'     => null, // Hides the "Popular" section above the "add" form in the admin.
 		);
 
@@ -500,7 +500,7 @@ class Sensei_PostTypes {
 			'query_var'         => true,
 			'show_in_nav_menus' => false,
 			'public'            => false,
-			'rewrite'           => array( 'slug' => esc_attr( apply_filters( 'sensei_quiz_type_slug', _x( 'quiz-type', 'taxonomy archive slug', 'woothemes-sensei' ) ) ) ),
+			'rewrite'           => array( 'slug' => esc_attr( apply_filters( 'sensei_quiz_type_slug', _x( 'quiz-type', 'taxonomy archive slug', 'sensei' ) ) ) ),
 		);
 
 		register_taxonomy( 'quiz-type', array( 'quiz' ), $args );
@@ -516,17 +516,17 @@ class Sensei_PostTypes {
 
 		// "Question Types" Custom Taxonomy
 		$labels = array(
-			'name'              => _x( 'Question Types', 'taxonomy general name', 'woothemes-sensei' ),
-			'singular_name'     => _x( 'Question Type', 'taxonomy singular name', 'woothemes-sensei' ),
-			'search_items'      => __( 'Search Question Types', 'woothemes-sensei' ),
-			'all_items'         => __( 'All Question Types', 'woothemes-sensei' ),
-			'parent_item'       => __( 'Parent Question Type', 'woothemes-sensei' ),
-			'parent_item_colon' => __( 'Parent Question Type:', 'woothemes-sensei' ),
-			'edit_item'         => __( 'Edit Question Type', 'woothemes-sensei' ),
-			'update_item'       => __( 'Update Question Type', 'woothemes-sensei' ),
-			'add_new_item'      => __( 'Add New Question Type', 'woothemes-sensei' ),
-			'new_item_name'     => __( 'New Question Type Name', 'woothemes-sensei' ),
-			'menu_name'         => __( 'Question Types', 'woothemes-sensei' ),
+			'name'              => _x( 'Question Types', 'taxonomy general name', 'sensei' ),
+			'singular_name'     => _x( 'Question Type', 'taxonomy singular name', 'sensei' ),
+			'search_items'      => __( 'Search Question Types', 'sensei' ),
+			'all_items'         => __( 'All Question Types', 'sensei' ),
+			'parent_item'       => __( 'Parent Question Type', 'sensei' ),
+			'parent_item_colon' => __( 'Parent Question Type:', 'sensei' ),
+			'edit_item'         => __( 'Edit Question Type', 'sensei' ),
+			'update_item'       => __( 'Update Question Type', 'sensei' ),
+			'add_new_item'      => __( 'Add New Question Type', 'sensei' ),
+			'new_item_name'     => __( 'New Question Type Name', 'sensei' ),
+			'menu_name'         => __( 'Question Types', 'sensei' ),
 			'popular_items'     => null, // Hides the "Popular" section above the "add" form in the admin.
 		);
 
@@ -538,7 +538,7 @@ class Sensei_PostTypes {
 			'query_var'         => false,
 			'show_in_nav_menus' => false,
 			'show_admin_column' => true,
-			'rewrite'           => array( 'slug' => esc_attr( apply_filters( 'sensei_question_type_slug', _x( 'question-type', 'taxonomy archive slug', 'woothemes-sensei' ) ) ) ),
+			'rewrite'           => array( 'slug' => esc_attr( apply_filters( 'sensei_question_type_slug', _x( 'question-type', 'taxonomy archive slug', 'sensei' ) ) ) ),
 		);
 
 		register_taxonomy( 'question-type', array( 'question' ), $args );
@@ -553,17 +553,17 @@ class Sensei_PostTypes {
 	public function setup_question_category_taxonomy() {
 		// "Question Categories" Custom Taxonomy
 		$labels = array(
-			'name'              => _x( 'Question Categories', 'taxonomy general name', 'woothemes-sensei' ),
-			'singular_name'     => _x( 'Question Category', 'taxonomy singular name', 'woothemes-sensei' ),
-			'search_items'      => __( 'Search Question Categories', 'woothemes-sensei' ),
-			'all_items'         => __( 'All Question Categories', 'woothemes-sensei' ),
-			'parent_item'       => __( 'Parent Question Category', 'woothemes-sensei' ),
-			'parent_item_colon' => __( 'Parent Question Category:', 'woothemes-sensei' ),
-			'edit_item'         => __( 'Edit Question Category', 'woothemes-sensei' ),
-			'update_item'       => __( 'Update Question Category', 'woothemes-sensei' ),
-			'add_new_item'      => __( 'Add New Question Category', 'woothemes-sensei' ),
-			'new_item_name'     => __( 'New Question Category Name', 'woothemes-sensei' ),
-			'menu_name'         => __( 'Categories', 'woothemes-sensei' ),
+			'name'              => _x( 'Question Categories', 'taxonomy general name', 'sensei' ),
+			'singular_name'     => _x( 'Question Category', 'taxonomy singular name', 'sensei' ),
+			'search_items'      => __( 'Search Question Categories', 'sensei' ),
+			'all_items'         => __( 'All Question Categories', 'sensei' ),
+			'parent_item'       => __( 'Parent Question Category', 'sensei' ),
+			'parent_item_colon' => __( 'Parent Question Category:', 'sensei' ),
+			'edit_item'         => __( 'Edit Question Category', 'sensei' ),
+			'update_item'       => __( 'Update Question Category', 'sensei' ),
+			'add_new_item'      => __( 'Add New Question Category', 'sensei' ),
+			'new_item_name'     => __( 'New Question Category Name', 'sensei' ),
+			'menu_name'         => __( 'Categories', 'sensei' ),
 		);
 
 		$args = array(
@@ -580,7 +580,7 @@ class Sensei_PostTypes {
 				'delete_terms' => 'manage_categories',
 				'assign_terms' => 'edit_questions',
 			),
-			'rewrite'           => array( 'slug' => esc_attr( apply_filters( 'sensei_question_category_slug', _x( 'question-category', 'taxonomy archive slug', 'woothemes-sensei' ) ) ) ),
+			'rewrite'           => array( 'slug' => esc_attr( apply_filters( 'sensei_question_category_slug', _x( 'question-category', 'taxonomy archive slug', 'sensei' ) ) ) ),
 		);
 
 		register_taxonomy( 'question-category', array( 'question' ), $args );
@@ -595,17 +595,17 @@ class Sensei_PostTypes {
 	public function setup_lesson_tag_taxonomy() {
 		// "Lesson Tags" Custom Taxonomy
 		$labels = array(
-			'name'              => _x( 'Lesson Tags', 'taxonomy general name', 'woothemes-sensei' ),
-			'singular_name'     => _x( 'Lesson Tag', 'taxonomy singular name', 'woothemes-sensei' ),
-			'search_items'      => __( 'Search Lesson Tags', 'woothemes-sensei' ),
-			'all_items'         => __( 'All Lesson Tags', 'woothemes-sensei' ),
-			'parent_item'       => __( 'Parent Tag', 'woothemes-sensei' ),
-			'parent_item_colon' => __( 'Parent Tag:', 'woothemes-sensei' ),
-			'edit_item'         => __( 'Edit Lesson Tag', 'woothemes-sensei' ),
-			'update_item'       => __( 'Update Lesson Tag', 'woothemes-sensei' ),
-			'add_new_item'      => __( 'Add New Lesson Tag', 'woothemes-sensei' ),
-			'new_item_name'     => __( 'New Tag Name', 'woothemes-sensei' ),
-			'menu_name'         => __( 'Lesson Tags', 'woothemes-sensei' ),
+			'name'              => _x( 'Lesson Tags', 'taxonomy general name', 'sensei' ),
+			'singular_name'     => _x( 'Lesson Tag', 'taxonomy singular name', 'sensei' ),
+			'search_items'      => __( 'Search Lesson Tags', 'sensei' ),
+			'all_items'         => __( 'All Lesson Tags', 'sensei' ),
+			'parent_item'       => __( 'Parent Tag', 'sensei' ),
+			'parent_item_colon' => __( 'Parent Tag:', 'sensei' ),
+			'edit_item'         => __( 'Edit Lesson Tag', 'sensei' ),
+			'update_item'       => __( 'Update Lesson Tag', 'sensei' ),
+			'add_new_item'      => __( 'Add New Lesson Tag', 'sensei' ),
+			'new_item_name'     => __( 'New Tag Name', 'sensei' ),
+			'menu_name'         => __( 'Lesson Tags', 'sensei' ),
 		);
 
 		$args = array(
@@ -621,7 +621,7 @@ class Sensei_PostTypes {
 				'delete_terms' => 'manage_categories',
 				'assign_terms' => 'edit_lessons',
 			),
-			'rewrite'           => array( 'slug' => esc_attr( apply_filters( 'sensei_lesson_tag_slug', _x( 'lesson-tag', 'taxonomy archive slug', 'woothemes-sensei' ) ) ) ),
+			'rewrite'           => array( 'slug' => esc_attr( apply_filters( 'sensei_lesson_tag_slug', _x( 'lesson-tag', 'taxonomy archive slug', 'sensei' ) ) ) ),
 		);
 
 		register_taxonomy( 'lesson-tag', array( 'lesson' ), $args );
@@ -642,34 +642,34 @@ class Sensei_PostTypes {
 		);
 
 		$this->labels['course']            = array(
-			'singular' => __( 'Course', 'woothemes-sensei' ),
-			'plural'   => __( 'Courses', 'woothemes-sensei' ),
-			'menu'     => __( 'Courses', 'woothemes-sensei' ),
+			'singular' => __( 'Course', 'sensei' ),
+			'plural'   => __( 'Courses', 'sensei' ),
+			'menu'     => __( 'Courses', 'sensei' ),
 		);
 		$this->labels['lesson']            = array(
-			'singular' => __( 'Lesson', 'woothemes-sensei' ),
-			'plural'   => __( 'Lessons', 'woothemes-sensei' ),
-			'menu'     => __( 'Lessons', 'woothemes-sensei' ),
+			'singular' => __( 'Lesson', 'sensei' ),
+			'plural'   => __( 'Lessons', 'sensei' ),
+			'menu'     => __( 'Lessons', 'sensei' ),
 		);
 		$this->labels['quiz']              = array(
-			'singular' => __( 'Quiz', 'woothemes-sensei' ),
-			'plural'   => __( 'Quizzes', 'woothemes-sensei' ),
-			'menu'     => __( 'Quizzes', 'woothemes-sensei' ),
+			'singular' => __( 'Quiz', 'sensei' ),
+			'plural'   => __( 'Quizzes', 'sensei' ),
+			'menu'     => __( 'Quizzes', 'sensei' ),
 		);
 		$this->labels['question']          = array(
-			'singular' => __( 'Question', 'woothemes-sensei' ),
-			'plural'   => __( 'Questions', 'woothemes-sensei' ),
-			'menu'     => __( 'Questions', 'woothemes-sensei' ),
+			'singular' => __( 'Question', 'sensei' ),
+			'plural'   => __( 'Questions', 'sensei' ),
+			'menu'     => __( 'Questions', 'sensei' ),
 		);
 		$this->labels['multiple_question'] = array(
-			'singular' => __( 'Multiple Question', 'woothemes-sensei' ),
-			'plural'   => __( 'Multiple Questions', 'woothemes-sensei' ),
-			'menu'     => __( 'Multiple Questions', 'woothemes-sensei' ),
+			'singular' => __( 'Multiple Question', 'sensei' ),
+			'plural'   => __( 'Multiple Questions', 'sensei' ),
+			'menu'     => __( 'Multiple Questions', 'sensei' ),
 		);
 		$this->labels['sensei_message']    = array(
-			'singular' => __( 'Message', 'woothemes-sensei' ),
-			'plural'   => __( 'Messages', 'woothemes-sensei' ),
-			'menu'     => __( 'Messages', 'woothemes-sensei' ),
+			'singular' => __( 'Message', 'sensei' ),
+			'plural'   => __( 'Messages', 'sensei' ),
+			'menu'     => __( 'Messages', 'sensei' ),
 		);
 
 	} // End setup_post_type_labels_base()
@@ -690,23 +690,23 @@ class Sensei_PostTypes {
 		$labels = array(
 			'name'               => $plural,
 			'singular_name'      => $singular,
-			'add_new'            => __( 'Add New', 'woothemes-sensei' ),
+			'add_new'            => __( 'Add New', 'sensei' ),
 			// translators: Placeholder is the singular post type label.
-			'add_new_item'       => sprintf( __( 'Add New %s', 'woothemes-sensei' ), $singular ),
+			'add_new_item'       => sprintf( __( 'Add New %s', 'sensei' ), $singular ),
 			// translators: Placeholder is the singular post type label.
-			'edit_item'          => sprintf( __( 'Edit %s', 'woothemes-sensei' ), $singular ),
+			'edit_item'          => sprintf( __( 'Edit %s', 'sensei' ), $singular ),
 			// translators: Placeholder is the singular post type label.
-			'new_item'           => sprintf( __( 'New %s', 'woothemes-sensei' ), $singular ),
+			'new_item'           => sprintf( __( 'New %s', 'sensei' ), $singular ),
 			// translators: Placeholder is the plural post type label.
-			'all_items'          => sprintf( __( 'All %s', 'woothemes-sensei' ), $plural ),
+			'all_items'          => sprintf( __( 'All %s', 'sensei' ), $plural ),
 			// translators: Placeholder is the singular post type label.
-			'view_item'          => sprintf( __( 'View %s', 'woothemes-sensei' ), $singular ),
+			'view_item'          => sprintf( __( 'View %s', 'sensei' ), $singular ),
 			// translators: Placeholder is the plural post type label.
-			'search_items'       => sprintf( __( 'Search %s', 'woothemes-sensei' ), $plural ),
+			'search_items'       => sprintf( __( 'Search %s', 'sensei' ), $plural ),
 			// translators: Placeholder is the lower-case plural post type label.
-			'not_found'          => sprintf( __( 'No %s found', 'woothemes-sensei' ), $lower_case_plural ),
+			'not_found'          => sprintf( __( 'No %s found', 'sensei' ), $lower_case_plural ),
 			// translators: Placeholder is the lower-case plural post type label.
-			'not_found_in_trash' => sprintf( __( 'No %s found in Trash', 'woothemes-sensei' ), $lower_case_plural ),
+			'not_found_in_trash' => sprintf( __( 'No %s found in Trash', 'sensei' ), $lower_case_plural ),
 			'parent_item_colon'  => '',
 			'menu_name'          => $menu,
 		);
@@ -749,19 +749,19 @@ class Sensei_PostTypes {
 		$messages = array(
 			0  => '',
 			// translators: Placeholders are the singular label for the post type and the post's permalink, respectively.
-			1  => sprintf( __( '%1$s updated. %2$sView %1$s%3$s.', 'woothemes-sensei' ), $this->labels[ $post_type ]['singular'], '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
-			2  => __( 'Custom field updated.', 'woothemes-sensei' ),
-			3  => __( 'Custom field deleted.', 'woothemes-sensei' ),
+			1  => sprintf( __( '%1$s updated. %2$sView %1$s%3$s.', 'sensei' ), $this->labels[ $post_type ]['singular'], '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
+			2  => __( 'Custom field updated.', 'sensei' ),
+			3  => __( 'Custom field deleted.', 'sensei' ),
 			// translators: Placeholder is the singular label for the post type.
-			4  => sprintf( __( '%1$s updated.', 'woothemes-sensei' ), $this->labels[ $post_type ]['singular'] ),
+			4  => sprintf( __( '%1$s updated.', 'sensei' ), $this->labels[ $post_type ]['singular'] ),
 			// translators: Placeholders are the singular label for the post type and the post's revision, respectively.
-			5  => isset( $_GET['revision'] ) ? sprintf( __( '%1$s restored to revision from %2$s.', 'woothemes-sensei' ), $this->labels[ $post_type ]['singular'], wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
+			5  => isset( $_GET['revision'] ) ? sprintf( __( '%1$s restored to revision from %2$s.', 'sensei' ), $this->labels[ $post_type ]['singular'], wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
 			// translators: Placeholders are the singular label for the post type and the post's permalink, respectively.
-			6  => sprintf( __( '%1$s published. %2$sView %1$s%3$s.', 'woothemes-sensei' ), $this->labels[ $post_type ]['singular'], '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
+			6  => sprintf( __( '%1$s published. %2$sView %1$s%3$s.', 'sensei' ), $this->labels[ $post_type ]['singular'], '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
 			// translators: Placeholder is the singular label for the post type.
-			7  => sprintf( __( '%1$s saved.', 'woothemes-sensei' ), $this->labels[ $post_type ]['singular'] ),
+			7  => sprintf( __( '%1$s saved.', 'sensei' ), $this->labels[ $post_type ]['singular'] ),
 			// translators: Placeholders are the singular label for the post type and the post's preview link, respectively.
-			8  => sprintf( __( '%1$s submitted. %2$sPreview %1$s%3$s.', 'woothemes-sensei' ), $this->labels[ $post_type ]['singular'], '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', '</a>' ),
+			8  => sprintf( __( '%1$s submitted. %2$sPreview %1$s%3$s.', 'sensei' ), $this->labels[ $post_type ]['singular'], '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', '</a>' ),
 			/*
 			  * translators: Placeholders are as follows (in order):
 			  *
@@ -770,9 +770,9 @@ class Sensei_PostTypes {
 			  * - The opening tag for the post's permalink.
 			  * - The closing tag for the post's permalink.
 			  */
-			9  => sprintf( __( '%1$s scheduled for: %2$s. %3$sPreview %4$s%5$s.', 'woothemes-sensei' ), $this->labels[ $post_type ]['singular'], '<strong>' . date_i18n( __( 'M j, Y @ G:i', 'woothemes-sensei' ), strtotime( $post->post_date ) ) . '</strong>', '<a target="_blank" href="' . esc_url( get_permalink( $post_ID ) ) . '">', $this->labels[ $post_type ]['singular'], '</a>' ),
+			9  => sprintf( __( '%1$s scheduled for: %2$s. %3$sPreview %4$s%5$s.', 'sensei' ), $this->labels[ $post_type ]['singular'], '<strong>' . date_i18n( __( 'M j, Y @ G:i', 'sensei' ), strtotime( $post->post_date ) ) . '</strong>', '<a target="_blank" href="' . esc_url( get_permalink( $post_ID ) ) . '">', $this->labels[ $post_type ]['singular'], '</a>' ),
 			// translators: Placeholders are the singular label for the post type and the post's preview link, respectively.
-			10 => sprintf( __( '%1$s draft updated. %2$sPreview %3$s%4$s.', 'woothemes-sensei' ), $this->labels[ $post_type ]['singular'], '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', $this->labels[ $post_type ]['singular'], '</a>' ),
+			10 => sprintf( __( '%1$s draft updated. %2$sPreview %3$s%4$s.', 'sensei' ), $this->labels[ $post_type ]['singular'], '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', $this->labels[ $post_type ]['singular'], '</a>' ),
 		);
 
 		return $messages;
@@ -788,9 +788,9 @@ class Sensei_PostTypes {
 	 */
 	public function enter_title_here( $title ) {
 		if ( get_post_type() == 'course' ) {
-			$title = __( 'Enter a title for this course here', 'woothemes-sensei' );
+			$title = __( 'Enter a title for this course here', 'sensei' );
 		} elseif ( get_post_type() == 'lesson' ) {
-			$title = __( 'Enter a title for this lesson here', 'woothemes-sensei' );
+			$title = __( 'Enter a title for this lesson here', 'sensei' );
 		}
 
 		return $title;

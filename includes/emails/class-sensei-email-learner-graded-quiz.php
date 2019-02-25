@@ -62,13 +62,13 @@ if ( ! class_exists( 'Sensei_Email_Learner_Graded_Quiz' ) ) :
 			do_action( 'sensei_before_mail', $this->recipient );
 
 			// translators: Placeholder is the blog name.
-			$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] Your quiz has been graded', 'woothemes-sensei' ), get_bloginfo( 'name' ) ), $this->template );
-			$this->heading = apply_filters( 'sensei_email_heading', __( 'Your quiz has been graded', 'woothemes-sensei' ), $this->template );
+			$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] Your quiz has been graded', 'sensei' ), get_bloginfo( 'name' ) ), $this->template );
+			$this->heading = apply_filters( 'sensei_email_heading', __( 'Your quiz has been graded', 'sensei' ), $this->template );
 
 			// Get passed flag
-			$passed = __( 'failed', 'woothemes-sensei' );
+			$passed = __( 'failed', 'sensei' );
 			if ( $grade >= $passmark ) {
-				$passed = __( 'passed', 'woothemes-sensei' );
+				$passed = __( 'passed', 'sensei' );
 			}
 
 			// Get grade tye (auto/manual)
@@ -76,8 +76,8 @@ if ( ! class_exists( 'Sensei_Email_Learner_Graded_Quiz' ) ) :
 
 			if ( 'auto' == $grade_type ) {
 				// translators: Placeholder is the blog name.
-				$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] You have completed a quiz', 'woothemes-sensei' ), get_bloginfo( 'name' ) ), $this->template );
-				$this->heading = apply_filters( 'sensei_email_heading', __( 'You have completed a quiz', 'woothemes-sensei' ), $this->template );
+				$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] You have completed a quiz', 'sensei' ), get_bloginfo( 'name' ) ), $this->template );
+				$this->heading = apply_filters( 'sensei_email_heading', __( 'You have completed a quiz', 'sensei' ), $this->template );
 			}
 
 			// Construct data array

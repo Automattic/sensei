@@ -56,8 +56,8 @@ if ( ! class_exists( 'Sensei_Email_Teacher_Started_Course' ) ) :
 			do_action( 'sensei_before_mail', $this->recipient );
 
 			// translators: Placeholder is the blog name.
-			$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] Your student has started a course', 'woothemes-sensei' ), get_bloginfo( 'name' ) ), $this->template );
-			$this->heading = apply_filters( 'sensei_email_heading', __( 'Your student has started a course', 'woothemes-sensei' ), $this->template );
+			$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] Your student has started a course', 'sensei' ), get_bloginfo( 'name' ) ), $this->template );
+			$this->heading = apply_filters( 'sensei_email_heading', __( 'Your student has started a course', 'sensei' ), $this->template );
 
 			// Construct data array
 			$sensei_email_data = apply_filters(

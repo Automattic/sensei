@@ -40,8 +40,8 @@ class Sensei_Updates {
 			'1.1.0' => array(
 				'auto'   => array(
 					'assign_role_caps' => array(
-						'title'   => __( 'Assign role capabilities', 'woothemes-sensei' ),
-						'desc'    => __( 'Assigns Sensei capabilites to the relevant user roles.', 'woothemes-sensei' ),
+						'title'   => __( 'Assign role capabilities', 'sensei' ),
+						'desc'    => __( 'Assigns Sensei capabilites to the relevant user roles.', 'sensei' ),
 						'product' => 'Sensei',
 					),
 				),
@@ -50,26 +50,26 @@ class Sensei_Updates {
 			'1.3.0' => array(
 				'auto'   => array(
 					'set_default_quiz_grade_type' => array(
-						'title' => __( 'Set default quiz grade type', 'woothemes-sensei' ),
-						'desc'  => __( 'Sets all quizzes to the default \'auto\' grade type.', 'woothemes-sensei' ),
+						'title' => __( 'Set default quiz grade type', 'sensei' ),
+						'desc'  => __( 'Sets all quizzes to the default \'auto\' grade type.', 'sensei' ),
 					),
 					'set_default_question_type'   => array(
-						'title' => __( 'Set default question type', 'woothemes-sensei' ),
-						'desc'  => __( 'Sets all questions to the default \'multiple choice\' type.', 'woothemes-sensei' ),
+						'title' => __( 'Set default question type', 'sensei' ),
+						'desc'  => __( 'Sets all questions to the default \'multiple choice\' type.', 'sensei' ),
 					),
 				),
 				'manual' => array(
 					'update_question_answer_data' => array(
-						'title' => __( 'Update question answer data', 'woothemes-sensei' ),
-						'desc'  => __( 'Updates questions to use the new question types structure.', 'woothemes-sensei' ),
+						'title' => __( 'Update question answer data', 'sensei' ),
+						'desc'  => __( 'Updates questions to use the new question types structure.', 'sensei' ),
 					),
 				),
 			),
 			'1.4.0' => array(
 				'auto'   => array(
 					'update_question_grade_points' => array(
-						'title' => __( 'Update question grade points', 'woothemes-sensei' ),
-						'desc'  => __( 'Sets all question grade points to the default value of \'1\'.', 'woothemes-sensei' ),
+						'title' => __( 'Update question grade points', 'sensei' ),
+						'desc'  => __( 'Sets all question grade points to the default value of \'1\'.', 'sensei' ),
 					),
 				),
 				'manual' => array(),
@@ -77,46 +77,46 @@ class Sensei_Updates {
 			'1.5.0' => array(
 				'auto'   => array(
 					'convert_essay_paste_questions' => array(
-						'title' => __( 'Convert essay paste questions into multi-line questions', 'woothemes-sensei' ),
-						'desc'  => __( 'Converts all essay paste questions into multi-line questions as the essay paste question type was removed in v1.5.0.', 'woothemes-sensei' ),
+						'title' => __( 'Convert essay paste questions into multi-line questions', 'sensei' ),
+						'desc'  => __( 'Converts all essay paste questions into multi-line questions as the essay paste question type was removed in v1.5.0.', 'sensei' ),
 					),
 				),
 				'manual' => array(
 					'set_random_question_order'       => array(
-						'title' => __( 'Set all quizzes to have a random question order', 'woothemes-sensei' ),
-						'desc'  => __( 'Sets the order all of questions in all quizzes to a random order, which can be switched off per quiz.', 'woothemes-sensei' ),
+						'title' => __( 'Set all quizzes to have a random question order', 'sensei' ),
+						'desc'  => __( 'Sets the order all of questions in all quizzes to a random order, which can be switched off per quiz.', 'sensei' ),
 					),
 					'set_default_show_question_count' => array(
-						'title' => __( 'Set all quizzes to show all questions', 'woothemes-sensei' ),
-						'desc'  => __( 'Sets all quizzes to show all questions - this can be changed per quiz.', 'woothemes-sensei' ),
+						'title' => __( 'Set all quizzes to show all questions', 'sensei' ),
+						'desc'  => __( 'Sets all quizzes to show all questions - this can be changed per quiz.', 'sensei' ),
 					),
 					'remove_deleted_user_activity'    => array(
-						'title' => __( 'Remove Sensei activity for deleted users', 'woothemes-sensei' ),
-						'desc'  => __( 'Removes all course, lesson &amp; quiz activity for users that have already been deleted from the database. This will fix incorrect learner counts in the Analysis section.', 'woothemes-sensei' ),
+						'title' => __( 'Remove Sensei activity for deleted users', 'sensei' ),
+						'desc'  => __( 'Removes all course, lesson &amp; quiz activity for users that have already been deleted from the database. This will fix incorrect learner counts in the Analysis section.', 'sensei' ),
 					),
 				),
 			),
 			'1.6.0' => array(
 				'auto'   => array(
 					'add_teacher_role'          => array(
-						'title' => __( 'Add \'Teacher\' role', 'woothemes-sensei' ),
-						'desc'  => __( 'Adds a \'Teacher\' role to your WordPress site that will allow users to mange the Grading and Analysis pages.', 'woothemes-sensei' ),
+						'title' => __( 'Add \'Teacher\' role', 'sensei' ),
+						'desc'  => __( 'Adds a \'Teacher\' role to your WordPress site that will allow users to mange the Grading and Analysis pages.', 'sensei' ),
 					),
 					'add_sensei_caps'           => array(
-						'title' => __( 'Add administrator capabilities', 'woothemes-sensei' ),
-						'desc'  => __( 'Adds the \'manage_sensei\' and \'manage_sensei_grades\' capabilities to the Administrator role.', 'woothemes-sensei' ),
+						'title' => __( 'Add administrator capabilities', 'sensei' ),
+						'desc'  => __( 'Adds the \'manage_sensei\' and \'manage_sensei_grades\' capabilities to the Administrator role.', 'sensei' ),
 					),
 					'restructure_question_meta' => array(
-						'title' => __( 'Restructure question meta data', 'woothemes-sensei' ),
-						'desc'  => __( 'Restructures the question meta data as it relates to quizzes - this accounts for changes in the data structure in v1.6+.', 'woothemes-sensei' ),
+						'title' => __( 'Restructure question meta data', 'sensei' ),
+						'desc'  => __( 'Restructures the question meta data as it relates to quizzes - this accounts for changes in the data structure in v1.6+.', 'sensei' ),
 					),
 					'update_quiz_settings'      => array(
-						'title' => __( 'Add new quiz settings', 'woothemes-sensei' ),
-						'desc'  => __( 'Adds new settings to quizzes that were previously registered as global settings.', 'woothemes-sensei' ),
+						'title' => __( 'Add new quiz settings', 'sensei' ),
+						'desc'  => __( 'Adds new settings to quizzes that were previously registered as global settings.', 'sensei' ),
 					),
 					'reset_lesson_order_meta'   => array(
-						'title' => __( 'Set default order of lessons', 'woothemes-sensei' ),
-						'desc'  => __( 'Adds data to lessons to ensure that they show up on the \'Order Lessons\' screen - if this update has been run once before then it will reset all lessons to the default order.', 'woothemes-sensei' ),
+						'title' => __( 'Set default order of lessons', 'sensei' ),
+						'desc'  => __( 'Adds data to lessons to ensure that they show up on the \'Order Lessons\' screen - if this update has been run once before then it will reset all lessons to the default order.', 'sensei' ),
 					),
 				),
 				'manual' => array(),
@@ -124,50 +124,50 @@ class Sensei_Updates {
 			'1.7.0' => array(
 				'auto'   => array(
 					'add_editor_caps' => array(
-						'title' => __( 'Add Editor capabilities', 'woothemes-sensei' ),
-						'desc'  => __( 'Adds the \'manage_sensei_grades\' capability to the Editor role.', 'woothemes-sensei' ),
+						'title' => __( 'Add Editor capabilities', 'sensei' ),
+						'desc'  => __( 'Adds the \'manage_sensei_grades\' capability to the Editor role.', 'sensei' ),
 					),
 				),
 				'forced' => array(
 					'update_question_gap_fill_separators'  => array(
-						'title' => __( 'Update Gap Fill questions', 'woothemes-sensei' ),
-						'desc'  => __( 'Updates the format of gap fill questions to allow auto grading and greater flexibility in matching.', 'woothemes-sensei' ),
+						'title' => __( 'Update Gap Fill questions', 'sensei' ),
+						'desc'  => __( 'Updates the format of gap fill questions to allow auto grading and greater flexibility in matching.', 'sensei' ),
 					),
 					'update_quiz_lesson_relationship'      => array(
-						'title' => __( 'Restructure quiz lesson relationship', 'woothemes-sensei' ),
-						'desc'  => __( 'Adds data to quizzes and lessons to ensure that they maintain their 1 to 1 relationship.', 'woothemes-sensei' ),
+						'title' => __( 'Restructure quiz lesson relationship', 'sensei' ),
+						'desc'  => __( 'Adds data to quizzes and lessons to ensure that they maintain their 1 to 1 relationship.', 'sensei' ),
 					),
 					'status_changes_fix_lessons'           => array(
-						'title' => __( 'Update lesson statuses', 'woothemes-sensei' ),
-						'desc'  => __( 'Update existing lesson statuses.', 'woothemes-sensei' ),
+						'title' => __( 'Update lesson statuses', 'sensei' ),
+						'desc'  => __( 'Update existing lesson statuses.', 'sensei' ),
 					),
 					'status_changes_convert_lessons'       => array(
-						'title' => __( 'Convert lesson statuses', 'woothemes-sensei' ),
-						'desc'  => __( 'Convert to new lesson statuses.', 'woothemes-sensei' ),
+						'title' => __( 'Convert lesson statuses', 'sensei' ),
+						'desc'  => __( 'Convert to new lesson statuses.', 'sensei' ),
 					),
 					'status_changes_convert_courses'       => array(
-						'title' => __( 'Convert course statuses', 'woothemes-sensei' ),
-						'desc'  => __( 'Convert to new course statuses.', 'woothemes-sensei' ),
+						'title' => __( 'Convert course statuses', 'sensei' ),
+						'desc'  => __( 'Convert to new course statuses.', 'sensei' ),
 					),
 					'status_changes_convert_questions'     => array(
-						'title' => __( 'Convert question statuses', 'woothemes-sensei' ),
-						'desc'  => __( 'Convert to new question statuses.', 'woothemes-sensei' ),
+						'title' => __( 'Convert question statuses', 'sensei' ),
+						'desc'  => __( 'Convert to new question statuses.', 'sensei' ),
 					),
 					'update_legacy_sensei_comments_status' => array(
-						'title' => __( 'Convert legacy Sensei activity types', 'woothemes-sensei' ),
-						'desc'  => __( 'Convert all legacy Sensei activity types such as \'sensei_lesson_start\' and \'sensei_user_answer\' to new status format.', 'woothemes-sensei' ),
+						'title' => __( 'Convert legacy Sensei activity types', 'sensei' ),
+						'desc'  => __( 'Convert all legacy Sensei activity types such as \'sensei_lesson_start\' and \'sensei_user_answer\' to new status format.', 'sensei' ),
 					),
 					'update_comment_course_lesson_comment_counts' => array(
-						'title' => __( 'Update comment counts', 'woothemes-sensei' ),
-						'desc'  => __( 'Update comment counts on Courses and Lessons due to status changes.', 'woothemes-sensei' ),
+						'title' => __( 'Update comment counts', 'sensei' ),
+						'desc'  => __( 'Update comment counts on Courses and Lessons due to status changes.', 'sensei' ),
 					),
 				),
 			),
 			'1.7.2' => array(
 				'auto' => array(
 					'index_comment_status_field' => array(
-						'title' => __( 'Add database index to comment statuses', 'woothemes-sensei' ),
-						'desc'  => __( 'This indexes the comment statuses in the database, which will speed up all Sensei activity queries.', 'woothemes-sensei' ),
+						'title' => __( 'Add database index to comment statuses', 'sensei' ),
+						'desc'  => __( 'This indexes the comment statuses in the database, which will speed up all Sensei activity queries.', 'sensei' ),
 					),
 				),
 			),
@@ -221,7 +221,7 @@ class Sensei_Updates {
 	 */
 	public function add_update_admin_screen() {
 		if ( current_user_can( 'manage_options' ) ) {
-			add_submenu_page( 'sensei', __( 'Sensei Updates', 'woothemes-sensei' ), __( 'Data Updates', 'woothemes-sensei' ), 'manage_options', 'sensei_updates', array( $this, 'sensei_updates_page' ) );
+			add_submenu_page( 'sensei', __( 'Sensei Updates', 'sensei' ), __( 'Data Updates', 'sensei' ), 'manage_options', 'sensei_updates', array( $this, 'sensei_updates_page' ) );
 		}
 	} // End add_update_admin_screen()
 
@@ -245,7 +245,7 @@ class Sensei_Updates {
 		<div class="wrap">
 
 		<div id="icon-woothemes-sensei" class="icon32"><br></div>
-		<h1><?php esc_html_e( 'Sensei Updates', 'woothemes-sensei' ); ?></h1>
+		<h1><?php esc_html_e( 'Sensei Updates', 'sensei' ); ?></h1>
 
 		<?php
 		$function_name = '';
@@ -267,8 +267,8 @@ class Sensei_Updates {
 						|| ! wp_verify_nonce( $_POST[ $function_name . '_nonce_field' ], 'run_' . $function_name ) ) {
 
 						wp_die(
-							'<h1>' . esc_html__( 'Cheatin&#8217; uh?', 'woothemes-sensei' ) . '</h1>' .
-							'<p>' . esc_html__( 'The nonce supplied in order to run this update function is invalid', 'woothemes-sensei' ) . '</p>',
+							'<h1>' . esc_html__( 'Cheatin&#8217; uh?', 'sensei' ) . '</h1>' .
+							'<p>' . esc_html__( 'The nonce supplied in order to run this update function is invalid', 'sensei' ) . '</p>',
 							403
 						);
 
@@ -315,8 +315,8 @@ class Sensei_Updates {
 					|| ! wp_verify_nonce( $_GET[ $function_name . '_nonce' ], 'run_' . $function_name ) ) {
 
 						wp_die(
-							'<h1>' . esc_html__( 'Cheatin&#8217; uh?', 'woothemes-sensei' ) . '</h1>' .
-							'<p>' . esc_html__( 'The nonce supplied in order to run this update function is invalid', 'woothemes-sensei' ) . '</p>',
+							'<h1>' . esc_html__( 'Cheatin&#8217; uh?', 'sensei' ) . '</h1>' .
+							'<p>' . esc_html__( 'The nonce supplied in order to run this update function is invalid', 'sensei' ) . '</p>',
 							403
 						);
 
@@ -353,11 +353,11 @@ class Sensei_Updates {
 			if ( ! $done_processing ) {
 				?>
 
-			<h3><?php esc_html_e( 'Processing Updates...', 'woothemes-sensei' ); ?></h3>
+			<h3><?php esc_html_e( 'Processing Updates...', 'sensei' ); ?></h3>
 
 			<p>
 
-					<?php esc_html_e( "If your browser doesn't start loading the next page automatically, click this button:", 'woothemes-sensei' ); ?>
+					<?php esc_html_e( "If your browser doesn't start loading the next page automatically, click this button:", 'sensei' ); ?>
 
 					<?php
 					$next_action_url = add_query_arg(
@@ -374,7 +374,7 @@ class Sensei_Updates {
 
 				<a class="button"  href="<?php echo esc_url( $next_action_url ); ?>">
 
-					<?php esc_html_e( 'Next', 'woothemes-sensei' ); ?>
+					<?php esc_html_e( 'Next', 'sensei' ); ?>
 
 				</a>
 
@@ -390,11 +390,11 @@ class Sensei_Updates {
 
 			<?php } else { ?>
 
-			<p><strong><?php esc_html_e( 'Update completed successfully!', 'woothemes-sensei' ); ?></strong></p>
+			<p><strong><?php esc_html_e( 'Update completed successfully!', 'sensei' ); ?></strong></p>
 			<p>
-				<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=lesson' ) ); ?>"><?php esc_html_e( 'Create a new lesson', 'woothemes-sensei' ); ?></a>
+				<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=lesson' ) ); ?>"><?php esc_html_e( 'Create a new lesson', 'sensei' ); ?></a>
 				or <a
-					href="<?php echo esc_url( admin_url( 'admin.php?page=sensei_updates' ) ); ?>"><?php esc_html_e( 'run some more updates', 'woothemes-sensei' ); ?></a>.
+					href="<?php echo esc_url( admin_url( 'admin.php?page=sensei_updates' ) ); ?>"><?php esc_html_e( 'run some more updates', 'sensei' ); ?></a>.
 			</p>
 
 				<?php
@@ -402,33 +402,33 @@ class Sensei_Updates {
 		} else {
 			?>
 
-			<h2><?php esc_html_e( 'Updates', 'woothemes-sensei' ); ?></h2>
+			<h2><?php esc_html_e( 'Updates', 'sensei' ); ?></h2>
 			<p>
 				<?php
 				// translators: Placeholders are opening and closing <code> tags.
-				echo wp_kses_post( sprintf( __( 'These are updates that have been made available as new Sensei versions have been released. Updates of type %1$sAuto%2$s will run as you update Sensei to the relevant version - other updates need to be run manually and you can do that here.', 'woothemes-sensei' ), '<code>', '</code>' ) );
+				echo wp_kses_post( sprintf( __( 'These are updates that have been made available as new Sensei versions have been released. Updates of type %1$sAuto%2$s will run as you update Sensei to the relevant version - other updates need to be run manually and you can do that here.', 'sensei' ), '<code>', '</code>' ) );
 				?>
 			</p>
 
 			<div class="updated"><p>
-					<strong><?php esc_html_e( 'Only run these updates if you have been instructed to do so by Support staff.', 'woothemes-sensei' ); ?></strong>
+					<strong><?php esc_html_e( 'Only run these updates if you have been instructed to do so by Support staff.', 'sensei' ); ?></strong>
 				</p></div>
 
 			<table class="widefat" cellspacing="0" id="update-plugins-table">
 
 				<thead>
 				<tr>
-					<th scope="col" class="manage-column"><?php esc_html_e( 'Update', 'woothemes-sensei' ); ?></th>
-					<th scope="col" class="manage-column"><?php esc_html_e( 'Type', 'woothemes-sensei' ); ?></th>
-					<th scope="col" class="manage-column"><?php esc_html_e( 'Action', 'woothemes-sensei' ); ?></th>
+					<th scope="col" class="manage-column"><?php esc_html_e( 'Update', 'sensei' ); ?></th>
+					<th scope="col" class="manage-column"><?php esc_html_e( 'Type', 'sensei' ); ?></th>
+					<th scope="col" class="manage-column"><?php esc_html_e( 'Action', 'sensei' ); ?></th>
 				</tr>
 				</thead>
 
 				<tfoot>
 				<tr>
-					<th scope="col" class="manage-column"><?php esc_html_e( 'Update', 'woothemes-sensei' ); ?></th>
-					<th scope="col" class="manage-column"><?php esc_html_e( 'Type', 'woothemes-sensei' ); ?></th>
-					<th scope="col" class="manage-column"><?php esc_html_e( 'Action', 'woothemes-sensei' ); ?></th>
+					<th scope="col" class="manage-column"><?php esc_html_e( 'Update', 'sensei' ); ?></th>
+					<th scope="col" class="manage-column"><?php esc_html_e( 'Type', 'sensei' ); ?></th>
+					<th scope="col" class="manage-column"><?php esc_html_e( 'Action', 'sensei' ); ?></th>
 				</tr>
 				</tfoot>
 
@@ -458,15 +458,15 @@ class Sensei_Updates {
 											<em>
 												<?php
 												// translators: Placeholders are the product name and the version number, respectively.
-												printf( esc_html__( 'Originally included in %1$s v%2$s', 'woothemes-sensei' ), esc_html( $product ), esc_html( $version ) );
+												printf( esc_html__( 'Originally included in %1$s v%2$s', 'sensei' ), esc_html( $product ), esc_html( $version ) );
 												?>
 											</em>
 										</p>
 									</td>
 									<?php
-									$type_label = __( 'Auto', 'woothemes-sensei' );
+									$type_label = __( 'Auto', 'sensei' );
 									if ( $type != 'auto' ) {
-										$type_label = __( 'Manual', 'woothemes-sensei' );
+										$type_label = __( 'Manual', 'sensei' );
 									}
 									?>
 									<td><p><?php echo esc_html( $type_label ); ?></p></td>
@@ -475,7 +475,7 @@ class Sensei_Updates {
 											<input onclick="javascript:return confirm('
 											<?php
 												// translators: Placeholder is the title of the update.
-												echo esc_html( addslashes( sprintf( __( 'Are you sure you want to run the \'%s\' update?', 'woothemes-sensei' ), $data['title'] ) ) );
+												echo esc_html( addslashes( sprintf( __( 'Are you sure you want to run the \'%s\' update?', 'sensei' ), $data['title'] ) ) );
 											?>
 												');"
 												   id="update-sensei"
@@ -489,9 +489,9 @@ class Sensei_Updates {
 												   value="
 												   <?php
 													if ( $update_run ) {
-														esc_html_e( 'Re-run Update', 'woothemes-sensei' );
+														esc_html_e( 'Re-run Update', 'sensei' );
 													} else {
-														esc_html_e( 'Run Update', 'woothemes-sensei' ); }
+														esc_html_e( 'Run Update', 'sensei' ); }
 													?>
 													"
 												   name="update">
@@ -669,16 +669,16 @@ class Sensei_Updates {
 
 			if ( $use_the_force && 0 < count( $updates_to_run ) ) {
 
-				$update_title = __( 'Important Sensei updates required', 'woothemes-sensei' );
+				$update_title = __( 'Important Sensei updates required', 'sensei' );
 
-				$update_message  = '<h1>' . esc_html__( 'Important Sensei upgrades required!', 'woothemes-sensei' ) . '</h1>' . "\n";
-				$update_message .= '<p>' . esc_html__( 'The latest version of Sensei requires some important database upgrades. In order to run these upgrades you will need to follow the step by step guide below. Your site will not function correctly unless you run these critical updates.', 'woothemes-sensei' ) . '</p>' . "\n";
+				$update_message  = '<h1>' . esc_html__( 'Important Sensei upgrades required!', 'sensei' ) . '</h1>' . "\n";
+				$update_message .= '<p>' . esc_html__( 'The latest version of Sensei requires some important database upgrades. In order to run these upgrades you will need to follow the step by step guide below. Your site will not function correctly unless you run these critical updates.', 'sensei' ) . '</p>' . "\n";
 
-				$update_message .= '<p><b>' . esc_html__( 'To run the upgrades click on each of the links below in the order that they appear.', 'woothemes-sensei' ) . '</b></p>' . "\n";
+				$update_message .= '<p><b>' . esc_html__( 'To run the upgrades click on each of the links below in the order that they appear.', 'sensei' ) . '</b></p>' . "\n";
 
-				$update_message .= '<p>' . esc_html__( 'Clicking each link will open up a new window/tab - do not close that window/tab until you see the message \'Update completed successfully\'. Once you see that message you can close the window/tab and start the next upgrade by clicking on the next link in the list.', 'woothemes-sensei' ) . '</p>' . "\n";
+				$update_message .= '<p>' . esc_html__( 'Clicking each link will open up a new window/tab - do not close that window/tab until you see the message \'Update completed successfully\'. Once you see that message you can close the window/tab and start the next upgrade by clicking on the next link in the list.', 'sensei' ) . '</p>' . "\n";
 
-				$update_message .= '<p><b>' . esc_html__( 'Once all the upgrades have been completed you will be able to use your WordPress site again.', 'woothemes-sensei' ) . '</b></p>' . "\n";
+				$update_message .= '<p><b>' . esc_html__( 'Once all the upgrades have been completed you will be able to use your WordPress site again.', 'sensei' ) . '</b></p>' . "\n";
 
 				$update_message .= '<ol>' . "\n";
 
@@ -697,7 +697,7 @@ class Sensei_Updates {
 
 					case '1.7.0':
 						// translators: Placeholders are an opening and closing <a> tag linking to an informational post.
-						$update_message .= '<p><em>' . wp_kses_post( sprintf( __( 'Want to know what these upgrades are all about? %1$sFind out more here%2$s.', 'woothemes-sensei' ), '<a href="http://develop.woothemes.com/sensei/2014/12/03/important-information-about-sensei-1-7" target="_blank">', '</a>' ) ) . '</em></p>' . "\n";
+						$update_message .= '<p><em>' . wp_kses_post( sprintf( __( 'Want to know what these upgrades are all about? %1$sFind out more here%2$s.', 'sensei' ), '<a href="http://develop.woothemes.com/sensei/2014/12/03/important-information-about-sensei-1-7" target="_blank">', '</a>' ) ) . '</em></p>' . "\n";
 						break;
 
 				}
@@ -1119,7 +1119,7 @@ class Sensei_Updates {
 	public function add_teacher_role() {
 		add_role(
 			'teacher',
-			__( 'Teacher', 'woothemes-sensei' ),
+			__( 'Teacher', 'sensei' ),
 			array(
 				'read'                 => true,
 				'manage_sensei_grades' => true,

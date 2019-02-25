@@ -156,7 +156,7 @@ final class Sensei_Extensions {
 	 * @access private
 	 */
 	public function add_admin_menu_item() {
-		add_submenu_page( 'sensei', __( 'Sensei Extensions', 'woothemes-sensei' ), __( 'Extensions', 'woothemes-sensei' ), 'install_plugins', 'sensei-extensions', array( $this, 'render' ) );
+		add_submenu_page( 'sensei', __( 'Sensei Extensions', 'sensei' ), __( 'Extensions', 'sensei' ), 'install_plugins', 'sensei-extensions', array( $this, 'render' ) );
 	}
 
 	/**

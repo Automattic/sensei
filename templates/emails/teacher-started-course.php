@@ -25,11 +25,11 @@ $large = 'text-align: center !important;font-size: 350% !important;line-height: 
 
 <?php do_action( 'sensei_before_email_content', $template ); ?>
 
-<p style="<?php echo esc_attr( $small ); ?>"><?php esc_html_e( 'Your student', 'woothemes-sensei' ); ?></p>
+<p style="<?php echo esc_attr( $small ); ?>"><?php esc_html_e( 'Your student', 'sensei' ); ?></p>
 
 <h2 style="<?php echo esc_attr( $large ); ?>"><?php echo esc_html( $learner_name ); ?></h2>
 
-<p style="<?php echo esc_attr( $small ); ?>"><?php esc_html_e( 'has started the course', 'woothemes-sensei' ); ?></p>
+<p style="<?php echo esc_attr( $small ); ?>"><?php esc_html_e( 'has started the course', 'sensei' ); ?></p>
 
 <h2 style="<?php echo esc_attr( $large ); ?>"><?php echo get_the_title( $course_id ); ?></h2>
 
@@ -38,7 +38,7 @@ $large = 'text-align: center !important;font-size: 350% !important;line-height: 
 <p style="<?php echo esc_attr( $small ); ?>">
 <?php
 // translators: Placeholders are an opening and closing <a> tag linking to the course's learners page in wp-admin.
-printf( esc_html__( 'Manage this course\'s learners %1$shere%2$s.', 'woothemes-sensei' ), '<a href="' . esc_url( admin_url( 'admin.php?page=sensei_learners&view=learners&course_id=' . $course_id ) ) . '">', '</a>' );
+printf( esc_html__( 'Manage this course\'s learners %1$shere%2$s.', 'sensei' ), '<a href="' . esc_url( admin_url( 'admin.php?page=sensei_learners&view=learners&course_id=' . $course_id ) ) . '">', '</a>' );
 ?>
 </p>
 

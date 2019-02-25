@@ -35,7 +35,7 @@
 
 	<?php else : ?>
 
-		<p><?php esc_html_e( 'No courses found that match your selection.', 'woothemes-sensei' ); ?></p>
+		<p><?php esc_html_e( 'No courses found that match your selection.', 'sensei' ); ?></p>
 
 	<?php endif; // End If Statement ?>
 

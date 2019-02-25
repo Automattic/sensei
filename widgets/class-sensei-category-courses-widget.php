@@ -27,9 +27,9 @@ class Sensei_Category_Courses_Widget extends WP_Widget {
 	public function __construct() {
 		/* Widget variable settings. */
 		$this->widget_cssclass    = 'widget_sensei_category_courses';
-		$this->widget_description = __( 'This widget will output a list of Courses for a specific category.', 'woothemes-sensei' );
+		$this->widget_description = __( 'This widget will output a list of Courses for a specific category.', 'sensei' );
 		$this->widget_idbase      = 'sensei_category_courses';
-		$this->widget_title       = __( 'Sensei - Category Courses', 'woothemes-sensei' );
+		$this->widget_title       = __( 'Sensei - Category Courses', 'sensei' );
 
 		/* Widget settings. */
 		$widget_ops = array(
@@ -137,16 +137,16 @@ class Sensei_Category_Courses_Widget extends WP_Widget {
 		?>
 		<!-- Widget Title: Text Input -->
 		<p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Title (optional):', 'woothemes-sensei' ); ?></label>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Title (optional):', 'sensei' ); ?></label>
 			<input type="text" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>"  value="<?php echo esc_attr( $instance['title'] ); ?>" class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" />
 		</p>
 		<!-- Widget Course Category: Select Input -->
 		<p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'course_category' ) ); ?>"><?php esc_html_e( 'Course Category:', 'woothemes-sensei' ); ?></label>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'course_category' ) ); ?>"><?php esc_html_e( 'Course Category:', 'sensei' ); ?></label>
 			<?php
 			$cat_args = array(
 				'hierarchical'     => true,
-				'show_option_none' => __( 'Select Category:', 'woothemes-sensei' ),
+				'show_option_none' => __( 'Select Category:', 'sensei' ),
 				'taxonomy'         => 'course-category',
 				'orderby'          => 'name',
 				'selected'         => intval( $instance['course_category'] ),
@@ -159,7 +159,7 @@ class Sensei_Category_Courses_Widget extends WP_Widget {
 		</p>
 		<!-- Widget Limit: Text Input -->
 		<p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'limit' ) ); ?>"><?php esc_html_e( 'Number of Courses (optional):', 'woothemes-sensei' ); ?></label>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'limit' ) ); ?>"><?php esc_html_e( 'Number of Courses (optional):', 'sensei' ); ?></label>
 			<input type="text" name="<?php echo esc_attr( $this->get_field_name( 'limit' ) ); ?>"  value="<?php echo esc_attr( $instance['limit'] ); ?>" class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'limit' ) ); ?>" />
 		</p>
 
@@ -218,14 +218,14 @@ class Sensei_Category_Courses_Widget extends WP_Widget {
 					if ( isset( Sensei()->settings->settings['course_author'] ) && ( Sensei()->settings->settings['course_author'] ) ) {
 						?>
 						<span class="course-author">
-							<?php esc_html_e( 'by', 'woothemes-sensei' ); ?>
+							<?php esc_html_e( 'by', 'sensei' ); ?>
 							<a href="<?php echo esc_url( $author_link ); ?>" title="<?php echo esc_attr( $author_display_name ); ?>">
 								<?php echo esc_html( $author_display_name ); ?>
 							</a>
 						</span>
 						<br />
 					<?php } // End If Statement ?>
-					<span class="course-lesson-count"><?php echo esc_html( Sensei()->course->course_lesson_count( $post_id ) ) . '&nbsp;' . esc_html__( 'Lessons', 'woothemes-sensei' ); ?></span>
+					<span class="course-lesson-count"><?php echo esc_html( Sensei()->course->course_lesson_count( $post_id ) ) . '&nbsp;' . esc_html__( 'Lessons', 'sensei' ); ?></span>
 					<br />
 					<?php
 					/** This action is documented in includes/class-sensei-frontend.php */

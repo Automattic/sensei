@@ -255,7 +255,7 @@ class Sensei_Language_Pack_Manager {
 	 */
 	protected function dismiss_language_pack_notice() {
 		if ( ! isset( $_REQUEST['_sensei_language_nonce'] ) && wp_verify_nonce( $_REQUEST['_sensei_language_nonce'], 'language_pack' ) ) {
-			wp_die( esc_html__( 'Cheatin&#8217; huh?', 'woothemes-sensei' ) );
+			wp_die( esc_html__( 'Cheatin&#8217; huh?', 'sensei' ) );
 		}
 
 		// Update version and remove notice
@@ -272,25 +272,25 @@ class Sensei_Language_Pack_Manager {
 
 		switch ( $_GET['translation_updated'] ) {
 			case 2:
-				echo '<div class="error"><p>' . esc_html__( 'Failed to install/update the translation:', 'woothemes-sensei' ) . ' ' . esc_html__( 'Seems you don\'t have permission to do this!', 'woothemes-sensei' ) . '</p></div>';
+				echo '<div class="error"><p>' . esc_html__( 'Failed to install/update the translation:', 'sensei' ) . ' ' . esc_html__( 'Seems you don\'t have permission to do this!', 'sensei' ) . '</p></div>';
 				break;
 			case 3:
-				echo '<div class="error"><p>' . esc_html__( 'Failed to install/update the translation:', 'woothemes-sensei' ) . ' ' . esc_html__( 'There is no translation available for your language!', 'woothemes-sensei' ) . '</p></div>';
+				echo '<div class="error"><p>' . esc_html__( 'Failed to install/update the translation:', 'sensei' ) . ' ' . esc_html__( 'There is no translation available for your language!', 'sensei' ) . '</p></div>';
 				break;
 			case 4:
 				echo '<div class="error"><p>'
-					. esc_html__( 'Failed to install/update the translation:', 'woothemes-sensei' )
+					. esc_html__( 'Failed to install/update the translation:', 'sensei' )
 					. ' '
 					// translators: Placeholders are an opening and closing <a> tag for the WordPress Codex page.
-					. sprintf( wp_kses_post( __( 'An authentication error occurred while updating the translation. Please try again or configure your %1$sUpgrade Constants%2$s.', 'woothemes-sensei' ) ), '<a href="http://codex.wordpress.org/Editing_wp-config.php#WordPress_Upgrade_Constants">', '</a>' )
+					. sprintf( wp_kses_post( __( 'An authentication error occurred while updating the translation. Please try again or configure your %1$sUpgrade Constants%2$s.', 'sensei' ) ), '<a href="http://codex.wordpress.org/Editing_wp-config.php#WordPress_Upgrade_Constants">', '</a>' )
 					. '</p></div>';
 				break;
 			case 5:
-				echo '<div class="error"><p>' . esc_html__( 'Failed to install/update the translation:', 'woothemes-sensei' ) . ' ' . esc_html__( 'Sorry but there is no translation available for your language =/', 'woothemes-sensei' ) . '</p></div>';
+				echo '<div class="error"><p>' . esc_html__( 'Failed to install/update the translation:', 'sensei' ) . ' ' . esc_html__( 'Sorry but there is no translation available for your language =/', 'sensei' ) . '</p></div>';
 				break;
 
 			default:
-				echo '<div class="updated"><p>' . esc_html__( 'Translations installed/updated successfully!', 'woothemes-sensei' ) . '</p></div>';
+				echo '<div class="updated"><p>' . esc_html__( 'Translations installed/updated successfully!', 'sensei' ) . '</p></div>';
 				break;
 		}
 	}
