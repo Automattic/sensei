@@ -71,7 +71,7 @@ class Sensei_Teacher {
 		add_filter( 'sensei_lesson_quiz_questions', array( $this, 'allow_teacher_access_to_questions' ), 20, 2 );
 
 		// Teacher column on the courses list on the admin edit screen
-		add_filter( 'manage_edit-course_columns', array( $this, 'course_column_heading' ), 10, 1 );
+		add_filter( 'manage_course_posts_columns', array( $this, 'course_column_heading' ), 10, 1 );
 		add_filter( 'manage_course_posts_custom_column', array( $this, 'course_column_data' ), 10, 2 );
 
 		// admin edit messages query limit teacher

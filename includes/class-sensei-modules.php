@@ -58,8 +58,8 @@ class Sensei_Core_Modules {
 		// Handle module ordering
 		add_action( 'admin_menu', array( $this, 'register_modules_admin_menu_items' ), 30 );
 		add_action( 'admin_post_order_modules', array( $this, 'handle_order_modules' ) );
-		add_filter( 'manage_edit-course_columns', array( $this, 'course_columns' ), 11, 1 );
-		add_action( 'manage_posts_custom_column', array( $this, 'course_column_content' ), 11, 2 );
+		add_filter( 'manage_course_posts_columns', array( $this, 'course_columns' ), 11, 1 );
+		add_action( 'manage_course_posts_custom_column', array( $this, 'course_column_content' ), 11, 2 );
 
 		// Ensure modules always show under courses
 		add_action( 'admin_menu', array( $this, 'remove_lessons_menu_model_taxonomy' ), 10 );
