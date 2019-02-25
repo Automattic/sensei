@@ -619,7 +619,7 @@ class Sensei_Main {
 	 */
 	public function activate_sensei() {
 
-		if ( ! get_option( 'sensei_installed', false ) ) {
+		if ( false === get_option( 'sensei_installed', false ) ) {
 			update_option( 'sensei_show_email_signup_form', true );
 		}
 
