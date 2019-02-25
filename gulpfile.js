@@ -44,11 +44,11 @@ var paths = {
 		'templates/**/*',
 		'uninstall.php',
 		'widgets/**/*',
-		'woothemes-sensei.php',
+		'sensei.php',
 		'wpml-config.xml',
 	],
-	packageDir: 'build/woothemes-sensei',
-	packageZip: 'build/woothemes-sensei.zip'
+	packageDir: 'build/sensei',
+	packageZip: 'build/sensei.zip'
 };
 
 gulp.task( 'clean', gulp.series( function( cb ) {
@@ -85,7 +85,7 @@ gulp.task( 'pot', gulp.series( function() {
 			domain: 'woothemes-sensei',
 			bugReport: 'https://www.transifex.com/woothemes/sensei-by-woothemes/'
 		} ) )
-		.pipe( gulp.dest( 'lang/woothemes-sensei.pot' ) );
+		.pipe( gulp.dest( 'lang/sensei.pot' ) );
 } ) );
 
 gulp.task( 'textdomain', gulp.series( function() {
