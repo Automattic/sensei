@@ -1545,11 +1545,13 @@ class Sensei_Admin {
 	}
 
 	public function init_select2() {
-		?>
-		<script type="text/javascript">
-			jQuery( '#lesson-order-course' ).select2( { width: 'resolve' } );
-		</script>
-		<?php
+		if ( isset( $_GET['page'] ) && 'lesson-order' === $_GET['page'] ) {
+			?>
+			<script type="text/javascript">
+				jQuery( '#lesson-order-course' ).select2( { width: 'resolve' } );
+			</script>
+			<?php
+		}
 	}
 
 	public function get_lesson_order( $course_id = 0 ) {
