@@ -1085,7 +1085,7 @@ class Sensei_Lesson {
 					$html                   .= '<td class="table-count question-number question-count-column"><span class="number">' . esc_html( $question_counter ) . '</span></td>';
 					$html                   .= '<td>' . esc_html( $question->post_title ) . '</td>';
 					$html                   .= '<td class="question-grade-column">' . esc_html( $question_grade ) . '</td>';
-					$question_types_filtered = ucwords( str_replace( array( '-', 'boolean' ), array( ' ', __( 'True/False', 'woothemes-sensei' ) ), $question_type ) );
+					$question_types_filtered = ucwords( str_replace( array( 'boolean', 'multiple-choice', 'gap-fill', 'single-line', 'multi-line', 'file-upload' ), array( __( 'True/False', 'woothemes-sensei' ), __( 'Multiple Choice', 'woothemes-sensei' ), __( 'Gap Fill', 'woothemes-sensei' ), __( 'Single Line', 'woothemes-sensei' ), __( 'Multi Line', 'woothemes-sensei' ), __( 'File Upload', 'woothemes-sensei' ) ), $question_type ) );
 					$html                   .= '<td>' . esc_html( $question_types_filtered ) . '</td>';
 					$html                   .= '<td><a title="' . esc_attr__( 'Edit Question', 'woothemes-sensei' ) . '" href="#question_' . esc_attr( $question_counter ) . '" class="question_table_edit">' . esc_html__( 'Edit', 'woothemes-sensei' ) . '</a> <a title="' . esc_attr__( 'Remove Question', 'woothemes-sensei' ) . '" href="#add-question-metadata" class="question_table_delete">' . esc_html__( 'Remove', 'woothemes-sensei' ) . '</a></td>';
 
