@@ -34,7 +34,9 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 	public function testClassInstance() {
 
 		// test if the class exists
-		$this->assertTrue( class_exists( 'WooThemes_Sensei_Course' ), 'Sensei course class does not exist' );
+		// FIXME: this test is deliberately broken.
+		// $this->assertTrue( class_exists( 'WooThemes_Sensei_Course' ), 'Sensei course class does not exist' );
+		$this->assertFalse( class_exists( 'WooThemes_Sensei_Course' ), 'Sensei course class does not exist' );
 
 		// test if the global sensei quiz class is loaded
 		$this->assertTrue( isset( Sensei()->course ), 'Sensei Course class is not loaded' );
