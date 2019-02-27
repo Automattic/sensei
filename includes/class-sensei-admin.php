@@ -1545,6 +1545,7 @@ class Sensei_Admin {
 	}
 
 	public function init_select2() {
+		// phpcs:ignore WordPress.Security.NonceVerification
 		if ( isset( $_GET['page'] ) && 'lesson-order' === $_GET['page'] ) {
 			?>
 			<script type="text/javascript">
