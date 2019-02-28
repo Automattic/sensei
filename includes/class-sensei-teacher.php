@@ -471,6 +471,9 @@ class Sensei_Teacher {
 						update_post_meta( $lesson->ID, '_order_module_' . intval( $term_id ), $order_module );
 					}
 				}
+
+				// Clean up module if no longer used.
+				Sensei()->modules->remove_if_unused( $term->term_id );
 			}
 		}
 
