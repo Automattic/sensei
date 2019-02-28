@@ -303,7 +303,7 @@ class Sensei_Core_Modules {
 				'fields'         => 'ids',
 				'posts_per_page' => 1,
 			)
-		 );
+		);
 		if ( $post_query->found_posts > 0 ) {
 			return true;
 		}

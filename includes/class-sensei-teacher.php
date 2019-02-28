@@ -396,9 +396,6 @@ class Sensei_Teacher {
 
 		foreach ( $terms_selected_on_course as $term ) {
 
-			/**
-			 * @var WP_Term $term
-			 */
 			$term_author = Sensei_Core_Modules::get_term_author( $term->slug );
 			if ( ! $term_author || intval( $new_teacher_id ) !== intval( $term_author->ID ) ) {
 
@@ -428,7 +425,7 @@ class Sensei_Teacher {
 
 				if ( empty( $new_term ) ) {
 
-					// create new term and set it
+					// Create new term and set it.
 					$new_term = wp_insert_term(
 						$term->name,
 						'module',
@@ -446,10 +443,10 @@ class Sensei_Teacher {
 
 				$term_id = $new_term['term_id'];
 
-				// set the terms selected on the course
+				// Set the terms selected on the course.
 				wp_set_object_terms( $course_id, $term_id, 'module', true );
 
-				// remove old term
+				// Remove old term.
 				if ( intval( $term_id ) !== intval( $term->term_id ) ) {
 					wp_remove_object_terms( $course_id, $term->term_id, 'module' );
 				}
@@ -457,7 +454,7 @@ class Sensei_Teacher {
 				foreach ( $lessons as $lesson ) {
 					if ( has_term( $term->term_id, 'module', $lesson ) ) {
 
-						// add the new term, the false at the end says to replace all terms on this module
+						// Add the new term, the false at the end says to replace all terms on this module
 						// with the new term.
 						wp_set_object_terms( $lesson->ID, $term_id, 'module', false );
 						$order_module     = 0;
