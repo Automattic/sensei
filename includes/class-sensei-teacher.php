@@ -395,22 +395,17 @@ class Sensei_Teacher {
 		$lessons = Sensei()->course->course_lessons( $course_id );
 
 		foreach ( $terms_selected_on_course as $term ) {
-
 			$term_author = Sensei_Core_Modules::get_term_author( $term->slug );
 			if ( ! $term_author || intval( $new_teacher_id ) !== intval( $term_author->ID ) ) {
-
-				$search_slugs = array();
-				$new_slug     = $new_teacher_id . '-' . sanitize_title( trim( $term->name ) );
+				$new_slug       = $new_teacher_id . '-' . sanitize_title( trim( $term->name ) );
+				$search_slugs   = array();
+				$search_slugs[] = $new_slug;
 
 				// First, try to recycle an existing module.
 				if ( user_can( $new_teacher_id, 'manage_options' ) ) {
 					$admin_slug     = sanitize_title( trim( $term->name ) );
-					$search_slugs[] = $admin_slug;
-					$search_slugs[] = $new_slug;
-
+					array_unshift( $search_slugs, $admin_slug );
 					$new_slug = $admin_slug;
-				} else {
-					$search_slugs[] = $new_slug;
 				}
 
 				// Search for term to recycle.
@@ -424,7 +419,6 @@ class Sensei_Teacher {
 				}
 
 				if ( empty( $new_term ) ) {
-
 					// Create new term and set it.
 					$new_term = wp_insert_term(
 						$term->name,
@@ -433,7 +427,6 @@ class Sensei_Teacher {
 							'slug' => $new_slug,
 						)
 					);
-
 				}
 
 				if ( is_wp_error( $new_term ) ) {
@@ -453,7 +446,6 @@ class Sensei_Teacher {
 
 				foreach ( $lessons as $lesson ) {
 					if ( has_term( $term->term_id, 'module', $lesson ) ) {
-
 						// Add the new term, the false at the end says to replace all terms on this module
 						// with the new term.
 						wp_set_object_terms( $lesson->ID, $term_id, 'module', false );
