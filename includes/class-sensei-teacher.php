@@ -403,7 +403,7 @@ class Sensei_Teacher {
 
 				// First, try to recycle an existing module.
 				if ( user_can( $new_teacher_id, 'manage_options' ) ) {
-					$admin_slug     = sanitize_title( trim( $term->name ) );
+					$admin_slug = sanitize_title( trim( $term->name ) );
 					array_unshift( $search_slugs, $admin_slug );
 					$new_slug = $admin_slug;
 				}
