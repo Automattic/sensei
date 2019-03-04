@@ -2,8 +2,8 @@
 /*
  * Plugin Name: Sensei
  * Plugin URI: https://woocommerce.com/products/sensei/
- * Description: A course management plugin that offers the smoothest platform for helping you teach anything.
- * Version: 2.0.0-dev
+ * Description: Share your knowledge, grow your network, and strengthen your brand by launching an online course.
+ * Version: 2.0.0-beta.1
  * Author: Automattic
  * Author URI: https://automattic.com
  * License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
@@ -44,7 +44,7 @@ Sensei_Bootstrap::get_instance()->bootstrap();
  * @since 1.8.0
  */
 function Sensei() {
-	return Sensei_Main::instance( array( 'version' => '2.0.0-dev' ) );
+	return Sensei_Main::instance( array( 'version' => '2.0.0-beta.1' ) );
 }
 
 // backwards compatibility
