@@ -409,31 +409,6 @@ class Sensei_Admin {
 		update_option( 'sensei_installed', 0 );
 	} // End admin_installed_notice()
 
-
-	/**
-	 * Language pack install notice.
-	 *
-	 * @since 1.9.0
-	 */
-	public function language_pack_install_notice() {
-		?>
-		<div id="message" class="updated sensei-message sensei-connect">
-			<p>
-				<?php
-				// translators: Placeholders are opening and closing <strong> tags.
-				echo wp_kses_post( sprintf( __( '%1$sSensei in your language %2$s. There is a translation available for your language.', 'sensei' ), '<strong>', '</strong>' ) );
-				?>
-			</p>
-
-				<p class="submit">
-					<a href="<?php echo esc_url( Sensei_Language_Pack_Manager::get_install_uri() ); ?>" class="button-primary"><?php esc_html_e( 'Install', 'sensei' ); ?></a>
-					<a href="<?php echo esc_url( Sensei_Language_Pack_Manager::get_dismiss_uri() ); ?>" class="docs button"><?php esc_html_e( 'Hide this notice', 'sensei' ); ?></a>
-				</p>
-		</div>
-		<?php
-	}
-
-
 	/**
 	 * admin_notices_styles function.
 	 *
@@ -453,10 +428,6 @@ class Sensei_Admin {
 				add_action( 'admin_notices', array( $this, 'admin_installed_notice' ) );
 			} // End If Statement
 		} // End If Statement
-
-		if ( Sensei_Language_Pack_Manager::has_language_pack_available() ) {
-			add_action( 'admin_notices', array( $this, 'language_pack_install_notice' ) );
-		}
 
 	} // End admin_notices_styles()
 

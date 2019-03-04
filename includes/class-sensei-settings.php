@@ -88,7 +88,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		if ( isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug ) ) {
 			add_action( 'admin_notices', array( $this, 'settings_errors' ) );
-			add_action( 'admin_notices', array( $this, 'language_pack_notices' ) );
 			add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ) );
 			add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
 		}
@@ -128,13 +127,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'name'        => __( 'Learner Profiles', 'sensei' ),
 			'description' => __( 'Settings for public Learner Profiles.', 'sensei' ),
 		);
-
-		if ( 'en_US' !== get_locale() ) {
-			$sections['language-settings'] = array(
-				'name'        => __( 'Language', 'sensei' ),
-				'description' => __( 'Language options.', 'sensei' ),
-			);
-		}
 
 		$this->sections = apply_filters( 'sensei_settings_tabs', $sections );
 	} // End init_sections()
@@ -618,17 +610,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'required'    => 1,
 		);
 
-		if ( 'en_US' !== get_locale() ) {
-			$fields['install_language_pack'] = array(
-				'name'        => __( 'Install Language Pack', 'sensei' ),
-				'description' => __( 'Use this action to install or re-install translation for your language if available.', 'sensei' ),
-				'type'        => 'button',
-				'section'     => 'language-settings',
-				'target'      => Sensei_Language_Pack_Manager::get_install_uri(),
-				'label'       => __( 'Install', 'sensei' ),
-			);
-		}
-
 		$this->fields = apply_filters( 'sensei_settings_fields', $fields );
 
 	} // End init_fields()
@@ -702,15 +683,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		return $pages_array;
 	} // End pages_array()
-
-	/**
-	 * Language packs notices.
-	 *
-	 * @since 1.9.0
-	 */
-	public function language_pack_notices() {
-		Sensei_Language_Pack_Manager::messages();
-	}
 
 	/**
 	 * Flush the rewrite rules after the settings have been updated.
