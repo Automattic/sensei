@@ -34,17 +34,49 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
+if ( class_exists( 'Sensei_Main' ) ) {
+	if ( ! function_exists( 'is_sensei_activating' ) ) {
+		/**
+		 * Checks if Sensei is being activated.
+		 *
+		 * @since 2.0.0
+		 * @access private
+		 *
+		 * @param string|bool $activating_plugin Plugin that may be getting activated. False if none.
+		 * @param string      $plugin            This plugin basename from loading function.
+		 * @return bool
+		 */
+		function is_sensei_activating( $activating_plugin, $plugin ) {
+			return ! empty( $activating_plugin ) && $activating_plugin === $plugin;
+		}
+	}
+	if ( ! isset( $_wp_plugin_file ) ) {
+		$_wp_plugin_file = false;
+	}
+	if ( ! isset( $plugin ) ) {
+		$plugin = null;
+	}
+	if ( is_sensei_activating( $_wp_plugin_file, $plugin ) && defined( 'SENSEI_IGNORE_ACTIVATION_CONFLICT' ) && true === SENSEI_IGNORE_ACTIVATION_CONFLICT ) {
+		// Hope that this will just be a conflict that happens during activation.
+		return;
+	} else {
+		die( esc_html__( 'Deactivate other instances of Sensei before activating this plugin.', 'sensei' ) );
+	}
+}
+
 require_once dirname( __FILE__ ) . '/includes/class-sensei-bootstrap.php';
 
 Sensei_Bootstrap::get_instance()->bootstrap();
 
-/**
- * Returns the global Sensei Instance.
- *
- * @since 1.8.0
- */
-function Sensei() {
-	return Sensei_Main::instance( array( 'version' => '2.0.0-beta.1' ) );
+if ( ! function_exists( 'Sensei' ) ) {
+	/**
+	 * Returns the global Sensei Instance.
+	 *
+	 * @since 1.8.0
+	 */
+	function Sensei() {
+		return Sensei_Main::instance( array( 'version' => '2.0.0-beta.1' ) );
+	}
 }
 
 // backwards compatibility
@@ -58,13 +90,15 @@ $woothemes_sensei = Sensei();
  */
 register_activation_hook( __FILE__, 'activate_sensei' );
 
-/**
- * Activate_sensei
- *
- * All the activation checks needed to ensure Sensei is ready for use
- *
- * @since 1.8.0
- */
-function activate_sensei() {
-	Sensei()->activate();
+if ( ! function_exists( 'activate_sensei' ) ) {
+	/**
+	 * Activate_sensei
+	 *
+	 * All the activation checks needed to ensure Sensei is ready for use
+	 *
+	 * @since 1.8.0
+	 */
+	function activate_sensei() {
+		Sensei()->activate();
+	}
 }
