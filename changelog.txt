@@ -1,5 +1,75 @@
 *** Sensei Changelog ***
 
+2019.04.22 - version 2.0.0
+
+* Extract: All WooCommerce integration functionality
+* New: Check for PHP 5.6
+* New: Email signup modal appears on initial activation
+* New: Sensei Extensions page
+* New: Filter `sensei_lesson_course_create_form_top` was added
+* New: Filter `sensei_lesson_course_create_form_bottom` was added
+* New: Action `sensei_lesson_course_created` was added
+* New: Filter `sensei_course_content_has_access` was added
+* New: Filter `sensei_output_course_enrolment_actions` was added
+* New: Filter `sensei_lesson_show_course_signup_notice` was added
+* New: Filter `sensei_lesson_course_signup_notice_message` was added
+* New: Filter `sensei_lesson_course_signup_notice_level` was added
+* New: Filter `sensei_quiz_course_signup_notice_message` was added
+* New: Action `sensei_course_meta_inside_before` was added
+* New: Action `sensei_course_meta_inside_after` was added
+* New: Filter `sensei_shortcode_classes` was added
+* New: Filter `sensei_widget_course_component_components_list` was added
+* New: Filter `sensei_widget_course_component_get_courses_{$component} ` was added
+* New: Filter `sensei_widget_course_component_no_courses_message_{$component}` was added
+* Fix: Conflict with Jetpack shortcodes module causing Sensei videos to not display
+* Fix: Bug causing the Lesson order to change on Lesson update
+* Fix: Completed modules being displayed as "In Progress"
+* Tweak: Access Permissions setting only controls Lesson content
+* Tweak: Change text domain from `woothemes-sensei` to `sensei`
+* Tweak: In `templates/content-course.php`, call Sensei_Course::get_course_loop_content_class instead of WooThemes_Sensei_Course::get_course_loop_content_class
+* Tweak: In `templates/single-quiz/question-type-*.php`, call Sensei_Question::get_template_data instead of WooThemes_Sensei_Question::get_template_data
+* Deprecate: Sensei_Main::sensei_woocommerce_email_course_details has been deprecated in favour of Sensei_WC::email_course_details
+* Deprecate: Sensei_Main::sensei_woocommerce_reactivate_subscription has been deprecated in favour of Sensei_WC::reactivate_subscription
+* Deprecate: Sensei_Main::sensei_woocommerce_subscription_ended has been deprecated in favour of Sensei_WC::end_subscription
+* Deprecate: Sensei_Main::sensei_woocommerce_complete_order has been deprecated in favour of Sensei_WC::complete_order
+* Deprecate: Sensei_Main::sensei_woocommerce_cancel_order has been deprecated in favour of Sensei_WC::cancel_order
+* Deprecate: Sensei_Main::sensei_activate_subscription has been deprecated in favour of Sensei_WC::activate_subscription
+* Deprecate: Sensei_Main::woocommerce_course_update has been deprecated in favour of Sensei_WC::course_update
+* Deprecate: Sensei_Main::sensei_get_woocommerce_product_object has been deprecated in favour of Sensei_WC::get_product_object
+* Deprecate: Sensei_Main::disable_guest_checkout has been deprecated in favour of Sensei_WC::disable_guest_checkout
+* Deprecate: Sensei_Main::virtual_order_payment_complete has been deprecated in favour of Sensei_WC::virtual_order_payment_complete
+* Deprecate: Sensei_Main::check_user_permissions has been deprecated with no replacement
+* Deprecate: Sensei_Utils::sensei_is_woocommerce_present has been deprecated in favour of Sensei_WC::is_woocommerce_present
+* Deprecate: Sensei_Utils::sensei_is_woocommerce_activated has been deprecated in favour of Sensei_WC::is_woocommerce_active
+* Deprecate: Sensei_Utils::sensei_customer_bought_product has been deprecated in favour of Sensei_WC::has_customer_bought_product
+* Deprecate: Sensei_Frontend::activate_purchased_courses has been deprecated in favour of \Sensei_WC_Paid_Courses\Courses::activate_purchased_courses
+* Deprecate: Sensei_Frontend::activate_purchased_single_course has been deprecated in favour of \Sensei_WC_Paid_Courses\Courses::activate_purchased_single_course
+* Deprecate: Sensei_Frontend::sensei_woocommerce_in_cart_message has been deprecated in favour of Sensei_WC::course_in_cart_message
+* Deprecate: Sensei_Course::get_product_courses has been deprecated in favour of Sensei_WC_Paid_Courses\Courses::get_product_courses
+* Deprecate: Sensei_Course::get_product_courses_query_args has been deprecated in favour of Sensei_WC_Paid_Courses\Courses::get_product_courses_query_args
+* Deprecate: Sensei_WC_Utils::wc_version_less_than has been deprecated in favour of version_compare( WC()->version, $str, '<'  )
+* Deprecate: Sensei_WC_Utils::is_product_variation has been deprecated in favour of $product->is_type( 'variation'  )
+* Deprecate: Sensei_WC_Utils::get_order_id has been deprecated in favour of $order->get_id()
+* Deprecate: Sensei_WC_Utils::get_product has been deprecated in favour of wc_get_product
+* Deprecate: Sensei_WC_Utils::get_parent_product has been deprecated in favour of wc_get_product
+* Deprecate: Sensei_WC_Utils::get_formatted_variation has been deprecated in favour of wc_get_formatted_variation
+* Deprecate: Sensei_WC_Utils::get_product_variation_data has been deprecated in favour of \Sensei_WC_Utils::get_variation_data
+* Deprecate: Sensei_WC_Utils::get_product_from_item has been deprecated in favour of $item->get_product()
+* Deprecate: Sensei_WC_Utils::get_checkout_url has been deprecated in favour of wc_get_checkout_url
+* Deprecate: sensei_wc_add_to_cart has been deprecated in favour of Sensei_WC::the_add_to_cart_button_html
+* Deprecate: sensei_check_if_product_is_in_cart has been deprecated in favour of Sensei_WC::is_product_in_cart
+* Deprecate: sensei_simple_course_price has been deprecated in favour of Sensei_WC_Paid_Courses\Frontend\Courses::output_course_price
+* Deprecate: is_woocommerce_active has been deprecated with no replacement.
+* Deprecate: sensei_check_woocommerce_version has been deprecated with no replacement
+* Deprecate: The `newcourses` shortcode has been deprecated
+* Deprecate: The `featuredcourses` shortcode has been deprecated
+* Deprecate: The `freecourses` shortcode has been deprecated
+* Deprecate: The `paidcourses` shortcode has been deprecated
+* Deprecate: The `usercourses` shortcode has been deprecated
+* Deprecate: The `allcourses` shortcode has been deprecated
+* Deprecate: The `sensei_show_delete_course_button` hook has been deprecated and will be removed in Sensei 4.0
+* Deprecate: The `sensei_merge_courses_with_parent_product` hook has been deprecated in favour of `sensei_wc_paid_courses_merge_courses_with_parent_product`
+
 2018.11.29 - version 1.12.2
 
 * New: Add usage tracking for course enrolments
