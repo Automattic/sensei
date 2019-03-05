@@ -36,7 +36,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 require_once dirname( __FILE__ ) . '/includes/class-sensei-dependency-checker.php';
-if ( ! Sensei_Dependency_Checker::are_dependencies_met() ) {
+if ( ! Sensei_Dependency_Checker::check_php() ) {
+	add_action( 'admin_notices', array( 'Sensei_Dependency_Checker', 'add_php_notice' ) );
 	return;
 }
 

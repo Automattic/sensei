@@ -20,25 +20,11 @@ class Sensei_Dependency_Checker {
 	const MINIMUM_PHP_VERSION = '5.6';
 
 	/**
-	 * Checks if all dependencies are met.
-	 *
-	 * @return bool
-	 */
-	public static function are_dependencies_met() {
-		$are_met = true;
-		if ( ! self::check_php() ) {
-			add_action( 'admin_notices', array( __CLASS__, 'add_php_notice' ) );
-			$are_met = false;
-		}
-		return $are_met;
-	}
-
-	/**
 	 * Checks for our PHP version requirement.
 	 *
 	 * @return bool
 	 */
-	private static function check_php() {
+	public static function check_php() {
 		return version_compare( phpversion(), self::MINIMUM_PHP_VERSION, '>=' );
 	}
 
