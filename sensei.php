@@ -8,13 +8,14 @@
  * Author URI: https://automattic.com
  * License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * Requires at least: 4.1
- * Tested up to: 4.9
+ * Tested up to: 5.1
+ * Requires PHP: 5.6
  * Text Domain: sensei
  * Domain path: /lang/
  */
 
 /*
-  Copyright 2013-2018 Automattic
+  Copyright 2013-2019 Automattic
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License, version 2, as
@@ -32,6 +33,11 @@
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
+}
+
+require_once dirname( __FILE__ ) . '/includes/class-sensei-dependency-checker.php';
+if ( ! Sensei_Dependency_Checker::are_dependencies_met() ) {
+	return;
 }
 
 if ( class_exists( 'Sensei_Main' ) ) {
