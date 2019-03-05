@@ -23,6 +23,12 @@ if ( class_exists( 'Sensei_Main' ) ) {
 }
 
 require dirname( __FILE__ ) . '/sensei.php';
+
+if ( ! function_exists( 'Sensei' ) ) {
+	// We still want people to be able to delete Sensei if they don't meet dependencies.
+	return;
+}
+
 require dirname( __FILE__ ) . '/includes/class-sensei-data-cleaner.php';
 
 // Cleanup all data.
