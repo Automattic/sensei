@@ -32,13 +32,7 @@
 */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
-}
-
-require_once dirname( __FILE__ ) . '/includes/class-sensei-dependency-checker.php';
-if ( ! Sensei_Dependency_Checker::check_php() ) {
-	add_action( 'admin_notices', array( 'Sensei_Dependency_Checker', 'add_php_notice' ) );
-	return;
+	exit; // Exit if accessed directly.
 }
 
 if ( class_exists( 'Sensei_Main' ) ) {
@@ -69,6 +63,12 @@ if ( class_exists( 'Sensei_Main' ) ) {
 	} else {
 		die( esc_html__( 'Deactivate other instances of Sensei before activating this plugin.', 'sensei' ) );
 	}
+}
+
+require_once dirname( __FILE__ ) . '/includes/class-sensei-dependency-checker.php';
+if ( ! Sensei_Dependency_Checker::check_php() ) {
+	add_action( 'admin_notices', array( 'Sensei_Dependency_Checker', 'add_php_notice' ) );
+	return;
 }
 
 require_once dirname( __FILE__ ) . '/includes/class-sensei-bootstrap.php';
