@@ -45,7 +45,17 @@ class Sensei_Dependency_Checker {
 		$message = sprintf( __( '<strong>Sensei</strong> requires PHP version %1$s but you are running %2$s.', 'sensei' ), self::MINIMUM_PHP_VERSION, phpversion() );
 		echo '<div class="error"><p>';
 		echo wp_kses( $message, array( 'strong' => array() ) );
-		echo '<p><a class="button button-primary" href="https://wordpress.org/support/update-php/" rel="noopener">' . esc_html__( 'Learn more about updating PHP', 'sensei' ) . '</a></p>';
+		$php_update_url = 'https://wordpress.org/support/update-php/';
+		if ( function_exists( 'wp_get_update_php_url' ) ) {
+			$php_update_url = wp_get_update_php_url();
+		}
+		printf(
+			'<p><a class="button button-primary" href="%1$s" target="_blank" rel="noopener noreferrer">%2$s <span class="screen-reader-text">%3$s</span><span aria-hidden="true" class="dashicons dashicons-external"></span></a></p>',
+			esc_url( $php_update_url ),
+			esc_html__( 'Learn more about updating PHP', 'sensei' ),
+			/* translators: accessibility text */
+			esc_html__( '(opens in a new tab)', 'sensei' )
+		);
 		echo '</p></div>';
 	}
 }
