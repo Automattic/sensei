@@ -108,7 +108,7 @@ class Sensei_Shortcode_Featured_Courses implements Sensei_Shortcode_Interface {
 	 * Rendering the shortcode this class is responsible for.
 	 */
 	public function render() {
-
+		// phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
 		global $wp_query;
 
 		// assign the query setup in $this-> setup_course_query

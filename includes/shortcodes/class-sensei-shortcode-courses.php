@@ -199,7 +199,7 @@ class Sensei_Shortcode_Courses implements Sensei_Shortcode_Interface {
 	 * @return string $content
 	 */
 	public function render() {
-
+		// phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
 		global $wp_query;
 
 		// assign the query setup in $this-> setup_course_query

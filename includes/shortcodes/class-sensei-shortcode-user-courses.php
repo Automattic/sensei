@@ -280,7 +280,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	 * @return string $content
 	 */
 	public function render() {
-
+		// phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
 		global $wp_query;
 
 		if ( false === is_user_logged_in() ) {
