@@ -63,7 +63,7 @@ class Sensei_Grading {
 		global $menu;
 
 		if ( current_user_can( 'manage_sensei_grades' ) ) {
-			$grading_page = add_submenu_page( 'sensei', __( 'Grading', 'sensei' ), __( 'Grading', 'sensei' ), 'manage_sensei_grades', $this->page_slug, array( $this, 'grading_page' ) );
+			add_submenu_page( 'sensei', __( 'Grading', 'sensei' ), __( 'Grading', 'sensei' ), 'manage_sensei_grades', $this->page_slug, array( $this, 'grading_page' ) );
 		}
 
 	} // End grading_admin_menu()

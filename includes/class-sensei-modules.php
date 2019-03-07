@@ -890,8 +890,8 @@ class Sensei_Core_Modules {
 		// add the modules link under the Course main menu
 		add_submenu_page( 'edit.php?post_type=course', __( 'Modules', 'sensei' ), __( 'Modules', 'sensei' ), 'manage_categories', 'edit-tags.php?taxonomy=module', '' );
 
-		// Regsiter new admin page for module ordering
-		$hook = add_submenu_page( 'edit.php?post_type=course', __( 'Order Modules', 'sensei' ), __( 'Order Modules', 'sensei' ), 'edit_lessons', $this->order_page_slug, array( $this, 'module_order_screen' ) );
+		// Register new admin page for module ordering.
+		add_submenu_page( 'edit.php?post_type=course', __( 'Order Modules', 'sensei' ), __( 'Order Modules', 'sensei' ), 'edit_lessons', $this->order_page_slug, array( $this, 'module_order_screen' ) );
 	}
 
 	/**
