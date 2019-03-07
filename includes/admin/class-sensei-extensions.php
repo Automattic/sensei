@@ -172,9 +172,11 @@ final class Sensei_Extensions {
 		// phpcs:ignore WordPress.Security.NonceVerification
 		$type = isset( $_GET['type'] ) ? sanitize_text_field( $_GET['type'] ) : null;
 
+		// phpcs:disable VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable -- used in view
 		$messages   = $this->get_messages();
 		$resources  = $this->get_resources();
 		$extensions = $this->get_extensions( $type, $category );
+		// phpcs:enable
 		include_once dirname( __FILE__ ) . '/views/html-admin-page-extensions.php';
 	}
 

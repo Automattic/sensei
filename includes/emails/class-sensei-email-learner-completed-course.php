@@ -1,5 +1,5 @@
 <?php
-
+// phpcs:disable VariableAnalysis.CodeAnalysis.VariableAnalysis -- Prevent "Unused global variable $sensei_email_data"
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }

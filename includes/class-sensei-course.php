@@ -553,6 +553,7 @@ class Sensei_Course {
 	 * @return array $new_columns
 	 */
 	public function add_column_headings( $defaults ) {
+		$new_columns                        = array();
 		$new_columns['cb']                  = '<input type="checkbox" />';
 		$new_columns['title']               = _x( 'Course Title', 'column name', 'sensei' );
 		$new_columns['course-prerequisite'] = _x( 'Pre-requisite Course', 'column name', 'sensei' );

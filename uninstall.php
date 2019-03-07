@@ -77,6 +77,7 @@ if ( ! is_multisite() ) {
 	foreach ( $blog_ids as $blog_id ) {
 		switch_to_blog( $blog_id );
 
+		// phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UndefinedVariable -- $plugin is passed to `uninstall_plugin`
 		if ( is_another_sensei_activated( $plugin ) ) {
 			continue;
 		}
