@@ -205,7 +205,6 @@ class Sensei_Category_Courses_Widget extends WP_Widget {
 				$user_info           = get_userdata( absint( $post_item->post_author ) );
 				$author_link         = get_author_posts_url( absint( $post_item->post_author ) );
 				$author_display_name = $user_info->display_name;
-				$author_id           = $post_item->post_author;
 				?>
 				<li class="fix">
 					<?php do_action( 'sensei_course_image', $post_id ); ?>

@@ -173,9 +173,6 @@ class Sensei_Lesson_Component_Widget extends WP_Widget {
 	 * @return void
 	 */
 	protected function load_component( $instance ) {
-
-		global  $current_user;
-
 		/*
 		newlessons
 		*/
@@ -201,7 +198,6 @@ class Sensei_Lesson_Component_Widget extends WP_Widget {
 				$user_info           = get_userdata( absint( $post_item->post_author ) );
 				$author_link         = get_author_posts_url( absint( $post_item->post_author ) );
 				$author_display_name = $user_info->display_name;
-				$author_id           = $post_item->post_author;
 				$lesson_course_id    = get_post_meta( $post_id, '_lesson_course', true );
 				?>
 				<li class="fix">

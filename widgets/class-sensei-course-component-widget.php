@@ -282,7 +282,6 @@ class Sensei_Course_Component_Widget extends WP_Widget {
 				$user_info           = get_userdata( absint( $course->post_author ) );
 				$author_link         = get_author_posts_url( absint( $course->post_author ) );
 				$author_display_name = $user_info->display_name;
-				$author_id           = $course->post_author;
 				?>
 
 				<li class="fix">
@@ -389,7 +388,7 @@ class Sensei_Course_Component_Widget extends WP_Widget {
 		$user_courses_activity = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
 
 		if ( ! is_array( $user_courses_activity ) ) {
-
+			$user_courses_activity_arr   = array();
 			$user_courses_activity_arr[] = $user_courses_activity;
 			$user_courses_activity       = $user_courses_activity_arr;
 
@@ -422,7 +421,7 @@ class Sensei_Course_Component_Widget extends WP_Widget {
 		$user_courses_activity = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
 
 		if ( ! is_array( $user_courses_activity ) ) {
-
+			$user_courses_activity_arr   = array();
 			$user_courses_activity_arr[] = $user_courses_activity;
 			$user_courses_activity       = $user_courses_activity_arr;
 
