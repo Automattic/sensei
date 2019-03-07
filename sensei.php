@@ -51,12 +51,17 @@ if ( class_exists( 'Sensei_Main' ) ) {
 			return ! empty( $activating_plugin ) && $activating_plugin === $plugin;
 		}
 	}
+
+	// phpcs:disable VariableAnalysis.CodeAnalysis.VariableAnalysis.UndefinedVariable -- false positive
 	if ( ! isset( $_wp_plugin_file ) ) {
 		$_wp_plugin_file = false;
 	}
+
 	if ( ! isset( $plugin ) ) {
 		$plugin = null;
 	}
+	// phpcs:enable
+
 	if ( is_sensei_activating( $_wp_plugin_file, $plugin ) && defined( 'SENSEI_IGNORE_ACTIVATION_CONFLICT' ) && true === SENSEI_IGNORE_ACTIVATION_CONFLICT ) {
 		// Hope that this will just be a conflict that happens during activation.
 		return;
