@@ -62,6 +62,7 @@ class Sensei_Question {
 	 * @return array $new_columns
 	 */
 	public function add_column_headings( $defaults ) {
+		$new_columns                      = array();
 		$new_columns['cb']                = '<input type="checkbox" />';
 		$new_columns['title']             = _x( 'Question', 'column name', 'sensei' );
 		$new_columns['question-type']     = _x( 'Type', 'column name', 'sensei' );
@@ -1192,7 +1193,6 @@ class Sensei_Question {
 
 		$right_answer = get_post_meta( $question_id, '_question_right_answer', true );
 		$type         = Sensei()->question->get_question_type( $question_id );
-		$type_name    = __( 'Multiple Choice', 'sensei' );
 		$grade_type   = 'manual-grade';
 
 		if ( 'boolean' == $type ) {
