@@ -1,5 +1,4 @@
 <?php
-// phpcs:disable VariableAnalysis.CodeAnalysis.VariableAnalysis.UndefinedVariable
 /**
  * Admin View: Page - Extensions - Category Listings
  *
@@ -7,6 +6,8 @@
  *
  * @package Sensei\Extensions
  */
+
+// phpcs:disable VariableAnalysis.CodeAnalysis.VariableAnalysis.UndefinedVariable
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
