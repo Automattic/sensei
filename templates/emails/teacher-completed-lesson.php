@@ -1,5 +1,4 @@
 <?php
-// phpcs:disable VariableAnalysis.CodeAnalysis.VariableAnalysis.UndefinedVariable
 /**
  * Teacher completed course email
  *
@@ -7,6 +6,9 @@
  * @package Sensei/Templates/Emails/HTML
  * @version 1.6.0
  */
+
+// phpcs:disable VariableAnalysis.CodeAnalysis.VariableAnalysis.UndefinedVariable
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 } // Exit if accessed directly ?>
