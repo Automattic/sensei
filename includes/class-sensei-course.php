@@ -1284,6 +1284,37 @@ class Sensei_Course {
 	} // End course_lesson_count()
 
 	/**
+	 * course_length function.
+	 *
+	 * @access public
+	 * @param  int $course_id (default: 0)
+	 * @return int
+	 */
+	public function course_length( $course_id = 0 ) {
+
+		$course_length = 0;
+		$lesson_args   = array(
+			'post_type'        => 'lesson',
+			'posts_per_page'   => -1,
+			'meta_key'         => '_lesson_course',
+			'meta_value'       => $course_id,
+			'post_status'      => 'publish',
+			'suppress_filters' => 0,
+			'fields'           => 'ids', // less data to retrieve
+		);
+		$course_lessons = new WP_Query( $lesson_args );
+		$lessons_array  = $course_lessons->posts;
+		wp_reset_postdata();
+		if ( is_array( $lessons_array ) ) {
+			foreach ( $lessons_array as $lesson_id ) {
+				$course_length += get_post_meta( $lesson_id, '_lesson_length', true );
+			}
+		}
+
+		return $course_length;
+	} // End course_length()
+
+	/**
 	 * course_lesson_preview_count function.
 	 *
 	 * @access public
@@ -2267,6 +2298,24 @@ class Sensei_Course {
 		$course              = get_post( $course_id );
 		$category_output     = get_the_term_list( $course->ID, 'course-category', '', ', ', '' );
 		$author_display_name = get_the_author_meta( 'display_name', $course->post_author );
+
+		$course_length = Sensei()->course->course_length( $course->ID );
+		if ( $course_length ) {
+			$hours   = floor( $course_length / 60 );
+			$minutes = $course_length % 60;
+			$html    = array();
+			$html[]  = '<span class="course-length"><span class="course-length-text">' . esc_html__( 'Length:', 'woothemes-sensei' ) . '</span>';
+			if ( $hours ) {
+				$html[] = $hours . esc_html__( 'h', 'woothemes-sensei' );
+			}
+			if ( $minutes ) {
+				$html[] = $minutes . esc_html__( 'm', 'woothemes-sensei' );
+			}
+			$html[]  = '</span>';
+			$output = join( ' ', $html );
+			
+			echo wp_kses_post( $output );
+		}
 
 		if ( isset( Sensei()->settings->settings['course_author'] ) && ( Sensei()->settings->settings['course_author'] ) ) {
 			?>
