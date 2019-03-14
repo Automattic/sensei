@@ -24,6 +24,7 @@
 * Fix: Conflict with Jetpack shortcodes module causing Sensei videos to not display
 * Fix: Bug causing the Lesson order to change on Lesson update
 * Fix: Completed modules being displayed as "In Progress"
+* Fix: Linter issues
 * Tweak: Access Permissions setting only controls Lesson content
 * Tweak: Change text domain from `woothemes-sensei` to `sensei`
 * Tweak: In `templates/content-course.php`, call Sensei_Course::get_course_loop_content_class instead of WooThemes_Sensei_Course::get_course_loop_content_class
