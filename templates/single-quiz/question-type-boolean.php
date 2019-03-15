@@ -1,25 +1,23 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
 /**
  * The Template for displaying True/False ( Boolean ) Question type.
  *
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     1.9.0
+ * @version     2.0.0
  */
-?>
 
-<?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
-	/**
-	 * Get the question data with the current quiz id
-	 * All data is loaded in this array to keep the template clean.
-	 */
-	$question_data   = Sensei_Question::get_template_data( sensei_get_the_question_id(), get_the_ID() );
-	$boolean_options = array( 'true', 'false' );
+/**
+ * Get the question data with the current quiz id
+ * All data is loaded in this array to keep the template clean.
+ */
+$question_data   = Sensei_Question::get_template_data( sensei_get_the_question_id(), get_the_ID() );
+$boolean_options = array( 'true', 'false' );
 
 ?>
 

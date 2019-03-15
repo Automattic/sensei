@@ -8,22 +8,22 @@
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     1.9.0
+ * @version     2.0.0
  */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+get_sensei_header();
+
+/**
+ * Action before lesson archive loop. This action runs within the archive-lesson.php.
+ *
+ * It will be executed even if there are no posts on the archive page.
+ */
+do_action( 'sensei_archive_before_lesson_loop' );
 ?>
-
-<?php get_sensei_header(); ?>
-
-	<?php
-
-		/**
-		 * Action before lesson archive loop. This action runs within the archive-lesson.php.
-		 *
-		 * It will be executed even if there are no posts on the archive page.
-		 */
-		do_action( 'sensei_archive_before_lesson_loop' );
-
-	?>
 
 	<?php if ( have_posts() ) : ?>
 

@@ -9,9 +9,13 @@
  * @category  Templates
  * @version   1.9.20
  */
-?>
 
-<?php get_sensei_header(); ?>
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+get_sensei_header();
+?>
 
 	<?php
 		/**

@@ -1,7 +1,4 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
 /**
  * Content-message.php template file
  *
@@ -12,8 +9,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     1.9.0
+ * @version     1.12.2
  */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 ?>
 
 <article <?php post_class( array( 'post', 'sensei_message' ), get_the_ID() ); ?>>

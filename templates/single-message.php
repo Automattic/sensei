@@ -7,11 +7,13 @@
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     1.9.0
+ * @version     1.12.0
  */
-?>
 
-<?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 get_sensei_header();
 the_post();
 ?>

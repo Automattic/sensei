@@ -7,13 +7,15 @@
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     1.9.0
+ * @version     2.0.0
  */
-?>
 
-<?php get_sensei_header(); ?>
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
-<?php
+get_sensei_header();
+
 /**
  * This hook fire inside learner-profile.php before the content
  *

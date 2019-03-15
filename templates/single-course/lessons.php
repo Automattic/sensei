@@ -1,7 +1,4 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
 /**
  * The Template for displaying all single course meta information.
  *
@@ -12,6 +9,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @category    Templates
  * @version     1.9.0
  */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 ?>
 
 <section class="course-lessons">

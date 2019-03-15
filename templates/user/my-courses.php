@@ -1,7 +1,4 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
 /**
  * The Template for displaying the my course page data.
  *
@@ -12,9 +9,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @category    Templates
  * @version     1.9.0
  */
-?>
 
-<?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Executes before the Sensei my courses markup begins. This hook
  * only fires whe a user is logged in. If you need to add

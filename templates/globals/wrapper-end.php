@@ -1,7 +1,4 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
 /**
  * Content wrappers
  *
@@ -12,6 +9,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @category    Templates
  * @version     1.9.0
  */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 ?>
 		</div>
 		<?php get_sidebar(); ?>
