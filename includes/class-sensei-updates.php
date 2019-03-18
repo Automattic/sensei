@@ -182,13 +182,21 @@ class Sensei_Updates {
 			),
 		);
 
-		$this->updates = apply_filters( 'sensei_upgrade_functions', $this->updates, $this->updates );
 		$this->version = get_option( 'sensei-version' );
 
 		// Manual Update Screen
 		add_action( 'admin_menu', array( $this, 'add_update_admin_screen' ), 50 );
 
 	} // End __construct()
+
+	/**
+	 * Get all the possible updates.
+	 *
+	 * @return array
+	 */
+	public function get_updates() {
+		return apply_filters( 'sensei_upgrade_functions', $this->updates, $this->updates );
+	}
 
 	/**
 	 * Get the array of upgrades that have executed.
@@ -435,10 +443,11 @@ class Sensei_Updates {
 				<tbody class="updates">
 				<?php
 				// Sort updates with the latest at the top
-				uksort( $this->updates, array( $this, 'sort_updates' ) );
-				$this->updates = array_reverse( $this->updates, true );
-				$class         = 'alternate';
-				foreach ( $this->updates as $version => $version_updates ) {
+				$updates = $this->get_updates();
+				uksort( $updates, array( $this, 'sort_updates' ) );
+				$updates = array_reverse( $updates, true );
+				$class   = 'alternate';
+				foreach ( $updates as $version => $version_updates ) {
 					foreach ( $version_updates as $type => $updates ) {
 						foreach ( $updates as $update => $data ) {
 							$update_run = $this->has_update_run( $update );
@@ -588,9 +597,10 @@ class Sensei_Updates {
 
 		$this->force_updates();
 
+		$updates = $this->get_updates();
 		// Run through all functions
-		foreach ( $this->updates as $version => $value ) {
-			foreach ( $this->updates[ $version ] as $upgrade_type => $function_to_run ) {
+		foreach ( $updates as $version => $value ) {
+			foreach ( $updates[ $version ] as $upgrade_type => $function_to_run ) {
 				if ( $upgrade_type == $type ) {
 					$updated = false;
 					// Run the update function
@@ -642,8 +652,9 @@ class Sensei_Updates {
 
 			$updates_to_run = array();
 
-			foreach ( $this->updates as $version => $value ) {
-				foreach ( $this->updates[ $version ] as $upgrade_type => $function_to_run ) {
+			$updates = $this->get_updates();
+			foreach ( $updates as $version => $value ) {
+				foreach ( $updates[ $version ] as $upgrade_type => $function_to_run ) {
 					if ( $upgrade_type == 'forced' ) {
 						foreach ( $function_to_run as $function_name => $update_data ) {
 
