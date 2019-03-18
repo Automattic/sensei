@@ -118,6 +118,7 @@ a.sensei-certificate-link {
       }
     }
     .lesson  {
+      @include clearfix();
       header  {
         h2  {
           margin: 0;
