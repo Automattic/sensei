@@ -565,7 +565,7 @@ class Sensei_Main {
 	public function install() {
 
 		register_activation_hook( $this->main_plugin_file_name, array( $this, 'activate_sensei' ) );
-		register_activation_hook( $this->main_plugin_file_name, 'flush_rewrite_rules' );
+		register_activation_hook( $this->main_plugin_file_name, array( $this, 'initiate_rewrite_rules_flush' ) );
 
 	} // End install()
 
