@@ -1,15 +1,16 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
 /**
  * Pagination - Lesson
  *
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     1.9.0
+ * @version     1.9.20
  */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 global $post;
 

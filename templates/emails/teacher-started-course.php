@@ -4,16 +4,14 @@
  *
  * @author  Automattic
  * @package Sensei/Templates/Emails/HTML
- * @version 1.6.0
+ * @version 2.0.0
  */
 
 // phpcs:disable VariableAnalysis.CodeAnalysis.VariableAnalysis.UndefinedVariable
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
-} // Exit if accessed directly ?>
-
-<?php
+} // Exit if accessed directly
 
 // Get data for email content
 global $sensei_email_data;
