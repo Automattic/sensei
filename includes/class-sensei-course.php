@@ -1179,6 +1179,8 @@ class Sensei_Course {
 	 * get_product_courses function.
 	 *
 	 * @access public
+	 * @deprecated 2.0.0 Use `Sensei_WC_Paid_Courses\Courses::get_product_courses()` instead.
+	 *
 	 * @param  int $product_id (default: 0)
 	 * @return array
 	 */
@@ -1195,6 +1197,8 @@ class Sensei_Course {
 	} // End get_product_courses()
 
 	/**
+	 * @deprecated 2.0.0 Use `Sensei_WC_Paid_Courses\Courses::get_product_courses_query_args()` instead.
+	 *
 	 * @param $product_id
 	 *
 	 * @return array
