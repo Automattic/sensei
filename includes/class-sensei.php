@@ -245,6 +245,18 @@ class Sensei_Main {
 		 * Hook in WooCommerce Subscriptions functionality
 		 */
 		add_action( 'init', array( 'Sensei_WC_Subscriptions', 'load_wc_subscriptions_integration_hooks' ) );
+
+		// Warn people with old version of PHP about upcoming changes and restrict updates.
+		if ( ! version_compare( phpversion(), '5.6.0', '>=' ) ) {
+			// Warn about upcoming Sensei 2 requirement and prevent updates.
+			add_action( 'admin_notices', array( __CLASS__, 'show_php_notice' ) );
+			add_filter( 'plugins_api', array( __CLASS__, 'plugins_api_hide_sensei_updates' ), 30, 3 );
+			add_action( 'pre_set_site_transient_update_plugins', array( __CLASS__, 'transient_update_plugins_hide_sensei_updates' ), 22, 1 );
+
+			if ( ! self::can_wordpress_hint_plugin_php_compat() ) {
+				add_action( 'plugin_row_meta', array( __CLASS__, 'add_plugin_meta_php_update_notice' ), 10, 3 );
+			}
+		}
 	}
 
 	/**
@@ -306,6 +318,206 @@ class Sensei_Main {
 	 */
 	public function __wakeup() {
 		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'woothemes-sensei' ), '1.8' );
+	}
+
+	/**
+	 * Show notice when minimum PHP version is not met.
+	 */
+	public static function show_php_notice() {
+		$screen        = get_current_screen();
+		$valid_screens = array( 'dashboard', 'plugins' );
+		if ( ! current_user_can( 'activate_plugins' ) || ! in_array( $screen->id, $valid_screens, true ) ) {
+			return;
+		}
+		$message = sprintf(
+			// translators: %1$s is the URL to the Sensei 2 announcement; %2$s is the name of the plugin required; %3$s is the minimum version number.
+			__( '<a href="%1$s" rel="noopener noreferrer"><strong>Sensei 2.0</strong> is coming soon</a> and requires a minimum PHP version of %2$s, but you are running %3$s. <strong>Please update your version of PHP before updating Sensei.</strong>', 'woothemes-sensei' ),
+			'https://senseilms.com/2019/02/27/upcoming-changes-in-sensei-2-0/',
+			'5.6.0',
+			phpversion()
+		);
+		echo '<div class="error"><p>';
+		echo wp_kses_post( $message );
+		$php_update_url = 'https://wordpress.org/support/update-php/';
+		if ( function_exists( 'wp_get_update_php_url' ) ) {
+			$php_update_url = wp_get_update_php_url();
+		}
+		printf(
+			'<p><a class="button button-primary" href="%1$s" target="_blank" rel="noopener noreferrer">%2$s <span class="screen-reader-text">%3$s</span><span aria-hidden="true" class="dashicons dashicons-external"></span></a></p>',
+			esc_url( $php_update_url ),
+			esc_html__( 'Learn more about updating PHP', 'woothemes-sensei' ),
+			/* translators: accessibility text */
+			esc_html__( '(opens in a new tab)', 'woothemes-sensei' )
+		);
+		echo '</p></div>';
+	}
+
+	/**
+	 * Add a PHP version notice for the plugin.
+	 *
+	 * @param string[] $plugin_meta An array of the plugin's metadata,
+	 *                              including the version, author,
+	 *                              author URI, and plugin URI.
+	 * @param string   $plugin_file Path to the plugin file relative to the plugins directory.
+	 * @param array    $plugin_data An array of plugin data.
+	 * @return string[]
+	 */
+	public static function add_plugin_meta_php_update_notice( $plugin_meta, $plugin_file, $plugin_data ) {
+		$plugins = self::get_sensei_php56_plugin_versions();
+		if ( ! isset( $plugins[ $plugin_file ] ) ) {
+			return $plugin_meta;
+		}
+
+		$versions = $plugins[ $plugin_file ];
+		if ( version_compare( $plugin_data['Version'], $versions['incompatible'], '>=' ) ) {
+			// They've already installed the incompatible version. Let it warn them.
+			return $plugin_meta;
+		}
+
+		$more_information_url = 'https://senseilms.com/documentation/';
+
+		// translators: Placeholder is url for more info on Sensei's PHP version bump.
+		$message       = sprintf( __( 'Next version requires newer version of PHP. <a href="%s" rel="noopener noreferrer" target="_blank">More Information <span aria-hidden="true" class="dashicons dashicons-external"></span></a>', 'woothemes-sensei' ), $more_information_url );
+		$plugin_meta[] = '<span style="color: red; font-weight: bold;">' . wp_kses_post( $message ) . '</span>';
+
+		return $plugin_meta;
+	}
+
+	/**
+	 * Plugin information callback. This hides future Sensei updates that will require PHP 5.6+.
+	 *
+	 * @param object $response The response core needs to display the modal.
+	 * @param string $action   The requested plugins_api() action.
+	 * @param object $args     Arguments passed to plugins_api().
+	 *
+	 * @return object An updated $response.
+	 */
+	public static function plugins_api_hide_sensei_updates( $response, $action, $args ) {
+		if ( 'plugin_information' !== $action ) {
+			return $response;
+		}
+
+		if ( empty( $args->slug ) ) {
+			return $response;
+		}
+
+		$plugins     = self::get_sensei_php56_plugin_versions();
+		$clean_slug  = str_replace( 'woocommerce-com-', '', $args->slug );
+		$plugin_file = $clean_slug . '.php';
+
+		if ( ! isset( $plugins[ $plugin_file ] ) ) {
+			return $response;
+		}
+
+		// If WordPress can hint when plugin requires certain PHP version and the Plugins API response included required
+		// PHP version, use that functionality.
+		if ( self::can_wordpress_hint_plugin_php_compat() && ! empty( $response->requires_php ) ) {
+			return $response;
+		}
+
+		$versions = $plugins[ $plugin_file ];
+		if ( empty( $response->version ) || version_compare( $response->version, $versions['incompatible'], '<' ) ) {
+			return $response;
+		}
+
+		// If the Plugins API has returned a version we know not to be compatible with installed PHP version,
+		// pass the current version of the plugin.
+		$response->version = $versions['current'];
+		if ( empty( $response->requires_php ) ) {
+			$response->requires_php = '5.6.0';
+		}
+
+		return $response;
+	}
+
+	/**
+	 * This hides future Sensei updates that will require PHP 5.6+.
+	 *
+	 * @param object $transient The update_plugins transient object.
+	 *
+	 * @return object The same or a modified version of the transient.
+	 */
+	public static function transient_update_plugins_hide_sensei_updates( $transient ) {
+		$plugins = self::get_sensei_php56_plugin_versions();
+
+		foreach ( $plugins as $plugin_file => $versions ) {
+			if ( isset( $transient->response[ $plugin_file ] ) ) {
+				$item = $transient->response[ $plugin_file ];
+
+				if ( self::can_wordpress_hint_plugin_php_compat() && ! empty( $item->requires_php ) ) {
+					continue;
+				}
+
+				if ( empty( $item->new_version ) || version_compare( $item->new_version, $versions['incompatible'], '>=' ) ) {
+					// If the new version is one we know not to be compatible with installed PHP version,
+					// forget it and pass the current version.
+					$item->upgrade_notice = '';
+					$item->package        = '';
+					$item->new_version    = $versions['current'];
+					if ( empty( $item->requires_php ) ) {
+						$item->requires_php = '5.6.0';
+					}
+					unset( $transient->response[ $plugin_file ] );
+					$transient->no_update[ $plugin_file ] = $item;
+				}
+			}
+		}
+
+		return $transient;
+	}
+
+	/**
+	 * Returns the plugin files and version for Sensei and official extensions that have a PHP version bump to 5.6+.
+	 *
+	 * @return array
+	 */
+	private static function get_sensei_php56_plugin_versions() {
+		static $plugins;
+
+		if ( isset( $plugins ) ) {
+			return $plugins;
+		}
+
+		$plugins = array();
+		$plugins[ plugin_basename( dirname( dirname( __FILE__ ) ) . '/woothemes-sensei.php' ) ] = array(
+			'current'      => Sensei()->version,
+			'incompatible' => '2.0.0',
+		);
+
+		$search_plugin_files = array(
+			'sensei-content-drip.php'           => '2.0.0',
+			'sensei-course-participants.php'    => '2.0.0',
+			'sensei-course-progress.php'        => '2.0.0',
+			'sensei-media-attachments.php'      => '2.0.0',
+			'sensei-share-your-grade.php'       => '2.0.0',
+			'woothemes-sensei-certificates.php' => '2.0.0',
+		);
+
+		if ( ! function_exists( 'get_plugins' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+		$all_plugins = get_plugins();
+		foreach ( $all_plugins as $plugin_file => $plugin_data ) {
+			if ( isset( $search_plugin_files[ basename( $plugin_file ) ] ) ) {
+				$plugins[ $plugin_file ] = array(
+					'current'      => $plugin_data['Version'],
+					'incompatible' => $search_plugin_files[ basename( $plugin_file ) ],
+				);
+			}
+		}
+
+		return $plugins;
+	}
+
+	/**
+	 * Check if WordPress version can hint at which PHP versions are compatible with a plugin.
+	 *
+	 * @return bool
+	 */
+	private static function can_wordpress_hint_plugin_php_compat() {
+		global $wp_version;
+
+		return version_compare( '5.2.0', $wp_version, '<=' );
 	}
 
 	/**
