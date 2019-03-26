@@ -249,7 +249,7 @@ class Sensei_Main {
 		// Warn people with old version of PHP about upcoming changes and restrict updates.
 		if ( ! version_compare( phpversion(), '5.6.0', '>=' ) ) {
 			// Warn about upcoming Sensei 2 requirement and prevent updates.
-			add_action( 'all_admin_notices', array( __CLASS__, 'show_php_notice' ) );
+			add_action( 'all_admin_notices', array( __CLASS__, 'show_php_version_notice' ) );
 			add_filter( 'plugins_api', array( __CLASS__, 'plugins_api_hide_sensei_updates' ), 30, 3 );
 			add_action( 'pre_set_site_transient_update_plugins', array( __CLASS__, 'transient_update_plugins_hide_sensei_updates' ), 22, 1 );
 			add_action( 'plugin_row_meta', array( __CLASS__, 'add_plugin_meta_php_update_notice' ), 10, 3 );
@@ -320,7 +320,7 @@ class Sensei_Main {
 	/**
 	 * Show notice when minimum PHP version is not met.
 	 */
-	public static function show_php_notice() {
+	public static function show_php_version_notice() {
 		$screen        = get_current_screen();
 		$valid_screens = array( 'dashboard', 'plugins', 'plugins-network' );
 		if ( ! current_user_can( 'activate_plugins' ) || ! in_array( $screen->id, $valid_screens, true ) ) {
