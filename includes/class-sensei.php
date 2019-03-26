@@ -325,7 +325,7 @@ class Sensei_Main {
 	 */
 	public static function show_php_notice() {
 		$screen        = get_current_screen();
-		$valid_screens = array( 'dashboard', 'plugins' );
+		$valid_screens = array( 'dashboard', 'plugins', 'plugins-network' );
 		if ( ! current_user_can( 'activate_plugins' ) || ! in_array( $screen->id, $valid_screens, true ) ) {
 			return;
 		}
