@@ -252,10 +252,7 @@ class Sensei_Main {
 			add_action( 'admin_notices', array( __CLASS__, 'show_php_notice' ) );
 			add_filter( 'plugins_api', array( __CLASS__, 'plugins_api_hide_sensei_updates' ), 30, 3 );
 			add_action( 'pre_set_site_transient_update_plugins', array( __CLASS__, 'transient_update_plugins_hide_sensei_updates' ), 22, 1 );
-
-			if ( ! self::can_wordpress_hint_plugin_php_compat() ) {
-				add_action( 'plugin_row_meta', array( __CLASS__, 'add_plugin_meta_php_update_notice' ), 10, 3 );
-			}
+			add_action( 'plugin_row_meta', array( __CLASS__, 'add_plugin_meta_php_update_notice' ), 10, 3 );
 		}
 	}
 
@@ -409,12 +406,6 @@ class Sensei_Main {
 			return $response;
 		}
 
-		// If WordPress can hint when plugin requires certain PHP version and the Plugins API response included required
-		// PHP version, use that functionality.
-		if ( self::can_wordpress_hint_plugin_php_compat() && ! empty( $response->requires_php ) ) {
-			return $response;
-		}
-
 		$versions = $plugins[ $plugin_file ];
 		if ( empty( $response->version ) || version_compare( $response->version, $versions['incompatible'], '<' ) ) {
 			return $response;
@@ -443,10 +434,6 @@ class Sensei_Main {
 		foreach ( $plugins as $plugin_file => $versions ) {
 			if ( isset( $transient->response[ $plugin_file ] ) ) {
 				$item = $transient->response[ $plugin_file ];
-
-				if ( self::can_wordpress_hint_plugin_php_compat() && ! empty( $item->requires_php ) ) {
-					continue;
-				}
 
 				if ( empty( $item->new_version ) || version_compare( $item->new_version, $versions['incompatible'], '>=' ) ) {
 					// If the new version is one we know not to be compatible with installed PHP version,
@@ -507,17 +494,6 @@ class Sensei_Main {
 		}
 
 		return $plugins;
-	}
-
-	/**
-	 * Check if WordPress version can hint at which PHP versions are compatible with a plugin.
-	 *
-	 * @return bool
-	 */
-	private static function can_wordpress_hint_plugin_php_compat() {
-		global $wp_version;
-
-		return version_compare( '5.2.0', $wp_version, '<=' );
 	}
 
 	/**
