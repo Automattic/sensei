@@ -249,7 +249,7 @@ class Sensei_Main {
 		// Warn people with old version of PHP about upcoming changes and restrict updates.
 		if ( ! version_compare( phpversion(), '5.6.0', '>=' ) ) {
 			// Warn about upcoming Sensei 2 requirement and prevent updates.
-			add_action( 'admin_notices', array( __CLASS__, 'show_php_notice' ) );
+			add_action( 'all_admin_notices', array( __CLASS__, 'show_php_notice' ) );
 			add_filter( 'plugins_api', array( __CLASS__, 'plugins_api_hide_sensei_updates' ), 30, 3 );
 			add_action( 'pre_set_site_transient_update_plugins', array( __CLASS__, 'transient_update_plugins_hide_sensei_updates' ), 22, 1 );
 			add_action( 'plugin_row_meta', array( __CLASS__, 'add_plugin_meta_php_update_notice' ), 10, 3 );
