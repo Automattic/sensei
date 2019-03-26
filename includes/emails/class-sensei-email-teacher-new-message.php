@@ -1,10 +1,10 @@
 <?php
-
+// phpcs:disable VariableAnalysis.CodeAnalysis.VariableAnalysis -- Prevent "Unused global variable $sensei_email_data"
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-if ( ! class_exists( 'WooThemes_Sensei_Email_Teacher_New_Message' ) ) :
+if ( ! class_exists( 'Sensei_Email_Teacher_New_Message' ) ) :
 
 	/**
 	 * Teacher New Message
@@ -16,7 +16,7 @@ if ( ! class_exists( 'WooThemes_Sensei_Email_Teacher_New_Message' ) ) :
 	 *
 	 * @since       1.6.0
 	 */
-	class WooThemes_Sensei_Email_Teacher_New_Message {
+	class Sensei_Email_Teacher_New_Message {
 
 		var $template;
 		var $subject;
@@ -57,8 +57,8 @@ if ( ! class_exists( 'WooThemes_Sensei_Email_Teacher_New_Message' ) ) :
 			do_action( 'sensei_before_mail', $this->recipient );
 
 			// translators: Placeholder is the blog name.
-			$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] You have received a new private message', 'woothemes-sensei' ), get_bloginfo( 'name' ) ), $this->template );
-			$this->heading = apply_filters( 'sensei_email_heading', __( 'Your student has sent you a private message', 'woothemes-sensei' ), $this->template );
+			$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] You have received a new private message', 'sensei' ), get_bloginfo( 'name' ) ), $this->template );
+			$this->heading = apply_filters( 'sensei_email_heading', __( 'Your student has sent you a private message', 'sensei' ), $this->template );
 
 			$content_type  = get_post_meta( $message_id, '_posttype', true );
 			$content_id    = get_post_meta( $message_id, '_post', true );
@@ -100,4 +100,4 @@ if ( ! class_exists( 'WooThemes_Sensei_Email_Teacher_New_Message' ) ) :
 
 endif;
 
-return new WooThemes_Sensei_Email_Teacher_New_Message();
+return new Sensei_Email_Teacher_New_Message();

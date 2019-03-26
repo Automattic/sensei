@@ -1,10 +1,10 @@
 <?php
-
+// phpcs:disable VariableAnalysis.CodeAnalysis.VariableAnalysis -- Prevent "Unused global variable $sensei_email_data"
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-if ( ! class_exists( 'WooThemes_Sensei_Email_Learner_Completed_Course' ) ) :
+if ( ! class_exists( 'Sensei_Email_Learner_Completed_Course' ) ) :
 
 	/**
 	 * Learner Completed Course
@@ -16,7 +16,7 @@ if ( ! class_exists( 'WooThemes_Sensei_Email_Learner_Completed_Course' ) ) :
 	 *
 	 * @since       1.6.0
 	 */
-	class WooThemes_Sensei_Email_Learner_Completed_Course {
+	class Sensei_Email_Learner_Completed_Course {
 
 		var $template;
 		var $subject;
@@ -60,13 +60,13 @@ if ( ! class_exists( 'WooThemes_Sensei_Email_Learner_Completed_Course' ) ) :
 			do_action( 'sensei_before_mail', $this->recipient );
 
 			// translators: Placeholder is the blog name.
-			$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] You have completed a course', 'woothemes-sensei' ), get_bloginfo( 'name' ) ), $this->template );
-			$this->heading = apply_filters( 'sensei_email_heading', __( 'You have completed a course', 'woothemes-sensei' ), $this->template );
+			$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] You have completed a course', 'sensei' ), get_bloginfo( 'name' ) ), $this->template );
+			$this->heading = apply_filters( 'sensei_email_heading', __( 'You have completed a course', 'sensei' ), $this->template );
 
 			// Get passed status
-			$passed = __( 'passed', 'woothemes-sensei' );
+			$passed = __( 'passed', 'sensei' );
 			if ( ! Sensei_Utils::sensei_user_passed_course( $course_id, $user_id ) ) {
-				$passed = __( 'failed', 'woothemes-sensei' );
+				$passed = __( 'failed', 'sensei' );
 			}
 
 			// Construct data array
@@ -91,4 +91,4 @@ if ( ! class_exists( 'WooThemes_Sensei_Email_Learner_Completed_Course' ) ) :
 
 endif;
 
-return new WooThemes_Sensei_Email_Learner_Completed_Course();
+return new Sensei_Email_Learner_Completed_Course();

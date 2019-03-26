@@ -4,8 +4,11 @@
  *
  * @author  Automattic
  * @package Sensei/Templates/Emails/HTML
- * @version 1.6.0
+ * @version 2.0.0
  */
+
+// phpcs:disable VariableAnalysis.CodeAnalysis.VariableAnalysis.UndefinedVariable
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 } // Exit if accessed directly ?>
@@ -28,7 +31,7 @@ $large = 'text-align: center !important;font-size: 350% !important;line-height: 
 <p style="<?php echo esc_attr( $small ); ?>">
 <?php
 // translators: Placeholder is the translated text for "passed" or "failed".
-printf( esc_html__( 'You have completed and %1$s the course', 'woothemes-sensei' ), esc_html( $passed ) );
+printf( esc_html__( 'You have completed and %1$s the course', 'sensei' ), esc_html( $passed ) );
 ?>
 </p>
 

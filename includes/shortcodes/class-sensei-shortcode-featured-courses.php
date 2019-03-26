@@ -108,11 +108,8 @@ class Sensei_Shortcode_Featured_Courses implements Sensei_Shortcode_Interface {
 	 * Rendering the shortcode this class is responsible for.
 	 */
 	public function render() {
-
+		// phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
 		global $wp_query;
-
-		// keep a reference to old query
-		$current_global_query = $wp_query;
 
 		// assign the query setup in $this-> setup_course_query
 		$wp_query = $this->query;
@@ -120,9 +117,6 @@ class Sensei_Shortcode_Featured_Courses implements Sensei_Shortcode_Interface {
 		ob_start();
 		Sensei_Templates::get_template( 'loop-course.php' );
 		$shortcode_output = ob_get_clean();
-
-		// restore old query
-		$wp_query = $current_global_query;
 
 		return $shortcode_output;
 

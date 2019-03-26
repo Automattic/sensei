@@ -25,7 +25,7 @@ var wpPot           = require( 'gulp-wp-pot' );
 var zip             = require( 'gulp-zip' );
 
 var paths = {
-	scripts: [ 'assets/js/**/*.js' ],
+	scripts: [ 'assets/js/**/*.js', '!assets/js/**/*.min.js' ],
 	css: [ 'assets/css/**/*.scss' ],
 	select2: [
 		'node_modules/select2/dist/css/select2.min.css',
@@ -44,11 +44,11 @@ var paths = {
 		'templates/**/*',
 		'uninstall.php',
 		'widgets/**/*',
-		'woothemes-sensei.php',
+		'sensei.php',
 		'wpml-config.xml',
 	],
-	packageDir: 'build/woothemes-sensei',
-	packageZip: 'build/woothemes-sensei.zip'
+	packageDir: 'build/sensei',
+	packageZip: 'build/sensei.zip'
 };
 
 gulp.task( 'clean', gulp.series( function( cb ) {
@@ -82,16 +82,16 @@ gulp.task( 'pot', gulp.series( function() {
 	return gulp.src( [ '**/**.php', '!node_modules/**', '!build/**' ] )
 		.pipe( sort() )
 		.pipe( wpPot( {
-			domain: 'woothemes-sensei',
+			domain: 'sensei',
 			bugReport: 'https://www.transifex.com/woothemes/sensei-by-woothemes/'
 		} ) )
-		.pipe( gulp.dest( 'lang/woothemes-sensei.pot' ) );
+		.pipe( gulp.dest( 'lang/sensei.pot' ) );
 } ) );
 
 gulp.task( 'textdomain', gulp.series( function() {
 	return gulp.src( [ '**/*.php', '!node_modules/**', '!build/**' ] )
 		.pipe( checktextdomain( {
-			text_domain: 'woothemes-sensei',
+			text_domain: 'sensei',
 			keywords: [
 				'__:1,2d',
 				'_e:1,2d',

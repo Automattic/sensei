@@ -72,7 +72,7 @@ class Sensei_HookFinder {
 		$admin_files 		= self::get_files( '*.php', GLOB_MARK, self::$sensei_directory.'/includes/admin/' );
 		$class_files 		= self::get_files( '*.php', GLOB_MARK, self::$sensei_directory.'/includes/' );
 		$other_files		= array(
-            self::$sensei_directory.'/woothemes-sensei.php'
+            self::$sensei_directory.'/sensei.php'
 		);
 
 		self::$files_to_scan = array(

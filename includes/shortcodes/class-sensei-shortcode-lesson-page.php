@@ -72,7 +72,7 @@ class Sensei_Shortcode_Lesson_Page implements Sensei_Shortcode_Interface {
 
 		if ( empty( $this->id ) ) {
 
-			return __( 'Please supply a lesson ID for this shortcode.', 'woothemes-sensei' );
+			return __( 'Please supply a lesson ID for this shortcode.', 'sensei' );
 
 		}
 
@@ -86,16 +86,13 @@ class Sensei_Shortcode_Lesson_Page implements Sensei_Shortcode_Interface {
 
 		} else {
 
-			return __( 'No posts found.', 'woothemes-sensei' );
+			return __( 'No posts found.', 'sensei' );
 
 		}
 
 		ob_start();
 		Sensei_Templates::get_template( 'content-single-lesson.php' );
 		$shortcode_output = ob_get_clean();
-
-		// set back the global query
-		wp_reset_query();
 
 		return $shortcode_output;
 

@@ -44,8 +44,8 @@ class Sensei_Course {
 
 		$this->token = 'course';
 
-		// Setup meta fields for this post type
-		$this->meta_fields = array( 'course_prerequisite', 'course_featured', 'course_video_embed', 'course_woocommerce_product' );
+		add_action( 'init', array( $this, 'set_up_meta_fields' ) );
+
 		// Admin actions
 		if ( is_admin() ) {
 			// Metabox functions
@@ -91,6 +91,9 @@ class Sensei_Course {
 
 		// the course meta
 		add_action( 'sensei_course_content_inside_before', array( $this, 'the_course_meta' ) );
+
+		// The course enrolment actions.
+		add_action( 'sensei_output_course_enrolment_actions', array( __CLASS__, 'output_course_enrolment_actions' ) );
 
 		// backwards compatible template hooks
 		add_action( 'sensei_course_content_inside_before', array( $this, 'content_before_backwards_compatibility_hooks' ) );
@@ -169,6 +172,20 @@ class Sensei_Course {
 	}
 
 	/**
+	 * Sets up the meta fields used for courses.
+	 */
+	public function set_up_meta_fields() {
+		/**
+		 * Sets up the meta fields saved on course save in WP admin.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param string[] $course_meta_fields Array of meta field key names to save on course save.
+		 */
+		$this->meta_fields = apply_filters( 'sensei_course_meta_fields', array( 'course_prerequisite', 'course_featured', 'course_video_embed' ) );
+	}
+
+	/**
 	 * meta_box_setup function.
 	 *
 	 * @access public
@@ -176,176 +193,23 @@ class Sensei_Course {
 	 */
 	public function meta_box_setup() {
 
-		if ( Sensei_WC::is_woocommerce_active() ) {
-			// Add Meta Box for WooCommerce Course
-			add_meta_box( 'course-wc-product', __( 'WooCommerce Product', 'woothemes-sensei' ), array( $this, 'course_woocommerce_product_meta_box_content' ), $this->token, 'side', 'default' );
-		} // End If Statement
 		// Add Meta Box for Prerequisite Course
-		add_meta_box( 'course-prerequisite', __( 'Course Prerequisite', 'woothemes-sensei' ), array( $this, 'course_prerequisite_meta_box_content' ), $this->token, 'side', 'default' );
+		add_meta_box( 'course-prerequisite', __( 'Course Prerequisite', 'sensei' ), array( $this, 'course_prerequisite_meta_box_content' ), $this->token, 'side', 'default' );
 		// Add Meta Box for Featured Course
-		add_meta_box( 'course-featured', __( 'Featured Course', 'woothemes-sensei' ), array( $this, 'course_featured_meta_box_content' ), $this->token, 'side', 'default' );
+		add_meta_box( 'course-featured', __( 'Featured Course', 'sensei' ), array( $this, 'course_featured_meta_box_content' ), $this->token, 'side', 'default' );
 		// Add Meta Box for Course Meta
-		add_meta_box( 'course-video', __( 'Course Video', 'woothemes-sensei' ), array( $this, 'course_video_meta_box_content' ), $this->token, 'normal', 'default' );
+		add_meta_box( 'course-video', __( 'Course Video', 'sensei' ), array( $this, 'course_video_meta_box_content' ), $this->token, 'normal', 'default' );
 		// Add Meta Box for Course Lessons
-		add_meta_box( 'course-lessons', __( 'Course Lessons', 'woothemes-sensei' ), array( $this, 'course_lessons_meta_box_content' ), $this->token, 'normal', 'default' );
+		add_meta_box( 'course-lessons', __( 'Course Lessons', 'sensei' ), array( $this, 'course_lessons_meta_box_content' ), $this->token, 'normal', 'default' );
 		// Add Meta Box to link to Manage Learners
-		add_meta_box( 'course-manage', __( 'Course Management', 'woothemes-sensei' ), array( $this, 'course_manage_meta_box_content' ), $this->token, 'side', 'default' );
+		add_meta_box( 'course-manage', __( 'Course Management', 'sensei' ), array( $this, 'course_manage_meta_box_content' ), $this->token, 'side', 'default' );
 		// Remove "Custom Settings" meta box.
 		remove_meta_box( 'woothemes-settings', $this->token, 'normal' );
 
 		// add Disable email notification box
-		add_meta_box( 'course-notifications', __( 'Course Notifications', 'woothemes-sensei' ), array( $this, 'course_notification_meta_box_content' ), 'course', 'normal', 'default' );
+		add_meta_box( 'course-notifications', __( 'Course Notifications', 'sensei' ), array( $this, 'course_notification_meta_box_content' ), 'course', 'normal', 'default' );
 
 	} // End meta_box_setup()
-
-	/**
-	 * course_woocommerce_product_meta_box_content function.
-	 *
-	 * @access public
-	 * @return void
-	 */
-	public function course_woocommerce_product_meta_box_content() {
-		global $post;
-
-		$select_course_woocommerce_product = get_post_meta( $post->ID, '_course_woocommerce_product', true );
-
-		$post_args   = array(
-			'post_type'        => array( 'product', 'product_variation' ),
-			'posts_per_page'   => -1,
-			'orderby'          => 'title',
-			'order'            => 'DESC',
-			'exclude'          => $post->ID,
-			'post_status'      => array( 'publish', 'private', 'draft' ),
-			'tax_query'        => array(
-				array(
-					'taxonomy' => 'product_type',
-					'field'    => 'slug',
-					'terms'    => array( 'variable', 'grouped' ),
-					'operator' => 'NOT IN',
-				),
-			),
-			'suppress_filters' => 0,
-		);
-		$posts_array = get_posts( $post_args );
-
-		$html = '';
-
-		$html .= '<input type="hidden" name="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" id="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" value="' . esc_attr( wp_create_nonce( plugin_basename( __FILE__ ) ) ) . '" />';
-
-		if ( count( $posts_array ) > 0 ) {
-
-			$html              .= '<select id="course-woocommerce-product-options" name="course_woocommerce_product" class="chosen_select widefat">' . "\n";
-			$html              .= '<option value="-">' . esc_html__( 'None', 'woothemes-sensei' ) . '</option>';
-				$prev_parent_id = 0;
-			foreach ( $posts_array as $post_item ) {
-
-				if ( 'product_variation' == $post_item->post_type ) {
-
-					$product_object = Sensei_WC_Utils::get_product( $post_item->ID );
-
-					if ( empty( $product_object ) ) {
-						// Product variation has been orphaned. Treat it like it has also been deleted.
-						continue;
-					}
-
-					$parent_id = wp_get_post_parent_id( $post_item->ID );
-
-					if ( sensei_check_woocommerce_version( '2.1' ) ) {
-						$formatted_variation = wc_get_formatted_variation( Sensei_WC_Utils::get_variation_data( $product_object ), true );
-
-					} else {
-						// fall back to pre wc 2.1
-						$formatted_variation = woocommerce_get_formatted_variation( Sensei_WC_Utils::get_variation_data( $product_object ), true );
-
-					}
-
-					$product_name = ucwords( $formatted_variation );
-					if ( empty( $product_name ) ) {
-						$product_name = __( 'Variation #', 'woothemes-sensei' ) . Sensei_WC_Utils::get_product_variation_id( $product_object );
-					}
-				} else {
-
-					$parent_id      = false;
-					$prev_parent_id = 0;
-					$product_name   = $post_item->post_title;
-
-				}
-
-				// Show variations in groups
-				if ( $parent_id && $parent_id != $prev_parent_id ) {
-
-					if ( 0 != $prev_parent_id ) {
-
-						$html .= '</optgroup>';
-
-					}
-					$html          .= '<optgroup label="' . esc_attr( get_the_title( $parent_id ) ) . '">';
-					$prev_parent_id = $parent_id;
-
-				} elseif ( ! $parent_id && 0 == $prev_parent_id ) {
-
-					$html .= '</optgroup>';
-
-				}
-
-				$html .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '"' . selected( $post_item->ID, $select_course_woocommerce_product, false ) . '>' . esc_html( $product_name ) . '</option>' . "\n";
-
-			} // End For Loop
-
-			$html .= '</select>' . "\n";
-			if ( current_user_can( 'publish_product' ) ) {
-
-				$html     .= '<p>' . "\n";
-					$html .= '<a href="' . esc_url( admin_url( 'post-new.php?post_type=product' ) ) . '" title="' . esc_attr( __( 'Add a Product', 'woothemes-sensei' ) ) . '">' . esc_html__( 'Add a Product', 'woothemes-sensei' ) . '</a>' . "\n";
-				$html     .= '</p>' . "\n";
-
-			} // End If Statement
-		} else {
-
-			if ( current_user_can( 'publish_product' ) ) {
-
-				$html     .= '<p>' . "\n";
-					$html .= esc_html__( 'No products exist yet.', 'woothemes-sensei' ) . '&nbsp;<a href="' . esc_url( admin_url( 'post-new.php?post_type=product' ) ) . '" title="' . esc_attr( __( 'Add a Product', 'woothemes-sensei' ) ) . '">' . esc_html__( 'Please add some first', 'woothemes-sensei' ) . '</a>' . "\n";
-				$html     .= '</p>' . "\n";
-
-			} else {
-				if ( ! empty( $select_course_woocommerce_product ) ) {
-					$html .= '<input type="hidden" name="course_woocommerce_product" value="' . esc_attr( absint( $select_course_woocommerce_product ) ) . '">';
-				}
-				$html     .= '<p>' . "\n";
-					$html .= esc_html( __( 'No products exist yet.', 'woothemes-sensei' ) ) . "\n";
-				$html     .= '</p>' . "\n";
-
-			} // End If Statement
-		} // End If Statement
-
-		echo wp_kses(
-			$html,
-			array_merge(
-				wp_kses_allowed_html( 'post' ),
-				array(
-					'input'    => array(
-						'id'    => array(),
-						'name'  => array(),
-						'type'  => array(),
-						'value' => array(),
-					),
-					'optgroup' => array(
-						'label' => array(),
-					),
-					'option'   => array(
-						'selected' => array(),
-						'value'    => array(),
-					),
-					'select'   => array(
-						'class' => array(),
-						'id'    => array(),
-						'name'  => array(),
-					),
-				)
-			)
-		);
-	} // End course_woocommerce_product_meta_box_content()
 
 	/**
 	 * course_prerequisite_meta_box_content function.
@@ -374,13 +238,13 @@ class Sensei_Course {
 
 		if ( count( $posts_array ) > 0 ) {
 			$html .= '<select id="course-prerequisite-options" name="course_prerequisite" class="chosen_select widefat">' . "\n";
-			$html .= '<option value="">' . esc_html__( 'None', 'woothemes-sensei' ) . '</option>';
+			$html .= '<option value="">' . esc_html__( 'None', 'sensei' ) . '</option>';
 			foreach ( $posts_array as $post_item ) {
 				$html .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '"' . selected( $post_item->ID, $select_course_prerequisite, false ) . '>' . esc_html( $post_item->post_title ) . '</option>' . "\n";
 			} // End For Loop
 			$html .= '</select>' . "\n";
 		} else {
-			$html .= '<p>' . esc_html__( 'No courses exist yet. Please add some first.', 'woothemes-sensei' ) . '</p>';
+			$html .= '<p>' . esc_html__( 'No courses exist yet. Please add some first.', 'sensei' ) . '</p>';
 		} // End If Statement
 
 		echo wp_kses(
@@ -428,7 +292,7 @@ class Sensei_Course {
 			$checked = checked( 'featured', $course_featured, false );
 		} // End If Statement
 
-		$html .= '<input type="checkbox" name="course_featured" value="featured" ' . $checked . '>&nbsp;' . esc_html__( 'Feature this course', 'woothemes-sensei' ) . '<br>';
+		$html .= '<input type="checkbox" name="course_featured" value="featured" ' . $checked . '>&nbsp;' . esc_html__( 'Feature this course', 'sensei' ) . '<br>';
 
 		echo wp_kses(
 			$html,
@@ -461,12 +325,12 @@ class Sensei_Course {
 
 		$html = '';
 
-		$html .= '<label class="screen-reader-text" for="course_video_embed">' . esc_html__( 'Video Embed Code', 'woothemes-sensei' ) . '</label>';
+		$html .= '<label class="screen-reader-text" for="course_video_embed">' . esc_html__( 'Video Embed Code', 'sensei' ) . '</label>';
 		$html .= '<textarea rows="5" cols="50" name="course_video_embed" tabindex="6" id="course-video-embed">';
 
 		$html .= $course_video_embed . '</textarea><p>';
 
-		$html .= esc_html__( 'Paste the embed code for your video (e.g. YouTube, Vimeo etc.) in the box above.', 'woothemes-sensei' ) . '</p>';
+		$html .= esc_html__( 'Paste the embed code for your video (e.g. YouTube, Vimeo etc.) in the box above.', 'sensei' ) . '</p>';
 
 		echo wp_kses(
 			$html,
@@ -606,9 +470,9 @@ class Sensei_Course {
 					. esc_url( get_edit_post_link( $post_item->ID ) )
 					. '" title="'
 					// translators: Placeholder is the Lesson title.
-					. esc_attr( sprintf( __( 'Edit %s', 'woothemes-sensei' ), $post_item->post_title ) )
+					. esc_attr( sprintf( __( 'Edit %s', 'sensei' ), $post_item->post_title ) )
 					. '" class="edit-lesson-action">'
-					. esc_html__( 'Edit this lesson', 'woothemes-sensei' )
+					. esc_html__( 'Edit this lesson', 'sensei' )
 					. '</a>';
 
 				$html .= '</p>' . "\n";
@@ -617,17 +481,17 @@ class Sensei_Course {
 		}
 		$html .= '<p>';
 		if ( 0 === count( $posts_array ) ) {
-			$html .= esc_html__( 'No lessons exist yet for this course.', 'woothemes-sensei' ) . "\n";
+			$html .= esc_html__( 'No lessons exist yet for this course.', 'sensei' ) . "\n";
 		} else {
 			$html .= '<hr />';
 		}
 		$html .= '<a href="' . esc_url( $add_lesson_admin_url )
-			. '" title="' . esc_attr__( 'Add a Lesson', 'woothemes-sensei' ) . '">';
+			. '" title="' . esc_attr__( 'Add a Lesson', 'sensei' ) . '">';
 		if ( count( $posts_array ) < 1 ) {
-			$html .= esc_html__( 'Please add some.', 'woothemes-sensei' );
+			$html .= esc_html__( 'Please add some.', 'sensei' );
 		} else {
 
-			$html .= esc_html__( '+ Add Another Lesson', 'woothemes-sensei' );
+			$html .= esc_html__( '+ Add Another Lesson', 'sensei' );
 		}
 
 		$html .= '</a></p>';
@@ -676,8 +540,8 @@ class Sensei_Course {
 			admin_url( 'admin.php' )
 		);
 
-		echo '<ul><li><a href=' . esc_url( $manage_url ) . '>' . esc_html__( 'Manage Learners', 'woothemes-sensei' ) . '</a></li>';
-		echo '<li><a href=' . esc_url( $grading_url ) . '>' . esc_html__( 'Manage Grading', 'woothemes-sensei' ) . '</a></li></ul>';
+		echo '<ul><li><a href=' . esc_url( $manage_url ) . '>' . esc_html__( 'Manage Learners', 'sensei' ) . '</a></li>';
+		echo '<li><a href=' . esc_url( $grading_url ) . '>' . esc_html__( 'Manage Grading', 'sensei' ) . '</a></li></ul>';
 	} // End course_manage_meta_box_content()
 
 	/**
@@ -689,13 +553,11 @@ class Sensei_Course {
 	 * @return array $new_columns
 	 */
 	public function add_column_headings( $defaults ) {
+		$new_columns                        = array();
 		$new_columns['cb']                  = '<input type="checkbox" />';
-		$new_columns['title']               = _x( 'Course Title', 'column name', 'woothemes-sensei' );
-		$new_columns['course-prerequisite'] = _x( 'Pre-requisite Course', 'column name', 'woothemes-sensei' );
-		if ( Sensei_WC::is_woocommerce_active() ) {
-			$new_columns['course-woocommerce-product'] = _x( 'WooCommerce Product', 'column name', 'woothemes-sensei' );
-		} // End If Statement
-		$new_columns['course-category'] = _x( 'Category', 'column name', 'woothemes-sensei' );
+		$new_columns['title']               = _x( 'Course Title', 'column name', 'sensei' );
+		$new_columns['course-prerequisite'] = _x( 'Pre-requisite Course', 'column name', 'sensei' );
+		$new_columns['course-category']     = _x( 'Category', 'column name', 'sensei' );
 		if ( isset( $defaults['date'] ) ) {
 			$new_columns['date'] = $defaults['date'];
 		}
@@ -727,7 +589,7 @@ class Sensei_Course {
 						. esc_url( get_edit_post_link( absint( $course_prerequisite_id ) ) )
 						. '" title="'
 						// translators: Placeholder is the title of the course prerequisite.
-						. esc_attr( sprintf( __( 'Edit %s', 'woothemes-sensei' ), get_the_title( absint( $course_prerequisite_id ) ) ) )
+						. esc_attr( sprintf( __( 'Edit %s', 'sensei' ), get_the_title( absint( $course_prerequisite_id ) ) ) )
 						. '">'
 						. get_the_title( absint( $course_prerequisite_id ) )
 						. '</a>';
@@ -735,40 +597,11 @@ class Sensei_Course {
 
 				break;
 
-			case 'course-woocommerce-product':
-				if ( Sensei_WC::is_woocommerce_active() ) {
-					$course_woocommerce_product_id = get_post_meta( $id, '_course_woocommerce_product', true );
-					if ( 0 < absint( $course_woocommerce_product_id ) ) {
-						if ( 'product_variation' == get_post_type( $course_woocommerce_product_id ) ) {
-							$product_object = Sensei_WC_Utils::get_product( $course_woocommerce_product_id );
-							if ( sensei_check_woocommerce_version( '2.1' ) ) {
-								$formatted_variation = wc_get_formatted_variation( Sensei_WC_Utils::get_product_variation_data( $product_object ), true );
-							} else {
-								$formatted_variation = Sensei_WC_Utils::get_formatted_variation( Sensei_WC_Utils::get_product_variation_data( $product_object ), true );
-							}
-							$course_woocommerce_product_id = Sensei_WC_Utils::get_product_id( $product_object );
-							$parent                        = Sensei_WC_Utils::get_parent_product( $product_object );
-							$product_name                  = $parent->get_title() . '<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . ucwords( $formatted_variation );
-						} else {
-							$product_name = get_the_title( absint( $course_woocommerce_product_id ) );
-						} // End If Statement
-						echo '<a href="'
-							. esc_url( get_edit_post_link( absint( $course_woocommerce_product_id ) ) )
-							. '" title="'
-							// translators: Placeholder is the product name.
-							. esc_attr( sprintf( __( 'Edit %s', 'woothemes-sensei' ), $product_name ) )
-							. '">'
-							. esc_html( $product_name )
-							. '</a>';
-					} // End If Statement
-				} // End If Statement
-				break;
-
 			case 'course-category':
 				$output = get_the_term_list( $id, 'course-category', '', ', ', '' );
 
 				if ( '' == $output ) {
-					echo esc_html__( 'None', 'woothemes-sensei' );
+					echo esc_html__( 'None', 'sensei' );
 				} else {
 					echo wp_kses_post( $output );
 				}
@@ -863,8 +696,17 @@ class Sensei_Course {
 					'exclude'          => $excludes,
 					'suppress_filters' => 0,
 				);
+
 				break;
+
 			case 'freecourses':
+				_doing_it_wrong(
+					__FUNCTION__,
+					// translators: string argument is "freecourses" (the query type).
+					sprintf( esc_html__( 'Queries for course type of %s is deprecated.', 'sensei' ), 'freecourses' ),
+					'2.0.0'
+				);
+
 				$post_args = array(
 					'post_type'        => 'course',
 					'orderby'          => $orderby,
@@ -873,12 +715,23 @@ class Sensei_Course {
 					'exclude'          => $excludes,
 					'suppress_filters' => 0,
 				);
-				// Sub Query to get all WooCommerce Products that have Zero price
-				$post_args['meta_query'] = Sensei_WC::get_free_courses_meta_query_args();
+
+				// If WooCommerce Paid Courses is not active, we will display all courses.
+				if ( class_exists( 'Sensei_WC_Paid_Courses\Sensei_WC_Paid_Courses' ) ) {
+					// Sub Query to get all WooCommerce Products that have Zero price
+					$post_args['meta_query'] = Sensei_WC::get_free_courses_meta_query_args();
+				}
 
 				break;
 
 			case 'paidcourses':
+				_doing_it_wrong(
+					__FUNCTION__,
+					// translators: string argument is "paidcourses" (the query type).
+					sprintf( esc_html__( 'Queries for course type of %s is deprecated.', 'sensei' ), 'paidcourses' ),
+					'2.0.0'
+				);
+
 				$post_args = array(
 					'post_type'        => 'course',
 					'orderby'          => $orderby,
@@ -888,8 +741,13 @@ class Sensei_Course {
 					'suppress_filters' => 0,
 				);
 
-				// Sub Query to get all WooCommerce Products that have price greater than zero
-				$post_args['meta_query'] = Sensei_WC::get_paid_courses_meta_query_args();
+				// If WooCommerce Paid Courses is not active, we will display no courses.
+				if ( class_exists( 'Sensei_WC_Paid_Courses\Sensei_WC_Paid_Courses' ) ) {
+					// Sub Query to get all WooCommerce Products that have price greater than zero
+					$post_args['meta_query'] = Sensei_WC::get_paid_courses_meta_query_args();
+				} else {
+					$post_args['post__in'] = array( -1 );
+				}
 
 				break;
 
@@ -1321,75 +1179,39 @@ class Sensei_Course {
 	 * get_product_courses function.
 	 *
 	 * @access public
+	 * @deprecated 2.0.0 Use `Sensei_WC_Paid_Courses\Courses::get_product_courses()` instead.
+	 *
 	 * @param  int $product_id (default: 0)
 	 * @return array
 	 */
 	public function get_product_courses( $product_id = 0 ) {
 
-		$courses = array();
+		_deprecated_function( __METHOD__, '2.0.0', 'Sensei_WC_Paid_Courses\Courses::get_product_courses' );
 
-		if ( ! Sensei_WC::is_woocommerce_active() || empty( $product_id ) ) {
-			return $courses;
+		if ( method_exists( 'Sensei_WC_Paid_Courses\Courses', 'get_product_courses' ) ) {
+			return \Sensei_WC_Paid_Courses\Courses::get_product_courses( $product_id );
 		}
 
-		$product = wc_get_product( $product_id );
-
-		if ( ! is_object( $product ) ) {
-			return $courses;
-		}
-
-		$courses = get_posts( self::get_product_courses_query_args( $product_id ) );
-
-		switch ( $product->get_type() ) {
-			case 'subscription_variation':
-			case 'variation':
-				/**
-				 * Merge a product variation's courses with the parent's courses. Defaults to false.
-				 *
-				 * @since 1.10.0
-				 *
-				 * @param bool $merge_courses_with_parent_product True to merge with parent product's courses.
-				 */
-				if ( empty( $courses ) || apply_filters( 'sensei_merge_courses_with_parent_product', false ) ) {
-					$parent_product_courses = get_posts( self::get_product_courses_query_args( $product->get_parent_id() ) );
-					$courses                = array_merge( $courses, $parent_product_courses );
-				}
-				break;
-
-			case 'variable-subscription':
-			case 'variable':
-				$variations = $product->get_available_variations();
-
-				foreach ( $variations as $variation ) {
-
-					$variation_courses = get_posts( self::get_product_courses_query_args( $variation['variation_id'] ) );
-					$courses           = array_merge( $courses, $variation_courses );
-
-				}
-				break;
-		}
-
-		return $courses;
+		return array();
 
 	} // End get_product_courses()
 
 	/**
+	 * @deprecated 2.0.0 Use `Sensei_WC_Paid_Courses\Courses::get_product_courses_query_args()` instead.
+	 *
 	 * @param $product_id
 	 *
 	 * @return array
 	 */
 	public static function get_product_courses_query_args( $product_id ) {
 
-		return array(
-			'post_type'        => 'course',
-			'posts_per_page'   => -1,
-			'meta_key'         => '_course_woocommerce_product',
-			'meta_value'       => $product_id,
-			'post_status'      => 'publish',
-			'suppress_filters' => 0,
-			'orderby'          => 'menu_order date',
-			'order'            => 'ASC',
-		);
+		_deprecated_function( __METHOD__, '2.0.0', 'Sensei_WC_Paid_Courses\Courses::get_product_courses_query_args' );
+
+		if ( method_exists( 'Sensei_WC_Paid_Courses\Courses', 'get_product_courses_query_args' ) ) {
+			return \Sensei_WC_Paid_Courses\Courses::get_product_courses_query_args( $product_id );
+		}
+
+		return array();
 
 	}
 
@@ -1528,7 +1350,7 @@ class Sensei_Course {
 					&& ( Sensei()->settings->settings['course_author'] ) ) {
 
 					$active_html .= '<span class="course-author">'
-						. esc_html__( 'by', 'woothemes-sensei' )
+						. esc_html__( 'by', 'sensei' )
 						. '<a href="' . esc_url( get_author_posts_url( absint( $course_item->post_author ) ) )
 						. '" title="' . esc_attr( $user_info->display_name ) . '">'
 						. esc_html( $user_info->display_name )
@@ -1544,19 +1366,19 @@ class Sensei_Course {
 					$lesson_count = 1;
 
 				} // End If Statement
-				$active_html .= '<span class="course-lesson-count">' . esc_html( $lesson_count ) . '&nbsp;' . esc_html__( 'Lessons', 'woothemes-sensei' ) . '</span>';
+				$active_html .= '<span class="course-lesson-count">' . esc_html( $lesson_count ) . '&nbsp;' . esc_html__( 'Lessons', 'sensei' ) . '</span>';
 				// Course Categories
 				if ( '' != $category_output ) {
 
 					$active_html .= '<span class="course-category">'
 						// translators: Placeholder is a comma-separated list of the Course categories.
-						. sprintf( __( 'in %s', 'woothemes-sensei' ), $category_output )
+						. sprintf( __( 'in %s', 'sensei' ), $category_output )
 						. '</span>';
 
 				} // End If Statement
 
 				// translators: Placeholders are the counts for lessons completed and total lessons, respectively.
-				$active_html .= '<span class="course-lesson-progress">' . esc_html( sprintf( __( '%1$d of %2$d lessons completed', 'woothemes-sensei' ), $lessons_completed, $lesson_count ) ) . '</span>';
+				$active_html .= '<span class="course-lesson-progress">' . esc_html( sprintf( __( '%1$d of %2$d lessons completed', 'sensei' ), $lessons_completed, $lesson_count ) ) . '</span>';
 
 				$active_html .= '</p>';
 
@@ -1582,12 +1404,12 @@ class Sensei_Course {
 						&& Sensei()->settings->settings['course_completion'] == 'complete' ) {
 
 						$active_html .= '<span><input name="course_complete" type="submit" class="course-complete" value="'
-							. esc_attr__( 'Mark as Complete', 'woothemes-sensei' ) . '"/> </span>';
+							. esc_attr__( 'Mark as Complete', 'sensei' ) . '"/> </span>';
 
 					} // End If Statement
 
 					$course_purchased = false;
-					if ( Sensei_WC::is_woocommerce_active() ) {
+					if ( class_exists( 'Sensei_WC' ) && Sensei_WC::is_woocommerce_active() ) {
 
 						// Get the product ID
 						$wc_post_id = get_post_meta( absint( $course_item->ID ), '_course_woocommerce_product', true );
@@ -1600,13 +1422,21 @@ class Sensei_Course {
 
 					/**
 					 * documented in class-sensei-course.php the_course_action_buttons function
+					 *
+					 * @deprecated 2.0.0
 					 */
-					$show_delete_course_button = apply_filters( 'sensei_show_delete_course_button', false );
+					$show_delete_course_button = apply_filters_deprecated(
+						'sensei_show_delete_course_button',
+						[ false ],
+						'2.0.0',
+						null,
+						'Sensei "Delete Course" button will be removed in version 4.0.'
+					);
 
 					if ( false == $course_purchased && $show_delete_course_button ) {
 
 						$active_html .= '<span><input name="course_complete" type="submit" class="course-delete" value="'
-							. esc_attr__( 'Delete Course', 'woothemes-sensei' ) . '"/></span>';
+							. esc_attr__( 'Delete Course', 'sensei' ) . '"/></span>';
 
 					} // End If Statement
 
@@ -1631,7 +1461,7 @@ class Sensei_Course {
 
 				if ( $current_page > 1 ) {
 					$prev_link    = add_query_arg( 'active_page', $current_page - 1 );
-					$active_html .= '<a class="prev page-numbers" href="' . esc_url( $prev_link ) . '">' . esc_html__( 'Previous', 'woothemes-sensei' ) . '</a> ';
+					$active_html .= '<a class="prev page-numbers" href="' . esc_url( $prev_link ) . '">' . esc_html__( 'Previous', 'sensei' ) . '</a> ';
 				}
 
 				for ( $i = 1; $i <= $total_pages; $i++ ) {
@@ -1646,7 +1476,7 @@ class Sensei_Course {
 
 				if ( $current_page < $total_pages ) {
 					$next_link    = add_query_arg( 'active_page', $current_page + 1 );
-					$active_html .= '<a class="next page-numbers" href="' . esc_url( $next_link ) . '">' . esc_html__( 'Next', 'woothemes-sensei' ) . '</a> ';
+					$active_html .= '<a class="next page-numbers" href="' . esc_url( $next_link ) . '">' . esc_html__( 'Next', 'sensei' ) . '</a> ';
 				}
 
 				$active_html .= '</nav>';
@@ -1677,20 +1507,20 @@ class Sensei_Course {
 							// Author
 							$user_info = get_userdata( absint( $course_item->post_author ) );
 				if ( isset( Sensei()->settings->settings['course_author'] ) && ( Sensei()->settings->settings['course_author'] ) ) {
-					$complete_html .= '<span class="course-author">' . esc_html__( 'by', 'woothemes-sensei' ) . '<a href="' . esc_url( get_author_posts_url( absint( $course_item->post_author ) ) ) . '" title="' . esc_attr( $user_info->display_name ) . '">' . esc_html( $user_info->display_name ) . '</a></span>';
+					$complete_html .= '<span class="course-author">' . esc_html__( 'by', 'sensei' ) . '<a href="' . esc_url( get_author_posts_url( absint( $course_item->post_author ) ) ) . '" title="' . esc_attr( $user_info->display_name ) . '">' . esc_html( $user_info->display_name ) . '</a></span>';
 				} // End If Statement
 
 							// Lesson count for this author
 							$complete_html .= '<span class="course-lesson-count">'
 								. esc_html( Sensei()->course->course_lesson_count( absint( $course_item->ID ) ) )
-								. '&nbsp;' . esc_html__( 'Lessons', 'woothemes-sensei' )
+								. '&nbsp;' . esc_html__( 'Lessons', 'sensei' )
 								. '</span>';
 
 							// Course Categories
 				if ( '' != $category_output ) {
 
 					// translators: Placeholder is comma-separated list of course categories.
-					$complete_html .= '<span class="course-category">' . sprintf( __( 'in %s', 'woothemes-sensei' ), $category_output ) . '</span>';
+					$complete_html .= '<span class="course-category">' . sprintf( __( 'in %s', 'sensei' ), $category_output ) . '</span>';
 
 				} // End If Statement
 
@@ -1711,7 +1541,7 @@ class Sensei_Course {
 
 							$results_link = '<a class="button view-results" href="'
 								. esc_url( Sensei()->course_results->get_permalink( $course_item->ID ) )
-								. '">' . esc_html__( 'View results', 'woothemes-sensei' )
+								. '">' . esc_html__( 'View results', 'sensei' )
 								. '</a>';
 						}
 						/**
@@ -1741,7 +1571,7 @@ class Sensei_Course {
 
 				if ( $current_page > 1 ) {
 					$prev_link      = add_query_arg( 'completed_page', $current_page - 1 );
-					$complete_html .= '<a class="prev page-numbers" href="' . esc_url( $prev_link ) . '">' . esc_html__( 'Previous', 'woothemes-sensei' ) . '</a> ';
+					$complete_html .= '<a class="prev page-numbers" href="' . esc_url( $prev_link ) . '">' . esc_html__( 'Previous', 'sensei' ) . '</a> ';
 				}
 
 				for ( $i = 1; $i <= $total_pages; $i++ ) {
@@ -1756,7 +1586,7 @@ class Sensei_Course {
 
 				if ( $current_page < $total_pages ) {
 					$next_link      = add_query_arg( 'completed_page', $current_page + 1 );
-					$complete_html .= '<a class="next page-numbers" href="' . esc_url( $next_link ) . '">' . esc_html__( 'Next', 'woothemes-sensei' ) . '</a> ';
+					$complete_html .= '<a class="next page-numbers" href="' . esc_url( $next_link ) . '">' . esc_html__( 'Next', 'sensei' ) . '</a> ';
 				}
 
 				$complete_html .= '</nav>';
@@ -1764,11 +1594,11 @@ class Sensei_Course {
 		} // End If Statement
 
 		if ( $manage ) {
-			$no_active_message   = __( 'You have no active courses.', 'woothemes-sensei' );
-			$no_complete_message = __( 'You have not completed any courses yet.', 'woothemes-sensei' );
+			$no_active_message   = __( 'You have no active courses.', 'sensei' );
+			$no_complete_message = __( 'You have not completed any courses yet.', 'sensei' );
 		} else {
-			$no_active_message   = __( 'This learner has no active courses.', 'woothemes-sensei' );
-			$no_complete_message = __( 'This learner has not completed any courses yet.', 'woothemes-sensei' );
+			$no_active_message   = __( 'This learner has no active courses.', 'sensei' );
+			$no_complete_message = __( 'This learner has not completed any courses yet.', 'sensei' );
 		}
 
 		ob_start();
@@ -1781,8 +1611,8 @@ class Sensei_Course {
 			?>
 			<p class="my-messages-link-container">
 				<a class="my-messages-link" href="<?php echo esc_url( get_post_type_archive_link( 'sensei_message' ) ); ?>"
-				   title="<?php esc_attr_e( 'View & reply to private messages sent to your course & lesson teachers.', 'woothemes-sensei' ); ?>">
-					<?php esc_html_e( 'My Messages', 'woothemes-sensei' ); ?>
+				   title="<?php esc_attr_e( 'View & reply to private messages sent to your course & lesson teachers.', 'sensei' ); ?>">
+					<?php esc_html_e( 'My Messages', 'sensei' ); ?>
 				</a>
 			</p>
 			<?php
@@ -1791,8 +1621,8 @@ class Sensei_Course {
 		<div id="my-courses">
 
 			<ul>
-				<li><a href="#active-courses"><?php esc_html_e( 'Active Courses', 'woothemes-sensei' ); ?></a></li>
-				<li><a href="#completed-courses"><?php esc_html_e( 'Completed Courses', 'woothemes-sensei' ); ?></a></li>
+				<li><a href="#active-courses"><?php esc_html_e( 'Active Courses', 'sensei' ); ?></a></li>
+				<li><a href="#completed-courses"><?php esc_html_e( 'Completed Courses', 'sensei' ); ?></a></li>
 			</ul>
 
 			<?php do_action( 'sensei_before_active_user_courses' ); ?>
@@ -1839,7 +1669,7 @@ class Sensei_Course {
 
 						<a href="<?php echo esc_url( $course_page_url ); ?>">
 
-							<?php esc_html_e( 'Start a Course!', 'woothemes-sensei' ); ?>
+							<?php esc_html_e( 'Start a Course!', 'sensei' ); ?>
 
 						</a>
 
@@ -1973,7 +1803,7 @@ class Sensei_Course {
 		$total_lessons = count( $this->course_lessons( $course_id ) );
 
 		// translators: Placeholders are the counts for lessons completed and total lessons, respectively.
-		$statement = sprintf( _n( 'Currently completed %1$s lesson of %2$s in total', 'Currently completed %1$s lessons of %2$s in total', $completed, 'woothemes-sensei' ), $completed, $total_lessons );
+		$statement = sprintf( _n( 'Currently completed %1$s lesson of %2$s in total', 'Currently completed %1$s lessons of %2$s in total', $completed, 'sensei' ), $completed, $total_lessons );
 
 		/**
 		 * Filter the course completion statement.
@@ -2161,7 +1991,7 @@ class Sensei_Course {
 		wp_nonce_field( 'update-course-notification-setting', '_sensei_course_notification' );
 
 		echo '<input id="disable_sensei_course_notification" ' . checked( $checked, true, false ) . ' type="checkbox" name="disable_sensei_course_notification" >';
-		echo '<label for="disable_sensei_course_notification">' . esc_html__( 'Disable notifications on this course?', 'woothemes-sensei' ) . '</label>';
+		echo '<label for="disable_sensei_course_notification">' . esc_html__( 'Disable notifications on this course?', 'sensei' ) . '</label>';
 
 	}//end course_notification_meta_box_content()
 
@@ -2242,12 +2072,12 @@ class Sensei_Course {
 			?>
 			<p class="sensei-free-lessons">
 				<a href="<?php echo esc_url( get_permalink() ); ?>">
-					<?php esc_html_e( 'Preview this course', 'woothemes-sensei' ); ?>
+					<?php esc_html_e( 'Preview this course', 'sensei' ); ?>
 				</a>
 				-
 				<?php
 					// translators: Placeholder is the number of preview lessons.
-					echo esc_html( sprintf( __( '(%d preview lessons)', 'woothemes-sensei' ), $preview_lesson_count ) );
+					echo esc_html( sprintf( __( '(%d preview lessons)', 'sensei' ), $preview_lesson_count ) );
 				?>
 			</p>
 
@@ -2268,10 +2098,13 @@ class Sensei_Course {
 		$category_output     = get_the_term_list( $course->ID, 'course-category', '', ', ', '' );
 		$author_display_name = get_the_author_meta( 'display_name', $course->post_author );
 
+		/** This action is documented in includes/class-sensei-frontend.php */
+		do_action( 'sensei_course_meta_inside_before', $course->ID );
+
 		if ( isset( Sensei()->settings->settings['course_author'] ) && ( Sensei()->settings->settings['course_author'] ) ) {
 			?>
 
-			<span class="course-author"><?php esc_html_e( 'by', 'woothemes-sensei' ); ?>
+			<span class="course-author"><?php esc_html_e( 'by', 'sensei' ); ?>
 
 				<a href="<?php echo esc_attr( get_author_posts_url( $course->post_author ) ); ?>" title="<?php echo esc_attr( $author_display_name ); ?>"><?php echo esc_attr( $author_display_name ); ?></a>
 
@@ -2280,33 +2113,35 @@ class Sensei_Course {
 		<?php } // End If Statement ?>
 
 		<span class="course-lesson-count">
-			<?php echo esc_html( Sensei()->course->course_lesson_count( $course->ID ) ) . '&nbsp;' . esc_html__( 'Lessons', 'woothemes-sensei' ); ?>
+			<?php echo esc_html( Sensei()->course->course_lesson_count( $course->ID ) ) . '&nbsp;' . esc_html__( 'Lessons', 'sensei' ); ?>
 		</span>
 
-		<?php if ( '' != $category_output ) { ?>
+		<?php
+		if ( ! empty( $category_output ) ) {
+			?>
 
 			<span class="course-category">
 				<?php
 				// translators: Placeholder is a comma-separated list of the course categories.
-				echo wp_kses_post( sprintf( __( 'in %s', 'woothemes-sensei' ), $category_output ) );
+				echo wp_kses_post( sprintf( __( 'in %s', 'sensei' ), $category_output ) );
 				?>
-</span>
+			</span>
 
 			<?php
-} // End If Statement
+		} // End If Statement
 
 		// number of completed lessons
-if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
+		if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
 			|| Sensei_Utils::user_completed_course( $course->ID, get_current_user_id() ) ) {
 
 			$completed    = count( $this->get_completed_lesson_ids( $course->ID, get_current_user_id() ) );
 			$lesson_count = count( $this->course_lessons( $course->ID ) );
 			// translators: Placeholders are the number of lessons completed and the total number of lessons, respectively.
-			echo '<span class="course-lesson-progress">' . esc_html( sprintf( __( '%1$d of %2$d lessons completed', 'woothemes-sensei' ), $completed, $lesson_count ) ) . '</span>';
+			echo '<span class="course-lesson-progress">' . esc_html( sprintf( __( '%1$d of %2$d lessons completed', 'sensei' ), $completed, $lesson_count ) ) . '</span>';
+		}
 
-}
-
-		sensei_simple_course_price( $course->ID );
+		/** This action is documented in includes/class-sensei-frontend.php */
+		do_action( 'sensei_course_meta_inside_after', $course->ID );
 
 		echo '</p>';
 	} // end the course meta
@@ -2357,81 +2192,92 @@ if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
 				<form method="POST" action="<?php echo esc_url( remove_query_arg( array( 'active_page', 'completed_page' ) ) ); ?>">
 
 					<input type="hidden"
-						   name="<?php echo esc_attr( 'woothemes_sensei_complete_course_noonce' ); ?>"
-						   id="<?php echo esc_attr( 'woothemes_sensei_complete_course_noonce' ); ?>"
-						   value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_complete_course_noonce' ) ); ?>"
+							name="<?php echo esc_attr( 'woothemes_sensei_complete_course_noonce' ); ?>"
+							id="<?php echo esc_attr( 'woothemes_sensei_complete_course_noonce' ); ?>"
+							value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_complete_course_noonce' ) ); ?>"
 						/>
 
 					<input type="hidden" name="course_complete_id" id="course-complete-id" value="<?php echo esc_attr( intval( $course->ID ) ); ?>" />
 
-					<?php
-					if ( 0 < absint( count( Sensei()->course->course_lessons( $course->ID ) ) )
-						&& Sensei()->settings->settings['course_completion'] == 'complete'
-						&& ! Sensei_Utils::user_completed_course( $course, get_current_user_id() ) ) {
-						?>
-
-						<span><input name="course_complete" type="submit" class="course-complete" value="<?php esc_attr_e( 'Mark as Complete', 'woothemes-sensei' ); ?>" /></span>
-
-						<?php
-					} // End If Statement
-
-					$course_purchased = false;
-					if ( Sensei_WC::is_woocommerce_active() ) {
-						// Get the product ID
-						$wc_post_id = get_post_meta( intval( $course->ID ), '_course_woocommerce_product', true );
-						if ( 0 < $wc_post_id ) {
-
-							$user             = wp_get_current_user();
-							$course_purchased = Sensei_Utils::sensei_customer_bought_product( $user->user_email, $user->ID, $wc_post_id );
-
-						} // End If Statement
-					} // End If Statement
-
-					/**
-					 * Hide or show the delete course button.
-					 *
-					 * This button on shows in certain instances, but this filter will hide it in those
-					 * cases. For other instances the button will be hidden.
-					 *
-					 * @since 1.9.0
-					 * @param bool $show_delete_course_button defaults to false
-					 */
-					$show_delete_course_button = apply_filters( 'sensei_show_delete_course_button', false );
-
-					if ( ! $course_purchased
-						 && ! Sensei_Utils::user_completed_course( $course->ID, get_current_user_id() )
-						 && $show_delete_course_button ) {
+			<?php
+			if ( 0 < absint( count( Sensei()->course->course_lessons( $course->ID ) ) )
+				&& Sensei()->settings->settings['course_completion'] == 'complete'
+				&& ! Sensei_Utils::user_completed_course( $course, get_current_user_id() ) ) {
 				?>
 
-						<span><input name="course_complete" type="submit" class="course-delete" value="<?php echo esc_attr__( 'Delete Course', 'woothemes-sensei' ); ?>"/></span>
+					<span><input name="course_complete" type="submit" class="course-complete" value="<?php esc_attr_e( 'Mark as Complete', 'sensei' ); ?>" /></span>
 
-										<?php
-					} // End If Statement
+				<?php
+			} // End If Statement
 
-					$has_quizzes  = Sensei()->course->course_quizzes( $course->ID, true );
-					$results_link = '';
-					if ( $has_quizzes ) {
-						$results_link = '<a class="button view-results" href="' . esc_url( Sensei()->course_results->get_permalink( $course->ID ) ) . '">' .
-							esc_html__( 'View results', 'woothemes-sensei' ) . '</a>';
-					}
+			$course_purchased = false;
+			if ( class_exists( 'Sensei_WC' ) && Sensei_WC::is_woocommerce_active() ) {
+				// Get the product ID
+				$wc_post_id = get_post_meta( intval( $course->ID ), '_course_woocommerce_product', true );
+				if ( 0 < $wc_post_id ) {
 
-					// Output only if there is content to display
-					if ( has_filter( 'sensei_results_links' ) || $has_quizzes ) {
-						?>
+					$user             = wp_get_current_user();
+					$course_purchased = Sensei_WC::has_customer_bought_product( $user->ID, $wc_post_id );
 
-						<p class="sensei-results-links">
-							<?php
-							/**
-							 * Filter the results links
-							 *
-							 * @param string $results_links_html
-							 * @param integer $course_id
-							 */
-							echo wp_kses_post( apply_filters( 'sensei_results_links', $results_link, $course->ID ) );
-							?>
-						</p>
+				} // End If Statement
+			} // End If Statement
 
-										<?php } // end if has filter ?>
+			/**
+			 * Hide or show the delete course button.
+			 *
+			 * This button on shows in certain instances, but this filter will hide it in those
+			 * cases. For other instances the button will be hidden.
+			 *
+			 * @since 1.9.0
+			 *
+			 * @deprecated 2.0.0
+			 *
+			 * @param bool $show_delete_course_button defaults to false
+			 */
+			$show_delete_course_button = apply_filters_deprecated(
+				'sensei_show_delete_course_button',
+				[ false ],
+				'2.0.0',
+				null,
+				'Sensei "Delete Course" button will be removed in version 4.0.'
+			);
+
+			if ( ! $course_purchased
+					&& ! Sensei_Utils::user_completed_course( $course->ID, get_current_user_id() )
+					&& $show_delete_course_button ) {
+				?>
+
+					<span><input name="course_complete" type="submit" class="course-delete" value="<?php echo esc_attr__( 'Delete Course', 'sensei' ); ?>"/></span>
+
+				<?php
+			} // End If Statement
+
+			$has_quizzes  = Sensei()->course->course_quizzes( $course->ID, true );
+			$results_link = '';
+			if ( $has_quizzes ) {
+				$results_link = '<a class="button view-results" href="' . esc_url( Sensei()->course_results->get_permalink( $course->ID ) ) . '">' .
+					esc_html__( 'View results', 'sensei' ) . '</a>';
+			}
+
+			// Output only if there is content to display.
+			if ( has_filter( 'sensei_results_links' ) || $has_quizzes ) {
+				?>
+
+					<p class="sensei-results-links">
+				<?php
+				/**
+				 * Filter the results links
+				 *
+				 * @param string $results_links_html
+				 * @param integer $course_id
+				 */
+				echo wp_kses_post( apply_filters( 'sensei_results_links', $results_link, $course->ID ) );
+				?>
+					</p>
+
+				<?php
+			} // end if has filter
+			?>
 				</form>
 			</section>
 
@@ -2594,8 +2440,8 @@ if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
 		$course_order_by_options = apply_filters(
 			'sensei_archive_course_order_by_options',
 			array(
-				'newness' => __( 'Sort by newest first', 'woothemes-sensei' ),
-				'title'   => __( 'Sort by title A-Z', 'woothemes-sensei' ),
+				'newness' => __( 'Sort by newest first', 'sensei' ),
+				'title'   => __( 'Sort by title A-Z', 'sensei' ),
 			)
 		);
 
@@ -2653,12 +2499,12 @@ if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
 				array(
 					'id'    => 'all',
 					'url'   => self::get_courses_page_url(),
-					'title' => __( 'All', 'woothemes-sensei' ),
+					'title' => __( 'All', 'sensei' ),
 				),
 				array(
 					'id'    => 'featured',
 					'url'   => add_query_arg( array( 'course_filter' => 'featured' ), self::get_courses_page_url() ),
-					'title' => __( 'Featured', 'woothemes-sensei' ),
+					'title' => __( 'Featured', 'sensei' ),
 				),
 			)
 		);
@@ -2786,7 +2632,7 @@ if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
 			$taxonomy_short_name = $taxonomy_obj->taxonomy;
 			$taxonomy_raw_obj    = get_taxonomy( $taxonomy_short_name );
 			// translators: Placeholders are the taxonomy name and the term name, respectively.
-			$title = sprintf( __( '%1$s Archives: %2$s', 'woothemes-sensei' ), $taxonomy_raw_obj->labels->name, $taxonomy_obj->name );
+			$title = sprintf( __( '%1$s Archives: %2$s', 'sensei' ), $taxonomy_raw_obj->labels->name, $taxonomy_obj->name );
 			echo wp_kses_post( apply_filters( 'course_category_archive_title', $before_html . $title . $after_html ) );
 			return;
 
@@ -2794,19 +2640,19 @@ if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
 
 		switch ( $query_type ) {
 			case 'newcourses':
-				$html .= $before_html . __( 'New Courses', 'woothemes-sensei' ) . $after_html;
+				$html .= $before_html . __( 'New Courses', 'sensei' ) . $after_html;
 				break;
 			case 'featuredcourses':
-				$html .= $before_html . __( 'Featured Courses', 'woothemes-sensei' ) . $after_html;
+				$html .= $before_html . __( 'Featured Courses', 'sensei' ) . $after_html;
 				break;
 			case 'freecourses':
-				$html .= $before_html . __( 'Free Courses', 'woothemes-sensei' ) . $after_html;
+				$html .= $before_html . __( 'Free Courses', 'sensei' ) . $after_html;
 				break;
 			case 'paidcourses':
-				$html .= $before_html . __( 'Paid Courses', 'woothemes-sensei' ) . $after_html;
+				$html .= $before_html . __( 'Paid Courses', 'sensei' ) . $after_html;
 				break;
 			default:
-				$html .= $before_html . __( 'Courses', 'woothemes-sensei' ) . $after_html;
+				$html .= $before_html . __( 'Courses', 'sensei' ) . $after_html;
 				break;
 		} // End Switch Statement
 
@@ -2816,10 +2662,9 @@ if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
 
 
 	/**
-	 * Filter the single course content
-	 * taking into account if the user has access.
+	 * Filter the single course content taking into account if the user has access.
 	 *
-	 * @1.9.0
+	 * @since 1.9.0
 	 *
 	 * @param string $content
 	 * @return string $content or $excerpt
@@ -2827,50 +2672,25 @@ if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
 	public static function single_course_content( $content ) {
 
 		if ( ! is_singular( 'course' ) ) {
-
 			return $content;
-
 		}
 
-		// Content Access Permissions
-		$access_permission = false;
-
-		if ( ! Sensei()->settings->get( 'access_permission' ) || sensei_all_access() ) {
-
-			$access_permission = true;
-
-		} // End If Statement
-
-		// Check if the user is taking the course
-		$is_user_taking_course = Sensei_Utils::user_started_course( get_the_ID(), get_current_user_id() );
-
-		if ( Sensei_WC::is_woocommerce_active() ) {
-
-			$wc_post_id = get_post_meta( get_the_ID(), '_course_woocommerce_product', true );
-			$product    = Sensei()->sensei_get_woocommerce_product_object( $wc_post_id );
-
-			$has_product_attached = isset( $product ) && is_object( $product );
-
-		} else {
-
-			$has_product_attached = false;
-
-		}
-
-		if ( ( is_user_logged_in() && $is_user_taking_course ) // Logged in and taking course.
-			|| ( $access_permission && ! $has_product_attached ) // Not required to be logged in & no product attached.
-			|| ( ! $access_permission && $has_product_attached ) ) { // Required to be logged in and product attached.
-			// compensate for core providing and empty $content
+		/**
+		 * Access check for the course content.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param bool $has_access_to_content Filtered variable for if the visitor has access to view the content.
+		 * @param int  $course_id             Post ID for the course.
+		 */
+		if ( apply_filters( 'sensei_course_content_has_access', true, get_the_ID() ) ) {
 			if ( empty( $content ) ) {
 				remove_filter( 'the_content', array( 'Sensei_Course', 'single_course_content' ) );
 				$course = get_post( get_the_ID() );
 
 				$content = apply_filters( 'the_content', $course->post_content );
-
 			}
-
 			return $content;
-
 		} else {
 			return '<p class="course-excerpt">' . get_post( get_the_ID() )->post_excerpt . '</p>';
 		}
@@ -2893,12 +2713,12 @@ if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
 		$course_lessons      = Sensei()->course->course_lessons( $post->ID );
 
 		// title should be Other Lessons if there are lessons belonging to models.
-		$title = __( 'Other Lessons', 'woothemes-sensei' );
+		$title = __( 'Other Lessons', 'sensei' );
 
 		// show header if there are lessons the number of lesson in the course is the same as those that isn't assigned to a module
 		if ( ! empty( $course_lessons ) && count( $course_lessons ) == count( $none_module_lessons ) ) {
 
-			$title = __( 'Lessons', 'woothemes-sensei' );
+			$title = __( 'Lessons', 'sensei' );
 
 		} elseif ( empty( $none_module_lessons ) ) { // if the none module lessons are simply empty the title should not be shown
 
@@ -3053,13 +2873,14 @@ if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
 	}
 
 	/**
-	 * Output the course actions like start taking course, register, add to cart etc.
+	 * If the user is already taking the course, show a progress indicator.
+	 * Otherwise, output the course actions like start taking course, register,
+	 * etc.
 	 *
 	 * @since 1.9.0
 	 */
 	public static function the_course_enrolment_actions() {
-
-		global $post;
+		global $post, $current_user;
 
 		if ( 'course' != $post->post_type ) {
 			return;
@@ -3068,36 +2889,17 @@ if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
 		?>
 		<section class="course-meta course-enrolment">
 		<?php
-		global  $post, $current_user;
-		$is_user_taking_course        = Sensei_Utils::user_started_course( $post->ID, $current_user->ID );
-		$is_course_content_restricted = (bool) apply_filters( 'sensei_is_course_content_restricted', false, $post->ID );
+		$is_user_taking_course = Sensei_Utils::user_started_course( $post->ID, $current_user->ID );
 
-		if ( is_user_logged_in() && ! $is_user_taking_course ) {
-
-			// Check for woocommerce
-			if ( Sensei_WC::is_woocommerce_active() && Sensei_WC::is_course_purchasable( $post->ID ) ) {
-
-				// Get the product ID
-				Sensei_WC::the_add_to_cart_button_html( $post->ID );
-
-			} else {
-				$should_display_start_course_form = (bool) apply_filters( 'sensei_display_start_course_form', true, $post->ID );
-				if ( $is_course_content_restricted && false == $should_display_start_course_form ) {
-					self::add_course_access_permission_message( '' );
-				}
-				if ( $should_display_start_course_form ) {
-					sensei_start_course_form( $post->ID );
-				}
-			} // End If Statement
-		} elseif ( is_user_logged_in() ) {
-
+		// If user is taking course, display progress.
+		if ( $is_user_taking_course ) {
 			// Check if course is completed
 			$user_course_status = Sensei_Utils::user_course_status( $post->ID, $current_user->ID );
 			$completed_course   = Sensei_Utils::user_completed_course( $user_course_status );
 			// Success message
 			if ( $completed_course ) {
 				?>
-				<div class="status completed"><?php esc_html_e( 'Completed', 'woothemes-sensei' ); ?></div>
+				<div class="status completed"><?php esc_html_e( 'Completed', 'sensei' ); ?></div>
 				<?php
 				$has_quizzes = Sensei()->course->course_quizzes( $post->ID, true );
 				if ( has_filter( 'sensei_results_links' ) || $has_quizzes ) {
@@ -3106,7 +2908,7 @@ if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
 						<?php
 						$results_link = '';
 						if ( $has_quizzes ) {
-							$results_link = '<a class="view-results" href="' . esc_url( Sensei()->course_results->get_permalink( $post->ID ) ) . '">' . esc_html__( 'View results', 'woothemes-sensei' ) . '</a>';
+							$results_link = '<a class="view-results" href="' . esc_url( Sensei()->course_results->get_permalink( $post->ID ) ) . '">' . esc_html__( 'View results', 'sensei' ) . '</a>';
 						}
 						/**
 						 * Filter documented in Sensei_Course::the_course_action_buttons
@@ -3115,80 +2917,101 @@ if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
 						echo wp_kses_post( $results_link );
 						?>
 						</p>
-				<?php } ?>
-			<?php } else { ?>
-				<div class="status in-progress"><?php echo esc_html__( 'In Progress', 'woothemes-sensei' ); ?></div>
-				<?php
-}
-		} else {
-
-			// Check for woocommerce
-			if ( Sensei_WC::is_woocommerce_active() && Sensei_WC::is_course_purchasable( $post->ID ) ) {
-
-				$login_link = '<a href="' . sensei_user_login_url() . '">' . __( 'log in', 'woothemes-sensei' ) . '</a>';
-				// translators: Placeholder is a link to log in.
-				$message = sprintf( __( 'Or %1$s to access your purchased courses', 'woothemes-sensei' ), $login_link );
-				Sensei()->notices->add_notice( $message, 'info' );
-				Sensei_WC::the_add_to_cart_button_html( $post->ID );
-
+					<?php
+				}
 			} else {
-
-				if ( get_option( 'users_can_register' ) ) {
-
-					// set the permissions message
-					$anchor_before = '<a href="' . esc_url( sensei_user_login_url() ) . '" >';
-					$anchor_after  = '</a>';
-					$notice        = sprintf(
-						// translators: Placeholders are an opening and closing <a> tag linking to the login URL.
-						__( 'or %1$slog in%2$s to view this course.', 'woothemes-sensei' ),
-						$anchor_before,
-						$anchor_after
-					);
-
-					self::add_course_access_permission_message( $notice );
-
-					$my_courses_page_id = '';
-
-					/**
-					 * Filter to force Sensei to output the default WordPress user
-					 * registration link.
-					 *
-					 * @since 1.9.0
-					 * @param bool $wp_register_link default false
-					 */
-
-					$wp_register_link = apply_filters( 'sensei_use_wp_register_link', false );
-
-					$settings = Sensei()->settings->get_settings();
-					if ( isset( $settings['my_course_page'] )
-						&& 0 < intval( $settings['my_course_page'] ) ) {
-
-						$my_courses_page_id = $settings['my_course_page'];
-
-					}
-
-					// If a My Courses page was set in Settings, and 'sensei_use_wp_register_link'
-					// is false, link to My Courses. If not, link to default WordPress registration page.
-					if ( ! empty( $my_courses_page_id ) && $my_courses_page_id && ! $wp_register_link ) {
-						if ( true === (bool) apply_filters( 'sensei_user_can_register_for_course', true, $post->ID ) ) {
-							$my_courses_url = get_permalink( $my_courses_page_id );
-							echo '<div class="status register"><a href="' . esc_url( $my_courses_url ) . '">' .
-								esc_html__( 'Register', 'woothemes-sensei' ) . '</a></div>';
-						}
-					} else {
-
-						wp_register( '<div class="status register">', '</div>' );
-
-					}
-				} // end if user can register
-			} // End If Statement
-		} // End If Statement
+				?>
+				<div class="status in-progress"><?php echo esc_html__( 'In Progress', 'sensei' ); ?></div>
+				<?php
+			}
+		} else {
+			/**
+			 * Action to output the course enrolment buttons. When this is
+			 * called, we know that the user is not taking the course, but do
+			 * not know whether the user is logged in.
+			 *
+			 * @since 2.0.0
+			 */
+			do_action( 'sensei_output_course_enrolment_actions' );
+		}
 		?>
 
 		</section>
 		<?php
+	}
 
-	}//end the_course_enrolment_actions()
+	/**
+	 * Output the course actions like start taking course, register, etc. Note
+	 * that this expects that the user is not already taking the course; that
+	 * check is done in `the_course_enrolment_actions`.
+	 *
+	 * @access private
+	 *
+	 * @since 2.0.0
+	 */
+	public static function output_course_enrolment_actions() {
+		global $post;
+
+		$is_course_content_restricted = (bool) apply_filters( 'sensei_is_course_content_restricted', false, $post->ID );
+
+		if ( is_user_logged_in() ) {
+			$should_display_start_course_form = (bool) apply_filters( 'sensei_display_start_course_form', true, $post->ID );
+			if ( $is_course_content_restricted && false == $should_display_start_course_form ) {
+				self::add_course_access_permission_message( '' );
+			}
+			if ( $should_display_start_course_form ) {
+				sensei_start_course_form( $post->ID );
+			}
+		} else {
+			if ( get_option( 'users_can_register' ) ) {
+
+				// set the permissions message
+				$anchor_before = '<a href="' . esc_url( sensei_user_login_url() ) . '" >';
+				$anchor_after  = '</a>';
+				$notice        = sprintf(
+					// translators: Placeholders are an opening and closing <a> tag linking to the login URL.
+					__( 'or %1$slog in%2$s to view this course.', 'sensei' ),
+					$anchor_before,
+					$anchor_after
+				);
+
+				self::add_course_access_permission_message( $notice );
+
+				$my_courses_page_id = '';
+
+				/**
+				 * Filter to force Sensei to output the default WordPress user
+				 * registration link.
+				 *
+				 * @since 1.9.0
+				 * @param bool $wp_register_link default false
+				 */
+				$wp_register_link = apply_filters( 'sensei_use_wp_register_link', false );
+
+				$settings = Sensei()->settings->get_settings();
+				if ( isset( $settings['my_course_page'] )
+					&& 0 < intval( $settings['my_course_page'] ) ) {
+
+					$my_courses_page_id = $settings['my_course_page'];
+
+				}
+
+				// If a My Courses page was set in Settings, and 'sensei_use_wp_register_link'
+				// is false, link to My Courses. If not, link to default WordPress registration page.
+				if ( ! empty( $my_courses_page_id ) && $my_courses_page_id && ! $wp_register_link ) {
+					if ( true === (bool) apply_filters( 'sensei_user_can_register_for_course', true, $post->ID ) ) {
+						$my_courses_url = get_permalink( $my_courses_page_id );
+						echo '<div class="status register"><a href="' . esc_url( $my_courses_url ) . '">' .
+							esc_html__( 'Register', 'sensei' ) . '</a></div>';
+					}
+				} else {
+
+					wp_register( '<div class="status register">', '</div>' );
+
+				}
+			}
+		}
+	}
 
 	/**
 	 * Output the course video inside the loop.
@@ -3276,7 +3099,7 @@ if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
 
 		if ( ! empty( $term ) ) {
 
-			$title = __( 'Category', 'woothemes-sensei' ) . ' ' . $term->name;
+			$title = __( 'Category', 'sensei' ) . ' ' . $term->name;
 
 		} else {
 
@@ -3467,14 +3290,14 @@ if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
 				. '" title="'
 				. sprintf(
 					// translators: Placeholder $1$s is the course title.
-					esc_attr__( 'You must first complete: %1$s', 'woothemes-sensei' ),
+					esc_attr__( 'You must first complete: %1$s', 'sensei' ),
 					$course_title
 				)
 				 . '">' . $course_title . '</a>';
 
 			$complete_prerequisite_message = sprintf(
 				// translators: Placeholder $1$s is the course title.
-				esc_html__( 'You must first complete %1$s before viewing this course', 'woothemes-sensei' ),
+				esc_html__( 'You must first complete %1$s before viewing this course', 'sensei' ),
 				$prerequisite_course_link
 			);
 

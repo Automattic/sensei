@@ -23,7 +23,7 @@ class Sensei_Analysis {
 	 * @param string $file
 	 */
 	public function __construct( $file ) {
-		$this->name      = __( 'Analysis', 'woothemes-sensei' );
+		$this->name      = __( 'Analysis', 'sensei' );
 		$this->file      = $file;
 		$this->page_slug = 'sensei_analysis';
 
@@ -56,7 +56,7 @@ class Sensei_Analysis {
 
 		if ( current_user_can( 'manage_sensei_grades' ) ) {
 
-			add_submenu_page( 'sensei', __( 'Analysis', 'woothemes-sensei' ), __( 'Analysis', 'woothemes-sensei' ), 'manage_sensei_grades', 'sensei_analysis', array( $this, 'analysis_page' ) );
+			add_submenu_page( 'sensei', __( 'Analysis', 'sensei' ), __( 'Analysis', 'sensei' ), 'manage_sensei_grades', 'sensei_analysis', array( $this, 'analysis_page' ) );
 
 		}
 
@@ -72,9 +72,7 @@ class Sensei_Analysis {
 	 */
 	public function enqueue_styles() {
 
-		wp_enqueue_style( 'woothemes-sensei-admin' );
-
-		wp_enqueue_style( 'woothemes-sensei-settings-api', Sensei()->plugin_url . 'assets/css/settings.css', '', Sensei()->version );
+		wp_enqueue_style( 'sensei-settings-api', Sensei()->plugin_url . 'assets/css/settings.css', '', Sensei()->version );
 
 	} // End enqueue_styles()
 
@@ -580,7 +578,7 @@ class Sensei_Analysis {
 
 			// Simple verification to ensure intent, Note that a Nonce is per user, so the URL can't be shared
 			if ( ! wp_verify_nonce( $_REQUEST['_sdl_nonce'], 'sensei_csv_download-' . $report ) ) {
-				wp_die( esc_html__( 'Invalid request', 'woothemes-sensei' ) );
+				wp_die( esc_html__( 'Invalid request', 'sensei' ) );
 			}
 
 			// Setup the variables we might need

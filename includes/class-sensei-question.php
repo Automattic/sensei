@@ -42,12 +42,12 @@ class Sensei_Question {
 
 	public function question_types() {
 		$types = array(
-			'multiple-choice' => __( 'Multiple Choice', 'woothemes-sensei' ),
-			'boolean'         => __( 'True/False', 'woothemes-sensei' ),
-			'gap-fill'        => __( 'Gap Fill', 'woothemes-sensei' ),
-			'single-line'     => __( 'Single Line', 'woothemes-sensei' ),
-			'multi-line'      => __( 'Multi Line', 'woothemes-sensei' ),
-			'file-upload'     => __( 'File Upload', 'woothemes-sensei' ),
+			'multiple-choice' => __( 'Multiple Choice', 'sensei' ),
+			'boolean'         => __( 'True/False', 'sensei' ),
+			'gap-fill'        => __( 'Gap Fill', 'sensei' ),
+			'single-line'     => __( 'Single Line', 'sensei' ),
+			'multi-line'      => __( 'Multi Line', 'sensei' ),
+			'file-upload'     => __( 'File Upload', 'sensei' ),
 		);
 
 		return apply_filters( 'sensei_question_types', $types );
@@ -62,10 +62,11 @@ class Sensei_Question {
 	 * @return array $new_columns
 	 */
 	public function add_column_headings( $defaults ) {
+		$new_columns                      = array();
 		$new_columns['cb']                = '<input type="checkbox" />';
-		$new_columns['title']             = _x( 'Question', 'column name', 'woothemes-sensei' );
-		$new_columns['question-type']     = _x( 'Type', 'column name', 'woothemes-sensei' );
-		$new_columns['question-category'] = _x( 'Categories', 'column name', 'woothemes-sensei' );
+		$new_columns['title']             = _x( 'Question', 'column name', 'sensei' );
+		$new_columns['question-type']     = _x( 'Type', 'column name', 'sensei' );
+		$new_columns['question-category'] = _x( 'Categories', 'column name', 'sensei' );
 		if ( isset( $defaults['date'] ) ) {
 			$new_columns['date'] = $defaults['date'];
 		}
@@ -118,7 +119,7 @@ class Sensei_Question {
 	public function question_edit_panel_metabox( $post_type, $post ) {
 		if ( in_array( $post_type, array( 'question', 'multiple_question' ) ) ) {
 
-			$metabox_title = __( 'Question', 'woothemes-sensei' );
+			$metabox_title = __( 'Question', 'sensei' );
 
 			if ( isset( $post->ID ) ) {
 
@@ -132,8 +133,8 @@ class Sensei_Question {
 				}
 			}
 			add_meta_box( 'question-edit-panel', $metabox_title, array( $this, 'question_edit_panel' ), 'question', 'normal', 'high' );
-			add_meta_box( 'question-lessons-panel', __( 'Quizzes', 'woothemes-sensei' ), array( $this, 'question_lessons_panel' ), 'question', 'side', 'default' );
-			add_meta_box( 'multiple-question-lessons-panel', __( 'Quizzes', 'woothemes-sensei' ), array( $this, 'question_lessons_panel' ), 'multiple_question', 'side', 'default' );
+			add_meta_box( 'question-lessons-panel', __( 'Quizzes', 'sensei' ), array( $this, 'question_lessons_panel' ), 'question', 'side', 'default' );
+			add_meta_box( 'multiple-question-lessons-panel', __( 'Quizzes', 'sensei' ), array( $this, 'question_lessons_panel' ), 'multiple_question', 'side', 'default' );
 		}
 	}
 
@@ -216,7 +217,7 @@ class Sensei_Question {
 		global $post;
 
 		// translators: Placeholders are an opening and closing <em> tag.
-		$no_lessons = sprintf( __( '%1$sThis question does not appear in any quizzes yet.%2$s', 'woothemes-sensei' ), '<em>', '</em>' );
+		$no_lessons = sprintf( __( '%1$sThis question does not appear in any quizzes yet.%2$s', 'sensei' ), '<em>', '</em>' );
 
 		if ( ! isset( $post->ID ) ) {
 			echo wp_kses_post( $no_lessons );
@@ -333,7 +334,7 @@ class Sensei_Question {
 
 			// Question type
 			$selected     = isset( $_GET['question_type'] ) ? $_GET['question_type'] : '';
-			$type_options = '<option value="">' . esc_html__( 'All types', 'woothemes-sensei' ) . '</option>';
+			$type_options = '<option value="">' . esc_html__( 'All types', 'sensei' ) . '</option>';
 			foreach ( $this->question_types as $label => $type ) {
 				$type_options .= '<option value="' . esc_attr( $label ) . '" ' . selected( $selected, $label, false ) . '>' . esc_html( $type ) . '</option>';
 			}
@@ -346,7 +347,7 @@ class Sensei_Question {
 			$cats = get_terms( 'question-category', array( 'hide_empty' => false ) );
 			if ( ! empty( $cats ) && ! is_wp_error( $cats ) ) {
 				$selected    = isset( $_GET['question_cat'] ) ? $_GET['question_cat'] : '';
-				$cat_options = '<option value="">' . esc_html__( 'All categories', 'woothemes-sensei' ) . '</option>';
+				$cat_options = '<option value="">' . esc_html__( 'All categories', 'sensei' ) . '</option>';
 				foreach ( $cats as $cat ) {
 					$cat_options .= '<option value="' . esc_attr( $cat->slug ) . '" ' . selected( $selected, $cat->slug, false ) . '>' . esc_html( $cat->name ) . '</option>';
 				}
@@ -497,7 +498,7 @@ class Sensei_Question {
 	/**
 	 * Echo the sensei question title.
 	 *
-	 * @uses WooThemes_Sensei_Question::get_the_question_title
+	 * @uses Sensei_Question::get_the_question_title
 	 *
 	 * @since 1.9.0
 	 * @param $question_id
@@ -748,7 +749,7 @@ class Sensei_Question {
 	 * This function has to be run inside the quiz question loop on the single quiz page.
 	 *
 	 * It show the correct/incorrect answer per question depending on the quiz logic explained here:
-	 * https://docs.woocommerce.com/document/sensei-quiz-settings-flowchart/
+	 * https://senseilms.com/documentation/quiz-settings-flowchart/
 	 *
 	 * Pseudo code for logic:  https://github.com/Automattic/sensei/issues/1422#issuecomment-214494263
 	 *
@@ -804,7 +805,7 @@ class Sensei_Question {
 		$user_question_grade = Sensei()->quiz->get_user_question_grade( $lesson_id, $question_id, get_current_user_id() );
 
 		// Defaults
-		$answer_message = __( 'Incorrect - Right Answer:', 'woothemes-sensei' ) . ' ' . self::get_correct_answer( $question_id );
+		$answer_message = __( 'Incorrect - Right Answer:', 'sensei' ) . ' ' . self::get_correct_answer( $question_id );
 
 		// For zero grade mark as 'correct' but add no classes
 		if ( 0 == $question_grade ) {
@@ -815,7 +816,7 @@ class Sensei_Question {
 			$user_correct         = true;
 			$answer_message_class = 'user_right';
 			// translators: Placeholder is the question grade.
-			$answer_message = sprintf( __( 'Grade: %d', 'woothemes-sensei' ), $user_question_grade );
+			$answer_message = sprintf( __( 'Grade: %d', 'sensei' ), $user_question_grade );
 		} else {
 			$user_correct         = false;
 			$answer_message_class = 'user_wrong';
@@ -972,7 +973,7 @@ class Sensei_Question {
 
 			}
 			// translators: Placeholders are the upload size and the measurement (e.g. 5 MB)
-			$max_upload_size = sprintf( __( 'Maximum upload file size: %1$d%2$s', 'woothemes-sensei' ), esc_html( $upload_size_unit ), esc_html( $sizes[ $u ] ) );
+			$max_upload_size = sprintf( __( 'Maximum upload file size: %1$d%2$s', 'sensei' ), esc_html( $upload_size_unit ), esc_html( $sizes[ $u ] ) );
 
 			// Assemble all the data needed by the file upload template
 			$question_data['answer_media_url']      = $answer_media_url;
@@ -1192,14 +1193,13 @@ class Sensei_Question {
 
 		$right_answer = get_post_meta( $question_id, '_question_right_answer', true );
 		$type         = Sensei()->question->get_question_type( $question_id );
-		$type_name    = __( 'Multiple Choice', 'woothemes-sensei' );
 		$grade_type   = 'manual-grade';
 
 		if ( 'boolean' == $type ) {
 			if ( 'true' === $right_answer ) {
-				$right_answer = __( 'True', 'woothemes-sensei' );
+				$right_answer = __( 'True', 'sensei' );
 			} else {
-				$right_answer = __( 'False', 'woothemes-sensei' );
+				$right_answer = __( 'False', 'sensei' );
 			}
 		} elseif ( 'multiple-choice' == $type ) {
 

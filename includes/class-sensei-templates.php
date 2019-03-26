@@ -145,7 +145,7 @@ class Sensei_Templates {
 
 		global $wp_query, $email_template;
 
-		$find = array( 'woothemes-sensei.php' );
+		$find = array( 'sensei.php' );
 		$file = '';
 
 		if ( isset( $email_template ) && $email_template ) {
@@ -502,7 +502,6 @@ class Sensei_Templates {
 
 		// deprecate all these hooks
 		sensei_do_deprecated_action( 'sensei_course_start', '1.9.0', 'sensei_single_course_content_inside_before' );
-		sensei_do_deprecated_action( 'sensei_woocommerce_in_cart_message', '1.9.0', 'sensei_single_course_content_inside_before' );
 		sensei_do_deprecated_action( 'sensei_course_meta', '1.9.0', 'sensei_single_course_content_inside_before' );
 		sensei_do_deprecated_action( 'sensei_course_meta_video', '1.9.0', 'sensei_single_course_content_inside_before' );
 
@@ -718,7 +717,7 @@ class Sensei_Templates {
 			$my_courses_url = get_permalink( $my_courses_page_id );
 
 			echo '<div class="status register"><a href="' . esc_url( $my_courses_url ) . '">' .
-				esc_html__( 'Register', 'woothemes-sensei' ) . '</a></div>';
+				esc_html__( 'Register', 'sensei' ) . '</a></div>';
 
 		} else {
 

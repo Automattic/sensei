@@ -7,11 +7,13 @@
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     1.9.0
+ * @version     1.12.0
  */
-?>
 
-<?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 get_sensei_header();
 the_post();
 ?>
@@ -26,8 +28,8 @@ the_post();
 	 *
 	 * @param integer $message_id
 	 *
-	 * @hooked WooThemes_Sensei_Messages::the_title                 - 20
-	 * @hooked WooThemes_Sensei_Messages::the_message_sent_by_title - 40
+	 * @hooked Sensei_Messages::the_title                 - 20
+	 * @hooked Sensei_Messages::the_message_sent_by_title - 40
 	 */
 	do_action( 'sensei_single_message_content_inside_before', get_the_ID() );
 	?>

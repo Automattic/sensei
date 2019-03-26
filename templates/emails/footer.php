@@ -4,7 +4,7 @@
  *
  * @author  Automattic
  * @package Sensei/Templates/Emails
- * @version 1.6.0
+ * @version 2.0.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -23,7 +23,7 @@ if ( isset( Sensei()->settings->settings['email_base_color'] ) && '' != Sensei()
 $base_lighter_40 = sensei_hex_lighter( $base, 40 );
 
 // translators: Placeholder is the blog name.
-$footer_text = sprintf( __( '%1$s - Powered by Sensei', 'woothemes-sensei' ), get_bloginfo( 'name' ) );
+$footer_text = sprintf( __( '%1$s - Powered by Sensei', 'sensei' ), get_bloginfo( 'name' ) );
 if ( isset( Sensei()->settings->settings['email_footer_text'] ) ) {
 	$footer_text = Sensei()->settings->settings['email_footer_text'];
 }

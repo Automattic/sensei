@@ -4,8 +4,11 @@
  *
  * @author  Automattic
  * @package Sensei/Templates/Emails/HTML
- * @version 1.6.0
+ * @version 2.0.0
  */
+
+// phpcs:disable VariableAnalysis.CodeAnalysis.VariableAnalysis.UndefinedVariable
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 } // Exit if accessed directly ?>
@@ -25,11 +28,11 @@ $large = 'text-align: center !important;font-size: 350% !important;line-height: 
 
 <?php do_action( 'sensei_before_email_content', $template ); ?>
 
-<p style="<?php echo esc_attr( $small ); ?>"><?php esc_html_e( 'Your student', 'woothemes-sensei' ); ?></p>
+<p style="<?php echo esc_attr( $small ); ?>"><?php esc_html_e( 'Your student', 'sensei' ); ?></p>
 
 <h2 style="<?php echo esc_attr( $large ); ?>"><?php echo esc_html( $learner_name ); ?></h2>
 
-<p style="<?php echo esc_attr( $small ); ?>"><?php echo esc_html__( 'has completed the lesson', 'woothemes-sensei' ); ?></p>
+<p style="<?php echo esc_attr( $small ); ?>"><?php echo esc_html__( 'has completed the lesson', 'sensei' ); ?></p>
 
 <h2 style="<?php echo esc_attr( $large ); ?>"><?php echo get_the_title( $lesson_id ); ?></h2>
 
@@ -38,7 +41,7 @@ $large = 'text-align: center !important;font-size: 350% !important;line-height: 
 <p style="<?php echo esc_attr( $small ); ?>">
 <?php
 // translators: Placeholders are an opening and closing <a> tag linking to the lesson's learners page.
-printf( esc_html__( 'Manage this lesson\'s learners %1$shere%2$s.', 'woothemes-sensei' ), '<a href="' . esc_url( admin_url( 'admin.php?page=sensei_learners&view=learners&lesson_id=' . $lesson_id ) ) . '">', '</a>' );
+printf( esc_html__( 'Manage this lesson\'s learners %1$shere%2$s.', 'sensei' ), '<a href="' . esc_url( admin_url( 'admin.php?page=sensei_learners&view=learners&lesson_id=' . $lesson_id ) ) . '">', '</a>' );
 ?>
 </p>
 

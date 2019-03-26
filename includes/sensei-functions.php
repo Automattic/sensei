@@ -167,23 +167,6 @@ if ( ! function_exists( 'sensei_hex_lighter' ) ) {
 }
 
 /**
- * WC Detection for backwards compatibility
- *
- * @since 1.9.0
- * @deprecated since 1.9.0 use  Sensei_WC::is_woocommerce_active()
- */
-if ( ! function_exists( 'is_woocommerce_active' ) ) {
-	function is_woocommerce_active() {
-		// calling is present instead of is active here
-		// as this function can override other is_woocommerce_active
-		// function in other woo plugins and Sensei_WC::is_woocommerce_active
-		// also check the sensei settings for enable WooCommerce support, which
-		// other plugins should not check against.
-		return Sensei_WC::is_woocommerce_present();
-	}
-}
-
-/**
  * Provides an interface to allow us to deprecate hooks while still allowing them
  * to work, but giving the developer an error message.
  *
@@ -198,12 +181,12 @@ function sensei_do_deprecated_action( $hook_tag, $version, $alternative = '', $a
 
 	if ( has_action( $hook_tag ) ) {
 
-		$error_message = sprintf( __( "SENSEI: The hook '%1\$s', has been deprecated since '%2\$s'.", 'woothemes-sensei' ), $hook_tag, $version );
+		$error_message = sprintf( __( "SENSEI: The hook '%1\$s', has been deprecated since '%2\$s'.", 'sensei' ), $hook_tag, $version );
 
 		if ( ! empty( $alternative ) ) {
 
 			// translators: Placeholder is the alternative action name.
-			$error_message .= sprintf( __( "Please use '%s' instead.", 'woothemes-sensei' ), $alternative );
+			$error_message .= sprintf( __( "Please use '%s' instead.", 'sensei' ), $alternative );
 
 		}
 
@@ -283,4 +266,26 @@ function sensei_does_theme_support_templates() {
 	$themes        = Sensei()->theme_integration_loader->get_supported_themes();
 
 	return in_array( $current_theme, $themes, true ) || current_theme_supports( 'sensei' );
+}
+
+if ( ! function_exists( 'sensei_check_woocommerce_version' ) ) {
+	/**
+	 * Check if WooCommerce version is greater than the one specified.
+	 *
+	 * @deprecated 2.0.0
+	 *
+	 * @param string $version Version to check against.
+	 * @return boolean
+	 */
+	function sensei_check_woocommerce_version( $version = '2.1' ) {
+		_deprecated_function( __FUNCTION__, '2.0.0' );
+
+		if ( method_exists( 'Sensei_WC', 'is_woocommerce_active' ) && Sensei_WC::is_woocommerce_active() ) {
+			global $woocommerce;
+			if ( version_compare( $woocommerce->version, $version, '>=' ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

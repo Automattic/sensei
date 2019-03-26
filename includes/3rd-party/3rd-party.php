@@ -7,3 +7,5 @@
 
 // Require compatibility files.
 require_once dirname( __FILE__ ) . '/jetpack.php';
+require_once dirname( __FILE__ ) . '/woocommerce.php';
+require_once dirname( __FILE__ ) . '/wordpress-importer.php';

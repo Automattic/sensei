@@ -129,6 +129,8 @@ class Sensei_Autoloader {
 			 * Admin
 			 */
 			'Sensei_Learner_Management'                  => 'admin/class-sensei-learner-management.php',
+			'Sensei_Extensions'                          => 'admin/class-sensei-extensions.php',
+			'Sensei_Email_Signup_Form'                   => 'email-signup/class-sensei-email-signup-form.php',
 
 			/**
 			 * Shortcodes
@@ -179,16 +181,6 @@ class Sensei_Autoloader {
 			'Sensei_Twentyfifteen'                       => 'theme-integrations/Twentyfifteen.php',
 			'Sensei_Twentysixteen'                       => 'theme-integrations/Twentysixteen.php',
 			'Sensei_Storefront'                          => 'theme-integrations/Storefront.php',
-
-			/**
-			 * WooCommerce
-			 */
-			'Sensei_WC'                                  => 'class-sensei-wc.php',
-
-			/**
-			 * WooCommerce Memberships
-			 */
-			'Sensei_WC_Memberships'                      => 'class-sensei-wc-memberships.php',
 
 			/**
 			* WPML

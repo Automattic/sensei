@@ -8,44 +8,42 @@
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     1.9.0
+ * @version     2.0.0
  */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+get_sensei_header();
+
+/**
+ * This action before teacher courses loop. This hook fires within the archive-course.php
+ * It fires even if the current archive has no posts.
+ *
+ * @since 1.9.0
+ */
+do_action( 'sensei_teacher_archive_course_loop_before' );
 ?>
 
-<?php get_sensei_header(); ?>
+<?php if ( have_posts() ) : ?>
 
-	<?php
+	<?php sensei_load_template( 'loop-course.php' ); ?>
 
-		/**
-		 * This action before teacher courses loop. This hook fires within the archive-course.php
-		 * It fires even if the current archive has no posts.
-		 *
-		 * @since 1.9.0
-		 */
-		do_action( 'sensei_teacher_archive_course_loop_before' );
+<?php else : ?>
 
-	?>
+	<p><?php esc_html_e( 'There are no courses for this teacher.', 'sensei' ); ?></p>
 
-	<?php if ( have_posts() ) : ?>
+<?php endif; // End If Statement ?>
 
-		<?php sensei_load_template( 'loop-course.php' ); ?>
+<?php
 
-	<?php else : ?>
+/**
+ * This action runs after including the teacher archive loop. This hook fires within the teacher-archive.php
+ * It fires even if the current archive has no posts.
+ *
+ * @since 1.9.0
+ */
+do_action( 'sensei_teacher_archive_course_loop_after' );
 
-		<p><?php esc_html_e( 'There are no courses for this teacher.', 'woothemes-sensei' ); ?></p>
-
-	<?php endif; // End If Statement ?>
-
-	<?php
-
-		/**
-		 * This action runs after including the teacher archive loop. This hook fires within the teacher-archive.php
-		 * It fires even if the current archive has no posts.
-		 *
-		 * @since 1.9.0
-		 */
-		do_action( 'sensei_teacher_archive_course_loop_after' );
-
-	?>
-
-<?php get_sensei_footer(); ?>
+get_sensei_footer();

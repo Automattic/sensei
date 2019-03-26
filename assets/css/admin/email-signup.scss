@@ -1,0 +1,62 @@
+$email_signup_blue: #00ace6;
+
+#mc_embed_signup {
+	display: none;
+	border-radius: 0;
+	font-family: Futura, sans-serif;
+	border: 7px solid $email_signup_blue;
+	font-size: 16px;
+
+	p, input, button, a {
+		font-size: 16px;
+	}
+
+	h2 {
+		text-transform: uppercase;
+		margin-bottom: 2em;
+		font-size: 24px;
+	}
+
+	input[type=email] {
+		width: 100%;
+		height: 2.5em;
+		border-radius: 3px;
+		background-color: #eee;
+	}
+
+	.email-input {
+		display: none;
+		margin-top: 2em;
+	}
+
+	.buttons {
+		margin-top: 2em;
+		margin-bottom: 2em;
+		text-align: right;
+	}
+
+	.gdpr-checkbox {
+		margin-top: 2em;
+	}
+
+	.gdpr-content p {
+		font-style: italic;
+		font-size: 0.9em;
+	}
+
+	.buttons {
+		.button, .button-primary {
+			border: none;
+			text-shadow: none;
+			box-shadow: none;
+		}
+
+		.button-primary {
+			background: $email_signup_blue;
+		}
+
+		.button {
+			background: rgba( 255, 255, 255, 0 );
+		}
+	}
+}

@@ -49,7 +49,7 @@ function course_single_lessons() {
 	  */
 function lesson_single_meta() {
 
-	_deprecated_function( 'lesson_single_meta', '1.9;0', 'WooThemes_Sensei_Lesson::the_lesson_meta' );
+	_deprecated_function( 'lesson_single_meta', '1.9;0', 'Sensei_Lesson::the_lesson_meta' );
 	sensei_the_single_lesson_meta();
 
 } // End lesson_single_meta()
@@ -118,7 +118,7 @@ function sensei_start_course_form( $course_id ) {
 
 				<input type="hidden" name="<?php echo esc_attr( 'woothemes_sensei_start_course_noonce' ); ?>" id="<?php echo esc_attr( 'woothemes_sensei_start_course_noonce' ); ?>" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_start_course_noonce' ) ); ?>" />
 
-				<span><input name="course_start" type="submit" class="course-start" value="<?php esc_html_e( 'Start taking this Course', 'woothemes-sensei' ); ?>"/></span>
+				<span><input name="course_start" type="submit" class="course-start" value="<?php esc_html_e( 'Start taking this Course', 'sensei' ); ?>"/></span>
 
 			</form>
 			<?php
@@ -126,67 +126,59 @@ function sensei_start_course_form( $course_id ) {
 } // End sensei_start_course_form()
 
 
-	/**
-	 * sensei_wc_add_to_cart function.
-	 *
-	 * @deprecated since Sensei_WC::the_add_to_cart_button_html( $course_id );
-	 * @access public
-	 * @param mixed $course_id
-	 * @return void
-	 */
+/**
+ * sensei_wc_add_to_cart function.
+ *
+ * @deprecated since Sensei_WC::the_add_to_cart_button_html( $course_id );
+ * @access public
+ *
+ * @param mixed $course_id Course Post ID.
+ * @return void
+ */
 function sensei_wc_add_to_cart( $course_id ) {
+	_deprecated_function( __FUNCTION__, '1.9.0', 'Sensei_WC::the_add_to_cart_button_html' );
+
+	if ( ! method_exists( 'Sensei_WC', 'the_add_to_cart_button_html' ) ) {
+		return;
+	}
 
 	Sensei_WC::the_add_to_cart_button_html( $course_id );
-
 } // End sensei_wc_add_to_cart()
 
 
-	/**
-	 * sensei_check_if_product_is_in_cart function.
-	 *
-	 * @deprecated since 1.9.0
-	 * @param int $wc_post_id (default: 0)
-	 * @return bool
-	 */
+/**
+ * sensei_check_if_product_is_in_cart function.
+ *
+ * @deprecated since 1.9.0 use is_product_in_cart()
+ *
+ * @param int $wc_post_id Post ID for product (default: 0).
+ * @return bool
+ */
 function sensei_check_if_product_is_in_cart( $wc_product_id = 0 ) {
+	_deprecated_function( __FUNCTION__, '1.9.0', 'Sensei_WC::is_product_in_cart' );
+
+	if ( ! method_exists( 'Sensei_WC', 'is_product_in_cart' ) ) {
+		return false;
+	}
+
 	return Sensei_WC::is_product_in_cart( $wc_product_id );
 } // End sensei_check_if_product_is_in_cart()
 
 	/**
 	 * sensei_simple_course_price function.
 	 *
-	 * @access public
+	 * @deprecated 2.0.0 Use `\Sensei_WC_Paid_Courses\Frontend\Courses::output_course_price()` if it exists.
 	 * @param mixed $post_id
 	 * @return void
 	 */
 function sensei_simple_course_price( $post_id ) {
+	_deprecated_function( __FUNCTION__, '2.0.0', 'Sensei_WC_Paid_Courses\Frontend\Courses::output_course_price()' );
 
-	global $wp_the_query;
-
-	// check for the my courses shortcode
-	if ( strpos( $wp_the_query->post->post_content, 'sensei_user_courses' ) || strpos( $wp_the_query->post->post_content, 'usercourses' ) ) {
+	if ( ! method_exists( 'Sensei_WC_Paid_Courses\Frontend\Courses', 'output_course_price' ) ) {
 		return;
 	}
 
-	$wc_post_id = get_post_meta( $post_id, '_course_woocommerce_product', true );
-	if ( ! Sensei_WC::is_woocommerce_active() || empty( $wc_post_id ) || false ) {
-		return;
-	}
-
-	// Get the product
-	$product = Sensei_WC::get_product_object( $wc_post_id );
-
-	if ( isset( $product ) && ! empty( $product ) && $product->is_purchasable()
-		 && $product->is_in_stock() && ! sensei_check_if_product_is_in_cart( $wc_post_id ) ) {
-		?>
-
-			<span class="course-price">
-				<?php echo wp_kses_post( $product->get_price_html() ); ?>
-			</span>
-
-		<?php
-	} // End If Statement
-
+	\Sensei_WC_Paid_Courses\Frontend\Courses::output_course_price( $post_id );
 } // End sensei_simple_course_price()
 
 	/**
@@ -445,12 +437,12 @@ function sensei_get_excerpt( $post_id = '' ) {
 }
 
 function sensei_has_user_started_course( $post_id = 0, $user_id = 0 ) {
-	_deprecated_function( __FUNCTION__, '1.7', 'WooThemes_Sensei_Utils::user_started_course()' );
+	_deprecated_function( __FUNCTION__, '1.7', 'Sensei_Utils::user_started_course()' );
 	return Sensei_Utils::user_started_course( $post_id, $user_id );
 } // End sensei_has_user_started_course()
 
 function sensei_has_user_completed_lesson( $post_id = 0, $user_id = 0 ) {
-	_deprecated_function( __FUNCTION__, '1.7', 'WooThemes_Sensei_Utils::user_completed_lesson()' );
+	_deprecated_function( __FUNCTION__, '1.7', 'Sensei_Utils::user_completed_lesson()' );
 	return Sensei_Utils::user_completed_lesson( $post_id, $user_id );
 } // End sensei_has_user_completed_lesson()
 
@@ -465,7 +457,7 @@ function sensei_has_user_completed_lesson( $post_id = 0, $user_id = 0 ) {
  */
 function sensei_has_user_completed_prerequisite_lesson( $current_lesson_id, $user_id ) {
 
-	return WooThemes_Sensei_Lesson::is_prerequisite_complete( $current_lesson_id, $user_id );
+	return Sensei_Lesson::is_prerequisite_complete( $current_lesson_id, $user_id );
 
 } // End sensei_has_user_completed_prerequisite_lesson()
 
@@ -700,12 +692,12 @@ function sensei_get_the_module_status() {
 	$status_class  = '';
 	if ( $module_progress && $module_progress > 0 ) {
 
-		$module_status = __( 'Completed', 'woothemes-sensei' );
+		$module_status = __( 'Completed', 'sensei' );
 		$status_class  = 'completed';
 
 		if ( $module_progress < 100 ) {
 
-			$module_status = __( 'In progress', 'woothemes-sensei' );
+			$module_status = __( 'In progress', 'sensei' );
 			$status_class  = 'in-progress';
 
 		}
@@ -845,7 +837,7 @@ function sensei_the_question_content() {
 	$question_type = Sensei()->question->get_question_type( $sensei_question_loop['current_question']->ID );
 
 	// load the template that displays the question information.
-	WooThemes_Sensei_Question::load_question_template( $question_type );
+	Sensei_Question::load_question_template( $question_type );
 
 }//end sensei_the_question_content()
 
@@ -936,7 +928,7 @@ function sensei_can_user_view_lesson( $lesson_id = '', $user_id = '' ) {
 	}
 
 	// Check for prerequisite lesson completions
-	$pre_requisite_complete = WooThemes_Sensei_Lesson::is_prerequisite_complete( $lesson_id, $user_id );
+	$pre_requisite_complete = Sensei_Lesson::is_prerequisite_complete( $lesson_id, $user_id );
 	$lesson_course_id       = get_post_meta( $lesson_id, '_lesson_course', true );
 	$user_taking_course     = Sensei_Utils::user_started_course( $lesson_course_id, $user_id );
 
@@ -970,8 +962,6 @@ function sensei_can_user_view_lesson( $lesson_id = '', $user_id = '' ) {
 	 * Filter the can user view lesson function
 	 *
 	 * @since 1.9.0
-	 *
-	 * @hooked Sensei_WC::alter_can_user_view_lesson
 	 *
 	 * @param bool $can_user_view_lesson
 	 * @param string $lesson_id

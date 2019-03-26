@@ -1,7 +1,4 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
 /**
  * Content-course.php template file
  *
@@ -12,11 +9,15 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     1.9.0
+ * @version     1.12.2
  */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 ?>
 
-<li <?php post_class( WooThemes_Sensei_Course::get_course_loop_content_class() ); ?> >
+<li <?php post_class( Sensei_Course::get_course_loop_content_class() ); ?> >
 
 	<?php
 	/**

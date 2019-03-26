@@ -46,7 +46,7 @@ class Sensei_REST_API_Endpoint_Modules extends Sensei_REST_API_Controller {
 
 		$course = $this->factory->find_one_by_id( $item_id );
 		if ( empty( $course ) ) {
-			return $this->not_found( __( 'Module not found', 'woothemes-sensei' ) );
+			return $this->not_found( __( 'Module not found', 'sensei' ) );
 		}
 
 		return $this->succeed( $this->prepare_data_transfer_object( $course ) );

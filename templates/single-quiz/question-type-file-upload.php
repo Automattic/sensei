@@ -1,7 +1,4 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
 /**
  * The Template for displaying File Upload Questions.
  *
@@ -10,17 +7,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     1.9.0
+ * @version     2.0.0
  */
-?>
 
-<?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
-	/**
-	 * Get the question data with the current quiz id
-	 * All data is loaded in this array to keep the template clean.
-	 */
-	$question_data = WooThemes_Sensei_Question::get_template_data( sensei_get_the_question_id(), get_the_ID() );
+/**
+ * Get the question data with the current quiz id
+ * All data is loaded in this array to keep the template clean.
+ */
+$question_data = Sensei_Question::get_template_data( sensei_get_the_question_id(), get_the_ID() );
 
 ?>
 
@@ -37,7 +35,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<?php
 		printf(
 			// translators: Placeholder %1$s is a link to the submitted file.
-			esc_html__( 'Submitted file: %1$s', 'woothemes-sensei' ),
+			esc_html__( 'Submitted file: %1$s', 'sensei' ),
 			'<a href="' . esc_url( $question_data['answer_media_url'] )
 			. '" target="_blank">'
 			. esc_html( $question_data['answer_media_filename'] ) . '</a>'
@@ -47,7 +45,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</p>
 	<?php if ( ! $question_data['lesson_complete'] ) { ?>
 
-		<aside class="reupload_notice"><?php esc_html_e( 'Uploading a new file will replace your existing one:', 'woothemes-sensei' ); ?></aside>
+		<aside class="reupload_notice"><?php esc_html_e( 'Uploading a new file will replace your existing one:', 'sensei' ); ?></aside>
 
 	<?php } ?>
 

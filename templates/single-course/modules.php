@@ -1,7 +1,4 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
 /**
  * List the Course Modules and Lesson in these modules
  *
@@ -13,8 +10,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     1.10.0
+ * @version     2.0.0
  */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 ?>
 
 <?php
@@ -93,7 +94,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 						<header>
 
-							<h3><?php esc_html_e( 'Lessons', 'woothemes-sensei' ); ?></h3>
+							<h3><?php esc_html_e( 'Lessons', 'sensei' ); ?></h3>
 
 						</header>
 

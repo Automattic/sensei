@@ -144,7 +144,7 @@ class Sensei_Quiz {
 
 		if ( intval( $answers_saved ) > 0 ) {
 			// update the message showed to user
-			Sensei()->frontend->messages = '<div class="sensei-message note">' . __( 'Quiz Saved Successfully.', 'woothemes-sensei' ) . '</div>';
+			Sensei()->frontend->messages = '<div class="sensei-message note">' . __( 'Quiz Saved Successfully.', 'sensei' ) . '</div>';
 		}
 
 		// remove the hook as it should only fire once per click
@@ -516,7 +516,7 @@ class Sensei_Quiz {
 		// Run any action on quiz/lesson reset (previously this didn't occur on resetting a quiz, see resetting a lesson in sensei_complete_lesson()
 		do_action( 'sensei_user_lesson_reset', $user_id, $lesson_id );
 		if ( ! is_admin() ) {
-			Sensei()->notices->add_notice( __( 'Quiz Reset Successfully.', 'woothemes-sensei' ), 'info' );
+			Sensei()->notices->add_notice( __( 'Quiz Reset Successfully.', 'sensei' ), 'info' );
 		}
 
 		return true;
@@ -629,7 +629,7 @@ class Sensei_Quiz {
 
 			}
 
-			$lesson_metadata['grade'] = $grade; // Technically already set as part of "WooThemes_Sensei_Utils::sensei_grade_quiz_auto()" above
+			$lesson_metadata['grade'] = $grade; // Technically already set as part of "Sensei_Utils::sensei_grade_quiz_auto()" above
 
 		} // end if ! is_wp_error( $grade ...
 
@@ -1144,7 +1144,7 @@ class Sensei_Quiz {
 			}
 
 			// translators: Placeholder is the quiz name with any instance of the word "quiz" removed.
-			$title = sprintf( __( '%s Quiz', 'woothemes-sensei' ), $title_with_no_quizzes );
+			$title = sprintf( __( '%s Quiz', 'sensei' ), $title_with_no_quizzes );
 		}
 
 		/**
@@ -1309,15 +1309,15 @@ class Sensei_Quiz {
 
 			 <?php if ( '' == $user_quiz_grade && ( ! $user_lesson_status || 'ungraded' !== $user_lesson_status->comment_approved ) ) { ?>
 
-				 <span><input type="submit" name="quiz_complete" class="quiz-submit complete" value="<?php esc_attr_e( 'Complete Quiz', 'woothemes-sensei' ); ?>"/></span>
+				 <span><input type="submit" name="quiz_complete" class="quiz-submit complete" value="<?php esc_attr_e( 'Complete Quiz', 'sensei' ); ?>"/></span>
 
-				 <span><input type="submit" name="quiz_save" class="quiz-submit save" value="<?php esc_attr_e( 'Save Quiz', 'woothemes-sensei' ); ?>"/></span>
+				 <span><input type="submit" name="quiz_save" class="quiz-submit save" value="<?php esc_attr_e( 'Save Quiz', 'sensei' ); ?>"/></span>
 
 				<?php } // End If Statement ?>
 
 			 <?php if ( isset( $reset_quiz_allowed ) && $reset_quiz_allowed ) { ?>
 
-				 <span><input type="submit" name="quiz_reset" class="quiz-submit reset" value="<?php esc_attr_e( 'Reset Quiz', 'woothemes-sensei' ); ?>"/></span>
+				 <span><input type="submit" name="quiz_reset" class="quiz-submit reset" value="<?php esc_attr_e( 'Reset Quiz', 'sensei' ); ?>"/></span>
 
 				<?php } ?>
 
@@ -1431,7 +1431,7 @@ class Sensei_Quiz {
 		return $merged;
 	}
 
-} // End Class WooThemes_Sensei_Quiz
+} // End Class Sensei_Quiz
 
 
 

@@ -4,8 +4,11 @@
  *
  * @author  Automattic
  * @package Sensei/Templates/Emails/HTML
- * @version 1.6.0
+ * @version 2.0.0
  */
+
+// phpcs:disable VariableAnalysis.CodeAnalysis.VariableAnalysis.UndefinedVariable
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 } // Exit if accessed directly ?>
@@ -30,7 +33,7 @@ $large = 'text-align: center !important;font-size: 350% !important;line-height: 
 <p style="<?php echo esc_attr( $small ); ?>">
 <?php
 // translators: Placeholder is the post type (e.g. course or lesson)
-printf( esc_html__( 'has replied to your private message regarding the %1$s', 'woothemes-sensei' ), esc_html( $content_type ) );
+printf( esc_html__( 'has replied to your private message regarding the %1$s', 'sensei' ), esc_html( $content_type ) );
 ?>
 </p>
 
@@ -45,7 +48,7 @@ printf( esc_html__( 'has replied to your private message regarding the %1$s', 'w
 <p style="<?php echo esc_attr( $small ); ?>">
 <?php
 // translators: Placeholder is an opening an closing <a> tag linking to the comment.
-printf( esc_html__( 'You can view the message and reply %1$shere%2$s.', 'woothemes-sensei' ), '<a href="' . esc_url( $comment_link ) . '">', '</a>' );
+printf( esc_html__( 'You can view the message and reply %1$shere%2$s.', 'sensei' ), '<a href="' . esc_url( $comment_link ) . '">', '</a>' );
 ?>
 </p>
 

@@ -8,6 +8,10 @@
  * @package Sensei/Templates
  * @version 1.6.4
  */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 ?>
 
 <div id="content" class="page col-full">

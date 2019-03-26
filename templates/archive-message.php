@@ -7,13 +7,15 @@
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     1.9.0
+ * @version     2.0.0
  */
-?>
 
-<?php get_sensei_header(); ?>
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
-<?php
+get_sensei_header();
+
 /**
  * This action before course messages archive loop. This hook fires within the archive-message.php file.
  * It fires even if the current archive has no no messages.
@@ -33,7 +35,7 @@ do_action( 'sensei_archive_before_message_loop' );
 
 	<?php else : ?>
 
-		<p> <?php esc_html_e( 'You do not have any messages.', 'woothemes-sensei' ); ?> </p>
+		<p> <?php esc_html_e( 'You do not have any messages.', 'sensei' ); ?> </p>
 
 	<?php endif; // End If Statement ?>
 

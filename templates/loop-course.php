@@ -1,7 +1,4 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
 /**
  * The Template for outputting Lists of any Sensei content type.
  *
@@ -12,9 +9,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @category    Templates
  * @version     1.9.0
  */
-?>
 
-<?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * This runs before the the course loop items in the loop.php template. It runs
  * only only for the course post type. This loop will not run if the current wp_query

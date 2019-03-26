@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.2.0
  */
-class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
+class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 	public $lesson_id;
 	public $course_id;
 	public $page_slug = 'sensei_analysis';
@@ -43,11 +43,11 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 	 */
 	function get_columns() {
 		$columns = array(
-			'title'     => __( 'Learner', 'woothemes-sensei' ),
-			'started'   => __( 'Date Started', 'woothemes-sensei' ),
-			'completed' => __( 'Date Completed', 'woothemes-sensei' ),
-			'status'    => __( 'Status', 'woothemes-sensei' ),
-			'grade'     => __( 'Grade', 'woothemes-sensei' ),
+			'title'     => __( 'Learner', 'sensei' ),
+			'started'   => __( 'Date Started', 'sensei' ),
+			'completed' => __( 'Date Completed', 'sensei' ),
+			'status'    => __( 'Status', 'sensei' ),
+			'grade'     => __( 'Grade', 'sensei' ),
 		);
 		$columns = apply_filters( 'sensei_analysis_lesson_columns', $columns, $this );
 		return $columns;
@@ -204,31 +204,31 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 		$status_class    = $grade = '';
 
 		if ( 'complete' == $item->comment_approved ) {
-			$status       = __( 'Completed', 'woothemes-sensei' );
+			$status       = __( 'Completed', 'sensei' );
 			$status_class = 'graded';
 
-			$grade = __( 'No Grade', 'woothemes-sensei' );
+			$grade = __( 'No Grade', 'sensei' );
 		} elseif ( 'graded' == $item->comment_approved ) {
-			$status       = __( 'Graded', 'woothemes-sensei' );
+			$status       = __( 'Graded', 'sensei' );
 			$status_class = 'graded';
 
 			$grade = get_comment_meta( $item->comment_ID, 'grade', true );
 		} elseif ( 'passed' == $item->comment_approved ) {
-			$status       = __( 'Passed', 'woothemes-sensei' );
+			$status       = __( 'Passed', 'sensei' );
 			$status_class = 'graded';
 
 			$grade = get_comment_meta( $item->comment_ID, 'grade', true );
 		} elseif ( 'failed' == $item->comment_approved ) {
-			$status       = __( 'Failed', 'woothemes-sensei' );
+			$status       = __( 'Failed', 'sensei' );
 			$status_class = 'failed';
 
 			$grade = get_comment_meta( $item->comment_ID, 'grade', true );
 		} elseif ( 'ungraded' == $item->comment_approved ) {
-			$status       = __( 'Ungraded', 'woothemes-sensei' );
+			$status       = __( 'Ungraded', 'sensei' );
 			$status_class = 'ungraded';
 
 		} else {
-			$status        = __( 'In Progress', 'woothemes-sensei' );
+			$status        = __( 'In Progress', 'sensei' );
 			$user_end_date = '';
 		}
 
@@ -342,7 +342,7 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 	 * @return void
 	 */
 	public function no_items() {
-		esc_html_e( 'No learners found.', 'woothemes-sensei' );
+		esc_html_e( 'No learners found.', 'sensei' );
 	} // End no_items()
 
 	/**
@@ -352,7 +352,7 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 	 * @return void
 	 */
 	public function data_table_header() {
-		echo '<strong>' . esc_html__( 'Learners taking this Lesson', 'woothemes-sensei' ) . '</strong>';
+		echo '<strong>' . esc_html__( 'Learners taking this Lesson', 'sensei' ) . '</strong>';
 	} // End data_table_header()
 
 	/**
@@ -372,7 +372,7 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 			),
 			admin_url( 'admin.php' )
 		);
-		echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( $url, 'sensei_csv_download-' . $report, '_sdl_nonce' ) ) . '">' . esc_html__( 'Export all rows (CSV)', 'woothemes-sensei' ) . '</a>';
+		echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( $url, 'sensei_csv_download-' . $report, '_sdl_nonce' ) ) . '">' . esc_html__( 'Export all rows (CSV)', 'sensei' ) . '</a>';
 	} // End data_table_footer()
 
 	/**
@@ -383,7 +383,7 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 	 */
 	public function search_button( $text = '' ) {
 
-		$text = __( 'Search Learners', 'woothemes-sensei' );
+		$text = __( 'Search Learners', 'sensei' );
 
 		return $text;
 

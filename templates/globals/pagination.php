@@ -1,15 +1,17 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
 /**
  * Pagination - Show numbered pagination for sensei archives
  *
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     1.9.0
+ * @version     1.12.2
  */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 // Exit if accessed directly
 global $wp_query;
 
