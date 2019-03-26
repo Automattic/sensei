@@ -567,7 +567,8 @@ class Sensei_Main {
 	/**
 	 * Check for plugin updates.
 	 *
-	 * @since 1.12.3
+	 * @access private
+	 * @since  1.12.3
 	 */
 	public function update() {
 		if ( ! version_compare( $this->version, get_option( 'woothemes-sensei-version' ), '>' ) ) {
