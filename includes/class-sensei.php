@@ -331,7 +331,7 @@ class Sensei_Main {
 		}
 		$message = sprintf(
 			// translators: %1$s is the URL to the Sensei 2 announcement; %2$s is the name of the plugin required; %3$s is the minimum version number.
-			__( '<a href="%1$s" rel="noopener noreferrer"><strong>Sensei 2.0</strong> is coming soon</a> and requires a minimum PHP version of %2$s, but you are running %3$s. <strong>Please update your version of PHP before updating Sensei.</strong>', 'woothemes-sensei' ),
+			__( '<a href="%1$s" rel="noopener noreferrer"><strong>Sensei 2.0</strong> is coming soon</a> and requires a minimum PHP version of %2$s, but you are running %3$s. <strong>To ensure that you continue to receive updates for Sensei and our official extensions, please upgrade to a newer version of PHP.</strong>', 'woothemes-sensei' ),
 			'https://senseilms.com/2019/02/27/upcoming-changes-in-sensei-2-0/',
 			'5.6.0',
 			phpversion()
@@ -374,10 +374,10 @@ class Sensei_Main {
 			return $plugin_meta;
 		}
 
-		$more_information_url = 'https://senseilms.com/documentation/';
+		$more_information_url = 'https://senseilms.com/documentation/faq/#requirements';
 
-		// translators: Placeholder is url for more info on Sensei's PHP version bump.
-		$message       = sprintf( __( 'Next version requires newer version of PHP. <a href="%s" rel="noopener noreferrer" target="_blank">More Information <span aria-hidden="true" class="dashicons dashicons-external"></span></a>', 'woothemes-sensei' ), $more_information_url );
+		// translators: %1$s is name of the Sensei product; %2$s is version not compatible with PHP 5.6; %3$s is url for more info on Sensei's PHP version bump.
+		$message       = sprintf( __( '%1$s %2$s requires a newer version of PHP. <a href="%3$s" rel="noopener noreferrer" target="_blank">More Information <span aria-hidden="true" class="dashicons dashicons-external"></span></a>', 'woothemes-sensei' ), $plugin_data['Name'], $versions['incompatible'], $more_information_url );
 		$plugin_meta[] = '<span style="color: red; font-weight: bold;">' . wp_kses_post( $message ) . '</span>';
 
 		return $plugin_meta;
