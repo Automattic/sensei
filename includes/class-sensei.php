@@ -430,6 +430,7 @@ class Sensei_Main {
 
 		// check flush the rewrite rules if the option sensei_flush_rewrite_rules option is 1
 		add_action( 'init', array( $this, 'flush_rewrite_rules' ), 101 );
+		add_action( 'admin_init', array( $this, 'update' ) );
 
 		// Add plugin action links filter
 		add_filter( 'plugin_action_links_' . plugin_basename( $this->main_plugin_file_name ), array( $this, 'plugin_action_links' ) );
@@ -563,6 +564,19 @@ class Sensei_Main {
 
 	} // End install()
 
+	/**
+	 * Check for plugin updates.
+	 *
+	 * @since 1.12.3
+	 */
+	public function update() {
+		if ( ! version_compare( $this->version, get_option( 'woothemes-sensei-version' ), '>' ) ) {
+			return;
+		}
+
+		// Run updates.
+		$this->register_plugin_version();
+	}
 
 	/**
 	 * Run on activation of the plugin.
