@@ -1700,7 +1700,7 @@ class Sensei_Core_Modules {
 			'show_in_nav_menus'  => false,
 			'show_in_quick_edit' => false,
 			'show_ui'            => true,
-			'show_in_menu'       =>false,
+			'show_in_menu'       => false,
 			'rewrite'            => array( 'slug' => $modules_rewrite_slug ),
 			'labels'             => $labels,
 		);
