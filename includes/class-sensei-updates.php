@@ -1145,6 +1145,7 @@ class Sensei_Updates {
 		if ( ! is_null( $role ) ) {
 			$role->add_cap( 'manage_sensei' );
 			$role->add_cap( 'manage_sensei_grades' );
+			$role->add_cap( 'manage_modules' );
 		}
 
 		return true;
@@ -1256,6 +1257,7 @@ class Sensei_Updates {
 
 		if ( ! is_null( $role ) ) {
 			$role->add_cap( 'manage_sensei_grades' );
+			$role->add_cap( 'manage_modules' );
 		}
 
 		return true;
