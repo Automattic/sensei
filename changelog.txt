@@ -3,7 +3,7 @@
 2019.03.27 - version 1.12.3
 * New: Restrict future updates for sites running a version of PHP less than 5.6 - #2502
 * Fix: Conflict with Jetpack shortcodes module and Sensei videos - #2426
-* Fix: Change progress status to "Completed" in modules (@tonytettinger) - #2432
+* Fix: Change progress status to "Completed" in modules (@tonytettinger) - #2342
 * Fix: Lesson order changes when lesson is updated using Classic Editor - #2471
 * Fix: Update version number on plugin update - #2503
 
