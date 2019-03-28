@@ -457,9 +457,9 @@ class Sensei_PostTypes {
 			'query_var'         => true,
 			'show_in_nav_menus' => true,
 			'capabilities'      => array(
-				'manage_terms' => 'manage_categories',
+				'manage_terms' => 'manage_sensei_categories',
 				'edit_terms'   => 'edit_courses',
-				'delete_terms' => 'manage_categories',
+				'delete_terms' => 'manage_sensei_categories',
 				'assign_terms' => 'edit_courses',
 			),
 			'rewrite'           => array( 'slug' => esc_attr( apply_filters( 'sensei_course_category_slug', _x( 'course-category', 'taxonomy archive slug', 'sensei' ) ) ) ),
@@ -616,9 +616,9 @@ class Sensei_PostTypes {
 			'query_var'         => true,
 			'show_in_nav_menus' => true,
 			'capabilities'      => array(
-				'manage_terms' => 'manage_categories',
+				'manage_terms' => 'manage_sensei_categories',
 				'edit_terms'   => 'edit_lessons',
-				'delete_terms' => 'manage_categories',
+				'delete_terms' => 'manage_sensei_categories',
 				'assign_terms' => 'edit_lessons',
 			),
 			'rewrite'           => array( 'slug' => esc_attr( apply_filters( 'sensei_lesson_tag_slug', _x( 'lesson-tag', 'taxonomy archive slug', 'sensei' ) ) ) ),

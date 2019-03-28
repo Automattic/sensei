@@ -888,7 +888,7 @@ class Sensei_Core_Modules {
 	 */
 	public function register_modules_admin_menu_items() {
 		// add the modules link under the Course main menu
-		add_submenu_page( 'edit.php?post_type=course', __( 'Modules', 'sensei' ), __( 'Modules', 'sensei' ), 'manage_modules', 'edit-tags.php?taxonomy=module', '' );
+		add_submenu_page( 'edit.php?post_type=course', __( 'Modules', 'sensei' ), __( 'Modules', 'sensei' ), 'manage_sensei_categories', 'edit-tags.php?taxonomy=module', '' );
 
 		// Register new admin page for module ordering.
 		add_submenu_page( 'edit.php?post_type=course', __( 'Order Modules', 'sensei' ), __( 'Order Modules', 'sensei' ), 'edit_lessons', $this->order_page_slug, array( $this, 'module_order_screen' ) );
@@ -1692,15 +1692,14 @@ class Sensei_Core_Modules {
 			'hierarchical'       => true,
 			'show_admin_column'  => true,
 			'capabilities'       => array(
-				'manage_terms' => 'manage_categories',
+				'manage_terms' => 'manage_sensei_categories',
 				'edit_terms'   => 'edit_courses',
-				'delete_terms' => 'manage_categories',
+				'delete_terms' => 'manage_sensei_categories',
 				'assign_terms' => 'edit_courses',
 			),
 			'show_in_nav_menus'  => false,
 			'show_in_quick_edit' => false,
 			'show_ui'            => true,
-			'show_in_menu'       => false,
 			'rewrite'            => array( 'slug' => $modules_rewrite_slug ),
 			'labels'             => $labels,
 		);
