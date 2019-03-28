@@ -40,7 +40,7 @@ var paths = {
 		'dummy_data.xml',
 		'includes/**/*',
 		'lang/**/*',
-		'README.md',
+		'readme.txt',
 		'templates/**/*',
 		'uninstall.php',
 		'widgets/**/*',

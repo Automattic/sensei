@@ -2,7 +2,7 @@
 Contributors: automattic, alexsanford1, bor0, donnapep, drawmyface, dwainm, jakeom, jeffikus, lastnode, mattyza, panosktn
 Tags: lms, learning management system, teach, train, tutor
 Requires at least: 4.1
-Tested up to: 5.0.3
+Tested up to: 5.1
 Requires PHP: 5.6
 Stable tag: 2.0.0
 License: GPLv2 or later
