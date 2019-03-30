@@ -597,7 +597,6 @@ class Sensei_Main {
 			update_option( 'sensei_show_email_signup_form', true );
 		}
 
-		update_option( 'skip_install_sensei_pages', 0 );
 		update_option( 'sensei_installed', 1 );
 
 	} // End activate_sensei()
