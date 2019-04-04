@@ -503,7 +503,7 @@ class Sensei_Main {
 	 */
 	public function load_localisation() {
 
-		load_plugin_textdomain( 'sensei', false, dirname( plugin_basename( $this->main_plugin_file_name ) ) . '/lang/' );
+		load_plugin_textdomain( 'sensei-lms', false, dirname( plugin_basename( $this->main_plugin_file_name ) ) . '/lang/' );
 
 	} // End load_localisation()
 
