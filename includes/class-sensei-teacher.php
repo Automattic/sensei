@@ -114,7 +114,7 @@ class Sensei_Teacher {
 		// if the the teacher is not a valid WordPress role create it
 		if ( ! is_a( $this->teacher_role, 'WP_Role' ) ) {
 			// create the role
-			$this->teacher_role = add_role( 'teacher', __( 'Teacher', 'sensei' ) );
+			$this->teacher_role = add_role( 'teacher', __( 'Teacher', 'sensei-lms' ) );
 		}
 
 		// add the capabilities before returning
@@ -229,7 +229,7 @@ class Sensei_Teacher {
 		}
 		add_meta_box(
 			'sensei-teacher',
-			__( 'Teacher', 'sensei' ),
+			__( 'Teacher', 'sensei-lms' ),
 			array( $this, 'teacher_meta_box_content' ),
 			'course',
 			'side',
@@ -917,7 +917,7 @@ class Sensei_Teacher {
 		 * @since 1.8.0
 		 * @param string $template
 		 */
-		$heading = apply_filters( 'sensei_email_heading', __( 'New course created.', 'sensei' ), $template );
+		$heading = apply_filters( 'sensei_email_heading', __( 'New course created.', 'sensei-lms' ), $template );
 
 		/**
 		 * Filter the email subject for the the
@@ -929,7 +929,7 @@ class Sensei_Teacher {
 		 */
 		$subject = apply_filters(
 			'sensei_email_subject',
-			'[' . get_bloginfo( 'name', 'display' ) . '] ' . __( 'New course created by', 'sensei' ) . ' ' . $teacher->display_name,
+			'[' . get_bloginfo( 'name', 'display' ) . '] ' . __( 'New course created by', 'sensei-lms' ) . ' ' . $teacher->display_name,
 			$template
 		);
 
@@ -1139,7 +1139,7 @@ class Sensei_Teacher {
 			return $columns;
 		}
 		$new_columns = array(
-			'teacher' => __( 'Teacher', 'sensei' ),
+			'teacher' => __( 'Teacher', 'sensei-lms' ),
 		);
 		return array_merge( $columns, $new_columns );
 
@@ -1288,7 +1288,7 @@ class Sensei_Teacher {
 		}
 
 		$output  = '<select name="course_teacher" id="dropdown_course_teachers">';
-		$output .= '<option value="">' . esc_html__( 'Show all teachers', 'sensei' ) . '</option>';
+		$output .= '<option value="">' . esc_html__( 'Show all teachers', 'sensei-lms' ) . '</option>';
 		$output .= $course_options;
 		$output .= '</select>';
 
@@ -1607,7 +1607,7 @@ class Sensei_Teacher {
 
 				<?php
 				// translators: Placeholder is the author name.
-				echo esc_html( sprintf( __( 'All courses by %s', 'sensei' ), $author_name ) );
+				echo esc_html( sprintf( __( 'All courses by %s', 'sensei-lms' ), $author_name ) );
 				?>
 
 			</h2>

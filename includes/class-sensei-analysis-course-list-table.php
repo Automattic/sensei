@@ -58,11 +58,11 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		switch ( $this->view ) {
 			case 'user':
 				$columns = array(
-					'title'       => __( 'Learner', 'sensei' ),
-					'started'     => __( 'Date Started', 'sensei' ),
-					'completed'   => __( 'Date Completed', 'sensei' ),
-					'user_status' => __( 'Status', 'sensei' ),
-					'percent'     => __( 'Percent Complete', 'sensei' ),
+					'title'       => __( 'Learner', 'sensei-lms' ),
+					'started'     => __( 'Date Started', 'sensei-lms' ),
+					'completed'   => __( 'Date Completed', 'sensei-lms' ),
+					'user_status' => __( 'Status', 'sensei-lms' ),
+					'percent'     => __( 'Percent Complete', 'sensei-lms' ),
 				);
 				break;
 
@@ -71,20 +71,20 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 				if ( $this->user_id ) {
 
 					$columns = array(
-						'title'       => __( 'Lesson', 'sensei' ),
-						'started'     => __( 'Date Started', 'sensei' ),
-						'completed'   => __( 'Date Completed', 'sensei' ),
-						'user_status' => __( 'Status', 'sensei' ),
-						'grade'       => __( 'Grade', 'sensei' ),
+						'title'       => __( 'Lesson', 'sensei-lms' ),
+						'started'     => __( 'Date Started', 'sensei-lms' ),
+						'completed'   => __( 'Date Completed', 'sensei-lms' ),
+						'user_status' => __( 'Status', 'sensei-lms' ),
+						'grade'       => __( 'Grade', 'sensei-lms' ),
 					);
 
 				} else {
 
 					$columns = array(
-						'title'         => __( 'Lesson', 'sensei' ),
-						'num_learners'  => __( 'Learners', 'sensei' ),
-						'completions'   => __( 'Completed', 'sensei' ),
-						'average_grade' => __( 'Average Grade', 'sensei' ),
+						'title'         => __( 'Lesson', 'sensei-lms' ),
+						'num_learners'  => __( 'Learners', 'sensei-lms' ),
+						'completions'   => __( 'Completed', 'sensei-lms' ),
+						'average_grade' => __( 'Average Grade', 'sensei-lms' ),
 					);
 
 				}
@@ -301,12 +301,12 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 
 				if ( 'complete' == $item->comment_approved ) {
 
-					$status       = __( 'Completed', 'sensei' );
+					$status       = __( 'Completed', 'sensei-lms' );
 					$status_class = 'graded';
 
 				} else {
 
-					$status        = __( 'In Progress', 'sensei' );
+					$status        = __( 'In Progress', 'sensei-lms' );
 					$status_class  = 'in-progress';
 					$user_end_date = '';
 
@@ -353,7 +353,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 			default:
 				// Displaying lessons for this Course for a specific User
 				if ( $this->user_id ) {
-					$status          = __( 'Not started', 'sensei' );
+					$status          = __( 'Not started', 'sensei-lms' );
 					$user_start_date = $user_end_date = $status_class = $grade = '';
 
 					$lesson_args   = array(
@@ -369,31 +369,31 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 						$user_end_date   = $lesson_status->comment_date;
 
 						if ( 'complete' == $lesson_status->comment_approved ) {
-							$status       = __( 'Completed', 'sensei' );
+							$status       = __( 'Completed', 'sensei-lms' );
 							$status_class = 'graded';
 
-							$grade = __( 'No Grade', 'sensei' );
+							$grade = __( 'No Grade', 'sensei-lms' );
 						} elseif ( 'graded' == $lesson_status->comment_approved ) {
-							$status       = __( 'Graded', 'sensei' );
+							$status       = __( 'Graded', 'sensei-lms' );
 							$status_class = 'graded';
 
 							$grade = get_comment_meta( $lesson_status->comment_ID, 'grade', true );
 						} elseif ( 'passed' == $lesson_status->comment_approved ) {
-							$status       = __( 'Passed', 'sensei' );
+							$status       = __( 'Passed', 'sensei-lms' );
 							$status_class = 'graded';
 
 							$grade = get_comment_meta( $lesson_status->comment_ID, 'grade', true );
 						} elseif ( 'failed' == $lesson_status->comment_approved ) {
-							$status       = __( 'Failed', 'sensei' );
+							$status       = __( 'Failed', 'sensei-lms' );
 							$status_class = 'failed';
 
 							$grade = get_comment_meta( $lesson_status->comment_ID, 'grade', true );
 						} elseif ( 'ungraded' == $lesson_status->comment_approved ) {
-							$status       = __( 'Ungraded', 'sensei' );
+							$status       = __( 'Ungraded', 'sensei-lms' );
 							$status_class = 'ungraded';
 
 						} elseif ( 'in-progress' == $lesson_status->comment_approved ) {
-							$status        = __( 'In Progress', 'sensei' );
+							$status        = __( 'In Progress', 'sensei-lms' );
 							$user_end_date = '';
 						}
 					} // END lesson_status
@@ -449,7 +449,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 					);
 					$lesson_completions = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_completions', $lesson_args, $item ) );
 
-					$lesson_average_grade = __( 'n/a', 'sensei' );
+					$lesson_average_grade = __( 'n/a', 'sensei-lms' );
 
 					if ( false != Sensei_Lesson::lesson_quiz_has_questions( $item->ID ) ) {
 						// Get Percent Complete
@@ -609,12 +609,12 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	public function no_items() {
 		switch ( $this->view ) {
 			case 'user':
-				$text = __( 'No learners found.', 'sensei' );
+				$text = __( 'No learners found.', 'sensei-lms' );
 				break;
 
 			case 'lesson':
 			default:
-				$text = __( 'No lessons found.', 'sensei' );
+				$text = __( 'No lessons found.', 'sensei-lms' );
 				break;
 		}
 		echo wp_kses_post( apply_filters( 'sensei_analysis_course_no_items_text', $text ) );
@@ -628,11 +628,11 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	 */
 	public function data_table_header() {
 		if ( $this->user_id ) {
-			$learners_text = __( 'Other Learners taking this Course', 'sensei' );
+			$learners_text = __( 'Other Learners taking this Course', 'sensei-lms' );
 		} else {
-			$learners_text = __( 'Learners taking this Course', 'sensei' );
+			$learners_text = __( 'Learners taking this Course', 'sensei-lms' );
 		}
-		$lessons_text = __( 'Lessons in this Course', 'sensei' );
+		$lessons_text = __( 'Lessons in this Course', 'sensei-lms' );
 
 		$url_args     = array(
 			'page'      => $this->page_slug,
@@ -694,7 +694,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 			$url_args['user_id'] = $this->user_id;
 		}
 		$url = add_query_arg( $url_args, admin_url( 'admin.php' ) );
-		echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( $url, 'sensei_csv_download-' . $report, '_sdl_nonce' ) ) . '">' . esc_html__( 'Export all rows (CSV)', 'sensei' ) . '</a>';
+		echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( $url, 'sensei_csv_download-' . $report, '_sdl_nonce' ) ) . '">' . esc_html__( 'Export all rows (CSV)', 'sensei-lms' ) . '</a>';
 	} // End data_table_footer()
 
 	/**
@@ -706,12 +706,12 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	public function search_button( $text = '' ) {
 		switch ( $this->view ) {
 			case 'user':
-				$text = __( 'Search Learners', 'sensei' );
+				$text = __( 'Search Learners', 'sensei-lms' );
 				break;
 
 			case 'lesson':
 			default:
-				$text = __( 'Search Lessons', 'sensei' );
+				$text = __( 'Search Lessons', 'sensei-lms' );
 				break;
 		} // End Switch Statement
 

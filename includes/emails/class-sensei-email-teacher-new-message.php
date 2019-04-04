@@ -57,8 +57,8 @@ if ( ! class_exists( 'Sensei_Email_Teacher_New_Message' ) ) :
 			do_action( 'sensei_before_mail', $this->recipient );
 
 			// translators: Placeholder is the blog name.
-			$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] You have received a new private message', 'sensei' ), get_bloginfo( 'name' ) ), $this->template );
-			$this->heading = apply_filters( 'sensei_email_heading', __( 'Your student has sent you a private message', 'sensei' ), $this->template );
+			$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] You have received a new private message', 'sensei-lms' ), get_bloginfo( 'name' ) ), $this->template );
+			$this->heading = apply_filters( 'sensei_email_heading', __( 'Your student has sent you a private message', 'sensei-lms' ), $this->template );
 
 			$content_type  = get_post_meta( $message_id, '_posttype', true );
 			$content_id    = get_post_meta( $message_id, '_post', true );

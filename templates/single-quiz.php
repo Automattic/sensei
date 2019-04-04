@@ -118,7 +118,7 @@ get_sensei_header();
 				</form>
 			<?php else : ?>
 
-				<div class="sensei-message alert"> <?php esc_html_e( 'There are no questions for this Quiz yet. Check back soon.', 'sensei' ); ?></div>
+				<div class="sensei-message alert"> <?php esc_html_e( 'There are no questions for this Quiz yet. Check back soon.', 'sensei-lms' ); ?></div>
 
 			<?php endif; // End If have questions ?>
 

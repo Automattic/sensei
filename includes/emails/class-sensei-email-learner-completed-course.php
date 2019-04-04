@@ -60,13 +60,13 @@ if ( ! class_exists( 'Sensei_Email_Learner_Completed_Course' ) ) :
 			do_action( 'sensei_before_mail', $this->recipient );
 
 			// translators: Placeholder is the blog name.
-			$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] You have completed a course', 'sensei' ), get_bloginfo( 'name' ) ), $this->template );
-			$this->heading = apply_filters( 'sensei_email_heading', __( 'You have completed a course', 'sensei' ), $this->template );
+			$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] You have completed a course', 'sensei-lms' ), get_bloginfo( 'name' ) ), $this->template );
+			$this->heading = apply_filters( 'sensei_email_heading', __( 'You have completed a course', 'sensei-lms' ), $this->template );
 
 			// Get passed status
-			$passed = __( 'passed', 'sensei' );
+			$passed = __( 'passed', 'sensei-lms' );
 			if ( ! Sensei_Utils::sensei_user_passed_course( $course_id, $user_id ) ) {
-				$passed = __( 'failed', 'sensei' );
+				$passed = __( 'failed', 'sensei-lms' );
 			}
 
 			// Construct data array

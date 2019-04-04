@@ -31,7 +31,7 @@ do_action( 'sensei_archive_before_lesson_loop' );
 
 	<?php else : ?>
 
-		<p><?php esc_html_e( 'No lessons found that match your selection.', 'sensei' ); ?></p>
+		<p><?php esc_html_e( 'No lessons found that match your selection.', 'sensei-lms' ); ?></p>
 
 	<?php endif; // End If Statement ?>
 

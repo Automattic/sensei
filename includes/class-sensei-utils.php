@@ -103,7 +103,7 @@ class Sensei_Utils {
 		}
 		// Sanity check
 		if ( empty( $args['user_id'] ) ) {
-			_deprecated_argument( __FUNCTION__, '1.0', esc_html__( 'At no point should user_id be equal to 0.', 'sensei' ) );
+			_deprecated_argument( __FUNCTION__, '1.0', esc_html__( 'At no point should user_id be equal to 0.', 'sensei-lms' ) );
 			return false;
 		}
 
@@ -174,13 +174,13 @@ class Sensei_Utils {
 
 		// A user ID of 0 is in valid, so shortcut this
 		if ( isset( $args['user_id'] ) && 0 == intval( $args['user_id'] ) ) {
-			_deprecated_argument( __FUNCTION__, '1.0', esc_html__( 'At no point should user_id be equal to 0.', 'sensei' ) );
+			_deprecated_argument( __FUNCTION__, '1.0', esc_html__( 'At no point should user_id be equal to 0.', 'sensei-lms' ) );
 			return false;
 		}
 		// Check for legacy code
 		if ( isset( $args['type'] ) && in_array( $args['type'], array( 'sensei_course_start', 'sensei_course_end', 'sensei_lesson_start', 'sensei_lesson_end', 'sensei_quiz_asked', 'sensei_user_grade', 'sensei_quiz_grade', 'sense_answer_notes' ) ) ) {
 			// translators: Placeholder is the name of a deprecated Sensei activity type.
-			_deprecated_argument( __FUNCTION__, '1.7', esc_html( sprintf( __( 'Sensei activity type %s is no longer used.', 'sensei' ), $args['type'] ) ) );
+			_deprecated_argument( __FUNCTION__, '1.7', esc_html( sprintf( __( 'Sensei activity type %s is no longer used.', 'sensei-lms' ), $args['type'] ) ) );
 			return false;
 		}
 		// Are we checking for specific comment_approved statuses?
@@ -1270,7 +1270,7 @@ class Sensei_Utils {
 
 		$status    = 'not_started';
 		$box_class = 'info';
-		$message   = __( 'You have not started this course yet.', 'sensei' );
+		$message   = __( 'You have not started this course yet.', 'sensei-lms' );
 
 		if ( $course_id > 0 && $user_id > 0 ) {
 
@@ -1283,12 +1283,12 @@ class Sensei_Utils {
 					$status    = 'passed';
 					$box_class = 'tick';
 					// translators: Placeholder is the user's grade.
-					$message = sprintf( __( 'You have passed this course with a grade of %1$d%%.', 'sensei' ), $user_grade );
+					$message = sprintf( __( 'You have passed this course with a grade of %1$d%%.', 'sensei-lms' ), $user_grade );
 				} else {
 					$status    = 'failed';
 					$box_class = 'alert';
 					// translators: Placeholders are the required grade and the actual grade, respectively.
-					$message = sprintf( __( 'You require %1$d%% to pass this course. Your grade is %2$s%%.', 'sensei' ), $passmark, $user_grade );
+					$message = sprintf( __( 'You require %1$d%% to pass this course. Your grade is %2$s%%.', 'sensei-lms' ), $passmark, $user_grade );
 				}
 			}
 		}
@@ -1313,7 +1313,7 @@ class Sensei_Utils {
 
 		$status    = 'not_started';
 		$box_class = 'info';
-		$message   = __( "You have not taken this lesson's quiz yet", 'sensei' );
+		$message   = __( "You have not taken this lesson's quiz yet", 'sensei-lms' );
 		$extra     = '';
 
 		if ( $lesson_id > 0 && $user_id > 0 ) {
@@ -1362,13 +1362,13 @@ class Sensei_Utils {
 				$status    = 'not_started_course';
 				$box_class = 'info';
 				// translators: Placeholders are an opening and closing <a> tag linking to the course permalink.
-				$message = sprintf( __( 'Please sign up for %1$sthe course%2$s before taking this quiz', 'sensei' ), '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr( __( 'Sign Up', 'sensei' ) ) . '">', '</a>' );
+				$message = sprintf( __( 'Please sign up for %1$sthe course%2$s before taking this quiz', 'sensei-lms' ), '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr( __( 'Sign Up', 'sensei-lms' ) ) . '">', '</a>' );
 
 			} elseif ( ! is_user_logged_in() ) {
 
 				$status    = 'login_required';
 				$box_class = 'info';
-				$message   = __( 'You must be logged in to take this quiz', 'sensei' );
+				$message   = __( 'You must be logged in to take this quiz', 'sensei-lms' );
 
 			}
 			// Lesson/Quiz is marked as complete thus passing any quiz restrictions
@@ -1378,20 +1378,20 @@ class Sensei_Utils {
 				$box_class = 'tick';
 				// Lesson status will be "complete" (has no Quiz)
 				if ( ! $has_quiz_questions ) {
-					$message = sprintf( __( 'Congratulations! You have passed this lesson.', 'sensei' ) );
+					$message = sprintf( __( 'Congratulations! You have passed this lesson.', 'sensei-lms' ) );
 				}
 				// Lesson status will be "graded" (no passmark required so might have failed all the questions)
 				elseif ( empty( $quiz_grade ) ) {
-					$message = sprintf( __( 'Congratulations! You have completed this lesson.', 'sensei' ) );
+					$message = sprintf( __( 'Congratulations! You have completed this lesson.', 'sensei-lms' ) );
 				}
 				// Lesson status will be "passed" (passmark reached)
 				elseif ( ! empty( $quiz_grade ) && abs( $quiz_grade ) >= 0 ) {
 					if ( $is_lesson ) {
 						// translators: Placeholder is the quiz grade.
-						$message = sprintf( __( 'Congratulations! You have passed this lesson\'s quiz achieving %s%%', 'sensei' ), self::round( $quiz_grade ) );
+						$message = sprintf( __( 'Congratulations! You have passed this lesson\'s quiz achieving %s%%', 'sensei-lms' ), self::round( $quiz_grade ) );
 					} else {
 						// translators: Placeholder is the quiz grade.
-						$message = sprintf( __( 'Congratulations! You have passed this quiz achieving %s%%', 'sensei' ), self::round( $quiz_grade ) );
+						$message = sprintf( __( 'Congratulations! You have passed this quiz achieving %s%%', 'sensei-lms' ), self::round( $quiz_grade ) );
 					}
 				}
 
@@ -1401,7 +1401,7 @@ class Sensei_Utils {
 				// Output HTML
 				if ( isset( $nav_links['next'] ) ) {
 					$message .= ' ' . '<a class="next-lesson" href="' . esc_url( $nav_links['next']['url'] )
-								. '" rel="next"><span class="meta-nav"></span>' . __( 'Next Lesson', 'sensei' )
+								. '" rel="next"><span class="meta-nav"></span>' . __( 'Next Lesson', 'sensei-lms' )
 								. '</a>';
 
 				}
@@ -1413,10 +1413,10 @@ class Sensei_Utils {
 					$box_class = 'info';
 					if ( $is_lesson ) {
 						// translators: Placeholders are an opening and closing <a> tag linking to the quiz permalink.
-						$message = sprintf( __( 'You have completed this lesson\'s quiz and it will be graded soon. %1$sView the lesson quiz%2$s', 'sensei' ), '<a href="' . esc_url( get_permalink( $quiz_id ) ) . '" title="' . esc_attr( get_the_title( $quiz_id ) ) . '">', '</a>' );
+						$message = sprintf( __( 'You have completed this lesson\'s quiz and it will be graded soon. %1$sView the lesson quiz%2$s', 'sensei-lms' ), '<a href="' . esc_url( get_permalink( $quiz_id ) ) . '" title="' . esc_attr( get_the_title( $quiz_id ) ) . '">', '</a>' );
 					} else {
 						// translators: Placeholder is the quiz passmark.
-						$message = sprintf( __( 'You have completed this quiz and it will be graded soon. You require %1$s%% to pass.', 'sensei' ), self::round( $quiz_passmark ) );
+						$message = sprintf( __( 'You have completed this quiz and it will be graded soon. You require %1$s%% to pass.', 'sensei-lms' ), self::round( $quiz_passmark ) );
 					}
 				}
 				// Lesson status must be "failed"
@@ -1425,10 +1425,10 @@ class Sensei_Utils {
 					$box_class = 'alert';
 					if ( $is_lesson ) {
 						// translators: Placeholders are the quiz passmark and the learner's grade, respectively.
-						$message = sprintf( __( 'You require %1$d%% to pass this lesson\'s quiz. Your grade is %2$s%%', 'sensei' ), self::round( $quiz_passmark ), self::round( $quiz_grade ) );
+						$message = sprintf( __( 'You require %1$d%% to pass this lesson\'s quiz. Your grade is %2$s%%', 'sensei-lms' ), self::round( $quiz_passmark ), self::round( $quiz_grade ) );
 					} else {
 						// translators: Placeholders are the quiz passmark and the learner's grade, respectively.
-						$message = sprintf( __( 'You require %1$d%% to pass this quiz. Your grade is %2$s%%', 'sensei' ), self::round( $quiz_passmark ), self::round( $quiz_grade ) );
+						$message = sprintf( __( 'You require %1$d%% to pass this quiz. Your grade is %2$s%%', 'sensei-lms' ), self::round( $quiz_passmark ), self::round( $quiz_grade ) );
 					}
 				}
 				// Lesson/Quiz requires a pass
@@ -1440,22 +1440,22 @@ class Sensei_Utils {
 						$message = '';
 					} elseif ( $is_lesson ) {
 						// translators: Placeholder is the quiz passmark.
-						$message = sprintf( __( 'You require %1$d%% to pass this lesson\'s quiz.', 'sensei' ), self::round( $quiz_passmark ) );
+						$message = sprintf( __( 'You require %1$d%% to pass this lesson\'s quiz.', 'sensei-lms' ), self::round( $quiz_passmark ) );
 					} else {
 						// translators: Placeholder is the quiz passmark.
-						$message = sprintf( __( 'You require %1$d%% to pass this quiz.', 'sensei' ), self::round( $quiz_passmark ) );
+						$message = sprintf( __( 'You require %1$d%% to pass this quiz.', 'sensei-lms' ), self::round( $quiz_passmark ) );
 					}
 				}
 			}
 		} else {
 
 			$course_id    = Sensei()->lesson->get_course_id( $lesson_id );
-			$course_link  = '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr__( 'Sign Up', 'sensei' ) . '">';
-			$course_link .= esc_html__( 'course', 'sensei' );
+			$course_link  = '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr__( 'Sign Up', 'sensei-lms' ) . '">';
+			$course_link .= esc_html__( 'course', 'sensei-lms' );
 			$course_link .= '</a>';
 
 			// translators: Placeholder is a link to the course permalink.
-			$message_default = sprintf( __( 'Please sign up for the %1$s before taking this quiz.', 'sensei' ), $course_link );
+			$message_default = sprintf( __( 'Please sign up for the %1$s before taking this quiz.', 'sensei-lms' ), $course_link );
 
 			/**
 			 * Filter the course sign up notice message on the quiz page.
@@ -1474,7 +1474,7 @@ class Sensei_Utils {
 
 		if ( $is_lesson && ! in_array( $status, array( 'login_required', 'not_started_course' ) ) ) {
 			$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
-			$extra   = '<p><a class="button" href="' . esc_url( get_permalink( $quiz_id ) ) . '" title="' . __( 'View the lesson quiz', 'sensei' ) . '">' . __( 'View the lesson quiz', 'sensei' ) . '</a></p>';
+			$extra   = '<p><a class="button" href="' . esc_url( get_permalink( $quiz_id ) ) . '" title="' . __( 'View the lesson quiz', 'sensei-lms' ) . '">' . __( 'View the lesson quiz', 'sensei-lms' ) . '</a></p>';
 		}
 
 		// Filter of all messages
@@ -2324,7 +2324,7 @@ class Sensei_Utils {
 
 		// show the none option if the client requested
 		if ( $enable_none_option ) {
-			$drop_down_element .= '<option value="">' . esc_html__( 'None', 'sensei' ) . '</option>';
+			$drop_down_element .= '<option value="">' . esc_html__( 'None', 'sensei-lms' ) . '</option>';
 		}
 
 		if ( count( $options ) > 0 ) {

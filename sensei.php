@@ -10,7 +10,7 @@
  * Requires at least: 4.1
  * Tested up to: 5.1
  * Requires PHP: 5.6
- * Text Domain: sensei
+ * Text Domain: sensei-lms
  * Domain path: /lang/
  */
 
@@ -66,7 +66,7 @@ if ( class_exists( 'Sensei_Main' ) ) {
 		// Hope that this will just be a conflict that happens during activation.
 		return;
 	} else {
-		die( esc_html__( 'Deactivate other instances of Sensei before activating this plugin.', 'sensei' ) );
+		die( esc_html__( 'Deactivate other instances of Sensei before activating this plugin.', 'sensei-lms' ) );
 	}
 }
 

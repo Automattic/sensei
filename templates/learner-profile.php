@@ -64,7 +64,7 @@ do_action( 'sensei_learner_profile_content_before' );
 
 			<p class="sensei-message">
 
-				<?php esc_html_e( 'The user requested does not exist.', 'sensei' ); ?>
+				<?php esc_html_e( 'The user requested does not exist.', 'sensei-lms' ); ?>
 
 			</p>
 

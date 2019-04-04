@@ -33,7 +33,7 @@ $large = 'text-align: center !important;font-size: 350% !important;line-height: 
 <p style="<?php echo esc_attr( $small ); ?>">
 <?php
 // translators: Placeholder is the post type (e.g. course or lesson)
-printf( esc_html__( 'has replied to your private message regarding the %1$s', 'sensei' ), esc_html( $content_type ) );
+printf( esc_html__( 'has replied to your private message regarding the %1$s', 'sensei-lms' ), esc_html( $content_type ) );
 ?>
 </p>
 
@@ -48,7 +48,7 @@ printf( esc_html__( 'has replied to your private message regarding the %1$s', 's
 <p style="<?php echo esc_attr( $small ); ?>">
 <?php
 // translators: Placeholder is an opening an closing <a> tag linking to the comment.
-printf( esc_html__( 'You can view the message and reply %1$shere%2$s.', 'sensei' ), '<a href="' . esc_url( $comment_link ) . '">', '</a>' );
+printf( esc_html__( 'You can view the message and reply %1$shere%2$s.', 'sensei-lms' ), '<a href="' . esc_url( $comment_link ) . '">', '</a>' );
 ?>
 </p>
 

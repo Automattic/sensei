@@ -32,7 +32,7 @@ do_action( 'sensei_teacher_archive_course_loop_before' );
 
 <?php else : ?>
 
-	<p><?php esc_html_e( 'There are no courses for this teacher.', 'sensei' ); ?></p>
+	<p><?php esc_html_e( 'There are no courses for this teacher.', 'sensei-lms' ); ?></p>
 
 <?php endif; // End If Statement ?>
 

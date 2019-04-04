@@ -72,7 +72,7 @@ class Sensei_Shortcode_Lesson_Page implements Sensei_Shortcode_Interface {
 
 		if ( empty( $this->id ) ) {
 
-			return __( 'Please supply a lesson ID for this shortcode.', 'sensei' );
+			return __( 'Please supply a lesson ID for this shortcode.', 'sensei-lms' );
 
 		}
 
@@ -86,7 +86,7 @@ class Sensei_Shortcode_Lesson_Page implements Sensei_Shortcode_Interface {
 
 		} else {
 
-			return __( 'No posts found.', 'sensei' );
+			return __( 'No posts found.', 'sensei-lms' );
 
 		}
 

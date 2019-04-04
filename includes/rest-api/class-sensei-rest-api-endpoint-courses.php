@@ -73,7 +73,7 @@ class Sensei_REST_API_Endpoint_Courses extends Sensei_REST_API_Controller {
 
 		$course = $this->factory->find_one_by_id( $item_id );
 		if ( empty( $course ) ) {
-			return $this->not_found( __( 'Course not found', 'sensei' ) );
+			return $this->not_found( __( 'Course not found', 'sensei-lms' ) );
 		}
 
 		return $this->succeed( $this->prepare_data_transfer_object( $course ) );
@@ -109,7 +109,7 @@ class Sensei_REST_API_Endpoint_Courses extends Sensei_REST_API_Controller {
 			if ( ! empty( $id ) ) {
 				$model_to_update = $this->factory->find_one_by_id( $id );
 				if ( empty( $model_to_update ) ) {
-					return $this->not_found( __( 'Course does not exist', 'sensei' ) );
+					return $this->not_found( __( 'Course does not exist', 'sensei-lms' ) );
 				}
 			}
 		}
@@ -142,11 +142,11 @@ class Sensei_REST_API_Endpoint_Courses extends Sensei_REST_API_Controller {
 	public function delete_item( $request ) {
 		$id = isset( $request['id'] ) ? absint( $request['id'] ) : null;
 		if ( empty( $id ) ) {
-			return $this->fail_with( __( 'No Course ID provided', 'sensei' ) );
+			return $this->fail_with( __( 'No Course ID provided', 'sensei-lms' ) );
 		}
 		$course = $this->factory->find_one_by_id( $id );
 		if ( null === $course ) {
-			return $this->not_found( __( 'Course does not exist', 'sensei' ) );
+			return $this->not_found( __( 'Course does not exist', 'sensei-lms' ) );
 		}
 		$result = $course->delete();
 		return $this->succeed( $result );

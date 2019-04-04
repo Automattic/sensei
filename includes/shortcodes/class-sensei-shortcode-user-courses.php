@@ -242,7 +242,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		<li class="user-completed">
 			<div class="sensei-message info">
 
-				<?php esc_html_e( 'You have not completed any courses yet.', 'sensei' ); ?>
+				<?php esc_html_e( 'You have not completed any courses yet.', 'sensei-lms' ); ?>
 
 			</div>
 		</li>
@@ -261,11 +261,11 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		<li class="user-active">
 			<div class="sensei-message info">
 
-				<?php esc_html_e( 'You have no active courses.', 'sensei' ); ?>
+				<?php esc_html_e( 'You have no active courses.', 'sensei-lms' ); ?>
 
 				<a href="<?php echo esc_attr( Sensei_Course::get_courses_page_url() ); ?>">
 
-					<?php esc_html_e( 'Start a Course!', 'sensei' ); ?>
+					<?php esc_html_e( 'Start a Course!', 'sensei-lms' ); ?>
 
 				</a>
 
@@ -430,9 +430,9 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		}
 
 		$active_filter_options = array(
-			'all'      => __( 'All Courses', 'sensei' ),
-			'active'   => __( 'Active Courses', 'sensei' ),
-			'complete' => __( 'Completed Courses', 'sensei' ),
+			'all'      => __( 'All Courses', 'sensei-lms' ),
+			'active'   => __( 'Active Courses', 'sensei-lms' ),
+			'complete' => __( 'Completed Courses', 'sensei-lms' ),
 		);
 
 		$base_url = get_page_link( $this->page_id );

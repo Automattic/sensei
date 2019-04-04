@@ -26,7 +26,7 @@ class Sensei_Course_Results {
 	public function __construct() {
 
 		// Setup learner profile URL base
-		$this->courses_url_base = apply_filters( 'sensei_course_slug', _x( 'course', 'post type single url slug', 'sensei' ) );
+		$this->courses_url_base = apply_filters( 'sensei_course_slug', _x( 'course', 'post type single url slug', 'sensei-lms' ) );
 
 		// Setup permalink structure for course results
 		add_action( 'init', array( $this, 'setup_permastruct' ) );
@@ -67,7 +67,7 @@ class Sensei_Course_Results {
 		global $wp_query;
 		if ( isset( $wp_query->query_vars['course_results'] ) ) {
 			$course         = get_page_by_path( $wp_query->query_vars['course_results'], OBJECT, 'course' );
-			$modified_title = __( 'Course Results: ', 'sensei' ) . $course->post_title . ' ' . $sep . ' ';
+			$modified_title = __( 'Course Results: ', 'sensei-lms' ) . $course->post_title . ' ' . $sep . ' ';
 			if ( is_array( $title ) ) {
 				$title['title'] = $modified_title;
 			} else {

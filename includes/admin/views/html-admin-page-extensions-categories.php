@@ -30,7 +30,7 @@ echo '<ul class="subsubsub">';
 	<a class="<?php echo '_all' === $current_category ? 'current' : ''; ?>"
 		href="<?php echo esc_url( add_query_arg( [ 'category' => '_all' ], admin_url( 'admin.php?page=sensei-extensions' ) ) ); ?>"
 	>
-		<?php esc_html_e( 'All', 'sensei' ); ?>
+		<?php esc_html_e( 'All', 'sensei-lms' ); ?>
 	</a>
 </li>
 <?php
