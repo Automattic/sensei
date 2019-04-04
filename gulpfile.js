@@ -83,7 +83,7 @@ gulp.task( 'pot', gulp.series( function() {
 		.pipe( sort() )
 		.pipe( wpPot( {
 			domain: 'sensei-lms',
-			bugReport: 'https://translate.wordpress.org/projects/wp-plugins/sensei/'
+			bugReport: 'https://translate.wordpress.org/projects/wp-plugins/sensei-lms/'
 		} ) )
 		.pipe( gulp.dest( 'lang/sensei-lms.pot' ) );
 } ) );

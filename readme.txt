@@ -1,4 +1,4 @@
-=== Sensei ===
+=== Sensei LMS ===
 Contributors: automattic, alexsanford1, bor0, donnapep, drawmyface, dwainm, jakeom, jeffikus, lastnode, mattyza, panosktn
 Tags: lms, learning management system, teach, train, tutor
 Requires at least: 4.1

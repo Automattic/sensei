@@ -41,7 +41,7 @@ class Sensei_Unit_Tests_Bootstrap {
 	 * @since 1.9
 	 */
 	public function load_sensei() {
-		require_once $this->plugin_dir . '/sensei.php';
+		require_once $this->plugin_dir . '/sensei-lms.php';
 	}
 	/**
 	 * Install Sensei after the test environment and Sensei have been loaded.
