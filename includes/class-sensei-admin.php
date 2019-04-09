@@ -103,7 +103,7 @@ class Sensei_Admin {
 
 		if ( $menu_cap ) {
 			$menu[] = array( '', 'read', 'separator-sensei', '', 'wp-menu-separator sensei' );
-			add_menu_page( 'Sensei', 'Sensei', $menu_cap, 'sensei', array( Sensei()->analysis, 'analysis_page' ), '', '50' );
+			add_menu_page( 'Sensei LMS', 'Sensei LMS', $menu_cap, 'sensei', array( Sensei()->analysis, 'analysis_page' ), '', '50' );
 		}
 
 		add_submenu_page( 'edit.php?post_type=course', __( 'Order Courses', 'sensei-lms' ), __( 'Order Courses', 'sensei-lms' ), 'manage_sensei', $this->course_order_page_slug, array( $this, 'course_order_screen' ) );
