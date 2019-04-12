@@ -112,7 +112,7 @@ class Sensei_Messages {
 	public function add_menu_item() {
 
 		if ( ! isset( Sensei()->settings->settings['messages_disable'] ) || ! Sensei()->settings->settings['messages_disable'] ) {
-			add_submenu_page( 'sensei', __( 'Messages', 'sensei' ), __( 'Messages', 'sensei' ), 'edit_courses', 'edit.php?post_type=sensei_message' );
+			add_submenu_page( 'sensei', __( 'Messages', 'sensei-lms' ), __( 'Messages', 'sensei-lms' ), 'edit_courses', 'edit.php?post_type=sensei_message' );
 		}
 	}
 
@@ -122,7 +122,7 @@ class Sensei_Messages {
 			return;
 		}
 
-		add_meta_box( $this->post_type . '-data', __( 'Message Information', 'sensei' ), array( $this, 'meta_box_content' ), $this->post_type, 'normal', 'default' );
+		add_meta_box( $this->post_type . '-data', __( 'Message Information', 'sensei-lms' ), array( $this, 'meta_box_content' ), $this->post_type, 'normal', 'default' );
 
 	}
 
@@ -132,15 +132,15 @@ class Sensei_Messages {
 		$settings = array(
 			array(
 				'id'          => 'sender',
-				'label'       => __( 'Message sent by:', 'sensei' ),
-				'description' => __( 'The username of the learner who sent this message.', 'sensei' ),
+				'label'       => __( 'Message sent by:', 'sensei-lms' ),
+				'description' => __( 'The username of the learner who sent this message.', 'sensei-lms' ),
 				'type'        => 'plain-text',
 				'default'     => get_post_meta( $post->ID, '_sender', true ),
 			),
 			array(
 				'id'          => 'receiver',
-				'label'       => __( 'Message received by:', 'sensei' ),
-				'description' => __( 'The username of the teacher who received this message.', 'sensei' ),
+				'label'       => __( 'Message received by:', 'sensei-lms' ),
+				'description' => __( 'The username of the teacher who received this message.', 'sensei-lms' ),
 				'type'        => 'plain-text',
 				'default'     => get_post_meta( $post->ID, '_receiver', true ),
 			),
@@ -155,12 +155,12 @@ class Sensei_Messages {
 
 			switch ( $message_posttype ) {
 				case 'course':
-					$label       = __( 'Message from course:', 'sensei' );
-					$description = __( 'The course to which this message relates.', 'sensei' );
+					$label       = __( 'Message from course:', 'sensei-lms' );
+					$description = __( 'The course to which this message relates.', 'sensei-lms' );
 					break;
 				case 'lesson':
-					$label       = __( 'Message from lesson:', 'sensei' );
-					$description = __( 'The lesson to which this message relates.', 'sensei' );
+					$label       = __( 'Message from lesson:', 'sensei-lms' );
+					$description = __( 'The lesson to which this message relates.', 'sensei-lms' );
 					break;
 			}
 
@@ -242,11 +242,11 @@ class Sensei_Messages {
 				$href = add_query_arg( array( 'contact' => $post->post_type ) );
 
 				if ( 'lesson' == $post->post_type ) {
-					$contact_button_text = __( 'Contact Lesson Teacher', 'sensei' );
+					$contact_button_text = __( 'Contact Lesson Teacher', 'sensei-lms' );
 				} elseif ( 'course' == $post->post_type ) {
-					$contact_button_text = __( 'Contact Course Teacher', 'sensei' );
+					$contact_button_text = __( 'Contact Course Teacher', 'sensei-lms' );
 				} else {
-					$contact_button_text = __( 'Contact Teacher', 'sensei' );
+					$contact_button_text = __( 'Contact Teacher', 'sensei-lms' );
 				}
 
 				$html .= '<p><a class="button send-message-button" href="' . esc_url( $href ) . '#private_message">' . esc_html( $contact_button_text ) . '</a></p>';
@@ -315,23 +315,23 @@ class Sensei_Messages {
 		$confirmation = '';
 		if ( isset( $_GET['send'] ) && 'complete' == $_GET['send'] ) {
 
-			$confirmation_message = __( 'Your private message has been sent.', 'sensei' );
+			$confirmation_message = __( 'Your private message has been sent.', 'sensei-lms' );
 			$confirmation         = '<div class="sensei-message tick">' . esc_html( $confirmation_message ) . '</div>';
 
 		}
 
-		$html         .= '<h3 id="private_message">' . esc_html__( 'Send Private Message', 'sensei' ) . '</h3>';
+		$html         .= '<h3 id="private_message">' . esc_html__( 'Send Private Message', 'sensei-lms' ) . '</h3>';
 		$html         .= '<p>';
 		$html         .= $confirmation;
 		$html         .= '</p>';
 		$html         .= '<form name="contact-teacher" action="" method="post" class="contact-teacher">';
 			$html     .= '<p class="form-row form-row-wide">';
-				$html .= '<textarea name="contact_message" placeholder="' . esc_attr__( 'Enter your private message.', 'sensei' ) . '"></textarea>';
+				$html .= '<textarea name="contact_message" placeholder="' . esc_attr__( 'Enter your private message.', 'sensei-lms' ) . '"></textarea>';
 			$html     .= '</p>';
 			$html     .= '<p class="form-row">';
 				$html .= '<input type="hidden" name="post_id" value="' . esc_attr( absint( $post->ID ) ) . '" />';
 				$html .= wp_nonce_field( 'message_teacher', 'sensei_message_teacher_nonce', true, false );
-				$html .= '<input type="submit" class="send_message" value="' . esc_attr__( 'Send Message', 'sensei' ) . '" />';
+				$html .= '<input type="submit" class="send_message" value="' . esc_attr__( 'Send Message', 'sensei-lms' ) . '" />';
 			$html     .= '</p>';
 			$html     .= '<div class="fix"></div>';
 		$html         .= '</form>';
@@ -595,7 +595,7 @@ class Sensei_Messages {
 
 		if ( is_single() && is_singular( $this->post_type ) && in_the_loop() && get_post_type( $post_id ) == $this->post_type ) {
 			if ( ! is_user_logged_in() || ! $this->view_message( $post_id ) ) {
-				$title = __( 'You are not allowed to view this message.', 'sensei' );
+				$title = __( 'You are not allowed to view this message.', 'sensei-lms' );
 			}
 		}
 
@@ -613,7 +613,7 @@ class Sensei_Messages {
 
 		if ( is_single() && is_singular( $this->post_type ) && in_the_loop() ) {
 			if ( ! is_user_logged_in() || ! $this->view_message( $post->ID ) ) {
-				$content = __( 'Please log in to view your messages.', 'sensei' );
+				$content = __( 'Please log in to view your messages.', 'sensei-lms' );
 			}
 		}
 
@@ -693,7 +693,7 @@ class Sensei_Messages {
 					<em>
 						<?php
 						// translators: Placeholders are the sender's display name and the date, respectively.
-						echo esc_html( sprintf( __( 'Sent by %1$s on %2$s.', 'sensei' ), $sender->display_name, get_the_date() ) );
+						echo esc_html( sprintf( __( 'Sent by %1$s on %2$s.', 'sensei-lms' ), $sender->display_name, get_the_date() ) );
 						?>
 					</em>
 				</small>
@@ -718,7 +718,7 @@ class Sensei_Messages {
 		$content_post_id = get_post_meta( $post->ID, '_post', true );
 		if ( $content_post_id ) {
 			// translators: Placeholder is a link to post, with the post's title as the link text.
-			$title = wp_kses_post( sprintf( __( 'Re: %1$s', 'sensei' ), '<a href="' . esc_url( get_permalink( $content_post_id ) ) . '">' . esc_html( get_the_title( $content_post_id ) ) . '</a>' ) );
+			$title = wp_kses_post( sprintf( __( 'Re: %1$s', 'sensei-lms' ), '<a href="' . esc_url( get_permalink( $content_post_id ) ) . '">' . esc_html( get_the_title( $content_post_id ) ) . '</a>' ) );
 		} else {
 			$title = esc_html( get_the_title( $post->ID ) );
 		}
@@ -760,7 +760,7 @@ class Sensei_Messages {
 
 		$html  = '';
 		$html .= '<header class="archive-header"><h1>';
-		$html .= esc_html__( 'My Messages', 'sensei' );
+		$html .= esc_html__( 'My Messages', 'sensei-lms' );
 		$html .= '</h1></header>';
 
 		/**
@@ -785,7 +785,7 @@ class Sensei_Messages {
 		if ( $content_post_id ) {
 
 			// translators: Placeholder is the post title.
-			$title = sprintf( __( 'Re: %1$s', 'sensei' ), get_the_title( $content_post_id ) );
+			$title = sprintf( __( 'Re: %1$s', 'sensei-lms' ), get_the_title( $content_post_id ) );
 
 		} else {
 
@@ -816,7 +816,7 @@ class Sensei_Messages {
 
 		if ( $sender_username && $sender instanceof WP_User ) {
 			// translators: Placeholders are the sender's display name and the date.
-			$sender_display_name = sprintf( __( 'Sent by %1$s on %2$s.', 'sensei' ), $sender->display_name, get_the_date() );
+			$sender_display_name = sprintf( __( 'Sent by %1$s on %2$s.', 'sensei-lms' ), $sender->display_name, get_the_date() );
 			?>
 			<p class="message-meta">
 				<small>
@@ -839,8 +839,8 @@ class Sensei_Messages {
 			?>
 			<p class="my-messages-link-container">
 				<a class="my-messages-link" href="<?php echo esc_url( get_post_type_archive_link( 'sensei_message' ) ); ?>"
-				   title="<?php esc_attr_e( 'View & reply to private messages sent to your course & lesson teachers.', 'sensei' ); ?>">
-					<?php esc_html_e( 'My Messages', 'sensei' ); ?>
+				   title="<?php esc_attr_e( 'View & reply to private messages sent to your course & lesson teachers.', 'sensei-lms' ); ?>">
+					<?php esc_html_e( 'My Messages', 'sensei-lms' ); ?>
 				</a>
 			</p>
 			<?php

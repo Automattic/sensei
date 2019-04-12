@@ -27,9 +27,9 @@ class Sensei_Course_Categories_Widget extends WP_Widget {
 	public function __construct() {
 		/* Widget variable settings. */
 		$this->widget_cssclass    = 'widget_sensei_course_categories';
-		$this->widget_description = __( 'This widget will output a list of Course Categories.', 'sensei' );
+		$this->widget_description = __( 'This widget will output a list of Course Categories.', 'sensei-lms' );
 		$this->widget_idbase      = 'sensei_course_categories';
-		$this->widget_title       = __( 'Sensei - Course Categories', 'sensei' );
+		$this->widget_title       = __( 'Sensei - Course Categories', 'sensei-lms' );
 
 		/* Widget settings. */
 		$widget_ops = array(
@@ -136,23 +136,23 @@ class Sensei_Course_Categories_Widget extends WP_Widget {
 		?>
 		<!-- Widget Title: Text Input -->
 		<p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Title (optional):', 'sensei' ); ?></label>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Title (optional):', 'sensei-lms' ); ?></label>
 			<input type="text" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>"  value="<?php echo esc_attr( $instance['title'] ); ?>" class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" />
 		</p>
 		<!-- Widget Limit: Text Input -->
 		<p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'limit' ) ); ?>"><?php esc_html_e( 'Number of Categories (optional):', 'sensei' ); ?></label>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'limit' ) ); ?>"><?php esc_html_e( 'Number of Categories (optional):', 'sensei-lms' ); ?></label>
 			<input type="text" name="<?php echo esc_attr( $this->get_field_name( 'limit' ) ); ?>"  value="<?php echo esc_attr( $instance['limit'] ); ?>" class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'limit' ) ); ?>" />
 		</p>
 		<!-- Widget Show Count: Checkbox Input -->
 		<p>
 			<input type="checkbox" class="checkbox" id="<?php echo esc_attr( $this->get_field_id( 'count' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'count' ) ); ?>"<?php checked( $instance['count'], 'on' ); ?> />
-			<label for="<?php echo esc_attr( $this->get_field_id( 'count' ) ); ?>"><?php esc_html_e( 'Show post counts', 'sensei' ); ?></label><br />
+			<label for="<?php echo esc_attr( $this->get_field_id( 'count' ) ); ?>"><?php esc_html_e( 'Show post counts', 'sensei-lms' ); ?></label><br />
 		</p>
 		<!-- Widget Show Hierarchy: Checkbox Input -->
 		<p>
 			<input type="checkbox" class="checkbox" id="<?php echo esc_attr( $this->get_field_id( 'hierarchical' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'hierarchical' ) ); ?>"<?php checked( $instance['hierarchical'], 'on' ); ?> />
-			<label for="<?php echo esc_attr( $this->get_field_id( 'hierarchical' ) ); ?>"><?php esc_html_e( 'Show hierarchy', 'sensei' ); ?></label>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'hierarchical' ) ); ?>"><?php esc_html_e( 'Show hierarchy', 'sensei-lms' ); ?></label>
 		</p>
 		<?php
 	} // End form()

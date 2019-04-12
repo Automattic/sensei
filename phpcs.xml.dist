@@ -51,7 +51,7 @@
 	<rule ref="WordPress.WP.I18n">
 		<properties>
 			<property name="text_domain" type="array">
-				<element value="sensei"/>
+				<element value="sensei-lms"/>
 			</property>
 		</properties>
 	</rule>

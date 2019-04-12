@@ -22,7 +22,7 @@ if ( class_exists( 'Sensei_Main' ) ) {
 	return;
 }
 
-require dirname( __FILE__ ) . '/sensei.php';
+require dirname( __FILE__ ) . '/sensei-lms.php';
 
 if ( ! function_exists( 'Sensei' ) ) {
 	// We still want people to be able to delete Sensei if they don't meet dependencies.
@@ -54,8 +54,11 @@ if ( ! is_multisite() ) {
 			$active_plugins          = (array) get_option( 'active_plugins', array() );
 			$other_sensei_basenames  = array(
 				'sensei/sensei.php',
+				'sensei/sensei-lms.php',
+				'sensei-lms/sensei-lms.php',
 				'sensei/woothemes-sensei.php',
 				'woothemes-sensei/woothemes-sensei.php',
+				'woothemes-sensei/sensei.php',
 			);
 			foreach ( $other_sensei_basenames as $basename ) {
 				if ( $basename === $current_plugin_basename ) {

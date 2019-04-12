@@ -1,6 +1,6 @@
 <?php
-/*
- * Plugin Name: Sensei
+/**
+ * Plugin Name: Sensei LMS
  * Plugin URI: https://woocommerce.com/products/sensei/
  * Description: Share your knowledge, grow your network, and strengthen your brand by launching an online course.
  * Version: 2.0.0
@@ -10,26 +10,26 @@
  * Requires at least: 4.1
  * Tested up to: 5.1
  * Requires PHP: 5.6
- * Text Domain: sensei
+ * Text Domain: sensei-lms
  * Domain path: /lang/
  */
 
-/*
-  Copyright 2013-2019 Automattic
-
-	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License, version 2, as
-	published by the Free Software Foundation.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+/**
+ * Copyright 2013-2019 Automattic
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License, version 2, as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -66,7 +66,7 @@ if ( class_exists( 'Sensei_Main' ) ) {
 		// Hope that this will just be a conflict that happens during activation.
 		return;
 	} else {
-		die( esc_html__( 'Deactivate other instances of Sensei before activating this plugin.', 'sensei' ) );
+		die( esc_html__( 'Deactivate other instances of Sensei before activating this plugin.', 'sensei-lms' ) );
 	}
 }
 

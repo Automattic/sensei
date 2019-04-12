@@ -35,7 +35,7 @@ do_action( 'sensei_archive_before_message_loop' );
 
 	<?php else : ?>
 
-		<p> <?php esc_html_e( 'You do not have any messages.', 'sensei' ); ?> </p>
+		<p> <?php esc_html_e( 'You do not have any messages.', 'sensei-lms' ); ?> </p>
 
 	<?php endif; // End If Statement ?>
 

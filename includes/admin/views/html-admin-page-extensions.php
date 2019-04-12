@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 <div class="wrap sensei sensei_extensions_wrap">
-	<h1><?php esc_html_e( 'Sensei Extensions', 'sensei' ); ?></h1>
+	<h1><?php esc_html_e( 'Sensei Extensions', 'sensei-lms' ); ?></h1>
 	<?php
 	require_once __DIR__ . '/html-admin-page-extensions-messages.php';
 	require_once __DIR__ . '/html-admin-page-extensions-categories.php';

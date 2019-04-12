@@ -52,7 +52,7 @@ class Sensei_Unsupported_Theme_Handler_Course_Archive
 				$content,
 				null,
 				array(
-					'post_title' => __( 'Courses', 'sensei' ),
+					'post_title' => __( 'Courses', 'sensei-lms' ),
 				)
 			);
 		}

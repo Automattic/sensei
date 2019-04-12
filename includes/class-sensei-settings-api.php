@@ -94,7 +94,7 @@ class Sensei_Settings_API {
 	 */
 	public function init_sections() {
 		// Override this function in your class and assign the array of sections to $this->sections.
-		esc_html_e( 'Override init_sections() in your class.', 'sensei' );
+		esc_html_e( 'Override init_sections() in your class.', 'sensei-lms' );
 	} // End init_sections()
 
 	/**
@@ -106,7 +106,7 @@ class Sensei_Settings_API {
 	 */
 	public function init_fields() {
 		// Override this function in your class and assign the array of sections to $this->fields.
-		esc_html_e( 'Override init_fields() in your class.', 'sensei' );
+		esc_html_e( 'Override init_fields() in your class.', 'sensei-lms' );
 	} // End init_fields()
 
 	/**
@@ -961,7 +961,7 @@ class Sensei_Settings_API {
 			$message = $data['error_message'];
 		} else {
 			// translators: Placeholder is the field name.
-			$message = sprintf( __( '%s is a required field', 'sensei' ), $data['name'] );
+			$message = sprintf( __( '%s is a required field', 'sensei-lms' ), $data['name'] );
 		}
 		$this->errors[ $key ] = $message;
 	} // End add_error()
@@ -980,7 +980,7 @@ class Sensei_Settings_API {
 			}
 		} else {
 			// translators: Placeholder is the name of the settings page.
-			$message = sprintf( __( '%s updated', 'sensei' ), $this->name );
+			$message = sprintf( __( '%s updated', 'sensei-lms' ), $this->name );
 			add_settings_error( $this->token . '-errors', $this->token, $message, 'updated' );
 		}
 	} // End parse_errors()

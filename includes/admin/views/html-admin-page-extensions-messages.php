@@ -20,7 +20,7 @@ if ( ! empty( $messages ) ) {
 		if ( isset( $message->type ) && in_array( $message->type, array( 'info', 'success', 'warning', 'error' ), true ) ) {
 			$message_type = $message->type;
 		}
-		$action_label  = isset( $message->action_label ) ? esc_attr( $message->action_label ) : __( 'More Information &rarr;', 'sensei' );
+		$action_label  = isset( $message->action_label ) ? esc_attr( $message->action_label ) : __( 'More Information &rarr;', 'sensei-lms' );
 		$action_url    = isset( $message->action_url ) ? esc_url( $message->action_url, array( 'http', 'https' ) ) : false;
 		$action_target = isset( $message->action_target ) && 'self' === $message->action_target ? '_self' : '_blank';
 		$action_str    = '';

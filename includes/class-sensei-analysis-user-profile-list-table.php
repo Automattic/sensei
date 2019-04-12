@@ -42,11 +42,11 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 	 */
 	function get_columns() {
 		$columns = array(
-			'title'     => __( 'Course', 'sensei' ),
-			'started'   => __( 'Date Started', 'sensei' ),
-			'completed' => __( 'Date Completed', 'sensei' ),
-			'status'    => __( 'Status', 'sensei' ),
-			'percent'   => __( 'Percent Complete', 'sensei' ),
+			'title'     => __( 'Course', 'sensei-lms' ),
+			'started'   => __( 'Date Started', 'sensei-lms' ),
+			'completed' => __( 'Date Completed', 'sensei-lms' ),
+			'status'    => __( 'Status', 'sensei-lms' ),
+			'percent'   => __( 'Percent Complete', 'sensei-lms' ),
 		);
 		$columns = apply_filters( 'sensei_analysis_user_profile_columns', $columns );
 		return $columns;
@@ -205,14 +205,14 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 
 		if ( 'complete' == $item->comment_approved ) {
 
-			$status       = __( 'Completed', 'sensei' );
+			$status       = __( 'Completed', 'sensei-lms' );
 			$status_class = 'graded';
 
 			$course_end_date = $item->comment_date;
 
 		} else {
 
-			$status       = __( 'In Progress', 'sensei' );
+			$status       = __( 'In Progress', 'sensei-lms' );
 			$status_class = 'in-progress';
 
 		}
@@ -312,7 +312,7 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 	 * @return void
 	 */
 	public function no_items() {
-		echo esc_html__( 'No courses found.', 'sensei' );
+		echo esc_html__( 'No courses found.', 'sensei-lms' );
 	} // End no_items()
 
 	/**
@@ -322,7 +322,7 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 	 * @return void
 	 */
 	public function data_table_header() {
-		echo '<strong>' . esc_html__( 'Courses', 'sensei' ) . '</strong>';
+		echo '<strong>' . esc_html__( 'Courses', 'sensei-lms' ) . '</strong>';
 	}
 
 	/**
@@ -342,7 +342,7 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 			),
 			admin_url( 'admin.php' )
 		);
-		echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( $url, 'sensei_csv_download-' . $report, '_sdl_nonce' ) ) . '">' . esc_html__( 'Export all rows (CSV)', 'sensei' ) . '</a>';
+		echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( $url, 'sensei_csv_download-' . $report, '_sdl_nonce' ) ) . '">' . esc_html__( 'Export all rows (CSV)', 'sensei-lms' ) . '</a>';
 	}
 
 	/**
@@ -352,7 +352,7 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 	 * @return string
 	 */
 	public function search_button( $text = '' ) {
-		return __( 'Search Courses', 'sensei' );
+		return __( 'Search Courses', 'sensei-lms' );
 	}
 
 } // End Class

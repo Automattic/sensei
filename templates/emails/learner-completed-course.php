@@ -31,7 +31,7 @@ $large = 'text-align: center !important;font-size: 350% !important;line-height: 
 <p style="<?php echo esc_attr( $small ); ?>">
 <?php
 // translators: Placeholder is the translated text for "passed" or "failed".
-printf( esc_html__( 'You have completed and %1$s the course', 'sensei' ), esc_html( $passed ) );
+printf( esc_html__( 'You have completed and %1$s the course', 'sensei-lms' ), esc_html( $passed ) );
 ?>
 </p>
 

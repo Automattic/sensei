@@ -128,7 +128,7 @@ class Sensei_PostTypes {
 			'show_in_admin_bar'     => true,
 			'query_var'             => true,
 			'rewrite'               => array(
-				'slug'       => esc_attr( apply_filters( 'sensei_course_slug', _x( 'course', 'post type single url base', 'sensei' ) ) ),
+				'slug'       => esc_attr( apply_filters( 'sensei_course_slug', _x( 'course', 'post type single url base', 'sensei-lms' ) ) ),
 				'with_front' => true,
 				'feeds'      => true,
 				'pages'      => true,
@@ -231,7 +231,7 @@ class Sensei_PostTypes {
 			'show_in_menu'          => true,
 			'query_var'             => true,
 			'rewrite'               => array(
-				'slug'       => esc_attr( apply_filters( 'sensei_lesson_slug', _x( 'lesson', 'post type single slug', 'sensei' ) ) ),
+				'slug'       => esc_attr( apply_filters( 'sensei_lesson_slug', _x( 'lesson', 'post type single slug', 'sensei-lms' ) ) ),
 				'with_front' => true,
 				'feeds'      => true,
 				'pages'      => true,
@@ -280,7 +280,7 @@ class Sensei_PostTypes {
 			'query_var'           => true,
 			'exclude_from_search' => true,
 			'rewrite'             => array(
-				'slug'       => esc_attr( apply_filters( 'sensei_quiz_slug', _x( 'quiz', 'post type single slug', 'sensei' ) ) ),
+				'slug'       => esc_attr( apply_filters( 'sensei_quiz_slug', _x( 'quiz', 'post type single slug', 'sensei-lms' ) ) ),
 				'with_front' => true,
 				'feeds'      => true,
 				'pages'      => true,
@@ -325,7 +325,7 @@ class Sensei_PostTypes {
 			'query_var'           => true,
 			'exclude_from_search' => true,
 			'rewrite'             => array(
-				'slug'       => esc_attr( apply_filters( 'sensei_question_slug', _x( 'question', 'post type single slug', 'sensei' ) ) ),
+				'slug'       => esc_attr( apply_filters( 'sensei_question_slug', _x( 'question', 'post type single slug', 'sensei-lms' ) ) ),
 				'with_front' => true,
 				'feeds'      => true,
 				'pages'      => true,
@@ -366,7 +366,7 @@ class Sensei_PostTypes {
 			'query_var'           => false,
 			'exclude_from_search' => true,
 			'rewrite'             => array(
-				'slug'       => esc_attr( apply_filters( 'sensei_multiple_question_slug', _x( 'multiple_question', 'post type single slug', 'sensei' ) ) ),
+				'slug'       => esc_attr( apply_filters( 'sensei_multiple_question_slug', _x( 'multiple_question', 'post type single slug', 'sensei-lms' ) ) ),
 				'with_front' => false,
 				'feeds'      => false,
 				'pages'      => false,
@@ -402,7 +402,7 @@ class Sensei_PostTypes {
 				'query_var'           => true,
 				'exclude_from_search' => true,
 				'rewrite'             => array(
-					'slug'       => esc_attr( apply_filters( 'sensei_messages_slug', _x( 'messages', 'post type single slug', 'sensei' ) ) ),
+					'slug'       => esc_attr( apply_filters( 'sensei_messages_slug', _x( 'messages', 'post type single slug', 'sensei-lms' ) ) ),
 					'with_front' => false,
 					'feeds'      => false,
 					'pages'      => true,
@@ -435,17 +435,17 @@ class Sensei_PostTypes {
 	public function setup_course_category_taxonomy() {
 		// "Course Categories" Custom Taxonomy
 		$labels = array(
-			'name'              => _x( 'Course Categories', 'taxonomy general name', 'sensei' ),
-			'singular_name'     => _x( 'Course Category', 'taxonomy singular name', 'sensei' ),
-			'search_items'      => __( 'Search Course Categories', 'sensei' ),
-			'all_items'         => __( 'All Course Categories', 'sensei' ),
-			'parent_item'       => __( 'Parent Course Category', 'sensei' ),
-			'parent_item_colon' => __( 'Parent Course Category:', 'sensei' ),
-			'edit_item'         => __( 'Edit Course Category', 'sensei' ),
-			'update_item'       => __( 'Update Course Category', 'sensei' ),
-			'add_new_item'      => __( 'Add New Course Category', 'sensei' ),
-			'new_item_name'     => __( 'New Course Category Name', 'sensei' ),
-			'menu_name'         => __( 'Course Categories', 'sensei' ),
+			'name'              => _x( 'Course Categories', 'taxonomy general name', 'sensei-lms' ),
+			'singular_name'     => _x( 'Course Category', 'taxonomy singular name', 'sensei-lms' ),
+			'search_items'      => __( 'Search Course Categories', 'sensei-lms' ),
+			'all_items'         => __( 'All Course Categories', 'sensei-lms' ),
+			'parent_item'       => __( 'Parent Course Category', 'sensei-lms' ),
+			'parent_item_colon' => __( 'Parent Course Category:', 'sensei-lms' ),
+			'edit_item'         => __( 'Edit Course Category', 'sensei-lms' ),
+			'update_item'       => __( 'Update Course Category', 'sensei-lms' ),
+			'add_new_item'      => __( 'Add New Course Category', 'sensei-lms' ),
+			'new_item_name'     => __( 'New Course Category Name', 'sensei-lms' ),
+			'menu_name'         => __( 'Course Categories', 'sensei-lms' ),
 			'popular_items'     => null, // Hides the "Popular" section above the "add" form in the admin.
 		);
 
@@ -462,7 +462,7 @@ class Sensei_PostTypes {
 				'delete_terms' => 'manage_categories',
 				'assign_terms' => 'edit_courses',
 			),
-			'rewrite'           => array( 'slug' => esc_attr( apply_filters( 'sensei_course_category_slug', _x( 'course-category', 'taxonomy archive slug', 'sensei' ) ) ) ),
+			'rewrite'           => array( 'slug' => esc_attr( apply_filters( 'sensei_course_category_slug', _x( 'course-category', 'taxonomy archive slug', 'sensei-lms' ) ) ) ),
 		);
 
 		register_taxonomy( 'course-category', array( 'course' ), $args );
@@ -479,17 +479,17 @@ class Sensei_PostTypes {
 
 		// "Quiz Types" Custom Taxonomy
 		$labels = array(
-			'name'              => _x( 'Quiz Types', 'taxonomy general name', 'sensei' ),
-			'singular_name'     => _x( 'Quiz Type', 'taxonomy singular name', 'sensei' ),
-			'search_items'      => __( 'Search Quiz Types', 'sensei' ),
-			'all_items'         => __( 'All Quiz Types', 'sensei' ),
-			'parent_item'       => __( 'Parent Quiz Type', 'sensei' ),
-			'parent_item_colon' => __( 'Parent Quiz Type:', 'sensei' ),
-			'edit_item'         => __( 'Edit Quiz Type', 'sensei' ),
-			'update_item'       => __( 'Update Quiz Type', 'sensei' ),
-			'add_new_item'      => __( 'Add New Quiz Type', 'sensei' ),
-			'new_item_name'     => __( 'New Quiz Type Name', 'sensei' ),
-			'menu_name'         => __( 'Quiz Types', 'sensei' ),
+			'name'              => _x( 'Quiz Types', 'taxonomy general name', 'sensei-lms' ),
+			'singular_name'     => _x( 'Quiz Type', 'taxonomy singular name', 'sensei-lms' ),
+			'search_items'      => __( 'Search Quiz Types', 'sensei-lms' ),
+			'all_items'         => __( 'All Quiz Types', 'sensei-lms' ),
+			'parent_item'       => __( 'Parent Quiz Type', 'sensei-lms' ),
+			'parent_item_colon' => __( 'Parent Quiz Type:', 'sensei-lms' ),
+			'edit_item'         => __( 'Edit Quiz Type', 'sensei-lms' ),
+			'update_item'       => __( 'Update Quiz Type', 'sensei-lms' ),
+			'add_new_item'      => __( 'Add New Quiz Type', 'sensei-lms' ),
+			'new_item_name'     => __( 'New Quiz Type Name', 'sensei-lms' ),
+			'menu_name'         => __( 'Quiz Types', 'sensei-lms' ),
 			'popular_items'     => null, // Hides the "Popular" section above the "add" form in the admin.
 		);
 
@@ -500,7 +500,7 @@ class Sensei_PostTypes {
 			'query_var'         => true,
 			'show_in_nav_menus' => false,
 			'public'            => false,
-			'rewrite'           => array( 'slug' => esc_attr( apply_filters( 'sensei_quiz_type_slug', _x( 'quiz-type', 'taxonomy archive slug', 'sensei' ) ) ) ),
+			'rewrite'           => array( 'slug' => esc_attr( apply_filters( 'sensei_quiz_type_slug', _x( 'quiz-type', 'taxonomy archive slug', 'sensei-lms' ) ) ) ),
 		);
 
 		register_taxonomy( 'quiz-type', array( 'quiz' ), $args );
@@ -516,17 +516,17 @@ class Sensei_PostTypes {
 
 		// "Question Types" Custom Taxonomy
 		$labels = array(
-			'name'              => _x( 'Question Types', 'taxonomy general name', 'sensei' ),
-			'singular_name'     => _x( 'Question Type', 'taxonomy singular name', 'sensei' ),
-			'search_items'      => __( 'Search Question Types', 'sensei' ),
-			'all_items'         => __( 'All Question Types', 'sensei' ),
-			'parent_item'       => __( 'Parent Question Type', 'sensei' ),
-			'parent_item_colon' => __( 'Parent Question Type:', 'sensei' ),
-			'edit_item'         => __( 'Edit Question Type', 'sensei' ),
-			'update_item'       => __( 'Update Question Type', 'sensei' ),
-			'add_new_item'      => __( 'Add New Question Type', 'sensei' ),
-			'new_item_name'     => __( 'New Question Type Name', 'sensei' ),
-			'menu_name'         => __( 'Question Types', 'sensei' ),
+			'name'              => _x( 'Question Types', 'taxonomy general name', 'sensei-lms' ),
+			'singular_name'     => _x( 'Question Type', 'taxonomy singular name', 'sensei-lms' ),
+			'search_items'      => __( 'Search Question Types', 'sensei-lms' ),
+			'all_items'         => __( 'All Question Types', 'sensei-lms' ),
+			'parent_item'       => __( 'Parent Question Type', 'sensei-lms' ),
+			'parent_item_colon' => __( 'Parent Question Type:', 'sensei-lms' ),
+			'edit_item'         => __( 'Edit Question Type', 'sensei-lms' ),
+			'update_item'       => __( 'Update Question Type', 'sensei-lms' ),
+			'add_new_item'      => __( 'Add New Question Type', 'sensei-lms' ),
+			'new_item_name'     => __( 'New Question Type Name', 'sensei-lms' ),
+			'menu_name'         => __( 'Question Types', 'sensei-lms' ),
 			'popular_items'     => null, // Hides the "Popular" section above the "add" form in the admin.
 		);
 
@@ -538,7 +538,7 @@ class Sensei_PostTypes {
 			'query_var'         => false,
 			'show_in_nav_menus' => false,
 			'show_admin_column' => true,
-			'rewrite'           => array( 'slug' => esc_attr( apply_filters( 'sensei_question_type_slug', _x( 'question-type', 'taxonomy archive slug', 'sensei' ) ) ) ),
+			'rewrite'           => array( 'slug' => esc_attr( apply_filters( 'sensei_question_type_slug', _x( 'question-type', 'taxonomy archive slug', 'sensei-lms' ) ) ) ),
 		);
 
 		register_taxonomy( 'question-type', array( 'question' ), $args );
@@ -553,17 +553,17 @@ class Sensei_PostTypes {
 	public function setup_question_category_taxonomy() {
 		// "Question Categories" Custom Taxonomy
 		$labels = array(
-			'name'              => _x( 'Question Categories', 'taxonomy general name', 'sensei' ),
-			'singular_name'     => _x( 'Question Category', 'taxonomy singular name', 'sensei' ),
-			'search_items'      => __( 'Search Question Categories', 'sensei' ),
-			'all_items'         => __( 'All Question Categories', 'sensei' ),
-			'parent_item'       => __( 'Parent Question Category', 'sensei' ),
-			'parent_item_colon' => __( 'Parent Question Category:', 'sensei' ),
-			'edit_item'         => __( 'Edit Question Category', 'sensei' ),
-			'update_item'       => __( 'Update Question Category', 'sensei' ),
-			'add_new_item'      => __( 'Add New Question Category', 'sensei' ),
-			'new_item_name'     => __( 'New Question Category Name', 'sensei' ),
-			'menu_name'         => __( 'Categories', 'sensei' ),
+			'name'              => _x( 'Question Categories', 'taxonomy general name', 'sensei-lms' ),
+			'singular_name'     => _x( 'Question Category', 'taxonomy singular name', 'sensei-lms' ),
+			'search_items'      => __( 'Search Question Categories', 'sensei-lms' ),
+			'all_items'         => __( 'All Question Categories', 'sensei-lms' ),
+			'parent_item'       => __( 'Parent Question Category', 'sensei-lms' ),
+			'parent_item_colon' => __( 'Parent Question Category:', 'sensei-lms' ),
+			'edit_item'         => __( 'Edit Question Category', 'sensei-lms' ),
+			'update_item'       => __( 'Update Question Category', 'sensei-lms' ),
+			'add_new_item'      => __( 'Add New Question Category', 'sensei-lms' ),
+			'new_item_name'     => __( 'New Question Category Name', 'sensei-lms' ),
+			'menu_name'         => __( 'Categories', 'sensei-lms' ),
 		);
 
 		$args = array(
@@ -580,7 +580,7 @@ class Sensei_PostTypes {
 				'delete_terms' => 'manage_categories',
 				'assign_terms' => 'edit_questions',
 			),
-			'rewrite'           => array( 'slug' => esc_attr( apply_filters( 'sensei_question_category_slug', _x( 'question-category', 'taxonomy archive slug', 'sensei' ) ) ) ),
+			'rewrite'           => array( 'slug' => esc_attr( apply_filters( 'sensei_question_category_slug', _x( 'question-category', 'taxonomy archive slug', 'sensei-lms' ) ) ) ),
 		);
 
 		register_taxonomy( 'question-category', array( 'question' ), $args );
@@ -595,17 +595,17 @@ class Sensei_PostTypes {
 	public function setup_lesson_tag_taxonomy() {
 		// "Lesson Tags" Custom Taxonomy
 		$labels = array(
-			'name'              => _x( 'Lesson Tags', 'taxonomy general name', 'sensei' ),
-			'singular_name'     => _x( 'Lesson Tag', 'taxonomy singular name', 'sensei' ),
-			'search_items'      => __( 'Search Lesson Tags', 'sensei' ),
-			'all_items'         => __( 'All Lesson Tags', 'sensei' ),
-			'parent_item'       => __( 'Parent Tag', 'sensei' ),
-			'parent_item_colon' => __( 'Parent Tag:', 'sensei' ),
-			'edit_item'         => __( 'Edit Lesson Tag', 'sensei' ),
-			'update_item'       => __( 'Update Lesson Tag', 'sensei' ),
-			'add_new_item'      => __( 'Add New Lesson Tag', 'sensei' ),
-			'new_item_name'     => __( 'New Tag Name', 'sensei' ),
-			'menu_name'         => __( 'Lesson Tags', 'sensei' ),
+			'name'              => _x( 'Lesson Tags', 'taxonomy general name', 'sensei-lms' ),
+			'singular_name'     => _x( 'Lesson Tag', 'taxonomy singular name', 'sensei-lms' ),
+			'search_items'      => __( 'Search Lesson Tags', 'sensei-lms' ),
+			'all_items'         => __( 'All Lesson Tags', 'sensei-lms' ),
+			'parent_item'       => __( 'Parent Tag', 'sensei-lms' ),
+			'parent_item_colon' => __( 'Parent Tag:', 'sensei-lms' ),
+			'edit_item'         => __( 'Edit Lesson Tag', 'sensei-lms' ),
+			'update_item'       => __( 'Update Lesson Tag', 'sensei-lms' ),
+			'add_new_item'      => __( 'Add New Lesson Tag', 'sensei-lms' ),
+			'new_item_name'     => __( 'New Tag Name', 'sensei-lms' ),
+			'menu_name'         => __( 'Lesson Tags', 'sensei-lms' ),
 		);
 
 		$args = array(
@@ -621,7 +621,7 @@ class Sensei_PostTypes {
 				'delete_terms' => 'manage_categories',
 				'assign_terms' => 'edit_lessons',
 			),
-			'rewrite'           => array( 'slug' => esc_attr( apply_filters( 'sensei_lesson_tag_slug', _x( 'lesson-tag', 'taxonomy archive slug', 'sensei' ) ) ) ),
+			'rewrite'           => array( 'slug' => esc_attr( apply_filters( 'sensei_lesson_tag_slug', _x( 'lesson-tag', 'taxonomy archive slug', 'sensei-lms' ) ) ) ),
 		);
 
 		register_taxonomy( 'lesson-tag', array( 'lesson' ), $args );
@@ -642,34 +642,34 @@ class Sensei_PostTypes {
 		);
 
 		$this->labels['course']            = array(
-			'singular' => __( 'Course', 'sensei' ),
-			'plural'   => __( 'Courses', 'sensei' ),
-			'menu'     => __( 'Courses', 'sensei' ),
+			'singular' => __( 'Course', 'sensei-lms' ),
+			'plural'   => __( 'Courses', 'sensei-lms' ),
+			'menu'     => __( 'Courses', 'sensei-lms' ),
 		);
 		$this->labels['lesson']            = array(
-			'singular' => __( 'Lesson', 'sensei' ),
-			'plural'   => __( 'Lessons', 'sensei' ),
-			'menu'     => __( 'Lessons', 'sensei' ),
+			'singular' => __( 'Lesson', 'sensei-lms' ),
+			'plural'   => __( 'Lessons', 'sensei-lms' ),
+			'menu'     => __( 'Lessons', 'sensei-lms' ),
 		);
 		$this->labels['quiz']              = array(
-			'singular' => __( 'Quiz', 'sensei' ),
-			'plural'   => __( 'Quizzes', 'sensei' ),
-			'menu'     => __( 'Quizzes', 'sensei' ),
+			'singular' => __( 'Quiz', 'sensei-lms' ),
+			'plural'   => __( 'Quizzes', 'sensei-lms' ),
+			'menu'     => __( 'Quizzes', 'sensei-lms' ),
 		);
 		$this->labels['question']          = array(
-			'singular' => __( 'Question', 'sensei' ),
-			'plural'   => __( 'Questions', 'sensei' ),
-			'menu'     => __( 'Questions', 'sensei' ),
+			'singular' => __( 'Question', 'sensei-lms' ),
+			'plural'   => __( 'Questions', 'sensei-lms' ),
+			'menu'     => __( 'Questions', 'sensei-lms' ),
 		);
 		$this->labels['multiple_question'] = array(
-			'singular' => __( 'Multiple Question', 'sensei' ),
-			'plural'   => __( 'Multiple Questions', 'sensei' ),
-			'menu'     => __( 'Multiple Questions', 'sensei' ),
+			'singular' => __( 'Multiple Question', 'sensei-lms' ),
+			'plural'   => __( 'Multiple Questions', 'sensei-lms' ),
+			'menu'     => __( 'Multiple Questions', 'sensei-lms' ),
 		);
 		$this->labels['sensei_message']    = array(
-			'singular' => __( 'Message', 'sensei' ),
-			'plural'   => __( 'Messages', 'sensei' ),
-			'menu'     => __( 'Messages', 'sensei' ),
+			'singular' => __( 'Message', 'sensei-lms' ),
+			'plural'   => __( 'Messages', 'sensei-lms' ),
+			'menu'     => __( 'Messages', 'sensei-lms' ),
 		);
 
 	} // End setup_post_type_labels_base()
@@ -690,23 +690,23 @@ class Sensei_PostTypes {
 		$labels = array(
 			'name'               => $plural,
 			'singular_name'      => $singular,
-			'add_new'            => __( 'Add New', 'sensei' ),
+			'add_new'            => __( 'Add New', 'sensei-lms' ),
 			// translators: Placeholder is the singular post type label.
-			'add_new_item'       => sprintf( __( 'Add New %s', 'sensei' ), $singular ),
+			'add_new_item'       => sprintf( __( 'Add New %s', 'sensei-lms' ), $singular ),
 			// translators: Placeholder is the singular post type label.
-			'edit_item'          => sprintf( __( 'Edit %s', 'sensei' ), $singular ),
+			'edit_item'          => sprintf( __( 'Edit %s', 'sensei-lms' ), $singular ),
 			// translators: Placeholder is the singular post type label.
-			'new_item'           => sprintf( __( 'New %s', 'sensei' ), $singular ),
+			'new_item'           => sprintf( __( 'New %s', 'sensei-lms' ), $singular ),
 			// translators: Placeholder is the plural post type label.
-			'all_items'          => sprintf( __( 'All %s', 'sensei' ), $plural ),
+			'all_items'          => sprintf( __( 'All %s', 'sensei-lms' ), $plural ),
 			// translators: Placeholder is the singular post type label.
-			'view_item'          => sprintf( __( 'View %s', 'sensei' ), $singular ),
+			'view_item'          => sprintf( __( 'View %s', 'sensei-lms' ), $singular ),
 			// translators: Placeholder is the plural post type label.
-			'search_items'       => sprintf( __( 'Search %s', 'sensei' ), $plural ),
+			'search_items'       => sprintf( __( 'Search %s', 'sensei-lms' ), $plural ),
 			// translators: Placeholder is the lower-case plural post type label.
-			'not_found'          => sprintf( __( 'No %s found', 'sensei' ), $lower_case_plural ),
+			'not_found'          => sprintf( __( 'No %s found', 'sensei-lms' ), $lower_case_plural ),
 			// translators: Placeholder is the lower-case plural post type label.
-			'not_found_in_trash' => sprintf( __( 'No %s found in Trash', 'sensei' ), $lower_case_plural ),
+			'not_found_in_trash' => sprintf( __( 'No %s found in Trash', 'sensei-lms' ), $lower_case_plural ),
 			'parent_item_colon'  => '',
 			'menu_name'          => $menu,
 		);
@@ -749,19 +749,19 @@ class Sensei_PostTypes {
 		$messages = array(
 			0  => '',
 			// translators: Placeholders are the singular label for the post type and the post's permalink, respectively.
-			1  => sprintf( __( '%1$s updated. %2$sView %1$s%3$s.', 'sensei' ), $this->labels[ $post_type ]['singular'], '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
-			2  => __( 'Custom field updated.', 'sensei' ),
-			3  => __( 'Custom field deleted.', 'sensei' ),
+			1  => sprintf( __( '%1$s updated. %2$sView %1$s%3$s.', 'sensei-lms' ), $this->labels[ $post_type ]['singular'], '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
+			2  => __( 'Custom field updated.', 'sensei-lms' ),
+			3  => __( 'Custom field deleted.', 'sensei-lms' ),
 			// translators: Placeholder is the singular label for the post type.
-			4  => sprintf( __( '%1$s updated.', 'sensei' ), $this->labels[ $post_type ]['singular'] ),
+			4  => sprintf( __( '%1$s updated.', 'sensei-lms' ), $this->labels[ $post_type ]['singular'] ),
 			// translators: Placeholders are the singular label for the post type and the post's revision, respectively.
-			5  => isset( $_GET['revision'] ) ? sprintf( __( '%1$s restored to revision from %2$s.', 'sensei' ), $this->labels[ $post_type ]['singular'], wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
+			5  => isset( $_GET['revision'] ) ? sprintf( __( '%1$s restored to revision from %2$s.', 'sensei-lms' ), $this->labels[ $post_type ]['singular'], wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
 			// translators: Placeholders are the singular label for the post type and the post's permalink, respectively.
-			6  => sprintf( __( '%1$s published. %2$sView %1$s%3$s.', 'sensei' ), $this->labels[ $post_type ]['singular'], '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
+			6  => sprintf( __( '%1$s published. %2$sView %1$s%3$s.', 'sensei-lms' ), $this->labels[ $post_type ]['singular'], '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
 			// translators: Placeholder is the singular label for the post type.
-			7  => sprintf( __( '%1$s saved.', 'sensei' ), $this->labels[ $post_type ]['singular'] ),
+			7  => sprintf( __( '%1$s saved.', 'sensei-lms' ), $this->labels[ $post_type ]['singular'] ),
 			// translators: Placeholders are the singular label for the post type and the post's preview link, respectively.
-			8  => sprintf( __( '%1$s submitted. %2$sPreview %1$s%3$s.', 'sensei' ), $this->labels[ $post_type ]['singular'], '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', '</a>' ),
+			8  => sprintf( __( '%1$s submitted. %2$sPreview %1$s%3$s.', 'sensei-lms' ), $this->labels[ $post_type ]['singular'], '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', '</a>' ),
 			/*
 			  * translators: Placeholders are as follows (in order):
 			  *
@@ -770,9 +770,9 @@ class Sensei_PostTypes {
 			  * - The opening tag for the post's permalink.
 			  * - The closing tag for the post's permalink.
 			  */
-			9  => sprintf( __( '%1$s scheduled for: %2$s. %3$sPreview %4$s%5$s.', 'sensei' ), $this->labels[ $post_type ]['singular'], '<strong>' . date_i18n( __( 'M j, Y @ G:i', 'sensei' ), strtotime( $post->post_date ) ) . '</strong>', '<a target="_blank" href="' . esc_url( get_permalink( $post_ID ) ) . '">', $this->labels[ $post_type ]['singular'], '</a>' ),
+			9  => sprintf( __( '%1$s scheduled for: %2$s. %3$sPreview %4$s%5$s.', 'sensei-lms' ), $this->labels[ $post_type ]['singular'], '<strong>' . date_i18n( __( 'M j, Y @ G:i', 'sensei-lms' ), strtotime( $post->post_date ) ) . '</strong>', '<a target="_blank" href="' . esc_url( get_permalink( $post_ID ) ) . '">', $this->labels[ $post_type ]['singular'], '</a>' ),
 			// translators: Placeholders are the singular label for the post type and the post's preview link, respectively.
-			10 => sprintf( __( '%1$s draft updated. %2$sPreview %3$s%4$s.', 'sensei' ), $this->labels[ $post_type ]['singular'], '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', $this->labels[ $post_type ]['singular'], '</a>' ),
+			10 => sprintf( __( '%1$s draft updated. %2$sPreview %3$s%4$s.', 'sensei-lms' ), $this->labels[ $post_type ]['singular'], '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', $this->labels[ $post_type ]['singular'], '</a>' ),
 		);
 
 		return $messages;
@@ -788,9 +788,9 @@ class Sensei_PostTypes {
 	 */
 	public function enter_title_here( $title ) {
 		if ( get_post_type() == 'course' ) {
-			$title = __( 'Enter a title for this course here', 'sensei' );
+			$title = __( 'Enter a title for this course here', 'sensei-lms' );
 		} elseif ( get_post_type() == 'lesson' ) {
-			$title = __( 'Enter a title for this lesson here', 'sensei' );
+			$title = __( 'Enter a title for this lesson here', 'sensei-lms' );
 		}
 
 		return $title;

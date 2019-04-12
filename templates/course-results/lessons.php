@@ -31,7 +31,7 @@ global $course;
 
 	<header>
 
-		<h2>  <?php esc_html_e( 'Lessons', 'sensei' ); ?> </h2>
+		<h2>  <?php esc_html_e( 'Lessons', 'sensei-lms' ); ?> </h2>
 
 	</header>
 
@@ -80,7 +80,7 @@ global $course;
 						   title="
 						   <?php
 							// translators: Placeholder is the lesson title.
-							echo esc_attr( sprintf( __( 'Start %s', 'sensei' ), $lesson->post_title ) );
+							echo esc_attr( sprintf( __( 'Start %s', 'sensei-lms' ), $lesson->post_title ) );
 							?>
 						 ">
 
@@ -112,7 +112,7 @@ global $course;
 				<?php
 				// lesson title will already appear above
 				if ( $course_has_lessons_in_modules ) {
-					esc_html_e( 'Other Lessons', 'sensei' );
+					esc_html_e( 'Other Lessons', 'sensei-lms' );
 				}
 				?>
 
@@ -141,7 +141,7 @@ global $course;
 					<a href="<?php echo esc_url_raw( get_permalink( $lesson->ID ) ); ?>" title="
 										<?php
 										// translators: Placeholder it the lesson title.
-										esc_attr( sprintf( __( 'Start %s', 'sensei' ), $lesson->post_title ) )
+										esc_attr( sprintf( __( 'Start %s', 'sensei-lms' ), $lesson->post_title ) )
 										?>
 					" >
 
@@ -160,7 +160,7 @@ global $course;
 
 		<h2 class="total-grade">
 
-			<?php esc_html_e( 'Total Grade', 'sensei' ); ?>
+			<?php esc_html_e( 'Total Grade', 'sensei-lms' ); ?>
 			<span class="lesson-grade">
 
 				<?php

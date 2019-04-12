@@ -106,8 +106,8 @@ class Sensei_Admin {
 			add_menu_page( 'Sensei', 'Sensei', $menu_cap, 'sensei', array( Sensei()->analysis, 'analysis_page' ), '', '50' );
 		}
 
-		add_submenu_page( 'edit.php?post_type=course', __( 'Order Courses', 'sensei' ), __( 'Order Courses', 'sensei' ), 'manage_sensei', $this->course_order_page_slug, array( $this, 'course_order_screen' ) );
-		add_submenu_page( 'edit.php?post_type=lesson', __( 'Order Lessons', 'sensei' ), __( 'Order Lessons', 'sensei' ), 'edit_lessons', $this->lesson_order_page_slug, array( $this, 'lesson_order_screen' ) );
+		add_submenu_page( 'edit.php?post_type=course', __( 'Order Courses', 'sensei-lms' ), __( 'Order Courses', 'sensei-lms' ), 'manage_sensei', $this->course_order_page_slug, array( $this, 'course_order_screen' ) );
+		add_submenu_page( 'edit.php?post_type=lesson', __( 'Order Lessons', 'sensei-lms' ), __( 'Order Lessons', 'sensei-lms' ), 'edit_lessons', $this->lesson_order_page_slug, array( $this, 'lesson_order_screen' ) );
 	}
 
 	/**
@@ -206,7 +206,7 @@ class Sensei_Admin {
 
 			?>
 			<div id="message" class="updated sensei-message sensei-connect">
-				<p><?php echo wp_kses_post( __( '<strong>Congratulations!</strong> &#8211; Sensei has been installed and set up.', 'sensei' ) ); ?></p>
+				<p><?php echo wp_kses_post( __( '<strong>Congratulations!</strong> &#8211; Sensei has been installed and set up.', 'sensei-lms' ) ); ?></p>
 				<p><a href="https://twitter.com/share" class="twitter-share-button" data-url="https://woocommerce.com/products/sensei/" data-text="A premium Learning Management plugin for #WordPress that helps you create courses. Beautifully." data-via="senseilms" data-size="large" data-hashtags="Sensei">Tweet</a>
 				<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script></p>
 			</div>
@@ -263,11 +263,11 @@ class Sensei_Admin {
 	function create_pages() {
 
 		// Courses page
-		$new_course_page_id = $this->create_page( esc_sql( _x( 'courses-overview', 'page_slug', 'sensei' ) ), __( 'Courses', 'sensei' ), '' );
+		$new_course_page_id = $this->create_page( esc_sql( _x( 'courses-overview', 'page_slug', 'sensei-lms' ) ), __( 'Courses', 'sensei-lms' ), '' );
 		Sensei()->settings->set( 'course_page', $new_course_page_id );
 
 		// User Dashboard page
-		$new_my_course_page_id = $this->create_page( esc_sql( _x( 'my-courses', 'page_slug', 'sensei' ) ), __( 'My Courses', 'sensei' ), '[sensei_user_courses]' );
+		$new_my_course_page_id = $this->create_page( esc_sql( _x( 'my-courses', 'page_slug', 'sensei-lms' ) ), __( 'My Courses', 'sensei-lms' ), '[sensei_user_courses]' );
 		Sensei()->settings->set( 'my_course_page', $new_my_course_page_id );
 
 	} // End create_pages()
@@ -346,7 +346,7 @@ class Sensei_Admin {
 		<div id="message" class="updated sensei-message sensei-connect">
 
 			<p>
-				<?php echo wp_kses_post( __( '<strong>Welcome to Sensei</strong> &#8211; You\'re almost ready to create some courses!', 'sensei' ) ); ?>
+				<?php echo wp_kses_post( __( '<strong>Welcome to Sensei</strong> &#8211; You\'re almost ready to create some courses!', 'sensei-lms' ) ); ?>
 			</p>
 
 			<p class="submit">
@@ -354,13 +354,13 @@ class Sensei_Admin {
 				<a href="<?php echo esc_url( add_query_arg( 'install_sensei_pages', 'true', admin_url( 'admin.php?page=sensei-settings' ) ) ); ?>"
 				   class="button-primary">
 
-					<?php esc_html_e( 'Install Sensei Pages', 'sensei' ); ?>
+					<?php esc_html_e( 'Install Sensei Pages', 'sensei-lms' ); ?>
 
 				</a>
 
 				<a class="skip button" href="<?php echo esc_url( add_query_arg( 'skip_install_sensei_pages', 'true', admin_url( 'admin.php?page=sensei-settings' ) ) ); ?>">
 
-					<?php esc_html_e( 'Skip setup', 'sensei' ); ?>
+					<?php esc_html_e( 'Skip setup', 'sensei-lms' ); ?>
 
 				</a>
 
@@ -381,19 +381,19 @@ class Sensei_Admin {
 		<div id="message" class="updated sensei-message sensei-connect">
 
 			<p>
-				<?php echo wp_kses_post( __( '<strong>Sensei has been installed</strong> &#8211; You\'re ready to start creating courses!', 'sensei' ) ); ?>
+				<?php echo wp_kses_post( __( '<strong>Sensei has been installed</strong> &#8211; You\'re ready to start creating courses!', 'sensei-lms' ) ); ?>
 			</p>
 
 			<p class="submit">
-				<a href="<?php echo esc_url( admin_url( 'admin.php?page=sensei-settings' ) ); ?>" class="button-primary"><?php esc_html_e( 'Settings', 'sensei' ); ?></a> <a class="docs button" href="http://www.woothemes.com/sensei-docs/">
-					<?php esc_html_e( 'Documentation', 'sensei' ); ?>
+				<a href="<?php echo esc_url( admin_url( 'admin.php?page=sensei-settings' ) ); ?>" class="button-primary"><?php esc_html_e( 'Settings', 'sensei-lms' ); ?></a> <a class="docs button" href="http://www.woothemes.com/sensei-docs/">
+					<?php esc_html_e( 'Documentation', 'sensei-lms' ); ?>
 				</a>
 			</p>
 
 			<p>
 
 				<a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.woothemes.com/sensei/" data-text="A premium Learning Management plugin for #WordPress that helps you teach courses online. Beautifully." data-via="WooThemes" data-size="large" data-hashtags="Sensei">
-					<?php esc_html_e( 'Tweet', 'sensei' ); ?>
+					<?php esc_html_e( 'Tweet', 'sensei-lms' ); ?>
 				</a>
 
 				<script>
@@ -441,14 +441,14 @@ class Sensei_Admin {
 	public function duplicate_action_link( $actions, $post ) {
 		switch ( $post->post_type ) {
 			case 'lesson':
-				$confirm              = __( 'This will duplicate the lesson quiz and all of its questions. Are you sure you want to do this?', 'sensei' );
-				$actions['duplicate'] = "<a onclick='return confirm(\"" . $confirm . "\");' href='" . $this->get_duplicate_link( $post->ID ) . "' title='" . esc_attr( __( 'Duplicate this lesson', 'sensei' ) ) . "'>" . __( 'Duplicate', 'sensei' ) . '</a>';
+				$confirm              = __( 'This will duplicate the lesson quiz and all of its questions. Are you sure you want to do this?', 'sensei-lms' );
+				$actions['duplicate'] = "<a onclick='return confirm(\"" . $confirm . "\");' href='" . $this->get_duplicate_link( $post->ID ) . "' title='" . esc_attr( __( 'Duplicate this lesson', 'sensei-lms' ) ) . "'>" . __( 'Duplicate', 'sensei-lms' ) . '</a>';
 				break;
 
 			case 'course':
-				$confirm                           = __( 'This will duplicate the course lessons along with all of their quizzes and questions. Are you sure you want to do this?', 'sensei' );
-				$actions['duplicate']              = '<a href="' . $this->get_duplicate_link( $post->ID ) . '" title="' . esc_attr( __( 'Duplicate this course', 'sensei' ) ) . '">' . __( 'Duplicate', 'sensei' ) . '</a>';
-				$actions['duplicate_with_lessons'] = '<a onclick="return confirm(\'' . $confirm . '\');" href="' . $this->get_duplicate_link( $post->ID, true ) . '" title="' . esc_attr( __( 'Duplicate this course with its lessons', 'sensei' ) ) . '">' . __( 'Duplicate (with lessons)', 'sensei' ) . '</a>';
+				$confirm                           = __( 'This will duplicate the course lessons along with all of their quizzes and questions. Are you sure you want to do this?', 'sensei-lms' );
+				$actions['duplicate']              = '<a href="' . $this->get_duplicate_link( $post->ID ) . '" title="' . esc_attr( __( 'Duplicate this course', 'sensei-lms' ) ) . '">' . __( 'Duplicate', 'sensei-lms' ) . '</a>';
+				$actions['duplicate_with_lessons'] = '<a onclick="return confirm(\'' . $confirm . '\');" href="' . $this->get_duplicate_link( $post->ID, true ) . '" title="' . esc_attr( __( 'Duplicate this course with its lessons', 'sensei-lms' ) ) . '">' . __( 'Duplicate (with lessons)', 'sensei-lms' ) . '</a>';
 				break;
 		}
 
@@ -515,13 +515,13 @@ class Sensei_Admin {
 	private function duplicate_content( $post_type = 'lesson', $with_lessons = false ) {
 		if ( ! isset( $_GET['post'] ) ) {
 			// translators: Placeholder is the post type string.
-			wp_die( esc_html( sprintf( __( 'Please supply a %1$s ID.', 'sensei' ) ), $post_type ) );
+			wp_die( esc_html( sprintf( __( 'Please supply a %1$s ID.', 'sensei-lms' ) ), $post_type ) );
 		}
 
 		$post_id = $_GET['post'];
 		$post    = get_post( $post_id );
 		if ( ! in_array( get_post_type( $post_id ), array( 'lesson', 'course' ), true ) ) {
-			wp_die( esc_html__( 'Invalid post type. Can duplicate only lessons and courses', 'sensei' ) );
+			wp_die( esc_html__( 'Invalid post type. Can duplicate only lessons and courses', 'sensei-lms' ) );
 		}
 
 		$action = 'duplicate_' . $post_type;
@@ -530,7 +530,7 @@ class Sensei_Admin {
 		}
 		check_admin_referer( $action . '_' . $post_id );
 		if ( ! current_user_can( 'manage_sensei_grades' ) ) {
-			wp_die( esc_html__( 'Insufficient permissions', 'sensei' ) );
+			wp_die( esc_html__( 'Insufficient permissions', 'sensei-lms' ) );
 		}
 
 		if ( ! is_wp_error( $post ) ) {
@@ -640,7 +640,7 @@ class Sensei_Admin {
 			}
 		}
 
-		$new_post['post_title']       .= empty( $suffix ) ? __( '(Duplicate)', 'sensei' ) : $suffix;
+		$new_post['post_title']       .= empty( $suffix ) ? __( '(Duplicate)', 'sensei-lms' ) : $suffix;
 		$new_post['post_date']         = current_time( 'mysql' );
 		$new_post['post_date_gmt']     = get_gmt_from_date( $new_post['post_date'] );
 		$new_post['post_modified']     = $new_post['post_date'];
@@ -735,7 +735,7 @@ class Sensei_Admin {
 			}
 
 			$output  = '<select name="lesson_course" id="dropdown_lesson_course">';
-			$output .= '<option value="">' . esc_html__( 'Show all courses', 'sensei' ) . '</option>';
+			$output .= '<option value="">' . esc_html__( 'Show all courses', 'sensei-lms' ) . '</option>';
 			$output .= $course_options;
 			$output .= '</select>';
 
@@ -1131,14 +1131,14 @@ class Sensei_Admin {
 
 		?>
 		<div id="<?php echo esc_attr( $this->course_order_page_slug ); ?>" class="wrap <?php echo esc_attr( $this->course_order_page_slug ); ?>">
-		<h1><?php esc_html_e( 'Order Courses', 'sensei' ); ?></h1>
+		<h1><?php esc_html_e( 'Order Courses', 'sensei-lms' ); ?></h1>
 							  <?php
 
 								$html = '';
 
 								if ( isset( $_GET['ordered'] ) && $_GET['ordered'] ) {
 									$html .= '<div class="updated fade">' . "\n";
-									$html .= '<p>' . esc_html__( 'The course order has been saved.', 'sensei' ) . '</p>' . "\n";
+									$html .= '<p>' . esc_html__( 'The course order has been saved.', 'sensei-lms' ) . '</p>' . "\n";
 									$html .= '</div>' . "\n";
 								}
 
@@ -1196,7 +1196,7 @@ class Sensei_Admin {
 									$html .= '<input type="hidden" name="action" value="order_courses" />' . "\n";
 									$html .= wp_nonce_field( 'order_courses', '_wpnonce', true, false ) . "\n";
 									$html .= '<input type="hidden" name="course-order" value="' . esc_attr( $order_string ) . '" />' . "\n";
-									$html .= '<input type="submit" class="button-primary" value="' . esc_attr__( 'Save course order', 'sensei' ) . '" />' . "\n";
+									$html .= '<input type="submit" class="button-primary" value="' . esc_attr__( 'Save course order', 'sensei-lms' ) . '" />' . "\n";
 									$html .= '</form>';
 								}
 
@@ -1301,14 +1301,14 @@ class Sensei_Admin {
 
 		?>
 		<div id="<?php echo esc_attr( $this->lesson_order_page_slug ); ?>" class="wrap <?php echo esc_attr( $this->lesson_order_page_slug ); ?>">
-		<h1><?php esc_html_e( 'Order Lessons', 'sensei' ); ?></h1>
+		<h1><?php esc_html_e( 'Order Lessons', 'sensei-lms' ); ?></h1>
 							  <?php
 
 								$html = '';
 
 								if ( isset( $_GET['ordered'] ) && $_GET['ordered'] ) {
 									$html .= '<div class="updated fade">' . "\n";
-									$html .= '<p>' . esc_html__( 'The lesson order has been saved.', 'sensei' ) . '</p>' . "\n";
+									$html .= '<p>' . esc_html__( 'The lesson order has been saved.', 'sensei-lms' ) . '</p>' . "\n";
 									$html .= '</div>' . "\n";
 								}
 
@@ -1325,7 +1325,7 @@ class Sensei_Admin {
 																			$html .= '<input type="hidden" name="post_type" value="lesson" />' . "\n";
 																			$html .= '<input type="hidden" name="page" value="lesson-order" />' . "\n";
 																			$html .= '<select id="lesson-order-course" name="course_id">' . "\n";
-																			$html .= '<option value="">' . esc_html__( 'Select a course', 'sensei' ) . '</option>' . "\n";
+																			$html .= '<option value="">' . esc_html__( 'Select a course', 'sensei-lms' ) . '</option>' . "\n";
 
 							  foreach ( $courses as $course ) {
 								  $course_id = '';
@@ -1336,7 +1336,7 @@ class Sensei_Admin {
 								}
 
 																			$html .= '</select>' . "\n";
-																			$html .= '<input type="submit" class="button-primary lesson-order-select-course-submit" value="' . esc_attr__( 'Select', 'sensei' ) . '" />' . "\n";
+																			$html .= '<input type="submit" class="button-primary lesson-order-select-course-submit" value="' . esc_attr__( 'Select', 'sensei-lms' ) . '" />' . "\n";
 																			$html .= '</form>' . "\n";
 
 								if ( isset( $_GET['course_id'] ) ) {
@@ -1421,7 +1421,7 @@ class Sensei_Admin {
 											}
 
 											if ( 0 < count( $displayed_lessons ) ) {
-												$html .= '<h3>' . esc_html__( 'Other Lessons', 'sensei' ) . '</h3>' . "\n";
+												$html .= '<h3>' . esc_html__( 'Other Lessons', 'sensei-lms' ) . '</h3>' . "\n";
 											}
 
 											$html         .= '<ul class="sortable-lesson-list" data-module-id="0">' . "\n";
@@ -1457,7 +1457,7 @@ class Sensei_Admin {
 											$html .= '</ul>' . "\n";
 										} else {
 											if ( 0 == count( $displayed_lessons ) ) {
-												$html .= '<p><em>' . esc_html__( 'There are no lessons in this course.', 'sensei' ) . '</em></p>';
+												$html .= '<p><em>' . esc_html__( 'There are no lessons in this course.', 'sensei-lms' ) . '</em></p>';
 											}
 										}
 
@@ -1466,7 +1466,7 @@ class Sensei_Admin {
 											$html .= wp_nonce_field( 'order_lessons', '_wpnonce', true, false ) . "\n";
 											$html .= '<input type="hidden" name="lesson-order" value="' . esc_attr( $order_string ) . '" />' . "\n";
 											$html .= '<input type="hidden" name="course_id" value="' . esc_attr( $course_id ) . '" />' . "\n";
-											$html .= '<input type="submit" class="button-primary" value="' . esc_attr__( 'Save lesson order', 'sensei' ) . '" />' . "\n";
+											$html .= '<input type="submit" class="button-primary" value="' . esc_attr__( 'Save lesson order', 'sensei-lms' ) . '" />' . "\n";
 											$html .= '</form>';
 										}
 									}
@@ -1592,12 +1592,12 @@ class Sensei_Admin {
 		global $nav_menu_selected_id;
 
 		$menu_items = array(
-			'#senseicourses'        => __( 'Courses', 'sensei' ),
-			'#senseilessons'        => __( 'Lessons', 'sensei' ),
-			'#senseimycourses'      => __( 'My Courses', 'sensei' ),
-			'#senseilearnerprofile' => __( 'My Profile', 'sensei' ),
-			'#senseimymessages'     => __( 'My Messages', 'sensei' ),
-			'#senseiloginlogout'    => __( 'Login', 'sensei' ) . '|' . __( 'Logout', 'sensei' ),
+			'#senseicourses'        => __( 'Courses', 'sensei-lms' ),
+			'#senseilessons'        => __( 'Lessons', 'sensei-lms' ),
+			'#senseimycourses'      => __( 'My Courses', 'sensei-lms' ),
+			'#senseilearnerprofile' => __( 'My Profile', 'sensei-lms' ),
+			'#senseimymessages'     => __( 'My Messages', 'sensei-lms' ),
+			'#senseiloginlogout'    => __( 'Login', 'sensei-lms' ) . '|' . __( 'Logout', 'sensei-lms' ),
 		);
 
 		$menu_items_obj = array();
@@ -1630,7 +1630,7 @@ class Sensei_Admin {
 			</div>
 			<p class="button-controls">
 				<span class="add-to-menu">
-					<input type="submit"<?php disabled( $nav_menu_selected_id, 0 ); ?> class="button-secondary submit-add-to-menu right" value="<?php esc_attr_e( 'Add to Menu', 'sensei' ); ?>" name="add-sensei-links-menu-item" id="submit-sensei-links" />
+					<input type="submit"<?php disabled( $nav_menu_selected_id, 0 ); ?> class="button-secondary submit-add-to-menu right" value="<?php esc_attr_e( 'Add to Menu', 'sensei-lms' ); ?>" name="add-sensei-links-menu-item" id="submit-sensei-links" />
 					<span class="spinner"></span>
 				</span>
 			</p>
@@ -1748,9 +1748,9 @@ class Sensei_Admin {
 		$maybe_admin = get_user_by( 'email', get_bloginfo( 'admin_email' ) );
 
 		if ( false === $maybe_admin || false === user_can( $maybe_admin, 'manage_options' ) ) {
-			$general_settings_url         = '<a href="' . esc_url( admin_url( 'options-general.php' ) ) . '">' . esc_html__( 'Settings > General', 'sensei' ) . '</a>';
-			$add_new_user_url             = '<a href="' . esc_url( admin_url( 'user-new.php' ) ) . '">' . esc_html__( 'add a new Administrator', 'sensei' ) . '</a>';
-			$existing_administrators_link = '<a href="' . esc_url( admin_url( 'users.php?role=administrator' ) ) . '">' . esc_html__( 'existing Administrator', 'sensei' ) . '</a>';
+			$general_settings_url         = '<a href="' . esc_url( admin_url( 'options-general.php' ) ) . '">' . esc_html__( 'Settings > General', 'sensei-lms' ) . '</a>';
+			$add_new_user_url             = '<a href="' . esc_url( admin_url( 'user-new.php' ) ) . '">' . esc_html__( 'add a new Administrator', 'sensei-lms' ) . '</a>';
+			$existing_administrators_link = '<a href="' . esc_url( admin_url( 'users.php?role=administrator' ) ) . '">' . esc_html__( 'existing Administrator', 'sensei-lms' ) . '</a>';
 			$current_setting              = get_bloginfo( 'admin_email' );
 
 			/*
@@ -1761,7 +1761,7 @@ class Sensei_Admin {
 			 * - The current admin email address from the Settings.
 			 * - A link to view the existing admin users, with the translated text "existing Administrator".
 			 */
-			$warning = __( 'To prevent issues with Sensei module names, your Email Address in %1$s should also belong to an Administrator user. You can either %2$s with the email address %3$s, or change that email address to match the email of an %4$s.', 'sensei' );
+			$warning = __( 'To prevent issues with Sensei module names, your Email Address in %1$s should also belong to an Administrator user. You can either %2$s with the email address %3$s, or change that email address to match the email of an %4$s.', 'sensei-lms' );
 
 			?>
 			<div id="message" class="error sensei-message sensei-connect">

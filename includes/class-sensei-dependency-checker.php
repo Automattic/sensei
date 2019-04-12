@@ -42,7 +42,7 @@ class Sensei_Dependency_Checker {
 		}
 
 		// translators: %1$s is version of PHP that Sensei requires; %2$s is the version of PHP WordPress is running on.
-		$message = sprintf( __( '<strong>Sensei</strong> requires a minimum PHP version of %1$s, but you are running %2$s.', 'sensei' ), self::MINIMUM_PHP_VERSION, phpversion() );
+		$message = sprintf( __( '<strong>Sensei</strong> requires a minimum PHP version of %1$s, but you are running %2$s.', 'sensei-lms' ), self::MINIMUM_PHP_VERSION, phpversion() );
 
 		echo '<div class="error"><p>';
 		echo wp_kses( $message, array( 'strong' => array() ) );
@@ -53,9 +53,9 @@ class Sensei_Dependency_Checker {
 		printf(
 			'<p><a class="button button-primary" href="%1$s" target="_blank" rel="noopener noreferrer">%2$s <span class="screen-reader-text">%3$s</span><span aria-hidden="true" class="dashicons dashicons-external"></span></a></p>',
 			esc_url( $php_update_url ),
-			esc_html__( 'Learn more about updating PHP', 'sensei' ),
+			esc_html__( 'Learn more about updating PHP', 'sensei-lms' ),
 			/* translators: accessibility text */
-			esc_html__( '(opens in a new tab)', 'sensei' )
+			esc_html__( '(opens in a new tab)', 'sensei-lms' )
 		);
 		echo '</p></div>';
 	}

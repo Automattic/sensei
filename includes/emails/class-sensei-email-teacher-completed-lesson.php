@@ -31,8 +31,8 @@ if ( ! class_exists( 'Sensei_Email_Teacher_Completed_Lesson' ) ) :
 		function __construct() {
 			$this->template = 'teacher-completed-lesson';
 			// translators: Placeholder is the blog name.
-			$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] Your student has completed a lesson', 'sensei' ), get_bloginfo( 'name' ) ), $this->template );
-			$this->heading = apply_filters( 'sensei_email_heading', __( 'Your student has completed a lesson', 'sensei' ), $this->template );
+			$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] Your student has completed a lesson', 'sensei-lms' ), get_bloginfo( 'name' ) ), $this->template );
+			$this->heading = apply_filters( 'sensei_email_heading', __( 'Your student has completed a lesson', 'sensei-lms' ), $this->template );
 		}
 
 		/**

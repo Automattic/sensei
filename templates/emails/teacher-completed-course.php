@@ -28,14 +28,14 @@ $large = 'text-align: center !important;font-size: 350% !important;line-height: 
 
 <?php do_action( 'sensei_before_email_content', $template ); ?>
 
-<p style="<?php echo esc_attr( $small ); ?>"><?php esc_html_e( 'Your student', 'sensei' ); ?></p>
+<p style="<?php echo esc_attr( $small ); ?>"><?php esc_html_e( 'Your student', 'sensei-lms' ); ?></p>
 
 <h2 style="<?php echo esc_attr( $large ); ?>"><?php echo esc_html( $learner_name ); ?></h2>
 
 <p style="<?php echo esc_attr( $small ); ?>">
 <?php
 // translators: Placeholder is the translated text for "passed" or "failed".
-printf( esc_html__( 'has completed and %1$s the course', 'sensei' ), esc_html( $passed ) );
+printf( esc_html__( 'has completed and %1$s the course', 'sensei-lms' ), esc_html( $passed ) );
 ?>
 </p>
 
@@ -46,7 +46,7 @@ printf( esc_html__( 'has completed and %1$s the course', 'sensei' ), esc_html( $
 <p style="<?php echo esc_attr( $small ); ?>">
 <?php
 // translators: Placeholders are an opening an closing <a> tag linking to the course learners admin page.
-printf( esc_html__( 'Manage this course\'s learners %1$shere%2$s.', 'sensei' ), '<a href="' . esc_url( admin_url( 'admin.php?page=sensei_learners&view=learners&course_id=' . $course_id ) ) . '">', '</a>' );
+printf( esc_html__( 'Manage this course\'s learners %1$shere%2$s.', 'sensei-lms' ), '<a href="' . esc_url( admin_url( 'admin.php?page=sensei_learners&view=learners&course_id=' . $course_id ) ) . '">', '</a>' );
 ?>
 </p>
 

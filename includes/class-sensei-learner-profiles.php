@@ -25,7 +25,7 @@ class Sensei_Learner_Profiles {
 	public function __construct() {
 
 		// Setup learner profile URL base
-		$this->profile_url_base = apply_filters( 'sensei_learner_profiles_url_base', __( 'learner', 'sensei' ) );
+		$this->profile_url_base = apply_filters( 'sensei_learner_profiles_url_base', __( 'learner', 'sensei-lms' ) );
 
 		// Setup permalink structure for learner profiles
 		add_action( 'init', array( $this, 'setup_permastruct' ) );
@@ -74,7 +74,7 @@ class Sensei_Learner_Profiles {
 			$name = Sensei_Learner::get_full_name( $learner_user->ID );
 
 			// translators: Placeholder is the full name of the learner.
-			$title = apply_filters( 'sensei_learner_profile_courses_heading', sprintf( __( 'Courses %s is taking', 'sensei' ), $name ) ) . ' ' . $sep . ' ';
+			$title = apply_filters( 'sensei_learner_profile_courses_heading', sprintf( __( 'Courses %s is taking', 'sensei-lms' ), $name ) ) . ' ' . $sep . ' ';
 		}
 		return $title;
 	}
@@ -148,7 +148,7 @@ class Sensei_Learner_Profiles {
 		}
 		$name = apply_filters( 'sensei_learner_profile_courses_heading_name', $name );
 		// translators: Placeholder is the first name or the display name of the user.
-		echo '<h2>' . wp_kses_post( apply_filters( 'sensei_learner_profile_courses_heading', sprintf( __( 'Courses %s is taking', 'sensei' ), $name ) ) ) . '</h2>';
+		echo '<h2>' . wp_kses_post( apply_filters( 'sensei_learner_profile_courses_heading', sprintf( __( 'Courses %s is taking', 'sensei-lms' ), $name ) ) ) . '</h2>';
 	}
 
 	/**

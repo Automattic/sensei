@@ -44,11 +44,11 @@ var paths = {
 		'templates/**/*',
 		'uninstall.php',
 		'widgets/**/*',
-		'sensei.php',
+		'sensei-lms.php',
 		'wpml-config.xml',
 	],
-	packageDir: 'build/sensei',
-	packageZip: 'build/sensei.zip'
+	packageDir: 'build/sensei-lms',
+	packageZip: 'build/sensei-lms.zip'
 };
 
 gulp.task( 'clean', gulp.series( function( cb ) {
@@ -82,16 +82,16 @@ gulp.task( 'pot', gulp.series( function() {
 	return gulp.src( [ '**/**.php', '!node_modules/**', '!build/**' ] )
 		.pipe( sort() )
 		.pipe( wpPot( {
-			domain: 'sensei',
-			bugReport: 'https://www.transifex.com/woothemes/sensei-by-woothemes/'
+			domain: 'sensei-lms',
+			bugReport: 'https://translate.wordpress.org/projects/wp-plugins/sensei-lms/'
 		} ) )
-		.pipe( gulp.dest( 'lang/sensei.pot' ) );
+		.pipe( gulp.dest( 'lang/sensei-lms.pot' ) );
 } ) );
 
 gulp.task( 'textdomain', gulp.series( function() {
 	return gulp.src( [ '**/*.php', '!node_modules/**', '!build/**' ] )
 		.pipe( checktextdomain( {
-			text_domain: 'sensei',
+			text_domain: 'sensei-lms',
 			keywords: [
 				'__:1,2d',
 				'_e:1,2d',

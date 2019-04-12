@@ -717,7 +717,7 @@ class Sensei_Templates {
 			$my_courses_url = get_permalink( $my_courses_page_id );
 
 			echo '<div class="status register"><a href="' . esc_url( $my_courses_url ) . '">' .
-				esc_html__( 'Register', 'sensei' ) . '</a></div>';
+				esc_html__( 'Register', 'sensei-lms' ) . '</a></div>';
 
 		} else {
 

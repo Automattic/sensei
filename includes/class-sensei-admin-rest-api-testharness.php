@@ -26,7 +26,7 @@ class Sensei_Admin_Rest_Api_Testharness {
 	}
 
 	function initialize() {
-		$this->name   = __( 'REST Api TestHarness', 'sensei' );
+		$this->name   = __( 'REST Api TestHarness', 'sensei-lms' );
 		$this->nonce  = wp_create_nonce( 'wp_rest' );
 		$this->cookie = $_COOKIE;
 	}

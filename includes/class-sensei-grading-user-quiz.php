@@ -64,13 +64,13 @@ class Sensei_Grading_User_Quiz {
 			<input type="hidden" name="sensei_manual_grade" value="<?php echo esc_attr( $this->quiz_id ); ?>" />
 			<input type="hidden" name="sensei_grade_next_learner" value="<?php echo esc_attr( $this->user_id ); ?>" />
 			<div class="total_grade_display">
-				<span><?php esc_attr_e( 'Grade:', 'sensei' ); ?></span>
+				<span><?php esc_attr_e( 'Grade:', 'sensei-lms' ); ?></span>
 				<span class="total_grade_total"><?php echo esc_html( $user_quiz_grade_total ); ?></span> / <span class="quiz_grade_total"><?php echo esc_html( $quiz_grade_total ); ?></span> (<span class="total_grade_percent"><?php echo esc_html( $quiz_grade ); ?></span>%)
 			</div>
 			<div class="buttons">
-				<input type="submit" value="<?php esc_attr_e( 'Save', 'sensei' ); ?>" class="grade-button button-primary" title="Saves grades as currently marked on this page" />
-				<input type="button" value="<?php esc_attr_e( 'Auto grade', 'sensei' ); ?>" class="autograde-button button-secondary" title="Where possible, automatically grades questions that have not yet been graded" />
-				<input type="reset" value="<?php esc_attr_e( 'Reset', 'sensei' ); ?>" class="reset-button button-secondary" title="Resets all questions to ungraded and total grade to 0" />
+				<input type="submit" value="<?php esc_attr_e( 'Save', 'sensei-lms' ); ?>" class="grade-button button-primary" title="Saves grades as currently marked on this page" />
+				<input type="button" value="<?php esc_attr_e( 'Auto grade', 'sensei-lms' ); ?>" class="autograde-button button-secondary" title="Where possible, automatically grades questions that have not yet been graded" />
+				<input type="reset" value="<?php esc_attr_e( 'Reset', 'sensei-lms' ); ?>" class="reset-button button-secondary" title="Resets all questions to ungraded and total grade to 0" />
 			</div>
 			<div class="clear"></div><br/>
 			<?php
@@ -102,22 +102,22 @@ class Sensei_Grading_User_Quiz {
 
 				$right_answer        = get_post_meta( $question_id, '_question_right_answer', true );
 				$user_answer_content = Sensei()->quiz->get_user_question_answer( $lesson_id, $question_id, $user_id );
-				$type_name           = __( 'Multiple Choice', 'sensei' );
+				$type_name           = __( 'Multiple Choice', 'sensei-lms' );
 				$grade_type          = 'manual-grade';
 
 				switch ( $type ) {
 					case 'boolean':
-						$type_name           = __( 'True/False', 'sensei' );
+						$type_name           = __( 'True/False', 'sensei-lms' );
 						$right_answer        = ucfirst( $right_answer );
 						$user_answer_content = ucfirst( $user_answer_content );
 						$grade_type          = 'auto-grade';
 						break;
 					case 'multiple-choice':
-						$type_name  = __( 'Multiple Choice', 'sensei' );
+						$type_name  = __( 'Multiple Choice', 'sensei-lms' );
 						$grade_type = 'auto-grade';
 						break;
 					case 'gap-fill':
-						$type_name = __( 'Gap Fill', 'sensei' );
+						$type_name = __( 'Gap Fill', 'sensei-lms' );
 
 						$right_answer_array = explode( '||', $right_answer );
 						if ( isset( $right_answer_array[0] ) ) {
@@ -143,15 +143,15 @@ class Sensei_Grading_User_Quiz {
 
 						break;
 					case 'multi-line':
-						$type_name  = __( 'Multi Line', 'sensei' );
+						$type_name  = __( 'Multi Line', 'sensei-lms' );
 						$grade_type = 'manual-grade';
 						break;
 					case 'single-line':
-						$type_name  = __( 'Single Line', 'sensei' );
+						$type_name  = __( 'Single Line', 'sensei-lms' );
 						$grade_type = 'manual-grade';
 						break;
 					case 'file-upload':
-						$type_name  = __( 'File Upload', 'sensei' );
+						$type_name  = __( 'File Upload', 'sensei-lms' );
 						$grade_type = 'manual-grade';
 
 						// Get uploaded file
@@ -163,7 +163,7 @@ class Sensei_Grading_User_Quiz {
 								$answer_media_filename = basename( $answer_media_url );
 								if ( $answer_media_url && $answer_media_filename ) {
 									// translators: Placeholder is a link to the submitted file.
-									$user_answer_content = sprintf( __( 'Submitted file: %1$s', 'sensei' ), '<a href="' . esc_url( $answer_media_url ) . '" target="_blank">' . esc_html( $answer_media_filename ) . '</a>' );
+									$user_answer_content = sprintf( __( 'Submitted file: %1$s', 'sensei-lms' ), '<a href="' . esc_url( $answer_media_url ) . '" target="_blank">' . esc_html( $answer_media_filename ) . '</a>' );
 								}
 							}
 						} else {
@@ -177,7 +177,7 @@ class Sensei_Grading_User_Quiz {
 				$user_answer_content = (array) $user_answer_content;
 				$right_answer        = (array) $right_answer;
 				// translators: Placeholder is the question number.
-				$question_title = sprintf( __( 'Question %d: ', 'sensei' ), $count ) . $type_name;
+				$question_title = sprintf( __( 'Question %d: ', 'sensei-lms' ), $count ) . $type_name;
 
 				$graded_class        = '';
 				$user_question_grade = Sensei()->quiz->get_user_question_grade( $lesson_id, $question_id, $user_id );
@@ -238,7 +238,7 @@ class Sensei_Grading_User_Quiz {
 						?>
 						</p>
 						<div class="right-answer">
-							<h5><?php esc_html_e( 'Correct answer', 'sensei' ); ?></h5>
+							<h5><?php esc_html_e( 'Correct answer', 'sensei-lms' ); ?></h5>
 							<span class="correct-answer">
 							<?php
 							foreach ( $right_answer as $_right_answer ) {
@@ -254,8 +254,8 @@ class Sensei_Grading_User_Quiz {
 							</span>
 						</div>
 						<div class="answer-notes">
-							<h5><?php esc_html_e( 'Grading Notes', 'sensei' ); ?></h5>
-							<textarea class="correct-answer" name="questions_feedback[<?php echo esc_attr( $question_id ); ?>]" placeholder="<?php esc_attr_e( 'Add notes here...', 'sensei' ); ?>"><?php echo esc_html( $question_answer_notes ); ?></textarea>
+							<h5><?php esc_html_e( 'Grading Notes', 'sensei-lms' ); ?></h5>
+							<textarea class="correct-answer" name="questions_feedback[<?php echo esc_attr( $question_id ); ?>]" placeholder="<?php esc_attr_e( 'Add notes here...', 'sensei-lms' ); ?>"><?php echo esc_html( $question_answer_notes ); ?></textarea>
 						</div>
 					</div>
 				</div>
@@ -276,13 +276,13 @@ class Sensei_Grading_User_Quiz {
 			<input type="hidden" name="total_graded_questions" id="total_graded_questions" value="<?php echo esc_attr( $graded_count ); ?>" />
 			<input type="hidden" name="all_questions_graded" id="all_questions_graded" value="<?php echo esc_attr( $all_graded ); ?>" />
 			<div class="total_grade_display">
-				<span><?php esc_attr_e( 'Grade:', 'sensei' ); ?></span>
+				<span><?php esc_attr_e( 'Grade:', 'sensei-lms' ); ?></span>
 				<span class="total_grade_total"><?php echo esc_html( $user_quiz_grade_total ); ?></span> / <span class="quiz_grade_total"><?php echo esc_html( $quiz_grade_total ); ?></span> (<span class="total_grade_percent"><?php echo esc_html( $quiz_grade ); ?></span>%)
 			</div>
 			<div class="buttons">
-				<input type="submit" value="<?php esc_attr_e( 'Save', 'sensei' ); ?>" class="grade-button button-primary" title="Saves grades as currently marked on this page" />
-				<input type="button" value="<?php esc_attr_e( 'Auto grade', 'sensei' ); ?>" class="autograde-button button-secondary" title="Where possible, automatically grades questions that have not yet been graded" />
-				<input type="reset" value="<?php esc_attr_e( 'Reset', 'sensei' ); ?>" class="reset-button button-secondary" title="Resets all questions to ungraded and total grade to 0" />
+				<input type="submit" value="<?php esc_attr_e( 'Save', 'sensei-lms' ); ?>" class="grade-button button-primary" title="Saves grades as currently marked on this page" />
+				<input type="button" value="<?php esc_attr_e( 'Auto grade', 'sensei-lms' ); ?>" class="autograde-button button-secondary" title="Where possible, automatically grades questions that have not yet been graded" />
+				<input type="reset" value="<?php esc_attr_e( 'Reset', 'sensei-lms' ); ?>" class="reset-button button-secondary" title="Resets all questions to ungraded and total grade to 0" />
 			</div>
 			<div class="clear"></div>
 			<script type="text/javascript">

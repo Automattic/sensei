@@ -79,11 +79,11 @@ $boolean_options = array( 'true', 'false' );
 
 			if ( 'true' == $option ) {
 
-				esc_html_e( 'True', 'sensei' );
+				esc_html_e( 'True', 'sensei-lms' );
 
 			} else {
 
-				esc_html_e( 'False', 'sensei' );
+				esc_html_e( 'False', 'sensei-lms' );
 
 			}
 

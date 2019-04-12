@@ -51,7 +51,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	 */
 	public function __construct( $analysis ) {
 		$this->analysis  = $analysis;
-		$this->name      = __( 'Bulk Learner Actions', 'sensei' );
+		$this->name      = __( 'Bulk Learner Actions', 'sensei-lms' );
 		$this->file      = $analysis->file;
 		$this->page_slug = $this->analysis->page_slug;
 		if ( is_admin() ) {
@@ -100,11 +100,11 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	public function get_known_bulk_actions() {
 		if ( null === $this->known_bulk_actions ) {
 			$this->known_bulk_actions = array(
-				self::ADD_TO_COURSE                 => __( 'Assign to Course(s)', 'sensei' ),
-				self::REMOVE_FROM_COURSE            => __( 'Unassign from Course(s)', 'sensei' ),
-				self::RESET_COURSE                  => __( 'Reset Course(s)', 'sensei' ),
-				self::COMPLETE_COURSE               => __( 'Recalculate Course(s) Completion (notify on complete)', 'sensei' ),
-				self::RECALCULATE_COURSE_COMPLETION => __( 'Recalculate Course(s) Completion (do not notify on complete)', 'sensei' ),
+				self::ADD_TO_COURSE                 => __( 'Assign to Course(s)', 'sensei-lms' ),
+				self::REMOVE_FROM_COURSE            => __( 'Unassign from Course(s)', 'sensei-lms' ),
+				self::RESET_COURSE                  => __( 'Reset Course(s)', 'sensei-lms' ),
+				self::COMPLETE_COURSE               => __( 'Recalculate Course(s) Completion (notify on complete)', 'sensei-lms' ),
+				self::RECALCULATE_COURSE_COMPLETION => __( 'Recalculate Course(s) Completion (do not notify on complete)', 'sensei-lms' ),
 			);
 		}
 		return (array) apply_filters( 'sensei_learners_admin_get_known_bulk_actions', $this->known_bulk_actions );
@@ -201,12 +201,12 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 		wp_enqueue_script( $sensei_learners_bulk_actions_js, $the_file, $bulk_learner_actions_dependencies, Sensei()->version, true );
 
 		$data = array(
-			'remove_generic_confirm'      => __( 'Are you sure you want to remove this user?', 'sensei' ),
-			'remove_from_lesson_confirm'  => __( 'Are you sure you want to remove the user from this lesson?', 'sensei' ),
-			'remove_from_course_confirm'  => __( 'Are you sure you want to remove the user from this course?', 'sensei' ),
+			'remove_generic_confirm'      => __( 'Are you sure you want to remove this user?', 'sensei-lms' ),
+			'remove_from_lesson_confirm'  => __( 'Are you sure you want to remove the user from this lesson?', 'sensei-lms' ),
+			'remove_from_course_confirm'  => __( 'Are you sure you want to remove the user from this course?', 'sensei-lms' ),
 			'remove_user_from_post_nonce' => wp_create_nonce( 'remove_user_from_post_nonce' ),
 			'bulk_add_learners_nonce'     => wp_create_nonce( self::NONCE_SENSEI_BULK_LEARNER_ACTIONS ),
-			'select_course_placeholder'   => __( 'Select Course', 'sensei' ),
+			'select_course_placeholder'   => __( 'Select Course', 'sensei-lms' ),
 			'is_debug'                    => $is_debug,
 			'sensei_version'              => Sensei()->version,
 		);
@@ -238,7 +238,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 		<?php
 		do_action( 'sensei_learner_admin_wrapper_container', 'bottom' );
 		?>
-		 </div> 
+		 </div>
 		<?php
 		do_action( 'sensei_learner_admin_after_container' );
 	}
@@ -279,14 +279,14 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 		$msgClass = 'notice-error';
 		$trans    = $msg;
 		if ( 'error-invalid-action' === $msg ) {
-			$trans = __( 'This bulk action is not supported', 'sensei' );
+			$trans = __( 'This bulk action is not supported', 'sensei-lms' );
 		}
 		if ( 'error-invalid-course' === $msg ) {
-			$trans = __( 'Invalid Course', 'sensei' );
+			$trans = __( 'Invalid Course', 'sensei-lms' );
 		}
 		if ( 'success-action-success' === $msg ) {
 			$msgClass = 'notice-success';
-			$trans    = __( 'Bulk learner action succeeded', 'sensei' );
+			$trans    = __( 'Bulk learner action succeeded', 'sensei-lms' );
 		}
 		?>
 		<div class="learners-notice <?php echo esc_attr( $msgClass ); ?>">

@@ -25,7 +25,7 @@ $question_data = Sensei_Question::get_template_data( sensei_get_the_question_id(
 <div class="answer">
 
 	<label for="<?php echo esc_attr( 'question_' . $question_data['ID'] ); ?>">
-		<?php esc_html_e( 'Answer:', 'sensei' ); ?>
+		<?php esc_html_e( 'Answer:', 'sensei-lms' ); ?>
 	</label>
 
 	<input type="text" id="<?php echo esc_attr( 'question_' . $question_data['ID'] ); ?>"

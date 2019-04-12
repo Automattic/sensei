@@ -27,9 +27,9 @@ class Sensei_Course_Component_Widget extends WP_Widget {
 	public function __construct() {
 		/* Widget variable settings. */
 		$this->widget_cssclass    = 'widget_sensei_course_component';
-		$this->widget_description = __( 'This widget will output a list of Courses - New, Featured, Free, Paid, Active, Completed.', 'sensei' );
+		$this->widget_description = __( 'This widget will output a list of Courses - New, Featured, Free, Paid, Active, Completed.', 'sensei-lms' );
 		$this->widget_idbase      = 'sensei_course_component';
-		$this->widget_title       = __( 'Sensei - Course Component', 'sensei' );
+		$this->widget_title       = __( 'Sensei - Course Component', 'sensei-lms' );
 
 		/**
 		 * Allows filtering of the widget's component list.
@@ -45,10 +45,10 @@ class Sensei_Course_Component_Widget extends WP_Widget {
 		$this->widget_componentslist = apply_filters(
 			'sensei_widget_course_component_components_list',
 			array(
-				'usercourses'      => __( 'New Courses', 'sensei' ),
-				'featuredcourses'  => __( 'Featured Courses', 'sensei' ),
-				'activecourses'    => __( 'My Active Courses', 'sensei' ),
-				'completedcourses' => __( 'My Completed Courses', 'sensei' ),
+				'usercourses'      => __( 'New Courses', 'sensei-lms' ),
+				'featuredcourses'  => __( 'Featured Courses', 'sensei-lms' ),
+				'activecourses'    => __( 'My Active Courses', 'sensei-lms' ),
+				'completedcourses' => __( 'My Completed Courses', 'sensei-lms' ),
 			)
 		);
 
@@ -166,12 +166,12 @@ class Sensei_Course_Component_Widget extends WP_Widget {
 		?>
 		<!-- Widget Title: Text Input -->
 		<p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Title (optional):', 'sensei' ); ?></label>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Title (optional):', 'sensei-lms' ); ?></label>
 			<input type="text" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>"  value="<?php echo esc_attr( $instance['title'] ); ?>" class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" />
 		</p>
 		<!-- Widget Component: Select Input -->
 		<p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'component' ) ); ?>"><?php esc_html_e( 'Component:', 'sensei' ); ?></label>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'component' ) ); ?>"><?php esc_html_e( 'Component:', 'sensei-lms' ); ?></label>
 			<select name="<?php echo esc_attr( $this->get_field_name( 'component' ) ); ?>" class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'component' ) ); ?>">
 			<?php foreach ( $this->widget_componentslist as $k => $v ) { ?>
 				<option value="<?php echo esc_attr( $k ); ?>"<?php selected( $instance['component'], $k ); ?>><?php echo esc_html( $v ); ?></option>
@@ -180,7 +180,7 @@ class Sensei_Course_Component_Widget extends WP_Widget {
 		</p>
 		<!-- Widget Limit: Text Input -->
 		<p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'limit' ) ); ?>"><?php esc_html_e( 'Number of Courses (optional):', 'sensei' ); ?></label>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'limit' ) ); ?>"><?php esc_html_e( 'Number of Courses (optional):', 'sensei-lms' ); ?></label>
 			<input type="text" name="<?php echo esc_attr( $this->get_field_name( 'limit' ) ); ?>"  value="<?php echo esc_attr( $instance['limit'] ); ?>" class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'limit' ) ); ?>" />
 		</p>
 
@@ -246,11 +246,11 @@ class Sensei_Course_Component_Widget extends WP_Widget {
 	public function display_no_courses_message() {
 
 		if ( 'featuredcourses' === $this->instance['component'] ) {
-			esc_html_e( 'You have no featured courses.', 'sensei' );
+			esc_html_e( 'You have no featured courses.', 'sensei-lms' );
 		} elseif ( 'activecourses' === $this->instance['component'] ) {
-			esc_html_e( 'You have no active courses.', 'sensei' );
+			esc_html_e( 'You have no active courses.', 'sensei-lms' );
 		} elseif ( 'completedcourses' === $this->instance['component'] ) {
-			esc_html_e( 'You have no completed courses.', 'sensei' );
+			esc_html_e( 'You have no completed courses.', 'sensei-lms' );
 		} else {
 			/**
 			 * Filter on the no courses message.
@@ -260,7 +260,7 @@ class Sensei_Course_Component_Widget extends WP_Widget {
 			 * @param string $message  No course message to display.
 			 * @param array  $instance Widget instance arguments.
 			 */
-			echo esc_html( apply_filters( 'sensei_widget_course_component_no_courses_message_' . $this->instance['component'], __( 'You have no courses.', 'sensei' ), $this->instance ) );
+			echo esc_html( apply_filters( 'sensei_widget_course_component_no_courses_message_' . $this->instance['component'], __( 'You have no courses.', 'sensei-lms' ), $this->instance ) );
 		}
 	}
 
@@ -302,7 +302,7 @@ class Sensei_Course_Component_Widget extends WP_Widget {
 					?>
 					<?php if ( isset( Sensei()->settings->settings['course_author'] ) && ( Sensei()->settings->settings['course_author'] ) ) { ?>
 						<span class="course-author">
-							<?php esc_html_e( 'by', 'sensei' ); ?>
+							<?php esc_html_e( 'by', 'sensei-lms' ); ?>
 							<a href="<?php echo esc_url( $author_link ); ?>" title="<?php echo esc_attr( $author_display_name ); ?>">
 								<?php echo esc_html( $author_display_name ); ?>
 							</a>
@@ -311,7 +311,7 @@ class Sensei_Course_Component_Widget extends WP_Widget {
 					<?php } // End If Statement ?>
 
 					<span class="course-lesson-count">
-						<?php echo esc_html( Sensei()->course->course_lesson_count( $post_id ) ) . '&nbsp;' . esc_html__( 'Lessons', 'sensei' ); ?>
+						<?php echo esc_html( Sensei()->course->course_lesson_count( $post_id ) ) . '&nbsp;' . esc_html__( 'Lessons', 'sensei-lms' ); ?>
 					</span>
 
 					<br />
@@ -329,7 +329,7 @@ class Sensei_Course_Component_Widget extends WP_Widget {
 			if ( 'activecourses' == esc_attr( $this->instance['component'] ) || 'completedcourses' == esc_attr( $this->instance['component'] ) ) {
 				$my_account_page_id = intval( Sensei()->settings->settings['my_course_page'] );
 				echo '<li class="my-account fix"><a href="' . esc_url( get_permalink( $my_account_page_id ) ) . '">'
-					 . esc_html__( 'My Courses', 'sensei' )
+					 . esc_html__( 'My Courses', 'sensei-lms' )
 					 . '<span class="meta-nav"></span></a></li>';
 			} // End If Statement
 

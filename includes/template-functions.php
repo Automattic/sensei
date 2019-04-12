@@ -118,7 +118,7 @@ function sensei_start_course_form( $course_id ) {
 
 				<input type="hidden" name="<?php echo esc_attr( 'woothemes_sensei_start_course_noonce' ); ?>" id="<?php echo esc_attr( 'woothemes_sensei_start_course_noonce' ); ?>" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_start_course_noonce' ) ); ?>" />
 
-				<span><input name="course_start" type="submit" class="course-start" value="<?php esc_html_e( 'Start taking this Course', 'sensei' ); ?>"/></span>
+				<span><input name="course_start" type="submit" class="course-start" value="<?php esc_html_e( 'Start taking this Course', 'sensei-lms' ); ?>"/></span>
 
 			</form>
 			<?php
@@ -692,12 +692,12 @@ function sensei_get_the_module_status() {
 	$status_class  = '';
 	if ( $module_progress && $module_progress > 0 ) {
 
-		$module_status = __( 'Completed', 'sensei' );
+		$module_status = __( 'Completed', 'sensei-lms' );
 		$status_class  = 'completed';
 
 		if ( $module_progress < 100 ) {
 
-			$module_status = __( 'In progress', 'sensei' );
+			$module_status = __( 'In progress', 'sensei-lms' );
 			$status_class  = 'in-progress';
 
 		}

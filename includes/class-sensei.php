@@ -268,7 +268,7 @@ class Sensei_Main {
 		if ( is_null( self::$_instance ) ) {
 
 			// Sensei requires a reference to the main Sensei plugin file
-			$sensei_main_plugin_file = dirname( dirname( __FILE__ ) ) . '/sensei.php';
+			$sensei_main_plugin_file = dirname( dirname( __FILE__ ) ) . '/sensei-lms.php';
 
 			self::$_instance = new self( $sensei_main_plugin_file, $args );
 
@@ -288,7 +288,7 @@ class Sensei_Main {
 	 */
 	public static function activation_flush_rules( $plugin ) {
 
-		if ( strpos( $plugin, '/sensei.php' ) > 0 ) {
+		if ( strpos( $plugin, '/sensei-lms.php' ) > 0 ) {
 
 			flush_rewrite_rules( true );
 
@@ -302,7 +302,7 @@ class Sensei_Main {
 	 * @since 1.8.0
 	 */
 	public function __clone() {
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'sensei' ), '1.8' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'sensei-lms' ), '1.8' );
 	}
 
 	/**
@@ -311,7 +311,7 @@ class Sensei_Main {
 	 * @since 1.8.0
 	 */
 	public function __wakeup() {
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'sensei' ), '1.8' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'sensei-lms' ), '1.8' );
 	}
 
 	/**
@@ -503,7 +503,7 @@ class Sensei_Main {
 	 */
 	public function load_localisation() {
 
-		load_plugin_textdomain( 'sensei', false, dirname( plugin_basename( $this->main_plugin_file_name ) ) . '/lang/' );
+		load_plugin_textdomain( 'sensei-lms', false, dirname( plugin_basename( $this->main_plugin_file_name ) ) . '/lang/' );
 
 	} // End load_localisation()
 
@@ -516,7 +516,7 @@ class Sensei_Main {
 	 */
 	public function load_plugin_textdomain() {
 		global $wp_version;
-		$domain = 'sensei';
+		$domain = 'sensei-lms';
 
 		if ( version_compare( $wp_version, '4.7', '>=' ) && is_admin() ) {
 			$wp_user_locale = get_user_locale();
@@ -720,15 +720,15 @@ class Sensei_Main {
 				if ( ( ! $prerequisite_complete && 0 < absint( $course_prerequisite_id ) ) ) {
 
 					$user_allowed = false;
-					$course_link  = '<a href="' . esc_url( get_permalink( $course_prerequisite_id ) ) . '">' . __( 'course', 'sensei' ) . '</a>';
+					$course_link  = '<a href="' . esc_url( get_permalink( $course_prerequisite_id ) ) . '">' . __( 'course', 'sensei-lms' ) . '</a>';
 
 					// translators: The placeholder %s is a link to the course.
-					$this->notices->add_notice( sprintf( __( 'Please complete the previous %1$s before taking this course.', 'sensei' ), $course_link ), 'info' );
+					$this->notices->add_notice( sprintf( __( 'Please complete the previous %1$s before taking this course.', 'sensei-lms' ), $course_link ), 'info' );
 
 				} elseif ( class_exists( 'Sensei_WC' ) && Sensei_WC::is_woocommerce_active() && Sensei_WC::is_course_purchasable( $post->ID ) && ! Sensei_Utils::user_started_course( $post->ID, $current_user->ID ) ) {
 
 					// translators: The placeholders are the opening and closing tags for a link to log in.
-					$message = sprintf( __( 'Or %1$s login %2$s to access your purchased courses', 'sensei' ), '<a href="' . sensei_user_login_url() . '">', '</a>' );
+					$message = sprintf( __( 'Or %1$s login %2$s to access your purchased courses', 'sensei-lms' ), '<a href="' . sensei_user_login_url() . '">', '</a>' );
 					$this->notices->add_notice( $message, 'info' );
 
 				} elseif ( ! Sensei_Utils::user_started_course( $post->ID, $current_user->ID ) ) {
@@ -758,24 +758,24 @@ class Sensei_Main {
 					$user_allowed = true;
 
 				} else {
-					$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __( 'Restricted Access', 'sensei' );
-					$course_link                        = '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '">' . __( 'course', 'sensei' ) . '</a>';
+					$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __( 'Restricted Access', 'sensei-lms' );
+					$course_link                        = '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '">' . __( 'course', 'sensei-lms' ) . '</a>';
 					$wc_post_id                         = get_post_meta( $lesson_course_id, '_course_woocommerce_product', true );
 					if ( class_exists( 'Sensei_WC' ) && Sensei_WC::is_woocommerce_active() && ( 0 < $wc_post_id ) ) {
 						if ( $is_preview ) {
 							// translators: The placeholder %1$s is a link to the Course.
-							$this->permissions_message['message'] = sprintf( __( 'This is a preview lesson. Please purchase the %1$s to access all lessons.', 'sensei' ), $course_link );
+							$this->permissions_message['message'] = sprintf( __( 'This is a preview lesson. Please purchase the %1$s to access all lessons.', 'sensei-lms' ), $course_link );
 						} else {
 							// translators: The placeholder %1$s is a link to the Course.
-							$this->permissions_message['message'] = sprintf( __( 'Please purchase the %1$s before starting this Lesson.', 'sensei' ), $course_link );
+							$this->permissions_message['message'] = sprintf( __( 'Please purchase the %1$s before starting this Lesson.', 'sensei-lms' ), $course_link );
 						}
 					} else {
 						if ( $is_preview ) {
 							// translators: The placeholder %1$s is a link to the Course.
-							$this->permissions_message['message'] = sprintf( __( 'This is a preview lesson. Please sign up for the %1$s to access all lessons.', 'sensei' ), $course_link );
+							$this->permissions_message['message'] = sprintf( __( 'This is a preview lesson. Please sign up for the %1$s to access all lessons.', 'sensei-lms' ), $course_link );
 						} else {
 							// translators: The placeholder %1$s is a link to the Course.
-							$this->permissions_message['message'] = sprintf( __( 'Please sign up for the %1$s before starting the lesson.', 'sensei' ), $course_link );
+							$this->permissions_message['message'] = sprintf( __( 'Please sign up for the %1$s before starting the lesson.', 'sensei-lms' ), $course_link );
 						}
 					} // End if().
 				} // End if().
@@ -802,10 +802,10 @@ class Sensei_Main {
 
 						if ( 0 < absint( $lesson_prerequisite_id ) && ( ! $user_lesson_prerequisite_complete ) ) {
 
-							$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __( 'Restricted Access', 'sensei' );
-							$lesson_link                        = '<a href="' . esc_url( get_permalink( $lesson_prerequisite_id ) ) . '">' . __( 'lesson', 'sensei' ) . '</a>';
+							$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __( 'Restricted Access', 'sensei-lms' );
+							$lesson_link                        = '<a href="' . esc_url( get_permalink( $lesson_prerequisite_id ) ) . '">' . __( 'lesson', 'sensei-lms' ) . '</a>';
 							// translators: The placeholder %1$s is a link to the Lesson.
-							$this->permissions_message['message'] = sprintf( __( 'Please complete the previous %1$s before taking this Quiz.', 'sensei' ), $lesson_link );
+							$this->permissions_message['message'] = sprintf( __( 'Please complete the previous %1$s before taking this Quiz.', 'sensei-lms' ), $lesson_link );
 
 						} else {
 
@@ -818,24 +818,24 @@ class Sensei_Main {
 					if ( is_user_logged_in() && ! Sensei_Utils::user_started_course( $lesson_course_id, $current_user->ID ) && ( isset( $this->settings->settings['access_permission'] ) && ( true == $this->settings->settings['access_permission'] ) ) ) {
 
 						$user_allowed                       = false;
-						$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __( 'Restricted Access', 'sensei' );
-						$course_link                        = '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '">' . __( 'course', 'sensei' ) . '</a>';
+						$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __( 'Restricted Access', 'sensei-lms' );
+						$course_link                        = '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '">' . __( 'course', 'sensei-lms' ) . '</a>';
 						$wc_post_id                         = get_post_meta( $lesson_course_id, '_course_woocommerce_product', true );
 						if ( class_exists( 'Sensei_WC' ) && Sensei_WC::is_woocommerce_active() && ( 0 < $wc_post_id ) ) {
 							// translators: The placeholder %1$s is a link to the Course.
-							$this->permissions_message['message'] = sprintf( __( 'Please purchase the %1$s before starting this Quiz.', 'sensei' ), $course_link );
+							$this->permissions_message['message'] = sprintf( __( 'Please purchase the %1$s before starting this Quiz.', 'sensei-lms' ), $course_link );
 						} else {
 							// translators: The placeholder %1$s is a link to the Course.
-							$this->permissions_message['message'] = sprintf( __( 'Please sign up for the %1$s before starting this Quiz.', 'sensei' ), $course_link );
+							$this->permissions_message['message'] = sprintf( __( 'Please sign up for the %1$s before starting this Quiz.', 'sensei-lms' ), $course_link );
 						} // End if().
 					} else {
 						$user_allowed = true;
 					} // End if().
 				} else {
-					$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __( 'Restricted Access', 'sensei' );
-					$course_link                        = '<a href="' . esc_url( get_permalink( get_post_meta( get_post_meta( $post->ID, '_quiz_lesson', true ), '_lesson_course', true ) ) ) . '">' . __( 'course', 'sensei' ) . '</a>';
+					$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __( 'Restricted Access', 'sensei-lms' );
+					$course_link                        = '<a href="' . esc_url( get_permalink( get_post_meta( get_post_meta( $post->ID, '_quiz_lesson', true ), '_lesson_course', true ) ) ) . '">' . __( 'course', 'sensei-lms' ) . '</a>';
 					// translators: The placeholder %1$s is a link to the Course.
-					$this->permissions_message['message'] = sprintf( __( 'Please sign up for the %1$s before taking this Quiz.', 'sensei' ), $course_link );
+					$this->permissions_message['message'] = sprintf( __( 'Please sign up for the %1$s before taking this Quiz.', 'sensei-lms' ), $course_link );
 				} // End if().
 				break;
 			default:
@@ -1367,12 +1367,12 @@ class Sensei_Main {
 		// documentation url if any.
 		if ( $this->get_documentation_url() ) {
 			/* translators: Docs as in Documentation */
-			$custom_actions['docs'] = sprintf( '<a href="%s" target="_blank">%s</a>', $this->get_documentation_url(), esc_html__( 'Docs', 'sensei' ) );
+			$custom_actions['docs'] = sprintf( '<a href="%s" target="_blank">%s</a>', $this->get_documentation_url(), esc_html__( 'Docs', 'sensei-lms' ) );
 		}
 
 		// support url if any.
 		if ( $this->get_support_url() ) {
-			$custom_actions['support'] = sprintf( '<a href="%s" target="_blank">%s</a>', $this->get_support_url(), esc_html_x( 'Support', 'noun', 'sensei' ) );
+			$custom_actions['support'] = sprintf( '<a href="%s" target="_blank">%s</a>', $this->get_support_url(), esc_html_x( 'Support', 'noun', 'sensei-lms' ) );
 		}
 
 		// add the links to the front of the actions list.
@@ -1390,7 +1390,7 @@ class Sensei_Main {
 	public function get_settings_link( $plugin_id = null ) {
 		$settings_url = $this->get_settings_url( $plugin_id );
 		if ( $settings_url ) {
-			return sprintf( '<a href="%s">%s</a>', $settings_url, esc_html_x( 'Configure', 'plugin action link', 'sensei' ) );
+			return sprintf( '<a href="%s">%s</a>', $settings_url, esc_html_x( 'Configure', 'plugin action link', 'sensei-lms' ) );
 		}
 
 		// no settings.

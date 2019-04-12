@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 echo '<br class="clear" />';
 
 if ( empty( $extensions ) ) {
-	echo '<div class="notice notice-warning below-h2"><p><strong>' . esc_html__( 'No extensions were found.', 'sensei' ) . '</strong></p></div>';
+	echo '<div class="notice notice-warning below-h2"><p><strong>' . esc_html__( 'No extensions were found.', 'sensei-lms' ) . '</strong></p></div>';
 } else {
 	echo '<ul class="products">';
 	foreach ( $extensions as $extension ) {
@@ -36,14 +36,14 @@ if ( empty( $extensions ) ) {
 				<h2><?php echo esc_html( $extension->title ); ?></h2>
 				<?php
 				if ( 0 === $extension->price ) {
-					echo '<div class="price free">' . esc_html__( 'Free', 'sensei' ) . '</div>';
+					echo '<div class="price free">' . esc_html__( 'Free', 'sensei-lms' ) . '</div>';
 				} else {
 					echo '<div class="price">' . esc_html( $extension->price ) . '</div>';
 				}
 				?>
 			</div>
 			<p class="buttons">
-				<a href="<?php echo esc_url( $url, array( 'http', 'https' ) ); ?>" class="button-primary"><?php esc_html_e( 'More Details', 'sensei' ); ?></a>
+				<a href="<?php echo esc_url( $url, array( 'http', 'https' ) ); ?>" class="button-primary"><?php esc_html_e( 'More Details', 'sensei-lms' ); ?></a>
 			</p>
 			<p class="excerpt">
 				<?php echo esc_html( $extension->excerpt ); ?>

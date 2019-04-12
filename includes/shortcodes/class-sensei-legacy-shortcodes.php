@@ -41,12 +41,12 @@ class Sensei_Legacy_Shortcodes {
 		$permalink = get_permalink();
 
 		// translators: %s is the name of the shortcode.
-		$caller  = sprintf( __( 'Shortcode `[%s]`', 'sensei' ), $shortcode );
+		$caller  = sprintf( __( 'Shortcode `[%s]`', 'sensei-lms' ), $shortcode );
 		$message = sprintf(
 			// translators: %1$s is the name of the shortcode; %2$s is page URL with shortcode; %3$s is URL for shortcode documentation.
 			__(
 				'The shortcode `[%1$s]` (used on: %2$s) has been deprecated since Sensei v1.9.0. Check %3$s for alternatives.',
-				'sensei'
+				'sensei-lms'
 			),
 			$shortcode,
 			$permalink,
@@ -70,7 +70,7 @@ class Sensei_Legacy_Shortcodes {
 			// translators: %1$s is the name of the shortcode; %2$s is the link to Sensei documentation.
 			__(
 				'The Sensei shortcode <strong>[%1$s]</strong> has been deprecated and will soon be removed. Check <a href="%2$s" rel="noopener">Sensei documentation</a> for alternatives. Only site editors will see this notice.',
-				'sensei'
+				'sensei-lms'
 			),
 			$shortcode,
 			self::DOCS_SHORTCODE_URL
@@ -114,7 +114,7 @@ class Sensei_Legacy_Shortcodes {
 	 */
 	public static function paid_courses( $atts, $content = null ) {
 
-		return self::generate_shortcode_courses( __( 'Paid Courses', 'sensei' ), 'paidcourses' );
+		return self::generate_shortcode_courses( __( 'Paid Courses', 'sensei-lms' ), 'paidcourses' );
 
 	} // End paid_courses()
 
@@ -129,7 +129,7 @@ class Sensei_Legacy_Shortcodes {
 	 */
 	public static function featured_courses( $atts, $content = null ) {
 
-		return self::generate_shortcode_courses( __( 'Featured Courses', 'sensei' ), 'featuredcourses' );
+		return self::generate_shortcode_courses( __( 'Featured Courses', 'sensei-lms' ), 'featuredcourses' );
 
 	} // End featured_courses()
 
@@ -143,7 +143,7 @@ class Sensei_Legacy_Shortcodes {
 	 */
 	public static function free_courses( $atts, $content = null ) {
 
-		return self::generate_shortcode_courses( __( 'Free Courses', 'sensei' ), 'freecourses' );
+		return self::generate_shortcode_courses( __( 'Free Courses', 'sensei-lms' ), 'freecourses' );
 
 	} // End free_courses()
 
@@ -157,7 +157,7 @@ class Sensei_Legacy_Shortcodes {
 	 */
 	public static function new_courses( $atts, $content = null ) {
 
-		return self::generate_shortcode_courses( __( 'New Courses', 'sensei' ), 'newcourses' );
+		return self::generate_shortcode_courses( __( 'New Courses', 'sensei-lms' ), 'newcourses' );
 
 	} // End new_courses()
 
@@ -419,7 +419,7 @@ class Sensei_Legacy_Shortcodes {
 
 						<?php if ( isset( Sensei()->settings->settings['course_author'] ) && ( Sensei()->settings->settings['course_author'] ) ) { ?>
 							<span class="course-author">
-								<?php esc_html_e( 'by', 'sensei' ); ?>
+								<?php esc_html_e( 'by', 'sensei-lms' ); ?>
 								<a href="<?php echo esc_url( $author_link ); ?>" title="<?php echo esc_attr( $author_display_name ); ?>">
 									<?php echo esc_html( $author_display_name ); ?>
 								</a>
@@ -427,14 +427,14 @@ class Sensei_Legacy_Shortcodes {
 						<?php } // End If Statement ?>
 
 						<span class="course-lesson-count">
-									<?php echo esc_html( Sensei()->course->course_lesson_count( $course_id ) ) . '&nbsp;' . esc_html__( 'Lessons', 'sensei' ); ?>
+									<?php echo esc_html( Sensei()->course->course_lesson_count( $course_id ) ) . '&nbsp;' . esc_html__( 'Lessons', 'sensei-lms' ); ?>
 								</span>
 
 						<?php if ( ! empty( $category_output ) ) { ?>
 							<span class="course-category">
 								<?php
 								// translators: Placeholder is a comma-separated list of categories.
-								echo wp_kses_post( sprintf( __( 'in %s', 'sensei' ), $category_output ) );
+								echo wp_kses_post( sprintf( __( 'in %s', 'sensei-lms' ), $category_output ) );
 								?>
 							</span>
 						<?php } // End If Statement ?>
@@ -453,10 +453,10 @@ class Sensei_Legacy_Shortcodes {
 					<?php
 					if ( 0 < $preview_lesson_count && ! $is_user_taking_course ) {
 						// translators: Placeholder is the number of preview lessons.
-						$preview_lessons = sprintf( __( '(%d preview lessons)', 'sensei' ), $preview_lesson_count );
+						$preview_lessons = sprintf( __( '(%d preview lessons)', 'sensei-lms' ), $preview_lesson_count );
 						?>
 						<p class="sensei-free-lessons">
-							<a href="<?php echo esc_url( get_permalink( $course_id ) ); ?>"><?php esc_html_e( 'Preview this course', 'sensei' ); ?>
+							<a href="<?php echo esc_url( get_permalink( $course_id ) ); ?>"><?php esc_html_e( 'Preview this course', 'sensei-lms' ); ?>
 							</a> - <?php echo esc_html( $preview_lessons ); ?>
 						</p>
 					<?php } ?>
