@@ -331,6 +331,10 @@ class Sensei_Admin {
 
 		}
 
+		if ( 'course' === $screen->id ) {
+			wp_enqueue_script( 'sensei-component-course-lessons', Sensei()->plugin_url . 'build/components/course-lessons/index.js', array(), Sensei()->version, true );
+		}
+
 		wp_enqueue_script( 'sensei-message-menu-fix', Sensei()->plugin_url . 'assets/js/admin/message-menu-fix.js', array( 'jquery' ), Sensei()->version, true );
 	}
 

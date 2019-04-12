@@ -1,9 +1,9 @@
 const webpack = require( 'webpack' );
 const glob = require( 'glob' );
 const miniCssExtractPlugin = require( 'mini-css-extract-plugin' );
-const entryArray = glob.sync( './assets/blocks/**/index.jsx' );
+const entryArray = glob.sync( './assets/components/**/index.jsx' );
 const entryObject = entryArray.reduce( ( acc, item ) => {
-	let name = item.replace( './assets/blocks/', '' ).replace( '/index.jsx', '' );
+	let name = item.replace( './assets/components/', '' ).replace( '/index.jsx', '' );
 	acc[name] = item;
 
 	return acc;
@@ -11,9 +11,10 @@ const entryObject = entryArray.reduce( ( acc, item ) => {
 
 const webpackConfig = ( env, argv ) => {
 	return {
+		mode: argv.mode ? argv.mode : 'development',
 		entry: entryObject,
 		output: {
-			filename: 'build/blocks/[name]/index.js',
+			filename: 'build/components/[name]/index.js',
 			path: __dirname
 		},
 		module: {
@@ -26,7 +27,7 @@ const webpackConfig = ( env, argv ) => {
 				{
 					test: /style\.s?css$/,
 					include: [
-						/assets\/blocks/
+						/assets\/components/
 					],
 					use: [
 						argv.mode !== 'production' ? 'style-loader' : miniCssExtractPlugin.loader,
@@ -38,7 +39,7 @@ const webpackConfig = ( env, argv ) => {
 		},
 		plugins: [
 			new miniCssExtractPlugin( {
-				filename: 'build/blocks/[name]/style.css'
+				filename: 'build/components/[name]/style.css'
 			} )
 		]
 	};

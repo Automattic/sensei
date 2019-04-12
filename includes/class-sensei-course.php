@@ -452,6 +452,7 @@ class Sensei_Course {
 		} // End If Statement
 
 		$html  = '';
+		$html .= '<div id="sensei-component-course-lesson-container">Component should go here</div>';
 		$html .= '<input type="hidden" name="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" id="'
 				 . esc_attr( 'woo_' . $this->token . '_noonce' )
 				 . '" value="' . esc_attr( wp_create_nonce( plugin_basename( __FILE__ ) ) ) . '" />';
