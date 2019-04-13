@@ -105,7 +105,7 @@ class Sensei_Lesson {
 			// flush rewrite rules when saving a lesson
 			add_action( 'save_post', array( __CLASS__, 'flush_rewrite_rules' ) );
 
-			add_action('admin_head', array( $this, 'add_custom_link_to_course' ) );
+			add_action( 'admin_head', array( $this, 'add_custom_link_to_course' ) );
 
 		} else {
 			// Frontend actions
