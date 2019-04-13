@@ -119,6 +119,10 @@ class Sensei_Lesson {
 	 */
 	function add_custom_link_to_course() {
 	    global $post;
+	    $screen = get_current_screen();
+	    if ( 'post' !== $screen->base ) {
+	        return;
+	    }
 
 	    $course_id_meta = get_post_meta( $post->ID, '_lesson_course', true );
 	    if ( ! is_numeric( $course_id_meta ) ) {
