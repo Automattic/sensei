@@ -120,6 +120,11 @@ class Sensei_Lesson {
 	function add_custom_link_to_course() {
 	    global $post;
 	    $screen = get_current_screen();
+
+	    if ( ! isset( $post ) ) {
+	        return;
+        }
+
 	    if ( 'post' !== $screen->base ) {
 	        return;
 	    }
@@ -140,7 +145,7 @@ class Sensei_Lesson {
             jQuery( function () {
                 jQuery( "body.post-type-lesson .wrap a.page-title-action" )
                     .last()
-                    .after( '<a href="<?php echo esc_attr( $url ); ?>" class="page-title-action"><?php echo esc_html__( 'Edit Course', 'sensei' ); ?></a>' );
+                    .after( '<a href="<?php echo esc_attr( $url ); ?>" class="page-title-action"><?php echo esc_html__( 'Edit Course', 'sensei-lms' ); ?></a>' );
             });
             </script><?php
 	}
