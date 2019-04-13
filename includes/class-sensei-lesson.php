@@ -105,12 +105,41 @@ class Sensei_Lesson {
 			// flush rewrite rules when saving a lesson
 			add_action( 'save_post', array( __CLASS__, 'flush_rewrite_rules' ) );
 
+			add_action('admin_head', array( $this, 'add_custom_link_to_course' ) );
+
 		} else {
 			// Frontend actions
 			// Starts lesson when the student visits for the first time and prerequisite courses have been met.
 			add_action( 'sensei_single_lesson_content_inside_before', array( __CLASS__, 'maybe_start_lesson' ) );
 		} // End If Statement
 	} // End __construct()
+
+	/**
+	 * Adds a link for editing the lesson's course if it belongs to a course.
+	 */
+	function add_custom_link_to_course() {
+	    global $post;
+
+	    $course_id_meta = get_post_meta( $post->ID, '_lesson_course', true );
+	    if ( ! is_numeric( $course_id_meta ) ) {
+	        return;
+	    }
+
+	    $type = get_post_type( $post );
+	    if ( 'lesson' !== $type ) {
+	        return;
+	    }
+
+	    $course_id = intval( $course_id_meta );
+	    $url =  admin_url( "post.php?post=$course_id&action=edit" ); ?>
+            <script>
+            jQuery( function () {
+                jQuery( "body.post-type-lesson .wrap a.page-title-action" )
+                    .last()
+                    .after( '<a href="<?php echo esc_attr( $url ); ?>" class="page-title-action"><?php echo esc_html__( 'Edit Course', 'sensei' ); ?></a>' );
+            });
+            </script><?php
+	}
 
 	/**
 	 * meta_box_setup function.
