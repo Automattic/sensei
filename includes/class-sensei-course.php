@@ -200,7 +200,7 @@ class Sensei_Course {
 		// Add Meta Box for Course Meta
 		add_meta_box( 'course-video', __( 'Course Video', 'sensei-lms' ), array( $this, 'course_video_meta_box_content' ), $this->token, 'normal', 'default' );
 		// Add Meta Box for Course Lessons
-		add_meta_box( 'course-lessons', __( 'Course Lessons', 'sensei-lms' ), array( $this, 'course_lessons_meta_box_content' ), $this->token, 'normal', 'default' );
+		add_meta_box( 'course-lessons', __( 'Lessons', 'sensei-lms' ), array( $this, 'course_lessons_meta_box_content' ), $this->token, 'normal', 'default' );
 		// Add Meta Box to link to Manage Learners
 		add_meta_box( 'course-manage', __( 'Course Management', 'sensei-lms' ), array( $this, 'course_manage_meta_box_content' ), $this->token, 'side', 'default' );
 		// Remove "Custom Settings" meta box.
@@ -440,77 +440,9 @@ class Sensei_Course {
 	 * @return void
 	 */
 	public function course_lessons_meta_box_content() {
-
 		global $post;
-
-		// Setup Lesson Query
-		$posts_array = array();
-		if ( 0 < $post->ID ) {
-
-			$posts_array = $this->course_lessons( $post->ID, 'any' );
-
-		} // End If Statement
-
-		$html  = '';
-		$html .= '<div id="sensei-component-course-lesson-container">Component should go here</div>';
-		$html .= '<input type="hidden" name="' . esc_attr( 'woo_' . $this->token . '_noonce' ) . '" id="'
-				 . esc_attr( 'woo_' . $this->token . '_noonce' )
-				 . '" value="' . esc_attr( wp_create_nonce( plugin_basename( __FILE__ ) ) ) . '" />';
-
-		$course_id            = ( 0 < $post->ID ) ? '&course_id=' . $post->ID : '';
-		$add_lesson_admin_url = admin_url( 'post-new.php?post_type=lesson' . $course_id );
-
-		if ( count( $posts_array ) > 0 ) {
-
-			foreach ( $posts_array as $post_item ) {
-
-				$html .= '<p>' . "\n";
-
-					$html .= esc_html( $post_item->post_title ) . "\n";
-				$html     .= '<a href="'
-					. esc_url( get_edit_post_link( $post_item->ID ) )
-					. '" title="'
-					// translators: Placeholder is the Lesson title.
-					. esc_attr( sprintf( __( 'Edit %s', 'sensei-lms' ), $post_item->post_title ) )
-					. '" class="edit-lesson-action">'
-					. esc_html__( 'Edit this lesson', 'sensei-lms' )
-					. '</a>';
-
-				$html .= '</p>' . "\n";
-
-			} // End For Loop
-		}
-		$html .= '<p>';
-		if ( 0 === count( $posts_array ) ) {
-			$html .= esc_html__( 'No lessons exist yet for this course.', 'sensei-lms' ) . "\n";
-		} else {
-			$html .= '<hr />';
-		}
-		$html .= '<a href="' . esc_url( $add_lesson_admin_url )
-			. '" title="' . esc_attr__( 'Add a Lesson', 'sensei-lms' ) . '">';
-		if ( count( $posts_array ) < 1 ) {
-			$html .= esc_html__( 'Please add some.', 'sensei-lms' );
-		} else {
-
-			$html .= esc_html__( '+ Add Another Lesson', 'sensei-lms' );
-		}
-
-		$html .= '</a></p>';
-
-		echo wp_kses(
-			$html,
-			array_merge(
-				wp_kses_allowed_html( 'post' ),
-				array(
-					'input' => array(
-						'id'    => array(),
-						'name'  => array(),
-						'type'  => array(),
-						'value' => array(),
-					),
-				)
-			)
-		);
+		echo '<div id="sensei-component-course-lesson-container"><noscript>This feature needs JavaScript to be enabled</noscript></div>';
+		echo '<script>window.senseiLMSAdminEditCourseID = ' . esc_js( $post->ID ) . ';</script>';
 	} // End course_lessons_meta_box_content()
 
 	/**
