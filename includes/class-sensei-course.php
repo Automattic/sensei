@@ -1430,7 +1430,7 @@ class Sensei_Course {
 						[ false ],
 						'2.0.0',
 						null,
-						'Sensei "Delete Course" button will be removed in version 4.0.'
+						'Sensei LMS "Delete Course" button will be removed in version 4.0.'
 					);
 
 					if ( false == $course_purchased && $show_delete_course_button ) {
@@ -2239,7 +2239,7 @@ class Sensei_Course {
 				[ false ],
 				'2.0.0',
 				null,
-				'Sensei "Delete Course" button will be removed in version 4.0.'
+				'Sensei LMS "Delete Course" button will be removed in version 4.0.'
 			);
 
 			if ( ! $course_purchased

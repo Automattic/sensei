@@ -293,7 +293,7 @@ class Sensei_Updates {
 
 					} else {
 
-						_doing_it_wrong( esc_html( $function_name ), 'Is not a valid Sensei updater function', 'Sensei 1.9.0' );
+						_doing_it_wrong( esc_html( $function_name ), 'Is not a valid Sensei LMS updater function', 'Sensei 1.9.0' );
 						return;
 
 					}// End If Statement
@@ -341,7 +341,7 @@ class Sensei_Updates {
 
 					} else {
 
-						_doing_it_wrong( esc_html( $function_name ), 'Is not a valid Sensei updater function', 'Sensei 1.9.0' );
+						_doing_it_wrong( esc_html( $function_name ), 'Is not a valid Sensei LMS updater function', 'Sensei 1.9.0' );
 						return;
 
 					} // End If Statement

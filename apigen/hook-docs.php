@@ -90,7 +90,7 @@ class Sensei_HookFinder {
 
 		echo '<div id="content">';
 		echo '<h1>Action and Filter Hook Reference</h1>';
-		echo '<div class="description"><p>The following is a full list of actions and filters found in Sensei.</p></div>';
+		echo '<div class="description"><p>The following is a full list of actions and filters found in Sensei LMS.</p></div>';
 
 		foreach ( self::$files_to_scan as $heading => $files ) {
 			self::$custom_hooks_found = array();
