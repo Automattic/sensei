@@ -117,37 +117,37 @@ class Sensei_Lesson {
 	/**
 	 * Adds a link for editing the lesson's course if it belongs to a course.
 	 */
-	function add_custom_link_to_course() {
-	    global $post;
-	    $screen = get_current_screen();
+	public function add_custom_link_to_course() {
+		global $post;
+		$screen = get_current_screen();
 
-	    if ( ! isset( $post ) ) {
-	        return;
-        }
+		if ( ! isset( $post ) ) {
+			return;
+		}
 
-	    if ( 'post' !== $screen->base ) {
-	        return;
-	    }
+		if ( 'post' !== $screen->base ) {
+			return;
+		}
 
-	    $course_id_meta = get_post_meta( $post->ID, '_lesson_course', true );
-	    if ( ! is_numeric( $course_id_meta ) ) {
-	        return;
-	    }
+		$course_id_meta = get_post_meta( $post->ID, '_lesson_course', true );
+		if ( ! is_numeric( $course_id_meta ) ) {
+			return;
+		}
 
-	    $type = get_post_type( $post );
-	    if ( 'lesson' !== $type ) {
-	        return;
-	    }
+		$type = get_post_type( $post );
+		if ( 'lesson' !== $type ) {
+			return;
+		}
 
-	    $course_id = intval( $course_id_meta );
-	    $url =  admin_url( "post.php?post=$course_id&action=edit" ); ?>
-            <script>
-            jQuery( function () {
-                jQuery( "body.post-type-lesson .wrap a.page-title-action" )
+		$course_id = intval( $course_id_meta );
+		$url       = admin_url( "post.php?post=$course_id&action=edit" ); ?>
+        <script>
+            jQuery(function () {
+                jQuery("body.post-type-lesson .wrap a.page-title-action")
                     .last()
-                    .after( '<a href="<?php echo esc_attr( $url ); ?>" class="page-title-action"><?php echo esc_html__( 'Edit Course', 'sensei-lms' ); ?></a>' );
+                    .after('<a href="<?php echo esc_attr( $url ); ?>" class="page-title-action"><?php echo esc_html__( 'Edit Course', 'sensei-lms' ); ?></a>');
             });
-            </script><?php
+        </script><?php
 	}
 
 	/**
