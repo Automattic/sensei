@@ -32,9 +32,8 @@ class CourseOutline extends React.Component {
             return response.json();
         }).then((responseJson) => {
             const nextOrderIndex = responseJson.lessons.length;
-            this.setState(Object.assign({}, this.state, responseJson, {nextOrderIndex}));
+            this.setState(Object.assign({}, this.state, responseJson, { nextOrderIndex } ) );
         }).catch(( err ) => {
-            console.log( err );
         });
     }
 
@@ -79,7 +78,8 @@ class CourseOutline extends React.Component {
 
     }
 
-    trashLesson(lessonID) {
+    trashLesson( event, lessonID ) {
+        event.preventDefault();
         const fetchOptions = Object.assign({}, this.getFetchApiOptions(), {method: 'DELETE'});
         window.fetch(this.apiSettings.root + 'wp/v2/lessons/' + lessonID, fetchOptions).then(( response ) => {
             if ( response.status !== 200) {
@@ -104,7 +104,7 @@ class CourseOutline extends React.Component {
                         createElement('span', null, lesson.order + ' '),
                         createElement('a', {href: lesson.edit_link}, lesson.title )),
                     createElement('td', null,
-                        createElement('a', {href:'#', onClick: ( e ) => { this.trashLesson( lesson.lesson_id )}}, 'Trash')))
+                        createElement('a', {href:'#', onClick: ( e ) => { this.trashLesson( e, lesson.lesson_id )}}, 'Trash')))
 
             );
         });
