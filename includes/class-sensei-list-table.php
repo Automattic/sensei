@@ -174,6 +174,14 @@ class Sensei_List_Table extends WP_List_Table {
 		$columns = $this->get_columns();
 		$hidden  = get_hidden_columns( $this->screen );
 
+		$sortable_columns = $this->get_sortable_columns();
+
+		$legacy_screen_id = preg_replace( '/^sensei\-lms\_/', 'sensei_', $this->screen->id );
+		if ( has_filter( "manage_{$legacy_screen_id}_sortable_columns" ) ) {
+			_deprecated_hook( esc_html( "manage_{$legacy_screen_id}_sortable_columns" ), '2.0.1', esc_html( "manage_{$this->screen->id}_sortable_columns" ) );
+			$sortable_columns = apply_filters( "manage_{$legacy_screen_id}_sortable_columns", $sortable_columns );
+		}
+
 		/**
 		 * Filter the list table sortable columns for a specific screen.
 		 *
@@ -184,7 +192,7 @@ class Sensei_List_Table extends WP_List_Table {
 		 *
 		 * @param array $sortable_columns An array of sortable columns.
 		 */
-		$_sortable = apply_filters( "manage_{$this->screen->id}_sortable_columns", $this->get_sortable_columns() );
+		$_sortable = apply_filters( "manage_{$this->screen->id}_sortable_columns", $sortable_columns );
 
 		$sortable = array();
 		foreach ( $_sortable as $id => $data ) {
