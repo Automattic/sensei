@@ -142,12 +142,13 @@ class Sensei_Lesson {
 		$course_id = intval( $course_id_meta );
 		$url       = admin_url( "post.php?post=$course_id&action=edit" ); ?>
         <script>
-            jQuery(function () {
-                jQuery("body.post-type-lesson .wrap a.page-title-action")
-                    .last()
-                    .after('<a href="<?php echo esc_attr( $url ); ?>" class="page-title-action"><?php echo esc_html__( 'Edit Course', 'sensei-lms' ); ?></a>');
-            });
-        </script><?php
+			jQuery(function () {
+				jQuery("body.post-type-lesson .wrap a.page-title-action")
+					.last()
+					.after('<a href="<?php echo esc_attr( $url ); ?>" class="page-title-action"><?php echo esc_html__( 'Edit Course', 'sensei-lms' ); ?></a>');
+			});
+		</script>
+		<?php
 	}
 
 	/**
