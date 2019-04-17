@@ -29,7 +29,7 @@ class Sensei_Category_Courses_Widget extends WP_Widget {
 		$this->widget_cssclass    = 'widget_sensei_category_courses';
 		$this->widget_description = __( 'This widget will output a list of Courses for a specific category.', 'sensei-lms' );
 		$this->widget_idbase      = 'sensei_category_courses';
-		$this->widget_title       = __( 'Sensei - Category Courses', 'sensei-lms' );
+		$this->widget_title       = __( 'Sensei LMS - Category Courses', 'sensei-lms' );
 
 		/* Widget settings. */
 		$widget_ops = array(

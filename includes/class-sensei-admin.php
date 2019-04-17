@@ -206,7 +206,7 @@ class Sensei_Admin {
 
 			?>
 			<div id="message" class="updated sensei-message sensei-connect">
-				<p><?php echo wp_kses_post( __( '<strong>Congratulations!</strong> &#8211; Sensei has been installed and set up.', 'sensei-lms' ) ); ?></p>
+				<p><?php echo wp_kses_post( __( '<strong>Congratulations!</strong> &#8211; Sensei LMS has been installed and set up.', 'sensei-lms' ) ); ?></p>
 				<p><a href="https://twitter.com/share" class="twitter-share-button" data-url="https://woocommerce.com/products/sensei/" data-text="A premium Learning Management plugin for #WordPress that helps you create courses. Beautifully." data-via="senseilms" data-size="large" data-hashtags="Sensei">Tweet</a>
 				<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script></p>
 			</div>
@@ -346,7 +346,7 @@ class Sensei_Admin {
 		<div id="message" class="updated sensei-message sensei-connect">
 
 			<p>
-				<?php echo wp_kses_post( __( '<strong>Welcome to Sensei</strong> &#8211; You\'re almost ready to create some courses!', 'sensei-lms' ) ); ?>
+				<?php echo wp_kses_post( __( '<strong>Welcome to Sensei LMS</strong> &#8211; You\'re almost ready to create some courses!', 'sensei-lms' ) ); ?>
 			</p>
 
 			<p class="submit">
@@ -354,7 +354,7 @@ class Sensei_Admin {
 				<a href="<?php echo esc_url( add_query_arg( 'install_sensei_pages', 'true', admin_url( 'admin.php?page=sensei-settings' ) ) ); ?>"
 				   class="button-primary">
 
-					<?php esc_html_e( 'Install Sensei Pages', 'sensei-lms' ); ?>
+					<?php esc_html_e( 'Install Sensei LMS Pages', 'sensei-lms' ); ?>
 
 				</a>
 
@@ -381,7 +381,7 @@ class Sensei_Admin {
 		<div id="message" class="updated sensei-message sensei-connect">
 
 			<p>
-				<?php echo wp_kses_post( __( '<strong>Sensei has been installed</strong> &#8211; You\'re ready to start creating courses!', 'sensei-lms' ) ); ?>
+				<?php echo wp_kses_post( __( '<strong>Sensei LMS has been installed</strong> &#8211; You\'re ready to start creating courses!', 'sensei-lms' ) ); ?>
 			</p>
 
 			<p class="submit">
@@ -1761,7 +1761,7 @@ class Sensei_Admin {
 			 * - The current admin email address from the Settings.
 			 * - A link to view the existing admin users, with the translated text "existing Administrator".
 			 */
-			$warning = __( 'To prevent issues with Sensei module names, your Email Address in %1$s should also belong to an Administrator user. You can either %2$s with the email address %3$s, or change that email address to match the email of an %4$s.', 'sensei-lms' );
+			$warning = __( 'To prevent issues with Sensei LMS module names, your Email Address in %1$s should also belong to an Administrator user. You can either %2$s with the email address %3$s, or change that email address to match the email of an %4$s.', 'sensei-lms' );
 
 			?>
 			<div id="message" class="error sensei-message sensei-connect">

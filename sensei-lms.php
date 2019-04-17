@@ -66,7 +66,7 @@ if ( class_exists( 'Sensei_Main' ) ) {
 		// Hope that this will just be a conflict that happens during activation.
 		return;
 	} else {
-		die( esc_html__( 'Deactivate other instances of Sensei before activating this plugin.', 'sensei-lms' ) );
+		die( esc_html__( 'Deactivate other instances of Sensei LMS before activating this plugin.', 'sensei-lms' ) );
 	}
 }
 

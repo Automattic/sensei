@@ -19,7 +19,7 @@
 	>
 		<input type="hidden" name="SOURCE" value="PLUGIN">
 		<div id="mc_embed_signup_scroll">
-			<h2><?php esc_html_e( 'Join Sensei\'s Mailing List!', 'sensei-lms' ); ?></h2>
+			<h2><?php esc_html_e( 'Join Sensei LMS\'s Mailing List!', 'sensei-lms' ); ?></h2>
 			<p>
 				<?php esc_html_e( "We're here for you — get tips, product updates, and inspiration straight to your mailbox.", 'sensei-lms' ); ?>
 			</p>
@@ -27,7 +27,7 @@
 				<div class="gdpr-checkbox">
 					<label class="checkbox subfield" for="gdpr_email">
 						<input type="checkbox" id="gdpr_email" name="gdpr[<?php echo esc_attr( Sensei_Email_Signup_Form::GDPR_EMAIL_FIELD_ID ); ?>]" value="Y" class="av-checkbox ">
-						<span><?php esc_html_e( 'Yes, please send me occasional emails about Sensei', 'sensei-lms' ); ?></span>
+						<span><?php esc_html_e( 'Yes, please send me occasional emails about Sensei LMS', 'sensei-lms' ); ?></span>
 					</label>
 				</div>
 			</div>

@@ -29,7 +29,7 @@ class Sensei_Course_Component_Widget extends WP_Widget {
 		$this->widget_cssclass    = 'widget_sensei_course_component';
 		$this->widget_description = __( 'This widget will output a list of Courses - New, Featured, Free, Paid, Active, Completed.', 'sensei-lms' );
 		$this->widget_idbase      = 'sensei_course_component';
-		$this->widget_title       = __( 'Sensei - Course Component', 'sensei-lms' );
+		$this->widget_title       = __( 'Sensei LMS - Course Component', 'sensei-lms' );
 
 		/**
 		 * Allows filtering of the widget's component list.

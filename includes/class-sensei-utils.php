@@ -180,7 +180,7 @@ class Sensei_Utils {
 		// Check for legacy code
 		if ( isset( $args['type'] ) && in_array( $args['type'], array( 'sensei_course_start', 'sensei_course_end', 'sensei_lesson_start', 'sensei_lesson_end', 'sensei_quiz_asked', 'sensei_user_grade', 'sensei_quiz_grade', 'sense_answer_notes' ) ) ) {
 			// translators: Placeholder is the name of a deprecated Sensei activity type.
-			_deprecated_argument( __FUNCTION__, '1.7', esc_html( sprintf( __( 'Sensei activity type %s is no longer used.', 'sensei-lms' ), $args['type'] ) ) );
+			_deprecated_argument( __FUNCTION__, '1.7', esc_html( sprintf( __( 'Sensei LMS activity type %s is no longer used.', 'sensei-lms' ), $args['type'] ) ) );
 			return false;
 		}
 		// Are we checking for specific comment_approved statuses?
