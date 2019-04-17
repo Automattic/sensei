@@ -141,7 +141,7 @@ class Sensei_Lesson {
 
 		$course_id = intval( $course_id_meta );
 		$url       = admin_url( "post.php?post=$course_id&action=edit" ); ?>
-        <script>
+		<script>
 			jQuery(function () {
 				jQuery("body.post-type-lesson .wrap a.page-title-action")
 					.last()
