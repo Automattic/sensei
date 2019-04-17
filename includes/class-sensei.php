@@ -183,6 +183,13 @@ class Sensei_Main {
 	public $feature_flags;
 
 	/**
+	 * The course outline rest api class.
+	 *
+	 * @var Sensei_REST_API_Endpoint_Course_Outline
+	 */
+	public $course_outline_api;
+
+	/**
 	 * Constructor method.
 	 *
 	 * @param  string $file The base file of the plugin.
@@ -440,6 +447,9 @@ class Sensei_Main {
 
 		// Add plugin action links filter
 		add_filter( 'plugin_action_links_' . plugin_basename( $this->main_plugin_file_name ), array( $this, 'plugin_action_links' ) );
+
+		$this->course_outline_api = new Sensei_REST_API_Endpoint_Course_Outline();
+		add_action( 'rest_api_init', array( $this->course_outline_api, 'register_routes' ) );
 
 		/**
 		 * Load all Template hooks
