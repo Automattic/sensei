@@ -556,7 +556,8 @@ class Sensei_Messages {
 	/**
 	 * Exclude message comments from feed queries and RSS.
 	 *
-	 * @since 2.0.1
+	 * @since 2.0.2
+	 * @access private
 	 *
 	 * @param  string $where The WHERE clause of the query.
 	 * @return string
