@@ -41,7 +41,7 @@ class Sensei_Updates {
 				'auto'   => array(
 					'assign_role_caps' => array(
 						'title'   => __( 'Assign role capabilities', 'sensei-lms' ),
-						'desc'    => __( 'Assigns Sensei capabilites to the relevant user roles.', 'sensei-lms' ),
+						'desc'    => __( 'Assigns Sensei LMS capabilites to the relevant user roles.', 'sensei-lms' ),
 						'product' => 'Sensei',
 					),
 				),
@@ -91,7 +91,7 @@ class Sensei_Updates {
 						'desc'  => __( 'Sets all quizzes to show all questions - this can be changed per quiz.', 'sensei-lms' ),
 					),
 					'remove_deleted_user_activity'    => array(
-						'title' => __( 'Remove Sensei activity for deleted users', 'sensei-lms' ),
+						'title' => __( 'Remove Sensei LMS activity for deleted users', 'sensei-lms' ),
 						'desc'  => __( 'Removes all course, lesson &amp; quiz activity for users that have already been deleted from the database. This will fix incorrect learner counts in the Analysis section.', 'sensei-lms' ),
 					),
 				),
@@ -154,8 +154,8 @@ class Sensei_Updates {
 						'desc'  => __( 'Convert to new question statuses.', 'sensei-lms' ),
 					),
 					'update_legacy_sensei_comments_status' => array(
-						'title' => __( 'Convert legacy Sensei activity types', 'sensei-lms' ),
-						'desc'  => __( 'Convert all legacy Sensei activity types such as \'sensei_lesson_start\' and \'sensei_user_answer\' to new status format.', 'sensei-lms' ),
+						'title' => __( 'Convert legacy Sensei LMS activity types', 'sensei-lms' ),
+						'desc'  => __( 'Convert all legacy Sensei LMS activity types such as \'sensei_lesson_start\' and \'sensei_user_answer\' to new status format.', 'sensei-lms' ),
 					),
 					'update_comment_course_lesson_comment_counts' => array(
 						'title' => __( 'Update comment counts', 'sensei-lms' ),
@@ -167,7 +167,7 @@ class Sensei_Updates {
 				'auto' => array(
 					'index_comment_status_field' => array(
 						'title' => __( 'Add database index to comment statuses', 'sensei-lms' ),
-						'desc'  => __( 'This indexes the comment statuses in the database, which will speed up all Sensei activity queries.', 'sensei-lms' ),
+						'desc'  => __( 'This indexes the comment statuses in the database, which will speed up all Sensei LMS activity queries.', 'sensei-lms' ),
 					),
 				),
 			),
@@ -229,7 +229,7 @@ class Sensei_Updates {
 	 */
 	public function add_update_admin_screen() {
 		if ( current_user_can( 'manage_options' ) ) {
-			add_submenu_page( 'sensei', __( 'Sensei Updates', 'sensei-lms' ), __( 'Data Updates', 'sensei-lms' ), 'manage_options', 'sensei_updates', array( $this, 'sensei_updates_page' ) );
+			add_submenu_page( 'sensei', __( 'Sensei LMS Updates', 'sensei-lms' ), __( 'Data Updates', 'sensei-lms' ), 'manage_options', 'sensei_updates', array( $this, 'sensei_updates_page' ) );
 		}
 	} // End add_update_admin_screen()
 
@@ -253,7 +253,7 @@ class Sensei_Updates {
 		<div class="wrap">
 
 		<div id="icon-woothemes-sensei" class="icon32"><br></div>
-		<h1><?php esc_html_e( 'Sensei Updates', 'sensei-lms' ); ?></h1>
+		<h1><?php esc_html_e( 'Sensei LMS Updates', 'sensei-lms' ); ?></h1>
 
 		<?php
 		$function_name = '';
@@ -293,7 +293,7 @@ class Sensei_Updates {
 
 					} else {
 
-						_doing_it_wrong( esc_html( $function_name ), 'Is not a valid Sensei updater function', 'Sensei 1.9.0' );
+						_doing_it_wrong( esc_html( $function_name ), 'Is not a valid Sensei LMS updater function', 'Sensei 1.9.0' );
 						return;
 
 					}// End If Statement
@@ -341,7 +341,7 @@ class Sensei_Updates {
 
 					} else {
 
-						_doing_it_wrong( esc_html( $function_name ), 'Is not a valid Sensei updater function', 'Sensei 1.9.0' );
+						_doing_it_wrong( esc_html( $function_name ), 'Is not a valid Sensei LMS updater function', 'Sensei 1.9.0' );
 						return;
 
 					} // End If Statement
@@ -414,7 +414,7 @@ class Sensei_Updates {
 			<p>
 				<?php
 				// translators: Placeholders are opening and closing <code> tags.
-				echo wp_kses_post( sprintf( __( 'These are updates that have been made available as new Sensei versions have been released. Updates of type %1$sAuto%2$s will run as you update Sensei to the relevant version - other updates need to be run manually and you can do that here.', 'sensei-lms' ), '<code>', '</code>' ) );
+				echo wp_kses_post( sprintf( __( 'These are updates that have been made available as new Sensei LMS versions have been released. Updates of type %1$sAuto%2$s will run as you update Sensei LMS to the relevant version - other updates need to be run manually and you can do that here.', 'sensei-lms' ), '<code>', '</code>' ) );
 				?>
 			</p>
 
@@ -680,10 +680,10 @@ class Sensei_Updates {
 
 			if ( $use_the_force && 0 < count( $updates_to_run ) ) {
 
-				$update_title = __( 'Important Sensei updates required', 'sensei-lms' );
+				$update_title = __( 'Important Sensei LMS updates required', 'sensei-lms' );
 
-				$update_message  = '<h1>' . esc_html__( 'Important Sensei upgrades required!', 'sensei-lms' ) . '</h1>' . "\n";
-				$update_message .= '<p>' . esc_html__( 'The latest version of Sensei requires some important database upgrades. In order to run these upgrades you will need to follow the step by step guide below. Your site will not function correctly unless you run these critical updates.', 'sensei-lms' ) . '</p>' . "\n";
+				$update_message  = '<h1>' . esc_html__( 'Important Sensei LMS upgrades required!', 'sensei-lms' ) . '</h1>' . "\n";
+				$update_message .= '<p>' . esc_html__( 'The latest version of Sensei LMS requires some important database upgrades. In order to run these upgrades you will need to follow the step by step guide below. Your site will not function correctly unless you run these critical updates.', 'sensei-lms' ) . '</p>' . "\n";
 
 				$update_message .= '<p><b>' . esc_html__( 'To run the upgrades click on each of the links below in the order that they appear.', 'sensei-lms' ) . '</b></p>' . "\n";
 

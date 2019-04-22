@@ -30,7 +30,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		if ( is_admin() ) {
 
 			$this->has_tabs   = true;
-			$this->name       = __( 'Sensei Settings', 'sensei-lms' );
+			$this->name       = __( 'Sensei LMS Settings', 'sensei-lms' );
 			$this->menu_label = __( 'Settings', 'sensei-lms' );
 			$this->page_slug  = 'sensei-settings';
 
@@ -224,8 +224,8 @@ class Sensei_Settings extends Sensei_Settings_API {
 		);
 
 		$fields['styles_disable']              = array(
-			'name'        => __( 'Disable Sensei Styles', 'sensei-lms' ),
-			'description' => __( 'Prevent the frontend stylesheets from loading. This will remove the default styles for all Sensei elements.', 'sensei-lms' ),
+			'name'        => __( 'Disable Sensei LMS Styles', 'sensei-lms' ),
+			'description' => __( 'Prevent the frontend stylesheets from loading. This will remove the default styles for all Sensei LMS elements.', 'sensei-lms' ),
 			'type'        => 'checkbox',
 			'default'     => false,
 			'section'     => 'default-settings',
@@ -240,7 +240,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		);
 
 		$fields['js_disable'] = array(
-			'name'        => __( 'Disable Sensei Javascript', 'sensei-lms' ),
+			'name'        => __( 'Disable Sensei LMS Javascript', 'sensei-lms' ),
 			'description' => __( 'Prevent the frontend javascript from loading. This affects the progress bars and the My Courses tabs.', 'sensei-lms' ),
 			'type'        => 'checkbox',
 			'default'     => false,
@@ -257,7 +257,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		$fields['sensei_delete_data_on_uninstall'] = array(
 			'name'        => __( 'Delete data on uninstall', 'sensei-lms' ),
-			'description' => __( 'Delete Sensei data when the plugin is deleted. Once removed, this data cannot be restored.', 'sensei-lms' ),
+			'description' => __( 'Delete Sensei LMS data when the plugin is deleted. Once removed, this data cannot be restored.', 'sensei-lms' ),
 			'type'        => 'checkbox',
 			'default'     => false,
 			'section'     => 'default-settings',
@@ -562,10 +562,10 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		$fields['email_footer_text'] = array(
 			'name'        => __( 'Email Footer Text', 'sensei-lms' ),
-			'description' => __( 'The text to appear in the footer of Sensei emails.', 'sensei-lms' ),
+			'description' => __( 'The text to appear in the footer of Sensei LMS emails.', 'sensei-lms' ),
 			'type'        => 'textarea',
 			// translators: Placeholder is the blog name.
-			'default'     => sprintf( __( '%1$s - Powered by Sensei', 'sensei-lms' ), get_bloginfo( 'name' ) ),
+			'default'     => sprintf( __( '%1$s - Powered by Sensei LMS', 'sensei-lms' ), get_bloginfo( 'name' ) ),
 			'section'     => 'email-notification-settings',
 			'required'    => 0,
 		);
@@ -573,7 +573,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$fields['email_base_color'] = array(
 			'name'        => __( 'Base Colour', 'sensei-lms' ),
 			// translators: Placeholders are opening and closing <code> tags.
-			'description' => sprintf( __( 'The base colour for Sensei email templates. Default %1$s#557da1%2$s.', 'sensei-lms' ), '<code>', '</code>' ),
+			'description' => sprintf( __( 'The base colour for Sensei LMS email templates. Default %1$s#557da1%2$s.', 'sensei-lms' ), '<code>', '</code>' ),
 			'type'        => 'color',
 			'default'     => '#557da1',
 			'section'     => 'email-notification-settings',
@@ -583,7 +583,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$fields['email_background_color'] = array(
 			'name'        => __( 'Background Colour', 'sensei-lms' ),
 			// translators: Placeholders are opening and closing <code> tags.
-			'description' => sprintf( __( 'The background colour for Sensei email templates. Default %1$s#f5f5f5%2$s.', 'sensei-lms' ), '<code>', '</code>' ),
+			'description' => sprintf( __( 'The background colour for Sensei LMS email templates. Default %1$s#f5f5f5%2$s.', 'sensei-lms' ), '<code>', '</code>' ),
 			'type'        => 'color',
 			'default'     => '#f5f5f5',
 			'section'     => 'email-notification-settings',
@@ -593,7 +593,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$fields['email_body_background_color'] = array(
 			'name'        => __( 'Body Background Colour', 'sensei-lms' ),
 			// translators: Placeholders are opening and closing <code> tags.
-			'description' => sprintf( __( 'The main body background colour for Sensei email templates. Default %1$s#fdfdfd%2$s.', 'sensei-lms' ), '<code>', '</code>' ),
+			'description' => sprintf( __( 'The main body background colour for Sensei LMS email templates. Default %1$s#fdfdfd%2$s.', 'sensei-lms' ), '<code>', '</code>' ),
 			'type'        => 'color',
 			'default'     => '#fdfdfd',
 			'section'     => 'email-notification-settings',
@@ -603,7 +603,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$fields['email_text_color'] = array(
 			'name'        => __( 'Body Text Colour', 'sensei-lms' ),
 			// translators: Placeholders are opening and closing <code> tags.
-			'description' => sprintf( __( 'The main body text colour for Sensei email templates. Default %1$s#505050%2$s.', 'sensei-lms' ), '<code>', '</code>' ),
+			'description' => sprintf( __( 'The main body text colour for Sensei LMS email templates. Default %1$s#505050%2$s.', 'sensei-lms' ), '<code>', '</code>' ),
 			'type'        => 'color',
 			'default'     => '#505050',
 			'section'     => 'email-notification-settings',

@@ -29,7 +29,7 @@ class Sensei_Lesson_Component_Widget extends WP_Widget {
 		$this->widget_cssclass    = 'widget_sensei_lesson_component';
 		$this->widget_description = __( 'This widget will output a list of the latest Lessons.', 'sensei-lms' );
 		$this->widget_idbase      = 'sensei_lesson_component';
-		$this->widget_title       = __( 'Sensei - Lesson Component', 'sensei-lms' );
+		$this->widget_title       = __( 'Sensei LMS - Lesson Component', 'sensei-lms' );
 
 		$this->widget_componentslist = array(
 			'newlessons' => __( 'New Lessons', 'sensei-lms' ),

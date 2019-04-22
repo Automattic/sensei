@@ -69,7 +69,7 @@ class Sensei_Legacy_Shortcodes {
 		$message = sprintf(
 			// translators: %1$s is the name of the shortcode; %2$s is the link to Sensei documentation.
 			__(
-				'The Sensei shortcode <strong>[%1$s]</strong> has been deprecated and will soon be removed. Check <a href="%2$s" rel="noopener">Sensei documentation</a> for alternatives. Only site editors will see this notice.',
+				'The Sensei LMS shortcode <strong>[%1$s]</strong> has been deprecated and will soon be removed. Check <a href="%2$s" rel="noopener">Sensei LMS documentation</a> for alternatives. Only site editors will see this notice.',
 				'sensei-lms'
 			),
 			$shortcode,

@@ -50,7 +50,7 @@ final class Sensei_Extensions {
 	 */
 	public function enqueue_admin_assets() {
 		$screen = get_current_screen();
-		if ( in_array( $screen->id, array( 'sensei_page_sensei-extensions' ), true ) ) {
+		if ( in_array( $screen->id, array( 'sensei-lms_page_sensei-extensions' ), true ) ) {
 			wp_enqueue_style( 'sensei-admin-extensions', Sensei()->plugin_url . 'assets/css/extensions.css', '', Sensei()->version, 'screen' );
 		}
 	}
@@ -156,7 +156,7 @@ final class Sensei_Extensions {
 	 * @access private
 	 */
 	public function add_admin_menu_item() {
-		add_submenu_page( 'sensei', __( 'Sensei Extensions', 'sensei-lms' ), __( 'Extensions', 'sensei-lms' ), 'install_plugins', 'sensei-extensions', array( $this, 'render' ) );
+		add_submenu_page( 'sensei', __( 'Sensei LMS Extensions', 'sensei-lms' ), __( 'Extensions', 'sensei-lms' ), 'install_plugins', 'sensei-extensions', array( $this, 'render' ) );
 	}
 
 	/**
