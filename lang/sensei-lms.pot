@@ -15,7 +15,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: sensei-lms.php:69
-msgid "Deactivate other instances of Sensei before activating this plugin."
+msgid "Deactivate other instances of Sensei LMS before activating this plugin."
 msgstr ""
 
 #: includes/class-sensei-admin-rest-api-testharness.php:29
@@ -31,7 +31,7 @@ msgid "Order Lessons"
 msgstr ""
 
 #: includes/class-sensei-admin.php:209
-msgid "<strong>Congratulations!</strong> &#8211; Sensei has been installed and set up."
+msgid "<strong>Congratulations!</strong> &#8211; Sensei LMS has been installed and set up."
 msgstr ""
 
 #: includes/class-sensei-admin.php:266
@@ -53,11 +53,11 @@ msgid "My Courses"
 msgstr ""
 
 #: includes/class-sensei-admin.php:349
-msgid "<strong>Welcome to Sensei</strong> &#8211; You're almost ready to create some courses!"
+msgid "<strong>Welcome to Sensei LMS</strong> &#8211; You're almost ready to create some courses!"
 msgstr ""
 
 #: includes/class-sensei-admin.php:357
-msgid "Install Sensei Pages"
+msgid "Install Sensei LMS Pages"
 msgstr ""
 
 #: includes/class-sensei-admin.php:363
@@ -65,7 +65,7 @@ msgid "Skip setup"
 msgstr ""
 
 #: includes/class-sensei-admin.php:384
-msgid "<strong>Sensei has been installed</strong> &#8211; You're ready to start creating courses!"
+msgid "<strong>Sensei LMS has been installed</strong> &#8211; You're ready to start creating courses!"
 msgstr ""
 
 #: includes/class-sensei-admin.php:388, includes/class-sensei-settings.php:34
@@ -198,7 +198,7 @@ msgid "existing Administrator"
 msgstr ""
 
 #: includes/class-sensei-admin.php:1764
-msgid "To prevent issues with Sensei module names, your Email Address in %1$s should also belong to an Administrator user. You can either %2$s with the email address %3$s, or change that email address to match the email of an %4$s."
+msgid "To prevent issues with Sensei LMS module names, your Email Address in %1$s should also belong to an Administrator user. You can either %2$s with the email address %3$s, or change that email address to match the email of an %4$s."
 msgstr ""
 
 #: includes/class-sensei-analysis-course-list-table.php:61, includes/class-sensei-analysis-lesson-list-table.php:46, includes/class-sensei-analysis-overview-list-table.php:69, includes/class-sensei-grading-main.php:63, includes/class-sensei-learners-admin-bulk-actions-view.php:51, includes/class-sensei-learners-main.php:71
@@ -632,7 +632,7 @@ msgstr ""
 
 #. translators: %1$s is version of PHP that Sensei requires; %2$s is the version of PHP WordPress is running on.
 #: includes/class-sensei-dependency-checker.php:45
-msgid "<strong>Sensei</strong> requires a minimum PHP version of %1$s, but you are running %2$s."
+msgid "<strong>Sensei LMS</strong> requires a minimum PHP version of %1$s, but you are running %2$s."
 msgstr ""
 
 #: includes/class-sensei-dependency-checker.php:56
@@ -919,6 +919,10 @@ msgstr ""
 
 #: includes/class-sensei-learners-admin-bulk-actions-controller.php:209, includes/class-sensei-learners-admin-bulk-actions-view.php:171
 msgid "Select Course"
+msgstr ""
+
+#: includes/class-sensei-learners-admin-bulk-actions-controller.php:267, includes/class-sensei-learners-admin-bulk-actions-controller.php:267
+msgid "Learner Admin"
 msgstr ""
 
 #: includes/class-sensei-learners-admin-bulk-actions-controller.php:282
@@ -1520,7 +1524,7 @@ msgstr ""
 msgid "Search Users"
 msgstr ""
 
-#: includes/class-sensei-list-table.php:262
+#: includes/class-sensei-list-table.php:271
 msgid "No items found."
 msgstr ""
 
@@ -2219,7 +2223,7 @@ msgid "%s updated"
 msgstr ""
 
 #: includes/class-sensei-settings.php:33
-msgid "Sensei Settings"
+msgid "Sensei LMS Settings"
 msgstr ""
 
 #: includes/class-sensei-settings.php:107
@@ -2323,11 +2327,11 @@ msgid "Output a placeholder image when no featured image has been specified for 
 msgstr ""
 
 #: includes/class-sensei-settings.php:227
-msgid "Disable Sensei Styles"
+msgid "Disable Sensei LMS Styles"
 msgstr ""
 
 #: includes/class-sensei-settings.php:228
-msgid "Prevent the frontend stylesheets from loading. This will remove the default styles for all Sensei elements."
+msgid "Prevent the frontend stylesheets from loading. This will remove the default styles for all Sensei LMS elements."
 msgstr ""
 
 #: includes/class-sensei-settings.php:234
@@ -2339,7 +2343,7 @@ msgid "Set the quiz question points format"
 msgstr ""
 
 #: includes/class-sensei-settings.php:243
-msgid "Disable Sensei Javascript"
+msgid "Disable Sensei LMS Javascript"
 msgstr ""
 
 #: includes/class-sensei-settings.php:244
@@ -2359,7 +2363,7 @@ msgid "Delete data on uninstall"
 msgstr ""
 
 #: includes/class-sensei-settings.php:260
-msgid "Delete Sensei data when the plugin is deleted. Once removed, this data cannot be restored."
+msgid "Delete Sensei LMS data when the plugin is deleted. Once removed, this data cannot be restored."
 msgstr ""
 
 #: includes/class-sensei-settings.php:268
@@ -2633,13 +2637,13 @@ msgid "Email Footer Text"
 msgstr ""
 
 #: includes/class-sensei-settings.php:565
-msgid "The text to appear in the footer of Sensei emails."
+msgid "The text to appear in the footer of Sensei LMS emails."
 msgstr ""
 
 #. translators: Placeholder is the blog name.
 #. translators: Placeholder is the blog name.
 #: includes/class-sensei-settings.php:568, templates/emails/footer.php:26
-msgid "%1$s - Powered by Sensei"
+msgid "%1$s - Powered by Sensei LMS"
 msgstr ""
 
 #: includes/class-sensei-settings.php:574
@@ -2648,7 +2652,7 @@ msgstr ""
 
 #. translators: Placeholders are opening and closing <code> tags.
 #: includes/class-sensei-settings.php:576
-msgid "The base colour for Sensei email templates. Default %1$s#557da1%2$s."
+msgid "The base colour for Sensei LMS email templates. Default %1$s#557da1%2$s."
 msgstr ""
 
 #: includes/class-sensei-settings.php:584
@@ -2657,7 +2661,7 @@ msgstr ""
 
 #. translators: Placeholders are opening and closing <code> tags.
 #: includes/class-sensei-settings.php:586
-msgid "The background colour for Sensei email templates. Default %1$s#f5f5f5%2$s."
+msgid "The background colour for Sensei LMS email templates. Default %1$s#f5f5f5%2$s."
 msgstr ""
 
 #: includes/class-sensei-settings.php:594
@@ -2666,7 +2670,7 @@ msgstr ""
 
 #. translators: Placeholders are opening and closing <code> tags.
 #: includes/class-sensei-settings.php:596
-msgid "The main body background colour for Sensei email templates. Default %1$s#fdfdfd%2$s."
+msgid "The main body background colour for Sensei LMS email templates. Default %1$s#fdfdfd%2$s."
 msgstr ""
 
 #: includes/class-sensei-settings.php:604
@@ -2675,7 +2679,7 @@ msgstr ""
 
 #. translators: Placeholders are opening and closing <code> tags.
 #: includes/class-sensei-settings.php:606
-msgid "The main body text colour for Sensei email templates. Default %1$s#505050%2$s."
+msgid "The main body text colour for Sensei LMS email templates. Default %1$s#505050%2$s."
 msgstr ""
 
 #: includes/class-sensei-settings.php:669
@@ -2708,7 +2712,7 @@ msgid "Assign role capabilities"
 msgstr ""
 
 #: includes/class-sensei-updates.php:44
-msgid "Assigns Sensei capabilites to the relevant user roles."
+msgid "Assigns Sensei LMS capabilites to the relevant user roles."
 msgstr ""
 
 #: includes/class-sensei-updates.php:53
@@ -2768,7 +2772,7 @@ msgid "Sets all quizzes to show all questions - this can be changed per quiz."
 msgstr ""
 
 #: includes/class-sensei-updates.php:94
-msgid "Remove Sensei activity for deleted users"
+msgid "Remove Sensei LMS activity for deleted users"
 msgstr ""
 
 #: includes/class-sensei-updates.php:95
@@ -2872,11 +2876,11 @@ msgid "Convert to new question statuses."
 msgstr ""
 
 #: includes/class-sensei-updates.php:157
-msgid "Convert legacy Sensei activity types"
+msgid "Convert legacy Sensei LMS activity types"
 msgstr ""
 
 #: includes/class-sensei-updates.php:158
-msgid "Convert all legacy Sensei activity types such as 'sensei_lesson_start' and 'sensei_user_answer' to new status format."
+msgid "Convert all legacy Sensei LMS activity types such as 'sensei_lesson_start' and 'sensei_user_answer' to new status format."
 msgstr ""
 
 #: includes/class-sensei-updates.php:161
@@ -2892,11 +2896,11 @@ msgid "Add database index to comment statuses"
 msgstr ""
 
 #: includes/class-sensei-updates.php:170
-msgid "This indexes the comment statuses in the database, which will speed up all Sensei activity queries."
+msgid "This indexes the comment statuses in the database, which will speed up all Sensei LMS activity queries."
 msgstr ""
 
 #: includes/class-sensei-updates.php:232, includes/class-sensei-updates.php:256
-msgid "Sensei Updates"
+msgid "Sensei LMS Updates"
 msgstr ""
 
 #: includes/class-sensei-updates.php:232
@@ -2937,7 +2941,7 @@ msgstr ""
 
 #. translators: Placeholders are opening and closing <code> tags.
 #: includes/class-sensei-updates.php:417
-msgid "These are updates that have been made available as new Sensei versions have been released. Updates of type %1$sAuto%2$s will run as you update Sensei to the relevant version - other updates need to be run manually and you can do that here."
+msgid "These are updates that have been made available as new Sensei LMS versions have been released. Updates of type %1$sAuto%2$s will run as you update Sensei LMS to the relevant version - other updates need to be run manually and you can do that here."
 msgstr ""
 
 #: includes/class-sensei-updates.php:422
@@ -2971,15 +2975,15 @@ msgid "Run Update"
 msgstr ""
 
 #: includes/class-sensei-updates.php:683
-msgid "Important Sensei updates required"
+msgid "Important Sensei LMS updates required"
 msgstr ""
 
 #: includes/class-sensei-updates.php:685
-msgid "Important Sensei upgrades required!"
+msgid "Important Sensei LMS upgrades required!"
 msgstr ""
 
 #: includes/class-sensei-updates.php:686
-msgid "The latest version of Sensei requires some important database upgrades. In order to run these upgrades you will need to follow the step by step guide below. Your site will not function correctly unless you run these critical updates."
+msgid "The latest version of Sensei LMS requires some important database upgrades. In order to run these upgrades you will need to follow the step by step guide below. Your site will not function correctly unless you run these critical updates."
 msgstr ""
 
 #: includes/class-sensei-updates.php:688
@@ -3001,7 +3005,7 @@ msgstr ""
 
 #: includes/class-sensei-usage-tracking.php:67
 msgid ""
-"We'd love if you helped us make Sensei better by allowing us to collect\n"
+"We'd love if you helped us make Sensei LMS better by allowing us to collect\n"
 "				<a href=\"%s\" target=\"_blank\">usage tracking data</a>.\n"
 "				No sensitive information is collected, and you can opt out at any time."
 msgstr ""
@@ -3012,7 +3016,7 @@ msgstr ""
 
 #: includes/class-sensei-usage-tracking.php:113
 msgid ""
-"Help us make Sensei better by allowing us to collect\n"
+"Help us make Sensei LMS better by allowing us to collect\n"
 "					<a href=\"%s\" target=\"_blank\">usage tracking data</a>.\n"
 "					No sensitive information is collected."
 msgstr ""
@@ -3023,7 +3027,7 @@ msgstr ""
 
 #. translators: Placeholder is the name of a deprecated Sensei activity type.
 #: includes/class-sensei-utils.php:183
-msgid "Sensei activity type %s is no longer used."
+msgid "Sensei LMS activity type %s is no longer used."
 msgstr ""
 
 #: includes/class-sensei-utils.php:1273
@@ -3225,7 +3229,7 @@ msgid "This widget will output a list of Courses for a specific category."
 msgstr ""
 
 #: widgets/class-sensei-category-courses-widget.php:32
-msgid "Sensei - Category Courses"
+msgid "Sensei LMS - Category Courses"
 msgstr ""
 
 #: widgets/class-sensei-category-courses-widget.php:140, widgets/class-sensei-course-categories-widget.php:139, widgets/class-sensei-course-component-widget.php:169, widgets/class-sensei-lesson-component-widget.php:147
@@ -3249,7 +3253,7 @@ msgid "This widget will output a list of Course Categories."
 msgstr ""
 
 #: widgets/class-sensei-course-categories-widget.php:32
-msgid "Sensei - Course Categories"
+msgid "Sensei LMS - Course Categories"
 msgstr ""
 
 #: widgets/class-sensei-course-categories-widget.php:144
@@ -3269,7 +3273,7 @@ msgid "This widget will output a list of Courses - New, Featured, Free, Paid, Ac
 msgstr ""
 
 #: widgets/class-sensei-course-component-widget.php:32
-msgid "Sensei - Course Component"
+msgid "Sensei LMS - Course Component"
 msgstr ""
 
 #: widgets/class-sensei-course-component-widget.php:50
@@ -3301,7 +3305,7 @@ msgid "This widget will output a list of the latest Lessons."
 msgstr ""
 
 #: widgets/class-sensei-lesson-component-widget.php:32
-msgid "Sensei - Lesson Component"
+msgid "Sensei LMS - Lesson Component"
 msgstr ""
 
 #: widgets/class-sensei-lesson-component-widget.php:35
@@ -3317,7 +3321,7 @@ msgid "More Lessons"
 msgstr ""
 
 #: includes/admin/class-sensei-extensions.php:159, includes/admin/views/html-admin-page-extensions.php:13
-msgid "Sensei Extensions"
+msgid "Sensei LMS Extensions"
 msgstr ""
 
 #: includes/admin/class-sensei-extensions.php:159
@@ -3434,7 +3438,7 @@ msgid "%s cannot be empty"
 msgstr ""
 
 #: includes/email-signup/template.php:22
-msgid "Join Sensei's Mailing List!"
+msgid "Join Sensei LMS's Mailing List!"
 msgstr ""
 
 #: includes/email-signup/template.php:24
@@ -3442,7 +3446,7 @@ msgid "We're here for you — get tips, product updates, and inspiration straigh
 msgstr ""
 
 #: includes/email-signup/template.php:30
-msgid "Yes, please send me occasional emails about Sensei"
+msgid "Yes, please send me occasional emails about Sensei LMS"
 msgstr ""
 
 #: includes/email-signup/template.php:36
@@ -3587,7 +3591,7 @@ msgstr ""
 
 #. translators: %1$s is the name of the shortcode; %2$s is the link to Sensei documentation.
 #: includes/shortcodes/class-sensei-legacy-shortcodes.php:71
-msgid "The Sensei shortcode <strong>[%1$s]</strong> has been deprecated and will soon be removed. Check <a href=\"%2$s\" rel=\"noopener\">Sensei documentation</a> for alternatives. Only site editors will see this notice."
+msgid "The Sensei LMS shortcode <strong>[%1$s]</strong> has been deprecated and will soon be removed. Check <a href=\"%2$s\" rel=\"noopener\">Sensei LMS documentation</a> for alternatives. Only site editors will see this notice."
 msgstr ""
 
 #: includes/shortcodes/class-sensei-shortcode-course-categories.php:96
