@@ -1,6 +1,16 @@
-*** Sensei Changelog ***
+*** Changelog ***
 
-2019.04.23 - version 2.0.0
+2019.05.21 - version 2.0.1
+
+* New: Rename plugin to Sensei LMS - #2511, #2516
+* New: Deprecate `manage_sensei_page_sensei_learners_sortable_columns` in favour of `manage_sensei-lms_page_sensei_learners_sortable_columns` - #2516
+* New: Deprecate `manage_sensei_page_sensei_grading_sortable_columns` in favour of `manage_sensei-lms_page_sensei_grading_sortable_columns` - #2516
+* New: Deprecate `manage_sensei_page_sensei_analysis_sortable_columns` in favour of `manage_sensei-lms_page_sensei_analysis_sortable_columns` - #2516
+* Tweak: Change text domain from `sensei` to `sensei-lms` - #2511
+* Tweak: Update footer text in `templates/emails/footer.php` - #2516
+* Fix: Allow "Learner Admin" link to be translated - #2516
+
+2019.04.02 - version 2.0.0
 
 * New: Extract all WooCommerce integration functionality
 * New: Add dependency check for minimum PHP version (5.6)
