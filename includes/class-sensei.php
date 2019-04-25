@@ -371,7 +371,7 @@ class Sensei_Main {
 		// data will be sent.
 		$this->usage_tracking->schedule_tracking_task();
 
-		// Initialize Event Tracking
+		// Initialize Event Tracking.
 		Sensei_Event_Tracking::init();
 
 		// Differentiate between administration and frontend logic.

@@ -1,6 +1,10 @@
 <?php
 /**
  * Usage Tracking subclass for Sensei.
+ *
+ * @package Core
+ * @author Automattic
+ * @since 2.1.0
  **/
 
 if ( ! defined( 'ABSPATH' ) ) {
