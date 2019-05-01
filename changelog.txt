@@ -1,6 +1,6 @@
 *** Changelog ***
 
-2019.05.21 - version 2.0.1
+2019.05.01 - version 2.0.1
 
 * New: Rename plugin to Sensei LMS - #2511, #2516
 * New: Deprecate `manage_sensei_page_sensei_learners_sortable_columns` in favour of `manage_sensei-lms_page_sensei_learners_sortable_columns` - #2516
