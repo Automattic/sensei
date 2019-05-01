@@ -80,6 +80,9 @@ class Sensei_Admin {
 		// remove a course from course order when trashed
 		add_action( 'transition_post_status', array( $this, 'remove_trashed_course_from_course_order' ) );
 
+		// Add workaround for block editor bug on CPT pages. See the function doc for more information.
+		add_action( 'admin_footer', array( $this, 'output_cpt_block_editor_workaround' ) );
+
 		Sensei_Extensions::instance()->init();
 
 	} // End __construct()
@@ -1773,6 +1776,45 @@ class Sensei_Admin {
 			</div>
 			<?php
 		}
+	}
+
+	/**
+	 * Adds a workaround for fixing an issue with CPT's in the block editor.
+	 *
+	 * See https://github.com/WordPress/gutenberg/pull/15375
+	 *
+	 * Once that PR makes its way into WP Core, this function (and its
+	 * attachment to the action in `__construct`) can be removed.
+	 *
+	 * @access private
+	 *
+	 * @since 2.1.0
+	 */
+	public function output_cpt_block_editor_workaround() {
+		$screen = get_current_screen();
+
+		if ( ! $screen->is_block_editor() ) {
+			return;
+		}
+
+?>
+<script type="text/javascript">
+	jQuery( document ).ready( function() {
+		if ( wp.apiFetch ) {
+			wp.apiFetch.use( function( options, next ) {
+				let url = options.path || options.url;
+				if ( 'POST' === options.method && wp.url.getQueryArg( url, 'meta-box-loader' ) ) {
+					if ( options.body instanceof FormData && 'undefined' === options.body.get( 'post_author' ) ) {
+						options.body.delete( 'post_author' );
+					}
+				}
+				return next( options );
+			} );
+		}
+	} );
+</script>
+<?php
+
 	}
 
 } // End Class
