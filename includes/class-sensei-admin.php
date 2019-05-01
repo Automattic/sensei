@@ -1797,7 +1797,7 @@ class Sensei_Admin {
 			return;
 		}
 
-?>
+		?>
 <script type="text/javascript">
 	jQuery( document ).ready( function() {
 		if ( wp.apiFetch ) {
@@ -1813,7 +1813,7 @@ class Sensei_Admin {
 		}
 	} );
 </script>
-<?php
+		<?php
 
 	}
 
