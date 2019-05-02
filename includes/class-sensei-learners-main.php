@@ -68,26 +68,27 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		switch ( $this->view ) {
 			case 'learners':
 				$columns = array(
-					'title'        => __( 'Learner', 'sensei-lms' ),
-					'date_started' => __( 'Date Started', 'sensei-lms' ),
-					'user_status'  => __( 'Status', 'sensei-lms' ),
+					'title'           => __( 'Learner', 'sensei-lms' ),
+					'date_started'    => __( 'Date Started', 'sensei-lms' ),
+					'date_completed'  => __( 'Date Completed', 'sensei-lms' ),
+					'user_status'     => __( 'Status', 'sensei-lms' ),
 				);
 				break;
 
 			case 'lessons':
 				$columns = array(
-					'title'        => __( 'Lesson', 'sensei-lms' ),
-					'num_learners' => __( '# Learners', 'sensei-lms' ),
-					'updated'      => __( 'Last Updated', 'sensei-lms' ),
+					'title'           => __( 'Lesson', 'sensei-lms' ),
+					'num_learners'    => __( '# Learners', 'sensei-lms' ),
+					'updated'         => __( 'Last Updated', 'sensei-lms' ),
 				);
 				break;
 
 			case 'courses':
 			default:
 				$columns = array(
-					'title'        => __( 'Course', 'sensei-lms' ),
-					'num_learners' => __( '# Learners', 'sensei-lms' ),
-					'updated'      => __( 'Last Updated', 'sensei-lms' ),
+					'title'           => __( 'Course', 'sensei-lms' ),
+					'num_learners'    => __( '# Learners', 'sensei-lms' ),
+					'updated'         => __( 'Last Updated', 'sensei-lms' ),
 				);
 				break;
 		}
@@ -294,11 +295,12 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				$column_data = apply_filters(
 					'sensei_learners_main_column_data',
 					array(
-						'title'        => '<strong><a class="row-title" href="' . esc_url( admin_url( 'user-edit.php?user_id=' . $user_activity->user_id ) ) . '" title="' . esc_attr( $a_title ) . '">' . esc_html( $title ) . '</a></strong>',
-						'date_started' => get_comment_meta( $user_activity->comment_ID, 'start', true ),
-						'user_status'  => $status_html,
+						'title'           => '<strong><a class="row-title" href="' . esc_url( admin_url( 'user-edit.php?user_id=' . $user_activity->user_id ) ) . '" title="' . esc_attr( $a_title ) . '">' . esc_html( $title ) . '</a></strong>',
+						'date_started'    => get_comment_meta( $user_activity->comment_ID, 'start', true ),
+            'date_completed'  => ( 'complete' == $user_activity->comment_approved || 'graded' == $user_activity->comment_approved || 'passed' == $user_activity->comment_approved ) ? $user_activity->comment_date : '',
+						'user_status'     => $status_html,
 						// translators: Placeholder is the "object type"; lesson or course.
-						'actions'      => '<a class="remove-learner button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '">' . sprintf( esc_html__( 'Remove from %1$s', 'sensei-lms' ), esc_html( $object_type ) ) . '</a>'
+						'actions'         => '<a class="remove-learner button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '">' . sprintf( esc_html__( 'Remove from %1$s', 'sensei-lms' ), esc_html( $object_type ) ) . '</a>'
 							. '<a class="reset-learner button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '">' . sprintf( esc_html__( 'Reset progress', 'sensei-lms' ), esc_html( $object_type ) ) . '</a>'
 							. $edit_start_date_form,
 					),
