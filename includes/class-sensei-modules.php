@@ -467,7 +467,7 @@ class Sensei_Core_Modules {
 	public function track_module_creation( $module_id ) {
 		$module           = get_term( $module_id );
 		$event_properties = [
-			'page' => $_REQUEST['from_page'],
+			'page' => isset( $_REQUEST['from_page'] ) ? $_REQUEST['from_page'] : '',
 		];
 
 		if ( $module->parent ) {
