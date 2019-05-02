@@ -1,0 +1,70 @@
+/* Extensions */
+.sensei_extensions_wrap {
+	.products {
+		overflow: hidden;
+		li {
+			float: left;
+			margin: 0 1em 1em 0!important;
+			padding: 0;
+			vertical-align: top;
+			width: 400px;
+			color: inherit;
+			border: 1px solid #ddd;
+			display: block;
+			min-height: 280px;
+			overflow: hidden;
+			background: #f6f6f6;
+			-webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.2), inset 0 -1px 0 rgba(0,0,0,.1);
+			box-shadow: inset 0 1px 0 rgba(255,255,255,.2), inset 0 -1px 0 rgba(0,0,0,.1);
+
+			a {
+				text-decoration: none;
+			}
+			div.product-header {
+				margin: 0!important;
+				background: #fff;
+				height: 80px;
+				clear: both;
+				padding: 20px;
+				box-sizing: border-box;
+
+				img {
+					display: inline-block;
+					width: auto;
+					max-height: 80px;
+					max-width: 80px;
+					margin: -20px -20px 0 0px;
+					padding-left: 1em;
+					float: right;
+				}
+
+				a.button {
+					clear: both;
+				}
+
+				h2 {
+					font-size: 16px;
+					padding: 0;
+					margin: 0;
+				}
+
+				div.price {
+					font-weight: bold;
+				}
+
+				a.details {
+					float: right;
+				}
+			}
+			p.excerpt {
+				margin: 0;
+				padding: 1em;
+				border-top: 1px solid #f1f1f1;
+			}
+			p.buttons {
+				margin: 0;
+				padding: 1em 1em 0;
+			}
+		}
+	}
+}

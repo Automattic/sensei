@@ -4,3 +4,5 @@ node_modules/*
 vendor/*
 docs.woothemes.com/*
 tests/images/test-*
+build
+diffs

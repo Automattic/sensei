@@ -550,7 +550,6 @@ jQuery(document).ready( function() {
 	if ( jQuery( '#lesson-course-options' ).exists() ) { jQuery( '#lesson-course-options' ).select2({width:'resolve'}); }
 	if ( jQuery( '#course-prerequisite-options' ).exists() ) { jQuery( '#course-prerequisite-options' ).select2({width:'resolve'}); }
 	if ( jQuery( '#lesson-course-details #course-category-options' ).exists() ) { jQuery( '#lesson-course-details #course-category-options' ).select2({width:'resolve'}); }
-	if ( jQuery( 'select#course-woocommerce-product-options' ).exists() ) { jQuery( 'select#course-woocommerce-product-options' ).select2({width:'resolve'}); }
 
 	// Quiz edit panel
 	if ( jQuery( '#add-question-type-options' ).exists() ) { jQuery( '#add-question-type-options' ).select2({width:'resolve'}); }
@@ -558,7 +557,6 @@ jQuery(document).ready( function() {
 	if ( jQuery( '#add-multiple-question-options' ).exists() ) { jQuery( '#add-multiple-question-options' ).select2({width:'resolve'}); }
 
 	// Courses Write Panel
-	if ( jQuery( '#course-wc-product #course-woocommerce-product-options' ).exists() ) { jQuery( '#course-woocommerce-product-options' ).select2({width:'resolve'}); }
 	if ( jQuery( '#add-multiple-question-category-options' ).exists() ) { jQuery( '#add-multiple-question-category-options' ).select2({width:'resolve'}); }
 
 	// Sensei Settings Panel
@@ -611,13 +609,8 @@ jQuery(document).ready( function() {
 		if ( validInput ) {
 
 			// Setup data
-			var dataToPost = '';
-			dataToPost += 'course_prerequisite' + '=' + jQuery( '#course-prerequisite-options' ).val();
-			dataToPost += '&course_woocommerce_product' + '=' + jQuery( '#course-woocommerce-product-options' ).val();
-			dataToPost += '&course_category' + '=' + jQuery( '#course-category-options' ).val();
-			dataToPost += '&course_title' + '=' + encodeURIComponent( jQuery( '#course-title' ).attr( 'value' ) );
-			dataToPost += '&course_content' + '=' + encodeURIComponent( jQuery( '#course-content' ).attr( 'value' ) );
-			dataToPost += '&action=add';
+			var dataToPost = $( '#lesson-course-details' ).find( 'input, textarea, select' ).serialize();
+
 			// Perform the AJAX call.
 			jQuery.post(
 				ajaxurl,
@@ -1277,12 +1270,11 @@ jQuery(document).ready( function() {
 		var answer_value = jQuery( this ).val();
 		var answer_field = jQuery( this );
 
-		var dataToPost = '&answer_value=' + answer_value;
-		jQuery.post(
+		jQuery.get(
 			ajaxurl,
 			{
 				action : 'question_get_answer_id',
-				data : dataToPost
+				answer_value: answer_value,
 			},
 			function( response ) {
 				if ( response ) {
@@ -1365,13 +1357,12 @@ jQuery(document).ready( function() {
 
 	jQuery( '#add-multiple-question-category-options' ).change( function() {
 		var cat = jQuery( this ).val();
-		var dataToPost = 'cat=' + cat;
 
-		jQuery.post(
+		jQuery.get(
 			ajaxurl,
 			{
 				action : 'get_question_category_limit',
-				data : dataToPost
+				cat: cat,
 			},
 			function( response ) {
 				if ( response ) {
@@ -1404,7 +1395,6 @@ jQuery(document).ready( function() {
 	if ( jQuery( '#lesson-course-options' ).exists() ) { jQuery( '#lesson-course-options' ).select2({width:'resolve'}); }
 	if ( jQuery( '#course-prerequisite-options' ).exists() ) { jQuery( '#course-prerequisite-options' ).select2({width:'resolve'}); }
 	if ( jQuery( '#course-category-options' ).exists() ) { jQuery( '#course-category-options' ).select2({width:'resolve'}); }
-	if ( jQuery( '#course-woocommerce-product-options' ).exists() && '-' != jQuery( '#course-woocommerce-product-options' ).val() ) { jQuery( '#course-woocommerce-product-options' ).select2({width:'resolve'}); }
 
 	// Quiz edit panel
 	if ( jQuery( '#add-question-type-options' ).exists() ) { jQuery( '#add-question-type-options' ).select2({width:'resolve'}); }
@@ -1412,7 +1402,6 @@ jQuery(document).ready( function() {
 	if ( jQuery( '#add-multiple-question-options' ).exists() ) { jQuery( '#add-multiple-question-options' ).select2({width:'resolve'}); }
 
 	// Courses Write Panel
-	if ( jQuery( 'select#course-woocommerce-product-options' ).exists() ) { jQuery( 'select#course-woocommerce-product-options' ).select2({width:'resolve'}); }
 	if ( jQuery( '#add-multiple-question-category-options' ).exists() ) { jQuery( '#add-multiple-question-category-options' ).select2({width:'resolve'}); }
 
 	// Sensei Settings Panel

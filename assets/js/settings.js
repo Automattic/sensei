@@ -94,8 +94,7 @@ jQuery(document).ready(function($) {
 
 	jQuery( '.sortable-lesson-list' ).bind( 'sortstop', function () {
 		var orderString = '';
-
-		var module_id = jQuery( this ).attr( 'data-module_id' );
+		var module_id = jQuery( this ).attr( 'data-module-id' );
 		var order_input = 'lesson-order';
 		if( 0 != module_id ) {
 			order_input = 'lesson-order-module-' + module_id;

@@ -30,6 +30,13 @@ class Sensei_Unsupported_Themes {
 	protected $_is_handling_request = false;
 
 	/**
+	 * Handler objects registered for handling requests.
+	 *
+	 * @var array
+	 */
+	protected $_handlers;
+
+	/**
 	 * Initialize rendering system for unsupported themes.
 	 *
 	 * @since 1.12.0
@@ -66,6 +73,26 @@ class Sensei_Unsupported_Themes {
 	 * @since 1.12.0
 	 */
 	private function __construct() {
+		// Set up registered handlers.
+		$this->_handlers = array(
+			new Sensei_Unsupported_Theme_Handler_CPT( 'course' ),
+			new Sensei_Unsupported_Theme_Handler_CPT( 'lesson' ),
+			new Sensei_Unsupported_Theme_Handler_CPT(
+				'sensei_message',
+				array(
+					'show_pagination'   => true,
+					'template_filename' => 'single-message.php',
+				)
+			),
+			new Sensei_Unsupported_Theme_Handler_CPT( 'quiz' ),
+			new Sensei_Unsupported_Theme_Handler_Module(),
+			new Sensei_Unsupported_Theme_Handler_Course_Results(),
+			new Sensei_Unsupported_Theme_Handler_Lesson_Tag_Archive(),
+			new Sensei_Unsupported_Theme_Handler_Teacher_Archive(),
+			new Sensei_Unsupported_Theme_Handler_Learner_Profile(),
+			new Sensei_Unsupported_Theme_Handler_Message_Archive(),
+			new Sensei_Unsupported_Theme_Handler_Course_Archive(),
+		);
 	}
 
 	/**
@@ -92,56 +119,14 @@ class Sensei_Unsupported_Themes {
 			return;
 		}
 
-		if ( is_single() && 'course' === get_post_type() ) {
-			$this->_is_handling_request = true;
-			$this->handle_course_page();
+		// Use the first handler that can handle this request.
+		foreach ( $this->_handlers as $handler ) {
+			if ( $handler->can_handle_request() ) {
+				$this->_is_handling_request = true;
+				$handler->handle_request();
+				break;
+			}
 		}
-	}
-
-	/**
-	 * Set up handling for a single course page.
-	 *
-	 * @since 1.12.0
-	 */
-	private function handle_course_page() {
-		add_filter( 'the_content', array( $this, 'course_page_content_filter' ) );
-	}
-
-	/**
-	 * Filter the content and insert Sensei course content.
-	 *
-	 * @since 1.12.0
-	 *
-	 * @param string $content The raw post content.
-	 *
-	 * @return string The content to be displayed on the page.
-	 */
-	public function course_page_content_filter( $content ) {
-		if ( ! is_main_query() ) {
-			return $content;
-		}
-
-		// Remove the filter we're in to avoid nested calls.
-		remove_filter( 'the_content', array( $this, 'course_page_content_filter' ) );
-
-		$course_id = get_the_ID();
-
-		/**
-		 * Whether to show pagination on the course page when displaying on a
-		 * theme that does not explicitly support Sensei.
-		 *
-		 * @param  bool $show_pagination The initial value.
-		 * @param  int  $course_id       The course ID.
-		 * @return bool
-		 */
-		$show_pagination = apply_filters( 'sensei_course_page_show_pagination', true, $course_id );
-
-		$renderer = new Sensei_Renderer_Single_Course( $course_id, array(
-			'show_pagination' => $show_pagination,
-		) );
-		$content = $renderer->render();
-
-		return $content;
 	}
 
 }

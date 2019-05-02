@@ -9,9 +9,13 @@
  * @category  Templates
  * @version   1.9.20
  */
-?>
 
-<?php get_sensei_header(); ?>
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+get_sensei_header();
+?>
 
 	<?php
 		/**
@@ -22,7 +26,7 @@
 		do_action( 'sensei_taxonomy_module_content_before' );
 	?>
 
-	<?php if ( have_posts() ): ?>
+	<?php if ( have_posts() ) : ?>
 			<section class="module-container" >
 				<?php
 					/**

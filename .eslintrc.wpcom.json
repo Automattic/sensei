@@ -1,0 +1,44 @@
+{
+  "env": {
+    "browser": true,
+    "jquery": true,
+    "node": true,
+    "es6": true
+  },
+  "extends": "eslint:recommended",
+  "parser": "babel-eslint",
+  "plugins": [
+    "react"
+  ],
+  "rules": {
+    "no-unsafe-finally": "off",
+    "no-native-reassign": "off",
+    "complexity": ["off", 11],
+    "require-yield": "error",
+    "no-compare-neg-zero": "off",
+    "no-useless-escape": "off",
+    "no-multi-spaces": ["off", {"ignoreEOLComments": true}],
+    "no-unused-vars": "off",
+    "no-redeclare": "off",
+    "no-undef": "off",
+    "no-mixed-spaces-and-tabs": "off",
+    "no-empty": "off",
+    "no-inner-declarations": "off",
+    "no-console": "off",
+    "no-extra-semi": "off",
+    "comma-dangle": "off",
+    "no-cond-assign": "off",
+    "no-constant-condition": "off",
+    "no-global-assign": "off",
+    "no-control-regex": "off",
+    "no-unexpected-multiline": "off",
+    "no-sparse-arrays": "off",
+    "no-regex-spaces": "off",
+    "no-unreachable": "off",
+    "no-fallthrough": "off",
+    "valid-typeof": "off",
+    "no-func-assign": "off",
+    "no-extra-boolean-cast": "off",
+    "no-self-assign": "off"
+  }
+}

@@ -69,8 +69,27 @@ jobs:
       script:
         - ./tests/bin/run-wp-unit-tests.sh
     - stage: test
-      php: 5.3
-      env: WP_VERSION=latest
-      dist: precise
+      php: 5.6
+      env: WP_VERSION=latest WP_MULTISITE=1
       script:
-        - ./tests/bin/run-wp-unit-tests.sh
+      - ./tests/bin/run-wp-unit-tests.sh
+    - stage: test
+      script:
+        - npm install
+        - npx eslint --config .eslintrc.wpcom.json --ignore-path .eslintignore-wpcom .
+    - stage: test
+      php: 7.2
+      script:
+        - composer install
+        - ./vendor/bin/phpcs -s
+          --sniffs=WordPress.WP.I18n,Generic.PHP.Syntax,WordPress.Security.EscapeOutput .
+    - stage: test
+      php: 7.2
+      script:
+        - composer install
+        - ./vendor/bin/phpcs -sn --sniffs=WordPress.Security.NonceVerification .
+    - stage: test
+      php: 7.2
+      script:
+        - composer install
+        - ./scripts/linter-ci

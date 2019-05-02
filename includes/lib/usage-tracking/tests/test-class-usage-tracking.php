@@ -29,7 +29,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	 * @covers {Prefix}_Usage_Tracking::hook
 	 */
 	public function testCronJobActionAdded() {
-		$this->assertTrue( !! has_action( $this->usage_tracking->get_prefix() . '_usage_tracking_send_usage_data', array( $this->usage_tracking, 'send_usage_data' ) ) );
+		$this->assertTrue( ! ! has_action( $this->usage_tracking->get_prefix() . '_usage_tracking_send_usage_data', array( $this->usage_tracking, 'send_usage_data' ) ) );
 	}
 
 	/**
@@ -64,7 +64,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	 * @covers {Prefix}_Usage_Tracking::hook
 	 */
 	public function testAjaxRequestSetup() {
-		$this->assertTrue( !! has_action( 'wp_ajax_' . $this->usage_tracking->get_prefix() . '_handle_tracking_opt_in', array( $this->usage_tracking, 'handle_tracking_opt_in' ) ) );
+		$this->assertTrue( ! ! has_action( 'wp_ajax_' . $this->usage_tracking->get_prefix() . '_handle_tracking_opt_in', array( $this->usage_tracking, 'handle_tracking_opt_in' ) ) );
 	}
 
 	/**
@@ -76,8 +76,8 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		$this->setupAjaxRequest();
 		$_POST['enable_tracking'] = '1';
 
-		$this->assertFalse( !! $this->usage_tracking->is_tracking_enabled(), 'Usage tracking initially disabled' );
-		$this->assertFalse( !! get_option( $this->usage_tracking->get_prefix() . '_usage_tracking_opt_in_hide' ), 'Dialog initially shown' );
+		$this->assertFalse( ! ! $this->usage_tracking->is_tracking_enabled(), 'Usage tracking initially disabled' );
+		$this->assertFalse( ! ! get_option( $this->usage_tracking->get_prefix() . '_usage_tracking_opt_in_hide' ), 'Dialog initially shown' );
 
 		try {
 			$this->usage_tracking->handle_tracking_opt_in();
@@ -122,8 +122,8 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		$this->setupAjaxRequest();
 		$_POST['enable_tracking'] = '0';
 
-		$this->assertFalse( !! $this->usage_tracking->is_tracking_enabled(), 'Usage tracking initially disabled' );
-		$this->assertFalse( !! get_option( $this->usage_tracking->get_prefix() . '_usage_tracking_opt_in_hide' ), 'Dialog initially shown' );
+		$this->assertFalse( ! ! $this->usage_tracking->is_tracking_enabled(), 'Usage tracking initially disabled' );
+		$this->assertFalse( ! ! get_option( $this->usage_tracking->get_prefix() . '_usage_tracking_opt_in_hide' ), 'Dialog initially shown' );
 
 		try {
 			$this->usage_tracking->handle_tracking_opt_in();
@@ -132,7 +132,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 			$this->assertEquals( array(), $wp_die_args['args'], 'wp_die call has no non-success status' );
 		}
 
-		$this->assertFalse( !! $this->usage_tracking->is_tracking_enabled(), 'Usage tracking disabled' );
+		$this->assertFalse( ! ! $this->usage_tracking->is_tracking_enabled(), 'Usage tracking disabled' );
 		$this->assertTrue( get_option( $this->usage_tracking->get_prefix() . '_usage_tracking_opt_in_hide' ), 'Dialog hidden' );
 	}
 
@@ -145,8 +145,8 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		$this->setupAjaxRequest();
 		$_REQUEST['nonce'] = 'invalid_nonce_1234';
 
-		$this->assertFalse( !! $this->usage_tracking->is_tracking_enabled(), 'Usage tracking initially disabled' );
-		$this->assertFalse( !! get_option( $this->usage_tracking->get_prefix() . '_usage_tracking_opt_in_hide' ), 'Dialog initially shown' );
+		$this->assertFalse( ! ! $this->usage_tracking->is_tracking_enabled(), 'Usage tracking initially disabled' );
+		$this->assertFalse( ! ! get_option( $this->usage_tracking->get_prefix() . '_usage_tracking_opt_in_hide' ), 'Dialog initially shown' );
 
 		try {
 			$this->usage_tracking->handle_tracking_opt_in();
@@ -155,8 +155,8 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 			$this->assertEquals( 403, $wp_die_args['args']['response'], 'wp_die called has "Forbidden" status' );
 		}
 
-		$this->assertFalse( !! $this->usage_tracking->is_tracking_enabled(), 'Usage tracking disabled' );
-		$this->assertFalse( !! get_option( $this->usage_tracking->get_prefix() . '_usage_tracking_opt_in_hide' ), 'Dialog not hidden' );
+		$this->assertFalse( ! ! $this->usage_tracking->is_tracking_enabled(), 'Usage tracking disabled' );
+		$this->assertFalse( ! ! get_option( $this->usage_tracking->get_prefix() . '_usage_tracking_opt_in_hide' ), 'Dialog not hidden' );
 	}
 
 	/**
@@ -170,8 +170,8 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 		// Current user cannot enable tracking
 		$this->allowCurrentUserToEnableTracking( false );
 
-		$this->assertFalse( !! $this->usage_tracking->is_tracking_enabled(), 'Usage tracking initially disabled' );
-		$this->assertFalse( !! get_option( $this->usage_tracking->get_prefix() . '_usage_tracking_opt_in_hide' ), 'Dialog initially shown' );
+		$this->assertFalse( ! ! $this->usage_tracking->is_tracking_enabled(), 'Usage tracking initially disabled' );
+		$this->assertFalse( ! ! get_option( $this->usage_tracking->get_prefix() . '_usage_tracking_opt_in_hide' ), 'Dialog initially shown' );
 
 		try {
 			$this->usage_tracking->handle_tracking_opt_in();
@@ -180,8 +180,8 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 			$this->assertEquals( 403, $wp_die_args['args']['response'], 'wp_die called has "Forbidden" status' );
 		}
 
-		$this->assertFalse( !! $this->usage_tracking->is_tracking_enabled(), 'Usage tracking disabled' );
-		$this->assertFalse( !! get_option( $this->usage_tracking->get_prefix() . '_usage_tracking_opt_in_hide' ), 'Dialog not hidden' );
+		$this->assertFalse( ! ! $this->usage_tracking->is_tracking_enabled(), 'Usage tracking disabled' );
+		$this->assertFalse( ! ! get_option( $this->usage_tracking->get_prefix() . '_usage_tracking_opt_in_hide' ), 'Dialog not hidden' );
 	}
 
 	/* END test ajax request cases */
@@ -230,7 +230,9 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 					'_en'            => $this->usage_tracking->get_prefix() . '_my_event',
 					'_ts'            => '1234000',
 					'_'              => '_',
-				), $query, 'Query parameters'
+				),
+				$query,
+				'Query parameters'
 			);
 		}
 	}

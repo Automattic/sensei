@@ -1,6 +1,7 @@
 <?php
 
-if ( ! defined( 'ABSPATH' ) ) { exit; }
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; }
 
 /**
  * Sensei Lesson Modules Class
@@ -17,7 +18,14 @@ class Sensei_Core_Lesson_Modules {
 	private $lesson_id;
 
 	public function __construct( $lesson_id ) {
-		$this->lesson_id = $lesson_id;
+		$parent_id = wp_is_post_revision( $lesson_id );
+
+		// Ensure we are working with the Lesson post, not a revision.
+		if ( $parent_id ) {
+			$this->lesson_id = $parent_id;
+		} else {
+			$this->lesson_id = $lesson_id;
+		}
 	}
 
 	/**
@@ -32,7 +40,7 @@ class Sensei_Core_Lesson_Modules {
 	 * @param integer|string $module_id ID of the new module
 	 * @param integer|string $course_id (Optional) ID of the course to check against
 	 */
-	public function set_module( $module_id, $course_id = NULL ) {
+	public function set_module( $module_id, $course_id = null ) {
 
 		// Convert IDs to integers
 		if ( $module_id || ! empty( $module_id ) ) {

@@ -1,12 +1,3 @@
-/*
-Plugin Name: Sensei
-Plugin URI: http://woothemes.com/
-Description: Sensei by WooThemes is the best Learning Management System ever!
-Version: 1.4.3
-Author: WooThemes
-Author URI: http://woothemes.com/
-License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
-*/
 /*-----------------------------------------------------------------------------------*/
 /* Sensei frontend  Stylesheet Sensei.css                                            */
 /*-----------------------------------------------------------------------------------*/
@@ -73,7 +64,9 @@ a.sensei-certificate-link {
 }
 
 /* Courses */
-.course, .course-container {
+.course,
+.course-container,
+.course-container .course {
   @include clearfix();
   position: relative;
   margin: 0 0 1.618em;
@@ -258,6 +251,7 @@ a.sensei-certificate-link {
   form  {
     ol#sensei-quiz-list  {
       margin: 0 0 1.618em 0;
+      list-style-position: outside;
       li  {
         position: relative;
         margin: 0 0 1.618em;
@@ -310,6 +304,7 @@ a.sensei-certificate-link {
               margin: 0 .382em 0 0;
             }
             label  {
+              display: inline;
               vertical-align: middle;
             }
           }
@@ -399,22 +394,20 @@ a.sensei-certificate-link {
 		}
 	}
 
-	header {
+	header.lesson-title {
 		display: flex;
 		align-items: center;
 		flex-wrap: wrap;
 		margin-bottom: 0.5em;
 
+		h1, h2 {
+			display: inline-block;
+			margin: 0;
+		}
+
 		.preview-label {
 			margin-left: 10px;
 			font-size: 1.1em;
-		}
-
-		&.lesson-title {
-			h1, h2 {
-				display: inline-block;
-				margin: 0;
-			}
 		}
 
 		.lesson-meta {
@@ -611,6 +604,9 @@ section.entry span.course-price { padding-left: 10px; }
     h2 {
       margin-top: 0;
     }
+  }
+  .my-messages-link-container {
+    clear: both;
   }
   .fix {
     clear: both;

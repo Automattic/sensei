@@ -19,19 +19,19 @@ class Sensei_Unit_Tests_Bootstrap {
 	 * @since 2.2
 	 */
 	public function __construct() {
-		ini_set( 'display_errors','on' );
+		ini_set( 'display_errors', 'on' );
 		error_reporting( E_ALL );
 		$this->tests_dir    = dirname( __FILE__ );
 		$this->plugin_dir   = dirname( $this->tests_dir );
 		$this->wp_tests_dir = getenv( 'WP_TESTS_DIR' ) ? getenv( 'WP_TESTS_DIR' ) : '/tmp/wordpress-tests-lib';
 		// load test function so tests_add_filter() is available
-		require_once( $this->wp_tests_dir . '/includes/functions.php' );
+		require_once $this->wp_tests_dir . '/includes/functions.php';
 		// load Sensei
 		tests_add_filter( 'muplugins_loaded', array( $this, 'load_sensei' ) );
 		// install Sensei
 		tests_add_filter( 'setup_theme', array( $this, 'install_sensei' ) );
 		// load the WP testing environment
-		require_once( $this->wp_tests_dir . '/includes/bootstrap.php' );
+		require_once $this->wp_tests_dir . '/includes/bootstrap.php';
 		// load Sensei testing framework
 		$this->includes();
 	}
@@ -41,7 +41,7 @@ class Sensei_Unit_Tests_Bootstrap {
 	 * @since 1.9
 	 */
 	public function load_sensei() {
-		require_once( $this->plugin_dir . '/woothemes-sensei.php' );
+		require_once $this->plugin_dir . '/sensei-lms.php';
 	}
 	/**
 	 * Install Sensei after the test environment and Sensei have been loaded.
@@ -51,7 +51,7 @@ class Sensei_Unit_Tests_Bootstrap {
 	public function install_sensei() {
 		// reload capabilities after install, see https://core.trac.wordpress.org/ticket/28374
 		$GLOBALS['wp_roles']->for_site();
-		echo "Installing Sensei..." . PHP_EOL;
+		echo 'Installing Sensei...' . PHP_EOL;
 	}
 	/**
 	 * Load Sensei-specific test cases and factories.
@@ -60,8 +60,8 @@ class Sensei_Unit_Tests_Bootstrap {
 	 */
 	public function includes() {
 		// factories
-		require_once( $this->tests_dir . '/framework/factories/class-sensei-factory.php' );
-		require_once( $this->tests_dir . '/framework/factories/class-wp-unittest-factory-for-post-sensei.php' );
+		require_once $this->tests_dir . '/framework/factories/class-sensei-factory.php';
+		require_once $this->tests_dir . '/framework/factories/class-wp-unittest-factory-for-post-sensei.php';
 	}
 	/**
 	 * Get the single class instance.

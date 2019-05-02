@@ -35,7 +35,8 @@ jQuery(document).ready( function( $ ) {
 			ajaxurl,
 			{
 				action : 'get_redirect_url_learners',
-				data : dataToPost
+				data : dataToPost,
+				security: window.woo_learners_general_data.course_category_nonce
 			},
 			function( response ) {
 				// Check for a response
@@ -49,10 +50,10 @@ jQuery(document).ready( function( $ ) {
 	$('.edit-start-date-submit').click(function() {
 		var $this = $( this );
 		var new_date = $this.prev( '.edit-start-date-date-picker' ).val();
-		var user_id = $this.attr( 'data-user_id' );
-		var post_id = $this.attr( 'data-post_id' );
-		var post_type = $this.attr( 'data-post_type' );
-		var comment_id = $this.attr( 'data-comment_id' );
+		var user_id = $this.attr( 'data-user-id' );
+		var post_id = $this.attr( 'data-post-id' );
+		var post_type = $this.attr( 'data-post-type' );
+		var comment_id = $this.attr( 'data-comment-id' );
 		var dataToPost = '';
 
 		if ( ! user_id || ! post_id || ! post_type || ! new_date || ! comment_id ) {
@@ -69,8 +70,8 @@ jQuery(document).ready( function( $ ) {
 			ajaxurl,
 			{
 				action : 'edit_date_started',
-				edit_date_nonce : window.woo_learners_general_data.edit_date_nonce,
-				data : dataToPost
+				data : dataToPost,
+				security: window.woo_learners_general_data.edit_date_nonce
 			},
 			function( response ) {
 				if ( response ) {
@@ -83,9 +84,9 @@ jQuery(document).ready( function( $ ) {
 	jQuery( '.remove-learner, .reset-learner' ).click( function( event ) {
 		var dataToPost = '';
 
-		var user_id = jQuery( this ).attr( 'data-user_id' );
-		var post_id = jQuery( this ).attr( 'data-post_id' );
-		var post_type = jQuery( this ).attr( 'data-post_type' );
+		var user_id = jQuery( this ).attr( 'data-user-id' );
+		var post_id = jQuery( this ).attr( 'data-post-id' );
+		var post_type = jQuery( this ).attr( 'data-post-type' );
 
 		var confirm_message = window.woo_learners_general_data.remove_generic_confirm;
 
@@ -128,8 +129,8 @@ jQuery(document).ready( function( $ ) {
 				ajaxurl,
 				{
 					action : actions[current_action].action,
-					modify_user_post_nonce : window.woo_learners_general_data.modify_user_post_nonce,
-					data : dataToPost
+					data : dataToPost,
+					security: window.woo_learners_general_data.modify_user_post_nonce
 				},
 				function( response ) {
 					if ( response ) {

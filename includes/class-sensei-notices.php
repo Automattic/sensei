@@ -47,8 +47,8 @@ class Sensei_Notices {
 	 */
 	public function __construct() {
 		// initialize the notices variable.
-		$this->notices = array();
-		$this->has_printed = false;
+		$this->notices      = array();
+		$this->has_printed  = false;
 		$this->allowed_html = array(
 			'embed'  => array(),
 			'iframe' => array(
@@ -63,7 +63,7 @@ class Sensei_Notices {
 				'height' => array(),
 				'src'    => array(),
 			),
-			'a' => array(
+			'a'      => array(
 				'href'  => array(),
 				'title' => array(),
 			),
@@ -82,7 +82,7 @@ class Sensei_Notices {
 		// append the new notice.
 		$this->notices[] = array(
 			'content' => $content,
-			'type' => $type,
+			'type'    => $type,
 		);
 
 		// if a notice is added after we've printed print it immediately.

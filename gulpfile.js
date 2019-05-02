@@ -22,15 +22,33 @@ var sass            = require( 'gulp-sass' );
 var sort            = require( 'gulp-sort' );
 var uglify          = require( 'gulp-uglify' );
 var wpPot           = require( 'gulp-wp-pot' );
+var zip             = require( 'gulp-zip' );
 
 var paths = {
-	scripts: [ 'assets/js/**/*.js' ],
+	scripts: [ 'assets/js/**/*.js', '!assets/js/**/*.min.js' ],
 	css: [ 'assets/css/**/*.scss' ],
 	select2: [
 		'node_modules/select2/dist/css/select2.min.css',
 		'node_modules/select2/dist/js/select2.full.js',
 		'node_modules/select2/dist/js/select2.full.min.js'
-	]
+	],
+	packageContents: [
+		'assets/**/*',
+		'changelog.txt',
+		'CONTRIBUTING.md',
+		'LICENSE',
+		'dummy_data.xml',
+		'includes/**/*',
+		'lang/**/*',
+		'readme.txt',
+		'templates/**/*',
+		'uninstall.php',
+		'widgets/**/*',
+		'sensei-lms.php',
+		'wpml-config.xml',
+	],
+	packageDir: 'build/sensei-lms',
+	packageZip: 'build/sensei-lms.zip'
 };
 
 gulp.task( 'clean', gulp.series( function( cb ) {
@@ -61,19 +79,19 @@ gulp.task( 'JS', gulp.series( function() {
 } ) );
 
 gulp.task( 'pot', gulp.series( function() {
-	return gulp.src( [ '**/**.php', '!node_modules/**' ] )
+	return gulp.src( [ '**/**.php', '!node_modules/**', '!build/**' ] )
 		.pipe( sort() )
 		.pipe( wpPot( {
-			domain: 'woothemes-sensei',
-			bugReport: 'https://www.transifex.com/woothemes/sensei-by-woothemes/'
+			domain: 'sensei-lms',
+			bugReport: 'https://translate.wordpress.org/projects/wp-plugins/sensei-lms/'
 		} ) )
-		.pipe( gulp.dest( 'lang/woothemes-sensei.pot' ) );
+		.pipe( gulp.dest( 'lang/sensei-lms.pot' ) );
 } ) );
 
 gulp.task( 'textdomain', gulp.series( function() {
-	return gulp.src( [ '**/*.php', '!node_modules/**' ] )
+	return gulp.src( [ '**/*.php', '!node_modules/**', '!build/**' ] )
 		.pipe( checktextdomain( {
-			text_domain: 'woothemes-sensei',
+			text_domain: 'sensei-lms',
 			keywords: [
 				'__:1,2d',
 				'_e:1,2d',
@@ -103,4 +121,21 @@ gulp.task( 'test', function() {
 		.pipe( phpunit() );
 } );
 
-gulp.task( 'default', gulp.series( 'test', 'clean', 'CSS', 'JS', 'vendor' ) );
+gulp.task( 'build', gulp.series( 'test', 'clean', 'CSS', 'JS', 'vendor' ) );
+gulp.task( 'build-unsafe', gulp.series( 'clean', 'CSS', 'JS', 'vendor' ) );
+
+gulp.task( 'copy-package', function() {
+	return gulp.src( paths.packageContents, { base: '.' } )
+		.pipe( gulp.dest( paths.packageDir ) );
+} );
+
+gulp.task( 'zip-package', function() {
+	return gulp.src( paths.packageDir + '/**/*', { base: paths.packageDir + '/..' } )
+		.pipe( zip( paths.packageZip ) )
+		.pipe( gulp.dest( '.' ) );
+} );
+
+gulp.task( 'package', gulp.series( 'build', 'copy-package', 'zip-package' ) );
+gulp.task( 'package-unsafe', gulp.series( 'build-unsafe', 'copy-package', 'zip-package' ) );
+
+gulp.task( 'default', gulp.series( 'build' ) );

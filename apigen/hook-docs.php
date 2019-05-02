@@ -72,7 +72,7 @@ class Sensei_HookFinder {
 		$admin_files 		= self::get_files( '*.php', GLOB_MARK, self::$sensei_directory.'/includes/admin/' );
 		$class_files 		= self::get_files( '*.php', GLOB_MARK, self::$sensei_directory.'/includes/' );
 		$other_files		= array(
-            self::$sensei_directory.'/woothemes-sensei.php'
+            self::$sensei_directory.'/sensei-lms.php'
 		);
 
 		self::$files_to_scan = array(
@@ -90,7 +90,7 @@ class Sensei_HookFinder {
 
 		echo '<div id="content">';
 		echo '<h1>Action and Filter Hook Reference</h1>';
-		echo '<div class="description"><p>The following is a full list of actions and filters found in Sensei.</p></div>';
+		echo '<div class="description"><p>The following is a full list of actions and filters found in Sensei LMS.</p></div>';
 
 		foreach ( self::$files_to_scan as $heading => $files ) {
 			self::$custom_hooks_found = array();

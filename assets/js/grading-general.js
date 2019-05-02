@@ -36,7 +36,8 @@ jQuery(document).ready( function() {
 
 		var total_questions = parseInt( jQuery( '#total_questions' ).val() );
 		var quiz_grade_total = parseInt( jQuery( '#quiz_grade_total' ).val() );
-		var percent = 0;
+		var percent = '0';
+
 		if ( 0 < quiz_grade_total ) {
 			percent = parseFloat( total_grade * 100 / quiz_grade_total ).toFixed(2);
 		}
@@ -140,15 +141,11 @@ jQuery(document).ready( function() {
 	jQuery( '#grading-course-options' ).on( 'change', '', function() {
 		// Populate the Lessons select box
 		var courseId = jQuery(this).val();
-		var dataToPost = '';
-		dataToPost += 'course_id' + '=' + courseId;
-		// Perform the AJAX call to get the select box.
-		jQuery.post(
+		jQuery.get(
 			ajaxurl,
 			{
-				action : 'get_lessons_dropdown',
-				get_lessons_dropdown_nonce : woo_localized_data.get_lessons_dropdown_nonce,
-				data : dataToPost
+				action: 'get_lessons_dropdown',
+				course_id: courseId,
 			},
 			function( response ) {
 				// Check for a response
@@ -180,26 +177,18 @@ jQuery(document).ready( function() {
 	 */
 	jQuery( '#grading-lesson-options' ).on( 'change', '', function() {
 		// Populate the Lessons select box
-		var lessonId = jQuery(this).val();
-		var courseId = jQuery( '#grading-course-options' ).val();
-		var dataToPost = '';
-		dataToPost += 'lesson_id' + '=' + lessonId;
-		dataToPost += '&course_id' + '=' + courseId;
-
+		var lessonId    = jQuery(this).val();
+		var courseId    = jQuery( '#grading-course-options' ).val();
 		var gradingView = jQuery.fn.getQueryVariable( 'view' );
-		if( gradingView ) {
-			dataToPost += '&view' + '=' + gradingView;
-		} else {
-			dataToPost += '&view' + '=ungraded';
-		}
 
 		// Perform the AJAX call to get the select box.
-		jQuery.post(
+		jQuery.get(
 			ajaxurl,
 			{
-				action : 'get_redirect_url',
-				get_lessons_html_nonce : woo_localized_data.get_lessons_html_nonce,
-				data : dataToPost
+				action: 'get_redirect_url',
+				course_id: courseId,
+				lesson_id: lessonId,
+				view: gradingView,
 			},
 			function( response ) {
 				// Check for a response

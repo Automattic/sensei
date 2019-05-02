@@ -10,5 +10,5 @@
  * @author Automattic
  *
  * @since 1.9.0
-*/
-Class Sensei_Twentysixteen extends Sensei__S{ }
+ */
+class Sensei_Twentysixteen extends Sensei__S{ }

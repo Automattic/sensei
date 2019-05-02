@@ -29,32 +29,47 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 	 */
 	private function setupPosts() {
 		// Create some regular posts.
-		$this->post_ids = $this->factory->post->create_many( 2, array(
-			'post_status' => 'publish',
-			'post_type'   => 'post',
-		) );
+		$this->post_ids = $this->factory->post->create_many(
+			2,
+			array(
+				'post_status' => 'publish',
+				'post_type'   => 'post',
+			)
+		);
 
 		// Create an unrelated CPT to ensure its posts do not get deleted.
-		register_post_type( 'biography', array(
-			'label'       => 'Biographies',
-			'description' => 'A biography of a famous person (for testing)',
-			'public'      => true,
-		) );
-		$this->biography_ids = $this->factory->post->create_many( 4, array(
-			'post_status' => 'publish',
-			'post_type'   => 'biography',
-		) );
+		register_post_type(
+			'biography',
+			array(
+				'label'       => 'Biographies',
+				'description' => 'A biography of a famous person (for testing)',
+				'public'      => true,
+			)
+		);
+		$this->biography_ids = $this->factory->post->create_many(
+			4,
+			array(
+				'post_status' => 'publish',
+				'post_type'   => 'biography',
+			)
+		);
 
 		// Create some Sensei posts.
-		$this->course_ids = $this->factory->post->create_many( 8, array(
-			'post_status' => 'publish',
-			'post_type'   => 'course',
-		) );
+		$this->course_ids = $this->factory->post->create_many(
+			8,
+			array(
+				'post_status' => 'publish',
+				'post_type'   => 'course',
+			)
+		);
 
-		$this->lesson_ids = $this->factory->post->create_many( 16, array(
-			'post_status' => 'publish',
-			'post_type'   => 'lesson',
-		) );
+		$this->lesson_ids = $this->factory->post->create_many(
+			16,
+			array(
+				'post_status' => 'publish',
+				'post_type'   => 'lesson',
+			)
+		);
 	}
 
 	/**
@@ -69,21 +84,24 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 			$this->modules[] = wp_insert_term( 'Module ' . $i, 'module' );
 		}
 
-		wp_set_object_terms( $this->course_ids[0],
+		wp_set_object_terms(
+			$this->course_ids[0],
 			array(
 				$this->modules[0]['term_id'],
 				$this->modules[1]['term_id'],
 			),
 			'module'
 		);
-		wp_set_object_terms( $this->course_ids[1],
+		wp_set_object_terms(
+			$this->course_ids[1],
 			array(
 				$this->modules[1]['term_id'],
 				$this->modules[2]['term_id'],
 			),
 			'module'
 		);
-		wp_set_object_terms( $this->course_ids[2],
+		wp_set_object_terms(
+			$this->course_ids[2],
 			array(
 				$this->modules[0]['term_id'],
 				$this->modules[1]['term_id'],
@@ -99,21 +117,24 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 			$this->categories[] = wp_insert_term( 'Category ' . $i, 'category' );
 		}
 
-		wp_set_object_terms( $this->course_ids[0],
+		wp_set_object_terms(
+			$this->course_ids[0],
 			array(
 				$this->categories[0]['term_id'],
 				$this->categories[1]['term_id'],
 			),
 			'category'
 		);
-		wp_set_object_terms( $this->post_ids[0],
+		wp_set_object_terms(
+			$this->post_ids[0],
 			array(
 				$this->categories[1]['term_id'],
 				$this->categories[2]['term_id'],
 			),
 			'category'
 		);
-		wp_set_object_terms( $this->biography_ids[2],
+		wp_set_object_terms(
+			$this->biography_ids[2],
 			array(
 				$this->categories[0]['term_id'],
 				$this->categories[1]['term_id'],
@@ -148,23 +169,30 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 	 */
 	private function setupPages() {
 		// Create some regular pages.
-		$this->regular_page_ids = $this->factory->post->create_many( 2, array(
-			'post_type'  => 'page',
-			'post_title' => 'Normal page',
-		) );
+		$this->regular_page_ids = $this->factory->post->create_many(
+			2,
+			array(
+				'post_type'  => 'page',
+				'post_title' => 'Normal page',
+			)
+		);
 
 		// Create the Course Archive page.
-		$this->course_archive_page_id = $this->factory->post->create( array(
-			'post_type'  => 'page',
-			'post_title' => 'Course Archive Page',
-		) );
+		$this->course_archive_page_id = $this->factory->post->create(
+			array(
+				'post_type'  => 'page',
+				'post_title' => 'Course Archive Page',
+			)
+		);
 		Sensei()->settings->set( 'course_page', $this->course_archive_page_id );
 
 		// Create the My Courses page.
-		$this->my_courses_page_id = $this->factory->post->create( array(
-			'post_type'  => 'page',
-			'post_title' => 'My Courses',
-		) );
+		$this->my_courses_page_id = $this->factory->post->create(
+			array(
+				'post_type'  => 'page',
+				'post_title' => 'My Courses',
+			)
+		);
 		Sensei()->settings->set( 'my_course_page', $this->my_courses_page_id );
 
 		// Refresh the Sensei settings in memory.
@@ -250,7 +278,7 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 	public function testSenseiOptionsDeleted() {
 		// Set a couple Sensei options.
 		update_option( 'sensei_usage_tracking_opt_in_hide', '1' );
-		update_option( 'woothemes-sensei-version', '1.10.0' );
+		update_option( 'sensei-version', '1.10.0' );
 
 		// Set a couple other options.
 		update_option( 'my_option_1', 'Value 1' );
@@ -260,7 +288,7 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 
 		// Ensure the Sensei options are deleted.
 		$this->assertFalse( get_option( 'sensei_usage_tracking_opt_in_hide' ) );
-		$this->assertFalse( get_option( 'woothemes-sensei-version' ) );
+		$this->assertFalse( get_option( 'sensei-version' ) );
 
 		// Ensure the non-Sensei options are intact.
 		$this->assertEquals( 'Value 1', get_option( 'my_option_1' ) );
@@ -300,33 +328,49 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 			$term_taxonomy_id = $module['term_taxonomy_id'];
 
 			// Ensure the data is deleted from all the relevant DB tables.
-			$this->assertEquals( array(), $wpdb->get_results(
-				$wpdb->prepare(
-					"SELECT * from $wpdb->termmeta WHERE term_id = %s",
-					$term_id
-				)
-			), 'Sensei term meta should be deleted' );
+			$this->assertEquals(
+				array(),
+				$wpdb->get_results(
+					$wpdb->prepare(
+						"SELECT * from $wpdb->termmeta WHERE term_id = %s",
+						$term_id
+					)
+				),
+				'Sensei term meta should be deleted'
+			);
 
-			$this->assertEquals( array(), $wpdb->get_results(
-				$wpdb->prepare(
-					"SELECT * from $wpdb->terms WHERE term_id = %s",
-					$term_id
-				)
-			), 'Sensei term should be deleted' );
+			$this->assertEquals(
+				array(),
+				$wpdb->get_results(
+					$wpdb->prepare(
+						"SELECT * from $wpdb->terms WHERE term_id = %s",
+						$term_id
+					)
+				),
+				'Sensei term should be deleted'
+			);
 
-			$this->assertEquals( array(), $wpdb->get_results(
-				$wpdb->prepare(
-					"SELECT * from $wpdb->term_taxonomy WHERE term_taxonomy_id = %s",
-					$term_taxonomy_id
-				)
-			), 'Sensei term taxonomy should be deleted' );
+			$this->assertEquals(
+				array(),
+				$wpdb->get_results(
+					$wpdb->prepare(
+						"SELECT * from $wpdb->term_taxonomy WHERE term_taxonomy_id = %s",
+						$term_taxonomy_id
+					)
+				),
+				'Sensei term taxonomy should be deleted'
+			);
 
-			$this->assertEquals( array(), $wpdb->get_results(
-				$wpdb->prepare(
-					"SELECT * from $wpdb->term_relationships WHERE term_taxonomy_id = %s",
-					$term_taxonomy_id
-				)
-			), 'Sensei term relationships should be deleted' );
+			$this->assertEquals(
+				array(),
+				$wpdb->get_results(
+					$wpdb->prepare(
+						"SELECT * from $wpdb->term_relationships WHERE term_taxonomy_id = %s",
+						$term_taxonomy_id
+					)
+				),
+				'Sensei term relationships should be deleted'
+			);
 		}
 	}
 
@@ -479,7 +523,7 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 
 		foreach ( array_merge( $keep_meta_keys, $remove_meta_keys ) as $meta_key ) {
 			update_user_meta( $student_id, $meta_key, 'test_value' );
-			$this->assertTrue( 'test_value' === get_user_meta( $student_id, $meta_key, true) );
+			$this->assertTrue( 'test_value' === get_user_meta( $student_id, $meta_key, true ) );
 		}
 
 		Sensei_Data_Cleaner::cleanup_all();
@@ -533,17 +577,19 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 	/* Helper functions. */
 
 	private function getPostIdsWithTerm( $term_id, $taxonomy ) {
-		return get_posts( array(
-			'fields'    => 'ids',
-			'post_type' => 'any',
-			'tax_query' => array(
-				array(
-					'field'    => 'term_id',
-					'terms'    => $term_id,
-					'taxonomy' => $taxonomy,
+		return get_posts(
+			array(
+				'fields'    => 'ids',
+				'post_type' => 'any',
+				'tax_query' => array(
+					array(
+						'field'    => 'term_id',
+						'terms'    => $term_id,
+						'taxonomy' => $taxonomy,
+					),
 				),
-			),
-		) );
+			)
+		);
 	}
 
 	private function emptyTrash() {

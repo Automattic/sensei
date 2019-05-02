@@ -1,5 +1,7 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
 
 /**
  * Admin Analysis Lesson Data Table in Sensei.
@@ -9,16 +11,17 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * @since 1.2.0
  */
-class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
+class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 	public $lesson_id;
 	public $course_id;
 	public $page_slug = 'sensei_analysis';
 
 	/**
 	 * Constructor
+	 *
 	 * @since  1.2.0
 	 */
-	public function __construct ( $lesson_id = 0 ) {
+	public function __construct( $lesson_id = 0 ) {
 		$this->lesson_id = intval( $lesson_id );
 		$this->course_id = intval( get_post_meta( $this->lesson_id, '_lesson_course', true ) );
 
@@ -34,16 +37,17 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 
 	/**
 	 * Define the columns that are going to be used in the table
+	 *
 	 * @since  1.7.0
 	 * @return array $columns, the array of columns to use with the table
 	 */
 	function get_columns() {
 		$columns = array(
-			'title' => __( 'Learner', 'woothemes-sensei' ),
-			'started' => __( 'Date Started', 'woothemes-sensei' ),
-			'completed' => __( 'Date Completed', 'woothemes-sensei' ),
-			'status' => __( 'Status', 'woothemes-sensei' ),
-			'grade' => __( 'Grade', 'woothemes-sensei' ),
+			'title'     => __( 'Learner', 'sensei-lms' ),
+			'started'   => __( 'Date Started', 'sensei-lms' ),
+			'completed' => __( 'Date Completed', 'sensei-lms' ),
+			'status'    => __( 'Status', 'sensei-lms' ),
+			'grade'     => __( 'Grade', 'sensei-lms' ),
 		);
 		$columns = apply_filters( 'sensei_analysis_lesson_columns', $columns, $this );
 		return $columns;
@@ -51,16 +55,17 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 
 	/**
 	 * get_columns Define the columns that are going to be used in the table
+	 *
 	 * @since  1.7.0
 	 * @return array $columns, the array of columns to use with the table
 	 */
 	function get_sortable_columns() {
 		$columns = array(
-			'title' => array( 'title', false ),
-			'started' => array( 'started', false ),
+			'title'     => array( 'title', false ),
+			'started'   => array( 'started', false ),
 			'completed' => array( 'completed', false ),
-			'status' => array( 'status', false ),
-			'grade' => array( 'grade', false ),
+			'status'    => array( 'status', false ),
+			'grade'     => array( 'grade', false ),
 		);
 		$columns = apply_filters( 'sensei_analysis_lesson_columns_sortable', $columns, $this );
 		return $columns;
@@ -68,6 +73,7 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 
 	/**
 	 * Prepare the table with different parameters, pagination, columns and table elements
+	 *
 	 * @since  1.7.0
 	 * @return void
 	 */
@@ -76,7 +82,7 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 
 		// Handle orderby (needs work)
 		$orderby = '';
-		if ( !empty( $_GET['orderby'] ) ) {
+		if ( ! empty( $_GET['orderby'] ) ) {
 			if ( array_key_exists( esc_html( $_GET['orderby'] ), $this->get_sortable_columns() ) ) {
 				$orderby = esc_html( $_GET['orderby'] );
 			} // End If Statement
@@ -84,13 +90,13 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 
 		// Handle order
 		$order = 'ASC';
-		if ( !empty( $_GET['order'] ) ) {
-			$order = ( 'ASC' == strtoupper($_GET['order']) ) ? 'ASC' : 'DESC';
+		if ( ! empty( $_GET['order'] ) ) {
+			$order = ( 'ASC' == strtoupper( $_GET['order'] ) ) ? 'ASC' : 'DESC';
 		}
 
 		// Handle search, need 4.1 version of WP to be able to restrict statuses to known post_ids
 		$search = false;
-		if ( !empty( $_GET['s'] ) ) {
+		if ( ! empty( $_GET['s'] ) ) {
 			$search = esc_html( $_GET['s'] );
 		} // End If Statement
 		$this->search = $search;
@@ -98,17 +104,17 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 		$per_page = $this->get_items_per_page( 'sensei_comments_per_page' );
 		$per_page = apply_filters( 'sensei_comments_per_page', $per_page, 'sensei_comments' );
 
-		$paged = $this->get_pagenum();
+		$paged  = $this->get_pagenum();
 		$offset = 0;
-		if ( !empty($paged) ) {
+		if ( ! empty( $paged ) ) {
 			$offset = $per_page * ( $paged - 1 );
 		} // End If Statement
 
 		$args = array(
-			'number' => $per_page,
-			'offset' => $offset,
+			'number'  => $per_page,
+			'offset'  => $offset,
 			'orderby' => $orderby,
-			'order' => $order,
+			'order'   => $order,
 		);
 		if ( $this->search ) {
 			$args['search'] = $this->search;
@@ -118,15 +124,18 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 
 		$total_items = $this->total_items;
 		$total_pages = ceil( $total_items / $per_page );
-		$this->set_pagination_args( array(
-			'total_items' => $total_items,
-			'total_pages' => $total_pages,
-			'per_page' => $per_page
-		) );
+		$this->set_pagination_args(
+			array(
+				'total_items' => $total_items,
+				'total_pages' => $total_pages,
+				'per_page'    => $per_page,
+			)
+		);
 	}
 
 	/**
 	 * Generate a csv report with different parameters, pagination, columns and table elements
+	 *
 	 * @since  1.7.0
 	 * @return data
 	 */
@@ -138,7 +147,7 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 
 		// Handle orderby
 		$orderby = '';
-		if ( !empty( $_GET['orderby'] ) ) {
+		if ( ! empty( $_GET['orderby'] ) ) {
 			if ( array_key_exists( esc_html( $_GET['orderby'] ), $this->get_sortable_columns() ) ) {
 				$orderby = esc_html( $_GET['orderby'] );
 			} // End If Statement
@@ -146,20 +155,20 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 
 		// Handle order
 		$order = 'ASC';
-		if ( !empty( $_GET['order'] ) ) {
-			$order = ( 'ASC' == strtoupper($_GET['order']) ) ? 'ASC' : 'DESC';
+		if ( ! empty( $_GET['order'] ) ) {
+			$order = ( 'ASC' == strtoupper( $_GET['order'] ) ) ? 'ASC' : 'DESC';
 		}
 
 		// Handle search
 		$search = false;
-		if ( !empty( $_GET['s'] ) ) {
+		if ( ! empty( $_GET['s'] ) ) {
 			$search = esc_html( $_GET['s'] );
 		} // End If Statement
 		$this->search = $search;
 
 		$args = array(
 			'orderby' => $orderby,
-			'order' => $order,
+			'order'   => $order,
 		);
 		if ( $this->search ) {
 			$args['search'] = $this->search;
@@ -167,8 +176,8 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 
 		// Start the csv with the column headings
 		$column_headers = array();
-		$columns = $this->get_columns();
-		foreach( $columns AS $key => $title ) {
+		$columns        = $this->get_columns();
+		foreach ( $columns as $key => $title ) {
 			$column_headers[] = $title;
 		}
 		$data[] = $column_headers;
@@ -176,7 +185,7 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 		$this->items = $this->get_lesson_statuses( $args );
 
 		// Process each row
-		foreach( $this->items AS $item) {
+		foreach ( $this->items as $item ) {
 			$data[] = $this->get_row_data( $item );
 		}
 
@@ -190,83 +199,98 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 	 * @param object $item The current item
 	 */
 	protected function get_row_data( $item ) {
-
 		$user_start_date = get_comment_meta( $item->comment_ID, 'start', true );
-		$user_end_date = $item->comment_date;
-		$status_class = $grade = '';
+		$user_end_date   = $item->comment_date;
+		$status_class    = $grade = '';
 
-		if( 'complete' == $item->comment_approved ) {
-			$status =  __( 'Completed', 'woothemes-sensei' );
+		if ( 'complete' == $item->comment_approved ) {
+			$status       = __( 'Completed', 'sensei-lms' );
 			$status_class = 'graded';
 
-			$grade =  __( 'No Grade', 'woothemes-sensei' );
-		}
-		elseif( 'graded' == $item->comment_approved ) {
-			$status = __( 'Graded', 'woothemes-sensei' ) ;
+			$grade = __( 'No Grade', 'sensei-lms' );
+		} elseif ( 'graded' == $item->comment_approved ) {
+			$status       = __( 'Graded', 'sensei-lms' );
 			$status_class = 'graded';
 
-			$grade = get_comment_meta( $item->comment_ID, 'grade', true);
-		}
-		elseif( 'passed' == $item->comment_approved ) {
-			$status =  __( 'Passed', 'woothemes-sensei' );
+			$grade = get_comment_meta( $item->comment_ID, 'grade', true );
+		} elseif ( 'passed' == $item->comment_approved ) {
+			$status       = __( 'Passed', 'sensei-lms' );
 			$status_class = 'graded';
 
-			$grade = get_comment_meta( $item->comment_ID, 'grade', true);
-		}
-		elseif( 'failed' == $item->comment_approved ) {
-			$status = __( 'Failed', 'woothemes-sensei' );
+			$grade = get_comment_meta( $item->comment_ID, 'grade', true );
+		} elseif ( 'failed' == $item->comment_approved ) {
+			$status       = __( 'Failed', 'sensei-lms' );
 			$status_class = 'failed';
 
-			$grade = get_comment_meta( $item->comment_ID, 'grade', true);
-		}
-		elseif( 'ungraded' == $item->comment_approved ) {
-			$status =  __( 'Ungraded', 'woothemes-sensei' );
+			$grade = get_comment_meta( $item->comment_ID, 'grade', true );
+		} elseif ( 'ungraded' == $item->comment_approved ) {
+			$status       = __( 'Ungraded', 'sensei-lms' );
 			$status_class = 'ungraded';
 
-		}
-		else {
-			$status =  __( 'In Progress', 'woothemes-sensei' );
+		} else {
+			$status        = __( 'In Progress', 'sensei-lms' );
 			$user_end_date = '';
 		}
 
 		// Output users data
-        $user_name = Sensei_Learner::get_full_name( $item->user_id );
+		$user_name = Sensei_Learner::get_full_name( $item->user_id );
 
-        if ( !$this->csv_output ) {
-			$url = add_query_arg( array( 'page' => $this->page_slug, 'user_id' => $item->user_id, 'course_id' => $this->course_id ), admin_url( 'admin.php' ) );
+		if ( ! $this->csv_output ) {
+			$url = add_query_arg(
+				array(
+					'page'      => $this->page_slug,
+					'user_id'   => $item->user_id,
+					'course_id' => $this->course_id,
+				),
+				admin_url( 'admin.php' )
+			);
 
-			$user_name = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . $user_name . '</a></strong>';
-			$status = sprintf( '<span class="%s">%s</span>', $item->comment_approved, $status );
-			if ( is_numeric($grade) ) {
+			$user_name = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . esc_html( $user_name ) . '</a></strong>';
+			$status    = sprintf( '<span class="%s">%s</span>', esc_attr( $item->comment_approved ), esc_html( $status ) );
+			if ( is_numeric( $grade ) ) {
 				$grade .= '%';
 			}
 		} // End If Statement
-		$column_data = apply_filters( 'sensei_analysis_lesson_column_data', array( 'title' => $user_name,
-										'started' => $user_start_date,
-										'completed' => $user_end_date,
-										'status' => $status,
-										'grade' => $grade,
-									), $item, $this );
 
-		return $column_data;
+		$column_data = apply_filters(
+			'sensei_analysis_lesson_column_data',
+			array(
+				'title'     => $user_name,
+				'started'   => $user_start_date,
+				'completed' => $user_end_date,
+				'status'    => $status,
+				'grade'     => $grade,
+			),
+			$item,
+			$this
+		);
+
+		$escaped_column_data = array();
+
+		foreach ( $column_data as $key => $data ) {
+			$escaped_column_data[ $key ] = wp_kses_post( $data );
+		}
+
+		return $escaped_column_data;
 	}
 
 	/**
 	 * Return array of lesson statuses
+	 *
 	 * @since  1.7.0
 	 * @return array statuses
 	 */
 	private function get_lesson_statuses( $args ) {
 
-		$activity_args = array( 
-				'post_id' => $this->lesson_id,
-				'type' => 'sensei_lesson_status',
-				'number' => $args['number'],
-				'offset' => $args['offset'],
-				'orderby' => $args['orderby'],
-				'order' => $args['order'],
-				'status' => 'any',
-			);
+		$activity_args = array(
+			'post_id' => $this->lesson_id,
+			'type'    => 'sensei_lesson_status',
+			'number'  => $args['number'],
+			'offset'  => $args['offset'],
+			'orderby' => $args['orderby'],
+			'order'   => $args['order'],
+			'status'  => 'any',
+		);
 
 		// Searching users on statuses requires sub-selecting the statuses by user_ids
 		if ( $this->search ) {
@@ -276,7 +300,7 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 			);
 			// Filter for extending
 			$user_args = apply_filters( 'sensei_analysis_lesson_search_users', $user_args );
-			if ( !empty( $user_args ) ) {
+			if ( ! empty( $user_args ) ) {
 				$learners_search = new WP_User_Query( $user_args );
 				// Store for reuse on counts
 				$activity_args['user_id'] = (array) $learners_search->get_results();
@@ -286,16 +310,25 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 		$activity_args = apply_filters( 'sensei_analysis_lesson_filter_statuses', $activity_args );
 
 		// WP_Comment_Query doesn't support SQL_CALC_FOUND_ROWS, so instead do this twice
-		$this->total_items = Sensei_Utils::sensei_check_for_activity( array_merge( $activity_args, array('count' => true, 'offset' => 0, 'number' => 0) ) );
+		$this->total_items = Sensei_Utils::sensei_check_for_activity(
+			array_merge(
+				$activity_args,
+				array(
+					'count'  => true,
+					'offset' => 0,
+					'number' => 0,
+				)
+			)
+		);
 
 		// Ensure we change our range to fit (in case a search threw off the pagination) - Should this be added to all views?
 		if ( $this->total_items < $activity_args['offset'] ) {
-			$new_paged = floor( $total_statuses / $activity_args['number'] );
+			$new_paged               = floor( $total_statuses / $activity_args['number'] );
 			$activity_args['offset'] = $new_paged * $activity_args['number'];
 		}
 		$statuses = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
 		// Need to always return an array, even with only 1 item
-		if ( !is_array($statuses) ) {
+		if ( ! is_array( $statuses ) ) {
 			$statuses = array( $statuses );
 		}
 		return $statuses;
@@ -304,44 +337,55 @@ class Sensei_Analysis_Lesson_List_Table extends WooThemes_Sensei_List_Table {
 	/**
 	 * no_items sets output when no items are found
 	 * Overloads the parent method
+	 *
 	 * @since  1.2.0
 	 * @return void
 	 */
 	public function no_items() {
-		 _e( 'No learners found.', 'woothemes-sensei' );
+		esc_html_e( 'No learners found.', 'sensei-lms' );
 	} // End no_items()
 
 	/**
 	 * data_table_header output for table heading
+	 *
 	 * @since  1.2.0
 	 * @return void
 	 */
 	public function data_table_header() {
-		echo '<strong>' . __( 'Learners taking this Lesson', 'woothemes-sensei' ) . '</strong>';
+		echo '<strong>' . esc_html__( 'Learners taking this Lesson', 'sensei-lms' ) . '</strong>';
 	} // End data_table_header()
 
 	/**
 	 * data_table_footer output for table footer
+	 *
 	 * @since  1.2.0
 	 * @return void
 	 */
 	public function data_table_footer() {
 		$lesson = get_post( $this->lesson_id );
 		$report = sanitize_title( $lesson->post_title ) . '-learners-overview';
-		$url = add_query_arg( array( 'page' => $this->page_slug, 'lesson_id' => $this->lesson_id, 'sensei_report_download' => $report ), admin_url( 'admin.php' ) );
-		echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( $url, 'sensei_csv_download-' . $report, '_sdl_nonce' ) ) . '">' . __( 'Export all rows (CSV)', 'woothemes-sensei' ) . '</a>';
+		$url    = add_query_arg(
+			array(
+				'page'                   => $this->page_slug,
+				'lesson_id'              => $this->lesson_id,
+				'sensei_report_download' => $report,
+			),
+			admin_url( 'admin.php' )
+		);
+		echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( $url, 'sensei_csv_download-' . $report, '_sdl_nonce' ) ) . '">' . esc_html__( 'Export all rows (CSV)', 'sensei-lms' ) . '</a>';
 	} // End data_table_footer()
 
 	/**
 	 * the text for the search button
+	 *
 	 * @since  1.7.0
 	 * @return string $text
 	 */
 	public function search_button( $text = '' ) {
 
-        $text =  __( 'Search Learners', 'woothemes-sensei' );
+		$text = __( 'Search Learners', 'sensei-lms' );
 
-        return $text;
+		return $text;
 
 	}
 } // End Class

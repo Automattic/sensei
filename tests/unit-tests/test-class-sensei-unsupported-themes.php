@@ -57,14 +57,16 @@ class Sensei_Unsupported_Themes_Test extends WP_UnitTestCase {
 	private function setupCoursePage() {
 		global $post, $wp_query;
 
-		$course = $this->factory->post->create_and_get( array(
-			'post_status' => 'publish',
-			'post_type'   => 'course',
-		) );
+		$course = $this->factory->post->create_and_get(
+			array(
+				'post_status' => 'publish',
+				'post_type'   => 'course',
+			)
+		);
 
 		// Setup globals.
-		$post = $course;
-		$wp_query->post = $course;
+		$post                = $course;
+		$wp_query->post      = $course;
 		$wp_query->is_single = true;
 	}
 

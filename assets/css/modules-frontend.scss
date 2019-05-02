@@ -1,5 +1,5 @@
 $fontawesome: FontAwesomeSensei, FontAwesome;
-.module-archive #main .status, #main .course .module-status {
+.module-archive .status, .course .module-status {
 	padding:.382em 1em;
 	-webkit-border-radius:5px;
 	border-radius:5px;
@@ -12,7 +12,7 @@ $fontawesome: FontAwesomeSensei, FontAwesome;
 	clear: both;
 	display: inline-block;
 }
-.module-archive #main .status:before, #main .course .module-status:before {
+.module-archive .status:before, .course .module-status:before {
 	font-family: $fontawesome;
 	display:inline-block;
 	font-size:100%;
@@ -21,13 +21,13 @@ $fontawesome: FontAwesomeSensei, FontAwesome;
 	line-height:1em;
 	width:1em;
 }
-.module-archive #main .status.completed, #main .course .module-status.completed {
+.module-archive .status.completed, .course .module-status.completed {
 	background:#63a95f;
 }
-.module-archive #main .status.completed:before, #main .course .module-status.completed:before {
+.module-archive .status.completed:before, .course .module-status.completed:before {
 	content:"\f00c";
 }
-.module-archive #main .status.in-progress:before, #main .course .module-status.in-progress:before {
+.module-archive .status.in-progress:before, .course .module-status.in-progress:before {
 	content:"\f110";
 }
 .module-lessons .lesson-status  {

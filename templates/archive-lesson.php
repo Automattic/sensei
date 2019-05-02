@@ -5,44 +5,44 @@
  *
  * Override this template by copying it to your_theme/sensei/archive-lesson.php
  *
- * @author 		Automattic
- * @package 	Sensei
+ * @author      Automattic
+ * @package     Sensei
  * @category    Templates
- * @version     1.9.0
+ * @version     2.0.0
  */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+get_sensei_header();
+
+/**
+ * Action before lesson archive loop. This action runs within the archive-lesson.php.
+ *
+ * It will be executed even if there are no posts on the archive page.
+ */
+do_action( 'sensei_archive_before_lesson_loop' );
 ?>
 
-<?php  get_sensei_header();  ?>
+	<?php if ( have_posts() ) : ?>
 
-    <?php
+		<?php sensei_load_template( 'loop-lesson.php' ); ?>
 
-        /**
-         * Action before lesson archive loop. This action runs within the archive-lesson.php.
-         *
-         * It will be executed even if there are no posts on the archive page.
-         */
-        do_action( 'sensei_archive_before_lesson_loop' );
+	<?php else : ?>
 
-    ?>
+		<p><?php esc_html_e( 'No lessons found that match your selection.', 'sensei-lms' ); ?></p>
 
-    <?php if ( have_posts() ): ?>
+	<?php endif; // End If Statement ?>
 
-        <?php sensei_load_template( 'loop-lesson.php' ); ?>
+	<?php
 
-    <?php else: ?>
-
-        <p><?php _e( 'No lessons found that match your selection.', 'woothemes-sensei' ); ?></p>
-
-    <?php  endif; // End If Statement ?>
-
-    <?php
-
-        /**
-         * Action after lesson archive  loop on the archive-lesson.php template file
-         * It will be executed even if there are no posts on the archive page.
-         *
-         * @since 1.9.0
-         */
-        do_action( 'sensei_archive_after_lesson_loop' );
-    ?>
+		/**
+		 * Action after lesson archive  loop on the archive-lesson.php template file
+		 * It will be executed even if there are no posts on the archive page.
+		 *
+		 * @since 1.9.0
+		 */
+		do_action( 'sensei_archive_after_lesson_loop' );
+	?>
 <?php get_sensei_footer(); ?>

@@ -59,10 +59,13 @@ class Sensei_Data_Cleaner {
 		'sensei_flush_rewrite_rules',
 		'sensei_needs_language_pack_install',
 		'woothemes_sensei_language_pack_version',
+		'sensei-version',
 		'woothemes-sensei-version',
 		'sensei_usage_tracking_opt_in_hide',
+		'sensei-upgrades',
 		'woothemes-sensei-upgrades',
 		'woothemes-sensei-settings',
+		'sensei-settings',
 		'sensei_courses_page_id',
 		'woothemes-sensei_courses_page_id',
 		'woothemes-sensei_user_dashboard_page_id',
@@ -244,12 +247,14 @@ class Sensei_Data_Cleaner {
 	 */
 	private static function cleanup_custom_post_types() {
 		foreach ( self::$custom_post_types as $post_type ) {
-			$items = get_posts( array(
-				'post_type'   => $post_type,
-				'post_status' => 'any',
-				'numberposts' => -1,
-				'fields'      => 'ids',
-			) );
+			$items = get_posts(
+				array(
+					'post_type'   => $post_type,
+					'post_status' => 'any',
+					'numberposts' => -1,
+					'fields'      => 'ids',
+				)
+			);
 
 			foreach ( $items as $item ) {
 				wp_trash_post( $item );

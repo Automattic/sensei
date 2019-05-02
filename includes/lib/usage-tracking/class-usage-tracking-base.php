@@ -8,6 +8,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// phpcs:disable WordPress.WP.I18n.NonSingularStringLiteralDomain
+
 /**
  * Usage Tracking class. Please update the prefix to something unique to your
  * plugin.
@@ -234,7 +236,8 @@ abstract class Sensei_Usage_Tracking_Base {
 
 		$pixel   .= '?' . implode( '&', $p ) . '&_=_'; // EOF marker.
 		$response = wp_remote_get(
-			$pixel, array(
+			$pixel,
+			array(
 				'blocking'    => true,
 				'timeout'     => 1,
 				'redirection' => 2,
@@ -486,7 +489,7 @@ abstract class Sensei_Usage_Tracking_Base {
 			<div id="<?php echo esc_attr( $this->get_prefix() ); ?>-usage-tracking-failure" class="notice notice-error hidden">
 				<p><?php esc_html_e( 'Something went wrong. Please try again later.', $this->get_text_domain() ); ?></p>
 			</div>
-		<?php
+			<?php
 		}
 	}
 
@@ -515,8 +518,11 @@ abstract class Sensei_Usage_Tracking_Base {
 	public function enqueue_script_deps() {
 		// Ensure jQuery is loaded.
 		wp_enqueue_script(
-			$this->get_prefix() . '_usage-tracking-notice', '',
-			array( 'jquery' ), null, true
+			$this->get_prefix() . '_usage-tracking-notice',
+			'',
+			array( 'jquery' ),
+			null,
+			true
 		);
 	}
 
@@ -525,7 +531,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * externally.
 	 **/
 	public function output_opt_in_js() {
-?>
+		?>
 <script type="text/javascript">
 	(function( prefix ) {
 		jQuery( document ).ready( function() {
@@ -573,6 +579,7 @@ abstract class Sensei_Usage_Tracking_Base {
 		});
 	})( "<?php echo esc_js( $this->get_prefix() ); ?>" );
 </script>
-<?php
+		<?php
 	}
 }
+// phpcs: enable
