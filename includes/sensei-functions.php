@@ -289,3 +289,7 @@ if ( ! function_exists( 'sensei_check_woocommerce_version' ) ) {
 		return false;
 	}
 }
+
+function sensei_track_event( $event_name, $properties = [] ) {
+	Sensei_Usage_Tracking::get_instance()->send_event( $event_name, $properties );
+}
