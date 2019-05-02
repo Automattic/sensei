@@ -467,6 +467,7 @@ class Sensei_Core_Modules {
 	public function track_module_creation( $module_id ) {
 		$module           = get_term( $module_id );
 		$event_properties = [
+			// phpcs:ignore WordPress.Security.NonceVerification
 			'page' => isset( $_REQUEST['from_page'] ) ? $_REQUEST['from_page'] : '',
 		];
 
