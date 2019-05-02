@@ -59,6 +59,21 @@ class Sensei_Usage_Tracking_Data {
 	}
 
 	/**
+	 * Get the base fields to be sent for event tracking.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @return array
+	 */
+	public static function get_event_tracking_base_fields() {
+		return [
+			'paid'     => class_exists( 'Sensei_WC' ) ? 1 : 0,
+			'courses'  => wp_count_posts( 'course' )->publish,
+			'learners' => self::get_learner_count(),
+		];
+	}
+
+	/**
 	 * Get stats related to lesson quizzes.
 	 *
 	 * @since 1.11.0
