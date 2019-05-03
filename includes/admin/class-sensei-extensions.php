@@ -178,7 +178,7 @@ final class Sensei_Extensions {
 		$extensions = $this->get_extensions( $type, $category );
 		// phpcs:enable
 
-		sensei_track_event( 'extensions_view', [
+		sensei_log_event( 'extensions_view', [
 			'view' => $category ? $category : '_all',
 		] );
 
