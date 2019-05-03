@@ -472,7 +472,7 @@ class Sensei_Core_Modules {
 		];
 
 		if ( $module->parent ) {
-			$event_properties['parent'] = $module->parent;
+			$event_properties['parent_id'] = $module->parent;
 		}
 
 		sensei_log_event( 'module_add', $event_properties );
