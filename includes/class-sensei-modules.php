@@ -475,7 +475,7 @@ class Sensei_Core_Modules {
 			$event_properties['parent'] = $module->parent;
 		}
 
-		sensei_track_event( 'module_add', $event_properties );
+		sensei_log_event( 'module_add', $event_properties );
 	}
 
 	/**

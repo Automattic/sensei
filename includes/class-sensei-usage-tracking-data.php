@@ -59,13 +59,13 @@ class Sensei_Usage_Tracking_Data {
 	}
 
 	/**
-	 * Get the base fields to be sent for event tracking.
+	 * Get the base fields to be sent for event logging.
 	 *
 	 * @since 2.1.0
 	 *
 	 * @return array
 	 */
-	public static function get_event_tracking_base_fields() {
+	public static function get_event_logging_base_fields() {
 		return [
 			'paid'     => class_exists( 'Sensei_WC' ) ? 1 : 0,
 			'courses'  => wp_count_posts( 'course' )->publish,
