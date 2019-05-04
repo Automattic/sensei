@@ -70,6 +70,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				$columns = array(
 					'title'        => __( 'Learner', 'sensei-lms' ),
 					'date_started' => __( 'Date Started', 'sensei-lms' ),
+					'date_completed'  => __( 'Date Completed', 'sensei-lms' ),
 					'user_status'  => __( 'Status', 'sensei-lms' ),
 				);
 				break;
@@ -296,6 +297,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 					array(
 						'title'        => '<strong><a class="row-title" href="' . esc_url( admin_url( 'user-edit.php?user_id=' . $user_activity->user_id ) ) . '" title="' . esc_attr( $a_title ) . '">' . esc_html( $title ) . '</a></strong>',
 						'date_started' => get_comment_meta( $user_activity->comment_ID, 'start', true ),
+            			'date_completed'  => ( 'complete' == $user_activity->comment_approved || 'graded' == $user_activity->comment_approved || 'passed' == $user_activity->comment_approved ) ? $user_activity->comment_date : '',
 						'user_status'  => $status_html,
 						// translators: Placeholder is the "object type"; lesson or course.
 						'actions'      => '<a class="remove-learner button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '">' . sprintf( esc_html__( 'Remove from %1$s', 'sensei-lms' ), esc_html( $object_type ) ) . '</a>'
