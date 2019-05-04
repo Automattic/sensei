@@ -9,11 +9,13 @@ jQuery(document).ready(function($) {
 	});
 
 	// Only show the General settings.
+	var defaultSettingsSlug = 'default-settings';
 	$( '#woothemes-sensei section' ).each( function () {
-		if ( this.id !== 'default-settings' ) {
+		if ( this.id !== defaultSettingsSlug ) {
 			$( this ).hide();
 		}
 	} );
+	sensei_log_event( 'settings_view', { view: defaultSettingsSlug } );
 
 	jQuery( '#woothemes-sensei .subsubsub a.tab' ).click( function () {
 		// Move the "current" CSS class.
@@ -28,6 +30,8 @@ jQuery(document).ready(function($) {
 		// Remove the first occurance of # from the selected string (will be added manually below).
 		toShow = toShow.replace( '#', '' );
 		jQuery('#'+toShow).show();
+
+		sensei_log_event( 'settings_view', { view: toShow } );
 
 		return false;
 	});
