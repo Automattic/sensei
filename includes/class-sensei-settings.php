@@ -39,6 +39,8 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$this->register_hook_listener();
 		$this->get_settings();
 
+		// Log when settings are updated by the user.
+		add_action( 'update_option_sensei-settings', [ $this, 'log_settings_update' ], 10, 3 );
 	} // End __construct()
 
 	/**
@@ -705,6 +707,45 @@ class Sensei_Settings extends Sensei_Settings_API {
 		}
 
 	}//end flush_rewrite_rules()
+
+	/**
+	 * Logs settings update from the Settings form.
+	 *
+	 * @access private
+	 * @since 2.1.0
+	 *
+	 * @param array $old_value The old settings value.
+	 * @param array $value     The new settings value.
+	 */
+	public function log_settings_update( $old_value, $value ) {
+		// Only process user-initiated settings updates.
+		if ( ! ( 'POST' === $_SERVER['REQUEST_METHOD'] && 'options' === get_current_screen()->id ) ) {
+			return;
+		}
+
+		// Find changed fields.
+		$changed = [];
+		foreach ( $this->fields as $field => $field_config ) {
+			$old_field_value = isset( $old_value[ $field ] ) ? $old_value[ $field ] : '';
+			$new_field_value = isset( $value[ $field ] ) ? $value[ $field ] : '';
+			if ( $new_field_value !== $old_field_value ) {
+				$section = $field_config['section'];
+				if ( ! isset( $changed[ $section ] ) ) {
+					$changed[ $section ] = [ $field ];
+				} else {
+					array_push( $changed[ $section ], $field );
+				}
+			}
+		}
+
+		// Log changed sections.
+		foreach ( $changed as $section => $fields ) {
+			sensei_log_event( 'settings_update', [
+				'view'     => $section,
+				'settings' => implode( ',', $fields ),
+			] );
+		}
+	}
 } // End Class
 
 /**
