@@ -303,5 +303,6 @@ function sensei_log_event( $event_name, $properties = [] ) {
 		Sensei_Usage_Tracking_Data::get_event_logging_base_fields(),
 		$properties
 	);
+
 	Sensei_Usage_Tracking::get_instance()->send_event( $event_name, $properties );
 }
