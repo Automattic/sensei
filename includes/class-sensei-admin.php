@@ -84,7 +84,7 @@ class Sensei_Admin {
 		add_action( 'admin_footer', array( $this, 'output_cpt_block_editor_workaround' ) );
 
 		// Add AJAX endpoint for event logging.
-		add_action( 'wp_ajax_sensei_log_event', array( $this, 'log_event' ) );
+		add_action( 'wp_ajax_sensei_log_event', array( $this, 'ajax_log_event' ) );
 
 		Sensei_Extensions::instance()->init();
 
@@ -1826,9 +1826,10 @@ class Sensei_Admin {
 	/**
 	 * Attempt to log a Sensei event.
 	 *
-	 *
+	 * @since 2.1.0
+	 * @access private
 	 */
-	function log_event() {
+	public function ajax_log_event() {
 		if ( ! isset( $_REQUEST['event_name'] ) ) {
 			wp_die();
 		}
