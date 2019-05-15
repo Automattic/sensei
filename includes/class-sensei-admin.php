@@ -83,6 +83,9 @@ class Sensei_Admin {
 		// Add workaround for block editor bug on CPT pages. See the function doc for more information.
 		add_action( 'admin_footer', array( $this, 'output_cpt_block_editor_workaround' ) );
 
+		// Add AJAX endpoint for event logging.
+		add_action( 'wp_ajax_sensei_log_event', array( $this, 'ajax_log_event' ) );
+
 		Sensei_Extensions::instance()->init();
 
 	} // End __construct()
@@ -335,6 +338,10 @@ class Sensei_Admin {
 		}
 
 		wp_enqueue_script( 'sensei-message-menu-fix', Sensei()->plugin_url . 'assets/js/admin/message-menu-fix.js', array( 'jquery' ), Sensei()->version, true );
+
+		// Event logging.
+		wp_enqueue_script( 'sensei-event-logging', Sensei()->plugin_url . 'assets/js/admin/event_logging' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
+		wp_localize_script( 'sensei-event-logging', 'sensei_event_logging', [ 'enabled' => Sensei_Usage_Tracking::get_instance()->get_tracking_enabled() ] );
 	}
 
 
@@ -1814,7 +1821,25 @@ class Sensei_Admin {
 	} );
 </script>
 		<?php
+	}
 
+	/**
+	 * Attempt to log a Sensei event.
+	 *
+	 * @since 2.1.0
+	 * @access private
+	 */
+	public function ajax_log_event() {
+		// phpcs:disable WordPress.Security.NonceVerification
+		if ( ! isset( $_REQUEST['event_name'] ) ) {
+			wp_die();
+		}
+
+		$event_name = $_REQUEST['event_name'];
+		$properties = isset( $_REQUEST['properties'] ) ? $_REQUEST['properties'] : [];
+
+		sensei_log_event( $event_name, $properties );
+		// phpcs:enable WordPress.Security.NonceVerification
 	}
 
 } // End Class
