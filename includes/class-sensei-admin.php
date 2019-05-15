@@ -1830,6 +1830,7 @@ class Sensei_Admin {
 	 * @access private
 	 */
 	public function ajax_log_event() {
+		// phpcs:disable WordPress.Security.NonceVerification
 		if ( ! isset( $_REQUEST['event_name'] ) ) {
 			wp_die();
 		}
@@ -1838,6 +1839,7 @@ class Sensei_Admin {
 		$properties = isset( $_REQUEST['properties'] ) ? $_REQUEST['properties'] : [];
 
 		sensei_log_event( $event_name, $properties );
+		// phpcs:enable WordPress.Security.NonceVerification
 	}
 
 } // End Class
