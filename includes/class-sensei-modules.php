@@ -71,6 +71,7 @@ class Sensei_Core_Modules {
 		add_action( $this->taxonomy . '_edit_form_fields', array( $this, 'edit_module_fields' ), 1, 1 );
 		add_action( 'edited_' . $this->taxonomy, array( $this, 'save_module_course' ), 10, 2 );
 		add_action( 'created_' . $this->taxonomy, array( $this, 'save_module_course' ), 10, 2 );
+		add_action( 'created_' . $this->taxonomy, array( $this, 'track_module_creation' ), 10 );
 		add_action( 'wp_ajax_sensei_json_search_courses', array( $this, 'search_courses_json' ) );
 
 		// Manage module taxonomy archive page
@@ -319,6 +320,7 @@ class Sensei_Core_Modules {
 		<div class="form-field">
 			<?php $this->render_module_course_multi_select(); ?>
 		</div>
+		<input type="hidden" name="from_page" value="module">
 		<?php
 	}
 
@@ -452,6 +454,28 @@ class Sensei_Core_Modules {
 
 			}
 		}
+	}
+
+	/**
+	 * Track module creation.
+	 *
+	 * @since 2.1.0
+	 * @access private
+	 *
+	 * @param int $module_id ID of module.
+	 */
+	public function track_module_creation( $module_id ) {
+		$module           = get_term( $module_id );
+		$event_properties = [
+			// phpcs:ignore WordPress.Security.NonceVerification
+			'page' => isset( $_REQUEST['from_page'] ) ? $_REQUEST['from_page'] : '',
+		];
+
+		if ( $module->parent ) {
+			$event_properties['parent_id'] = $module->parent;
+		}
+
+		sensei_log_event( 'module_add', $event_properties );
 	}
 
 	/**

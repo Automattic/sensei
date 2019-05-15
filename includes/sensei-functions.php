@@ -289,3 +289,20 @@ if ( ! function_exists( 'sensei_check_woocommerce_version' ) ) {
 		return false;
 	}
 }
+
+/**
+ * Track a Sensei event.
+ *
+ * @since 2.1.0
+ *
+ * @param string $event_name The name of the event, without the `sensei_` prefix.
+ * @param array  $properties The event properties to be sent.
+ */
+function sensei_log_event( $event_name, $properties = [] ) {
+	$properties = array_merge(
+		Sensei_Usage_Tracking_Data::get_event_logging_base_fields(),
+		$properties
+	);
+
+	Sensei_Usage_Tracking::get_instance()->send_event( $event_name, $properties );
+}
