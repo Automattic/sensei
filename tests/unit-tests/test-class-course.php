@@ -184,6 +184,33 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 	/**
 	 * @covers Sensei_Course::log_initial_publish_event
 	 */
+	public function testLogNoEventOnExistingCourseSecondPublish() {
+		$course_id = $this->factory->course->create();
+
+		// Remove the meta to simulate an existing course.
+		delete_post_meta( $course_id, 'course_already_published' );
+
+		// Unpublish course.
+		wp_update_post( [
+			'ID'          => $course_id,
+			'post_status' => 'draft',
+		] );
+
+		// Reset test logger and republish course.
+		Sensei_Test_Events::reset();
+		wp_update_post( [
+			'ID'          => $course_id,
+			'post_status' => 'publish',
+		] );
+
+		// Ensure that the second publish did not log an event.
+		$events = Sensei_Test_Events::get_logged_events();
+		$this->assertCount( 0, $events );
+	}
+
+	/**
+	 * @covers Sensei_Course::log_initial_publish_event
+	 */
 	public function testLogEventModuleCount() {
 		$course_id = $this->factory->course->create( [
 			'post_status' => 'draft',
