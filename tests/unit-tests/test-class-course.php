@@ -19,6 +19,7 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		parent::setup();
 
 		$this->factory = new Sensei_Factory();
+		Sensei_Test_Events::reset();
 	}//end setup()
 
 	public function tearDown() {
@@ -145,4 +146,139 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		$this->assertEquals( 100, Sensei()->course->get_completion_percentage( $test_course_id, $test_user_id ), 'Course completed percentage is not accurate' );
 
 	}
+
+	/**
+	 * @covers Sensei_Course::log_initial_publish_event
+	 */
+	public function testLogEventOnFirstPublish() {
+		$this->factory->course->create();
+
+		$events = Sensei_Test_Events::get_logged_events( 'sensei_course_publish' );
+		$this->assertCount( 1, $events );
+	}
+
+	/**
+	 * @covers Sensei_Course::log_initial_publish_event
+	 */
+	public function testLogNoEventOnSecondPublish() {
+		$course_id = $this->factory->course->create();
+
+		// Unpublish course.
+		wp_update_post( [
+			'ID'          => $course_id,
+			'post_status' => 'draft',
+		] );
+
+		// Reset test logger and republish course.
+		Sensei_Test_Events::reset();
+		wp_update_post( [
+			'ID'          => $course_id,
+			'post_status' => 'publish',
+		] );
+
+		// Ensure that the second publish did not log an event.
+		$events = Sensei_Test_Events::get_logged_events();
+		$this->assertCount( 0, $events );
+	}
+
+	/**
+	 * @covers Sensei_Course::log_initial_publish_event
+	 */
+	public function testLogEventModuleCount() {
+		$course_id = $this->factory->course->create( [
+			'post_status' => 'draft',
+		] );
+
+		// Add some modules.
+		wp_set_object_terms( $course_id, [ 'module-a', 'module-b' ], 'module' );
+
+		// Publish course.
+		wp_update_post( [
+			'ID'          => $course_id,
+			'post_status' => 'publish',
+		] );
+
+		$events = Sensei_Test_Events::get_logged_events( 'sensei_course_publish' );
+		$this->assertCount( 1, $events );
+
+		// Ensure module count is correct.
+		$event = $events[0];
+		$this->assertEquals( 2, $event['url_args']['module_count'] );
+	}
+
+	/**
+	 * @covers Sensei_Course::log_initial_publish_event
+	 */
+	public function testLogEventLessonCount() {
+		$course_id = $this->factory->course->create( [
+			'post_status' => 'draft',
+		] );
+
+		// Add some lessons to the course.
+		$lesson_ids = $this->factory->lesson->create_many( 2 );
+		foreach ( $lesson_ids as $lesson_id ) {
+			add_post_meta( $lesson_id, '_lesson_course', $course_id );
+		}
+
+		// Publish course.
+		wp_update_post( [
+			'ID'          => $course_id,
+			'post_status' => 'publish',
+		] );
+
+		$events = Sensei_Test_Events::get_logged_events( 'sensei_course_publish' );
+		$this->assertCount( 1, $events );
+
+		// Ensure lesson count is correct.
+		$event = $events[0];
+		$this->assertEquals( 2, $event['url_args']['lesson_count'] );
+	}
+
+	/**
+	 * @covers Sensei_Course::log_initial_publish_event
+	 */
+	public function testLogEventProductId() {
+		$course_id = $this->factory->course->create( [
+			'post_status' => 'draft',
+		] );
+
+		// Add product ID.
+		add_post_meta( $course_id, '_course_woocommerce_product', 5 );
+
+		// Publish without product ID.
+		wp_update_post( [
+			'ID'          => $course_id,
+			'post_status' => 'publish',
+		] );
+
+		$events = Sensei_Test_Events::get_logged_events( 'sensei_course_publish' );
+		$this->assertCount( 1, $events );
+
+		// Ensure product ID is correct.
+		$event = $events[0];
+		$this->assertEquals( 5, $event['url_args']['product_id'] );
+	}
+
+	/**
+	 * @covers Sensei_Course::log_initial_publish_event
+	 */
+	public function testLogNoEventProductId() {
+		$course_id = $this->factory->course->create( [
+			'post_status' => 'draft',
+		] );
+
+		// Publish without product ID.
+		wp_update_post( [
+			'ID'          => $course_id,
+			'post_status' => 'publish',
+		] );
+
+		$events = Sensei_Test_Events::get_logged_events( 'sensei_course_publish' );
+		$this->assertCount( 1, $events );
+
+		// Ensure product ID is correct.
+		$event = $events[0];
+		$this->assertEquals( -1, $event['url_args']['product_id'] );
+	}
+
 }//end class

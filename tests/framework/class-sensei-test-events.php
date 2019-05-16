@@ -61,9 +61,20 @@ class Sensei_Test_Events {
 
 	/**
 	 * Get the list of events that have been logged.
+	 *
+	 * @param string $event_name Optional event name to filter by.
 	 */
-	public static function get_logged_events() {
-		return self::$_logged_events;
+	public static function get_logged_events( $event_name = null ) {
+		if ( $event_name ) {
+			return array_values( array_filter(
+				Sensei_Test_Events::$_logged_events,
+				function( $element ) use ( $event_name ) {
+					return $event_name === $element['event_name'];
+				}
+			) );
+		} else {
+			return self::$_logged_events;
+		}
 	}
 
 	/**
