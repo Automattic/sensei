@@ -148,6 +148,8 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test event logging on first publish.
+	 *
 	 * @covers Sensei_Course::log_initial_publish_event
 	 */
 	public function testLogEventOnFirstPublish() {
@@ -158,23 +160,29 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test no event logging on second publish.
+	 *
 	 * @covers Sensei_Course::log_initial_publish_event
 	 */
 	public function testLogNoEventOnSecondPublish() {
 		$course_id = $this->factory->course->create();
 
 		// Unpublish course.
-		wp_update_post( [
-			'ID'          => $course_id,
-			'post_status' => 'draft',
-		] );
+		wp_update_post(
+			[
+				'ID'          => $course_id,
+				'post_status' => 'draft',
+			]
+		);
 
 		// Reset test logger and republish course.
 		Sensei_Test_Events::reset();
-		wp_update_post( [
-			'ID'          => $course_id,
-			'post_status' => 'publish',
-		] );
+		wp_update_post(
+			[
+				'ID'          => $course_id,
+				'post_status' => 'publish',
+			]
+		);
 
 		// Ensure that the second publish did not log an event.
 		$events = Sensei_Test_Events::get_logged_events();
@@ -182,6 +190,8 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test no event logging on existing course second publish.
+	 *
 	 * @covers Sensei_Course::log_initial_publish_event
 	 */
 	public function testLogNoEventOnExistingCourseSecondPublish() {
@@ -191,17 +201,21 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		delete_post_meta( $course_id, 'course_already_published' );
 
 		// Unpublish course.
-		wp_update_post( [
-			'ID'          => $course_id,
-			'post_status' => 'draft',
-		] );
+		wp_update_post(
+			[
+				'ID'          => $course_id,
+				'post_status' => 'draft',
+			]
+		);
 
 		// Reset test logger and republish course.
 		Sensei_Test_Events::reset();
-		wp_update_post( [
-			'ID'          => $course_id,
-			'post_status' => 'publish',
-		] );
+		wp_update_post(
+			[
+				'ID'          => $course_id,
+				'post_status' => 'publish',
+			]
+		);
 
 		// Ensure that the second publish did not log an event.
 		$events = Sensei_Test_Events::get_logged_events();
@@ -209,6 +223,8 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test no event logging on update.
+	 *
 	 * @covers Sensei_Course::log_initial_publish_event
 	 */
 	public function testLogNoEventOnExistingCourseUpdate() {
@@ -219,11 +235,13 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 
 		// Reset test logger and update course without changing the status.
 		Sensei_Test_Events::reset();
-		wp_update_post( [
-			'ID'           => $course_id,
-			'post_content' => 'New content',
-			'post_status'  => 'publish',
-		] );
+		wp_update_post(
+			[
+				'ID'           => $course_id,
+				'post_content' => 'New content',
+				'post_status'  => 'publish',
+			]
+		);
 
 		// Ensure that the second publish did not log an event.
 		$events = Sensei_Test_Events::get_logged_events();
@@ -231,21 +249,27 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test event logging module count.
+	 *
 	 * @covers Sensei_Course::log_initial_publish_event
 	 */
 	public function testLogEventModuleCount() {
-		$course_id = $this->factory->course->create( [
-			'post_status' => 'draft',
-		] );
+		$course_id = $this->factory->course->create(
+			[
+				'post_status' => 'draft',
+			]
+		);
 
 		// Add some modules.
 		wp_set_object_terms( $course_id, [ 'module-a', 'module-b' ], 'module' );
 
 		// Publish course.
-		wp_update_post( [
-			'ID'          => $course_id,
-			'post_status' => 'publish',
-		] );
+		wp_update_post(
+			[
+				'ID'          => $course_id,
+				'post_status' => 'publish',
+			]
+		);
 
 		$events = Sensei_Test_Events::get_logged_events( 'sensei_course_publish' );
 		$this->assertCount( 1, $events );
@@ -256,12 +280,16 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test event logging lesson count.
+	 *
 	 * @covers Sensei_Course::log_initial_publish_event
 	 */
 	public function testLogEventLessonCount() {
-		$course_id = $this->factory->course->create( [
-			'post_status' => 'draft',
-		] );
+		$course_id = $this->factory->course->create(
+			[
+				'post_status' => 'draft',
+			]
+		);
 
 		// Add some lessons to the course.
 		$lesson_ids = $this->factory->lesson->create_many( 2 );
@@ -270,10 +298,12 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		}
 
 		// Publish course.
-		wp_update_post( [
-			'ID'          => $course_id,
-			'post_status' => 'publish',
-		] );
+		wp_update_post(
+			[
+				'ID'          => $course_id,
+				'post_status' => 'publish',
+			]
+		);
 
 		$events = Sensei_Test_Events::get_logged_events( 'sensei_course_publish' );
 		$this->assertCount( 1, $events );
@@ -284,21 +314,27 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test event logging product ID.
+	 *
 	 * @covers Sensei_Course::log_initial_publish_event
 	 */
 	public function testLogEventProductId() {
-		$course_id = $this->factory->course->create( [
-			'post_status' => 'draft',
-		] );
+		$course_id = $this->factory->course->create(
+			[
+				'post_status' => 'draft',
+			]
+		);
 
 		// Add product ID.
 		add_post_meta( $course_id, '_course_woocommerce_product', 5 );
 
 		// Publish without product ID.
-		wp_update_post( [
-			'ID'          => $course_id,
-			'post_status' => 'publish',
-		] );
+		wp_update_post(
+			[
+				'ID'          => $course_id,
+				'post_status' => 'publish',
+			]
+		);
 
 		$events = Sensei_Test_Events::get_logged_events( 'sensei_course_publish' );
 		$this->assertCount( 1, $events );
@@ -309,18 +345,24 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test event logging without product ID.
+	 *
 	 * @covers Sensei_Course::log_initial_publish_event
 	 */
 	public function testLogNoEventProductId() {
-		$course_id = $this->factory->course->create( [
-			'post_status' => 'draft',
-		] );
+		$course_id = $this->factory->course->create(
+			[
+				'post_status' => 'draft',
+			]
+		);
 
 		// Publish without product ID.
-		wp_update_post( [
-			'ID'          => $course_id,
-			'post_status' => 'publish',
-		] );
+		wp_update_post(
+			[
+				'ID'          => $course_id,
+				'post_status' => 'publish',
+			]
+		);
 
 		$events = Sensei_Test_Events::get_logged_events( 'sensei_course_publish' );
 		$this->assertCount( 1, $events );

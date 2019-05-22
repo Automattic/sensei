@@ -3339,7 +3339,7 @@ class Sensei_Course {
 
 		// If we haven't already published this course, log an event.
 		if ( $publishing && ! $already_published ) {
-			$product_id = get_post_meta( $post->ID, '_course_woocommerce_product', true );
+			$product_id       = get_post_meta( $post->ID, '_course_woocommerce_product', true );
 			$event_properties = [
 				'module_count' => count( wp_get_post_terms( $post->ID, 'module' ) ),
 				'lesson_count' => $this->course_lesson_count( $post->ID ),
