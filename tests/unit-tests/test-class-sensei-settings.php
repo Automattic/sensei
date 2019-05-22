@@ -1,5 +1,13 @@
 <?php
+/**
+ * File with class for testing Sensei Settings.
+ *
+ * @package sensei-tests
+ */
 
+/**
+ * Class for testing Sensei Settings.
+ */
 class Sensei_Settings_Test extends WP_UnitTestCase {
 	/**
 	 * Set up for tests.
@@ -12,6 +20,8 @@ class Sensei_Settings_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test logging of changed settings.
+	 *
 	 * @covers Sensei_Settings::log_settings_update
 	 */
 	public function testLogChangedSettings() {
@@ -51,6 +61,8 @@ class Sensei_Settings_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test logging of settings only on user update.
+	 *
 	 * @covers Sensei_Settings::log_settings_update
 	 */
 	public function testOnlyLogSettingsOnUserUpdate() {
@@ -102,6 +114,6 @@ class Sensei_Settings_Test extends WP_UnitTestCase {
 		}
 
 		$this->original_request_method = null;
-		$this->original_screen = null;
+		$this->original_screen         = null;
 	}
 }

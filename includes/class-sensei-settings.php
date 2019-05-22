@@ -40,7 +40,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$this->get_settings();
 
 		// Log when settings are updated by the user.
-		add_action( 'update_option_sensei-settings', [ $this, 'log_settings_update' ], 10, 3 );
+		add_action( 'update_option_sensei-settings', [ $this, 'log_settings_update' ], 10, 2 );
 	} // End __construct()
 
 	/**
@@ -740,10 +740,13 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		// Log changed sections.
 		foreach ( $changed as $section => $fields ) {
-			sensei_log_event( 'settings_update', [
-				'view'     => $section,
-				'settings' => implode( ',', $fields ),
-			] );
+			sensei_log_event(
+				'settings_update',
+				[
+					'view'     => $section,
+					'settings' => implode( ',', $fields ),
+				]
+			);
 		}
 	}
 } // End Class
