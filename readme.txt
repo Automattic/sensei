@@ -23,6 +23,9 @@ You don't have time to spend hiring a developer to make your online courses look
 = Quizzes that assess and reinforce =
 Leverage the power of quizzes to strengthen your students' understanding of key concepts and evaluate their progress.
 
+= Earn passive income =
+Our [WooCommerce Paid Courses extension](https://woocommerce.com/products/woocommerce-paid-courses/) enables you to sell your courses using the most popular eCommerce platform on the web - WooCommerce.
+
 = We're here to stay =
 Sensei LMS is built by Automattic, the company behind products like WordPress.com, WooCommerce, Jetpack and more.
 
