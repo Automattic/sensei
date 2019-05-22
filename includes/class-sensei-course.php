@@ -3329,7 +3329,7 @@ class Sensei_Course {
 	 * @param WP_Post $post       The course.
 	 */
 	public function log_initial_publish_event( $new_status, $old_status, $post ) {
-		if ( 'course' !== $post->post_type ) {
+		if ( 'course' !== $post->post_type || $new_status === $old_status ) {
 			return;
 		}
 
