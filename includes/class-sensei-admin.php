@@ -534,6 +534,12 @@ class Sensei_Admin {
 			wp_die( esc_html__( 'Invalid post type. Can duplicate only lessons and courses', 'sensei-lms' ) );
 		}
 
+		// Set up event properties.
+		$event            = $post_type . '_duplicate';
+		$event_properties = [
+			$post_type . '_id' => $post_id,
+		];
+
 		$action = 'duplicate_' . $post_type;
 		if ( $with_lessons ) {
 			$action .= '_with_lessons';
@@ -554,13 +560,17 @@ class Sensei_Admin {
 				}
 
 				if ( 'course' == $new_post->post_type && $with_lessons ) {
-					$this->duplicate_course_lessons( $post_id, $new_post->ID );
+					$event                           .= '_with_lessons';
+					$event_properties['lesson_count'] = $this->duplicate_course_lessons( $post_id, $new_post->ID );
 				}
 
 				$redirect_url = admin_url( 'post.php?post=' . $new_post->ID . '&action=edit' );
 			} else {
 				$redirect_url = admin_url( 'edit.php?post_type=' . $post->post_type . '&message=duplicate_failed' );
 			}
+
+			// Log event.
+			sensei_log_event( $event, $event_properties );
 
 			wp_safe_redirect( esc_url_raw( $redirect_url ) );
 			exit;
@@ -612,7 +622,7 @@ class Sensei_Admin {
 	 *
 	 * @param  integer $old_course_id ID of original course
 	 * @param  integer $new_course_id ID of duplicated course
-	 * @return void
+	 * @return int Number of lessons duplicated.
 	 */
 	private function duplicate_course_lessons( $old_course_id, $new_course_id ) {
 		$lesson_args = array(
@@ -630,6 +640,8 @@ class Sensei_Admin {
 
 			$this->duplicate_lesson_quizzes( $lesson->ID, $new_lesson->ID );
 		}
+
+		return count( $lessons );
 	}
 
 	/**
