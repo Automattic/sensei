@@ -1,4 +1,5 @@
 $fontawesome: FontAwesomeSensei, FontAwesome;
+
 .module-archive .status, .course .module-status {
 	padding:.382em 1em;
 	-webkit-border-radius:5px;
@@ -9,9 +10,9 @@ $fontawesome: FontAwesomeSensei, FontAwesome;
 	color:#fff;
 	font-weight:bold;
 	background:#c6c6c6;
-	clear: both;
 	display: inline-block;
 }
+
 .module-archive .status:before, .course .module-status:before {
 	font-family: $fontawesome;
 	display:inline-block;
@@ -21,15 +22,19 @@ $fontawesome: FontAwesomeSensei, FontAwesome;
 	line-height:1em;
 	width:1em;
 }
+
 .module-archive .status.completed, .course .module-status.completed {
 	background:#63a95f;
 }
+
 .module-archive .status.completed:before, .course .module-status.completed:before {
 	content:"\f00c";
 }
+
 .module-archive .status.in-progress:before, .course .module-status.in-progress:before {
 	content:"\f110";
 }
+
 .module-lessons .lesson-status  {
 	font-style: normal;
 }
@@ -57,19 +62,31 @@ $fontawesome: FontAwesomeSensei, FontAwesome;
 	}
 }
 
-.module {
+.course .module {
 	position: relative;
 	margin: 0 0 1em 0 !important;
 	border: none !important;
+
 	header {
+		align-items: center;
 		background: rgba(0,0,0,0.05);
+		display: flex;
 		margin-bottom: 0 !important;
+		padding: 1em 20px;
+		width: 100%;
+
 		h2 {
+			display: inline-block;
 			font-size: 1.8em;
-			padding: 0.6em 0 0.6em 20px;
-			margin: 0 !important;
+			margin-right: 20px;
+		}
+
+		.status {
+			margin-left: auto;
+			white-space: nowrap;
 		}
 	}
+
 	.module-description {
 		padding: 1em 20px;
 		background: rgba(0,0,0,0.015);
@@ -144,12 +161,5 @@ $fontawesome: FontAwesomeSensei, FontAwesome;
 				}
 			}
 		}
-	}
-	.module-status {
-		position: absolute;
-		right: 20px;
-		top: 1em;
-		margin: 0 !important;
-		font-size: inherit !important;
 	}
 }
