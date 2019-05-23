@@ -64,14 +64,14 @@ $fontawesome: FontAwesomeSensei, FontAwesome;
 
 .course .module {
 	position: relative;
-	margin: 0 0 1em 0 !important;
-	border: none !important;
+	margin: 0 0 1em 0 ;
+	border: none;
 
 	header {
 		align-items: center;
 		background: rgba(0,0,0,0.05);
 		display: flex;
-		margin-bottom: 0 !important;
+		margin-bottom: 0;
 		padding: 1em 20px;
 		width: 100%;
 
