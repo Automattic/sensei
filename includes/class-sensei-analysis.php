@@ -598,42 +598,32 @@ class Sensei_Analysis {
 			$type = isset( $_GET['view'] ) ? esc_html( $_GET['view'] ) : false;
 
 			// Set up default properties for logging an event.
-			$event_properties = [
-				'view'      => '',
-				'course_id' => '',
-				'lesson_id' => '',
-				'user_id'   => '',
-			];
+			$event_properties = [ 'view' => '' ];
 
 			if ( 0 < $lesson_id ) {
 				// Viewing a specific Lesson and all its Learners
 				$sensei_analysis_report_object = $this->load_report_object( 'Lesson', $lesson_id );
-				$event_properties['view']      = 'lesson_learners';
-				$event_properties['lesson_id'] = $lesson_id;
+				$event_properties['view']      = 'course-lesson-users';
 			} elseif ( 0 < $course_id && 0 < $user_id ) {
 				// Viewing a specific User on a specific Course
 				$sensei_analysis_report_object = $this->load_report_object( 'Course', $course_id, $user_id );
-				$event_properties['view']      = 'learner_course_lessons';
-				$event_properties['course_id'] = $course_id;
-				$event_properties['user_id']   = $user_id;
+				$event_properties['view']      = 'user-course-lessons';
 			} elseif ( 0 < $course_id ) {
 				// Viewing a specific Course and all it's Lessons, or it's Learners
 				$sensei_analysis_report_object = $this->load_report_object( 'Course', $course_id );
-				$event_properties['course_id'] = $course_id;
 
 				// Set view property for event logging.
 				if ( isset( $_GET['view'] ) ) {
 					if ( 'lesson' === $_GET['view'] ) {
-						$event_properties['view'] = 'course_lessons';
+						$event_properties['view'] = 'course-lessons';
 					} else if ( 'user' === $_GET['view'] ) {
-						$event_properties['view'] = 'course_learners';
+						$event_properties['view'] = 'course-users';
 					}
 				}
 			} elseif ( 0 < $user_id ) {
 				// Viewing a specific Learner, and their Courses
 				$sensei_analysis_report_object = $this->load_report_object( 'User_Profile', $user_id );
-				$event_properties['view']      = 'learner_courses';
-				$event_properties['user_id']   = $user_id;
+				$event_properties['view']      = 'user-courses';
 			} else {
 				// Overview of all Learners, all Courses, or all Lessons
 				$sensei_analysis_report_object = $this->load_report_object( 'Overview', $type );
