@@ -616,7 +616,7 @@ class Sensei_Analysis {
 				if ( isset( $_GET['view'] ) ) {
 					if ( 'lesson' === $_GET['view'] ) {
 						$event_properties['view'] = 'course-lessons';
-					} else if ( 'user' === $_GET['view'] ) {
+					} elseif ( 'user' === $_GET['view'] ) {
 						$event_properties['view'] = 'course-users';
 					}
 				}
