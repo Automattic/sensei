@@ -32,6 +32,16 @@ function sensei_wordpress_importer_add_modules_to_imported_lessons() {
 			$order++;
 		}
 	}
+
+	// Log the import event if we're importing the dummy data.
+	$global_importer = isset( $GLOBALS['wp_import'] ) ? $GLOBALS['wp_import'] : false;
+	if (
+		$global_importer
+		&& 'WP_Import' === get_class( $global_importer )
+		&& 'http://demo.sensei.com/' === $global_importer->base_url
+	) {
+		sensei_log_event( 'data_import', [ 'dummy_data' => 1 ] );
+	}
 }
 
 add_action( 'import_end', 'sensei_wordpress_importer_add_modules_to_imported_lessons' );
