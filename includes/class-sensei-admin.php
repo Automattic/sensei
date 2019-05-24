@@ -534,8 +534,13 @@ class Sensei_Admin {
 			wp_die( esc_html__( 'Invalid post type. Can duplicate only lessons and courses', 'sensei-lms' ) );
 		}
 
-		// Set up event properties.
-		$event            = $post_type . '_duplicate';
+		$event = false;
+		if ( 'course' === $post_type ) {
+			$event = 'course_duplicate';
+		} elseif ( 'lesson' === $post_type ) {
+			$event = 'lesson_duplicate';
+		}
+
 		$event_properties = [
 			$post_type . '_id' => $post_id,
 		];
@@ -560,7 +565,7 @@ class Sensei_Admin {
 				}
 
 				if ( 'course' == $new_post->post_type && $with_lessons ) {
-					$event                           .= '_with_lessons';
+					$event                            = 'course_duplicate_with_lessons';
 					$event_properties['lesson_count'] = $this->duplicate_course_lessons( $post_id, $new_post->ID );
 				}
 
@@ -570,7 +575,9 @@ class Sensei_Admin {
 			}
 
 			// Log event.
-			sensei_log_event( $event, $event_properties );
+			if ( $event ) {
+				sensei_log_event( $event, $event_properties );
+			}
 
 			wp_safe_redirect( esc_url_raw( $redirect_url ) );
 			exit;
