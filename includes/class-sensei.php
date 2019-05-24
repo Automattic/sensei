@@ -582,6 +582,9 @@ class Sensei_Main {
 
 		// Run updates.
 		$this->register_plugin_version();
+
+		// Flush rewrite cache.
+		$this->initiate_rewrite_rules_flush();
 	}
 
 	/**
