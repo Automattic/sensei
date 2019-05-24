@@ -7,8 +7,6 @@
 
 /**
  * Track when dummy data is imported but don't track any events that could fire during import.
- *
- * @return bool
  */
 function sensei_wordpress_importer_usage_tracking_dummy_data() {
 	// Log the import event if we're importing the dummy data.
