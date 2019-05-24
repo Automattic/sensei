@@ -6,6 +6,26 @@
  */
 
 /**
+ * Track when dummy data is imported but don't track any events that could fire during import.
+ *
+ * @return bool
+ */
+function sensei_wordpress_importer_usage_tracking_dummy_data() {
+	// Log the import event if we're importing the dummy data.
+	$global_importer = isset( $GLOBALS['wp_import'] ) ? $GLOBALS['wp_import'] : false;
+	if (
+		$global_importer
+		&& 'WP_Import' === get_class( $global_importer )
+		&& 'http://demo.sensei.com/' === $global_importer->base_url
+	) {
+		sensei_log_event( 'data_import', [ 'dummy_data' => 1 ] );
+
+		// Disable tracking of other events.
+		add_filter( 'sensei_log_event', 'sensei_wordpress_importer_disable_event_tracking' );
+	}
+}
+
+/**
  * Attaches modules to lessons for dummy data.
  */
 function sensei_wordpress_importer_add_modules_to_imported_lessons() {
@@ -33,15 +53,17 @@ function sensei_wordpress_importer_add_modules_to_imported_lessons() {
 		}
 	}
 
-	// Log the import event if we're importing the dummy data.
-	$global_importer = isset( $GLOBALS['wp_import'] ) ? $GLOBALS['wp_import'] : false;
-	if (
-		$global_importer
-		&& 'WP_Import' === get_class( $global_importer )
-		&& 'http://demo.sensei.com/' === $global_importer->base_url
-	) {
-		sensei_log_event( 'data_import', [ 'dummy_data' => 1 ] );
-	}
+	remove_filter( 'sensei_log_event', 'sensei_wordpress_importer_disable_event_tracking' );
 }
 
+/**
+ * Helper function to disable event tracking while importing dummy data.
+ *
+ * @return bool
+ */
+function sensei_wordpress_importer_disable_event_tracking() {
+	return false;
+}
+
+add_action( 'import_start', 'sensei_wordpress_importer_usage_tracking_dummy_data' );
 add_action( 'import_end', 'sensei_wordpress_importer_add_modules_to_imported_lessons' );
