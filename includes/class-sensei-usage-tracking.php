@@ -176,9 +176,12 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 	 * @access private
 	 */
 	public function set_event_logging_source_frontend() {
-		add_filter( 'sensei_event_logging_source', function( $fields ) {
-			return 'frontend';
-		} );
+		add_filter(
+			'sensei_event_logging_source',
+			function( $fields ) {
+				return 'frontend';
+			}
+		);
 	}
 
 	/**
@@ -189,8 +192,11 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 	 * @access private
 	 */
 	public function set_event_logging_source_data_import() {
-		add_filter( 'sensei_event_logging_source', function( $fields ) {
-			return 'data-import';
-		} );
+		add_filter(
+			'sensei_event_logging_source',
+			function( $fields ) {
+				return 'data-import';
+			}
+		);
 	}
 }
