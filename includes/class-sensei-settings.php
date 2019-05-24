@@ -688,7 +688,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 	/**
 	 * Flush the rewrite rules after the settings have been updated.
-	 * This is to ensure that the
+	 * This is to ensure that the proper permalinks are set up for archive pages.
 	 *
 	 * @since 1.9.0
 	 */
