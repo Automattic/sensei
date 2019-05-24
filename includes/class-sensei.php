@@ -435,7 +435,7 @@ class Sensei_Main {
 		add_action( 'plugins_loaded', array( $this, 'wp_quicklatex_support' ), 200 ); // Runs after Plugins have loaded
 
 		// check flush the rewrite rules if the option sensei_flush_rewrite_rules option is 1
-		add_action( 'init', array( $this, 'flush_rewrite_rules' ), 101 );
+		add_action( 'admin_init', array( $this, 'flush_rewrite_rules' ), 101 );
 		add_action( 'admin_init', array( $this, 'update' ) );
 
 		// Add plugin action links filter
