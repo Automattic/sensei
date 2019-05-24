@@ -304,5 +304,18 @@ function sensei_log_event( $event_name, $properties = [] ) {
 		$properties
 	);
 
+	/**
+	 * Explicitly disable usage tracking from being sent.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param bool   $log_event    Whether we should log the event.
+	 * @param string $event_name   The name of the event, without the `sensei_` prefix.
+	 * @param array  $properties   The event properties to be sent.
+	 */
+	if ( false === apply_filters( 'sensei_log_event', true, $event_name, $properties ) ) {
+		return;
+	}
+
 	Sensei_Usage_Tracking::get_instance()->send_event( $event_name, $properties );
 }
