@@ -1265,32 +1265,17 @@ class Sensei_Frontend {
 
 						<p class="form-row form-row-wide">
 							<label for="sensei_reg_username"><?php esc_html_e( 'Username', 'sensei-lms' ); ?> <span class="required">*</span></label>
-							<input type="text" class="input-text" name="sensei_reg_username" id="sensei_reg_username" value="
-							<?php
-							if ( ! empty( $_POST['sensei_reg_username'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
-								echo esc_attr( $_POST['sensei_reg_username'] );} // phpcs:ignore WordPress.Security.NonceVerification
-							?>
-" />
+							<input type="text" class="input-text" name="sensei_reg_username" id="sensei_reg_username" value="<?php echo ( ! empty( $_POST['sensei_reg_username'] ) ) ? esc_attr( $_POST['sensei_reg_username'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification ?>" />
 						</p>
 
 						<p class="form-row form-row-wide">
 							<label for="sensei_reg_email"><?php esc_html_e( 'Email address', 'sensei-lms' ); ?> <span class="required">*</span></label>
-							<input type="email" class="input-text" name="sensei_reg_email" id="sensei_reg_email" value="
-							<?php
-							if ( ! empty( $_POST['sensei_reg_email'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
-								echo esc_attr( $_POST['sensei_reg_email'] );} // phpcs:ignore WordPress.Security.NonceVerification
-							?>
-" />
+							<input type="email" class="input-text" name="sensei_reg_email" id="sensei_reg_email" value="<?php echo ( ! empty( $_POST['sensei_reg_email'] ) ) ? esc_attr( $_POST['sensei_reg_email'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification ?>" />
 						</p>
 
 						<p class="form-row form-row-wide">
 							<label for="sensei_reg_password"><?php esc_html_e( 'Password', 'sensei-lms' ); ?> <span class="required">*</span></label>
-							<input type="password" class="input-text" name="sensei_reg_password" id="sensei_reg_password" value="
-							<?php
-							if ( ! empty( $_POST['sensei_reg_password'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
-								echo esc_attr( $_POST['sensei_reg_password'] );} // phpcs:ignore WordPress.Security.NonceVerification
-							?>
-" />
+							<input type="password" class="input-text" name="sensei_reg_password" id="sensei_reg_password" value="<?php echo ( ! empty( $_POST['sensei_reg_password'] ) ) ? esc_attr( $_POST['sensei_reg_password'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification ?>" />
 						</p>
 
 						<!-- Spam Trap -->
