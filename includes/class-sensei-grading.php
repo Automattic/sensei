@@ -167,6 +167,11 @@ class Sensei_Grading {
 	 */
 	public function grading_default_view() {
 
+		$course_id = null;
+		$lesson_id = null;
+		$user_id   = null;
+		$view      = null;
+
 		// Load Grading data
 		if ( ! empty( $_GET['course_id'] ) ) {
 			$course_id = intval( $_GET['course_id'] );
