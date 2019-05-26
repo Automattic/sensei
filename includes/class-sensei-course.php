@@ -1776,7 +1776,7 @@ class Sensei_Course {
 		} else {
 			$class = ' red';
 		}
-		$progress_bar_html = '<div class="meter' . esc_attr( $class ) . '"><span style="width: ' .
+		$progress_bar_html = '<div class="meter' . esc_attr( $class ) . '"><span class="value" style="width: ' .
 			esc_attr( $progress_percentage ) . '%">' . esc_html( round( $progress_percentage ) ) . '%</span></div>';
 
 		return $progress_bar_html;
