@@ -162,6 +162,10 @@ class Sensei_Messages {
 					$label       = __( 'Message from lesson:', 'sensei-lms' );
 					$description = __( 'The lesson to which this message relates.', 'sensei-lms' );
 					break;
+				case 'quiz':
+					$label       = __( 'Message from quiz:', 'sensei-lms' );
+					$description = __( 'The quiz to which this message relates.', 'sensei-lms' );
+					break;
 			}
 
 			$settings[] = array(
