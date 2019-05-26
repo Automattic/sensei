@@ -1136,6 +1136,9 @@ class Sensei_Admin {
 	 */
 	public function course_order_screen() {
 
+		$should_update_order = false;
+		$new_course_order    = array();
+
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 		wp_enqueue_script( 'sensei-settings', esc_url( Sensei()->plugin_url . 'assets/js/settings' . $suffix . '.js' ), array( 'jquery', 'jquery-ui-sortable' ), Sensei()->version );
 
@@ -1169,9 +1172,6 @@ class Sensei_Admin {
 										$ordered_course_ids = explode( ',', $order_string );
 										$all_course_ids     = array_unique( array_merge( $ordered_course_ids, $all_course_ids ) );
 									}
-
-									$should_update_order = false;
-									$new_course_order    = array();
 
 									$html .= '<form id="editgrouping" method="post" action="'
 										. esc_url( admin_url( 'admin-post.php' ) ) . '" class="validate">' . "\n";
