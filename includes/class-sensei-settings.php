@@ -739,7 +739,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 				// Get changed setting values to be logged. In most cases, this
 				// will be an array containing only the name of the field.
-				$changed_values = $this->get_changed_setting_values(
+				$changed_values      = $this->get_changed_setting_values(
 					$field,
 					$new_field_value,
 					$old_field_value
@@ -770,8 +770,8 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 * @since 2.1.0
 	 *
 	 * @param string $field     The name of the setting field.
-	 * @param array  $new_array The new value.
-	 * @param array  $old_array The old value.
+	 * @param array  $new_value The new value.
+	 * @param array  $old_value The old value.
 	 *
 	 * @return array The array of strings representing the field that was
 	 *               changed, or an array containing the field name.
