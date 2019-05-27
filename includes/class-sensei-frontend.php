@@ -849,17 +849,26 @@ class Sensei_Frontend {
 			return;
 		}
 
-		$nav_links = sensei_get_prev_next_lessons( $lesson_id );
+		$nav_links    = sensei_get_prev_next_lessons( $lesson_id );
+		$redirect_url = false;
 
 		if ( isset( $nav_links['next'] ) ) {
-			/**
-			 * Filter the URL that students are redirected to after completing a lesson.
-			 *
-			 * @since 1.12.0
-			 *
-			 * @param string $redirect_url URL to redirect students to after completing a lesson.
-			 */
-			wp_safe_redirect( apply_filters( 'sensei_complete_lesson_redirect_url', esc_url_raw( $nav_links['next']['url'] ) ) );
+			$redirect_url = $nav_links['next']['url'];
+		}
+
+		/**
+		 * Filter the URL that students are redirected to after completing a lesson.
+		 *
+		 * @since 1.12.0
+		 *
+		 * @param string|bool $redirect_url URL to redirect students to after completing a lesson. False to skip redirect.
+		 * @param int         $lesson_id    Current lesson ID.
+		 * @param array       $nav_links    Navigation links found for the current lesson.
+		 */
+		$redirect_url = apply_filters( 'sensei_complete_lesson_redirect_url', $redirect_url, $lesson_id, $nav_links );
+
+		if ( $redirect_url ) {
+			wp_safe_redirect( esc_url_raw( $redirect_url ) );
 			exit;
 		}
 	}
