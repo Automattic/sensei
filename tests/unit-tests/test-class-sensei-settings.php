@@ -20,6 +20,16 @@ class Sensei_Settings_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tear down after tests.
+	 */
+	public function tearDown() {
+		parent::tearDown();
+
+		Sensei_Test_Events::reset();
+		$this->resetSimulateSettingsRequest();
+	}
+
+	/**
 	 * Test logging of changed settings.
 	 *
 	 * @covers Sensei_Settings::log_settings_update
