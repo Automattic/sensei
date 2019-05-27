@@ -726,15 +726,25 @@ class Sensei_Settings extends Sensei_Settings_API {
 		// Find changed fields.
 		$changed = [];
 		foreach ( $this->fields as $field => $field_config ) {
+			// Handle absent fields.
 			$old_field_value = isset( $old_value[ $field ] ) ? $old_value[ $field ] : '';
 			$new_field_value = isset( $value[ $field ] ) ? $value[ $field ] : '';
+
 			if ( $new_field_value !== $old_field_value ) {
+				// Create an array for this section of settings if needed.
 				$section = $field_config['section'];
 				if ( ! isset( $changed[ $section ] ) ) {
-					$changed[ $section ] = [ $field ];
-				} else {
-					array_push( $changed[ $section ], $field );
+					$changed[ $section ] = [];
 				}
+
+				// Get changed setting values to be logged. In most cases, this
+				// will be an array containing only the name of the field.
+				$changed_values = $this->get_changed_setting_values(
+					$field,
+					$new_field_value,
+					$old_field_value
+				);
+				$changed[ $section ] = array_merge( $changed[ $section ], $changed_values );
 			}
 		}
 
@@ -748,6 +758,48 @@ class Sensei_Settings extends Sensei_Settings_API {
 				]
 			);
 		}
+	}
+
+	/**
+	 * Get an array of setting values which were changed. In most cases, this
+	 * will simply be the name of the setting. However, if the setting is an
+	 * array of strings, then this will return an array of the string values
+	 * that were changed. These values returned will be of the form
+	 * "field_name[value_name]".
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param string $field     The name of the setting field.
+	 * @param array  $new_array The new value.
+	 * @param array  $old_array The old value.
+	 *
+	 * @return array The array of strings representing the field that was
+	 *               changed, or an array containing the field name.
+	 */
+	private function get_changed_setting_values( $field, $new_value, $old_value ) {
+		// If the old and new values are not arrays, return the field name.
+		if ( ! is_array( $new_value ) || ! is_array( $old_value ) ) {
+			return [ $field ];
+		}
+
+		// Now, make sure they are both string arrays.
+		foreach ( array_merge( $new_value, $old_value ) as $value ) {
+			if ( ! is_string( $value ) ) {
+				return [ $field ];
+			}
+		}
+
+		// We have two string arrays. Return the difference in their values.
+		$added   = array_diff( $new_value, $old_value );
+		$removed = array_diff( $old_value, $new_value );
+		$diff    = array_merge( $added, $removed );
+
+		return array_map(
+			function( $value ) use ( $field ) {
+				return $field . '[' . $value . ']';
+			},
+			$diff
+		);
 	}
 } // End Class
 

@@ -82,6 +82,73 @@ class Sensei_Settings_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test logging of array settings.
+	 *
+	 * @covers Sensei_Settings::log_settings_update
+	 */
+	public function testLogArraySettings() {
+		$settings = Sensei()->settings;
+
+		// Set "email_teachers" setting.
+		$settings->set( 'email_teachers', [ 'teacher-started-course', 'teacher-completed-course' ] );
+
+		// Get current settings.
+		$new = $settings->get_settings();
+
+		// Change the "email_teachers" setting.
+		$new['email_teachers'] = [ 'teacher-started-course', 'teacher-completed-lesson' ];
+
+		// Trigger update with new setting values.
+		$this->simulateSettingsRequest();
+		$old = $settings->get_settings();
+		$settings->log_settings_update( $old, $new );
+
+		// Ensure array setting change was logged.
+		$events = Sensei_Test_Events::get_logged_events();
+		$this->assertCount( 1, $events );
+
+		$changed = explode( ',', $events[0]['url_args']['settings'] );
+		sort( $changed );
+		$this->assertEquals(
+			[
+				'email_teachers[teacher-completed-course]',
+				'email_teachers[teacher-completed-lesson]',
+			],
+			$changed
+		);
+	}
+
+	/**
+	 * Test logging of non-string array settings.
+	 *
+	 * @covers Sensei_Settings::log_settings_update
+	 */
+	public function testLogNonStringArraySettings() {
+		$settings = Sensei()->settings;
+
+		// Set an array setting with non-string values.
+		$settings->set( 'email_learners', [ 'a string', [ 'a sub-array' ] ] );
+
+		// Get current settings.
+		$new = $settings->get_settings();
+
+		// Change the array setting.
+		$new['email_learners'] = [ 'a different string', [ 'a different sub-array' ] ];
+
+		// Trigger update with new setting values.
+		$this->simulateSettingsRequest();
+		$old = $settings->get_settings();
+		$settings->log_settings_update( $old, $new );
+
+		// Ensure array setting change was logged without values.
+		$events = Sensei_Test_Events::get_logged_events();
+		$this->assertCount( 1, $events );
+		$changed = explode( ',', $events[0]['url_args']['settings'] );
+		sort( $changed );
+		$this->assertEquals( [ 'email_learners' ], $changed );
+	}
+
+	/**
 	 * Simulate Sensei settings update request.
 	 */
 	private function simulateSettingsRequest() {
