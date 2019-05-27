@@ -707,9 +707,9 @@ function sensei_get_the_module_status() {
 		return '';
 	}
 
-	$module_status_html = '<p class="status module-status ' . esc_attr( $status_class ) . '">'
+	$module_status_html = '<span class="status module-status ' . esc_attr( $status_class ) . '">'
 							. esc_html( $module_status )
-							. '</p>';
+							. '</span>';
 
 	/**
 	 * Filter the module status.

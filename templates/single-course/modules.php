@@ -80,15 +80,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 							<?php sensei_the_module_title(); ?>
 
 						<?php } ?>
+
 					</h2>
 
+					<?php sensei_the_module_status(); ?>
 				</header>
 
 				<section class="entry">
 
 					<p class="module-description"><?php sensei_the_module_description(); ?></p>
-
-					<?php sensei_the_module_status(); ?>
 
 					<section class="module-lessons">
 
