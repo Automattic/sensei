@@ -491,6 +491,7 @@ class Sensei_Course {
 					. '" title="'
 					// translators: Placeholder is the Lesson title.
 					. esc_attr( sprintf( __( 'Edit %s', 'sensei-lms' ), $post_item->post_title ) )
+					. '" data-course-status="' . esc_attr( $post->post_status )
 					. '" class="edit-lesson-action">'
 					. esc_html__( 'Edit this lesson', 'sensei-lms' )
 					. '</a>';
