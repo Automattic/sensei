@@ -129,7 +129,7 @@ class Sensei_Course {
 		}
 
 		// Log event on the initial publish for a course.
-		add_action( 'transition_post_status', [ $this, 'log_initial_publish_event' ], 10, 3 );
+		add_action( 'sensei_course_initial_publish', [ $this, 'log_initial_publish_event' ] );
 	}
 
 	/**
@@ -3317,41 +3317,21 @@ class Sensei_Course {
 	}
 
 	/**
-	 * Log an event when a course is initially published, but not on
-	 * subsequently publishes (i.e. if the course is unpublished and
-	 * re-published, do not log another event).
+	 * Log an event when a course is initially published.
 	 *
 	 * @since 2.1.0
 	 * @access private
 	 *
-	 * @param string  $new_status The new post status.
-	 * @param string  $old_status The old post status.
-	 * @param WP_Post $post       The course.
+	 * @param WP_Post $course The Course.
 	 */
-	public function log_initial_publish_event( $new_status, $old_status, $post ) {
-		if ( 'course' !== $post->post_type || $new_status === $old_status ) {
-			return;
-		}
-
-		$already_published = get_post_meta( $post->ID, 'course_already_published' );
-		$publishing        = 'publish' === $new_status;
-		$unpublishing      = 'publish' === $old_status;
-
-		// If we haven't already published this course, log an event.
-		if ( $publishing && ! $already_published ) {
-			$product_id       = get_post_meta( $post->ID, '_course_woocommerce_product', true );
-			$event_properties = [
-				'module_count' => count( wp_get_post_terms( $post->ID, 'module' ) ),
-				'lesson_count' => $this->course_lesson_count( $post->ID ),
-				'product_id'   => $product_id ? $product_id : -1,
-			];
-			sensei_log_event( 'course_publish', $event_properties );
-		}
-
-		// If we are publishing or unpublishing, mark as already published.
-		if ( ( $publishing || $unpublishing ) && ! $already_published ) {
-			add_post_meta( $post->ID, 'course_already_published', true, true );
-		}
+	public function log_initial_publish_event( $course ) {
+		$product_id       = get_post_meta( $course->ID, '_course_woocommerce_product', true );
+		$event_properties = [
+			'module_count' => count( wp_get_post_terms( $course->ID, 'module' ) ),
+			'lesson_count' => $this->course_lesson_count( $course->ID ),
+			'product_id'   => $product_id ? $product_id : -1,
+		];
+		sensei_log_event( 'course_publish', $event_properties );
 	}
 
 }//end class
