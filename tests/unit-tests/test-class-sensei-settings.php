@@ -106,7 +106,7 @@ class Sensei_Settings_Test extends WP_UnitTestCase {
 		$new = $settings->get_settings();
 
 		// Change the "email_teachers" setting.
-		$new['email_teachers'] = [ 'teacher-started-course', 'teacher-completed-lesson' ];
+		$new['email_teachers'] = [ '', 'teacher-started-course', 'teacher-completed-lesson' ];
 
 		// Trigger update with new setting values.
 		$this->simulateSettingsRequest();

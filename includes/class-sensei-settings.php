@@ -793,7 +793,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$added   = array_diff( $new_value, $old_value );
 		$removed = array_diff( $old_value, $new_value );
 
-		return array_merge( $added, $removed );
+		return array_filter( array_merge( $added, $removed ) );
 	}
 } // End Class
 
