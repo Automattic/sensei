@@ -73,6 +73,13 @@ class Sensei_Usage_Tracking_Data {
 		];
 
 		/**
+		 * Filter the event logging source.
+		 *
+		 * @param string The source (defaults to "unknown").
+		 */
+		$base_fields['source'] = apply_filters( 'sensei_event_logging_source', 'unknown' );
+
+		/**
 		 * Filter the fields that should be sent with every event that is logged.
 		 *
 		 * @param array $base_fields The default base fields.

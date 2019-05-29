@@ -1857,6 +1857,14 @@ class Sensei_Admin {
 		$event_name = $_REQUEST['event_name'];
 		$properties = isset( $_REQUEST['properties'] ) ? $_REQUEST['properties'] : [];
 
+		// Set the source to js-event.
+		add_filter(
+			'sensei_event_logging_source',
+			function() {
+				return 'js-event';
+			}
+		);
+
 		sensei_log_event( $event_name, $properties );
 		// phpcs:enable WordPress.Security.NonceVerification
 	}
