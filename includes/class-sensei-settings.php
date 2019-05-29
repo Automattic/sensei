@@ -792,14 +792,8 @@ class Sensei_Settings extends Sensei_Settings_API {
 		// We have two string arrays. Return the difference in their values.
 		$added   = array_diff( $new_value, $old_value );
 		$removed = array_diff( $old_value, $new_value );
-		$diff    = array_merge( $added, $removed );
 
-		return array_map(
-			function( $value ) use ( $field ) {
-				return $field . '[' . $value . ']';
-			},
-			$diff
-		);
+		return array_merge( $added, $removed );
 	}
 } // End Class
 

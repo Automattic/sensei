@@ -121,8 +121,8 @@ class Sensei_Settings_Test extends WP_UnitTestCase {
 		sort( $changed );
 		$this->assertEquals(
 			[
-				'email_teachers[teacher-completed-course]',
-				'email_teachers[teacher-completed-lesson]',
+				'teacher-completed-course',
+				'teacher-completed-lesson',
 			],
 			$changed
 		);
