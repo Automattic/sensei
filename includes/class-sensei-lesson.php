@@ -110,6 +110,9 @@ class Sensei_Lesson {
 			// Starts lesson when the student visits for the first time and prerequisite courses have been met.
 			add_action( 'sensei_single_lesson_content_inside_before', array( __CLASS__, 'maybe_start_lesson' ) );
 		} // End If Statement
+
+		// Log event on the initial publish for a lesson.
+		add_action( 'sensei_lesson_initial_publish', [ $this, 'log_initial_publish_event' ] );
 	} // End __construct()
 
 	/**
@@ -4476,6 +4479,35 @@ class Sensei_Lesson {
 	 */
 	public static function lesson_quiz_has_questions( $lesson_id ) {
 		return (bool) get_post_meta( $lesson_id, '_quiz_has_questions', true );
+	}
+
+	/**
+	 * Log an event when a lesson is initially published.
+	 *
+	 * @since 2.1.0
+	 * @access private
+	 *
+	 * @param WP_Post $lesson The Lesson.
+	 */
+	public function log_initial_publish_event( $lesson ) {
+		$event_properties = [
+			'course_id' => -1,
+			'module_id' => -1,
+		];
+
+		// Get course ID if it is set.
+		$lesson_course_id = get_post_meta( $lesson->ID, '_lesson_course', true );
+		if ( $lesson_course_id ) {
+			$event_properties['course_id'] = $lesson_course_id;
+		}
+
+		// Get module ID if it is set.
+		$modules = wp_get_post_terms( $lesson->ID, 'module' );
+		if ( is_array( $modules ) && count( $modules ) > 0 ) {
+			$event_properties['module_id'] = $modules[0]->term_id;
+		}
+
+		sensei_log_event( 'lesson_publish', $event_properties );
 	}
 
 } // End Class
