@@ -87,6 +87,9 @@ class Sensei_PostTypes {
 		// Add 'Edit Quiz' link to admin bar
 		add_action( 'admin_bar_menu', array( $this, 'quiz_admin_bar_menu' ), 81 );
 
+		// Fire an action for initial publish of Sensei CPT's.
+		add_action( 'transition_post_status', [ $this, 'fire_initial_publish_action' ], 10, 3 );
+
 	} // End __construct()
 
 	/**
@@ -893,6 +896,56 @@ class Sensei_PostTypes {
 					)
 				);
 			}
+		}
+	}
+
+	/**
+	 * Fire an action on initial publish of any Sensei CPT, but not subsequent
+	 * publishes. (i.e. if the post is unpublished and re-published, do not fire
+	 * the action again).
+	 *
+	 * @since 2.1.0
+	 * @access private
+	 *
+	 * @param string  $new_status The new post status.
+	 * @param string  $old_status The old post status.
+	 * @param WP_Post $post       The post.
+	 */
+	public function fire_initial_publish_action( $new_status, $old_status, $post ) {
+		/**
+		 * Filter the post types for which to fire an action on initial publish.
+		 *
+		 * @since 2.1.0
+		 *
+		 * @param array $post_types The post types.
+		 */
+		$post_types = apply_filters(
+			'sensei_post_types_for_initial_publish_action',
+			[
+				'course',
+				'lesson',
+				'quiz',
+				'question',
+				'sensei_message',
+			]
+		);
+
+		if ( ! in_array( $post->post_type, $post_types ) || $new_status === $old_status ) {
+			return;
+		}
+
+		$already_published = get_post_meta( $post->ID, '_sensei_already_published' );
+		$publishing        = 'publish' === $new_status;
+		$unpublishing      = 'publish' === $old_status;
+
+		// If we haven't already published this course, log an event.
+		if ( $publishing && ! $already_published ) {
+			do_action( "sensei_{$post->post_type}_initial_publish", $post );
+		}
+
+		// If we are publishing or unpublishing, mark as already published.
+		if ( ( $publishing || $unpublishing ) && ! $already_published ) {
+			add_post_meta( $post->ID, '_sensei_already_published', true, true );
 		}
 	}
 
