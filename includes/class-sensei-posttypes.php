@@ -88,7 +88,8 @@ class Sensei_PostTypes {
 		add_action( 'admin_bar_menu', array( $this, 'quiz_admin_bar_menu' ), 81 );
 
 		// Fire an action for initial publish of Sensei CPT's.
-		add_action( 'transition_post_status', [ $this, 'fire_initial_publish_action' ], 10, 3 );
+		add_action( 'transition_post_status', [ $this, 'maybe_mark_post_already_published' ], 10, 3 );
+		add_action( 'wp_insert_post', [ $this, 'fire_initial_publish_action' ], 100, 2 );
 
 	} // End __construct()
 
@@ -900,9 +901,9 @@ class Sensei_PostTypes {
 	}
 
 	/**
-	 * Fire an action on initial publish of any Sensei CPT, but not subsequent
-	 * publishes. (i.e. if the post is unpublished and re-published, do not fire
-	 * the action again).
+	 * On `post_status_transition`, mark a post as already published if the old
+	 * status is `publish`. We do not mark it if the new status is `publish`.
+	 * This way, we can perform actions on the initial publish of the post.
 	 *
 	 * @since 2.1.0
 	 * @access private
@@ -911,7 +912,51 @@ class Sensei_PostTypes {
 	 * @param string  $old_status The old post status.
 	 * @param WP_Post $post       The post.
 	 */
-	public function fire_initial_publish_action( $new_status, $old_status, $post ) {
+	public function maybe_mark_post_already_published( $new_status, $old_status, $post ) {
+		if (
+			$this->is_sensei_post_type_for_initial_publish_action( $post->post_type )
+			&& 'publish' === $old_status
+		) {
+			$this->mark_post_already_published( $post->ID );
+		}
+	}
+
+	/**
+	 * Fire an action on initial publish of any Sensei CPT, but not subsequent
+	 * publishes. (i.e. if the post is unpublished and re-published, do not fire
+	 * the action again).
+	 *
+	 * @since 2.1.0
+	 * @access private
+	 *
+	 * @param int     $post_id The ID of the post being saved.
+	 * @param WP_Post $post    The post being saved.
+	 */
+	public function fire_initial_publish_action( $post_id, $post ) {
+		if (
+			! $this->is_sensei_post_type_for_initial_publish_action( get_post_type( $post_id ) )
+			|| 'publish' !== get_post_status( $post_id )
+			|| $this->check_post_already_published( $post_id )
+		) {
+			return;
+		}
+
+		do_action( "sensei_{$post->post_type}_initial_publish", $post );
+
+		// Mark as "already published" so we do not fire the action again.
+		$this->mark_post_already_published( $post_id );
+	}
+
+	/**
+	 * Check if post type is one for which we should fire the "initial publish"
+	 * action.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param string $post_type The post type.
+	 * @return bool
+	 */
+	private function is_sensei_post_type_for_initial_publish_action( $post_type ) {
 		/**
 		 * Filter the post types for which to fire an action on initial publish.
 		 *
@@ -929,24 +974,30 @@ class Sensei_PostTypes {
 				'sensei_message',
 			]
 		);
+		return in_array( $post_type, $post_types );
+	}
 
-		if ( ! in_array( $post->post_type, $post_types ) || $new_status === $old_status ) {
-			return;
-		}
+	/**
+	 * Mark the given post as "already published".
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param string $post_id The post ID.
+	 */
+	private function mark_post_already_published( $post_id ) {
+		add_post_meta( $post_id, '_sensei_already_published', true, true );
+	}
 
-		$already_published = get_post_meta( $post->ID, '_sensei_already_published' );
-		$publishing        = 'publish' === $new_status;
-		$unpublishing      = 'publish' === $old_status;
-
-		// If we haven't already published this course, log an event.
-		if ( $publishing && ! $already_published ) {
-			do_action( "sensei_{$post->post_type}_initial_publish", $post );
-		}
-
-		// If we are publishing or unpublishing, mark as already published.
-		if ( ( $publishing || $unpublishing ) && ! $already_published ) {
-			add_post_meta( $post->ID, '_sensei_already_published', true, true );
-		}
+	/**
+	 * Check whether the post is marked as "already published".
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param string $post_id The post ID.
+	 * @return bool
+	 */
+	private function check_post_already_published( $post_id ) {
+		return get_post_meta( $post_id, '_sensei_already_published', true );
 	}
 
 } // End Class

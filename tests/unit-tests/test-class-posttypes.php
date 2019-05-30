@@ -50,6 +50,36 @@ class Sensei_Class_PostTypes extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Ensure intitial publish action is fired after other hooks.
+	 *
+	 * @covers Sensei_PostType::setup_initial_publish_action
+	 */
+	public function testFireActionAfterHooks() {
+		add_action(
+			'save_post',
+			function( $post_id ) {
+				if ( 'course' === get_post_type( $post_id ) ) {
+					add_post_meta( $post_id, 'test_meta', 'test_value', true );
+				}
+			}
+		);
+
+		// Ensure that meta exists on `sensei_course_initial_publish`.
+		$test_suite = $this;
+		add_action(
+			'sensei_course_initial_publish',
+			function( $post ) use ( $test_suite ) {
+				$meta_value = get_post_meta( $post->ID, 'test_meta', true );
+				$test_suite->assertEquals( 'test_value', $meta_value );
+			}
+		);
+
+		// Ensure the action was called.
+		$course_id = $this->factory->course->create();
+		$this->assertEquals( 1, did_action( 'sensei_course_initial_publish' ) );
+	}
+
+	/**
 	 * Test action fires for no non-Sensei post types.
 	 *
 	 * @covers Sensei_PostType::setup_initial_publish_action
