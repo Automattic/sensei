@@ -922,9 +922,12 @@ class Sensei_PostTypes {
 		add_action( 'wp_insert_post', [ $this, 'fire_initial_publish_action' ], 100, 2 );
 
 		// Never fire action on REST API request.
-		add_action( 'rest_api_init', function() {
-			remove_action( 'wp_insert_post', [ $this, 'fire_initial_publish_action' ], 100, 2 );
-		} );
+		add_action(
+			'rest_api_init',
+			function() {
+				remove_action( 'wp_insert_post', [ $this, 'fire_initial_publish_action' ], 100, 2 );
+			}
+		);
 	}
 
 	/**
@@ -947,6 +950,7 @@ class Sensei_PostTypes {
 		if (
 			! $this->is_sensei_post_type_for_initial_publish_action( $post->post_type )
 			|| 'publish' !== $old_status
+			// phpcs:ignore WordPress.Security.NonceVerification
 			|| ( isset( $_REQUEST['meta-box-loader'] ) && '1' === $_REQUEST['meta-box-loader'] )
 		) {
 			return;
@@ -1008,7 +1012,7 @@ class Sensei_PostTypes {
 				'sensei_message',
 			]
 		);
-		return in_array( $post_type, $post_types );
+		return in_array( $post_type, $post_types, true );
 	}
 
 	/**

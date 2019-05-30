@@ -1,5 +1,13 @@
 <?php
+/**
+ * File containing tests for Sensei_PostTypes class.
+ *
+ * @package sensei-tests
+ */
 
+/**
+ * Class for testing Sensei_PostTypes.
+ */
 class Sensei_Class_PostTypes extends WP_UnitTestCase {
 	/**
 	 * Setup function.
