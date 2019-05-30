@@ -80,6 +80,56 @@ class Sensei_Class_PostTypes extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Ensure initial publish action is not called for REST API requests. See
+	 * documentation for Sensei_Course::setup_initial_publish_action
+	 *
+	 * @covers Sensei_PostType::setup_initial_publish_action
+	 */
+	public function testFireNoActionOnRestApiRequest() {
+		do_action( 'rest_api_init' );
+		$this->factory->course->create();
+		$this->assertEquals( 0, did_action( 'sensei_course_initial_publish' ) );
+	}
+
+	/**
+	 * Ensure post is not marked as "already published" on metabox update
+	 * request. See documentation for
+	 * Sensei_Course::setup_initial_publish_action
+	 *
+	 * @covers Sensei_PostType::setup_initial_publish_action
+	 */
+	public function testNoMarkPublishedOnMetaboxUpdate() {
+		$_REQUEST['meta-box-loader'] = '1';
+
+		$course_id = $this->factory->course->create();
+		$this->assertEquals( 1, did_action( 'sensei_course_initial_publish' ) );
+
+		// Remove the meta to simulate an existing course.
+		delete_post_meta( $course_id, '_sensei_already_published' );
+
+		// Unpublish course.
+		wp_update_post(
+			[
+				'ID'          => $course_id,
+				'post_status' => 'draft',
+			]
+		);
+
+		// Republish course.
+		wp_update_post(
+			[
+				'ID'          => $course_id,
+				'post_status' => 'publish',
+			]
+		);
+
+		// Ensure that the second publish fired a second action.
+		$this->assertEquals( 2, did_action( 'sensei_course_initial_publish' ) );
+
+		unset( $_REQUEST['meta-box-loader'] );
+	}
+
+	/**
 	 * Test action fires for no non-Sensei post types.
 	 *
 	 * @covers Sensei_PostType::setup_initial_publish_action

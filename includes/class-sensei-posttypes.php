@@ -87,9 +87,7 @@ class Sensei_PostTypes {
 		// Add 'Edit Quiz' link to admin bar
 		add_action( 'admin_bar_menu', array( $this, 'quiz_admin_bar_menu' ), 81 );
 
-		// Fire an action for initial publish of Sensei CPT's.
-		add_action( 'transition_post_status', [ $this, 'maybe_mark_post_already_published' ], 10, 3 );
-		add_action( 'wp_insert_post', [ $this, 'fire_initial_publish_action' ], 100, 2 );
+		$this->setup_initial_publish_action();
 
 	} // End __construct()
 
@@ -901,9 +899,42 @@ class Sensei_PostTypes {
 	}
 
 	/**
+	 * Setup firing of the "initial publish" action for Sensei CPT's. This will
+	 * set up hooks to track when posts are published, and to fire the "initial
+	 * publish" action at the correct time.
+	 *
+	 * However, this action will not be fired for posts that are created through
+	 * the REST API. This is because of an edge case with the block editor. When
+	 * a post is published through the block editor, the "initial publish"
+	 * action will be fired when the metabox save request is posted, rather than
+	 * when the initial API request is posted.
+	 *
+	 * Note that the REST API restriction can be removed when we migrate all
+	 * meta information for the block editor away from metaboxes and into
+	 * blocks.
+	 *
+	 * @since 2.1.0
+	 * @access private
+	 */
+	public function setup_initial_publish_action() {
+		// Fire an action for initial publish of Sensei CPT's.
+		add_action( 'transition_post_status', [ $this, 'maybe_mark_post_already_published' ], 10, 3 );
+		add_action( 'wp_insert_post', [ $this, 'fire_initial_publish_action' ], 100, 2 );
+
+		// Never fire action on REST API request.
+		add_action( 'rest_api_init', function() {
+			remove_action( 'wp_insert_post', [ $this, 'fire_initial_publish_action' ], 100, 2 );
+		} );
+	}
+
+	/**
 	 * On `post_status_transition`, mark a post as already published if the old
 	 * status is `publish`. We do not mark it if the new status is `publish`.
 	 * This way, we can perform actions on the initial publish of the post.
+	 *
+	 * Note that we also do nothing if this is a metabox update request. In this
+	 * case, the REST API request has already handled the post status
+	 * transition, so we should not handle it again.
 	 *
 	 * @since 2.1.0
 	 * @access private
@@ -914,11 +945,14 @@ class Sensei_PostTypes {
 	 */
 	public function maybe_mark_post_already_published( $new_status, $old_status, $post ) {
 		if (
-			$this->is_sensei_post_type_for_initial_publish_action( $post->post_type )
-			&& 'publish' === $old_status
+			! $this->is_sensei_post_type_for_initial_publish_action( $post->post_type )
+			|| 'publish' !== $old_status
+			|| ( isset( $_REQUEST['meta-box-loader'] ) && '1' === $_REQUEST['meta-box-loader'] )
 		) {
-			$this->mark_post_already_published( $post->ID );
+			return;
 		}
+
+		$this->mark_post_already_published( $post->ID );
 	}
 
 	/**
