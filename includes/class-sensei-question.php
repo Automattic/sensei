@@ -38,6 +38,8 @@ class Sensei_Question {
 
 			add_action( 'save_post_question', array( $this, 'save_question' ), 10, 1 );
 		} // End If Statement
+
+		add_action( 'sensei_question_initial_publish', [ $this, 'log_initial_publish_event' ] );
 	} // End __construct()
 
 	public function question_types() {
@@ -1244,6 +1246,33 @@ class Sensei_Question {
 		return apply_filters( 'sensei_questions_get_correct_answer', $right_answer, $question_id );
 
 	} // get_correct_answer
+
+	/**
+	 * Log an event when a question is initially published.
+	 *
+	 * @since 2.1.0
+	 * @access private
+	 *
+	 * @param WP_Post $question The question object.
+	 */
+	public function log_initial_publish_event( $question ) {
+		$event_properties = [
+			'page'          => 'unknown',
+			'question_type' => $this->get_question_type( $question->ID ),
+		];
+
+		if ( function_exists( 'get_current_screen' ) ) {
+			$screen = get_current_screen();
+
+			if ( $screen && 'question' === $screen->id ) {
+				$event_properties['page'] = 'question';
+			} elseif ( isset( $_REQUEST['action'] ) && 'lesson_update_question' === $_REQUEST['action'] ) {
+				$event_properties['page'] = 'lesson';
+			}
+		}
+
+		sensei_log_event( 'question_add', $event_properties );
+	}
 
 } // End Class
 
