@@ -148,6 +148,39 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test initial publish logging default property values.
+	 *
+	 * @covers Sensei_Course::log_initial_publish_event
+	 */
+	public function testLogInitialPublishDefaultPropertyValues() {
+		$course_id = $this->factory->course->create(
+			[
+				'post_status' => 'draft',
+			]
+		);
+
+		// Set product meta to "-", which simulates actual behaviour.
+		add_post_meta( $course_id, '_course_woocommerce_product', '-', true );
+
+		// Publish course.
+		wp_update_post(
+			[
+				'ID'          => $course_id,
+				'post_status' => 'publish',
+			]
+		);
+
+		$events = Sensei_Test_Events::get_logged_events( 'sensei_course_publish' );
+		$this->assertCount( 1, $events );
+
+		// Ensure default values are correct.
+		$event = $events[0];
+		$this->assertEquals( 0, $event['url_args']['module_count'] );
+		$this->assertEquals( 0, $event['url_args']['lesson_count'] );
+		$this->assertEquals( -1, $event['url_args']['product_id'] );
+	}
+
+	/**
 	 * Test initial publish logging module count.
 	 *
 	 * @covers Sensei_Course::log_initial_publish_event

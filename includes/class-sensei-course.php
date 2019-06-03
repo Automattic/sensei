@@ -3329,7 +3329,7 @@ class Sensei_Course {
 		$event_properties = [
 			'module_count' => count( wp_get_post_terms( $course->ID, 'module' ) ),
 			'lesson_count' => $this->course_lesson_count( $course->ID ),
-			'product_id'   => $product_id ? $product_id : -1,
+			'product_id'   => intval( $product_id ) ? intval( $product_id ) : -1,
 		];
 		sensei_log_event( 'course_publish', $event_properties );
 	}
