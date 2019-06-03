@@ -26,12 +26,27 @@ class Sensei_Class_PostTypes extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test actions are fired on shutdown.
+	 *
+	 * @covers Sensei_PostType::setup_initial_publish_action
+	 */
+	public function testFireActionsOnShutdown() {
+		$this->assertNotFalse(
+			has_action(
+				'shutdown',
+				[ Sensei()->post_types, 'fire_scheduled_initial_publish_actions' ]
+			)
+		);
+	}
+
+	/**
 	 * Test action firing on first publish.
 	 *
 	 * @covers Sensei_PostType::setup_initial_publish_action
 	 */
 	public function testFireActionOnFirstPublish() {
 		$this->factory->course->create();
+		Sensei()->post_types->fire_scheduled_initial_publish_actions();
 		$this->assertEquals( 1, did_action( 'sensei_course_initial_publish' ) );
 	}
 
@@ -42,18 +57,18 @@ class Sensei_Class_PostTypes extends WP_UnitTestCase {
 	 */
 	public function testFireActionForSenseiPostTypes() {
 		$this->factory->course->create();
-		$this->assertEquals( 1, did_action( 'sensei_course_initial_publish' ) );
-
 		$this->factory->lesson->create();
-		$this->assertEquals( 1, did_action( 'sensei_lesson_initial_publish' ) );
-
 		$quiz = $this->factory->quiz->create();
-		$this->assertEquals( 1, did_action( 'sensei_quiz_initial_publish' ) );
-
 		$this->factory->question->create( [ 'quiz_id' => $quiz ] );
-		$this->assertEquals( 1, did_action( 'sensei_question_initial_publish' ) );
-
 		$this->factory->message->create();
+
+		// Ensure all delayed actions are fired.
+		Sensei()->post_types->fire_scheduled_initial_publish_actions();
+
+		$this->assertEquals( 1, did_action( 'sensei_course_initial_publish' ) );
+		$this->assertEquals( 1, did_action( 'sensei_lesson_initial_publish' ) );
+		$this->assertEquals( 1, did_action( 'sensei_quiz_initial_publish' ) );
+		$this->assertEquals( 1, did_action( 'sensei_question_initial_publish' ) );
 		$this->assertEquals( 1, did_action( 'sensei_sensei_message_initial_publish' ) );
 	}
 
@@ -84,6 +99,7 @@ class Sensei_Class_PostTypes extends WP_UnitTestCase {
 
 		// Ensure the action was called.
 		$course_id = $this->factory->course->create();
+		Sensei()->post_types->fire_scheduled_initial_publish_actions();
 		$this->assertEquals( 1, did_action( 'sensei_course_initial_publish' ) );
 	}
 
@@ -95,8 +111,12 @@ class Sensei_Class_PostTypes extends WP_UnitTestCase {
 	 */
 	public function testFireNoActionOnRestApiRequest() {
 		do_action( 'rest_api_init' );
-		$this->factory->course->create();
-		$this->assertEquals( 0, did_action( 'sensei_course_initial_publish' ) );
+		$this->assertFalse(
+			has_action(
+				'shutdown',
+				[ Sensei()->post_types, 'fire_scheduled_initial_publish_actions' ]
+			)
+		);
 	}
 
 	/**
@@ -110,6 +130,7 @@ class Sensei_Class_PostTypes extends WP_UnitTestCase {
 		$_REQUEST['meta-box-loader'] = '1';
 
 		$course_id = $this->factory->course->create();
+		Sensei()->post_types->fire_scheduled_initial_publish_actions();
 		$this->assertEquals( 1, did_action( 'sensei_course_initial_publish' ) );
 
 		// Remove the meta to simulate an existing course.
@@ -132,6 +153,7 @@ class Sensei_Class_PostTypes extends WP_UnitTestCase {
 		);
 
 		// Ensure that the second publish fired a second action.
+		Sensei()->post_types->fire_scheduled_initial_publish_actions();
 		$this->assertEquals( 2, did_action( 'sensei_course_initial_publish' ) );
 
 		unset( $_REQUEST['meta-box-loader'] );
@@ -144,6 +166,7 @@ class Sensei_Class_PostTypes extends WP_UnitTestCase {
 	 */
 	public function testFireNoActionForNonSenseiPostType() {
 		$this->factory->post->create();
+		Sensei()->post_types->fire_scheduled_initial_publish_actions();
 		$this->assertEquals( 0, did_action( 'sensei_post_initial_publish' ) );
 	}
 
@@ -154,6 +177,7 @@ class Sensei_Class_PostTypes extends WP_UnitTestCase {
 	 */
 	public function testFireNoActionOnSecondPublish() {
 		$course_id = $this->factory->course->create();
+		Sensei()->post_types->fire_scheduled_initial_publish_actions();
 		$this->assertEquals( 1, did_action( 'sensei_course_initial_publish' ) );
 
 		// Unpublish course.
@@ -173,6 +197,7 @@ class Sensei_Class_PostTypes extends WP_UnitTestCase {
 		);
 
 		// Ensure that the second publish did not fire a second action.
+		Sensei()->post_types->fire_scheduled_initial_publish_actions();
 		$this->assertEquals( 1, did_action( 'sensei_course_initial_publish' ) );
 	}
 
@@ -183,6 +208,7 @@ class Sensei_Class_PostTypes extends WP_UnitTestCase {
 	 */
 	public function testFireNoActionOnExistingPostSecondPublish() {
 		$course_id = $this->factory->course->create();
+		Sensei()->post_types->fire_scheduled_initial_publish_actions();
 		$this->assertEquals( 1, did_action( 'sensei_course_initial_publish' ) );
 
 		// Remove the meta to simulate an existing course.
@@ -205,6 +231,7 @@ class Sensei_Class_PostTypes extends WP_UnitTestCase {
 		);
 
 		// Ensure that the second publish did not fire a second action.
+		Sensei()->post_types->fire_scheduled_initial_publish_actions();
 		$this->assertEquals( 1, did_action( 'sensei_course_initial_publish' ) );
 	}
 
@@ -215,6 +242,7 @@ class Sensei_Class_PostTypes extends WP_UnitTestCase {
 	 */
 	public function testFireNoActionOnExistingCourseUpdate() {
 		$course_id = $this->factory->course->create();
+		Sensei()->post_types->fire_scheduled_initial_publish_actions();
 		$this->assertEquals( 1, did_action( 'sensei_course_initial_publish' ) );
 
 		// Remove the meta to simulate an existing published course.
@@ -230,6 +258,7 @@ class Sensei_Class_PostTypes extends WP_UnitTestCase {
 		);
 
 		// Ensure that the second publish did not fire an action.
+		Sensei()->post_types->fire_scheduled_initial_publish_actions();
 		$this->assertEquals( 1, did_action( 'sensei_course_initial_publish' ) );
 	}
 }

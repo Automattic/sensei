@@ -170,6 +170,7 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 			]
 		);
 
+		Sensei()->post_types->fire_scheduled_initial_publish_actions();
 		$events = Sensei_Test_Events::get_logged_events( 'sensei_course_publish' );
 		$this->assertCount( 1, $events );
 
@@ -203,6 +204,7 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 			]
 		);
 
+		Sensei()->post_types->fire_scheduled_initial_publish_actions();
 		$events = Sensei_Test_Events::get_logged_events( 'sensei_course_publish' );
 		$this->assertCount( 1, $events );
 
@@ -237,6 +239,7 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 			]
 		);
 
+		Sensei()->post_types->fire_scheduled_initial_publish_actions();
 		$events = Sensei_Test_Events::get_logged_events( 'sensei_course_publish' );
 		$this->assertCount( 1, $events );
 
@@ -268,6 +271,7 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 			]
 		);
 
+		Sensei()->post_types->fire_scheduled_initial_publish_actions();
 		$events = Sensei_Test_Events::get_logged_events( 'sensei_course_publish' );
 		$this->assertCount( 1, $events );
 
@@ -296,6 +300,7 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 			]
 		);
 
+		Sensei()->post_types->fire_scheduled_initial_publish_actions();
 		$events = Sensei_Test_Events::get_logged_events( 'sensei_course_publish' );
 		$this->assertCount( 1, $events );
 
