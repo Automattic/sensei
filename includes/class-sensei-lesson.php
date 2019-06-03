@@ -2314,7 +2314,14 @@ class Sensei_Lesson {
 					$value_to_log = $val;
 				}
 			}
-			$event_properties[ $field . '_id' ] = $value_to_log;
+
+			// Get property name.
+			$property_name = $field . '_id';
+			if ( 'course_woocommerce_product' === $field ) {
+				$property_name = 'product_id';
+			}
+
+			$event_properties[ $property_name ] = $value_to_log;
 		}
 		sensei_log_event( 'lesson_course_add', $event_properties );
 
