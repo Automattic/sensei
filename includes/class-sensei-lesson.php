@@ -136,7 +136,7 @@ class Sensei_Lesson {
 			return;
 		}
 
-		$course_status = get_post_status ( $course_id );
+		$course_status = get_post_status( $course_id );
 
 		if ( 'trash' === $course_status ) {
 			return;
@@ -148,7 +148,7 @@ class Sensei_Lesson {
 			return;
 		}
 
-		$url       = admin_url( "post.php?post=$course_id&action=edit" ); ?>
+		$url = admin_url( "post.php?post=$course_id&action=edit" ); ?>
 
 		<script>
 			jQuery(function () {
