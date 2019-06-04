@@ -119,28 +119,37 @@ class Sensei_Lesson {
 	 */
 	public function add_custom_link_to_course() {
 		global $post;
-		$screen = get_current_screen();
 
 		if ( ! isset( $post ) ) {
 			return;
 		}
 
+		$screen = get_current_screen();
+
 		if ( 'post' !== $screen->base ) {
 			return;
 		}
 
-		$course_id_meta = get_post_meta( $post->ID, '_lesson_course', true );
-		if ( ! is_numeric( $course_id_meta ) ) {
+		$course_id = intval( get_post_meta( $post->ID, '_lesson_course', true ) );
+
+		if ( ! $course_id ) {
+			return;
+		}
+
+		$course_status = get_post_status ( $course_id );
+
+		if ( 'trash' === $course_status ) {
 			return;
 		}
 
 		$type = get_post_type( $post );
+
 		if ( 'lesson' !== $type ) {
 			return;
 		}
 
-		$course_id = intval( $course_id_meta );
 		$url       = admin_url( "post.php?post=$course_id&action=edit" ); ?>
+
 		<script>
 			jQuery(function () {
 				jQuery("body.post-type-lesson .wrap a.page-title-action")
