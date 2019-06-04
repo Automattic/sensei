@@ -39,6 +39,13 @@ class Sensei_PostTypes {
 	public $quiz;
 
 	/**
+	 * Array of post ID's for which to fire an "initial publish" action.
+	 *
+	 * @var array
+	 */
+	private $initial_publish_post_ids = [];
+
+	/**
 	 * Constructor
 	 *
 	 * @since  1.0.0
@@ -86,6 +93,8 @@ class Sensei_PostTypes {
 
 		// Add 'Edit Quiz' link to admin bar
 		add_action( 'admin_bar_menu', array( $this, 'quiz_admin_bar_menu' ), 81 );
+
+		$this->setup_initial_publish_action();
 
 	} // End __construct()
 
@@ -894,6 +903,193 @@ class Sensei_PostTypes {
 				);
 			}
 		}
+	}
+
+	/**
+	 * Setup firing of the "initial publish" action for Sensei CPT's. This will
+	 * set up hooks to track when posts are published, and to fire the "initial
+	 * publish" action at the correct time.
+	 *
+	 * However, this action will not be fired for posts that are created through
+	 * the REST API. This is because of an edge case with the block editor. When
+	 * a post is published through the block editor, the "initial publish"
+	 * action will be fired when the metabox save request is posted, rather than
+	 * when the initial API request is posted.
+	 *
+	 * Note that the REST API restriction can be removed when we migrate all
+	 * meta information for the block editor away from metaboxes and into
+	 * blocks.
+	 *
+	 * @since 2.1.0
+	 * @access private
+	 */
+	public function setup_initial_publish_action() {
+		$this->reset_scheduled_initial_publish_actions();
+
+		// Schedule an action for initial publish of Sensei CPT's.
+		add_action( 'transition_post_status', [ $this, 'maybe_schedule_initial_publish_action' ], 10, 3 );
+
+		// Fire all scheduled actions on shutdown.
+		add_action( 'shutdown', [ $this, 'fire_scheduled_initial_publish_actions' ] );
+
+		// Never fire actions on REST API request.
+		add_action( 'rest_api_init', [ $this, 'disable_fire_scheduled_initial_publish_actions' ] );
+	}
+
+	/**
+	 * Disable the scheduled "initial publish" actions from being fired. This is
+	 * called on `rest_api_init`.
+	 *
+	 * @since 2.1.0
+	 * @access private
+	 */
+	public function disable_fire_scheduled_initial_publish_actions() {
+		remove_action( 'shutdown', [ $this, 'fire_scheduled_initial_publish_actions' ] );
+	}
+
+	/**
+	 * This hook is run on `post_status_transition` to schedule the "initial
+	 * publish" action if needed.
+	 *
+	 * Posts will be marked as already published if the old status is `publish`,
+	 * so that we do not fire the "initial publish" action for existing publish
+	 * posts when they are re-published.
+	 *
+	 * For newly published posts, we schedule the "initial publish" action to be
+	 * fired at the end of the request.
+	 *
+	 * Note that we do not mark as published if this is a metabox update
+	 * request. In this case, the REST API request has already handled this, so
+	 * we just need to schedule the action if needed.
+	 *
+	 * @since 2.1.0
+	 * @access private
+	 *
+	 * @param string  $new_status The new post status.
+	 * @param string  $old_status The old post status.
+	 * @param WP_Post $post       The post.
+	 */
+	public function maybe_schedule_initial_publish_action( $new_status, $old_status, $post ) {
+		// Only handle Sensei post types.
+		if ( ! $this->is_sensei_post_type_for_initial_publish_action( $post->post_type ) ) {
+			return;
+		}
+
+		// If the old status is `publish`, mark as already published.
+		if ( 'publish' === $old_status && ! $this->is_meta_box_save_request() ) {
+			$this->mark_post_already_published( $post->ID );
+		}
+
+		// If transitioning to `publish` for the first time, schedule the action.
+		if ( 'publish' === $new_status && ! $this->check_post_already_published( $post->ID ) ) {
+			$this->schedule_initial_publish_action( $post->ID );
+		}
+	}
+
+	/**
+	 * Fire the scheduled "initial publish" actions. This is run on `shutdown`.
+	 *
+	 * @since 2.1.0
+	 * @access private
+	 */
+	public function fire_scheduled_initial_publish_actions() {
+		foreach ( array_unique( $this->initial_publish_post_ids ) as $post_id ) {
+			$post = get_post( $post_id );
+			if ( $post ) {
+				do_action( "sensei_{$post->post_type}_initial_publish", $post );
+				$this->mark_post_already_published( $post->ID );
+			}
+		}
+
+		// Clear the finished post ID's.
+		$this->reset_scheduled_initial_publish_actions();
+	}
+
+	/**
+	 * Determine whether the current request is a "meta box save" request
+	 * (typically run by the block editor).
+	 *
+	 * @since 2.1.0
+	 * @access private
+	 */
+	private function is_meta_box_save_request() {
+		// phpcs:ignore WordPress.Security.NonceVerification
+		return isset( $_REQUEST['meta-box-loader'] ) && '1' === $_REQUEST['meta-box-loader'];
+	}
+
+	/**
+	 * Schedule an "initial publish" action for the given post ID.
+	 *
+	 * @since 2.1.0
+	 * @access private
+	 *
+	 * @param int $post_id The post ID.
+	 */
+	private function schedule_initial_publish_action( $post_id ) {
+		$this->initial_publish_post_ids[] = $post_id;
+	}
+
+	/**
+	 * Reset the array of post ID's for which to fire "initial publish" actions.
+	 *
+	 * @since 2.1.0
+	 * @access private
+	 */
+	private function reset_scheduled_initial_publish_actions() {
+		$this->initial_publish_post_ids = [];
+	}
+
+	/**
+	 * Check if post type is one for which we should fire the "initial publish"
+	 * action.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param string $post_type The post type.
+	 * @return bool
+	 */
+	private function is_sensei_post_type_for_initial_publish_action( $post_type ) {
+		/**
+		 * Filter the post types for which to fire an action on initial publish.
+		 *
+		 * @since 2.1.0
+		 *
+		 * @param array $post_types The post types.
+		 */
+		$post_types = apply_filters(
+			'sensei_post_types_for_initial_publish_action',
+			[
+				'course',
+				'lesson',
+				'quiz',
+				'question',
+				'sensei_message',
+			]
+		);
+		return in_array( $post_type, $post_types, true );
+	}
+
+	/**
+	 * Mark the given post as "already published".
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param string $post_id The post ID.
+	 */
+	private function mark_post_already_published( $post_id ) {
+		add_post_meta( $post_id, '_sensei_already_published', true, true );
+	}
+
+	/**
+	 * Check whether the post is marked as "already published".
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param string $post_id The post ID.
+	 * @return bool
+	 */
+	private function check_post_already_published( $post_id ) {
+		return get_post_meta( $post_id, '_sensei_already_published', true );
 	}
 
 } // End Class

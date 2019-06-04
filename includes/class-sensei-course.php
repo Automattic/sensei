@@ -130,6 +130,9 @@ class Sensei_Course {
 		if ( (int) get_option( 'page_on_front' ) > 0 ) {
 			add_action( 'pre_get_posts', array( $this, 'allow_course_archive_on_front_page' ), 9, 1 );
 		}
+
+		// Log event on the initial publish for a course.
+		add_action( 'sensei_course_initial_publish', [ $this, 'log_initial_publish_event' ] );
 	}
 
 	/**
@@ -3333,6 +3336,24 @@ class Sensei_Course {
 
 			Sensei()->notices->add_notice( $filtered_message, 'info' );
 		}
+	}
+
+	/**
+	 * Log an event when a course is initially published.
+	 *
+	 * @since 2.1.0
+	 * @access private
+	 *
+	 * @param WP_Post $course The Course.
+	 */
+	public function log_initial_publish_event( $course ) {
+		$product_id       = get_post_meta( $course->ID, '_course_woocommerce_product', true );
+		$event_properties = [
+			'module_count' => count( wp_get_post_terms( $course->ID, 'module' ) ),
+			'lesson_count' => $this->course_lesson_count( $course->ID ),
+			'product_id'   => intval( $product_id ) ? intval( $product_id ) : -1,
+		];
+		sensei_log_event( 'course_publish', $event_properties );
 	}
 
 }//end class
