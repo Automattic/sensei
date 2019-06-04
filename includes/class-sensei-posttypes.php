@@ -933,12 +933,18 @@ class Sensei_PostTypes {
 		add_action( 'shutdown', [ $this, 'fire_scheduled_initial_publish_actions' ] );
 
 		// Never fire actions on REST API request.
-		add_action(
-			'rest_api_init',
-			function() {
-				remove_action( 'shutdown', [ $this, 'fire_scheduled_initial_publish_actions' ] );
-			}
-		);
+		add_action( 'rest_api_init', [ $this, 'disable_fire_scheduled_initial_publish_actions' ] );
+	}
+
+	/**
+	 * Disable the scheduled "initial publish" actions from being fired. This is
+	 * called on `rest_api_init`.
+	 *
+	 * @since 2.1.0
+	 * @access private
+	 */
+	public function disable_fire_scheduled_initial_publish_actions() {
+		remove_action( 'shutdown', [ $this, 'fire_scheduled_initial_publish_actions' ] );
 	}
 
 	/**

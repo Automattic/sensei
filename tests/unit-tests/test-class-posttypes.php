@@ -110,7 +110,17 @@ class Sensei_Class_PostTypes extends WP_UnitTestCase {
 	 * @covers Sensei_PostType::setup_initial_publish_action
 	 */
 	public function testFireNoActionOnRestApiRequest() {
-		do_action( 'rest_api_init' );
+		$this->assertNotFalse(
+			has_action(
+				'rest_api_init',
+				[ Sensei()->post_types, 'disable_fire_scheduled_initial_publish_actions' ]
+			)
+		);
+
+		// Simulate `rest_api_init`.
+		Sensei()->post_types->disable_fire_scheduled_initial_publish_actions();
+
+		// Ensure the firing action was removed.
 		$this->assertFalse(
 			has_action(
 				'shutdown',
