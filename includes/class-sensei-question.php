@@ -311,7 +311,7 @@ class Sensei_Question {
 			remove_action( 'save_post_question', array( $this, 'save_question' ) );
 
 			// Update question data
-			$question_id = apply_filters('woosensei_save_question', $data);
+			$question_id = apply_filters('sensei_save_question', $data);
 			$question_id = $question_id ? $question_id : $this->lesson_save_question($data);
 
 			// Re-hook same function
