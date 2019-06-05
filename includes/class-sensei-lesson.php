@@ -350,7 +350,7 @@ class Sensei_Lesson {
 		} // End If Statement
 
 		$html .= '<label for="lesson_preview">';
-		$html .= '<input type="checkbox" id="lesson_preview" name="lesson_preview" value="preview" ' . $checked . '>&nbsp;' . esc_html__( 'Allow this lesson to be viewed without purchase/login', 'sensei-lms' ) . '<br>';
+		$html .= '<input type="checkbox" id="lesson_preview" name="lesson_preview" value="preview" ' . $checked . '>&nbsp;' . esc_html__( 'Allow this lesson to be viewed without login', 'sensei-lms' ) . '<br>';
 
 		echo wp_kses(
 			$html,
