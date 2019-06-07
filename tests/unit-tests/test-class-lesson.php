@@ -360,6 +360,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 			]
 		);
 
+		Sensei()->post_types->fire_scheduled_initial_publish_actions();
 		$events = Sensei_Test_Events::get_logged_events( 'sensei_lesson_publish' );
 		$this->assertCount( 1, $events );
 
@@ -377,6 +378,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		// Create lesson with no course ID.
 		$lesson_id = $this->factory->lesson->create();
 
+		Sensei()->post_types->fire_scheduled_initial_publish_actions();
 		$events = Sensei_Test_Events::get_logged_events( 'sensei_lesson_publish' );
 		$this->assertCount( 1, $events );
 
@@ -409,6 +411,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 			]
 		);
 
+		Sensei()->post_types->fire_scheduled_initial_publish_actions();
 		$events = Sensei_Test_Events::get_logged_events( 'sensei_lesson_publish' );
 		$this->assertCount( 1, $events );
 
@@ -426,6 +429,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		// Create lesson with no module ID.
 		$lesson_id = $this->factory->lesson->create();
 
+		Sensei()->post_types->fire_scheduled_initial_publish_actions();
 		$events = Sensei_Test_Events::get_logged_events( 'sensei_lesson_publish' );
 		$this->assertCount( 1, $events );
 
