@@ -1645,7 +1645,7 @@ class Sensei_Lesson {
 				$question_class = 'answer-fields question_required_fields hidden';
 			}
 
-			$question_class = apply_filters('sensei_question_class', $question_class);
+			$question_class = apply_filters( 'sensei_question_class', $question_class );
 
 
 
@@ -2355,7 +2355,7 @@ class Sensei_Lesson {
 				$current_user                 = wp_get_current_user();
 				$question_data['post_author'] = $current_user->ID;
 				$question_id = apply_filters('sensei_save_question', $question_data);
-				$question_id = $question_id ? $question_id : $this->lesson_save_question($question_data);
+				$question_id = $question_id ? $question_id : $this->lesson_save_question( $question_data );
 				$question_type                = Sensei()->question->get_question_type( $question_id );
 
 				$question_count = intval( $question_data['question_count'] );
@@ -2737,7 +2737,7 @@ class Sensei_Lesson {
 		$question_category      = '';
 
 		//retrieve data from custom question types
-		$question_extra_data    = apply_filters('sensei_question_extra_data', $data);
+		$question_extra_data    = apply_filters( 'sensei_question_extra_data', $data );
 
 		// Handle Question Type
 		if ( isset( $data['question_type'] ) && ( '' != $data['question_type'] ) ) {
@@ -2907,7 +2907,7 @@ class Sensei_Lesson {
 				update_post_meta( $question_id, '_random_order', $random_order );
 				update_post_meta( $question_id, '_answer_feedback', $answer_feedback );
 				// update custom question type meta
-				apply_filters('sensei_update_custom_question_type_meta', $question_id, $question_extra_data);
+				apply_filters( 'sensei_update_custom_question_type_meta', $question_id, $question_extra_data );
 
 				if ( 'quiz' != $context ) {
 					wp_set_post_terms( $question_id, array( $question_type ), 'question-type', false );
@@ -2937,7 +2937,7 @@ class Sensei_Lesson {
 				add_post_meta( $question_id, '_random_order', $random_order );
 
 				// add custom question type meta
-				apply_filters('sensei_add_custom_question_type_meta', $question_id, $question_extra_data);
+				apply_filters( 'sensei_add_custom_question_type_meta', $question_id, $question_extra_data );
 				// Don't store empty value, no point
 				if ( ! empty( $answer_feedback ) ) {
 					add_post_meta( $question_id, '_answer_feedback', $answer_feedback );
