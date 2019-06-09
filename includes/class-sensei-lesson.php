@@ -157,7 +157,7 @@ class Sensei_Lesson {
 			jQuery(function () {
 				jQuery("body.post-type-lesson .wrap a.page-title-action")
 					.last()
-					.after('<a href="<?php echo esc_attr( $url ); ?>" class="page-title-action"><?php echo esc_html__( 'Edit Course', 'sensei-lms' ); ?></a>');
+					.after('<a href="<?php echo esc_attr( $url ); ?>" class="page-title-action" data-sensei-log-event="lesson_edit_course_click"><?php echo esc_html__( 'Edit Course', 'sensei-lms' ); ?></a>');
 			});
 		</script>
 		<?php
