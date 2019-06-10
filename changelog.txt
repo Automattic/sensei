@@ -3,10 +3,8 @@
 2019.06.17 - version 2.1.0
 
 * New: Add "Edit Course" button when in classic editor - #2514
-* New: Add event logging to the WordPress dashboard - #2672, #2673, #2675, #2686, #2696, #2695,
-#2700, #2697, #2702, #2684, #2687, #2707, #2706, #2709, #2715
-* New: Add `sensei_complete_lesson_redirect_url` filter for disabling the redirect after completing
-a lesson - #2510
+* New: Add `sensei_complete_lesson_redirect_url` filter for disabling the redirect after completing a lesson - #2510
+* New: Add event logging to the WordPress dashboard - #2672, #2673, #2675, #2686, #2696, #2695, #2700, #2697, #2702, #2684, #2687, #2707, #2706, #2709, #2715
 * Tweak: Make queries on Analysis page more performant - #2359
 * Tweak: Ensure module status does not overlap module name - #2699, #2713
 * Tweak: Allow more HTML elements in Sensei notices - #2712
