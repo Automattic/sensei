@@ -1,5 +1,23 @@
 *** Changelog ***
 
+2019.06.17 - version 2.1.0
+
+* New: Add "Edit Course" button when in classic editor - #2514
+* New: Add `sensei_complete_lesson_redirect_url` filter for disabling the redirect after completing a lesson - #2510
+* New: Add event logging to the WordPress dashboard - #2672, #2673, #2675, #2686, #2696, #2695, #2700, #2697, #2702, #2684, #2687, #2707, #2706, #2709, #2715
+* Tweak: Make queries on Analysis page more performant - #2359
+* Tweak: Ensure module status does not overlap module name - #2699, #2713
+* Tweak: Allow more HTML elements in Sensei notices - #2712
+* Tweak: Adjust alignment of value inside progress bar - #2701
+* Tweak: Adjust vertical gap for quiz tabs - #2523
+* Tweak: Update lesson preview checkbox text - #2711
+* Fix: Enable teachers to save course settings in the block editor - #2658
+* Fix: Don't prefill fields with empty characters on the registration form - #2622
+* Fix: Add label and description for a message that is related to a quiz - #2521
+* Fix: PHP notice on the Order Courses page when there are no courses - #2689
+* Fix: PHP notice on the Grading page when there are no submitted quizzes - #2691
+* Fix: Fix SSI directive error on the quiz page - #2704
+
 2019.05.01 - version 2.0.1
 
 * New: Rename plugin to Sensei LMS - #2511, #2516
