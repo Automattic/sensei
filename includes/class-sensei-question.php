@@ -310,9 +310,12 @@ class Sensei_Question {
 			// Unhook function to prevent infinite loops
 			remove_action( 'save_post_question', array( $this, 'save_question' ) );
 
-			// Update question data
+			/**
+			 * Hook into the process that saves a question after it is created
+			 * @param object $question_data All question data
+			 */
 			$question_id = apply_filters( 'sensei_save_question', $data );
-	
+
 			// Re-hook same function
 			add_action( 'save_post_question', array( $this, 'save_question' ) );
 		}
