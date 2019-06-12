@@ -314,6 +314,7 @@ class Sensei_Question {
 			 * Hook into the process that saves a question after it is created
 			 * @param object $question_data All question data
 			 */
+
 			$question_id = apply_filters( 'sensei_save_question', $data );
 
 			// Re-hook same function

@@ -1644,10 +1644,12 @@ class Sensei_Lesson {
 				$question_id    = '';
 				$question_class = 'answer-fields question_required_fields hidden';
 			}
+
 			/** Hook into the process that renders the question class
 			 *
 			 * @param string $question_class class name
 			 */
+
 			$question_class = apply_filters( 'sensei_question_class', $question_class );
 
 			switch ( $question_type ) {
@@ -2351,6 +2353,7 @@ class Sensei_Lesson {
 			if ( isset( $question_data['quiz_id'] ) && ( 0 < absint( $question_data['quiz_id'] ) ) ) {
 				$current_user                 = wp_get_current_user();
 				$question_data['post_author'] = $current_user->ID;
+
 				/**
 				 * Hook into the process that saves a question after it is created
 				 * @param object $question_data All question data
@@ -2738,6 +2741,7 @@ class Sensei_Lesson {
 		 * Retrieve data from questions with custom question type
 		 * @param array $data Array containing question data
 		 */
+
 		$question_extra_data = apply_filters( 'sensei_question_extra_data', $data );
 
 		// Handle Question Type
@@ -2907,11 +2911,13 @@ class Sensei_Lesson {
 				update_post_meta( $question_id, '_answer_order', $answer_order );
 				update_post_meta( $question_id, '_random_order', $random_order );
 				update_post_meta( $question_id, '_answer_feedback', $answer_feedback );
+
 				/**
 				 * Update question meta
 				 * @param integer $question_id unique identifier for the question
 				 * @param array $question_extra_data Question data
 				 */
+
 				apply_filters( 'sensei_update_custom_question_type_meta', $question_id, $question_extra_data );
 
 				if ( 'quiz' != $context ) {
@@ -2946,6 +2952,7 @@ class Sensei_Lesson {
 				 * @param integer $question_id unique identifier for the question
 				 * @param array $question_extra_data Question data
 				 */
+
 				apply_filters( 'sensei_add_custom_question_type_meta', $question_id, $question_extra_data );
 				// Don't store empty value, no point
 				if ( ! empty( $answer_feedback ) ) {
