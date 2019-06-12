@@ -3880,8 +3880,7 @@ class Sensei_Lesson {
 		?>
 		<header class="lesson-title">
 			<h2>
-				<a href="<?php echo esc_url( get_permalink( $lesson_id ) ); ?>"
-					 title="<?php echo esc_attr( $heading_link_title ); ?>" >
+				<a href="<?php echo esc_url( get_permalink( $lesson_id ) ); ?>" title="<?php echo esc_attr( $heading_link_title ); ?>" >
 					<?php echo wp_kses_post( $count_markup ) . get_the_title( $lesson_id ); ?>
 				</a>
 			</h2>
@@ -4332,9 +4331,7 @@ class Sensei_Lesson {
 					<p>
 
 						<a class="button"
-							 href="<?php echo esc_url( get_permalink( $quiz_id ) ); ?>"
-							 title="<?php esc_attr_e( 'View the Lesson Quiz', 'sensei-lms' ); ?>">
-
+							 href="<?php echo esc_url( get_permalink( $quiz_id ) ); ?>" title="<?php esc_attr_e( 'View the Lesson Quiz', 'sensei-lms' ); ?>">
 							<?php esc_html_e( 'View the Lesson Quiz', 'sensei-lms' ); ?>
 
 						</a>
