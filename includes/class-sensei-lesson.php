@@ -2739,6 +2739,7 @@ class Sensei_Lesson {
 
 		/**
 		 * Retrieve data from questions with custom question type
+		 *
 		 * @param array $data Array containing question data
 		 */
 
@@ -2914,6 +2915,7 @@ class Sensei_Lesson {
 
 				/**
 				 * Update question meta
+				 *
 				 * @param integer $question_id unique identifier for the question
 				 * @param array $question_extra_data Question data
 				 */
@@ -2949,6 +2951,7 @@ class Sensei_Lesson {
 
 				/**
 				 * Add question meta
+				 *
 				 * @param integer $question_id unique identifier for the question
 				 * @param array $question_extra_data Question data
 				 */
