@@ -4330,8 +4330,7 @@ class Sensei_Lesson {
 
 					<p>
 
-						<a class="button"
-							 href="<?php echo esc_url( get_permalink( $quiz_id ) ); ?>" title="<?php esc_attr_e( 'View the Lesson Quiz', 'sensei-lms' ); ?>">
+						<a class="button" href="<?php echo esc_url( get_permalink( $quiz_id ) ); ?>" title="<?php esc_attr_e( 'View the Lesson Quiz', 'sensei-lms' ); ?>">
 							<?php esc_html_e( 'View the Lesson Quiz', 'sensei-lms' ); ?>
 
 						</a>
