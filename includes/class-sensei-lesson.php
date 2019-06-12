@@ -2356,13 +2356,14 @@ class Sensei_Lesson {
 
 				/**
 				 * Hook into the process that saves a question after it is created
+				 *
 				 * @param object $question_data All question data
 				 */
-				$question_id                  = apply_filters( 'sensei_save_question', $question_data );
-				$question_type                = Sensei()->question->get_question_type( $question_id );
-				$question_count               = intval( $question_data['question_count'] );
+				$question_id    = apply_filters( 'sensei_save_question', $question_data );
+				$question_type  = Sensei()->question->get_question_type( $question_id );
+				$question_count = intval( $question_data['question_count'] );
 				++$question_count;
-				$return                       = $this->quiz_panel_question( $question_type, $question_count, $question_id );
+				$return = $this->quiz_panel_question( $question_type, $question_count, $question_id );
 			} // End If Statement
 		} // End If Statement
 
