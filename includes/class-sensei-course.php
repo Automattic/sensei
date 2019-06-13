@@ -391,8 +391,8 @@ class Sensei_Course {
 		global $post;
 
 		/* Verify the nonce before proceeding. */
-		if ( ( get_post_type() != $this->token ) || ! wp_verify_nonce( $_POST[ 'woo_' . $this->token . '_noonce' ], plugin_basename( __FILE__ ) ) ) {
-			return $post_id;
+		if ( ( get_post_type() != $this->token ) || ! isset( $_POST[ 'woo_' . $this->token . '_noonce' ] ) || ! wp_verify_nonce( $_POST[ 'woo_' . $this->token . '_noonce' ], plugin_basename( __FILE__ ) ) ) {
+			return;
 		}
 
 		/* Get the post type object. */
