@@ -32,6 +32,11 @@ class Sensei_Unit_Tests_Bootstrap {
 		tests_add_filter( 'setup_theme', array( $this, 'install_sensei' ) );
 		// load the WP testing environment
 		require_once $this->wp_tests_dir . '/includes/bootstrap.php';
+
+		add_action( 'http_api_debug', function($response, $context, $classname, $r, $url) {
+			var_dump($url);
+		}, 10, 5 );
+
 		// load Sensei testing framework
 		$this->includes();
 	}
