@@ -55,7 +55,7 @@ jobs:
         - ./tests/bin/run-wp-unit-tests.sh
     - stage: test
       php: 5.6
-      env: WP_VERSION=4.4
+      env: WP_VERSION=4.9
       script:
         - ./tests/bin/run-wp-unit-tests.sh
     - stage: test
