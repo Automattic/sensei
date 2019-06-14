@@ -469,6 +469,7 @@ class Sensei_Core_Modules {
 		$event_properties = [
 			// phpcs:ignore WordPress.Security.NonceVerification
 			'page' => isset( $_REQUEST['from_page'] ) ? $_REQUEST['from_page'] : '',
+			'parent_id' => -1,
 		];
 
 		if ( $module->parent ) {
