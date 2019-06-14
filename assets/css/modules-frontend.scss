@@ -70,6 +70,7 @@ $fontawesome: FontAwesomeSensei, FontAwesome;
 	header {
 		align-items: center;
 		background: rgba(0,0,0,0.05);
+		box-sizing: border-box;
 		display: flex;
 		margin-bottom: 0;
 		padding: 1em 20px;
