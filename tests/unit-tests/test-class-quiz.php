@@ -481,14 +481,21 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		Sensei()->quiz->set_user_grades( $user_quiz_grades, $test_lesson_id, $test_user_id );
 
 		// was the lesson data reset?
-		$lesson_data_reset = Sensei()->quiz->reset_user_lesson_data( $test_lesson_id, $test_user_id );
+		ob_start();
+		$lesson_data_reset        = Sensei()->quiz->reset_user_lesson_data( $test_lesson_id, $test_user_id );
+		$lesson_data_reset_notice = ob_get_clean();
+
 		$this->assertTrue( $lesson_data_reset, 'The lesson data was not reset for a valid use case' );
+		$valid_notices = [
+			'<div class="sensei-message info">Quiz Reset Successfully.</div>',
+			'', // No notice is immediately displayed if notices haven't been printed elsewhere in another test.
+		];
+		$this->assertContains( $lesson_data_reset_notice, $valid_notices, 'Invalid notice displayed after quiz reset' );
 
 		// make sure transients are remove as well
 		$transient_key  = 'sensei_answers_' . $test_user_id . '_' . $test_lesson_id;
 		$transient_data = get_transient( $transient_key );
 		$this->assertFalse( $transient_data, 'The transient was not reset along with the users saved data. The result should be false.' );
-
 	}//end testResetUserLessonData()
 
 	/**
