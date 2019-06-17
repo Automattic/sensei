@@ -562,7 +562,7 @@ class Sensei_Messages {
 	 * @param  string $where The WHERE clause of the query.
 	 * @return string
 	 */
-	public static function exclude_message_comments_from_feed_where( $where ) {
+	public function exclude_message_comments_from_feed_where( $where ) {
 		return $where . ( $where ? ' AND ' : '' ) . " post_type != 'sensei_message' ";
 	}
 
