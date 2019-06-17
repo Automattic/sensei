@@ -64,6 +64,7 @@ class Sensei_Messages {
 		add_filter( 'get_comments_number', array( $this, 'message_reply_count' ), 100, 2 );
 		add_filter( 'comments_open', array( $this, 'message_replies_open' ), 100, 2 );
 		add_action( 'pre_get_posts', array( $this, 'only_show_messages_to_owner' ) );
+		add_filter( 'comment_feed_where', array( $this, 'exclude_message_comments_from_feed_where' ) );
 	} // End __construct()
 
 	public function only_show_messages_to_owner( $query ) {
@@ -551,6 +552,20 @@ class Sensei_Messages {
 			}
 		}
 	}
+
+	/**
+	 * Exclude message comments from feed queries and RSS.
+	 *
+	 * @since 2.0.2
+	 * @access private
+	 *
+	 * @param  string $where The WHERE clause of the query.
+	 * @return string
+	 */
+	public function exclude_message_comments_from_feed_where( $where ) {
+		return $where . ( $where ? ' AND ' : '' ) . " post_type != 'sensei_message' ";
+	}
+
 	/**
 	 * Only show allowed messages in messages archive
 	 *
