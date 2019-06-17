@@ -17,6 +17,7 @@
 * Fix: PHP notice on the Order Courses page when there are no courses - #2689
 * Fix: PHP notice on the Grading page when there are no submitted quizzes - #2691
 * Fix: Fix SSI directive error on the quiz page - #2704
+* Fix: Hide private messages from comment feed - #2726
 
 2019.05.01 - version 2.0.1
 
