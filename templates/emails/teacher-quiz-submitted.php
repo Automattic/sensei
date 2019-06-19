@@ -13,6 +13,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <?php
 
+// Ignore undefined variables - they are provided by the $sensei_email_data global.
+// phpcs:disable VariableAnalysis.CodeAnalysis.VariableAnalysis.UndefinedVariable
+
 // Get data for email content
 global $sensei_email_data;
 extract( $sensei_email_data );
