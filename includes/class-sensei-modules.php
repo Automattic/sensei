@@ -704,6 +704,7 @@ class Sensei_Core_Modules {
 			// Limit to specific course if specified
 			if ( isset( $_GET['course_id'] ) && 0 < intval( $_GET['course_id'] ) ) {
 				$course_id    = intval( $_GET['course_id'] );
+				$meta_query   = [];
 				$meta_query[] = array(
 					'key'   => '_lesson_course',
 					'value' => intval( $course_id ),
@@ -2191,6 +2192,7 @@ class Sensei_Core_Modules {
 			}
 
 			// add the term to the teachers terms
+			$users_terms   = [];
 			$users_terms[] = $term;
 
 		}

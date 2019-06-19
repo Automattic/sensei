@@ -1185,6 +1185,7 @@ class Sensei_Quiz {
 	 */
 	public static function stop_quiz_questions_loop() {
 
+		$sensei_question_loop              = [];
 		$sensei_question_loop['total']     = 0;
 		$sensei_question_loop['questions'] = array();
 		$sensei_question_loop['quiz_id']   = '';

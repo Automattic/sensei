@@ -885,6 +885,7 @@ class Sensei_Question {
 		}
 
 		// setup the question data
+		$data                           = [];
 		$data['ID']                     = $question_id;
 		$data['title']                  = get_the_title( $question_id );
 		$data['content']                = get_post( $question_id )->post_content;

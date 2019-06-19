@@ -310,7 +310,7 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 
 		// Ensure we change our range to fit (in case a search threw off the pagination) - Should this be added to all views?
 		if ( $this->total_items < $activity_args['offset'] ) {
-			$new_paged               = floor( $total_statuses / $activity_args['number'] );
+			$new_paged               = floor( $this->total_items / $activity_args['number'] );
 			$activity_args['offset'] = $new_paged * $activity_args['number'];
 		}
 		$statuses = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
