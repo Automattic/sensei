@@ -92,4 +92,9 @@ jobs:
       php: 7.2
       script:
         - composer install
+        - ./vendor/bin/phpcs -s --standard=./wpcom-phpcs.xml .
+    - stage: test
+      php: 7.2
+      script:
+        - composer install
         - ./scripts/linter-ci

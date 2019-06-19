@@ -56,4 +56,17 @@
 		</properties>
 	</rule>
 
+	<!-- Rules from WPCOM -->
+	<rule ref="NoGetCurrentUser"/>
+	<rule ref="VariableAnalysis"/>
+	<rule ref="VariableAnalysis.CodeAnalysis.VariableAnalysis.UndefinedVariable">
+		<type>error</type>
+	</rule>
+	<rule ref="WordPress.WP.GlobalVariablesOverride"/>
+	<rule ref="VariableAnalysis.CodeAnalysis.VariableAnalysis">
+		<properties>
+			<property name="allowUnusedCaughtExceptions" value="true"/>
+		</properties>
+	</rule>
+
 </ruleset>
