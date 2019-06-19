@@ -178,7 +178,7 @@ function sensei_simple_course_price( $post_id ) {
 		return;
 	}
 
-	\Sensei_WC_Paid_Courses\Frontend\Courses::output_course_price( $post_id );
+	\Sensei_WC_Paid_Courses\Frontend\Courses::instance()->output_course_price( $post_id );
 } // End sensei_simple_course_price()
 
 	/**
