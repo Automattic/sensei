@@ -103,21 +103,6 @@ class Sensei_Course_Results {
 	}
 
 	/**
-	 * Load content for course results
-	 *
-	 * @since  1.4.0
-	 * @return void
-	 */
-	public function content() {
-		global $wp_query,  $current_user;
-
-		if ( isset( $wp_query->query_vars['course_results'] ) ) {
-			Sensei_Templates::get_template( 'course-results/course-info.php' );
-		}
-
-	}
-
-	/**
 	 * Load course results info
 	 *
 	 * @since  1.4.0
