@@ -2335,7 +2335,6 @@ class Sensei_Lesson {
 	 * @return void
 	 */
 	public function lesson_add_course() {
-		global $current_user;
 		// Add nonce security to the request
 		if ( isset( $_POST['lesson_add_course_nonce'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification
@@ -2387,7 +2386,6 @@ class Sensei_Lesson {
 	 * @return void
 	 */
 	public function lesson_update_question() {
-		global $current_user;
 		// Add nonce security to the request
 		if ( isset( $_POST['lesson_update_question_nonce'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification
@@ -2717,7 +2715,6 @@ class Sensei_Lesson {
 	 * @return integer|boolean $course_id or false
 	 */
 	private function lesson_save_course( $data = array() ) {
-		global $current_user;
 		$return = false;
 		// Setup the course data
 		$course_id           = 0;
