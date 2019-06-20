@@ -92,7 +92,7 @@ jobs:
       php: 7.2
       script:
         - composer install
-        - ./vendor/bin/phpcs -s --standard=./wpcom-phpcs.xml .
+        - ./vendor/bin/phpcs -sn --standard=./wpcom-phpcs.xml .
     - stage: test
       php: 7.2
       script:
