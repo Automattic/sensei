@@ -262,9 +262,8 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	}
 
 	public function learners_admin_menu() {
-		global $menu;
 		if ( current_user_can( 'manage_sensei_grades' ) ) {
-			$learners_page = add_submenu_page( 'sensei', __( 'Learner Admin', 'sensei-lms' ), __( 'Learner Admin', 'sensei-lms' ), 'manage_sensei_grades', 'sensei_learner_admin', array( $this, 'learner_admin_page' ) );
+			add_submenu_page( 'sensei', __( 'Learner Admin', 'sensei-lms' ), __( 'Learner Admin', 'sensei-lms' ), 'manage_sensei_grades', 'sensei_learner_admin', array( $this, 'learner_admin_page' ) );
 		}
 	}
 

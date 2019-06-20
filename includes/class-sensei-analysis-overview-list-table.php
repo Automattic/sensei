@@ -603,27 +603,14 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	public function stats_boxes() {
 
 		// Get the data required
-		$user_count    = count_users();
-		$user_count    = apply_filters( 'sensei_analysis_total_users', $user_count['total_users'], $user_count );
-		$total_courses = Sensei()->course->course_count( array( 'publish', 'private' ) );
-		$total_lessons = Sensei()->lesson->lesson_count( array( 'publish', 'private' ) );
-
-		/**
-		 * filter the analysis tot grades query args
-		 */
-		$grade_args = apply_filters(
-			'sensei_analysis_total_quiz_grades',
-			array(
-				'type'     => 'sensei_lesson_status',
-				'status'   => 'any',
-
-				'meta_key' => 'grade',
-			)
-		);
-
+		$user_count          = count_users();
+		$user_count          = apply_filters( 'sensei_analysis_total_users', $user_count['total_users'], $user_count );
+		$total_courses       = Sensei()->course->course_count( array( 'publish', 'private' ) );
+		$total_lessons       = Sensei()->lesson->lesson_count( array( 'publish', 'private' ) );
 		$total_grade_count   = Sensei_Grading::get_graded_lessons_count();
 		$total_grade_total   = Sensei_Grading::get_graded_lessons_sum();
 		$total_average_grade = 0;
+
 		if ( $total_grade_total > 0 && $total_grade_count > 0 ) {
 			$total_average_grade = Sensei_Utils::quotient_as_absolute_rounded_number( $total_grade_total, $total_grade_count, 2 );
 		}

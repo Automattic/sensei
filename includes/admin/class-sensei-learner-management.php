@@ -101,8 +101,6 @@ class Sensei_Learner_Management {
 	 * @access public
 	 */
 	public function learners_admin_menu() {
-		global $menu;
-
 		if ( current_user_can( 'manage_sensei_grades' ) ) {
 			$learners_page = add_submenu_page( 'sensei', $this->name, $this->name, 'manage_sensei_grades', $this->page_slug, array( $this, 'learners_page' ) );
 			add_action( "load-$learners_page", array( $this, 'load_screen_options_when_on_bulk_actions' ) );

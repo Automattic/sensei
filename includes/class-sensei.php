@@ -192,7 +192,7 @@ class Sensei_Main {
 
 		// Setup object data
 		$this->main_plugin_file_name = $main_plugin_file_name;
-		$this->plugin_url            = trailingslashit( plugins_url( '', $plugin = $this->main_plugin_file_name ) );
+		$this->plugin_url            = trailingslashit( plugins_url( '', $this->main_plugin_file_name ) );
 		$this->plugin_path           = trailingslashit( dirname( $this->main_plugin_file_name ) );
 		$this->template_url          = apply_filters( 'sensei_template_url', 'sensei/' );
 		$this->version               = isset( $args['version'] ) ? $args['version'] : null;

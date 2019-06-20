@@ -302,12 +302,10 @@ class Sensei_Messages {
 	}
 
 	public function teacher_contact_form( $post ) {
-
 		if ( ! is_user_logged_in() ) {
 			return;
 		}
 
-		global $current_user;
 		wp_get_current_user();
 
 		$html = '';
@@ -361,7 +359,7 @@ class Sensei_Messages {
 			return false;
 		}
 
-		$message_id = $this->save_new_message_post( $current_user->ID, $post->post_author, sanitize_text_field( $_POST['contact_message'] ), $post->ID );
+		$this->save_new_message_post( $current_user->ID, $post->post_author, sanitize_text_field( $_POST['contact_message'] ), $post->ID );
 	}
 
 	public function message_reply_received( $comment_id = 0 ) {

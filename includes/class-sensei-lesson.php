@@ -1020,8 +1020,6 @@ class Sensei_Lesson {
 		$html = '';
 
 		if ( count( $questions ) > 0 ) {
-
-			$question_class   = '';
 			$question_counter = 1;
 
 			foreach ( $questions as $question ) {
@@ -1063,7 +1061,7 @@ class Sensei_Lesson {
 	}
 
 	public function quiz_panel_question( $question_type = '', $question_counter = 0, $question_id = 0, $context = 'quiz', $multiple_data = array() ) {
-		global $row_counter,  $quiz_questions;
+		global $row_counter;
 
 		$html = '';
 
@@ -2010,9 +2008,8 @@ class Sensei_Lesson {
 	public function lesson_quiz_meta_box_content() {
 		global $post;
 
-		// Get quiz panel
 		$quiz_id = 0;
-		$quizzes = array();
+
 		if ( 0 < $post->ID ) {
 			$quiz_id = $this->lesson_quizzes( $post->ID, 'any' );
 		}
@@ -2034,7 +2031,7 @@ class Sensei_Lesson {
 		// Get quiz panel
 		$quiz_id   = 0;
 		$lesson_id = $post->ID;
-		$quizzes   = array();
+
 		if ( 0 < $lesson_id ) {
 			$quiz_id = $this->lesson_quizzes( $lesson_id, 'any' );
 		}
@@ -2303,8 +2300,6 @@ class Sensei_Lesson {
 	 * @return void
 	 */
 	public function add_column_data( $column_name, $id ) {
-		global $wpdb, $post;
-
 		switch ( $column_name ) {
 			case 'id':
 				echo esc_html( $id );
@@ -2717,29 +2712,23 @@ class Sensei_Lesson {
 	 * @return integer|boolean $course_id or false
 	 */
 	private function lesson_save_course( $data = array() ) {
-		global $current_user;
 		$return = false;
 		// Setup the course data
-		$course_id           = 0;
-		$course_content      = '';
-		$course_title        = '';
-		$course_prerequisite = 0;
-		$course_category     = 0;
+		$course_id      = 0;
+		$course_content = '';
+		$course_title   = '';
+
 		if ( isset( $data['course_id'] ) && ( 0 < absint( $data['course_id'] ) ) ) {
 			$course_id = absint( $data['course_id'] );
 		} // End If Statement
 		if ( isset( $data['course_title'] ) && ( '' != $data['course_title'] ) ) {
 			$course_title = $data['course_title'];
 		} // End If Statement
-		$post_title = $course_title;
-		if ( isset( $data['post_author'] ) ) {
-			$post_author = $data['post_author'];
-		} else {
-			$current_user = wp_get_current_user();
-			$post_author  = $current_user->ID;
-		} // End If Statement
+
+		$post_title  = $course_title;
 		$post_status = 'publish';
 		$post_type   = 'course';
+
 		if ( isset( $data['course_content'] ) && ( '' != $data['course_content'] ) ) {
 			$course_content = $data['course_content'];
 		} // End If Statement
@@ -3228,9 +3217,7 @@ class Sensei_Lesson {
 					$questions[] = $question;
 				}
 			} else {
-
 				// Otherwise, make sure that we convert all multiple questions into single questions
-				$multiple_array     = array();
 				$existing_questions = array();
 
 				// Set array of questions that already exist so we can prevent duplicates from appearing
@@ -3428,8 +3415,6 @@ class Sensei_Lesson {
 				$dimensions       = Sensei()->get_image_size( $image_thumb_size );
 				$width            = $dimensions['width'];
 				$height           = $dimensions['height'];
-				$crop             = $dimensions['crop'];
-
 			} else {
 
 				if ( ! $widget && ! Sensei()->settings->settings['course_lesson_image_enable'] ) {
@@ -3441,8 +3426,6 @@ class Sensei_Lesson {
 				$dimensions       = Sensei()->get_image_size( $image_thumb_size );
 				$width            = $dimensions['width'];
 				$height           = $dimensions['height'];
-				$crop             = $dimensions['crop'];
-
 			} // End If Statement
 		} // End If Statement
 
@@ -3873,13 +3856,11 @@ class Sensei_Lesson {
 	 * @param $lesson_id
 	 */
 	public static function the_lesson_meta( $lesson_id ) {
-
 		global $wp_query;
-		$loop_lesson_number = $wp_query->current_post + 1;
 
-		$course_id              = Sensei()->lesson->get_course_id( $lesson_id );
-		$single_lesson_complete = false;
-		$is_user_taking_course  = Sensei_Utils::user_started_course( $course_id, get_current_user_id() );
+		$loop_lesson_number    = $wp_query->current_post + 1;
+		$course_id             = Sensei()->lesson->get_course_id( $lesson_id );
+		$is_user_taking_course = Sensei_Utils::user_started_course( $course_id, get_current_user_id() );
 
 		// Get Lesson data
 		$complexity_array = Sensei()->lesson->lesson_complexities();
@@ -4345,7 +4326,6 @@ class Sensei_Lesson {
 		}
 
 		$lesson_prerequisite       = (int) get_post_meta( $lesson_id, '_lesson_prerequisite', true );
-		$lesson_course_id          = (int) get_post_meta( $lesson_id, '_lesson_course', true );
 		$quiz_id                   = Sensei()->lesson->lesson_quizzes( $lesson_id );
 		$has_user_completed_lesson = Sensei_Utils::user_completed_lesson( intval( $lesson_id ), $user_id );
 		$show_actions              = is_user_logged_in() ? true : false;
@@ -4467,7 +4447,7 @@ class Sensei_Lesson {
 	public static function limit_archive_content( $content ) {
 
 		if ( is_post_type_archive( 'lesson' ) && Sensei()->settings->get( 'access_permission' ) ) {
-			return wp_trim_words( $content, $num_words = 30, $more = '…' );
+			return wp_trim_words( $content, 30, '…' );
 		}
 
 		return $content;

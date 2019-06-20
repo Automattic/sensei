@@ -52,12 +52,8 @@ class Sensei_Analysis {
 	 * @return void
 	 */
 	public function analysis_admin_menu() {
-		global $menu, $woocommerce;
-
 		if ( current_user_can( 'manage_sensei_grades' ) ) {
-
 			add_submenu_page( 'sensei', __( 'Analysis', 'sensei-lms' ), __( 'Analysis', 'sensei-lms' ), 'manage_sensei_grades', 'sensei_analysis', array( $this, 'analysis_page' ) );
-
 		}
 
 	} // End analysis_admin_menu()

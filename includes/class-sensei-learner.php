@@ -78,8 +78,6 @@ class Sensei_Learner {
 	}
 
 	public static function get_all( $args ) {
-
-		$user_ids = false;
 		$post_id  = 0;
 		$activity = '';
 

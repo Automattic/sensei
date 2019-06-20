@@ -255,19 +255,7 @@ class Sensei_Legacy_Shortcodes {
 	 * @since 1.9.0
 	 */
 	public static function initialise_legacy_course_loop() {
-
-		global  $post, $wp_query, $shortcode_override, $course_excludes;
-
-		// Handle Query Type
-		$query_type = '';
-
-		if ( isset( $_GET['action'] ) && ( '' != esc_html( $_GET['action'] ) ) ) {
-			$query_type = esc_html( $_GET['action'] );
-		} // End If Statement
-
-		if ( '' != $shortcode_override ) {
-			$query_type = $shortcode_override;
-		} // End If Statement
+		global $wp_query, $shortcode_override, $course_excludes;
 
 		if ( ! is_array( $course_excludes ) ) {
 			$course_excludes = array(); }
@@ -314,8 +302,7 @@ class Sensei_Legacy_Shortcodes {
 	 * @param WP_Query $course_query
 	 */
 	public static function loop_courses( $course_query, $amount ) {
-
-		global $shortcode_override, $posts_array, $post, $wp_query, $shortcode_override, $course_excludes, $course_includes;
+		global $shortcode_override, $posts_array, $course_excludes, $course_includes;
 
 		if ( count( $course_query->get_posts() ) > 0 ) {
 
@@ -387,7 +374,6 @@ class Sensei_Legacy_Shortcodes {
 		$user_info             = get_userdata( absint( $course->post_author ) );
 		$author_link           = get_author_posts_url( absint( $course->post_author ) );
 		$author_display_name   = $user_info->display_name;
-		$author_id             = $course->post_author;
 		$category_output       = get_the_term_list( $course_id, 'course-category', '', ', ', '' );
 		$preview_lesson_count  = intval( Sensei()->course->course_lesson_preview_count( $course_id ) );
 		$is_user_taking_course = Sensei_Utils::user_started_course( $course_id, get_current_user_id() );
