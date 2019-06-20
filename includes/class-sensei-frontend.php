@@ -1766,7 +1766,7 @@ class Sensei_Frontend {
 			wp_new_user_notification( $user_id, $new_user_password );
 		}
 
-		// set global current user aka log the user in.
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.OverrideProhibited -- Log in recently registered user.
 		$current_user = get_user_by( 'id', $user_id );
 		wp_set_auth_cookie( $user_id, true );
 
