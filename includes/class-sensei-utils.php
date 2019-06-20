@@ -109,8 +109,6 @@ class Sensei_Utils {
 
 		do_action( 'sensei_log_activity_before', $args, $data );
 
-		$flush_cache = false;
-
 		// Custom Logic
 		// Check if comment exists first
 		$comment_id = $wpdb->get_var( $wpdb->prepare( "SELECT comment_ID FROM $wpdb->comments WHERE comment_post_ID = %d AND user_id = %d AND comment_type = %s ", $args['post_id'], $args['user_id'], $args['type'] ) );
@@ -118,7 +116,6 @@ class Sensei_Utils {
 			// Add the comment
 			$comment_id = wp_insert_comment( $data );
 
-			$flush_cache = true;
 		} elseif ( isset( $args['action'] ) && 'update' == $args['action'] ) {
 			// Update the comment if an update was requested
 			$data['comment_ID'] = $comment_id;
@@ -127,13 +124,7 @@ class Sensei_Utils {
 				$data['comment_date'] = current_time( 'mysql' );
 			}
 			wp_update_comment( $data );
-			$flush_cache = true;
 		} // End If Statement
-
-		// Manually Flush the Cache
-		if ( $flush_cache ) {
-			wp_cache_flush();
-		}
 
 		do_action( 'sensei_log_activity_after', $args, $data, $comment_id );
 
@@ -296,8 +287,6 @@ class Sensei_Utils {
 					$dataset_changes = wp_delete_comment( intval( $value->comment_ID ), true );
 				} // End If Statement
 			} // End For Loop
-			// Manually flush the cache
-			wp_cache_flush();
 		} // End If Statement
 		return $dataset_changes;
 	} // End sensei_delete_activities()
@@ -333,7 +322,6 @@ class Sensei_Utils {
 						continue;
 					}
 					$dataset_changes = wp_delete_comment( intval( $activity->comment_ID ), true );
-					wp_cache_flush();
 				}
 			}
 		}
@@ -1317,10 +1305,6 @@ class Sensei_Utils {
 		$extra     = '';
 
 		if ( $lesson_id > 0 && $user_id > 0 ) {
-
-			// Prerequisite lesson
-			$prerequisite = get_post_meta( $lesson_id, '_lesson_prerequisite', true );
-
 			// Course ID
 			$course_id = absint( get_post_meta( $lesson_id, '_lesson_course', true ) );
 
@@ -1349,8 +1333,7 @@ class Sensei_Utils {
 			}
 
 			// Quiz passmark
-			$quiz_passmark       = absint( get_post_meta( $quiz_id, '_quiz_passmark', true ) );
-			$quiz_passmark_float = (float) $quiz_passmark;
+			$quiz_passmark = absint( get_post_meta( $quiz_id, '_quiz_passmark', true ) );
 
 			// Pass required
 			$pass_required = get_post_meta( $quiz_id, '_pass_required', true );
@@ -2508,7 +2491,7 @@ class Sensei_Utils {
 			'complete' => 0,
 		);
 
-		$activity_logged = self::update_course_status( $user_id, $course_id, $course_status = 'in-progress', $course_metadata );
+		$activity_logged = self::update_course_status( $user_id, $course_id, 'in-progress', $course_metadata );
 
 		// Allow further actions
 		if ( $activity_logged ) {

@@ -142,8 +142,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 * @return void
 	 */
 	public function init_fields() {
-		global $pagenow;
-
 		$pages_array          = $this->pages_array();
 		$posts_per_page_array = array(
 			'0'  => '0',

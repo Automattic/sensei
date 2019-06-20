@@ -784,8 +784,6 @@ class Sensei_Settings_API {
 	 * @param  array $args
 	 */
 	public function form_field_button( $args ) {
-		$options = $this->get_settings();
-
 		if ( isset( $args['data']['target'] ) && isset( $args['data']['label'] ) ) {
 			printf( '<a href="%s" class="button button-secondary">%s</a> ', esc_url( $args['data']['target'] ), esc_html( $args['data']['label'] ) );
 

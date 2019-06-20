@@ -57,12 +57,8 @@ class Sensei_Admin_Rest_Api_Testharness {
 	}
 
 	function testharness_admin_menu() {
-		global $menu, $woocommerce;
-
 		if ( current_user_can( 'manage_sensei_grades' ) ) {
-
 			add_submenu_page( 'sensei', $this->name, $this->name, 'manage_sensei_grades', $this->page_slug, array( $this, 'render_page' ) );
-
 		}
 	}
 

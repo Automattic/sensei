@@ -429,11 +429,9 @@ function sensei_get_prev_next_lessons( $lesson_id = 0 ) {
    * @return string $excerpt
    */
 function sensei_get_excerpt( $post_id = '' ) {
-
-	global $post;
 	_deprecated_function( 'sensei_get_excerpt', 'use the WordPress excerpt functionality.' );
-	return get_the_excerpt();
 
+	return get_the_excerpt();
 }
 
 function sensei_has_user_started_course( $post_id = 0, $user_id = 0 ) {
@@ -684,7 +682,7 @@ function sensei_get_the_module_status() {
 	}
 
 	global $sensei_modules_loop;
-	$module_title    = $sensei_modules_loop['current_module']->name;
+
 	$module_term_id  = $sensei_modules_loop['current_module']->term_id;
 	$course_id       = $sensei_modules_loop['course_id'];
 	$module_progress = Sensei()->modules->get_user_module_progress( $module_term_id, $course_id, get_current_user_id() );

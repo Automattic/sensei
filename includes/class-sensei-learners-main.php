@@ -144,8 +144,6 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	 * @return void
 	 */
 	public function prepare_items() {
-		global $avail_stati, $wpdb;
-
 		// Handle orderby
 		$orderby = '';
 		if ( ! empty( $_GET['orderby'] ) ) {
@@ -537,8 +535,6 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	 * @return array learners
 	 */
 	private function get_learners( $args ) {
-
-		$user_ids = false;
 		$post_id  = 0;
 		$activity = '';
 

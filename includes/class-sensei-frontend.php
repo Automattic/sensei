@@ -372,11 +372,8 @@ class Sensei_Frontend {
 		global $pagenow, $wp_rewrite;
 
 		if ( 'nav-menus.php' != $pagenow && ! defined( 'DOING_AJAX' ) && isset( $item->url ) && 'custom' == $item->type ) {
-
 			// Set up Sensei menu links.
-			$course_page_id     = intval( Sensei()->settings->settings['course_page'] );
 			$my_account_page_id = intval( Sensei()->settings->settings['my_course_page'] );
-
 			$course_page_url    = Sensei_Course::get_courses_page_url();
 			$lesson_archive_url = get_post_type_archive_link( 'lesson' );
 			$my_courses_url     = get_permalink( $my_account_page_id );
@@ -818,7 +815,7 @@ class Sensei_Frontend {
 
 		switch ( $sanitized_submit ) {
 			case 'lesson-complete':
-				Sensei_Utils::sensei_start_lesson( $lesson_id, $current_user->ID, $complete = true );
+				Sensei_Utils::sensei_start_lesson( $lesson_id, $current_user->ID, true );
 				$this->maybe_redirect_to_next_lesson( $lesson_id );
 
 				break;
@@ -877,7 +874,8 @@ class Sensei_Frontend {
 	 * Marks a course as complete.
 	 */
 	public function sensei_complete_course() {
-		global $post,  $current_user, $wp_query;
+		global $current_user;
+
 		if ( isset( $_POST['course_complete'] ) && wp_verify_nonce( $_POST['woothemes_sensei_complete_course_noonce'], 'woothemes_sensei_complete_course_noonce' ) ) {
 
 			$sanitized_submit    = esc_html( $_POST['course_complete'] );
@@ -899,7 +897,7 @@ class Sensei_Frontend {
 						// Mark all quiz user meta lessons as complete.
 						foreach ( $course_lesson_ids as $lesson_item_id ) {
 							// Mark lesson as complete.
-							$activity_logged = Sensei_Utils::sensei_start_lesson( $lesson_item_id, $current_user->ID, $complete = true );
+							$activity_logged = Sensei_Utils::sensei_start_lesson( $lesson_item_id, $current_user->ID, true );
 						} // End For Loop
 
 						// Update with final stats.
@@ -1031,11 +1029,11 @@ class Sensei_Frontend {
 	public function sensei_complete_lesson_button() {
 		global  $post;
 
-		$quiz_id   = 0;
 		$lesson_id = $post->ID;
 
 		// make sure user is taking course.
 		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
+
 		if ( ! Sensei_Utils::user_started_course( $course_id, get_current_user_id() ) ) {
 			return;
 		}
@@ -1107,14 +1105,10 @@ class Sensei_Frontend {
 	} // End sensei_lesson_quiz_meta()
 
 	public function sensei_course_archive_meta() {
-		global  $post;
 		// Meta data.
-		$post_id             = get_the_ID();
-		$post_title          = get_the_title();
-		$author_display_name = get_the_author();
-		$author_id           = get_the_author_meta( 'ID' );
-		$category_output     = get_the_term_list( $post_id, 'course-category', '', ', ', '' );
-		$free_lesson_count   = intval( Sensei()->course->course_lesson_preview_count( $post_id ) );
+		$post_id           = get_the_ID();
+		$category_output   = get_the_term_list( $post_id, 'course-category', '', ', ', '' );
+		$free_lesson_count = intval( Sensei()->course->course_lesson_preview_count( $post_id ) );
 		?>
 		<section class="entry">
 			<p class="sensei-course-meta">
@@ -1313,7 +1307,6 @@ class Sensei_Frontend {
 	} // End sensei_login_form()
 
 	public function sensei_lesson_meta( $post_id = 0 ) {
-		global $post;
 		if ( 0 < intval( $post_id ) ) {
 			$lesson_course_id = absint( get_post_meta( $post_id, '_lesson_course', true ) );
 			?>

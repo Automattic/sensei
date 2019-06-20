@@ -697,8 +697,7 @@ class Sensei_Templates {
 
 
 	public static function the_register_button( $post_id = '' ) {
-
-		global $current_user, $post;
+		global $current_user;
 
 		if ( ! get_option( 'users_can_register' )
 			 || 'course' != get_post_type( $post_id )
@@ -706,7 +705,6 @@ class Sensei_Templates {
 			 || ! Sensei()->settings->get( 'access_permission' ) ) {
 
 			return;
-
 		}
 
 		// if user is not logged in skipped for single lesson

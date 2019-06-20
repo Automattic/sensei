@@ -60,8 +60,6 @@ class Sensei_Grading {
 	 * @return void
 	 */
 	public function grading_admin_menu() {
-		global $menu;
-
 		if ( current_user_can( 'manage_sensei_grades' ) ) {
 			add_submenu_page( 'sensei', __( 'Grading', 'sensei-lms' ), __( 'Grading', 'sensei-lms' ), 'manage_sensei_grades', $this->page_slug, array( $this, 'grading_page' ) );
 		}
@@ -541,8 +539,6 @@ class Sensei_Grading {
 	 * fallback.
 	 */
 	private function deprecated_get_lessons_dropdown() {
-		$posts_array = array();
-
 		// Parse POST data
 		// phpcs:ignore WordPress.Security.NonceVerification -- No modifications are made here.
 		$data        = $_POST['data'];

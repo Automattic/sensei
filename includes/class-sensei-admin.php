@@ -156,7 +156,7 @@ class Sensei_Admin {
 	 * @return void
 	 */
 	public function admin_menu_highlight() {
-		global $menu, $submenu, $parent_file, $submenu_file, $self, $post_type, $taxonomy;
+		global $parent_file, $submenu_file, $post_type, $taxonomy;
 
 		$screen = get_current_screen();
 
