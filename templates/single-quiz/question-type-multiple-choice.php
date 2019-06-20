@@ -24,7 +24,7 @@ $question_data = Sensei_Question::get_template_data( sensei_get_the_question_id(
 
 <?php
 $count = 0;
-foreach ( $question_data['answer_options'] as $id => $option ) {
+foreach ( $question_data['answer_options'] as $option ) {
 
 	$count++;
 
