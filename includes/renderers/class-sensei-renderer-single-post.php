@@ -150,10 +150,12 @@ class Sensei_Renderer_Single_Post implements Sensei_Renderer_Interface {
 	public function set_global_vars() {
 		global $wp_query, $wp_the_query, $post, $pages;
 
+		// phpcs:disable WordPress.WP.GlobalVariablesOverride.OverrideProhibited -- Used to render single post.
 		$post         = get_post( $this->post_id );
 		$pages        = array( $post->post_content );
 		$wp_query     = $this->post_query;
 		$wp_the_query = $wp_query;
+		// phpcs:enable WordPress.WP.GlobalVariablesOverride.OverrideProhibited
 	}
 
 	/**
@@ -163,10 +165,12 @@ class Sensei_Renderer_Single_Post implements Sensei_Renderer_Interface {
 	private function reset_global_vars() {
 		global $wp_query, $wp_the_query, $post, $pages;
 
+		// phpcs:disable WordPress.WP.GlobalVariablesOverride.OverrideProhibited -- Restoring preexisting state.
 		$wp_query     = $this->global_wp_query_ref;
 		$wp_the_query = $this->global_wp_the_query_ref;
 		$post         = $this->global_post_ref;
 		$pages        = $this->global_pages_ref;
+		// phpcs:enable WordPress.WP.GlobalVariablesOverride.OverrideProhibited
 	}
 
 	/**

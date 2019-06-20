@@ -2854,6 +2854,7 @@ class Sensei_Course {
 
 		}
 
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.OverrideProhibited -- Used for lesson loop on single course page. Reset in hook to `sensei_single_course_lessons_after`.
 		$wp_query = new WP_Query( $course_lesson_query_args );
 
 	}//end load_single_course_lessons_query()

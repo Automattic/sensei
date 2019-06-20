@@ -135,8 +135,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 * @return void
 	 */
 	public function prepare_items() {
-		global $per_page;
-
 		// Handle orderby
 		$orderby = '';
 		if ( ! empty( $_GET['orderby'] ) ) {

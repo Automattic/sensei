@@ -92,12 +92,17 @@ class Sensei_Shortcode_User_Messages implements Sensei_Shortcode_Interface {
 
 		// set the wp_query to the current messages query
 		global $wp_query;
+
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.OverrideProhibited -- Mock loop for template part below. Reset afterwards.
 		$wp_query = $this->messages_query;
 
 		ob_start();
 		Sensei()->notices->maybe_print_notices();
 		Sensei_Templates::get_part( 'loop', 'message' );
 		$messages_html = ob_get_clean();
+
+		// phpcs:ignore WordPress.WP.DiscouragedFunctions.wp_reset_query_wp_reset_query -- wp_reset_postdata() is not a good alternative.
+		wp_reset_query();
 
 		return $messages_html;
 

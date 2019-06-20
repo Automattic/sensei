@@ -2297,7 +2297,7 @@ class Sensei_Core_Modules {
 	 */
 	public static function teardown_single_course_module_loop() {
 
-		global $sensei_modules_loop, $wp_query, $post;
+		global $sensei_modules_loop;
 
 		// reset all of the modules loop variables
 		$sensei_modules_loop['total']   = 0;
@@ -2306,7 +2306,6 @@ class Sensei_Core_Modules {
 
 		// set the current course to be the global post again
 		wp_reset_query();
-		$post = $wp_query->post;
 	}//end teardown_single_course_module_loop()
 
 } // end modules class

@@ -304,7 +304,6 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	}
 
 	public function parse_query_args() {
-		global $per_page;
 		// Handle orderby
 		$course_id = 0;
 		$lesson_id = 0;
