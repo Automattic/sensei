@@ -96,6 +96,7 @@ class Sensei_Shortcode_Lesson_Page implements Sensei_Shortcode_Interface {
 		Sensei_Templates::get_template( 'content-single-lesson.php' );
 		$shortcode_output = ob_get_clean();
 
+		// phpcs:ignore WordPress.WP.DiscouragedFunctions.wp_reset_query_wp_reset_query -- wp_reset_postdata() is not a good alternative.
 		wp_reset_query();
 
 		return $shortcode_output;

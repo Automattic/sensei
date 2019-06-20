@@ -315,6 +315,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 
 		$shortcode_output = ob_get_clean();
 
+		// phpcs:ignore WordPress.WP.DiscouragedFunctions.wp_reset_query_wp_reset_query -- wp_reset_postdata() is not a good alternative.
 		wp_reset_query();
 
 		$this->detach_shortcode_hooks();
