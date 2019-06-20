@@ -519,6 +519,7 @@ function sensei_setup_module() {
 		// setup the global wp-query only if the lessons
 		if ( $modules_query->have_posts() ) {
 
+			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.OverrideProhibited -- Use modules query for modules loop. Reset in `Sensei_Core_Modules::teardown_single_course_module_loop()`
 			$wp_query = $modules_query;
 
 		} else {
