@@ -78,6 +78,8 @@ class Sensei_Shortcode_Lesson_Page implements Sensei_Shortcode_Interface {
 
 		// set the wp_query to the current lessons query
 		global $wp_query;
+
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.OverrideProhibited -- Using it for loop below. Reset afterwards.
 		$wp_query = $this->lesson_page_query;
 
 		if ( have_posts() ) {
@@ -93,6 +95,8 @@ class Sensei_Shortcode_Lesson_Page implements Sensei_Shortcode_Interface {
 		ob_start();
 		Sensei_Templates::get_template( 'content-single-lesson.php' );
 		$shortcode_output = ob_get_clean();
+
+		wp_reset_query();
 
 		return $shortcode_output;
 
