@@ -850,7 +850,6 @@ class Sensei_Updates {
 		);
 		$quizzes = get_posts( $args );
 
-		$old_answers      = array();
 		$right_answers    = array();
 		$old_user_answers = array();
 
@@ -1607,7 +1606,8 @@ class Sensei_Updates {
 							) ) {
 									continue; // Found the meta data already
 							}
-							$result = $wpdb->insert(
+
+							$wpdb->insert(
 								$wpdb->commentmeta,
 								array(
 									'comment_id' => $comment_ID,
@@ -1752,7 +1752,8 @@ class Sensei_Updates {
 							) ) {
 									continue; // Found the meta data already
 							}
-							$result = $wpdb->insert(
+
+							$wpdb->insert(
 								$wpdb->commentmeta,
 								array(
 									'comment_id' => $comment_ID,
@@ -1986,7 +1987,8 @@ class Sensei_Updates {
 							) ) {
 									continue; // Found the meta data already
 							}
-							$result = $wpdb->insert(
+
+							$wpdb->insert(
 								$wpdb->commentmeta,
 								array(
 									'comment_id' => $comment_ID,
@@ -2072,7 +2074,7 @@ class Sensei_Updates {
 	public function remove_legacy_comments() {
 		global $wpdb;
 
-		$result = $wpdb->delete( $wpdb->comments, array( 'comment_approved' => 'legacy' ) );
+		$wpdb->delete( $wpdb->comments, array( 'comment_approved' => 'legacy' ) );
 
 		return true;
 	}

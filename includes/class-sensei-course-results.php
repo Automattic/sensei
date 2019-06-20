@@ -127,10 +127,7 @@ class Sensei_Course_Results {
 	 * @return void
 	 */
 	public function course_lessons() {
-
-		global $course;
 		_deprecated_function( 'Sensei_modules course_lessons ', '1.9.0' );
-
 	}
 
 	/**
@@ -198,10 +195,7 @@ class Sensei_Course_Results {
 	 * @since 1.8.0
 	 */
 	public static function fire_course_image_hook() {
-
-		global $course;
 		sensei_do_deprecated_action( 'sensei_course_image', '1.9.0', 'sensei_single_course_content_inside_before', array( get_the_ID() ) );
-
 	}
 
 } // End Class

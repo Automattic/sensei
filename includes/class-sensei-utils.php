@@ -1317,10 +1317,6 @@ class Sensei_Utils {
 		$extra     = '';
 
 		if ( $lesson_id > 0 && $user_id > 0 ) {
-
-			// Prerequisite lesson
-			$prerequisite = get_post_meta( $lesson_id, '_lesson_prerequisite', true );
-
 			// Course ID
 			$course_id = absint( get_post_meta( $lesson_id, '_lesson_course', true ) );
 
@@ -1350,7 +1346,6 @@ class Sensei_Utils {
 
 			// Quiz passmark
 			$quiz_passmark       = absint( get_post_meta( $quiz_id, '_quiz_passmark', true ) );
-			$quiz_passmark_float = (float) $quiz_passmark;
 
 			// Pass required
 			$pass_required = get_post_meta( $quiz_id, '_pass_required', true );
@@ -2508,7 +2503,7 @@ class Sensei_Utils {
 			'complete' => 0,
 		);
 
-		$activity_logged = self::update_course_status( $user_id, $course_id, $course_status = 'in-progress', $course_metadata );
+		$activity_logged = self::update_course_status( $user_id, $course_id, 'in-progress', $course_metadata );
 
 		// Allow further actions
 		if ( $activity_logged ) {

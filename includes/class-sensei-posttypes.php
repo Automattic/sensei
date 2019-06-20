@@ -731,8 +731,6 @@ class Sensei_PostTypes {
 	 * @return array           The modified array of messages for post types.
 	 */
 	public function setup_post_type_messages( $messages ) {
-		global $post, $post_ID;
-
 		$messages['course']            = $this->create_post_type_messages( 'course' );
 		$messages['lesson']            = $this->create_post_type_messages( 'lesson' );
 		$messages['quiz']              = $this->create_post_type_messages( 'quiz' );

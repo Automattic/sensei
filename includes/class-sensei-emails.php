@@ -159,8 +159,6 @@ class Sensei_Emails {
 	 * @return void
 	 */
 	function send( $to, $subject, $message, $headers = "Content-Type: text/html\r\n", $attachments = '', $content_type = 'text/html' ) {
-		global $email_template;
-
 		// Set content type
 		$this->_content_type = $content_type;
 

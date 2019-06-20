@@ -342,9 +342,6 @@ class Sensei_Quiz {
 		global  $post, $current_user;
 		$this->data = new stdClass();
 
-		// Default grade
-		$grade = 0;
-
 		// Get Quiz Questions
 		$lesson_quiz_questions = Sensei()->lesson->lesson_quiz_questions( $post->ID );
 
@@ -352,9 +349,6 @@ class Sensei_Quiz {
 
 		// Get quiz grade type
 		$quiz_grade_type = get_post_meta( $post->ID, '_quiz_grade_type', true );
-
-		// Get quiz pass setting
-		$pass_required = get_post_meta( $post->ID, '_pass_required', true );
 
 		// Get quiz pass mark
 		$quiz_passmark = Sensei_Utils::as_absolute_rounded_number( get_post_meta( $post->ID, '_quiz_passmark', true ), 2 );
@@ -493,9 +487,9 @@ class Sensei_Quiz {
 		delete_transient( $answers_feedback_transient_key );
 
 		// reset the quiz answers and feedback notes
-		$deleted_answers       = Sensei_Utils::delete_user_data( 'quiz_answers', $lesson_id, $user_id );
-		$deleted_grades        = Sensei_Utils::delete_user_data( 'quiz_grades', $lesson_id, $user_id );
-		$deleted_user_feedback = Sensei_Utils::delete_user_data( 'quiz_answers_feedback', $lesson_id, $user_id );
+		Sensei_Utils::delete_user_data( 'quiz_answers', $lesson_id, $user_id );
+		Sensei_Utils::delete_user_data( 'quiz_grades', $lesson_id, $user_id );
+		Sensei_Utils::delete_user_data( 'quiz_answers_feedback', $lesson_id, $user_id );
 
 		// Delete quiz answers, this auto deletes the corresponding meta data, such as the question/answer grade
 		Sensei_Utils::sensei_delete_quiz_answers( $quiz_id, $user_id );
