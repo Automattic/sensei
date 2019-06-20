@@ -77,8 +77,8 @@ if ( ! is_multisite() ) {
 	$blog_ids         = $wpdb->get_col( "SELECT blog_id FROM $wpdb->blogs" );
 	$original_blog_id = get_current_blog_id();
 
-	foreach ( $blog_ids as $blog_id ) {
-		switch_to_blog( $blog_id );
+	foreach ( $blog_ids as $current_blog_id ) {
+		switch_to_blog( $current_blog_id );
 
 		// phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UndefinedVariable -- $plugin is passed to `uninstall_plugin`
 		if ( is_another_sensei_activated( $plugin ) ) {
