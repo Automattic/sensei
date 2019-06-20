@@ -340,7 +340,7 @@ class Sensei_Admin {
 		wp_enqueue_script( 'sensei-message-menu-fix', Sensei()->plugin_url . 'assets/js/admin/message-menu-fix.js', array( 'jquery' ), Sensei()->version, true );
 
 		// Event logging.
-		wp_enqueue_script( 'sensei-event-logging', Sensei()->plugin_url . 'assets/js/admin/event_logging' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
+		wp_enqueue_script( 'sensei-event-logging', Sensei()->plugin_url . 'assets/js/admin/event-logging' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
 		wp_localize_script( 'sensei-event-logging', 'sensei_event_logging', [ 'enabled' => Sensei_Usage_Tracking::get_instance()->get_tracking_enabled() ] );
 	}
 
