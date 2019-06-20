@@ -19,6 +19,8 @@ $style_small = 'text-align: center !important;';
 
 $style_large = 'text-align: center !important;font-size: 350% !important;line-height: 100% !important;';
 
+// $template is provided by the calling code.
+// phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UndefinedVariable
 do_action( 'sensei_before_email_content', $template );
 ?>
 

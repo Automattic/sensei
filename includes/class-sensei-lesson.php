@@ -1553,6 +1553,7 @@ class Sensei_Lesson {
 		 */
 		$qry = apply_filters( 'sensei_existing_questions_query_results', $qry );
 
+		$questions              = [];
 		$questions['questions'] = $qry->posts;
 		$questions['count']     = intval( $qry->found_posts );
 		$questions['page']      = $page;
@@ -1713,6 +1714,7 @@ class Sensei_Lesson {
 						$right_answer_id = $this->get_answer_id( $right_answers[ $i ] );
 						// Right Answer
 						$right_answer = '<label class="answer" for="question_' . esc_attr( $question_counter ) . '_right_answer_' . esc_attr( $i ) . '"><span>' . esc_html__( 'Right:', 'sensei-lms' ) . '</span> <input rel="' . esc_attr( $right_answer_id ) . '" type="text" id="question_' . esc_attr( $question_counter ) . '_right_answer_' . esc_attr( $i ) . '" name="question_right_answers[]" value="' . esc_attr( $right_answers[ $i ] ) . '" size="25" class="question_answer widefat" /> <a class="remove_answer_option"></a></label>';
+						$answers      = [];
 						if ( $question_id ) {
 							$answers[ $right_answer_id ] = $right_answer;
 						} else {
@@ -2346,6 +2348,7 @@ class Sensei_Lesson {
 		// Save the Course
 		$updated                      = false;
 		$current_user                 = wp_get_current_user();
+		$question_data                = [];
 		$question_data['post_author'] = $current_user->ID;
 		$updated                      = $this->lesson_save_course( $course_data );
 

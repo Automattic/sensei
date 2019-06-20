@@ -962,6 +962,7 @@ class Sensei_Main {
 			'post-trashed' => 'post-trashed',
 		);
 
+		$stats               = [];
 		$statuses_to_exclude = array( 'post-trashed', 'trash' );
 
 		foreach ( (array) $count as $row ) {

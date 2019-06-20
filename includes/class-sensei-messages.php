@@ -577,6 +577,8 @@ class Sensei_Messages {
 			return;
 		}
 
+		$meta_query = [];
+
 		if ( $query->is_main_query() && is_post_type_archive( $this->post_type ) ) {
 			wp_get_current_user();
 			$username = $current_user->user_login;

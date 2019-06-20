@@ -1068,6 +1068,7 @@ class Sensei_Grading {
 
 		global $wpdb;
 
+		$comment_query_piece           = [];
 		$comment_query_piece['select'] = 'SELECT   COUNT(*) AS total';
 		$comment_query_piece['from']   = " FROM {$wpdb->comments}  INNER JOIN {$wpdb->commentmeta}  ON ( {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id ) ";
 		$comment_query_piece['where']  = " WHERE {$wpdb->comments}.comment_type IN ('sensei_lesson_status') AND ( {$wpdb->commentmeta}.meta_key = 'grade')";
@@ -1088,6 +1089,7 @@ class Sensei_Grading {
 
 		global $wpdb;
 
+		$comment_query_piece           = [];
 		$comment_query_piece['select'] = "SELECT SUM({$wpdb->commentmeta}.meta_value) AS meta_sum";
 		$comment_query_piece['from']   = " FROM {$wpdb->comments}  INNER JOIN {$wpdb->commentmeta}  ON ( {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id ) ";
 		$comment_query_piece['where']  = " WHERE {$wpdb->comments}.comment_type IN ('sensei_lesson_status') AND ( {$wpdb->commentmeta}.meta_key = 'grade')";
@@ -1110,6 +1112,7 @@ class Sensei_Grading {
 		global $wpdb;
 
 		$clean_user_id                 = esc_sql( $user_id );
+		$comment_query_piece           = [];
 		$comment_query_piece['select'] = "SELECT SUM({$wpdb->commentmeta}.meta_value) AS meta_sum";
 		$comment_query_piece['from']   = " FROM {$wpdb->comments}  INNER JOIN {$wpdb->commentmeta}  ON ( {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id ) ";
 		$comment_query_piece['where']  = " WHERE {$wpdb->comments}.comment_type IN ('sensei_lesson_status') AND ( {$wpdb->commentmeta}.meta_key = 'grade') AND {$wpdb->comments}.user_id = {$clean_user_id} ";
@@ -1133,6 +1136,7 @@ class Sensei_Grading {
 		global $wpdb;
 
 		$clean_lesson_id               = esc_sql( $lesson_id );
+		$comment_query_piece           = [];
 		$comment_query_piece['select'] = "SELECT SUM({$wpdb->commentmeta}.meta_value) AS meta_sum";
 		$comment_query_piece['from']   = " FROM {$wpdb->comments}  INNER JOIN {$wpdb->commentmeta}  ON ( {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id ) ";
 		$comment_query_piece['where']  = " WHERE {$wpdb->comments}.comment_type IN ('sensei_lesson_status') AND ( {$wpdb->commentmeta}.meta_key = 'grade') AND {$wpdb->comments}.comment_post_ID = {$clean_lesson_id} ";
@@ -1157,6 +1161,7 @@ class Sensei_Grading {
 		global $wpdb;
 
 		$clean_course_id               = esc_sql( $course_id );
+		$comment_query_piece           = [];
 		$comment_query_piece['select'] = "SELECT SUM({$wpdb->commentmeta}.meta_value) AS meta_sum";
 		$comment_query_piece['from']   = " FROM {$wpdb->comments}  INNER JOIN {$wpdb->commentmeta}  ON ( {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id ) ";
 		$comment_query_piece['where']  = " WHERE {$wpdb->comments}.comment_type IN ('sensei_course_status') AND ( {$wpdb->commentmeta}.meta_key = 'percent') AND {$wpdb->comments}.comment_post_ID = {$clean_course_id} ";

@@ -886,6 +886,7 @@ class Sensei_Updates {
 			}
 		}
 
+		$answers_linkup = [];
 		if ( is_array( $right_answers ) ) {
 			foreach ( $right_answers as $quiz_id => $question ) {
 				$count = 0;
@@ -900,6 +901,7 @@ class Sensei_Updates {
 			}
 		}
 
+		$new_user_answers = [];
 		if ( is_array( $old_user_answers ) ) {
 			foreach ( $old_user_answers as $quiz_id => $user_answers ) {
 				foreach ( $user_answers as $user_id => $answers ) {

@@ -2066,6 +2066,7 @@ class Sensei_Utils {
 		$pieces['fields'] = " COUNT(*) AS total, SUM($wpdb->commentmeta.meta_value) AS meta_sum ";
 		unset( $pieces['groupby'] );
 		if ( version_compare( $wp_version, '4.1', '>=' ) ) {
+			$args            = [];
 			$args['order']   = false;
 			$args['orderby'] = false;
 		}
@@ -2087,6 +2088,7 @@ class Sensei_Utils {
 		$pieces['fields'] = ' COUNT(*) AS total ';
 		unset( $pieces['groupby'] );
 		if ( version_compare( $wp_version, '4.1', '>=' ) ) {
+			$args            = [];
 			$args['order']   = false;
 			$args['orderby'] = false;
 		}
