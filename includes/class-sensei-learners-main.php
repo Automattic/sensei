@@ -144,7 +144,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	 * @return void
 	 */
 	public function prepare_items() {
-		global $avail_stati, $wpdb, $per_page;
+		global $avail_stati, $wpdb;
 
 		// Handle orderby
 		$orderby = '';
