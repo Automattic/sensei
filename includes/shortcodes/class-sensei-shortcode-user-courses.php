@@ -297,7 +297,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 
 		// mostly hooks added for legacy and backwards compatiblity sake
 		do_action( 'sensei_my_courses_before' );
-		do_action( 'sensei_before_user_course_content', get_current_user() );
+		do_action( 'sensei_before_user_course_content', wp_get_current_user() );
 
 		ob_start();
 		echo '<section id="sensei-user-courses">';
@@ -310,7 +310,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		echo '</section>';
 
 		// mostly hooks added for legacy and backwards compatiblity sake
-		do_action( 'sensei_after_user_course_content', get_current_user() );
+		do_action( 'sensei_after_user_course_content', wp_get_current_user() );
 		do_action( 'sensei_my_courses_after' );
 
 		$shortcode_output = ob_get_clean();
