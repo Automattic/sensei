@@ -1345,7 +1345,7 @@ class Sensei_Utils {
 			}
 
 			// Quiz passmark
-			$quiz_passmark       = absint( get_post_meta( $quiz_id, '_quiz_passmark', true ) );
+			$quiz_passmark = absint( get_post_meta( $quiz_id, '_quiz_passmark', true ) );
 
 			// Pass required
 			$pass_required = get_post_meta( $quiz_id, '_pass_required', true );

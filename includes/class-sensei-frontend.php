@@ -1106,9 +1106,9 @@ class Sensei_Frontend {
 
 	public function sensei_course_archive_meta() {
 		// Meta data.
-		$post_id             = get_the_ID();
-		$category_output     = get_the_term_list( $post_id, 'course-category', '', ', ', '' );
-		$free_lesson_count   = intval( Sensei()->course->course_lesson_preview_count( $post_id ) );
+		$post_id           = get_the_ID();
+		$category_output   = get_the_term_list( $post_id, 'course-category', '', ', ', '' );
+		$free_lesson_count = intval( Sensei()->course->course_lesson_preview_count( $post_id ) );
 		?>
 		<section class="entry">
 			<p class="sensei-course-meta">

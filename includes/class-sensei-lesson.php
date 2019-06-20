@@ -2714,9 +2714,9 @@ class Sensei_Lesson {
 	private function lesson_save_course( $data = array() ) {
 		$return = false;
 		// Setup the course data
-		$course_id           = 0;
-		$course_content      = '';
-		$course_title        = '';
+		$course_id      = 0;
+		$course_content = '';
+		$course_title   = '';
 
 		if ( isset( $data['course_id'] ) && ( 0 < absint( $data['course_id'] ) ) ) {
 			$course_id = absint( $data['course_id'] );
@@ -3856,12 +3856,11 @@ class Sensei_Lesson {
 	 * @param $lesson_id
 	 */
 	public static function the_lesson_meta( $lesson_id ) {
-
 		global $wp_query;
-		$loop_lesson_number = $wp_query->current_post + 1;
 
-		$course_id              = Sensei()->lesson->get_course_id( $lesson_id );
-		$is_user_taking_course  = Sensei_Utils::user_started_course( $course_id, get_current_user_id() );
+		$loop_lesson_number    = $wp_query->current_post + 1;
+		$course_id             = Sensei()->lesson->get_course_id( $lesson_id );
+		$is_user_taking_course = Sensei_Utils::user_started_course( $course_id, get_current_user_id() );
 
 		// Get Lesson data
 		$complexity_array = Sensei()->lesson->lesson_complexities();

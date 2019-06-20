@@ -203,19 +203,19 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 		$user_end_date   = $item->comment_date;
 
 		if ( 'complete' == $item->comment_approved ) {
-			$status       = __( 'Completed', 'sensei-lms' );
-			$grade = __( 'No Grade', 'sensei-lms' );
+			$status = __( 'Completed', 'sensei-lms' );
+			$grade  = __( 'No Grade', 'sensei-lms' );
 		} elseif ( 'graded' == $item->comment_approved ) {
-			$status       = __( 'Graded', 'sensei-lms' );
-			$grade = get_comment_meta( $item->comment_ID, 'grade', true );
+			$status = __( 'Graded', 'sensei-lms' );
+			$grade  = get_comment_meta( $item->comment_ID, 'grade', true );
 		} elseif ( 'passed' == $item->comment_approved ) {
-			$status       = __( 'Passed', 'sensei-lms' );
-			$grade = get_comment_meta( $item->comment_ID, 'grade', true );
+			$status = __( 'Passed', 'sensei-lms' );
+			$grade  = get_comment_meta( $item->comment_ID, 'grade', true );
 		} elseif ( 'failed' == $item->comment_approved ) {
-			$status       = __( 'Failed', 'sensei-lms' );
-			$grade = get_comment_meta( $item->comment_ID, 'grade', true );
+			$status = __( 'Failed', 'sensei-lms' );
+			$grade  = get_comment_meta( $item->comment_ID, 'grade', true );
 		} elseif ( 'ungraded' == $item->comment_approved ) {
-			$status       = __( 'Ungraded', 'sensei-lms' );
+			$status = __( 'Ungraded', 'sensei-lms' );
 		} else {
 			$status        = __( 'In Progress', 'sensei-lms' );
 			$user_end_date = '';
