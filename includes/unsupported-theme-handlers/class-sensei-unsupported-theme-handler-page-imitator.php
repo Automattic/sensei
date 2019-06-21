@@ -66,11 +66,13 @@ abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 		 * Set up new global $post and set it on $wp_query. Set $wp_the_query
 		 * as well so we can reset it back to this later.
 		 */
+		// phpcs:disable WordPress.WP.GlobalVariablesOverride.OverrideProhibited -- Used to mock our own page within a custom loop. Reset afterwards.
 		$post            = new WP_Post( (object) $dummy_post_properties );
 		$wp_query        = clone $wp_query;
 		$wp_query->post  = $post;
 		$wp_query->posts = array( $post );
 		$wp_the_query    = $wp_query;
+		// phpcs:enable WordPress.WP.GlobalVariablesOverride.OverrideProhibited
 
 		// Prevent comments form from appearing.
 		$wp_query->post_count    = 1;
@@ -275,8 +277,10 @@ abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 			throw new Exception( 'setup_original_query cannot be called before output_content_as_page' );
 		}
 
+		// phpcs:disable WordPress.WP.GlobalVariablesOverride.OverrideProhibited -- Resetting to the original query from self::output_content_as_page().
 		$wp_query = $this->original_query;
 		$post     = $this->original_post;
+		// phpcs:enable WordPress.WP.GlobalVariablesOverride.OverrideProhibited
 	}
 
 }

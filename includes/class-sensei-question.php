@@ -38,6 +38,8 @@ class Sensei_Question {
 
 			add_action( 'save_post_question', array( $this, 'save_question' ), 10, 1 );
 		} // End If Statement
+
+		add_action( 'sensei_question_initial_publish', [ $this, 'log_initial_publish_event' ] );
 	} // End __construct()
 
 	public function question_types() {
@@ -84,8 +86,6 @@ class Sensei_Question {
 	 * @return void
 	 */
 	public function add_column_data( $column_name, $id ) {
-		global $wpdb, $post;
-
 		switch ( $column_name ) {
 
 			case 'id':
@@ -317,6 +317,7 @@ class Sensei_Question {
 			 */
 
 			$question_id = apply_filters( 'sensei_save_question', $data );
+
 
 			// Re-hook same function
 			add_action( 'save_post_question', array( $this, 'save_question' ) );
@@ -696,7 +697,6 @@ class Sensei_Question {
 		$user_lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, get_current_user_id() );
 		$user_quiz_grade    = Sensei_Quiz::get_user_quiz_grade( $lesson_id, get_current_user_id() );
 		$reset_quiz_allowed = Sensei_Quiz::is_reset_allowed( $lesson_id );
-		$quiz_grade_type    = get_post_meta( $quiz_id, '_quiz_grade_type', true );
 		$quiz_graded        = isset( $user_lesson_status->comment_approved ) && ! in_array( $user_lesson_status->comment_approved, array( 'ungraded', 'in-progress' ) );
 
 		$quiz_required_pass_grade     = intval( get_post_meta( $quiz_id, '_quiz_passmark', true ) );
@@ -761,16 +761,13 @@ class Sensei_Question {
 	 * @since 1.9.0
 	 */
 	public static function the_answer_result_indication() {
+		global $sensei_question_loop;
 
-		global $post,  $current_user, $sensei_question_loop;
-
-		$answer_message       = '';
-		$answer_message_class = '';
-		$quiz_id              = $sensei_question_loop['quiz_id'];
-		$question_item        = $sensei_question_loop['current_question'];
-		$lesson_id            = Sensei()->quiz->get_lesson_id( $quiz_id );
-		$user_lesson_status   = Sensei_Utils::user_lesson_status( $lesson_id, get_current_user_id() );
-		$quiz_graded          = isset( $user_lesson_status->comment_approved ) && ! in_array( $user_lesson_status->comment_approved, array( 'in-progress', 'ungraded' ) );
+		$quiz_id            = $sensei_question_loop['quiz_id'];
+		$question_item      = $sensei_question_loop['current_question'];
+		$lesson_id          = Sensei()->quiz->get_lesson_id( $quiz_id );
+		$user_lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, get_current_user_id() );
+		$quiz_graded        = isset( $user_lesson_status->comment_approved ) && ! in_array( $user_lesson_status->comment_approved, array( 'in-progress', 'ungraded' ) );
 
 		if ( ! Sensei_Utils::user_started_course( Sensei()->lesson->get_course_id( $lesson_id ), get_current_user_id() ) ) {
 			return;
@@ -894,6 +891,7 @@ class Sensei_Question {
 		}
 
 		// setup the question data
+		$data                           = [];
 		$data['ID']                     = $question_id;
 		$data['title']                  = get_the_title( $question_id );
 		$data['content']                = get_post( $question_id )->post_content;
@@ -1195,10 +1193,8 @@ class Sensei_Question {
 	 * @return string $correct_answer or empty
 	 */
 	public static function get_correct_answer( $question_id ) {
-
 		$right_answer = get_post_meta( $question_id, '_question_right_answer', true );
 		$type         = Sensei()->question->get_question_type( $question_id );
-		$grade_type   = 'manual-grade';
 
 		if ( 'boolean' == $type ) {
 			if ( 'true' === $right_answer ) {
@@ -1249,6 +1245,33 @@ class Sensei_Question {
 		return apply_filters( 'sensei_questions_get_correct_answer', $right_answer, $question_id );
 
 	} // get_correct_answer
+
+	/**
+	 * Log an event when a question is initially published.
+	 *
+	 * @since 2.1.0
+	 * @access private
+	 *
+	 * @param WP_Post $question The question object.
+	 */
+	public function log_initial_publish_event( $question ) {
+		$event_properties = [
+			'page'          => 'unknown',
+			'question_type' => $this->get_question_type( $question->ID ),
+		];
+
+		if ( function_exists( 'get_current_screen' ) ) {
+			$screen = get_current_screen();
+
+			if ( $screen && 'question' === $screen->id ) {
+				$event_properties['page'] = 'question';
+			} elseif ( isset( $_REQUEST['action'] ) && 'lesson_update_question' === $_REQUEST['action'] ) {
+				$event_properties['page'] = 'lesson';
+			}
+		}
+
+		sensei_log_event( 'question_add', $event_properties );
+	}
 
 } // End Class
 

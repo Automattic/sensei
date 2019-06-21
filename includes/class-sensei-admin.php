@@ -83,6 +83,9 @@ class Sensei_Admin {
 		// Add workaround for block editor bug on CPT pages. See the function doc for more information.
 		add_action( 'admin_footer', array( $this, 'output_cpt_block_editor_workaround' ) );
 
+		// Add AJAX endpoint for event logging.
+		add_action( 'wp_ajax_sensei_log_event', array( $this, 'ajax_log_event' ) );
+
 		Sensei_Extensions::instance()->init();
 
 	} // End __construct()
@@ -105,6 +108,7 @@ class Sensei_Admin {
 		}
 
 		if ( $menu_cap ) {
+			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.OverrideProhibited -- Only way to add separator above our menu group.
 			$menu[] = array( '', 'read', 'separator-sensei', '', 'wp-menu-separator sensei' );
 			add_menu_page( 'Sensei LMS', 'Sensei LMS', $menu_cap, 'sensei', array( Sensei()->analysis, 'analysis_page' ), '', '50' );
 		}
@@ -152,7 +156,7 @@ class Sensei_Admin {
 	 * @return void
 	 */
 	public function admin_menu_highlight() {
-		global $menu, $submenu, $parent_file, $submenu_file, $self, $post_type, $taxonomy;
+		global $parent_file, $submenu_file, $post_type, $taxonomy;
 
 		$screen = get_current_screen();
 
@@ -160,6 +164,7 @@ class Sensei_Admin {
 			return;
 		}
 
+		// phpcs:disable WordPress.WP.GlobalVariablesOverride.OverrideProhibited -- Only way to highlight our special pages in menu.
 		if ( $screen->base == 'post' && $post_type == 'course' ) {
 
 			$parent_file = 'edit.php?post_type=course';
@@ -180,6 +185,7 @@ class Sensei_Admin {
 			$parent_file  = 'sensei';
 
 		}
+		// phpcs:enable WordPress.WP.GlobalVariablesOverride.OverrideProhibited
 	}
 
 	/**
@@ -335,6 +341,10 @@ class Sensei_Admin {
 		}
 
 		wp_enqueue_script( 'sensei-message-menu-fix', Sensei()->plugin_url . 'assets/js/admin/message-menu-fix.js', array( 'jquery' ), Sensei()->version, true );
+
+		// Event logging.
+		wp_enqueue_script( 'sensei-event-logging', Sensei()->plugin_url . 'assets/js/admin/event-logging' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
+		wp_localize_script( 'sensei-event-logging', 'sensei_event_logging', [ 'enabled' => Sensei_Usage_Tracking::get_instance()->get_tracking_enabled() ] );
 	}
 
 
@@ -527,6 +537,17 @@ class Sensei_Admin {
 			wp_die( esc_html__( 'Invalid post type. Can duplicate only lessons and courses', 'sensei-lms' ) );
 		}
 
+		$event = false;
+		if ( 'course' === $post_type ) {
+			$event = 'course_duplicate';
+		} elseif ( 'lesson' === $post_type ) {
+			$event = 'lesson_duplicate';
+		}
+
+		$event_properties = [
+			$post_type . '_id' => $post_id,
+		];
+
 		$action = 'duplicate_' . $post_type;
 		if ( $with_lessons ) {
 			$action .= '_with_lessons';
@@ -547,12 +568,18 @@ class Sensei_Admin {
 				}
 
 				if ( 'course' == $new_post->post_type && $with_lessons ) {
-					$this->duplicate_course_lessons( $post_id, $new_post->ID );
+					$event                            = 'course_duplicate_with_lessons';
+					$event_properties['lesson_count'] = $this->duplicate_course_lessons( $post_id, $new_post->ID );
 				}
 
 				$redirect_url = admin_url( 'post.php?post=' . $new_post->ID . '&action=edit' );
 			} else {
 				$redirect_url = admin_url( 'edit.php?post_type=' . $post->post_type . '&message=duplicate_failed' );
+			}
+
+			// Log event.
+			if ( $event ) {
+				sensei_log_event( $event, $event_properties );
 			}
 
 			wp_safe_redirect( esc_url_raw( $redirect_url ) );
@@ -605,7 +632,7 @@ class Sensei_Admin {
 	 *
 	 * @param  integer $old_course_id ID of original course
 	 * @param  integer $new_course_id ID of duplicated course
-	 * @return void
+	 * @return int Number of lessons duplicated.
 	 */
 	private function duplicate_course_lessons( $old_course_id, $new_course_id ) {
 		$lesson_args = array(
@@ -623,6 +650,8 @@ class Sensei_Admin {
 
 			$this->duplicate_lesson_quizzes( $lesson->ID, $new_lesson->ID );
 		}
+
+		return count( $lessons );
 	}
 
 	/**
@@ -1129,6 +1158,9 @@ class Sensei_Admin {
 	 */
 	public function course_order_screen() {
 
+		$should_update_order = false;
+		$new_course_order    = array();
+
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 		wp_enqueue_script( 'sensei-settings', esc_url( Sensei()->plugin_url . 'assets/js/settings' . $suffix . '.js' ), array( 'jquery', 'jquery-ui-sortable' ), Sensei()->version );
 
@@ -1162,9 +1194,6 @@ class Sensei_Admin {
 										$ordered_course_ids = explode( ',', $order_string );
 										$all_course_ids     = array_unique( array_merge( $ordered_course_ids, $all_course_ids ) );
 									}
-
-									$should_update_order = false;
-									$new_course_order    = array();
 
 									$html .= '<form id="editgrouping" method="post" action="'
 										. esc_url( admin_url( 'admin-post.php' ) ) . '" class="validate">' . "\n";
@@ -1814,7 +1843,33 @@ class Sensei_Admin {
 	} );
 </script>
 		<?php
+	}
 
+	/**
+	 * Attempt to log a Sensei event.
+	 *
+	 * @since 2.1.0
+	 * @access private
+	 */
+	public function ajax_log_event() {
+		// phpcs:disable WordPress.Security.NonceVerification
+		if ( ! isset( $_REQUEST['event_name'] ) ) {
+			wp_die();
+		}
+
+		$event_name = $_REQUEST['event_name'];
+		$properties = isset( $_REQUEST['properties'] ) ? $_REQUEST['properties'] : [];
+
+		// Set the source to js-event.
+		add_filter(
+			'sensei_event_logging_source',
+			function() {
+				return 'js-event';
+			}
+		);
+
+		sensei_log_event( $event_name, $properties );
+		// phpcs:enable WordPress.Security.NonceVerification
 	}
 
 } // End Class

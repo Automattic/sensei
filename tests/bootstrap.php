@@ -62,6 +62,10 @@ class Sensei_Unit_Tests_Bootstrap {
 		// factories
 		require_once $this->tests_dir . '/framework/factories/class-sensei-factory.php';
 		require_once $this->tests_dir . '/framework/factories/class-wp-unittest-factory-for-post-sensei.php';
+
+		// Testing setup for event logging.
+		require_once $this->tests_dir . '/framework/class-sensei-test-events.php';
+		Sensei_Test_Events::init();
 	}
 	/**
 	 * Get the single class instance.

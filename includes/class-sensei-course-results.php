@@ -109,12 +109,13 @@ class Sensei_Course_Results {
 	 * @return void
 	 */
 	public function content() {
-		global $wp_query,  $current_user;
+		global $wp_query;
+
+		_deprecated_function( __METHOD__, '2.2.0' );
 
 		if ( isset( $wp_query->query_vars['course_results'] ) ) {
 			Sensei_Templates::get_template( 'course-results/course-info.php' );
 		}
-
 	}
 
 	/**
@@ -142,10 +143,7 @@ class Sensei_Course_Results {
 	 * @return void
 	 */
 	public function course_lessons() {
-
-		global $course;
 		_deprecated_function( 'Sensei_modules course_lessons ', '1.9.0' );
-
 	}
 
 	/**
@@ -213,10 +211,7 @@ class Sensei_Course_Results {
 	 * @since 1.8.0
 	 */
 	public static function fire_course_image_hook() {
-
-		global $course;
 		sensei_do_deprecated_action( 'sensei_course_image', '1.9.0', 'sensei_single_course_content_inside_before', array( get_the_ID() ) );
-
 	}
 
 } // End Class

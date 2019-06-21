@@ -147,7 +147,7 @@ class Sensei_List_Table extends WP_List_Table {
 	 * @return array $columns, the array of columns to use with the table
 	 */
 	public function get_columns() {
-		return $columns = $this->columns;
+		return $this->columns;
 	} // End get_columns()
 
 	/**
@@ -157,7 +157,7 @@ class Sensei_List_Table extends WP_List_Table {
 	 * @return array $sortable, the array of columns that can be sorted by the user
 	 */
 	public function get_sortable_columns() {
-		return $sortable = $this->sortable_columns;
+		return $this->sortable_columns;
 	} // End get_sortable_columns()
 
 	/**

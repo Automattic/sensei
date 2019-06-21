@@ -298,13 +298,13 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	}
 
 	private function get_allowed_css( $style ) {
+		$styles   = [];
 		$styles[] = 'display';
 
 		return $styles;
 	}
 
 	public function parse_query_args() {
-		global $per_page;
 		// Handle orderby
 		$course_id = 0;
 		$lesson_id = 0;

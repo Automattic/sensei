@@ -99,7 +99,7 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 	 * @return void
 	 */
 	public function prepare_items() {
-		global  $per_page, $wp_version;
+		global $wp_version;
 
 		// Handle orderby
 		$orderby = '';

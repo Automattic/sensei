@@ -121,7 +121,9 @@ class Sensei_Learner_Profiles {
 	 * @return void
 	 */
 	public function content() {
-		global $wp_query,  $learner_user, $current_user;
+		global $wp_query;
+
+		_deprecated_function( __METHOD__, '2.2.0' );
 
 		if ( isset( Sensei()->settings->settings['learner_profile_enable'] ) && Sensei()->settings->settings['learner_profile_enable'] ) {
 

@@ -78,8 +78,6 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 	 * @return void
 	 */
 	public function prepare_items() {
-		global $per_page;
-
 		// Handle orderby (needs work)
 		$orderby = '';
 		if ( ! empty( $_GET['orderby'] ) ) {
@@ -201,32 +199,21 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 	protected function get_row_data( $item ) {
 		$user_start_date = get_comment_meta( $item->comment_ID, 'start', true );
 		$user_end_date   = $item->comment_date;
-		$status_class    = $grade = '';
 
 		if ( 'complete' == $item->comment_approved ) {
-			$status       = __( 'Completed', 'sensei-lms' );
-			$status_class = 'graded';
-
-			$grade = __( 'No Grade', 'sensei-lms' );
+			$status = __( 'Completed', 'sensei-lms' );
+			$grade  = __( 'No Grade', 'sensei-lms' );
 		} elseif ( 'graded' == $item->comment_approved ) {
-			$status       = __( 'Graded', 'sensei-lms' );
-			$status_class = 'graded';
-
-			$grade = get_comment_meta( $item->comment_ID, 'grade', true );
+			$status = __( 'Graded', 'sensei-lms' );
+			$grade  = get_comment_meta( $item->comment_ID, 'grade', true );
 		} elseif ( 'passed' == $item->comment_approved ) {
-			$status       = __( 'Passed', 'sensei-lms' );
-			$status_class = 'graded';
-
-			$grade = get_comment_meta( $item->comment_ID, 'grade', true );
+			$status = __( 'Passed', 'sensei-lms' );
+			$grade  = get_comment_meta( $item->comment_ID, 'grade', true );
 		} elseif ( 'failed' == $item->comment_approved ) {
-			$status       = __( 'Failed', 'sensei-lms' );
-			$status_class = 'failed';
-
-			$grade = get_comment_meta( $item->comment_ID, 'grade', true );
+			$status = __( 'Failed', 'sensei-lms' );
+			$grade  = get_comment_meta( $item->comment_ID, 'grade', true );
 		} elseif ( 'ungraded' == $item->comment_approved ) {
-			$status       = __( 'Ungraded', 'sensei-lms' );
-			$status_class = 'ungraded';
-
+			$status = __( 'Ungraded', 'sensei-lms' );
 		} else {
 			$status        = __( 'In Progress', 'sensei-lms' );
 			$user_end_date = '';
@@ -323,7 +310,7 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 
 		// Ensure we change our range to fit (in case a search threw off the pagination) - Should this be added to all views?
 		if ( $this->total_items < $activity_args['offset'] ) {
-			$new_paged               = floor( $total_statuses / $activity_args['number'] );
+			$new_paged               = floor( $this->total_items / $activity_args['number'] );
 			$activity_args['offset'] = $new_paged * $activity_args['number'];
 		}
 		$statuses = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
