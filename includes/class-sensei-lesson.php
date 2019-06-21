@@ -1535,7 +1535,7 @@ class Sensei_Lesson {
 					<td>' . esc_html( get_the_title( $question_id ) ) . '</td>
 					<td>' . esc_html( $question_type ) . '</td>
 					<td>' . esc_html( $question_cat_list ) . '</td>
-				  </tr>';
+					</tr>';
 
 		return wp_kses(
 			$html,
@@ -1611,7 +1611,7 @@ class Sensei_Lesson {
 			if ( ! $html ) {
 				$html = '<tr class="alternate">
 								<td class="no-results" colspan="4"><em>' . esc_html__( 'There are no questions matching your search.', 'sensei-lms' ) . '</em></td>
-							  </tr>';
+								</tr>';
 			}
 
 			$return['html']  = $html;
@@ -1644,6 +1644,12 @@ class Sensei_Lesson {
 				$question_id    = '';
 				$question_class = 'answer-fields question_required_fields hidden';
 			}
+
+			/** Hook into the process that renders the question class
+			 *
+			 * @param string $question_class class name
+			 */
+
 
 			$question_class = apply_filters( 'sensei_question_class', $question_class );
 
@@ -1685,7 +1691,7 @@ class Sensei_Lesson {
 						// Setup Wrong Answer HTML
 					foreach ( $wrong_answers as $i => $answer ) {
 
-					  $answer_id     = $this->get_answer_id( $answer );
+						$answer_id     = $this->get_answer_id( $answer );
 						$wrong_answer  = '<label class="answer" for="question_' . esc_attr( $question_counter ) . '_wrong_answer_' . esc_attr( $i ) . '"><span>' . esc_html__( 'Wrong:', 'sensei-lms' );
 						$wrong_answer     .= '</span> <input rel="' . esc_attr( $answer_id ) . '" type="text" id="question_' . esc_attr( $question_counter ) . '_wrong_answer_' . esc_attr( $i );
 						$wrong_answer     .= '" name="question_wrong_answers[]" value="' . esc_attr( $answer ) . '" size="25" class="question_answer widefat" /> <a class="remove_answer_option"></a></label>';
@@ -1730,6 +1736,7 @@ class Sensei_Lesson {
 
 				  $html .= '</div>';
 				  break;
+
 				case 'boolean':
 					$html .= '<div class="question_boolean_fields ' . esc_attr( $question_class ) . '">';
 					if ( $question_id ) {
@@ -2348,11 +2355,19 @@ class Sensei_Lesson {
 			if ( isset( $question_data['quiz_id'] ) && ( 0 < absint( $question_data['quiz_id'] ) ) ) {
 				$current_user                 = wp_get_current_user();
 				$question_data['post_author'] = $current_user->ID;
-				$question_id                  = apply_filters( 'sensei_update_question', $question_data );
-				$question_type                = Sensei()->question->get_question_type( $question_id );
-				$question_count               = intval( $question_data['question_count'] );
+
+
+				/**
+				 * Hook into the process that saves a question after it is created
+				 *
+				 * @param object $question_data All question data
+				 */
+				$question_id    = apply_filters( 'sensei_update_question', $question_data );
+				$question_type  = Sensei()->question->get_question_type( $question_id );
+				$question_count = intval( $question_data['question_count'] );
+
 				++$question_count;
-				$return                       = $this->quiz_panel_question( $question_type, $question_count, $question_id );
+				$return = $this->quiz_panel_question( $question_type, $question_count, $question_id );
 			} // End If Statement
 		} // End If Statement
 
@@ -2727,7 +2742,12 @@ class Sensei_Lesson {
 		$question_type          = 'multiple-choice';
 		$question_category      = '';
 
-		// retrieve data from custom question types.
+		/**
+		 * Retrieve data from questions with custom question type
+		 *
+		 * @param array $data Array containing question data
+		 */
+
 		$question_extra_data = apply_filters( 'sensei_custom_question_type_data', $data );
 
 		// Handle Question Type
@@ -2897,7 +2917,14 @@ class Sensei_Lesson {
 				update_post_meta( $question_id, '_answer_order', $answer_order );
 				update_post_meta( $question_id, '_random_order', $random_order );
 				update_post_meta( $question_id, '_answer_feedback', $answer_feedback );
-				// update custom question type meta.
+
+				/**
+				 * Update question meta
+				 *
+				 * @param integer $question_id unique identifier for the question
+				 * @param array $question_extra_data Question data
+				 */
+
 				apply_filters( 'sensei_update_custom_question_type_meta', $question_id, $question_extra_data );
 
 				if ( 'quiz' != $context ) {
@@ -2927,7 +2954,13 @@ class Sensei_Lesson {
 				add_post_meta( $question_id, '_answer_order', $answer_order );
 				add_post_meta( $question_id, '_random_order', $random_order );
 
-				// add custom question type meta
+				/**
+				 * Add question meta
+				 *
+				 * @param integer $question_id unique identifier for the question
+				 * @param array $question_extra_data Question data
+				 */
+
 				apply_filters( 'sensei_add_custom_question_type_meta', $question_id, $question_extra_data );
 				// Don't store empty value, no point
 				if ( ! empty( $answer_feedback ) ) {
@@ -3851,8 +3884,7 @@ class Sensei_Lesson {
 		?>
 		<header class="lesson-title">
 			<h2>
-				<a href="<?php echo esc_url( get_permalink( $lesson_id ) ); ?>"
-				   title="<?php echo esc_attr( $heading_link_title ); ?>" >
+				<a href="<?php echo esc_url( get_permalink( $lesson_id ) ); ?>" title="<?php echo esc_attr( $heading_link_title ); ?>" >
 					<?php echo wp_kses_post( $count_markup ) . get_the_title( $lesson_id ); ?>
 				</a>
 			</h2>
@@ -4302,10 +4334,7 @@ class Sensei_Lesson {
 
 					<p>
 
-						<a class="button"
-						   href="<?php echo esc_url( get_permalink( $quiz_id ) ); ?>"
-						   title="<?php esc_attr_e( 'View the Lesson Quiz', 'sensei-lms' ); ?>">
-
+						<a class="button" href="<?php echo esc_url( get_permalink( $quiz_id ) ); ?>" title="<?php esc_attr_e( 'View the Lesson Quiz', 'sensei-lms' ); ?>">
 							<?php esc_html_e( 'View the Lesson Quiz', 'sensei-lms' ); ?>
 
 						</a>
