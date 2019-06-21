@@ -1822,7 +1822,7 @@ class Sensei_Admin {
 	public function output_cpt_block_editor_workaround() {
 		$screen = get_current_screen();
 
-		if ( ! $screen->is_block_editor() ) {
+		if ( ! ( method_exists( $screen, 'is_block_editor' ) && $screen->is_block_editor() ) ) {
 			return;
 		}
 
