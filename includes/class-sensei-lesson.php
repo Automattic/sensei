@@ -749,8 +749,8 @@ class Sensei_Lesson {
 						$html .= '&nbsp;&nbsp;&nbsp;';
 						// Cancel action link
 						$html .= '<a href="#course-add-cancel" class="lesson_course_cancel">' . esc_html__( 'Cancel', 'sensei-lms' ) . '</a>';
-					$html     .= '</p>';
-				$html         .= '</div>';
+						$html .= '</p>';
+						$html .= '</div>';
 		} // End If Statement
 
 		echo wp_kses(
@@ -937,11 +937,11 @@ class Sensei_Lesson {
 						'value'       => array(),
 					),
 					// Explicitly allow label tag for WP.com.
-					'label'  => array(
+					'label'    => array(
 						'class' => array(),
 						'for'   => array(),
 					),
-					'option' => array(
+					'option'   => array(
 						'value' => array(),
 					),
 					'select'   => array(
@@ -1203,7 +1203,7 @@ class Sensei_Lesson {
 						'value'   => array(),
 					),
 					// Explicitly allow label tag for WP.com.
-					'label'  => array(
+					'label'    => array(
 						'class' => array(),
 						'for'   => array(),
 					),
@@ -1650,7 +1650,6 @@ class Sensei_Lesson {
 			 * @param string $question_class class name
 			 */
 
-
 			$question_class = apply_filters( 'sensei_question_class', $question_class );
 
 			switch ( $question_type ) {
@@ -1693,8 +1692,8 @@ class Sensei_Lesson {
 
 						$answer_id     = $this->get_answer_id( $answer );
 						$wrong_answer  = '<label class="answer" for="question_' . esc_attr( $question_counter ) . '_wrong_answer_' . esc_attr( $i ) . '"><span>' . esc_html__( 'Wrong:', 'sensei-lms' );
-						$wrong_answer     .= '</span> <input rel="' . esc_attr( $answer_id ) . '" type="text" id="question_' . esc_attr( $question_counter ) . '_wrong_answer_' . esc_attr( $i );
-						$wrong_answer     .= '" name="question_wrong_answers[]" value="' . esc_attr( $answer ) . '" size="25" class="question_answer widefat" /> <a class="remove_answer_option"></a></label>';
+						$wrong_answer .= '</span> <input rel="' . esc_attr( $answer_id ) . '" type="text" id="question_' . esc_attr( $question_counter ) . '_wrong_answer_' . esc_attr( $i );
+						$wrong_answer .= '" name="question_wrong_answers[]" value="' . esc_attr( $answer ) . '" size="25" class="question_answer widefat" /> <a class="remove_answer_option"></a></label>';
 						if ( $question_id ) {
 							$answers[ $answer_id ] = $wrong_answer;
 						} else {
@@ -1734,8 +1733,8 @@ class Sensei_Lesson {
 
 					$html .= $this->quiz_panel_question_feedback( $question_counter, $question_id, 'multiple-choice' );
 
-				  $html .= '</div>';
-				  break;
+					$html .= '</div>';
+					break;
 
 				case 'boolean':
 					$html .= '<div class="question_boolean_fields ' . esc_attr( $question_class ) . '">';
@@ -1845,7 +1844,7 @@ class Sensei_Lesson {
 						'value'   => array(),
 					),
 					// Explicitly allow label tag for WP.com.
-					'label' => array(
+					'label'    => array(
 						'class' => array(),
 						'for'   => array(),
 					),
@@ -1896,7 +1895,7 @@ class Sensei_Lesson {
 				wp_kses_allowed_html( 'post' ),
 				array(
 					// Explicitly allow label tag for WP.com.
-					'label' => array(
+					'label'    => array(
 						'for' => array(),
 					),
 					// Explicitly allow textarea tag for WP.com.
@@ -2355,7 +2354,6 @@ class Sensei_Lesson {
 			if ( isset( $question_data['quiz_id'] ) && ( 0 < absint( $question_data['quiz_id'] ) ) ) {
 				$current_user                 = wp_get_current_user();
 				$question_data['post_author'] = $current_user->ID;
-
 
 				/**
 				 * Hook into the process that saves a question after it is created
