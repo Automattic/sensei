@@ -1647,8 +1647,6 @@ class Sensei_Lesson {
 
 			$question_class = apply_filters( 'sensei_question_class', $question_class );
 
-
-
 			switch ( $question_type ) {
 				case 'multiple-choice':
 					$html .= '<div class="question_default_fields multiple-choice-answers ' . esc_attr( str_replace( ' hidden', '', $question_class ) ) . '">';
@@ -1689,8 +1687,8 @@ class Sensei_Lesson {
 
 					  $answer_id     = $this->get_answer_id( $answer );
 						$wrong_answer  = '<label class="answer" for="question_' . esc_attr( $question_counter ) . '_wrong_answer_' . esc_attr( $i ) . '"><span>' . esc_html__( 'Wrong:', 'sensei-lms' );
-						$wrong_answer .= '</span> <input rel="' . esc_attr( $answer_id ) . '" type="text" id="question_' . esc_attr( $question_counter ) . '_wrong_answer_' . esc_attr( $i );
-						$wrong_answer .= '" name="question_wrong_answers[]" value="' . esc_attr( $answer ) . '" size="25" class="question_answer widefat" /> <a class="remove_answer_option"></a></label>';
+						$wrong_answer     .= '</span> <input rel="' . esc_attr( $answer_id ) . '" type="text" id="question_' . esc_attr( $question_counter ) . '_wrong_answer_' . esc_attr( $i );
+						$wrong_answer     .= '" name="question_wrong_answers[]" value="' . esc_attr( $answer ) . '" size="25" class="question_answer widefat" /> <a class="remove_answer_option"></a></label>';
 						if ( $question_id ) {
 							$answers[ $answer_id ] = $wrong_answer;
 						} else {
@@ -1719,19 +1717,19 @@ class Sensei_Lesson {
 						$html .= $answer;
 					}
 
-						$html .= '<input type="hidden" class="answer_order" name="answer_order" value="' . esc_attr( $answer_order_string ) . '" />';
-						$html .= '<span class="hidden right_answer_count">' . esc_html( $total_right ) . '</span>';
-						$html .= '<span class="hidden wrong_answer_count">' . esc_html( $total_wrong ) . '</span>';
+					$html .= '<input type="hidden" class="answer_order" name="answer_order" value="' . esc_attr( $answer_order_string ) . '" />';
+					$html .= '<span class="hidden right_answer_count">' . esc_html( $total_right ) . '</span>';
+					$html .= '<span class="hidden wrong_answer_count">' . esc_html( $total_wrong ) . '</span>';
 
-						$html .= '<div class="add_answer_options">';
-						$html .= '<a class="add_right_answer_option add_answer_option button" rel="' . esc_attr( $question_counter ) . '">' . esc_html__( 'Add right answer', 'sensei-lms' ) . '</a>';
-						$html .= '<a class="add_wrong_answer_option add_answer_option button" rel="' . esc_attr( $question_counter ) . '">' . esc_html__( 'Add wrong answer', 'sensei-lms' ) . '</a>';
-						$html .= '</div>';
+					$html .= '<div class="add_answer_options">';
+					$html .= '<a class="add_right_answer_option add_answer_option button" rel="' . esc_attr( $question_counter ) . '">' . esc_html__( 'Add right answer', 'sensei-lms' ) . '</a>';
+					$html .= '<a class="add_wrong_answer_option add_answer_option button" rel="' . esc_attr( $question_counter ) . '">' . esc_html__( 'Add wrong answer', 'sensei-lms' ) . '</a>';
+					$html .= '</div>';
 
-						$html .= $this->quiz_panel_question_feedback( $question_counter, $question_id, 'multiple-choice' );
+					$html .= $this->quiz_panel_question_feedback( $question_counter, $question_id, 'multiple-choice' );
 
-					  $html .= '</div>';
-					break;
+				  $html .= '</div>';
+				  break;
 				case 'boolean':
 					$html .= '<div class="question_boolean_fields ' . esc_attr( $question_class ) . '">';
 					if ( $question_id ) {
@@ -2350,7 +2348,7 @@ class Sensei_Lesson {
 			if ( isset( $question_data['quiz_id'] ) && ( 0 < absint( $question_data['quiz_id'] ) ) ) {
 				$current_user                 = wp_get_current_user();
 				$question_data['post_author'] = $current_user->ID;
-				$question_id                  = apply_filters( 'sensei_save_question', $question_data );
+				$question_id                  = apply_filters( 'sensei_update_question', $question_data );
 				$question_type                = Sensei()->question->get_question_type( $question_id );
 				$question_count               = intval( $question_data['question_count'] );
 				++$question_count;
@@ -2730,7 +2728,7 @@ class Sensei_Lesson {
 		$question_category      = '';
 
 		// retrieve data from custom question types.
-		$question_extra_data = apply_filters( 'sensei_question_extra_data', $data );
+		$question_extra_data = apply_filters( 'sensei_custom_question_type_data', $data );
 
 		// Handle Question Type
 		if ( isset( $data['question_type'] ) && ( '' != $data['question_type'] ) ) {
