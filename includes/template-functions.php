@@ -178,7 +178,7 @@ function sensei_simple_course_price( $post_id ) {
 		return;
 	}
 
-	\Sensei_WC_Paid_Courses\Frontend\Courses::output_course_price( $post_id );
+	\Sensei_WC_Paid_Courses\Frontend\Courses::instance()->output_course_price( $post_id );
 } // End sensei_simple_course_price()
 
 	/**
@@ -429,11 +429,9 @@ function sensei_get_prev_next_lessons( $lesson_id = 0 ) {
    * @return string $excerpt
    */
 function sensei_get_excerpt( $post_id = '' ) {
-
-	global $post;
 	_deprecated_function( 'sensei_get_excerpt', 'use the WordPress excerpt functionality.' );
-	return get_the_excerpt();
 
+	return get_the_excerpt();
 }
 
 function sensei_has_user_started_course( $post_id = 0, $user_id = 0 ) {
@@ -519,6 +517,7 @@ function sensei_setup_module() {
 		// setup the global wp-query only if the lessons
 		if ( $modules_query->have_posts() ) {
 
+			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.OverrideProhibited -- Use modules query for modules loop. Reset in `Sensei_Core_Modules::teardown_single_course_module_loop()`
 			$wp_query = $modules_query;
 
 		} else {
@@ -683,7 +682,7 @@ function sensei_get_the_module_status() {
 	}
 
 	global $sensei_modules_loop;
-	$module_title    = $sensei_modules_loop['current_module']->name;
+
 	$module_term_id  = $sensei_modules_loop['current_module']->term_id;
 	$course_id       = $sensei_modules_loop['course_id'];
 	$module_progress = Sensei()->modules->get_user_module_progress( $module_term_id, $course_id, get_current_user_id() );
@@ -707,9 +706,9 @@ function sensei_get_the_module_status() {
 		return '';
 	}
 
-	$module_status_html = '<p class="status module-status ' . esc_attr( $status_class ) . '">'
+	$module_status_html = '<span class="status module-status ' . esc_attr( $status_class ) . '">'
 							. esc_html( $module_status )
-							. '</p>';
+							. '</span>';
 
 	/**
 	 * Filter the module status.

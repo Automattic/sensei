@@ -98,6 +98,7 @@ if ( ! function_exists( 'sensei_rgb_from_hex' ) ) {
 		// Convert shorthand colors to full format, e.g. "FFF" -> "FFFFFF"
 		$color = preg_replace( '~^(.)(.)(.)$~', '$1$1$2$2$3$3', $color );
 
+		$rgb      = [];
 		$rgb['R'] = hexdec( $color{0} . $color{1} );
 		$rgb['G'] = hexdec( $color{2} . $color{3} );
 		$rgb['B'] = hexdec( $color{4} . $color{5} );
@@ -288,4 +289,34 @@ if ( ! function_exists( 'sensei_check_woocommerce_version' ) ) {
 		}
 		return false;
 	}
+}
+
+/**
+ * Track a Sensei event.
+ *
+ * @since 2.1.0
+ *
+ * @param string $event_name The name of the event, without the `sensei_` prefix.
+ * @param array  $properties The event properties to be sent.
+ */
+function sensei_log_event( $event_name, $properties = [] ) {
+	$properties = array_merge(
+		Sensei_Usage_Tracking_Data::get_event_logging_base_fields(),
+		$properties
+	);
+
+	/**
+	 * Explicitly disable usage tracking from being sent.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param bool   $log_event    Whether we should log the event.
+	 * @param string $event_name   The name of the event, without the `sensei_` prefix.
+	 * @param array  $properties   The event properties to be sent.
+	 */
+	if ( false === apply_filters( 'sensei_log_event', true, $event_name, $properties ) ) {
+		return;
+	}
+
+	Sensei_Usage_Tracking::get_instance()->send_event( $event_name, $properties );
 }

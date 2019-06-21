@@ -54,6 +54,9 @@ class Sensei_Course {
 			// Custom Write Panel Columns
 			add_filter( 'manage_edit-course_columns', array( $this, 'add_column_headings' ), 10, 1 );
 			add_action( 'manage_posts_custom_column', array( $this, 'add_column_data' ), 10, 2 );
+
+			// Enqueue scripts.
+			add_action( 'admin_enqueue_scripts', array( $this, 'register_admin_scripts' ) );
 		} else {
 			$this->my_courses_page = false;
 		} // End If Statement
@@ -126,6 +129,26 @@ class Sensei_Course {
 		// Allow course archive to be setup as the home page
 		if ( (int) get_option( 'page_on_front' ) > 0 ) {
 			add_action( 'pre_get_posts', array( $this, 'allow_course_archive_on_front_page' ), 9, 1 );
+		}
+
+		// Log event on the initial publish for a course.
+		add_action( 'sensei_course_initial_publish', [ $this, 'log_initial_publish_event' ] );
+	}
+
+	/**
+	 * Register and enqueue scripts that are needed in the backend.
+	 *
+	 * @access private
+	 * @since 2.1.0
+	 */
+	public function register_admin_scripts() {
+		$screen = get_current_screen();
+
+		// Allow developers to load non-minified versions of scripts.
+		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+
+		if ( 'course' === $screen->id ) {
+			wp_enqueue_script( 'sensei-admin-course-edit', Sensei()->plugin_url . 'assets/js/admin/course-edit' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
 		}
 	}
 
@@ -471,6 +494,7 @@ class Sensei_Course {
 					. '" title="'
 					// translators: Placeholder is the Lesson title.
 					. esc_attr( sprintf( __( 'Edit %s', 'sensei-lms' ), $post_item->post_title ) )
+					. '" data-course-status="' . esc_attr( $post->post_status )
 					. '" class="edit-lesson-action">'
 					. esc_html__( 'Edit this lesson', 'sensei-lms' )
 					. '</a>';
@@ -485,7 +509,8 @@ class Sensei_Course {
 		} else {
 			$html .= '<hr />';
 		}
-		$html .= '<a href="' . esc_url( $add_lesson_admin_url )
+		$html .= '<a class="add-course-lesson" href="' . esc_url( $add_lesson_admin_url )
+			. '" data-course-status="' . esc_attr( $post->post_status )
 			. '" title="' . esc_attr__( 'Add a Lesson', 'sensei-lms' ) . '">';
 		if ( count( $posts_array ) < 1 ) {
 			$html .= esc_html__( 'Please add some.', 'sensei-lms' );
@@ -575,8 +600,6 @@ class Sensei_Course {
 	 * @return void
 	 */
 	public function add_column_data( $column_name, $id ) {
-		global $wpdb, $post;
-
 		switch ( $column_name ) {
 			case 'id':
 				echo esc_html( $id );
@@ -1776,7 +1799,7 @@ class Sensei_Course {
 		} else {
 			$class = ' red';
 		}
-		$progress_bar_html = '<div class="meter' . esc_attr( $class ) . '"><span style="width: ' .
+		$progress_bar_html = '<div class="meter' . esc_attr( $class ) . '"><span class="value" style="width: ' .
 			esc_attr( $progress_percentage ) . '%">' . esc_html( round( $progress_percentage ) ) . '%</span></div>';
 
 		return $progress_bar_html;
@@ -2831,6 +2854,7 @@ class Sensei_Course {
 
 		}
 
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.OverrideProhibited -- Used for lesson loop on single course page. Reset in hook to `sensei_single_course_lessons_after`.
 		$wp_query = new WP_Query( $course_lesson_query_args );
 
 	}//end load_single_course_lessons_query()
@@ -3311,6 +3335,24 @@ class Sensei_Course {
 
 			Sensei()->notices->add_notice( $filtered_message, 'info' );
 		}
+	}
+
+	/**
+	 * Log an event when a course is initially published.
+	 *
+	 * @since 2.1.0
+	 * @access private
+	 *
+	 * @param WP_Post $course The Course.
+	 */
+	public function log_initial_publish_event( $course ) {
+		$product_id       = get_post_meta( $course->ID, '_course_woocommerce_product', true );
+		$event_properties = [
+			'module_count' => count( wp_get_post_terms( $course->ID, 'module' ) ),
+			'lesson_count' => $this->course_lesson_count( $course->ID ),
+			'product_id'   => intval( $product_id ) ? intval( $product_id ) : -1,
+		];
+		sensei_log_event( 'course_publish', $event_properties );
 	}
 
 }//end class

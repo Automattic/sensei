@@ -372,11 +372,8 @@ class Sensei_Frontend {
 		global $pagenow, $wp_rewrite;
 
 		if ( 'nav-menus.php' != $pagenow && ! defined( 'DOING_AJAX' ) && isset( $item->url ) && 'custom' == $item->type ) {
-
 			// Set up Sensei menu links.
-			$course_page_id     = intval( Sensei()->settings->settings['course_page'] );
 			$my_account_page_id = intval( Sensei()->settings->settings['my_course_page'] );
-
 			$course_page_url    = Sensei_Course::get_courses_page_url();
 			$lesson_archive_url = get_post_type_archive_link( 'lesson' );
 			$my_courses_url     = get_permalink( $my_account_page_id );
@@ -818,7 +815,7 @@ class Sensei_Frontend {
 
 		switch ( $sanitized_submit ) {
 			case 'lesson-complete':
-				Sensei_Utils::sensei_start_lesson( $lesson_id, $current_user->ID, $complete = true );
+				Sensei_Utils::sensei_start_lesson( $lesson_id, $current_user->ID, true );
 				$this->maybe_redirect_to_next_lesson( $lesson_id );
 
 				break;
@@ -849,17 +846,26 @@ class Sensei_Frontend {
 			return;
 		}
 
-		$nav_links = sensei_get_prev_next_lessons( $lesson_id );
+		$nav_links    = sensei_get_prev_next_lessons( $lesson_id );
+		$redirect_url = false;
 
 		if ( isset( $nav_links['next'] ) ) {
-			/**
-			 * Filter the URL that students are redirected to after completing a lesson.
-			 *
-			 * @since 1.12.0
-			 *
-			 * @param string $redirect_url URL to redirect students to after completing a lesson.
-			 */
-			wp_safe_redirect( apply_filters( 'sensei_complete_lesson_redirect_url', esc_url_raw( $nav_links['next']['url'] ) ) );
+			$redirect_url = $nav_links['next']['url'];
+		}
+
+		/**
+		 * Filter the URL that students are redirected to after completing a lesson.
+		 *
+		 * @since 1.12.0
+		 *
+		 * @param string|bool $redirect_url URL to redirect students to after completing a lesson. False to skip redirect.
+		 * @param int         $lesson_id    Current lesson ID.
+		 * @param array       $nav_links    Navigation links found for the current lesson.
+		 */
+		$redirect_url = apply_filters( 'sensei_complete_lesson_redirect_url', $redirect_url, $lesson_id, $nav_links );
+
+		if ( $redirect_url ) {
+			wp_safe_redirect( esc_url_raw( $redirect_url ) );
 			exit;
 		}
 	}
@@ -868,7 +874,8 @@ class Sensei_Frontend {
 	 * Marks a course as complete.
 	 */
 	public function sensei_complete_course() {
-		global $post,  $current_user, $wp_query;
+		global $current_user;
+
 		if ( isset( $_POST['course_complete'] ) && wp_verify_nonce( $_POST['woothemes_sensei_complete_course_noonce'], 'woothemes_sensei_complete_course_noonce' ) ) {
 
 			$sanitized_submit    = esc_html( $_POST['course_complete'] );
@@ -890,7 +897,7 @@ class Sensei_Frontend {
 						// Mark all quiz user meta lessons as complete.
 						foreach ( $course_lesson_ids as $lesson_item_id ) {
 							// Mark lesson as complete.
-							$activity_logged = Sensei_Utils::sensei_start_lesson( $lesson_item_id, $current_user->ID, $complete = true );
+							$activity_logged = Sensei_Utils::sensei_start_lesson( $lesson_item_id, $current_user->ID, true );
 						} // End For Loop
 
 						// Update with final stats.
@@ -1022,11 +1029,11 @@ class Sensei_Frontend {
 	public function sensei_complete_lesson_button() {
 		global  $post;
 
-		$quiz_id   = 0;
 		$lesson_id = $post->ID;
 
 		// make sure user is taking course.
 		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
+
 		if ( ! Sensei_Utils::user_started_course( $course_id, get_current_user_id() ) ) {
 			return;
 		}
@@ -1098,14 +1105,10 @@ class Sensei_Frontend {
 	} // End sensei_lesson_quiz_meta()
 
 	public function sensei_course_archive_meta() {
-		global  $post;
 		// Meta data.
-		$post_id             = get_the_ID();
-		$post_title          = get_the_title();
-		$author_display_name = get_the_author();
-		$author_id           = get_the_author_meta( 'ID' );
-		$category_output     = get_the_term_list( $post_id, 'course-category', '', ', ', '' );
-		$free_lesson_count   = intval( Sensei()->course->course_lesson_preview_count( $post_id ) );
+		$post_id           = get_the_ID();
+		$category_output   = get_the_term_list( $post_id, 'course-category', '', ', ', '' );
+		$free_lesson_count = intval( Sensei()->course->course_lesson_preview_count( $post_id ) );
 		?>
 		<section class="entry">
 			<p class="sensei-course-meta">
@@ -1265,32 +1268,17 @@ class Sensei_Frontend {
 
 						<p class="form-row form-row-wide">
 							<label for="sensei_reg_username"><?php esc_html_e( 'Username', 'sensei-lms' ); ?> <span class="required">*</span></label>
-							<input type="text" class="input-text" name="sensei_reg_username" id="sensei_reg_username" value="
-							<?php
-							if ( ! empty( $_POST['sensei_reg_username'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
-								echo esc_attr( $_POST['sensei_reg_username'] );} // phpcs:ignore WordPress.Security.NonceVerification
-							?>
-" />
+							<input type="text" class="input-text" name="sensei_reg_username" id="sensei_reg_username" value="<?php echo ( ! empty( $_POST['sensei_reg_username'] ) ) ? esc_attr( $_POST['sensei_reg_username'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification ?>" />
 						</p>
 
 						<p class="form-row form-row-wide">
 							<label for="sensei_reg_email"><?php esc_html_e( 'Email address', 'sensei-lms' ); ?> <span class="required">*</span></label>
-							<input type="email" class="input-text" name="sensei_reg_email" id="sensei_reg_email" value="
-							<?php
-							if ( ! empty( $_POST['sensei_reg_email'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
-								echo esc_attr( $_POST['sensei_reg_email'] );} // phpcs:ignore WordPress.Security.NonceVerification
-							?>
-" />
+							<input type="email" class="input-text" name="sensei_reg_email" id="sensei_reg_email" value="<?php echo ( ! empty( $_POST['sensei_reg_email'] ) ) ? esc_attr( $_POST['sensei_reg_email'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification ?>" />
 						</p>
 
 						<p class="form-row form-row-wide">
 							<label for="sensei_reg_password"><?php esc_html_e( 'Password', 'sensei-lms' ); ?> <span class="required">*</span></label>
-							<input type="password" class="input-text" name="sensei_reg_password" id="sensei_reg_password" value="
-							<?php
-							if ( ! empty( $_POST['sensei_reg_password'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
-								echo esc_attr( $_POST['sensei_reg_password'] );} // phpcs:ignore WordPress.Security.NonceVerification
-							?>
-" />
+							<input type="password" class="input-text" name="sensei_reg_password" id="sensei_reg_password" value="<?php echo ( ! empty( $_POST['sensei_reg_password'] ) ) ? esc_attr( $_POST['sensei_reg_password'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification ?>" />
 						</p>
 
 						<!-- Spam Trap -->
@@ -1319,7 +1307,6 @@ class Sensei_Frontend {
 	} // End sensei_login_form()
 
 	public function sensei_lesson_meta( $post_id = 0 ) {
-		global $post;
 		if ( 0 < intval( $post_id ) ) {
 			$lesson_course_id = absint( get_post_meta( $post_id, '_lesson_course', true ) );
 			?>
@@ -1772,7 +1759,7 @@ class Sensei_Frontend {
 			wp_new_user_notification( $user_id, $new_user_password );
 		}
 
-		// set global current user aka log the user in.
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.OverrideProhibited -- Log in recently registered user.
 		$current_user = get_user_by( 'id', $user_id );
 		wp_set_auth_cookie( $user_id, true );
 

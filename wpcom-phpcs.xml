@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<ruleset name="wpcom-standard">
+	<description>The sniffs for wpcom.</description>
+
+	<!-- What to scan -->
+	<file>.</file>
+	<!-- Ignoring Files and Folders:
+		https://github.com/squizlabs/PHP_CodeSniffer/wiki/Advanced-Usage#ignoring-files-and-folders -->
+	<exclude-pattern>./apigen/</exclude-pattern>
+	<exclude-pattern>./tests/</exclude-pattern>
+	<exclude-pattern type="relative">build/</exclude-pattern>
+	<exclude-pattern>./node_modules/</exclude-pattern>
+	<exclude-pattern>./vendor/</exclude-pattern>
+
+	<!-- How to scan -->
+	<arg value="sp"/> <!-- Show sniff and progress -->
+	<arg name="basepath" value="."/> <!-- Strip the file paths down to the relevant bit -->
+	<arg name="parallel" value="50"/> <!-- Enables parallel processing when available for faster results. -->
+	<arg name="extensions" value="php"/> <!-- Limit to PHP files -->
+
+	<!-- Rules from WPCOM -->
+	<autoload>./vendor/phpcompatibility/php-compatibility/PHPCSAliases.php</autoload>
+	<rule ref="NoGetCurrentUser"/>
+	<rule ref="VariableAnalysis"/>
+	<rule ref="VariableAnalysis.CodeAnalysis.VariableAnalysis.UndefinedVariable">
+		<type>error</type>
+	</rule>
+	<rule ref="WordPress.WP.GlobalVariablesOverride"/>
+	<rule ref="VariableAnalysis.CodeAnalysis.VariableAnalysis">
+		<properties>
+			<property name="allowUnusedCaughtExceptions" value="true"/>
+		</properties>
+	</rule>
+</ruleset>

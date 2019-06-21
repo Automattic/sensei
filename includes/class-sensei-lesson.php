@@ -105,12 +105,63 @@ class Sensei_Lesson {
 			// flush rewrite rules when saving a lesson
 			add_action( 'save_post', array( __CLASS__, 'flush_rewrite_rules' ) );
 
+			add_action( 'admin_head', array( $this, 'add_custom_link_to_course' ) );
+
 		} else {
 			// Frontend actions
 			// Starts lesson when the student visits for the first time and prerequisite courses have been met.
 			add_action( 'sensei_single_lesson_content_inside_before', array( __CLASS__, 'maybe_start_lesson' ) );
 		} // End If Statement
+
+		// Log event on the initial publish for a lesson.
+		add_action( 'sensei_lesson_initial_publish', [ $this, 'log_initial_publish_event' ] );
 	} // End __construct()
+
+	/**
+	 * Adds a link for editing the lesson's course if it belongs to a course.
+	 */
+	public function add_custom_link_to_course() {
+		global $post;
+
+		if ( ! isset( $post ) ) {
+			return;
+		}
+
+		$screen = get_current_screen();
+
+		if ( 'post' !== $screen->base ) {
+			return;
+		}
+
+		$course_id = intval( get_post_meta( $post->ID, '_lesson_course', true ) );
+
+		if ( ! $course_id ) {
+			return;
+		}
+
+		$course_status = get_post_status( $course_id );
+
+		if ( 'trash' === $course_status ) {
+			return;
+		}
+
+		$type = get_post_type( $post );
+
+		if ( 'lesson' !== $type ) {
+			return;
+		}
+
+		$url = admin_url( "post.php?post=$course_id&action=edit" ); ?>
+
+		<script>
+			jQuery(function () {
+				jQuery("body.post-type-lesson .wrap a.page-title-action")
+					.last()
+					.after('<a href="<?php echo esc_attr( $url ); ?>" class="page-title-action" data-sensei-log-event="lesson_edit_course_click"><?php echo esc_html__( 'Edit Course', 'sensei-lms' ); ?></a>');
+			});
+		</script>
+		<?php
+	}
 
 	/**
 	 * meta_box_setup function.
@@ -302,7 +353,7 @@ class Sensei_Lesson {
 		} // End If Statement
 
 		$html .= '<label for="lesson_preview">';
-		$html .= '<input type="checkbox" id="lesson_preview" name="lesson_preview" value="preview" ' . $checked . '>&nbsp;' . esc_html__( 'Allow this lesson to be viewed without purchase/login', 'sensei-lms' ) . '<br>';
+		$html .= '<input type="checkbox" id="lesson_preview" name="lesson_preview" value="preview" ' . $checked . '>&nbsp;' . esc_html__( 'Allow this lesson to be viewed without login', 'sensei-lms' ) . '<br>';
 
 		echo wp_kses(
 			$html,
@@ -969,8 +1020,6 @@ class Sensei_Lesson {
 		$html = '';
 
 		if ( count( $questions ) > 0 ) {
-
-			$question_class   = '';
 			$question_counter = 1;
 
 			foreach ( $questions as $question ) {
@@ -1012,7 +1061,7 @@ class Sensei_Lesson {
 	}
 
 	public function quiz_panel_question( $question_type = '', $question_counter = 0, $question_id = 0, $context = 'quiz', $multiple_data = array() ) {
-		global $row_counter,  $quiz_questions;
+		global $row_counter;
 
 		$html = '';
 
@@ -1504,6 +1553,7 @@ class Sensei_Lesson {
 		 */
 		$qry = apply_filters( 'sensei_existing_questions_query_results', $qry );
 
+		$questions              = [];
 		$questions['questions'] = $qry->posts;
 		$questions['count']     = intval( $qry->found_posts );
 		$questions['page']      = $page;
@@ -1672,6 +1722,7 @@ class Sensei_Lesson {
 						$right_answer_id = $this->get_answer_id( $right_answers[ $i ] );
 						// Right Answer
 						$right_answer = '<label class="answer" for="question_' . esc_attr( $question_counter ) . '_right_answer_' . esc_attr( $i ) . '"><span>' . esc_html__( 'Right:', 'sensei-lms' ) . '</span> <input rel="' . esc_attr( $right_answer_id ) . '" type="text" id="question_' . esc_attr( $question_counter ) . '_right_answer_' . esc_attr( $i ) . '" name="question_right_answers[]" value="' . esc_attr( $right_answers[ $i ] ) . '" size="25" class="question_answer widefat" /> <a class="remove_answer_option"></a></label>';
+						$answers      = [];
 						if ( $question_id ) {
 							$answers[ $right_answer_id ] = $right_answer;
 						} else {
@@ -1966,9 +2017,8 @@ class Sensei_Lesson {
 	public function lesson_quiz_meta_box_content() {
 		global $post;
 
-		// Get quiz panel
 		$quiz_id = 0;
-		$quizzes = array();
+
 		if ( 0 < $post->ID ) {
 			$quiz_id = $this->lesson_quizzes( $post->ID, 'any' );
 		}
@@ -1990,7 +2040,7 @@ class Sensei_Lesson {
 		// Get quiz panel
 		$quiz_id   = 0;
 		$lesson_id = $post->ID;
-		$quizzes   = array();
+
 		if ( 0 < $lesson_id ) {
 			$quiz_id = $this->lesson_quizzes( $lesson_id, 'any' );
 		}
@@ -2259,8 +2309,6 @@ class Sensei_Lesson {
 	 * @return void
 	 */
 	public function add_column_data( $column_name, $id ) {
-		global $wpdb, $post;
-
 		switch ( $column_name ) {
 			case 'id':
 				echo esc_html( $id );
@@ -2291,7 +2339,6 @@ class Sensei_Lesson {
 	 * @return void
 	 */
 	public function lesson_add_course() {
-		global $current_user;
 		// Add nonce security to the request
 		if ( isset( $_POST['lesson_add_course_nonce'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification
@@ -2308,8 +2355,31 @@ class Sensei_Lesson {
 		// Save the Course
 		$updated                      = false;
 		$current_user                 = wp_get_current_user();
+		$question_data                = [];
 		$question_data['post_author'] = $current_user->ID;
 		$updated                      = $this->lesson_save_course( $course_data );
+
+		// Compute properties and log an event.
+		$event_properties = [];
+		foreach ( [ 'course_prerequisite', 'course_category', 'course_woocommerce_product' ] as $field ) {
+			$value_to_log = -1;
+			if ( isset( $course_data[ $field ] ) ) {
+				$val = intval( $course_data[ $field ] );
+				if ( $val ) {
+					$value_to_log = $val;
+				}
+			}
+
+			// Get property name.
+			$property_name = $field . '_id';
+			if ( 'course_woocommerce_product' === $field ) {
+				$property_name = 'product_id';
+			}
+
+			$event_properties[ $property_name ] = $value_to_log;
+		}
+		sensei_log_event( 'lesson_course_add', $event_properties );
+
 		echo esc_html( $updated );
 		die(); // WordPress may print out a spurious zero without this can be particularly bad if using JSON
 	} // End lesson_add_course()
@@ -2321,7 +2391,6 @@ class Sensei_Lesson {
 	 * @return void
 	 */
 	public function lesson_update_question() {
-		global $current_user;
 		// Add nonce security to the request
 		if ( isset( $_POST['lesson_update_question_nonce'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification
@@ -2657,29 +2726,23 @@ class Sensei_Lesson {
 	 * @return integer|boolean $course_id or false
 	 */
 	private function lesson_save_course( $data = array() ) {
-		global $current_user;
 		$return = false;
 		// Setup the course data
-		$course_id           = 0;
-		$course_content      = '';
-		$course_title        = '';
-		$course_prerequisite = 0;
-		$course_category     = 0;
+		$course_id      = 0;
+		$course_content = '';
+		$course_title   = '';
+
 		if ( isset( $data['course_id'] ) && ( 0 < absint( $data['course_id'] ) ) ) {
 			$course_id = absint( $data['course_id'] );
 		} // End If Statement
 		if ( isset( $data['course_title'] ) && ( '' != $data['course_title'] ) ) {
 			$course_title = $data['course_title'];
 		} // End If Statement
-		$post_title = $course_title;
-		if ( isset( $data['post_author'] ) ) {
-			$post_author = $data['post_author'];
-		} else {
-			$current_user = wp_get_current_user();
-			$post_author  = $current_user->ID;
-		} // End If Statement
+
+		$post_title  = $course_title;
 		$post_status = 'publish';
 		$post_type   = 'course';
+
 		if ( isset( $data['course_content'] ) && ( '' != $data['course_content'] ) ) {
 			$course_content = $data['course_content'];
 		} // End If Statement
@@ -3194,9 +3257,7 @@ class Sensei_Lesson {
 					$questions[] = $question;
 				}
 			} else {
-
 				// Otherwise, make sure that we convert all multiple questions into single questions
-				$multiple_array     = array();
 				$existing_questions = array();
 
 				// Set array of questions that already exist so we can prevent duplicates from appearing
@@ -3394,8 +3455,6 @@ class Sensei_Lesson {
 				$dimensions       = Sensei()->get_image_size( $image_thumb_size );
 				$width            = $dimensions['width'];
 				$height           = $dimensions['height'];
-				$crop             = $dimensions['crop'];
-
 			} else {
 
 				if ( ! $widget && ! Sensei()->settings->settings['course_lesson_image_enable'] ) {
@@ -3407,8 +3466,6 @@ class Sensei_Lesson {
 				$dimensions       = Sensei()->get_image_size( $image_thumb_size );
 				$width            = $dimensions['width'];
 				$height           = $dimensions['height'];
-				$crop             = $dimensions['crop'];
-
 			} // End If Statement
 		} // End If Statement
 
@@ -3839,13 +3896,11 @@ class Sensei_Lesson {
 	 * @param $lesson_id
 	 */
 	public static function the_lesson_meta( $lesson_id ) {
-
 		global $wp_query;
-		$loop_lesson_number = $wp_query->current_post + 1;
 
-		$course_id              = Sensei()->lesson->get_course_id( $lesson_id );
-		$single_lesson_complete = false;
-		$is_user_taking_course  = Sensei_Utils::user_started_course( $course_id, get_current_user_id() );
+		$loop_lesson_number    = $wp_query->current_post + 1;
+		$course_id             = Sensei()->lesson->get_course_id( $lesson_id );
+		$is_user_taking_course = Sensei_Utils::user_started_course( $course_id, get_current_user_id() );
 
 		// Get Lesson data
 		$complexity_array = Sensei()->lesson->lesson_complexities();
@@ -4310,7 +4365,6 @@ class Sensei_Lesson {
 		}
 
 		$lesson_prerequisite       = (int) get_post_meta( $lesson_id, '_lesson_prerequisite', true );
-		$lesson_course_id          = (int) get_post_meta( $lesson_id, '_lesson_course', true );
 		$quiz_id                   = Sensei()->lesson->lesson_quizzes( $lesson_id );
 		$has_user_completed_lesson = Sensei_Utils::user_completed_lesson( intval( $lesson_id ), $user_id );
 		$show_actions              = is_user_logged_in() ? true : false;
@@ -4429,7 +4483,7 @@ class Sensei_Lesson {
 	public static function limit_archive_content( $content ) {
 
 		if ( is_post_type_archive( 'lesson' ) && Sensei()->settings->get( 'access_permission' ) ) {
-			return wp_trim_words( $content, $num_words = 30, $more = '…' );
+			return wp_trim_words( $content, 30, '…' );
 		}
 
 		return $content;
@@ -4511,6 +4565,35 @@ class Sensei_Lesson {
 	 */
 	public static function lesson_quiz_has_questions( $lesson_id ) {
 		return (bool) get_post_meta( $lesson_id, '_quiz_has_questions', true );
+	}
+
+	/**
+	 * Log an event when a lesson is initially published.
+	 *
+	 * @since 2.1.0
+	 * @access private
+	 *
+	 * @param WP_Post $lesson The Lesson.
+	 */
+	public function log_initial_publish_event( $lesson ) {
+		$event_properties = [
+			'course_id' => -1,
+			'module_id' => -1,
+		];
+
+		// Get course ID if it is set.
+		$lesson_course_id = get_post_meta( $lesson->ID, '_lesson_course', true );
+		if ( $lesson_course_id ) {
+			$event_properties['course_id'] = $lesson_course_id;
+		}
+
+		// Get module ID if it is set.
+		$modules = wp_get_post_terms( $lesson->ID, 'module' );
+		if ( is_array( $modules ) && count( $modules ) > 0 ) {
+			$event_properties['module_id'] = $modules[0]->term_id;
+		}
+
+		sensei_log_event( 'lesson_publish', $event_properties );
 	}
 
 } // End Class

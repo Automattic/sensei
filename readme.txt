@@ -1,10 +1,10 @@
 === Sensei LMS ===
 Contributors: automattic, alexsanford1, bor0, donnapep, drawmyface, dwainm, jakeom, jeffikus, lastnode, mattyza, panosktn
-Tags: lms, learning management system, teach, train, tutor
-Requires at least: 4.1
+Tags: elearning, lms, learning management system, teach, tutor
+Requires at least: 4.9
 Tested up to: 5.2
 Requires PHP: 5.6
-Stable tag: 2.0.1
+Stable tag: 2.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -22,6 +22,9 @@ You don't have time to spend hiring a developer to make your online courses look
 
 = Quizzes that assess and reinforce =
 Leverage the power of quizzes to strengthen your students' understanding of key concepts and evaluate their progress.
+
+= Earn passive income =
+Our [WooCommerce Paid Courses extension](https://woocommerce.com/products/woocommerce-paid-courses/) enables you to sell your courses using the most popular eCommerce platform on the web - WooCommerce.
 
 = We're here to stay =
 Sensei LMS is built by Automattic, the company behind products like WordPress.com, WooCommerce, Jetpack and more.
