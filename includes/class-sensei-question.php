@@ -318,7 +318,6 @@ class Sensei_Question {
 
 			$question_id = apply_filters( 'sensei_save_question', $data );
 
-
 			// Re-hook same function
 			add_action( 'save_post_question', array( $this, 'save_question' ) );
 		}
