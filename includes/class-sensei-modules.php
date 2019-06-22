@@ -1505,7 +1505,7 @@ class Sensei_Core_Modules {
 			 *
 			 * @param string $html The HTML to be displayed.
 			 */
-			echo apply_filters( 'sensei_modules_title', '<header class="modules-title"><h2>' . esc_html__( 'Modules', 'sensei-lms' ) . '</h2></header>' );
+			echo wp_kses_post( apply_filters( 'sensei_modules_title', '<header class="modules-title"><h2>' . __( 'Modules', 'sensei-lms' ) . '</h2></header>' ) );
 		}
 	}
 
