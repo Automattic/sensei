@@ -2423,13 +2423,7 @@ class Sensei_Lesson {
 			if ( isset( $question_data['quiz_id'] ) && ( 0 < absint( $question_data['quiz_id'] ) ) ) {
 				$current_user                 = wp_get_current_user();
 				$question_data['post_author'] = $current_user->ID;
-
-				/**
-				 * Hook into the process that saves a question after it is created
-				 *
-				 * @param object $question_data All question data
-				 */
-				$question_id    = apply_filters( 'sensei_update_question', $question_data );
+				$question_id                  = $this->lesson_save_question( $question_data );
 				$question_type  = Sensei()->question->get_question_type( $question_id );
 				$question_count = intval( $question_data['question_count'] );
 
