@@ -2477,6 +2477,8 @@ class Sensei_Utils {
 				return defined( 'DOING_CRON' );
 			case 'frontend':
 				return ( ! is_admin() || defined( 'DOING_AJAX' ) ) && ! defined( 'DOING_CRON' );
+			case 'rest-api':
+				return defined( 'REST_REQUEST' ) && REST_REQUEST;
 		}
 	}
 
