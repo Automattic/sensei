@@ -309,8 +309,8 @@ class Sensei_Question {
 
 			// Unhook function to prevent infinite loops
 			remove_action( 'save_post_question', array( $this, 'save_question' ) );
-			
-      // update question data
+
+			// update question data
 			Sensei()->lesson->lesson_save_question( $data, 'question' );
 
 			// Re-hook same function

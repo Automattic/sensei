@@ -1877,6 +1877,14 @@ class Sensei_Lesson {
 			}
 		}
 
+		/**
+		 * Hook into the process that render question fields
+		 *
+		 * @param string $html
+		 * @param string $question_type
+		 * @param integer $question_id
+		 * @param integer $question_counter
+		 */
 		$html = apply_filters( 'sensei_quiz_panel_question_field', $html, $question_type, $question_id, $question_counter );
 
 		return wp_kses(
@@ -2424,8 +2432,8 @@ class Sensei_Lesson {
 				$current_user                 = wp_get_current_user();
 				$question_data['post_author'] = $current_user->ID;
 				$question_id                  = $this->lesson_save_question( $question_data );
-				$question_type  = Sensei()->question->get_question_type( $question_id );
-				$question_count = intval( $question_data['question_count'] );
+				$question_type                = Sensei()->question->get_question_type( $question_id );
+				$question_count               = intval( $question_data['question_count'] );
 
 				++$question_count;
 				$return = $this->quiz_panel_question( $question_type, $question_count, $question_id );
@@ -3032,7 +3040,13 @@ class Sensei_Lesson {
 		} // End If Statement
 		// Check that the insert or update saved by testing the post id
 		if ( 0 < $question_id ) {
-			$return = $question_id;
+
+			/**
+			 * Hook into the process that saves a question when it is created
+			 *
+			 * @param array $data
+			 */
+			$return = apply_filters( 'sensei_save_question', $data );
 		} // End If Statement
 		return $return;
 	} // End lesson_question_save()
