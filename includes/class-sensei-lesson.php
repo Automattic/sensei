@@ -3040,13 +3040,7 @@ class Sensei_Lesson {
 		} // End If Statement
 		// Check that the insert or update saved by testing the post id
 		if ( 0 < $question_id ) {
-
-			/**
-			 * Hook into the process that saves a question
-			 *
-			 * @param array $data
-			 */
-			$return = apply_filters( 'sensei_save_question', $data );
+			$return = $question_id;
 		} // End If Statement
 		return $return;
 	} // End lesson_question_save()
