@@ -3042,7 +3042,7 @@ class Sensei_Lesson {
 		if ( 0 < $question_id ) {
 
 			/**
-			 * Hook into the process that saves a question when it is created
+			 * Hook into the process that saves a question
 			 *
 			 * @param array $data
 			 */
