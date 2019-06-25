@@ -1,5 +1,13 @@
 *** Changelog ***
 
+2019.06.25 - version 2.1.1
+* Tweak: Rename event logging JS file to match file naming standards - #2730
+* Tweak: Fix PHPCS issues with undefined variables - #2731
+* Tweak: Remove unused variables from codebase - #2732
+* Tweak: Fix PHPCS issues with global variable overrides - #2733
+* Fix: Don't call non-static method statically - #2729
+* Fix: PHP fatal error on WordPress versions < 5.0 - #2736
+
 2019.06.17 - version 2.1.0
 
 * New: Add "Edit Course" button when in classic editor - #2514
