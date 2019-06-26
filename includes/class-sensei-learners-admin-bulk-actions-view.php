@@ -297,6 +297,14 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		}
 	}
 
+	/**
+	 * Allows us to add `display: none` to course list.
+	 *
+	 * @access private
+	 *
+	 * @param array $styles List of styles that are allowe and considered safe.
+	 * @return array
+	 */
 	public function get_allowed_css( $styles ) {
 		$styles[] = 'display';
 
