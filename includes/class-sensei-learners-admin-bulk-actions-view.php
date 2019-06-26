@@ -297,8 +297,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		}
 	}
 
-	private function get_allowed_css( $style ) {
-		$styles   = [];
+	public function get_allowed_css( $styles ) {
 		$styles[] = 'display';
 
 		return $styles;
