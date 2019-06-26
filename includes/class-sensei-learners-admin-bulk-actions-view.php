@@ -302,7 +302,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	 *
 	 * @access private
 	 *
-	 * @param array $styles List of styles that are allowe and considered safe.
+	 * @param array $styles List of styles that are allowed and considered safe.
 	 * @return array
 	 */
 	public function get_allowed_css( $styles ) {
