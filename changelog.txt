@@ -1,10 +1,17 @@
 *** Changelog ***
 
+2019.06.26 - version 2.1.2
+* Fix: Modules not displaying in WP admin - #2742
+* Fix: Multiple correct answers being removed from question editor - #2743
+* Fix: Filtering of allowed CSS attributes for bulk learner actions - #2744
+
 2019.06.25 - version 2.1.1
+* New: Bump minimum supported WordPress version to 4.9 - #2725
 * Tweak: Rename event logging JS file to match file naming standards - #2730
 * Tweak: Fix PHPCS issues with undefined variables - #2731
 * Tweak: Remove unused variables from codebase - #2732
 * Tweak: Fix PHPCS issues with global variable overrides - #2733
+* Fix: Remove global cache flush - #2682
 * Fix: Don't call non-static method statically - #2729
 * Fix: PHP fatal error on WordPress versions < 5.0 - #2736
 
