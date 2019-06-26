@@ -1699,9 +1699,10 @@ class Sensei_Lesson {
 				case 'multiple-choice':
 					$html .= '<div class="question_default_fields multiple-choice-answers ' . esc_attr( str_replace( ' hidden', '', $question_class ) ) . '">';
 
-						$right_answers = (array) $right_answer;
-						// Calculate total right answers available (defaults to 1)
-						$total_right = 0;
+					$answers       = [];
+					$right_answers = (array) $right_answer;
+					// Calculate total right answers available (defaults to 1)
+					$total_right = 0;
 					if ( $question_id ) {
 						$total_right = get_post_meta( $question_id, '_right_answer_count', true );
 					}
@@ -1710,11 +1711,12 @@ class Sensei_Lesson {
 					}
 					for ( $i = 0; $i < $total_right; $i++ ) {
 						if ( ! isset( $right_answers[ $i ] ) ) {
-							$right_answers[ $i ] = ''; }
+							$right_answers[ $i ] = '';
+						}
 						$right_answer_id = $this->get_answer_id( $right_answers[ $i ] );
 						// Right Answer
 						$right_answer = '<label class="answer" for="question_' . esc_attr( $question_counter ) . '_right_answer_' . esc_attr( $i ) . '"><span>' . esc_html__( 'Right:', 'sensei-lms' ) . '</span> <input rel="' . esc_attr( $right_answer_id ) . '" type="text" id="question_' . esc_attr( $question_counter ) . '_right_answer_' . esc_attr( $i ) . '" name="question_right_answers[]" value="' . esc_attr( $right_answers[ $i ] ) . '" size="25" class="question_answer widefat" /> <a class="remove_answer_option"></a></label>';
-						$answers      = [];
+
 						if ( $question_id ) {
 							$answers[ $right_answer_id ] = $right_answer;
 						} else {
@@ -1722,8 +1724,8 @@ class Sensei_Lesson {
 						}
 					}
 
-						// Calculate total wrong answers available (defaults to 4)
-						$total_wrong = 0;
+					// Calculate total wrong answers available (defaults to 4)
+					$total_wrong = 0;
 					if ( $question_id ) {
 						$total_wrong = get_post_meta( $question_id, '_wrong_answer_count', true );
 					}
@@ -1731,7 +1733,7 @@ class Sensei_Lesson {
 						$total_wrong = 1;
 					}
 
-						// Setup Wrong Answer HTML
+					// Setup Wrong Answer HTML
 					foreach ( $wrong_answers as $i => $answer ) {
 
 						$answer_id     = $this->get_answer_id( $answer );
@@ -1749,7 +1751,7 @@ class Sensei_Lesson {
 						}
 					} // end for each
 
-						$answers_sorted = $answers;
+					$answers_sorted = $answers;
 					if ( $question_id && count( $answer_order ) > 0 ) {
 						$answers_sorted = array();
 						foreach ( $answer_order as $answer_id ) {
