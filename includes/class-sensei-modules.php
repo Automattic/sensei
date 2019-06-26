@@ -2177,6 +2177,8 @@ class Sensei_Core_Modules {
 
 		}
 
+		$users_terms = [];
+
 		// loop through and update all terms adding the author name
 		foreach ( $terms as $index => $term ) {
 
@@ -2192,7 +2194,6 @@ class Sensei_Core_Modules {
 			}
 
 			// add the term to the teachers terms
-			$users_terms   = [];
 			$users_terms[] = $term;
 
 		}
