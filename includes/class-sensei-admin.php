@@ -1388,7 +1388,7 @@ class Sensei_Admin {
 
 											$args = array(
 												'post_type' => 'lesson',
-												'post_status' => 'publish',
+												'post_status' => array( 'publish', 'draft', 'future', 'private' ),
 												'posts_per_page' => -1,
 												'meta_query' => array(
 													array(
@@ -1440,7 +1440,7 @@ class Sensei_Admin {
 										}
 
 										// Other Lessons
-										$lessons = Sensei()->course->course_lessons( $course_id );
+										$lessons = Sensei()->course->course_lessons( $course_id, array( 'publish', 'draft', 'future', 'private' ) );
 
 										if ( 0 < count( $lessons ) ) {
 
