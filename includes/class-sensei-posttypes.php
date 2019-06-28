@@ -91,6 +91,9 @@ class Sensei_PostTypes {
 			} // End If Statement
 		} // End If Statement
 
+		// REST API functionality.
+		add_action( 'rest_api_init', [ $this, 'setup_rest_api' ] );
+
 		// Add 'Edit Quiz' link to admin bar
 		add_action( 'admin_bar_menu', array( $this, 'quiz_admin_bar_menu' ), 81 );
 
@@ -118,6 +121,18 @@ class Sensei_PostTypes {
 		} // End For Loop
 
 	} // End load_posttype_objects
+
+	/**
+	 * Set up REST API for post types.
+	 *
+	 * @access private
+	 * @since 2.2.0
+	 */
+	public function setup_rest_api() {
+		// Ensure registered meta will show up in the REST API for courses and lessons.
+		add_post_type_support( 'course', 'custom-fields' );
+		add_post_type_support( 'lesson', 'custom-fields' );
+	}
 
 	/**
 	 * Setup the "course" post type, it's admin menu item and the appropriate labels and permissions.
