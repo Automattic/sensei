@@ -1388,7 +1388,7 @@ class Sensei_Admin {
 
 											$args = array(
 												'post_type' => 'lesson',
-												'post_status' => 'publish',
+												'post_status' => array( 'publish', 'draft', 'future', 'private' ),
 												'posts_per_page' => -1,
 												'meta_query' => array(
 													array(
