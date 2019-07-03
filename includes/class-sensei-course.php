@@ -51,9 +51,10 @@ class Sensei_Course {
 			// Metabox functions
 			add_action( 'add_meta_boxes', array( $this, 'meta_box_setup' ), 20 );
 			add_action( 'save_post', array( $this, 'meta_box_save' ) );
+
 			// Custom Write Panel Columns
-			add_filter( 'manage_edit-course_columns', array( $this, 'add_column_headings' ), 10, 1 );
-			add_action( 'manage_posts_custom_column', array( $this, 'add_column_data' ), 10, 2 );
+			add_filter( 'manage_course_posts_columns', array( $this, 'add_column_headings' ), 10, 1 );
+			add_action( 'manage_course_posts_custom_column', array( $this, 'add_column_data' ), 10, 2 );
 
 			// Enqueue scripts.
 			add_action( 'admin_enqueue_scripts', array( $this, 'register_admin_scripts' ) );
