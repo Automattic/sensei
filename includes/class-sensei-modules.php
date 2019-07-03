@@ -1498,14 +1498,17 @@ class Sensei_Core_Modules {
 	 */
 	public function course_modules_title() {
 		if ( sensei_module_has_lessons() ) {
+			global $post;
+
 			/**
 			 * Filters the module title on the single course page.
 			 *
 			 * @since 2.2.0
 			 *
-			 * @param string $html The HTML to be displayed.
+			 * @param string $html   The HTML to be displayed.
+			 * @param int $course_id Course ID.
 			 */
-			echo wp_kses_post( apply_filters( 'sensei_modules_title', '<header class="modules-title"><h2>' . __( 'Modules', 'sensei-lms' ) . '</h2></header>' ) );
+			echo wp_kses_post( apply_filters( 'sensei_modules_title', '<header class="modules-title"><h2>' . __( 'Modules', 'sensei-lms' ) . '</h2></header>', $post->ID ) );
 		}
 	}
 
