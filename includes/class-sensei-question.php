@@ -189,11 +189,11 @@ class Sensei_Question {
 						'value'       => array(),
 					),
 					// Explicitly allow label tag for WP.com.
-					'label'  => array(
+					'label'    => array(
 						'class' => array(),
 						'for'   => array(),
 					),
-					'option' => array(
+					'option'   => array(
 						'value' => array(),
 					),
 					'select'   => array(
@@ -310,7 +310,7 @@ class Sensei_Question {
 			// Unhook function to prevent infinite loops
 			remove_action( 'save_post_question', array( $this, 'save_question' ) );
 
-			// Update question data
+			// update question data
 			Sensei()->lesson->lesson_save_question( $data, 'question' );
 
 			// Re-hook same function

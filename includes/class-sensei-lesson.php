@@ -800,8 +800,8 @@ class Sensei_Lesson {
 						$html .= '&nbsp;&nbsp;&nbsp;';
 						// Cancel action link
 						$html .= '<a href="#course-add-cancel" class="lesson_course_cancel">' . esc_html__( 'Cancel', 'sensei-lms' ) . '</a>';
-					$html     .= '</p>';
-				$html         .= '</div>';
+						$html .= '</p>';
+						$html .= '</div>';
 		} // End If Statement
 
 		echo wp_kses(
@@ -988,11 +988,11 @@ class Sensei_Lesson {
 						'value'       => array(),
 					),
 					// Explicitly allow label tag for WP.com.
-					'label'  => array(
+					'label'    => array(
 						'class' => array(),
 						'for'   => array(),
 					),
-					'option' => array(
+					'option'   => array(
 						'value' => array(),
 					),
 					'select'   => array(
@@ -1252,7 +1252,7 @@ class Sensei_Lesson {
 						'value'   => array(),
 					),
 					// Explicitly allow label tag for WP.com.
-					'label'  => array(
+					'label'    => array(
 						'class' => array(),
 						'for'   => array(),
 					),
@@ -1585,7 +1585,7 @@ class Sensei_Lesson {
 					<td>' . esc_html( get_the_title( $question_id ) ) . '</td>
 					<td>' . esc_html( $question_type ) . '</td>
 					<td>' . esc_html( $question_cat_list ) . '</td>
-				  </tr>';
+					</tr>';
 
 		return wp_kses(
 			$html,
@@ -1661,7 +1661,7 @@ class Sensei_Lesson {
 			if ( ! $html ) {
 				$html = '<tr class="alternate">
 								<td class="no-results" colspan="4"><em>' . esc_html__( 'There are no questions matching your search.', 'sensei-lms' ) . '</em></td>
-							  </tr>';
+								</tr>';
 			}
 
 			$return['html']  = $html;
@@ -1694,6 +1694,13 @@ class Sensei_Lesson {
 				$question_id    = '';
 				$question_class = 'answer-fields question_required_fields hidden';
 			}
+
+			/** Hook into the process that renders the question class
+			 *
+			 * @param string $question_class class name
+			 */
+
+			$question_class = apply_filters( 'sensei_question_class', $question_class );
 
 			switch ( $question_type ) {
 				case 'multiple-choice':
@@ -1741,13 +1748,9 @@ class Sensei_Lesson {
 						$wrong_answer .= '</span> <input rel="' . esc_attr( $answer_id ) . '" type="text" id="question_' . esc_attr( $question_counter ) . '_wrong_answer_' . esc_attr( $i );
 						$wrong_answer .= '" name="question_wrong_answers[]" value="' . esc_attr( $answer ) . '" size="25" class="question_answer widefat" /> <a class="remove_answer_option"></a></label>';
 						if ( $question_id ) {
-
 							$answers[ $answer_id ] = $wrong_answer;
-
 						} else {
-
 							$answers[] = $wrong_answer;
-
 						}
 					} // end for each
 
@@ -1772,19 +1775,20 @@ class Sensei_Lesson {
 						$html .= $answer;
 					}
 
-						$html .= '<input type="hidden" class="answer_order" name="answer_order" value="' . esc_attr( $answer_order_string ) . '" />';
-						$html .= '<span class="hidden right_answer_count">' . esc_html( $total_right ) . '</span>';
-						$html .= '<span class="hidden wrong_answer_count">' . esc_html( $total_wrong ) . '</span>';
+					$html .= '<input type="hidden" class="answer_order" name="answer_order" value="' . esc_attr( $answer_order_string ) . '" />';
+					$html .= '<span class="hidden right_answer_count">' . esc_html( $total_right ) . '</span>';
+					$html .= '<span class="hidden wrong_answer_count">' . esc_html( $total_wrong ) . '</span>';
 
-						$html     .= '<div class="add_answer_options">';
-							$html .= '<a class="add_right_answer_option add_answer_option button" rel="' . esc_attr( $question_counter ) . '">' . esc_html__( 'Add right answer', 'sensei-lms' ) . '</a>';
-							$html .= '<a class="add_wrong_answer_option add_answer_option button" rel="' . esc_attr( $question_counter ) . '">' . esc_html__( 'Add wrong answer', 'sensei-lms' ) . '</a>';
-						$html     .= '</div>';
+					$html .= '<div class="add_answer_options">';
+					$html .= '<a class="add_right_answer_option add_answer_option button" rel="' . esc_attr( $question_counter ) . '">' . esc_html__( 'Add right answer', 'sensei-lms' ) . '</a>';
+					$html .= '<a class="add_wrong_answer_option add_answer_option button" rel="' . esc_attr( $question_counter ) . '">' . esc_html__( 'Add wrong answer', 'sensei-lms' ) . '</a>';
+					$html .= '</div>';
 
-						$html .= $this->quiz_panel_question_feedback( $question_counter, $question_id, 'multiple-choice' );
+					$html .= $this->quiz_panel_question_feedback( $question_counter, $question_id, 'multiple-choice' );
 
 					$html .= '</div>';
 					break;
+
 				case 'boolean':
 					$html .= '<div class="question_boolean_fields ' . esc_attr( $question_class ) . '">';
 					if ( $question_id ) {
@@ -1875,6 +1879,16 @@ class Sensei_Lesson {
 			}
 		}
 
+		/**
+		 * Hook into the process that render question fields
+		 *
+		 * @param string $html
+		 * @param string $question_type
+		 * @param integer $question_id
+		 * @param integer $question_counter
+		 */
+		$html = apply_filters( 'sensei_quiz_panel_question_field', $html, $question_type, $question_id, $question_counter );
+
 		return wp_kses(
 			$html,
 			array_merge(
@@ -1891,7 +1905,7 @@ class Sensei_Lesson {
 						'value'   => array(),
 					),
 					// Explicitly allow label tag for WP.com.
-					'label' => array(
+					'label'    => array(
 						'class' => array(),
 						'for'   => array(),
 					),
@@ -1942,7 +1956,7 @@ class Sensei_Lesson {
 				wp_kses_allowed_html( 'post' ),
 				array(
 					// Explicitly allow label tag for WP.com.
-					'label' => array(
+					'label'    => array(
 						'for' => array(),
 					),
 					// Explicitly allow textarea tag for WP.com.
@@ -2421,10 +2435,9 @@ class Sensei_Lesson {
 				$question_data['post_author'] = $current_user->ID;
 				$question_id                  = $this->lesson_save_question( $question_data );
 				$question_type                = Sensei()->question->get_question_type( $question_id );
+				$question_count               = intval( $question_data['question_count'] );
 
-				$question_count = intval( $question_data['question_count'] );
 				++$question_count;
-
 				$return = $this->quiz_panel_question( $question_type, $question_count, $question_id );
 			} // End If Statement
 		} // End If Statement
@@ -2794,6 +2807,14 @@ class Sensei_Lesson {
 		$question_type          = 'multiple-choice';
 		$question_category      = '';
 
+		/**
+		 * Retrieve data from questions with custom question type
+		 *
+		 * @param array $data Array containing question data
+		 */
+
+		$question_extra_data = apply_filters( 'sensei_custom_question_type_data', $data );
+
 		// Handle Question Type
 		if ( isset( $data['question_type'] ) && ( '' != $data['question_type'] ) ) {
 			$question_type = $data['question_type'];
@@ -2962,6 +2983,15 @@ class Sensei_Lesson {
 				update_post_meta( $question_id, '_random_order', $random_order );
 				update_post_meta( $question_id, '_answer_feedback', $answer_feedback );
 
+				/**
+				 * Update question meta
+				 *
+				 * @param integer $question_id unique identifier for the question
+				 * @param array $question_extra_data Question data
+				 */
+
+				apply_filters( 'sensei_update_custom_question_type_meta', $question_id, $question_extra_data );
+
 				if ( 'quiz' != $context ) {
 					wp_set_post_terms( $question_id, array( $question_type ), 'question-type', false );
 				}
@@ -2970,7 +3000,7 @@ class Sensei_Lesson {
 				$question_count = intval( $data['question_count'] );
 				++$question_count;
 
-				// Set post meta
+				// Set post meta.
 				if ( 'quiz' == $context ) {
 					add_post_meta( $question_id, '_quiz_id', $quiz_id, false );
 					$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
@@ -2988,6 +3018,15 @@ class Sensei_Lesson {
 				add_post_meta( $question_id, '_question_media', $question_media );
 				add_post_meta( $question_id, '_answer_order', $answer_order );
 				add_post_meta( $question_id, '_random_order', $random_order );
+
+				/**
+				 * Add question meta
+				 *
+				 * @param integer $question_id unique identifier for the question
+				 * @param array $question_extra_data Question data
+				 */
+
+				apply_filters( 'sensei_add_custom_question_type_meta', $question_id, $question_extra_data );
 				// Don't store empty value, no point
 				if ( ! empty( $answer_feedback ) ) {
 					add_post_meta( $question_id, '_answer_feedback', $answer_feedback );
@@ -3059,7 +3098,7 @@ class Sensei_Lesson {
 
 		return $lesson_complexities;
 
-	} // End lesson_complexities
+	} // End lesson_complexities.
 
 
 	/**
@@ -3902,8 +3941,7 @@ class Sensei_Lesson {
 		?>
 		<header class="lesson-title">
 			<h2>
-				<a href="<?php echo esc_url( get_permalink( $lesson_id ) ); ?>"
-				   title="<?php echo esc_attr( $heading_link_title ); ?>" >
+				<a href="<?php echo esc_url( get_permalink( $lesson_id ) ); ?>" title="<?php echo esc_attr( $heading_link_title ); ?>" >
 					<?php echo wp_kses_post( $count_markup ) . get_the_title( $lesson_id ); ?>
 				</a>
 			</h2>
@@ -4352,10 +4390,7 @@ class Sensei_Lesson {
 
 					<p>
 
-						<a class="button"
-						   href="<?php echo esc_url( get_permalink( $quiz_id ) ); ?>"
-						   title="<?php esc_attr_e( 'View the Lesson Quiz', 'sensei-lms' ); ?>">
-
+						<a class="button" href="<?php echo esc_url( get_permalink( $quiz_id ) ); ?>" title="<?php esc_attr_e( 'View the Lesson Quiz', 'sensei-lms' ); ?>">
 							<?php esc_html_e( 'View the Lesson Quiz', 'sensei-lms' ); ?>
 
 						</a>
