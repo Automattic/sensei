@@ -55,7 +55,7 @@ jobs:
         - ./tests/bin/run-wp-unit-tests.sh
     - stage: test
       php: 5.6
-      env: WP_VERSION=4.4
+      env: WP_VERSION=4.9
       script:
         - ./tests/bin/run-wp-unit-tests.sh
     - stage: test
@@ -69,15 +69,8 @@ jobs:
       script:
         - ./tests/bin/run-wp-unit-tests.sh
     - stage: test
-      php: 5.3
-      env: WP_VERSION=latest
-      dist: precise
-      script:
-        - ./tests/bin/run-wp-unit-tests.sh
-    - stage: test
-      php: 5.3
+      php: 5.6
       env: WP_VERSION=latest WP_MULTISITE=1
-      dist: precise
       script:
       - ./tests/bin/run-wp-unit-tests.sh
     - stage: test
@@ -95,6 +88,11 @@ jobs:
       script:
         - composer install
         - ./vendor/bin/phpcs -sn --sniffs=WordPress.Security.NonceVerification .
+    - stage: test
+      php: 7.2
+      script:
+        - composer install
+        - ./vendor/bin/phpcs -sn --standard=./wpcom-phpcs.xml .
     - stage: test
       php: 7.2
       script:

@@ -59,6 +59,35 @@ class Sensei_Usage_Tracking_Data {
 	}
 
 	/**
+	 * Get the base fields to be sent for event logging.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @return array
+	 */
+	public static function get_event_logging_base_fields() {
+		$base_fields = [
+			'paid'     => 0,
+			'courses'  => wp_count_posts( 'course' )->publish,
+			'learners' => self::get_learner_count(),
+		];
+
+		/**
+		 * Filter the event logging source.
+		 *
+		 * @param string The source (defaults to "unknown").
+		 */
+		$base_fields['source'] = apply_filters( 'sensei_event_logging_source', 'unknown' );
+
+		/**
+		 * Filter the fields that should be sent with every event that is logged.
+		 *
+		 * @param array $base_fields The default base fields.
+		 */
+		return apply_filters( 'sensei_event_logging_base_fields', $base_fields );
+	}
+
+	/**
 	 * Get stats related to lesson quizzes.
 	 *
 	 * @since 1.11.0

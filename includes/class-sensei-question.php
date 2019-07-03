@@ -38,16 +38,18 @@ class Sensei_Question {
 
 			add_action( 'save_post_question', array( $this, 'save_question' ), 10, 1 );
 		} // End If Statement
+
+		add_action( 'sensei_question_initial_publish', [ $this, 'log_initial_publish_event' ] );
 	} // End __construct()
 
 	public function question_types() {
 		$types = array(
-			'multiple-choice' => __( 'Multiple Choice', 'woothemes-sensei' ),
-			'boolean'         => __( 'True/False', 'woothemes-sensei' ),
-			'gap-fill'        => __( 'Gap Fill', 'woothemes-sensei' ),
-			'single-line'     => __( 'Single Line', 'woothemes-sensei' ),
-			'multi-line'      => __( 'Multi Line', 'woothemes-sensei' ),
-			'file-upload'     => __( 'File Upload', 'woothemes-sensei' ),
+			'multiple-choice' => __( 'Multiple Choice', 'sensei-lms' ),
+			'boolean'         => __( 'True/False', 'sensei-lms' ),
+			'gap-fill'        => __( 'Gap Fill', 'sensei-lms' ),
+			'single-line'     => __( 'Single Line', 'sensei-lms' ),
+			'multi-line'      => __( 'Multi Line', 'sensei-lms' ),
+			'file-upload'     => __( 'File Upload', 'sensei-lms' ),
 		);
 
 		return apply_filters( 'sensei_question_types', $types );
@@ -62,10 +64,11 @@ class Sensei_Question {
 	 * @return array $new_columns
 	 */
 	public function add_column_headings( $defaults ) {
+		$new_columns                      = array();
 		$new_columns['cb']                = '<input type="checkbox" />';
-		$new_columns['title']             = _x( 'Question', 'column name', 'woothemes-sensei' );
-		$new_columns['question-type']     = _x( 'Type', 'column name', 'woothemes-sensei' );
-		$new_columns['question-category'] = _x( 'Categories', 'column name', 'woothemes-sensei' );
+		$new_columns['title']             = _x( 'Question', 'column name', 'sensei-lms' );
+		$new_columns['question-type']     = _x( 'Type', 'column name', 'sensei-lms' );
+		$new_columns['question-category'] = _x( 'Categories', 'column name', 'sensei-lms' );
 		if ( isset( $defaults['date'] ) ) {
 			$new_columns['date'] = $defaults['date'];
 		}
@@ -83,8 +86,6 @@ class Sensei_Question {
 	 * @return void
 	 */
 	public function add_column_data( $column_name, $id ) {
-		global $wpdb, $post;
-
 		switch ( $column_name ) {
 
 			case 'id':
@@ -118,7 +119,7 @@ class Sensei_Question {
 	public function question_edit_panel_metabox( $post_type, $post ) {
 		if ( in_array( $post_type, array( 'question', 'multiple_question' ) ) ) {
 
-			$metabox_title = __( 'Question', 'woothemes-sensei' );
+			$metabox_title = __( 'Question', 'sensei-lms' );
 
 			if ( isset( $post->ID ) ) {
 
@@ -132,8 +133,8 @@ class Sensei_Question {
 				}
 			}
 			add_meta_box( 'question-edit-panel', $metabox_title, array( $this, 'question_edit_panel' ), 'question', 'normal', 'high' );
-			add_meta_box( 'question-lessons-panel', __( 'Quizzes', 'woothemes-sensei' ), array( $this, 'question_lessons_panel' ), 'question', 'side', 'default' );
-			add_meta_box( 'multiple-question-lessons-panel', __( 'Quizzes', 'woothemes-sensei' ), array( $this, 'question_lessons_panel' ), 'multiple_question', 'side', 'default' );
+			add_meta_box( 'question-lessons-panel', __( 'Quizzes', 'sensei-lms' ), array( $this, 'question_lessons_panel' ), 'question', 'side', 'default' );
+			add_meta_box( 'multiple-question-lessons-panel', __( 'Quizzes', 'sensei-lms' ), array( $this, 'question_lessons_panel' ), 'multiple_question', 'side', 'default' );
 		}
 	}
 
@@ -216,7 +217,7 @@ class Sensei_Question {
 		global $post;
 
 		// translators: Placeholders are an opening and closing <em> tag.
-		$no_lessons = sprintf( __( '%1$sThis question does not appear in any quizzes yet.%2$s', 'woothemes-sensei' ), '<em>', '</em>' );
+		$no_lessons = sprintf( __( '%1$sThis question does not appear in any quizzes yet.%2$s', 'sensei-lms' ), '<em>', '</em>' );
 
 		if ( ! isset( $post->ID ) ) {
 			echo wp_kses_post( $no_lessons );
@@ -310,7 +311,7 @@ class Sensei_Question {
 			remove_action( 'save_post_question', array( $this, 'save_question' ) );
 
 			// Update question data
-			$question_id = Sensei()->lesson->lesson_save_question( $data, 'question' );
+			Sensei()->lesson->lesson_save_question( $data, 'question' );
 
 			// Re-hook same function
 			add_action( 'save_post_question', array( $this, 'save_question' ) );
@@ -333,7 +334,7 @@ class Sensei_Question {
 
 			// Question type
 			$selected     = isset( $_GET['question_type'] ) ? $_GET['question_type'] : '';
-			$type_options = '<option value="">' . esc_html__( 'All types', 'woothemes-sensei' ) . '</option>';
+			$type_options = '<option value="">' . esc_html__( 'All types', 'sensei-lms' ) . '</option>';
 			foreach ( $this->question_types as $label => $type ) {
 				$type_options .= '<option value="' . esc_attr( $label ) . '" ' . selected( $selected, $label, false ) . '>' . esc_html( $type ) . '</option>';
 			}
@@ -346,7 +347,7 @@ class Sensei_Question {
 			$cats = get_terms( 'question-category', array( 'hide_empty' => false ) );
 			if ( ! empty( $cats ) && ! is_wp_error( $cats ) ) {
 				$selected    = isset( $_GET['question_cat'] ) ? $_GET['question_cat'] : '';
-				$cat_options = '<option value="">' . esc_html__( 'All categories', 'woothemes-sensei' ) . '</option>';
+				$cat_options = '<option value="">' . esc_html__( 'All categories', 'sensei-lms' ) . '</option>';
 				foreach ( $cats as $cat ) {
 					$cat_options .= '<option value="' . esc_attr( $cat->slug ) . '" ' . selected( $selected, $cat->slug, false ) . '>' . esc_html( $cat->name ) . '</option>';
 				}
@@ -497,7 +498,7 @@ class Sensei_Question {
 	/**
 	 * Echo the sensei question title.
 	 *
-	 * @uses WooThemes_Sensei_Question::get_the_question_title
+	 * @uses Sensei_Question::get_the_question_title
 	 *
 	 * @since 1.9.0
 	 * @param $question_id
@@ -690,7 +691,6 @@ class Sensei_Question {
 		$user_lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, get_current_user_id() );
 		$user_quiz_grade    = Sensei_Quiz::get_user_quiz_grade( $lesson_id, get_current_user_id() );
 		$reset_quiz_allowed = Sensei_Quiz::is_reset_allowed( $lesson_id );
-		$quiz_grade_type    = get_post_meta( $quiz_id, '_quiz_grade_type', true );
 		$quiz_graded        = isset( $user_lesson_status->comment_approved ) && ! in_array( $user_lesson_status->comment_approved, array( 'ungraded', 'in-progress' ) );
 
 		$quiz_required_pass_grade     = intval( get_post_meta( $quiz_id, '_quiz_passmark', true ) );
@@ -748,23 +748,20 @@ class Sensei_Question {
 	 * This function has to be run inside the quiz question loop on the single quiz page.
 	 *
 	 * It show the correct/incorrect answer per question depending on the quiz logic explained here:
-	 * https://docs.woocommerce.com/document/sensei-quiz-settings-flowchart/
+	 * https://senseilms.com/documentation/quiz-settings-flowchart/
 	 *
 	 * Pseudo code for logic:  https://github.com/Automattic/sensei/issues/1422#issuecomment-214494263
 	 *
 	 * @since 1.9.0
 	 */
 	public static function the_answer_result_indication() {
+		global $sensei_question_loop;
 
-		global $post,  $current_user, $sensei_question_loop;
-
-		$answer_message       = '';
-		$answer_message_class = '';
-		$quiz_id              = $sensei_question_loop['quiz_id'];
-		$question_item        = $sensei_question_loop['current_question'];
-		$lesson_id            = Sensei()->quiz->get_lesson_id( $quiz_id );
-		$user_lesson_status   = Sensei_Utils::user_lesson_status( $lesson_id, get_current_user_id() );
-		$quiz_graded          = isset( $user_lesson_status->comment_approved ) && ! in_array( $user_lesson_status->comment_approved, array( 'in-progress', 'ungraded' ) );
+		$quiz_id            = $sensei_question_loop['quiz_id'];
+		$question_item      = $sensei_question_loop['current_question'];
+		$lesson_id          = Sensei()->quiz->get_lesson_id( $quiz_id );
+		$user_lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, get_current_user_id() );
+		$quiz_graded        = isset( $user_lesson_status->comment_approved ) && ! in_array( $user_lesson_status->comment_approved, array( 'in-progress', 'ungraded' ) );
 
 		if ( ! Sensei_Utils::user_started_course( Sensei()->lesson->get_course_id( $lesson_id ), get_current_user_id() ) ) {
 			return;
@@ -804,7 +801,7 @@ class Sensei_Question {
 		$user_question_grade = Sensei()->quiz->get_user_question_grade( $lesson_id, $question_id, get_current_user_id() );
 
 		// Defaults
-		$answer_message = __( 'Incorrect - Right Answer:', 'woothemes-sensei' ) . ' ' . self::get_correct_answer( $question_id );
+		$answer_message = __( 'Incorrect - Right Answer:', 'sensei-lms' ) . ' ' . self::get_correct_answer( $question_id );
 
 		// For zero grade mark as 'correct' but add no classes
 		if ( 0 == $question_grade ) {
@@ -815,7 +812,7 @@ class Sensei_Question {
 			$user_correct         = true;
 			$answer_message_class = 'user_right';
 			// translators: Placeholder is the question grade.
-			$answer_message = sprintf( __( 'Grade: %d', 'woothemes-sensei' ), $user_question_grade );
+			$answer_message = sprintf( __( 'Grade: %d', 'sensei-lms' ), $user_question_grade );
 		} else {
 			$user_correct         = false;
 			$answer_message_class = 'user_wrong';
@@ -888,6 +885,7 @@ class Sensei_Question {
 		}
 
 		// setup the question data
+		$data                           = [];
 		$data['ID']                     = $question_id;
 		$data['title']                  = get_the_title( $question_id );
 		$data['content']                = get_post( $question_id )->post_content;
@@ -972,7 +970,7 @@ class Sensei_Question {
 
 			}
 			// translators: Placeholders are the upload size and the measurement (e.g. 5 MB)
-			$max_upload_size = sprintf( __( 'Maximum upload file size: %1$d%2$s', 'woothemes-sensei' ), esc_html( $upload_size_unit ), esc_html( $sizes[ $u ] ) );
+			$max_upload_size = sprintf( __( 'Maximum upload file size: %1$d%2$s', 'sensei-lms' ), esc_html( $upload_size_unit ), esc_html( $sizes[ $u ] ) );
 
 			// Assemble all the data needed by the file upload template
 			$question_data['answer_media_url']      = $answer_media_url;
@@ -1189,17 +1187,14 @@ class Sensei_Question {
 	 * @return string $correct_answer or empty
 	 */
 	public static function get_correct_answer( $question_id ) {
-
 		$right_answer = get_post_meta( $question_id, '_question_right_answer', true );
 		$type         = Sensei()->question->get_question_type( $question_id );
-		$type_name    = __( 'Multiple Choice', 'woothemes-sensei' );
-		$grade_type   = 'manual-grade';
 
 		if ( 'boolean' == $type ) {
 			if ( 'true' === $right_answer ) {
-				$right_answer = __( 'True', 'woothemes-sensei' );
+				$right_answer = __( 'True', 'sensei-lms' );
 			} else {
-				$right_answer = __( 'False', 'woothemes-sensei' );
+				$right_answer = __( 'False', 'sensei-lms' );
 			}
 		} elseif ( 'multiple-choice' == $type ) {
 
@@ -1244,6 +1239,33 @@ class Sensei_Question {
 		return apply_filters( 'sensei_questions_get_correct_answer', $right_answer, $question_id );
 
 	} // get_correct_answer
+
+	/**
+	 * Log an event when a question is initially published.
+	 *
+	 * @since 2.1.0
+	 * @access private
+	 *
+	 * @param WP_Post $question The question object.
+	 */
+	public function log_initial_publish_event( $question ) {
+		$event_properties = [
+			'page'          => 'unknown',
+			'question_type' => $this->get_question_type( $question->ID ),
+		];
+
+		if ( function_exists( 'get_current_screen' ) ) {
+			$screen = get_current_screen();
+
+			if ( $screen && 'question' === $screen->id ) {
+				$event_properties['page'] = 'question';
+			} elseif ( isset( $_REQUEST['action'] ) && 'lesson_update_question' === $_REQUEST['action'] ) {
+				$event_properties['page'] = 'lesson';
+			}
+		}
+
+		sensei_log_event( 'question_add', $event_properties );
+	}
 
 } // End Class
 

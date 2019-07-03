@@ -23,7 +23,7 @@ class Sensei_Analysis {
 	 * @param string $file
 	 */
 	public function __construct( $file ) {
-		$this->name      = __( 'Analysis', 'woothemes-sensei' );
+		$this->name      = __( 'Analysis', 'sensei-lms' );
 		$this->file      = $file;
 		$this->page_slug = 'sensei_analysis';
 
@@ -52,12 +52,8 @@ class Sensei_Analysis {
 	 * @return void
 	 */
 	public function analysis_admin_menu() {
-		global $menu, $woocommerce;
-
 		if ( current_user_can( 'manage_sensei_grades' ) ) {
-
-			add_submenu_page( 'sensei', __( 'Analysis', 'woothemes-sensei' ), __( 'Analysis', 'woothemes-sensei' ), 'manage_sensei_grades', 'sensei_analysis', array( $this, 'analysis_page' ) );
-
+			add_submenu_page( 'sensei', __( 'Analysis', 'sensei-lms' ), __( 'Analysis', 'sensei-lms' ), 'manage_sensei_grades', 'sensei_analysis', array( $this, 'analysis_page' ) );
 		}
 
 	} // End analysis_admin_menu()
@@ -72,9 +68,7 @@ class Sensei_Analysis {
 	 */
 	public function enqueue_styles() {
 
-		wp_enqueue_style( 'woothemes-sensei-admin' );
-
-		wp_enqueue_style( 'woothemes-sensei-settings-api', Sensei()->plugin_url . 'assets/css/settings.css', '', Sensei()->version );
+		wp_enqueue_style( 'sensei-settings-api', Sensei()->plugin_url . 'assets/css/settings.css', '', Sensei()->version );
 
 	} // End enqueue_styles()
 
@@ -580,7 +574,7 @@ class Sensei_Analysis {
 
 			// Simple verification to ensure intent, Note that a Nonce is per user, so the URL can't be shared
 			if ( ! wp_verify_nonce( $_REQUEST['_sdl_nonce'], 'sensei_csv_download-' . $report ) ) {
-				wp_die( esc_html__( 'Invalid request', 'woothemes-sensei' ) );
+				wp_die( esc_html__( 'Invalid request', 'sensei-lms' ) );
 			}
 
 			// Setup the variables we might need
@@ -599,21 +593,37 @@ class Sensei_Analysis {
 			}
 			$type = isset( $_GET['view'] ) ? esc_html( $_GET['view'] ) : false;
 
+			// Set up default properties for logging an event.
+			$event_properties = [ 'view' => '' ];
+
 			if ( 0 < $lesson_id ) {
 				// Viewing a specific Lesson and all its Learners
 				$sensei_analysis_report_object = $this->load_report_object( 'Lesson', $lesson_id );
+				$event_properties['view']      = 'course-lesson-users';
 			} elseif ( 0 < $course_id && 0 < $user_id ) {
 				// Viewing a specific User on a specific Course
 				$sensei_analysis_report_object = $this->load_report_object( 'Course', $course_id, $user_id );
+				$event_properties['view']      = 'user-course-lessons';
 			} elseif ( 0 < $course_id ) {
 				// Viewing a specific Course and all it's Lessons, or it's Learners
 				$sensei_analysis_report_object = $this->load_report_object( 'Course', $course_id );
+
+				// Set view property for event logging.
+				if ( isset( $_GET['view'] ) ) {
+					if ( 'lesson' === $_GET['view'] ) {
+						$event_properties['view'] = 'course-lessons';
+					} elseif ( 'user' === $_GET['view'] ) {
+						$event_properties['view'] = 'course-users';
+					}
+				}
 			} elseif ( 0 < $user_id ) {
 				// Viewing a specific Learner, and their Courses
 				$sensei_analysis_report_object = $this->load_report_object( 'User_Profile', $user_id );
+				$event_properties['view']      = 'user-courses';
 			} else {
 				// Overview of all Learners, all Courses, or all Lessons
 				$sensei_analysis_report_object = $this->load_report_object( 'Overview', $type );
+				$event_properties['view']      = isset( $_GET['view'] ) ? $_GET['view'] : '';
 			} // End If Statement
 
 			// Handle the headers
@@ -624,6 +634,9 @@ class Sensei_Analysis {
 
 			// Output the data
 			$this->report_write_download( $report_data_array );
+
+			// Log event.
+			sensei_log_event( 'analysis_export', $event_properties );
 
 			// Cleanly exit
 			exit;

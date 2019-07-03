@@ -6,8 +6,6 @@
  * All functionality pertaining the the shortcodes before
  * version 1.9
  *
- * These shortcodes will soon be deprecated.
- *
  * @package Content
  * @subpackage Shortcode
  * @author Automattic
@@ -15,6 +13,8 @@
  * @since       1.6.0
  */
 class Sensei_Legacy_Shortcodes {
+
+	const DOCS_SHORTCODE_URL = 'https://senseilms.com/documentation/shortcodes/';
 
 	/**
 	 * Add the legacy shortcodes to WordPress
@@ -31,6 +31,63 @@ class Sensei_Legacy_Shortcodes {
 		add_shortcode( 'usercourses', array( __CLASS__, 'user_courses' ) );
 
 	}
+
+	/**
+	 * Call `_doing_it_wrong()` for a deprecated shortcode.
+	 *
+	 * @param string $shortcode Shortcode that was deprecated.
+	 */
+	private static function throw_deprecation_warning( $shortcode ) {
+		$permalink = get_permalink();
+
+		// translators: %s is the name of the shortcode.
+		$caller  = sprintf( __( 'Shortcode `[%s]`', 'sensei-lms' ), $shortcode );
+		$message = sprintf(
+			// translators: %1$s is the name of the shortcode; %2$s is page URL with shortcode; %3$s is URL for shortcode documentation.
+			__(
+				'The shortcode `[%1$s]` (used on: %2$s) has been deprecated since Sensei v1.9.0. Check %3$s for alternatives.',
+				'sensei-lms'
+			),
+			$shortcode,
+			$permalink,
+			self::DOCS_SHORTCODE_URL
+		);
+
+		_doing_it_wrong( esc_html( $caller ), esc_html( $message ), '2.0.0' );
+	}
+
+	/**
+	 * Output message on frontend to warn those with the privileges on the site.
+	 *
+	 * @param string $shortcode Shortcode that was deprecated.
+	 */
+	private static function output_deprecation_notice( $shortcode ) {
+		if ( ! is_user_logged_in() || ! current_user_can( 'edit_posts' ) ) {
+			return;
+		}
+		echo '<div class="sensei"><div class="sensei-message alert">';
+		$message = sprintf(
+			// translators: %1$s is the name of the shortcode; %2$s is the link to Sensei documentation.
+			__(
+				'The Sensei LMS shortcode <strong>[%1$s]</strong> has been deprecated and will soon be removed. Check <a href="%2$s" rel="noopener">Sensei LMS documentation</a> for alternatives. Only site editors will see this notice.',
+				'sensei-lms'
+			),
+			$shortcode,
+			self::DOCS_SHORTCODE_URL
+		);
+		echo wp_kses(
+			$message,
+			array(
+				'a'      => array(
+					'href' => array(),
+					'rel'  => array(),
+				),
+				'strong' => array(),
+			)
+		);
+		echo '</div></div>';
+	}
+
 	/**
 	 * all_courses shortcode output function.
 	 *
@@ -57,7 +114,7 @@ class Sensei_Legacy_Shortcodes {
 	 */
 	public static function paid_courses( $atts, $content = null ) {
 
-		return self::generate_shortcode_courses( __( 'Paid Courses', 'woothemes-sensei' ), 'paidcourses' );
+		return self::generate_shortcode_courses( __( 'Paid Courses', 'sensei-lms' ), 'paidcourses' );
 
 	} // End paid_courses()
 
@@ -72,7 +129,7 @@ class Sensei_Legacy_Shortcodes {
 	 */
 	public static function featured_courses( $atts, $content = null ) {
 
-		return self::generate_shortcode_courses( __( 'Featured Courses', 'woothemes-sensei' ), 'featuredcourses' );
+		return self::generate_shortcode_courses( __( 'Featured Courses', 'sensei-lms' ), 'featuredcourses' );
 
 	} // End featured_courses()
 
@@ -86,7 +143,7 @@ class Sensei_Legacy_Shortcodes {
 	 */
 	public static function free_courses( $atts, $content = null ) {
 
-		return self::generate_shortcode_courses( __( 'Free Courses', 'woothemes-sensei' ), 'freecourses' );
+		return self::generate_shortcode_courses( __( 'Free Courses', 'sensei-lms' ), 'freecourses' );
 
 	} // End free_courses()
 
@@ -100,7 +157,7 @@ class Sensei_Legacy_Shortcodes {
 	 */
 	public static function new_courses( $atts, $content = null ) {
 
-		return self::generate_shortcode_courses( __( 'New Courses', 'woothemes-sensei' ), 'newcourses' );
+		return self::generate_shortcode_courses( __( 'New Courses', 'sensei-lms' ), 'newcourses' );
 
 	} // End new_courses()
 
@@ -114,6 +171,7 @@ class Sensei_Legacy_Shortcodes {
 	 * @return string
 	 */
 	public static function generate_shortcode_courses( $title, $shortcode_specific_override ) {
+		self::throw_deprecation_warning( $shortcode_specific_override, '1.9.0' );
 
 		global  $shortcode_override, $posts_array;
 
@@ -131,6 +189,9 @@ class Sensei_Legacy_Shortcodes {
 
 		// loop and get all courses html
 		ob_start();
+
+		self::output_deprecation_notice( $shortcode_specific_override );
+
 		self::initialise_legacy_course_loop();
 		$courses = ob_get_clean();
 
@@ -162,11 +223,15 @@ class Sensei_Legacy_Shortcodes {
 	 */
 	public static function user_courses( $atts, $content = null ) {
 		global $shortcode_override;
+		self::throw_deprecation_warning( 'usercourses', '1.9.0' );
+
 		extract( shortcode_atts( array( 'amount' => 0 ), $atts ) );
 
 		$shortcode_override = 'usercourses';
 
 		ob_start();
+
+		self::output_deprecation_notice( 'usercourses' );
 
 		if ( is_user_logged_in() ) {
 
@@ -190,19 +255,7 @@ class Sensei_Legacy_Shortcodes {
 	 * @since 1.9.0
 	 */
 	public static function initialise_legacy_course_loop() {
-
-		global  $post, $wp_query, $shortcode_override, $course_excludes;
-
-		// Handle Query Type
-		$query_type = '';
-
-		if ( isset( $_GET['action'] ) && ( '' != esc_html( $_GET['action'] ) ) ) {
-			$query_type = esc_html( $_GET['action'] );
-		} // End If Statement
-
-		if ( '' != $shortcode_override ) {
-			$query_type = $shortcode_override;
-		} // End If Statement
+		global $wp_query, $shortcode_override, $course_excludes;
 
 		if ( ! is_array( $course_excludes ) ) {
 			$course_excludes = array(); }
@@ -249,8 +302,7 @@ class Sensei_Legacy_Shortcodes {
 	 * @param WP_Query $course_query
 	 */
 	public static function loop_courses( $course_query, $amount ) {
-
-		global $shortcode_override, $posts_array, $post, $wp_query, $shortcode_override, $course_excludes, $course_includes;
+		global $shortcode_override, $posts_array, $course_excludes, $course_includes;
 
 		if ( count( $course_query->get_posts() ) > 0 ) {
 
@@ -322,7 +374,6 @@ class Sensei_Legacy_Shortcodes {
 		$user_info             = get_userdata( absint( $course->post_author ) );
 		$author_link           = get_author_posts_url( absint( $course->post_author ) );
 		$author_display_name   = $user_info->display_name;
-		$author_id             = $course->post_author;
 		$category_output       = get_the_term_list( $course_id, 'course-category', '', ', ', '' );
 		$preview_lesson_count  = intval( Sensei()->course->course_lesson_preview_count( $course_id ) );
 		$is_user_taking_course = Sensei_Utils::user_started_course( $course_id, get_current_user_id() );
@@ -347,9 +398,14 @@ class Sensei_Legacy_Shortcodes {
 
 					<p class="sensei-course-meta">
 
+						<?php
+						/** This action is documented in includes/class-sensei-frontend.php */
+						do_action( 'sensei_course_meta_inside_before', $course_id );
+						?>
+
 						<?php if ( isset( Sensei()->settings->settings['course_author'] ) && ( Sensei()->settings->settings['course_author'] ) ) { ?>
 							<span class="course-author">
-								<?php esc_html_e( 'by', 'woothemes-sensei' ); ?>
+								<?php esc_html_e( 'by', 'sensei-lms' ); ?>
 								<a href="<?php echo esc_url( $author_link ); ?>" title="<?php echo esc_attr( $author_display_name ); ?>">
 									<?php echo esc_html( $author_display_name ); ?>
 								</a>
@@ -357,19 +413,22 @@ class Sensei_Legacy_Shortcodes {
 						<?php } // End If Statement ?>
 
 						<span class="course-lesson-count">
-									<?php echo esc_html( Sensei()->course->course_lesson_count( $course_id ) ) . '&nbsp;' . esc_html__( 'Lessons', 'woothemes-sensei' ); ?>
+									<?php echo esc_html( Sensei()->course->course_lesson_count( $course_id ) ) . '&nbsp;' . esc_html__( 'Lessons', 'sensei-lms' ); ?>
 								</span>
 
-						<?php if ( '' != $category_output ) { ?>
+						<?php if ( ! empty( $category_output ) ) { ?>
 							<span class="course-category">
 								<?php
 								// translators: Placeholder is a comma-separated list of categories.
-								echo wp_kses_post( sprintf( __( 'in %s', 'woothemes-sensei' ), $category_output ) );
+								echo wp_kses_post( sprintf( __( 'in %s', 'sensei-lms' ), $category_output ) );
 								?>
 							</span>
 						<?php } // End If Statement ?>
 
-						<?php sensei_simple_course_price( $course_id ); ?>
+						<?php
+						/** This action is documented in includes/class-sensei-frontend.php */
+						do_action( 'sensei_course_meta_inside_after', $course_id );
+						?>
 
 					</p>
 
@@ -380,10 +439,10 @@ class Sensei_Legacy_Shortcodes {
 					<?php
 					if ( 0 < $preview_lesson_count && ! $is_user_taking_course ) {
 						// translators: Placeholder is the number of preview lessons.
-						$preview_lessons = sprintf( __( '(%d preview lessons)', 'woothemes-sensei' ), $preview_lesson_count );
+						$preview_lessons = sprintf( __( '(%d preview lessons)', 'sensei-lms' ), $preview_lesson_count );
 						?>
 						<p class="sensei-free-lessons">
-							<a href="<?php echo esc_url( get_permalink( $course_id ) ); ?>"><?php esc_html_e( 'Preview this course', 'woothemes-sensei' ); ?>
+							<a href="<?php echo esc_url( get_permalink( $course_id ) ); ?>"><?php esc_html_e( 'Preview this course', 'sensei-lms' ); ?>
 							</a> - <?php echo esc_html( $preview_lessons ); ?>
 						</p>
 					<?php } ?>

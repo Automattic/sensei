@@ -118,6 +118,7 @@ a.sensei-certificate-link {
       }
     }
     .lesson  {
+      @include clearfix();
       header  {
         h2  {
           margin: 0;
@@ -693,6 +694,7 @@ section.entry span.course-price { padding-left: 10px; }
 /* Course Progress Bars */
 .meter {
   height: 25px;  /* Can be anything */
+  line-height: 25px;
   position: relative;
   margin: 20px 0; /* Just for demo spacing */
   background: darken($bg_light, 5%);
@@ -700,9 +702,10 @@ section.entry span.course-price { padding-left: 10px; }
   -webkit-border-radius: 25px;
   border-radius: 25px;
   clear: both;
-  > span {
+
+  .value {
     display: block;
-    padding: 1px 10px 0 0;
+    padding: 0 10px 0 0;
     height: 100%;
     background-color: $success;
     position: relative;

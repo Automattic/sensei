@@ -7,13 +7,15 @@
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     1.9.0
+ * @version     1.12.2
  */
-?>
 
-<?php get_sensei_header(); ?>
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
-<?php
+get_sensei_header();
+
 /**
  * This hook fire inside learner-profile.php before the content
  *
@@ -105,7 +107,5 @@ $course = get_page_by_path( $wp_query->query_vars['course_results'], OBJECT, 'co
  * @since 1.9.0
  */
 do_action( 'sensei_course_results_content_after' );
-?>
 
-
-<?php get_sensei_footer(); ?>
+get_sensei_footer();

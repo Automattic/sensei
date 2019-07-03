@@ -290,7 +290,7 @@ abstract class Sensei_Domain_Models_Model_Abstract {
 			return new WP_Error(
 				'required-field-empty',
 				// translators: Placeholder %s is the name of the field.
-				sprintf( __( '%s cannot be empty', 'woothemes-sensei' ), $field_declaration->name )
+				sprintf( __( '%s cannot be empty', 'sensei-lms' ), $field_declaration->name )
 			);
 		} elseif ( ! $field_declaration->required && ! empty( $value ) ) {
 			foreach ( $field_declaration->validations as $method_name ) {

@@ -16,15 +16,34 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 
 	const SENSEI_SETTING_NAME = 'sensei_usage_tracking_enabled';
 
-	const SENSEI_TRACKING_INFO_URL = 'https://docs.woocommerce.com/document/what-data-does-sensei-track';
+	const SENSEI_TRACKING_INFO_URL = 'https://senseilms.com/documentation/what-data-does-sensei-track/';
 
 	protected function __construct() {
 		parent::__construct();
 
 		// Add filter for settings.
 		add_filter( 'sensei_settings_fields', array( $this, 'add_setting_field' ) );
+
+		// Init event logging source filters.
+		add_action( 'init', [ $this, 'init_event_logging_sources' ] );
 	}
 
+	/*
+	 * Initalization.
+	 */
+
+	/**
+	 * Initialize filters for event logging sources.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @access private
+	 */
+	public function init_event_logging_sources() {
+		add_filter( 'sensei_event_logging_source', [ $this, 'detect_event_logging_source' ], 1 );
+		add_filter( 'template_redirect', [ $this, 'set_event_logging_source_frontend' ] );
+		add_filter( 'import_start', [ $this, 'set_event_logging_source_data_import' ] );
+	}
 
 	/*
 	 * Implementation for abstract functions.
@@ -39,10 +58,10 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 	}
 
 	protected function get_text_domain() {
-		return 'woothemes-sensei';
+		return 'sensei-lms';
 	}
 
-	protected function get_tracking_enabled() {
+	public function get_tracking_enabled() {
 		return Sensei()->settings->get( self::SENSEI_SETTING_NAME ) || false;
 	}
 
@@ -65,10 +84,10 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 			 * users what data Sensei tracks.
 			 */
 			__(
-				"We'd love if you helped us make Sensei better by allowing us to collect
+				"We'd love if you helped us make Sensei LMS better by allowing us to collect
 				<a href=\"%s\" target=\"_blank\">usage tracking data</a>.
 				No sensitive information is collected, and you can opt out at any time.",
-				'woothemes-sensei'
+				'sensei-lms'
 			),
 			self::SENSEI_TRACKING_INFO_URL
 		);
@@ -79,14 +98,15 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 			return true;
 		}
 		$third_party_plugins = array(
+			'classic-editor',
+			'jetpack',
+			'polylang',
+			'sitepress-multilingual-cms',
 			'woocommerce',
-			'woothemes-updater',
-			'woocommerce-subscriptions',
 			'woocommerce-memberships',
 			'woocommerce-product-vendors',
-			'polylang',
-			'jetpack',
-			'sitepress-multilingual-cms',
+			'woocommerce-subscriptions',
+			'woothemes-updater',
 			'wp-quicklatex',
 		);
 		if ( in_array( $plugin_slug, $third_party_plugins, true ) ) {
@@ -102,7 +122,7 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 
 	public function add_setting_field( $fields ) {
 		$fields[ self::SENSEI_SETTING_NAME ] = array(
-			'name'        => __( 'Enable usage tracking', 'woothemes-sensei' ),
+			'name'        => __( 'Enable usage tracking', 'sensei-lms' ),
 			'description' => sprintf(
 
 				/*
@@ -110,10 +130,10 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 				 * users what data Sensei tracks.
 				 */
 				__(
-					'Help us make Sensei better by allowing us to collect
+					'Help us make Sensei LMS better by allowing us to collect
 					<a href="%s" target="_blank">usage tracking data</a>.
 					No sensitive information is collected.',
-					'woothemes-sensei'
+					'sensei-lms'
 				),
 				self::SENSEI_TRACKING_INFO_URL
 			),
@@ -123,5 +143,60 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 		);
 
 		return $fields;
+	}
+
+	/**
+	 * Attempt to detect the source of the event logging request.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @access private
+	 *
+	 * @param  string $source The initial source.
+	 * @return string         The detected source.
+	 */
+	public static function detect_event_logging_source( $source ) {
+		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+			return 'rest-api';
+		}
+
+		if ( is_admin() ) {
+			return 'wp-admin';
+		}
+
+		return $source;
+	}
+
+
+	/**
+	 * Set the event logging source to `frontend`.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @access private
+	 */
+	public function set_event_logging_source_frontend() {
+		add_filter(
+			'sensei_event_logging_source',
+			function( $fields ) {
+				return 'frontend';
+			}
+		);
+	}
+
+	/**
+	 * Set the event logging source to `data-import`.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @access private
+	 */
+	public function set_event_logging_source_data_import() {
+		add_filter(
+			'sensei_event_logging_source',
+			function( $fields ) {
+				return 'data-import';
+			}
+		);
 	}
 }

@@ -18,7 +18,14 @@ class Sensei_Core_Lesson_Modules {
 	private $lesson_id;
 
 	public function __construct( $lesson_id ) {
-		$this->lesson_id = $lesson_id;
+		$parent_id = wp_is_post_revision( $lesson_id );
+
+		// Ensure we are working with the Lesson post, not a revision.
+		if ( $parent_id ) {
+			$this->lesson_id = $parent_id;
+		} else {
+			$this->lesson_id = $lesson_id;
+		}
 	}
 
 	/**

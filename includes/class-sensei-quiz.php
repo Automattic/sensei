@@ -144,7 +144,7 @@ class Sensei_Quiz {
 
 		if ( intval( $answers_saved ) > 0 ) {
 			// update the message showed to user
-			Sensei()->frontend->messages = '<div class="sensei-message note">' . __( 'Quiz Saved Successfully.', 'woothemes-sensei' ) . '</div>';
+			Sensei()->frontend->messages = '<div class="sensei-message note">' . __( 'Quiz Saved Successfully.', 'sensei-lms' ) . '</div>';
 		}
 
 		// remove the hook as it should only fire once per click
@@ -342,9 +342,6 @@ class Sensei_Quiz {
 		global  $post, $current_user;
 		$this->data = new stdClass();
 
-		// Default grade
-		$grade = 0;
-
 		// Get Quiz Questions
 		$lesson_quiz_questions = Sensei()->lesson->lesson_quiz_questions( $post->ID );
 
@@ -352,9 +349,6 @@ class Sensei_Quiz {
 
 		// Get quiz grade type
 		$quiz_grade_type = get_post_meta( $post->ID, '_quiz_grade_type', true );
-
-		// Get quiz pass setting
-		$pass_required = get_post_meta( $post->ID, '_pass_required', true );
 
 		// Get quiz pass mark
 		$quiz_passmark = Sensei_Utils::as_absolute_rounded_number( get_post_meta( $post->ID, '_quiz_passmark', true ), 2 );
@@ -493,9 +487,9 @@ class Sensei_Quiz {
 		delete_transient( $answers_feedback_transient_key );
 
 		// reset the quiz answers and feedback notes
-		$deleted_answers       = Sensei_Utils::delete_user_data( 'quiz_answers', $lesson_id, $user_id );
-		$deleted_grades        = Sensei_Utils::delete_user_data( 'quiz_grades', $lesson_id, $user_id );
-		$deleted_user_feedback = Sensei_Utils::delete_user_data( 'quiz_answers_feedback', $lesson_id, $user_id );
+		Sensei_Utils::delete_user_data( 'quiz_answers', $lesson_id, $user_id );
+		Sensei_Utils::delete_user_data( 'quiz_grades', $lesson_id, $user_id );
+		Sensei_Utils::delete_user_data( 'quiz_answers_feedback', $lesson_id, $user_id );
 
 		// Delete quiz answers, this auto deletes the corresponding meta data, such as the question/answer grade
 		Sensei_Utils::sensei_delete_quiz_answers( $quiz_id, $user_id );
@@ -516,7 +510,7 @@ class Sensei_Quiz {
 		// Run any action on quiz/lesson reset (previously this didn't occur on resetting a quiz, see resetting a lesson in sensei_complete_lesson()
 		do_action( 'sensei_user_lesson_reset', $user_id, $lesson_id );
 		if ( ! is_admin() ) {
-			Sensei()->notices->add_notice( __( 'Quiz Reset Successfully.', 'woothemes-sensei' ), 'info' );
+			Sensei()->notices->add_notice( __( 'Quiz Reset Successfully.', 'sensei-lms' ), 'info' );
 		}
 
 		return true;
@@ -629,7 +623,7 @@ class Sensei_Quiz {
 
 			}
 
-			$lesson_metadata['grade'] = $grade; // Technically already set as part of "WooThemes_Sensei_Utils::sensei_grade_quiz_auto()" above
+			$lesson_metadata['grade'] = $grade; // Technically already set as part of "Sensei_Utils::sensei_grade_quiz_auto()" above
 
 		} // end if ! is_wp_error( $grade ...
 
@@ -1144,7 +1138,7 @@ class Sensei_Quiz {
 			}
 
 			// translators: Placeholder is the quiz name with any instance of the word "quiz" removed.
-			$title = sprintf( __( '%s Quiz', 'woothemes-sensei' ), $title_with_no_quizzes );
+			$title = sprintf( __( '%s Quiz', 'sensei-lms' ), $title_with_no_quizzes );
 		}
 
 		/**
@@ -1191,6 +1185,7 @@ class Sensei_Quiz {
 	 */
 	public static function stop_quiz_questions_loop() {
 
+		$sensei_question_loop              = [];
 		$sensei_question_loop['total']     = 0;
 		$sensei_question_loop['questions'] = array();
 		$sensei_question_loop['quiz_id']   = '';
@@ -1305,19 +1300,19 @@ class Sensei_Quiz {
 					value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_reset_quiz_nonce' ) ); ?>" />
 			 <input type="hidden" name="woothemes_sensei_save_quiz_nonce" id="woothemes_sensei_save_quiz_nonce"
 					value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_save_quiz_nonce' ) ); ?>" />
-			 <!--#end Action Nonce's -->
+			 <!-- End Action Nonce's -->
 
 			 <?php if ( '' == $user_quiz_grade && ( ! $user_lesson_status || 'ungraded' !== $user_lesson_status->comment_approved ) ) { ?>
 
-				 <span><input type="submit" name="quiz_complete" class="quiz-submit complete" value="<?php esc_attr_e( 'Complete Quiz', 'woothemes-sensei' ); ?>"/></span>
+				 <span><input type="submit" name="quiz_complete" class="quiz-submit complete" value="<?php esc_attr_e( 'Complete Quiz', 'sensei-lms' ); ?>"/></span>
 
-				 <span><input type="submit" name="quiz_save" class="quiz-submit save" value="<?php esc_attr_e( 'Save Quiz', 'woothemes-sensei' ); ?>"/></span>
+				 <span><input type="submit" name="quiz_save" class="quiz-submit save" value="<?php esc_attr_e( 'Save Quiz', 'sensei-lms' ); ?>"/></span>
 
 				<?php } // End If Statement ?>
 
 			 <?php if ( isset( $reset_quiz_allowed ) && $reset_quiz_allowed ) { ?>
 
-				 <span><input type="submit" name="quiz_reset" class="quiz-submit reset" value="<?php esc_attr_e( 'Reset Quiz', 'woothemes-sensei' ); ?>"/></span>
+				 <span><input type="submit" name="quiz_reset" class="quiz-submit reset" value="<?php esc_attr_e( 'Reset Quiz', 'sensei-lms' ); ?>"/></span>
 
 				<?php } ?>
 
@@ -1431,7 +1426,7 @@ class Sensei_Quiz {
 		return $merged;
 	}
 
-} // End Class WooThemes_Sensei_Quiz
+} // End Class Sensei_Quiz
 
 
 

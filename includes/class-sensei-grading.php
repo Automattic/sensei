@@ -27,7 +27,7 @@ class Sensei_Grading {
 	 * @param $file
 	 */
 	public function __construct( $file ) {
-		$this->name      = __( 'Grading', 'woothemes-sensei' );
+		$this->name      = __( 'Grading', 'sensei-lms' );
 		$this->file      = $file;
 		$this->page_slug = 'sensei_grading';
 
@@ -60,10 +60,8 @@ class Sensei_Grading {
 	 * @return void
 	 */
 	public function grading_admin_menu() {
-		global $menu;
-
 		if ( current_user_can( 'manage_sensei_grades' ) ) {
-			$grading_page = add_submenu_page( 'sensei', __( 'Grading', 'woothemes-sensei' ), __( 'Grading', 'woothemes-sensei' ), 'manage_sensei_grades', $this->page_slug, array( $this, 'grading_page' ) );
+			add_submenu_page( 'sensei', __( 'Grading', 'sensei-lms' ), __( 'Grading', 'sensei-lms' ), 'manage_sensei_grades', $this->page_slug, array( $this, 'grading_page' ) );
 		}
 
 	} // End grading_admin_menu()
@@ -97,7 +95,7 @@ class Sensei_Grading {
 
 		wp_enqueue_style( Sensei()->token . '-admin' );
 
-		wp_enqueue_style( 'woothemes-sensei-settings-api', Sensei()->plugin_url . 'assets/css/settings.css', '', Sensei()->version );
+		wp_enqueue_style( 'sensei-settings-api', Sensei()->plugin_url . 'assets/css/settings.css', '', Sensei()->version );
 
 	} // End enqueue_styles()
 
@@ -131,7 +129,7 @@ class Sensei_Grading {
 	 */
 	public function load_data_object( $name = '', $data = 0, $optional_data = null ) {
 		// Load Analysis data
-		$object_name = 'WooThemes_Sensei_Grading_' . $name;
+		$object_name = 'Sensei_Grading_' . $name;
 		if ( is_null( $optional_data ) ) {
 			$sensei_grading_object = new $object_name( $data );
 		} else {
@@ -166,6 +164,11 @@ class Sensei_Grading {
 	 * @return void
 	 */
 	public function grading_default_view() {
+
+		$course_id = null;
+		$lesson_id = null;
+		$user_id   = null;
+		$view      = null;
 
 		// Load Grading data
 		if ( ! empty( $_GET['course_id'] ) ) {
@@ -484,7 +487,7 @@ class Sensei_Grading {
 		);
 		$courses     = get_posts( apply_filters( 'sensei_grading_filter_courses', $course_args ) );
 
-		$html .= '<option value="">' . __( 'Select a course', 'woothemes-sensei' ) . '</option>';
+		$html .= '<option value="">' . __( 'Select a course', 'sensei-lms' ) . '</option>';
 		if ( count( $courses ) > 0 ) {
 			foreach ( $courses as $course_id ) {
 				$html .= '<option value="' . esc_attr( absint( $course_id ) ) . '" ' . selected( $course_id, $selected_course_id, false ) . '>' . esc_html( get_the_title( $course_id ) ) . '</option>' . "\n";
@@ -536,8 +539,6 @@ class Sensei_Grading {
 	 * fallback.
 	 */
 	private function deprecated_get_lessons_dropdown() {
-		$posts_array = array();
-
 		// Parse POST data
 		// phpcs:ignore WordPress.Security.NonceVerification -- No modifications are made here.
 		$data        = $_POST['data'];
@@ -577,7 +578,7 @@ class Sensei_Grading {
 			);
 			$lessons     = get_posts( apply_filters( 'sensei_grading_filter_lessons', $lesson_args ) );
 
-			$html .= '<option value="">' . esc_html__( 'Select a lesson', 'woothemes-sensei' ) . '</option>';
+			$html .= '<option value="">' . esc_html__( 'Select a lesson', 'sensei-lms' ) . '</option>';
 			if ( count( $lessons ) > 0 ) {
 				foreach ( $lessons as $lesson_id ) {
 					$html .= '<option value="' . esc_attr( absint( $lesson_id ) ) . '" ' . selected( $lesson_id, $selected_lesson_id, false ) . '>' . esc_html( get_the_title( $lesson_id ) ) . '</option>' . "\n";
@@ -683,7 +684,7 @@ class Sensei_Grading {
 			else {
 				$lesson_status = 'graded';
 			}
-			$lesson_metadata['grade'] = $grade; // Technically already set as part of "WooThemes_Sensei_Utils::sensei_grade_quiz()" above
+			$lesson_metadata['grade'] = $grade; // Technically already set as part of "Sensei_Utils::sensei_grade_quiz()" above
 
 			Sensei_Utils::update_lesson_status( $user_id, $quiz_lesson_id, $lesson_status, $lesson_metadata );
 
@@ -806,7 +807,7 @@ class Sensei_Grading {
 			if ( 'graded' == $_GET['message'] ) {
 				$msg = array(
 					'updated',
-					__( 'Quiz Graded Successfully!', 'woothemes-sensei' ),
+					__( 'Quiz Graded Successfully!', 'sensei-lms' ),
 				);
 			}
 			?>
@@ -820,7 +821,7 @@ class Sensei_Grading {
 	public function sensei_grading_notices() {
 		if ( isset( $_GET['action'] ) && 'graded' == $_GET['action'] ) {
 			echo '<div class="grading-notice updated">';
-				echo '<p>' . esc_html__( 'Quiz Graded Successfully!', 'woothemes-sensei' ) . '</p>';
+				echo '<p>' . esc_html__( 'Quiz Graded Successfully!', 'sensei-lms' ) . '</p>';
 			echo '</div>';
 		} // End If Statement
 	} // End sensei_grading_notices()
@@ -899,7 +900,7 @@ class Sensei_Grading {
 
 		} else {
 
-			$grade = new WP_Error( 'autograde', __( 'This quiz is not able to be automatically graded.', 'woothemes-sensei' ) );
+			$grade = new WP_Error( 'autograde', __( 'This quiz is not able to be automatically graded.', 'sensei-lms' ) );
 
 		}
 
@@ -1067,12 +1068,12 @@ class Sensei_Grading {
 
 		global $wpdb;
 
-		$comment_query_piece['select']  = 'SELECT   COUNT(*) AS total';
-		$comment_query_piece['from']    = " FROM {$wpdb->comments}  INNER JOIN {$wpdb->commentmeta}  ON ( {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id ) ";
-		$comment_query_piece['where']   = " WHERE {$wpdb->comments}.comment_type IN ('sensei_lesson_status') AND ( {$wpdb->commentmeta}.meta_key = 'grade')";
-		$comment_query_piece['orderby'] = " ORDER BY {$wpdb->comments}.comment_date_gmt DESC ";
+		$comment_query_piece           = [];
+		$comment_query_piece['select'] = 'SELECT   COUNT(*) AS total';
+		$comment_query_piece['from']   = " FROM {$wpdb->comments}  INNER JOIN {$wpdb->commentmeta}  ON ( {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id ) ";
+		$comment_query_piece['where']  = " WHERE {$wpdb->comments}.comment_type IN ('sensei_lesson_status') AND ( {$wpdb->commentmeta}.meta_key = 'grade')";
 
-		$comment_query            = $comment_query_piece['select'] . $comment_query_piece['from'] . $comment_query_piece['where'] . $comment_query_piece['orderby'];
+		$comment_query            = $comment_query_piece['select'] . $comment_query_piece['from'] . $comment_query_piece['where'];
 		$number_of_graded_lessons = intval( $wpdb->get_var( $comment_query, 0, 0 ) );
 
 		return $number_of_graded_lessons;
@@ -1088,12 +1089,12 @@ class Sensei_Grading {
 
 		global $wpdb;
 
-		$comment_query_piece['select']  = "SELECT SUM({$wpdb->commentmeta}.meta_value) AS meta_sum";
-		$comment_query_piece['from']    = " FROM {$wpdb->comments}  INNER JOIN {$wpdb->commentmeta}  ON ( {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id ) ";
-		$comment_query_piece['where']   = " WHERE {$wpdb->comments}.comment_type IN ('sensei_lesson_status') AND ( {$wpdb->commentmeta}.meta_key = 'grade')";
-		$comment_query_piece['orderby'] = " ORDER BY {$wpdb->comments}.comment_date_gmt DESC ";
+		$comment_query_piece           = [];
+		$comment_query_piece['select'] = "SELECT SUM({$wpdb->commentmeta}.meta_value) AS meta_sum";
+		$comment_query_piece['from']   = " FROM {$wpdb->comments}  INNER JOIN {$wpdb->commentmeta}  ON ( {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id ) ";
+		$comment_query_piece['where']  = " WHERE {$wpdb->comments}.comment_type IN ('sensei_lesson_status') AND ( {$wpdb->commentmeta}.meta_key = 'grade')";
 
-		$comment_query     = $comment_query_piece['select'] . $comment_query_piece['from'] . $comment_query_piece['where'] . $comment_query_piece['orderby'];
+		$comment_query     = $comment_query_piece['select'] . $comment_query_piece['from'] . $comment_query_piece['where'];
 		$sum_of_all_grades = intval( $wpdb->get_var( $comment_query, 0, 0 ) );
 
 		return $sum_of_all_grades;
@@ -1110,13 +1111,13 @@ class Sensei_Grading {
 	public static function get_user_graded_lessons_sum( $user_id ) {
 		global $wpdb;
 
-		$clean_user_id                  = esc_sql( $user_id );
-		$comment_query_piece['select']  = "SELECT SUM({$wpdb->commentmeta}.meta_value) AS meta_sum";
-		$comment_query_piece['from']    = " FROM {$wpdb->comments}  INNER JOIN {$wpdb->commentmeta}  ON ( {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id ) ";
-		$comment_query_piece['where']   = " WHERE {$wpdb->comments}.comment_type IN ('sensei_lesson_status') AND ( {$wpdb->commentmeta}.meta_key = 'grade') AND {$wpdb->comments}.user_id = {$clean_user_id} ";
-		$comment_query_piece['orderby'] = " ORDER BY {$wpdb->comments}.comment_date_gmt DESC ";
+		$clean_user_id                 = esc_sql( $user_id );
+		$comment_query_piece           = [];
+		$comment_query_piece['select'] = "SELECT SUM({$wpdb->commentmeta}.meta_value) AS meta_sum";
+		$comment_query_piece['from']   = " FROM {$wpdb->comments}  INNER JOIN {$wpdb->commentmeta}  ON ( {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id ) ";
+		$comment_query_piece['where']  = " WHERE {$wpdb->comments}.comment_type IN ('sensei_lesson_status') AND ( {$wpdb->commentmeta}.meta_key = 'grade') AND {$wpdb->comments}.user_id = {$clean_user_id} ";
 
-		$comment_query     = $comment_query_piece['select'] . $comment_query_piece['from'] . $comment_query_piece['where'] . $comment_query_piece['orderby'];
+		$comment_query     = $comment_query_piece['select'] . $comment_query_piece['from'] . $comment_query_piece['where'];
 		$sum_of_all_grades = intval( $wpdb->get_var( $comment_query, 0, 0 ) );
 
 		return $sum_of_all_grades;
@@ -1134,13 +1135,13 @@ class Sensei_Grading {
 
 		global $wpdb;
 
-		$clean_lesson_id                = esc_sql( $lesson_id );
-		$comment_query_piece['select']  = "SELECT SUM({$wpdb->commentmeta}.meta_value) AS meta_sum";
-		$comment_query_piece['from']    = " FROM {$wpdb->comments}  INNER JOIN {$wpdb->commentmeta}  ON ( {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id ) ";
-		$comment_query_piece['where']   = " WHERE {$wpdb->comments}.comment_type IN ('sensei_lesson_status') AND ( {$wpdb->commentmeta}.meta_key = 'grade') AND {$wpdb->comments}.comment_post_ID = {$clean_lesson_id} ";
-		$comment_query_piece['orderby'] = " ORDER BY {$wpdb->comments}.comment_date_gmt DESC ";
+		$clean_lesson_id               = esc_sql( $lesson_id );
+		$comment_query_piece           = [];
+		$comment_query_piece['select'] = "SELECT SUM({$wpdb->commentmeta}.meta_value) AS meta_sum";
+		$comment_query_piece['from']   = " FROM {$wpdb->comments}  INNER JOIN {$wpdb->commentmeta}  ON ( {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id ) ";
+		$comment_query_piece['where']  = " WHERE {$wpdb->comments}.comment_type IN ('sensei_lesson_status') AND ( {$wpdb->commentmeta}.meta_key = 'grade') AND {$wpdb->comments}.comment_post_ID = {$clean_lesson_id} ";
 
-		$comment_query     = $comment_query_piece['select'] . $comment_query_piece['from'] . $comment_query_piece['where'] . $comment_query_piece['orderby'];
+		$comment_query     = $comment_query_piece['select'] . $comment_query_piece['from'] . $comment_query_piece['where'];
 		$sum_of_all_grades = intval( $wpdb->get_var( $comment_query, 0, 0 ) );
 
 		return $sum_of_all_grades;
@@ -1159,13 +1160,13 @@ class Sensei_Grading {
 
 		global $wpdb;
 
-		$clean_course_id                = esc_sql( $course_id );
-		$comment_query_piece['select']  = "SELECT SUM({$wpdb->commentmeta}.meta_value) AS meta_sum";
-		$comment_query_piece['from']    = " FROM {$wpdb->comments}  INNER JOIN {$wpdb->commentmeta}  ON ( {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id ) ";
-		$comment_query_piece['where']   = " WHERE {$wpdb->comments}.comment_type IN ('sensei_course_status') AND ( {$wpdb->commentmeta}.meta_key = 'percent') AND {$wpdb->comments}.comment_post_ID = {$clean_course_id} ";
-		$comment_query_piece['orderby'] = " ORDER BY {$wpdb->comments}.comment_date_gmt DESC ";
+		$clean_course_id               = esc_sql( $course_id );
+		$comment_query_piece           = [];
+		$comment_query_piece['select'] = "SELECT SUM({$wpdb->commentmeta}.meta_value) AS meta_sum";
+		$comment_query_piece['from']   = " FROM {$wpdb->comments}  INNER JOIN {$wpdb->commentmeta}  ON ( {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id ) ";
+		$comment_query_piece['where']  = " WHERE {$wpdb->comments}.comment_type IN ('sensei_course_status') AND ( {$wpdb->commentmeta}.meta_key = 'percent') AND {$wpdb->comments}.comment_post_ID = {$clean_course_id} ";
 
-		$comment_query     = $comment_query_piece['select'] . $comment_query_piece['from'] . $comment_query_piece['where'] . $comment_query_piece['orderby'];
+		$comment_query     = $comment_query_piece['select'] . $comment_query_piece['from'] . $comment_query_piece['where'];
 		$sum_of_all_grades = intval( $wpdb->get_var( $comment_query, 0, 0 ) );
 
 		return $sum_of_all_grades;

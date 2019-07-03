@@ -1,11 +1,10 @@
 {
-  "name": "woothemes-sensei",
-  "title": "Sensei",
-  "version": "1.12.2",
-  "homepage": "http://www.woothemes.com/products/sensei/",
+  "name": "sensei-lms",
+  "version": "2.1.2",
+  "homepage": "https://woocommerce.com/products/sensei/",
   "repository": {
     "type": "git",
-    "url": "https://github.com/woothemes/sensei.git"
+    "url": "https://github.com/Automattic/sensei.git"
   },
   "license": "GPL-2.0+",
   "main": "gulpfile.js",

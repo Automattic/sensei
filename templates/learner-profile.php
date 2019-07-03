@@ -7,13 +7,15 @@
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     1.9.0
+ * @version     2.0.0
  */
-?>
 
-<?php get_sensei_header(); ?>
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
-<?php
+get_sensei_header();
+
 /**
  * This hook fire inside learner-profile.php before the content
  *
@@ -62,7 +64,7 @@ do_action( 'sensei_learner_profile_content_before' );
 
 			<p class="sensei-message">
 
-				<?php esc_html_e( 'The user requested does not exist.', 'woothemes-sensei' ); ?>
+				<?php esc_html_e( 'The user requested does not exist.', 'sensei-lms' ); ?>
 
 			</p>
 

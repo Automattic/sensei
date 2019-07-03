@@ -4,7 +4,9 @@
  *
  * @author  Automattic
  * @package Sensei/Templates/Emails/HTML
+ * @version 2.0.0
  */
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -17,11 +19,13 @@ $style_small = 'text-align: center !important;';
 
 $style_large = 'text-align: center !important;font-size: 350% !important;line-height: 100% !important;';
 
+// $template is provided by the calling code.
+// phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UndefinedVariable
 do_action( 'sensei_before_email_content', $template );
 ?>
 
 <p style="<?php echo esc_attr( $style_small ); ?>">
-	<?php esc_html_e( 'The Course', 'woothemes-sensei' ); ?>
+	<?php esc_html_e( 'The Course', 'sensei-lms' ); ?>
 </p>
 
 <h2 style="<?php echo esc_attr( $style_large ); ?>">
@@ -29,7 +33,7 @@ do_action( 'sensei_before_email_content', $template );
 </h2>
 
 <p style="<?php echo esc_attr( $style_small ); ?>">
-	<?php esc_html_e( 'has been assigned to you.', 'woothemes-sensei' ); ?>
+	<?php esc_html_e( 'has been assigned to you.', 'sensei-lms' ); ?>
 </p>
 
 <hr/>
@@ -37,7 +41,7 @@ do_action( 'sensei_before_email_content', $template );
 <p style="<?php echo esc_attr( $style_small ); ?>">
 	<?php
 
-	echo esc_html__( 'You can edit the assigned course here: ', 'woothemes-sensei' ) . '<a href="' . esc_url( $sensei_email_data['course_edit_link'] ) . '">' . esc_html( $sensei_email_data['course_name'] ) . '</a>';
+	echo esc_html__( 'You can edit the assigned course here: ', 'sensei-lms' ) . '<a href="' . esc_url( $sensei_email_data['course_edit_link'] ) . '">' . esc_html( $sensei_email_data['course_name'] ) . '</a>';
 
 	?>
 </p>

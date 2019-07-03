@@ -1,10 +1,10 @@
 <?php
-
+// phpcs:disable VariableAnalysis.CodeAnalysis.VariableAnalysis -- Prevent "Unused global variable $sensei_email_data"
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-if ( ! class_exists( 'WooThemes_Sensei_Email_New_Message_Reply' ) ) :
+if ( ! class_exists( 'Sensei_Email_New_Message_Reply' ) ) :
 
 	/**
 	 * Teacher New Message
@@ -16,7 +16,7 @@ if ( ! class_exists( 'WooThemes_Sensei_Email_New_Message_Reply' ) ) :
 	 *
 	 * @since       1.6.0
 	 */
-	class WooThemes_Sensei_Email_New_Message_Reply {
+	class Sensei_Email_New_Message_Reply {
 
 		/**
 		 * @var string
@@ -94,8 +94,8 @@ if ( ! class_exists( 'WooThemes_Sensei_Email_New_Message_Reply' ) ) :
 			do_action( 'sensei_before_mail', $this->recipient );
 
 			// translators: Placeholder is the blog name.
-			$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] You have a new message', 'woothemes-sensei' ), get_bloginfo( 'name' ) ), $this->template );
-			$this->heading = apply_filters( 'sensei_email_heading', __( 'You have received a reply to your private message', 'woothemes-sensei' ), $this->template );
+			$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] You have a new message', 'sensei-lms' ), get_bloginfo( 'name' ) ), $this->template );
+			$this->heading = apply_filters( 'sensei_email_heading', __( 'You have received a reply to your private message', 'sensei-lms' ), $this->template );
 
 			$content_type  = get_post_meta( $this->message->ID, '_posttype', true );
 			$content_id    = get_post_meta( $this->message->ID, '_post', true );
@@ -134,4 +134,4 @@ if ( ! class_exists( 'WooThemes_Sensei_Email_New_Message_Reply' ) ) :
 
 endif;
 
-return new WooThemes_Sensei_Email_New_Message_Reply();
+return new Sensei_Email_New_Message_Reply();

@@ -114,7 +114,7 @@ class Sensei_Teacher {
 		// if the the teacher is not a valid WordPress role create it
 		if ( ! is_a( $this->teacher_role, 'WP_Role' ) ) {
 			// create the role
-			$this->teacher_role = add_role( 'teacher', __( 'Teacher', 'woothemes-sensei' ) );
+			$this->teacher_role = add_role( 'teacher', __( 'Teacher', 'sensei-lms' ) );
 		}
 
 		// add the capabilities before returning
@@ -229,7 +229,7 @@ class Sensei_Teacher {
 		}
 		add_meta_box(
 			'sensei-teacher',
-			__( 'Teacher', 'woothemes-sensei' ),
+			__( 'Teacher', 'sensei-lms' ),
 			array( $this, 'teacher_meta_box_content' ),
 			'course',
 			'side',
@@ -572,7 +572,7 @@ class Sensei_Teacher {
 		$sensei_post_types = array( 'course', 'lesson', 'question' );
 
 		// exit early for the following conditions
-		$limit_screen_ids = array( 'sensei_page_sensei_analysis', 'course_page_module-order' );
+		$limit_screen_ids = array( 'sensei-lms_page_sensei_analysis', 'course_page_module-order' );
 
 		if ( ! $this->is_admin_teacher() || empty( $screen ) || ! in_array( $screen->id, $limit_screen_ids )
 			|| ! in_array( $query->query['post_type'], $sensei_post_types ) ) {
@@ -677,9 +677,9 @@ class Sensei_Teacher {
 			return $query;
 		}
 		switch ( $screen->id ) {
-			case 'sensei_page_sensei_grading':
-			case 'sensei_page_sensei_analysis':
-			case 'sensei_page_sensei_learners':
+			case 'sensei-lms_page_sensei_grading':
+			case 'sensei-lms_page_sensei_analysis':
+			case 'sensei-lms_page_sensei_learners':
 			case 'lesson':
 			case 'course':
 			case 'question':
@@ -717,7 +717,7 @@ class Sensei_Teacher {
 		// check if we're on the grading screen
 		$screen = get_current_screen();
 
-		if ( empty( $screen ) || 'sensei_page_sensei_grading' != $screen->id ) {
+		if ( empty( $screen ) || 'sensei-lms_page_sensei_grading' != $screen->id ) {
 			return $comments;
 		}
 
@@ -917,7 +917,7 @@ class Sensei_Teacher {
 		 * @since 1.8.0
 		 * @param string $template
 		 */
-		$heading = apply_filters( 'sensei_email_heading', __( 'New course created.', 'woothemes-sensei' ), $template );
+		$heading = apply_filters( 'sensei_email_heading', __( 'New course created.', 'sensei-lms' ), $template );
 
 		/**
 		 * Filter the email subject for the the
@@ -929,7 +929,7 @@ class Sensei_Teacher {
 		 */
 		$subject = apply_filters(
 			'sensei_email_subject',
-			'[' . get_bloginfo( 'name', 'display' ) . '] ' . __( 'New course created by', 'woothemes-sensei' ) . ' ' . $teacher->display_name,
+			'[' . get_bloginfo( 'name', 'display' ) . '] ' . __( 'New course created by', 'sensei-lms' ) . ' ' . $teacher->display_name,
 			$template
 		);
 
@@ -1139,7 +1139,7 @@ class Sensei_Teacher {
 			return $columns;
 		}
 		$new_columns = array(
-			'teacher' => __( 'Teacher', 'woothemes-sensei' ),
+			'teacher' => __( 'Teacher', 'sensei-lms' ),
 		);
 		return array_merge( $columns, $new_columns );
 
@@ -1288,7 +1288,7 @@ class Sensei_Teacher {
 		}
 
 		$output  = '<select name="course_teacher" id="dropdown_course_teachers">';
-		$output .= '<option value="">' . esc_html__( 'Show all teachers', 'woothemes-sensei' ) . '</option>';
+		$output .= '<option value="">' . esc_html__( 'Show all teachers', 'sensei-lms' ) . '</option>';
 		$output .= $course_options;
 		$output .= '</select>';
 
@@ -1607,7 +1607,7 @@ class Sensei_Teacher {
 
 				<?php
 				// translators: Placeholder is the author name.
-				echo esc_html( sprintf( __( 'All courses by %s', 'woothemes-sensei' ), $author_name ) );
+				echo esc_html( sprintf( __( 'All courses by %s', 'sensei-lms' ), $author_name ) );
 				?>
 
 			</h2>

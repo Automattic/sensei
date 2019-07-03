@@ -1,7 +1,4 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
 /**
  * The Template for displaying Single Line Questions.
  *
@@ -10,24 +7,25 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     1.9.0
+ * @version     2.0.0
  */
-?>
 
-<?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
-	/**
-	 * Get the question data with the current quiz id
-	 * All data is loaded in this array to keep the template clean.
-	 */
-	$question_data = WooThemes_Sensei_Question::get_template_data( sensei_get_the_question_id(), get_the_ID() );
+/**
+ * Get the question data with the current quiz id
+ * All data is loaded in this array to keep the template clean.
+ */
+$question_data = Sensei_Question::get_template_data( sensei_get_the_question_id(), get_the_ID() );
 
 ?>
 
 <div class="answer">
 
 	<label for="<?php echo esc_attr( 'question_' . $question_data['ID'] ); ?>">
-		<?php esc_html_e( 'Answer:', 'woothemes-sensei' ); ?>
+		<?php esc_html_e( 'Answer:', 'sensei-lms' ); ?>
 	</label>
 
 	<input type="text" id="<?php echo esc_attr( 'question_' . $question_data['ID'] ); ?>"

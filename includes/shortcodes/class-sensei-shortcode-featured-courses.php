@@ -108,21 +108,18 @@ class Sensei_Shortcode_Featured_Courses implements Sensei_Shortcode_Interface {
 	 * Rendering the shortcode this class is responsible for.
 	 */
 	public function render() {
-
+		// phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
 		global $wp_query;
 
-		// keep a reference to old query
-		$current_global_query = $wp_query;
-
-		// assign the query setup in $this-> setup_course_query
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.OverrideProhibited -- Used to produce loop in shortcode. Reset below.
 		$wp_query = $this->query;
 
 		ob_start();
 		Sensei_Templates::get_template( 'loop-course.php' );
 		$shortcode_output = ob_get_clean();
 
-		// restore old query
-		$wp_query = $current_global_query;
+		// phpcs:ignore WordPress.WP.DiscouragedFunctions.wp_reset_query_wp_reset_query -- wp_reset_postdata() is not a good alternative.
+		wp_reset_query();
 
 		return $shortcode_output;
 

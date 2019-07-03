@@ -98,6 +98,7 @@ if ( ! function_exists( 'sensei_rgb_from_hex' ) ) {
 		// Convert shorthand colors to full format, e.g. "FFF" -> "FFFFFF"
 		$color = preg_replace( '~^(.)(.)(.)$~', '$1$1$2$2$3$3', $color );
 
+		$rgb      = [];
 		$rgb['R'] = hexdec( $color{0} . $color{1} );
 		$rgb['G'] = hexdec( $color{2} . $color{3} );
 		$rgb['B'] = hexdec( $color{4} . $color{5} );
@@ -167,23 +168,6 @@ if ( ! function_exists( 'sensei_hex_lighter' ) ) {
 }
 
 /**
- * WC Detection for backwards compatibility
- *
- * @since 1.9.0
- * @deprecated since 1.9.0 use  Sensei_WC::is_woocommerce_active()
- */
-if ( ! function_exists( 'is_woocommerce_active' ) ) {
-	function is_woocommerce_active() {
-		// calling is present instead of is active here
-		// as this function can override other is_woocommerce_active
-		// function in other woo plugins and Sensei_WC::is_woocommerce_active
-		// also check the sensei settings for enable WooCommerce support, which
-		// other plugins should not check against.
-		return Sensei_WC::is_woocommerce_present();
-	}
-}
-
-/**
  * Provides an interface to allow us to deprecate hooks while still allowing them
  * to work, but giving the developer an error message.
  *
@@ -198,12 +182,12 @@ function sensei_do_deprecated_action( $hook_tag, $version, $alternative = '', $a
 
 	if ( has_action( $hook_tag ) ) {
 
-		$error_message = sprintf( __( "SENSEI: The hook '%1\$s', has been deprecated since '%2\$s'.", 'woothemes-sensei' ), $hook_tag, $version );
+		$error_message = sprintf( __( "SENSEI: The hook '%1\$s', has been deprecated since '%2\$s'.", 'sensei-lms' ), $hook_tag, $version );
 
 		if ( ! empty( $alternative ) ) {
 
 			// translators: Placeholder is the alternative action name.
-			$error_message .= sprintf( __( "Please use '%s' instead.", 'woothemes-sensei' ), $alternative );
+			$error_message .= sprintf( __( "Please use '%s' instead.", 'sensei-lms' ), $alternative );
 
 		}
 
@@ -283,4 +267,56 @@ function sensei_does_theme_support_templates() {
 	$themes        = Sensei()->theme_integration_loader->get_supported_themes();
 
 	return in_array( $current_theme, $themes, true ) || current_theme_supports( 'sensei' );
+}
+
+if ( ! function_exists( 'sensei_check_woocommerce_version' ) ) {
+	/**
+	 * Check if WooCommerce version is greater than the one specified.
+	 *
+	 * @deprecated 2.0.0
+	 *
+	 * @param string $version Version to check against.
+	 * @return boolean
+	 */
+	function sensei_check_woocommerce_version( $version = '2.1' ) {
+		_deprecated_function( __FUNCTION__, '2.0.0' );
+
+		if ( method_exists( 'Sensei_WC', 'is_woocommerce_active' ) && Sensei_WC::is_woocommerce_active() ) {
+			global $woocommerce;
+			if ( version_compare( $woocommerce->version, $version, '>=' ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+}
+
+/**
+ * Track a Sensei event.
+ *
+ * @since 2.1.0
+ *
+ * @param string $event_name The name of the event, without the `sensei_` prefix.
+ * @param array  $properties The event properties to be sent.
+ */
+function sensei_log_event( $event_name, $properties = [] ) {
+	$properties = array_merge(
+		Sensei_Usage_Tracking_Data::get_event_logging_base_fields(),
+		$properties
+	);
+
+	/**
+	 * Explicitly disable usage tracking from being sent.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param bool   $log_event    Whether we should log the event.
+	 * @param string $event_name   The name of the event, without the `sensei_` prefix.
+	 * @param array  $properties   The event properties to be sent.
+	 */
+	if ( false === apply_filters( 'sensei_log_event', true, $event_name, $properties ) ) {
+		return;
+	}
+
+	Sensei_Usage_Tracking::get_instance()->send_event( $event_name, $properties );
 }

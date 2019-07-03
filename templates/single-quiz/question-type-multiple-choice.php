@@ -1,24 +1,22 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
 /**
  * The Template for displaying Multiple Choice Questions.
  *
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     1.9.0
+ * @version     1.12.2
  */
-?>
 
-<?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
-	/**
-	 * Get the question data with the current quiz id
-	 * All data is loaded in this array to keep the template clean.
-	 */
-	$question_data = WooThemes_Sensei_Question::get_template_data( sensei_get_the_question_id(), get_the_ID() );
+/**
+ * Get the question data with the current quiz id
+ * All data is loaded in this array to keep the template clean.
+ */
+$question_data = Sensei_Question::get_template_data( sensei_get_the_question_id(), get_the_ID() );
 
 ?>
 
@@ -26,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <?php
 $count = 0;
-foreach ( $question_data['answer_options'] as $id => $option ) {
+foreach ( $question_data['answer_options'] as $option ) {
 
 	$count++;
 

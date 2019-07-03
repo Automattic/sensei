@@ -64,6 +64,7 @@ class Sensei_Messages {
 		add_filter( 'get_comments_number', array( $this, 'message_reply_count' ), 100, 2 );
 		add_filter( 'comments_open', array( $this, 'message_replies_open' ), 100, 2 );
 		add_action( 'pre_get_posts', array( $this, 'only_show_messages_to_owner' ) );
+		add_filter( 'comment_feed_where', array( $this, 'exclude_message_comments_from_feed_where' ) );
 	} // End __construct()
 
 	public function only_show_messages_to_owner( $query ) {
@@ -112,7 +113,7 @@ class Sensei_Messages {
 	public function add_menu_item() {
 
 		if ( ! isset( Sensei()->settings->settings['messages_disable'] ) || ! Sensei()->settings->settings['messages_disable'] ) {
-			add_submenu_page( 'sensei', __( 'Messages', 'woothemes-sensei' ), __( 'Messages', 'woothemes-sensei' ), 'edit_courses', 'edit.php?post_type=sensei_message' );
+			add_submenu_page( 'sensei', __( 'Messages', 'sensei-lms' ), __( 'Messages', 'sensei-lms' ), 'edit_courses', 'edit.php?post_type=sensei_message' );
 		}
 	}
 
@@ -122,7 +123,7 @@ class Sensei_Messages {
 			return;
 		}
 
-		add_meta_box( $this->post_type . '-data', __( 'Message Information', 'woothemes-sensei' ), array( $this, 'meta_box_content' ), $this->post_type, 'normal', 'default' );
+		add_meta_box( $this->post_type . '-data', __( 'Message Information', 'sensei-lms' ), array( $this, 'meta_box_content' ), $this->post_type, 'normal', 'default' );
 
 	}
 
@@ -132,15 +133,15 @@ class Sensei_Messages {
 		$settings = array(
 			array(
 				'id'          => 'sender',
-				'label'       => __( 'Message sent by:', 'woothemes-sensei' ),
-				'description' => __( 'The username of the learner who sent this message.', 'woothemes-sensei' ),
+				'label'       => __( 'Message sent by:', 'sensei-lms' ),
+				'description' => __( 'The username of the learner who sent this message.', 'sensei-lms' ),
 				'type'        => 'plain-text',
 				'default'     => get_post_meta( $post->ID, '_sender', true ),
 			),
 			array(
 				'id'          => 'receiver',
-				'label'       => __( 'Message received by:', 'woothemes-sensei' ),
-				'description' => __( 'The username of the teacher who received this message.', 'woothemes-sensei' ),
+				'label'       => __( 'Message received by:', 'sensei-lms' ),
+				'description' => __( 'The username of the teacher who received this message.', 'sensei-lms' ),
 				'type'        => 'plain-text',
 				'default'     => get_post_meta( $post->ID, '_receiver', true ),
 			),
@@ -155,12 +156,16 @@ class Sensei_Messages {
 
 			switch ( $message_posttype ) {
 				case 'course':
-					$label       = __( 'Message from course:', 'woothemes-sensei' );
-					$description = __( 'The course to which this message relates.', 'woothemes-sensei' );
+					$label       = __( 'Message from course:', 'sensei-lms' );
+					$description = __( 'The course to which this message relates.', 'sensei-lms' );
 					break;
 				case 'lesson':
-					$label       = __( 'Message from lesson:', 'woothemes-sensei' );
-					$description = __( 'The lesson to which this message relates.', 'woothemes-sensei' );
+					$label       = __( 'Message from lesson:', 'sensei-lms' );
+					$description = __( 'The lesson to which this message relates.', 'sensei-lms' );
+					break;
+				case 'quiz':
+					$label       = __( 'Message from quiz:', 'sensei-lms' );
+					$description = __( 'The quiz to which this message relates.', 'sensei-lms' );
 					break;
 			}
 
@@ -242,11 +247,11 @@ class Sensei_Messages {
 				$href = add_query_arg( array( 'contact' => $post->post_type ) );
 
 				if ( 'lesson' == $post->post_type ) {
-					$contact_button_text = __( 'Contact Lesson Teacher', 'woothemes-sensei' );
+					$contact_button_text = __( 'Contact Lesson Teacher', 'sensei-lms' );
 				} elseif ( 'course' == $post->post_type ) {
-					$contact_button_text = __( 'Contact Course Teacher', 'woothemes-sensei' );
+					$contact_button_text = __( 'Contact Course Teacher', 'sensei-lms' );
 				} else {
-					$contact_button_text = __( 'Contact Teacher', 'woothemes-sensei' );
+					$contact_button_text = __( 'Contact Teacher', 'sensei-lms' );
 				}
 
 				$html .= '<p><a class="button send-message-button" href="' . esc_url( $href ) . '#private_message">' . esc_html( $contact_button_text ) . '</a></p>';
@@ -297,12 +302,10 @@ class Sensei_Messages {
 	}
 
 	public function teacher_contact_form( $post ) {
-
 		if ( ! is_user_logged_in() ) {
 			return;
 		}
 
-		global $current_user;
 		wp_get_current_user();
 
 		$html = '';
@@ -315,23 +318,23 @@ class Sensei_Messages {
 		$confirmation = '';
 		if ( isset( $_GET['send'] ) && 'complete' == $_GET['send'] ) {
 
-			$confirmation_message = __( 'Your private message has been sent.', 'woothemes-sensei' );
+			$confirmation_message = __( 'Your private message has been sent.', 'sensei-lms' );
 			$confirmation         = '<div class="sensei-message tick">' . esc_html( $confirmation_message ) . '</div>';
 
 		}
 
-		$html         .= '<h3 id="private_message">' . esc_html__( 'Send Private Message', 'woothemes-sensei' ) . '</h3>';
+		$html         .= '<h3 id="private_message">' . esc_html__( 'Send Private Message', 'sensei-lms' ) . '</h3>';
 		$html         .= '<p>';
 		$html         .= $confirmation;
 		$html         .= '</p>';
 		$html         .= '<form name="contact-teacher" action="" method="post" class="contact-teacher">';
 			$html     .= '<p class="form-row form-row-wide">';
-				$html .= '<textarea name="contact_message" placeholder="' . esc_attr__( 'Enter your private message.', 'woothemes-sensei' ) . '"></textarea>';
+				$html .= '<textarea name="contact_message" placeholder="' . esc_attr__( 'Enter your private message.', 'sensei-lms' ) . '"></textarea>';
 			$html     .= '</p>';
 			$html     .= '<p class="form-row">';
 				$html .= '<input type="hidden" name="post_id" value="' . esc_attr( absint( $post->ID ) ) . '" />';
 				$html .= wp_nonce_field( 'message_teacher', 'sensei_message_teacher_nonce', true, false );
-				$html .= '<input type="submit" class="send_message" value="' . esc_attr__( 'Send Message', 'woothemes-sensei' ) . '" />';
+				$html .= '<input type="submit" class="send_message" value="' . esc_attr__( 'Send Message', 'sensei-lms' ) . '" />';
 			$html     .= '</p>';
 			$html     .= '<div class="fix"></div>';
 		$html         .= '</form>';
@@ -356,7 +359,7 @@ class Sensei_Messages {
 			return false;
 		}
 
-		$message_id = $this->save_new_message_post( $current_user->ID, $post->post_author, sanitize_text_field( $_POST['contact_message'] ), $post->ID );
+		$this->save_new_message_post( $current_user->ID, $post->post_author, sanitize_text_field( $_POST['contact_message'] ), $post->ID );
 	}
 
 	public function message_reply_received( $comment_id = 0 ) {
@@ -547,6 +550,20 @@ class Sensei_Messages {
 			}
 		}
 	}
+
+	/**
+	 * Exclude message comments from feed queries and RSS.
+	 *
+	 * @since 2.0.2
+	 * @access private
+	 *
+	 * @param  string $where The WHERE clause of the query.
+	 * @return string
+	 */
+	public function exclude_message_comments_from_feed_where( $where ) {
+		return $where . ( $where ? ' AND ' : '' ) . " post_type != 'sensei_message' ";
+	}
+
 	/**
 	 * Only show allowed messages in messages archive
 	 *
@@ -559,6 +576,8 @@ class Sensei_Messages {
 		if ( is_admin() ) {
 			return;
 		}
+
+		$meta_query = [];
 
 		if ( $query->is_main_query() && is_post_type_archive( $this->post_type ) ) {
 			wp_get_current_user();
@@ -595,7 +614,7 @@ class Sensei_Messages {
 
 		if ( is_single() && is_singular( $this->post_type ) && in_the_loop() && get_post_type( $post_id ) == $this->post_type ) {
 			if ( ! is_user_logged_in() || ! $this->view_message( $post_id ) ) {
-				$title = __( 'You are not allowed to view this message.', 'woothemes-sensei' );
+				$title = __( 'You are not allowed to view this message.', 'sensei-lms' );
 			}
 		}
 
@@ -613,7 +632,7 @@ class Sensei_Messages {
 
 		if ( is_single() && is_singular( $this->post_type ) && in_the_loop() ) {
 			if ( ! is_user_logged_in() || ! $this->view_message( $post->ID ) ) {
-				$content = __( 'Please log in to view your messages.', 'woothemes-sensei' );
+				$content = __( 'Please log in to view your messages.', 'sensei-lms' );
 			}
 		}
 
@@ -693,7 +712,7 @@ class Sensei_Messages {
 					<em>
 						<?php
 						// translators: Placeholders are the sender's display name and the date, respectively.
-						echo esc_html( sprintf( __( 'Sent by %1$s on %2$s.', 'woothemes-sensei' ), $sender->display_name, get_the_date() ) );
+						echo esc_html( sprintf( __( 'Sent by %1$s on %2$s.', 'sensei-lms' ), $sender->display_name, get_the_date() ) );
 						?>
 					</em>
 				</small>
@@ -718,7 +737,7 @@ class Sensei_Messages {
 		$content_post_id = get_post_meta( $post->ID, '_post', true );
 		if ( $content_post_id ) {
 			// translators: Placeholder is a link to post, with the post's title as the link text.
-			$title = wp_kses_post( sprintf( __( 'Re: %1$s', 'woothemes-sensei' ), '<a href="' . esc_url( get_permalink( $content_post_id ) ) . '">' . esc_html( get_the_title( $content_post_id ) ) . '</a>' ) );
+			$title = wp_kses_post( sprintf( __( 'Re: %1$s', 'sensei-lms' ), '<a href="' . esc_url( get_permalink( $content_post_id ) ) . '">' . esc_html( get_the_title( $content_post_id ) ) . '</a>' ) );
 		} else {
 			$title = esc_html( get_the_title( $post->ID ) );
 		}
@@ -760,7 +779,7 @@ class Sensei_Messages {
 
 		$html  = '';
 		$html .= '<header class="archive-header"><h1>';
-		$html .= esc_html__( 'My Messages', 'woothemes-sensei' );
+		$html .= esc_html__( 'My Messages', 'sensei-lms' );
 		$html .= '</h1></header>';
 
 		/**
@@ -785,7 +804,7 @@ class Sensei_Messages {
 		if ( $content_post_id ) {
 
 			// translators: Placeholder is the post title.
-			$title = sprintf( __( 'Re: %1$s', 'woothemes-sensei' ), get_the_title( $content_post_id ) );
+			$title = sprintf( __( 'Re: %1$s', 'sensei-lms' ), get_the_title( $content_post_id ) );
 
 		} else {
 
@@ -816,7 +835,7 @@ class Sensei_Messages {
 
 		if ( $sender_username && $sender instanceof WP_User ) {
 			// translators: Placeholders are the sender's display name and the date.
-			$sender_display_name = sprintf( __( 'Sent by %1$s on %2$s.', 'woothemes-sensei' ), $sender->display_name, get_the_date() );
+			$sender_display_name = sprintf( __( 'Sent by %1$s on %2$s.', 'sensei-lms' ), $sender->display_name, get_the_date() );
 			?>
 			<p class="message-meta">
 				<small>
@@ -839,8 +858,8 @@ class Sensei_Messages {
 			?>
 			<p class="my-messages-link-container">
 				<a class="my-messages-link" href="<?php echo esc_url( get_post_type_archive_link( 'sensei_message' ) ); ?>"
-				   title="<?php esc_attr_e( 'View & reply to private messages sent to your course & lesson teachers.', 'woothemes-sensei' ); ?>">
-					<?php esc_html_e( 'My Messages', 'woothemes-sensei' ); ?>
+				   title="<?php esc_attr_e( 'View & reply to private messages sent to your course & lesson teachers.', 'sensei-lms' ); ?>">
+					<?php esc_html_e( 'My Messages', 'sensei-lms' ); ?>
 				</a>
 			</p>
 			<?php

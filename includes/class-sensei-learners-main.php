@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.3.0
  */
-class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
+class Sensei_Learners_Main extends Sensei_List_Table {
 
 	public $course_id = 0;
 	public $lesson_id = 0;
@@ -68,26 +68,26 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 		switch ( $this->view ) {
 			case 'learners':
 				$columns = array(
-					'title'        => __( 'Learner', 'woothemes-sensei' ),
-					'date_started' => __( 'Date Started', 'woothemes-sensei' ),
-					'user_status'  => __( 'Status', 'woothemes-sensei' ),
+					'title'        => __( 'Learner', 'sensei-lms' ),
+					'date_started' => __( 'Date Started', 'sensei-lms' ),
+					'user_status'  => __( 'Status', 'sensei-lms' ),
 				);
 				break;
 
 			case 'lessons':
 				$columns = array(
-					'title'        => __( 'Lesson', 'woothemes-sensei' ),
-					'num_learners' => __( '# Learners', 'woothemes-sensei' ),
-					'updated'      => __( 'Last Updated', 'woothemes-sensei' ),
+					'title'        => __( 'Lesson', 'sensei-lms' ),
+					'num_learners' => __( '# Learners', 'sensei-lms' ),
+					'updated'      => __( 'Last Updated', 'sensei-lms' ),
 				);
 				break;
 
 			case 'courses':
 			default:
 				$columns = array(
-					'title'        => __( 'Course', 'woothemes-sensei' ),
-					'num_learners' => __( '# Learners', 'woothemes-sensei' ),
-					'updated'      => __( 'Last Updated', 'woothemes-sensei' ),
+					'title'        => __( 'Course', 'sensei-lms' ),
+					'num_learners' => __( '# Learners', 'sensei-lms' ),
+					'updated'      => __( 'Last Updated', 'sensei-lms' ),
 				);
 				break;
 		}
@@ -144,8 +144,6 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 	 * @return void
 	 */
 	public function prepare_items() {
-		global $avail_stati, $wpdb, $per_page;
-
 		// Handle orderby
 		$orderby = '';
 		if ( ! empty( $_GET['orderby'] ) ) {
@@ -234,7 +232,7 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 
 		if ( ! $item ) {
 			return array(
-				'title'        => esc_html__( 'No results found', 'woothemes-sensei' ),
+				'title'        => esc_html__( 'No results found', 'sensei-lms' ),
 				'num_learners' => '',
 				'updated'      => '',
 				'actions'      => '',
@@ -252,30 +250,30 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 				if ( $this->lesson_id ) {
 
 					$post_id     = intval( $this->lesson_id );
-					$object_type = __( 'lesson', 'woothemes-sensei' );
+					$object_type = __( 'lesson', 'sensei-lms' );
 					$post_type   = 'lesson';
 
 				} elseif ( $this->course_id ) {
 
 					$post_id     = intval( $this->course_id );
-					$object_type = __( 'course', 'woothemes-sensei' );
+					$object_type = __( 'course', 'sensei-lms' );
 					$post_type   = 'course';
 
 				}
 
 				if ( 'complete' == $user_activity->comment_approved || 'graded' == $user_activity->comment_approved || 'passed' == $user_activity->comment_approved ) {
 
-					$status_html = '<span class="graded">' . esc_html__( 'Completed', 'woothemes-sensei' ) . '</span>';
+					$status_html = '<span class="graded">' . esc_html__( 'Completed', 'sensei-lms' ) . '</span>';
 
 				} else {
 
-					$status_html = '<span class="in-progress">' . esc_html__( 'In Progress', 'woothemes-sensei' ) . '</span>';
+					$status_html = '<span class="in-progress">' . esc_html__( 'In Progress', 'sensei-lms' ) . '</span>';
 
 				}
 
 				$title = Sensei_Learner::get_full_name( $user_activity->user_id );
 				// translators: Placeholder is the full name of the learner.
-				$a_title              = sprintf( esc_html__( 'Edit &#8220;%s&#8221;', 'woothemes-sensei' ), esc_html( $title ) );
+				$a_title              = sprintf( esc_html__( 'Edit &#8220;%s&#8221;', 'sensei-lms' ), esc_html( $title ) );
 				$edit_start_date_form = $this->get_edit_start_date_form( $user_activity, $post_id, $post_type, $object_type );
 
 				/**
@@ -298,8 +296,8 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 						'date_started' => get_comment_meta( $user_activity->comment_ID, 'start', true ),
 						'user_status'  => $status_html,
 						// translators: Placeholder is the "object type"; lesson or course.
-						'actions'      => '<a class="remove-learner button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '">' . sprintf( esc_html__( 'Remove from %1$s', 'woothemes-sensei' ), esc_html( $object_type ) ) . '</a>'
-							. '<a class="reset-learner button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '">' . sprintf( esc_html__( 'Reset progress', 'woothemes-sensei' ), esc_html( $object_type ) ) . '</a>'
+						'actions'      => '<a class="remove-learner button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '">' . sprintf( esc_html__( 'Remove from %1$s', 'sensei-lms' ), esc_html( $object_type ) ) . '</a>'
+							. '<a class="reset-learner button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '">' . sprintf( esc_html__( 'Reset progress', 'sensei-lms' ), esc_html( $object_type ) ) . '</a>'
 							. $edit_start_date_form,
 					),
 					$item,
@@ -345,7 +343,7 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 				);
 				$title           = get_the_title( $item );
 				// translators: Placeholder is the item title.
-				$a_title = sprintf( esc_html__( 'Edit &#8220;%s&#8221;', 'woothemes-sensei' ), esc_html( $title ) );
+				$a_title = sprintf( esc_html__( 'Edit &#8220;%s&#8221;', 'sensei-lms' ), esc_html( $title ) );
 
 				$grading_action = '';
 				if ( Sensei_Lesson::lesson_quiz_has_questions( $item->ID ) ) {
@@ -358,7 +356,7 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 							),
 							admin_url( 'admin.php' )
 						)
-					) . '">' . esc_html__( 'Grading', 'woothemes-sensei' ) . '</a>';
+					) . '">' . esc_html__( 'Grading', 'sensei-lms' ) . '</a>';
 				}
 
 				$column_data = apply_filters(
@@ -377,7 +375,7 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 								),
 								admin_url( 'admin.php' )
 							)
-						) . '">' . esc_html__( 'Manage learners', 'woothemes-sensei' ) . '</a> ' . $grading_action,
+						) . '">' . esc_html__( 'Manage learners', 'sensei-lms' ) . '</a> ' . $grading_action,
 					),
 					$item,
 					$this->course_id
@@ -400,7 +398,7 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 				);
 				$title           = get_the_title( $item );
 				// translators: Placeholder is the item title.
-				$a_title = sprintf( esc_html__( 'Edit &#8220;%s&#8221;', 'woothemes-sensei' ), esc_html( $title ) );
+				$a_title = sprintf( esc_html__( 'Edit &#8220;%s&#8221;', 'sensei-lms' ), esc_html( $title ) );
 
 				$grading_action = '';
 				if ( version_compare( $wp_version, '4.1', '>=' ) ) {
@@ -412,7 +410,7 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 							),
 							admin_url( 'admin.php' )
 						)
-					) . '">' . esc_html__( 'Grading', 'woothemes-sensei' ) . '</a>';
+					) . '">' . esc_html__( 'Grading', 'sensei-lms' ) . '</a>';
 				}
 
 				$column_data = apply_filters(
@@ -439,7 +437,7 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 								),
 								admin_url( 'admin.php' )
 							)
-						) . '">' . esc_html__( 'Manage learners', 'woothemes-sensei' ) . '</a> ' . $grading_action,
+						) . '">' . esc_html__( 'Manage learners', 'sensei-lms' ) . '</a> ' . $grading_action,
 					),
 					$item
 				);
@@ -457,7 +455,7 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 		$date_started = get_comment_meta( $comment_id, 'start', true );
 		$form         = '<form class="edit-start-date">';
 		$form        .= '<input class="edit-start-date-date-picker" type="text" value="' . esc_attr( $date_started ) . '">';
-		$form        .= '<a class="edit-start-date-submit button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '" data-comment-id="' . esc_attr( $comment_id ) . '">' . sprintf( esc_html__( 'Edit Start Date', 'woothemes-sensei' ), esc_html( $object_type ) ) . '</a>';
+		$form        .= '<a class="edit-start-date-submit button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '" data-comment-id="' . esc_attr( $comment_id ) . '">' . sprintf( esc_html__( 'Edit Start Date', 'sensei-lms' ), esc_html( $object_type ) ) . '</a>';
 		$form        .= '</form>';
 
 		return $form;
@@ -537,8 +535,6 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 	 * @return array learners
 	 */
 	private function get_learners( $args ) {
-
-		$user_ids = false;
 		$post_id  = 0;
 		$activity = '';
 
@@ -616,17 +612,17 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 	public function no_items() {
 		switch ( $this->view ) {
 			case 'learners':
-				$text = __( 'No learners found.', 'woothemes-sensei' );
+				$text = __( 'No learners found.', 'sensei-lms' );
 				break;
 
 			case 'lessons':
-				$text = __( 'No lessons found.', 'woothemes-sensei' );
+				$text = __( 'No lessons found.', 'sensei-lms' );
 				break;
 
 			case 'courses':
 			case 'default':
 			default:
-				$text = __( 'No courses found.', 'woothemes-sensei' );
+				$text = __( 'No courses found.', 'sensei-lms' );
 				break;
 		}
 		echo wp_kses_post( apply_filters( 'sensei_learners_no_items_text', $text ) );
@@ -655,9 +651,9 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 
 			echo '<div class="select-box">' . "\n";
 
-				echo '<select id="course-category-options" data-placeholder="' . esc_attr__( 'Course Category', 'woothemes-sensei' ) . '" name="learners_course_cat" class="chosen_select widefat">' . "\n";
+				echo '<select id="course-category-options" data-placeholder="' . esc_attr__( 'Course Category', 'sensei-lms' ) . '" name="learners_course_cat" class="chosen_select widefat">' . "\n";
 
-					echo '<option value="0">' . esc_html__( 'All Course Categories', 'woothemes-sensei' ) . '</option>' . "\n";
+					echo '<option value="0">' . esc_html__( 'All Course Categories', 'sensei-lms' ) . '</option>' . "\n";
 
 			foreach ( $cats as $cat ) {
 				echo '<option value="' . esc_attr( $cat->term_id ) . '"' . selected( $cat->term_id, $selected_cat, false ) . '>' . esc_html( $cat->name ) . '</option>' . "\n";
@@ -693,8 +689,8 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 			$learner_args['view'] = 'learners';
 			$lesson_args['view']  = 'lessons';
 
-			$menu['learners'] = '<a class="' . esc_attr( $learners_class ) . '" href="' . esc_url( add_query_arg( $learner_args, admin_url( 'admin.php' ) ) ) . '">' . esc_html__( 'Learners', 'woothemes-sensei' ) . '</a>';
-			$menu['lessons']  = '<a class="' . esc_attr( $lessons_class ) . '" href="' . esc_url( add_query_arg( $lesson_args, admin_url( 'admin.php' ) ) ) . '">' . esc_html__( 'Lessons', 'woothemes-sensei' ) . '</a>';
+			$menu['learners'] = '<a class="' . esc_attr( $learners_class ) . '" href="' . esc_url( add_query_arg( $learner_args, admin_url( 'admin.php' ) ) ) . '">' . esc_html__( 'Learners', 'sensei-lms' ) . '</a>';
+			$menu['lessons']  = '<a class="' . esc_attr( $lessons_class ) . '" href="' . esc_url( add_query_arg( $lesson_args, admin_url( 'admin.php' ) ) ) . '">' . esc_html__( 'Lessons', 'sensei-lms' ) . '</a>';
 
 		}
 		// Have Course and Lesson
@@ -712,7 +708,7 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 				. esc_url( add_query_arg( $query_args, admin_url( 'admin.php' ) ) )
 				. '"><em>&larr; '
 				// translators: Placeholder is the Course title.
-				. esc_html( sprintf( __( 'Back to %s', 'woothemes-sensei' ), $course ) )
+				. esc_html( sprintf( __( 'Back to %s', 'sensei-lms' ), $course ) )
 				. '</em></a>';
 		}
 		$menu = apply_filters( 'sensei_learners_sub_menu', $menu );
@@ -751,12 +747,12 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 		$form_lesson_id = 0;
 		if ( $this->course_id && ! $this->lesson_id ) {
 			$post_title     = get_the_title( $this->course_id );
-			$post_type      = __( 'Course', 'woothemes-sensei' );
+			$post_type      = __( 'Course', 'sensei-lms' );
 			$form_post_type = 'course';
 			$form_course_id = $this->course_id;
 		} elseif ( $this->course_id && $this->lesson_id ) {
 			$post_title     = get_the_title( $this->lesson_id );
-			$post_type      = __( 'Lesson', 'woothemes-sensei' );
+			$post_type      = __( 'Lesson', 'sensei-lms' );
 			$form_post_type = 'lesson';
 			$form_course_id = $this->course_id;
 			$form_lesson_id = $this->lesson_id;
@@ -770,34 +766,34 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 			<h3><span>
 				<?php
 				// translators: Placeholder is the post type.
-				printf( esc_html__( 'Add Learner to %1$s', 'woothemes-sensei' ), esc_html( $post_type ) );
+				printf( esc_html__( 'Add Learner to %1$s', 'sensei-lms' ), esc_html( $post_type ) );
 				?>
 			</span></h3>
 			<div class="inside">
 				<form name="add_learner" action="" method="post">
 					<p>
 						<select name="add_user_id" id="add_learner_search" multiple="multiple" style="min-width:300px;">
-							<option value="0" selected="selected"><?php esc_html_e( 'Find learner', 'woothemes-sensei' ); ?></option>
+							<option value="0" selected="selected"><?php esc_html_e( 'Find learner', 'sensei-lms' ); ?></option>
 						</select>
 						<?php if ( 'lesson' == $form_post_type ) { ?>
-							<label for="add_complete_lesson"><input type="checkbox" id="add_complete_lesson" name="add_complete_lesson"  value="yes" /> <?php esc_html_e( 'Complete lesson for learner', 'woothemes-sensei' ); ?></label>
+							<label for="add_complete_lesson"><input type="checkbox" id="add_complete_lesson" name="add_complete_lesson"  value="yes" /> <?php esc_html_e( 'Complete lesson for learner', 'sensei-lms' ); ?></label>
 						<?php } elseif ( 'course' == $form_post_type ) { ?>
-							<label for="add_complete_course"><input type="checkbox" id="add_complete_course" name="add_complete_course"  value="yes" /> <?php esc_html_e( 'Complete course for learner', 'woothemes-sensei' ); ?></label>
+							<label for="add_complete_course"><input type="checkbox" id="add_complete_course" name="add_complete_course"  value="yes" /> <?php esc_html_e( 'Complete course for learner', 'sensei-lms' ); ?></label>
 						<?php } ?>
 						<br/>
-						<span class="description"><?php esc_html_e( 'Search for a user by typing their name or username.', 'woothemes-sensei' ); ?></span>
+						<span class="description"><?php esc_html_e( 'Search for a user by typing their name or username.', 'sensei-lms' ); ?></span>
 					</p>
 					<p>
 						<?php
 						// translators: Placeholder is the post title.
-						submit_button( sprintf( __( 'Add to \'%1$s\'', 'woothemes-sensei' ), $post_title ), 'primary', 'add_learner_submit', false, array() );
+						submit_button( sprintf( __( 'Add to \'%1$s\'', 'sensei-lms' ), $post_title ), 'primary', 'add_learner_submit', false, array() );
 						?>
 					</p>
 					<?php if ( 'lesson' == $form_post_type ) { ?>
 						<p><span class="description">
 							<?php
 							// translators: Placeholder is the course title.
-							printf( esc_html__( 'Learner will also be added to the course \'%1$s\' if they are not already taking it.', 'woothemes-sensei' ), esc_html( $course_title ) );
+							printf( esc_html__( 'Learner will also be added to the course \'%1$s\' if they are not already taking it.', 'sensei-lms' ), esc_html( $course_title ) );
 							?>
 						</span></p>
 					<?php } ?>
@@ -825,15 +821,15 @@ class Sensei_Learners_Main extends WooThemes_Sensei_List_Table {
 
 		switch ( $this->view ) {
 			case 'learners':
-				$text = __( 'Search Learners', 'woothemes-sensei' );
+				$text = __( 'Search Learners', 'sensei-lms' );
 				break;
 
 			case 'lessons':
-				$text = __( 'Search Lessons', 'woothemes-sensei' );
+				$text = __( 'Search Lessons', 'sensei-lms' );
 				break;
 
 			default:
-				$text = __( 'Search Courses', 'woothemes-sensei' );
+				$text = __( 'Search Courses', 'sensei-lms' );
 				break;
 		}
 

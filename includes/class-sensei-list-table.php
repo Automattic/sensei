@@ -135,7 +135,7 @@ class Sensei_List_Table extends WP_List_Table {
 				}
 			}
 			?>
-			<?php $this->search_box( apply_filters( 'sensei_list_table_search_button_text', __( 'Search Users', 'woothemes-sensei' ) ), 'search_id' ); ?>
+			<?php $this->search_box( apply_filters( 'sensei_list_table_search_button_text', __( 'Search Users', 'sensei-lms' ) ), 'search_id' ); ?>
 		</form>
 		<?php
 	} // End table_search_form()
@@ -147,7 +147,7 @@ class Sensei_List_Table extends WP_List_Table {
 	 * @return array $columns, the array of columns to use with the table
 	 */
 	public function get_columns() {
-		return $columns = $this->columns;
+		return $this->columns;
 	} // End get_columns()
 
 	/**
@@ -157,7 +157,7 @@ class Sensei_List_Table extends WP_List_Table {
 	 * @return array $sortable, the array of columns that can be sorted by the user
 	 */
 	public function get_sortable_columns() {
-		return $sortable = $this->sortable_columns;
+		return $this->sortable_columns;
 	} // End get_sortable_columns()
 
 	/**
@@ -174,6 +174,15 @@ class Sensei_List_Table extends WP_List_Table {
 		$columns = $this->get_columns();
 		$hidden  = get_hidden_columns( $this->screen );
 
+		$sortable_columns = $this->get_sortable_columns();
+
+		$legacy_screen_id = preg_replace( '/^sensei\-lms\_/', 'sensei_', $this->screen->id );
+		if ( has_filter( "manage_{$legacy_screen_id}_sortable_columns" ) ) {
+			_deprecated_hook( esc_html( "manage_{$legacy_screen_id}_sortable_columns" ), '2.0.1', esc_html( "manage_{$this->screen->id}_sortable_columns" ) );
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+			$sortable_columns = apply_filters( "manage_{$legacy_screen_id}_sortable_columns", $sortable_columns );
+		}
+
 		/**
 		 * Filter the list table sortable columns for a specific screen.
 		 *
@@ -184,7 +193,7 @@ class Sensei_List_Table extends WP_List_Table {
 		 *
 		 * @param array $sortable_columns An array of sortable columns.
 		 */
-		$_sortable = apply_filters( "manage_{$this->screen->id}_sortable_columns", $this->get_sortable_columns() );
+		$_sortable = apply_filters( "manage_{$this->screen->id}_sortable_columns", $sortable_columns );
 
 		$sortable = array();
 		foreach ( $_sortable as $id => $data ) {
@@ -247,7 +256,7 @@ class Sensei_List_Table extends WP_List_Table {
 	 * @abstract
 	 */
 	protected function get_row_data( $item ) {
-		die( 'either function WooThemes_Sensei_List_Table::get_row_data() must be over-ridden in a sub-class or WooThemes_Sensei_List_Table::single_row() should be.' );
+		die( 'either function Sensei_List_Table::get_row_data() must be over-ridden in a sub-class or Sensei_List_Table::single_row() should be.' );
 	}
 
 	/**
@@ -259,7 +268,7 @@ class Sensei_List_Table extends WP_List_Table {
 	 */
 	function no_items() {
 
-		esc_html_e( 'No items found.', 'woothemes-sensei' );
+		esc_html_e( 'No items found.', 'sensei-lms' );
 
 	} // End no_items()
 

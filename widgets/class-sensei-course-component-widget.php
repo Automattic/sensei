@@ -12,11 +12,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.1.0
  */
-class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
-	protected $woo_widget_cssclass;
-	protected $woo_widget_description;
-	protected $woo_widget_idbase;
-	protected $woo_widget_title;
+class Sensei_Course_Component_Widget extends WP_Widget {
+	protected $widget_cssclass;
+	protected $widget_description;
+	protected $widget_idbase;
+	protected $widget_title;
 	protected $instance;
 
 	/**
@@ -26,39 +26,47 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 	 */
 	public function __construct() {
 		/* Widget variable settings. */
-		$this->woo_widget_cssclass    = 'widget_sensei_course_component';
-		$this->woo_widget_description = __( 'This widget will output a list of Courses - New, Featured, Free, Paid, Active, Completed.', 'woothemes-sensei' );
-		$this->woo_widget_idbase      = 'sensei_course_component';
-		$this->woo_widget_title       = __( 'Sensei - Course Component', 'woothemes-sensei' );
+		$this->widget_cssclass    = 'widget_sensei_course_component';
+		$this->widget_description = __( 'This widget will output a list of Courses - New, Featured, Free, Paid, Active, Completed.', 'sensei-lms' );
+		$this->widget_idbase      = 'sensei_course_component';
+		$this->widget_title       = __( 'Sensei LMS - Course Component', 'sensei-lms' );
 
-		$this->woo_widget_componentslist = array(
-			'usercourses'      => __( 'New Courses', 'woothemes-sensei' ),
-			'featuredcourses'  => __( 'Featured Courses', 'woothemes-sensei' ),
-			'activecourses'    => __( 'My Active Courses', 'woothemes-sensei' ),
-			'completedcourses' => __( 'My Completed Courses', 'woothemes-sensei' ),
+		/**
+		 * Allows filtering of the widget's component list.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param array $components_list {
+		 *     Array of course components to allow in the widget.
+		 *
+		 *     @type string ${$component_name} Label for the component.
+		 * }
+		 */
+		$this->widget_componentslist = apply_filters(
+			'sensei_widget_course_component_components_list',
+			array(
+				'usercourses'      => __( 'New Courses', 'sensei-lms' ),
+				'featuredcourses'  => __( 'Featured Courses', 'sensei-lms' ),
+				'activecourses'    => __( 'My Active Courses', 'sensei-lms' ),
+				'completedcourses' => __( 'My Completed Courses', 'sensei-lms' ),
+			)
 		);
-
-		// Add support for the WooCommerce shelf.
-		if ( Sensei_WC::is_woocommerce_active() ) {
-			$this->woo_widget_componentslist['freecourses'] = __( 'Free Courses', 'woothemes-sensei' );
-			$this->woo_widget_componentslist['paidcourses'] = __( 'Paid Courses', 'woothemes-sensei' );
-		}
 
 		/* Widget settings. */
 		$widget_ops = array(
-			'classname'   => $this->woo_widget_cssclass,
-			'description' => $this->woo_widget_description,
+			'classname'   => $this->widget_cssclass,
+			'description' => $this->widget_description,
 		);
 
 		/* Widget control settings. */
 		$control_ops = array(
 			'width'   => 250,
 			'height'  => 350,
-			'id_base' => $this->woo_widget_idbase,
+			'id_base' => $this->widget_idbase,
 		);
 
 		/* Create the widget. */
-		parent::__construct( $this->woo_widget_idbase, $this->woo_widget_title, $widget_ops, $control_ops );
+		parent::__construct( $this->widget_idbase, $this->widget_title, $widget_ops, $control_ops );
 	} // End __construct()
 
 	/**
@@ -74,7 +82,7 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 		remove_filter( 'pre_get_posts', 'sensei_course_archive_filter', 10, 1 );
 
 		// don't show active or completed course if a user is not logged in
-		if ( ! in_array( $instance['component'], array_keys( $this->woo_widget_componentslist ) )
+		if ( ! in_array( $instance['component'], array_keys( $this->widget_componentslist ) )
 			 || ( ! is_user_logged_in() && ( 'activecourses' == $instance['component'] || 'completedcourses' == $instance['component'] ) ) ) {
 			// No Output
 			return;
@@ -96,14 +104,14 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 		/*
 		 Widget content. */
 		// Add actions for plugins/themes to hook onto.
-		do_action( $this->woo_widget_cssclass . '_top' );
+		do_action( $this->widget_cssclass . '_top' );
 
-		if ( in_array( $instance['component'], array_keys( $this->woo_widget_componentslist ) ) ) {
+		if ( in_array( $instance['component'], array_keys( $this->widget_componentslist ) ) ) {
 			$this->load_component( $instance );
 		}
 
 		// Add actions for plugins/themes to hook onto.
-		do_action( $this->woo_widget_cssclass . '_bottom' );
+		do_action( $this->widget_cssclass . '_bottom' );
 
 		/* After widget (defined by themes). */
 		echo wp_kses_post( $args['after_widget'] );
@@ -158,21 +166,21 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 		?>
 		<!-- Widget Title: Text Input -->
 		<p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Title (optional):', 'woothemes-sensei' ); ?></label>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Title (optional):', 'sensei-lms' ); ?></label>
 			<input type="text" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>"  value="<?php echo esc_attr( $instance['title'] ); ?>" class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" />
 		</p>
 		<!-- Widget Component: Select Input -->
 		<p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'component' ) ); ?>"><?php esc_html_e( 'Component:', 'woothemes-sensei' ); ?></label>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'component' ) ); ?>"><?php esc_html_e( 'Component:', 'sensei-lms' ); ?></label>
 			<select name="<?php echo esc_attr( $this->get_field_name( 'component' ) ); ?>" class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'component' ) ); ?>">
-			<?php foreach ( $this->woo_widget_componentslist as $k => $v ) { ?>
+			<?php foreach ( $this->widget_componentslist as $k => $v ) { ?>
 				<option value="<?php echo esc_attr( $k ); ?>"<?php selected( $instance['component'], $k ); ?>><?php echo esc_html( $v ); ?></option>
 			<?php } ?>
 			</select>
 		</p>
 		<!-- Widget Limit: Text Input -->
 		<p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'limit' ) ); ?>"><?php esc_html_e( 'Number of Courses (optional):', 'woothemes-sensei' ); ?></label>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'limit' ) ); ?>"><?php esc_html_e( 'Number of Courses (optional):', 'sensei-lms' ); ?></label>
 			<input type="text" name="<?php echo esc_attr( $this->get_field_name( 'limit' ) ); ?>"  value="<?php echo esc_attr( $instance['limit'] ); ?>" class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'limit' ) ); ?>" />
 		</p>
 
@@ -188,53 +196,40 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 	 * @return void
 	 */
 	protected function load_component( $instance ) {
+		$component = esc_attr( $instance['component'] );
 
-		$courses = array();
-
-		if ( 'usercourses' == esc_attr( $instance['component'] ) ) {
-			// usercourses == new courses
+		if ( 'usercourses' === $component ) {
 			$courses = $this->get_new_courses();
-
-		} elseif ( 'activecourses' == esc_attr( $instance['component'] ) ) {
-
+		} elseif ( 'activecourses' === $component ) {
 			$courses = $this->get_active_courses();
-
-		} elseif ( 'completedcourses' == esc_attr( $instance['component'] ) ) {
-
+		} elseif ( 'completedcourses' === $component ) {
 			$courses = $this->get_completed_courses();
-
-		} elseif ( 'featuredcourses' == esc_attr( $instance['component'] ) ) {
-
+		} elseif ( 'featuredcourses' === $component ) {
 			$courses = $this->get_featured_courses();
-
-		} elseif ( 'paidcourses' == esc_attr( $instance['component'] ) ) {
-
-			$args    = array( 'posts_per_page' => $this->instance['limit'] );
-			$courses = Sensei_WC::get_paid_courses( $args );
-
-		} elseif ( 'freecourses' == esc_attr( $instance['component'] ) ) {
-
-			$args    = array( 'posts_per_page' => $this->instance['limit'] );
-			$courses = Sensei_WC::get_free_courses( $args );
-
 		} else {
+			if ( ! has_filter( 'sensei_widget_course_component_get_courses_' . $component ) ) {
+				return;
+			}
 
-			return;
-
+			/**
+			 * Get the courses for a custom component.
+			 *
+			 * @since 2.0.0
+			 *
+			 * @param WP_Post[] $courses  List of course post objects.
+			 * @param array     $instance Widget instance arguments.
+			 */
+			$courses = apply_filters( 'sensei_widget_course_component_get_courses_' . $component, array(), $instance );
 		}
 
-		// course_query() is buggy, it doesn't honour the 1st arg if includes are provided, so instead slice the includes
+		// course_query() is buggy, it doesn't honour the 1st arg if includes are provided, so instead slice the includes.
 		if ( ! empty( $instance['limit'] ) && intval( $instance['limit'] ) >= 1 && intval( $instance['limit'] ) < count( $courses ) ) {
-
 			$courses = array_slice( $courses, 0, intval( $instance['limit'] ) );
-
 		}
 
-		if ( empty( $courses ) && $instance['limit'] != 0 ) {
-
+		if ( empty( $courses ) && 0 !== $instance['limit'] ) {
 			$this->display_no_courses_message();
 			return;
-
 		}
 
 		$this->display_courses( $courses );
@@ -250,22 +245,22 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 	 */
 	public function display_no_courses_message() {
 
-		if ( 'featuredcourses' == $this->instance['component'] ) {
-
-			esc_html_e( 'You have no featured courses.', 'woothemes-sensei' );
-
-		} elseif ( 'activecourses' == $this->instance['component'] ) {
-
-			esc_html_e( 'You have no active courses.', 'woothemes-sensei' );
-
-		} elseif ( 'completedcourses' == $this->instance['component'] ) {
-
-			esc_html_e( 'You have no completed courses.', 'woothemes-sensei' );
-
+		if ( 'featuredcourses' === $this->instance['component'] ) {
+			esc_html_e( 'You have no featured courses.', 'sensei-lms' );
+		} elseif ( 'activecourses' === $this->instance['component'] ) {
+			esc_html_e( 'You have no active courses.', 'sensei-lms' );
+		} elseif ( 'completedcourses' === $this->instance['component'] ) {
+			esc_html_e( 'You have no completed courses.', 'sensei-lms' );
 		} else {
-
-			esc_html_e( 'You have no courses.', 'woothemes-sensei' );
-
+			/**
+			 * Filter on the no courses message.
+			 *
+			 * @since 2.0.0
+			 *
+			 * @param string $message  No course message to display.
+			 * @param array  $instance Widget instance arguments.
+			 */
+			echo esc_html( apply_filters( 'sensei_widget_course_component_no_courses_message_' . $this->instance['component'], __( 'You have no courses.', 'sensei-lms' ), $this->instance ) );
 		}
 	}
 
@@ -287,7 +282,6 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 				$user_info           = get_userdata( absint( $course->post_author ) );
 				$author_link         = get_author_posts_url( absint( $course->post_author ) );
 				$author_display_name = $user_info->display_name;
-				$author_id           = $course->post_author;
 				?>
 
 				<li class="fix">
@@ -302,9 +296,13 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 					</a>
 					<br />
 
+					<?php
+					/** This action is documented in includes/class-sensei-frontend.php */
+					do_action( 'sensei_course_meta_inside_before', $post_id );
+					?>
 					<?php if ( isset( Sensei()->settings->settings['course_author'] ) && ( Sensei()->settings->settings['course_author'] ) ) { ?>
 						<span class="course-author">
-							<?php esc_html_e( 'by', 'woothemes-sensei' ); ?>
+							<?php esc_html_e( 'by', 'sensei-lms' ); ?>
 							<a href="<?php echo esc_url( $author_link ); ?>" title="<?php echo esc_attr( $author_display_name ); ?>">
 								<?php echo esc_html( $author_display_name ); ?>
 							</a>
@@ -313,12 +311,15 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 					<?php } // End If Statement ?>
 
 					<span class="course-lesson-count">
-						<?php echo esc_html( Sensei()->course->course_lesson_count( $post_id ) ) . '&nbsp;' . esc_html__( 'Lessons', 'woothemes-sensei' ); ?>
+						<?php echo esc_html( Sensei()->course->course_lesson_count( $post_id ) ) . '&nbsp;' . esc_html__( 'Lessons', 'sensei-lms' ); ?>
 					</span>
 
 					<br />
 
-					<?php sensei_simple_course_price( $post_id ); ?>
+					<?php
+					/** This action is documented in includes/class-sensei-frontend.php */
+					do_action( 'sensei_course_meta_inside_after', $post_id );
+					?>
 
 				</li>
 
@@ -328,7 +329,7 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 			if ( 'activecourses' == esc_attr( $this->instance['component'] ) || 'completedcourses' == esc_attr( $this->instance['component'] ) ) {
 				$my_account_page_id = intval( Sensei()->settings->settings['my_course_page'] );
 				echo '<li class="my-account fix"><a href="' . esc_url( get_permalink( $my_account_page_id ) ) . '">'
-					 . esc_html__( 'My Courses', 'woothemes-sensei' )
+					 . esc_html__( 'My Courses', 'sensei-lms' )
 					 . '<span class="meta-nav"></span></a></li>';
 			} // End If Statement
 
@@ -387,7 +388,7 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 		$user_courses_activity = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
 
 		if ( ! is_array( $user_courses_activity ) ) {
-
+			$user_courses_activity_arr   = array();
 			$user_courses_activity_arr[] = $user_courses_activity;
 			$user_courses_activity       = $user_courses_activity_arr;
 
@@ -420,7 +421,7 @@ class WooThemes_Sensei_Course_Component_Widget extends WP_Widget {
 		$user_courses_activity = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
 
 		if ( ! is_array( $user_courses_activity ) ) {
-
+			$user_courses_activity_arr   = array();
 			$user_courses_activity_arr[] = $user_courses_activity;
 			$user_courses_activity       = $user_courses_activity_arr;
 

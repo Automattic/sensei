@@ -145,7 +145,7 @@ class Sensei_Templates {
 
 		global $wp_query, $email_template;
 
-		$find = array( 'woothemes-sensei.php' );
+		$find = array( 'sensei.php' );
 		$file = '';
 
 		if ( isset( $email_template ) && $email_template ) {
@@ -290,6 +290,7 @@ class Sensei_Templates {
 		self::locate_and_load_template_overrides( Sensei()->template_url . 'content-no-permissions.php', true );
 
 		$file   = 'no-permissions.php';
+		$find   = [];
 		$find[] = $file;
 		$find[] = Sensei()->template_url . $file;
 
@@ -502,7 +503,6 @@ class Sensei_Templates {
 
 		// deprecate all these hooks
 		sensei_do_deprecated_action( 'sensei_course_start', '1.9.0', 'sensei_single_course_content_inside_before' );
-		sensei_do_deprecated_action( 'sensei_woocommerce_in_cart_message', '1.9.0', 'sensei_single_course_content_inside_before' );
 		sensei_do_deprecated_action( 'sensei_course_meta', '1.9.0', 'sensei_single_course_content_inside_before' );
 		sensei_do_deprecated_action( 'sensei_course_meta_video', '1.9.0', 'sensei_single_course_content_inside_before' );
 
@@ -698,8 +698,11 @@ class Sensei_Templates {
 
 
 	public static function the_register_button( $post_id = '' ) {
+		global $current_user;
 
-		global $current_user, $post;
+		// This function is no longer used internally. It should be removed in
+		// version 4.0.
+		_deprecated_function( __METHOD__, '2.2.0' );
 
 		if ( ! get_option( 'users_can_register' )
 			 || 'course' != get_post_type( $post_id )
@@ -707,18 +710,18 @@ class Sensei_Templates {
 			 || ! Sensei()->settings->get( 'access_permission' ) ) {
 
 			return;
-
 		}
 
 		// if user is not logged in skipped for single lesson
 		// show a link to the my_courses page or the WordPress register page if
 		// not my courses page was set in the settings
+		$my_courses_page_id = 0;
 		if ( ! empty( $my_courses_page_id ) && $my_courses_page_id ) {
 
 			$my_courses_url = get_permalink( $my_courses_page_id );
 
 			echo '<div class="status register"><a href="' . esc_url( $my_courses_url ) . '">' .
-				esc_html__( 'Register', 'woothemes-sensei' ) . '</a></div>';
+				esc_html__( 'Register', 'sensei-lms' ) . '</a></div>';
 
 		} else {
 

@@ -12,11 +12,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.0.0
  */
-class WooThemes_Sensei_Lesson_Component_Widget extends WP_Widget {
-	protected $woo_widget_cssclass;
-	protected $woo_widget_description;
-	protected $woo_widget_idbase;
-	protected $woo_widget_title;
+class Sensei_Lesson_Component_Widget extends WP_Widget {
+	protected $widget_cssclass;
+	protected $widget_description;
+	protected $widget_idbase;
+	protected $widget_title;
 
 	/**
 	 * Constructor function.
@@ -26,30 +26,30 @@ class WooThemes_Sensei_Lesson_Component_Widget extends WP_Widget {
 	 */
 	public function __construct() {
 		/* Widget variable settings. */
-		$this->woo_widget_cssclass    = 'widget_sensei_lesson_component';
-		$this->woo_widget_description = __( 'This widget will output a list of the latest Lessons.', 'woothemes-sensei' );
-		$this->woo_widget_idbase      = 'sensei_lesson_component';
-		$this->woo_widget_title       = __( 'Sensei - Lesson Component', 'woothemes-sensei' );
+		$this->widget_cssclass    = 'widget_sensei_lesson_component';
+		$this->widget_description = __( 'This widget will output a list of the latest Lessons.', 'sensei-lms' );
+		$this->widget_idbase      = 'sensei_lesson_component';
+		$this->widget_title       = __( 'Sensei LMS - Lesson Component', 'sensei-lms' );
 
-		$this->woo_widget_componentslist = array(
-			'newlessons' => __( 'New Lessons', 'woothemes-sensei' ),
+		$this->widget_componentslist = array(
+			'newlessons' => __( 'New Lessons', 'sensei-lms' ),
 		);
 
 		/* Widget settings. */
 		$widget_ops = array(
-			'classname'   => $this->woo_widget_cssclass,
-			'description' => $this->woo_widget_description,
+			'classname'   => $this->widget_cssclass,
+			'description' => $this->widget_description,
 		);
 
 		/* Widget control settings. */
 		$control_ops = array(
 			'width'   => 250,
 			'height'  => 350,
-			'id_base' => $this->woo_widget_idbase,
+			'id_base' => $this->widget_idbase,
 		);
 
 		/* Create the widget. */
-		parent::__construct( $this->woo_widget_idbase, $this->woo_widget_title, $widget_ops, $control_ops );
+		parent::__construct( $this->widget_idbase, $this->widget_title, $widget_ops, $control_ops );
 	} // End __construct()
 
 	/**
@@ -67,7 +67,7 @@ class WooThemes_Sensei_Lesson_Component_Widget extends WP_Widget {
 		$after_title   = $args['after_title'];
 		$after_widget  = $args['after_widget'];
 
-		if ( in_array( $instance['component'], array_keys( $this->woo_widget_componentslist ) ) && ( 'activecourses' == $instance['component'] || 'completedcourses' == $instance['component'] ) && ! is_user_logged_in() ) {
+		if ( in_array( $instance['component'], array_keys( $this->widget_componentslist ) ) && ( 'activecourses' == $instance['component'] || 'completedcourses' == $instance['component'] ) && ! is_user_logged_in() ) {
 			// No Output
 		} else {
 			/* Our variables from the widget settings. */
@@ -83,14 +83,14 @@ class WooThemes_Sensei_Lesson_Component_Widget extends WP_Widget {
 			/*
 			 Widget content. */
 			// Add actions for plugins/themes to hook onto.
-			do_action( $this->woo_widget_cssclass . '_top' );
+			do_action( $this->widget_cssclass . '_top' );
 
-			if ( in_array( $instance['component'], array_keys( $this->woo_widget_componentslist ) ) ) {
+			if ( in_array( $instance['component'], array_keys( $this->widget_componentslist ) ) ) {
 				$this->load_component( $instance );
 			}
 
 			// Add actions for plugins/themes to hook onto.
-			do_action( $this->woo_widget_cssclass . '_bottom' );
+			do_action( $this->widget_cssclass . '_bottom' );
 
 			/* After widget (defined by themes). */
 			echo wp_kses_post( $after_widget );
@@ -144,21 +144,21 @@ class WooThemes_Sensei_Lesson_Component_Widget extends WP_Widget {
 		?>
 		<!-- Widget Title: Text Input -->
 		<p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Title (optional):', 'woothemes-sensei' ); ?></label>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Title (optional):', 'sensei-lms' ); ?></label>
 			<input type="text" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>"  value="<?php echo esc_attr( $instance['title'] ); ?>" class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" />
 		</p>
 		<!-- Widget Component: Select Input -->
 		<p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'component' ) ); ?>"><?php esc_html_e( 'Component:', 'woothemes-sensei' ); ?></label>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'component' ) ); ?>"><?php esc_html_e( 'Component:', 'sensei-lms' ); ?></label>
 			<select name="<?php echo esc_attr( $this->get_field_name( 'component' ) ); ?>" class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'component' ) ); ?>">
-			<?php foreach ( $this->woo_widget_componentslist as $k => $v ) { ?>
+			<?php foreach ( $this->widget_componentslist as $k => $v ) { ?>
 				<option value="<?php echo esc_attr( $k ); ?>"<?php selected( $instance['component'], $k ); ?>><?php echo esc_html( $v ); ?></option>
 			<?php } ?>
 			</select>
 		</p>
 		<!-- Widget Limit: Text Input -->
 		<p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'limit' ) ); ?>"><?php esc_html_e( 'Number of Lessons (optional):', 'woothemes-sensei' ); ?></label>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'limit' ) ); ?>"><?php esc_html_e( 'Number of Lessons (optional):', 'sensei-lms' ); ?></label>
 			<input type="text" name="<?php echo esc_attr( $this->get_field_name( 'limit' ) ); ?>"  value="<?php echo esc_attr( $instance['limit'] ); ?>" class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'limit' ) ); ?>" />
 		</p>
 
@@ -173,9 +173,6 @@ class WooThemes_Sensei_Lesson_Component_Widget extends WP_Widget {
 	 * @return void
 	 */
 	protected function load_component( $instance ) {
-
-		global  $current_user;
-
 		/*
 		newlessons
 		*/
@@ -201,7 +198,6 @@ class WooThemes_Sensei_Lesson_Component_Widget extends WP_Widget {
 				$user_info           = get_userdata( absint( $post_item->post_author ) );
 				$author_link         = get_author_posts_url( absint( $post_item->post_author ) );
 				$author_display_name = $user_info->display_name;
-				$author_id           = $post_item->post_author;
 				$lesson_course_id    = get_post_meta( $post_id, '_lesson_course', true );
 				?>
 				<li class="fix">
@@ -210,7 +206,7 @@ class WooThemes_Sensei_Lesson_Component_Widget extends WP_Widget {
 					<br />
 					<?php if ( isset( Sensei()->settings->settings['lesson_author'] ) && ( Sensei()->settings->settings['lesson_author'] ) ) { ?>
 						<span class="course-author">
-							<?php esc_html_e( 'by', 'woothemes-sensei' ); ?>
+							<?php esc_html_e( 'by', 'sensei-lms' ); ?>
 							<a href="<?php echo esc_url( $author_link ); ?>" title="<?php echo esc_attr( $author_display_name ); ?>">
 								<?php echo esc_html( $author_display_name ); ?>
 							</a>
@@ -223,8 +219,8 @@ class WooThemes_Sensei_Lesson_Component_Widget extends WP_Widget {
 							echo ' ' . wp_kses_post(
 								sprintf(
 									// translators: Placeholder is a link to the Course permalink.
-									__( 'Part of: %s', 'woothemes-sensei' ),
-									'<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '" title="' . esc_attr( __( 'View course', 'woothemes-sensei' ) ) . '"><em>' . esc_html( get_the_title( $lesson_course_id ) ) . '</em></a>'
+									__( 'Part of: %s', 'sensei-lms' ),
+									'<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '" title="' . esc_attr( __( 'View course', 'sensei-lms' ) ) . '"><em>' . esc_html( get_the_title( $lesson_course_id ) ) . '</em></a>'
 								)
 							);
 							?>
@@ -233,7 +229,7 @@ class WooThemes_Sensei_Lesson_Component_Widget extends WP_Widget {
 					<br />
 				</li>
 			<?php } // End For Loop ?>
-			<?php echo '<li class="my-account fix"><a class="button" href="' . esc_url( get_post_type_archive_link( 'lesson' ) ) . '">' . esc_html__( 'More Lessons', 'woothemes-sensei' ) . '</a></li>'; ?>
+			<?php echo '<li class="my-account fix"><a class="button" href="' . esc_url( get_post_type_archive_link( 'lesson' ) ) . '">' . esc_html__( 'More Lessons', 'sensei-lms' ) . '</a></li>'; ?>
 		</ul>
 			<?php
 		} // End If Statement

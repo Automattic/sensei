@@ -12,11 +12,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.1.0
  */
-class WooThemes_Sensei_Course_Categories_Widget extends WP_Widget {
-	protected $woo_widget_cssclass;
-	protected $woo_widget_description;
-	protected $woo_widget_idbase;
-	protected $woo_widget_title;
+class Sensei_Course_Categories_Widget extends WP_Widget {
+	protected $widget_cssclass;
+	protected $widget_description;
+	protected $widget_idbase;
+	protected $widget_title;
 
 	/**
 	 * Constructor function.
@@ -26,26 +26,26 @@ class WooThemes_Sensei_Course_Categories_Widget extends WP_Widget {
 	 */
 	public function __construct() {
 		/* Widget variable settings. */
-		$this->woo_widget_cssclass    = 'widget_sensei_course_categories';
-		$this->woo_widget_description = __( 'This widget will output a list of Course Categories.', 'woothemes-sensei' );
-		$this->woo_widget_idbase      = 'sensei_course_categories';
-		$this->woo_widget_title       = __( 'Sensei - Course Categories', 'woothemes-sensei' );
+		$this->widget_cssclass    = 'widget_sensei_course_categories';
+		$this->widget_description = __( 'This widget will output a list of Course Categories.', 'sensei-lms' );
+		$this->widget_idbase      = 'sensei_course_categories';
+		$this->widget_title       = __( 'Sensei LMS - Course Categories', 'sensei-lms' );
 
 		/* Widget settings. */
 		$widget_ops = array(
-			'classname'   => $this->woo_widget_cssclass,
-			'description' => $this->woo_widget_description,
+			'classname'   => $this->widget_cssclass,
+			'description' => $this->widget_description,
 		);
 
 		/* Widget control settings. */
 		$control_ops = array(
 			'width'   => 250,
 			'height'  => 350,
-			'id_base' => $this->woo_widget_idbase,
+			'id_base' => $this->widget_idbase,
 		);
 
 		/* Create the widget. */
-		parent::__construct( $this->woo_widget_idbase, $this->woo_widget_title, $widget_ops, $control_ops );
+		parent::__construct( $this->widget_idbase, $this->widget_title, $widget_ops, $control_ops );
 	} // End __construct()
 
 	/**
@@ -76,12 +76,12 @@ class WooThemes_Sensei_Course_Categories_Widget extends WP_Widget {
 		/*
 		 Widget content. */
 		// Add actions for plugins/themes to hook onto.
-		do_action( $this->woo_widget_cssclass . '_top' );
+		do_action( $this->widget_cssclass . '_top' );
 
 		$this->load_component( $instance );
 
 		// Add actions for plugins/themes to hook onto.
-		do_action( $this->woo_widget_cssclass . '_bottom' );
+		do_action( $this->widget_cssclass . '_bottom' );
 
 		/* After widget (defined by themes). */
 		echo wp_kses_post( $after_widget );
@@ -136,23 +136,23 @@ class WooThemes_Sensei_Course_Categories_Widget extends WP_Widget {
 		?>
 		<!-- Widget Title: Text Input -->
 		<p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Title (optional):', 'woothemes-sensei' ); ?></label>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Title (optional):', 'sensei-lms' ); ?></label>
 			<input type="text" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>"  value="<?php echo esc_attr( $instance['title'] ); ?>" class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" />
 		</p>
 		<!-- Widget Limit: Text Input -->
 		<p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'limit' ) ); ?>"><?php esc_html_e( 'Number of Categories (optional):', 'woothemes-sensei' ); ?></label>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'limit' ) ); ?>"><?php esc_html_e( 'Number of Categories (optional):', 'sensei-lms' ); ?></label>
 			<input type="text" name="<?php echo esc_attr( $this->get_field_name( 'limit' ) ); ?>"  value="<?php echo esc_attr( $instance['limit'] ); ?>" class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'limit' ) ); ?>" />
 		</p>
 		<!-- Widget Show Count: Checkbox Input -->
 		<p>
 			<input type="checkbox" class="checkbox" id="<?php echo esc_attr( $this->get_field_id( 'count' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'count' ) ); ?>"<?php checked( $instance['count'], 'on' ); ?> />
-			<label for="<?php echo esc_attr( $this->get_field_id( 'count' ) ); ?>"><?php esc_html_e( 'Show post counts', 'woothemes-sensei' ); ?></label><br />
+			<label for="<?php echo esc_attr( $this->get_field_id( 'count' ) ); ?>"><?php esc_html_e( 'Show post counts', 'sensei-lms' ); ?></label><br />
 		</p>
 		<!-- Widget Show Hierarchy: Checkbox Input -->
 		<p>
 			<input type="checkbox" class="checkbox" id="<?php echo esc_attr( $this->get_field_id( 'hierarchical' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'hierarchical' ) ); ?>"<?php checked( $instance['hierarchical'], 'on' ); ?> />
-			<label for="<?php echo esc_attr( $this->get_field_id( 'hierarchical' ) ); ?>"><?php esc_html_e( 'Show hierarchy', 'woothemes-sensei' ); ?></label>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'hierarchical' ) ); ?>"><?php esc_html_e( 'Show hierarchy', 'sensei-lms' ); ?></label>
 		</p>
 		<?php
 	} // End form()

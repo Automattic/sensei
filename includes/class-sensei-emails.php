@@ -59,14 +59,14 @@ class Sensei_Emails {
 	 */
 	function init() {
 
-		$this->emails['learner-graded-quiz']      = include dirname( __FILE__ ) . '/emails/class-woothemes-sensei-email-learner-graded-quiz.php';
-		$this->emails['learner-completed-course'] = include dirname( __FILE__ ) . '/emails/class-woothemes-sensei-email-learner-completed-course.php';
-		$this->emails['teacher-completed-course'] = include dirname( __FILE__ ) . '/emails/class-woothemes-sensei-email-teacher-completed-course.php';
-		$this->emails['teacher-started-course']   = include dirname( __FILE__ ) . '/emails/class-woothemes-sensei-email-teacher-started-course.php';
-		$this->emails['teacher-completed-lesson'] = include dirname( __FILE__ ) . '/emails/class-woothemes-sensei-email-teacher-completed-lesson.php';
-		$this->emails['teacher-quiz-submitted']   = include dirname( __FILE__ ) . '/emails/class-woothemes-sensei-email-teacher-quiz-submitted.php';
-		$this->emails['teacher-new-message']      = include dirname( __FILE__ ) . '/emails/class-woothemes-sensei-email-teacher-new-message.php';
-		$this->emails['new-message-reply']        = include dirname( __FILE__ ) . '/emails/class-woothemes-sensei-email-new-message-reply.php';
+		$this->emails['learner-graded-quiz']      = include dirname( __FILE__ ) . '/emails/class-sensei-email-learner-graded-quiz.php';
+		$this->emails['learner-completed-course'] = include dirname( __FILE__ ) . '/emails/class-sensei-email-learner-completed-course.php';
+		$this->emails['teacher-completed-course'] = include dirname( __FILE__ ) . '/emails/class-sensei-email-teacher-completed-course.php';
+		$this->emails['teacher-started-course']   = include dirname( __FILE__ ) . '/emails/class-sensei-email-teacher-started-course.php';
+		$this->emails['teacher-completed-lesson'] = include dirname( __FILE__ ) . '/emails/class-sensei-email-teacher-completed-lesson.php';
+		$this->emails['teacher-quiz-submitted']   = include dirname( __FILE__ ) . '/emails/class-sensei-email-teacher-quiz-submitted.php';
+		$this->emails['teacher-new-message']      = include dirname( __FILE__ ) . '/emails/class-sensei-email-teacher-new-message.php';
+		$this->emails['new-message-reply']        = include dirname( __FILE__ ) . '/emails/class-sensei-email-new-message-reply.php';
 		$this->emails                             = apply_filters( 'sensei_email_classes', $this->emails );
 	}
 
@@ -159,8 +159,6 @@ class Sensei_Emails {
 	 * @return void
 	 */
 	function send( $to, $subject, $message, $headers = "Content-Type: text/html\r\n", $attachments = '', $content_type = 'text/html' ) {
-		global $email_template;
-
 		// Set content type
 		$this->_content_type = $content_type;
 

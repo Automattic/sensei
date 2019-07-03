@@ -12,7 +12,7 @@ class Sensei_WP_Cli {
 			'sensei course new',
 			array( $this, 'create_course' ),
 			array(
-				'shortdesc' => 'Creates a new Sensei course with an empty body',
+				'shortdesc' => 'Creates a new Sensei LMS course with an empty body',
 				'synopsis'  => array(
 					array(
 						'type'     => 'positional',

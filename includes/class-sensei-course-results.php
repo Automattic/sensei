@@ -26,7 +26,7 @@ class Sensei_Course_Results {
 	public function __construct() {
 
 		// Setup learner profile URL base
-		$this->courses_url_base = apply_filters( 'sensei_course_slug', _x( 'course', 'post type single url slug', 'woothemes-sensei' ) );
+		$this->courses_url_base = apply_filters( 'sensei_course_slug', _x( 'course', 'post type single url slug', 'sensei-lms' ) );
 
 		// Setup permalink structure for course results
 		add_action( 'init', array( $this, 'setup_permastruct' ) );
@@ -67,7 +67,7 @@ class Sensei_Course_Results {
 		global $wp_query;
 		if ( isset( $wp_query->query_vars['course_results'] ) ) {
 			$course         = get_page_by_path( $wp_query->query_vars['course_results'], OBJECT, 'course' );
-			$modified_title = __( 'Course Results: ', 'woothemes-sensei' ) . $course->post_title . ' ' . $sep . ' ';
+			$modified_title = __( 'Course Results: ', 'sensei-lms' ) . $course->post_title . ' ' . $sep . ' ';
 			if ( is_array( $title ) ) {
 				$title['title'] = $modified_title;
 			} else {
@@ -109,12 +109,13 @@ class Sensei_Course_Results {
 	 * @return void
 	 */
 	public function content() {
-		global $wp_query,  $current_user;
+		global $wp_query;
+
+		_deprecated_function( __METHOD__, '2.2.0' );
 
 		if ( isset( $wp_query->query_vars['course_results'] ) ) {
 			Sensei_Templates::get_template( 'course-results/course-info.php' );
 		}
-
 	}
 
 	/**
@@ -142,10 +143,7 @@ class Sensei_Course_Results {
 	 * @return void
 	 */
 	public function course_lessons() {
-
-		global $course;
 		_deprecated_function( 'Sensei_modules course_lessons ', '1.9.0' );
-
 	}
 
 	/**
@@ -213,10 +211,7 @@ class Sensei_Course_Results {
 	 * @since 1.8.0
 	 */
 	public static function fire_course_image_hook() {
-
-		global $course;
 		sensei_do_deprecated_action( 'sensei_course_image', '1.9.0', 'sensei_single_course_content_inside_before', array( get_the_ID() ) );
-
 	}
 
 } // End Class

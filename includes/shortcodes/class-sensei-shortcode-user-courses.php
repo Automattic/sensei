@@ -137,14 +137,18 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	}
 
 	private function should_filter_course_by_status( $course_status, $user_id ) {
-		$should_filter = Sensei_WC_Subscriptions::has_user_bought_subscription_but_cancelled(
-			$course_status->comment_post_ID,
-			$user_id
-		);
-
+		/**
+		 * Filters courses processed by the course query in the
+		 * [sensei_user_courses] shortcode.
+		 *
+		 * @param bool       $should_filter Whether the course should be filtered out.
+		 * @param WP_Comment $course_status The current course status record.
+		 * @param int        $user_id       The user ID.
+		 * @return bool
+		 */
 		return (bool) apply_filters(
 			'sensei_setup_course_query_should_filter_course_by_status',
-			$should_filter,
+			false,
 			$course_status,
 			$user_id
 		);
@@ -238,7 +242,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		<li class="user-completed">
 			<div class="sensei-message info">
 
-				<?php esc_html_e( 'You have not completed any courses yet.', 'woothemes-sensei' ); ?>
+				<?php esc_html_e( 'You have not completed any courses yet.', 'sensei-lms' ); ?>
 
 			</div>
 		</li>
@@ -257,11 +261,11 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		<li class="user-active">
 			<div class="sensei-message info">
 
-				<?php esc_html_e( 'You have no active courses.', 'woothemes-sensei' ); ?>
+				<?php esc_html_e( 'You have no active courses.', 'sensei-lms' ); ?>
 
 				<a href="<?php echo esc_attr( Sensei_Course::get_courses_page_url() ); ?>">
 
-					<?php esc_html_e( 'Start a Course!', 'woothemes-sensei' ); ?>
+					<?php esc_html_e( 'Start a Course!', 'sensei-lms' ); ?>
 
 				</a>
 
@@ -276,7 +280,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	 * @return string $content
 	 */
 	public function render() {
-
+		// phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
 		global $wp_query;
 
 		if ( false === is_user_logged_in() ) {
@@ -286,17 +290,14 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		// setup the course query that will be used when rendering
 		$this->setup_course_query();
 
-		// keep a reference to old query
-		$current_global_query = $wp_query;
-
-		// assign the query setup in $this-> setup_course_query
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.OverrideProhibited -- Mocking loop for shortcode. Reset below.
 		$wp_query = $this->query;
 
 		$this->attach_shortcode_hooks();
 
 		// mostly hooks added for legacy and backwards compatiblity sake
 		do_action( 'sensei_my_courses_before' );
-		do_action( 'sensei_before_user_course_content', get_current_user() );
+		do_action( 'sensei_before_user_course_content', wp_get_current_user() );
 
 		ob_start();
 		echo '<section id="sensei-user-courses">';
@@ -309,17 +310,15 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		echo '</section>';
 
 		// mostly hooks added for legacy and backwards compatiblity sake
-		do_action( 'sensei_after_user_course_content', get_current_user() );
+		do_action( 'sensei_after_user_course_content', wp_get_current_user() );
 		do_action( 'sensei_my_courses_after' );
 
 		$shortcode_output = ob_get_clean();
 
+		// phpcs:ignore WordPress.WP.DiscouragedFunctions.wp_reset_query_wp_reset_query -- wp_reset_postdata() is not a good alternative.
+		wp_reset_query();
+
 		$this->detach_shortcode_hooks();
-
-		// restore old query
-		$wp_query = $current_global_query;
-
-		wp_reset_postdata();
 
 		return $shortcode_output;
 
@@ -434,9 +433,9 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		}
 
 		$active_filter_options = array(
-			'all'      => __( 'All Courses', 'woothemes-sensei' ),
-			'active'   => __( 'Active Courses', 'woothemes-sensei' ),
-			'complete' => __( 'Completed Courses', 'woothemes-sensei' ),
+			'all'      => __( 'All Courses', 'sensei-lms' ),
+			'active'   => __( 'Active Courses', 'sensei-lms' ),
+			'complete' => __( 'Completed Courses', 'sensei-lms' ),
 		);
 
 		$base_url = get_page_link( $this->page_id );

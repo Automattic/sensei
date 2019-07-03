@@ -63,7 +63,7 @@ class Sensei_Learner_Management {
 	 * @param string $file Main plugin file name.
 	 */
 	public function __construct( $file ) {
-		$this->name      = __( 'Learner Management', 'woothemes-sensei' );
+		$this->name      = __( 'Learner Management', 'sensei-lms' );
 		$this->file      = $file;
 		$this->page_slug = 'sensei_learners';
 
@@ -101,8 +101,6 @@ class Sensei_Learner_Management {
 	 * @access public
 	 */
 	public function learners_admin_menu() {
-		global $menu;
-
 		if ( current_user_can( 'manage_sensei_grades' ) ) {
 			$learners_page = add_submenu_page( 'sensei', $this->name, $this->name, 'manage_sensei_grades', $this->page_slug, array( $this, 'learners_page' ) );
 			add_action( "load-$learners_page", array( $this, 'load_screen_options_when_on_bulk_actions' ) );
@@ -132,7 +130,7 @@ class Sensei_Learner_Management {
 		if ( isset( $this->bulk_actions_controller ) && $this->bulk_actions_controller->is_current_page() ) {
 
 			$args = array(
-				'label'   => __( 'Learners per page', 'woothemes-sensei' ),
+				'label'   => __( 'Learners per page', 'sensei-lms' ),
 				'default' => 20,
 				'option'  => self::SENSEI_LEARNER_MANAGEMENT_PER_PAGE,
 			);
@@ -164,21 +162,21 @@ class Sensei_Learner_Management {
 			'sensei-learners-general',
 			'slgL10n',
 			array(
-				'inprogress' => __( 'In Progress', 'woothemes-sensei' ),
+				'inprogress' => __( 'In Progress', 'sensei-lms' ),
 			)
 		);
 
 		$data = array(
-			'remove_generic_confirm'     => __( 'Are you sure you want to remove this user?', 'woothemes-sensei' ),
-			'remove_from_lesson_confirm' => __( 'Are you sure you want to remove the user from this lesson?', 'woothemes-sensei' ),
-			'remove_from_course_confirm' => __( 'Are you sure you want to remove the user from this course?', 'woothemes-sensei' ),
-			'reset_lesson_confirm'       => __( 'Are you sure you want to reset the progress of this user for this lesson?', 'woothemes-sensei' ),
-			'reset_course_confirm'       => __( 'Are you sure you want to reset the progress of this user for this course?', 'woothemes-sensei' ),
+			'remove_generic_confirm'     => __( 'Are you sure you want to remove this user?', 'sensei-lms' ),
+			'remove_from_lesson_confirm' => __( 'Are you sure you want to remove the user from this lesson?', 'sensei-lms' ),
+			'remove_from_course_confirm' => __( 'Are you sure you want to remove the user from this course?', 'sensei-lms' ),
+			'reset_lesson_confirm'       => __( 'Are you sure you want to reset the progress of this user for this lesson?', 'sensei-lms' ),
+			'reset_course_confirm'       => __( 'Are you sure you want to reset the progress of this user for this course?', 'sensei-lms' ),
 			'modify_user_post_nonce'     => wp_create_nonce( 'modify_user_post_nonce' ),
 			'search_users_nonce'         => wp_create_nonce( 'search-users' ),
 			'edit_date_nonce'            => wp_create_nonce( 'edit_date_nonce' ),
 			'course_category_nonce'      => wp_create_nonce( 'course_category_nonce' ),
-			'selectplaceholder'          => __( 'Select Learner', 'woothemes-sensei' ),
+			'selectplaceholder'          => __( 'Select Learner', 'sensei-lms' ),
 		);
 
 		wp_localize_script( 'sensei-learners-general', 'woo_learners_general_data', $data );
@@ -193,8 +191,7 @@ class Sensei_Learner_Management {
 	 */
 	public function enqueue_styles() {
 
-		wp_enqueue_style( 'woothemes-sensei-admin' );
-		wp_enqueue_style( 'woothemes-sensei-jquery-ui', Sensei()->plugin_url . 'assets/css/jquery-ui.css', '', Sensei()->version );
+		wp_enqueue_style( 'sensei-jquery-ui', Sensei()->plugin_url . 'assets/css/jquery-ui.css', '', Sensei()->version );
 
 	} // End enqueue_styles()
 
@@ -227,7 +224,7 @@ class Sensei_Learner_Management {
 	 */
 	public function load_data_object( $name = '', $data = 0, $optional_data = null ) {
 		// Load Analysis data.
-		$object_name = 'WooThemes_Sensei_Learners_' . $name;
+		$object_name = 'Sensei_Learners_' . $name;
 		if ( is_null( $optional_data ) ) {
 			$sensei_learners_object = new $object_name( $data );
 		} else {
@@ -543,7 +540,7 @@ class Sensei_Learner_Management {
 			die();
 		}
 
-		$default = isset( $_GET['default'] ) ? $_GET['default'] : __( 'None', 'woothemes-sensei' );
+		$default = isset( $_GET['default'] ) ? $_GET['default'] : __( 'None', 'sensei-lms' );
 
 		$found_users = array( '' => $default );
 
@@ -665,15 +662,15 @@ class Sensei_Learner_Management {
 	public function add_learner_notices() {
 		if ( isset( $_GET['page'] ) && $this->page_slug === $_GET['page'] && isset( $_GET['message'] ) && $_GET['message'] ) {
 			if ( 'error' !== $_GET['message'] ) {
-				$message = __( 'Learner added successfully!', 'woothemes-sensei' );
+				$message = __( 'Learner added successfully!', 'sensei-lms' );
 				if ( 'success_bulk' === $_GET['message'] ) {
-					$message = __( 'Learners added successfully!', 'woothemes-sensei' );
+					$message = __( 'Learners added successfully!', 'sensei-lms' );
 				}
 				$msg = array( 'updated', $message );
 			} else {
 				$msg = array(
 					'error',
-					__( 'Error adding learner.', 'woothemes-sensei' ),
+					__( 'Error adding learner.', 'sensei-lms' ),
 				);
 			}
 			?>

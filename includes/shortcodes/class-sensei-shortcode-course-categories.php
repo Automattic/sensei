@@ -93,7 +93,7 @@ class Sensei_Shortcode_Course_Categories implements Sensei_Shortcode_Interface {
 
 		if ( empty( $this->sensei_course_taxonomy_terms ) ) {
 
-			return __( 'No course categories found.', 'woothemes-sensei' );
+			return __( 'No course categories found.', 'sensei-lms' );
 
 		}
 

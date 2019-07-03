@@ -54,7 +54,7 @@ class Sensei_Shortcode_Course_Page implements Sensei_Shortcode_Interface {
 		if ( empty( $this->id ) ) {
 			return sprintf(
 				// translators: Placeholder is the example shortcode text.
-				__( 'Please supply a course ID for the shortcode: %s', 'woothemes-sensei' ),
+				__( 'Please supply a course ID for the shortcode: %s', 'sensei-lms' ),
 				'[sensei_course_page id=""]'
 			);
 		}
@@ -65,7 +65,7 @@ class Sensei_Shortcode_Course_Page implements Sensei_Shortcode_Interface {
 			return $this->renderer->render();
 		} catch ( Sensei_Renderer_Missing_Fields_Exception $e ) {
 			// translators: Placeholders are the shortcode name and the error message.
-			return sprintf( __( 'Error rendering %1$s shortcode - %2$s', 'woothemes-sensei' ), '[sensei_course_page]', $e->getMessage() );
+			return sprintf( __( 'Error rendering %1$s shortcode - %2$s', 'sensei-lms' ), '[sensei_course_page]', $e->getMessage() );
 		}
 	}
 

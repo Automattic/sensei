@@ -57,8 +57,8 @@ class Sensei_Email_Teacher_New_Course_Assignment {
 		$this->recipient = stripslashes( $this->teacher->user_email );
 		do_action( 'sensei_before_mail', $this->recipient );
 
-		$this->heading = apply_filters( 'sensei_email_heading', __( 'Course assigned to you', 'woothemes-sensei' ), $this->template );
-		$this->subject = apply_filters( 'sensei_email_subject', __( 'New course assigned to you', 'woothemes-sensei' ), $this->template );
+		$this->heading = apply_filters( 'sensei_email_heading', __( 'Course assigned to you', 'sensei-lms' ), $this->template );
+		$this->subject = apply_filters( 'sensei_email_subject', __( 'New course assigned to you', 'sensei-lms' ), $this->template );
 
 		// course edit link
 		$course_edit_link = admin_url( 'post.php?post=' . $course_id . '&action=edit' );

@@ -52,7 +52,7 @@ class Sensei_Bootstrap {
 	}
 
 	private function init_must_have_includes() {
-		require_once dirname( __FILE__ ) . '/lib/woo-functions.php';
 		require_once dirname( __FILE__ ) . '/sensei-functions.php';
+		require_once dirname( __FILE__ ) . '/3rd-party/3rd-party.php';
 	}
 }

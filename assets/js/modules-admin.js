@@ -136,10 +136,11 @@ jQuery( document ).ready( function () {
 		}
 
 		var newTermData = {
-			newTerm : newTerm,
+			newTerm: newTerm,
 			security: security,
 			action: 'sensei_add_new_module_term',
-			course_id: courseId
+			course_id: courseId,
+			from_page: 'course',
 		};
 
 		jQuery.post( ajaxurl, newTermData, function(response) {

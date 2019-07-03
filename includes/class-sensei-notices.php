@@ -49,24 +49,18 @@ class Sensei_Notices {
 		// initialize the notices variable.
 		$this->notices      = array();
 		$this->has_printed  = false;
-		$this->allowed_html = array(
-			'embed'  => array(),
-			'iframe' => array(
-				'width'           => array(),
-				'height'          => array(),
-				'src'             => array(),
-				'frameborder'     => array(),
-				'allowfullscreen' => array(),
-			),
-			'video'  => array(
-				'width'  => array(),
-				'height' => array(),
-				'src'    => array(),
-			),
-			'a'      => array(
-				'href'  => array(),
-				'title' => array(),
-			),
+		$this->allowed_html = array_merge(
+			wp_kses_allowed_html( 'post' ),
+			array(
+				'embed'  => array(),
+				'iframe' => array(
+					'width'           => array(),
+					'height'          => array(),
+					'src'             => array(),
+					'frameborder'     => array(),
+					'allowfullscreen' => array(),
+				),
+			)
 		);
 	}
 

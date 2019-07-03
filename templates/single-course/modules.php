@@ -1,7 +1,4 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
 /**
  * List the Course Modules and Lesson in these modules
  *
@@ -13,8 +10,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     1.10.0
+ * @version     2.1.0
  */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 ?>
 
 <?php
@@ -79,21 +80,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 							<?php sensei_the_module_title(); ?>
 
 						<?php } ?>
+
 					</h2>
 
+					<?php sensei_the_module_status(); ?>
 				</header>
 
 				<section class="entry">
 
 					<p class="module-description"><?php sensei_the_module_description(); ?></p>
 
-					<?php sensei_the_module_status(); ?>
-
 					<section class="module-lessons">
 
 						<header>
 
-							<h3><?php esc_html_e( 'Lessons', 'woothemes-sensei' ); ?></h3>
+							<h3><?php esc_html_e( 'Lessons', 'sensei-lms' ); ?></h3>
 
 						</header>
 

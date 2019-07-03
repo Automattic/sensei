@@ -39,6 +39,13 @@ class Sensei_PostTypes {
 	public $quiz;
 
 	/**
+	 * Array of post ID's for which to fire an "initial publish" action.
+	 *
+	 * @var array
+	 */
+	private $initial_publish_post_ids = [];
+
+	/**
 	 * Constructor
 	 *
 	 * @since  1.0.0
@@ -84,8 +91,13 @@ class Sensei_PostTypes {
 			} // End If Statement
 		} // End If Statement
 
+		// REST API functionality.
+		add_action( 'rest_api_init', [ $this, 'setup_rest_api' ] );
+
 		// Add 'Edit Quiz' link to admin bar
 		add_action( 'admin_bar_menu', array( $this, 'quiz_admin_bar_menu' ), 81 );
+
+		$this->setup_initial_publish_action();
 
 	} // End __construct()
 
@@ -102,13 +114,25 @@ class Sensei_PostTypes {
 		foreach ( $posttypes as $posttype_token => $posttype_name ) {
 
 			// Load the files
-			$class_name                   = 'WooThemes_Sensei_' . $posttype_name;
+			$class_name                   = 'Sensei_' . $posttype_name;
 			$this->$posttype_token        = new $class_name();
 			$this->$posttype_token->token = $posttype_token;
 
 		} // End For Loop
 
 	} // End load_posttype_objects
+
+	/**
+	 * Set up REST API for post types.
+	 *
+	 * @access private
+	 * @since 2.2.0
+	 */
+	public function setup_rest_api() {
+		// Ensure registered meta will show up in the REST API for courses and lessons.
+		add_post_type_support( 'course', 'custom-fields' );
+		add_post_type_support( 'lesson', 'custom-fields' );
+	}
 
 	/**
 	 * Setup the "course" post type, it's admin menu item and the appropriate labels and permissions.
@@ -128,7 +152,7 @@ class Sensei_PostTypes {
 			'show_in_admin_bar'     => true,
 			'query_var'             => true,
 			'rewrite'               => array(
-				'slug'       => esc_attr( apply_filters( 'sensei_course_slug', _x( 'course', 'post type single url base', 'woothemes-sensei' ) ) ),
+				'slug'       => esc_attr( apply_filters( 'sensei_course_slug', _x( 'course', 'post type single url base', 'sensei-lms' ) ) ),
 				'with_front' => true,
 				'feeds'      => true,
 				'pages'      => true,
@@ -231,7 +255,7 @@ class Sensei_PostTypes {
 			'show_in_menu'          => true,
 			'query_var'             => true,
 			'rewrite'               => array(
-				'slug'       => esc_attr( apply_filters( 'sensei_lesson_slug', _x( 'lesson', 'post type single slug', 'woothemes-sensei' ) ) ),
+				'slug'       => esc_attr( apply_filters( 'sensei_lesson_slug', _x( 'lesson', 'post type single slug', 'sensei-lms' ) ) ),
 				'with_front' => true,
 				'feeds'      => true,
 				'pages'      => true,
@@ -280,7 +304,7 @@ class Sensei_PostTypes {
 			'query_var'           => true,
 			'exclude_from_search' => true,
 			'rewrite'             => array(
-				'slug'       => esc_attr( apply_filters( 'sensei_quiz_slug', _x( 'quiz', 'post type single slug', 'woothemes-sensei' ) ) ),
+				'slug'       => esc_attr( apply_filters( 'sensei_quiz_slug', _x( 'quiz', 'post type single slug', 'sensei-lms' ) ) ),
 				'with_front' => true,
 				'feeds'      => true,
 				'pages'      => true,
@@ -325,7 +349,7 @@ class Sensei_PostTypes {
 			'query_var'           => true,
 			'exclude_from_search' => true,
 			'rewrite'             => array(
-				'slug'       => esc_attr( apply_filters( 'sensei_question_slug', _x( 'question', 'post type single slug', 'woothemes-sensei' ) ) ),
+				'slug'       => esc_attr( apply_filters( 'sensei_question_slug', _x( 'question', 'post type single slug', 'sensei-lms' ) ) ),
 				'with_front' => true,
 				'feeds'      => true,
 				'pages'      => true,
@@ -366,7 +390,7 @@ class Sensei_PostTypes {
 			'query_var'           => false,
 			'exclude_from_search' => true,
 			'rewrite'             => array(
-				'slug'       => esc_attr( apply_filters( 'sensei_multiple_question_slug', _x( 'multiple_question', 'post type single slug', 'woothemes-sensei' ) ) ),
+				'slug'       => esc_attr( apply_filters( 'sensei_multiple_question_slug', _x( 'multiple_question', 'post type single slug', 'sensei-lms' ) ) ),
 				'with_front' => false,
 				'feeds'      => false,
 				'pages'      => false,
@@ -402,7 +426,7 @@ class Sensei_PostTypes {
 				'query_var'           => true,
 				'exclude_from_search' => true,
 				'rewrite'             => array(
-					'slug'       => esc_attr( apply_filters( 'sensei_messages_slug', _x( 'messages', 'post type single slug', 'woothemes-sensei' ) ) ),
+					'slug'       => esc_attr( apply_filters( 'sensei_messages_slug', _x( 'messages', 'post type single slug', 'sensei-lms' ) ) ),
 					'with_front' => false,
 					'feeds'      => false,
 					'pages'      => true,
@@ -435,17 +459,17 @@ class Sensei_PostTypes {
 	public function setup_course_category_taxonomy() {
 		// "Course Categories" Custom Taxonomy
 		$labels = array(
-			'name'              => _x( 'Course Categories', 'taxonomy general name', 'woothemes-sensei' ),
-			'singular_name'     => _x( 'Course Category', 'taxonomy singular name', 'woothemes-sensei' ),
-			'search_items'      => __( 'Search Course Categories', 'woothemes-sensei' ),
-			'all_items'         => __( 'All Course Categories', 'woothemes-sensei' ),
-			'parent_item'       => __( 'Parent Course Category', 'woothemes-sensei' ),
-			'parent_item_colon' => __( 'Parent Course Category:', 'woothemes-sensei' ),
-			'edit_item'         => __( 'Edit Course Category', 'woothemes-sensei' ),
-			'update_item'       => __( 'Update Course Category', 'woothemes-sensei' ),
-			'add_new_item'      => __( 'Add New Course Category', 'woothemes-sensei' ),
-			'new_item_name'     => __( 'New Course Category Name', 'woothemes-sensei' ),
-			'menu_name'         => __( 'Course Categories', 'woothemes-sensei' ),
+			'name'              => _x( 'Course Categories', 'taxonomy general name', 'sensei-lms' ),
+			'singular_name'     => _x( 'Course Category', 'taxonomy singular name', 'sensei-lms' ),
+			'search_items'      => __( 'Search Course Categories', 'sensei-lms' ),
+			'all_items'         => __( 'All Course Categories', 'sensei-lms' ),
+			'parent_item'       => __( 'Parent Course Category', 'sensei-lms' ),
+			'parent_item_colon' => __( 'Parent Course Category:', 'sensei-lms' ),
+			'edit_item'         => __( 'Edit Course Category', 'sensei-lms' ),
+			'update_item'       => __( 'Update Course Category', 'sensei-lms' ),
+			'add_new_item'      => __( 'Add New Course Category', 'sensei-lms' ),
+			'new_item_name'     => __( 'New Course Category Name', 'sensei-lms' ),
+			'menu_name'         => __( 'Course Categories', 'sensei-lms' ),
 			'popular_items'     => null, // Hides the "Popular" section above the "add" form in the admin.
 		);
 
@@ -462,7 +486,7 @@ class Sensei_PostTypes {
 				'delete_terms' => 'manage_categories',
 				'assign_terms' => 'edit_courses',
 			),
-			'rewrite'           => array( 'slug' => esc_attr( apply_filters( 'sensei_course_category_slug', _x( 'course-category', 'taxonomy archive slug', 'woothemes-sensei' ) ) ) ),
+			'rewrite'           => array( 'slug' => esc_attr( apply_filters( 'sensei_course_category_slug', _x( 'course-category', 'taxonomy archive slug', 'sensei-lms' ) ) ) ),
 		);
 
 		register_taxonomy( 'course-category', array( 'course' ), $args );
@@ -479,17 +503,17 @@ class Sensei_PostTypes {
 
 		// "Quiz Types" Custom Taxonomy
 		$labels = array(
-			'name'              => _x( 'Quiz Types', 'taxonomy general name', 'woothemes-sensei' ),
-			'singular_name'     => _x( 'Quiz Type', 'taxonomy singular name', 'woothemes-sensei' ),
-			'search_items'      => __( 'Search Quiz Types', 'woothemes-sensei' ),
-			'all_items'         => __( 'All Quiz Types', 'woothemes-sensei' ),
-			'parent_item'       => __( 'Parent Quiz Type', 'woothemes-sensei' ),
-			'parent_item_colon' => __( 'Parent Quiz Type:', 'woothemes-sensei' ),
-			'edit_item'         => __( 'Edit Quiz Type', 'woothemes-sensei' ),
-			'update_item'       => __( 'Update Quiz Type', 'woothemes-sensei' ),
-			'add_new_item'      => __( 'Add New Quiz Type', 'woothemes-sensei' ),
-			'new_item_name'     => __( 'New Quiz Type Name', 'woothemes-sensei' ),
-			'menu_name'         => __( 'Quiz Types', 'woothemes-sensei' ),
+			'name'              => _x( 'Quiz Types', 'taxonomy general name', 'sensei-lms' ),
+			'singular_name'     => _x( 'Quiz Type', 'taxonomy singular name', 'sensei-lms' ),
+			'search_items'      => __( 'Search Quiz Types', 'sensei-lms' ),
+			'all_items'         => __( 'All Quiz Types', 'sensei-lms' ),
+			'parent_item'       => __( 'Parent Quiz Type', 'sensei-lms' ),
+			'parent_item_colon' => __( 'Parent Quiz Type:', 'sensei-lms' ),
+			'edit_item'         => __( 'Edit Quiz Type', 'sensei-lms' ),
+			'update_item'       => __( 'Update Quiz Type', 'sensei-lms' ),
+			'add_new_item'      => __( 'Add New Quiz Type', 'sensei-lms' ),
+			'new_item_name'     => __( 'New Quiz Type Name', 'sensei-lms' ),
+			'menu_name'         => __( 'Quiz Types', 'sensei-lms' ),
 			'popular_items'     => null, // Hides the "Popular" section above the "add" form in the admin.
 		);
 
@@ -500,7 +524,7 @@ class Sensei_PostTypes {
 			'query_var'         => true,
 			'show_in_nav_menus' => false,
 			'public'            => false,
-			'rewrite'           => array( 'slug' => esc_attr( apply_filters( 'sensei_quiz_type_slug', _x( 'quiz-type', 'taxonomy archive slug', 'woothemes-sensei' ) ) ) ),
+			'rewrite'           => array( 'slug' => esc_attr( apply_filters( 'sensei_quiz_type_slug', _x( 'quiz-type', 'taxonomy archive slug', 'sensei-lms' ) ) ) ),
 		);
 
 		register_taxonomy( 'quiz-type', array( 'quiz' ), $args );
@@ -516,17 +540,17 @@ class Sensei_PostTypes {
 
 		// "Question Types" Custom Taxonomy
 		$labels = array(
-			'name'              => _x( 'Question Types', 'taxonomy general name', 'woothemes-sensei' ),
-			'singular_name'     => _x( 'Question Type', 'taxonomy singular name', 'woothemes-sensei' ),
-			'search_items'      => __( 'Search Question Types', 'woothemes-sensei' ),
-			'all_items'         => __( 'All Question Types', 'woothemes-sensei' ),
-			'parent_item'       => __( 'Parent Question Type', 'woothemes-sensei' ),
-			'parent_item_colon' => __( 'Parent Question Type:', 'woothemes-sensei' ),
-			'edit_item'         => __( 'Edit Question Type', 'woothemes-sensei' ),
-			'update_item'       => __( 'Update Question Type', 'woothemes-sensei' ),
-			'add_new_item'      => __( 'Add New Question Type', 'woothemes-sensei' ),
-			'new_item_name'     => __( 'New Question Type Name', 'woothemes-sensei' ),
-			'menu_name'         => __( 'Question Types', 'woothemes-sensei' ),
+			'name'              => _x( 'Question Types', 'taxonomy general name', 'sensei-lms' ),
+			'singular_name'     => _x( 'Question Type', 'taxonomy singular name', 'sensei-lms' ),
+			'search_items'      => __( 'Search Question Types', 'sensei-lms' ),
+			'all_items'         => __( 'All Question Types', 'sensei-lms' ),
+			'parent_item'       => __( 'Parent Question Type', 'sensei-lms' ),
+			'parent_item_colon' => __( 'Parent Question Type:', 'sensei-lms' ),
+			'edit_item'         => __( 'Edit Question Type', 'sensei-lms' ),
+			'update_item'       => __( 'Update Question Type', 'sensei-lms' ),
+			'add_new_item'      => __( 'Add New Question Type', 'sensei-lms' ),
+			'new_item_name'     => __( 'New Question Type Name', 'sensei-lms' ),
+			'menu_name'         => __( 'Question Types', 'sensei-lms' ),
 			'popular_items'     => null, // Hides the "Popular" section above the "add" form in the admin.
 		);
 
@@ -538,7 +562,7 @@ class Sensei_PostTypes {
 			'query_var'         => false,
 			'show_in_nav_menus' => false,
 			'show_admin_column' => true,
-			'rewrite'           => array( 'slug' => esc_attr( apply_filters( 'sensei_question_type_slug', _x( 'question-type', 'taxonomy archive slug', 'woothemes-sensei' ) ) ) ),
+			'rewrite'           => array( 'slug' => esc_attr( apply_filters( 'sensei_question_type_slug', _x( 'question-type', 'taxonomy archive slug', 'sensei-lms' ) ) ) ),
 		);
 
 		register_taxonomy( 'question-type', array( 'question' ), $args );
@@ -553,17 +577,17 @@ class Sensei_PostTypes {
 	public function setup_question_category_taxonomy() {
 		// "Question Categories" Custom Taxonomy
 		$labels = array(
-			'name'              => _x( 'Question Categories', 'taxonomy general name', 'woothemes-sensei' ),
-			'singular_name'     => _x( 'Question Category', 'taxonomy singular name', 'woothemes-sensei' ),
-			'search_items'      => __( 'Search Question Categories', 'woothemes-sensei' ),
-			'all_items'         => __( 'All Question Categories', 'woothemes-sensei' ),
-			'parent_item'       => __( 'Parent Question Category', 'woothemes-sensei' ),
-			'parent_item_colon' => __( 'Parent Question Category:', 'woothemes-sensei' ),
-			'edit_item'         => __( 'Edit Question Category', 'woothemes-sensei' ),
-			'update_item'       => __( 'Update Question Category', 'woothemes-sensei' ),
-			'add_new_item'      => __( 'Add New Question Category', 'woothemes-sensei' ),
-			'new_item_name'     => __( 'New Question Category Name', 'woothemes-sensei' ),
-			'menu_name'         => __( 'Categories', 'woothemes-sensei' ),
+			'name'              => _x( 'Question Categories', 'taxonomy general name', 'sensei-lms' ),
+			'singular_name'     => _x( 'Question Category', 'taxonomy singular name', 'sensei-lms' ),
+			'search_items'      => __( 'Search Question Categories', 'sensei-lms' ),
+			'all_items'         => __( 'All Question Categories', 'sensei-lms' ),
+			'parent_item'       => __( 'Parent Question Category', 'sensei-lms' ),
+			'parent_item_colon' => __( 'Parent Question Category:', 'sensei-lms' ),
+			'edit_item'         => __( 'Edit Question Category', 'sensei-lms' ),
+			'update_item'       => __( 'Update Question Category', 'sensei-lms' ),
+			'add_new_item'      => __( 'Add New Question Category', 'sensei-lms' ),
+			'new_item_name'     => __( 'New Question Category Name', 'sensei-lms' ),
+			'menu_name'         => __( 'Categories', 'sensei-lms' ),
 		);
 
 		$args = array(
@@ -580,7 +604,7 @@ class Sensei_PostTypes {
 				'delete_terms' => 'manage_categories',
 				'assign_terms' => 'edit_questions',
 			),
-			'rewrite'           => array( 'slug' => esc_attr( apply_filters( 'sensei_question_category_slug', _x( 'question-category', 'taxonomy archive slug', 'woothemes-sensei' ) ) ) ),
+			'rewrite'           => array( 'slug' => esc_attr( apply_filters( 'sensei_question_category_slug', _x( 'question-category', 'taxonomy archive slug', 'sensei-lms' ) ) ) ),
 		);
 
 		register_taxonomy( 'question-category', array( 'question' ), $args );
@@ -595,17 +619,17 @@ class Sensei_PostTypes {
 	public function setup_lesson_tag_taxonomy() {
 		// "Lesson Tags" Custom Taxonomy
 		$labels = array(
-			'name'              => _x( 'Lesson Tags', 'taxonomy general name', 'woothemes-sensei' ),
-			'singular_name'     => _x( 'Lesson Tag', 'taxonomy singular name', 'woothemes-sensei' ),
-			'search_items'      => __( 'Search Lesson Tags', 'woothemes-sensei' ),
-			'all_items'         => __( 'All Lesson Tags', 'woothemes-sensei' ),
-			'parent_item'       => __( 'Parent Tag', 'woothemes-sensei' ),
-			'parent_item_colon' => __( 'Parent Tag:', 'woothemes-sensei' ),
-			'edit_item'         => __( 'Edit Lesson Tag', 'woothemes-sensei' ),
-			'update_item'       => __( 'Update Lesson Tag', 'woothemes-sensei' ),
-			'add_new_item'      => __( 'Add New Lesson Tag', 'woothemes-sensei' ),
-			'new_item_name'     => __( 'New Tag Name', 'woothemes-sensei' ),
-			'menu_name'         => __( 'Lesson Tags', 'woothemes-sensei' ),
+			'name'              => _x( 'Lesson Tags', 'taxonomy general name', 'sensei-lms' ),
+			'singular_name'     => _x( 'Lesson Tag', 'taxonomy singular name', 'sensei-lms' ),
+			'search_items'      => __( 'Search Lesson Tags', 'sensei-lms' ),
+			'all_items'         => __( 'All Lesson Tags', 'sensei-lms' ),
+			'parent_item'       => __( 'Parent Tag', 'sensei-lms' ),
+			'parent_item_colon' => __( 'Parent Tag:', 'sensei-lms' ),
+			'edit_item'         => __( 'Edit Lesson Tag', 'sensei-lms' ),
+			'update_item'       => __( 'Update Lesson Tag', 'sensei-lms' ),
+			'add_new_item'      => __( 'Add New Lesson Tag', 'sensei-lms' ),
+			'new_item_name'     => __( 'New Tag Name', 'sensei-lms' ),
+			'menu_name'         => __( 'Lesson Tags', 'sensei-lms' ),
 		);
 
 		$args = array(
@@ -621,7 +645,7 @@ class Sensei_PostTypes {
 				'delete_terms' => 'manage_categories',
 				'assign_terms' => 'edit_lessons',
 			),
-			'rewrite'           => array( 'slug' => esc_attr( apply_filters( 'sensei_lesson_tag_slug', _x( 'lesson-tag', 'taxonomy archive slug', 'woothemes-sensei' ) ) ) ),
+			'rewrite'           => array( 'slug' => esc_attr( apply_filters( 'sensei_lesson_tag_slug', _x( 'lesson-tag', 'taxonomy archive slug', 'sensei-lms' ) ) ) ),
 		);
 
 		register_taxonomy( 'lesson-tag', array( 'lesson' ), $args );
@@ -642,34 +666,34 @@ class Sensei_PostTypes {
 		);
 
 		$this->labels['course']            = array(
-			'singular' => __( 'Course', 'woothemes-sensei' ),
-			'plural'   => __( 'Courses', 'woothemes-sensei' ),
-			'menu'     => __( 'Courses', 'woothemes-sensei' ),
+			'singular' => __( 'Course', 'sensei-lms' ),
+			'plural'   => __( 'Courses', 'sensei-lms' ),
+			'menu'     => __( 'Courses', 'sensei-lms' ),
 		);
 		$this->labels['lesson']            = array(
-			'singular' => __( 'Lesson', 'woothemes-sensei' ),
-			'plural'   => __( 'Lessons', 'woothemes-sensei' ),
-			'menu'     => __( 'Lessons', 'woothemes-sensei' ),
+			'singular' => __( 'Lesson', 'sensei-lms' ),
+			'plural'   => __( 'Lessons', 'sensei-lms' ),
+			'menu'     => __( 'Lessons', 'sensei-lms' ),
 		);
 		$this->labels['quiz']              = array(
-			'singular' => __( 'Quiz', 'woothemes-sensei' ),
-			'plural'   => __( 'Quizzes', 'woothemes-sensei' ),
-			'menu'     => __( 'Quizzes', 'woothemes-sensei' ),
+			'singular' => __( 'Quiz', 'sensei-lms' ),
+			'plural'   => __( 'Quizzes', 'sensei-lms' ),
+			'menu'     => __( 'Quizzes', 'sensei-lms' ),
 		);
 		$this->labels['question']          = array(
-			'singular' => __( 'Question', 'woothemes-sensei' ),
-			'plural'   => __( 'Questions', 'woothemes-sensei' ),
-			'menu'     => __( 'Questions', 'woothemes-sensei' ),
+			'singular' => __( 'Question', 'sensei-lms' ),
+			'plural'   => __( 'Questions', 'sensei-lms' ),
+			'menu'     => __( 'Questions', 'sensei-lms' ),
 		);
 		$this->labels['multiple_question'] = array(
-			'singular' => __( 'Multiple Question', 'woothemes-sensei' ),
-			'plural'   => __( 'Multiple Questions', 'woothemes-sensei' ),
-			'menu'     => __( 'Multiple Questions', 'woothemes-sensei' ),
+			'singular' => __( 'Multiple Question', 'sensei-lms' ),
+			'plural'   => __( 'Multiple Questions', 'sensei-lms' ),
+			'menu'     => __( 'Multiple Questions', 'sensei-lms' ),
 		);
 		$this->labels['sensei_message']    = array(
-			'singular' => __( 'Message', 'woothemes-sensei' ),
-			'plural'   => __( 'Messages', 'woothemes-sensei' ),
-			'menu'     => __( 'Messages', 'woothemes-sensei' ),
+			'singular' => __( 'Message', 'sensei-lms' ),
+			'plural'   => __( 'Messages', 'sensei-lms' ),
+			'menu'     => __( 'Messages', 'sensei-lms' ),
 		);
 
 	} // End setup_post_type_labels_base()
@@ -690,23 +714,23 @@ class Sensei_PostTypes {
 		$labels = array(
 			'name'               => $plural,
 			'singular_name'      => $singular,
-			'add_new'            => __( 'Add New', 'woothemes-sensei' ),
+			'add_new'            => __( 'Add New', 'sensei-lms' ),
 			// translators: Placeholder is the singular post type label.
-			'add_new_item'       => sprintf( __( 'Add New %s', 'woothemes-sensei' ), $singular ),
+			'add_new_item'       => sprintf( __( 'Add New %s', 'sensei-lms' ), $singular ),
 			// translators: Placeholder is the singular post type label.
-			'edit_item'          => sprintf( __( 'Edit %s', 'woothemes-sensei' ), $singular ),
+			'edit_item'          => sprintf( __( 'Edit %s', 'sensei-lms' ), $singular ),
 			// translators: Placeholder is the singular post type label.
-			'new_item'           => sprintf( __( 'New %s', 'woothemes-sensei' ), $singular ),
+			'new_item'           => sprintf( __( 'New %s', 'sensei-lms' ), $singular ),
 			// translators: Placeholder is the plural post type label.
-			'all_items'          => sprintf( __( 'All %s', 'woothemes-sensei' ), $plural ),
+			'all_items'          => sprintf( __( 'All %s', 'sensei-lms' ), $plural ),
 			// translators: Placeholder is the singular post type label.
-			'view_item'          => sprintf( __( 'View %s', 'woothemes-sensei' ), $singular ),
+			'view_item'          => sprintf( __( 'View %s', 'sensei-lms' ), $singular ),
 			// translators: Placeholder is the plural post type label.
-			'search_items'       => sprintf( __( 'Search %s', 'woothemes-sensei' ), $plural ),
+			'search_items'       => sprintf( __( 'Search %s', 'sensei-lms' ), $plural ),
 			// translators: Placeholder is the lower-case plural post type label.
-			'not_found'          => sprintf( __( 'No %s found', 'woothemes-sensei' ), $lower_case_plural ),
+			'not_found'          => sprintf( __( 'No %s found', 'sensei-lms' ), $lower_case_plural ),
 			// translators: Placeholder is the lower-case plural post type label.
-			'not_found_in_trash' => sprintf( __( 'No %s found in Trash', 'woothemes-sensei' ), $lower_case_plural ),
+			'not_found_in_trash' => sprintf( __( 'No %s found in Trash', 'sensei-lms' ), $lower_case_plural ),
 			'parent_item_colon'  => '',
 			'menu_name'          => $menu,
 		);
@@ -722,8 +746,6 @@ class Sensei_PostTypes {
 	 * @return array           The modified array of messages for post types.
 	 */
 	public function setup_post_type_messages( $messages ) {
-		global $post, $post_ID;
-
 		$messages['course']            = $this->create_post_type_messages( 'course' );
 		$messages['lesson']            = $this->create_post_type_messages( 'lesson' );
 		$messages['quiz']              = $this->create_post_type_messages( 'quiz' );
@@ -749,19 +771,19 @@ class Sensei_PostTypes {
 		$messages = array(
 			0  => '',
 			// translators: Placeholders are the singular label for the post type and the post's permalink, respectively.
-			1  => sprintf( __( '%1$s updated. %2$sView %1$s%3$s.', 'woothemes-sensei' ), $this->labels[ $post_type ]['singular'], '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
-			2  => __( 'Custom field updated.', 'woothemes-sensei' ),
-			3  => __( 'Custom field deleted.', 'woothemes-sensei' ),
+			1  => sprintf( __( '%1$s updated. %2$sView %1$s%3$s.', 'sensei-lms' ), $this->labels[ $post_type ]['singular'], '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
+			2  => __( 'Custom field updated.', 'sensei-lms' ),
+			3  => __( 'Custom field deleted.', 'sensei-lms' ),
 			// translators: Placeholder is the singular label for the post type.
-			4  => sprintf( __( '%1$s updated.', 'woothemes-sensei' ), $this->labels[ $post_type ]['singular'] ),
+			4  => sprintf( __( '%1$s updated.', 'sensei-lms' ), $this->labels[ $post_type ]['singular'] ),
 			// translators: Placeholders are the singular label for the post type and the post's revision, respectively.
-			5  => isset( $_GET['revision'] ) ? sprintf( __( '%1$s restored to revision from %2$s.', 'woothemes-sensei' ), $this->labels[ $post_type ]['singular'], wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
+			5  => isset( $_GET['revision'] ) ? sprintf( __( '%1$s restored to revision from %2$s.', 'sensei-lms' ), $this->labels[ $post_type ]['singular'], wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
 			// translators: Placeholders are the singular label for the post type and the post's permalink, respectively.
-			6  => sprintf( __( '%1$s published. %2$sView %1$s%3$s.', 'woothemes-sensei' ), $this->labels[ $post_type ]['singular'], '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
+			6  => sprintf( __( '%1$s published. %2$sView %1$s%3$s.', 'sensei-lms' ), $this->labels[ $post_type ]['singular'], '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
 			// translators: Placeholder is the singular label for the post type.
-			7  => sprintf( __( '%1$s saved.', 'woothemes-sensei' ), $this->labels[ $post_type ]['singular'] ),
+			7  => sprintf( __( '%1$s saved.', 'sensei-lms' ), $this->labels[ $post_type ]['singular'] ),
 			// translators: Placeholders are the singular label for the post type and the post's preview link, respectively.
-			8  => sprintf( __( '%1$s submitted. %2$sPreview %1$s%3$s.', 'woothemes-sensei' ), $this->labels[ $post_type ]['singular'], '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', '</a>' ),
+			8  => sprintf( __( '%1$s submitted. %2$sPreview %1$s%3$s.', 'sensei-lms' ), $this->labels[ $post_type ]['singular'], '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', '</a>' ),
 			/*
 			  * translators: Placeholders are as follows (in order):
 			  *
@@ -770,9 +792,9 @@ class Sensei_PostTypes {
 			  * - The opening tag for the post's permalink.
 			  * - The closing tag for the post's permalink.
 			  */
-			9  => sprintf( __( '%1$s scheduled for: %2$s. %3$sPreview %4$s%5$s.', 'woothemes-sensei' ), $this->labels[ $post_type ]['singular'], '<strong>' . date_i18n( __( 'M j, Y @ G:i', 'woothemes-sensei' ), strtotime( $post->post_date ) ) . '</strong>', '<a target="_blank" href="' . esc_url( get_permalink( $post_ID ) ) . '">', $this->labels[ $post_type ]['singular'], '</a>' ),
+			9  => sprintf( __( '%1$s scheduled for: %2$s. %3$sPreview %4$s%5$s.', 'sensei-lms' ), $this->labels[ $post_type ]['singular'], '<strong>' . date_i18n( __( 'M j, Y @ G:i', 'sensei-lms' ), strtotime( $post->post_date ) ) . '</strong>', '<a target="_blank" href="' . esc_url( get_permalink( $post_ID ) ) . '">', $this->labels[ $post_type ]['singular'], '</a>' ),
 			// translators: Placeholders are the singular label for the post type and the post's preview link, respectively.
-			10 => sprintf( __( '%1$s draft updated. %2$sPreview %3$s%4$s.', 'woothemes-sensei' ), $this->labels[ $post_type ]['singular'], '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', $this->labels[ $post_type ]['singular'], '</a>' ),
+			10 => sprintf( __( '%1$s draft updated. %2$sPreview %3$s%4$s.', 'sensei-lms' ), $this->labels[ $post_type ]['singular'], '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', $this->labels[ $post_type ]['singular'], '</a>' ),
 		);
 
 		return $messages;
@@ -788,9 +810,9 @@ class Sensei_PostTypes {
 	 */
 	public function enter_title_here( $title ) {
 		if ( get_post_type() == 'course' ) {
-			$title = __( 'Enter a title for this course here', 'woothemes-sensei' );
+			$title = __( 'Enter a title for this course here', 'sensei-lms' );
 		} elseif ( get_post_type() == 'lesson' ) {
-			$title = __( 'Enter a title for this lesson here', 'woothemes-sensei' );
+			$title = __( 'Enter a title for this lesson here', 'sensei-lms' );
 		}
 
 		return $title;
@@ -894,6 +916,193 @@ class Sensei_PostTypes {
 				);
 			}
 		}
+	}
+
+	/**
+	 * Setup firing of the "initial publish" action for Sensei CPT's. This will
+	 * set up hooks to track when posts are published, and to fire the "initial
+	 * publish" action at the correct time.
+	 *
+	 * However, this action will not be fired for posts that are created through
+	 * the REST API. This is because of an edge case with the block editor. When
+	 * a post is published through the block editor, the "initial publish"
+	 * action will be fired when the metabox save request is posted, rather than
+	 * when the initial API request is posted.
+	 *
+	 * Note that the REST API restriction can be removed when we migrate all
+	 * meta information for the block editor away from metaboxes and into
+	 * blocks.
+	 *
+	 * @since 2.1.0
+	 * @access private
+	 */
+	public function setup_initial_publish_action() {
+		$this->reset_scheduled_initial_publish_actions();
+
+		// Schedule an action for initial publish of Sensei CPT's.
+		add_action( 'transition_post_status', [ $this, 'maybe_schedule_initial_publish_action' ], 10, 3 );
+
+		// Fire all scheduled actions on shutdown.
+		add_action( 'shutdown', [ $this, 'fire_scheduled_initial_publish_actions' ] );
+
+		// Never fire actions on REST API request.
+		add_action( 'rest_api_init', [ $this, 'disable_fire_scheduled_initial_publish_actions' ] );
+	}
+
+	/**
+	 * Disable the scheduled "initial publish" actions from being fired. This is
+	 * called on `rest_api_init`.
+	 *
+	 * @since 2.1.0
+	 * @access private
+	 */
+	public function disable_fire_scheduled_initial_publish_actions() {
+		remove_action( 'shutdown', [ $this, 'fire_scheduled_initial_publish_actions' ] );
+	}
+
+	/**
+	 * This hook is run on `post_status_transition` to schedule the "initial
+	 * publish" action if needed.
+	 *
+	 * Posts will be marked as already published if the old status is `publish`,
+	 * so that we do not fire the "initial publish" action for existing publish
+	 * posts when they are re-published.
+	 *
+	 * For newly published posts, we schedule the "initial publish" action to be
+	 * fired at the end of the request.
+	 *
+	 * Note that we do not mark as published if this is a metabox update
+	 * request. In this case, the REST API request has already handled this, so
+	 * we just need to schedule the action if needed.
+	 *
+	 * @since 2.1.0
+	 * @access private
+	 *
+	 * @param string  $new_status The new post status.
+	 * @param string  $old_status The old post status.
+	 * @param WP_Post $post       The post.
+	 */
+	public function maybe_schedule_initial_publish_action( $new_status, $old_status, $post ) {
+		// Only handle Sensei post types.
+		if ( ! $this->is_sensei_post_type_for_initial_publish_action( $post->post_type ) ) {
+			return;
+		}
+
+		// If the old status is `publish`, mark as already published.
+		if ( 'publish' === $old_status && ! $this->is_meta_box_save_request() ) {
+			$this->mark_post_already_published( $post->ID );
+		}
+
+		// If transitioning to `publish` for the first time, schedule the action.
+		if ( 'publish' === $new_status && ! $this->check_post_already_published( $post->ID ) ) {
+			$this->schedule_initial_publish_action( $post->ID );
+		}
+	}
+
+	/**
+	 * Fire the scheduled "initial publish" actions. This is run on `shutdown`.
+	 *
+	 * @since 2.1.0
+	 * @access private
+	 */
+	public function fire_scheduled_initial_publish_actions() {
+		foreach ( array_unique( $this->initial_publish_post_ids ) as $post_id ) {
+			$post = get_post( $post_id );
+			if ( $post ) {
+				do_action( "sensei_{$post->post_type}_initial_publish", $post );
+				$this->mark_post_already_published( $post->ID );
+			}
+		}
+
+		// Clear the finished post ID's.
+		$this->reset_scheduled_initial_publish_actions();
+	}
+
+	/**
+	 * Determine whether the current request is a "meta box save" request
+	 * (typically run by the block editor).
+	 *
+	 * @since 2.1.0
+	 * @access private
+	 */
+	private function is_meta_box_save_request() {
+		// phpcs:ignore WordPress.Security.NonceVerification
+		return isset( $_REQUEST['meta-box-loader'] ) && '1' === $_REQUEST['meta-box-loader'];
+	}
+
+	/**
+	 * Schedule an "initial publish" action for the given post ID.
+	 *
+	 * @since 2.1.0
+	 * @access private
+	 *
+	 * @param int $post_id The post ID.
+	 */
+	private function schedule_initial_publish_action( $post_id ) {
+		$this->initial_publish_post_ids[] = $post_id;
+	}
+
+	/**
+	 * Reset the array of post ID's for which to fire "initial publish" actions.
+	 *
+	 * @since 2.1.0
+	 * @access private
+	 */
+	private function reset_scheduled_initial_publish_actions() {
+		$this->initial_publish_post_ids = [];
+	}
+
+	/**
+	 * Check if post type is one for which we should fire the "initial publish"
+	 * action.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param string $post_type The post type.
+	 * @return bool
+	 */
+	private function is_sensei_post_type_for_initial_publish_action( $post_type ) {
+		/**
+		 * Filter the post types for which to fire an action on initial publish.
+		 *
+		 * @since 2.1.0
+		 *
+		 * @param array $post_types The post types.
+		 */
+		$post_types = apply_filters(
+			'sensei_post_types_for_initial_publish_action',
+			[
+				'course',
+				'lesson',
+				'quiz',
+				'question',
+				'sensei_message',
+			]
+		);
+		return in_array( $post_type, $post_types, true );
+	}
+
+	/**
+	 * Mark the given post as "already published".
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param string $post_id The post ID.
+	 */
+	private function mark_post_already_published( $post_id ) {
+		add_post_meta( $post_id, '_sensei_already_published', true, true );
+	}
+
+	/**
+	 * Check whether the post is marked as "already published".
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param string $post_id The post ID.
+	 * @return bool
+	 */
+	private function check_post_already_published( $post_id ) {
+		return get_post_meta( $post_id, '_sensei_already_published', true );
 	}
 
 } // End Class

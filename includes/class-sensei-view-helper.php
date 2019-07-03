@@ -63,7 +63,7 @@ class Sensei_View_Helper {
 	 */
 	private function with_text( $formatted_points ) {
 		// translators: number of points.
-		return sprintf( __( 'Points: %s', 'woothemes-sensei' ), $formatted_points );
+		return sprintf( __( 'Points: %s', 'sensei-lms' ), $formatted_points );
 	}
 
 	/**

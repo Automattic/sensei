@@ -1,7 +1,4 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
 /**
  * The Template for displaying all course lessons on the course results page.
  *
@@ -10,8 +7,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     1.9.0
+ * @version     2.0.0
  */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 global $course;
 ?>
@@ -30,7 +31,7 @@ global $course;
 
 	<header>
 
-		<h2>  <?php esc_html_e( 'Lessons', 'woothemes-sensei' ); ?> </h2>
+		<h2>  <?php esc_html_e( 'Lessons', 'sensei-lms' ); ?> </h2>
 
 	</header>
 
@@ -79,7 +80,7 @@ global $course;
 						   title="
 						   <?php
 							// translators: Placeholder is the lesson title.
-							echo esc_attr( sprintf( __( 'Start %s', 'woothemes-sensei' ), $lesson->post_title ) );
+							echo esc_attr( sprintf( __( 'Start %s', 'sensei-lms' ), $lesson->post_title ) );
 							?>
 						 ">
 
@@ -111,7 +112,7 @@ global $course;
 				<?php
 				// lesson title will already appear above
 				if ( $course_has_lessons_in_modules ) {
-					esc_html_e( 'Other Lessons', 'woothemes-sensei' );
+					esc_html_e( 'Other Lessons', 'sensei-lms' );
 				}
 				?>
 
@@ -140,7 +141,7 @@ global $course;
 					<a href="<?php echo esc_url_raw( get_permalink( $lesson->ID ) ); ?>" title="
 										<?php
 										// translators: Placeholder it the lesson title.
-										esc_attr( sprintf( __( 'Start %s', 'woothemes-sensei' ), $lesson->post_title ) )
+										esc_attr( sprintf( __( 'Start %s', 'sensei-lms' ), $lesson->post_title ) )
 										?>
 					" >
 
@@ -159,7 +160,7 @@ global $course;
 
 		<h2 class="total-grade">
 
-			<?php esc_html_e( 'Total Grade', 'woothemes-sensei' ); ?>
+			<?php esc_html_e( 'Total Grade', 'sensei-lms' ); ?>
 			<span class="lesson-grade">
 
 				<?php
