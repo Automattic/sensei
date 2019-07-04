@@ -1261,24 +1261,21 @@ class Sensei_Teacher {
 
 		// get roles with the course edit capability
 		// and then get the users with those roles
-		$users_who_can_edit_courses = array();
+		$role_users_who_can_edit_courses = array();
 		foreach ( $roles as $role_item ) {
 
 			$role = get_role( strtolower( $role_item['name'] ) );
 
 			if ( is_a( $role, 'WP_Role' ) && $role->has_cap( 'edit_courses' ) ) {
-
-				$user_query_args                 = array(
-					'role'   => $role->name,
-					'fields' => array( 'ID', 'display_name' ),
-				);
-				$role_users_who_can_edit_courses = get_users( $user_query_args );
-
-				// add user from the current $user_role to all users
-				$users_who_can_edit_courses = array_merge( $users_who_can_edit_courses, $role_users_who_can_edit_courses );
-
+				$role_users_who_can_edit_courses[] = $role->name;
 			}
 		}
+
+		$user_query_args  = array(
+			'role__in' => $role_users_who_can_edit_courses,
+			'fields'   => array( 'ID', 'display_name' ),
+		);
+		$users_who_can_edit_courses = get_users( $user_query_args );
 
 		// Create the select element with the given users who can edit course
 		$selected       = isset( $_GET['course_teacher'] ) ? $_GET['course_teacher'] : '';
