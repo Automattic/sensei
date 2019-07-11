@@ -108,13 +108,6 @@ a.sensei-certificate-link {
     a {
       color: #555;
     }
-
-    .course-price  {
-      font-style: normal;
-      font-weight: bold;
-      color: darken($color_body, 20%);
-      @include border_radius(300px);
-    }
   }
 
   .sensei-course-meta {
