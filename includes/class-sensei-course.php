@@ -1510,19 +1510,19 @@ class Sensei_Course {
 
 				$complete_html .= '<article class="' . esc_attr( join( ' ', get_post_class( array( 'course', 'post' ), $course_item->ID ) ) ) . '">';
 
-					// Image
-					$complete_html .= Sensei()->course->course_image( absint( $course_item->ID ), 100, 100, true );
+				// Image
+				$complete_html .= Sensei()->course->course_image( absint( $course_item->ID ), 100, 100, true );
 
-					// Title
-					$complete_html .= '<header>';
-					$complete_html .= '<h2 class="course-title"><a href="' . esc_url( get_permalink( absint( $course_item->ID ) ) ) . '" title="' . esc_attr( $course_item->post_title ) . '">' . esc_html( $course_item->post_title ) . '</a></h2>';
+				// Title
+				$complete_html .= '<header>';
+				$complete_html .= '<h2 class="course-title"><a href="' . esc_url( get_permalink( absint( $course_item->ID ) ) ) . '" title="' . esc_attr( $course_item->post_title ) . '">' . esc_html( $course_item->post_title ) . '</a></h2>';
 
-					// Author
-					$user_info = get_userdata( absint( $course_item->post_author ) );
+				// Author
+				$user_info = get_userdata( absint( $course_item->post_author ) );
 
-					if ( isset( Sensei()->settings->settings['course_author'] ) && ( Sensei()->settings->settings['course_author'] ) ) {
-						$complete_html .= '<span class="course-author">' . esc_html__( 'by ', 'sensei-lms' ) . '<a href="' . esc_url( get_author_posts_url( absint( $course_item->post_author ) ) ) . '" title="' . esc_attr( $user_info->display_name ) . '">' . esc_html( $user_info->display_name ) . '</a></span>';
-					}
+				if ( isset( Sensei()->settings->settings['course_author'] ) && ( Sensei()->settings->settings['course_author'] ) ) {
+					$complete_html .= '<span class="course-author">' . esc_html__( 'by ', 'sensei-lms' ) . '<a href="' . esc_url( get_author_posts_url( absint( $course_item->post_author ) ) ) . '" title="' . esc_attr( $user_info->display_name ) . '">' . esc_html( $user_info->display_name ) . '</a></span>';
+				}
 
 					$complete_html .= '</header>';
 
