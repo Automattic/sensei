@@ -1359,28 +1359,24 @@ class Sensei_Course {
 
 				// Title
 				$active_html .= '<header>';
-
-				$active_html .= '<h2><a href="' . esc_url( get_permalink( absint( $course_item->ID ) ) ) . '" title="' . esc_attr( $course_item->post_title ) . '">' . esc_html( $course_item->post_title ) . '</a></h2>';
-
-				$active_html .= '</header>';
-
-				$active_html .= '<section class="entry">';
-
-				$active_html .= '<p class="sensei-course-meta">';
+				$active_html .= '<h2 class="course-title"><a href="' . esc_url( get_permalink( absint( $course_item->ID ) ) ) . '" title="' . esc_attr( $course_item->post_title ) . '">' . esc_html( $course_item->post_title ) . '</a></h2>';
 
 				// Author
 				$user_info = get_userdata( absint( $course_item->post_author ) );
+
 				if ( isset( Sensei()->settings->settings['course_author'] )
 					&& ( Sensei()->settings->settings['course_author'] ) ) {
-
 					$active_html .= '<span class="course-author">'
-						. esc_html__( 'by', 'sensei-lms' )
+						. esc_html__( 'by ', 'sensei-lms' )
 						. '<a href="' . esc_url( get_author_posts_url( absint( $course_item->post_author ) ) )
 						. '" title="' . esc_attr( $user_info->display_name ) . '">'
 						. esc_html( $user_info->display_name )
 						. '</a></span>';
+				}
 
-				} // End If Statement
+				$active_html .= '</header>';
+				$active_html .= '<section class="entry">';
+				$active_html .= '<div class="sensei-course-meta">';
 
 				// Lesson count for this author
 				$lesson_count = Sensei()->course->course_lesson_count( absint( $course_item->ID ) );
@@ -1404,7 +1400,7 @@ class Sensei_Course {
 				// translators: Placeholders are the counts for lessons completed and total lessons, respectively.
 				$active_html .= '<span class="course-lesson-progress">' . esc_html( sprintf( __( '%1$d of %2$d lessons completed', 'sensei-lms' ), $lessons_completed, $lesson_count ) ) . '</span>';
 
-				$active_html .= '</p>';
+				$active_html .= '</div>';
 
 				$active_html .= '<p class="course-excerpt">' . esc_html( $course_item->post_excerpt ) . '</p>';
 
@@ -1514,25 +1510,25 @@ class Sensei_Course {
 
 				$complete_html .= '<article class="' . esc_attr( join( ' ', get_post_class( array( 'course', 'post' ), $course_item->ID ) ) ) . '">';
 
-					// Image
-					$complete_html .= Sensei()->course->course_image( absint( $course_item->ID ), 100, 100, true );
+				// Image
+				$complete_html .= Sensei()->course->course_image( absint( $course_item->ID ), 100, 100, true );
 
-					// Title
-					$complete_html .= '<header>';
+				// Title
+				$complete_html .= '<header>';
+				$complete_html .= '<h2 class="course-title"><a href="' . esc_url( get_permalink( absint( $course_item->ID ) ) ) . '" title="' . esc_attr( $course_item->post_title ) . '">' . esc_html( $course_item->post_title ) . '</a></h2>';
 
-						$complete_html .= '<h2><a href="' . esc_url( get_permalink( absint( $course_item->ID ) ) ) . '" title="' . esc_attr( $course_item->post_title ) . '">' . esc_html( $course_item->post_title ) . '</a></h2>';
+				// Author
+				$user_info = get_userdata( absint( $course_item->post_author ) );
+
+				if ( isset( Sensei()->settings->settings['course_author'] ) && ( Sensei()->settings->settings['course_author'] ) ) {
+					$complete_html .= '<span class="course-author">' . esc_html__( 'by ', 'sensei-lms' ) . '<a href="' . esc_url( get_author_posts_url( absint( $course_item->post_author ) ) ) . '" title="' . esc_attr( $user_info->display_name ) . '">' . esc_html( $user_info->display_name ) . '</a></span>';
+				}
 
 					$complete_html .= '</header>';
 
 					$complete_html .= '<section class="entry">';
 
 						$complete_html .= '<p class="sensei-course-meta">';
-
-							// Author
-							$user_info = get_userdata( absint( $course_item->post_author ) );
-				if ( isset( Sensei()->settings->settings['course_author'] ) && ( Sensei()->settings->settings['course_author'] ) ) {
-					$complete_html .= '<span class="course-author">' . esc_html__( 'by', 'sensei-lms' ) . '<a href="' . esc_url( get_author_posts_url( absint( $course_item->post_author ) ) ) . '" title="' . esc_attr( $user_info->display_name ) . '">' . esc_html( $user_info->display_name ) . '</a></span>';
-				} // End If Statement
 
 							// Lesson count for this author
 							$complete_html .= '<span class="course-lesson-count">'
@@ -2116,42 +2112,31 @@ class Sensei_Course {
 	 * @param integer $course_id
 	 */
 	public function the_course_meta( $course_id ) {
-		echo '<p class="sensei-course-meta">';
-
 		$course              = get_post( $course_id );
 		$category_output     = get_the_term_list( $course->ID, 'course-category', '', ', ', '' );
 		$author_display_name = get_the_author_meta( 'display_name', $course->post_author );
 
+		if ( isset( Sensei()->settings->settings['course_author'] ) && ( Sensei()->settings->settings['course_author'] ) ) {
+			echo '<span class="course-author">' .
+				esc_html( 'by ', 'sensei-lms' ) .
+				'<a href="' . esc_attr( get_author_posts_url( $course->post_author ) ) . '" title="' . esc_attr( $author_display_name ) . '">' . esc_attr( $author_display_name ) . '</a>
+			</span>';
+		}
+
+		echo '<div class="sensei-course-meta">';
+
 		/** This action is documented in includes/class-sensei-frontend.php */
 		do_action( 'sensei_course_meta_inside_before', $course->ID );
 
-		if ( isset( Sensei()->settings->settings['course_author'] ) && ( Sensei()->settings->settings['course_author'] ) ) {
-			?>
+		echo '<span class="course-lesson-count">' .
+			esc_html( Sensei()->course->course_lesson_count( $course->ID ) ) . '&nbsp;' . esc_html__( 'Lessons', 'sensei-lms' ) .
+		'</span>';
 
-			<span class="course-author"><?php esc_html_e( 'by', 'sensei-lms' ); ?>
-
-				<a href="<?php echo esc_attr( get_author_posts_url( $course->post_author ) ); ?>" title="<?php echo esc_attr( $author_display_name ); ?>"><?php echo esc_attr( $author_display_name ); ?></a>
-
-			</span>
-
-		<?php } // End If Statement ?>
-
-		<span class="course-lesson-count">
-			<?php echo esc_html( Sensei()->course->course_lesson_count( $course->ID ) ) . '&nbsp;' . esc_html__( 'Lessons', 'sensei-lms' ); ?>
-		</span>
-
-		<?php
 		if ( ! empty( $category_output ) ) {
-			?>
-
-			<span class="course-category">
-				<?php
+			echo '<span class="course-category">' .
 				// translators: Placeholder is a comma-separated list of the course categories.
-				echo wp_kses_post( sprintf( __( 'in %s', 'sensei-lms' ), $category_output ) );
-				?>
-			</span>
-
-			<?php
+				wp_kses_post( sprintf( __( 'in %s', 'sensei-lms' ), $category_output ) ) .
+			'</span>';
 		} // End If Statement
 
 		// number of completed lessons
@@ -2167,8 +2152,8 @@ class Sensei_Course {
 		/** This action is documented in includes/class-sensei-frontend.php */
 		do_action( 'sensei_course_meta_inside_after', $course->ID );
 
-		echo '</p>';
-	} // end the course meta
+		echo '</div>';
+	}
 
 	/**
 	 * Filter the classes attached to a post types for courses

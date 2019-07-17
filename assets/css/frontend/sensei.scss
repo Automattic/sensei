@@ -73,9 +73,17 @@ a.sensei-certificate-link {
   padding: 0 0 1em;
   border-bottom: 1px solid #e2e2e2;
   list-style: none;
+
   header h2  {
     margin: 0;
   }
+
+  .course-title {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+  }
+
   .course-meta  {
     margin-bottom: 20px;
     clear: both;
@@ -86,20 +94,30 @@ a.sensei-certificate-link {
       margin-bottom: 0.618em;
     }
   }
-  .sensei-course-meta  {
-    font-style: italic;
-    font-size: .9em;
+
+  .course-author,
+  .course-category {
+    margin-left: 5px;
+  }
+
+  .course-author,
+  .sensei-course-meta {
     color: lighten($color_body, 20%);
-    a  {
+    font-size: .9em;
+
+    a {
       color: #555;
     }
-    .course-price  {
-      font-style: normal;
-      font-weight: bold;
-      color: darken($color_body, 20%);
-      @include border_radius(300px);
-    }
   }
+
+  .sensei-course-meta {
+    font-style: italic;
+  }
+
+  .course-excerpt {
+    margin-top: 1.5em;
+  }
+
   .entry-actions  {
     span  {
       margin: 0 1em 0 0;
@@ -418,10 +436,7 @@ a.sensei-certificate-link {
 }
 
 div.course-container div.course { display: block; padding: 5px; }
-section.entry span.course-lesson-count { padding-left: 10px; }
-section.entry span.course-category { padding-left: 10px; }
-section.entry span.course-lesson-progress { padding-left: 10px; }
-section.entry span.course-price { padding-left: 10px; }
+section.entry span.course-lesson-progress { margin-left: 10px; }
 
 .sensei form {
   .form-row {
@@ -592,9 +607,6 @@ section.entry span.course-price { padding-left: 10px; }
 
 /* Learner Profiles */
 #learner-info {
-  h2 {
-    margin: 20px 0;
-  }
   .learner-avatar {
     float: right;
     width: 120px;
