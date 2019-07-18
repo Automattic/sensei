@@ -373,7 +373,6 @@ class Sensei_Teacher {
 	 * @return void
 	 */
 	public static function update_course_modules_author( $course_id, $new_teacher_id ) {
-
 		if ( empty( $course_id ) || empty( $new_teacher_id ) ) {
 			return;
 		}
@@ -396,6 +395,7 @@ class Sensei_Teacher {
 
 		foreach ( $terms_selected_on_course as $term ) {
 			$term_author = Sensei_Core_Modules::get_term_author( $term->slug );
+
 			if ( ! $term_author || intval( $new_teacher_id ) !== intval( $term_author->ID ) ) {
 				$new_slug       = $new_teacher_id . '-' . sanitize_title( trim( $term->name ) );
 				$search_slugs   = array();
@@ -410,8 +410,10 @@ class Sensei_Teacher {
 
 				// Search for term to recycle.
 				$new_term = false;
+
 				foreach ( $search_slugs as $search_slug ) {
 					$search_term = get_term_by( 'slug', $search_slug, 'module', ARRAY_A );
+
 					if ( $search_term && ! is_wp_error( $search_term ) ) {
 						$new_term = $search_term;
 						break;
@@ -449,14 +451,18 @@ class Sensei_Teacher {
 						// Add the new term, the false at the end says to replace all terms on this module
 						// with the new term.
 						wp_set_object_terms( $lesson->ID, $term_id, 'module', false );
+
 						$order_module     = 0;
 						$old_order_module = get_post_meta( $lesson->ID, '_order_module_' . intval( $term->term_id ), true );
+
 						if ( $old_order_module ) {
 							$order_module = $old_order_module;
+
 							if ( intval( $term->term_id ) !== intval( $term_id ) ) {
 								delete_post_meta( $lesson->ID, '_order_module_' . intval( $term->term_id ) );
 							}
 						}
+
 						update_post_meta( $lesson->ID, '_order_module_' . intval( $term_id ), $order_module );
 					}
 				}
@@ -465,7 +471,6 @@ class Sensei_Teacher {
 				Sensei()->modules->remove_if_unused( $term->term_id );
 			}
 		}
-
 	}
 
 	/**

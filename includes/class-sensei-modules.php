@@ -286,6 +286,7 @@ class Sensei_Core_Modules {
 	 */
 	public function is_term_used( $module_term_id ) {
 		$term_children = get_term_children( $module_term_id, 'module' );
+
 		if ( ! is_wp_error( $term_children ) && ! empty( $term_children ) ) {
 			return true;
 		}
@@ -304,6 +305,7 @@ class Sensei_Core_Modules {
 				'posts_per_page' => 1,
 			)
 		);
+
 		if ( $post_query->found_posts > 0 ) {
 			return true;
 		}
