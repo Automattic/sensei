@@ -268,6 +268,52 @@ class Sensei_Core_Modules {
 	}
 
 	/**
+	 * Delete a term if it is childless and not associated with a lesson or course.
+	 *
+	 * @param int $module_term_id Term ID for the module.
+	 */
+	public function remove_if_unused( $module_term_id ) {
+		if ( ! $this->is_term_used( $module_term_id ) ) {
+			wp_delete_term( $module_term_id, 'module' );
+		}
+	}
+
+	/**
+	 * Check if term either has children or is associated with a lesson or course.
+	 *
+	 * @param int $module_term_id Term ID for the module.
+	 * @return bool True if term is has children or is associated with a lesson or course.
+	 */
+	public function is_term_used( $module_term_id ) {
+		$term_children = get_term_children( $module_term_id, 'module' );
+
+		if ( ! is_wp_error( $term_children ) && ! empty( $term_children ) ) {
+			return true;
+		}
+
+		$post_query = new WP_Query(
+			array(
+				'post_type'      => array( 'lesson', 'course' ),
+				'tax_query'      => array(
+					array(
+						'taxonomy' => 'module',
+						'field'    => 'id',
+						'terms'    => intval( $module_term_id ),
+					),
+				),
+				'fields'         => 'ids',
+				'posts_per_page' => 1,
+			)
+		);
+
+		if ( $post_query->found_posts > 0 ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
 	 * Save module to lesson. This method checks for authorization, and checks
 	 * the incoming nonce.
 	 *

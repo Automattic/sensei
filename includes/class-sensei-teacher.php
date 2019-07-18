@@ -373,7 +373,6 @@ class Sensei_Teacher {
 	 * @return void
 	 */
 	public static function update_course_modules_author( $course_id, $new_teacher_id ) {
-
 		if ( empty( $course_id ) || empty( $new_teacher_id ) ) {
 			return;
 		}
@@ -384,95 +383,95 @@ class Sensei_Teacher {
 			Sensei()->modules->setup_modules_taxonomy();
 		}
 
+		remove_filter( 'get_terms', array( Sensei()->modules, 'append_teacher_name_to_module' ), 70 );
 		$terms_selected_on_course = wp_get_object_terms( $course_id, 'module' );
+		add_filter( 'get_terms', array( Sensei()->modules, 'append_teacher_name_to_module' ), 70, 3 );
 
 		if ( empty( $terms_selected_on_course ) ) {
 			return;
 		}
 
+		$lessons = Sensei()->course->course_lessons( $course_id );
+
 		foreach ( $terms_selected_on_course as $term ) {
-
 			$term_author = Sensei_Core_Modules::get_term_author( $term->slug );
-			if ( $new_teacher_id != $term_author->ID ) {
 
-				$new_term = '';
+			if ( ! $term_author || intval( $new_teacher_id ) !== intval( $term_author->ID ) ) {
+				$new_slug       = $new_teacher_id . '-' . sanitize_title( trim( $term->name ) );
+				$search_slugs   = array();
+				$search_slugs[] = $new_slug;
 
-				// if the new teacher is admin first check to see if the term with this name already exists
+				// First, try to recycle an existing module.
 				if ( user_can( $new_teacher_id, 'manage_options' ) ) {
+					$admin_slug = sanitize_title( trim( $term->name ) );
+					array_unshift( $search_slugs, $admin_slug );
+					$new_slug = $admin_slug;
+				}
 
-					$slug_without_teacher_id = str_ireplace( ' ', '-', trim( $term->name ) );
-					$term_args               = array(
-						'slug'       => $slug_without_teacher_id,
-						'hide_empty' => false,
-					);
-					$existing_admin_terms    = get_terms( 'module', $term_args );
-					if ( ! empty( $existing_admin_terms ) ) {
-						// insert it even if it exists
-						$new_term = get_term( $existing_admin_terms[0]->term_id, 'module', ARRAY_A );
+				// Search for term to recycle.
+				$new_term = false;
+
+				foreach ( $search_slugs as $search_slug ) {
+					$search_term = get_term_by( 'slug', $search_slug, 'module', ARRAY_A );
+
+					if ( $search_term && ! is_wp_error( $search_term ) ) {
+						$new_term = $search_term;
+						break;
 					}
 				}
 
 				if ( empty( $new_term ) ) {
-
-					// setup the new slug
-					$new_author_term_slug = $new_teacher_id . '-' . str_ireplace( ' ', '-', trim( $term->name ) );
-
-					// create new term and set it
+					// Create new term and set it.
 					$new_term = wp_insert_term(
 						$term->name,
 						'module',
 						array(
-							'slug' => $new_author_term_slug,
+							'slug' => $new_slug,
 						)
 					);
-
 				}
 
-				// if term exists
-				if ( is_wp_error( $new_term ) && isset( $new_term->errors['term_exists'] ) ) {
+				if ( is_wp_error( $new_term ) ) {
+					// Something happened. Let's leave the module alone.
+					continue;
+				}
 
-					$existing_term = get_term_by( 'slug', $new_author_term_slug, 'module' );
-					$term_id       = $existing_term->term_id;
+				$term_id = $new_term['term_id'];
 
-				} else {
-
-					// for a new term simply get the term from the returned value
-					$term_id = $new_term['term_id'];
-
-				} // End if().
-
-				// set the terms selected on the course
+				// Set the terms selected on the course.
 				wp_set_object_terms( $course_id, $term_id, 'module', true );
 
-				// remove old term
-				if ( $term_id !== $term->term_id ) {
+				// Remove old term.
+				if ( intval( $term_id ) !== intval( $term->term_id ) ) {
 					wp_remove_object_terms( $course_id, $term->term_id, 'module' );
 				}
 
-				// update the lessons within the current module term
-				$lessons = Sensei()->course->course_lessons( $course_id );
 				foreach ( $lessons as $lesson ) {
-
-					if ( has_term( $term->slug, 'module', $lesson ) ) {
-
-						// add the new term, the false at the end says to replace all terms on this module
+					if ( has_term( $term->term_id, 'module', $lesson ) ) {
+						// Add the new term, the false at the end says to replace all terms on this module
 						// with the new term.
 						wp_set_object_terms( $lesson->ID, $term_id, 'module', false );
+
 						$order_module     = 0;
 						$old_order_module = get_post_meta( $lesson->ID, '_order_module_' . intval( $term->term_id ), true );
+
 						if ( $old_order_module ) {
 							$order_module = $old_order_module;
-							if ( $term->term_id !== $term_id ) {
+
+							if ( intval( $term->term_id ) !== intval( $term_id ) ) {
 								delete_post_meta( $lesson->ID, '_order_module_' . intval( $term->term_id ) );
 							}
 						}
+
 						update_post_meta( $lesson->ID, '_order_module_' . intval( $term_id ), $order_module );
 					}
 				}
-			}// End if().
-		}// End foreach().
 
-	}//end update_course_modules_author()
+				// Clean up module if no longer used.
+				Sensei()->modules->remove_if_unused( $term->term_id );
+			}
+		}
+	}
 
 	/**
 	 * Sensei_Teacher::update_course_lessons_author
