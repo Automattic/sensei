@@ -87,6 +87,9 @@ class Sensei_Renderer_Single_Post implements Sensei_Renderer_Interface {
 		add_filter( 'sensei_show_main_footer', '__return_false' );
 		add_filter( 'sensei_show_main_header', '__return_false' );
 
+		// Even though the header is not being displayed, the action hooked to it still needs to fire.
+		do_action( 'sensei_before_main_content' );
+
 		// We'll make the assumption that the theme will display the title.
 		add_filter( 'the_title', array( $this, 'hide_the_title' ), 100, 2 );
 
