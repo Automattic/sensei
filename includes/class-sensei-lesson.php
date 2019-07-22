@@ -52,10 +52,6 @@ class Sensei_Lesson {
 			add_action( 'wp_ajax_lesson_update_question', array( $this, 'lesson_update_question' ) );
 			add_action( 'wp_ajax_nopriv_lesson_update_question', array( $this, 'lesson_update_question' ) );
 
-			// Add course
-			add_action( 'wp_ajax_lesson_add_course', array( $this, 'lesson_add_course' ) );
-			add_action( 'wp_ajax_nopriv_lesson_add_course', array( $this, 'lesson_add_course' ) );
-
 			// Update grade type
 			add_action( 'wp_ajax_lesson_update_grade_type', array( $this, 'lesson_update_grade_type' ) );
 			add_action( 'wp_ajax_nopriv_lesson_update_grade_type', array( $this, 'lesson_update_grade_type' ) );
@@ -2164,7 +2160,6 @@ class Sensei_Lesson {
 
 			$ajax_vars = array(
 				'lesson_update_question_nonce'           => wp_create_nonce( 'lesson_update_question_nonce' ),
-				'lesson_add_course_nonce'                => wp_create_nonce( 'lesson_add_course_nonce' ),
 				'lesson_update_grade_type_nonce'         => wp_create_nonce( 'lesson_update_grade_type_nonce' ),
 				'lesson_update_question_order_nonce'     => wp_create_nonce( 'lesson_update_question_order_nonce' ),
 				'lesson_update_question_order_random_nonce' => wp_create_nonce( 'lesson_update_question_order_random_nonce' ),
@@ -2258,58 +2253,6 @@ class Sensei_Lesson {
 				break;
 		} // End Switch Statement
 	} // End add_column_data()
-
-	/**
-	 * lesson_add_course function.
-	 *
-	 * @access public
-	 * @return void
-	 */
-	public function lesson_add_course() {
-		// Add nonce security to the request
-		if ( isset( $_POST['lesson_add_course_nonce'] ) ) {
-			// phpcs:ignore WordPress.Security.NonceVerification
-			$nonce = esc_html( $_POST['lesson_add_course_nonce'] );
-		} // End If Statement
-		if ( ! wp_verify_nonce( $nonce, 'lesson_add_course_nonce' )
-			|| ! current_user_can( 'edit_lessons' ) ) {
-			die( '' );
-		} // End If Statement
-		// Parse POST data
-		$data        = $_POST['data'];
-		$course_data = array();
-		parse_str( $data, $course_data );
-		// Save the Course
-		$updated                      = false;
-		$current_user                 = wp_get_current_user();
-		$question_data                = [];
-		$question_data['post_author'] = $current_user->ID;
-		$updated                      = $this->lesson_save_course( $course_data );
-
-		// Compute properties and log an event.
-		$event_properties = [];
-		foreach ( [ 'course_prerequisite', 'course_category', 'course_woocommerce_product' ] as $field ) {
-			$value_to_log = -1;
-			if ( isset( $course_data[ $field ] ) ) {
-				$val = intval( $course_data[ $field ] );
-				if ( $val ) {
-					$value_to_log = $val;
-				}
-			}
-
-			// Get property name.
-			$property_name = $field . '_id';
-			if ( 'course_woocommerce_product' === $field ) {
-				$property_name = 'product_id';
-			}
-
-			$event_properties[ $property_name ] = $value_to_log;
-		}
-		sensei_log_event( 'lesson_course_add', $event_properties );
-
-		echo esc_html( $updated );
-		die(); // WordPress may print out a spurious zero without this can be particularly bad if using JSON
-	} // End lesson_add_course()
 
 	/**
 	 * lesson_update_question function.
@@ -2638,75 +2581,6 @@ class Sensei_Lesson {
 		update_post_meta( $quiz_data['quiz_id'], '_random_question_order', $quiz_data['random_question_order'] );
 		die();
 	}
-
-	/**
-	 * lesson_save_course function.
-	 *
-	 * @access private
-	 * @param array $data (default: array())
-	 * @return integer|boolean $course_id or false
-	 */
-	private function lesson_save_course( $data = array() ) {
-		$return = false;
-		// Setup the course data
-		$course_id      = 0;
-		$course_content = '';
-		$course_title   = '';
-
-		if ( isset( $data['course_id'] ) && ( 0 < absint( $data['course_id'] ) ) ) {
-			$course_id = absint( $data['course_id'] );
-		} // End If Statement
-		if ( isset( $data['course_title'] ) && ( '' != $data['course_title'] ) ) {
-			$course_title = $data['course_title'];
-		} // End If Statement
-
-		$post_title  = $course_title;
-		$post_status = 'publish';
-		$post_type   = 'course';
-
-		if ( isset( $data['course_content'] ) && ( '' != $data['course_content'] ) ) {
-			$course_content = $data['course_content'];
-		} // End If Statement
-		$post_content = $course_content;
-		// Course Query Arguments
-		$post_type_args = array(
-			'post_content' => $post_content,
-			'post_status'  => $post_status,
-			'post_title'   => $post_title,
-			'post_type'    => $post_type,
-		);
-		// Only save if there is a valid title.
-		if ( $post_title != '' ) {
-			// Check for prerequisite courses.
-			$course_prerequisite_id = absint( $data['course_prerequisite'] );
-			$course_category_id     = absint( $data['course_category'] );
-
-			// Create the new course.
-			$course_id = wp_insert_post( $post_type_args );
-
-			add_post_meta( $course_id, '_course_prerequisite', $course_prerequisite_id );
-
-			/**
-			 * Triggers after a course was created from the lesson page meta box.
-			 *
-			 * @since 2.0.0
-			 *
-			 * @param int   $course_id Course ID that was just created.
-			 * @param array $data      Data that was sent when creating the course.
-			 */
-			do_action( 'sensei_lesson_course_created', $course_id, $data );
-
-			if ( 0 < $course_category_id ) {
-				wp_set_object_terms( $course_id, $course_category_id, 'course-category' );
-			} // End If Statement.
-		} // End If Statement.
-		// Check that the insert or update saved by testing the post id.
-		if ( 0 < $course_id ) {
-			$return = $course_id;
-		} // End If Statement.
-		return $return;
-	} // End lesson_save_course().
-
 
 	/**
 	 * lesson_save_question function.
