@@ -333,10 +333,10 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 
 		Sensei()->post_types->fire_scheduled_initial_publish_actions();
 		$events = Sensei_Test_Events::get_logged_events( 'sensei_course_publish' );
-		$this->assertCount( 1, $events );
+		$this->assertCount( 1, $events, 'One event for sensei_course_publish should be recorded' );
 
-		// Ensure product ID is correct.
+		// Ensure product count is correct.
 		$event = $events[0];
-		$this->assertEquals( 2, $event['url_args']['product_count'] );
+		$this->assertEquals( 2, $event['url_args']['product_count'], 'Event should have 2 products attached to the course' );
 	}
 }//end class
