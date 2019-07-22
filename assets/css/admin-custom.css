@@ -3,12 +3,10 @@
 */
 
 /* Lesson Write Panel Styling */
-a.lesson_course_cancel { text-decoration: underline; }
 a.lesson_question_cancel { text-decoration: underline; }
 #lesson-info input[type=text] { margin-bottom: 10px; }
 #lesson-info label { vertical-align: top; }
 #lesson-quiz input[type=text], #lesson-quiz input[type=number] { margin-bottom: 10px; }
-#lesson-course-details input, #lesson-course-details select { margin-bottom: 10px; }
 tr.question-quick-edit td { padding-bottom: 10px; }
 #add-quiz-main button.add_quiz { margin-left: 5px; }
 select.question-type-select { margin-bottom: 10px; }
