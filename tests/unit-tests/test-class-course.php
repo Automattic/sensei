@@ -178,7 +178,7 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		$event = $events[0];
 		$this->assertEquals( 0, $event['url_args']['module_count'] );
 		$this->assertEquals( 0, $event['url_args']['lesson_count'] );
-		$this->assertEquals( 1, $event['url_args']['product_count'] );
+		$this->assertEquals( 0, $event['url_args']['product_count'] );
 	}
 
 	/**
