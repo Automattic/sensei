@@ -3333,12 +3333,11 @@ class Sensei_Course {
 	 */
 	public function log_initial_publish_event( $course ) {
 		$product_ids = get_post_meta( $course->ID, '_course_woocommerce_product', false );
-		$product_count = empty( $product_ids ) ? 0 : count( $product_ids );
 
 		$event_properties = [
 			'module_count' => count( wp_get_post_terms( $course->ID, 'module' ) ),
 			'lesson_count' => $this->course_lesson_count( $course->ID ),
-			'product_count'   => $product_count,
+			'product_count'   => empty( $product_ids ) ? 0 : count( $product_ids ),
 		];
 		sensei_log_event( 'course_publish', $event_properties );
 	}
