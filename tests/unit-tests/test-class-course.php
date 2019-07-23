@@ -178,7 +178,7 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		$event = $events[0];
 		$this->assertEquals( 0, $event['url_args']['module_count'] );
 		$this->assertEquals( 0, $event['url_args']['lesson_count'] );
-		$this->assertEquals( -1, $event['url_args']['product_id'] );
+		$this->assertEquals( 0, $event['url_args']['product_count'] );
 	}
 
 	/**
@@ -249,11 +249,11 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test initial publish logging product ID.
+	 * Test initial publish logging product count.
 	 *
 	 * @covers Sensei_Course::log_initial_publish_event
 	 */
-	public function testLogInitialPublishProductId() {
+	public function testLogInitialPublishProductCount() {
 		$course_id = $this->factory->course->create(
 			[
 				'post_status' => 'draft',
@@ -277,7 +277,7 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 
 		// Ensure product ID is correct.
 		$event = $events[0];
-		$this->assertEquals( 5, $event['url_args']['product_id'] );
+		$this->assertEquals( 1, $event['url_args']['product_count'] );
 	}
 
 	/**
@@ -285,7 +285,7 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 	 *
 	 * @covers Sensei_Course::log_initial_publish_event
 	 */
-	public function testLogNoEventProductId() {
+	public function testLogNoEventProduct() {
 		$course_id = $this->factory->course->create(
 			[
 				'post_status' => 'draft',
@@ -306,7 +306,37 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 
 		// Ensure product ID is correct.
 		$event = $events[0];
-		$this->assertEquals( -1, $event['url_args']['product_id'] );
+		$this->assertEquals( 0, $event['url_args']['product_count'] );
 	}
 
+	/**
+	 * Test initial publish logging product count with multiple product IDs.
+	 *
+	 * @covers Sensei_Course::log_initial_publish_event
+	 */
+	public function testLogEventProductCountMultiProduct() {
+		$course_id = $this->factory->course->create(
+			[
+				'post_status' => 'draft',
+			]
+		);
+		add_post_meta( $course_id, '_course_woocommerce_product', 5 );
+		add_post_meta( $course_id, '_course_woocommerce_product', 6 );
+
+		// Publish.
+		wp_update_post(
+			[
+				'ID'          => $course_id,
+				'post_status' => 'publish',
+			]
+		);
+
+		Sensei()->post_types->fire_scheduled_initial_publish_actions();
+		$events = Sensei_Test_Events::get_logged_events( 'sensei_course_publish' );
+		$this->assertCount( 1, $events, 'One event for sensei_course_publish should be recorded' );
+
+		// Ensure product count is correct.
+		$event = $events[0];
+		$this->assertEquals( 2, $event['url_args']['product_count'], 'Event should have 2 products attached to the course' );
+	}
 }//end class
