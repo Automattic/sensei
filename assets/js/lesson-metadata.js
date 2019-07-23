@@ -16,21 +16,6 @@ jQuery(document).ready( function() {
 	};
 
 	/**
-	 * Validation of input fields - Add Course.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 */
-	jQuery.fn.validateCourseInput = function() {
-		// Check for empty course titles
-		if ( jQuery( '#course-title' ).val().replace(/^\s+|\s+$/g, '').length != 0 ) {
-			return true;
-		} else {
-			return false;
-		}
-	};
-
-	/**
 	 * Validation of input fields - Add, Edit Question.
 	 *
 	 * @since 1.0.0
@@ -549,7 +534,6 @@ jQuery(document).ready( function() {
 	if ( jQuery( '#lesson-prerequisite-options' ).exists() ) { jQuery( '#lesson-prerequisite-options' ).select2({width:'resolve'}); }
 	if ( jQuery( '#lesson-course-options' ).exists() ) { jQuery( '#lesson-course-options' ).select2({width:'resolve'}); }
 	if ( jQuery( '#course-prerequisite-options' ).exists() ) { jQuery( '#course-prerequisite-options' ).select2({width:'resolve'}); }
-	if ( jQuery( '#lesson-course-details #course-category-options' ).exists() ) { jQuery( '#lesson-course-details #course-category-options' ).select2({width:'resolve'}); }
 
 	// Quiz edit panel
 	if ( jQuery( '#add-question-type-options' ).exists() ) { jQuery( '#add-question-type-options' ).select2({width:'resolve'}); }
@@ -567,81 +551,7 @@ jQuery(document).ready( function() {
 	});
 
 	/***************************************************************************************************
-	 * 	4 - Course Functions.
-	 ***************************************************************************************************/
-
-	/**
-	 * Add Course Click Event.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 */
-	// Hide the add course panel
-	jQuery( '#lesson-course-details' ).addClass( 'hidden' );
-	// Display on click
-	jQuery( '#lesson-course-add' ).click( function() {
-		// Display the add course panel and hide the add course link
-		jQuery( '#lesson-course-actions' ).hide();
-		jQuery( '#lesson-course-details' ).removeClass( 'hidden' );
-	});
-
-	/**
-	 * Cancel Events Click Event - add course.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 */
-	jQuery( '#lesson-course-details p' ).on( 'click', 'a.lesson_course_cancel', function() {
-		// Hide the add course panel and show the add course link
-		jQuery( '#lesson-course-actions' ).show();
-		jQuery( '#lesson-course-details' ).addClass( 'hidden' );
-	});
-
-	/**
-	 * Save Course Click Event - Ajax.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 */
-	jQuery( '#lesson-course-details p' ).on( 'click', 'a.lesson_course_save', function() {
-		// Validate Inputs
-		var validInput = jQuery.fn.validateCourseInput();
-		if ( validInput ) {
-
-			// Setup data
-			var dataToPost = $( '#lesson-course-details' ).find( 'input, textarea, select' ).serialize();
-
-			// Perform the AJAX call.
-			jQuery.post(
-				ajaxurl,
-				{
-					action : 'lesson_add_course',
-					lesson_add_course_nonce : woo_localized_data.lesson_add_course_nonce,
-					data : dataToPost
-				},
-				function( response ) {
-
-					// Check for a course id
-					if ( 0 < response ) {
-						jQuery( '#lesson-course-actions' ).show();
-						jQuery( '#lesson-course-details' ).addClass( 'hidden' );
-						jQuery( '#lesson-course-options' ).append(jQuery( '<option></option>' ).attr( 'value' , response ).text(  jQuery( '#course-title' ).attr( 'value' ) ) );
-						jQuery( '#lesson-course-options' ).val( response).trigger('change');
-					} else {
-						// TODO - course creation fail message
-					}
-				}
-			);
-			return false; // TODO - move this below the next bracket when doing the ajax loader
-		//});
-		} else {
-			jQuery( '#course-title' ).focus();
-			// TODO - add error message
-		}
-	});
-
-	/***************************************************************************************************
-	 * 	5 - Quiz Question Functions.
+	 * 	4 - Quiz Question Functions.
 	 ***************************************************************************************************/
 
 	/**
@@ -1393,7 +1303,6 @@ jQuery(document).ready( function() {
 	if ( jQuery( '#lesson-complexity-options' ).exists() ) { jQuery( '#lesson-complexity-options' ).select2({width:'resolve'}); }
 	if ( jQuery( '#lesson-prerequisite-options' ).exists() ) { jQuery( '#lesson-prerequisite-options' ).select2({width:'resolve'}); }
 	if ( jQuery( '#lesson-course-options' ).exists() ) { jQuery( '#lesson-course-options' ).select2({width:'resolve'}); }
-	if ( jQuery( '#course-prerequisite-options' ).exists() ) { jQuery( '#course-prerequisite-options' ).select2({width:'resolve'}); }
 	if ( jQuery( '#course-category-options' ).exists() ) { jQuery( '#course-category-options' ).select2({width:'resolve'}); }
 
 	// Quiz edit panel
