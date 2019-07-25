@@ -475,7 +475,6 @@ class Sensei_Course {
 		 * @param int    $post_id        The course ID.
 		 * @param string $meta_key       The meta to be saved.
 		 * @param mixed  $new_meta_value The meta value to be saved.
-		 * @return bool
 		 */
 		if ( apply_filters( 'sensei_course_meta_do_default_save', true, $post_id, $meta_key, $new_meta_value ) ) {
 			// Update meta field with the new value
