@@ -2712,12 +2712,24 @@ class Sensei_Course {
 	 * @since 1.9.0
 	 */
 	public static function the_course_lessons_title() {
-
 		if ( ! is_singular( 'course' ) ) {
 			return;
 		}
 
+		/**
+		 * Access check for the course lessons.
+		 *
+		 * @since 2.2.0
+		 *
+		 * @param bool $show_lessons Whether or not the lessons should be shown. Default true.
+		 * @param int  $course_id    Course ID.
+		 */
+		if ( ! apply_filters( 'sensei_course_lessons_has_access', true, get_the_ID() ) ) {
+			return;
+		}
+
 		global $post;
+
 		$none_module_lessons = Sensei()->modules->get_none_module_lessons( $post->ID );
 		$course_lessons      = Sensei()->course->course_lessons( $post->ID );
 
