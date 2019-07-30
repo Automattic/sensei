@@ -1580,6 +1580,17 @@ class Sensei_Core_Modules {
 	 * @return void
 	 */
 	public function load_course_module_content_template() {
+		/**
+		 * Access check for the course lessons.
+		 *
+		 * @since 2.2.0
+		 *
+		 * @param bool $show_lessons Whether or not the lessons should be shown. Default true.
+		 * @param int  $course_id    Course ID.
+		 */
+		if ( ! apply_filters( 'sensei_course_lessons_has_access', true, get_the_ID() ) ) {
+			return;
+		}
 
 		// load backwards compatible template name if it exists in the users theme
 		$located_template = locate_template( Sensei()->template_url . 'single-course/course-modules.php' );
