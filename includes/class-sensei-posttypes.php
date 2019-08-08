@@ -82,7 +82,7 @@ class Sensei_PostTypes {
 		$this->load_posttype_objects( $default_post_types );
 
 		// Admin functions
-		if ( is_admin() ) {
+		if ( is_admin() || defined( 'WP_CLI' ) && WP_CLI ) {
 			$this->set_role_cap_defaults( $default_post_types );
 			global $pagenow;
 			if ( ( $pagenow == 'post.php' || $pagenow == 'post-new.php' ) ) {
