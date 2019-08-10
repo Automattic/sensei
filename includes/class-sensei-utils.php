@@ -2564,7 +2564,7 @@ class Sensei_Utils {
 		 * @param int|false $course_id Course ID.
 		 */
 		return apply_filters( 'sensei_course_show_lessons', true, $course_id );
-}
+	}
 } // End Class
 
 /**
