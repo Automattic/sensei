@@ -1543,19 +1543,7 @@ class Sensei_Core_Modules {
 	 * @return void
 	 */
 	public function course_modules_title() {
-		if ( ! sensei_module_has_lessons() ) {
-			return;
-		}
-
-		/**
-		 * Access check for the course lessons.
-		 *
-		 * @since 2.2.0
-		 *
-		 * @param bool $show_lessons Whether or not the lessons should be shown. Default true.
-		 * @param int  $course_id    Course ID.
-		 */
-		if ( ! apply_filters( 'sensei_course_lessons_has_access', true, get_the_ID() ) ) {
+		if ( ! sensei_module_has_lessons() || ! Sensei_Utils::show_course_lessons( get_the_ID() ) ) {
 			return;
 		}
 
@@ -1580,15 +1568,7 @@ class Sensei_Core_Modules {
 	 * @return void
 	 */
 	public function load_course_module_content_template() {
-		/**
-		 * Access check for the course lessons.
-		 *
-		 * @since 2.2.0
-		 *
-		 * @param bool $show_lessons Whether or not the lessons should be shown. Default true.
-		 * @param int  $course_id    Course ID.
-		 */
-		if ( ! apply_filters( 'sensei_course_lessons_has_access', true, get_the_ID() ) ) {
+		if ( ! Sensei_Utils::show_course_lessons( get_the_ID() ) ) {
 			return;
 		}
 
