@@ -26,6 +26,9 @@ function sensei_course_archive_next_link( $type = 'newcourses' ) {
 	  * @return void
 	  */
 function course_single_lessons() {
+	if ( ! Sensei_Utils::show_course_lessons( get_the_ID() ) ) {
+		return;
+	}
 
 	// load backwards compatible template name if it exists in the users theme
 	$located_template = locate_template( Sensei()->template_url . 'single-course/course-lessons.php' );

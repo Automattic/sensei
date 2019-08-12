@@ -2544,6 +2544,27 @@ class Sensei_Utils {
 
 		return ( null !== $filter_to_apply ) ? (bool) apply_filters( $filter_to_apply, $setting_on ) : $setting_on;
 	}
+
+
+	/**
+	 * Determine whether to show the lessons on the single course page.
+	 *
+	 * @since 2.2.0
+	 *
+	 * @param int|false $course_id Course ID.
+	 * @return bool Whether to show the lessons. Default true.
+	 */
+	public static function show_course_lessons( $course_id ) {
+		/**
+		 * Set the visibility of lessons on the single course page.
+		 *
+		 * @since 2.2.0
+		 *
+		 * @param bool $show_lessons   Whether the lessons should be shown. Default true.
+		 * @param int|false $course_id Course ID.
+		 */
+		return apply_filters( 'sensei_course_show_lessons', true, $course_id );
+	}
 } // End Class
 
 /**

@@ -1543,19 +1543,21 @@ class Sensei_Core_Modules {
 	 * @return void
 	 */
 	public function course_modules_title() {
-		if ( sensei_module_has_lessons() ) {
-			global $post;
-
-			/**
-			 * Filters the module title on the single course page.
-			 *
-			 * @since 2.2.0
-			 *
-			 * @param string $html   The HTML to be displayed.
-			 * @param int $course_id Course ID.
-			 */
-			echo wp_kses_post( apply_filters( 'sensei_modules_title', '<header class="modules-title"><h2>' . __( 'Modules', 'sensei-lms' ) . '</h2></header>', $post->ID ) );
+		if ( ! sensei_module_has_lessons() || ! Sensei_Utils::show_course_lessons( get_the_ID() ) ) {
+			return;
 		}
+
+		global $post;
+
+		/**
+		 * Filters the module title on the single course page.
+		 *
+		 * @since 2.2.0
+		 *
+		 * @param string $html   The HTML to be displayed.
+		 * @param int $course_id Course ID.
+		 */
+		echo wp_kses_post( apply_filters( 'sensei_modules_title', '<header class="modules-title"><h2>' . __( 'Modules', 'sensei-lms' ) . '</h2></header>', $post->ID ) );
 	}
 
 	/**
@@ -1566,6 +1568,9 @@ class Sensei_Core_Modules {
 	 * @return void
 	 */
 	public function load_course_module_content_template() {
+		if ( ! Sensei_Utils::show_course_lessons( get_the_ID() ) ) {
+			return;
+		}
 
 		// load backwards compatible template name if it exists in the users theme
 		$located_template = locate_template( Sensei()->template_url . 'single-course/course-modules.php' );
