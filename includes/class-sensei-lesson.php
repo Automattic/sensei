@@ -2638,6 +2638,70 @@ class Sensei_Lesson {
 	}
 
 	/**
+	 * lesson_save_course function.
+	 *
+	 * @access private
+	 * @deprecated 2.2.0
+	 * @param array $data (default: array())
+	 * @return integer|boolean $course_id or false
+	 */
+	private function lesson_save_course( $data = array() ) {
+		_deprecated_function( __METHOD__, '2.2.0' );
+
+		$return = false;
+		// Setup the course data
+		$course_id      = 0;
+		$course_content = '';
+		$course_title   = '';
+ 		if ( isset( $data['course_id'] ) && ( 0 < absint( $data['course_id'] ) ) ) {
+			$course_id = absint( $data['course_id'] );
+		} // End If Statement
+		if ( isset( $data['course_title'] ) && ( '' != $data['course_title'] ) ) {
+			$course_title = $data['course_title'];
+		} // End If Statement
+ 		$post_title  = $course_title;
+		$post_status = 'publish';
+		$post_type   = 'course';
+ 		if ( isset( $data['course_content'] ) && ( '' != $data['course_content'] ) ) {
+			$course_content = $data['course_content'];
+		} // End If Statement
+		$post_content = $course_content;
+		// Course Query Arguments
+		$post_type_args = array(
+			'post_content' => $post_content,
+			'post_status'  => $post_status,
+			'post_title'   => $post_title,
+			'post_type'    => $post_type,
+		);
+		// Only save if there is a valid title.
+		if ( $post_title != '' ) {
+			// Check for prerequisite courses.
+			$course_prerequisite_id = absint( $data['course_prerequisite'] );
+			$course_category_id     = absint( $data['course_category'] );
+ 			// Create the new course.
+			$course_id = wp_insert_post( $post_type_args );
+ 			add_post_meta( $course_id, '_course_prerequisite', $course_prerequisite_id );
+ 			/**
+			 * Triggers after a course was created from the lesson page meta box.
+			 *
+			 * @since 2.0.0
+			 *
+			 * @param int   $course_id Course ID that was just created.
+			 * @param array $data      Data that was sent when creating the course.
+			 */
+			do_action( 'sensei_lesson_course_created', $course_id, $data );
+ 			if ( 0 < $course_category_id ) {
+				wp_set_object_terms( $course_id, $course_category_id, 'course-category' );
+			} // End If Statement.
+		} // End If Statement.
+		// Check that the insert or update saved by testing the post id.
+		if ( 0 < $course_id ) {
+			$return = $course_id;
+		} // End If Statement.
+		return $return;
+	} // End lesson_save_course().
+
+	/**
 	 * lesson_save_question function.
 	 *
 	 * @access private
