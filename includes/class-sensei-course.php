@@ -452,8 +452,34 @@ class Sensei_Course {
 			$new_meta_value = ( isset( $_POST[ $post_key ] ) ? sanitize_html_class( $_POST[ $post_key ] ) : '' );
 		} // End If Statement
 
-		// update field with the new value
-		return update_post_meta( $post_id, $meta_key, $new_meta_value );
+		/**
+		 * Action before saving the meta value.
+		 *
+		 * @since 2.2.0
+		 *
+		 * @param int    $post_id        The course ID.
+		 * @param string $meta_key       The meta to be saved.
+		 * @param mixed  $new_meta_value The meta value to be saved.
+		 */
+		do_action( 'sensei_course_meta_before_save', $post_id, $meta_key, $new_meta_value );
+
+		/**
+		 * Filter whether or not to run the default save functionality for the
+		 * meta. This may be used with the
+		 * "sensei_course_meta_before_save" action to create custom
+		 * save functionality for specific meta.
+		 *
+		 * @since 2.2.0
+		 *
+		 * @param bool   $do_save        Whether or not to do the default save.
+		 * @param int    $post_id        The course ID.
+		 * @param string $meta_key       The meta to be saved.
+		 * @param mixed  $new_meta_value The meta value to be saved.
+		 */
+		if ( apply_filters( 'sensei_course_meta_default_save', true, $post_id, $meta_key, $new_meta_value ) ) {
+			// Update meta field with the new value
+			return update_post_meta( $post_id, $meta_key, $new_meta_value );
+		}
 
 	} // End save_post_meta()
 
