@@ -1,5 +1,23 @@
 *** Changelog ***
 
+2019.08.28 - version 2.2.0
+* New: Add `sensei_course_meta_before_save` and `sensei_course_meta_default_save` hooks for saving course meta - #2761
+* New: Add `sensei_course_show_lessons` filter to conditionally hide lessons on single course page - #2763
+* New: Add `sensei_modules_title` filter for modifying the module title HTML - #2737
+* New: Remove ability to add a course from the lesson page - #2758
+* New: Deprecate `Sensei_Lesson::lesson_save_course` function - #2769
+* New: Deprecate `Sensei_Lesson::lesson_add_course` function - #2760
+* New: Add support for custom fields on REST API requests - #2747
+* Tweak: Log product count when a course is published - #2755
+* Tweak: Update layout of course meta on relevant pages - #2751
+* Fix: Items not showing up on plugin activation via WP CLI (@kakoma) - #2766
+* Fix: Ensure WooCommerce notices are displayed for unsupported themes - #2756
+* Fix: Clean up modules when course teacher is changed - #2472
+* Fix: Conflict with WP Ultimate Recipe plugin - #2749
+* Fix: Show draft, private, future lessons on the Order Lessons page (@mostafaabd) - #2746, #2371
+* Fix: PHP notice when trashing / restoring a course (@mostafaabd) - #2721
+* Fix: Alignment issue on single course page when lesson has a featured image (@mostafaabd) - #2719
+
 2019.06.26 - version 2.1.2
 * Fix: Modules not displaying in WP admin - #2742
 * Fix: Multiple correct answers being removed from question editor - #2743
@@ -118,6 +136,13 @@
 * Fix: Fix permalink/rewrite rule issue on plugin activation - #2492
 * Fix: Allow for late additions to data updates - #2490
 * Fix: Fix issues with coding standards
+
+2019.03.27 - version 1.12.3
+* New: Restrict future updates for sites running a version of PHP less than 5.6 - #2502
+* Fix: Conflict with Jetpack shortcodes module and Sensei videos - #2426
+* Fix: Change progress status to "Completed" in modules (@tonytettinger) - #2342
+* Fix: Lesson order changes when lesson is updated using Classic Editor - #2471
+* Fix: Update version number on plugin update - #2503
 
 2018.11.29 - version 1.12.2
 
