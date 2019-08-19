@@ -110,8 +110,10 @@ abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 	 * @return array
 	 */
 	private function generate_dummy_post_args( $object_to_copy ) {
+		global $wpdb;
+
 		$default_args = array(
-			'ID'                    => 0,
+			'ID'                    => absint( $wpdb->get_var( "SELECT MAX( ID ) from {$wpdb->prefix}posts" ) ) + 1,
 			'post_status'           => 'publish',
 			'post_author'           => 0,
 			'post_parent'           => 0,
