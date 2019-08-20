@@ -14,17 +14,23 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 	/**
-	 * @var WP_Query The original query for the query.
+	 * The original query for the query.
+	 *
+	 * @var WP_Query
 	 */
 	private $original_query;
 
 	/**
-	 * @var WP_Post The original post for the query.
+	 * The original post for the query.
+	 *
+	 * @var WP_Post
 	 */
 	private $original_post;
 
 	/**
-	 * @var WP_Post The dummy post to be rendered.
+	 * The dummy post to be rendered.
+	 *
+	 * @var WP_Post
 	 */
 	private $dummy_post;
 
