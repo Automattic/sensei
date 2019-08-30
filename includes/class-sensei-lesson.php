@@ -215,7 +215,7 @@ class Sensei_Lesson {
 		$html = '';
 		// Lesson Length
 		$html .= '<p><label for="lesson_length">' . esc_html__( 'Lesson Length in minutes', 'sensei-lms' ) . ': </label>';
-		$html .= '<input type="number" id="lesson-length" name="lesson_length" class="small-text" value="' . esc_attr( $lesson_length ) . '" /></p>' . "\n";
+		$html .= '<input type="number" id="lesson-length" name="lesson_length" class="small-text" step="1" value="' . esc_attr( $lesson_length ) . '" /></p>' . "\n";
 		// Lesson Complexity
 		$html     .= '<p><label for="lesson_complexity">' . esc_html__( 'Lesson Complexity', 'sensei-lms' ) . ': </label>';
 		$html     .= '<select id="lesson-complexity-options" name="lesson_complexity" class="chosen_select lesson-complexity-select">';
@@ -669,6 +669,20 @@ class Sensei_Lesson {
 			// phpcs:ignore WordPress.Security.NonceVerification
 			$new_meta_value = isset( $_POST[ $post_key ] ) ? $_POST[ $post_key ] : '';
 			$new_meta_value = Sensei_Wp_Kses::maybe_sanitize( $new_meta_value, $this->allowed_html );
+		} else if ( 'lesson_length' === $post_key ) {
+
+			$new_meta_value = isset( $_POST[ $post_key ] ) ? $_POST[ $post_key ] : '';
+
+			if ( ! is_numeric( $new_meta_value ) ) {
+
+				$new_meta_value = '-1';
+
+			} else {
+
+				$new_meta_value = (string) absint( $new_meta_value );
+
+			}
+
 		} else {
 			// phpcs:ignore WordPress.Security.NonceVerification
 			$new_meta_value = ( isset( $_POST[ $post_key ] ) ? sanitize_html_class( $_POST[ $post_key ] ) : '' );
