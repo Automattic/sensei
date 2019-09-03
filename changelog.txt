@@ -1,6 +1,6 @@
 *** Changelog ***
 
-2019.08.28 - version 2.2.0
+2019.09.03 - version 2.2.0
 * New: Add `sensei_course_meta_before_save` and `sensei_course_meta_default_save` hooks for saving course meta - #2761
 * New: Add `sensei_course_show_lessons` filter to conditionally hide lessons on single course page - #2763
 * New: Add `sensei_modules_title` filter for modifying the module title HTML - #2737
