@@ -1271,10 +1271,11 @@ class Sensei_Teacher {
 			}
 		}
 
-		$user_query_args  = array(
+		$user_query_args = array(
 			'role__in' => $role_users_who_can_edit_courses,
 			'fields'   => array( 'ID', 'display_name' ),
 		);
+
 		$users_who_can_edit_courses = get_users( $user_query_args );
 
 		// Create the select element with the given users who can edit course
