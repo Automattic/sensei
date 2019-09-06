@@ -561,6 +561,10 @@ class Sensei_Messages {
 	 * @return string
 	 */
 	public function exclude_message_comments_from_feed_where( $where ) {
+		if ( is_singular() ) {
+			return $where;
+		}
+
 		return $where . ( $where ? ' AND ' : '' ) . " post_type != 'sensei_message' ";
 	}
 
