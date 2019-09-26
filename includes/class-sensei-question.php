@@ -533,7 +533,7 @@ class Sensei_Question {
 		$question_grade = Sensei()->question->get_question_grade( $question_id );
 
 		$title_html  = '<span class="question question-title">';
-		$title_html .= esc_html( $title );
+		$title_html .= wp_kses_post( $title );
 		$title_html .= Sensei()->view_helper->format_question_points( $question_grade );
 		$title_html .= '</span>';
 
