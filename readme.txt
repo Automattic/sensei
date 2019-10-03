@@ -17,14 +17,14 @@ Your knowledge is worth teaching, so teach it!
 = Seamless WordPress integration =
 Sensei LMS integrates effortlessly with your WordPress site, making it easy to create courses, lessons and quizzes.
 
+= Earn passive income =
+Our [WooCommerce Paid Courses extension](https://woocommerce.com/products/woocommerce-paid-courses/) enables you to sell your courses using the most popular eCommerce platform on the web - WooCommerce.
+
 = No coding required =
 You don't have time to spend hiring a developer to make your online courses look great, and you shouldn't have to. Sensei LMS just works with your preferred WordPress theme.
 
 = Quizzes that assess and reinforce =
 Leverage the power of quizzes to strengthen your students' understanding of key concepts and evaluate their progress.
-
-= Earn passive income =
-Our [WooCommerce Paid Courses extension](https://woocommerce.com/products/woocommerce-paid-courses/) enables you to sell your courses using the most popular eCommerce platform on the web - WooCommerce.
 
 = We're here to stay =
 Sensei LMS is built by Automattic, the company behind products like WordPress.com, WooCommerce, Jetpack and more.
