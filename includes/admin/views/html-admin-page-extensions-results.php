@@ -20,10 +20,9 @@ if ( empty( $extensions ) ) {
 	foreach ( $extensions as $extension ) {
 		$url = add_query_arg(
 			array(
-				'utm_source'   => 'product',
-				'utm_medium'   => 'extensionpage',
-				'utm_campaign' => 'sensei',
-				'utm_content'  => 'listing',
+				'utm_source'   => str_replace( ['http://', 'https://'], '', get_site_url() ),
+				'utm_medium'   => 'extensions',
+				'utm_campaign' => 'sensei-lms',
 			),
 			$extension->link
 		);
