@@ -4302,6 +4302,18 @@ class Sensei_Lesson {
 	}//end the_title()
 
 	/**
+	 * Flush the rewrite rules.
+	 *
+	 * @since 1.9.0
+	 * @deprecated 2.2.1
+	 *
+	 * @param int $post_id Post ID.
+	 */
+	public static function flush_rewrite_rules( $post_id ) {
+		_deprecated_function( __METHOD__, '2.2.1' );
+	}
+
+	/**
 	 * Output the quiz specific buttons and messaging on the single lesson page
 	 *
 	 * @since 1.0.0 moved here from frontend class

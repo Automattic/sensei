@@ -2858,6 +2858,18 @@ class Sensei_Course {
 	}//end load_single_course_lessons_query()
 
 	/**
+	 * Flush the rewrite rules.
+	 *
+	 * @since 1.9.0
+	 * @deprecated 2.2.1
+	 *
+	 * @param int $post_id Post ID.
+	 */
+	public static function flush_rewrite_rules( $post_id ) {
+		_deprecated_function( __METHOD__, '2.2.1' );
+	}
+
+	/**
 	 * Optionally return the full content on the single course pages
 	 * depending on the users course_single_content_display setting
 	 *
