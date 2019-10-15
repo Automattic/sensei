@@ -14,14 +14,25 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 	/**
-	 * @var WP_Query The original query for the query.
+	 * The original query for the query.
+	 *
+	 * @var WP_Query
 	 */
 	private $original_query;
 
 	/**
-	 * @var WP_Post The original post for the query.
+	 * The original post for the query.
+	 *
+	 * @var WP_Post
 	 */
 	private $original_post;
+
+	/**
+	 * The dummy post to be rendered.
+	 *
+	 * @var WP_Post
+	 */
+	private $dummy_post;
 
 	/**
 	 * Prepare the WP query object for the imitated request.
@@ -62,12 +73,15 @@ abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 		$this->original_query = $wp_query;
 		$this->original_post  = $post;
 
+		// Create the dummy post object.
+		$this->dummy_post = new WP_Post( (object) $dummy_post_properties );
+
 		/*
 		 * Set up new global $post and set it on $wp_query. Set $wp_the_query
 		 * as well so we can reset it back to this later.
 		 */
 		// phpcs:disable WordPress.WP.GlobalVariablesOverride.OverrideProhibited -- Used to mock our own page within a custom loop. Reset afterwards.
-		$post            = new WP_Post( (object) $dummy_post_properties );
+		$post            = $this->dummy_post;
 		$wp_query        = clone $wp_query;
 		$wp_query->post  = $post;
 		$wp_query->posts = array( $post );
@@ -110,8 +124,10 @@ abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 	 * @return array
 	 */
 	private function generate_dummy_post_args( $object_to_copy ) {
+		global $wpdb;
+
 		$default_args = array(
-			'ID'                    => 0,
+			'ID'                    => absint( $wpdb->get_var( "SELECT MAX( ID ) from {$wpdb->prefix}posts" ) ) + 1,
 			'post_status'           => 'publish',
 			'post_author'           => 0,
 			'post_parent'           => 0,
@@ -231,7 +247,7 @@ abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 	 * @return string|bool
 	 */
 	public function hide_dummy_post_title( $title, $id ) {
-		if ( 0 === $id ) {
+		if ( $this->dummy_post->ID === $id ) {
 			return '';
 		}
 		return $title;

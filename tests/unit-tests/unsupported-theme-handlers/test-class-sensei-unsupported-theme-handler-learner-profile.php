@@ -111,7 +111,8 @@ class Sensei_Unsupported_Theme_Handler_Learner_Profile_Test extends WP_UnitTestC
 
 		$this->handler->handle_request();
 
-		$this->assertEquals( 0, $post->ID, 'The dummy post ID should be 0' );
+		$this->assertNotEquals( 0, $post->ID, 'The dummy post ID should be non-zero' );
+		$this->assertNull( get_post( $post->ID ), 'The dummy post ID should be unused' );
 		$this->assertEquals( 'page', $post->post_type, 'The dummy post type should be "page"' );
 
 		$copied_from_learner_user = array(
