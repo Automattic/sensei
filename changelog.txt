@@ -1,5 +1,15 @@
 *** Changelog ***
 
+2019.10.23 - version 2.2.1
+* New: Allow HTML in question titles - #2780
+* Tweak: Optimize loading of teacher dropdown on Courses page (@mostafaabd) - #2750
+* Tweak: Update extension parameters passed to Google Analytics - #2783
+* Tweak: Move upsell higher in ReadMe - #2782
+* Fix: No longer flush rewrite rules on course and lesson save - #2718
+* Fix: Fix layout issue with Academia theme - #2773
+* Fix: Remove default wrapper around single post renderer on unsupported theme - #2786
+* Fix: Do not limit message comments on single post comment feeds - #2776
+
 2019.09.03 - version 2.2.0
 * New: Add `sensei_course_meta_before_save` and `sensei_course_meta_default_save` hooks for saving course meta - #2761
 * New: Add `sensei_course_show_lessons` filter to conditionally hide lessons on single course page - #2763
