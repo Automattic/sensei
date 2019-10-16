@@ -98,9 +98,6 @@ class Sensei_Lesson {
 			// save bulk edit fields
 			add_action( 'wp_ajax_save_bulk_edit_book', array( $this, 'save_all_lessons_edit_fields' ) );
 
-			// flush rewrite rules when saving a lesson
-			add_action( 'save_post', array( __CLASS__, 'flush_rewrite_rules' ) );
-
 			add_action( 'admin_head', array( $this, 'add_custom_link_to_course' ) );
 
 		} else {
@@ -4214,26 +4211,15 @@ class Sensei_Lesson {
 	}//end the_title()
 
 	/**
-	 * Flush the rewrite rules for a lesson post type
+	 * Flush the rewrite rules.
 	 *
 	 * @since 1.9.0
+	 * @deprecated 2.2.1
 	 *
-	 * @param $post_id
+	 * @param int $post_id Post ID.
 	 */
 	public static function flush_rewrite_rules( $post_id ) {
-
-		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
-
-			return;
-
-		}
-
-		if ( 'lesson' == get_post_type( $post_id ) ) {
-
-			Sensei()->initiate_rewrite_rules_flush();
-
-		}
-
+		_deprecated_function( __METHOD__, '2.2.1' );
 	}
 
 	/**

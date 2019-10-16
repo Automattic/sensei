@@ -124,9 +124,6 @@ class Sensei_Course {
 		// ensure the course category page respects the manual order set for courses
 		add_filter( 'pre_get_posts', array( __CLASS__, 'alter_course_category_order' ), 10, 1 );
 
-		// flush rewrite rules when saving a course
-		add_action( 'save_post', array( 'Sensei_Course', 'flush_rewrite_rules' ) );
-
 		// Allow course archive to be setup as the home page
 		if ( (int) get_option( 'page_on_front' ) > 0 ) {
 			add_action( 'pre_get_posts', array( $this, 'allow_course_archive_on_front_page' ), 9, 1 );
@@ -2872,26 +2869,15 @@ class Sensei_Course {
 	}//end load_single_course_lessons_query()
 
 	/**
-	 * Flush the rewrite rules for a course post type
+	 * Flush the rewrite rules.
 	 *
 	 * @since 1.9.0
+	 * @deprecated 2.2.1
 	 *
-	 * @param $post_id
+	 * @param int $post_id Post ID.
 	 */
 	public static function flush_rewrite_rules( $post_id ) {
-
-		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
-
-			return;
-
-		}
-
-		if ( 'course' == get_post_type( $post_id ) ) {
-
-			Sensei()->initiate_rewrite_rules_flush();
-
-		}
-
+		_deprecated_function( __METHOD__, '2.2.1' );
 	}
 
 	/**
