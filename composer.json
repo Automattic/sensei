@@ -1,16 +1,15 @@
 {
-	"name": "woothemes-sensei",
+	"name": "automattic/sensei-lms",
 	"description": "A learning management plugin for WordPress, which provides the smoothest platform for helping you teach anything.",
 	"require-dev": {
 		"php": "^5.4 || ^7",
 		"apigen/apigen": "*",
-		"dealerdirect/phpcodesniffer-composer-installer": "^0.5.0",
-		"phpcompatibility/phpcompatibility-wp": "^2",
 		"phpunit/phpunit": "^6.5",
-		"squizlabs/php_codesniffer": "^3.3.2",
-		"wp-coding-standards/wpcs": "^1.1.0",
-		"sirbrillig/phpcs-variable-analysis": "^2.6",
-		"sirbrillig/phpcs-no-get-current-user": "^1.0"
+		"dealerdirect/phpcodesniffer-composer-installer": "^0.4.4",
+		"phpcompatibility/phpcompatibility-wp": "^2.0",
+		"squizlabs/php_codesniffer": "^3.3",
+		"wp-coding-standards/wpcs": "^2.1",
+		"sirbrillig/phpcs-variable-analysis": "^2.6"
 	},
 	"prefer-stable": true
 }
