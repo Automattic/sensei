@@ -14,7 +14,6 @@
 	<exclude-pattern type="relative">^build/*</exclude-pattern>
 	<exclude-pattern type="relative">^tmp/*</exclude-pattern>
 	<exclude-pattern type="relative">^apigen/*</exclude-pattern>
-	<exclude-pattern type="relative">^tests/*</exclude-pattern>
 
 	<!-- Configs -->
 	<config name="minimum_supported_wp_version" value="4.9" />
