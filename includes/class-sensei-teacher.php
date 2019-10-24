@@ -268,8 +268,8 @@ class Sensei_Teacher {
 					</option>
 
 				<?php
-}// End foreach().
-?>
+			}// End foreach().
+			?>
 
 		</select>
 

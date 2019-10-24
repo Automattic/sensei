@@ -3313,8 +3313,8 @@ class Sensei_Course {
 				. sprintf(
 					// translators: Placeholder $1$s is the course title.
 					esc_attr__( 'You must first complete: %1$s', 'sensei-lms' ),
-					$course_title
-				)
+				$course_title
+			)
 				 . '">' . $course_title . '</a>';
 
 			$complete_prerequisite_message = sprintf(

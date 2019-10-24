@@ -1228,7 +1228,7 @@ class Sensei_Frontend {
 			</p>
 
 			<?php
-} // End If Statement
+		} // End If Statement
 
 	} // End sensei_course_category_main_content()
 

@@ -1238,7 +1238,7 @@ class Sensei_Admin {
 										wp_kses_allowed_html( 'post' ),
 										array(
 											// Explicitly allow form tag for WP.com.
-											'form'   => array(
+											'form'  => array(
 												'action' => array(),
 												'class'  => array(),
 												'id'     => array(),
@@ -1359,10 +1359,10 @@ class Sensei_Admin {
 																			$html .= '<select id="lesson-order-course" name="course_id">' . "\n";
 																			$html .= '<option value="">' . esc_html__( 'Select a course', 'sensei-lms' ) . '</option>' . "\n";
 
-							  foreach ( $courses as $course ) {
-								  $course_id = '';
-								  if ( isset( $_GET['course_id'] ) ) {
-									  $course_id = intval( $_GET['course_id'] );
+								foreach ( $courses as $course ) {
+									$course_id = '';
+									if ( isset( $_GET['course_id'] ) ) {
+										$course_id = intval( $_GET['course_id'] );
 									}
 									$html .= '<option value="' . esc_attr( intval( $course->ID ) ) . '" ' . selected( $course->ID, $course_id, false ) . '>' . esc_html( get_the_title( $course->ID ) ) . '</option>' . "\n";
 								}
@@ -1535,7 +1535,7 @@ class Sensei_Admin {
 												'style' => array(),
 											),
 											'ul'     => array(
-												'class'          => array(),
+												'class' => array(),
 												'data-module-id' => array(),
 											),
 										)

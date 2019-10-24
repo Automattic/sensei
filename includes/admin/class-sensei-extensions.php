@@ -178,9 +178,12 @@ final class Sensei_Extensions {
 		$extensions = $this->get_extensions( $type, $category );
 		// phpcs:enable
 
-		sensei_log_event( 'extensions_view', [
-			'view' => $category ? $category : '_all',
-		] );
+		sensei_log_event(
+			'extensions_view',
+			[
+				'view' => $category ? $category : '_all',
+			]
+		);
 
 		include_once dirname( __FILE__ ) . '/views/html-admin-page-extensions.php';
 	}

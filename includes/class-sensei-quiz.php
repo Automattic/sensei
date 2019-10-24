@@ -1340,7 +1340,7 @@ class Sensei_Quiz {
 			$user_quiz_grade = get_comment_meta( $user_lesson_status->comment_ID, 'grade', true );
 		}
 
-		return (double) $user_quiz_grade;
+		return (float) $user_quiz_grade;
 
 	}
 
