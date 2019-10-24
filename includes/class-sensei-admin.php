@@ -108,7 +108,7 @@ class Sensei_Admin {
 		}
 
 		if ( $menu_cap ) {
-			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.OverrideProhibited -- Only way to add separator above our menu group.
+			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Only way to add separator above our menu group.
 			$menu[] = array( '', 'read', 'separator-sensei', '', 'wp-menu-separator sensei' );
 			add_menu_page( 'Sensei LMS', 'Sensei LMS', $menu_cap, 'sensei', array( Sensei()->analysis, 'analysis_page' ), '', '50' );
 		}
@@ -164,7 +164,7 @@ class Sensei_Admin {
 			return;
 		}
 
-		// phpcs:disable WordPress.WP.GlobalVariablesOverride.OverrideProhibited -- Only way to highlight our special pages in menu.
+		// phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited -- Only way to highlight our special pages in menu.
 		if ( $screen->base == 'post' && $post_type == 'course' ) {
 
 			$parent_file = 'edit.php?post_type=course';
@@ -185,7 +185,7 @@ class Sensei_Admin {
 			$parent_file  = 'sensei';
 
 		}
-		// phpcs:enable WordPress.WP.GlobalVariablesOverride.OverrideProhibited
+		// phpcs:enable WordPress.WP.GlobalVariablesOverride.Prohibited
 	}
 
 	/**

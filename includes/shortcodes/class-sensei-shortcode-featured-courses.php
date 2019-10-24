@@ -111,7 +111,7 @@ class Sensei_Shortcode_Featured_Courses implements Sensei_Shortcode_Interface {
 		// phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
 		global $wp_query;
 
-		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.OverrideProhibited -- Used to produce loop in shortcode. Reset below.
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Used to produce loop in shortcode. Reset below.
 		$wp_query = $this->query;
 
 		ob_start();
