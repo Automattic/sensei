@@ -4309,6 +4309,16 @@ class Sensei_Lesson {
 
 		$lesson_allow_comments = $allow_comments && ( $user_taking_course || $has_access || $is_preview );
 
+		/**
+		 * Controls when lesson comments are going to be displayed.
+		 *
+		 * @since 2.3.0
+		 *
+		 * @param bool  $lesson_allow_comments True if comments are allowed.
+		 * @param int $lesson_id The lesson id.
+		 */
+		$lesson_allow_comments = apply_filters( 'sensei_lesson_allow_comments', $lesson_allow_comments, get_the_ID() );
+
 		if ( $lesson_allow_comments || is_singular( 'sensei_message' ) ) {
 			comments_template( '', true );
 		}
