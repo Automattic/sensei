@@ -67,6 +67,8 @@ class Sensei_Learner_Management {
 		$this->file      = $file;
 		$this->page_slug = 'sensei_learners';
 
+		add_action( 'init', [ $this, 'register_learner_taxonomy' ] );
+
 		// Admin functions.
 		if ( is_admin() ) {
 			add_filter( 'set-screen-option', array( $this, 'set_learner_management_screen_option' ), 20, 3 );
@@ -93,6 +95,23 @@ class Sensei_Learner_Management {
 			add_action( 'wp_ajax_sensei_json_search_users', array( $this, 'json_search_users' ) );
 		}
 	} // End __construct()
+
+	/**
+	 * Registers the learner taxonomy.
+	 *
+	 * @access private
+	 */
+	public function register_learner_taxonomy() {
+		register_taxonomy(
+			'learner',
+			'course',
+			[
+				'public'             => false,
+				'publicly_queryable' => false, // @todo Not sure about this.
+				'show_ui'            => false,
+			]
+		);
+	}
 
 	/**
 	 * Add learner management menu.
