@@ -1547,7 +1547,7 @@ class Sensei_Utils {
 					'field'   => 'comment_ID',
 				);
 
-				$user_course_status_id = Sensei_Utils::sensei_get_activity_value( $activity_args );
+				$user_course_status_id = self::sensei_get_activity_value( $activity_args );
 
 				if ( $user_course_status_id ) {
 
