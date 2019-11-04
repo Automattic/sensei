@@ -194,7 +194,7 @@ class Sensei_Course_Access {
 	 */
 	private function get_default_access( $user_id ) {
 		// No access provider has explicitly granted or restricted access to the user. Use Sensei's default.
-		if ( Sensei_Learner::has_started_course( $this->course_id, $user_id ) ) {
+		if ( Sensei_Utils::has_started_course( $this->course_id, $user_id ) ) {
 			return true;
 		}
 

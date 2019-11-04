@@ -171,7 +171,7 @@ class Sensei_Course {
 		}
 
 		if ( \Sensei_Course_Access::use_legacy_access_check() ) {
-			return false !== Sensei_Learner::has_started_course( $course_id, $user_id );
+			return false !== Sensei_Utils::has_started_course( $course_id, $user_id );
 		}
 
 		$course_access = Sensei_Course_Access::get_course_instance( $course_id );
@@ -2198,7 +2198,7 @@ class Sensei_Course {
 		} // End If Statement
 
 		// number of completed lessons
-		if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
+		if ( Sensei_Utils::has_started_course( $course->ID, get_current_user_id() )
 			|| Sensei_Utils::user_completed_course( $course->ID, get_current_user_id() ) ) {
 
 			$completed    = count( $this->get_completed_lesson_ids( $course->ID, get_current_user_id() ) );
