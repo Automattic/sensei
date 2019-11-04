@@ -70,17 +70,20 @@ class Sensei_Course_Access {
 	/**
 	 * Return if a user has access.
 	 *
-	 * @param int $user_id User ID.
+	 * @param int  $user_id       User ID.
+	 * @param bool $force_recheck Force a recalculation of access.
 	 * @return bool
 	 */
-	public function has_access( $user_id ) {
+	public function has_access( $user_id, $force_recheck = false ) {
 		try {
-			$access_check_log = $this->get_access_check_log( $user_id );
-			if (
-				$access_check_log
-				&& $access_check_log->get_version() === $this->get_course_access_providers_version()
-			) {
-				return $this->get_stored_access( $user_id );
+			if ( ! $force_recheck ) {
+				$access_check_log = $this->get_access_check_log( $user_id );
+				if (
+					$access_check_log
+					&& $access_check_log->get_version() === $this->get_course_access_providers_version()
+				) {
+					return $this->get_stored_access( $user_id );
+				}
 			}
 
 			$access_check_log = $this->check_access( $user_id );
@@ -95,6 +98,15 @@ class Sensei_Course_Access {
 		}
 
 		return $has_access;
+	}
+
+	/**
+	 * Trigger course access check when access might have changed.
+	 *
+	 * @param int $user_id User ID.
+	 */
+	public function trigger_course_access_check( $user_id ) {
+		$this->has_access( $user_id, true );
 	}
 
 	/**
