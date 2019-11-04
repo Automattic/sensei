@@ -138,6 +138,9 @@ class Sensei_Course_Access {
 			return true === $result;
 		}
 
+		// If they have access, make sure they have started the course.
+		Sensei_Utils::start_user_on_course( $user_id, $this->course_id );
+
 		$result = wp_set_post_terms( $this->course_id, [ intval( $term->term_id ) ], 'learner', true );
 
 		return is_array( $result ) && ! empty( $result );
