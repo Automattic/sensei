@@ -115,14 +115,17 @@ final class Sensei_Course_Access_Log implements JsonSerializable {
 	public function has_access() {
 		$access_log_results = $this->get_access_log_results();
 
+		// If one provider is granting access, they have access to the course.
 		if ( in_array( true, $access_log_results, true ) ) {
 			return true;
 		}
 
+		// If no provider granted access and they have one provider blocking access, they DO NOT have access to the course.
 		if ( in_array( false, $access_log_results, true ) ) {
 			return false;
 		}
 
+		// If all providers returned `null` or there are no providers, return `null` and let Sensei use its default access check.
 		return null;
 	}
 
