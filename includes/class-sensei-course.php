@@ -151,6 +151,35 @@ class Sensei_Course {
 	}
 
 	/**
+	 * Check if a user has access to a course.
+	 *
+	 * @param int      $course_id Course post ID.
+	 * @param int|null $user_id   User ID.
+	 * @return bool
+	 */
+	public static function check_user_access( $course_id, $user_id = null ) {
+		if ( 'course' !== get_post_type( $course_id ) ) {
+			return false;
+		}
+
+		if ( ! $user_id ) {
+			$user_id = get_current_user_id();
+		}
+
+		if ( empty( $course_id ) ) {
+			return false;
+		}
+
+		if ( \Sensei_Course_Access::use_legacy_access_check() ) {
+			return false !== Sensei_Learner::has_started_course( $course_id, $user_id );
+		}
+
+		$course_access = Sensei_Course_Access::get_course_instance( $course_id );
+
+		return $course_access->has_access( $user_id );
+	}
+
+	/**
 	 * @param $message
 	 */
 	private static function add_course_access_permission_message( $message ) {

@@ -1499,56 +1499,20 @@ class Sensei_Utils {
 	}
 
 	/**
-	 * Check if a user has started a course or not
+	 * Check if a user has started a course or not.
 	 *
 	 * @since  1.7.0
-	 * @param int $course_id
-	 * @param int $user_id
+	 * @deprecated 2.x.x For access control, use `Sensei_Course::check_user_access()`. For course progress check, use `Sensei_Learner::has_started_course()`.
+	 *
+	 * @param int $course_id Course ID.
+	 * @param int $user_id   User ID.
 	 * @return mixed false or comment_ID
 	 */
 	public static function user_started_course( $course_id = 0, $user_id = 0 ) {
+		// _deprecated_function( __METHOD__, '2.x.x', 'For access control, use `Sensei_Course::check_user_access()`. For course progress check, use `Sensei_Learner::has_started_course()`' );
 
-		$user_started_course = false;
-
-		if ( $course_id ) {
-
-			if ( ! $user_id ) {
-				$user_id = get_current_user_id();
-			}
-
-			if ( ! $user_id > 0 ) {
-
-				$user_started_course = false;
-
-			} else {
-
-				$activity_args = array(
-					'post_id' => $course_id,
-					'user_id' => $user_id,
-					'type'    => 'sensei_course_status',
-					'field'   => 'comment_ID',
-				);
-
-				$user_course_status_id = self::sensei_get_activity_value( $activity_args );
-
-				if ( $user_course_status_id ) {
-
-					$user_started_course = $user_course_status_id;
-
-				}
-			}
-		}
-
-		/**
-		 * Filter the user started course value
-		 *
-		 * @since 1.9.3
-		 *
-		 * @param bool $user_started_course
-		 * @param integer $course_id
-		 */
-		return apply_filters( 'sensei_user_started_course', $user_started_course, $course_id, $user_id );
-
+		// This was mainly used to check for course access. For now, use that replacement method.
+		return Sensei_Course::check_user_access( $course_id, $user_id );
 	}
 
 	/**
