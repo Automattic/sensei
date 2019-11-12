@@ -371,6 +371,8 @@ class Sensei_Main {
 		// data will be sent.
 		$this->usage_tracking->schedule_tracking_task();
 
+		Sensei_Blocks::instance()->init();
+
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
 			// Load Admin Class
