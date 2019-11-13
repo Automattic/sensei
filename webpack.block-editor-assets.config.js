@@ -7,7 +7,8 @@ function getWebpackConfig( env, argv ) {
 	return {
 		...webpackConfig,
 		entry: {
-			// TODO
+			'messages-block': './assets/block-editor/messages-block',
+			'messages-block-frontend': './assets/block-editor/messages-block/frontend.jsx',
 		},
 		output: {
 			path: path.resolve( __dirname, 'assets/block-editor/build' ),
