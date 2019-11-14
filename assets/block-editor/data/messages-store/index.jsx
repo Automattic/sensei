@@ -25,13 +25,19 @@ function apiFetchMessages() {
 				[
 					{
 						id: 1,
-						post_title: 'Message thread 1',
-						post_content: 'Tell me about the course!',
+						message_title: 'Re: Lesson 1',
+						message_sender: 'learner',
+						excerpt: 'Tell me about the course!',
+						formatted_date: 'January 1, 2018',
+						link: '/messages/the-first-message',
 					},
 					{
 						id: 2,
-						post_title: 'Message thread 2',
-						post_content: 'Tell me MORE about the course!',
+						message_title: 'Re: Course 2',
+						message_sender: 'learner',
+						excerpt: 'Tell me MORE about the course!',
+						formatted_date: 'February 2, 2019',
+						link: '/messages/the-second-message',
 					},
 				]
 			)

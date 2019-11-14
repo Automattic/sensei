@@ -25,7 +25,13 @@ function Block() {
 		return <Placeholder label={ __( 'Loading Messages...' ) } />;
 	}
 
-	return messages.map( ( message ) => <Message key={ message.id } message={ message } /> );
+	return (
+		<div className='message-container'>
+			{ messages.map(
+				( message ) => <Message key={message.id} message={message} />
+			) }
+		</div>
+	);
 }
 
 export default Block;
