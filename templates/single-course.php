@@ -41,7 +41,10 @@ get_sensei_header();
 
 	<section class="entry fix">
 
-		<?php the_content(); ?>
+		<?php
+			$page_object = get_page( get_the_ID() );
+			echo apply_filters( 'the_content', $page_object->post_content );
+		?>
 
 	</section>
 
