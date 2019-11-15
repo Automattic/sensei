@@ -1,6 +1,13 @@
 <?php
+/**
+ * File containing the class \Sensei_Blocks
+ *
+ * @package sensei
+ * @since   2.3.0
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
