@@ -7,9 +7,4 @@ module.exports = {
 		wp: true,
 	},
 	plugins: [ 'jest' ],
-	rules: {
-		// '@wordpress/dependency-group': 'off',
-		// 'valid-jsdoc': 'off',
-		// yoda: [ 'error', 'never' ],
-	},
 };

@@ -24,7 +24,7 @@ const renderSender = ( message ) => (
 
 // TODO: sanitize?
 const renderExcerpt = ( message ) => (
-	<p class='message-excerpt'>
+	<p className='message-excerpt'>
 		{ message.excerpt }
 	</p>
 );
