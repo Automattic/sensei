@@ -25,6 +25,7 @@
     "cross-env": "^5.2.0",
     "css-loader": "^0.28.11",
     "del": "^3.0.0",
+    "eslint": "^5.4.0",
     "eslint-plugin-react": "^7.12.2",
     "fs-extra": "^7.0.1",
     "gulp": "^4.0.0",
