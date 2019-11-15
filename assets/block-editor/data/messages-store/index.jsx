@@ -36,7 +36,7 @@ function apiFetchMessages() {
 						message_title: 'Re: Course 2',
 						message_sender: 'learner',
 						excerpt: 'Tell me MORE about the course!',
-						formatted_date: 'Februare 2, 2019',
+						formatted_date: 'February 2, 2019',
 						link: '/messages/the-second-message',
 					},
 				]
