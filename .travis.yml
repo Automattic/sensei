@@ -76,7 +76,7 @@ jobs:
     - stage: test
       script:
         - npm install
-        - npx eslint --config .eslintrc.wpcom.json --ignore-path .eslintignore-wpcom .
+        - npx eslint --no-eslintrc --config .eslintrc.wpcom.json --ignore-path .eslintignore-wpcom .
     - stage: test
       php: 7.2
       script:
