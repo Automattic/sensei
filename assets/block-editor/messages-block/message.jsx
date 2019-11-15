@@ -12,16 +12,17 @@ const renderTitle = ( message ) => (
 const renderSender = ( message ) => (
 	<p className='message-meta'><small><em>
 		{
-			sprintf(
+			message.message_sender ? sprintf(
 				// translators: Placeholders are the sender's display name and the date.
 				__( 'Sent by %1$s on %2$s' ),
 				message.message_sender,
 				message.formatted_date
-			)
+			) : ' '
 		}
 	</em></small></p>
 );
 
+// TODO: sanitize?
 const renderExcerpt = ( message ) => (
 	<p class='message-excerpt'>
 		{ message.excerpt }
