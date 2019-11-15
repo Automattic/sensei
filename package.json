@@ -28,6 +28,7 @@
     "eslint": "^6.6.0",
     "eslint-config-prettier": "^6.5.0",
     "eslint-plugin-react": "^7.12.2",
+    "eslint-wpcom": "npm:eslint@^5.16.0",
     "fs-extra": "^7.0.1",
     "gulp": "^4.0.0",
     "gulp-babel": "^8.0.0",
@@ -63,7 +64,7 @@
     "block-editor-assets": "cross-env NODE_ENV=production npx calypso-build --config webpack.block-editor-assets.config.js --env.WP",
     "block-editor-assets:dev": "npx calypso-build --config webpack.block-editor-assets.config.js --env.WP",
     "block-editor-assets:watch": "npx calypso-build --config webpack.block-editor-assets.config.js --env.WP --watch",
-    "lint:js": "eslint assets/block-editor --ext=js,jsx",
-    "lint:js-fix": "eslint assets/block-editor --ext=js,jsx --fix"
+    "lint:js": "./node_modules/eslint/bin/eslint.js assets/block-editor --ext=js,jsx",
+    "lint:js-fix": "./node_modules/eslint/bin/eslint.js assets/block-editor --ext=js,jsx --fix"
   }
 }
