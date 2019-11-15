@@ -2,8 +2,12 @@
  * WordPress dependencies.
  */
 import { useSelect } from '@wordpress/data';
-import { Placeholder } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+
+/**
+ * External dependencies.
+ */
+import classnames from 'classnames';
 
 /**
  * Internal dependencies.
@@ -20,15 +24,17 @@ function Block() {
 			isFetching: store.isFetching(),
 		};
 	} );
-
-	if ( isFetching ) {
-		return <Placeholder label={ __( 'Loading Messages...' ) } />;
-	}
+	const classes = classnames( 'message-container', {
+		'is-fetching': isFetching,
+	} );
+	const messagesList = isFetching ? Array.from( { length: 2 } ) : messages;
 
 	return (
-		<div className='message-container'>
-			{ messages.map(
-				( message ) => <Message key={message.id} message={message} />
+		<div className={ classes }>
+			{ messagesList.map(
+				( message = {}, i ) => (
+					<Message key={ message.id || i } message={ message } />
+				)
 			) }
 		</div>
 	);

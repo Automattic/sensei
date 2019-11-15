@@ -73,11 +73,20 @@ final class Sensei_Blocks {
 			true
 		);
 
+		wp_register_style(
+			'sensei-messages-block',
+			Sensei()->plugin_url . 'assets/block-editor/build/messages-block.css',
+			[],
+			Sensei()->version
+		);
+
 		register_block_type(
 			'sensei-lms/messages-block',
 			[
 				'editor_script' => 'sensei-messages-block',
 				'script'        => 'sensei-messages-block-frontend',
+				'editor_style'  => 'sensei-messages-block',
+				'style'         => 'sensei-messages-block',
 			]
 		);
 	}

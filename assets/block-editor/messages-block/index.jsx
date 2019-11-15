@@ -8,6 +8,7 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies.
  */
 import Block from './block';
+import './style.scss';
 
 registerBlockType( 'sensei-lms/messages-block', {
 	title: __( 'Sensei LMS Messages', 'sensei-lms' ),
