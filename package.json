@@ -62,8 +62,8 @@
     "test-js": "jest",
     "block-editor-assets": "cross-env NODE_ENV=production npx calypso-build --config webpack.block-editor-assets.config.js --env.WP",
     "block-editor-assets:dev": "npx calypso-build --config webpack.block-editor-assets.config.js --env.WP",
-		"block-editor-assets:watch": "npx calypso-build --config webpack.block-editor-assets.config.js --env.WP --watch",
-		"lint:js": "eslint assets/block-editor --ext=js,jsx",
-		"lint:js-fix": "eslint assets/block-editor --ext=js,jsx --fix"
+    "block-editor-assets:watch": "npx calypso-build --config webpack.block-editor-assets.config.js --env.WP --watch",
+    "lint:js": "eslint assets/block-editor --ext=js,jsx",
+    "lint:js-fix": "eslint assets/block-editor --ext=js,jsx --fix"
   }
 }
