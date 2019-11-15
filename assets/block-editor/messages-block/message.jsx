@@ -4,7 +4,7 @@
 import { sprintf, __ } from '@wordpress/i18n';
 
 const renderTitle = ( message ) => (
-	<a href={ message.link } >
+	<a className='message-link' href={ message.link } >
 		<h3>{ message.message_title }</h3>
 	</a>
 );
