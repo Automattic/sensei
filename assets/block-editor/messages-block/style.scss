@@ -16,9 +16,9 @@ $core-grey-light-500: #e2e4e7;
 	}
 }
 
-.entry .message-container {
+.message-container {
 	&.is-fetching {
-		a {
+		a.message-link {
 			text-decoration: none;
 		}
 
