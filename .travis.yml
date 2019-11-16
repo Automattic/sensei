@@ -74,14 +74,14 @@ jobs:
       script:
       - ./tests/bin/run-wp-unit-tests.sh
     - stage: test
+      language: node_js
+      node_js: '10.17'
       script:
-        - npm install -g npm
-        - npm install
         - npm run lint:js
     - stage: test
+      language: node_js
+      node_js: '10.17'
       script:
-        - npm install -g npm
-        - npm install
         - ./node_modules/eslint-wpcom/bin/eslint.js --no-eslintrc --config .eslintrc.wpcom.json --ignore-path .eslintignore-wpcom .
     - stage: test
       php: 7.2
