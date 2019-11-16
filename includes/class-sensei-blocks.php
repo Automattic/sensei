@@ -70,6 +70,11 @@ final class Sensei_Blocks {
 		register_block_type(
 			'sensei-lms/course-shortcode-block',
 			[
+				'attributes'      => [
+					'number' => [
+						'type' => 'number',
+					],
+				],
 				'editor_script'   => 'sensei-course-shortcode-block',
 				'editor_style'    => Sensei()->token . '-frontend',
 				'render_callback' => function( $attributes, $content ) {
