@@ -2,6 +2,7 @@
  * WordPress dependencies.
  */
 import { registerStore, dispatch } from '@wordpress/data';
+import apiFetch from '@wordpress/api-fetch';
 
 // Store name.
 const MESSAGES_STORE = 'sensei-lms/messages';
@@ -18,31 +19,7 @@ const DEFAULT_STATE = {
  * Fetch the messages from the API. Returns a Promise.
  */
 function apiFetchMessages() {
-	// TODO: Using dummy data for now. Should use apiFetch with the REST API instead.
-	return new Promise( ( resolve ) => {
-		setTimeout( () => {
-			resolve(
-				[
-					{
-						id: 1,
-						message_title: 'Re: Lesson 1',
-						message_sender: 'learner',
-						excerpt: 'Tell me about the course!',
-						formatted_date: 'January 1, 2018',
-						link: '/messages/the-first-message',
-					},
-					{
-						id: 2,
-						message_title: 'Re: Course 2',
-						message_sender: 'learner',
-						excerpt: 'Tell me MORE about the course!',
-						formatted_date: 'February 2, 2019',
-						link: '/messages/the-second-message',
-					},
-				]
-			)
-		}, 1000 );
-	} );
+	return apiFetch( { path: '/wp/v2/sensei-messages' } );
 }
 
 // Actions for messages store.
