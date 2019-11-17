@@ -282,6 +282,15 @@ class Sensei_Admin {
 	} // End create_pages()
 
 	/**
+	 * Just registers the styles used globally.
+	 */
+	public static function register_styles() {
+
+		wp_register_style( 'sensei-global', Sensei()->plugin_url . 'assets/css/global.css', '', Sensei()->version, 'screen' );
+		wp_register_style( 'sensei-admin-custom', Sensei()->plugin_url . 'assets/css/admin-custom.css', '', Sensei()->version, 'screen' );
+	}
+
+	/**
 	 * Load the global admin styles for the menu icon and the relevant page icon.
 	 *
 	 * @access public
@@ -291,12 +300,13 @@ class Sensei_Admin {
 	public function admin_styles_global( $hook ) {
 		global $post_type;
 
+		self::register_styles();
+
 		$allowed_post_types      = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'course', 'question' ) );
 		$allowed_post_type_pages = apply_filters( 'sensei_scripts_allowed_post_type_pages', array( 'edit.php', 'post-new.php', 'post.php', 'edit-tags.php' ) );
 		$allowed_pages           = apply_filters( 'sensei_scripts_allowed_pages', array( 'sensei_grading', 'sensei_analysis', 'sensei_learners', 'sensei_updates', 'sensei-settings', $this->lesson_order_page_slug, $this->course_order_page_slug ) );
 
 		// Global Styles for icons and menu items
-		wp_register_style( 'sensei-global', Sensei()->plugin_url . 'assets/css/global.css', '', Sensei()->version, 'screen' );
 		wp_enqueue_style( 'sensei-global' );
 		$select_two_location = '/assets/vendor/select2/select2.min.css';
 
@@ -306,7 +316,6 @@ class Sensei_Admin {
 		// Test for Write Panel Pages
 		if ( ( ( isset( $post_type ) && in_array( $post_type, $allowed_post_types ) ) && ( isset( $hook ) && in_array( $hook, $allowed_post_type_pages ) ) ) || ( isset( $_GET['page'] ) && in_array( $_GET['page'], $allowed_pages ) ) ) {
 
-			wp_register_style( 'sensei-admin-custom', Sensei()->plugin_url . 'assets/css/admin-custom.css', '', Sensei()->version, 'screen' );
 			wp_enqueue_style( 'sensei-admin-custom' );
 
 		}

@@ -159,6 +159,13 @@ class Sensei_Frontend {
 	} // End enqueue_scripts()
 
 	/**
+	 * Registers frontend CSS files.
+	 */
+	public static function register_styles() {
+		wp_register_style( Sensei()->token . '-frontend', Sensei()->plugin_url . 'assets/css/frontend/sensei.css', '', Sensei()->version, 'screen' );
+	}
+
+	/**
 	 * Enqueue frontend CSS files.
 	 *
 	 * @since  1.0.0
@@ -170,7 +177,7 @@ class Sensei_Frontend {
 
 		if ( ! $disable_styles ) {
 
-			wp_register_style( Sensei()->token . '-frontend', Sensei()->plugin_url . 'assets/css/frontend/sensei.css', '', Sensei()->version, 'screen' );
+			self::register_styles();
 			wp_enqueue_style( Sensei()->token . '-frontend' );
 
 			// Allow additional stylesheets to be loaded.

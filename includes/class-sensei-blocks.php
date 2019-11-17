@@ -55,8 +55,8 @@ final class Sensei_Blocks {
 	 * Registers the course shortcode block.
 	 */
 	private function register_course_shortcode() {
-		wp_register_style( 'sensei-global', Sensei()->plugin_url . 'assets/css/global.css', '', Sensei()->version, 'screen' );
-		wp_register_style( Sensei()->token . '-frontend', Sensei()->plugin_url . 'assets/css/frontend/sensei.css', [ 'sensei-global' ], Sensei()->version, 'screen' );
+		Sensei_Admin::register_styles();
+		Sensei_Frontend::register_styles();
 
 		$asset_info = include Sensei()->plugin_path . 'assets/block-editor/build/course-shortcode-block.asset.php';
 		wp_register_script(
@@ -67,16 +67,39 @@ final class Sensei_Blocks {
 			true
 		);
 
+		$css_extension = is_rtl() ? '.rtl.css' : '.css';
+		wp_register_style(
+			'sensei-course-shortcode-block-css',
+			Sensei()->plugin_url . 'assets/block-editor/build/course-shortcode-block' . $css_extension,
+			[ 'sensei-global', Sensei()->token . '-frontend' ],
+			$asset_info['version']
+		);
+
 		register_block_type(
 			'sensei-lms/course-shortcode-block',
 			[
 				'attributes'      => [
-					'number' => [
+					'exclude' => [
+						'type' => 'string',
+					],
+					'ids'     => [
+						'type' => 'string',
+					],
+					'number'  => [
 						'type' => 'number',
+					],
+					'order'   => [
+						'type' => 'string',
+					],
+					'orderby' => [
+						'type' => 'string',
+					],
+					'teacher' => [
+						'type' => 'string',
 					],
 				],
 				'editor_script'   => 'sensei-course-shortcode-block',
-				'editor_style'    => Sensei()->token . '-frontend',
+				'editor_style'    => 'sensei-course-shortcode-block-css',
 				'render_callback' => function( $attributes, $content ) {
 					return $this->do_shortcode( 'sensei_courses', $attributes );
 				},
@@ -88,13 +111,13 @@ final class Sensei_Blocks {
 	 * Render the shortcode.
 	 *
 	 * @param string $shortcode  Name of shortcode.
-	 * @param array  $attributes Attributes passed to the block
+	 * @param array  $attributes Attributes passed to the block.
 	 * @return string
 	 */
 	public function do_shortcode( $shortcode, $attributes ) {
 		$shortcode_str = '[' . $shortcode;
 		foreach ( $attributes as $key => $value ) {
-			$shortcode_str .= ' ' . esc_attr( $key ) .'="' . esc_attr( $value ). '"';
+			$shortcode_str .= ' ' . esc_attr( $key ) . '="' . esc_attr( $value ) . '"';
 		}
 		$shortcode_str .= ']';
 		return do_shortcode( $shortcode_str );
