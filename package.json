@@ -54,8 +54,6 @@
     "select2": "4.0.5"
   },
   "scripts": {
-    "build": "gulp && cross-env BABEL_ENV=default webpack --mode=production",
-    "dev": "gulp && cross-env BABEL_ENV=default webpack --mode=development --watch",
     "test": "npm run test-php && npm run test-js",
     "test-php": "gulp test",
     "test-js": "wp-scripts test-unit-js",
