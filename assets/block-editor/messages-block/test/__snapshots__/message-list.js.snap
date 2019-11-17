@@ -1,0 +1,133 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MessageList Component renders the given messages 1`] = `
+<div
+  className="message-container"
+>
+  <article>
+    <a
+      className="message-link"
+      href="http://example.com/messages/100"
+    >
+      <h3>
+        Re: My Course
+      </h3>
+    </a>
+    <p
+      className="message-meta"
+    >
+      <small>
+        <em>
+          Sent by user1 on 2019-11-16
+        </em>
+      </small>
+    </p>
+    <section
+      className="entry"
+    >
+      <p
+        className="message-excerpt"
+        dangerouslySetInnerHTML={
+          Object {
+            "__html": "Hello, teacher!",
+          }
+        }
+      />
+    </section>
+  </article>
+  <article>
+    <a
+      className="message-link"
+      href="http://example.com/messages/101"
+    >
+      <h3>
+        Re: My Lesson
+      </h3>
+    </a>
+    <p
+      className="message-meta"
+    >
+      <small>
+        <em>
+          Sent by user2 on 2019-11-17
+        </em>
+      </small>
+    </p>
+    <section
+      className="entry"
+    >
+      <p
+        className="message-excerpt"
+        dangerouslySetInnerHTML={
+          Object {
+            "__html": "Hello, lesson teacher!",
+          }
+        }
+      />
+    </section>
+  </article>
+</div>
+`;
+
+exports[`MessageList Component renders the placeholder UI when fetching 1`] = `
+<div
+  className="message-container is-fetching"
+>
+  <article>
+    <a
+      className="message-link"
+    >
+      <h3 />
+    </a>
+    <p
+      className="message-meta"
+    >
+      <small>
+        <em>
+           
+        </em>
+      </small>
+    </p>
+    <section
+      className="entry"
+    >
+      <p
+        className="message-excerpt"
+        dangerouslySetInnerHTML={
+          Object {
+            "__html": "",
+          }
+        }
+      />
+    </section>
+  </article>
+  <article>
+    <a
+      className="message-link"
+    >
+      <h3 />
+    </a>
+    <p
+      className="message-meta"
+    >
+      <small>
+        <em>
+           
+        </em>
+      </small>
+    </p>
+    <section
+      className="entry"
+    >
+      <p
+        className="message-excerpt"
+        dangerouslySetInnerHTML={
+          Object {
+            "__html": "",
+          }
+        }
+      />
+    </section>
+  </article>
+</div>
+`;
