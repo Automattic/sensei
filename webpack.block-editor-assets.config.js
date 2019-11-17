@@ -7,7 +7,7 @@ function getWebpackConfig( env, argv ) {
 	return {
 		...webpackConfig,
 		entry: {
-			// TODO
+			'course-shortcode-block': './assets/block-editor/course-shortcode-block'
 		},
 		output: {
 			path: path.resolve( __dirname, 'assets/block-editor/build' ),
