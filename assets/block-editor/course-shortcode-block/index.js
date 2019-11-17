@@ -30,11 +30,46 @@ const settings = {
 	description: __( 'Insert a course list.' ),
 	attributes: {
 		/**
+		 * Post ID(s) to exclude from courses list (separated by commas).
+		 */
+		exclude: {
+			type: 'string',
+			default: '',
+		},
+		/**
+		 * Post ID(s) to show in list (separated by commas).
+		 */
+		ids: {
+			type: 'string',
+			default: '',
+		},
+		/**
 		 * Number of courses to show.
 		 */
 		number: {
 			type: 'number',
 			default: 10,
+		},
+		/**
+		 * Order direction field.
+		 */
+		order: {
+			type: 'string',
+			default: 'DESC',
+		},
+		/**
+		 * Order field.
+		 */
+		orderby: {
+			type: 'string',
+			default: 'date',
+		},
+		/**
+		 * Teacher ID(s) to show courses for.
+		 */
+		teacher: {
+			type: 'string',
+			default: '',
 		},
 	},
 	supports: {
