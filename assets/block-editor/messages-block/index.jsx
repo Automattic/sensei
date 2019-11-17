@@ -15,13 +15,13 @@ registerBlockType( 'sensei-lms/messages-block', {
 	icon: 'format-chat',
 	category: 'widgets',
 
-	edit: function( props ) {
+	edit( props ) {
 		return <Block { ...props } />
 	},
 
-	save: function() {
+	save() {
 		return (
-			<div class="wp-block-sensei-messages"></div>
+			<div className="wp-block-sensei-messages"></div>
 		);
 	}
 } );

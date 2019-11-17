@@ -13,8 +13,8 @@ describe( 'fetchMessages', () => {
 
 describe( 'receiveMessages', () => {
 	it( 'builds an action object', () => {
-		let messages = [ { id: 1 }, { id: 2 } ];
-		let error = { message: 'Whoops!' };
+		const messages = [ { id: 1 }, { id: 2 } ];
+		const error = { message: 'Whoops!' };
 
 		expect( actions.receiveMessages( messages, error ) ).toEqual( {
 			type: 'RECEIVE_MESSAGES',

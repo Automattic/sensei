@@ -29,12 +29,12 @@ describe( 'getMessages', () => {
 	it( 'triggers an API request for the messages', () => {
 		resolvers.getMessages();
 
-		let fetchPath = window.fetch.mock.calls[0][0];
+		const fetchPath = window.fetch.mock.calls[0][0];
 		expect( fetchPath ).toMatch( /^\/wp\/v2\/sensei-messages/ );
 	} );
 
 	describe( 'on success', () => {
-		let messages = [ { id: 1 }, { id: 2 } ];
+		const messages = [ { id: 1 }, { id: 2 } ];
 
 		beforeEach( () => {
 			window.fetch.mockReturnValue( Promise.resolve( {
@@ -66,7 +66,7 @@ describe( 'getMessages', () => {
 	} );
 
 	describe( 'on error', () => {
-		let error = { message: 'Oh noes!' };
+		const error = { message: 'Oh noes!' };
 
 		beforeEach( () => {
 			window.fetch.mockReturnValue( Promise.resolve( {
@@ -77,7 +77,7 @@ describe( 'getMessages', () => {
 			} ) );
 		} );
 
-		it( 'dispaches RECEIVE_MESSAGES with the error from the API', () => {
+		it( 'dispaches RECEIVE_MESSAGES with the error from the API', done => {
 			resolvers.getMessages();
 
 			// When API request completes, the messages should be populated.
@@ -90,6 +90,7 @@ describe( 'getMessages', () => {
 				if ( storeSelect.getError() ) {
 					expect( storeSelect.isFetching() ).toBeFalsy();
 					expect( storeSelect.getError() ).toEqual( error );
+					didFinish = true;
 					done();
 				}
 			} );
