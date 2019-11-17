@@ -19,6 +19,7 @@
     "@wordpress/i18n": "^3.7.0",
     "@wordpress/jest-preset-default": "^1.0.6",
     "@wordpress/scripts": "^5.1.0",
+    "autoprefixer": "^9.7.1",
     "babel-eslint": "^10.0.1",
     "babel-loader": "^8.0.4",
     "cross-env": "^5.2.1",
