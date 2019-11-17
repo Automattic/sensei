@@ -42,6 +42,7 @@ final class Sensei_Blocks {
 			return;
 		}
 		add_action( 'init', [ $this, 'register_blocks' ], 11 );
+		add_filter( 'block_categories', [ $this, 'add_sensei_block_category' ] );
 	}
 
 	/**
@@ -49,6 +50,23 @@ final class Sensei_Blocks {
 	 */
 	public function register_blocks() {
 		$this->register_course_shortcode();
+	}
+
+	/**
+	 * Add Sensei's block category.
+	 *
+	 * @param array $categories Block categories.
+	 *
+	 * @return array
+	 */
+	public function add_sensei_block_category( $categories ) {
+		$categories[] = array(
+			'slug'  => 'sensei-lms',
+			'title' => __( 'Sensei LMS', 'sensei-lms' ),
+			'icon'  => null,
+		);
+
+		return $categories;
 	}
 
 	/**
