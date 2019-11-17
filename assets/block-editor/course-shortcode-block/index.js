@@ -20,7 +20,7 @@ const icon = (
 const settings = {
 	title,
 	icon,
-	category: 'widgets',
+	category: 'sensei-lms',
 	keywords: [ __( 'courses' ), 'sensei' ],
 	description: __( 'Insert a course list.' ),
 	attributes: {
