@@ -13,7 +13,7 @@ import './style.scss';
 registerBlockType( 'sensei-lms/messages-block', {
 	title: __( 'Sensei LMS Messages', 'sensei-lms' ),
 	icon: 'format-chat',
-	category: 'widgets',
+	category: 'sensei-lms',
 
 	edit( props ) {
 		return <Block { ...props } />
