@@ -59,7 +59,6 @@
     "test": "npm run test-php && npm run test-js",
     "test-php": "gulp test",
     "test-js": "wp-scripts test-unit-js",
-    "test-js:update-snapshots": "wp-scripts test-unit-js --updateSnapshot",
     "block-editor-assets": "cross-env NODE_ENV=production npx calypso-build --config webpack.block-editor-assets.config.js --env.WP",
     "block-editor-assets:dev": "npx calypso-build --config webpack.block-editor-assets.config.js --env.WP",
     "block-editor-assets:watch": "npx calypso-build --config webpack.block-editor-assets.config.js --env.WP --watch",

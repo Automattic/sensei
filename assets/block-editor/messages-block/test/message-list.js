@@ -1,48 +1,49 @@
 /**
  * External dependencies.
  */
-import renderer from 'react-test-renderer';
+import ShallowRenderer from 'react-test-renderer/shallow';
 
 /**
  * Internal dependencies.
  */
 import MessageList from '../message-list';
+import Message from '../message';
 
-const messages = [
-	{
-		id: 100,
-		link: 'http://example.com/messages/100',
-		displayed_title: 'Re: My Course',
-		sender: 'user1',
-		displayed_date: '2019-11-16',
-		excerpt: {
-			rendered: 'Hello, teacher!',
-		},
-	},
-	{
-		id: 101,
-		link: 'http://example.com/messages/101',
-		displayed_title: 'Re: My Lesson',
-		sender: 'user2',
-		displayed_date: '2019-11-17',
-		excerpt: {
-			rendered: 'Hello, lesson teacher!',
-		},
-	},
-];
+const message1 = { id: 100 };
+const message2 = { id: 101 };
+const message3 = { id: 102 };
+const messages = [ message1, message2, message3 ];
+
+const shallowRender = ( component ) => {
+	const renderer = new ShallowRenderer();
+	renderer.render( component );
+	return renderer.getRenderOutput();
+}
 
 describe( 'MessageList Component', () => {
 	it( 'renders the given messages', () => {
-		const tree = renderer
-			.create( <MessageList messages={ messages } /> )
-			.toJSON();
-		expect( tree ).toMatchSnapshot();
+		const result = shallowRender( <MessageList messages={ messages } /> );
+
+		expect( result.props.className ).toEqual( 'message-container' );
+		expect( result.props.children ).toEqual( [
+			<Message key={ message1.id } message={ message1 } />,
+			<Message key={ message2.id } message={ message2 } />,
+			<Message key={ message3.id } message={ message3 } />
+		] );
 	} );
 
-	it( 'renders the placeholder UI when fetching', () => {
-		const tree = renderer
-			.create( <MessageList isFetching={ true } messages={ messages } /> )
-			.toJSON();
-		expect( tree ).toMatchSnapshot();
+	describe( 'when fetching', () => {
+		const result = shallowRender( <MessageList isFetching={ true } messages={ messages } /> );
+
+		it( 'adds the "is-fetching" class', () => {
+			expect( result.props.className ).toEqual( 'message-container is-fetching' );
+		} );
+
+		it( 'renders placeholder messages', () => {
+			expect( result.props.children ).toEqual( [
+				<Message key={ 0 } message={ {} } />,
+				<Message key={ 1 } message={ {} } />
+			] );
+		} );
 	} );
 } );
