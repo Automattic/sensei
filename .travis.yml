@@ -82,7 +82,7 @@ jobs:
       language: node_js
       node_js: '10.17'
       script:
-        - ./node_modules/eslint-wpcom/bin/eslint.js --no-eslintrc --config .eslintrc.wpcom.json --ignore-path .eslintignore-wpcom .
+        - npm run lint-js-wpcom
     - stage: test
       php: 7.2
       script:
