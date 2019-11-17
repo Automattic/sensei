@@ -17,7 +17,7 @@ import {
 
 class Edit extends Component {
 	render() {
-		const { attributes, className, setAttributes } = this.props;1
+		const { attributes, className, setAttributes } = this.props;
 		const { exclude, ids, number, order, orderby, teacher } = attributes;
 		const classes = classNames( className, 'sensei-lms-course-shortcode-block' );
 
@@ -28,9 +28,9 @@ class Edit extends Component {
 						<RangeControl
 							label={ __( 'Number of Courses', 'sensei-lms' ) }
 							value={ number }
-							onChange={ ( number ) => setAttributes( { number } ) }
-							min={1}
-							max={100}
+							onChange={ ( numberValue ) => setAttributes( { number: numberValue } ) }
+							min={ 1 }
+							max={ 100 }
 						/>
 						<SelectControl
 							label={ __( 'Order By', 'sensei-lms' ) }
@@ -43,7 +43,7 @@ class Edit extends Component {
 								{ label: __( 'Random', 'sensei-lms' ), value: 'rand' },
 								{ label: __( 'Teacher', 'sensei-lms' ), value: 'author' },
 							] }
-							onChange={ ( orderby ) => setAttributes( { orderby } ) }
+							onChange={ ( orderbyValue ) => setAttributes( { orderby: orderbyValue } ) }
 						/>
 						<SelectControl
 							label={ __( 'Order Direction', 'sensei-lms' ) }
@@ -52,25 +52,25 @@ class Edit extends Component {
 								{ label: __( 'Ascending', 'sensei-lms' ), value: 'ASC' },
 								{ label: __( 'Descending', 'sensei-lms' ), value: 'DESC' },
 							] }
-							onChange={ ( order ) => setAttributes( { order } ) }
+							onChange={ ( orderValue ) => setAttributes( { order: orderValue } ) }
 						/>
 						<TextControl
 							label={ __( 'Teacher IDs', 'sensei-lms' ) }
 							value={ teacher }
 							help={ __( 'Filter to just certain teacher IDs (separated by commas).', 'sensei-lms' ) }
-							onChange={ ( teacher ) => setAttributes( { teacher } ) }
+							onChange={ ( teacherValue ) => setAttributes( { teacher: teacherValue } ) }
 						/>
 						<TextControl
 							label={ __( 'Include Post IDs', 'sensei-lms' ) }
 							value={ ids }
 							help={ __( 'If set, include only these post IDs (separated by commas).', 'sensei-lms' ) }
-							onChange={ ( ids ) => setAttributes( { ids } ) }
+							onChange={ ( idsValue ) => setAttributes( { ids: idsValue } ) }
 						/>
 						<TextControl
 							label={ __( 'Exclude Post IDs', 'sensei-lms' ) }
 							value={ exclude }
 							help={ __( 'If set, exclude these post IDs (separated by commas).', 'sensei-lms' ) }
-							onChange={ ( exclude ) => setAttributes( { exclude } ) }
+							onChange={ ( excludeValue ) => setAttributes( { exclude: excludeValue } ) }
 						/>
 					</PanelBody>
 				</InspectorControls>
