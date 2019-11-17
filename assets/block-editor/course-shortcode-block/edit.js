@@ -4,13 +4,12 @@
 import { __ } from '@wordpress/i18n';
 import classNames from 'classnames';
 import { Component, Fragment } from '@wordpress/element';
-import { InspectorControls } from '@wordpress/editor';
+import { InspectorControls, ServerSideRender } from '@wordpress/editor';
 
 import './editor.scss';
 import {
 	PanelBody,
 	RangeControl,
-	ServerSideRender,
 	TextControl,
 	SelectControl,
 } from '@wordpress/components';
