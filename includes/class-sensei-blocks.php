@@ -132,7 +132,7 @@ final class Sensei_Blocks {
 	 * @param array  $attributes Attributes passed to the block.
 	 * @return string
 	 */
-	public function do_shortcode( $shortcode, $attributes ) {
+	private function do_shortcode( $shortcode, $attributes ) {
 		$shortcode_str = '[' . $shortcode;
 		foreach ( $attributes as $key => $value ) {
 			$shortcode_str .= ' ' . esc_attr( $key ) . '="' . esc_attr( $value ) . '"';
