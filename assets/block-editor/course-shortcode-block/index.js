@@ -21,8 +21,8 @@ const settings = {
 	title,
 	icon,
 	category: 'sensei-lms',
-	keywords: [ __( 'courses' ), 'sensei' ],
-	description: __( 'Insert a course list.' ),
+	keywords: [ __( 'courses', 'sensei-lms' ), 'sensei' ],
+	description: __( 'Insert a course list.', 'sensei-lms' ),
 	attributes: {
 		/**
 		 * Post ID(s) to exclude from courses list (separated by commas).
