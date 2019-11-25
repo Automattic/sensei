@@ -219,7 +219,10 @@ class Sensei_Grading_User_Quiz {
 					</div>
 					<div class="sensei-grading-answer">
 						<h4><?php echo wp_kses_post( apply_filters( 'sensei_question_title', $question->post_title ) ); ?></h4>
-						<?php echo apply_filters( 'the_content', wp_kses_post( $question->post_content ) ); // WPCS: XSS ok. ?>
+						<?php
+						// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped before core filter applied.
+						echo apply_filters( 'the_content', wp_kses_post( $question->post_content ) );
+						?>
 						<p class="user-answer">
 						<?php
 						foreach ( $user_answer_content as $_user_answer ) {

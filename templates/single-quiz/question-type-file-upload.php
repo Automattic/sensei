@@ -24,7 +24,10 @@ $question_data = Sensei_Question::get_template_data( sensei_get_the_question_id(
 
 <?php if ( $question_data['question_helptext'] ) { ?>
 
-	<?php echo apply_filters( 'the_content', esc_html( $question_data['question_helptext'] ) ); // WPCS: XSS ok. ?>
+	<?php
+	// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in called method (before `the_content` filter).
+	echo apply_filters( 'the_content', esc_html( $question_data['question_helptext'] ) );
+	?>
 
 <?php } ?>
 

@@ -1234,7 +1234,8 @@ class Sensei_Quiz {
 			$message .= wp_kses_post( $messages );
 		}
 
-		echo $message; // WPCS: XSS ok.
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped above.
+		echo $message;
 	}
 
 	/**

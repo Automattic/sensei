@@ -242,7 +242,9 @@ class Sensei_List_Table extends WP_List_Table {
 				'" style="' . esc_attr( $style ) . '">';
 			if ( isset( $column_data[ $column_name ] ) ) {
 				// $column_data is escaped in the individual get_row_data functions.
-				echo $column_data[ $column_name ]; // WPCS: XSS ok.
+
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in `get_row_data` method implementations.
+				echo $column_data[ $column_name ];
 			}
 			echo '</td>';
 		}

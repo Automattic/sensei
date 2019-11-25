@@ -1184,7 +1184,8 @@ function sensei_get_current_page_url() {
  */
 function sensei_the_my_courses_content() {
 
-	echo Sensei()->course->load_user_courses_content( wp_get_current_user() ); // WPCS: XSS ok.
+	// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in called method.
+	echo Sensei()->course->load_user_courses_content( wp_get_current_user() );
 
 } // sensei_the_my_courses_content
 

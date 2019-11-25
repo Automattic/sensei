@@ -1762,7 +1762,8 @@ class Sensei_Course {
 		<?php do_action( 'sensei_after_user_courses' ); ?>
 
 		<?php
-		echo ob_get_clean(); // WPCS: XSS ok.
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped above and should be escaped in hooked methods.
+		echo ob_get_clean();
 
 		do_action( 'sensei_after_learner_course_content', $user );
 
