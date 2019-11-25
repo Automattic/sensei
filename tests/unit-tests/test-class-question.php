@@ -71,7 +71,7 @@ class Sensei_Class_Question_Test extends WP_UnitTestCase {
 
 		// does this method return a string for a valid question id
 		$questions               = get_posts( 'post_type=question' );
-		$should_be_question_type = Sensei()->question->get_question_type( $questions[  array_rand( $questions ) ]->ID );
+		$should_be_question_type = Sensei()->question->get_question_type( $questions[ array_rand( $questions ) ]->ID );
 		$sensei_question_types   = array_keys( Sensei()->question->question_types() );
 		$this->assertTrue(
 			in_array( $should_be_question_type, $sensei_question_types ),
