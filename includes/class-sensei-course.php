@@ -638,7 +638,7 @@ class Sensei_Course {
 						// translators: Placeholder is the title of the course prerequisite.
 						. esc_attr( sprintf( __( 'Edit %s', 'sensei-lms' ), get_the_title( absint( $course_prerequisite_id ) ) ) )
 						. '">'
-						. get_the_title( absint( $course_prerequisite_id ) )
+						. esc_html( get_the_title( absint( $course_prerequisite_id ) ) )
 						. '</a>';
 				}
 

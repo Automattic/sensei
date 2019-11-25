@@ -2237,14 +2237,14 @@ class Sensei_Lesson {
 				$lesson_course_id = get_post_meta( $id, '_lesson_course', true );
 				if ( 0 < absint( $lesson_course_id ) ) {
 					// translators: Placeholder is the course title.
-					echo '<a href="' . esc_url( get_edit_post_link( absint( $lesson_course_id ) ) ) . '" title="' . sprintf( esc_attr__( 'Edit %s', 'sensei-lms' ), get_the_title( absint( $lesson_course_id ) ) ) . '">' . get_the_title( absint( $lesson_course_id ) ) . '</a>';
+					echo '<a href="' . esc_url( get_edit_post_link( absint( $lesson_course_id ) ) ) . '" title="' . esc_attr( sprintf( __( 'Edit %s', 'sensei-lms' ), get_the_title( absint( $lesson_course_id ) ) ) ) . '">' . esc_html( get_the_title( absint( $lesson_course_id ) ) ) . '</a>';
 				} // End If Statement
 				break;
 			case 'lesson-prerequisite':
 				$lesson_prerequisite_id = get_post_meta( $id, '_lesson_prerequisite', true );
 				if ( 0 < absint( $lesson_prerequisite_id ) ) {
 					// translators: Placeholder is the title of the prerequisite lesson.
-					echo '<a href="' . esc_url( get_edit_post_link( absint( $lesson_prerequisite_id ) ) ) . '" title="' . sprintf( esc_attr__( 'Edit %s', 'sensei-lms' ), get_the_title( absint( $lesson_prerequisite_id ) ) ) . '">' . get_the_title( absint( $lesson_prerequisite_id ) ) . '</a>';
+					echo '<a href="' . esc_url( get_edit_post_link( absint( $lesson_prerequisite_id ) ) ) . '" title="' . esc_attr( sprintf( __( 'Edit %s', 'sensei-lms' ), get_the_title( absint( $lesson_prerequisite_id ) ) ) ) . '">' . esc_html( get_the_title( absint( $lesson_prerequisite_id ) ) ) . '</a>';
 				} // End If Statement
 				break;
 			default:
@@ -3840,7 +3840,7 @@ class Sensei_Lesson {
 			<h2>
 				<a href="<?php echo esc_url( get_permalink( $lesson_id ) ); ?>"
 				   title="<?php echo esc_attr( $heading_link_title ); ?>" >
-					<?php echo wp_kses_post( $count_markup ) . get_the_title( $lesson_id ); ?>
+					<?php echo wp_kses_post( $count_markup ) . esc_html( get_the_title( $lesson_id ) ); ?>
 				</a>
 			</h2>
 

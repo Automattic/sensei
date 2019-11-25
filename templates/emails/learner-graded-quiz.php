@@ -35,7 +35,7 @@ printf( esc_html__( 'You %1$s the lesson', 'sensei-lms' ), esc_html( $passed ) )
 ?>
 </p>
 
-<h2 style="<?php echo esc_attr( $large ); ?>"><?php echo get_the_title( $lesson_id ); ?></h2>
+<h2 style="<?php echo esc_attr( $large ); ?>"><?php echo esc_html( get_the_title( $lesson_id ) ); ?></h2>
 
 <p style="<?php echo esc_attr( $small ); ?>"><?php esc_html_e( 'with a grade of', 'sensei-lms' ); ?></p>
 
