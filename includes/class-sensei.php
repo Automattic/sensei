@@ -173,11 +173,6 @@ class Sensei_Main {
 	public $view_helper;
 
 	/**
-	 * @var Sensei_WP_Cli
-	 */
-	private $wp_cli;
-
-	/**
 	 * @var Sensei_Feature_Flags
 	 */
 	public $feature_flags;
@@ -408,8 +403,6 @@ class Sensei_Main {
 		$this->Sensei_WPML = new Sensei_WPML();
 
 		$this->rest_api = new Sensei_REST_API_V1();
-
-				$this->wp_cli = new Sensei_WP_Cli();
 	}
 
 	/**
