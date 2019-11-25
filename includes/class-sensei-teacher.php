@@ -1485,6 +1485,7 @@ class Sensei_Teacher {
 			// phpcs:ignore WordPress.Security.NonceVerification -- We are not making any changes based on this.
 			if ( isset( $_POST['redirect_to'] ) ) {
 
+				// phpcs:ignore WordPress.Security.NonceVerification -- We are not making any changes based on this.
 				wp_redirect( $_POST['redirect_to'], 303 );
 
 				exit;
