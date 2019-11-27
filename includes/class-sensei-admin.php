@@ -37,7 +37,6 @@ class Sensei_Admin {
 
 		// register admin scripts
 		add_action( 'admin_enqueue_scripts', array( $this, 'register_scripts' ) );
-		add_action( 'admin_footer', array( $this, 'init_select2' ) );
 
 		add_action( 'admin_print_styles', array( $this, 'admin_notices_styles' ) );
 		add_action( 'settings_before_form', array( $this, 'install_pages_output' ) );
@@ -323,7 +322,6 @@ class Sensei_Admin {
 	 * @access public
 	 */
 	public function register_scripts( $hook ) {
-
 		$screen = get_current_screen();
 
 		// Allow developers to load non-minified versions of scripts
@@ -333,11 +331,19 @@ class Sensei_Admin {
 		// Select2 script used to enhance all select boxes
 		wp_register_script( 'sensei-core-select2', Sensei()->plugin_url . $select_two_location . $suffix . '.js', array( 'jquery' ), Sensei()->version );
 
+		// Load ordering script on Order Courses and Order Lessons pages.
+		if ( in_array( $screen->id, [ 'course_page_course-order', 'lesson_page_lesson-order' ] ) ) {
+			wp_enqueue_script(
+				'sensei-ordering',
+				Sensei()->plugin_url . 'assets/js/admin/ordering' . $suffix . '.js',
+				array( 'jquery', 'jquery-ui-sortable', 'sensei-core-select2' ),
+				Sensei()->version,
+				true );
+		}
+
 		// load edit module scripts
 		if ( 'edit-module' == $screen->id ) {
-
 			wp_enqueue_script( 'sensei-chosen-ajax', Sensei()->plugin_url . 'assets/chosen/ajax-chosen.jquery.min.js', array( 'jquery', 'sensei-chosen' ), Sensei()->version, true );
-
 		}
 
 		wp_enqueue_script( 'sensei-message-menu-fix', Sensei()->plugin_url . 'assets/js/admin/message-menu-fix.js', array( 'jquery' ), Sensei()->version, true );
@@ -1162,7 +1168,6 @@ class Sensei_Admin {
 		$new_course_order    = array();
 
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-		wp_enqueue_script( 'sensei-settings', esc_url( Sensei()->plugin_url . 'assets/js/settings' . $suffix . '.js' ), array( 'jquery', 'jquery-ui-sortable' ), Sensei()->version );
 
 		?>
 		<div id="<?php echo esc_attr( $this->course_order_page_slug ); ?>" class="wrap <?php echo esc_attr( $this->course_order_page_slug ); ?>">
@@ -1329,7 +1334,6 @@ class Sensei_Admin {
 	public function lesson_order_screen() {
 
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-		wp_enqueue_script( 'sensei-settings', esc_url( Sensei()->plugin_url . 'assets/js/settings' . $suffix . '.js' ), array( 'jquery', 'jquery-ui-sortable' ), Sensei()->version );
 
 		?>
 		<div id="<?php echo esc_attr( $this->lesson_order_page_slug ); ?>" class="wrap <?php echo esc_attr( $this->lesson_order_page_slug ); ?>">
@@ -1545,17 +1549,6 @@ class Sensei_Admin {
 								?>
 		</div>
 		<?php
-	}
-
-	public function init_select2() {
-		// phpcs:ignore WordPress.Security.NonceVerification
-		if ( isset( $_GET['page'] ) && 'lesson-order' === $_GET['page'] ) {
-			?>
-			<script type="text/javascript">
-				jQuery( '#lesson-order-course' ).select2( { width: 'resolve' } );
-			</script>
-			<?php
-		}
 	}
 
 	public function get_lesson_order( $course_id = 0 ) {
