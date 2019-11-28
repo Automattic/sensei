@@ -332,13 +332,14 @@ class Sensei_Admin {
 		wp_register_script( 'sensei-core-select2', Sensei()->plugin_url . $select_two_location . $suffix . '.js', array( 'jquery' ), Sensei()->version );
 
 		// Load ordering script on Order Courses and Order Lessons pages.
-		if ( in_array( $screen->id, [ 'course_page_course-order', 'lesson_page_lesson-order' ] ) ) {
+		if ( in_array( $screen->id, [ 'course_page_course-order', 'lesson_page_lesson-order' ], true ) ) {
 			wp_enqueue_script(
 				'sensei-ordering',
 				Sensei()->plugin_url . 'assets/js/admin/ordering' . $suffix . '.js',
 				array( 'jquery', 'jquery-ui-sortable', 'sensei-core-select2' ),
 				Sensei()->version,
-				true );
+				true
+			);
 		}
 
 		// load edit module scripts

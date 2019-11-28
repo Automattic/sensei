@@ -2162,14 +2162,14 @@ class Sensei_Lesson {
 		);
 
 		$ajax_vars = array(
-			'lesson_update_question_nonce'           => wp_create_nonce( 'lesson_update_question_nonce' ),
-			'lesson_update_grade_type_nonce'         => wp_create_nonce( 'lesson_update_grade_type_nonce' ),
-			'lesson_update_question_order_nonce'     => wp_create_nonce( 'lesson_update_question_order_nonce' ),
+			'lesson_update_question_nonce'              => wp_create_nonce( 'lesson_update_question_nonce' ),
+			'lesson_update_grade_type_nonce'            => wp_create_nonce( 'lesson_update_grade_type_nonce' ),
+			'lesson_update_question_order_nonce'        => wp_create_nonce( 'lesson_update_question_order_nonce' ),
 			'lesson_update_question_order_random_nonce' => wp_create_nonce( 'lesson_update_question_order_random_nonce' ),
-			'lesson_add_multiple_questions_nonce'    => wp_create_nonce( 'lesson_add_multiple_questions_nonce' ),
-			'lesson_remove_multiple_questions_nonce' => wp_create_nonce( 'lesson_remove_multiple_questions_nonce' ),
-			'lesson_add_existing_questions_nonce'    => wp_create_nonce( 'lesson_add_existing_questions_nonce' ),
-			'filter_existing_questions_nonce'        => wp_create_nonce( 'filter_existing_questions_nonce' ),
+			'lesson_add_multiple_questions_nonce'       => wp_create_nonce( 'lesson_add_multiple_questions_nonce' ),
+			'lesson_remove_multiple_questions_nonce'    => wp_create_nonce( 'lesson_remove_multiple_questions_nonce' ),
+			'lesson_add_existing_questions_nonce'       => wp_create_nonce( 'lesson_add_existing_questions_nonce' ),
+			'filter_existing_questions_nonce'           => wp_create_nonce( 'filter_existing_questions_nonce' ),
 		);
 
 		$data = array_merge( $translation_strings, $ajax_vars );
