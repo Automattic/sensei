@@ -70,7 +70,9 @@ gulp.task( 'CSS', gulp.series( function() {
 
 gulp.task( 'JS', gulp.series( function() {
 	return gulp.src( paths.scripts )
-		.pipe( babel() )
+		.pipe( babel( {
+			'configFile': './.babelrc-legacy',
+		} ) )
 		// This will minify and rename to *.min.js
 		.pipe( uglify() )
 		.pipe( rename( { extname: '.min.js' } ) )
