@@ -153,7 +153,7 @@ class Sensei_Learner_Management {
 		wp_enqueue_script(
 			'sensei-learners-general',
 			Sensei()->plugin_url . 'assets/js/learners-general' . $suffix . '.js',
-			array( 'jquery', 'sensei-core-select2', 'sensei-chosen-ajax', 'jquery-ui-core', 'jquery-ui-datepicker' ),
+			array( 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'sensei-core-select2' ),
 			Sensei()->version,
 			true
 		);
