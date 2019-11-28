@@ -323,7 +323,7 @@ class Sensei_Teacher {
 	 * @return array $users user id array
 	 */
 	public function save_teacher_meta_box( $course_id ) {
-		// // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Do not change the nonce.
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Do not change the nonce.
 		if ( empty( $_POST['sensei_meta_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['sensei_meta_nonce'] ), 'sensei_save_data' ) ) {
 			return;
 		}
