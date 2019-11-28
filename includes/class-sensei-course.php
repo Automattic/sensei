@@ -146,7 +146,7 @@ class Sensei_Course {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		if ( 'course' === $screen->id ) {
-			wp_enqueue_script( 'sensei-admin-course-edit', Sensei()->plugin_url . 'assets/js/admin/course-edit' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
+			wp_enqueue_script( 'sensei-admin-course-edit', Sensei()->plugin_url . 'assets/js/admin/course-edit' . $suffix . '.js', array( 'jquery', 'sensei-core-select2' ), Sensei()->version, true );
 		}
 	}
 
