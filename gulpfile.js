@@ -14,6 +14,7 @@ var babel           = require( 'gulp-babel' );
 var checktextdomain = require( 'gulp-checktextdomain' );
 var chmod           = require( 'gulp-chmod' );
 var del             = require( 'del' );
+var exec            = require( 'child_process' ).exec;
 var gulp            = require( 'gulp' );
 var minifyCSS       = require( 'gulp-minify-css' );
 var phpunit         = require( 'gulp-phpunit' );
@@ -80,6 +81,10 @@ gulp.task( 'JS', gulp.series( function() {
 		.pipe( gulp.dest( 'assets/js' ) );
 } ) );
 
+gulp.task( 'block-editor-assets', gulp.series( function( cb ) {
+	exec( 'npm run block-editor-assets', cb );
+} ) );
+
 gulp.task( 'pot', gulp.series( function() {
 	return gulp.src( [ '**/**.php', '!node_modules/**', '!build/**' ] )
 		.pipe( sort() )
@@ -123,8 +128,8 @@ gulp.task( 'test', function() {
 		.pipe( phpunit() );
 } );
 
-gulp.task( 'build', gulp.series( 'test', 'clean', 'CSS', 'JS', 'vendor' ) );
-gulp.task( 'build-unsafe', gulp.series( 'clean', 'CSS', 'JS', 'vendor' ) );
+gulp.task( 'build', gulp.series( 'test', 'clean', 'CSS', 'JS', 'block-editor-assets', 'vendor' ) );
+gulp.task( 'build-unsafe', gulp.series( 'clean', 'CSS', 'JS', 'block-editor-assets', 'vendor' ) );
 
 gulp.task( 'copy-package', function() {
 	return gulp.src( paths.packageContents, { base: '.' } )
