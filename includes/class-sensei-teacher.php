@@ -1486,7 +1486,7 @@ class Sensei_Teacher {
 			if ( isset( $_POST['redirect_to'] ) ) {
 
 				// phpcs:ignore WordPress.Security.NonceVerification -- We are not making any changes based on this.
-				wp_redirect( $_POST['redirect_to'], 303 );
+				wp_safe_redirect( $_POST['redirect_to'], 303 );
 
 				exit;
 
