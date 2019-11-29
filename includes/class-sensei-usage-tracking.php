@@ -78,7 +78,6 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 
 	protected function opt_in_dialog_text() {
 		return sprintf(
-
 			/*
 			 * translators: the href tag contains the URL for the page telling
 			 * users what data Sensei tracks.
@@ -124,7 +123,6 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 		$fields[ self::SENSEI_SETTING_NAME ] = array(
 			'name'        => __( 'Enable usage tracking', 'sensei-lms' ),
 			'description' => sprintf(
-
 				/*
 				 * translators: the href tag contains the URL for the page telling
 				 * users what data Sensei tracks.

@@ -34,7 +34,7 @@ $large = 'text-align: center !important;font-size: 350% !important;line-height: 
 
 <p style="<?php echo esc_attr( $small ); ?>"><?php echo esc_html__( 'has completed the lesson', 'sensei-lms' ); ?></p>
 
-<h2 style="<?php echo esc_attr( $large ); ?>"><?php echo get_the_title( $lesson_id ); ?></h2>
+<h2 style="<?php echo esc_attr( $large ); ?>"><?php echo esc_html( get_the_title( $lesson_id ) ); ?></h2>
 
 <hr/>
 

@@ -58,6 +58,7 @@ if ( class_exists( 'Sensei_Main' ) ) {
 	}
 
 	if ( ! isset( $plugin ) ) {
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- This shouldn't have any effect. Just ensuring variable is set.
 		$plugin = null;
 	}
 	// phpcs:enable

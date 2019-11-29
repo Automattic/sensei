@@ -35,6 +35,6 @@ printf( esc_html__( 'You have completed and %1$s the course', 'sensei-lms' ), es
 ?>
 </p>
 
-<h2 style="<?php echo esc_attr( $large ); ?>"><?php echo get_the_title( $course_id ); ?></h2>
+<h2 style="<?php echo esc_attr( $large ); ?>"><?php echo esc_html( get_the_title( $course_id ) ); ?></h2>
 
 <?php do_action( 'sensei_after_email_content', $template ); ?>

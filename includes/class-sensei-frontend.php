@@ -1228,7 +1228,7 @@ class Sensei_Frontend {
 			</p>
 
 			<?php
-} // End If Statement
+		} // End If Statement
 
 	} // End sensei_course_category_main_content()
 
@@ -1759,7 +1759,7 @@ class Sensei_Frontend {
 			wp_new_user_notification( $user_id, $new_user_password );
 		}
 
-		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.OverrideProhibited -- Log in recently registered user.
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Log in recently registered user.
 		$current_user = get_user_by( 'id', $user_id );
 		wp_set_auth_cookie( $user_id, true );
 

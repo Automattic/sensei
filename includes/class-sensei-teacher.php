@@ -248,6 +248,7 @@ class Sensei_Teacher {
 	 * @parameters
 	 */
 	public function teacher_meta_box_content( $post ) {
+		wp_nonce_field( 'sensei_save_data', 'sensei_meta_nonce' );
 
 		// get the current author
 		$current_author = $post->post_author;
@@ -268,8 +269,8 @@ class Sensei_Teacher {
 					</option>
 
 				<?php
-}// End foreach().
-?>
+			}// End foreach().
+			?>
 
 		</select>
 
@@ -322,9 +323,12 @@ class Sensei_Teacher {
 	 * @return array $users user id array
 	 */
 	public function save_teacher_meta_box( $course_id ) {
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Do not change the nonce.
+		if ( empty( $_POST['sensei_meta_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['sensei_meta_nonce'] ), 'sensei_save_data' ) ) {
+			return;
+		}
 
 		// check if this is a post from saving the teacher, if not exit early
-		// phpcs:ignore WordPress.Security.NonceVerification -- ok because we don't change anything based on these values.
 		if ( ! isset( $_POST['sensei-course-teacher-author'] ) || ! isset( $_POST['post_ID'] ) ) {
 			return;
 		}
@@ -337,7 +341,8 @@ class Sensei_Teacher {
 
 		// get the current teacher/author
 		$current_author = absint( $post->post_author );
-		$new_author     = absint( $_POST['sensei-course-teacher-author'] );
+
+		$new_author = absint( $_POST['sensei-course-teacher-author'] );
 
 		// loop through all post lessons to update their authors as well
 		$this->update_course_lessons_author( $course_id, $new_author );
@@ -1480,7 +1485,8 @@ class Sensei_Teacher {
 			// phpcs:ignore WordPress.Security.NonceVerification -- We are not making any changes based on this.
 			if ( isset( $_POST['redirect_to'] ) ) {
 
-				wp_redirect( $_POST['redirect_to'], 303 );
+				// phpcs:ignore WordPress.Security.NonceVerification -- We are not making any changes based on this.
+				wp_safe_redirect( $_POST['redirect_to'], 303 );
 
 				exit;
 

@@ -189,11 +189,11 @@ class Sensei_Question {
 						'value'       => array(),
 					),
 					// Explicitly allow label tag for WP.com.
-					'label'  => array(
+					'label'    => array(
 						'class' => array(),
 						'for'   => array(),
 					),
-					'option' => array(
+					'option'   => array(
 						'value' => array(),
 					),
 					'select'   => array(
@@ -564,7 +564,8 @@ class Sensei_Question {
 	 * @param $question_id
 	 */
 	public static function the_question_description( $question_id ) {
-		echo self::get_the_question_description( $question_id ); // WPCS: XSS ok.
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in called method (before `the_content` filter).
+		echo self::get_the_question_description( $question_id );
 	}
 
 	/**

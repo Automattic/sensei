@@ -1,42 +1,72 @@
 <?xml version="1.0"?>
-<ruleset name="Sensei"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:noNamespaceSchemaLocation="vendor/squizlabs/php_codesniffer/phpcs.xsd">
+<ruleset name="Sensei LMS">
+	<description>A custom set of code standard rules to check for WordPress themes and plugins.</description>
 
-	<description>A custom set of code standard rules to check for Sensei plugin.</description>
+	<arg value="s"/>
+	<arg value="p"/>
+	<arg name="colors"/>
 
-	<!-- For help in understanding this file: https://github.com/squizlabs/PHP_CodeSniffer/wiki/Annotated-ruleset.xml -->
-	<!-- For help in using PHPCS: https://github.com/squizlabs/PHP_CodeSniffer/wiki/Usage -->
-
-	<!-- What to scan -->
+	<arg name="extensions" value="php"/>
 	<file>.</file>
-	<!-- Ignoring Files and Folders:
-		https://github.com/squizlabs/PHP_CodeSniffer/wiki/Advanced-Usage#ignoring-files-and-folders -->
-	<exclude-pattern>./apigen/</exclude-pattern>
-	<exclude-pattern type="relative">build/</exclude-pattern>
-	<exclude-pattern>./node_modules/</exclude-pattern>
-	<exclude-pattern>./vendor/</exclude-pattern>
 
-	<!-- How to scan -->
-	<arg value="sp"/> <!-- Show sniff and progress -->
-	<arg name="basepath" value="."/> <!-- Strip the file paths down to the relevant bit -->
-	<arg name="parallel" value="50"/> <!-- Enables parallel processing when available for faster results. -->
-	<arg name="extensions" value="php"/> <!-- Limit to PHP files -->
+	<exclude-pattern type="relative">^node_modules/*</exclude-pattern>
+	<exclude-pattern type="relative">^vendor/*</exclude-pattern>
+	<exclude-pattern type="relative">^build/*</exclude-pattern>
+	<exclude-pattern type="relative">^tmp/*</exclude-pattern>
+	<exclude-pattern type="relative">^apigen/*</exclude-pattern>
 
-	<!-- Rules: Check PHP version compatibility - see
-		https://github.com/PHPCompatibility/PHPCompatibilityWP -->
-	<rule ref="PHPCompatibilityWP"/>
-	<!-- For help in understanding this testVersion:
-		https://github.com/PHPCompatibility/PHPCompatibility#sniffing-your-code-for-compatibility-with-specific-php-versions -->
+	<!-- Configs -->
+	<config name="minimum_supported_wp_version" value="4.9" />
 	<config name="testVersion" value="5.6-"/>
 
-	<!-- Rules: WordPress Coding Standards - see
-		https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards -->
-	<rule ref="WordPress-Extra"/><!-- Includes WordPress-Core -->
-	<rule ref="WordPress-Docs"/>
-	<!-- For help in understanding these custom sniff properties:
-		https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards/wiki/Customizable-sniff-properties -->
-	<config name="minimum_supported_wp_version" value="4.7"/>
+	<!-- Rules -->
+	<rule ref="PHPCompatibilityWP"/>
+	<rule ref="WordPress">
+        <exclude name="Generic.Arrays.DisallowShortArraySyntax"/>
+    </rule>
+	<rule ref="WordPress-Docs" />
+	<rule ref="WordPress-Extra" />
+
+	<rule ref="WordPress.Security.ValidatedSanitizedInput" />
+	<rule ref="WordPress.DB.DirectDatabaseQuery" />
+
+	<!-- Array Syntax (disabled until we transition to short-array) -->
+<!--
+	<rule ref="Generic.Arrays.DisallowLongArraySyntax">
+		<include-pattern>/sensei-lms.php</include-pattern>
+		<include-pattern>/uninstall.php</include-pattern>
+		<include-pattern>/includes/class-sensei-dependency-checker.php</include-pattern>
+	</rule>
+
+	<rule ref="Generic.Arrays.DisallowShortArraySyntax">
+		<include-pattern>/sensei-lms.php</include-pattern>
+		<include-pattern>/uninstall.php</include-pattern>
+		<include-pattern>/includes/class-sensei-dependency-checker.php</include-pattern>
+	</rule>
+-->
+
+	<!-- Temporary Rule Exclusions -->
+	<rule ref="VariableAnalysis">
+		<exclude-pattern>includes/admin/views/</exclude-pattern>
+		<exclude-pattern>templates/</exclude-pattern>
+
+		<severity>4</severity>
+	</rule>
+	<!-- End of Temporary Rule Exclusions -->
+
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array" value="sensei-lms" />
+		</properties>
+	</rule>
+
+	<rule ref="Squiz.Commenting">
+		<exclude-pattern>tests/</exclude-pattern>
+		<exclude name="Squiz.Commenting.LongConditionClosingComment" />
+		<exclude name="Squiz.Commenting.PostStatementComment" />
+		<exclude name="Squiz.Commenting.FunctionComment.MissingParamComment" />
+		<exclude-pattern>tests/*</exclude-pattern>
+	</rule>
 
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
 		<properties>
@@ -47,13 +77,4 @@
 		</properties>
 		<exclude-pattern>**/views/*</exclude-pattern>
 	</rule>
-
-	<rule ref="WordPress.WP.I18n">
-		<properties>
-			<property name="text_domain" type="array">
-				<element value="sensei-lms"/>
-			</property>
-		</properties>
-	</rule>
-
 </ruleset>

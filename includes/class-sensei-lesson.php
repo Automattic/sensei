@@ -913,11 +913,11 @@ class Sensei_Lesson {
 						'value'       => array(),
 					),
 					// Explicitly allow label tag for WP.com.
-					'label'  => array(
+					'label'    => array(
 						'class' => array(),
 						'for'   => array(),
 					),
-					'option' => array(
+					'option'   => array(
 						'value' => array(),
 					),
 					'select'   => array(
@@ -1177,7 +1177,7 @@ class Sensei_Lesson {
 						'value'   => array(),
 					),
 					// Explicitly allow label tag for WP.com.
-					'label'  => array(
+					'label'    => array(
 						'class' => array(),
 						'for'   => array(),
 					),
@@ -1816,7 +1816,7 @@ class Sensei_Lesson {
 						'value'   => array(),
 					),
 					// Explicitly allow label tag for WP.com.
-					'label' => array(
+					'label'    => array(
 						'class' => array(),
 						'for'   => array(),
 					),
@@ -1867,7 +1867,7 @@ class Sensei_Lesson {
 				wp_kses_allowed_html( 'post' ),
 				array(
 					// Explicitly allow label tag for WP.com.
-					'label' => array(
+					'label'    => array(
 						'for' => array(),
 					),
 					// Explicitly allow textarea tag for WP.com.
@@ -1943,7 +1943,8 @@ class Sensei_Lesson {
 			$quiz_id = $this->lesson_quizzes( $post->ID, 'any' );
 		}
 
-		echo $this->quiz_panel( $quiz_id ); // WPCS: XSS ok.
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output is escaped in the method.
+		echo $this->quiz_panel( $quiz_id );
 
 	} // End lesson_quiz_meta_box_content()
 
@@ -2236,14 +2237,14 @@ class Sensei_Lesson {
 				$lesson_course_id = get_post_meta( $id, '_lesson_course', true );
 				if ( 0 < absint( $lesson_course_id ) ) {
 					// translators: Placeholder is the course title.
-					echo '<a href="' . esc_url( get_edit_post_link( absint( $lesson_course_id ) ) ) . '" title="' . sprintf( esc_attr__( 'Edit %s', 'sensei-lms' ), get_the_title( absint( $lesson_course_id ) ) ) . '">' . get_the_title( absint( $lesson_course_id ) ) . '</a>';
+					echo '<a href="' . esc_url( get_edit_post_link( absint( $lesson_course_id ) ) ) . '" title="' . esc_attr( sprintf( __( 'Edit %s', 'sensei-lms' ), get_the_title( absint( $lesson_course_id ) ) ) ) . '">' . esc_html( get_the_title( absint( $lesson_course_id ) ) ) . '</a>';
 				} // End If Statement
 				break;
 			case 'lesson-prerequisite':
 				$lesson_prerequisite_id = get_post_meta( $id, '_lesson_prerequisite', true );
 				if ( 0 < absint( $lesson_prerequisite_id ) ) {
 					// translators: Placeholder is the title of the prerequisite lesson.
-					echo '<a href="' . esc_url( get_edit_post_link( absint( $lesson_prerequisite_id ) ) ) . '" title="' . sprintf( esc_attr__( 'Edit %s', 'sensei-lms' ), get_the_title( absint( $lesson_prerequisite_id ) ) ) . '">' . get_the_title( absint( $lesson_prerequisite_id ) ) . '</a>';
+					echo '<a href="' . esc_url( get_edit_post_link( absint( $lesson_prerequisite_id ) ) ) . '" title="' . esc_attr( sprintf( __( 'Edit %s', 'sensei-lms' ), get_the_title( absint( $lesson_prerequisite_id ) ) ) ) . '">' . esc_html( get_the_title( absint( $lesson_prerequisite_id ) ) ) . '</a>';
 				} // End If Statement
 				break;
 			default:
@@ -2356,7 +2357,8 @@ class Sensei_Lesson {
 			} // End If Statement
 		} // End If Statement
 
-		echo $return; // WPCS: XSS ok.
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in methods that generate `$return`.
+		echo $return;
 
 		die();
 	} // End lesson_update_question()
@@ -2416,7 +2418,8 @@ class Sensei_Lesson {
 			}
 		}
 
-		echo $return; // WPCS: XSS ok.
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in methods that generate `$return`.
+		echo $return;
 
 		die();
 	}
@@ -2557,7 +2560,8 @@ class Sensei_Lesson {
 			}
 		}
 
-		echo $return; // WPCS: XSS ok.
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in methods that generate `$return`.
+		echo $return;
 
 		die( '' );
 	}
@@ -3506,7 +3510,9 @@ class Sensei_Lesson {
 						'class' => ' ',
 					);
 					$course_field         = Sensei_Utils::generate_drop_down( '-1', $course_options, $course_attributes );
-					echo $this->generate_all_lessons_edit_field( esc_html__( 'Lesson Course', 'sensei-lms' ), $course_field ); // WPCS: XSS ok.
+
+					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in called method.
+					echo $this->generate_all_lessons_edit_field( esc_html__( 'Lesson Course', 'sensei-lms' ), $course_field );
 
 					//
 					// lesson complexity selection
@@ -3520,7 +3526,9 @@ class Sensei_Lesson {
 						'class' => ' ',
 					);
 					$complexity_filed               = Sensei_Utils::generate_drop_down( '-1', $lesson_complexities, $complexity_dropdown_attributes );
-					echo $this->generate_all_lessons_edit_field( esc_html__( 'Lesson Complexity', 'sensei-lms' ), $complexity_filed ); // WPCS: XSS ok.
+
+					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in called method.
+					echo $this->generate_all_lessons_edit_field( esc_html__( 'Lesson Complexity', 'sensei-lms' ), $complexity_filed );
 
 					?>
 
@@ -3543,13 +3551,17 @@ class Sensei_Lesson {
 						'class' => ' ',
 					);
 					$require_pass_field              = Sensei_Utils::generate_drop_down( '-1', $pass_required_options, $pass_required_select_attributes, false );
-					echo $this->generate_all_lessons_edit_field( esc_html__( 'Pass required', 'sensei-lms' ), $require_pass_field ); // WPCS: XSS ok.
+
+					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in called method.
+					echo $this->generate_all_lessons_edit_field( esc_html__( 'Pass required', 'sensei-lms' ), $require_pass_field );
 
 					//
 					// Quiz pass percentage
 					//
 					$quiz_pass_percentage_field = '<input name="quiz_passmark" id="sensei-edit-quiz-pass-percentage" type="number" />';
-					echo $this->generate_all_lessons_edit_field( esc_html__( 'Pass Percentage', 'sensei-lms' ), $quiz_pass_percentage_field ); // WPCS: XSS ok.
+
+					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in called method.
+					echo $this->generate_all_lessons_edit_field( esc_html__( 'Pass Percentage', 'sensei-lms' ), $quiz_pass_percentage_field );
 
 					//
 					// Enable quiz reset button
@@ -3566,7 +3578,9 @@ class Sensei_Lesson {
 						'class' => ' ',
 					);
 					$quiz_reset_field             = Sensei_Utils::generate_drop_down( '-1', $quiz_reset_select__options, $quiz_reset_select_attributes, false );
-					echo $this->generate_all_lessons_edit_field( esc_html__( 'Enable quiz reset button', 'sensei-lms' ), $quiz_reset_field ); // WPCS: XSS ok.
+
+					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in called method.
+					echo $this->generate_all_lessons_edit_field( esc_html__( 'Enable quiz reset button', 'sensei-lms' ), $quiz_reset_field );
 
 					?>
 			</div>
@@ -3826,7 +3840,7 @@ class Sensei_Lesson {
 			<h2>
 				<a href="<?php echo esc_url( get_permalink( $lesson_id ) ); ?>"
 				   title="<?php echo esc_attr( $heading_link_title ); ?>" >
-					<?php echo wp_kses_post( $count_markup ) . get_the_title( $lesson_id ); ?>
+					<?php echo wp_kses_post( $count_markup ) . esc_html( get_the_title( $lesson_id ) ); ?>
 				</a>
 			</h2>
 

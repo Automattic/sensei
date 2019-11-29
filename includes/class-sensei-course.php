@@ -638,7 +638,7 @@ class Sensei_Course {
 						// translators: Placeholder is the title of the course prerequisite.
 						. esc_attr( sprintf( __( 'Edit %s', 'sensei-lms' ), get_the_title( absint( $course_prerequisite_id ) ) ) )
 						. '">'
-						. get_the_title( absint( $course_prerequisite_id ) )
+						. esc_html( get_the_title( absint( $course_prerequisite_id ) ) )
 						. '</a>';
 				}
 
@@ -1762,7 +1762,8 @@ class Sensei_Course {
 		<?php do_action( 'sensei_after_user_courses' ); ?>
 
 		<?php
-		echo ob_get_clean(); // WPCS: XSS ok.
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped above and should be escaped in hooked methods.
+		echo ob_get_clean();
 
 		do_action( 'sensei_after_learner_course_content', $user );
 
@@ -2863,7 +2864,7 @@ class Sensei_Course {
 
 		}
 
-		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.OverrideProhibited -- Used for lesson loop on single course page. Reset in hook to `sensei_single_course_lessons_after`.
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Used for lesson loop on single course page. Reset in hook to `sensei_single_course_lessons_after`.
 		$wp_query = new WP_Query( $course_lesson_query_args );
 
 	}//end load_single_course_lessons_query()

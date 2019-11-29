@@ -406,7 +406,7 @@ class Sensei_Updates {
 			</p>
 
 				<?php
-} // End If Statement
+			} // End If Statement
 		} else {
 			?>
 

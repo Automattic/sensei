@@ -520,7 +520,7 @@ function sensei_setup_module() {
 		// setup the global wp-query only if the lessons
 		if ( $modules_query->have_posts() ) {
 
-			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.OverrideProhibited -- Use modules query for modules loop. Reset in `Sensei_Core_Modules::teardown_single_course_module_loop()`
+			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Use modules query for modules loop. Reset in `Sensei_Core_Modules::teardown_single_course_module_loop()`
 			$wp_query = $modules_query;
 
 		} else {
@@ -1184,7 +1184,8 @@ function sensei_get_current_page_url() {
  */
 function sensei_the_my_courses_content() {
 
-	echo Sensei()->course->load_user_courses_content( wp_get_current_user() ); // WPCS: XSS ok.
+	// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in called method.
+	echo Sensei()->course->load_user_courses_content( wp_get_current_user() );
 
 } // sensei_the_my_courses_content
 

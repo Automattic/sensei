@@ -290,7 +290,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		// setup the course query that will be used when rendering
 		$this->setup_course_query();
 
-		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.OverrideProhibited -- Mocking loop for shortcode. Reset below.
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Mocking loop for shortcode. Reset below.
 		$wp_query = $this->query;
 
 		$this->attach_shortcode_hooks();

@@ -627,12 +627,12 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 		// Setup the boxes to render
 		$stats_to_render = array(
-			__( 'Total Courses', 'sensei-lms' )               => $total_courses,
-			__( 'Total Lessons', 'sensei-lms' )               => $total_lessons,
-			__( 'Total Learners', 'sensei-lms' )              => $user_count,
+			__( 'Total Courses', 'sensei-lms' )           => $total_courses,
+			__( 'Total Lessons', 'sensei-lms' )           => $total_lessons,
+			__( 'Total Learners', 'sensei-lms' )          => $user_count,
 			__( 'Average Courses per Learner', 'sensei-lms' ) => $average_courses_per_learner,
-			__( 'Average Grade', 'sensei-lms' )               => $total_average_grade . '%',
-			__( 'Total Completed Courses', 'sensei-lms' )     => $total_courses_ended,
+			__( 'Average Grade', 'sensei-lms' )           => $total_average_grade . '%',
+			__( 'Total Completed Courses', 'sensei-lms' ) => $total_courses_ended,
 		);
 		return apply_filters( 'sensei_analysis_stats_boxes', $stats_to_render );
 	} // End stats_boxes()
