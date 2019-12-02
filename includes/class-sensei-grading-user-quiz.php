@@ -204,16 +204,16 @@ class Sensei_Grading_User_Quiz {
 						|| ( 'manual' === $quiz_grade_type && 0 === $user_question_grade );
 
 					if ( $user_right ) {
-						$graded_class = 'user_right';
+						$graded_class           = 'user_right';
 						$user_quiz_grade_total += $user_question_grade;
 						$graded_count++;
-					} else if ( $user_wrong ) {
-						$graded_class = 'user_wrong';
+					} elseif ( $user_wrong ) {
+						$graded_class        = 'user_wrong';
 						$user_question_grade = 0;
 						$graded_count++;
 					}
 				}
-			?>
+				?>
 
 			<div class="postbox question_box <?php echo esc_attr( $type ); ?> <?php echo esc_attr( $grade_type ); ?> <?php echo esc_attr( $graded_class ); ?>" id="<?php echo esc_attr( 'question_' . $question_id . '_box' ); ?>">
 				<div class="handlediv" title="Click to toggle"><br></div>
