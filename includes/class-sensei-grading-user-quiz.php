@@ -103,7 +103,6 @@ class Sensei_Grading_User_Quiz {
 				$right_answer        = get_post_meta( $question_id, '_question_right_answer', true );
 				$user_answer_content = Sensei()->quiz->get_user_question_answer( $lesson_id, $question_id, $user_id );
 				$type_name           = __( 'Multiple Choice', 'sensei-lms' );
-				$grade_type          = 'manual-grade';
 
 				switch ( $type ) {
 					case 'boolean':
@@ -174,6 +173,15 @@ class Sensei_Grading_User_Quiz {
 						// Nothing
 						break;
 				}
+
+				$quiz_grade_type = get_post_meta( $this->quiz_id, '_quiz_grade_type', true );
+
+				// Don't auto-grade if "Grade quiz automatically" isn't selected in Quiz Settings,
+				// regardless of question type.
+				if ( 'manual' === $quiz_grade_type ) {
+					$grade_type = 'manual-grade';
+				}
+
 				$user_answer_content = (array) $user_answer_content;
 				$right_answer        = (array) $right_answer;
 				// translators: Placeholder is the question number.
