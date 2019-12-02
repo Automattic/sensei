@@ -84,7 +84,6 @@ class Sensei_Grading_User_Quiz {
 				)
 			);
 			$user_quiz_grade  = get_comment_meta( $lesson_status_id, 'grade', true );
-			$correct_answers  = 0;
 
 			foreach ( $questions as $question ) {
 				$question_id = $question->ID;
