@@ -570,9 +570,16 @@
 .sensei-grading-main  {
 	.question_box {
 		@include clearfix();
-		&.ungraded {
 
+		&.ungraded {
+			.grading-mark.icon_right,
+			.grading-mark.icon_wrong {
+				&:after {
+					@include opacity(0.2);
+				}
+			}
 		}
+
 		&.user_right {
 			.grading-mark.icon_right  {
 				&:after  {
