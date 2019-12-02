@@ -103,7 +103,7 @@ jQuery(document).ready( function( $ ) {
 			} else if ( jQuery( this ).hasClass( 'zero-graded' ) ) {
 				$( this ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', false );
 				$( this ).find( '.grading-mark.icon_right input' ).attr( 'checked', false );
-				$( this ).find( '.input.question-grade' ).val( 0 );
+				$( this ).find( 'input.question-grade' ).val( 0 );
 			}
 		} );
 
