@@ -79,7 +79,7 @@ jQuery(document).ready( function() {
 
 				// Auto-grading
 				if ( jQuery( this ).hasClass( 'auto-grade' ) ) {
-					if( user_answer == correct_answer ) { // Right answer
+					if( jQuery.trim( user_answer ) === jQuery.trim( correct_answer ) ) { // Right answer
 						jQuery( this ).addClass( 'user_right' ).removeClass( 'user_wrong' ).removeClass( 'ungraded' );
 						jQuery( this ).find( '.grading-mark.icon_right input' ).attr( 'checked', true );
 						jQuery( this ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', false );
