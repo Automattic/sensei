@@ -1,4 +1,4 @@
-jQuery(document).ready( function() {
+jQuery(document).ready( function( $ ) {
 
 	/***************************************************************************************************
 	 * 	1 - Helper Functions.
@@ -63,47 +63,51 @@ jQuery(document).ready( function() {
 	 * Automatically grades questions where possible
 	 * @return void
 	 */
-	jQuery.fn.autoGrade = function() {
-		jQuery( '.question_box' ).each( function() {
-			// Ungraded question
-			if( ! jQuery( this ).hasClass( 'user_right' ) && ! jQuery( this ).hasClass( 'user_wrong' ) && ! jQuery( this ).hasClass( 'zero-graded' ) ) {
-				jQuery( this ).addClass( 'ungraded' );
+	$.fn.autoGrade = function() {
+		$( '.question_box' ).each( function() {
+			// Only grade questions that haven't already been graded.
+			if ( ! $( this ).hasClass( 'user_right' )
+				&& ! $( this ).hasClass( 'user_wrong' )
+				&& ! $( this ).hasClass( 'zero-graded' ) ) {
 				var user_answer, correct_answer;
-				if( jQuery( this ).hasClass( 'gap-fill' ) ) {
-					user_answer = jQuery( this ).find( '.user-answer .highlight' ).html();
-					correct_answer = jQuery( this ).find( '.correct-answer .highlight' ).html();
+
+				$( this ).addClass( 'ungraded' );
+
+				if ( $( this ).hasClass( 'gap-fill' ) ) {
+					user_answer = $( this ).find( '.user-answer .highlight' ).html();
+					correct_answer = $( this ).find( '.correct-answer .highlight' ).html();
 				} else {
-					user_answer = jQuery( this ).find( '.user-answer' ).html();
-					correct_answer = jQuery( this ).find( '.correct-answer' ).html();
+					user_answer = $( this ).find( '.user-answer' ).html();
+					correct_answer = $( this ).find( '.correct-answer' ).html();
 				}
 
 				// Auto-grading
-				if ( jQuery( this ).hasClass( 'auto-grade' ) ) {
-					if( jQuery.trim( user_answer ) === jQuery.trim( correct_answer ) ) { // Right answer
-						jQuery( this ).addClass( 'user_right' ).removeClass( 'user_wrong' ).removeClass( 'ungraded' );
-						jQuery( this ).find( '.grading-mark.icon_right input' ).attr( 'checked', true );
-						jQuery( this ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', false );
-						jQuery( this ).find( 'input.question-grade' ).val( jQuery( this ).find( 'input.question_total_grade' ).val() );
+				if ( $( this ).hasClass( 'auto-grade' ) ) {
+					if ( $.trim( user_answer ) === $.trim( correct_answer ) ) { // Right answer
+						$( this ).addClass( 'user_right' ).removeClass( 'user_wrong' ).removeClass( 'ungraded' );
+						$( this ).find( '.grading-mark.icon_right input' ).attr( 'checked', true );
+						$( this ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', false );
+						$( this ).find( 'input.question-grade' ).val( $( this ).find( 'input.question_total_grade' ).val() );
 					} else { // Wrong answer
-						jQuery( this ).addClass( 'user_wrong' ).removeClass( 'user_right' ).removeClass( 'ungraded' );
-						jQuery( this ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', true );
-						jQuery( this ).find( '.grading-mark.icon_right input' ).attr( 'checked', false );
-						jQuery( this ).find( 'input.question-grade' ).val( 0 );
+						$( this ).addClass( 'user_wrong' ).removeClass( 'user_right' ).removeClass( 'ungraded' );
+						$( this ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', true );
+						$( this ).find( '.grading-mark.icon_right input' ).attr( 'checked', false );
+						$( this ).find( 'input.question-grade' ).val( 0 );
 					}
 				} else { // Manual grading
-					jQuery( this ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', false );
-					jQuery( this ).find( '.grading-mark.icon_right input' ).attr( 'checked', false );
-					jQuery( this ).removeClass( 'user_wrong' ).removeClass( 'user_right' );
+					$( this ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', false );
+					$( this ).find( '.grading-mark.icon_right input' ).attr( 'checked', false );
+					$( this ).removeClass( 'user_wrong' ).removeClass( 'user_right' );
 				}
 			// Question with a grade value of 0.
 			} else if ( jQuery( this ).hasClass( 'zero-graded' ) ) {
-				jQuery( this ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', false );
-				jQuery( this ).find( '.grading-mark.icon_right input' ).attr( 'checked', false );
-				jQuery( this ).find( '.input.question-grade' ).val( 0 );
+				$( this ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', false );
+				$( this ).find( '.grading-mark.icon_right input' ).attr( 'checked', false );
+				$( this ).find( '.input.question-grade' ).val( 0 );
 			}
-		});
+		} );
 
-		jQuery.fn.calculateTotalGrade();
+		$.fn.calculateTotalGrade();
 	};
 
 	/**
@@ -265,7 +269,7 @@ jQuery(document).ready( function() {
 	 */
 	jQuery( '.sensei-grading-main .buttons' ).on( 'click', '.autograde-button', function() {
 		// Toggle manual-grade questions to auto-grade so that they will now be graded.
-		jQuery( '.manual-grade' ).addClass( 'auto-grade' ).removeClass( 'manual-grade' );
+		$( '.manual-grade' ).addClass( 'auto-grade' ).removeClass( 'manual-grade' );
 		jQuery.fn.autoGrade();
 	});
 
