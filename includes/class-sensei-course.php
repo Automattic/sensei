@@ -2093,6 +2093,11 @@ class Sensei_Course {
 	public function loop_before_backwards_compatibility_hooks() {
 
 		global $post;
+
+		if ( ! $post ) {
+			return;
+		}
+
 		sensei_do_deprecated_action( 'sensei_course_archive_header', '1.9.0', 'sensei_course_content_inside_before', $post->post_type );
 
 	}
