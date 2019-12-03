@@ -221,10 +221,10 @@ jQuery(document).ready( function( $ ) {
 	 */
 	jQuery( '.grading-mark' ).on( 'change', 'input', function() {
 		if( this.value == 'right' ) {
-			jQuery( '#' + this.name + '_box' ).addClass( 'user_right' ).removeClass( 'user_wrong' );
+			jQuery( '#' + this.name + '_box' ).addClass( 'user_right' ).removeClass( 'user_wrong ungraded' );
 			jQuery( '#' + this.name + '_box' ).find( 'input.question-grade' ).val( jQuery( '#' + this.name + '_box' ).find( 'input.question_total_grade' ).val() );
 		} else {
-			jQuery( '#' + this.name + '_box' ).addClass( 'user_wrong' ).removeClass( 'user_right' );
+			jQuery( '#' + this.name + '_box' ).addClass( 'user_wrong' ).removeClass( 'user_right ungraded' );
 			jQuery( '#' + this.name + '_box' ).find( 'input.question-grade' ).val( 0 );
 		}
 		jQuery.fn.calculateTotalGrade();
