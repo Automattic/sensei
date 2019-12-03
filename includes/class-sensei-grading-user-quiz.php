@@ -198,10 +198,11 @@ class Sensei_Grading_User_Quiz {
 					$graded_count++;
 				} else {
 					$user_right = intval( $user_question_grade > 0 );
-					// For auto-grading, the user's grade will not be set if they answered incorrectly.
-					// For manual grading, the user's grade will be 0 if they answered incorrectly.
-					$user_wrong = ( 'auto' === $quiz_grade_type && empty( $user_question_grade ) )
-						|| ( 'manual' === $quiz_grade_type && 0 === $user_question_grade );
+					// The user's grade will be 0 if they answered incorrectly.
+					// Don't set a grade for questions that are part of an auto-graded quiz, but that must be manually graded.
+					$user_wrong =
+						( 'manual' === $quiz_grade_type && 0 === $user_question_grade )
+						|| ( 'auto' === $quiz_grade_type && 'manual-grade' === $grade_type && 0 === $user_question_grade );
 
 					if ( $user_right ) {
 						$graded_class           = 'user_right';
