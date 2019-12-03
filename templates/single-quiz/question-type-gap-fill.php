@@ -38,5 +38,7 @@ $question_data = Sensei_Question::get_template_data( sensei_get_the_question_id(
 			<?php echo wp_kses_post( apply_filters( 'sensei_answer_text', esc_html( $question_data['gapfill_post'] ) ) ); ?>
 
 		</span>
+		
+	</span>
 
 </p>
