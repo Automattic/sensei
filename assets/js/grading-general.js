@@ -268,8 +268,11 @@ jQuery(document).ready( function( $ ) {
 	 * @access public
 	 */
 	jQuery( '.sensei-grading-main .buttons' ).on( 'click', '.autograde-button', function() {
-		// Toggle manual-grade questions to auto-grade so that they will now be graded.
-		$( '.manual-grade' ).addClass( 'auto-grade' ).removeClass( 'manual-grade' );
+		// Toggle manual-grade questions to auto-grade for question types that are able to be
+		// automatically graded, so that they will now be scored.
+		$( '.boolean.manual-grade, .multiple-choice.manual-grade, .gap-fill.manual-grade' )
+			.addClass( 'auto-grade' )
+			.removeClass( 'manual-grade' );
 		jQuery.fn.autoGrade();
 	});
 
