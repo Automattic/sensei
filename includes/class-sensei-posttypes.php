@@ -417,27 +417,30 @@ class Sensei_PostTypes {
 		if ( ! isset( Sensei()->settings->settings['messages_disable'] ) || ! Sensei()->settings->settings['messages_disable'] ) {
 
 			$args = array(
-				'labels'              => $this->create_post_type_labels( $this->labels['sensei_message']['singular'], $this->labels['sensei_message']['plural'], $this->labels['sensei_message']['menu'] ),
-				'public'              => true,
-				'publicly_queryable'  => true,
-				'show_ui'             => true,
-				'show_in_menu'        => 'admin.php?page=sensei',
-				'show_in_nav_menus'   => true,
-				'query_var'           => true,
-				'exclude_from_search' => true,
-				'rewrite'             => array(
+				'labels'                => $this->create_post_type_labels( $this->labels['sensei_message']['singular'], $this->labels['sensei_message']['plural'], $this->labels['sensei_message']['menu'] ),
+				'public'                => true,
+				'publicly_queryable'    => true,
+				'show_ui'               => true,
+				'show_in_menu'          => 'admin.php?page=sensei',
+				'show_in_nav_menus'     => true,
+				'query_var'             => true,
+				'exclude_from_search'   => true,
+				'rewrite'               => array(
 					'slug'       => esc_attr( apply_filters( 'sensei_messages_slug', _x( 'messages', 'post type single slug', 'sensei-lms' ) ) ),
 					'with_front' => false,
 					'feeds'      => false,
 					'pages'      => true,
 				),
-				'map_meta_cap'        => true,
-				'capability_type'     => 'question',
-				'has_archive'         => true,
-				'hierarchical'        => false,
-				'menu_position'       => 50,
-				'supports'            => array( 'title', 'editor', 'comments' ),
-				'delete_with_user'    => true,
+				'map_meta_cap'          => true,
+				'capability_type'       => 'question',
+				'has_archive'           => true,
+				'hierarchical'          => false,
+				'menu_position'         => 50,
+				'show_in_rest'          => true,
+				'rest_base'             => 'sensei-messages',
+				'rest_controller_class' => 'Sensei_REST_API_Messages_Controller',
+				'supports'              => array( 'title', 'editor', 'comments' ),
+				'delete_with_user'      => true,
 			);
 
 			/**

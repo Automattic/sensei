@@ -802,7 +802,26 @@ class Sensei_Messages {
 	 * @param $post_id
 	 */
 	public static function the_message_title( $message_post_id ) {
+		?>
+		<h2>
+			<a href="<?php echo esc_url_raw( get_the_permalink( $message_post_id ) ); ?>">
+				<?php echo esc_html( self::get_the_message_title( $message_post_id ) ); ?>
+			</a>
 
+		</h2>
+
+		<?php
+	} //end the_message_header
+
+	/**
+	 * Get the message title that is going to be displayed.
+	 *
+	 * @since 2.3.0
+	 * @param integer $message_post_id The message id.
+	 *
+	 * @return string the message title
+	 */
+	public static function get_the_message_title( $message_post_id ) {
 		$content_post_id = get_post_meta( $message_post_id, '_post', true );
 
 		if ( $content_post_id ) {
@@ -816,16 +835,8 @@ class Sensei_Messages {
 
 		}
 
-		?>
-		<h2>
-			<a href="<?php echo esc_url_raw( get_the_permalink( $message_post_id ) ); ?>">
-				<?php echo esc_html( $title ); ?>
-			</a>
-
-		</h2>
-
-		<?php
-	} //end the_message_header
+		return $title;
+	}
 
 	/**
 	 * Output the message sender given the post id.
