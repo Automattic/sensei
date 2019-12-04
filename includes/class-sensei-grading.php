@@ -79,7 +79,7 @@ class Sensei_Grading {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		// Load Grading JS
-		wp_enqueue_script( 'sensei-grading-general', Sensei()->plugin_url . 'assets/js/grading-general' . $suffix . '.js', array( 'jquery' ), Sensei()->version );
+		wp_enqueue_script( 'sensei-grading-general', Sensei()->plugin_url . 'assets/js/grading-general' . $suffix . '.js', array( 'jquery', 'sensei-core-select2' ), Sensei()->version );
 
 	} // End enqueue_scripts()
 

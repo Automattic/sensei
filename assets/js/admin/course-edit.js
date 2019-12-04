@@ -1,4 +1,6 @@
 jQuery( document ).ready( function( $ ) {
+	$( '#course-prerequisite-options' ).select2( { width:'resolve' } );
+
 	function trackLinkClickCallback( event_name ) {
 		return function() {
 			var properties = {

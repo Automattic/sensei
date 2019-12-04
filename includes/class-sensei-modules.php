@@ -1482,6 +1482,7 @@ class Sensei_Core_Modules {
 	 * @return void
 	 */
 	public function admin_enqueue_scripts( $hook ) {
+		$screen = get_current_screen();
 
 		/**
 		 * Filter the page hooks where modules admin script can be loaded on.
@@ -1490,17 +1491,12 @@ class Sensei_Core_Modules {
 		 */
 		$script_on_pages_white_list = apply_filters(
 			'sensei_module_admin_script_page_white_lists',
-			array(
-				'edit-tags.php',
-				'course_page_module-order',
-				'post-new.php',
-				'post.php',
-				'term.php',
-
-			)
+			array( 'course_page_module-order' )
 		);
 
-		if ( ! in_array( $hook, $script_on_pages_white_list ) ) {
+		// Only load module scripts when adding, editing or ordering modules.
+		if ( ! in_array( $hook, $script_on_pages_white_list )
+			&& ( ! $screen || 'module' !== $screen->taxonomy ) ) {
 			return;
 		}
 

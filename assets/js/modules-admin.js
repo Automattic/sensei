@@ -22,8 +22,6 @@ jQuery( document ).ready( function () {
     */
 	// module order screen
 	jQuery( '#module-order-course' ).select2({width:'resolve'});
-	// lesson edit screen modules selection
-	jQuery( 'select#lesson-module-options' ).select2({width:'resolve'});
 
 	/**
      * Sortable functionality

@@ -2123,60 +2123,63 @@ class Sensei_Lesson {
 	 * @return void
 	 */
 	public function enqueue_scripts( $hook ) {
-		global  $post_type;
+		global $post_type;
 
-		$allowed_post_types      = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'course', 'question' ) );
-		$allowed_post_type_pages = apply_filters( 'sensei_scripts_allowed_post_type_pages', array( 'edit.php', 'post-new.php', 'post.php', 'edit-tags.php' ) );
-		$allowed_pages           = apply_filters( 'sensei_scripts_allowed_pages', array( 'sensei_grading', 'sensei_analysis', 'sensei_learners', 'sensei_updates', 'sensei-settings', 'lesson-order' ) );
+		// Only load lesson scripts when adding or editing lessons or questions.
+		$allowed_post_types      = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'question' ) );
+		$allowed_post_type_pages = apply_filters( 'sensei_scripts_allowed_post_type_pages', array( 'post-new.php', 'post.php' ) );
 
-		// Test for Write Panel Pages
-		if ( ( ( isset( $post_type ) && in_array( $post_type, $allowed_post_types ) ) && ( isset( $hook ) && in_array( $hook, $allowed_post_type_pages ) ) ) || ( isset( $_GET['page'] ) && in_array( $_GET['page'], $allowed_pages ) ) ) {
-
-			$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-
-			// Load the lessons script
-			wp_enqueue_media();
-			wp_enqueue_script( 'sensei-lesson-metadata', Sensei()->plugin_url . 'assets/js/lesson-metadata' . $suffix . '.js', array( 'jquery', 'sensei-core-select2', 'jquery-ui-sortable' ), Sensei()->version, true );
-			wp_enqueue_script( 'sensei-lesson-chosen', Sensei()->plugin_url . 'assets/chosen/chosen.jquery' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
-			wp_enqueue_script( 'sensei-chosen-ajax', Sensei()->plugin_url . 'assets/chosen/ajax-chosen.jquery' . $suffix . '.js', array( 'jquery', 'sensei-lesson-chosen' ), Sensei()->version, true );
-
-			// Load the bulk edit screen script
-			if ( 'edit.php' == $hook && 'lesson' == $_GET['post_type'] ) {
-				wp_enqueue_script( 'sensei-lessons-bulk-edit', Sensei()->plugin_url . 'assets/js/admin/lesson-bulk-edit' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
-			}
-
-			// Localise script
-			$translation_strings = array(
-				'right_colon'             => esc_html__( 'Right:', 'sensei-lms' ),
-				'wrong_colon'             => esc_html__( 'Wrong:', 'sensei-lms' ),
-				'add_file'                => esc_html__( 'Add file', 'sensei-lms' ),
-				'change_file'             => esc_html__( 'Change file', 'sensei-lms' ),
-				'confirm_remove'          => esc_html__( 'Are you sure you want to remove this question?', 'sensei-lms' ),
-				'confirm_remove_multiple' => esc_html__( 'Are you sure you want to remove these questions?', 'sensei-lms' ),
-				'too_many_for_cat'        => esc_html__( 'You have selected more questions than this category contains - please reduce the number of questions that you are adding.', 'sensei-lms' ),
-			);
-
-			$ajax_vars = array(
-				'lesson_update_question_nonce'           => wp_create_nonce( 'lesson_update_question_nonce' ),
-				'lesson_update_grade_type_nonce'         => wp_create_nonce( 'lesson_update_grade_type_nonce' ),
-				'lesson_update_question_order_nonce'     => wp_create_nonce( 'lesson_update_question_order_nonce' ),
-				'lesson_update_question_order_random_nonce' => wp_create_nonce( 'lesson_update_question_order_random_nonce' ),
-				'lesson_add_multiple_questions_nonce'    => wp_create_nonce( 'lesson_add_multiple_questions_nonce' ),
-				'lesson_remove_multiple_questions_nonce' => wp_create_nonce( 'lesson_remove_multiple_questions_nonce' ),
-				'lesson_add_existing_questions_nonce'    => wp_create_nonce( 'lesson_add_existing_questions_nonce' ),
-				'filter_existing_questions_nonce'        => wp_create_nonce( 'filter_existing_questions_nonce' ),
-			);
-
-			$data = array_merge( $translation_strings, $ajax_vars );
-			wp_localize_script( 'sensei-lesson-metadata', 'woo_localized_data', $data );
-
-			// Chosen RTL
-			if ( is_rtl() ) {
-				wp_enqueue_script( 'sensei-chosen-rtl', Sensei()->plugin_url . 'assets/chosen/chosen-rtl' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
-			}
+		if ( ! isset( $post_type )
+			|| ! isset( $hook )
+			|| ! in_array( $post_type, $allowed_post_types )
+			|| ! in_array( $hook, $allowed_post_type_pages )
+		) {
+			return;
 		}
 
-	} // End enqueue_scripts()
+		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+
+		// Load the lessons script.
+		wp_enqueue_media();
+		wp_enqueue_script( 'sensei-lesson-metadata', Sensei()->plugin_url . 'assets/js/lesson-metadata' . $suffix . '.js', array( 'jquery', 'sensei-core-select2', 'jquery-ui-sortable' ), Sensei()->version, true );
+		wp_enqueue_script( 'sensei-lesson-chosen', Sensei()->plugin_url . 'assets/chosen/chosen.jquery' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
+		wp_enqueue_script( 'sensei-chosen-ajax', Sensei()->plugin_url . 'assets/chosen/ajax-chosen.jquery' . $suffix . '.js', array( 'jquery', 'sensei-lesson-chosen' ), Sensei()->version, true );
+
+		// Load the bulk edit screen script.
+		if ( 'edit.php' == $hook && 'lesson' == $_GET['post_type'] ) {
+			wp_enqueue_script( 'sensei-lessons-bulk-edit', Sensei()->plugin_url . 'assets/js/admin/lesson-bulk-edit' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
+		}
+
+		// Localise script.
+		$translation_strings = array(
+			'right_colon'             => esc_html__( 'Right:', 'sensei-lms' ),
+			'wrong_colon'             => esc_html__( 'Wrong:', 'sensei-lms' ),
+			'add_file'                => esc_html__( 'Add file', 'sensei-lms' ),
+			'change_file'             => esc_html__( 'Change file', 'sensei-lms' ),
+			'confirm_remove'          => esc_html__( 'Are you sure you want to remove this question?', 'sensei-lms' ),
+			'confirm_remove_multiple' => esc_html__( 'Are you sure you want to remove these questions?', 'sensei-lms' ),
+			'too_many_for_cat'        => esc_html__( 'You have selected more questions than this category contains - please reduce the number of questions that you are adding.', 'sensei-lms' ),
+		);
+
+		$ajax_vars = array(
+			'lesson_update_question_nonce'              => wp_create_nonce( 'lesson_update_question_nonce' ),
+			'lesson_update_grade_type_nonce'            => wp_create_nonce( 'lesson_update_grade_type_nonce' ),
+			'lesson_update_question_order_nonce'        => wp_create_nonce( 'lesson_update_question_order_nonce' ),
+			'lesson_update_question_order_random_nonce' => wp_create_nonce( 'lesson_update_question_order_random_nonce' ),
+			'lesson_add_multiple_questions_nonce'       => wp_create_nonce( 'lesson_add_multiple_questions_nonce' ),
+			'lesson_remove_multiple_questions_nonce'    => wp_create_nonce( 'lesson_remove_multiple_questions_nonce' ),
+			'lesson_add_existing_questions_nonce'       => wp_create_nonce( 'lesson_add_existing_questions_nonce' ),
+			'filter_existing_questions_nonce'           => wp_create_nonce( 'filter_existing_questions_nonce' ),
+		);
+
+		$data = array_merge( $translation_strings, $ajax_vars );
+		wp_localize_script( 'sensei-lesson-metadata', 'woo_localized_data', $data );
+
+		// Chosen RTL
+		if ( is_rtl() ) {
+			wp_enqueue_script( 'sensei-chosen-rtl', Sensei()->plugin_url . 'assets/chosen/chosen-rtl' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
+		}
+	}
 
 	/**
 	 * Load in CSS styles where necessary.
