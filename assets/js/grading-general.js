@@ -134,6 +134,8 @@ jQuery(document).ready( function( $ ) {
 				$( this ).find( 'input.question-grade' ).val( 0 );
 			}
 		} );
+
+		$.fn.calculateTotalGrade();
 	};
 
 	/**
