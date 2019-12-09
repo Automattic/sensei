@@ -81,18 +81,46 @@ jQuery(document).ready( function( $ ) {
 					correct_answer = $( this ).find( '.correct-answer' ).html();
 				}
 
+				user_answer = $.trim( user_answer );
+				correct_answer = $.trim( correct_answer );
+
 				// Auto-grading
 				if ( $( this ).hasClass( 'auto-grade' ) ) {
-					if ( $.trim( user_answer ) === $.trim( correct_answer ) ) { // Right answer
-						$( this ).addClass( 'user_right' ).removeClass( 'user_wrong' ).removeClass( 'ungraded' );
-						$( this ).find( '.grading-mark.icon_right input' ).attr( 'checked', true );
-						$( this ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', false );
-						$( this ).find( 'input.question-grade' ).val( $( this ).find( 'input.question_total_grade' ).val() );
-					} else { // Wrong answer
-						$( this ).addClass( 'user_wrong' ).removeClass( 'user_right' ).removeClass( 'ungraded' );
-						$( this ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', true );
-						$( this ).find( '.grading-mark.icon_right input' ).attr( 'checked', false );
-						$( this ).find( 'input.question-grade' ).val( 0 );
+					if ( $( this ).hasClass( 'multiple-choice' ) ) { // Multiple Choice
+						user_answers = user_answer.split( '<br>' );
+						correct_answers = correct_answer.split( '<br>' );
+						all_correct = true;
+
+						user_answers.forEach( function( user_answer ) {
+							if ( -1 === $.inArray ( user_answer, correct_answers ) ) {
+								all_correct = false;
+							}
+						} );
+
+						if ( all_correct ) {
+							$( this ).addClass( 'user_right' ).removeClass( 'user_wrong' ).removeClass( 'ungraded' );
+							$( this ).find( '.grading-mark.icon_right input' ).attr( 'checked', true );
+							$( this ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', false );
+							$( this ).find( 'input.question-grade' ).val( $( this ).find( 'input.question_total_grade' ).val() );
+						} else { // Wrong answer
+							$( this ).addClass( 'user_wrong' ).removeClass( 'user_right' ).removeClass( 'ungraded' );
+							$( this ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', true );
+							$( this ).find( '.grading-mark.icon_right input' ).attr( 'checked', false );
+							$( this ).find( 'input.question-grade' ).val( 0 );
+						}
+					}
+					else {
+						if ( user_answer === correct_answer ) { // Right answer
+							$( this ).addClass( 'user_right' ).removeClass( 'user_wrong' ).removeClass( 'ungraded' );
+							$( this ).find( '.grading-mark.icon_right input' ).attr( 'checked', true );
+							$( this ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', false );
+							$( this ).find( 'input.question-grade' ).val( $( this ).find( 'input.question_total_grade' ).val() );
+						} else { // Wrong answer
+							$( this ).addClass( 'user_wrong' ).removeClass( 'user_right' ).removeClass( 'ungraded' );
+							$( this ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', true );
+							$( this ).find( '.grading-mark.icon_right input' ).attr( 'checked', false );
+							$( this ).find( 'input.question-grade' ).val( 0 );
+						}
 					}
 				} else { // Manual grading
 					$( this ).find( '.grading-mark.icon_wrong input' ).attr( 'checked', false );
@@ -106,8 +134,6 @@ jQuery(document).ready( function( $ ) {
 				$( this ).find( 'input.question-grade' ).val( 0 );
 			}
 		} );
-
-		$.fn.calculateTotalGrade();
 	};
 
 	/**
