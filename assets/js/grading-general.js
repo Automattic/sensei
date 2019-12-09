@@ -66,6 +66,7 @@ jQuery(document).ready( function( $ ) {
 	$.fn.autoGrade = function() {
 		$( '.question_box' ).each( function() {
 			var $this = $( this );
+			var all_correct = false;
 
 			// Only grade questions that haven't already been graded.
 			if ( ! $this.hasClass( 'user_right' )
@@ -88,7 +89,9 @@ jQuery(document).ready( function( $ ) {
 
 				// Auto-grading
 				if ( $this.hasClass( 'auto-grade' ) ) {
-					if ( $this.hasClass( 'multiple-choice' ) ) { // Multiple Choice
+					// Split answers to multiple choice questions into an array since there may be
+					// multiple correct answers.
+					if ( $this.hasClass( 'multiple-choice' ) ) {
 						user_answers = user_answer.split( '<br>' );
 						correct_answers = correct_answer.split( '<br>' );
 						all_correct = true;
@@ -98,31 +101,18 @@ jQuery(document).ready( function( $ ) {
 								all_correct = false;
 							}
 						} );
-
-						if ( all_correct ) {
-							$this.addClass( 'user_right' ).removeClass( 'user_wrong' ).removeClass( 'ungraded' );
-							$this.find( '.grading-mark.icon_right input' ).attr( 'checked', true );
-							$this.find( '.grading-mark.icon_wrong input' ).attr( 'checked', false );
-							$this.find( 'input.question-grade' ).val( $this.find( 'input.question_total_grade' ).val() );
-						} else { // Wrong answer
-							$this.addClass( 'user_wrong' ).removeClass( 'user_right' ).removeClass( 'ungraded' );
-							$this.find( '.grading-mark.icon_wrong input' ).attr( 'checked', true );
-							$this.find( '.grading-mark.icon_right input' ).attr( 'checked', false );
-							$this.find( 'input.question-grade' ).val( 0 );
-						}
 					}
-					else {
-						if ( user_answer === correct_answer ) { // Right answer
-							$this.addClass( 'user_right' ).removeClass( 'user_wrong' ).removeClass( 'ungraded' );
-							$this.find( '.grading-mark.icon_right input' ).attr( 'checked', true );
-							$this.find( '.grading-mark.icon_wrong input' ).attr( 'checked', false );
-							$this.find( 'input.question-grade' ).val( $this.find( 'input.question_total_grade' ).val() );
-						} else { // Wrong answer
-							$this.addClass( 'user_wrong' ).removeClass( 'user_right' ).removeClass( 'ungraded' );
-							$this.find( '.grading-mark.icon_wrong input' ).attr( 'checked', true );
-							$this.find( '.grading-mark.icon_right input' ).attr( 'checked', false );
-							$this.find( 'input.question-grade' ).val( 0 );
-						}
+
+					if ( all_correct || ( user_answer === correct_answer ) ) { // Right answer
+						$this.addClass( 'user_right' ).removeClass( 'user_wrong' ).removeClass( 'ungraded' );
+						$this.find( '.grading-mark.icon_right input' ).attr( 'checked', true );
+						$this.find( '.grading-mark.icon_wrong input' ).attr( 'checked', false );
+						$this.find( 'input.question-grade' ).val( $this.find( 'input.question_total_grade' ).val() );
+					} else { // Wrong answer
+						$this.addClass( 'user_wrong' ).removeClass( 'user_right' ).removeClass( 'ungraded' );
+						$this.find( '.grading-mark.icon_wrong input' ).attr( 'checked', true );
+						$this.find( '.grading-mark.icon_right input' ).attr( 'checked', false );
+						$this.find( 'input.question-grade' ).val( 0 );
 					}
 				} else { // Manual grading
 					$this.find( '.grading-mark.icon_wrong input' ).attr( 'checked', false );
