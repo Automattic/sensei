@@ -197,7 +197,7 @@ class Sensei_Grading_User_Quiz {
 					$user_question_grade = 0;
 					$graded_count++;
 				} else {
-					$user_right = intval( $user_question_grade > 0 );
+					$user_right = intval( $user_question_grade ) > 0;
 					// The user's grade will be 0 if they answered incorrectly.
 					// Don't set a grade for questions that are part of an auto-graded quiz, but that must be manually graded.
 					$user_wrong =
