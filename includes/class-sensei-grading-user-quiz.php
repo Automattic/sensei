@@ -84,7 +84,6 @@ class Sensei_Grading_User_Quiz {
 				)
 			);
 			$user_quiz_grade  = get_comment_meta( $lesson_status_id, 'grade', true );
-			$correct_answers  = 0;
 
 			foreach ( $questions as $question ) {
 				$question_id = $question->ID;
@@ -103,7 +102,6 @@ class Sensei_Grading_User_Quiz {
 				$right_answer        = get_post_meta( $question_id, '_question_right_answer', true );
 				$user_answer_content = Sensei()->quiz->get_user_question_answer( $lesson_id, $question_id, $user_id );
 				$type_name           = __( 'Multiple Choice', 'sensei-lms' );
-				$grade_type          = 'manual-grade';
 
 				switch ( $type ) {
 					case 'boolean':
@@ -174,6 +172,15 @@ class Sensei_Grading_User_Quiz {
 						// Nothing
 						break;
 				}
+
+				$quiz_grade_type = get_post_meta( $this->quiz_id, '_quiz_grade_type', true );
+
+				// Don't auto-grade if "Grade quiz automatically" isn't selected in Quiz Settings,
+				// regardless of question type.
+				if ( 'manual' === $quiz_grade_type ) {
+					$grade_type = 'manual-grade';
+				}
+
 				$user_answer_content = (array) $user_answer_content;
 				$right_answer        = (array) $right_answer;
 				// translators: Placeholder is the question number.
@@ -182,27 +189,33 @@ class Sensei_Grading_User_Quiz {
 				$graded_class        = '';
 				$user_question_grade = Sensei()->quiz->get_user_question_grade( $lesson_id, $question_id, $user_id );
 				$graded_class        = 'ungraded';
-				if ( 0 == $question_grade_total && 0 == intval( $user_question_grade ) ) {
-					// Question skips grading
-					$grade_type   = 'zero-graded';
-					$graded_class = '';
-					++$correct_answers;
-					++$graded_count;
-					$user_question_grade = 0;
-				} elseif ( intval( $user_question_grade ) > 0 ) {
-					$graded_class = 'user_right';
-					++$correct_answers;
-					$user_quiz_grade_total += $user_question_grade;
-					++$graded_count;
-				} else {
-					if ( ! is_string( $user_question_grade ) && intval( $user_question_grade ) == 0 ) {
-						$graded_class = 'user_wrong';
-						++$graded_count;
-					}
-					$user_question_grade = 0;
-				}
 
+				// Question with no grade value associated with it.
+				if ( 0 === $question_grade_total ) {
+					$grade_type          = 'zero-graded';
+					$graded_class        = '';
+					$user_question_grade = 0;
+					$graded_count++;
+				} else {
+					$user_right = intval( $user_question_grade ) > 0;
+					// The user's grade will be 0 if they answered incorrectly.
+					// Don't set a grade for questions that are part of an auto-graded quiz, but that must be manually graded.
+					$user_wrong =
+						( 'manual' === $quiz_grade_type && 0 === $user_question_grade )
+						|| ( 'auto' === $quiz_grade_type && 'manual-grade' === $grade_type && 0 === $user_question_grade );
+
+					if ( $user_right ) {
+						$graded_class           = 'user_right';
+						$user_quiz_grade_total += $user_question_grade;
+						$graded_count++;
+					} elseif ( $user_wrong ) {
+						$graded_class        = 'user_wrong';
+						$user_question_grade = 0;
+						$graded_count++;
+					}
+				}
 				?>
+
 			<div class="postbox question_box <?php echo esc_attr( $type ); ?> <?php echo esc_attr( $grade_type ); ?> <?php echo esc_attr( $graded_class ); ?>" id="<?php echo esc_attr( 'question_' . $question_id . '_box' ); ?>">
 				<div class="handlediv" title="Click to toggle"><br></div>
 				<h3 class="hndle"><span><?php echo esc_html( $question_title ); ?></span></h3>
