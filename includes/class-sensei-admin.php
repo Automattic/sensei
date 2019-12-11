@@ -635,6 +635,38 @@ class Sensei_Admin {
 	}
 
 	/**
+	 * Sync prerequisite ids after course duplication
+	 *
+	 * @param  array $should_update_prerequisite List with lesson_id and old_prerequisite_id id to update
+	 * @param  array $duplication_ids_history    History with the id before and after duplication
+	 * @return void
+	 */
+	private function prerequisite_sync_ids( $should_update_prerequisite, $duplication_ids_history ) {
+		foreach ( $should_update_prerequisite as $lesson_to_update ) {
+			$old_prerequisite_id = $lesson_to_update[ 'old_prerequisite_id' ];
+			$new_prerequisite_id = $duplication_ids_history[ $old_prerequisite_id ];
+			update_post_meta( $lesson_to_update[ 'lesson_id' ], '_lesson_prerequisite', $new_prerequisite_id, $old_prerequisite_id );
+		}
+	}
+
+	/**
+	 * Get an update prerequisite object
+	 *
+	 * @param  integer $new_lesson_id List with lesson_id and old_prerequisite_id id to update
+	 * @return array                  Object with the id of the lesson to update and its old prerequisite id
+	 */
+	private function get_update_prerequisite_object( $new_lesson_id ) {
+		$lesson_prerequisite = get_post_meta( $new_lesson_id, '_lesson_prerequisite', true );
+		if ( $lesson_prerequisite !== '' ) {
+			return array(
+				'lesson_id'           => $new_lesson_id,
+				'old_prerequisite_id' => $lesson_prerequisite,
+			);
+		}
+		return null;
+	}
+
+	/**
 	 * Duplicate lessons inside a course
 	 *
 	 * @param  integer $old_course_id ID of original course
@@ -649,14 +681,23 @@ class Sensei_Admin {
 			'meta_value'       => $old_course_id,
 			'suppress_filters' => 0,
 		);
-		$lessons     = get_posts( $lesson_args );
+		$lessons                    = get_posts( $lesson_args );
+		$duplication_ids_history    = array();
+		$should_update_prerequisite = array();
 
 		foreach ( $lessons as $lesson ) {
 			$new_lesson = $this->duplicate_post( $lesson, '', true );
 			add_post_meta( $new_lesson->ID, '_lesson_course', $new_course_id );
 
+			$update_prerequisite_object = $this->get_update_prerequisite_object( $new_lesson->ID );
+			if ( ! is_null( $update_prerequisite_object ) ) {
+				$should_update_prerequisite[] = $update_prerequisite_object;
+			}
+			$duplication_ids_history[$lesson->ID] = $new_lesson->ID;
+
 			$this->duplicate_lesson_quizzes( $lesson->ID, $new_lesson->ID );
 		}
+		$this->prerequisite_sync_ids( $should_update_prerequisite, $duplication_ids_history );
 
 		return count( $lessons );
 	}
