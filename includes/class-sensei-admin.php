@@ -637,27 +637,27 @@ class Sensei_Admin {
 	/**
 	 * Sync prerequisite ids after course duplication
 	 *
-	 * @param  array $should_update_prerequisite List with lesson_id and old_prerequisite_id id to update
-	 * @param  array $duplication_ids_history    History with the id before and after duplication
+	 * @param  array $should_update_prerequisite List with lesson_id and old_prerequisite_id id to update.
+	 * @param  array $duplication_ids_history    History with the id before and after duplication.
 	 * @return void
 	 */
 	private function prerequisite_sync_ids( $should_update_prerequisite, $duplication_ids_history ) {
 		foreach ( $should_update_prerequisite as $lesson_to_update ) {
-			$old_prerequisite_id = $lesson_to_update[ 'old_prerequisite_id' ];
+			$old_prerequisite_id = $lesson_to_update['old_prerequisite_id'];
 			$new_prerequisite_id = $duplication_ids_history[ $old_prerequisite_id ];
-			update_post_meta( $lesson_to_update[ 'lesson_id' ], '_lesson_prerequisite', $new_prerequisite_id, $old_prerequisite_id );
+			update_post_meta( $lesson_to_update['lesson_id'], '_lesson_prerequisite', $new_prerequisite_id, $old_prerequisite_id );
 		}
 	}
 
 	/**
 	 * Get an update prerequisite object
 	 *
-	 * @param  integer $new_lesson_id List with lesson_id and old_prerequisite_id id to update
-	 * @return array                  Object with the id of the lesson to update and its old prerequisite id
+	 * @param  integer $new_lesson_id List with lesson_id and old_prerequisite_id id to update.
+	 * @return array                  Object with the id of the lesson to update and its old prerequisite id.
 	 */
 	private function get_update_prerequisite_object( $new_lesson_id ) {
 		$lesson_prerequisite = get_post_meta( $new_lesson_id, '_lesson_prerequisite', true );
-		if ( $lesson_prerequisite !== '' ) {
+		if ( '' !== $lesson_prerequisite ) {
 			return array(
 				'lesson_id'           => $new_lesson_id,
 				'old_prerequisite_id' => $lesson_prerequisite,
@@ -669,12 +669,12 @@ class Sensei_Admin {
 	/**
 	 * Duplicate lessons inside a course
 	 *
-	 * @param  integer $old_course_id ID of original course
-	 * @param  integer $new_course_id ID of duplicated course
+	 * @param  integer $old_course_id ID of original course.
+	 * @param  integer $new_course_id ID of duplicated course.
 	 * @return int Number of lessons duplicated.
 	 */
 	private function duplicate_course_lessons( $old_course_id, $new_course_id ) {
-		$lesson_args = array(
+		$lesson_args                = array(
 			'post_type'        => 'lesson',
 			'posts_per_page'   => -1,
 			'meta_key'         => '_lesson_course',
@@ -693,7 +693,7 @@ class Sensei_Admin {
 			if ( ! is_null( $update_prerequisite_object ) ) {
 				$should_update_prerequisite[] = $update_prerequisite_object;
 			}
-			$duplication_ids_history[$lesson->ID] = $new_lesson->ID;
+			$duplication_ids_history[ $lesson->ID ] = $new_lesson->ID;
 
 			$this->duplicate_lesson_quizzes( $lesson->ID, $new_lesson->ID );
 		}
