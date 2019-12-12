@@ -645,18 +645,19 @@ class Sensei_Admin {
 		foreach ( $should_update_prerequisite as $lesson_to_update ) {
 			$old_prerequisite_id = $lesson_to_update['old_prerequisite_id'];
 			$new_prerequisite_id = $duplication_ids_history[ $old_prerequisite_id ];
-			update_post_meta( $lesson_to_update['lesson_id'], '_lesson_prerequisite', $new_prerequisite_id, $old_prerequisite_id );
+			add_post_meta( $lesson_to_update['lesson_id'], '_lesson_prerequisite', $new_prerequisite_id );
 		}
 	}
 
 	/**
 	 * Get an update prerequisite object
 	 *
-	 * @param  integer $new_lesson_id List with lesson_id and old_prerequisite_id id to update.
+	 * @param  integer $old_lesson_id ID of the lesson before the duplication.
+	 * @param  integer $new_lesson_id New ID of the lesson.
 	 * @return array                  Object with the id of the lesson to update and its old prerequisite id.
 	 */
-	private function get_update_prerequisite_object( $new_lesson_id ) {
-		$lesson_prerequisite = get_post_meta( $new_lesson_id, '_lesson_prerequisite', true );
+	private function get_update_prerequisite_object( $old_lesson_id, $new_lesson_id ) {
+		$lesson_prerequisite = get_post_meta( $old_lesson_id, '_lesson_prerequisite', true );
 		if ( '' !== $lesson_prerequisite ) {
 			return array(
 				'lesson_id'           => $new_lesson_id,
@@ -689,7 +690,7 @@ class Sensei_Admin {
 			$new_lesson = $this->duplicate_post( $lesson, '', true );
 			add_post_meta( $new_lesson->ID, '_lesson_course', $new_course_id );
 
-			$update_prerequisite_object = $this->get_update_prerequisite_object( $new_lesson->ID );
+			$update_prerequisite_object = $this->get_update_prerequisite_object( $lesson->ID, $new_lesson->ID );
 			if ( ! is_null( $update_prerequisite_object ) ) {
 				$should_update_prerequisite[] = $update_prerequisite_object;
 			}
@@ -751,7 +752,7 @@ class Sensei_Admin {
 			$post_meta = get_post_custom( $post->ID );
 			if ( $post_meta && count( $post_meta ) > 0 ) {
 
-				$ignore_meta = array( '_quiz_lesson', '_quiz_id', '_lesson_quiz' );
+				$ignore_meta = array( '_quiz_lesson', '_quiz_id', '_lesson_quiz', '_lesson_prerequisite' );
 
 				if ( $ignore_course ) {
 					$ignore_meta[] = '_lesson_course';
