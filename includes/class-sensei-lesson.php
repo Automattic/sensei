@@ -285,7 +285,6 @@ class Sensei_Lesson {
 			'order'            => 'ASC',
 			'exclude'          => $post->ID,
 			'suppress_filters' => 0,
-			'post_status'      => [ 'publish', 'draft' ],
 		);
 		$posts_array = get_posts( $post_args );
 		// Build the HTML to Output
@@ -295,8 +294,7 @@ class Sensei_Lesson {
 			$html .= '<select id="lesson-prerequisite-options" name="lesson_prerequisite" class="chosen_select widefat" style="width: 100%">' . "\n";
 			$html .= '<option value="">' . esc_html__( 'None', 'sensei-lms' ) . '</option>';
 			foreach ( $posts_array as $post_item ) {
-				$draft_mark = 'draft' === $post_item->post_status ? ' — ' . esc_html__( 'Draft', 'sensei-lms' ) : '';
-				$html      .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '"' . selected( $post_item->ID, $select_lesson_prerequisite, false ) . '>' . esc_html( $post_item->post_title ) . $draft_mark . '</option>' . "\n";
+				$html .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '"' . selected( $post_item->ID, $select_lesson_prerequisite, false ) . '>' . esc_html( $post_item->post_title ) . '</option>' . "\n";
 			} // End For Loop
 			$html .= '</select>' . "\n";
 		} else {
