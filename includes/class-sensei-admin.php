@@ -658,7 +658,7 @@ class Sensei_Admin {
 	 */
 	private function get_update_prerequisite_object( $old_lesson_id, $new_lesson_id ) {
 		$lesson_prerequisite = get_post_meta( $old_lesson_id, '_lesson_prerequisite', true );
-		if ( '' !== $lesson_prerequisite ) {
+		if ( ! empty( $lesson_prerequisite ) ) {
 			return array(
 				'lesson_id'           => $new_lesson_id,
 				'old_prerequisite_id' => $lesson_prerequisite,
