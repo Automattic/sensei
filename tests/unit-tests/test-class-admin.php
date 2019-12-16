@@ -71,7 +71,7 @@ class Sensei_Class_Admin_Test extends WP_UnitTestCase {
 			add_post_meta( $lesson_id, '_lesson_course', $course_id );
 		}
 
-		// Add prerequisite
+		// Add the first lesson as prerequisite of the second one
 		add_post_meta( $lesson_ids[1], '_lesson_prerequisite', $lesson_ids[0] );
 
 		// Create nonce to pass in the method
@@ -105,8 +105,10 @@ class Sensei_Class_Admin_Test extends WP_UnitTestCase {
 		$this->assertCount( $qty_lessons, $lessons, 'The number of lessons duplicated should be the same that the original.' );
 
 		// Prerequisite assertation
-		$new_prerequisite = get_post_meta( $lessons[1]->ID, '_lesson_prerequisite', true );
-		$this->assertEquals( $lessons[0]->ID, $new_prerequisite, 'The prerequisite post meta should update after the duplication.' );
+		$first_lesson_prerequisite  = get_post_meta( $lessons[0]->ID, '_lesson_prerequisite', true );
+		$second_lesson_prerequisite = get_post_meta( $lessons[1]->ID, '_lesson_prerequisite', true );
+		$this->assertEquals( $first_lesson_prerequisite, '', 'The first lesson prerequisite should be empty.' );
+		$this->assertEquals( $second_lesson_prerequisite, $lessons[0]->ID, 'The second lesson prerequisite should be the first duplicated lesson.' );
 	}
 
 }//end class
