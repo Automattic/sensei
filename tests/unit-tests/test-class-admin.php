@@ -81,8 +81,10 @@ class Sensei_Class_Admin_Test extends WP_UnitTestCase {
 		$_REQUEST['_wpnonce'] = $duplicate_nonce;
 		$_GET['post']         = $course_id;
 
+		// Runs the duplication
 		Sensei()->admin->duplicate_course_with_lessons_action();
 
+		// Get duplicated course (all in draft)
 		$course_args   = array(
 			'post_type'   => 'course',
 			'post_status' => [ 'draft' ],
@@ -90,6 +92,7 @@ class Sensei_Class_Admin_Test extends WP_UnitTestCase {
 		$courses       = get_posts( $course_args );
 		$new_course_id = $courses[0]->ID;
 
+		// Get the lessons of the duplicated post
 		$lesson_args = array(
 			'post_type'   => 'lesson',
 			'meta_key'    => '_lesson_course', // phpcs:ignore Slow query ok.
@@ -98,8 +101,10 @@ class Sensei_Class_Admin_Test extends WP_UnitTestCase {
 		);
 		$lessons     = get_posts( $lesson_args );
 
+		// Lessons assertation
 		$this->assertCount( $qty_lessons, $lessons, 'The number of lessons duplicated should be the same that the original.' );
 
+		// Prerequisite assertation
 		$new_prerequisite = get_post_meta( $lessons[1]->ID, '_lesson_prerequisite', true );
 		$this->assertEquals( $lessons[0]->ID, $new_prerequisite, 'The prerequisite post meta should update after the duplication.' );
 	}
