@@ -671,12 +671,14 @@ class Sensei_Admin {
 	 */
 	private function get_prerequisite_update_object( $old_lesson_id, $new_lesson_id ) {
 		$lesson_prerequisite = get_post_meta( $old_lesson_id, '_lesson_prerequisite', true );
+
 		if ( ! empty( $lesson_prerequisite ) ) {
 			return array(
 				'lesson_id'           => $new_lesson_id,
 				'old_prerequisite_id' => $lesson_prerequisite,
 			);
 		}
+
 		return null;
 	}
 
@@ -704,6 +706,7 @@ class Sensei_Admin {
 			add_post_meta( $new_lesson->ID, '_lesson_course', $new_course_id );
 
 			$update_prerequisite_object = $this->get_prerequisite_update_object( $lesson->ID, $new_lesson->ID );
+
 			if ( ! is_null( $update_prerequisite_object ) ) {
 				$lessons_to_update[] = $update_prerequisite_object;
 			}
@@ -711,6 +714,7 @@ class Sensei_Admin {
 
 			$this->duplicate_lesson_quizzes( $lesson->ID, $new_lesson->ID );
 		}
+
 		$this->update_lesson_prerequisite_ids( $lessons_to_update, $new_lesson_id_lookup );
 
 		return count( $lessons );
