@@ -526,6 +526,17 @@ class Sensei_Admin {
 	}
 
 	/**
+	 * Redirect the user safely
+	 *
+	 * @param  string $redirect_url URL to redirect the user.
+	 * @return void
+	 */
+	public function safe_redirect( $redirect_url ) {
+		wp_safe_redirect( esc_url_raw( $redirect_url ) );
+		exit;
+	}
+
+	/**
 	 * Duplicate content
 	 *
 	 * @param  string  $post_type    Post type being duplicated
@@ -589,8 +600,7 @@ class Sensei_Admin {
 				sensei_log_event( $event, $event_properties );
 			}
 
-			wp_safe_redirect( esc_url_raw( $redirect_url ) );
-			exit;
+			$this->safe_redirect( $redirect_url );
 		}
 	}
 
@@ -602,7 +612,6 @@ class Sensei_Admin {
 	 * @return void
 	 */
 	private function duplicate_lesson_quizzes( $old_lesson_id, $new_lesson_id ) {
-
 		$old_quiz_id        = Sensei()->lesson->lesson_quizzes( $old_lesson_id );
 		$old_quiz_questions = Sensei()->lesson->lesson_quiz_questions( $old_quiz_id );
 
