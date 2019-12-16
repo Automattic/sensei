@@ -612,7 +612,11 @@ class Sensei_Admin {
 	 * @return void
 	 */
 	private function duplicate_lesson_quizzes( $old_lesson_id, $new_lesson_id ) {
-		$old_quiz_id        = Sensei()->lesson->lesson_quizzes( $old_lesson_id );
+		$old_quiz_id = Sensei()->lesson->lesson_quizzes( $old_lesson_id );
+		if ( empty( $old_quiz_id ) ) {
+			return;
+		}
+
 		$old_quiz_questions = Sensei()->lesson->lesson_quiz_questions( $old_quiz_id );
 
 		// duplicate the generic wp post information
