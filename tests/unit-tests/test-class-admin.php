@@ -5,7 +5,7 @@ class Sensei_Class_Admin_Test extends WP_UnitTestCase {
 	/**
 	 * Constructor function
 	 */
-	public function __construct() {
+	public function __construct() { // phpcs:ignore Generic.CodeAnalysis.UselessOverridingMethod.Found
 		parent::__construct();
 	}
 
@@ -56,7 +56,13 @@ class Sensei_Class_Admin_Test extends WP_UnitTestCase {
 			->method( 'safe_redirect' );
 
 		// Create and set current user as teacher
-		$admin_user = $this->factory->user->create_and_get( array( 'user_login' => 'admin_user', 'user_pass' => null, 'role' => 'teacher' ) );
+		$admin_user = $this->factory->user->create_and_get(
+			array(
+				'user_login' => 'admin_user',
+				'user_pass'  => null,
+				'role'       => 'teacher',
+			)
+		);
 		wp_set_current_user( $admin_user->ID );
 
 		$course_id  = $this->factory->course->create();
@@ -86,8 +92,8 @@ class Sensei_Class_Admin_Test extends WP_UnitTestCase {
 
 		$lesson_args = array(
 			'post_type'   => 'lesson',
-			'meta_key'    => '_lesson_course',
-			'meta_value'  => $new_course_id,
+			'meta_key'    => '_lesson_course', // phpcs:ignore Slow query ok.
+			'meta_value'  => $new_course_id, // phpcs:ignore Slow query ok.
 			'post_status' => [ 'draft' ],
 		);
 		$lessons     = get_posts( $lesson_args );
