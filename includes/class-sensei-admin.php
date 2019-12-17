@@ -528,6 +528,7 @@ class Sensei_Admin {
 	/**
 	 * Redirect the user safely.
 	 *
+	 * @access private
 	 * @param  string $redirect_url URL to redirect the user.
 	 * @return void
 	 */
