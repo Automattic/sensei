@@ -517,7 +517,7 @@ class Sensei_Admin {
 	}
 
 	/**
-	 * Duplicate course with lessons
+	 * Duplicate course with lessons.
 	 *
 	 * @return void
 	 */
@@ -526,7 +526,7 @@ class Sensei_Admin {
 	}
 
 	/**
-	 * Redirect the user safely
+	 * Redirect the user safely.
 	 *
 	 * @param  string $redirect_url URL to redirect the user.
 	 * @return void
@@ -537,10 +537,10 @@ class Sensei_Admin {
 	}
 
 	/**
-	 * Duplicate content
+	 * Duplicate content.
 	 *
-	 * @param  string  $post_type    Post type being duplicated
-	 * @param  boolean $with_lessons Include lessons or not
+	 * @param  string  $post_type    Post type being duplicated.
+	 * @param  boolean $with_lessons Include lessons or not.
 	 * @return void
 	 */
 	private function duplicate_content( $post_type = 'lesson', $with_lessons = false ) {
@@ -605,14 +605,15 @@ class Sensei_Admin {
 	}
 
 	/**
-	 * Duplicate quizzes inside lessons
+	 * Duplicate quizzes inside lessons.
 	 *
-	 * @param  integer $old_lesson_id ID of original lesson
-	 * @param  integer $new_lesson_id ID of duplicate lesson
+	 * @param  integer $old_lesson_id ID of original lesson.
+	 * @param  integer $new_lesson_id ID of duplicate lesson.
 	 * @return void
 	 */
 	private function duplicate_lesson_quizzes( $old_lesson_id, $new_lesson_id ) {
 		$old_quiz_id = Sensei()->lesson->lesson_quizzes( $old_lesson_id );
+
 		if ( empty( $old_quiz_id ) ) {
 			return;
 		}
@@ -648,7 +649,7 @@ class Sensei_Admin {
 	}
 
 	/**
-	 * Update prerequisite ids after course duplication
+	 * Update prerequisite ids after course duplication.
 	 *
 	 * @param  array $lessons_to_update    List with lesson_id and old_prerequisite_id id to update.
 	 * @param  array $new_lesson_id_lookup History with the id before and after duplication.
@@ -663,7 +664,7 @@ class Sensei_Admin {
 	}
 
 	/**
-	 * Get an prerequisite update object
+	 * Get an prerequisite update object.
 	 *
 	 * @param  integer $old_lesson_id ID of the lesson before the duplication.
 	 * @param  integer $new_lesson_id New ID of the lesson.
@@ -683,7 +684,7 @@ class Sensei_Admin {
 	}
 
 	/**
-	 * Duplicate lessons inside a course
+	 * Duplicate lessons inside a course.
 	 *
 	 * @param  integer $old_course_id ID of original course.
 	 * @param  integer $new_course_id ID of duplicated course.
@@ -710,8 +711,8 @@ class Sensei_Admin {
 			if ( ! is_null( $update_prerequisite_object ) ) {
 				$lessons_to_update[] = $update_prerequisite_object;
 			}
-			$new_lesson_id_lookup[ $lesson->ID ] = $new_lesson->ID;
 
+			$new_lesson_id_lookup[ $lesson->ID ] = $new_lesson->ID;
 			$this->duplicate_lesson_quizzes( $lesson->ID, $new_lesson->ID );
 		}
 
@@ -721,12 +722,12 @@ class Sensei_Admin {
 	}
 
 	/**
-	 * Duplicate post
+	 * Duplicate post.
 	 *
-	 * @param  object  $post          Post to be duplicated
-	 * @param  string  $suffix        Suffix for duplicated post title
-	 * @param  boolean $ignore_course Ignore lesson course when dulicating
-	 * @return object                 Duplicate post object
+	 * @param  object  $post          Post to be duplicated.
+	 * @param  string  $suffix        Suffix for duplicated post title.
+	 * @param  boolean $ignore_course Ignore lesson course when dulicating.
+	 * @return object                 Duplicate post object.
 	 */
 	private function duplicate_post( $post, $suffix = null, $ignore_course = false ) {
 
