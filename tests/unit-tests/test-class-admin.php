@@ -34,14 +34,21 @@ class Sensei_Class_Admin_Test extends WP_UnitTestCase {
 	/**
 	 * Test duplicate courses with lessons.
 	 *
-	 * @covers WooThemes_Sensei_Admin::duplicate_course_with_lessons_action
+	 * @uses WooThemes_Sensei_Admin::duplicate_course_with_lessons_action
+	 * @uses WooThemes_Sensei_Admin::duplicate_content
+	 * @uses WooThemes_Sensei_Admin::duplicate_post
+	 * @uses WooThemes_Sensei_Admin::update_lesson_prerequisite_ids
+	 * @uses WooThemes_Sensei_Admin::get_prerequisite_update_object
+	 * @uses WooThemes_Sensei_Admin::duplicate_lesson_quizzes
+	 *
+	 * @covers WooThemes_Sensei_Admin::duplicate_course_lessons
 	 *
 	 * @return void
 	 */
 	public function testDuplicateCourseWithLessons() {
 		$this->assertTrue(
-			method_exists( 'WooThemes_Sensei_Admin', 'duplicate_course_with_lessons_action' ),
-			'The admin class function `duplicate_course_with_lessons_action` does not exist '
+			method_exists( 'WooThemes_Sensei_Admin', 'duplicate_course_lessons' ),
+			'The admin class function `duplicate_course_lessons` does not exist '
 		);
 
 		$qty_lessons = 2;
@@ -78,11 +85,27 @@ class Sensei_Class_Admin_Test extends WP_UnitTestCase {
 	/**
 	 * Test duplicate courses with lessons with prerequisite.
 	 *
-	 * @covers WooThemes_Sensei_Admin::duplicate_course_with_lessons_action
+	 * @uses WooThemes_Sensei_Admin::duplicate_course_with_lessons_action
+	 * @uses WooThemes_Sensei_Admin::duplicate_content
+	 * @uses WooThemes_Sensei_Admin::duplicate_course_lessons
+	 * @uses WooThemes_Sensei_Admin::duplicate_post
+	 * @uses WooThemes_Sensei_Admin::duplicate_lesson_quizzes
+	 *
+	 * @covers WooThemes_Sensei_Admin::update_lesson_prerequisite_ids
+	 * @covers WooThemes_Sensei_Admin::get_prerequisite_update_object
 	 *
 	 * @return void
 	 */
 	public function testDuplicateCourseWithLessonsWithPrerequisite() {
+		$this->assertTrue(
+			method_exists( 'WooThemes_Sensei_Admin', 'duplicate_course_lessons' ),
+			'The admin class function `update_lesson_prerequisite_ids` does not exist '
+		);
+		$this->assertTrue(
+			method_exists( 'WooThemes_Sensei_Admin', 'duplicate_course_lessons' ),
+			'The admin class function `get_prerequisite_update_object` does not exist '
+		);
+
 		$qty_lessons = 2;
 		$duplication = $this->duplicate_course_with_lessons_setup( $qty_lessons );
 		$course_id   = $duplication['course_id'];
