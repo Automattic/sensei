@@ -692,14 +692,7 @@ class Sensei_Admin {
 	 * @return int Number of lessons duplicated.
 	 */
 	private function duplicate_course_lessons( $old_course_id, $new_course_id ) {
-		$lesson_args          = array(
-			'post_type'        => 'lesson',
-			'posts_per_page'   => -1,
-			'meta_key'         => '_lesson_course',
-			'meta_value'       => $old_course_id,
-			'suppress_filters' => 0,
-		);
-		$lessons              = get_posts( $lesson_args );
+		$lessons              = Sensei()->course->course_lessons( $old_course_id );
 		$new_lesson_id_lookup = array();
 		$lessons_to_update    = array();
 
