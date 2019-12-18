@@ -517,7 +517,7 @@ class Sensei_Admin {
 	}
 
 	/**
-	 * Duplicate course with lessons
+	 * Duplicate course with lessons.
 	 *
 	 * @return void
 	 */
@@ -526,10 +526,22 @@ class Sensei_Admin {
 	}
 
 	/**
-	 * Duplicate content
+	 * Redirect the user safely.
 	 *
-	 * @param  string  $post_type    Post type being duplicated
-	 * @param  boolean $with_lessons Include lessons or not
+	 * @access private
+	 * @param  string $redirect_url URL to redirect the user.
+	 * @return void
+	 */
+	protected function safe_redirect( $redirect_url ) {
+		wp_safe_redirect( esc_url_raw( $redirect_url ) );
+		exit;
+	}
+
+	/**
+	 * Duplicate content.
+	 *
+	 * @param  string  $post_type    Post type being duplicated.
+	 * @param  boolean $with_lessons Include lessons or not.
 	 * @return void
 	 */
 	private function duplicate_content( $post_type = 'lesson', $with_lessons = false ) {
@@ -589,21 +601,24 @@ class Sensei_Admin {
 				sensei_log_event( $event, $event_properties );
 			}
 
-			wp_safe_redirect( esc_url_raw( $redirect_url ) );
-			exit;
+			$this->safe_redirect( $redirect_url );
 		}
 	}
 
 	/**
-	 * Duplicate quizzes inside lessons
+	 * Duplicate quizzes inside lessons.
 	 *
-	 * @param  integer $old_lesson_id ID of original lesson
-	 * @param  integer $new_lesson_id ID of duplicate lesson
+	 * @param  integer $old_lesson_id ID of original lesson.
+	 * @param  integer $new_lesson_id ID of duplicate lesson.
 	 * @return void
 	 */
 	private function duplicate_lesson_quizzes( $old_lesson_id, $new_lesson_id ) {
+		$old_quiz_id = Sensei()->lesson->lesson_quizzes( $old_lesson_id );
 
-		$old_quiz_id        = Sensei()->lesson->lesson_quizzes( $old_lesson_id );
+		if ( empty( $old_quiz_id ) ) {
+			return;
+		}
+
 		$old_quiz_questions = Sensei()->lesson->lesson_quiz_questions( $old_quiz_id );
 
 		// duplicate the generic wp post information
@@ -635,39 +650,85 @@ class Sensei_Admin {
 	}
 
 	/**
-	 * Duplicate lessons inside a course
+	 * Update prerequisite ids after course duplication.
 	 *
-	 * @param  integer $old_course_id ID of original course
-	 * @param  integer $new_course_id ID of duplicated course
+	 * @param  array $lessons_to_update    List with lesson_id and old_prerequisite_id id to update.
+	 * @param  array $new_lesson_id_lookup History with the id before and after duplication.
+	 * @return void
+	 */
+	private function update_lesson_prerequisite_ids( $lessons_to_update, $new_lesson_id_lookup ) {
+		foreach ( $lessons_to_update as $lesson_to_update ) {
+			$old_prerequisite_id = $lesson_to_update['old_prerequisite_id'];
+			$new_prerequisite_id = $new_lesson_id_lookup[ $old_prerequisite_id ];
+			add_post_meta( $lesson_to_update['lesson_id'], '_lesson_prerequisite', $new_prerequisite_id );
+		}
+	}
+
+	/**
+	 * Get an prerequisite update object.
+	 *
+	 * @param  integer $old_lesson_id ID of the lesson before the duplication.
+	 * @param  integer $new_lesson_id New ID of the lesson.
+	 * @return array                  Object with the id of the lesson to update and its old prerequisite id.
+	 */
+	private function get_prerequisite_update_object( $old_lesson_id, $new_lesson_id ) {
+		$lesson_prerequisite = get_post_meta( $old_lesson_id, '_lesson_prerequisite', true );
+
+		if ( ! empty( $lesson_prerequisite ) ) {
+			return array(
+				'lesson_id'           => $new_lesson_id,
+				'old_prerequisite_id' => $lesson_prerequisite,
+			);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Duplicate lessons inside a course.
+	 *
+	 * @param  integer $old_course_id ID of original course.
+	 * @param  integer $new_course_id ID of duplicated course.
 	 * @return int Number of lessons duplicated.
 	 */
 	private function duplicate_course_lessons( $old_course_id, $new_course_id ) {
-		$lesson_args = array(
+		$lesson_args          = array(
 			'post_type'        => 'lesson',
 			'posts_per_page'   => -1,
 			'meta_key'         => '_lesson_course',
 			'meta_value'       => $old_course_id,
 			'suppress_filters' => 0,
 		);
-		$lessons     = get_posts( $lesson_args );
+		$lessons              = get_posts( $lesson_args );
+		$new_lesson_id_lookup = array();
+		$lessons_to_update    = array();
 
 		foreach ( $lessons as $lesson ) {
 			$new_lesson = $this->duplicate_post( $lesson, '', true );
 			add_post_meta( $new_lesson->ID, '_lesson_course', $new_course_id );
 
+			$update_prerequisite_object = $this->get_prerequisite_update_object( $lesson->ID, $new_lesson->ID );
+
+			if ( ! is_null( $update_prerequisite_object ) ) {
+				$lessons_to_update[] = $update_prerequisite_object;
+			}
+
+			$new_lesson_id_lookup[ $lesson->ID ] = $new_lesson->ID;
 			$this->duplicate_lesson_quizzes( $lesson->ID, $new_lesson->ID );
 		}
+
+		$this->update_lesson_prerequisite_ids( $lessons_to_update, $new_lesson_id_lookup );
 
 		return count( $lessons );
 	}
 
 	/**
-	 * Duplicate post
+	 * Duplicate post.
 	 *
-	 * @param  object  $post          Post to be duplicated
-	 * @param  string  $suffix        Suffix for duplicated post title
-	 * @param  boolean $ignore_course Ignore lesson course when dulicating
-	 * @return object                 Duplicate post object
+	 * @param  object  $post          Post to be duplicated.
+	 * @param  string  $suffix        Suffix for duplicated post title.
+	 * @param  boolean $ignore_course Ignore lesson course when dulicating.
+	 * @return object                 Duplicate post object.
 	 */
 	private function duplicate_post( $post, $suffix = null, $ignore_course = false ) {
 
@@ -710,7 +771,7 @@ class Sensei_Admin {
 			$post_meta = get_post_custom( $post->ID );
 			if ( $post_meta && count( $post_meta ) > 0 ) {
 
-				$ignore_meta = array( '_quiz_lesson', '_quiz_id', '_lesson_quiz' );
+				$ignore_meta = array( '_quiz_lesson', '_quiz_id', '_lesson_quiz', '_lesson_prerequisite' );
 
 				if ( $ignore_course ) {
 					$ignore_meta[] = '_lesson_course';
