@@ -532,7 +532,7 @@ class Sensei_Admin {
 	 * @param  string $redirect_url URL to redirect the user.
 	 * @return void
 	 */
-	public function safe_redirect( $redirect_url ) {
+	protected function safe_redirect( $redirect_url ) {
 		wp_safe_redirect( esc_url_raw( $redirect_url ) );
 		exit;
 	}
