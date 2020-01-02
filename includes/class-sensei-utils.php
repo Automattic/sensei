@@ -1972,13 +1972,14 @@ class Sensei_Utils {
 	 *
 	 * @access public
 	 * @since  1.7.0
-	 * @param int    $user_id
-	 * @param int    $course_id
-	 * @param string $status
-	 * @param array  $metadata
-	 * @return mixed false or comment_ID
+	 * @param  int    $user_id
+	 * @param  int    $course_id
+	 * @param  string $status
+	 * @param  array  $metadata
+	 * @param  bool   $replicating_lang Flag if the status is being replicated for another language.
+	 * @return mixed                    false or comment_ID.
 	 */
-	public static function update_course_status( $user_id, $course_id, $status = 'in-progress', $metadata = array() ) {
+	public static function update_course_status( $user_id, $course_id, $status = 'in-progress', $metadata = array(), $replicating_lang = false ) {
 		$comment_id = false;
 		if ( ! empty( $status ) ) {
 			$args = array(
@@ -1999,7 +2000,8 @@ class Sensei_Utils {
 					update_comment_meta( $comment_id, $key, $value );
 				}
 			}
-			do_action( 'sensei_course_status_updated', $status, $user_id, $course_id, $comment_id );
+
+			do_action( 'sensei_course_status_updated', $status, $user_id, $course_id, $comment_id, $metadata, $replicating_lang );
 		}
 		return $comment_id;
 	}
