@@ -3,6 +3,7 @@ class Sensei_WPML {
 	public function __construct() {
 		add_action( 'sensei_before_mail', array( $this, 'sensei_before_mail' ) );
 		add_action( 'sensei_after_sending_email', array( $this, 'sensei_after_sending_email' ) );
+		add_action( 'sensei_course_status_updated', array( $this, 'sensei_course_status_updated' ), 10, 6 );
 	}
 
 	public function sensei_before_mail( $email_address ) {
@@ -33,5 +34,37 @@ class Sensei_WPML {
 		* @since 1.9.7
 		*/
 		do_action( 'wpml_restore_language_from_email' );
+	}
+
+	/**
+	 * Replicate course status for all languages.
+	 *
+	 * @param string $status
+	 * @param int    $user_id
+	 * @param int    $course_id
+	 * @param array  $comment_id
+	 * @param array  $metadata
+	 * @param bool   $replicating_lang Flag if the status is being replicated for another language.
+	 * @return void
+	 */
+	public function sensei_course_status_updated( $status, $user_id, $course_id, $comment_id, $metadata, $replicating_lang ) {
+		// Prevent to replicate the replication.
+		if ( $replicating_lang ) {
+			return;
+		}
+
+		// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		$trid                 = apply_filters( 'wpml_element_trid', null, $course_id );
+		$element_translations = apply_filters( 'wpml_get_element_translations', null, $trid );
+		// phpcs:enable
+
+		foreach ( $element_translations as $item ) {
+			// Skip the original update.
+			if ( (int) $item->element_id === (int) $course_id ) {
+				continue;
+			}
+
+			Sensei_Utils::update_course_status( $user_id, $item->element_id, $status, $metadata, true );
+		}
 	}
 }
