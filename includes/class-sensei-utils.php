@@ -700,13 +700,14 @@ class Sensei_Utils {
 	 *
 	 * @since 1.6.0
 	 *
-	 * @param  integer     $lesson_id ID of lesson
-	 * @param int| string $user_id default 0
-	 * @param bool        $complete default false
+	 * @param integer    $lesson_id        ID of lesson.
+	 * @param int|string $user_id          default 0.
+	 * @param bool       $complete         default false.
+	 * @param bool       $replicating_lang default false. Flag if the status is being replicated for another language.
 	 *
 	 * @return mixed boolean or comment_ID
 	 */
-	public static function sensei_start_lesson( $lesson_id = 0, $user_id = 0, $complete = false ) {
+	public static function sensei_start_lesson( $lesson_id = 0, $user_id = 0, $complete = false, $replicating_lang = false ) {
 
 		if ( intval( $user_id ) == 0 ) {
 			$user_id = get_current_user_id();
@@ -727,8 +728,8 @@ class Sensei_Utils {
 			$metadata = array();
 			$status   = 'in-progress';
 
-			// Note: When this action runs the lesson status may not yet exist
-			do_action( 'sensei_user_lesson_start', $user_id, $lesson_id );
+			// Note: When this action runs the lesson status may not yet exist.
+			do_action( 'sensei_user_lesson_start', $user_id, $lesson_id, $complete, $replicating_lang );
 
 			if ( $complete ) {
 
