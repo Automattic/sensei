@@ -242,14 +242,20 @@ class Sensei_Emails {
 	}
 
 	/**
-	 * Send email to learner on course completion
+	 * Send email to learner on course completion.
 	 *
 	 * @access public
+	 * @param  string $status
+	 * @param  int    $user_id
+	 * @param  int    $course_id
+	 * @param  int    $comment_id
+	 * @param  array  $metadata
+	 * @param  bool   $replicating_lang Flag if the status is being replicated for another language.
 	 * @return void
 	 */
-	function learner_completed_course( $status = 'in-progress', $user_id = 0, $course_id = 0, $comment_id = 0 ) {
+	public function learner_completed_course( $status = 'in-progress', $user_id = 0, $course_id = 0, $comment_id = 0, $metadata = array(), $replicating_lang = false ) {
 
-		if ( 'complete' != $status ) {
+		if ( 'complete' != $status || $replicating_lang ) {
 			return;
 		}
 
@@ -270,14 +276,20 @@ class Sensei_Emails {
 	}
 
 	/**
-	 * Send email to teacher on course completion
+	 * Send email to teacher on course completion.
 	 *
 	 * @access public
+	 * @param  string $status
+	 * @param  int    $learner_id
+	 * @param  int    $course_id
+	 * @param  int    $comment_id
+	 * @param  array  $metadata
+	 * @param  bool   $replicating_lang Flag if the status is being replicated for another language.
 	 * @return void
 	 */
-	function teacher_completed_course( $status = 'in-progress', $learner_id = 0, $course_id = 0, $comment_id = 0 ) {
+	public function teacher_completed_course( $status = 'in-progress', $learner_id = 0, $course_id = 0, $comment_id = 0, $metadata = array(), $replicating_lang = false ) {
 
-		if ( 'complete' != $status ) {
+		if ( 'complete' != $status || $replicating_lang ) {
 			return;
 		}
 
@@ -322,15 +334,20 @@ class Sensei_Emails {
 	}
 
 	/**
-	 * teacher_completed_lesson()
-	 *
-	 * Send email to teacher on student completing lesson
+	 * Send email to teacher on student completing lesson.
 	 *
 	 * @access public
+	 * @param  int  $learner_id
+	 * @param  int  $lesson_id
+	 * @param  bool $replicating_lang Flag if the status is being replicated for another language.
 	 * @return void
-	 * @since 1.9.0
+	 * @since  1.9.0
 	 */
-	function teacher_completed_lesson( $learner_id = 0, $lesson_id = 0 ) {
+	public function teacher_completed_lesson( $learner_id = 0, $lesson_id = 0, $replicating_lang = false ) {
+
+		if ( $replicating_lang ) {
+			return;
+		}
 
 		$send = false;
 
