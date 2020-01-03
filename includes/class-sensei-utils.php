@@ -1938,10 +1938,10 @@ class Sensei_Utils {
 	 * @param int|string $lesson_id
 	 * @param string     $status
 	 * @param array      $metadata
-	 *
-	 * @return mixed false or comment_ID
+	 * @param bool       $replicating_lang Flag if the status is being replicated for another language.
+	 * @return mixed                       false or comment_ID.
 	 */
-	public static function update_lesson_status( $user_id, $lesson_id, $status = 'in-progress', $metadata = array() ) {
+	public static function update_lesson_status( $user_id, $lesson_id, $status = 'in-progress', $metadata = array(), $replicating_lang = false ) {
 		$comment_id = false;
 		if ( ! empty( $status ) ) {
 			$args = array(
@@ -1963,7 +1963,7 @@ class Sensei_Utils {
 				}
 			}
 
-			do_action( 'sensei_lesson_status_updated', $status, $user_id, $lesson_id, $comment_id );
+			do_action( 'sensei_lesson_status_updated', $status, $user_id, $lesson_id, $comment_id, $metadata, $replicating_lang );
 		}
 		return $comment_id;
 	}
