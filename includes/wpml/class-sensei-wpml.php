@@ -56,7 +56,7 @@ class Sensei_WPML {
 
 		// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		$trid                 = apply_filters( 'wpml_element_trid', null, $course_id );
-		$element_translations = apply_filters( 'wpml_get_element_translations', null, $trid );
+		$element_translations = apply_filters( 'wpml_get_element_translations', [], $trid );
 		// phpcs:enable
 
 		foreach ( $element_translations as $item ) {
@@ -86,7 +86,7 @@ class Sensei_WPML {
 
 		// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		$trid                 = apply_filters( 'wpml_element_trid', null, $lesson_id );
-		$element_translations = apply_filters( 'wpml_get_element_translations', null, $trid );
+		$element_translations = apply_filters( 'wpml_get_element_translations', [], $trid );
 		// phpcs:enable
 
 		foreach ( $element_translations as $item ) {
