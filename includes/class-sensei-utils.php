@@ -767,7 +767,7 @@ class Sensei_Utils {
 
 			if ( $complete ) {
 				// Run this *after* the lesson status has been created/updated
-				do_action( 'sensei_user_lesson_end', $user_id, $lesson_id );
+				do_action( 'sensei_user_lesson_end', $user_id, $lesson_id, $replicating_lang );
 			}
 		}
 
