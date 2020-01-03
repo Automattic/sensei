@@ -4,6 +4,7 @@ class Sensei_WPML {
 		add_action( 'sensei_before_mail', array( $this, 'sensei_before_mail' ) );
 		add_action( 'sensei_after_sending_email', array( $this, 'sensei_after_sending_email' ) );
 		add_action( 'sensei_course_status_updated', array( $this, 'sensei_course_status_updated' ), 10, 6 );
+		add_action( 'sensei_lesson_status_updated', array( $this, 'sensei_lesson_status_updated' ), 10, 6 );
 		add_action( 'sensei_user_lesson_start', array( $this, 'sensei_user_lesson_start' ), 10, 4 );
 	}
 
@@ -66,6 +67,37 @@ class Sensei_WPML {
 			}
 
 			Sensei_Utils::update_course_status( $user_id, $item->element_id, $status, $metadata, true );
+		}
+	}
+
+	/**
+	 * Start the lesson for the user on all languages.
+	 *
+	 * @param string $status
+	 * @param int    $user_id
+	 * @param int    $lesson_id
+	 * @param array  $comment_id
+	 * @param array  $metadata
+	 * @param bool   $replicating_lang Flag if the content is being replicated for another language.
+	 * @return void
+	 */
+	public function sensei_lesson_status_updated( $status, $user_id, $lesson_id, $comment_id, $metadata, $replicating_lang ) {
+		if ( $replicating_lang ) {
+			return;
+		}
+
+		// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		$trid                 = apply_filters( 'wpml_element_trid', null, $lesson_id );
+		$element_translations = apply_filters( 'wpml_get_element_translations', [], $trid );
+		// phpcs:enable
+
+		foreach ( $element_translations as $item ) {
+			// Skip the original update.
+			if ( (int) $item->element_id === (int) $lesson_id ) {
+				continue;
+			}
+
+			Sensei_Utils::update_lesson_status( $user_id, $item->element_id, $status, $metadata, true );
 		}
 	}
 
