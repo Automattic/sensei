@@ -181,7 +181,7 @@ class Sensei_Course_Access {
 			$access_log->record_access_check( $access_provider_id, $access_provider->has_access( $user_id, $this->course_id ) );
 		}
 
-		$access_log->finalize_log();
+		$access_log->finalize_log( self::get_course_access_providers_version() );
 
 		update_term_meta( $term->term_id, $this->get_course_log_meta_key(), wp_slash( wp_json_encode( $access_log ) ) );
 

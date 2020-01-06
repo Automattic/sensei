@@ -141,11 +141,12 @@ final class Sensei_Course_Access_Log implements JsonSerializable {
 
 	/**
 	 * Run once all the access providers have been checked.
+	 *
+	 * @param string $access_providers_version Hash of the access providers versions used to generate this log.
 	 */
-	public function finalize_log() {
+	public function finalize_log( $access_providers_version ) {
 		if ( ! isset( $this->version ) ) {
-			$access_record = $this->get_provider_access();
-			$this->version = Sensei_Course_Access::hash_course_access_provider_versions( array_keys( $access_record ) );
+			$this->version = $access_providers_version;
 		}
 	}
 }
