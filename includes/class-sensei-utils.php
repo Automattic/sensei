@@ -1479,10 +1479,9 @@ class Sensei_Utils {
 	 * Start course for user
 	 *
 	 * @since  1.4.8
-	 * @since  2.x.x No longer returns comment ID.
 	 * @param  integer $user_id   User ID
 	 * @param  integer $course_id Course ID
-	 * @return bool
+	 * @return bool|int False if they haven't started; Comment ID of course progress if they have.
 	 */
 	public static function user_start_course( $user_id = 0, $course_id = 0 ) {
 
@@ -1490,9 +1489,9 @@ class Sensei_Utils {
 
 		if ( $user_id && $course_id ) {
 			// Check if user is already on the Course
-			$activity_logged = self::user_started_course( $course_id, $user_id );
+			$activity_logged = self::has_started_course( $course_id, $user_id );
 			if ( ! $activity_logged ) {
-				$activity_logged = false !== self::start_user_on_course( $user_id, $course_id );
+				$activity_logged = self::start_user_on_course( $user_id, $course_id );
 			}
 		}
 
@@ -1568,7 +1567,7 @@ class Sensei_Utils {
 		 *
 		 * @since 1.9.3
 		 *
-		 * @param bool $user_started_course
+		 * @param bool|int $user_started_course
 		 * @param integer $course_id
 		 */
 		return apply_filters( 'sensei_user_started_course', $user_started_course, $course_id, $user_id );
