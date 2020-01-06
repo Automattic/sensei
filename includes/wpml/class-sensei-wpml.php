@@ -5,7 +5,7 @@ class Sensei_WPML {
 		add_action( 'sensei_after_sending_email', array( $this, 'sensei_after_sending_email' ) );
 		add_action( 'sensei_course_status_updated', array( $this, 'sensei_course_status_updated' ), 10, 6 );
 		add_action( 'sensei_lesson_status_updated', array( $this, 'sensei_lesson_status_updated' ), 10, 6 );
-		add_action( 'sensei_user_lesson_start', array( $this, 'sensei_user_lesson_start' ), 10, 4 );
+		add_action( 'sensei_started_lesson_completed', array( $this, 'sensei_started_lesson_completed' ), 10, 5 );
 	}
 
 	public function sensei_before_mail( $email_address ) {
@@ -104,13 +104,14 @@ class Sensei_WPML {
 	/**
 	 * Replicate lesson status for all languages.
 	 *
-	 * @param int  $user_id
-	 * @param int  $lesson_id
-	 * @param bool $complete
-	 * @param bool $replicating_lang Flag if the status is being replicated for another language.
+	 * @param int    $lesson_id
+	 * @param int    $user_id
+	 * @param string $status
+	 * @param bool   $complete
+	 * @param bool   $replicating_lang Flag if the status is being replicated for another language.
 	 * @return void
 	 */
-	public function sensei_user_lesson_start( $user_id, $lesson_id, $complete, $replicating_lang ) {
+	public function sensei_started_lesson_completed( $lesson_id, $user_id, $status, $complete, $replicating_lang ) {
 		// Prevent to replicate the replication.
 		if ( $replicating_lang ) {
 			return;
@@ -127,7 +128,7 @@ class Sensei_WPML {
 				continue;
 			}
 
-			Sensei_Utils::sensei_start_lesson( $item->element_id, $user_id, $complete, true );
+			Sensei_Utils::complete_lesson( $item->element_id, $user_id, $status, $complete, true );
 		}
 	}
 }
