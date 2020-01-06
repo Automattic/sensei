@@ -110,7 +110,7 @@ final class Sensei_Course_Access_Log implements JsonSerializable {
 	 * @param int    $result             Result of check. See return for `\Sensei_Course_Access_Provider_Interface::has_access`.
 	 */
 	public function record_access_check( $access_provider_id, $result ) {
-		$this->provider_access[ $access_provider_id ] = $result;
+		$this->provider_access[ $access_provider_id ] = self::sanitize_access_result( $result );
 	}
 
 	/**
