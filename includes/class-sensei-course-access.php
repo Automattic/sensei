@@ -249,7 +249,7 @@ class Sensei_Course_Access {
 	public function get_course_access_providers_version() {
 		if ( ! isset( self::$access_providers_version ) ) {
 			$access_providers               = self::get_course_access_providers();
-			self::$access_providers_version = self::hash_course_access_provider_versions( array_keys( $access_providers ) );
+			self::$access_providers_version = self::hash_course_access_provider_versions( $access_providers );
 		}
 
 		return self::$access_providers_version;
@@ -258,16 +258,17 @@ class Sensei_Course_Access {
 	/**
 	 * Generates a hash of all the access provider versions.
 	 *
-	 * @param string[] $access_providers Array of access provider class names.
+	 * @param Sensei_Course_Access_Provider_Interface[] $access_providers Array of access provider objects..
 	 * @return string
 	 */
-	public static function hash_course_access_provider_versions( $access_providers ) {
+	private static function hash_course_access_provider_versions( $access_providers ) {
 		$versions = [];
-		foreach ( $access_providers as $access_provider_class ) {
-			if ( ! is_a( $access_provider_class, 'Sensei_Course_Access_Provider_Interface', true ) ) {
+		foreach ( $access_providers as $access_provider ) {
+			if ( ! ( $access_provider instanceof Sensei_Course_Access_Provider_Interface ) ) {
 				continue;
 			}
 
+			$access_provider_class              = get_class( $access_provider );
 			$versions[ $access_provider_class ] = $access_provider_class::get_version();
 		}
 
