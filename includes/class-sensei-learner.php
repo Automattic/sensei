@@ -26,10 +26,10 @@ class Sensei_Learner {
 	public static function get_learner_term( $user_id ) {
 		$user_term_slug = self::get_learner_term_slug( $user_id );
 		if ( ! isset( self::$learner_terms[ $user_id ] ) ) {
-			self::$learner_terms[ $user_id ] = get_term_by( 'slug', $user_term_slug, 'learner' );
+			self::$learner_terms[ $user_id ] = get_term_by( 'slug', $user_term_slug, Sensei_PostTypes::LEARNER_TAXONOMY_NAME );
 
 			if ( empty( self::$learner_terms[ $user_id ] ) ) {
-				$term = wp_insert_term( $user_term_slug, 'learner' );
+				$term = wp_insert_term( $user_term_slug, Sensei_PostTypes::LEARNER_TAXONOMY_NAME );
 				if ( is_array( $term ) && ! empty( $term['term_id'] ) ) {
 					self::$learner_terms[ $user_id ] = get_term( $term['term_id'] );
 				}

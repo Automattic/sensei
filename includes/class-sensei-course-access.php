@@ -119,7 +119,7 @@ class Sensei_Course_Access {
 	private function get_stored_access( $user_id ) {
 		$term = Sensei_Learner::get_learner_term( $user_id );
 
-		return has_term( $term->term_id, 'learner', $this->course_id );
+		return has_term( $term->term_id, Sensei_PostTypes::LEARNER_TAXONOMY_NAME, $this->course_id );
 	}
 
 	/**
@@ -133,7 +133,7 @@ class Sensei_Course_Access {
 	private function save_access( $user_id, $has_access ) {
 		$term = Sensei_Learner::get_learner_term( $user_id );
 		if ( ! $has_access ) {
-			$result = wp_remove_object_terms( $this->course_id, [ intval( $term->term_id ) ], 'learner' );
+			$result = wp_remove_object_terms( $this->course_id, [ intval( $term->term_id ) ], Sensei_PostTypes::LEARNER_TAXONOMY_NAME );
 
 			return true === $result;
 		}
@@ -141,7 +141,7 @@ class Sensei_Course_Access {
 		// If they have access, make sure they have started the course.
 		Sensei_Utils::start_user_on_course( $user_id, $this->course_id );
 
-		$result = wp_set_post_terms( $this->course_id, [ intval( $term->term_id ) ], 'learner', true );
+		$result = wp_set_post_terms( $this->course_id, [ intval( $term->term_id ) ], Sensei_PostTypes::LEARNER_TAXONOMY_NAME, true );
 
 		return is_array( $result ) && ! empty( $result );
 	}
