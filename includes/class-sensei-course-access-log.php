@@ -57,6 +57,20 @@ final class Sensei_Course_Access_Log implements JsonSerializable {
 	}
 
 	/**
+	 * Sanitizes the values loaded into `self::$provider_access`.
+	 *
+	 * @param mixed $result Un-sanitized access result.
+	 * @return null|int
+	 */
+	public static function sanitize_access_result( $result ) {
+		if ( null === $result ) {
+			return null;
+		}
+
+		return intval( $result );
+	}
+
+	/**
 	 * Restore a course access log from a serialized JSON string.
 	 *
 	 * @param string $json_string JSON representation of log.
@@ -71,7 +85,7 @@ final class Sensei_Course_Access_Log implements JsonSerializable {
 
 		$time            = isset( $json_arr['t'] ) ? floatval( $json_arr['t'] ) : microtime( true );
 		$version         = isset( $json_arr['v'] ) ? sanitize_text_field( $json_arr['v'] ) : -1;
-		$provider_access = isset( $json_arr['a'] ) ? array_map( 'intval', $json_arr['a'] ) : [];
+		$provider_access = isset( $json_arr['a'] ) ? array_map( [ __CLASS__, 'sanitize_access_result' ], $json_arr['a'] ) : [];
 
 		return new self( $time, $provider_access, $version );
 	}
