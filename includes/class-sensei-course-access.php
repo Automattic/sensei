@@ -271,6 +271,8 @@ class Sensei_Course_Access {
 			$versions[ $access_provider_class ] = $access_provider_class::get_version();
 		}
 
+		ksort( $versions );
+
 		return md5( wp_json_encode( $versions ) );
 	}
 
