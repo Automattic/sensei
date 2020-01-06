@@ -1479,9 +1479,10 @@ class Sensei_Utils {
 	 * Start course for user
 	 *
 	 * @since  1.4.8
+	 * @since  2.x.x No longer returns comment ID.
 	 * @param  integer $user_id   User ID
 	 * @param  integer $course_id Course ID
-	 * @return mixed boolean or comment_ID
+	 * @return bool
 	 */
 	public static function user_start_course( $user_id = 0, $course_id = 0 ) {
 
@@ -1491,7 +1492,7 @@ class Sensei_Utils {
 			// Check if user is already on the Course
 			$activity_logged = self::user_started_course( $course_id, $user_id );
 			if ( ! $activity_logged ) {
-				$activity_logged = self::start_user_on_course( $user_id, $course_id );
+				$activity_logged = false !== self::start_user_on_course( $user_id, $course_id );
 			}
 		}
 
@@ -1502,14 +1503,19 @@ class Sensei_Utils {
 	 * Check if a user has started a course or not.
 	 *
 	 * @since  1.7.0
-	 * @deprecated 2.x.x For access control, use `Sensei_Course::check_user_access()`. For course progress check, use `Sensei_Utils::has_started_course()`.
+	 * @deprecated 2.x.x No longer returns comment ID when they have access. For access control, use `Sensei_Course::check_user_access()`. For course progress check, use `Sensei_Utils::has_started_course()`.
 	 *
 	 * @param int $course_id Course ID.
 	 * @param int $user_id   User ID.
-	 * @return mixed false or comment_ID
+	 * @return bool
 	 */
 	public static function user_started_course( $course_id = 0, $user_id = 0 ) {
+		// @todo Uncomment next line when we're ready to remove usage in the plugin itself.
 		// _deprecated_function( __METHOD__, '2.x.x', 'For access control, use `Sensei_Course::check_user_access()`. For course progress check, use `Sensei_Utils::has_started_course()`' );
+
+		if ( empty( $course_id ) ) {
+			return false;
+		}
 
 		// This was mainly used to check for course access. For now, use that replacement method.
 		return Sensei_Course::check_user_access( $course_id, $user_id );
