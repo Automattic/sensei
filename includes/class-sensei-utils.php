@@ -1502,7 +1502,7 @@ class Sensei_Utils {
 	 * Check if a user has started a course or not.
 	 *
 	 * @since  1.7.0
-	 * @deprecated 2.x.x For access control, use `Sensei_Course::check_user_access()`. For course progress check, use `Sensei_Learner::has_started_course()`.
+	 * @deprecated 2.x.x For access control, use `Sensei_Course::check_user_access()`. For course progress check, use `Sensei_Utils::has_started_course()`.
 	 *
 	 * @param int $course_id Course ID.
 	 * @param int $user_id   User ID.
