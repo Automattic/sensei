@@ -3,9 +3,33 @@ class Sensei_WPML {
 	public function __construct() {
 		add_action( 'sensei_before_mail', array( $this, 'sensei_before_mail' ) );
 		add_action( 'sensei_after_sending_email', array( $this, 'sensei_after_sending_email' ) );
-		add_action( 'sensei_course_status_updated', array( $this, 'sensei_course_status_updated' ), 10, 6 );
-		add_action( 'sensei_lesson_status_updated', array( $this, 'sensei_lesson_status_updated' ), 10, 6 );
-		add_action( 'sensei_started_lesson_completed', array( $this, 'sensei_started_lesson_completed' ), 10, 5 );
+
+		add_action( 'init', array( $this, 'init_hook' ), 13 );
+	}
+
+	/**
+	 * Method to run on the init action.
+	 *
+	 * @return void
+	 */
+	public function init_hook() {
+		/**
+		 * Replicate user progress for all languages hook.
+		 *
+		 * This can affect other hooks behavior. The following actions will run for
+		 * all translation content throught WPML:
+		 * sensei_course_status_updated, sensei_lesson_status_updated,
+		 * sensei_user_lesson_end and sensei_started_lesson_completed.
+		 *
+		 * @since 2.3.0
+		 *
+		 * @param bool $replicate_progress If progress should be replicated for all languages.
+		 */
+		if ( apply_filters( 'sensei_wpml_replicate_user_progress_for_all_languages', false ) ) {
+			add_action( 'sensei_course_status_updated', array( $this, 'sensei_course_status_updated' ), 10, 6 );
+			add_action( 'sensei_lesson_status_updated', array( $this, 'sensei_lesson_status_updated' ), 10, 6 );
+			add_action( 'sensei_started_lesson_completed', array( $this, 'sensei_started_lesson_completed' ), 10, 5 );
+		}
 	}
 
 	public function sensei_before_mail( $email_address ) {
