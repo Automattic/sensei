@@ -86,7 +86,7 @@ class Sensei_Course_Access {
 				}
 			}
 
-			$access_check_log = $this->check_access( $user_id );
+			$access_check_log = $this->build_access_log( $user_id );
 			$has_access       = $access_check_log->has_access();
 			if ( ! is_bool( $has_access ) ) {
 				$has_access = $this->get_default_access( $user_id );
@@ -150,6 +150,7 @@ class Sensei_Course_Access {
 	 * Get the access check log for a user.
 	 *
 	 * @param int $user_id User ID.
+	 *
 	 * @return bool|Sensei_Course_Access_Log
 	 * @throws Exception When learner term could not be created.
 	 */
@@ -165,13 +166,14 @@ class Sensei_Course_Access {
 	}
 
 	/**
-	 * Generate a new access log by checking with access providers.
+	 * Builds a new access log record by checking with access providers.
 	 *
 	 * @param int $user_id User ID.
+	 *
 	 * @return Sensei_Course_Access_Log
 	 * @throws Exception When learner term could not be created.
 	 */
-	private function check_access( $user_id ) {
+	private function build_access_log( $user_id ) {
 		$term       = Sensei_Learner::get_learner_term( $user_id );
 		$access_log = Sensei_Course_Access_Log::create();
 

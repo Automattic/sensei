@@ -10,15 +10,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Stores a log entry for course access checks.
+ * Stores a log entry for course access checks for a particular user and course.
  */
 final class Sensei_Course_Access_Log implements JsonSerializable {
 	/**
-	 * Records access log records.
+	 * Access check results from providers.
 	 *
 	 * @var array
 	 */
-	private $access_log_results = [];
+	private $provider_access = [];
 
 	/**
 	 * Time the log was created.
@@ -37,14 +37,14 @@ final class Sensei_Course_Access_Log implements JsonSerializable {
 	/**
 	 * Sensei_Course_Access_Log constructor.
 	 *
-	 * @param float  $time       Time this log entry was started.
-	 * @param array  $access_log Access log result.
-	 * @param string $version    Version of the access providers that produced this access result.
+	 * @param float  $time            Time this log entry was started.
+	 * @param array  $provider_access Course access check results from all providers.
+	 * @param string $version         Version of the access providers that produced this access log.
 	 */
-	private function __construct( $time, $access_log = [], $version = null ) {
-		$this->time               = $time;
-		$this->access_log_results = $access_log;
-		$this->version            = $version;
+	private function __construct( $time, $provider_access = [], $version = null ) {
+		$this->time            = $time;
+		$this->provider_access = $provider_access;
+		$this->version         = $version;
 	}
 
 	/**
@@ -60,6 +60,7 @@ final class Sensei_Course_Access_Log implements JsonSerializable {
 	 * Restore a course access log from a serialized JSON string.
 	 *
 	 * @param string $json_string JSON representation of log.
+	 *
 	 * @return Sensei_Course_Access_Log|bool
 	 */
 	public static function from_json( $json_string ) {
@@ -68,11 +69,11 @@ final class Sensei_Course_Access_Log implements JsonSerializable {
 			return false;
 		}
 
-		$time       = isset( $json_arr['t'] ) ? floatval( $json_arr['t'] ) : microtime( true );
-		$version    = isset( $json_arr['v'] ) ? sanitize_text_field( $json_arr['v'] ) : -1;
-		$access_log = isset( $json_arr['l'] ) ? array_map( 'intval', $json_arr['l'] ) : [];
+		$time            = isset( $json_arr['t'] ) ? floatval( $json_arr['t'] ) : microtime( true );
+		$version         = isset( $json_arr['v'] ) ? sanitize_text_field( $json_arr['v'] ) : -1;
+		$provider_access = isset( $json_arr['a'] ) ? array_map( 'intval', $json_arr['a'] ) : [];
 
-		return new self( $time, $access_log, $version );
+		return new self( $time, $provider_access, $version );
 	}
 
 	/**
@@ -84,27 +85,27 @@ final class Sensei_Course_Access_Log implements JsonSerializable {
 		return [
 			't' => $this->time,
 			'v' => $this->get_version(),
-			'l' => $this->access_log_results,
+			'a' => $this->provider_access,
 		];
 	}
 
 	/**
-	 * Records access check into log.
+	 * Records provider access check result.
 	 *
 	 * @param string $access_provider_id Access provider identifier.
 	 * @param int    $result             Result of check. See return for `\Sensei_Course_Access_Provider_Interface::has_access`.
 	 */
 	public function record_access_check( $access_provider_id, $result ) {
-		$this->access_log_results[ $access_provider_id ] = $result;
+		$this->provider_access[ $access_provider_id ] = $result;
 	}
 
 	/**
-	 * Get the access log result.
+	 * Get the access check results from all providers.
 	 *
 	 * @return array
 	 */
-	public function get_access_log_results() {
-		return $this->access_log_results;
+	public function get_provider_access() {
+		return $this->provider_access;
 	}
 
 	/**
@@ -113,15 +114,15 @@ final class Sensei_Course_Access_Log implements JsonSerializable {
 	 * @return bool|null
 	 */
 	public function has_access() {
-		$access_log_results = $this->get_access_log_results();
+		$access_record_results = $this->get_provider_access();
 
 		// If one provider is granting access, they have access to the course.
-		if ( in_array( true, $access_log_results, true ) ) {
+		if ( in_array( true, $access_record_results, true ) ) {
 			return true;
 		}
 
 		// If no provider granted access and they have one provider blocking access, they DO NOT have access to the course.
-		if ( in_array( false, $access_log_results, true ) ) {
+		if ( in_array( false, $access_record_results, true ) ) {
 			return false;
 		}
 
@@ -143,8 +144,8 @@ final class Sensei_Course_Access_Log implements JsonSerializable {
 	 */
 	public function finalize_log() {
 		if ( ! isset( $this->version ) ) {
-			$access_log    = $this->get_access_log_results();
-			$this->version = Sensei_Course_Access::hash_course_access_provider_versions( array_keys( $access_log ) );
+			$access_record = $this->get_provider_access();
+			$this->version = Sensei_Course_Access::hash_course_access_provider_versions( array_keys( $access_record ) );
 		}
 	}
 }
