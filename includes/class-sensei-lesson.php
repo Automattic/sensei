@@ -4319,7 +4319,7 @@ class Sensei_Lesson {
 	public static function output_comments() {
 		global $post;
 
-		$course_id          = Sensei()->lesson->get_course_id( get_the_ID() );
+		$course_id = Sensei()->lesson->get_course_id( get_the_ID() );
 
 		if ( empty( $course_id ) ) {
 			return;

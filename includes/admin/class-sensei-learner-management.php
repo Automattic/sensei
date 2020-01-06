@@ -67,7 +67,6 @@ class Sensei_Learner_Management {
 		$this->file      = $file;
 		$this->page_slug = 'sensei_learners';
 
-
 		// Admin functions.
 		if ( is_admin() ) {
 			add_filter( 'set-screen-option', array( $this, 'set_learner_management_screen_option' ), 20, 3 );

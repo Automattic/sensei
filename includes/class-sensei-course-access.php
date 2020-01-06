@@ -281,7 +281,7 @@ class Sensei_Course_Access {
 	 * Check if we should use the legacy access check. Legacy access check
 	 * uses course enrollment to determine access.
 	 *
-	 * return bool
+	 * @return bool
 	 */
 	public static function use_legacy_access_check() {
 		$use_legacy_access_check = false;
