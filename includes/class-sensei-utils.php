@@ -728,7 +728,7 @@ class Sensei_Utils {
 			$status   = 'in-progress';
 
 			// Note: When this action runs the lesson status may not yet exist.
-			do_action( 'sensei_user_lesson_start', $user_id, $lesson_id, $complete );
+			do_action( 'sensei_user_lesson_start', $user_id, $lesson_id );
 
 			if ( $complete ) {
 
