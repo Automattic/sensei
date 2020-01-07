@@ -1,5 +1,17 @@
 *** Changelog ***
 
+2020.01.14 - version 2.3.0
+* New: Configure Renovate - #2805
+* New: Remove Sensei_WP_Cli class - #2814
+* New: Upgrade WPCS to 2.2 - #2793
+* New: Add REST endpoint for messages - #2809
+* New: Initial setup needed for blocks - #2810
+* Tweak: Optimize JS script file loading - #2815
+* Fix: Auto-grading of manually graded questions - #2816
+* Fix: Add closing span tag in gap fill question template (@traed) - #2824
+* Fix: Duplicated course maintaining original prerequisites - #2821
+* Fix: Lesson order when duplicating course with lessons - #2827
+
 2019.10.23 - version 2.2.1
 * New: Allow HTML in question titles - #2780
 * Tweak: Optimize loading of teacher dropdown on Courses page (@mostafaabd) - #2750
