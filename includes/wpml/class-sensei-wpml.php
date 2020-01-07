@@ -146,6 +146,9 @@ class Sensei_WPML {
 		$element_translations = apply_filters( 'wpml_get_element_translations', [], $trid );
 		// phpcs:enable
 
+		global $sitepress;
+		// Fix for the Sensei_Utils::sensei_check_for_activity receive the comments from all languages.
+		remove_filter( 'comments_clauses', array( $sitepress, 'comments_clauses' ) );
 		foreach ( $element_translations as $item ) {
 			// Skip the original update.
 			if ( (int) $item->element_id === (int) $lesson_id ) {
@@ -154,5 +157,7 @@ class Sensei_WPML {
 
 			Sensei_Utils::complete_lesson( $item->element_id, $user_id, $status, $complete, true );
 		}
+		// Re-enable the filter.
+		add_filter( 'comments_clauses', array( $sitepress, 'comments_clauses' ), 10, 2 );
 	}
 }
