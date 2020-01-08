@@ -170,6 +170,7 @@ class Sensei_Course {
 			return false;
 		}
 
+		// @todo This should be replaced by the manual course access provider.
 		if ( \Sensei_Course_Access::use_legacy_access_check() ) {
 			return false !== Sensei_Utils::has_started_course( $course_id, $user_id );
 		}
