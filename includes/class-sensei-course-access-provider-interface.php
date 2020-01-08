@@ -21,14 +21,22 @@ interface Sensei_Course_Access_Provider_Interface {
 	public static function get_id();
 
 	/**
+	 * Check if this course access provider manages access for a particular course.
+	 *
+	 * @param int $course_id Course post ID.
+	 *
+	 * @return bool
+	 */
+	public function handles_access( $course_id );
+
+	/**
 	 * Check if this course access provider is granting access for a user to a course.
 	 *
 	 * @param int $user_id   User ID.
 	 * @param int $course_id Course post ID.
 	 *
-	 * @return bool|null  `true` if access is granted;
-	 *                    `false` if access should be restricted unless provided elsewhere;
-	 *                    `null` if provider doesn't manage this course's access.
+	 * @return bool  `true` if access is granted;
+	 *               `false` if access should be restricted unless provided elsewhere.
 	 */
 	public function has_access( $user_id, $course_id );
 

@@ -23,18 +23,25 @@ class Sensei_Course_Access {
 	private static $instances = [];
 
 	/**
-	 * Course access providers.
+	 * All course access providers.
 	 *
 	 * @var Sensei_Course_Access_Provider_Interface[]
 	 */
 	private static $access_providers;
 
 	/**
+	 * Access providers handling this particular course.
+	 *
+	 * @var Sensei_Course_Access_Provider_Interface[]
+	 */
+	private $course_access_providers;
+
+	/**
 	 * Course access providers version hash.
 	 *
 	 * @var string
 	 */
-	private static $access_providers_version;
+	private $course_access_providers_version;
 
 	/**
 	 * Course ID to handle access checks for.
@@ -177,7 +184,7 @@ class Sensei_Course_Access {
 		$term       = Sensei_Learner::get_learner_term( $user_id );
 		$access_log = Sensei_Course_Access_Log::create();
 
-		foreach ( self::get_course_access_providers() as $access_provider_id => $access_provider ) {
+		foreach ( self::get_all_access_providers() as $access_provider_id => $access_provider ) {
 			$access_log->record_access_check( $access_provider_id, $access_provider->has_access( $user_id, $this->course_id ) );
 		}
 
@@ -213,11 +220,30 @@ class Sensei_Course_Access {
 	}
 
 	/**
+	 * Get an array of all the access providers that are handling this course's access.
+	 *
+	 * @return Sensei_Course_Access_Provider_Interface[]
+	 */
+	private function get_course_access_providers() {
+		if ( ! isset( $this->course_access_providers ) ) {
+			$this->course_access_providers = [];
+
+			foreach ( self::get_all_access_providers() as $id => $access_provider ) {
+				if ( $access_provider->handles_access( $this->course_id ) ) {
+					$this->course_access_providers[ $id ] = $access_provider;
+				}
+			}
+		}
+
+		return $this->course_access_providers;
+	}
+
+	/**
 	 * Get an array of all the instantiated course access providers.
 	 *
 	 * @return Sensei_Course_Access_Provider_Interface[]
 	 */
-	private static function get_course_access_providers() {
+	private static function get_all_access_providers() {
 		if ( ! isset( self::$access_providers ) ) {
 			self::$access_providers = [];
 
@@ -247,12 +273,12 @@ class Sensei_Course_Access {
 	 * @return string
 	 */
 	public function get_course_access_providers_version() {
-		if ( ! isset( self::$access_providers_version ) ) {
-			$access_providers               = self::get_course_access_providers();
-			self::$access_providers_version = self::hash_course_access_provider_versions( $access_providers );
+		if ( ! isset( $this->course_access_providers_version ) ) {
+			$access_providers                      = $this->get_course_access_providers();
+			$this->course_access_providers_version = self::hash_course_access_provider_versions( $access_providers );
 		}
 
-		return self::$access_providers_version;
+		return $this->course_access_providers_version;
 	}
 
 	/**
