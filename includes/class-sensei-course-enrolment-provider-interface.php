@@ -21,7 +21,7 @@ interface Sensei_Course_Enrolment_Provider_Interface {
 	public static function get_id();
 
 	/**
-	 * Check if this course enrolment provider manages access for a particular course.
+	 * Check if this course enrolment provider manages enrolment for a particular course.
 	 *
 	 * @param int $course_id Course post ID.
 	 *
@@ -30,7 +30,7 @@ interface Sensei_Course_Enrolment_Provider_Interface {
 	public function handles_enrolment( $course_id );
 
 	/**
-	 * Check if this course enrolment provider is granting access for a user to a course.
+	 * Check if this course enrolment provider is enrolment a user to a course.
 	 *
 	 * @param int $user_id   User ID.
 	 * @param int $course_id Course post ID.
@@ -40,7 +40,7 @@ interface Sensei_Course_Enrolment_Provider_Interface {
 	public function is_enroled( $user_id, $course_id );
 
 	/**
-	 * Gets the version of the enrolment provider logic. If this changes, access will be recalculated.
+	 * Gets the version of the enrolment provider logic. If this changes, enrolment will be recalculated.
 	 *
 	 * @return int
 	 */
