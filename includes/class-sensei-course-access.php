@@ -261,7 +261,7 @@ class Sensei_Course_Access {
 			/**
 			 * Fetch all registered course access providers.
 			 *
-			 * @since 2.x.x
+			 * @since 3.0.0
 			 *
 			 * @param string[] $provider_classes List of access providers classes.
 			 */

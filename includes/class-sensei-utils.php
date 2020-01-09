@@ -1502,7 +1502,7 @@ class Sensei_Utils {
 	 * Check if a user has started a course or not.
 	 *
 	 * @since  1.7.0
-	 * @deprecated 2.x.x No longer returns comment ID when they have access. For access control, use `Sensei_Course::check_user_access()`. For course progress check, use `Sensei_Utils::has_started_course()`.
+	 * @deprecated 3.0.0 No longer returns comment ID when they have access. For access control, use `Sensei_Course::check_user_access()`. For course progress check, use `Sensei_Utils::has_started_course()`.
 	 *
 	 * @param int $course_id Course ID.
 	 * @param int $user_id   User ID.
@@ -1510,7 +1510,7 @@ class Sensei_Utils {
 	 */
 	public static function user_started_course( $course_id = 0, $user_id = 0 ) {
 		// @todo Uncomment next line when we're ready to remove usage in the plugin itself.
-		// _deprecated_function( __METHOD__, '2.x.x', 'For access control, use `Sensei_Course::check_user_access()`. For course progress check, use `Sensei_Utils::has_started_course()`' );
+		// _deprecated_function( __METHOD__, '3.0.0', 'For access control, use `Sensei_Course::check_user_access()`. For course progress check, use `Sensei_Utils::has_started_course()`' );
 
 		if ( empty( $course_id ) ) {
 			return false;
@@ -1523,7 +1523,7 @@ class Sensei_Utils {
 	/**
 	 * Check if a user has started a course or not.
 	 *
-	 * @since 2.x.x
+	 * @since 3.0.0
 	 *
 	 * @param int $course_id Course ID.
 	 * @param int $user_id   User ID.
