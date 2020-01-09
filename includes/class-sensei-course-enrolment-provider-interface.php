@@ -35,8 +35,7 @@ interface Sensei_Course_Enrolment_Provider_Interface {
 	 * @param int $user_id   User ID.
 	 * @param int $course_id Course post ID.
 	 *
-	 * @return bool  `true` if access is granted;
-	 *               `false` if access should be restricted unless provided elsewhere.
+	 * @return bool  `true` if this provider enrols the student and `false` if not.
 	 */
 	public function is_enroled( $user_id, $course_id );
 
