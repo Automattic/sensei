@@ -35,6 +35,67 @@ class Sensei_Class_Course_Access_Test extends WP_UnitTestCase {
 		$this->assertEquals( 1000, $instance->get_course_id(), 'Course ID for provided instance did not match what was expected' );
 	}
 
+	/**
+	 * Creates a standard student user account.
+	 *
+	 * @return int
+	 */
+	private function createStandardStudent() {
+		return $this->factory->user->create();
+	}
+
+	/**
+	 * Create a user with "Dinosaur" in its display name.
+	 *
+	 * @return int
+	 */
+	private function createDinosaurStudent() {
+		$user = get_user_by( 'ID', $this->createStandardStudent() );
+
+		$dinosaur_names = [
+			'Pat',
+			'Tony',
+			'Jan',
+			'Meg',
+		];
+
+		shuffle( $dinosaur_names );
+		$user->display_name = 'Dinosaur ' . $dinosaur_names[0];
+		wp_update_user( $user );
+
+		return $user->ID;
+	}
+
+	/**
+	 * Turns a user into a crook by adding "I am a crook" to their description.
+	 *
+	 * @param int $user_id
+	 * @return int
+	 */
+	private function turnStudentIntoCrook( $user_id ) {
+		$user = get_user_by( 'ID', $user_id );
+
+		$user->description = 'I am a crook';
+		wp_update_user( $user );
+
+		return $user_id;
+	}
+
+	/**
+	 * Adds an access provider.
+	 */
+	private function addAccessProvider( $class_name ) {
+		add_filter( 'sensei_course_access_providers', function( $providers ) use ( $class_name ) {
+			if ( in_array( $class_name, $providers, true ) ) {
+				return $providers;
+			}
+
+			$providers[] = $class_name;
+
+			return $class_name;
+		} );
+	}
+
 
 	/**
 	 * Resets the access providers.
