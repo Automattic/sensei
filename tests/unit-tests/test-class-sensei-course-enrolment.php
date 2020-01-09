@@ -19,11 +19,11 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 	}
 
 	public function testGetCourseInstanceMultiple() {
-		$instanceA = Sensei_Course_Enrolment::get_course_instance(1);
-		$instanceB = Sensei_Course_Enrolment::get_course_instance(1);
+		$instance_a = Sensei_Course_Enrolment::get_course_instance( 1 );
+		$instance_b = Sensei_Course_Enrolment::get_course_instance( 1 );
 
-		$this->assertTrue( $instanceA instanceof Sensei_Course_Enrolment );
-		$this->assertTrue( $instanceA === $instanceB, 'Instances should be the same for the same course ID' );
+		$this->assertTrue( $instance_a instanceof Sensei_Course_Enrolment );
+		$this->assertTrue( $instance_a === $instance_b, 'Instances should be the same for the same course ID' );
 	}
 
 	public function testGetCourseId() {
@@ -89,15 +89,18 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 	 * Adds an enrolment provider.
 	 */
 	private function addEnrolmentProvider( $class_name ) {
-		add_filter( 'sensei_course_enrolment_providers', function( $providers ) use ( $class_name ) {
-			if ( in_array( $class_name, $providers, true ) ) {
-				return $providers;
+		add_filter(
+			'sensei_course_enrolment_providers',
+			function( $providers ) use ( $class_name ) {
+				if ( in_array( $class_name, $providers, true ) ) {
+					return $providers;
+				}
+
+				$providers[] = $class_name;
+
+				return $class_name;
 			}
-
-			$providers[] = $class_name;
-
-			return $class_name;
-		} );
+		);
 	}
 
 

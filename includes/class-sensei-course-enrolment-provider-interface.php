@@ -30,7 +30,7 @@ interface Sensei_Course_Enrolment_Provider_Interface {
 	public function handles_enrolment( $course_id );
 
 	/**
-	 * Check if this course enrolment provider is enrolment a user to a course.
+	 * Check if this course enrolment provider is enroling a user to a course.
 	 *
 	 * @param int $user_id   User ID.
 	 * @param int $course_id Course post ID.
