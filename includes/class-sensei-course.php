@@ -153,11 +153,13 @@ class Sensei_Course {
 	/**
 	 * Check if a user has access to a course.
 	 *
+	 * @since 3.0.0
+	 *
 	 * @param int      $course_id Course post ID.
 	 * @param int|null $user_id   User ID.
 	 * @return bool
 	 */
-	public static function check_user_access( $course_id, $user_id = null ) {
+	public static function is_user_enroled( $course_id, $user_id = null ) {
 		if ( 'course' !== get_post_type( $course_id ) ) {
 			return false;
 		}
@@ -170,14 +172,14 @@ class Sensei_Course {
 			return false;
 		}
 
-		// @todo This should be replaced by the manual course access provider.
-		if ( \Sensei_Course_Access::use_legacy_access_check() ) {
+		// @todo This should be replaced by the manual course enrolment provider.
+		if ( \Sensei_Course_Enrolment::use_legacy_enrolment_check() ) {
 			return false !== Sensei_Utils::has_started_course( $course_id, $user_id );
 		}
 
-		$course_access = Sensei_Course_Access::get_course_instance( $course_id );
+		$course_access = Sensei_Course_Enrolment::get_course_instance( $course_id );
 
-		return $course_access->has_access( $user_id );
+		return $course_access->is_enroled( $user_id );
 	}
 
 	/**

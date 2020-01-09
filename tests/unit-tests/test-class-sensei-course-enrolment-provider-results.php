@@ -1,6 +1,6 @@
 <?php
 
-class Sensei_Class_Course_Access_Log_Test extends WP_UnitTestCase {
+class Sensei_Class_Course_Enrolment_Provider_Results_Test extends WP_UnitTestCase {
 
 	/**
 	 * Setup function.
@@ -15,16 +15,16 @@ class Sensei_Class_Course_Access_Log_Test extends WP_UnitTestCase {
 		$base = [
 			't' => microtime( true ),
 			'v' => '###',
-			'a' => [
+			'r' => [
 				'testA' => true,
 				'testB' => false,
 			],
 		];
 
-		$access_log = Sensei_Course_Access_Log::from_json( wp_json_encode( $base ) );
-		$this->assertTrue( $access_log instanceof Sensei_Course_Access_Log );
+		$access_log = Sensei_Course_Enrolment_Provider_Results::from_json( wp_json_encode( $base ) );
+		$this->assertTrue( $access_log instanceof Sensei_Course_Enrolment_Provider_Results );
 		$this->assertEquals( $base['t'], $access_log->get_time() );
 		$this->assertEquals( $base['v'], $access_log->get_version() );
-		$this->assertEquals( $base['a'], $access_log->get_provider_access() );
+		$this->assertEquals( $base['r'], $access_log->get_provider_results() );
 	}
 }
