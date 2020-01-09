@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Stores a log entry for course access checks for a particular user and course.
+ * Stores a log entry for course access checks between a particular user and course.
  */
 final class Sensei_Course_Access_Log implements JsonSerializable {
 	/**
@@ -37,37 +37,14 @@ final class Sensei_Course_Access_Log implements JsonSerializable {
 	/**
 	 * Sensei_Course_Access_Log constructor.
 	 *
-	 * @param float  $time            Time this log entry was started.
 	 * @param array  $provider_access Course access check results from all providers.
 	 * @param string $version         Version of the access providers that produced this access log.
+	 * @param float  $time            Time this log entry was started.
 	 */
-	private function __construct( $time, $provider_access = [], $version = null ) {
-		$this->time            = $time;
+	public function __construct( $provider_access, $version, $time = null ) {
 		$this->provider_access = $provider_access;
 		$this->version         = $version;
-	}
-
-	/**
-	 * Start a new access log.
-	 *
-	 * @return Sensei_Course_Access_Log
-	 */
-	public static function create() {
-		return new self( microtime( true ) );
-	}
-
-	/**
-	 * Sanitizes the values loaded into `self::$provider_access`.
-	 *
-	 * @param mixed $result Un-sanitized access result.
-	 * @return null|int
-	 */
-	public static function sanitize_access_result( $result ) {
-		if ( null === $result ) {
-			return null;
-		}
-
-		return intval( $result );
+		$this->time            = isset( $time ) ? $time : microtime( true );
 	}
 
 	/**
@@ -83,11 +60,11 @@ final class Sensei_Course_Access_Log implements JsonSerializable {
 			return false;
 		}
 
-		$time            = isset( $json_arr['t'] ) ? floatval( $json_arr['t'] ) : microtime( true );
+		$provider_access = isset( $json_arr['a'] ) ? array_map( 'boolval', $json_arr['a'] ) : [];
 		$version         = isset( $json_arr['v'] ) ? sanitize_text_field( $json_arr['v'] ) : -1;
-		$provider_access = isset( $json_arr['a'] ) ? array_map( [ __CLASS__, 'sanitize_access_result' ], $json_arr['a'] ) : [];
+		$time            = isset( $json_arr['t'] ) ? floatval( $json_arr['t'] ) : null;
 
-		return new self( $time, $provider_access, $version );
+		return new self( $provider_access, $version, $time );
 	}
 
 	/**
@@ -104,16 +81,6 @@ final class Sensei_Course_Access_Log implements JsonSerializable {
 	}
 
 	/**
-	 * Records provider access check result.
-	 *
-	 * @param string $access_provider_id Access provider identifier.
-	 * @param int    $result             Result of check. See return for `\Sensei_Course_Access_Provider_Interface::has_access`.
-	 */
-	public function record_access_check( $access_provider_id, $result ) {
-		$this->provider_access[ $access_provider_id ] = self::sanitize_access_result( $result );
-	}
-
-	/**
 	 * Get the access check results from all providers.
 	 *
 	 * @return array
@@ -123,11 +90,13 @@ final class Sensei_Course_Access_Log implements JsonSerializable {
 	}
 
 	/**
-	 * Returns the result of all the access checks.
+	 * Returns the result of all the access checks. Used by `Sensei_Course_Access::has_access()`, do not call directly.
+	 *
+	 * @access private
 	 *
 	 * @return bool|null
 	 */
-	public function has_access() {
+	public function is_access_provided() {
 		$access_record_results = $this->get_provider_access();
 
 		// If one provider is granting access, they have access to the course.
@@ -140,7 +109,8 @@ final class Sensei_Course_Access_Log implements JsonSerializable {
 			return false;
 		}
 
-		// If all providers returned `null` or there are no providers, return `null` and let Sensei use its default access check.
+		// @todo This will just return false once we add the manual access provider.
+		// If there are no providers, return `null` and let Sensei use its default access check.
 		return null;
 	}
 
@@ -154,13 +124,11 @@ final class Sensei_Course_Access_Log implements JsonSerializable {
 	}
 
 	/**
-	 * Run once all the access providers have been checked.
+	 * Get the time this access log was generated.
 	 *
-	 * @param string $access_providers_version Hash of the access providers versions used to generate this log.
+	 * @return string
 	 */
-	public function finalize_log( $access_providers_version ) {
-		if ( ! isset( $this->version ) ) {
-			$this->version = $access_providers_version;
-		}
+	public function get_time() {
+		return $this->time;
 	}
 }

@@ -51,7 +51,16 @@ class Sensei_Course_Access {
 	private $course_id;
 
 	/**
-	 * Get singleton instance.
+	 * Sensei_Course_Access constructor.
+	 *
+	 * @param int $course_id Course ID to handle checks for.
+	 */
+	private function __construct( $course_id ) {
+		$this->course_id = $course_id;
+	}
+
+	/**
+	 * Get instance for a particular course.
 	 *
 	 * @param int $course_id Course ID to handle checks for.
 	 *
@@ -66,16 +75,16 @@ class Sensei_Course_Access {
 	}
 
 	/**
-	 * Sensei_Course_Access constructor.
+	 * Gets the course ID for this access object.
 	 *
-	 * @param int $course_id Course ID to handle checks for.
+	 * @return int
 	 */
-	private function __construct( $course_id ) {
-		$this->course_id = $course_id;
+	public function get_course_id() {
+		return $this->course_id;
 	}
 
 	/**
-	 * Return if a user has access.
+	 * Check if a user has access to this course.
 	 *
 	 * @param int  $user_id       User ID.
 	 * @param bool $force_recheck Force a recalculation of access.
@@ -94,7 +103,9 @@ class Sensei_Course_Access {
 			}
 
 			$access_check_log = $this->build_access_log( $user_id );
-			$has_access       = $access_check_log->has_access();
+			$has_access       = $access_check_log->is_access_provided();
+
+			// @todo Method will always be bool when we add manual access provider. Remove this and the `get_default_access` temporary method.
 			if ( ! is_bool( $has_access ) ) {
 				$has_access = $this->get_default_access( $user_id );
 			}
@@ -181,15 +192,13 @@ class Sensei_Course_Access {
 	 * @throws Exception When learner term could not be created.
 	 */
 	private function build_access_log( $user_id ) {
-		$term       = Sensei_Learner::get_learner_term( $user_id );
-		$access_log = Sensei_Course_Access_Log::create();
-
-		foreach ( self::get_all_access_providers() as $access_provider_id => $access_provider ) {
-			$access_log->record_access_check( $access_provider_id, $access_provider->has_access( $user_id, $this->course_id ) );
+		$term            = Sensei_Learner::get_learner_term( $user_id );
+		$provider_access = [];
+		foreach ( $this->get_course_access_providers() as $access_provider_id => $access_provider ) {
+			$provider_access[ $access_provider_id ] = $access_provider->has_access( $user_id, $this->course_id );
 		}
 
-		$access_log->finalize_log( self::get_course_access_providers_version() );
-
+		$access_log = new Sensei_Course_Access_Log( $provider_access, $this->get_course_access_providers_version() );
 		update_term_meta( $term->term_id, $this->get_course_log_meta_key(), wp_slash( wp_json_encode( $access_log ) ) );
 
 		return $access_log;
@@ -197,6 +206,8 @@ class Sensei_Course_Access {
 
 	/**
 	 * Get the default access level for course if no other access provider returns a result.
+	 *
+	 * @todo This is just a temporary method until we add a manual access provider.
 	 *
 	 * @param int $user_id User ID.
 	 * @return bool
