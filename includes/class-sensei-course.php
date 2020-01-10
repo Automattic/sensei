@@ -177,9 +177,9 @@ class Sensei_Course {
 			return false !== Sensei_Utils::has_started_course( $course_id, $user_id );
 		}
 
-		$course_access = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 
-		return $course_access->is_enroled( $user_id );
+		return $course_enrolment->is_enroled( $user_id );
 	}
 
 	/**
