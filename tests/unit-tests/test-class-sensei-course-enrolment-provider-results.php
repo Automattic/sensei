@@ -73,7 +73,7 @@ class Sensei_Class_Course_Enrolment_Provider_Results_Test extends WP_UnitTestCas
 			'#version#'
 		);
 
-		$this->assertFalse( $results->is_enrolment_provided(), 'If at least one provider provides enrolment, they are enroled' );
+		$this->assertFalse( $results->is_enrolment_provided(), 'No providers are providing enrolment so they should not be enroled' );
 	}
 
 	/**
