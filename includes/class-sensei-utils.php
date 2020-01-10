@@ -1502,7 +1502,7 @@ class Sensei_Utils {
 	 * Check if a user has started a course or not.
 	 *
 	 * @since  1.7.0
-	 * @deprecated 3.0.0 No longer returns comment ID when they have access. 'To check if a user is enroled use `Sensei_Course::is_user_enroled()`. For course progress check, use `Sensei_Utils::has_started_course()`.
+	 * @deprecated 3.0.0 No longer returns comment ID when they have access. To check if a user is enroled use `Sensei_Course::is_user_enroled()`. For course progress check, use `Sensei_Utils::has_started_course()`.
 	 *
 	 * @param int $course_id Course ID.
 	 * @param int $user_id   User ID.
