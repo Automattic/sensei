@@ -151,7 +151,7 @@ class Sensei_Course {
 	}
 
 	/**
-	 * Check if a user has access to a course.
+	 * Check if a user is enroled in a course.
 	 *
 	 * @since 3.0.0
 	 *

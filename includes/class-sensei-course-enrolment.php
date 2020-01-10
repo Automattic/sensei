@@ -96,7 +96,7 @@ class Sensei_Course_Enrolment {
 				$enrolment_check_results = $this->get_enrolment_check_results( $user_id );
 				if (
 					$enrolment_check_results
-					&& $enrolment_check_results->get_version() === $this->get_course_enrolment_providers_version()
+					&& $enrolment_check_results->get_version_hash() === $this->get_course_enrolment_providers_version()
 				) {
 					return $this->has_stored_enrolment( $user_id );
 				}
