@@ -33,7 +33,7 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 		Sensei_Course_Enrolment::get_course_instance( 1001 );
 
 		$this->assertTrue( $instance instanceof Sensei_Course_Enrolment );
-		$this->assertEquals( 1000, $instance->get_course_id(), 'Course ID for provided instance did not match what was expected' );
+		$this->assertEquals( 1000, $instance->get_course_id(), 'Course ID for provided instance did not match the created instance' );
 	}
 
 	/**
@@ -147,7 +147,7 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests to make sure non-handling providers aren't used. Never_Handles has a true response, but it should never be asked.
+	 * Tests to make sure the cached response is updated on a change to the providers.
 	 */
 	public function testEnrolmentCheckVersionCachingWorks() {
 		$course_id  = $this->getSimpleCourse();
@@ -165,7 +165,19 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 		$this->resetAndSetUpVersiondProvider( true ); // Version : 2; Even numbers provide enrolment.
 		$course_enrolment_b = Sensei_Course_Enrolment::get_course_instance( $course_id );
 		$is_enroled_b       = $course_enrolment_b->is_enroled( $student_id );
-		$this->assertTrue( $is_enroled_b, 'This version of the provider should provide enrolment. Cache was not refreshed on version change' );
+		$this->assertTrue( $is_enroled_b, 'Cache should refresh on version chnage and this version of the provider should provide enrolment.' );
+	}
+
+	/**
+	 * Helper for `\Sensei_Class_Course_Enrolment_Test::testEnrolmentCheckVersionCachingWorks`.
+	 */
+	private function resetAndSetUpVersiondProvider( $bump_version ) {
+		$this->resetEnrolmentProviders();
+		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Version_Morph::class );
+
+		if ( $bump_version ) {
+			Sensei_Test_Enrolment_Provider_Version_Morph::$version++;
+		}
 	}
 
 	/**
@@ -198,18 +210,6 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 
 		$this->assertFalse( $course_enrolment->is_enroled( $student_id_crook ), 'This provider should deny crooks' );
 		$this->assertTrue( $course_enrolment->is_enroled( $student_id_okay ), 'This provider should allow okay students' );
-	}
-
-	/**
-	 * Helper for test above.
-	 */
-	private function resetAndSetUpVersiondProvider( $bump_version ) {
-		$this->resetEnrolmentProviders();
-		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Version_Morph::class );
-
-		if ( $bump_version ) {
-			Sensei_Test_Enrolment_Provider_Version_Morph::$version++;
-		}
 	}
 
 	/**
@@ -274,7 +274,7 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 		$this->turnStudentIntoCrook( $student_id );
 		$course_enrolment->trigger_course_enrolment_check( $student_id );
 
-		$this->assertFalse( has_term( $student_term->term_id, Sensei_PostTypes::LEARNER_TAXONOMY_NAME, $course_id ), 'Student term associated was not removed when enrolment was removed' );
+		$this->assertFalse( has_term( $student_term->term_id, Sensei_PostTypes::LEARNER_TAXONOMY_NAME, $course_id ), 'Student term associated should be removed when enrolment was removed' );
 	}
 
 	/**
