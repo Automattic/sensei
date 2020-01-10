@@ -75,7 +75,7 @@ final class Sensei_Course_Enrolment_Provider_Results implements JsonSerializable
 	public function jsonSerialize() {
 		return [
 			't' => $this->time,
-			'v' => $this->get_version(),
+			'v' => $this->version,
 			'r' => $this->provider_results,
 		];
 	}
