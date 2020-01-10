@@ -325,7 +325,7 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 
 		shuffle( $dinosaur_names );
 
-		$result = wp_update_user(
+		wp_update_user(
 			[
 				'ID'           => $user_id,
 				'display_name' => 'Dinosaur ' . $dinosaur_names[0],
