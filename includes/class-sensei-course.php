@@ -160,16 +160,16 @@ class Sensei_Course {
 	 * @return bool
 	 */
 	public static function is_user_enroled( $course_id, $user_id = null ) {
+		if ( empty( $course_id ) ) {
+			return false;
+		}
+
 		if ( 'course' !== get_post_type( $course_id ) ) {
 			return false;
 		}
 
 		if ( ! $user_id ) {
 			$user_id = get_current_user_id();
-		}
-
-		if ( empty( $course_id ) ) {
-			return false;
 		}
 
 		// @todo This should be replaced by the manual course enrolment provider.
