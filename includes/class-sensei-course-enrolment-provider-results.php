@@ -53,7 +53,7 @@ final class Sensei_Course_Enrolment_Provider_Results implements JsonSerializable
 	 *
 	 * @param string $json_string JSON representation of enrolment results.
 	 *
-	 * @return Sensei_Course_Enrolment_Provider_Results|bool
+	 * @return Sensei_Course_Enrolment_Provider_Results|false
 	 */
 	public static function from_json( $json_string ) {
 		$json_arr = json_decode( $json_string, true );
