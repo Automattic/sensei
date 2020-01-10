@@ -24,11 +24,11 @@ class Sensei_Class_Course_Enrolment_Provider_Results_Test extends WP_UnitTestCas
 			],
 		];
 
-		$access_log = Sensei_Course_Enrolment_Provider_Results::from_json( wp_json_encode( $base ) );
-		$this->assertTrue( $access_log instanceof Sensei_Course_Enrolment_Provider_Results );
-		$this->assertEquals( round( $base['t'], 3 ), round( $access_log->get_time(), 3 ) );
-		$this->assertEquals( $base['v'], $access_log->get_version_hash() );
-		$this->assertEquals( $base['r'], $access_log->get_provider_results() );
+		$provider_results = Sensei_Course_Enrolment_Provider_Results::from_json( wp_json_encode( $base ) );
+		$this->assertTrue( $provider_results instanceof Sensei_Course_Enrolment_Provider_Results );
+		$this->assertEquals( round( $base['t'], 3 ), round( $provider_results->get_time(), 3 ) );
+		$this->assertEquals( $base['v'], $provider_results->get_version_hash() );
+		$this->assertEquals( $base['r'], $provider_results->get_provider_results() );
 	}
 
 	/**
@@ -47,7 +47,7 @@ class Sensei_Class_Course_Enrolment_Provider_Results_Test extends WP_UnitTestCas
 	}
 
 	/**
-	 * Tests for positive enrolment by at least one provider.
+	 * Tests for positive enrolment by all providers.
 	 */
 	public function testIsEnrolmentProvidedMultiplePositive() {
 		$results = new Sensei_Course_Enrolment_Provider_Results(

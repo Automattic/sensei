@@ -154,7 +154,7 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 		$student_id = $this->createStandardStudent();
 
 		// Initial request.
-		$this->resetAndSetUpVersiondProvider( false ); // Version : 1; Odd numbers do not provide enrolment.
+		$this->resetAndSetUpVersionedProvider( false ); // Version : 1; Odd numbers do not provide enrolment.
 		$course_enrolment_a = Sensei_Course_Enrolment::get_course_instance( $course_id );
 		$is_enroled_a       = $course_enrolment_a->is_enroled( $student_id );
 		$is_enroled_a_2     = $course_enrolment_a->is_enroled( $student_id );
@@ -162,22 +162,10 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 		$this->assertEquals( $is_enroled_a_2, $is_enroled_a, 'Duplicate calls should use caching and return same result' );
 
 		// Bump version. Second request.
-		$this->resetAndSetUpVersiondProvider( true ); // Version : 2; Even numbers provide enrolment.
+		$this->resetAndSetUpVersionedProvider( true ); // Version : 2; Even numbers provide enrolment.
 		$course_enrolment_b = Sensei_Course_Enrolment::get_course_instance( $course_id );
 		$is_enroled_b       = $course_enrolment_b->is_enroled( $student_id );
 		$this->assertTrue( $is_enroled_b, 'Cache should refresh on version chnage and this version of the provider should provide enrolment.' );
-	}
-
-	/**
-	 * Helper for `\Sensei_Class_Course_Enrolment_Test::testEnrolmentCheckVersionCachingWorks`.
-	 */
-	private function resetAndSetUpVersiondProvider( $bump_version ) {
-		$this->resetEnrolmentProviders();
-		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Version_Morph::class );
-
-		if ( $bump_version ) {
-			Sensei_Test_Enrolment_Provider_Version_Morph::$version++;
-		}
 	}
 
 	/**
@@ -381,5 +369,17 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 		$course_enrolment_instances = new ReflectionProperty( Sensei_Course_Enrolment::class, 'instances' );
 		$course_enrolment_instances->setAccessible( true );
 		$course_enrolment_instances->setValue( [] );
+	}
+
+	/**
+	 * Helper for `\Sensei_Class_Course_Enrolment_Test::testEnrolmentCheckVersionCachingWorks`.
+	 */
+	private function resetAndSetUpVersionedProvider( $bump_version ) {
+		$this->resetEnrolmentProviders();
+		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Version_Morph::class );
+
+		if ( $bump_version ) {
+			Sensei_Test_Enrolment_Provider_Version_Morph::$version++;
+		}
 	}
 }

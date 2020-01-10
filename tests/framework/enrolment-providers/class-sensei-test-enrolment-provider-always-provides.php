@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the class Sensei_Test_Access_Provider_Always_Provides.
+ * File containing the class Sensei_Test_Enrolment_Provider_Always_Provides.
  *
  * @package sensei-tests
  */
