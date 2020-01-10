@@ -467,7 +467,6 @@ class Sensei_PostTypes {
 			'course',
 			[
 				'public'             => false,
-				'publicly_queryable' => false, // @todo Not sure about this.
 				'show_ui'            => false,
 			]
 		);
