@@ -20,7 +20,7 @@ class Sensei_Test_Enrolment_Provider_Never_Provides implements Sensei_Course_Enr
 	}
 
 	public function is_enroled( $user_id, $course_id ) {
-		return true;
+		return false;
 	}
 
 	public static function get_version() {
