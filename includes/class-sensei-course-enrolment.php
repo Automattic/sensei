@@ -98,7 +98,7 @@ class Sensei_Course_Enrolment {
 					$enrolment_check_results
 					&& $enrolment_check_results->get_version() === $this->get_course_enrolment_providers_version()
 				) {
-					return $this->get_stored_enrolment( $user_id );
+					return $this->has_stored_enrolment( $user_id );
 				}
 			}
 
@@ -134,7 +134,7 @@ class Sensei_Course_Enrolment {
 	 * @return bool
 	 * @throws Exception When learner term could not be created.
 	 */
-	private function get_stored_enrolment( $user_id ) {
+	private function has_stored_enrolment( $user_id ) {
 		$term = Sensei_Learner::get_learner_term( $user_id );
 
 		return has_term( $term->term_id, Sensei_PostTypes::LEARNER_TAXONOMY_NAME, $this->course_id );
