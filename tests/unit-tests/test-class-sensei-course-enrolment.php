@@ -150,6 +150,8 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 	 * Tests to make sure the cached response is updated on a change to the providers.
 	 */
 	public function testEnrolmentCheckVersionCachingWorks() {
+		Sensei_Test_Enrolment_Provider_Version_Morph::$version = 1;
+
 		$course_id  = $this->getSimpleCourse();
 		$student_id = $this->createStandardStudent();
 
