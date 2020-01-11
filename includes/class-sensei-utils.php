@@ -411,6 +411,7 @@ class Sensei_Utils {
 			'editor_class'  => 'sensei_text_editor',
 			'teeny'         => false,
 			'dfw'           => false,
+			'editor_css'    => '<style> .mce-top-part button { background-color: rgba(0,0,0,0.0) !important; } </style>',
 			'tinymce'       => array(
 				'theme_advanced_buttons1' => $buttons,
 				'theme_advanced_buttons2' => '',
