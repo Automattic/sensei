@@ -276,7 +276,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				$course_enrolment  = Sensei_Course_Enrolment::get_course_instance( $this->course_id );
 				$enrolment_results = $course_enrolment->get_enrolment_check_results( $user_activity->user_id );
 
-				if ( $enrolment_results ) {
+				if ( $enrolment_results && ! empty( $enrolment_results->get_provider_results() ) ) {
 					$helper_html   = [];
 					$helper_html[] = '<ul class="enrolment-helper">';
 					foreach ( $enrolment_results->get_provider_results() as $id => $result ) {
@@ -296,7 +296,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 					$helper_html = implode( '', $helper_html );
 				} else {
-					$helper_html = esc_html__( 'No enrollment data was found', 'sensei-lms' );
+					$helper_html = esc_html__( 'No enrollment data was found.', 'sensei-lms' );
 				}
 
 
