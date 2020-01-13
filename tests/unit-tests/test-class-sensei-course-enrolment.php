@@ -234,6 +234,29 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests re-checking enrolment when we have it ignore cached result.
+	 */
+	public function testCourseEnrolmentCheckDoNotUseCache() {
+		$course_id  = $this->getSimpleCourse();
+		$student_id = $this->createStandardStudent();
+
+		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Denies_Crooks::class );
+
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+
+		$pre_crook_enrolment = $course_enrolment->is_enroled( $student_id );
+		$this->assertTrue( $pre_crook_enrolment, 'As a non-crook, this student should be enroled' );
+
+		$this->turnStudentIntoCrook( $student_id );
+		$pre_notify_enrolment = $course_enrolment->is_enroled( $student_id );
+		$this->assertTrue( $pre_notify_enrolment, 'Even as a crook, the cached value should be used until we notify the course enrolment handler' );
+
+		// Check enrolment but don't let it use the cached result.
+		$post_notify_enrolment = $course_enrolment->is_enroled( $student_id, false );
+		$this->assertFalse( $post_notify_enrolment, 'Now that the crook status is known, they should no longer be enroled in the course' );
+	}
+
+	/**
 	 * Tests storage of the term association for positive results.
 	 *
 	 * @covers \Sensei_Course_Enrolment::save_enrolment
