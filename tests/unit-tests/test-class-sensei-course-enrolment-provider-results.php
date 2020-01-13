@@ -16,7 +16,7 @@ class Sensei_Class_Course_Enrolment_Provider_Results_Test extends WP_UnitTestCas
 	 */
 	public function testFromJson() {
 		$base = [
-			't' => microtime( true ),
+			't' => microtime( true ) - 4,
 			'v' => '###',
 			'r' => [
 				'testA' => true,
@@ -26,9 +26,9 @@ class Sensei_Class_Course_Enrolment_Provider_Results_Test extends WP_UnitTestCas
 
 		$provider_results = Sensei_Course_Enrolment_Provider_Results::from_json( wp_json_encode( $base ) );
 		$this->assertTrue( $provider_results instanceof Sensei_Course_Enrolment_Provider_Results );
-		$this->assertEquals( round( $base['t'], 3 ), round( $provider_results->get_time(), 3 ) );
-		$this->assertEquals( $base['v'], $provider_results->get_version_hash() );
-		$this->assertEquals( $base['r'], $provider_results->get_provider_results() );
+		$this->assertEquals( round( $base['t'], 3 ), round( $provider_results->get_time(), 3 ), 'Time (`t`) should match what it was initially set to', 0.1 );
+		$this->assertEquals( $base['v'], $provider_results->get_version_hash(), 'Version (`v`) should match what it was initially set to' );
+		$this->assertEquals( $base['r'], $provider_results->get_provider_results(), 'Results (`r`) should match what it was initially set to' );
 	}
 
 	/**
