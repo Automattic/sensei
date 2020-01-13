@@ -86,13 +86,14 @@ class Sensei_Course_Enrolment {
 	/**
 	 * Check if a user is enroled in a course.
 	 *
-	 * @param int  $user_id       User ID.
-	 * @param bool $force_recheck Force a recalculation with all providers.
+	 * @param int  $user_id     User ID.
+	 * @param bool $check_cache Check and use cached result.
+	 *
 	 * @return bool
 	 */
-	public function is_enroled( $user_id, $force_recheck = false ) {
+	public function is_enroled( $user_id, $check_cache = true ) {
 		try {
-			if ( ! $force_recheck ) {
+			if ( $check_cache ) {
 				$enrolment_check_results = $this->get_enrolment_check_results( $user_id );
 				if (
 					$enrolment_check_results
@@ -124,7 +125,7 @@ class Sensei_Course_Enrolment {
 	 * @param int $user_id User ID.
 	 */
 	public function trigger_course_enrolment_check( $user_id ) {
-		$this->is_enroled( $user_id, true );
+		$this->is_enroled( $user_id, false );
 	}
 
 	/**
