@@ -169,12 +169,14 @@ class Sensei_Course_Enrolment {
 	/**
 	 * Get the enrolment check results for a user.
 	 *
+	 * @access private Used internally only.
+	 *
 	 * @param int $user_id User ID.
 	 *
 	 * @return bool|Sensei_Course_Enrolment_Provider_Results
 	 * @throws Exception When learner term could not be created.
 	 */
-	private function get_enrolment_check_results( $user_id ) {
+	public function get_enrolment_check_results( $user_id ) {
 		$term                    = Sensei_Learner::get_learner_term( $user_id );
 		$enrolment_check_results = get_term_meta( $term->term_id, $this->get_course_results_meta_key(), true );
 
@@ -246,6 +248,26 @@ class Sensei_Course_Enrolment {
 		}
 
 		return $this->course_enrolment_providers;
+	}
+
+	/**
+	 * Gets the descriptive name of the provider by ID.
+	 *
+	 * @param string $provider_id Unique identifier of the enrolment provider.
+	 *
+	 * @return string|false
+	 */
+	public static function get_enrolment_provider_name_by_id( $provider_id )
+	{
+		$all_providers = self::get_all_enrolment_providers();
+		if ( ! isset( $all_providers[ $provider_id ] ) ) {
+			return false;
+		}
+
+		$provider       = $all_providers[ $provider_id ];
+		$provider_class = get_class( $provider );
+
+		return $provider_class::get_name();
 	}
 
 	/**

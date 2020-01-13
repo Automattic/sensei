@@ -21,6 +21,13 @@ interface Sensei_Course_Enrolment_Provider_Interface {
 	public static function get_id();
 
 	/**
+	 * Gets the descriptive name of the provider.
+	 *
+	 * @return string
+	 */
+	public static function get_name();
+
+	/**
 	 * Check if this course enrolment provider manages enrolment for a particular course.
 	 *
 	 * @param int $course_id Course post ID.
