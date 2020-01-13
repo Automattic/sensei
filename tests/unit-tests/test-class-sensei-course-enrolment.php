@@ -16,6 +16,14 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
+	}
+
+	/**
+	 * Clean up after test.
+	 */
+	public function tearDown() {
+		parent::tearDown();
+
 		$this->resetEnrolmentProviders();
 	}
 
