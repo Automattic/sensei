@@ -166,15 +166,15 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 		// Initial request.
 		$this->resetAndSetUpVersionedProvider( false ); // Version : 1; Odd numbers do not provide enrolment.
 		$course_enrolment_a = Sensei_Course_Enrolment::get_course_instance( $course_id );
-		$is_enrolled_a       = $course_enrolment_a->is_enrolled( $student_id );
-		$is_enrolled_a_2     = $course_enrolment_a->is_enrolled( $student_id );
+		$is_enrolled_a      = $course_enrolment_a->is_enrolled( $student_id );
+		$is_enrolled_a_2    = $course_enrolment_a->is_enrolled( $student_id );
 		$this->assertFalse( $is_enrolled_a, 'This version of the provider should not provide enrolment' );
 		$this->assertEquals( $is_enrolled_a_2, $is_enrolled_a, 'Duplicate calls should use caching and return same result' );
 
 		// Bump version. Second request.
 		$this->resetAndSetUpVersionedProvider( true ); // Version : 2; Even numbers provide enrolment.
 		$course_enrolment_b = Sensei_Course_Enrolment::get_course_instance( $course_id );
-		$is_enrolled_b       = $course_enrolment_b->is_enrolled( $student_id );
+		$is_enrolled_b      = $course_enrolment_b->is_enrolled( $student_id );
 		$this->assertTrue( $is_enrolled_b, 'Cache should refresh on version chnage and this version of the provider should provide enrolment.' );
 	}
 
