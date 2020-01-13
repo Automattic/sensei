@@ -1502,7 +1502,7 @@ class Sensei_Utils {
 	 * Check if a user has started a course or not.
 	 *
 	 * @since  1.7.0
-	 * @deprecated 3.0.0 No longer returns comment ID when they have access. To check if a user is enroled use `Sensei_Course::is_user_enroled()`. For course progress check, use `Sensei_Utils::has_started_course()`.
+	 * @deprecated 3.0.0 No longer returns comment ID when they have access. To check if a user is enrolled use `Sensei_Course::is_user_enrolled()`. For course progress check, use `Sensei_Utils::has_started_course()`.
 	 *
 	 * @param int $course_id Course ID.
 	 * @param int $user_id   User ID.
@@ -1510,14 +1510,14 @@ class Sensei_Utils {
 	 */
 	public static function user_started_course( $course_id = 0, $user_id = 0 ) {
 		// @todo Uncomment next line when we're ready to remove usage in the plugin itself.
-		// _deprecated_function( __METHOD__, '3.0.0', 'To check if a user is enroled use `Sensei_Course::is_user_enroled()`. For course progress check, use `Sensei_Utils::has_started_course()`' );
+		// _deprecated_function( __METHOD__, '3.0.0', 'To check if a user is enrolled use `Sensei_Course::is_user_enrolled()`. For course progress check, use `Sensei_Utils::has_started_course()`' );
 
 		if ( empty( $course_id ) ) {
 			return false;
 		}
 
-		// This was mainly used to check if a user was enroled in a course. For now, use this replacement method.
-		return Sensei_Course::is_user_enroled( $course_id, $user_id );
+		// This was mainly used to check if a user was enrolled in a course. For now, use this replacement method.
+		return Sensei_Course::is_user_enrolled( $course_id, $user_id );
 	}
 
 	/**

@@ -151,7 +151,7 @@ class Sensei_Course {
 	}
 
 	/**
-	 * Check if a user is enroled in a course.
+	 * Check if a user is enrolled in a course.
 	 *
 	 * @since 3.0.0
 	 *
@@ -159,7 +159,7 @@ class Sensei_Course {
 	 * @param int|null $user_id   User ID.
 	 * @return bool
 	 */
-	public static function is_user_enroled( $course_id, $user_id = null ) {
+	public static function is_user_enrolled( $course_id, $user_id = null ) {
 		if ( empty( $course_id ) ) {
 			return false;
 		}
@@ -179,7 +179,7 @@ class Sensei_Course {
 
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 
-		return $course_enrolment->is_enroled( $user_id );
+		return $course_enrolment->is_enrolled( $user_id );
 	}
 
 	/**

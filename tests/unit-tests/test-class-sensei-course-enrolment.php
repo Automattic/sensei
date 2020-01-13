@@ -54,7 +54,7 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 
-		$this->assertTrue( $course_enrolment->is_enroled( $student_id ) );
+		$this->assertTrue( $course_enrolment->is_enrolled( $student_id ) );
 	}
 
 	/**
@@ -67,7 +67,7 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 
-		$this->assertFalse( $course_enrolment->is_enroled( $student_id ) );
+		$this->assertFalse( $course_enrolment->is_enrolled( $student_id ) );
 	}
 
 	/**
@@ -79,7 +79,7 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 
-		$this->assertFalse( $course_enrolment->is_enroled( $student_id ) );
+		$this->assertFalse( $course_enrolment->is_enrolled( $student_id ) );
 	}
 
 	/**
@@ -95,8 +95,8 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 		$course_enrolment_simple = Sensei_Course_Enrolment::get_course_instance( $course_id_simple );
 		$course_enrolment_dog    = Sensei_Course_Enrolment::get_course_instance( $course_id_dog );
 
-		$this->assertFalse( $course_enrolment_simple->is_enroled( $student_id ), 'Non-dog courses should be NOT handled and therefore enrolment should not be provided' );
-		$this->assertTrue( $course_enrolment_dog->is_enroled( $student_id ), 'Dog courses should be handled and enrol all students' );
+		$this->assertFalse( $course_enrolment_simple->is_enrolled( $student_id ), 'Non-dog courses should be NOT handled and therefore enrolment should not be provided' );
+		$this->assertTrue( $course_enrolment_dog->is_enrolled( $student_id ), 'Dog courses should be handled and enrol all students' );
 	}
 
 	/**
@@ -110,7 +110,7 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 
-		$this->assertTrue( $course_enrolment->is_enroled( $student_id ), 'One positive provider should always enrol student in course' );
+		$this->assertTrue( $course_enrolment->is_enrolled( $student_id ), 'One positive provider should always enrol student in course' );
 	}
 
 	/**
@@ -124,7 +124,7 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 
-		$this->assertTrue( $course_enrolment->is_enroled( $student_id ), 'One positive provider should always enrol student in course' );
+		$this->assertTrue( $course_enrolment->is_enrolled( $student_id ), 'One positive provider should always enrol student in course' );
 	}
 
 	/**
@@ -137,7 +137,7 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 
-		$this->assertFalse( $course_enrolment->is_enroled( $student_id ), 'Student should not be enroled if there are no providers handling enrolment for a course' );
+		$this->assertFalse( $course_enrolment->is_enrolled( $student_id ), 'Student should not be enrolled if there are no providers handling enrolment for a course' );
 	}
 
 	/**
@@ -151,7 +151,7 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 
-		$this->assertFalse( $course_enrolment->is_enroled( $student_id ), 'Non-handling providers should never be used to determine enrolment' );
+		$this->assertFalse( $course_enrolment->is_enrolled( $student_id ), 'Non-handling providers should never be used to determine enrolment' );
 	}
 
 	/**
@@ -166,20 +166,20 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 		// Initial request.
 		$this->resetAndSetUpVersionedProvider( false ); // Version : 1; Odd numbers do not provide enrolment.
 		$course_enrolment_a = Sensei_Course_Enrolment::get_course_instance( $course_id );
-		$is_enroled_a       = $course_enrolment_a->is_enroled( $student_id );
-		$is_enroled_a_2     = $course_enrolment_a->is_enroled( $student_id );
-		$this->assertFalse( $is_enroled_a, 'This version of the provider should not provide enrolment' );
-		$this->assertEquals( $is_enroled_a_2, $is_enroled_a, 'Duplicate calls should use caching and return same result' );
+		$is_enrolled_a       = $course_enrolment_a->is_enrolled( $student_id );
+		$is_enrolled_a_2     = $course_enrolment_a->is_enrolled( $student_id );
+		$this->assertFalse( $is_enrolled_a, 'This version of the provider should not provide enrolment' );
+		$this->assertEquals( $is_enrolled_a_2, $is_enrolled_a, 'Duplicate calls should use caching and return same result' );
 
 		// Bump version. Second request.
 		$this->resetAndSetUpVersionedProvider( true ); // Version : 2; Even numbers provide enrolment.
 		$course_enrolment_b = Sensei_Course_Enrolment::get_course_instance( $course_id );
-		$is_enroled_b       = $course_enrolment_b->is_enroled( $student_id );
-		$this->assertTrue( $is_enroled_b, 'Cache should refresh on version chnage and this version of the provider should provide enrolment.' );
+		$is_enrolled_b       = $course_enrolment_b->is_enrolled( $student_id );
+		$this->assertTrue( $is_enrolled_b, 'Cache should refresh on version chnage and this version of the provider should provide enrolment.' );
 	}
 
 	/**
-	 * Tests a provider that actually has an opinion about which students are enroled. Only enrols users with "Dinosaur" in their name.
+	 * Tests a provider that actually has an opinion about which students are enrolled. Only enrols users with "Dinosaur" in their name.
 	 */
 	public function testEnrolmentCheckConditionalUserPositive() {
 		$course_id           = $this->getSimpleCourse();
@@ -190,12 +190,12 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 
-		$this->assertFalse( $course_enrolment->is_enroled( $student_id_standard ), 'This provider should only allow dinosaurs' );
-		$this->assertTrue( $course_enrolment->is_enroled( $student_id_dino ), 'This provider should allow dinosaurs' );
+		$this->assertFalse( $course_enrolment->is_enrolled( $student_id_standard ), 'This provider should only allow dinosaurs' );
+		$this->assertTrue( $course_enrolment->is_enrolled( $student_id_dino ), 'This provider should allow dinosaurs' );
 	}
 
 	/**
-	 * Tests a provider that actually has an opinion about which students are enroled. Denies crooks.
+	 * Tests a provider that actually has an opinion about which students are enrolled. Denies crooks.
 	 */
 	public function testEnrolmentCheckConditionalUserNegative() {
 		$course_id        = $this->getSimpleCourse();
@@ -206,8 +206,8 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 
-		$this->assertFalse( $course_enrolment->is_enroled( $student_id_crook ), 'This provider should deny crooks' );
-		$this->assertTrue( $course_enrolment->is_enroled( $student_id_okay ), 'This provider should allow okay students' );
+		$this->assertFalse( $course_enrolment->is_enrolled( $student_id_crook ), 'This provider should deny crooks' );
+		$this->assertTrue( $course_enrolment->is_enrolled( $student_id_okay ), 'This provider should allow okay students' );
 	}
 
 	/**
@@ -221,16 +221,16 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 
-		$pre_crook_enrolment = $course_enrolment->is_enroled( $student_id );
-		$this->assertTrue( $pre_crook_enrolment, 'As a non-crook, this student should be enroled' );
+		$pre_crook_enrolment = $course_enrolment->is_enrolled( $student_id );
+		$this->assertTrue( $pre_crook_enrolment, 'As a non-crook, this student should be enrolled' );
 
 		$this->turnStudentIntoCrook( $student_id );
-		$pre_notify_enrolment = $course_enrolment->is_enroled( $student_id );
+		$pre_notify_enrolment = $course_enrolment->is_enrolled( $student_id );
 		$this->assertTrue( $pre_notify_enrolment, 'Even as a crook, the cached value should be used until we notify the course enrolment handler' );
 
 		$course_enrolment->trigger_course_enrolment_check( $student_id );
-		$post_notify_enrolment = $course_enrolment->is_enroled( $student_id );
-		$this->assertFalse( $post_notify_enrolment, 'Now that the crook status is known, they should no longer be enroled in the course' );
+		$post_notify_enrolment = $course_enrolment->is_enrolled( $student_id );
+		$this->assertFalse( $post_notify_enrolment, 'Now that the crook status is known, they should no longer be enrolled in the course' );
 	}
 
 	/**
@@ -244,16 +244,16 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 
-		$pre_crook_enrolment = $course_enrolment->is_enroled( $student_id );
-		$this->assertTrue( $pre_crook_enrolment, 'As a non-crook, this student should be enroled' );
+		$pre_crook_enrolment = $course_enrolment->is_enrolled( $student_id );
+		$this->assertTrue( $pre_crook_enrolment, 'As a non-crook, this student should be enrolled' );
 
 		$this->turnStudentIntoCrook( $student_id );
-		$pre_notify_enrolment = $course_enrolment->is_enroled( $student_id );
+		$pre_notify_enrolment = $course_enrolment->is_enrolled( $student_id );
 		$this->assertTrue( $pre_notify_enrolment, 'Even as a crook, the cached value should be used until we notify the course enrolment handler' );
 
 		// Check enrolment but don't let it use the cached result.
-		$post_notify_enrolment = $course_enrolment->is_enroled( $student_id, false );
-		$this->assertFalse( $post_notify_enrolment, 'Now that the crook status is known, they should no longer be enroled in the course' );
+		$post_notify_enrolment = $course_enrolment->is_enrolled( $student_id, false );
+		$this->assertFalse( $post_notify_enrolment, 'Now that the crook status is known, they should no longer be enrolled in the course' );
 	}
 
 	/**
@@ -268,7 +268,7 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Always_Provides::class );
 
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
-		$this->assertTrue( $course_enrolment->is_enroled( $student_id ) );
+		$this->assertTrue( $course_enrolment->is_enrolled( $student_id ) );
 
 		$student_term = Sensei_Learner::get_learner_term( $student_id );
 		$this->assertTrue( has_term( $student_term->term_id, Sensei_PostTypes::LEARNER_TAXONOMY_NAME, $course_id ), 'Student term was not associated with the course but should have been' );
@@ -286,12 +286,12 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Denies_Crooks::class );
 
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
-		$this->assertTrue( $course_enrolment->is_enroled( $student_id ) );
+		$this->assertTrue( $course_enrolment->is_enrolled( $student_id ) );
 
 		$student_term = Sensei_Learner::get_learner_term( $student_id );
 		$this->assertTrue( has_term( $student_term->term_id, Sensei_PostTypes::LEARNER_TAXONOMY_NAME, $course_id ), 'Student term was not associated with the course but should have been' );
 
-		// Turns the student into someone who won't be enroled by provider.
+		// Turns the student into someone who won't be enrolled by provider.
 		$this->turnStudentIntoCrook( $student_id );
 		$course_enrolment->trigger_course_enrolment_check( $student_id );
 

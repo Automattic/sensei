@@ -84,14 +84,14 @@ class Sensei_Course_Enrolment {
 	}
 
 	/**
-	 * Check if a user is enroled in a course.
+	 * Check if a user is enrolled in a course.
 	 *
 	 * @param int  $user_id     User ID.
 	 * @param bool $check_cache Check and use cached result.
 	 *
 	 * @return bool
 	 */
-	public function is_enroled( $user_id, $check_cache = true ) {
+	public function is_enrolled( $user_id, $check_cache = true ) {
 		try {
 			if ( $check_cache ) {
 				$enrolment_check_results = $this->get_enrolment_check_results( $user_id );
@@ -104,19 +104,19 @@ class Sensei_Course_Enrolment {
 			}
 
 			$enrolment_check_results = $this->query_enrolment_providers( $user_id );
-			$is_enroled              = $enrolment_check_results->is_enrolment_provided();
+			$is_enrolled             = $enrolment_check_results->is_enrolment_provided();
 
 			// @todo Method will always be bool when we add manual enrolment provider. Remove this and the `get_legacy_enrolment_status` temporary method.
-			if ( ! is_bool( $is_enroled ) ) {
-				$is_enroled = $this->get_legacy_enrolment_status( $user_id );
+			if ( ! is_bool( $is_enrolled ) ) {
+				$is_enrolled = $this->get_legacy_enrolment_status( $user_id );
 			}
 
-			$this->save_enrolment( $user_id, $is_enroled );
+			$this->save_enrolment( $user_id, $is_enrolled );
 		} catch ( Exception $e ) {
-			$is_enroled = false;
+			$is_enrolled = false;
 		}
 
-		return $is_enroled;
+		return $is_enrolled;
 	}
 
 	/**
@@ -125,7 +125,7 @@ class Sensei_Course_Enrolment {
 	 * @param int $user_id User ID.
 	 */
 	public function trigger_course_enrolment_check( $user_id ) {
-		$this->is_enroled( $user_id, false );
+		$this->is_enrolled( $user_id, false );
 	}
 
 	/**
@@ -145,20 +145,20 @@ class Sensei_Course_Enrolment {
 	 * Save enrolment in taxonomy.
 	 *
 	 * @param int  $user_id    User ID.
-	 * @param bool $is_enroled If the user is enroled in the course.
+	 * @param bool $is_enrolled If the user is enrolled in the course.
 	 *
 	 * @return bool
 	 * @throws Exception When learner term could not be created.
 	 */
-	private function save_enrolment( $user_id, $is_enroled ) {
+	private function save_enrolment( $user_id, $is_enrolled ) {
 		$term = Sensei_Learner::get_learner_term( $user_id );
-		if ( ! $is_enroled ) {
+		if ( ! $is_enrolled ) {
 			$result = wp_remove_object_terms( $this->course_id, [ intval( $term->term_id ) ], Sensei_PostTypes::LEARNER_TAXONOMY_NAME );
 
 			return true === $result;
 		}
 
-		// If they are enroled, make sure they have started the course.
+		// If they are enrolled, make sure they have started the course.
 		Sensei_Utils::start_user_on_course( $user_id, $this->course_id );
 
 		$result = wp_set_post_terms( $this->course_id, [ intval( $term->term_id ) ], Sensei_PostTypes::LEARNER_TAXONOMY_NAME, true );
@@ -257,8 +257,7 @@ class Sensei_Course_Enrolment {
 	 *
 	 * @return string|false
 	 */
-	public static function get_enrolment_provider_name_by_id( $provider_id )
-	{
+	public static function get_enrolment_provider_name_by_id( $provider_id ) {
 		$all_providers = self::get_all_enrolment_providers();
 		if ( ! isset( $all_providers[ $provider_id ] ) ) {
 			return false;
