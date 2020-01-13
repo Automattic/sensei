@@ -15,6 +15,10 @@ class Sensei_Test_Enrolment_Provider_Always_Provides implements Sensei_Course_En
 		return 'always-provides';
 	}
 
+	public static function get_name() {
+		return 'Always Provides';
+	}
+
 	public function handles_enrolment( $course_id ) {
 		return true;
 	}

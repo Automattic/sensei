@@ -15,6 +15,10 @@ class Sensei_Test_Enrolment_Provider_Denies_Crooks implements Sensei_Course_Enro
 		return 'denies-crooks';
 	}
 
+	public static function get_name() {
+		return 'Denies Crooks';
+	}
+
 	public function handles_enrolment( $course_id ) {
 		return true;
 	}

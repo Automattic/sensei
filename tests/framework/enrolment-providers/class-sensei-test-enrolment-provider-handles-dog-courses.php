@@ -15,6 +15,10 @@ class Sensei_Test_Enrolment_Provider_Handles_Dog_Courses implements Sensei_Cours
 		return 'handles-dog-courses';
 	}
 
+	public static function get_name() {
+		return 'Handles Dog Courses';
+	}
+
 	public function handles_enrolment( $course_id ) {
 		if ( 1 === preg_match( '/dog/i', get_the_title( $course_id ) ) ) {
 			return true;

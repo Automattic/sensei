@@ -17,6 +17,10 @@ class Sensei_Test_Enrolment_Provider_Version_Morph implements Sensei_Course_Enro
 		return 'version-morph';
 	}
 
+	public static function get_name() {
+		return 'Version Morph';
+	}
+
 	public function handles_enrolment( $course_id ) {
 		return true;
 	}

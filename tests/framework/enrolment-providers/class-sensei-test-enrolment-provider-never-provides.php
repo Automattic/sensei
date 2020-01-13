@@ -15,6 +15,10 @@ class Sensei_Test_Enrolment_Provider_Never_Provides implements Sensei_Course_Enr
 		return 'never-provides';
 	}
 
+	public static function get_name() {
+		return 'Never Provides';
+	}
+
 	public function handles_enrolment( $course_id ) {
 		return true;
 	}

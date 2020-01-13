@@ -15,6 +15,10 @@ class Sensei_Test_Enrolment_Provider_Provides_For_Dinosaurs implements Sensei_Co
 		return 'provides-for-dinosaurs';
 	}
 
+	public static function get_name() {
+		return 'Provides for Dinosaurs';
+	}
+
 	public function handles_enrolment( $course_id ) {
 		return true;
 	}
