@@ -166,6 +166,8 @@ class Sensei_Learner_Management {
 			)
 		);
 
+		wp_enqueue_script( 'jquery-ui-tooltip' );
+
 		$data = array(
 			'remove_generic_confirm'     => __( 'Are you sure you want to remove this user?', 'sensei-lms' ),
 			'remove_from_lesson_confirm' => __( 'Are you sure you want to remove the user from this lesson?', 'sensei-lms' ),
