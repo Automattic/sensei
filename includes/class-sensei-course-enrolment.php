@@ -197,7 +197,7 @@ class Sensei_Course_Enrolment {
 		$term             = Sensei_Learner::get_learner_term( $user_id );
 		$provider_results = [];
 		foreach ( $this->get_course_enrolment_providers() as $enrolment_provider_id => $enrolment_provider ) {
-			$provider_results[ $enrolment_provider_id ] = $enrolment_provider->is_enroled( $user_id, $this->course_id );
+			$provider_results[ $enrolment_provider_id ] = $enrolment_provider->is_enrolled( $user_id, $this->course_id );
 		}
 
 		$enrolment_results = new Sensei_Course_Enrolment_Provider_Results( $provider_results, $this->get_course_enrolment_providers_version() );

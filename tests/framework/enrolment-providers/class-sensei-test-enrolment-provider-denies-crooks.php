@@ -19,7 +19,7 @@ class Sensei_Test_Enrolment_Provider_Denies_Crooks implements Sensei_Course_Enro
 		return true;
 	}
 
-	public function is_enroled( $user_id, $course_id ) {
+	public function is_enrolled( $user_id, $course_id ) {
 		$user = get_user_by( 'ID', $user_id );
 		if ( $user && 1 === preg_match( '/crook/', $user->description ) ) {
 			return false;

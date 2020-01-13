@@ -19,7 +19,7 @@ class Sensei_Test_Enrolment_Provider_Provides_For_Dinosaurs implements Sensei_Co
 		return true;
 	}
 
-	public function is_enroled( $user_id, $course_id ) {
+	public function is_enrolled( $user_id, $course_id ) {
 		$user = get_user_by( 'ID', $user_id );
 		if ( $user && 1 === preg_match( '/dinosaur/i', $user->display_name ) ) {
 			return true;

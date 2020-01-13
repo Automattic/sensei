@@ -21,7 +21,7 @@ class Sensei_Test_Enrolment_Provider_Version_Morph implements Sensei_Course_Enro
 		return true;
 	}
 
-	public function is_enroled( $user_id, $course_id ) {
+	public function is_enrolled( $user_id, $course_id ) {
 		return 0 === self::$version % 2;
 	}
 
