@@ -1,9 +1,19 @@
+---
+name: Bug report
+about: Create a report to help us improve
+title: ''
+labels: "[Type] Bug"
+assignees: ''
+
+---
+
 <!-- Thanks for contributing to Sensei! Pick a clear title ("Lesson: Show complexity in individual lessons") and proceed. -->
 
 #### Steps to Reproduce
-1.
-2.
-3.
+1. Go to '...'
+2. Click on '....'
+3. Scroll down to '....'
+4. See error
 
 #### What I Expected
 
@@ -21,10 +31,7 @@
 
 
 #### Context / Source
-<!-- Optional: share your unique context to help us understand your perspective.
-
-If requesting a new feature, explain why you'd like to see it added.
--->
+<!-- Optional: share your unique context to help us understand your perspective. -->
 
 
 
