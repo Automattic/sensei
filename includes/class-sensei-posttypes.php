@@ -466,8 +466,8 @@ class Sensei_PostTypes {
 			self::LEARNER_TAXONOMY_NAME,
 			'course',
 			[
-				'public'             => false,
-				'show_ui'            => false,
+				'public'  => false,
+				'show_ui' => false,
 			]
 		);
 	}
