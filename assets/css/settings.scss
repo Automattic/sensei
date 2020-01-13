@@ -554,6 +554,20 @@
 				color: #fff;
 			}
 		}
+
+		.enrolment_status  {
+			span  {
+				padding: 5px 10px;
+				@include border_radius(3px);
+			}
+			.not-enroled  {
+				background: darken($bg_light, 5%);
+			}
+			.enroled  {
+				background: $success;
+				color: #fff;
+			}
+		}
 	}
 }
 
