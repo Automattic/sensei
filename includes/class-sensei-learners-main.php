@@ -276,34 +276,36 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				$course_enrolment  = Sensei_Course_Enrolment::get_course_instance( $this->course_id );
 				$enrolment_results = $course_enrolment->get_enrolment_check_results( $user_activity->user_id );
 
-				if ( $enrolment_results && ! empty( $enrolment_results->get_provider_results() ) ) {
-					$helper_html   = [];
-					$helper_html[] = '<ul class="enrolment-helper">';
-					foreach ( $enrolment_results->get_provider_results() as $id => $result ) {
-						$name = Sensei_Course_Enrolment::get_enrolment_provider_name_by_id( $id );
-						if ( ! $name ) {
-							$name = $id;
-						}
+				$enrolment_tooltip_html = '';
+				if ( Sensei()->feature_flags->is_enabled( 'enrolment_provider_tooltip' ) ) {
+					if ( $enrolment_results && ! empty( $enrolment_results->get_provider_results() ) ) {
+						$enrolment_tooltip_html   = [];
+						$enrolment_tooltip_html[] = '<ul class="enrolment-helper">';
+						foreach ( $enrolment_results->get_provider_results() as $id => $result ) {
+							$name = Sensei_Course_Enrolment::get_enrolment_provider_name_by_id( $id );
+							if ( ! $name ) {
+								$name = $id;
+							}
 
-						$item_class = 'does-not-provide-enrolment';
-						if ( $result ) {
-							$item_class = 'provides-enrolment';
-						}
+							$item_class = 'does-not-provide-enrolment';
+							if ( $result ) {
+								$item_class = 'provides-enrolment';
+							}
 
-						$helper_html[] = '<li class="' . esc_attr( $item_class ) . '">' . $name . '</li>';
+							$enrolment_tooltip_html[] = '<li class="' . esc_attr( $item_class ) . '">' . $name . '</li>';
+						}
+						$enrolment_tooltip_html[] = '</ul>';
+
+						$enrolment_tooltip_html = implode( '', $enrolment_tooltip_html );
+					} else {
+						$enrolment_tooltip_html = esc_html__( 'No enrollment data was found.', 'sensei-lms' );
 					}
-					$helper_html[] = '</ul>';
-
-					$helper_html = implode( '', $helper_html );
-				} else {
-					$helper_html = esc_html__( 'No enrollment data was found.', 'sensei-lms' );
 				}
 
-
 				if ( $is_user_enrolled ) {
-					$enrolment_status_html = '<span class="enrolled sensei-tooltip" data-tooltip="' . esc_attr( htmlentities( $helper_html ) ) . '">' . esc_html__( 'Enrolled', 'sensei-lms' ) . '</span>';
+					$enrolment_status_html = '<span class="enrolled sensei-tooltip" data-tooltip="' . esc_attr( htmlentities( $enrolment_tooltip_html ) ) . '">' . esc_html__( 'Enrolled', 'sensei-lms' ) . '</span>';
 				} else {
-					$enrolment_status_html = '<span class="not-enrolled sensei-tooltip" data-tooltip="' . esc_attr( htmlentities( $helper_html ) ) . '">' . esc_html__( 'Not Enrolled', 'sensei-lms' ) . '</span>';
+					$enrolment_status_html = '<span class="not-enrolled sensei-tooltip" data-tooltip="' . esc_attr( htmlentities( $enrolment_tooltip_html ) ) . '">' . esc_html__( 'Not Enrolled', 'sensei-lms' ) . '</span>';
 				}
 
 				$title = Sensei_Learner::get_full_name( $user_activity->user_id );
