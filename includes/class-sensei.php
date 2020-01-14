@@ -576,6 +576,11 @@ class Sensei_Main {
 			return;
 		}
 
+		// Mark site as having enrolment data from pre-3.0.0.
+		if ( version_compare( '3.0.0', get_option( 'sensei-version' ), '<' ) ) {
+			update_option( 'sensei-enrolment-legacy', time() );
+		}
+
 		// Run updates.
 		$this->register_plugin_version();
 
