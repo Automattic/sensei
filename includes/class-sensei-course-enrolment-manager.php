@@ -68,6 +68,11 @@ class Sensei_Course_Enrolment_Manager {
 
 		$this->enrolment_providers = [];
 
+		// Manual enrolment is Sensei's core enrolment provider.
+		$provider_classes = [
+			Sensei_Course_Manual_Enrolment_Provider::class,
+		];
+
 		/**
 		 * Fetch all registered course enrolment providers.
 		 *
@@ -75,7 +80,7 @@ class Sensei_Course_Enrolment_Manager {
 		 *
 		 * @since 3.0.0
 		 */
-		$provider_classes = apply_filters( 'sensei_course_enrolment_providers', [] );
+		$provider_classes = apply_filters( 'sensei_course_enrolment_providers', $provider_classes );
 		foreach ( $provider_classes as $provider_class ) {
 			if ( ! class_exists( $provider_class ) || ! is_a( $provider_class, 'Sensei_Course_Enrolment_Provider_Interface', true ) ) {
 				continue;

@@ -105,12 +105,6 @@ final class Sensei_Course_Enrolment_Provider_Results implements JsonSerializable
 			return true;
 		}
 
-		// @todo Remove this once we have a core provider, such as manual enrolment.
-		// If there are no providers, return `null` and let Sensei handle it.
-		if ( empty( $provider_results ) ) {
-			return null;
-		}
-
 		// The student is not enrolled in the course.
 		return false;
 	}
