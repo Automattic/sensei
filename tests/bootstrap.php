@@ -24,6 +24,9 @@ class Sensei_Unit_Tests_Bootstrap {
 		$this->tests_dir    = dirname( __FILE__ );
 		$this->plugin_dir   = dirname( $this->tests_dir );
 		$this->wp_tests_dir = getenv( 'WP_TESTS_DIR' ) ? getenv( 'WP_TESTS_DIR' ) : '/tmp/wordpress-tests-lib';
+
+		define( 'SENSEI_TEST_FRAMEWORK_DIR', $this->tests_dir . '/framework' );
+
 		// load test function so tests_add_filter() is available
 		require_once $this->wp_tests_dir . '/includes/functions.php';
 		// load Sensei
@@ -60,11 +63,11 @@ class Sensei_Unit_Tests_Bootstrap {
 	 */
 	public function includes() {
 		// factories
-		require_once $this->tests_dir . '/framework/factories/class-sensei-factory.php';
-		require_once $this->tests_dir . '/framework/factories/class-wp-unittest-factory-for-post-sensei.php';
+		require_once SENSEI_TEST_FRAMEWORK_DIR . '/factories/class-sensei-factory.php';
+		require_once SENSEI_TEST_FRAMEWORK_DIR . '/factories/class-wp-unittest-factory-for-post-sensei.php';
 
 		// Testing setup for event logging.
-		require_once $this->tests_dir . '/framework/class-sensei-test-events.php';
+		require_once SENSEI_TEST_FRAMEWORK_DIR . '/class-sensei-test-events.php';
 		Sensei_Test_Events::init();
 	}
 	/**

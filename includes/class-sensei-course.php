@@ -151,6 +151,38 @@ class Sensei_Course {
 	}
 
 	/**
+	 * Check if a user is enrolled in a course.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param int      $course_id Course post ID.
+	 * @param int|null $user_id   User ID.
+	 * @return bool
+	 */
+	public static function is_user_enrolled( $course_id, $user_id = null ) {
+		if ( empty( $course_id ) ) {
+			return false;
+		}
+
+		if ( 'course' !== get_post_type( $course_id ) ) {
+			return false;
+		}
+
+		if ( ! $user_id ) {
+			$user_id = get_current_user_id();
+		}
+
+		// @todo This should be replaced by the manual course enrolment provider.
+		if ( \Sensei_Course_Enrolment::use_legacy_enrolment_check() ) {
+			return false !== Sensei_Utils::has_started_course( $course_id, $user_id );
+		}
+
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+
+		return $course_enrolment->is_enrolled( $user_id );
+	}
+
+	/**
 	 * @param $message
 	 */
 	private static function add_course_access_permission_message( $message ) {
@@ -2169,7 +2201,7 @@ class Sensei_Course {
 		} // End If Statement
 
 		// number of completed lessons
-		if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
+		if ( Sensei_Utils::has_started_course( $course->ID, get_current_user_id() )
 			|| Sensei_Utils::user_completed_course( $course->ID, get_current_user_id() ) ) {
 
 			$completed    = count( $this->get_completed_lesson_ids( $course->ID, get_current_user_id() ) );
