@@ -62,7 +62,7 @@ class Sensei_Class_Course_Enrolment_Provider_Results_Test extends WP_UnitTestCas
 	}
 
 	/**
-	 * Tests to make sure they aren't enrolledd if all providers do not provide enrolment.
+	 * Tests to make sure they aren't enrolled if all providers do not provide enrolment.
 	 */
 	public function testIsEnrolmentProvidedAllNegative() {
 		$results = new Sensei_Course_Enrolment_Provider_Results(
