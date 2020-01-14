@@ -45,6 +45,21 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests getting an enrolment provider by ID.
+	 */
+	public function testGetEnrolmentProviderById() {
+		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Always_Provides::class );
+
+		$provider_always_provides = Sensei_Course_Enrolment::get_enrolment_provider_by_id( Sensei_Test_Enrolment_Provider_Always_Provides::get_id() );
+		$provider_never_provides  = Sensei_Course_Enrolment::get_enrolment_provider_by_id( Sensei_Test_Enrolment_Provider_Never_Provides::get_id() );
+
+		$this->assertFalse( $provider_never_provides, 'This provider was never registered and should not be returned.' );
+		$this->assertNotFalse( $provider_always_provides, 'This provider was registered and its singleton instance should be returned' );
+
+		$this->assertTrue( $provider_always_provides instanceof Sensei_Test_Enrolment_Provider_Always_Provides, 'Singleton instance of the provider should be returned.' );
+	}
+
+	/**
 	 * Simple check for positive enrolment with simple provider.
 	 */
 	public function testEnrolmentCheckAlwaysProvides() {

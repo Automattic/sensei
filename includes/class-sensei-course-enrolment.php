@@ -251,6 +251,22 @@ class Sensei_Course_Enrolment {
 	}
 
 	/**
+	 * Gets the enrolment provider object by its ID.
+	 *
+	 * @param string $provider_id Unique identifier of the enrolment provider.
+	 *
+	 * @return Sensei_Course_Enrolment_Provider_Interface|false
+	 */
+	public static function get_enrolment_provider_by_id( $provider_id ) {
+		$all_providers = self::get_all_enrolment_providers();
+		if ( ! isset( $all_providers[ $provider_id ] ) ) {
+			return false;
+		}
+
+		return $all_providers[ $provider_id ];
+	}
+
+	/**
 	 * Gets the descriptive name of the provider by ID.
 	 *
 	 * @param string $provider_id Unique identifier of the enrolment provider.
@@ -258,12 +274,11 @@ class Sensei_Course_Enrolment {
 	 * @return string|false
 	 */
 	public static function get_enrolment_provider_name_by_id( $provider_id ) {
-		$all_providers = self::get_all_enrolment_providers();
-		if ( ! isset( $all_providers[ $provider_id ] ) ) {
+		$provider = self::get_enrolment_provider_by_id( $provider_id );
+		if ( ! $provider ) {
 			return false;
 		}
 
-		$provider       = $all_providers[ $provider_id ];
 		$provider_class = get_class( $provider );
 
 		return $provider_class::get_name();
