@@ -4329,6 +4329,7 @@ class Sensei_Lesson {
 		$user_taking_course = Sensei_Utils::user_started_course( $course_id );
 		$has_access         = ! Sensei()->settings->get( 'access_permission' );
 		$is_preview         = Sensei_Utils::is_preview_lesson( $post->ID );
+		$user_can_view_lesson = sensei_can_user_view_lesson();
 
 		$lesson_allow_comments = $allow_comments && ( $user_taking_course || $has_access || $is_preview );
 
