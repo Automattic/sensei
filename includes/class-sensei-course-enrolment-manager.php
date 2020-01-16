@@ -91,7 +91,6 @@ class Sensei_Course_Enrolment_Manager {
 			 * @param string[] $provider_classes List of enrolment providers classes.
 			 *
 			 * @since 3.0.0
-			 *
 			 */
 			$provider_classes = apply_filters( 'sensei_course_enrolment_providers', [] );
 			foreach ( $provider_classes as $provider_class ) {
