@@ -5,6 +5,8 @@
  * @package sensei-tests
  */
 
+// phpcs:disable WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid -- Using PHPUnit conventions.
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
