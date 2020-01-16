@@ -554,7 +554,50 @@
 				color: #fff;
 			}
 		}
+
+		.enrolment_status  {
+			span  {
+				padding: 5px 10px;
+				@include border_radius(3px);
+			}
+			.not-enrolled  {
+				background: darken($bg_light, 5%);
+			}
+			.enrolled  {
+				background: $success;
+				color: #fff;
+			}
+		}
 	}
+}
+
+.enrolment-helper {
+	.provides-enrolment {
+		color: $success;
+		&:before {
+			font-family: dashicons;
+			content: "\f12a";
+			font-size: 150%;
+			vertical-align: middle;
+		}
+	}
+	.does-not-provide-enrolment {
+		color: darken($bg_light, 40%);
+		&:before {
+			font-family: dashicons;
+			content: "\f159";
+			font-size: 150%;
+			vertical-align: middle;
+		}
+	}
+}
+
+.sensei-ui-tooltip {
+	padding: 5px;
+	position: absolute;
+	z-index: 9999;
+	max-width: 300px;
+	border-width: 2px;
 }
 
 .sensei-learners-main {

@@ -22,6 +22,19 @@ jQuery(document).ready( function( $ ) {
      ***************************************************************************************************/
 
 	/**
+	 * Used for student enrolment hints.
+	 *
+	 * @since 3.0.0
+	 */
+	jQuery( document ).tooltip( {
+		items: '.sensei-tooltip',
+		tooltipClass: 'sensei-ui-tooltip',
+		content: function () {
+			return jQuery(this).data( 'tooltip' );
+		}
+	} );
+
+	/**
      * Course Category Change Event.
      *
      * @since 1.6.0
