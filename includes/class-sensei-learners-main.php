@@ -277,10 +277,12 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				$enrolment_results = $course_enrolment->get_enrolment_check_results( $user_activity->user_id );
 
 				$enrolment_tooltip_html = '';
+
 				if ( Sensei()->feature_flags->is_enabled( 'enrolment_provider_tooltip' ) ) {
 					if ( $enrolment_results && ! empty( $enrolment_results->get_provider_results() ) ) {
 						$enrolment_tooltip_html   = [];
 						$enrolment_tooltip_html[] = '<ul class="enrolment-helper">';
+
 						foreach ( $enrolment_results->get_provider_results() as $id => $result ) {
 							$name = Sensei_Course_Enrolment::get_enrolment_provider_name_by_id( $id );
 							if ( ! $name ) {
@@ -294,19 +296,23 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 							$enrolment_tooltip_html[] = '<li class="' . esc_attr( $item_class ) . '">' . esc_html( $name ) . '</li>';
 						}
-						$enrolment_tooltip_html[] = '</ul>';
 
-						$enrolment_tooltip_html = implode( '', $enrolment_tooltip_html );
+						$enrolment_tooltip_html[] = '</ul>';
+						$enrolment_tooltip_html   = implode( '', $enrolment_tooltip_html );
 					} else {
 						$enrolment_tooltip_html = esc_html__( 'No enrollment data was found.', 'sensei-lms' );
 					}
 				}
 
 				if ( $is_user_enrolled ) {
-					$enrolment_status_html = '<span class="enrolled sensei-tooltip" data-tooltip="' . esc_attr( htmlentities( $enrolment_tooltip_html ) ) . '">' . esc_html__( 'Enrolled', 'sensei-lms' ) . '</span>';
+					$enrolment_label             = __( 'Enrolled', 'sensei-lms' );
+					$enrolment_label_extra_class = 'enrolled';
 				} else {
-					$enrolment_status_html = '<span class="not-enrolled sensei-tooltip" data-tooltip="' . esc_attr( htmlentities( $enrolment_tooltip_html ) ) . '">' . esc_html__( 'Not Enrolled', 'sensei-lms' ) . '</span>';
+					$enrolment_label             = __( 'Not Enrolled', 'sensei-lms' );
+					$enrolment_label_extra_class = 'not-enrolled';
 				}
+
+				$enrolment_status_html = '<span class="sensei-tooltip '. esc_attr( $enrolment_label_extra_class ) .'" data-tooltip="' . esc_attr( htmlentities( $enrolment_tooltip_html ) ) . '">' . esc_html( $enrolment_label ) . '</span>';
 
 				$title = Sensei_Learner::get_full_name( $user_activity->user_id );
 				// translators: Placeholder is the full name of the learner.
