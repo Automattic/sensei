@@ -1073,7 +1073,7 @@ class Sensei_Question {
 
 				// determine if the current option must be checked
 				$checked = '';
-				if ( isset( $question_data['user_answer_entry'] ) && 0 < count( $question_data['user_answer_entry'] ) ) {
+				if ( isset( $question_data['user_answer_entry'] ) ) {
 					if ( is_array( $question_data['user_answer_entry'] ) && in_array( $answer, $question_data['user_answer_entry'] ) ) {
 
 						$checked = 'checked="checked"';
