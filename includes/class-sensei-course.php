@@ -173,7 +173,7 @@ class Sensei_Course {
 		}
 
 		// @todo This should be replaced by the manual course enrolment provider.
-		if ( \Sensei_Course_Enrolment::use_legacy_enrolment_check() ) {
+		if ( Sensei_Course_Enrolment_Manager::use_legacy_enrolment_check() ) {
 			return false !== Sensei_Utils::has_started_course( $course_id, $user_id );
 		}
 

@@ -284,7 +284,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 						$enrolment_tooltip_html[] = '<ul class="enrolment-helper">';
 
 						foreach ( $enrolment_results->get_provider_results() as $id => $result ) {
-							$name = Sensei_Course_Enrolment::get_enrolment_provider_name_by_id( $id );
+							$name = Sensei_Course_Enrolment_Manager::get_enrolment_provider_name_by_id( $id );
 							if ( ! $name ) {
 								$name = $id;
 							}
