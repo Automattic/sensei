@@ -292,7 +292,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 								$item_class = 'provides-enrolment';
 							}
 
-							$enrolment_tooltip_html[] = '<li class="' . esc_attr( $item_class ) . '">' . $name . '</li>';
+							$enrolment_tooltip_html[] = '<li class="' . esc_attr( $item_class ) . '">' . esc_html( $name ) . '</li>';
 						}
 						$enrolment_tooltip_html[] = '</ul>';
 
