@@ -3,7 +3,6 @@
 require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-helpers.php';
 
 class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
-
 	use Sensei_Course_Enrolment_Test_Helpers;
 
 	/**
@@ -13,15 +12,16 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
+
+		self::resetEnrolmentProviders();
 	}
 
 	/**
-	 * Clean up after test.
+	 * Clean up after all tests.
 	 */
-	public function tearDown() {
-		parent::tearDown();
-
-		$this->resetEnrolmentProviders();
+	public static function tearDownAfterClass() {
+		parent::tearDownAfterClass();
+		self::resetEnrolmentProviders();
 	}
 
 	public function testGetCourseInstanceMultiple() {
@@ -276,7 +276,7 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 	 * Helper for `\Sensei_Class_Course_Enrolment_Test::testEnrolmentCheckVersionCachingWorks`.
 	 */
 	private function resetAndSetUpVersionedProvider( $bump_version ) {
-		$this->resetEnrolmentProviders();
+		self::resetEnrolmentProviders();
 		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Version_Morph::class );
 
 		if ( $bump_version ) {

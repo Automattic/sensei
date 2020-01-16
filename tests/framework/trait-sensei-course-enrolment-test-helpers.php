@@ -29,7 +29,7 @@ trait Sensei_Course_Enrolment_Test_Helpers {
 	/**
 	 * Resets the enrolment providers.
 	 */
-	private function resetEnrolmentProviders() {
+	private static function resetEnrolmentProviders() {
 		remove_all_filters( 'sensei_course_enrolment_providers' );
 
 		$enrolment_providers = new ReflectionProperty( Sensei_Course_Enrolment_Manager::class, 'enrolment_providers' );
