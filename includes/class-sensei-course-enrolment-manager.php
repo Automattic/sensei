@@ -13,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Handles the management of course enrolment.
  */
 class Sensei_Course_Enrolment_Manager {
+	const COURSE_ENROLMENT_SITE_SALT_OPTION = 'sensei_course_enrolment_site_salt';
+
 	/**
 	 * All course enrolment providers.
 	 *
@@ -102,6 +104,34 @@ class Sensei_Course_Enrolment_Manager {
 		}
 
 		return self::$enrolment_providers;
+	}
+
+	/**
+	 * Gets the site course enrolment salt that can be used to invalidate all enrolments.
+	 *
+	 * @return string
+	 */
+	public static function get_site_salt() {
+		$enrolment_salt = \get_option( self::COURSE_ENROLMENT_SITE_SALT_OPTION );
+
+		if ( ! $enrolment_salt ) {
+			return self::reset_site_salt();
+		}
+
+		return $enrolment_salt;
+	}
+
+	/**
+	 * Resets the site course enrolment salt. If already set, this will invalidate all current course enrolment results.
+	 *
+	 * @return string
+	 */
+	public static function reset_site_salt() {
+		$new_salt = md5( uniqid() );
+
+		\update_option( self::COURSE_ENROLMENT_SITE_SALT_OPTION, $new_salt, true );
+
+		return $new_salt;
 	}
 
 	/**

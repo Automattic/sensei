@@ -268,6 +268,6 @@ class Sensei_Course_Enrolment {
 
 		ksort( $versions );
 
-		return md5( wp_json_encode( $versions ) );
+		return md5( Sensei_Course_Enrolment_Manager::get_site_salt() . wp_json_encode( $versions ) );
 	}
 }

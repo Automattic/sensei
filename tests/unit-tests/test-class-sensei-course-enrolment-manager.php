@@ -61,4 +61,28 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 		$post_notify_enrolment = $course_enrolment->is_enrolled( $student_id );
 		$this->assertFalse( $post_notify_enrolment, 'Now that the crook status is known, they should no longer be enrolled in the course' );
 	}
+
+	/**
+	 * Simple tests for getting a site's enrolment salt.
+	 *
+	 * @covers \Sensei_Course_Enrolment_Manager::get_site_salt
+	 */
+	public function testGetSiteEnrolmentSalt() {
+		$enrolment_salt = Sensei_Course_Enrolment_Manager::get_site_salt();
+		$this->assertTrue( ! empty( $enrolment_salt ), 'Enrolment salt should not be empty' );
+		$this->assertEquals( Sensei_Course_Enrolment_Manager::get_site_salt(), $enrolment_salt, 'Getting enrolment salt twice without resetting should product the same result' );
+	}
+
+	/**
+	 * Tests to make sure resetting the site enrolment salt produces a new salt.
+	 *
+	 * @covers \Sensei_Course_Enrolment_Manager::get_site_salt
+	 */
+	public function testResetSiteEnrolmentSalt() {
+		$enrolment_salt = Sensei_Course_Enrolment_Manager::get_site_salt();
+		$this->assertTrue( ! empty( $enrolment_salt ), 'Enrolment salt should not be empty' );
+		$new_enrolment_salt = Sensei_Course_Enrolment_Manager::reset_site_salt();
+		$this->assertNotEquals( Sensei_Course_Enrolment_Manager::get_site_salt(), $enrolment_salt, 'Getting enrolment salt after resetting it should produce a different result.' );
+		$this->assertEquals( Sensei_Course_Enrolment_Manager::get_site_salt(), $new_enrolment_salt, 'Getting enrolment salt after resetting return the same salt as the reset method returns.' );
+	}
 }
