@@ -1,10 +1,10 @@
 <?php
 
-require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-course-enrolment-test-helpers.php';
+require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-helpers.php';
 
 class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 
-	use Course_Enrolment_Test_Helpers;
+	use Sensei_Course_Enrolment_Test_Helpers;
 
 	/**
 	 * Setup function.

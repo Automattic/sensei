@@ -22,7 +22,7 @@ require_once SENSEI_TEST_FRAMEWORK_DIR . '/enrolment-providers/class-sensei-test
  *
  * @since 3.0.0
  */
-trait Course_Enrolment_Test_Helpers {
+trait Sensei_Course_Enrolment_Test_Helpers {
 
 	/**
 	 * Resets the enrolment providers.
