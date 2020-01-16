@@ -153,7 +153,7 @@ class Sensei_Learner_Management {
 		wp_enqueue_script(
 			'sensei-learners-general',
 			Sensei()->plugin_url . 'assets/js/learners-general' . $suffix . '.js',
-			array( 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'sensei-core-select2' ),
+			array( 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'jquery-ui-tooltip', 'sensei-core-select2' ),
 			Sensei()->version,
 			true
 		);
@@ -165,8 +165,6 @@ class Sensei_Learner_Management {
 				'inprogress' => __( 'In Progress', 'sensei-lms' ),
 			)
 		);
-
-		wp_enqueue_script( 'jquery-ui-tooltip' );
 
 		$data = array(
 			'remove_generic_confirm'     => __( 'Are you sure you want to remove this user?', 'sensei-lms' ),
