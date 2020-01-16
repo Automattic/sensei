@@ -312,12 +312,19 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 					$enrolment_label_extra_class = 'not-enrolled';
 				}
 
-				$enrolment_status_html = '<span class="sensei-tooltip '. esc_attr( $enrolment_label_extra_class ) .'" data-tooltip="' . esc_attr( htmlentities( $enrolment_tooltip_html ) ) . '">' . esc_html( $enrolment_label ) . '</span>';
+				$enrolment_status_html = '<span class="sensei-tooltip ' . esc_attr( $enrolment_label_extra_class ) . '" data-tooltip="' . esc_attr( htmlentities( $enrolment_tooltip_html ) ) . '">' . esc_html( $enrolment_label ) . '</span>';
 
 				$title = Sensei_Learner::get_full_name( $user_activity->user_id );
 				// translators: Placeholder is the full name of the learner.
 				$a_title              = sprintf( esc_html__( 'Edit &#8220;%s&#8221;', 'sensei-lms' ), esc_html( $title ) );
 				$edit_start_date_form = $this->get_edit_start_date_form( $user_activity, $post_id, $post_type, $object_type );
+
+				$actions   = [];
+				$actions[] = '<a class="remove-learner button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '">' . sprintf( esc_html__( 'Remove from %1$s', 'sensei-lms' ), esc_html( $object_type ) ) . '</a>';
+				$actions[] = '<a class="reset-learner button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '">' . sprintf( esc_html__( 'Reset progress', 'sensei-lms' ), esc_html( $object_type ) ) . '</a>';
+				if ( $edit_start_date_form ) {
+					$actions[] = $edit_start_date_form;
+				}
 
 				/**
 				 * sensei_learners_main_column_data filter
@@ -340,9 +347,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 						'user_status'      => $progress_status_html,
 						'enrolment_status' => $enrolment_status_html,
 						// translators: Placeholder is the "object type"; lesson or course.
-						'actions'          => '<a class="remove-learner button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '">' . sprintf( esc_html__( 'Remove from %1$s', 'sensei-lms' ), esc_html( $object_type ) ) . '</a>'
-											  . '<a class="reset-learner button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '">' . sprintf( esc_html__( 'Reset progress', 'sensei-lms' ), esc_html( $object_type ) ) . '</a>'
-											  . $edit_start_date_form,
+						'actions'          => implode( ' ', $actions ),
 					),
 					$item,
 					$post_id,
