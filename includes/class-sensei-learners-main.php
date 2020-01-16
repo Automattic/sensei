@@ -319,7 +319,8 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				$a_title              = sprintf( esc_html__( 'Edit &#8220;%s&#8221;', 'sensei-lms' ), esc_html( $title ) );
 				$edit_start_date_form = $this->get_edit_start_date_form( $user_activity, $post_id, $post_type, $object_type );
 
-				$actions   = [];
+				$actions = [];
+				// translators: Placeholder is object type (course or lesson).
 				$actions[] = '<a class="remove-learner button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '">' . sprintf( esc_html__( 'Remove from %1$s', 'sensei-lms' ), esc_html( $object_type ) ) . '</a>';
 				$actions[] = '<a class="reset-learner button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '">' . sprintf( esc_html__( 'Reset progress', 'sensei-lms' ), esc_html( $object_type ) ) . '</a>';
 				if ( $edit_start_date_form ) {
