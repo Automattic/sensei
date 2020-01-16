@@ -255,7 +255,7 @@ class Sensei_Course_Enrolment {
 	 *
 	 * @return string
 	 */
-	public static function hash_course_enrolment_provider_versions( $enrolment_providers ) {
+	private static function hash_course_enrolment_provider_versions( $enrolment_providers ) {
 		$versions = [];
 		foreach ( $enrolment_providers as $enrolment_provider ) {
 			if ( ! ( $enrolment_provider instanceof Sensei_Course_Enrolment_Provider_Interface ) ) {
