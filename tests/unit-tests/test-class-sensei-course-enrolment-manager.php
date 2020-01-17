@@ -57,7 +57,7 @@ class Sensei_Class_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 		$pre_notify_enrolment = $course_enrolment->is_enrolled( $student_id );
 		$this->assertTrue( $pre_notify_enrolment, 'Even as a crook, the cached value should be used until we notify the course enrolment handler' );
 
-		Sensei_Course_Enrolment_Manager::trigger_course_enrolment_check( $course_id, $student_id );
+		Sensei_Course_Enrolment_Manager::trigger_course_enrolment_check( $student_id, $course_id );
 		$post_notify_enrolment = $course_enrolment->is_enrolled( $student_id );
 		$this->assertFalse( $post_notify_enrolment, 'Now that the crook status is known, they should no longer be enrolled in the course' );
 	}

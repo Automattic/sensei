@@ -136,10 +136,10 @@ class Sensei_Course_Enrolment_Manager {
 	/**
 	 * Trigger course enrolment check when enrolment might have changed.
 	 *
+	 * @param int $user_id User ID.
 	 * @param int $course_id Course post ID.
-	 * @param int $user_id   User ID.
 	 */
-	public static function trigger_course_enrolment_check( $course_id, $user_id ) {
+	public static function trigger_course_enrolment_check( $user_id, $course_id ) {
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 		if ( $course_enrolment ) {
 			$course_enrolment->is_enrolled( $user_id, false );
