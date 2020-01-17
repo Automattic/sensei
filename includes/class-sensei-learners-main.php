@@ -340,7 +340,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 						);
 
 						$actions[] = '<a class="learner-action button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="withdraw" href="' . esc_url( $withdraw_action_url ) . '">' . esc_html__( 'Remove manual enrollment', 'sensei-lms' ) . '</a>';
-					} elseif( ! $is_user_enrolled ) {
+					} elseif ( ! $is_user_enrolled ) {
 						$enrol_action_url = wp_nonce_url(
 							add_query_arg(
 								array(
@@ -851,10 +851,12 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		}
 		?>
 		<div class="postbox">
-			<h2 class="postbox-title"><?php
+			<h2 class="postbox-title">
+				<?php
 				// translators: Placeholder is the post type.
 				printf( esc_html__( 'Add Learner to %1$s', 'sensei-lms' ), esc_html( $post_type ) );
-			?></h2>
+				?>
+			</h2>
 			<div class="inside">
 				<form name="add_learner" action="" method="post">
 					<p>

@@ -522,6 +522,7 @@ class Sensei_Learner_Management {
 
 		$failed_redirect_url = add_query_arg( [ 'message' => 'error_' . $learner_action ], $redirect_url );
 
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Don't touch the nonce.
 		if ( empty( $_GET['_wpnonce'] ) || ! wp_verify_nonce( wp_unslash( $_GET['_wpnonce'] ), 'sensei-learner-action-' . $learner_action ) ) {
 			wp_safe_redirect( esc_url_raw( $failed_redirect_url ) );
 			exit;

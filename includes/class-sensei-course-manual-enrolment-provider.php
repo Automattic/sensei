@@ -144,7 +144,8 @@ class Sensei_Course_Manual_Enrolment_Provider implements Sensei_Course_Enrolment
 	/**
 	 * Migrates legacy enrolment data.
 	 *
-	 * @return bool
+	 * @param int $user_id   User ID.
+	 * @param int $course_id Course post ID.
 	 */
 	private function migrate_legacy_enrolment( $user_id, $course_id ) {
 		$course_progress_comment_id = Sensei_Utils::get_course_progress_comment_id( $course_id, $user_id );
@@ -177,6 +178,9 @@ class Sensei_Course_Manual_Enrolment_Provider implements Sensei_Course_Enrolment
 
 	/**
 	 * Check if a user's enrolment status needs to be migrated from pre-3.0.0 enrolment.
+	 *
+	 * @param int $user_id   User ID.
+	 * @param int $course_id Course post ID.
 	 *
 	 * @return bool
 	 */
