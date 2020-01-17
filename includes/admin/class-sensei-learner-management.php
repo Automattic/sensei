@@ -505,11 +505,9 @@ class Sensei_Learner_Management {
 
 	/**
 	 * Handles learner action.
-	 *
-	 * @param string $action Action to perform.
 	 */
 	public function handle_learner_actions() {
-		if ( ! isset( $_GET['learner_action'] ) ){
+		if ( ! isset( $_GET['learner_action'] ) ) {
 			return;
 		}
 
@@ -728,7 +726,7 @@ class Sensei_Learner_Management {
 			$message = sanitize_text_field( wp_unslash( $_GET['message'] ) );
 			$notice  = false;
 
-			switch( $message ) {
+			switch ( $message ) {
 				case 'error':
 				case 'error_enrol':
 					$notice = [
