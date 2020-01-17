@@ -1774,7 +1774,7 @@ class Sensei_Frontend {
 			$redirect = esc_url( home_url( $wp->request ) );
 		}
 
-		wp_redirect( apply_filters( 'sensei_registration_redirect', $redirect ) );
+		wp_safe_redirect( apply_filters( 'sensei_registration_redirect', $redirect ) );
 		exit;
 
 	} // end  sensei_process_registration)()
