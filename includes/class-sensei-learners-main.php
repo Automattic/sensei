@@ -813,21 +813,18 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		}
 		?>
 		<div class="postbox">
-			<h3><span>
-				<?php
+			<h2 class="postbox-title"><?php
 				// translators: Placeholder is the post type.
 				printf( esc_html__( 'Add Learner to %1$s', 'sensei-lms' ), esc_html( $post_type ) );
-				?>
-			</span></h3>
+			?></h2>
 			<div class="inside">
 				<form name="add_learner" action="" method="post">
 					<p>
 						<select name="add_user_id" id="add_learner_search" multiple="multiple" style="min-width:300px;">
-							<option value="0" selected="selected"><?php esc_html_e( 'Find learner', 'sensei-lms' ); ?></option>
 						</select>
-						<?php if ( 'lesson' == $form_post_type ) { ?>
+						<?php if ( 'lesson' === $form_post_type ) { ?>
 							<label for="add_complete_lesson"><input type="checkbox" id="add_complete_lesson" name="add_complete_lesson"  value="yes" /> <?php esc_html_e( 'Complete lesson for learner', 'sensei-lms' ); ?></label>
-						<?php } elseif ( 'course' == $form_post_type ) { ?>
+						<?php } elseif ( 'course' === $form_post_type ) { ?>
 							<label for="add_complete_course"><input type="checkbox" id="add_complete_course" name="add_complete_course"  value="yes" /> <?php esc_html_e( 'Complete course for learner', 'sensei-lms' ); ?></label>
 						<?php } ?>
 						<br/>
@@ -839,7 +836,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 						submit_button( sprintf( __( 'Add to \'%1$s\'', 'sensei-lms' ), $post_title ), 'primary', 'add_learner_submit', false, array() );
 						?>
 					</p>
-					<?php if ( 'lesson' == $form_post_type ) { ?>
+					<?php if ( 'lesson' === $form_post_type ) { ?>
 						<p><span class="description">
 							<?php
 							// translators: Placeholder is the course title.
