@@ -94,12 +94,31 @@ jQuery(document).ready( function( $ ) {
 		);
 	});
 
-	jQuery( '.remove-learner, .reset-learner' ).click( function( event ) {
+	jQuery( '.learner-action' ).click( function( event ) {
+		var current_action  = jQuery( this ).attr( 'data-action' );
+		var action_messages = {
+			withdraw: window.woo_learners_general_data.remove_from_course_confirm,
+			enrol:    window.woo_learners_general_data.enrol_in_course_confirm
+		};
+
+		if ( typeof action_messages[current_action] === 'undefined' ) {
+			return;
+		}
+
+		var confirm_message = action_messages[current_action];
+
+		if ( ! confirm( confirm_message ) ) {
+			event.preventDefault();
+		}
+	});
+
+	jQuery( '.learner-async-action' ).click( function( event ) {
 		var dataToPost = '';
 
 		var user_id = jQuery( this ).attr( 'data-user-id' );
 		var post_id = jQuery( this ).attr( 'data-post-id' );
 		var post_type = jQuery( this ).attr( 'data-post-type' );
+		var current_action = jQuery( this ).attr( 'data-action' );
 
 		var confirm_message = window.woo_learners_general_data.remove_generic_confirm;
 
@@ -108,18 +127,12 @@ jQuery(document).ready( function( $ ) {
 				lesson : window.woo_learners_general_data.reset_lesson_confirm,
 				course : window.woo_learners_general_data.reset_course_confirm,
 				action : 'reset_user_post'
-			},
-			remove: {
-				lesson : window.woo_learners_general_data.remove_from_lesson_confirm,
-				course : window.woo_learners_general_data.remove_from_course_confirm,
-				action : 'remove_user_from_post'
-			},
-			edit_date: {
-				action: 'edit_date_started'
 			}
 		};
 
-		var current_action = jQuery( event.target ).hasClass( 'remove-learner' ) ? 'remove' : 'reset';
+		if ( typeof actions[current_action] === 'undefined' ) {
+			return;
+		}
 
 		confirm_message = actions[current_action][post_type];
 
@@ -128,10 +141,6 @@ jQuery(document).ready( function( $ ) {
 		}
 
 		var table_row = jQuery( this ).closest( 'tr' );
-
-		if ( 'remove' === current_action ) {
-			table_row.fadeTo( 'fast', 0.33 );
-		}
 
 		if ( user_id && post_id && post_type ) {
 			dataToPost += 'user_id=' + user_id;
@@ -148,20 +157,15 @@ jQuery(document).ready( function( $ ) {
 				function( response ) {
 					if ( response ) {
 						switch ( current_action ) {
-						case 'remove':
-							table_row.remove();
-							break;
-
-						case 'reset':
-							table_row.find( '.graded' ).html( window.slgL10n.inprogress ).removeClass( 'graded' ).addClass( 'in-progress' );
-							break;
+							case 'reset':
+								table_row.find( '.graded' ).html( window.slgL10n.inprogress ).removeClass( 'graded' ).addClass( 'in-progress' );
+								break;
 						}
 					}
 				}
 			);
 		}
 	});
-
 
 	jQuery('select#add_learner_search').select2({
 		minimumInputLength: 3,

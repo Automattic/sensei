@@ -61,7 +61,7 @@ class Sensei_Course_Manual_Enrolment_Provider implements Sensei_Course_Enrolment
 		}
 
 		$term             = Sensei_Learner::get_learner_term( $user_id );
-		$enrolment_status = get_term_meta( $term->ID, $this->get_enrolment_status_meta_key( $course_id ) );
+		$enrolment_status = get_term_meta( $term->term_id, $this->get_enrolment_status_meta_key( $course_id ) );
 
 		return ! empty( $enrolment_status );
 	}
@@ -71,12 +71,19 @@ class Sensei_Course_Manual_Enrolment_Provider implements Sensei_Course_Enrolment
 	 *
 	 * @param int $user_id   User ID.
 	 * @param int $course_id Course post ID.
+	 *
+	 * @return bool
 	 */
 	public function enrol_student( $user_id, $course_id ) {
-		$this->add_student_enrolment( $user_id, $course_id );
+		// Check if they are already manually enrolled.
+		if ( $this->is_enrolled( $user_id, $course_id ) ) {
+			return true;
+		}
 
-		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
-		$course_enrolment->trigger_course_enrolment_check( $user_id );
+		$this->add_student_enrolment( $user_id, $course_id );
+		Sensei_Course_Enrolment_Manager::trigger_course_enrolment_check( $user_id, $course_id );
+
+		return $this->is_enrolled( $user_id, $course_id );
 	}
 
 	/**
@@ -84,12 +91,19 @@ class Sensei_Course_Manual_Enrolment_Provider implements Sensei_Course_Enrolment
 	 *
 	 * @param int $user_id   User ID.
 	 * @param int $course_id Course post ID.
+	 *
+	 * @return bool
 	 */
 	public function withdraw_student( $user_id, $course_id ) {
-		$this->remove_student_enrolment( $user_id, $course_id );
+		// Check if they aren't manually enrolled.
+		if ( ! $this->is_enrolled( $user_id, $course_id ) ) {
+			return true;
+		}
 
-		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
-		$course_enrolment->trigger_course_enrolment_check( $user_id );
+		$this->remove_student_enrolment( $user_id, $course_id );
+		Sensei_Course_Enrolment_Manager::trigger_course_enrolment_check( $user_id, $course_id );
+
+		return ! $this->is_enrolled( $user_id, $course_id );
 	}
 
 	/**
@@ -100,7 +114,9 @@ class Sensei_Course_Manual_Enrolment_Provider implements Sensei_Course_Enrolment
 	 */
 	private function add_student_enrolment( $user_id, $course_id ) {
 		$term = Sensei_Learner::get_learner_term( $user_id );
-		update_term_meta( $term->ID, $this->get_enrolment_status_meta_key( $course_id ), time() );
+		update_term_meta( $term->term_id, $this->get_enrolment_status_meta_key( $course_id ), time() );
+
+		Sensei_Utils::start_user_on_course( $user_id, $course_id );
 	}
 
 	/**
@@ -111,7 +127,7 @@ class Sensei_Course_Manual_Enrolment_Provider implements Sensei_Course_Enrolment
 	 */
 	private function remove_student_enrolment( $user_id, $course_id ) {
 		$term = Sensei_Learner::get_learner_term( $user_id );
-		delete_term_meta( $term->ID, $this->get_enrolment_status_meta_key( $course_id ) );
+		delete_term_meta( $term->term_id, $this->get_enrolment_status_meta_key( $course_id ) );
 	}
 
 	/**
@@ -182,7 +198,7 @@ class Sensei_Course_Manual_Enrolment_Provider implements Sensei_Course_Enrolment
 	 */
 	private function has_migrated_legacy_enrolment( $user_id, $course_id ) {
 		$term          = Sensei_Learner::get_learner_term( $user_id );
-		$migration_log = get_term_meta( $term->ID, $this->get_legacy_migration_status_meta_key( $course_id ), true );
+		$migration_log = get_term_meta( $term->term_id, $this->get_legacy_migration_status_meta_key( $course_id ), true );
 
 		return ! empty( $migration_log );
 	}
@@ -196,7 +212,7 @@ class Sensei_Course_Manual_Enrolment_Provider implements Sensei_Course_Enrolment
 	 */
 	private function set_migrated_legacy_enrolment_status( $user_id, $course_id, $migration_log ) {
 		$term = Sensei_Learner::get_learner_term( $user_id );
-		update_term_meta( $term->ID, $this->get_legacy_migration_status_meta_key( $course_id ), wp_json_encode( $migration_log ) );
+		update_term_meta( $term->term_id, $this->get_legacy_migration_status_meta_key( $course_id ), wp_json_encode( $migration_log ) );
 	}
 
 	/**

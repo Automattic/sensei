@@ -320,9 +320,46 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				$edit_start_date_form = $this->get_edit_start_date_form( $user_activity, $post_id, $post_type, $object_type );
 
 				$actions = [];
-				// translators: Placeholder is object type (course or lesson).
-				$actions[] = '<a class="remove-learner button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '">' . sprintf( esc_html__( 'Remove from %1$s', 'sensei-lms' ), esc_html( $object_type ) ) . '</a>';
-				$actions[] = '<a class="reset-learner button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '">' . sprintf( esc_html__( 'Reset progress', 'sensei-lms' ), esc_html( $object_type ) ) . '</a>';
+
+				$manual_enrolment_provider = Sensei_Course_Enrolment_Manager::get_enrolment_provider_by_id( Sensei_Course_Manual_Enrolment_Provider::get_id() );
+
+				if ( 'course' === $post_type && $manual_enrolment_provider instanceof Sensei_Course_Manual_Enrolment_Provider ) {
+					if ( $manual_enrolment_provider->is_enrolled( $user_activity->user_id, $post_id ) ) {
+						$withdraw_action_url = wp_nonce_url(
+							add_query_arg(
+								array(
+									'page'           => 'sensei_learners',
+									'view'           => 'learners',
+									'learner_action' => 'withdraw',
+									'course_id'      => $this->course_id,
+									'user_id'        => $user_activity->user_id,
+								),
+								admin_url( 'admin.php' )
+							),
+							'sensei-learner-action-withdraw'
+						);
+
+						$actions[] = '<a class="learner-action button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="withdraw" href="' . esc_url( $withdraw_action_url ) . '">' . esc_html__( 'Remove manual enrollment', 'sensei-lms' ) . '</a>';
+					} elseif( ! $is_user_enrolled ) {
+						$enrol_action_url = wp_nonce_url(
+							add_query_arg(
+								array(
+									'page'           => 'sensei_learners',
+									'view'           => 'learners',
+									'learner_action' => 'enrol',
+									'course_id'      => $this->course_id,
+									'user_id'        => $user_activity->user_id,
+								),
+								admin_url( 'admin.php' )
+							),
+							'sensei-learner-action-enrol'
+						);
+
+						$actions[] = '<a class="learner-action button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="enrol" href="' . esc_url( $enrol_action_url ) . '">' . esc_html__( 'Manually enroll student', 'sensei-lms' ) . '</a>';
+					}
+				}
+
+				$actions[] = '<a class="learner-async-action button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="reset" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '">' . sprintf( esc_html__( 'Reset progress', 'sensei-lms' ), esc_html( $object_type ) ) . '</a>';
 				if ( $edit_start_date_form ) {
 					$actions[] = $edit_start_date_form;
 				}
@@ -366,6 +403,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 							'data-post-id'    => array(),
 							'data-post-type'  => array(),
 							'data-user-id'    => array(),
+							'data-action'     => array(),
 						),
 						// Explicitly allow form tag for WP.com.
 						'form'  => array(
@@ -820,7 +858,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 			<div class="inside">
 				<form name="add_learner" action="" method="post">
 					<p>
-						<select name="add_user_id" id="add_learner_search" multiple="multiple" style="min-width:300px;">
+						<select name="add_user_id[]" id="add_learner_search" multiple="multiple" style="min-width:300px;">
 						</select>
 						<?php if ( 'lesson' === $form_post_type ) { ?>
 							<label for="add_complete_lesson"><input type="checkbox" id="add_complete_lesson" name="add_complete_lesson"  value="yes" /> <?php esc_html_e( 'Complete lesson for learner', 'sensei-lms' ); ?></label>
