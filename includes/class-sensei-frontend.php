@@ -1768,8 +1768,8 @@ class Sensei_Frontend {
 
 		// Redirect.
 		global $wp;
-		if ( wp_get_referer() ) {
-			$redirect = esc_url( wp_get_referer() );
+		if ( ! empty( $new_user_http_referer ) ) {
+			$redirect = esc_url( $new_user_http_referer );
 		} else {
 			$redirect = esc_url( home_url( $wp->request ) );
 		}
