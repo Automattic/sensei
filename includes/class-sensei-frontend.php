@@ -1284,6 +1284,8 @@ class Sensei_Frontend {
 						<!-- Spam Trap -->
 						<div style="left:-999em; position:absolute;"><label for="trap"><?php esc_html_e( 'Anti-spam', 'sensei-lms' ); ?></label><input type="text" name="email_2" id="trap" tabindex="-1" /></div>
 
+						<input type="hidden" id="sensei_reg_http_referer" name="sensei_reg_http_referer" value="<?php echo wp_get_referer() ? esc_attr( wp_get_referer() ) : ''; ?>">
+
 						<?php do_action( 'sensei_register_form_fields' ); ?>
 						<?php do_action( 'register_form' ); ?>
 
