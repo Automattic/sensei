@@ -99,11 +99,6 @@ class Sensei_Course_Enrolment {
 			$enrolment_check_results = $this->query_enrolment_providers( $user_id );
 			$is_enrolled             = $enrolment_check_results->is_enrolment_provided();
 
-			// @todo Method will always be bool when we add manual enrolment provider. Remove this and the `get_legacy_enrolment_status` temporary method.
-			if ( ! is_bool( $is_enrolled ) ) {
-				$is_enrolled = $this->get_legacy_enrolment_status( $user_id );
-			}
-
 			$this->save_enrolment( $user_id, $is_enrolled );
 		} catch ( Exception $e ) {
 			$is_enrolled = false;
@@ -190,20 +185,6 @@ class Sensei_Course_Enrolment {
 		update_term_meta( $term->term_id, $this->get_course_results_meta_key(), wp_slash( wp_json_encode( $enrolment_results ) ) );
 
 		return $enrolment_results;
-	}
-
-	/**
-	 * Provides the legacy enrolment status.
-	 *
-	 * @todo This is just a temporary method until we add a manual enrolment provider.
-	 *
-	 * @param int $user_id User ID.
-	 *
-	 * @return bool
-	 */
-	private function get_legacy_enrolment_status( $user_id ) {
-		// No enrolment provider has explicitly provided enrolment to the user. Use Sensei's default.
-		return Sensei_Utils::has_started_course( $this->course_id, $user_id );
 	}
 
 	/**

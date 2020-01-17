@@ -127,26 +127,6 @@ class Sensei_Course_Enrolment_Manager {
 	}
 
 	/**
-	 * Check if we should use the legacy enrolment check. Legacy check uses course
-	 * progress to determine enrolment.
-	 *
-	 * @return bool
-	 */
-	public static function use_legacy_enrolment_check() {
-		$use_legacy_enrolment_check = false;
-
-		// Check if WCPC is around but not offering enrolment providers (an old version).
-		if (
-			class_exists( '\Sensei_WC_Paid_Courses\Sensei_WC_Paid_Courses' ) &&
-			! class_exists( '\Sensei_WC_Paid_Courses\Course_Enrolment_Providers' )
-		) {
-			$use_legacy_enrolment_check = true;
-		}
-
-		return apply_filters( 'sensei_legacy_enrolment_check', $use_legacy_enrolment_check );
-	}
-
-	/**
 	 * Get an array of all the instantiated course enrolment providers.
 	 *
 	 * @return Sensei_Course_Enrolment_Provider_Interface[]
