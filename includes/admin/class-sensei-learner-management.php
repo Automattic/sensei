@@ -169,7 +169,7 @@ class Sensei_Learner_Management {
 		$data = array(
 			'remove_generic_confirm'     => __( 'Are you sure you want to remove this user?', 'sensei-lms' ),
 			'remove_from_lesson_confirm' => __( 'Are you sure you want to remove the user from this lesson?', 'sensei-lms' ),
-			'remove_from_course_confirm' => __( 'Are you sure you want to remove the user from this course?', 'sensei-lms' ),
+			'remove_from_course_confirm' => __( 'Are you sure you want to remove this user\'s manual enrollment in the course?', 'sensei-lms' ),
 			'enrol_in_course_confirm'    => __( 'Are you sure you want to enroll the user in this course?', 'sensei-lms' ),
 			'reset_lesson_confirm'       => __( 'Are you sure you want to reset the progress of this user for this lesson?', 'sensei-lms' ),
 			'reset_course_confirm'       => __( 'Are you sure you want to reset the progress of this user for this course?', 'sensei-lms' ),
