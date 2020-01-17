@@ -27,6 +27,8 @@ trait Sensei_Course_Enrolment_Manual_Test_Helpers {
 	 */
 	private function manuallyEnrolStudentInCourse( $user_id, $course_id ) {
 		/**
+		 * Manual provider.
+		 *
 		 * @var \Sensei_Course_Manual_Enrolment_Provider $manual_provider
 		 */
 		$manual_provider = \Sensei_Course_Enrolment_Manager::get_enrolment_provider_by_id( \Sensei_Course_Manual_Enrolment_Provider::get_id() );
