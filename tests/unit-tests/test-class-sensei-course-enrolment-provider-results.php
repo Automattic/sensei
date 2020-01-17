@@ -84,8 +84,6 @@ class Sensei_Course_Enrolment_Provider_Results_Test extends WP_UnitTestCase {
 	 * Tests for negative enrolment when there are no providers handling the course.
 	 */
 	public function testIsEnrolmentProvidedNoProviders() {
-		$this->markTestSkipped( 'Until we implement manual enrolment provider, this should be skipped to allow for the temporary null behavior' );
-
 		$results = new Sensei_Course_Enrolment_Provider_Results(
 			[],
 			'#version#'
