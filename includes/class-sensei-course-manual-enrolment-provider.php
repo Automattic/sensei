@@ -116,7 +116,7 @@ class Sensei_Course_Manual_Enrolment_Provider implements Sensei_Course_Enrolment
 		$term = Sensei_Learner::get_learner_term( $user_id );
 		update_term_meta( $term->term_id, $this->get_enrolment_status_meta_key( $course_id ), time() );
 
-		Sensei_Utils::start_user_on_course( $user_id, $course_id );
+		Sensei_Utils::user_start_course( $user_id, $course_id );
 	}
 
 	/**

@@ -138,7 +138,7 @@ class Sensei_Course_Enrolment {
 		}
 
 		// If they are enrolled, make sure they have started the course.
-		Sensei_Utils::start_user_on_course( $user_id, $this->course_id );
+		Sensei_Utils::user_start_course( $user_id, $this->course_id );
 
 		$result = wp_set_post_terms( $this->course_id, [ intval( $term->term_id ) ], Sensei_PostTypes::LEARNER_TAXONOMY_NAME, true );
 
