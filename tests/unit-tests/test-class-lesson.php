@@ -1,6 +1,8 @@
 <?php
 
 class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
+	use Sensei_Course_Enrolment_Manual_Test_Helpers;
+
 	/**
 	 * @var Sensei_Factory
 	 */
@@ -303,8 +305,9 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 				'question_count' => 1,
 			)
 		);
-		$lesson_id      = array_pop( $course_lessons['lesson_ids'] );
-		Sensei_Utils::start_user_on_course( $user_id, $course_lessons['course_id'] );
+
+		$lesson_id = array_pop( $course_lessons['lesson_ids'] );
+		$this->manuallyEnrolStudentInCourse( $user_id, $course_lessons['course_id'] );
 
 		Sensei_Lesson::maybe_start_lesson( $lesson_id, $user_id );
 		$this->assertTrue( false !== Sensei_Utils::user_started_lesson( $lesson_id, $user_id ) );
