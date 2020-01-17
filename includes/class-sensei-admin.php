@@ -217,7 +217,7 @@ class Sensei_Admin {
 				<p><?php echo wp_kses_post( __( '<strong>Congratulations!</strong> &#8211; Sensei LMS has been installed and set up.', 'sensei-lms' ) ); ?></p>
 				<p>
 					<a href="<?php echo esc_url( admin_url( 'post-new.php?post_type=course' ) ); ?>" class="button-primary">
-						<?php esc_html_e( 'Create Course', 'sensei-lms' ); ?>
+						<?php esc_html_e( 'Create a Course', 'sensei-lms' ); ?>
 					</a>
 				</p>
 			</div>
@@ -415,7 +415,7 @@ class Sensei_Admin {
 
 			<p>
 				<a href="<?php echo esc_url( admin_url( 'post-new.php?post_type=course' ) ); ?>" class="button-primary">
-					<?php esc_html_e( 'Create Course', 'sensei-lms' ); ?>
+					<?php esc_html_e( 'Create a Course', 'sensei-lms' ); ?>
 				</a>
 			</p>
 
