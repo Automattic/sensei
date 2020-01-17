@@ -147,7 +147,7 @@ class Sensei_Course_Manual_Enrolment_Provider implements Sensei_Course_Enrolment
 	 * @return bool
 	 */
 	private function migrate_legacy_enrolment( $user_id, $course_id ) {
-		$course_progress_comment_id = Sensei_Utils::get_course_progress_comment_id( $user_id, $course_id );
+		$course_progress_comment_id = Sensei_Utils::get_course_progress_comment_id( $course_id, $user_id );
 
 		$migration_log      = [];
 		$is_legacy_enrolled = ! empty( $course_progress_comment_id );
@@ -164,7 +164,7 @@ class Sensei_Course_Manual_Enrolment_Provider implements Sensei_Course_Enrolment
 		 * @param int  $user_id            User ID.
 		 * @param int  $course_id          Course post ID.
 		 */
-		$is_legacy_enrolled = apply_fitlers( 'sensei_is_legacy_enrolled', $is_legacy_enrolled, $user_id, $course_id );
+		$is_legacy_enrolled = apply_filters( 'sensei_is_legacy_enrolled', $is_legacy_enrolled, $user_id, $course_id );
 
 		$migration_log['is_enrolled'] = $is_legacy_enrolled;
 
@@ -181,7 +181,7 @@ class Sensei_Course_Manual_Enrolment_Provider implements Sensei_Course_Enrolment
 	 * @return bool
 	 */
 	private function needs_legacy_migration( $user_id, $course_id ) {
-		if ( ! get_option( 'sensei-enrolment-legacy' ) ) {
+		if ( ! get_option( 'sensei_enrolment_legacy' ) ) {
 			return false;
 		}
 
