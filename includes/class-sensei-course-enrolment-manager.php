@@ -111,7 +111,7 @@ class Sensei_Course_Enrolment_Manager {
 	 * @return string
 	 */
 	public static function get_site_salt() {
-		$enrolment_salt = \get_option( self::COURSE_ENROLMENT_SITE_SALT_OPTION );
+		$enrolment_salt = get_option( self::COURSE_ENROLMENT_SITE_SALT_OPTION );
 
 		if ( ! $enrolment_salt ) {
 			return self::reset_site_salt();
