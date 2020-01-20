@@ -128,7 +128,7 @@ class Sensei_Course_Enrolment_Manager {
 	public static function reset_site_salt() {
 		$new_salt = md5( uniqid() );
 
-		\update_option( self::COURSE_ENROLMENT_SITE_SALT_OPTION, $new_salt, true );
+		update_option( self::COURSE_ENROLMENT_SITE_SALT_OPTION, $new_salt, true );
 
 		return $new_salt;
 	}
