@@ -4325,9 +4325,9 @@ class Sensei_Lesson {
 			return;
 		}
 
-		$allow_comments     = Sensei()->settings->settings['lesson_comments'];
-		$has_access         = ! Sensei()->settings->get( 'access_permission' );
-		$is_preview         = Sensei_Utils::is_preview_lesson( $post->ID );
+		$allow_comments       = Sensei()->settings->settings['lesson_comments'];
+		$has_access           = ! Sensei()->settings->get( 'access_permission' );
+		$is_preview           = Sensei_Utils::is_preview_lesson( $post->ID );
 		$user_can_view_lesson = sensei_can_user_view_lesson();
 
 		$lesson_allow_comments = $allow_comments && ( $user_can_view_lesson || $has_access || $is_preview );
