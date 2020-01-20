@@ -120,7 +120,7 @@ class Sensei_Course_Manual_Enrolment_Provider implements Sensei_Course_Enrolment
 	}
 
 	/**
-	 * Manually unenrol a student in a course.
+	 * Manually withdraw a student in a course.
 	 *
 	 * @param int $user_id   User ID.
 	 * @param int $course_id Course post ID.
