@@ -1703,10 +1703,13 @@ class Sensei_Frontend {
 		}
 
 		// retreive form variables.
-		$new_user_name         = sanitize_user( $_POST['sensei_reg_username'] );
-		$new_user_email        = $_POST['sensei_reg_email'];
-		$new_user_password     = $_POST['sensei_reg_password'];
-		$new_user_http_referer = $_POST['sensei_reg_http_referer'];
+		$new_user_name     = sanitize_user( $_POST['sensei_reg_username'] );
+		$new_user_email    = $_POST['sensei_reg_email'];
+		$new_user_password = $_POST['sensei_reg_password'];
+
+		if ( isset( $_POST['sensei_reg_http_referer'] ) && '' !== $_POST['sensei_reg_http_referer'] ) {
+			$new_user_http_referer = esc_url_raw( wp_unslash( $_POST['sensei_reg_http_referer'] ) );
+		}
 
 		// Check the username.
 		$username_error_notice = '';
