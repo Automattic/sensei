@@ -504,7 +504,7 @@ class Sensei_Learner_Management {
 
 
 	/**
-	 * Handles learner action.
+	 * Handles learner actions (manually enrolling or withdrawing a student from a course).
 	 */
 	public function handle_learner_actions() {
 		if ( ! isset( $_GET['learner_action'] ) ) {
