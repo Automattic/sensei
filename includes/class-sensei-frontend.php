@@ -1387,11 +1387,14 @@ class Sensei_Frontend {
 			&& wp_verify_nonce( $_POST['woothemes_sensei_start_course_noonce'], 'woothemes_sensei_start_course_noonce' )
 			&& ! $is_user_taking_course ) {
 
-			// Start the course.
-			$activity_logged                   = Sensei_Utils::user_start_course( $current_user->ID, $post->ID );
+			// Manually enrol a student.
+			$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
+			$manual_enrolment  = $enrolment_manager->get_manual_enrolment_provider();
+			$student_enrolled  = $manual_enrolment && $manual_enrolment->enrol_student( $current_user->ID, $post->ID );
+
 			$this->data                        = new stdClass();
 			$this->data->is_user_taking_course = false;
-			if ( $activity_logged ) {
+			if ( $student_enrolled ) {
 				$this->data->is_user_taking_course = true;
 
 				// Refresh page to avoid re-posting.
