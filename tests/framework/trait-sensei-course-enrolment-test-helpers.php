@@ -27,7 +27,7 @@ require_once SENSEI_TEST_FRAMEWORK_DIR . '/enrolment-providers/class-sensei-test
 trait Sensei_Course_Enrolment_Test_Helpers {
 
 	/**
-	 * Resets the enrolment providers.
+	 * Resets the enrolment providers. Do not do this in production. This is just to reset state in tests.
 	 */
 	private static function resetEnrolmentProviders() {
 		remove_all_filters( 'sensei_course_enrolment_providers' );
@@ -133,7 +133,7 @@ trait Sensei_Course_Enrolment_Test_Helpers {
 	}
 
 	/**
-	 * Prepare the enrolment manager.
+	 * Prepare the enrolment manager. Do not do this in production. This is just to simulate what is done on `init`.
 	 */
 	private function prepareEnrolmentManager() {
 		Sensei_Course_Enrolment_Manager::instance()->collect_enrolment_providers();
