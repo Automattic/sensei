@@ -1,6 +1,10 @@
 <?php
-
-class Sensei_Class_Course_Enrolment_Provider_Results_Test extends WP_UnitTestCase {
+/**
+ * Tests for Sensei_Course_Enrolment_Provider_Results class.
+ *
+ * @group course-enrolment
+ */
+class Sensei_Course_Enrolment_Provider_Results_Test extends WP_UnitTestCase {
 
 	/**
 	 * Setup function.

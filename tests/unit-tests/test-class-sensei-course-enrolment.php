@@ -2,7 +2,12 @@
 
 require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-helpers.php';
 
-class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
+/**
+ * Tests for Sensei_Course_Enrolment class.
+ *
+ * @group course-enrolment
+ */
+class Sensei_Course_Enrolment_Test extends WP_UnitTestCase {
 	use Sensei_Course_Enrolment_Test_Helpers;
 
 	/**
@@ -48,6 +53,7 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 		$course_id  = $this->getSimpleCourse();
 		$student_id = $this->createStandardStudent();
 		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Always_Provides::class );
+		$this->prepareEnrolmentManager();
 
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 
@@ -61,6 +67,7 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 		$course_id  = $this->getSimpleCourse();
 		$student_id = $this->createStandardStudent();
 		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Never_Provides::class );
+		$this->prepareEnrolmentManager();
 
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 
@@ -89,6 +96,8 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 
 		// This provider provides enrolment for any student when a course with "dog" in the title is checked.
 		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Handles_Dog_Courses::class );
+		$this->prepareEnrolmentManager();
+
 		$course_enrolment_simple = Sensei_Course_Enrolment::get_course_instance( $course_id_simple );
 		$course_enrolment_dog    = Sensei_Course_Enrolment::get_course_instance( $course_id_dog );
 
@@ -104,6 +113,7 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 		$student_id = $this->createStandardStudent();
 		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Always_Provides::class );
 		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Never_Provides::class );
+		$this->prepareEnrolmentManager();
 
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 
@@ -116,8 +126,10 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 	public function testEnrolmentCheckPositivePrevailsSecond() {
 		$course_id  = $this->getSimpleCourse();
 		$student_id = $this->createStandardStudent();
+
 		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Never_Provides::class );
 		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Always_Provides::class );
+		$this->prepareEnrolmentManager();
 
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 
@@ -130,7 +142,9 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 	public function testEnrolmentCheckNoHandlingProviders() {
 		$course_id  = $this->getSimpleCourse();
 		$student_id = $this->createStandardStudent();
+
 		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Never_Handles::class );
+		$this->prepareEnrolmentManager();
 
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 
@@ -143,8 +157,10 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 	public function testEnrolmentCheckNonHandlingProvidersIgnored() {
 		$course_id  = $this->getSimpleCourse();
 		$student_id = $this->createStandardStudent();
+
 		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Never_Handles::class );
 		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Never_Provides::class );
+		$this->prepareEnrolmentManager();
 
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 
@@ -184,6 +200,7 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 		$student_id_dino     = $this->createDinosaurStudent();
 
 		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Provides_For_Dinosaurs::class );
+		$this->prepareEnrolmentManager();
 
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 
@@ -200,6 +217,7 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 		$student_id_okay  = $this->createStandardStudent();
 
 		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Denies_Crooks::class );
+		$this->prepareEnrolmentManager();
 
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 
@@ -215,6 +233,7 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 		$student_id = $this->createStandardStudent();
 
 		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Denies_Crooks::class );
+		$this->prepareEnrolmentManager();
 
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 
@@ -240,6 +259,7 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 		$student_id = $this->createStandardStudent();
 
 		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Always_Provides::class );
+		$this->prepareEnrolmentManager();
 
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 		$this->assertTrue( $course_enrolment->is_enrolled( $student_id ) );
@@ -258,6 +278,7 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 		$student_id = $this->createStandardStudent();
 
 		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Denies_Crooks::class );
+		$this->prepareEnrolmentManager();
 
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 		$this->assertTrue( $course_enrolment->is_enrolled( $student_id ) );
@@ -278,6 +299,7 @@ class Sensei_Class_Course_Enrolment_Test extends WP_UnitTestCase {
 	private function resetAndSetUpVersionedProvider( $bump_version ) {
 		self::resetEnrolmentProviders();
 		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Version_Morph::class );
+		$this->prepareEnrolmentManager();
 
 		if ( $bump_version ) {
 			Sensei_Test_Enrolment_Provider_Version_Morph::$version++;

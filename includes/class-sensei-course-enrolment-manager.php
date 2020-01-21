@@ -10,17 +10,80 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Handles the management of course enrolment.
+ * Singleton handling the management of enrolment for all courses.
  */
 class Sensei_Course_Enrolment_Manager {
 	const COURSE_ENROLMENT_SITE_SALT_OPTION = 'sensei_course_enrolment_site_salt';
+
+	/**
+	 * Instance of singleton.
+	 *
+	 * @var self
+	 */
+	private static $instance;
 
 	/**
 	 * All course enrolment providers.
 	 *
 	 * @var Sensei_Course_Enrolment_Provider_Interface[]
 	 */
-	private static $enrolment_providers;
+	private $enrolment_providers;
+
+
+	/**
+	 * Fetches an instance of the class.
+	 *
+	 * @return self
+	 */
+	public static function instance() {
+		if ( ! self::$instance ) {
+			self::$instance = new self();
+		}
+		return self::$instance;
+	}
+
+	/**
+	 * Sensei_Course_Enrolment_Manager constructor. Private so it can only be initialized internally.
+	 */
+	private function __construct() {}
+
+	/**
+	 * Sets the actions.
+	 */
+	public function init() {
+		add_action( 'init', [ $this, 'collect_enrolment_providers' ], 100 );
+	}
+
+	/**
+	 * Collects and initializes enrolment providers. Hooked late into `init`.
+	 *
+	 * Do not call outside of this class.
+	 *
+	 * @access private
+	 */
+	public function collect_enrolment_providers() {
+		if ( isset( $this->enrolment_providers ) ) {
+			return;
+		}
+
+		$this->enrolment_providers = [];
+
+		/**
+		 * Fetch all registered course enrolment providers.
+		 *
+		 * @param string[] $provider_classes List of enrolment providers classes.
+		 *
+		 * @since 3.0.0
+		 */
+		$provider_classes = apply_filters( 'sensei_course_enrolment_providers', [] );
+		foreach ( $provider_classes as $provider_class ) {
+			if ( ! class_exists( $provider_class ) || ! is_a( $provider_class, 'Sensei_Course_Enrolment_Provider_Interface', true ) ) {
+				continue;
+			}
+
+			$this->enrolment_providers[ $provider_class::get_id() ] = new $provider_class();
+		}
+	}
 
 	/**
 	 * Gets the descriptive name of the provider by ID.
@@ -29,8 +92,8 @@ class Sensei_Course_Enrolment_Manager {
 	 *
 	 * @return string|false
 	 */
-	public static function get_enrolment_provider_name_by_id( $provider_id ) {
-		$provider = self::get_enrolment_provider_by_id( $provider_id );
+	public function get_enrolment_provider_name_by_id( $provider_id ) {
+		$provider = $this->get_enrolment_provider_by_id( $provider_id );
 		if ( ! $provider ) {
 			return false;
 		}
@@ -47,8 +110,8 @@ class Sensei_Course_Enrolment_Manager {
 	 *
 	 * @return Sensei_Course_Enrolment_Provider_Interface|false
 	 */
-	public static function get_enrolment_provider_by_id( $provider_id ) {
-		$all_providers = self::get_all_enrolment_providers();
+	public function get_enrolment_provider_by_id( $provider_id ) {
+		$all_providers = $this->get_all_enrolment_providers();
 		if ( ! isset( $all_providers[ $provider_id ] ) ) {
 			return false;
 		}
@@ -80,29 +143,14 @@ class Sensei_Course_Enrolment_Manager {
 	 * Get an array of all the instantiated course enrolment providers.
 	 *
 	 * @return Sensei_Course_Enrolment_Provider_Interface[]
+	 * @throws Exception When there was an attempt to access enrolment providers before collected in init:100.
 	 */
-	public static function get_all_enrolment_providers() {
-		if ( ! isset( self::$enrolment_providers ) ) {
-			self::$enrolment_providers = [];
-
-			/**
-			 * Fetch all registered course enrolment providers.
-			 *
-			 * @param string[] $provider_classes List of enrolment providers classes.
-			 *
-			 * @since 3.0.0
-			 */
-			$provider_classes = apply_filters( 'sensei_course_enrolment_providers', [] );
-			foreach ( $provider_classes as $provider_class ) {
-				if ( ! class_exists( $provider_class ) || ! is_a( $provider_class, 'Sensei_Course_Enrolment_Provider_Interface', true ) ) {
-					continue;
-				}
-
-				self::$enrolment_providers[ $provider_class::get_id() ] = new $provider_class();
-			}
+	public function get_all_enrolment_providers() {
+		if ( ! isset( $this->enrolment_providers ) ) {
+			throw new Exception( 'Enrolment providers were asked for before they were collected late in `init`' );
 		}
 
-		return self::$enrolment_providers;
+		return $this->enrolment_providers;
 	}
 
 	/**
@@ -136,7 +184,7 @@ class Sensei_Course_Enrolment_Manager {
 	/**
 	 * Trigger course enrolment check when enrolment might have changed.
 	 *
-	 * @param int $user_id User ID.
+	 * @param int $user_id   User ID.
 	 * @param int $course_id Course post ID.
 	 */
 	public static function trigger_course_enrolment_check( $user_id, $course_id ) {

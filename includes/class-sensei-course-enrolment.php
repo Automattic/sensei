@@ -224,7 +224,10 @@ class Sensei_Course_Enrolment {
 		if ( ! isset( $this->course_enrolment_providers ) ) {
 			$this->course_enrolment_providers = [];
 
-			foreach ( Sensei_Course_Enrolment_Manager::get_all_enrolment_providers() as $id => $enrolment_provider ) {
+			$enrolment_manager   = Sensei_Course_Enrolment_Manager::instance();
+			$enrolment_providers = $enrolment_manager->get_all_enrolment_providers();
+
+			foreach ( $enrolment_providers as $id => $enrolment_provider ) {
 				if ( $enrolment_provider->handles_enrolment( $this->course_id ) ) {
 					$this->course_enrolment_providers[ $id ] = $enrolment_provider;
 				}

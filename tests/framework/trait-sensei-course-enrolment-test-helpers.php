@@ -34,7 +34,7 @@ trait Sensei_Course_Enrolment_Test_Helpers {
 
 		$enrolment_providers = new ReflectionProperty( Sensei_Course_Enrolment_Manager::class, 'enrolment_providers' );
 		$enrolment_providers->setAccessible( true );
-		$enrolment_providers->setValue( null );
+		$enrolment_providers->setValue( Sensei_Course_Enrolment_Manager::instance(), null );
 
 		$course_enrolment_instances = new ReflectionProperty( Sensei_Course_Enrolment::class, 'instances' );
 		$course_enrolment_instances->setAccessible( true );
@@ -132,4 +132,10 @@ trait Sensei_Course_Enrolment_Test_Helpers {
 		);
 	}
 
+	/**
+	 * Prepare the enrolment manager.
+	 */
+	private function prepareEnrolmentManager() {
+		Sensei_Course_Enrolment_Manager::instance()->collect_enrolment_providers();
+	}
 }
