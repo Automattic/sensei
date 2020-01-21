@@ -141,6 +141,16 @@ class Sensei_Course_Enrolment_Manager {
 	}
 
 	/**
+	 * Get the manual enrolment provider.
+	 *
+	 * @return false|Sensei_Course_Manual_Enrolment_Provider
+	 * @throws Exception When there was an attempt to access the manual enrolment providers before providers are collected in init:100.
+	 */
+	public function get_manual_enrolment_provider() {
+		return $this->get_enrolment_provider_by_id( Sensei_Course_Manual_Enrolment_Provider::get_id() );
+	}
+
+	/**
 	 * Gets the site course enrolment salt that can be used to invalidate all enrolments.
 	 *
 	 * @return string
