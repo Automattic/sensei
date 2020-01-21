@@ -278,9 +278,9 @@ class Sensei_Lesson {
 		// Get existing post meta
 		$select_lesson_prerequisite = get_post_meta( $post->ID, '_lesson_prerequisite', true );
 		// Get current Course.
-		$current_course = get_post_meta( $post->ID, '_lesson_course', true );
+		$current_lesson_course = get_post_meta( $post->ID, '_lesson_course', true );
 
-		if ( $current_course ) {
+		if ( $current_lesson_course ) {
 			// Get Lesson Posts from current Course.
 			$post_args = array(
 				'post_type'        => 'lesson',
@@ -293,7 +293,7 @@ class Sensei_Lesson {
 				'meta_query'       => array(
 					array(
 						'key'     => '_lesson_course',
-						'value'   => $current_course,
+						'value'   => $current_lesson_course,
 						'compare' => '=',
 					),
 				),
