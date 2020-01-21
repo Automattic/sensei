@@ -277,6 +277,9 @@ class Sensei_Lesson {
 		global $post;
 		// Get existing post meta
 		$select_lesson_prerequisite = get_post_meta( $post->ID, '_lesson_prerequisite', true );
+		// Get current Course.
+		$current_course = get_post_meta( $post->ID, '_lesson_course', true );
+
 		// Get the Lesson Posts
 		$post_args   = array(
 			'post_type'        => 'lesson',
