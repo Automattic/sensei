@@ -91,6 +91,7 @@ class Sensei_Course_Enrolment_Manager {
 	 * @param string $provider_id Unique identifier of the enrolment provider.
 	 *
 	 * @return string|false
+	 * @throws Exception When there was an attempt to access enrolment providers before collected in init:100.
 	 */
 	public function get_enrolment_provider_name_by_id( $provider_id ) {
 		$provider = $this->get_enrolment_provider_by_id( $provider_id );
@@ -109,6 +110,7 @@ class Sensei_Course_Enrolment_Manager {
 	 * @param string $provider_id Unique identifier of the enrolment provider.
 	 *
 	 * @return Sensei_Course_Enrolment_Provider_Interface|false
+	 * @throws Exception When there was an attempt to access enrolment providers before collected in init:100.
 	 */
 	public function get_enrolment_provider_by_id( $provider_id ) {
 		$all_providers = $this->get_all_enrolment_providers();
