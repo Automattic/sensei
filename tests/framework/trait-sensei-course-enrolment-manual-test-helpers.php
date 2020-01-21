@@ -35,7 +35,7 @@ trait Sensei_Course_Enrolment_Manual_Test_Helpers {
 
 	/**
 	 * Adds enrolment for student but does not trigger recaculation.
-	 * Simulates `\Sensei_Course_Manual_Enrolment_Provider::add_student_enrolment`.
+	 * Simulates `Sensei_Course_Manual_Enrolment_Provider::add_student_enrolment`.
 	 *
 	 * @param int $user_id   User ID.
 	 * @param int $course_id Course post ID.
@@ -49,7 +49,7 @@ trait Sensei_Course_Enrolment_Manual_Test_Helpers {
 
 	/**
 	 * Manually withdraw a student in a course.
-	 * Simulates `\Sensei_Course_Manual_Enrolment_Provider::remove_student_enrolment`.
+	 * Simulates `Sensei_Course_Manual_Enrolment_Provider::remove_student_enrolment`.
 	 *
 	 * @param int $user_id   User ID.
 	 * @param int $course_id Course post ID.
@@ -94,7 +94,7 @@ trait Sensei_Course_Enrolment_Manual_Test_Helpers {
 	 * @return false|Sensei_Course_Manual_Enrolment_Provider
 	 */
 	private function getManualEnrolmentProvider() {
-		return \Sensei_Course_Enrolment_Manager::get_enrolment_provider_by_id( \Sensei_Course_Manual_Enrolment_Provider::get_id() );
+		return Sensei_Course_Enrolment_Manager::instance()->get_enrolment_provider_by_id( Sensei_Course_Manual_Enrolment_Provider::get_id() );
 	}
 
 	/**
@@ -125,5 +125,16 @@ trait Sensei_Course_Enrolment_Manual_Test_Helpers {
 		$course_enrolment_instances = new ReflectionProperty( Sensei_Course_Enrolment::class, 'instances' );
 		$course_enrolment_instances->setAccessible( true );
 		$course_enrolment_instances->setValue( [] );
+	}
+
+	/**
+	 * Resets the course enrolment manager. Do not do this in production. This is just to reset state in tests.
+	 */
+	private static function resetCourseEnrolmentManager() {
+		$enrolment_providers = new ReflectionProperty( Sensei_Course_Enrolment_Manager::class, 'enrolment_providers' );
+		$enrolment_providers->setAccessible( true );
+		$enrolment_providers->setValue( Sensei_Course_Enrolment_Manager::instance(), null );
+
+		Sensei_Course_Enrolment_Manager::instance()->collect_enrolment_providers();
 	}
 }

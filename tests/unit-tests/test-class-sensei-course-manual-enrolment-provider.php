@@ -1,6 +1,10 @@
 <?php
-
-class Sensei_Class_Course_Manual_Enrolment_Provider_Test extends WP_UnitTestCase {
+/**
+ * Tests for Sensei_Course_Manual_Enrolment_Provider class.
+ *
+ * @group course-enrolment
+ */
+class Sensei_Course_Manual_Enrolment_Provider_Test extends WP_UnitTestCase {
 	use Sensei_Course_Enrolment_Manual_Test_Helpers;
 
 	/**
@@ -14,6 +18,7 @@ class Sensei_Class_Course_Manual_Enrolment_Provider_Test extends WP_UnitTestCase
 		self::resetSideWideLegacyEnrolmentFlag();
 		self::resetCourseEnrolmentProviders();
 		self::resetLegacyFilters();
+		self::resetCourseEnrolmentManager();
 	}
 
 	/**
@@ -24,13 +29,14 @@ class Sensei_Class_Course_Manual_Enrolment_Provider_Test extends WP_UnitTestCase
 		self::resetSideWideLegacyEnrolmentFlag();
 		self::resetCourseEnrolmentProviders();
 		self::resetLegacyFilters();
+		self::resetCourseEnrolmentManager();
 	}
 
 	/**
 	 * Ensures the manual provider is registered.
 	 */
 	public function testProviderIsRegistered() {
-		$providers = Sensei_Course_Enrolment_Manager::get_all_enrolment_providers();
+		$providers = Sensei_Course_Enrolment_Manager::instance()->get_all_enrolment_providers();
 
 		$this->assertTrue( isset( $providers[ Sensei_Course_Manual_Enrolment_Provider::get_id() ] ), '`manual` provider key should be set' );
 		$this->assertTrue( $providers[ Sensei_Course_Manual_Enrolment_Provider::get_id() ] instanceof Sensei_Course_Manual_Enrolment_Provider, '`manual` provider should be of class Sensei_Course_Manual_Enrolment_Provider' );

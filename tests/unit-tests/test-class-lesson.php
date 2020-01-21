@@ -293,6 +293,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * @group course-enrolment
 	 * @covers Sensei_Lesson::maybe_start_lesson
 	 */
 	public function testMaybeStartLessonEnrolled() {

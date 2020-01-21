@@ -73,7 +73,7 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 	/**
 	 * Simple tests for getting a site's enrolment salt.
 	 *
-	 * @covers \Sensei_Course_Enrolment_Manager::get_site_salt
+	 * @covers Sensei_Course_Enrolment_Manager::get_site_salt
 	 */
 	public function testGetSiteEnrolmentSalt() {
 		$enrolment_salt = Sensei_Course_Enrolment_Manager::get_site_salt();
@@ -84,7 +84,7 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 	/**
 	 * Tests to make sure resetting the site enrolment salt produces a new salt.
 	 *
-	 * @covers \Sensei_Course_Enrolment_Manager::get_site_salt
+	 * @covers Sensei_Course_Enrolment_Manager::get_site_salt
 	 */
 	public function testResetSiteEnrolmentSalt() {
 		$enrolment_salt = Sensei_Course_Enrolment_Manager::get_site_salt();
