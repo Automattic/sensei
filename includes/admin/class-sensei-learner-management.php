@@ -548,7 +548,7 @@ class Sensei_Learner_Management {
 		}
 
 		$enrolment_manager         = Sensei_Course_Enrolment_Manager::instance();
-		$manual_enrolment_provider = $enrolment_manager->get_enrolment_provider_by_id( Sensei_Course_Manual_Enrolment_Provider::get_id() );
+		$manual_enrolment_provider = $enrolment_manager->get_manual_enrolment_provider();
 		if ( ! ( $manual_enrolment_provider instanceof Sensei_Course_Manual_Enrolment_Provider ) ) {
 			wp_safe_redirect( esc_url_raw( $failed_redirect_url ) );
 			exit;
@@ -659,7 +659,7 @@ class Sensei_Learner_Management {
 		$results   = [];
 
 		$enrolment_manager         = Sensei_Course_Enrolment_Manager::instance();
-		$manual_enrolment_provider = $enrolment_manager->get_enrolment_provider_by_id( Sensei_Course_Manual_Enrolment_Provider::get_id() );
+		$manual_enrolment_provider = $enrolment_manager->get_manual_enrolment_provider();
 
 		foreach ( $user_ids as $user_id ) {
 			$result = false;

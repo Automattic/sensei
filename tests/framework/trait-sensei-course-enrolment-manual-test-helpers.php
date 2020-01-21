@@ -94,7 +94,7 @@ trait Sensei_Course_Enrolment_Manual_Test_Helpers {
 	 * @return false|Sensei_Course_Manual_Enrolment_Provider
 	 */
 	private function getManualEnrolmentProvider() {
-		return Sensei_Course_Enrolment_Manager::instance()->get_enrolment_provider_by_id( Sensei_Course_Manual_Enrolment_Provider::get_id() );
+		return Sensei_Course_Enrolment_Manager::instance()->get_manual_enrolment_provider();
 	}
 
 	/**
