@@ -2245,7 +2245,7 @@ class Sensei_Lesson {
 				} // End If Statement
 				break;
 			case 'lesson-prerequisite':
-				$lesson_prerequisite_id = get_post_meta( $id, '_lesson_prerequisite', true );
+				$lesson_prerequisite_id   = get_post_meta( $id, '_lesson_prerequisite', true );
 				$lesson_prerequisite_post = get_post( $lesson_prerequisite_id );
 				if ( 0 < absint( $lesson_prerequisite_id ) ) {
 					// translators: Placeholder is the title of the prerequisite lesson.
