@@ -146,7 +146,6 @@ class Sensei_Course_Manual_Enrolment_Provider_Test extends WP_UnitTestCase {
 		$this->assertTrue( $is_enrolled, 'The user should have been enrolled due to legacy enrolment from course progress.' );
 	}
 
-
 	/**
 	 * Tests to make sure student is enrolled only when the term meta is set.
 	 */
