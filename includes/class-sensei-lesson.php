@@ -268,14 +268,14 @@ class Sensei_Lesson {
 	}
 
 	/**
-	 * lesson_prerequisite_meta_box_content function.
+	 * Lesson_prerequisite_meta_box_content function.
 	 *
 	 * @access public
 	 * @return void
 	 */
 	public function lesson_prerequisite_meta_box_content() {
 		global $post;
-		// Get existing post meta
+		// Get existing post meta.
 		$select_lesson_prerequisite = get_post_meta( $post->ID, '_lesson_prerequisite', true );
 		// Get current Course.
 		$current_lesson_course = get_post_meta( $post->ID, '_lesson_course', true );
@@ -311,7 +311,7 @@ class Sensei_Lesson {
 			);
 		}
 		$posts_array = get_posts( $post_args );
-		// Build the HTML to Output
+		// Build the HTML to Output.
 		$html  = '';
 		$html .= wp_nonce_field( 'sensei-save-post-meta', 'woo_' . $this->token . '_nonce', true, false );
 		if ( count( $posts_array ) > 0 ) {
