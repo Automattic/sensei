@@ -321,7 +321,8 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 				$actions = [];
 
-				$manual_enrolment_provider = Sensei_Course_Enrolment_Manager::get_enrolment_provider_by_id( Sensei_Course_Manual_Enrolment_Provider::get_id() );
+				$enrolment_manager         = Sensei_Course_Enrolment_Manager::instance();
+				$manual_enrolment_provider = $enrolment_manager->get_enrolment_provider_by_id( Sensei_Course_Manual_Enrolment_Provider::get_id() );
 
 				if ( 'course' === $post_type && $manual_enrolment_provider instanceof Sensei_Course_Manual_Enrolment_Provider ) {
 					if ( $manual_enrolment_provider->is_enrolled( $user_activity->user_id, $post_id ) ) {
