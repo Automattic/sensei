@@ -107,7 +107,7 @@ trait Sensei_Course_Enrolment_Manual_Test_Helpers {
 	/**
 	 * Deletes the side-wide flag for legacy enrolment migration.
 	 */
-	private static function resetSideWideLegacyEnrolmentFlag() {
+	private static function resetSiteWideLegacyEnrolmentFlag() {
 		delete_option( 'sensei_enrolment_legacy' );
 	}
 

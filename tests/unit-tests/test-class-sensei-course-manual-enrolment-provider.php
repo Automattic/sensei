@@ -15,7 +15,7 @@ class Sensei_Course_Manual_Enrolment_Provider_Test extends WP_UnitTestCase {
 
 		$this->factory = new Sensei_Factory();
 
-		self::resetSideWideLegacyEnrolmentFlag();
+		self::resetSiteWideLegacyEnrolmentFlag();
 		self::resetCourseEnrolmentProviders();
 		self::resetLegacyFilters();
 		self::resetCourseEnrolmentManager();
@@ -26,7 +26,7 @@ class Sensei_Course_Manual_Enrolment_Provider_Test extends WP_UnitTestCase {
 	 */
 	public static function tearDownAfterClass() {
 		parent::tearDownAfterClass();
-		self::resetSideWideLegacyEnrolmentFlag();
+		self::resetSiteWideLegacyEnrolmentFlag();
 		self::resetCourseEnrolmentProviders();
 		self::resetLegacyFilters();
 		self::resetCourseEnrolmentManager();
@@ -98,15 +98,13 @@ class Sensei_Course_Manual_Enrolment_Provider_Test extends WP_UnitTestCase {
 		$course_id  = $this->getSimpleCourseId();
 		$student_id = $this->getStandardStudentUserId();
 
-		// Start course progress for the student and simulate a legacy enrolment.
-		$this->legacyEnrolStudentStartCourseProgress( $student_id, $course_id );
 		$this->simulateUpgradingFromSensei2ToSensei3();
 
 		$this->assertNotEmpty( get_option( 'sensei_enrolment_legacy' ), 'The site-wide legacy enrolment flag should have been set.' );
 
 		$is_enrolled = $provider->is_enrolled( $student_id, $course_id );
 		$this->assertTrue( $this->wasLegacyEnrolmentChecked( $student_id, $course_id ), 'Legacy enrolment status for user should have been checked.' );
-		$this->assertTrue( $is_enrolled, 'The user should have been enrolled due to legacy enrolment.' );
+		$this->assertFalse( $is_enrolled, 'The user should not have been enrolled because they were not enrolled previously.' );
 	}
 
 	/**
