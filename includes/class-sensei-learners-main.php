@@ -356,7 +356,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 							'sensei-learner-action-enrol'
 						);
 
-						$actions[] = '<a class="learner-action button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="enrol" href="' . esc_url( $enrol_action_url ) . '">' . esc_html__( 'Manually enroll student', 'sensei-lms' ) . '</a>';
+						$actions[] = '<a class="learner-action button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="enrol" href="' . esc_url( $enrol_action_url ) . '">' . esc_html__( 'Manually enroll learner', 'sensei-lms' ) . '</a>';
 					}
 				}
 

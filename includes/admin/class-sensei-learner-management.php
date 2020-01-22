@@ -167,13 +167,13 @@ class Sensei_Learner_Management {
 		);
 
 		$data = array(
-			'remove_generic_confirm'     => __( 'Are you sure you want to remove this user?', 'sensei-lms' ),
-			'remove_from_lesson_confirm' => __( 'Are you sure you want to remove the user from this lesson?', 'sensei-lms' ),
-			'remove_from_course_confirm' => __( 'Are you sure you want to remove this user\'s manual enrollment in the course?', 'sensei-lms' ),
-			'enrol_in_course_confirm'    => __( 'Are you sure you want to enroll the user in this course?', 'sensei-lms' ),
-			'reset_lesson_confirm'       => __( 'Are you sure you want to reset the progress of this user for this lesson?', 'sensei-lms' ),
-			'reset_course_confirm'       => __( 'Are you sure you want to reset the progress of this user for this course?', 'sensei-lms' ),
-			'remove_progress_confirm'    => __( 'Are you sure you want to remove the progress of this user for this course?', 'sensei-lms' ),
+			'remove_generic_confirm'     => __( 'Are you sure you want to remove this learner?', 'sensei-lms' ),
+			'remove_from_lesson_confirm' => __( 'Are you sure you want to remove the learner from this lesson?', 'sensei-lms' ),
+			'remove_from_course_confirm' => __( 'Are you sure you want to remove this learner\'s manual enrollment in the course?', 'sensei-lms' ),
+			'enrol_in_course_confirm'    => __( 'Are you sure you want to enroll the learner in this course?', 'sensei-lms' ),
+			'reset_lesson_confirm'       => __( 'Are you sure you want to reset the progress of this learner for this lesson?', 'sensei-lms' ),
+			'reset_course_confirm'       => __( 'Are you sure you want to reset the progress of this learner for this course?', 'sensei-lms' ),
+			'remove_progress_confirm'    => __( 'Are you sure you want to remove the progress of this learner for this course?', 'sensei-lms' ),
 			'modify_user_post_nonce'     => wp_create_nonce( 'modify_user_post_nonce' ),
 			'search_users_nonce'         => wp_create_nonce( 'search-users' ),
 			'edit_date_nonce'            => wp_create_nonce( 'edit_date_nonce' ),
