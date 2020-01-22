@@ -69,7 +69,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 */
 	public function set( $setting, $new_value ) {
 
-		$settings             = self::get_settings_raw();
+		$settings             = $this->get_settings();
 		$settings[ $setting ] = $new_value;
 		return update_option( $this->token, $settings );
 
