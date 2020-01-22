@@ -1521,7 +1521,7 @@ class Sensei_Utils {
 	}
 
 	/**
-	 * Check if a user has started a course or not.
+	 * Get the course progress comment ID, if it exists.
 	 *
 	 * @since 3.0.0
 	 *
