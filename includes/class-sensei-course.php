@@ -3020,7 +3020,7 @@ class Sensei_Course {
 		);
 
 		/**
-		 * Check if currently logged in user can manually enrol themselves. Defaults to `true`.
+		 * Check if currently logged in user can manually enrol themselves. Defaults to `true` when not already enrolled.
 		 *
 		 * @since 3.0.0
 		 *
