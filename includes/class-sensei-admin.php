@@ -215,8 +215,11 @@ class Sensei_Admin {
 			?>
 			<div id="message" class="updated sensei-message sensei-connect">
 				<p><?php echo wp_kses_post( __( '<strong>Congratulations!</strong> &#8211; Sensei LMS has been installed and set up.', 'sensei-lms' ) ); ?></p>
-				<p><a href="https://twitter.com/share" class="twitter-share-button" data-url="https://woocommerce.com/products/sensei/" data-text="A premium Learning Management plugin for #WordPress that helps you create courses. Beautifully." data-via="senseilms" data-size="large" data-hashtags="Sensei">Tweet</a>
-				<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script></p>
+				<p>
+					<a href="<?php echo esc_url( admin_url( 'post-new.php?post_type=course' ) ); ?>" class="button-primary">
+						<?php esc_html_e( 'Create a Course', 'sensei-lms' ); ?>
+					</a>
+				</p>
 			</div>
 			<?php
 
@@ -411,15 +414,9 @@ class Sensei_Admin {
 			</p>
 
 			<p>
-
-				<a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.woothemes.com/sensei/" data-text="A premium Learning Management plugin for #WordPress that helps you teach courses online. Beautifully." data-via="WooThemes" data-size="large" data-hashtags="Sensei">
-					<?php esc_html_e( 'Tweet', 'sensei-lms' ); ?>
+				<a href="<?php echo esc_url( admin_url( 'post-new.php?post_type=course' ) ); ?>" class="button-primary">
+					<?php esc_html_e( 'Create a Course', 'sensei-lms' ); ?>
 				</a>
-
-				<script>
-					!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
-				</script>
-
 			</p>
 
 		</div>
