@@ -362,7 +362,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 				$reset_action = 'reset_progress';
 				$reset_label  = esc_html__( 'Reset progress', 'sensei-lms' );
-				if ( ! $is_user_enrolled ) {
+				if ( 'course' === $post_type && ! $is_user_enrolled ) {
 					$reset_action = 'remove_progress';
 					$reset_label  = esc_html__( 'Remove progress', 'sensei-lms' );
 				}
