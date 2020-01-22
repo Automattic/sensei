@@ -2553,11 +2553,16 @@ class Sensei_Utils {
 	 *
 	 * @param $course_id int
 	 * @param $user_id int
-	 * @return mixed
+	 * @return bool
 	 */
 	public static function reset_course_for_user( $course_id, $user_id ) {
 		self::sensei_remove_user_from_course( $course_id, $user_id );
-		return self::user_start_course( $user_id, $course_id );
+
+		if ( ! Sensei_Course::is_user_enrolled( $course_id, $user_id ) ) {
+			return true;
+		}
+
+		return false !== self::user_start_course( $user_id, $course_id );
 	}
 
 	/**

@@ -360,7 +360,15 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 					}
 				}
 
-				$actions[] = '<a class="learner-async-action button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="reset" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '">' . sprintf( esc_html__( 'Reset progress', 'sensei-lms' ), esc_html( $object_type ) ) . '</a>';
+				$reset_action = 'reset_progress';
+				$reset_label  = esc_html__( 'Reset progress', 'sensei-lms' );
+				if ( ! $is_user_enrolled ) {
+					$reset_action = 'remove_progress';
+					$reset_label  = esc_html__( 'Remove progress', 'sensei-lms' );
+				}
+
+				$actions[] = '<a class="learner-async-action button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="' . esc_attr( $reset_action ) . '" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '">' . $reset_label . '</a>';
+
 				if ( $edit_start_date_form ) {
 					$actions[] = $edit_start_date_form;
 				}

@@ -173,6 +173,7 @@ class Sensei_Learner_Management {
 			'enrol_in_course_confirm'    => __( 'Are you sure you want to enroll the user in this course?', 'sensei-lms' ),
 			'reset_lesson_confirm'       => __( 'Are you sure you want to reset the progress of this user for this lesson?', 'sensei-lms' ),
 			'reset_course_confirm'       => __( 'Are you sure you want to reset the progress of this user for this course?', 'sensei-lms' ),
+			'remove_progress_confirm'    => __( 'Are you sure you want to remove the progress of this user for this course?', 'sensei-lms' ),
 			'modify_user_post_nonce'     => wp_create_nonce( 'modify_user_post_nonce' ),
 			'search_users_nonce'         => wp_create_nonce( 'search-users' ),
 			'edit_date_nonce'            => wp_create_nonce( 'edit_date_nonce' ),
@@ -413,8 +414,8 @@ class Sensei_Learner_Management {
 			exit( '' );
 		}
 
-		$date_started         = get_comment_meta( $comment_id, 'start', true );
-		$date_string          = esc_html( $action_data['new_date'] );
+		$date_started = get_comment_meta( $comment_id, 'start', true );
+		$date_string  = esc_html( $action_data['new_date'] );
 
 		if ( empty( $date_string ) ) {
 			exit( '' );
@@ -498,6 +499,10 @@ class Sensei_Learner_Management {
 							break;
 					}
 					break;
+			}
+
+			if ( $altered && ! Sensei_Utils::has_started_course( $post_id, $user_id ) ) {
+				exit( 'removed' );
 			}
 
 			if ( $altered ) {

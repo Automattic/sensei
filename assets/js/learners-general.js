@@ -123,7 +123,11 @@ jQuery(document).ready( function( $ ) {
 		var confirm_message = window.woo_learners_general_data.remove_generic_confirm;
 
 		var actions = {
-			reset: {
+			remove_progress: {
+				course : window.woo_learners_general_data.remove_progress_confirm,
+				action : 'reset_user_post'
+			},
+			reset_progress: {
 				lesson : window.woo_learners_general_data.reset_lesson_confirm,
 				course : window.woo_learners_general_data.reset_course_confirm,
 				action : 'reset_user_post'
@@ -156,6 +160,17 @@ jQuery(document).ready( function( $ ) {
 				},
 				function( response ) {
 					if ( response ) {
+						if ( 'removed' === response ) {
+							table_row.fadeTo(
+								400,
+								0,
+								function() {
+									table_row.remove();
+								}
+							);
+
+							return;
+						}
 						switch ( current_action ) {
 							case 'reset':
 								table_row.find( '.graded' ).html( window.slgL10n.inprogress ).removeClass( 'graded' ).addClass( 'in-progress' );
