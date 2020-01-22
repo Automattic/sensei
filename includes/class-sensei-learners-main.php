@@ -70,7 +70,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				$columns = array(
 					'title'            => __( 'Learner', 'sensei-lms' ),
 					'date_started'     => __( 'Date Started', 'sensei-lms' ),
-					'user_status'      => __( 'Progress', 'sensei-lms' ),
+					'user_status'      => __( 'Status', 'sensei-lms' ),
 					'enrolment_status' => __( 'Enrollment', 'sensei-lms' ),
 				);
 				break;
