@@ -357,6 +357,10 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 						);
 
 						$actions[] = '<a class="learner-action button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="enrol" href="' . esc_url( $enrol_action_url ) . '">' . esc_html__( 'Manually enroll learner', 'sensei-lms' ) . '</a>';
+					} else {
+						$manual_enrolment_disabled_reason = __( 'Enrollment is given by another provider.', 'sensei-lms' );
+
+						$actions[] = '<a class="learner-action button disabled" disabled="disabled" title="' . esc_attr( $manual_enrolment_disabled_reason ) . '">' . esc_html__( 'Manually enroll learner', 'sensei-lms' ) . '</a>';
 					}
 				}
 
