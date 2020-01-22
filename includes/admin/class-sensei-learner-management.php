@@ -414,11 +414,17 @@ class Sensei_Learner_Management {
 		}
 
 		$date_started         = get_comment_meta( $comment_id, 'start', true );
-		$expected_date_format = 'Y-m-d';
 		$date_string          = esc_html( $action_data['new_date'] );
+
 		if ( empty( $date_string ) ) {
 			exit( '' );
 		}
+
+		$expected_date_format = 'Y-m-d H:i:s';
+		if ( false === strpos( $date_string, ' ' ) ) {
+			$expected_date_format = 'Y-m-d';
+		}
+
 		$date = DateTime::createFromFormat( $expected_date_format, $date_string );
 		if ( false === $date ) {
 			exit( '' );
