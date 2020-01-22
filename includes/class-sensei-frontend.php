@@ -1284,7 +1284,7 @@ class Sensei_Frontend {
 						<!-- Spam Trap -->
 						<div style="left:-999em; position:absolute;"><label for="trap"><?php esc_html_e( 'Anti-spam', 'sensei-lms' ); ?></label><input type="text" name="email_2" id="trap" tabindex="-1" /></div>
 
-						<input type="hidden" id="sensei_reg_http_referer" name="sensei_reg_http_referer" value="<?php echo wp_get_referer() ? esc_attr( wp_get_referer() ) : ''; ?>">
+						<input type="hidden" id="sensei_reg_http_referer" name="sensei_reg_http_referer" value="<?php echo wp_get_referer() ? esc_url( wp_get_referer() ) : ''; ?>">
 
 						<?php do_action( 'sensei_register_form_fields' ); ?>
 						<?php do_action( 'register_form' ); ?>
@@ -1772,12 +1772,12 @@ class Sensei_Frontend {
 		// Redirect.
 		global $wp;
 		if ( ! empty( $new_user_http_referer ) ) {
-			$redirect = esc_url( $new_user_http_referer );
+			$redirect = $new_user_http_referer;
 		} else {
-			$redirect = esc_url( home_url( $wp->request ) );
+			$redirect = home_url( $wp->request );
 		}
 
-		wp_safe_redirect( apply_filters( 'sensei_registration_redirect', $redirect ) );
+		wp_safe_redirect( apply_filters( 'sensei_registration_redirect', esc_url_raw( $redirect ) ) );
 		exit;
 
 	} // end  sensei_process_registration)()
