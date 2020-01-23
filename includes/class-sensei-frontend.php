@@ -1380,18 +1380,21 @@ class Sensei_Frontend {
 	public function sensei_course_start() {
 		global $post, $current_user;
 
-		// Check if the user is taking the course.
-		$is_user_taking_course = Sensei_Utils::user_started_course( $post->ID, $current_user->ID );
 		// Handle user starting the course.
-		if ( isset( $_POST['course_start'] )
+		if (
+			isset( $_POST['course_start'] )
 			&& wp_verify_nonce( $_POST['woothemes_sensei_start_course_noonce'], 'woothemes_sensei_start_course_noonce' )
-			&& ! $is_user_taking_course ) {
+			&& Sensei_Course::can_current_user_manually_enrol( $post->ID )
+		) {
 
-			// Start the course.
-			$activity_logged                   = Sensei_Utils::user_start_course( $current_user->ID, $post->ID );
+			// Manually enrol a student.
+			$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
+			$manual_enrolment  = $enrolment_manager->get_manual_enrolment_provider();
+			$student_enrolled  = $manual_enrolment && $manual_enrolment->enrol_student( $current_user->ID, $post->ID );
+
 			$this->data                        = new stdClass();
 			$this->data->is_user_taking_course = false;
-			if ( $activity_logged ) {
+			if ( $student_enrolled ) {
 				$this->data->is_user_taking_course = true;
 
 				// Refresh page to avoid re-posting.
