@@ -1,5 +1,11 @@
 *** Changelog ***
 
+2020.01.23 - version 2.4.0
+* New: Replace Twitter button with Create Course button after activation - #2850
+* Fix: PHP warning for multiple choice questions - #2843
+* Fix: Default settings cleared after clicking "Install Sensei LMS Pages" button - #2847
+* Fix: Add transparent background to TinyMCE editor buttons for multi line questions (@JuanchoPestana) - #2855
+
 2020.01.14 - version 2.3.0
 * New: Configure Renovate - #2805
 * New: Remove Sensei_WP_Cli class - #2814
