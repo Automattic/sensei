@@ -63,6 +63,7 @@ class Sensei_Unit_Tests_Bootstrap {
 	 */
 	public function includes() {
 		// factories
+		require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-manual-test-helpers.php';
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/factories/class-sensei-factory.php';
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/factories/class-wp-unittest-factory-for-post-sensei.php';
 

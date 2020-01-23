@@ -252,7 +252,7 @@ class Sensei_Course_Enrolment_Test extends WP_UnitTestCase {
 	/**
 	 * Tests storage of the term association for positive results.
 	 *
-	 * @covers \Sensei_Course_Enrolment::save_enrolment
+	 * @covers Sensei_Course_Enrolment::save_enrolment
 	 */
 	public function testSaveEnrolmentStore() {
 		$course_id  = $this->getSimpleCourse();
@@ -271,7 +271,7 @@ class Sensei_Course_Enrolment_Test extends WP_UnitTestCase {
 	/**
 	 * Tests remove of the stored term association for when enrolment is removed.
 	 *
-	 * @covers \Sensei_Course_Enrolment::save_enrolment
+	 * @covers Sensei_Course_Enrolment::save_enrolment
 	 */
 	public function testSaveEnrolmentRemoved() {
 		$course_id  = $this->getSimpleCourse();

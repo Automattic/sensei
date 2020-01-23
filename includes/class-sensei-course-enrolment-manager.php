@@ -68,6 +68,11 @@ class Sensei_Course_Enrolment_Manager {
 
 		$this->enrolment_providers = [];
 
+		// Manual enrolment is Sensei's core enrolment provider.
+		$provider_classes = [
+			Sensei_Course_Manual_Enrolment_Provider::class,
+		];
+
 		/**
 		 * Fetch all registered course enrolment providers.
 		 *
@@ -75,7 +80,7 @@ class Sensei_Course_Enrolment_Manager {
 		 *
 		 * @since 3.0.0
 		 */
-		$provider_classes = apply_filters( 'sensei_course_enrolment_providers', [] );
+		$provider_classes = apply_filters( 'sensei_course_enrolment_providers', $provider_classes );
 		foreach ( $provider_classes as $provider_class ) {
 			if ( ! class_exists( $provider_class ) || ! is_a( $provider_class, 'Sensei_Course_Enrolment_Provider_Interface', true ) ) {
 				continue;
@@ -122,26 +127,6 @@ class Sensei_Course_Enrolment_Manager {
 	}
 
 	/**
-	 * Check if we should use the legacy enrolment check. Legacy check uses course
-	 * progress to determine enrolment.
-	 *
-	 * @return bool
-	 */
-	public static function use_legacy_enrolment_check() {
-		$use_legacy_enrolment_check = false;
-
-		// Check if WCPC is around but not offering enrolment providers (an old version).
-		if (
-			class_exists( '\Sensei_WC_Paid_Courses\Sensei_WC_Paid_Courses' ) &&
-			! class_exists( '\Sensei_WC_Paid_Courses\Course_Enrolment_Providers' )
-		) {
-			$use_legacy_enrolment_check = true;
-		}
-
-		return apply_filters( 'sensei_legacy_enrolment_check', $use_legacy_enrolment_check );
-	}
-
-	/**
 	 * Get an array of all the instantiated course enrolment providers.
 	 *
 	 * @return Sensei_Course_Enrolment_Provider_Interface[]
@@ -153,6 +138,16 @@ class Sensei_Course_Enrolment_Manager {
 		}
 
 		return $this->enrolment_providers;
+	}
+
+	/**
+	 * Get the manual enrolment provider.
+	 *
+	 * @return false|Sensei_Course_Manual_Enrolment_Provider
+	 * @throws Exception When there was an attempt to access the manual enrolment providers before providers are collected in init:100.
+	 */
+	public function get_manual_enrolment_provider() {
+		return $this->get_enrolment_provider_by_id( Sensei_Course_Manual_Enrolment_Provider::get_id() );
 	}
 
 	/**

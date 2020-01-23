@@ -1522,6 +1522,43 @@ class Sensei_Utils {
 	}
 
 	/**
+	 * Get the course progress comment ID, if it exists.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param int $course_id Course ID.
+	 * @param int $user_id   User ID.
+	 * @return int|bool false or comment_ID
+	 */
+	public static function get_course_progress_comment_id( $course_id, $user_id = null ) {
+		if ( empty( $course_id ) ) {
+			return false;
+		}
+
+		if ( ! $user_id ) {
+			$user_id = get_current_user_id();
+			if ( ! $user_id ) {
+				return false;
+			}
+		}
+
+		$activity_args = array(
+			'post_id' => $course_id,
+			'user_id' => $user_id,
+			'type'    => 'sensei_course_status',
+			'field'   => 'comment_ID',
+		);
+
+		$course_progress_comment_id = self::sensei_get_activity_value( $activity_args );
+
+		if ( empty( $course_progress_comment_id ) ) {
+			return false;
+		}
+
+		return $course_progress_comment_id;
+	}
+
+	/**
 	 * Check if a user has started a course or not.
 	 *
 	 * @since 3.0.0
@@ -1531,37 +1568,7 @@ class Sensei_Utils {
 	 * @return int|bool false or comment_ID
 	 */
 	public static function has_started_course( $course_id = 0, $user_id = 0 ) {
-
-		$user_started_course = false;
-
-		if ( $course_id ) {
-
-			if ( ! $user_id ) {
-				$user_id = get_current_user_id();
-			}
-
-			if ( ! $user_id > 0 ) {
-
-				$user_started_course = false;
-
-			} else {
-
-				$activity_args = array(
-					'post_id' => $course_id,
-					'user_id' => $user_id,
-					'type'    => 'sensei_course_status',
-					'field'   => 'comment_ID',
-				);
-
-				$user_course_status_id = self::sensei_get_activity_value( $activity_args );
-
-				if ( $user_course_status_id ) {
-
-					$user_started_course = $user_course_status_id;
-
-				}
-			}
-		}
+		$user_started_course = self::get_course_progress_comment_id( $course_id, $user_id );
 
 		/**
 		 * Filter the user started course value
@@ -2547,11 +2554,16 @@ class Sensei_Utils {
 	 *
 	 * @param $course_id int
 	 * @param $user_id int
-	 * @return mixed
+	 * @return bool
 	 */
 	public static function reset_course_for_user( $course_id, $user_id ) {
 		self::sensei_remove_user_from_course( $course_id, $user_id );
-		return self::user_start_course( $user_id, $course_id );
+
+		if ( ! Sensei_Course::is_user_enrolled( $course_id, $user_id ) ) {
+			return true;
+		}
+
+		return false !== self::user_start_course( $user_id, $course_id );
 	}
 
 	/**

@@ -172,11 +172,6 @@ class Sensei_Course {
 			$user_id = get_current_user_id();
 		}
 
-		// @todo This should be replaced by the manual course enrolment provider.
-		if ( Sensei_Course_Enrolment_Manager::use_legacy_enrolment_check() ) {
-			return false !== Sensei_Utils::has_started_course( $course_id, $user_id );
-		}
-
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 
 		return $course_enrolment->is_enrolled( $user_id );
