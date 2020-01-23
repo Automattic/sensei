@@ -29,7 +29,6 @@ class Sensei_Course_Enrolment_Manager {
 	 */
 	private $enrolment_providers;
 
-
 	/**
 	 * Fetches an instance of the class.
 	 *
@@ -52,6 +51,7 @@ class Sensei_Course_Enrolment_Manager {
 	 */
 	public function init() {
 		add_action( 'init', [ $this, 'collect_enrolment_providers' ], 100 );
+		add_filter( 'sensei_can_user_manually_enrol', [ $this, 'maybe_prevent_frontend_manual_enrol' ], 10, 2 );
 	}
 
 	/**
@@ -148,6 +148,35 @@ class Sensei_Course_Enrolment_Manager {
 	 */
 	public function get_manual_enrolment_provider() {
 		return $this->get_enrolment_provider_by_id( Sensei_Course_Manual_Enrolment_Provider::get_id() );
+	}
+
+	/**
+	 * Check if currently logged in user can manually enrol themselves. Block enrolment when a non-manual
+	 * provider handles enrolment.
+	 *
+	 * @param bool $can_user_manually_enrol True if they can manually enrol themselves, false if not.
+	 * @param int  $course_id               Course post ID.
+	 *
+	 * @return bool
+	 */
+	public function maybe_prevent_frontend_manual_enrol( $can_user_manually_enrol, $course_id ) {
+		$all_providers = $this->get_all_enrolment_providers();
+
+		// If the manual provider has been filtered out, do not allow frontend enrolment.
+		if ( ! isset( $all_providers[ Sensei_Course_Manual_Enrolment_Provider::get_id() ] ) ) {
+			return false;
+		}
+
+		unset( $all_providers[ Sensei_Course_Manual_Enrolment_Provider::get_id() ] );
+
+		foreach ( $all_providers as $provider ) {
+			if ( $provider->handles_enrolment( $course_id ) ) {
+				// One of the other providers handles enrolment. Prevent enrolment on the frontend form.
+				return false;
+			}
+		}
+
+		return $can_user_manually_enrol;
 	}
 
 	/**

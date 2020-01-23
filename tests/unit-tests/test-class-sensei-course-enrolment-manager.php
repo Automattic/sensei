@@ -71,6 +71,46 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests to make sure manual enrolment is blocked on the frontend if someone filtered out `manual` provider.
+	 */
+	public function testMaybePreventFrontendManualEnrolNoManual() {
+		$course_id         = $this->getSimpleCourse();
+		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
+
+		$this->removeEnrolmentProvider( Sensei_Course_Manual_Enrolment_Provider::class );
+		$this->prepareEnrolmentManager();
+
+		$this->assertFalse( $enrolment_manager->maybe_prevent_frontend_manual_enrol( null, $course_id ) );
+	}
+
+	/**
+	 * Tests to make sure manual enrolment is blocked on the frontend if there is provider that handles the course.
+	 */
+	public function testMaybePreventFrontendManualEnrolHasHandlingProvider() {
+		$course_id         = $this->getSimpleCourse();
+		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
+
+		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Always_Provides::class );
+		$this->prepareEnrolmentManager();
+
+		$this->assertFalse( $enrolment_manager->maybe_prevent_frontend_manual_enrol( null, $course_id ) );
+	}
+
+	/**
+	 * Tests to make sure manual enrolment is blocked on the frontend if there is provider that handles the course.
+	 */
+	public function testMaybeAllowFrontendManualEnrolNoHandlingProvider() {
+		$course_id         = $this->getSimpleCourse();
+		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
+
+		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Never_Handles::class );
+		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Handles_Dog_Courses::class );
+		$this->prepareEnrolmentManager();
+
+		$this->assertEquals( null, $enrolment_manager->maybe_prevent_frontend_manual_enrol( null, $course_id ) );
+	}
+
+	/**
 	 * Simple tests for getting a site's enrolment salt.
 	 *
 	 * @covers Sensei_Course_Enrolment_Manager::get_site_salt

@@ -133,6 +133,24 @@ trait Sensei_Course_Enrolment_Test_Helpers {
 	}
 
 	/**
+	 * Removes an enrolment provider.
+	 */
+	private function removeEnrolmentProvider( $class_name ) {
+		add_filter(
+			'sensei_course_enrolment_providers',
+			function( $providers ) use ( $class_name ) {
+				foreach ( $providers as $index => $provider_class ) {
+					if ( $class_name === $provider_class ) {
+						unset( $providers[ $index ] );
+					}
+				}
+
+				return $providers;
+			}
+		);
+	}
+
+	/**
 	 * Prepare the enrolment manager. Do not do this in production. This is just to simulate what is done on `init`.
 	 */
 	private function prepareEnrolmentManager() {
