@@ -4319,7 +4319,12 @@ class Sensei_Lesson {
 	public static function output_comments() {
 		global $post;
 
-		$course_id          = Sensei()->lesson->get_course_id( get_the_ID() );
+		$course_id = Sensei()->lesson->get_course_id( get_the_ID() );
+
+		if ( empty( $course_id ) ) {
+			return;
+		}
+
 		$allow_comments     = Sensei()->settings->settings['lesson_comments'];
 		$user_taking_course = Sensei_Utils::user_started_course( $course_id );
 		$has_access         = ! Sensei()->settings->get( 'access_permission' );

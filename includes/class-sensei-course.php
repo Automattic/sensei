@@ -151,6 +151,33 @@ class Sensei_Course {
 	}
 
 	/**
+	 * Check if a user is enrolled in a course.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param int      $course_id Course post ID.
+	 * @param int|null $user_id   User ID.
+	 * @return bool
+	 */
+	public static function is_user_enrolled( $course_id, $user_id = null ) {
+		if ( empty( $course_id ) ) {
+			return false;
+		}
+
+		if ( 'course' !== get_post_type( $course_id ) ) {
+			return false;
+		}
+
+		if ( ! $user_id ) {
+			$user_id = get_current_user_id();
+		}
+
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+
+		return $course_enrolment->is_enrolled( $user_id );
+	}
+
+	/**
 	 * @param $message
 	 */
 	private static function add_course_access_permission_message( $message ) {
@@ -2169,7 +2196,7 @@ class Sensei_Course {
 		} // End If Statement
 
 		// number of completed lessons
-		if ( Sensei_Utils::user_started_course( $course->ID, get_current_user_id() )
+		if ( Sensei_Utils::has_started_course( $course->ID, get_current_user_id() )
 			|| Sensei_Utils::user_completed_course( $course->ID, get_current_user_id() ) ) {
 
 			$completed    = count( $this->get_completed_lesson_ids( $course->ID, get_current_user_id() ) );
@@ -2969,6 +2996,41 @@ class Sensei_Course {
 	}
 
 	/**
+	 * Check if a user can manually enrol themselves.
+	 *
+	 * @param int $course_id Course post ID.
+	 *
+	 * @return bool
+	 */
+	public static function can_current_user_manually_enrol( $course_id ) {
+		if ( ! is_user_logged_in() ) {
+			return false;
+		}
+
+		// Check if the user is already enrolled through any provider.
+		$is_user_enrolled = self::is_user_enrolled( $course_id, get_current_user_id() );
+
+		$default_can_user_manually_enrol = ! $is_user_enrolled;
+
+		$can_user_manually_enrol = apply_filters_deprecated(
+			'sensei_display_start_course_form',
+			[ $default_can_user_manually_enrol, $course_id ],
+			'3.0.0',
+			'sensei_can_user_manually_enrol'
+		);
+
+		/**
+		 * Check if currently logged in user can manually enrol themselves. Defaults to `true` when not already enrolled.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param bool $can_user_manually_enrol True if they can manually enrol themselves, false if not.
+		 * @param int  $course_id               Course post ID.
+		 */
+		return (bool) apply_filters( 'sensei_can_user_manually_enrol', $can_user_manually_enrol, $course_id );
+	}
+
+	/**
 	 * Output the course actions like start taking course, register, etc. Note
 	 * that this expects that the user is not already taking the course; that
 	 * check is done in `the_course_enrolment_actions`.
@@ -2983,7 +3045,7 @@ class Sensei_Course {
 		$is_course_content_restricted = (bool) apply_filters( 'sensei_is_course_content_restricted', false, $post->ID );
 
 		if ( is_user_logged_in() ) {
-			$should_display_start_course_form = (bool) apply_filters( 'sensei_display_start_course_form', true, $post->ID );
+			$should_display_start_course_form = self::can_current_user_manually_enrol( $post->ID );
 			if ( $is_course_content_restricted && false == $should_display_start_course_form ) {
 				self::add_course_access_permission_message( '' );
 			}

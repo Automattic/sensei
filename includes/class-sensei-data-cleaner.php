@@ -54,6 +54,7 @@ class Sensei_Data_Cleaner {
 	 */
 	private static $options = array(
 		'sensei_installed',
+		'sensei_course_enrolment_site_salt',
 		'sensei_course_order',
 		'skip_install_sensei_pages',
 		'sensei_flush_rewrite_rules',
@@ -61,6 +62,7 @@ class Sensei_Data_Cleaner {
 		'woothemes_sensei_language_pack_version',
 		'sensei-version',
 		'woothemes-sensei-version',
+		'sensei_enrolment_legacy',
 		'sensei_usage_tracking_opt_in_hide',
 		'sensei-upgrades',
 		'woothemes-sensei-upgrades',

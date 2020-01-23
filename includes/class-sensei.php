@@ -367,6 +367,7 @@ class Sensei_Main {
 		$this->usage_tracking->schedule_tracking_task();
 
 		Sensei_Blocks::instance()->init();
+		Sensei_Course_Enrolment_Manager::instance()->init();
 
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
@@ -573,6 +574,11 @@ class Sensei_Main {
 	public function update() {
 		if ( ! version_compare( $this->version, get_option( 'sensei-version' ), '>' ) ) {
 			return;
+		}
+
+		// Mark site as having enrolment data from pre-3.0.0.
+		if ( version_compare( '3.0.0-dev', get_option( 'sensei-version' ), '>' ) ) {
+			update_option( 'sensei_enrolment_legacy', time() );
 		}
 
 		// Run updates.

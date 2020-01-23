@@ -9,6 +9,50 @@
  * @since 1.9.0
  */
 class Sensei_Learner {
+	/**
+	 * Cache of the learner terms.
+	 *
+	 * @var WP_Term[]
+	 */
+	private static $learner_terms = [];
+
+	/**
+	 * Get the learner term for the user.
+	 *
+	 * @param int $user_id User ID.
+	 * @return WP_Term
+	 * @throws Exception When learner term could not be created.
+	 */
+	public static function get_learner_term( $user_id ) {
+		$user_term_slug = self::get_learner_term_slug( $user_id );
+		if ( ! isset( self::$learner_terms[ $user_id ] ) ) {
+			self::$learner_terms[ $user_id ] = get_term_by( 'slug', $user_term_slug, Sensei_PostTypes::LEARNER_TAXONOMY_NAME );
+
+			if ( empty( self::$learner_terms[ $user_id ] ) ) {
+				$term = wp_insert_term( $user_term_slug, Sensei_PostTypes::LEARNER_TAXONOMY_NAME );
+				if ( is_array( $term ) && ! empty( $term['term_id'] ) ) {
+					self::$learner_terms[ $user_id ] = get_term( $term['term_id'] );
+				}
+			}
+
+			if ( empty( self::$learner_terms[ $user_id ] ) || self::$learner_terms[ $user_id ] instanceof WP_Error ) {
+				unset( self::$learner_terms[ $user_id ] );
+				throw new Exception( esc_html__( 'Learner term could not be created for user.', 'sensei-lms' ) );
+			}
+		}
+
+		return self::$learner_terms[ $user_id ];
+	}
+
+	/**
+	 * Gets the user term slug.
+	 *
+	 * @param int $user_id User ID.
+	 * @return string
+	 */
+	public static function get_learner_term_slug( $user_id ) {
+		return 'user-' . $user_id;
+	}
 
 	/**
 	 * Get the students full name
