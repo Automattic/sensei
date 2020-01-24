@@ -2651,7 +2651,7 @@ class Sensei_Course {
 		$course_page_id  = intval( Sensei()->settings->settings['course_page'] );
 		$course_page_url = empty( $course_page_id ) ? get_post_type_archive_link( 'course' ) : get_permalink( $course_page_id );
 
-		return $course_page_url;
+		return apply_filters('sensei_course_page_url', $course_page_url);
 
 	}//end get_courses_page_url()
 
