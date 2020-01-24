@@ -3095,9 +3095,9 @@ class Sensei_Course {
 							esc_html__( 'Register', 'sensei-lms' ) . '</a></div>';
 					}
 				} else {
-
-					wp_register( '<div class="status register">', '</div>' );
-
+					if ( true === (bool) apply_filters( 'sensei_user_can_register_for_course', true, $post->ID ) ) {
+						wp_register( '<div class="status register">', '</div>' );
+					}
 				}
 			}
 		}
