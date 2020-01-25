@@ -268,7 +268,7 @@ class Sensei_Lesson {
 	}
 
 	/**
-	 * Lesson_prerequisite_meta_box_content function.
+	 * Handles the creation of the dropdown field for the Lesson Prerequisite meta box.
 	 *
 	 * @access public
 	 * @return void
