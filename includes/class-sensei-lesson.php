@@ -280,36 +280,31 @@ class Sensei_Lesson {
 		// Get current Course.
 		$current_lesson_course = get_post_meta( $post->ID, '_lesson_course', true );
 
+		// Get all the Lesson Posts.
+		$post_args = array(
+			'post_type'        => 'lesson',
+			'posts_per_page'   => -1,
+			'orderby'          => 'title',
+			'order'            => 'ASC',
+			'exclude'          => $post->ID,
+			'suppress_filters' => 0,
+			'post_status'      => [ 'publish', 'draft' ],
+		);
+
 		if ( $current_lesson_course ) {
-			// Get Lesson Posts from current Course.
-			$post_args = array(
-				'post_type'        => 'lesson',
-				'posts_per_page'   => -1,
-				'orderby'          => 'title',
-				'order'            => 'ASC',
-				'exclude'          => $post->ID,
-				'suppress_filters' => 0,
-				'post_status'      => [ 'publish', 'draft' ],
-				'meta_query'       => array(
-					array(
-						'key'     => '_lesson_course',
-						'value'   => $current_lesson_course,
-						'compare' => '=',
-					),
+			// Meta query args to only get Lesson Posts from current Course.
+			$meta_query_args = array(
+				array(
+					'key'     => '_lesson_course',
+					'value'   => $current_lesson_course,
+					'compare' => '=',
 				),
 			);
-		} else {
-			// Get the Lesson Posts.
-			$post_args = array(
-				'post_type'        => 'lesson',
-				'posts_per_page'   => -1,
-				'orderby'          => 'title',
-				'order'            => 'ASC',
-				'exclude'          => $post->ID,
-				'suppress_filters' => 0,
-				'post_status'      => [ 'publish', 'draft' ],
-			);
+				// Add meta query to $post_args.
+				// phpcs:ignore WordPress.DB.SlowDBQuery
+				$post_args['meta_query'] = $meta_query_args;
 		}
+
 		$posts_array = get_posts( $post_args );
 		// Build the HTML to Output.
 		$html  = '';
