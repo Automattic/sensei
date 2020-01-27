@@ -4325,12 +4325,10 @@ class Sensei_Lesson {
 			return;
 		}
 
-		$allow_comments     = Sensei()->settings->settings['lesson_comments'];
-		$user_taking_course = Sensei_Utils::user_started_course( $course_id );
-		$has_access         = ! Sensei()->settings->get( 'access_permission' );
-		$is_preview         = Sensei_Utils::is_preview_lesson( $post->ID );
+		$allow_comments       = Sensei()->settings->settings['lesson_comments'];
+		$user_can_view_lesson = sensei_can_user_view_lesson();
 
-		$lesson_allow_comments = $allow_comments && ( $user_taking_course || $has_access || $is_preview );
+		$lesson_allow_comments = $allow_comments && $user_can_view_lesson;
 
 		if ( $lesson_allow_comments || is_singular( 'sensei_message' ) ) {
 			comments_template( '', true );
