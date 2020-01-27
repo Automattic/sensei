@@ -3086,18 +3086,17 @@ class Sensei_Course {
 
 				}
 
+				if ( ! (bool) apply_filters( 'sensei_user_can_register_for_course', true, $post->ID ) ) {
+					return;
+				}
 				// If a My Courses page was set in Settings, and 'sensei_use_wp_register_link'
 				// is false, link to My Courses. If not, link to default WordPress registration page.
 				if ( ! empty( $my_courses_page_id ) && $my_courses_page_id && ! $wp_register_link ) {
-					if ( true === (bool) apply_filters( 'sensei_user_can_register_for_course', true, $post->ID ) ) {
 						$my_courses_url = get_permalink( $my_courses_page_id );
 						echo '<div class="status register"><a href="' . esc_url( $my_courses_url ) . '">' .
 							esc_html__( 'Register', 'sensei-lms' ) . '</a></div>';
-					}
 				} else {
-
-					wp_register( '<div class="status register">', '</div>' );
-
+						wp_register( '<div class="status register">', '</div>' );
 				}
 			}
 		}
