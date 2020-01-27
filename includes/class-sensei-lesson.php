@@ -292,17 +292,15 @@ class Sensei_Lesson {
 		);
 
 		if ( $current_lesson_course ) {
-			// Meta query args to only get Lesson Posts from current Course.
-			$meta_query_args = array(
+			// Add meta query to only get Lesson Posts from current Course.
+			// phpcs:ignore WordPress.DB.SlowDBQuery
+			$post_args['meta_query'] = array(
 				array(
 					'key'     => '_lesson_course',
 					'value'   => $current_lesson_course,
 					'compare' => '=',
 				),
 			);
-				// Add meta query to $post_args.
-				// phpcs:ignore WordPress.DB.SlowDBQuery
-				$post_args['meta_query'] = $meta_query_args;
 		}
 
 		$posts_array = get_posts( $post_args );
