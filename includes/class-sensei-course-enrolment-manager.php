@@ -14,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Course_Enrolment_Manager {
 	const COURSE_ENROLMENT_SITE_SALT_OPTION = 'sensei_course_enrolment_site_salt';
+	const LEARNER_CALCULATION_META_NAME     = 'learner_calculated_version';
 
 	/**
 	 * Instance of singleton.
@@ -216,5 +217,54 @@ class Sensei_Course_Enrolment_Manager {
 		if ( $course_enrolment ) {
 			$course_enrolment->is_enrolled( $user_id, false );
 		}
+	}
+
+	/**
+	 * Recalculate all enrolments for a specific user. This method will return the cached enrolments if they already
+	 * exist. To enforce a calculation after a possible change, use
+	 * Sensei_Course_Enrolment_Manager::trigger_course_enrolment_check instead.
+	 *
+	 * @param int $user_id   User ID.
+	 *
+	 * @see Sensei_Course_Enrolment_Manager::trigger_course_enrolment_check
+	 */
+	public function recalculate_enrolments( $user_id ) {
+
+		$learner_calculated_version = get_user_meta( $user_id, self::LEARNER_CALCULATION_META_NAME, true );
+		if ( self::get_enrolment_calculation_version() === $learner_calculated_version ) {
+			return;
+		}
+
+		$course_args = [
+			'post_type'      => 'course',
+			'post_status'    => 'publish',
+			'posts_per_page' => - 1,
+			'fields'         => 'ids',
+		];
+
+		$courses = get_posts( $course_args );
+
+		if ( empty( $courses ) ) {
+			return;
+		}
+
+		foreach ( $courses as $course ) {
+			Sensei_Course_Enrolment::get_course_instance( $course )->is_enrolled( $user_id );
+		}
+
+		update_user_meta(
+			$user_id,
+			self::LEARNER_CALCULATION_META_NAME,
+			self::get_enrolment_calculation_version()
+		);
+	}
+
+	/**
+	 * Returns the enrolment calculation version string.
+	 *
+	 * @return string The calculation version.
+	 */
+	public static function get_enrolment_calculation_version() {
+		return self::get_site_salt() . '-' . Sensei()->version;
 	}
 }

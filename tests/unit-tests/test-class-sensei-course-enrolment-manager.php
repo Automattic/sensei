@@ -133,4 +133,71 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 		$this->assertNotEquals( Sensei_Course_Enrolment_Manager::get_site_salt(), $enrolment_salt, 'Getting enrolment salt after resetting it should produce a different result.' );
 		$this->assertEquals( Sensei_Course_Enrolment_Manager::get_site_salt(), $new_enrolment_salt, 'Getting enrolment salt after resetting return the same salt as the reset method returns.' );
 	}
+
+	/**
+ * Tests that Sensei_Course_Enrolment_Manager::recalculate_enrolments calls Sensei_Course_Enrolment::is_enroled for
+ * all courses.
+ */
+	public function testEnrolmentsForAllCoursesAreCalculated() {
+		$simple_course = $this->getSimpleCourse();
+		$dog_course    = $this->getDogCourse();
+		$student_id    = $this->createStandardStudent();
+
+		$this->prepareEnrolmentManager();
+
+		$simple_mock = $this->create_course_enrolment_mock( $simple_course );
+		$dog_mock    = $this->create_course_enrolment_mock( $dog_course );
+
+		$simple_mock->expects( $this->once() )->method( 'is_enrolled' )->with( $this->equalTo( $student_id ) );
+		$dog_mock->expects( $this->once() )->method( 'is_enrolled' )->with( $this->equalTo( $student_id ) );
+
+		$user_meta = get_user_meta( $student_id, Sensei_Course_Enrolment_Manager::LEARNER_CALCULATION_META_NAME, true );
+		$this->assertEmpty( $user_meta );
+
+		Sensei_Course_Enrolment_Manager::instance()->recalculate_enrolments( $student_id );
+
+		$user_meta = get_user_meta( $student_id, Sensei_Course_Enrolment_Manager::LEARNER_CALCULATION_META_NAME, true );
+		$this->assertEquals( Sensei_Course_Enrolment_Manager::get_enrolment_calculation_version(), $user_meta );
+	}
+
+	/**
+	 * Tests that Sensei_Course_Enrolment_Manager::recalculate_enrolments does not do any calculation when the enrloments
+	 * have been already calculated.
+	 */
+	public function testNoCalculationIsPerformedWhenAlreadyCalculated() {
+		$simple_course = $this->getSimpleCourse();
+		$student_id    = $this->createStandardStudent();
+		update_user_meta(
+			$student_id,
+			Sensei_Course_Enrolment_Manager::LEARNER_CALCULATION_META_NAME,
+			Sensei_Course_Enrolment_Manager::get_enrolment_calculation_version()
+		);
+
+		$this->prepareEnrolmentManager();
+
+		$simple_mock = $this->create_course_enrolment_mock( $simple_course );
+
+		$simple_mock->expects( $this->never() )->method( 'is_enrolled' );
+
+		Sensei_Course_Enrolment_Manager::instance()->recalculate_enrolments( $student_id );
+	}
+
+	/**
+	 * Helper method to create a Sensei_Course_Enrolment mock object.
+	 */
+	private function create_course_enrolment_mock( $course ) {
+		$mock = $this->getMockBuilder( Sensei_Course_Enrolment::class )
+			->disableOriginalConstructor()
+			->setMethods( [ 'is_enrolled' ] )
+			->getMock();
+
+		$property = new ReflectionProperty( 'Sensei_Course_Enrolment', 'instances' );
+		$property->setAccessible( true );
+		$instances            = $property->getValue();
+		$instances[ $course ] = $mock;
+		$property->setValue( $instances );
+
+		return $mock;
+	}
+
 }
