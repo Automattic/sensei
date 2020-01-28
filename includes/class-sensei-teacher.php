@@ -855,6 +855,10 @@ class Sensei_Teacher {
 		if ( 'course' != get_post_type( $course_id ) || ! get_userdata( $teacher_id ) ) {
 			return false;
 		}
+		
+		if ( ! apply_filters( 'sensei_notify_teacher_new_course_assignment', true ) ) {
+    		return false;
+		}
 
 		// if new user is the same as the current logged user, they don't need an email
 		if ( $teacher_id == get_current_user_id() ) {
