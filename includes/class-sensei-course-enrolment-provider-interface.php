@@ -18,14 +18,14 @@ interface Sensei_Course_Enrolment_Provider_Interface {
 	 *
 	 * @return int
 	 */
-	public static function get_id();
+	public function get_id();
 
 	/**
 	 * Gets the descriptive name of the provider.
 	 *
 	 * @return string
 	 */
-	public static function get_name();
+	public function get_name();
 
 	/**
 	 * Check if this course enrolment provider manages enrolment for a particular course.
@@ -51,5 +51,5 @@ interface Sensei_Course_Enrolment_Provider_Interface {
 	 *
 	 * @return int
 	 */
-	public static function get_version();
+	public function get_version();
 }

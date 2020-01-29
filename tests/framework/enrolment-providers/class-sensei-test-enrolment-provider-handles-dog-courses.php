@@ -11,11 +11,13 @@
  * Used in testing. Handles enrolment for courses with "dog" in their title.
  */
 class Sensei_Test_Enrolment_Provider_Handles_Dog_Courses implements Sensei_Course_Enrolment_Provider_Interface {
-	public static function get_id() {
-		return 'handles-dog-courses';
+	const ID = 'handles-dog-courses';
+
+	public function get_id() {
+		return self::ID;
 	}
 
-	public static function get_name() {
+	public function get_name() {
 		return 'Handles Dog Courses';
 	}
 
@@ -31,7 +33,7 @@ class Sensei_Test_Enrolment_Provider_Handles_Dog_Courses implements Sensei_Cours
 		return true;
 	}
 
-	public static function get_version() {
+	public function get_version() {
 		return 1;
 	}
 

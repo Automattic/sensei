@@ -11,11 +11,13 @@
  * Used in testing. Denies enrolment for crooks.
  */
 class Sensei_Test_Enrolment_Provider_Denies_Crooks implements Sensei_Course_Enrolment_Provider_Interface {
-	public static function get_id() {
-		return 'denies-crooks';
+	const ID = 'denies-crooks';
+
+	public function get_id() {
+		return self::ID;
 	}
 
-	public static function get_name() {
+	public function get_name() {
 		return 'Denies Crooks';
 	}
 
@@ -32,7 +34,7 @@ class Sensei_Test_Enrolment_Provider_Denies_Crooks implements Sensei_Course_Enro
 		return true;
 	}
 
-	public static function get_version() {
+	public function get_version() {
 		return 1;
 	}
 

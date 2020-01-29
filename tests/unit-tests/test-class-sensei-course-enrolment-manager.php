@@ -37,8 +37,8 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 		$this->prepareEnrolmentManager();
 
 		$enrolment_manager        = Sensei_Course_Enrolment_Manager::instance();
-		$provider_always_provides = $enrolment_manager->get_enrolment_provider_by_id( Sensei_Test_Enrolment_Provider_Always_Provides::get_id() );
-		$provider_never_provides  = $enrolment_manager->get_enrolment_provider_by_id( Sensei_Test_Enrolment_Provider_Never_Provides::get_id() );
+		$provider_always_provides = $enrolment_manager->get_enrolment_provider_by_id( Sensei_Test_Enrolment_Provider_Always_Provides::ID );
+		$provider_never_provides  = $enrolment_manager->get_enrolment_provider_by_id( Sensei_Test_Enrolment_Provider_Never_Provides::ID );
 
 		$this->assertFalse( $provider_never_provides, 'This provider was never registered and should not be returned.' );
 		$this->assertNotFalse( $provider_always_provides, 'This provider was registered and its singleton instance should be returned' );

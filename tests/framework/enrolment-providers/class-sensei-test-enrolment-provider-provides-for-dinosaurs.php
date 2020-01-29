@@ -11,11 +11,13 @@
  * Used in testing. Provides enrolment for dinosaurs only.
  */
 class Sensei_Test_Enrolment_Provider_Provides_For_Dinosaurs implements Sensei_Course_Enrolment_Provider_Interface {
-	public static function get_id() {
-		return 'provides-for-dinosaurs';
+	const ID = 'provides-for-dinosaurs';
+
+	public function get_id() {
+		return self::ID;
 	}
 
-	public static function get_name() {
+	public function get_name() {
 		return 'Provides for Dinosaurs';
 	}
 
@@ -32,7 +34,7 @@ class Sensei_Test_Enrolment_Provider_Provides_For_Dinosaurs implements Sensei_Co
 		return false;
 	}
 
-	public static function get_version() {
+	public function get_version() {
 		return 1;
 	}
 

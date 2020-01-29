@@ -11,11 +11,13 @@
  * Used in testing. Never handles a particular course's enrolment.
  */
 class Sensei_Test_Enrolment_Provider_Never_Handles implements Sensei_Course_Enrolment_Provider_Interface {
-	public static function get_id() {
-		return 'never-handles';
+	const ID = 'never-handles';
+
+	public function get_id() {
+		return self::ID;
 	}
 
-	public static function get_name() {
+	public function get_name() {
 		return 'Never Handles';
 	}
 
@@ -27,7 +29,7 @@ class Sensei_Test_Enrolment_Provider_Never_Handles implements Sensei_Course_Enro
 		return true;
 	}
 
-	public static function get_version() {
+	public function get_version() {
 		return 1;
 	}
 
