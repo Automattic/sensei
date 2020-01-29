@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @group usage-tracking
+ */
 class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	private $course_ids;
 	private $modules;
@@ -494,6 +497,8 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Usage_Tracking_Data::get_learner_count
 	 */
 	public function testGetUsageDataLearners() {
+		$this->setupCoursesAndModules();
+
 		// Create some users.
 		$subscribers = $this->factory->user->create_many( 8, array( 'role' => 'subscriber' ) );
 		$editors     = $this->factory->user->create_many( 3, array( 'role' => 'editor' ) );
@@ -774,7 +779,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	 */
 	public function testGetUsageDataQuestionTypesInvalidType() {
 		// Create a question.
-		$questions = $this->factory->post->create(
+		$question = $this->factory->post->create(
 			array(
 				'post_type'   => 'question',
 				'post_status' => 'publish',
@@ -782,7 +787,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		);
 
 		// Set the question to use an invalid type.
-		wp_set_post_terms( $questions[0], array( 'automattic' ), 'question-type' );
+		wp_set_post_terms( $question, array( 'automattic' ), 'question-type' );
 
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
 
@@ -932,6 +937,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Usage_Tracking_Data::get_course_active_count
 	 */
 	public function testGetCourseActiveCount() {
+		$this->setupCoursesAndModules();
 		$this->enrollUsers();
 
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
@@ -947,6 +953,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Usage_Tracking_Data::get_course_completed_count
 	 */
 	public function testGetCourseCompletedCount() {
+		$this->setupCoursesAndModules();
 		$this->enrollUsers();
 
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
