@@ -259,7 +259,7 @@ class Sensei_Course_Manual_Enrolment_Provider implements Sensei_Course_Enrolment
 	/**
 	 * Gets the version of the enrolment provider logic. If this changes, enrolment will be recalculated.
 	 *
-	 * @return int
+	 * @return int|string
 	 */
 	public function get_version() {
 		// @todo change this to just increment an integer.
