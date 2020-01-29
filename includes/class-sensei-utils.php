@@ -1528,7 +1528,7 @@ class Sensei_Utils {
 	 *
 	 * @param int $course_id Course ID.
 	 * @param int $user_id   User ID.
-	 * @return int|bool false or comment_ID
+	 * @return int|false false or comment_ID
 	 */
 	public static function get_course_progress_comment_id( $course_id, $user_id = null ) {
 		if ( empty( $course_id ) ) {
