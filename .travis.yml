@@ -39,7 +39,7 @@ jobs:
     #    - npm install || exit 1
     #    - npm run test-js || exit 1
     - stage: test
-      php: 7.2
+      php: 7.4
       env: WP_VERSION=latest
       script:
         - ./tests/bin/run-wp-unit-tests.sh
