@@ -1480,6 +1480,8 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests getting lessons with video count.
+	 *
 	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
 	 * @covers Sensei_Usage_Tracking_Data::get_lesson_with_video_count
 	 */
