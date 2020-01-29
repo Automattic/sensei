@@ -967,9 +967,7 @@ class Sensei_Grading {
 
 			$right_answer = (array) get_post_meta( $question_id, '_question_right_answer', true );
 
-			if ( 0 == get_magic_quotes_gpc() ) {
-				$answer = wp_unslash( $answer );
-			}
+			$answer = wp_unslash( $answer );
 			$answer = (array) $answer;
 			if ( is_array( $right_answer ) && count( $right_answer ) == count( $answer ) ) {
 				// Loop through all answers ensure none are 'missing'
@@ -1022,9 +1020,7 @@ class Sensei_Grading {
 		$right_answer  = get_post_meta( $question_id, '_question_right_answer', true );
 		$gapfill_array = explode( '||', $right_answer );
 
-		if ( 0 == get_magic_quotes_gpc() ) { // deprecated from PHP 5.4 but we still support PHP 5.2
-			$user_answer = wp_unslash( $user_answer );
-		}
+		$user_answer = wp_unslash( $user_answer );
 
 		/**
 		 * case sensitive grading filter
