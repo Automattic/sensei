@@ -46,10 +46,6 @@ class Sensei_Class_Admin_Test extends WP_UnitTestCase {
 	 * @return void
 	 */
 	public function testDuplicateCourseWithLessons() {
-		$this->assertTrue(
-			method_exists( 'WooThemes_Sensei_Admin', 'duplicate_course_lessons' ),
-			'The admin class function `duplicate_course_lessons` does not exist '
-		);
 
 		$qty_lessons = 2;
 		$duplication = $this->duplicate_course_with_lessons_setup( $qty_lessons );
@@ -97,15 +93,6 @@ class Sensei_Class_Admin_Test extends WP_UnitTestCase {
 	 * @return void
 	 */
 	public function testDuplicateCourseWithLessonsWithPrerequisite() {
-		$this->assertTrue(
-			method_exists( 'WooThemes_Sensei_Admin', 'duplicate_course_lessons' ),
-			'The admin class function `update_lesson_prerequisite_ids` does not exist '
-		);
-		$this->assertTrue(
-			method_exists( 'WooThemes_Sensei_Admin', 'duplicate_course_lessons' ),
-			'The admin class function `get_prerequisite_update_object` does not exist '
-		);
-
 		$qty_lessons = 2;
 		$duplication = $this->duplicate_course_with_lessons_setup( $qty_lessons );
 		$course_id   = $duplication['course_id'];
