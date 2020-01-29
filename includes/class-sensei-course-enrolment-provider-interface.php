@@ -49,7 +49,7 @@ interface Sensei_Course_Enrolment_Provider_Interface {
 	/**
 	 * Gets the version of the enrolment provider logic. If this changes, enrolment will be recalculated.
 	 *
-	 * @return int
+	 * @return int|string
 	 */
 	public function get_version();
 }
