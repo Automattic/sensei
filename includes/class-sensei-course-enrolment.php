@@ -247,7 +247,7 @@ class Sensei_Course_Enrolment {
 			}
 
 			$enrolment_provider_class              = get_class( $enrolment_provider );
-			$versions[ $enrolment_provider_class ] = $enrolment_provider_class::get_version();
+			$versions[ $enrolment_provider_class ] = $enrolment_provider->get_version();
 		}
 
 		ksort( $versions );

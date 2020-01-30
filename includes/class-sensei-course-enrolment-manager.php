@@ -69,24 +69,24 @@ class Sensei_Course_Enrolment_Manager {
 		$this->enrolment_providers = [];
 
 		// Manual enrolment is Sensei's core enrolment provider.
-		$provider_classes = [
-			Sensei_Course_Manual_Enrolment_Provider::class,
+		$providers = [
+			Sensei_Course_Manual_Enrolment_Provider::instance(),
 		];
 
 		/**
 		 * Fetch all registered course enrolment providers.
 		 *
-		 * @param string[] $provider_classes List of enrolment providers classes.
+		 * @param Sensei_Course_Enrolment_Provider_Interface[] $providers List of enrolment providers instances.
 		 *
 		 * @since 3.0.0
 		 */
-		$provider_classes = apply_filters( 'sensei_course_enrolment_providers', $provider_classes );
-		foreach ( $provider_classes as $provider_class ) {
-			if ( ! class_exists( $provider_class ) || ! is_a( $provider_class, 'Sensei_Course_Enrolment_Provider_Interface', true ) ) {
+		$providers = apply_filters( 'sensei_course_enrolment_providers', $providers );
+		foreach ( $providers as $provider ) {
+			if ( ! ( $provider instanceof Sensei_Course_Enrolment_Provider_Interface ) ) {
 				continue;
 			}
 
-			$this->enrolment_providers[ $provider_class::get_id() ] = new $provider_class();
+			$this->enrolment_providers[ $provider->get_id() ] = $provider;
 		}
 	}
 
@@ -104,9 +104,7 @@ class Sensei_Course_Enrolment_Manager {
 			return false;
 		}
 
-		$provider_class = get_class( $provider );
-
-		return $provider_class::get_name();
+		return $provider->get_name();
 	}
 
 	/**
@@ -147,7 +145,7 @@ class Sensei_Course_Enrolment_Manager {
 	 * @throws Exception When there was an attempt to access the manual enrolment providers before providers are collected in init:100.
 	 */
 	public function get_manual_enrolment_provider() {
-		return $this->get_enrolment_provider_by_id( Sensei_Course_Manual_Enrolment_Provider::get_id() );
+		return $this->get_enrolment_provider_by_id( Sensei_Course_Manual_Enrolment_Provider::instance()->get_id() );
 	}
 
 	/**

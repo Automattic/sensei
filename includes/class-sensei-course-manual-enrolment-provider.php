@@ -19,11 +19,36 @@ class Sensei_Course_Manual_Enrolment_Provider implements Sensei_Course_Enrolment
 	const META_PREFIX_MANUAL_STATUS    = 'course-enrolment-manual-';
 
 	/**
+	 * Singleton instance.
+	 *
+	 * @var self
+	 */
+	private static $instance;
+
+	/**
+	 * Provides singleton instance of manual provider.
+	 *
+	 * @return Sensei_Course_Manual_Enrolment_Provider
+	 */
+	public static function instance() {
+		if ( ! isset( self::$instance ) ) {
+			self::$instance = new self();
+		}
+
+		return self::$instance;
+	}
+
+	/**
+	 * Sensei_Course_Manual_Enrolment_Provider constructor. Private so it can only be initialized internally.
+	 */
+	private function __construct() {}
+
+	/**
 	 * Gets the unique identifier of this enrolment provider.
 	 *
 	 * @return int
 	 */
-	public static function get_id() {
+	public function get_id() {
 		return 'manual';
 	}
 
@@ -32,7 +57,7 @@ class Sensei_Course_Manual_Enrolment_Provider implements Sensei_Course_Enrolment
 	 *
 	 * @return string
 	 */
-	public static function get_name() {
+	public function get_name() {
 		return esc_html__( 'Manual', 'sensei-lms' );
 	}
 
@@ -234,9 +259,9 @@ class Sensei_Course_Manual_Enrolment_Provider implements Sensei_Course_Enrolment
 	/**
 	 * Gets the version of the enrolment provider logic. If this changes, enrolment will be recalculated.
 	 *
-	 * @return int
+	 * @return int|string
 	 */
-	public static function get_version() {
+	public function get_version() {
 		// @todo change this to just increment an integer.
 		return filemtime( __FILE__ );
 	}

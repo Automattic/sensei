@@ -121,11 +121,7 @@ trait Sensei_Course_Enrolment_Test_Helpers {
 		add_filter(
 			'sensei_course_enrolment_providers',
 			function( $providers ) use ( $class_name ) {
-				if ( in_array( $class_name, $providers, true ) ) {
-					return $providers;
-				}
-
-				$providers[] = $class_name;
+				$providers[] = new $class_name();
 
 				return $providers;
 			}
