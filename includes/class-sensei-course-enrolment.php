@@ -85,6 +85,11 @@ class Sensei_Course_Enrolment {
 	 * @return bool
 	 */
 	public function is_enrolled( $user_id, $check_cache = true ) {
+		// Users can only be enrolled in a published course.
+		if ( 'publish' !== get_post_status( $this->course_id ) ) {
+			return false;
+		}
+
 		try {
 			if ( $check_cache ) {
 				$enrolment_check_results = $this->get_enrolment_check_results( $user_id );
