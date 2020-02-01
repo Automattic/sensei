@@ -1610,7 +1610,7 @@ class Sensei_Utils {
 			);
 
 			// Grab all of this Courses' lessons, looping through each...
-			$lesson_ids    = Sensei()->course->course_lessons( $course_id, 'publish', 'ids' );
+			$lesson_ids    = Sensei()->course->course_lessons( $course_id, array( 'publish', 'private' ), 'ids' );
 			$total_lessons = count( $lesson_ids );
 				// ...if course completion not set to 'passed', and all lessons are complete or graded,
 				// ......then all lessons are 'passed'
