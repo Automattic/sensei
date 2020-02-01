@@ -487,7 +487,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'section'     => 'learner-profile-settings',
 		);
 
-		// Email notifications
+		// Email notifications.
 		$learner_email_options = array(
 			'learner-graded-quiz'      => __( 'Their quiz is graded (auto and manual grading)', 'sensei-lms' ),
 			'learner-completed-course' => __( 'They complete a course', 'sensei-lms' ),
@@ -499,6 +499,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'teacher-completed-lesson' => __( 'A learner completes a lesson', 'sensei-lms' ),
 			'teacher-quiz-submitted'   => __( 'A learner submits a quiz for grading', 'sensei-lms' ),
 			'teacher-new-message'      => __( 'A learner sends a private message to a teacher', 'sensei-lms' ),
+			'teacher-assigned-course'  => __( 'A course is assigned to a teacher', 'sensei-lms' ),
 		);
 
 		$global_email_options = array(
@@ -519,7 +520,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'description' => __( 'Select the notifications that will be sent to teachers.', 'sensei-lms' ),
 			'type'        => 'multicheck',
 			'options'     => $teacher_email_options,
-			'defaults'    => array( 'teacher-completed-course', 'teacher-started-course', 'teacher-quiz-submitted', 'teacher-new-message' ),
+			'defaults'    => array( 'teacher-completed-course', 'teacher-started-course', 'teacher-quiz-submitted', 'teacher-new-message', 'teacher-assigned-course' ),
 			'section'     => 'email-notification-settings',
 		);
 
