@@ -852,16 +852,21 @@ class Sensei_Teacher {
 	 */
 	public function teacher_course_assigned_notification( $teacher_id, $course_id ) {
 
+		// If setting is disabled, exit.
+		if ( ! in_array( 'teacher-assigned-course', (array) Sensei()->settings->settings['email_teacher'], true ) ) {
+			return false;
+		}
+
 		if ( 'course' != get_post_type( $course_id ) || ! get_userdata( $teacher_id ) ) {
 			return false;
 		}
 
-		// if new user is the same as the current logged user, they don't need an email
+		// If new user is the same as the current logged user, they don't need an email.
 		if ( $teacher_id == get_current_user_id() ) {
 			return true;
 		}
 
-		// load the email class
+		// Load the email class.
 		include dirname( __FILE__ ) . '/emails/class-sensei-email-teacher-new-course-assignment.php';
 		$email = new Sensei_Email_Teacher_New_Course_Assignment();
 		$email->trigger( $teacher_id, $course_id );
