@@ -121,6 +121,24 @@ class Sensei_Course_Enrolment_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Check that unpublished courses return `false` for `is_enrolled`.
+	 */
+	public function testEnrolmentCheckUnpublishedCourse() {
+		$course_id  = $this->factory->course->create(
+			[
+				'post_status' => 'draft',
+			]
+		);
+		$student_id = $this->createStandardStudent();
+		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Always_Provides::class );
+		$this->prepareEnrolmentManager();
+
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+
+		$this->assertFalse( $course_enrolment->is_enrolled( $student_id ), 'Students cannot be enrolled in unpublished courses.' );
+	}
+
+	/**
 	 * Check for positive result when positive and negative provider exist. Checks for case when positive is registered second.
 	 */
 	public function testEnrolmentCheckPositivePrevailsSecond() {
