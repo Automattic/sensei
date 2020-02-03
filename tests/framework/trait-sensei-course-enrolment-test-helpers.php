@@ -135,8 +135,8 @@ trait Sensei_Course_Enrolment_Test_Helpers {
 		add_filter(
 			'sensei_course_enrolment_providers',
 			function( $providers ) use ( $class_name ) {
-				foreach ( $providers as $index => $provider_class ) {
-					if ( $class_name === $provider_class ) {
+				foreach ( $providers as $index => $provider ) {
+					if ( get_class( $provider ) === $class_name ) {
 						unset( $providers[ $index ] );
 					}
 				}
