@@ -178,6 +178,13 @@ class Sensei_Main {
 	public $feature_flags;
 
 	/**
+	 * The scheduler which is responsible to recalculate user enrolments.
+	 *
+	 * @var Sensei_Enrolment_Calculation_Scheduler
+	 */
+	private $enrolment_scheduler;
+
+	/**
 	 * Constructor method.
 	 *
 	 * @param  string $file The base file of the plugin.
@@ -368,6 +375,7 @@ class Sensei_Main {
 
 		Sensei_Blocks::instance()->init();
 		Sensei_Course_Enrolment_Manager::instance()->init();
+		$this->enrolment_scheduler = Sensei_Enrolment_Calculation_Scheduler::instance();
 
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
@@ -549,6 +557,7 @@ class Sensei_Main {
 	 */
 	public function deactivation() {
 		$this->usage_tracking->unschedule_tracking_task();
+		$this->enrolment_scheduler->stop();
 	}
 
 
