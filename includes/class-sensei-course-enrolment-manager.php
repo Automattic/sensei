@@ -162,11 +162,11 @@ class Sensei_Course_Enrolment_Manager {
 		$all_providers = $this->get_all_enrolment_providers();
 
 		// If the manual provider has been filtered out, do not allow frontend enrolment.
-		if ( ! isset( $all_providers[ Sensei_Course_Manual_Enrolment_Provider::get_id() ] ) ) {
+		if ( ! isset( $all_providers[ Sensei_Course_Manual_Enrolment_Provider::instance()->get_id() ] ) ) {
 			return false;
 		}
 
-		unset( $all_providers[ Sensei_Course_Manual_Enrolment_Provider::get_id() ] );
+		unset( $all_providers[ Sensei_Course_Manual_Enrolment_Provider::instance()->get_id() ] );
 
 		foreach ( $all_providers as $provider ) {
 			if ( $provider->handles_enrolment( $course_id ) ) {
