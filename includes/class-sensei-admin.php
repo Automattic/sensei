@@ -682,6 +682,58 @@ class Sensei_Admin {
 	}
 
 	/**
+	 * Update the _lesson_order meta on the duplicated Course so that it uses
+	 * the new Lesson IDs.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param int   $course_id            The ID of the new Course.
+	 * @param array $new_lesson_id_lookup An array mapping old lesson IDs to the
+	 *                                    IDs of their duplicates.
+	 */
+	private function update_lesson_order_on_course( $course_id, $new_lesson_id_lookup ) {
+		$old_lesson_order_string = get_post_meta( $course_id, '_lesson_order', true );
+
+		if ( empty( $old_lesson_order_string ) ) {
+			return;
+		}
+
+		$old_lesson_order = explode( ',', $old_lesson_order_string );
+		$new_lesson_order = [];
+
+		// Map old lesson IDs to new IDs.
+		foreach ( $old_lesson_order as $old_lesson_id ) {
+			if ( ! isset( $new_lesson_id_lookup[ $old_lesson_id ] ) ) {
+				continue;
+			}
+
+			// Add new lesson ID to order.
+			$new_lesson_id      = $new_lesson_id_lookup[ $old_lesson_id ];
+			$new_lesson_order[] = $new_lesson_id;
+		}
+
+		// Persist new lesson order to course meta.
+		$new_lesson_order_string = join( ',', $new_lesson_order );
+		update_post_meta( $course_id, '_lesson_order', $new_lesson_order_string );
+	}
+
+	/**
+	 * Update the _order_<course-id> on a newly duplicated Lesson to use the
+	 * new Course ID.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param WP_Post $lesson        The new Lesson.
+	 * @param int     $old_course_id The ID of the old Course that was duplicated.
+	 * @param int     $new_course_id The ID of the new Course.
+	 */
+	private function update_lesson_order_on_lesson( $lesson, $old_course_id, $new_course_id ) {
+		$lesson_order_value = get_post_meta( $lesson->ID, "_order_$old_course_id", true );
+		update_post_meta( $lesson->ID, "_order_$new_course_id", $lesson_order_value );
+		delete_post_meta( $lesson->ID, "_order_$old_course_id" );
+	}
+
+	/**
 	 * Duplicate lessons inside a course.
 	 *
 	 * @param  integer $old_course_id ID of original course.
@@ -705,9 +757,15 @@ class Sensei_Admin {
 
 			$new_lesson_id_lookup[ $lesson->ID ] = $new_lesson->ID;
 			$this->duplicate_lesson_quizzes( $lesson->ID, $new_lesson->ID );
+
+			// Update the _order_<course-id> meta on the lesson.
+			$this->update_lesson_order_on_lesson( $new_lesson, $old_course_id, $new_course_id );
 		}
 
 		$this->update_lesson_prerequisite_ids( $lessons_to_update, $new_lesson_id_lookup );
+
+		// Update the _lesson_order meta on the course.
+		$this->update_lesson_order_on_course( $new_course_id, $new_lesson_id_lookup );
 
 		return count( $lessons );
 	}

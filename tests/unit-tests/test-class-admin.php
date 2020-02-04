@@ -132,6 +132,61 @@ class Sensei_Class_Admin_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test duplicate courses with lessons, ensure lesson order is preserved.
+	 *
+	 * @uses WooThemes_Sensei_Admin::duplicate_course_with_lessons_action
+	 * @uses WooThemes_Sensei_Admin::duplicate_content
+	 * @uses WooThemes_Sensei_Admin::duplicate_post
+	 *
+	 * @covers WooThemes_Sensei_Admin::duplicate_course_lessons
+	 *
+	 * @return void
+	 */
+	public function testDuplicateCourseWithLessonsPreservesOrder() {
+		$this->assertTrue(
+			method_exists( 'WooThemes_Sensei_Admin', 'duplicate_course_lessons' ),
+			'The admin class function `duplicate_course_lessons` does not exist '
+		);
+
+		$qty_lessons = 2;
+		$original    = $this->duplicate_course_with_lessons_setup( $qty_lessons );
+		$course_id   = $original['course_id'];
+		$lessons_ids = $original['lessons_ids'];
+		$lesson1_id  = $lessons_ids[0];
+		$lesson2_id  = $lessons_ids[1];
+
+		$lesson_order = join( ',', [ $lesson1_id, $lesson2_id ] );
+		Sensei()->admin->save_lesson_order( $lesson_order, $course_id );
+
+		// Runs the duplication
+		Sensei()->admin->duplicate_course_with_lessons_action();
+
+		// Get the duplicated course and lessons.
+		$duplicated_course  = $this->get_duplicated_course( $course_id );
+		$duplicated_lesson1 = $this->get_duplicated_lesson( $lesson1_id );
+		$duplicated_lesson2 = $this->get_duplicated_lesson( $lesson2_id );
+
+		// Assert course order is correct.
+		$this->assertEquals(
+			join( ',', [ $duplicated_lesson1->ID, $duplicated_lesson2->ID ] ),
+			get_post_meta( $duplicated_course->ID, '_lesson_order', true ),
+			'Duplicated lesson order in course meta differs from the original order'
+		);
+
+		// Assert order is correct on each lesson.
+		$this->assertEquals(
+			'1',
+			get_post_meta( $duplicated_lesson1->ID, "_order_$duplicated_course->ID", true ),
+			'Duplicated lesson order on first lesson differs from the original order'
+		);
+		$this->assertEquals(
+			'2',
+			get_post_meta( $duplicated_lesson2->ID, "_order_$duplicated_course->ID", true ),
+			'Duplicated lesson order on second lesson differs from the original order'
+		);
+	}
+
+	/**
 	 * Setup function for duplicate course.
 	 *
 	 * This function mocks the redirect method, create and set the user, create a course
@@ -178,5 +233,39 @@ class Sensei_Class_Admin_Test extends WP_UnitTestCase {
 			'course_id'   => $course_id,
 			'lessons_ids' => $lessons_ids,
 		);
+	}
+
+	/**
+	 * Get duplicated course given the original course ID.
+	 *
+	 * @param int $course_id The ID of the original course.
+	 * @return WP_Post
+	 */
+	private function get_duplicated_course( $course_id ) {
+		$duplicated_course_args = array(
+			'post_type'   => 'course',
+			'meta_key'    => '_duplicate', // phpcs:ignore Slow query ok.
+			'meta_value'  => $course_id, // phpcs:ignore Slow query ok.
+			'post_status' => [ 'draft' ],
+			'per_page'    => 1,
+		);
+		return get_posts( $duplicated_course_args )[0];
+	}
+
+	/**
+	 * Get duplicated lesson given the original lesson ID.
+	 *
+	 * @param int $lesson_id The ID of the original lesson.
+	 * @return WP_Post
+	 */
+	private function get_duplicated_lesson( $lesson_id ) {
+		$duplicated_lesson_args = array(
+			'post_type'   => 'lesson',
+			'meta_key'    => '_duplicate', // phpcs:ignore Slow query ok.
+			'meta_value'  => $lesson_id, // phpcs:ignore Slow query ok.
+			'post_status' => [ 'draft' ],
+			'per_page'    => 1,
+		);
+		return get_posts( $duplicated_lesson_args )[0];
 	}
 }//end class
