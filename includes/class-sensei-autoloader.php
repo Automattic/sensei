@@ -7,23 +7,16 @@ class Sensei_Autoloader_Bundle {
 	/**
 	 * @var path to the includes directory within Sensei.
 	 */
-	private $include_path      = 'includes';
-	private $bundle_identifier = 'sensei';
+	private $include_path = 'includes';
 
 	/**
 	 * Sensei_Autoloader_Bundle constructor.
 	 *
-	 * @param string $bundle_identifier
 	 * @param string $namespace_path path relative to includes
 	 */
-	public function __construct( $bundle_identifier = 'sensei', $bundle_identifier_path = '' ) {
-		$this->bundle_identifier = $bundle_identifier;
+	public function __construct( $bundle_identifier_path = '' ) {
 		// setup a relative path for the current autoload instance
 		$this->include_path = trailingslashit( trailingslashit( untrailingslashit( dirname( __FILE__ ) ) ) . $bundle_identifier_path );
-	}
-
-	private function format_namespace() {
-		return strtolower( $this->bundle_identifier );
 	}
 
 	/**
@@ -31,10 +24,6 @@ class Sensei_Autoloader_Bundle {
 	 * @return bool
 	 */
 	public function load_class( $class ) {
-
-		if ( ! is_numeric( strpos( strtolower( $class ), $this->format_namespace() ) ) ) {
-			return false;
-		}
 
 		// check for file in the main includes directory
 		$class_file_path = $this->include_path . 'class-' . str_replace( '_', '-', strtolower( $class ) ) . '.php';
@@ -100,9 +89,10 @@ class Sensei_Autoloader {
 		$this->initialize_class_file_map();
 
 		$this->autoloader_bundles = array(
-			new Sensei_Autoloader_Bundle( 'Sensei_REST_API', 'rest-api' ),
-			new Sensei_Autoloader_Bundle( 'Sensei_Domain_Models', 'domain-models' ),
-			new Sensei_Autoloader_Bundle( 'Sensei', '' ),
+			new Sensei_Autoloader_Bundle( 'rest-api' ),
+			new Sensei_Autoloader_Bundle( 'domain-models' ),
+			new Sensei_Autoloader_Bundle( '' ),
+			new Sensei_Autoloader_Bundle( 'enrolment' ),
 		);
 
 		// add Sensei custom auto loader
