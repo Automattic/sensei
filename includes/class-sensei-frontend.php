@@ -139,7 +139,7 @@ class Sensei_Frontend {
 
 			$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
-			if ( is_page( (int) Sensei()->settings->settings[ 'my_course_page' ] ) ) {
+			if ( is_page( (int) Sensei()->settings->settings['my_course_page'] ) ) {
 				// My Courses tabs script.
 				wp_register_script( Sensei()->token . '-user-dashboard', esc_url( Sensei()->plugin_url . 'assets/js/user-dashboard' . $suffix . '.js' ), array( 'jquery-ui-tabs' ), Sensei()->version, true );
 				wp_enqueue_script( Sensei()->token . '-user-dashboard' );
