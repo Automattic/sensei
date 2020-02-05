@@ -649,9 +649,9 @@ class Sensei_Question {
 	 * @param string $question_id
 	 */
 	public static function the_question_media( $question_id ) {
-
+		// Note: get_the_question_media() handles escaping output.
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo self::get_the_question_media( $question_id );
-
 	}
 
 	/**
