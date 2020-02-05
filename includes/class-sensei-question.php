@@ -617,7 +617,7 @@ class Sensei_Question {
 		if ( $question_media_link ) {
 
 				$output .= '<div class="question_media_display">';
-				$output .= wp_kses_post( $question_media_link );
+				$output .= $question_media_link;
 				$output .= '<dl>';
 
 			if ( $question_media_title ) {
@@ -650,7 +650,7 @@ class Sensei_Question {
 	 */
 	public static function the_question_media( $question_id ) {
 
-		echo wp_kses_post( self::get_the_question_media( $question_id ) );
+		echo self::get_the_question_media( $question_id );
 
 	}
 
