@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the class Sensei_Course_Enrolment_Provider_State.
+ * File containing the class Sensei_Course_Enrolment_Provider_State_Set.
  *
  * @package sensei
  */
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Stores set of all the enrolment provider state objects.
+ * Stores set of all the enrolment provider state objects for a course and user.
  */
 class Sensei_Course_Enrolment_Provider_State_Set implements JsonSerializable {
 	/**
@@ -42,7 +42,7 @@ class Sensei_Course_Enrolment_Provider_State_Set implements JsonSerializable {
 	}
 
 	/**
-	 * Restore a course enrolment state record from a serialized JSON string.
+	 * Restore a provider state set from a serialized JSON string.
 	 *
 	 * @param string $json_string JSON representation of enrolment state.
 	 *
@@ -72,7 +72,7 @@ class Sensei_Course_Enrolment_Provider_State_Set implements JsonSerializable {
 	}
 
 	/**
-	 * Create a fresh state storage record.
+	 * Create a fresh state set record.
 	 *
 	 * @return self
 	 */
