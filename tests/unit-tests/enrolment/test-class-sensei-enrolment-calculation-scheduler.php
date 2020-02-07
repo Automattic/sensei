@@ -6,6 +6,7 @@ require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-he
  * Tests for Sensei_Enrolment_Calculation_Scheduler class.
  *
  * @covers Sensei_Enrolment_Calculation_Scheduler
+ * @group course-enrolment
  */
 class Sensei_Enrolment_Calculation_Scheduler_Test extends WP_UnitTestCase {
 	/**
