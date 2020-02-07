@@ -127,6 +127,57 @@ class Sensei_Course_Enrolment_Provider_State_Test extends WP_UnitTestCase {
 		$json_string     = \wp_json_encode( $state );
 		$expected_string = \wp_json_encode( $initial_state );
 
-		$this->assertEquals( $expected_string, $json_string, 'Setting the value to null  should persist with data not set when serializing the object' );
+		$this->assertEquals( $expected_string, $json_string, 'Setting the value to null should persist with data not set when serializing the object' );
+	}
+
+	/**
+	 * Tests logging a simple message.
+	 */
+	public function testAddLogMessage() {
+		$state_set = Sensei_Course_Enrolment_Provider_State_Set::create();
+		$state     = Sensei_Course_Enrolment_Provider_State::create( $state_set );
+
+		$test_message = 'I really hope this works';
+		$state->add_log_message( $test_message );
+		$logs = $state->get_logs();
+
+		$this->assertEquals( $logs[0][1], $test_message, 'The message should match what was added' );
+	}
+
+	/**
+	 * Tests getting log message with oldest at the top.
+	 */
+	public function testGetLogs() {
+		$time         = time();
+		$initial_data = [
+			'l' => [
+				[
+					$time,
+					'This is the newest message',
+				],
+				[
+					$time - 10,
+					'This is the oldest message',
+				],
+				[
+					$time - 5,
+					'This is the third oldest message',
+				],
+				[
+					$time - 7,
+					'This is the second oldest message',
+				],
+			],
+		];
+
+		$state_set = Sensei_Course_Enrolment_Provider_State_Set::create();
+		$state     = Sensei_Course_Enrolment_Provider_State::from_serialized_array( $state_set, $initial_data );
+
+		$logs = $state->get_logs();
+
+		$this->assertEquals( $initial_data['l'][1], $logs[0], 'The first log entry should be the oldest' );
+		$this->assertEquals( $initial_data['l'][3], $logs[1], 'The second log entry should be the second oldest' );
+		$this->assertEquals( $initial_data['l'][2], $logs[2], 'The third log entry should be the third oldest' );
+		$this->assertEquals( $initial_data['l'][0], $logs[3], 'The last log entry should be the newest' );
 	}
 }

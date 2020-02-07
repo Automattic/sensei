@@ -21,13 +21,6 @@ class Sensei_Course_Enrolment_Provider_State implements JsonSerializable {
 	private $state_set;
 
 	/**
-	 * Course enrolment state.
-	 *
-	 * @var bool
-	 */
-	private $enrolment_status;
-
-	/**
 	 * Provider data storage.
 	 *
 	 * @var array
@@ -184,7 +177,7 @@ class Sensei_Course_Enrolment_Provider_State implements JsonSerializable {
 	 *
 	 * @param string $message  Message to log.
 	 */
-	public function log_message( $message ) {
+	public function add_log_message( $message ) {
 		$this->logs[] = [
 			time(),
 			sanitize_text_field( $message ),
@@ -202,6 +195,20 @@ class Sensei_Course_Enrolment_Provider_State implements JsonSerializable {
 	 * }
 	 */
 	public function get_logs() {
-		return $this->logs;
+		$logs = $this->logs;
+
+		// We need to sort because JSON might not keep the order.
+		usort(
+			$logs,
+			function( $a, $b ) {
+				if ( $a[0] > $b[0] ) {
+					return 1;
+				}
+
+				return -1;
+			}
+		);
+
+		return $logs;
 	}
 }
