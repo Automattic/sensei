@@ -367,16 +367,16 @@ class Sensei_Quiz {
 			);
 		}
 
-		// Get Quiz Questions
+		// Get Quiz Questions.
 		$lesson_quiz_questions = Sensei()->lesson->lesson_quiz_questions( $post->ID );
 
-		// Get quiz grade type
+		// Get quiz grade type.
 		$quiz_grade_type = get_post_meta( $post->ID, '_quiz_grade_type', true );
 
-		// Get quiz pass mark
+		// Get quiz pass mark.
 		$quiz_passmark = Sensei_Utils::as_absolute_rounded_number( get_post_meta( $post->ID, '_quiz_passmark', true ), 2 );
 
-		// Get latest quiz answers and grades
+		// Get latest quiz answers and grades.
 		$lesson_id       = Sensei()->quiz->get_lesson_id( $post->ID );
 		$user_quizzes    = Sensei()->quiz->get_user_answers( $lesson_id, get_current_user_id() );
 		$user_quiz_grade = 0;
@@ -387,7 +387,7 @@ class Sensei_Quiz {
 		if ( ! is_array( $user_quizzes ) ) {
 			$user_quizzes = array(); }
 
-		// Check again that the lesson is complete
+		// Check again that the lesson is complete.
 		$user_lesson_end      = Sensei_Utils::user_completed_lesson( $user_lesson_status );
 		$user_lesson_complete = false;
 		if ( $user_lesson_end ) {
@@ -395,13 +395,13 @@ class Sensei_Quiz {
 		} // End If Statement
 
 		$reset_allowed = get_post_meta( $post->ID, '_enable_quiz_reset', true );
-		// backwards compatibility
+		// Backwards compatibility.
 		if ( 'on' == $reset_allowed ) {
 			$reset_allowed = 1;
 		}
 
 		// Build frontend data object for backwards compatibility
-		// using this is no longer recommended
+		// using this is no longer recommended.
 		$this->data->user_quiz_grade       = $user_quiz_grade;
 		$this->data->quiz_passmark         = $quiz_passmark;
 		$this->data->quiz_lesson           = $quiz_lesson_id;
