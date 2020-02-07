@@ -177,7 +177,6 @@ class Sensei_Course_Manual_Enrolment_Provider_Test extends WP_UnitTestCase {
 		$provider->enrol_student( $student_id, $course_id );
 
 		$this->assertTrue( $provider->is_enrolled( $student_id, $course_id ), 'Student should now be enrolled.' );
-		$this->assertNotEmpty( get_term_meta( $student_term->term_id, Sensei_Course_Manual_Enrolment_Provider::META_PREFIX_MANUAL_STATUS . $course_id, true ), 'Term meta should be set to store the manual enrolment status.' );
 	}
 
 	/**
@@ -195,7 +194,6 @@ class Sensei_Course_Manual_Enrolment_Provider_Test extends WP_UnitTestCase {
 		$provider->withdraw_student( $student_id, $course_id );
 
 		$this->assertFalse( $provider->is_enrolled( $student_id, $course_id ), 'Student should not be enrolled after withdrawing them from the course.' );
-		$this->assertEmpty( get_term_meta( $student_term->term_id, Sensei_Course_Manual_Enrolment_Provider::META_PREFIX_MANUAL_STATUS . $course_id, true ), 'Term meta should not be set that would store the manual enrolment status.' );
 	}
 
 	/**
