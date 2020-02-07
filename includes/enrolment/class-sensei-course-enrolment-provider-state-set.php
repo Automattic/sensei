@@ -33,15 +33,6 @@ class Sensei_Course_Enrolment_Provider_State_Set implements JsonSerializable {
 	private function __construct() {}
 
 	/**
-	 * Set the provider states.
-	 *
-	 * @param Sensei_Course_Enrolment_Provider_State[] $provider_states State objects for all providers.
-	 */
-	private function set_provider_states( $provider_states ) {
-		$this->provider_states = $provider_states;
-	}
-
-	/**
 	 * Restore a provider state set from a serialized JSON string.
 	 *
 	 * @param string $json_string JSON representation of enrolment state.
@@ -87,6 +78,15 @@ class Sensei_Course_Enrolment_Provider_State_Set implements JsonSerializable {
 	 */
 	public function jsonSerialize() {
 		return $this->provider_states;
+	}
+
+	/**
+	 * Set the provider states.
+	 *
+	 * @param Sensei_Course_Enrolment_Provider_State[] $provider_states State objects for all providers.
+	 */
+	private function set_provider_states( $provider_states ) {
+		$this->provider_states = $provider_states;
 	}
 
 	/**
