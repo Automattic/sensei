@@ -187,10 +187,10 @@ class Sensei_Course_Enrolment_Provider_State implements JsonSerializable {
 	}
 
 	/**
-	 * Get the log messages.
+	 * Get the log messages ordered by time (descending; oldest first).
 	 *
 	 * @return array {
-	 *     @var $0 Microtime for the log entry.
+	 *     @var $0 Time for the log entry.
 	 *     @var $1 Log message.
 	 * }
 	 */
