@@ -265,6 +265,7 @@ class Sensei_Course_Enrolment {
 
 			if ( $result && ! is_wp_error( $result ) ) {
 				$state_set->set_has_changed( false );
+			} else {
 				$success = false;
 			}
 		}
