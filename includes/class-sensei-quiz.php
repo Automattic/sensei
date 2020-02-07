@@ -31,21 +31,21 @@ class Sensei_Quiz {
 		$this->meta_fields = array( 'quiz_passmark', 'quiz_lesson', 'quiz_type', 'quiz_grade_type', 'pass_required', 'enable_quiz_reset' );
 		add_action( 'save_post', array( $this, 'update_after_lesson_change' ) );
 
-		// listen to the reset button click
+		// Listen to the reset button click.
 		add_action( 'template_redirect', array( $this, 'reset_button_click_listener' ) );
 
-		// fire the complete quiz button submit for grading action
+		// Fire the complete quiz button submit for grading action.
 		add_action( 'sensei_single_quiz_content_inside_before', array( $this, 'user_quiz_submit_listener' ) );
 
-		// fire the save user answers quiz button click responder
+		// Fire the save user answers quiz button click responder.
 		add_action( 'sensei_single_quiz_content_inside_before', array( $this, 'user_save_quiz_answers_listener' ) );
 
-		// fire the load global data function
+		// Fire the load global data function.
 		add_action( 'sensei_single_quiz_content_inside_before', array( $this, 'load_global_quiz_data' ), 10 );
 
 		add_action( 'template_redirect', array( $this, 'quiz_has_no_questions' ) );
 
-		// remove post when lesson is permanently deleted
+		// Remove post when lesson is permanently deleted.
 		add_action( 'delete_post', array( $this, 'maybe_delete_quiz' ) );
 
 	} // End __construct()
