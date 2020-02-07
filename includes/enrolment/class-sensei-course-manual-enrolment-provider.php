@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Course_Manual_Enrolment_Provider
 	extends Sensei_Course_Enrolment_Stored_Status_Provider
 	implements Sensei_Course_Enrolment_Provider_Interface {
-	const META_PREFIX_LEGACY_MIGRATION = 'course-enrolment-manual-legacy-';
+	const DATA_KEY_LEGACY_MIGRATION = 'legacy_log';
 
 	/**
 	 * Singleton instance.
@@ -190,8 +190,9 @@ class Sensei_Course_Manual_Enrolment_Provider
 	 * @return bool
 	 */
 	private function has_migrated_legacy_enrolment( $user_id, $course_id ) {
-		$term          = Sensei_Learner::get_learner_term( $user_id );
-		$migration_log = get_term_meta( $term->term_id, $this->get_legacy_migration_status_meta_key( $course_id ), true );
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$provider_state   = $course_enrolment->get_provider_state( $this, $user_id );
+		$migration_log    = $provider_state->get_stored_value( self::DATA_KEY_LEGACY_MIGRATION );
 
 		return ! empty( $migration_log );
 	}
@@ -204,19 +205,11 @@ class Sensei_Course_Manual_Enrolment_Provider
 	 * @param array $migration_log Log of the migration.
 	 */
 	private function set_migrated_legacy_enrolment_status( $user_id, $course_id, $migration_log ) {
-		$term = Sensei_Learner::get_learner_term( $user_id );
-		update_term_meta( $term->term_id, $this->get_legacy_migration_status_meta_key( $course_id ), wp_json_encode( $migration_log ) );
-	}
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$provider_state   = $course_enrolment->get_provider_state( $this, $user_id );
 
-	/**
-	 * Gets the meta key used to track legacy enrolment status migration.
-	 *
-	 * @param int $course_id Course post ID.
-	 *
-	 * @return string
-	 */
-	private function get_legacy_migration_status_meta_key( $course_id ) {
-		return self::META_PREFIX_LEGACY_MIGRATION . $course_id;
+		$provider_state->set_stored_value( self::DATA_KEY_LEGACY_MIGRATION, $migration_log );
+		$course_enrolment->persist_state_sets();
 	}
 
 	/**

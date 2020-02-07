@@ -162,7 +162,7 @@ class Sensei_Course_Enrolment_Provider_State implements JsonSerializable {
 	 * Set a value in the provider's storage.
 	 *
 	 * @param string $key   Key for the value to set.
-	 * @param string $value Value to set.
+	 * @param mixed  $value Value to set.
 	 */
 	public function set_stored_value( $key, $value ) {
 		if (
