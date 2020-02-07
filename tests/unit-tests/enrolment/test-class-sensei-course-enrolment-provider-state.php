@@ -16,7 +16,7 @@ class Sensei_Course_Enrolment_Provider_State_Test extends WP_UnitTestCase {
 			],
 			'l' => [
 				[
-					microtime( true ),
+					time(),
 					'This is a test.',
 				],
 			],
@@ -50,7 +50,7 @@ class Sensei_Course_Enrolment_Provider_State_Test extends WP_UnitTestCase {
 			],
 			'l' => [
 				[
-					microtime( true ),
+					time(),
 					'This is a test.',
 				],
 			],

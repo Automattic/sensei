@@ -48,7 +48,7 @@ class Sensei_Course_Enrolment_Provider_State implements JsonSerializable {
 	 * @param array                                      $provider_data    Basic storage for provider data.
 	 * @param array                                      $logs             Log messages.
 	 */
-	private function __construct( \Sensei_Course_Enrolment_Provider_State_Set $state_set, $provider_data = [], $logs = [] ) {
+	private function __construct( Sensei_Course_Enrolment_Provider_State_Set $state_set, $provider_data = [], $logs = [] ) {
 		$this->state_set     = $state_set;
 		$this->provider_data = $provider_data;
 		$this->logs          = $logs;
@@ -57,12 +57,12 @@ class Sensei_Course_Enrolment_Provider_State implements JsonSerializable {
 	/**
 	 * Restore a course enrolment state record from data restored from a serialized JSON string.
 	 *
-	 * @param \Sensei_Course_Enrolment_Provider_State_Set $state_set State set storing this provider state object.
-	 * @param array                                       $data      Serialized state of object.
+	 * @param Sensei_Course_Enrolment_Provider_State_Set $state_set State set storing this provider state object.
+	 * @param array                                      $data      Serialized state of object.
 	 *
 	 * @return self|false
 	 */
-	public static function from_serialized_array( \Sensei_Course_Enrolment_Provider_State_Set $state_set, $data ) {
+	public static function from_serialized_array( Sensei_Course_Enrolment_Provider_State_Set $state_set, $data ) {
 		if ( empty( $data ) ) {
 			return false;
 		}
@@ -76,7 +76,7 @@ class Sensei_Course_Enrolment_Provider_State implements JsonSerializable {
 	/**
 	 * Create a fresh state storage record.
 	 *
-	 * @param \Sensei_Course_Enrolment_Provider_State_Set $state_set State set storing this provider state object.
+	 * @param Sensei_Course_Enrolment_Provider_State_Set $state_set State set storing this provider state object.
 	 *
 	 * @return self
 	 */
@@ -85,9 +85,9 @@ class Sensei_Course_Enrolment_Provider_State implements JsonSerializable {
 	}
 
 	/**
-	 * Sanitize the logs.
+	 * Sanitize a log entry.
 	 *
-	 * @param  array $logs Non-sanitized log entries.
+	 * @param  array $log_entry Non-sanitized log entry.
 	 *
 	 * @return array
 	 */
@@ -100,7 +100,7 @@ class Sensei_Course_Enrolment_Provider_State implements JsonSerializable {
 			return null;
 		}
 
-		$log_entry[0] = floatval( $log_entry[0] );
+		$log_entry[0] = intval( $log_entry[0] );
 		$log_entry[1] = sanitize_text_field( $log_entry[1] );
 
 		return $log_entry;
@@ -186,7 +186,7 @@ class Sensei_Course_Enrolment_Provider_State implements JsonSerializable {
 	 */
 	public function log_message( $message ) {
 		$this->logs[] = [
-			microtime( true ),
+			time(),
 			sanitize_text_field( $message ),
 		];
 

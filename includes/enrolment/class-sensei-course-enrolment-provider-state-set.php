@@ -15,6 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Course_Enrolment_Provider_State_Set implements JsonSerializable {
 	/**
 	 * Flag for if a state set has changed.
+	 *
+	 * @var bool
 	 */
 	private $has_changed = false;
 
