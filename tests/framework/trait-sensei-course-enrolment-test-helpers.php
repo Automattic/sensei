@@ -18,6 +18,8 @@ require_once SENSEI_TEST_FRAMEWORK_DIR . '/enrolment-providers/class-sensei-test
 require_once SENSEI_TEST_FRAMEWORK_DIR . '/enrolment-providers/class-sensei-test-enrolment-provider-never-provides.php';
 require_once SENSEI_TEST_FRAMEWORK_DIR . '/enrolment-providers/class-sensei-test-enrolment-provider-provides-for-dinosaurs.php';
 require_once SENSEI_TEST_FRAMEWORK_DIR . '/enrolment-providers/class-sensei-test-enrolment-provider-version-morph.php';
+require_once SENSEI_TEST_FRAMEWORK_DIR . '/enrolment-providers/class-sensei-test-enrolment-provider-stateful-initially-false.php';
+require_once SENSEI_TEST_FRAMEWORK_DIR . '/enrolment-providers/class-sensei-test-enrolment-provider-stateful-initially-true.php';
 
 /**
  * Helpers for course enrolment related tests.
