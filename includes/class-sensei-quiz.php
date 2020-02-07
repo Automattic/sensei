@@ -41,7 +41,7 @@ class Sensei_Quiz {
 		add_action( 'sensei_single_quiz_content_inside_before', array( $this, 'user_save_quiz_answers_listener' ) );
 
 		// fire the load global data function
-		add_action( 'sensei_single_quiz_content_inside_before', array( $this, 'load_global_quiz_data' ), 80 );
+		add_action( 'sensei_single_quiz_content_inside_before', array( $this, 'load_global_quiz_data' ), 10 );
 
 		add_action( 'template_redirect', array( $this, 'quiz_has_no_questions' ) );
 
