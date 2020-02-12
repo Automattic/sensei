@@ -2657,7 +2657,7 @@ class Sensei_Course {
 		 *
 		 * @param string $course_page_url Course archive page URL.
 		 */
-		return apply_filters( 'sensei_course_page_url', $course_page_url );
+		return apply_filters( 'sensei_course_archive_page_url', $course_page_url );
 	}
 
 	/**
