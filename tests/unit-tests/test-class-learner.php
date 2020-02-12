@@ -1,6 +1,9 @@
 <?php
 
+require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-helpers.php';
+
 class Sensei_Class_Student_Test extends WP_UnitTestCase {
+	use Sensei_Course_Enrolment_Test_Helpers;
 
 	/**
 	 * Constructor function
@@ -20,11 +23,13 @@ class Sensei_Class_Student_Test extends WP_UnitTestCase {
 
 		$this->factory = new Sensei_Factory();
 
+		self::resetEnrolmentProviders();
 	}//end setUp()
 
 	public function tearDown() {
 		parent::tearDown();
 		$this->factory->tearDown();
+		self::resetEnrolmentProviders();
 	}
 
 	/**
@@ -36,6 +41,26 @@ class Sensei_Class_Student_Test extends WP_UnitTestCase {
 		$this->assertTrue( class_exists( 'Sensei_Learner' ), 'the Sensei student class is not loaded' );
 
 	} // end testClassInstance
+
+	/**
+	 * Tests that Sensei_Course_Enrolment_Manager::delete_user_enrolments delete user enrolments
+	 * when user is deleted.
+	 */
+	public function testDeleteUserEnrolments() {
+		$course_id  = $this->getSimpleCourse();
+		$student_id = $this->createStandardStudent();
+
+		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Always_Provides::class );
+		$this->prepareEnrolmentManager();
+
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$this->assertTrue( $course_enrolment->is_enrolled( $student_id ) );
+
+		wp_delete_user( $student_id );
+
+		$student_term = Sensei_Learner::get_learner_term( $student_id );
+		$this->assertFalse( has_term( $student_term->term_id, Sensei_PostTypes::LEARNER_TAXONOMY_NAME, $course_id ), 'User terms should be removed when user is deleted' );
+	}
 
 	/**
 	 * Testing the get_learner_full_name function. This function tests the basic assumptions.

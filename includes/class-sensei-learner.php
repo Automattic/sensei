@@ -44,7 +44,22 @@ class Sensei_Learner {
 	 * Sets the actions.
 	 */
 	public function init() {
+		add_action( 'deleted_user', array( $this, 'delete_user_enrolments' ) );
+	}
 
+	/**
+	 * Remove user enrolments when removing user.
+	 *
+	 * Hooked into deleted_user.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param int $user_id User ID.
+	 */
+	public function delete_user_enrolments( $user_id ) {
+		$learner_term = self::get_learner_term( $user_id );
+
+		wp_delete_term( $learner_term->term_id, Sensei_PostTypes::LEARNER_TAXONOMY_NAME );
 	}
 
 	/**
