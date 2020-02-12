@@ -149,7 +149,16 @@ class Sensei_Learner {
 
 	}//end get_full_name()
 
+	/**
+	 * Get all actice lerner ids for a course.
+	 *
+	 * @param int $course_id Course ID.
+	 *
+	 * @deprecated 3.0.0
+	 */
 	public static function get_all_active_learner_ids_for_course( $course_id ) {
+		_deprecated_function( __METHOD__, '3.0.0' );
+
 		$post_id = absint( $course_id );
 
 		if ( ! $post_id ) {
@@ -173,7 +182,16 @@ class Sensei_Learner {
 		return $learner_ids;
 	}
 
+	/**
+	 * Get all users.
+	 *
+	 * @param array $args
+	 *
+	 * @deprecated 3.0.0
+	 */
 	public static function get_all( $args ) {
+		_deprecated_function( __METHOD__, '3.0.0' );
+
 		$post_id  = 0;
 		$activity = '';
 
