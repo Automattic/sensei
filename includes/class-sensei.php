@@ -374,6 +374,7 @@ class Sensei_Main {
 		$this->usage_tracking->schedule_tracking_task();
 
 		Sensei_Blocks::instance()->init();
+		Sensei_Learner::instance()->init();
 		Sensei_Course_Enrolment_Manager::instance()->init();
 		$this->enrolment_scheduler = Sensei_Enrolment_Calculation_Scheduler::instance();
 

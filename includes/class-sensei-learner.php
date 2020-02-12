@@ -10,11 +10,42 @@
  */
 class Sensei_Learner {
 	/**
+	 * Instance of singleton.
+	 *
+	 * @var self
+	 */
+	private static $instance;
+
+	/**
 	 * Cache of the learner terms.
 	 *
 	 * @var WP_Term[]
 	 */
 	private static $learner_terms = [];
+
+	/**
+	 * Fetches an instance of the class.
+	 *
+	 * @return self
+	 */
+	public static function instance() {
+		if ( ! self::$instance ) {
+			self::$instance = new self();
+		}
+		return self::$instance;
+	}
+
+	/**
+	 * Sensei_Course_Enrolment_Manager constructor. Private so it can only be initialized internally.
+	 */
+	private function __construct() {}
+
+	/**
+	 * Sets the actions.
+	 */
+	public function init() {
+
+	}
 
 	/**
 	 * Get the learner term for the user.
