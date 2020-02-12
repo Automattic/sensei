@@ -10,6 +10,8 @@
  * 3) Run gulp to minify javascript and css using the 'gulp' command.
  */
 
+require( 'dotenv' ).config();
+
 var babel           = require( 'gulp-babel' );
 var checktextdomain = require( 'gulp-checktextdomain' );
 var chmod           = require( 'gulp-chmod' );
@@ -25,6 +27,7 @@ var uglify          = require( 'gulp-uglify' );
 var wpPot           = require( 'gulp-wp-pot' );
 var zip             = require( 'gulp-zip' );
 var browserSync 	= require( 'browser-sync' ).create();
+var env 			= require( 'process' ).env;
 
 var paths = {
 	scripts: [ 'assets/js/**/*.js', '!assets/js/**/*.min.js' ],
@@ -164,8 +167,8 @@ gulp.task( 'watch', function() {
 
 gulp.task( 'serve', function() {
 	browserSync.init( {
-		proxy: "localhost:8240",
-		port: 8242,
+		proxy: env.WORDPRESS_HOST || "localhost:8240",
+		port: env.BROWSERSYNC_PORT || 8242,
 		open: false
 	} );
 
