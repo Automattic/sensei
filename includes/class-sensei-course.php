@@ -3132,7 +3132,7 @@ class Sensei_Course {
 			?>
 
 			<div class="course-video">
-				<?php echo wp_kses( $course_video_embed, self::$allowed_html ); ?>
+				<?php echo $course_video_embed; ?>
 			</div>
 
 			<?php

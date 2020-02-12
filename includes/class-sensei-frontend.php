@@ -1017,7 +1017,7 @@ class Sensei_Frontend {
 
 			if ( '' != $lesson_video_embed ) {
 				?>
-				<div class="video"><?php echo wp_kses( $lesson_video_embed, $this->allowed_html ); ?></div>
+				<div class="video"><?php echo $lesson_video_embed; ?></div>
 				<?php
 			} // End If Statement
 		} // End If Statement
