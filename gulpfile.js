@@ -146,3 +146,8 @@ gulp.task( 'package', gulp.series( 'build', 'copy-package', 'zip-package' ) );
 gulp.task( 'package-unsafe', gulp.series( 'build-unsafe', 'copy-package', 'zip-package' ) );
 
 gulp.task( 'default', gulp.series( 'build' ) );
+
+gulp.task( 'watch', function() {
+	gulp.watch( paths.css, { delay: 50 }, gulp.series( 'CSS' ) );
+	gulp.watch( paths.scripts, gulp.series( 'JS' ) );
+} );
