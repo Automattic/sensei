@@ -45,6 +45,7 @@ class Sensei_Data_Cleaner {
 		'question-type',
 		'question-category',
 		'lesson-tag',
+		'sensei_learner',
 	);
 
 	/**
