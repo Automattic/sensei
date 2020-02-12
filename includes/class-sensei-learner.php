@@ -12,6 +12,8 @@ class Sensei_Learner {
 	/**
 	 * Instance of singleton.
 	 *
+	 * @since 3.0.0
+	 *
 	 * @var self
 	 */
 	private static $instance;
@@ -25,6 +27,8 @@ class Sensei_Learner {
 
 	/**
 	 * Fetches an instance of the class.
+	 *
+	 * @since 3.0.0
 	 *
 	 * @return self
 	 */
@@ -42,6 +46,8 @@ class Sensei_Learner {
 
 	/**
 	 * Sets the actions.
+	 *
+	 * @since 3.0.0
 	 */
 	public function init() {
 		add_action( 'deleted_user', array( $this, 'delete_user_enrolments' ) );
