@@ -24,6 +24,7 @@ var sort            = require( 'gulp-sort' );
 var uglify          = require( 'gulp-uglify' );
 var wpPot           = require( 'gulp-wp-pot' );
 var zip             = require( 'gulp-zip' );
+var browserSync 	= require( 'browser-sync' ).create();
 
 var paths = {
 	scripts: [ 'assets/js/**/*.js', '!assets/js/**/*.min.js' ],
@@ -52,6 +53,11 @@ var paths = {
 	packageZip: 'build/sensei-lms.zip'
 };
 
+function reloadBrowser( done ) {
+	browserSync.reload();
+	done();
+}
+
 gulp.task( 'clean', gulp.series( function( cb ) {
 	return del( [
 		'assets/js/**/*.min.js',
@@ -62,14 +68,14 @@ gulp.task( 'clean', gulp.series( function( cb ) {
 	], cb );
 } ) );
 
-gulp.task( 'CSS', gulp.series( function() {
+function buildCSS() {
 	return gulp.src( paths.css )
 		.pipe( sass().on( 'error', sass.logError ) )
 		.pipe( minifyCSS( { keepBreaks: false } ) )
 		.pipe( gulp.dest( 'assets/css' ) );
-} ) );
+}
 
-gulp.task( 'JS', gulp.series( function() {
+function buildJS() {
 	return gulp.src( paths.scripts )
 		.pipe( babel( {
 			'configFile': './.babelrc-legacy',
@@ -79,7 +85,11 @@ gulp.task( 'JS', gulp.series( function() {
 		.pipe( rename( { extname: '.min.js' } ) )
 		.pipe( chmod( 0o644 ) )
 		.pipe( gulp.dest( 'assets/js' ) );
-} ) );
+}
+
+gulp.task( 'CSS', gulp.series( buildCSS ) );
+
+gulp.task( 'JS', gulp.series( buildJS ) );
 
 gulp.task( 'block-editor-assets', gulp.series( function( cb ) {
 	exec( 'npm run block-editor-assets', cb );
@@ -150,4 +160,19 @@ gulp.task( 'default', gulp.series( 'build' ) );
 gulp.task( 'watch', function() {
 	gulp.watch( paths.css, { delay: 50 }, gulp.series( 'CSS' ) );
 	gulp.watch( paths.scripts, gulp.series( 'JS' ) );
+} );
+
+gulp.task( 'serve', function() {
+	browserSync.init( {
+		proxy: "localhost:8240",
+		port: 8242,
+		open: false
+	} );
+
+	gulp.watch( paths.css, function() {
+		return buildCSS().pipe( browserSync.stream() )
+	} );
+
+	gulp.watch( paths.scripts, gulp.series( 'JS', reloadBrowser ) );
+
 } );
