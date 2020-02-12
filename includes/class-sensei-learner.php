@@ -57,6 +57,8 @@ class Sensei_Learner {
 	/**
 	 * Delete all user activity and enrolment terms when user is deleted.
 	 *
+	 * @since 3.0.0
+	 *
 	 * @param  integer $user_id User ID.
 	 * @return void
 	 */
