@@ -8,6 +8,15 @@
  * $ npm install
  *
  * 3) Run gulp to minify javascript and css using the 'gulp' command.
+ *
+ * 4a) Run `gulp serve` to start a BrowserSync server that pushes updates on file changes.
+ * Browser tabs accessing the site via this proxy (http://localhost:8242) will get CSS updates injected, and reloaded on JS changes.
+ * Configuration: set environment variables at runtime or in a `.env` file:
+ * WORDPRESS_HOST= URL of local Wordpress instance (Default: localhost:8240)
+ * BROWSERSYNC_PORT= Port for (Default: 8242)
+ *
+ * 4b) Run `gulp watch` to automatically compile CSS and JS files when they change.
+ *
  */
 
 require( 'dotenv' ).config();
@@ -140,6 +149,7 @@ gulp.task( 'test', function() {
 	return gulp.src( 'phpunit.xml' )
 		.pipe( phpunit() );
 } );
+
 
 gulp.task( 'build', gulp.series( 'test', 'clean', 'CSS', 'JS', 'block-editor-assets', 'vendor' ) );
 gulp.task( 'build-unsafe', gulp.series( 'clean', 'CSS', 'JS', 'block-editor-assets', 'vendor' ) );
