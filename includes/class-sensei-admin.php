@@ -68,9 +68,6 @@ class Sensei_Admin {
 		add_action( 'trash_course', array( $this, 'delete_content' ), 10, 2 );
 		add_action( 'trash_lesson', array( $this, 'delete_content' ), 10, 2 );
 
-		// Delete user activity when user is deleted
-		add_action( 'deleted_user', array( $this, 'delete_user_activity' ), 10, 1 );
-
 		// Add notices to WP dashboard
 		add_action( 'admin_notices', array( $this, 'theme_compatibility_notices' ) );
 		// warn users in case admin_email is not a real WP_User
@@ -934,15 +931,17 @@ class Sensei_Admin {
 	}
 
 	/**
-	 * Delete all user activity when user is deleted
+	 * Delete all user activity when user is deleted.
 	 *
-	 * @param  integer $user_id User ID
+	 * @deprecated 3.0.0 Use `\Sensei_Learner::delete_user_activity` instead.
+	 *
+	 * @param  integer $user_id User ID.
 	 * @return void
 	 */
 	public function delete_user_activity( $user_id = 0 ) {
-		if ( $user_id ) {
-			Sensei_Utils::delete_all_user_activity( $user_id );
-		}
+		_deprecated_function( __METHOD__, '3.0.0', '\Sensei_Learner::delete_user_activity' );
+
+		\Sensei_Learner::instance()->delete_user_activity( $user_id );
 	}
 
 	public function render_settings( $settings = array(), $post_id = 0, $group_id = '' ) {

@@ -50,22 +50,25 @@ class Sensei_Learner {
 	 * @since 3.0.0
 	 */
 	public function init() {
-		add_action( 'deleted_user', array( $this, 'delete_user_enrolments' ) );
+		// Delete user activity and enrolment terms when user is deleted.
+		add_action( 'deleted_user', array( $this, 'delete_user_activity' ) );
 	}
 
 	/**
-	 * Remove user enrolments when removing user.
+	 * Delete all user activity and enrolment terms when user is deleted.
 	 *
-	 * Hooked into deleted_user.
-	 *
-	 * @since 3.0.0
-	 *
-	 * @param int $user_id User ID.
+	 * @param  integer $user_id User ID.
+	 * @return void
 	 */
-	public function delete_user_enrolments( $user_id ) {
-		$learner_term = self::get_learner_term( $user_id );
+	public function delete_user_activity( $user_id = 0 ) {
+		if ( $user_id ) {
+			// Remove activities.
+			Sensei_Utils::delete_all_user_activity( $user_id );
 
-		wp_delete_term( $learner_term->term_id, Sensei_PostTypes::LEARNER_TAXONOMY_NAME );
+			// Remove enrolment terms.
+			$learner_term = self::get_learner_term( $user_id );
+			wp_delete_term( $learner_term->term_id, Sensei_PostTypes::LEARNER_TAXONOMY_NAME );
+		}
 	}
 
 	/**
