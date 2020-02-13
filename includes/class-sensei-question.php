@@ -648,6 +648,7 @@ class Sensei_Question {
 	 * @param string $question_id
 	 */
 	public static function the_question_media( $question_id ) {
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo self::question_media_kses_post( self::get_the_question_media( $question_id ) );
 	}
 
