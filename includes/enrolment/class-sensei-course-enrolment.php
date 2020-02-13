@@ -191,6 +191,15 @@ class Sensei_Course_Enrolment {
 	}
 
 	/**
+	 * Delete the enrolment result for a particular user.
+	 *
+	 * @param int $user_id User ID.
+	 */
+	public function delete_enrolment_result( $user_id ) {
+		delete_user_meta( $user_id, $this->get_course_results_meta_key() );
+	}
+
+	/**
 	 * Get the course log meta key.
 	 *
 	 * @return string
