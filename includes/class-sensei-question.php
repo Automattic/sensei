@@ -654,7 +654,7 @@ class Sensei_Question {
 	/**
 	 * Special kses processing for media output to allow 'source' video tag.
 	 *
-	 * @since 2.5.0
+	 * @since 3.0.0
 	 * @param string $source_string
 	 * @return string with allowed html elements
 	 */
