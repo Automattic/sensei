@@ -617,7 +617,7 @@ class Sensei_Question {
 		if ( $question_media_link ) {
 
 				$output .= '<div class="question_media_display">';
-				$output .= $question_media_link;
+				$output .= self::question_media_kses_post( $question_media_link );
 				$output .= '<dl>';
 
 			if ( $question_media_title ) {
@@ -641,7 +641,6 @@ class Sensei_Question {
 
 	} // end get_the_question_media
 
-
 	/**
 	 * Output the question media
 	 *
@@ -649,9 +648,26 @@ class Sensei_Question {
 	 * @param string $question_id
 	 */
 	public static function the_question_media( $question_id ) {
-		// Note: get_the_question_media() handles escaping output.
-		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo self::get_the_question_media( $question_id );
+		echo self::question_media_kses_post( self::get_the_question_media( $question_id ) );
+	}
+
+	/**
+	 * Special kses processing for media output to allow 'source' video tag.
+	 *
+	 * @since 2.5.0
+	 * @param string $source_string
+	 * @return string with allowed html elements
+	 */
+	private static function question_media_kses_post( $source_string ) {
+		$source_tag = array(
+			'source' => array(
+				'type' => true,
+				'src' => true,
+			),
+		);
+		$allowed_html = array_merge( $source_tag, wp_kses_allowed_html( 'post' ) );
+
+		return wp_kses( $source_string, $allowed_html );
 	}
 
 	/**
