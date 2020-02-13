@@ -13,6 +13,7 @@
 
 <?php get_sensei_header(); ?>
 
+  <section class="sensei-archive-controls">
 	<?php
 
 		/**
@@ -28,6 +29,7 @@
 		do_action( 'sensei_archive_before_course_loop' );
 
 	?>
+  </section>
 
 	<?php if ( have_posts() ) : ?>
 
