@@ -215,6 +215,7 @@ class Sensei_Data_Cleaner {
 	private static $user_meta_keys = array(
 		'^sensei_hide_menu_settings_notice$',
 		'^_module_progress_[0-9]+_[0-9]+$',
+		'^learner_calculated_version$',
 	);
 
 	/**
