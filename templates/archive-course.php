@@ -13,23 +13,23 @@
 
 <?php get_sensei_header(); ?>
 
-  <section class="sensei-archive-controls">
-	<?php
+	<section class="sensei-archive-controls">
+		<?php
 
-		/**
-		 * This action before course archive loop. This hook fires within the archive-course.php
-		 * It fires even if the current archive has no posts.
-		 *
-		 * @since 1.9.0
-		 *
-		 * @hooked Sensei_Course::course_archive_sorting 20
-		 * @hooked Sensei_Course::course_archive_filters 20
-		 * @hooked Sensei_Templates::deprecated_archive_hook 80
-		 */
-		do_action( 'sensei_archive_before_course_loop' );
+			/**
+			 * This action before course archive loop. This hook fires within the archive-course.php
+			 * It fires even if the current archive has no posts.
+			 *
+			 * @since 1.9.0
+			 *
+			 * @hooked Sensei_Course::course_archive_sorting 20
+			 * @hooked Sensei_Course::course_archive_filters 20
+			 * @hooked Sensei_Templates::deprecated_archive_hook 80
+			 */
+			do_action( 'sensei_archive_before_course_loop' );
 
-	?>
-  </section>
+		?>
+	</section>
 
 	<?php if ( have_posts() ) : ?>
 
