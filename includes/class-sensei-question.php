@@ -660,10 +660,10 @@ class Sensei_Question {
 	 * @return string with allowed html elements
 	 */
 	private static function question_media_kses_post( $source_string ) {
-		$source_tag = array(
+		$source_tag   = array(
 			'source' => array(
 				'type' => true,
-				'src' => true,
+				'src'  => true,
 			),
 		);
 		$allowed_html = array_merge( $source_tag, wp_kses_allowed_html( 'post' ) );
