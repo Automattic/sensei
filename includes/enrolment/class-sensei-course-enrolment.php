@@ -171,7 +171,7 @@ class Sensei_Course_Enrolment {
 	 * @throws Exception When learner term could not be created.
 	 */
 	public function get_enrolment_check_results( $user_id ) {
-		$enrolment_check_results = get_user_meta( $user_id, $this->get_course_results_meta_key(), true );
+		$enrolment_check_results = get_user_meta( $user_id, $this->get_enrolment_results_meta_key(), true );
 
 		if ( empty( $enrolment_check_results ) ) {
 			return false;
@@ -195,7 +195,7 @@ class Sensei_Course_Enrolment {
 		}
 
 		$enrolment_results = new Sensei_Course_Enrolment_Provider_Results( $provider_results, $this->get_course_enrolment_providers_version() );
-		update_user_meta( $user_id, $this->get_course_results_meta_key(), wp_slash( wp_json_encode( $enrolment_results ) ) );
+		update_user_meta( $user_id, $this->get_enrolment_results_meta_key(), wp_slash( wp_json_encode( $enrolment_results ) ) );
 
 		return $enrolment_results;
 	}
@@ -222,8 +222,7 @@ class Sensei_Course_Enrolment {
 	 */
 	public function get_provider_state( Sensei_Course_Enrolment_Provider_Interface $provider, $user_id ) {
 		if ( ! isset( $this->provider_state_sets[ $user_id ] ) ) {
-			$term                = Sensei_Learner::get_learner_term( $user_id );
-			$provider_state_sets = get_term_meta( $term->term_id, $this->get_providers_state_meta_key(), true );
+			$provider_state_sets = get_user_meta( $user_id, $this->get_providers_state_meta_key(), true );
 
 			if ( ! empty( $provider_state_sets ) ) {
 				$provider_state_sets = Sensei_Course_Enrolment_Provider_State_Set::from_json( $provider_state_sets );
@@ -255,13 +254,7 @@ class Sensei_Course_Enrolment {
 				continue;
 			}
 
-			try {
-				$term = Sensei_Learner::get_learner_term( $user_id );
-			} catch ( \Exception $e ) {
-				continue;
-			}
-
-			$result = update_term_meta( $term->term_id, $this->get_providers_state_meta_key(), wp_slash( wp_json_encode( $state_set ) ) );
+			$result = update_user_meta( $user_id, $this->get_providers_state_meta_key(), wp_slash( wp_json_encode( $state_set ) ) );
 
 			if ( $result && ! is_wp_error( $result ) ) {
 				$state_set->set_has_changed( false );
