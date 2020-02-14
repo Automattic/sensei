@@ -933,15 +933,15 @@ class Sensei_Admin {
 	/**
 	 * Delete all user activity when user is deleted.
 	 *
-	 * @deprecated 3.0.0 Use `\Sensei_Learner::delete_user_activity` instead.
+	 * @deprecated 3.0.0 Use `\Sensei_Learner::delete_all_user_activity` instead. But if you want also remove the enrolment terms, use `\Sensei_Learner::delete_user_registers`.
 	 *
 	 * @param  integer $user_id User ID.
 	 * @return void
 	 */
 	public function delete_user_activity( $user_id = 0 ) {
-		_deprecated_function( __METHOD__, '3.0.0', '\Sensei_Learner::delete_user_activity' );
+		_deprecated_function( __METHOD__, '3.0.0', 'To remove only activities use `\Sensei_Learner::delete_all_user_activity`. To remove also enrolment terms, use `\Sensei_Learner::delete_user_registers`' );
 
-		\Sensei_Learner::instance()->delete_user_activity( $user_id );
+		\Sensei_Learner::instance()->delete_all_user_activity( $user_id );
 	}
 
 	public function render_settings( $settings = array(), $post_id = 0, $group_id = '' ) {

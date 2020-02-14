@@ -51,7 +51,7 @@ class Sensei_Learner {
 	 */
 	public function init() {
 		// Delete user activity and enrolment terms when user is deleted.
-		add_action( 'deleted_user', array( $this, 'delete_user_activity' ) );
+		add_action( 'deleted_user', array( $this, 'delete_user_registers' ) );
 	}
 
 	/**
@@ -62,15 +62,52 @@ class Sensei_Learner {
 	 * @param  integer $user_id User ID.
 	 * @return void
 	 */
-	public function delete_user_activity( $user_id = 0 ) {
+	public function delete_user_registers( $user_id = 0 ) {
 		if ( $user_id ) {
 			// Remove activities.
-			Sensei_Utils::delete_all_user_activity( $user_id );
+			$this->delete_all_user_activity( $user_id );
 
 			// Remove enrolment terms.
 			$learner_term = self::get_learner_term( $user_id );
 			wp_delete_term( $learner_term->term_id, Sensei_PostTypes::LEARNER_TAXONOMY_NAME );
 		}
+	}
+
+	/**
+	 * Delete all activity for specified user.
+	 *
+	 * @since  3.0.0
+	 *
+	 * @param  integer $user_id User ID.
+	 * @return boolean
+	 */
+	public function delete_all_user_activity( $user_id = 0 ) {
+		$dataset_changes = false;
+
+		if ( $user_id ) {
+
+			$activities = Sensei_Utils::sensei_check_for_activity( array( 'user_id' => $user_id ), true );
+
+			if ( $activities ) {
+
+				// Need to always return an array, even with only 1 item.
+				if ( ! is_array( $activities ) ) {
+					$activities = array( $activities );
+				}
+
+				foreach ( $activities as $activity ) {
+					if ( '' == $activity->comment_type ) {
+						continue;
+					}
+					if ( strpos( 'sensei_', $activity->comment_type ) != 0 ) {
+						continue;
+					}
+					$dataset_changes = wp_delete_comment( intval( $activity->comment_ID ), true );
+				}
+			}
+		}
+
+		return $dataset_changes;
 	}
 
 	/**

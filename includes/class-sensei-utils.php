@@ -292,43 +292,21 @@ class Sensei_Utils {
 	} // End sensei_delete_activities()
 
 	/**
-	 * Delete all activity for specified user
+	 * Delete all activity for specified user.
 	 *
 	 * @access public
 	 * @since  1.5.0
-	 * @param  integer $user_id User ID
+	 *
+	 * @deprecated 3.0.0 Use `\Sensei_Learner::delete_all_user_activity` instead. But if you want also remove the enrolment terms, use `\Sensei_Learner::delete_user_registers`.
+	 *
+	 * @param  integer $user_id User ID.
 	 * @return boolean
 	 */
 	public static function delete_all_user_activity( $user_id = 0 ) {
+		_deprecated_function( __METHOD__, '3.0.0', 'To remove only activities use `\Sensei_Learner::delete_all_user_activity`. To remove also enrolment terms, use `\Sensei_Learner::delete_user_registers`' );
 
-		$dataset_changes = false;
-
-		if ( $user_id ) {
-
-			$activities = self::sensei_check_for_activity( array( 'user_id' => $user_id ), true );
-
-			if ( $activities ) {
-
-				// Need to always return an array, even with only 1 item
-				if ( ! is_array( $activities ) ) {
-					$activities = array( $activities );
-				}
-
-				foreach ( $activities as $activity ) {
-					if ( '' == $activity->comment_type ) {
-						continue;
-					}
-					if ( strpos( 'sensei_', $activity->comment_type ) != 0 ) {
-						continue;
-					}
-					$dataset_changes = wp_delete_comment( intval( $activity->comment_ID ), true );
-				}
-			}
-		}
-
-		return $dataset_changes;
-	} // Edn delete_all_user_activity()
-
+		return \Sensei_Learner::instance()->delete_all_user_activity( $user_id );
+	} // End delete_all_user_activity()
 
 	/**
 	 * Get value for a specified activity.
