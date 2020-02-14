@@ -13,7 +13,7 @@ function is_sensei() {
 
 	$is_sensei = false;
 
-	$post_types = array( 'lesson', 'course', 'quiz', 'question' );
+	$post_types = array( 'lesson', 'course', 'quiz', 'question', 'sensei_message' );
 	$taxonomies = array( 'course-category', 'quiz-type', 'question-type', 'lesson-tag', 'module' );
 
 	if ( is_post_type_archive( $post_types ) || is_singular( $post_types ) || is_tax( $taxonomies ) ) {
