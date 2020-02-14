@@ -693,6 +693,12 @@ class Sensei_Lesson {
 		if ( 'lesson_preview' == $post_key && isset( $_POST['action'] ) && $_POST['action'] == 'inline-save' ) {
 			$new_meta_value = '-1';
 		}
+
+		// If course is being changed, set the prerequisite to empty.
+		// phpcs:ignore WordPress.Security.NonceVerification
+		if ( isset( $_POST['lesson_course'] ) && get_post_meta( $post_id, '_lesson_course', true ) !== $_POST['lesson_course'] && '' !== get_post_meta( $post_id, '_lesson_course', true ) && '_lesson_prerequisite' === $meta_key ) {
+				$new_meta_value = '';
+		}
 		// update field with the new value
 		if ( -1 != $new_meta_value ) {
 			return update_post_meta( $post_id, $meta_key, $new_meta_value );
