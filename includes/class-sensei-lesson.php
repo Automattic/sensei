@@ -301,9 +301,9 @@ class Sensei_Lesson {
 					'compare' => '=',
 				),
 			);
+			$posts_array             = get_posts( $post_args );
 		}
 
-		$posts_array = get_posts( $post_args );
 		// Build the HTML to Output.
 		$html  = '';
 		$html .= wp_nonce_field( 'sensei-save-post-meta', 'woo_' . $this->token . '_nonce', true, false );
