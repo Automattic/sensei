@@ -172,8 +172,9 @@ jQuery(document).ready( function( $ ) {
 							return;
 						}
 						switch ( current_action ) {
-							case 'reset':
-								table_row.find( '.graded' ).html( window.slgL10n.inprogress ).removeClass( 'graded' ).addClass( 'in-progress' );
+							case 'reset_progress':
+								location.reload();
+
 								break;
 						}
 					}
