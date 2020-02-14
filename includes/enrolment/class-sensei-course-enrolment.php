@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Course_Enrolment {
 	const META_PREFIX_ENROLMENT_RESULTS         = 'course-enrolment-';
-	const META_PREFIX_ENROLMENT_PROVIDERS_STATE = 'enrolment-providers-state-';
+	const META_PREFIX_ENROLMENT_PROVIDERS_STATE = 'sensei_enrolment_providers_state_';
 
 	/**
 	 * Courses instances.
