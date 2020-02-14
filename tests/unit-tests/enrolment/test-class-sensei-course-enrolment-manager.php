@@ -91,12 +91,13 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 		$this->prepareEnrolmentManager();
 
 		Sensei_Course_Enrolment_Manager::trigger_course_enrolment_check( $student_id, $course_id );
-		$this->assertTrue( false === get_user_meta( $student_id, $course_results_meta_key, true ), 'The results meta should not be set yet after lazily triggering a course enrolment check' );
+		$m = get_user_meta( $student_id, $course_results_meta_key, true );
+		$this->assertTrue( '' === get_user_meta( $student_id, $course_results_meta_key, true ), 'The results meta should not be set yet after lazily triggering a course enrolment check' );
 		$this->assertEnrolmentCheckDeferred( $student_id, $course_id, 'There should be a deferred enrolment check for the student/course' );
 
 		Sensei_Course_Enrolment_Manager::instance()->run_deferred_course_enrolment_checks();
 
-		$this->assertTrue( false !== get_user_meta( $student_id, $course_results_meta_key, true ), 'The results meta should be set after running the deferred course enrolment checks' );
+		$this->assertTrue( ! empty( get_user_meta( $student_id, $course_results_meta_key, true ) ), 'The results meta should be set after running the deferred course enrolment checks' );
 		$this->assertEnrolmentChecNotDeferred( $student_id, $course_id, 'There should no longer be a deferred enrolment check for the student/course' );
 	}
 
@@ -255,7 +256,7 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 	 * @param int $user_id   User ID.
 	 * @param int $course_id Course post ID.
 	 */
-	private function assertEnrolmentCheckDeferred( $user_id, $course_id, $message  = null ) {
+	private function assertEnrolmentCheckDeferred( $user_id, $course_id, $message = null ) {
 		$property = new ReflectionProperty( Sensei_Course_Enrolment_Manager::class, 'deferred_enrolment_checks' );
 		$property->setAccessible( true );
 		$deferred = $property->getValue( Sensei_Course_Enrolment_Manager::instance() );
@@ -269,7 +270,7 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 	 * @param int $user_id   User ID.
 	 * @param int $course_id Course post ID.
 	 */
-	private function assertEnrolmentChecNotDeferred( $user_id, $course_id, $message  = null ) {
+	private function assertEnrolmentChecNotDeferred( $user_id, $course_id, $message = null ) {
 		$property = new ReflectionProperty( Sensei_Course_Enrolment_Manager::class, 'deferred_enrolment_checks' );
 		$property->setAccessible( true );
 		$deferred = $property->getValue( Sensei_Course_Enrolment_Manager::instance() );
