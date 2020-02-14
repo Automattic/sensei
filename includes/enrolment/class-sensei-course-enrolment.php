@@ -161,8 +161,7 @@ class Sensei_Course_Enrolment {
 	 * @throws Exception When learner term could not be created.
 	 */
 	public function get_enrolment_check_results( $user_id ) {
-		$term                    = Sensei_Learner::get_learner_term( $user_id );
-		$enrolment_check_results = get_term_meta( $term->term_id, $this->get_course_results_meta_key(), true );
+		$enrolment_check_results = get_user_meta( $user_id, $this->get_course_results_meta_key(), true );
 
 		if ( empty( $enrolment_check_results ) ) {
 			return false;
@@ -180,14 +179,13 @@ class Sensei_Course_Enrolment {
 	 * @throws Exception When learner term could not be created.
 	 */
 	private function query_enrolment_providers( $user_id ) {
-		$term             = Sensei_Learner::get_learner_term( $user_id );
 		$provider_results = [];
 		foreach ( $this->get_course_enrolment_providers() as $enrolment_provider_id => $enrolment_provider ) {
 			$provider_results[ $enrolment_provider_id ] = $enrolment_provider->is_enrolled( $user_id, $this->course_id );
 		}
 
 		$enrolment_results = new Sensei_Course_Enrolment_Provider_Results( $provider_results, $this->get_course_enrolment_providers_version() );
-		update_term_meta( $term->term_id, $this->get_course_results_meta_key(), wp_slash( wp_json_encode( $enrolment_results ) ) );
+		update_user_meta( $user_id, $this->get_course_results_meta_key(), wp_slash( wp_json_encode( $enrolment_results ) ) );
 
 		return $enrolment_results;
 	}
