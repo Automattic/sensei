@@ -293,7 +293,7 @@ class Sensei_Lesson {
 
 		if ( $current_lesson_course ) {
 			// Add meta query to only get Lesson Posts from current Course.
-			// phpcs:ignore WordPress.DB.SlowDBQuery
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Slow query ok.
 			$post_args['meta_query'] = array(
 				array(
 					'key'     => '_lesson_course',
