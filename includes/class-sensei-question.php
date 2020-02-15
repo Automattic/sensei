@@ -664,7 +664,7 @@ class Sensei_Question {
 	public static function the_question_hidden_fields( $question_id ) {
 		?>
 
-			<input type="hidden" name="question_id_<?php $question_id; ?>" value="<?php $question_id; ?>" />
+			<input type="hidden" name="question_id_<?php echo esc_attr( $question_id ); ?>" value="<?php echo esc_attr( $question_id ); ?>" />
 			<input type="hidden" name="questions_asked[]" value="<?php echo esc_attr( $question_id ); ?>" />
 
 		<?php

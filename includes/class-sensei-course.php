@@ -172,11 +172,6 @@ class Sensei_Course {
 			$user_id = get_current_user_id();
 		}
 
-		// @todo This should be replaced by the manual course enrolment provider.
-		if ( \Sensei_Course_Enrolment::use_legacy_enrolment_check() ) {
-			return false !== Sensei_Utils::has_started_course( $course_id, $user_id );
-		}
-
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 
 		return $course_enrolment->is_enrolled( $user_id );
@@ -2652,13 +2647,18 @@ class Sensei_Course {
 	 * @return string $course_page_url
 	 */
 	public static function get_courses_page_url() {
-
 		$course_page_id  = intval( Sensei()->settings->settings['course_page'] );
 		$course_page_url = empty( $course_page_id ) ? get_post_type_archive_link( 'course' ) : get_permalink( $course_page_id );
 
-		return $course_page_url;
-
-	}//end get_courses_page_url()
+		/**
+		 * Filter the course archive page URL.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param string $course_page_url Course archive page URL.
+		 */
+		return apply_filters( 'sensei_course_archive_page_url', $course_page_url );
+	}
 
 	/**
 	 * Output the headers on the course archive page
@@ -3001,6 +3001,41 @@ class Sensei_Course {
 	}
 
 	/**
+	 * Check if a user can manually enrol themselves.
+	 *
+	 * @param int $course_id Course post ID.
+	 *
+	 * @return bool
+	 */
+	public static function can_current_user_manually_enrol( $course_id ) {
+		if ( ! is_user_logged_in() ) {
+			return false;
+		}
+
+		// Check if the user is already enrolled through any provider.
+		$is_user_enrolled = self::is_user_enrolled( $course_id, get_current_user_id() );
+
+		$default_can_user_manually_enrol = ! $is_user_enrolled;
+
+		$can_user_manually_enrol = apply_filters_deprecated(
+			'sensei_display_start_course_form',
+			[ $default_can_user_manually_enrol, $course_id ],
+			'3.0.0',
+			'sensei_can_user_manually_enrol'
+		);
+
+		/**
+		 * Check if currently logged in user can manually enrol themselves. Defaults to `true` when not already enrolled.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param bool $can_user_manually_enrol True if they can manually enrol themselves, false if not.
+		 * @param int  $course_id               Course post ID.
+		 */
+		return (bool) apply_filters( 'sensei_can_user_manually_enrol', $can_user_manually_enrol, $course_id );
+	}
+
+	/**
 	 * Output the course actions like start taking course, register, etc. Note
 	 * that this expects that the user is not already taking the course; that
 	 * check is done in `the_course_enrolment_actions`.
@@ -3015,7 +3050,7 @@ class Sensei_Course {
 		$is_course_content_restricted = (bool) apply_filters( 'sensei_is_course_content_restricted', false, $post->ID );
 
 		if ( is_user_logged_in() ) {
-			$should_display_start_course_form = (bool) apply_filters( 'sensei_display_start_course_form', true, $post->ID );
+			$should_display_start_course_form = self::can_current_user_manually_enrol( $post->ID );
 			if ( $is_course_content_restricted && false == $should_display_start_course_form ) {
 				self::add_course_access_permission_message( '' );
 			}
@@ -3056,18 +3091,17 @@ class Sensei_Course {
 
 				}
 
+				if ( ! (bool) apply_filters( 'sensei_user_can_register_for_course', true, $post->ID ) ) {
+					return;
+				}
 				// If a My Courses page was set in Settings, and 'sensei_use_wp_register_link'
 				// is false, link to My Courses. If not, link to default WordPress registration page.
 				if ( ! empty( $my_courses_page_id ) && $my_courses_page_id && ! $wp_register_link ) {
-					if ( true === (bool) apply_filters( 'sensei_user_can_register_for_course', true, $post->ID ) ) {
 						$my_courses_url = get_permalink( $my_courses_page_id );
 						echo '<div class="status register"><a href="' . esc_url( $my_courses_url ) . '">' .
 							esc_html__( 'Register', 'sensei-lms' ) . '</a></div>';
-					}
 				} else {
-
-					wp_register( '<div class="status register">', '</div>' );
-
+						wp_register( '<div class="status register">', '</div>' );
 				}
 			}
 		}

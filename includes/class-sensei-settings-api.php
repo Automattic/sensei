@@ -388,9 +388,16 @@ class Sensei_Settings_API {
 		$this->settings = self::get_settings_raw();
 
 		foreach ( $this->fields as $k => $v ) {
-			if ( ! isset( $this->settings[ $k ] ) && isset( $v['default'] ) ) {
-				$this->settings[ $k ] = $v['default'];
+
+			if ( ! isset( $this->settings[ $k ] ) ) {
+
+				if ( isset( $v['default'] ) ) {
+					$this->settings[ $k ] = $v['default'];
+				} elseif ( isset( $v['defaults'] ) ) {
+					$this->settings[ $k ] = $v['defaults'];
+				}
 			}
+
 			if ( $v['type'] == 'checkbox' && $this->settings[ $k ] != true ) {
 				$this->settings[ $k ] = 0;
 			}

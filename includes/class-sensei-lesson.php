@@ -2269,8 +2269,10 @@ class Sensei_Lesson {
 			case 'lesson-prerequisite':
 				$lesson_prerequisite_id = get_post_meta( $id, '_lesson_prerequisite', true );
 				if ( 0 < absint( $lesson_prerequisite_id ) ) {
+					$lesson_prerequisite_post = get_post( $lesson_prerequisite_id );
 					// translators: Placeholder is the title of the prerequisite lesson.
 					echo '<a href="' . esc_url( get_edit_post_link( absint( $lesson_prerequisite_id ) ) ) . '" title="' . esc_attr( sprintf( __( 'Edit %s', 'sensei-lms' ), get_the_title( absint( $lesson_prerequisite_id ) ) ) ) . '">' . esc_html( get_the_title( absint( $lesson_prerequisite_id ) ) ) . '</a>';
+					_post_states( $lesson_prerequisite_post );
 				} // End If Statement
 				break;
 			default:
@@ -4347,12 +4349,10 @@ class Sensei_Lesson {
 			return;
 		}
 
-		$allow_comments     = Sensei()->settings->settings['lesson_comments'];
-		$user_taking_course = Sensei_Utils::user_started_course( $course_id );
-		$has_access         = ! Sensei()->settings->get( 'access_permission' );
-		$is_preview         = Sensei_Utils::is_preview_lesson( $post->ID );
+		$allow_comments       = Sensei()->settings->settings['lesson_comments'];
+		$user_can_view_lesson = sensei_can_user_view_lesson();
 
-		$lesson_allow_comments = $allow_comments && ( $user_taking_course || $has_access || $is_preview );
+		$lesson_allow_comments = $allow_comments && $user_can_view_lesson;
 
 		if ( $lesson_allow_comments || is_singular( 'sensei_message' ) ) {
 			comments_template( '', true );

@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Handles course enrolment logic.
+ * Handles course enrolment logic for a particular course.
  */
 class Sensei_Course_Enrolment {
 	const META_PREFIX_ENROLMENT_RESULTS = 'course-enrolment-';
@@ -21,13 +21,6 @@ class Sensei_Course_Enrolment {
 	 * @var static[]
 	 */
 	private static $instances = [];
-
-	/**
-	 * All course enrolment providers.
-	 *
-	 * @var Sensei_Course_Enrolment_Provider_Interface[]
-	 */
-	private static $enrolment_providers;
 
 	/**
 	 * Enrolment providers handling this particular course.
@@ -92,6 +85,11 @@ class Sensei_Course_Enrolment {
 	 * @return bool
 	 */
 	public function is_enrolled( $user_id, $check_cache = true ) {
+		// Users can only be enrolled in a published course.
+		if ( 'publish' !== get_post_status( $this->course_id ) ) {
+			return false;
+		}
+
 		try {
 			if ( $check_cache ) {
 				$enrolment_check_results = $this->get_enrolment_check_results( $user_id );
@@ -106,26 +104,12 @@ class Sensei_Course_Enrolment {
 			$enrolment_check_results = $this->query_enrolment_providers( $user_id );
 			$is_enrolled             = $enrolment_check_results->is_enrolment_provided();
 
-			// @todo Method will always be bool when we add manual enrolment provider. Remove this and the `get_legacy_enrolment_status` temporary method.
-			if ( ! is_bool( $is_enrolled ) ) {
-				$is_enrolled = $this->get_legacy_enrolment_status( $user_id );
-			}
-
 			$this->save_enrolment( $user_id, $is_enrolled );
 		} catch ( Exception $e ) {
 			$is_enrolled = false;
 		}
 
 		return $is_enrolled;
-	}
-
-	/**
-	 * Trigger course enrolment check when enrolment might have changed.
-	 *
-	 * @param int $user_id User ID.
-	 */
-	public function trigger_course_enrolment_check( $user_id ) {
-		$this->is_enrolled( $user_id, false );
 	}
 
 	/**
@@ -159,7 +143,7 @@ class Sensei_Course_Enrolment {
 		}
 
 		// If they are enrolled, make sure they have started the course.
-		Sensei_Utils::start_user_on_course( $user_id, $this->course_id );
+		Sensei_Utils::user_start_course( $user_id, $this->course_id );
 
 		$result = wp_set_post_terms( $this->course_id, [ intval( $term->term_id ) ], Sensei_PostTypes::LEARNER_TAXONOMY_NAME, true );
 
@@ -177,8 +161,7 @@ class Sensei_Course_Enrolment {
 	 * @throws Exception When learner term could not be created.
 	 */
 	public function get_enrolment_check_results( $user_id ) {
-		$term                    = Sensei_Learner::get_learner_term( $user_id );
-		$enrolment_check_results = get_term_meta( $term->term_id, $this->get_course_results_meta_key(), true );
+		$enrolment_check_results = get_user_meta( $user_id, $this->get_course_results_meta_key(), true );
 
 		if ( empty( $enrolment_check_results ) ) {
 			return false;
@@ -196,30 +179,15 @@ class Sensei_Course_Enrolment {
 	 * @throws Exception When learner term could not be created.
 	 */
 	private function query_enrolment_providers( $user_id ) {
-		$term             = Sensei_Learner::get_learner_term( $user_id );
 		$provider_results = [];
 		foreach ( $this->get_course_enrolment_providers() as $enrolment_provider_id => $enrolment_provider ) {
 			$provider_results[ $enrolment_provider_id ] = $enrolment_provider->is_enrolled( $user_id, $this->course_id );
 		}
 
 		$enrolment_results = new Sensei_Course_Enrolment_Provider_Results( $provider_results, $this->get_course_enrolment_providers_version() );
-		update_term_meta( $term->term_id, $this->get_course_results_meta_key(), wp_slash( wp_json_encode( $enrolment_results ) ) );
+		update_user_meta( $user_id, $this->get_course_results_meta_key(), wp_slash( wp_json_encode( $enrolment_results ) ) );
 
 		return $enrolment_results;
-	}
-
-	/**
-	 * Provides the legacy enrolment status.
-	 *
-	 * @todo This is just a temporary method until we add a manual enrolment provider.
-	 *
-	 * @param int $user_id User ID.
-	 *
-	 * @return bool
-	 */
-	private function get_legacy_enrolment_status( $user_id ) {
-		// No enrolment provider has explicitly provided enrolment to the user. Use Sensei's default.
-		return Sensei_Utils::has_started_course( $this->course_id, $user_id );
 	}
 
 	/**
@@ -240,7 +208,10 @@ class Sensei_Course_Enrolment {
 		if ( ! isset( $this->course_enrolment_providers ) ) {
 			$this->course_enrolment_providers = [];
 
-			foreach ( self::get_all_enrolment_providers() as $id => $enrolment_provider ) {
+			$enrolment_manager   = Sensei_Course_Enrolment_Manager::instance();
+			$enrolment_providers = $enrolment_manager->get_all_enrolment_providers();
+
+			foreach ( $enrolment_providers as $id => $enrolment_provider ) {
 				if ( $enrolment_provider->handles_enrolment( $this->course_id ) ) {
 					$this->course_enrolment_providers[ $id ] = $enrolment_provider;
 				}
@@ -248,69 +219,6 @@ class Sensei_Course_Enrolment {
 		}
 
 		return $this->course_enrolment_providers;
-	}
-
-	/**
-	 * Gets the enrolment provider object by its ID.
-	 *
-	 * @param string $provider_id Unique identifier of the enrolment provider.
-	 *
-	 * @return Sensei_Course_Enrolment_Provider_Interface|false
-	 */
-	public static function get_enrolment_provider_by_id( $provider_id ) {
-		$all_providers = self::get_all_enrolment_providers();
-		if ( ! isset( $all_providers[ $provider_id ] ) ) {
-			return false;
-		}
-
-		return $all_providers[ $provider_id ];
-	}
-
-	/**
-	 * Gets the descriptive name of the provider by ID.
-	 *
-	 * @param string $provider_id Unique identifier of the enrolment provider.
-	 *
-	 * @return string|false
-	 */
-	public static function get_enrolment_provider_name_by_id( $provider_id ) {
-		$provider = self::get_enrolment_provider_by_id( $provider_id );
-		if ( ! $provider ) {
-			return false;
-		}
-
-		$provider_class = get_class( $provider );
-
-		return $provider_class::get_name();
-	}
-
-	/**
-	 * Get an array of all the instantiated course enrolment providers.
-	 *
-	 * @return Sensei_Course_Enrolment_Provider_Interface[]
-	 */
-	private static function get_all_enrolment_providers() {
-		if ( ! isset( self::$enrolment_providers ) ) {
-			self::$enrolment_providers = [];
-
-			/**
-			 * Fetch all registered course enrolment providers.
-			 *
-			 * @since 3.0.0
-			 *
-			 * @param string[] $provider_classes List of enrolment providers classes.
-			 */
-			$provider_classes = apply_filters( 'sensei_course_enrolment_providers', [] );
-			foreach ( $provider_classes as $provider_class ) {
-				if ( ! class_exists( $provider_class ) || ! is_a( $provider_class, 'Sensei_Course_Enrolment_Provider_Interface', true ) ) {
-					continue;
-				}
-
-				self::$enrolment_providers[ $provider_class::get_id() ] = new $provider_class();
-			}
-		}
-
-		return self::$enrolment_providers;
 	}
 
 	/**
@@ -342,31 +250,11 @@ class Sensei_Course_Enrolment {
 			}
 
 			$enrolment_provider_class              = get_class( $enrolment_provider );
-			$versions[ $enrolment_provider_class ] = $enrolment_provider_class::get_version();
+			$versions[ $enrolment_provider_class ] = $enrolment_provider->get_version();
 		}
 
 		ksort( $versions );
 
-		return md5( wp_json_encode( $versions ) );
-	}
-
-	/**
-	 * Check if we should use the legacy enrolment check. Legacy check uses course
-	 * progress to determine enrolment.
-	 *
-	 * @return bool
-	 */
-	public static function use_legacy_enrolment_check() {
-		$use_legacy_enrolment_check = false;
-
-		// Check if WCPC is around but not offering enrolment providers (an old version).
-		if (
-			class_exists( '\Sensei_WC_Paid_Courses\Sensei_WC_Paid_Courses' ) &&
-			! class_exists( '\Sensei_WC_Paid_Courses\Course_Enrolment_Providers' )
-		) {
-			$use_legacy_enrolment_check = true;
-		}
-
-		return apply_filters( 'sensei_legacy_enrolment_check', $use_legacy_enrolment_check );
+		return md5( Sensei_Course_Enrolment_Manager::get_site_salt() . wp_json_encode( $versions ) );
 	}
 }

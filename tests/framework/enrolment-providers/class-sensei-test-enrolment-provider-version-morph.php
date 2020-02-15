@@ -11,13 +11,15 @@
  * Used in testing. Version can be increased. Provides enrolment when version is even.
  */
 class Sensei_Test_Enrolment_Provider_Version_Morph implements Sensei_Course_Enrolment_Provider_Interface {
+	const ID = 'version-morph';
+
 	public static $version = 1;
 
-	public static function get_id() {
-		return 'version-morph';
+	public function get_id() {
+		return self::ID;
 	}
 
-	public static function get_name() {
+	public function get_name() {
 		return 'Version Morph';
 	}
 
@@ -29,7 +31,7 @@ class Sensei_Test_Enrolment_Provider_Version_Morph implements Sensei_Course_Enro
 		return 0 === self::$version % 2;
 	}
 
-	public static function get_version() {
+	public function get_version() {
 		return self::$version;
 	}
 

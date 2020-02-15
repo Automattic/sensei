@@ -11,11 +11,13 @@
  * Used in testing. Never provides enrolment.
  */
 class Sensei_Test_Enrolment_Provider_Never_Provides implements Sensei_Course_Enrolment_Provider_Interface {
-	public static function get_id() {
-		return 'never-provides';
+	const ID = 'never-provides';
+
+	public function get_id() {
+		return self::ID;
 	}
 
-	public static function get_name() {
+	public function get_name() {
 		return 'Never Provides';
 	}
 
@@ -27,7 +29,7 @@ class Sensei_Test_Enrolment_Provider_Never_Provides implements Sensei_Course_Enr
 		return false;
 	}
 
-	public static function get_version() {
+	public function get_version() {
 		return 1;
 	}
 
