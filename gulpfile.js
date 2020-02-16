@@ -35,8 +35,8 @@ var sort            = require( 'gulp-sort' );
 var uglify          = require( 'gulp-uglify' );
 var wpPot           = require( 'gulp-wp-pot' );
 var zip             = require( 'gulp-zip' );
-var browserSync 	= require( 'browser-sync' ).create();
-var env 			= require( 'process' ).env;
+var browserSync     = require( 'browser-sync' ).create();
+var env             = require( 'process' ).env;
 
 var paths = {
 	scripts: [ 'assets/js/**/*.js', '!assets/js/**/*.min.js' ],
