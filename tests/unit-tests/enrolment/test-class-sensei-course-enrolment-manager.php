@@ -91,7 +91,7 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 		$this->prepareEnrolmentManager();
 
 		Sensei_Course_Enrolment_Manager::trigger_course_enrolment_check( $student_id, $course_id );
-		$m = get_user_meta( $student_id, $course_results_meta_key, true );
+
 		$this->assertTrue( '' === get_user_meta( $student_id, $course_results_meta_key, true ), 'The results meta should not be set yet after lazily triggering a course enrolment check' );
 		$this->assertEnrolmentCheckDeferred( $student_id, $course_id, 'There should be a deferred enrolment check for the student/course' );
 
