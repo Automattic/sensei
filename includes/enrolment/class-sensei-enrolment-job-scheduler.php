@@ -121,12 +121,17 @@ class Sensei_Enrolment_Job_Scheduler {
 	 * @param callable|null                  $completion_callback
 	 */
 	private function handle_self_scheduling_job( Sensei_Enrolment_Job_Interface $job, $completion_callback = null ) {
+		// Immediately schedule the next job just in case the process times out.
+		$this->schedule_single_job( $job );
+
 		$reschedule_job = $job->run();
 
-		if ( $reschedule_job ) {
-			$this->schedule_single_job( $job );
-		} elseif ( is_callable( $completion_callback ) ) {
-			call_user_func( $completion_callback );
+		if ( ! $reschedule_job ) {
+			$this->cancel_scheduled_job( $job );
+
+			if ( is_callable( $completion_callback ) ) {
+				call_user_func( $completion_callback );
+			}
 		}
 	}
 
@@ -143,5 +148,18 @@ class Sensei_Enrolment_Job_Scheduler {
 		if ( ! wp_next_scheduled( $name, $args ) ) {
 			wp_schedule_single_event( time(), $name, $args );
 		}
+	}
+
+	/**
+	 * Cancel a scheduled job.
+	 *
+	 * @param Sensei_Enrolment_Job_Interface $job Job to schedule.
+	 */
+	private function cancel_scheduled_job( Sensei_Enrolment_Job_Interface $job ) {
+		$class_name = get_class( $job );
+		$name       = $class_name::get_name();
+		$args       = $job->get_args();
+
+		wp_clear_scheduled_hook( $name, $args );
 	}
 }
