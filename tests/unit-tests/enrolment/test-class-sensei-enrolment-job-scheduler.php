@@ -4,6 +4,7 @@
  * Tests for Sensei_Enrolment_Calculation_Scheduler class.
  *
  * @covers Sensei_Enrolment_Learner_Calculation_Scheduler
+ * @group course-enrolment
  */
 class Sensei_Enrolment_Calculation_Scheduler_Test extends WP_UnitTestCase {
 	private $scheduled_events = [];
@@ -108,7 +109,6 @@ class Sensei_Enrolment_Calculation_Scheduler_Test extends WP_UnitTestCase {
 	 */
 	public function testLearnerCalculationCompletesWhenUsersAreCalculated() {
 		$scheduler = Sensei_Enrolment_Job_Scheduler::instance();
-		$job       = new Sensei_Enrolment_Learner_Calculation_Job( 20 );
 
 		update_user_meta(
 			1,
@@ -125,7 +125,7 @@ class Sensei_Enrolment_Calculation_Scheduler_Test extends WP_UnitTestCase {
 			);
 		}
 
-		$scheduler->run_learner_calculation( $job->get_args() );
+		$scheduler->run_learner_calculation();
 
 		$option = get_option( Sensei_Enrolment_Job_Scheduler::CALCULATION_VERSION_OPTION_NAME );
 		$this->assertEquals( Sensei_Course_Enrolment_Manager::get_enrolment_calculation_version(), $option );

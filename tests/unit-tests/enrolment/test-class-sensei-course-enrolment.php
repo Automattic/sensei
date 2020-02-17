@@ -312,6 +312,108 @@ class Sensei_Course_Enrolment_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests invalidating results for current learners only and enqueuing async job.
+	 */
+	public function testRecalculateEnrolmentCurrentLearnersOnly() {
+		$course_id         = $this->getSimpleCourse();
+		$other_user_ids    = $this->factory()->user->create_many( 2 );
+		$enrolled_user_ids = $this->factory()->user->create_many( 5 );
+		$all_user_ids      = array_merge( $enrolled_user_ids, $other_user_ids );
+
+		foreach ( $other_user_ids as $user_id ) {
+			$this->turnStudentIntoCrook( $user_id );
+		}
+
+		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Denies_Crooks::class );
+		$this->prepareEnrolmentManager();
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$course_salt      = $course_enrolment->get_course_enrolment_salt();
+
+		// First, ensure we've calculated all users.
+		foreach ( $all_user_ids as $user_id ) {
+			$course_enrolment->is_enrolled( $user_id );
+		}
+
+		$job = $course_enrolment->recalculate_enrolment( true );
+
+		foreach ( $enrolled_user_ids as $user_id ) {
+			$this->assertEquals( '', get_user_meta( $user_id, $course_enrolment->get_course_results_meta_key(), true ), 'Enrolled users should have an invalidated enrolment result set' );
+		}
+
+		foreach ( $other_user_ids as $user_id ) {
+			$this->assertNotEquals( '', get_user_meta( $user_id, $course_enrolment->get_course_results_meta_key(), true ), 'Unenrolled users should NOT have an invalidated enrolment result set' );
+		}
+		$this->assertEquals( $course_enrolment->get_course_enrolment_salt(), $course_salt, 'The course salt should not have been reset' );
+
+		$this->assertTrue( $job instanceof Sensei_Enrolment_Course_Calculation_Job, 'Returned job should be an instance of Sensei_Enrolment_Course_Calculation_Job' );
+		$this->assertNotEmpty( \wp_next_scheduled( Sensei_Enrolment_Course_Calculation_Job::get_name(), $job->get_args() ), 'Job should have been scheduled' );
+	}
+
+	/**
+	 * Tests recalculating enrolment for all users.
+	 */
+	public function testRecalculateEnrolmentAllUsers() {
+		$course_id         = $this->getSimpleCourse();
+		$other_user_ids    = $this->factory()->user->create_many( 2 );
+		$enrolled_user_ids = $this->factory()->user->create_many( 3 );
+		$all_user_ids      = array_merge( $enrolled_user_ids, $other_user_ids );
+
+		foreach ( $other_user_ids as $user_id ) {
+			$this->turnStudentIntoCrook( $user_id );
+		}
+
+		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Denies_Crooks::class );
+		$this->prepareEnrolmentManager();
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+
+		$course_salt = $course_enrolment->get_course_enrolment_salt();
+
+		// First, ensure we've calculated all users.
+		foreach ( $all_user_ids as $user_id ) {
+			$course_enrolment->is_enrolled( $user_id );
+		}
+
+		$job = $course_enrolment->recalculate_enrolment( false );
+		wp_cache_flush();
+
+		foreach ( $all_user_ids as $user_id ) {
+			$this->assertEquals( '', get_user_meta( $user_id, $course_enrolment->get_course_results_meta_key(), true ), 'All users should have an enrolment result invalidated' );
+		}
+		$this->assertNotEquals( $course_enrolment->get_course_enrolment_salt(), $course_salt, 'The course salt should have been reset' );
+
+		$this->assertTrue( $job instanceof Sensei_Enrolment_Course_Calculation_Job, 'Returned job should be an instance of Sensei_Enrolment_Course_Calculation_Job' );
+		$this->assertNotEmpty( \wp_next_scheduled( Sensei_Enrolment_Course_Calculation_Job::get_name(), $job->get_args() ), 'Job should have been scheduled' );
+	}
+
+	/**
+	 * Tests retrieval of enrolled users IDs.
+	 */
+	public function testGetEnrolledUserIds() {
+		$course_id         = $this->getSimpleCourse();
+		$other_user_ids    = $this->factory()->user->create_many( 2 );
+		$enrolled_user_ids = $this->factory()->user->create_many( 3 );
+		$all_user_ids      = array_merge( $enrolled_user_ids, $other_user_ids );
+
+		foreach ( $other_user_ids as $user_id ) {
+			$this->turnStudentIntoCrook( $user_id );
+		}
+
+		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Denies_Crooks::class );
+		$this->prepareEnrolmentManager();
+
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+
+		$this->assertEquals( [], $course_enrolment->get_enrolled_user_ids(), 'Before we calculate enrolment, no one should be marked as enrolled in course' );
+
+		// First, ensure we've calculated all users.
+		foreach ( $all_user_ids as $user_id ) {
+			$course_enrolment->is_enrolled( $user_id );
+		}
+
+		$this->assertEquals( $enrolled_user_ids, $course_enrolment->get_enrolled_user_ids(), 'We should only get the IDs of students who should be enrolled' );
+	}
+
+	/**
 	 * Helper for `\Sensei_Class_Course_Enrolment_Test::testEnrolmentCheckVersionCachingWorks`.
 	 */
 	private function resetAndSetUpVersionedProvider( $bump_version ) {

@@ -1,11 +1,12 @@
 <?php
 
 /**
- * Tests for Sensei_Enrolment_Calculation_Scheduler class.
+ * Tests for Sensei_Enrolment_Learner_Calculation_Job class.
  *
- * @covers Sensei_Enrolment_Learner_Calculation_Scheduler
+ * @covers Sensei_Enrolment_Learner_Calculation_Job
+ * @group course-enrolment
  */
-class Sensei_Enrolment_Calculation_Scheduler_Test extends WP_UnitTestCase {
+class Sensei_Enrolment_Learner_Calculation_Job_Test extends WP_UnitTestCase {
 	/**
 	 * Setup function.
 	 */
