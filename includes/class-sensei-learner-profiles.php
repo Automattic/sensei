@@ -35,6 +35,9 @@ class Sensei_Learner_Profiles {
 		add_action( 'sensei_learner_profile_info', array( $this, 'learner_profile_courses_heading' ), 30, 1 );
 
 		// Add class to body tag
+		add_filter( 'body_class', array( $this, 'learner_profile_body_class' ), 10, 1 );
+
+		// Scripts
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 	} // End __construct()
 
