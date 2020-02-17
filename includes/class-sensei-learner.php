@@ -47,7 +47,7 @@ class Sensei_Learner {
 	/**
 	 * Get the learner user ID from a term slug.
 	 *
-	 * @param string $term_slug Term slug to parse the user ID from.
+	 * @param string $term_name Term slug to parse the user ID from.
 	 * @return int
 	 */
 	public static function get_learner_id( $term_name ) {

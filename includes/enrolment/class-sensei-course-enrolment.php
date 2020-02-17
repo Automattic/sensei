@@ -160,14 +160,13 @@ class Sensei_Course_Enrolment {
 	private function invalidate_all_learner_results() {
 		global $wpdb;
 
-		$invalidated_data = [
-			'meta_value' => '',
-		];
+		// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- Infrequent query that is much faster than alternatives.
+		$invalidated_data = [ 'meta_value' => '' ];
 
-		$where = [
-			'meta_key' => $this->get_course_results_meta_key(),
-		];
+		// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Infrequent query that is much faster than alternatives.
+		$where = [ 'meta_key' => $this->get_course_results_meta_key() ];
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Caching is invalidated by a reset of the course salt below.
 		$wpdb->update( $wpdb->usermeta, $invalidated_data, $where );
 
 		$this->reset_course_enrolment_salt();

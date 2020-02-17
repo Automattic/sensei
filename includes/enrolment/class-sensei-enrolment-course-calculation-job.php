@@ -113,6 +113,7 @@ class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Enrolment_Job_In
 
 		// When querying for just currently enrolled users, we invalidated the results for all current users first.
 		if ( $this->invalidated_only ) {
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Ran inside of async job.
 			$user_args['meta_query'] = [
 				[
 					'key'   => $meta_key,
@@ -120,6 +121,7 @@ class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Enrolment_Job_In
 				],
 			];
 		} else {
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Ran inside of async job.
 			$user_args['meta_query'] = [
 				'relation' => 'OR',
 				[
