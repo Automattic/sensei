@@ -376,6 +376,7 @@ class Sensei_Main {
 		Sensei_Blocks::instance()->init();
 		Sensei_Course_Enrolment_Manager::instance()->init();
 		$this->enrolment_scheduler = Sensei_Enrolment_Job_Scheduler::instance();
+		$this->enrolment_scheduler->init();
 
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {

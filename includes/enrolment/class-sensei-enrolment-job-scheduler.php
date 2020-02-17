@@ -38,13 +38,19 @@ class Sensei_Enrolment_Job_Scheduler {
 	/**
 	 * Sensei_Enrolment_Job_Scheduler constructor.
 	 */
-	private function __construct() {
+	private function __construct() {}
+
+	/**
+	 * Initialize the hooks.
+	 */
+	public function init() {
 		// Handle job that ensures all learners have up-to-date enrolment calculations.
 		add_action( 'init', [ $this, 'maybe_start_learner_calculation' ], 101 );
 		add_action( Sensei_Enrolment_Learner_Calculation_Job::get_name(), [ $this, 'run_learner_calculation' ] );
 
 		// Handle job that ensures a course's enrolment is up-to-date.
 		add_action( Sensei_Enrolment_Course_Calculation_Job::get_name(), [ $this, 'run_course_calculation' ] );
+
 	}
 
 	/**
@@ -143,7 +149,7 @@ class Sensei_Enrolment_Job_Scheduler {
 	private function schedule_single_job( Sensei_Enrolment_Job_Interface $job ) {
 		$class_name = get_class( $job );
 		$name       = $class_name::get_name();
-		$args       = $job->get_args();
+		$args       = [ $job->get_args() ];
 
 		if ( ! wp_next_scheduled( $name, $args ) ) {
 			wp_schedule_single_event( time(), $name, $args );
@@ -158,7 +164,7 @@ class Sensei_Enrolment_Job_Scheduler {
 	private function cancel_scheduled_job( Sensei_Enrolment_Job_Interface $job ) {
 		$class_name = get_class( $job );
 		$name       = $class_name::get_name();
-		$args       = $job->get_args();
+		$args       = [ $job->get_args() ];
 
 		wp_clear_scheduled_hook( $name, $args );
 	}
