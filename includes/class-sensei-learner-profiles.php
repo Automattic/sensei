@@ -37,7 +37,7 @@ class Sensei_Learner_Profiles {
 		// Add class to body tag
 		add_filter( 'body_class', array( $this, 'learner_profile_body_class' ), 10, 1 );
 
-		// Scripts
+		// Scripts for frontend.
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 	} // End __construct().
 
