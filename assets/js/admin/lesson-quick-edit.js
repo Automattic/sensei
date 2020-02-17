@@ -11,7 +11,7 @@
 
 		// get the post ID
 		var postId = 0;
-		if ( typeof( id ) == 'object' ) {
+		if ( !Number.isInteger( id ) ) {
 
 			postId = parseInt(this.getId(id));
 
