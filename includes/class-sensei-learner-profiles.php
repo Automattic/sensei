@@ -39,7 +39,7 @@ class Sensei_Learner_Profiles {
 
 		// Scripts
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
-	} // End __construct()
+	} // End __construct().
 
 	/**
 	 * Enqueue frontend JavaScripts.
