@@ -182,7 +182,7 @@ class Sensei_Course_Enrolment {
 	public function get_enrolled_user_ids( $args = [] ) {
 		$args['fields'] = 'names';
 
-		$learner_terms = \wp_get_object_terms( $this->course_id, Sensei_PostTypes::LEARNER_TAXONOMY_NAME, $args );
+		$learner_terms = wp_get_object_terms( $this->course_id, Sensei_PostTypes::LEARNER_TAXONOMY_NAME, $args );
 
 		return array_map( [ 'Sensei_learner', 'get_learner_id' ], $learner_terms );
 	}

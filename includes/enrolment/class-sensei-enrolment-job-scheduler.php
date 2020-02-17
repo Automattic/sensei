@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the class Sensei_Enrolment_Course_Calculation_Scheduler.
+ * File containing the class Sensei_Enrolment_Job_Scheduler.
  *
  * @package sensei
  */

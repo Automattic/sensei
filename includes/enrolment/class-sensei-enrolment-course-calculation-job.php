@@ -111,7 +111,7 @@ class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Enrolment_Job_In
 
 		$meta_key = $course_enrolment->get_course_results_meta_key();
 
-		// When querying for just currently enrolled users, we invalidated the results for all current users first.
+		// When querying for just currently enrolled users, we invalidated the results for all currently enrolled users first.
 		if ( $this->invalidated_only ) {
 			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Ran inside of async job.
 			$user_args['meta_query'] = [
