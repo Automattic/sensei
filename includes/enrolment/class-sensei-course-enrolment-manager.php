@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Course_Enrolment_Manager {
 	const COURSE_ENROLMENT_SITE_SALT_OPTION = 'sensei_course_enrolment_site_salt';
-	const LEARNER_CALCULATION_META_NAME     = 'learner_calculated_version';
+	const LEARNER_CALCULATION_META_NAME     = 'sensei_learner_calculated_version';
 
 	/**
 	 * Instance of singleton.
