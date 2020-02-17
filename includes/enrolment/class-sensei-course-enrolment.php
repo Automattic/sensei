@@ -184,6 +184,11 @@ class Sensei_Course_Enrolment {
 
 		$learner_terms = wp_get_object_terms( $this->course_id, Sensei_PostTypes::LEARNER_TAXONOMY_NAME, $args );
 
+		// This only happens if we asked for terms too early (before init).
+		if ( is_wp_error( $learner_terms ) ) {
+			return [];
+		}
+
 		return array_map( [ 'Sensei_learner', 'get_learner_id' ], $learner_terms );
 	}
 
