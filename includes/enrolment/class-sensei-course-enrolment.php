@@ -14,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Course_Enrolment {
 	const META_PREFIX_ENROLMENT_RESULTS = 'sensei_course_enrolment_';
+	const META_COURSE_ENROLMENT_VERSION = '_course_enrolment_version';
 
 	/**
 	 * Courses instances.
@@ -113,6 +114,81 @@ class Sensei_Course_Enrolment {
 	}
 
 	/**
+	 * Marks all enrolment results as invalid for a course and enqueues an async job to recalculate.
+	 *
+	 * @param bool $enrolled_learners_only
+	 *
+	 * @return Sensei_Enrolment_Course_Calculation_Job
+	 */
+	public function recalculate_enrolment( $enrolled_learners_only ) {
+		$invalidated_only = false;
+
+		// If we just invalidated current learners, we only have to recalculate for those invalidated results.
+		if ( $enrolled_learners_only ) {
+			$invalidated_only = true;
+			$this->invalidate_enrolled_learner_results();
+		} else {
+			$this->invalidate_all_learner_results();
+		}
+
+		$job_scheduler = Sensei_Enrolment_Job_Scheduler::instance();
+
+		return $job_scheduler->start_course_calculation_job( $this->course_id, $invalidated_only );
+	}
+
+	/**
+	 * Bulk invalidate all learner results for enrolled users in a course.
+	 *
+	 * Note: this could still cause a delay when users visit My Courses or another page that relies on the term.
+	 * We aren't invalidating the entire user for this.
+	 */
+	private function invalidate_enrolled_learner_results() {
+		$enrolled_user_ids = $this->get_enrolled_user_ids();
+		foreach ( $enrolled_user_ids as $user_id ) {
+			update_user_meta( $user_id, $this->get_course_results_meta_key(), '' );
+		}
+	}
+
+	/**
+	 * Bulk invalidate all learner results for all users.
+	 *
+	 * This could still cause a delay when users visit My Courses or another page that relies on the term.
+	 * We aren't invalidating the entire user for this.
+	 *
+	 * Since we're doing a direct database edit here, we combine this with a salt reset to invalidate cached results.
+	 */
+	private function invalidate_all_learner_results() {
+		global $wpdb;
+
+		$invalidated_data = [
+			'meta_value' => '',
+		];
+
+		$where = [
+			'meta_key' => $this->get_course_results_meta_key(),
+		];
+
+		$wpdb->update( $wpdb->usermeta, $invalidated_data, $where );
+
+		$this->reset_course_enrolment_salt();
+	}
+
+	/**
+	 * Get the IDs for the enrolled users.
+	 *
+	 * @param array $args Additional arguments to pass to `WP_Term_Query`. Useful for pagination.
+	 *
+	 * @return int[]
+	 */
+	public function get_enrolled_user_ids( $args = [] ) {
+		$args['fields'] = 'names';
+
+		$learner_terms = \wp_get_object_terms( $this->course_id, Sensei_PostTypes::LEARNER_TAXONOMY_NAME, $args );
+
+		return array_map( [ 'Sensei_learner', 'get_learner_id' ], $learner_terms );
+	}
+
+	/**
 	 * Get enrolment from taxonomy record.
 	 *
 	 * @param int $user_id User ID.
@@ -195,7 +271,7 @@ class Sensei_Course_Enrolment {
 	 *
 	 * @return string
 	 */
-	private function get_course_results_meta_key() {
+	public function get_course_results_meta_key() {
 		return self::META_PREFIX_ENROLMENT_RESULTS . $this->course_id;
 	}
 
@@ -229,7 +305,7 @@ class Sensei_Course_Enrolment {
 	public function get_course_enrolment_providers_version() {
 		if ( ! isset( $this->course_enrolment_providers_version ) ) {
 			$enrolment_providers                      = $this->get_course_enrolment_providers();
-			$this->course_enrolment_providers_version = self::hash_course_enrolment_provider_versions( $enrolment_providers );
+			$this->course_enrolment_providers_version = $this->hash_course_enrolment_provider_versions( $enrolment_providers );
 		}
 
 		return $this->course_enrolment_providers_version;
@@ -242,7 +318,7 @@ class Sensei_Course_Enrolment {
 	 *
 	 * @return string
 	 */
-	private static function hash_course_enrolment_provider_versions( $enrolment_providers ) {
+	private function hash_course_enrolment_provider_versions( $enrolment_providers ) {
 		$versions = [];
 		foreach ( $enrolment_providers as $enrolment_provider ) {
 			if ( ! ( $enrolment_provider instanceof Sensei_Course_Enrolment_Provider_Interface ) ) {
@@ -255,6 +331,34 @@ class Sensei_Course_Enrolment {
 
 		ksort( $versions );
 
-		return md5( Sensei_Course_Enrolment_Manager::get_site_salt() . wp_json_encode( $versions ) );
+		return md5( Sensei_Course_Enrolment_Manager::get_site_salt() . $this->get_course_enrolment_salt() . wp_json_encode( $versions ) );
+	}
+
+	/**
+	 * Gets the course salt that can be used to invalidate all course enrolments.
+	 *
+	 * @return string
+	 */
+	public function get_course_enrolment_salt() {
+		$course_salt = get_post_meta( $this->course_id, self::META_COURSE_ENROLMENT_VERSION, true );
+
+		if ( ! $course_salt ) {
+			return $this->reset_course_enrolment_salt();
+		}
+
+		return $course_salt;
+	}
+
+	/**
+	 * Resets the course salt. If already set, this will invalidate all enrolment results for the current course.
+	 *
+	 * @return string
+	 */
+	public function reset_course_enrolment_salt() {
+		$new_salt = md5( uniqid() );
+
+		update_post_meta( $this->course_id, self::META_COURSE_ENROLMENT_VERSION, $new_salt );
+
+		return $new_salt;
 	}
 }
