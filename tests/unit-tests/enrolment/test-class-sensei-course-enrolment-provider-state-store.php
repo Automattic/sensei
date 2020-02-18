@@ -6,12 +6,12 @@ require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-he
  *
  * @group course-enrolment
  */
-class Sensei_Course_Enrolment_Provider_State_Set_Test extends WP_UnitTestCase {
+class Sensei_Course_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 	/**
 	 * Tests to make sure valid json strings result in a valid state set.
 	 *
-	 * @covers \Sensei_Course_Enrolment_Provider_State_Set::get_provider_state
-	 * @covers \Sensei_Course_Enrolment_Provider_State_Set::from_json
+	 * @covers \Sensei_Course_Enrolment_Provider_State_Store::get_provider_state
+	 * @covers \Sensei_Course_Enrolment_Provider_State_Store::from_json
 	 */
 	public function testFromJsonString() {
 		$always_provides_provider = new Sensei_Test_Enrolment_Provider_Always_Provides();
@@ -36,9 +36,9 @@ class Sensei_Course_Enrolment_Provider_State_Set_Test extends WP_UnitTestCase {
 		];
 
 		$data_json = \wp_json_encode( $data );
-		$state_set = \Sensei_Course_Enrolment_Provider_State_Set::from_json( $data_json );
+		$state_set = \Sensei_Course_Enrolment_Provider_State_Store::from_json( $data_json );
 
-		$this->assertTrue( $state_set instanceof Sensei_Course_Enrolment_Provider_State_Set, 'JSON should have resulted in a valid state set' );
+		$this->assertTrue( $state_set instanceof Sensei_Course_Enrolment_Provider_State_Store, 'JSON should have resulted in a valid state set' );
 
 		$always_provides_state = $state_set->get_provider_state( $always_provides_provider );
 		$this->assertTrue( $always_provides_state->get_stored_value( 'test' ), 'Provider state should have been initialized with a stored value test as true' );
@@ -51,8 +51,8 @@ class Sensei_Course_Enrolment_Provider_State_Set_Test extends WP_UnitTestCase {
 	/**
 	 * Tests to make sure valid json strings result in a valid state set.
 	 *
-	 * @covers \Sensei_Course_Enrolment_Provider_State_Set::get_provider_state
-	 * @covers \Sensei_Course_Enrolment_Provider_State_Set::from_json
+	 * @covers \Sensei_Course_Enrolment_Provider_State_Store::get_provider_state
+	 * @covers \Sensei_Course_Enrolment_Provider_State_Store::from_json
 	 */
 	public function testSerializedJsonValid() {
 		$always_provides_provider = new Sensei_Test_Enrolment_Provider_Always_Provides();
@@ -77,7 +77,7 @@ class Sensei_Course_Enrolment_Provider_State_Set_Test extends WP_UnitTestCase {
 		];
 
 		$data_json      = \wp_json_encode( $data );
-		$state_set      = \Sensei_Course_Enrolment_Provider_State_Set::from_json( $data_json );
+		$state_set      = \Sensei_Course_Enrolment_Provider_State_Store::from_json( $data_json );
 		$state_set_json = \wp_json_encode( $state_set );
 
 		$this->assertEquals( $data_json, $state_set_json, 'Serialized state set should equal the initial state' );
@@ -86,14 +86,14 @@ class Sensei_Course_Enrolment_Provider_State_Set_Test extends WP_UnitTestCase {
 	/**
 	 * Test setting the has changed state when making changes to the provider states within the set.
 	 *
-	 * @covers \Sensei_Course_Enrolment_Provider_State_Set::set_has_changed
-	 * @covers \Sensei_Course_Enrolment_Provider_State_Set::get_has_changed
+	 * @covers \Sensei_Course_Enrolment_Provider_State_Store::set_has_changed
+	 * @covers \Sensei_Course_Enrolment_Provider_State_Store::get_has_changed
 	 * @covers \Sensei_Course_Enrolment_Provider_State::set_stored_value
 	 * @covers \Sensei_Course_Enrolment_Provider_State::add_log_message
 	 */
 	public function testHasChangedStates() {
 		$always_provides_provider = new Sensei_Test_Enrolment_Provider_Always_Provides();
-		$state_set                = Sensei_Course_Enrolment_Provider_State_Set::create();
+		$state_set                = Sensei_Course_Enrolment_Provider_State_Store::create();
 		$provider_state           = $state_set->get_provider_state( $always_provides_provider );
 
 		// Note that we only count new providers as a change after something changes within them.

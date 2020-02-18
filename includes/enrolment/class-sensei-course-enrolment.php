@@ -47,7 +47,7 @@ class Sensei_Course_Enrolment {
 	/**
 	 * Sets of enrolment provider states for different users.
 	 *
-	 * @var Sensei_Course_Enrolment_Provider_State_Set[]
+	 * @var Sensei_Course_Enrolment_Provider_State_Store[]
 	 */
 	private $provider_state_sets = [];
 
@@ -225,11 +225,11 @@ class Sensei_Course_Enrolment {
 			$provider_state_sets = get_user_meta( $user_id, $this->get_providers_state_meta_key(), true );
 
 			if ( ! empty( $provider_state_sets ) ) {
-				$provider_state_sets = Sensei_Course_Enrolment_Provider_State_Set::from_json( $provider_state_sets );
+				$provider_state_sets = Sensei_Course_Enrolment_Provider_State_Store::from_json( $provider_state_sets );
 			}
 
 			if ( empty( $provider_state_sets ) ) {
-				$provider_state_sets = Sensei_Course_Enrolment_Provider_State_Set::create();
+				$provider_state_sets = Sensei_Course_Enrolment_Provider_State_Store::create();
 			}
 
 			$this->provider_state_sets[ $user_id ] = $provider_state_sets;

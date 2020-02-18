@@ -16,7 +16,7 @@ class Sensei_Course_Enrolment_Provider_State implements JsonSerializable {
 	/**
 	 * State set storing this provider state.
 	 *
-	 * @var Sensei_Course_Enrolment_Provider_State_Set
+	 * @var Sensei_Course_Enrolment_Provider_State_Store
 	 */
 	private $state_set;
 
@@ -37,11 +37,11 @@ class Sensei_Course_Enrolment_Provider_State implements JsonSerializable {
 	/**
 	 * Class constructor.
 	 *
-	 * @param Sensei_Course_Enrolment_Provider_State_Set $state_set        State set storing this provider state.
+	 * @param Sensei_Course_Enrolment_Provider_State_Store $state_set        State set storing this provider state.
 	 * @param array                                      $provider_data    Basic storage for provider data.
 	 * @param array                                      $logs             Log messages.
 	 */
-	private function __construct( Sensei_Course_Enrolment_Provider_State_Set $state_set, $provider_data = [], $logs = [] ) {
+	private function __construct( Sensei_Course_Enrolment_Provider_State_Store $state_set, $provider_data = [], $logs = [] ) {
 		$this->state_set     = $state_set;
 		$this->provider_data = $provider_data;
 		$this->logs          = $logs;
@@ -50,12 +50,12 @@ class Sensei_Course_Enrolment_Provider_State implements JsonSerializable {
 	/**
 	 * Restore a course enrolment state record from data restored from a serialized JSON string.
 	 *
-	 * @param Sensei_Course_Enrolment_Provider_State_Set $state_set State set storing this provider state object.
+	 * @param Sensei_Course_Enrolment_Provider_State_Store $state_set State set storing this provider state object.
 	 * @param array                                      $data      Serialized state of object.
 	 *
 	 * @return self|false
 	 */
-	public static function from_serialized_array( Sensei_Course_Enrolment_Provider_State_Set $state_set, $data ) {
+	public static function from_serialized_array( Sensei_Course_Enrolment_Provider_State_Store $state_set, $data ) {
 		if ( empty( $data ) ) {
 			return false;
 		}
@@ -69,11 +69,11 @@ class Sensei_Course_Enrolment_Provider_State implements JsonSerializable {
 	/**
 	 * Create a fresh state storage record.
 	 *
-	 * @param Sensei_Course_Enrolment_Provider_State_Set $state_set State set storing this provider state object.
+	 * @param Sensei_Course_Enrolment_Provider_State_Store $state_set State set storing this provider state object.
 	 *
 	 * @return self
 	 */
-	public static function create( Sensei_Course_Enrolment_Provider_State_Set $state_set ) {
+	public static function create( Sensei_Course_Enrolment_Provider_State_Store $state_set ) {
 		return new self( $state_set );
 	}
 

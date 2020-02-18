@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Stores set of all the enrolment provider state objects for a course and user.
  */
-class Sensei_Course_Enrolment_Provider_State_Set implements JsonSerializable {
+class Sensei_Course_Enrolment_Provider_State_Store implements JsonSerializable {
 	/**
 	 * Flag for if a state set has changed.
 	 *
