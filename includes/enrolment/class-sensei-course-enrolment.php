@@ -145,7 +145,7 @@ class Sensei_Course_Enrolment {
 	private function invalidate_enrolled_learner_results() {
 		$enrolled_user_ids = $this->get_enrolled_user_ids();
 		foreach ( $enrolled_user_ids as $user_id ) {
-			update_user_meta( $user_id, $this->get_course_results_meta_key(), '' );
+			update_user_meta( $user_id, $this->get_enrolment_results_meta_key(), '' );
 		}
 	}
 
@@ -164,7 +164,7 @@ class Sensei_Course_Enrolment {
 		$invalidated_data = [ 'meta_value' => '' ];
 
 		// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Infrequent query that is much faster than alternatives.
-		$where = [ 'meta_key' => $this->get_course_results_meta_key() ];
+		$where = [ 'meta_key' => $this->get_enrolment_results_meta_key() ];
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Caching is invalidated by a reset of the course salt below.
 		$wpdb->update( $wpdb->usermeta, $invalidated_data, $where );
@@ -284,7 +284,7 @@ class Sensei_Course_Enrolment {
 	 *
 	 * @return string
 	 */
-	private function get_enrolment_results_meta_key() {
+	public function get_enrolment_results_meta_key() {
 		return self::META_PREFIX_ENROLMENT_RESULTS . $this->course_id;
 	}
 

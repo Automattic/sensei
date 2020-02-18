@@ -381,11 +381,11 @@ class Sensei_Course_Enrolment_Test extends WP_UnitTestCase {
 		$job = $course_enrolment->recalculate_enrolment( true );
 
 		foreach ( $enrolled_user_ids as $user_id ) {
-			$this->assertEquals( '', get_user_meta( $user_id, $course_enrolment->get_course_results_meta_key(), true ), 'Enrolled users should have an invalidated enrolment result set' );
+			$this->assertEquals( '', get_user_meta( $user_id, $course_enrolment->get_enrolment_results_meta_key(), true ), 'Enrolled users should have an invalidated enrolment result set' );
 		}
 
 		foreach ( $other_user_ids as $user_id ) {
-			$this->assertNotEquals( '', get_user_meta( $user_id, $course_enrolment->get_course_results_meta_key(), true ), 'Unenrolled users should NOT have an invalidated enrolment result set' );
+			$this->assertNotEquals( '', get_user_meta( $user_id, $course_enrolment->get_enrolment_results_meta_key(), true ), 'Unenrolled users should NOT have an invalidated enrolment result set' );
 		}
 		$this->assertEquals( $course_enrolment->get_course_enrolment_salt(), $course_salt, 'The course salt should not have been reset' );
 
@@ -421,7 +421,7 @@ class Sensei_Course_Enrolment_Test extends WP_UnitTestCase {
 		wp_cache_flush();
 
 		foreach ( $all_user_ids as $user_id ) {
-			$this->assertEquals( '', get_user_meta( $user_id, $course_enrolment->get_course_results_meta_key(), true ), 'All users should have an enrolment result invalidated' );
+			$this->assertEquals( '', get_user_meta( $user_id, $course_enrolment->get_enrolment_results_meta_key(), true ), 'All users should have an enrolment result invalidated' );
 		}
 		$this->assertNotEquals( $course_enrolment->get_course_enrolment_salt(), $course_salt, 'The course salt should have been reset' );
 

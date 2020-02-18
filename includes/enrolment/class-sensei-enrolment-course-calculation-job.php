@@ -109,7 +109,7 @@ class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Enrolment_Job_In
 			'number' => $this->batch_size,
 		];
 
-		$meta_key = $course_enrolment->get_course_results_meta_key();
+		$meta_key = $course_enrolment->get_enrolment_results_meta_key();
 
 		// When querying for just currently enrolled users, we invalidated the results for all currently enrolled users first.
 		if ( $this->invalidated_only ) {
