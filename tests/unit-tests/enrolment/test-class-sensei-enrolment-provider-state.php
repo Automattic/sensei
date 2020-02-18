@@ -204,7 +204,7 @@ class Sensei_Enrolment_Provider_State_Test extends WP_UnitTestCase {
 			'Third log entry',
 			'Fourth log entry',
 		];
-		foreach( $initial_data as $entry ) {
+		foreach ( $initial_data as $entry ) {
 			$state->add_log_message( $entry );
 		}
 
