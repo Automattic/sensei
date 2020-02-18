@@ -126,7 +126,7 @@ trait Sensei_Course_Enrolment_Test_Helpers {
 	}
 
 	/**
-	 * Turns a user into a crook by adding "I am a crook" to their description.
+	 * Turns a user into a non-crook by clearing their description.
 	 *
 	 * @param int $user_id
 	 * @return int
@@ -134,7 +134,7 @@ trait Sensei_Course_Enrolment_Test_Helpers {
 	private function turnStudentIntoNormal( $user_id ) {
 		$user = get_user_by( 'ID', $user_id );
 
-		$user->description = 'I am a normal';
+		$user->description = '';
 		wp_update_user( $user );
 
 		return $user_id;

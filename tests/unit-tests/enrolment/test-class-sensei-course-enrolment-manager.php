@@ -1,7 +1,5 @@
 <?php
 
-use Sensei_WC_Paid_Courses\Course_Enrolment_Providers\WooCommerce_Simple;
-
 require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-helpers.php';
 
 /**
