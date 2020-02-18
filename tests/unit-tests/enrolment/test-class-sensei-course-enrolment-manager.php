@@ -1,5 +1,7 @@
 <?php
 
+use Sensei_WC_Paid_Courses\Course_Enrolment_Providers\WooCommerce_Simple;
+
 require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-helpers.php';
 
 /**
@@ -120,6 +122,30 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 		$this->assertEnrolmentCheckNotDeferred( $student_id, $course_id, 'There should not be a deferred enrolment check for the student/course' );
 	}
 
+	/**
+	 * Tests to make sure deferred calculation of results are removed when calculated.
+	 */
+	public function testDoubleTriggerProperlyDeletesResults() {
+		$course_id        = $this->getSimpleCourse();
+		$student_id       = $this->createStandardStudent();
+		$course_enrolment = \Sensei_Course_Enrolment::get_course_instance( $course_id );
+
+		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Denies_Crooks::class );
+		$this->prepareEnrolmentManager();
+
+		$this->assertTrue( $course_enrolment->is_enrolled( $student_id ), 'Initially the user should be enrolled' );
+		$this->turnStudentIntoCrook( $student_id );
+		$this->assertTrue( $course_enrolment->is_enrolled( $student_id ), 'The student should still be enrolled after changing the status without actions' );
+
+		Sensei_Course_Enrolment_Manager::trigger_course_enrolment_check( $student_id, $course_id );
+
+		$this->assertFalse( $course_enrolment->is_enrolled( $student_id ), 'The user should now no longer be enrolled' );
+
+		$this->turnStudentIntoNormal( $student_id );
+		Sensei_Course_Enrolment_Manager::trigger_course_enrolment_check( $student_id, $course_id );
+		$this->assertTrue( $course_enrolment->is_enrolled( $student_id ), 'The user should now be enrolled' );
+
+	}
 
 	/**
 	 * Tests to make sure manual enrolment is blocked on the frontend if someone filtered out `manual` provider.

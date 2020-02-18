@@ -60,6 +60,7 @@ class Sensei_Course_Enrolment_Manager {
 	public function init() {
 		add_action( 'init', [ $this, 'collect_enrolment_providers' ], 100 );
 		add_action( 'shutdown', [ $this, 'run_deferred_course_enrolment_checks' ] );
+		add_action( 'sensei_enrolment_results_calculated', [ $this, 'remove_deferred_enrolment_check' ], 10, 3 );
 		add_filter( 'sensei_can_user_manually_enrol', [ $this, 'maybe_prevent_frontend_manual_enrol' ], 10, 2 );
 
 		add_action( 'shutdown', [ Sensei_Enrolment_Provider_State_Store::class, 'persist_all' ] );
@@ -199,6 +200,17 @@ class Sensei_Course_Enrolment_Manager {
 				$this->do_course_enrolment_check( $user_id, $course_id );
 			}
 		}
+	}
+
+	/**
+	 * When enrolment calculation happens, remove it from deferred calculation.
+	 *
+	 * @param Sensei_Course_Enrolment_Provider_Results $enrolment_results
+	 * @param int                                      $course_id
+	 * @param int                                      $user_id
+	 */
+	public function remove_deferred_enrolment_check( Sensei_Course_Enrolment_Provider_Results $enrolment_results, $course_id, $user_id ) {
+		unset( $this->deferred_enrolment_checks[ $user_id ][ $course_id ] );
 	}
 
 	/**
