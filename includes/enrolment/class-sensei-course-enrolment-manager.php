@@ -205,9 +205,9 @@ class Sensei_Course_Enrolment_Manager {
 	/**
 	 * When enrolment calculation happens, remove it from deferred calculation.
 	 *
-	 * @param Sensei_Course_Enrolment_Provider_Results $enrolment_results
-	 * @param int                                      $course_id
-	 * @param int                                      $user_id
+	 * @param Sensei_Course_Enrolment_Provider_Results $enrolment_results Enrolment results object.
+	 * @param int                                      $course_id         Course post ID.
+	 * @param int                                      $user_id           User ID.
 	 */
 	public function remove_deferred_enrolment_check( Sensei_Course_Enrolment_Provider_Results $enrolment_results, $course_id, $user_id ) {
 		unset( $this->deferred_enrolment_checks[ $user_id ][ $course_id ] );
