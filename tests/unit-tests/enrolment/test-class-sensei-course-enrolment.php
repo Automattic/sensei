@@ -337,7 +337,7 @@ class Sensei_Course_Enrolment_Test extends WP_UnitTestCase {
 		$course_id     = $this->getSimpleCourse();
 		$student_id    = $this->createStandardStudent();
 		$persisted_set = '{"always-provides":{"d":{"test":1234},"l":[[1581098440,"This is a log message"]]}}';
-		update_user_meta( $student_id, Sensei_Course_Enrolment::META_PREFIX_ENROLMENT_PROVIDERS_STATE . $course_id, $persisted_set );
+		update_user_meta( $student_id, Sensei_Enrolment_Provider_State_Store::META_PREFIX_ENROLMENT_PROVIDERS_STATE . $course_id, $persisted_set );
 
 		$provider_class = Sensei_Test_Enrolment_Provider_Always_Provides::class;
 		$this->addEnrolmentProvider( $provider_class );
@@ -353,63 +353,6 @@ class Sensei_Course_Enrolment_Test extends WP_UnitTestCase {
 
 		$logs = $provider_state->get_logs();
 		$this->assertEquals( 'This is a log message', $logs[0][1], 'Persisted log entry should be retrieved' );
-	}
-
-	/**
-	 * Tests persisting of state sets when there is a change.
-	 */
-	public function testPersistStateSetsWhenChange() {
-		$course_id     = $this->getSimpleCourse();
-		$student_id    = $this->createStandardStudent();
-		$persisted_set = '{"always-provides":{"d":{"test":1234},"l":[[1581098440,"This is a log message"]]}}';
-		update_user_meta( $student_id, Sensei_Course_Enrolment::META_PREFIX_ENROLMENT_PROVIDERS_STATE . $course_id, $persisted_set );
-
-		$provider_class = Sensei_Test_Enrolment_Provider_Always_Provides::class;
-		$this->addEnrolmentProvider( $provider_class );
-		$this->prepareEnrolmentManager();
-
-		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
-		$provider          = $enrolment_manager->get_enrolment_provider_by_id( $provider_class::ID );
-		$course_enrolment  = Sensei_Course_Enrolment::get_course_instance( $course_id );
-		$provider_state    = $course_enrolment->get_provider_state( $provider, $student_id );
-		$provider_state->set_stored_value( 'test', 54321 );
-		$course_enrolment->persist_state_stores();
-
-		$expected_persisted_set = '{"always-provides":{"d":{"test":54321},"l":[[1581098440,"This is a log message"]]}}';
-		$persisted_set          = get_user_meta( $student_id, Sensei_Course_Enrolment::META_PREFIX_ENROLMENT_PROVIDERS_STATE . $course_id, true );
-		$this->assertEquals( $expected_persisted_set, $persisted_set, 'The changed stored value should have been persisted' );
-	}
-
-	/**
-	 * Tests not persisting of state sets when there isn't a change.
-	 */
-	public function testMpPersistStateSetsWhenMpChange() {
-		$course_id     = $this->getSimpleCourse();
-		$student_id    = $this->createStandardStudent();
-		$persisted_set = '{"always-provides":{"d":{"test":1234},"l":[[1581098440,"This is a log message"]]}}';
-		update_user_meta( $student_id, Sensei_Course_Enrolment::META_PREFIX_ENROLMENT_PROVIDERS_STATE . $course_id, $persisted_set );
-
-		$provider_class = Sensei_Test_Enrolment_Provider_Always_Provides::class;
-		$this->addEnrolmentProvider( $provider_class );
-		$this->prepareEnrolmentManager();
-
-		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
-		$provider          = $enrolment_manager->get_enrolment_provider_by_id( $provider_class::ID );
-		$course_enrolment  = Sensei_Course_Enrolment::get_course_instance( $course_id );
-		$provider_state    = $course_enrolment->get_provider_state( $provider, $student_id );
-
-		// Background remove user meta.
-		delete_user_meta( $student_id, Sensei_Course_Enrolment::META_PREFIX_ENROLMENT_PROVIDERS_STATE . $course_id );
-
-		// This isn't a change in the stored value.
-		$provider_state->set_stored_value( 'test', 1234 );
-		$provider_state->get_logs();
-		$provider_state->get_stored_value( 'new-key' );
-		$course_enrolment->persist_state_stores();
-
-		$expected_persisted_set = null;
-		$persisted_set          = get_user_meta( $student_id, Sensei_Course_Enrolment::META_PREFIX_ENROLMENT_PROVIDERS_STATE . $course_id, true );
-		$this->assertEquals( $expected_persisted_set, $persisted_set, 'The state sets should NOT have been persisted without a change' );
 	}
 
 	/**

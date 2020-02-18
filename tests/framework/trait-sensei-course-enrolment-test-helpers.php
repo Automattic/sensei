@@ -44,6 +44,15 @@ trait Sensei_Course_Enrolment_Test_Helpers {
 	}
 
 	/**
+	 * Resets the state stores.
+	 */
+	private static function resetEnrolmentStateStores() {
+		$state_store_instances = new ReflectionProperty( Sensei_Enrolment_Provider_State_Store::class, 'instances' );
+		$state_store_instances->setAccessible( true );
+		$state_store_instances->setValue( [] );
+	}
+
+	/**
 	 * Gets a simple course ID.
 	 *
 	 * @return int

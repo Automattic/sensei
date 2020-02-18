@@ -46,7 +46,7 @@ trait Sensei_Course_Enrolment_Manual_Test_Helpers {
 		$provider_state   = $course_enrolment->get_provider_state( Sensei_Course_Manual_Enrolment_Provider::instance(), $user_id );
 
 		$provider_state->set_stored_value( Sensei_Course_Enrolment_Stored_Status_Provider::DATA_KEY_ENROLMENT_STATUS, true );
-		$course_enrolment->persist_state_stores();
+		$provider_state->save();
 
 		Sensei_Utils::user_start_course( $user_id, $course_id );
 	}
@@ -63,7 +63,7 @@ trait Sensei_Course_Enrolment_Manual_Test_Helpers {
 		$provider_state   = $course_enrolment->get_provider_state( Sensei_Course_Manual_Enrolment_Provider::instance(), $user_id );
 
 		$provider_state->set_stored_value( Sensei_Course_Enrolment_Stored_Status_Provider::DATA_KEY_ENROLMENT_STATUS, false );
-		$course_enrolment->persist_state_stores();
+		$provider_state->save();
 	}
 
 	/**

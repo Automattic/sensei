@@ -13,8 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Handles course enrolment logic for a particular course.
  */
 class Sensei_Course_Enrolment {
-	const META_PREFIX_ENROLMENT_RESULTS         = 'sensei_course_enrolment_';
-	const META_PREFIX_ENROLMENT_PROVIDERS_STATE = 'sensei_enrolment_providers_state_';
+	const META_PREFIX_ENROLMENT_RESULTS = 'sensei_course_enrolment_';
 
 	/**
 	 * Courses instances.
@@ -45,21 +44,12 @@ class Sensei_Course_Enrolment {
 	private $course_id;
 
 	/**
-	 * Sets of enrolment provider states for different users.
-	 *
-	 * @var Sensei_Enrolment_Provider_State_Store[]
-	 */
-	private $provider_state_stores = [];
-
-	/**
 	 * Sensei_Course_Enrolment constructor.
 	 *
 	 * @param int $course_id Course ID to handle checks for.
 	 */
 	private function __construct( $course_id ) {
 		$this->course_id = $course_id;
-
-		add_action( 'shutdown', [ $this, 'persist_state_stores' ] );
 	}
 
 	/**
@@ -221,58 +211,7 @@ class Sensei_Course_Enrolment {
 	 * @throws Exception When learner term could not be created.
 	 */
 	public function get_provider_state( Sensei_Course_Enrolment_Provider_Interface $provider, $user_id ) {
-		if ( ! isset( $this->provider_state_stores[ $user_id ] ) ) {
-			$provider_state_stores = get_user_meta( $user_id, $this->get_providers_state_meta_key(), true );
-
-			if ( ! empty( $provider_state_stores ) ) {
-				$provider_state_stores = Sensei_Enrolment_Provider_State_Store::from_json( $provider_state_stores );
-			}
-
-			if ( empty( $provider_state_stores ) ) {
-				$provider_state_stores = Sensei_Enrolment_Provider_State_Store::create();
-			}
-
-			$this->provider_state_stores[ $user_id ] = $provider_state_stores;
-		}
-
-		return $this->provider_state_stores[ $user_id ]->get_provider_state( $provider );
-	}
-
-	/**
-	 * Persist the state sets that have changed.
-	 *
-	 * @access private Used internally only.
-	 *
-	 * @return bool
-	 * @throws Exception When learner term could not be created.
-	 */
-	public function persist_state_stores() {
-		$success = true;
-
-		foreach ( $this->provider_state_stores as $user_id => $state_store ) {
-			if ( ! $state_store->get_has_changed() ) {
-				continue;
-			}
-
-			$result = update_user_meta( $user_id, $this->get_providers_state_meta_key(), wp_slash( wp_json_encode( $state_store ) ) );
-
-			if ( $result && ! is_wp_error( $result ) ) {
-				$state_store->set_has_changed( false );
-			} else {
-				$success = false;
-			}
-		}
-
-		return $success;
-	}
-
-	/**
-	 * Get the enrolment provider state meta key.
-	 *
-	 * @return string
-	 */
-	private function get_providers_state_meta_key() {
-		return self::META_PREFIX_ENROLMENT_PROVIDERS_STATE . $this->course_id;
+		return Sensei_Enrolment_Provider_State_Store::get( $user_id, $this->course_id )->get_provider_state( $provider );
 	}
 
 	/**

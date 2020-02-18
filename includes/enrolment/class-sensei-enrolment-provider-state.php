@@ -16,7 +16,7 @@ class Sensei_Enrolment_Provider_State implements JsonSerializable {
 	const MAX_LOG_ENTRIES = 30;
 
 	/**
-	 * State set storing this provider state.
+	 * State store storing this provider state.
 	 *
 	 * @var Sensei_Enrolment_Provider_State_Store
 	 */
@@ -46,7 +46,7 @@ class Sensei_Enrolment_Provider_State implements JsonSerializable {
 	/**
 	 * Class constructor.
 	 *
-	 * @param Sensei_Enrolment_Provider_State_Store $state_store        State set storing this provider state.
+	 * @param Sensei_Enrolment_Provider_State_Store $state_store        State store storing this provider state.
 	 * @param array                                 $provider_data    Basic storage for provider data.
 	 * @param array                                 $logs             Log messages.
 	 */
@@ -59,7 +59,7 @@ class Sensei_Enrolment_Provider_State implements JsonSerializable {
 	/**
 	 * Restore a course enrolment state record from data restored from a serialized JSON string.
 	 *
-	 * @param Sensei_Enrolment_Provider_State_Store $state_store State set storing this provider state object.
+	 * @param Sensei_Enrolment_Provider_State_Store $state_store State store storing this provider state object.
 	 * @param array                                 $data      Serialized state of object.
 	 *
 	 * @return self|false
@@ -78,7 +78,7 @@ class Sensei_Enrolment_Provider_State implements JsonSerializable {
 	/**
 	 * Create a fresh state storage record.
 	 *
-	 * @param Sensei_Enrolment_Provider_State_Store $state_store State set storing this provider state object.
+	 * @param Sensei_Enrolment_Provider_State_Store $state_store State store storing this provider state object.
 	 *
 	 * @return self
 	 */
@@ -233,5 +233,17 @@ class Sensei_Enrolment_Provider_State implements JsonSerializable {
 		}
 
 		return $this->logs;
+	}
+
+	/**
+	 * Immediately persist a provider state. If you don't immediately need a change to be saved, you don't need
+	 * to call this method. It will automatically be stored during `shutdown`.
+	 *
+	 * @see Sensei_Enrolment_Provider_State_Store::persist_all()
+	 *
+	 * @return bool
+	 */
+	public function save() {
+		return $this->state_store->save();
 	}
 }

@@ -53,6 +53,8 @@ class Sensei_Course_Enrolment_Manager {
 	public function init() {
 		add_action( 'init', [ $this, 'collect_enrolment_providers' ], 100 );
 		add_filter( 'sensei_can_user_manually_enrol', [ $this, 'maybe_prevent_frontend_manual_enrol' ], 10, 2 );
+
+		add_action( 'shutdown', [ Sensei_Enrolment_Provider_State_Store::class, 'persist_all' ] );
 	}
 
 	/**

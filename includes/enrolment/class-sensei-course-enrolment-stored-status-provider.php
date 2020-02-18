@@ -49,7 +49,7 @@ abstract class Sensei_Course_Enrolment_Stored_Status_Provider implements Sensei_
 		$provider_state   = $course_enrolment->get_provider_state( $this, $user_id );
 
 		$provider_state->set_stored_value( self::DATA_KEY_ENROLMENT_STATUS, $is_enrolled );
-		$course_enrolment->persist_state_stores();
+		$provider_state->save();
 	}
 
 	/**
@@ -63,7 +63,7 @@ abstract class Sensei_Course_Enrolment_Stored_Status_Provider implements Sensei_
 		$provider_state   = $course_enrolment->get_provider_state( $this, $user_id );
 
 		$provider_state->set_stored_value( self::DATA_KEY_ENROLMENT_STATUS, null );
-		$course_enrolment->persist_state_stores();
+		$provider_state->save();
 	}
 
 	/**
