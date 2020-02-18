@@ -373,7 +373,7 @@ class Sensei_Course_Enrolment_Test extends WP_UnitTestCase {
 		$course_enrolment  = Sensei_Course_Enrolment::get_course_instance( $course_id );
 		$provider_state    = $course_enrolment->get_provider_state( $provider, $student_id );
 		$provider_state->set_stored_value( 'test', 54321 );
-		$course_enrolment->persist_state_sets();
+		$course_enrolment->persist_state_stores();
 
 		$expected_persisted_set = '{"always-provides":{"d":{"test":54321},"l":[[1581098440,"This is a log message"]]}}';
 		$persisted_set          = get_user_meta( $student_id, Sensei_Course_Enrolment::META_PREFIX_ENROLMENT_PROVIDERS_STATE . $course_id, true );
@@ -405,7 +405,7 @@ class Sensei_Course_Enrolment_Test extends WP_UnitTestCase {
 		$provider_state->set_stored_value( 'test', 1234 );
 		$provider_state->get_logs();
 		$provider_state->get_stored_value( 'new-key' );
-		$course_enrolment->persist_state_sets();
+		$course_enrolment->persist_state_stores();
 
 		$expected_persisted_set = null;
 		$persisted_set          = get_user_meta( $student_id, Sensei_Course_Enrolment::META_PREFIX_ENROLMENT_PROVIDERS_STATE . $course_id, true );

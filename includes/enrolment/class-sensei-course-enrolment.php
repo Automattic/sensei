@@ -49,7 +49,7 @@ class Sensei_Course_Enrolment {
 	 *
 	 * @var Sensei_Enrolment_Provider_State_Store[]
 	 */
-	private $provider_state_sets = [];
+	private $provider_state_stores = [];
 
 	/**
 	 * Sensei_Course_Enrolment constructor.
@@ -59,7 +59,7 @@ class Sensei_Course_Enrolment {
 	private function __construct( $course_id ) {
 		$this->course_id = $course_id;
 
-		add_action( 'shutdown', [ $this, 'persist_state_sets' ] );
+		add_action( 'shutdown', [ $this, 'persist_state_stores' ] );
 	}
 
 	/**
@@ -221,21 +221,21 @@ class Sensei_Course_Enrolment {
 	 * @throws Exception When learner term could not be created.
 	 */
 	public function get_provider_state( Sensei_Course_Enrolment_Provider_Interface $provider, $user_id ) {
-		if ( ! isset( $this->provider_state_sets[ $user_id ] ) ) {
-			$provider_state_sets = get_user_meta( $user_id, $this->get_providers_state_meta_key(), true );
+		if ( ! isset( $this->provider_state_stores[ $user_id ] ) ) {
+			$provider_state_stores = get_user_meta( $user_id, $this->get_providers_state_meta_key(), true );
 
-			if ( ! empty( $provider_state_sets ) ) {
-				$provider_state_sets = Sensei_Enrolment_Provider_State_Store::from_json( $provider_state_sets );
+			if ( ! empty( $provider_state_stores ) ) {
+				$provider_state_stores = Sensei_Enrolment_Provider_State_Store::from_json( $provider_state_stores );
 			}
 
-			if ( empty( $provider_state_sets ) ) {
-				$provider_state_sets = Sensei_Enrolment_Provider_State_Store::create();
+			if ( empty( $provider_state_stores ) ) {
+				$provider_state_stores = Sensei_Enrolment_Provider_State_Store::create();
 			}
 
-			$this->provider_state_sets[ $user_id ] = $provider_state_sets;
+			$this->provider_state_stores[ $user_id ] = $provider_state_stores;
 		}
 
-		return $this->provider_state_sets[ $user_id ]->get_provider_state( $provider );
+		return $this->provider_state_stores[ $user_id ]->get_provider_state( $provider );
 	}
 
 	/**
@@ -246,18 +246,18 @@ class Sensei_Course_Enrolment {
 	 * @return bool
 	 * @throws Exception When learner term could not be created.
 	 */
-	public function persist_state_sets() {
+	public function persist_state_stores() {
 		$success = true;
 
-		foreach ( $this->provider_state_sets as $user_id => $state_set ) {
-			if ( ! $state_set->get_has_changed() ) {
+		foreach ( $this->provider_state_stores as $user_id => $state_store ) {
+			if ( ! $state_store->get_has_changed() ) {
 				continue;
 			}
 
-			$result = update_user_meta( $user_id, $this->get_providers_state_meta_key(), wp_slash( wp_json_encode( $state_set ) ) );
+			$result = update_user_meta( $user_id, $this->get_providers_state_meta_key(), wp_slash( wp_json_encode( $state_store ) ) );
 
 			if ( $result && ! is_wp_error( $result ) ) {
-				$state_set->set_has_changed( false );
+				$state_store->set_has_changed( false );
 			} else {
 				$success = false;
 			}

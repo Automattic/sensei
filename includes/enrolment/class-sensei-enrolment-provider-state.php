@@ -20,7 +20,7 @@ class Sensei_Enrolment_Provider_State implements JsonSerializable {
 	 *
 	 * @var Sensei_Enrolment_Provider_State_Store
 	 */
-	private $state_set;
+	private $state_store;
 
 	/**
 	 * Provider data storage.
@@ -46,12 +46,12 @@ class Sensei_Enrolment_Provider_State implements JsonSerializable {
 	/**
 	 * Class constructor.
 	 *
-	 * @param Sensei_Enrolment_Provider_State_Store $state_set        State set storing this provider state.
+	 * @param Sensei_Enrolment_Provider_State_Store $state_store        State set storing this provider state.
 	 * @param array                                 $provider_data    Basic storage for provider data.
 	 * @param array                                 $logs             Log messages.
 	 */
-	private function __construct( Sensei_Enrolment_Provider_State_Store $state_set, $provider_data = [], $logs = [] ) {
-		$this->state_set     = $state_set;
+	private function __construct( Sensei_Enrolment_Provider_State_Store $state_store, $provider_data = [], $logs = [] ) {
+		$this->state_store   = $state_store;
 		$this->provider_data = $provider_data;
 		$this->logs          = $logs;
 	}
@@ -59,12 +59,12 @@ class Sensei_Enrolment_Provider_State implements JsonSerializable {
 	/**
 	 * Restore a course enrolment state record from data restored from a serialized JSON string.
 	 *
-	 * @param Sensei_Enrolment_Provider_State_Store $state_set State set storing this provider state object.
+	 * @param Sensei_Enrolment_Provider_State_Store $state_store State set storing this provider state object.
 	 * @param array                                 $data      Serialized state of object.
 	 *
 	 * @return self|false
 	 */
-	public static function from_serialized_array( Sensei_Enrolment_Provider_State_Store $state_set, $data ) {
+	public static function from_serialized_array( Sensei_Enrolment_Provider_State_Store $state_store, $data ) {
 		if ( empty( $data ) ) {
 			return false;
 		}
@@ -72,18 +72,18 @@ class Sensei_Enrolment_Provider_State implements JsonSerializable {
 		$provider_data = isset( $data['d'] ) ? array_filter( array_map( [ __CLASS__, 'sanitize_data' ], $data['d'] ) ) : [];
 		$logs          = isset( $data['l'] ) ? array_filter( array_map( [ __CLASS__, 'sanitize_logs' ], $data['l'] ) ) : [];
 
-		return new self( $state_set, $provider_data, $logs );
+		return new self( $state_store, $provider_data, $logs );
 	}
 
 	/**
 	 * Create a fresh state storage record.
 	 *
-	 * @param Sensei_Enrolment_Provider_State_Store $state_set State set storing this provider state object.
+	 * @param Sensei_Enrolment_Provider_State_Store $state_store State set storing this provider state object.
 	 *
 	 * @return self
 	 */
-	public static function create( Sensei_Enrolment_Provider_State_Store $state_set ) {
-		return new self( $state_set );
+	public static function create( Sensei_Enrolment_Provider_State_Store $state_store ) {
+		return new self( $state_store );
 	}
 
 	/**
@@ -171,7 +171,7 @@ class Sensei_Enrolment_Provider_State implements JsonSerializable {
 			! isset( $this->provider_data[ $key ] )
 			|| $value !== $this->provider_data[ $key ]
 		) {
-			$this->state_set->set_has_changed( true );
+			$this->state_store->set_has_changed( true );
 		}
 
 		if ( null === $value ) {
@@ -200,7 +200,7 @@ class Sensei_Enrolment_Provider_State implements JsonSerializable {
 			$this->logs = array_slice( $this->logs, -1 * self::MAX_LOG_ENTRIES );
 		}
 
-		$this->state_set->set_has_changed( true );
+		$this->state_store->set_has_changed( true );
 	}
 
 	/**

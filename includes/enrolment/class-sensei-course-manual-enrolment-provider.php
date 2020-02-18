@@ -209,7 +209,7 @@ class Sensei_Course_Manual_Enrolment_Provider
 		$provider_state   = $course_enrolment->get_provider_state( $this, $user_id );
 
 		$provider_state->set_stored_value( self::DATA_KEY_LEGACY_MIGRATION, $migration_log );
-		$course_enrolment->persist_state_sets();
+		$course_enrolment->persist_state_stores();
 	}
 
 	/**
