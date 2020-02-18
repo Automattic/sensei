@@ -145,6 +145,48 @@ class Sensei_Enrolment_Provider_State_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests pruning the most recent 30 messages on log add.
+	 */
+	public function testPruneOnAddLog() {
+		$time         = time();
+		$initial_data = [
+			'l' => [
+				[
+					$time,
+					'This is the newest message',
+				],
+				[
+					$time - 1000,
+					'This is the oldest message',
+				],
+				[
+					$time - 999,
+					'This is the second oldest message',
+				],
+			],
+		];
+		$logs_entries = array_fill( 0, 27, 'Dinosaur in the middle!' );
+		foreach( $logs_entries as $l ) {
+			$initial_data['l'][] = [
+				wp_rand( time() - 997, time() - 1 ),
+				$l,
+			];
+		}
+
+
+		$state_set = Sensei_Enrolment_Provider_State_Store::create();
+		$state     = Sensei_Enrolment_Provider_State::from_serialized_array( $state_set, $initial_data );
+
+		$state->add_log_message( 'This should cause a pruning' );
+		$logs = $state->get_logs();
+
+		$this->assertEquals( 30, count( $logs ), 'The log should have been pruned to just 30 entries.' );
+		$this->assertEquals( $initial_data['l'][2], $logs[0], 'The first log entry should be the original second oldest' );
+		$this->assertEquals( $initial_data['l'][0], $logs[28], 'The second to last log entry should be the newest original' );
+		$this->assertEquals( 'This should cause a pruning', $logs[29][1], 'The last log entry should be the entry we just added' );
+	}
+
+	/**
 	 * Tests getting log message with oldest at the top.
 	 */
 	public function testGetLogs() {

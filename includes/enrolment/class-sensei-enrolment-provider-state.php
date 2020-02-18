@@ -13,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Stores the state for a course enrolment provider.
  */
 class Sensei_Enrolment_Provider_State implements JsonSerializable {
+	const MAX_LOG_ENTRIES = 30;
+
 	/**
 	 * State set storing this provider state.
 	 *
@@ -33,6 +35,13 @@ class Sensei_Enrolment_Provider_State implements JsonSerializable {
 	 * @var array
 	 */
 	private $logs = [];
+
+	/**
+	 * Tracks if we've sorted the logs.
+	 *
+	 * @var bool
+	 */
+	private $logs_sorted = false;
 
 	/**
 	 * Class constructor.
@@ -178,10 +187,18 @@ class Sensei_Enrolment_Provider_State implements JsonSerializable {
 	 * @param string $message  Message to log.
 	 */
 	public function add_log_message( $message ) {
+		// Make sure the logs have been sorted.
+		$this->get_logs();
+
 		$this->logs[] = [
 			time(),
 			sanitize_text_field( $message ),
 		];
+
+		if ( count( $this->logs ) > self::MAX_LOG_ENTRIES ) {
+			// Take the last `self::MAX_LOG_ENTRIES` entries.
+			$this->logs = array_slice( $this->logs, -1 * self::MAX_LOG_ENTRIES );
+		}
 
 		$this->state_set->set_has_changed( true );
 	}
@@ -195,20 +212,26 @@ class Sensei_Enrolment_Provider_State implements JsonSerializable {
 	 * }
 	 */
 	public function get_logs() {
-		$logs = $this->logs;
+		if ( ! $this->logs_sorted ) {
+			// We need to sort because JSON might not keep the order.
+			usort(
+				$this->logs,
+				function ( $a, $b ) {
+					if ( $a[0] > $b[0] ) {
+						return 1;
+					}
 
-		// We need to sort because JSON might not keep the order.
-		usort(
-			$logs,
-			function( $a, $b ) {
-				if ( $a[0] > $b[0] ) {
-					return 1;
+					if ( $a[0] === $b[0] ) {
+						return 0;
+					}
+
+					return -1;
 				}
+			);
 
-				return -1;
-			}
-		);
+			$this->logs_sorted = true;
+		}
 
-		return $logs;
+		return $this->logs;
 	}
 }
