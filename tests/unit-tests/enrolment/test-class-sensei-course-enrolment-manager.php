@@ -112,6 +112,7 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Always_Provides::class );
 		$this->prepareEnrolmentManager();
 
+		remove_action( 'shutdown', 'wp_ob_end_flush_all', 1 );
 		do_action( 'shutdown' );
 
 		Sensei_Course_Enrolment_Manager::trigger_course_enrolment_check( $student_id, $course_id );
