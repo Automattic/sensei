@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Handles course enrolment logic for a particular course.
  */
 class Sensei_Course_Enrolment {
-	const META_PREFIX_ENROLMENT_RESULTS         = 'course-enrolment-';
+	const META_PREFIX_ENROLMENT_RESULTS         = 'sensei_course_enrolment_';
 	const META_PREFIX_ENROLMENT_PROVIDERS_STATE = 'sensei_enrolment_providers_state_';
 
 	/**
