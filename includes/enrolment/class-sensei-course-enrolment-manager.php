@@ -249,10 +249,6 @@ class Sensei_Course_Enrolment_Manager {
 		if ( $course_enrolment ) {
 			$course_enrolment->is_enrolled( $user_id, false );
 		}
-
-		if ( isset( $this->deferred_enrolment_checks[ $user_id ] ) ) {
-			unset( $this->deferred_enrolment_checks[ $user_id ][ $course_id ] );
-		}
 	}
 
 	/**
