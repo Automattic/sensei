@@ -202,8 +202,6 @@ class Sensei_Course_Enrolment {
 	/**
 	 * Get a enrolment provider's state for a user.
 	 *
-	 * @access private Used internally only.
-	 *
 	 * @param Sensei_Course_Enrolment_Provider_Interface $provider Provider object.
 	 * @param int                                        $user_id User ID.
 	 *
