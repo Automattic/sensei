@@ -22,6 +22,15 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tear down.
+	 */
+	public function tearDown() {
+		parent::tearDown();
+
+		$this->clearEnrolmentCheckDeferred();
+	}
+
+	/**
 	 * Clean up after all tests.
 	 */
 	public static function tearDownAfterClass() {
@@ -69,6 +78,48 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 		$post_notify_enrolment = $course_enrolment->is_enrolled( $student_id );
 		$this->assertFalse( $post_notify_enrolment, 'Now that the crook status is known, they should no longer be enrolled in the course' );
 	}
+
+	/**
+	 * Test o make sure the recalculation happens only once when triggering course enrolment checks.
+	 */
+	public function testDeferredEnrolmentCheckCalled() {
+		$course_id               = $this->getSimpleCourse();
+		$student_id              = $this->createStandardStudent();
+		$course_results_meta_key = Sensei_Course_Enrolment::META_PREFIX_ENROLMENT_RESULTS . $course_id;
+
+		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Always_Provides::class );
+		$this->prepareEnrolmentManager();
+
+		Sensei_Course_Enrolment_Manager::trigger_course_enrolment_check( $student_id, $course_id );
+
+		$this->assertTrue( '' === get_user_meta( $student_id, $course_results_meta_key, true ), 'The results meta should not be set yet after lazily triggering a course enrolment check' );
+		$this->assertEnrolmentCheckDeferred( $student_id, $course_id, 'There should be a deferred enrolment check for the student/course' );
+
+		Sensei_Course_Enrolment_Manager::instance()->run_deferred_course_enrolment_checks();
+
+		$this->assertTrue( ! empty( get_user_meta( $student_id, $course_results_meta_key, true ) ), 'The results meta should be set after running the deferred course enrolment checks' );
+		$this->assertEnrolmentCheckNotDeferred( $student_id, $course_id, 'There should no longer be a deferred enrolment check for the student/course' );
+	}
+
+	/**
+	 * Test o make sure the recalculation happens immediately once we're inside/after shutdown action.
+	 */
+	public function testEnrolmentCheckCalledImmediatelyDuringShutdown() {
+		$course_id               = $this->getSimpleCourse();
+		$student_id              = $this->createStandardStudent();
+		$course_results_meta_key = Sensei_Course_Enrolment::META_PREFIX_ENROLMENT_RESULTS . $course_id;
+
+		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Always_Provides::class );
+		$this->prepareEnrolmentManager();
+
+		remove_action( 'shutdown', 'wp_ob_end_flush_all', 1 );
+		do_action( 'shutdown' );
+
+		Sensei_Course_Enrolment_Manager::trigger_course_enrolment_check( $student_id, $course_id );
+		$this->assertTrue( false !== get_user_meta( $student_id, $course_results_meta_key, true ), 'The results meta should be set yet after immediately running enrolment check' );
+		$this->assertEnrolmentCheckNotDeferred( $student_id, $course_id, 'There should not be a deferred enrolment check for the student/course' );
+	}
+
 
 	/**
 	 * Tests to make sure manual enrolment is blocked on the frontend if someone filtered out `manual` provider.
@@ -200,4 +251,40 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 		return $mock;
 	}
 
+	/**
+	 * Assert that an enrolment check was deferred.
+	 *
+	 * @param int $user_id   User ID.
+	 * @param int $course_id Course post ID.
+	 */
+	private function assertEnrolmentCheckDeferred( $user_id, $course_id, $message = null ) {
+		$property = new ReflectionProperty( Sensei_Course_Enrolment_Manager::class, 'deferred_enrolment_checks' );
+		$property->setAccessible( true );
+		$deferred = $property->getValue( Sensei_Course_Enrolment_Manager::instance() );
+
+		$this->assertTrue( isset( $deferred[ $user_id ][ $course_id ] ), $message );
+	}
+
+	/**
+	 * Assert that an enrolment check was NOT deferred.
+	 *
+	 * @param int $user_id   User ID.
+	 * @param int $course_id Course post ID.
+	 */
+	private function assertEnrolmentCheckNotDeferred( $user_id, $course_id, $message = null ) {
+		$property = new ReflectionProperty( Sensei_Course_Enrolment_Manager::class, 'deferred_enrolment_checks' );
+		$property->setAccessible( true );
+		$deferred = $property->getValue( Sensei_Course_Enrolment_Manager::instance() );
+
+		$this->assertFalse( isset( $deferred[ $user_id ][ $course_id ] ), $message );
+	}
+
+	/**
+	 * Reset enrolment check deferment status.
+	 */
+	private function clearEnrolmentCheckDeferred() {
+		$property = new ReflectionProperty( Sensei_Course_Enrolment_Manager::class, 'deferred_enrolment_checks' );
+		$property->setAccessible( true );
+		$property->setValue( Sensei_Course_Enrolment_Manager::instance(), [] );
+	}
 }

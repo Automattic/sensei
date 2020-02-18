@@ -241,7 +241,7 @@ class Sensei_Course_Enrolment {
 	 * @throws Exception When learner term could not be created.
 	 */
 	public function get_enrolment_check_results( $user_id ) {
-		$enrolment_check_results = get_user_meta( $user_id, $this->get_course_results_meta_key(), true );
+		$enrolment_check_results = get_user_meta( $user_id, $this->get_enrolment_results_meta_key(), true );
 
 		if ( empty( $enrolment_check_results ) ) {
 			return false;
@@ -265,18 +265,40 @@ class Sensei_Course_Enrolment {
 		}
 
 		$enrolment_results = new Sensei_Course_Enrolment_Provider_Results( $provider_results, $this->get_course_enrolment_providers_version() );
-		update_user_meta( $user_id, $this->get_course_results_meta_key(), wp_slash( wp_json_encode( $enrolment_results ) ) );
+		update_user_meta( $user_id, $this->get_enrolment_results_meta_key(), wp_slash( wp_json_encode( $enrolment_results ) ) );
 
 		return $enrolment_results;
 	}
 
 	/**
-	 * Get the course log meta key.
+	 * Delete the enrolment result for a particular user.
+	 *
+	 * @param int $user_id User ID.
+	 */
+	public function delete_enrolment_result( $user_id ) {
+		delete_user_meta( $user_id, $this->get_enrolment_results_meta_key() );
+	}
+
+	/**
+	 * Get the enrolment results meta key.
 	 *
 	 * @return string
 	 */
-	public function get_course_results_meta_key() {
+	private function get_enrolment_results_meta_key() {
 		return self::META_PREFIX_ENROLMENT_RESULTS . $this->course_id;
+	}
+
+	/**
+	 * Get a enrolment provider's state for a user.
+	 *
+	 * @param Sensei_Course_Enrolment_Provider_Interface $provider Provider object.
+	 * @param int                                        $user_id User ID.
+	 *
+	 * @return Sensei_Enrolment_Provider_State
+	 * @throws Exception When learner term could not be created.
+	 */
+	public function get_provider_state( Sensei_Course_Enrolment_Provider_Interface $provider, $user_id ) {
+		return Sensei_Enrolment_Provider_State_Store::get( $user_id, $this->course_id )->get_provider_state( $provider );
 	}
 
 	/**
