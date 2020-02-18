@@ -617,7 +617,7 @@ class Sensei_Question {
 		if ( $question_media_link ) {
 
 				$output .= '<div class="question_media_display">';
-				$output .= self::question_media_kses_post( $question_media_link );
+				$output .= self::question_media_kses( $question_media_link );
 				$output .= '<dl>';
 
 			if ( $question_media_title ) {
@@ -649,7 +649,7 @@ class Sensei_Question {
 	 */
 	public static function the_question_media( $question_id ) {
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo self::question_media_kses_post( self::get_the_question_media( $question_id ) );
+		echo self::question_media_kses( self::get_the_question_media( $question_id ) );
 	}
 
 	/**
@@ -659,7 +659,7 @@ class Sensei_Question {
 	 * @param string $source_string
 	 * @return string with allowed html elements
 	 */
-	private static function question_media_kses_post( $source_string ) {
+	private static function question_media_kses( $source_string ) {
 		$source_tag   = array(
 			'source' => array(
 				'type' => true,
