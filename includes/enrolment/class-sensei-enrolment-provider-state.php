@@ -37,13 +37,6 @@ class Sensei_Enrolment_Provider_State implements JsonSerializable {
 	private $logs = [];
 
 	/**
-	 * Tracks if we've sorted the logs.
-	 *
-	 * @var bool
-	 */
-	private $logs_sorted = false;
-
-	/**
 	 * Class constructor.
 	 *
 	 * @param Sensei_Enrolment_Provider_State_Store $state_store      State store storing this provider state.
@@ -187,9 +180,6 @@ class Sensei_Enrolment_Provider_State implements JsonSerializable {
 	 * @param string $message  Message to log.
 	 */
 	public function add_log_message( $message ) {
-		// Make sure the logs have been sorted.
-		$this->get_logs();
-
 		$this->logs[] = [
 			time(),
 			sanitize_text_field( $message ),
@@ -212,26 +202,6 @@ class Sensei_Enrolment_Provider_State implements JsonSerializable {
 	 * }
 	 */
 	public function get_logs() {
-		if ( ! $this->logs_sorted ) {
-			// We need to sort because JSON might not keep the order.
-			usort(
-				$this->logs,
-				function ( $a, $b ) {
-					if ( $a[0] > $b[0] ) {
-						return 1;
-					}
-
-					if ( $a[0] === $b[0] ) {
-						return 0;
-					}
-
-					return -1;
-				}
-			);
-
-			$this->logs_sorted = true;
-		}
-
 		return $this->logs;
 	}
 

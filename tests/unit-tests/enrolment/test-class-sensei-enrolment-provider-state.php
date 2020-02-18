@@ -1,4 +1,6 @@
 <?php
+require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-helpers.php';
+
 /**
  * Tests for Sensei_Enrolment_Provider_State class.
  *
@@ -169,26 +171,12 @@ class Sensei_Enrolment_Provider_State_Test extends WP_UnitTestCase {
 	public function testPruneOnAddLog() {
 		$time         = time();
 		$initial_data = [
-			'l' => [
-				[
-					$time,
-					'This is the newest message',
-				],
-				[
-					$time - 1000,
-					'This is the oldest message',
-				],
-				[
-					$time - 999,
-					'This is the second oldest message',
-				],
-			],
+			'l' => [],
 		];
-		$logs_entries = array_fill( 0, 27, 'Dinosaur in the middle!' );
-		foreach ( $logs_entries as $l ) {
+		for ( $i = 0; $i < 31; $i++ ) {
 			$initial_data['l'][] = [
-				wp_rand( time() - 997, time() - 1 ),
-				$l,
+				$time + $i,
+				'Log entry ' . $i,
 			];
 		}
 
@@ -200,7 +188,6 @@ class Sensei_Enrolment_Provider_State_Test extends WP_UnitTestCase {
 
 		$this->assertEquals( 30, count( $logs ), 'The log should have been pruned to just 30 entries.' );
 		$this->assertEquals( $initial_data['l'][2], $logs[0], 'The first log entry should be the original second oldest' );
-		$this->assertEquals( $initial_data['l'][0], $logs[28], 'The second to last log entry should be the newest original' );
 		$this->assertEquals( 'This should cause a pruning', $logs[29][1], 'The last log entry should be the entry we just added' );
 	}
 
@@ -208,36 +195,24 @@ class Sensei_Enrolment_Provider_State_Test extends WP_UnitTestCase {
 	 * Tests getting log message with oldest at the top.
 	 */
 	public function testGetLogs() {
-		$time         = time();
-		$initial_data = [
-			'l' => [
-				[
-					$time,
-					'This is the newest message',
-				],
-				[
-					$time - 10,
-					'This is the oldest message',
-				],
-				[
-					$time - 5,
-					'This is the third oldest message',
-				],
-				[
-					$time - 7,
-					'This is the second oldest message',
-				],
-			],
-		];
-
 		$state_store = Sensei_Enrolment_Provider_State_Store::get( 0, 0 );
-		$state       = Sensei_Enrolment_Provider_State::from_serialized_array( $state_store, $initial_data );
+		$state       = Sensei_Enrolment_Provider_State::create( $state_store );
+
+		$initial_data = [
+			'First log entry',
+			'Second log entry',
+			'Third log entry',
+			'Fourth log entry',
+		];
+		foreach( $initial_data as $entry ) {
+			$state->add_log_message( $entry );
+		}
 
 		$logs = $state->get_logs();
 
-		$this->assertEquals( $initial_data['l'][1], $logs[0], 'The first log entry should be the oldest' );
-		$this->assertEquals( $initial_data['l'][3], $logs[1], 'The second log entry should be the second oldest' );
-		$this->assertEquals( $initial_data['l'][2], $logs[2], 'The third log entry should be the third oldest' );
-		$this->assertEquals( $initial_data['l'][0], $logs[3], 'The last log entry should be the newest' );
+		$this->assertEquals( $initial_data[0], $logs[0][1], 'The first log entry should be the oldest' );
+		$this->assertEquals( $initial_data[1], $logs[1][1], 'The second log entry should be the second oldest' );
+		$this->assertEquals( $initial_data[2], $logs[2][1], 'The third log entry should be the third oldest' );
+		$this->assertEquals( $initial_data[3], $logs[3][1], 'The last log entry should be the newest' );
 	}
 }
