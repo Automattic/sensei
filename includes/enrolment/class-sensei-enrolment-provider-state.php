@@ -46,7 +46,7 @@ class Sensei_Enrolment_Provider_State implements JsonSerializable {
 	/**
 	 * Class constructor.
 	 *
-	 * @param Sensei_Enrolment_Provider_State_Store $state_store        State store storing this provider state.
+	 * @param Sensei_Enrolment_Provider_State_Store $state_store      State store storing this provider state.
 	 * @param array                                 $provider_data    Basic storage for provider data.
 	 * @param array                                 $logs             Log messages.
 	 */
@@ -60,7 +60,7 @@ class Sensei_Enrolment_Provider_State implements JsonSerializable {
 	 * Restore a course enrolment state record from data restored from a serialized JSON string.
 	 *
 	 * @param Sensei_Enrolment_Provider_State_Store $state_store State store storing this provider state object.
-	 * @param array                                 $data      Serialized state of object.
+	 * @param array                                 $data        Serialized state of object.
 	 *
 	 * @return self|false
 	 */
