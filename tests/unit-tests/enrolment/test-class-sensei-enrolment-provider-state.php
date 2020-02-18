@@ -1,15 +1,15 @@
 <?php
 /**
- * Tests for Sensei_Course_Enrolment_Provider_State class.
+ * Tests for Sensei_Enrolment_Provider_State class.
  *
  * @group course-enrolment
  */
-class Sensei_Course_Enrolment_Provider_State_Test extends WP_UnitTestCase {
+class Sensei_Enrolment_Provider_State_Test extends WP_UnitTestCase {
 	/**
 	 * Tests to make sure arrays of serialized data return an instantiated object.
 	 */
 	public function testFromSerializedArray() {
-		$state_set  = Sensei_Course_Enrolment_Provider_State_Store::create();
+		$state_set  = Sensei_Enrolment_Provider_State_Store::create();
 		$test_array = [
 			'd' => [
 				'test' => 'Dinosaurs!',
@@ -22,9 +22,9 @@ class Sensei_Course_Enrolment_Provider_State_Test extends WP_UnitTestCase {
 			],
 		];
 
-		$result = Sensei_Course_Enrolment_Provider_State::from_serialized_array( $state_set, $test_array );
+		$result = Sensei_Enrolment_Provider_State::from_serialized_array( $state_set, $test_array );
 
-		$this->assertTrue( $result instanceof Sensei_Course_Enrolment_Provider_State, 'Serialized data should have returned a instantiated object' );
+		$this->assertTrue( $result instanceof Sensei_Enrolment_Provider_State, 'Serialized data should have returned a instantiated object' );
 		$this->assertEquals( $test_array['l'], $result->get_logs() );
 		$this->assertEquals( $test_array['d']['test'], $result->get_stored_value( 'test' ) );
 	}
@@ -33,8 +33,8 @@ class Sensei_Course_Enrolment_Provider_State_Test extends WP_UnitTestCase {
 	 * Tests to make sure invalid JSON strings return false.
 	 */
 	public function testFromSerializedEmptyArrayFails() {
-		$state_set = Sensei_Course_Enrolment_Provider_State_Store::create();
-		$result    = Sensei_Course_Enrolment_Provider_State::from_serialized_array( $state_set, [] );
+		$state_set = Sensei_Enrolment_Provider_State_Store::create();
+		$result    = Sensei_Enrolment_Provider_State::from_serialized_array( $state_set, [] );
 
 		$this->assertFalse( $result, 'Invalid serialized array should have returned false' );
 	}
@@ -43,7 +43,7 @@ class Sensei_Course_Enrolment_Provider_State_Test extends WP_UnitTestCase {
 	 * Tests to make sure the object is JSON serialized properly.
 	 */
 	public function testJsonSerializeValid() {
-		$state_set  = Sensei_Course_Enrolment_Provider_State_Store::create();
+		$state_set  = Sensei_Enrolment_Provider_State_Store::create();
 		$test_array = [
 			'd' => [
 				'test' => 'Dinosaurs!',
@@ -56,7 +56,7 @@ class Sensei_Course_Enrolment_Provider_State_Test extends WP_UnitTestCase {
 			],
 		];
 
-		$state = Sensei_Course_Enrolment_Provider_State::from_serialized_array( $state_set, $test_array );
+		$state = Sensei_Enrolment_Provider_State::from_serialized_array( $state_set, $test_array );
 
 		$this->assertEquals( \wp_json_encode( $test_array ), \wp_json_encode( $state ) );
 	}
@@ -65,14 +65,14 @@ class Sensei_Course_Enrolment_Provider_State_Test extends WP_UnitTestCase {
 	 * Test to make sure we can get a stored data value that has been set.
 	 */
 	public function testGetStoredValueThatHasBeenSet() {
-		$state_set  = Sensei_Course_Enrolment_Provider_State_Store::create();
+		$state_set  = Sensei_Enrolment_Provider_State_Store::create();
 		$test_array = [
 			'd' => [
 				'test' => 'value',
 			],
 		];
 
-		$state = Sensei_Course_Enrolment_Provider_State::from_serialized_array( $state_set, $test_array );
+		$state = Sensei_Enrolment_Provider_State::from_serialized_array( $state_set, $test_array );
 
 		$this->assertEquals( $test_array['d']['test'], $state->get_stored_value( 'test' ) );
 	}
@@ -81,12 +81,12 @@ class Sensei_Course_Enrolment_Provider_State_Test extends WP_UnitTestCase {
 	 * Test to make sure data values that have not been set return as null.
 	 */
 	public function testGetStoredValueThatHasNotBeenSet() {
-		$state_set   = Sensei_Course_Enrolment_Provider_State_Store::create();
+		$state_set   = Sensei_Enrolment_Provider_State_Store::create();
 		$test_object = [
 			'd' => [],
 		];
 		$test_string = \wp_json_encode( $test_object );
-		$state       = Sensei_Course_Enrolment_Provider_State::from_serialized_array( $state_set, $test_string );
+		$state       = Sensei_Enrolment_Provider_State::from_serialized_array( $state_set, $test_string );
 
 		$this->assertEquals( null, $state->get_stored_value( 'test' ) );
 	}
@@ -95,8 +95,8 @@ class Sensei_Course_Enrolment_Provider_State_Test extends WP_UnitTestCase {
 	 * Tests to ensure the enrolment status can be set.
 	 */
 	public function testSetDataValue() {
-		$state_set = Sensei_Course_Enrolment_Provider_State_Store::create();
-		$state     = Sensei_Course_Enrolment_Provider_State::create( $state_set );
+		$state_set = Sensei_Enrolment_Provider_State_Store::create();
+		$state     = Sensei_Enrolment_Provider_State::create( $state_set );
 
 		$state->set_stored_value( 'test', true );
 
@@ -110,13 +110,13 @@ class Sensei_Course_Enrolment_Provider_State_Test extends WP_UnitTestCase {
 	 * Tests to ensure the enrolment status can be cleared.
 	 */
 	public function testClearStoredValue() {
-		$state_set     = Sensei_Course_Enrolment_Provider_State_Store::create();
+		$state_set     = Sensei_Enrolment_Provider_State_Store::create();
 		$initial_state = [
 			'd' => [],
 			'l' => [],
 		];
 
-		$state = Sensei_Course_Enrolment_Provider_State::from_serialized_array( $state_set, $initial_state );
+		$state = Sensei_Enrolment_Provider_State::from_serialized_array( $state_set, $initial_state );
 		$state->set_stored_value( 'test', true );
 
 		$this->assertTrue( $state->get_stored_value( 'test' ) );
@@ -134,8 +134,8 @@ class Sensei_Course_Enrolment_Provider_State_Test extends WP_UnitTestCase {
 	 * Tests logging a simple message.
 	 */
 	public function testAddLogMessage() {
-		$state_set = Sensei_Course_Enrolment_Provider_State_Store::create();
-		$state     = Sensei_Course_Enrolment_Provider_State::create( $state_set );
+		$state_set = Sensei_Enrolment_Provider_State_Store::create();
+		$state     = Sensei_Enrolment_Provider_State::create( $state_set );
 
 		$test_message = 'I really hope this works';
 		$state->add_log_message( $test_message );
@@ -170,8 +170,8 @@ class Sensei_Course_Enrolment_Provider_State_Test extends WP_UnitTestCase {
 			],
 		];
 
-		$state_set = Sensei_Course_Enrolment_Provider_State_Store::create();
-		$state     = Sensei_Course_Enrolment_Provider_State::from_serialized_array( $state_set, $initial_data );
+		$state_set = Sensei_Enrolment_Provider_State_Store::create();
+		$state     = Sensei_Enrolment_Provider_State::from_serialized_array( $state_set, $initial_data );
 
 		$logs = $state->get_logs();
 

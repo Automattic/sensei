@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the class Sensei_Course_Enrolment_Provider_State_Set.
+ * File containing the class Sensei_Enrolment_Provider_State_Store.
  *
  * @package sensei
  */
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Stores set of all the enrolment provider state objects for a course and user.
  */
-class Sensei_Course_Enrolment_Provider_State_Store implements JsonSerializable {
+class Sensei_Enrolment_Provider_State_Store implements JsonSerializable {
 	/**
 	 * Flag for if a state set has changed.
 	 *
@@ -23,7 +23,7 @@ class Sensei_Course_Enrolment_Provider_State_Store implements JsonSerializable {
 	/**
 	 * State objects for the providers.
 	 *
-	 * @var Sensei_Course_Enrolment_Provider_State[]
+	 * @var Sensei_Enrolment_Provider_State[]
 	 */
 	private $provider_states = [];
 
@@ -49,7 +49,7 @@ class Sensei_Course_Enrolment_Provider_State_Store implements JsonSerializable {
 
 		$provider_states = [];
 		foreach ( $json_arr as $provider_id => $provider_state_data ) {
-			$provider_state_data = Sensei_Course_Enrolment_Provider_State::from_serialized_array( $self, $provider_state_data );
+			$provider_state_data = Sensei_Enrolment_Provider_State::from_serialized_array( $self, $provider_state_data );
 			if ( ! $provider_state_data ) {
 				continue;
 			}
@@ -83,7 +83,7 @@ class Sensei_Course_Enrolment_Provider_State_Store implements JsonSerializable {
 	/**
 	 * Set the provider states.
 	 *
-	 * @param Sensei_Course_Enrolment_Provider_State[] $provider_states State objects for all providers.
+	 * @param Sensei_Enrolment_Provider_State[] $provider_states State objects for all providers.
 	 */
 	private function set_provider_states( $provider_states ) {
 		$this->provider_states = $provider_states;
@@ -94,13 +94,13 @@ class Sensei_Course_Enrolment_Provider_State_Store implements JsonSerializable {
 	 *
 	 * @param Sensei_Course_Enrolment_Provider_Interface $provider Provider object.
 	 *
-	 * @return Sensei_Course_Enrolment_Provider_State
+	 * @return Sensei_Enrolment_Provider_State
 	 */
 	public function get_provider_state( Sensei_Course_Enrolment_Provider_Interface $provider ) {
 		$provider_id = $provider->get_id();
 
 		if ( ! isset( $this->provider_states[ $provider_id ] ) ) {
-			$this->provider_states[ $provider_id ] = Sensei_Course_Enrolment_Provider_State::create( $this );
+			$this->provider_states[ $provider_id ] = Sensei_Enrolment_Provider_State::create( $this );
 		}
 
 		return $this->provider_states[ $provider_id ];

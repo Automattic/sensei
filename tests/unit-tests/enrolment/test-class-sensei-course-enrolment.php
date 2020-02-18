@@ -327,7 +327,7 @@ class Sensei_Course_Enrolment_Test extends WP_UnitTestCase {
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 		$provider_state   = $course_enrolment->get_provider_state( $provider, $student_id );
 
-		$this->assertTrue( $provider_state instanceof Sensei_Course_Enrolment_Provider_State );
+		$this->assertTrue( $provider_state instanceof Sensei_Enrolment_Provider_State );
 	}
 
 	/**
@@ -348,7 +348,7 @@ class Sensei_Course_Enrolment_Test extends WP_UnitTestCase {
 		$course_enrolment  = Sensei_Course_Enrolment::get_course_instance( $course_id );
 		$provider_state    = $course_enrolment->get_provider_state( $provider, $student_id );
 
-		$this->assertTrue( $provider_state instanceof Sensei_Course_Enrolment_Provider_State );
+		$this->assertTrue( $provider_state instanceof Sensei_Enrolment_Provider_State );
 		$this->assertEquals( 1234, $provider_state->get_stored_value( 'test' ), 'Persisted stored value should be retrieved' );
 
 		$logs = $provider_state->get_logs();
