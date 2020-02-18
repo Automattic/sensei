@@ -312,6 +312,50 @@ class Sensei_Course_Enrolment_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests getting a fresh provider state result.
+	 */
+	public function testGetProviderStateFresh() {
+		$provider_class = Sensei_Test_Enrolment_Provider_Always_Provides::class;
+		$this->addEnrolmentProvider( $provider_class );
+		$this->prepareEnrolmentManager();
+
+		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
+		$provider          = $enrolment_manager->get_enrolment_provider_by_id( $provider_class::ID );
+		$course_id         = $this->getSimpleCourse();
+		$student_id        = $this->createStandardStudent();
+
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$provider_state   = $course_enrolment->get_provider_state( $provider, $student_id );
+
+		$this->assertTrue( $provider_state instanceof Sensei_Enrolment_Provider_State );
+	}
+
+	/**
+	 * Tests getting a provider state result that has persisted.
+	 */
+	public function testGetProviderStateSaved() {
+		$course_id     = $this->getSimpleCourse();
+		$student_id    = $this->createStandardStudent();
+		$persisted_set = '{"always-provides":{"d":{"test":1234},"l":[[1581098440,"This is a log message"]]}}';
+		update_user_meta( $student_id, Sensei_Enrolment_Provider_State_Store::META_PREFIX_ENROLMENT_PROVIDERS_STATE . $course_id, $persisted_set );
+
+		$provider_class = Sensei_Test_Enrolment_Provider_Always_Provides::class;
+		$this->addEnrolmentProvider( $provider_class );
+		$this->prepareEnrolmentManager();
+
+		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
+		$provider          = $enrolment_manager->get_enrolment_provider_by_id( $provider_class::ID );
+		$course_enrolment  = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$provider_state    = $course_enrolment->get_provider_state( $provider, $student_id );
+
+		$this->assertTrue( $provider_state instanceof Sensei_Enrolment_Provider_State );
+		$this->assertEquals( 1234, $provider_state->get_stored_value( 'test' ), 'Persisted stored value should be retrieved' );
+
+		$logs = $provider_state->get_logs();
+		$this->assertEquals( 'This is a log message', $logs[0][1], 'Persisted log entry should be retrieved' );
+	}
+
+	/**
 	 * Helper for `\Sensei_Class_Course_Enrolment_Test::testEnrolmentCheckVersionCachingWorks`.
 	 */
 	private function resetAndSetUpVersionedProvider( $bump_version ) {

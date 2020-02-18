@@ -27,10 +27,11 @@ trait Sensei_Course_Enrolment_Manual_Test_Helpers {
 	 * @return bool
 	 */
 	private function wasLegacyEnrolmentChecked( $user_id, $course_id ) {
-		$learner_term            = Sensei_Learner::get_learner_term( $user_id );
-		$enrolment_migration_log = get_term_meta( $learner_term->term_id, Sensei_Course_Manual_Enrolment_Provider::META_PREFIX_LEGACY_MIGRATION . $course_id, true );
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$provider_state   = $course_enrolment->get_provider_state( Sensei_Course_Manual_Enrolment_Provider::instance(), $user_id );
+		$migration_log    = $provider_state->get_stored_value( Sensei_Course_Manual_Enrolment_Provider::DATA_KEY_LEGACY_MIGRATION );
 
-		return ! empty( $enrolment_migration_log );
+		return ! empty( $migration_log );
 	}
 
 	/**
@@ -41,8 +42,11 @@ trait Sensei_Course_Enrolment_Manual_Test_Helpers {
 	 * @param int $course_id Course post ID.
 	 */
 	private function directlyEnrolStudent( $user_id, $course_id ) {
-		$term = Sensei_Learner::get_learner_term( $user_id );
-		update_term_meta( $term->term_id, Sensei_Course_Manual_Enrolment_Provider::META_PREFIX_MANUAL_STATUS . $course_id, time() );
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$provider_state   = $course_enrolment->get_provider_state( Sensei_Course_Manual_Enrolment_Provider::instance(), $user_id );
+
+		$provider_state->set_stored_value( Sensei_Course_Enrolment_Stored_Status_Provider::DATA_KEY_ENROLMENT_STATUS, true );
+		$provider_state->save();
 
 		Sensei_Utils::user_start_course( $user_id, $course_id );
 	}
@@ -55,8 +59,11 @@ trait Sensei_Course_Enrolment_Manual_Test_Helpers {
 	 * @param int $course_id Course post ID.
 	 */
 	private function directlyWithdrawStudent( $user_id, $course_id ) {
-		$term = Sensei_Learner::get_learner_term( $user_id );
-		delete_term_meta( $term->term_id, Sensei_Course_Manual_Enrolment_Provider::META_PREFIX_MANUAL_STATUS . $course_id );
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$provider_state   = $course_enrolment->get_provider_state( Sensei_Course_Manual_Enrolment_Provider::instance(), $user_id );
+
+		$provider_state->set_stored_value( Sensei_Course_Enrolment_Stored_Status_Provider::DATA_KEY_ENROLMENT_STATUS, false );
+		$provider_state->save();
 	}
 
 	/**

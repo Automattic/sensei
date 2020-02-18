@@ -18,6 +18,8 @@ require_once SENSEI_TEST_FRAMEWORK_DIR . '/enrolment-providers/class-sensei-test
 require_once SENSEI_TEST_FRAMEWORK_DIR . '/enrolment-providers/class-sensei-test-enrolment-provider-never-provides.php';
 require_once SENSEI_TEST_FRAMEWORK_DIR . '/enrolment-providers/class-sensei-test-enrolment-provider-provides-for-dinosaurs.php';
 require_once SENSEI_TEST_FRAMEWORK_DIR . '/enrolment-providers/class-sensei-test-enrolment-provider-version-morph.php';
+require_once SENSEI_TEST_FRAMEWORK_DIR . '/enrolment-providers/class-sensei-test-enrolment-provider-stateful-initially-false.php';
+require_once SENSEI_TEST_FRAMEWORK_DIR . '/enrolment-providers/class-sensei-test-enrolment-provider-stateful-initially-true.php';
 
 /**
  * Helpers for course enrolment related tests.
@@ -39,6 +41,15 @@ trait Sensei_Course_Enrolment_Test_Helpers {
 		$course_enrolment_instances = new ReflectionProperty( Sensei_Course_Enrolment::class, 'instances' );
 		$course_enrolment_instances->setAccessible( true );
 		$course_enrolment_instances->setValue( [] );
+	}
+
+	/**
+	 * Resets the state stores.
+	 */
+	private static function resetEnrolmentStateStores() {
+		$state_store_instances = new ReflectionProperty( Sensei_Enrolment_Provider_State_Store::class, 'instances' );
+		$state_store_instances->setAccessible( true );
+		$state_store_instances->setValue( [] );
 	}
 
 	/**
