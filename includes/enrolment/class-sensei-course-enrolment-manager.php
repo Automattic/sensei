@@ -210,7 +210,9 @@ class Sensei_Course_Enrolment_Manager {
 	 * @param int                                      $user_id           User ID.
 	 */
 	public function remove_deferred_enrolment_check( Sensei_Course_Enrolment_Provider_Results $enrolment_results, $course_id, $user_id ) {
-		unset( $this->deferred_enrolment_checks[ $user_id ][ $course_id ] );
+		if ( isset( $this->deferred_enrolment_checks[ $user_id ] ) ) {
+			unset( $this->deferred_enrolment_checks[ $user_id ][ $course_id ] );
+		}
 	}
 
 	/**
