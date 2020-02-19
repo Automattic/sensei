@@ -41,7 +41,7 @@ class Sensei_Quiz {
 		add_action( 'sensei_single_quiz_content_inside_before', array( $this, 'user_save_quiz_answers_listener' ) );
 
 		// Fire the load global data function.
-		add_action( 'sensei_single_quiz_content_inside_before', array( $this, 'load_global_quiz_data' ), 10 );
+		add_action( 'sensei_single_quiz_content_inside_before', array( $this, 'load_global_quiz_data' ), 80 );
 
 		add_action( 'template_redirect', array( $this, 'quiz_has_no_questions' ) );
 
@@ -342,33 +342,11 @@ class Sensei_Quiz {
 		global  $post, $current_user;
 		$this->data = new stdClass();
 
-		// Get Quiz Lesson ID.
-		$quiz_lesson_id = absint( get_post_meta( $post->ID, '_quiz_lesson', true ) );
-
-		// Get user lesson status.
-		$user_lesson_status = Sensei_Utils::user_lesson_status( $quiz_lesson_id, $current_user->ID );
-
-		// These variables are used for checking if the user has saved or completed the quiz.
-		$user_quiz_answers          = get_comment_meta( $user_lesson_status->comment_ID, 'quiz_answers', true );
-		$user_quiz_grades           = get_comment_meta( $user_lesson_status->comment_ID, 'quiz_grades', true );
-		$user_quiz_answers_feedback = get_comment_meta( $user_lesson_status->comment_ID, 'quiz_answers_feedback', true );
-
-		// If these three variables are empty, the user has only SEEN the quiz, no action has been taken.
-		if ( empty( $user_quiz_answers ) && empty( $user_quiz_grades ) && empty( $user_quiz_answers_feedback ) ) {
-			// Set questions_asked to empty, so that the lesson_quiz_questions fetches questions again from posts,
-			// not from this already selected questions. This makes sure new or deleted questions are considered.
-			Sensei_Utils::update_lesson_status(
-				$current_user->ID,
-				$quiz_lesson_id,
-				'in-progress',
-				array(
-					'questions_asked' => '',
-				)
-			);
-		}
-
 		// Get Quiz Questions.
 		$lesson_quiz_questions = Sensei()->lesson->lesson_quiz_questions( $post->ID );
+
+		// Get Quiz Lesson ID.
+		$quiz_lesson_id = absint( get_post_meta( $post->ID, '_quiz_lesson', true ) );
 
 		// Get quiz grade type.
 		$quiz_grade_type = get_post_meta( $post->ID, '_quiz_grade_type', true );
@@ -377,9 +355,10 @@ class Sensei_Quiz {
 		$quiz_passmark = Sensei_Utils::as_absolute_rounded_number( get_post_meta( $post->ID, '_quiz_passmark', true ), 2 );
 
 		// Get latest quiz answers and grades.
-		$lesson_id       = Sensei()->quiz->get_lesson_id( $post->ID );
-		$user_quizzes    = Sensei()->quiz->get_user_answers( $lesson_id, get_current_user_id() );
-		$user_quiz_grade = 0;
+		$lesson_id          = Sensei()->quiz->get_lesson_id( $post->ID );
+		$user_quizzes       = Sensei()->quiz->get_user_answers( $lesson_id, get_current_user_id() );
+		$user_lesson_status = Sensei_Utils::user_lesson_status( $quiz_lesson_id, $current_user->ID );
+		$user_quiz_grade    = 0;
 		if ( isset( $user_lesson_status->comment_ID ) ) {
 			$user_quiz_grade = get_comment_meta( $user_lesson_status->comment_ID, 'grade', true );
 		}

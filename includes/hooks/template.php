@@ -187,7 +187,7 @@ add_action( 'sensei_single_quiz_content_inside_before', array( 'Sensei_Quiz', 't
 
 // since 1.9.0
 // Initialize the quiz questions loop.
-add_action( 'sensei_single_quiz_content_inside_before', array( 'Sensei_Quiz', 'start_quiz_questions_loop' ), 20 );
+add_action( 'sensei_single_quiz_content_inside_before', array( 'Sensei_Quiz', 'start_quiz_questions_loop' ) );
 
 // since 1.9.0
 // Hook in the quiz user message.
