@@ -3244,33 +3244,6 @@ class Sensei_Lesson {
 			}
 		}
 
-		// Save the questions that will be asked for the current user
-		// this happens only once per user/quiz, unless the user resets the quiz
-		if ( ! is_admin() && $user_lesson_status ) {
-
-			// user lesson status can return as an array.
-			if ( is_array( $user_lesson_status ) ) {
-				$comment_ID = $user_lesson_status[0]->comment_ID;
-
-			} else {
-				$comment_ID = $user_lesson_status->comment_ID;
-			}
-
-			$questions_asked = get_comment_meta( $comment_ID, 'questions_asked', true );
-			if ( empty( $questions_asked ) && $user_lesson_status ) {
-
-				$questions_asked = array();
-
-				foreach ( $questions as $question ) {
-					$questions_asked[] = $question->ID;
-				}
-
-				// save the questions asked id
-				$questions_asked_csv = implode( ',', $questions_asked );
-				update_comment_meta( $comment_ID, 'questions_asked', $questions_asked_csv );
-			}
-		}
-
 		/**
 		 * Filter the questions returned by Sensei_Lesson::lessons_quiz_questions
 		 *
