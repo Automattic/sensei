@@ -187,6 +187,17 @@ class Sensei_Course_Enrolment {
 		$enrolment_results = new Sensei_Course_Enrolment_Provider_Results( $provider_results, $this->get_course_enrolment_providers_version() );
 		update_user_meta( $user_id, $this->get_enrolment_results_meta_key(), wp_slash( wp_json_encode( $enrolment_results ) ) );
 
+		/**
+		 * Notify upon calculation of enrolment results.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param Sensei_Course_Enrolment_Provider_Results $enrolment_results Enrolment results object.
+		 * @param int                                      $course_id         Course post ID.
+		 * @param int                                      $user_id           User ID.
+		 */
+		do_action( 'sensei_enrolment_results_calculated', $enrolment_results, $this->course_id, $user_id );
+
 		return $enrolment_results;
 	}
 

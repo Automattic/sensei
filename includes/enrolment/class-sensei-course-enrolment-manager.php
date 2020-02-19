@@ -60,6 +60,7 @@ class Sensei_Course_Enrolment_Manager {
 	public function init() {
 		add_action( 'init', [ $this, 'collect_enrolment_providers' ], 100 );
 		add_action( 'shutdown', [ $this, 'run_deferred_course_enrolment_checks' ] );
+		add_action( 'sensei_enrolment_results_calculated', [ $this, 'remove_deferred_enrolment_check' ], 10, 3 );
 		add_filter( 'sensei_can_user_manually_enrol', [ $this, 'maybe_prevent_frontend_manual_enrol' ], 10, 2 );
 
 		add_action( 'shutdown', [ Sensei_Enrolment_Provider_State_Store::class, 'persist_all' ] );
@@ -202,6 +203,19 @@ class Sensei_Course_Enrolment_Manager {
 	}
 
 	/**
+	 * When enrolment calculation happens, remove it from deferred calculation.
+	 *
+	 * @param Sensei_Course_Enrolment_Provider_Results $enrolment_results Enrolment results object.
+	 * @param int                                      $course_id         Course post ID.
+	 * @param int                                      $user_id           User ID.
+	 */
+	public function remove_deferred_enrolment_check( Sensei_Course_Enrolment_Provider_Results $enrolment_results, $course_id, $user_id ) {
+		if ( isset( $this->deferred_enrolment_checks[ $user_id ] ) ) {
+			unset( $this->deferred_enrolment_checks[ $user_id ][ $course_id ] );
+		}
+	}
+
+	/**
 	 * Defer course enrolment check to the end of request.
 	 *
 	 * @param int $user_id   User ID.
@@ -236,10 +250,6 @@ class Sensei_Course_Enrolment_Manager {
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 		if ( $course_enrolment ) {
 			$course_enrolment->is_enrolled( $user_id, false );
-		}
-
-		if ( isset( $this->deferred_enrolment_checks[ $user_id ] ) ) {
-			unset( $this->deferred_enrolment_checks[ $user_id ][ $course_id ] );
 		}
 	}
 

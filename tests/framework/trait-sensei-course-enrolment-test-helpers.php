@@ -126,6 +126,21 @@ trait Sensei_Course_Enrolment_Test_Helpers {
 	}
 
 	/**
+	 * Turns a user into a non-crook by clearing their description.
+	 *
+	 * @param int $user_id
+	 * @return int
+	 */
+	private function turnStudentIntoNormal( $user_id ) {
+		$user = get_user_by( 'ID', $user_id );
+
+		$user->description = '';
+		wp_update_user( $user );
+
+		return $user_id;
+	}
+
+	/**
 	 * Adds an enrolment provider.
 	 */
 	private function addEnrolmentProvider( $class_name ) {
