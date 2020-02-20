@@ -11,6 +11,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Handles course enrolment logic for a particular course.
+ *
+ * Each course/user combination has its own results record (`Sensei_Course_Enrolment_Provider_Results`)
+ * stored in user meta. There are several ways in which result records can be invalidated so that
+ * enrolment providers are asked to recalculate.
+ *
+ * - The user meta record can be set to an empty string. This marks it as invalid and needing recalculation. One
+ *   common way this will happen is by a provider calling `\Sensei_Course_Enrolment_Manager::trigger_course_enrolment_check`
+ *   to trigger the recalculation.
+ * - The version hash for the record could be changed. The version hash is made up of three components. If
+ *   any single component changes, the record will be recalculated. The three components are:
+ *   - Site wide hash: If this changes, every enrolment result record is invalidated.
+ *   - Course hash: If this changes for a course, every enrolment result related to that specific course is invalidated.
+ *   - Hash of provider versions: If an update occurs that includes changed logic for one of the enrolment providers,
+ *     all enrolment results are invalidated.
  */
 class Sensei_Course_Enrolment {
 	const META_PREFIX_ENROLMENT_RESULTS = 'sensei_course_enrolment_';
