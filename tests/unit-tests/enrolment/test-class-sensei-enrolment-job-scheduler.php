@@ -55,11 +55,12 @@ class Sensei_Enrolment_Calculation_Scheduler_Test extends WP_UnitTestCase {
 	 * Tests that the scheduler doesn't starts when the calculation version is the current one.
 	 */
 	public function testLearnerCalculationDoesntStartWhenVersionIsSet() {
-		$scheduler = Sensei_Enrolment_Job_Scheduler::instance();
+		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
+		$scheduler         = Sensei_Enrolment_Job_Scheduler::instance();
 
 		update_option(
 			Sensei_Enrolment_Job_Scheduler::CALCULATION_VERSION_OPTION_NAME,
-			Sensei_Course_Enrolment_Manager::get_enrolment_calculation_version()
+			$enrolment_manager->get_enrolment_calculation_version()
 		);
 
 		$scheduler->maybe_start_learner_calculation();
@@ -84,7 +85,8 @@ class Sensei_Enrolment_Calculation_Scheduler_Test extends WP_UnitTestCase {
 	 * Tests that once the scheduler run is completed, subsequent starts have no effect.
 	 */
 	public function testLearnerCalculationDoesntStartAfterCompletion() {
-		$scheduler = Sensei_Enrolment_Job_Scheduler::instance();
+		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
+		$scheduler         = Sensei_Enrolment_Job_Scheduler::instance();
 
 		$scheduler->maybe_start_learner_calculation();
 		$scheduler->stop_all_jobs();
@@ -95,7 +97,7 @@ class Sensei_Enrolment_Calculation_Scheduler_Test extends WP_UnitTestCase {
 
 		update_option(
 			Sensei_Enrolment_Job_Scheduler::CALCULATION_VERSION_OPTION_NAME,
-			Sensei_Course_Enrolment_Manager::get_enrolment_calculation_version()
+			$enrolment_manager->get_enrolment_calculation_version()
 		);
 
 		$scheduler->maybe_start_learner_calculation();
@@ -108,12 +110,13 @@ class Sensei_Enrolment_Calculation_Scheduler_Test extends WP_UnitTestCase {
 	 * Tests that when there are no users to calculate, the schedule run is completed.
 	 */
 	public function testLearnerCalculationCompletesWhenUsersAreCalculated() {
-		$scheduler = Sensei_Enrolment_Job_Scheduler::instance();
+		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
+		$scheduler         = Sensei_Enrolment_Job_Scheduler::instance();
 
 		update_user_meta(
 			1,
 			Sensei_Course_Enrolment_Manager::LEARNER_CALCULATION_META_NAME,
-			Sensei_Course_Enrolment_Manager::get_enrolment_calculation_version()
+			$enrolment_manager->get_enrolment_calculation_version()
 		);
 
 		for ( $i = 0; $i < 3; $i ++ ) {
@@ -121,14 +124,14 @@ class Sensei_Enrolment_Calculation_Scheduler_Test extends WP_UnitTestCase {
 			update_user_meta(
 				$user,
 				Sensei_Course_Enrolment_Manager::LEARNER_CALCULATION_META_NAME,
-				Sensei_Course_Enrolment_Manager::get_enrolment_calculation_version()
+				$enrolment_manager->get_enrolment_calculation_version()
 			);
 		}
 
 		$scheduler->run_learner_calculation();
 
 		$option = get_option( Sensei_Enrolment_Job_Scheduler::CALCULATION_VERSION_OPTION_NAME );
-		$this->assertEquals( Sensei_Course_Enrolment_Manager::get_enrolment_calculation_version(), $option );
+		$this->assertEquals( $enrolment_manager->get_enrolment_calculation_version(), $option );
 	}
 
 	/**

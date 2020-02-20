@@ -270,11 +270,11 @@ class Sensei_Course_Enrolment_Manager {
 	 *
 	 * @return string
 	 */
-	public static function get_site_salt() {
+	public function get_site_salt() {
 		$enrolment_salt = get_option( self::COURSE_ENROLMENT_SITE_SALT_OPTION );
 
 		if ( ! $enrolment_salt ) {
-			return self::reset_site_salt();
+			return $this->reset_site_salt();
 		}
 
 		return $enrolment_salt;
@@ -285,7 +285,7 @@ class Sensei_Course_Enrolment_Manager {
 	 *
 	 * @return string
 	 */
-	public static function reset_site_salt() {
+	public function reset_site_salt() {
 		$new_salt = md5( uniqid() );
 
 		update_option( self::COURSE_ENROLMENT_SITE_SALT_OPTION, $new_salt, true );
@@ -342,7 +342,7 @@ class Sensei_Course_Enrolment_Manager {
 	public function recalculate_enrolments( $user_id ) {
 
 		$learner_calculated_version = get_user_meta( $user_id, self::LEARNER_CALCULATION_META_NAME, true );
-		if ( self::get_enrolment_calculation_version() === $learner_calculated_version ) {
+		if ( $this->get_enrolment_calculation_version() === $learner_calculated_version ) {
 			return;
 		}
 
@@ -366,7 +366,7 @@ class Sensei_Course_Enrolment_Manager {
 		update_user_meta(
 			$user_id,
 			self::LEARNER_CALCULATION_META_NAME,
-			self::get_enrolment_calculation_version()
+			$this->get_enrolment_calculation_version()
 		);
 	}
 
@@ -384,7 +384,7 @@ class Sensei_Course_Enrolment_Manager {
 	 *
 	 * @return string The calculation version.
 	 */
-	public static function get_enrolment_calculation_version() {
-		return self::get_site_salt() . '-' . Sensei()->version;
+	public function get_enrolment_calculation_version() {
+		return $this->get_site_salt() . '-' . Sensei()->version;
 	}
 }

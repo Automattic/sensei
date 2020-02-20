@@ -370,6 +370,8 @@ class Sensei_Course_Enrolment {
 	 * @return string
 	 */
 	private function hash_course_enrolment_provider_versions( $enrolment_providers ) {
+		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
+
 		$versions = [];
 		foreach ( $enrolment_providers as $enrolment_provider ) {
 			if ( ! ( $enrolment_provider instanceof Sensei_Course_Enrolment_Provider_Interface ) ) {
@@ -382,7 +384,7 @@ class Sensei_Course_Enrolment {
 
 		ksort( $versions );
 
-		return md5( Sensei_Course_Enrolment_Manager::get_site_salt() . $this->get_course_enrolment_salt() . wp_json_encode( $versions ) );
+		return md5( $enrolment_manager->get_site_salt() . $this->get_course_enrolment_salt() . wp_json_encode( $versions ) );
 	}
 
 	/**
