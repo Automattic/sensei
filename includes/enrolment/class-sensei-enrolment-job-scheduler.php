@@ -85,6 +85,8 @@ class Sensei_Enrolment_Job_Scheduler {
 
 	/**
 	 * Check to see if we need to start learner calculation job.
+	 *
+	 * @access private
 	 */
 	public function maybe_start_learner_calculation() {
 		if ( get_option( self::CALCULATION_VERSION_OPTION_NAME ) === Sensei_Course_Enrolment_Manager::get_enrolment_calculation_version() ) {
@@ -97,6 +99,8 @@ class Sensei_Enrolment_Job_Scheduler {
 
 	/**
 	 * Run batch of learner calculations.
+	 *
+	 * @access private
 	 */
 	public function run_learner_calculation() {
 		$job                 = new Sensei_Enrolment_Learner_Calculation_Job( 20 );
@@ -112,6 +116,8 @@ class Sensei_Enrolment_Job_Scheduler {
 
 	/**
 	 * Run batch of course calculations.
+	 *
+	 * @access private
 	 *
 	 * @param array $args Arguments for the job.
 	 */
