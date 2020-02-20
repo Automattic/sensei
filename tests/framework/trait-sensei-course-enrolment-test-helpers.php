@@ -38,6 +38,10 @@ trait Sensei_Course_Enrolment_Test_Helpers {
 		$enrolment_providers->setAccessible( true );
 		$enrolment_providers->setValue( Sensei_Course_Enrolment_Manager::instance(), null );
 
+		$enrolment_providers = new ReflectionProperty( Sensei_Course_Enrolment_Manager::class, 'enrolment_providers_versions_hash' );
+		$enrolment_providers->setAccessible( true );
+		$enrolment_providers->setValue( Sensei_Course_Enrolment_Manager::instance(), null );
+
 		$course_enrolment_instances = new ReflectionProperty( Sensei_Course_Enrolment::class, 'instances' );
 		$course_enrolment_instances->setAccessible( true );
 		$course_enrolment_instances->setValue( [] );

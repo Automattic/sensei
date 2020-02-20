@@ -45,13 +45,6 @@ class Sensei_Course_Enrolment {
 	private $course_enrolment_providers;
 
 	/**
-	 * Course enrolment providers version hash.
-	 *
-	 * @var string
-	 */
-	private $course_enrolment_providers_version;
-
-	/**
 	 * Course ID for this enrolment object.
 	 *
 	 * @var int
@@ -110,7 +103,7 @@ class Sensei_Course_Enrolment {
 				$enrolment_check_results = $this->get_enrolment_check_results( $user_id );
 				if (
 					$enrolment_check_results
-					&& $enrolment_check_results->get_version_hash() === $this->get_course_enrolment_providers_version()
+					&& $enrolment_check_results->get_version_hash() === $this->get_current_enrolment_result_version()
 				) {
 					return $this->has_stored_enrolment( $user_id );
 				}
@@ -287,7 +280,7 @@ class Sensei_Course_Enrolment {
 			$provider_results[ $enrolment_provider_id ] = $enrolment_provider->is_enrolled( $user_id, $this->course_id );
 		}
 
-		$enrolment_results = new Sensei_Course_Enrolment_Provider_Results( $provider_results, $this->get_course_enrolment_providers_version() );
+		$enrolment_results = new Sensei_Course_Enrolment_Provider_Results( $provider_results, $this->get_current_enrolment_result_version() );
 		update_user_meta( $user_id, $this->get_enrolment_results_meta_key(), wp_slash( wp_json_encode( $enrolment_results ) ) );
 
 		/**
@@ -349,40 +342,28 @@ class Sensei_Course_Enrolment {
 	}
 
 	/**
-	 * Get the hash of the current versions of all course enrolment providers.
+	 * Get the version hash that current enrolment results should be at.
 	 *
 	 * @return string
 	 */
-	public function get_course_enrolment_providers_version() {
-		if ( ! isset( $this->course_enrolment_providers_version ) ) {
-			$enrolment_providers                      = $this->get_course_enrolment_providers();
-			$this->course_enrolment_providers_version = $this->hash_course_enrolment_provider_versions( $enrolment_providers );
-		}
+	public function get_current_enrolment_result_version() {
+		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
 
-		return $this->course_enrolment_providers_version;
+		$components   = [];
+		$components[] = Sensei_Course_Enrolment_Manager::get_site_salt();
+		$components[] = $this->get_course_enrolment_salt();
+		$components[] = $enrolment_manager->get_enrolment_provider_versions_hash();
+
+		return md5( implode( '-', $components ) );
 	}
 
 	/**
 	 * Generates a hash of all the enrolment provider versions.
 	 *
-	 * @param Sensei_Course_Enrolment_Provider_Interface[] $enrolment_providers Array of enrolment provider objects.
-	 *
 	 * @return string
 	 */
-	private function hash_course_enrolment_provider_versions( $enrolment_providers ) {
+	private function hash_course_enrolment_provider_versions() {
 		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
-
-		$versions = [];
-		foreach ( $enrolment_providers as $enrolment_provider ) {
-			if ( ! ( $enrolment_provider instanceof Sensei_Course_Enrolment_Provider_Interface ) ) {
-				continue;
-			}
-
-			$enrolment_provider_class              = get_class( $enrolment_provider );
-			$versions[ $enrolment_provider_class ] = $enrolment_provider->get_version();
-		}
-
-		ksort( $versions );
 
 		return md5( $enrolment_manager->get_site_salt() . $this->get_course_enrolment_salt() . wp_json_encode( $versions ) );
 	}
