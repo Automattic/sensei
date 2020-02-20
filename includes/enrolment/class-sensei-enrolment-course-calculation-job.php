@@ -88,7 +88,6 @@ class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Enrolment_Job_In
 			return false;
 		}
 
-		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $this->course_id );
 		foreach ( $user_ids as $user_id ) {
 			$course_enrolment->is_enrolled( $user_id, false );
 		}
