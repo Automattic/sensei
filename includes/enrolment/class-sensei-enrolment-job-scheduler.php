@@ -129,8 +129,8 @@ class Sensei_Enrolment_Job_Scheduler {
 	/**
 	 * Handle the scheduling of a job that might need to be rescheduled after a run.
 	 *
-	 * @param Sensei_Enrolment_Job_Interface $job
-	 * @param callable|null                  $completion_callback
+	 * @param Sensei_Enrolment_Job_Interface $job                 Job object.
+	 * @param callable|null                  $completion_callback Optional callback to call upon completion of a job.
 	 */
 	private function handle_self_scheduling_job( Sensei_Enrolment_Job_Interface $job, $completion_callback = null ) {
 		// Immediately schedule the next job just in case the process times out.
