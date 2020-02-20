@@ -56,7 +56,7 @@ class Sensei_Enrolment_Course_Calculation_Job_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests to make sure the batches continue to run until completed.
+	 * Tests checking course enrolment happens when job runs.
 	 */
 	public function testCheckingCourseEnrolment() {
 		$course_id        = $this->factory->course->create();
@@ -81,7 +81,7 @@ class Sensei_Enrolment_Course_Calculation_Job_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests to make sure the batches continue to run until completed.
+	 * Tests to make sure only enrolled progress is invalidated and recalculated.
 	 */
 	public function testCheckingCourseEnrolmentInvalidatedOnly() {
 		$course_id        = $this->factory->course->create();
