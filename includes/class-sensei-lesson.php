@@ -2130,7 +2130,7 @@ class Sensei_Lesson {
 		$allowed_post_types      = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'question' ) );
 		$allowed_post_type_pages = apply_filters( 'sensei_scripts_allowed_post_type_pages', array( 'post-new.php', 'post.php' ) );
 
-		if ( "edit.php" === $hook && "lesson" === $post_type ) {
+		if ( 'edit.php' === $hook && 'lesson' === $post_type ) {
 			$this->enqueue_lesson_edit_scripts();
 		}
 
@@ -2180,9 +2180,15 @@ class Sensei_Lesson {
 			wp_enqueue_script( 'sensei-chosen-rtl', Sensei()->plugin_url . 'assets/chosen/chosen-rtl' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
 		}
 	}
-
-	public function enqueue_lesson_edit_scripts () {
-		// load the quick edit screen script
+	/**
+	 * Load scripts for the Lessons admin page.
+	 *
+	 * @access public
+	 * @since  3.0.0
+	 * @return void
+	 */
+	public function enqueue_lesson_edit_scripts() {
+		// Load the quick edit screen script.
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 		wp_enqueue_script( 'sensei-lesson-quick-edit', Sensei()->plugin_url . 'assets/js/admin/lesson-quick-edit' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
 
