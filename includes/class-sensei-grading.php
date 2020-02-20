@@ -704,8 +704,7 @@ class Sensei_Grading {
 
 			} // end if in_array
 		} else {
-			// Set to ungraded status if only a partial grading was saved
-
+			// Set to ungraded status if only a partial grading was saved.
 			Sensei_Utils::update_lesson_status( $user_id, $quiz_lesson_id, 'ungraded' );
 
 		} // end if $_POST['all_que...
