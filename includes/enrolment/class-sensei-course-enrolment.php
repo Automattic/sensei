@@ -349,12 +349,12 @@ class Sensei_Course_Enrolment {
 	public function get_current_enrolment_result_version() {
 		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
 
-		$salt_components   = [];
-		$salt_components[] = $enrolment_manager->get_site_salt();
-		$salt_components[] = $enrolment_manager->get_enrolment_provider_versions_hash();
-		$salt_components[] = $this->get_course_enrolment_salt();
+		$hash_components   = [];
+		$hash_components[] = $enrolment_manager->get_site_salt();
+		$hash_components[] = $enrolment_manager->get_enrolment_provider_versions_hash();
+		$hash_components[] = $this->get_course_enrolment_salt();
 
-		return md5( implode( '-', $salt_components ) );
+		return md5( implode( '-', $hash_components ) );
 	}
 
 	/**
