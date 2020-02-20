@@ -220,8 +220,7 @@ class Sensei_Course_Enrolment_Manager {
 		// Usually the user will be back calculated by the end of the request, but mark them
 		// as needing a recalculation just in case the request fails early.
 		$this->mark_user_as_needing_recalculation( $user_id );
-
-		$this->delete_enrolment_result( $user_id, $course_id );
+		$this->invalidate_learner_result( $user_id, $course_id );
 
 		$this->deferred_enrolment_checks[ $user_id ][ $course_id ] = true;
 	}
@@ -244,15 +243,15 @@ class Sensei_Course_Enrolment_Manager {
 	}
 
 	/**
-	 * Delete an enrolment result so that it gets recalculated next time it is requested.
+	 * Invalidate an enrolment result so that it gets recalculated next time it is requested.
 	 *
 	 * @param int $user_id   User ID.
 	 * @param int $course_id Course post ID.
 	 */
-	private function delete_enrolment_result( $user_id, $course_id ) {
+	private function invalidate_learner_result( $user_id, $course_id ) {
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 		if ( $course_enrolment ) {
-			$course_enrolment->delete_enrolment_result( $user_id );
+			$course_enrolment->invalidate_learner_result( $user_id );
 		}
 	}
 

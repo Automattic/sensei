@@ -137,15 +137,24 @@ class Sensei_Course_Enrolment {
 	}
 
 	/**
-	 * Bulk invalidate all learner results for enrolled users in a course.
+	 * Invalidate a single learner/course enrolment result.
 	 *
 	 * Note: this could still cause a delay when users visit My Courses or another page that relies on the term.
 	 * We aren't invalidating the entire user for this.
+	 *
+	 * @param int $user_id User ID.
+	 */
+	public function invalidate_learner_result( $user_id ) {
+		update_user_meta( $user_id, $this->get_enrolment_results_meta_key(), '' );
+	}
+
+	/**
+	 * Bulk invalidate all learner results for enrolled users in a course.
 	 */
 	private function invalidate_enrolled_learner_results() {
 		$enrolled_user_ids = $this->get_enrolled_user_ids();
 		foreach ( $enrolled_user_ids as $user_id ) {
-			update_user_meta( $user_id, $this->get_enrolment_results_meta_key(), '' );
+			$this->invalidate_learner_result( $user_id );
 		}
 	}
 
