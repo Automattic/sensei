@@ -8,7 +8,18 @@
  * $ npm install
  *
  * 3) Run gulp to minify javascript and css using the 'gulp' command.
+ *
+ * 4a) Run `gulp serve` to start a BrowserSync server that pushes updates on file changes.
+ * Browser tabs accessing the site via this proxy (http://localhost:8242) will get CSS updates injected, and reloaded on JS changes.
+ * Configuration: set environment variables at runtime or in a `.env` file:
+ * WORDPRESS_HOST= URL of local Wordpress instance (Default: localhost:8240)
+ * BROWSERSYNC_PORT= Port for (Default: 8242)
+ *
+ * 4b) Run `gulp watch` to automatically compile CSS and JS files when they change.
+ *
  */
+
+require( 'dotenv' ).config();
 
 var babel           = require( 'gulp-babel' );
 var checktextdomain = require( 'gulp-checktextdomain' );
@@ -24,6 +35,8 @@ var sort            = require( 'gulp-sort' );
 var uglify          = require( 'gulp-uglify' );
 var wpPot           = require( 'gulp-wp-pot' );
 var zip             = require( 'gulp-zip' );
+var browserSync     = require( 'browser-sync' ).create();
+var env             = require( 'process' ).env;
 
 var paths = {
 	scripts: [ 'assets/js/**/*.js', '!assets/js/**/*.min.js' ],
@@ -52,6 +65,11 @@ var paths = {
 	packageZip: 'build/sensei-lms.zip'
 };
 
+function reloadBrowser( done ) {
+	browserSync.reload();
+	done();
+}
+
 gulp.task( 'clean', gulp.series( function( cb ) {
 	return del( [
 		'assets/js/**/*.min.js',
@@ -62,14 +80,14 @@ gulp.task( 'clean', gulp.series( function( cb ) {
 	], cb );
 } ) );
 
-gulp.task( 'CSS', gulp.series( function() {
+function buildCSS() {
 	return gulp.src( paths.css )
 		.pipe( sass().on( 'error', sass.logError ) )
 		.pipe( minifyCSS( { keepBreaks: false } ) )
 		.pipe( gulp.dest( 'assets/css' ) );
-} ) );
+}
 
-gulp.task( 'JS', gulp.series( function() {
+function buildJS() {
 	return gulp.src( paths.scripts )
 		.pipe( babel( {
 			'configFile': './.babelrc-legacy',
@@ -79,7 +97,11 @@ gulp.task( 'JS', gulp.series( function() {
 		.pipe( rename( { extname: '.min.js' } ) )
 		.pipe( chmod( 0o644 ) )
 		.pipe( gulp.dest( 'assets/js' ) );
-} ) );
+}
+
+gulp.task( 'CSS', gulp.series( buildCSS ) );
+
+gulp.task( 'JS', gulp.series( buildJS ) );
 
 gulp.task( 'block-editor-assets', gulp.series( function( cb ) {
 	exec( 'npm run block-editor-assets', cb );
@@ -128,6 +150,7 @@ gulp.task( 'test', function() {
 		.pipe( phpunit() );
 } );
 
+
 gulp.task( 'build', gulp.series( 'test', 'clean', 'CSS', 'JS', 'block-editor-assets', 'vendor' ) );
 gulp.task( 'build-unsafe', gulp.series( 'clean', 'CSS', 'JS', 'block-editor-assets', 'vendor' ) );
 
@@ -146,3 +169,23 @@ gulp.task( 'package', gulp.series( 'build', 'copy-package', 'zip-package' ) );
 gulp.task( 'package-unsafe', gulp.series( 'build-unsafe', 'copy-package', 'zip-package' ) );
 
 gulp.task( 'default', gulp.series( 'build' ) );
+
+gulp.task( 'watch', function() {
+	gulp.watch( paths.css, { delay: 50 }, gulp.series( 'CSS' ) );
+	gulp.watch( paths.scripts, gulp.series( 'JS' ) );
+} );
+
+gulp.task( 'serve', function() {
+	browserSync.init( {
+		proxy: env.WORDPRESS_HOST || "localhost:8240",
+		port: env.BROWSERSYNC_PORT || 8242,
+		open: false
+	} );
+
+	gulp.watch( paths.css, function() {
+		return buildCSS().pipe( browserSync.stream() )
+	} );
+
+	gulp.watch( paths.scripts, gulp.series( 'JS', reloadBrowser ) );
+
+} );
