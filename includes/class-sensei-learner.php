@@ -9,6 +9,8 @@
  * @since 1.9.0
  */
 class Sensei_Learner {
+	const LEARNER_TERM_PREFIX = 'user-';
+
 	/**
 	 * Cache of the learner terms.
 	 *
@@ -45,13 +47,24 @@ class Sensei_Learner {
 	}
 
 	/**
+	 * Get the learner user ID from a term slug.
+	 *
+	 * @param string $term_name Term slug to parse the user ID from.
+	 * @return int
+	 */
+	public static function get_learner_id( $term_name ) {
+		// Cut off the `user-` prefix.
+		return intval( substr( $term_name, strlen( self::LEARNER_TERM_PREFIX ) ) );
+	}
+
+	/**
 	 * Gets the user term slug.
 	 *
 	 * @param int $user_id User ID.
 	 * @return string
 	 */
 	public static function get_learner_term_slug( $user_id ) {
-		return 'user-' . $user_id;
+		return self::LEARNER_TERM_PREFIX . $user_id;
 	}
 
 	/**
