@@ -48,9 +48,7 @@ class Sensei_Learner_Profiles {
 	 * @return void
 	 */
 	public function enqueue_scripts() {
-		$disable_js = Sensei_Utils::get_setting_as_flag( 'js_disable', 'sensei_settings_js_disable' );
-
-		if ( ! $disable_js ) {
+		if ( ! Sensei_Utils::get_setting_as_flag( 'js_disable', 'sensei_settings_js_disable' ) ) {
 
 			$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
