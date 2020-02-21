@@ -1140,7 +1140,7 @@ class Sensei_Quiz {
 			/**
 			 * hook document in class-woothemes-sensei-message.php
 			 */
-			return apply_filters( 'sensei_single_title', $title, get_post_type() );
+			$title = apply_filters( 'sensei_single_title', $title, get_post_type() );
 		}
 
 		return $title;
