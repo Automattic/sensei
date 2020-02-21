@@ -1,0 +1,185 @@
+<?php
+
+/**
+ * Tests for Sensei_Enrolment_Learner_Calculation_Job class.
+ *
+ * @covers Sensei_Enrolment_Learner_Calculation_Job
+ * @group course-enrolment
+ */
+class Sensei_Enrolment_Course_Calculation_Job_Test extends WP_UnitTestCase {
+	/**
+	 * Setup function.
+	 */
+	public function setUp() {
+		parent::setUp();
+
+		$this->factory = new Sensei_Factory();
+		Sensei()->deactivation();
+	}
+
+	/**
+	 * Tests arguments are carried over from constructor.
+	 */
+	public function testGetArgs() {
+		$test_args = [
+			'course_id'        => 10,
+			'invalidated_only' => true,
+			'batch_size'       => 20,
+		];
+
+		$job = new Sensei_Enrolment_Course_Calculation_Job( $test_args );
+
+		$this->assertEquals( $test_args, $job->get_args(), 'Arguments should match' );
+	}
+
+	/**
+	 * Tests to make sure the batches continue to run until completed.
+	 */
+	public function testContinueToRunBatch() {
+		$course_id        = $this->factory->course->create();
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$job              = new Sensei_Enrolment_Course_Calculation_Job(
+			[
+				'course_id'        => $course_id,
+				'invalidated_only' => false,
+				'batch_size'       => 2,
+			]
+		);
+
+		$this->createAndEnrolUsers( $course_id, 5 );
+		$this->invalidateAllCourseResults( $course_enrolment );
+
+		$this->assertTrue( $job->run(), 'Job should ask to be rescheduled after first run.' );
+		$this->assertTrue( $job->run(), 'Job should ask to be rescheduled after second run.' );
+		$this->assertTrue( $job->run(), 'Job should ask to be rescheduled after third run.' );
+		$this->assertFalse( $job->run(), 'Job should ask to be completed after fourth run.' );
+	}
+
+	/**
+	 * Tests checking course enrolment happens when job runs.
+	 */
+	public function testCheckingCourseEnrolment() {
+		$course_id        = $this->factory->course->create();
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$job              = new Sensei_Enrolment_Course_Calculation_Job(
+			[
+				'course_id'        => $course_id,
+				'invalidated_only' => false,
+				'batch_size'       => 5,
+			]
+		);
+
+		$user_ids = $this->factory()->user->create_many( 3 );
+		$this->invalidateAllCourseResults( $course_enrolment );
+
+		$this->assertTrue( $job->run(), 'Job should ask to be rescheduled after first run.' );
+
+		foreach ( $user_ids as $user_id ) {
+			$results = $course_enrolment->get_enrolment_check_results( $user_id );
+			$this->assertNotFalse( $results, 'Results should have been calculated' );
+		}
+	}
+
+	/**
+	 * Tests to make sure only enrolled progress is invalidated and recalculated.
+	 */
+	public function testCheckingCourseEnrolmentInvalidatedOnly() {
+		$course_id        = $this->factory->course->create();
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$job              = new Sensei_Enrolment_Course_Calculation_Job(
+			[
+				'course_id'        => $course_id,
+				'invalidated_only' => true,
+				'batch_size'       => 5,
+			]
+		);
+
+		$enrolled_user_ids = $this->createAndEnrolUsers( $course_id, 2 );
+		$other_user_ids    = $this->factory()->user->create_many( 2 );
+		$user_ids          = array_merge( $enrolled_user_ids, $other_user_ids );
+
+		foreach ( $user_ids as $user_id ) {
+			$course_enrolment->is_enrolled( $user_id );
+		}
+
+		$new_user_ids = $this->factory()->user->create_many( 2 );
+
+		$this->invalidateEnrolledCourseResults( $course_enrolment );
+
+		foreach ( $enrolled_user_ids as $user_id ) {
+			$results = $course_enrolment->get_enrolment_check_results( $user_id );
+			$this->assertFalse( $results, 'Results should have been cleared for enrolled users' );
+		}
+
+		foreach ( $new_user_ids as $user_id ) {
+			$results = $course_enrolment->get_enrolment_check_results( $user_id );
+			$this->assertFalse( $results, 'Results should have never been set for new users' );
+		}
+
+		$other_results = [];
+		foreach ( $other_user_ids as $user_id ) {
+			$results                   = $course_enrolment->get_enrolment_check_results( $user_id );
+			$other_results[ $user_id ] = wp_json_encode( $results );
+			$this->assertNotFalse( $results, 'Results should NOT have been cleared for users who are not enrolled' );
+		}
+
+		$this->assertTrue( $job->run(), 'Job should ask to be rescheduled after first run.' );
+
+		foreach ( $enrolled_user_ids as $user_id ) {
+			$results = $course_enrolment->get_enrolment_check_results( $user_id );
+			$this->assertNotFalse( $results, 'Results should have been calculated for enrolled users' );
+		}
+
+		foreach ( $other_user_ids as $user_id ) {
+			$results = $course_enrolment->get_enrolment_check_results( $user_id );
+			$this->assertEquals( $other_results[ $user_id ], wp_json_encode( $results ), 'Results should NOT have been calculated or changed for users who are not enrolled' );
+		}
+
+		foreach ( $new_user_ids as $user_id ) {
+			$results = $course_enrolment->get_enrolment_check_results( $user_id );
+			$this->assertFalse( $results, 'Results should still have never been set for new users' );
+		}
+	}
+
+	/**
+	 * Create and enrol users in a course.
+	 *
+	 * @param int $course_id Course ID.
+	 * @param int $n         Number of students to create.
+	 *
+	 * @return int[]
+	 */
+	private function createAndEnrolUsers( $course_id, $n ) {
+		$user_ids = $this->factory()->user->create_many( $n );
+
+		$manual_provider = Sensei_Course_Enrolment_Manager::instance()->get_manual_enrolment_provider();
+		foreach ( $user_ids as $user_id ) {
+			$manual_provider->enrol_student( $user_id, $course_id );
+		}
+
+		return $user_ids;
+	}
+
+	/**
+	 * Invalidate all course enrolment results.
+	 *
+	 * @param Sensei_Course_Enrolment $course_enrolment
+	 */
+	private function invalidateAllCourseResults( $course_enrolment ) {
+		$method = new ReflectionMethod( Sensei_Course_Enrolment::class, 'invalidate_all_learner_results' );
+		$method->setAccessible( true );
+		$method->invoke( $course_enrolment );
+		wp_cache_flush();
+	}
+
+	/**
+	 * Invalidate enrolled user course enrolment results.
+	 *
+	 * @param Sensei_Course_Enrolment $course_enrolment
+	 */
+	private function invalidateEnrolledCourseResults( $course_enrolment ) {
+		$method = new ReflectionMethod( Sensei_Course_Enrolment::class, 'invalidate_enrolled_learner_results' );
+		$method->setAccessible( true );
+		$method->invoke( $course_enrolment );
+	}
+}

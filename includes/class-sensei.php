@@ -180,7 +180,7 @@ class Sensei_Main {
 	/**
 	 * The scheduler which is responsible to recalculate user enrolments.
 	 *
-	 * @var Sensei_Enrolment_Calculation_Scheduler
+	 * @var Sensei_Enrolment_Job_Scheduler
 	 */
 	private $enrolment_scheduler;
 
@@ -375,7 +375,8 @@ class Sensei_Main {
 
 		Sensei_Blocks::instance()->init();
 		Sensei_Course_Enrolment_Manager::instance()->init();
-		$this->enrolment_scheduler = Sensei_Enrolment_Calculation_Scheduler::instance();
+		$this->enrolment_scheduler = Sensei_Enrolment_Job_Scheduler::instance();
+		$this->enrolment_scheduler->init();
 
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
@@ -557,7 +558,7 @@ class Sensei_Main {
 	 */
 	public function deactivation() {
 		$this->usage_tracking->unschedule_tracking_task();
-		$this->enrolment_scheduler->stop();
+		$this->enrolment_scheduler->stop_all_jobs();
 	}
 
 
