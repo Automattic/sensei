@@ -7,8 +7,8 @@ function getWebpackConfig( env, argv ) {
 	return {
 		...webpackConfig,
 		entry: {
-			// TODO: Remove this! It is only here to fix the empty build.
-			index: './assets/block-editor/index.js',
+			'messages-block': './assets/block-editor/messages-block',
+			'messages-block-frontend': './assets/block-editor/messages-block/frontend.jsx',
 		},
 		output: {
 			path: path.resolve( __dirname, 'assets/block-editor/build' ),

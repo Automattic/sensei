@@ -42,12 +42,70 @@ final class Sensei_Blocks {
 			return;
 		}
 		add_action( 'init', [ $this, 'register_blocks' ], 11 );
+		add_filter( 'block_categories', [ $this, 'add_sensei_block_category' ] );
 	}
 
 	/**
 	 * Registers all the blocks.
 	 */
 	public function register_blocks() {
-		// Silence is golden.
+		$this->register_messages();
+	}
+
+	/**
+	 * Add Sensei's block category.
+	 *
+	 * @param array $categories Block categories.
+	 *
+	 * @return array
+	 */
+	public function add_sensei_block_category( $categories ) {
+		$categories[] = array(
+			'slug'  => 'sensei-lms',
+			'title' => __( 'Sensei LMS', 'sensei-lms' ),
+			'icon'  => null,
+		);
+
+		return $categories;
+	}
+
+	/**
+	 * Registers the messages block.
+	 */
+	private function register_messages() {
+		$asset_info_editor = include Sensei()->plugin_path . 'assets/block-editor/build/messages-block.asset.php';
+		wp_register_script(
+			'sensei-messages-block',
+			Sensei()->plugin_url . 'assets/block-editor/build/messages-block.js',
+			$asset_info_editor['dependencies'],
+			$asset_info_editor['version'],
+			true
+		);
+
+		$asset_info_frontend = include Sensei()->plugin_path . 'assets/block-editor/build/messages-block-frontend.asset.php';
+		wp_register_script(
+			'sensei-messages-block-frontend',
+			Sensei()->plugin_url . 'assets/block-editor/build/messages-block-frontend.js',
+			$asset_info_frontend['dependencies'],
+			$asset_info_frontend['version'],
+			true
+		);
+
+		wp_register_style(
+			'sensei-messages-block',
+			Sensei()->plugin_url . 'assets/block-editor/build/messages-block.css',
+			[],
+			Sensei()->version
+		);
+
+		register_block_type(
+			'sensei-lms/messages-block',
+			[
+				'editor_script' => 'sensei-messages-block',
+				'script'        => 'sensei-messages-block-frontend',
+				'editor_style'  => 'sensei-messages-block',
+				'style'         => 'sensei-messages-block',
+			]
+		);
 	}
 }

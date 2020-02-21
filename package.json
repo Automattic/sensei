@@ -19,6 +19,7 @@
     "@wordpress/i18n": "^3.7.0",
     "@wordpress/jest-preset-default": "^1.0.6",
     "@wordpress/scripts": "^5.1.0",
+    "autoprefixer": "^9.7.1",
     "babel-eslint": "^10.0.1",
     "babel-loader": "^8.0.4",
     "cross-env": "^5.2.1",
@@ -51,12 +52,13 @@
     "webpack-cli": "^3.2.0"
   },
   "dependencies": {
+    "classnames": "^2.2.6",
     "select2": "4.0.5"
   },
   "scripts": {
     "test": "npm run test-php && npm run test-js",
     "test-php": "gulp test",
-    "test-js": "wp-scripts test-unit-js --passWithNoTests",
+    "test-js": "wp-scripts test-unit-js",
     "block-editor-assets": "cross-env NODE_ENV=production npx calypso-build --config webpack.block-editor-assets.config.js --env.WP",
     "block-editor-assets:dev": "npx calypso-build --config webpack.block-editor-assets.config.js --env.WP",
     "block-editor-assets:watch": "npx calypso-build --config webpack.block-editor-assets.config.js --env.WP --watch",
