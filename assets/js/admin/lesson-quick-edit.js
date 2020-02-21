@@ -11,7 +11,7 @@
 
 		// get the post ID
 		var postId = 0;
-		if ( !Number.isInteger( id ) ) {
+		if ( id instanceof Element ) {
 
 			postId = parseInt(this.getId(id));
 
