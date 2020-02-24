@@ -44,17 +44,18 @@ class Sensei_Learner_Profiles {
 	/**
 	 * Enqueue frontend JavaScripts.
 	 *
-	 * @since  1.0.0
-	 * @return void
+	 * @since  3.0.0
 	 */
 	public function enqueue_scripts() {
 		if ( ! Sensei_Utils::get_setting_as_flag( 'js_disable', 'sensei_settings_js_disable' ) ) {
+			global $wp;
+			if ( preg_match('/\/learner\//', add_query_arg( $wp->query_vars, home_url( $wp->request ) ) ) ||
+				'' !== get_query_var( 'learner_profile' ) ) {
+				$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
-			$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-
-			// My Courses tabs script.
-			wp_register_script( Sensei()->token . '-user-dashboard', esc_url( Sensei()->plugin_url . 'assets/js/user-dashboard' . $suffix . '.js' ), array( 'jquery-ui-tabs' ), Sensei()->version, true );
-			wp_enqueue_script( Sensei()->token . '-user-dashboard' );
+				wp_register_script( Sensei()->token . '-user-dashboard', esc_url( Sensei()->plugin_url . 'assets/js/user-dashboard' . $suffix . '.js' ), array( 'jquery-ui-tabs' ), Sensei()->version, true );
+				wp_enqueue_script( Sensei()->token . '-user-dashboard' );
+			}
 		}
 	}
 
