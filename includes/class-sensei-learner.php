@@ -192,7 +192,7 @@ class Sensei_Learner {
 	}//end get_full_name()
 
 	/**
-	 * Get all actice lerner ids for a course.
+	 * Get all active learner ids for a course.
 	 *
 	 * @param int $course_id Course ID.
 	 *
