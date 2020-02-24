@@ -51,7 +51,7 @@ class Sensei_Learner_Profiles {
 		if ( ! Sensei_Utils::get_setting_as_flag( 'js_disable', 'sensei_settings_js_disable' ) ) {
 			global $wp;
 			global $post;
-			if ( preg_match('/\/learner\//', add_query_arg( $wp->query_vars, home_url( $wp->request ) ) ) ||
+			if ( preg_match( '/\/learner\//', add_query_arg( $wp->query_vars, home_url( $wp->request ) ) ) ||
 				'' !== get_query_var( 'learner_profile' ) ||
 				( is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'usercourses' ) ) ) {
 
