@@ -2130,6 +2130,10 @@ class Sensei_Lesson {
 		$allowed_post_types      = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'question' ) );
 		$allowed_post_type_pages = apply_filters( 'sensei_scripts_allowed_post_type_pages', array( 'post-new.php', 'post.php' ) );
 
+		if ( 'edit.php' === $hook && 'lesson' === $post_type ) {
+			$this->enqueue_lesson_edit_scripts();
+		}
+
 		if ( ! isset( $post_type )
 			|| ! isset( $hook )
 			|| ! in_array( $post_type, $allowed_post_types )
@@ -2145,11 +2149,6 @@ class Sensei_Lesson {
 		wp_enqueue_script( 'sensei-lesson-metadata', Sensei()->plugin_url . 'assets/js/lesson-metadata' . $suffix . '.js', array( 'jquery', 'sensei-core-select2', 'jquery-ui-sortable' ), Sensei()->version, true );
 		wp_enqueue_script( 'sensei-lesson-chosen', Sensei()->plugin_url . 'assets/chosen/chosen.jquery' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
 		wp_enqueue_script( 'sensei-chosen-ajax', Sensei()->plugin_url . 'assets/chosen/ajax-chosen.jquery' . $suffix . '.js', array( 'jquery', 'sensei-lesson-chosen' ), Sensei()->version, true );
-
-		// Load the bulk edit screen script.
-		if ( 'edit.php' == $hook && 'lesson' == $_GET['post_type'] ) {
-			wp_enqueue_script( 'sensei-lessons-bulk-edit', Sensei()->plugin_url . 'assets/js/admin/lesson-bulk-edit' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
-		}
 
 		// Localise script.
 		$translation_strings = array(
@@ -2180,6 +2179,21 @@ class Sensei_Lesson {
 		if ( is_rtl() ) {
 			wp_enqueue_script( 'sensei-chosen-rtl', Sensei()->plugin_url . 'assets/chosen/chosen-rtl' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
 		}
+	}
+	/**
+	 * Load scripts for the Lessons admin page.
+	 *
+	 * @access private
+	 * @since  3.0.0
+	 * @return void
+	 */
+	private function enqueue_lesson_edit_scripts() {
+		// Load the quick edit screen script.
+		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		wp_enqueue_script( 'sensei-lesson-quick-edit', Sensei()->plugin_url . 'assets/js/admin/lesson-quick-edit' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
+
+		// Load the bulk edit screen script.
+		wp_enqueue_script( 'sensei-lessons-bulk-edit', Sensei()->plugin_url . 'assets/js/admin/lesson-bulk-edit' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
 	}
 
 	/**
@@ -3728,9 +3742,6 @@ class Sensei_Lesson {
 		if ( 'lesson-course' != $column_name ) {
 			return;
 		}
-		// load the script
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-		wp_enqueue_script( 'sensei-lesson-quick-edit', Sensei()->plugin_url . 'assets/js/admin/lesson-quick-edit' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
 
 		// setup the values for all meta fields
 		$data = array();
