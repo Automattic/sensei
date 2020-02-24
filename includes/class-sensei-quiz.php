@@ -1136,12 +1136,14 @@ class Sensei_Quiz {
 
 			// translators: Placeholder is the quiz name with any instance of the word "quiz" removed.
 			$title = sprintf( __( '%s Quiz', 'sensei-lms' ), $title_with_no_quizzes );
+
+			/**
+			 * hook document in class-woothemes-sensei-message.php
+			 */
+			$title = apply_filters( 'sensei_single_title', $title, get_post_type() );
 		}
 
-		/**
-		 * hook document in class-woothemes-sensei-message.php
-		 */
-		return apply_filters( 'sensei_single_title', $title, get_post_type() );
+		return $title;
 
 	}
 
