@@ -100,10 +100,10 @@ class Sensei_Learner {
 		}
 
 		foreach ( $activities as $activity ) {
-			if ( '' == $activity->comment_type ) { // phpcs:ignore WordPress.PHP.StrictComparisons
+			if ( empty( $activity->comment_type ) ) {
 				continue;
 			}
-			if ( strpos( 'sensei_', $activity->comment_type ) != 0 ) { // phpcs:ignore WordPress.PHP.StrictComparisons
+			if ( strpos( $activity->comment_type, 'sensei_' ) !== 0 ) {
 				continue;
 			}
 			$dataset_changes = wp_delete_comment( intval( $activity->comment_ID ), true );
