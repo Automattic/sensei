@@ -406,7 +406,7 @@ class Sensei_Learner_Management {
 		// validate we can edit date.
 		$may_edit_date = false;
 
-		if ( current_user_can( 'manage_sensei' ) || get_current_user_id() === $post->post_author ) {
+		if ( current_user_can( 'manage_sensei' ) || get_current_user_id() === intval( $post->post_author ) ) {
 			$may_edit_date = true;
 		}
 
@@ -467,7 +467,7 @@ class Sensei_Learner_Management {
 		$may_remove_user = false;
 
 		// Only teachers and admins can remove users.
-		if ( current_user_can( 'manage_sensei' ) || get_current_user_id() === $post->post_author ) {
+		if ( current_user_can( 'manage_sensei' ) || get_current_user_id() === intval( $post->post_author ) ) {
 			$may_remove_user = true;
 		}
 
@@ -548,8 +548,10 @@ class Sensei_Learner_Management {
 		$course_id = intval( $_GET['course_id'] );
 		$post      = get_post( $course_id );
 
+		$may_manage_enrolment = false;
+
 		// Only teachers and admins can enrol and withdraw users.
-		if ( current_user_can( 'manage_sensei' ) || get_current_user_id() === $post->post_author ) {
+		if ( current_user_can( 'manage_sensei' ) || get_current_user_id() === intval( $post->post_author ) ) {
 			$may_manage_enrolment = true;
 		}
 
