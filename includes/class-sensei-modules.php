@@ -1494,9 +1494,10 @@ class Sensei_Core_Modules {
 			array( 'course_page_module-order' )
 		);
 
-		// Only load module scripts when adding, editing or ordering modules.
-		if ( ! in_array( $hook, $script_on_pages_white_list )
-			&& ( ! $screen || 'module' !== $screen->taxonomy ) ) {
+		// Only load module scripts when adding, editing or ordering modules or editing course.
+		$screen_related = $screen && ( 'module' === $screen->taxonomy || 'course' === $screen->id );
+
+		if ( ! ( in_array( $hook, $script_on_pages_white_list ) || $screen_related ) ) {
 			return;
 		}
 
