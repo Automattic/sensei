@@ -2183,11 +2183,11 @@ class Sensei_Lesson {
 	/**
 	 * Load scripts for the Lessons admin page.
 	 *
-	 * @access public
+	 * @access private
 	 * @since  3.0.0
 	 * @return void
 	 */
-	public function enqueue_lesson_edit_scripts() {
+	private function enqueue_lesson_edit_scripts() {
 		// Load the quick edit screen script.
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 		wp_enqueue_script( 'sensei-lesson-quick-edit', Sensei()->plugin_url . 'assets/js/admin/lesson-quick-edit' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
