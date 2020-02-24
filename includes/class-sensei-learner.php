@@ -84,27 +84,29 @@ class Sensei_Learner {
 	public function delete_all_user_activity( $user_id = 0 ) {
 		$dataset_changes = false;
 
-		if ( $user_id ) {
+		if ( ! $user_id ) {
+			return $dataset_changes;
+		}
 
-			$activities = Sensei_Utils::sensei_check_for_activity( array( 'user_id' => $user_id ), true );
+		$activities = Sensei_Utils::sensei_check_for_activity( array( 'user_id' => $user_id ), true );
 
-			if ( $activities ) {
+		if ( ! $activities ) {
+			return $dataset_changes;
+		}
 
-				// Need to always return an array, even with only 1 item.
-				if ( ! is_array( $activities ) ) {
-					$activities = array( $activities );
-				}
+		// Need to always return an array, even with only 1 item.
+		if ( ! is_array( $activities ) ) {
+			$activities = array( $activities );
+		}
 
-				foreach ( $activities as $activity ) {
-					if ( '' == $activity->comment_type ) { // phpcs:ignore WordPress.PHP.StrictComparisons
-						continue;
-					}
-					if ( strpos( 'sensei_', $activity->comment_type ) != 0 ) { // phpcs:ignore WordPress.PHP.StrictComparisons
-						continue;
-					}
-					$dataset_changes = wp_delete_comment( intval( $activity->comment_ID ), true );
-				}
+		foreach ( $activities as $activity ) {
+			if ( '' == $activity->comment_type ) { // phpcs:ignore WordPress.PHP.StrictComparisons
+				continue;
 			}
+			if ( strpos( 'sensei_', $activity->comment_type ) != 0 ) { // phpcs:ignore WordPress.PHP.StrictComparisons
+				continue;
+			}
+			$dataset_changes = wp_delete_comment( intval( $activity->comment_ID ), true );
 		}
 
 		return $dataset_changes;
