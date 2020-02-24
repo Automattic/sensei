@@ -297,13 +297,13 @@ class Sensei_Utils {
 	 * @access public
 	 * @since  1.5.0
 	 *
-	 * @deprecated 3.0.0 Use `\Sensei_Learner::delete_all_user_activity` instead. But if you want also remove the enrolment terms, use `\Sensei_Learner::delete_user_registers`.
+	 * @deprecated 3.0.0 Use `\Sensei_Learner::delete_all_user_activity` instead.
 	 *
 	 * @param  integer $user_id User ID.
 	 * @return boolean
 	 */
 	public static function delete_all_user_activity( $user_id = 0 ) {
-		_deprecated_function( __METHOD__, '3.0.0', 'To remove only activities use `\Sensei_Learner::delete_all_user_activity`. To remove also enrolment terms, use `\Sensei_Learner::delete_user_registers`' );
+		_deprecated_function( __METHOD__, '3.0.0', 'Sensei_Learner::delete_all_user_activity' );
 
 		return \Sensei_Learner::instance()->delete_all_user_activity( $user_id );
 	} // End delete_all_user_activity()

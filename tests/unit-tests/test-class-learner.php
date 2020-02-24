@@ -43,8 +43,9 @@ class Sensei_Class_Student_Test extends WP_UnitTestCase {
 	} // end testClassInstance
 
 	/**
-	 * Tests that Sensei_Course_Enrolment_Manager::delete_user_enrolments delete user enrolments
-	 * when user is deleted.
+	 * Tests that user enrolments terms are deleted when user is deleted.
+	 *
+	 * @covers Sensei_Learner::delete_all_user_activity
 	 */
 	public function testDeleteUserEnrolments() {
 		$course_id  = $this->getSimpleCourse();
