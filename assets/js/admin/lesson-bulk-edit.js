@@ -3,7 +3,7 @@
  */
 
 jQuery( function( $ ) {
-	$( '#bulk_edit' ).live( 'click #bulk_edit', function() {
+	$( '#the-list' ).on( 'click',  '#bulk-edit #bulk_edit ', function() {
 		// define the bulk edit row
 		var $bulk_row = $( '#bulk-edit' );
 
