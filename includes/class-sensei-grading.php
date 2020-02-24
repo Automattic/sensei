@@ -703,7 +703,11 @@ class Sensei_Grading {
 				do_action( 'sensei_user_lesson_end', $user_id, $quiz_lesson_id );
 
 			} // end if in_array
-		}// end if $_POST['all_que...
+		} else {
+			// Set to ungraded status if only a partial grading was saved.
+			Sensei_Utils::update_lesson_status( $user_id, $quiz_lesson_id, 'ungraded' );
+
+		} // end if $_POST['all_que...
 
 		if ( isset( $_POST['sensei_grade_next_learner'] ) && strlen( $_POST['sensei_grade_next_learner'] ) > 0 ) {
 
