@@ -118,7 +118,7 @@ gulp.task( 'pot', gulp.series( function() {
 } ) );
 
 gulp.task( 'textdomain', gulp.series( function() {
-	return gulp.src( [ '**/*.php', '!node_modules/**', '!build/**' ] )
+	return gulp.src( [ '**/*.php', '!node_modules/**', '!build/**' , '!vendor/**' ] )
 		.pipe( checktextdomain( {
 			text_domain: 'sensei-lms',
 			keywords: [
