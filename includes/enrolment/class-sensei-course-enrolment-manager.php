@@ -317,17 +317,26 @@ class Sensei_Course_Enrolment_Manager {
 	 * @return bool
 	 */
 	private static function should_defer_enrolment_check() {
+		$should_defer_enrolment_check = true;
+
 		// If this is called during a cron job, do not defer the enrolment check.
 		if ( defined( 'DOING_CRON' ) && DOING_CRON ) {
-			return false;
+			$should_defer_enrolment_check = false;
 		}
 
 		// If the `shutdown` action has already been fired, do not defer the enrolment check.
 		if ( did_action( 'shutdown' ) ) {
-			return false;
+			$should_defer_enrolment_check = false;
 		}
 
-		return true;
+		/**
+		 * Override deferment handling for enrolment checking.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param bool $should_defer_enrolment_check True if enrolment checks should be deferred to the end of the request.
+		 */
+		return apply_filters( 'sensei_should_defer_enrolment_check', $should_defer_enrolment_check );
 	}
 
 	/**
