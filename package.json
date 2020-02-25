@@ -33,7 +33,7 @@
     "fs-extra": "7.0.1",
     "gulp": "4.0.2",
     "gulp-babel": "8.0.0",
-    "gulp-checktextdomain": "1.1.1",
+    "gulp-checktextdomain": "2.2.1",
     "gulp-chmod": "2.0.0",
     "gulp-clean-css": "^4.2.0",
     "gulp-rename": "1.4.0",
