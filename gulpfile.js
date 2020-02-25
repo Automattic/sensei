@@ -28,7 +28,6 @@ var del             = require( 'del' );
 var exec            = require( 'child_process' ).exec;
 var gulp            = require( 'gulp' );
 var cleanCSS        = require( 'gulp-clean-css' );
-var phpunit         = require( 'gulp-phpunit' );
 var rename          = require( 'gulp-rename' );
 var sass            = require( 'gulp-sass' );
 var sort            = require( 'gulp-sort' );
