@@ -255,7 +255,7 @@ class Sensei_Course_Enrolment_Test extends WP_UnitTestCase {
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 
 		$initial_version_hash = $course_enrolment->get_current_enrolment_result_version();
-		Sensei_Course_Enrolment_Manager::reset_site_salt();
+		Sensei_Course_Enrolment_Manager::instance()->reset_site_salt();
 
 		$this->assertNotEquals( $initial_version_hash, $course_enrolment->get_current_enrolment_result_version(), 'Site salt reset should produce a new result version' );
 	}

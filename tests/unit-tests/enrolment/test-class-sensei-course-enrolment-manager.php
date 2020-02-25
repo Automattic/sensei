@@ -245,6 +245,8 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 	 * have been already calculated.
 	 */
 	public function testNoCalculationIsPerformedWhenAlreadyCalculated() {
+		$this->prepareEnrolmentManager();
+
 		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
 		$simple_course     = $this->getSimpleCourse();
 		$student_id        = $this->createStandardStudent();
@@ -254,7 +256,6 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 			$enrolment_manager->get_enrolment_calculation_version()
 		);
 
-		$this->prepareEnrolmentManager();
 
 		$simple_mock = $this->create_course_enrolment_mock( $simple_course );
 

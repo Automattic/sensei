@@ -1,4 +1,5 @@
 <?php
+require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-helpers.php';
 
 /**
  * Tests for Sensei_Enrolment_Learner_Calculation_Job class.
@@ -7,6 +8,8 @@
  * @group course-enrolment
  */
 class Sensei_Enrolment_Learner_Calculation_Job_Test extends WP_UnitTestCase {
+	use Sensei_Course_Enrolment_Test_Helpers;
+
 	/**
 	 * Setup function.
 	 */
@@ -32,6 +35,8 @@ class Sensei_Enrolment_Learner_Calculation_Job_Test extends WP_UnitTestCase {
 		$property = new ReflectionProperty( 'Sensei_Course_Enrolment_Manager', 'instance' );
 		$property->setAccessible( true );
 		$property->setValue( $mock );
+
+		$this->prepareEnrolmentManager();
 
 		$user1 = $this->factory->user->create( [ 'user_login' => 'user1' ] );
 		update_user_meta(
@@ -67,6 +72,8 @@ class Sensei_Enrolment_Learner_Calculation_Job_Test extends WP_UnitTestCase {
 		$property = new ReflectionProperty( 'Sensei_Course_Enrolment_Manager', 'instance' );
 		$property->setAccessible( true );
 		$property->setValue( $mock );
+
+		$this->prepareEnrolmentManager();
 
 		$user1 = $this->factory->user->create( [ 'user_login' => 'user1' ] );
 		$user2 = $this->factory->user->create( [ 'user_login' => 'user2' ] );
