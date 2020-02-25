@@ -696,11 +696,12 @@ class Sensei_Lesson {
 			$new_meta_value = '-1';
 		}
 
-		// If course is being changed, set the prerequisite to empty.
+		// Get lesson course.
 		if ( '_lesson_prerequisite' === $meta_key ) {
 				$lesson_course_meta = get_post_meta( $post_id, '_lesson_course', true );
 		}
 
+		// If course is being changed, set the prerequisite to empty.
 		// phpcs:ignore WordPress.Security.NonceVerification
 		if ( ! empty( $lesson_course_meta ) && isset( $_POST['lesson_course'] ) && $lesson_course_meta !== $_POST['lesson_course'] ) {
 			$new_meta_value = '';
