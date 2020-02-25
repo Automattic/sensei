@@ -27,7 +27,7 @@ var chmod           = require( 'gulp-chmod' );
 var del             = require( 'del' );
 var exec            = require( 'child_process' ).exec;
 var gulp            = require( 'gulp' );
-var minifyCSS       = require( 'gulp-minify-css' );
+var cleanCSS        = require( 'gulp-clean-css' );
 var phpunit         = require( 'gulp-phpunit' );
 var rename          = require( 'gulp-rename' );
 var sass            = require( 'gulp-sass' );
@@ -83,7 +83,7 @@ gulp.task( 'clean', gulp.series( function( cb ) {
 function buildCSS() {
 	return gulp.src( paths.css )
 		.pipe( sass().on( 'error', sass.logError ) )
-		.pipe( minifyCSS( { keepBreaks: false } ) )
+		.pipe( cleanCSS() )
 		.pipe( gulp.dest( 'assets/css' ) );
 }
 
