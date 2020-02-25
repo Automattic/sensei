@@ -702,6 +702,7 @@ class Sensei_Lesson {
 				$lesson_course_meta = get_post_meta( $post_id, '_lesson_course', true );
 		}
 
+		// phpcs:ignore WordPress.Security.NonceVerification
 		if ( ! empty( $lesson_course_meta ) && isset( $_POST['lesson_course'] ) && $lesson_course_meta !== $_POST['lesson_course'] ) {
 			$new_meta_value = '';
 		}
