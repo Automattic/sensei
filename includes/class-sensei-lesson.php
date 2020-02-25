@@ -279,7 +279,7 @@ class Sensei_Lesson {
 		$select_lesson_prerequisite = get_post_meta( $post->ID, '_lesson_prerequisite', true );
 		// Get current Course.
 		$current_lesson_course = get_post_meta( $post->ID, '_lesson_course', true );
-		// Create empty $posts_array
+		// Create empty $posts_array.
 		$posts_array = array();
 
 		// Get all the Lesson Posts.
@@ -664,7 +664,7 @@ class Sensei_Lesson {
 		// Get the meta key.
 		$meta_key = '_' . $post_key;
 
-		// ignore fields are not posted
+		// Ignore fields are not posted.
 		// phpcs:ignore WordPress.Security.NonceVerification
 		if ( ! isset( $_POST[ $post_key ] ) ) {
 
@@ -690,7 +690,7 @@ class Sensei_Lesson {
 			$new_meta_value = ( isset( $_POST[ $post_key ] ) ? sanitize_html_class( $_POST[ $post_key ] ) : '' );
 		} // End If Statement
 
-		// quick edit work around
+		// Quick edit work around.
 		// phpcs:ignore WordPress.Security.NonceVerification
 		if ( 'lesson_preview' == $post_key && isset( $_POST['action'] ) && $_POST['action'] == 'inline-save' ) {
 			$new_meta_value = '-1';
@@ -706,7 +706,7 @@ class Sensei_Lesson {
 			$new_meta_value = '';
 		}
 
-		// update field with the new value
+		// Update field with the new value.
 		if ( -1 != $new_meta_value ) {
 			return update_post_meta( $post_id, $meta_key, $new_meta_value );
 		}
