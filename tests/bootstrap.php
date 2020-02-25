@@ -33,6 +33,10 @@ class Sensei_Unit_Tests_Bootstrap {
 		tests_add_filter( 'muplugins_loaded', array( $this, 'load_sensei' ) );
 		// install Sensei
 		tests_add_filter( 'setup_theme', array( $this, 'install_sensei' ) );
+
+		// Enrolment checks should happen immediately in tests. Filter can be removed for specific tests.
+		tests_add_filter( 'sensei_should_defer_enrolment_check', '__return_false' );
+
 		// load the WP testing environment
 		require_once $this->wp_tests_dir . '/includes/bootstrap.php';
 		// load Sensei testing framework
