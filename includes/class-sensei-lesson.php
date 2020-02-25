@@ -697,7 +697,6 @@ class Sensei_Lesson {
 		}
 
 		// If course is being changed, set the prerequisite to empty.
-		// phpcs:ignore WordPress.Security.NonceVerification
 		if ( '_lesson_prerequisite' === $meta_key ) {
 				$lesson_course_meta = get_post_meta( $post_id, '_lesson_course', true );
 		}
