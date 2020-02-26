@@ -198,7 +198,10 @@ class Sensei_Learner {
 			}
 
 			if ( ! empty( $query_args['post__in'] ) ) {
-				$course_ids = array_intersect( $course_ids, (array) $query_args['post__in'] );
+				$existing_course_ids = (array) $query_args['post__in'];
+				$existing_course_ids = array_map( 'intval', $existing_course_ids );
+
+				$course_ids = array_intersect( $course_ids, $existing_course_ids );
 			}
 
 			if ( empty( $course_ids ) ) {
@@ -260,7 +263,7 @@ class Sensei_Learner {
 		}
 
 		foreach ( $course_statuses as $status ) {
-			$course_ids[] = $status->comment_post_ID;
+			$course_ids[] = intval( $status->comment_post_ID );
 		}
 
 		return $course_ids;
