@@ -256,7 +256,6 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 			$enrolment_manager->get_enrolment_calculation_version()
 		);
 
-
 		$simple_mock = $this->create_course_enrolment_mock( $simple_course );
 
 		$simple_mock->expects( $this->never() )->method( 'is_enrolled' );
