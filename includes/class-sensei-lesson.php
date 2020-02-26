@@ -701,10 +701,12 @@ class Sensei_Lesson {
 				$lesson_course_meta = get_post_meta( $post_id, '_lesson_course', true );
 		}
 
-		// If course is being changed, set the prerequisite to empty.
 		// phpcs:ignore WordPress.Security.NonceVerification
 		if ( ! empty( $lesson_course_meta ) && isset( $_POST['lesson_course'] ) && $lesson_course_meta !== $_POST['lesson_course'] ) {
+			// If course is being changed, set the prerequisite to empty.
 			$new_meta_value = '';
+			// If the course for the lesson changes, remove this lesson from being a prerequisite for any other lesson.
+			$this->remove_self_from_prerequisites( $post_id );
 		}
 
 		// Update field with the new value.
@@ -713,6 +715,45 @@ class Sensei_Lesson {
 		}
 
 	} // End save_post_meta()
+
+	/**
+	 * Removes a sepecific lesson from being a prerequisite of any other lessons.
+	 * The expected result after executing this function is:
+	 * No lesson should have the $post_id (received parameter) lesson as a prerequisite.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function remove_self_from_prerequisites( $post_id ) {
+
+		// Get all the Lesson Posts.
+		$post_args = array(
+			'post_type'        => 'lesson',
+			'posts_per_page'   => -1,
+			'exclude'          => $post_id,
+			'suppress_filters' => 0,
+			'post_status'      => [ 'publish', 'draft' ],
+		);
+
+			// Add meta query to only get Lessons with a specific lesson prerequisite.
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Slow query ok.
+			$post_args['meta_query'] = array(
+				array(
+					'key'     => '_lesson_prerequisite',
+					'value'   => $post_id,
+					'compare' => '=',
+				),
+			);
+
+			$posts_array = get_posts( $post_args );
+
+			if ( count( $posts_array ) > 0 ) {
+				foreach ( $posts_array as $post_item ) {
+					update_post_meta( $post_item->ID, '_lesson_prerequisite', '' );
+				}
+			}
+
+	}
 
 	/**
 	 * lesson_course_meta_box_content function.
