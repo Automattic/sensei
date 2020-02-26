@@ -138,6 +138,7 @@ class Sensei_Learner {
 
 		return $this->get_enrolled_courses_query( $user_id, $base_query_args );
 	}
+
 	/**
 	 * Query the courses a user is enrolled in and has completed.
 	 *
