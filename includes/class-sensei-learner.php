@@ -112,7 +112,9 @@ class Sensei_Learner {
 	 */
 	public function get_enrolled_courses_query( $user_id, $base_query_args = [] ) {
 		/**
-		 * Fire before we query a user's enrolled courses.
+		 * Fire before we query a user's enrolled courses. This needs to be called before
+		 * building the query arguments because `active` courses might be incomplete if we
+		 * haven't verified a user's enrolment is up-to-date.
 		 *
 		 * @since 3.0.0
 		 *
