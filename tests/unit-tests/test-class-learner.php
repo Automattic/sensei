@@ -71,13 +71,13 @@ class Sensei_Class_Student_Test extends WP_UnitTestCase {
 		$learner_manager = Sensei_Learner::instance();
 
 		$args_without_order = $learner_manager->get_enrolled_courses_query_args( 0 );
-		$this->assertEqual( 'date', $args_without_order['orderby'], 'Initially we should order by date' );
+		$this->assertEquals( 'date', $args_without_order['orderby'], 'Initially we should order by date' );
 
 		// Simulate us setting the course order. Normally this would also set the menu_order for all courses.
 		update_option( 'sensei_course_order', '1,2,3' );
 
 		$args_with_order = $learner_manager->get_enrolled_courses_query_args( 0 );
-		$this->assertEqual( 'menu_order', $args_with_order['orderby'], 'Initially we should order by date' );
+		$this->assertEquals( 'menu_order', $args_with_order['orderby'], 'Initially we should order by date' );
 	}
 
 	/**
