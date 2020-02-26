@@ -40,7 +40,6 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 
 	/**
 	 * @var string number of items to show on the current page
-	 * Default: -1.
 	 */
 	protected $number;
 
@@ -89,7 +88,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 
 		$attributes = shortcode_atts(
 			array(
-				'number'  => '10',
+				'number'  => null,
 				'status'  => 'all',
 				'orderby' => 'title',
 				'order'   => 'ASC',
@@ -111,13 +110,21 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 
 		$this->page_id = $wp_query->get_queried_object_id();
 
+		$per_page = 10;
+		if (
+			isset( Sensei()->settings->settings['my_course_amount'] )
+			&& 0 < absint( Sensei()->settings->settings['my_course_amount'] )
+		) {
+			$per_page = absint( Sensei()->settings->settings['my_course_amount'] );
+		}
+
 		// set up all argument need for constructing the course query
-		$this->number  = isset( $attributes['number'] ) ? $attributes['number'] : '10';
+		$this->number  = isset( $attributes['number'] ) ? absint( $attributes['number'] ) : $per_page;
 		$this->orderby = isset( $attributes['orderby'] ) ? $attributes['orderby'] : 'title';
 		$this->status  = isset( $attributes['status'] ) ? $attributes['status'] : 'all';
 
 		// set the default for menu_order to be ASC
-		if ( 'menu_order' == $this->orderby && ! isset( $attributes['order'] ) ) {
+		if ( 'menu_order' === $this->orderby && ! isset( $attributes['order'] ) ) {
 
 			$this->order = 'ASC';
 
@@ -216,7 +223,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 			'posts_per_page' => $number_of_posts,
 		);
 
-		if ( null !== $included_courses )  {
+		if ( null !== $included_courses ) {
 			$base_query_args['post__in'] = $included_courses;
 		}
 

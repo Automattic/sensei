@@ -132,8 +132,20 @@ class Sensei_Learner {
 	 * @return array
 	 */
 	public function get_enrolled_courses_query_args( $user_id, $base_query_args = [] ) {
+		$order                = 'DESC';
+		$orderby              = 'date';
+		$has_set_course_order = '' !== get_option( 'sensei_course_order', '' );
+
+		// If a fixed course order has been set, trust menu_order.
+		if ( $has_set_course_order ) {
+			$order   = 'ASC';
+			$orderby = 'menu_order';
+		}
+
 		$default_args = [
 			'post_status' => 'publish',
+			'order'       => $order,
+			'orderby'     => $orderby,
 			'tax_query'   => [], // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- Just empty to set array.
 		];
 
