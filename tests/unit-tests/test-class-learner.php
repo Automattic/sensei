@@ -111,6 +111,88 @@ class Sensei_Class_Student_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests to make sure only active enrolled courses show up with query.
+	 */
+	public function testGetEnrolledActiveCoursesQuerySimple() {
+		$enrolled_course_ids     = $this->factory->course->create_many( 2 );
+		$other_course_ids        = $this->factory->course->create_many( 1 );
+		$completed_course_ids    = [ $enrolled_course_ids[0] ];
+		$enrolled_and_active_ids = [ $enrolled_course_ids[1] ];
+		$not_included_ids        = [ $enrolled_course_ids[0], $other_course_ids[0] ];
+		$student_id              = $this->createStandardStudent();
+		$learner_manager         = Sensei_Learner::instance();
+
+		$this->prepareEnrolmentManager();
+
+		$manual_provider = Sensei_Course_Enrolment_Manager::instance()->get_manual_enrolment_provider();
+
+		foreach ( $enrolled_course_ids as $course_id ) {
+			$manual_provider->enrol_student( $student_id, $course_id );
+		}
+
+		foreach ( $completed_course_ids as $course_id ) {
+			Sensei_Utils::user_complete_course( $course_id, $student_id );
+		}
+
+		$base_query_args        = [
+			'posts_per_page' => -1,
+		];
+		$query_enrolled_courses = $learner_manager->get_enrolled_active_courses_query( $student_id, $base_query_args );
+
+		$this->assertTrue( $query_enrolled_courses instanceof WP_Query, 'Returned value should be instance of WP_Query' );
+		$this->assertEquals( count( $enrolled_and_active_ids ), $query_enrolled_courses->found_posts, 'Number of found posts should match number of enrolled and active courses' );
+
+		foreach ( $query_enrolled_courses->posts as $check_post ) {
+			$this->assertTrue( in_array( $check_post->ID, $enrolled_and_active_ids, true ), 'Enrolled and incomplete courses should be included in results' );
+		}
+
+		foreach ( $query_enrolled_courses->posts as $check_post ) {
+			$this->assertFalse( in_array( $check_post->ID, $not_included_ids, true ), 'Courses either not enrolled in or already completed should not be included in results' );
+		}
+	}
+
+	/**
+	 * Tests to make sure only completed enrolled courses show up with query.
+	 */
+	public function testGetEnrolledCompletedCoursesQuerySimple() {
+		$enrolled_course_ids        = $this->factory->course->create_many( 2 );
+		$other_course_ids           = $this->factory->course->create_many( 1 );
+		$completed_course_ids       = [ $enrolled_course_ids[0], $other_course_ids[0] ];
+		$enrolled_and_completed_ids = [ $enrolled_course_ids[0] ];
+		$not_included_ids           = [ $enrolled_course_ids[1], $other_course_ids[0] ];
+		$student_id                 = $this->createStandardStudent();
+		$learner_manager            = Sensei_Learner::instance();
+
+		$this->prepareEnrolmentManager();
+
+		$manual_provider = Sensei_Course_Enrolment_Manager::instance()->get_manual_enrolment_provider();
+
+		foreach ( $enrolled_course_ids as $course_id ) {
+			$manual_provider->enrol_student( $student_id, $course_id );
+		}
+
+		foreach ( $completed_course_ids as $course_id ) {
+			Sensei_Utils::user_complete_course( $course_id, $student_id );
+		}
+
+		$base_query_args        = [
+			'posts_per_page' => -1,
+		];
+		$query_enrolled_courses = $learner_manager->get_enrolled_completed_courses_query( $student_id, $base_query_args );
+
+		$this->assertTrue( $query_enrolled_courses instanceof WP_Query, 'Returned value should be instance of WP_Query' );
+		$this->assertEquals( count( $enrolled_and_completed_ids ), $query_enrolled_courses->found_posts, 'Number of found posts should match number of enrolled and completed courses' );
+
+		foreach ( $query_enrolled_courses->posts as $check_post ) {
+			$this->assertTrue( in_array( $check_post->ID, $enrolled_and_completed_ids, true ), 'Enrolled and completed courses should be included in results' );
+		}
+
+		foreach ( $query_enrolled_courses->posts as $check_post ) {
+			$this->assertFalse( in_array( $check_post->ID, $not_included_ids, true ), 'Courses either not enrolled in or still active should not be included in results' );
+		}
+	}
+
+	/**
 	 * Tests to make sure users that have stale enrolment results are calculated before querying.
 	 */
 	public function testGetEnrolledCoursesQueryStaleIncluded() {
