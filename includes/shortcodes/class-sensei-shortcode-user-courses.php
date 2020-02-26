@@ -182,11 +182,11 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		);
 
 		if ( 'complete' === $this->status ) {
-			$this->query = $learner_manager->get_enrolled_completed_courses_query( $user_id, $base_query_args );
-			$empty_callback   = [ $this, 'completed_no_course_message_output' ];
+			$this->query    = $learner_manager->get_enrolled_completed_courses_query( $user_id, $base_query_args );
+			$empty_callback = [ $this, 'completed_no_course_message_output' ];
 		} elseif ( 'active' === $this->status ) {
-			$this->query = $learner_manager->get_enrolled_active_courses_query( $user_id, $base_query_args );
-			$empty_callback   = [ $this, 'active_no_course_message_output' ];
+			$this->query    = $learner_manager->get_enrolled_active_courses_query( $user_id, $base_query_args );
+			$empty_callback = [ $this, 'active_no_course_message_output' ];
 		} else {
 			$this->query = $learner_manager->get_enrolled_courses_query( $user_id, $base_query_args );
 		}
