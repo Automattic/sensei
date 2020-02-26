@@ -12,11 +12,92 @@ class Sensei_Learner {
 	const LEARNER_TERM_PREFIX = 'user-';
 
 	/**
+	 * Instance of singleton.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @var self
+	 */
+	private static $instance;
+
+	/**
 	 * Cache of the learner terms.
 	 *
 	 * @var WP_Term[]
 	 */
 	private static $learner_terms = [];
+
+	/**
+	 * Fetches an instance of the class.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @return self
+	 */
+	public static function instance() {
+		if ( ! self::$instance ) {
+			self::$instance = new self();
+		}
+		return self::$instance;
+	}
+
+	/**
+	 * Sensei_Course_Enrolment_Manager constructor. Private so it can only be initialized internally.
+	 */
+	private function __construct() {}
+
+	/**
+	 * Sets the actions.
+	 *
+	 * @since 3.0.0
+	 */
+	public function init() {
+		// Delete user activity and enrolment terms when user is deleted.
+		add_action( 'deleted_user', array( $this, 'delete_all_user_activity' ) );
+	}
+
+	/**
+	 * Delete all activity for specified user.
+	 *
+	 * @since  3.0.0
+	 *
+	 * @param  integer $user_id User ID.
+	 * @return boolean
+	 */
+	public function delete_all_user_activity( $user_id = 0 ) {
+		$dataset_changes = false;
+
+		if ( ! $user_id ) {
+			return $dataset_changes;
+		}
+
+		// Remove enrolment terms.
+		$learner_term = self::get_learner_term( $user_id );
+		wp_delete_term( $learner_term->term_id, Sensei_PostTypes::LEARNER_TAXONOMY_NAME );
+
+		$activities = Sensei_Utils::sensei_check_for_activity( array( 'user_id' => $user_id ), true );
+
+		if ( ! $activities ) {
+			return $dataset_changes;
+		}
+
+		// Need to always return an array, even with only 1 item.
+		if ( ! is_array( $activities ) ) {
+			$activities = array( $activities );
+		}
+
+		foreach ( $activities as $activity ) {
+			if ( empty( $activity->comment_type ) ) {
+				continue;
+			}
+			if ( strpos( $activity->comment_type, 'sensei_' ) !== 0 ) {
+				continue;
+			}
+			$dataset_changes = wp_delete_comment( intval( $activity->comment_ID ), true );
+		}
+
+		return $dataset_changes;
+	}
 
 	/**
 	 * Get the learner term for the user.
@@ -110,7 +191,16 @@ class Sensei_Learner {
 
 	}//end get_full_name()
 
+	/**
+	 * Get all active learner ids for a course.
+	 *
+	 * @param int $course_id Course ID.
+	 *
+	 * @deprecated 3.0.0
+	 */
 	public static function get_all_active_learner_ids_for_course( $course_id ) {
+		_deprecated_function( __METHOD__, '3.0.0' );
+
 		$post_id = absint( $course_id );
 
 		if ( ! $post_id ) {
@@ -134,7 +224,16 @@ class Sensei_Learner {
 		return $learner_ids;
 	}
 
+	/**
+	 * Get all users.
+	 *
+	 * @param array $args
+	 *
+	 * @deprecated 3.0.0
+	 */
 	public static function get_all( $args ) {
+		_deprecated_function( __METHOD__, '3.0.0' );
+
 		$post_id  = 0;
 		$activity = '';
 
