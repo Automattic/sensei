@@ -703,8 +703,6 @@ class Sensei_Course {
 	 * @return array
 	 */
 	public function course_query( $amount = 0, $type = 'default', $includes = array(), $excludes = array() ) {
-		global $my_courses_page;
-
 		if ( 'usercourses' === $type ) {
 			$base_query = [
 				'posts_per_page' => $amount,
@@ -1344,7 +1342,7 @@ class Sensei_Course {
 	 * @return string          HTML displayng course data
 	 */
 	public function load_user_courses_content( $user = false ) {
-		global $course, $my_courses_page, $my_courses_section;
+		global $course;
 
 		if ( ! isset( Sensei()->settings->settings['learner_profile_show_courses'] )
 			|| ! Sensei()->settings->settings['learner_profile_show_courses'] ) {
@@ -1363,8 +1361,6 @@ class Sensei_Course {
 
 		if ( is_a( $user, 'WP_User' ) ) {
 
-			$my_courses_page = true;
-
 			// Allow action to be run before My Courses content has loaded
 			do_action( 'sensei_before_my_courses', $user->ID );
 
@@ -1377,65 +1373,25 @@ class Sensei_Course {
 
 			}
 
-			$course_statuses = Sensei_Utils::sensei_check_for_activity(
-				array(
-					'user_id' => $user->ID,
-					'type'    => 'sensei_course_status',
-				),
-				true
-			);
-			// User may only be on 1 Course
-			if ( ! is_array( $course_statuses ) ) {
-				$course_statuses = array( $course_statuses );
-			}
-			$completed_ids = $active_ids = array();
-			foreach ( $course_statuses as $course_status ) {
-				if ( Sensei_Utils::user_completed_course( $course_status, $user->ID ) ) {
-					$completed_ids[] = $course_status->comment_post_ID;
-				} else {
-					$active_ids[] = $course_status->comment_post_ID;
-				}
-			}
-
-			$active_count = $completed_count = 0;
-
 			$learner_manager = Sensei_Learner::instance();
 
-			$base_query_args = [
+			$active_query_args    = [
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Safe use of pagination var.
+				'paged'          => isset( $_GET['active_page'] ) ? absint( $_GET['active_page'] ) : 1,
 				'posts_per_page' => $per_page,
 			];
+			$active_courses_query = $learner_manager->get_enrolled_active_courses_query( $user->ID, $active_query_args );
+			$active_courses       = $active_courses_query->posts;
+			$active_count         = $active_courses_query->found_posts;
 
-			$active_courses = array();
-			if ( 0 < intval( count( $active_ids ) ) ) {
-				$my_courses_section   = 'active';
-				$active_query_args    = array_merge(
-					$base_query_args,
-					[
-						// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Safe use of pagination var.
-						'paged'    => isset( $_GET['active_page'] ) ? absint( $_GET['active_page'] ) : 1,
-						'post__in' => $active_ids,
-					]
-				);
-				$active_courses_query = $learner_manager->get_enrolled_courses_query( $user->ID, $active_query_args );
-				$active_courses       = $active_courses_query->posts;
-				$active_count         = $active_courses_query->found_posts;
-			} // End If Statement
-
-			$completed_courses = array();
-			if ( 0 < intval( count( $completed_ids ) ) ) {
-				$my_courses_section      = 'completed';
-				$completed_query_args    = array_merge(
-					$base_query_args,
-					[
-						// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Safe use of pagination var.
-						'paged'    => isset( $_GET['completed_page'] ) ? absint( $_GET['completed_page'] ) : 1,
-						'post__in' => $completed_ids,
-					]
-				);
-				$completed_courses_query = $learner_manager->get_enrolled_courses_query( $user->ID, $completed_query_args );
-				$completed_courses       = $completed_courses_query->posts;
-				$completed_count         = $completed_courses_query->found_posts;
-			} // End If Statement
+			$completed_query_args    = [
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Safe use of pagination var.
+				'paged'          => isset( $_GET['active_page'] ) ? absint( $_GET['active_page'] ) : 1,
+				'posts_per_page' => $per_page,
+			];
+			$completed_courses_query = $learner_manager->get_enrolled_completed_courses_query( $user->ID, $completed_query_args );
+			$completed_courses       = $completed_courses_query->posts;
+			$completed_count         = $completed_courses_query->found_posts;
 
 			foreach ( $active_courses as $course_item ) {
 

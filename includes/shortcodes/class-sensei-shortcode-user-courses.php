@@ -168,53 +168,11 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	 * @since 1.9.0
 	 */
 	protected function setup_course_query() {
-		$user_id           = get_current_user_id();
-		$status_query      = array(
-			'user_id' => $user_id,
-			'type'    => 'sensei_course_status',
-		);
-		$user_courses_logs = Sensei_Utils::sensei_check_for_activity( $status_query, true );
-		if ( ! is_array( $user_courses_logs ) ) {
-
-			$user_courses_logs = array( $user_courses_logs );
-
-		}
-
-		$completed_ids = array();
-		$active_ids    = array();
-		foreach ( $user_courses_logs as $course_status ) {
-			if ( true === $this->should_filter_course_by_status( $course_status, $user_id ) ) {
-				continue;
-			}
-			if ( Sensei_Utils::user_completed_course( $course_status, get_current_user_id() ) ) {
-
-				$completed_ids[] = $course_status->comment_post_ID;
-
-			} else {
-
-				$active_ids[] = $course_status->comment_post_ID;
-
-			}
-		}
-
-		$empty_callback   = [ $this, 'no_course_message_output' ];
-		$included_courses = null;
-
-		if ( 'complete' === $this->status ) {
-
-			$included_courses = empty( $completed_ids ) ? array( '-1000' ) : $completed_ids;
-			$empty_callback   = [ $this, 'completed_no_course_message_output' ];
-
-		} elseif ( 'active' === $this->status ) {
-
-			$included_courses = empty( $active_ids ) ? array( '-1000' ) : $active_ids;
-			$empty_callback   = [ $this, 'active_no_course_message_output' ];
-
-		}
+		$learner_manager = Sensei_Learner::instance();
+		$user_id         = get_current_user_id();
+		$empty_callback  = [ $this, 'no_course_message_output' ];
 
 		$number_of_posts = $this->number;
-
-		// course query parameters
 		$query_var_paged = get_query_var( 'paged' );
 		$base_query_args = array(
 			'orderby'        => $this->orderby,
@@ -223,12 +181,15 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 			'posts_per_page' => $number_of_posts,
 		);
 
-		if ( null !== $included_courses ) {
-			$base_query_args['post__in'] = $included_courses;
+		if ( 'complete' === $this->status ) {
+			$this->query = $learner_manager->get_enrolled_completed_courses_query( $user_id, $base_query_args );
+			$empty_callback   = [ $this, 'completed_no_course_message_output' ];
+		} elseif ( 'active' === $this->status ) {
+			$this->query = $learner_manager->get_enrolled_active_courses_query( $user_id, $base_query_args );
+			$empty_callback   = [ $this, 'active_no_course_message_output' ];
+		} else {
+			$this->query = $learner_manager->get_enrolled_courses_query( $user_id, $base_query_args );
 		}
-
-		$learners    = Sensei_Learner::instance();
-		$this->query = $learners->get_enrolled_courses_query( $user_id, $base_query_args );
 
 		if ( empty( $this->query->found_posts ) ) {
 			add_action( 'sensei_loop_course_inside_before', $empty_callback );

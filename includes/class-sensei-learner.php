@@ -9,7 +9,10 @@
  * @since 1.9.0
  */
 class Sensei_Learner {
-	const LEARNER_TERM_PREFIX = 'user-';
+	const LEARNER_TERM_PREFIX            = 'user-';
+	const COURSE_STATUS_FILTER           = 'sensei_course_status';
+	const COURSE_STATUS_FILTER_COMPLETED = 'completed';
+	const COURSE_STATUS_FILTER_ACTIVE    = 'active';
 
 	/**
 	 * Instance of singleton.
@@ -108,19 +111,45 @@ class Sensei_Learner {
 	 * @return WP_Query
 	 */
 	public function get_enrolled_courses_query( $user_id, $base_query_args = [] ) {
-		$query_args = $this->get_enrolled_courses_query_args( $user_id, $base_query_args );
-
 		/**
 		 * Fire before we query a user's enrolled courses.
 		 *
 		 * @since 3.0.0
 		 *
-		 * @param int   $user_id    User ID.
-		 * @param array $query_args Arguments used for query.
+		 * @param int $user_id User ID.
 		 */
-		do_action( 'sensei_before_learners_enrolled_courses_query', $user_id, $query_args );
+		do_action( 'sensei_before_learners_enrolled_courses_query', $user_id );
+
+		$query_args = $this->get_enrolled_courses_query_args( $user_id, $base_query_args );
 
 		return new WP_Query( $query_args );
+	}
+
+	/**
+	 * Query the courses a user is enrolled in and hasn't completed.
+	 *
+	 * @param int   $user_id         User ID.
+	 * @param array $base_query_args Base query arguments.
+	 *
+	 * @return WP_Query
+	 */
+	public function get_enrolled_active_courses_query( $user_id, $base_query_args = [] ) {
+		$base_query_args[ self::COURSE_STATUS_FILTER ] = self::COURSE_STATUS_FILTER_ACTIVE;
+
+		return $this->get_enrolled_courses_query( $user_id, $base_query_args );
+	}
+	/**
+	 * Query the courses a user is enrolled in and has completed.
+	 *
+	 * @param int   $user_id         User ID.
+	 * @param array $base_query_args Base query arguments.
+	 *
+	 * @return WP_Query
+	 */
+	public function get_enrolled_completed_courses_query( $user_id, $base_query_args = [] ) {
+		$base_query_args[ self::COURSE_STATUS_FILTER ] = self::COURSE_STATUS_FILTER_COMPLETED;
+
+		return $this->get_enrolled_courses_query( $user_id, $base_query_args );
 	}
 
 	/**
@@ -159,7 +188,82 @@ class Sensei_Learner {
 			'include_children' => false,
 		];
 
+		if ( isset( $query_args[ self::COURSE_STATUS_FILTER ] ) ) {
+			$course_ids = [];
+			if ( self::COURSE_STATUS_FILTER_COMPLETED === $query_args[ self::COURSE_STATUS_FILTER ] ) {
+				$course_ids = $this->get_completed_course_ids( $user_id );
+			}
+			if ( self::COURSE_STATUS_FILTER_ACTIVE === $query_args[ self::COURSE_STATUS_FILTER ] ) {
+				$course_ids = $this->get_active_course_ids( $user_id );
+			}
+
+			if ( ! empty( $query_args['post__in'] ) ) {
+				$course_ids = array_intersect( $course_ids, (array) $query_args['post__in'] );
+			}
+
+			if ( empty( $course_ids ) ) {
+				$course_ids = [ -1 ];
+			}
+
+			$query_args['post__in'] = $course_ids;
+
+			unset( $query_args[ self::COURSE_STATUS_FILTER ] );
+		}
+
 		return $query_args;
+	}
+
+	/**
+	 * Get the course IDs for a learner's completed courses.
+	 *
+	 * @param int $user_id User ID.
+	 *
+	 * @return int[]
+	 */
+	private function get_completed_course_ids( $user_id ) {
+		return $this->get_course_ids_by_progress_status( $user_id, 'complete' );
+	}
+
+	/**
+	 * Get the course IDs for a learner's active courses.
+	 *
+	 * @param int $user_id User ID.
+	 *
+	 * @return int[]
+	 */
+	private function get_active_course_ids( $user_id ) {
+		return $this->get_course_ids_by_progress_status( $user_id, 'in-progress' );
+	}
+
+	/**
+	 * Get the course IDs by progress status.
+	 *
+	 * @param int    $user_id User ID.
+	 * @param string $status  Course progress status. Either `completed` or `in-progress`.
+	 *
+	 * @return int[]
+	 */
+	private function get_course_ids_by_progress_status( $user_id, $status ) {
+		$course_ids      = [];
+		$course_statuses = Sensei_Utils::sensei_check_for_activity(
+			[
+				'user_id' => $user_id,
+				'type'    => 'sensei_course_status',
+				'status'  => $status,
+			],
+			true
+		);
+
+		// Check for activity returns single if only one. We always want an array.
+		if ( ! is_array( $course_statuses ) ) {
+			$course_statuses = [ $course_statuses ];
+		}
+
+		foreach ( $course_statuses as $status ) {
+			$course_ids[] = $status->comment_post_ID;
+		}
+
+		return $course_ids;
 	}
 
 	/**
