@@ -62,6 +62,7 @@ class Sensei_Course_Enrolment_Manager {
 		add_action( 'shutdown', [ $this, 'run_deferred_course_enrolment_checks' ] );
 		add_action( 'sensei_enrolment_results_calculated', [ $this, 'remove_deferred_enrolment_check' ], 10, 3 );
 		add_filter( 'sensei_can_user_manually_enrol', [ $this, 'maybe_prevent_frontend_manual_enrol' ], 10, 2 );
+		add_action( 'sensei_before_learners_enrolled_courses_query', [ $this, 'recalculate_enrolments' ] );
 
 		add_action( 'shutdown', [ Sensei_Enrolment_Provider_State_Store::class, 'persist_all' ] );
 	}

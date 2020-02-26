@@ -100,6 +100,57 @@ class Sensei_Learner {
 	}
 
 	/**
+	 * Query the courses a user is enrolled in.
+	 *
+	 * @param int   $user_id         User ID.
+	 * @param array $base_query_args Base query arguments.
+	 *
+	 * @return WP_Query
+	 */
+	public function get_enrolled_courses_query( $user_id, $base_query_args = [] ) {
+		$query_args = $this->get_enrolled_courses_query_args( $user_id, $base_query_args );
+
+		/**
+		 * Fire before we query a user's enrolled courses.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param int   $user_id    User ID.
+		 * @param array $query_args Arguments used for query.
+		 */
+		do_action( 'sensei_before_learners_enrolled_courses_query', $user_id, $query_args );
+
+		return new WP_Query( $query_args );
+	}
+
+	/**
+	 * Get the arguments to pass to WP_Query to fetch a learner's enrolled courses.
+	 *
+	 * @param int   $user_id         User ID.
+	 * @param array $base_query_args Base query arguments.
+	 *
+	 * @return array
+	 */
+	public function get_enrolled_courses_query_args( $user_id, $base_query_args = [] ) {
+		$default_args = [
+			'post_status' => 'publish',
+			'tax_query'   => [], // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- Just empty to set array.
+		];
+
+		$query_args   = array_merge( $default_args, $base_query_args );
+		$learner_term = self::get_learner_term( $user_id );
+
+		$query_args['post_type']   = 'course';
+		$query_args['tax_query'][] = [
+			'taxonomy'         => Sensei_PostTypes::LEARNER_TAXONOMY_NAME,
+			'terms'            => $learner_term->term_id,
+			'include_children' => false,
+		];
+
+		return $query_args;
+	}
+
+	/**
 	 * Get the learner term for the user.
 	 *
 	 * @param int $user_id User ID.
@@ -155,7 +206,8 @@ class Sensei_Learner {
 	 *
 	 * @since 1.9.0
 	 *
-	 * @param $user_id
+	 * @param int $user_id User ID.
+	 *
 	 * @return bool|mixed|void
 	 */
 	public static function get_full_name( $user_id ) {

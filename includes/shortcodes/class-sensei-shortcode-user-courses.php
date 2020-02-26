@@ -190,46 +190,69 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 			}
 		}
 
-		if ( 'complete' == $this->status ) {
+		$empty_callback   = [ $this, 'no_course_message_output' ];
+		$included_courses = null;
+
+		if ( 'complete' === $this->status ) {
 
 			$included_courses = empty( $completed_ids ) ? array( '-1000' ) : $completed_ids;
-			if ( empty( $completed_ids ) ) {
-				add_action( 'sensei_loop_course_inside_before', array( $this, 'completed_no_course_message_output' ) );
-			}
-		} elseif ( 'active' == $this->status ) {
+			$empty_callback   = [ $this, 'completed_no_course_message_output' ];
+
+		} elseif ( 'active' === $this->status ) {
 
 			$included_courses = empty( $active_ids ) ? array( '-1000' ) : $active_ids;
-			if ( empty( $active_ids ) ) {
-				add_action( 'sensei_loop_course_inside_before', array( $this, 'active_no_course_message_output' ) );
-			}
-		} else { // all courses
+			$empty_callback   = [ $this, 'active_no_course_message_output' ];
 
-			if ( empty( $completed_ids ) && empty( $active_ids ) ) {
-
-				$included_courses = array( '-1000' ); // don't show any courses
-
-			} else {
-				$included_courses = Sensei_Utils::array_zip_merge( (array) $active_ids, (array) $completed_ids );
-			}
 		}
 
 		$number_of_posts = $this->number;
 
 		// course query parameters
 		$query_var_paged = get_query_var( 'paged' );
-		$query_args      = array(
-			'post_type'      => 'course',
-			'post_status'    => 'publish',
+		$base_query_args = array(
 			'orderby'        => $this->orderby,
 			'order'          => $this->order,
 			'paged'          => empty( $query_var_paged ) ? 1 : $query_var_paged,
 			'posts_per_page' => $number_of_posts,
-			'post__in'       => $included_courses,
 		);
 
-		$this->query = new WP_Query( $query_args );
+		if ( null !== $included_courses )  {
+			$base_query_args['post__in'] = $included_courses;
+		}
+
+		$learners    = Sensei_Learner::instance();
+		$this->query = $learners->get_enrolled_courses_query( $user_id, $base_query_args );
+
+		if ( empty( $this->query->found_posts ) ) {
+			add_action( 'sensei_loop_course_inside_before', $empty_callback );
+		}
 
 	}//end setup_course_query()
+
+	/**
+	 * Output the message that tells the user they have
+	 * no courses.
+	 *
+	 * @since 3.0.0
+	 */
+	public function no_course_message_output() {
+		?>
+
+		<li class="user-active">
+			<div class="sensei-message info">
+
+				<?php esc_html_e( 'You have no active or completed courses.', 'sensei-lms' ); ?>
+
+				<a href="<?php echo esc_attr( Sensei_Course::get_courses_page_url() ); ?>">
+
+					<?php esc_html_e( 'Start a Course!', 'sensei-lms' ); ?>
+
+				</a>
+
+			</div>
+		</li>
+		<?php
+	}
 
 	/**
 	 * Output the message that tells the user they have
