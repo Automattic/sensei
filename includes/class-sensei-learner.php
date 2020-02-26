@@ -9,10 +9,10 @@
  * @since 1.9.0
  */
 class Sensei_Learner {
-	const LEARNER_TERM_PREFIX            = 'user-';
-	const COURSE_STATUS_FILTER           = 'sensei_course_status';
-	const COURSE_STATUS_FILTER_COMPLETED = 'completed';
-	const COURSE_STATUS_FILTER_ACTIVE    = 'active';
+	const LEARNER_TERM_PREFIX              = 'user-';
+	const COURSE_PROGRESS_FILTER           = 'sensei_course_progress';
+	const COURSE_PROGRESS_FILTER_COMPLETED = 'completed';
+	const COURSE_PROGRESS_FILTER_ACTIVE    = 'active';
 
 	/**
 	 * Instance of singleton.
@@ -134,7 +134,7 @@ class Sensei_Learner {
 	 * @return WP_Query
 	 */
 	public function get_enrolled_active_courses_query( $user_id, $base_query_args = [] ) {
-		$base_query_args[ self::COURSE_STATUS_FILTER ] = self::COURSE_STATUS_FILTER_ACTIVE;
+		$base_query_args[ self::COURSE_PROGRESS_FILTER ] = self::COURSE_PROGRESS_FILTER_ACTIVE;
 
 		return $this->get_enrolled_courses_query( $user_id, $base_query_args );
 	}
@@ -147,7 +147,7 @@ class Sensei_Learner {
 	 * @return WP_Query
 	 */
 	public function get_enrolled_completed_courses_query( $user_id, $base_query_args = [] ) {
-		$base_query_args[ self::COURSE_STATUS_FILTER ] = self::COURSE_STATUS_FILTER_COMPLETED;
+		$base_query_args[ self::COURSE_PROGRESS_FILTER ] = self::COURSE_PROGRESS_FILTER_COMPLETED;
 
 		return $this->get_enrolled_courses_query( $user_id, $base_query_args );
 	}
@@ -188,12 +188,12 @@ class Sensei_Learner {
 			'include_children' => false,
 		];
 
-		if ( isset( $query_args[ self::COURSE_STATUS_FILTER ] ) ) {
+		if ( isset( $query_args[ self::COURSE_PROGRESS_FILTER ] ) ) {
 			$course_ids = [];
-			if ( self::COURSE_STATUS_FILTER_COMPLETED === $query_args[ self::COURSE_STATUS_FILTER ] ) {
+			if ( self::COURSE_PROGRESS_FILTER_COMPLETED === $query_args[ self::COURSE_PROGRESS_FILTER ] ) {
 				$course_ids = $this->get_completed_course_ids( $user_id );
 			}
-			if ( self::COURSE_STATUS_FILTER_ACTIVE === $query_args[ self::COURSE_STATUS_FILTER ] ) {
+			if ( self::COURSE_PROGRESS_FILTER_ACTIVE === $query_args[ self::COURSE_PROGRESS_FILTER ] ) {
 				$course_ids = $this->get_active_course_ids( $user_id );
 			}
 
@@ -210,7 +210,7 @@ class Sensei_Learner {
 
 			$query_args['post__in'] = $course_ids;
 
-			unset( $query_args[ self::COURSE_STATUS_FILTER ] );
+			unset( $query_args[ self::COURSE_PROGRESS_FILTER ] );
 		}
 
 		return $query_args;
