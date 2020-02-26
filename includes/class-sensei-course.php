@@ -1386,7 +1386,7 @@ class Sensei_Course {
 
 			$completed_query_args    = [
 				// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Safe use of pagination var.
-				'paged'          => isset( $_GET['active_page'] ) ? absint( $_GET['active_page'] ) : 1,
+				'paged'          => isset( $_GET['completed_page'] ) ? absint( $_GET['completed_page'] ) : 1,
 				'posts_per_page' => $per_page,
 			];
 			$completed_courses_query = $learner_manager->get_enrolled_completed_courses_query( $user->ID, $completed_query_args );
