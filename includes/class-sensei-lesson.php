@@ -722,9 +722,10 @@ class Sensei_Lesson {
 	 * No lesson should have the $post_id (received parameter) lesson as a prerequisite.
 	 *
 	 * @access public
+	 * @param int $post_id (default: 0).
 	 * @return void
 	 */
-	public function remove_self_from_prerequisites( $post_id ) {
+	public function remove_self_from_prerequisites( $post_id = 0 ) {
 
 		// Get all the Lesson Posts.
 		$post_args = array(
@@ -756,23 +757,23 @@ class Sensei_Lesson {
 	}
 
 	/**
-	 * lesson_course_meta_box_content function.
+	 * Lesson_course_meta_box_content function.
 	 *
 	 * @access public
 	 * @return void
 	 */
 	public function lesson_course_meta_box_content() {
 		global $post;
-		// Setup Lesson Meta Data
+		// Setup Lesson Meta Data.
 		$selected_lesson_course = 0;
 		if ( 0 < $post->ID ) {
 			$selected_lesson_course = get_post_meta( $post->ID, '_lesson_course', true );
 		} // End If Statement
-		// Handle preselected course
+		// Handle preselected course.
 		if ( isset( $_GET['course_id'] ) && ( 0 < absint( $_GET['course_id'] ) ) ) {
 			$selected_lesson_course = absint( $_GET['course_id'] );
 		} // End If Statement
-		// Get the Lesson Posts
+		// Get the Lesson Posts.
 		$post_args   = array(
 			'post_type'        => 'course',
 			'posts_per_page'   => -1,
@@ -782,12 +783,12 @@ class Sensei_Lesson {
 			'suppress_filters' => 0,
 		);
 		$posts_array = get_posts( $post_args );
-		// Buid the HTML to Output
+		// Build the HTML to Output.
 		$html = '';
-		// Nonce
+		// Nonce.
 		$html .= wp_nonce_field( 'sensei-save-post-meta', 'woo_' . $this->token . '_nonce', true, false );
 
-		// Select the course for the lesson
+		// Select the course for the lesson.
 		$drop_down_args = array(
 			'name'  => 'lesson_course',
 			'id'    => 'lesson-course-options',
