@@ -4,6 +4,7 @@ require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-he
 
 class Sensei_Class_Student_Test extends WP_UnitTestCase {
 	use Sensei_Course_Enrolment_Test_Helpers;
+	use Sensei_Course_Enrolment_Manual_Test_Helpers;
 
 	/**
 	 * Constructor function
@@ -61,6 +62,87 @@ class Sensei_Class_Student_Test extends WP_UnitTestCase {
 
 		$student_term = Sensei_Learner::get_learner_term( $student_id );
 		$this->assertFalse( has_term( $student_term->term_id, Sensei_PostTypes::LEARNER_TAXONOMY_NAME, $course_id ), 'User terms should be removed when user is deleted' );
+	}
+
+	/**
+	 * Tests to make sure menu order is used when course order has been set.
+	 */
+	public function testQueryArgsUseMenuOrderWhenCourseOrderSet() {
+		$learner_manager = Sensei_Learner::instance();
+
+		$args_without_order = $learner_manager->get_enrolled_courses_query_args( 0 );
+		$this->assertEqual( 'date', $args_without_order['orderby'], 'Initially we should order by date' );
+
+		// Simulate us setting the course order. Normally this would also set the menu_order for all courses.
+		update_option( 'sensei_course_order', '1,2,3' );
+
+		$args_with_order = $learner_manager->get_enrolled_courses_query_args( 0 );
+		$this->assertEqual( 'menu_order', $args_with_order['orderby'], 'Initially we should order by date' );
+	}
+
+	/**
+	 * Tests to make sure only enrolled courses show up with query.
+	 */
+	public function testGetEnrolledCoursesQuerySimple() {
+		$enrolled_course_ids = $this->factory->course->create_many( 2 );
+		$other_course_ids    = $this->factory->course->create_many( 1 );
+		$student_id          = $this->createStandardStudent();
+		$learner_manager     = Sensei_Learner::instance();
+
+		$this->prepareEnrolmentManager();
+
+		$manual_provider = Sensei_Course_Enrolment_Manager::instance()->get_manual_enrolment_provider();
+
+		foreach ( $enrolled_course_ids as $course_id ) {
+			$manual_provider->enrol_student( $student_id, $course_id );
+		}
+
+		$base_query_args        = [
+			'posts_per_page' => -1,
+		];
+		$query_enrolled_courses = $learner_manager->get_enrolled_courses_query( $student_id, $base_query_args );
+
+		$this->assertTrue( $query_enrolled_courses instanceof WP_Query, 'Returned value should be instance of WP_Query' );
+		$this->assertEquals( count( $enrolled_course_ids ), $query_enrolled_courses->found_posts, 'Number of found posts should match number of enrolled courses' );
+
+		foreach ( $query_enrolled_courses->posts as $check_post ) {
+			$this->assertTrue( in_array( $check_post->ID, $enrolled_course_ids, true ), 'Enrolled course should be included in results' );
+		}
+	}
+
+	/**
+	 * Tests to make sure users that have stale enrolment results are calculated before querying.
+	 */
+	public function testGetEnrolledCoursesQueryStaleIncluded() {
+		$enrolled_course_ids = $this->factory->course->create_many( 2 );
+		$other_course_ids    = $this->factory->course->create_many( 1 );
+		$student_id          = $this->createStandardStudent();
+		$learner_manager     = Sensei_Learner::instance();
+
+		$this->prepareEnrolmentManager();
+
+		foreach ( $enrolled_course_ids as $course_id ) {
+			$this->directlyEnrolStudent( $student_id, $course_id );
+		}
+
+		$user_meta = get_user_meta( $student_id, Sensei_Course_Enrolment_Manager::LEARNER_CALCULATION_META_NAME, true );
+		$this->assertEmpty( $user_meta, 'Learner should not be calculated prior to querying courses' );
+
+		// This should run
+		$base_query_args        = [
+			'posts_per_page' => -1,
+		];
+		$query_enrolled_courses = $learner_manager->get_enrolled_courses_query( $student_id, $base_query_args );
+
+		$user_meta = get_user_meta( $student_id, Sensei_Course_Enrolment_Manager::LEARNER_CALCULATION_META_NAME, true );
+		$this->assertEquals( Sensei_Course_Enrolment_Manager::get_enrolment_calculation_version(), $user_meta, 'Learner should have been calculated prior to querying courses' );
+
+		$this->assertTrue( $query_enrolled_courses instanceof WP_Query, 'Returned value should be instance of WP_Query' );
+		$this->assertEquals( count( $enrolled_course_ids ), $query_enrolled_courses->found_posts, 'Number of found posts should match number of enrolled courses' );
+
+		foreach ( $query_enrolled_courses->posts as $check_post ) {
+			$this->assertTrue( in_array( $check_post->ID, $enrolled_course_ids, true ), 'Enrolled course should be included in results' );
+		}
 	}
 
 	/**
