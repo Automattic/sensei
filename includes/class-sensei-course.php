@@ -723,9 +723,9 @@ class Sensei_Course {
 				'3.0.0'
 			);
 
-			$learner = Sensei_Learner::instance();
+			$learner_manager = Sensei_Learner::instance();
 
-			return $learner->get_enrolled_courses_query( get_current_user_id(), $base_query )->posts;
+			return $learner_manager->get_enrolled_courses_query( get_current_user_id(), $base_query )->posts;
 		}
 
 		$results_array = array();
@@ -795,15 +795,15 @@ class Sensei_Course {
 					'3.0.0'
 				);
 
-				$learner   = Sensei_Learner::instance();
-				$post_args = array(
+				$learner_manager = Sensei_Learner::instance();
+				$post_args       = array(
 					'orderby'          => $orderby,
 					'order'            => $order,
 					'post__in'         => $includes,
 					'post__not_in'     => $excludes,
 					'suppress_filters' => 0,
 				);
-				$post_args = $learner->get_enrolled_courses_query_args( get_current_user_id(), $post_args );
+				$post_args       = $learner_manager->get_enrolled_courses_query_args( get_current_user_id(), $post_args );
 
 				break;
 
@@ -1399,7 +1399,7 @@ class Sensei_Course {
 
 			$active_count = $completed_count = 0;
 
-			$learner = Sensei_Learner::instance();
+			$learner_manager = Sensei_Learner::instance();
 
 			$base_query_args = [
 				'posts_per_page' => $per_page,
@@ -1416,7 +1416,7 @@ class Sensei_Course {
 						'post__in' => $active_ids,
 					]
 				);
-				$active_courses_query = $learner->get_enrolled_courses_query( $user->ID, $active_query_args );
+				$active_courses_query = $learner_manager->get_enrolled_courses_query( $user->ID, $active_query_args );
 				$active_courses       = $active_courses_query->posts;
 				$active_count         = $active_courses_query->found_posts;
 			} // End If Statement
@@ -1432,7 +1432,7 @@ class Sensei_Course {
 						'post__in' => $completed_ids,
 					]
 				);
-				$completed_courses_query = $learner->get_enrolled_courses_query( $user->ID, $completed_query_args );
+				$completed_courses_query = $learner_manager->get_enrolled_courses_query( $user->ID, $completed_query_args );
 				$completed_courses       = $completed_courses_query->posts;
 				$completed_count         = $completed_courses_query->found_posts;
 			} // End If Statement
