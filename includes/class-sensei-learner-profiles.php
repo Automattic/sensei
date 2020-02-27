@@ -42,9 +42,9 @@ class Sensei_Learner_Profiles {
 
 	/**
 	 * Enqueue scripts for learner profiles
-   *
-   * @since 3.0.0
-   * @return void
+	 *
+	 * @return void
+	 * @since 3.0.0
 	 */
 	public function enqueue_scripts() {
 		$disable_js = Sensei_Utils::get_setting_as_flag( 'js_disable', 'sensei_settings_js_disable' );
