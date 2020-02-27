@@ -795,6 +795,11 @@ section.entry span.course-lesson-progress { margin-left: 10px; }
     padding: 1em 1.618em;
     border:none!important;
     @include border_radius(5px);
+    &:after {
+      content: "";
+      clear: both;
+      display: block;
+    }
     &:before  {
       @include iconbefore();
       font-size: 1.387em;
@@ -868,7 +873,7 @@ section.entry span.course-lesson-progress { margin-left: 10px; }
     a.next-lesson {
       display: inline-block;
       padding: 5px 20px 4px;
-      margin: -3px 0 0 1em;
+      margin-left: 1em;
       @include border_radius(5px);
       text-decoration: none;
       font-size: 11px;
