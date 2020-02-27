@@ -142,14 +142,6 @@ class Sensei_Frontend {
 			// My Courses tabs script.
 			wp_enqueue_script( Sensei()->token . '-tabs', esc_url( Sensei()->plugin_url . 'assets/js/tabs' . $suffix . '.js' ), array( ), Sensei()->version, true );
 
-			// Course Archive javascript.
-			if ( is_post_type_archive( 'course' ) ) {
-
-				wp_register_script( 'sensei-course-archive-js', esc_url( Sensei()->plugin_url . 'assets/js/frontend/course-archive' . $suffix . '.js' ), array( 'jquery' ), '1', true );
-				wp_enqueue_script( 'sensei-course-archive-js' );
-
-			}
-
 			// Allow additional scripts to be loaded.
 			do_action( 'sensei_additional_scripts' );
 
