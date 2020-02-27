@@ -140,7 +140,7 @@ class Sensei_Frontend {
 			$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 			// My Courses tabs script.
-			wp_enqueue_script( Sensei()->token . '-tabs', esc_url( Sensei()->plugin_url . 'assets/js/tabs' . $suffix . '.js' ), array( ), Sensei()->version, true );
+			wp_register_script( Sensei()->token . '-tabs', esc_url( Sensei()->plugin_url . 'assets/js/tabs' . $suffix . '.js' ), array(), Sensei()->version, true );
 
 			// Allow additional scripts to be loaded.
 			do_action( 'sensei_additional_scripts' );

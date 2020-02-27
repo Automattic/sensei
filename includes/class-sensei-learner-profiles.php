@@ -31,12 +31,28 @@ class Sensei_Learner_Profiles {
 		add_action( 'init', array( $this, 'setup_permastruct' ) );
 		add_filter( 'wp_title', array( $this, 'page_title' ), 10, 2 );
 
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+
 		// Set heading for courses section of learner profiles
 		add_action( 'sensei_learner_profile_info', array( $this, 'learner_profile_courses_heading' ), 30, 1 );
 
 		// Add class to body tag
 		add_filter( 'body_class', array( $this, 'learner_profile_body_class' ), 10, 1 );
 	} // End __construct()
+
+	/**
+	 * Enqueue scripts for learner profiles
+   *
+   * @since 3.0.0
+   * @return void
+	 */
+	public function enqueue_scripts() {
+		$disable_js = Sensei_Utils::get_setting_as_flag( 'js_disable', 'sensei_settings_js_disable' );
+
+		if ( ! $disable_js ) {
+			wp_enqueue_script( Sensei()->token . '-tabs' );
+		}
+	}
 
 	/**
 	 * Setup permalink structure for learner profiles
