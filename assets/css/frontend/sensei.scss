@@ -63,6 +63,14 @@ a.sensei-certificate-link {
   text-decoration: none;
 }
 
+/* Spacing defaults */
+
+.sensei .entry-content {
+	section {
+		padding: 0;
+	}
+}
+
 /* Courses */
 .course,
 .course-container,
@@ -631,6 +639,11 @@ section.entry span.course-lesson-progress { margin-left: 10px; }
   margin: 0 0 1em 0;
 }
 
+.sensei .archive-header {
+  background: transparent;
+  padding: 0;
+}
+
 .sensei-course-filters {
   margin: 0 0 2em 0;
   padding: 0;
@@ -707,6 +720,7 @@ section.entry span.course-lesson-progress { margin-left: 10px; }
 .meter {
   height: 25px;  /* Can be anything */
   line-height: 25px;
+  font-size: 16px;
   position: relative;
   margin: 20px 0; /* Just for demo spacing */
   background: darken($bg_light, 5%);
