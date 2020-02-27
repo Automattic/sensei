@@ -140,16 +140,7 @@ class Sensei_Frontend {
 			$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 			// My Courses tabs script.
-			wp_register_script( Sensei()->token . '-user-dashboard', esc_url( Sensei()->plugin_url . 'assets/js/user-dashboard' . $suffix . '.js' ), array( 'jquery-ui-tabs' ), Sensei()->version, true );
-			wp_enqueue_script( Sensei()->token . '-user-dashboard' );
-
-			// Course Archive javascript.
-			if ( is_post_type_archive( 'course' ) ) {
-
-				wp_register_script( 'sensei-course-archive-js', esc_url( Sensei()->plugin_url . 'assets/js/frontend/course-archive' . $suffix . '.js' ), array( 'jquery' ), '1', true );
-				wp_enqueue_script( 'sensei-course-archive-js' );
-
-			}
+			wp_register_script( Sensei()->token . '-tabs', esc_url( Sensei()->plugin_url . 'assets/js/tabs' . $suffix . '.js' ), array(), Sensei()->version, true );
 
 			// Allow additional scripts to be loaded.
 			do_action( 'sensei_additional_scripts' );

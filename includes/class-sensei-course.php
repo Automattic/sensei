@@ -1690,7 +1690,7 @@ class Sensei_Course {
 		?>
 		<div id="my-courses">
 
-			<ul>
+			<ul class="sensei-tabs">
 				<li><a href="#active-courses"><?php esc_html_e( 'Active Courses', 'sensei-lms' ); ?></a></li>
 				<li><a href="#completed-courses"><?php esc_html_e( 'Completed Courses', 'sensei-lms' ); ?></a></li>
 			</ul>
@@ -2521,7 +2521,7 @@ class Sensei_Course {
 		?>
 
 		<form class="sensei-ordering" name="sensei-course-order" action="<?php echo esc_attr( Sensei_Utils::get_current_url() ); ?>" method="get">
-			<select name="course-orderby" class="orderby">
+			<select name="course-orderby" class="orderby" onchange="this.form.submit()">
 				<?php
 				foreach ( $course_order_by_options as $value => $text ) {
 

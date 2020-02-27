@@ -508,6 +508,41 @@ section.entry span.course-lesson-progress { margin-left: 10px; }
   }
 }
 
+.sensei-tabs {
+  display: block;
+  margin: 10px 0 1em 0;
+  list-style: none;
+  padding: 0;
+
+  li {
+    display: inline-block;
+    margin: 0 .2em 1px 0;
+    padding: 0;
+    white-space: nowrap;
+
+    a {
+      padding: 5px 20px;
+      font-weight: bold;
+
+      text-decoration: none!important;
+      line-height: 1;
+      outline: none;
+
+    }
+
+    a.sensei-tab-active {
+      color: #333;
+      background: #e2e2e2;
+      border-radius: 100px;
+    }
+  }
+}
+
+.sensei-tab-hidden {
+  display: none;
+}
+
+
 /* My Courses */
 #my-courses  {
   .register-link {
@@ -519,88 +554,6 @@ section.entry span.course-lesson-progress { margin-left: 10px; }
     }
     input[type="text"], input[type="password"] {
       width: 90%;
-    }
-  }
-  &.ui-tabs {
-    position: relative;
-    zoom: 1;
-    .ui-tabs-nav {
-      margin: 0 0 10px!important;
-      float: left;
-      width: 100%;
-      padding: .2em 0 0;
-      li {
-        list-style: none;
-        float: left;
-        position: relative;
-        top: 1px;
-        margin: 0 .2em 1px 0;
-        border-bottom: 0 !important;
-        padding: 0;
-        white-space: nowrap;
-        a {
-          float: left;
-          padding: 5px 20px;
-          font-weight: bold;
-          color: #777;
-          text-decoration: none;
-          outline: none!important;
-          line-height: 1;
-          cursor: pointer;
-        }
-        &.ui-tabs-selected {
-          margin-bottom: 0;
-          padding-bottom: 1px;
-          a {
-            cursor: text;
-          }
-        }
-        &.ui-state-hover {
-          a {
-            color: #555;
-          }
-        }
-        &.ui-state-active {
-          a {
-            color: #333;
-            background: #e2e2e2;
-            border-radius: 100px;
-            -moz-border-radius: 100px;
-            -webkit-border-radius: 100px;
-          }
-        }
-        &.ui-state-disabled {
-          a {
-            cursor: text;
-          }
-        }
-        &.ui-state-processing {
-          a {
-            cursor: text;
-          }
-        }
-      }
-    }
-    &.ui-tabs-collapsible {
-      .ui-tabs-nav {
-        li {
-          &.ui-tabs-selected {
-            a {
-              cursor: pointer;
-            }
-          }
-        }
-      }
-    }
-    .ui-tabs-panel {
-      clear: both;
-      display: block;
-      border-width: 0;
-      padding: 1em 0;
-      background: none;
-    }
-    .ui-tabs-hide {
-      display: none !important;
     }
   }
 }
