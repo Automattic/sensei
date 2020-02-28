@@ -210,6 +210,57 @@ class Sensei_Course_Enrolment_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests to make sure a provider version bump produces a new result version hash.
+	 */
+	public function testHashChangesOnProviderVersionChange() {
+		Sensei_Test_Enrolment_Provider_Version_Morph::$version = 1;
+
+		$course_id        = $this->getSimpleCourse();
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+
+		$this->resetAndSetUpVersionedProvider( false );
+
+		$initial_version_hash = $course_enrolment->get_current_enrolment_result_version();
+
+		$this->resetAndSetUpVersionedProvider( true ); // Bump version.
+
+		$this->assertNotEquals( $initial_version_hash, $course_enrolment->get_current_enrolment_result_version(), 'Provider version bump should produce a new result version' );
+	}
+
+	/**
+	 * Tests to make sure a course salt reset produces a new result version hash.
+	 */
+	public function testHashChangesOnCourseSaltReset() {
+		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Always_Provides::class );
+		$this->prepareEnrolmentManager();
+
+		$course_id        = $this->getSimpleCourse();
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+
+		$initial_version_hash = $course_enrolment->get_current_enrolment_result_version();
+
+		$course_enrolment->reset_course_enrolment_salt();
+
+		$this->assertNotEquals( $initial_version_hash, $course_enrolment->get_current_enrolment_result_version(), 'Course salt reset should produce a new result version' );
+	}
+
+	/**
+	 * Tests to make sure a site salt reset produces a new result version hash.
+	 */
+	public function testHashChangesOnSiteSaltReset() {
+		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Always_Provides::class );
+		$this->prepareEnrolmentManager();
+
+		$course_id        = $this->getSimpleCourse();
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+
+		$initial_version_hash = $course_enrolment->get_current_enrolment_result_version();
+		Sensei_Course_Enrolment_Manager::instance()->reset_site_salt();
+
+		$this->assertNotEquals( $initial_version_hash, $course_enrolment->get_current_enrolment_result_version(), 'Site salt reset should produce a new result version' );
+	}
+
+	/**
 	 * Tests a provider that actually has an opinion about which students are enrolled. Only enrols users with "Dinosaur" in their name.
 	 */
 	public function testEnrolmentCheckConditionalUserPositive() {

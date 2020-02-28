@@ -89,7 +89,9 @@ class Sensei_Enrolment_Job_Scheduler {
 	 * @access private
 	 */
 	public function maybe_start_learner_calculation() {
-		if ( get_option( self::CALCULATION_VERSION_OPTION_NAME ) === Sensei_Course_Enrolment_Manager::get_enrolment_calculation_version() ) {
+		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
+
+		if ( get_option( self::CALCULATION_VERSION_OPTION_NAME ) === $enrolment_manager->get_enrolment_calculation_version() ) {
 			return;
 		}
 
@@ -105,9 +107,11 @@ class Sensei_Enrolment_Job_Scheduler {
 	public function run_learner_calculation() {
 		$job                 = new Sensei_Enrolment_Learner_Calculation_Job( 20 );
 		$completion_callback = function() {
+			$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
+
 			update_option(
 				self::CALCULATION_VERSION_OPTION_NAME,
-				Sensei_Course_Enrolment_Manager::get_enrolment_calculation_version()
+				$enrolment_manager->get_enrolment_calculation_version()
 			);
 		};
 

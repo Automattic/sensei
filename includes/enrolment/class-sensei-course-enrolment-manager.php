@@ -31,6 +31,13 @@ class Sensei_Course_Enrolment_Manager {
 	private $enrolment_providers;
 
 	/**
+	 * Hash of all the enrolment provider versions.
+	 *
+	 * @var string
+	 */
+	private $enrolment_providers_versions_hash;
+
+	/**
 	 * Deferred enrolment checks.
 	 *
 	 * @var array
@@ -100,6 +107,31 @@ class Sensei_Course_Enrolment_Manager {
 
 			$this->enrolment_providers[ $provider->get_id() ] = $provider;
 		}
+	}
+
+	/**
+	 * Generates a hash of all the enrolment provider versions.
+	 *
+	 * @return string
+	 */
+	public function get_enrolment_provider_versions_hash() {
+		if ( ! isset( $this->enrolment_providers_versions_hash ) ) {
+			$versions = [];
+			foreach ( $this->get_all_enrolment_providers() as $enrolment_provider ) {
+				if ( ! ( $enrolment_provider instanceof Sensei_Course_Enrolment_Provider_Interface ) ) {
+					continue;
+				}
+
+				$enrolment_provider_class              = get_class( $enrolment_provider );
+				$versions[ $enrolment_provider_class ] = $enrolment_provider->get_version();
+			}
+
+			ksort( $versions );
+
+			$this->enrolment_providers_versions_hash = md5( wp_json_encode( $versions ) );
+		}
+
+		return $this->enrolment_providers_versions_hash;
 	}
 
 	/**
@@ -270,11 +302,11 @@ class Sensei_Course_Enrolment_Manager {
 	 *
 	 * @return string
 	 */
-	public static function get_site_salt() {
+	public function get_site_salt() {
 		$enrolment_salt = get_option( self::COURSE_ENROLMENT_SITE_SALT_OPTION );
 
 		if ( ! $enrolment_salt ) {
-			return self::reset_site_salt();
+			return $this->reset_site_salt();
 		}
 
 		return $enrolment_salt;
@@ -285,7 +317,7 @@ class Sensei_Course_Enrolment_Manager {
 	 *
 	 * @return string
 	 */
-	public static function reset_site_salt() {
+	public function reset_site_salt() {
 		$new_salt = md5( uniqid() );
 
 		update_option( self::COURSE_ENROLMENT_SITE_SALT_OPTION, $new_salt, true );
@@ -351,7 +383,7 @@ class Sensei_Course_Enrolment_Manager {
 	public function recalculate_enrolments( $user_id ) {
 
 		$learner_calculated_version = get_user_meta( $user_id, self::LEARNER_CALCULATION_META_NAME, true );
-		if ( self::get_enrolment_calculation_version() === $learner_calculated_version ) {
+		if ( $this->get_enrolment_calculation_version() === $learner_calculated_version ) {
 			return;
 		}
 
@@ -375,7 +407,7 @@ class Sensei_Course_Enrolment_Manager {
 		update_user_meta(
 			$user_id,
 			self::LEARNER_CALCULATION_META_NAME,
-			self::get_enrolment_calculation_version()
+			$this->get_enrolment_calculation_version()
 		);
 	}
 
@@ -393,7 +425,13 @@ class Sensei_Course_Enrolment_Manager {
 	 *
 	 * @return string The calculation version.
 	 */
-	public static function get_enrolment_calculation_version() {
-		return self::get_site_salt() . '-' . Sensei()->version;
+	public function get_enrolment_calculation_version() {
+		$hash_components   = [];
+		$hash_components[] = $this->get_site_salt();
+		$hash_components[] = $this->get_enrolment_provider_versions_hash();
+
+		$current_hash = md5( implode( '-', $hash_components ) );
+
+		return $current_hash . '-' . Sensei()->version;
 	}
 }

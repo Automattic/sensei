@@ -55,12 +55,13 @@ class Sensei_Enrolment_Learner_Calculation_Job implements Sensei_Enrolment_Job_I
 	 * @return bool
 	 */
 	public function run() {
+		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
 
 		$meta_query = [
 			'relation' => 'OR',
 			[
 				'key'     => Sensei_Course_Enrolment_Manager::LEARNER_CALCULATION_META_NAME,
-				'value'   => Sensei_Course_Enrolment_Manager::get_enrolment_calculation_version(),
+				'value'   => $enrolment_manager->get_enrolment_calculation_version(),
 				'compare' => '!=',
 			],
 			[

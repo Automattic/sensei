@@ -193,9 +193,11 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Course_Enrolment_Manager::get_site_salt
 	 */
 	public function testGetSiteEnrolmentSalt() {
-		$enrolment_salt = Sensei_Course_Enrolment_Manager::get_site_salt();
+		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
+		$enrolment_salt    = $enrolment_manager->get_site_salt();
+
 		$this->assertTrue( ! empty( $enrolment_salt ), 'Enrolment salt should not be empty' );
-		$this->assertEquals( Sensei_Course_Enrolment_Manager::get_site_salt(), $enrolment_salt, 'Getting enrolment salt twice without resetting should product the same result' );
+		$this->assertEquals( $enrolment_manager->get_site_salt(), $enrolment_salt, 'Getting enrolment salt twice without resetting should product the same result' );
 	}
 
 	/**
@@ -204,11 +206,13 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Course_Enrolment_Manager::get_site_salt
 	 */
 	public function testResetSiteEnrolmentSalt() {
-		$enrolment_salt = Sensei_Course_Enrolment_Manager::get_site_salt();
+		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
+		$enrolment_salt    = $enrolment_manager->get_site_salt();
+
 		$this->assertTrue( ! empty( $enrolment_salt ), 'Enrolment salt should not be empty' );
-		$new_enrolment_salt = Sensei_Course_Enrolment_Manager::reset_site_salt();
-		$this->assertNotEquals( Sensei_Course_Enrolment_Manager::get_site_salt(), $enrolment_salt, 'Getting enrolment salt after resetting it should produce a different result.' );
-		$this->assertEquals( Sensei_Course_Enrolment_Manager::get_site_salt(), $new_enrolment_salt, 'Getting enrolment salt after resetting return the same salt as the reset method returns.' );
+		$new_enrolment_salt = $enrolment_manager->reset_site_salt();
+		$this->assertNotEquals( $enrolment_manager->get_site_salt(), $enrolment_salt, 'Getting enrolment salt after resetting it should produce a different result.' );
+		$this->assertEquals( $enrolment_manager->get_site_salt(), $new_enrolment_salt, 'Getting enrolment salt after resetting return the same salt as the reset method returns.' );
 	}
 
 	/**
@@ -216,9 +220,10 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
  * all courses.
  */
 	public function testEnrolmentsForAllCoursesAreCalculated() {
-		$simple_course = $this->getSimpleCourse();
-		$dog_course    = $this->getDogCourse();
-		$student_id    = $this->createStandardStudent();
+		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
+		$simple_course     = $this->getSimpleCourse();
+		$dog_course        = $this->getDogCourse();
+		$student_id        = $this->createStandardStudent();
 
 		$this->prepareEnrolmentManager();
 
@@ -234,7 +239,7 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 		Sensei_Course_Enrolment_Manager::instance()->recalculate_enrolments( $student_id );
 
 		$user_meta = get_user_meta( $student_id, Sensei_Course_Enrolment_Manager::LEARNER_CALCULATION_META_NAME, true );
-		$this->assertEquals( Sensei_Course_Enrolment_Manager::get_enrolment_calculation_version(), $user_meta );
+		$this->assertEquals( $enrolment_manager->get_enrolment_calculation_version(), $user_meta );
 	}
 
 	/**
@@ -242,15 +247,16 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 	 * have been already calculated.
 	 */
 	public function testNoCalculationIsPerformedWhenAlreadyCalculated() {
-		$simple_course = $this->getSimpleCourse();
-		$student_id    = $this->createStandardStudent();
+		$this->prepareEnrolmentManager();
+
+		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
+		$simple_course     = $this->getSimpleCourse();
+		$student_id        = $this->createStandardStudent();
 		update_user_meta(
 			$student_id,
 			Sensei_Course_Enrolment_Manager::LEARNER_CALCULATION_META_NAME,
-			Sensei_Course_Enrolment_Manager::get_enrolment_calculation_version()
+			$enrolment_manager->get_enrolment_calculation_version()
 		);
-
-		$this->prepareEnrolmentManager();
 
 		$simple_mock = $this->create_course_enrolment_mock( $simple_course );
 
