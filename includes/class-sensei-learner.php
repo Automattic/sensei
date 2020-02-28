@@ -9,7 +9,7 @@
  * @since 1.9.0
  */
 class Sensei_Learner {
-	const LEARNER_TERM_PREFIX              = 'user-';
+	const LEARNER_TERM_PREFIX = 'user-';
 
 	/**
 	 * Instance of singleton.
