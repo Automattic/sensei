@@ -200,10 +200,10 @@ class Sensei_Learner {
 	 */
 	private function query_args_helper_course_id_inclusion( $query_args, $course_ids ) {
 		if ( ! empty( $query_args['post__in'] ) ) {
-			$existing_course_ids = (array) $query_args['post__in'];
-			$existing_course_ids = array_map( 'intval', $existing_course_ids );
+			$existing_post_ids = (array) $query_args['post__in'];
+			$existing_post_ids = array_map( 'intval', $existing_post_ids );
 
-			$course_ids = array_intersect( $course_ids, $existing_course_ids );
+			$course_ids = array_intersect( $course_ids, $existing_post_ids );
 		}
 
 		if ( empty( $course_ids ) ) {
