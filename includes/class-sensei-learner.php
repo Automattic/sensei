@@ -10,9 +10,6 @@
  */
 class Sensei_Learner {
 	const LEARNER_TERM_PREFIX              = 'user-';
-	const COURSE_PROGRESS_FILTER           = 'sensei_course_progress';
-	const COURSE_PROGRESS_FILTER_COMPLETED = 'completed';
-	const COURSE_PROGRESS_FILTER_ACTIVE    = 'active';
 
 	/**
 	 * Instance of singleton.
@@ -111,16 +108,7 @@ class Sensei_Learner {
 	 * @return WP_Query
 	 */
 	public function get_enrolled_courses_query( $user_id, $base_query_args = [] ) {
-		/**
-		 * Fire before we query a user's enrolled courses. This needs to be called before
-		 * building the query arguments because `active` courses might be incomplete if we
-		 * haven't verified a user's enrolment is up-to-date.
-		 *
-		 * @since 3.0.0
-		 *
-		 * @param int $user_id User ID.
-		 */
-		do_action( 'sensei_before_learners_enrolled_courses_query', $user_id );
+		$this->before_enrolled_courses_query($user_id);
 
 		$query_args = $this->get_enrolled_courses_query_args( $user_id, $base_query_args );
 
@@ -136,9 +124,13 @@ class Sensei_Learner {
 	 * @return WP_Query
 	 */
 	public function get_enrolled_active_courses_query( $user_id, $base_query_args = [] ) {
-		$base_query_args[ self::COURSE_PROGRESS_FILTER ] = self::COURSE_PROGRESS_FILTER_ACTIVE;
+		$this->before_enrolled_courses_query($user_id);
 
-		return $this->get_enrolled_courses_query( $user_id, $base_query_args );
+		$query_args = $this->get_enrolled_courses_query_args( $user_id, $base_query_args );
+		$course_ids = $this->get_active_course_ids( $user_id );
+		$query_args = $this->post_inclusion_query_args_helper( $query_args, $course_ids );
+
+		return new WP_Query( $query_args );
 	}
 
 	/**
@@ -150,9 +142,13 @@ class Sensei_Learner {
 	 * @return WP_Query
 	 */
 	public function get_enrolled_completed_courses_query( $user_id, $base_query_args = [] ) {
-		$base_query_args[ self::COURSE_PROGRESS_FILTER ] = self::COURSE_PROGRESS_FILTER_COMPLETED;
+		$this->before_enrolled_courses_query($user_id);
 
-		return $this->get_enrolled_courses_query( $user_id, $base_query_args );
+		$query_args = $this->get_enrolled_courses_query_args( $user_id, $base_query_args );
+		$course_ids = $this->get_completed_course_ids( $user_id );
+		$query_args = $this->post_inclusion_query_args_helper( $query_args, $course_ids );
+
+		return new WP_Query( $query_args );
 	}
 
 	/**
@@ -191,32 +187,54 @@ class Sensei_Learner {
 			'include_children' => false,
 		];
 
-		if ( isset( $query_args[ self::COURSE_PROGRESS_FILTER ] ) ) {
-			$course_ids = [];
-			if ( self::COURSE_PROGRESS_FILTER_COMPLETED === $query_args[ self::COURSE_PROGRESS_FILTER ] ) {
-				$course_ids = $this->get_completed_course_ids( $user_id );
-			}
-			if ( self::COURSE_PROGRESS_FILTER_ACTIVE === $query_args[ self::COURSE_PROGRESS_FILTER ] ) {
-				$course_ids = $this->get_active_course_ids( $user_id );
-			}
+		return $query_args;
+	}
 
-			if ( ! empty( $query_args['post__in'] ) ) {
-				$existing_course_ids = (array) $query_args['post__in'];
-				$existing_course_ids = array_map( 'intval', $existing_course_ids );
+	/**
+	 * Modify query to only include a certain set of course IDs.
+	 *
+	 * @param array $query_args Query arguments.
+	 * @param int[] $course_ids Course IDs
+	 *
+	 * @return array
+	 */
+	private function post_inclusion_query_args_helper( $query_args, $course_ids ) {
+		if ( ! empty( $query_args['post__in'] ) ) {
+			$existing_course_ids = (array) $query_args['post__in'];
+			$existing_course_ids = array_map( 'intval', $existing_course_ids );
 
-				$course_ids = array_intersect( $course_ids, $existing_course_ids );
-			}
-
-			if ( empty( $course_ids ) ) {
-				$course_ids = [ -1 ];
-			}
-
-			$query_args['post__in'] = $course_ids;
-
-			unset( $query_args[ self::COURSE_PROGRESS_FILTER ] );
+			$course_ids = array_intersect( $course_ids, $existing_course_ids );
 		}
 
+		if ( empty( $course_ids ) ) {
+			$course_ids = [ -1 ];
+		}
+
+		$query_args['post__in'] = $course_ids;
+
 		return $query_args;
+	}
+
+	/**
+	 * Notify that a user's enrolled courses are about to be queried.
+	 *
+	 * @param int   $user_id         User ID.
+	 * @param array $base_query_args Base query arguments.
+	 *
+	 * @return WP_Query
+	 */
+	private function before_enrolled_courses_query( $user_id ) {
+
+		/**
+		 * Fire before we query a user's enrolled courses. This needs to be called before
+		 * building the query arguments because `active` courses might be incomplete if we
+		 * haven't verified a user's enrolment is up-to-date.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param int $user_id User ID.
+		 */
+		do_action( 'sensei_before_learners_enrolled_courses_query', $user_id );
 	}
 
 	/**
