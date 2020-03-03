@@ -49,17 +49,7 @@ class Sensei_Frontend {
 	 */
 	public function __construct() {
 
-		$this->allowed_html = array(
-			'embed'  => array(),
-			'iframe' => array(
-				'width'           => array(),
-				'height'          => array(),
-				'src'             => array(),
-				'frameborder'     => array(),
-				'allowfullscreen' => array(),
-			),
-			'video'  => Sensei_Wp_Kses::get_video_html_tag_allowed_attributes(),
-		);
+		$this->allowed_html = Sensei_Wp_Kses::get_default_wp_kses_allowed_html();
 
 		// Template output actions.
 		add_action( 'sensei_before_main_content', array( $this, 'sensei_output_content_wrapper' ), 10 );
