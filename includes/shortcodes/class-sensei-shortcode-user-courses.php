@@ -195,7 +195,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 			add_action( 'sensei_loop_course_inside_before', $empty_callback );
 		}
 
-	}//end setup_course_query()
+	}
 
 	/**
 	 * Output the message that tells the user they have
