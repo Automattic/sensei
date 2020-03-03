@@ -154,9 +154,9 @@ class Sensei_Learner {
 		$query_args = $this->get_enrolled_courses_query_args( $user_id, $base_query_args );
 
 		if ( 'active' === $type ) {
-			$course_ids = $this->get_active_course_ids( $user_id );
+			$course_ids = $this->get_course_ids_by_progress_status( $user_id, 'in-progress' );
 		} else {
-			$course_ids = $this->get_completed_course_ids( $user_id );
+			$course_ids = $this->get_course_ids_by_progress_status( $user_id, 'complete' );
 		}
 
 		if ( ! empty( $query_args['post__in'] ) ) {
@@ -228,28 +228,6 @@ class Sensei_Learner {
 		 * @param int $user_id User ID.
 		 */
 		do_action( 'sensei_before_learners_enrolled_courses_query', $user_id );
-	}
-
-	/**
-	 * Get the course IDs for a learner's completed courses.
-	 *
-	 * @param int $user_id User ID.
-	 *
-	 * @return int[]
-	 */
-	private function get_completed_course_ids( $user_id ) {
-		return $this->get_course_ids_by_progress_status( $user_id, 'complete' );
-	}
-
-	/**
-	 * Get the course IDs for a learner's active courses.
-	 *
-	 * @param int $user_id User ID.
-	 *
-	 * @return int[]
-	 */
-	private function get_active_course_ids( $user_id ) {
-		return $this->get_course_ids_by_progress_status( $user_id, 'in-progress' );
 	}
 
 	/**
