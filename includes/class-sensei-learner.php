@@ -144,7 +144,7 @@ class Sensei_Learner {
 	 *
 	 * @param int    $user_id         User ID.
 	 * @param array  $base_query_args Base query arguments.
-	 * @param string $type            Type of query to run.
+	 * @param string $type            Type of query to run (`active` or `completed`).
 	 *
 	 * @return WP_Query
 	 */
