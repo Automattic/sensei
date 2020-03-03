@@ -693,9 +693,8 @@ class Sensei_Course {
 	 * @since 1.0.0
 	 * @since 2.0.0 For `$type` argument, `paidcourses` is no longer supported.
 	 * @since 2.0.0 For `$type` argument, `freecourses` is no longer supported.
-	 * @since 3.0.0 For `$type` argument, `usercourses` is no longer supported. Use `Sensei_Learner::get_enrolled_courses_query`.
 	 *
-	 * @access public
+	 * @deprecated 3.0.0
 	 *
 	 * @param int    $amount (default: 0)
 	 * @param string $type (default: 'default')
@@ -703,6 +702,8 @@ class Sensei_Course {
 	 * @return array
 	 */
 	public function course_query( $amount = 0, $type = 'default', $includes = array(), $excludes = array() ) {
+		_deprecated_function( __METHOD__, '3.0.0' );
+
 		if ( 'usercourses' === $type ) {
 			$base_query = [
 				'posts_per_page' => $amount,
@@ -713,13 +714,6 @@ class Sensei_Course {
 			if ( ! empty( $excludes ) ) {
 				$base_query['post__not_in'] = $excludes;
 			}
-
-			// Note: This may break deprecated behavior for users calling this for a non-current user ID.
-			_doing_it_wrong(
-				__METHOD__,
-				esc_html__( 'Querying for argument `$type` of `usercourses` is deprecated. Use `Sensei_Learner::get_enrolled_courses_query`.', 'sensei-lms' ),
-				'3.0.0'
-			);
 
 			$learner_manager = Sensei_Learner::instance();
 
@@ -754,15 +748,16 @@ class Sensei_Course {
 	 * @since 1.0.0
 	 * @since 2.0.0 For `$type` argument, `paidcourses` is no longer supported.
 	 * @since 2.0.0 For `$type` argument, `freecourses` is no longer supported.
-	 * @since 3.0.0 For `$type` argument, `usercourses` is no longer supported. Use `Sensei_Learner::get_enrolled_courses_query`.
 	 *
-	 * @access public
+	 * @deprecated 3.0.0
+	 *
 	 * @param string $type (default: '')
 	 * @param int    $amount (default: 0)
 	 * @param array  $includes (default: array())
 	 * @return array
 	 */
 	public function get_archive_query_args( $type = '', $amount = 0, $includes = array(), $excludes = array() ) {
+		_deprecated_function( __METHOD__, '3.0.0' );
 
 		global $wp_query;
 
@@ -787,12 +782,6 @@ class Sensei_Course {
 		switch ( $type ) {
 
 			case 'usercourses':
-				_doing_it_wrong(
-					__METHOD__,
-					esc_html__( 'Querying with argument `$type` having a value of `usercourses` is deprecated. Use `Sensei_Learner::get_enrolled_courses_query`.', 'sensei-lms' ),
-					'3.0.0'
-				);
-
 				$learner_manager = Sensei_Learner::instance();
 				$post_args       = array(
 					'orderby'          => $orderby,
