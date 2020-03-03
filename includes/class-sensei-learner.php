@@ -124,13 +124,7 @@ class Sensei_Learner {
 	 * @return WP_Query
 	 */
 	public function get_enrolled_active_courses_query( $user_id, $base_query_args = [] ) {
-		$this->before_enrolled_courses_query( $user_id );
-
-		$query_args = $this->get_enrolled_courses_query_args( $user_id, $base_query_args );
-		$course_ids = $this->get_active_course_ids( $user_id );
-		$query_args = $this->query_args_helper_course_id_inclusion( $query_args, $course_ids );
-
-		return new WP_Query( $query_args );
+		return $this->get_enrolled_courses_query_by_progress_status( $user_id, $base_query_args, 'active' );
 	}
 
 	/**
@@ -142,11 +136,41 @@ class Sensei_Learner {
 	 * @return WP_Query
 	 */
 	public function get_enrolled_completed_courses_query( $user_id, $base_query_args = [] ) {
+		return $this->get_enrolled_courses_query_by_progress_status( $user_id, $base_query_args, 'completed' );
+	}
+
+	/**
+	 * Query the courses a user is enrolled in by progress status.
+	 *
+	 * @param int    $user_id         User ID.
+	 * @param array  $base_query_args Base query arguments.
+	 * @param string $type            Type of query to run.
+	 *
+	 * @return WP_Query
+	 */
+	private function get_enrolled_courses_query_by_progress_status( $user_id, $base_query_args, $type ) {
 		$this->before_enrolled_courses_query( $user_id );
 
 		$query_args = $this->get_enrolled_courses_query_args( $user_id, $base_query_args );
-		$course_ids = $this->get_completed_course_ids( $user_id );
-		$query_args = $this->query_args_helper_course_id_inclusion( $query_args, $course_ids );
+
+		if ( 'active' === $type ) {
+			$course_ids = $this->get_active_course_ids( $user_id );
+		} else {
+			$course_ids = $this->get_completed_course_ids( $user_id );
+		}
+
+		if ( ! empty( $query_args['post__in'] ) ) {
+			$existing_post_ids = (array) $query_args['post__in'];
+			$existing_post_ids = array_map( 'intval', $existing_post_ids );
+
+			$course_ids = array_intersect( $course_ids, $existing_post_ids );
+		}
+
+		if ( empty( $course_ids ) ) {
+			$course_ids = [ -1 ];
+		}
+
+		$query_args['post__in'] = $course_ids;
 
 		return new WP_Query( $query_args );
 	}
@@ -186,31 +210,6 @@ class Sensei_Learner {
 			'terms'            => $learner_term->term_id,
 			'include_children' => false,
 		];
-
-		return $query_args;
-	}
-
-	/**
-	 * Modify query to only include a certain set of course IDs.
-	 *
-	 * @param array $query_args Query arguments.
-	 * @param int[] $course_ids Course IDs.
-	 *
-	 * @return array
-	 */
-	private function query_args_helper_course_id_inclusion( $query_args, $course_ids ) {
-		if ( ! empty( $query_args['post__in'] ) ) {
-			$existing_post_ids = (array) $query_args['post__in'];
-			$existing_post_ids = array_map( 'intval', $existing_post_ids );
-
-			$course_ids = array_intersect( $course_ids, $existing_post_ids );
-		}
-
-		if ( empty( $course_ids ) ) {
-			$course_ids = [ -1 ];
-		}
-
-		$query_args['post__in'] = $course_ids;
 
 		return $query_args;
 	}
