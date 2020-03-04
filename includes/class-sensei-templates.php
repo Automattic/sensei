@@ -523,7 +523,7 @@ class Sensei_Templates {
 		}
 
 	}//end deprecate_single_lesson_breadcrumbs_and_comments_hooks()
-	
+
 	/**
 	 * Running the deprecated hook: sensei_lesson_single_meta
 	 *
