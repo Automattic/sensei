@@ -100,6 +100,168 @@ class Sensei_Learner {
 	}
 
 	/**
+	 * Query the courses a user is enrolled in.
+	 *
+	 * @param int   $user_id         User ID.
+	 * @param array $base_query_args Base query arguments.
+	 *
+	 * @return WP_Query
+	 */
+	public function get_enrolled_courses_query( $user_id, $base_query_args = [] ) {
+		$this->before_enrolled_courses_query( $user_id );
+
+		$query_args = $this->get_enrolled_courses_query_args( $user_id, $base_query_args );
+
+		return new WP_Query( $query_args );
+	}
+
+	/**
+	 * Query the courses a user is enrolled in and hasn't completed.
+	 *
+	 * @param int   $user_id         User ID.
+	 * @param array $base_query_args Base query arguments.
+	 *
+	 * @return WP_Query
+	 */
+	public function get_enrolled_active_courses_query( $user_id, $base_query_args = [] ) {
+		return $this->get_enrolled_courses_query_by_progress_status( $user_id, $base_query_args, 'active' );
+	}
+
+	/**
+	 * Query the courses a user is enrolled in and has completed.
+	 *
+	 * @param int   $user_id         User ID.
+	 * @param array $base_query_args Base query arguments.
+	 *
+	 * @return WP_Query
+	 */
+	public function get_enrolled_completed_courses_query( $user_id, $base_query_args = [] ) {
+		return $this->get_enrolled_courses_query_by_progress_status( $user_id, $base_query_args, 'completed' );
+	}
+
+	/**
+	 * Query the courses a user is enrolled in by progress status.
+	 *
+	 * @param int    $user_id         User ID.
+	 * @param array  $base_query_args Base query arguments.
+	 * @param string $type            Type of query to run (`active` or `completed`).
+	 *
+	 * @return WP_Query
+	 */
+	private function get_enrolled_courses_query_by_progress_status( $user_id, $base_query_args, $type ) {
+		$this->before_enrolled_courses_query( $user_id );
+
+		$query_args = $this->get_enrolled_courses_query_args( $user_id, $base_query_args );
+
+		if ( 'active' === $type ) {
+			$course_ids = $this->get_course_ids_by_progress_status( $user_id, 'in-progress' );
+		} else {
+			$course_ids = $this->get_course_ids_by_progress_status( $user_id, 'complete' );
+		}
+
+		if ( ! empty( $query_args['post__in'] ) ) {
+			$existing_post_ids = (array) $query_args['post__in'];
+			$existing_post_ids = array_map( 'intval', $existing_post_ids );
+
+			$course_ids = array_intersect( $course_ids, $existing_post_ids );
+		}
+
+		if ( empty( $course_ids ) ) {
+			$course_ids = [ -1 ];
+		}
+
+		$query_args['post__in'] = $course_ids;
+
+		return new WP_Query( $query_args );
+	}
+
+	/**
+	 * Get the arguments to pass to WP_Query to fetch a learner's enrolled courses.
+	 *
+	 * @param int   $user_id         User ID.
+	 * @param array $base_query_args Base query arguments.
+	 *
+	 * @return array
+	 */
+	public function get_enrolled_courses_query_args( $user_id, $base_query_args = [] ) {
+		$order                = 'DESC';
+		$orderby              = 'date';
+		$has_set_course_order = '' !== get_option( 'sensei_course_order', '' );
+
+		// If a fixed course order has been set, trust menu_order.
+		if ( $has_set_course_order ) {
+			$order   = 'ASC';
+			$orderby = 'menu_order';
+		}
+
+		$default_args = [
+			'post_status' => 'publish',
+			'order'       => $order,
+			'orderby'     => $orderby,
+			'tax_query'   => [], // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- Just empty to set array.
+		];
+
+		$query_args   = array_merge( $default_args, $base_query_args );
+		$learner_term = self::get_learner_term( $user_id );
+
+		$query_args['post_type']   = 'course';
+		$query_args['tax_query'][] = [
+			'taxonomy'         => Sensei_PostTypes::LEARNER_TAXONOMY_NAME,
+			'terms'            => $learner_term->term_id,
+			'include_children' => false,
+		];
+
+		return $query_args;
+	}
+
+	/**
+	 * Notify that a user's enrolled courses are about to be queried.
+	 */
+	private function before_enrolled_courses_query( $user_id ) {
+		/**
+		 * Fire before we query a user's enrolled courses. This needs to be called before
+		 * building the query arguments because `active` courses might be incomplete if we
+		 * haven't verified a user's enrolment is up-to-date.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param int $user_id User ID.
+		 */
+		do_action( 'sensei_before_learners_enrolled_courses_query', $user_id );
+	}
+
+	/**
+	 * Get the course IDs by progress status.
+	 *
+	 * @param int    $user_id User ID.
+	 * @param string $status  Course progress status. Either `completed` or `in-progress`.
+	 *
+	 * @return int[]
+	 */
+	private function get_course_ids_by_progress_status( $user_id, $status ) {
+		$course_ids      = [];
+		$course_statuses = Sensei_Utils::sensei_check_for_activity(
+			[
+				'user_id' => $user_id,
+				'type'    => 'sensei_course_status',
+				'status'  => $status,
+			],
+			true
+		);
+
+		// Check for activity returns single if only one. We always want an array.
+		if ( ! is_array( $course_statuses ) ) {
+			$course_statuses = [ $course_statuses ];
+		}
+
+		foreach ( $course_statuses as $status ) {
+			$course_ids[] = intval( $status->comment_post_ID );
+		}
+
+		return $course_ids;
+	}
+
+	/**
 	 * Get the learner term for the user.
 	 *
 	 * @param int $user_id User ID.
@@ -155,7 +317,8 @@ class Sensei_Learner {
 	 *
 	 * @since 1.9.0
 	 *
-	 * @param $user_id
+	 * @param int $user_id User ID.
+	 *
 	 * @return bool|mixed|void
 	 */
 	public static function get_full_name( $user_id ) {

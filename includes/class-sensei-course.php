@@ -688,21 +688,39 @@ class Sensei_Course {
 
 
 	/**
-	 * course_query function.
+	 * Query courses.
 	 *
-	 * @access public
+	 * @since 1.0.0
+	 * @since 2.0.0 For `$type` argument, `paidcourses` is no longer supported.
+	 * @since 2.0.0 For `$type` argument, `freecourses` is no longer supported.
+	 *
+	 * @deprecated 3.0.0
+	 *
 	 * @param int    $amount (default: 0)
 	 * @param string $type (default: 'default')
 	 * @param array  $includes (default: array())
 	 * @return array
 	 */
 	public function course_query( $amount = 0, $type = 'default', $includes = array(), $excludes = array() ) {
-		global $my_courses_page;
+		_deprecated_function( __METHOD__, '3.0.0' );
+
+		if ( 'usercourses' === $type ) {
+			$base_query = [
+				'posts_per_page' => $amount,
+			];
+			if ( ! empty( $includes ) ) {
+				$base_query['post__in'] = $includes;
+			}
+			if ( ! empty( $excludes ) ) {
+				$base_query['post__not_in'] = $excludes;
+			}
+
+			$learner_manager = Sensei_Learner::instance();
+
+			return $learner_manager->get_enrolled_courses_query( get_current_user_id(), $base_query )->posts;
+		}
 
 		$results_array = array();
-
-		if ( $my_courses_page ) {
-			add_action( 'pre_get_posts', array( $this, 'filter_my_courses' ) ); }
 
 		$post_args = $this->get_archive_query_args( $type, $amount, $includes, $excludes );
 
@@ -719,24 +737,27 @@ class Sensei_Course {
 
 		}
 
-		if ( $my_courses_page ) {
-			remove_action( 'pre_get_posts', array( $this, 'filter_my_courses' ) ); }
-
 		return $results_array;
 
 	} // End course_query()
 
 
 	/**
-	 * get_archive_query_args function.
+	 * Get the query arguments for fetching courses in different contexts.
 	 *
-	 * @access public
+	 * @since 1.0.0
+	 * @since 2.0.0 For `$type` argument, `paidcourses` is no longer supported.
+	 * @since 2.0.0 For `$type` argument, `freecourses` is no longer supported.
+	 *
+	 * @deprecated 3.0.0
+	 *
 	 * @param string $type (default: '')
 	 * @param int    $amount (default: 0)
 	 * @param array  $includes (default: array())
 	 * @return array
 	 */
 	public function get_archive_query_args( $type = '', $amount = 0, $includes = array(), $excludes = array() ) {
+		_deprecated_function( __METHOD__, '3.0.0' );
 
 		global $wp_query;
 
@@ -761,23 +782,22 @@ class Sensei_Course {
 		switch ( $type ) {
 
 			case 'usercourses':
-				$post_args = array(
-					'post_type'        => 'course',
+				$learner_manager = Sensei_Learner::instance();
+				$post_args       = array(
 					'orderby'          => $orderby,
 					'order'            => $order,
-					'post_status'      => 'publish',
-					'include'          => $includes,
-					'exclude'          => $excludes,
+					'post__in'         => $includes,
+					'post__not_in'     => $excludes,
 					'suppress_filters' => 0,
 				);
+				$post_args       = $learner_manager->get_enrolled_courses_query_args( get_current_user_id(), $post_args );
 
 				break;
 
 			case 'freecourses':
 				_doing_it_wrong(
-					__FUNCTION__,
-					// translators: string argument is "freecourses" (the query type).
-					sprintf( esc_html__( 'Queries for course type of %s is deprecated.', 'sensei-lms' ), 'freecourses' ),
+					__METHOD__,
+					esc_html__( 'Querying with argument `$type` having a value of `freecourses` is deprecated.', 'sensei-lms' ),
 					'2.0.0'
 				);
 
@@ -800,9 +820,8 @@ class Sensei_Course {
 
 			case 'paidcourses':
 				_doing_it_wrong(
-					__FUNCTION__,
-					// translators: string argument is "paidcourses" (the query type).
-					sprintf( esc_html__( 'Queries for course type of %s is deprecated.', 'sensei-lms' ), 'paidcourses' ),
+					__METHOD__,
+					esc_html__( 'Querying with argument `$type` having a value of `paidcourses` is deprecated.', 'sensei-lms' ),
 					'2.0.0'
 				);
 
@@ -1292,21 +1311,13 @@ class Sensei_Course {
 	/**
 	 * Fix posts_per_page for My Courses page
 	 *
+	 * @deprecated 3.0.0
+	 *
 	 * @param  WP_Query $query
 	 * @return void
 	 */
 	public function filter_my_courses( $query ) {
-		global  $my_courses_section;
-
-		if ( isset( Sensei()->settings->settings['my_course_amount'] ) && ( 0 < absint( Sensei()->settings->settings['my_course_amount'] ) ) ) {
-			$amount = absint( Sensei()->settings->settings['my_course_amount'] );
-			$query->set( 'posts_per_page', $amount );
-		}
-
-		if ( isset( $_GET[ $my_courses_section . '_page' ] ) && 0 < intval( $_GET[ $my_courses_section . '_page' ] ) ) {
-			$page = intval( $_GET[ $my_courses_section . '_page' ] );
-			$query->set( 'paged', $page );
-		}
+		_deprecated_function( __METHOD__, '3.0.0' );
 	}
 
 	/**
@@ -1320,7 +1331,7 @@ class Sensei_Course {
 	 * @return string          HTML displayng course data
 	 */
 	public function load_user_courses_content( $user = false ) {
-		global $course, $my_courses_page, $my_courses_section;
+		global $course;
 
 		if ( ! isset( Sensei()->settings->settings['learner_profile_show_courses'] )
 			|| ! Sensei()->settings->settings['learner_profile_show_courses'] ) {
@@ -1339,8 +1350,6 @@ class Sensei_Course {
 
 		if ( is_a( $user, 'WP_User' ) ) {
 
-			$my_courses_page = true;
-
 			// Allow action to be run before My Courses content has loaded
 			do_action( 'sensei_before_my_courses', $user->ID );
 
@@ -1353,41 +1362,25 @@ class Sensei_Course {
 
 			}
 
-			$course_statuses = Sensei_Utils::sensei_check_for_activity(
-				array(
-					'user_id' => $user->ID,
-					'type'    => 'sensei_course_status',
-				),
-				true
-			);
-			// User may only be on 1 Course
-			if ( ! is_array( $course_statuses ) ) {
-				$course_statuses = array( $course_statuses );
-			}
-			$completed_ids = $active_ids = array();
-			foreach ( $course_statuses as $course_status ) {
-				if ( Sensei_Utils::user_completed_course( $course_status, $user->ID ) ) {
-					$completed_ids[] = $course_status->comment_post_ID;
-				} else {
-					$active_ids[] = $course_status->comment_post_ID;
-				}
-			}
+			$learner_manager = Sensei_Learner::instance();
 
-			$active_count = $completed_count = 0;
+			$active_query_args    = [
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Safe use of pagination var.
+				'paged'          => isset( $_GET['active_page'] ) ? absint( $_GET['active_page'] ) : 1,
+				'posts_per_page' => $per_page,
+			];
+			$active_courses_query = $learner_manager->get_enrolled_active_courses_query( $user->ID, $active_query_args );
+			$active_courses       = $active_courses_query->posts;
+			$active_count         = $active_courses_query->found_posts;
 
-			$active_courses = array();
-			if ( 0 < intval( count( $active_ids ) ) ) {
-				$my_courses_section = 'active';
-				$active_courses     = Sensei()->course->course_query( $per_page, 'usercourses', $active_ids );
-				$active_count       = count( $active_ids );
-			} // End If Statement
-
-			$completed_courses = array();
-			if ( 0 < intval( count( $completed_ids ) ) ) {
-				$my_courses_section = 'completed';
-				$completed_courses  = Sensei()->course->course_query( $per_page, 'usercourses', $completed_ids );
-				$completed_count    = count( $completed_ids );
-			} // End If Statement
+			$completed_query_args    = [
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Safe use of pagination var.
+				'paged'          => isset( $_GET['completed_page'] ) ? absint( $_GET['completed_page'] ) : 1,
+				'posts_per_page' => $per_page,
+			];
+			$completed_courses_query = $learner_manager->get_enrolled_completed_courses_query( $user->ID, $completed_query_args );
+			$completed_courses       = $completed_courses_query->posts;
+			$completed_count         = $completed_courses_query->found_posts;
 
 			foreach ( $active_courses as $course_item ) {
 
