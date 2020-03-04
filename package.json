@@ -28,7 +28,7 @@
     "dotenv": "8.2.0",
     "eslint": "6.6.0",
     "eslint-config-prettier": "6.6.0",
-    "eslint-plugin-react": "7.16.0",
+    "eslint-plugin-react": "7.18.3",
     "eslint-wpcom": "npm:eslint@5.16.0",
     "fs-extra": "7.0.1",
     "gulp": "4.0.2",
