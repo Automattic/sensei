@@ -1034,7 +1034,7 @@ class Sensei_Frontend {
 		// make sure user is taking course.
 		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
 
-		if ( ! Sensei_Utils::user_started_course( $course_id, get_current_user_id() ) ) {
+		if ( ! Sensei_Course::is_user_enrolled( $course_id ) ) {
 			return;
 		}
 
