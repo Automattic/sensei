@@ -945,13 +945,13 @@ function sensei_can_user_view_lesson( $lesson_id = null, $user_id = null ) {
 							|| $is_preview_lesson;
 
 	/**
-	 * Filter if the can user view lesson content, including quizzes.
+	 * Filter if the user can view lesson and quiz content.
 	 *
 	 * @since 1.9.0
 	 *
-	 * @param bool   $can_user_view_lesson True if they can view lesson/quiz content.
-	 * @param string $lesson_id            Lesson post ID.
-	 * @param string $user_id              User ID.
+	 * @param bool $can_user_view_lesson True if they can view lesson/quiz content.
+	 * @param int  $lesson_id            Lesson post ID.
+	 * @param int  $user_id              User ID.
 	 */
 	return apply_filters( 'sensei_can_user_view_lesson', $can_user_view_lesson, $lesson_id, $user_id );
 }
