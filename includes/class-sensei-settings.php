@@ -38,6 +38,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		$this->register_hook_listener();
 		$this->get_settings();
+		$this->enable_assigned_teacher_course_setting_by_default();
 
 		// Log when settings are updated by the user.
 		add_action( 'update_option_sensei-settings', [ $this, 'log_settings_update' ], 10, 2 );
@@ -794,6 +795,27 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		return array_filter( array_merge( $added, $removed ) );
 	}
+
+	/**
+	 * Enables the "teacher is assigned course" (notification) setting by default.
+	 *
+	 * Before introducing this setting, the behavior of Sensei was to "send emails
+	 * when a course is assigned to a teacher automatically". The default behavior
+	 * of the newly introduced setting should match that, so that the expeceted
+	 * behavior is not changed automatically.
+	 *
+	 * @return void
+	 */
+	public function enable_assigned_teacher_course_setting_by_default() {
+
+		if ( ! get_option( 'enable_assigned_teacher_course_setting_by_default', false ) && isset( $this->settings['email_teachers'] ) ) {
+			array_push( $this->settings['email_teachers'], 'teacher-assigned-course' );
+			update_option( $this->token, $this->settings );
+			update_option( 'enable_assigned_teacher_course_setting_by_default', 1 );
+		}
+
+	} // End enable assigned teacher course setting by default function.
+
 } // End Class
 
 /**
