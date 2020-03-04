@@ -789,12 +789,13 @@ class Sensei_Core_Modules {
 
 			$module = get_queried_object();
 
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Safe handling of course ID query var.
 			$course_id = isset( $_GET['course_id'] ) ? intval( $_GET['course_id'] ) : null;
 			$user_id   = get_current_user_id();
 
 			$module_progress = false;
-			if ( $user_id && isset( $_GET['course_id'] ) && intval( $_GET['course_id'] ) > 0 ) {
-				$module_progress = $this->get_user_module_progress( $module->term_id, $_GET['course_id'], $user_id );
+			if ( $user_id && ! empty( $course_id ) ) {
+				$module_progress = $this->get_user_module_progress( $module->term_id, $course_id, $user_id );
 			}
 
 			if ( $module_progress && $module_progress > 0 ) {
