@@ -3816,7 +3816,7 @@ class Sensei_Lesson {
 
 		$loop_lesson_number    = $wp_query->current_post + 1;
 		$course_id             = Sensei()->lesson->get_course_id( $lesson_id );
-		$is_user_taking_course = Sensei_Utils::user_started_course( $course_id, get_current_user_id() );
+		$is_user_taking_course = Sensei_Course::is_user_enrolled( $course_id );
 
 		// Get Lesson data
 		$complexity_array = Sensei()->lesson->lesson_complexities();
