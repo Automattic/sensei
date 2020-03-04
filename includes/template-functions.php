@@ -992,7 +992,7 @@ function sensei_the_single_lesson_meta() {
 	do_action( 'sensei_complete_lesson' );
 	// Check that the course has been started
 	if ( Sensei()->access_settings()
-		|| Sensei_Utils::user_started_course( $lesson_course_id, get_current_user_id() )
+		|| Sensei_Course::is_user_enrolled( $lesson_course_id )
 		|| $is_preview ) {
 		?>
 		<section class="lesson-meta">
@@ -1006,8 +1006,7 @@ function sensei_the_single_lesson_meta() {
 			<?php do_action( 'sensei_frontend_messages' ); ?>
 
 			<?php
-			if ( ! $is_preview
-				|| Sensei_Utils::user_started_course( $lesson_course_id, get_current_user_id() ) ) {
+			if ( ! $is_preview || Sensei_Course::is_user_enrolled( $lesson_course_id ) ) {
 
 				sensei_do_deprecated_action( 'sensei_lesson_quiz_meta', '1.9.0', 'sensei_single_lesson_content_inside_before', array( get_the_ID(), get_current_user_id() ) );
 
