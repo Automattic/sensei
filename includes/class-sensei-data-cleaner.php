@@ -71,6 +71,7 @@ class Sensei_Data_Cleaner {
 		'sensei_courses_page_id',
 		'woothemes-sensei_courses_page_id',
 		'woothemes-sensei_user_dashboard_page_id',
+		'enable_assigned_teacher_course_setting_by_default',
 	);
 
 	/**
