@@ -437,11 +437,6 @@ function sensei_get_excerpt( $post_id = '' ) {
 	return get_the_excerpt();
 }
 
-function sensei_has_user_started_course( $post_id = 0, $user_id = 0 ) {
-	_deprecated_function( __FUNCTION__, '1.7', 'Sensei_Utils::user_started_course()' );
-	return Sensei_Utils::user_started_course( $post_id, $user_id );
-} // End sensei_has_user_started_course()
-
 function sensei_has_user_completed_lesson( $post_id = 0, $user_id = 0 ) {
 	_deprecated_function( __FUNCTION__, '1.7', 'Sensei_Utils::user_completed_lesson()' );
 	return Sensei_Utils::user_completed_lesson( $post_id, $user_id );
