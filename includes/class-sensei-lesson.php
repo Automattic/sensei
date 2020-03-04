@@ -4054,8 +4054,11 @@ class Sensei_Lesson {
 	 * Show the user not taking course message if it is the case
 	 *
 	 * @since 1.9.0
+	 * @deprecated 3.0.0
 	 */
 	public static function user_not_taking_course_message() {
+
+	  _deprecated_function( __METHOD__, '3.0.0' );
 
 		$lesson_id = get_the_ID();
 
@@ -4066,7 +4069,7 @@ class Sensei_Lesson {
 		$is_preview             = Sensei_Utils::is_preview_lesson( $lesson_id );
 		$pre_requisite_complete = self::is_prerequisite_complete( $lesson_id, get_current_user_id() );
 		$lesson_course_id       = get_post_meta( $lesson_id, '_lesson_course', true );
-		$user_taking_course     = Sensei_Utils::user_started_course( $lesson_course_id, get_current_user_id() );
+		$user_taking_course     = Sensei_Course::is_user_enrolled( $lesson_course_id );
 
 		if ( $pre_requisite_complete && $is_preview && ! $user_taking_course ) {
 
