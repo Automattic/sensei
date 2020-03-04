@@ -52,7 +52,7 @@
     "webpack-cli": "3.3.10"
   },
   "dependencies": {
-    "select2": "4.0.5"
+    "select2": "4.0.13"
   },
   "scripts": {
     "test": "npm run test-php && npm run test-js",
