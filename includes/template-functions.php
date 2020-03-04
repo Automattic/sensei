@@ -927,7 +927,7 @@ function sensei_can_user_view_lesson( $lesson_id = '', $user_id = '' ) {
 	// Check for prerequisite lesson completions
 	$pre_requisite_complete = Sensei_Lesson::is_prerequisite_complete( $lesson_id, $user_id );
 	$lesson_course_id       = get_post_meta( $lesson_id, '_lesson_course', true );
-	$user_taking_course     = Sensei_Utils::user_started_course( $lesson_course_id, $user_id );
+	$user_taking_course     = Sensei_Course::is_user_enrolled( $lesson_course_id, $user_id );
 
 	$is_preview = false;
 	if ( Sensei_Utils::is_preview_lesson( $lesson_id ) ) {
