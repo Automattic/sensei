@@ -991,7 +991,7 @@ function sensei_the_single_lesson_meta() {
 	// Complete Lesson Logic
 	do_action( 'sensei_complete_lesson' );
 	// Check that the course has been started
-	if ( Sensei()->access_settings()
+	if ( ! Sensei()->access_settings()
 		|| Sensei_Course::is_user_enrolled( $lesson_course_id )
 		|| $is_preview ) {
 		?>
