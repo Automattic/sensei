@@ -853,7 +853,7 @@ class Sensei_Teacher {
 	public function teacher_course_assigned_notification( $teacher_id, $course_id ) {
 
 		// If setting is disabled, exit.
-		if ( ! in_array( 'teacher-assigned-course', (array) Sensei()->settings->settings['email_teachers'], true ) ) {
+		if ( ! isset( Sensei()->settings->settings['email_teachers'] ) || ! in_array( 'teacher-assigned-course', (array) Sensei()->settings->settings['email_teachers'], true ) ) {
 			return false;
 		}
 
