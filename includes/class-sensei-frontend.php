@@ -1356,7 +1356,7 @@ class Sensei_Frontend {
 	}
 
 	public function sensei_lesson_preview_title( $title = '', $id = 0 ) {
-		global $post, $current_user;
+		global $post;
 
 		// Limit to lessons and check if lesson ID matches filtered post ID.
 		// @see https://github.com/woothemes/sensei/issues/574.
@@ -1369,7 +1369,7 @@ class Sensei_Frontend {
 				$course_id = get_post_meta( $post->ID, '_lesson_course', true );
 
 				// Check if the user is taking the course.
-				if ( is_singular( 'lesson' ) && Sensei_Utils::is_preview_lesson( $post->ID ) && ! Sensei_Utils::user_started_course( $course_id, $current_user->ID ) && $post->ID == $id ) {
+				if ( is_singular( 'lesson' ) && Sensei_Utils::is_preview_lesson( $post->ID ) && ! Sensei_Course::is_user_enrolled( $course_id ) && $post->ID == $id ) {
 					$title .= ' ' . $this->sensei_lesson_preview_title_tag( $course_id );
 				}
 			}
