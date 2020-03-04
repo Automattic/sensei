@@ -788,11 +788,12 @@ class Sensei_Core_Modules {
 
 			$module = get_queried_object();
 
+			$course_id = isset( $_GET['course_id'] ) ? intval( $_GET['course_id'] ) : null;
+			$user_id   = get_current_user_id();
+
 			$module_progress = false;
-			if ( is_user_logged_in() && isset( $_GET['course_id'] ) && intval( $_GET['course_id'] ) > 0 ) {
-				global $current_user;
-				wp_get_current_user();
-				$module_progress = $this->get_user_module_progress( $module->term_id, $_GET['course_id'], $current_user->ID );
+			if ( $user_id && isset( $_GET['course_id'] ) && intval( $_GET['course_id'] ) > 0 ) {
+				$module_progress = $this->get_user_module_progress( $module->term_id, $_GET['course_id'], $user_id );
 			}
 
 			if ( $module_progress && $module_progress > 0 ) {
@@ -805,8 +806,45 @@ class Sensei_Core_Modules {
 				echo '<p class="status ' . esc_attr( $class ) . '">' . esc_html( $status ) . '</p>';
 			}
 
-			echo '<p class="archive-description module-description">' . wp_kses_post( apply_filters( 'sensei_module_archive_description', nl2br( $module->description ), $module->term_id ) ) . '</p>';
+			if ( $this->can_view_module_content( $module, $course_id, $user_id ) ) {
+				echo '<p class="archive-description module-description">' . wp_kses_post( apply_filters( 'sensei_module_archive_description', nl2br( $module->description ), $module->term_id ) ) . '</p>';
+			}
 		}
+	}
+
+	/**
+	 * Check if we can view module content.
+	 *
+	 * @param WP_Term $module    Module term object.
+	 * @param int     $course_id Course post ID. May not be set if not viewing module in course context.
+	 * @param int     $user_id   User ID. Defaults to currently logged in user ID.
+	 *
+	 * @return bool
+	 */
+	public function can_view_module_content( WP_Term $module, $course_id = null, $user_id = null ) {
+		$can_view_module_content = false;
+
+		if ( null === $user_id ) {
+			$user_id = get_current_user_id();
+		}
+
+		if ( ! Sensei()->settings->get( 'access_permission' ) || sensei_all_access() ) {
+			$can_view_module_content = true;
+		} elseif ( $course_id && Sensei()->course->can_access_course_content( $course_id, $user_id, 'module' ) ) {
+			$can_view_module_content = true;
+		}
+
+		/**
+		 * Filter if the user can view module content.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param bool $can_view_module_content True if they can view module content.
+		 * @param int  $module_term_id          Module term ID.
+		 * @param int  $course_id               Course post ID.
+		 * @param int  $user_id                 User ID.
+		 */
+		return apply_filters( 'sensei_can_user_view_module', $can_view_module_content, $module->term_id, $course_id, $user_id );
 	}
 
 	public function module_archive_body_class( $classes ) {
