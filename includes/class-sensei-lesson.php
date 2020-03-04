@@ -4058,7 +4058,7 @@ class Sensei_Lesson {
 	 */
 	public static function user_not_taking_course_message() {
 
-	  _deprecated_function( __METHOD__, '3.0.0' );
+		_deprecated_function( __METHOD__, '3.0.0' );
 
 		$lesson_id = get_the_ID();
 
