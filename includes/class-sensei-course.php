@@ -196,7 +196,7 @@ class Sensei_Course {
 		$can_view_course_content = false;
 
 		if (
-			! Sensei()->settings->get( 'access_permission' )
+			! sensei_is_login_required()
 			|| sensei_all_access()
 			|| $is_user_enrolled
 		) {

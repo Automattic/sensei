@@ -927,20 +927,16 @@ function sensei_can_user_view_lesson( $lesson_id = null, $user_id = null ) {
 	}
 
 	// Check for prerequisite lesson completions.
-	$pre_requisite_complete   = Sensei_Lesson::is_prerequisite_complete( $lesson_id, $user_id );
-	$is_preview_lesson        = false;
-	$global_access_permission = false;
+	$pre_requisite_complete = Sensei_Lesson::is_prerequisite_complete( $lesson_id, $user_id );
+	$is_preview_lesson      = false;
 
 	if ( Sensei_Utils::is_preview_lesson( $lesson_id ) ) {
 		$is_preview_lesson      = true;
 		$pre_requisite_complete = true;
 	};
 
-	if ( ! Sensei()->settings->get( 'access_permission' ) || sensei_all_access() ) {
-		$global_access_permission = true;
-	}
-
-	$can_user_view_lesson = $global_access_permission
+	$can_user_view_lesson = ! sensei_is_login_required()
+							|| sensei_all_access()
 							|| ( $user_can_view_course_content && $pre_requisite_complete )
 							|| $is_preview_lesson;
 
