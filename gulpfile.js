@@ -27,8 +27,7 @@ var chmod           = require( 'gulp-chmod' );
 var del             = require( 'del' );
 var exec            = require( 'child_process' ).exec;
 var gulp            = require( 'gulp' );
-var minifyCSS       = require( 'gulp-minify-css' );
-var phpunit         = require( 'gulp-phpunit' );
+var cleanCSS        = require( 'gulp-clean-css' );
 var rename          = require( 'gulp-rename' );
 var sass            = require( 'gulp-sass' );
 var sort            = require( 'gulp-sort' );
@@ -36,7 +35,8 @@ var uglify          = require( 'gulp-uglify' );
 var wpPot           = require( 'gulp-wp-pot' );
 var zip             = require( 'gulp-zip' );
 var browserSync     = require( 'browser-sync' ).create();
-var env             = require( 'process' ).env;
+var process         = require( 'process' );
+var env             = process.env;
 
 var paths = {
 	scripts: [ 'assets/js/**/*.js', '!assets/js/**/*.min.js' ],
@@ -83,7 +83,7 @@ gulp.task( 'clean', gulp.series( function( cb ) {
 function buildCSS() {
 	return gulp.src( paths.css )
 		.pipe( sass().on( 'error', sass.logError ) )
-		.pipe( minifyCSS( { keepBreaks: false } ) )
+		.pipe( cleanCSS() )
 		.pipe( gulp.dest( 'assets/css' ) );
 }
 
@@ -118,7 +118,7 @@ gulp.task( 'pot', gulp.series( function() {
 } ) );
 
 gulp.task( 'textdomain', gulp.series( function() {
-	return gulp.src( [ '**/*.php', '!node_modules/**', '!build/**' ] )
+	return gulp.src( [ '**/*.php', '!node_modules/**', '!build/**' , '!vendor/**' ] )
 		.pipe( checktextdomain( {
 			text_domain: 'sensei-lms',
 			keywords: [
@@ -145,10 +145,11 @@ gulp.task( 'vendor', function() {
 		.pipe( gulp.dest( 'assets/vendor/select2' ) );
 } );
 
-gulp.task( 'test', function() {
-	return gulp.src( 'phpunit.xml' )
-		.pipe( phpunit() );
-} );
+gulp.task( 'test', gulp.series( function phpunit( cb ) {
+	var phpunitProcess = exec( './vendor/bin/phpunit', cb );
+	phpunitProcess.stdout.pipe( process.stdout );
+	phpunitProcess.stderr.pipe( process.stderr );
+} ) );
 
 
 gulp.task( 'build', gulp.series( 'test', 'clean', 'CSS', 'JS', 'block-editor-assets', 'vendor' ) );
