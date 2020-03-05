@@ -17,18 +17,11 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	/**
 	 * @var array|null we only do these actions
 	 */
-	private $known_bulk_actions = null;
-	private $page_slug          = 'sensei_learner_admin';
-	private $view               = 'sensei_learner_admin';
+	private $known_bulk_actions;
+	private $page_slug;
+	private $view;
 	private $name;
-	private $query_args = array();
-
-	/**
-	 * @return array
-	 */
-	public function get_query_args() {
-		return $this->query_args;
-	}
+	private $learner_management;
 
 	/**
 	 * @return string|void
@@ -47,13 +40,22 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	/**
 	 * Sensei_Learners_Admin_Main constructor.
 	 *
-	 * @param $analysis Sensei_Learner_Management
+	 * @param $management Sensei_Learner_Management
 	 */
-	public function __construct( $analysis ) {
-		$this->analysis  = $analysis;
+	public function __construct( $management ) {
 		$this->name      = __( 'Bulk Learner Actions', 'sensei-lms' );
-		$this->file      = $analysis->file;
-		$this->page_slug = $this->analysis->page_slug;
+		$this->page_slug = $management->page_slug;
+		$this->view      = 'sensei_learner_admin';
+		$this->learner_management = $management;
+
+		$this->known_bulk_actions = [
+			self::ADD_TO_COURSE                 => __( 'Assign to Course(s)', 'sensei-lms' ),
+			self::REMOVE_FROM_COURSE            => __( 'Unassign from Course(s)', 'sensei-lms' ),
+			self::RESET_COURSE                  => __( 'Reset Course(s)', 'sensei-lms' ),
+			self::COMPLETE_COURSE               => __( 'Recalculate Course(s) Completion (notify on complete)', 'sensei-lms' ),
+			self::RECALCULATE_COURSE_COMPLETION => __( 'Recalculate Course(s) Completion (do not notify on complete)', 'sensei-lms' ),
+		];
+
 		if ( is_admin() ) {
 			$this->hook();
 		}
@@ -98,15 +100,6 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	}
 
 	public function get_known_bulk_actions() {
-		if ( null === $this->known_bulk_actions ) {
-			$this->known_bulk_actions = array(
-				self::ADD_TO_COURSE                 => __( 'Assign to Course(s)', 'sensei-lms' ),
-				self::REMOVE_FROM_COURSE            => __( 'Unassign from Course(s)', 'sensei-lms' ),
-				self::RESET_COURSE                  => __( 'Reset Course(s)', 'sensei-lms' ),
-				self::COMPLETE_COURSE               => __( 'Recalculate Course(s) Completion (notify on complete)', 'sensei-lms' ),
-				self::RECALCULATE_COURSE_COMPLETION => __( 'Recalculate Course(s) Completion (do not notify on complete)', 'sensei-lms' ),
-			);
-		}
 		return (array) apply_filters( 'sensei_learners_admin_get_known_bulk_actions', $this->known_bulk_actions );
 	}
 
@@ -217,7 +210,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 
 	public function learner_admin_page() {
 		// Load Learners data
-		$sensei_learners_main_view = new Sensei_Learners_Admin_Bulk_Actions_View( $this );
+		$sensei_learners_main_view = new Sensei_Learners_Admin_Bulk_Actions_View( $this, $this->learner_management );
 		$sensei_learners_main_view->prepare_items();
 		// Wrappers
 		do_action( 'sensei_learner_admin_before_container' );
@@ -252,19 +245,13 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 		if ( $this->is_current_page() ) {
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ), 30 );
 		}
-		// add_action( 'admin_menu', array( $this, 'learners_admin_menu' ), 30);
+
 		add_action( 'admin_init', array( $this, 'handle_http_post' ) );
 		add_action( 'admin_notices', array( $this, 'add_notices' ) );
 	}
 
 	public function get_view() {
 		return $this->view;
-	}
-
-	public function learners_admin_menu() {
-		if ( current_user_can( 'manage_sensei_grades' ) ) {
-			add_submenu_page( 'sensei', __( 'Learner Admin', 'sensei-lms' ), __( 'Learner Admin', 'sensei-lms' ), 'manage_sensei_grades', 'sensei_learner_admin', array( $this, 'learner_admin_page' ) );
-		}
 	}
 
 	public function add_notices() {

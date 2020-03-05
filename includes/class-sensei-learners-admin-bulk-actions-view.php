@@ -16,24 +16,28 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	 */
 	private $controller;
 
+	private $learner_management;
+
 	/**
 	 * Sensei_Learners_Admin_Main_View constructor.
 	 *
 	 * @param Sensei_Learners_Admin_Bulk_Actions_Controller $controller
 	 */
-	public function __construct( $controller ) {
+	public function __construct( $controller, $learner_management ) {
 		$this->controller = $controller;
 		$this->name       = $controller->get_name();
 		$this->page_slug  = $controller->get_page_slug();
-		parent::__construct( $this->page_slug );
 		$this->query_args = $this->parse_query_args();
+		$this->learner_management = $learner_management;
+
+		parent::__construct( $this->page_slug );
+
 		add_action( 'sensei_before_list_table', array( $this, 'data_table_header' ) );
-		add_action( 'sensei_after_list_table', array( $this, 'data_table_footer' ) );
 		add_filter( 'sensei_list_table_search_button_text', array( $this, 'search_button' ) );
 	}
 
 	public function output_headers() {
-		$link_back_to_lm = '<a href="' . esc_url( $this->controller->analysis->get_url() ) . '">' . esc_html( $this->controller->analysis->get_name() ) . '</a>';
+		$link_back_to_lm = '<a href="' . esc_url( $this->learner_management->get_url() ) . '">' . esc_html( $this->learner_management->get_name() ) . '</a>';
 		$title           = $this->name;
 		$subtitle        = '';
 		if ( isset( $this->query_args['filter_by_course_id'] ) ) {
