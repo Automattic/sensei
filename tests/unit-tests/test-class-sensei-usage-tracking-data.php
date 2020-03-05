@@ -1221,7 +1221,13 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 
 		// Enroll users in course.
 		foreach ( $subscribers as $subscriber ) {
-			$this->manuallyEnrolStudentInCourse( $subscriber, $course_id );
+			$comment_ids[] = $this->factory->comment->create(
+				array(
+					'user_id'         => $subscriber,
+					'comment_post_ID' => $course_id,
+					'comment_type'    => 'sensei_course_status',
+				)
+			);
 		}
 
 		update_comment_meta( $comment_ids[0], 'start', '2017-05-23 10:59:00' );
