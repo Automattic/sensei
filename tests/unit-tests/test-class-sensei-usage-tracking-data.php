@@ -1425,6 +1425,8 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test getting count of lessons with `_lesson_length` set.
+	 *
 	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
 	 * @covers Sensei_Usage_Tracking_Data::get_lesson_has_length_count
 	 */
@@ -1458,6 +1460,8 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test getting count of lessons with `_lesson_complexity` set.
+	 *
 	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
 	 * @covers Sensei_Usage_Tracking_Data::get_lesson_with_complexity_count
 	 */
