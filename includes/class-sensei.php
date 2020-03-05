@@ -740,13 +740,13 @@ class Sensei_Main {
 					// translators: The placeholder %s is a link to the course.
 					$this->notices->add_notice( sprintf( __( 'Please complete the previous %1$s before taking this course.', 'sensei-lms' ), $course_link ), 'info' );
 
-				} elseif ( class_exists( 'Sensei_WC' ) && Sensei_WC::is_woocommerce_active() && Sensei_WC::is_course_purchasable( $post->ID ) && ! Sensei_Utils::user_started_course( $post->ID, $current_user->ID ) ) {
+				} elseif ( class_exists( 'Sensei_WC' ) && Sensei_WC::is_woocommerce_active() && Sensei_WC::is_course_purchasable( $post->ID ) && ! Sensei_Course::is_user_enrolled( $post->ID, $current_user->ID ) ) {
 
 					// translators: The placeholders are the opening and closing tags for a link to log in.
 					$message = sprintf( __( 'Or %1$s login %2$s to access your purchased courses', 'sensei-lms' ), '<a href="' . sensei_user_login_url() . '">', '</a>' );
 					$this->notices->add_notice( $message, 'info' );
 
-				} elseif ( ! Sensei_Utils::user_started_course( $post->ID, $current_user->ID ) ) {
+				} elseif ( ! Sensei_Course::is_user_enrolled( $post->ID, $current_user->ID ) ) {
 
 					// users who haven't started the course are allowed to view it
 					$user_allowed = true;

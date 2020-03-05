@@ -525,26 +525,6 @@ class Sensei_Templates {
 	}//end deprecate_single_lesson_breadcrumbs_and_comments_hooks()
 
 	/**
-	 * Deprecate the hook sensei_lesson_course_signup.
-	 *
-	 * The hook content will be linked directly on the recommended
-	 * sensei_single_lesson_content_inside_after
-	 *
-	 * @deprecated since 1.9.0
-	 */
-	public static function deprecate_sensei_lesson_course_signup_hook() {
-
-		$lesson_course_id   = get_post_meta( get_the_ID(), '_lesson_course', true );
-		$user_taking_course = Sensei_Utils::user_started_course( $lesson_course_id, get_current_user_id() );
-
-		if ( ! $user_taking_course ) {
-
-			sensei_do_deprecated_action( 'sensei_lesson_course_signup', '1.9.0', 'sensei_single_lesson_content_inside_after', $lesson_course_id );
-
-		}
-	}//end deprecate_sensei_lesson_course_signup_hook()
-
-	/**
 	 * Running the deprecated hook: sensei_lesson_single_meta
 	 *
 	 * @since 1.9.0

@@ -437,11 +437,6 @@ function sensei_get_excerpt( $post_id = '' ) {
 	return get_the_excerpt();
 }
 
-function sensei_has_user_started_course( $post_id = 0, $user_id = 0 ) {
-	_deprecated_function( __FUNCTION__, '1.7', 'Sensei_Utils::user_started_course()' );
-	return Sensei_Utils::user_started_course( $post_id, $user_id );
-} // End sensei_has_user_started_course()
-
 function sensei_has_user_completed_lesson( $post_id = 0, $user_id = 0 ) {
 	_deprecated_function( __FUNCTION__, '1.7', 'Sensei_Utils::user_completed_lesson()' );
 	return Sensei_Utils::user_completed_lesson( $post_id, $user_id );
@@ -932,7 +927,7 @@ function sensei_can_user_view_lesson( $lesson_id = '', $user_id = '' ) {
 	// Check for prerequisite lesson completions
 	$pre_requisite_complete = Sensei_Lesson::is_prerequisite_complete( $lesson_id, $user_id );
 	$lesson_course_id       = get_post_meta( $lesson_id, '_lesson_course', true );
-	$user_taking_course     = Sensei_Utils::user_started_course( $lesson_course_id, $user_id );
+	$user_taking_course     = Sensei_Course::is_user_enrolled( $lesson_course_id, $user_id );
 
 	$is_preview = false;
 	if ( Sensei_Utils::is_preview_lesson( $lesson_id ) ) {
@@ -997,7 +992,7 @@ function sensei_the_single_lesson_meta() {
 	do_action( 'sensei_complete_lesson' );
 	// Check that the course has been started
 	if ( Sensei()->access_settings()
-		|| Sensei_Utils::user_started_course( $lesson_course_id, get_current_user_id() )
+		|| Sensei_Course::is_user_enrolled( $lesson_course_id )
 		|| $is_preview ) {
 		?>
 		<section class="lesson-meta">
@@ -1011,8 +1006,7 @@ function sensei_the_single_lesson_meta() {
 			<?php do_action( 'sensei_frontend_messages' ); ?>
 
 			<?php
-			if ( ! $is_preview
-				|| Sensei_Utils::user_started_course( $lesson_course_id, get_current_user_id() ) ) {
+			if ( ! $is_preview || Sensei_Course::is_user_enrolled( $lesson_course_id ) ) {
 
 				sensei_do_deprecated_action( 'sensei_lesson_quiz_meta', '1.9.0', 'sensei_single_lesson_content_inside_before', array( get_the_ID(), get_current_user_id() ) );
 
