@@ -375,17 +375,30 @@ class Sensei_Usage_Tracking_Data {
 	 * @return int Number of course enrolments.
 	 **/
 	private static function get_course_enrolments() {
-		global $wpdb;
-
-		return $wpdb->get_var(
-			"SELECT COUNT(DISTINCT c.user_id)
-			FROM {$wpdb->comments} c
-			INNER JOIN {$wpdb->usermeta} um ON c.user_id = um.user_id
-			INNER JOIN {$wpdb->posts} p ON p.ID = c.comment_post_ID
-			WHERE comment_type = 'sensei_course_status'
-				AND meta_key = '{$wpdb->prefix}capabilities' AND meta_value NOT LIKE '%administrator%'
-				AND post_status = 'publish' AND c.user_id <> 0"
+		return (int) get_terms(
+			[
+				'hide_empty' => true,
+				'fields'     => 'count',
+				'exclude'    => self::get_admin_learner_term_ids(),
+				'taxonomy'   => Sensei_PostTypes::LEARNER_TAXONOMY_NAME,
+			]
 		);
+	}
+
+	/**
+	 * Get the learner term IDs for all admin users.
+	 *
+	 * @return string[]
+	 */
+	private static function get_admin_learner_term_ids() {
+		$admins         = get_users( [ 'role' => 'administrator' ] );
+		$admin_term_ids = [];
+		foreach ( $admins as $admin ) {
+			$learner_term     = Sensei_Learner::get_learner_term( $admin->ID );
+			$admin_term_ids[] = $learner_term->term_id;
+		}
+
+		return $admin_term_ids;
 	}
 
 	/**

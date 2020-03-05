@@ -4,6 +4,8 @@
  * @group usage-tracking
  */
 class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
+	use Sensei_Course_Enrolment_Manual_Test_Helpers;
+
 	private $course_ids;
 	private $modules;
 
@@ -1113,13 +1115,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 
 		// Enroll users in course.
 		foreach ( $subscribers as $subscriber ) {
-			$this->factory->comment->create(
-				array(
-					'user_id'         => $subscriber,
-					'comment_post_ID' => $course_id,
-					'comment_type'    => 'sensei_course_status',
-				)
-			);
+			$this->manuallyEnrolStudentInCourse( $subscriber, $course_id );
 		}
 
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
@@ -1147,13 +1143,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 
 		// Enroll users in course.
 		foreach ( array_merge( $administrators, $subscribers ) as $user ) {
-			$this->factory->comment->create(
-				array(
-					'user_id'         => $user,
-					'comment_post_ID' => $course_id,
-					'comment_type'    => 'sensei_course_status',
-				)
-			);
+			$this->manuallyEnrolStudentInCourse( $user, $course_id );
 		}
 
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
@@ -1177,13 +1167,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 
 		// Enroll users in course.
 		foreach ( $subscribers as $subscriber ) {
-			$this->factory->comment->create(
-				array(
-					'user_id'         => $subscriber,
-					'comment_post_ID' => $course_id,
-					'comment_type'    => 'sensei_course_status',
-				)
-			);
+			$this->manuallyEnrolStudentInCourse( $subscriber, $course_id );
 		}
 
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
@@ -1210,13 +1194,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 
 		// Enroll users in course.
 		foreach ( $subscribers as $subscriber ) {
-			$comment_ids[] = $this->factory->comment->create(
-				array(
-					'user_id'         => $subscriber,
-					'comment_post_ID' => $course_id,
-					'comment_type'    => 'sensei_course_status',
-				)
-			);
+			$this->manuallyEnrolStudentInCourse( $subscriber, $course_id );
 		}
 
 		update_comment_meta( $comment_ids[0], 'start', '2017-05-23 10:59:00' );
