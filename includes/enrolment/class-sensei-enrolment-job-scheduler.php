@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Sensei_Enrolment_Job_Scheduler is a class that handles the async jobs for calculating enrolment.
  */
 class Sensei_Enrolment_Job_Scheduler {
+	const ACTION_SCHEDULER_GROUP          = 'sensei-enrolment';
 	const CALCULATION_VERSION_OPTION_NAME = 'sensei-scheduler-calculation-version';
 
 	/**
@@ -73,14 +74,6 @@ class Sensei_Enrolment_Job_Scheduler {
 		$this->schedule_single_job( $job );
 
 		return $job;
-	}
-
-	/**
-	 * Stops all jobs that this class is responsible for.
-	 */
-	public function stop_all_jobs() {
-		wp_unschedule_hook( Sensei_Enrolment_Learner_Calculation_Job::get_name() );
-		wp_unschedule_hook( Sensei_Enrolment_Course_Calculation_Job::get_name() );
 	}
 
 	/**
@@ -161,8 +154,14 @@ class Sensei_Enrolment_Job_Scheduler {
 		$name       = $class_name::get_name();
 		$args       = [ $job->get_args() ];
 
-		if ( ! wp_next_scheduled( $name, $args ) ) {
-			wp_schedule_single_event( time(), $name, $args );
+		if ( $this->is_action_scheduler_available() ) {
+			if ( ! as_next_scheduled_action( $name, $args, self::ACTION_SCHEDULER_GROUP ) ) {
+				as_schedule_single_action( time(), $name, $args, self::ACTION_SCHEDULER_GROUP );
+			}
+		} else {
+			if ( ! wp_next_scheduled( $name, $args ) ) {
+				wp_schedule_single_event( time(), $name, $args );
+			}
 		}
 	}
 
@@ -177,5 +176,33 @@ class Sensei_Enrolment_Job_Scheduler {
 		$args       = [ $job->get_args() ];
 
 		wp_clear_scheduled_hook( $name, $args );
+
+		if ( $this->is_action_scheduler_available() ) {
+			as_unschedule_all_actions( $name, $args, self::ACTION_SCHEDULER_GROUP );
+		}
+	}
+
+	/**
+	 * Stops all jobs that this class is responsible for.
+	 */
+	public function stop_all_jobs() {
+		wp_unschedule_hook( Sensei_Enrolment_Learner_Calculation_Job::get_name() );
+		wp_unschedule_hook( Sensei_Enrolment_Course_Calculation_Job::get_name() );
+
+		if ( $this->is_action_scheduler_available() ) {
+			as_unschedule_all_actions( null, null, self::ACTION_SCHEDULER_GROUP );
+		}
+	}
+
+	/**
+	 * Check to see if Action Scheduler is available.
+	 *
+	 * @return bool
+	 */
+	private function is_action_scheduler_available() {
+		return class_exists( 'ActionScheduler_Versions' )
+				&& function_exists( 'as_unschedule_all_actions' )
+				&& function_exists( 'as_next_scheduled_action' )
+				&& function_exists( 'as_schedule_single_action' );
 	}
 }
