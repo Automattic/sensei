@@ -5,7 +5,7 @@
 		"php": "^5.4 || ^7",
 		"apigen/apigen": "*",
 		"phpunit/phpunit": "6.5.14",
-		"dealerdirect/phpcodesniffer-composer-installer": "0.4.4",
+		"dealerdirect/phpcodesniffer-composer-installer": "0.6.2",
 		"phpcompatibility/phpcompatibility-wp": "2.1.0",
 		"squizlabs/php_codesniffer": "3.5.4",
 		"wp-coding-standards/wpcs": "2.2.1",
