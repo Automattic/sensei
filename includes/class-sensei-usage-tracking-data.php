@@ -37,6 +37,7 @@ class Sensei_Usage_Tracking_Data {
 			'enrolments'              => self::get_course_enrolments(),
 			'enrolment_first'         => self::get_first_course_enrolment(),
 			'enrolment_last'          => self::get_last_course_enrolment(),
+			'enrolment_calculated'    => self::get_is_enrolment_calculated() ? 1 : 0,
 			'learners'                => self::get_learner_count(),
 			'lessons'                 => wp_count_posts( 'lesson' )->publish,
 			'lesson_modules'          => self::get_lesson_module_count(),
@@ -386,9 +387,22 @@ class Sensei_Usage_Tracking_Data {
 	}
 
 	/**
+	 * Checks if enrolment has been calculated for the current Sensei version.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @return bool
+	 */
+	private static function get_is_enrolment_calculated() {
+		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
+
+		return get_option( Sensei_Enrolment_Job_Scheduler::CALCULATION_VERSION_OPTION_NAME ) === $enrolment_manager->get_enrolment_calculation_version();
+	}
+
+	/**
 	 * Get the learner term IDs for all admin users.
 	 *
-	 * @return string[]
+	 * @return int[]
 	 */
 	private static function get_admin_learner_term_ids() {
 		$admins         = get_users( [ 'role' => 'administrator' ] );

@@ -1126,6 +1126,33 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 
 	/**
 	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_is_enrolment_calculated
+	 */
+	public function testGetIsEnrolmentCalculatedTrue() {
+		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
+		update_option( Sensei_Enrolment_Job_Scheduler::CALCULATION_VERSION_OPTION_NAME, $enrolment_manager->get_enrolment_calculation_version() );
+
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'enrolments', $usage_data, 'Key' );
+		$this->assertEquals( 1, $usage_data['enrolment_calculated'], 'Boolean int' );
+	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_is_enrolment_calculated
+	 */
+	public function testGetIsEnrolmentCalculatedFalse() {
+		delete_option( Sensei_Enrolment_Job_Scheduler::CALCULATION_VERSION_OPTION_NAME );
+
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'enrolments', $usage_data, 'Key' );
+		$this->assertEquals( 0, $usage_data['enrolment_calculated'], 'Boolean int' );
+	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
 	 * @covers Sensei_Usage_Tracking_Data::get_course_enrolments
 	 */
 	public function testGetCourseEnrolmentsNoAdminUsers() {
