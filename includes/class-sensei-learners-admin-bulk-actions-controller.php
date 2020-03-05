@@ -180,18 +180,29 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 
 	public function enqueue_scripts() {
 		$is_debug = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG;
-		$suffix   = '';
 
-		$jquery_modal_js_path = Sensei()->plugin_url . 'assets/vendor/jquery-modal-0.8.0/jquery.modal.min.js';
-		wp_register_script( 'sensei-admin-jquery-modal', $jquery_modal_js_path );
+		wp_enqueue_script(
+			'sensei-admin-jquery-modal',
+			'https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js',
+			[ 'jquery' ],
+			Sensei()->version,
+			true
+		);
 
-		$jquery_modal_css_filepath = Sensei()->plugin_url . 'assets/vendor/jquery-modal-0.8.0/jquery.modal.min.css';
-		wp_enqueue_style( 'sensei-admin-jquery-modal-css', $jquery_modal_css_filepath );
+		wp_enqueue_style(
+			'sensei-admin-jquery-modal-css',
+			'https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css',
+			[],
+			Sensei()->version
+		);
 
-		$bulk_learner_actions_dependencies = array( 'jquery', 'sensei-core-select2', 'sensei-admin-jquery-modal' );
-		$sensei_learners_bulk_actions_js   = 'sensei-learners-admin-bulk-actions-js';
-		$the_file                          = Sensei()->plugin_url . 'assets/js/learners-bulk-actions' . $suffix . '.js';
-		wp_enqueue_script( $sensei_learners_bulk_actions_js, $the_file, $bulk_learner_actions_dependencies, Sensei()->version, true );
+		wp_enqueue_script(
+			'sensei-learners-admin-bulk-actions-js',
+			Sensei()->plugin_url . 'assets/js/learners-bulk-actions.js',
+			[ 'jquery', 'sensei-core-select2', 'sensei-admin-jquery-modal' ],
+			Sensei()->version,
+			true
+		);
 
 		$data = array(
 			'remove_generic_confirm'      => __( 'Are you sure you want to remove this user?', 'sensei-lms' ),
@@ -204,8 +215,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 			'sensei_version'              => Sensei()->version,
 		);
 
-		wp_localize_script( $sensei_learners_bulk_actions_js, 'sensei_learners_bulk_data', $data );
-
+		wp_localize_script( 'sensei-learners-admin-bulk-actions-js', 'sensei_learners_bulk_data', $data );
 	}
 
 	public function learner_admin_page() {
