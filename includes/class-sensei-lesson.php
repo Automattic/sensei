@@ -3999,7 +3999,7 @@ class Sensei_Lesson {
 		}
 
 		$lesson_course_id   = get_post_meta( $lesson_id, '_lesson_course', true );
-		$user_taking_course = Sensei_Utils::user_started_course( $lesson_course_id, $user_id );
+		$user_taking_course = Sensei_Course::is_user_enrolled( $lesson_course_id, $user_id );
 		if ( ! $user_taking_course || ! sensei_can_user_view_lesson( $lesson_id, $user_id ) ) {
 			return;
 		}
