@@ -674,7 +674,7 @@ class Sensei_Utils {
 	/**
 	 * Mark a lesson as started for user
 	 *
-	 * Will also start the lesson course for the user if the user hans't started taking it already.
+	 * Will also start the lesson course for the user if the user hasn't started taking it already.
 	 *
 	 * @since 1.6.0
 	 *
