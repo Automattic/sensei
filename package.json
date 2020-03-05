@@ -41,7 +41,7 @@
     "gulp-sort": "2.0.0",
     "gulp-uglify": "3.0.2",
     "gulp-wp-pot": "2.3.6",
-    "gulp-zip": "4.2.0",
+    "gulp-zip": "5.0.1",
     "jest": "25.0.0",
     "mini-css-extract-plugin": "0.4.5",
     "node-sass": "4.13.0",
