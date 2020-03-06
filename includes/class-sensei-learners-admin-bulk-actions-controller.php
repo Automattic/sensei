@@ -9,11 +9,12 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 
 	const NONCE_SENSEI_BULK_LEARNER_ACTIONS       = 'sensei-bulk-learner-actions';
 	const SENSEI_BULK_LEARNER_ACTIONS_NONCE_FIELD = '_sensei_bulk_learner_actions_field';
-	const ADD_TO_COURSE                           = 'add_to_course';
-	const REMOVE_FROM_COURSE                      = 'remove_from_course';
-	const RESET_COURSE                            = 'reset_course';
+	const MANUALLY_ENROL                          = 'manually_enrol';
+	const REMOVE_MANUAL_ENROLMENT                 = 'remove_manual_enrolment';
+	const REMOVE_PROGRESS                         = 'remove_progress';
 	const COMPLETE_COURSE                         = 'complete_course';
 	const RECALCULATE_COURSE_COMPLETION           = 'recalculate_course_completion';
+
 	/**
 	 * @var array|null we only do these actions
 	 */
@@ -49,9 +50,9 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 		$this->learner_management = $management;
 
 		$this->known_bulk_actions = [
-			self::ADD_TO_COURSE                 => __( 'Assign to Course(s)', 'sensei-lms' ),
-			self::REMOVE_FROM_COURSE            => __( 'Unassign from Course(s)', 'sensei-lms' ),
-			self::RESET_COURSE                  => __( 'Reset Course(s)', 'sensei-lms' ),
+			self::MANUALLY_ENROL                => __( 'Manually enroll', 'sensei-lms' ),
+			self::REMOVE_MANUAL_ENROLMENT       => __( 'Remove manual enrollment', 'sensei-lms' ),
+			self::REMOVE_PROGRESS               => __( 'Remove progress', 'sensei-lms' ),
 			self::COMPLETE_COURSE               => __( 'Recalculate Course(s) Completion (notify on complete)', 'sensei-lms' ),
 			self::RECALCULATE_COURSE_COMPLETION => __( 'Recalculate Course(s) Completion (do not notify on complete)', 'sensei-lms' ),
 		];
@@ -108,23 +109,22 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 			return;
 		}
 
-		if ( ! isset( $_POST['sensei_bulk_action'] ) ) {
+		if ( ! isset( $_POST['sensei_bulk_action'], $_POST['bulk_action_course_ids'], $_POST['bulk_action_user_ids'] ) ) {
 			return;
 		}
 
 		check_admin_referer( self::NONCE_SENSEI_BULK_LEARNER_ACTIONS, self::SENSEI_BULK_LEARNER_ACTIONS_NONCE_FIELD );
 
-		$sensei_bulk_action = $_POST['sensei_bulk_action'];
+		$sensei_bulk_action = sanitize_text_field( wp_unslash( $_POST['sensei_bulk_action'] ) );
+		$course_ids         = explode( ',', sanitize_text_field( wp_unslash( $_POST['bulk_action_course_ids'] ) ) );
+		$user_ids           = array_map( 'absint', explode( ',', sanitize_text_field( wp_unslash( $_POST['bulk_action_user_ids'] ) ) ) );
 
-		if ( ! in_array( $sensei_bulk_action, array_keys( $this->get_known_bulk_actions() ) ) ) {
+		if ( ! array_key_exists( $sensei_bulk_action, $this->get_known_bulk_actions() ) ) {
 			$this->redirect_to_learner_admin_index( 'error-invalid-action' );
 		}
 
-		$course_ids = isset( $_POST['bulk_action_course_ids'] ) ? explode( ',', $_POST['bulk_action_course_ids'] ) : array();
-		$user_ids   = isset( $_POST['bulk_action_user_ids'] ) ? array_map( 'absint', explode( ',', $_POST['bulk_action_user_ids'] ) ) : array();
-
 		foreach ( $course_ids as $course_id ) {
-			// Validate courses before continuing
+			// Validate courses before continuing.
 			$course = get_post( absint( $course_id ) );
 			if ( empty( $course ) ) {
 				$this->redirect_to_learner_admin_index( 'error-invalid-course' );
@@ -134,48 +134,46 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 		foreach ( $user_ids as $user_id ) {
 			$user = new WP_User( $user_id );
 
-			if ( ! $user->exists() ) {
-				continue;
-			}
-
-			foreach ( $course_ids as $course_id ) {
-
-				if ( self::ADD_TO_COURSE === $sensei_bulk_action ) {
-					Sensei_Utils::user_start_course( $user_id, $course_id );
-				}
-
-				if ( self::REMOVE_FROM_COURSE === $sensei_bulk_action ) {
-					if ( false === Sensei_Utils::user_started_course( $course_id, $user_id ) ) {
-						continue;
-					}
-					Sensei_Utils::sensei_remove_user_from_course( $course_id, $user_id );
-				}
-
-				if ( self::RESET_COURSE === $sensei_bulk_action ) {
-					if ( false === Sensei_Utils::user_started_course( $course_id, $user_id ) ) {
-						continue;
-					}
-					Sensei_Utils::reset_course_for_user( $course_id, $user_id );
-				}
-
-				if ( self::COMPLETE_COURSE === $sensei_bulk_action ) {
-					if ( false === Sensei_Utils::user_started_course( $course_id, $user_id ) || Sensei_Utils::user_completed_course( $course_id, $user_id ) ) {
-						continue;
-					}
-					Sensei_Utils::user_complete_course( $course_id, $user_id );
-				}
-
-				if ( self::RECALCULATE_COURSE_COMPLETION === $sensei_bulk_action ) {
-					if ( false === Sensei_Utils::user_started_course( $course_id, $user_id ) || Sensei_Utils::user_completed_course( $course_id, $user_id ) ) {
-						continue;
-					}
-					$trigger_completion = false;
-					Sensei_Utils::user_complete_course( $course_id, $user_id, $trigger_completion );
+			if ( $user->exists() ) {
+				foreach ( $course_ids as $course_id ) {
+					$this->do_user_action( $user_id, $course_id, $sensei_bulk_action );
 				}
 			}
 		}
 
-		$this->redirect_to_learner_admin_index( 'success-action-success' );
+		$this->redirect_to_learner_admin_index( 'action-success' );
+	}
+
+	private function do_user_action( $user_id, $course_id, $action ) {
+		$manual_enrolment_provider = Sensei_Course_Enrolment_Manager::instance()->get_manual_enrolment_provider();
+
+		switch ( $action ) {
+			case self::MANUALLY_ENROL:
+				if ( ! $manual_enrolment_provider->is_enrolled( $user_id, $course_id ) ) {
+					$manual_enrolment_provider->enrol_student( $user_id, $course_id );
+				}
+				break;
+			case self::REMOVE_MANUAL_ENROLMENT:
+				if ( $manual_enrolment_provider->is_enrolled( $user_id, $course_id ) ) {
+					$manual_enrolment_provider->withdraw_student( $user_id, $course_id );
+				}
+				break;
+			case self::REMOVE_PROGRESS:
+				if ( Sensei_Utils::has_started_course( $course_id, $user_id ) ) {
+					Sensei_Utils::reset_course_for_user( $course_id, $user_id );
+				}
+				break;
+			case self::COMPLETE_COURSE:
+				if ( Sensei_Utils::has_started_course( $course_id, $user_id ) && ! Sensei_Utils::user_completed_course( $course_id, $user_id ) ) {
+					Sensei_Utils::user_complete_course( $course_id, $user_id );
+				}
+				break;
+			case self::RECALCULATE_COURSE_COMPLETION:
+				if ( Sensei_Utils::has_started_course( $course_id, $user_id ) && ! Sensei_Utils::user_completed_course( $course_id, $user_id ) ) {
+					Sensei_Utils::user_complete_course( $course_id, $user_id, false );
+				}
+				break;
+		}
 	}
 
 	public function enqueue_scripts() {
@@ -268,25 +266,32 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 		if ( ! $this->is_current_page() ) {
 			return;
 		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( ! isset( $_GET['message'] ) ) {
 			return;
 		}
-		$msg      = $_GET['message'];
-		$msgClass = 'notice-error';
-		$trans    = $msg;
-		if ( 'error-invalid-action' === $msg ) {
-			$trans = __( 'This bulk action is not supported', 'sensei-lms' );
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Safe use of message.
+		$msg       = sanitize_text_field( wp_unslash( $_GET['message'] ) );
+		$msg_class = 'notice notice-error';
+
+		switch ( $msg ) {
+			case 'error-invalid-action':
+				$msg = __( 'This bulk action is not supported', 'sensei-lms' );
+				break;
+			case 'error-invalid-course':
+				$msg = __( 'Invalid Course', 'sensei-lms' );
+				break;
+			case 'action-success':
+				$msg_class = 'notice notice-success';
+				$msg       = __( 'Bulk learner action succeeded', 'sensei-lms' );
+				break;
 		}
-		if ( 'error-invalid-course' === $msg ) {
-			$trans = __( 'Invalid Course', 'sensei-lms' );
-		}
-		if ( 'success-action-success' === $msg ) {
-			$msgClass = 'notice-success';
-			$trans    = __( 'Bulk learner action succeeded', 'sensei-lms' );
-		}
+
 		?>
-		<div class="learners-notice <?php echo esc_attr( $msgClass ); ?>">
-			<p><?php echo esc_html( $trans ); ?></p>
+		<div class="learners-notice <?php echo esc_attr( $msg_class ); ?>">
+			<p><?php echo esc_html( $msg ); ?></p>
 		</div>
 		<?php
 	}
