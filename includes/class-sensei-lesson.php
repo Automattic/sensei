@@ -3765,7 +3765,7 @@ class Sensei_Lesson {
 	/**
 	 * Filter the classes for lessons on the single course page.
 	 *
-	 * Adds the nesecary classes depending on the user data
+	 * Adds the necessary classes depending on the user data
 	 *
 	 * @since 1.9.0
 	 * @param array $classes
