@@ -1,10 +1,17 @@
 <?php
+/**
+ * File containing the class Sensei_Learners_Admin_Bulk_Actions_Controller.
+ *
+ * @package sensei
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 } // Exit if accessed directly
 
-
+/**
+ * This class handles the bulk learner actions in learner management.
+ */
 class Sensei_Learners_Admin_Bulk_Actions_Controller {
 
 	const NONCE_SENSEI_BULK_LEARNER_ACTIONS       = 'sensei-bulk-learner-actions';
@@ -16,15 +23,43 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	const RECALCULATE_COURSE_COMPLETION           = 'recalculate_course_completion';
 
 	/**
-	 * @var array|null we only do these actions
+	 * The available bulk actions.
+	 *
+	 * @var array|null
 	 */
 	private $known_bulk_actions;
+
+	/**
+	 * The page slug.
+	 *
+	 * @var string
+	 */
 	private $page_slug;
+
+	/**
+	 * The page view.
+	 *
+	 * @var string
+	 */
 	private $view;
-	private $name;
+
+	/**
+	 * The Sensei_Learner_Management object.
+	 *
+	 * @var Sensei_Learner_Management
+	 */
 	private $learner_management;
 
 	/**
+	 * The name of the page
+	 *
+	 * @var string
+	 */
+	private $name;
+
+	/**
+	 * Get the name of the page.
+	 *
 	 * @return string|void
 	 */
 	public function get_name() {
@@ -32,6 +67,8 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	}
 
 	/**
+	 * Get the page slug.
+	 *
 	 * @return string
 	 */
 	public function get_page_slug() {
@@ -41,12 +78,12 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	/**
 	 * Sensei_Learners_Admin_Main constructor.
 	 *
-	 * @param $management Sensei_Learner_Management
+	 * @param Sensei_Learner_Management $management The learner managemnt object.
 	 */
 	public function __construct( $management ) {
-		$this->name      = __( 'Bulk Learner Actions', 'sensei-lms' );
-		$this->page_slug = $management->page_slug;
-		$this->view      = 'sensei_learner_admin';
+		$this->name               = __( 'Bulk Learner Actions', 'sensei-lms' );
+		$this->page_slug          = $management->page_slug;
+		$this->view               = 'sensei_learner_admin';
 		$this->learner_management = $management;
 
 		$this->known_bulk_actions = [
@@ -58,10 +95,15 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 		];
 
 		if ( is_admin() ) {
-			$this->hook();
+			$this->register_hooks();
 		}
 	}
 
+	/**
+	 * Redirects to the bulk learner management screen and displays a message.
+	 *
+	 * @param string $result The result code or an error message to be displayed.
+	 */
 	private function redirect_to_learner_admin_index( $result ) {
 		$url = add_query_arg(
 			array(
@@ -75,40 +117,62 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 		exit;
 	}
 
-	private function get_page_url_parts() {
-		return array(
-			'page' => $this->get_page_slug(),
-			'view' => $this->get_view(),
+	/**
+	 * Get the url of the bulk learner management screen.
+	 *
+	 * @return string
+	 */
+	public function get_url() {
+		return add_query_arg(
+			[
+				'page' => $this->get_page_slug(),
+				'view' => $this->get_view(),
+			],
+			admin_url( 'admin.php' )
 		);
 	}
 
-	public function get_url() {
-		return $this->build_admin_url( $this->get_page_url_parts() );
-	}
-
-	private function build_admin_url( $args_array ) {
-		return add_query_arg( $args_array, admin_url( 'admin.php' ) );
-	}
-
+	/**
+	 * Get the url of the learner management screen of a course.
+	 *
+	 * @param integer $course_id The course id.
+	 * @return string
+	 */
 	public function get_learner_management_course_url( $course_id ) {
-		return $this->build_admin_url(
-			array(
+		return add_query_arg(
+			[
 				'page'      => 'sensei_learners',
 				'course_id' => absint( $course_id ),
 				'view'      => 'learners',
-			)
+			],
+			admin_url( 'admin.php' )
 		);
 	}
 
+	/**
+	 * Get the supported bulk actions.
+	 *
+	 * @return array
+	 */
 	public function get_known_bulk_actions() {
 		return (array) apply_filters( 'sensei_learners_admin_get_known_bulk_actions', $this->known_bulk_actions );
 	}
 
+	/**
+	 * Handles the bulk action POST request. Required arguments are:
+	 *
+	 * 'sensei_bulk_action'         The action to perform.
+	 * 'bulk_action_user_ids'       The users to perform the action on.
+	 * 'bulk_action_course_ids and' The courses which the action is aimed on.
+	 *
+	 * @access private
+	 */
 	public function handle_http_post() {
 		if ( ! $this->is_current_page() ) {
 			return;
 		}
 
+		// phpcs:ignore WordPress.Security.NonceVerification -- Nonce checked in check_nonce below.
 		if ( ! isset( $_POST['sensei_bulk_action'], $_POST['bulk_action_course_ids'], $_POST['bulk_action_user_ids'] ) ) {
 			return;
 		}
@@ -144,8 +208,19 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 		$this->redirect_to_learner_admin_index( 'action-success' );
 	}
 
+	/**
+	 * Helper method to perform the action on a user and course.
+	 *
+	 * @param integer $user_id   The user to perform the action on.
+	 * @param integer $course_id The course which the action relates to.
+	 * @param string  $action    The action.
+	 */
 	private function do_user_action( $user_id, $course_id, $action ) {
-		$manual_enrolment_provider = Sensei_Course_Enrolment_Manager::instance()->get_manual_enrolment_provider();
+		try {
+			$manual_enrolment_provider = Sensei_Course_Enrolment_Manager::instance()->get_manual_enrolment_provider();
+		} catch ( Exception $e ) {
+			$this->redirect_to_learner_admin_index( $e->getMessage() );
+		}
 
 		switch ( $action ) {
 			case self::MANUALLY_ENROL:
@@ -176,6 +251,11 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 		}
 	}
 
+	/**
+	 * Enqueues JS and CSS dependencies.
+	 *
+	 * @access private
+	 */
 	public function enqueue_scripts() {
 		$is_debug = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG;
 
@@ -216,11 +296,15 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 		wp_localize_script( 'sensei-learners-admin-bulk-actions-js', 'sensei_learners_bulk_data', $data );
 	}
 
+	/**
+	 * Display the learner bulk action page.
+	 */
 	public function learner_admin_page() {
-		// Load Learners data
+		// Load Learners data.
 		$sensei_learners_main_view = new Sensei_Learners_Admin_Bulk_Actions_View( $this, $this->learner_management );
 		$sensei_learners_main_view->prepare_items();
-		// Wrappers
+
+		// Wrappers.
 		do_action( 'sensei_learner_admin_before_container' );
 		?>
 		<div id="woothemes-sensei" class="wrap woothemes-sensei">
@@ -239,17 +323,23 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 		<?php
 		do_action( 'sensei_learner_admin_wrapper_container', 'bottom' );
 		?>
-		 </div>
+		</div>
 		<?php
 		do_action( 'sensei_learner_admin_after_container' );
 	}
 
+	/**
+	 * Checks if this is the bulk management page.
+	 */
 	public function is_current_page() {
-		return isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug )
-			&& isset( $_GET['view'] ) && ( $_GET['view'] == $this->view );
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
+		return isset( $_GET['page'], $_GET['view'] ) && ( $_GET['page'] === $this->page_slug ) && ( $_GET['view'] === $this->view );
 	}
 
-	private function hook() {
+	/**
+	 * Registers the class' hooks.
+	 */
+	private function register_hooks() {
 		if ( $this->is_current_page() ) {
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ), 30 );
 		}
@@ -258,10 +348,19 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 		add_action( 'admin_notices', array( $this, 'add_notices' ) );
 	}
 
+	/**
+	 * Get the page view string.
+	 *
+	 * @return string
+	 */
 	public function get_view() {
 		return $this->view;
 	}
 
+	/**
+	 * Adds a notice in the bulk management page. The notice message is retrieved from the message GET argument. The
+	 * GET argument can be either the actual message or a specific code.
+	 */
 	public function add_notices() {
 		if ( ! $this->is_current_page() ) {
 			return;
