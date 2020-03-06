@@ -1,12 +1,15 @@
 <?php
 
 class Sensei_Class_Course_Test extends WP_UnitTestCase {
+	use Sensei_Course_Enrolment_Manual_Test_Helpers;
 
 	/**
 	 * Constructor function
 	 */
 	public function __construct() {
 		parent::__construct();
+
+		$this->factory = new Sensei_Factory();
 	}
 
 	/**
@@ -338,5 +341,55 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		// Ensure product count is correct.
 		$event = $events[0];
 		$this->assertEquals( 2, $event['url_args']['product_count'], 'Event should have 2 products attached to the course' );
+	}
+
+	/**
+	 * Checks to make sure standard users can view course content when the access permissions setting is disabled.
+	 */
+	public function testCanAccessCourseContentDisableAccessPermissionCan() {
+		$course_instance = Sensei()->course;
+		$user_id         = $this->factory->user->create();
+		$course_id       = $this->factory->course->create();
+
+		Sensei()->settings->set( 'access_permission', false );
+		$result = $course_instance->can_access_course_content( $course_id, $user_id );
+		Sensei()->settings->set( 'access_permission', true );
+
+		$this->assertTrue( $result, 'Standard users should have access to course content when access permissions are disabled' );
+	}
+
+	/**
+	 * Checks to make sure admins always have access to course content.
+	 */
+	public function testCanAccessCourseContentAdminCan() {
+		$course_instance = Sensei()->course;
+		$user_id         = $this->factory->user->create( [ 'role' => 'administrator' ] );
+		$course_id       = $this->factory->course->create();
+
+		$this->assertTrue( $course_instance->can_access_course_content( $course_id, $user_id ), 'Admins should have access to course content' );
+	}
+
+	/**
+	 * Checks to make sure standard users who aren't enrolled can't view course content.
+	 */
+	public function testCanAccessCourseContentStandardUserCanNot() {
+		$course_instance = Sensei()->course;
+		$user_id         = $this->factory->user->create();
+		$course_id       = $this->factory->course->create();
+
+		$this->assertFalse( $course_instance->can_access_course_content( $course_id, $user_id ), 'Standard users who are not enrolled should not have access to course content' );
+	}
+
+	/**
+	 * Checks to make sure standard users who are enrolled can view course content.
+	 */
+	public function testCanAccessCourseContentEnrolledStandardCan() {
+		$course_instance = Sensei()->course;
+		$user_id         = $this->factory->user->create();
+		$course_id       = $this->factory->course->create();
+
+		$this->manuallyEnrolStudentInCourse( $user_id, $course_id );
+
+		$this->assertTrue( $course_instance->can_access_course_content( $course_id, $user_id ), 'Standard users who are enrolled should have access to course content' );
 	}
 }//end class
