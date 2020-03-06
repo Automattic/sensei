@@ -4368,7 +4368,7 @@ class Sensei_Lesson {
 		$has_user_completed_lesson = Sensei_Utils::user_completed_lesson( intval( $lesson_id ), $user_id );
 
 		if ( $quiz_id && is_user_logged_in()
-			&& Sensei_Utils::user_started_course( $lesson_course_id, $user_id ) ) {
+			&& Sensei_Course::is_user_enrolled( $lesson_course_id, $user_id ) ) {
 			$has_quiz_questions = self::lesson_quiz_has_questions( $lesson_id );
 
 			// Display lesson quiz status message
