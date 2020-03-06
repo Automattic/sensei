@@ -1240,7 +1240,7 @@ class Sensei_Utils {
 
 		if ( $course_id > 0 && $user_id > 0 ) {
 
-			$started_course = self::user_started_course( $course_id, $user_id );
+			$started_course = self::has_started_course( $course_id, $user_id );
 
 			if ( $started_course ) {
 				$passmark   = self::sensei_course_pass_grade( $course_id ); // This happens inside sensei_user_passed_course()!

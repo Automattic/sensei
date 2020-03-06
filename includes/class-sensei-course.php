@@ -1858,8 +1858,11 @@ class Sensei_Course {
 	 */
 	public function get_progress_statement( $course_id, $user_id ) {
 
-		if ( empty( $course_id ) || empty( $user_id )
-		|| ! Sensei_Utils::user_started_course( $course_id, $user_id ) ) {
+		if (
+			empty( $course_id )
+			|| empty( $user_id )
+			|| ! self::is_user_enrolled( $course_id, $user_id )
+		) {
 			return '';
 		}
 
@@ -1921,8 +1924,11 @@ class Sensei_Course {
 			$user_id = get_current_user_id();
 		}
 
-		if ( 'course' != get_post_type( $course_id ) || ! get_userdata( $user_id )
-			|| ! Sensei_Utils::user_started_course( $course_id, $user_id ) ) {
+		if (
+			'course' !== get_post_type( $course_id )
+			|| ! get_userdata( $user_id )
+			|| ! self::is_user_enrolled( $course_id, $user_id )
+		) {
 			return;
 		}
 		$percentage_completed = $this->get_completion_percentage( $course_id, $user_id );
@@ -2135,7 +2141,7 @@ class Sensei_Course {
 		// Meta data
 		$course                = get_post( $course_id );
 		$preview_lesson_count  = intval( Sensei()->course->course_lesson_preview_count( $course->ID ) );
-		$is_user_taking_course = Sensei_Utils::user_started_course( $course->ID, get_current_user_id() );
+		$is_user_taking_course = self::is_user_enrolled( $course->ID, get_current_user_id() );
 
 		if ( 0 < $preview_lesson_count && ! $is_user_taking_course ) {
 			?>
@@ -2942,7 +2948,7 @@ class Sensei_Course {
 		?>
 		<section class="course-meta course-enrolment">
 		<?php
-		$is_user_taking_course = Sensei_Utils::user_started_course( $post->ID, $current_user->ID );
+		$is_user_taking_course = self::is_user_enrolled( $post->ID, $current_user->ID );
 
 		// If user is taking course, display progress.
 		if ( $is_user_taking_course ) {
