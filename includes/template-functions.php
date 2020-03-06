@@ -936,7 +936,7 @@ function sensei_can_user_view_lesson( $lesson_id = null, $user_id = null ) {
 	};
 
 	$can_user_view_lesson = ! sensei_is_login_required()
-							|| sensei_all_access()
+							|| sensei_all_access( $user_id )
 							|| ( $user_can_view_course_content && $pre_requisite_complete )
 							|| $is_preview_lesson;
 

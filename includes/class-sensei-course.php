@@ -192,12 +192,15 @@ class Sensei_Course {
 			$user_id = get_current_user_id();
 		}
 
-		$is_user_enrolled        = is_user_logged_in() && self::is_user_enrolled( $course_id, $user_id );
 		$can_view_course_content = false;
+		$is_user_enrolled        = false;
+		if ( ! empty( $user_id ) ) {
+			$is_user_enrolled = self::is_user_enrolled( $course_id, $user_id );
+		}
 
 		if (
 			! sensei_is_login_required()
-			|| sensei_all_access()
+			|| sensei_all_access( $user_id )
 			|| $is_user_enrolled
 		) {
 			$can_view_course_content = true;
