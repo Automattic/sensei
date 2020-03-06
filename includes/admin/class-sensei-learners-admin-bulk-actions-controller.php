@@ -103,8 +103,10 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	 * Redirects to the bulk learner management screen and displays a message.
 	 *
 	 * @param string $result The result code or an error message to be displayed.
+	 *
+	 * @access private
 	 */
-	private function redirect_to_learner_admin_index( $result ) {
+	public function redirect_to_learner_admin_index( $result ) {
 		$url = add_query_arg(
 			array(
 				'page'    => $this->get_page_slug(),
@@ -177,14 +179,16 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 			return;
 		}
 
-		check_admin_referer( self::NONCE_SENSEI_BULK_LEARNER_ACTIONS, self::SENSEI_BULK_LEARNER_ACTIONS_NONCE_FIELD );
+		$this->check_nonce();
 
+		// phpcs:ignore WordPress.Security.NonceVerification -- Nonce checked in check_nonce
 		$sensei_bulk_action = sanitize_text_field( wp_unslash( $_POST['sensei_bulk_action'] ) );
-		$course_ids         = explode( ',', sanitize_text_field( wp_unslash( $_POST['bulk_action_course_ids'] ) ) );
-		$user_ids           = array_map( 'absint', explode( ',', sanitize_text_field( wp_unslash( $_POST['bulk_action_user_ids'] ) ) ) );
+		$course_ids         = explode( ',', sanitize_text_field( wp_unslash( $_POST['bulk_action_course_ids'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification
+		$user_ids           = array_map( 'absint', explode( ',', sanitize_text_field( wp_unslash( $_POST['bulk_action_user_ids'] ) ) ) ); // phpcs:ignore WordPress.Security.NonceVerification
 
 		if ( ! array_key_exists( $sensei_bulk_action, $this->get_known_bulk_actions() ) ) {
 			$this->redirect_to_learner_admin_index( 'error-invalid-action' );
+			return;
 		}
 
 		foreach ( $course_ids as $course_id ) {
@@ -192,6 +196,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 			$course = get_post( absint( $course_id ) );
 			if ( empty( $course ) ) {
 				$this->redirect_to_learner_admin_index( 'error-invalid-course' );
+				return;
 			}
 		}
 
@@ -200,12 +205,21 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 
 			if ( $user->exists() ) {
 				foreach ( $course_ids as $course_id ) {
-					$this->do_user_action( $user_id, $course_id, $sensei_bulk_action );
+					$this->do_user_action( $user_id, (int) $course_id, $sensei_bulk_action );
 				}
 			}
 		}
 
 		$this->redirect_to_learner_admin_index( 'action-success' );
+	}
+
+	/**
+	 * Wraps global method to facilitate mocking.
+	 *
+	 * @access private
+	 */
+	public function check_nonce() {
+		check_admin_referer( self::NONCE_SENSEI_BULK_LEARNER_ACTIONS, self::SENSEI_BULK_LEARNER_ACTIONS_NONCE_FIELD );
 	}
 
 	/**
