@@ -4060,21 +4060,6 @@ class Sensei_Lesson {
 
 		_deprecated_function( __METHOD__, '3.0.0' );
 
-		$lesson_id = get_the_ID();
-
-		if ( 'lesson' != get_post_type( $lesson_id ) ) {
-			return;
-		}
-
-		$is_preview             = Sensei_Utils::is_preview_lesson( $lesson_id );
-		$pre_requisite_complete = self::is_prerequisite_complete( $lesson_id, get_current_user_id() );
-		$lesson_course_id       = get_post_meta( $lesson_id, '_lesson_course', true );
-		$user_taking_course     = Sensei_Course::is_user_enrolled( $lesson_course_id );
-
-		if ( $pre_requisite_complete && $is_preview && ! $user_taking_course ) {
-
-		}// end if
-
 	} // end user_not_taking_course_message
 
 	/**
