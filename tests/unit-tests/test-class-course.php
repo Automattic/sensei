@@ -1,6 +1,7 @@
 <?php
 
 class Sensei_Class_Course_Test extends WP_UnitTestCase {
+	use Sensei_Course_Enrolment_Test_Helpers;
 	use Sensei_Course_Enrolment_Manual_Test_Helpers;
 
 	/**

@@ -1,5 +1,4 @@
 <?php
-require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-helpers.php';
 
 /**
  * Tests for Sensei_Enrolment_Learner_Calculation_Job class.
