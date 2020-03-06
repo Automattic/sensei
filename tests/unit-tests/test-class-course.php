@@ -385,6 +385,8 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 	 * Checks to make sure standard users who are enrolled can view course content.
 	 */
 	public function testCanAccessCourseContentEnrolledStandardCan() {
+		$this->prepareEnrolmentManager();
+
 		$course_instance = Sensei()->course;
 		$user_id         = $this->factory->user->create();
 		$course_id       = $this->factory->course->create();
