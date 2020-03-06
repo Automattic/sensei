@@ -4216,7 +4216,7 @@ class Sensei_Lesson {
 		$course_id  = get_post_meta( $post->ID, '_lesson_course', true );
 		$is_preview = isset( $post->ID )
 			&& Sensei_Utils::is_preview_lesson( $post->ID )
-			&& ! Sensei_Utils::user_started_course( $course_id, $current_user->ID );
+			&& ! Sensei_Course::is_user_enrolled( $course_id, $current_user->ID );
 
 		?>
 		<header class="lesson-title">
