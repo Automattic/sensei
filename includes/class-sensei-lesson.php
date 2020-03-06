@@ -4092,7 +4092,7 @@ class Sensei_Lesson {
 			return;
 		}
 
-		$show_course_signup_notice = sensei_is_login_required() && ! Sensei_Utils::user_started_course( $course_id, get_current_user_id() );
+		$show_course_signup_notice = sensei_is_login_required() && ! Sensei_Course::is_user_enrolled( $course_id );
 
 		/**
 		 * Filter for if we should show the course sign up notice on the lesson page.
