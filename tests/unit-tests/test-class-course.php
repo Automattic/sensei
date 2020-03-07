@@ -367,11 +367,9 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		$user_id         = $this->factory->user->create( [ 'role' => 'administrator' ] );
 		$course_id       = $this->factory->course->create();
 
-		global $wp_roles;
-		$user = get_user_by('ID',$user_id);
-		var_dump($wp_roles);
-		var_dump($user);
-		var_dump($user->get_role_caps());
+		$user = get_user_by( 'id', $user_id );
+		$user->add_cap( 'manage_sensei' );
+
 		$this->assertTrue( $course_instance->can_access_course_content( $course_id, $user_id ), 'Admins should have access to course content' );
 	}
 
