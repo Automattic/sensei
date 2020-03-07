@@ -235,6 +235,7 @@ class Sensei_Legacy_Shortcodes {
 
 		if ( is_user_logged_in() ) {
 
+			wp_enqueue_script( Sensei()->token . '-user-dashboard' );
 			Sensei_Templates::get_template( 'user/my-courses.php' );
 
 		} else {

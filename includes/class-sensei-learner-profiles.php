@@ -30,15 +30,15 @@ class Sensei_Learner_Profiles {
 		// Setup permalink structure for learner profiles
 		add_action( 'init', array( $this, 'setup_permastruct' ) );
 		add_filter( 'wp_title', array( $this, 'page_title' ), 10, 2 );
-
+		
+		// Scripts for frontend.
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+		
 		// Set heading for courses section of learner profiles
 		add_action( 'sensei_learner_profile_info', array( $this, 'learner_profile_courses_heading' ), 30, 1 );
 
 		// Add class to body tag
 		add_filter( 'body_class', array( $this, 'learner_profile_body_class' ), 10, 1 );
-
-		// Scripts for frontend.
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 	} // End __construct().
 
 	/**
@@ -48,18 +48,12 @@ class Sensei_Learner_Profiles {
 	 * @access private
 	 */
 	public function enqueue_scripts() {
-		if ( ! Sensei_Utils::get_setting_as_flag( 'js_disable', 'sensei_settings_js_disable' ) ) {
-			global $wp;
-			global $post;
-			if ( preg_match( '/\/learner\//', add_query_arg( $wp->query_vars, home_url( $wp->request ) ) ) ||
-				'' !== get_query_var( 'learner_profile' ) ||
-				( is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'usercourses' ) ) ) {
+		global $wp_query;
 
-				$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		if ( ! Sensei_Utils::get_setting_as_flag( 'js_disable', 'sensei_settings_js_disable' ) &&
+			isset( $wp_query->query_vars['learner_profile'] ) ) {
 
-				wp_register_script( Sensei()->token . '-user-dashboard', esc_url( Sensei()->plugin_url . 'assets/js/user-dashboard' . $suffix . '.js' ), array( 'jquery-ui-tabs' ), Sensei()->version, true );
-				wp_enqueue_script( Sensei()->token . '-user-dashboard' );
-			}
+			wp_enqueue_script( Sensei()->token . '-user-dashboard' );
 		}
 	}
 
