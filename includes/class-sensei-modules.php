@@ -870,7 +870,7 @@ class Sensei_Core_Modules {
 			return;
 		}
 
-		$show_course_signup_notice = ! $this->can_view_module_content();
+		$show_course_signup_notice = ! $this->can_view_module_content( null, $course_id );
 
 		/**
 		 * Filter for if we should show the course sign up notice on the module page.
