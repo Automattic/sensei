@@ -148,7 +148,7 @@ class Sensei_Frontend {
 			}
 
 			wp_register_script( Sensei()->token . '-user-dashboard', esc_url( Sensei()->plugin_url . 'assets/js/user-dashboard' . $suffix . '.js' ), array( 'jquery-ui-tabs' ), Sensei()->version, true );
-			
+
 			// Allow additional scripts to be loaded.
 			do_action( 'sensei_additional_scripts' );
 

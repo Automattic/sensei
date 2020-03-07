@@ -30,10 +30,10 @@ class Sensei_Learner_Profiles {
 		// Setup permalink structure for learner profiles
 		add_action( 'init', array( $this, 'setup_permastruct' ) );
 		add_filter( 'wp_title', array( $this, 'page_title' ), 10, 2 );
-		
+
 		// Scripts for frontend.
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
-		
+
 		// Set heading for courses section of learner profiles
 		add_action( 'sensei_learner_profile_info', array( $this, 'learner_profile_courses_heading' ), 30, 1 );
 
