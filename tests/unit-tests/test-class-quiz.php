@@ -666,10 +666,8 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$old_data_user_id  = wp_create_user( 'olddata', 'olddata', 'olddata@test.com' );
 		$question_type     = Sensei()->question->get_question_type( $question_id );
 
-		// Sanitise answer
-		if ( 0 == get_magic_quotes_gpc() ) {
-			$answer = wp_unslash( $answer );
-		}
+		$answer = wp_unslash( $answer );
+
 		switch ( $question_type ) {
 			case 'multi-line':
 				$answer = nl2br( $answer );
