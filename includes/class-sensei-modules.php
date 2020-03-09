@@ -838,9 +838,10 @@ class Sensei_Core_Modules {
 			$user_id = get_current_user_id();
 		}
 
-		if ( ! sensei_is_login_required() ) {
-			$can_view_module_content = true;
-		} elseif ( $course_id && Sensei()->course->can_access_course_content( $course_id, $user_id, 'module' ) ) {
+		if (
+			! sensei_is_login_required()
+			|| ( $course_id && Sensei()->course->can_access_course_content( $course_id, $user_id, 'module' ) )
+		) {
 			$can_view_module_content = true;
 		}
 
