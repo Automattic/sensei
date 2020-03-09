@@ -1251,7 +1251,7 @@ class Sensei_Quiz {
 	}
 
 	/**
-	 * The quiz action buttons needed to ouput quiz
+	 * The quiz action buttons needed to output quiz
 	 * action such as reset complete and save.
 	 *
 	 * @since 1.3.0
