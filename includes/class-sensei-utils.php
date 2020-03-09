@@ -1287,7 +1287,7 @@ class Sensei_Utils {
 			$course_id = absint( get_post_meta( $lesson_id, '_lesson_course', true ) );
 
 			// Has user started course
-			$started_course = self::user_started_course( $course_id, $user_id );
+			$started_course = Sensei_Course::is_user_enrolled( $course_id, $user_id );
 
 			// Has user completed lesson
 			$user_lesson_status = self::user_lesson_status( $lesson_id, $user_id );
