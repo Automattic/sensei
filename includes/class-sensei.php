@@ -442,7 +442,7 @@ class Sensei_Main {
 
 		// check flush the rewrite rules if the option sensei_flush_rewrite_rules option is 1
 		add_action( 'admin_init', array( $this, 'flush_rewrite_rules' ), 101 );
-		add_action( 'admin_init', array( $this, 'update' ) );
+		add_action( 'init', array( $this, 'update' ) );
 
 		// Add plugin action links filter
 		add_filter( 'plugin_action_links_' . plugin_basename( $this->main_plugin_file_name ), array( $this, 'plugin_action_links' ) );
@@ -456,13 +456,16 @@ class Sensei_Main {
 	}
 
 	/**
-	 * Run Sensei updates.
+	 * Run Sensei automatic data updates. This has been unused for many versions and should be considered destructive.
 	 *
-	 * @access  public
+	 * @deprecated 3.0.0
 	 * @since   1.1.0
+	 *
 	 * @return  void
 	 */
 	public function run_updates() {
+		_deprecated_function( __METHOD__, '3.0.0' );
+
 		// Run updates if administrator
 		if ( current_user_can( 'manage_options' ) || current_user_can( 'manage_sensei' ) ) {
 
@@ -588,7 +591,7 @@ class Sensei_Main {
 		}
 
 		// Mark site as having enrolment data from pre-3.0.0.
-		if ( version_compare( '3.0.0-dev', get_option( 'sensei-version' ), '>' ) ) {
+		if ( get_option( 'sensei-version' ) && version_compare( '3.0.0-dev', get_option( 'sensei-version' ), '>' ) ) {
 			update_option( 'sensei_enrolment_legacy', time() );
 		}
 
