@@ -456,13 +456,16 @@ class Sensei_Main {
 	}
 
 	/**
-	 * Run Sensei updates.
+	 * Run Sensei automatic data updates. This has been unused for many versions and should be considered destructive.
 	 *
-	 * @access  public
+	 * @deprecated 3.0.0
 	 * @since   1.1.0
+	 *
 	 * @return  void
 	 */
 	public function run_updates() {
+		_deprecated_function( __METHOD__, '3.0.0' );
+
 		// Run updates if administrator
 		if ( current_user_can( 'manage_options' ) || current_user_can( 'manage_sensei' ) ) {
 
