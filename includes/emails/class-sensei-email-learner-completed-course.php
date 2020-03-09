@@ -47,7 +47,7 @@ if ( ! class_exists( 'Sensei_Email_Learner_Completed_Course' ) ) :
 		function trigger( $user_id = 0, $course_id = 0 ) {
 			global  $sensei_email_data;
 
-			if ( ! Sensei_Utils::user_started_course( $course_id, $user_id ) ) {
+			if ( ! Sensei_Course::is_user_enrolled( $course_id, $user_id ) ) {
 				return;
 			}
 
