@@ -442,7 +442,7 @@ class Sensei_Main {
 
 		// check flush the rewrite rules if the option sensei_flush_rewrite_rules option is 1
 		add_action( 'admin_init', array( $this, 'flush_rewrite_rules' ), 101 );
-		add_action( 'admin_init', array( $this, 'update' ) );
+		add_action( 'init', array( $this, 'update' ) );
 
 		// Add plugin action links filter
 		add_filter( 'plugin_action_links_' . plugin_basename( $this->main_plugin_file_name ), array( $this, 'plugin_action_links' ) );
