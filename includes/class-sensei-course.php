@@ -178,6 +178,49 @@ class Sensei_Course {
 	}
 
 	/**
+	 * Check if a visitor can access course content.
+	 *
+	 * This is just part of the check for lessons and quizzes. To include checks for prerequisites and preview lessons,
+	 * use the global template function `sensei_can_user_view_lesson()`.
+	 *
+	 * @param int    $course_id Course post ID.
+	 * @param int    $user_id   User ID.
+	 * @param string $context   Context that we're checking for course content access (`lesson`, `quiz`, or `module`).
+	 */
+	public function can_access_course_content( $course_id, $user_id = null, $context = 'lesson' ) {
+		if ( null === $user_id ) {
+			$user_id = get_current_user_id();
+		}
+
+		$can_view_course_content = false;
+		$is_user_enrolled        = false;
+		if ( ! empty( $user_id ) ) {
+			$is_user_enrolled = self::is_user_enrolled( $course_id, $user_id );
+		}
+
+		if (
+			! sensei_is_login_required()
+			|| sensei_all_access( $user_id )
+			|| $is_user_enrolled
+		) {
+			$can_view_course_content = true;
+		}
+
+		/**
+		 * Filters if a visitor can view course content.
+		 *
+		 * @since 3.0.0.
+		 *
+		 * @param bool   $can_view_course_content True if they can view the course content.
+		 * @param int    $course_id               Course post ID.
+		 * @param int    $user_id                 User ID if user is logged in.
+		 * @param string $context                 Context that we're checking for course content
+		 *                                        access (`lesson`, `quiz`, or `module`).
+		 */
+		return apply_filters( 'sensei_can_access_course_content', $can_view_course_content, $course_id, $user_id, $context );
+	}
+
+	/**
 	 * @param $message
 	 */
 	private static function add_course_access_permission_message( $message ) {

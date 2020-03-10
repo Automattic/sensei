@@ -1,7 +1,5 @@
 <?php
 
-require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-helpers.php';
-
 class Sensei_Class_Student_Test extends WP_UnitTestCase {
 	use Sensei_Course_Enrolment_Test_Helpers;
 	use Sensei_Course_Enrolment_Manual_Test_Helpers;

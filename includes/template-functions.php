@@ -893,80 +893,64 @@ function sensei_get_the_question_id() {
  * Template function to determine if the current user can
  * access the current lesson content being viewed.
  *
- * This function checks in the folowing order
+ * This function checks in the following order
  * - if the current user has all access based on their permissions
- * - If the access permission setting is enabled for this site, if not the user has accces
+ * - If the access permission setting is enabled for this site, if not the user has access
  * - if the lesson has a pre-requisite and if the user has completed that
  * - If it is a preview the user has access as well
  *
  * @since 1.9.0
  *
- * @param string $lesson_id
+ * @param int $lesson_id Lesson post ID. Default: Use global post in loop.
+ * @param int $user_id   User ID. Default: Use currently logged in user ID.
  * @return bool
  */
-function sensei_can_user_view_lesson( $lesson_id = '', $user_id = '' ) {
-
+function sensei_can_user_view_lesson( $lesson_id = null, $user_id = null ) {
 	if ( empty( $lesson_id ) ) {
-
 		$lesson_id = get_the_ID();
-
 	}
 
-	if ( 'quiz' == get_post_type( get_the_ID() ) ) {
-
+	$context = 'lesson';
+	if ( 'quiz' === get_post_type( get_the_ID() ) ) {
+		$context   = 'quiz';
 		$lesson_id = Sensei()->quiz->get_lesson_id( get_the_ID() );
-
 	}
 
 	if ( empty( $user_id ) ) {
-
 		$user_id = get_current_user_id();
-
 	}
 
-	// Check for prerequisite lesson completions
+	$user_can_view_course_content = false;
+	$course_id                    = Sensei()->lesson->get_course_id( $lesson_id );
+	if ( $course_id ) {
+		$user_can_view_course_content = Sensei()->course->can_access_course_content( $course_id, $user_id, $context );
+	}
+
+	// Check for prerequisite lesson completions.
 	$pre_requisite_complete = Sensei_Lesson::is_prerequisite_complete( $lesson_id, $user_id );
-	$lesson_course_id       = get_post_meta( $lesson_id, '_lesson_course', true );
-	$user_taking_course     = Sensei_Course::is_user_enrolled( $lesson_course_id, $user_id );
+	$is_preview_lesson      = false;
 
-	$is_preview = false;
 	if ( Sensei_Utils::is_preview_lesson( $lesson_id ) ) {
-
-		$is_preview             = true;
+		$is_preview_lesson      = true;
 		$pre_requisite_complete = true;
-
 	};
 
-	$user_can_access_lesson = false;
-
-	if ( is_user_logged_in() && $user_taking_course ) {
-
-		$user_can_access_lesson = true;
-
-	}
-
-	$access_permission = false;
-
-	if ( ! Sensei()->settings->get( 'access_permission' ) || sensei_all_access() ) {
-
-		$access_permission = true;
-
-	}
-
-	$can_user_view_lesson = $access_permission || ( $user_can_access_lesson && $pre_requisite_complete ) || $is_preview;
+	$can_user_view_lesson = ! sensei_is_login_required()
+							|| sensei_all_access( $user_id )
+							|| ( $user_can_view_course_content && $pre_requisite_complete )
+							|| $is_preview_lesson;
 
 	/**
-	 * Filter the can user view lesson function
+	 * Filter if the user can view lesson and quiz content.
 	 *
 	 * @since 1.9.0
 	 *
-	 * @param bool $can_user_view_lesson
-	 * @param string $lesson_id
-	 * @param string $user_id
+	 * @param bool $can_user_view_lesson True if they can view lesson/quiz content.
+	 * @param int  $lesson_id            Lesson post ID.
+	 * @param int  $user_id              User ID.
 	 */
 	return apply_filters( 'sensei_can_user_view_lesson', $can_user_view_lesson, $lesson_id, $user_id );
-
-} // end sensei_can_current_user_view_lesson
+}
 
 /**
  * Ouput the single lesson meta

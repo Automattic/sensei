@@ -79,6 +79,7 @@ class Sensei_Core_Modules {
 		add_action( 'pre_get_posts', array( $this, 'module_archive_filter' ), 10, 1 );
 		add_filter( 'sensei_lessons_archive_text', array( $this, 'module_archive_title' ) );
 		add_action( 'sensei_loop_lesson_inside_before', array( $this, 'module_archive_description' ), 30 );
+		add_action( 'sensei_taxonomy_module_content_inside_before', array( $this, 'course_signup_link' ), 30 );
 		add_action( 'sensei_taxonomy_module_content_inside_before', array( $this, 'module_archive_description' ), 30 );
 
 		add_filter( 'body_class', array( $this, 'module_archive_body_class' ) );
@@ -788,11 +789,13 @@ class Sensei_Core_Modules {
 
 			$module = get_queried_object();
 
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Safe handling of course ID query var.
+			$course_id = isset( $_GET['course_id'] ) ? intval( $_GET['course_id'] ) : null;
+			$user_id   = get_current_user_id();
+
 			$module_progress = false;
-			if ( is_user_logged_in() && isset( $_GET['course_id'] ) && intval( $_GET['course_id'] ) > 0 ) {
-				global $current_user;
-				wp_get_current_user();
-				$module_progress = $this->get_user_module_progress( $module->term_id, $_GET['course_id'], $current_user->ID );
+			if ( $user_id && ! empty( $course_id ) ) {
+				$module_progress = $this->get_user_module_progress( $module->term_id, $course_id, $user_id );
 			}
 
 			if ( $module_progress && $module_progress > 0 ) {
@@ -805,8 +808,111 @@ class Sensei_Core_Modules {
 				echo '<p class="status ' . esc_attr( $class ) . '">' . esc_html( $status ) . '</p>';
 			}
 
-			echo '<p class="archive-description module-description">' . wp_kses_post( apply_filters( 'sensei_module_archive_description', nl2br( $module->description ), $module->term_id ) ) . '</p>';
+			if ( $this->can_view_module_content( $module, $course_id, $user_id ) ) {
+				echo '<p class="archive-description module-description">' . wp_kses_post( apply_filters( 'sensei_module_archive_description', nl2br( $module->description ), $module->term_id ) ) . '</p>';
+			}
 		}
+	}
+
+	/**
+	 * Check if we can view module content.
+	 *
+	 * @param WP_Term $module    Module term object. Defaults to the currently queried term.
+	 * @param int     $course_id Course post ID. May not be set if not viewing module in course context.
+	 * @param int     $user_id   User ID. Defaults to currently logged in user ID.
+	 *
+	 * @return bool
+	 */
+	public function can_view_module_content( WP_Term $module = null, $course_id = null, $user_id = null ) {
+		$can_view_module_content = false;
+
+		if ( null === $module ) {
+			$module = get_queried_object();
+		}
+
+		if ( ! $module instanceof WP_Term ) {
+			return false;
+		}
+
+		if ( null === $user_id ) {
+			$user_id = get_current_user_id();
+		}
+
+		if (
+			! sensei_is_login_required()
+			|| ( $course_id && Sensei()->course->can_access_course_content( $course_id, $user_id, 'module' ) )
+		) {
+			$can_view_module_content = true;
+		}
+
+		/**
+		 * Filter if the user can view module content.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param bool $can_view_module_content True if they can view module content.
+		 * @param int  $module_term_id          Module term ID.
+		 * @param int  $course_id               Course post ID.
+		 * @param int  $user_id                 User ID.
+		 */
+		return apply_filters( 'sensei_can_user_view_module', $can_view_module_content, $module->term_id, $course_id, $user_id );
+	}
+
+	/**
+	 * Outputs the module course sign-up link.
+	 *
+	 * @access private
+	 * @since 3.0.0
+	 */
+	public function course_signup_link() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Safe use of retrieving course ID.
+		$course_id = isset( $_GET['course_id'] ) ? intval( $_GET['course_id'] ) : null;
+		if ( empty( $course_id ) || 'course' !== get_post_type( $course_id ) ) {
+			return;
+		}
+
+		$show_course_signup_notice = ! $this->can_view_module_content( null, $course_id );
+
+		/**
+		 * Filter for if we should show the course sign up notice on the module page.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param bool $show_course_signup_notice True if we should show the signup notice to the user.
+		 * @param int  $course_id                 Post ID for the course.
+		 */
+		if ( ! apply_filters( 'sensei_module_show_course_signup_notice', $show_course_signup_notice, $course_id ) ) {
+			return;
+		}
+
+		$course_link  = '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr__( 'Sign Up', 'sensei-lms' ) . '">';
+		$course_link .= esc_html__( 'course', 'sensei-lms' );
+		$course_link .= '</a>';
+
+		// translators: Placeholder is a link to the Course.
+		$message_default = sprintf( esc_html__( 'Please sign up for the %1$s before starting the module.', 'sensei-lms' ), $course_link );
+
+		/**
+		 * Filter the course sign up notice message on the module page.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param string $message     Message to show user.
+		 * @param int    $course_id   Post ID for the course.
+		 * @param string $course_link Generated HTML link to the course.
+		 */
+		$message = apply_filters( 'sensei_module_course_signup_notice_message', $message_default, $course_id, $course_link );
+
+		/**
+		 * Filter the course sign up notice message alert level on the module page.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param string $notice_level Notice level to use for the shown alert (alert, tick, download, info).
+		 * @param int    $course_id    Post ID for the course.
+		 */
+		$notice_level = apply_filters( 'sensei_module_course_signup_notice_level', 'info', $course_id );
+		Sensei()->notices->add_notice( $message, $notice_level );
 	}
 
 	public function module_archive_body_class( $classes ) {

@@ -38,27 +38,55 @@ function is_sensei() {
 }
 
 /**
- * Determine if the current user is and admin that
- * can acess all of Sensei without restrictions
+ * Determine if a user is an admin that can access all of Sensei without restrictions.
  *
  * @since 1.4.0
+ * @since 3.0.0 Added `$user_id` argument. Preserves backward compatibility.
+ *
+ * @param int $user_id User ID. Defaults to current user.
+ *
  * @return boolean
  */
-function sensei_all_access() {
+function sensei_all_access( $user_id = null ) {
+	if ( null === $user_id ) {
+		$user_id = get_current_user_id();
+	}
 
-	$access = current_user_can( 'manage_sensei' ) || current_user_can( 'manage_sensei_grades' );
+	if ( empty( $user_id ) ) {
+		return false;
+	}
+
+	$access = user_can( $user_id, 'manage_sensei' ) || user_can( $user_id, 'manage_sensei_grades' );
+
+	if ( has_filter( 'sensei_all_access' ) ) {
+		// For backwards compatibility with filter, we temporarily need to change the current user.
+		$previous_current_user_id = get_current_user_id();
+		wp_set_current_user( $user_id );
+
+		/**
+		 * Filter sensei_all_access function result which determines if the current user
+		 * can access all of Sensei without restrictions.
+		 *
+		 * @since 1.4.0
+		 * @deprecated 3.0.0
+		 *
+		 * @param bool $access True if user has all access.
+		 */
+		$access = apply_filters_deprecated( 'sensei_all_access', [ $access ], '3.0.0', 'sensei_user_all_access' );
+
+		wp_set_current_user( $previous_current_user_id );
+	}
 
 	/**
-	 * Filter sensei_all_access function result
-	 * which determinse if the current user
-	 * can access all of Sensei without restrictions
+	 * Filter if a particular user has access to all of Sensei without restrictions.
 	 *
-	 * @since 1.4.0
-	 * @param bool $access
+	 * @since 3.0.0
+	 *
+	 * @param bool $access  True if user has all access.
+	 * @param int  $user_id User ID to check.
 	 */
-	return apply_filters( 'sensei_all_access', $access );
-
-} // End sensei_all_access()
+	return apply_filters( 'sensei_user_all_access', $access, $user_id );
+}
 
 if ( ! function_exists( 'sensei_light_or_dark' ) ) {
 
