@@ -58,27 +58,35 @@ function sensei_all_access( $user_id = null ) {
 
 	$access = user_can( $user_id, 'manage_sensei' ) || user_can( $user_id, 'manage_sensei_grades' );
 
-	// For backwards compatibility with filter, we temporarily need to change the current user.
-	$previous_current_user_id = get_current_user_id();
-	wp_set_current_user( $user_id );
+	if ( has_filter( 'sensei_all_access' ) ) {
+		// For backwards compatibility with filter, we temporarily need to change the current user.
+		$previous_current_user_id = get_current_user_id();
+		wp_set_current_user( $user_id );
+
+		/**
+		 * Filter sensei_all_access function result which determines if the current user
+		 * can access all of Sensei without restrictions.
+		 *
+		 * @since 1.4.0
+		 * @deprecated 3.0.0
+		 *
+		 * @param bool $access True if user has all access.
+		 */
+		$access = apply_filters_deprecated( 'sensei_all_access', [ $access ], '3.0.0', 'sensei_user_all_access' );
+
+		wp_set_current_user( $previous_current_user_id );
+	}
 
 	/**
-	 * Filter sensei_all_access function result which determines if the current user
-	 * can access all of Sensei without restrictions.
+	 * Filter if a particular user has access to all of Sensei without restrictions.
 	 *
-	 * @since 1.4.0
-	 * @since 3.0.0 Added $user_id parameter.
+	 * @since 3.0.0
 	 *
 	 * @param bool $access  True if user has all access.
 	 * @param int  $user_id User ID to check.
 	 */
-	$access = apply_filters( 'sensei_all_access', $access, $user_id );
-
-	wp_set_current_user( $previous_current_user_id );
-
-	return $access;
-
-} // End sensei_all_access()
+	return apply_filters( 'sensei_user_all_access', $access, $user_id );
+}
 
 if ( ! function_exists( 'sensei_light_or_dark' ) ) {
 
