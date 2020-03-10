@@ -47,14 +47,7 @@ class Sensei_Email_Signup_Form {
 	 * @access private
 	 */
 	public function enqueue_scripts() {
-		// Register jQuery Modal JS.
-		wp_register_script(
-			'jquery-modal',
-			'https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js',
-			[ 'jquery' ],
-			Sensei()->version,
-			false
-		);
+		wp_enqueue_script( 'jquery-modal' );
 
 		// Load JS for the form.
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
@@ -73,13 +66,7 @@ class Sensei_Email_Signup_Form {
 	 * @access private
 	 */
 	public function enqueue_styles() {
-		// Register jQuery Modal CSS.
-		wp_register_style(
-			'jquery-modal',
-			'https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css',
-			false,
-			Sensei()->version
-		);
+		wp_enqueue_style( 'jquery-modal' );
 
 		// Load CSS for the form.
 		wp_enqueue_style(

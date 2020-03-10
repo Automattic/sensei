@@ -273,28 +273,9 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	public function enqueue_scripts() {
 		$is_debug = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG;
 
-		wp_enqueue_script(
-			'sensei-admin-jquery-modal',
-			'https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js',
-			[ 'jquery' ],
-			Sensei()->version,
-			true
-		);
-
-		wp_enqueue_style(
-			'sensei-admin-jquery-modal-css',
-			'https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css',
-			[],
-			Sensei()->version
-		);
-
-		wp_enqueue_script(
-			'sensei-learners-admin-bulk-actions-js',
-			Sensei()->plugin_url . 'assets/js/learners-bulk-actions.js',
-			[ 'jquery', 'sensei-core-select2', 'sensei-admin-jquery-modal' ],
-			Sensei()->version,
-			true
-		);
+		wp_enqueue_script( 'jquery-modal' );
+		wp_enqueue_style( 'jquery-modal' );
+		wp_enqueue_script( 'sensei-learners-admin-bulk-actions-js' );
 
 		$data = array(
 			'remove_generic_confirm'      => __( 'Are you sure you want to remove this user?', 'sensei-lms' ),
