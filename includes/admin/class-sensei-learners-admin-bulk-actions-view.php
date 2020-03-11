@@ -92,9 +92,10 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	 */
 	public function get_columns() {
 		$columns = array(
-			'cb'       => '<label class="screen-reader-text" for="cb-select-all-1">Select All</label><input id="cb-select-all-1" type="checkbox">',
-			'learner'  => __( 'Learner', 'sensei-lms' ),
-			'overview' => __( 'Overview', 'sensei-lms' ),
+			'cb'         => '<label class="screen-reader-text" for="cb-select-all-1">Select All</label><input id="cb-select-all-1" type="checkbox">',
+			'learner'    => __( 'Learner', 'sensei-lms' ),
+			'progress'   => __( 'Course progress', 'sensei-lms' ),
+			'enrolments' => __( 'Enrollments', 'sensei-lms' ),
 		);
 
 		return apply_filters( 'sensei_learners_admin_default_columns', $columns, $this );
@@ -140,21 +141,24 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	 * @see WP_List_Table
 	 *
 	 * @return array The row's data
+	 * @throws Exception When learner term could not be retrieved.
 	 */
 	protected function get_row_data( $item ) {
 		if ( ! $item ) {
 			$row_data = array(
-				'cb'       => '',
-				'learner'  => esc_html__( 'No results found', 'sensei-lms' ),
-				'overview' => '',
+				'cb'         => '',
+				'learner'    => esc_html__( 'No results found', 'sensei-lms' ),
+				'progress'   => '',
+				'enrolments' => '',
 			);
 		} else {
 			$learner  = $item;
 			$courses  = $this->get_learner_courses_html( $item->course_statuses );
 			$row_data = array(
-				'cb'       => '<label class="screen-reader-text" for="cb-select-all-1">Select All</label><input type="checkbox" name="user_id" value="' . esc_attr( $learner->user_id ) . '" class="sensei_user_select_id">',
-				'learner'  => $this->get_learner_html( $learner ),
-				'overview' => $courses,
+				'cb'         => '<label class="screen-reader-text" for="cb-select-all-1">Select All</label><input type="checkbox" name="user_id" value="' . esc_attr( $learner->user_id ) . '" class="sensei_user_select_id">',
+				'learner'    => $this->get_learner_html( $learner ),
+				'progress'   => $courses,
+				'enrolments' => get_term_field( 'count', Sensei_Learner::get_learner_term( $learner->user_id ) ),
 			);
 		}
 
@@ -371,7 +375,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	}
 
 	/**
-	 * Helper method to display the content of the overview column of the table.
+	 * Helper method to display the content of the progress column of the table.
 	 *
 	 * @param array $courses The courses to be displayed.
 	 *
