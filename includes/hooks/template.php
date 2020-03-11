@@ -280,10 +280,6 @@ add_action( 'sensei_single_course_content_inside_before', array( 'Sensei_Course'
 add_action( 'sensei_single_lesson_content_inside_before', array( 'Sensei_Lesson', 'course_signup_link' ), 30 );
 
 // @since 1.9.0
-// hook the deprecate breadcrumbs and comments hooks
-add_action( 'sensei_after_main_content', array( 'Sensei_Templates', 'deprecate_single_lesson_breadcrumbs_and_comments_hooks' ), 5 );
-
-// @since 1.9.0
 // Add the quiz specific buttons and notices to the lesson
 add_action( 'sensei_single_lesson_content_inside_after', array( 'Sensei_Lesson', 'footer_quiz_call_to_action' ) );
 

@@ -509,22 +509,6 @@ class Sensei_Templates {
 	} // End deprecate_course_single_meta_hooks
 
 	/**
-	 * Run the deprecated hooks on the single lesson page
-	 *
-	 * @deprecated since 1.9.0
-	 */
-	public static function deprecate_single_lesson_breadcrumbs_and_comments_hooks() {
-
-		if ( is_singular( 'lesson' ) ) {
-
-			sensei_do_deprecated_action( 'sensei_breadcrumb', '1.9.0', 'sensei_after_main_content', get_the_ID() );
-			sensei_do_deprecated_action( 'sensei_comments', '1.9.0', 'sensei_after_main_content', get_the_ID() );
-
-		}
-
-	}//end deprecate_single_lesson_breadcrumbs_and_comments_hooks()
-
-	/**
 	 * Running the deprecated hook: sensei_lesson_single_meta
 	 *
 	 * @since 1.9.0
