@@ -121,16 +121,6 @@ class Sensei_Course_Results {
 	}
 
 	/**
-	 * Load template for displaying course lessons
-	 *
-	 * @since  1.4.0
-	 * @return void
-	 */
-	public function course_lessons() {
-		_deprecated_function( 'Sensei_modules course_lessons ', '1.9.0' );
-	}
-
-	/**
 	 * Adding class to body tag
 	 *
 	 * @param  array $classes Existing classes
