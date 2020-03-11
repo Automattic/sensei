@@ -1306,14 +1306,6 @@ class Sensei_Frontend {
 	/**
 	 * @deprecated since 1.9.0
 	 */
-	public function sensei_course_meta() {
-		_deprecated_function( 'Sensei_Frontend::sensei_course_meta', '1.9.0', 'Sensei_Course::the_course_meta()' );
-		Sensei()->course->the_course_meta( get_post() );
-	} // End sensei_course_meta()
-
-	/**
-	 * @deprecated since 1.9.0
-	 */
 	public function sensei_course_meta_video() {
 		_deprecated_function( 'Sensei_Frontend::sensei_course_meta_video', '1.9.0', 'Sensei_Course::the_course_video()' );
 		Sensei_Course::the_course_video();
