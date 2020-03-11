@@ -1203,24 +1203,6 @@ class Sensei_Main {
 	}
 
 	/**
-	 * Disable guest checkout if a course product is in the cart
-	 *
-	 * @deprecated since 1.9.0
-	 *
-	 * @param  boolean $guest_checkout Current guest checkout setting.
-	 * @return boolean                 Modified guest checkout setting.
-	 */
-	public function disable_guest_checkout( $guest_checkout ) {
-		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_WC::disable_guest_checkout' );
-
-		if ( ! method_exists( 'Sensei_WC', 'disable_guest_checkout' ) ) {
-			return $guest_checkout;
-		}
-
-		return Sensei_WC::disable_guest_checkout( $guest_checkout );
-	}//end disable_guest_checkout()
-
-	/**
 	 * Change order status with virtual products to completed
 	 *
 	 * @deprecated since 1.9.0 use Sensei_WC::virtual_order_payment_complete( $order_status, $order_id )
