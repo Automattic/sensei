@@ -2961,20 +2961,6 @@ class Sensei_Course {
 	}
 
 	/**
-	 * Optionally return the full content on the single course pages
-	 * depending on the users course_single_content_display setting
-	 *
-	 * @since 1.9.0
-	 * @deprecated since 1.12.0
-	 * @param $excerpt
-	 * @return string
-	 */
-	public static function full_content_excerpt_override( $excerpt ) {
-		_deprecated_function( __METHOD__, '1.12.0' );
-		return $excerpt;
-	}
-
-	/**
 	 * If the user is already taking the course, show a progress indicator.
 	 * Otherwise, output the course actions like start taking course, register,
 	 * etc.
