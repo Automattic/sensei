@@ -1079,13 +1079,6 @@ class Sensei_Frontend {
 	/**
 	 * @deprecated since 1.9.0
 	 */
-	public function sensei_message_archive_main_content() {
-		_deprecated_function( 'Sensei_Frontend::sensei_message_archive_main_content', 'This method is no longer needed' );
-	} // End sensei_lesson_archive_main_content()
-
-	/**
-	 * @deprecated since 1.9.0
-	 */
 	public function sensei_no_permissions_main_content() {
 		_deprecated_function( 'Sensei_Frontend::sensei_no_permissions_main_content', 'This method is no longer needed' );
 	} // End sensei_no_permissions_main_content()
