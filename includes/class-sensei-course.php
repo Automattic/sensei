@@ -2146,7 +2146,6 @@ class Sensei_Course {
 	public function content_before_backwards_compatibility_hooks( $post_id ) {
 
 		sensei_do_deprecated_action( 'sensei_course_image', '1.9.0', 'sensei_course_content_inside_before' );
-		sensei_do_deprecated_action( 'sensei_course_archive_course_title', '1.9.0', 'sensei_course_content_inside_before' );
 
 	}
 

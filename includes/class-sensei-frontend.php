@@ -1093,8 +1093,6 @@ class Sensei_Frontend {
 
 						<?php sensei_do_deprecated_action( 'sensei_course_image', '1.9.0', 'sensei_single_course_content_inside_before', get_the_ID() ); ?>
 
-						<?php sensei_do_deprecated_action( 'sensei_course_archive_course_title', '1.9.0', 'sensei_course_content_inside_before', $post ); ?>
-
 						<?php do_action( 'sensei_course_archive_meta' ); ?>
 
 					</article>
