@@ -290,43 +290,6 @@ class Sensei_Utils {
 	} // End sensei_get_activity_value()
 
 	/**
-	 * Checks if a user (by email) has bought an item.
-	 *
-	 * @deprecated since 1.9.0 use Sensei_WC::has_customer_bought_product($user_id, $product_id)
-	 * @access public
-	 * @since  1.0.0
-	 * @param  string $customer_email
-	 * @param  int    $user_id
-	 * @param  int    $product_id
-	 * @return bool
-	 */
-	public static function sensei_customer_bought_product( $customer_email, $user_id, $product_id ) {
-		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_WC::has_customer_bought_product($user_id, $product_id)' );
-
-		if ( ! method_exists( 'Sensei_WC', 'has_customer_bought_product' ) ) {
-			return false;
-		}
-
-		$emails = array();
-
-		if ( $user_id ) {
-			$user     = get_user_by( 'id', intval( $user_id ) );
-			$emails[] = $user->user_email;
-		}
-
-		if ( is_email( $customer_email ) ) {
-			$emails[] = $customer_email;
-		}
-
-		if ( sizeof( $emails ) == 0 ) {
-			return false;
-		}
-
-		return Sensei_WC::has_customer_bought_product( $user_id, $product_id );
-
-	} // End sensei_customer_bought_product()
-
-	/**
 	 * Load the WordPress rich text editor
 	 *
 	 * @param  string $content    Initial content for editor
