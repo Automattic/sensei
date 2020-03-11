@@ -465,19 +465,6 @@ class Sensei_Frontend {
 	} // End sensei_search_results_classes()
 
 	/**
-	 * Outputs the single page title.
-	 *
-	 * @since  1.1.0
-	 * @return void
-	 * @deprecated
-	 */
-	function the_single_title() {
-
-		_deprecated_function( 'Sensei_Frontend::the_single_title', '1.9.0' );
-
-	} // End sensei_single_title()
-
-	/**
 	 * Outputs the course image.
 	 *
 	 * @deprecated since 1.9.0
