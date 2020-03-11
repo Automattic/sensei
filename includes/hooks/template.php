@@ -388,10 +388,6 @@ add_action( 'sensei_my_courses_before', array( 'Sensei_Templates', 'fire_sensei_
 // fire the sensei frontend messages hook before the my-courses content
 add_action( 'sensei_my_courses_content_inside_before', array( 'Sensei_Templates', 'fire_frontend_messages_hook' ) );
 
-// @since 1.9.0
-// deprecate the sensei_before_user_course_content hook
-add_action( 'sensei_my_courses_content_inside_before', array( 'Sensei_Templates', 'deprecate_sensei_before_user_course_content_hook' ) );
-
 /**********************************
  *
  *

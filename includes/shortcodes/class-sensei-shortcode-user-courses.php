@@ -301,7 +301,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		echo '</section>';
 
 		// mostly hooks added for legacy and backwards compatiblity sake
-		sensei_do_deprecated_action( 'sensei_after_user_course_content', '3.0.0', 'sensei_my_courses_after', wp_get_current_user() );
+		do_action( 'sensei_after_user_course_content', wp_get_current_user() );
 		do_action( 'sensei_my_courses_after' );
 
 		$shortcode_output = ob_get_clean();
