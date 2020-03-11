@@ -422,21 +422,6 @@ function sensei_get_prev_next_lessons( $lesson_id = 0 ) {
 	return $links;
 } // End sensei_get_prev_next_lessons()
 
-  /**
-   * sensei_get_excerpt Returns the excerpt for the $post
-   *
-   * Unhooks wp_trim_excerpt() so to disable excerpt auto-gen.
-   *
-   * @deprecated since  1.9.0
-   * @param  int|WP_Post $post_id Optional. Defaults to current post
-   * @return string $excerpt
-   */
-function sensei_get_excerpt( $post_id = '' ) {
-	_deprecated_function( 'sensei_get_excerpt', 'use the WordPress excerpt functionality.' );
-
-	return get_the_excerpt();
-}
-
 function sensei_has_user_completed_lesson( $post_id = 0, $user_id = 0 ) {
 	_deprecated_function( __FUNCTION__, '1.7', 'Sensei_Utils::user_completed_lesson()' );
 	return Sensei_Utils::user_completed_lesson( $post_id, $user_id );
