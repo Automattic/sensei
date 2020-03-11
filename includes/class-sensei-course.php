@@ -2705,8 +2705,6 @@ class Sensei_Course {
 	/**
 	 * Output the headers on the course archive page
 	 *
-	 * Hooked into the sensei_archive_title
-	 *
 	 * @since 1.9.0
 	 * @param string $query_type
 	 * @param string $before_html
@@ -2718,9 +2716,6 @@ class Sensei_Course {
 		if ( ! is_post_type_archive( 'course' ) ) {
 			return;
 		}
-
-		// deprecated since 1.9.0
-		sensei_do_deprecated_action( 'sensei_archive_title', '1.9.0', 'sensei_archive_before_course_loop' );
 
 		$html = '';
 
