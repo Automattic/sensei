@@ -553,19 +553,6 @@ class Sensei_Frontend {
 	} // sensei_course_archive_header()
 
 	/**
-	 * Outputs the headers on the lesson archive page.
-	 *
-	 * @deprecated since 1.9.0
-	 * @access public
-	 * @since  1.2.1
-	 * @return void
-	 */
-	public function sensei_lesson_archive_header() {
-		_deprecated_function( 'Sensei_Frontend::sensei_lesson_archive_header', '1.9.0', 'Sensei_Lesson::the_archive_header' );
-		Sensei()->lesson->the_archive_header();
-	} // sensei_course_archive_header()
-
-	/**
 	 * Generates the "My Messages"archive header.
 	 *
 	 * @deprecated since 1.9.0
