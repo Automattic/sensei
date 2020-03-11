@@ -30,21 +30,6 @@ function course_single_lessons() {
 
 } // End course_single_lessons()
 
-
-	 /**
-	  * lesson_single_meta function.
-	  *
-	  * @access public
-	  * @return void
-	  */
-function lesson_single_meta() {
-
-	_deprecated_function( 'lesson_single_meta', '1.9;0', 'Sensei_Lesson::the_lesson_meta' );
-	sensei_the_single_lesson_meta();
-
-} // End lesson_single_meta()
-
-
 	 /**
 	  * quiz_questions function.
 	  *
