@@ -556,24 +556,6 @@ class Sensei_Core_Modules {
 		die();
 	}
 
-	/**
-	 * display modules on single course pages
-	 *
-	 * @since 1.8.0
-	 * @return void
-	 */
-	public function single_course_modules() {
-
-		_deprecated_function( 'Sensei_Modules->single_course_modules', 'Sensei 1.9.0', 'Sensei()->modules->load_course_module_content_template' );
-		// only show modules on the course that has modules
-		if ( is_singular( 'course' ) && has_term( '', 'module' ) ) {
-
-			$this->load_course_module_content_template();
-
-		}
-
-	} // end single_course_modules
-
 	public function sensei_course_preview_titles( $title, $lesson_id ) {
 		global $post, $current_user;
 
