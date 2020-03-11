@@ -1203,27 +1203,6 @@ class Sensei_Main {
 	}
 
 	/**
-	 * Sensei_activate_subscription runs when a subscription product is purchased
-	 *
-	 * @deprecated since 1.9.0 use Sensei_WC::activate_subscription
-	 *
-	 * @since   1.2.0
-	 * @access  public
-	 *
-	 * @param   integer $order_id order ID.
-	 * @return  void
-	 */
-	public function sensei_activate_subscription( $order_id = 0 ) {
-		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_WC::activate_subscription' );
-
-		if ( ! method_exists( 'Sensei_WC', 'activate_subscription' ) ) {
-			return;
-		}
-
-		Sensei_WC::activate_subscription( $order_id );
-	} // End sensei_activate_subscription()
-
-	/**
 	 * If WooCommerce is activated and the customer has purchased the course, update Sensei to indicate that they are taking the course.
 	 *
 	 * @deprecated since 1.9.0 use Sensei_WC::course_update
