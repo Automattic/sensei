@@ -219,10 +219,6 @@ add_filter( 'sensei_get_question_template_data', array( 'Sensei_Question', 'file
 add_action( 'sensei_single_quiz_questions_after', array( 'Sensei_Quiz', 'action_buttons' ), 10, 0 );
 
 // @since 1.9.0
-// deprecate the sensei_complete_quiz hook
-add_action( 'sensei_single_quiz_content_inside_before', array( 'Sensei_Templates', 'deprecate_sensei_complete_quiz_action' ) );
-
-// @since 1.9.0
 // deprecate the sensei_quiz_question_type hook
 add_action( 'sensei_quiz_question_inside_after', array( 'Sensei_Templates', 'deprecate_sensei_quiz_question_type_action' ) );
 

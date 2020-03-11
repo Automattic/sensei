@@ -610,18 +610,6 @@ class Sensei_Templates {
 	}
 
 	/**
-	 * Run the sensei_complete_quiz for those still hooking
-	 * into but deprecated it.
-	 *
-	 * @deprecated since 1.9.0
-	 */
-	public static function deprecate_sensei_complete_quiz_action() {
-
-		sensei_do_deprecated_action( 'sensei_complete_quiz', '1.9.0', 'sensei_single_quiz_content_inside_before' );
-
-	}
-
-	/**
 	 * Run the sensei_quiz_question_type action for those still hooing into it, but depreate
 	 * it to provide user with a better alternative.
 	 *
