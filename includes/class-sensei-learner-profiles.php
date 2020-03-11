@@ -115,27 +115,6 @@ class Sensei_Learner_Profiles {
 	}
 
 	/**
-	 * Load content for learner profiles
-	 *
-	 * @since  1.4.0
-	 * @return void
-	 */
-	public function content() {
-		global $wp_query;
-
-		_deprecated_function( __METHOD__, '2.2.0' );
-
-		if ( isset( Sensei()->settings->settings['learner_profile_enable'] ) && Sensei()->settings->settings['learner_profile_enable'] ) {
-
-			if ( isset( $wp_query->query_vars['learner_profile'] ) ) {
-
-				Sensei_Templates::get_template( 'learner-profile/learner-info.php' );
-
-			}
-		}
-	}
-
-	/**
 	 * Set heading for courses section of learner profiles
 	 *
 	 * @since  1.4.0
