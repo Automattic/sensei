@@ -1080,13 +1080,6 @@ class Sensei_Frontend {
 	/**
 	 * @deprecated since 1.9.0
 	 */
-	public function sensei_single_main_content() {
-		_deprecated_function( 'Woothemes_Sensei_Frontend::sensei_single_main_content', '1.9.0' );
-	} // End sensei_single_main_content()
-
-	/**
-	 * @deprecated since 1.9.0
-	 */
 	public function sensei_lesson_archive_main_content() {
 		_deprecated_function( 'Sensei_Frontend::sensei_lesson_archive_main_content', '1.9.0', 'Please include loop-lesson.php directly' );
 	} // End sensei_lesson_archive_main_content()
