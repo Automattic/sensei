@@ -27,26 +27,6 @@ class Sensei_Utils {
 	} // End get_placeholder_image()
 
 	/**
-	 * Check if WooCommerce is present.
-	 *
-	 * @deprecated since 1.9.0 use Sensei_WC::is_woocommerce_present()
-	 * @access public
-	 * @since  1.0.2
-	 * @static
-	 * @return bool
-	 */
-	public static function sensei_is_woocommerce_present() {
-		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_WC::is_woocommerce_present' );
-
-		if ( ! method_exists( 'Sensei_WC', 'is_woocommerce_present' ) ) {
-			return false;
-		}
-
-		return Sensei_WC::is_woocommerce_present();
-
-	} // End sensei_is_woocommerce_present()
-
-	/**
 	 * Check if WooCommerce is active.
 	 *
 	 * @deprecated since 1.9.0 use Sensei_WC::is_woocommerce_active
