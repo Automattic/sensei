@@ -1304,14 +1304,6 @@ class Sensei_Frontend {
 	} // End sensei_course_start()
 
 	/**
-	 * @deprecated since 1.9.0
-	 */
-	public function sensei_course_meta_video() {
-		_deprecated_function( 'Sensei_Frontend::sensei_course_meta_video', '1.9.0', 'Sensei_Course::the_course_video()' );
-		Sensei_Course::the_course_video();
-	} // End sensei_course_meta_video()
-
-	/**
 	 * This function shows the WooCommerce cart notice if the user has
 	 * added the current course to cart. It does not show if the user is already taking
 	 * the course.
