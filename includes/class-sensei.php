@@ -650,21 +650,6 @@ class Sensei_Main {
 	} // End ensure_post_thumbnails_support()
 
 	/**
-	 * template_loader function.
-	 *
-	 * @access public
-	 * @param mixed $template
-	 * @return void
-	 * @deprecated
-	 */
-	public function template_loader( $template = '' ) {
-
-		_deprecated_function( 'Sensei()->template_loader', '1.9.0', 'Use Sensei_Templates::template_loader( $template ) instead' );
-		Sensei_Templates::template_loader( $template );
-
-	} // End template_loader()
-
-	/**
 	 * Determine the relative path to the plugin's directory.
 	 *
 	 * @access public
