@@ -72,7 +72,6 @@ class Sensei_Frontend {
 		add_action( 'sensei_complete_lesson_button', array( $this, 'sensei_complete_lesson_button' ) );
 		add_action( 'sensei_reset_lesson_button', array( $this, 'sensei_reset_lesson_button' ) );
 		add_action( 'sensei_course_archive_meta', array( $this, 'sensei_course_archive_meta' ) );
-		add_action( 'sensei_lesson_tag_main_content', array( $this, 'sensei_lesson_archive_main_content' ), 10 );
 		add_action( 'sensei_no_permissions_main_content', array( $this, 'sensei_no_permissions_main_content' ), 10 );
 		add_action( 'sensei_lesson_meta', array( $this, 'sensei_lesson_meta' ), 10 );
 		add_action( 'sensei_single_course_content_inside_before', array( $this, 'sensei_course_start' ), 10 );
@@ -1076,13 +1075,6 @@ class Sensei_Frontend {
 		</section>
 		<?php
 	} // End sensei_course_archive_meta()
-
-	/**
-	 * @deprecated since 1.9.0
-	 */
-	public function sensei_lesson_archive_main_content() {
-		_deprecated_function( 'Sensei_Frontend::sensei_lesson_archive_main_content', '1.9.0', 'Please include loop-lesson.php directly' );
-	} // End sensei_lesson_archive_main_content()
 
 	/**
 	 * @deprecated since 1.9.0
