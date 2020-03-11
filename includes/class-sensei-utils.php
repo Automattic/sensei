@@ -27,26 +27,6 @@ class Sensei_Utils {
 	} // End get_placeholder_image()
 
 	/**
-	 * Check if WooCommerce is active.
-	 *
-	 * @deprecated since 1.9.0 use Sensei_WC::is_woocommerce_active
-	 * @access public
-	 * @since  1.0.2
-	 * @static
-	 * @return boolean
-	 */
-	public static function sensei_is_woocommerce_activated() {
-		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_WC::is_woocommerce_active' );
-
-		if ( ! method_exists( 'Sensei_WC', 'is_woocommerce_active' ) ) {
-			return false;
-		}
-
-		return Sensei_WC::is_woocommerce_active();
-
-	} // End sensei_is_woocommerce_activated()
-
-	/**
 	 * Log an activity item.
 	 *
 	 * @access public
