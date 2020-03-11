@@ -120,25 +120,6 @@ class Sensei_Core_Modules {
 	} // end constructor
 
 	/**
-	 * Alter a module term slug when a new taxonomy term is created
-	 * This will add the creators user name to the slug for uniqueness.
-	 *
-	 * @since 1.8.0
-	 *
-	 * @param $term_id
-	 * @param $tt_id
-	 * @param $taxonomy
-	 *
-	 * @return void
-	 * @deprecated since 1.9.0
-	 */
-	public function change_module_term_slug( $term_id, $tt_id, $taxonomy ) {
-
-		_deprecated_function( 'change_module_term_slug', '1.9.0' );
-
-	}//end change_module_term_slug()
-
-	/**
 	 * Hook in all meta boxes related tot he modules taxonomy
 	 *
 	 * @since 1.8.0
