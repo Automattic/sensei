@@ -197,23 +197,6 @@ class Sensei_Frontend {
 	} // End sensei_get_template_part()
 
 	/**
-	 * Check if the template file exists.
-	 *
-	 * @access public
-	 * @param mixed  $template_name Template name.
-	 * @param string $template_path Template path. Optional. Default ''.
-	 * @param string $default_path Default path to templates. Optional. Default ''.
-	 * @return void
-	 */
-	function sensei_locate_template( $template_name, $template_path = '', $default_path = '' ) {
-
-		_deprecated_function( 'sensei_locate_template', '1.9.0', 'Sensei_Templates::locate_template' );
-		Sensei_Templates::locate_template( $template_name, $template_path, $default_path );
-
-	} // End sensei_locate_template()
-
-
-	/**
 	 * Output the start of the content wrapper.
 	 *
 	 * @access public
