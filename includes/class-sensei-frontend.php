@@ -981,18 +981,6 @@ class Sensei_Frontend {
 	} // End sensei_get_user_quiz_answers()
 
 	/**
-	 * Checks if a user has completed a lesson.
-	 *
-	 * @param int $post_id Optional. Lesson ID. Default 0.
-	 * @param int $user_id Optional. User ID. Default 0.
-	 * @return bool true if the user has completed the lesson, false otherwise.
-	 */
-	public function sensei_has_user_completed_lesson( $post_id = 0, $user_id = 0 ) {
-		_deprecated_function( __FUNCTION__, '1.7', 'Sensei_Utils::user_completed_lesson()' );
-		return Sensei_Utils::user_completed_lesson( $post_id, $user_id );
-	} // End sensei_has_user_completed_lesson()
-
-	/**
 	 * Outputs all notices.
 	 */
 	public function sensei_frontend_messages() {
