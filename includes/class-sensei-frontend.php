@@ -643,18 +643,6 @@ class Sensei_Frontend {
 		echo wp_kses_post( $html );
 	} // End sensei_breadcrumb()
 
-
-	/**
-	 * Outputs the course signup link.
-	 *
-	 * @deprecated since 1.9.0 use Sensei_Lesson::course_signup_link instead
-	 */
-	public function sensei_lesson_course_signup_link() {
-
-		_deprecated_function( 'sensei_lesson_course_signup_link', '1.9.0', 'Sensei_Lesson::course_signup_link' );
-		Sensei_Lesson::course_signup_link();
-	}
-
 	/**
 	 * Outputs the lesson tags.
 	 *
