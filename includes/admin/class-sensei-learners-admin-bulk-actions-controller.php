@@ -76,6 +76,34 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	}
 
 	/**
+	 * This method returns an empty array and it exists only for backwards compatibility.
+	 *
+	 * @deprecated 3.0.0
+	 * @return array Empty array
+	 */
+	public function get_query_args() {
+
+		_deprecated_function( __METHOD__, '3.0.0' );
+
+		return [];
+	}
+
+	/**
+	 * This method adds a 'Learner Admin' submenu page in Sensei. If any content is generated for this page elsewhere,
+	 * you should move this call beside it.
+	 *
+	 * @deprecated 3.0.0
+	 */
+	public function learners_admin_menu() {
+
+		_deprecated_function( __METHOD__, '3.0.0' );
+
+		if ( current_user_can( 'manage_sensei_grades' ) ) {
+			add_submenu_page( 'sensei', __( 'Learner Admin', 'sensei-lms' ), __( 'Learner Admin', 'sensei-lms' ), 'manage_sensei_grades', 'sensei_learner_admin', array( $this, 'learner_admin_page' ) );
+		}
+	}
+
+	/**
 	 * Sensei_Learners_Admin_Main constructor.
 	 *
 	 * @param Sensei_Learner_Management $management The learner managemnt object.
