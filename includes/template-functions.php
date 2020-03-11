@@ -422,11 +422,6 @@ function sensei_get_prev_next_lessons( $lesson_id = 0 ) {
 	return $links;
 } // End sensei_get_prev_next_lessons()
 
-function sensei_has_user_completed_lesson( $post_id = 0, $user_id = 0 ) {
-	_deprecated_function( __FUNCTION__, '1.7', 'Sensei_Utils::user_completed_lesson()' );
-	return Sensei_Utils::user_completed_lesson( $post_id, $user_id );
-} // End sensei_has_user_completed_lesson()
-
 /**
  * Determine if a user has completed the pre-requisite lesson.
  *
