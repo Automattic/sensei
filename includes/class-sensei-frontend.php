@@ -192,6 +192,8 @@ class Sensei_Frontend {
 	 */
 	function sensei_get_template_part( $slug, $name = '' ) {
 
+		_deprecated_function( 'sensei_locate_template', '1.9.0', 'Sensei_Templates::get_part' );
+
 		Sensei_Templates::get_part( $slug, $name );
 
 	} // End sensei_get_template_part()
