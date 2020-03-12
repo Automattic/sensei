@@ -391,38 +391,6 @@ class Sensei_Templates {
 	}//end the_title()
 
 	/**
-	 * Deprecated all deprecated_single_main_content_hook hooked actions.
-	 *
-	 * The content must be dealt with inside the respective templates.
-	 *
-	 * @since 1.9.0
-	 * @deprecated 1.9.0
-	 */
-	public static function deprecated_single_main_content_hook() {
-
-		if ( is_singular( 'course' ) ) {
-
-			sensei_do_deprecated_action( 'sensei_single_main_content', '1.9.0', 'sensei_single_course_content_inside_before or sensei_single_course_content_inside_after' );
-
-		} elseif ( is_singular( 'message' ) ) {
-
-			sensei_do_deprecated_action( 'sensei_single_main_content', '1.9.0', 'sensei_single_message_content_inside_before or sensei_single_message_content_inside_after' );
-		}
-
-	}//end deprecated_single_main_content_hook()
-
-	/**
-	 * hook in the deperecated single main content to the lesson
-	 *
-	 * @deprecated since 1.9.0
-	 */
-	public static function deprecate_lesson_single_main_content_hook() {
-
-		sensei_do_deprecated_action( 'sensei_single_main_content', '1.9.0', 'sensei_single_lesson_content_inside_before' );
-
-	}//end deprecate_lesson_single_main_content_hook()
-
-	/**
 	 * Fire the sensei_complete_course action.
 	 *
 	 * This is just a backwards compatible function to add the action

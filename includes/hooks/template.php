@@ -77,11 +77,6 @@ add_action( 'sensei_single_course_content_inside_before', array( $sensei->course
 // Filter the content and replace it with the excerpt if the user doesn't have full access
 add_filter( 'the_content', array( 'Sensei_Course', 'single_course_content' ) );
 
-// @1.9.0
-// Deprecate single main content hooks
-add_action( 'sensei_single_course_content_inside_after', array( 'Sensei_Templates', 'deprecated_single_main_content_hook' ) );
-add_action( 'sensei_single_message_content_inside_after', array( 'Sensei_Templates', 'deprecated_single_main_content_hook' ) );
-
 // @since 1.9.0
 // add the single course lessons title
 add_action( 'sensei_single_course_content_inside_after', array( 'Sensei_Course', 'the_course_lessons_title' ), 9 );
@@ -140,9 +135,6 @@ add_action( 'sensei_no_permissions_inside_after_content', array( 'Sensei_Utils',
  *
  * Single Quiz Hooks
  */
-// @since 1.9.0
-// deprecate hooks no longer needed
-add_action( 'sensei_single_quiz_content_inside_before', array( 'Sensei_Quiz', 'deprecate_quiz_sensei_single_main_content_hook' ) );
 
 // @since 1.9.0
 // Single quiz title
@@ -187,9 +179,6 @@ add_action( 'sensei_single_quiz_questions_after', array( 'Sensei_Quiz', 'action_
  *
  * Single Lesson Hooks
  */
-// @since 1.9.0
-// deprecate the main content hook on the single lesson page
-add_action( 'sensei_single_lesson_content_inside_before', array( 'Sensei_Templates', 'deprecate_lesson_single_main_content_hook' ), 20 );
 
 // @since 1.9.0
 // hook in the lesson image on the single lesson
