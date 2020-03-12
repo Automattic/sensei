@@ -241,10 +241,6 @@ add_action( 'sensei_single_lesson_content_inside_before', array( 'Sensei_Lesson'
 add_action( 'sensei_single_lesson_content_inside_after', 'sensei_the_single_lesson_meta', 10 );
 
 // @since 1.9.0
-// deprecate the sensei_lesson_single_meta hook
-add_action( 'sensei_single_lesson_content_inside_after', array( 'Sensei_Templates', 'deprecate_sensei_lesson_single_meta_hook' ), 15 );
-
-// @since 1.9.0
 // hook in the lesson prerequisite completion message
 add_action( 'sensei_single_lesson_content_inside_before', array( 'Sensei_Lesson', 'prerequisite_complete_message' ), 20 );
 

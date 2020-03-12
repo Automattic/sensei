@@ -452,22 +452,6 @@ class Sensei_Templates {
 	}
 
 	/**
-	 * Running the deprecated hook: sensei_lesson_single_meta
-	 *
-	 * @since 1.9.0
-	 * @deprecated since 1.9.0
-	 */
-	public static function deprecate_sensei_lesson_single_meta_hook() {
-
-		if ( sensei_can_user_view_lesson() ) {
-
-			sensei_do_deprecated_action( 'sensei_lesson_single_meta', '1.9.0', 'sensei_single_lesson_content_inside_after' );
-
-		}
-
-	}//end deprecate_sensei_lesson_single_meta_hook()
-
-	/**
 	 * Deprecate the sensei lesson single title hook
 	 *
 	 * @deprecated since 1.9.0
