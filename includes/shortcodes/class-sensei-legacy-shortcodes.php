@@ -295,7 +295,7 @@ class Sensei_Legacy_Shortcodes {
 	}
 
 	/**
-	 * Loop through courses in the query and output the infomration needed
+	 * Loop through courses in the query and output the information needed
 	 *
 	 * @since 1.9.0
 	 *
