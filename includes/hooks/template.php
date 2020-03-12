@@ -313,9 +313,6 @@ add_filter( 'the_content', array( 'Sensei_Lesson', 'limit_archive_content' ) );
  *
  * Learner Profile hooks
  */
-// @since 1.9.0
-// deprecate the learner profile content hook as the markup code is added in the template directly.
-add_action( 'sensei_learner_profile_content_before', array( 'Sensei_Learner_Profiles', 'deprecate_sensei_learner_profile_content_hook' ) );
 
 // @since 1.9.0
 // do the sensei complete course action on the learner profiles page.

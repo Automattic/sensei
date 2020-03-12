@@ -214,18 +214,6 @@ class Sensei_Learner_Profiles {
 		return $classes;
 	}
 
-	/**
-	 * Deprecate the deprecate_sensei_learner_profile_content hook
-	 *
-	 * @since 1.9.0
-	 */
-	public static function deprecate_sensei_learner_profile_content_hook() {
-
-		sensei_do_deprecated_action( 'sensei_learner_profile_content', '1.9.0', 'sensei_learner_profile_content_before' );
-
-	}
-
-
 } // End Class
 
 /**
