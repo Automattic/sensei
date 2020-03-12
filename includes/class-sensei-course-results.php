@@ -138,18 +138,6 @@ class Sensei_Course_Results {
 
 	}
 
-	/**
-	 * Deprecate the sensei_course_results_top hook
-	 *
-	 * @deprecate since 1.9.0
-	 */
-	public static function deprecate_course_results_top_hook() {
-
-		global $course;
-		sensei_do_deprecated_action( 'sensei_course_results_top', '1.9.0', 'sensei_course_results_content_inside_before', $course->ID );
-
-	}
-
 } // End Class
 
 /**

@@ -352,10 +352,6 @@ add_action( 'sensei_course_results_content_inside_before_lessons', array( $sense
 // @since 1.9.0
 add_action( 'sensei_course_results_content_inside_before', array( $sensei->course, 'course_image' ) );
 
-// @since 1.9.0
-// deprecate the course results top hook in favour of a new hook
-add_action( 'sensei_course_results_content_inside_before', array( 'Sensei_Course_Results', 'deprecate_course_results_top_hook' ) );
-
 /**********************************
  *
  *
