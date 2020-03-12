@@ -133,17 +133,6 @@ class Sensei_Course_Results {
 	}
 
 	/**
-	 * Deprecate the sensei_course_results_content hook
-	 *
-	 * @deprecated since 1.9.0
-	 */
-	public static function deprecate_sensei_course_results_content_hook() {
-
-		sensei_do_deprecated_action( 'sensei_course_results_content', '1.9.0', 'sensei_course_results_content_before' );
-
-	}
-
-	/**
 	 * Fire the sensei frontend message hook
 	 *
 	 * @since 1.9.0

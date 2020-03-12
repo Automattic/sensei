@@ -346,10 +346,6 @@ add_action( 'sensei_learner_profile_inside_content_before', array( 'Sensei_Templ
  */
 
 // @since 1.9.0
-// fire the deprecated hook function within the course-result.php file
-add_action( 'sensei_course_results_content_before', array( 'Sensei_Course_Results', 'deprecate_sensei_course_results_content_hook' ) );
-
-// @since 1.9.0
 // load the course information on the course results page
 add_action( 'sensei_course_results_content_inside_before_lessons', array( $sensei->course_results, 'course_info' ) );
 
