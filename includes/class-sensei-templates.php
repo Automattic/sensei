@@ -424,18 +424,6 @@ class Sensei_Templates {
 	}
 
 	/**
-	 * Deprecate the  old sensei modules after hooks
-	 *
-	 * @since 1.9.0
-	 * @deprecated since 1.9.0
-	 */
-	public static function deprecate_module_after_hook() {
-
-		sensei_do_deprecated_action( 'sensei_modules_page_after', '1.9.0', 'sensei_single_course_modules_after' );
-
-	}
-
-	/**
 	 * hook in the deperecated single main content to the lesson
 	 *
 	 * @deprecated since 1.9.0

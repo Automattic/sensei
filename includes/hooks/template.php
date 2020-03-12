@@ -88,7 +88,6 @@ add_action( 'sensei_single_message_content_inside_after', array( 'Sensei_Templat
  * @deprecated since 1.9.0
  */
 add_action( 'sensei_single_course_modules_before', array( 'Sensei_Templates', 'deprecate_module_before_hook' ) );
-add_action( 'sensei_single_course_modules_after', array( 'Sensei_Templates', 'deprecate_module_after_hook' ) );
 
 // @since 1.9.0
 // add the single course lessons title
