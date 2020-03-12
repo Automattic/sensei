@@ -284,10 +284,6 @@ add_action( 'sensei_single_message_content_inside_before', array( 'Sensei_Messag
  * Lesson Archive Hooks
  */
 
-// deprecate the sensei_lesson_archive_header hook
-// @deprecated since 1.9.0
-add_action( 'sensei_loop_lesson_inside_before', array( 'Sensei_Lesson', 'deprecate_sensei_lesson_archive_header_hook' ), 20 );
-
 // @1.9.0
 // The archive title header on the lesson archive loop
 add_action( 'sensei_loop_lesson_inside_before', array( $sensei->lesson, 'the_archive_header' ), 20 );
