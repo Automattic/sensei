@@ -452,20 +452,6 @@ class Sensei_Templates {
 	}
 
 	/**
-	 * course_single_meta function.
-	 *
-	 * @access public
-	 * @return void
-	 * @deprecated since 1.9.0
-	 */
-	public static function deprecate_course_single_meta_hooks() {
-
-		// deprecate all these hooks
-		sensei_do_deprecated_action( 'sensei_course_start', '1.9.0', 'sensei_single_course_content_inside_before' );
-
-	} // End deprecate_course_single_meta_hooks
-
-	/**
 	 * Running the deprecated hook: sensei_lesson_single_meta
 	 *
 	 * @since 1.9.0

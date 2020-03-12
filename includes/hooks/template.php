@@ -73,11 +73,6 @@ add_action( 'sensei_single_course_content_inside_before', array( 'Sensei_Course'
 // hook the single course title on the single course page
 add_action( 'sensei_single_course_content_inside_before', array( $sensei->course, 'course_image' ), 20 );
 
-
-// @1.9.0
-// Add legacy hooks deprecated in 1.9.0
-add_action( 'sensei_single_course_content_inside_before', array( 'Sensei_Templates', 'deprecate_course_single_meta_hooks' ), 10 );
-
 // @1.9.0
 // Filter the content and replace it with the excerpt if the user doesn't have full access
 add_filter( 'the_content', array( 'Sensei_Course', 'single_course_content' ) );
