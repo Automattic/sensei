@@ -941,13 +941,6 @@ function sensei_the_single_lesson_meta() {
 			?>
 			<?php do_action( 'sensei_frontend_messages' ); ?>
 
-			<?php
-			if ( ! $is_preview || Sensei_Course::is_user_enrolled( $lesson_course_id ) ) {
-
-				sensei_do_deprecated_action( 'sensei_lesson_quiz_meta', '1.9.0', 'sensei_single_lesson_content_inside_before', array( get_the_ID(), get_current_user_id() ) );
-
-			}
-			?>
 		</section>
 
 		<?php do_action( 'sensei_lesson_back_link', $lesson_course_id ); ?>
