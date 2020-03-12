@@ -436,22 +436,6 @@ class Sensei_Templates {
 	}
 
 	/**
-	 * Deprecate the single message hooks for post types.
-	 *
-	 * @since 1.9.0
-	 * @deprecated since 1.9.0
-	 */
-	public static function deprecate_all_post_type_single_title_hooks() {
-
-		if ( is_singular( 'sensei_message' ) ) {
-
-			sensei_do_deprecated_action( 'sensei_message_single_title', '1.9.0', 'sensei_single_message_content_inside_before' );
-
-		}
-
-	}
-
-	/**
 	 * hook in the deperecated single main content to the lesson
 	 *
 	 * @deprecated since 1.9.0

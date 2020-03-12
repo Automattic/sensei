@@ -83,14 +83,6 @@ add_action( 'sensei_single_course_content_inside_after', array( 'Sensei_Template
 add_action( 'sensei_single_message_content_inside_after', array( 'Sensei_Templates', 'deprecated_single_main_content_hook' ) );
 
 /**
- * Deprecate all the post type single title hooks in favor of before content and after content hooks
- *
- * @deprecate 1.9.0
- * @1.9.0
- */
-add_action( 'sensei_single_message_content_inside_before', array( 'Sensei_Templates', 'deprecate_all_post_type_single_title_hooks' ) );
-
-/**
  * Deprecate hooks into the single course modules
  *
  * @deprecated since 1.9.0
