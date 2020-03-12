@@ -111,8 +111,6 @@ class Sensei_Course_Results {
 
 		Sensei_Utils::sensei_user_course_status_message( $course->ID, get_current_user_id() );
 
-		sensei_do_deprecated_action( 'sensei_course_results_lessons', '1.9.', 'sensei_course_results_content_inside_after', $course );
-
 	}
 
 	/**
