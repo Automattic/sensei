@@ -147,7 +147,6 @@ add_action( 'sensei_no_permissions_inside_after_content', array( 'Sensei_Utils',
 // @since 1.9.0
 // deprecate hooks no longer needed
 add_action( 'sensei_single_quiz_content_inside_before', array( 'Sensei_Quiz', 'deprecate_quiz_sensei_single_main_content_hook' ) );
-add_action( 'sensei_single_quiz_content_inside_before', array( 'Sensei_Quiz', 'deprecate_quiz_sensei_quiz_single_title_hook' ) );
 
 // @since 1.9.0
 // Single quiz title

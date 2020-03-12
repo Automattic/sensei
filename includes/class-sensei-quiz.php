@@ -1099,16 +1099,6 @@ class Sensei_Quiz {
 		sensei_do_deprecated_action( 'sensei_single_main_content', '1.9.0', 'sensei_single_quiz_content_inside_before or sensei_single_quiz_content_inside_after' );
 
 	}
-	/*
-	* Deprecate the sensei_quiz_single_title on the single-quiz template.
-	*
-	* @deprecated since 1.9.0
-	*/
-	public static function deprecate_quiz_sensei_quiz_single_title_hook() {
-
-		sensei_do_deprecated_action( 'sensei_quiz_single_title', '1.9.0', 'sensei_single_quiz_content_inside_before ' );
-
-	}
 
 	/**
 	 * Filter the single title and add the Quiz to it.
