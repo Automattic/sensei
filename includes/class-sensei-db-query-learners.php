@@ -56,7 +56,20 @@ class Sensei_Db_Query_Learners {
 				`u`.`user_email`,
 				GROUP_CONCAT(`c`.`comment_post_ID`, '|', IF(`c`.`comment_approved` = 'complete', 'c', 'p' )) AS 'course_statuses',
 				COUNT(`c`.`comment_approved`) AS 'course_count'
-			FROM `{$wpdb->users}` AS `u`
+			FROM `{$wpdb->users}` AS `u`";
+
+		if ( ! empty( $this->filter_by_course_id ) ) {
+			$eq = ( 'inc' === $this->filter_type ) ? '=' : '!=';
+
+			$sql .= "
+				INNER JOIN `{$wpdb->comments}` AS `cf`
+					ON `u`.`ID` = `cf`.`user_id` 
+					AND `cf`.`comment_type` = 'sensei_course_status'
+					AND `cf`.comment_post_ID {$eq} {$this->filter_by_course_id} 
+					AND `cf`.comment_approved IS NOT NULL";
+		}
+
+		$sql .= "
 			LEFT JOIN `{$wpdb->comments}` AS `c`
 				ON `u`.`ID` = `c`.`user_id` AND `c`.`comment_type` = 'sensei_course_status'";
 
@@ -65,12 +78,6 @@ class Sensei_Db_Query_Learners {
 		if ( null !== $matching_user_ids ) {
 			$user_id_in = empty( $matching_user_ids ) ? 'false' : implode( ',', $matching_user_ids );
 			$sql       .= " AND u.ID IN ({$user_id_in})";
-		}
-
-		if ( ! empty( $this->filter_by_course_id ) ) {
-			$sql .= ' AND';
-			$eq   = ( 'inc' === $this->filter_type ) ? '=' : '!=';
-			$sql .= " c.comment_post_ID {$eq} {$this->filter_by_course_id} AND c.comment_approved IS NOT NULL";
 		}
 
 		$sql .= ' GROUP BY `u`.`ID`';
