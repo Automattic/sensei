@@ -497,7 +497,6 @@ class Sensei_Templates {
 	public static function deprecated_archive_message_hooks() {
 
 		sensei_do_deprecated_action( 'sensei_message_archive_main_content', '1.9.0', 'sensei_archive_before_message_loop OR sensei_archive_after_message_loop' );
-		sensei_do_deprecated_action( 'sensei_message_archive_header', '1.9.0', 'sensei_archive_before_message_loop' );
 
 	}
 
