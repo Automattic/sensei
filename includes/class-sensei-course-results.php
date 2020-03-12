@@ -116,8 +116,6 @@ class Sensei_Course_Results {
 
 		sensei_do_deprecated_action( 'sensei_course_results_lessons', '1.9.', 'sensei_course_results_content_inside_after', $course );
 
-		sensei_do_deprecated_action( 'sensei_course_results_bottom', '1.9.', 'sensei_course_results_content_inside_after', $course->ID );
-
 	}
 
 	/**
