@@ -110,10 +110,6 @@ add_action( 'sensei_single_course_inside_before_lesson', array( 'Sensei_Lesson',
 add_filter( 'get_the_excerpt', array( 'Sensei_Lesson', 'alter_the_lesson_excerpt' ) );
 
 // @since 1.9.0
-// run a deprecated hook for backwards compatibility sake
-add_action( 'sensei_single_course_modules_before', array( 'Sensei_Core_Modules', 'deprecate_sensei_single_course_modules_content' ) );
-
-// @since 1.9.0
 // hook in the module loop intialization functionality
 add_action( 'sensei_single_course_modules_before', array( 'Sensei_Core_Modules', 'setup_single_course_module_loop' ) );
 

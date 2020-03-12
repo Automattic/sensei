@@ -2365,18 +2365,6 @@ class Sensei_Core_Modules {
 	} // end reset_none_modules_transient
 
 	/**
-	 * This function calls the deprecated hook 'sensei_single_course_modules_content' to fire
-	 *
-	 * @since 1.9.0
-	 * @deprecated since 1.9.0
-	 */
-	public static function deprecate_sensei_single_course_modules_content() {
-
-		sensei_do_deprecated_action( 'sensei_single_course_modules_content', '1.9.0', 'sensei_single_course_modules_before or sensei_single_course_modules_after' );
-
-	}
-
-	/**
 	 * Setup the single course module loop.
 	 *
 	 * Setup the global $sensei_modules_loop
