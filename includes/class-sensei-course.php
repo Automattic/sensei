@@ -99,8 +99,6 @@ class Sensei_Course {
 		// The course enrolment actions.
 		add_action( 'sensei_output_course_enrolment_actions', array( __CLASS__, 'output_course_enrolment_actions' ) );
 
-		// backwards compatible template hooks
-		add_action( 'sensei_course_content_inside_before', array( $this, 'content_before_backwards_compatibility_hooks' ) );
 		// add the user status on the course to the markup as a class
 		add_filter( 'post_class', array( __CLASS__, 'add_course_user_status_class' ), 20, 3 );
 
@@ -2130,22 +2128,6 @@ class Sensei_Course {
 		update_post_meta( $course_id, 'disable_notification', $new_val );
 
 	}//end save_course_notification_meta_box()
-
-	/**
-	 * Backwards compatibility hooks added to ensure that
-	 * plugins and other parts of sensei still works.
-	 *
-	 * This function hooks into `sensei_course_content_inside_before`
-	 *
-	 * @since 1.9
-	 *
-	 * @param WP_Post $post
-	 */
-	public function content_before_backwards_compatibility_hooks( $post_id ) {
-
-		sensei_do_deprecated_action( 'sensei_course_image', '1.9.0', 'sensei_course_content_inside_before' );
-
-	}
 
 	/**
 	 * Output a link to view course. The button text is different depending on the amount of preview lesson available.

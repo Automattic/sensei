@@ -66,7 +66,7 @@ add_action( 'sensei_course_content_inside_before', array( 'Sensei_Templates', 't
  */
 // @1.9.0
 // add deprecated action hooks for backwards compatibility sake
-// hooks on single course page: sensei_course_image , sensei_course_single_title, sensei_course_single_meta
+// hooks on single course page: sensei_course_single_title, sensei_course_single_meta
 add_action( 'sensei_single_course_content_inside_before', array( 'Sensei_Templates', 'deprecated_single_course_inside_before_hooks' ), 80 );
 
 // @1.9.0
@@ -359,11 +359,6 @@ add_action( 'sensei_course_results_content_inside_before', array( $sensei->cours
 // @since 1.9.0
 // deprecate the course results top hook in favour of a new hook
 add_action( 'sensei_course_results_content_inside_before', array( 'Sensei_Course_Results', 'deprecate_course_results_top_hook' ) );
-
-// @since 1.9.0
-// Fire the course image hook within the course results page
-add_action( 'sensei_course_results_content_inside_before', array( 'Sensei_Course_Results', 'fire_course_image_hook' ) );
-
 
 /**********************************
  *

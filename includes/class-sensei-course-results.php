@@ -179,15 +179,6 @@ class Sensei_Course_Results {
 
 	}
 
-	/**
-	 * Fire the course image hook
-	 *
-	 * @since 1.8.0
-	 */
-	public static function fire_course_image_hook() {
-		sensei_do_deprecated_action( 'sensei_course_image', '1.9.0', 'sensei_single_course_content_inside_before', array( get_the_ID() ) );
-	}
-
 } // End Class
 
 /**
