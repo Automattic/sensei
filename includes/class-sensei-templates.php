@@ -391,19 +391,6 @@ class Sensei_Templates {
 	}//end the_title()
 
 	/**
-	 * This function adds the hooks inside and above the single course content for
-	 * backwards compatibility sake.
-	 *
-	 * @since 1.9.0
-	 * @deprecated 1.9.0
-	 */
-	public static function deprecated_single_course_inside_before_hooks() {
-
-		sensei_do_deprecated_action( 'sensei_course_single_title', '1.9.0', 'sensei_single_course_content_inside_before' );
-
-	}//end deprecated_single_course_inside_before_hooks()
-
-	/**
 	 * Deprecated all deprecated_single_main_content_hook hooked actions.
 	 *
 	 * The content must be dealt with inside the respective templates.
