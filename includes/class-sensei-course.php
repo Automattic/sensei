@@ -101,8 +101,6 @@ class Sensei_Course {
 
 		// backwards compatible template hooks
 		add_action( 'sensei_course_content_inside_before', array( $this, 'content_before_backwards_compatibility_hooks' ) );
-		add_action( 'sensei_loop_course_before', array( $this, 'loop_before_backwards_compatibility_hooks' ) );
-
 		// add the user status on the course to the markup as a class
 		add_filter( 'post_class', array( __CLASS__, 'add_course_user_status_class' ), 20, 3 );
 
@@ -2146,27 +2144,6 @@ class Sensei_Course {
 	public function content_before_backwards_compatibility_hooks( $post_id ) {
 
 		sensei_do_deprecated_action( 'sensei_course_image', '1.9.0', 'sensei_course_content_inside_before' );
-
-	}
-
-	/**
-	 * Backwards compatibility hooks that should be hooked into sensei_loop_course_before
-	 *
-	 * hooked into 'sensei_loop_course_before'
-	 *
-	 * @since 1.9
-	 *
-	 * @global WP_Post $post
-	 */
-	public function loop_before_backwards_compatibility_hooks() {
-
-		global $post;
-
-		if ( ! $post ) {
-			return;
-		}
-
-		sensei_do_deprecated_action( 'sensei_course_archive_header', '1.9.0', 'sensei_course_content_inside_before', $post->post_type );
 
 	}
 

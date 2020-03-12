@@ -1082,7 +1082,7 @@ class Sensei_Frontend {
 
 			<section id="main-course" class="course-container">
 
-				<?php do_action( 'sensei_course_archive_header' ); ?>
+				<?php sensei_do_deprecated_action( 'sensei_course_archive_header', '3.0.0', 'sensei_course_content_inside_before' ); ?>
 
 				<?php
 				while ( have_posts() ) {
