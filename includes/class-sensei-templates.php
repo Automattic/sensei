@@ -342,19 +342,6 @@ class Sensei_Templates {
 
 	}
 
-
-	/**
-	 * Hooks the deprecated archive content hook into the hook again just in
-	 * case other developers have used it.
-	 *
-	 * @deprecated since 1.9.0
-	 */
-	public static function deprecated_archive_course_content_hook() {
-
-		sensei_do_deprecated_action( 'sensei_course_archive_main_content', '1.9.0', 'sensei_loop_course_before' );
-
-	}//end deprecated_archive_course_content_hook()
-
 	/**
 	 * A generic function for echoing the post title
 	 *

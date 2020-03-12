@@ -49,8 +49,6 @@ add_action( 'sensei_pagination', array( 'Sensei_Frontend', 'load_content_paginat
  *
  * COURSE ARCHIVE HOOKS
  */
-// deprecate the archive content hook @since 1.9.0
-add_action( 'sensei_archive_before_course_loop', array( 'Sensei_Templates', 'deprecated_archive_course_content_hook' ), 10, 1 );
 
 // Course archive title hook @since 1.9.0
 add_action( 'sensei_archive_before_course_loop', array( 'Sensei_Course', 'archive_header' ), 10, 0 );
