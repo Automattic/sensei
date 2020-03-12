@@ -536,21 +536,6 @@ class Sensei_Frontend {
 	}
 
 	/**
-	 * Outputs the headers on the course archive page.
-	 *
-	 * @access public
-	 * @since  1.2.0
-	 * @deprecated since 1.9.0 use Sensei_Course::archive_header
-	 * @return void
-	 */
-	function sensei_course_archive_header() {
-
-		trigger_error( 'This function sensei_course_archive_header has been depricated. Please use: Sensei_Course::course_archive_header ' );
-		Sensei_Course::archive_header( '', '<header class="archive-header"><h1>', '</h1></header>' );
-
-	} // sensei_course_archive_header()
-
-	/**
 	 * Generates the "My Messages"archive header.
 	 *
 	 * @deprecated since 1.9.0
