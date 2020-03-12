@@ -87,10 +87,6 @@ add_action( 'sensei_single_course_content_inside_before', array( 'Sensei_Templat
 add_filter( 'the_content', array( 'Sensei_Course', 'single_course_content' ) );
 
 // @1.9.0
-// Deprecate lessons specific single course hooks
-add_action( 'sensei_single_course_content_inside_after', array( 'Sensei_Templates', 'deprecate_sensei_course_single_lessons_hook' ) );
-
-// @1.9.0
 // Deprecate single main content hooks
 add_action( 'sensei_single_course_content_inside_after', array( 'Sensei_Templates', 'deprecated_single_main_content_hook' ) );
 add_action( 'sensei_single_message_content_inside_after', array( 'Sensei_Templates', 'deprecated_single_main_content_hook' ) );

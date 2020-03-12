@@ -405,19 +405,6 @@ class Sensei_Templates {
 	}//end deprecated_single_course_inside_before_hooks()
 
 	/**
-	 * This function adds the hooks to sensei_course_single_lessons for
-	 * backwards compatibility sake.  and provides developers with an alternative.
-	 *
-	 * @since 1.9.0
-	 * @deprecated 1.9.0
-	 */
-	public static function deprecate_sensei_course_single_lessons_hook() {
-
-		sensei_do_deprecated_action( 'sensei_course_single_lessons', '1.9.0', 'sensei_single_course_content_inside_after' );
-
-	}//end deprecate_sensei_course_single_lessons_hook()
-
-	/**
 	 * Deprecated all deprecated_single_main_content_hook hooked actions.
 	 *
 	 * The content must be dealt with inside the respective templates.
