@@ -344,9 +344,6 @@ add_action( 'sensei_my_courses_content_inside_before', array( 'Sensei_Templates'
  *
  * Archive Message Hooks
  */
-// @since 1.9.0
-// Deprecate the archive messages hooks no longer supported
-add_action( 'sensei_archive_before_message_loop', array( 'Sensei_Templates', 'deprecated_archive_message_hooks' ) );
 
 // @since 1.9.0
 // Deprecate the archive messages hooks no longer supported

@@ -489,18 +489,6 @@ class Sensei_Templates {
 	}//end fire_frontend_messages_hook()
 
 	/**
-	 * Deprecate the 2 main hooks on the archive message template
-	 *
-	 * @deprecated since 1.9.0
-	 * @since 1.9.0
-	 */
-	public static function deprecated_archive_message_hooks() {
-
-		sensei_do_deprecated_action( 'sensei_message_archive_main_content', '1.9.0', 'sensei_archive_before_message_loop OR sensei_archive_after_message_loop' );
-
-	}
-
-	/**
 	 * Run the sensei_quiz_question_type action for those still hooing into it, but depreate
 	 * it to provide user with a better alternative.
 	 *
