@@ -338,10 +338,6 @@ add_action( 'sensei_my_courses_content_inside_before', array( 'Sensei_Templates'
  *
  * Login form template hooks
  */
-// @since 1.9.0
-// deprecate the sensei_login_form hok which was use to load the login form.
-// This now loads independent of the my-courses template which helps keep templates free from logic
-add_action( 'sensei_login_form_before', array( 'Sensei_Templates', 'deprecate_sensei_login_form_hook' ) );
 
 /**********************************
  *
