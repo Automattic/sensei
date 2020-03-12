@@ -1238,19 +1238,6 @@ class Sensei_Quiz {
 	}
 
 	/**
-	 * This functions runs the old sensei_quiz_action_buttons action
-	 * for backwards compatiblity sake.
-	 *
-	 * @since 1.9.0
-	 * @deprecated
-	 */
-	public static function deprecate_sensei_quiz_action_buttons_hook() {
-
-		sensei_do_deprecated_action( 'sensei_quiz_action_buttons', '1.9.0', 'sensei_single_quiz_questions_after' );
-
-	}
-
-	/**
 	 * The quiz action buttons needed to ouput quiz
 	 * action such as reset complete and save.
 	 *
