@@ -536,16 +536,6 @@ class Sensei_Frontend {
 	}
 
 	/**
-	 * Generates the "My Messages"archive header.
-	 *
-	 * @deprecated since 1.9.0
-	 */
-	public function sensei_message_archive_header() {
-		_deprecated_function( 'Sensei_Frontend::sensei_message_archive_header', 'Please use: Sense' );
-		Sensei_Messages::the_archive_header();
-	} // sensei_message_archive_header()
-
-	/**
 	 * Output for course archive page individual course title.
 	 *
 	 * @since  1.2.0
