@@ -448,22 +448,6 @@ class Sensei_Templates {
 
 	}//end fire_frontend_messages_hook()
 
-	/**
-	 * Run the sensei_quiz_question_type action for those still hooing into it, but depreate
-	 * it to provide user with a better alternative.
-	 *
-	 * @deprecated since 1.9.0
-	 */
-	public static function deprecate_sensei_quiz_question_type_action() {
-
-		// Question Type
-		global $sensei_question_loop;
-		$question_type = Sensei()->question->get_question_type( $sensei_question_loop['current_question']->ID );
-		sensei_do_deprecated_action( 'sensei_quiz_question_type', '1.9.0', 'sensei_quiz_question_inside_after', $question_type );
-
-	}
-
-
 	public static function the_register_button( $post_id = '' ) {
 		global $current_user;
 
