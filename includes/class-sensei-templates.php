@@ -490,17 +490,6 @@ class Sensei_Templates {
 	}//end deprecate_lesson_single_main_content_hook()
 
 	/**
-	 * hook in the deperecated single main content to the lesson
-	 *
-	 * @deprecated since 1.9.0
-	 */
-	public static function deprecate_lesson_image_hook() {
-
-		sensei_do_deprecated_action( 'sensei_lesson_image', '1.9.0', 'sensei_single_lesson_content_inside_before', get_the_ID() );
-
-	}//end deprecate_lesson_image_hook()
-
-	/**
 	 * hook in the deprecated sensei_login_form hook for backwards
 	 * compatibility
 	 *

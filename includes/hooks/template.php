@@ -221,10 +221,6 @@ add_action( 'sensei_single_lesson_content_inside_before', array( 'Sensei_Templat
 add_action( 'sensei_single_lesson_content_inside_before', array( 'Sensei_Lesson', 'the_lesson_image' ), 17 );
 
 // @since 1.9.0
-// hook in the lesson image on the single lesson deprecated hook function
-add_action( 'sensei_single_lesson_content_inside_before', array( 'Sensei_Templates', 'deprecate_lesson_image_hook' ), 10 );
-
-// @since 1.9.0
 // hook in the lesson single title deprecated function
 add_action( 'sensei_single_lesson_content_inside_before', array( 'Sensei_Templates', 'deprecate_sensei_lesson_single_title' ), 15 );
 
