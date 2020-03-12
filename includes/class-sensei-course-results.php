@@ -37,9 +37,6 @@ class Sensei_Course_Results {
 		// Support newer WordPress theme (>= 4.4)
 		add_filter( 'document_title_parts', array( $this, 'page_title' ), 10, 2 );
 
-		// Load course results
-		add_action( 'sensei_course_results_content_inside_before', array( $this, 'deprecate_course_result_info_hook' ), 10 );
-
 		// Add class to body tag
 		add_filter( 'body_class', array( $this, 'body_class' ), 10, 1 );
 
@@ -140,17 +137,6 @@ class Sensei_Course_Results {
 	public static function fire_sensei_message_hook() {
 
 		do_action( 'sensei_frontend_messages' );
-
-	}
-
-	/**
-	 * Deprecate the course_results info hook
-	 *
-	 * @since 1.9.0
-	 */
-	public static function deprecate_course_result_info_hook() {
-
-		sensei_do_deprecated_action( 'sensei_course_results_info', '1.9.0', 'sensei_course_results_content_inside_before' );
 
 	}
 
