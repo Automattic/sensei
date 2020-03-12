@@ -66,7 +66,7 @@ add_action( 'sensei_course_content_inside_before', array( 'Sensei_Templates', 't
  */
 // @1.9.0
 // add deprecated action hooks for backwards compatibility sake
-// hooks on single course page: sensei_course_single_title, sensei_course_single_meta
+// hooks on single course page: sensei_course_single_title
 add_action( 'sensei_single_course_content_inside_before', array( 'Sensei_Templates', 'deprecated_single_course_inside_before_hooks' ), 80 );
 
 // @1.9.0
