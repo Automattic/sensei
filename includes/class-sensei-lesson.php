@@ -3765,7 +3765,7 @@ class Sensei_Lesson {
 	/**
 	 * Filter the classes for lessons on the single course page.
 	 *
-	 * Adds the nesecary classes depending on the user data
+	 * Adds the necessary classes depending on the user data
 	 *
 	 * @since 1.9.0
 	 * @param array $classes
@@ -3790,7 +3790,7 @@ class Sensei_Lesson {
 				} // End If Statement
 			} // End If Statement
 
-			$is_user_taking_course = Sensei_Utils::user_started_course( $course_id, get_current_user_id() );
+			$is_user_taking_course = Sensei_Course::is_user_enrolled( $course_id );
 			if ( Sensei_Utils::is_preview_lesson( get_the_ID() ) && ! $is_user_taking_course ) {
 
 				$lesson_classes[] = 'lesson-preview';
@@ -3816,7 +3816,7 @@ class Sensei_Lesson {
 
 		$loop_lesson_number    = $wp_query->current_post + 1;
 		$course_id             = Sensei()->lesson->get_course_id( $lesson_id );
-		$is_user_taking_course = Sensei_Utils::user_started_course( $course_id, get_current_user_id() );
+		$is_user_taking_course = Sensei_Course::is_user_enrolled( $course_id );
 
 		// Get Lesson data
 		$complexity_array = Sensei()->lesson->lesson_complexities();
@@ -3999,7 +3999,7 @@ class Sensei_Lesson {
 		}
 
 		$lesson_course_id   = get_post_meta( $lesson_id, '_lesson_course', true );
-		$user_taking_course = Sensei_Utils::user_started_course( $lesson_course_id, $user_id );
+		$user_taking_course = Sensei_Course::is_user_enrolled( $lesson_course_id, $user_id );
 		if ( ! $user_taking_course || ! sensei_can_user_view_lesson( $lesson_id, $user_id ) ) {
 			return;
 		}
@@ -4054,23 +4054,11 @@ class Sensei_Lesson {
 	 * Show the user not taking course message if it is the case
 	 *
 	 * @since 1.9.0
+	 * @deprecated 3.0.0
 	 */
 	public static function user_not_taking_course_message() {
 
-		$lesson_id = get_the_ID();
-
-		if ( 'lesson' != get_post_type( $lesson_id ) ) {
-			return;
-		}
-
-		$is_preview             = Sensei_Utils::is_preview_lesson( $lesson_id );
-		$pre_requisite_complete = self::is_prerequisite_complete( $lesson_id, get_current_user_id() );
-		$lesson_course_id       = get_post_meta( $lesson_id, '_lesson_course', true );
-		$user_taking_course     = Sensei_Utils::user_started_course( $lesson_course_id, get_current_user_id() );
-
-		if ( $pre_requisite_complete && $is_preview && ! $user_taking_course ) {
-
-		}// end if
+		_deprecated_function( __METHOD__, '3.0.0' );
 
 	} // end user_not_taking_course_message
 
@@ -4089,7 +4077,7 @@ class Sensei_Lesson {
 			return;
 		}
 
-		$show_course_signup_notice = sensei_is_login_required() && ! Sensei_Utils::user_started_course( $course_id, get_current_user_id() );
+		$show_course_signup_notice = sensei_is_login_required() && ! Sensei_Course::is_user_enrolled( $course_id );
 
 		/**
 		 * Filter for if we should show the course sign up notice on the lesson page.
@@ -4213,7 +4201,7 @@ class Sensei_Lesson {
 		$course_id  = get_post_meta( $post->ID, '_lesson_course', true );
 		$is_preview = isset( $post->ID )
 			&& Sensei_Utils::is_preview_lesson( $post->ID )
-			&& ! Sensei_Utils::user_started_course( $course_id, $current_user->ID );
+			&& ! Sensei_Course::is_user_enrolled( $course_id, $current_user->ID );
 
 		?>
 		<header class="lesson-title">
@@ -4365,7 +4353,7 @@ class Sensei_Lesson {
 		$has_user_completed_lesson = Sensei_Utils::user_completed_lesson( intval( $lesson_id ), $user_id );
 
 		if ( $quiz_id && is_user_logged_in()
-			&& Sensei_Utils::user_started_course( $lesson_course_id, $user_id ) ) {
+			&& Sensei_Course::is_user_enrolled( $lesson_course_id, $user_id ) ) {
 			$has_quiz_questions = self::lesson_quiz_has_questions( $lesson_id );
 
 			// Display lesson quiz status message

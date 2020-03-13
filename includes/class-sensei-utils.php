@@ -674,7 +674,7 @@ class Sensei_Utils {
 	/**
 	 * Mark a lesson as started for user
 	 *
-	 * Will also start the lesson course for the user if the user hans't started taking it already.
+	 * Will also start the lesson course for the user if the user hasn't started taking it already.
 	 *
 	 * @since 1.6.0
 	 *
@@ -696,7 +696,7 @@ class Sensei_Utils {
 
 			$course_id = get_post_meta( $lesson_id, '_lesson_course', true );
 			if ( $course_id ) {
-				$is_user_taking_course = self::user_started_course( $course_id, $user_id );
+				$is_user_taking_course = self::has_started_course( $course_id, $user_id );
 				if ( ! $is_user_taking_course ) {
 					self::user_start_course( $user_id, $course_id );
 				}
