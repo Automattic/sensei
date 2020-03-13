@@ -1261,7 +1261,6 @@ class Sensei_Frontend {
 			 * @param bool|null $student_enrolled True if the student enrolled; False if there was a problem.
 			 * @param int       $user_id          User ID.
 			 * @param int       $course_id        Course post ID.
-			 *
 			 */
 			$student_enrolled = apply_filters( 'sensei_handle_frontend_student_enrolment', null, $current_user->ID, $post->ID );
 
