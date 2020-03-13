@@ -157,19 +157,6 @@ add_action( 'sensei_single_course_modules_after', array( 'Sensei_Core_Modules', 
 add_action( 'sensei_single_course_content_inside_before', array( 'Sensei_Course', 'the_course_enrolment_actions' ), 30 );
 add_action( 'sensei_single_course_content_inside_before', array( 'Sensei_Course', 'the_course_video' ), 40 );
 
-//
-// no permissions template for the single course
-//
-add_action( 'sensei_no_permissions_inside_before_content', array( 'Sensei_Course', 'the_title' ), 20 );
-add_action( 'sensei_no_permissions_inside_before_content', array( 'Sensei_Course', 'the_course_enrolment_actions' ), 23 );
-add_action( 'sensei_no_permissions_inside_before_content', array( $sensei->course, 'course_image' ), 25 );
-add_action( 'sensei_no_permissions_inside_before_content', array( 'Sensei_Course', 'the_course_video' ), 40 );
-add_action( 'sensei_no_permissions_inside_after_content', array( $sensei->modules, 'load_course_module_content_template' ), 43 );
-add_action( 'sensei_no_permissions_inside_after_content', array( 'Sensei_Course', 'the_course_lessons_title' ), 45 );
-add_action( 'sensei_no_permissions_inside_after_content', array( 'Sensei_Course', 'load_single_course_lessons_query' ), 50 );
-add_action( 'sensei_no_permissions_inside_after_content', 'course_single_lessons', 60 );
-add_action( 'sensei_no_permissions_inside_after_content', array( 'Sensei_Utils', 'restore_wp_query' ), 70 );
-
 /***************************
  *
  *
@@ -450,7 +437,6 @@ add_action( 'sensei_teacher_archive_course_loop_before', array( 'Sensei_Teacher'
  * Frontend notices display
  */
 add_action( 'sensei_course_results_content_inside_before', array( $sensei->notices, 'maybe_print_notices' ) );
-add_action( 'sensei_no_permissions_inside_before_content', array( $sensei->notices, 'maybe_print_notices' ), 90 );
 add_action( 'sensei_single_course_content_inside_before', array( $sensei->notices, 'maybe_print_notices' ), 40 );
 add_action( 'sensei_single_lesson_content_inside_before', array( $sensei->notices, 'maybe_print_notices' ), 40 );
 add_action( 'sensei_taxonomy_module_content_inside_before', array( $sensei->notices, 'maybe_print_notices' ), 40 );
