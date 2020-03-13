@@ -2273,6 +2273,61 @@ class Sensei_Lesson {
 	} // End add_column_data()
 
 	/**
+	 * Add a course from the lesson page.
+	 *
+	 * @access public
+	 * @deprecated 2.2.0
+	 * @return void
+	 */
+	public function lesson_add_course() {
+		_deprecated_function( __METHOD__, '2.2.0' );
+
+		// Add nonce security to the request
+		if ( isset( $_POST['lesson_add_course_nonce'] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification
+			$nonce = esc_html( $_POST['lesson_add_course_nonce'] );
+		} // End If Statement
+		if ( ! wp_verify_nonce( $nonce, 'lesson_add_course_nonce' )
+			|| ! current_user_can( 'edit_lessons' ) ) {
+			die( '' );
+		} // End If Statement
+		// Parse POST data
+		$data        = $_POST['data'];
+		$course_data = array();
+		parse_str( $data, $course_data );
+		// Save the Course
+		$updated                      = false;
+		$current_user                 = wp_get_current_user();
+		$question_data                = [];
+		$question_data['post_author'] = $current_user->ID;
+		$updated                      = $this->lesson_save_course( $course_data );
+
+		// Compute properties and log an event.
+		$event_properties = [];
+		foreach ( [ 'course_prerequisite', 'course_category', 'course_woocommerce_product' ] as $field ) {
+			$value_to_log = -1;
+			if ( isset( $course_data[ $field ] ) ) {
+				$val = intval( $course_data[ $field ] );
+				if ( $val ) {
+					$value_to_log = $val;
+				}
+			}
+
+			// Get property name.
+			$property_name = $field . '_id';
+			if ( 'course_woocommerce_product' === $field ) {
+				$property_name = 'product_id';
+			}
+
+			$event_properties[ $property_name ] = $value_to_log;
+		}
+		sensei_log_event( 'lesson_course_add', $event_properties );
+
+		echo esc_html( $updated );
+		die(); // WordPress may print out a spurious zero without this can be particularly bad if using JSON
+	} // End lesson_add_course()
+
+	/**
 	 * Updates a question.
 	 *
 	 * @access public
