@@ -117,19 +117,6 @@ add_action( 'sensei_single_course_modules_after', array( 'Sensei_Core_Modules', 
 add_action( 'sensei_single_course_content_inside_before', array( 'Sensei_Course', 'the_course_enrolment_actions' ), 30 );
 add_action( 'sensei_single_course_content_inside_before', array( 'Sensei_Course', 'the_course_video' ), 40 );
 
-//
-// no permissions template for the single course
-//
-add_action( 'sensei_no_permissions_inside_before_content', array( 'Sensei_Course', 'the_title' ), 20 );
-add_action( 'sensei_no_permissions_inside_before_content', array( 'Sensei_Course', 'the_course_enrolment_actions' ), 23 );
-add_action( 'sensei_no_permissions_inside_before_content', array( $sensei->course, 'course_image' ), 25 );
-add_action( 'sensei_no_permissions_inside_before_content', array( 'Sensei_Course', 'the_course_video' ), 40 );
-add_action( 'sensei_no_permissions_inside_after_content', array( $sensei->modules, 'load_course_module_content_template' ), 43 );
-add_action( 'sensei_no_permissions_inside_after_content', array( 'Sensei_Course', 'the_course_lessons_title' ), 45 );
-add_action( 'sensei_no_permissions_inside_after_content', array( 'Sensei_Course', 'load_single_course_lessons_query' ), 50 );
-add_action( 'sensei_no_permissions_inside_after_content', 'course_single_lessons', 60 );
-add_action( 'sensei_no_permissions_inside_after_content', array( 'Sensei_Utils', 'restore_wp_query' ), 70 );
-
 /***************************
  *
  *
@@ -183,10 +170,6 @@ add_action( 'sensei_single_quiz_questions_after', array( 'Sensei_Quiz', 'action_
 // @since 1.9.0
 // hook in the lesson image on the single lesson
 add_action( 'sensei_single_lesson_content_inside_before', array( 'Sensei_Lesson', 'the_lesson_image' ), 17 );
-
-// @since 1.9.0
-// hook in the sensei lesson user notices
-add_action( 'sensei_single_lesson_content_inside_before', array( 'Sensei_Lesson', 'user_not_taking_course_message' ), 15 );
 
 // @since 1.9.0
 // attach the lesson title
@@ -344,7 +327,6 @@ add_action( 'sensei_teacher_archive_course_loop_before', array( 'Sensei_Teacher'
  * Frontend notices display
  */
 add_action( 'sensei_course_results_content_inside_before', array( $sensei->notices, 'maybe_print_notices' ) );
-add_action( 'sensei_no_permissions_inside_before_content', array( $sensei->notices, 'maybe_print_notices' ), 90 );
 add_action( 'sensei_single_course_content_inside_before', array( $sensei->notices, 'maybe_print_notices' ), 40 );
 add_action( 'sensei_single_lesson_content_inside_before', array( $sensei->notices, 'maybe_print_notices' ), 40 );
 add_action( 'sensei_taxonomy_module_content_inside_before', array( $sensei->notices, 'maybe_print_notices' ), 40 );
