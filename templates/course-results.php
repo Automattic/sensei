@@ -7,7 +7,7 @@
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     1.12.2
+ * @version     3.0.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
