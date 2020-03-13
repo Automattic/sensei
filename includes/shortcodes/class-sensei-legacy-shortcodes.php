@@ -376,7 +376,7 @@ class Sensei_Legacy_Shortcodes {
 		$author_display_name   = $user_info->display_name;
 		$category_output       = get_the_term_list( $course_id, 'course-category', '', ', ', '' );
 		$preview_lesson_count  = intval( Sensei()->course->course_lesson_preview_count( $course_id ) );
-		$is_user_taking_course = Sensei_Utils::user_started_course( $course_id, get_current_user_id() );
+		$is_user_taking_course = Sensei_Course::is_user_enrolled( $course_id, get_current_user_id() );
 		?>
 
 		<article class="<?php echo esc_attr( join( ' ', get_post_class( array( 'course', 'post' ), $course_id ) ) ); ?>">

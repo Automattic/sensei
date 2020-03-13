@@ -781,7 +781,7 @@ class Sensei_Question {
 		$user_lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, get_current_user_id() );
 		$quiz_graded        = isset( $user_lesson_status->comment_approved ) && ! in_array( $user_lesson_status->comment_approved, array( 'in-progress', 'ungraded' ) );
 
-		if ( ! Sensei_Utils::user_started_course( Sensei()->lesson->get_course_id( $lesson_id ), get_current_user_id() ) ) {
+		if ( ! Sensei_Utils::has_started_course( Sensei()->lesson->get_course_id( $lesson_id ), get_current_user_id() ) ) {
 			return;
 		}
 

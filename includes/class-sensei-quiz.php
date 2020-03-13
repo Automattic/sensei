@@ -1251,7 +1251,7 @@ class Sensei_Quiz {
 	}
 
 	/**
-	 * The quiz action buttons needed to ouput quiz
+	 * The quiz action buttons needed to output quiz
 	 * action such as reset complete and save.
 	 *
 	 * @since 1.3.0
@@ -1287,7 +1287,7 @@ class Sensei_Quiz {
 			$show_actions = Sensei_Utils::user_completed_lesson( $lesson_prerequisite, $current_user->ID );
 
 		}
-		if ( $show_actions && is_user_logged_in() && Sensei_Utils::user_started_course( $lesson_course_id, $current_user->ID ) ) {
+		if ( $show_actions && is_user_logged_in() && Sensei_Course::is_user_enrolled( $lesson_course_id, $current_user->ID ) ) {
 
 			// Get Reset Settings
 			$reset_quiz_allowed = get_post_meta( $post->ID, '_enable_quiz_reset', true );
