@@ -7,30 +7,30 @@ assignees: ''
 
 ---
 
-<!-- Thanks for contributing to Sensei! Pick a clear title ("Lesson: Show complexity in individual lessons") and proceed. -->
+<!-- Thanks for contributing to Sensei LMS! Pick a clear title ("Lesson: Show complexity in individual lessons") and proceed. -->
 
-#### Steps to Reproduce
+### Steps to Reproduce
 1. Go to '...'
 2. Click on '....'
 3. Scroll down to '....'
 4. See error
 
-#### What I Expected
+### What I Expected
 
 
-#### What Happened Instead
+### What Happened Instead
 
 
-#### PHP / WordPress / Sensei version
+### PHP / WordPress / Sensei LMS version
 
 
-#### Browser / OS version
+### Browser / OS version
 
 
-#### Screenshot / Video
+### Screenshot / Video
 
 
-#### Context / Source
+### Context / Source
 <!-- Optional: share your unique context to help us understand your perspective. -->
 
 
