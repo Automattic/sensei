@@ -808,7 +808,7 @@ class Sensei_Learner_Management {
 	 *
 	 * The user must have both name and surname otherwise display name will be returned.
 	 *
-	 * @deprecated since 1.9.0 use Se
+	 * @deprecated since 1.9.0 use Sensei_Learner::get_full_name
 	 * @since 1.8.0
 	 *
 	 * @param int $user_id | bool false for an invalid $user_id.
@@ -817,6 +817,7 @@ class Sensei_Learner_Management {
 	 */
 	public function get_learner_full_name( $user_id ) {
 
+		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_Learner::get_full_name' );
 		return Sensei_Learner::get_full_name( $user_id );
 
 	}

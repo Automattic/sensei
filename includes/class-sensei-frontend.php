@@ -184,7 +184,7 @@ class Sensei_Frontend {
 	/**
 	 * Get template part.
 	 *
-	 * @deprecated since 1.9.0
+	 * @deprecated since 1.9.0 use Sensei_Templates::get_part
 	 * @access public
 	 * @param mixed  $slug Template slug.
 	 * @param string $name Optional. Template name. Default ''.
@@ -192,7 +192,7 @@ class Sensei_Frontend {
 	 */
 	function sensei_get_template_part( $slug, $name = '' ) {
 
-		_deprecated_function( 'sensei_locate_template', '1.9.0', 'Sensei_Templates::get_part' );
+		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_Templates::get_part' );
 
 		Sensei_Templates::get_part( $slug, $name );
 
@@ -518,7 +518,7 @@ class Sensei_Frontend {
 	/**
 	 * Outputs the course image.
 	 *
-	 * @deprecated since 1.9.0
+	 * @deprecated since 1.9.0 use Sensei()->course->course_image
 	 * @param int    $course_id Course ID.
 	 * @param string $width Optional. Image width. Default '100'.
 	 * @param string $height Optional. Image height. Default '100'.
@@ -528,6 +528,7 @@ class Sensei_Frontend {
 	 */
 	function sensei_course_image( $course_id, $width = '100', $height = '100', $return = false ) {
 
+		_deprecated_function( __METHOD__, '1.9.0', 'Sensei()->course->course_image' );
 		if ( ! $return ) {
 
 			echo wp_kses_post( Sensei()->course->course_image( $course_id, $width, $height ) );
@@ -543,7 +544,7 @@ class Sensei_Frontend {
 	 * Outputs the lesson image.
 	 *
 	 * @since  1.2.0
-	 * @deprecated since 1.9.0
+	 * @deprecated since 1.9.0 use Sensei()->lesson->lesson_image
 	 * @param int        $lesson_id Lesson ID.
 	 * @param string     $width Optional. Image width. Default '100'.
 	 * @param string     $height Optional. Image height. Default '100'.
@@ -553,6 +554,8 @@ class Sensei_Frontend {
 	 * @return string Lesson image or empty string if the image was echoed.
 	 */
 	function sensei_lesson_image( $lesson_id, $width = '100', $height = '100', $return = false, $widget = false ) {
+
+		_deprecated_function( __METHOD__, '1.9.0', 'Sensei()->lesson->lesson_image' );
 
 		if ( ! $return ) {
 
@@ -1098,9 +1101,11 @@ class Sensei_Frontend {
 	/**
 	 * Outputs the quiz buttons and messages.
 	 *
-	 * @deprecated since 1.9.0
+	 * @deprecated since 1.9.0 use Sensei_Lesson::footer_quiz_call_to_action()
 	 */
 	public function sensei_lesson_quiz_meta() {
+
+		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_Lesson::footer_quiz_call_to_action' );
 
 		Sensei_Lesson::footer_quiz_call_to_action();
 

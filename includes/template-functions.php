@@ -64,10 +64,11 @@ function lesson_single_meta() {
 	  * @access public
 	  * @param bool $return (default: false)
 	  * @return void
-	  * @deprecated since 1.9.0
+	  * @deprecated since 1.9.0 use Sensei_Templates::get_template
 	  */
 function quiz_questions( $return = false ) {
 
+	_deprecated_function( __FUNCTION__, '1.9.0', 'Sensei_Templates::get_template' );
 	Sensei_Templates::get_template( 'single-quiz/quiz-questions.php' );
 
 } // End quiz_questions()
@@ -100,6 +101,7 @@ function quiz_question_type( $question_type = 'multiple-choice' ) {
 	 */
 function sensei_check_prerequisite_course( $course_id ) {
 
+	_deprecated_function( __FUNCTION__, '1.9.0', 'Sensei_Course::is_prerequisite_complete' );
 	return Sensei_Course::is_prerequisite_complete( $course_id );
 
 } // End sensei_check_prerequisite_course()
