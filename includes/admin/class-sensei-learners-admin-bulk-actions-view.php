@@ -94,7 +94,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		$columns = array(
 			'cb'         => '<label class="screen-reader-text" for="cb-select-all-1">Select All</label><input id="cb-select-all-1" type="checkbox">',
 			'learner'    => __( 'Learner', 'sensei-lms' ),
-			'progress'   => __( 'Course progress', 'sensei-lms' ),
+			'progress'   => __( 'Course Progress', 'sensei-lms' ),
 			'enrolments' => __( 'Enrollments', 'sensei-lms' ),
 		);
 

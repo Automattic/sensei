@@ -115,7 +115,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 		$this->learner_management = $management;
 
 		$this->known_bulk_actions = [
-			self::MANUALLY_ENROL                => __( 'Manually enroll', 'sensei-lms' ),
+			self::MANUALLY_ENROL                => __( 'Add manual enrollment', 'sensei-lms' ),
 			self::REMOVE_MANUAL_ENROLMENT       => __( 'Remove manual enrollment', 'sensei-lms' ),
 			self::REMOVE_PROGRESS               => __( 'Remove progress', 'sensei-lms' ),
 			self::COMPLETE_COURSE               => __( 'Recalculate Course(s) Completion (notify on complete)', 'sensei-lms' ),
