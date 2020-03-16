@@ -192,6 +192,7 @@ class Sensei_Frontend {
 	 */
 	function sensei_get_template_part( $slug, $name = '' ) {
 
+		// To be removed in 5.0.0.
 		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_Templates::get_part' );
 
 		Sensei_Templates::get_part( $slug, $name );
@@ -528,6 +529,7 @@ class Sensei_Frontend {
 	 */
 	function sensei_course_image( $course_id, $width = '100', $height = '100', $return = false ) {
 
+		// To be removed in 5.0.0.
 		_deprecated_function( __METHOD__, '1.9.0', 'Sensei()->course->course_image' );
 		if ( ! $return ) {
 
@@ -555,6 +557,7 @@ class Sensei_Frontend {
 	 */
 	function sensei_lesson_image( $lesson_id, $width = '100', $height = '100', $return = false, $widget = false ) {
 
+		// To be removed in 5.0.0.
 		_deprecated_function( __METHOD__, '1.9.0', 'Sensei()->lesson->lesson_image' );
 
 		if ( ! $return ) {
@@ -1105,6 +1108,7 @@ class Sensei_Frontend {
 	 */
 	public function sensei_lesson_quiz_meta() {
 
+		// To be removed in 5.0.0.
 		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_Lesson::footer_quiz_call_to_action' );
 
 		Sensei_Lesson::footer_quiz_call_to_action();

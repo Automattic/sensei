@@ -817,6 +817,7 @@ class Sensei_Learner_Management {
 	 */
 	public function get_learner_full_name( $user_id ) {
 
+		// To be removed in 5.0.0.
 		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_Learner::get_full_name' );
 		return Sensei_Learner::get_full_name( $user_id );
 

@@ -68,6 +68,7 @@ function lesson_single_meta() {
 	  */
 function quiz_questions( $return = false ) {
 
+	// To be removed in 5.0.0.
 	_deprecated_function( __FUNCTION__, '1.9.0', 'Sensei_Templates::get_template' );
 	Sensei_Templates::get_template( 'single-quiz/quiz-questions.php' );
 
@@ -101,6 +102,7 @@ function quiz_question_type( $question_type = 'multiple-choice' ) {
 	 */
 function sensei_check_prerequisite_course( $course_id ) {
 
+	// To be removed in 5.0.0.
 	_deprecated_function( __FUNCTION__, '1.9.0', 'Sensei_Course::is_prerequisite_complete' );
 	return Sensei_Course::is_prerequisite_complete( $course_id );
 

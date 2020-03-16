@@ -411,6 +411,7 @@ class Sensei_Utils {
 	 */
 	public static function sensei_save_quiz_answers( $submitted = array(), $user_id = 0 ) {
 
+		// To be removed in 5.0.0.
 		_deprecated_function( __METHOD__, '1.9.4', 'Sensei_Quiz::save_user_answers' );
 
 		if ( intval( $user_id ) == 0 ) {
@@ -547,6 +548,7 @@ class Sensei_Utils {
 	 */
 	public static function sensei_grade_quiz_auto( $quiz_id = 0, $submitted = array(), $total_questions = 0, $quiz_grade_type = 'auto' ) {
 
+		// To be removed in 5.0.0.
 		_deprecated_function( __METHOD__, '1.7.4', 'Sensei_Grading::grade_quiz_auto' );
 
 		return Sensei_Grading::grade_quiz_auto( $quiz_id, $submitted, $total_questions, $quiz_grade_type );
@@ -597,6 +599,7 @@ class Sensei_Utils {
 	 */
 	public static function sensei_grade_question_auto( $question_id = 0, $question_type = '', $answer = '', $user_id = 0 ) {
 
+		// To be removed in 5.0.0.
 		_deprecated_function( __METHOD__, '1.7.4', 'Sensei_Grading::grade_question_auto' );
 
 		return Sensei_Grading::grade_question_auto( $question_id, $question_type, $answer, $user_id );
@@ -907,6 +910,7 @@ class Sensei_Utils {
 	 */
 	public static function sensei_get_user_question_answer_notes( $question = 0, $user_id = 0 ) {
 
+		// To be removed in 5.0.0.
 		_deprecated_function( __METHOD__, '1.7.5', 'Sensei()->quiz->get_user_question_feedback' );
 
 		$answer_notes = false;
