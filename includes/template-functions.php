@@ -6,19 +6,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	 *  Output tags.
 	 ***************************************************************************************************/
 
-	/**
-	 * sensei_course_archive_next_link function.
-	 *
-	 * @access public
-	 * @param string $type (default: 'newcourses')
-	 * @return void
-	 */
-function sensei_course_archive_next_link( $type = 'newcourses' ) {
-
-	_deprecated_function( 'sensei_course_archive_next_link', '1.9.0', 'This is no longer used or required in Sensei LMS.' );
-
-} // End sensei_course_archive_next_link()
-
 	 /**
 	  * course_single_lessons function.
 	  *
@@ -42,21 +29,6 @@ function course_single_lessons() {
 	Sensei_Templates::get_template( 'single-course/lessons.php' );
 
 } // End course_single_lessons()
-
-
-	 /**
-	  * lesson_single_meta function.
-	  *
-	  * @access public
-	  * @return void
-	  */
-function lesson_single_meta() {
-
-	_deprecated_function( 'lesson_single_meta', '1.9;0', 'Sensei_Lesson::the_lesson_meta' );
-	sensei_the_single_lesson_meta();
-
-} // End lesson_single_meta()
-
 
 	 /**
 	  * quiz_questions function.
@@ -421,26 +393,6 @@ function sensei_get_prev_next_lessons( $lesson_id = 0 ) {
 
 	return $links;
 } // End sensei_get_prev_next_lessons()
-
-  /**
-   * sensei_get_excerpt Returns the excerpt for the $post
-   *
-   * Unhooks wp_trim_excerpt() so to disable excerpt auto-gen.
-   *
-   * @deprecated since  1.9.0
-   * @param  int|WP_Post $post_id Optional. Defaults to current post
-   * @return string $excerpt
-   */
-function sensei_get_excerpt( $post_id = '' ) {
-	_deprecated_function( 'sensei_get_excerpt', 'use the WordPress excerpt functionality.' );
-
-	return get_the_excerpt();
-}
-
-function sensei_has_user_completed_lesson( $post_id = 0, $user_id = 0 ) {
-	_deprecated_function( __FUNCTION__, '1.7', 'Sensei_Utils::user_completed_lesson()' );
-	return Sensei_Utils::user_completed_lesson( $post_id, $user_id );
-} // End sensei_has_user_completed_lesson()
 
 /**
  * Determine if a user has completed the pre-requisite lesson.
@@ -989,13 +941,6 @@ function sensei_the_single_lesson_meta() {
 			?>
 			<?php do_action( 'sensei_frontend_messages' ); ?>
 
-			<?php
-			if ( ! $is_preview || Sensei_Course::is_user_enrolled( $lesson_course_id ) ) {
-
-				sensei_do_deprecated_action( 'sensei_lesson_quiz_meta', '1.9.0', 'sensei_single_lesson_content_inside_before', array( get_the_ID(), get_current_user_id() ) );
-
-			}
-			?>
 		</section>
 
 		<?php do_action( 'sensei_lesson_back_link', $lesson_course_id ); ?>

@@ -120,25 +120,6 @@ class Sensei_Core_Modules {
 	} // end constructor
 
 	/**
-	 * Alter a module term slug when a new taxonomy term is created
-	 * This will add the creators user name to the slug for uniqueness.
-	 *
-	 * @since 1.8.0
-	 *
-	 * @param $term_id
-	 * @param $tt_id
-	 * @param $taxonomy
-	 *
-	 * @return void
-	 * @deprecated since 1.9.0
-	 */
-	public function change_module_term_slug( $term_id, $tt_id, $taxonomy ) {
-
-		_deprecated_function( 'change_module_term_slug', '1.9.0' );
-
-	}//end change_module_term_slug()
-
-	/**
 	 * Hook in all meta boxes related tot he modules taxonomy
 	 *
 	 * @since 1.8.0
@@ -574,24 +555,6 @@ class Sensei_Core_Modules {
 		echo json_encode( $found_courses );
 		die();
 	}
-
-	/**
-	 * display modules on single course pages
-	 *
-	 * @since 1.8.0
-	 * @return void
-	 */
-	public function single_course_modules() {
-
-		_deprecated_function( 'Sensei_Modules->single_course_modules', 'Sensei 1.9.0', 'Sensei()->modules->load_course_module_content_template' );
-		// only show modules on the course that has modules
-		if ( is_singular( 'course' ) && has_term( '', 'module' ) ) {
-
-			$this->load_course_module_content_template();
-
-		}
-
-	} // end single_course_modules
 
 	public function sensei_course_preview_titles( $title, $lesson_id ) {
 		global $post, $current_user;
@@ -2400,18 +2363,6 @@ class Sensei_Core_Modules {
 		} // end if is a course or a lesson
 
 	} // end reset_none_modules_transient
-
-	/**
-	 * This function calls the deprecated hook 'sensei_single_course_modules_content' to fire
-	 *
-	 * @since 1.9.0
-	 * @deprecated since 1.9.0
-	 */
-	public static function deprecate_sensei_single_course_modules_content() {
-
-		sensei_do_deprecated_action( 'sensei_single_course_modules_content', '1.9.0', 'sensei_single_course_modules_before or sensei_single_course_modules_after' );
-
-	}
 
 	/**
 	 * Setup the single course module loop.

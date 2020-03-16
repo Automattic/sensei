@@ -1090,27 +1090,6 @@ class Sensei_Quiz {
 	} // end quiz_has_no_questions
 
 	/**
-	 * Deprecate the sensei_single_main_content on the single-quiz template.
-	 *
-	 * @deprecated since 1.9.0
-	 */
-	public static function deprecate_quiz_sensei_single_main_content_hook() {
-
-		sensei_do_deprecated_action( 'sensei_single_main_content', '1.9.0', 'sensei_single_quiz_content_inside_before or sensei_single_quiz_content_inside_after' );
-
-	}
-	/*
-	* Deprecate the sensei_quiz_single_title on the single-quiz template.
-	*
-	* @deprecated since 1.9.0
-	*/
-	public static function deprecate_quiz_sensei_quiz_single_title_hook() {
-
-		sensei_do_deprecated_action( 'sensei_quiz_single_title', '1.9.0', 'sensei_single_quiz_content_inside_before ' );
-
-	}
-
-	/**
 	 * Filter the single title and add the Quiz to it.
 	 *
 	 * @param string $title
@@ -1235,19 +1214,6 @@ class Sensei_Quiz {
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped above.
 		echo $message;
-	}
-
-	/**
-	 * This functions runs the old sensei_quiz_action_buttons action
-	 * for backwards compatiblity sake.
-	 *
-	 * @since 1.9.0
-	 * @deprecated
-	 */
-	public static function deprecate_sensei_quiz_action_buttons_hook() {
-
-		sensei_do_deprecated_action( 'sensei_quiz_action_buttons', '1.9.0', 'sensei_single_quiz_questions_after' );
-
 	}
 
 	/**

@@ -99,10 +99,6 @@ class Sensei_Course {
 		// The course enrolment actions.
 		add_action( 'sensei_output_course_enrolment_actions', array( __CLASS__, 'output_course_enrolment_actions' ) );
 
-		// backwards compatible template hooks
-		add_action( 'sensei_course_content_inside_before', array( $this, 'content_before_backwards_compatibility_hooks' ) );
-		add_action( 'sensei_loop_course_before', array( $this, 'loop_before_backwards_compatibility_hooks' ) );
-
 		// add the user status on the course to the markup as a class
 		add_filter( 'post_class', array( __CLASS__, 'add_course_user_status_class' ), 20, 3 );
 
@@ -2134,44 +2130,6 @@ class Sensei_Course {
 	}//end save_course_notification_meta_box()
 
 	/**
-	 * Backwards compatibility hooks added to ensure that
-	 * plugins and other parts of sensei still works.
-	 *
-	 * This function hooks into `sensei_course_content_inside_before`
-	 *
-	 * @since 1.9
-	 *
-	 * @param WP_Post $post
-	 */
-	public function content_before_backwards_compatibility_hooks( $post_id ) {
-
-		sensei_do_deprecated_action( 'sensei_course_image', '1.9.0', 'sensei_course_content_inside_before' );
-		sensei_do_deprecated_action( 'sensei_course_archive_course_title', '1.9.0', 'sensei_course_content_inside_before' );
-
-	}
-
-	/**
-	 * Backwards compatibility hooks that should be hooked into sensei_loop_course_before
-	 *
-	 * hooked into 'sensei_loop_course_before'
-	 *
-	 * @since 1.9
-	 *
-	 * @global WP_Post $post
-	 */
-	public function loop_before_backwards_compatibility_hooks() {
-
-		global $post;
-
-		if ( ! $post ) {
-			return;
-		}
-
-		sensei_do_deprecated_action( 'sensei_course_archive_header', '1.9.0', 'sensei_course_content_inside_before', $post->post_type );
-
-	}
-
-	/**
 	 * Output a link to view course. The button text is different depending on the amount of preview lesson available.
 	 *
 	 * hooked into 'sensei_course_content_inside_after'
@@ -2705,8 +2663,6 @@ class Sensei_Course {
 	/**
 	 * Output the headers on the course archive page
 	 *
-	 * Hooked into the sensei_archive_title
-	 *
 	 * @since 1.9.0
 	 * @param string $query_type
 	 * @param string $before_html
@@ -2718,9 +2674,6 @@ class Sensei_Course {
 		if ( ! is_post_type_archive( 'course' ) ) {
 			return;
 		}
-
-		// deprecated since 1.9.0
-		sensei_do_deprecated_action( 'sensei_archive_title', '1.9.0', 'sensei_archive_before_course_loop' );
 
 		$html = '';
 
@@ -2958,20 +2911,6 @@ class Sensei_Course {
 	 */
 	public static function flush_rewrite_rules( $post_id ) {
 		_deprecated_function( __METHOD__, '2.2.1' );
-	}
-
-	/**
-	 * Optionally return the full content on the single course pages
-	 * depending on the users course_single_content_display setting
-	 *
-	 * @since 1.9.0
-	 * @deprecated since 1.12.0
-	 * @param $excerpt
-	 * @return string
-	 */
-	public static function full_content_excerpt_override( $excerpt ) {
-		_deprecated_function( __METHOD__, '1.12.0' );
-		return $excerpt;
 	}
 
 	/**

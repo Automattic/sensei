@@ -4147,18 +4147,6 @@ class Sensei_Lesson {
 	}
 
 	/**
-	 * Deprecate the sensei_lesson_archive_header hook but keep it
-	 * active for backwards compatibility.
-	 *
-	 * @deprecated since 1.9.0
-	 */
-	public static function deprecate_sensei_lesson_archive_header_hook() {
-
-		sensei_do_deprecated_action( 'sensei_lesson_archive_header', '1.9.0', 'sensei_loop_lesson_inside_before' );
-
-	}
-
-	/**
 	 * Outputs the the lesson archive header.
 	 *
 	 * @since  1.9.0

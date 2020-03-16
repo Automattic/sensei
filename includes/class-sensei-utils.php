@@ -27,46 +27,6 @@ class Sensei_Utils {
 	} // End get_placeholder_image()
 
 	/**
-	 * Check if WooCommerce is present.
-	 *
-	 * @deprecated since 1.9.0 use Sensei_WC::is_woocommerce_present()
-	 * @access public
-	 * @since  1.0.2
-	 * @static
-	 * @return bool
-	 */
-	public static function sensei_is_woocommerce_present() {
-		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_WC::is_woocommerce_present' );
-
-		if ( ! method_exists( 'Sensei_WC', 'is_woocommerce_present' ) ) {
-			return false;
-		}
-
-		return Sensei_WC::is_woocommerce_present();
-
-	} // End sensei_is_woocommerce_present()
-
-	/**
-	 * Check if WooCommerce is active.
-	 *
-	 * @deprecated since 1.9.0 use Sensei_WC::is_woocommerce_active
-	 * @access public
-	 * @since  1.0.2
-	 * @static
-	 * @return boolean
-	 */
-	public static function sensei_is_woocommerce_activated() {
-		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_WC::is_woocommerce_active' );
-
-		if ( ! method_exists( 'Sensei_WC', 'is_woocommerce_active' ) ) {
-			return false;
-		}
-
-		return Sensei_WC::is_woocommerce_active();
-
-	} // End sensei_is_woocommerce_activated()
-
-	/**
 	 * Log an activity item.
 	 *
 	 * @access public
@@ -166,12 +126,6 @@ class Sensei_Utils {
 		// A user ID of 0 is in valid, so shortcut this
 		if ( isset( $args['user_id'] ) && 0 == intval( $args['user_id'] ) ) {
 			_deprecated_argument( __FUNCTION__, '1.0', esc_html__( 'At no point should user_id be equal to 0.', 'sensei-lms' ) );
-			return false;
-		}
-		// Check for legacy code
-		if ( isset( $args['type'] ) && in_array( $args['type'], array( 'sensei_course_start', 'sensei_course_end', 'sensei_lesson_start', 'sensei_lesson_end', 'sensei_quiz_asked', 'sensei_user_grade', 'sensei_quiz_grade', 'sense_answer_notes' ) ) ) {
-			// translators: Placeholder is the name of a deprecated Sensei activity type.
-			_deprecated_argument( __FUNCTION__, '1.7', esc_html( sprintf( __( 'Sensei LMS activity type %s is no longer used.', 'sensei-lms' ), $args['type'] ) ) );
 			return false;
 		}
 		// Are we checking for specific comment_approved statuses?
@@ -328,43 +282,6 @@ class Sensei_Utils {
 		}
 		return $activity_value;
 	} // End sensei_get_activity_value()
-
-	/**
-	 * Checks if a user (by email) has bought an item.
-	 *
-	 * @deprecated since 1.9.0 use Sensei_WC::has_customer_bought_product($user_id, $product_id)
-	 * @access public
-	 * @since  1.0.0
-	 * @param  string $customer_email
-	 * @param  int    $user_id
-	 * @param  int    $product_id
-	 * @return bool
-	 */
-	public static function sensei_customer_bought_product( $customer_email, $user_id, $product_id ) {
-		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_WC::has_customer_bought_product($user_id, $product_id)' );
-
-		if ( ! method_exists( 'Sensei_WC', 'has_customer_bought_product' ) ) {
-			return false;
-		}
-
-		$emails = array();
-
-		if ( $user_id ) {
-			$user     = get_user_by( 'id', intval( $user_id ) );
-			$emails[] = $user->user_email;
-		}
-
-		if ( is_email( $customer_email ) ) {
-			$emails[] = $customer_email;
-		}
-
-		if ( sizeof( $emails ) == 0 ) {
-			return false;
-		}
-
-		return Sensei_WC::has_customer_bought_product( $user_id, $product_id );
-
-	} // End sensei_customer_bought_product()
 
 	/**
 	 * Load the WordPress rich text editor
