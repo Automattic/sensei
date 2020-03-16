@@ -16,6 +16,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
+		self::resetCourseEnrolmentManager();
 	}//end setUp()
 
 	public function tearDown() {
