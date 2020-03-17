@@ -222,7 +222,12 @@ class Sensei_Course {
 	private static function add_course_access_permission_message( $message ) {
 		global $post;
 		if ( Sensei()->settings->get( 'access_permission' ) ) {
-			$message = apply_filters( 'sensei_couse_access_permission_message', $message, $post->ID );
+			$message = apply_filters_deprecated(
+				'sensei_couse_access_permission_message',
+				[ $message, $post->ID ],
+				'3.0.0'
+			);
+
 			if ( ! empty( $message ) ) {
 				Sensei()->notices->add_notice( $message, 'info' );
 			}
@@ -3028,7 +3033,11 @@ class Sensei_Course {
 	public static function output_course_enrolment_actions() {
 		global $post;
 
-		$is_course_content_restricted = (bool) apply_filters( 'sensei_is_course_content_restricted', false, $post->ID );
+		$is_course_content_restricted = (bool) apply_filters_deprecated(
+			'sensei_is_course_content_restricted',
+			[ false, $post->ID ],
+			'3.0.0'
+		);
 
 		if ( is_user_logged_in() ) {
 			$should_display_start_course_form = self::can_current_user_manually_enrol( $post->ID );
@@ -3072,7 +3081,13 @@ class Sensei_Course {
 
 				}
 
-				if ( ! (bool) apply_filters( 'sensei_user_can_register_for_course', true, $post->ID ) ) {
+				if (
+					! (bool) apply_filters_deprecated(
+						'sensei_user_can_register_for_course',
+						[ true, $post->ID ],
+						'3.0.0'
+					)
+				) {
 					return;
 				}
 				// If a My Courses page was set in Settings, and 'sensei_use_wp_register_link'
