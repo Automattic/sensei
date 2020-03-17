@@ -72,7 +72,7 @@ $course = get_page_by_path( $wp_query->query_vars['course_results'], OBJECT, 'co
 
 			<section class="course-results-lessons">
 				<?php
-				if ( Sensei_Utils::has_started_course( $course->ID ) ) {
+				if ( Sensei_Utils::has_started_course( $course->ID, get_current_user_id() ) ) {
 
 					sensei_the_course_results_lessons();
 
