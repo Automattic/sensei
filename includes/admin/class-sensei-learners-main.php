@@ -701,18 +701,10 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 			'order'   => $args['order'],
 		);
 
-		// Searching users on statuses requires sub-selecting the statuses by user_ids
-		if ( $args['search'] ) {
-			$user_args = array(
-				'search' => '*' . $args['search'] . '*',
-				'fields' => 'ID',
-			);
-			// Filter for extending
-			$user_args = apply_filters( 'sensei_learners_search_users', $user_args );
-			if ( ! empty( $user_args ) ) {
-				$learners_search          = new WP_User_Query( $user_args );
-				$activity_args['user_id'] = $learners_search->get_results();
-			}
+		$user_ids = $this->filter_activities_by_users( $args[ 'search' ], 'sadf', $this->course_id );
+
+		if ( ! empty ($user_ids) ) {
+			$activity_args[ 'user_id' ] = $user_ids;
 		}
 
 		$activity_args = apply_filters( 'sensei_learners_filter_users', $activity_args );
@@ -741,6 +733,31 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		$this->total_items = $total_learners;
 		return $learners;
 	} // End get_learners()
+
+	private function filter_activities_by_users( $search, $enrolment_status, $course_id ) {
+		$user_args = [];
+
+		if ( $search ) {
+			$user_args = [
+				'search' => '*' . $search . '*',
+				'fields' => 'ID',
+			];
+		}
+
+		$user_args = apply_filters( 'sensei_learners_search_users', $user_args );
+
+		if ( in_array( $enrolment_status, ['enrolled', 'unenrolled'], true ) ) {
+			$enrolled_users = Sensei_Course_Enrolment::get_course_instance( $course_id )->get_enrolled_user_ids();
+
+			if ( 'enrolled' === $enrolment_status ) {
+				$user_args[ 'include' ] = $enrolled_users;
+			} else {
+				$user_args[ 'exclude' ] = $enrolled_users;
+			}
+		}
+
+		return empty( $user_args ) ? [] : ( new WP_User_Query( $user_args ) )->get_results();
+	}
 
 	/**
 	 * Sets output when no items are found
