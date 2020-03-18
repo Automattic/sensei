@@ -15,39 +15,78 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Learners_Main extends Sensei_List_Table {
 
-	public $course_id = 0;
-	public $lesson_id = 0;
-	public $view      = 'courses';
-	public $page_slug = 'sensei_learners';
+	/**
+	 * The course id of the current view.
+	 *
+	 * @var integer
+	 */
+	private $course_id;
+
+	/**
+	 * The lesson id of the current view.
+	 *
+	 * @var integer
+	 */
+	private $lesson_id;
+
+	/**
+	 * The current view of learner management. Possible values are 'lessons', 'courses' and 'learners'.
+	 *
+	 * @var string
+	 */
+	private $view;
+
+	/**
+	 * The page slug.
+	 *
+	 * @var string
+	 */
+	private $page_slug;
 
 	/**
 	 * Constructor
 	 *
 	 * @since  1.6.0
 	 */
-	public function __construct( $course_id = 0, $lesson_id = 0 ) {
-		$this->course_id = intval( $course_id );
-		$this->lesson_id = intval( $lesson_id );
+	public function __construct() {
 
-		if ( isset( $_GET['view'] ) && in_array( $_GET['view'], array( 'courses', 'lessons', 'learners' ) ) ) {
-			$this->view = $_GET['view'];
+		// phpcs:disable WordPress.Security.NonceVerification -- No data are modified.
+		if ( isset( $_GET['course_id'] ) ) {
+			$this->course_id = (int) $_GET['course_id'];
+		} else {
+			$this->course_id = 0;
 		}
 
-		// Viewing a single lesson always sets the view to Learners
+		if ( isset( $_GET['lesson_id'] ) ) {
+			$this->lesson_id = (int) $_GET['lesson_id'];
+		} else {
+			$this->lesson_id = 0;
+		}
+
+		if ( isset( $_GET['view'] ) && in_array( $_GET['view'], array( 'courses', 'lessons', 'learners' ), true ) ) {
+			$this->view = sanitize_text_field( wp_unslash( $_GET['view'] ) );
+		} else {
+			$this->view = 'courses';
+		}
+		// phpcs:enable WordPress.Security.NonceVerification
+
+		// Viewing a single lesson always sets the view to Learners.
 		if ( $this->lesson_id ) {
 			$this->view = 'learners';
 		}
 
-		// Load Parent token into constructor
+		$this->page_slug = 'sensei_learners';
+
+		// Load Parent token into constructor.
 		parent::__construct( 'learners_main' );
 
-		// Actions
+		// Actions.
 		add_action( 'sensei_before_list_table', array( $this, 'data_table_header' ) );
 		add_action( 'sensei_after_list_table', array( $this, 'data_table_footer' ) );
 		add_action( 'sensei_learners_extra', array( $this, 'add_learners_box' ) );
 
 		add_filter( 'sensei_list_table_search_button_text', array( $this, 'search_button' ) );
-	} // End __construct()
+	}
 
 	public function get_course_id() {
 		return $this->course_id;

@@ -256,17 +256,8 @@ class Sensei_Learner_Management {
 			$this->bulk_actions_controller->learner_admin_page();
 			return;
 		}
-		// Load Learners data.
-		$course_id = 0;
-		$lesson_id = 0;
-		if ( isset( $_GET['course_id'] ) ) {
-			$course_id = intval( $_GET['course_id'] );
-		}
-		if ( isset( $_GET['lesson_id'] ) ) {
-			$lesson_id = intval( $_GET['lesson_id'] );
-		}
 
-		$sensei_learners_main = new Sensei_Learners_Main( $course_id, $lesson_id );
+		$sensei_learners_main = new Sensei_Learners_Main();
 		$sensei_learners_main->prepare_items();
 
 		// Wrappers.
