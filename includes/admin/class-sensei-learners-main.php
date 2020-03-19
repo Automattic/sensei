@@ -907,9 +907,9 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 		if ( $this->course_id && ! $this->lesson_id ) {
 
-			$menu['learners']            = $this->all_learners_link();
-			$menu['enrolled-learners']   = $this->learners_link_with_enrolment( 'enrolled' );
-			$menu['unenrolled-learners'] = $this->learners_link_with_enrolment( 'unenrolled' );
+			$menu['learners']            = $this->learners_link( 'all' );
+			$menu['enrolled-learners']   = $this->learners_link( 'enrolled' );
+			$menu['unenrolled-learners'] = $this->learners_link( 'unenrolled' );
 			$menu['lessons']             = $this->lessons_link();
 
 		} elseif ( $this->course_id && $this->lesson_id ) {
@@ -943,31 +943,13 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	}
 
 	/**
-	 * Constructs the 'All Learners' anchor element in learner management.
-	 *
-	 * @return string The element
-	 */
-	private function all_learners_link() {
-		$query_args = array(
-			'page'      => $this->page_slug,
-			'course_id' => $this->course_id,
-			'view'      => 'learners',
-		);
-
-		$is_selected = 'learners' === $this->view && 'all' === $this->enrolment_status;
-		$url         = add_query_arg( $query_args, admin_url( 'admin.php' ) );
-
-		return '<a ' . ( $is_selected ? 'class="current"' : '' ) . ' href="' . esc_url( $url ) . '">' . esc_html__( 'All Learners', 'sensei-lms' ) . '</a>';
-	}
-
-	/**
-	 * Constructs the enrolment related anchor elements in learner management.
+	 * Constructs the learner anchor elements in learner management.
 	 *
 	 * @param string $enrolment_status The enrolment status.
 	 *
 	 * @return string The element
 	 */
-	private function learners_link_with_enrolment( $enrolment_status ) {
+	private function learners_link( $enrolment_status ) {
 		$query_args = array(
 			'page'             => $this->page_slug,
 			'course_id'        => $this->course_id,
@@ -978,10 +960,16 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		$is_selected = 'learners' === $this->view && $enrolment_status === $this->enrolment_status;
 		$url         = add_query_arg( $query_args, admin_url( 'admin.php' ) );
 
-		if ( 'enrolled' === $enrolment_status ) {
-			$link_title = esc_html__( 'Enrolled Learners', 'sensei-lms' );
-		} elseif ( 'unenrolled' === $enrolment_status ) {
-			$link_title = esc_html__( 'Unenrolled Learners', 'sensei-lms' );
+		switch ( $enrolment_status ) {
+			case 'enrolled':
+				$link_title = esc_html__( 'Enrolled Learners', 'sensei-lms' );
+				break;
+			case 'unenrolled':
+				$link_title = esc_html__( 'Unenrolled Learners', 'sensei-lms' );
+				break;
+			case 'all':
+				$link_title = esc_html__( 'All Learners', 'sensei-lms' );
+				break;
 		}
 
 		return '<a ' . ( $is_selected ? 'class="current"' : '' ) . ' href="' . esc_url( $url ) . '">' . $link_title . '</a>';
