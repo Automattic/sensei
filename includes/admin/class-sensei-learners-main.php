@@ -1,6 +1,12 @@
 <?php
+/**
+ * This file contains Sensei_Learners_Main class.
+ *
+ * @package sensei
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -94,16 +100,25 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 		// Actions.
 		add_action( 'sensei_before_list_table', array( $this, 'data_table_header' ) );
-		add_action( 'sensei_after_list_table', array( $this, 'data_table_footer' ) );
 		add_action( 'sensei_learners_extra', array( $this, 'add_learners_box' ) );
 
 		add_filter( 'sensei_list_table_search_button_text', array( $this, 'search_button' ) );
 	}
 
+	/**
+	 * Course id getter.
+	 *
+	 * @return int The course id
+	 */
 	public function get_course_id() {
 		return $this->course_id;
 	}
 
+	/**
+	 * Lesson id getter.
+	 *
+	 * @return int The lesson id
+	 */
 	public function get_lesson_id() {
 		return $this->lesson_id;
 	}
@@ -114,8 +129,8 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	 * @since  1.7.0
 	 * @return array $columns, the array of columns to use with the table
 	 */
-	function get_columns() {
-		$columns = array();
+	public function get_columns() {
+
 		switch ( $this->view ) {
 			case 'learners':
 				$columns = array(
@@ -144,10 +159,17 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				break;
 		}
 		$columns['actions'] = '';
-		// Backwards compatible
-		if ( 'learners' == $this->view ) {
-			$columns = apply_filters( 'sensei_learners_learners_columns', $columns, $this );
+
+		// Backwards compatible.
+		if ( 'learners' === $this->view ) {
+			$columns = apply_filters_deprecated(
+				'sensei_learners_learners_columns',
+				[ $columns, $this ],
+				'3.0.0',
+				'sensei_learners_default_columns'
+			);
 		}
+
 		$columns = apply_filters( 'sensei_learners_default_columns', $columns, $this );
 		return $columns;
 	}
@@ -158,22 +180,15 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	 * @since  1.7.0
 	 * @return array $columns, the array of columns to use with the table
 	 */
-	function get_sortable_columns() {
-		$columns = array();
+	public function get_sortable_columns() {
+
 		switch ( $this->view ) {
 			case 'learners':
 				$columns = array(
 					'title' => array( 'title', false ),
 				);
 				break;
-
 			case 'lessons':
-				$columns = array(
-					'title'   => array( 'title', false ),
-					'updated' => array( 'post_modified', false ),
-				);
-				break;
-
 			default:
 				$columns = array(
 					'title'   => array( 'title', false ),
@@ -181,10 +196,16 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				);
 				break;
 		}
-		// Backwards compatible
-		if ( 'learners' == $this->view ) {
-			$columns = apply_filters( 'sensei_learners_learners_columns_sortable', $columns, $this );
+		// Backwards compatible.
+		if ( 'learners' === $this->view ) {
+			$columns = apply_filters_deprecated(
+				'sensei_learners_learners_columns_sortable',
+				[ $columns, $this ],
+				'3.0.0',
+				'sensei_learners_default_columns'
+			);
 		}
+
 		$columns = apply_filters( 'sensei_learners_default_columns_sortable', $columns, $this );
 		return $columns;
 	}
@@ -279,7 +300,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	 *
 	 * @since  1.7.0
 	 *
-	 * @param object $item The current item
+	 * @param object $item The current item.
 	 *
 	 * @return array Escaped column data.
 	 */
@@ -299,7 +320,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 		switch ( $this->view ) {
 			case 'learners':
-				// in this case the item passed in is actually the users activity on course of lesson
+				// in this case the item passed in is actually the users activity on course of lesson.
 				$user_activity = $item;
 				$post_id       = false;
 
@@ -317,7 +338,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 				}
 
-				if ( 'complete' == $user_activity->comment_approved || 'graded' == $user_activity->comment_approved || 'passed' == $user_activity->comment_approved ) {
+				if ( 'complete' === $user_activity->comment_approved || 'graded' === $user_activity->comment_approved || 'passed' === $user_activity->comment_approved ) {
 
 					$progress_status_html = '<span class="graded">' . esc_html__( 'Completed', 'sensei-lms' ) . '</span>';
 
@@ -433,7 +454,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				}
 
 				/**
-				 * sensei_learners_main_column_data filter
+				 * Filter sensei_learners_main_column_data
 				 *
 				 * This filter runs on the learner management screen for a specific course.
 				 * It provides the learner row column details.
@@ -606,6 +627,16 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		return $escaped_column_data;
 	}
 
+	/**
+	 * Generates the edit start date form.
+	 *
+	 * @param WP_Comment $user_activity The sensei user activity.
+	 * @param integer    $post_id       The post id.
+	 * @param string     $post_type     The post type (lesson or course).
+	 * @param string     $object_type   The object type.
+	 *
+	 * @return string The form.
+	 */
 	private function get_edit_start_date_form( $user_activity, $post_id, $post_type, $object_type ) {
 		$comment_id   = $user_activity->comment_ID;
 		$date_started = get_comment_meta( $comment_id, 'start', true );
@@ -621,6 +652,9 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	 * Return array of course
 	 *
 	 * @since  1.7.0
+	 *
+	 * @param array $args Arguments to WP_Query.
+	 *
 	 * @return array courses
 	 */
 	private function get_courses( $args ) {
@@ -652,9 +686,12 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	} // End get_courses()
 
 	/**
-	 * Return array of lessons
+	 * Return array of lessons.
 	 *
 	 * @since  1.7.0
+	 *
+	 * @param array $args Arguments to WP_Query.
+	 *
 	 * @return array lessons
 	 */
 	private function get_lessons( $args ) {
@@ -688,6 +725,9 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	 * Return array of learners
 	 *
 	 * @since  1.7.0
+	 *
+	 * @param array $args Arguments to comment query.
+	 *
 	 * @return array learners
 	 */
 	private function get_learners( $args ) {
@@ -747,7 +787,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 			$activity_args['offset'] = $new_paged * $activity_args['number'];
 		}
 		$learners = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
-		// Need to always return an array, even with only 1 item
+		// Need to always return an array, even with only 1 item.
 		if ( ! is_array( $learners ) ) {
 			$learners = array( $learners );
 		}
@@ -835,13 +875,15 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		echo '<div class="learners-selects">';
 		do_action( 'sensei_learners_before_dropdown_filters' );
 
-		// Display Course Categories only on default view
-		if ( 'courses' == $this->view ) {
+		// Display Course Categories only on default view.
+		if ( 'courses' === $this->view ) {
 
 			$selected_cat = 0;
-			if ( isset( $_GET['course_cat'] ) && '' != esc_html( $_GET['course_cat'] ) ) {
-				$selected_cat = intval( $_GET['course_cat'] );
+			// phpcs:disable WordPress.Security.NonceVerification -- No data are modified.
+			if ( isset( $_GET['course_cat'] ) && '' !== sanitize_text_field( wp_unslash( $_GET['course_cat'] ) ) ) {
+				$selected_cat = (int) $_GET['course_cat'];
 			}
+			// phpcs:enable
 
 			$cats = get_terms( 'course-category', array( 'hide_empty' => false ) );
 
@@ -969,8 +1011,8 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	 * @return void
 	 */
 	public function data_table_footer() {
-		// Nothing right now
-	} // End data_table_footer()
+		_deprecated_function( __METHOD__, '3.0.0' );
+	}
 
 	/**
 	 * Add learners (to Course or Lesson) box to bottom of table display
@@ -1055,7 +1097,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	 * @since  1.7.0
 	 * @return string $text
 	 */
-	public function search_button( $text = '' ) {
+	public function search_button() {
 
 		switch ( $this->view ) {
 			case 'learners':
@@ -1073,8 +1115,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 		return $text;
 	}
-
-} // End Class
+}
 
 /**
  * Class WooThemes_Sensei_Learners_Main
@@ -1082,4 +1123,4 @@ class Sensei_Learners_Main extends Sensei_List_Table {
  * @ignore only for backward compatibility
  * @since 1.9.0
  */
-class WooThemes_Sensei_Learners_Main extends Sensei_Learners_Main {}
+class WooThemes_Sensei_Learners_Main extends Sensei_Learners_Main {} //phpcs:ignore Generic.Files.OneObjectStructurePerFile.MultipleFound
