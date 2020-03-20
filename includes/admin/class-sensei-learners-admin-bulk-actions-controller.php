@@ -117,7 +117,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 		$this->known_bulk_actions = [
 			self::MANUALLY_ENROL                => __( 'Add manual enrollment', 'sensei-lms' ),
 			self::REMOVE_MANUAL_ENROLMENT       => __( 'Remove manual enrollment', 'sensei-lms' ),
-			self::REMOVE_PROGRESS               => __( 'Remove progress', 'sensei-lms' ),
+			self::REMOVE_PROGRESS               => __( 'Reset or remove progress', 'sensei-lms' ),
 			self::COMPLETE_COURSE               => __( 'Recalculate Course(s) Completion (notify on complete)', 'sensei-lms' ),
 			self::RECALCULATE_COURSE_COMPLETION => __( 'Recalculate Course(s) Completion (do not notify on complete)', 'sensei-lms' ),
 		];
@@ -419,4 +419,3 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	}
 
 }
-
