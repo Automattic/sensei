@@ -847,7 +847,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	/**
 	 * Check if the user's enrollment is provided by the manual provider.
 	 *
-	 * @param $user_id integer The user id.
+	 * @param integer $user_id The user id.
 	 * @return bool The manual enrollment status.
 	 */
 	private function is_manually_enrolled( $user_id ) {
