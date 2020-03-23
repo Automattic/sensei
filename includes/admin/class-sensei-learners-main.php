@@ -824,7 +824,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		if ( in_array( $this->enrolment_status, [ 'enrolled', 'unenrolled', 'manual' ], true ) ) {
 			$enroled_users = Sensei_Course_Enrolment::get_course_instance( $this->course_id )->get_enrolled_user_ids();
 
-			if ( 'manual' == $this->enrolment_status ) {
+			if ( 'manual' === $this->enrolment_status ) {
 				$enroled_users = array_filter( $enroled_users, [ $this, 'is_manually_enrolled' ] );
 			}
 
@@ -845,10 +845,10 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	}
 
 	/**
-	 * Check if the user's enrollment is provided by the manual provider
+	 * Check if the user's enrollment is provided by the manual provider.
 	 *
-	 * @param $user_id
-	 * @return bool
+	 * @param $user_id integer The user id.
+	 * @return bool The manual enrollment status.
 	 */
 	private function is_manually_enrolled( $user_id ) {
 		$enrolment_manager         = Sensei_Course_Enrolment_Manager::instance();
@@ -925,11 +925,11 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 		if ( $this->course_id && ! $this->lesson_id ) {
 
-			$menu['learners']            = $this->learners_link( 'all' );
-			$menu['enrolled-learners']   = $this->learners_link( 'enrolled' );
-			$menu['unenrolled-learners'] = $this->learners_link( 'unenrolled' );
+			$menu['learners']                   = $this->learners_link( 'all' );
+			$menu['enrolled-learners']          = $this->learners_link( 'enrolled' );
+			$menu['unenrolled-learners']        = $this->learners_link( 'unenrolled' );
 			$menu['manually-enrolled-learners'] = $this->learners_link( 'manual' );
-			$menu['lessons']             = $this->lessons_link();
+			$menu['lessons']                    = $this->lessons_link();
 
 		} elseif ( $this->course_id && $this->lesson_id ) {
 
