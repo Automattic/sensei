@@ -987,7 +987,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				$link_title = esc_html__( 'Unenrolled Learners', 'sensei-lms' );
 				break;
 			case 'manual':
-				$link_title = esc_html__( 'Manually enrolled Learners', 'sensei-lms' );
+				$link_title = esc_html__( 'Manually Enrolled Learners', 'sensei-lms' );
 				break;
 			case 'all':
 				$link_title = esc_html__( 'All Learners', 'sensei-lms' );
