@@ -928,6 +928,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 			$menu['learners']            = $this->learners_link( 'all' );
 			$menu['enrolled-learners']   = $this->learners_link( 'enrolled' );
 			$menu['unenrolled-learners'] = $this->learners_link( 'unenrolled' );
+			$menu['manually-enrolled-learners'] = $this->learners_link( 'manual' );
 			$menu['lessons']             = $this->lessons_link();
 
 		} elseif ( $this->course_id && $this->lesson_id ) {
@@ -984,6 +985,9 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				break;
 			case 'unenrolled':
 				$link_title = esc_html__( 'Unenrolled Learners', 'sensei-lms' );
+				break;
+			case 'manual':
+				$link_title = esc_html__( 'Manually enrolled Learners', 'sensei-lms' );
 				break;
 			case 'all':
 				$link_title = esc_html__( 'All Learners', 'sensei-lms' );
