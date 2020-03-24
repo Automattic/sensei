@@ -405,11 +405,12 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 						$withdraw_action_url = wp_nonce_url(
 							add_query_arg(
 								array(
-									'page'           => 'sensei_learners',
-									'view'           => 'learners',
-									'learner_action' => 'withdraw',
-									'course_id'      => $this->course_id,
-									'user_id'        => $user_activity->user_id,
+									'page'             => 'sensei_learners',
+									'view'             => 'learners',
+									'learner_action'   => 'withdraw',
+									'course_id'        => $this->course_id,
+									'user_id'          => $user_activity->user_id,
+									'enrolment_status' => $this->enrolment_status,
 								),
 								admin_url( 'admin.php' )
 							),
@@ -421,11 +422,12 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 						$enrol_action_url = wp_nonce_url(
 							add_query_arg(
 								array(
-									'page'           => 'sensei_learners',
-									'view'           => 'learners',
-									'learner_action' => 'enrol',
-									'course_id'      => $this->course_id,
-									'user_id'        => $user_activity->user_id,
+									'page'             => 'sensei_learners',
+									'view'             => 'learners',
+									'learner_action'   => 'enrol',
+									'course_id'        => $this->course_id,
+									'user_id'          => $user_activity->user_id,
+									'enrolment_status' => $this->enrolment_status,
 								),
 								admin_url( 'admin.php' )
 							),
