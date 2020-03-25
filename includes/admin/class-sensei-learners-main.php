@@ -1,6 +1,12 @@
 <?php
+/**
+ * This file contains Sensei_Learners_Main class.
+ *
+ * @package sensei
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -15,44 +21,104 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Learners_Main extends Sensei_List_Table {
 
-	public $course_id = 0;
-	public $lesson_id = 0;
-	public $view      = 'courses';
-	public $page_slug = 'sensei_learners';
+	/**
+	 * The course id of the current view.
+	 *
+	 * @var integer
+	 */
+	private $course_id;
+
+	/**
+	 * The lesson id of the current view.
+	 *
+	 * @var integer
+	 */
+	private $lesson_id;
+
+	/**
+	 * The current view of learner management. Possible values are 'lessons', 'courses' and 'learners'.
+	 *
+	 * @var string
+	 */
+	private $view;
+
+	/**
+	 * The page slug.
+	 *
+	 * @var string
+	 */
+	private $page_slug;
+
+	/**
+	 * The enrollment status of the learners.
+	 *
+	 * @var string
+	 */
+	private $enrolment_status;
 
 	/**
 	 * Constructor
 	 *
 	 * @since  1.6.0
 	 */
-	public function __construct( $course_id = 0, $lesson_id = 0 ) {
-		$this->course_id = intval( $course_id );
-		$this->lesson_id = intval( $lesson_id );
+	public function __construct() {
 
-		if ( isset( $_GET['view'] ) && in_array( $_GET['view'], array( 'courses', 'lessons', 'learners' ) ) ) {
-			$this->view = $_GET['view'];
+		// phpcs:disable WordPress.Security.NonceVerification -- No data are modified.
+		if ( isset( $_GET['course_id'] ) ) {
+			$this->course_id = (int) $_GET['course_id'];
+		} else {
+			$this->course_id = 0;
 		}
 
-		// Viewing a single lesson always sets the view to Learners
+		if ( isset( $_GET['lesson_id'] ) ) {
+			$this->lesson_id = (int) $_GET['lesson_id'];
+		} else {
+			$this->lesson_id = 0;
+		}
+
+		if ( isset( $_GET['view'] ) && in_array( $_GET['view'], array( 'courses', 'lessons', 'learners' ), true ) ) {
+			$this->view = sanitize_text_field( wp_unslash( $_GET['view'] ) );
+		} else {
+			$this->view = 'courses';
+		}
+
+		$this->enrolment_status = 'all';
+		if ( isset( $_GET['enrolment_status'] ) ) {
+			$this->enrolment_status = sanitize_text_field( wp_unslash( $_GET['enrolment_status'] ) );
+		}
+		// phpcs:enable WordPress.Security.NonceVerification
+
+		// Viewing a single lesson always sets the view to Learners.
 		if ( $this->lesson_id ) {
 			$this->view = 'learners';
 		}
 
-		// Load Parent token into constructor
+		$this->page_slug = 'sensei_learners';
+
+		// Load Parent token into constructor.
 		parent::__construct( 'learners_main' );
 
-		// Actions
+		// Actions.
 		add_action( 'sensei_before_list_table', array( $this, 'data_table_header' ) );
-		add_action( 'sensei_after_list_table', array( $this, 'data_table_footer' ) );
 		add_action( 'sensei_learners_extra', array( $this, 'add_learners_box' ) );
 
 		add_filter( 'sensei_list_table_search_button_text', array( $this, 'search_button' ) );
-	} // End __construct()
+	}
 
+	/**
+	 * Course id getter.
+	 *
+	 * @return int The course id
+	 */
 	public function get_course_id() {
 		return $this->course_id;
 	}
 
+	/**
+	 * Lesson id getter.
+	 *
+	 * @return int The lesson id
+	 */
 	public function get_lesson_id() {
 		return $this->lesson_id;
 	}
@@ -63,8 +129,8 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	 * @since  1.7.0
 	 * @return array $columns, the array of columns to use with the table
 	 */
-	function get_columns() {
-		$columns = array();
+	public function get_columns() {
+
 		switch ( $this->view ) {
 			case 'learners':
 				$columns = array(
@@ -93,10 +159,17 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				break;
 		}
 		$columns['actions'] = '';
-		// Backwards compatible
-		if ( 'learners' == $this->view ) {
-			$columns = apply_filters( 'sensei_learners_learners_columns', $columns, $this );
+
+		// Backwards compatible.
+		if ( 'learners' === $this->view ) {
+			$columns = apply_filters_deprecated(
+				'sensei_learners_learners_columns',
+				[ $columns, $this ],
+				'3.0.0',
+				'sensei_learners_default_columns'
+			);
 		}
+
 		$columns = apply_filters( 'sensei_learners_default_columns', $columns, $this );
 		return $columns;
 	}
@@ -107,22 +180,15 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	 * @since  1.7.0
 	 * @return array $columns, the array of columns to use with the table
 	 */
-	function get_sortable_columns() {
-		$columns = array();
+	public function get_sortable_columns() {
+
 		switch ( $this->view ) {
 			case 'learners':
 				$columns = array(
 					'title' => array( 'title', false ),
 				);
 				break;
-
 			case 'lessons':
-				$columns = array(
-					'title'   => array( 'title', false ),
-					'updated' => array( 'post_modified', false ),
-				);
-				break;
-
 			default:
 				$columns = array(
 					'title'   => array( 'title', false ),
@@ -130,10 +196,16 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				);
 				break;
 		}
-		// Backwards compatible
-		if ( 'learners' == $this->view ) {
-			$columns = apply_filters( 'sensei_learners_learners_columns_sortable', $columns, $this );
+		// Backwards compatible.
+		if ( 'learners' === $this->view ) {
+			$columns = apply_filters_deprecated(
+				'sensei_learners_learners_columns_sortable',
+				[ $columns, $this ],
+				'3.0.0',
+				'sensei_learners_default_columns_sortable'
+			);
 		}
+
 		$columns = apply_filters( 'sensei_learners_default_columns_sortable', $columns, $this );
 		return $columns;
 	}
@@ -145,31 +217,35 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	 * @return void
 	 */
 	public function prepare_items() {
-		// Handle orderby
+
+		// phpcs:disable WordPress.Security.NonceVerification -- No data are modified.
+		// Handle orderby.
 		$orderby = '';
 		if ( ! empty( $_GET['orderby'] ) ) {
-			if ( array_key_exists( esc_html( $_GET['orderby'] ), $this->get_sortable_columns() ) ) {
-				$orderby = esc_html( $_GET['orderby'] );
-			} // End If Statement
+			$orderby_arg = sanitize_text_field( wp_unslash( $_GET['orderby'] ) );
+			if ( array_key_exists( $orderby_arg, $this->get_sortable_columns() ) ) {
+				$orderby = $orderby_arg;
+			}
 		}
 
-		// Handle order
+		// Handle order.
 		$order = 'DESC';
 		if ( ! empty( $_GET['order'] ) ) {
-			$order = ( 'ASC' == strtoupper( $_GET['order'] ) ) ? 'ASC' : 'DESC';
+			$order = 'ASC' === strtoupper( sanitize_text_field( wp_unslash( $_GET['order'] ) ) ) ? 'ASC' : 'DESC';
 		}
 
-		// Handle category selection
+		// Handle category selection.
 		$category = false;
 		if ( ! empty( $_GET['course_cat'] ) ) {
-			$category = intval( $_GET['course_cat'] );
-		} // End If Statement
+			$category = (int) $_GET['course_cat'];
+		}
 
-		// Handle search
+		// Handle search.
 		$search = false;
 		if ( ! empty( $_GET['s'] ) ) {
-			$search = esc_html( $_GET['s'] );
-		} // End If Statement
+			$search = sanitize_text_field( wp_unslash( $_GET['s'] ) );
+		}
+		// phpcs:enable WordPress.Security.NonceVerification
 
 		$per_page = $this->get_items_per_page( 'sensei_comments_per_page' );
 		$per_page = apply_filters( 'sensei_comments_per_page', $per_page, 'sensei_comments' );
@@ -224,7 +300,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	 *
 	 * @since  1.7.0
 	 *
-	 * @param object $item The current item
+	 * @param object $item The current item.
 	 *
 	 * @return array Escaped column data.
 	 */
@@ -244,7 +320,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 		switch ( $this->view ) {
 			case 'learners':
-				// in this case the item passed in is actually the users activity on course of lesson
+				// in this case the item passed in is actually the users activity on course of lesson.
 				$user_activity = $item;
 				$post_id       = false;
 
@@ -262,7 +338,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 				}
 
-				if ( 'complete' == $user_activity->comment_approved || 'graded' == $user_activity->comment_approved || 'passed' == $user_activity->comment_approved ) {
+				if ( 'complete' === $user_activity->comment_approved || 'graded' === $user_activity->comment_approved || 'passed' === $user_activity->comment_approved ) {
 
 					$progress_status_html = '<span class="graded">' . esc_html__( 'Completed', 'sensei-lms' ) . '</span>';
 
@@ -329,11 +405,12 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 						$withdraw_action_url = wp_nonce_url(
 							add_query_arg(
 								array(
-									'page'           => 'sensei_learners',
-									'view'           => 'learners',
-									'learner_action' => 'withdraw',
-									'course_id'      => $this->course_id,
-									'user_id'        => $user_activity->user_id,
+									'page'             => 'sensei_learners',
+									'view'             => 'learners',
+									'learner_action'   => 'withdraw',
+									'course_id'        => $this->course_id,
+									'user_id'          => $user_activity->user_id,
+									'enrolment_status' => $this->enrolment_status,
 								),
 								admin_url( 'admin.php' )
 							),
@@ -345,11 +422,12 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 						$enrol_action_url = wp_nonce_url(
 							add_query_arg(
 								array(
-									'page'           => 'sensei_learners',
-									'view'           => 'learners',
-									'learner_action' => 'enrol',
-									'course_id'      => $this->course_id,
-									'user_id'        => $user_activity->user_id,
+									'page'             => 'sensei_learners',
+									'view'             => 'learners',
+									'learner_action'   => 'enrol',
+									'course_id'        => $this->course_id,
+									'user_id'          => $user_activity->user_id,
+									'enrolment_status' => $this->enrolment_status,
 								),
 								admin_url( 'admin.php' )
 							),
@@ -378,7 +456,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				}
 
 				/**
-				 * sensei_learners_main_column_data filter
+				 * Filter sensei_learners_main_column_data
 				 *
 				 * This filter runs on the learner management screen for a specific course.
 				 * It provides the learner row column details.
@@ -551,6 +629,16 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		return $escaped_column_data;
 	}
 
+	/**
+	 * Generates the edit start date form.
+	 *
+	 * @param WP_Comment $user_activity The sensei user activity.
+	 * @param integer    $post_id       The post id.
+	 * @param string     $post_type     The post type (lesson or course).
+	 * @param string     $object_type   The object type.
+	 *
+	 * @return string The form.
+	 */
 	private function get_edit_start_date_form( $user_activity, $post_id, $post_type, $object_type ) {
 		$comment_id   = $user_activity->comment_ID;
 		$date_started = get_comment_meta( $comment_id, 'start', true );
@@ -566,6 +654,9 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	 * Return array of course
 	 *
 	 * @since  1.7.0
+	 *
+	 * @param array $args Arguments to WP_Query.
+	 *
 	 * @return array courses
 	 */
 	private function get_courses( $args ) {
@@ -597,9 +688,12 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	} // End get_courses()
 
 	/**
-	 * Return array of lessons
+	 * Return array of lessons.
 	 *
 	 * @since  1.7.0
+	 *
+	 * @param array $args Arguments to WP_Query.
+	 *
 	 * @return array lessons
 	 */
 	private function get_lessons( $args ) {
@@ -633,6 +727,9 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	 * Return array of learners
 	 *
 	 * @since  1.7.0
+	 *
+	 * @param array $args Arguments to comment query.
+	 *
 	 * @return array learners
 	 */
 	private function get_learners( $args ) {
@@ -662,23 +759,20 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 			'order'   => $args['order'],
 		);
 
-		// Searching users on statuses requires sub-selecting the statuses by user_ids
-		if ( $args['search'] ) {
-			$user_args = array(
-				'search' => '*' . $args['search'] . '*',
-				'fields' => 'ID',
-			);
-			// Filter for extending
-			$user_args = apply_filters( 'sensei_learners_search_users', $user_args );
-			if ( ! empty( $user_args ) ) {
-				$learners_search          = new WP_User_Query( $user_args );
-				$activity_args['user_id'] = $learners_search->get_results();
-			}
+		$user_ids = $this->filter_activities_by_users( $args['search'] );
+
+		// No users where found.
+		if ( is_array( $user_ids ) && empty( $user_ids ) ) {
+			return [];
+		}
+
+		if ( false !== $user_ids ) {
+			$activity_args['user_id'] = $user_ids;
 		}
 
 		$activity_args = apply_filters( 'sensei_learners_filter_users', $activity_args );
 
-		// WP_Comment_Query doesn't support SQL_CALC_FOUND_ROWS, so instead do this twice
+		// WP_Comment_Query doesn't support SQL_CALC_FOUND_ROWS, so instead do this twice.
 		$total_learners = Sensei_Utils::sensei_check_for_activity(
 			array_merge(
 				$activity_args,
@@ -695,13 +789,72 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 			$activity_args['offset'] = $new_paged * $activity_args['number'];
 		}
 		$learners = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
-		// Need to always return an array, even with only 1 item
+		// Need to always return an array, even with only 1 item.
 		if ( ! is_array( $learners ) ) {
 			$learners = array( $learners );
 		}
 		$this->total_items = $total_learners;
 		return $learners;
 	} // End get_learners()
+
+	/**
+	 * Returns a list of user ids to filter sensei activities. If no filtering is required, false is returned.
+	 *
+	 * @param string $search The search string.
+	 *
+	 * @return array|bool An array of user ids or false if no filtering is required. If no users are found an empty
+	 *                    array will be returned.
+	 */
+	private function filter_activities_by_users( $search ) {
+		$user_args = [];
+
+		if ( $search ) {
+			$user_args = [ 'search' => '*' . $search . '*' ];
+		}
+
+		/**
+		 * Allows user search arguments modification in learner management.
+		 *
+		 * @param array $user_args {
+		 *     @type string 'search' The search argument as used in WP_User_Query.
+		 * }
+		 */
+		$user_args = apply_filters( 'sensei_learners_search_users', $user_args );
+
+		if ( in_array( $this->enrolment_status, [ 'enrolled', 'unenrolled', 'manual' ], true ) ) {
+			$enroled_users = Sensei_Course_Enrolment::get_course_instance( $this->course_id )->get_enrolled_user_ids();
+
+			if ( 'manual' === $this->enrolment_status ) {
+				$enroled_users = array_filter( $enroled_users, [ $this, 'is_manually_enrolled' ] );
+			}
+
+			if ( in_array( $this->enrolment_status, [ 'enrolled', 'manual' ], true ) ) {
+				$user_args['include'] = $enroled_users;
+			} else {
+				$user_args['exclude'] = $enroled_users;
+			}
+		}
+
+		if ( ! empty( $user_args ) ) {
+			$user_args['fields'] = 'ID';
+
+			return ( new WP_User_Query( $user_args ) )->get_results();
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check if the user's enrollment is provided by the manual provider.
+	 *
+	 * @param integer $user_id The user id.
+	 * @return bool The manual enrollment status.
+	 */
+	private function is_manually_enrolled( $user_id ) {
+		$enrolment_manager         = Sensei_Course_Enrolment_Manager::instance();
+		$manual_enrolment_provider = $enrolment_manager->get_manual_enrolment_provider();
+		return $manual_enrolment_provider->is_enrolled( $user_id, $this->course_id );
+	}
 
 	/**
 	 * Sets output when no items are found
@@ -740,13 +893,15 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		echo '<div class="learners-selects">';
 		do_action( 'sensei_learners_before_dropdown_filters' );
 
-		// Display Course Categories only on default view
-		if ( 'courses' == $this->view ) {
+		// Display Course Categories only on default view.
+		if ( 'courses' === $this->view ) {
 
 			$selected_cat = 0;
-			if ( isset( $_GET['course_cat'] ) && '' != esc_html( $_GET['course_cat'] ) ) {
-				$selected_cat = intval( $_GET['course_cat'] );
+			// phpcs:disable WordPress.Security.NonceVerification -- No data are modified.
+			if ( isset( $_GET['course_cat'] ) && '' !== sanitize_text_field( wp_unslash( $_GET['course_cat'] ) ) ) {
+				$selected_cat = (int) $_GET['course_cat'];
 			}
+			// phpcs:enable
 
 			$cats = get_terms( 'course-category', array( 'hide_empty' => false ) );
 
@@ -767,35 +922,16 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		echo '</div><!-- /.learners-selects -->';
 
 		$menu = array();
-		// Have Course no Lesson
+
 		if ( $this->course_id && ! $this->lesson_id ) {
 
-			$learners_class = $lessons_class = '';
-			switch ( $this->view ) {
-				case 'learners':
-					$learners_class = 'current';
-					break;
+			$menu['learners']                   = $this->learners_link( 'all' );
+			$menu['enrolled-learners']          = $this->learners_link( 'enrolled' );
+			$menu['unenrolled-learners']        = $this->learners_link( 'unenrolled' );
+			$menu['manually-enrolled-learners'] = $this->learners_link( 'manual' );
+			$menu['lessons']                    = $this->lessons_link();
 
-				case 'lessons':
-					$lessons_class = 'current';
-					break;
-			}
-
-			$query_args = array(
-				'page'      => $this->page_slug,
-				'course_id' => $this->course_id,
-			);
-
-			$learner_args         = $lesson_args = $query_args;
-			$learner_args['view'] = 'learners';
-			$lesson_args['view']  = 'lessons';
-
-			$menu['learners'] = '<a class="' . esc_attr( $learners_class ) . '" href="' . esc_url( add_query_arg( $learner_args, admin_url( 'admin.php' ) ) ) . '">' . esc_html__( 'Learners', 'sensei-lms' ) . '</a>';
-			$menu['lessons']  = '<a class="' . esc_attr( $lessons_class ) . '" href="' . esc_url( add_query_arg( $lesson_args, admin_url( 'admin.php' ) ) ) . '">' . esc_html__( 'Lessons', 'sensei-lms' ) . '</a>';
-
-		}
-		// Have Course and Lesson
-		elseif ( $this->course_id && $this->lesson_id ) {
+		} elseif ( $this->course_id && $this->lesson_id ) {
 
 			$query_args = array(
 				'page'      => $this->page_slug,
@@ -812,7 +948,9 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				. esc_html( sprintf( __( 'Back to %s', 'sensei-lms' ), $course ) )
 				. '</em></a>';
 		}
+
 		$menu = apply_filters( 'sensei_learners_sub_menu', $menu );
+
 		if ( ! empty( $menu ) ) {
 			echo '<ul class="subsubsub">' . "\n";
 			foreach ( $menu as $class => $item ) {
@@ -821,8 +959,60 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 			echo wp_kses_post( implode( " |</li>\n", $menu ) ) . "</li>\n";
 			echo '</ul>' . "\n";
 		}
+	}
 
-	} // End data_table_header()
+	/**
+	 * Constructs the learner anchor elements in learner management.
+	 *
+	 * @param string $enrolment_status The enrolment status.
+	 *
+	 * @return string The element
+	 */
+	private function learners_link( $enrolment_status ) {
+		$query_args = array(
+			'page'             => $this->page_slug,
+			'course_id'        => $this->course_id,
+			'view'             => 'learners',
+			'enrolment_status' => $enrolment_status,
+		);
+
+		$is_selected = 'learners' === $this->view && $enrolment_status === $this->enrolment_status;
+		$url         = add_query_arg( $query_args, admin_url( 'admin.php' ) );
+
+		switch ( $enrolment_status ) {
+			case 'enrolled':
+				$link_title = esc_html__( 'Enrolled Learners', 'sensei-lms' );
+				break;
+			case 'unenrolled':
+				$link_title = esc_html__( 'Unenrolled Learners', 'sensei-lms' );
+				break;
+			case 'manual':
+				$link_title = esc_html__( 'Manually Enrolled Learners', 'sensei-lms' );
+				break;
+			case 'all':
+				$link_title = esc_html__( 'All Learners', 'sensei-lms' );
+				break;
+		}
+
+		return '<a ' . ( $is_selected ? 'class="current"' : '' ) . ' href="' . esc_url( $url ) . '">' . $link_title . '</a>';
+	}
+
+	/**
+	 * Constructs the 'Lessons' anchor element in learner management.
+	 *
+	 * @return string The element
+	 */
+	private function lessons_link() {
+		$query_args = array(
+			'page'      => $this->page_slug,
+			'course_id' => $this->course_id,
+			'view'      => 'lessons',
+		);
+
+		$url = add_query_arg( $query_args, admin_url( 'admin.php' ) );
+
+		return '<a ' . ( 'lessons' === $this->view ? 'class="current"' : '' ) . ' href="' . esc_url( $url ) . '">' . esc_html__( 'Lessons', 'sensei-lms' ) . '</a>';
+	}
 
 	/**
 	 * Output for table footer
@@ -831,8 +1021,8 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	 * @return void
 	 */
 	public function data_table_footer() {
-		// Nothing right now
-	} // End data_table_footer()
+		_deprecated_function( __METHOD__, '3.0.0' );
+	}
 
 	/**
 	 * Add learners (to Course or Lesson) box to bottom of table display
@@ -917,7 +1107,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	 * @since  1.7.0
 	 * @return string $text
 	 */
-	public function search_button( $text = '' ) {
+	public function search_button() {
 
 		switch ( $this->view ) {
 			case 'learners':
@@ -935,8 +1125,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 		return $text;
 	}
-
-} // End Class
+}
 
 /**
  * Class WooThemes_Sensei_Learners_Main
@@ -944,4 +1133,4 @@ class Sensei_Learners_Main extends Sensei_List_Table {
  * @ignore only for backward compatibility
  * @since 1.9.0
  */
-class WooThemes_Sensei_Learners_Main extends Sensei_Learners_Main {}
+class WooThemes_Sensei_Learners_Main extends Sensei_Learners_Main {} //phpcs:ignore Generic.Files.OneObjectStructurePerFile.MultipleFound

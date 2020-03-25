@@ -1417,7 +1417,7 @@ class Sensei_Utils {
 	 * @return bool
 	 */
 	public static function user_started_course( $course_id = 0, $user_id = 0 ) {
-		_deprecated_function( __METHOD__, '3.0.0', 'Sensei_Course::is_user_enrolled' );
+		_deprecated_function( __METHOD__, '3.0.0', 'To check if a user is enrolled use `Sensei_Course::is_user_enrolled()`. For course progress check, use `Sensei_Utils::has_started_course()`' );
 
 		if ( empty( $course_id ) ) {
 			return false;
