@@ -202,7 +202,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				'sensei_learners_learners_columns_sortable',
 				[ $columns, $this ],
 				'3.0.0',
-				'sensei_learners_default_columns'
+				'sensei_learners_default_columns_sortable'
 			);
 		}
 
