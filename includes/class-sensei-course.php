@@ -225,7 +225,8 @@ class Sensei_Course {
 			$message = apply_filters_deprecated(
 				'sensei_couse_access_permission_message',
 				[ $message, $post->ID ],
-				'3.0.0'
+				'3.0.0',
+				null
 			);
 
 			if ( ! empty( $message ) ) {
@@ -3036,7 +3037,8 @@ class Sensei_Course {
 		$is_course_content_restricted = (bool) apply_filters_deprecated(
 			'sensei_is_course_content_restricted',
 			[ false, $post->ID ],
-			'3.0.0'
+			'3.0.0',
+			null
 		);
 
 		if ( is_user_logged_in() ) {
@@ -3085,7 +3087,8 @@ class Sensei_Course {
 					! (bool) apply_filters_deprecated(
 						'sensei_user_can_register_for_course',
 						[ true, $post->ID ],
-						'3.0.0'
+						'3.0.0',
+						null
 					)
 				) {
 					return;
