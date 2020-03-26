@@ -717,7 +717,7 @@ class Sensei_Lesson {
 	} // End save_post_meta()
 
 	/**
-	 * Removes a sepecific lesson from being a prerequisite of any other lessons.
+	 * Removes a specific lesson from being a prerequisite of any other lessons.
 	 * The expected result after executing this function is:
 	 * No lesson should have the $post_id (received parameter) lesson as a prerequisite.
 	 *
