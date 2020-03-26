@@ -748,10 +748,8 @@ class Sensei_Lesson {
 
 			$posts_array = get_posts( $post_args );
 
-			if ( count( $posts_array ) > 0 ) {
-				foreach ( $posts_array as $post_item ) {
-					update_post_meta( $post_item->ID, '_lesson_prerequisite', '' );
-				}
+			foreach ( $posts_array as $post_item ) {
+				update_post_meta( $post_item->ID, '_lesson_prerequisite', '' );
 			}
 
 	}
