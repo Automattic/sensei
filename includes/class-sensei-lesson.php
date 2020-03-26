@@ -727,30 +727,27 @@ class Sensei_Lesson {
 	 */
 	public function remove_self_from_prerequisites( $post_id = 0 ) {
 
-		// Get all the Lesson Posts.
+		// Get all the Lesson Posts with a specific lesson prerequisite.
 		$post_args = array(
 			'post_type'        => 'lesson',
 			'posts_per_page'   => -1,
 			'exclude'          => $post_id,
 			'suppress_filters' => 0,
 			'post_status'      => [ 'publish', 'draft' ],
-		);
-
-			// Add meta query to only get Lessons with a specific lesson prerequisite.
-			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Slow query ok.
-			$post_args['meta_query'] = array(
+			'meta_query'       => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Slow query ok.
 				array(
 					'key'     => '_lesson_prerequisite',
 					'value'   => $post_id,
 					'compare' => '=',
 				),
-			);
+			),
+		);
 
 			$posts_array = get_posts( $post_args );
 
-			foreach ( $posts_array as $post_item ) {
-				update_post_meta( $post_item->ID, '_lesson_prerequisite', '' );
-			}
+		foreach ( $posts_array as $post_item ) {
+			update_post_meta( $post_item->ID, '_lesson_prerequisite', '' );
+		}
 
 	}
 
