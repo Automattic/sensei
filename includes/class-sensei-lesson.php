@@ -706,7 +706,7 @@ class Sensei_Lesson {
 			// If course is being changed, set the prerequisite to empty.
 			$new_meta_value = '';
 			// If the course for the lesson changes, remove this lesson from being a prerequisite for any other lesson.
-			$this->remove_self_from_prerequisites( $post_id );
+			$this->remove_prerequisite_from_lessons( $post_id );
 		}
 
 		// Update field with the new value.
@@ -721,11 +721,11 @@ class Sensei_Lesson {
 	 * The expected result after executing this function is:
 	 * No lesson should have the $post_id (received parameter) lesson as a prerequisite.
 	 *
-	 * @access public
+	 * @since 3.0.0
+	 * @access private
 	 * @param int $post_id (default: 0).
-	 * @return void
 	 */
-	public function remove_self_from_prerequisites( $post_id = 0 ) {
+	private function remove_prerequisite_from_lessons( $post_id = 0 ) {
 
 		// Get all the Lesson Posts with a specific lesson prerequisite.
 		$post_args = array(
