@@ -699,14 +699,14 @@ class Sensei_Lesson {
 		// Get lesson course.
 		if ( '_lesson_prerequisite' === $meta_key ) {
 				$lesson_course_meta = get_post_meta( $post_id, '_lesson_course', true );
-		}
 
 		// phpcs:ignore WordPress.Security.NonceVerification
-		if ( ! empty( $lesson_course_meta ) && isset( $_POST['lesson_course'] ) && $lesson_course_meta !== $_POST['lesson_course'] ) {
-			// If course is being changed, set the prerequisite to empty.
-			$new_meta_value = '';
-			// If the course for the lesson changes, remove this lesson from being a prerequisite for any other lesson.
-			$this->remove_prerequisite_from_lessons( $post_id );
+			if ( ! empty( $lesson_course_meta ) && isset( $_POST['lesson_course'] ) && $lesson_course_meta !== $_POST['lesson_course'] ) {
+				// If course is being changed, set the prerequisite to empty.
+				$new_meta_value = '';
+				// If the course for the lesson changes, remove this lesson from being a prerequisite for any other lesson.
+				$this->remove_prerequisite_from_lessons( $post_id );
+			}
 		}
 
 		// Update field with the new value.
