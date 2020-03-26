@@ -8,6 +8,7 @@
 class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 	use Sensei_Course_Enrolment_Test_Helpers;
 
+
 	/**
 	 * Setup function.
 	 */
@@ -261,6 +262,75 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 		$simple_mock->expects( $this->never() )->method( 'is_enrolled' );
 
 		Sensei_Course_Enrolment_Manager::instance()->recalculate_enrolments( $student_id );
+	}
+
+	/**
+	 * Tests to make sure enrolment is recalculated when moving from draft to publish.
+	 */
+	public function testRecalculateOnCoursePostScheduleChangeTrueDraftToPublish() {
+		$course   = $this->factory->course->create_and_get( [ 'post_status' => 'draft' ] );
+		$job_args = [
+			'course_id'        => $course->ID,
+			'invalidated_only' => false,
+		];
+		$job      = new Sensei_Enrolment_Course_Calculation_Job( $job_args );
+
+		$course->post_status = 'publish';
+		wp_update_post( $course );
+
+		$this->assertNotEmpty( wp_next_scheduled( Sensei_Enrolment_Course_Calculation_Job::get_name(), [ $job->get_args() ] ), 'Job should have been scheduled' );
+	}
+
+	/**
+	 * Tests to make sure enrolment is recalculated when moving from publish to draft.
+	 */
+	public function testRecalculateOnCoursePostScheduleChangeTruePublishToDraft() {
+		$course   = $this->factory->course->create_and_get( [ 'post_status' => 'publish' ] );
+		$job_args = [
+			'course_id'        => $course->ID,
+			'invalidated_only' => false,
+		];
+		$job      = new Sensei_Enrolment_Course_Calculation_Job( $job_args );
+
+		$course->post_status = 'draft';
+		wp_update_post( $course );
+
+		$this->assertNotEmpty( wp_next_scheduled( Sensei_Enrolment_Course_Calculation_Job::get_name(), [ $job->get_args() ] ), 'Job should have been scheduled' );
+	}
+
+	/**
+	 * Tests to make sure enrolment is not recalculated when moving from publish to publish.
+	 */
+	public function testRecalculateOnCoursePostScheduleChangeFalsePublishToPublish() {
+		$course   = $this->factory->course->create_and_get( [ 'post_status' => 'publish' ] );
+		$job_args = [
+			'course_id'        => $course->ID,
+			'invalidated_only' => false,
+		];
+		$job      = new Sensei_Enrolment_Course_Calculation_Job( $job_args );
+
+		$course->post_status = 'publish';
+		$course->post_title  = $course->post_title . ' Updated';
+		wp_update_post( $course );
+
+		$this->assertFalse( wp_next_scheduled( Sensei_Enrolment_Course_Calculation_Job::get_name(), [ $job->get_args() ] ), 'Job should not have been scheduled' );
+	}
+
+	/**
+	 * Tests to make sure enrolment is not recalculated when moving from scheduled to draft.
+	 */
+	public function testRecalculateOnCoursePostScheduleChangeFalseScheduledToDraft() {
+		$course   = $this->factory->course->create_and_get( [ 'post_status' => 'scheduled' ] );
+		$job_args = [
+			'course_id'        => $course->ID,
+			'invalidated_only' => false,
+		];
+		$job      = new Sensei_Enrolment_Course_Calculation_Job( $job_args );
+
+		$course->post_status = 'draft';
+		wp_update_post( $course );
+
+		$this->assertFalse( wp_next_scheduled( Sensei_Enrolment_Course_Calculation_Job::get_name(), [ $job->get_args() ] ), 'Job should not have been scheduled' );
 	}
 
 	/**
