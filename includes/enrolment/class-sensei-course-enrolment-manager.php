@@ -70,6 +70,7 @@ class Sensei_Course_Enrolment_Manager {
 		add_action( 'sensei_enrolment_results_calculated', [ $this, 'remove_deferred_enrolment_check' ], 10, 3 );
 		add_filter( 'sensei_can_user_manually_enrol', [ $this, 'maybe_prevent_frontend_manual_enrol' ], 10, 2 );
 		add_action( 'sensei_before_learners_enrolled_courses_query', [ $this, 'recalculate_enrolments' ] );
+		add_action( 'transition_post_status', [ $this, 'recalculate_on_course_post_status_change' ], 10, 3 );
 
 		add_action( 'shutdown', [ Sensei_Enrolment_Provider_State_Store::class, 'persist_all' ] );
 	}
@@ -410,6 +411,30 @@ class Sensei_Course_Enrolment_Manager {
 			self::LEARNER_CALCULATION_META_NAME,
 			$this->get_enrolment_calculation_version()
 		);
+	}
+
+	/**
+	 * Trigger course enrolment recalculation when post status changes.
+	 *
+	 * @param string  $new_status New post status.
+	 * @param string  $old_status Old post status.
+	 * @param WP_Post $post       Post object.
+	 */
+	public function recalculate_on_course_post_status_change( $new_status, $old_status, $post ) {
+		if (
+			$new_status === $old_status       // No change in status.
+			|| 'course' !== $post->post_type  // Not a course.
+			|| 'new' === $old_status          // This is initial creation.
+			|| (
+				'publish' !== $new_status     // Not changing between published and not published.
+				&& 'publish' !== $old_status
+			)
+		) {
+			return;
+		}
+
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $post->ID );
+		$course_enrolment->recalculate_enrolment( false );
 	}
 
 	/**
