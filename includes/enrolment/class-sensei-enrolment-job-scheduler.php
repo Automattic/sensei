@@ -155,7 +155,12 @@ class Sensei_Enrolment_Job_Scheduler {
 		$args       = [ $job->get_args() ];
 
 		if ( $this->is_action_scheduler_available() ) {
-			if ( ! as_next_scheduled_action( $name, $args, self::ACTION_SCHEDULER_GROUP ) ) {
+			$next_scheduled_action = as_next_scheduled_action( $name, $args, self::ACTION_SCHEDULER_GROUP );
+
+			if (
+				! $next_scheduled_action // Not scheduled.
+				|| true === $next_scheduled_action // Currently running.
+			) {
 				as_schedule_single_action( time(), $name, $args, self::ACTION_SCHEDULER_GROUP );
 			}
 		} else {
