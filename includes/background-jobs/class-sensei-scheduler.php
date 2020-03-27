@@ -71,6 +71,6 @@ class Sensei_Scheduler {
 		return class_exists( 'ActionScheduler_Versions' )
 				&& function_exists( 'as_unschedule_all_actions' )
 				&& function_exists( 'as_next_scheduled_action' )
-				&& function_exists( 'as_schedule_single_action' );
+				&& function_exists( 'as_schedule_recurring_action' );
 	}
 }
