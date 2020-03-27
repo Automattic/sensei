@@ -10,9 +10,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Stores set of all the enrolment provider state objects for a course and user.
+ * This is class is responsible for managing the enrollment providers' snapshots.
  */
 class Sensei_Enrolment_Provider_State_Store implements JsonSerializable {
+	const SNAPSHOT_HISTORY_SIZE = 30;
+
 	const META_PREFIX_ENROLMENT_PROVIDERS_STATE = 'sensei_enrolment_providers_state_';
 
 	/**
@@ -20,14 +22,14 @@ class Sensei_Enrolment_Provider_State_Store implements JsonSerializable {
 	 *
 	 * @var bool
 	 */
-	private $has_changed = false;
+	private $has_changed;
 
 	/**
-	 * State objects for the providers.
+	 * The snapshots of the enrolment providers.
 	 *
-	 * @var Sensei_Enrolment_Provider_State[]
+	 * @var Sensei_Enrolment_Provider_State_Snapshot[]
 	 */
-	private $provider_states = [];
+	private $snapshots;
 
 	/**
 	 * User ID that this store is used for.
@@ -59,6 +61,8 @@ class Sensei_Enrolment_Provider_State_Store implements JsonSerializable {
 	private function __construct( $user_id, $course_id ) {
 		$this->user_id   = $user_id;
 		$this->course_id = $course_id;
+		$this->snapshots = [];
+		$this->has_changed = false;
 	}
 
 	/**
@@ -69,7 +73,7 @@ class Sensei_Enrolment_Provider_State_Store implements JsonSerializable {
 	 *
 	 * @return self
 	 */
-	public static function get( $user_id, $course_id ) {
+	private static function get( $user_id, $course_id ) {
 		if ( ! isset( self::$instances[ $user_id ] ) ) {
 			self::$instances[ $user_id ] = [];
 		}
@@ -97,17 +101,7 @@ class Sensei_Enrolment_Provider_State_Store implements JsonSerializable {
 			return;
 		}
 
-		$provider_states = [];
-		foreach ( $json_arr as $provider_id => $provider_state_data ) {
-			$provider_state_data = Sensei_Enrolment_Provider_State::from_serialized_array( $this, $provider_state_data );
-			if ( ! $provider_state_data ) {
-				continue;
-			}
-
-			$provider_states[ $provider_id ] = $provider_state_data;
-		}
-
-		$this->set_provider_states( $provider_states );
+		$this->snapshots = array_filter( array_map( 'Sensei_Enrolment_Provider_State_Snapshot::from_serialized_array', $json_arr ) );
 	}
 
 	/**
@@ -116,67 +110,7 @@ class Sensei_Enrolment_Provider_State_Store implements JsonSerializable {
 	 * @return array
 	 */
 	public function jsonSerialize() {
-		return $this->provider_states;
-	}
-
-	/**
-	 * Get the course post ID.
-	 *
-	 * @return int
-	 */
-	public function get_course_id() {
-		return $this->course_id;
-	}
-
-	/**
-	 * Get the user ID.
-	 *
-	 * @return int
-	 */
-	public function get_user_id() {
-		return $this->user_id;
-	}
-
-	/**
-	 * Set the provider states.
-	 *
-	 * @param Sensei_Enrolment_Provider_State[] $provider_states State objects for all providers.
-	 */
-	private function set_provider_states( $provider_states ) {
-		$this->provider_states = $provider_states;
-	}
-
-	/**
-	 * Get the state object for a provider.
-	 *
-	 * @param Sensei_Course_Enrolment_Provider_Interface $provider Provider object.
-	 *
-	 * @return Sensei_Enrolment_Provider_State
-	 */
-	public function get_provider_state( Sensei_Course_Enrolment_Provider_Interface $provider ) {
-		$provider_id = $provider->get_id();
-
-		if ( ! isset( $this->provider_states[ $provider_id ] ) ) {
-			$this->provider_states[ $provider_id ] = Sensei_Enrolment_Provider_State::create( $this );
-		}
-
-		return $this->provider_states[ $provider_id ];
-	}
-
-	/**
-	 * Mark a state store as changed so it is stored in the database.
-	 *
-	 * @param bool $has_changed True if provider states have changed.
-	 */
-	public function set_has_changed( $has_changed ) {
-		$this->has_changed = (bool) $has_changed;
-	}
-
-	/**
-	 * Get if a provider state store has changed and if it needs to be updated in the database.
-	 */
-	public function get_has_changed() {
-		return $this->has_changed;
+		return $this->snapshots;
 	}
 
 	/**
@@ -185,17 +119,17 @@ class Sensei_Enrolment_Provider_State_Store implements JsonSerializable {
 	 * @return bool
 	 */
 	public function save() {
-		if ( ! $this->get_has_changed() ) {
+		if ( ! $this->has_changed ) {
 			return true;
 		}
 
-		$result = update_user_meta( $this->get_user_id(), self::get_providers_state_meta_key( $this->get_course_id() ), wp_slash( wp_json_encode( $this ) ) );
+		$result = update_user_meta( $this->user_id, self::get_providers_state_meta_key( $this->course_id ), wp_slash( wp_json_encode( $this ) ) );
 
 		if ( ! $result || is_wp_error( $result ) ) {
 			return false;
 		}
 
-		$this->set_has_changed( false );
+		$this->has_changed = false;
 
 		return true;
 	}
@@ -222,5 +156,58 @@ class Sensei_Enrolment_Provider_State_Store implements JsonSerializable {
 	 */
 	private static function get_providers_state_meta_key( $course_id ) {
 		return self::META_PREFIX_ENROLMENT_PROVIDERS_STATE . $course_id;
+	}
+
+	/**
+	 * Register a log message.
+	 *
+	 * @param $user_id   The user which relates to this message.
+	 * @param $course_id The course which relates to this message.
+	 * @param $message   The message.
+	 */
+	public static function register_log_message( $user_id, $course_id, $message) {
+		$state_store = self::get( $user_id, $course_id );
+		$new_snapshot = $state_store->get_current_snapshot()->update_message( $message );
+		$state_store->add_snapshot( $new_snapshot );
+	}
+
+	/**
+	 * Register a possible update in the status of a provider for a user and a course. If there was no actual change on
+	 * the status, this method has no effect.
+	 *
+	 * @param $enrolment_provider The provider which has a status update.
+	 * @param $user_id            The user which the change applies to.
+	 * @param $course_id          The course which the change applies to.
+	 */
+	public static function register_possible_enrolment_change( Sensei_Course_Enrolment_Provider_Interface $enrolment_provider, $user_id, $course_id, $is_enrolled ) {
+		$state_store = self::get( $user_id, $course_id );
+		$new_snapshot = $state_store->get_current_snapshot()->update_status( $enrolment_provider->get_id(), $is_enrolled);
+
+		if ( null !== $new_snapshot ) {
+			$state_store->add_snapshot( $new_snapshot );
+		}
+	}
+
+	/**
+	 * Returns the current snapshot.
+	 *
+	 * @return Sensei_Enrolment_Provider_State_Snapshot
+	 */
+	private function get_current_snapshot() {
+		if ( empty( $this->snapshots ) ) {
+			return Sensei_Enrolment_Provider_State_Snapshot::create();
+		} else {
+			return $this->snapshots[0];
+		}
+	}
+
+	/**
+	 * Adds a new snapshot to history.
+	 * @param $snapshot
+	 */
+	private function add_snapshot( $snapshot ) {
+		$this->has_changed = true;
+		array_unshift( $this->snapshots, $snapshot);
+		array_splice( $this->snapshots, self::SNAPSHOT_HISTORY_SIZE );
 	}
 }
