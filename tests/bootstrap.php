@@ -54,13 +54,18 @@ class Sensei_Unit_Tests_Bootstrap {
 		// Testing setup for scheduler.
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/class-sensei-scheduler-shim.php';
 
-		tests_add_filter(
-			'sensei_scheduler_class',
-			function () {
-				return Sensei_Scheduler_Shim::class;
-			}
-		);
+		tests_add_filter( 'sensei_scheduler_class', [ __CLASS__, 'use_scheduler_shim' ] );
 	}
+
+	/**
+	 * Use the scheduler shim.
+	 *
+	 * @return string
+	 */
+	public static function use_scheduler_shim() {
+		return Sensei_Scheduler_Shim::class;
+	}
+
 	/**
 	 * Install Sensei after the test environment and Sensei have been loaded.
 	 *
@@ -80,6 +85,8 @@ class Sensei_Unit_Tests_Bootstrap {
 		// factories
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-helpers.php';
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-manual-test-helpers.php';
+		require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-scheduler-test-helpers.php';
+		require_once SENSEI_TEST_FRAMEWORK_DIR . '/class-sensei-background-job-stub.php';
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/factories/class-sensei-factory.php';
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/factories/class-wp-unittest-factory-for-post-sensei.php';
 
