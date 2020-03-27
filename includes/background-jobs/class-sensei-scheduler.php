@@ -18,7 +18,7 @@ class Sensei_Scheduler {
 	/**
 	 * Instance of the current handler.
 	 *
-	 * @var Sensei_Background_Job_Interface
+	 * @var Sensei_Scheduler_Interface
 	 */
 	private static $instance;
 
@@ -38,6 +38,8 @@ class Sensei_Scheduler {
 
 	/**
 	 * Get the class for the scheduler.
+	 *
+	 * @return string
 	 */
 	private static function get_class() {
 		if ( 0 === did_action( 'plugins_loaded' ) ) {

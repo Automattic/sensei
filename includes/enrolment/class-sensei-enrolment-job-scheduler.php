@@ -128,8 +128,8 @@ class Sensei_Enrolment_Job_Scheduler {
 	 * Returns all the background jobs this class is responsible for. Used for cancelling in WP Cron.
 	 */
 	public function get_background_jobs( $jobs ) {
-		$jobs[] = Sensei_Enrolment_Learner_Calculation_Job::get_name();
-		$jobs[] = Sensei_Enrolment_Course_Calculation_Job::get_name();
+		$jobs[] = Sensei_Enrolment_Learner_Calculation_Job::NAME;
+		$jobs[] = Sensei_Enrolment_Course_Calculation_Job::NAME;
 
 		return $jobs;
 	}
