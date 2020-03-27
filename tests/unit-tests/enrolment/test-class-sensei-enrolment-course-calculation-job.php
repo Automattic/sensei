@@ -49,10 +49,17 @@ class Sensei_Enrolment_Course_Calculation_Job_Test extends WP_UnitTestCase {
 		$this->createAndEnrolUsers( $course_id, 5 );
 		$this->invalidateAllCourseResults( $course_enrolment );
 
-		$this->assertTrue( $job->run(), 'Job should ask to be rescheduled after first run.' );
-		$this->assertTrue( $job->run(), 'Job should ask to be rescheduled after second run.' );
-		$this->assertTrue( $job->run(), 'Job should ask to be rescheduled after third run.' );
-		$this->assertFalse( $job->run(), 'Job should ask to be completed after fourth run.' );
+		$job->run();
+		$this->assertFalse( $job->is_complete(), 'Job should not be marked complete after the first run.' );
+
+		$job->run();
+		$this->assertFalse( $job->is_complete(), 'Job should not be marked as complete after the second run.' );
+
+		$job->run();
+		$this->assertFalse( $job->is_complete(), 'Job should not be marked as complete after the third run.' );
+
+		$job->run();
+		$this->assertTrue( $job->is_complete(), 'Job should be marked as complete after fourth run.' );
 	}
 
 	/**
@@ -72,7 +79,8 @@ class Sensei_Enrolment_Course_Calculation_Job_Test extends WP_UnitTestCase {
 		$user_ids = $this->factory()->user->create_many( 3 );
 		$this->invalidateAllCourseResults( $course_enrolment );
 
-		$this->assertTrue( $job->run(), 'Job should ask to be rescheduled after first run.' );
+		$job->run();
+		$this->assertFalse( $job->is_complete(), 'Job should not be complete after first run.' );
 
 		foreach ( $user_ids as $user_id ) {
 			$results = $course_enrolment->get_enrolment_check_results( $user_id );
@@ -123,7 +131,8 @@ class Sensei_Enrolment_Course_Calculation_Job_Test extends WP_UnitTestCase {
 			$this->assertNotFalse( $results, 'Results should NOT have been cleared for users who are not enrolled' );
 		}
 
-		$this->assertTrue( $job->run(), 'Job should ask to be rescheduled after first run.' );
+		$job->run();
+		$this->assertFalse( $job->is_complete(), 'Job should not be complete after first run.' );
 
 		foreach ( $enrolled_user_ids as $user_id ) {
 			$results = $course_enrolment->get_enrolment_check_results( $user_id );

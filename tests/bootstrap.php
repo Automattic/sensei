@@ -39,6 +39,7 @@ class Sensei_Unit_Tests_Bootstrap {
 
 		// load the WP testing environment
 		require_once $this->wp_tests_dir . '/includes/bootstrap.php';
+
 		// load Sensei testing framework
 		$this->includes();
 	}
@@ -49,6 +50,16 @@ class Sensei_Unit_Tests_Bootstrap {
 	 */
 	public function load_sensei() {
 		require_once $this->plugin_dir . '/sensei-lms.php';
+
+		// Testing setup for scheduler.
+		require_once SENSEI_TEST_FRAMEWORK_DIR . '/class-sensei-scheduler-shim.php';
+
+		tests_add_filter(
+			'sensei_scheduler_class',
+			function () {
+				return Sensei_Scheduler_Shim::class;
+			}
+		);
 	}
 	/**
 	 * Install Sensei after the test environment and Sensei have been loaded.

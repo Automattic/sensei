@@ -18,6 +18,7 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 		$this->factory = new Sensei_Factory();
 
 		self::resetEnrolmentProviders();
+		Sensei_Scheduler_Shim::reset();
 	}
 
 	/**
@@ -27,6 +28,7 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 		parent::tearDown();
 
 		$this->clearEnrolmentCheckDeferred();
+		Sensei_Scheduler_Shim::reset();
 	}
 
 	/**
@@ -278,7 +280,7 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 		$course->post_status = 'publish';
 		wp_update_post( $course );
 
-		$this->assertNotEmpty( wp_next_scheduled( Sensei_Enrolment_Course_Calculation_Job::get_name(), [ $job->get_args() ] ), 'Job should have been scheduled' );
+		$this->assertNotFalse( Sensei_Scheduler_Shim::get_next_scheduled( $job ), 'Job should have been scheduled' );
 	}
 
 	/**
@@ -295,7 +297,7 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 		$course->post_status = 'draft';
 		wp_update_post( $course );
 
-		$this->assertNotEmpty( wp_next_scheduled( Sensei_Enrolment_Course_Calculation_Job::get_name(), [ $job->get_args() ] ), 'Job should have been scheduled' );
+		$this->assertNotFalse( Sensei_Scheduler_Shim::get_next_scheduled( $job ), 'Job should have been scheduled' );
 	}
 
 	/**
@@ -313,7 +315,7 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 		$course->post_title  = $course->post_title . ' Updated';
 		wp_update_post( $course );
 
-		$this->assertFalse( wp_next_scheduled( Sensei_Enrolment_Course_Calculation_Job::get_name(), [ $job->get_args() ] ), 'Job should not have been scheduled' );
+		$this->assertFalse( Sensei_Scheduler_Shim::get_next_scheduled( $job ), 'Job should not have been scheduled' );
 	}
 
 	/**
@@ -330,7 +332,7 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 		$course->post_status = 'draft';
 		wp_update_post( $course );
 
-		$this->assertFalse( wp_next_scheduled( Sensei_Enrolment_Course_Calculation_Job::get_name(), [ $job->get_args() ] ), 'Job should not have been scheduled' );
+		$this->assertFalse( Sensei_Scheduler_Shim::get_next_scheduled( $job ), 'Job should not have been scheduled' );
 	}
 
 	/**
