@@ -15,8 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 3.0.0
  */
 class Sensei_Scheduler_Shim implements Sensei_Scheduler_Interface {
-	static $scheduled_jobs = [];
-	static $action_count   = [];
+	private static $scheduled_jobs = [];
+	private static $action_count   = [];
 
 	/**
 	 * Reset the shim.
@@ -128,7 +128,7 @@ class Sensei_Scheduler_Shim implements Sensei_Scheduler_Interface {
 			wp_json_encode(
 				[
 					$job->get_name(),
-					$job->get_args()
+					$job->get_args(),
 				]
 			)
 		);
