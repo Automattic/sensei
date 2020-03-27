@@ -10,10 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Sensei_Enrolment_Job_Scheduler is a class that handles the async jobs for calculating enrolment.
+ * Sensei_Enrolment_Job_Scheduler is a class that handles the background jobs for calculating enrolment.
  */
 class Sensei_Enrolment_Job_Scheduler {
-	const ACTION_SCHEDULER_GROUP          = 'sensei-enrolment';
 	const CALCULATION_VERSION_OPTION_NAME = 'sensei-scheduler-calculation-version';
 
 	/**
@@ -47,10 +46,12 @@ class Sensei_Enrolment_Job_Scheduler {
 	public function init() {
 		// Handle job that ensures all learners have up-to-date enrolment calculations.
 		add_action( 'init', [ $this, 'maybe_start_learner_calculation' ], 101 );
-		add_action( Sensei_Enrolment_Learner_Calculation_Job::get_name(), [ $this, 'run_learner_calculation' ] );
+		add_filter( 'sensei_background_job_actions', [ $this, 'get_background_jobs' ] );
+
+		add_action( Sensei_Enrolment_Learner_Calculation_Job::NAME, [ $this, 'run_learner_calculation' ] );
 
 		// Handle job that ensures a course's enrolment is up-to-date.
-		add_action( Sensei_Enrolment_Course_Calculation_Job::get_name(), [ $this, 'run_course_calculation' ] );
+		add_action( Sensei_Enrolment_Course_Calculation_Job::NAME, [ $this, 'run_course_calculation' ] );
 
 	}
 
@@ -71,7 +72,7 @@ class Sensei_Enrolment_Job_Scheduler {
 		];
 
 		$job = new Sensei_Enrolment_Course_Calculation_Job( $args );
-		$this->schedule_single_job( $job );
+		Sensei_Scheduler::instance()->schedule_job( $job );
 
 		return $job;
 	}
@@ -89,7 +90,7 @@ class Sensei_Enrolment_Job_Scheduler {
 		}
 
 		$job = new Sensei_Enrolment_Learner_Calculation_Job( 20 );
-		$this->schedule_single_job( $job );
+		Sensei_Scheduler::instance()->schedule_job( $job );
 	}
 
 	/**
@@ -108,7 +109,7 @@ class Sensei_Enrolment_Job_Scheduler {
 			);
 		};
 
-		$this->handle_self_scheduling_job( $job, $completion_callback );
+		Sensei_Scheduler::instance()->run( $job, $completion_callback );
 	}
 
 	/**
@@ -120,94 +121,16 @@ class Sensei_Enrolment_Job_Scheduler {
 	 */
 	public function run_course_calculation( $args ) {
 		$job = new Sensei_Enrolment_Course_Calculation_Job( $args );
-		$this->handle_self_scheduling_job( $job );
+		Sensei_Scheduler::instance()->run( $job );
 	}
 
 	/**
-	 * Handle the scheduling of a job that might need to be rescheduled after a run.
-	 *
-	 * @param Sensei_Enrolment_Job_Interface $job                 Job object.
-	 * @param callable|null                  $completion_callback Optional callback to call upon completion of a job.
+	 * Returns all the background jobs this class is responsible for. Used for cancelling in WP Cron.
 	 */
-	private function handle_self_scheduling_job( Sensei_Enrolment_Job_Interface $job, $completion_callback = null ) {
-		// Immediately schedule the next job just in case the process times out.
-		$this->schedule_single_job( $job );
+	public function get_background_jobs( $jobs ) {
+		$jobs[] = Sensei_Enrolment_Learner_Calculation_Job::get_name();
+		$jobs[] = Sensei_Enrolment_Course_Calculation_Job::get_name();
 
-		$reschedule_job = $job->run();
-
-		if ( ! $reschedule_job ) {
-			$this->cancel_scheduled_job( $job );
-
-			if ( is_callable( $completion_callback ) ) {
-				call_user_func( $completion_callback );
-			}
-		}
-	}
-
-	/**
-	 * Schedule a single job to run as soon as possible.
-	 *
-	 * @param Sensei_Enrolment_Job_Interface $job Job to schedule.
-	 */
-	private function schedule_single_job( Sensei_Enrolment_Job_Interface $job ) {
-		$class_name = get_class( $job );
-		$name       = $class_name::get_name();
-		$args       = [ $job->get_args() ];
-
-		if ( $this->is_action_scheduler_available() ) {
-			$next_scheduled_action = as_next_scheduled_action( $name, $args, self::ACTION_SCHEDULER_GROUP );
-
-			if (
-				! $next_scheduled_action // Not scheduled.
-				|| true === $next_scheduled_action // Currently running.
-			) {
-				as_schedule_single_action( time(), $name, $args, self::ACTION_SCHEDULER_GROUP );
-			}
-		} else {
-			if ( ! wp_next_scheduled( $name, $args ) ) {
-				wp_schedule_single_event( time(), $name, $args );
-			}
-		}
-	}
-
-	/**
-	 * Cancel a scheduled job.
-	 *
-	 * @param Sensei_Enrolment_Job_Interface $job Job to schedule.
-	 */
-	private function cancel_scheduled_job( Sensei_Enrolment_Job_Interface $job ) {
-		$class_name = get_class( $job );
-		$name       = $class_name::get_name();
-		$args       = [ $job->get_args() ];
-
-		wp_clear_scheduled_hook( $name, $args );
-
-		if ( $this->is_action_scheduler_available() ) {
-			as_unschedule_all_actions( $name, $args, self::ACTION_SCHEDULER_GROUP );
-		}
-	}
-
-	/**
-	 * Stops all jobs that this class is responsible for.
-	 */
-	public function stop_all_jobs() {
-		wp_unschedule_hook( Sensei_Enrolment_Learner_Calculation_Job::get_name() );
-		wp_unschedule_hook( Sensei_Enrolment_Course_Calculation_Job::get_name() );
-
-		if ( $this->is_action_scheduler_available() ) {
-			as_unschedule_all_actions( null, null, self::ACTION_SCHEDULER_GROUP );
-		}
-	}
-
-	/**
-	 * Check to see if Action Scheduler is available.
-	 *
-	 * @return bool
-	 */
-	private function is_action_scheduler_available() {
-		return class_exists( 'ActionScheduler_Versions' )
-				&& function_exists( 'as_unschedule_all_actions' )
-				&& function_exists( 'as_next_scheduled_action' )
-				&& function_exists( 'as_schedule_single_action' );
+		return $jobs;
 	}
 }
