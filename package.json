@@ -4,13 +4,14 @@
   "homepage": "https://woocommerce.com/products/sensei/",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Automattic/sensei.git"
+    "url": "https://github.com:Automattic/sensei.git"
   },
   "license": "GPL-2.0+",
   "main": "gulpfile.js",
   "devDependencies": {
     "@automattic/calypso-build": "5.1.0",
     "@babel/core": "7.8.7",
+    "@octokit/graphql": "^4.3.1",
     "@wordpress/babel-preset-default": "4.7.0",
     "@wordpress/blocks": "6.8.0",
     "@wordpress/components": "8.4.0",
@@ -22,6 +23,7 @@
     "babel-eslint": "10.1.0",
     "babel-loader": "8.0.6",
     "browser-sync": "2.26.7",
+    "chalk": "^3.0.0",
     "cross-env": "5.2.1",
     "css-loader": "3.4.2",
     "del": "3.0.0",
@@ -46,15 +48,19 @@
     "mini-css-extract-plugin": "0.4.5",
     "node-sass": "4.13.0",
     "orchestrator": "0.3.8",
+    "promptly": "^3.0.3",
+    "request-promise": "^4.2.5",
     "sass-loader": "7.3.1",
     "style-loader": "0.21.0",
     "webpack": "4.41.2",
-    "webpack-cli": "3.3.10"
+    "webpack-cli": "3.3.10",
+    "zenhub-api": "^0.2.0"
   },
   "dependencies": {
     "select2": "4.0.5"
   },
   "scripts": {
+    "changelog": "node ./bin/changelog",
     "test": "npm run test-php && npm run test-js",
     "test-php": "./vendor/bin/phpunit",
     "test-js": "wp-scripts test-unit-js --passWithNoTests",
@@ -64,5 +70,11 @@
     "lint-js": "./node_modules/eslint/bin/eslint.js assets/block-editor --ext=js,jsx",
     "lint-js:fix": "./node_modules/eslint/bin/eslint.js assets/block-editor --ext=js,jsx --fix",
     "lint-js-wpcom": "./node_modules/eslint-wpcom/bin/eslint.js --no-eslintrc --config .eslintrc.wpcom.json --ignore-path .eslintignore-wpcom ."
+  },
+  "changelog": {
+    "defaultPrefix": "New",
+    "labelPrefix": "[Type]",
+    "repo": "Automattic/sensei",
+    "skipLabel": "[Type] Maintenance"
   }
 }
