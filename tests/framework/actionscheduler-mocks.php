@@ -1,4 +1,8 @@
 <?php
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
+
 /**
  * File that adds mocks for action scheduler functions.
  *
@@ -78,7 +82,7 @@ function as_unschedule_all_actions( $hook, $args = null, $group = '' ) {
 	return true;
 }
 
-function as_next_scheduled_action( $hook, $args = NULL, $group = '' ) {
+function as_next_scheduled_action( $hook, $args = null, $group = '' ) {
 	_as_add_call( __FUNCTION__ );
 
 	$query = compact( 'hook', 'args', 'group' );
