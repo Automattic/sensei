@@ -7,7 +7,7 @@
  */
 class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 	use Sensei_Course_Enrolment_Test_Helpers;
-
+	use Sensei_Scheduler_Test_Helpers;
 
 	/**
 	 * Setup function.
@@ -18,6 +18,7 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 		$this->factory = new Sensei_Factory();
 
 		self::resetEnrolmentProviders();
+		self::restoreShimScheduler();
 		Sensei_Scheduler_Shim::reset();
 	}
 

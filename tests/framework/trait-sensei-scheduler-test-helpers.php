@@ -20,10 +20,10 @@ trait Sensei_Scheduler_Test_Helpers {
 	/**
 	 * Restore the scheduler's shim.
 	 */
-	private static function restoreScheduler() {
+	private static function restoreShimScheduler() {
 		self::resetScheduler();
 
-		tests_add_filter( 'sensei_scheduler_class', [ __CLASS__, 'use_scheduler_shim' ] );
+		add_filter( 'sensei_scheduler_class', [ 'Sensei_Unit_Tests_Bootstrap', 'scheduler_use_shim' ] );
 	}
 
 	/**
@@ -35,5 +35,23 @@ trait Sensei_Scheduler_Test_Helpers {
 		$scheduler_instance->setValue( null );
 
 		remove_all_filters( 'sensei_scheduler_class' );
+	}
+
+	/**
+	 * Scheduler: Use WP Cron.
+	 *
+	 * @return string
+	 */
+	public static function scheduler_use_wp_cron() {
+		return Sensei_Scheduler_WP_Cron::class;
+	}
+
+	/**
+	 * Scheduler: Use Action Scheduler.
+	 *
+	 * @return string
+	 */
+	public static function scheduler_use_action_scheduler() {
+		return Sensei_Scheduler_Action_Scheduler::class;
 	}
 }

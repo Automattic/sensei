@@ -20,6 +20,7 @@ class Sensei_Scheduler_Test extends WP_UnitTestCase {
 		parent::setUp();
 
 		self::resetScheduler();
+		add_filter( 'sensei_scheduler_class', [ __CLASS__, 'scheduler_use_wp_cron' ] );
 	}
 
 
@@ -27,15 +28,15 @@ class Sensei_Scheduler_Test extends WP_UnitTestCase {
 	 * Clean up after all tests.
 	 */
 	public static function tearDownAfterClass() {
-		parent::tearDownAfterClass();
+		self::restoreShimScheduler();
 
-		self::restoreScheduler();
+		return parent::tearDownAfterClass();
 	}
 
 	/**
 	 * Test that by default it returns the WP Cron scheduler.
 	 */
 	public function testInstance() {
-		$this->assertTrue( Sensei_Scheduler::instance() instanceof Sensei_Scheduler_WP_Cron, 'By default, scheduler should be handled by the WP cron handler' );
+		$this->assertTrue( Sensei_Scheduler::instance() instanceof Sensei_Scheduler_WP_Cron, 'Scheduler should be handled by the WP cron handler when told to do so' );
 	}
 }

@@ -9,8 +9,6 @@
  * Tests for Sensei_Scheduler_Action_Scheduler class.
  *
  * @group background-jobs
- * @runTestsInSeparateProcesses
- * @preserveGlobalState disabled
  */
 class Sensei_Scheduler_Action_Scheduler_Test extends WP_UnitTestCase {
 	use Sensei_Scheduler_Test_Helpers;
@@ -30,6 +28,7 @@ class Sensei_Scheduler_Action_Scheduler_Test extends WP_UnitTestCase {
 	public static function setUpBeforeClass() {
 		self::createMocks();
 		self::resetScheduler();
+		add_filter( 'sensei_scheduler_class', [ __CLASS__, 'scheduler_use_action_scheduler' ] );
 
 		return parent::setUpBeforeClass();
 	}
@@ -38,7 +37,7 @@ class Sensei_Scheduler_Action_Scheduler_Test extends WP_UnitTestCase {
 	 * Tear down after all tests.
 	 */
 	public static function tearDownAfterClass() {
-		self::restoreScheduler();
+		self::restoreShimScheduler();
 
 		return parent::tearDownAfterClass();
 	}

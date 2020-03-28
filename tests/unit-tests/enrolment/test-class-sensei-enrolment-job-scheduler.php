@@ -7,6 +7,8 @@
  * @group course-enrolment
  */
 class Sensei_Enrolment_Calculation_Scheduler_Test extends WP_UnitTestCase {
+	use Sensei_Scheduler_Test_Helpers;
+
 	/**
 	 * Setup function.
 	 */
@@ -16,6 +18,7 @@ class Sensei_Enrolment_Calculation_Scheduler_Test extends WP_UnitTestCase {
 		$this->factory = new Sensei_Factory();
 		Sensei()->deactivation();
 
+		self::restoreShimScheduler();
 		Sensei_Scheduler_Shim::reset();
 	}
 

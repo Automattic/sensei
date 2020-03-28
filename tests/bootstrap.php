@@ -54,15 +54,15 @@ class Sensei_Unit_Tests_Bootstrap {
 		// Testing setup for scheduler.
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/class-sensei-scheduler-shim.php';
 
-		tests_add_filter( 'sensei_scheduler_class', [ __CLASS__, 'use_scheduler_shim' ] );
+		add_filter( 'sensei_scheduler_class', [ __CLASS__, 'scheduler_use_shim' ] );
 	}
 
 	/**
-	 * Use the scheduler shim.
+	 * Scheduler: Use shim.
 	 *
 	 * @return string
 	 */
-	public static function use_scheduler_shim() {
+	public static function scheduler_use_shim() {
 		return Sensei_Scheduler_Shim::class;
 	}
 
