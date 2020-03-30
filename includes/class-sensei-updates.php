@@ -184,7 +184,7 @@ class Sensei_Updates {
 				'manual' => array(
 					'recalculate_enrolment' => array(
 						'title'    => __( 'Recalculate enrollment', 'sensei-lms' ),
-						'desc'     => __( 'Invalidate the cached enrolment and have Sensei LMS recalculate for all users and courses.', 'sensei-lms' ),
+						'desc'     => __( 'Invalidate the cached enrollment and trigger recalculation for all users and courses.', 'sensei-lms' ),
 						'multiple' => true,
 					),
 				),
