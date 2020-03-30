@@ -49,25 +49,27 @@ class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 	 * Tests to make sure valid json strings result in a valid state store.
 	 *
 	 * @covers \Sensei_Enrolment_Provider_State_Store::get_provider_state
-	 * @covers \Sensei_Enrolment_Provider_State_Store::from_json
+	 * @covers \Sensei_Enrolment_Provider_State_Store::restore_from_json
 	 */
 	public function testFromJsonString() {
 		$always_provides_provider = new Sensei_Test_Enrolment_Provider_Always_Provides();
 		$never_provides_provider  = new Sensei_Test_Enrolment_Provider_Never_Provides();
 
 		$data = [
-			$always_provides_provider->get_id() => [
-				'd' => [
-					'test' => true,
+			's' => [
+				$always_provides_provider->get_id() => [
+					'd' => [
+						'test' => true,
+					],
+					'l' => [],
 				],
-				'l' => [],
-			],
-			$never_provides_provider->get_id()  => [
-				'd' => [],
-				'l' => [
-					[
-						time(),
-						'Such a great log message.',
+				$never_provides_provider->get_id()  => [
+					'd' => [],
+					'l' => [
+						[
+							time(),
+							'Such a great log message.',
+						],
 					],
 				],
 			],
@@ -76,42 +78,126 @@ class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 		$data_json   = \wp_json_encode( $data );
 		$state_store = $this->getStateStoreFromJSON( $data_json );
 
-		$this->assertTrue( $state_store instanceof Sensei_Enrolment_Provider_State_Store, 'JSON should have resulted in a valid state store' );
+		$this->assertInstanceOf( 'Sensei_Enrolment_Provider_State_Store', $state_store, 'JSON should have resulted in a valid state store' );
 
 		$always_provides_state = $state_store->get_provider_state( $always_provides_provider );
 		$this->assertTrue( $always_provides_state->get_stored_value( 'test' ), 'Provider state should have been initialized with a stored value test as true' );
 
 		$never_provides_state = $state_store->get_provider_state( $never_provides_provider );
 		$logs                 = $never_provides_state->get_logs();
-		$this->assertEquals( $data['never-provides']['l'][0][1], $logs[0][1], 'Never provides provider should have a log entry' );
+		$this->assertEquals( $data['s']['never-provides']['l'][0][1], $logs[0][1], 'Never provides provider should have a log entry' );
+	}
+
+	/**
+	 * Tests to make sure that the history is updated.
+	 *
+	 * @covers \Sensei_Enrolment_Provider_State_Store::register_possible_enrolment_change
+	 * @covers \Sensei_Enrolment_Provider_State_Store::restore_from_json
+	 */
+	public function testHistoryFromJsonString() {
+		$data = [];
+
+		$data_json   = \wp_json_encode( $data );
+		$state_store = $this->getStateStoreFromJSON( $data_json, 1, 1 );
+
+		$this->assertInstanceOf( 'Sensei_Enrolment_Provider_State_Store', $state_store, 'JSON should have resulted in a valid state store' );
+
+		// Test that a snapshot is added to an empty history.
+		$results = [
+			'manual' => true,
+			'simple' => false,
+		];
+
+		Sensei_Enrolment_Provider_State_Store::register_possible_enrolment_change( $results, 1, 1 );
+		$history = json_decode( wp_json_encode( $state_store ), true )['h'];
+
+		$this->assertCount( 1, $history );
+		$this->assertTrue( $history[0]['p']['manual']['enrolment_status'] );
+		$this->assertFalse( $history[0]['p']['simple']['enrolment_status'] );
+
+		// Test that adding the same result has no effect.
+		Sensei_Enrolment_Provider_State_Store::register_possible_enrolment_change( $results, 1, 1 );
+		$history = json_decode( wp_json_encode( $state_store ), true )['h'];
+
+		$this->assertCount( 1, $history );
+
+		// Test that updating the enrolment status adds a new entry to history.
+		$results = [
+			'manual' => false,
+			'simple' => false,
+		];
+
+		Sensei_Enrolment_Provider_State_Store::register_possible_enrolment_change( $results, 1, 1 );
+		$history = json_decode( wp_json_encode( $state_store ), true )['h'];
+
+		$this->assertCount( 2, $history );
+		$this->assertTrue( $history[1]['p']['manual']['enrolment_status'] );
+		$this->assertFalse( $history[0]['p']['manual']['enrolment_status'] );
+	}
+
+	/**
+	 * Tests to make sure that the history is limited.
+	 *
+	 * @covers \Sensei_Enrolment_Provider_State_Store::register_possible_enrolment_change
+	 */
+	public function testHistoryIsLimitedByMaximumSize() {
+		$data = [
+			'h' => [
+				[
+					't' => 1585569489,
+					'p' => [
+						'simple' => [
+							'enrolment_status' => false,
+						],
+					],
+				],
+			],
+		];
+
+		$data_json   = \wp_json_encode( $data );
+		$state_store = $this->getStateStoreFromJSON( $data_json, 1, 1 );
+
+		for ( $i = 0; $i < Sensei_Enrolment_Provider_State_Store::HISTORY_SIZE; $i++ ) {
+			$results = [
+				'simple' . $i => true,
+			];
+
+			Sensei_Enrolment_Provider_State_Store::register_possible_enrolment_change( $results, 1, 1 );
+		}
+
+		$history = json_decode( wp_json_encode( $state_store ), true )['h'];
+		$this->assertCount( Sensei_Enrolment_Provider_State_Store::HISTORY_SIZE, $history );
 	}
 
 	/**
 	 * Tests to make sure valid json strings result in a valid state store.
 	 *
 	 * @covers \Sensei_Enrolment_Provider_State_Store::get_provider_state
-	 * @covers \Sensei_Enrolment_Provider_State_Store::from_json
+	 * @covers \Sensei_Enrolment_Provider_State_Store::restore_from_json
 	 */
 	public function testSerializedJsonValid() {
 		$always_provides_provider = new Sensei_Test_Enrolment_Provider_Always_Provides();
 		$never_provides_provider  = new Sensei_Test_Enrolment_Provider_Never_Provides();
 
 		$data = [
-			$always_provides_provider->get_id() => [
-				'd' => [
-					'test' => true,
+			's' => [
+				$always_provides_provider->get_id() => [
+					'd' => [
+						'test' => true,
+					],
+					'l' => [],
 				],
-				'l' => [],
-			],
-			$never_provides_provider->get_id()  => [
-				'd' => [],
-				'l' => [
-					[
-						time(),
-						'Such a great log message.',
+				$never_provides_provider->get_id()  => [
+					'd' => [],
+					'l' => [
+						[
+							time(),
+							'Such a great log message.',
+						],
 					],
 				],
 			],
+			'h' => [],
 		];
 
 		$data_json        = \wp_json_encode( $data );
@@ -170,7 +256,7 @@ class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 	public function testPersistStateSetsWhenChange() {
 		$course_id     = $this->getSimpleCourse();
 		$student_id    = $this->createStandardStudent();
-		$persisted_set = '{"always-provides":{"d":{"test":1234},"l":[[1581098440,"This is a log message"]]}}';
+		$persisted_set = '{"s":{"always-provides":{"d":{"test":1234},"l":[[1581098440,"This is a log message"]]}},"h":[]}';
 		update_user_meta( $student_id, Sensei_Enrolment_Provider_State_Store::META_PREFIX_ENROLMENT_PROVIDERS_STATE . $course_id, $persisted_set );
 
 		$provider_class = Sensei_Test_Enrolment_Provider_Always_Provides::class;
@@ -184,7 +270,7 @@ class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 		$provider_state->set_stored_value( 'test', 54321 );
 		$provider_state->save();
 
-		$expected_persisted_set = '{"always-provides":{"d":{"test":54321},"l":[[1581098440,"This is a log message"]]}}';
+		$expected_persisted_set = '{"s":{"always-provides":{"d":{"test":54321},"l":[[1581098440,"This is a log message"]]}},"h":[]}';
 		$persisted_set          = get_user_meta( $student_id, Sensei_Enrolment_Provider_State_Store::META_PREFIX_ENROLMENT_PROVIDERS_STATE . $course_id, true );
 		$this->assertEquals( $expected_persisted_set, $persisted_set, 'The changed stored value should have been persisted' );
 	}
@@ -195,7 +281,7 @@ class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 	public function testMpPersistStateSetsWhenMpChange() {
 		$course_id     = $this->getSimpleCourse();
 		$student_id    = $this->createStandardStudent();
-		$persisted_set = '{"always-provides":{"d":{"test":1234},"l":[[1581098440,"This is a log message"]]}}';
+		$persisted_set = '{"s":{"always-provides":{"d":{"test":1234},"l":[[1581098440,"This is a log message"]]}},"h":[]}';
 		update_user_meta( $student_id, Sensei_Enrolment_Provider_State_Store::META_PREFIX_ENROLMENT_PROVIDERS_STATE . $course_id, $persisted_set );
 
 		$provider_class = Sensei_Test_Enrolment_Provider_Always_Provides::class;
