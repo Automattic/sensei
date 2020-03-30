@@ -822,16 +822,20 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		$user_args = apply_filters( 'sensei_learners_search_users', $user_args );
 
 		if ( in_array( $this->enrolment_status, [ 'enrolled', 'unenrolled', 'manual' ], true ) ) {
-			$enroled_users = Sensei_Course_Enrolment::get_course_instance( $this->course_id )->get_enrolled_user_ids();
+			$enrolled_users = Sensei_Course_Enrolment::get_course_instance( $this->course_id )->get_enrolled_user_ids();
 
 			if ( 'manual' === $this->enrolment_status ) {
-				$enroled_users = array_filter( $enroled_users, [ $this, 'is_manually_enrolled' ] );
+				$enrolled_users = array_filter( $enrolled_users, [ $this, 'is_manually_enrolled' ] );
 			}
 
 			if ( in_array( $this->enrolment_status, [ 'enrolled', 'manual' ], true ) ) {
-				$user_args['include'] = $enroled_users;
+				if ( empty( $enrolled_users ) ) {
+					$enrolled_users = [ -1 ];
+				}
+
+				$user_args['include'] = $enrolled_users;
 			} else {
-				$user_args['exclude'] = $enroled_users;
+				$user_args['exclude'] = $enrolled_users;
 			}
 		}
 
@@ -853,6 +857,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	private function is_manually_enrolled( $user_id ) {
 		$enrolment_manager         = Sensei_Course_Enrolment_Manager::instance();
 		$manual_enrolment_provider = $enrolment_manager->get_manual_enrolment_provider();
+
 		return $manual_enrolment_provider->is_enrolled( $user_id, $this->course_id );
 	}
 
