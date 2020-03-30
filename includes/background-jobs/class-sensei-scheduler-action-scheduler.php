@@ -34,7 +34,7 @@ class Sensei_Scheduler_Action_Scheduler implements Sensei_Scheduler_Interface {
 
 		if ( ! $next_scheduled_action ) {
 			// Schedule a recurring task that will be cancelled when a job is marked as complete.
-			as_schedule_recurring_action( $time, 0, $job->get_name(), [ $job->get_args() ], self::ACTION_SCHEDULER_GROUP );
+			as_schedule_recurring_action( $time, 1, $job->get_name(), [ $job->get_args() ], self::ACTION_SCHEDULER_GROUP );
 		}
 	}
 
