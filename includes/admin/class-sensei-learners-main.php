@@ -444,34 +444,10 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 				$reset_action = 'reset_progress';
 				$reset_label  = esc_html__( 'Reset progress', 'sensei-lms' );
-
-				$is_course_progress_reset_removal = ! $is_user_enrolled;
-
-				/**
-				 * Determine if resetting the course progress will actually just remove it.
-				 *
-				 * @param bool $is_course_progress_reset_removal True if this course progress reset will just remove the progress.
-				 * @param bool $is_user_enrolled                 True if the user is enrolled.
-				 * @param int  $user_id                          User ID.
-				 * @param int  $course_id                        Course post ID.
-				 */
-				$is_course_progress_reset_removal = apply_filters( 'sensei_user_course_progress_reset_is_removal', $is_course_progress_reset_removal, $is_user_enrolled, $user_activity->user_id, $this->course_id );
-
-				if ( 'course' === $post_type && $is_course_progress_reset_removal ) {
+				if ( 'course' === $post_type && ! $is_user_enrolled ) {
 					$reset_action = 'remove_progress';
 					$reset_label  = esc_html__( 'Remove progress', 'sensei-lms' );
 				}
-
-				/**
-				 * Allow customization of the course progress reset label.
-				 *
-				 * @param string $reset_label                      Label for the reset button.
-				 * @param bool   $is_course_progress_reset_removal True if this course progress reset will just remove the progress.
-				 * @param bool   $is_user_enrolled                 True if the user is enrolled.
-				 * @param int    $user_id                          User ID.
-				 * @param int    $course_id                        Course post ID.
-				 */
-				$reset_label = apply_filters( 'sensei_user_course_progress_reset_action_label', $reset_label, $is_course_progress_reset_removal, $is_user_enrolled, $user_activity->user_id, $this->course_id );
 
 				$actions[] = '<a class="learner-async-action button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="' . esc_attr( $reset_action ) . '" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '">' . $reset_label . '</a>';
 
