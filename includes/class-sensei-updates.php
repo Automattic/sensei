@@ -180,6 +180,14 @@ class Sensei_Updates {
 				),
 				'manual' => array(),
 			),
+			'3.0.0' => array(
+				'manual' => array(
+					'recalculate_enrolment' => array(
+						'title'    => __( 'Recalculate enrollment', 'sensei-lms' ),
+						'desc'     => __( 'Invalidate the cached enrolment and have Sensei LMS recalculate for all users and courses.', 'sensei-lms' ),
+					),
+				),
+			),
 		);
 
 		$this->version = get_option( 'sensei-version' );
@@ -2108,6 +2116,19 @@ class Sensei_Updates {
 
 	}//end enhance_teacher_role()
 
+	/**
+	 * Invalidates the calculated/cached enrolment to trigger Sensei to recalculate enrolment
+	 * for all learners and classes.
+	 *
+	 * @access private
+	 * @since 3.0.0
+	 */
+	public function recalculate_enrolment() {
+		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
+		$enrolment_manager->reset_site_salt();
+
+		return true;
+	}
 } // End Class
 
 /**
