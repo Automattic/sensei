@@ -65,6 +65,13 @@ class Sensei_Scheduler_WP_Cron implements Sensei_Scheduler_Interface {
 	 * Cancel all jobs.
 	 */
 	public function cancel_all_jobs() {
+		/**
+		 * Get a list of background job actions that are handled by this class.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param array $actions Scheduled actions that are handled by this class.
+		 */
 		$actions = apply_filters( 'sensei_background_job_actions', [] );
 		foreach ( $actions as $action_name ) {
 			wp_unschedule_hook( $action_name );

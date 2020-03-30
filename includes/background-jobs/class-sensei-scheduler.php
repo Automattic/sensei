@@ -52,6 +52,13 @@ class Sensei_Scheduler {
 			$default_class_name = Sensei_Scheduler_Action_Scheduler::class;
 		}
 
+		/**
+		 * Override the default class that implements `Sensei_Scheduler_Interface`.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param string $class_name Class for the scheduler that should be used by Sensei.
+		 */
 		$class_name = apply_filters( 'sensei_scheduler_class', $default_class_name );
 		if ( ! is_subclass_of( $class_name, Sensei_Scheduler_Interface::class, true ) ) {
 			_doing_it_wrong( __METHOD__, 'The filter "sensei_scheduler_class" returned an invalid scheduler.', '3.0.0' );
