@@ -185,6 +185,7 @@ class Sensei_Updates {
 					'recalculate_enrolment' => array(
 						'title'    => __( 'Recalculate enrollment', 'sensei-lms' ),
 						'desc'     => __( 'Invalidate the cached enrolment and have Sensei LMS recalculate for all users and courses.', 'sensei-lms' ),
+						'multiple' => true,
 					),
 				),
 			),
@@ -498,14 +499,14 @@ class Sensei_Updates {
 												   id="update-sensei"
 												   class="button
 												   <?php
-													if ( ! $update_run ) {
+													if ( ! $update_run || ! empty( $data['multiple'] ) ) {
 														echo ' button-primary'; }
 													?>
 													"
 												   type="submit"
 												   value="
 												   <?php
-													if ( $update_run ) {
+													if ( $update_run && empty( $data['multiple'] ) ) {
 														esc_html_e( 'Re-run Update', 'sensei-lms' );
 													} else {
 														esc_html_e( 'Run Update', 'sensei-lms' ); }
