@@ -1251,10 +1251,23 @@ class Sensei_Frontend {
 			&& Sensei_Course::can_current_user_manually_enrol( $post->ID )
 		) {
 
-			// Manually enrol a student.
-			$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
-			$manual_enrolment  = $enrolment_manager->get_manual_enrolment_provider();
-			$student_enrolled  = $manual_enrolment && $manual_enrolment->enrol_student( $current_user->ID, $post->ID );
+			/**
+			 * Lets providers handle their own course sign-up. If they return a boolean, it will be treated as a result.
+			 *
+			 * @since 3.0.0
+			 *
+			 * @param bool|null $student_enrolled True if the student enrolled; False if there was a problem.
+			 * @param int       $user_id          User ID.
+			 * @param int       $course_id        Course post ID.
+			 */
+			$student_enrolled = apply_filters( 'sensei_handle_frontend_student_enrolment', null, $current_user->ID, $post->ID );
+
+			// If no other handler took care of enrolling the student, sign the student up with the manual enrolment provider.
+			if ( null === $student_enrolled ) {
+				$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
+				$manual_enrolment  = $enrolment_manager->get_manual_enrolment_provider();
+				$student_enrolled  = $manual_enrolment && $manual_enrolment->enrol_student( $current_user->ID, $post->ID );
+			}
 
 			$this->data                        = new stdClass();
 			$this->data->is_user_taking_course = false;

@@ -62,10 +62,24 @@ class Sensei_Enrolment_Provider_State implements JsonSerializable {
 			return false;
 		}
 
-		$provider_data = isset( $data['d'] ) ? array_filter( array_map( [ __CLASS__, 'sanitize_data' ], $data['d'] ) ) : [];
-		$logs          = isset( $data['l'] ) ? array_filter( array_map( [ __CLASS__, 'sanitize_logs' ], $data['l'] ) ) : [];
+		$provider_data = isset( $data['d'] ) ? array_map( [ __CLASS__, 'sanitize_data' ], $data['d'] ) : [];
+		$logs          = isset( $data['l'] ) ? array_map( [ __CLASS__, 'sanitize_logs' ], $data['l'] ) : [];
+
+		$provider_data = array_filter( $provider_data, [ __CLASS__, 'filter_null_values' ] );
+		$logs          = array_filter( $logs, [ __CLASS__, 'filter_null_values' ] );
 
 		return new self( $state_store, $provider_data, $logs );
+	}
+
+	/**
+	 * Helper method to filter out null values.
+	 *
+	 * @param mixed $value Value to filter.
+	 *
+	 * @return bool
+	 */
+	private static function filter_null_values( $value ) {
+		return null !== $value;
 	}
 
 	/**

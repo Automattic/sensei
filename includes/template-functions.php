@@ -90,7 +90,7 @@ function sensei_check_prerequisite_course( $course_id ) {
 	 */
 function sensei_start_course_form( $course_id ) {
 
-	$prerequisite_complete = sensei_check_prerequisite_course( $course_id );
+	$prerequisite_complete = Sensei_Course::is_prerequisite_complete( $course_id );
 
 	if ( $prerequisite_complete ) {
 		?><form method="POST" action="<?php echo esc_url( get_permalink( $course_id ) ); ?>">
