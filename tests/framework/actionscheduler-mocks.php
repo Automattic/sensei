@@ -96,15 +96,14 @@ function as_next_scheduled_action( $hook, $args = null, $group = '' ) {
 	return false;
 }
 
-function as_schedule_recurring_action( $timestamp, $interval_in_seconds, $hook, $args = array(), $group = '' ) {
+function as_schedule_single_action( $timestamp, $hook, $args = array(), $group = '' ) {
 	_as_add_call( __FUNCTION__ );
 
 	$GLOBALS['scheduled_actions'][] = [
-		'time'     => $timestamp,
-		'interval' => $interval_in_seconds,
-		'hook'     => $hook,
-		'args'     => $args,
-		'group'    => $group,
+		'time'  => $timestamp,
+		'hook'  => $hook,
+		'args'  => $args,
+		'group' => $group,
 	];
 
 	return true;
