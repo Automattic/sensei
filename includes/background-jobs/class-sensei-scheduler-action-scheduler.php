@@ -18,6 +18,13 @@ class Sensei_Scheduler_Action_Scheduler implements Sensei_Scheduler_Interface {
 	const ACTION_SCHEDULER_GROUP = 'sensei-enrolment';
 
 	/**
+	 * Currently running job.
+	 *
+	 * @var Sensei_Background_Job_Interface
+	 */
+	private $current_job;
+
+	/**
 	 * Schedule a job to run.
 	 *
 	 * @param Sensei_Background_Job_Interface $job  Job object.
@@ -34,7 +41,10 @@ class Sensei_Scheduler_Action_Scheduler implements Sensei_Scheduler_Interface {
 
 		if (
 			! $next_scheduled_action // Not scheduled.
-			|| true === $next_scheduled_action // Currently running.
+			|| ( // Currently running.
+				$job === $this->current_job
+				&& true === $next_scheduled_action
+			)
 		) {
 			as_schedule_single_action( $time, $job->get_name(), [ $job->get_args() ], self::ACTION_SCHEDULER_GROUP );
 		}
@@ -47,6 +57,8 @@ class Sensei_Scheduler_Action_Scheduler implements Sensei_Scheduler_Interface {
 	 * @param callable|null                   $completion_callback Callback to call when job is complete.
 	 */
 	public function run( Sensei_Background_Job_Interface $job, $completion_callback = null ) {
+		$this->current_job = $job;
+
 		$this->schedule_job( $job );
 
 		$job->run();
@@ -58,6 +70,8 @@ class Sensei_Scheduler_Action_Scheduler implements Sensei_Scheduler_Interface {
 				call_user_func( $completion_callback );
 			}
 		}
+
+		$this->current_job = null;
 	}
 
 	/**
