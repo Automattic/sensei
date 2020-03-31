@@ -107,6 +107,10 @@ class Sensei_Enrolment_Provider_State_Snapshot implements JsonSerializable {
 			return false;
 		}
 
+		if ( ! isset( $this->providers_status[ $provider_id ] ) ) {
+			$this->providers_status[ $provider_id ] = [];
+		}
+
 		$this->providers_status[ $provider_id ]['es'] = $is_enrolled;
 
 		return true;
