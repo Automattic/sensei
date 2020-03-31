@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 3.0.0
  */
 class Sensei_Scheduler_Action_Scheduler implements Sensei_Scheduler_Interface {
-	const ACTION_SCHEDULER_GROUP = 'sensei-enrolment';
+	const ACTION_SCHEDULER_GROUP = 'sensei-lms';
 
 	/**
 	 * Currently running job.
