@@ -112,8 +112,8 @@ class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 		$history = json_decode( wp_json_encode( $state_store ), true )['h'];
 
 		$this->assertCount( 1, $history );
-		$this->assertTrue( $history[0]['p']['manual']['enrolment_status'] );
-		$this->assertFalse( $history[0]['p']['simple']['enrolment_status'] );
+		$this->assertTrue( $history[0]['p']['manual']['es'] );
+		$this->assertFalse( $history[0]['p']['simple']['es'] );
 
 		// Test that adding the same result has no effect.
 		Sensei_Enrolment_Provider_State_Store::register_possible_enrolment_change( $results, 1, 1 );
@@ -131,8 +131,20 @@ class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 		$history = json_decode( wp_json_encode( $state_store ), true )['h'];
 
 		$this->assertCount( 2, $history );
-		$this->assertTrue( $history[1]['p']['manual']['enrolment_status'] );
-		$this->assertFalse( $history[0]['p']['manual']['enrolment_status'] );
+		$this->assertTrue( $history[1]['p']['manual']['es'] );
+		$this->assertFalse( $history[0]['p']['manual']['es'] );
+
+		// Test that removing a provider adds a new entry to history.
+		$results = [
+			'manual' => false,
+		];
+
+		Sensei_Enrolment_Provider_State_Store::register_possible_enrolment_change( $results, 1, 1 );
+		$history = json_decode( wp_json_encode( $state_store ), true )['h'];
+
+		$this->assertCount( 3, $history );
+		$this->assertFalse( $history[0]['p']['manual']['es'] );
+		$this->assertArrayNotHasKey( 'simple', $history[0]['p'] );
 	}
 
 	/**

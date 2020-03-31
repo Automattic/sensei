@@ -25,7 +25,7 @@ class Sensei_Enrolment_Provider_State_Snapshot implements JsonSerializable {
 	 * An array of the status of all enrolment providers.
 	 *
 	 * [
-	 *      'provider_id' => [ 'enrolment_status' => true|false ]
+	 *      'provider_id' => [ 'es' => true|false ]
 	 * ]
 	 *
 	 * @var array
@@ -103,11 +103,33 @@ class Sensei_Enrolment_Provider_State_Snapshot implements JsonSerializable {
 	 */
 	public function update_status( $provider_id, $is_enrolled ) {
 
-		if ( isset( $this->providers_status[ $provider_id ]['enrolment_status'] ) && $is_enrolled === $this->providers_status[ $provider_id ]['enrolment_status'] ) {
+		if ( isset( $this->providers_status[ $provider_id ]['es'] ) && $is_enrolled === $this->providers_status[ $provider_id ]['es'] ) {
 			return false;
 		}
 
-		$this->providers_status[ $provider_id ]['enrolment_status'] = $is_enrolled;
+		$this->providers_status[ $provider_id ]['es'] = $is_enrolled;
+
+		return true;
+	}
+
+	/**
+	 * Set the active providers of the snapshot
+	 *
+	 * @param array $active_provider_ids The active providers id.
+	 *
+	 * @return bool True if the providers were actually updated. False otherwise.
+	 */
+	public function set_active_providers( $active_provider_ids ) {
+
+		$removed_providers = array_diff( array_keys( $this->providers_status ), $active_provider_ids );
+
+		if ( empty( $removed_providers ) ) {
+			return false;
+		}
+
+		foreach ( $removed_providers as $index => $provider_id ) {
+			unset( $this->providers_status[ $provider_id ] );
+		}
 
 		return true;
 	}

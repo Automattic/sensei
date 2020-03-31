@@ -239,6 +239,8 @@ class Sensei_Enrolment_Provider_State_Store implements JsonSerializable {
 			$has_changed = $new_snapshot->update_status( $provider_id, $is_enrolled ) || $has_changed;
 		}
 
+		$has_changed = $new_snapshot->set_active_providers( array_keys( $provider_results ) ) || $has_changed;
+
 		if ( $has_changed ) {
 			$state_store->add_snapshot( $new_snapshot );
 		}
