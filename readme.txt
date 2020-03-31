@@ -1,5 +1,5 @@
 === Sensei LMS ===
-Contributors: automattic, alexsanford1, donnapep, jakeom, gikaragia, renathoc, yscik, bor0, drawmyface, dwainm, jeffikus, lastnode, mattyza, panosktn
+Contributors: automattic, alexsanford1, donnapep, jakeom, gikaragia, renathoc, yscik, dwainm, panosktn, jeffikus
 Tags: elearning, lms, learning management system, teach, tutor
 Requires at least: 4.9
 Tested up to: 5.3
