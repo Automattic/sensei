@@ -180,6 +180,15 @@ class Sensei_Updates {
 				),
 				'manual' => array(),
 			),
+			'3.0.0' => array(
+				'manual' => array(
+					'recalculate_enrolment' => array(
+						'title'    => __( 'Recalculate enrollment', 'sensei-lms' ),
+						'desc'     => __( 'Invalidate the cached enrollment and trigger recalculation for all users and courses.', 'sensei-lms' ),
+						'multiple' => true,
+					),
+				),
+			),
 		);
 
 		$this->version = get_option( 'sensei-version' );
@@ -490,14 +499,14 @@ class Sensei_Updates {
 												   id="update-sensei"
 												   class="button
 												   <?php
-													if ( ! $update_run ) {
+													if ( ! $update_run || ! empty( $data['multiple'] ) ) {
 														echo ' button-primary'; }
 													?>
 													"
 												   type="submit"
 												   value="
 												   <?php
-													if ( $update_run ) {
+													if ( $update_run && empty( $data['multiple'] ) ) {
 														esc_html_e( 'Re-run Update', 'sensei-lms' );
 													} else {
 														esc_html_e( 'Run Update', 'sensei-lms' ); }
@@ -2108,6 +2117,19 @@ class Sensei_Updates {
 
 	}//end enhance_teacher_role()
 
+	/**
+	 * Invalidates the calculated/cached enrolment to trigger Sensei to recalculate enrolment
+	 * for all learners and classes.
+	 *
+	 * @access private
+	 * @since 3.0.0
+	 */
+	public function recalculate_enrolment() {
+		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
+		$enrolment_manager->reset_site_salt();
+
+		return true;
+	}
 } // End Class
 
 /**
