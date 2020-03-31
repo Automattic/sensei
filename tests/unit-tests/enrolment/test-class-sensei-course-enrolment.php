@@ -7,6 +7,7 @@
  */
 class Sensei_Course_Enrolment_Test extends WP_UnitTestCase {
 	use Sensei_Course_Enrolment_Test_Helpers;
+	use Sensei_Scheduler_Test_Helpers;
 
 	/**
 	 * Setup function.
@@ -17,6 +18,7 @@ class Sensei_Course_Enrolment_Test extends WP_UnitTestCase {
 		$this->factory = new Sensei_Factory();
 
 		self::resetEnrolmentProviders();
+		self::restoreShimScheduler();
 	}
 
 	/**
@@ -439,7 +441,7 @@ class Sensei_Course_Enrolment_Test extends WP_UnitTestCase {
 		$this->assertEquals( $course_enrolment->get_course_enrolment_salt(), $course_salt, 'The course salt should not have been reset' );
 
 		$this->assertTrue( $job instanceof Sensei_Enrolment_Course_Calculation_Job, 'Returned job should be an instance of Sensei_Enrolment_Course_Calculation_Job' );
-		$this->assertNotEmpty( wp_next_scheduled( Sensei_Enrolment_Course_Calculation_Job::get_name(), [ $job->get_args() ] ), 'Job should have been scheduled' );
+		$this->assertNotFalse( Sensei_Scheduler_Shim::get_next_scheduled( $job ), 'Job should have been scheduled' );
 	}
 
 	/**
@@ -475,7 +477,7 @@ class Sensei_Course_Enrolment_Test extends WP_UnitTestCase {
 		$this->assertNotEquals( $course_enrolment->get_course_enrolment_salt(), $course_salt, 'The course salt should have been reset' );
 
 		$this->assertTrue( $job instanceof Sensei_Enrolment_Course_Calculation_Job, 'Returned job should be an instance of Sensei_Enrolment_Course_Calculation_Job' );
-		$this->assertNotEmpty( wp_next_scheduled( Sensei_Enrolment_Course_Calculation_Job::get_name(), [ $job->get_args() ] ), 'Job should have been scheduled' );
+		$this->assertNotFalse( Sensei_Scheduler_Shim::get_next_scheduled( $job ), 'Job should have been scheduled' );
 	}
 
 	/**

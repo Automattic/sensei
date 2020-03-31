@@ -562,9 +562,8 @@ class Sensei_Main {
 	 */
 	public function deactivation() {
 		$this->usage_tracking->unschedule_tracking_task();
-		$this->enrolment_scheduler->stop_all_jobs();
+		Sensei_Scheduler::instance()->cancel_all_jobs();
 	}
-
 
 	/**
 	 * Register activation hooks.

@@ -13,13 +13,22 @@ if ( ! defined( 'ABSPATH' ) ) {
  * The Sensei_Enrolment_Learner_Calculation_Job is responsible for running jobs of user enrolment calculations. It is set
  * up to run once after a Sensei version upgrade or when Sensei_Course_Enrolment_Manager::get_site_salt() is updated.
  */
-class Sensei_Enrolment_Learner_Calculation_Job implements Sensei_Enrolment_Job_Interface {
+class Sensei_Enrolment_Learner_Calculation_Job implements Sensei_Background_Job_Interface {
+	const NAME = 'sensei_calculate_learner_enrolments';
+
 	/**
 	 * Number of users for each job run.
 	 *
 	 * @var integer
 	 */
 	private $batch_size;
+
+	/**
+	 * Whether the job is complete.
+	 *
+	 * @var bool
+	 */
+	private $is_complete = false;
 
 	/**
 	 * Sensei_Enrolment_Learner_Calculation_Job constructor.
@@ -35,8 +44,8 @@ class Sensei_Enrolment_Learner_Calculation_Job implements Sensei_Enrolment_Job_I
 	 *
 	 * @return string
 	 */
-	public static function get_name() {
-		return 'sensei_calculate_learner_enrolments';
+	public function get_name() {
+		return self::NAME;
 	}
 
 	/**
@@ -49,10 +58,7 @@ class Sensei_Enrolment_Learner_Calculation_Job implements Sensei_Enrolment_Job_I
 	}
 
 	/**
-	 * Run the job and return `true` if the job should be immediately rescheduled (for another batch) or `false`
-	 * if the job can be considered complete.
-	 *
-	 * @return bool
+	 * Run the job.
 	 */
 	public function run() {
 		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
@@ -79,13 +85,22 @@ class Sensei_Enrolment_Learner_Calculation_Job implements Sensei_Enrolment_Job_I
 		$users = get_users( $user_args );
 
 		if ( empty( $users ) ) {
-			return false;
+			$this->is_complete = true;
+
+			return;
 		}
 
 		foreach ( $users as $user ) {
 			Sensei_Course_Enrolment_Manager::instance()->recalculate_enrolments( $user );
 		}
+	}
 
-		return true;
+	/**
+	 * After the job runs, check to see if it needs to be re-queued for the next batch.
+	 *
+	 * @return bool
+	 */
+	public function is_complete() {
+		return $this->is_complete;
 	}
 }

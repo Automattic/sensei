@@ -92,6 +92,7 @@ class Sensei_Autoloader {
 			new Sensei_Autoloader_Bundle( 'rest-api' ),
 			new Sensei_Autoloader_Bundle( 'domain-models' ),
 			new Sensei_Autoloader_Bundle( '' ),
+			new Sensei_Autoloader_Bundle( 'background-jobs' ),
 			new Sensei_Autoloader_Bundle( 'enrolment' ),
 		);
 

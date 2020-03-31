@@ -7,7 +7,7 @@
  * @group course-enrolment
  */
 class Sensei_Enrolment_Calculation_Scheduler_Test extends WP_UnitTestCase {
-	private $scheduled_events = [];
+	use Sensei_Scheduler_Test_Helpers;
 
 	/**
 	 * Setup function.
@@ -18,37 +18,26 @@ class Sensei_Enrolment_Calculation_Scheduler_Test extends WP_UnitTestCase {
 		$this->factory = new Sensei_Factory();
 		Sensei()->deactivation();
 
-		tests_add_filter(
-			'schedule_event',
-			function ( $event ) {
-				$event_name = $event->hook;
-
-				if ( ! isset( $this->scheduled_events[ $event_name ] ) ) {
-					$this->scheduled_events[ $event_name ] = 0;
-				}
-				$this->scheduled_events[ $event_name ]++;
-
-				return $event;
-			}
-		);
+		self::restoreShimScheduler();
+		Sensei_Scheduler_Shim::reset();
 	}
 
 	public function tearDown() {
 		parent::tearDown();
 
-		$this->scheduled_events = [];
+		Sensei_Scheduler_Shim::reset();
 	}
 
 	/**
 	 * Tests that the scheduler starts when the calculation version does not exist.
 	 */
 	public function testLearnerCalculationStartsWhenVersionIsNotSet() {
-
+		$job       = new Sensei_Enrolment_Learner_Calculation_Job( 20 );
 		$scheduler = Sensei_Enrolment_Job_Scheduler::instance();
 
 		$scheduler->maybe_start_learner_calculation();
 
-		$this->assertEventScheduledCount( 1, Sensei_Enrolment_Learner_Calculation_Job::get_name(), 'The job should have been scheduled once.' );
+		$this->assertEventScheduledCount( 1, Sensei_Enrolment_Learner_Calculation_Job::NAME, 'The job should have been scheduled once.' );
 	}
 
 	/**
@@ -65,7 +54,7 @@ class Sensei_Enrolment_Calculation_Scheduler_Test extends WP_UnitTestCase {
 
 		$scheduler->maybe_start_learner_calculation();
 
-		$this->assertEventScheduledCount( 0, Sensei_Enrolment_Learner_Calculation_Job::get_name(), 'No job should have been scheduled.' );
+		$this->assertEventScheduledCount( 0, Sensei_Enrolment_Learner_Calculation_Job::NAME, 'No job should have been scheduled.' );
 	}
 
 	/**
@@ -78,7 +67,7 @@ class Sensei_Enrolment_Calculation_Scheduler_Test extends WP_UnitTestCase {
 		$scheduler->maybe_start_learner_calculation();
 		$scheduler->maybe_start_learner_calculation();
 
-		$this->assertEventScheduledCount( 1, Sensei_Enrolment_Learner_Calculation_Job::get_name(), 'The job should have been scheduled once.' );
+		$this->assertEventScheduledCount( 1, Sensei_Enrolment_Learner_Calculation_Job::NAME, 'The job should have been scheduled once.' );
 	}
 
 	/**
@@ -89,11 +78,11 @@ class Sensei_Enrolment_Calculation_Scheduler_Test extends WP_UnitTestCase {
 		$scheduler         = Sensei_Enrolment_Job_Scheduler::instance();
 
 		$scheduler->maybe_start_learner_calculation();
-		$scheduler->stop_all_jobs();
+		Sensei_Scheduler::instance()->cancel_all_jobs();
 		$scheduler->maybe_start_learner_calculation();
 
-		$this->assertEventScheduledCount( 2, Sensei_Enrolment_Learner_Calculation_Job::get_name(), 'The job should have been scheduled again if it prematurely stopped' );
-		$scheduler->stop_all_jobs();
+		$this->assertEventScheduledCount( 2, Sensei_Enrolment_Learner_Calculation_Job::NAME, 'The job should have been scheduled again if it prematurely stopped' );
+		Sensei_Scheduler::instance()->cancel_all_jobs();
 
 		update_option(
 			Sensei_Enrolment_Job_Scheduler::CALCULATION_VERSION_OPTION_NAME,
@@ -102,7 +91,7 @@ class Sensei_Enrolment_Calculation_Scheduler_Test extends WP_UnitTestCase {
 
 		$scheduler->maybe_start_learner_calculation();
 
-		$this->assertEventScheduledCount( 2, Sensei_Enrolment_Learner_Calculation_Job::get_name(), 'The job should not have started again after it was completed' );
+		$this->assertEventScheduledCount( 2, Sensei_Enrolment_Learner_Calculation_Job::NAME, 'The job should not have started again after it was completed' );
 	}
 
 
@@ -138,13 +127,10 @@ class Sensei_Enrolment_Calculation_Scheduler_Test extends WP_UnitTestCase {
 	 * Assert that an event was scheduled a certain number of times.
 	 *
 	 * @param int    $expected Number of times an event should have been scheduled.
-	 * @param string $event    Event name.
+	 * @param string $action   Action name.
 	 * @param string $message  Message to show for failure.
 	 */
-	public function assertEventScheduledCount( $expected, $event, $message = '' ) {
-		if ( ! isset( $this->scheduled_events[ $event ] ) ) {
-			$this->scheduled_events[ $event ] = 0;
-		}
-		$this->assertEquals( $expected, $this->scheduled_events[ $event ], $message );
+	public function assertEventScheduledCount( $expected, $action, $message = '' ) {
+		$this->assertEquals( $expected, Sensei_Scheduler_Shim::get_scheduled_action_count( $action ), $message );
 	}
 }

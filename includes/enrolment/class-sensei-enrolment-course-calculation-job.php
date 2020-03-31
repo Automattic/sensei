@@ -13,7 +13,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * The Sensei_Enrolment_Course_Calculation_Job is responsible for recalculating course enrolment for all users or
  * just the users who are already enrolled.
  */
-class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Enrolment_Job_Interface {
+class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Background_Job_Interface {
+	const NAME = 'sensei_calculate_course_enrolments';
+
 	const DEFAULT_BATCH_SIZE = 40;
 
 	/**
@@ -38,6 +40,13 @@ class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Enrolment_Job_In
 	private $batch_size = self::DEFAULT_BATCH_SIZE;
 
 	/**
+	 * Whether the job is complete.
+	 *
+	 * @var bool
+	 */
+	private $is_complete = false;
+
+	/**
 	 * Sensei_Enrolment_Course_Calculation_Job constructor.
 	 *
 	 * @param array $args Arguments to run for the job.
@@ -53,8 +62,8 @@ class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Enrolment_Job_In
 	 *
 	 * @return string
 	 */
-	public static function get_name() {
-		return 'sensei_calculate_course_enrolments';
+	public function get_name() {
+		return self::NAME;
 	}
 
 	/**
@@ -71,28 +80,36 @@ class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Enrolment_Job_In
 	}
 
 	/**
-	 * Run the job and return `true` if the job should be immediately rescheduled (for another batch) or `false`
-	 * if the job can be considered complete.
-	 *
-	 * @return bool
+	 * Run the job.
 	 */
 	public function run() {
 		if ( empty( $this->course_id ) ) {
-			return false;
+			$this->is_complete = true;
+
+			return;
 		}
 
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $this->course_id );
 		$user_ids         = get_users( $this->get_query_args( $course_enrolment ) );
 
 		if ( empty( $user_ids ) ) {
-			return false;
+			$this->is_complete = true;
+
+			return;
 		}
 
 		foreach ( $user_ids as $user_id ) {
 			$course_enrolment->is_enrolled( $user_id, false );
 		}
+	}
 
-		return true;
+	/**
+	 * After the job runs, check to see if it needs to be re-queued for the next batch.
+	 *
+	 * @return bool
+	 */
+	public function is_complete() {
+		return $this->is_complete;
 	}
 
 	/**
