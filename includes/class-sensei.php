@@ -11,6 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.0.0
  */
 class Sensei_Main {
+	const COMMENT_COUNT_TRANSIENT_PREFIX = 'sensei_comment_counts_';
 
 	/**
 	 * @var string
@@ -428,7 +429,7 @@ class Sensei_Main {
 		add_action( 'after_setup_theme', array( $this, 'sensei_load_template_functions' ) );
 
 		// Filter comment counts
-		add_filter( 'wp_count_comments', array( $this, 'sensei_count_comments' ), 10, 2 );
+		add_filter( 'wp_count_comments', array( $this, 'sensei_count_comments' ), 999, 2 );
 
 		add_action( 'body_class', array( $this, 'body_class' ) );
 
@@ -967,78 +968,166 @@ class Sensei_Main {
 	} // End load_class()
 
 	/**
-	 * Filtering wp_count_comments to ensure that Sensei comments are ignored
+	 * Filtering wp_count_comments to ensure that Sensei comments are ignored.
 	 *
 	 * @since   1.4.0
 	 * @access  public
-	 * @param  array   $comments
-	 * @param  integer $post_id
-	 * @return array
+	 *
+	 * @param stdClass $comment_counts Counts by comment status.
+	 * @param int      $post_id        Post ID.
+	 *
+	 * @return stdClass
 	 */
-	public function sensei_count_comments( $comments, $post_id ) {
-		global $wpdb;
+	public function sensei_count_comments( $comment_counts, $post_id ) {
+		// If we are getting counts for a specific, non-Sensei post, return early.
+		if (
+			! empty( $post_id )
+			&& ! in_array( get_post_type( $post_id ), [ 'course', 'lesson', 'quiz' ], true )
+		) {
+			return $comment_counts;
+		}
 
+		// If there are no Sensei comments to deduct, return early.
+		$sensei_counts = $this->get_sensei_comment_counts( $post_id );
+		if ( empty( $sensei_counts ) ) {
+			return $comment_counts;
+		}
+
+		// If nothing else has provided a filter value, get the raw value and side-step this filter.
+		if ( empty( $comment_counts ) ) {
+			$comment_counts = $this->get_comment_counts_raw( $post_id );
+
+			if ( empty( $comment_counts ) ) {
+				return $comment_counts;
+			}
+		}
+
+		// Subtract Sensei's comment counts from all the comment counts.
+		foreach ( array_keys( (array) $comment_counts ) as $count_type ) {
+			if ( isset( $sensei_counts[ $count_type ] ) ) {
+				$comment_counts->{$count_type} = max( 0, (int) $comment_counts->{$count_type} - $sensei_counts[ $count_type ] );
+			}
+		}
+
+		return $comment_counts;
+	}
+
+	/**
+	 * Clear the comment count cache.
+	 *
+	 * @param int $post_id Post ID.
+	 */
+	public function flush_comment_counts_cache( $post_id ) {
 		$post_id = (int) $post_id;
 
-		$count = wp_cache_get( "comments-{$post_id}", 'counts' );
+		$post_transient_id = self::COMMENT_COUNT_TRANSIENT_PREFIX . $post_id;
+		delete_transient( $post_transient_id );
 
-		if ( false !== $count ) {
-			return $count;
+		$all_transient_id = self::COMMENT_COUNT_TRANSIENT_PREFIX . '0';
+		delete_transient( $all_transient_id );
+	}
+
+	/**
+	 * Get the Sensei related comment counts by comment_approved but use caching.
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @return array
+	 */
+	private function get_sensei_comment_counts( $post_id ) {
+		$post_id = (int) $post_id;
+
+		$transient_id = self::COMMENT_COUNT_TRANSIENT_PREFIX . $post_id;
+		$stats        = get_transient( $transient_id );
+
+		if ( ! $stats || ! is_array( $stats ) ) {
+			$stats = $this->get_sensei_comment_counts_direct( $post_id );
+
+			set_transient( $transient_id, $stats );
 		}
-
-		$statuses = array( '' ); // Default to the WP normal comments
-		// WC excludes these so exclude them too
-		$wc_statuses_to_exclude = array( 'order_note', 'webhook_delivery' );
-		$stati                  = $wpdb->get_results( "SELECT comment_type FROM {$wpdb->comments} GROUP BY comment_type", ARRAY_A );
-		foreach ( (array) $stati as $status ) {
-			if ( 'sensei_' != substr( $status['comment_type'], 0, 7 ) &&
-				! in_array( $status['comment_type'], $wc_statuses_to_exclude ) ) {
-				$statuses[] = $status['comment_type'];
-			}
-		}
-		$where = "WHERE comment_type IN ('" . join( "', '", array_unique( $statuses ) ) . "')";
-
-		if ( $post_id > 0 ) {
-			$where .= $wpdb->prepare( ' AND comment_post_ID = %d', $post_id );
-		}
-
-		$count = $wpdb->get_results( "SELECT comment_approved, COUNT( * ) AS num_comments FROM {$wpdb->comments} {$where} GROUP BY comment_approved", ARRAY_A );
-
-		$total    = 0;
-		$approved = array(
-			'0'            => 'moderated',
-			'1'            => 'approved',
-			'spam'         => 'spam',
-			'trash'        => 'trash',
-			'post-trashed' => 'post-trashed',
-		);
-
-		$stats               = [];
-		$statuses_to_exclude = array( 'post-trashed', 'trash' );
-
-		foreach ( (array) $count as $row ) {
-			// Don't count post-trashed toward totals.
-			$comment_approved = $row['comment_approved'];
-
-			if ( ! in_array( $comment_approved, $statuses_to_exclude, true ) ) {
-				$total += $row['num_comments'];
-			}
-			if ( isset( $approved[ $row['comment_approved'] ] ) ) {
-				$stats[ $approved[ $row['comment_approved'] ] ] = $row['num_comments'];
-			}
-		}
-
-		$stats['total_comments'] = $total;
-		foreach ( $approved as $key ) {
-			if ( empty( $stats[ $key ] ) ) {
-				$stats[ $key ] = 0;
-			}
-		}
-
-		$stats = (object) $stats;
-		wp_cache_set( "comments-{$post_id}", $stats, 'counts' );
 
 		return $stats;
+	}
+
+	/**
+	 * Get the Sensei related comment counts by comment_approved.
+	 *
+	 * @param  int $post_id Post ID.
+	 *
+	 * @return array
+	 */
+	private function get_sensei_comment_counts_direct( $post_id ) {
+		global $wpdb;
+
+		$post_where = '';
+
+		if ( ! empty( $post_id ) ) {
+			$post_where = $wpdb->prepare( 'AND comment_post_ID=%d', $post_id );
+		}
+
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- `$post_where` prepared above.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching -- Cached in calling method.
+		$counts = $wpdb->get_results(
+			"
+					SELECT comment_approved, COUNT(*) AS num_comments
+					FROM {$wpdb->comments}
+					WHERE
+						comment_type IN ( 'sensei_course_status', 'sensei_lesson_status', 'sensei_user_answer' )
+						{$post_where}
+					GROUP BY comment_approved
+			",
+			ARRAY_A
+		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+
+		$stats = [
+			'all'            => 0,
+			'total_comments' => 0,
+		];
+
+		foreach ( (array) $counts as $row ) {
+			$row['num_comments'] = (int) $row['num_comments'];
+
+			// Don't count post-trashed toward totals.
+			if ( ! in_array( $row['comment_approved'], array( 'post-trashed', 'trash', 'spam' ), true ) ) {
+				$stats['all']            += $row['num_comments'];
+				$stats['total_comments'] += $row['num_comments'];
+			} elseif ( ! in_array( $row['comment_approved'], array( 'post-trashed', 'trash' ), true ) ) {
+				$stats['total_comments'] += $row['num_comments'];
+			}
+
+			if ( ! isset( $stats[ $row['comment_approved'] ] ) ) {
+				$stats[ $row['comment_approved'] ] = 0;
+			}
+
+			$stats[ $row['comment_approved'] ] += $row['num_comments'];
+		}
+
+		if (
+			empty( $stats['total_comments'] )
+			&& 2 === count( $stats )
+		) {
+			return [];
+		}
+
+		return $stats;
+	}
+
+	/**
+	 * Get the comment counts without Sensei modifications.
+	 *
+	 * @param  int $post_id Post ID.
+	 *
+	 * @return stdClass
+	 */
+	private function get_comment_counts_raw( $post_id ) {
+		remove_filter( 'wp_count_comments', [ $this, 'sensei_count_comments' ], 999 );
+
+		$raw_comment_count = wp_count_comments( $post_id );
+
+		add_filter( 'wp_count_comments', [ $this, 'sensei_count_comments' ], 999, 2 );
+
+		return $raw_comment_count;
 	}
 
 	/**
