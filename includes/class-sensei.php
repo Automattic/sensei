@@ -590,7 +590,7 @@ class Sensei_Main {
 		}
 
 		// Mark site as having enrolment data from pre-3.0.0.
-		if ( get_option( 'sensei-version' ) && version_compare( '3.0.0-dev', get_option( 'sensei-version' ), '>' ) ) {
+		if ( get_option( 'sensei-version' ) && version_compare( '3.0.0-beta.1', get_option( 'sensei-version' ), '>' ) ) {
 			update_option( 'sensei_enrolment_legacy', time() );
 		}
 
