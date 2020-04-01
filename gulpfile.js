@@ -108,7 +108,7 @@ gulp.task( 'block-editor-assets', gulp.series( function( cb ) {
 } ) );
 
 gulp.task( 'pot', gulp.series( function() {
-	return gulp.src( [ '**/**.php', '!node_modules/**', '!build/**' ] )
+	return gulp.src( [ '**/**.php', '!node_modules/**', '!vendor/**', '!build/**' ] )
 		.pipe( sort() )
 		.pipe( wpPot( {
 			domain: 'sensei-lms',
