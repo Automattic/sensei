@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Stores set of all the enrolment provider state objects for a course and user.
  */
 class Sensei_Enrolment_Provider_State_Store implements JsonSerializable {
-	const HISTORY_SIZE = 30;
+	const DEFAULT_HISTORY_SIZE = 30;
 
 	const META_PREFIX_ENROLMENT_PROVIDERS_STATE = 'sensei_enrolment_providers_state_';
 
@@ -273,7 +273,7 @@ class Sensei_Enrolment_Provider_State_Store implements JsonSerializable {
 		 *
 		 * @param int  $history_size Default history size.
 		 */
-		$history_size = apply_filters( 'sensei_enrolment_history_size', self::HISTORY_SIZE );
+		$history_size = apply_filters( 'sensei_enrolment_history_size', self::DEFAULT_HISTORY_SIZE );
 
 		$this->has_changed = true;
 		array_unshift( $this->history, $snapshot );

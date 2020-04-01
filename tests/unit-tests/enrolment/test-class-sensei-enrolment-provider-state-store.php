@@ -169,7 +169,7 @@ class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 		$data_json   = \wp_json_encode( $data );
 		$state_store = $this->getStateStoreFromJSON( $data_json, 1, 1 );
 
-		for ( $i = 0; $i < Sensei_Enrolment_Provider_State_Store::HISTORY_SIZE; $i++ ) {
+		for ( $i = 0; $i < Sensei_Enrolment_Provider_State_Store::DEFAULT_HISTORY_SIZE; $i++ ) {
 			$results = [
 				'simple' . $i => true,
 			];
@@ -178,7 +178,7 @@ class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 		}
 
 		$history = json_decode( wp_json_encode( $state_store ), true )['h'];
-		$this->assertCount( Sensei_Enrolment_Provider_State_Store::HISTORY_SIZE, $history );
+		$this->assertCount( Sensei_Enrolment_Provider_State_Store::DEFAULT_HISTORY_SIZE, $history );
 	}
 
 	/**
