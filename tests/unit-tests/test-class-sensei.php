@@ -290,9 +290,8 @@ class Sensei_Globals_Test extends WP_UnitTestCase {
 				shuffle( $types );
 
 				return $types[0];
-			}
+			},
 		];
-
 
 		$post_ids    = $this->factory->course->create_many( $course_count );
 		$comment_ids = $this->createCommentsForPosts( $post_ids, $comment_approved_map, $comment_args );
@@ -317,10 +316,10 @@ class Sensei_Globals_Test extends WP_UnitTestCase {
 		};
 
 		$comment_ids = [];
-		foreach( $comment_approved_map as $status => $n ) {
+		foreach ( $comment_approved_map as $status => $n ) {
 			$comment_args['comment_approved'] = $status;
 
-			for( $i=0; $i < $n; $i++ ) {
+			for ( $i = 0; $i < $n; $i++ ) {
 				$comment_ids[] = $this->createComment( $comment_args );
 			}
 		}
