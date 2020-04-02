@@ -244,14 +244,13 @@ class Sensei_Course_Enrolment {
 	/**
 	 * Save enrolment in taxonomy.
 	 *
-	 * @param int  $user_id    User ID.
 	 * @param int  $user_id     User ID.
 	 * @param bool $is_enrolled If the user is enrolled in the course.
 	 *
 	 * @return bool
 	 * @throws Exception When learner term could not be created.
 	 */
-	private function save_enrolment( $user_id, $is_enrolled ) {
+	public function save_enrolment( $user_id, $is_enrolled ) {
 		$term = Sensei_Learner::get_learner_term( $user_id );
 		if ( ! $is_enrolled ) {
 			$result = wp_remove_object_terms( $this->course_id, [ intval( $term->term_id ) ], Sensei_PostTypes::LEARNER_TAXONOMY_NAME );
