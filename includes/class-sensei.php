@@ -987,6 +987,10 @@ class Sensei_Main {
 			return $comment_counts;
 		}
 
+		if ( ! $this->comment_counts_include_sensei_comments( $post_id ) ) {
+			return $comment_counts;
+		}
+
 		// If there are no Sensei comments to deduct, return early.
 		$sensei_counts = $this->get_sensei_comment_counts( $post_id );
 		if ( empty( $sensei_counts ) ) {
@@ -1010,6 +1014,36 @@ class Sensei_Main {
 		}
 
 		return $comment_counts;
+	}
+
+	/**
+	 * Get if the comment counts include Sensei comments.
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @return bool
+	 */
+	private function comment_counts_include_sensei_comments( $post_id ) {
+		// On a clean install, WordPress does not include Sensei's comments in its count.
+		$includes_sensei_comments = false;
+
+		// WooCommerce includes Sensei's comments in its counts.
+		if (
+			empty( $post_id )
+			&& has_filter( 'wp_count_comments', [ 'WC_Comments', 'wp_count_comments' ] )
+		) {
+			$includes_sensei_comments = true;
+		}
+
+		/**
+		 * Available to override if `wp_count_comments()` includes Sensei's comments in the count.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param bool $includes_sensei_comments Whether the count already includes Sensei's comments.
+		 * @param int  $post_id                  Post ID.
+		 */
+		return apply_filters( 'sensei_comment_counts_include_sensei_comments', $includes_sensei_comments, $post_id );
 	}
 
 	/**
