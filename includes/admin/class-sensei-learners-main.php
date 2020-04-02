@@ -85,6 +85,16 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		$this->enrolment_status = 'all';
 		if ( isset( $_GET['enrolment_status'] ) ) {
 			$this->enrolment_status = sanitize_text_field( wp_unslash( $_GET['enrolment_status'] ) );
+
+			$valid_enrolment_statuses = [ 'all', 'enrolled', 'unenrolled' ];
+
+			if ( $this->manual_filter_visible() ) {
+				$valid_enrolment_statuses[] = 'manual';
+			}
+
+			if ( ! in_array( $this->enrolment_status, $valid_enrolment_statuses, true ) ) {
+				$this->enrolment_status = 'all';
+			}
 		}
 		// phpcs:enable WordPress.Security.NonceVerification
 
@@ -930,11 +940,15 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 		if ( $this->course_id && ! $this->lesson_id ) {
 
-			$menu['learners']                   = $this->learners_link( 'all' );
-			$menu['enrolled-learners']          = $this->learners_link( 'enrolled' );
-			$menu['unenrolled-learners']        = $this->learners_link( 'unenrolled' );
-			$menu['manually-enrolled-learners'] = $this->learners_link( 'manual' );
-			$menu['lessons']                    = $this->lessons_link();
+			$menu['learners']            = $this->learners_link( 'all' );
+			$menu['enrolled-learners']   = $this->learners_link( 'enrolled' );
+			$menu['unenrolled-learners'] = $this->learners_link( 'unenrolled' );
+
+			if ( $this->manual_filter_visible() ) {
+				$menu['manually-enrolled-learners'] = $this->learners_link( 'manual' );
+			}
+
+			$menu['lessons'] = $this->lessons_link();
 
 		} elseif ( $this->course_id && $this->lesson_id ) {
 
@@ -1129,6 +1143,19 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		}
 
 		return $text;
+	}
+
+	/**
+	 * Helper method which calculates if the 'Manually Enrolled Learners' filter should be displayed.
+	 *
+	 * @return bool
+	 * @throws Exception If the providers weren't initialized yet.
+	 */
+	private function manual_filter_visible() {
+		$manual_provider = Sensei_Course_Enrolment_Manager::instance()->get_manual_enrolment_provider();
+		$all_providers   = Sensei_Course_Enrolment_Manager::instance()->get_all_enrolment_providers();
+
+		return $manual_provider instanceof Sensei_Course_Manual_Enrolment_Provider && count( $all_providers ) > 1;
 	}
 }
 
