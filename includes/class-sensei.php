@@ -979,15 +979,16 @@ class Sensei_Main {
 	 * @return stdClass
 	 */
 	public function sensei_count_comments( $comment_counts, $post_id ) {
-		// If we are getting counts for a specific, non-Sensei post, return early.
 		if (
-			! empty( $post_id )
-			&& ! in_array( get_post_type( $post_id ), [ 'course', 'lesson', 'quiz' ], true )
-		) {
-			return $comment_counts;
-		}
+			// If we are getting counts for a specific, non-Sensei post, return early.
+			(
+				! empty( $post_id )
+				&& ! in_array( get_post_type( $post_id ), [ 'course', 'lesson', 'quiz' ], true )
+			)
 
-		if ( ! $this->comment_counts_include_sensei_comments( $post_id ) ) {
+			// If Sensei's comment counts aren't included, we don't need to adjust.
+			|| ! $this->comment_counts_include_sensei_comments( $post_id )
+		) {
 			return $comment_counts;
 		}
 
