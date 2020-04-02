@@ -698,6 +698,37 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	}//end testGetUserQuestionAnswer()
 
 	/**
+	 * This tests Woothemes_Sensei()->quiz->get_user_question_answer without user_id argument.
+	 */
+	public function testGetUserQuestionAnswerWithoutUserId() {
+		// setup the data needed for the assertions
+		$test_user_id           = wp_create_user( 'studentGetQuestionAnswer', 'studentGetQuestionAnswer', 'studentGetQuestionAnswer@test.com' );
+		$test_lesson_id         = $this->factory->get_random_lesson_id();
+		$test_quiz_id           = Sensei()->lesson->lesson_quizzes( $test_lesson_id );
+		$test_user_quiz_answers = $this->factory->generate_user_quiz_answers( $test_quiz_id );
+		$files                  = $this->factory->generate_test_files( $test_user_quiz_answers );
+		Sensei()->quiz->save_user_answers( $test_user_quiz_answers, $files, $test_lesson_id, $test_user_id );
+		$random_question_id  = array_rand( $test_user_quiz_answers );
+		$users_saved_answers = Sensei()->quiz->get_user_answers( $test_lesson_id, $test_user_id );
+
+		$this->assertNull(
+			Sensei()->quiz->get_user_question_answer( $test_lesson_id, $random_question_id ),
+			'Should return null when has no user_id argument and is not logged in'
+		);
+
+		// Logged user
+		wp_set_current_user( $test_user_id );
+		$question_answer = Sensei()->quiz->get_user_question_answer( $test_lesson_id, $random_question_id );
+
+		$this->assertEquals(
+			$users_saved_answers[ $random_question_id ],
+			$question_answer,
+			'Should return the correct answer if has no user_id argument but user is logged in'
+		);
+
+	}//end testGetUserQuestionAnswerWithoutUserId()
+
+	/**
 	 * Testing $woothemes->quiz->set_user_grades
 	 */
 	public function testSetUserGrades() {
@@ -875,6 +906,35 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$this->assertEquals( 1950, $retrieved_grade, 'The get user question grade does not fall back th old data' );
 
 	}//end testGetUserQuestionGrade()
+
+	/**
+	 * Testing $woothemes->quiz->get_user_question_grade without user_id argument.
+	 */
+	public function testGetUserQuestionGradeWithoutUserId() {
+		// setup the data needed for the assertions in this test
+		$test_user_id           = wp_create_user( 'testGetUserQuestionGrade', 'testGetUserQuestionGrade', 'testGetUserQuestionGrade@test.com' );
+		$test_lesson_id         = $this->factory->get_random_lesson_id();
+		$test_quiz_id           = Sensei()->lesson->lesson_quizzes( $test_lesson_id );
+		$test_user_quiz_answers = $this->factory->generate_user_quiz_answers( $test_quiz_id );
+		$test_user_grades       = $this->factory->generate_user_quiz_grades( $test_user_quiz_answers );
+		Sensei()->quiz->set_user_grades( $test_user_grades, $test_lesson_id, $test_user_id );
+		$test_question_id = array_rand( $test_user_grades );
+
+		$this->assertFalse(
+			Sensei()->quiz->get_user_question_grade( $test_lesson_id, $test_question_id ),
+			'Should return false when has no user_id argument and is not logged in'
+		);
+
+		wp_set_current_user( $test_user_id );
+		$retrieved_grade = Sensei()->quiz->get_user_question_grade( $test_lesson_id, $test_question_id );
+
+		// test if the the question grade can be retrieved
+		$this->assertEquals(
+			$test_user_grades[ $test_question_id ],
+			$retrieved_grade,
+			'Should return the correct grade if has no user_id argument but user is logged in'
+		);
+	}//end testGetUserQuestionGradeWithoutUserId()
 
 	/**
 	 * This tests Sensei()->quiz->save_user_answers_feedback
