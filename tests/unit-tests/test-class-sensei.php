@@ -160,4 +160,188 @@ class Sensei_Globals_Test extends WP_UnitTestCase {
 		// make sure the version number was set on the new sensei instance
 		$this->assertTrue( isset( Sensei()->version ), 'The version number is not set on the global Sensei object' );
 	}
+
+	/**
+	 * Tests to make sure that when Sensei comments are included in count (for example: with WooCommerce)
+	 * they are properly removed.
+	 */
+	public function testSenseiCommentCountsAllIncludeSenseiCounts() {
+		add_filter( 'sensei_comment_counts_include_sensei_comments', '__return_true' );
+
+		$user_ids = $this->factory->user->create_many( 2 );
+
+		$course_status_map = [
+			'in-progress' => 2,
+			'complete'    => 1,
+		];
+		$this->createCourseAndProgress( 2, $course_status_map, $user_ids );
+
+		$stats_with_sensei = (object) [
+			'approved'       => 3,
+			'spam'           => 1,
+			'trash'          => 0,
+			'post-trashed'   => 0,
+			'total_comments' => 6,
+			'all'            => 5,
+			'moderated'      => 2,
+		];
+
+		$stats_without_sensei = (object) [
+			'approved'       => 3,
+			'spam'           => 1,
+			'trash'          => 0,
+			'post-trashed'   => 0,
+			'total_comments' => 3,
+			'all'            => 2,
+			'moderated'      => 2,
+		];
+
+		$stats = Sensei()->sensei_count_comments( $stats_with_sensei, 0 );
+
+		remove_filter( 'sensei_comment_counts_include_sensei_comments', '__return_true' );
+
+		$this->assertEquals( (array) $stats_without_sensei, (array) $stats, 'Stats should not have Sensei comment counts included' );
+	}
+
+
+	/**
+	 * Tests to make sure that when Sensei comments are NOT included in count (no WooCommerce) they aren't removed.
+	 */
+	public function testSenseiCommentCountsAllExcludeSenseiCountsWithoutPost() {
+		add_filter( 'sensei_comment_counts_include_sensei_comments', '__return_false' );
+
+		$user_ids = $this->factory->user->create_many( 2 );
+
+		$course_status_map = [
+			'in-progress' => 2,
+			'complete'    => 1,
+		];
+		$this->createCourseAndProgress( 2, $course_status_map, $user_ids );
+
+		$stats_without_sensei = (object) [
+			'approved'       => 3,
+			'spam'           => 1,
+			'trash'          => 0,
+			'post-trashed'   => 0,
+			'total_comments' => 6,
+			'all'            => 5,
+			'moderated'      => 2,
+		];
+
+		$stats = Sensei()->sensei_count_comments( $stats_without_sensei, 0 );
+
+		remove_filter( 'sensei_comment_counts_include_sensei_comments', '__return_false' );
+
+		$this->assertEquals( (array) $stats_without_sensei, (array) $stats, 'Stats should be what we passed back' );
+	}
+
+	/**
+	 * Tests to make sure that when Sensei comments are NOT included in count (has post ID) they aren't properly removed.
+	 */
+	public function testSenseiCommentCountsAllExcludeSenseiCountsWithPost() {
+		add_filter( 'sensei_comment_counts_include_sensei_comments', '__return_false' );
+
+		$user_ids = $this->factory->user->create_many( 2 );
+
+		$course_status_map = [
+			'in-progress' => 2,
+			'complete'    => 1,
+		];
+		$this->createCourseAndProgress( 2, $course_status_map, $user_ids );
+
+		$post_id = $this->factory->post->create();
+
+		$stats_without_sensei = (object) [
+			'approved'       => 3,
+			'spam'           => 1,
+			'trash'          => 0,
+			'post-trashed'   => 0,
+			'total_comments' => 6,
+			'all'            => 5,
+			'moderated'      => 2,
+		];
+
+		$stats = Sensei()->sensei_count_comments( $stats_without_sensei, $post_id );
+
+		remove_filter( 'sensei_comment_counts_include_sensei_comments', '__return_false' );
+
+		$this->assertEquals( (array) $stats_without_sensei, (array) $stats, 'Stats should be what we passed back' );
+	}
+
+	/**
+	 * Create courses and comments for the course.
+	 *
+	 * @param int   $course_count         Number of courses.
+	 * @param array $comment_approved_map Map of status => n.
+	 * @param array $user_ids             User IDs to use for comment generation.
+	 *
+	 * @return array
+	 */
+	private function createCourseAndProgress( $course_count, $comment_approved_map, $user_ids ) {
+		$comment_args = [
+			'user_id'      => function() use ( $user_ids ) {
+				shuffle( $user_ids );
+
+				return $user_ids[0];
+			},
+			'comment_type' => function() {
+				$types = [ 'sensei_course_status', 'sensei_lesson_status', 'sensei_user_answer' ];
+
+				shuffle( $types );
+
+				return $types[0];
+			}
+		];
+
+
+		$post_ids    = $this->factory->course->create_many( $course_count );
+		$comment_ids = $this->createCommentsForPosts( $post_ids, $comment_approved_map, $comment_args );
+
+		return [ $post_ids, $comment_ids ];
+	}
+
+	/**
+	 * Create comments for post IDs.
+	 *
+	 * @param int[] $post_ids             Post IDs.
+	 * @param array $comment_approved_map Map of status => n.
+	 * @param array $comment_args         Arguments to pass to comment generator.
+	 *
+	 * @return int[]
+	 */
+	private function createCommentsForPosts( $post_ids, $comment_approved_map, $comment_args ) {
+		$comment_args['comment_post_ID'] = function() use ( $post_ids ) {
+			shuffle( $post_ids );
+
+			return $post_ids[0];
+		};
+
+		$comment_ids = [];
+		foreach( $comment_approved_map as $status => $n ) {
+			$comment_args['comment_approved'] = $status;
+
+			for( $i=0; $i < $n; $i++ ) {
+				$comment_ids[] = $this->createComment( $comment_args );
+			}
+		}
+
+		return $comment_ids;
+	}
+
+	/**
+	 * Create a comment based on certain arguments.
+	 *
+	 * @param array $comment_args Arguments to pass to comment factory.
+	 *
+	 * @return int
+	 */
+	private function createComment( $comment_args ) {
+		foreach ( $comment_args as $name => $value ) {
+			if ( is_callable( $value ) ) {
+				$comment_args[ $name ] = call_user_func( $value );
+			}
+		}
+
+		return $this->factory->comment->create( $comment_args );
+	}
 }
