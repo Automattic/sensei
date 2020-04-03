@@ -207,8 +207,6 @@ class Sensei_Main {
 			$this->install();
 		}
 
-		// Run this on activation.
-		register_activation_hook( $this->main_plugin_file_name, array( $this, 'activation' ) );
 		// Run this on deactivation.
 		register_deactivation_hook( $this->main_plugin_file_name, array( $this, 'deactivation' ) );
 
@@ -543,15 +541,12 @@ class Sensei_Main {
 	/**
 	 * Run on activation.
 	 *
-	 * @access public
 	 * @since  1.0.0
-	 * @return void
+	 * @deprecated 3.0.0
 	 */
 	public function activation() {
-
-		$this->register_plugin_version();
-
-	} // End activation()
+		_deprecated_function( __METHOD__, '3.0.0' );
+	}
 
 	/**
 	 * Run on activation.
@@ -580,25 +575,65 @@ class Sensei_Main {
 	} // End install()
 
 	/**
-	 * Check for plugin updates.
+	 * Checks for plugin update tasks and ensures the current version is set.
 	 *
 	 * @since 2.0.0
 	 */
 	public function update() {
-		if ( ! version_compare( $this->version, get_option( 'sensei-version' ), '>' ) ) {
+		$current_version = get_option( 'sensei-version' );
+		$is_new_install  = ! $current_version && ! get_option( 'sensei-settings', get_option( 'woothemes-sensei-settings' ) );
+		$is_upgrade      = $current_version && version_compare( $this->version, $current_version, '>' );
+
+		// Make sure the current version is up-to-date.
+		if (
+			! $current_version
+			|| $is_upgrade
+		) {
+			$this->register_plugin_version();
+		}
+
+		// Only proceed if we knew the previous version and this was a new install or an upgrade.
+		if ( $current_version && ! $is_new_install && ! $is_upgrade ) {
 			return;
 		}
 
-		// Mark site as having enrolment data from pre-3.0.0.
-		if ( get_option( 'sensei-version' ) && version_compare( '3.0.0-beta.1', get_option( 'sensei-version' ), '>' ) ) {
+		// Mark site as having enrolment data from legacy instances.
+		if (
+			// If the version is known and the previous version was pre-3.0.0.
+			(
+				$is_upgrade
+				&& version_compare( '3.0.0-beta.1', $current_version, '>' )
+			)
+
+			// If there wasn't a current version set and this isn't a new install, double check to make sure there wasn't any enrolment.
+			|| (
+				! $current_version
+				&& ! $is_new_install
+				&& $this->course_progress_exists()
+			)
+		) {
 			update_option( 'sensei_enrolment_legacy', time() );
 		}
 
-		// Run updates.
-		$this->register_plugin_version();
-
 		// Flush rewrite cache.
 		$this->initiate_rewrite_rules_flush();
+	}
+
+	/**
+	 * Helper function to check to see if any course progress exists in the database.
+	 *
+	 * @return bool
+	 */
+	private function course_progress_exists() {
+		$activity_args = [
+			'type'   => 'sensei_course_status',
+			'number' => 1,
+			'status' => 'any',
+		];
+
+		$activity_sample = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
+
+		return ! empty( $activity_sample );
 	}
 
 	/**
