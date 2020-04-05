@@ -581,7 +581,7 @@ class Sensei_Main {
 	 */
 	public function update() {
 		$current_version = get_option( 'sensei-version' );
-		$is_new_install  = ! $current_version && ! get_option( 'sensei-settings', get_option( 'woothemes-sensei-settings' ) );
+		$is_new_install  = ! $current_version && $this->course_exists();
 		$is_upgrade      = $current_version && version_compare( $this->version, $current_version, '>' );
 
 		// Make sure the current version is up-to-date.
@@ -617,6 +617,27 @@ class Sensei_Main {
 
 		// Flush rewrite cache.
 		$this->initiate_rewrite_rules_flush();
+	}
+
+	/**
+	 * Helper function to check to see if any courses exists in the database.
+	 *
+	 * @return bool
+	 */
+	private function course_exists() {
+		$course_counts = wp_count_posts( 'course' );
+
+		if ( empty( $course_counts ) ) {
+			return false;
+		}
+
+		foreach ( (array) $course_counts as $count ) {
+			if ( $count > 0 ){
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**

@@ -50,7 +50,6 @@ class Sensei_Globals_Test extends WP_UnitTestCase {
 	 */
 	public function testUpdateNewInstall() {
 		$this->resetUpdateOptions();
-		$this->deleteSettings();
 
 		Sensei()->update();
 
@@ -59,21 +58,20 @@ class Sensei_Globals_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests to make sure the version is set on new installs but the legacy update flag option isn't set, even when
-	 * there might be a course progress artifact.
+	 * Tests to make sure the version and legacy update flag option are set when both course and progress
+	 * artifacts exist.
 	 */
-	public function testUpdateNewInstallWithProgress() {
+	public function testUpdateOldInstallWithProgress() {
 		$user_id   = $this->factory->user->create();
 		$course_id = $this->factory->course->create();
 		Sensei_Utils::user_start_course( $user_id, $course_id );
 
 		$this->resetUpdateOptions();
-		$this->deleteSettings();
 
 		Sensei()->update();
 
 		$this->assertEquals( Sensei()->version, get_option( 'sensei-version' ) );
-		$this->assertEmpty( get_option( 'sensei_enrolment_legacy' ), 'Legacy update flag option should not be set on new installs even with artifacts' );
+		$this->assertNotEmpty( get_option( 'sensei_enrolment_legacy' ), 'Legacy update flag option should be set on updates even when course and progress artifacts exist' );
 	}
 
 	/**
@@ -86,7 +84,6 @@ class Sensei_Globals_Test extends WP_UnitTestCase {
 		Sensei_Utils::user_start_course( $user_id, $course_id );
 
 		$this->resetUpdateOptions();
-		$this->deleteSettings();
 
 		update_option( 'woothemes-sensei-version', '1.9.0' );
 		update_option( 'woothemes-sensei-settings', [ 'settings' => true ] );
@@ -103,7 +100,6 @@ class Sensei_Globals_Test extends WP_UnitTestCase {
 	 */
 	public function testUpdatev1UpdateWithoutProgress() {
 		$this->resetUpdateOptions();
-		$this->deleteSettings();
 
 		update_option( 'woothemes-sensei-version', '1.9.0' );
 		update_option( 'woothemes-sensei-settings', [ 'settings' => true ] );
@@ -152,14 +148,6 @@ class Sensei_Globals_Test extends WP_UnitTestCase {
 	private function resetUpdateOptions() {
 		delete_option( 'sensei-version' );
 		delete_option( 'sensei_enrolment_legacy' );
-	}
-
-	/**
-	 * Resets the settings options.
-	 */
-	private function deleteSettings() {
-		delete_option( 'sensei-settings' );
-		delete_option( 'woothemes-sensei-settings' );
 	}
 
 	/**
