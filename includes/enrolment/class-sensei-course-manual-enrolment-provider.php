@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Course_Manual_Enrolment_Provider
 	extends Sensei_Course_Enrolment_Stored_Status_Provider
-	implements Sensei_Course_Enrolment_Provider_Interface {
+	implements Sensei_Course_Enrolment_Provider_Interface, Sensei_Course_Enrolment_Provider_Debug_Interface {
 	const DATA_KEY_LEGACY_MIGRATION = 'legacy_log';
 
 	/**
@@ -210,6 +210,44 @@ class Sensei_Course_Manual_Enrolment_Provider
 
 		$provider_state->set_stored_value( self::DATA_KEY_LEGACY_MIGRATION, $migration_log );
 		$provider_state->save();
+	}
+
+	/**
+	 * Provide debugging information about a user's enrolment in a course.
+	 *
+	 * @param int $user_id   User ID.
+	 * @param int $course_id Course post ID.
+	 *
+	 * @return string[] Array of human readable debug messages. Allowed HTML tags: a[href]; strong; em; span[style,class]
+	 */
+	public function debug( $user_id, $course_id ) {
+		$messages = [];
+		if ( $this->is_enrolled( $user_id, $course_id ) ) {
+			$messages[] = __( 'Learner <strong>is currently</strong> manually enrolled.', 'sensei-lms' );
+		} else {
+			$messages[] = __( 'Learner <strong>is not currently</strong> manually enrolled.', 'sensei-lms' );
+		}
+
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$provider_state   = $course_enrolment->get_provider_state( $this, $user_id );
+		$migration_log    = $provider_state->get_stored_value( self::DATA_KEY_LEGACY_MIGRATION );
+		if ( empty( $migration_log ) ) {
+			$messages[] = __( 'Learner manual enrollment <strong>was not migrated</strong> from a legacy version of Sensei LMS.', 'sensei-lms' );
+		} else {
+			if ( empty( $migration_log['had_progress'] ) ) {
+				$messages[] = __( 'Learner <strong>did not have</strong> course progress at the time of manual enrollment migration.', 'sensei-lms' );
+			} else {
+				$messages[] = __( 'Learner <strong>did have</strong> course progress at the time of manual enrollment migration.', 'sensei-lms' );
+			}
+
+			if ( empty( $migration_log['is_enrolled'] ) ) {
+				$messages[] = __( 'Manual enrollment <strong>was not provided</strong> to the learner on legacy migration.', 'sensei-lms' );
+			} else {
+				$messages[] = __( 'Manual enrollment <strong>was provided</strong> to the learner on legacy migration.', 'sensei-lms' );
+			}
+		}
+
+		return $messages;
 	}
 
 	/**
