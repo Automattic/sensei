@@ -980,8 +980,11 @@ class Sensei_Main {
 	 */
 	public function sensei_count_comments( $comment_counts, $post_id ) {
 		if (
+			// If comment counts are empty, so far nothing has touched core's counts and we can return early.
+			empty( $comment_counts )
+
 			// If we are getting counts for a specific, non-Sensei post, return early.
-			(
+			|| (
 				! empty( $post_id )
 				&& ! in_array( get_post_type( $post_id ), [ 'course', 'lesson', 'quiz' ], true )
 			)
@@ -996,15 +999,6 @@ class Sensei_Main {
 		$sensei_counts = $this->get_sensei_comment_counts( $post_id );
 		if ( empty( $sensei_counts ) ) {
 			return $comment_counts;
-		}
-
-		// If nothing else has provided a filter value, get the raw value and side-step this filter.
-		if ( empty( $comment_counts ) ) {
-			$comment_counts = $this->get_comment_counts_raw( $post_id );
-
-			if ( empty( $comment_counts ) ) {
-				return $comment_counts;
-			}
 		}
 
 		// Subtract Sensei's comment counts from all the comment counts.
