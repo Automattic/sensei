@@ -1124,11 +1124,12 @@ class Sensei_Main {
 			$row['num_comments'] = (int) $row['num_comments'];
 
 			// Don't count post-trashed toward totals.
-			if ( ! in_array( $row['comment_approved'], array( 'post-trashed', 'trash', 'spam' ), true ) ) {
-				$stats['all']            += $row['num_comments'];
+			if ( ! in_array( $row['comment_approved'], [ 'post-trashed', 'trash' ], true ) ) {
 				$stats['total_comments'] += $row['num_comments'];
-			} elseif ( ! in_array( $row['comment_approved'], array( 'post-trashed', 'trash' ), true ) ) {
-				$stats['total_comments'] += $row['num_comments'];
+
+				if ( 'spam' !== $row['comment_approved'] ) {
+					$stats['all'] += $row['num_comments'];
+				}
 			}
 
 			if ( ! isset( $stats[ $row['comment_approved'] ] ) ) {
