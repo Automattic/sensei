@@ -185,7 +185,15 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	 * @return array
 	 */
 	public function get_known_bulk_actions() {
-		return (array) apply_filters( 'sensei_learners_admin_get_known_bulk_actions', $this->known_bulk_actions );
+		$known_bulk_actions = $this->known_bulk_actions;
+
+		$manual_provider = Sensei_Course_Enrolment_Manager::instance()->get_manual_enrolment_provider();
+		if ( ! $manual_provider ) {
+			unset( $known_bulk_actions[ self::MANUALLY_ENROL ] );
+			unset( $known_bulk_actions[ self::REMOVE_MANUAL_ENROLMENT ] );
+		}
+
+		return (array) apply_filters( 'sensei_learners_admin_get_known_bulk_actions', $known_bulk_actions );
 	}
 
 	/**
