@@ -632,7 +632,7 @@ class Sensei_Main {
 		}
 
 		foreach ( (array) $course_counts as $count ) {
-			if ( $count > 0 ){
+			if ( $count > 0 ) {
 				return true;
 			}
 		}
