@@ -581,7 +581,7 @@ class Sensei_Main {
 	 */
 	public function update() {
 		$current_version = get_option( 'sensei-version' );
-		$is_new_install  = ! $current_version && $this->course_exists();
+		$is_new_install  = ! $current_version && ! $this->course_exists();
 		$is_upgrade      = $current_version && version_compare( $this->version, $current_version, '>' );
 
 		// Make sure the current version is up-to-date.
