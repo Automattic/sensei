@@ -222,11 +222,6 @@ class Sensei_Course_Manual_Enrolment_Provider
 	 */
 	public function debug( $user_id, $course_id ) {
 		$messages = [];
-		if ( $this->is_enrolled( $user_id, $course_id ) ) {
-			$messages[] = __( 'Learner <strong>is currently</strong> manually enrolled.', 'sensei-lms' );
-		} else {
-			$messages[] = __( 'Learner <strong>is not currently</strong> manually enrolled.', 'sensei-lms' );
-		}
 
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 		$provider_state   = $course_enrolment->get_provider_state( $this, $user_id );
