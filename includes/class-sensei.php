@@ -625,19 +625,12 @@ class Sensei_Main {
 	 * @return bool
 	 */
 	private function course_exists() {
-		$course_counts = wp_count_posts( 'course' );
+		global $wpdb;
 
-		if ( empty( $course_counts ) ) {
-			return false;
-		}
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Lightweight query run only once before post type is registered.
+		$course_sample_id = (int) $wpdb->get_var( "SELECT `ID` FROM {$wpdb->posts} WHERE `post_type`='course' LIMIT 1" );
 
-		foreach ( (array) $course_counts as $count ) {
-			if ( $count > 0 ) {
-				return true;
-			}
-		}
-
-		return false;
+		return ! empty( $course_sample_id );
 	}
 
 	/**
