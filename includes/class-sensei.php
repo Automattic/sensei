@@ -1144,23 +1144,6 @@ class Sensei_Main {
 	}
 
 	/**
-	 * Get the comment counts without Sensei modifications.
-	 *
-	 * @param  int $post_id Post ID.
-	 *
-	 * @return stdClass
-	 */
-	private function get_comment_counts_raw( $post_id ) {
-		remove_filter( 'wp_count_comments', [ $this, 'sensei_count_comments' ], 999 );
-
-		$raw_comment_count = wp_count_comments( $post_id );
-
-		add_filter( 'wp_count_comments', [ $this, 'sensei_count_comments' ], 999, 2 );
-
-		return $raw_comment_count;
-	}
-
-	/**
 	 * Init images.
 	 *
 	 * @since 1.4.5
