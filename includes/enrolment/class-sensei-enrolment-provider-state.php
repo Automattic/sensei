@@ -13,8 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Stores the state for a course enrolment provider.
  */
 class Sensei_Enrolment_Provider_State implements JsonSerializable {
-	const MAX_LOG_ENTRIES = 30;
-
 	/**
 	 * State store storing this provider state.
 	 *
@@ -30,23 +28,14 @@ class Sensei_Enrolment_Provider_State implements JsonSerializable {
 	private $provider_data = [];
 
 	/**
-	 * Log messages.
-	 *
-	 * @var array
-	 */
-	private $logs = [];
-
-	/**
 	 * Class constructor.
 	 *
 	 * @param Sensei_Enrolment_Provider_State_Store $state_store      State store storing this provider state.
 	 * @param array                                 $provider_data    Basic storage for provider data.
-	 * @param array                                 $logs             Log messages.
 	 */
-	private function __construct( Sensei_Enrolment_Provider_State_Store $state_store, $provider_data = [], $logs = [] ) {
+	private function __construct( Sensei_Enrolment_Provider_State_Store $state_store, $provider_data = [] ) {
 		$this->state_store   = $state_store;
 		$this->provider_data = $provider_data;
-		$this->logs          = $logs;
 	}
 
 	/**
@@ -63,12 +52,10 @@ class Sensei_Enrolment_Provider_State implements JsonSerializable {
 		}
 
 		$provider_data = isset( $data['d'] ) ? array_map( [ __CLASS__, 'sanitize_data' ], $data['d'] ) : [];
-		$logs          = isset( $data['l'] ) ? array_map( [ __CLASS__, 'sanitize_logs' ], $data['l'] ) : [];
 
 		$provider_data = array_filter( $provider_data, [ __CLASS__, 'filter_null_values' ] );
-		$logs          = array_filter( $logs, [ __CLASS__, 'filter_null_values' ] );
 
-		return new self( $state_store, $provider_data, $logs );
+		return new self( $state_store, $provider_data );
 	}
 
 	/**
@@ -91,28 +78,6 @@ class Sensei_Enrolment_Provider_State implements JsonSerializable {
 	 */
 	public static function create( Sensei_Enrolment_Provider_State_Store $state_store ) {
 		return new self( $state_store );
-	}
-
-	/**
-	 * Sanitize a log entry.
-	 *
-	 * @param  array $log_entry Non-sanitized log entry.
-	 *
-	 * @return array
-	 */
-	private static function sanitize_logs( $log_entry ) {
-		if ( ! is_array( $log_entry ) ) {
-			return null;
-		}
-
-		if ( 2 !== count( $log_entry ) ) {
-			return null;
-		}
-
-		$log_entry[0] = intval( $log_entry[0] );
-		$log_entry[1] = sanitize_text_field( $log_entry[1] );
-
-		return $log_entry;
 	}
 
 	/**
@@ -148,7 +113,6 @@ class Sensei_Enrolment_Provider_State implements JsonSerializable {
 	public function jsonSerialize() {
 		return [
 			'd' => $this->provider_data,
-			'l' => $this->logs,
 		];
 	}
 
@@ -186,37 +150,6 @@ class Sensei_Enrolment_Provider_State implements JsonSerializable {
 		} else {
 			$this->provider_data[ $key ] = self::sanitize_data( $value );
 		}
-	}
-
-	/**
-	 * Log a message for a provider.
-	 *
-	 * @param string $message  Message to log.
-	 */
-	public function add_log_message( $message ) {
-		$this->logs[] = [
-			time(),
-			sanitize_text_field( $message ),
-		];
-
-		if ( count( $this->logs ) > self::MAX_LOG_ENTRIES ) {
-			// Take the last `self::MAX_LOG_ENTRIES` entries.
-			$this->logs = array_slice( $this->logs, -1 * self::MAX_LOG_ENTRIES );
-		}
-
-		$this->state_store->set_has_changed( true );
-	}
-
-	/**
-	 * Get the log messages ordered by time (descending; oldest first).
-	 *
-	 * @return array {
-	 *     @var $0 Time for the log entry.
-	 *     @var $1 Log message.
-	 * }
-	 */
-	public function get_logs() {
-		return $this->logs;
 	}
 
 	/**

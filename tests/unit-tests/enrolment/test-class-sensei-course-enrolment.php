@@ -387,7 +387,7 @@ class Sensei_Course_Enrolment_Test extends WP_UnitTestCase {
 	public function testGetProviderStateSaved() {
 		$course_id     = $this->getSimpleCourse();
 		$student_id    = $this->createStandardStudent();
-		$persisted_set = '{"always-provides":{"d":{"test":1234},"l":[[1581098440,"This is a log message"]]}}';
+		$persisted_set = '{"always-provides":{"d":{"test":1234}}}';
 		update_user_meta( $student_id, Sensei_Enrolment_Provider_State_Store::META_PREFIX_ENROLMENT_PROVIDERS_STATE . $course_id, $persisted_set );
 
 		$provider_class = Sensei_Test_Enrolment_Provider_Always_Provides::class;
@@ -401,9 +401,6 @@ class Sensei_Course_Enrolment_Test extends WP_UnitTestCase {
 
 		$this->assertTrue( $provider_state instanceof Sensei_Enrolment_Provider_State );
 		$this->assertEquals( 1234, $provider_state->get_stored_value( 'test' ), 'Persisted stored value should be retrieved' );
-
-		$logs = $provider_state->get_logs();
-		$this->assertEquals( 'This is a log message', $logs[0][1], 'Persisted log entry should be retrieved' );
 	}
 
 	/**
