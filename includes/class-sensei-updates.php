@@ -1097,6 +1097,7 @@ class Sensei_Updates {
 			'status' => 'approve',
 		);
 
+		$post_ids   = [];
 		$activities = get_comments( $args );
 
 		foreach ( $activities as $activity ) {
@@ -1114,7 +1115,13 @@ class Sensei_Updates {
 
 			if ( ! $user_exists ) {
 				wp_delete_comment( intval( $activity->comment_ID ), true );
+
+				$post_ids[] = $activity->comment_post_ID;
 			}
+		}
+
+		foreach ( array_unique( $post_ids ) as $post_id ) {
+			Sensei()->flush_comment_counts_cache( $post_id );
 		}
 
 		$total_activities = count( $activity_count );

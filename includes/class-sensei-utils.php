@@ -670,6 +670,7 @@ class Sensei_Utils {
 					$comment['comment_date']     = current_time( 'mysql' );
 					wp_update_comment( $comment );
 
+					Sensei()->flush_comment_counts_cache( $lesson_id );
 				}
 			}
 
