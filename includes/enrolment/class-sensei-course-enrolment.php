@@ -93,6 +93,26 @@ class Sensei_Course_Enrolment {
 	 * @return bool
 	 */
 	public function is_enrolled( $user_id, $check_cache = true ) {
+		/**
+		 * Allow complete side-stepping of enrolment handling in Sensei.
+		 *
+		 * This will have some other side-effects. For example, if using learner queries (My Courses,
+		 * Learner Profiles, etc), you will have to save the learner term and association by using the
+		 * `\Sensei_Course_Enrolment::save_enrolment` method. Additionally, manual enrolment handling
+		 * in Learner Management will not have any effect.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param bool|null $is_enrolled If a boolean, that value will be used. Null values will keep default behavior.
+		 * @param int       $user_id     User ID.
+		 * @param int       $course_id   Course post ID.
+		 * @param bool      $check_cache Advise hooked method if cached values should be trusted.
+		 */
+		$is_enrolled = apply_filters( 'sensei_is_enrolled', null, $user_id, $this->course_id, $check_cache );
+		if ( null !== $is_enrolled ) {
+			return $is_enrolled;
+		}
+
 		// Users can only be enrolled in a published course.
 		if ( 'publish' !== get_post_status( $this->course_id ) ) {
 			return false;
@@ -224,13 +244,13 @@ class Sensei_Course_Enrolment {
 	/**
 	 * Save enrolment in taxonomy.
 	 *
-	 * @param int  $user_id    User ID.
+	 * @param int  $user_id     User ID.
 	 * @param bool $is_enrolled If the user is enrolled in the course.
 	 *
 	 * @return bool
 	 * @throws Exception When learner term could not be created.
 	 */
-	private function save_enrolment( $user_id, $is_enrolled ) {
+	public function save_enrolment( $user_id, $is_enrolled ) {
 		$term = Sensei_Learner::get_learner_term( $user_id );
 		if ( ! $is_enrolled ) {
 			$result = wp_remove_object_terms( $this->course_id, [ intval( $term->term_id ) ], Sensei_PostTypes::LEARNER_TAXONOMY_NAME );

@@ -1050,6 +1050,11 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	 * @return void
 	 */
 	public function add_learners_box() {
+		$manual_provider = Sensei_Course_Enrolment_Manager::instance()->get_manual_enrolment_provider();
+		if ( ! $manual_provider ) {
+			return;
+		}
+
 		$post_type      = '';
 		$post_title     = '';
 		$form_post_type = '';

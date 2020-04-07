@@ -185,7 +185,9 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	 * @return array
 	 */
 	public function get_known_bulk_actions() {
-		return (array) apply_filters( 'sensei_learners_admin_get_known_bulk_actions', $this->known_bulk_actions );
+		$known_bulk_actions = $this->known_bulk_actions;
+
+		return (array) apply_filters( 'sensei_learners_admin_get_known_bulk_actions', $known_bulk_actions );
 	}
 
 	/**
