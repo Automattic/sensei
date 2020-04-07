@@ -32,7 +32,7 @@ class Sensei_Updates {
 	public function __construct( $parent ) {
 
 		// Setup object data
-		$this->parent      = $parent;
+		$this->parent = $parent;
 
 		add_action( 'admin_init', array( $this, 'init_updates_run' ) );
 
