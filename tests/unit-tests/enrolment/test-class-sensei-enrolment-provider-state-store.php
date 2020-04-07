@@ -60,16 +60,9 @@ class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 				'd' => [
 					'test' => true,
 				],
-				'l' => [],
 			],
 			$never_provides_provider->get_id()  => [
 				'd' => [],
-				'l' => [
-					[
-						time(),
-						'Such a great log message.',
-					],
-				],
 			],
 		];
 
@@ -80,10 +73,6 @@ class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 
 		$always_provides_state = $state_store->get_provider_state( $always_provides_provider );
 		$this->assertTrue( $always_provides_state->get_stored_value( 'test' ), 'Provider state should have been initialized with a stored value test as true' );
-
-		$never_provides_state = $state_store->get_provider_state( $never_provides_provider );
-		$logs                 = $never_provides_state->get_logs();
-		$this->assertEquals( $data['never-provides']['l'][0][1], $logs[0][1], 'Never provides provider should have a log entry' );
 	}
 
 	/**
@@ -101,16 +90,9 @@ class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 				'd' => [
 					'test' => true,
 				],
-				'l' => [],
 			],
 			$never_provides_provider->get_id()  => [
 				'd' => [],
-				'l' => [
-					[
-						time(),
-						'Such a great log message.',
-					],
-				],
 			],
 		];
 
@@ -127,7 +109,6 @@ class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 	 * @covers \Sensei_Enrolment_Provider_State_Store::set_has_changed
 	 * @covers \Sensei_Enrolment_Provider_State_Store::get_has_changed
 	 * @covers \Sensei_Enrolment_Provider_State::set_stored_value
-	 * @covers \Sensei_Enrolment_Provider_State::add_log_message
 	 */
 	public function testHasChangedStates() {
 		$always_provides_provider = new Sensei_Test_Enrolment_Provider_Always_Provides();
@@ -140,10 +121,6 @@ class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 		$provider_state->set_stored_value( 'test', true );
 		$this->assertTrue( $state_store->get_has_changed(), 'State store should be marked as having had changed after setting data value' );
 		$state_store->set_has_changed( false );
-
-		$this->assertFalse( $state_store->get_has_changed(), 'Has Changed status should have been set to false.' );
-		$provider_state->add_log_message( 'Test log message' );
-		$this->assertTrue( $state_store->get_has_changed(), 'State store should be marked as having had changed after adding log entry' );
 	}
 
 	/**
@@ -170,7 +147,7 @@ class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 	public function testPersistStateSetsWhenChange() {
 		$course_id     = $this->getSimpleCourse();
 		$student_id    = $this->createStandardStudent();
-		$persisted_set = '{"always-provides":{"d":{"test":1234},"l":[[1581098440,"This is a log message"]]}}';
+		$persisted_set = '{"always-provides":{"d":{"test":1234}}}';
 		update_user_meta( $student_id, Sensei_Enrolment_Provider_State_Store::META_PREFIX_ENROLMENT_PROVIDERS_STATE . $course_id, $persisted_set );
 
 		$provider_class = Sensei_Test_Enrolment_Provider_Always_Provides::class;
@@ -184,7 +161,7 @@ class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 		$provider_state->set_stored_value( 'test', 54321 );
 		$provider_state->save();
 
-		$expected_persisted_set = '{"always-provides":{"d":{"test":54321},"l":[[1581098440,"This is a log message"]]}}';
+		$expected_persisted_set = '{"always-provides":{"d":{"test":54321}}}';
 		$persisted_set          = get_user_meta( $student_id, Sensei_Enrolment_Provider_State_Store::META_PREFIX_ENROLMENT_PROVIDERS_STATE . $course_id, true );
 		$this->assertEquals( $expected_persisted_set, $persisted_set, 'The changed stored value should have been persisted' );
 	}
@@ -195,7 +172,7 @@ class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 	public function testMpPersistStateSetsWhenMpChange() {
 		$course_id     = $this->getSimpleCourse();
 		$student_id    = $this->createStandardStudent();
-		$persisted_set = '{"always-provides":{"d":{"test":1234},"l":[[1581098440,"This is a log message"]]}}';
+		$persisted_set = '{"always-provides":{"d":{"test":1234}}}';
 		update_user_meta( $student_id, Sensei_Enrolment_Provider_State_Store::META_PREFIX_ENROLMENT_PROVIDERS_STATE . $course_id, $persisted_set );
 
 		$provider_class = Sensei_Test_Enrolment_Provider_Always_Provides::class;
@@ -212,7 +189,6 @@ class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 
 		// This isn't a change in the stored value.
 		$provider_state->set_stored_value( 'test', 1234 );
-		$provider_state->get_logs();
 		$provider_state->get_stored_value( 'new-key' );
 		$provider_state->save();
 
