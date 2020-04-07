@@ -42,10 +42,10 @@ class Sensei_Emails {
 
 		// Hooks for sending emails during Sensei events
 		add_action( 'sensei_user_quiz_grade', array( $this, 'learner_graded_quiz' ), 10, 4 );
-		add_action( 'sensei_course_status_updated', array( $this, 'learner_completed_course' ), 10, 4 );
-		add_action( 'sensei_course_status_updated', array( $this, 'teacher_completed_course' ), 10, 4 );
+		add_action( 'sensei_course_status_updated', array( $this, 'learner_completed_course' ), 10, 6 );
+		add_action( 'sensei_course_status_updated', array( $this, 'teacher_completed_course' ), 10, 6 );
 		add_action( 'sensei_user_course_start', array( $this, 'teacher_started_course' ), 10, 2 );
-		add_action( 'sensei_user_lesson_end', array( $this, 'teacher_completed_lesson' ), 10, 2 );
+		add_action( 'sensei_user_lesson_end', array( $this, 'teacher_completed_lesson' ), 10, 3 );
 		add_action( 'sensei_user_quiz_submitted', array( $this, 'teacher_quiz_submitted' ), 10, 5 );
 		add_action( 'sensei_new_private_message', array( $this, 'teacher_new_message' ), 10, 1 );
 		add_action( 'sensei_private_message_reply', array( $this, 'new_message_reply' ), 10, 2 );
@@ -242,14 +242,20 @@ class Sensei_Emails {
 	}
 
 	/**
-	 * Send email to learner on course completion
+	 * Send email to learner on course completion.
 	 *
 	 * @access public
+	 * @param  string $status
+	 * @param  int    $user_id
+	 * @param  int    $course_id
+	 * @param  int    $comment_id
+	 * @param  array  $metadata
+	 * @param  bool   $replicating_lang Flag if the status is being replicated for another language.
 	 * @return void
 	 */
-	function learner_completed_course( $status = 'in-progress', $user_id = 0, $course_id = 0, $comment_id = 0 ) {
+	public function learner_completed_course( $status = 'in-progress', $user_id = 0, $course_id = 0, $comment_id = 0, $metadata = array(), $replicating_lang = false ) {
 
-		if ( 'complete' != $status ) {
+		if ( 'complete' != $status || $replicating_lang ) {
 			return;
 		}
 
@@ -270,14 +276,20 @@ class Sensei_Emails {
 	}
 
 	/**
-	 * Send email to teacher on course completion
+	 * Send email to teacher on course completion.
 	 *
 	 * @access public
+	 * @param  string $status
+	 * @param  int    $learner_id
+	 * @param  int    $course_id
+	 * @param  int    $comment_id
+	 * @param  array  $metadata
+	 * @param  bool   $replicating_lang Flag if the status is being replicated for another language.
 	 * @return void
 	 */
-	function teacher_completed_course( $status = 'in-progress', $learner_id = 0, $course_id = 0, $comment_id = 0 ) {
+	public function teacher_completed_course( $status = 'in-progress', $learner_id = 0, $course_id = 0, $comment_id = 0, $metadata = array(), $replicating_lang = false ) {
 
-		if ( 'complete' != $status ) {
+		if ( 'complete' != $status || $replicating_lang ) {
 			return;
 		}
 
@@ -322,15 +334,20 @@ class Sensei_Emails {
 	}
 
 	/**
-	 * teacher_completed_lesson()
-	 *
-	 * Send email to teacher on student completing lesson
+	 * Send email to teacher on student completing lesson.
 	 *
 	 * @access public
+	 * @param  int  $learner_id
+	 * @param  int  $lesson_id
+	 * @param  bool $replicating_lang Flag if the status is being replicated for another language.
 	 * @return void
-	 * @since 1.9.0
+	 * @since  1.9.0
 	 */
-	function teacher_completed_lesson( $learner_id = 0, $lesson_id = 0 ) {
+	public function teacher_completed_lesson( $learner_id = 0, $lesson_id = 0, $replicating_lang = false ) {
+
+		if ( $replicating_lang ) {
+			return;
+		}
 
 		$send = false;
 

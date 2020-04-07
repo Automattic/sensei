@@ -604,9 +604,9 @@ class Sensei_Utils {
 	 *
 	 * @since 1.6.0
 	 *
-	 * @param  integer     $lesson_id ID of lesson
-	 * @param int| string $user_id default 0
-	 * @param bool        $complete default false
+	 * @param integer    $lesson_id        ID of lesson.
+	 * @param int|string $user_id          default 0.
+	 * @param bool       $complete         default false.
 	 *
 	 * @return mixed boolean or comment_ID
 	 */
@@ -631,7 +631,7 @@ class Sensei_Utils {
 			$metadata = array();
 			$status   = 'in-progress';
 
-			// Note: When this action runs the lesson status may not yet exist
+			// Note: When this action runs the lesson status may not yet exist.
 			do_action( 'sensei_user_lesson_start', $user_id, $lesson_id );
 
 			if ( $complete ) {
@@ -652,29 +652,64 @@ class Sensei_Utils {
 				$metadata['start'] = current_time( 'mysql' );
 				$activity_logged   = self::update_lesson_status( $user_id, $lesson_id, $status, $metadata );
 
-			} else {
-
-				// if users is already taking the lesson  and the status changes to complete update it
-				$current_user_activity = get_comment( $activity_logged );
-				if ( in_array( $status, array( 'complete', 'passed' ), true ) &&
-					$status != $current_user_activity->comment_approved ) {
-
-					$comment                     = array();
-					$comment['comment_ID']       = $activity_logged;
-					$comment['comment_approved'] = $status;
-					$comment['comment_date']     = current_time( 'mysql' );
-					wp_update_comment( $comment );
-
-				}
 			}
 
-			if ( $complete ) {
-				// Run this *after* the lesson status has been created/updated
-				do_action( 'sensei_user_lesson_end', $user_id, $lesson_id );
-			}
+			self::complete_lesson( $lesson_id, $user_id, $status, $complete );
 		}
 
 		return $activity_logged;
+	}
+
+	/**
+	 * Complete lesson.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param integer    $lesson_id        ID of lesson.
+	 * @param int|string $user_id          ID of user.
+	 * @param string     $status           New status for the lesson.
+	 * @param bool       $complete         If the status is complete.
+	 * @param bool       $replicating_lang Flag if the status is being replicated for another language.
+	 *
+	 * @return void
+	 */
+	public static function complete_lesson( $lesson_id = 0, $user_id = 0, $status, $complete, $replicating_lang = false ) {
+		$activity_logged = self::user_started_lesson( $lesson_id, $user_id );
+
+		// if users is already taking the lesson and the status changes to complete update it.
+		if ( $activity_logged ) {
+			$current_user_activity = get_comment( $activity_logged );
+
+			if ( in_array( $status, array( 'complete', 'passed' ), true ) &&
+				$status != $current_user_activity->comment_approved ) {
+
+				$comment                     = array();
+				$comment['comment_ID']       = $activity_logged;
+				$comment['comment_approved'] = $status;
+				$comment['comment_date']     = current_time( 'mysql' );
+				wp_update_comment( $comment );
+
+				/**
+				 * Complete started lesson hook.
+				 *
+				 * This hook is if user is already taking the lesson and the status changes to complete.
+				 *
+				 * @since 2.3.0
+				 *
+				 * @param int    $lesson_id        ID of lesson.
+				 * @param int    $user_id          ID of user.
+				 * @param string $status           New status for the lesson.
+				 * @param bool   $replicating_lang Flag if the status is being replicated for another language.
+				 */
+				do_action( 'sensei_started_lesson_completed', $lesson_id, $user_id, $status, $complete, $replicating_lang );
+
+			}
+		}
+
+		if ( $complete ) {
+			// Run this *after* the lesson status has been created/updated.
+			do_action( 'sensei_user_lesson_end', $user_id, $lesson_id, $replicating_lang );
+		}
 	}
 
 	/**
@@ -1874,10 +1909,10 @@ class Sensei_Utils {
 	 * @param int|string $lesson_id
 	 * @param string     $status
 	 * @param array      $metadata
-	 *
-	 * @return mixed false or comment_ID
+	 * @param bool       $replicating_lang Flag if the status is being replicated for another language.
+	 * @return mixed                       false or comment_ID.
 	 */
-	public static function update_lesson_status( $user_id, $lesson_id, $status = 'in-progress', $metadata = array() ) {
+	public static function update_lesson_status( $user_id, $lesson_id, $status = 'in-progress', $metadata = array(), $replicating_lang = false ) {
 		$comment_id = false;
 		if ( ! empty( $status ) ) {
 			$args = array(
@@ -1899,7 +1934,7 @@ class Sensei_Utils {
 				}
 			}
 
-			do_action( 'sensei_lesson_status_updated', $status, $user_id, $lesson_id, $comment_id );
+			do_action( 'sensei_lesson_status_updated', $status, $user_id, $lesson_id, $comment_id, $metadata, $replicating_lang );
 		}
 		return $comment_id;
 	}
@@ -1909,13 +1944,14 @@ class Sensei_Utils {
 	 *
 	 * @access public
 	 * @since  1.7.0
-	 * @param int    $user_id
-	 * @param int    $course_id
-	 * @param string $status
-	 * @param array  $metadata
-	 * @return mixed false or comment_ID
+	 * @param  int    $user_id
+	 * @param  int    $course_id
+	 * @param  string $status
+	 * @param  array  $metadata
+	 * @param  bool   $replicating_lang Flag if the status is being replicated for another language.
+	 * @return mixed                    false or comment_ID.
 	 */
-	public static function update_course_status( $user_id, $course_id, $status = 'in-progress', $metadata = array() ) {
+	public static function update_course_status( $user_id, $course_id, $status = 'in-progress', $metadata = array(), $replicating_lang = false ) {
 		$comment_id = false;
 		if ( ! empty( $status ) ) {
 			$args = array(
@@ -1936,7 +1972,8 @@ class Sensei_Utils {
 					update_comment_meta( $comment_id, $key, $value );
 				}
 			}
-			do_action( 'sensei_course_status_updated', $status, $user_id, $course_id, $comment_id );
+
+			do_action( 'sensei_course_status_updated', $status, $user_id, $course_id, $comment_id, $metadata, $replicating_lang );
 		}
 		return $comment_id;
 	}
