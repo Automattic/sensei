@@ -1101,7 +1101,7 @@ class Sensei_Main {
 					SELECT comment_approved, COUNT(*) AS num_comments
 					FROM {$wpdb->comments}
 					WHERE
-						comment_type IN ( 'sensei_course_status', 'sensei_lesson_status', 'sensei_user_answer' )
+						comment_type LIKE 'sensei_%'
 						{$post_where}
 					GROUP BY comment_approved
 			",
