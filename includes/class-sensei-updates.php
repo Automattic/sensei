@@ -33,7 +33,8 @@ class Sensei_Updates {
 
 		// Setup object data
 		$this->parent      = $parent;
-		$this->updates_run = self::get_ran_upgrades_raw();
+
+		add_action( 'admin_init', array( $this, 'init_updates_run' ) );
 
 		// The list of upgrades to run
 		$this->updates = array(
@@ -197,6 +198,13 @@ class Sensei_Updates {
 		add_action( 'admin_menu', array( $this, 'add_update_admin_screen' ), 50 );
 
 	} // End __construct()
+
+	/**
+	 * Initializes the updates that have been executed.
+	 */
+	public function init_updates_run() {
+		$this->updates_run = self::get_ran_upgrades_raw();
+	}
 
 	/**
 	 * Get all the possible updates.
