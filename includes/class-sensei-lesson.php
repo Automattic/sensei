@@ -4306,8 +4306,8 @@ class Sensei_Lesson {
 	 * @since 1.9.0
 	 */
 	public static function output_comments() {
-		$allow_comments       = Sensei()->settings->settings['lesson_comments'];
-		$user_can_view_lesson = sensei_can_user_view_lesson();
+		$allow_comments        = Sensei()->settings->settings['lesson_comments'];
+		$user_can_view_lesson  = sensei_can_user_view_lesson();
 		$lesson_allow_comments = $allow_comments && $user_can_view_lesson;
 
 		if ( $lesson_allow_comments || is_singular( 'sensei_message' ) ) {
