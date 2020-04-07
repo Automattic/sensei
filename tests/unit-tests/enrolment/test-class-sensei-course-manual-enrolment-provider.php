@@ -197,6 +197,104 @@ class Sensei_Course_Manual_Enrolment_Provider_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test debug messages are generated correctly for learner without legacy migration.
+	 */
+	public function testDebugEnrolledNoLegacy() {
+		$provider   = $this->getManualEnrolmentProvider();
+		$course_id  = $this->getSimpleCourseId();
+		$student_id = $this->getStandardStudentUserId();
+
+		$debug          = $provider->debug( $student_id, $course_id );
+		$expected_debug = [
+			__( 'Learner manual enrollment <strong>was not migrated</strong> from a legacy version of Sensei LMS.', 'sensei-lms' ),
+		];
+
+		$this->assertEquals( $expected_debug, $debug );
+	}
+
+	/**
+	 * Test debug messages are generated correctly for a learner with legacy migration who wasn't enrolled
+	 * from legacy and didn't have progress.
+	 */
+	public function testDebugEnrolledLegacyNoProgressNotEnrolled() {
+		$provider   = $this->getManualEnrolmentProvider();
+		$course_id  = $this->getSimpleCourseId();
+		$student_id = $this->getStandardStudentUserId();
+
+		// Set the legacy migration log.
+		$migration_log    = [
+			'had_progress' => false,
+			'is_enrolled'  => false,
+		];
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$provider_state   = $course_enrolment->get_provider_state( $provider, $student_id );
+		$provider_state->set_stored_value( Sensei_Course_Manual_Enrolment_Provider::DATA_KEY_LEGACY_MIGRATION, $migration_log );
+		$provider_state->save();
+
+		$debug          = $provider->debug( $student_id, $course_id );
+		$expected_debug = [
+			__( 'Learner <strong>did not have</strong> course progress at the time of manual enrollment migration.', 'sensei-lms' ),
+			__( 'Manual enrollment <strong>was not provided</strong> to the learner on legacy migration.', 'sensei-lms' ),
+		];
+
+		$this->assertEquals( $expected_debug, $debug );
+	}
+
+	/**
+	 * Test debug messages are generated correctly for a learner with legacy migration who wasn't enrolled from legacy.
+	 */
+	public function testDebugEnrolledLegacyNotEnrolled() {
+		$provider   = $this->getManualEnrolmentProvider();
+		$course_id  = $this->getSimpleCourseId();
+		$student_id = $this->getStandardStudentUserId();
+
+		// Set the legacy migration log.
+		$migration_log    = [
+			'had_progress' => true,
+			'is_enrolled'  => false,
+		];
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$provider_state   = $course_enrolment->get_provider_state( $provider, $student_id );
+		$provider_state->set_stored_value( Sensei_Course_Manual_Enrolment_Provider::DATA_KEY_LEGACY_MIGRATION, $migration_log );
+		$provider_state->save();
+
+		$debug          = $provider->debug( $student_id, $course_id );
+		$expected_debug = [
+			__( 'Learner <strong>did have</strong> course progress at the time of manual enrollment migration.', 'sensei-lms' ),
+			__( 'Manual enrollment <strong>was not provided</strong> to the learner on legacy migration.', 'sensei-lms' ),
+		];
+
+		$this->assertEquals( $expected_debug, $debug );
+	}
+
+	/**
+	 * Test debug messages are generated correctly for a learner with legacy migration who was enrolled from legacy.
+	 */
+	public function testDebugEnrolledLegacyEnrolled() {
+		$provider   = $this->getManualEnrolmentProvider();
+		$course_id  = $this->getSimpleCourseId();
+		$student_id = $this->getStandardStudentUserId();
+
+		// Set the legacy migration log.
+		$migration_log    = [
+			'had_progress' => true,
+			'is_enrolled'  => true,
+		];
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$provider_state   = $course_enrolment->get_provider_state( $provider, $student_id );
+		$provider_state->set_stored_value( Sensei_Course_Manual_Enrolment_Provider::DATA_KEY_LEGACY_MIGRATION, $migration_log );
+		$provider_state->save();
+
+		$debug          = $provider->debug( $student_id, $course_id );
+		$expected_debug = [
+			__( 'Learner <strong>did have</strong> course progress at the time of manual enrollment migration.', 'sensei-lms' ),
+			__( 'Manual enrollment <strong>was provided</strong> to the learner on legacy migration.', 'sensei-lms' ),
+		];
+
+		$this->assertEquals( $expected_debug, $debug );
+	}
+
+	/**
 	 * Creates a standard student user account.
 	 *
 	 * @return int
