@@ -5,7 +5,7 @@
 * New: Add a filter for the course archive page URL [#2899](https://github.com/Automattic/sensei/pull/2899) 
 * New: Add course enrollment indicator to learner management [#2838](https://github.com/Automattic/sensei/pull/2838) 
 * New: Add course enrolment recalculation scheduler [#2874](https://github.com/Automattic/sensei/pull/2874) 
-* New: Add learner management filter for manually enrolled users [#2987](https://github.com/Automattic/sensei/pull/2987), [#2996](https://github.com/Automattic/sensei/pull/2996) 
+* New: Add learner management filter for manually enrolled users [#2987](https://github.com/Automattic/sensei/pull/2987), [#2996](https://github.com/Automattic/sensei/pull/2996)
 * New: Add manual enrollment provider [#2848](https://github.com/Automattic/sensei/pull/2848) 
 * New: Add missing deprecation notices [#2974](https://github.com/Automattic/sensei/pull/2974) 
 * New: Enable filtering by "Enrolled Learners" and "Unenrolled Learners" in Learner Management [#2981](https://github.com/Automattic/sensei/pull/2981), [#2988](https://github.com/Automattic/sensei/pull/2988)
@@ -19,7 +19,7 @@
 * New: Deprecate filters used by legacy WCPC memberships [#2979](https://github.com/Automattic/sensei/pull/2979) 
 * New: Filter defer enrolment check behavior [#2942](https://github.com/Automattic/sensei/pull/2942) 
 * New: Introduce enrolment manager [#2844](https://github.com/Automattic/sensei/pull/2844) 
-* New: Introduce provider state storage and stored status providers [#2888](https://github.com/Automattic/sensei/pull/2888) 
+* New: Introduce provider state storage and stored status providers [#2888](https://github.com/Automattic/sensei/pull/2888)
 * New: Manually enrol student on frontend when they sign up for course [#2854](https://github.com/Automattic/sensei/pull/2854) 
 * New: Pass the comment ID to the `sensei_is_legacy_enrolled` filter [#2872](https://github.com/Automattic/sensei/pull/2872) 
 * New: Recalculate course enrolment when moving from published to not published [#2990](https://github.com/Automattic/sensei/pull/2990) 
@@ -36,6 +36,8 @@
 * New: Switch to storing enrolment results in user meta [#2903](https://github.com/Automattic/sensei/pull/2903) 
 * New: Update enrolled courses queries to use learner term [#2946](https://github.com/Automattic/sensei/pull/2946) 
 * New: Use Action Scheduler for enrolment async jobs when available [#2930](https://github.com/Automattic/sensei/pull/2930) 
+* New: Add filter to bypass enrolment functionality [#3011](https://github.com/Automattic/sensei/pull/3011)
+* New: Allow providers to provide debug information [#3020](https://github.com/Automattic/sensei/pull/3020)
 * Tweak: Append post status to prerequisite lesson on Lessons page [#2853](https://github.com/Automattic/sensei/pull/2853) 👏 @JuanchoPestana
 * Tweak: Change user_started_course in quiz and email code [#2968](https://github.com/Automattic/sensei/pull/2968) 
 * Tweak: Add support for enrolments in bulk learner management [#2965](https://github.com/Automattic/sensei/pull/2965) 
@@ -44,6 +46,10 @@
 * Tweak: Replace usages of Sensei_Utils::user_started_course in templates [#2951](https://github.com/Automattic/sensei/pull/2951) 
 * Tweak: Rename "Remove progress" bulk learner action [#2985](https://github.com/Automattic/sensei/pull/2985) 
 * Tweak: Update usage tracking for enrolment count [#2958](https://github.com/Automattic/sensei/pull/2958) 
+* Tweak: Hide "Manually Enrolled Learners" filter when not needed [#3014](https://github.com/Automattic/sensei/pull/3014)
+* Tweak: Remove logging functionality from provider state [#3021](https://github.com/Automattic/sensei/pull/3021)
+* Tweak: Refactor removal of Sensei comments from total counts [#3009](https://github.com/Automattic/sensei/pull/3009)
+* Tweak: Switch to using a handler when a learner starts taking a course [#3000](https://github.com/Automattic/sensei/pull/3000)
 * Fix: Add clear background to TinyMCE buttons [#2833](https://github.com/Automattic/sensei/pull/2833) 👏 @JuanchoPestana
 * Fix: Add missing question ID to hidden question field [#2871](https://github.com/Automattic/sensei/pull/2871) 👏 @traed
 * Fix: Add module admin scripts on course edit page [#2918](https://github.com/Automattic/sensei/pull/2918) 
@@ -61,6 +67,8 @@
 * Fix: Ensure lesson comments are not displayed if user isn't allowed to view lesson [#2840](https://github.com/Automattic/sensei/pull/2840) 👏 @JuanchoPestana
 * Fix: Fix lesson order for courses that are duplicated with lessons [#2883](https://github.com/Automattic/sensei/pull/2883) 
 * Fix: Fix video playback for question media attachments [#2886](https://github.com/Automattic/sensei/pull/2886)
+* Fix: Add fail-safes on update version check [#3019](https://github.com/Automattic/sensei/pull/3019)
+* Fix: Fix comment template not displaying for messages [#3024](https://github.com/Automattic/sensei/pull/3024)
 
 2020.01.23 - version 2.4.0
 * New: Replace Twitter button with Create Course button after activation - #2850
