@@ -1252,21 +1252,24 @@ class Sensei_Frontend {
 		) {
 
 			/**
-			 * Lets providers handle their own course sign-up. If they return a boolean, it will be treated as a result.
+			 * Lets providers give their own course sign-up handler.
 			 *
 			 * @since 3.0.0
 			 *
-			 * @param bool|null $student_enrolled True if the student enrolled; False if there was a problem.
-			 * @param int       $user_id          User ID.
-			 * @param int       $course_id        Course post ID.
+			 * @param callable $handler {
+			 *     Frontend enrolment handler. Returns `true` if successful; `false` if not.
+			 *
+			 *     @type int $user_id   User ID.
+			 *     @type int $course_id Course post ID.
+			 * }
+			 * @param int      $user_id          User ID.
+			 * @param int      $course_id        Course post ID.
 			 */
-			$student_enrolled = apply_filters( 'sensei_handle_frontend_student_enrolment', null, $current_user->ID, $post->ID );
+			$student_enrollment_handler = apply_filters( 'sensei_frontend_student_enrolment_handler', [ $this, 'manually_enrol_learner' ], $current_user->ID, $post->ID );
 
-			// If no other handler took care of enrolling the student, sign the student up with the manual enrolment provider.
-			if ( null === $student_enrolled ) {
-				$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
-				$manual_enrolment  = $enrolment_manager->get_manual_enrolment_provider();
-				$student_enrolled  = $manual_enrolment && $manual_enrolment->enrol_student( $current_user->ID, $post->ID );
+			$student_enrolled = false;
+			if ( is_callable( $student_enrollment_handler ) ) {
+				$student_enrolled = call_user_func( $student_enrollment_handler, $current_user->ID, $post->ID );
 			}
 
 			$this->data                        = new stdClass();
@@ -1295,6 +1298,24 @@ class Sensei_Frontend {
 			} // End If Statement
 		} // End If Statement
 	} // End sensei_course_start()
+
+	/**
+	 * Handle the frontend manual enrollment of a learner.
+	 *
+	 * @since 3.0.0
+	 * @access private
+	 *
+	 * @param int $user_id   User ID.
+	 * @param int $course_id Course post ID.
+	 *
+	 * @return bool True if successful.
+	 */
+	public function manually_enrol_learner( $user_id, $course_id ) {
+		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
+		$manual_enrolment  = $enrolment_manager->get_manual_enrolment_provider();
+
+		return $manual_enrolment && $manual_enrolment->enrol_student( $user_id, $course_id );
+	}
 
 	/**
 	 * This function shows the WooCommerce cart notice if the user has
