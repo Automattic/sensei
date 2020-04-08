@@ -300,6 +300,12 @@ class Sensei_Course_Enrolment {
 			$provider_results[ $enrolment_provider_id ] = $enrolment_provider->is_enrolled( $user_id, $this->course_id );
 		}
 
+		Sensei_Enrolment_Provider_Journal_Store::register_possible_enrolment_change(
+			$provider_results,
+			$user_id,
+			$this->course_id
+		);
+
 		$enrolment_results = new Sensei_Course_Enrolment_Provider_Results( $provider_results, $this->get_current_enrolment_result_version() );
 		update_user_meta( $user_id, $this->get_enrolment_results_meta_key(), wp_slash( wp_json_encode( $enrolment_results ) ) );
 
