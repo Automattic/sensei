@@ -86,6 +86,7 @@ class Sensei_Learner {
 			$activities = array( $activities );
 		}
 
+		$post_ids = [];
 		foreach ( $activities as $activity ) {
 			if ( empty( $activity->comment_type ) ) {
 				continue;
@@ -93,7 +94,13 @@ class Sensei_Learner {
 			if ( strpos( $activity->comment_type, 'sensei_' ) !== 0 ) {
 				continue;
 			}
+
+			$post_ids[]      = $activity->comment_post_ID;
 			$dataset_changes = wp_delete_comment( intval( $activity->comment_ID ), true );
+		}
+
+		foreach ( array_unique( $post_ids ) as $post_id ) {
+			Sensei()->flush_comment_counts_cache( $post_id );
 		}
 
 		return $dataset_changes;

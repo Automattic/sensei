@@ -88,6 +88,8 @@ class Sensei_Utils {
 
 		do_action( 'sensei_log_activity_after', $args, $data, $comment_id );
 
+		Sensei()->flush_comment_counts_cache( $args['post_id'] );
+
 		if ( 0 < $comment_id ) {
 			// Return the ID so that it can be used for meta data storage
 			return $comment_id;
@@ -242,6 +244,9 @@ class Sensei_Utils {
 				} // End If Statement
 			} // End For Loop
 		} // End If Statement
+
+		Sensei()->flush_comment_counts_cache( $args['post_id'] );
+
 		return $dataset_changes;
 	} // End sensei_delete_activities()
 
@@ -665,6 +670,7 @@ class Sensei_Utils {
 					$comment['comment_date']     = current_time( 'mysql' );
 					wp_update_comment( $comment );
 
+					Sensei()->flush_comment_counts_cache( $lesson_id );
 				}
 			}
 
