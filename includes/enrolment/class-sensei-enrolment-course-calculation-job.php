@@ -14,9 +14,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  * just the users who are already enrolled.
  */
 class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Background_Job_Interface {
-	const NAME = 'sensei_calculate_course_enrolments';
+	const NAME                             = 'sensei_calculate_course_enrolments';
+	const OPTION_TRACK_LAST_USER_ID_PREFIX = 'sensei_calculate_course_enrolments_last_user_id_';
+	const OPTION_TRACK_CURRENT_JOB_PREFIX  = 'sensei_calculate_course_enrolments_current_job_';
 
 	const DEFAULT_BATCH_SIZE = 40;
+
+	/**
+	 * Current job unique identifier.
+	 *
+	 * @var string
+	 */
+	private $job_id;
 
 	/**
 	 * Course post ID to recalculate.
@@ -52,9 +61,22 @@ class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Background_Job_I
 	 * @param array $args Arguments to run for the job.
 	 */
 	public function __construct( $args ) {
+		$this->job_id           = isset( $args['job_id'] ) ? sanitize_text_field( $args['job_id'] ) : null;
 		$this->course_id        = isset( $args['course_id'] ) ? intval( $args['course_id'] ) : null;
 		$this->invalidated_only = isset( $args['invalidated_only'] ) ? boolval( $args['invalidated_only'] ) : false;
-		$this->batch_size       = isset( $args['batch_size'] ) ? intval( $args['batch_size'] ) : self::DEFAULT_BATCH_SIZE;
+
+		$batch_size = isset( $args['batch_size'] ) ? intval( $args['batch_size'] ) : self::DEFAULT_BATCH_SIZE;
+
+		/**
+		 * Filter the batch size for the number of users to query per run in the course calculation job.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param int  $batch_size       Batch size to filter.
+		 * @param int  $course_id        Course ID we're running.
+		 * @param bool $invalidated_only Whether this is just a job for invalidated course results only.
+		 */
+		$this->batch_size = apply_filters( 'sensei_enrolment_course_calculation_job_batch_size', $batch_size, $this->course_id, $this->invalidated_only );
 	}
 
 	/**
@@ -73,9 +95,9 @@ class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Background_Job_I
 	 */
 	public function get_args() {
 		return [
+			'job_id'           => $this->job_id,
 			'course_id'        => $this->course_id,
 			'invalidated_only' => $this->invalidated_only,
-			'batch_size'       => $this->batch_size,
 		];
 	}
 
@@ -83,23 +105,36 @@ class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Background_Job_I
 	 * Run the job.
 	 */
 	public function run() {
-		if ( empty( $this->course_id ) ) {
-			$this->is_complete = true;
+		$current_job_id = $this->get_current_job_id();
+
+		if (
+			empty( $this->course_id )
+			|| ! $current_job_id
+			|| $current_job_id !== $this->get_job_id()
+		) {
+			$this->end();
 
 			return;
 		}
 
+		add_action( 'pre_user_query', [ $this, 'modify_user_query_add_user_id' ] );
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $this->course_id );
-		$user_ids         = get_users( $this->get_query_args( $course_enrolment ) );
+		$user_query       = new WP_User_Query( $this->get_query_args( $course_enrolment ) );
+		remove_action( 'pre_user_query', [ $this, 'modify_user_query_add_user_id' ] );
 
-		if ( empty( $user_ids ) ) {
-			$this->is_complete = true;
-
-			return;
-		}
+		$user_ids = $user_query->get_results();
 
 		foreach ( $user_ids as $user_id ) {
 			$course_enrolment->is_enrolled( $user_id, false );
+
+			$this->set_last_user_id( $user_id );
+		}
+
+		if (
+			empty( $user_ids )
+			|| (int) $user_query->get_total() <= (int) $this->batch_size
+		) {
+			$this->end();
 		}
 	}
 
@@ -152,5 +187,142 @@ class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Background_Job_I
 		}
 
 		return $user_args;
+	}
+
+	/**
+	 * Modify user query to add the user ID check.
+	 *
+	 * @access private
+	 *
+	 * @param WP_User_Query $user_query User query to modify.
+	 */
+	public function modify_user_query_add_user_id( WP_User_Query $user_query ) {
+		global $wpdb;
+
+		$user_query->query_where .= $wpdb->prepare( ' AND ID>%d', $this->get_last_user_id() );
+	}
+
+	/**
+	 * Get the option name for tracking the current job.
+	 *
+	 * @return string
+	 */
+	private function get_current_job_option_name() {
+		return self::OPTION_TRACK_CURRENT_JOB_PREFIX . $this->course_id . '_' . $this->invalidated_only ? 1 : 0;
+	}
+
+	/**
+	 * Get the option name for tracking the last user ID.
+	 *
+	 * @return string
+	 */
+	private function get_last_user_id_option_name() {
+		$job_id = $this->get_job_id();
+
+		if ( false === $job_id ) {
+			return false;
+		}
+
+		return self::OPTION_TRACK_LAST_USER_ID_PREFIX . $job_id;
+	}
+
+	/**
+	 * Set the last calculated user ID.
+	 *
+	 * @param int $user_id User ID.
+	 */
+	public function set_last_user_id( $user_id ) {
+		$current_user_option_name = $this->get_last_user_id_option_name();
+
+		if ( ! $current_user_option_name ) {
+			return;
+		}
+
+		update_option( $current_user_option_name, (int) $user_id, false );
+	}
+
+	/**
+	 * Get the last user ID that was calculated.
+	 *
+	 * @return int
+	 */
+	public function get_last_user_id() {
+		$current_user_option_name = $this->get_last_user_id_option_name();
+
+		if ( ! $current_user_option_name ) {
+			return 0;
+		}
+
+		return (int) get_option( $current_user_option_name, 0 );
+	}
+
+	/**
+	 * Get the current job ID.
+	 *
+	 * @return string|false
+	 */
+	public function get_current_job_id() {
+		global $wpdb;
+
+		$row = $wpdb->get_row( $wpdb->prepare( "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s LIMIT 1", $this->get_current_job_option_name() ) );
+
+		if ( is_object( $row ) && ! empty( $row->option_value ) ) {
+			return sanitize_text_field( $row->option_value );
+		}
+
+		return false;
+	}
+
+	/**
+	 * Get the job ID for this job.
+	 *
+	 * @return string
+	 */
+	public function get_job_id() {
+		return $this->job_id;
+	}
+
+	/**
+	 * Set up job before it is scheduled for the first time.
+	 */
+	public function start() {
+		$this->job_id = md5( uniqid() );
+
+		update_option( $this->get_current_job_option_name(), $this->job_id );
+
+		$this->set_last_user_id( 0 );
+	}
+
+	/**
+	 * Resume the current job. Useful for fetching before cancelling.
+	 *
+	 * @return bool True if we were able to restore the current job.
+	 */
+	public function resume() {
+		$this->job_id = $this->get_current_job_id();
+		if ( ! $this->job_id ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Clean up when a job is finished or has been cancelled.
+	 */
+	public function end() {
+		$this->is_complete = true;
+
+		$current_user_option_name = $this->get_last_user_id_option_name();
+		if ( $current_user_option_name ) {
+			delete_option( $current_user_option_name );
+		}
+
+		if (
+			$this->job_id
+			&& $this->job_id === $this->get_current_job_id()
+		) {
+			delete_option( $this->get_current_job_option_name() );
+		}
 	}
 }

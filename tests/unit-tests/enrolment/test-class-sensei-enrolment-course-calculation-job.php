@@ -18,13 +18,22 @@ class Sensei_Enrolment_Course_Calculation_Job_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Clean up after test.
+	 */
+	public function tearDown() {
+		parent::tearDown();
+
+		remove_all_filters( 'sensei_enrolment_course_calculation_job_batch_size' );
+	}
+
+	/**
 	 * Tests arguments are carried over from constructor.
 	 */
 	public function testGetArgs() {
 		$test_args = [
+			'job_id'           => null,
 			'course_id'        => 10,
 			'invalidated_only' => true,
-			'batch_size'       => 20,
 		];
 
 		$job = new Sensei_Enrolment_Course_Calculation_Job( $test_args );
@@ -36,15 +45,22 @@ class Sensei_Enrolment_Course_Calculation_Job_Test extends WP_UnitTestCase {
 	 * Tests to make sure the batches continue to run until completed.
 	 */
 	public function testContinueToRunBatch() {
+		add_filter(
+			'sensei_enrolment_course_calculation_job_batch_size',
+			function() {
+				return 2;
+			}
+		);
+
 		$course_id        = $this->factory->course->create();
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 		$job              = new Sensei_Enrolment_Course_Calculation_Job(
 			[
 				'course_id'        => $course_id,
 				'invalidated_only' => false,
-				'batch_size'       => 2,
 			]
 		);
+		$job->start();
 
 		$this->createAndEnrolUsers( $course_id, 5 );
 		$this->invalidateAllCourseResults( $course_enrolment );
@@ -56,31 +72,35 @@ class Sensei_Enrolment_Course_Calculation_Job_Test extends WP_UnitTestCase {
 		$this->assertFalse( $job->is_complete(), 'Job should not be marked as complete after the second run.' );
 
 		$job->run();
-		$this->assertFalse( $job->is_complete(), 'Job should not be marked as complete after the third run.' );
-
-		$job->run();
-		$this->assertTrue( $job->is_complete(), 'Job should be marked as complete after fourth run.' );
+		$this->assertTrue( $job->is_complete(), 'Job should be marked as complete after third run.' );
 	}
 
 	/**
 	 * Tests checking course enrolment happens when job runs.
 	 */
 	public function testCheckingCourseEnrolment() {
+		add_filter(
+			'sensei_enrolment_course_calculation_job_batch_size',
+			function() {
+				return 5;
+			}
+		);
+
 		$course_id        = $this->factory->course->create();
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 		$job              = new Sensei_Enrolment_Course_Calculation_Job(
 			[
 				'course_id'        => $course_id,
 				'invalidated_only' => false,
-				'batch_size'       => 5,
 			]
 		);
+		$job->start();
 
 		$user_ids = $this->factory()->user->create_many( 3 );
 		$this->invalidateAllCourseResults( $course_enrolment );
 
 		$job->run();
-		$this->assertFalse( $job->is_complete(), 'Job should not be complete after first run.' );
+		$this->assertTrue( $job->is_complete(), 'Job should be complete after first run.' );
 
 		foreach ( $user_ids as $user_id ) {
 			$results = $course_enrolment->get_enrolment_check_results( $user_id );
@@ -92,15 +112,22 @@ class Sensei_Enrolment_Course_Calculation_Job_Test extends WP_UnitTestCase {
 	 * Tests to make sure only enrolled progress is invalidated and recalculated.
 	 */
 	public function testCheckingCourseEnrolmentInvalidatedOnly() {
+		add_filter(
+			'sensei_enrolment_course_calculation_job_batch_size',
+			function() {
+				return 5;
+			}
+		);
+
 		$course_id        = $this->factory->course->create();
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 		$job              = new Sensei_Enrolment_Course_Calculation_Job(
 			[
 				'course_id'        => $course_id,
 				'invalidated_only' => true,
-				'batch_size'       => 5,
 			]
 		);
+		$job->start();
 
 		$enrolled_user_ids = $this->createAndEnrolUsers( $course_id, 2 );
 		$other_user_ids    = $this->factory()->user->create_many( 2 );
@@ -132,7 +159,7 @@ class Sensei_Enrolment_Course_Calculation_Job_Test extends WP_UnitTestCase {
 		}
 
 		$job->run();
-		$this->assertFalse( $job->is_complete(), 'Job should not be complete after first run.' );
+		$this->assertTrue( $job->is_complete(), 'Job should be complete after first run.' );
 
 		foreach ( $enrolled_user_ids as $user_id ) {
 			$results = $course_enrolment->get_enrolment_check_results( $user_id );
