@@ -70,7 +70,7 @@ class Sensei_Enrolment_Job_Scheduler {
 		];
 
 		// Make sure all previous jobs for this course are stopped.
-		$this->cancel_course_calculation_job();
+		$this->cancel_course_calculation_job( $course_id );
 
 		$job = new Sensei_Enrolment_Course_Calculation_Job( $args );
 		$job->start();
