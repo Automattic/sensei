@@ -45,6 +45,8 @@ trait Sensei_Course_Enrolment_Test_Helpers {
 		$course_enrolment_instances = new ReflectionProperty( Sensei_Course_Enrolment::class, 'instances' );
 		$course_enrolment_instances->setAccessible( true );
 		$course_enrolment_instances->setValue( [] );
+
+		Sensei_Course_Enrolment::set_store_negative_enrolment_results( true );
 	}
 
 	/**
