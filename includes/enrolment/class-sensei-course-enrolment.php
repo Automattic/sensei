@@ -326,7 +326,7 @@ class Sensei_Course_Enrolment {
 	}
 
 	/**
-	 * Store the enrolment results.
+	 * Store the enrolment results in user meta.
 	 *
 	 * @param int                                      $user_id           User ID.
 	 * @param Sensei_Course_Enrolment_Provider_Results $enrolment_results Enrolment results object.
