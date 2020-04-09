@@ -281,6 +281,8 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 		$course->post_status = 'publish';
 		wp_update_post( $course );
 
+		$job->resume();
+
 		$this->assertNotFalse( Sensei_Scheduler_Shim::get_next_scheduled( $job ), 'Job should have been scheduled' );
 	}
 
@@ -297,6 +299,8 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 
 		$course->post_status = 'draft';
 		wp_update_post( $course );
+
+		$job->resume();
 
 		$this->assertNotFalse( Sensei_Scheduler_Shim::get_next_scheduled( $job ), 'Job should have been scheduled' );
 	}
