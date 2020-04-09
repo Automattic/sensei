@@ -95,6 +95,10 @@ class Sensei_Enrolment_Provider_Journal implements JsonSerializable {
 			return false;
 		}
 
+		if ( ! isset( $log_entry['t'], $log_entry['m'] ) ) {
+			return false;
+		}
+
 		return [
 			'timestamp' => (int) $log_entry['t'],
 			'message'   => sanitize_text_field( $log_entry['m'] ),
@@ -178,7 +182,7 @@ class Sensei_Enrolment_Provider_Journal implements JsonSerializable {
 		$message_log_size = apply_filters( 'sensei_enrolment_message_log_size', self::DEFAULT_MESSAGE_LOG_SIZE );
 
 		$message_entry = [
-			'timestamp' => time(),
+			'timestamp' => microtime( true ),
 			'message'   => sanitize_text_field( $message ),
 		];
 		array_unshift( $this->message_log, $message_entry );
@@ -197,7 +201,7 @@ class Sensei_Enrolment_Provider_Journal implements JsonSerializable {
 		if ( empty( $this->history ) || $this->history[0]['enrolment_status'] !== $enrolment_status ) {
 			$this->add_status(
 				[
-					'timestamp'        => time(),
+					'timestamp'        => microtime( true ),
 					'enrolment_status' => $enrolment_status,
 				]
 			);
@@ -214,10 +218,10 @@ class Sensei_Enrolment_Provider_Journal implements JsonSerializable {
 	 * @return bool True if there was a deletion, false otherwise.
 	 */
 	public function delete_enrolment_status() {
-		if ( ! empty( $this->history ) ) {
+		if ( ! empty( $this->history ) && null !== $this->history[0]['enrolment_status'] ) {
 			$this->add_status(
 				[
-					'timestamp'        => time(),
+					'timestamp'        => microtime( true ),
 					'enrolment_status' => null,
 				]
 			);

@@ -123,6 +123,17 @@ class Sensei_Enrolment_Provider_Journal_Store implements JsonSerializable {
 	 * @return bool
 	 */
 	public function save() {
+		/**
+		 * Enables journal storage for sensei.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param bool $enable_journal True to enable.
+		 */
+		if ( ! apply_filters( 'sensei_enable_journal', false ) ) {
+			return false;
+		}
+
 		if ( ! $this->has_changed ) {
 			return true;
 		}
@@ -199,12 +210,12 @@ class Sensei_Enrolment_Provider_Journal_Store implements JsonSerializable {
 	 *
 	 * @param int $user_id     The user to return the snapshot for.
 	 * @param int $course_id   The course to return the snapshot for.
-	 * @param int $timestamp   The timestamp of the snapshot. If omitted the current snapshot is returned.
+	 * @param int $timestamp   The timestamp of the snapshot in microseconds. If omitted the current snapshot is returned.
 	 *
 	 * @return array
 	 */
 	public static function get_enrolment_snanpshot( $user_id, $course_id, $timestamp = null ) {
-		$timestamp     = null === $timestamp ? time() : $timestamp;
+		$timestamp     = null === $timestamp ? microtime( true ) : $timestamp;
 		$journal_store = self::get( $user_id, $course_id );
 
 		$snapshot = [];
@@ -251,6 +262,7 @@ class Sensei_Enrolment_Provider_Journal_Store implements JsonSerializable {
 		}
 
 		$journal_store->providers_journal[ $provider_id ]->add_log_message( $message );
+		$journal_store->has_changed = true;
 	}
 
 	/**
