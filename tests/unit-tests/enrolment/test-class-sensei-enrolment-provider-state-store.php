@@ -34,15 +34,12 @@ class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 	 * Tests to make sure instances are preserved.
 	 */
 	public function testGetCachesCorrectly() {
-		$instance_a_1 = Sensei_Enrolment_Provider_State_Store::get( 1, 1 );
-		$instance_a_2 = Sensei_Enrolment_Provider_State_Store::get( 1, 1 );
-		$instance_b_1 = Sensei_Enrolment_Provider_State_Store::get( 1, 2 );
-		$instance_c_1 = Sensei_Enrolment_Provider_State_Store::get( 2, 1 );
+		$instance_a_1 = Sensei_Enrolment_Provider_State_Store::get( 1 );
+		$instance_a_2 = Sensei_Enrolment_Provider_State_Store::get( 1 );
+		$instance_b_1 = Sensei_Enrolment_Provider_State_Store::get( 2 );
 
-		$this->assertEquals( $instance_a_1, $instance_a_2, 'Instances with same user and course IDs should be exact match' );
+		$this->assertEquals( $instance_a_1, $instance_a_2, 'Instances with same user should be exact match' );
 		$this->assertNotEquals( $instance_a_1, $instance_b_1, 'Instances with different user IDs should be different' );
-		$this->assertNotEquals( $instance_a_1, $instance_c_1, 'Instances with different course IDs should be different' );
-		$this->assertNotEquals( $instance_b_1, $instance_c_1, 'Instances with different course and user IDs should be different' );
 	}
 
 	/**
@@ -56,13 +53,11 @@ class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 		$never_provides_provider  = new Sensei_Test_Enrolment_Provider_Never_Provides();
 
 		$data = [
-			$always_provides_provider->get_id() => [
-				'd' => [
+			1 => [
+				$always_provides_provider->get_id() => [
 					'test' => true,
 				],
-			],
-			$never_provides_provider->get_id()  => [
-				'd' => [],
+				$never_provides_provider->get_id()  => [],
 			],
 		];
 
@@ -71,7 +66,7 @@ class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 
 		$this->assertTrue( $state_store instanceof Sensei_Enrolment_Provider_State_Store, 'JSON should have resulted in a valid state store' );
 
-		$always_provides_state = $state_store->get_provider_state( $always_provides_provider );
+		$always_provides_state = $state_store->get_provider_state( $always_provides_provider, 1 );
 		$this->assertTrue( $always_provides_state->get_stored_value( 'test' ), 'Provider state should have been initialized with a stored value test as true' );
 	}
 
@@ -86,13 +81,19 @@ class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 		$never_provides_provider  = new Sensei_Test_Enrolment_Provider_Never_Provides();
 
 		$data = [
-			$always_provides_provider->get_id() => [
-				'd' => [
+			1 => [
+				$always_provides_provider->get_id() => [
 					'test' => true,
 				],
+				$never_provides_provider->get_id()  => [],
 			],
-			$never_provides_provider->get_id()  => [
-				'd' => [],
+		];
+
+		$expected_data = [
+			1 => [
+				$always_provides_provider->get_id() => [
+					'test' => true,
+				],
 			],
 		];
 
@@ -100,7 +101,9 @@ class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 		$state_store      = $this->getStateStoreFromJSON( $data_json );
 		$state_store_json = \wp_json_encode( $state_store );
 
-		$this->assertEquals( $data_json, $state_store_json, 'Serialized state store should equal the initial state' );
+		$expected_data_json = \wp_json_encode( $expected_data );
+
+		$this->assertEquals( $expected_data_json, $state_store_json, 'Serialized state store should equal the initial state' );
 	}
 
 	/**
@@ -112,8 +115,8 @@ class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 	 */
 	public function testHasChangedStates() {
 		$always_provides_provider = new Sensei_Test_Enrolment_Provider_Always_Provides();
-		$state_store              = Sensei_Enrolment_Provider_State_Store::get( 0, 0 );
-		$provider_state           = $state_store->get_provider_state( $always_provides_provider );
+		$state_store              = Sensei_Enrolment_Provider_State_Store::get( 0 );
+		$provider_state           = $state_store->get_provider_state( $always_provides_provider, 0 );
 
 		// Note that we only count new providers as a change after something changes within them.
 		$this->assertFalse( $state_store->get_has_changed(), 'Nothing has changed in the provider state store yet' );
@@ -147,8 +150,8 @@ class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 	public function testPersistStateSetsWhenChange() {
 		$course_id     = $this->getSimpleCourse();
 		$student_id    = $this->createStandardStudent();
-		$persisted_set = '{"always-provides":{"d":{"test":1234}}}';
-		update_user_meta( $student_id, Sensei_Enrolment_Provider_State_Store::META_PREFIX_ENROLMENT_PROVIDERS_STATE . $course_id, $persisted_set );
+		$persisted_set = '{"' . $course_id . '":{"always-provides":{"test":1234}}}';
+		update_user_meta( $student_id, Sensei_Enrolment_Provider_State_Store::META_ENROLMENT_PROVIDERS_STATE, $persisted_set );
 
 		$provider_class = Sensei_Test_Enrolment_Provider_Always_Provides::class;
 		$this->addEnrolmentProvider( $provider_class );
@@ -158,11 +161,13 @@ class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 		$provider          = $enrolment_manager->get_enrolment_provider_by_id( $provider_class::ID );
 		$course_enrolment  = Sensei_Course_Enrolment::get_course_instance( $course_id );
 		$provider_state    = $course_enrolment->get_provider_state( $provider, $student_id );
+
+		$this->assertEquals( 1234, $provider_state->get_stored_value( 'test' ) );
 		$provider_state->set_stored_value( 'test', 54321 );
 		$provider_state->save();
 
-		$expected_persisted_set = '{"always-provides":{"d":{"test":54321}}}';
-		$persisted_set          = get_user_meta( $student_id, Sensei_Enrolment_Provider_State_Store::META_PREFIX_ENROLMENT_PROVIDERS_STATE . $course_id, true );
+		$expected_persisted_set = '{"' . $course_id . '":{"always-provides":{"test":54321}}}';
+		$persisted_set          = get_user_meta( $student_id, Sensei_Enrolment_Provider_State_Store::META_ENROLMENT_PROVIDERS_STATE, true );
 		$this->assertEquals( $expected_persisted_set, $persisted_set, 'The changed stored value should have been persisted' );
 	}
 
@@ -172,8 +177,8 @@ class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 	public function testMpPersistStateSetsWhenMpChange() {
 		$course_id     = $this->getSimpleCourse();
 		$student_id    = $this->createStandardStudent();
-		$persisted_set = '{"always-provides":{"d":{"test":1234}}}';
-		update_user_meta( $student_id, Sensei_Enrolment_Provider_State_Store::META_PREFIX_ENROLMENT_PROVIDERS_STATE . $course_id, $persisted_set );
+		$persisted_set = '{"' . $course_id . '":{"always-provides":{"test":1234}}}';
+		update_user_meta( $student_id, Sensei_Enrolment_Provider_State_Store::META_ENROLMENT_PROVIDERS_STATE, $persisted_set );
 
 		$provider_class = Sensei_Test_Enrolment_Provider_Always_Provides::class;
 		$this->addEnrolmentProvider( $provider_class );
@@ -185,7 +190,7 @@ class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 		$provider_state    = $course_enrolment->get_provider_state( $provider, $student_id );
 
 		// Background remove user meta.
-		delete_user_meta( $student_id, Sensei_Enrolment_Provider_State_Store::META_PREFIX_ENROLMENT_PROVIDERS_STATE . $course_id );
+		delete_user_meta( $student_id, Sensei_Enrolment_Provider_State_Store::META_ENROLMENT_PROVIDERS_STATE );
 
 		// This isn't a change in the stored value.
 		$provider_state->set_stored_value( 'test', 1234 );
@@ -193,7 +198,7 @@ class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 		$provider_state->save();
 
 		$expected_persisted_set = null;
-		$persisted_set          = get_user_meta( $student_id, Sensei_Enrolment_Provider_State_Store::META_PREFIX_ENROLMENT_PROVIDERS_STATE . $course_id, true );
+		$persisted_set          = get_user_meta( $student_id, Sensei_Enrolment_Provider_State_Store::META_ENROLMENT_PROVIDERS_STATE, true );
 		$this->assertEquals( $expected_persisted_set, $persisted_set, 'The state stores should NOT have been persisted without a change' );
 	}
 

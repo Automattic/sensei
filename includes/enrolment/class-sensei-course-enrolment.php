@@ -356,7 +356,7 @@ class Sensei_Course_Enrolment {
 	 * @throws Exception When learner term could not be created.
 	 */
 	public function get_provider_state( Sensei_Course_Enrolment_Provider_Interface $provider, $user_id ) {
-		return Sensei_Enrolment_Provider_State_Store::get( $user_id, $this->course_id )->get_provider_state( $provider );
+		return Sensei_Enrolment_Provider_State_Store::get( $user_id )->get_provider_state( $provider, $this->course_id );
 	}
 
 	/**

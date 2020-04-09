@@ -29,41 +29,27 @@ class Sensei_Enrolment_Provider_State_Test extends WP_UnitTestCase {
 	 * Tests to make sure arrays of serialized data return an instantiated object.
 	 */
 	public function testFromSerializedArray() {
-		$state_store = Sensei_Enrolment_Provider_State_Store::get( 0, 0 );
+		$state_store = Sensei_Enrolment_Provider_State_Store::get( 0 );
 		$test_array  = [
-			'd' => [
-				'test' => 'Dinosaurs!',
-			],
+			'test' => 'Dinosaurs!',
 		];
 
-		$result = Sensei_Enrolment_Provider_State::from_serialized_array( $state_store, $test_array );
+		$result = Sensei_Enrolment_Provider_State::from_array( $state_store, $test_array );
 
 		$this->assertTrue( $result instanceof Sensei_Enrolment_Provider_State, 'Serialized data should have returned a instantiated object' );
-		$this->assertEquals( $test_array['d']['test'], $result->get_stored_value( 'test' ) );
-	}
-
-	/**
-	 * Tests to make sure invalid JSON strings return false.
-	 */
-	public function testFromSerializedEmptyArrayFails() {
-		$state_store = Sensei_Enrolment_Provider_State_Store::get( 0, 0 );
-		$result      = Sensei_Enrolment_Provider_State::from_serialized_array( $state_store, [] );
-
-		$this->assertFalse( $result, 'Invalid serialized array should have returned false' );
+		$this->assertEquals( $test_array['test'], $result->get_stored_value( 'test' ) );
 	}
 
 	/**
 	 * Tests to make sure the object is JSON serialized properly.
 	 */
 	public function testJsonSerializeValid() {
-		$state_store = Sensei_Enrolment_Provider_State_Store::get( 0, 0 );
+		$state_store = Sensei_Enrolment_Provider_State_Store::get( 0 );
 		$test_array  = [
-			'd' => [
-				'test' => 'Dinosaurs!',
-			],
+			'test' => 'Dinosaurs!',
 		];
 
-		$state = Sensei_Enrolment_Provider_State::from_serialized_array( $state_store, $test_array );
+		$state = Sensei_Enrolment_Provider_State::from_array( $state_store, $test_array );
 
 		$this->assertEquals( \wp_json_encode( $test_array ), \wp_json_encode( $state ) );
 	}
@@ -72,28 +58,23 @@ class Sensei_Enrolment_Provider_State_Test extends WP_UnitTestCase {
 	 * Test to make sure we can get a stored data value that has been set.
 	 */
 	public function testGetStoredValueThatHasBeenSet() {
-		$state_store = Sensei_Enrolment_Provider_State_Store::get( 0, 0 );
+		$state_store = Sensei_Enrolment_Provider_State_Store::get( 0 );
 		$test_array  = [
-			'd' => [
-				'test' => 'value',
-			],
+			'test' => 'value',
 		];
 
-		$state = Sensei_Enrolment_Provider_State::from_serialized_array( $state_store, $test_array );
+		$state = Sensei_Enrolment_Provider_State::from_array( $state_store, $test_array );
 
-		$this->assertEquals( $test_array['d']['test'], $state->get_stored_value( 'test' ) );
+		$this->assertEquals( $test_array['test'], $state->get_stored_value( 'test' ) );
 	}
 
 	/**
 	 * Test to make sure data values that have not been set return as null.
 	 */
 	public function testGetStoredValueThatHasNotBeenSet() {
-		$state_store = Sensei_Enrolment_Provider_State_Store::get( 0, 0 );
-		$test_object = [
-			'd' => [],
-		];
-		$test_string = \wp_json_encode( $test_object );
-		$state       = Sensei_Enrolment_Provider_State::from_serialized_array( $state_store, $test_string );
+		$state_store = Sensei_Enrolment_Provider_State_Store::get( 0 );
+		$test_object = [];
+		$state       = Sensei_Enrolment_Provider_State::from_array( $state_store, $test_object );
 
 		$this->assertEquals( null, $state->get_stored_value( 'test' ) );
 	}
@@ -102,7 +83,7 @@ class Sensei_Enrolment_Provider_State_Test extends WP_UnitTestCase {
 	 * Tests to ensure the enrolment status can be set.
 	 */
 	public function testSetDataValue() {
-		$state_store = Sensei_Enrolment_Provider_State_Store::get( 0, 0 );
+		$state_store = Sensei_Enrolment_Provider_State_Store::get( 0 );
 		$state       = Sensei_Enrolment_Provider_State::create( $state_store );
 
 		$state->set_stored_value( 'test', true );
@@ -110,19 +91,17 @@ class Sensei_Enrolment_Provider_State_Test extends WP_UnitTestCase {
 		$this->assertTrue( $state->get_stored_value( 'test' ) );
 
 		$json_string = \wp_json_encode( $state );
-		$this->assertEquals( '{"d":{"test":true}}', $json_string, 'The set data value should persist when serializing the object' );
+		$this->assertEquals( '{"test":true}', $json_string, 'The set data value should persist when serializing the object' );
 	}
 
 	/**
 	 * Tests to ensure the enrolment status can be cleared.
 	 */
 	public function testClearStoredValue() {
-		$state_store   = Sensei_Enrolment_Provider_State_Store::get( 0, 0 );
-		$initial_state = [
-			'd' => [],
-		];
+		$state_store   = Sensei_Enrolment_Provider_State_Store::get( 0 );
+		$initial_state = [];
 
-		$state = Sensei_Enrolment_Provider_State::from_serialized_array( $state_store, $initial_state );
+		$state = Sensei_Enrolment_Provider_State::from_array( $state_store, $initial_state );
 		$state->set_stored_value( 'test', true );
 
 		$this->assertTrue( $state->get_stored_value( 'test' ) );

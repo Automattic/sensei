@@ -387,8 +387,8 @@ class Sensei_Course_Enrolment_Test extends WP_UnitTestCase {
 	public function testGetProviderStateSaved() {
 		$course_id     = $this->getSimpleCourse();
 		$student_id    = $this->createStandardStudent();
-		$persisted_set = '{"always-provides":{"d":{"test":1234}}}';
-		update_user_meta( $student_id, Sensei_Enrolment_Provider_State_Store::META_PREFIX_ENROLMENT_PROVIDERS_STATE . $course_id, $persisted_set );
+		$persisted_set = '{"' . $course_id . '":{"always-provides":{"test":1234}}}';
+		update_user_meta( $student_id, Sensei_Enrolment_Provider_State_Store::META_ENROLMENT_PROVIDERS_STATE, $persisted_set );
 
 		$provider_class = Sensei_Test_Enrolment_Provider_Always_Provides::class;
 		$this->addEnrolmentProvider( $provider_class );
