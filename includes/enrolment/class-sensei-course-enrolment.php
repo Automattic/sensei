@@ -332,8 +332,7 @@ class Sensei_Course_Enrolment {
 	 * @param Sensei_Course_Enrolment_Provider_Results $enrolment_results Enrolment results object.
 	 */
 	private function store_enrolment_results( $user_id, Sensei_Course_Enrolment_Provider_Results $enrolment_results ) {
-		$results_meta_key =  $this->get_enrolment_results_meta_key();
-
+		$results_meta_key   = $this->get_enrolment_results_meta_key();
 		$store_results      = true;
 		$had_existing_value = ! empty( get_user_meta( $user_id, $results_meta_key, true ) );
 
