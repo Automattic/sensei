@@ -333,17 +333,10 @@ class Sensei_Course_Enrolment {
 	 */
 	private function store_enrolment_results( $user_id, Sensei_Course_Enrolment_Provider_Results $enrolment_results ) {
 		$results_meta_key   = $this->get_enrolment_results_meta_key();
-		$store_results      = true;
 		$had_existing_value = ! empty( get_user_meta( $user_id, $results_meta_key, true ) );
 
-		if (
-			! self::$store_negative_enrolment_results
-			&& ! $had_existing_value
-			&& ! $enrolment_results->is_enrolment_provided()
-		) {
-			// We're probably in a background request and we haven't already stored results.
-			$store_results = false;
-		}
+		// We're probably in a background request and we haven't already stored results.
+		$store_results = self::$store_negative_enrolment_results || $had_existing_value || $enrolment_results->is_enrolment_provided();
 
 		/**
 		 * Filter on whether course enrolment results should be stored.
