@@ -82,11 +82,9 @@ add_filter( 'the_content', array( 'Sensei_Course', 'single_course_content' ) );
 add_action( 'sensei_single_course_content_inside_after', array( 'Sensei_Course', 'the_course_lessons_title' ), 9 );
 
 // @since 1.9.0
-// hooks in the course lessons query and remove it at the end
-// also loading the course lessons template in the middle
-add_action( 'sensei_single_course_lessons_before', array( 'Sensei_Course', 'load_single_course_lessons_query' ) );
+// @since 3.0.0 Use secondary query to loop the lessons.
+// Load the course lessons template
 add_action( 'sensei_single_course_content_inside_after', 'course_single_lessons', 10 );
-add_action( 'sensei_single_course_lessons_after', array( 'Sensei_Utils', 'restore_wp_query' ) );
 
 // @since 1.9.0
 // add post classes to the lessons on the single course page

@@ -22,7 +22,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 		/**
 		 * Actions just before the sensei single course lessons loop begins
 		 *
-		 * @hooked Sensei_Course::load_single_course_lessons_query
 		 * @since 1.9.0
 		 */
 		do_action( 'sensei_single_course_lessons_before' );
@@ -32,11 +31,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<?php
 
 	// lessons loaded into loop in the sensei_single_course_lessons_before hook
-	if ( have_posts() ) :
+	if ( $query->have_posts() ) :
 
 		// start course lessons loop
-		while ( have_posts() ) :
-			the_post();
+		while ( $query->have_posts() ) :
+			$query->the_post();
 			?>
 
 			<article <?php post_class(); ?> >
@@ -91,8 +90,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 		/**
 		 * Actions just before the sensei single course lessons loop begins
-		 *
-		 * @hooked Sensei_Course::reset_single_course_query
 		 *
 		 * @since 1.9.0
 		 */

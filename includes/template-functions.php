@@ -26,7 +26,9 @@ function course_single_lessons() {
 
 	}
 
-	Sensei_Templates::get_template( 'single-course/lessons.php' );
+	$lessons_query = Sensei_Course::get_single_course_lessons_query();
+	Sensei_Templates::get_template( 'single-course/lessons.php', [ 'query' => $lessons_query ] );
+	wp_reset_postdata();
 
 } // End course_single_lessons()
 

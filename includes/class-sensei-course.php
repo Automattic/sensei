@@ -2842,17 +2842,19 @@ class Sensei_Course {
 	}//end the_course_lessons_title()
 
 	/**
-	 * This function loads the global wp_query object with with lessons
-	 * of the current course. It is designed to be used on the single-course template
+	 * Get a wp_query object with with lessons of the current course.
+	 * It is designed to be used on the single-course template
 	 * and expects the global post to be a singular course.
 	 *
 	 * This function excludes lessons belonging to modules as they are
 	 * queried separately.
 	 *
 	 * @since 1.9.0
-	 * @global $wp_query
+	 * @since 3.0.0 Returns the WP_Query object.
+	 *
+	 * @return $wp_query
 	 */
-	public static function load_single_course_lessons_query() {
+	public static function get_single_course_lessons_query() {
 
 		global $post, $wp_query;
 
@@ -2919,10 +2921,8 @@ class Sensei_Course {
 
 		}
 
-		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Used for lesson loop on single course page. Reset in hook to `sensei_single_course_lessons_after`.
-		$wp_query = new WP_Query( $course_lesson_query_args );
-
-	}//end load_single_course_lessons_query()
+		return new WP_Query( $course_lesson_query_args );
+	}//end get_single_course_lessons_query()
 
 	/**
 	 * Flush the rewrite rules.
