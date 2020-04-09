@@ -3862,7 +3862,7 @@ class Sensei_Lesson {
 				<?php
 
 				$meta_html          = '';
-				$user_lesson_status = Sensei_Utils::user_lesson_status( get_the_ID(), get_current_user_id() );
+				$user_lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, get_current_user_id() );
 
 				$lesson_length = get_post_meta( $lesson_id, '_lesson_length', true );
 				if ( '' != $lesson_length ) {
