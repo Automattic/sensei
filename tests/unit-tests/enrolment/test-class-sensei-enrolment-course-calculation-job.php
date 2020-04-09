@@ -96,15 +96,22 @@ class Sensei_Enrolment_Course_Calculation_Job_Test extends WP_UnitTestCase {
 		);
 		$job->start();
 
-		$user_ids = $this->factory()->user->create_many( 3 );
+		$enrolled_user_ids = $this->createAndEnrolUsers( $course_id, 3 );
+		$other_user_ids    = $this->factory()->user->create_many( 1 );
+
 		$this->invalidateAllCourseResults( $course_enrolment );
 
 		$job->run();
 		$this->assertTrue( $job->is_complete(), 'Job should be complete after first run.' );
 
-		foreach ( $user_ids as $user_id ) {
+		foreach ( $enrolled_user_ids as $user_id ) {
 			$results = $course_enrolment->get_enrolment_check_results( $user_id );
-			$this->assertNotFalse( $results, 'Results should have been calculated' );
+			$this->assertNotFalse( $results, 'Results should have been calculated and stored' );
+		}
+
+		foreach ( $other_user_ids as $user_id ) {
+			$results = $course_enrolment->get_enrolment_check_results( $user_id );
+			$this->assertFalse( $results, 'Results should have not been stored' );
 		}
 	}
 
