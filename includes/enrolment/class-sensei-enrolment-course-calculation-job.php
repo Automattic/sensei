@@ -65,8 +65,6 @@ class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Background_Job_I
 		$this->course_id        = isset( $args['course_id'] ) ? intval( $args['course_id'] ) : null;
 		$this->invalidated_only = isset( $args['invalidated_only'] ) ? boolval( $args['invalidated_only'] ) : false;
 
-		$batch_size = isset( $args['batch_size'] ) ? intval( $args['batch_size'] ) : self::DEFAULT_BATCH_SIZE;
-
 		/**
 		 * Filter the batch size for the number of users to query per run in the course calculation job.
 		 *
@@ -76,7 +74,7 @@ class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Background_Job_I
 		 * @param int  $course_id        Course ID we're running.
 		 * @param bool $invalidated_only Whether this is just a job for invalidated course results only.
 		 */
-		$this->batch_size = apply_filters( 'sensei_enrolment_course_calculation_job_batch_size', $batch_size, $this->course_id, $this->invalidated_only );
+		$this->batch_size = apply_filters( 'sensei_enrolment_course_calculation_job_batch_size', self::DEFAULT_BATCH_SIZE, $this->course_id, $this->invalidated_only );
 	}
 
 	/**
