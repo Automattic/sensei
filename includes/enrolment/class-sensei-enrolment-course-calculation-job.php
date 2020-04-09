@@ -219,7 +219,7 @@ class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Background_Job_I
 	private function get_last_user_id_option_name() {
 		$job_id = $this->get_job_id();
 
-		if ( false === $job_id ) {
+		if ( ! $job_id ) {
 			return false;
 		}
 
