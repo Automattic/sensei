@@ -2360,11 +2360,13 @@ class Sensei_Utils {
 	 * Restore the global WP_Query
 	 *
 	 * @since 1.9.0
+	 *
+	 * @deprecated 3.0.0 Use the `wp_reset_query` instead.
 	 */
 	public static function restore_wp_query() {
+		_deprecated_function( __METHOD__, '3.0.0', 'wp_reset_query' );
 
 		wp_reset_query();
-
 	}
 
 	/**
