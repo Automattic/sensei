@@ -30,12 +30,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 	<?php
 
+	// phpcs:disable VariableAnalysis.CodeAnalysis.VariableAnalysis.UndefinedVariable -- The template receives the $query variable from args.
+
 	// lessons loaded into loop in the sensei_single_course_lessons_before hook
 	if ( $query->have_posts() ) :
 
 		// start course lessons loop
 		while ( $query->have_posts() ) :
 			$query->the_post();
+			// phpcs:enable
 			?>
 
 			<article <?php post_class(); ?> >
