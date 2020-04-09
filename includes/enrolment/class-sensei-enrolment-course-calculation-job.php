@@ -264,6 +264,7 @@ class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Background_Job_I
 	public function get_current_job_id() {
 		global $wpdb;
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Avoiding cache issues with multiple jobs running.
 		$row = $wpdb->get_row( $wpdb->prepare( "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s LIMIT 1", $this->get_current_job_option_name() ) );
 
 		if ( is_object( $row ) && ! empty( $row->option_value ) ) {
