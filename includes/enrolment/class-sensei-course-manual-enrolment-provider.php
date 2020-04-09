@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Course_Manual_Enrolment_Provider
 	extends Sensei_Course_Enrolment_Stored_Status_Provider
 	implements Sensei_Course_Enrolment_Provider_Interface, Sensei_Course_Enrolment_Provider_Debug_Interface {
-	const DATA_KEY_LEGACY_MIGRATION = 'legacy_log';
+	const DATA_KEY_LEGACY_MIGRATION = 'legacy_manual';
 
 	/**
 	 * Singleton instance.
@@ -140,14 +140,12 @@ class Sensei_Course_Manual_Enrolment_Provider
 	private function get_legacy_enrolment( $user_id, $course_id ) {
 		$course_progress_comment_id = Sensei_Utils::get_course_progress_comment_id( $course_id, $user_id );
 
-		$migration_log      = [];
-		$is_legacy_enrolled = ! empty( $course_progress_comment_id );
-
-		$migration_log['had_progress'] = $is_legacy_enrolled;
-
 		/**
 		 * Allows other providers to have an opinion about whether or not a user was enrolled pre-3.0.0.
 		 * This should only be called once per user/course just after upgrading from a pre-3.0.0 version of Sensei.
+		 *
+		 * Note: This will only allow manual enrolment to not be given. It won't be called for learners with course
+		 * progress.
 		 *
 		 * @since 3.0.0
 		 *
@@ -156,11 +154,8 @@ class Sensei_Course_Manual_Enrolment_Provider
 		 * @param int       $course_id                   Course post ID.
 		 * @param int|false $course_progress_comment_id  Comment ID for the course progress record (if it exists).
 		 */
-		$is_legacy_enrolled = apply_filters( 'sensei_is_legacy_enrolled', $is_legacy_enrolled, $user_id, $course_id, $course_progress_comment_id );
-
-		$migration_log['is_enrolled'] = $is_legacy_enrolled;
-
-		$this->set_migrated_legacy_enrolment_status( $user_id, $course_id, $migration_log );
+		$is_legacy_enrolled = apply_filters( 'sensei_is_legacy_enrolled', true, $user_id, $course_id, $course_progress_comment_id );
+		$this->set_migrated_legacy_enrolment_status( $user_id, $course_id, $is_legacy_enrolled );
 
 		return $is_legacy_enrolled;
 	}
@@ -178,6 +173,12 @@ class Sensei_Course_Manual_Enrolment_Provider
 			return false;
 		}
 
+		// We only migrate people who had course progress.
+		$course_progress_comment_id = Sensei_Utils::get_course_progress_comment_id( $course_id, $user_id );
+		if ( ! $course_progress_comment_id ) {
+			return false;
+		}
+
 		return ! $this->has_migrated_legacy_enrolment( $user_id, $course_id );
 	}
 
@@ -190,25 +191,25 @@ class Sensei_Course_Manual_Enrolment_Provider
 	 * @return bool
 	 */
 	private function has_migrated_legacy_enrolment( $user_id, $course_id ) {
-		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
-		$provider_state   = $course_enrolment->get_provider_state( $this, $user_id );
-		$migration_log    = $provider_state->get_stored_value( self::DATA_KEY_LEGACY_MIGRATION );
+		$course_enrolment    = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$provider_state      = $course_enrolment->get_provider_state( $this, $user_id );
+		$legacy_manual_value = $provider_state->get_stored_value( self::DATA_KEY_LEGACY_MIGRATION );
 
-		return ! empty( $migration_log );
+		return null !== $legacy_manual_value;
 	}
 
 	/**
 	 * Update legacy migration status.
 	 *
-	 * @param int   $user_id       User ID.
-	 * @param int   $course_id     Course post ID.
-	 * @param array $migration_log Log of the migration.
+	 * @param int  $user_id                 User ID.
+	 * @param int  $course_id               Course post ID.
+	 * @param bool $legacy_enrolment_status Value of legacy enrolment status.
 	 */
-	private function set_migrated_legacy_enrolment_status( $user_id, $course_id, $migration_log ) {
+	private function set_migrated_legacy_enrolment_status( $user_id, $course_id, $legacy_enrolment_status ) {
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 		$provider_state   = $course_enrolment->get_provider_state( $this, $user_id );
 
-		$provider_state->set_stored_value( self::DATA_KEY_LEGACY_MIGRATION, $migration_log );
+		$provider_state->set_stored_value( self::DATA_KEY_LEGACY_MIGRATION, $legacy_enrolment_status );
 		$provider_state->save();
 	}
 
@@ -223,19 +224,20 @@ class Sensei_Course_Manual_Enrolment_Provider
 	public function debug( $user_id, $course_id ) {
 		$messages = [];
 
-		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
-		$provider_state   = $course_enrolment->get_provider_state( $this, $user_id );
-		$migration_log    = $provider_state->get_stored_value( self::DATA_KEY_LEGACY_MIGRATION );
-		if ( empty( $migration_log ) ) {
-			$messages[] = __( 'Learner manual enrollment <strong>was not migrated</strong> from a legacy version of Sensei LMS.', 'sensei-lms' );
-		} else {
-			if ( empty( $migration_log['had_progress'] ) ) {
-				$messages[] = __( 'Learner <strong>did not have</strong> course progress at the time of manual enrollment migration.', 'sensei-lms' );
-			} else {
-				$messages[] = __( 'Learner <strong>did have</strong> course progress at the time of manual enrollment migration.', 'sensei-lms' );
-			}
+		$course_enrolment        = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$provider_state          = $course_enrolment->get_provider_state( $this, $user_id );
+		$legacy_migration_status = $provider_state->get_stored_value( self::DATA_KEY_LEGACY_MIGRATION );
 
-			if ( empty( $migration_log['is_enrolled'] ) ) {
+		if ( null === $legacy_migration_status ) {
+			$messages[] = __( 'Learner manual enrollment <strong>was not migrated</strong> from a legacy version of Sensei LMS.', 'sensei-lms' );
+
+			if ( false !== get_option( 'sensei_enrolment_legacy' ) ) {
+				$messages[] = __( 'Learner <strong>did not have</strong> course progress at the time of manual enrollment migration.', 'sensei-lms' );
+			}
+		} else {
+			$messages[] = __( 'Learner <strong>did have</strong> course progress at the time of manual enrollment migration.', 'sensei-lms' );
+
+			if ( false === $legacy_migration_status ) {
 				$messages[] = __( 'Manual enrollment <strong>was not provided</strong> to the learner on legacy migration.', 'sensei-lms' );
 			} else {
 				$messages[] = __( 'Manual enrollment <strong>was provided</strong> to the learner on legacy migration.', 'sensei-lms' );
