@@ -90,9 +90,11 @@ class Sensei_Enrolment_Learner_Calculation_Job implements Sensei_Background_Job_
 			return;
 		}
 
+		Sensei_Course_Enrolment::set_store_negative_enrolment_results( false );
 		foreach ( $users as $user ) {
 			Sensei_Course_Enrolment_Manager::instance()->recalculate_enrolments( $user );
 		}
+		Sensei_Course_Enrolment::set_store_negative_enrolment_results( true );
 	}
 
 	/**
