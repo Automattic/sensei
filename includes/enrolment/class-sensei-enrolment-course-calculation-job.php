@@ -208,7 +208,9 @@ class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Background_Job_I
 	 * @return string
 	 */
 	private function get_current_job_option_name() {
-		return self::OPTION_TRACK_CURRENT_JOB_PREFIX . $this->course_id . '_' . $this->invalidated_only ? 1 : 0;
+		$invalidated_suffix = $this->invalidated_only ? 1 : 0;
+
+		return self::OPTION_TRACK_CURRENT_JOB_PREFIX . $this->course_id . '_' . $invalidated_suffix;
 	}
 
 	/**
@@ -289,7 +291,7 @@ class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Background_Job_I
 	public function start() {
 		$this->job_id = md5( uniqid() );
 
-		update_option( $this->get_current_job_option_name(), $this->job_id );
+		update_option( $this->get_current_job_option_name(), $this->job_id, false );
 
 		$this->set_last_user_id( 0 );
 	}
