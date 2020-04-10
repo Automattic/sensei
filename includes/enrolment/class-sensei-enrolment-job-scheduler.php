@@ -58,23 +58,42 @@ class Sensei_Enrolment_Job_Scheduler {
 	/**
 	 * Start a job to recalculate enrolments for a course.
 	 *
-	 * @param int  $course_id        Course post ID.
-	 * @param bool $invalidated_only Recalculate just the results that have been invalidated (set to an empty string).
-	 * @param int  $batch_size       Batch size for the job. Null will use default batch size set by job handler.
+	 * @param int $course_id Course post ID.
 	 *
 	 * @return Sensei_Enrolment_Course_Calculation_Job Job object.
 	 */
-	public function start_course_calculation_job( $course_id, $invalidated_only, $batch_size = null ) {
+	public function start_course_calculation_job( $course_id ) {
 		$args = [
-			'course_id'        => $course_id,
-			'invalidated_only' => $invalidated_only,
-			'batch_size'       => $batch_size,
+			'course_id' => $course_id,
 		];
 
+		// Make sure any previous job for this course is stopped.
+		$this->cancel_course_calculation_job( $course_id );
+
 		$job = new Sensei_Enrolment_Course_Calculation_Job( $args );
+		$job->setup();
+
 		Sensei_Scheduler::instance()->schedule_job( $job );
 
 		return $job;
+	}
+
+	/**
+	 * Cancel any current course calculation job.
+	 *
+	 * @param int $course_id Course post ID.
+	 */
+	private function cancel_course_calculation_job( $course_id ) {
+		$args = [
+			'course_id' => $course_id,
+		];
+		$job  = new Sensei_Enrolment_Course_Calculation_Job( $args );
+
+		// If we are able to resume a current job, cancel it.
+		if ( $job->resume() ) {
+			$job->end();
+			Sensei_Scheduler::instance()->cancel_scheduled_job( $job );
+		}
 	}
 
 	/**

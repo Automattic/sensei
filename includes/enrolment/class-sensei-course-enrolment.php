@@ -150,24 +150,13 @@ class Sensei_Course_Enrolment {
 	/**
 	 * Marks all enrolment results as invalid for a course and enqueues an async job to recalculate.
 	 *
-	 * @param bool $enrolled_learners_only
-	 *
 	 * @return Sensei_Enrolment_Course_Calculation_Job
 	 */
-	public function recalculate_enrolment( $enrolled_learners_only ) {
-		$invalidated_only = false;
-
-		// If we just invalidated current learners, we only have to recalculate for those invalidated results.
-		if ( $enrolled_learners_only ) {
-			$invalidated_only = true;
-			$this->invalidate_enrolled_learner_results();
-		} else {
-			$this->invalidate_all_learner_results();
-		}
-
+	public function recalculate_enrolment() {
+		$this->invalidate_all_learner_results();
 		$job_scheduler = Sensei_Enrolment_Job_Scheduler::instance();
 
-		return $job_scheduler->start_course_calculation_job( $this->course_id, $invalidated_only );
+		return $job_scheduler->start_course_calculation_job( $this->course_id );
 	}
 
 	/**
@@ -180,16 +169,6 @@ class Sensei_Course_Enrolment {
 	 */
 	public function invalidate_learner_result( $user_id ) {
 		update_user_meta( $user_id, $this->get_enrolment_results_meta_key(), '' );
-	}
-
-	/**
-	 * Bulk invalidate all learner results for enrolled users in a course.
-	 */
-	private function invalidate_enrolled_learner_results() {
-		$enrolled_user_ids = $this->get_enrolled_user_ids();
-		foreach ( $enrolled_user_ids as $user_id ) {
-			$this->invalidate_learner_result( $user_id );
-		}
 	}
 
 	/**
