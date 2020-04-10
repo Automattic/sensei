@@ -41,7 +41,7 @@ class Sensei_Enrolment_Provider_Journal_Store_Test extends WP_UnitTestCase {
 		$user     = $this->factory->user->create();
 		$provider = new Sensei_Test_Enrolment_Provider_Always_Provides();
 
-		Sensei_Enrolment_Provider_Journal_Store::add_provider_log_message( $user, $course, $provider->get_id(), 'Test message' );
+		Sensei_Enrolment_Provider_Journal_Store::add_provider_log_message( $provider, $user, $course, 'Test message' );
 		Sensei_Enrolment_Provider_Journal_Store::persist_all();
 
 		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::META_PREFIX_ENROLMENT_PROVIDERS_JOURNAL . $course );
@@ -63,14 +63,14 @@ class Sensei_Enrolment_Provider_Journal_Store_Test extends WP_UnitTestCase {
 		$provider = new Sensei_Test_Enrolment_Provider_Always_Provides();
 		$this->enableJournal();
 
-		Sensei_Enrolment_Provider_Journal_Store::add_provider_log_message( $user, $course, $provider->get_id(), 'First message' );
-		Sensei_Enrolment_Provider_Journal_Store::add_provider_log_message( $user, $course, $provider->get_id(), 'Second message' );
+		Sensei_Enrolment_Provider_Journal_Store::add_provider_log_message( $provider, $user, $course, 'First message' );
+		Sensei_Enrolment_Provider_Journal_Store::add_provider_log_message( $provider, $user, $course, 'Second message' );
 		Sensei_Enrolment_Provider_Journal_Store::persist_all();
 
 		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::META_PREFIX_ENROLMENT_PROVIDERS_JOURNAL . $course, true );
 		$this->assertRegExp( '/.*always-provides.*Second message.*First message/', $user_meta, 'A meta with the provider id and the two messages should be stored.' );
 
-		$logs = Sensei_Enrolment_Provider_Journal_Store::get_provider_logs( $user, $course, $provider->get_id() );
+		$logs = Sensei_Enrolment_Provider_Journal_Store::get_provider_logs( $provider, $user, $course );
 		$this->assertCount( 2, $logs, 'There should be exactly 2 messages in the logs' );
 		$this->assertEquals( 'Second message', $logs[0]['message'], 'The second message should be in the beginning of the log.' );
 		$this->assertEquals( 'First message', $logs[1]['message'], 'The first message should be in the end of the log.' );

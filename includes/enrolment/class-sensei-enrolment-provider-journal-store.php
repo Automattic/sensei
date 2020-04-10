@@ -249,35 +249,35 @@ class Sensei_Enrolment_Provider_Journal_Store implements JsonSerializable {
 	/**
 	 * Add a log message to a provider.
 	 *
-	 * @param int    $user_id     The user id.
-	 * @param int    $course_id   The course id.
-	 * @param int    $provider_id The provider id.
-	 * @param string $message     The message to be added.
+	 * @param Sensei_Course_Enrolment_Provider_Interface $provider  The provider.
+	 * @param int                                        $user_id   The user id.
+	 * @param int                                        $course_id The course id.
+	 * @param string                                     $message   The message to be added.
 	 */
-	public static function add_provider_log_message( $user_id, $course_id, $provider_id, $message ) {
+	public static function add_provider_log_message( Sensei_Course_Enrolment_Provider_Interface $provider, $user_id, $course_id, $message ) {
 		$journal_store = self::get( $user_id, $course_id );
 
-		if ( ! isset( $journal_store->providers_journal[ $provider_id ] ) ) {
-			$journal_store->providers_journal[ $provider_id ] = Sensei_Enrolment_Provider_Journal::create();
+		if ( ! isset( $journal_store->providers_journal[ $provider->get_id() ] ) ) {
+			$journal_store->providers_journal[ $provider->get_id() ] = Sensei_Enrolment_Provider_Journal::create();
 		}
 
-		$journal_store->providers_journal[ $provider_id ]->add_log_message( $message );
+		$journal_store->providers_journal[ $provider->get_id() ]->add_log_message( $message );
 		$journal_store->has_changed = true;
 	}
 
 	/**
 	 * Get the log messages of a provider.
 	 *
-	 * @param int $user_id     The user id.
-	 * @param int $course_id   The course id.
-	 * @param int $provider_id The provider id.
+	 * @param Sensei_Course_Enrolment_Provider_Interface $provider  The provider.
+	 * @param int                                        $user_id   The user id.
+	 * @param int                                        $course_id The course id.
 	 *
 	 * @return array The message log of the provider. Each element of the array has the format:
 	 *               [ 'timestamp' => Timestamp of the message, 'message' => The actual message ]
 	 */
-	public static function get_provider_logs( $user_id, $course_id, $provider_id ) {
+	public static function get_provider_logs( Sensei_Course_Enrolment_Provider_Interface $provider, $user_id, $course_id ) {
 		$journal_store = self::get( $user_id, $course_id );
 
-		return isset( $journal_store->providers_journal[ $provider_id ] ) ? $journal_store->providers_journal[ $provider_id ]->get_logs() : [];
+		return isset( $journal_store->providers_journal[ $provider->get_id() ] ) ? $journal_store->providers_journal[ $provider->get_id() ]->get_logs() : [];
 	}
 }
