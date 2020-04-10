@@ -156,8 +156,10 @@ class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Background_Job_I
 	 */
 	private function get_query_args( $course_enrolment ) {
 		$user_args = [
-			'fields' => 'ID',
-			'number' => $this->batch_size,
+			'fields'  => 'ID',
+			'number'  => $this->batch_size,
+			'orderby' => 'ID',
+			'order'   => 'ASC',
 		];
 
 		$meta_key = $course_enrolment->get_enrolment_results_meta_key();
