@@ -46,7 +46,7 @@ class Sensei_Enrolment_Provider_State_Store implements JsonSerializable {
 	/**
 	 * Class constructor.
 	 *
-	 * @param int $user_id   User ID.
+	 * @param int $user_id User ID.
 	 */
 	private function __construct( $user_id ) {
 		$this->user_id = $user_id;
@@ -55,7 +55,7 @@ class Sensei_Enrolment_Provider_State_Store implements JsonSerializable {
 	/**
 	 * Get a state store record for a user.
 	 *
-	 * @param int $user_id   User ID.
+	 * @param int $user_id User ID.
 	 *
 	 * @return self
 	 */
