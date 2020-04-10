@@ -144,7 +144,7 @@ class Sensei_Course_Manual_Enrolment_Provider
 		 * Allows other providers to have an opinion about whether or not a user was enrolled pre-3.0.0.
 		 * This should only be called once per user/course just after upgrading from a pre-3.0.0 version of Sensei.
 		 *
-		 * Note: This will only allow manual enrolment to not be given. It won't be called for learners with course
+		 * Note: This will only allow manual enrolment to not be given. It won't be called for learners without course
 		 * progress.
 		 *
 		 * @since 3.0.0
