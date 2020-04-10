@@ -27,11 +27,11 @@ trait Sensei_Course_Enrolment_Manual_Test_Helpers {
 	 * @return bool
 	 */
 	private function wasLegacyEnrolmentChecked( $user_id, $course_id ) {
-		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
-		$provider_state   = $course_enrolment->get_provider_state( Sensei_Course_Manual_Enrolment_Provider::instance(), $user_id );
-		$migration_log    = $provider_state->get_stored_value( Sensei_Course_Manual_Enrolment_Provider::DATA_KEY_LEGACY_MIGRATION );
+		$course_enrolment        = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$provider_state          = $course_enrolment->get_provider_state( Sensei_Course_Manual_Enrolment_Provider::instance(), $user_id );
+		$legacy_migration_status = $provider_state->get_stored_value( Sensei_Course_Manual_Enrolment_Provider::DATA_KEY_LEGACY_MIGRATION );
 
-		return ! empty( $migration_log );
+		return null !== $legacy_migration_status;
 	}
 
 	/**
