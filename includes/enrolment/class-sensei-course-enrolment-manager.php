@@ -378,7 +378,7 @@ class Sensei_Course_Enrolment_Manager {
 	 * exist. To enforce a calculation after a possible change, use
 	 * Sensei_Course_Enrolment_Manager::trigger_course_enrolment_check instead.
 	 *
-	 * @param int $user_id   User ID.
+	 * @param int $user_id User ID.
 	 *
 	 * @see Sensei_Course_Enrolment_Manager::trigger_course_enrolment_check
 	 */

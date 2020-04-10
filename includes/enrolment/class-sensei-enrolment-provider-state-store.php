@@ -10,10 +10,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Stores set of all the enrolment provider state objects for a course and user.
+ * Stores set of all the enrolment provider state objects for all courses for a user.
  */
 class Sensei_Enrolment_Provider_State_Store implements JsonSerializable {
-	const META_PREFIX_ENROLMENT_PROVIDERS_STATE = 'sensei_enrolment_providers_state_';
+	const META_ENROLMENT_PROVIDERS_STATE = 'sensei_enrolment_providers_state';
 
 	/**
 	 * Flag for if a state store has changed.
@@ -25,7 +25,7 @@ class Sensei_Enrolment_Provider_State_Store implements JsonSerializable {
 	/**
 	 * State objects for the providers.
 	 *
-	 * @var Sensei_Enrolment_Provider_State[]
+	 * @var Sensei_Enrolment_Provider_State[][]
 	 */
 	private $provider_states = [];
 
@@ -37,53 +37,39 @@ class Sensei_Enrolment_Provider_State_Store implements JsonSerializable {
 	private $user_id;
 
 	/**
-	 * Course post ID that this store is used for.
-	 *
-	 * @var int
-	 */
-	private $course_id;
-
-	/**
 	 * Keeps track of instances of this class.
 	 *
-	 * @var self[][]
+	 * @var self[]
 	 */
 	private static $instances = [];
 
 	/**
 	 * Class constructor.
 	 *
-	 * @param int $user_id   User ID.
-	 * @param int $course_id Course post ID.
+	 * @param int $user_id User ID.
 	 */
-	private function __construct( $user_id, $course_id ) {
-		$this->user_id   = $user_id;
-		$this->course_id = $course_id;
+	private function __construct( $user_id ) {
+		$this->user_id = $user_id;
 	}
 
 	/**
-	 * Get a state store record for a user/course.
+	 * Get a state store record for a user.
 	 *
-	 * @param int $user_id   User ID.
-	 * @param int $course_id Course post ID.
+	 * @param int $user_id User ID.
 	 *
 	 * @return self
 	 */
-	public static function get( $user_id, $course_id ) {
+	public static function get( $user_id ) {
 		if ( ! isset( self::$instances[ $user_id ] ) ) {
-			self::$instances[ $user_id ] = [];
-		}
+			self::$instances[ $user_id ] = new self( $user_id );
 
-		if ( ! isset( self::$instances[ $user_id ][ $course_id ] ) ) {
-			self::$instances[ $user_id ][ $course_id ] = new self( $user_id, $course_id );
-
-			$provider_state_stores = get_user_meta( $user_id, self::get_providers_state_meta_key( $course_id ), true );
+			$provider_state_stores = get_user_meta( $user_id, self::META_ENROLMENT_PROVIDERS_STATE, true );
 			if ( ! empty( $provider_state_stores ) ) {
-				self::$instances[ $user_id ][ $course_id ]->restore_from_json( $provider_state_stores );
+				self::$instances[ $user_id ]->restore_from_json( $provider_state_stores );
 			}
 		}
 
-		return self::$instances[ $user_id ][ $course_id ];
+		return self::$instances[ $user_id ];
 	}
 
 	/**
@@ -98,13 +84,22 @@ class Sensei_Enrolment_Provider_State_Store implements JsonSerializable {
 		}
 
 		$provider_states = [];
-		foreach ( $json_arr as $provider_id => $provider_state_data ) {
-			$provider_state_data = Sensei_Enrolment_Provider_State::from_serialized_array( $this, $provider_state_data );
-			if ( ! $provider_state_data ) {
+		foreach ( $json_arr as $course_id => $providers ) {
+			if ( ! is_numeric( $course_id ) ) {
 				continue;
 			}
 
-			$provider_states[ $provider_id ] = $provider_state_data;
+			$course_id                     = (string) $course_id;
+			$provider_states[ $course_id ] = [];
+
+			foreach ( $providers as $provider_id => $provider_state_data ) {
+				$provider_state_data = Sensei_Enrolment_Provider_State::from_array( $this, $provider_state_data );
+				if ( ! $provider_state_data ) {
+					continue;
+				}
+
+				$provider_states[ $course_id ][ $provider_id ] = $provider_state_data;
+			}
 		}
 
 		$this->set_provider_states( $provider_states );
@@ -116,16 +111,21 @@ class Sensei_Enrolment_Provider_State_Store implements JsonSerializable {
 	 * @return array
 	 */
 	public function jsonSerialize() {
-		return $this->provider_states;
-	}
+		$course_states = $this->provider_states;
 
-	/**
-	 * Get the course post ID.
-	 *
-	 * @return int
-	 */
-	public function get_course_id() {
-		return $this->course_id;
+		foreach ( $course_states as $course_id => $provider_states ) {
+			foreach ( $provider_states as $provider_id => $provider_state ) {
+				if ( ! $provider_state->has_data() ) {
+					unset( $course_states[ $course_id ][ $provider_id ] );
+				}
+			}
+
+			if ( empty( $course_states[ $course_id ] ) ) {
+				unset( $course_states[ $course_id ] );
+			}
+		}
+
+		return $course_states;
 	}
 
 	/**
@@ -149,18 +149,25 @@ class Sensei_Enrolment_Provider_State_Store implements JsonSerializable {
 	/**
 	 * Get the state object for a provider.
 	 *
-	 * @param Sensei_Course_Enrolment_Provider_Interface $provider Provider object.
+	 * @param Sensei_Course_Enrolment_Provider_Interface $provider  Provider object.
+	 * @param int                                        $course_id Course post ID.
 	 *
 	 * @return Sensei_Enrolment_Provider_State
 	 */
-	public function get_provider_state( Sensei_Course_Enrolment_Provider_Interface $provider ) {
+	public function get_provider_state( Sensei_Course_Enrolment_Provider_Interface $provider, $course_id ) {
 		$provider_id = $provider->get_id();
 
-		if ( ! isset( $this->provider_states[ $provider_id ] ) ) {
-			$this->provider_states[ $provider_id ] = Sensei_Enrolment_Provider_State::create( $this );
+		$course_id = (string) $course_id;
+
+		if ( ! isset( $this->provider_states[ $course_id ] ) ) {
+			$this->provider_states[ $course_id ] = [];
 		}
 
-		return $this->provider_states[ $provider_id ];
+		if ( ! isset( $this->provider_states[ $course_id ][ $provider_id ] ) ) {
+			$this->provider_states[ $course_id ][ $provider_id ] = Sensei_Enrolment_Provider_State::create( $this );
+		}
+
+		return $this->provider_states[ $course_id ][ $provider_id ];
 	}
 
 	/**
@@ -189,7 +196,7 @@ class Sensei_Enrolment_Provider_State_Store implements JsonSerializable {
 			return true;
 		}
 
-		$result = update_user_meta( $this->get_user_id(), self::get_providers_state_meta_key( $this->get_course_id() ), wp_slash( wp_json_encode( $this ) ) );
+		$result = update_user_meta( $this->get_user_id(), self::META_ENROLMENT_PROVIDERS_STATE, wp_slash( wp_json_encode( $this ) ) );
 
 		if ( ! $result || is_wp_error( $result ) ) {
 			return false;
@@ -206,21 +213,8 @@ class Sensei_Enrolment_Provider_State_Store implements JsonSerializable {
 	 * As this isn't a singleton, Sensei_Course_Enrolment_Manager hooks this into `shutdown` in its `init` method.
 	 */
 	public static function persist_all() {
-		foreach ( self::$instances as $user_id => $course_instances ) {
-			foreach ( $course_instances as $instance ) {
-				$instance->save();
-			}
+		foreach ( self::$instances as $user_id => $instance ) {
+			$instance->save();
 		}
-	}
-
-	/**
-	 * Get the enrolment provider state meta key.
-	 *
-	 * @param int $course_id Course post ID.
-	 *
-	 * @return string
-	 */
-	private static function get_providers_state_meta_key( $course_id ) {
-		return self::META_PREFIX_ENROLMENT_PROVIDERS_STATE . $course_id;
 	}
 }

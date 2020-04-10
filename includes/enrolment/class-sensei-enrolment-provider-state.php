@@ -42,17 +42,12 @@ class Sensei_Enrolment_Provider_State implements JsonSerializable {
 	 * Restore a course enrolment state record from data restored from a serialized JSON string.
 	 *
 	 * @param Sensei_Enrolment_Provider_State_Store $state_store State store storing this provider state object.
-	 * @param array                                 $data        Serialized state of object.
+	 * @param array                                 $data        Data to initialize object from.
 	 *
 	 * @return self|false
 	 */
-	public static function from_serialized_array( Sensei_Enrolment_Provider_State_Store $state_store, $data ) {
-		if ( empty( $data ) ) {
-			return false;
-		}
-
-		$provider_data = isset( $data['d'] ) ? array_map( [ __CLASS__, 'sanitize_data' ], $data['d'] ) : [];
-
+	public static function from_array( Sensei_Enrolment_Provider_State_Store $state_store, $data ) {
+		$provider_data = array_map( [ __CLASS__, 'sanitize_data' ], $data );
 		$provider_data = array_filter( $provider_data, [ __CLASS__, 'filter_null_values' ] );
 
 		return new self( $state_store, $provider_data );
@@ -111,9 +106,7 @@ class Sensei_Enrolment_Provider_State implements JsonSerializable {
 	 * @return array
 	 */
 	public function jsonSerialize() {
-		return [
-			'd' => $this->provider_data,
-		];
+		return $this->provider_data;
 	}
 
 	/**
@@ -162,5 +155,14 @@ class Sensei_Enrolment_Provider_State implements JsonSerializable {
 	 */
 	public function save() {
 		return $this->state_store->save();
+	}
+
+	/**
+	 * Checks if there is any data in the state.
+	 *
+	 * @return bool
+	 */
+	public function has_data() {
+		return ! empty( $this->provider_data );
 	}
 }
