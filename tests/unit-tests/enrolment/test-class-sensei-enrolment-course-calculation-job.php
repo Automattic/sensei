@@ -60,7 +60,7 @@ class Sensei_Enrolment_Course_Calculation_Job_Test extends WP_UnitTestCase {
 				'invalidated_only' => false,
 			]
 		);
-		$job->start();
+		$job->setup();
 
 		$this->createAndEnrolUsers( $course_id, 5 );
 		$this->invalidateAllCourseResults( $course_enrolment );
@@ -94,7 +94,7 @@ class Sensei_Enrolment_Course_Calculation_Job_Test extends WP_UnitTestCase {
 				'invalidated_only' => false,
 			]
 		);
-		$job->start();
+		$job->setup();
 
 		$enrolled_user_ids = $this->createAndEnrolUsers( $course_id, 3 );
 		$other_user_ids    = $this->factory()->user->create_many( 1 );
@@ -134,7 +134,7 @@ class Sensei_Enrolment_Course_Calculation_Job_Test extends WP_UnitTestCase {
 				'invalidated_only' => true,
 			]
 		);
-		$job->start();
+		$job->setup();
 
 		$enrolled_user_ids = $this->createAndEnrolUsers( $course_id, 2 );
 		$other_user_ids    = $this->factory()->user->create_many( 2 );

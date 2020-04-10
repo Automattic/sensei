@@ -73,7 +73,7 @@ class Sensei_Enrolment_Job_Scheduler {
 		$this->cancel_course_calculation_job( $course_id );
 
 		$job = new Sensei_Enrolment_Course_Calculation_Job( $args );
-		$job->start();
+		$job->setup();
 
 		Sensei_Scheduler::instance()->schedule_job( $job );
 

@@ -290,7 +290,7 @@ class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Background_Job_I
 	/**
 	 * Set up job before it is scheduled for the first time.
 	 */
-	public function start() {
+	public function setup() {
 		$this->job_id = md5( uniqid() );
 
 		update_option( $this->get_current_job_option_name(), $this->job_id, false );
