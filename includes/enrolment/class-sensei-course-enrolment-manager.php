@@ -383,7 +383,6 @@ class Sensei_Course_Enrolment_Manager {
 	 * @see Sensei_Course_Enrolment_Manager::trigger_course_enrolment_check
 	 */
 	public function recalculate_enrolments( $user_id ) {
-
 		$learner_calculated_version = get_user_meta( $user_id, self::LEARNER_CALCULATION_META_NAME, true );
 		if ( $this->get_enrolment_calculation_version() === $learner_calculated_version ) {
 			return;
@@ -434,7 +433,7 @@ class Sensei_Course_Enrolment_Manager {
 		}
 
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $post->ID );
-		$course_enrolment->recalculate_enrolment( false );
+		$course_enrolment->recalculate_enrolment();
 	}
 
 	/**

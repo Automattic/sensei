@@ -35,13 +35,6 @@ class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Background_Job_I
 	private $course_id;
 
 	/**
-	 * Recalculate for just the invalidated (set to empty string) course enrolment results.
-	 *
-	 * @var bool
-	 */
-	private $invalidated_only;
-
-	/**
 	 * Number of learners to calculate per batch.
 	 *
 	 * @var int
@@ -61,9 +54,8 @@ class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Background_Job_I
 	 * @param array $args Arguments to run for the job.
 	 */
 	public function __construct( $args ) {
-		$this->job_id           = isset( $args['job_id'] ) ? sanitize_text_field( $args['job_id'] ) : null;
-		$this->course_id        = isset( $args['course_id'] ) ? intval( $args['course_id'] ) : null;
-		$this->invalidated_only = isset( $args['invalidated_only'] ) ? boolval( $args['invalidated_only'] ) : false;
+		$this->job_id    = isset( $args['job_id'] ) ? sanitize_text_field( $args['job_id'] ) : null;
+		$this->course_id = isset( $args['course_id'] ) ? intval( $args['course_id'] ) : null;
 
 		/**
 		 * Filter the batch size for the number of users to query per run in the course calculation job.
@@ -72,9 +64,8 @@ class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Background_Job_I
 		 *
 		 * @param int  $batch_size       Batch size to filter.
 		 * @param int  $course_id        Course ID we're running.
-		 * @param bool $invalidated_only Whether this is just a job for invalidated course results only.
 		 */
-		$this->batch_size = apply_filters( 'sensei_enrolment_course_calculation_job_batch_size', self::DEFAULT_BATCH_SIZE, $this->course_id, $this->invalidated_only );
+		$this->batch_size = apply_filters( 'sensei_enrolment_course_calculation_job_batch_size', self::DEFAULT_BATCH_SIZE, $this->course_id );
 	}
 
 	/**
@@ -93,9 +84,8 @@ class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Background_Job_I
 	 */
 	public function get_args() {
 		return [
-			'job_id'           => $this->job_id,
-			'course_id'        => $this->course_id,
-			'invalidated_only' => $this->invalidated_only,
+			'job_id'    => $this->job_id,
+			'course_id' => $this->course_id,
 		];
 	}
 
@@ -164,29 +154,18 @@ class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Background_Job_I
 
 		$meta_key = $course_enrolment->get_enrolment_results_meta_key();
 
-		// When querying for just currently enrolled users, we invalidated the results for all currently enrolled users first.
-		if ( $this->invalidated_only ) {
-			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Ran inside of async job.
-			$user_args['meta_query'] = [
-				[
-					'key'   => $meta_key,
-					'value' => '',
-				],
-			];
-		} else {
-			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Ran inside of async job.
-			$user_args['meta_query'] = [
-				'relation' => 'OR',
-				[
-					'key'   => $meta_key,
-					'value' => '',
-				],
-				[
-					'key'     => $meta_key,
-					'compare' => 'NOT EXISTS',
-				],
-			];
-		}
+		// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Ran inside of async job.
+		$user_args['meta_query'] = [
+			'relation' => 'OR',
+			[
+				'key'   => $meta_key,
+				'value' => '',
+			],
+			[
+				'key'     => $meta_key,
+				'compare' => 'NOT EXISTS',
+			],
+		];
 
 		return $user_args;
 	}
@@ -210,9 +189,7 @@ class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Background_Job_I
 	 * @return string
 	 */
 	private function get_current_job_option_name() {
-		$invalidated_suffix = $this->invalidated_only ? 1 : 0;
-
-		return self::OPTION_TRACK_CURRENT_JOB_PREFIX . $this->course_id . '_' . $invalidated_suffix;
+		return self::OPTION_TRACK_CURRENT_JOB_PREFIX . $this->course_id;
 	}
 
 	/**

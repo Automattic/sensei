@@ -31,9 +31,8 @@ class Sensei_Enrolment_Course_Calculation_Job_Test extends WP_UnitTestCase {
 	 */
 	public function testGetArgs() {
 		$test_args = [
-			'job_id'           => null,
-			'course_id'        => 10,
-			'invalidated_only' => true,
+			'job_id'    => null,
+			'course_id' => 10,
 		];
 
 		$job = new Sensei_Enrolment_Course_Calculation_Job( $test_args );
@@ -56,8 +55,7 @@ class Sensei_Enrolment_Course_Calculation_Job_Test extends WP_UnitTestCase {
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 		$job              = new Sensei_Enrolment_Course_Calculation_Job(
 			[
-				'course_id'        => $course_id,
-				'invalidated_only' => false,
+				'course_id' => $course_id,
 			]
 		);
 		$job->setup();
@@ -90,8 +88,7 @@ class Sensei_Enrolment_Course_Calculation_Job_Test extends WP_UnitTestCase {
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 		$job              = new Sensei_Enrolment_Course_Calculation_Job(
 			[
-				'course_id'        => $course_id,
-				'invalidated_only' => false,
+				'course_id' => $course_id,
 			]
 		);
 		$job->setup();
@@ -112,75 +109,6 @@ class Sensei_Enrolment_Course_Calculation_Job_Test extends WP_UnitTestCase {
 		foreach ( $other_user_ids as $user_id ) {
 			$results = $course_enrolment->get_enrolment_check_results( $user_id );
 			$this->assertFalse( $results, 'Results should have not been stored' );
-		}
-	}
-
-	/**
-	 * Tests to make sure only enrolled progress is invalidated and recalculated.
-	 */
-	public function testCheckingCourseEnrolmentInvalidatedOnly() {
-		add_filter(
-			'sensei_enrolment_course_calculation_job_batch_size',
-			function() {
-				return 5;
-			}
-		);
-
-		$course_id        = $this->factory->course->create();
-		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
-		$job              = new Sensei_Enrolment_Course_Calculation_Job(
-			[
-				'course_id'        => $course_id,
-				'invalidated_only' => true,
-			]
-		);
-		$job->setup();
-
-		$enrolled_user_ids = $this->createAndEnrolUsers( $course_id, 2 );
-		$other_user_ids    = $this->factory()->user->create_many( 2 );
-		$user_ids          = array_merge( $enrolled_user_ids, $other_user_ids );
-
-		foreach ( $user_ids as $user_id ) {
-			$course_enrolment->is_enrolled( $user_id );
-		}
-
-		$new_user_ids = $this->factory()->user->create_many( 2 );
-
-		$this->invalidateEnrolledCourseResults( $course_enrolment );
-
-		foreach ( $enrolled_user_ids as $user_id ) {
-			$results = $course_enrolment->get_enrolment_check_results( $user_id );
-			$this->assertFalse( $results, 'Results should have been cleared for enrolled users' );
-		}
-
-		foreach ( $new_user_ids as $user_id ) {
-			$results = $course_enrolment->get_enrolment_check_results( $user_id );
-			$this->assertFalse( $results, 'Results should have never been set for new users' );
-		}
-
-		$other_results = [];
-		foreach ( $other_user_ids as $user_id ) {
-			$results                   = $course_enrolment->get_enrolment_check_results( $user_id );
-			$other_results[ $user_id ] = wp_json_encode( $results );
-			$this->assertNotFalse( $results, 'Results should NOT have been cleared for users who are not enrolled' );
-		}
-
-		$job->run();
-		$this->assertTrue( $job->is_complete(), 'Job should be complete after first run.' );
-
-		foreach ( $enrolled_user_ids as $user_id ) {
-			$results = $course_enrolment->get_enrolment_check_results( $user_id );
-			$this->assertNotFalse( $results, 'Results should have been calculated for enrolled users' );
-		}
-
-		foreach ( $other_user_ids as $user_id ) {
-			$results = $course_enrolment->get_enrolment_check_results( $user_id );
-			$this->assertEquals( $other_results[ $user_id ], wp_json_encode( $results ), 'Results should NOT have been calculated or changed for users who are not enrolled' );
-		}
-
-		foreach ( $new_user_ids as $user_id ) {
-			$results = $course_enrolment->get_enrolment_check_results( $user_id );
-			$this->assertFalse( $results, 'Results should still have never been set for new users' );
 		}
 	}
 

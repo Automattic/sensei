@@ -273,8 +273,7 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 	public function testRecalculateOnCoursePostScheduleChangeTrueDraftToPublish() {
 		$course   = $this->factory->course->create_and_get( [ 'post_status' => 'draft' ] );
 		$job_args = [
-			'course_id'        => $course->ID,
-			'invalidated_only' => false,
+			'course_id' => $course->ID,
 		];
 		$job      = new Sensei_Enrolment_Course_Calculation_Job( $job_args );
 
@@ -292,8 +291,7 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 	public function testRecalculateOnCoursePostScheduleChangeTruePublishToDraft() {
 		$course   = $this->factory->course->create_and_get( [ 'post_status' => 'publish' ] );
 		$job_args = [
-			'course_id'        => $course->ID,
-			'invalidated_only' => false,
+			'course_id' => $course->ID,
 		];
 		$job      = new Sensei_Enrolment_Course_Calculation_Job( $job_args );
 
@@ -311,8 +309,7 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 	public function testRecalculateOnCoursePostScheduleChangeFalsePublishToPublish() {
 		$course   = $this->factory->course->create_and_get( [ 'post_status' => 'publish' ] );
 		$job_args = [
-			'course_id'        => $course->ID,
-			'invalidated_only' => false,
+			'course_id' => $course->ID,
 		];
 		$job      = new Sensei_Enrolment_Course_Calculation_Job( $job_args );
 
@@ -329,8 +326,7 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 	public function testRecalculateOnCoursePostScheduleChangeFalseScheduledToDraft() {
 		$course   = $this->factory->course->create_and_get( [ 'post_status' => 'scheduled' ] );
 		$job_args = [
-			'course_id'        => $course->ID,
-			'invalidated_only' => false,
+			'course_id' => $course->ID,
 		];
 		$job      = new Sensei_Enrolment_Course_Calculation_Job( $job_args );
 
