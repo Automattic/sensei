@@ -113,13 +113,13 @@ class Sensei_Enrolment_Provider_Journal implements JsonSerializable {
 	 * @return array|bool
 	 */
 	private static function deserialize_history_entry( $entry ) {
-		if ( ! isset( $entry['t'], $entry['s'] ) ) {
+		if ( ! isset( $entry['t'] ) || ! array_key_exists( 's', $entry ) ) {
 			return false;
 		}
 
 		return [
-			'timestamp'        => (int) $entry['t'],
-			'enrolment_status' => (bool) $entry['s'],
+			'timestamp'        => (float) $entry['t'],
+			'enrolment_status' => null === $entry['s'] ? null : (bool) $entry['s'],
 		];
 	}
 
@@ -182,7 +182,7 @@ class Sensei_Enrolment_Provider_Journal implements JsonSerializable {
 		$message_log_size = apply_filters( 'sensei_enrolment_message_log_size', self::DEFAULT_MESSAGE_LOG_SIZE );
 
 		$message_entry = [
-			'timestamp' => microtime( true ),
+			'timestamp' => time(),
 			'message'   => sanitize_text_field( $message ),
 		];
 		array_unshift( $this->message_log, $message_entry );
@@ -242,7 +242,7 @@ class Sensei_Enrolment_Provider_Journal implements JsonSerializable {
 	public function get_status_at( $timestamp ) {
 
 		foreach ( $this->history as $status ) {
-			if ( $status['timestamp'] <= $timestamp ) {
+			if ( $status['timestamp'] < $timestamp || abs( $status['timestamp'] - $timestamp ) < 0.001 ) {
 				return $status;
 			}
 		}

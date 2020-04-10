@@ -163,7 +163,7 @@ class Sensei_Enrolment_Provider_Journal_Store_Test extends WP_UnitTestCase {
 
 		Sensei_Enrolment_Provider_Journal_Store::register_possible_enrolment_change( $provider_results, $user, $course );
 		$after_first_change = microtime( true );
-		usleep( 1000 );
+		usleep( 10000 );
 
 		$provider_results = [
 			'memberships' => false,
@@ -171,7 +171,7 @@ class Sensei_Enrolment_Provider_Journal_Store_Test extends WP_UnitTestCase {
 
 		Sensei_Enrolment_Provider_Journal_Store::register_possible_enrolment_change( $provider_results, $user, $course );
 		$after_second_change = microtime( true );
-		usleep( 1000 );
+		usleep( 10000 );
 
 		$provider_results = [
 			'manual'      => false,
@@ -193,6 +193,74 @@ class Sensei_Enrolment_Provider_Journal_Store_Test extends WP_UnitTestCase {
 		$this->assertCount( 2, $current_snapshot, 'There should be 2 providers in the snapshot.' );
 		$this->assertTrue( $current_snapshot['memberships'], 'The memberships provider status should be true.' );
 		$this->assertFalse( $current_snapshot['manual'], 'The manual provider status should be false.' );
+	}
+
+	/**
+	 * Tests that Sensei_Enrolment_Provider_Journal_Store::get_enrolment_snanpshot returns correct snapshots after the
+	 * timestamps are rounded.
+	 */
+	public function testHistorySnapshotsRoundings() {
+		$course = $this->factory->course->create();
+		$user   = $this->factory->user->create();
+		$this->enableJournal();
+
+		$method = new ReflectionMethod( Sensei_Enrolment_Provider_Journal_Store::class, 'get' );
+		$method->setAccessible( true );
+		$journal_store = $method->invoke( null, $user, $course );
+
+		$journal_json = '
+			{
+				"manual": {
+				"h": [
+						{
+							"t": 1586530073.434888,
+							"s": false
+						},
+						{
+							"t": 1586530073.432448,
+							"s": true
+						}
+					],
+					"l": []
+				},
+				"memberships": {
+				"h": [
+						{
+							"t": 1586530073.434444,
+							"s": null
+						},
+						{
+							"t": 1586530073.431507,
+							"s": false
+						}
+					],
+					"l": []
+				}
+			}';
+
+
+		$method = new ReflectionMethod( $journal_store, 'restore_from_json' );
+		$method->setAccessible( true );
+		$method->invoke( $journal_store, $journal_json );
+
+		$state_store_instances = new ReflectionProperty( Sensei_Enrolment_Provider_Journal_Store::class, 'instances' );
+		$state_store_instances->setAccessible( true );
+		$state_store_instances->setValue(
+			[
+				$user => [
+					$course => $journal_store,
+				],
+			]
+		);
+
+		$current_snapshot = Sensei_Enrolment_Provider_Journal_Store::get_enrolment_snanpshot( $user, $course, 1586530073.434586 );
+		$this->assertCount( 1, $current_snapshot, 'There should be 1 provider in the snapshot.' );
+		$this->assertFalse( $current_snapshot['manual'], 'The manual provider status should be false.' );
+
+		$previous_snapshot = Sensei_Enrolment_Provider_Journal_Store::get_enrolment_snanpshot( $user, $course, 1586530073.432801 );
+		$this->assertCount( 2, $previous_snapshot, 'There should be 2 providers in the snapshot.' );
+		$this->assertTrue( $previous_snapshot['manual'], 'The manual provider status should be true.' );
+		$this->assertFalse( $previous_snapshot['memberships'], 'The memberships provider status should be false.' );
 	}
 
 	private function enableJournal() {

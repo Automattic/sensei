@@ -208,14 +208,14 @@ class Sensei_Enrolment_Provider_Journal_Store implements JsonSerializable {
 	 * Get a snapshot of the providers' enrolment status for a user and course at a specific timestamp. If no timestamp
 	 * is provided the current snapshot is returned.
 	 *
-	 * @param int $user_id     The user to return the snapshot for.
-	 * @param int $course_id   The course to return the snapshot for.
-	 * @param int $timestamp   The timestamp of the snapshot in microseconds. If omitted the current snapshot is returned.
+	 * @param int       $user_id     The user to return the snapshot for.
+	 * @param int       $course_id   The course to return the snapshot for.
+	 * @param int|float $timestamp   The timestamp of the snapshot. If omitted the current snapshot is returned.
 	 *
 	 * @return array
 	 */
 	public static function get_enrolment_snanpshot( $user_id, $course_id, $timestamp = null ) {
-		$timestamp     = null === $timestamp ? microtime( true ) : $timestamp;
+		$timestamp     = null === $timestamp ? microtime( true ) : (float) $timestamp;
 		$journal_store = self::get( $user_id, $course_id );
 
 		$snapshot = [];
