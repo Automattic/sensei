@@ -197,7 +197,7 @@ class Sensei_Enrolment_Provider_Journal_Store_Test extends WP_UnitTestCase {
 
 	private function enableJournal() {
 		tests_add_filter(
-			'sensei_enable_journal',
+			'sensei_enable_enrolment_provider_journal',
 			function () {
 				return true;
 			}

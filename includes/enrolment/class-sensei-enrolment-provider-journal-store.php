@@ -124,13 +124,13 @@ class Sensei_Enrolment_Provider_Journal_Store implements JsonSerializable {
 	 */
 	public function save() {
 		/**
-		 * Enables journal storage for sensei.
+		 * Enables journal storage for Sensei.
 		 *
 		 * @since 3.0.0
 		 *
 		 * @param bool $enable_journal True to enable.
 		 */
-		if ( ! apply_filters( 'sensei_enable_journal', false ) ) {
+		if ( ! apply_filters( 'sensei_enable_enrolment_provider_journal', false ) ) {
 			return false;
 		}
 
