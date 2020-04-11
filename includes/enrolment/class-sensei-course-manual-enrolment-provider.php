@@ -106,7 +106,21 @@ class Sensei_Course_Manual_Enrolment_Provider
 		$this->set_enrolment_status( $user_id, $course_id, true );
 		Sensei_Course_Enrolment_Manager::trigger_course_enrolment_check( $user_id, $course_id );
 
-		return $this->is_enrolled( $user_id, $course_id );
+		if ( ! $this->is_enrolled( $user_id, $course_id ) ) {
+			return false;
+		}
+
+		/**
+		 * Fire action when a learner is provided with manual enrolment.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param int $user_id   User ID.
+		 * @param int $course_id Course post ID.
+		 */
+		do_action( 'sensei_manual_enrolment_learner_enrolled', $user_id, $course_id );
+
+		return true;
 	}
 
 	/**
@@ -126,7 +140,21 @@ class Sensei_Course_Manual_Enrolment_Provider
 		$this->set_enrolment_status( $user_id, $course_id, false );
 		Sensei_Course_Enrolment_Manager::trigger_course_enrolment_check( $user_id, $course_id );
 
-		return ! $this->is_enrolled( $user_id, $course_id );
+		if ( $this->is_enrolled( $user_id, $course_id ) ) {
+			return false;
+		}
+
+		/**
+		 * Fire action when a learner's manual enrolment is withdrawn.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param int $user_id   User ID.
+		 * @param int $course_id Course post ID.
+		 */
+		do_action( 'sensei_manual_enrolment_learner_withdrawn', $user_id, $course_id );
+
+		return true;
 	}
 
 	/**
