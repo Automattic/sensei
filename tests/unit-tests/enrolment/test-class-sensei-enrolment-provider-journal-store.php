@@ -238,7 +238,6 @@ class Sensei_Enrolment_Provider_Journal_Store_Test extends WP_UnitTestCase {
 				}
 			}';
 
-
 		$method = new ReflectionMethod( $journal_store, 'restore_from_json' );
 		$method->setAccessible( true );
 		$method->invoke( $journal_store, $journal_json );

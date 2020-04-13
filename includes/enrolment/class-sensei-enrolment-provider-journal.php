@@ -13,8 +13,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * This class represents a journal for a single provider.
  */
 class Sensei_Enrolment_Provider_Journal implements JsonSerializable {
-	const DEFAULT_HISTORY_SIZE     = 30;
-	const DEFAULT_MESSAGE_LOG_SIZE = 30;
+	const DEFAULT_HISTORY_SIZE        = 30;
+	const DEFAULT_MESSAGE_LOG_SIZE    = 30;
+	const HISTORY_TIMESTAMP_PRECISION = 0.001;
 
 	/**
 	 * The history of the provider's status. A null enrolment status marks a deletion of a provider. Each element of
@@ -242,7 +243,7 @@ class Sensei_Enrolment_Provider_Journal implements JsonSerializable {
 	public function get_status_at( $timestamp ) {
 
 		foreach ( $this->history as $status ) {
-			if ( $status['timestamp'] < $timestamp || abs( $status['timestamp'] - $timestamp ) < 0.001 ) {
+			if ( $status['timestamp'] < $timestamp || abs( $status['timestamp'] - $timestamp ) < self::HISTORY_TIMESTAMP_PRECISION ) {
 				return $status;
 			}
 		}
