@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * This class is responsible for storing provider metadata like logs and status history.
  */
 class Sensei_Enrolment_Provider_Journal_Store implements JsonSerializable {
-	const META_PREFIX_ENROLMENT_PROVIDERS_JOURNAL = 'sensei_enrolment_providers_journal_';
+	const META_ENROLMENT_PROVIDERS_JOURNAL = 'sensei_enrolment_providers_journal';
 
 	/**
 	 * Flag for if a state the store has changed.
@@ -23,9 +23,14 @@ class Sensei_Enrolment_Provider_Journal_Store implements JsonSerializable {
 	private $has_changed = false;
 
 	/**
-	 * Journal objects for the providers.
+	 * Journal objects for each course and provider. The format of the array is the following:
+	 * [
+	 *    $course_id => [
+	 *        $provider_id => Sensei_Enrolment_Provider_Journal
+	 *    ]
+	 * ]
 	 *
-	 * @var Sensei_Enrolment_Provider_Journal[]
+	 * @var Sensei_Enrolment_Provider_Journal[][]
 	 */
 	private $providers_journal;
 
@@ -37,16 +42,9 @@ class Sensei_Enrolment_Provider_Journal_Store implements JsonSerializable {
 	private $user_id;
 
 	/**
-	 * Course post ID that this store is used for.
-	 *
-	 * @var int
-	 */
-	private $course_id;
-
-	/**
 	 * Keeps track of instances of this class.
 	 *
-	 * @var self[][]
+	 * @var self[]
 	 */
 	private static $instances = [];
 
@@ -54,11 +52,9 @@ class Sensei_Enrolment_Provider_Journal_Store implements JsonSerializable {
 	 * Class constructor.
 	 *
 	 * @param int $user_id   User ID.
-	 * @param int $course_id Course post ID.
 	 */
-	private function __construct( $user_id, $course_id ) {
+	private function __construct( $user_id ) {
 		$this->user_id           = $user_id;
-		$this->course_id         = $course_id;
 		$this->providers_journal = [];
 	}
 
@@ -66,25 +62,20 @@ class Sensei_Enrolment_Provider_Journal_Store implements JsonSerializable {
 	 * Get a journal store record for a user/course.
 	 *
 	 * @param int $user_id   User ID.
-	 * @param int $course_id Course post ID.
 	 *
 	 * @return self
 	 */
-	private static function get( $user_id, $course_id ) {
+	private static function get( $user_id ) {
 		if ( ! isset( self::$instances[ $user_id ] ) ) {
-			self::$instances[ $user_id ] = [];
-		}
+			self::$instances[ $user_id ] = new self( $user_id );
 
-		if ( ! isset( self::$instances[ $user_id ][ $course_id ] ) ) {
-			self::$instances[ $user_id ][ $course_id ] = new self( $user_id, $course_id );
-
-			$provider_journal_stores = get_user_meta( $user_id, self::get_providers_meta_key( $course_id ), true );
+			$provider_journal_stores = get_user_meta( $user_id, self::META_ENROLMENT_PROVIDERS_JOURNAL, true );
 			if ( ! empty( $provider_journal_stores ) ) {
-				self::$instances[ $user_id ][ $course_id ]->restore_from_json( $provider_journal_stores );
+				self::$instances[ $user_id ]->restore_from_json( $provider_journal_stores );
 			}
 		}
 
-		return self::$instances[ $user_id ][ $course_id ];
+		return self::$instances[ $user_id ];
 	}
 
 	/**
@@ -99,11 +90,13 @@ class Sensei_Enrolment_Provider_Journal_Store implements JsonSerializable {
 			return;
 		}
 
-		foreach ( $json_arr as $provider_id => $provider_journal_data ) {
-			$provider_journal = Sensei_Enrolment_Provider_Journal::from_serialized_array( $provider_journal_data );
+		foreach ( $json_arr as $course_id => $course_journal ) {
+			foreach ( $course_journal as $provider_id => $provider_journal_data ) {
+				$provider_journal = Sensei_Enrolment_Provider_Journal::from_serialized_array( $provider_journal_data );
 
-			if ( $provider_journal ) {
-				$this->providers_journal[ $provider_id ] = $provider_journal;
+				if ( $provider_journal ) {
+					$this->providers_journal[ $course_id ][ $provider_id ] = $provider_journal;
+				}
 			}
 		}
 	}
@@ -138,7 +131,7 @@ class Sensei_Enrolment_Provider_Journal_Store implements JsonSerializable {
 			return true;
 		}
 
-		$result = update_user_meta( $this->user_id, self::get_providers_meta_key( $this->course_id ), wp_slash( wp_json_encode( $this ) ) );
+		$result = update_user_meta( $this->user_id, self::META_ENROLMENT_PROVIDERS_JOURNAL, wp_slash( wp_json_encode( $this ) ) );
 
 		if ( ! $result || is_wp_error( $result ) ) {
 			return false;
@@ -155,22 +148,9 @@ class Sensei_Enrolment_Provider_Journal_Store implements JsonSerializable {
 	 * As this isn't a singleton, Sensei_Course_Enrolment_Manager hooks this into `shutdown` in its `init` method.
 	 */
 	public static function persist_all() {
-		foreach ( self::$instances as $user_id => $course_instances ) {
-			foreach ( $course_instances as $instance ) {
-				$instance->save();
-			}
+		foreach ( self::$instances as $user_id => $instance ) {
+			$instance->save();
 		}
-	}
-
-	/**
-	 * Get the journal store user meta key.
-	 *
-	 * @param int $course_id Course post ID.
-	 *
-	 * @return string
-	 */
-	private static function get_providers_meta_key( $course_id ) {
-		return self::META_PREFIX_ENROLMENT_PROVIDERS_JOURNAL . $course_id;
 	}
 
 	/**
@@ -182,26 +162,26 @@ class Sensei_Enrolment_Provider_Journal_Store implements JsonSerializable {
 	 * @param int   $course_id        The course which the change applies to.
 	 */
 	public static function register_possible_enrolment_change( $provider_results, $user_id, $course_id ) {
-		$journal_store = self::get( $user_id, $course_id );
+		$journal_store = self::get( $user_id );
 
 		$has_changed = false;
 
 		foreach ( $provider_results as $provider_id => $is_enrolled ) {
-			if ( ! isset( $journal_store->providers_journal[ $provider_id ] ) ) {
-				$journal_store->providers_journal[ $provider_id ] = Sensei_Enrolment_Provider_Journal::create();
+			if ( ! isset( $journal_store->providers_journal[ $course_id ][ $provider_id ] ) ) {
+				$journal_store->providers_journal[ $course_id ][ $provider_id ] = Sensei_Enrolment_Provider_Journal::create();
 			}
 
-			$has_changed = $journal_store->providers_journal[ $provider_id ]->update_enrolment_status( $is_enrolled ) || $has_changed;
+			$has_changed = $journal_store->providers_journal[ $course_id ][ $provider_id ]->update_enrolment_status( $is_enrolled ) || $has_changed;
 		}
 
 		$current_snapshot = self::get_enrolment_snanpshot( $user_id, $course_id );
 
 		$removed_providers = array_diff( array_keys( $current_snapshot ), array_keys( $provider_results ) );
 		foreach ( $removed_providers as $removed_provider ) {
-			$has_changed = $journal_store->providers_journal[ $removed_provider ]->delete_enrolment_status() || $has_changed;
+			$has_changed = $journal_store->providers_journal[ $course_id ][ $removed_provider ]->delete_enrolment_status() || $has_changed;
 		}
 
-		$journal_store->has_changed = $has_changed;
+		$journal_store->has_changed = $has_changed || $journal_store->has_changed;
 	}
 
 	/**
@@ -216,10 +196,15 @@ class Sensei_Enrolment_Provider_Journal_Store implements JsonSerializable {
 	 */
 	public static function get_enrolment_snanpshot( $user_id, $course_id, $timestamp = null ) {
 		$timestamp     = null === $timestamp ? microtime( true ) : (float) $timestamp;
-		$journal_store = self::get( $user_id, $course_id );
+		$journal_store = self::get( $user_id );
 
 		$snapshot = [];
-		foreach ( $journal_store->providers_journal as $provider_id => $journal ) {
+
+		if ( ! isset( $journal_store->providers_journal[ $course_id ] ) ) {
+			return $snapshot;
+		}
+
+		foreach ( $journal_store->providers_journal[ $course_id ] as $provider_id => $journal ) {
 			$status = $journal->get_status_at( $timestamp );
 
 			if ( null !== $status['enrolment_status'] ) {
@@ -241,9 +226,11 @@ class Sensei_Enrolment_Provider_Journal_Store implements JsonSerializable {
 	 *               [ 'timestamp' => Timestamp of the status change, 'enrolment_status' => true|false|null ]
 	 */
 	public static function get_provider_history( Sensei_Course_Enrolment_Provider_Interface $provider, $user_id, $course_id ) {
-		$journal_store = self::get( $user_id, $course_id );
+		$journal_store = self::get( $user_id );
 
-		return isset( $journal_store->providers_journal[ $provider->get_id() ] ) ? $journal_store->providers_journal[ $provider->get_id() ]->get_history() : [];
+		return isset( $journal_store->providers_journal[ $course_id ][ $provider->get_id() ] ) ?
+			$journal_store->providers_journal[ $course_id ][ $provider->get_id() ]->get_history() :
+			[];
 	}
 
 	/**
@@ -255,13 +242,13 @@ class Sensei_Enrolment_Provider_Journal_Store implements JsonSerializable {
 	 * @param string                                     $message   The message to be added.
 	 */
 	public static function add_provider_log_message( Sensei_Course_Enrolment_Provider_Interface $provider, $user_id, $course_id, $message ) {
-		$journal_store = self::get( $user_id, $course_id );
+		$journal_store = self::get( $user_id );
 
-		if ( ! isset( $journal_store->providers_journal[ $provider->get_id() ] ) ) {
-			$journal_store->providers_journal[ $provider->get_id() ] = Sensei_Enrolment_Provider_Journal::create();
+		if ( ! isset( $journal_store->providers_journal[ $course_id ][ $provider->get_id() ] ) ) {
+			$journal_store->providers_journal[ $course_id ][ $provider->get_id() ] = Sensei_Enrolment_Provider_Journal::create();
 		}
 
-		$journal_store->providers_journal[ $provider->get_id() ]->add_log_message( $message );
+		$journal_store->providers_journal[ $course_id ][ $provider->get_id() ]->add_log_message( $message );
 		$journal_store->has_changed = true;
 	}
 
@@ -276,8 +263,10 @@ class Sensei_Enrolment_Provider_Journal_Store implements JsonSerializable {
 	 *               [ 'timestamp' => Timestamp of the message, 'message' => The actual message ]
 	 */
 	public static function get_provider_logs( Sensei_Course_Enrolment_Provider_Interface $provider, $user_id, $course_id ) {
-		$journal_store = self::get( $user_id, $course_id );
+		$journal_store = self::get( $user_id );
 
-		return isset( $journal_store->providers_journal[ $provider->get_id() ] ) ? $journal_store->providers_journal[ $provider->get_id() ]->get_logs() : [];
+		return isset( $journal_store->providers_journal[ $course_id ][ $provider->get_id() ] ) ?
+			$journal_store->providers_journal[ $course_id ][ $provider->get_id() ]->get_logs() :
+			[];
 	}
 }

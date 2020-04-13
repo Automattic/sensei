@@ -44,13 +44,13 @@ class Sensei_Enrolment_Provider_Journal_Store_Test extends WP_UnitTestCase {
 		Sensei_Enrolment_Provider_Journal_Store::add_provider_log_message( $provider, $user, $course, 'Test message' );
 		Sensei_Enrolment_Provider_Journal_Store::persist_all();
 
-		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::META_PREFIX_ENROLMENT_PROVIDERS_JOURNAL . $course );
+		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::META_ENROLMENT_PROVIDERS_JOURNAL );
 		$this->assertEmpty( $user_meta, 'Nothing should be stored with the filter returning false.' );
 
 		$this->enableJournal();
 		Sensei_Enrolment_Provider_Journal_Store::persist_all();
 
-		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::META_PREFIX_ENROLMENT_PROVIDERS_JOURNAL . $course );
+		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::META_ENROLMENT_PROVIDERS_JOURNAL );
 		$this->assertNotEmpty( $user_meta, 'Meta should be stored with the filter returning true.' );
 	}
 
@@ -67,7 +67,7 @@ class Sensei_Enrolment_Provider_Journal_Store_Test extends WP_UnitTestCase {
 		Sensei_Enrolment_Provider_Journal_Store::add_provider_log_message( $provider, $user, $course, 'Second message' );
 		Sensei_Enrolment_Provider_Journal_Store::persist_all();
 
-		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::META_PREFIX_ENROLMENT_PROVIDERS_JOURNAL . $course, true );
+		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::META_ENROLMENT_PROVIDERS_JOURNAL, true );
 		$this->assertRegExp( '/.*always-provides.*Second message.*First message/', $user_meta, 'A meta with the provider id and the two messages should be stored.' );
 
 		$logs = Sensei_Enrolment_Provider_Journal_Store::get_provider_logs( $provider, $user, $course );
@@ -92,7 +92,7 @@ class Sensei_Enrolment_Provider_Journal_Store_Test extends WP_UnitTestCase {
 		Sensei_Enrolment_Provider_Journal_Store::register_possible_enrolment_change( $provider_results, $user, $course );
 		Sensei_Enrolment_Provider_Journal_Store::persist_all();
 
-		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::META_PREFIX_ENROLMENT_PROVIDERS_JOURNAL . $course, true );
+		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::META_ENROLMENT_PROVIDERS_JOURNAL, true );
 		$this->assertRegExp( '/.*manual.*s.*true/', $user_meta, 'Manual provider status should be true' );
 		$this->assertRegExp( '/.*simple.*s.*false/', $user_meta, 'Simple provider status should be true' );
 
@@ -104,7 +104,7 @@ class Sensei_Enrolment_Provider_Journal_Store_Test extends WP_UnitTestCase {
 		Sensei_Enrolment_Provider_Journal_Store::register_possible_enrolment_change( $provider_results, $user, $course );
 		Sensei_Enrolment_Provider_Journal_Store::persist_all();
 
-		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::META_PREFIX_ENROLMENT_PROVIDERS_JOURNAL . $course, true );
+		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::META_ENROLMENT_PROVIDERS_JOURNAL, true );
 		$this->assertRegExp( '/.*manual.*s.*false.*s.*true/', $user_meta, 'Manual provider status should be initially true then false' );
 		$this->assertRegExp( '/.*simple.*s.*true.*s.*false/', $user_meta, 'Simple provider status should be initially false then true' );
 	}
@@ -211,35 +211,38 @@ class Sensei_Enrolment_Provider_Journal_Store_Test extends WP_UnitTestCase {
 		$method->setAccessible( true );
 		$journal_store = $method->invoke( null, $user, $course );
 
-		$journal_json = '
+		$journal_json = <<<EOT
 			{
-				"manual": {
-				"h": [
-						{
-							"t": 1586530073.434888,
-							"s": false
-						},
-						{
-							"t": 1586530073.432448,
-							"s": true
-						}
-					],
-					"l": []
-				},
-				"memberships": {
-				"h": [
-						{
-							"t": 1586530073.434444,
-							"s": null
-						},
-						{
-							"t": 1586530073.431507,
-							"s": false
-						}
-					],
-					"l": []
+				"$course": {
+					"manual": {
+						"h": [
+								{
+									"t": 1586530073.434888,
+									"s": false
+								},
+								{
+									"t": 1586530073.432448,
+									"s": true
+								}
+							],
+						"l": []
+					},
+					"memberships": {
+						"h": [
+								{
+									"t": 1586530073.434444,
+									"s": null
+								},
+								{
+									"t": 1586530073.431507,
+									"s": false
+								}
+							],
+						"l": []
+					}
 				}
-			}';
+			}
+EOT;
 
 		$method = new ReflectionMethod( $journal_store, 'restore_from_json' );
 		$method->setAccessible( true );
@@ -247,13 +250,7 @@ class Sensei_Enrolment_Provider_Journal_Store_Test extends WP_UnitTestCase {
 
 		$state_store_instances = new ReflectionProperty( Sensei_Enrolment_Provider_Journal_Store::class, 'instances' );
 		$state_store_instances->setAccessible( true );
-		$state_store_instances->setValue(
-			[
-				$user => [
-					$course => $journal_store,
-				],
-			]
-		);
+		$state_store_instances->setValue( [ $user => $journal_store ] );
 
 		$current_snapshot = Sensei_Enrolment_Provider_Journal_Store::get_enrolment_snanpshot( $user, $course, 1586530073.434586 );
 		$this->assertCount( 1, $current_snapshot, 'There should be 1 provider in the snapshot.' );
@@ -264,6 +261,69 @@ class Sensei_Enrolment_Provider_Journal_Store_Test extends WP_UnitTestCase {
 		$this->assertTrue( $previous_snapshot['manual'], 'The manual provider status should be true.' );
 		$this->assertFalse( $previous_snapshot['memberships'], 'The memberships provider status should be false.' );
 	}
+
+	/**
+	 * Tests that the JSON is parsed correctly when there are 2 courses.
+	 */
+	public function testJournalWithManyCourses() {
+		$courses = $this->factory->course->create_many( 2 );
+		$user    = $this->factory->user->create();
+		$this->enableJournal();
+
+		$method = new ReflectionMethod( Sensei_Enrolment_Provider_Journal_Store::class, 'get' );
+		$method->setAccessible( true );
+		$journal_store = $method->invoke( null, $user );
+
+		$journal_json = <<<EOT
+			{
+				"$courses[0]": {
+					"manual": {
+						"h": [
+								{
+									"t": 1586530073.432448,
+									"s": true
+								}
+							],
+						"l": []
+					}
+				},
+				"$courses[1]": {
+					"denies-crooks": {
+						"h": [],
+						"l": [
+							{
+								"t": 1586530073,
+								"m": "Meaningful message"
+							}
+						]
+					}
+				}
+			}
+EOT;
+
+		$method = new ReflectionMethod( $journal_store, 'restore_from_json' );
+		$method->setAccessible( true );
+		$method->invoke( $journal_store, $journal_json );
+
+		$state_store_instances = new ReflectionProperty( Sensei_Enrolment_Provider_Journal_Store::class, 'instances' );
+		$state_store_instances->setAccessible( true );
+		$state_store_instances->setValue( [ $user => $journal_store ] );
+
+		$current_snapshot = Sensei_Enrolment_Provider_Journal_Store::get_enrolment_snanpshot( $user, $courses[0] );
+		$this->assertCount( 1, $current_snapshot, 'There should be 1 provider in the snapshot.' );
+		$this->assertTrue( $current_snapshot['manual'], 'The manual provider status should be true.' );
+
+		$logs = Sensei_Enrolment_Provider_Journal_Store::get_provider_logs( Sensei_Course_Manual_Enrolment_Provider::instance(), $user, $courses[0] );
+		$this->assertCount( 0, $logs, 'There should no messages in the logs' );
+
+		$current_snapshot = Sensei_Enrolment_Provider_Journal_Store::get_enrolment_snanpshot( $user, $courses[1] );
+		$this->assertCount( 0, $current_snapshot, 'There should be no providers in the snapshot.' );
+
+		$logs = Sensei_Enrolment_Provider_Journal_Store::get_provider_logs( new Sensei_Test_Enrolment_Provider_Denies_Crooks(), $user, $courses[1] );
+		$this->assertCount( 1, $logs, 'There should be exactly 1 message in the logs' );
+		$this->assertEquals( 'Meaningful message', $logs[0]['message'] );
+	}
+
 
 	private function enableJournal() {
 		tests_add_filter(
