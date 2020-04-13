@@ -238,18 +238,40 @@ class Sensei_Course_Enrolment {
 	 */
 	public function save_enrolment( $user_id, $is_enrolled ) {
 		$term = Sensei_Learner::get_learner_term( $user_id );
-		if ( ! $is_enrolled ) {
-			$result = wp_remove_object_terms( $this->course_id, [ intval( $term->term_id ) ], Sensei_PostTypes::LEARNER_TAXONOMY_NAME );
 
-			return true === $result;
+		$is_enrolled_current = has_term( $term->term_id, Sensei_PostTypes::LEARNER_TAXONOMY_NAME, $this->course_id );
+
+		// Nothing has changed.
+		if ( $is_enrolled_current === $is_enrolled ) {
+			return true;
 		}
 
-		// If they are enrolled, make sure they have started the course.
-		Sensei_Utils::user_start_course( $user_id, $this->course_id );
+		if ( ! $is_enrolled ) {
+			$result = true === wp_remove_object_terms( $this->course_id, [ intval( $term->term_id ) ], Sensei_PostTypes::LEARNER_TAXONOMY_NAME );
+		} else {
+			// If they are enrolled, make sure they have started the course.
+			Sensei_Utils::user_start_course( $user_id, $this->course_id );
 
-		$result = wp_set_post_terms( $this->course_id, [ intval( $term->term_id ) ], Sensei_PostTypes::LEARNER_TAXONOMY_NAME, true );
+			$save_result = wp_set_post_terms( $this->course_id, [ intval( $term->term_id ) ], Sensei_PostTypes::LEARNER_TAXONOMY_NAME, true );
+			$result      = is_array( $save_result ) && ! empty( $save_result );
+		}
 
-		return is_array( $result ) && ! empty( $result );
+		if ( ! $result ) {
+			return false;
+		}
+
+		/**
+		 * Fire action when course enrolment status changes.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param int  $user_id     User ID.
+		 * @param int  $course_id   Course post ID.
+		 * @param bool $is_enrolled New enrolment status.
+		 */
+		do_action( 'sensei_course_enrolment_status_changed', $user_id, $this->course_id, $is_enrolled );
+
+		return true;
 	}
 
 	/**
