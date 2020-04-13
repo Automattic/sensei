@@ -290,6 +290,12 @@ class Sensei_Course_Enrolment {
 
 		$this->store_enrolment_results( $user_id, $enrolment_results );
 
+		Sensei_Enrolment_Provider_Journal_Store::register_possible_enrolment_change(
+			$enrolment_results,
+			$user_id,
+			$this->course_id
+		);
+
 		/**
 		 * Notify upon calculation of enrolment results.
 		 *

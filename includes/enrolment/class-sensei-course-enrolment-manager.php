@@ -73,6 +73,7 @@ class Sensei_Course_Enrolment_Manager {
 		add_action( 'transition_post_status', [ $this, 'recalculate_on_course_post_status_change' ], 10, 3 );
 
 		add_action( 'shutdown', [ Sensei_Enrolment_Provider_State_Store::class, 'persist_all' ] );
+		add_action( 'shutdown', [ Sensei_Enrolment_Provider_Journal_Store::class, 'persist_all' ] );
 	}
 
 	/**
