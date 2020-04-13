@@ -89,7 +89,11 @@ class Sensei_Enrolment_Provider_Journal_Store_Test extends WP_UnitTestCase {
 			'simple' => false,
 		];
 
-		Sensei_Enrolment_Provider_Journal_Store::register_possible_enrolment_change( $provider_results, $user, $course );
+		Sensei_Enrolment_Provider_Journal_Store::register_possible_enrolment_change(
+			new Sensei_Course_Enrolment_Provider_Results( $provider_results, 'thehash' ),
+			$user,
+			$course
+		);
 		Sensei_Enrolment_Provider_Journal_Store::persist_all();
 
 		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::META_ENROLMENT_PROVIDERS_JOURNAL, true );
@@ -101,12 +105,121 @@ class Sensei_Enrolment_Provider_Journal_Store_Test extends WP_UnitTestCase {
 			'simple' => true,
 		];
 
-		Sensei_Enrolment_Provider_Journal_Store::register_possible_enrolment_change( $provider_results, $user, $course );
+		Sensei_Enrolment_Provider_Journal_Store::register_possible_enrolment_change(
+			new Sensei_Course_Enrolment_Provider_Results( $provider_results, 'thehash' ),
+			$user,
+			$course
+		);
 		Sensei_Enrolment_Provider_Journal_Store::persist_all();
 
 		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::META_ENROLMENT_PROVIDERS_JOURNAL, true );
 		$this->assertRegExp( '/.*manual.*s.*false.*s.*true/', $user_meta, 'Manual provider status should be initially true then false' );
 		$this->assertRegExp( '/.*simple.*s.*true.*s.*false/', $user_meta, 'Simple provider status should be initially false then true' );
+	}
+
+	/**
+	 * Tests that the user meta is stored only after the user becomes enrolled to a course.
+	 */
+	public function testEnrolmentHistoryIsStoredAfterEnrolment() {
+		$course = $this->factory->course->create();
+		$user   = $this->factory->user->create();
+		$this->enableJournal();
+
+		// Test that when the user is not enrolled, no meta is stored.
+		$provider_results = [
+			'manual' => false,
+			'simple' => false,
+		];
+
+		Sensei_Enrolment_Provider_Journal_Store::register_possible_enrolment_change(
+			new Sensei_Course_Enrolment_Provider_Results( $provider_results, 'thehash' ),
+			$user,
+			$course
+		);
+		Sensei_Enrolment_Provider_Journal_Store::persist_all();
+
+		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::META_ENROLMENT_PROVIDERS_JOURNAL, true );
+		$this->assertEmpty( $user_meta, 'Meta should not be stored if the user is not enrolled to any courses.' );
+
+		// Test that after the user gets enrolled, the meta is stored.
+		$provider_results = [
+			'manual' => false,
+			'simple' => true,
+		];
+
+		Sensei_Enrolment_Provider_Journal_Store::register_possible_enrolment_change(
+			new Sensei_Course_Enrolment_Provider_Results( $provider_results, 'thehash' ),
+			$user,
+			$course
+		);
+		Sensei_Enrolment_Provider_Journal_Store::persist_all();
+
+		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::META_ENROLMENT_PROVIDERS_JOURNAL, true );
+		$this->assertNotEmpty( $user_meta, 'Meta should be stored after the user gets enrolled to the courses.' );
+
+		// Test that changes are stored after the user gets enrolled.
+		$provider_results = [
+			'manual' => false,
+			'simple' => false,
+		];
+
+		Sensei_Enrolment_Provider_Journal_Store::register_possible_enrolment_change(
+			new Sensei_Course_Enrolment_Provider_Results( $provider_results, 'thehash' ),
+			$user,
+			$course
+		);
+		Sensei_Enrolment_Provider_Journal_Store::persist_all();
+
+		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::META_ENROLMENT_PROVIDERS_JOURNAL, true );
+		$this->assertRegExp( '/.*manual.*s.*false.*s.*false/', $user_meta, 'Manual provider status should be false in both entries.' );
+		$this->assertRegExp( '/.*simple.*s.*false.*s.*true/', $user_meta, 'Simple provider status should be initially true then false.' );
+
+		// Test that if a user is enrolled to a course, nothing is stored for courses that is unenrolled.
+		$second_course    = $this->factory->course->create();
+		$provider_results = [
+			'manual' => false,
+			'simple' => false,
+		];
+
+		Sensei_Enrolment_Provider_Journal_Store::register_possible_enrolment_change(
+			new Sensei_Course_Enrolment_Provider_Results( $provider_results, 'thehash' ),
+			$user,
+			$second_course
+		);
+		Sensei_Enrolment_Provider_Journal_Store::persist_all();
+
+		$user_meta     = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::META_ENROLMENT_PROVIDERS_JOURNAL, true );
+		$journal_array = json_decode( $user_meta, true );
+		$this->assertArrayHasKey( $course, $journal_array );
+		$this->assertArrayNotHasKey( $second_course, $journal_array );
+	}
+
+	/**
+	 * Tests that the history is stored after a message was added to the log.
+	 */
+	public function testEnrolmentHistoryIsStoredAfterMessageIsAdded() {
+		$course   = $this->factory->course->create();
+		$user     = $this->factory->user->create();
+		$provider = new Sensei_Test_Enrolment_Provider_Always_Provides();
+		$this->enableJournal();
+
+		Sensei_Enrolment_Provider_Journal_Store::add_provider_log_message( $provider, $user, $course, 'First message' );
+
+		$provider_results = [
+			'manual' => false,
+			'simple' => false,
+		];
+
+		Sensei_Enrolment_Provider_Journal_Store::register_possible_enrolment_change(
+			new Sensei_Course_Enrolment_Provider_Results( $provider_results, 'thehash' ),
+			$user,
+			$course
+		);
+		Sensei_Enrolment_Provider_Journal_Store::persist_all();
+
+		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::META_ENROLMENT_PROVIDERS_JOURNAL, true );
+		$this->assertRegExp( '/.*manual.*s.*false/', $user_meta, 'Manual provider status should be stored.' );
+		$this->assertRegExp( '/.*simple.*s.*false/', $user_meta, 'Simple provider status should be stored.' );
 	}
 
 	/**
@@ -126,15 +239,28 @@ class Sensei_Enrolment_Provider_Journal_Store_Test extends WP_UnitTestCase {
 			'denies-crooks'  => false,
 		];
 
-		Sensei_Enrolment_Provider_Journal_Store::register_possible_enrolment_change( $provider_results, $user, $course );
-		Sensei_Enrolment_Provider_Journal_Store::register_possible_enrolment_change( $provider_results, $user, $course );
+		Sensei_Enrolment_Provider_Journal_Store::register_possible_enrolment_change(
+			new Sensei_Course_Enrolment_Provider_Results( $provider_results, 'thehash' ),
+			$user,
+			$course
+		);
+
+		Sensei_Enrolment_Provider_Journal_Store::register_possible_enrolment_change(
+			new Sensei_Course_Enrolment_Provider_Results( $provider_results, 'thehash' ),
+			$user,
+			$course
+		);
 
 		$provider_results = [
 			'manual'         => false,
 			'never-provides' => false,
 		];
 
-		Sensei_Enrolment_Provider_Journal_Store::register_possible_enrolment_change( $provider_results, $user, $course );
+		Sensei_Enrolment_Provider_Journal_Store::register_possible_enrolment_change(
+			new Sensei_Course_Enrolment_Provider_Results( $provider_results, 'thehash' ),
+			$user,
+			$course
+		);
 
 		$manual_history = Sensei_Enrolment_Provider_Journal_Store::get_provider_history( $manual_provider, $user, $course );
 		$this->assertCount( 2, $manual_history, 'There should be 2 changes in manual provider status.' );
@@ -164,7 +290,11 @@ class Sensei_Enrolment_Provider_Journal_Store_Test extends WP_UnitTestCase {
 			'simple' => false,
 		];
 
-		Sensei_Enrolment_Provider_Journal_Store::register_possible_enrolment_change( $provider_results, $user, $course );
+		Sensei_Enrolment_Provider_Journal_Store::register_possible_enrolment_change(
+			new Sensei_Course_Enrolment_Provider_Results( $provider_results, 'thehash' ),
+			$user,
+			$course
+		);
 		$after_first_change = microtime( true );
 		usleep( 10000 );
 
@@ -172,7 +302,11 @@ class Sensei_Enrolment_Provider_Journal_Store_Test extends WP_UnitTestCase {
 			'memberships' => false,
 		];
 
-		Sensei_Enrolment_Provider_Journal_Store::register_possible_enrolment_change( $provider_results, $user, $course );
+		Sensei_Enrolment_Provider_Journal_Store::register_possible_enrolment_change(
+			new Sensei_Course_Enrolment_Provider_Results( $provider_results, 'thehash' ),
+			$user,
+			$course
+		);
 		$after_second_change = microtime( true );
 		usleep( 10000 );
 
@@ -181,7 +315,11 @@ class Sensei_Enrolment_Provider_Journal_Store_Test extends WP_UnitTestCase {
 			'memberships' => true,
 		];
 
-		Sensei_Enrolment_Provider_Journal_Store::register_possible_enrolment_change( $provider_results, $user, $course );
+		Sensei_Enrolment_Provider_Journal_Store::register_possible_enrolment_change(
+			new Sensei_Course_Enrolment_Provider_Results( $provider_results, 'thehash' ),
+			$user,
+			$course
+		);
 
 		$first_change_snapshot = Sensei_Enrolment_Provider_Journal_Store::get_enrolment_snanpshot( $user, $course, $after_first_change );
 		$this->assertCount( 2, $first_change_snapshot, 'There should be 2 providers in the snapshot.' );
@@ -323,7 +461,6 @@ EOT;
 		$this->assertCount( 1, $logs, 'There should be exactly 1 message in the logs' );
 		$this->assertEquals( 'Meaningful message', $logs[0]['message'] );
 	}
-
 
 	private function enableJournal() {
 		tests_add_filter(

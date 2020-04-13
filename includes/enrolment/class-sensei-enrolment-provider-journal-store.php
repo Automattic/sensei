@@ -111,7 +111,7 @@ class Sensei_Enrolment_Provider_Journal_Store implements JsonSerializable {
 	}
 
 	/**
-	 * Persist this store.
+	 * Persist this store. If the store isn't changed, this method has no effect.
 	 *
 	 * @return bool
 	 */
@@ -154,19 +154,24 @@ class Sensei_Enrolment_Provider_Journal_Store implements JsonSerializable {
 	}
 
 	/**
-	 * Register a possible update in the status of a provider for a user and a course. If there was no actual change on
-	 * the status, this method has no effect.
+	 * Register a possible update in the course enrolment status of a provider for a user. If there was no actual change
+	 * on the status, this method has no effect. Changes start being registered only after a user is enrolled.
 	 *
-	 * @param array $provider_results An array with the format 'provider_id' => enrollment result.
-	 * @param int   $user_id          The user which the change applies to.
-	 * @param int   $course_id        The course which the change applies to.
+	 * @param Sensei_Course_Enrolment_Provider_Results $enrolment_results The enrolment results.
+	 * @param int                                      $user_id          The user which the change applies to.
+	 * @param int                                      $course_id        The course which the change applies to.
 	 */
-	public static function register_possible_enrolment_change( $provider_results, $user_id, $course_id ) {
+	public static function register_possible_enrolment_change( $enrolment_results, $user_id, $course_id ) {
 		$journal_store = self::get( $user_id );
 
-		$has_changed = false;
+		// Register the status of the user for the first time only if he is enrolled.
+		if ( ! isset( $journal_store->providers_journal[ $course_id ] ) && ! $enrolment_results->is_enrolment_provided() ) {
+			return;
+		}
 
-		foreach ( $provider_results as $provider_id => $is_enrolled ) {
+		// Loop through all providers to update any changes in status.
+		$has_changed = false;
+		foreach ( $enrolment_results->get_provider_results() as $provider_id => $is_enrolled ) {
 			if ( ! isset( $journal_store->providers_journal[ $course_id ][ $provider_id ] ) ) {
 				$journal_store->providers_journal[ $course_id ][ $provider_id ] = Sensei_Enrolment_Provider_Journal::create();
 			}
@@ -174,9 +179,10 @@ class Sensei_Enrolment_Provider_Journal_Store implements JsonSerializable {
 			$has_changed = $journal_store->providers_journal[ $course_id ][ $provider_id ]->update_enrolment_status( $is_enrolled ) || $has_changed;
 		}
 
+		// Mark any removed providers as deleted in enrolment history.
 		$current_snapshot = self::get_enrolment_snanpshot( $user_id, $course_id );
 
-		$removed_providers = array_diff( array_keys( $current_snapshot ), array_keys( $provider_results ) );
+		$removed_providers = array_diff( array_keys( $current_snapshot ), array_keys( $enrolment_results->get_provider_results() ) );
 		foreach ( $removed_providers as $removed_provider ) {
 			$has_changed = $journal_store->providers_journal[ $course_id ][ $removed_provider ]->delete_enrolment_status() || $has_changed;
 		}
