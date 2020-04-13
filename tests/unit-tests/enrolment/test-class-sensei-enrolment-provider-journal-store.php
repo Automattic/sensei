@@ -116,33 +116,36 @@ class Sensei_Enrolment_Provider_Journal_Store_Test extends WP_UnitTestCase {
 		$course = $this->factory->course->create();
 		$user   = $this->factory->user->create();
 		$this->enableJournal();
+		$manual_provider = Sensei_Course_Manual_Enrolment_Provider::instance();
+		$never_provides  = new Sensei_Test_Enrolment_Provider_Never_Provides();
+		$denies_crooks   = new Sensei_Test_Enrolment_Provider_Denies_Crooks();
 
 		$provider_results = [
-			'manual'      => true,
-			'simple'      => false,
-			'memberships' => false,
+			'manual'         => true,
+			'never-provides' => false,
+			'denies-crooks'  => false,
 		];
 
 		Sensei_Enrolment_Provider_Journal_Store::register_possible_enrolment_change( $provider_results, $user, $course );
 		Sensei_Enrolment_Provider_Journal_Store::register_possible_enrolment_change( $provider_results, $user, $course );
 
 		$provider_results = [
-			'manual' => false,
-			'simple' => false,
+			'manual'         => false,
+			'never-provides' => false,
 		];
 
 		Sensei_Enrolment_Provider_Journal_Store::register_possible_enrolment_change( $provider_results, $user, $course );
 
-		$manual_history = Sensei_Enrolment_Provider_Journal_Store::get_provider_history( $user, $course, 'manual' );
+		$manual_history = Sensei_Enrolment_Provider_Journal_Store::get_provider_history( $manual_provider, $user, $course );
 		$this->assertCount( 2, $manual_history, 'There should be 2 changes in manual provider status.' );
 		$this->assertFalse( $manual_history[0]['enrolment_status'], 'The current status should be false.' );
 		$this->assertTrue( $manual_history[1]['enrolment_status'], 'The previous status should be true.' );
 
-		$simple_history = Sensei_Enrolment_Provider_Journal_Store::get_provider_history( $user, $course, 'simple' );
+		$simple_history = Sensei_Enrolment_Provider_Journal_Store::get_provider_history( $never_provides, $user, $course );
 		$this->assertCount( 1, $simple_history, 'There should be 1 change in simple provider status.' );
 		$this->assertFalse( $simple_history[0]['enrolment_status'], 'The current status should be false.' );
 
-		$memberships_history = Sensei_Enrolment_Provider_Journal_Store::get_provider_history( $user, $course, 'memberships' );
+		$memberships_history = Sensei_Enrolment_Provider_Journal_Store::get_provider_history( $denies_crooks, $user, $course );
 		$this->assertCount( 2, $memberships_history, 'There should be 2 changes in memberships provider status.' );
 		$this->assertNull( $memberships_history[0]['enrolment_status'], 'The current status should be deleted.' );
 		$this->assertFalse( $memberships_history[1]['enrolment_status'], 'The previous status should be false.' );

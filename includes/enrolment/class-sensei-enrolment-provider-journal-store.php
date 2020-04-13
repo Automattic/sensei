@@ -233,17 +233,17 @@ class Sensei_Enrolment_Provider_Journal_Store implements JsonSerializable {
 	/**
 	 * Get the enrolment status history of a provider for a specified user and course.
 	 *
-	 * @param int $user_id     The user id.
-	 * @param int $course_id   The course id.
-	 * @param int $provider_id The provider id.
+	 * @param Sensei_Course_Enrolment_Provider_Interface $provider  The provider.
+	 * @param int                                        $user_id   The user id.
+	 * @param int                                        $course_id The course id.
 	 *
 	 * @return array The history of the provider. Each element of the array has the format:
 	 *               [ 'timestamp' => Timestamp of the status change, 'enrolment_status' => true|false|null ]
 	 */
-	public static function get_provider_history( $user_id, $course_id, $provider_id ) {
+	public static function get_provider_history( Sensei_Course_Enrolment_Provider_Interface $provider, $user_id, $course_id ) {
 		$journal_store = self::get( $user_id, $course_id );
 
-		return isset( $journal_store->providers_journal[ $provider_id ] ) ? $journal_store->providers_journal[ $provider_id ]->get_history() : [];
+		return isset( $journal_store->providers_journal[ $provider->get_id() ] ) ? $journal_store->providers_journal[ $provider->get_id() ]->get_history() : [];
 	}
 
 	/**
