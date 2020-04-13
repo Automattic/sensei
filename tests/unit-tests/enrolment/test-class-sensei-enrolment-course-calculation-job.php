@@ -125,7 +125,7 @@ class Sensei_Enrolment_Course_Calculation_Job_Test extends WP_UnitTestCase {
 
 		$manual_provider = Sensei_Course_Enrolment_Manager::instance()->get_manual_enrolment_provider();
 		foreach ( $user_ids as $user_id ) {
-			$manual_provider->enrol_student( $user_id, $course_id );
+			$manual_provider->enrol_learner( $user_id, $course_id );
 		}
 
 		return $user_ids;

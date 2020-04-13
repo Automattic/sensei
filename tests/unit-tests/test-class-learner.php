@@ -92,7 +92,7 @@ class Sensei_Class_Student_Test extends WP_UnitTestCase {
 		$manual_provider = Sensei_Course_Enrolment_Manager::instance()->get_manual_enrolment_provider();
 
 		foreach ( $enrolled_course_ids as $course_id ) {
-			$manual_provider->enrol_student( $student_id, $course_id );
+			$manual_provider->enrol_learner( $student_id, $course_id );
 		}
 
 		$base_query_args        = [
@@ -125,7 +125,7 @@ class Sensei_Class_Student_Test extends WP_UnitTestCase {
 		$manual_provider = Sensei_Course_Enrolment_Manager::instance()->get_manual_enrolment_provider();
 
 		foreach ( $enrolled_course_ids as $course_id ) {
-			$manual_provider->enrol_student( $student_id, $course_id );
+			$manual_provider->enrol_learner( $student_id, $course_id );
 		}
 
 		foreach ( $completed_course_ids as $course_id ) {
@@ -166,7 +166,7 @@ class Sensei_Class_Student_Test extends WP_UnitTestCase {
 		$manual_provider = Sensei_Course_Enrolment_Manager::instance()->get_manual_enrolment_provider();
 
 		foreach ( $enrolled_course_ids as $course_id ) {
-			$manual_provider->enrol_student( $student_id, $course_id );
+			$manual_provider->enrol_learner( $student_id, $course_id );
 		}
 
 		foreach ( $completed_course_ids as $course_id ) {

@@ -569,9 +569,9 @@ class Sensei_Learner_Management {
 
 		$result = false;
 		if ( 'withdraw' === $learner_action ) {
-			$result = $manual_enrolment_provider->withdraw_student( $user_id, $course_id );
+			$result = $manual_enrolment_provider->withdraw_learner( $user_id, $course_id );
 		} elseif ( 'enrol' === $learner_action ) {
-			$result = $manual_enrolment_provider->enrol_student( $user_id, $course_id );
+			$result = $manual_enrolment_provider->enrol_learner( $user_id, $course_id );
 		}
 
 		if ( ! $result ) {
@@ -689,7 +689,7 @@ class Sensei_Learner_Management {
 			$result = false;
 
 			if ( $manual_enrolment_provider instanceof Sensei_Course_Manual_Enrolment_Provider ) {
-				$result = $manual_enrolment_provider->enrol_student( $user_id, $course_id );
+				$result = $manual_enrolment_provider->enrol_learner( $user_id, $course_id );
 			}
 
 			switch ( $post_type ) {

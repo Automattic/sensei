@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Course enrolment provider for manually enrolling students.
+ * Course enrolment provider for manually enrolling learners.
  *
  * @since 3.0.0
  */
@@ -74,12 +74,12 @@ class Sensei_Course_Manual_Enrolment_Provider
 	}
 
 	/**
-	 * Check if this course enrolment provider is enroling a user to a course.
+	 * Check if this course enrolment provider is enrolling a user to a course.
 	 *
 	 * @param int $user_id   User ID.
 	 * @param int $course_id Course post ID.
 	 *
-	 * @return bool  `true` if this provider enrols the student and `false` if not.
+	 * @return bool  `true` if this provider enrols the learner and `false` if not.
 	 */
 	protected function get_initial_enrolment_status( $user_id, $course_id ) {
 		if ( $this->needs_legacy_migration( $user_id, $course_id ) ) {
@@ -90,14 +90,14 @@ class Sensei_Course_Manual_Enrolment_Provider
 	}
 
 	/**
-	 * Enrols a student manually in a course.
+	 * Enrols a learner manually in a course.
 	 *
 	 * @param int $user_id   User ID.
 	 * @param int $course_id Course post ID.
 	 *
 	 * @return bool
 	 */
-	public function enrol_student( $user_id, $course_id ) {
+	public function enrol_learner( $user_id, $course_id ) {
 		// Check if they are already manually enrolled.
 		if ( $this->is_enrolled( $user_id, $course_id ) ) {
 			return true;
@@ -110,14 +110,14 @@ class Sensei_Course_Manual_Enrolment_Provider
 	}
 
 	/**
-	 * Withdraw manual enrolment for a student in a course.
+	 * Withdraw manual enrolment for a learner in a course.
 	 *
 	 * @param int $user_id   User ID.
 	 * @param int $course_id Course post ID.
 	 *
 	 * @return bool
 	 */
-	public function withdraw_student( $user_id, $course_id ) {
+	public function withdraw_learner( $user_id, $course_id ) {
 		// Check if they aren't manually enrolled.
 		if ( ! $this->is_enrolled( $user_id, $course_id ) ) {
 			return true;

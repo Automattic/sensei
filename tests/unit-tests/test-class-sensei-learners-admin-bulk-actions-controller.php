@@ -83,14 +83,14 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller_Test extends WP_UnitTestCase
 
 		$mock_provider = $this->getMockBuilder( Sensei_Course_Manual_Enrolment_Provider::class )
 			->disableOriginalConstructor()
-			->setMethods( [ 'enrol_student', 'is_enrolled' ] )
+			->setMethods( [ 'enrol_learner', 'is_enrolled' ] )
 			->getMock();
 
 		$mock_provider->method( 'is_enrolled' )->willReturn( true, true, false, false );
 		$this->registerMockProvider( $mock_provider );
 
 		$mock_provider->expects( $this->exactly( 2 ) )
-			->method( 'enrol_student' )
+			->method( 'enrol_learner' )
 			->withConsecutive(
 				[ $users[1], $courses[0] ],
 				[ $users[1], $courses[1] ]
@@ -113,14 +113,14 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller_Test extends WP_UnitTestCase
 
 		$mock_provider = $this->getMockBuilder( Sensei_Course_Manual_Enrolment_Provider::class )
 			->disableOriginalConstructor()
-			->setMethods( [ 'withdraw_student', 'is_enrolled' ] )
+			->setMethods( [ 'withdraw_learner', 'is_enrolled' ] )
 			->getMock();
 
 		$mock_provider->method( 'is_enrolled' )->willReturn( true, true, false, false );
 		$this->registerMockProvider( $mock_provider );
 
 		$mock_provider->expects( $this->exactly( 2 ) )
-			->method( 'withdraw_student' )
+			->method( 'withdraw_learner' )
 			->withConsecutive(
 				[ $users[0], $courses[0] ],
 				[ $users[0], $courses[1] ]

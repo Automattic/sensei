@@ -1265,11 +1265,11 @@ class Sensei_Frontend {
 			 * @param int      $user_id          User ID.
 			 * @param int      $course_id        Course post ID.
 			 */
-			$student_enrollment_handler = apply_filters( 'sensei_frontend_student_enrolment_handler', [ $this, 'manually_enrol_learner' ], $current_user->ID, $post->ID );
+			$learner_enrollment_handler = apply_filters( 'sensei_frontend_learner_enrolment_handler', [ $this, 'manually_enrol_learner' ], $current_user->ID, $post->ID );
 
 			$student_enrolled = false;
-			if ( is_callable( $student_enrollment_handler ) ) {
-				$student_enrolled = call_user_func( $student_enrollment_handler, $current_user->ID, $post->ID );
+			if ( is_callable( $learner_enrollment_handler ) ) {
+				$student_enrolled = call_user_func( $learner_enrollment_handler, $current_user->ID, $post->ID );
 			}
 
 			$this->data                        = new stdClass();
@@ -1314,7 +1314,7 @@ class Sensei_Frontend {
 		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
 		$manual_enrolment  = $enrolment_manager->get_manual_enrolment_provider();
 
-		return $manual_enrolment && $manual_enrolment->enrol_student( $user_id, $course_id );
+		return $manual_enrolment && $manual_enrolment->enrol_learner( $user_id, $course_id );
 	}
 
 	/**

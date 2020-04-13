@@ -156,7 +156,7 @@ class Sensei_Course_Manual_Enrolment_Provider_Test extends WP_UnitTestCase {
 
 		$this->assertFalse( $provider->is_enrolled( $student_id, $course_id ), 'Student should not be enrolled before we enrol them.' );
 
-		$provider->enrol_student( $student_id, $course_id );
+		$provider->enrol_learner( $student_id, $course_id );
 
 		$this->assertTrue( $provider->is_enrolled( $student_id, $course_id ), 'Student should now be enrolled.' );
 	}
@@ -173,7 +173,7 @@ class Sensei_Course_Manual_Enrolment_Provider_Test extends WP_UnitTestCase {
 		$this->directlyEnrolStudent( $student_id, $course_id );
 		$this->assertTrue( $provider->is_enrolled( $student_id, $course_id ), 'Student should be enrolled after directly enrolling them.' );
 
-		$provider->withdraw_student( $student_id, $course_id );
+		$provider->withdraw_learner( $student_id, $course_id );
 
 		$this->assertFalse( $provider->is_enrolled( $student_id, $course_id ), 'Student should not be enrolled after withdrawing them from the course.' );
 	}

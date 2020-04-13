@@ -269,12 +269,12 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 		switch ( $action ) {
 			case self::MANUALLY_ENROL:
 				if ( ! $manual_enrolment_provider->is_enrolled( $user_id, $course_id ) ) {
-					$manual_enrolment_provider->enrol_student( $user_id, $course_id );
+					$manual_enrolment_provider->enrol_learner( $user_id, $course_id );
 				}
 				break;
 			case self::REMOVE_MANUAL_ENROLMENT:
 				if ( $manual_enrolment_provider->is_enrolled( $user_id, $course_id ) ) {
-					$manual_enrolment_provider->withdraw_student( $user_id, $course_id );
+					$manual_enrolment_provider->withdraw_learner( $user_id, $course_id );
 				}
 				break;
 			case self::REMOVE_PROGRESS:
