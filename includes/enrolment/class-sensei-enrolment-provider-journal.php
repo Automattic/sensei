@@ -133,10 +133,17 @@ class Sensei_Enrolment_Provider_Journal implements JsonSerializable {
 		$history     = array_map( [ __CLASS__, 'serialize_history_entry' ], $this->history );
 		$message_log = array_map( [ __CLASS__, 'serialize_log_entry' ], $this->message_log );
 
-		return [
-			'h' => $history,
-			'l' => $message_log,
-		];
+		$result = [];
+
+		if ( ! empty( $history ) ) {
+			$result['h'] = $history;
+		}
+
+		if ( ! empty( $message_log ) ) {
+			$result['l'] = $message_log;
+		}
+
+		return $result;
 	}
 
 	/**

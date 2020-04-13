@@ -120,7 +120,7 @@ class Sensei_Enrolment_Provider_Journal_Test extends WP_UnitTestCase {
 
 		$journal_array = json_decode( wp_json_encode( $journal ), true );
 
-		$this->assertCount( 0, $journal_array['h'], 'Deletion on an empty history should have no effect.' );
+		$this->assertArrayNotHasKey( 'h', $journal_array, 'Deletion on an empty history should have no effect.' );
 
 		$journal->update_enrolment_status( false );
 		$journal->delete_enrolment_status();
