@@ -1314,7 +1314,7 @@ class Sensei_Frontend {
 		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
 		$manual_enrolment  = $enrolment_manager->get_manual_enrolment_provider();
 
-		return $manual_enrolment && $manual_enrolment->enrol_student( $user_id, $course_id );
+		return $manual_enrolment && $manual_enrolment->enrol_learner( $user_id, $course_id );
 	}
 
 	/**

@@ -80,7 +80,7 @@ trait Sensei_Course_Enrolment_Manual_Test_Helpers {
 			return false;
 		}
 
-		return $manual_provider->enrol_student( $user_id, $course_id );
+		return $manual_provider->enrol_learner( $user_id, $course_id );
 	}
 
 	/**
