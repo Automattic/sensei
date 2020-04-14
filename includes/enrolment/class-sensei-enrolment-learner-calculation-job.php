@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Enrolment_Learner_Calculation_Job implements Sensei_Background_Job_Interface {
 	const NAME               = 'sensei_calculate_learner_enrolments';
-	const DEFAULT_BATCH_SIZE = 10;
+	const DEFAULT_BATCH_SIZE = 20;
 
 	/**
 	 * Number of users for each job run.
