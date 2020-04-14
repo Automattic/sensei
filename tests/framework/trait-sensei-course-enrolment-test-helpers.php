@@ -46,7 +46,7 @@ trait Sensei_Course_Enrolment_Test_Helpers {
 		$course_enrolment_instances->setAccessible( true );
 		$course_enrolment_instances->setValue( [] );
 
-		Sensei_Course_Enrolment::set_store_negative_enrolment_results( true );
+		remove_all_filters( 'sensei_course_enrolment_store_results' );
 	}
 
 	/**

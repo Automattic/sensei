@@ -38,13 +38,6 @@ class Sensei_Course_Enrolment {
 	private static $instances = [];
 
 	/**
-	 * Option for whether negative enrolment results should be stored.
-	 *
-	 * @var bool
-	 */
-	private static $store_negative_enrolment_results = true;
-
-	/**
 	 * Enrolment providers handling this particular course.
 	 *
 	 * @var Sensei_Course_Enrolment_Provider_Interface[]
@@ -342,20 +335,18 @@ class Sensei_Course_Enrolment {
 		$results_meta_key   = $this->get_enrolment_results_meta_key();
 		$had_existing_value = ! empty( get_user_meta( $user_id, $results_meta_key, true ) );
 
-		// We're probably in a background request and we haven't already stored results.
-		$store_results = self::$store_negative_enrolment_results || $had_existing_value || $enrolment_results->is_enrolment_provided();
-
 		/**
 		 * Filter on whether course enrolment results should be stored.
 		 *
 		 * @since 3.0.0
 		 *
-		 * @param bool                                     $store_results     Whether to store the results.
-		 * @param int                                      $course_id         Course post ID.
-		 * @param int                                      $user_id           User ID.
-		 * @param Sensei_Course_Enrolment_Provider_Results $enrolment_results Enrolment results object.
+		 * @param bool                                     $store_results      Whether to store the results.
+		 * @param int                                      $user_id            User ID.
+		 * @param int                                      $course_id          Course post ID.
+		 * @param bool                                     $had_existing_value True if a stale enrolment result is already stored.
+		 * @param Sensei_Course_Enrolment_Provider_Results $enrolment_results  Enrolment results object.
 		 */
-		$store_results = apply_filters( 'sensei_course_enrolment_store_results', $store_results, $user_id, $this->course_id, $enrolment_results );
+		$store_results = apply_filters( 'sensei_course_enrolment_store_results', true, $user_id, $this->course_id, $had_existing_value, $enrolment_results );
 
 		if ( $store_results ) {
 			update_user_meta( $user_id, $results_meta_key, wp_slash( wp_json_encode( $enrolment_results ) ) );
@@ -363,6 +354,21 @@ class Sensei_Course_Enrolment {
 			// This will only occur if the filter returns something other than the default.
 			delete_user_meta( $user_id, $results_meta_key );
 		}
+	}
+
+	/**
+	 * Helper to disable storing enrolment results when it isn't already stored and enrolment isn't provided.
+	 *
+	 * @param bool                                     $store_results      Whether to store the results.
+	 * @param int                                      $user_id            User ID.
+	 * @param int                                      $course_id          Course post ID.
+	 * @param bool                                     $had_existing_value True if a stale enrolment result is already stored.
+	 * @param Sensei_Course_Enrolment_Provider_Results $enrolment_results  Enrolment results object.
+	 *
+	 * @return bool
+	 */
+	public static function do_not_store_negative_enrolment_results( $store_results, $user_id, $course_id, $had_existing_value, $enrolment_results ) {
+		return $had_existing_value || $enrolment_results->is_enrolment_provided();
 	}
 
 	/**
@@ -451,14 +457,5 @@ class Sensei_Course_Enrolment {
 		update_post_meta( $this->course_id, self::META_COURSE_ENROLMENT_VERSION, $new_salt );
 
 		return $new_salt;
-	}
-
-	/**
-	 * Set whether enrolment results user meta should be stored when enrolment is not provided.
-	 *
-	 * @param bool $store_negative_enrolment_results True if we should store negative enrolment results.
-	 */
-	public static function set_store_negative_enrolment_results( $store_negative_enrolment_results ) {
-		self::$store_negative_enrolment_results = $store_negative_enrolment_results;
 	}
 }
