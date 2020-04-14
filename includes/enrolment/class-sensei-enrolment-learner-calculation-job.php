@@ -14,7 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * up to run once after a Sensei version upgrade or when Sensei_Course_Enrolment_Manager::get_site_salt() is updated.
  */
 class Sensei_Enrolment_Learner_Calculation_Job implements Sensei_Background_Job_Interface {
-	const NAME = 'sensei_calculate_learner_enrolments';
+	const NAME               = 'sensei_calculate_learner_enrolments';
+	const DEFAULT_BATCH_SIZE = 10;
 
 	/**
 	 * Number of users for each job run.
@@ -32,11 +33,16 @@ class Sensei_Enrolment_Learner_Calculation_Job implements Sensei_Background_Job_
 
 	/**
 	 * Sensei_Enrolment_Learner_Calculation_Job constructor.
-	 *
-	 * @param integer $batch_size The scheduler's batch size.
 	 */
-	public function __construct( $batch_size ) {
-		$this->batch_size = $batch_size;
+	public function __construct() {
+		/**
+		 * Filter the batch size for the number of users to query per run in the learner calculation job.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param int $batch_size Batch size to filter.
+		 */
+		$this->batch_size = apply_filters( 'sensei_enrolment_learner_calculation_job_batch_size', self::DEFAULT_BATCH_SIZE );
 	}
 
 	/**

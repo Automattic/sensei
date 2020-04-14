@@ -108,7 +108,7 @@ class Sensei_Enrolment_Job_Scheduler {
 			return;
 		}
 
-		$job = new Sensei_Enrolment_Learner_Calculation_Job( 20 );
+		$job = new Sensei_Enrolment_Learner_Calculation_Job();
 		Sensei_Scheduler::instance()->schedule_job( $job );
 	}
 
@@ -118,7 +118,7 @@ class Sensei_Enrolment_Job_Scheduler {
 	 * @access private
 	 */
 	public function run_learner_calculation() {
-		$job                 = new Sensei_Enrolment_Learner_Calculation_Job( 20 );
+		$job                 = new Sensei_Enrolment_Learner_Calculation_Job();
 		$completion_callback = function() {
 			$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
 
