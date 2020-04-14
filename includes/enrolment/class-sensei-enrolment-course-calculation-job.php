@@ -112,13 +112,13 @@ class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Background_Job_I
 
 		$user_ids = $user_query->get_results();
 
-		Sensei_Course_Enrolment::set_store_negative_enrolment_results( false );
+		add_filter( 'sensei_course_enrolment_store_results', [ Sensei_Course_Enrolment::class, 'do_not_store_negative_enrolment_results' ], 10, 5 );
 		foreach ( $user_ids as $user_id ) {
 			$course_enrolment->is_enrolled( $user_id, false );
 
 			$this->set_last_user_id( $user_id );
 		}
-		Sensei_Course_Enrolment::set_store_negative_enrolment_results( true );
+		remove_filter( 'sensei_course_enrolment_store_results', [ Sensei_Course_Enrolment::class, 'do_not_store_negative_enrolment_results' ], 10 );
 
 		if (
 			empty( $user_ids )

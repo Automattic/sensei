@@ -20,11 +20,27 @@ class Sensei_Enrolment_Learner_Calculation_Job_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Clean up after test.
+	 */
+	public function tearDown() {
+		parent::tearDown();
+
+		remove_all_filters( 'sensei_enrolment_learner_calculation_job_batch_size' );
+	}
+
+	/**
 	 * Tests that a call to Sensei_Enrolment_Calculation_Scheduler::calculate_enrolments, calculates the enrolments for
 	 * a number of users equal to the batch size.
 	 */
 	public function testSchedulerCalculatesEnrolmentsForOneBatch() {
-		$job = new Sensei_Enrolment_Learner_Calculation_Job( 2 );
+		add_filter(
+			'sensei_enrolment_learner_calculation_job_batch_size',
+			function() {
+				return 2;
+			}
+		);
+
+		$job = new Sensei_Enrolment_Learner_Calculation_Job();
 
 		$mock = $this->getMockBuilder( Sensei_Course_Enrolment_Manager::class )
 			->disableOriginalConstructor()
@@ -60,8 +76,15 @@ class Sensei_Enrolment_Learner_Calculation_Job_Test extends WP_UnitTestCase {
 	 * calculates the enrolments for all users.
 	 */
 	public function testSchedulerCalculatesEnrolmentsForAllBatches() {
+		add_filter(
+			'sensei_enrolment_learner_calculation_job_batch_size',
+			function() {
+				return 2;
+			}
+		);
+
 		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
-		$job               = new Sensei_Enrolment_Learner_Calculation_Job( 2 );
+		$job               = new Sensei_Enrolment_Learner_Calculation_Job();
 
 		$mock = $this->getMockBuilder( Sensei_Course_Enrolment_Manager::class )
 			->disableOriginalConstructor()

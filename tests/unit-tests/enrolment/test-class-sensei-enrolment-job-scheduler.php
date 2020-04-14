@@ -32,7 +32,7 @@ class Sensei_Enrolment_Calculation_Scheduler_Test extends WP_UnitTestCase {
 	 * Tests that the scheduler starts when the calculation version does not exist.
 	 */
 	public function testLearnerCalculationStartsWhenVersionIsNotSet() {
-		$job       = new Sensei_Enrolment_Learner_Calculation_Job( 20 );
+		$job       = new Sensei_Enrolment_Learner_Calculation_Job();
 		$scheduler = Sensei_Enrolment_Job_Scheduler::instance();
 
 		$scheduler->maybe_start_learner_calculation();
