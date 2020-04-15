@@ -146,20 +146,14 @@ class Sensei_Learner_Management {
 	 * @since 1.6.0
 	 */
 	public function enqueue_scripts() {
-		$is_debug = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG;
-		$suffix   = $is_debug ? '' : '.min';
 
 		// Load Learners JS.
-		wp_enqueue_script(
-			'sensei-learners-general',
-			Sensei()->plugin_url . 'assets/js/learners-general' . $suffix . '.js',
-			array( 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'jquery-ui-tooltip', 'sensei-core-select2' ),
-			Sensei()->version,
-			true
-		);
+
+		Sensei()->assets->enqueue( 'js/learners-general.js',
+			[ 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'jquery-ui-tooltip', 'sensei-core-select2' ], true );
 
 		wp_localize_script(
-			'sensei-learners-general',
+			'sensei-js-learners-general',
 			'slgL10n',
 			array(
 				'inprogress' => __( 'In Progress', 'sensei-lms' ),
@@ -181,7 +175,7 @@ class Sensei_Learner_Management {
 			'selectplaceholder'          => __( 'Select learners to manually enroll...', 'sensei-lms' ),
 		);
 
-		wp_localize_script( 'sensei-learners-general', 'woo_learners_general_data', $data );
+		wp_localize_script( 'sensei-js-learners-general', 'woo_learners_general_data', $data );
 	} // End enqueue_scripts()
 
 	/**
@@ -193,7 +187,7 @@ class Sensei_Learner_Management {
 	 */
 	public function enqueue_styles() {
 
-		wp_enqueue_style( 'sensei-jquery-ui', Sensei()->plugin_url . 'assets/css/jquery-ui.css', '', Sensei()->version );
+		Sensei()->assets->enqueue('css/jquery-ui.css');
 
 	} // End enqueue_styles()
 
