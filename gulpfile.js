@@ -11,18 +11,11 @@
  *
  */
 
-
-var babel           = require( 'gulp-babel' );
 var checktextdomain = require( 'gulp-checktextdomain' );
-var chmod           = require( 'gulp-chmod' );
 var del             = require( 'del' );
 var exec            = require( 'child_process' ).exec;
 var gulp            = require( 'gulp' );
-var cleanCSS        = require( 'gulp-clean-css' );
-var rename          = require( 'gulp-rename' );
-var sass            = require( 'gulp-sass' );
 var sort            = require( 'gulp-sort' );
-var uglify          = require( 'gulp-uglify' );
 var wpPot           = require( 'gulp-wp-pot' );
 var zip             = require( 'gulp-zip' );
 var process         = require( 'process' );
@@ -35,8 +28,6 @@ function npm_run ( command ) {
 }
 
 var paths = {
-	scripts: [ 'assets/js/**/*.js', '!assets/js/**/*.min.js' ],
-	css: [ 'assets/css/**/*.scss' ],
 	select2: [
 		'node_modules/select2/dist/css/select2.min.css',
 		'node_modules/select2/dist/js/select2.full.js',
@@ -63,36 +54,17 @@ var paths = {
 
 gulp.task( 'clean', gulp.series( function( cb ) {
 	return del( [
-		'assets/js/**/*.min.js',
-		'assets/js/**/*.min.js',
-		'assets/css/**/*.min.css',
+		'assets/dist/**',
 		'assets/vendor/select2/**',
 		'build'
 	], cb );
 } ) );
 
-function buildCSS() {
-	return gulp.src( paths.css )
-		.pipe( sass().on( 'error', sass.logError ) )
-		.pipe( cleanCSS() )
-		.pipe( gulp.dest( 'assets/css' ) );
+function buildWebpack () {
+	return npm_run( 'build' )
 }
 
-function buildJS() {
-	return gulp.src( paths.scripts )
-		.pipe( babel( {
-			'configFile': './.babelrc-legacy',
-		} ) )
-		// This will minify and rename to *.min.js
-		.pipe( uglify() )
-		.pipe( rename( { extname: '.min.js' } ) )
-		.pipe( chmod( 0o644 ) )
-		.pipe( gulp.dest( 'assets/js' ) );
-}
-
-gulp.task( 'CSS', gulp.series( buildCSS ) );
-
-gulp.task( 'JS', gulp.series( buildJS ) );
+gulp.task( 'webpack', gulp.series( buildWebpack ) );
 
 gulp.task( 'block-editor-assets', gulp.series( function( cb ) {
 	exec( 'npm run block-editor-assets', cb );
@@ -140,9 +112,9 @@ gulp.task( 'test', gulp.series( function npm_test ( ) {
 	npm_run( 'test' )
 } ) );
 
+gulp.task( 'build', gulp.series( 'test', 'clean', 'webpack', 'vendor' ) );
+gulp.task( 'build-unsafe', gulp.series( 'clean', 'webpack', 'vendor' ) );
 
-gulp.task( 'build', gulp.series( 'test', 'clean', 'CSS', 'JS', 'block-editor-assets', 'vendor' ) );
-gulp.task( 'build-unsafe', gulp.series( 'clean', 'CSS', 'JS', 'block-editor-assets', 'vendor' ) );
 
 gulp.task( 'copy-package', function() {
 	return gulp.src( paths.packageContents, { base: '.' } )
