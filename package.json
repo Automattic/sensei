@@ -60,9 +60,6 @@
     "build": "cross-env NODE_ENV=production npx calypso-build",
     "start": "calypso-build --watch",
     "test-js": "wp-scripts test-unit-js --passWithNoTests",
-    "block-editor-assets": "cross-env NODE_ENV=production npx calypso-build --config webpack.block-editor-assets.config.js --env.WP",
-    "block-editor-assets:dev": "npx calypso-build --config webpack.block-editor-assets.config.js --env.WP",
-    "block-editor-assets:watch": "npx calypso-build --config webpack.block-editor-assets.config.js --env.WP --watch",
     "lint-js": "./node_modules/eslint/bin/eslint.js assets/block-editor --ext=js,jsx",
     "lint-js:fix": "./node_modules/eslint/bin/eslint.js assets/block-editor --ext=js,jsx --fix",
     "lint-js-wpcom": "./node_modules/eslint-wpcom/bin/eslint.js --no-eslintrc --config .eslintrc.wpcom.json --ignore-path .eslintignore-wpcom ."
