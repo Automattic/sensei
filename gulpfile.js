@@ -9,17 +9,8 @@
  *
  * 3) Run gulp to minify javascript and css using the 'gulp' command.
  *
- * 4a) Run `gulp serve` to start a BrowserSync server that pushes updates on file changes.
- * Browser tabs accessing the site via this proxy (http://localhost:8242) will get CSS updates injected, and reloaded on JS changes.
- * Configuration: set environment variables at runtime or in a `.env` file:
- * WORDPRESS_HOST= URL of local Wordpress instance (Default: localhost:8240)
- * BROWSERSYNC_PORT= Port for (Default: 8242)
- *
- * 4b) Run `gulp watch` to automatically compile CSS and JS files when they change.
- *
  */
 
-require( 'dotenv' ).config();
 
 var babel           = require( 'gulp-babel' );
 var checktextdomain = require( 'gulp-checktextdomain' );
@@ -34,9 +25,7 @@ var sort            = require( 'gulp-sort' );
 var uglify          = require( 'gulp-uglify' );
 var wpPot           = require( 'gulp-wp-pot' );
 var zip             = require( 'gulp-zip' );
-var browserSync     = require( 'browser-sync' ).create();
 var process         = require( 'process' );
-var env             = process.env;
 
 function npm_run ( command ) {
 	var npmProcess = exec( `npm run ${command}` );
@@ -71,11 +60,6 @@ var paths = {
 	packageDir: 'build/sensei-lms',
 	packageZip: 'build/sensei-lms.zip'
 };
-
-function reloadBrowser( done ) {
-	browserSync.reload();
-	done();
-}
 
 gulp.task( 'clean', gulp.series( function( cb ) {
 	return del( [
@@ -175,23 +159,3 @@ gulp.task( 'package', gulp.series( 'build', 'copy-package', 'zip-package' ) );
 gulp.task( 'package-unsafe', gulp.series( 'build-unsafe', 'copy-package', 'zip-package' ) );
 
 gulp.task( 'default', gulp.series( 'build' ) );
-
-gulp.task( 'watch', function() {
-	gulp.watch( paths.css, { delay: 50 }, gulp.series( 'CSS' ) );
-	gulp.watch( paths.scripts, gulp.series( 'JS' ) );
-} );
-
-gulp.task( 'serve', function() {
-	browserSync.init( {
-		proxy: env.WORDPRESS_HOST || "localhost:8240",
-		port: env.BROWSERSYNC_PORT || 8242,
-		open: false
-	} );
-
-	gulp.watch( paths.css, function() {
-		return buildCSS().pipe( browserSync.stream() )
-	} );
-
-	gulp.watch( paths.scripts, gulp.series( 'JS', reloadBrowser ) );
-
-} );
