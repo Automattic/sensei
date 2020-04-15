@@ -55,6 +55,11 @@ class Sensei_Main {
 	public $settings;
 
 	/**
+	 * @var Sensei_Assets
+	 */
+	public $assets;
+
+	/**
 	 * @var Sensei_Course_Results
 	 */
 	public $course_results;
@@ -323,6 +328,9 @@ class Sensei_Main {
 	public function initialize_global_objects() {
 		// Setup settings
 		$this->settings = new Sensei_Settings();
+
+		// Asset loading
+		$this->assets = new Sensei_Assets( $this->plugin_url, $this->plugin_path, $this->version );
 
 		// feature flags
 		$this->feature_flags = new Sensei_Feature_Flags();
