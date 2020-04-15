@@ -38,6 +38,13 @@ var browserSync     = require( 'browser-sync' ).create();
 var process         = require( 'process' );
 var env             = process.env;
 
+function npm_run ( command ) {
+	var npmProcess = exec( `npm run ${command}` );
+	npmProcess.stdout.pipe( process.stdout );
+	npmProcess.stderr.pipe( process.stderr );
+	return npmProcess;
+}
+
 var paths = {
 	scripts: [ 'assets/js/**/*.js', '!assets/js/**/*.min.js' ],
 	css: [ 'assets/css/**/*.scss' ],
@@ -145,10 +152,8 @@ gulp.task( 'vendor', function() {
 		.pipe( gulp.dest( 'assets/vendor/select2' ) );
 } );
 
-gulp.task( 'test', gulp.series( function phpunit( cb ) {
-	var phpunitProcess = exec( './vendor/bin/phpunit', cb );
-	phpunitProcess.stdout.pipe( process.stdout );
-	phpunitProcess.stderr.pipe( process.stderr );
+gulp.task( 'test', gulp.series( function npm_test ( ) {
+	npm_run( 'test' )
 } ) );
 
 
