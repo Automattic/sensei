@@ -336,45 +336,34 @@ class Sensei_Admin {
 		$select_two_location = '/assets/vendor/select2/select2.full';
 
 		// Select2 script used to enhance all select boxes.
-		wp_register_script( 'sensei-core-select2', Sensei()->plugin_url . $select_two_location . $suffix . '.js', array( 'jquery' ), Sensei()->version );
+		Sensei()->assets->register('sensei-core-select2', '../vendor/select2/select2.full.js', [ 'jquery' ] );
 
-		wp_register_script(
-			'jquery-modal',
-			Sensei()->plugin_url . 'assets/vendor/jquery-modal-0.9.1/jquery.modal' . $suffix . '.js',
-			[ 'jquery' ],
-			Sensei()->version,
-			true
-		);
+		Sensei()->assets->register('jquery-modal', '../vendor/jquery-modal-0.9.1/jquery.modal.js', [ 'jquery' ], true );
 
-		wp_register_script(
+		Sensei()->assets->register(
 			'sensei-learners-admin-bulk-actions-js',
-			Sensei()->plugin_url . 'assets/js/learners-bulk-actions' . $suffix . '.js',
+			'js/learners-bulk-actions.js',
 			[ 'jquery', 'sensei-core-select2', 'jquery-modal' ],
-			Sensei()->version,
 			true
 		);
 
 		// Load ordering script on Order Courses and Order Lessons pages.
 		if ( in_array( $screen->id, [ 'course_page_course-order', 'lesson_page_lesson-order' ], true ) ) {
-			wp_enqueue_script(
-				'sensei-ordering',
-				Sensei()->plugin_url . 'assets/js/admin/ordering' . $suffix . '.js',
-				array( 'jquery', 'jquery-ui-sortable', 'sensei-core-select2' ),
-				Sensei()->version,
-				true
-			);
+			Sensei()->assets->enqueue('js/admin/ordering.js', ['jquery', 'jquery-ui-sortable', 'sensei-core-select2'], true );
 		}
 
 		// load edit module scripts
 		if ( 'edit-module' == $screen->id ) {
-			wp_enqueue_script( 'sensei-chosen-ajax', Sensei()->plugin_url . 'assets/chosen/ajax-chosen.jquery.min.js', array( 'jquery', 'sensei-chosen' ), Sensei()->version, true );
+			Sensei()->assets->enqueue('../chosen/ajax-chosen.jquery.min.js', ['jquery', 'sensei-chosen-chosen-jquery-min'], true );
 		}
 
-		wp_enqueue_script( 'sensei-message-menu-fix', Sensei()->plugin_url . 'assets/js/admin/message-menu-fix.js', array( 'jquery' ), Sensei()->version, true );
+		Sensei()->assets->enqueue( 'js/admin/message-menu-fix.js', [ 'jquery' ], true );
 
 		// Event logging.
-		wp_enqueue_script( 'sensei-event-logging', Sensei()->plugin_url . 'assets/js/admin/event-logging' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
-		wp_localize_script( 'sensei-event-logging', 'sensei_event_logging', [ 'enabled' => Sensei_Usage_Tracking::get_instance()->get_tracking_enabled() ] );
+
+		Sensei()->assets->enqueue( 'js/admin/event-logging.js', [ 'jquery' ], true );
+
+		wp_localize_script( 'sensei-js-admin-event-logging', 'sensei_event_logging', [ 'enabled' => Sensei_Usage_Tracking::get_instance()->get_tracking_enabled() ] );
 	}
 
 
