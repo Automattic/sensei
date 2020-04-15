@@ -59,6 +59,7 @@
     "test-php": "./vendor/bin/phpunit",
     "build": "cross-env NODE_ENV=production npx calypso-build",
     "start": "calypso-build --watch",
+    "package": "gulp package",
     "test-js": "wp-scripts test-unit-js --passWithNoTests",
     "lint-js-wpcom": "wp-scripts lint-js --no-eslintrc --config .eslintrc.wpcom.json --ignore-path .eslintignore-wpcom .",
     "lint-css": "wp-scripts lint-style **/*.scss",
