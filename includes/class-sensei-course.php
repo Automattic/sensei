@@ -99,10 +99,6 @@ class Sensei_Course {
 		// The course enrolment actions.
 		add_action( 'sensei_output_course_enrolment_actions', array( __CLASS__, 'output_course_enrolment_actions' ) );
 
-		// backwards compatible template hooks
-		add_action( 'sensei_course_content_inside_before', array( $this, 'content_before_backwards_compatibility_hooks' ) );
-		add_action( 'sensei_loop_course_before', array( $this, 'loop_before_backwards_compatibility_hooks' ) );
-
 		// add the user status on the course to the markup as a class
 		add_filter( 'post_class', array( __CLASS__, 'add_course_user_status_class' ), 20, 3 );
 
@@ -178,12 +174,61 @@ class Sensei_Course {
 	}
 
 	/**
+	 * Check if a visitor can access course content.
+	 *
+	 * This is just part of the check for lessons and quizzes. To include checks for prerequisites and preview lessons,
+	 * use the global template function `sensei_can_user_view_lesson()`.
+	 *
+	 * @param int    $course_id Course post ID.
+	 * @param int    $user_id   User ID.
+	 * @param string $context   Context that we're checking for course content access (`lesson`, `quiz`, or `module`).
+	 */
+	public function can_access_course_content( $course_id, $user_id = null, $context = 'lesson' ) {
+		if ( null === $user_id ) {
+			$user_id = get_current_user_id();
+		}
+
+		$can_view_course_content = false;
+		$is_user_enrolled        = false;
+		if ( ! empty( $user_id ) ) {
+			$is_user_enrolled = self::is_user_enrolled( $course_id, $user_id );
+		}
+
+		if (
+			! sensei_is_login_required()
+			|| sensei_all_access( $user_id )
+			|| $is_user_enrolled
+		) {
+			$can_view_course_content = true;
+		}
+
+		/**
+		 * Filters if a visitor can view course content.
+		 *
+		 * @since 3.0.0.
+		 *
+		 * @param bool   $can_view_course_content True if they can view the course content.
+		 * @param int    $course_id               Course post ID.
+		 * @param int    $user_id                 User ID if user is logged in.
+		 * @param string $context                 Context that we're checking for course content
+		 *                                        access (`lesson`, `quiz`, or `module`).
+		 */
+		return apply_filters( 'sensei_can_access_course_content', $can_view_course_content, $course_id, $user_id, $context );
+	}
+
+	/**
 	 * @param $message
 	 */
 	private static function add_course_access_permission_message( $message ) {
 		global $post;
 		if ( Sensei()->settings->get( 'access_permission' ) ) {
-			$message = apply_filters( 'sensei_couse_access_permission_message', $message, $post->ID );
+			$message = apply_filters_deprecated(
+				'sensei_couse_access_permission_message',
+				[ $message, $post->ID ],
+				'3.0.0',
+				null
+			);
+
 			if ( ! empty( $message ) ) {
 				Sensei()->notices->add_notice( $message, 'info' );
 			}
@@ -688,21 +733,39 @@ class Sensei_Course {
 
 
 	/**
-	 * course_query function.
+	 * Query courses.
 	 *
-	 * @access public
+	 * @since 1.0.0
+	 * @since 2.0.0 For `$type` argument, `paidcourses` is no longer supported.
+	 * @since 2.0.0 For `$type` argument, `freecourses` is no longer supported.
+	 *
+	 * @deprecated 3.0.0
+	 *
 	 * @param int    $amount (default: 0)
 	 * @param string $type (default: 'default')
 	 * @param array  $includes (default: array())
 	 * @return array
 	 */
 	public function course_query( $amount = 0, $type = 'default', $includes = array(), $excludes = array() ) {
-		global $my_courses_page;
+		_deprecated_function( __METHOD__, '3.0.0' );
+
+		if ( 'usercourses' === $type ) {
+			$base_query = [
+				'posts_per_page' => $amount,
+			];
+			if ( ! empty( $includes ) ) {
+				$base_query['post__in'] = $includes;
+			}
+			if ( ! empty( $excludes ) ) {
+				$base_query['post__not_in'] = $excludes;
+			}
+
+			$learner_manager = Sensei_Learner::instance();
+
+			return $learner_manager->get_enrolled_courses_query( get_current_user_id(), $base_query )->posts;
+		}
 
 		$results_array = array();
-
-		if ( $my_courses_page ) {
-			add_action( 'pre_get_posts', array( $this, 'filter_my_courses' ) ); }
 
 		$post_args = $this->get_archive_query_args( $type, $amount, $includes, $excludes );
 
@@ -719,24 +782,27 @@ class Sensei_Course {
 
 		}
 
-		if ( $my_courses_page ) {
-			remove_action( 'pre_get_posts', array( $this, 'filter_my_courses' ) ); }
-
 		return $results_array;
 
 	} // End course_query()
 
 
 	/**
-	 * get_archive_query_args function.
+	 * Get the query arguments for fetching courses in different contexts.
 	 *
-	 * @access public
+	 * @since 1.0.0
+	 * @since 2.0.0 For `$type` argument, `paidcourses` is no longer supported.
+	 * @since 2.0.0 For `$type` argument, `freecourses` is no longer supported.
+	 *
+	 * @deprecated 3.0.0
+	 *
 	 * @param string $type (default: '')
 	 * @param int    $amount (default: 0)
 	 * @param array  $includes (default: array())
 	 * @return array
 	 */
 	public function get_archive_query_args( $type = '', $amount = 0, $includes = array(), $excludes = array() ) {
+		_deprecated_function( __METHOD__, '3.0.0' );
 
 		global $wp_query;
 
@@ -761,23 +827,22 @@ class Sensei_Course {
 		switch ( $type ) {
 
 			case 'usercourses':
-				$post_args = array(
-					'post_type'        => 'course',
+				$learner_manager = Sensei_Learner::instance();
+				$post_args       = array(
 					'orderby'          => $orderby,
 					'order'            => $order,
-					'post_status'      => 'publish',
-					'include'          => $includes,
-					'exclude'          => $excludes,
+					'post__in'         => $includes,
+					'post__not_in'     => $excludes,
 					'suppress_filters' => 0,
 				);
+				$post_args       = $learner_manager->get_enrolled_courses_query_args( get_current_user_id(), $post_args );
 
 				break;
 
 			case 'freecourses':
 				_doing_it_wrong(
-					__FUNCTION__,
-					// translators: string argument is "freecourses" (the query type).
-					sprintf( esc_html__( 'Queries for course type of %s is deprecated.', 'sensei-lms' ), 'freecourses' ),
+					__METHOD__,
+					esc_html__( 'Querying with argument `$type` having a value of `freecourses` is deprecated.', 'sensei-lms' ),
 					'2.0.0'
 				);
 
@@ -800,9 +865,8 @@ class Sensei_Course {
 
 			case 'paidcourses':
 				_doing_it_wrong(
-					__FUNCTION__,
-					// translators: string argument is "paidcourses" (the query type).
-					sprintf( esc_html__( 'Queries for course type of %s is deprecated.', 'sensei-lms' ), 'paidcourses' ),
+					__METHOD__,
+					esc_html__( 'Querying with argument `$type` having a value of `paidcourses` is deprecated.', 'sensei-lms' ),
 					'2.0.0'
 				);
 
@@ -1292,21 +1356,13 @@ class Sensei_Course {
 	/**
 	 * Fix posts_per_page for My Courses page
 	 *
+	 * @deprecated 3.0.0
+	 *
 	 * @param  WP_Query $query
 	 * @return void
 	 */
 	public function filter_my_courses( $query ) {
-		global  $my_courses_section;
-
-		if ( isset( Sensei()->settings->settings['my_course_amount'] ) && ( 0 < absint( Sensei()->settings->settings['my_course_amount'] ) ) ) {
-			$amount = absint( Sensei()->settings->settings['my_course_amount'] );
-			$query->set( 'posts_per_page', $amount );
-		}
-
-		if ( isset( $_GET[ $my_courses_section . '_page' ] ) && 0 < intval( $_GET[ $my_courses_section . '_page' ] ) ) {
-			$page = intval( $_GET[ $my_courses_section . '_page' ] );
-			$query->set( 'paged', $page );
-		}
+		_deprecated_function( __METHOD__, '3.0.0' );
 	}
 
 	/**
@@ -1320,7 +1376,7 @@ class Sensei_Course {
 	 * @return string          HTML displayng course data
 	 */
 	public function load_user_courses_content( $user = false ) {
-		global $course, $my_courses_page, $my_courses_section;
+		global $course;
 
 		if ( ! isset( Sensei()->settings->settings['learner_profile_show_courses'] )
 			|| ! Sensei()->settings->settings['learner_profile_show_courses'] ) {
@@ -1339,8 +1395,6 @@ class Sensei_Course {
 
 		if ( is_a( $user, 'WP_User' ) ) {
 
-			$my_courses_page = true;
-
 			// Allow action to be run before My Courses content has loaded
 			do_action( 'sensei_before_my_courses', $user->ID );
 
@@ -1353,41 +1407,25 @@ class Sensei_Course {
 
 			}
 
-			$course_statuses = Sensei_Utils::sensei_check_for_activity(
-				array(
-					'user_id' => $user->ID,
-					'type'    => 'sensei_course_status',
-				),
-				true
-			);
-			// User may only be on 1 Course
-			if ( ! is_array( $course_statuses ) ) {
-				$course_statuses = array( $course_statuses );
-			}
-			$completed_ids = $active_ids = array();
-			foreach ( $course_statuses as $course_status ) {
-				if ( Sensei_Utils::user_completed_course( $course_status, $user->ID ) ) {
-					$completed_ids[] = $course_status->comment_post_ID;
-				} else {
-					$active_ids[] = $course_status->comment_post_ID;
-				}
-			}
+			$learner_manager = Sensei_Learner::instance();
 
-			$active_count = $completed_count = 0;
+			$active_query_args    = [
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Safe use of pagination var.
+				'paged'          => isset( $_GET['active_page'] ) ? absint( $_GET['active_page'] ) : 1,
+				'posts_per_page' => $per_page,
+			];
+			$active_courses_query = $learner_manager->get_enrolled_active_courses_query( $user->ID, $active_query_args );
+			$active_courses       = $active_courses_query->posts;
+			$active_count         = $active_courses_query->found_posts;
 
-			$active_courses = array();
-			if ( 0 < intval( count( $active_ids ) ) ) {
-				$my_courses_section = 'active';
-				$active_courses     = Sensei()->course->course_query( $per_page, 'usercourses', $active_ids );
-				$active_count       = count( $active_ids );
-			} // End If Statement
-
-			$completed_courses = array();
-			if ( 0 < intval( count( $completed_ids ) ) ) {
-				$my_courses_section = 'completed';
-				$completed_courses  = Sensei()->course->course_query( $per_page, 'usercourses', $completed_ids );
-				$completed_count    = count( $completed_ids );
-			} // End If Statement
+			$completed_query_args    = [
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Safe use of pagination var.
+				'paged'          => isset( $_GET['completed_page'] ) ? absint( $_GET['completed_page'] ) : 1,
+				'posts_per_page' => $per_page,
+			];
+			$completed_courses_query = $learner_manager->get_enrolled_completed_courses_query( $user->ID, $completed_query_args );
+			$completed_courses       = $completed_courses_query->posts;
+			$completed_count         = $completed_courses_query->found_posts;
 
 			foreach ( $active_courses as $course_item ) {
 
@@ -1865,8 +1903,11 @@ class Sensei_Course {
 	 */
 	public function get_progress_statement( $course_id, $user_id ) {
 
-		if ( empty( $course_id ) || empty( $user_id )
-		|| ! Sensei_Utils::user_started_course( $course_id, $user_id ) ) {
+		if (
+			empty( $course_id )
+			|| empty( $user_id )
+			|| ! self::is_user_enrolled( $course_id, $user_id )
+		) {
 			return '';
 		}
 
@@ -1928,8 +1969,11 @@ class Sensei_Course {
 			$user_id = get_current_user_id();
 		}
 
-		if ( 'course' != get_post_type( $course_id ) || ! get_userdata( $user_id )
-			|| ! Sensei_Utils::user_started_course( $course_id, $user_id ) ) {
+		if (
+			'course' !== get_post_type( $course_id )
+			|| ! get_userdata( $user_id )
+			|| ! self::is_user_enrolled( $course_id, $user_id )
+		) {
 			return;
 		}
 		$percentage_completed = $this->get_completion_percentage( $course_id, $user_id );
@@ -2092,44 +2136,6 @@ class Sensei_Course {
 	}//end save_course_notification_meta_box()
 
 	/**
-	 * Backwards compatibility hooks added to ensure that
-	 * plugins and other parts of sensei still works.
-	 *
-	 * This function hooks into `sensei_course_content_inside_before`
-	 *
-	 * @since 1.9
-	 *
-	 * @param WP_Post $post
-	 */
-	public function content_before_backwards_compatibility_hooks( $post_id ) {
-
-		sensei_do_deprecated_action( 'sensei_course_image', '1.9.0', 'sensei_course_content_inside_before' );
-		sensei_do_deprecated_action( 'sensei_course_archive_course_title', '1.9.0', 'sensei_course_content_inside_before' );
-
-	}
-
-	/**
-	 * Backwards compatibility hooks that should be hooked into sensei_loop_course_before
-	 *
-	 * hooked into 'sensei_loop_course_before'
-	 *
-	 * @since 1.9
-	 *
-	 * @global WP_Post $post
-	 */
-	public function loop_before_backwards_compatibility_hooks() {
-
-		global $post;
-
-		if ( ! $post ) {
-			return;
-		}
-
-		sensei_do_deprecated_action( 'sensei_course_archive_header', '1.9.0', 'sensei_course_content_inside_before', $post->post_type );
-
-	}
-
-	/**
 	 * Output a link to view course. The button text is different depending on the amount of preview lesson available.
 	 *
 	 * hooked into 'sensei_course_content_inside_after'
@@ -2142,7 +2148,7 @@ class Sensei_Course {
 		// Meta data
 		$course                = get_post( $course_id );
 		$preview_lesson_count  = intval( Sensei()->course->course_lesson_preview_count( $course->ID ) );
-		$is_user_taking_course = Sensei_Utils::user_started_course( $course->ID, get_current_user_id() );
+		$is_user_taking_course = self::is_user_enrolled( $course->ID, get_current_user_id() );
 
 		if ( 0 < $preview_lesson_count && ! $is_user_taking_course ) {
 			?>
@@ -2647,18 +2653,21 @@ class Sensei_Course {
 	 * @return string $course_page_url
 	 */
 	public static function get_courses_page_url() {
-
 		$course_page_id  = intval( Sensei()->settings->settings['course_page'] );
 		$course_page_url = empty( $course_page_id ) ? get_post_type_archive_link( 'course' ) : get_permalink( $course_page_id );
 
-		return $course_page_url;
-
-	}//end get_courses_page_url()
+		/**
+		 * Filter the course archive page URL.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param string $course_page_url Course archive page URL.
+		 */
+		return apply_filters( 'sensei_course_archive_page_url', $course_page_url );
+	}
 
 	/**
 	 * Output the headers on the course archive page
-	 *
-	 * Hooked into the sensei_archive_title
 	 *
 	 * @since 1.9.0
 	 * @param string $query_type
@@ -2671,9 +2680,6 @@ class Sensei_Course {
 		if ( ! is_post_type_archive( 'course' ) ) {
 			return;
 		}
-
-		// deprecated since 1.9.0
-		sensei_do_deprecated_action( 'sensei_archive_title', '1.9.0', 'sensei_archive_before_course_loop' );
 
 		$html = '';
 
@@ -2914,20 +2920,6 @@ class Sensei_Course {
 	}
 
 	/**
-	 * Optionally return the full content on the single course pages
-	 * depending on the users course_single_content_display setting
-	 *
-	 * @since 1.9.0
-	 * @deprecated since 1.12.0
-	 * @param $excerpt
-	 * @return string
-	 */
-	public static function full_content_excerpt_override( $excerpt ) {
-		_deprecated_function( __METHOD__, '1.12.0' );
-		return $excerpt;
-	}
-
-	/**
 	 * If the user is already taking the course, show a progress indicator.
 	 * Otherwise, output the course actions like start taking course, register,
 	 * etc.
@@ -2944,7 +2936,7 @@ class Sensei_Course {
 		?>
 		<section class="course-meta course-enrolment">
 		<?php
-		$is_user_taking_course = Sensei_Utils::user_started_course( $post->ID, $current_user->ID );
+		$is_user_taking_course = self::is_user_enrolled( $post->ID, $current_user->ID );
 
 		// If user is taking course, display progress.
 		if ( $is_user_taking_course ) {
@@ -3042,7 +3034,12 @@ class Sensei_Course {
 	public static function output_course_enrolment_actions() {
 		global $post;
 
-		$is_course_content_restricted = (bool) apply_filters( 'sensei_is_course_content_restricted', false, $post->ID );
+		$is_course_content_restricted = (bool) apply_filters_deprecated(
+			'sensei_is_course_content_restricted',
+			[ false, $post->ID ],
+			'3.0.0',
+			null
+		);
 
 		if ( is_user_logged_in() ) {
 			$should_display_start_course_form = self::can_current_user_manually_enrol( $post->ID );
@@ -3086,7 +3083,14 @@ class Sensei_Course {
 
 				}
 
-				if ( ! (bool) apply_filters( 'sensei_user_can_register_for_course', true, $post->ID ) ) {
+				if (
+					! (bool) apply_filters_deprecated(
+						'sensei_user_can_register_for_course',
+						[ true, $post->ID ],
+						'3.0.0',
+						null
+					)
+				) {
 					return;
 				}
 				// If a My Courses page was set in Settings, and 'sensei_use_wp_register_link'

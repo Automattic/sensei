@@ -102,7 +102,7 @@ class Sensei_Shortcode_Featured_Courses implements Sensei_Shortcode_Interface {
 
 		$this->query = new WP_Query( $query_args );
 
-	}//end setup_course_query()
+	}
 
 	/**
 	 * Rendering the shortcode this class is responsible for.

@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Course_Enrolment_Manager {
 	const COURSE_ENROLMENT_SITE_SALT_OPTION = 'sensei_course_enrolment_site_salt';
-	const LEARNER_CALCULATION_META_NAME     = 'learner_calculated_version';
+	const LEARNER_CALCULATION_META_NAME     = 'sensei_learner_calculated_version';
 
 	/**
 	 * Instance of singleton.
@@ -29,6 +29,20 @@ class Sensei_Course_Enrolment_Manager {
 	 * @var Sensei_Course_Enrolment_Provider_Interface[]
 	 */
 	private $enrolment_providers;
+
+	/**
+	 * Hash of all the enrolment provider versions.
+	 *
+	 * @var string
+	 */
+	private $enrolment_providers_versions_hash;
+
+	/**
+	 * Deferred enrolment checks.
+	 *
+	 * @var array
+	 */
+	private $deferred_enrolment_checks = [];
 
 	/**
 	 * Fetches an instance of the class.
@@ -52,7 +66,14 @@ class Sensei_Course_Enrolment_Manager {
 	 */
 	public function init() {
 		add_action( 'init', [ $this, 'collect_enrolment_providers' ], 100 );
+		add_action( 'shutdown', [ $this, 'run_deferred_course_enrolment_checks' ] );
+		add_action( 'sensei_enrolment_results_calculated', [ $this, 'remove_deferred_enrolment_check' ], 10, 3 );
 		add_filter( 'sensei_can_user_manually_enrol', [ $this, 'maybe_prevent_frontend_manual_enrol' ], 10, 2 );
+		add_action( 'sensei_before_learners_enrolled_courses_query', [ $this, 'recalculate_enrolments' ] );
+		add_action( 'transition_post_status', [ $this, 'recalculate_on_course_post_status_change' ], 10, 3 );
+
+		add_action( 'shutdown', [ Sensei_Enrolment_Provider_State_Store::class, 'persist_all' ] );
+		add_action( 'shutdown', [ Sensei_Enrolment_Provider_Journal_Store::class, 'persist_all' ] );
 	}
 
 	/**
@@ -89,6 +110,31 @@ class Sensei_Course_Enrolment_Manager {
 
 			$this->enrolment_providers[ $provider->get_id() ] = $provider;
 		}
+	}
+
+	/**
+	 * Generates a hash of all the enrolment provider versions.
+	 *
+	 * @return string
+	 */
+	public function get_enrolment_provider_versions_hash() {
+		if ( ! isset( $this->enrolment_providers_versions_hash ) ) {
+			$versions = [];
+			foreach ( $this->get_all_enrolment_providers() as $enrolment_provider ) {
+				if ( ! ( $enrolment_provider instanceof Sensei_Course_Enrolment_Provider_Interface ) ) {
+					continue;
+				}
+
+				$enrolment_provider_class              = get_class( $enrolment_provider );
+				$versions[ $enrolment_provider_class ] = $enrolment_provider->get_version();
+			}
+
+			ksort( $versions );
+
+			$this->enrolment_providers_versions_hash = md5( wp_json_encode( $versions ) );
+		}
+
+		return $this->enrolment_providers_versions_hash;
 	}
 
 	/**
@@ -179,15 +225,91 @@ class Sensei_Course_Enrolment_Manager {
 	}
 
 	/**
+	 * Run the deferred enrolment checks.
+	 *
+	 * @access private
+	 */
+	public function run_deferred_course_enrolment_checks() {
+		foreach ( $this->deferred_enrolment_checks as $user_id => $course_ids ) {
+			foreach ( array_keys( $course_ids ) as $course_id ) {
+				$this->do_course_enrolment_check( $user_id, $course_id );
+			}
+		}
+	}
+
+	/**
+	 * When enrolment calculation happens, remove it from deferred calculation.
+	 *
+	 * @param Sensei_Course_Enrolment_Provider_Results $enrolment_results Enrolment results object.
+	 * @param int                                      $course_id         Course post ID.
+	 * @param int                                      $user_id           User ID.
+	 */
+	public function remove_deferred_enrolment_check( Sensei_Course_Enrolment_Provider_Results $enrolment_results, $course_id, $user_id ) {
+		if ( isset( $this->deferred_enrolment_checks[ $user_id ] ) ) {
+			unset( $this->deferred_enrolment_checks[ $user_id ][ $course_id ] );
+		}
+	}
+
+	/**
+	 * Defer course enrolment check to the end of request.
+	 *
+	 * @param int $user_id   User ID.
+	 * @param int $course_id Course post ID.
+	 */
+	private function defer_course_enrolment_check( $user_id, $course_id ) {
+		if ( ! isset( $this->deferred_enrolment_checks[ $user_id ] ) ) {
+			$this->deferred_enrolment_checks[ $user_id ] = [];
+		}
+
+		// Check if the enrolment check is already deferred.
+		if ( isset( $this->deferred_enrolment_checks[ $user_id ][ $course_id ] ) ) {
+			return;
+		}
+
+		// Usually the user will be back calculated by the end of the request, but mark them
+		// as needing a recalculation just in case the request fails early.
+		$this->mark_user_as_needing_recalculation( $user_id );
+		$this->invalidate_learner_result( $user_id, $course_id );
+
+		$this->deferred_enrolment_checks[ $user_id ][ $course_id ] = true;
+	}
+
+	/**
+	 * Trigger course enrolment check when enrolment might have changed.
+	 *
+	 * @param int $user_id   User ID.
+	 * @param int $course_id Course post ID.
+	 */
+	private function do_course_enrolment_check( $user_id, $course_id ) {
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		if ( $course_enrolment ) {
+			$course_enrolment->is_enrolled( $user_id, false );
+		}
+	}
+
+	/**
+	 * Invalidate an enrolment result so that it gets recalculated next time it is requested.
+	 *
+	 * @param int $user_id   User ID.
+	 * @param int $course_id Course post ID.
+	 */
+	private function invalidate_learner_result( $user_id, $course_id ) {
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		if ( $course_enrolment ) {
+			$course_enrolment->invalidate_learner_result( $user_id );
+		}
+	}
+
+	/**
 	 * Gets the site course enrolment salt that can be used to invalidate all enrolments.
 	 *
 	 * @return string
 	 */
-	public static function get_site_salt() {
+	public function get_site_salt() {
 		$enrolment_salt = get_option( self::COURSE_ENROLMENT_SITE_SALT_OPTION );
 
 		if ( ! $enrolment_salt ) {
-			return self::reset_site_salt();
+			return $this->reset_site_salt();
 		}
 
 		return $enrolment_salt;
@@ -198,7 +320,7 @@ class Sensei_Course_Enrolment_Manager {
 	 *
 	 * @return string
 	 */
-	public static function reset_site_salt() {
+	public function reset_site_salt() {
 		$new_salt = md5( uniqid() );
 
 		update_option( self::COURSE_ENROLMENT_SITE_SALT_OPTION, $new_salt, true );
@@ -213,10 +335,43 @@ class Sensei_Course_Enrolment_Manager {
 	 * @param int $course_id Course post ID.
 	 */
 	public static function trigger_course_enrolment_check( $user_id, $course_id ) {
-		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
-		if ( $course_enrolment ) {
-			$course_enrolment->is_enrolled( $user_id, false );
+		$instance = self::instance();
+
+		if ( self::should_defer_enrolment_check() ) {
+			$instance->defer_course_enrolment_check( $user_id, $course_id );
+
+			return;
 		}
+
+		$instance->do_course_enrolment_check( $user_id, $course_id );
+	}
+
+	/**
+	 * Check if we should defer enrolment checks.
+	 *
+	 * @return bool
+	 */
+	private static function should_defer_enrolment_check() {
+		$should_defer_enrolment_check = true;
+
+		// If this is called during a cron job, do not defer the enrolment check.
+		if ( defined( 'DOING_CRON' ) && DOING_CRON ) {
+			$should_defer_enrolment_check = false;
+		}
+
+		// If the `shutdown` action has already been fired, do not defer the enrolment check.
+		if ( did_action( 'shutdown' ) ) {
+			$should_defer_enrolment_check = false;
+		}
+
+		/**
+		 * Override deferment handling for enrolment checking.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param bool $should_defer_enrolment_check True if enrolment checks should be deferred to the end of the request.
+		 */
+		return apply_filters( 'sensei_should_defer_enrolment_check', $should_defer_enrolment_check );
 	}
 
 	/**
@@ -224,14 +379,13 @@ class Sensei_Course_Enrolment_Manager {
 	 * exist. To enforce a calculation after a possible change, use
 	 * Sensei_Course_Enrolment_Manager::trigger_course_enrolment_check instead.
 	 *
-	 * @param int $user_id   User ID.
+	 * @param int $user_id User ID.
 	 *
 	 * @see Sensei_Course_Enrolment_Manager::trigger_course_enrolment_check
 	 */
 	public function recalculate_enrolments( $user_id ) {
-
 		$learner_calculated_version = get_user_meta( $user_id, self::LEARNER_CALCULATION_META_NAME, true );
-		if ( self::get_enrolment_calculation_version() === $learner_calculated_version ) {
+		if ( $this->get_enrolment_calculation_version() === $learner_calculated_version ) {
 			return;
 		}
 
@@ -255,8 +409,41 @@ class Sensei_Course_Enrolment_Manager {
 		update_user_meta(
 			$user_id,
 			self::LEARNER_CALCULATION_META_NAME,
-			self::get_enrolment_calculation_version()
+			$this->get_enrolment_calculation_version()
 		);
+	}
+
+	/**
+	 * Trigger course enrolment recalculation when post status changes.
+	 *
+	 * @param string  $new_status New post status.
+	 * @param string  $old_status Old post status.
+	 * @param WP_Post $post       Post object.
+	 */
+	public function recalculate_on_course_post_status_change( $new_status, $old_status, $post ) {
+		if (
+			$new_status === $old_status       // No change in status.
+			|| 'course' !== $post->post_type  // Not a course.
+			|| 'new' === $old_status          // This is initial creation.
+			|| (
+				'publish' !== $new_status     // Not changing between published and not published.
+				&& 'publish' !== $old_status
+			)
+		) {
+			return;
+		}
+
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $post->ID );
+		$course_enrolment->recalculate_enrolment();
+	}
+
+	/**
+	 * Mark a user as needing recalculation.
+	 *
+	 * @param int $user_id User ID.
+	 */
+	public function mark_user_as_needing_recalculation( $user_id ) {
+		delete_user_meta( $user_id, self::LEARNER_CALCULATION_META_NAME );
 	}
 
 	/**
@@ -264,7 +451,13 @@ class Sensei_Course_Enrolment_Manager {
 	 *
 	 * @return string The calculation version.
 	 */
-	public static function get_enrolment_calculation_version() {
-		return self::get_site_salt() . '-' . Sensei()->version;
+	public function get_enrolment_calculation_version() {
+		$hash_components   = [];
+		$hash_components[] = $this->get_site_salt();
+		$hash_components[] = $this->get_enrolment_provider_versions_hash();
+
+		$current_hash = md5( implode( '-', $hash_components ) );
+
+		return $current_hash . '-' . Sensei()->version;
 	}
 }

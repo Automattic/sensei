@@ -2,19 +2,6 @@ A simple & lightweight method of displaying modal windows with jQuery.
 
 For quick examples and demos, head to [jquerymodal.com](http://jquerymodal.com/).
 
-Maintainers Wanted
----
-
-![](https://img.shields.io/badge/maintainers-wanted-red.svg)
-
-This library became more popular and active than I ever expected, and unfortunately I don't have time to maintain it myself.
-
-If you are interested in helping me maintain this library, please let me know — **I would love your help!**
-
-[**Read more about becoming a maintainer &raquo;**](https://github.com/kylefox/jquery-modal/issues/170)
-
-_I'd especially like people who would be excited about working towards a brand new **jQuery Modal 2.0**. See my [Proposal for jQuery Modal 2.0](https://github.com/kylefox/jquery-modal/issues/169) for more details & discussion._
-
 # Why another modal plugin?
 
 Most plugins I've found try to do too much, and have specialized ways of handling photo galleries, iframes and video.  The resulting HTML & CSS is often bloated and difficult to customize.
@@ -36,14 +23,16 @@ or with [Bower](http://bower.io/):
 
 `bower install jquery-modal`
 
-or the good old fashioned way of including the scripts & styles manually:
+or use the hosted version from [cdnjs](https://cdnjs.com/libraries/jquery-modal):
 
 ```html
-<script src="jquery.modal.min.js" type="text/javascript" charset="utf-8"></script>
-<link rel="stylesheet" href="jquery.modal.css" type="text/css" media="screen" />
-```
+<!-- Remember to include jQuery :) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
 
-_(You'll obviously need to include jQuery as well)._
+<!-- jQuery Modal -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
+```
 
 **Using Rails?** Check out the [jquery-modal-rails plugin](https://github.com/dei79/jquery-modal-rails)!
 
@@ -129,40 +118,52 @@ You can provide a clean fallback for users who have JavaScript disabled by manua
 
 By default the overlay & window appear instantaneously, but you can enable a fade effect by specifying the `fadeDuration` option.
 
-    $('a.open-modal').click(function(event) {
-      $(this).modal({
-        fadeDuration: 250
-      });
-      return false;
-    });
+```js
+$('a.open-modal').click(function(event) {
+  $(this).modal({
+    fadeDuration: 250
+  });
+  return false;
+});
+```
 
 This will fade in the overlay and modal over 250 milliseconds _simultaneously._ If you want the effect of the overlay appearing _before_ the window, you can specify the `fadeDelay` option. This indicates at what point during the overlay transition the window transition should begin.
 
 So if you wanted the window to fade in when the overlay's was 80% finished:
 
-      $(elm).modal({
-        fadeDuration: 250,
-        fadeDelay: 0.80
-      });
+```js
+$(elm).modal({
+  fadeDuration: 250,
+  fadeDelay: 0.80
+});
+```
 
 Or, if you wanted the window to fade in a few moments after the overlay transition has completely finished:
 
-      $(elm).modal({
-        fadeDuration: 250,
-        fadeDelay: 1.5
-      });
+```js
+$(elm).modal({
+  fadeDuration: 250,
+  fadeDelay: 1.5
+});
+```
 
-Fading is the only supported transition. Also, there are no transitions when closing the modal.
+The `fadeDelay` option only applies when opening the modal. When closing the modal, both the modal and the overlay fade out simultaneously according to the `fadeDuration` setting.
+
+Fading is the only supported transition.
 
 # Closing
 
 Because there can be only one modal active at a single time, there's no need to select which modal to close:
 
-    $.modal.close();
+```js
+$.modal.close();
+```
 
 Similar to how links can be automatically bound to open modals, they can be bound to close modals using `rel="modal:close"`:
 
-    <a href="#close" rel="modal:close">Close window</a>
+```html
+<a href="#close" rel="modal:close">Close window</a>
+```
 
 _(Note that modals loaded with AJAX are removed from the DOM when closed)._
 
@@ -175,19 +176,25 @@ _(Note that modals loaded with AJAX are removed from the DOM when closed)._
 
 These are the supported options and their default values:
 
-    $.modal.defaults = {
-      closeExisting: true,    // Close existing modals. Set this to false if you need to stack multiple modal instances.
-      escapeClose: true,      // Allows the user to close the modal by pressing `ESC`
-      clickClose: true,       // Allows the user to close the modal by clicking the overlay
-      closeText: 'Close',     // Text content for the close <a> tag.
-      closeClass: '',         // Add additional class(es) to the close <a> tag.
-      showClose: true,        // Shows a (X) icon/link in the top-right corner
-      modalClass: "modal",    // CSS class added to the element being displayed in the modal.
-      spinnerHtml: null,      // HTML appended to the default spinner during AJAX requests.
-      showSpinner: true,      // Enable/disable the default spinner during AJAX requests.
-      fadeDuration: null,     // Number of milliseconds the fade transition takes (null means no transition)
-      fadeDelay: 1.0          // Point during the overlay's fade-in that the modal begins to fade in (.5 = 50%, 1.5 = 150%, etc.)
-    };
+```js
+$.modal.defaults = {
+  closeExisting: true,    // Close existing modals. Set this to false if you need to stack multiple modal instances.
+  escapeClose: true,      // Allows the user to close the modal by pressing `ESC`
+  clickClose: true,       // Allows the user to close the modal by clicking the overlay
+  closeText: 'Close',     // Text content for the close <a> tag.
+  closeClass: '',         // Add additional class(es) to the close <a> tag.
+  showClose: true,        // Shows a (X) icon/link in the top-right corner
+  modalClass: "modal",    // CSS class added to the element being displayed in the modal.
+  blockerClass: "modal",  // CSS class added to the overlay (blocker).
+
+  // HTML appended to the default spinner during AJAX requests.
+  spinnerHtml: '<div class="rect1"></div><div class="rect2"></div><div class="rect3"></div><div class="rect4"></div>',
+
+  showSpinner: true,      // Enable/disable the default spinner during AJAX requests.
+  fadeDuration: null,     // Number of milliseconds the fade transition takes (null means no transition)
+  fadeDelay: 1.0          // Point during the overlay's fade-in that the modal begins to fade in (.5 = 50%, 1.5 = 150%, etc.)
+};
+```
 
 # Events
 
@@ -205,15 +212,19 @@ $.modal.AFTER_CLOSE = 'modal:after-close';      // Fires after the modal has ful
 
 The first and only argument passed to these event handlers is the `modal` object, which has three properties:
 
-    modal.$elm;        // Original jQuery object upon which modal() was invoked.
-    modal.options;    // Options passed to the modal.
-    modal.$blocker;    // The overlay element.
+```js
+modal.$elm;       // Original jQuery object upon which modal() was invoked.
+modal.options;    // Options passed to the modal.
+modal.$blocker;   // The overlay element.
+```
 
 So, you could do something like this:
 
-    $('#purchase-form').on($.modal.BEFORE_CLOSE, function(event, modal) {
-      clear_shopping_cart();
-    });
+```js
+$('#purchase-form').on($.modal.BEFORE_CLOSE, function(event, modal) {
+  clear_shopping_cart();
+});
+```
 
 # AJAX
 
@@ -223,14 +234,18 @@ jQuery Modal uses $.get for basic AJAX support. A simple spinner will be display
 
 You can add text or additional HTML to the spinner with the `spinnerHtml` option, or disable the spinner entirely by setting `showSpinner: false`.
 
+The default spinner is from the excellent [SpinKit](http://tobiasahlin.com/spinkit/) by [Tobias Ahlin](https://twitter.com/tobiasahlin) 👍
+
 ## Events
 
 The following events are triggered when AJAX modals are requested.
 
-    $.modal.AJAX_SEND = 'modal:ajax:send';
-    $.modal.AJAX_SUCCESS = 'modal:ajax:success';
-    $.modal.AJAX_FAIL = 'modal:ajax:fail';
-    $.modal.AJAX_COMPLETE = 'modal:ajax:complete';
+```js
+$.modal.AJAX_SEND = 'modal:ajax:send';
+$.modal.AJAX_SUCCESS = 'modal:ajax:success';
+$.modal.AJAX_FAIL = 'modal:ajax:fail';
+$.modal.AJAX_COMPLETE = 'modal:ajax:complete';
+```
 
 The handlers receive no arguments. The events are triggered on the `<a>` element which initiated the AJAX modal.
 
@@ -240,30 +255,34 @@ It's a good idea to provide more robust AJAX handling -- error handling, in part
 
 Simply bypass the default AJAX handling (i.e.: don't use `rel="modal"`)
 
-    <a href="ajax.html" rel="ajax:modal">Click me!</a>
+```html
+<a href="ajax.html" rel="ajax:modal">Click me!</a>
+```
 
 and make your AJAX request in the link's click handler. Note that you need to manually append the new HTML/modal in the `success` callback:
 
-    $('a[rel="ajax:modal"]').click(function(event) {
+```js
+$('a[rel="ajax:modal"]').click(function(event) {
 
-      $.ajax({
+  $.ajax({
 
-        url: $(this).attr('href'),
+    url: $(this).attr('href'),
 
-        success: function(newHTML, textStatus, jqXHR) {
-          $(newHTML).appendTo('body').modal();
-        },
+    success: function(newHTML, textStatus, jqXHR) {
+      $(newHTML).appendTo('body').modal();
+    },
 
-        error: function(jqXHR, textStatus, errorThrown) {
-          // Handle AJAX errors
-        }
+    error: function(jqXHR, textStatus, errorThrown) {
+      // Handle AJAX errors
+    }
 
-        // More AJAX customization goes here.
+    // More AJAX customization goes here.
 
-      });
+  });
 
-      return false;
-    });
+  return false;
+});
+```
 
 Note that the AJAX response must be wrapped in a div with class <code>modal</code> when using the second (manual) method.
 
@@ -280,6 +299,20 @@ Note that the AJAX response must be wrapped in a div with class <code>modal</cod
 I don't use this library as frequently as I used to, so if you want to see a fix/improvement you're best off submitting a pull request. Bugs without a test case and/or improvements without a pull request will be shown no mercy and closed!
 
 # Contributing
+
+## Maintainers Wanted
+
+![](https://img.shields.io/badge/maintainers-wanted-red.svg)
+
+This library became more popular and active than I ever expected, and unfortunately I don't have time to maintain it myself.
+
+If you are interested in helping me maintain this library, please let me know — **I would love your help!**
+
+[**Read more about becoming a maintainer &raquo;**](https://github.com/kylefox/jquery-modal/issues/170)
+
+_I'd especially like people who would be excited about working towards a brand new **jQuery Modal 2.0**. See my [Proposal for jQuery Modal 2.0](https://github.com/kylefox/jquery-modal/issues/169) for more details & discussion._
+
+## How to contribute
 
 I welcome improvements to this plugin, particularly with:
 

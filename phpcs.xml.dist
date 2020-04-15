@@ -54,6 +54,9 @@
 	</rule>
 	<!-- End of Temporary Rule Exclusions -->
 
+	<rule ref="WordPress.Files.FileName.InvalidClassFileName">
+		<exclude-pattern>tests/framework/actionscheduler-mocks.php</exclude-pattern>
+	</rule>
 	<rule ref="WordPress.WP.I18n">
 		<properties>
 			<property name="text_domain" type="array" value="sensei-lms" />

@@ -617,7 +617,7 @@ class Sensei_Question {
 		if ( $question_media_link ) {
 
 				$output .= '<div class="question_media_display">';
-				$output .= wp_kses_post( $question_media_link );
+				$output .= self::question_media_kses( $question_media_link );
 				$output .= '<dl>';
 
 			if ( $question_media_title ) {
@@ -641,7 +641,6 @@ class Sensei_Question {
 
 	} // end get_the_question_media
 
-
 	/**
 	 * Output the question media
 	 *
@@ -649,9 +648,27 @@ class Sensei_Question {
 	 * @param string $question_id
 	 */
 	public static function the_question_media( $question_id ) {
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo self::question_media_kses( self::get_the_question_media( $question_id ) );
+	}
 
-		echo wp_kses_post( self::get_the_question_media( $question_id ) );
+	/**
+	 * Special kses processing for media output to allow 'source' video tag.
+	 *
+	 * @since 3.0.0
+	 * @param string $source_string
+	 * @return string with allowed html elements
+	 */
+	private static function question_media_kses( $source_string ) {
+		$source_tag   = array(
+			'source' => array(
+				'type' => true,
+				'src'  => true,
+			),
+		);
+		$allowed_html = array_merge( $source_tag, wp_kses_allowed_html( 'post' ) );
 
+		return wp_kses( $source_string, $allowed_html );
 	}
 
 	/**
@@ -764,7 +781,7 @@ class Sensei_Question {
 		$user_lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, get_current_user_id() );
 		$quiz_graded        = isset( $user_lesson_status->comment_approved ) && ! in_array( $user_lesson_status->comment_approved, array( 'in-progress', 'ungraded' ) );
 
-		if ( ! Sensei_Utils::user_started_course( Sensei()->lesson->get_course_id( $lesson_id ), get_current_user_id() ) ) {
+		if ( ! Sensei_Utils::has_started_course( Sensei()->lesson->get_course_id( $lesson_id ), get_current_user_id() ) ) {
 			return;
 		}
 

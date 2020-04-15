@@ -219,12 +219,18 @@ class Sensei_Learner_Management {
 	 * Creates new instance of class.
 	 *
 	 * @since  1.6.0
+	 *
+	 * @deprecated 3.0.0
+	 *
 	 * @param  string    $name          Name of class.
 	 * @param  integer   $data          constructor arguments.
 	 * @param  undefined $optional_data optional constructor arguments.
 	 * @return object                 class instance object
 	 */
 	public function load_data_object( $name = '', $data = 0, $optional_data = null ) {
+
+		_deprecated_function( __METHOD__, '3.0.0', 'new Sensei_Learners_$name' );
+
 		// Load Analysis data.
 		$object_name = 'Sensei_Learners_' . $name;
 		if ( is_null( $optional_data ) ) {
@@ -250,16 +256,10 @@ class Sensei_Learner_Management {
 			$this->bulk_actions_controller->learner_admin_page();
 			return;
 		}
-		// Load Learners data.
-		$course_id = 0;
-		$lesson_id = 0;
-		if ( isset( $_GET['course_id'] ) ) {
-			$course_id = intval( $_GET['course_id'] );
-		}
-		if ( isset( $_GET['lesson_id'] ) ) {
-			$lesson_id = intval( $_GET['lesson_id'] );
-		}
-		$sensei_learners_main = $this->load_data_object( 'Main', $course_id, $lesson_id );
+
+		$sensei_learners_main = new Sensei_Learners_Main();
+		$sensei_learners_main->prepare_items();
+
 		// Wrappers.
 		do_action( 'learners_before_container' );
 		do_action( 'learners_wrapper_container', 'top' );
@@ -406,7 +406,7 @@ class Sensei_Learner_Management {
 		// validate we can edit date.
 		$may_edit_date = false;
 
-		if ( current_user_can( 'manage_sensei' ) || get_current_user_id() === $post->post_author ) {
+		if ( current_user_can( 'manage_sensei' ) || get_current_user_id() === intval( $post->post_author ) ) {
 			$may_edit_date = true;
 		}
 
@@ -467,7 +467,7 @@ class Sensei_Learner_Management {
 		$may_remove_user = false;
 
 		// Only teachers and admins can remove users.
-		if ( current_user_can( 'manage_sensei' ) || get_current_user_id() === $post->post_author ) {
+		if ( current_user_can( 'manage_sensei' ) || get_current_user_id() === intval( $post->post_author ) ) {
 			$may_remove_user = true;
 		}
 
@@ -548,8 +548,10 @@ class Sensei_Learner_Management {
 		$course_id = intval( $_GET['course_id'] );
 		$post      = get_post( $course_id );
 
+		$may_manage_enrolment = false;
+
 		// Only teachers and admins can enrol and withdraw users.
-		if ( current_user_can( 'manage_sensei' ) || get_current_user_id() === $post->post_author ) {
+		if ( current_user_can( 'manage_sensei' ) || get_current_user_id() === intval( $post->post_author ) ) {
 			$may_manage_enrolment = true;
 		}
 
@@ -567,9 +569,9 @@ class Sensei_Learner_Management {
 
 		$result = false;
 		if ( 'withdraw' === $learner_action ) {
-			$result = $manual_enrolment_provider->withdraw_student( $user_id, $course_id );
+			$result = $manual_enrolment_provider->withdraw_learner( $user_id, $course_id );
 		} elseif ( 'enrol' === $learner_action ) {
-			$result = $manual_enrolment_provider->enrol_student( $user_id, $course_id );
+			$result = $manual_enrolment_provider->enrol_learner( $user_id, $course_id );
 		}
 
 		if ( ! $result ) {
@@ -669,6 +671,17 @@ class Sensei_Learner_Management {
 		$lesson_id = isset( $_POST['add_lesson_id'] ) ? $_POST['add_lesson_id'] : '';
 		$results   = [];
 
+		$course = get_post( $course_id );
+		if (
+			! $course
+			|| (
+				! current_user_can( 'manage_sensei' )
+				&& get_current_user_id() !== intval( $course->post_author )
+			)
+		) {
+			return $result;
+		}
+
 		$enrolment_manager         = Sensei_Course_Enrolment_Manager::instance();
 		$manual_enrolment_provider = $enrolment_manager->get_manual_enrolment_provider();
 
@@ -676,7 +689,7 @@ class Sensei_Learner_Management {
 			$result = false;
 
 			if ( $manual_enrolment_provider instanceof Sensei_Course_Manual_Enrolment_Provider ) {
-				$result = $manual_enrolment_provider->enrol_student( $user_id, $course_id );
+				$result = $manual_enrolment_provider->enrol_learner( $user_id, $course_id );
 			}
 
 			switch ( $post_type ) {
@@ -795,7 +808,7 @@ class Sensei_Learner_Management {
 	 *
 	 * The user must have both name and surname otherwise display name will be returned.
 	 *
-	 * @deprecated since 1.9.0 use Se
+	 * @deprecated since 1.9.0 use Sensei_Learner::get_full_name
 	 * @since 1.8.0
 	 *
 	 * @param int $user_id | bool false for an invalid $user_id.
@@ -804,6 +817,8 @@ class Sensei_Learner_Management {
 	 */
 	public function get_learner_full_name( $user_id ) {
 
+		// To be removed in 5.0.0.
+		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_Learner::get_full_name' );
 		return Sensei_Learner::get_full_name( $user_id );
 
 	}

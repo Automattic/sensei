@@ -1,5 +1,17 @@
 {
   "extends": [
     "config:base"
+  ],
+  "packageRules": [
+    {
+      "depTypeList": ["devDependencies"],
+      "extends": ["schedule:monthly"],
+      "groupName": "devDependencies"
+    },
+    {
+      "depTypeList": ["dependencies"],
+      "extends": ["schedule:monthly"],
+      "groupName": "dependencies"
+    }
   ]
 }

@@ -71,6 +71,10 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		$settings             = $this->get_settings();
 		$settings[ $setting ] = $new_value;
+
+		// Update the cached setting.
+		$this->settings[ $setting ] = $new_value;
+
 		return update_option( $this->token, $settings );
 
 	}

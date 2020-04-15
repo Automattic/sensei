@@ -6,3 +6,4 @@ docs.woothemes.com/*
 tests/images/test-*
 build
 diffs
+.env
