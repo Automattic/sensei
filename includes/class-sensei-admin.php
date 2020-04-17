@@ -295,25 +295,17 @@ class Sensei_Admin {
 		$allowed_pages           = apply_filters( 'sensei_scripts_allowed_pages', array( 'sensei_grading', 'sensei_analysis', 'sensei_learners', 'sensei_updates', 'sensei-settings', $this->lesson_order_page_slug, $this->course_order_page_slug ) );
 
 		// Global Styles for icons and menu items
-		wp_register_style( 'sensei-global', Sensei()->plugin_url . 'assets/css/global.css', '', Sensei()->version, 'screen' );
-		wp_enqueue_style( 'sensei-global' );
-		$select_two_location = '/assets/vendor/select2/select2.min.css';
+		Sensei()->assets->enqueue( 'sensei-global', 'css/global.css', [], 'screen' );
 
 		// Select 2 styles
-		wp_enqueue_style( 'sensei-core-select2', Sensei()->plugin_url . $select_two_location, '', Sensei()->version, 'screen' );
+		Sensei()->assets->enqueue( 'sensei-core-select2', '../vendor/select2/select2.min.css', [], 'screen' );
 
-		wp_register_style(
-			'jquery-modal',
-			Sensei()->plugin_url . 'assets/vendor/jquery-modal-0.9.1/jquery.modal.min.css',
-			[],
-			Sensei()->version
-		);
+		Sensei()->assets->register( 'jquery-modal', '../vendor/jquery-modal-0.9.1/jquery.modal.min.css' );
 
 		// Test for Write Panel Pages
 		if ( ( ( isset( $post_type ) && in_array( $post_type, $allowed_post_types ) ) && ( isset( $hook ) && in_array( $hook, $allowed_post_type_pages ) ) ) || ( isset( $_GET['page'] ) && in_array( $_GET['page'], $allowed_pages ) ) ) {
 
-			wp_register_style( 'sensei-admin-custom', Sensei()->plugin_url . 'assets/css/admin-custom.css', '', Sensei()->version, 'screen' );
-			wp_enqueue_style( 'sensei-admin-custom' );
+			Sensei()->assets->enqueue( 'sensei-admin-custom', 'css/admin-custom.css', [], 'screen' );
 
 		}
 
@@ -446,7 +438,7 @@ class Sensei_Admin {
 		// Installed notices
 		if ( 1 == get_option( 'sensei_installed' ) ) {
 
-			wp_enqueue_style( 'sensei-activation', plugins_url( '/assets/css/activation.css', dirname( __FILE__ ) ), '', Sensei()->version );
+			Sensei()->assets->enqueue( 'sensei-activation', 'css/activation.css' );
 
 			if ( get_option( 'skip_install_sensei_pages' ) != 1 && Sensei()->get_page_id( 'course' ) < 1 && ! isset( $_GET['install_sensei_pages'] ) && ! isset( $_GET['skip_install_sensei_pages'] ) ) {
 				add_action( 'admin_notices', array( $this, 'admin_install_notice' ) );
