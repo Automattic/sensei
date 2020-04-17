@@ -71,7 +71,7 @@ class Sensei_Assets {
 
 
 	private function call_wp( $action, $handle, $config ) {
-		call_user_func( $action . '_' . $config['type'], $handle, $config['url'], $config['dependencies'], $config['version'], $config["args"] );
+		call_user_func( $action . '_' . $config['type'], $handle, $config['url'], $config['dependencies'], $config['version'], $config['args'] );
 	}
 
 	/**
@@ -102,11 +102,11 @@ class Sensei_Assets {
 		}
 
 		return [
-			"url"          => $url,
-			"dependencies" => $dependencies,
-			"version"      => $version,
-			"type"         => $is_js ? "script" : "style",
-			"args"         => $args || $is_js ? false : "all" // defaults for wp_enqueue_script or wp_enqueue_style
+			'url'          => $url,
+			'dependencies' => $dependencies,
+			'version'      => $version,
+			'type'         => $is_js ? 'script' : 'style',
+			'args'         => $args || $is_js ? false : 'all', // defaults for wp_enqueue_script or wp_enqueue_style
 		];
 	}
 

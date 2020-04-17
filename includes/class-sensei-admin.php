@@ -324,9 +324,9 @@ class Sensei_Admin {
 		$screen = get_current_screen();
 
 		// Select2 script used to enhance all select boxes.
-		Sensei()->assets->register('sensei-core-select2', '../vendor/select2/select2.full.js', [ 'jquery' ] );
+		Sensei()->assets->register( 'sensei-core-select2', '../vendor/select2/select2.full.js', [ 'jquery' ] );
 
-		Sensei()->assets->register('jquery-modal', '../vendor/jquery-modal-0.9.1/jquery.modal.js', [ 'jquery' ], true );
+		Sensei()->assets->register( 'jquery-modal', '../vendor/jquery-modal-0.9.1/jquery.modal.js', [ 'jquery' ], true );
 
 		Sensei()->assets->register(
 			'sensei-learners-admin-bulk-actions-js',
@@ -336,11 +336,11 @@ class Sensei_Admin {
 		);
 
 		Sensei()->assets->register( 'sensei-chosen', '../vendor/chosen/chosen.jquery.min.js', [ 'jquery' ], true );
-		Sensei()->assets->register( 'sensei-chosen-ajax', '../vendor/chosen/ajax-chosen.jquery.min.js', ['jquery', 'sensei-chosen'], true );
+		Sensei()->assets->register( 'sensei-chosen-ajax', '../vendor/chosen/ajax-chosen.jquery.min.js', [ 'jquery', 'sensei-chosen' ], true );
 
 		// Load ordering script on Order Courses and Order Lessons pages.
 		if ( in_array( $screen->id, [ 'course_page_course-order', 'lesson_page_lesson-order' ], true ) ) {
-			Sensei()->assets->enqueue( 'sensei-ordering', 'js/admin/ordering.js', ['jquery', 'jquery-ui-sortable', 'sensei-core-select2'], true );
+			Sensei()->assets->enqueue( 'sensei-ordering', 'js/admin/ordering.js', [ 'jquery', 'jquery-ui-sortable', 'sensei-core-select2' ], true );
 		}
 
 		// load edit module scripts

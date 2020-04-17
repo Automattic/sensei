@@ -1531,7 +1531,7 @@ class Sensei_Core_Modules {
 		$disable_styles = apply_filters( 'sensei_disable_styles', $disable_styles );
 
 		if ( ! $disable_styles ) {
-			Sensei()->assets->enqueue($this->taxonomy . '-frontend', 'css/modules-frontend.css');
+			Sensei()->assets->enqueue( $this->taxonomy . '-frontend', 'css/modules-frontend.css' );
 		}
 
 	}
@@ -1564,8 +1564,12 @@ class Sensei_Core_Modules {
 		}
 		wp_enqueue_script( 'sensei-chosen-ajax' );
 
-		Sensei()->assets->enqueue( $this->taxonomy . '-admin', 'js/modules-admin.js',
-			[ 'jquery', 'sensei-chosen-ajax', 'jquery-ui-sortable', 'sensei-core-select2' ], true );
+		Sensei()->assets->enqueue(
+			$this->taxonomy . '-admin',
+			'js/modules-admin.js',
+			[ 'jquery', 'sensei-chosen-ajax', 'jquery-ui-sortable', 'sensei-core-select2' ],
+			true
+		);
 
 		// localized module data
 		$localize_modulesAdmin = array(

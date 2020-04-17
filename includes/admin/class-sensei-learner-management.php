@@ -149,8 +149,12 @@ class Sensei_Learner_Management {
 
 		// Load Learners JS.
 
-		Sensei()->assets->enqueue( 'sensei-learners-general', 'js/learners-general.js',
-			[ 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'jquery-ui-tooltip', 'sensei-core-select2' ], true );
+		Sensei()->assets->enqueue(
+			'sensei-learners-general',
+			'js/learners-general.js',
+			[ 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'jquery-ui-tooltip', 'sensei-core-select2' ],
+			true
+		);
 
 		wp_localize_script(
 			'sensei-learners-general',
