@@ -25,10 +25,8 @@ class Sensei_Assets {
 	/**
 	 * Enqueue a script or stylesheet with wp_enqueue_script/wp_enqueue_style
 	 *
-	 * @see enqueue_asset
-	 *
 	 * @param string      $filename     The filename
-	 * @param array       $dependencies Style dependencies
+	 * @param array       $dependencies Dependencies
 	 * @param bool|string $args         In footer flag (script) or media type (style)
 	 */
 	public function enqueue( $filename, $dependencies = [], $args = null ) {
@@ -36,6 +34,14 @@ class Sensei_Assets {
 		$this->call_wp( 'wp_enqueue', $config );
 	}
 
+	/**
+	 * Register a script or stylesheet with wp_register_script/wp_register_style
+	 *
+	 * @param string|null $name         The registered name. If empty, it will be generated based on the filename
+	 * @param string      $filename     The filename
+	 * @param array       $dependencies Dependencies
+	 * @param null        $args
+	 */
 	public function register( $name, $filename, $dependencies = [], $args = null ) {
 		$config = $this->asset_config( $filename, $dependencies, $args );
 		if ( $name ) {
@@ -46,12 +52,12 @@ class Sensei_Assets {
 
 	private function call_wp( $action, $config ) {
 		call_user_func( $action . '_' . $config['type'], $config['name'], $config['url'], $config['dependencies'], $config['version'], $config["args"] );
-
 	}
 
 	/**
-	 * Loads asset metadata (dependencies tracked by the build process, version hash)
-	 * Generates a name with a sensei- prefix:
+	 * Builds asset metadata for a given file.
+	 * Loads dependencies and version hash tracked by the build process from [filename].asset.php
+	 * Generates a name with a sensei- prefix and slashes to dashes:
 	 * 'js/admin/lesson.js' > 'sensei-js-admin-lesson'
 	 *
 	 * @param string      $type         Asset type (script or style)
@@ -62,7 +68,7 @@ class Sensei_Assets {
 
 	/**
 	 * @param string $filename     The filename
-	 * @param array  $dependencies Dependencies
+	 * @param array  $dependencies Manually specified dependencies
 	 *
 	 * @return array Asset information
 	 */
