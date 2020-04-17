@@ -55,9 +55,14 @@ if ( ! class_exists( 'Sensei_Email_Teacher_Started_Course' ) ) :
 
 			do_action( 'sensei_before_mail', $this->recipient );
 
-			// translators: Placeholder is the blog name.
-			$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] Your student has started a course', 'sensei-lms' ), get_bloginfo( 'name' ) ), $this->template );
-			$this->heading = apply_filters( 'sensei_email_heading', __( 'Your student has started a course', 'sensei-lms' ), $this->template );
+			//Get course name
+			$course_post = get_post( $course_id );
+			$course_name = esc_html( $course_post->post_title );
+
+			// translators: Placeholders are the blog name and Course Name.
+			$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] Your student has started a new course: %2$s ', 'sensei-lms' ), get_bloginfo( 'name' ), $course_title ), $this->template );
+			// translators: Placeholder is the Course Name.
+			$this->heading = apply_filters( 'sensei_email_heading', sprintf( __( 'Your student has started the course: %1$s', 'sensei-lms' ), $course_name ), $this->template );
 
 			// Construct data array
 			$sensei_email_data = apply_filters(
@@ -69,6 +74,7 @@ if ( ! class_exists( 'Sensei_Email_Teacher_Started_Course' ) ) :
 					'learner_id'   => $learner_id,
 					'learner_name' => $this->learner->display_name,
 					'course_id'    => $course_id,
+					'course_name'  => $course_name,
 				),
 				$this->template
 			);

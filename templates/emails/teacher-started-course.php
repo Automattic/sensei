@@ -32,7 +32,7 @@ $large = 'text-align: center !important;font-size: 350% !important;line-height: 
 
 <p style="<?php echo esc_attr( $small ); ?>"><?php esc_html_e( 'has started the course', 'sensei-lms' ); ?></p>
 
-<h2 style="<?php echo esc_attr( $large ); ?>"><?php echo esc_html( get_the_title( $course_id ) ); ?></h2>
+<h2 style="<?php echo esc_attr( $large ); ?>"><?php echo esc_html( $course_name ); ?></h2>
 
 <hr/>
 
