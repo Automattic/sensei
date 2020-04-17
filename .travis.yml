@@ -39,7 +39,7 @@ jobs:
     #    - npm install || exit 1
     #    - npm run test-js || exit 1
     - stage: test
-      php: 7.2
+      php: 7.4
       env: WP_VERSION=latest
       script:
         - ./tests/bin/run-wp-unit-tests.sh
@@ -55,7 +55,7 @@ jobs:
         - ./tests/bin/run-wp-unit-tests.sh
     - stage: test
       php: 5.6
-      env: WP_VERSION=4.4
+      env: WP_VERSION=4.9
       script:
         - ./tests/bin/run-wp-unit-tests.sh
     - stage: test
@@ -74,9 +74,20 @@ jobs:
       script:
       - ./tests/bin/run-wp-unit-tests.sh
     - stage: test
+      language: node_js
+      node_js: '10.17'
       script:
-        - npm install
-        - npx eslint --config .eslintrc.wpcom.json --ignore-path .eslintignore-wpcom .
+        - npm run test-js
+    - stage: test
+      language: node_js
+      node_js: '10.17'
+      script:
+        - npm run lint-js
+    - stage: test
+      language: node_js
+      node_js: '10.17'
+      script:
+        - npm run lint-js-wpcom
     - stage: test
       php: 7.2
       script:
@@ -88,6 +99,11 @@ jobs:
       script:
         - composer install
         - ./vendor/bin/phpcs -sn --sniffs=WordPress.Security.NonceVerification .
+    - stage: test
+      php: 7.2
+      script:
+        - composer install
+        - ./vendor/bin/phpcs -sn --standard=./wpcom-phpcs.xml .
     - stage: test
       php: 7.2
       script:

@@ -6,4 +6,4 @@ docs.woothemes.com/*
 tests/images/test-*
 build
 diffs
-/nbproject/private/
+.env

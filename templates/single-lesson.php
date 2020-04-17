@@ -35,7 +35,6 @@ if ( have_posts() ) {
 		 * @param integer $lesson_id
 		 *
 		 * @hooked deprecated_lesson_image_hook - 10
-		 * @hooked deprecate_sensei_lesson_single_title - 15
 		 * @hooked Sensei_Lesson::lesson_image() -  17
 		 * @hooked deprecate_lesson_single_main_content_hook - 20
 		 */

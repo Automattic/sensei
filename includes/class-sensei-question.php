@@ -38,6 +38,8 @@ class Sensei_Question {
 
 			add_action( 'save_post_question', array( $this, 'save_question' ), 10, 1 );
 		} // End If Statement
+
+		add_action( 'sensei_question_initial_publish', [ $this, 'log_initial_publish_event' ] );
 	} // End __construct()
 
 	public function question_types() {
@@ -84,8 +86,6 @@ class Sensei_Question {
 	 * @return void
 	 */
 	public function add_column_data( $column_name, $id ) {
-		global $wpdb, $post;
-
 		switch ( $column_name ) {
 
 			case 'id':
@@ -189,11 +189,11 @@ class Sensei_Question {
 						'value'       => array(),
 					),
 					// Explicitly allow label tag for WP.com.
-					'label'  => array(
+					'label'    => array(
 						'class' => array(),
 						'for'   => array(),
 					),
-					'option' => array(
+					'option'   => array(
 						'value' => array(),
 					),
 					'select'   => array(
@@ -311,7 +311,7 @@ class Sensei_Question {
 			remove_action( 'save_post_question', array( $this, 'save_question' ) );
 
 			// Update question data
-			$question_id = Sensei()->lesson->lesson_save_question( $data, 'question' );
+			Sensei()->lesson->lesson_save_question( $data, 'question' );
 
 			// Re-hook same function
 			add_action( 'save_post_question', array( $this, 'save_question' ) );
@@ -533,7 +533,7 @@ class Sensei_Question {
 		$question_grade = Sensei()->question->get_question_grade( $question_id );
 
 		$title_html  = '<span class="question question-title">';
-		$title_html .= esc_html( $title );
+		$title_html .= wp_kses_post( $title );
 		$title_html .= Sensei()->view_helper->format_question_points( $question_grade );
 		$title_html .= '</span>';
 
@@ -564,7 +564,8 @@ class Sensei_Question {
 	 * @param $question_id
 	 */
 	public static function the_question_description( $question_id ) {
-		echo self::get_the_question_description( $question_id ); // WPCS: XSS ok.
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in called method (before `the_content` filter).
+		echo self::get_the_question_description( $question_id );
 	}
 
 	/**
@@ -616,7 +617,7 @@ class Sensei_Question {
 		if ( $question_media_link ) {
 
 				$output .= '<div class="question_media_display">';
-				$output .= wp_kses_post( $question_media_link );
+				$output .= self::question_media_kses( $question_media_link );
 				$output .= '<dl>';
 
 			if ( $question_media_title ) {
@@ -640,7 +641,6 @@ class Sensei_Question {
 
 	} // end get_the_question_media
 
-
 	/**
 	 * Output the question media
 	 *
@@ -648,9 +648,27 @@ class Sensei_Question {
 	 * @param string $question_id
 	 */
 	public static function the_question_media( $question_id ) {
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo self::question_media_kses( self::get_the_question_media( $question_id ) );
+	}
 
-		echo wp_kses_post( self::get_the_question_media( $question_id ) );
+	/**
+	 * Special kses processing for media output to allow 'source' video tag.
+	 *
+	 * @since 3.0.0
+	 * @param string $source_string
+	 * @return string with allowed html elements
+	 */
+	private static function question_media_kses( $source_string ) {
+		$source_tag   = array(
+			'source' => array(
+				'type' => true,
+				'src'  => true,
+			),
+		);
+		$allowed_html = array_merge( $source_tag, wp_kses_allowed_html( 'post' ) );
 
+		return wp_kses( $source_string, $allowed_html );
 	}
 
 	/**
@@ -663,7 +681,7 @@ class Sensei_Question {
 	public static function the_question_hidden_fields( $question_id ) {
 		?>
 
-			<input type="hidden" name="question_id_<?php $question_id; ?>" value="<?php $question_id; ?>" />
+			<input type="hidden" name="question_id_<?php echo esc_attr( $question_id ); ?>" value="<?php echo esc_attr( $question_id ); ?>" />
 			<input type="hidden" name="questions_asked[]" value="<?php echo esc_attr( $question_id ); ?>" />
 
 		<?php
@@ -691,7 +709,6 @@ class Sensei_Question {
 		$user_lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, get_current_user_id() );
 		$user_quiz_grade    = Sensei_Quiz::get_user_quiz_grade( $lesson_id, get_current_user_id() );
 		$reset_quiz_allowed = Sensei_Quiz::is_reset_allowed( $lesson_id );
-		$quiz_grade_type    = get_post_meta( $quiz_id, '_quiz_grade_type', true );
 		$quiz_graded        = isset( $user_lesson_status->comment_approved ) && ! in_array( $user_lesson_status->comment_approved, array( 'ungraded', 'in-progress' ) );
 
 		$quiz_required_pass_grade     = intval( get_post_meta( $quiz_id, '_quiz_passmark', true ) );
@@ -756,18 +773,15 @@ class Sensei_Question {
 	 * @since 1.9.0
 	 */
 	public static function the_answer_result_indication() {
+		global $sensei_question_loop;
 
-		global $post,  $current_user, $sensei_question_loop;
+		$quiz_id            = $sensei_question_loop['quiz_id'];
+		$question_item      = $sensei_question_loop['current_question'];
+		$lesson_id          = Sensei()->quiz->get_lesson_id( $quiz_id );
+		$user_lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, get_current_user_id() );
+		$quiz_graded        = isset( $user_lesson_status->comment_approved ) && ! in_array( $user_lesson_status->comment_approved, array( 'in-progress', 'ungraded' ) );
 
-		$answer_message       = '';
-		$answer_message_class = '';
-		$quiz_id              = $sensei_question_loop['quiz_id'];
-		$question_item        = $sensei_question_loop['current_question'];
-		$lesson_id            = Sensei()->quiz->get_lesson_id( $quiz_id );
-		$user_lesson_status   = Sensei_Utils::user_lesson_status( $lesson_id, get_current_user_id() );
-		$quiz_graded          = isset( $user_lesson_status->comment_approved ) && ! in_array( $user_lesson_status->comment_approved, array( 'in-progress', 'ungraded' ) );
-
-		if ( ! Sensei_Utils::user_started_course( Sensei()->lesson->get_course_id( $lesson_id ), get_current_user_id() ) ) {
+		if ( ! Sensei_Utils::has_started_course( Sensei()->lesson->get_course_id( $lesson_id ), get_current_user_id() ) ) {
 			return;
 		}
 
@@ -889,6 +903,7 @@ class Sensei_Question {
 		}
 
 		// setup the question data
+		$data                           = [];
 		$data['ID']                     = $question_id;
 		$data['title']                  = get_the_title( $question_id );
 		$data['content']                = get_post( $question_id )->post_content;
@@ -1075,7 +1090,7 @@ class Sensei_Question {
 
 				// determine if the current option must be checked
 				$checked = '';
-				if ( isset( $question_data['user_answer_entry'] ) && 0 < count( $question_data['user_answer_entry'] ) ) {
+				if ( isset( $question_data['user_answer_entry'] ) ) {
 					if ( is_array( $question_data['user_answer_entry'] ) && in_array( $answer, $question_data['user_answer_entry'] ) ) {
 
 						$checked = 'checked="checked"';
@@ -1190,10 +1205,8 @@ class Sensei_Question {
 	 * @return string $correct_answer or empty
 	 */
 	public static function get_correct_answer( $question_id ) {
-
 		$right_answer = get_post_meta( $question_id, '_question_right_answer', true );
 		$type         = Sensei()->question->get_question_type( $question_id );
-		$grade_type   = 'manual-grade';
 
 		if ( 'boolean' == $type ) {
 			if ( 'true' === $right_answer ) {
@@ -1244,6 +1257,33 @@ class Sensei_Question {
 		return apply_filters( 'sensei_questions_get_correct_answer', $right_answer, $question_id );
 
 	} // get_correct_answer
+
+	/**
+	 * Log an event when a question is initially published.
+	 *
+	 * @since 2.1.0
+	 * @access private
+	 *
+	 * @param WP_Post $question The question object.
+	 */
+	public function log_initial_publish_event( $question ) {
+		$event_properties = [
+			'page'          => 'unknown',
+			'question_type' => $this->get_question_type( $question->ID ),
+		];
+
+		if ( function_exists( 'get_current_screen' ) ) {
+			$screen = get_current_screen();
+
+			if ( $screen && 'question' === $screen->id ) {
+				$event_properties['page'] = 'question';
+			} elseif ( isset( $_REQUEST['action'] ) && 'lesson_update_question' === $_REQUEST['action'] ) {
+				$event_properties['page'] = 'lesson';
+			}
+		}
+
+		sensei_log_event( 'question_add', $event_properties );
+	}
 
 } // End Class
 

@@ -6,19 +6,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	 *  Output tags.
 	 ***************************************************************************************************/
 
-	/**
-	 * sensei_course_archive_next_link function.
-	 *
-	 * @access public
-	 * @param string $type (default: 'newcourses')
-	 * @return void
-	 */
-function sensei_course_archive_next_link( $type = 'newcourses' ) {
-
-	_deprecated_function( 'sensei_course_archive_next_link', '1.9.0', 'This is no longer used or required in Sensei LMS.' );
-
-} // End sensei_course_archive_next_link()
-
 	 /**
 	  * course_single_lessons function.
 	  *
@@ -26,6 +13,9 @@ function sensei_course_archive_next_link( $type = 'newcourses' ) {
 	  * @return void
 	  */
 function course_single_lessons() {
+	if ( ! Sensei_Utils::show_course_lessons( get_the_ID() ) ) {
+		return;
+	}
 
 	// load backwards compatible template name if it exists in the users theme
 	$located_template = locate_template( Sensei()->template_url . 'single-course/course-lessons.php' );
@@ -40,31 +30,18 @@ function course_single_lessons() {
 
 } // End course_single_lessons()
 
-
-	 /**
-	  * lesson_single_meta function.
-	  *
-	  * @access public
-	  * @return void
-	  */
-function lesson_single_meta() {
-
-	_deprecated_function( 'lesson_single_meta', '1.9;0', 'Sensei_Lesson::the_lesson_meta' );
-	sensei_the_single_lesson_meta();
-
-} // End lesson_single_meta()
-
-
 	 /**
 	  * quiz_questions function.
 	  *
 	  * @access public
 	  * @param bool $return (default: false)
 	  * @return void
-	  * @deprecated since 1.9.0
+	  * @deprecated since 1.9.0 use Sensei_Templates::get_template
 	  */
 function quiz_questions( $return = false ) {
 
+	// To be removed in 5.0.0.
+	_deprecated_function( __FUNCTION__, '1.9.0', 'Sensei_Templates::get_template' );
 	Sensei_Templates::get_template( 'single-quiz/quiz-questions.php' );
 
 } // End quiz_questions()
@@ -97,6 +74,8 @@ function quiz_question_type( $question_type = 'multiple-choice' ) {
 	 */
 function sensei_check_prerequisite_course( $course_id ) {
 
+	// To be removed in 5.0.0.
+	_deprecated_function( __FUNCTION__, '1.9.0', 'Sensei_Course::is_prerequisite_complete' );
 	return Sensei_Course::is_prerequisite_complete( $course_id );
 
 } // End sensei_check_prerequisite_course()
@@ -111,14 +90,14 @@ function sensei_check_prerequisite_course( $course_id ) {
 	 */
 function sensei_start_course_form( $course_id ) {
 
-	$prerequisite_complete = sensei_check_prerequisite_course( $course_id );
+	$prerequisite_complete = Sensei_Course::is_prerequisite_complete( $course_id );
 
 	if ( $prerequisite_complete ) {
 		?><form method="POST" action="<?php echo esc_url( get_permalink( $course_id ) ); ?>">
 
 				<input type="hidden" name="<?php echo esc_attr( 'woothemes_sensei_start_course_noonce' ); ?>" id="<?php echo esc_attr( 'woothemes_sensei_start_course_noonce' ); ?>" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_start_course_noonce' ) ); ?>" />
 
-				<span><input name="course_start" type="submit" class="course-start" value="<?php esc_html_e( 'Start taking this Course', 'sensei-lms' ); ?>"/></span>
+				<span><input name="course_start" type="submit" class="course-start" value="<?php esc_html_e( 'Take This Course', 'sensei-lms' ); ?>"/></span>
 
 			</form>
 			<?php
@@ -178,7 +157,7 @@ function sensei_simple_course_price( $post_id ) {
 		return;
 	}
 
-	\Sensei_WC_Paid_Courses\Frontend\Courses::output_course_price( $post_id );
+	\Sensei_WC_Paid_Courses\Frontend\Courses::instance()->output_course_price( $post_id );
 } // End sensei_simple_course_price()
 
 	/**
@@ -419,33 +398,6 @@ function sensei_get_prev_next_lessons( $lesson_id = 0 ) {
 	return $links;
 } // End sensei_get_prev_next_lessons()
 
-  /**
-   * sensei_get_excerpt Returns the excerpt for the $post
-   *
-   * Unhooks wp_trim_excerpt() so to disable excerpt auto-gen.
-   *
-   * @deprecated since  1.9.0
-   * @param  int|WP_Post $post_id Optional. Defaults to current post
-   * @return string $excerpt
-   */
-function sensei_get_excerpt( $post_id = '' ) {
-
-	global $post;
-	_deprecated_function( 'sensei_get_excerpt', 'use the WordPress excerpt functionality.' );
-	return get_the_excerpt();
-
-}
-
-function sensei_has_user_started_course( $post_id = 0, $user_id = 0 ) {
-	_deprecated_function( __FUNCTION__, '1.7', 'Sensei_Utils::user_started_course()' );
-	return Sensei_Utils::user_started_course( $post_id, $user_id );
-} // End sensei_has_user_started_course()
-
-function sensei_has_user_completed_lesson( $post_id = 0, $user_id = 0 ) {
-	_deprecated_function( __FUNCTION__, '1.7', 'Sensei_Utils::user_completed_lesson()' );
-	return Sensei_Utils::user_completed_lesson( $post_id, $user_id );
-} // End sensei_has_user_completed_lesson()
-
 /**
  * Determine if a user has completed the pre-requisite lesson.
  *
@@ -519,6 +471,7 @@ function sensei_setup_module() {
 		// setup the global wp-query only if the lessons
 		if ( $modules_query->have_posts() ) {
 
+			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Use modules query for modules loop. Reset in `Sensei_Core_Modules::teardown_single_course_module_loop()`
 			$wp_query = $modules_query;
 
 		} else {
@@ -683,7 +636,7 @@ function sensei_get_the_module_status() {
 	}
 
 	global $sensei_modules_loop;
-	$module_title    = $sensei_modules_loop['current_module']->name;
+
 	$module_term_id  = $sensei_modules_loop['current_module']->term_id;
 	$course_id       = $sensei_modules_loop['course_id'];
 	$module_progress = Sensei()->modules->get_user_module_progress( $module_term_id, $course_id, get_current_user_id() );
@@ -707,9 +660,9 @@ function sensei_get_the_module_status() {
 		return '';
 	}
 
-	$module_status_html = '<p class="status module-status ' . esc_attr( $status_class ) . '">'
+	$module_status_html = '<span class="status module-status ' . esc_attr( $status_class ) . '">'
 							. esc_html( $module_status )
-							. '</p>';
+							. '</span>';
 
 	/**
 	 * Filter the module status.
@@ -896,80 +849,64 @@ function sensei_get_the_question_id() {
  * Template function to determine if the current user can
  * access the current lesson content being viewed.
  *
- * This function checks in the folowing order
+ * This function checks in the following order
  * - if the current user has all access based on their permissions
- * - If the access permission setting is enabled for this site, if not the user has accces
+ * - If the access permission setting is enabled for this site, if not the user has access
  * - if the lesson has a pre-requisite and if the user has completed that
  * - If it is a preview the user has access as well
  *
  * @since 1.9.0
  *
- * @param string $lesson_id
+ * @param int $lesson_id Lesson post ID. Default: Use global post in loop.
+ * @param int $user_id   User ID. Default: Use currently logged in user ID.
  * @return bool
  */
-function sensei_can_user_view_lesson( $lesson_id = '', $user_id = '' ) {
-
+function sensei_can_user_view_lesson( $lesson_id = null, $user_id = null ) {
 	if ( empty( $lesson_id ) ) {
-
 		$lesson_id = get_the_ID();
-
 	}
 
-	if ( 'quiz' == get_post_type( get_the_ID() ) ) {
-
+	$context = 'lesson';
+	if ( 'quiz' === get_post_type( get_the_ID() ) ) {
+		$context   = 'quiz';
 		$lesson_id = Sensei()->quiz->get_lesson_id( get_the_ID() );
-
 	}
 
 	if ( empty( $user_id ) ) {
-
 		$user_id = get_current_user_id();
-
 	}
 
-	// Check for prerequisite lesson completions
+	$user_can_view_course_content = false;
+	$course_id                    = Sensei()->lesson->get_course_id( $lesson_id );
+	if ( $course_id ) {
+		$user_can_view_course_content = Sensei()->course->can_access_course_content( $course_id, $user_id, $context );
+	}
+
+	// Check for prerequisite lesson completions.
 	$pre_requisite_complete = Sensei_Lesson::is_prerequisite_complete( $lesson_id, $user_id );
-	$lesson_course_id       = get_post_meta( $lesson_id, '_lesson_course', true );
-	$user_taking_course     = Sensei_Utils::user_started_course( $lesson_course_id, $user_id );
+	$is_preview_lesson      = false;
 
-	$is_preview = false;
 	if ( Sensei_Utils::is_preview_lesson( $lesson_id ) ) {
-
-		$is_preview             = true;
+		$is_preview_lesson      = true;
 		$pre_requisite_complete = true;
-
 	};
 
-	$user_can_access_lesson = false;
-
-	if ( is_user_logged_in() && $user_taking_course ) {
-
-		$user_can_access_lesson = true;
-
-	}
-
-	$access_permission = false;
-
-	if ( ! Sensei()->settings->get( 'access_permission' ) || sensei_all_access() ) {
-
-		$access_permission = true;
-
-	}
-
-	$can_user_view_lesson = $access_permission || ( $user_can_access_lesson && $pre_requisite_complete ) || $is_preview;
+	$can_user_view_lesson = ! sensei_is_login_required()
+							|| sensei_all_access( $user_id )
+							|| ( $user_can_view_course_content && $pre_requisite_complete )
+							|| $is_preview_lesson;
 
 	/**
-	 * Filter the can user view lesson function
+	 * Filter if the user can view lesson and quiz content.
 	 *
 	 * @since 1.9.0
 	 *
-	 * @param bool $can_user_view_lesson
-	 * @param string $lesson_id
-	 * @param string $user_id
+	 * @param bool $can_user_view_lesson True if they can view lesson/quiz content.
+	 * @param int  $lesson_id            Lesson post ID.
+	 * @param int  $user_id              User ID.
 	 */
 	return apply_filters( 'sensei_can_user_view_lesson', $can_user_view_lesson, $lesson_id, $user_id );
-
-} // end sensei_can_current_user_view_lesson
+}
 
 /**
  * Ouput the single lesson meta
@@ -995,7 +932,7 @@ function sensei_the_single_lesson_meta() {
 	do_action( 'sensei_complete_lesson' );
 	// Check that the course has been started
 	if ( Sensei()->access_settings()
-		|| Sensei_Utils::user_started_course( $lesson_course_id, get_current_user_id() )
+		|| Sensei_Course::is_user_enrolled( $lesson_course_id )
 		|| $is_preview ) {
 		?>
 		<section class="lesson-meta">
@@ -1008,14 +945,6 @@ function sensei_the_single_lesson_meta() {
 			?>
 			<?php do_action( 'sensei_frontend_messages' ); ?>
 
-			<?php
-			if ( ! $is_preview
-				|| Sensei_Utils::user_started_course( $lesson_course_id, get_current_user_id() ) ) {
-
-				sensei_do_deprecated_action( 'sensei_lesson_quiz_meta', '1.9.0', 'sensei_single_lesson_content_inside_before', array( get_the_ID(), get_current_user_id() ) );
-
-			}
-			?>
 		</section>
 
 		<?php do_action( 'sensei_lesson_back_link', $lesson_course_id ); ?>
@@ -1182,7 +1111,8 @@ function sensei_get_current_page_url() {
  */
 function sensei_the_my_courses_content() {
 
-	echo Sensei()->course->load_user_courses_content( wp_get_current_user() ); // WPCS: XSS ok.
+	// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in called method.
+	echo Sensei()->course->load_user_courses_content( wp_get_current_user() );
 
 } // sensei_the_my_courses_content
 

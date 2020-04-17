@@ -24,14 +24,22 @@ class Sensei_Unit_Tests_Bootstrap {
 		$this->tests_dir    = dirname( __FILE__ );
 		$this->plugin_dir   = dirname( $this->tests_dir );
 		$this->wp_tests_dir = getenv( 'WP_TESTS_DIR' ) ? getenv( 'WP_TESTS_DIR' ) : '/tmp/wordpress-tests-lib';
+
+		define( 'SENSEI_TEST_FRAMEWORK_DIR', $this->tests_dir . '/framework' );
+
 		// load test function so tests_add_filter() is available
 		require_once $this->wp_tests_dir . '/includes/functions.php';
 		// load Sensei
 		tests_add_filter( 'muplugins_loaded', array( $this, 'load_sensei' ) );
 		// install Sensei
 		tests_add_filter( 'setup_theme', array( $this, 'install_sensei' ) );
+
+		// Enrolment checks should happen immediately in tests. Filter can be removed for specific tests.
+		tests_add_filter( 'sensei_should_defer_enrolment_check', '__return_false' );
+
 		// load the WP testing environment
 		require_once $this->wp_tests_dir . '/includes/bootstrap.php';
+
 		// load Sensei testing framework
 		$this->includes();
 	}
@@ -42,7 +50,22 @@ class Sensei_Unit_Tests_Bootstrap {
 	 */
 	public function load_sensei() {
 		require_once $this->plugin_dir . '/sensei-lms.php';
+
+		// Testing setup for scheduler.
+		require_once SENSEI_TEST_FRAMEWORK_DIR . '/class-sensei-scheduler-shim.php';
+
+		add_filter( 'sensei_scheduler_class', [ __CLASS__, 'scheduler_use_shim' ] );
 	}
+
+	/**
+	 * Scheduler: Use shim.
+	 *
+	 * @return string
+	 */
+	public static function scheduler_use_shim() {
+		return Sensei_Scheduler_Shim::class;
+	}
+
 	/**
 	 * Install Sensei after the test environment and Sensei have been loaded.
 	 *
@@ -60,8 +83,16 @@ class Sensei_Unit_Tests_Bootstrap {
 	 */
 	public function includes() {
 		// factories
-		require_once $this->tests_dir . '/framework/factories/class-sensei-factory.php';
-		require_once $this->tests_dir . '/framework/factories/class-wp-unittest-factory-for-post-sensei.php';
+		require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-helpers.php';
+		require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-manual-test-helpers.php';
+		require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-scheduler-test-helpers.php';
+		require_once SENSEI_TEST_FRAMEWORK_DIR . '/class-sensei-background-job-stub.php';
+		require_once SENSEI_TEST_FRAMEWORK_DIR . '/factories/class-sensei-factory.php';
+		require_once SENSEI_TEST_FRAMEWORK_DIR . '/factories/class-wp-unittest-factory-for-post-sensei.php';
+
+		// Testing setup for event logging.
+		require_once SENSEI_TEST_FRAMEWORK_DIR . '/class-sensei-test-events.php';
+		Sensei_Test_Events::init();
 	}
 	/**
 	 * Get the single class instance.

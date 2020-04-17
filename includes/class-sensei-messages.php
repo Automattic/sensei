@@ -64,6 +64,7 @@ class Sensei_Messages {
 		add_filter( 'get_comments_number', array( $this, 'message_reply_count' ), 100, 2 );
 		add_filter( 'comments_open', array( $this, 'message_replies_open' ), 100, 2 );
 		add_action( 'pre_get_posts', array( $this, 'only_show_messages_to_owner' ) );
+		add_filter( 'comment_feed_where', array( $this, 'exclude_message_comments_from_feed_where' ) );
 	} // End __construct()
 
 	public function only_show_messages_to_owner( $query ) {
@@ -161,6 +162,10 @@ class Sensei_Messages {
 				case 'lesson':
 					$label       = __( 'Message from lesson:', 'sensei-lms' );
 					$description = __( 'The lesson to which this message relates.', 'sensei-lms' );
+					break;
+				case 'quiz':
+					$label       = __( 'Message from quiz:', 'sensei-lms' );
+					$description = __( 'The quiz to which this message relates.', 'sensei-lms' );
 					break;
 			}
 
@@ -297,12 +302,10 @@ class Sensei_Messages {
 	}
 
 	public function teacher_contact_form( $post ) {
-
 		if ( ! is_user_logged_in() ) {
 			return;
 		}
 
-		global $current_user;
 		wp_get_current_user();
 
 		$html = '';
@@ -356,7 +359,7 @@ class Sensei_Messages {
 			return false;
 		}
 
-		$message_id = $this->save_new_message_post( $current_user->ID, $post->post_author, sanitize_text_field( $_POST['contact_message'] ), $post->ID );
+		$this->save_new_message_post( $current_user->ID, $post->post_author, sanitize_text_field( $_POST['contact_message'] ), $post->ID );
 	}
 
 	public function message_reply_received( $comment_id = 0 ) {
@@ -547,6 +550,24 @@ class Sensei_Messages {
 			}
 		}
 	}
+
+	/**
+	 * Exclude message comments from feed queries and RSS.
+	 *
+	 * @since 2.0.2
+	 * @access private
+	 *
+	 * @param  string $where The WHERE clause of the query.
+	 * @return string
+	 */
+	public function exclude_message_comments_from_feed_where( $where ) {
+		if ( is_singular() ) {
+			return $where;
+		}
+
+		return $where . ( $where ? ' AND ' : '' ) . " post_type != 'sensei_message' ";
+	}
+
 	/**
 	 * Only show allowed messages in messages archive
 	 *
@@ -559,6 +580,8 @@ class Sensei_Messages {
 		if ( is_admin() ) {
 			return;
 		}
+
+		$meta_query = [];
 
 		if ( $query->is_main_query() && is_post_type_archive( $this->post_type ) ) {
 			wp_get_current_user();
@@ -779,7 +802,26 @@ class Sensei_Messages {
 	 * @param $post_id
 	 */
 	public static function the_message_title( $message_post_id ) {
+		?>
+		<h2>
+			<a href="<?php echo esc_url_raw( get_the_permalink( $message_post_id ) ); ?>">
+				<?php echo esc_html( self::get_the_message_title( $message_post_id ) ); ?>
+			</a>
 
+		</h2>
+
+		<?php
+	} //end the_message_header
+
+	/**
+	 * Get the message title that is going to be displayed.
+	 *
+	 * @since 2.3.0
+	 * @param integer $message_post_id The message id.
+	 *
+	 * @return string the message title
+	 */
+	public static function get_the_message_title( $message_post_id ) {
 		$content_post_id = get_post_meta( $message_post_id, '_post', true );
 
 		if ( $content_post_id ) {
@@ -793,16 +835,8 @@ class Sensei_Messages {
 
 		}
 
-		?>
-		<h2>
-			<a href="<?php echo esc_url_raw( get_the_permalink( $message_post_id ) ); ?>">
-				<?php echo esc_html( $title ); ?>
-			</a>
-
-		</h2>
-
-		<?php
-	} //end the_message_header
+		return $title;
+	}
 
 	/**
 	 * Output the message sender given the post id.

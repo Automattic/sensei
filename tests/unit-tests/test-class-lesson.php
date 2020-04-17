@@ -1,6 +1,8 @@
 <?php
 
 class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
+	use Sensei_Course_Enrolment_Manual_Test_Helpers;
+
 	/**
 	 * @var Sensei_Factory
 	 */
@@ -23,6 +25,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		parent::setup();
 
 		$this->factory = new Sensei_Factory();
+		Sensei_Test_Events::reset();
 	}//end setup()
 
 	public function tearDown() {
@@ -290,9 +293,12 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * @group course-enrolment
 	 * @covers Sensei_Lesson::maybe_start_lesson
 	 */
 	public function testMaybeStartLessonEnrolled() {
+		$this->resetCourseEnrolmentManager();
+
 		$user_id = wp_create_user( 'getlearnertestuser', 'password', 'getlearnertestuser@sensei-test.com' );
 		wp_set_current_user( $user_id );
 
@@ -302,8 +308,9 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 				'question_count' => 1,
 			)
 		);
-		$lesson_id      = array_pop( $course_lessons['lesson_ids'] );
-		Sensei_Utils::start_user_on_course( $user_id, $course_lessons['course_id'] );
+
+		$lesson_id = array_pop( $course_lessons['lesson_ids'] );
+		$this->manuallyEnrolStudentInCourse( $user_id, $course_lessons['course_id'] );
 
 		Sensei_Lesson::maybe_start_lesson( $lesson_id, $user_id );
 		$this->assertTrue( false !== Sensei_Utils::user_started_lesson( $lesson_id, $user_id ) );
@@ -332,6 +339,109 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 
 		Sensei_Lesson::maybe_start_lesson( $lesson_id, $user_id );
 		$this->assertFalse( Sensei_Utils::user_started_lesson( $lesson_id, $user_id ) );
+	}
+
+	/**
+	 * Test initial publish logging course ID.
+	 *
+	 * @covers Sensei_Lesson::log_initial_publish_event
+	 */
+	public function testLogInitialPublishCourseID() {
+		$lesson_id = $this->factory->lesson->create(
+			[
+				'post_status' => 'draft',
+			]
+		);
+		$course_id = $this->factory->course->create();
+		Sensei_Test_Events::reset();
+
+		// Set the course ID on the lesson.
+		add_post_meta( $lesson_id, '_lesson_course', $course_id, true );
+
+		// Publish lesson.
+		wp_update_post(
+			[
+				'ID'          => $lesson_id,
+				'post_status' => 'publish',
+			]
+		);
+
+		Sensei()->post_types->fire_scheduled_initial_publish_actions();
+		$events = Sensei_Test_Events::get_logged_events( 'sensei_lesson_publish' );
+		$this->assertCount( 1, $events );
+
+		// Ensure course ID is correct.
+		$event = $events[0];
+		$this->assertEquals( $course_id, $event['url_args']['course_id'] );
+	}
+
+	/**
+	 * Test initial publish logging no course ID.
+	 *
+	 * @covers Sensei_Lesson::log_initial_publish_event
+	 */
+	public function testLogInitialPublishNoCourseID() {
+		// Create lesson with no course ID.
+		$lesson_id = $this->factory->lesson->create();
+
+		Sensei()->post_types->fire_scheduled_initial_publish_actions();
+		$events = Sensei_Test_Events::get_logged_events( 'sensei_lesson_publish' );
+		$this->assertCount( 1, $events );
+
+		// Ensure course ID is -1.
+		$event = $events[0];
+		$this->assertEquals( -1, $event['url_args']['course_id'] );
+	}
+
+	/**
+	 * Test initial publish logging module ID.
+	 *
+	 * @covers Sensei_Lesson::log_initial_publish_event
+	 */
+	public function testLogInitialPublishModuleID() {
+		$lesson_id = $this->factory->lesson->create(
+			[
+				'post_status' => 'draft',
+			]
+		);
+
+		// Add a module.
+		$module_ids = wp_set_object_terms( $lesson_id, [ 'test-module' ], 'module' );
+		$module_id  = $module_ids[0];
+
+		// Publish lesson.
+		wp_update_post(
+			[
+				'ID'          => $lesson_id,
+				'post_status' => 'publish',
+			]
+		);
+
+		Sensei()->post_types->fire_scheduled_initial_publish_actions();
+		$events = Sensei_Test_Events::get_logged_events( 'sensei_lesson_publish' );
+		$this->assertCount( 1, $events );
+
+		// Ensure course ID is correct.
+		$event = $events[0];
+		$this->assertEquals( $module_id, $event['url_args']['module_id'] );
+	}
+
+	/**
+	 * Test initial publish logging no module ID.
+	 *
+	 * @covers Sensei_Lesson::log_initial_publish_event
+	 */
+	public function testLogInitialPublishNoModuleID() {
+		// Create lesson with no module ID.
+		$lesson_id = $this->factory->lesson->create();
+
+		Sensei()->post_types->fire_scheduled_initial_publish_actions();
+		$events = Sensei_Test_Events::get_logged_events( 'sensei_lesson_publish' );
+		$this->assertCount( 1, $events );
+
+		// Ensure course ID is -1.
+		$event = $events[0];
+		$this->assertEquals( -1, $event['url_args']['module_id'] );
 	}
 
 	private static function get_course_lesson_order( $course_id ) {

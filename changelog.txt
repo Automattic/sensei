@@ -1,6 +1,167 @@
 *** Changelog ***
 
-2019.05.21 - version 2.0.1
+2020.04.15 - version 3.0.0
+* New: Add Recalculate Enrolment data update [#2998](https://github.com/Automattic/sensei/pull/2998)
+* New: Add a filter for the course archive page URL [#2899](https://github.com/Automattic/sensei/pull/2899)
+* New: Add course enrollment indicator to learner management [#2838](https://github.com/Automattic/sensei/pull/2838)
+* New: Add course enrolment recalculation scheduler [#2874](https://github.com/Automattic/sensei/pull/2874)
+* New: Add learner management filter for manually enrolled users [#2987](https://github.com/Automattic/sensei/pull/2987), [#2996](https://github.com/Automattic/sensei/pull/2996)
+* New: Add manual enrollment provider [#2848](https://github.com/Automattic/sensei/pull/2848)
+* New: Add missing deprecation notices [#2974](https://github.com/Automattic/sensei/pull/2974)
+* New: Enable filtering by "Enrolled Learners" and "Unenrolled Learners" in Learner Management [#2981](https://github.com/Automattic/sensei/pull/2981), [#2988](https://github.com/Automattic/sensei/pull/2988)
+* New: Allow frontend enrolment form to be handled by other providers [#2973](https://github.com/Automattic/sensei/pull/2973)
+* New: Block access to module when not signed up [#2952](https://github.com/Automattic/sensei/pull/2952)
+* New: Block frontend manual enrollment if there is a handling provider [#2862](https://github.com/Automattic/sensei/pull/2862)
+* New: Courses must be published to have enrolment [#2877](https://github.com/Automattic/sensei/pull/2877)
+* New: Create generic enrolment job scheduler and introduce course recalculation [#2909](https://github.com/Automattic/sensei/pull/2909)
+* New: Defer triggering recalculation until the end of the request [#2905](https://github.com/Automattic/sensei/pull/2905), [#2914](https://github.com/Automattic/sensei/pull/2914)
+* New: Deprecate Sensei_Utils::user_started_course [#2984](https://github.com/Automattic/sensei/pull/2984)
+* New: Deprecate filters used by legacy WCPC memberships [#2979](https://github.com/Automattic/sensei/pull/2979)
+* New: Filter defer enrolment check behavior [#2942](https://github.com/Automattic/sensei/pull/2942)
+* New: Introduce enrolment manager [#2844](https://github.com/Automattic/sensei/pull/2844)
+* New: Introduce provider state storage and stored status providers [#2888](https://github.com/Automattic/sensei/pull/2888)
+* New: Manually enrol student on frontend when they sign up for course [#2854](https://github.com/Automattic/sensei/pull/2854)
+* New: Pass the comment ID to the `sensei_is_legacy_enrolled` filter [#2872](https://github.com/Automattic/sensei/pull/2872)
+* New: Recalculate course enrolment when moving from published to not published [#2990](https://github.com/Automattic/sensei/pull/2990)
+* New: Recalculate when any provider version changes [#2916](https://github.com/Automattic/sensei/pull/2916)
+* New: Refactor so that providers are instantiated by their handler [#2875](https://github.com/Automattic/sensei/pull/2875)
+* New: Remove deprecated functionality for 3.0 [#2969](https://github.com/Automattic/sensei/pull/2969)
+* New: Remove enrolments on user deletion [#2898](https://github.com/Automattic/sensei/pull/2898)
+* New: Remove the taxonomy sensei_learner terms and new user meta on uninstall [#2897](https://github.com/Automattic/sensei/pull/2897)
+* New: Deprecate Sensei_Lesson::user_not_taking_course_message [#2953](https://github.com/Automattic/sensei/pull/2953), [#2978](https://github.com/Automattic/sensei/pull/2978)
+* New: Remove user meta on uninstall [#2907](https://github.com/Automattic/sensei/pull/2907)
+* New: Run plugin update checker and tasks on every request [#2967](https://github.com/Automattic/sensei/pull/2967)
+* New: Split course progress from course enrolment [#2799](https://github.com/Automattic/sensei/pull/2799)
+* New: Split scheduler to seperate classes for easier testing [#2991](https://github.com/Automattic/sensei/pull/2991)
+* New: Switch to storing enrolment results in user meta [#2903](https://github.com/Automattic/sensei/pull/2903)
+* New: Update enrolled courses queries to use learner term [#2946](https://github.com/Automattic/sensei/pull/2946)
+* New: Use Action Scheduler for enrolment async jobs when available [#2930](https://github.com/Automattic/sensei/pull/2930)
+* New: Add filter to bypass enrolment functionality [#3011](https://github.com/Automattic/sensei/pull/3011)
+* New: Allow providers to provide debug information [#3020](https://github.com/Automattic/sensei/pull/3020)
+* New: Fire actions on enrolment status change and manual enrolment status change [#3035](https://github.com/Automattic/sensei/pull/3035)
+* New: Add a filter for the batch size of the learner calculation job [#3054](https://github.com/Automattic/sensei/pull/3054)
+* New: Introduce a provider journal store [#3027](https://github.com/Automattic/sensei/pull/3027)
+* Tweak: Append post status to prerequisite lesson on Lessons page [#2853](https://github.com/Automattic/sensei/pull/2853) 👏 @JuanchoPestana
+* Tweak: Change user_started_course in quiz and email code [#2968](https://github.com/Automattic/sensei/pull/2968)
+* Tweak: Add support for enrolments in bulk learner management [#2965](https://github.com/Automattic/sensei/pull/2965)
+* Tweak: Move enrolment files to own directory [#2881](https://github.com/Automattic/sensei/pull/2881)
+* Tweak: Replace usages of Sensei_Utils::user_started_course in course methods [#2962](https://github.com/Automattic/sensei/pull/2962)
+* Tweak: Replace usages of Sensei_Utils::user_started_course in templates [#2951](https://github.com/Automattic/sensei/pull/2951)
+* Tweak: Rename "Remove progress" bulk learner action [#2985](https://github.com/Automattic/sensei/pull/2985)
+* Tweak: Update usage tracking for enrolment count [#2958](https://github.com/Automattic/sensei/pull/2958)
+* Tweak: Hide "Manually Enrolled Learners" filter when not needed [#3014](https://github.com/Automattic/sensei/pull/3014)
+* Tweak: Remove logging functionality from provider state [#3021](https://github.com/Automattic/sensei/pull/3021)
+* Tweak: Refactor removal of Sensei comments from total counts [#3009](https://github.com/Automattic/sensei/pull/3009)
+* Tweak: Switch to using a handler when a learner starts taking a course [#3000](https://github.com/Automattic/sensei/pull/3000)
+* Tweak: Allow for not storing enrolment results when they don't provide enrolment [#3028](https://github.com/Automattic/sensei/pull/3028)
+* Tweak: Update course calculation job to paginate using last calculated user ID [#3029](https://github.com/Automattic/sensei/pull/3029)
+* Tweak: Don't manually enrol learners who don't have course progress [#3030](https://github.com/Automattic/sensei/pull/3030)
+* Tweak: Ensure courses share the same provider state meta per learner [#3033](https://github.com/Automattic/sensei/pull/3033)
+* Tweak: Replace "student" with "learner" in methods and frontend hook [#3038](https://github.com/Automattic/sensei/pull/3038)
+* Tweak: Use `time` instead of `microtime` function when logging enrolment results [#3034](https://github.com/Automattic/sensei/pull/3034)
+* Tweak: Switch to using a filter when storing enrolment results [#3031](https://github.com/Automattic/sensei/pull/3031)
+* Tweak: Use new strategy for looping through last user ID for learner calculation job [#3055](https://github.com/Automattic/sensei/pull/3055)
+* Fix: Add clear background to TinyMCE buttons [#2833](https://github.com/Automattic/sensei/pull/2833) 👏 @JuanchoPestana
+* Fix: Add missing question ID to hidden question field [#2871](https://github.com/Automattic/sensei/pull/2871) 👏 @traed
+* Fix: Add module admin scripts on course edit page [#2918](https://github.com/Automattic/sensei/pull/2918)
+* Fix: Check sensei_user_can_register_for_course filter when My Courses Page is not set [#2865](https://github.com/Automattic/sensei/pull/2865) 👏 @JuanchoPestana
+* Fix: Enable teachers to remove / reset progress and edit the start date for a learner [#2922](https://github.com/Automattic/sensei/pull/2922)
+* Fix: Fix PHP 7.4 issues [#2876](https://github.com/Automattic/sensei/pull/2876)
+* Fix: Fix bulk editing lessons [#2917](https://github.com/Automattic/sensei/pull/2917)
+* Fix: Fix display of "Next Lesson" button in notice [#2949](https://github.com/Automattic/sensei/pull/2949)
+* Fix: Improve theme support for TwentyTwenty [#2902](https://github.com/Automattic/sensei/pull/2902)
+* Fix: Only enqueue user-dashboard.js where required [#2882](https://github.com/Automattic/sensei/pull/2882) 👏 @coleshaw
+* Fix: Fix PHP notices when viewing course archive page on certain themes [#2911](https://github.com/Automattic/sensei/pull/2911)
+* Fix: Fix JS error on Lessons page [#2910](https://github.com/Automattic/sensei/pull/2910)
+* Fix: Set lesson status to ungraded after reset [#2919](https://github.com/Automattic/sensei/pull/2919)
+* Fix: Limit triggering of sensei_single_title in single quiz the_title hook for quiz posts [#2920](https://github.com/Automattic/sensei/pull/2920)
+* Fix: Ensure lesson comments are not displayed if user isn't allowed to view lesson [#2840](https://github.com/Automattic/sensei/pull/2840) 👏 @JuanchoPestana
+* Fix: Fix lesson order for courses that are duplicated with lessons [#2883](https://github.com/Automattic/sensei/pull/2883)
+* Fix: Fix video playback for question media attachments [#2886](https://github.com/Automattic/sensei/pull/2886)
+* Fix: Add fail-safes on update version check [#3019](https://github.com/Automattic/sensei/pull/3019)
+* Fix: Fix comment template not displaying for messages [#3024](https://github.com/Automattic/sensei/pull/3024)
+
+2020.01.23 - version 2.4.0
+* New: Replace Twitter button with Create Course button after activation - #2850
+* Fix: PHP warning for multiple choice questions - #2843
+* Fix: Default settings cleared after clicking "Install Sensei LMS Pages" button - #2847
+* Fix: Add transparent background to TinyMCE editor buttons for multi line questions (@JuanchoPestana) - #2855
+
+2020.01.14 - version 2.3.0
+* New: Configure Renovate - #2805
+* New: Remove Sensei_WP_Cli class - #2814
+* New: Upgrade WPCS to 2.2 - #2793
+* New: Add REST endpoint for messages - #2809
+* New: Initial setup needed for blocks - #2810
+* Tweak: Optimize JS script file loading - #2815
+* Fix: Auto-grading of manually graded questions - #2816
+* Fix: Add closing span tag in gap fill question template (@traed) - #2824
+* Fix: Duplicated course maintaining original prerequisites - #2821
+* Fix: Lesson order when duplicating course with lessons - #2827
+
+2019.10.23 - version 2.2.1
+* New: Allow HTML in question titles - #2780
+* Tweak: Optimize loading of teacher dropdown on Courses page (@mostafaabd) - #2750
+* Tweak: Update extension parameters passed to Google Analytics - #2783
+* Tweak: Move upsell higher in ReadMe - #2782
+* Fix: No longer flush rewrite rules on course and lesson save - #2718
+* Fix: Fix layout issue with Academia theme - #2773
+* Fix: Remove default wrapper around single post renderer on unsupported theme - #2786
+* Fix: Do not limit message comments on single post comment feeds - #2776
+
+2019.09.03 - version 2.2.0
+* New: Add `sensei_course_meta_before_save` and `sensei_course_meta_default_save` hooks for saving course meta - #2761
+* New: Add `sensei_course_show_lessons` filter to conditionally hide lessons on single course page - #2763
+* New: Add `sensei_modules_title` filter for modifying the module title HTML - #2737
+* New: Remove ability to add a course from the lesson page - #2758
+* New: Deprecate `Sensei_Lesson::lesson_save_course` function - #2769
+* New: Deprecate `Sensei_Lesson::lesson_add_course` function - #2760
+* New: Add support for custom fields on REST API requests - #2747
+* Tweak: Log product count when a course is published - #2755
+* Tweak: Update layout of course meta on relevant pages - #2751
+* Fix: Items not showing up on plugin activation via WP CLI (@kakoma) - #2766
+* Fix: Ensure WooCommerce notices are displayed for unsupported themes - #2756
+* Fix: Clean up modules when course teacher is changed - #2472
+* Fix: Conflict with WP Ultimate Recipe plugin - #2749
+* Fix: Show draft, private, future lessons on the Order Lessons page (@mostafaabd) - #2746, #2371
+* Fix: PHP notice when trashing / restoring a course (@mostafaabd) - #2721
+* Fix: Alignment issue on single course page when lesson has a featured image (@mostafaabd) - #2719
+
+2019.06.26 - version 2.1.2
+* Fix: Modules not displaying in WP admin - #2742
+* Fix: Multiple correct answers being removed from question editor - #2743
+* Fix: Filtering of allowed CSS attributes for bulk learner actions - #2744
+
+2019.06.25 - version 2.1.1
+* New: Bump minimum supported WordPress version to 4.9 - #2725
+* Tweak: Rename event logging JS file to match file naming standards - #2730
+* Tweak: Fix PHPCS issues with undefined variables - #2731
+* Tweak: Remove unused variables from codebase - #2732
+* Tweak: Fix PHPCS issues with global variable overrides - #2733
+* Fix: Remove global cache flush - #2682
+* Fix: Don't call non-static method statically - #2729
+* Fix: PHP fatal error on WordPress versions < 5.0 - #2736
+
+2019.06.17 - version 2.1.0
+
+* New: Add "Edit Course" button when in classic editor - #2514
+* New: Add `sensei_complete_lesson_redirect_url` filter for disabling the redirect after completing a lesson - #2510
+* New: Add event logging to the WordPress dashboard - #2672, #2673, #2675, #2686, #2696, #2695, #2700, #2697, #2702, #2684, #2687, #2707, #2706, #2709, #2715
+* Tweak: Make queries on Analysis page more performant - #2359
+* Tweak: Ensure module status does not overlap module name - #2699, #2713
+* Tweak: Allow more HTML elements in Sensei notices - #2712
+* Tweak: Adjust alignment of value inside progress bar - #2701
+* Tweak: Adjust vertical gap for quiz tabs - #2523
+* Tweak: Update lesson preview checkbox text - #2711
+* Fix: Enable teachers to save course settings in the block editor - #2658
+* Fix: Don't prefill fields with empty characters on the registration form - #2622
+* Fix: Add label and description for a message that is related to a quiz - #2521
+* Fix: PHP notice on the Order Courses page when there are no courses - #2689
+* Fix: PHP notice on the Grading page when there are no submitted quizzes - #2691
+* Fix: Fix SSI directive error on the quiz page - #2704
+* Fix: Hide private messages from comment feed - #2726
+
+2019.05.01 - version 2.0.1
 
 * New: Rename plugin to Sensei LMS - #2511, #2516
 * New: Deprecate `manage_sensei_page_sensei_learners_sortable_columns` in favour of `manage_sensei-lms_page_sensei_learners_sortable_columns` - #2516
@@ -84,6 +245,13 @@
 * Fix: Fix permalink/rewrite rule issue on plugin activation - #2492
 * Fix: Allow for late additions to data updates - #2490
 * Fix: Fix issues with coding standards
+
+2019.03.27 - version 1.12.3
+* New: Restrict future updates for sites running a version of PHP less than 5.6 - #2502
+* Fix: Conflict with Jetpack shortcodes module and Sensei videos - #2426
+* Fix: Change progress status to "Completed" in modules (@tonytettinger) - #2342
+* Fix: Lesson order changes when lesson is updated using Classic Editor - #2471
+* Fix: Update version number on plugin update - #2503
 
 2018.11.29 - version 1.12.2
 

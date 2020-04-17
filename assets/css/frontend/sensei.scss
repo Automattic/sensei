@@ -63,6 +63,14 @@ a.sensei-certificate-link {
   text-decoration: none;
 }
 
+/* Spacing defaults */
+
+.sensei .entry-content {
+	section {
+		padding: 0;
+	}
+}
+
 /* Courses */
 .course,
 .course-container,
@@ -73,9 +81,17 @@ a.sensei-certificate-link {
   padding: 0 0 1em;
   border-bottom: 1px solid #e2e2e2;
   list-style: none;
+
   header h2  {
     margin: 0;
   }
+
+  .course-title {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+  }
+
   .course-meta  {
     margin-bottom: 20px;
     clear: both;
@@ -86,20 +102,30 @@ a.sensei-certificate-link {
       margin-bottom: 0.618em;
     }
   }
-  .sensei-course-meta  {
-    font-style: italic;
-    font-size: .9em;
+
+  .course-author,
+  .course-category {
+    margin-left: 5px;
+  }
+
+  .course-author,
+  .sensei-course-meta {
     color: lighten($color_body, 20%);
-    a  {
+    font-size: .9em;
+
+    a {
       color: #555;
     }
-    .course-price  {
-      font-style: normal;
-      font-weight: bold;
-      color: darken($color_body, 20%);
-      @include border_radius(300px);
-    }
   }
+
+  .sensei-course-meta {
+    font-style: italic;
+  }
+
+  .course-excerpt {
+    margin-top: 1.5em;
+  }
+
   .entry-actions  {
     span  {
       margin: 0 1em 0 0;
@@ -118,6 +144,7 @@ a.sensei-certificate-link {
       }
     }
     .lesson  {
+      @include clearfix();
       header  {
         h2  {
           margin: 0;
@@ -417,10 +444,7 @@ a.sensei-certificate-link {
 }
 
 div.course-container div.course { display: block; padding: 5px; }
-section.entry span.course-lesson-count { padding-left: 10px; }
-section.entry span.course-category { padding-left: 10px; }
-section.entry span.course-lesson-progress { padding-left: 10px; }
-section.entry span.course-price { padding-left: 10px; }
+section.entry span.course-lesson-progress { margin-left: 10px; }
 
 .sensei form {
   .form-row {
@@ -591,9 +615,6 @@ section.entry span.course-price { padding-left: 10px; }
 
 /* Learner Profiles */
 #learner-info {
-  h2 {
-    margin: 20px 0;
-  }
   .learner-avatar {
     float: right;
     width: 120px;
@@ -616,6 +637,11 @@ section.entry span.course-price { padding-left: 10px; }
 /* Course Archives */
 .sensei-ordering {
   margin: 0 0 1em 0;
+}
+
+.sensei .archive-header {
+  background: transparent;
+  padding: 0;
 }
 
 .sensei-course-filters {
@@ -693,6 +719,8 @@ section.entry span.course-price { padding-left: 10px; }
 /* Course Progress Bars */
 .meter {
   height: 25px;  /* Can be anything */
+  line-height: 25px;
+  font-size: 16px;
   position: relative;
   margin: 20px 0; /* Just for demo spacing */
   background: darken($bg_light, 5%);
@@ -700,9 +728,10 @@ section.entry span.course-price { padding-left: 10px; }
   -webkit-border-radius: 25px;
   border-radius: 25px;
   clear: both;
-  > span {
+
+  .value {
     display: block;
-    padding: 1px 10px 0 0;
+    padding: 0 10px 0 0;
     height: 100%;
     background-color: $success;
     position: relative;
@@ -766,6 +795,11 @@ section.entry span.course-price { padding-left: 10px; }
     padding: 1em 1.618em;
     border:none!important;
     @include border_radius(5px);
+    &:after {
+      content: "";
+      clear: both;
+      display: block;
+    }
     &:before  {
       @include iconbefore();
       font-size: 1.387em;
@@ -839,7 +873,7 @@ section.entry span.course-price { padding-left: 10px; }
     a.next-lesson {
       display: inline-block;
       padding: 5px 20px 4px;
-      margin: -3px 0 0 1em;
+      margin-left: 1em;
       @include border_radius(5px);
       text-decoration: none;
       font-size: 11px;
@@ -897,7 +931,6 @@ section.entry span.course-price { padding-left: 10px; }
     }
 
     &:active {
-      border-color: $color_links - #555;
       -webkit-box-shadow: inset 0 0 7px hsla(0,0%,0%,.3),
       0 1px 0 hsla(0, 100%, 100%, 1);
       -moz-box-shadow: inset 0 0 7px hsla(0,0%,0%,.3),

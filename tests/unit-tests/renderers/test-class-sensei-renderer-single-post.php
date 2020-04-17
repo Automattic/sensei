@@ -53,25 +53,18 @@ class Sensei_Renderer_Single_Post_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Ensure renderer disables Sensei's header and footer.
+	 * Ensure renderer disables Sensei's footer.
 	 *
 	 * @since 1.12.0
 	 */
-	public function testShouldTemporarilyDisableHeaderAndFooter() {
+	public function testShouldTemporarilyDisableFooter() {
 		$renderer = new Sensei_Renderer_Single_Post( $this->post_id, 'single.php' );
 		$renderer->render();
 
 		/*
-		 * sensei_get_header and sensei_get_footer fire the actions
-		 * 'sensei_before_main_content' and 'sensei_after_main_content',
-		 * respectively. If these actions were not called, we know that the
-		 * header and footer were skipped.
+		 * sensei_get_footer fires the 'sensei_after_main_content' action.
+		 * If this action was not called, we know that the footer was skipped.
 		 */
-		$this->assertEquals(
-			0,
-			did_action( 'sensei_before_main_content' ),
-			'Should not have called sensei_before_main_content'
-		);
 		$this->assertEquals(
 			0,
 			did_action( 'sensei_after_main_content' ),

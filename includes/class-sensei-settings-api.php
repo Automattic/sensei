@@ -388,9 +388,16 @@ class Sensei_Settings_API {
 		$this->settings = self::get_settings_raw();
 
 		foreach ( $this->fields as $k => $v ) {
-			if ( ! isset( $this->settings[ $k ] ) && isset( $v['default'] ) ) {
-				$this->settings[ $k ] = $v['default'];
+
+			if ( ! isset( $this->settings[ $k ] ) ) {
+
+				if ( isset( $v['default'] ) ) {
+					$this->settings[ $k ] = $v['default'];
+				} elseif ( isset( $v['defaults'] ) ) {
+					$this->settings[ $k ] = $v['defaults'];
+				}
 			}
+
 			if ( $v['type'] == 'checkbox' && $this->settings[ $k ] != true ) {
 				$this->settings[ $k ] = 0;
 			}
@@ -784,8 +791,6 @@ class Sensei_Settings_API {
 	 * @param  array $args
 	 */
 	public function form_field_button( $args ) {
-		$options = $this->get_settings();
-
 		if ( isset( $args['data']['target'] ) && isset( $args['data']['label'] ) ) {
 			printf( '<a href="%s" class="button button-secondary">%s</a> ', esc_url( $args['data']['target'] ), esc_html( $args['data']['label'] ) );
 

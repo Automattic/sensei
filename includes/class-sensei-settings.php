@@ -39,6 +39,8 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$this->register_hook_listener();
 		$this->get_settings();
 
+		// Log when settings are updated by the user.
+		add_action( 'update_option_sensei-settings', [ $this, 'log_settings_update' ], 10, 2 );
 	} // End __construct()
 
 	/**
@@ -67,8 +69,12 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 */
 	public function set( $setting, $new_value ) {
 
-		$settings             = self::get_settings_raw();
+		$settings             = $this->get_settings();
 		$settings[ $setting ] = $new_value;
+
+		// Update the cached setting.
+		$this->settings[ $setting ] = $new_value;
+
 		return update_option( $this->token, $settings );
 
 	}
@@ -140,8 +146,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 * @return void
 	 */
 	public function init_fields() {
-		global $pagenow;
-
 		$pages_array          = $this->pages_array();
 		$posts_per_page_array = array(
 			'0'  => '0',
@@ -686,7 +690,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 	/**
 	 * Flush the rewrite rules after the settings have been updated.
-	 * This is to ensure that the
+	 * This is to ensure that the proper permalinks are set up for archive pages.
 	 *
 	 * @since 1.9.0
 	 */
@@ -705,6 +709,94 @@ class Sensei_Settings extends Sensei_Settings_API {
 		}
 
 	}//end flush_rewrite_rules()
+
+	/**
+	 * Logs settings update from the Settings form.
+	 *
+	 * @access private
+	 * @since 2.1.0
+	 *
+	 * @param array $old_value The old settings value.
+	 * @param array $value     The new settings value.
+	 */
+	public function log_settings_update( $old_value, $value ) {
+		// Only process user-initiated settings updates.
+		if ( ! ( 'POST' === $_SERVER['REQUEST_METHOD'] && 'options' === get_current_screen()->id ) ) {
+			return;
+		}
+
+		// Find changed fields.
+		$changed = [];
+		foreach ( $this->fields as $field => $field_config ) {
+			// Handle absent fields.
+			$old_field_value = isset( $old_value[ $field ] ) ? $old_value[ $field ] : '';
+			$new_field_value = isset( $value[ $field ] ) ? $value[ $field ] : '';
+
+			if ( $new_field_value !== $old_field_value ) {
+				// Create an array for this section of settings if needed.
+				$section = $field_config['section'];
+				if ( ! isset( $changed[ $section ] ) ) {
+					$changed[ $section ] = [];
+				}
+
+				// Get changed setting values to be logged. In most cases, this
+				// will be an array containing only the name of the field.
+				$changed_values      = $this->get_changed_setting_values(
+					$field,
+					$new_field_value,
+					$old_field_value
+				);
+				$changed[ $section ] = array_merge( $changed[ $section ], $changed_values );
+			}
+		}
+
+		// Log changed sections.
+		foreach ( $changed as $section => $fields ) {
+			sensei_log_event(
+				'settings_update',
+				[
+					'view'     => $section,
+					'settings' => implode( ',', $fields ),
+				]
+			);
+		}
+	}
+
+	/**
+	 * Get an array of setting values which were changed. In most cases, this
+	 * will simply be the name of the setting. However, if the setting is an
+	 * array of strings, then this will return an array of the string values
+	 * that were changed. These values returned will be of the form
+	 * "field_name[value_name]".
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param string $field     The name of the setting field.
+	 * @param array  $new_value The new value.
+	 * @param array  $old_value The old value.
+	 *
+	 * @return array The array of strings representing the field that was
+	 *               changed, or an array containing the field name.
+	 */
+	private function get_changed_setting_values( $field, $new_value, $old_value ) {
+		// If the old and new values are not arrays, return the field name.
+		if ( ! is_array( $new_value ) || ! is_array( $old_value ) ) {
+			return [ $field ];
+		}
+
+		// Now, make sure they are both string arrays.
+		foreach ( array_merge( $new_value, $old_value ) as $value ) {
+			if ( ! is_string( $value ) ) {
+				return [ $field ];
+			}
+		}
+
+		// We have two string arrays. Return the difference in their values.
+		$added   = array_diff( $new_value, $old_value );
+		$removed = array_diff( $old_value, $new_value );
+
+		return array_filter( array_merge( $added, $removed ) );
+	}
 } // End Class
 
 /**

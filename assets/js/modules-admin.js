@@ -22,8 +22,6 @@ jQuery( document ).ready( function () {
     */
 	// module order screen
 	jQuery( '#module-order-course' ).select2({width:'resolve'});
-	// lesson edit screen modules selection
-	jQuery( 'select#lesson-module-options' ).select2({width:'resolve'});
 
 	/**
      * Sortable functionality
@@ -136,10 +134,11 @@ jQuery( document ).ready( function () {
 		}
 
 		var newTermData = {
-			newTerm : newTerm,
+			newTerm: newTerm,
 			security: security,
 			action: 'sensei_add_new_module_term',
-			course_id: courseId
+			course_id: courseId,
+			from_page: 'course',
 		};
 
 		jQuery.post( ajaxurl, newTermData, function(response) {

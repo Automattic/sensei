@@ -1,10 +1,10 @@
 === Sensei LMS ===
-Contributors: automattic, alexsanford1, bor0, donnapep, drawmyface, dwainm, jakeom, jeffikus, lastnode, mattyza, panosktn
-Tags: lms, learning management system, teach, train, tutor
-Requires at least: 4.1
-Tested up to: 5.1
+Contributors: automattic, alexsanford1, donnapep, jakeom, gikaragia, renathoc, yscik, dwainm, panosktn, jeffikus
+Tags: elearning, lms, learning management system, teach, tutor
+Requires at least: 4.9
+Tested up to: 5.4
 Requires PHP: 5.6
-Stable tag: 2.0.1
+Stable tag: 3.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -16,6 +16,9 @@ Your knowledge is worth teaching, so teach it!
 
 = Seamless WordPress integration =
 Sensei LMS integrates effortlessly with your WordPress site, making it easy to create courses, lessons and quizzes.
+
+= Earn passive income =
+Our [WooCommerce Paid Courses extension](https://woocommerce.com/products/woocommerce-paid-courses/) enables you to sell your courses using the most popular eCommerce platform on the web - WooCommerce.
 
 = No coding required =
 You don't have time to spend hiring a developer to make your online courses look great, and you shouldn't have to. Sensei LMS just works with your preferred WordPress theme.

@@ -93,6 +93,10 @@ class Sensei_Renderer_Single_Post implements Sensei_Renderer_Interface {
 		// Capture output.
 		ob_start();
 
+		// Even though the header is not being displayed, the action hooked to it still needs to fire. Remove default wrapper.
+		remove_action( 'sensei_before_main_content', array( Sensei()->frontend, 'sensei_output_content_wrapper' ) );
+		do_action( 'sensei_before_main_content' );
+
 		// Render the template.
 		Sensei_Templates::get_template( $this->template );
 
@@ -150,10 +154,12 @@ class Sensei_Renderer_Single_Post implements Sensei_Renderer_Interface {
 	public function set_global_vars() {
 		global $wp_query, $wp_the_query, $post, $pages;
 
+		// phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited -- Used to render single post.
 		$post         = get_post( $this->post_id );
 		$pages        = array( $post->post_content );
 		$wp_query     = $this->post_query;
 		$wp_the_query = $wp_query;
+		// phpcs:enable WordPress.WP.GlobalVariablesOverride.Prohibited
 	}
 
 	/**
@@ -163,10 +169,12 @@ class Sensei_Renderer_Single_Post implements Sensei_Renderer_Interface {
 	private function reset_global_vars() {
 		global $wp_query, $wp_the_query, $post, $pages;
 
+		// phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited -- Restoring preexisting state.
 		$wp_query     = $this->global_wp_query_ref;
 		$wp_the_query = $this->global_wp_the_query_ref;
 		$post         = $this->global_post_ref;
 		$pages        = $this->global_pages_ref;
+		// phpcs:enable WordPress.WP.GlobalVariablesOverride.Prohibited
 	}
 
 	/**

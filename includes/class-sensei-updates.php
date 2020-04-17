@@ -180,6 +180,15 @@ class Sensei_Updates {
 				),
 				'manual' => array(),
 			),
+			'3.0.0' => array(
+				'manual' => array(
+					'recalculate_enrolment' => array(
+						'title'    => __( 'Recalculate enrollment', 'sensei-lms' ),
+						'desc'     => __( 'Invalidate the cached enrollment and trigger recalculation for all users and courses.', 'sensei-lms' ),
+						'multiple' => true,
+					),
+				),
+			),
 		);
 
 		$this->version = get_option( 'sensei-version' );
@@ -406,7 +415,7 @@ class Sensei_Updates {
 			</p>
 
 				<?php
-} // End If Statement
+			} // End If Statement
 		} else {
 			?>
 
@@ -490,14 +499,14 @@ class Sensei_Updates {
 												   id="update-sensei"
 												   class="button
 												   <?php
-													if ( ! $update_run ) {
+													if ( ! $update_run || ! empty( $data['multiple'] ) ) {
 														echo ' button-primary'; }
 													?>
 													"
 												   type="submit"
 												   value="
 												   <?php
-													if ( $update_run ) {
+													if ( $update_run && empty( $data['multiple'] ) ) {
 														esc_html_e( 'Re-run Update', 'sensei-lms' );
 													} else {
 														esc_html_e( 'Run Update', 'sensei-lms' ); }
@@ -850,7 +859,6 @@ class Sensei_Updates {
 		);
 		$quizzes = get_posts( $args );
 
-		$old_answers      = array();
 		$right_answers    = array();
 		$old_user_answers = array();
 
@@ -887,6 +895,7 @@ class Sensei_Updates {
 			}
 		}
 
+		$answers_linkup = [];
 		if ( is_array( $right_answers ) ) {
 			foreach ( $right_answers as $quiz_id => $question ) {
 				$count = 0;
@@ -901,6 +910,7 @@ class Sensei_Updates {
 			}
 		}
 
+		$new_user_answers = [];
 		if ( is_array( $old_user_answers ) ) {
 			foreach ( $old_user_answers as $quiz_id => $user_answers ) {
 				foreach ( $user_answers as $user_id => $answers ) {
@@ -1087,6 +1097,7 @@ class Sensei_Updates {
 			'status' => 'approve',
 		);
 
+		$post_ids   = [];
 		$activities = get_comments( $args );
 
 		foreach ( $activities as $activity ) {
@@ -1104,8 +1115,13 @@ class Sensei_Updates {
 
 			if ( ! $user_exists ) {
 				wp_delete_comment( intval( $activity->comment_ID ), true );
-				wp_cache_flush();
+
+				$post_ids[] = $activity->comment_post_ID;
 			}
+		}
+
+		foreach ( array_unique( $post_ids ) as $post_id ) {
+			Sensei()->flush_comment_counts_cache( $post_id );
 		}
 
 		$total_activities = count( $activity_count );
@@ -1607,7 +1623,8 @@ class Sensei_Updates {
 							) ) {
 									continue; // Found the meta data already
 							}
-							$result = $wpdb->insert(
+
+							$wpdb->insert(
 								$wpdb->commentmeta,
 								array(
 									'comment_id' => $comment_ID,
@@ -1752,7 +1769,8 @@ class Sensei_Updates {
 							) ) {
 									continue; // Found the meta data already
 							}
-							$result = $wpdb->insert(
+
+							$wpdb->insert(
 								$wpdb->commentmeta,
 								array(
 									'comment_id' => $comment_ID,
@@ -1986,7 +2004,8 @@ class Sensei_Updates {
 							) ) {
 									continue; // Found the meta data already
 							}
-							$result = $wpdb->insert(
+
+							$wpdb->insert(
 								$wpdb->commentmeta,
 								array(
 									'comment_id' => $comment_ID,
@@ -2072,7 +2091,7 @@ class Sensei_Updates {
 	public function remove_legacy_comments() {
 		global $wpdb;
 
-		$result = $wpdb->delete( $wpdb->comments, array( 'comment_approved' => 'legacy' ) );
+		$wpdb->delete( $wpdb->comments, array( 'comment_approved' => 'legacy' ) );
 
 		return true;
 	}
@@ -2105,6 +2124,19 @@ class Sensei_Updates {
 
 	}//end enhance_teacher_role()
 
+	/**
+	 * Invalidates the calculated/cached enrolment to trigger Sensei to recalculate enrolment
+	 * for all learners and classes.
+	 *
+	 * @access private
+	 * @since 3.0.0
+	 */
+	public function recalculate_enrolment() {
+		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
+		$enrolment_manager->reset_site_salt();
+
+		return true;
+	}
 } // End Class
 
 /**

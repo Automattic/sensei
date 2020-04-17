@@ -19,6 +19,9 @@ To make things easier we've created these guidelines:
 ## Unit Tests
 Unit tests can be run locally. Please see our [test instructions](https://github.com/Automattic/sensei/tree/master/tests#readme) to run the unit tests.
 
+## CSS
+CSS is built using [SASS](https://sass-lang.com/documentation/file.SASS_REFERENCE.html). To compile to .css files, run `gulp CSS` from the root folder.
+
 ## Development Blog
 Please follow further development updates at [https://senseilms.com/blog/](https://senseilms.com/blog/)
 

@@ -1,12 +1,16 @@
 <?php
 
 class Sensei_Class_Course_Test extends WP_UnitTestCase {
+	use Sensei_Course_Enrolment_Test_Helpers;
+	use Sensei_Course_Enrolment_Manual_Test_Helpers;
 
 	/**
 	 * Constructor function
 	 */
 	public function __construct() {
 		parent::__construct();
+
+		$this->factory = new Sensei_Factory();
 	}
 
 	/**
@@ -19,6 +23,7 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		parent::setup();
 
 		$this->factory = new Sensei_Factory();
+		Sensei_Test_Events::reset();
 	}//end setup()
 
 	public function tearDown() {
@@ -144,5 +149,253 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		// all lessons should no be completed
 		$this->assertEquals( 100, Sensei()->course->get_completion_percentage( $test_course_id, $test_user_id ), 'Course completed percentage is not accurate' );
 
+	}
+
+	/**
+	 * Test initial publish logging default property values.
+	 *
+	 * @covers Sensei_Course::log_initial_publish_event
+	 */
+	public function testLogInitialPublishDefaultPropertyValues() {
+		$course_id = $this->factory->course->create(
+			[
+				'post_status' => 'draft',
+			]
+		);
+
+		// Set product meta to "-", which simulates actual behaviour.
+		add_post_meta( $course_id, '_course_woocommerce_product', '-', true );
+
+		// Publish course.
+		wp_update_post(
+			[
+				'ID'          => $course_id,
+				'post_status' => 'publish',
+			]
+		);
+
+		Sensei()->post_types->fire_scheduled_initial_publish_actions();
+		$events = Sensei_Test_Events::get_logged_events( 'sensei_course_publish' );
+		$this->assertCount( 1, $events );
+
+		// Ensure default values are correct.
+		$event = $events[0];
+		$this->assertEquals( 0, $event['url_args']['module_count'] );
+		$this->assertEquals( 0, $event['url_args']['lesson_count'] );
+		$this->assertEquals( 0, $event['url_args']['product_count'] );
+	}
+
+	/**
+	 * Test initial publish logging module count.
+	 *
+	 * @covers Sensei_Course::log_initial_publish_event
+	 */
+	public function testLogInitialPublishModuleCount() {
+		$course_id = $this->factory->course->create(
+			[
+				'post_status' => 'draft',
+			]
+		);
+
+		// Add some modules.
+		wp_set_object_terms( $course_id, [ 'module-a', 'module-b' ], 'module' );
+
+		// Publish course.
+		wp_update_post(
+			[
+				'ID'          => $course_id,
+				'post_status' => 'publish',
+			]
+		);
+
+		Sensei()->post_types->fire_scheduled_initial_publish_actions();
+		$events = Sensei_Test_Events::get_logged_events( 'sensei_course_publish' );
+		$this->assertCount( 1, $events );
+
+		// Ensure module count is correct.
+		$event = $events[0];
+		$this->assertEquals( 2, $event['url_args']['module_count'] );
+	}
+
+	/**
+	 * Test initial publish logging lesson count.
+	 *
+	 * @covers Sensei_Course::log_initial_publish_event
+	 */
+	public function testLogInitialPublishLessonCount() {
+		$course_id = $this->factory->course->create(
+			[
+				'post_status' => 'draft',
+			]
+		);
+
+		// Add some lessons to the course.
+		$lesson_ids = $this->factory->lesson->create_many( 2 );
+		foreach ( $lesson_ids as $lesson_id ) {
+			add_post_meta( $lesson_id, '_lesson_course', $course_id );
+		}
+
+		// Publish course.
+		wp_update_post(
+			[
+				'ID'          => $course_id,
+				'post_status' => 'publish',
+			]
+		);
+
+		Sensei()->post_types->fire_scheduled_initial_publish_actions();
+		$events = Sensei_Test_Events::get_logged_events( 'sensei_course_publish' );
+		$this->assertCount( 1, $events );
+
+		// Ensure lesson count is correct.
+		$event = $events[0];
+		$this->assertEquals( 2, $event['url_args']['lesson_count'] );
+	}
+
+	/**
+	 * Test initial publish logging product count.
+	 *
+	 * @covers Sensei_Course::log_initial_publish_event
+	 */
+	public function testLogInitialPublishProductCount() {
+		$course_id = $this->factory->course->create(
+			[
+				'post_status' => 'draft',
+			]
+		);
+
+		// Add product ID.
+		add_post_meta( $course_id, '_course_woocommerce_product', 5 );
+
+		// Publish without product ID.
+		wp_update_post(
+			[
+				'ID'          => $course_id,
+				'post_status' => 'publish',
+			]
+		);
+
+		Sensei()->post_types->fire_scheduled_initial_publish_actions();
+		$events = Sensei_Test_Events::get_logged_events( 'sensei_course_publish' );
+		$this->assertCount( 1, $events );
+
+		// Ensure product ID is correct.
+		$event = $events[0];
+		$this->assertEquals( 1, $event['url_args']['product_count'] );
+	}
+
+	/**
+	 * Test initial publish logging without product ID.
+	 *
+	 * @covers Sensei_Course::log_initial_publish_event
+	 */
+	public function testLogNoEventProduct() {
+		$course_id = $this->factory->course->create(
+			[
+				'post_status' => 'draft',
+			]
+		);
+
+		// Publish without product ID.
+		wp_update_post(
+			[
+				'ID'          => $course_id,
+				'post_status' => 'publish',
+			]
+		);
+
+		Sensei()->post_types->fire_scheduled_initial_publish_actions();
+		$events = Sensei_Test_Events::get_logged_events( 'sensei_course_publish' );
+		$this->assertCount( 1, $events );
+
+		// Ensure product ID is correct.
+		$event = $events[0];
+		$this->assertEquals( 0, $event['url_args']['product_count'] );
+	}
+
+	/**
+	 * Test initial publish logging product count with multiple product IDs.
+	 *
+	 * @covers Sensei_Course::log_initial_publish_event
+	 */
+	public function testLogEventProductCountMultiProduct() {
+		$course_id = $this->factory->course->create(
+			[
+				'post_status' => 'draft',
+			]
+		);
+		add_post_meta( $course_id, '_course_woocommerce_product', 5 );
+		add_post_meta( $course_id, '_course_woocommerce_product', 6 );
+
+		// Publish.
+		wp_update_post(
+			[
+				'ID'          => $course_id,
+				'post_status' => 'publish',
+			]
+		);
+
+		Sensei()->post_types->fire_scheduled_initial_publish_actions();
+		$events = Sensei_Test_Events::get_logged_events( 'sensei_course_publish' );
+		$this->assertCount( 1, $events, 'One event for sensei_course_publish should be recorded' );
+
+		// Ensure product count is correct.
+		$event = $events[0];
+		$this->assertEquals( 2, $event['url_args']['product_count'], 'Event should have 2 products attached to the course' );
+	}
+
+	/**
+	 * Checks to make sure standard users can view course content when the access permissions setting is disabled.
+	 */
+	public function testCanAccessCourseContentDisableAccessPermissionCan() {
+		$course_instance = Sensei()->course;
+		$user_id         = $this->factory->user->create();
+		$course_id       = $this->factory->course->create();
+
+		Sensei()->settings->set( 'access_permission', false );
+		$result = $course_instance->can_access_course_content( $course_id, $user_id );
+		Sensei()->settings->set( 'access_permission', true );
+
+		$this->assertTrue( $result, 'Standard users should have access to course content when access permissions are disabled' );
+	}
+
+	/**
+	 * Checks to make sure admins always have access to course content.
+	 */
+	public function testCanAccessCourseContentAdminCan() {
+		$course_instance = Sensei()->course;
+		$user_id         = $this->factory->user->create( [ 'role' => 'administrator' ] );
+		$course_id       = $this->factory->course->create();
+
+		$user = get_user_by( 'id', $user_id );
+		$user->add_cap( 'manage_sensei' );
+
+		$this->assertTrue( $course_instance->can_access_course_content( $course_id, $user_id ), 'Admins should have access to course content' );
+	}
+
+	/**
+	 * Checks to make sure standard users who aren't enrolled can't view course content.
+	 */
+	public function testCanAccessCourseContentStandardUserCanNot() {
+		$course_instance = Sensei()->course;
+		$user_id         = $this->factory->user->create();
+		$course_id       = $this->factory->course->create();
+
+		$this->assertFalse( $course_instance->can_access_course_content( $course_id, $user_id ), 'Standard users who are not enrolled should not have access to course content' );
+	}
+
+	/**
+	 * Checks to make sure standard users who are enrolled can view course content.
+	 */
+	public function testCanAccessCourseContentEnrolledStandardCan() {
+		$this->prepareEnrolmentManager();
+
+		$course_instance = Sensei()->course;
+		$user_id         = $this->factory->user->create();
+		$course_id       = $this->factory->course->create();
+
+		$this->manuallyEnrolStudentInCourse( $user_id, $course_id );
+
+		$this->assertTrue( $course_instance->can_access_course_content( $course_id, $user_id ), 'Standard users who are enrolled should have access to course content' );
 	}
 }//end class

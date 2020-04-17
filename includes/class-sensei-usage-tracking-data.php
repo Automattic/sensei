@@ -37,6 +37,7 @@ class Sensei_Usage_Tracking_Data {
 			'enrolments'              => self::get_course_enrolments(),
 			'enrolment_first'         => self::get_first_course_enrolment(),
 			'enrolment_last'          => self::get_last_course_enrolment(),
+			'enrolment_calculated'    => self::get_is_enrolment_calculated() ? 1 : 0,
 			'learners'                => self::get_learner_count(),
 			'lessons'                 => wp_count_posts( 'lesson' )->publish,
 			'lesson_modules'          => self::get_lesson_module_count(),
@@ -56,6 +57,35 @@ class Sensei_Usage_Tracking_Data {
 		);
 
 		return array_merge( $question_type_count, $usage_data, $quiz_stats );
+	}
+
+	/**
+	 * Get the base fields to be sent for event logging.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @return array
+	 */
+	public static function get_event_logging_base_fields() {
+		$base_fields = [
+			'paid'     => 0,
+			'courses'  => wp_count_posts( 'course' )->publish,
+			'learners' => self::get_learner_count(),
+		];
+
+		/**
+		 * Filter the event logging source.
+		 *
+		 * @param string The source (defaults to "unknown").
+		 */
+		$base_fields['source'] = apply_filters( 'sensei_event_logging_source', 'unknown' );
+
+		/**
+		 * Filter the fields that should be sent with every event that is logged.
+		 *
+		 * @param array $base_fields The default base fields.
+		 */
+		return apply_filters( 'sensei_event_logging_base_fields', $base_fields );
 	}
 
 	/**
@@ -346,17 +376,43 @@ class Sensei_Usage_Tracking_Data {
 	 * @return int Number of course enrolments.
 	 **/
 	private static function get_course_enrolments() {
-		global $wpdb;
-
-		return $wpdb->get_var(
-			"SELECT COUNT(DISTINCT c.user_id)
-			FROM {$wpdb->comments} c
-			INNER JOIN {$wpdb->usermeta} um ON c.user_id = um.user_id
-			INNER JOIN {$wpdb->posts} p ON p.ID = c.comment_post_ID
-			WHERE comment_type = 'sensei_course_status'
-				AND meta_key = '{$wpdb->prefix}capabilities' AND meta_value NOT LIKE '%administrator%'
-				AND post_status = 'publish' AND c.user_id <> 0"
+		return (int) get_terms(
+			[
+				'hide_empty' => true,
+				'fields'     => 'count',
+				'exclude'    => self::get_admin_learner_term_ids(),
+				'taxonomy'   => Sensei_PostTypes::LEARNER_TAXONOMY_NAME,
+			]
 		);
+	}
+
+	/**
+	 * Checks if enrolment has been calculated for the current Sensei version.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @return bool
+	 */
+	private static function get_is_enrolment_calculated() {
+		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
+
+		return get_option( Sensei_Enrolment_Job_Scheduler::CALCULATION_VERSION_OPTION_NAME ) === $enrolment_manager->get_enrolment_calculation_version();
+	}
+
+	/**
+	 * Get the learner term IDs for all admin users.
+	 *
+	 * @return int[]
+	 */
+	private static function get_admin_learner_term_ids() {
+		$admins         = get_users( [ 'role' => 'administrator' ] );
+		$admin_term_ids = [];
+		foreach ( $admins as $admin ) {
+			$learner_term     = Sensei_Learner::get_learner_term( $admin->ID );
+			$admin_term_ids[] = $learner_term->term_id;
+		}
+
+		return $admin_term_ids;
 	}
 
 	/**

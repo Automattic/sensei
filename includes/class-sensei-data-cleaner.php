@@ -45,6 +45,7 @@ class Sensei_Data_Cleaner {
 		'question-type',
 		'question-category',
 		'lesson-tag',
+		'sensei_learner',
 	);
 
 	/**
@@ -54,6 +55,7 @@ class Sensei_Data_Cleaner {
 	 */
 	private static $options = array(
 		'sensei_installed',
+		'sensei_course_enrolment_site_salt',
 		'sensei_course_order',
 		'skip_install_sensei_pages',
 		'sensei_flush_rewrite_rules',
@@ -61,6 +63,7 @@ class Sensei_Data_Cleaner {
 		'woothemes_sensei_language_pack_version',
 		'sensei-version',
 		'woothemes-sensei-version',
+		'sensei_enrolment_legacy',
 		'sensei_usage_tracking_opt_in_hide',
 		'sensei-upgrades',
 		'woothemes-sensei-upgrades',
@@ -202,6 +205,7 @@ class Sensei_Data_Cleaner {
 		'sensei_answers_[0-9]+_[0-9]+',
 		'sensei_answers_feedback_[0-9]+_[0-9]+',
 		'quiz_grades_[0-9]+_[0-9]+',
+		'sensei_comment_counts_[0-9]+',
 	);
 
 	/**
@@ -212,6 +216,9 @@ class Sensei_Data_Cleaner {
 	private static $user_meta_keys = array(
 		'^sensei_hide_menu_settings_notice$',
 		'^_module_progress_[0-9]+_[0-9]+$',
+		'^sensei_learner_calculated_version$',
+		'^sensei_course_enrolment_[0-9]+$',
+		'^sensei_enrolment_providers_state_[0-9]+$',
 	);
 
 	/**

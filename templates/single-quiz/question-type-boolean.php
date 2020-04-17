@@ -12,6 +12,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// Ignore undefined variables - they are provided by the calling code.
+// phpcs:disable VariableAnalysis.CodeAnalysis.VariableAnalysis.UndefinedVariable
+
 /**
  * Get the question data with the current quiz id
  * All data is loaded in this array to keep the template clean.
