@@ -329,7 +329,7 @@ class Sensei_Main {
 		// Setup settings
 		$this->settings = new Sensei_Settings();
 
-		// Asset loading
+		// Asset loading.
 		$this->assets = new Sensei_Assets( $this->plugin_url, $this->plugin_path, $this->version );
 
 		// feature flags
