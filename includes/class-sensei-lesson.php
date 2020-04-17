@@ -2146,9 +2146,8 @@ class Sensei_Lesson {
 
 		// Load the lessons script.
 		wp_enqueue_media();
-		wp_enqueue_script( 'sensei-lesson-metadata', Sensei()->plugin_url . 'assets/js/lesson-metadata' . $suffix . '.js', array( 'jquery', 'sensei-core-select2', 'jquery-ui-sortable' ), Sensei()->version, true );
-		wp_enqueue_script( 'sensei-lesson-chosen', Sensei()->plugin_url . 'assets/chosen/chosen.jquery' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
-		wp_enqueue_script( 'sensei-chosen-ajax', Sensei()->plugin_url . 'assets/chosen/ajax-chosen.jquery' . $suffix . '.js', array( 'jquery', 'sensei-lesson-chosen' ), Sensei()->version, true );
+		Sensei()->assets->enqueue( 'sensei-lesson-metadata', 'js/lesson-metadata.js', [ 'jquery', 'sensei-core-select2', 'jquery-ui-sortable', 'sensei-chosen-ajax'], true );
+
 
 		// Localise script.
 		$translation_strings = array(
@@ -2177,7 +2176,7 @@ class Sensei_Lesson {
 
 		// Chosen RTL
 		if ( is_rtl() ) {
-			wp_enqueue_script( 'sensei-chosen-rtl', Sensei()->plugin_url . 'assets/chosen/chosen-rtl' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
+			Sensei()->assets->enqueue( 'sensei-chosen-rtl', '../vendor/chosen/chosen-rtl.js', [ 'jquery' ], true );
 		}
 	}
 	/**
@@ -2189,11 +2188,9 @@ class Sensei_Lesson {
 	 */
 	private function enqueue_lesson_edit_scripts() {
 		// Load the quick edit screen script.
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-		wp_enqueue_script( 'sensei-lesson-quick-edit', Sensei()->plugin_url . 'assets/js/admin/lesson-quick-edit' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
+		Sensei()->assets->enqueue( 'sensei-lesson-quick-edit', 'js/admin/lesson-quick-edit.js', [ 'jquery' ], true );
+		Sensei()->assets->enqueue( 'sensei-lesson-bulk-edit', 'js/admin/lesson-bulk-edit.js', [ 'jquery' ], true );
 
-		// Load the bulk edit screen script.
-		wp_enqueue_script( 'sensei-lessons-bulk-edit', Sensei()->plugin_url . 'assets/js/admin/lesson-bulk-edit' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
 	}
 
 	/**
@@ -2212,7 +2209,7 @@ class Sensei_Lesson {
 
 		// Test for Write Panel Pages
 		if ( ( ( isset( $post_type ) && in_array( $post_type, $allowed_post_types ) ) && ( isset( $hook ) && in_array( $hook, $allowed_post_type_pages ) ) ) || ( isset( $_GET['page'] ) && in_array( $_GET['page'], $allowed_pages ) ) ) {
-			wp_enqueue_style( 'sensei-settings-api', esc_url( Sensei()->plugin_url . 'assets/css/settings.css' ), '', Sensei()->version );
+			Sensei()->assets->enqueue( 'sensei-settings-api', 'css/settings.css' );
 		}
 
 	} // End enqueue_styles()
