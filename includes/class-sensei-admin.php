@@ -323,10 +323,6 @@ class Sensei_Admin {
 	public function register_scripts( $hook ) {
 		$screen = get_current_screen();
 
-		// Allow developers to load non-minified versions of scripts.
-		$suffix              = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-		$select_two_location = '/assets/vendor/select2/select2.full';
-
 		// Select2 script used to enhance all select boxes.
 		Sensei()->assets->register('sensei-core-select2', '../vendor/select2/select2.full.js', [ 'jquery' ] );
 
@@ -1283,8 +1279,6 @@ class Sensei_Admin {
 		$should_update_order = false;
 		$new_course_order    = array();
 
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-
 		?>
 		<div id="<?php echo esc_attr( $this->course_order_page_slug ); ?>" class="wrap <?php echo esc_attr( $this->course_order_page_slug ); ?>">
 		<h1><?php esc_html_e( 'Order Courses', 'sensei-lms' ); ?></h1>
@@ -1448,8 +1442,6 @@ class Sensei_Admin {
 	 * @return void
 	 */
 	public function lesson_order_screen() {
-
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		?>
 		<div id="<?php echo esc_attr( $this->lesson_order_page_slug ); ?>" class="wrap <?php echo esc_attr( $this->lesson_order_page_slug ); ?>">

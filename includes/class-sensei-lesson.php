@@ -2142,8 +2142,6 @@ class Sensei_Lesson {
 			return;
 		}
 
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-
 		// Load the lessons script.
 		wp_enqueue_media();
 		Sensei()->assets->enqueue( 'sensei-lesson-metadata', 'js/lesson-metadata.js', [ 'jquery', 'sensei-core-select2', 'jquery-ui-sortable', 'sensei-chosen-ajax'], true );

@@ -135,8 +135,6 @@ class Sensei_Frontend {
 
 		if ( ! $disable_js ) {
 
-			$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-
 			// Course Archive javascript.
 			if ( is_post_type_archive( 'course' ) ) {
 

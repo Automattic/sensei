@@ -1010,8 +1010,6 @@ class Sensei_Settings_API {
 	 */
 	public function enqueue_scripts() {
 
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-
 		Sensei()->assets->enqueue( 'sensei-settings', 'js/settings.js', [ 'jquery', 'farbtastic' ] );
 
 		if ( $this->has_range ) {
