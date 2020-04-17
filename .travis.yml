@@ -90,6 +90,11 @@ jobs:
       script:
         - npm run lint-js-wpcom
     - stage: test
+      language: node_js
+      node_js: '10.17'
+      script:
+        - npm run build
+    - stage: test
       php: 7.2
       script:
         - composer install
