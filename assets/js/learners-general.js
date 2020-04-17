@@ -16,6 +16,9 @@ jQuery(document).ready( function( $ ) {
 	jQuery('.edit-start-date-date-picker').datepicker({
 		dateFormat: 'yy-mm-dd'
 	});
+	jQuery('.edit-completion-date-date-picker').datepicker({
+		dateFormat: 'yy-mm-dd'
+	});
 
 	/***************************************************************************************************
      * 	2 - Learner Management Overview Functions.
@@ -83,6 +86,40 @@ jQuery(document).ready( function( $ ) {
 			ajaxurl,
 			{
 				action : 'edit_date_started',
+				data : dataToPost,
+				security: window.woo_learners_general_data.edit_date_nonce
+			},
+			function( response ) {
+				if ( response ) {
+					location.reload();
+				}
+			}
+		);
+	});
+
+	$('.edit-completion-date-submit').click(function() {
+		var $this = $( this );
+		var new_date = $this.prev( '.edit-completion-date-date-picker' ).val();
+		var user_id = $this.attr( 'data-user-id' );
+		var post_id = $this.attr( 'data-post-id' );
+		var post_type = $this.attr( 'data-post-type' );
+		var comment_id = $this.attr( 'data-comment-id' );
+		var dataToPost = '';
+
+		if ( ! user_id || ! post_id || ! post_type || ! new_date || ! comment_id ) {
+			return;
+		}
+
+		dataToPost += 'user_id=' + user_id;
+		dataToPost += '&post_id=' + post_id;
+		dataToPost += '&post_type=' + post_type;
+		dataToPost += '&new_date=' + new_date;
+		dataToPost += '&comment_id=' + comment_id;
+
+		$.post(
+			ajaxurl,
+			{
+				action : 'edit_date_completion',
 				data : dataToPost,
 				security: window.woo_learners_general_data.edit_date_nonce
 			},

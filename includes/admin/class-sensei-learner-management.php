@@ -89,6 +89,7 @@ class Sensei_Learner_Management {
 		if ( is_admin() ) {
 			add_action( 'wp_ajax_get_redirect_url_learners', array( $this, 'get_redirect_url' ) );
 			add_action( 'wp_ajax_edit_date_started', array( $this, 'edit_date_started' ) );
+			add_action( 'wp_ajax_edit_date_completion', array( $this, 'edit_date_completion' ) );
 			add_action( 'wp_ajax_reset_user_post', array( $this, 'reset_user_post' ) );
 			add_action( 'wp_ajax_sensei_json_search_users', array( $this, 'json_search_users' ) );
 		}
@@ -436,6 +437,72 @@ class Sensei_Learner_Management {
 		}
 
 		$updated = update_comment_meta( $comment_id, 'start', $mysql_date, $date_started );
+
+		if ( false === $updated ) {
+			exit( '' );
+		}
+
+		exit( esc_html( $mysql_date ) );
+	}
+
+	/**
+	 * Edits the course/lesson start date.
+	 */
+	public function edit_date_completion() {
+		check_ajax_referer( 'edit_date_nonce', 'security' );
+
+		$data        = sanitize_text_field( $_POST['data'] );
+		$action_data = array();
+		parse_str( $data, $action_data );
+
+		$post = get_post( intval( $action_data['post_id'] ) );
+
+		if ( empty( $post ) || ! is_a( $post, 'WP_Post' ) ) {
+			exit( '' );
+		}
+
+		$comment_id = isset( $action_data['comment_id'] ) ? absint( $action_data['comment_id'] ) : 0;
+		$comment    = get_comment( intval( $action_data['comment_id'] ) );
+		if ( empty( $comment ) ) {
+			exit( '' );
+		}
+
+		// validate we can edit date.
+		$may_edit_date = false;
+
+		if ( current_user_can( 'manage_sensei' ) || get_current_user_id() === intval( $post->post_author ) ) {
+			$may_edit_date = true;
+		}
+
+		if ( ! $may_edit_date ) {
+			exit( '' );
+		}
+
+		$date_completed = $comment->comment_date;
+		$date_string    = esc_html( $action_data['new_date'] );
+
+		if ( empty( $date_string ) ) {
+			exit( '' );
+		}
+
+		$expected_date_format = 'Y-m-d H:i:s';
+		if ( false === strpos( $date_string, ' ' ) ) {
+			$expected_date_format = 'Y-m-d';
+		}
+
+		$date = DateTime::createFromFormat( $expected_date_format, $date_string );
+		if ( false === $date ) {
+			exit( '' );
+		}
+		$mysql_date = date( 'Y-m-d H:i:s', $date->getTimestamp() );
+		if ( false === $mysql_date ) {
+			exit( '' );
+		}
+
+		$commentarr                 = array();
+		$commentarr['comment_ID']   = $comment_id;
+		$commentarr['comment_date'] = $mysql_date;
+		$updated = wp_update_comment( $commentarr );		
 
 		if ( false === $updated ) {
 			exit( '' );

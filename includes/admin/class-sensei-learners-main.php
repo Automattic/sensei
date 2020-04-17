@@ -402,8 +402,9 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 				$title = Sensei_Learner::get_full_name( $user_activity->user_id );
 				// translators: Placeholder is the full name of the learner.
-				$a_title              = sprintf( esc_html__( 'Edit &#8220;%s&#8221;', 'sensei-lms' ), esc_html( $title ) );
-				$edit_start_date_form = $this->get_edit_start_date_form( $user_activity, $post_id, $post_type, $object_type );
+				$a_title                   = sprintf( esc_html__( 'Edit &#8220;%s&#8221;', 'sensei-lms' ), esc_html( $title ) );
+				$edit_start_date_form      = $this->get_edit_start_date_form( $user_activity, $post_id, $post_type, $object_type );
+				$edit_completion_date_form = $this->get_edit_completion_date_form( $user_activity, $post_id, $post_type, $object_type );
 
 				$actions = [];
 
@@ -463,6 +464,10 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 				if ( $edit_start_date_form ) {
 					$actions[] = $edit_start_date_form;
+				}
+
+				if ( $edit_completion_date_form ) {
+					$actions[] = $edit_completion_date_form;
 				}
 
 				/**
@@ -656,6 +661,27 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		$form        .= '<input class="edit-start-date-date-picker" type="text" value="' . esc_attr( $date_started ) . '">';
 		$form        .= '<a class="edit-start-date-submit button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '" data-comment-id="' . esc_attr( $comment_id ) . '">' . sprintf( esc_html__( 'Edit Start Date', 'sensei-lms' ), esc_html( $object_type ) ) . '</a>';
 		$form        .= '</form>';
+
+		return $form;
+	}
+
+	/**
+	 * Generates the edit completion date form.
+	 *
+	 * @param WP_Comment $user_activity The sensei user activity.
+	 * @param integer    $post_id       The post id.
+	 * @param string     $post_type     The post type (lesson or course).
+	 * @param string     $object_type   The object type.
+	 *
+	 * @return string The form.
+	 */
+	private function get_edit_completion_date_form( $user_activity, $post_id, $post_type, $object_type ) {
+		$comment_id     = $user_activity->comment_ID;
+		$date_completed = $user_activity->comment_date;
+		$form           = '<form class="edit-completion-date">';
+		$form          .= '<input class="edit-completion-date-date-picker" type="text" value="' . esc_attr( $date_completed ) . '">';
+		$form          .= '<a class="edit-completion-date-submit button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '" data-comment-id="' . esc_attr( $comment_id ) . '">' . sprintf( esc_html__( 'Edit Completion Date', 'sensei-lms' ), esc_html( $object_type ) ) . '</a>';
+		$form          .= '</form>';
 
 		return $form;
 	}
