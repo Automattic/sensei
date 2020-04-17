@@ -2642,8 +2642,12 @@ msgstr ""
 msgid "Manual"
 msgstr ""
 
-#: includes/enrolment/class-sensei-course-manual-enrolment-provider.php:230
+#: includes/enrolment/class-sensei-course-manual-enrolment-provider.php:260
 msgid "Learner manual enrollment <strong>was not migrated</strong> from a legacy version of Sensei LMS."
+msgstr ""
+
+#: includes/enrolment/class-sensei-course-manual-enrolment-provider.php:263
+msgid "Learner <strong>did not have</strong> course progress at the time of manual enrollment migration."
 msgstr ""
 
 #: includes/rest-api/class-sensei-rest-api-endpoint-courses.php:76
