@@ -36,8 +36,8 @@
     "lint-js-wpcom": "wp-scripts lint-js --no-eslintrc --config .eslintrc.wpcom.json --ignore-path .eslintignore-wpcom .",
     "lint-css": "wp-scripts lint-style **/*.scss",
     "lint-css:fix": "npm run lint-css -- --fix",
-    "lint-js": "wp-scripts lint-js assets/**/**.jsx",
-    "lint-js:fix": "npm run lint-js -- --fix",
     "run-phpcs": "./vendor/bin/phpcs --encoding=utf-8"
+    "lint-jsx": "wp-scripts lint-js assets/**/**.jsx",
+    "lint-jsx:fix": "npm run lint-js -- --fix",
   }
 }

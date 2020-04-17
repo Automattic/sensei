@@ -82,7 +82,7 @@ jobs:
       language: node_js
       node_js: '10.17'
       script:
-        - npm run lint-js
+        - npm run lint-jsx
     - stage: test
       language: node_js
       node_js: '10.17'
