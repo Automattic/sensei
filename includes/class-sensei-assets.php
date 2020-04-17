@@ -6,6 +6,7 @@
  * @package Sensei\Assets
  * @since   1.3.0
  */
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -96,11 +97,11 @@ class Sensei_Assets {
 	}
 
 	/**
-	 * Call the wrapped Wordpress core function with _type postfix
+	 * Call the wrapped WordPress core function with _type postfix
 	 *
-	 * @param string $action wp_enqueue or wp_register
-	 * @param string $handle Unique handle for the asset
-	 * @param array  $config Asset information
+	 * @param string $action wp_enqueue or wp_register.
+	 * @param string $handle Unique handle for the asset.
+	 * @param array  $config Asset information.
 	 */
 	private function call_wp( $action, $handle, $config ) {
 		call_user_func( $action . '_' . $config['type'], $handle, $config['url'], $config['dependencies'], $config['version'], $config['args'] );
