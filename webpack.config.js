@@ -41,11 +41,13 @@ function getName ( filename ) {
 		;
 }
 
-const FontLoader = {
-	test: /\.(woff|woff2|eot|ttf|otf)$/,
+const FileLoader = {
+	test: /\.(?:gif|jpg|jpeg|png|svg|woff|woff2|eot|ttf|otf)$/i,
 	loader: 'file-loader',
 	options: {
-		name: '[folder]/[name]-[contenthash].[ext]'
+		name: '[path]/[name]-[contenthash].[ext]',
+		context: 'assets',
+		publicPath: '..'
 	}
 };
 
@@ -65,8 +67,8 @@ function getWebpackConfig ( env, argv ) {
 		},
 		module: {
 			rules: [
+				FileLoader,
 				...webpackConfig.module.rules,
-				FontLoader
 			]
 		},
 		node: {
