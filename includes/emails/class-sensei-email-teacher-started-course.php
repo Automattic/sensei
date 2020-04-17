@@ -60,7 +60,7 @@ if ( ! class_exists( 'Sensei_Email_Teacher_Started_Course' ) ) :
 			$course_name = esc_html( $course_post->post_title );
 
 			// translators: Placeholders are the blog name and Course Name.
-			$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] Your student has started a new course: %2$s ', 'sensei-lms' ), get_bloginfo( 'name' ), $course_title ), $this->template );
+			$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] Your student has started a new course: %2$s ', 'sensei-lms' ), get_bloginfo( 'name' ), $course_name ), $this->template );
 			// translators: Placeholder is the Course Name.
 			$this->heading = apply_filters( 'sensei_email_heading', sprintf( __( 'Your student has started the course: %1$s', 'sensei-lms' ), $course_name ), $this->template );
 
