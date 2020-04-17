@@ -13,6 +13,7 @@ notifications:
 branches:
   only:
   - master
+  - next
 cache:
   directories:
   - vendor
