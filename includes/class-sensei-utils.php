@@ -644,7 +644,7 @@ class Sensei_Utils {
 				$has_questions = Sensei_Lesson::lesson_quiz_has_questions( $lesson_id );
 				if ( $has_questions ) {
 					$status            = 'passed'; // Force a pass
-					$metadata['grade'] = 100;
+					$metadata['grade'] = 0;
 				} else {
 					$status = 'complete';
 				}

@@ -154,18 +154,18 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 			case 'lessons':
 				$columns = array(
-					'title'           => __( 'Lesson', 'sensei-lms' ),
-					'num_learners'    => __( '# Learners', 'sensei-lms' ),
-					'updated'         => __( 'Last Updated', 'sensei-lms' ),
+					'title'        => __( 'Lesson', 'sensei-lms' ),
+					'num_learners' => __( '# Learners', 'sensei-lms' ),
+					'updated'      => __( 'Last Updated', 'sensei-lms' ),
 				);
 				break;
 
 			case 'courses':
 			default:
 				$columns = array(
-					'title'           => __( 'Course', 'sensei-lms' ),
-					'num_learners'    => __( '# Learners', 'sensei-lms' ),
-					'updated'         => __( 'Last Updated', 'sensei-lms' ),
+					'title'        => __( 'Course', 'sensei-lms' ),
+					'num_learners' => __( '# Learners', 'sensei-lms' ),
+					'updated'      => __( 'Last Updated', 'sensei-lms' ),
 				);
 				break;
 		}
