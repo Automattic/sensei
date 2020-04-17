@@ -38,6 +38,9 @@
 * New: Use Action Scheduler for enrolment async jobs when available [#2930](https://github.com/Automattic/sensei/pull/2930)
 * New: Add filter to bypass enrolment functionality [#3011](https://github.com/Automattic/sensei/pull/3011)
 * New: Allow providers to provide debug information [#3020](https://github.com/Automattic/sensei/pull/3020)
+* New: Fire actions on enrolment status change and manual enrolment status change [3035](https://github.com/Automattic/sensei/pull/3035)
+* New: Add a filter for the batch size of the learner calculation job [3054](https://github.com/Automattic/sensei/pull/3054)
+* New: Introduce a provider journal store [3027](https://github.com/Automattic/sensei/pull/3027)
 * Tweak: Append post status to prerequisite lesson on Lessons page [#2853](https://github.com/Automattic/sensei/pull/2853) 👏 @JuanchoPestana
 * Tweak: Change user_started_course in quiz and email code [#2968](https://github.com/Automattic/sensei/pull/2968)
 * Tweak: Add support for enrolments in bulk learner management [#2965](https://github.com/Automattic/sensei/pull/2965)
@@ -50,6 +53,14 @@
 * Tweak: Remove logging functionality from provider state [#3021](https://github.com/Automattic/sensei/pull/3021)
 * Tweak: Refactor removal of Sensei comments from total counts [#3009](https://github.com/Automattic/sensei/pull/3009)
 * Tweak: Switch to using a handler when a learner starts taking a course [#3000](https://github.com/Automattic/sensei/pull/3000)
+* Tweak: Allow for not storing enrolment results when they don't provide enrolment [3028](https://github.com/Automattic/sensei/pull/3028)
+* Tweak: Update course calculation job to paginate using last calculated user ID [3029](https://github.com/Automattic/sensei/pull/3029)
+* Tweak: Don't manually enrol learners who don't have course progress [3030](https://github.com/Automattic/sensei/pull/3030)
+* Tweak: Ensure courses share the same provider state meta per learner [3033](https://github.com/Automattic/sensei/pull/3033)
+* Tweak: Replace "student" with "learner" in methods and frontend hook [3038](https://github.com/Automattic/sensei/pull/3038)
+* Tweak: Use `time` instead of `microtime` function when logging enrolment results [3034](https://github.com/Automattic/sensei/pull/3034)
+* Tweak: Switch to using a filter when storing enrolment results [3031](https://github.com/Automattic/sensei/pull/3031)
+* Tweak: Use new strategy for looping through last user ID for learner calculation job [3055](https://github.com/Automattic/sensei/pull/3055)
 * Fix: Add clear background to TinyMCE buttons [#2833](https://github.com/Automattic/sensei/pull/2833) 👏 @JuanchoPestana
 * Fix: Add missing question ID to hidden question field [#2871](https://github.com/Automattic/sensei/pull/2871) 👏 @traed
 * Fix: Add module admin scripts on course edit page [#2918](https://github.com/Automattic/sensei/pull/2918)
