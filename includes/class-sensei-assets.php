@@ -25,64 +25,76 @@ class Sensei_Assets {
 	/**
 	 * Enqueue a script or stylesheet with wp_enqueue_script/wp_enqueue_style
 	 *
+	 * @param string      $handle       Unique name of the asset
 	 * @param string      $filename     The filename
 	 * @param array       $dependencies Dependencies
 	 * @param bool|string $args         In footer flag (script) or media type (style)
 	 */
-	public function enqueue( $filename, $dependencies = [], $args = null ) {
+	public function enqueue( $handle, $filename, $dependencies = [], $args = null ) {
+
 		$config = $this->asset_config( $filename, $dependencies, $args );
-		$this->call_wp( 'wp_enqueue', $config );
+		$this->call_wp( 'wp_enqueue', $handle, $config );
+
 	}
 
 	/**
 	 * Register a script or stylesheet with wp_register_script/wp_register_style
 	 *
-	 * @param string|null $name         The registered name. If empty, it will be generated based on the filename
+	 * @param string|null $handle       Unique name of the asset
 	 * @param string      $filename     The filename
 	 * @param array       $dependencies Dependencies
 	 * @param null        $args
 	 */
-	public function register( $name, $filename, $dependencies = [], $args = null ) {
+	public function register( $handle, $filename, $dependencies = [], $args = null ) {
 		$config = $this->asset_config( $filename, $dependencies, $args );
-		if ( $name ) {
-			$config['name'] = $name;
-		}
-		$this->call_wp( 'wp_register', $config );
+
+		$this->call_wp( 'wp_register', $handle, $config );
 	}
 
-	private function call_wp( $action, $config ) {
-		call_user_func( $action . '_' . $config['type'], $config['name'], $config['url'], $config['dependencies'], $config['version'], $config["args"] );
+	/**
+	 * Enqueue a registered script
+	 *
+	 * @param string $handle Unique name of the script
+	 */
+	public function enqueue_script( $handle ) {
+		wp_enqueue_script( $handle );
+	}
+
+	/**
+	 * Enqueue a registered stylesheet
+	 *
+	 * @param string $handle Unique name of the stylesheet
+	 */
+	public function enqueue_style( $handle ) {
+		wp_enqueue_style( $handle );
+	}
+
+
+	private function call_wp( $action, $handle, $config ) {
+		call_user_func( $action . '_' . $config['type'], $handle, $config['url'], $config['dependencies'], $config['version'], $config["args"] );
 	}
 
 	/**
 	 * Builds asset metadata for a given file.
 	 * Loads dependencies and version hash tracked by the build process from [filename].asset.php
-	 * Generates a name with a sensei- prefix and slashes to dashes:
-	 * 'js/admin/lesson.js' > 'sensei-js-admin-lesson'
 	 *
-	 * @param string      $type         Asset type (script or style)
 	 * @param string      $filename     The filename
 	 * @param array       $dependencies Dependencies
-	 * @param bool|string $extra_arg    Argument passed to wp_enqueue_script or wp_enqueue_style
-	 */
-
-	/**
-	 * @param string $filename     The filename
-	 * @param array  $dependencies Manually specified dependencies
+	 * @param bool|string $args         Argument passed to wp_enqueue_script or wp_enqueue_style
 	 *
 	 * @return array Asset information
 	 */
 	public function asset_config( $filename, $dependencies = [], $args = null ) {
 
 		$is_js             = preg_match( '/\.js$/', $filename );
-		$basename          = preg_replace( '/\.\w+$/', '', $filename );
-		$name              = 'sensei-' . preg_replace( '/[]\/\.]/', '-', $basename );
 		$url               = $this->asset_url( $filename );
 		$version           = $this->version;
 		$asset_config_path = path_join( $this->plugin_path, 'assets/dist/' . $filename . '.asset.php' );
 
 		if ( file_exists( $asset_config_path ) ) {
 			$asset_config = require $asset_config_path;
+
+			// Only add generated dependencies for scripts
 			if ( $is_js ) {
 				$dependencies = array_merge( $dependencies, $asset_config['dependencies'] );
 			}
@@ -90,7 +102,6 @@ class Sensei_Assets {
 		}
 
 		return [
-			"name"         => $name,
 			"url"          => $url,
 			"dependencies" => $dependencies,
 			"version"      => $version,

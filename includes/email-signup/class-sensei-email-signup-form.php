@@ -48,7 +48,7 @@ class Sensei_Email_Signup_Form {
 	 */
 	public function enqueue_scripts() {
 		// Load JS for the form.
-		Sensei()->assets->enqueue('js/admin/email-signup.js', [ 'jquery-modal' ]);
+		Sensei()->assets->enqueue( 'sensei-email-signup-js', 'js/admin/email-signup.js', [ 'jquery-modal' ] );
 	}
 
 	/**
@@ -57,7 +57,7 @@ class Sensei_Email_Signup_Form {
 	 * @access private
 	 */
 	public function enqueue_styles() {
-		Sensei()->assets->enqueue( 'css/admin/email-signup.css', [ 'jquery-modal' ] );
+		Sensei()->assets->enqueue( 'sensei-email-signup-css', 'css/admin/email-signup.css', [ 'jquery-modal' ] );
 	}
 
 	/**
