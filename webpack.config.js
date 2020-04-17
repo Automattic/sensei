@@ -20,7 +20,6 @@ const files = [
 	'js/ranges.js',
 	'js/settings.js',
 	'js/user-dashboard.js',
-	'js/admin/onboarding.jsx',
 
 	'css/admin/email-signup.scss',
 	'css/frontend/sensei.scss',
