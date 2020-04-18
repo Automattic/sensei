@@ -484,7 +484,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 					array(
 						'title'            => '<strong><a class="row-title" href="' . esc_url( admin_url( 'user-edit.php?user_id=' . $user_activity->user_id ) ) . '" title="' . esc_attr( $a_title ) . '">' . esc_html( $title ) . '</a></strong>',
 						'date_started'     => get_comment_meta( $user_activity->comment_ID, 'start', true ),
-            'date_completed'   => ( 'complete' == $user_activity->comment_approved ) ? $user_activity->comment_date : '',
+						'date_completed'   => ( 'complete' == $user_activity->comment_approved ) ? $user_activity->comment_date : '',
 						'user_status'      => $progress_status_html,
 						'enrolment_status' => $enrolment_status_html,
 						// translators: Placeholder is the "object type"; lesson or course.
