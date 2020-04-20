@@ -126,9 +126,10 @@ class Sensei_Assets {
 	public function asset_config( $filename, $dependencies = [], $args = null ) {
 
 		$is_js             = preg_match( '/\.js$/', $filename );
+		$basename          = preg_replace( '/\.\w+$/', '', $filename );
 		$url               = $this->asset_url( $filename );
 		$version           = $this->version;
-		$asset_config_path = path_join( $this->plugin_path, 'assets/dist/' . $filename . '.asset.php' );
+		$asset_config_path = path_join( $this->plugin_path, 'assets/dist/' . $basename . '.asset.php' );
 
 		if ( file_exists( $asset_config_path ) ) {
 			$asset_config = require $asset_config_path;
