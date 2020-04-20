@@ -22,17 +22,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Assets {
 
 	/**
-	 * @var string The URL for the plugin.
+	 * The URL for the plugin.
+	 *
+	 * @var string
 	 */
 	protected $plugin_url;
 
 	/**
-	 * @var string Plugin location.
+	 * Plugin location.
+	 *
+	 * @var string
 	 */
 	protected $plugin_path;
 
 	/**
-	 * @var string Plugin version.
+	 * Plugin version.
+	 * 
+	 * @var string
 	 */
 	protected $version;
 

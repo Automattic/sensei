@@ -55,6 +55,8 @@ class Sensei_Main {
 	public $settings;
 
 	/**
+	 * Script and stylesheet loading.
+	 *
 	 * @var Sensei_Assets
 	 */
 	public $assets;
@@ -179,6 +181,8 @@ class Sensei_Main {
 	public $view_helper;
 
 	/**
+	 * Experimental features.
+	 *
 	 * @var Sensei_Feature_Flags
 	 */
 	public $feature_flags;
