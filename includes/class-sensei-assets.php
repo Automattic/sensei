@@ -146,7 +146,7 @@ class Sensei_Assets {
 			'dependencies' => $dependencies,
 			'version'      => $version,
 			'type'         => $is_js ? 'script' : 'style',
-			'args'         => $args || $is_js ? false : 'all', // defaults for wp_enqueue_script or wp_enqueue_style.
+			'args'         => null !== $args ? $args : ( $is_js ? false : 'all' ), // defaults for wp_enqueue_script or wp_enqueue_style.
 		];
 	}
 
