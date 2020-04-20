@@ -12,7 +12,7 @@
     "@automattic/calypso-build": "5.1.0",
     "@wordpress/babel-preset-default": "4.7.0",
     "@wordpress/jest-preset-default": "1.0.6",
-    "@wordpress/scripts": "5.1.0",
+    "@wordpress/scripts": "8.0.1",
     "cross-env": "5.2.1",
     "del": "3.0.0",
     "eslint": "6.8.0",
