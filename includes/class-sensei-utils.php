@@ -1399,17 +1399,17 @@ class Sensei_Utils {
 	 */
 	public static function user_start_course( $user_id = 0, $course_id = 0 ) {
 
-		$activity_logged = false;
+		$activity_comment_id = false;
 
 		if ( $user_id && $course_id ) {
-			// Check if user is already on the Course
-			$activity_logged = self::has_started_course( $course_id, $user_id );
-			if ( ! $activity_logged ) {
-				$activity_logged = self::start_user_on_course( $user_id, $course_id );
+			// Check if user is already on the Course.
+			$activity_comment_id = self::get_course_progress_comment_id( $course_id, $user_id );
+			if ( false === $activity_comment_id ) {
+				$activity_comment_id = self::start_user_on_course( $user_id, $course_id );
 			}
 		}
 
-		return $activity_logged;
+		return $activity_comment_id;
 	}
 
 	/**
