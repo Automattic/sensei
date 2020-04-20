@@ -20,6 +20,7 @@ class Sensei_Onboarding {
 		$this->page_slug = 'sensei_onboarding';
 
 		if ( is_admin() ) {
+			add_action( 'admin_menu', array ( $this, 'admin_menu' ), 20 );
 			if ( isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug ) ) {
 
 				add_action(
@@ -36,6 +37,13 @@ class Sensei_Onboarding {
 					}
 				);
 			}
+		}
+
+	}
+
+	public function admin_menu() {
+		if ( current_user_can( 'manage_sensei' ) ) {
+			add_submenu_page( 'sensei', __( 'Onboarding', 'sensei-lms' ), __( 'Onboarding', 'sensei-lms' ), 'manage_sensei', $this->page_slug, array ( $this, 'onboarding_page' ) );
 		}
 
 	}
