@@ -37,7 +37,7 @@ class Sensei_Assets {
 
 	/**
 	 * Plugin version.
-	 * 
+	 *
 	 * @var string
 	 */
 	protected $version;
