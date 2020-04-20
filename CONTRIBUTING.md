@@ -19,8 +19,11 @@ To make things easier we've created these guidelines:
 ## Unit Tests
 Unit tests can be run locally. Please see our [test instructions](https://github.com/Automattic/sensei/tree/master/tests#readme) to run the unit tests.
 
-## CSS
-CSS is built using [SASS](https://sass-lang.com/documentation/file.SASS_REFERENCE.html). To compile to .css files, run `gulp CSS` from the root folder.
+## Javascript and CSS
+- Javascript, JSX and SCSS files (using [SASS](https://sass-lang.com/documentation/file.SASS_REFERENCE.html)) need to be compiled before using the plugin.
+- The command `npm run build` generates production-ready versions of these files. 
+- For development, the command `npm run start` will create files with source maps for debugging support, and keep watching the source files for changes. 
+
 
 ## Development Blog
 Please follow further development updates at [https://senseilms.com/blog/](https://senseilms.com/blog/)
