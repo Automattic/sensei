@@ -193,6 +193,10 @@ class Sensei_Main {
 	 * @var Sensei_Enrolment_Job_Scheduler
 	 */
 	private $enrolment_scheduler;
+	/**
+	 * @var Sensei_Onboarding
+	 */
+	private $onboarding;
 
 	/**
 	 * Constructor method.
@@ -397,6 +401,9 @@ class Sensei_Main {
 
 			// Load Analysis Reports
 			$this->analysis = new Sensei_Analysis( $this->main_plugin_file_name );
+
+			// Loading onboarding page
+			$this->onboarding = new Sensei_Onboarding();
 
 			if ( $this->feature_flags->is_enabled( 'rest_api_testharness' ) ) {
 				$this->test_harness = new Sensei_Admin_Rest_Api_Testharness( $this->main_plugin_file_name );
