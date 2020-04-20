@@ -19,7 +19,26 @@ class Sensei_Onboarding {
 
 		$this->page_slug = 'sensei_onboarding';
 
+		if ( is_admin() ) {
+			if ( isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug ) ) {
 
+				add_action(
+					'admin_print_scripts',
+					function() {
+						Sensei()->assets->enqueue( 'sensei-onboarding', 'onboarding/onboarding.js', [], true );
+					}
+				);
+
+				add_action(
+					'admin_print_styles',
+					function() {
+						Sensei()->assets->enqueue( 'sensei-onboarding', 'onboarding/onboarding.css', [ 'wp-components' ] );
+					}
+				);
+			}
+		}
+
+	}
 	}
 
 
