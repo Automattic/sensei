@@ -1,4 +1,5 @@
-const path = require( 'path' );
+const path                 = require( 'path' );
+const { fromPairs }        = require( 'lodash' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 
 const files = [
@@ -51,7 +52,7 @@ const FileLoader = {
 };
 
 function mapFilesToEntries ( files ) {
-	return Object.fromEntries( files.map( filename =>
+	return fromPairs( files.map( filename =>
 		[ getName( filename ), `./assets/${filename}` ]
 	) );
 }
