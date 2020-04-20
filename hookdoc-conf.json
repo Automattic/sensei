@@ -1,11 +1,11 @@
 {
   "opts": {
-    "destination": "hookdocs",
-    "template": "node_modules/wp-hookdoc/template",
-    "readme": "./.github/hookdoc-tmpl/README.md"
+      "destination": "hookdocs",
+      "template": "node_modules/wp-hookdoc/template",
+      "readme": "./.github/hookdoc-tmpl/README.md"
   },
   "source": {
-    "include": [
+      "include": [
         "./",
         "includes"
       ],
