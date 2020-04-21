@@ -136,7 +136,7 @@ class Sensei_Assets {
 
 			// Only add generated dependencies for scripts.
 			if ( $is_js ) {
-				$dependencies = array_merge( $dependencies, $asset_config['dependencies'] );
+				$dependencies = array_unique( array_merge( $dependencies, $asset_config['dependencies'] ) );
 			}
 			$version = $asset_config['version'];
 		}
