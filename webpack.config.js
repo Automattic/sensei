@@ -1,5 +1,5 @@
-const path                 = require( 'path' );
-const { fromPairs }        = require( 'lodash' );
+const path = require( 'path' );
+const { fromPairs } = require( 'lodash' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 
 const files = [
@@ -35,10 +35,8 @@ const files = [
 	'css/settings.scss',
 ];
 
-function getName ( filename ) {
-	return filename
-		.replace( /\.\w*$/, '' )
-		;
+function getName( filename ) {
+	return filename.replace( /\.\w*$/, '' );
 }
 
 const FileLoader = {
@@ -47,33 +45,33 @@ const FileLoader = {
 	options: {
 		name: '[path]/[name]-[contenthash].[ext]',
 		context: 'assets',
-		publicPath: '..'
-	}
+		publicPath: '..',
+	},
 };
 
-function mapFilesToEntries ( files ) {
-	return fromPairs( files.map( filename =>
-		[ getName( filename ), `./assets/${filename}` ]
-	) );
+function mapFilesToEntries( files ) {
+	return fromPairs(
+		files.map( ( filename ) => [
+			getName( filename ),
+			`./assets/${ filename }`,
+		] )
+	);
 }
 
-function getWebpackConfig ( env, argv ) {
-	const webpackConfig = getBaseWebpackConfig( {...env, WP: true}, argv );
+function getWebpackConfig( env, argv ) {
+	const webpackConfig = getBaseWebpackConfig( { ...env, WP: true }, argv );
 	return {
 		...webpackConfig,
 		entry: mapFilesToEntries( files ),
 		output: {
-			path: path.resolve( './assets/dist' )
+			path: path.resolve( './assets/dist' ),
 		},
 		module: {
-			rules: [
-				FileLoader,
-				...webpackConfig.module.rules,
-			]
+			rules: [ FileLoader, ...webpackConfig.module.rules ],
 		},
 		node: {
 			crypto: 'empty',
-		}
+		},
 	};
 }
 
