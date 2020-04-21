@@ -33,7 +33,7 @@
     "start": "calypso-build --watch",
     "package": "gulp package",
     "test-js": "wp-scripts test-unit-js --passWithNoTests",
-    "lint-js-wpcom": "wp-scripts lint-js --no-eslintrc --config .eslintrc.wpcom.json --ignore-path .eslintignore-wpcom .",
+    "lint-js-wpcom": "wp-scripts lint-js --no-eslintrc --config .eslintrc.wpcom.json .",
     "lint-css": "wp-scripts lint-style **/*.scss",
     "lint-css:fix": "npm run lint-css -- --fix",
     "run-phpcs": "./vendor/bin/phpcs --encoding=utf-8",

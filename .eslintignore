@@ -1,7 +1,6 @@
-build
-assets/dist
-assets/vendor
-assets/chosen
-webpack.config.js
+/build
+/assets/dist
+/assets/vendor
+/assets/chosen
 /vendor
 /apigen
