@@ -477,6 +477,7 @@ class Sensei_Course_Enrolment_Manager {
 
 		// Disable enrolment system until WCPC is deactivated or upgraded.
 		add_filter( 'sensei_is_enrolled', '__return_false' );
+		add_filter( 'sensei_course_enrolment_providers', '__return_empty_array', 100 );
 
 		// Show admin notice.
 		add_action( 'admin_notices', [ $this, 'add_wcpc_1_notice' ] );
