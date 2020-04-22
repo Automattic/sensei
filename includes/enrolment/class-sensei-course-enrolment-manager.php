@@ -384,7 +384,7 @@ class Sensei_Course_Enrolment_Manager {
 	 * @see Sensei_Course_Enrolment_Manager::trigger_course_enrolment_check
 	 */
 	public function recalculate_enrolments( $user_id ) {
-		$learner_calculated_version = get_user_meta( $user_id, self::LEARNER_CALCULATION_META_NAME, true );
+		$learner_calculated_version = get_user_meta( $user_id, self::get_learner_calculated_version_meta_key(), true );
 		if ( $this->get_enrolment_calculation_version() === $learner_calculated_version ) {
 			return;
 		}
@@ -408,7 +408,7 @@ class Sensei_Course_Enrolment_Manager {
 
 		update_user_meta(
 			$user_id,
-			self::LEARNER_CALCULATION_META_NAME,
+			self::get_learner_calculated_version_meta_key(),
 			$this->get_enrolment_calculation_version()
 		);
 	}
@@ -443,7 +443,7 @@ class Sensei_Course_Enrolment_Manager {
 	 * @param int $user_id User ID.
 	 */
 	public function mark_user_as_needing_recalculation( $user_id ) {
-		delete_user_meta( $user_id, self::LEARNER_CALCULATION_META_NAME );
+		delete_user_meta( $user_id, self::get_learner_calculated_version_meta_key() );
 	}
 
 	/**
@@ -459,5 +459,22 @@ class Sensei_Course_Enrolment_Manager {
 		$current_hash = md5( implode( '-', $hash_components ) );
 
 		return $current_hash . '-' . Sensei()->version;
+	}
+
+	/**
+	 * Get the learner calculated meta key.
+	 *
+	 * @return string
+	 */
+	public static function get_learner_calculated_version_meta_key() {
+		global $wpdb;
+
+		$meta_key = self::LEARNER_CALCULATION_META_NAME;
+
+		if ( is_multisite() ) {
+			$meta_key = $wpdb->get_blog_prefix() . $meta_key;
+		}
+
+		return $meta_key;
 	}
 }
