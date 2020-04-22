@@ -495,7 +495,7 @@ class Sensei_Course_Enrolment_Manager {
 			return;
 		}
 
-		$message = __( '<strong>Sensei LMS</strong> has detected an incompatible version of WooCommerce Paid Courses. Learners will not be able to access their courses until it is deactivated or upgraded to version 2.0.0 or greater.', 'sensei-lms' );
+		$message = __( '<strong>Sensei LMS</strong> has detected an incompatible version of WooCommerce Paid Courses. Learners will not be able to access their courses until it is upgraded to version 2.0.0 or greater.', 'sensei-lms' );
 
 		echo '<div class="error"><p>';
 		echo wp_kses( $message, [ 'strong' => [] ] );
