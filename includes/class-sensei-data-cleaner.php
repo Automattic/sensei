@@ -393,7 +393,7 @@ class Sensei_Data_Cleaner {
 		global $wpdb;
 
 		foreach ( self::$user_meta_keys as $meta_key ) {
-			$meta_key = str_replace( '%BLOG_PREFIX%', preg_quote( $wpdb->get_blog_prefix() ), $meta_key );
+			$meta_key = str_replace( '%BLOG_PREFIX%', preg_quote( $wpdb->get_blog_prefix(), null ), $meta_key );
 
 			$wpdb->query(
 				$wpdb->prepare(
