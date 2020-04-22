@@ -479,7 +479,7 @@ class Sensei_Course_Enrolment_Manager {
 		add_filter( 'sensei_is_enrolled', '__return_false' );
 
 		// Show admin notice.
-		add_action( 'admin_notices',  [ $this, 'add_wcpc_1_notice' ] );
+		add_action( 'admin_notices', [ $this, 'add_wcpc_1_notice' ] );
 	}
 
 	/**
@@ -487,7 +487,7 @@ class Sensei_Course_Enrolment_Manager {
 	 *
 	 * @access private
 	 */
-	public static function add_wcpc_1_notice() {
+	public function add_wcpc_1_notice() {
 		$screen        = get_current_screen();
 		$valid_screens = [ 'dashboard', 'plugins', 'plugins-network', 'sensei-lms_page_sensei_learners' ];
 
