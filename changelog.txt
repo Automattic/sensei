@@ -61,6 +61,7 @@
 * Tweak: Use `time` instead of `microtime` function when logging enrolment results [#3034](https://github.com/Automattic/sensei/pull/3034)
 * Tweak: Switch to using a filter when storing enrolment results [#3031](https://github.com/Automattic/sensei/pull/3031)
 * Tweak: Use new strategy for looping through last user ID for learner calculation job [#3055](https://github.com/Automattic/sensei/pull/3055)
+* Tweak: Use a less filtered method for checking if user has started course [#3065](https://github.com/Automattic/sensei/pull/3065)
 * Fix: Add clear background to TinyMCE buttons [#2833](https://github.com/Automattic/sensei/pull/2833) 👏 @JuanchoPestana
 * Fix: Add missing question ID to hidden question field [#2871](https://github.com/Automattic/sensei/pull/2871) 👏 @traed
 * Fix: Add module admin scripts on course edit page [#2918](https://github.com/Automattic/sensei/pull/2918)
