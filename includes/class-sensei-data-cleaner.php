@@ -218,7 +218,7 @@ class Sensei_Data_Cleaner {
 		'^_module_progress_[0-9]+_[0-9]+$',
 		'^%BLOG_PREFIX%sensei_learner_calculated_version$',
 		'^%BLOG_PREFIX%sensei_course_enrolment_[0-9]+$',
-		'^%BLOG_PREFIX%sensei_enrolment_providers_state_[0-9]+$',
+		'^%BLOG_PREFIX%sensei_enrolment_providers_state$',
 	);
 
 	/**
