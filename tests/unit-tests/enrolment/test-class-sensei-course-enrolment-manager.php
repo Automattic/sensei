@@ -89,10 +89,7 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 
 		$course_id               = $this->getSimpleCourse();
 		$student_id              = $this->createStandardStudent();
-		$course_results_meta_key = Sensei_Course_Enrolment::META_PREFIX_ENROLMENT_RESULTS . $course_id;
-		if ( is_multisite() ) {
-			$course_results_meta_key = $wpdb->get_blog_prefix() . $course_results_meta_key;
-		}
+		$course_results_meta_key = $wpdb->get_blog_prefix() . Sensei_Course_Enrolment::META_PREFIX_ENROLMENT_RESULTS . $course_id;
 
 		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Always_Provides::class );
 		$this->prepareEnrolmentManager();
@@ -118,11 +115,7 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 
 		$course_id               = $this->getSimpleCourse();
 		$student_id              = $this->createStandardStudent();
-		$course_results_meta_key = Sensei_Course_Enrolment::META_PREFIX_ENROLMENT_RESULTS . $course_id;
-
-		if ( is_multisite() ) {
-			$course_results_meta_key = $wpdb->get_blog_prefix() . $course_results_meta_key;
-		}
+		$course_results_meta_key = $wpdb->get_blog_prefix() . Sensei_Course_Enrolment::META_PREFIX_ENROLMENT_RESULTS . $course_id;
 
 		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Always_Provides::class );
 		$this->prepareEnrolmentManager();

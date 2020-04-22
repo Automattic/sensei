@@ -469,12 +469,6 @@ class Sensei_Course_Enrolment_Manager {
 	public static function get_learner_calculated_version_meta_key() {
 		global $wpdb;
 
-		$meta_key = self::LEARNER_CALCULATION_META_NAME;
-
-		if ( is_multisite() ) {
-			$meta_key = $wpdb->get_blog_prefix() . $meta_key;
-		}
-
-		return $meta_key;
+		return $wpdb->get_blog_prefix() . self::LEARNER_CALCULATION_META_NAME;
 	}
 }

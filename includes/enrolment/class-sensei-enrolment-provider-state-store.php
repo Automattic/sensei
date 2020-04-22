@@ -227,12 +227,6 @@ class Sensei_Enrolment_Provider_State_Store implements JsonSerializable {
 	public static function get_provider_state_store_meta_key() {
 		global $wpdb;
 
-		$meta_key = self::META_ENROLMENT_PROVIDERS_STATE;
-
-		if ( is_multisite() ) {
-			$meta_key = $wpdb->get_blog_prefix() . $meta_key;
-		}
-
-		return $meta_key;
+		return $wpdb->get_blog_prefix() . self::META_ENROLMENT_PROVIDERS_STATE;
 	}
 }

@@ -379,13 +379,7 @@ class Sensei_Course_Enrolment {
 	public function get_enrolment_results_meta_key() {
 		global $wpdb;
 
-		$meta_key = self::META_PREFIX_ENROLMENT_RESULTS . $this->course_id;
-
-		if ( is_multisite() ) {
-			$meta_key = $wpdb->get_blog_prefix() . $meta_key;
-		}
-
-		return $meta_key;
+		return $wpdb->get_blog_prefix() . self::META_PREFIX_ENROLMENT_RESULTS . $this->course_id;
 	}
 
 	/**
