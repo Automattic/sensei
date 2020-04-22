@@ -216,9 +216,9 @@ class Sensei_Data_Cleaner {
 	private static $user_meta_keys = array(
 		'^sensei_hide_menu_settings_notice$',
 		'^_module_progress_[0-9]+_[0-9]+$',
-		'^sensei_learner_calculated_version$',
-		'^sensei_course_enrolment_[0-9]+$',
-		'^sensei_enrolment_providers_state_[0-9]+$',
+		'sensei_learner_calculated_version$',
+		'sensei_course_enrolment_[0-9]+$',
+		'sensei_enrolment_providers_state_[0-9]+$',
 	);
 
 	/**
