@@ -1,19 +1,22 @@
-import { __ } from '@wordpress/i18n';
-
-import { Button } from '@wordpress/components';
-import { Card } from '@woocommerce/components';
-import '@woocommerce/components/build-style/style.css';
+import { FullScreen } from './fullscreen.jsx';
+import { render } from '@wordpress/element';
+import './onboarding.scss';
 
 function SenseiOnboardingPage() {
+
 	return (
-		<Card className="wrap">
-			<h1> { __( 'Welcome to Sensei LMS!', 'sensei-lms' ) } </h1>
-			<Button isPrimary>Okay</Button>
-		</Card>
+		<FullScreen>
+			<div className="sensei-onboarding__header">
+
+			</div>
+			<div className="sensei-onboarding__container">
+				
+			</div>
+		</FullScreen>
 	);
 }
 
-wp.element.render(
+render(
 	<SenseiOnboardingPage />,
 	document.getElementById( 'sensei-onboarding-page' )
 );

@@ -1,0 +1,19 @@
+@import '~@woocommerce/components/build-style/style.css';
+.sensei-onboarding {
+
+  &__header {
+    border-bottom: 1px solid #dcdcde;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    padding: 8px;
+  }
+
+  &__container {
+    max-width: 476px;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 16px;
+  }
+}

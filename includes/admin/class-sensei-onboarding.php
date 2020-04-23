@@ -54,8 +54,9 @@ class Sensei_Onboarding {
 
 
 	public function onboarding_page() {
+
 		?>
-		<div id="sensei-onboarding-page">
+		<div id="sensei-onboarding-page" class="sensei-onboarding">
 
 		</div>
 		<?php
