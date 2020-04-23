@@ -112,7 +112,7 @@ class Sensei_Enrolment_Calculation_Scheduler_Test extends WP_UnitTestCase {
 
 		update_user_meta(
 			1,
-			Sensei_Course_Enrolment_Manager::LEARNER_CALCULATION_META_NAME,
+			Sensei_Course_Enrolment_Manager::get_learner_calculated_version_meta_key(),
 			$enrolment_manager->get_enrolment_calculation_version()
 		);
 
@@ -120,7 +120,7 @@ class Sensei_Enrolment_Calculation_Scheduler_Test extends WP_UnitTestCase {
 			$user = $this->factory->user->create();
 			update_user_meta(
 				$user,
-				Sensei_Course_Enrolment_Manager::LEARNER_CALCULATION_META_NAME,
+				Sensei_Course_Enrolment_Manager::get_learner_calculated_version_meta_key(),
 				$enrolment_manager->get_enrolment_calculation_version()
 			);
 		}

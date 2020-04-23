@@ -377,7 +377,9 @@ class Sensei_Course_Enrolment {
 	 * @return string
 	 */
 	public function get_enrolment_results_meta_key() {
-		return self::META_PREFIX_ENROLMENT_RESULTS . $this->course_id;
+		global $wpdb;
+
+		return $wpdb->get_blog_prefix() . self::META_PREFIX_ENROLMENT_RESULTS . $this->course_id;
 	}
 
 	/**

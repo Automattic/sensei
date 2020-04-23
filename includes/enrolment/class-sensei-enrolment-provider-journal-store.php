@@ -69,7 +69,7 @@ class Sensei_Enrolment_Provider_Journal_Store implements JsonSerializable {
 		if ( ! isset( self::$instances[ $user_id ] ) ) {
 			self::$instances[ $user_id ] = new self( $user_id );
 
-			$provider_journal_stores = get_user_meta( $user_id, self::META_ENROLMENT_PROVIDERS_JOURNAL, true );
+			$provider_journal_stores = get_user_meta( $user_id, self::get_provider_journal_store_meta_key(), true );
 			if ( ! empty( $provider_journal_stores ) ) {
 				self::$instances[ $user_id ]->restore_from_json( $provider_journal_stores );
 			}
@@ -131,7 +131,7 @@ class Sensei_Enrolment_Provider_Journal_Store implements JsonSerializable {
 			return true;
 		}
 
-		$result = update_user_meta( $this->user_id, self::META_ENROLMENT_PROVIDERS_JOURNAL, wp_slash( wp_json_encode( $this ) ) );
+		$result = update_user_meta( $this->user_id, self::get_provider_journal_store_meta_key(), wp_slash( wp_json_encode( $this ) ) );
 
 		if ( ! $result || is_wp_error( $result ) ) {
 			return false;
@@ -274,5 +274,16 @@ class Sensei_Enrolment_Provider_Journal_Store implements JsonSerializable {
 		return isset( $journal_store->providers_journal[ $course_id ][ $provider->get_id() ] ) ?
 			$journal_store->providers_journal[ $course_id ][ $provider->get_id() ]->get_logs() :
 			[];
+	}
+
+	/**
+	 * Get the provider journal store meta key.
+	 *
+	 * @return string
+	 */
+	public static function get_provider_journal_store_meta_key() {
+		global $wpdb;
+
+		return $wpdb->get_blog_prefix() . self::META_ENROLMENT_PROVIDERS_JOURNAL;
 	}
 }
