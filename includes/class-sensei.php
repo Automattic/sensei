@@ -603,7 +603,7 @@ class Sensei_Main {
 			// If the version is known and the previous version was pre-3.0.0.
 			(
 				$is_upgrade
-				&& version_compare( '3.0.0-beta.4', $current_version, '>' )
+				&& version_compare( '3.0.0-beta.5', $current_version, '>' )
 			)
 
 			// If there wasn't a current version set and this isn't a new install, double check to make sure there wasn't any enrolment.
