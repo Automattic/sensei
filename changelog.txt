@@ -41,6 +41,8 @@
 * New: Fire actions on enrolment status change and manual enrolment status change [#3035](https://github.com/Automattic/sensei/pull/3035)
 * New: Add a filter for the batch size of the learner calculation job [#3054](https://github.com/Automattic/sensei/pull/3054)
 * New: Introduce a provider journal store [#3027](https://github.com/Automattic/sensei/pull/3027)
+* New: Add multisite support for enrolment data [#3072] (https://github.com/Automattic/sensei/pull/3072)
+* New: Delete provider journal data on uninstall [#3073](https://github.com/Automattic/sensei/pull/3073)
 * Tweak: Append post status to prerequisite lesson on Lessons page [#2853](https://github.com/Automattic/sensei/pull/2853) 👏 @JuanchoPestana
 * Tweak: Change user_started_course in quiz and email code [#2968](https://github.com/Automattic/sensei/pull/2968)
 * Tweak: Add support for enrolments in bulk learner management [#2965](https://github.com/Automattic/sensei/pull/2965)
@@ -62,6 +64,7 @@
 * Tweak: Switch to using a filter when storing enrolment results [#3031](https://github.com/Automattic/sensei/pull/3031)
 * Tweak: Use new strategy for looping through last user ID for learner calculation job [#3055](https://github.com/Automattic/sensei/pull/3055)
 * Tweak: Use a less filtered method for checking if user has started course [#3065](https://github.com/Automattic/sensei/pull/3065)
+* Tweak: Block enrolment checking and display notice with WCPC v1  [#3070](https://github.com/Automattic/sensei/pull/3070)
 * Fix: Add clear background to TinyMCE buttons [#2833](https://github.com/Automattic/sensei/pull/2833) 👏 @JuanchoPestana
 * Fix: Add missing question ID to hidden question field [#2871](https://github.com/Automattic/sensei/pull/2871) 👏 @traed
 * Fix: Add module admin scripts on course edit page [#2918](https://github.com/Automattic/sensei/pull/2918)
