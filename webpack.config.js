@@ -49,9 +49,9 @@ const FileLoader = {
 	},
 };
 
-function mapFilesToEntries( files ) {
+function mapFilesToEntries( filenames ) {
 	return fromPairs(
-		files.map( ( filename ) => [
+		filenames.map( ( filename ) => [
 			getName( filename ),
 			`./assets/${ filename }`,
 		] )
