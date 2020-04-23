@@ -1,11 +1,18 @@
 <?php
+/**
+ * Onboarding.
+ *
+ * @package Sensei\Onboarding
+ * @since   1.3.0
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
  * Sensei Onboarding Class
- * All onboarding functionality
+ * All onboarding functionality.
  *
  * @package Sensei
  * @author  Automattic
@@ -13,15 +20,25 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Onboarding {
 
+	/**
+	 * URL Slug for Onboarding Wizard page
+	 *
+	 * @var string
+	 */
 	public $page_slug;
 
+	/**
+	 * Sensei_Onboarding constructor.
+	 */
 	public function __construct() {
 
 		$this->page_slug = 'sensei_onboarding';
 
 		if ( is_admin() ) {
-			add_action( 'admin_menu', array ( $this, 'admin_menu' ), 20 );
-			if ( isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug ) ) {
+			add_action( 'admin_menu', [ $this, 'admin_menu' ], 20 );
+
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
+			if ( isset( $_GET['page'] ) && ( $_GET['page'] === $this->page_slug ) ) {
 
 				add_action(
 					'admin_print_scripts',
@@ -37,22 +54,40 @@ class Sensei_Onboarding {
 					}
 				);
 
-				add_filter( 'admin_body_class', [ $this, 'add_body_class' ] );
+				add_filter(
+					'admin_body_class',
+					function( $classes ) {
+						$classes .= ' sensei-wp-admin-fullscreen ';
+						return $classes;
+					}
+				);
 				add_filter( 'show_admin_bar', '__return_false' );
 			}
 		}
 
 	}
 
+	/**
+	 * Register an Onboarding submenu.
+	 */
 	public function admin_menu() {
 		if ( current_user_can( 'manage_sensei' ) ) {
-			add_submenu_page( 'sensei', __( 'Onboarding', 'sensei-lms' ), __( 'Onboarding', 'sensei-lms' ), 'manage_sensei', $this->page_slug, array ( $this, 'onboarding_page' ) );
+			add_submenu_page(
+				'sensei',
+				__( 'Onboarding', 'sensei-lms' ),
+				__( 'Onboarding', 'sensei-lms' ),
+				'manage_sensei',
+				$this->page_slug,
+				[ $this, 'onboarding_page' ]
+			);
 		}
 
 	}
-	}
 
 
+	/**
+	 * Render app container for Onboarding Wizard.
+	 */
 	public function onboarding_page() {
 
 		?>
@@ -62,8 +97,4 @@ class Sensei_Onboarding {
 		<?php
 	}
 
-	function add_body_class( $classes ) {
-		$classes .= ' sensei-wp-admin-fullscreen ';
-		return $classes;
-	}
 }
