@@ -33,12 +33,10 @@
     "start": "calypso-build --watch",
     "package": "gulp package",
     "test-js": "wp-scripts test-unit-js --passWithNoTests",
-    "lint-js-wpcom": "wp-scripts lint-js --no-eslintrc --config .eslintrc.wpcom.json .",
-    "lint-js-wpcom:fix": "npm run lint-js-wpcom -- --fix",
     "lint-css": "wp-scripts lint-style **/*.scss",
     "lint-css:fix": "npm run lint-css -- --fix",
     "run-phpcs": "./vendor/bin/phpcs --encoding=utf-8",
-    "lint-jsx": "wp-scripts lint-js assets/**/**.jsx",
-    "lint-jsx:fix": "npm run lint-jsx -- --fix"
+    "lint-js": "wp-scripts lint-js",
+    "lint-js:fix": "npm run lint-jsx -- --fix"
   }
 }
