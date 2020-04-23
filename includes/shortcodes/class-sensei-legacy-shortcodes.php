@@ -235,6 +235,9 @@ class Sensei_Legacy_Shortcodes {
 
 		if ( is_user_logged_in() ) {
 
+			if ( ! Sensei_Utils::get_setting_as_flag( 'js_disable', 'sensei_settings_js_disable' ) ) {
+				wp_enqueue_script( Sensei()->token . '-user-dashboard' );
+			}
 			Sensei_Templates::get_template( 'user/my-courses.php' );
 
 		} else {
@@ -295,7 +298,7 @@ class Sensei_Legacy_Shortcodes {
 	}
 
 	/**
-	 * Loop through courses in the query and output the infomration needed
+	 * Loop through courses in the query and output the information needed
 	 *
 	 * @since 1.9.0
 	 *
@@ -376,7 +379,7 @@ class Sensei_Legacy_Shortcodes {
 		$author_display_name   = $user_info->display_name;
 		$category_output       = get_the_term_list( $course_id, 'course-category', '', ', ', '' );
 		$preview_lesson_count  = intval( Sensei()->course->course_lesson_preview_count( $course_id ) );
-		$is_user_taking_course = Sensei_Utils::user_started_course( $course_id, get_current_user_id() );
+		$is_user_taking_course = Sensei_Course::is_user_enrolled( $course_id, get_current_user_id() );
 		?>
 
 		<article class="<?php echo esc_attr( join( ' ', get_post_class( array( 'course', 'post' ), $course_id ) ) ); ?>">

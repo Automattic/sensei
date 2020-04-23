@@ -68,9 +68,6 @@ class Sensei_Admin {
 		add_action( 'trash_course', array( $this, 'delete_content' ), 10, 2 );
 		add_action( 'trash_lesson', array( $this, 'delete_content' ), 10, 2 );
 
-		// Delete user activity when user is deleted
-		add_action( 'deleted_user', array( $this, 'delete_user_activity' ), 10, 1 );
-
 		// Add notices to WP dashboard
 		add_action( 'admin_notices', array( $this, 'theme_compatibility_notices' ) );
 		// warn users in case admin_email is not a real WP_User
@@ -305,6 +302,13 @@ class Sensei_Admin {
 		// Select 2 styles
 		wp_enqueue_style( 'sensei-core-select2', Sensei()->plugin_url . $select_two_location, '', Sensei()->version, 'screen' );
 
+		wp_register_style(
+			'jquery-modal',
+			Sensei()->plugin_url . 'assets/vendor/jquery-modal-0.9.1/jquery.modal.min.css',
+			[],
+			Sensei()->version
+		);
+
 		// Test for Write Panel Pages
 		if ( ( ( isset( $post_type ) && in_array( $post_type, $allowed_post_types ) ) && ( isset( $hook ) && in_array( $hook, $allowed_post_type_pages ) ) ) || ( isset( $_GET['page'] ) && in_array( $_GET['page'], $allowed_pages ) ) ) {
 
@@ -327,12 +331,28 @@ class Sensei_Admin {
 	public function register_scripts( $hook ) {
 		$screen = get_current_screen();
 
-		// Allow developers to load non-minified versions of scripts
+		// Allow developers to load non-minified versions of scripts.
 		$suffix              = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 		$select_two_location = '/assets/vendor/select2/select2.full';
 
-		// Select2 script used to enhance all select boxes
+		// Select2 script used to enhance all select boxes.
 		wp_register_script( 'sensei-core-select2', Sensei()->plugin_url . $select_two_location . $suffix . '.js', array( 'jquery' ), Sensei()->version );
+
+		wp_register_script(
+			'jquery-modal',
+			Sensei()->plugin_url . 'assets/vendor/jquery-modal-0.9.1/jquery.modal' . $suffix . '.js',
+			[ 'jquery' ],
+			Sensei()->version,
+			true
+		);
+
+		wp_register_script(
+			'sensei-learners-admin-bulk-actions-js',
+			Sensei()->plugin_url . 'assets/js/learners-bulk-actions' . $suffix . '.js',
+			[ 'jquery', 'sensei-core-select2', 'jquery-modal' ],
+			Sensei()->version,
+			true
+		);
 
 		// Load ordering script on Order Courses and Order Lessons pages.
 		if ( in_array( $screen->id, [ 'course_page_course-order', 'lesson_page_lesson-order' ], true ) ) {
@@ -682,6 +702,58 @@ class Sensei_Admin {
 	}
 
 	/**
+	 * Update the _lesson_order meta on the duplicated Course so that it uses
+	 * the new Lesson IDs.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param int   $course_id            The ID of the new Course.
+	 * @param array $new_lesson_id_lookup An array mapping old lesson IDs to the
+	 *                                    IDs of their duplicates.
+	 */
+	private function update_lesson_order_on_course( $course_id, $new_lesson_id_lookup ) {
+		$old_lesson_order_string = get_post_meta( $course_id, '_lesson_order', true );
+
+		if ( empty( $old_lesson_order_string ) ) {
+			return;
+		}
+
+		$old_lesson_order = explode( ',', $old_lesson_order_string );
+		$new_lesson_order = [];
+
+		// Map old lesson IDs to new IDs.
+		foreach ( $old_lesson_order as $old_lesson_id ) {
+			if ( ! isset( $new_lesson_id_lookup[ $old_lesson_id ] ) ) {
+				continue;
+			}
+
+			// Add new lesson ID to order.
+			$new_lesson_id      = $new_lesson_id_lookup[ $old_lesson_id ];
+			$new_lesson_order[] = $new_lesson_id;
+		}
+
+		// Persist new lesson order to course meta.
+		$new_lesson_order_string = join( ',', $new_lesson_order );
+		update_post_meta( $course_id, '_lesson_order', $new_lesson_order_string );
+	}
+
+	/**
+	 * Update the _order_<course-id> on a newly duplicated Lesson to use the
+	 * new Course ID.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param WP_Post $lesson        The new Lesson.
+	 * @param int     $old_course_id The ID of the old Course that was duplicated.
+	 * @param int     $new_course_id The ID of the new Course.
+	 */
+	private function update_lesson_order_on_lesson( $lesson, $old_course_id, $new_course_id ) {
+		$lesson_order_value = get_post_meta( $lesson->ID, "_order_$old_course_id", true );
+		update_post_meta( $lesson->ID, "_order_$new_course_id", $lesson_order_value );
+		delete_post_meta( $lesson->ID, "_order_$old_course_id" );
+	}
+
+	/**
 	 * Duplicate lessons inside a course.
 	 *
 	 * @param  integer $old_course_id ID of original course.
@@ -705,9 +777,15 @@ class Sensei_Admin {
 
 			$new_lesson_id_lookup[ $lesson->ID ] = $new_lesson->ID;
 			$this->duplicate_lesson_quizzes( $lesson->ID, $new_lesson->ID );
+
+			// Update the _order_<course-id> meta on the lesson.
+			$this->update_lesson_order_on_lesson( $new_lesson, $old_course_id, $new_course_id );
 		}
 
 		$this->update_lesson_prerequisite_ids( $lessons_to_update, $new_lesson_id_lookup );
+
+		// Update the _lesson_order meta on the course.
+		$this->update_lesson_order_on_course( $new_course_id, $new_lesson_id_lookup );
 
 		return count( $lessons );
 	}
@@ -934,15 +1012,17 @@ class Sensei_Admin {
 	}
 
 	/**
-	 * Delete all user activity when user is deleted
+	 * Delete all user activity when user is deleted.
 	 *
-	 * @param  integer $user_id User ID
+	 * @deprecated 3.0.0 Use `\Sensei_Learner::delete_all_user_activity` instead.
+	 *
+	 * @param  integer $user_id User ID.
 	 * @return void
 	 */
 	public function delete_user_activity( $user_id = 0 ) {
-		if ( $user_id ) {
-			Sensei_Utils::delete_all_user_activity( $user_id );
-		}
+		_deprecated_function( __METHOD__, '3.0.0', 'Sensei_Learner::delete_all_user_activity' );
+
+		\Sensei_Learner::instance()->delete_all_user_activity( $user_id );
 	}
 
 	public function render_settings( $settings = array(), $post_id = 0, $group_id = '' ) {

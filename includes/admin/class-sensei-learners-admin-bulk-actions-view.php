@@ -1,68 +1,123 @@
 <?php
+/**
+ * File containing the class Sensei_Learners_Admin_Bulk_Actions_View.
+ *
+ * @package sensei
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 } // Exit if accessed directly
 
+/**
+ * This class handles is responsible for displaying the learner bulk actions page in the admin screens.
+ */
 class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 
-
-	public $view      = '';
-	public $page_slug = 'sensei_learner_admin';
-	private $name;
-	private $query_args = array();
 	/**
+	 * The page slug.
+	 *
+	 * @var string
+	 */
+	private $page_slug;
+
+	/**
+	 * The page name.
+	 *
+	 * @var string
+	 */
+	private $name;
+
+	/**
+	 * The learner query arguments for this table.
+	 *
+	 * @var string
+	 */
+	private $query_args;
+
+	/**
+	 * The class which handles the bulk learner actions.
+	 *
 	 * @var Sensei_Learners_Admin_Bulk_Actions_Controller
 	 */
 	private $controller;
 
 	/**
+	 * The Sensei_Learner_Management object.
+	 *
+	 * @var Sensei_Learner_Management
+	 */
+	private $learner_management;
+
+	/**
 	 * Sensei_Learners_Admin_Main_View constructor.
 	 *
-	 * @param Sensei_Learners_Admin_Bulk_Actions_Controller $controller
+	 * @param Sensei_Learners_Admin_Bulk_Actions_Controller $controller         The controller.
+	 * @param Sensei_Learner_Management                     $learner_management The learner management.
 	 */
-	public function __construct( $controller ) {
-		$this->controller = $controller;
-		$this->name       = $controller->get_name();
-		$this->page_slug  = $controller->get_page_slug();
+	public function __construct( $controller, $learner_management ) {
+		$this->controller         = $controller;
+		$this->name               = $controller->get_name();
+		$this->page_slug          = $controller->get_page_slug();
+		$this->query_args         = $this->parse_query_args();
+		$this->learner_management = $learner_management;
+		$this->page_slug          = 'sensei_learner_admin';
+
 		parent::__construct( $this->page_slug );
-		$this->query_args = $this->parse_query_args();
+
 		add_action( 'sensei_before_list_table', array( $this, 'data_table_header' ) );
-		add_action( 'sensei_after_list_table', array( $this, 'data_table_footer' ) );
 		add_filter( 'sensei_list_table_search_button_text', array( $this, 'search_button' ) );
 	}
 
+	/**
+	 * Outputs the HTML before the main table.
+	 */
 	public function output_headers() {
-		$link_back_to_lm = '<a href="' . esc_url( $this->controller->analysis->get_url() ) . '">' . esc_html( $this->controller->analysis->get_name() ) . '</a>';
-		$title           = $this->name;
+		$link_back_to_lm = '<a href="' . esc_url( $this->learner_management->get_url() ) . '">' . esc_html( $this->learner_management->get_name() ) . '</a>';
 		$subtitle        = '';
+
 		if ( isset( $this->query_args['filter_by_course_id'] ) ) {
 			$course = get_post( absint( $this->query_args['filter_by_course_id'] ) );
 			if ( ! empty( $course ) ) {
 				$subtitle .= '<h2>' . esc_html( $course->post_title ) . '</h2>';
 			}
 		}
-		echo '<h1>' . wp_kses_post( $link_back_to_lm ) . ' | ' . esc_html( $title ) . '</h1>' . wp_kses_post( $subtitle );
+		echo '<h1>' . wp_kses_post( $link_back_to_lm ) . ' | ' . esc_html( $this->name ) . '</h1>' . wp_kses_post( $subtitle );
 	}
 
-	function get_columns() {
+	/**
+	 * Get the table columns.
+	 *
+	 * @see Sensei_List_Table,WP_List_Table
+	 */
+	public function get_columns() {
 		$columns = array(
-			'cb'       => '<label class="screen-reader-text" for="cb-select-all-1">Select All</label><input id="cb-select-all-1" type="checkbox">',
-			'learner'  => __( 'Learner', 'sensei-lms' ),
-			'overview' => __( 'Overview', 'sensei-lms' ),
+			'cb'         => '<label class="screen-reader-text" for="cb-select-all-1">Select All</label><input id="cb-select-all-1" type="checkbox">',
+			'learner'    => __( 'Learner', 'sensei-lms' ),
+			'progress'   => __( 'Course Progress', 'sensei-lms' ),
+			'enrolments' => __( 'Enrollments', 'sensei-lms' ),
 		);
 
 		return apply_filters( 'sensei_learners_admin_default_columns', $columns, $this );
 	}
 
-	function get_sortable_columns() {
+	/**
+	 * Get a list of sortable columns.
+	 *
+	 * @see WP_List_Table
+	 */
+	public function get_sortable_columns() {
 		$columns = array(
 			'learner' => array( 'learner', false ),
 		);
 		return apply_filters( 'sensei_learner_admin_default_columns_sortable', $columns, $this );
 	}
 
-
+	/**
+	 * Prepare the table items.
+	 *
+	 * @see WP_List_Table
+	 */
 	public function prepare_items() {
 		$this->items = $this->get_learners( $this->query_args );
 
@@ -78,25 +133,37 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 
 	}
 
+	/**
+	 * Get the data for a table row.
+	 *
+	 * @param array $item The row's item.
+	 *
+	 * @see WP_List_Table
+	 *
+	 * @return array The row's data
+	 * @throws Exception When learner term could not be retrieved.
+	 */
 	protected function get_row_data( $item ) {
 		if ( ! $item ) {
 			$row_data = array(
-				'cb'       => '',
-				'learner'  => esc_html__( 'No results found', 'sensei-lms' ),
-				'overview' => '',
+				'cb'         => '',
+				'learner'    => esc_html__( 'No results found', 'sensei-lms' ),
+				'progress'   => '',
+				'enrolments' => '',
 			);
 		} else {
 			$learner  = $item;
 			$courses  = $this->get_learner_courses_html( $item->course_statuses );
 			$row_data = array(
-				'cb'       => '<label class="screen-reader-text" for="cb-select-all-1">Select All</label>' . '<input type="checkbox" name="user_id" value="' . esc_attr( $learner->user_id ) . '" class="sensei_user_select_id">',
-				'learner'  => $this->get_learner_html( $learner ),
-				'overview' => $courses,
+				'cb'         => '<label class="screen-reader-text" for="cb-select-all-1">Select All</label><input type="checkbox" name="user_id" value="' . esc_attr( $learner->user_id ) . '" class="sensei_user_select_id">',
+				'learner'    => $this->get_learner_html( $learner ),
+				'progress'   => $courses,
+				'enrolments' => get_term_field( 'count', Sensei_Learner::get_learner_term( $learner->user_id ) ),
 			);
 		}
 
 		/**
-		 * sensei_learner_admin_get_row_data Filter, for adding/removing row data.
+		 * Filter sensei_learner_admin_get_row_data, for adding/removing row data.
 		 *
 		 * @param array                                   $row_data The Row Data.
 		 * @param mixed|object                            $item The Item (learner query row).
@@ -142,6 +209,13 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		return $escaped_row_data;
 	}
 
+	/**
+	 * Get the HTML for a learner that is displayed on each row.
+	 *
+	 * @param array $learner A learner as returned by prepare_items().
+	 *
+	 * @return string The HTML.
+	 */
 	private function get_learner_html( $learner ) {
 		$login = $learner->user_login;
 		$title = Sensei_Learner::get_full_name( $learner->user_id );
@@ -153,6 +227,13 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		return $html;
 	}
 
+	/**
+	 * Helper method to retrieve the learners from the DB.
+	 *
+	 * @param array $args The query args.
+	 *
+	 * @return array The learners.
+	 */
 	private function get_learners( $args ) {
 		$query             = new Sensei_Db_Query_Learners( $args );
 		$learners          = $query->get_all();
@@ -161,11 +242,26 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	}
 
 
+	/**
+	 * Displays the message when no items are found.
+	 *
+	 * @see WP_List_Table
+	 */
 	public function no_items() {
 		$text = __( 'No learners found.', 'sensei-lms' );
 		echo wp_kses_post( apply_filters( 'sensei_learners_no_items_text', $text ) );
 	}
 
+	/**
+	 * Helper method to display a select element which contain courses.
+	 *
+	 * @param array   $courses         The courses options.
+	 * @param integer $selected_course The selected course.
+	 * @param string  $select_id       The id of the element.
+	 * @param string  $name            The name of the element.
+	 * @param string  $select_label    The label of the element.
+	 * @param bool    $multiple        Whether multiple selections are allowed.
+	 */
 	private function courses_select( $courses, $selected_course, $select_id = 'course-select', $name = 'course_id', $select_label = null, $multiple = false ) {
 		if ( null === $select_label ) {
 			$select_label = __( 'Select Course', 'sensei-lms' );
@@ -183,6 +279,11 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		<?php
 	}
 
+	/**
+	 * Helper method to display the bulk action form in the modal.
+	 *
+	 * @param array $courses The courses options.
+	 */
 	private function render_bulk_actions_form( $courses ) {
 		$label = __( 'Select Course(s)', 'sensei-lms' );
 
@@ -199,11 +300,21 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		<?php
 	}
 
+	/**
+	 * Helper method to display the bulk action selector.
+	 */
 	private function render_bulk_action_select_box() {
 		$rendered     =
 			'<select name="sensei_bulk_action_select" id="bulk-action-selector-top">' .
 			'<option value="">' . esc_html__( 'Bulk Learner Actions', 'sensei-lms' ) . '</option>';
 		$bulk_actions = $this->controller->get_known_bulk_actions();
+
+		$manual_provider = Sensei_Course_Enrolment_Manager::instance()->get_manual_enrolment_provider();
+		if ( ! $manual_provider ) {
+			unset( $bulk_actions[ Sensei_Learners_Admin_Bulk_Actions_Controller::MANUALLY_ENROL ] );
+			unset( $bulk_actions[ Sensei_Learners_Admin_Bulk_Actions_Controller::REMOVE_MANUAL_ENROLMENT ] );
+		}
+
 		foreach ( $bulk_actions as $value => $translation ) {
 			$rendered .= '<option value="' . esc_attr( $value ) . '">' . esc_html( $translation ) . '</option>';
 		}
@@ -211,12 +322,16 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		return $rendered . '</select>';
 	}
 
-
+	/**
+	 * Helper method to display the controls of bulk actions.
+	 */
 	public function data_table_header() {
 		$courses         = Sensei_Course::get_all_courses();
 		$selected_course = 0;
-		if ( isset( $_GET['filter_by_course_id'] ) && '' != esc_html( $_GET['filter_by_course_id'] ) ) {
-			$selected_course = intval( $_GET['filter_by_course_id'] );
+
+		// phpcs:ignore WordPress.Security.NonceVerification -- Argument is used to filter courses.
+		if ( isset( $_GET['filter_by_course_id'] ) && '' !== esc_html( sanitize_text_field( wp_unslash( $_GET['filter_by_course_id'] ) ) ) ) {
+			$selected_course = (int) $_GET['filter_by_course_id']; // phpcs:ignore WordPress.Security.NonceVerification
 		}
 		?>
 		<div class="tablenav top">
@@ -244,7 +359,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 				<form action="" method="get">
 					<?php
 					foreach ( $this->query_args as $name => $value ) {
-						if ( 'filter_by_course_id' == $name || 'filter_type' == $name ) {
+						if ( 'filter_by_course_id' === $name || 'filter_type' === $name ) {
 							continue;
 						}
 						echo '<input type="hidden" name="' . esc_attr( $name ) . '" value="' . esc_attr( $value ) . '">';
@@ -259,10 +374,20 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		<?php
 	}
 
-	public function search_button( $text = '' ) {
+	/**
+	 * Returns the search button text.
+	 */
+	public function search_button() {
 		return __( 'Search Learners', 'sensei-lms' );
 	}
 
+	/**
+	 * Helper method to display the content of the progress column of the table.
+	 *
+	 * @param array $courses The courses to be displayed.
+	 *
+	 * @return string The HTML for the column.
+	 */
 	private function get_learner_courses_html( $courses ) {
 		if ( empty( $courses ) ) {
 			return '0 ' . esc_html__( 'Courses', 'sensei-lms' ) . ' ' . esc_html__( 'In Progress', 'sensei-lms' );
@@ -275,13 +400,13 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 				$splitted      = explode( '|', $course_id );
 				$course_id     = absint( $splitted[0] );
 				$course_status = $splitted[1];
-				if ( $course_status === 'c' ) {
+
+				if ( 'c' === $course_status ) {
 					$courses_completed++;
 				}
 
-				$course = get_post( $course_id );
-				// $span_style = 'display: inline; padding: .2em .6em .3em; font-size: 75%; font-weight: 700; line-height: 1; color: #fff; text-align: center; white-space: nowrap; vertical-align: baseline; border-radius: .25em;';
-				$span_style   = $course_status == 'c' ? ' button-primary action' : ' action';
+				$course       = get_post( $course_id );
+				$span_style   = 'c' === $course_status ? ' button-primary action' : ' action';
 				$course_arr[] = '<a href="' . esc_url( $this->controller->get_learner_management_course_url( $course_id ) ) . '" class="button' . esc_attr( $span_style ) . '" data-course-id="' . esc_attr( $course_id ) . '">' . esc_html( $course->post_title ) . '</a>';
 			}
 
@@ -311,37 +436,39 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		return $styles;
 	}
 
-	public function parse_query_args() {
-		// Handle orderby
-		$course_id = 0;
-		$lesson_id = 0;
-		if ( isset( $_GET['course_id'] ) ) {
-			$course_id = intval( $_GET['course_id'] );
-		}
-		if ( isset( $_GET['lesson_id'] ) ) {
-			$lesson_id = intval( $_GET['lesson_id'] );
-		}
-		$this->course_id = intval( $course_id );
-		$this->lesson_id = intval( $lesson_id );
-
+	/**
+	 * Generates the query args from GET arguments
+	 *
+	 * @return array The query args
+	 */
+	private function parse_query_args() {
+		// Handle orderby.
 		$orderby = '';
+
+		// phpcs:ignore WordPress.Security.NonceVerification -- Argument is used to order columns.
 		if ( ! empty( $_GET['orderby'] ) ) {
-			if ( array_key_exists( esc_html( $_GET['orderby'] ), $this->get_sortable_columns() ) ) {
-				$orderby = esc_html( $_GET['orderby'] );
-			} // End If Statement
+			// phpcs:ignore WordPress.Security.NonceVerification
+			$orderby_input = sanitize_text_field( wp_unslash( $_GET['orderby'] ) );
+			if ( array_key_exists( $orderby_input, $this->get_sortable_columns() ) ) {
+				$orderby = $orderby_input;
+			}
 		}
 
-		// Handle order
+		// Handle order.
 		$order = 'DESC';
+		// phpcs:ignore WordPress.Security.NonceVerification -- Argument is used to order columns.
 		if ( ! empty( $_GET['order'] ) ) {
-			$order = ( 'ASC' == strtoupper( $_GET['order'] ) ) ? 'ASC' : 'DESC';
+			// phpcs:ignore WordPress.Security.NonceVerification
+			$order = 'ASC' === strtoupper( sanitize_text_field( wp_unslash( $_GET['order'] ) ) ) ? 'ASC' : 'DESC';
 		}
 
-		// Handle search
+		// Handle search.
 		$search = false;
+		// phpcs:ignore WordPress.Security.NonceVerification -- Argument is used for searching.
 		if ( ! empty( $_GET['s'] ) ) {
-			$search = esc_html( $_GET['s'] );
-		} // End If Statement
+			// phpcs:ignore WordPress.Security.NonceVerification
+			$search = sanitize_text_field( wp_unslash( ( $_GET['s'] ) ) );
+		}
 
 		$screen   = get_current_screen();
 		$per_page = 0;
@@ -349,7 +476,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 			$screen_option = $screen->get_option( 'per_page', 'option' );
 			$per_page      = absint( get_user_meta( get_current_user_id(), $screen_option, true ) );
 			if ( empty( $per_page ) || $per_page < 1 ) {
-				// get the default value if none is set
+				// Get the default value if none is set.
 				$per_page = absint( $screen->get_option( 'per_page', 'default' ) );
 			}
 		} else {
@@ -367,18 +494,23 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		}
 
 		$filter_by_course_id = 0;
+		// phpcs:ignore WordPress.Security.NonceVerification -- Argument is used for filtering.
 		if ( ! empty( $_GET['filter_by_course_id'] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification
 			$filter_by_course_id = absint( $_GET['filter_by_course_id'] );
 		}
 
 		$filter_type = 'inc';
+		// phpcs:ignore WordPress.Security.NonceVerification -- Argument is used for filtering.
 		if ( ! empty( $_GET['filter_type'] ) ) {
-			$filter_type = in_array( $_GET['filter_type'], array( 'inc', 'exc' ) ) ? $_GET['filter_type'] : 'inc';
+			// phpcs:ignore WordPress.Security.NonceVerification
+			$filter_type_input = sanitize_text_field( wp_unslash( $_GET['filter_type'] ) );
+			$filter_type       = in_array( $filter_type_input, array( 'inc', 'exc' ), true ) ? $filter_type_input : 'inc';
 		}
-		$page             = $this->page_slug;
-		$view             = $this->controller->get_view();
-		$args             = compact( 'page', 'view', 'per_page', 'offset', 'orderby', 'order', 'search', 'filter_by_course_id', 'filter_type' );
-		$this->query_args = $args;
+		$page = $this->page_slug;
+		$view = $this->controller->get_view();
+		$args = compact( 'page', 'view', 'per_page', 'offset', 'orderby', 'order', 'search', 'filter_by_course_id', 'filter_type' );
+
 		return $args;
 	}
 }

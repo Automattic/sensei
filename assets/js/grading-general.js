@@ -92,8 +92,8 @@ jQuery(document).ready( function( $ ) {
 					// Split answers to multiple choice questions into an array since there may be
 					// multiple correct answers.
 					if ( $this.hasClass( 'multiple-choice' ) ) {
-						user_answers = user_answer.split( '<br>' );
-						correct_answers = correct_answer.split( '<br>' );
+						var user_answers = user_answer.split( '<br>' );
+						var correct_answers = correct_answer.split( '<br>' );
 						all_correct = true;
 
 						user_answers.forEach( function( user_answer ) {

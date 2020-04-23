@@ -103,26 +103,8 @@ class Sensei_Course_Manual_Enrolment_Provider_Test extends WP_UnitTestCase {
 		$this->assertNotEmpty( get_option( 'sensei_enrolment_legacy' ), 'The site-wide legacy enrolment flag should have been set.' );
 
 		$is_enrolled = $provider->is_enrolled( $student_id, $course_id );
-		$this->assertTrue( $this->wasLegacyEnrolmentChecked( $student_id, $course_id ), 'Legacy enrolment status for user should have been checked.' );
+		$this->assertFalse( $this->wasLegacyEnrolmentChecked( $student_id, $course_id ), 'Legacy enrolment status for user should not have been checked.' );
 		$this->assertFalse( $is_enrolled, 'The user should not have been enrolled because they were not enrolled previously.' );
-	}
-
-	/**
-	 * Tests to make sure enrolment is provided when the `sensei_is_legacy_enrolled` filter returns true.
-	 */
-	public function testIsEnrolledLegacyMigrateWithFilter() {
-		$provider   = $this->getManualEnrolmentProvider();
-		$course_id  = $this->getSimpleCourseId();
-		$student_id = $this->getStandardStudentUserId();
-
-		$this->simulateUpgradingFromSensei2ToSensei3();
-		add_filter( 'sensei_is_legacy_enrolled', '__return_true' );
-
-		$this->assertNotEmpty( get_option( 'sensei_enrolment_legacy' ), 'The site-wide legacy enrolment flag should have been set.' );
-
-		$is_enrolled = $provider->is_enrolled( $student_id, $course_id );
-		$this->assertTrue( $this->wasLegacyEnrolmentChecked( $student_id, $course_id ), 'Legacy enrolment status for user should have been checked.' );
-		$this->assertTrue( $is_enrolled, 'The user should have been enrolled due to legacy enrolment migration filter.' );
 	}
 
 	/**
@@ -145,9 +127,9 @@ class Sensei_Course_Manual_Enrolment_Provider_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests to make sure student is enrolled only when the term meta is set.
+	 * Tests to make sure student is enrolled only when the user meta is set directly in provider state.
 	 */
-	public function testIsEnrolledWithTermMeta() {
+	public function testIsEnrolledWithDirectEnrolment() {
 		$provider   = $this->getManualEnrolmentProvider();
 		$course_id  = $this->getSimpleCourseId();
 		$student_id = $this->getStandardStudentUserId();
@@ -156,11 +138,11 @@ class Sensei_Course_Manual_Enrolment_Provider_Test extends WP_UnitTestCase {
 
 		$is_enrolled = $provider->is_enrolled( $student_id, $course_id );
 		$this->assertFalse( $this->wasLegacyEnrolmentChecked( $student_id, $course_id ), 'Legacy enrolment status for user should not have been checked.' );
-		$this->assertTrue( $is_enrolled, 'The user should have been enrolled when the term meta was set.' );
+		$this->assertTrue( $is_enrolled, 'The user should have been enrolled when directly enrolled in provider state.' );
 
 		$this->directlyWithdrawStudent( $student_id, $course_id );
 		$is_enrolled_post_withdrawal = $provider->is_enrolled( $student_id, $course_id );
-		$this->assertFalse( $is_enrolled_post_withdrawal, 'The user should have been withdrawn when the term meta was deleted.' );
+		$this->assertFalse( $is_enrolled_post_withdrawal, 'The user should have been withdrawn when the user was directly withdrawn from provider state storage.' );
 	}
 
 	/**
@@ -174,10 +156,9 @@ class Sensei_Course_Manual_Enrolment_Provider_Test extends WP_UnitTestCase {
 
 		$this->assertFalse( $provider->is_enrolled( $student_id, $course_id ), 'Student should not be enrolled before we enrol them.' );
 
-		$provider->enrol_student( $student_id, $course_id );
+		$provider->enrol_learner( $student_id, $course_id );
 
 		$this->assertTrue( $provider->is_enrolled( $student_id, $course_id ), 'Student should now be enrolled.' );
-		$this->assertNotEmpty( get_term_meta( $student_term->term_id, Sensei_Course_Manual_Enrolment_Provider::META_PREFIX_MANUAL_STATUS . $course_id, true ), 'Term meta should be set to store the manual enrolment status.' );
 	}
 
 	/**
@@ -192,10 +173,71 @@ class Sensei_Course_Manual_Enrolment_Provider_Test extends WP_UnitTestCase {
 		$this->directlyEnrolStudent( $student_id, $course_id );
 		$this->assertTrue( $provider->is_enrolled( $student_id, $course_id ), 'Student should be enrolled after directly enrolling them.' );
 
-		$provider->withdraw_student( $student_id, $course_id );
+		$provider->withdraw_learner( $student_id, $course_id );
 
 		$this->assertFalse( $provider->is_enrolled( $student_id, $course_id ), 'Student should not be enrolled after withdrawing them from the course.' );
-		$this->assertEmpty( get_term_meta( $student_term->term_id, Sensei_Course_Manual_Enrolment_Provider::META_PREFIX_MANUAL_STATUS . $course_id, true ), 'Term meta should not be set that would store the manual enrolment status.' );
+	}
+
+	/**
+	 * Test debug messages are generated correctly for learner without legacy migration.
+	 */
+	public function testDebugEnrolledNoLegacy() {
+		$provider   = $this->getManualEnrolmentProvider();
+		$course_id  = $this->getSimpleCourseId();
+		$student_id = $this->getStandardStudentUserId();
+
+		$debug          = $provider->debug( $student_id, $course_id );
+		$expected_debug = [
+			__( 'Learner manual enrollment <strong>was not migrated</strong> from a legacy version of Sensei LMS.', 'sensei-lms' ),
+		];
+
+		$this->assertEquals( $expected_debug, $debug );
+	}
+
+	/**
+	 * Test debug messages are generated correctly for a learner with legacy migration who wasn't enrolled from legacy.
+	 */
+	public function testDebugEnrolledLegacyNotEnrolled() {
+		$provider   = $this->getManualEnrolmentProvider();
+		$course_id  = $this->getSimpleCourseId();
+		$student_id = $this->getStandardStudentUserId();
+
+		// Set the legacy enrolment status.
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$provider_state   = $course_enrolment->get_provider_state( $provider, $student_id );
+		$provider_state->set_stored_value( Sensei_Course_Manual_Enrolment_Provider::DATA_KEY_LEGACY_MIGRATION, false );
+		$provider_state->save();
+
+		$debug          = $provider->debug( $student_id, $course_id );
+		$expected_debug = [
+			__( 'Learner <strong>did have</strong> course progress at the time of manual enrollment migration.', 'sensei-lms' ),
+			__( 'Manual enrollment <strong>was not provided</strong> to the learner on legacy migration.', 'sensei-lms' ),
+		];
+
+		$this->assertEquals( $expected_debug, $debug );
+	}
+
+	/**
+	 * Test debug messages are generated correctly for a learner with legacy migration who was enrolled from legacy.
+	 */
+	public function testDebugEnrolledLegacyEnrolled() {
+		$provider   = $this->getManualEnrolmentProvider();
+		$course_id  = $this->getSimpleCourseId();
+		$student_id = $this->getStandardStudentUserId();
+
+		// Set the legacy migration status.
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$provider_state   = $course_enrolment->get_provider_state( $provider, $student_id );
+		$provider_state->set_stored_value( Sensei_Course_Manual_Enrolment_Provider::DATA_KEY_LEGACY_MIGRATION, true );
+		$provider_state->save();
+
+		$debug          = $provider->debug( $student_id, $course_id );
+		$expected_debug = [
+			__( 'Learner <strong>did have</strong> course progress at the time of manual enrollment migration.', 'sensei-lms' ),
+			__( 'Manual enrollment <strong>was provided</strong> to the learner on legacy migration.', 'sensei-lms' ),
+		];
+
+		$this->assertEquals( $expected_debug, $debug );
 	}
 
 	/**

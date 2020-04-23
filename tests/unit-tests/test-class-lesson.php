@@ -297,6 +297,8 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Lesson::maybe_start_lesson
 	 */
 	public function testMaybeStartLessonEnrolled() {
+		$this->resetCourseEnrolmentManager();
+
 		$user_id = wp_create_user( 'getlearnertestuser', 'password', 'getlearnertestuser@sensei-test.com' );
 		wp_set_current_user( $user_id );
 

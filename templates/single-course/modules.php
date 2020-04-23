@@ -10,7 +10,7 @@
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     2.1.0
+ * @version     3.0.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -113,7 +113,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 										<?php
 										$course_id = Sensei()->lesson->get_course_id( get_the_ID() );
-										if ( Sensei_Utils::is_preview_lesson( get_the_ID() ) && ! Sensei_Utils::user_started_course( $course_id, get_current_user_id() ) ) {
+										if ( Sensei_Utils::is_preview_lesson( get_the_ID() ) && ! Sensei_Course::is_user_enrolled( $course_id ) ) {
 
 											echo wp_kses_post( Sensei()->frontend->sensei_lesson_preview_title_tag( $course_id ) );
 

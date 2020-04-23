@@ -45,6 +45,7 @@ class Sensei_Data_Cleaner {
 		'question-type',
 		'question-category',
 		'lesson-tag',
+		'sensei_learner',
 	);
 
 	/**
@@ -204,6 +205,7 @@ class Sensei_Data_Cleaner {
 		'sensei_answers_[0-9]+_[0-9]+',
 		'sensei_answers_feedback_[0-9]+_[0-9]+',
 		'quiz_grades_[0-9]+_[0-9]+',
+		'sensei_comment_counts_[0-9]+',
 	);
 
 	/**
@@ -214,6 +216,10 @@ class Sensei_Data_Cleaner {
 	private static $user_meta_keys = array(
 		'^sensei_hide_menu_settings_notice$',
 		'^_module_progress_[0-9]+_[0-9]+$',
+		'^%BLOG_PREFIX%sensei_learner_calculated_version$',
+		'^%BLOG_PREFIX%sensei_course_enrolment_[0-9]+$',
+		'^%BLOG_PREFIX%sensei_enrolment_providers_state$',
+		'^%BLOG_PREFIX%sensei_enrolment_providers_journal$',
 	);
 
 	/**
@@ -388,6 +394,8 @@ class Sensei_Data_Cleaner {
 		global $wpdb;
 
 		foreach ( self::$user_meta_keys as $meta_key ) {
+			$meta_key = str_replace( '%BLOG_PREFIX%', preg_quote( $wpdb->get_blog_prefix(), null ), $meta_key );
+
 			$wpdb->query(
 				$wpdb->prepare(
 					"DELETE FROM {$wpdb->usermeta} WHERE meta_key RLIKE %s",

@@ -1,7 +1,5 @@
 <?php
 
-require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-helpers.php';
-
 /**
  * Tests for Sensei_Course_Enrolment class.
  *
@@ -9,6 +7,7 @@ require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-he
  */
 class Sensei_Course_Enrolment_Test extends WP_UnitTestCase {
 	use Sensei_Course_Enrolment_Test_Helpers;
+	use Sensei_Scheduler_Test_Helpers;
 
 	/**
 	 * Setup function.
@@ -19,6 +18,7 @@ class Sensei_Course_Enrolment_Test extends WP_UnitTestCase {
 		$this->factory = new Sensei_Factory();
 
 		self::resetEnrolmentProviders();
+		self::restoreShimScheduler();
 	}
 
 	/**
@@ -121,6 +121,24 @@ class Sensei_Course_Enrolment_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Check that unpublished courses return `false` for `is_enrolled`.
+	 */
+	public function testEnrolmentCheckUnpublishedCourse() {
+		$course_id  = $this->factory->course->create(
+			[
+				'post_status' => 'draft',
+			]
+		);
+		$student_id = $this->createStandardStudent();
+		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Always_Provides::class );
+		$this->prepareEnrolmentManager();
+
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+
+		$this->assertFalse( $course_enrolment->is_enrolled( $student_id ), 'Students cannot be enrolled in unpublished courses.' );
+	}
+
+	/**
 	 * Check for positive result when positive and negative provider exist. Checks for case when positive is registered second.
 	 */
 	public function testEnrolmentCheckPositivePrevailsSecond() {
@@ -189,6 +207,57 @@ class Sensei_Course_Enrolment_Test extends WP_UnitTestCase {
 		$course_enrolment_b = Sensei_Course_Enrolment::get_course_instance( $course_id );
 		$is_enrolled_b      = $course_enrolment_b->is_enrolled( $student_id );
 		$this->assertTrue( $is_enrolled_b, 'Cache should refresh on version chnage and this version of the provider should provide enrolment.' );
+	}
+
+	/**
+	 * Tests to make sure a provider version bump produces a new result version hash.
+	 */
+	public function testHashChangesOnProviderVersionChange() {
+		Sensei_Test_Enrolment_Provider_Version_Morph::$version = 1;
+
+		$course_id        = $this->getSimpleCourse();
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+
+		$this->resetAndSetUpVersionedProvider( false );
+
+		$initial_version_hash = $course_enrolment->get_current_enrolment_result_version();
+
+		$this->resetAndSetUpVersionedProvider( true ); // Bump version.
+
+		$this->assertNotEquals( $initial_version_hash, $course_enrolment->get_current_enrolment_result_version(), 'Provider version bump should produce a new result version' );
+	}
+
+	/**
+	 * Tests to make sure a course salt reset produces a new result version hash.
+	 */
+	public function testHashChangesOnCourseSaltReset() {
+		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Always_Provides::class );
+		$this->prepareEnrolmentManager();
+
+		$course_id        = $this->getSimpleCourse();
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+
+		$initial_version_hash = $course_enrolment->get_current_enrolment_result_version();
+
+		$course_enrolment->reset_course_enrolment_salt();
+
+		$this->assertNotEquals( $initial_version_hash, $course_enrolment->get_current_enrolment_result_version(), 'Course salt reset should produce a new result version' );
+	}
+
+	/**
+	 * Tests to make sure a site salt reset produces a new result version hash.
+	 */
+	public function testHashChangesOnSiteSaltReset() {
+		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Always_Provides::class );
+		$this->prepareEnrolmentManager();
+
+		$course_id        = $this->getSimpleCourse();
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+
+		$initial_version_hash = $course_enrolment->get_current_enrolment_result_version();
+		Sensei_Course_Enrolment_Manager::instance()->reset_site_salt();
+
+		$this->assertNotEquals( $initial_version_hash, $course_enrolment->get_current_enrolment_result_version(), 'Site salt reset should produce a new result version' );
 	}
 
 	/**
@@ -291,6 +360,111 @@ class Sensei_Course_Enrolment_Test extends WP_UnitTestCase {
 		$course_enrolment->is_enrolled( $student_id, false );
 
 		$this->assertFalse( has_term( $student_term->term_id, Sensei_PostTypes::LEARNER_TAXONOMY_NAME, $course_id ), 'Student term associated should be removed when enrolment was removed' );
+	}
+
+	/**
+	 * Tests getting a fresh provider state result.
+	 */
+	public function testGetProviderStateFresh() {
+		$provider_class = Sensei_Test_Enrolment_Provider_Always_Provides::class;
+		$this->addEnrolmentProvider( $provider_class );
+		$this->prepareEnrolmentManager();
+
+		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
+		$provider          = $enrolment_manager->get_enrolment_provider_by_id( $provider_class::ID );
+		$course_id         = $this->getSimpleCourse();
+		$student_id        = $this->createStandardStudent();
+
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$provider_state   = $course_enrolment->get_provider_state( $provider, $student_id );
+
+		$this->assertTrue( $provider_state instanceof Sensei_Enrolment_Provider_State );
+	}
+
+	/**
+	 * Tests getting a provider state result that has persisted.
+	 */
+	public function testGetProviderStateSaved() {
+		$course_id     = $this->getSimpleCourse();
+		$student_id    = $this->createStandardStudent();
+		$persisted_set = '{"' . $course_id . '":{"always-provides":{"test":1234}}}';
+		update_user_meta( $student_id, Sensei_Enrolment_Provider_State_Store::get_provider_state_store_meta_key(), $persisted_set );
+
+		$provider_class = Sensei_Test_Enrolment_Provider_Always_Provides::class;
+		$this->addEnrolmentProvider( $provider_class );
+		$this->prepareEnrolmentManager();
+
+		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
+		$provider          = $enrolment_manager->get_enrolment_provider_by_id( $provider_class::ID );
+		$course_enrolment  = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$provider_state    = $course_enrolment->get_provider_state( $provider, $student_id );
+
+		$this->assertTrue( $provider_state instanceof Sensei_Enrolment_Provider_State );
+		$this->assertEquals( 1234, $provider_state->get_stored_value( 'test' ), 'Persisted stored value should be retrieved' );
+	}
+
+	/**
+	 * Tests recalculating enrolment for all users.
+	 */
+	public function testRecalculateEnrolmentAllUsers() {
+		$course_id         = $this->getSimpleCourse();
+		$other_user_ids    = $this->factory()->user->create_many( 2 );
+		$enrolled_user_ids = $this->factory()->user->create_many( 3 );
+		$all_user_ids      = array_merge( $enrolled_user_ids, $other_user_ids );
+
+		foreach ( $other_user_ids as $user_id ) {
+			$this->turnStudentIntoCrook( $user_id );
+		}
+
+		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Denies_Crooks::class );
+		$this->prepareEnrolmentManager();
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+
+		$course_salt = $course_enrolment->get_course_enrolment_salt();
+
+		// First, ensure we've calculated all users.
+		foreach ( $all_user_ids as $user_id ) {
+			$course_enrolment->is_enrolled( $user_id );
+		}
+
+		$job = $course_enrolment->recalculate_enrolment();
+		wp_cache_flush();
+
+		foreach ( $all_user_ids as $user_id ) {
+			$this->assertEquals( '', get_user_meta( $user_id, $course_enrolment->get_enrolment_results_meta_key(), true ), 'All users should have an enrolment result invalidated' );
+		}
+		$this->assertNotEquals( $course_enrolment->get_course_enrolment_salt(), $course_salt, 'The course salt should have been reset' );
+
+		$this->assertTrue( $job instanceof Sensei_Enrolment_Course_Calculation_Job, 'Returned job should be an instance of Sensei_Enrolment_Course_Calculation_Job' );
+		$this->assertNotFalse( Sensei_Scheduler_Shim::get_next_scheduled( $job ), 'Job should have been scheduled' );
+	}
+
+	/**
+	 * Tests retrieval of enrolled users IDs.
+	 */
+	public function testGetEnrolledUserIds() {
+		$course_id         = $this->getSimpleCourse();
+		$other_user_ids    = $this->factory()->user->create_many( 2 );
+		$enrolled_user_ids = $this->factory()->user->create_many( 3 );
+		$all_user_ids      = array_merge( $enrolled_user_ids, $other_user_ids );
+
+		foreach ( $other_user_ids as $user_id ) {
+			$this->turnStudentIntoCrook( $user_id );
+		}
+
+		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Denies_Crooks::class );
+		$this->prepareEnrolmentManager();
+
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+
+		$this->assertEquals( [], $course_enrolment->get_enrolled_user_ids(), 'Before we calculate enrolment, no one should be marked as enrolled in course' );
+
+		// First, ensure we've calculated all users.
+		foreach ( $all_user_ids as $user_id ) {
+			$course_enrolment->is_enrolled( $user_id );
+		}
+
+		$this->assertEquals( $enrolled_user_ids, $course_enrolment->get_enrolled_user_ids(), 'We should only get the IDs of students who should be enrolled' );
 	}
 
 	/**
