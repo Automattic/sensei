@@ -83,12 +83,7 @@ jobs:
       language: node_js
       node_js: '10.17'
       script:
-        - npm run lint-jsx
-    - stage: test
-      language: node_js
-      node_js: '10.17'
-      script:
-        - npm run lint-js-wpcom
+        - npm run lint-js
     - stage: test
       language: node_js
       node_js: '10.17'
