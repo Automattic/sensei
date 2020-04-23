@@ -4,7 +4,7 @@
  * Handles script and stylesheet loading.
  *
  * @package Sensei\Assets
- * @since   1.3.0
+ * @since   3.1.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
