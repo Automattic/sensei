@@ -193,7 +193,10 @@ class Sensei_Main {
 	 * @var Sensei_Enrolment_Job_Scheduler
 	 */
 	private $enrolment_scheduler;
+
 	/**
+	 * Onboarding wizard.
+	 *
 	 * @var Sensei_Onboarding
 	 */
 	private $onboarding;
