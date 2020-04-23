@@ -1096,7 +1096,7 @@ class Sensei_Course {
 	 * @param string $fields (default: 'all'). WP only allows 3 types, but we will limit it to only 'ids' or 'all'
 	 * @return array{ type WP_Post }  $posts_array
 	 */
-	public function course_lessons( $course_id = 0, $post_status = 'publish', $fields = 'all' ) {
+	public function course_lessons( $course_id = 0, $post_status = array( 'publish', 'private' ), $fields = 'all' ) {
 
 		if ( is_a( $course_id, 'WP_Post' ) ) {
 			$course_id = $course_id->ID;
