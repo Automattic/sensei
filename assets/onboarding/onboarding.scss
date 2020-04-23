@@ -8,6 +8,13 @@
     justify-content: center;
     background: #fff;
     padding: 8px;
+
+    .woocommerce-stepper {
+      width: 100%;
+      &__steps {
+        margin: 0;
+      }
+    }
   }
 
   &__container {
