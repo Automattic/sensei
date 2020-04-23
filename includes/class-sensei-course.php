@@ -2845,7 +2845,12 @@ class Sensei_Course {
 			return;
 		}
 
-		$course_lessons_post_status = isset( $wp_query ) && $wp_query->is_preview() ? 'all' : 'publish';
+		$course_lessons_post_status = isset( $wp_query ) && $wp_query->is_preview() ? 'all' : array( 'publish' );
+
+		// Only get private posts if user has proper capabilities.
+		if ( current_user_can( 'read_private_posts' ) && ! $wp_query->is_preview() ) {
+			$course_lessons_post_status[] = 'private';
+		}
 
 		$course_lesson_query_args = array(
 			'post_status'      => $course_lessons_post_status,
@@ -2892,6 +2897,7 @@ class Sensei_Course {
 				'fields'         => 'ids',
 				'meta_key'       => '_lesson_course',
 				'meta_value'     => intval( $course_id ),
+				'post_status'    => $course_lessons_post_status,
 			)
 		);
 		if ( ! empty( $course_lesson_order ) ) {

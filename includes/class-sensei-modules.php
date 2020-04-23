@@ -1623,7 +1623,12 @@ class Sensei_Core_Modules {
 
 		}
 
-		$course_lessons_post_status = isset( $wp_query ) && $wp_query->is_preview() ? 'all' : 'publish';
+		$course_lessons_post_status = isset( $wp_query ) && $wp_query->is_preview() ? 'all' : array( 'publish' );
+
+		// Only get private posts if user has proper capabilities.
+		if ( current_user_can( 'read_private_posts' ) && ! $wp_query->is_preview() ) {
+			$course_lessons_post_status[] = 'private';
+		}
 
 		$args = array(
 			'post_type'        => 'lesson',
