@@ -1198,12 +1198,18 @@ class Sensei_Course {
 	 */
 	public function course_lesson_count( $course_id = 0 ) {
 
+		// Only get private posts if user has proper capabilities.
+		$post_status = array( 'publish' );
+		if ( current_user_can( 'read_private_posts' ) ) {
+			$post_status[] = 'private';
+		}
+
 		$lesson_args   = array(
 			'post_type'        => 'lesson',
 			'posts_per_page'   => -1,
 			'meta_key'         => '_lesson_course',
 			'meta_value'       => $course_id,
-			'post_status'      => 'publish',
+			'post_status'      => $post_status,
 			'suppress_filters' => 0,
 			'fields'           => 'ids', // less data to retrieve
 		);
