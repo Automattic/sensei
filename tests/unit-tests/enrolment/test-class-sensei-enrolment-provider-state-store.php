@@ -151,7 +151,7 @@ class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 		$course_id     = $this->getSimpleCourse();
 		$student_id    = $this->createStandardStudent();
 		$persisted_set = '{"' . $course_id . '":{"always-provides":{"test":1234}}}';
-		update_user_meta( $student_id, Sensei_Enrolment_Provider_State_Store::META_ENROLMENT_PROVIDERS_STATE, $persisted_set );
+		update_user_meta( $student_id, Sensei_Enrolment_Provider_State_Store::get_provider_state_store_meta_key(), $persisted_set );
 
 		$provider_class = Sensei_Test_Enrolment_Provider_Always_Provides::class;
 		$this->addEnrolmentProvider( $provider_class );
@@ -167,7 +167,7 @@ class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 		$provider_state->save();
 
 		$expected_persisted_set = '{"' . $course_id . '":{"always-provides":{"test":54321}}}';
-		$persisted_set          = get_user_meta( $student_id, Sensei_Enrolment_Provider_State_Store::META_ENROLMENT_PROVIDERS_STATE, true );
+		$persisted_set          = get_user_meta( $student_id, Sensei_Enrolment_Provider_State_Store::get_provider_state_store_meta_key(), true );
 		$this->assertEquals( $expected_persisted_set, $persisted_set, 'The changed stored value should have been persisted' );
 	}
 
@@ -178,7 +178,7 @@ class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 		$course_id     = $this->getSimpleCourse();
 		$student_id    = $this->createStandardStudent();
 		$persisted_set = '{"' . $course_id . '":{"always-provides":{"test":1234}}}';
-		update_user_meta( $student_id, Sensei_Enrolment_Provider_State_Store::META_ENROLMENT_PROVIDERS_STATE, $persisted_set );
+		update_user_meta( $student_id, Sensei_Enrolment_Provider_State_Store::get_provider_state_store_meta_key(), $persisted_set );
 
 		$provider_class = Sensei_Test_Enrolment_Provider_Always_Provides::class;
 		$this->addEnrolmentProvider( $provider_class );
@@ -190,7 +190,7 @@ class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 		$provider_state    = $course_enrolment->get_provider_state( $provider, $student_id );
 
 		// Background remove user meta.
-		delete_user_meta( $student_id, Sensei_Enrolment_Provider_State_Store::META_ENROLMENT_PROVIDERS_STATE );
+		delete_user_meta( $student_id, Sensei_Enrolment_Provider_State_Store::get_provider_state_store_meta_key() );
 
 		// This isn't a change in the stored value.
 		$provider_state->set_stored_value( 'test', 1234 );
@@ -198,7 +198,7 @@ class Sensei_Enrolment_Provider_State_Store_Test extends WP_UnitTestCase {
 		$provider_state->save();
 
 		$expected_persisted_set = null;
-		$persisted_set          = get_user_meta( $student_id, Sensei_Enrolment_Provider_State_Store::META_ENROLMENT_PROVIDERS_STATE, true );
+		$persisted_set          = get_user_meta( $student_id, Sensei_Enrolment_Provider_State_Store::get_provider_state_store_meta_key(), true );
 		$this->assertEquals( $expected_persisted_set, $persisted_set, 'The state stores should NOT have been persisted without a change' );
 	}
 

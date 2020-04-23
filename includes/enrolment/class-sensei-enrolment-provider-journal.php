@@ -29,7 +29,6 @@ class Sensei_Enrolment_Provider_Journal implements JsonSerializable {
 	 */
 	private $history;
 
-
 	/**
 	 * The message log of the provider. Each element of the array has the format:
 	 *     [
