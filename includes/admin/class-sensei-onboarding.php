@@ -36,6 +36,9 @@ class Sensei_Onboarding {
 						Sensei()->assets->enqueue( 'sensei-onboarding', 'onboarding/onboarding.css', [ 'wp-components' ] );
 					}
 				);
+
+				add_filter( 'admin_body_class', [ $this, 'add_body_class' ] );
+				add_filter( 'show_admin_bar', '__return_false' );
 			}
 		}
 
@@ -58,4 +61,8 @@ class Sensei_Onboarding {
 		<?php
 	}
 
+	function add_body_class( $classes ) {
+		$classes .= ' sensei-wp-admin-fullscreen ';
+		return $classes;
+	}
 }
