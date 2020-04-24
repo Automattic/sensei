@@ -1,16 +1,27 @@
-import { useEffect } from '@wordpress/element';
+import { useLayoutEffect } from '@wordpress/element';
 
-export function useFullScreen() {
+/**
+ * Apply fullscreen view by hiding wp-admin elements via CSS.
+ *
+ * Allows setting additional classes on the body element.
+ * Fullscreen and classes are added when the component is mounted, and removed when unmounted.
+ *
+ * @param {string[]} bodyClasses Additional classes to be set.
+ */
+export function useFullScreen( bodyClasses = [] ) {
+	bodyClasses.push( 'sensei-wp-admin-fullscreen' );
+
 	function setupGlobalStyles() {
 		toggleGlobalStyles( true );
 		return toggleGlobalStyles.bind( null, false );
 	}
 
 	function toggleGlobalStyles( enabled ) {
-		document.body.classList.toggle( 'sensei-wp-admin-fullscreen', enabled );
-		document.body.classList.toggle( 'sensei-color', enabled );
+		if ( enabled ) document.body.classList.add( ...bodyClasses );
+		else document.body.classList.remove( ...bodyClasses );
+
 		document.documentElement.classList.toggle( 'wp-toolbar', ! enabled );
 	}
 
-	useEffect( setupGlobalStyles, [] );
+	useLayoutEffect( setupGlobalStyles, [] );
 }

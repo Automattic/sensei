@@ -4,7 +4,7 @@ import { useFullScreen } from './use-fullscreen';
 import { steps } from './steps.jsx';
 
 function SenseiOnboardingPage() {
-	useFullScreen();
+	useFullScreen( [ 'sensei-color', 'sensei-onboarding__page' ] );
 
 	const currentStep = steps[ 0 ];
 
