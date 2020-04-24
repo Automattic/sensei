@@ -672,7 +672,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	private function get_courses( $args ) {
 		$course_args = array(
 			'post_type'      => 'course',
-			'post_status'    => 'publish',
+			'post_status'    => array( 'publish', 'private' ),
 			'posts_per_page' => $args['per_page'],
 			'offset'         => $args['offset'],
 			'orderby'        => $args['orderby'],
