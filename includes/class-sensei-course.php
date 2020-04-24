@@ -2931,6 +2931,8 @@ class Sensei_Course {
 	public static function load_single_course_lessons_query() {
 		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Course::get_single_course_lessons_query' );
 
+		global $wp_query;
+
 		$args = self::get_single_course_lessons_args();
 
 		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Used for lesson loop on single course page. Reset in hook to `sensei_single_course_lessons_after`.
