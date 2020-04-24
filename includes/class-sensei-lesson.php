@@ -438,7 +438,7 @@ class Sensei_Lesson {
 			return;
 		}
 
-		if ( ! in_array( get_post_status( $lesson_id ), array( 'publish', 'future', 'pending' ), true ) ) {
+		if ( ! in_array( get_post_status( $lesson_id ), array( 'publish', 'future', 'pending', 'private' ), true ) ) {
 			return;
 		}
 
