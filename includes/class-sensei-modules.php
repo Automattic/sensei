@@ -1289,7 +1289,7 @@ class Sensei_Core_Modules {
 	public function taxonomy_column_content( $column_data, $column_name, $term_id ) {
 
 		$args = array(
-			'post_status'    => 'publish',
+			'post_status'    => array( 'publish', 'private' ),
 			'posts_per_page' => -1,
 			'tax_query'      => array(
 				array(
