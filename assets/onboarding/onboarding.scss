@@ -1,4 +1,7 @@
 @import '~@woocommerce/components/build-style/style.css';
+@import 'variables';
+@import 'colors';
+
 .sensei-onboarding {
 
   &__header {
@@ -11,8 +14,15 @@
 
     .woocommerce-stepper {
       width: 100%;
+
       &__steps {
         margin: 0;
+      }
+
+      &__step.is-complete, &__step.is-active {
+        .woocommerce-stepper__step-icon {
+          background: $secondary;
+        }
       }
     }
   }
