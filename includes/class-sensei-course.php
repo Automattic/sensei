@@ -322,6 +322,7 @@ class Sensei_Course {
 			'order'            => 'DESC',
 			'exclude'          => $post->ID,
 			'suppress_filters' => 0,
+			'post_status'      => array( 'publish', 'private' ),
 		);
 		$posts_array = get_posts( $post_args );
 
