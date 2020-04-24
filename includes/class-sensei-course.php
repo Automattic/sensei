@@ -2926,10 +2926,10 @@ class Sensei_Course {
 	 * @since 1.9.0
 	 * @global $wp_query
 	 *
-	 * @deprecated 3.0.0 Use `Sensei_Course::get_single_course_lessons_query` instead.
+	 * @deprecated 3.1.0 Use `Sensei_Course::get_single_course_lessons_query` instead.
 	 */
 	public static function load_single_course_lessons_query() {
-		_deprecated_function( __METHOD__, '3.0.0', 'Sensei_Course::get_single_course_lessons_query' );
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Course::get_single_course_lessons_query' );
 
 		$args = self::get_single_course_lessons_args();
 
