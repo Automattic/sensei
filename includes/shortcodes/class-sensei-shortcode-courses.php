@@ -118,6 +118,7 @@ class Sensei_Shortcode_Courses implements Sensei_Shortcode_Interface {
 			'orderby'        => $this->orderby,
 			'order'          => $this->order,
 			'posts_per_page' => $this->number,
+			'post_status'    => array( 'publish', 'private' ),
 
 		);
 
