@@ -285,7 +285,7 @@ class Sensei_Lesson {
 			'order'            => 'ASC',
 			'exclude'          => $post->ID,
 			'suppress_filters' => 0,
-			'post_status'      => [ 'publish', 'draft' ],
+			'post_status'      => array( 'publish', 'draft', 'private' ),
 		);
 		$posts_array = get_posts( $post_args );
 		// Build the HTML to Output
