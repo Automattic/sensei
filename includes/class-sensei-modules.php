@@ -980,9 +980,14 @@ class Sensei_Core_Modules {
 	 */
 	public function calculate_user_module_progress( $user_id = 0, $module_id = 0, $course_id = 0 ) {
 
+		$post_status = array( 'publish' );
+		if ( user_can( $user_id, 'read_private_posts' ) ) {
+			$post_status[] = 'private';
+		}
+
 		$args    = array(
 			'post_type'      => 'lesson',
-			'post_status'    => 'publish',
+			'post_status'    => $post_status,
 			'posts_per_page' => -1,
 			'tax_query'      => array(
 				array(
