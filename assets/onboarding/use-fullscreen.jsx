@@ -2,7 +2,7 @@ import { useEffect } from '@wordpress/element';
 
 import './fullscreen.scss';
 
-export function FullScreen( { children } ) {
+export function useFullScreen() {
 	function setupGlobalStyles() {
 		toggleGlobalStyles( true );
 		return toggleGlobalStyles.bind( null, false );
@@ -15,6 +15,4 @@ export function FullScreen( { children } ) {
 	}
 
 	useEffect( setupGlobalStyles, [] );
-
-	return <>{ children }</>;
 }
