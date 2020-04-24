@@ -709,7 +709,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	private function get_lessons( $args ) {
 		$lesson_args = array(
 			'post_type'      => 'lesson',
-			'post_status'    => 'publish',
+			'post_status'    => array( 'publish', 'private' ),
 			'posts_per_page' => $args['per_page'],
 			'offset'         => $args['offset'],
 			'orderby'        => $args['orderby'],
