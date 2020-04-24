@@ -3,6 +3,15 @@
 
 .sensei-onboarding {
 
+  &__page {
+    background: #f6f7f7;
+    color: #50575e;
+
+    * {
+      box-sizing: border-box
+    }
+  }
+
   &__header {
     border-bottom: 1px solid #dcdcde;
     display: flex;
@@ -13,6 +22,7 @@
 
     .woocommerce-stepper {
       width: 100%;
+
       &__steps {
         margin: 0;
       }
