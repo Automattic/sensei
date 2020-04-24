@@ -1,8 +1,11 @@
 import { Card, H } from '@woocommerce/components';
 import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
+import { useState } from '@wordpress/element';
+import { UsageModal } from './usage-modal.jsx';
 
 export function Welcome() {
+	const [ usageModalActive, toggleUsageModal ] = useState( false );
 	return (
 		<>
 			<div className="sensei-onboarding__title">
@@ -18,13 +21,20 @@ export function Welcome() {
 						'sensei-lms'
 					) }
 				</p>
-				<Button isPrimary className="sensei-button">
+				<Button
+					isPrimary
+					className="sensei-onboarding__button sensei-onboarding__button-card"
+					onClick={ () => toggleUsageModal( true ) }
+				>
 					{ __( 'Continue', 'sensei-lms' ) }
 				</Button>
 			</Card>
 			<div className="sensei-onboarding__skip">
 				<Button isLink>{ __( 'Not right now', 'sensei-lms' ) }</Button>
 			</div>
+			{ usageModalActive && (
+				<UsageModal onClose={ () => toggleUsageModal( false ) } />
+			) }
 		</>
 	);
 }
