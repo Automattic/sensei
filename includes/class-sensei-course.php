@@ -1244,7 +1244,7 @@ class Sensei_Course {
 			'author'           => $author_id,
 			'meta_key'         => '_lesson_course',
 			'meta_value'       => $course_id,
-			'post_status'      => 'publish',
+			'post_status'      => array( 'publish', 'private' ),
 			'suppress_filters' => 0,
 			'fields'           => 'ids', // less data to retrieve
 		);
