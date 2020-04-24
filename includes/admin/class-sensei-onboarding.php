@@ -43,14 +43,14 @@ class Sensei_Onboarding {
 				add_action(
 					'admin_print_scripts',
 					function() {
-						Sensei()->assets->enqueue( 'sensei-onboarding', 'onboarding/onboarding.js', [], true );
+						Sensei()->assets->enqueue( 'sensei-onboarding', 'onboarding/index.js', [], true );
 					}
 				);
 
 				add_action(
 					'admin_print_styles',
 					function() {
-						Sensei()->assets->enqueue( 'sensei-onboarding', 'onboarding/onboarding.css', [ 'wp-components' ] );
+						Sensei()->assets->enqueue( 'sensei-onboarding', 'onboarding/style.css', [ 'wp-components' ] );
 					}
 				);
 

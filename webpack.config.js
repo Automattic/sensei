@@ -21,6 +21,8 @@ const files = [
 	'js/ranges.js',
 	'js/settings.js',
 	'js/user-dashboard.js',
+	'onboarding/index.jsx',
+	'onboarding/style.scss',
 
 	'css/admin/email-signup.scss',
 	'css/frontend/sensei.scss',

@@ -1,7 +1,5 @@
 import { useEffect } from '@wordpress/element';
 
-import './fullscreen.scss';
-
 export function useFullScreen() {
 	function setupGlobalStyles() {
 		toggleGlobalStyles( true );

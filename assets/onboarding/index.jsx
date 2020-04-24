@@ -1,7 +1,6 @@
 import { Stepper } from '@woocommerce/components';
 import { render } from '@wordpress/element';
 import { useFullScreen } from './use-fullscreen';
-import './onboarding.scss';
 import { steps } from './steps.jsx';
 
 function SenseiOnboardingPage() {
