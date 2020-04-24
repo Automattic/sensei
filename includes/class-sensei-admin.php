@@ -963,11 +963,12 @@ class Sensei_Admin {
 
 			if ( $num_posts ) {
 
-				$published = intval( $num_posts->publish );
-				$post_type = get_post_type_object( $type );
+				$published            = intval( $num_posts->publish );
+				$published_as_private = intval( $num_posts->private );
+				$post_type            = get_post_type_object( $type );
 
 				$text = '%s ' . $post_type->labels->singular_name;
-				$text = sprintf( $text, number_format_i18n( $published ) );
+				$text = sprintf( $text, number_format_i18n( $published + $published_as_private ) );
 
 				if ( current_user_can( $post_type->cap->edit_posts ) ) {
 					$items[] = sprintf( '<a class="%1$s-count" href="edit.php?post_type=%1$s">%2$s</a>', $type, $text ) . "\n";
