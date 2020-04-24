@@ -2842,20 +2842,11 @@ class Sensei_Course {
 	}
 
 	/**
-	 * Get a wp_query object with with lessons of the current course.
-	 * It is designed to be used on the single-course template
-	 * and expects the global post to be a singular course.
+	 * Get single course lessons args.
 	 *
-	 * This function excludes lessons belonging to modules as they are
-	 * queried separately.
-	 *
-	 * @since 1.9.0
-	 * @since 3.0.0 Returns the WP_Query object.
-	 *
-	 * @return $wp_query
+	 * @return array $course_lesson_query_args
 	 */
-	public static function get_single_course_lessons_query() {
-
+	private static function get_single_course_lessons_args() {
 		global $post, $wp_query;
 
 		$course_id = $post->ID;
@@ -2921,7 +2912,47 @@ class Sensei_Course {
 
 		}
 
-		return new WP_Query( $course_lesson_query_args );
+		return $course_lesson_query_args;
+	}
+
+	/**
+	 * This function loads the global wp_query object with with lessons
+	 * of the current course. It is designed to be used on the single-course template
+	 * and expects the global post to be a singular course.
+	 *
+	 * This function excludes lessons belonging to modules as they are
+	 * queried separately.
+	 *
+	 * @since 1.9.0
+	 * @global $wp_query
+	 *
+	 * @deprecated 3.0.0 Use `Sensei_Course::get_single_course_lessons_query` instead.
+	 */
+	public static function load_single_course_lessons_query() {
+		_deprecated_function( __METHOD__, '3.0.0', 'Sensei_Course::get_single_course_lessons_query' );
+
+		$args = self::get_single_course_lessons_args();
+
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Used for lesson loop on single course page. Reset in hook to `sensei_single_course_lessons_after`.
+		$wp_query = new WP_Query( $args );
+	}
+
+	/**
+	 * Get a wp_query object with with lessons of the current course.
+	 * It is designed to be used on the single-course template
+	 * and expects the global post to be a singular course.
+	 *
+	 * This function excludes lessons belonging to modules as they are
+	 * queried separately.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @return WP_Query $wp_query
+	 */
+	public static function get_single_course_lessons_query() {
+		$args = self::get_single_course_lessons_args();
+
+		return new WP_Query( $args );
 	}
 
 	/**
