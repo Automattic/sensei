@@ -38,6 +38,6 @@
     "lint-css:fix": "npm run lint-css -- --fix",
     "run-phpcs": "./vendor/bin/phpcs --encoding=utf-8",
     "lint-js": "wp-scripts lint-js",
-    "lint-js:fix": "npm run lint-jsx -- --fix"
+    "lint-js:fix": "npm run lint-js -- --fix"
   }
 }
