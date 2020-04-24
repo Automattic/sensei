@@ -1869,7 +1869,7 @@ class Sensei_Course {
 		 */
 		return apply_filters( 'sensei_get_all_courses', $wp_query_obj->posts );
 
-	}//end get_all_courses()
+	}
 
 	/**
 	 * Generate the course meter component
@@ -1892,7 +1892,7 @@ class Sensei_Course {
 
 		return $progress_bar_html;
 
-	}//end get_progress_meter()
+	}
 
 	/**
 	 * Generate a statement that tells users
@@ -1927,7 +1927,7 @@ class Sensei_Course {
 		 */
 		return apply_filters( 'sensei_course_completion_statement', $statement );
 
-	}//end get_progress_statement()
+	}
 
 	/**
 	 * Output the course progress statement
@@ -1982,7 +1982,7 @@ class Sensei_Course {
 
 		echo wp_kses_post( $this->get_progress_meter( $percentage_completed ) );
 
-	}//end the_progress_meter()
+	}
 
 	/**
 	 * Checks how many lessons are completed
@@ -2013,7 +2013,7 @@ class Sensei_Course {
 
 		return $completed_lesson_ids;
 
-	}//end get_completed_lesson_ids()
+	}
 
 	/**
 	 * Calculate the perceantage completed in the course
@@ -2050,7 +2050,7 @@ class Sensei_Course {
 		 */
 		return apply_filters( 'sensei_course_completion_percentage', $percentage, $course_id, $user_id );
 
-	}//end get_completion_percentage()
+	}
 
 	/**
 	 * Block email notifications for the specific courses
@@ -2093,7 +2093,7 @@ class Sensei_Course {
 		}// end if
 
 		return $should_send;
-	}//end block_notification_emails()
+	}
 
 	/**
 	 * Render the course notification setting meta box
@@ -2110,7 +2110,7 @@ class Sensei_Course {
 		echo '<input id="disable_sensei_course_notification" ' . checked( $checked, true, false ) . ' type="checkbox" name="disable_sensei_course_notification" >';
 		echo '<label for="disable_sensei_course_notification">' . esc_html__( 'Disable notifications on this course?', 'sensei-lms' ) . '</label>';
 
-	}//end course_notification_meta_box_content()
+	}
 
 	/**
 	 * Store the setting for the course notification setting.
@@ -2135,7 +2135,7 @@ class Sensei_Course {
 
 		update_post_meta( $course_id, 'disable_notification', $new_val );
 
-	}//end save_course_notification_meta_box()
+	}
 
 	/**
 	 * Output a link to view course. The button text is different depending on the amount of preview lesson available.
@@ -2261,7 +2261,7 @@ class Sensei_Course {
 
 		return $classes;
 
-	}//end add_course_user_status_class()
+	}
 
 	/**
 	 * Prints out the course action buttons links
@@ -2372,7 +2372,7 @@ class Sensei_Course {
 			<?php
 		}// end if is user logged in
 
-	}//end the_course_action_buttons()
+	}
 
 	/**
 	 * This function alter the main query on the course archive page.
@@ -2430,7 +2430,7 @@ class Sensei_Course {
 
 		return $query;
 
-	}//end course_query_filter()
+	}
 
 	/**
 	 * Determine the class of the course loop
@@ -2481,7 +2481,7 @@ class Sensei_Course {
 		 */
 		return apply_filters( 'sensei_course_loop_content_class', $extra_classes, get_post() );
 
-	}//end get_course_loop_content_class()
+	}
 
 	/**
 	 * Get the number of columns set for Sensei courses
@@ -2556,7 +2556,7 @@ class Sensei_Course {
 		</form>
 
 		<?php
-	}//end course_archive_sorting()
+	}
 
 	/**
 	 * Output the course archive filter markup
@@ -2746,7 +2746,7 @@ class Sensei_Course {
 
 		echo wp_kses_post( apply_filters( 'course_archive_title', $html ) );
 
-	}//end archive_header()
+	}
 
 
 	/**
@@ -2783,7 +2783,7 @@ class Sensei_Course {
 			return '<p class="course-excerpt">' . get_post( get_the_ID() )->post_excerpt . '</p>';
 		}
 
-	}//end single_course_content()
+	}
 
 	/**
 	 * Output the the single course lessons title with markup.
@@ -2839,7 +2839,7 @@ class Sensei_Course {
 		 */
 		echo wp_kses_post( apply_filters( 'the_course_lessons_title', ob_get_clean() ) ); // output and filter the captured output and stop capturing.
 
-	}//end the_course_lessons_title()
+	}
 
 	/**
 	 * Get a wp_query object with with lessons of the current course.
@@ -2922,7 +2922,7 @@ class Sensei_Course {
 		}
 
 		return new WP_Query( $course_lesson_query_args );
-	}//end get_single_course_lessons_query()
+	}
 
 	/**
 	 * Flush the rewrite rules.
@@ -3191,7 +3191,7 @@ class Sensei_Course {
 
 		<?php
 
-	}//end the_title()
+	}
 
 	/**
 	 * Show the title on the course category pages
@@ -3223,7 +3223,7 @@ class Sensei_Course {
 
 		echo wp_kses_post( apply_filters( 'course_category_title', $html, $term->term_id ) );
 
-	}//end course_category_title()
+	}
 
 	/**
 	 * Alter the course query to respect the order set for courses and apply
@@ -3304,7 +3304,7 @@ class Sensei_Course {
 		 */
 		return apply_filters( 'sensei_course_is_prerequisite_complete', $prerequisite_complete, $course_id );
 
-	}//end is_prerequisite_complete()
+	}
 
 	/**
 	 * Allowing user to set course archive page as front page.
@@ -3443,7 +3443,7 @@ class Sensei_Course {
 		sensei_log_event( 'course_publish', $event_properties );
 	}
 
-}//end class
+}
 
 /**
  * Class WooThemes_Sensei_Course
