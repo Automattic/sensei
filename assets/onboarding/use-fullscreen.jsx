@@ -9,7 +9,7 @@ import { useLayoutEffect } from '@wordpress/element';
  * @param {string[]} bodyClasses Additional classes to be set.
  */
 export function useFullScreen( bodyClasses = [] ) {
-	bodyClasses.push( 'sensei-wp-admin-fullscreen' );
+	const classes = [ ...bodyClasses, 'sensei-wp-admin-fullscreen' ];
 
 	function setupGlobalStyles() {
 		toggleGlobalStyles( true );
@@ -17,11 +17,11 @@ export function useFullScreen( bodyClasses = [] ) {
 	}
 
 	function toggleGlobalStyles( enabled ) {
-		if ( enabled ) document.body.classList.add( ...bodyClasses );
-		else document.body.classList.remove( ...bodyClasses );
+		if ( enabled ) document.body.classList.add( ...classes );
+		else document.body.classList.remove( ...classes );
 
 		document.documentElement.classList.toggle( 'wp-toolbar', ! enabled );
 	}
 
-	useLayoutEffect( setupGlobalStyles, [] );
+	useLayoutEffect( setupGlobalStyles, [ bodyClasses ] );
 }
