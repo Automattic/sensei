@@ -1,0 +1,38 @@
+@import '~@woocommerce/components/build-style/style.css';
+@import 'fullscreen';
+
+.sensei-onboarding {
+
+	&__page {
+		background: #f6f7f7;
+		color: #50575e;
+
+		* {
+			box-sizing: border-box;
+		}
+	}
+
+	&__header {
+		border-bottom: 1px solid #dcdcde;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: #fff;
+		padding: 8px;
+
+		.woocommerce-stepper {
+			width: 100%;
+
+			&__steps {
+				margin: 0;
+			}
+		}
+	}
+
+	&__container {
+		max-width: 476px;
+		margin-left: auto;
+		margin-right: auto;
+		font-size: 16px;
+	}
+}

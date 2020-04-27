@@ -25,6 +25,9 @@
     "prettier": "npm:wp-prettier@1.19.1"
   },
   "dependencies": {
+    "@woocommerce/components": "4.0.0",
+    "@wordpress/components": "9.4.1",
+    "@wordpress/i18n": "3.11.0",
     "select2": "4.0.5"
   },
   "scripts": {

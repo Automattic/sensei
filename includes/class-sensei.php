@@ -195,6 +195,13 @@ class Sensei_Main {
 	private $enrolment_scheduler;
 
 	/**
+	 * Onboarding wizard.
+	 *
+	 * @var Sensei_Onboarding
+	 */
+	private $onboarding;
+
+	/**
 	 * Constructor method.
 	 *
 	 * @param  string $file The base file of the plugin.
@@ -330,7 +337,7 @@ class Sensei_Main {
 	 * @since 1.9.0
 	 */
 	public function initialize_global_objects() {
-		// Setup settings
+		// Setup settings.
 		$this->settings = new Sensei_Settings();
 
 		// Asset loading.
@@ -397,6 +404,9 @@ class Sensei_Main {
 
 			// Load Analysis Reports
 			$this->analysis = new Sensei_Analysis( $this->main_plugin_file_name );
+
+			// Loading onboarding page
+			$this->onboarding = new Sensei_Onboarding();
 
 			if ( $this->feature_flags->is_enabled( 'rest_api_testharness' ) ) {
 				$this->test_harness = new Sensei_Admin_Rest_Api_Testharness( $this->main_plugin_file_name );
