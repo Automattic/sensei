@@ -1,32 +1,35 @@
 <?php
 /**
- * Onboarding.
+ * Create Sensei pages during onboarding.
  *
  * @package Sensei\Onboarding
  * @since   1.3.0
  */
 
-namespace Sensei\Onboarding;
+namespace Sensei_Onboarding;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-
+/**
+ * Create Sensei base pages.
+ *
+ * @package Sensei_Onboarding
+ */
 class Pages {
 
 	/**
-	 * create_page function.
+	 * Create a page unless one already exists with the given slug.
 	 *
-	 * @access public
-	 * @param mixed  $slug
-	 * @param mixed  $option
-	 * @param string $page_title (default: '')
-	 * @param string $page_content (default: '')
-	 * @param int    $post_parent (default: 0)
-	 * @return integer $page_id
+	 * @param mixed  $slug         Page slug.
+	 * @param string $page_title   The page title.
+	 * @param string $page_content The content of the page.
+	 * @param int    $post_parent  Parent post ID.
+	 *
+	 * @return integer $page_id The ID of the created page.
 	 */
-	function create_page( $slug, $page_title = '', $page_content = '', $post_parent = 0 ) {
+	public function create_page( $slug, $page_title = '', $page_content = '', $post_parent = 0 ) {
 		global $wpdb;
 
 		$page_id = $wpdb->get_var( $wpdb->prepare( 'SELECT ID FROM ' . $wpdb->posts . ' WHERE post_name = %s LIMIT 1;', $slug ) );
@@ -49,26 +52,25 @@ class Pages {
 
 		return $page_id;
 
-	} // End create_page()
-
+	}
 
 	/**
-	 * create_pages function.
+	 * Create Courses and My Courses pages.
+	 * Updates Sensei settings Course page nad My Courses options.
 	 *
-	 * @access public
 	 * @return void
 	 */
-	function create_pages() {
+	public function create_pages() {
 
-		// Courses page
+		// Courses page.
 		$new_course_page_id = $this->create_page( esc_sql( _x( 'courses-overview', 'page_slug', 'sensei-lms' ) ), __( 'Courses', 'sensei-lms' ), '' );
 		Sensei()->settings->set( 'course_page', $new_course_page_id );
 
-		// User Dashboard page
+		// My Courses page.
 		$new_my_course_page_id = $this->create_page( esc_sql( _x( 'my-courses', 'page_slug', 'sensei-lms' ) ), __( 'My Courses', 'sensei-lms' ), '[sensei_user_courses]' );
 		Sensei()->settings->set( 'my_course_page', $new_my_course_page_id );
 
-	} // End create_pages()
+	}
 
 
 }
