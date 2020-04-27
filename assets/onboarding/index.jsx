@@ -1,24 +1,28 @@
-import { Stepper } from '@woocommerce/components';
 import { render } from '@wordpress/element';
 import { useFullScreen } from '../react-hooks';
 import { steps } from './steps.jsx';
+import { QueryStringRouter } from './query-string-router';
+import Navigation from './navigation';
+import ContentContainer from './content-container';
 
-function SenseiOnboardingPage() {
+/**
+ * Query string name used to route the onboarding wizard.
+ */
+const QUERY_STRING_NAME = 'onboarding-step';
+
+const SenseiOnboardingPage = () => {
 	useFullScreen( [ 'sensei-color', 'sensei-onboarding__page' ] );
 
-	const currentStep = steps[ 0 ];
-
 	return (
-		<>
-			<div className="sensei-onboarding__header">
-				<Stepper currentStep={ currentStep.key } steps={ steps } />
-			</div>
-			<div className="sensei-onboarding__container">
-				{ currentStep.container }
-			</div>
-		</>
+		<QueryStringRouter
+			routes={ steps }
+			queryStringName={ QUERY_STRING_NAME }
+		>
+			<Navigation routes={ steps } />
+			<ContentContainer />
+		</QueryStringRouter>
 	);
-}
+};
 
 render(
 	<SenseiOnboardingPage />,
