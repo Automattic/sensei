@@ -135,17 +135,15 @@ class Sensei_Frontend {
 
 		if ( ! $disable_js ) {
 
-			$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-
 			// Course Archive javascript.
 			if ( is_post_type_archive( 'course' ) ) {
 
-				wp_register_script( 'sensei-course-archive-js', esc_url( Sensei()->plugin_url . 'assets/js/frontend/course-archive' . $suffix . '.js' ), array( 'jquery' ), '1', true );
+				Sensei()->assets->register( 'sensei-course-archive-js', 'js/frontend/course-archive.js', [ 'jquery' ], true );
 				wp_enqueue_script( 'sensei-course-archive-js' );
 
 			}
 
-			wp_register_script( Sensei()->token . '-user-dashboard', esc_url( Sensei()->plugin_url . 'assets/js/user-dashboard' . $suffix . '.js' ), array( 'jquery-ui-tabs' ), Sensei()->version, true );
+			Sensei()->assets->register( Sensei()->token . '-user-dashboard', 'js/user-dashboard.js', [ 'jquery-ui-tabs' ], true );
 
 			// Allow additional scripts to be loaded.
 			do_action( 'sensei_additional_scripts' );
@@ -166,8 +164,7 @@ class Sensei_Frontend {
 
 		if ( ! $disable_styles ) {
 
-			wp_register_style( Sensei()->token . '-frontend', Sensei()->plugin_url . 'assets/css/frontend/sensei.css', '', Sensei()->version, 'screen' );
-			wp_enqueue_style( Sensei()->token . '-frontend' );
+			Sensei()->assets->enqueue( Sensei()->token . '-frontend', 'css/frontend/sensei.css', [], 'screen' );
 
 			// Allow additional stylesheets to be loaded.
 			do_action( 'sensei_additional_styles' );

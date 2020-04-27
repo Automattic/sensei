@@ -13,6 +13,7 @@ notifications:
 branches:
   only:
   - master
+  - next
 cache:
   directories:
   - vendor
@@ -87,7 +88,7 @@ jobs:
       language: node_js
       node_js: '10.17'
       script:
-        - npm run lint-js-wpcom
+        - npm run build
     - stage: test
       php: 7.2
       script:

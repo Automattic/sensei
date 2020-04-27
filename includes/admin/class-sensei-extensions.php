@@ -51,7 +51,7 @@ final class Sensei_Extensions {
 	public function enqueue_admin_assets() {
 		$screen = get_current_screen();
 		if ( in_array( $screen->id, array( 'sensei-lms_page_sensei-extensions' ), true ) ) {
-			wp_enqueue_style( 'sensei-admin-extensions', Sensei()->plugin_url . 'assets/css/extensions.css', '', Sensei()->version, 'screen' );
+			Sensei()->assets->enqueue( 'sensei-admin-extensions', 'css/extensions.css', [], 'screen' );
 		}
 	}
 

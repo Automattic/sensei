@@ -138,11 +138,8 @@ class Sensei_Course {
 	public function register_admin_scripts() {
 		$screen = get_current_screen();
 
-		// Allow developers to load non-minified versions of scripts.
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-
 		if ( 'course' === $screen->id ) {
-			wp_enqueue_script( 'sensei-admin-course-edit', Sensei()->plugin_url . 'assets/js/admin/course-edit' . $suffix . '.js', array( 'jquery', 'sensei-core-select2' ), Sensei()->version, true );
+			Sensei()->assets->enqueue( 'sensei-admin-course-edit', 'js/admin/course-edit.js', [ 'jquery', 'sensei-core-select2' ], true );
 		}
 	}
 
