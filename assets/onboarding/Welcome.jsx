@@ -3,9 +3,18 @@ import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { UsageModal } from './usage-modal.jsx';
+import { usePageApi } from './use-page-api.jsx';
 
 export function Welcome() {
 	const [ usageModalActive, toggleUsageModal ] = useState( false );
+
+	const [ data, submit ] = usePageApi( 'welcome' );
+
+	function submitPage( allowUsageTracking ) {
+		toggleUsageModal( false );
+		submit( { usage_tracking: allowUsageTracking } );
+	}
+
 	return (
 		<>
 			<div className="sensei-onboarding__title">
@@ -33,7 +42,11 @@ export function Welcome() {
 				<Button isLink>{ __( 'Not right now', 'sensei-lms' ) }</Button>
 			</div>
 			{ usageModalActive && (
-				<UsageModal onClose={ () => toggleUsageModal( false ) } />
+				<UsageModal
+					tracking={ data.usage_tracking }
+					onClose={ () => toggleUsageModal( false ) }
+					onContinue={ submitPage }
+				/>
 			) }
 		</>
 	);

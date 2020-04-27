@@ -4,7 +4,7 @@ import interpolateComponents from 'interpolate-components';
 import { __ } from '@wordpress/i18n';
 import { useState } from '@wordpress/element';
 
-export function UsageModal( { onContinue, onClose } ) {
+export function UsageModal( { tracking, onContinue, onClose } ) {
 	const trackingMessage = interpolateComponents( {
 		mixedString: __(
 			'Get improved features and faster fixes by sharing non-sensitive data via {{link}}usage tracking{{/link}} ' +
@@ -22,7 +22,7 @@ export function UsageModal( { onContinue, onClose } ) {
 		},
 	} );
 
-	const [ allowTracking, setAllowTracking ] = useState( false );
+	const [ allowTracking, setAllowTracking ] = useState( tracking );
 
 	return (
 		<Modal
