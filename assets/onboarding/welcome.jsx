@@ -8,11 +8,11 @@ import { usePageApi } from './use-page-api.jsx';
 export function Welcome() {
 	const [ usageModalActive, toggleUsageModal ] = useState( false );
 
-	const [ data, submit ] = usePageApi( 'welcome' );
+	const { data, submit, isBusy } = usePageApi( 'welcome' );
 
-	function submitPage( allowUsageTracking ) {
+	async function submitPage( allowUsageTracking ) {
+		await submit( { usage_tracking: allowUsageTracking } );
 		toggleUsageModal( false );
-		submit( { usage_tracking: allowUsageTracking } );
 	}
 
 	return (
@@ -44,6 +44,7 @@ export function Welcome() {
 			{ usageModalActive && (
 				<UsageModal
 					tracking={ data.usage_tracking }
+					isSubmitting={ isBusy }
 					onClose={ () => toggleUsageModal( false ) }
 					onContinue={ submitPage }
 				/>
