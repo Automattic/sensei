@@ -1,13 +1,5 @@
 import { updateRouteURL, getCurrentRouteFromURL } from './url-functions';
-
-const mockSearch = ( search ) => {
-	Object.defineProperty( window, 'location', {
-		value: {
-			search,
-		},
-		writable: true,
-	} );
-};
+import { mockSearch } from '../../tests-helper/functions';
 
 describe( 'URL functions', () => {
 	describe( 'updateRouteURL', () => {
