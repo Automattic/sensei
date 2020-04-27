@@ -10,6 +10,7 @@
   "main": "gulpfile.js",
   "devDependencies": {
     "@automattic/calypso-build": "6.0.0",
+    "@testing-library/react": "10.0.3",
     "@wordpress/babel-preset-default": "4.12.1",
     "@wordpress/jest-preset-default": "6.0.0",
     "@wordpress/scripts": "8.0.1",
