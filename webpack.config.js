@@ -1,6 +1,8 @@
 const path = require( 'path' );
+const process = require( 'process' );
 const { fromPairs } = require( 'lodash' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
+const isDevelopment = process.env.NODE_ENV !== 'production';
 
 const files = [
 	'js/admin/course-edit.js',
@@ -68,6 +70,9 @@ function getWebpackConfig( env, argv ) {
 		output: {
 			path: path.resolve( './assets/dist' ),
 		},
+		devtool:
+			process.env.SOURCEMAP ||
+			( isDevelopment ? 'eval-source-map' : false ),
 		module: {
 			rules: [ FileLoader, ...webpackConfig.module.rules ],
 		},
