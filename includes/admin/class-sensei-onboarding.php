@@ -28,11 +28,19 @@ class Sensei_Onboarding {
 	public $page_slug;
 
 	/**
+	 * Creation of Sensei pages.
+	 *
+	 * @var \Sensei_Onboarding\Pages
+	 */
+	public $pages;
+
+	/**
 	 * Sensei_Onboarding constructor.
 	 */
 	public function __construct() {
 
 		$this->page_slug = 'sensei_onboarding';
+		$this->pages = new Sensei_Onboarding\Pages();
 
 		add_action( 'rest_api_init', [ $this, 'register_rest_api' ] );
 		if ( is_admin() ) {
@@ -231,7 +239,7 @@ class Sensei_Onboarding {
 	 */
 	public function api_welcome_submit( $data ) {
 		Sensei()->usage_tracking->set_tracking_enabled( (bool) $data['usage_tracking'] );
-		// TODO Sensei()->admin->create_pages();
+		$this->pages->create_pages();
 
 		return true;
 	}
