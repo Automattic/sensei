@@ -50,4 +50,28 @@ describe( 'React hooks', () => {
 			expect( eventHandlerMock ).toBeCalled();
 		} );
 	} );
+
+	describe( 'useFullScreen', () => {
+		it( 'Should add classes to the body when mounted and remove when unmounted', () => {
+			const testClassName = 'test-class';
+
+			const TestComponent = () => {
+				useFullScreen( [ testClassName ] );
+
+				return <div />;
+			};
+
+			const { unmount } = render( <TestComponent /> );
+
+			expect(
+				document.body.classList.contains( testClassName )
+			).toBeTruthy();
+
+			unmount();
+
+			expect(
+				document.body.classList.contains( testClassName )
+			).toBeFalsy();
+		} );
+	} );
 } );
