@@ -1,6 +1,7 @@
 import { render, fireEvent } from '@testing-library/react';
 
 import { QueryStringRouter, useQueryStringRouter } from './index';
+import ContentContainer from '../content-container';
 import { mockSearch } from '../../tests-helper/functions';
 
 const ContainerWithNextButton = ( { nextKey, children } ) => {
@@ -55,12 +56,10 @@ const baseRoutes = [
 ];
 
 describe( '<QueryStringRouter />', () => {
-	const ContainerTest = () => useQueryStringRouter().currentContainer;
-
 	it( 'Should render the first route', () => {
 		const { queryByText } = render(
 			<QueryStringRouter routes={ baseRoutes } queryStringName="route">
-				<ContainerTest />
+				<ContentContainer />
 			</QueryStringRouter>
 		);
 
@@ -70,7 +69,7 @@ describe( '<QueryStringRouter />', () => {
 	it( 'Should navigate to the next route', () => {
 		const { queryByText, queryByTestId } = render(
 			<QueryStringRouter routes={ baseRoutes } queryStringName="route">
-				<ContainerTest />
+				<ContentContainer />
 			</QueryStringRouter>
 		);
 
@@ -82,7 +81,7 @@ describe( '<QueryStringRouter />', () => {
 	it( 'Should go to the correct route after on popstate', () => {
 		const { queryByText, queryByTestId } = render(
 			<QueryStringRouter routes={ baseRoutes } queryStringName="route">
-				<ContainerTest />
+				<ContentContainer />
 			</QueryStringRouter>
 		);
 
