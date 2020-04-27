@@ -4253,8 +4253,9 @@ class Sensei_Lesson {
 
 		if ( intval( $lesson_prerequisite ) > 0 ) {
 
-			// If the user hasn't completed the prereq then hide the current actions
-			$show_actions = Sensei_Utils::user_completed_lesson( $lesson_prerequisite, $user_id );
+			// If the user hasn't completed the prereq then hide the current actions.
+			// (If the user is either the lesson creator or admin, show actions)
+			$show_actions = Sensei_Utils::user_completed_lesson( $lesson_prerequisite, $user_id ) || (int) get_post_field( 'post_author', $lesson_id ) === $user_id || current_user_can( 'create_users' );
 
 		}
 
