@@ -30,7 +30,7 @@ class Sensei_Onboarding {
 	/**
 	 * Creation of Sensei pages.
 	 *
-	 * @var \Sensei_Onboarding\Pages
+	 * @var Sensei_Onboarding_Pages
 	 */
 	public $pages;
 
@@ -40,7 +40,7 @@ class Sensei_Onboarding {
 	public function __construct() {
 
 		$this->page_slug = 'sensei_onboarding';
-		$this->pages = new Sensei_Onboarding\Pages();
+		$this->pages     = new Sensei_Onboarding_Pages();
 
 		add_action( 'rest_api_init', [ $this, 'register_rest_api' ] );
 		if ( is_admin() ) {

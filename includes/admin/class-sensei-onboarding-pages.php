@@ -6,8 +6,6 @@
  * @since   1.3.0
  */
 
-namespace Sensei_Onboarding;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -17,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @package Sensei_Onboarding
  */
-class Pages {
+class Sensei_Onboarding_Pages {
 
 	/**
 	 * Create a page unless one already exists with the given slug.

@@ -126,7 +126,7 @@ class Sensei_Autoloader {
 			'Sensei_Learners_Main'                       => 'admin/class-sensei-learners-main.php',
 			'Sensei_Email_Signup_Form'                   => 'email-signup/class-sensei-email-signup-form.php',
 			'Sensei_Onboarding'                          => 'admin/class-sensei-onboarding.php',
-			'Sensei_Onboarding\Pages'                    => 'admin/class-sensei-onboarding-pages.php',
+			'Sensei_Onboarding_Pages'                    => 'admin/class-sensei-onboarding-pages.php',
 
 			/**
 			 * Shortcodes
