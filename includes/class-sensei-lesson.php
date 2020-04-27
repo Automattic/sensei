@@ -4240,7 +4240,7 @@ class Sensei_Lesson {
 	public static function footer_quiz_call_to_action( $lesson_id = 0, $user_id = 0 ) {
 
 		$lesson_id = empty( $lesson_id ) ? get_the_ID() : $lesson_id;
-		$user_id   = empty( $lesson_id ) ? get_current_user_id() : $user_id;
+		$user_id   = empty( $user_id ) ? get_current_user_id() : $user_id;
 
 		if ( ! sensei_can_user_view_lesson( $lesson_id, $user_id ) ) {
 			return;
