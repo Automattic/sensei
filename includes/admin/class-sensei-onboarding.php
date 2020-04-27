@@ -192,6 +192,10 @@ class Sensei_Onboarding {
 		$page      = $request->get_param( 'page' );
 		$method    = $request->get_method();
 		$endpoints = [
+			'welcome' => [
+				'GET'  => [ $this, 'api_welcome_get' ],
+				'POST' => [ $this, 'api_welcome_submit' ],
+			],
 		];
 
 		if ( ! ( array_key_exists( $page, $endpoints ) && array_key_exists( $method, $endpoints[ $page ] ) ) ) {
@@ -206,4 +210,30 @@ class Sensei_Onboarding {
 			return call_user_func( $endpoint );
 		}
 	}
+
+	/**
+	 * Welcome step data.
+	 *
+	 * @return array Data used on welcome page.
+	 */
+	public function api_welcome_get() {
+		return [
+			'usage_tracking' => Sensei()->usage_tracking->get_tracking_enabled(),
+		];
+	}
+
+	/**
+	 * Submit form on welcome step.
+	 *
+	 * @param array $data Form data.
+	 *
+	 * @return bool Success.
+	 */
+	public function api_welcome_submit( $data ) {
+		Sensei()->usage_tracking->set_tracking_enabled( (bool) $data['usage_tracking'] );
+		// TODO Sensei()->admin->create_pages();
+
+		return true;
+	}
+
 }
