@@ -337,7 +337,7 @@ class Sensei_Main {
 	 * @since 1.9.0
 	 */
 	public function initialize_global_objects() {
-		// Setup settings
+		// Setup settings.
 		$this->settings = new Sensei_Settings();
 
 		// Asset loading.
