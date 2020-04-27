@@ -34,7 +34,9 @@ class Sensei_Onboarding {
 
 		$this->page_slug = 'sensei_onboarding';
 
+		add_action( 'rest_api_init', [ $this, 'register_rest_api' ] );
 		if ( is_admin() ) {
+
 			add_action( 'admin_menu', [ $this, 'admin_menu' ], 20 );
 			add_action( 'current_screen', [ $this, 'add_onboarding_help_tab' ] );
 
@@ -102,9 +104,7 @@ class Sensei_Onboarding {
 				[ $this, 'onboarding_page' ]
 			);
 		}
-
 	}
-
 
 	/**
 	 * Render app container for Onboarding Wizard.
@@ -154,5 +154,56 @@ class Sensei_Onboarding {
 					'<p><a href="' . admin_url( 'admin.php?page=' . $this->page_slug ) . '" class="button button-primary" data-sensei-log-event="' . $link_track_event . '">' . __( 'Setup wizard', 'sensei-lms' ) . '</a></p>',
 			]
 		);
+	}
+	/**
+	 * Register REST API route.
+	 */
+	public function register_rest_api() {
+
+		register_rest_route(
+			'sensei/v1',
+			'/onboarding/(?P<page>[a-zA-Z0-9-]+)',
+			array(
+				'methods'             => [ 'GET', 'POST' ],
+				'callback'            => [ $this, 'handle_api_request' ],
+				'permission_callback' => [ $this, 'can_user_access_rest_api' ],
+			)
+		);
+	}
+
+	/**
+	 * Check user permission for REST API access.
+	 *
+	 * @return bool Whether the user can access the Onboarding REST API.
+	 */
+	public function can_user_access_rest_api() {
+		return current_user_can( 'manage_sensei' );
+	}
+
+	/**
+	 * Process onboarding API request.
+	 *
+	 * @param WP_REST_Request $request The request object.
+	 *
+	 * @return mixed Result for the called endpoint.
+	 */
+	public function handle_api_request( $request ) {
+
+		$page      = $request->get_param( 'page' );
+		$method    = $request->get_method();
+		$endpoints = [
+		];
+
+		if ( ! ( array_key_exists( $page, $endpoints ) && array_key_exists( $method, $endpoints[ $page ] ) ) ) {
+			return new WP_Error( 'invalid_page', __( 'Page not found', 'sensei-lms' ), [ 'status' => 404 ] );
+		}
+		$endpoint = $endpoints[ $page ][ $method ];
+
+		if ( 'POST' === $method ) {
+			$data = $request->get_json_params();
+			return call_user_func( $endpoint, $data );
+		} else {
+			return call_user_func( $endpoint );
+		}
 	}
 }
