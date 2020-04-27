@@ -163,7 +163,7 @@ class Sensei_Main {
 	 *
 	 * @var Sensei_Usage_Tracking
 	 */
-	private $usage_tracking;
+	public $usage_tracking;
 
 	/**
 	 * @var $id

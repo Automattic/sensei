@@ -65,7 +65,7 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 		return Sensei()->settings->get( self::SENSEI_SETTING_NAME ) || false;
 	}
 
-	protected function set_tracking_enabled( $enable ) {
+	public function set_tracking_enabled( $enable ) {
 		Sensei()->settings->set( self::SENSEI_SETTING_NAME, $enable );
 
 		// Refresh settings in-memory so we get the right value.
