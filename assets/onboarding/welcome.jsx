@@ -1,4 +1,4 @@
-import { Card, H } from '@woocommerce/components';
+import { Card, H, Link } from '@woocommerce/components';
 import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
 import { useState } from '@wordpress/element';
@@ -39,7 +39,7 @@ export function Welcome() {
 				</Button>
 			</Card>
 			<div className="sensei-onboarding__skip">
-				<Button isLink>{ __( 'Not right now', 'sensei-lms' ) }</Button>
+				<Link href="edit.php?post_type=course" type="wp-admin">{ __( 'Not right now', 'sensei-lms' ) }</Link>
 			</div>
 			{ usageModalActive && (
 				<UsageModal
