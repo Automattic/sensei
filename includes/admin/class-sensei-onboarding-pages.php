@@ -28,12 +28,11 @@ class Sensei_Onboarding_Pages {
 	 * @return integer $page_id The ID of the created page.
 	 */
 	public function create_page( $slug, $page_title = '', $page_content = '', $post_parent = 0 ) {
-		global $wpdb;
 
-		$page_id = $wpdb->get_var( $wpdb->prepare( 'SELECT ID FROM ' . $wpdb->posts . ' WHERE post_name = %s LIMIT 1;', $slug ) );
-		if ( $page_id ) :
-			return $page_id;
-		endif;
+		$page = get_page_by_path( $slug );
+		if ( $page ) {
+			return $page->ID;
+		}
 
 		$page_data = array(
 			'post_status'    => 'publish',
