@@ -2947,7 +2947,7 @@ class Sensei_Course {
 	 * This function excludes lessons belonging to modules as they are
 	 * queried separately.
 	 *
-	 * @since 3.0.0
+	 * @since 3.1.0
 	 *
 	 * @return WP_Query $wp_query
 	 */
