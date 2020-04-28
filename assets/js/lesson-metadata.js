@@ -562,7 +562,15 @@ jQuery(document).ready( function() {
 	 */
 	jQuery( '#add-question-actions' ).on( 'change', 'select.question-type-select', function() {
 		// Show the correct Question Type
-		var questionType = jQuery(this).val();
+		var select       = jQuery(this);
+		var title        = jQuery( '#question-edit-panel > .ui-sortable-handle > span' );
+		var questionType = select.val();
+
+		if ( title.length > 0 ) {
+			var questionLabel = select.find( `option[value="${questionType}"]` ).text();
+
+			title.text( questionLabel );
+		}
 
 		jQuery( '#add-new-question' ).find( 'div.question_default_fields' ).hide();
 		jQuery( '#add-new-question' ).find( 'div.question_boolean_fields' ).hide();
