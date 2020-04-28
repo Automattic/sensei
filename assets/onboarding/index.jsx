@@ -1,9 +1,8 @@
 import { render } from '@wordpress/element';
 import { useFullScreen } from '../react-hooks';
 import { steps } from './steps.jsx';
-import { QueryStringRouter } from './query-string-router';
+import { QueryStringRouter, Route } from './query-string-router';
 import Navigation from './navigation';
-import ContentContainer from './content-container';
 
 /**
  * Query string name used to route the onboarding wizard.
@@ -14,12 +13,22 @@ const SenseiOnboardingPage = () => {
 	useFullScreen( [ 'sensei-color', 'sensei-onboarding__page' ] );
 
 	return (
-		<QueryStringRouter
-			routes={ steps }
-			queryStringName={ QUERY_STRING_NAME }
-		>
+		<QueryStringRouter queryStringName={ QUERY_STRING_NAME }>
 			<Navigation routes={ steps } />
-			<ContentContainer />
+			<div className="sensei-onboarding__container">
+				<Route route="welcome" defaultRoute>
+					{ steps[0].container }
+				</Route>
+				<Route route="purpose">
+					{ steps[1].container }
+				</Route>
+				<Route route="features">
+					{ steps[2].container }
+				</Route>
+				<Route route="ready">
+					{ steps[3].container }
+				</Route>
+			</div>
 		</QueryStringRouter>
 	);
 };
