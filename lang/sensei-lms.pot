@@ -2638,6 +2638,10 @@ msgstr ""
 msgid "Your student has started a course"
 msgstr ""
 
+#: includes/enrolment/class-sensei-course-enrolment-manager.php:510
+msgid "<strong>Sensei LMS</strong> has detected an incompatible version of WooCommerce Paid Courses. Learners will not be able to access their courses until it is upgraded to version 2.0.0 or greater."
+msgstr ""
+
 #: includes/enrolment/class-sensei-course-manual-enrolment-provider.php:62
 msgid "Manual"
 msgstr ""

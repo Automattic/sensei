@@ -85,9 +85,11 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 	 * Test o make sure the recalculation happens only once when triggering course enrolment checks.
 	 */
 	public function testDeferredEnrolmentCheckCalled() {
+		global $wpdb;
+
 		$course_id               = $this->getSimpleCourse();
 		$student_id              = $this->createStandardStudent();
-		$course_results_meta_key = Sensei_Course_Enrolment::META_PREFIX_ENROLMENT_RESULTS . $course_id;
+		$course_results_meta_key = $wpdb->get_blog_prefix() . Sensei_Course_Enrolment::META_PREFIX_ENROLMENT_RESULTS . $course_id;
 
 		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Always_Provides::class );
 		$this->prepareEnrolmentManager();
@@ -109,9 +111,11 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 	 * Test o make sure the recalculation happens immediately once we're inside/after shutdown action.
 	 */
 	public function testEnrolmentCheckCalledImmediatelyDuringShutdown() {
+		global $wpdb;
+
 		$course_id               = $this->getSimpleCourse();
 		$student_id              = $this->createStandardStudent();
-		$course_results_meta_key = Sensei_Course_Enrolment::META_PREFIX_ENROLMENT_RESULTS . $course_id;
+		$course_results_meta_key = $wpdb->get_blog_prefix() . Sensei_Course_Enrolment::META_PREFIX_ENROLMENT_RESULTS . $course_id;
 
 		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Always_Provides::class );
 		$this->prepareEnrolmentManager();
@@ -235,12 +239,12 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 		$simple_mock->expects( $this->once() )->method( 'is_enrolled' )->with( $this->equalTo( $student_id ) );
 		$dog_mock->expects( $this->once() )->method( 'is_enrolled' )->with( $this->equalTo( $student_id ) );
 
-		$user_meta = get_user_meta( $student_id, Sensei_Course_Enrolment_Manager::LEARNER_CALCULATION_META_NAME, true );
+		$user_meta = get_user_meta( $student_id, Sensei_Course_Enrolment_Manager::get_learner_calculated_version_meta_key(), true );
 		$this->assertEmpty( $user_meta );
 
 		Sensei_Course_Enrolment_Manager::instance()->recalculate_enrolments( $student_id );
 
-		$user_meta = get_user_meta( $student_id, Sensei_Course_Enrolment_Manager::LEARNER_CALCULATION_META_NAME, true );
+		$user_meta = get_user_meta( $student_id, Sensei_Course_Enrolment_Manager::get_learner_calculated_version_meta_key(), true );
 		$this->assertEquals( $enrolment_manager->get_enrolment_calculation_version(), $user_meta );
 	}
 
@@ -256,7 +260,7 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 		$student_id        = $this->createStandardStudent();
 		update_user_meta(
 			$student_id,
-			Sensei_Course_Enrolment_Manager::LEARNER_CALCULATION_META_NAME,
+			Sensei_Course_Enrolment_Manager::get_learner_calculated_version_meta_key(),
 			$enrolment_manager->get_enrolment_calculation_version()
 		);
 

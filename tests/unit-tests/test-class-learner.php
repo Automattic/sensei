@@ -205,7 +205,7 @@ class Sensei_Class_Student_Test extends WP_UnitTestCase {
 			$this->directlyEnrolStudent( $student_id, $course_id );
 		}
 
-		$user_meta = get_user_meta( $student_id, Sensei_Course_Enrolment_Manager::LEARNER_CALCULATION_META_NAME, true );
+		$user_meta = get_user_meta( $student_id, Sensei_Course_Enrolment_Manager::get_learner_calculated_version_meta_key(), true );
 		$this->assertEmpty( $user_meta, 'Learner should not be calculated prior to querying courses' );
 
 		// This should run
@@ -214,7 +214,7 @@ class Sensei_Class_Student_Test extends WP_UnitTestCase {
 		];
 		$query_enrolled_courses = $learner_manager->get_enrolled_courses_query( $student_id, $base_query_args );
 
-		$user_meta = get_user_meta( $student_id, Sensei_Course_Enrolment_Manager::LEARNER_CALCULATION_META_NAME, true );
+		$user_meta = get_user_meta( $student_id, Sensei_Course_Enrolment_Manager::get_learner_calculated_version_meta_key(), true );
 		$this->assertEquals( Sensei_Course_Enrolment_Manager::instance()->get_enrolment_calculation_version(), $user_meta, 'Learner should have been calculated prior to querying courses' );
 
 		$this->assertTrue( $query_enrolled_courses instanceof WP_Query, 'Returned value should be instance of WP_Query' );
