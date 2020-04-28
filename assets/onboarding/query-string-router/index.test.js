@@ -1,6 +1,6 @@
 import { render, fireEvent } from '@testing-library/react';
 
-import { QueryStringRouter, Route, useQueryStringRouter } from './index';
+import QueryStringRouter, { Route, useQueryStringRouter } from './index';
 import { mockSearch } from '../../tests-helper/functions';
 
 const NextButton = ( { nextKey } ) => {

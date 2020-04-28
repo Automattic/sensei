@@ -16,7 +16,7 @@ const QueryStringRouterContext = createContext();
 /**
  * Query string router component.
  */
-export const QueryStringRouter = ( { paramName, children } ) => {
+const QueryStringRouter = ( { paramName, children } ) => {
 	// Current route.
 	const [ currentRoute, setRoute ] = useState(
 		getCurrentRouteFromURL( paramName )
@@ -50,6 +50,8 @@ export const QueryStringRouter = ( { paramName, children } ) => {
 		</QueryStringRouterContext.Provider>
 	);
 };
+
+export default QueryStringRouter;
 
 /**
  * Export `Route` component as part of the query string router.
