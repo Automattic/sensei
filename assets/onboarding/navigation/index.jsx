@@ -10,9 +10,9 @@ import { useQueryStringRouter } from '../query-string-router';
  *
  * @param {Array}    steps        Steps list.
  * @param {string[]} visitedSteps Key of the visited steps.
- * @param {Function} updateRoute  Function that update the step.
+ * @param {Function} goTo         Function that update the step.
  */
-const getStepsWithNavigationState = ( steps, visitedSteps, updateRoute ) =>
+const getStepsWithNavigationState = ( steps, visitedSteps, goTo ) =>
 	steps.map( ( step, index ) => {
 		const nextKey = get( steps, [ index + 1, 'key' ], null );
 
@@ -23,7 +23,7 @@ const getStepsWithNavigationState = ( steps, visitedSteps, updateRoute ) =>
 
 		if ( visitedSteps.includes( step.key ) ) {
 			stepWithNavigationState.onClick = () => {
-				updateRoute( step.key );
+				goTo( step.key );
 			};
 		}
 
@@ -34,7 +34,7 @@ const getStepsWithNavigationState = ( steps, visitedSteps, updateRoute ) =>
  * Navigation component.
  */
 const Navigation = ( { steps } ) => {
-	const { currentRoute, updateRoute } = useQueryStringRouter();
+	const { currentRoute, goTo } = useQueryStringRouter();
 
 	// Visited steps.
 	const [ visitedSteps, setVisitedSteps ] = useState( [] );
@@ -47,8 +47,7 @@ const Navigation = ( { steps } ) => {
 
 	// Update steps with navigation state.
 	const stepsWithNavigationState = useMemo(
-		() =>
-			getStepsWithNavigationState( steps, visitedSteps, updateRoute ),
+		() => getStepsWithNavigationState( steps, visitedSteps, goTo ),
 		[ steps, visitedSteps ]
 	);
 

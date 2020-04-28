@@ -24,14 +24,14 @@ export const QueryStringRouter = ( { paramName, children } ) => {
 
 	// Provider value.
 	const providerValue = useMemo( () => {
-		const updateRoute = ( newRoute, replace = false ) => {
+		const goTo = ( newRoute, replace = false ) => {
 			updateRouteURL( paramName, newRoute, replace );
 			setRoute( newRoute );
 		};
 
 		return {
 			currentRoute,
-			updateRoute,
+			goTo,
 		};
 	}, [ currentRoute, paramName, setRoute ] );
 

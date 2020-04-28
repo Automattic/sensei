@@ -4,12 +4,12 @@ import { QueryStringRouter, Route, useQueryStringRouter } from './index';
 import { mockSearch } from '../../tests-helper/functions';
 
 const NextButton = ( { nextKey } ) => {
-	const { updateRoute } = useQueryStringRouter();
+	const { goTo } = useQueryStringRouter();
 
 	return (
 		<button
 			onClick={ () => {
-				updateRoute( nextKey );
+				goTo( nextKey );
 			} }
 			data-testid="next-button"
 		/>

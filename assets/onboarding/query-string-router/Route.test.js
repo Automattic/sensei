@@ -4,11 +4,11 @@ import { render } from '@testing-library/react';
 import { QueryStringRouter, Route, useQueryStringRouter } from './index';
 
 const GoToSecondRoute = () => {
-	const { updateRoute } = useQueryStringRouter();
+	const { goTo } = useQueryStringRouter();
 
 	useEffect( () => {
-		updateRoute( 'two' );
-	}, [ updateRoute ] );
+		goTo( 'two' );
+	}, [ goTo ] );
 
 	return null;
 };

@@ -5,14 +5,14 @@ import { useQueryStringRouter } from './query-string-router';
  * Mock component for tests purpose. REMOVE ME when the final is ready!
  */
 const Welcome = () => {
-	const { updateRoute } = useQueryStringRouter();
+	const { goTo } = useQueryStringRouter();
 
 	return (
 		<>
 			<h1>Welcome!</h1>
 			<button
 				onClick={ () => {
-					updateRoute( 'purpose' );
+					goTo( 'purpose' );
 				} }
 			>
 				Next
