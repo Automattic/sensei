@@ -79,7 +79,7 @@ describe( '<QueryStringRouter />', () => {
 	} );
 
 	it( 'Should go to the correct route after on popstate', () => {
-		const { queryByText, queryByTestId } = render(
+		const { queryByText } = render(
 			<QueryStringRouter routes={ baseRoutes } queryStringName="route">
 				<ContentContainer />
 			</QueryStringRouter>
