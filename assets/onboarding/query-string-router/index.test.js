@@ -1,75 +1,31 @@
 import { render, fireEvent } from '@testing-library/react';
 
-import { QueryStringRouter, useQueryStringRouter } from './index';
-import ContentContainer from '../content-container';
+import { QueryStringRouter, Route, useQueryStringRouter } from './index';
 import { mockSearch } from '../../tests-helper/functions';
 
-const ContainerWithNextButton = ( { nextKey, children } ) => {
+const NextButton = ( { nextKey } ) => {
 	const { updateRoute } = useQueryStringRouter();
 
 	return (
-		<div>
-			{ children }
-			<button
-				onClick={ () => {
-					updateRoute( nextKey );
-				} }
-				data-testid="next-button"
-			>
-				{ 'Next' }
-			</button>
-		</div>
+		<button
+			onClick={ () => {
+				updateRoute( nextKey );
+			} }
+			data-testid="next-button"
+		/>
 	);
 };
 
-const baseRoutes = [
-	{
-		key: 'first',
-		container: (
-			<ContainerWithNextButton nextKey="second">
-				One
-			</ContainerWithNextButton>
-		),
-		label: 'First',
-		isComplete: false,
-	},
-	{
-		key: 'second',
-		container: (
-			<ContainerWithNextButton nextKey="third">
-				Two
-			</ContainerWithNextButton>
-		),
-		label: 'Second',
-		isComplete: false,
-	},
-	{
-		key: 'third',
-		container: (
-			<ContainerWithNextButton nextKey="first">
-				Three
-			</ContainerWithNextButton>
-		),
-		label: 'Third',
-		isComplete: false,
-	},
-];
-
 describe( '<QueryStringRouter />', () => {
-	it( 'Should render the first route', () => {
-		const { queryByText } = render(
-			<QueryStringRouter routes={ baseRoutes } queryStringName="route">
-				<ContentContainer />
-			</QueryStringRouter>
-		);
-
-		expect( queryByText( 'One' ) ).toBeTruthy();
-	} );
-
 	it( 'Should navigate to the next route', () => {
 		const { queryByText, queryByTestId } = render(
-			<QueryStringRouter routes={ baseRoutes } queryStringName="route">
-				<ContentContainer />
+			<QueryStringRouter queryStringName="route">
+				<Route route="one" defaultRoute>
+					One <NextButton nextKey="two" />
+				</Route>
+				<Route route="two">
+					Two <NextButton nextKey="three" />
+				</Route>
 			</QueryStringRouter>
 		);
 
@@ -80,12 +36,17 @@ describe( '<QueryStringRouter />', () => {
 
 	it( 'Should go to the correct route after on popstate', () => {
 		const { queryByText } = render(
-			<QueryStringRouter routes={ baseRoutes } queryStringName="route">
-				<ContentContainer />
+			<QueryStringRouter queryStringName="route">
+				<Route route="one" defaultRoute>
+					One <NextButton nextKey="two" />
+				</Route>
+				<Route route="two">
+					Two <NextButton nextKey="three" />
+				</Route>
 			</QueryStringRouter>
 		);
 
-		mockSearch( 'route=second' );
+		mockSearch( 'route=two' );
 		fireEvent.popState( window );
 
 		expect( queryByText( 'Two' ) ).toBeTruthy();

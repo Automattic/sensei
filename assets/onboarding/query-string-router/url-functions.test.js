@@ -38,13 +38,12 @@ describe( 'URL functions', () => {
 			expect( currentRoute ).toEqual( 'test-route' );
 		} );
 
-		it( 'Should return the first key as fallback when there is no a route', () => {
+		it( 'Should return empty key when there is no a route', () => {
 			mockSearch( 'route=' );
 
-			const routes = [ { key: 'first-route' } ];
-			const currentRoute = getCurrentRouteFromURL( 'route', routes );
+			const currentRoute = getCurrentRouteFromURL( 'route' );
 
-			expect( currentRoute ).toEqual( 'first-route' );
+			expect( currentRoute ).toBeNull();
 		} );
 	} );
 } );

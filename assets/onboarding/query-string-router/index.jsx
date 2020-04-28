@@ -16,15 +16,14 @@ const QueryStringRouterContext = createContext();
 /**
  * Query string router component.
  */
-export const QueryStringRouter = ( { routes, queryStringName, children } ) => {
+export const QueryStringRouter = ( { queryStringName, children } ) => {
 	// Current route.
 	const [ currentRoute, setRoute ] = useState(
-		getCurrentRouteFromURL( queryStringName, routes )
+		getCurrentRouteFromURL( queryStringName )
 	);
 
 	// Provider value.
 	const providerValue = useMemo( () => {
-		const { container } = routes.find( ( r ) => currentRoute === r.key );
 		const updateRoute = ( newRoute ) => {
 			updateRouteURL( queryStringName, newRoute );
 			setRoute( newRoute );
@@ -32,18 +31,17 @@ export const QueryStringRouter = ( { routes, queryStringName, children } ) => {
 
 		return {
 			currentRoute,
-			currentContainer: container,
 			updateRoute,
 		};
-	}, [ currentRoute, routes, queryStringName, setRoute ] );
+	}, [ currentRoute, queryStringName, setRoute ] );
 
 	// Handle history changes through popstate.
 	useEventListener(
 		'popstate',
 		() => {
-			setRoute( getCurrentRouteFromURL( queryStringName, routes ) );
+			setRoute( getCurrentRouteFromURL( queryStringName ) );
 		},
-		[ setRoute, routes, queryStringName ]
+		[ setRoute, queryStringName ]
 	);
 
 	return (
@@ -52,6 +50,11 @@ export const QueryStringRouter = ( { routes, queryStringName, children } ) => {
 		</QueryStringRouterContext.Provider>
 	);
 };
+
+/**
+ * Export `Route` component as part of the query string router.
+ */
+export { default as Route } from './Route';
 
 /**
  * Hook to access the query string router value.

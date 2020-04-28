@@ -17,10 +17,10 @@ const pushQueryStringState = ( queryStringName, queryStringValue ) => {
  *
  * @param {string} name  Name of the query string to get.
  *
- * @return {string} The value in the query string.
+ * @return {string|null} The value in the query string. If it's empty, return null.
  */
 const getQueryString = ( name ) =>
-	new URLSearchParams( window.location.search ).get( name );
+	new URLSearchParams( window.location.search ).get( name ) || null;
 
 /**
  * Update URL with new route.
@@ -33,12 +33,11 @@ export const updateRouteURL = ( queryStringName, newRoute ) => {
 };
 
 /**
- * Get current route from URL or first route.
+ * Get current route from URL.
  *
  * @param {string} queryStringName Query string name that the route is associated.
- * @param {Array}  routes          Routes list.
  *
  * @return {string} Current route key.
  */
-export const getCurrentRouteFromURL = ( queryStringName, routes = null ) =>
-	getQueryString( queryStringName ) || routes[ 0 ].key;
+export const getCurrentRouteFromURL = ( queryStringName ) =>
+	getQueryString( queryStringName );
