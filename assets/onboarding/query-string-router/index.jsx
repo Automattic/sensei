@@ -15,6 +15,15 @@ const QueryStringRouterContext = createContext();
 
 /**
  * Query string router component.
+ * It creates a provider with the following values in the context:
+ * - `currentRoute`: The string of the current route.
+ * - `goTo`: Functions that send the user to another route.
+ *
+ * @param {Object} props
+ * @param {string} props.paramName Param used as reference in the query string.
+ * @param {Object} props.children  Render this children if it matches the route.
+ *
+ * @return {Object|null} Provider component.
  */
 const QueryStringRouter = ( { paramName, children } ) => {
 	// Current route.
@@ -24,6 +33,13 @@ const QueryStringRouter = ( { paramName, children } ) => {
 
 	// Provider value.
 	const providerValue = useMemo( () => {
+		/**
+		 * Functions that send the user to another route.
+		 * It changes the URL and update the state of the current route.
+		 *
+		 * @param {string}  newRoute New route to send the user.
+		 * @param {boolean} replace  Flag to mark if should replace or push state.
+		 */
 		const goTo = ( newRoute, replace = false ) => {
 			updateRouteURL( paramName, newRoute, replace );
 			setRoute( newRoute );
@@ -59,7 +75,9 @@ export default QueryStringRouter;
 export { default as Route } from './Route';
 
 /**
- * Hook to access the query string router value.
+ * Hook to access the query string router values from the context.
+ *
+ * @return {Object} Object with `currentRoute` and `goTo`.
  */
 export const useQueryStringRouter = () =>
 	useContext( QueryStringRouterContext );
