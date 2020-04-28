@@ -2,6 +2,10 @@ import { updateRouteURL, getCurrentRouteFromURL } from './url-functions';
 import { mockSearch } from '../../tests-helper/functions';
 
 describe( 'URL functions', () => {
+	afterEach( () => {
+		mockSearch( '' );
+	} );
+
 	describe( 'updateRouteURL', () => {
 		it( 'Should add a param to the current URL', () => {
 			const pushStateSpy = jest.spyOn( window.history, 'pushState' );
@@ -26,6 +30,21 @@ describe( 'URL functions', () => {
 				{},
 				'',
 				'?route=test-route&other-param=value'
+			);
+		} );
+
+		it( 'Should update the route with the replaceState when flag is true', () => {
+			const replaceStateSpy = jest.spyOn(
+				window.history,
+				'replaceState'
+			);
+
+			updateRouteURL( 'route', 'test-route', true );
+
+			expect( replaceStateSpy ).toHaveBeenCalledWith(
+				{},
+				'',
+				'?route=test-route'
 			);
 		} );
 	} );

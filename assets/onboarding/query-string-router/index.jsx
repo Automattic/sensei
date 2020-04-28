@@ -24,8 +24,8 @@ export const QueryStringRouter = ( { paramName, children } ) => {
 
 	// Provider value.
 	const providerValue = useMemo( () => {
-		const updateRoute = ( newRoute ) => {
-			updateRouteURL( paramName, newRoute );
+		const updateRoute = ( newRoute, replace = false ) => {
+			updateRouteURL( paramName, newRoute, replace );
 			setRoute( newRoute );
 		};
 
