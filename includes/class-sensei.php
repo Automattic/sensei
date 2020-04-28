@@ -55,6 +55,13 @@ class Sensei_Main {
 	public $settings;
 
 	/**
+	 * Script and stylesheet loading.
+	 *
+	 * @var Sensei_Assets
+	 */
+	public $assets;
+
+	/**
 	 * @var Sensei_Course_Results
 	 */
 	public $course_results;
@@ -174,6 +181,8 @@ class Sensei_Main {
 	public $view_helper;
 
 	/**
+	 * Experimental features.
+	 *
 	 * @var Sensei_Feature_Flags
 	 */
 	public $feature_flags;
@@ -184,6 +193,13 @@ class Sensei_Main {
 	 * @var Sensei_Enrolment_Job_Scheduler
 	 */
 	private $enrolment_scheduler;
+
+	/**
+	 * Onboarding wizard.
+	 *
+	 * @var Sensei_Onboarding
+	 */
+	private $onboarding;
 
 	/**
 	 * Constructor method.
@@ -321,8 +337,11 @@ class Sensei_Main {
 	 * @since 1.9.0
 	 */
 	public function initialize_global_objects() {
-		// Setup settings
+		// Setup settings.
 		$this->settings = new Sensei_Settings();
+
+		// Asset loading.
+		$this->assets = new Sensei_Assets( $this->plugin_url, $this->plugin_path, $this->version );
 
 		// feature flags
 		$this->feature_flags = new Sensei_Feature_Flags();
@@ -385,6 +404,9 @@ class Sensei_Main {
 
 			// Load Analysis Reports
 			$this->analysis = new Sensei_Analysis( $this->main_plugin_file_name );
+
+			// Loading onboarding page
+			$this->onboarding = new Sensei_Onboarding();
 
 			if ( $this->feature_flags->is_enabled( 'rest_api_testharness' ) ) {
 				$this->test_harness = new Sensei_Admin_Rest_Api_Testharness( $this->main_plugin_file_name );

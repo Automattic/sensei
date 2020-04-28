@@ -1,1 +1,6 @@
-build
+/build
+/assets/dist
+/assets/vendor
+/assets/chosen
+/vendor
+/apigen

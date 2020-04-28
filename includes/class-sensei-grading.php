@@ -76,10 +76,8 @@ class Sensei_Grading {
 	 */
 	public function enqueue_scripts() {
 
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-
 		// Load Grading JS
-		wp_enqueue_script( 'sensei-grading-general', Sensei()->plugin_url . 'assets/js/grading-general' . $suffix . '.js', array( 'jquery', 'sensei-core-select2' ), Sensei()->version );
+		Sensei()->assets->enqueue( 'sensei-grading-general', 'js/grading-general.js', [ 'jquery', 'sensei-core-select2' ] );
 
 	} // End enqueue_scripts()
 
@@ -95,7 +93,7 @@ class Sensei_Grading {
 
 		wp_enqueue_style( Sensei()->token . '-admin' );
 
-		wp_enqueue_style( 'sensei-settings-api', Sensei()->plugin_url . 'assets/css/settings.css', '', Sensei()->version );
+		Sensei()->assets->enqueue( 'sensei-settings-api', 'css/settings.css' );
 
 	} // End enqueue_styles()
 

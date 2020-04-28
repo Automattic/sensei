@@ -38,12 +38,12 @@ $fontawesome: FontAwesomeSensei, FontAwesome;
 /* Font Awesome Icons */
 @font-face {
   font-family: 'FontAwesomeSensei';
-  src: url('../../fonts/fontawesome-webfont.eot');
-  src: url('../../fonts/fontawesome-webfont.eot?#iefix') format('embedded-opentype'),
-     url('../../fonts/fontawesome-webfont.woff2') format('woff2'),
-     url('../../fonts/fontawesome-webfont.woff') format('woff'),
-     url('../../fonts/fontawesome-webfont.ttf')  format('truetype'),
-     url('../../fonts/fontawesome-webfont.svg#svgFontName') format('svg');
+  src: url('../fonts/fontawesome-webfont.eot');
+  src: url('../fonts/fontawesome-webfont.eot?#iefix') format('embedded-opentype'),
+     url('../fonts/fontawesome-webfont.woff2') format('woff2'),
+     url('../fonts/fontawesome-webfont.woff') format('woff'),
+     url('../fonts/fontawesome-webfont.ttf')  format('truetype'),
+     url('../fonts/fontawesome-webfont.svg#svgFontName') format('svg');
   font-weight: 400;
   font-style: normal;
 }

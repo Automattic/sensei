@@ -7,3 +7,4 @@ tests/images/test-*
 build
 diffs
 .env
+assets/dist

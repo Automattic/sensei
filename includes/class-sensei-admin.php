@@ -295,25 +295,17 @@ class Sensei_Admin {
 		$allowed_pages           = apply_filters( 'sensei_scripts_allowed_pages', array( 'sensei_grading', 'sensei_analysis', 'sensei_learners', 'sensei_updates', 'sensei-settings', $this->lesson_order_page_slug, $this->course_order_page_slug ) );
 
 		// Global Styles for icons and menu items
-		wp_register_style( 'sensei-global', Sensei()->plugin_url . 'assets/css/global.css', '', Sensei()->version, 'screen' );
-		wp_enqueue_style( 'sensei-global' );
-		$select_two_location = '/assets/vendor/select2/select2.min.css';
+		Sensei()->assets->enqueue( 'sensei-global', 'css/global.css', [], 'screen' );
 
 		// Select 2 styles
-		wp_enqueue_style( 'sensei-core-select2', Sensei()->plugin_url . $select_two_location, '', Sensei()->version, 'screen' );
+		Sensei()->assets->enqueue( 'sensei-core-select2', '../vendor/select2/select2.min.css', [], 'screen' );
 
-		wp_register_style(
-			'jquery-modal',
-			Sensei()->plugin_url . 'assets/vendor/jquery-modal-0.9.1/jquery.modal.min.css',
-			[],
-			Sensei()->version
-		);
+		Sensei()->assets->register( 'jquery-modal', '../vendor/jquery-modal-0.9.1/jquery.modal.min.css' );
 
 		// Test for Write Panel Pages
 		if ( ( ( isset( $post_type ) && in_array( $post_type, $allowed_post_types ) ) && ( isset( $hook ) && in_array( $hook, $allowed_post_type_pages ) ) ) || ( isset( $_GET['page'] ) && in_array( $_GET['page'], $allowed_pages ) ) ) {
 
-			wp_register_style( 'sensei-admin-custom', Sensei()->plugin_url . 'assets/css/admin-custom.css', '', Sensei()->version, 'screen' );
-			wp_enqueue_style( 'sensei-admin-custom' );
+			Sensei()->assets->enqueue( 'sensei-admin-custom', 'css/admin-custom.css', [], 'screen' );
 
 		}
 
@@ -331,49 +323,37 @@ class Sensei_Admin {
 	public function register_scripts( $hook ) {
 		$screen = get_current_screen();
 
-		// Allow developers to load non-minified versions of scripts.
-		$suffix              = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-		$select_two_location = '/assets/vendor/select2/select2.full';
-
 		// Select2 script used to enhance all select boxes.
-		wp_register_script( 'sensei-core-select2', Sensei()->plugin_url . $select_two_location . $suffix . '.js', array( 'jquery' ), Sensei()->version );
+		Sensei()->assets->register( 'sensei-core-select2', '../vendor/select2/select2.full.js', [ 'jquery' ] );
 
-		wp_register_script(
-			'jquery-modal',
-			Sensei()->plugin_url . 'assets/vendor/jquery-modal-0.9.1/jquery.modal' . $suffix . '.js',
-			[ 'jquery' ],
-			Sensei()->version,
-			true
-		);
+		Sensei()->assets->register( 'jquery-modal', '../vendor/jquery-modal-0.9.1/jquery.modal.js', [ 'jquery' ], true );
 
-		wp_register_script(
+		Sensei()->assets->register(
 			'sensei-learners-admin-bulk-actions-js',
-			Sensei()->plugin_url . 'assets/js/learners-bulk-actions' . $suffix . '.js',
+			'js/learners-bulk-actions.js',
 			[ 'jquery', 'sensei-core-select2', 'jquery-modal' ],
-			Sensei()->version,
 			true
 		);
+
+		Sensei()->assets->register( 'sensei-chosen', '../vendor/chosen/chosen.jquery.min.js', [ 'jquery' ], true );
+		Sensei()->assets->register( 'sensei-chosen-ajax', '../vendor/chosen/ajax-chosen.jquery.min.js', [ 'jquery', 'sensei-chosen' ], true );
 
 		// Load ordering script on Order Courses and Order Lessons pages.
 		if ( in_array( $screen->id, [ 'course_page_course-order', 'lesson_page_lesson-order' ], true ) ) {
-			wp_enqueue_script(
-				'sensei-ordering',
-				Sensei()->plugin_url . 'assets/js/admin/ordering' . $suffix . '.js',
-				array( 'jquery', 'jquery-ui-sortable', 'sensei-core-select2' ),
-				Sensei()->version,
-				true
-			);
+			Sensei()->assets->enqueue( 'sensei-ordering', 'js/admin/ordering.js', [ 'jquery', 'jquery-ui-sortable', 'sensei-core-select2' ], true );
 		}
 
 		// load edit module scripts
 		if ( 'edit-module' == $screen->id ) {
-			wp_enqueue_script( 'sensei-chosen-ajax', Sensei()->plugin_url . 'assets/chosen/ajax-chosen.jquery.min.js', array( 'jquery', 'sensei-chosen' ), Sensei()->version, true );
+			wp_enqueue_script( 'sensei-chosen-ajax' );
 		}
 
-		wp_enqueue_script( 'sensei-message-menu-fix', Sensei()->plugin_url . 'assets/js/admin/message-menu-fix.js', array( 'jquery' ), Sensei()->version, true );
+		Sensei()->assets->enqueue( 'sensei-message-menu-fix', 'js/admin/message-menu-fix.js', [ 'jquery' ], true );
 
 		// Event logging.
-		wp_enqueue_script( 'sensei-event-logging', Sensei()->plugin_url . 'assets/js/admin/event-logging' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
+
+		Sensei()->assets->enqueue( 'sensei-event-logging', 'js/admin/event-logging.js', [ 'jquery' ], true );
+
 		wp_localize_script( 'sensei-event-logging', 'sensei_event_logging', [ 'enabled' => Sensei_Usage_Tracking::get_instance()->get_tracking_enabled() ] );
 	}
 
@@ -457,7 +437,7 @@ class Sensei_Admin {
 		// Installed notices
 		if ( 1 == get_option( 'sensei_installed' ) ) {
 
-			wp_enqueue_style( 'sensei-activation', plugins_url( '/assets/css/activation.css', dirname( __FILE__ ) ), '', Sensei()->version );
+			Sensei()->assets->enqueue( 'sensei-activation', 'css/activation.css' );
 
 			if ( get_option( 'skip_install_sensei_pages' ) != 1 && Sensei()->get_page_id( 'course' ) < 1 && ! isset( $_GET['install_sensei_pages'] ) && ! isset( $_GET['skip_install_sensei_pages'] ) ) {
 				add_action( 'admin_notices', array( $this, 'admin_install_notice' ) );
@@ -1299,8 +1279,6 @@ class Sensei_Admin {
 		$should_update_order = false;
 		$new_course_order    = array();
 
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-
 		?>
 		<div id="<?php echo esc_attr( $this->course_order_page_slug ); ?>" class="wrap <?php echo esc_attr( $this->course_order_page_slug ); ?>">
 		<h1><?php esc_html_e( 'Order Courses', 'sensei-lms' ); ?></h1>
@@ -1464,8 +1442,6 @@ class Sensei_Admin {
 	 * @return void
 	 */
 	public function lesson_order_screen() {
-
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		?>
 		<div id="<?php echo esc_attr( $this->lesson_order_page_slug ); ?>" class="wrap <?php echo esc_attr( $this->lesson_order_page_slug ); ?>">
