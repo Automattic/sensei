@@ -1,43 +1,42 @@
 /**
- * Add query string to URL with pushState.
+ * Add param to the URL with pushState.
  *
- * @param {string} queryStringName  Query string name to be added to the URL.
- * @param {string} queryStringValue Query string value to be added to the URL.
+ * @param {string} paramName  Param name to be added to the URL.
+ * @param {string} paramValue Param value to be added to the URL.
  */
-const pushQueryStringState = ( queryStringName, queryStringValue ) => {
+const pushQueryStringState = ( paramName, paramValue ) => {
 	const { search } = window.location;
 	const searchParams = new URLSearchParams( search );
 
-	searchParams.set( queryStringName, queryStringValue );
+	searchParams.set( paramName, paramValue );
 	window.history.pushState( {}, '', `?${ searchParams.toString() }` );
 };
 
 /**
- * Get query string from URL.
+ * Get parameter from URL.
  *
- * @param {string} name  Name of the query string to get.
+ * @param {string} name  Name of the param to get.
  *
- * @return {string|null} The value in the query string. If it's empty, return null.
+ * @return {string|null} The value in the param. If it's empty, return null.
  */
-const getQueryString = ( name ) =>
+const getParam = ( name ) =>
 	new URLSearchParams( window.location.search ).get( name ) || null;
 
 /**
  * Update URL with new route.
  *
- * @param {string} queryStringName Query string name that the route is associated.
- * @param {string} newRoute        Text that represents the new route.
+ * @param {string} paramName Param name that the route is associated.
+ * @param {string} newRoute  Text that represents the new route.
  */
-export const updateRouteURL = ( queryStringName, newRoute ) => {
-	pushQueryStringState( queryStringName, newRoute );
+export const updateRouteURL = ( paramName, newRoute ) => {
+	pushQueryStringState( paramName, newRoute );
 };
 
 /**
  * Get current route from URL.
  *
- * @param {string} queryStringName Query string name that the route is associated.
+ * @param {string} paramName Param name that the route is associated.
  *
  * @return {string} Current route key.
  */
-export const getCurrentRouteFromURL = ( queryStringName ) =>
-	getQueryString( queryStringName );
+export const getCurrentRouteFromURL = ( paramName ) => getParam( paramName );

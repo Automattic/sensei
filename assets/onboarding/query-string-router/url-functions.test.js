@@ -3,7 +3,7 @@ import { mockSearch } from '../../tests-helper/functions';
 
 describe( 'URL functions', () => {
 	describe( 'updateRouteURL', () => {
-		it( 'Should add a query string to the current URL', () => {
+		it( 'Should add a param to the current URL', () => {
 			const pushStateSpy = jest.spyOn( window.history, 'pushState' );
 
 			updateRouteURL( 'route', 'test-route' );
@@ -15,7 +15,7 @@ describe( 'URL functions', () => {
 			);
 		} );
 
-		it( 'Should change the query string if it already exists', () => {
+		it( 'Should change the param if it already exists', () => {
 			mockSearch( 'route=pre-existing&other-param=value' );
 
 			const pushStateSpy = jest.spyOn( window.history, 'pushState' );

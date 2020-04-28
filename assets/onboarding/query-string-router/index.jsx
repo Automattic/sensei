@@ -16,16 +16,16 @@ const QueryStringRouterContext = createContext();
 /**
  * Query string router component.
  */
-export const QueryStringRouter = ( { queryStringName, children } ) => {
+export const QueryStringRouter = ( { paramName, children } ) => {
 	// Current route.
 	const [ currentRoute, setRoute ] = useState(
-		getCurrentRouteFromURL( queryStringName )
+		getCurrentRouteFromURL( paramName )
 	);
 
 	// Provider value.
 	const providerValue = useMemo( () => {
 		const updateRoute = ( newRoute ) => {
-			updateRouteURL( queryStringName, newRoute );
+			updateRouteURL( paramName, newRoute );
 			setRoute( newRoute );
 		};
 
@@ -33,15 +33,15 @@ export const QueryStringRouter = ( { queryStringName, children } ) => {
 			currentRoute,
 			updateRoute,
 		};
-	}, [ currentRoute, queryStringName, setRoute ] );
+	}, [ currentRoute, paramName, setRoute ] );
 
 	// Handle history changes through popstate.
 	useEventListener(
 		'popstate',
 		() => {
-			setRoute( getCurrentRouteFromURL( queryStringName ) );
+			setRoute( getCurrentRouteFromURL( paramName ) );
 		},
-		[ setRoute, queryStringName ]
+		[ setRoute, paramName ]
 	);
 
 	return (

@@ -5,15 +5,15 @@ import { QueryStringRouter, Route } from './query-string-router';
 import Navigation from './navigation';
 
 /**
- * Query string name used to route the onboarding wizard.
+ * Param name used to route the onboarding wizard.
  */
-const QUERY_STRING_NAME = 'onboarding-step';
+const PARAM_NAME = 'step';
 
 const SenseiOnboardingPage = () => {
 	useFullScreen( [ 'sensei-color', 'sensei-onboarding__page' ] );
 
 	return (
-		<QueryStringRouter queryStringName={ QUERY_STRING_NAME }>
+		<QueryStringRouter paramName={ PARAM_NAME }>
 			<div className="sensei-onboarding__header">
 				<Navigation steps={ steps } />
 			</div>
