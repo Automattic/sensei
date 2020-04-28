@@ -52,7 +52,6 @@ class Sensei_Enrolment_Job_Scheduler {
 
 		// Handle job that ensures a course's enrolment is up-to-date.
 		add_action( Sensei_Enrolment_Course_Calculation_Job::NAME, [ $this, 'run_course_calculation' ] );
-
 	}
 
 	/**
@@ -103,12 +102,19 @@ class Sensei_Enrolment_Job_Scheduler {
 	 */
 	public function maybe_start_learner_calculation() {
 		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
+		$current_version   = $enrolment_manager->get_enrolment_calculation_version();
 
-		if ( get_option( self::CALCULATION_VERSION_OPTION_NAME ) === $enrolment_manager->get_enrolment_calculation_version() ) {
+		if ( get_option( self::CALCULATION_VERSION_OPTION_NAME ) === $current_version ) {
 			return;
 		}
 
 		$job = new Sensei_Enrolment_Learner_Calculation_Job();
+
+		// If we aren't running for this version, restart the job.
+		if ( ! $job->is_calculating_version( $current_version ) ) {
+			$job->setup( $current_version );
+		}
+
 		Sensei_Scheduler::instance()->schedule_job( $job );
 	}
 

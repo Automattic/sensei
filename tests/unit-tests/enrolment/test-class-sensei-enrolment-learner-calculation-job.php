@@ -26,6 +26,7 @@ class Sensei_Enrolment_Learner_Calculation_Job_Test extends WP_UnitTestCase {
 		parent::tearDown();
 
 		remove_all_filters( 'sensei_enrolment_learner_calculation_job_batch_size' );
+		( new Sensei_Enrolment_Learner_Calculation_Job() )->end();
 	}
 
 	/**
@@ -41,6 +42,7 @@ class Sensei_Enrolment_Learner_Calculation_Job_Test extends WP_UnitTestCase {
 		);
 
 		$job = new Sensei_Enrolment_Learner_Calculation_Job();
+		$job->setup( 'version' );
 
 		$mock = $this->getMockBuilder( Sensei_Course_Enrolment_Manager::class )
 			->disableOriginalConstructor()
@@ -85,6 +87,7 @@ class Sensei_Enrolment_Learner_Calculation_Job_Test extends WP_UnitTestCase {
 
 		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
 		$job               = new Sensei_Enrolment_Learner_Calculation_Job();
+		$job->setup( 'version' );
 
 		$mock = $this->getMockBuilder( Sensei_Course_Enrolment_Manager::class )
 			->disableOriginalConstructor()

@@ -278,10 +278,11 @@ class Sensei_Course_Manual_Enrolment_Provider
 	/**
 	 * Gets the version of the enrolment provider logic. If this changes, enrolment will be recalculated.
 	 *
+	 * This version should be bumped to the next stable Sensei LMS version whenever this provider is modified.
+	 *
 	 * @return int|string
 	 */
 	public function get_version() {
-		// @todo change this to just increment an integer.
-		return filemtime( __FILE__ );
+		return '3.0.0';
 	}
 }
