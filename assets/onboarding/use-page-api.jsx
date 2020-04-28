@@ -4,7 +4,7 @@ import apiFetch from '@wordpress/api-fetch';
 export function usePageApi( page ) {
 	const [ data, setData ] = useState( {} );
 	const [ isBusy, setBusy ] = useState( false );
-	const path = `/sensei/v1/onboarding/${ page }`;
+	let path = `/sensei/v1/onboarding/${ page }`;
 	useEffect( () => {
 		fetchData();
 	}, [ page ] );
@@ -26,6 +26,7 @@ export function usePageApi( page ) {
 			data: formData,
 		} );
 		setBusy( false );
+		path = `${path}?skip-preloaded`;
 		await fetchData();
 	}
 
