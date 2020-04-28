@@ -14,7 +14,9 @@ const SenseiOnboardingPage = () => {
 
 	return (
 		<QueryStringRouter queryStringName={ QUERY_STRING_NAME }>
-			<Navigation steps={ steps } />
+			<div className="sensei-onboarding__header">
+				<Navigation steps={ steps } />
+			</div>
 			<div className="sensei-onboarding__container">
 				<Route route="welcome" defaultRoute>
 					{ steps[0].container }

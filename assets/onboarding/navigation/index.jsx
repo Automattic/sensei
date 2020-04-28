@@ -53,12 +53,10 @@ const Navigation = ( { steps } ) => {
 	);
 
 	return (
-		<div className="sensei-onboarding__header">
-			<Stepper
-				steps={ stepsWithNavigationState }
-				currentStep={ currentRoute || steps[ 0 ].key }
-			/>
-		</div>
+		<Stepper
+			steps={ stepsWithNavigationState }
+			currentStep={ currentRoute || steps[ 0 ].key }
+		/>
 	);
 };
 
