@@ -18,7 +18,7 @@ const SenseiOnboardingPage = () => {
 				<Navigation steps={ steps } />
 			</div>
 			<div className="sensei-onboarding__container">
-				{ steps.map( ( step, i ) =>
+				{ steps.map( ( step, i ) => (
 					<Route
 						key={ step.key }
 						route={ step.key }
@@ -26,7 +26,7 @@ const SenseiOnboardingPage = () => {
 					>
 						{ step.container }
 					</Route>
-				) }
+				) ) }
 			</div>
 		</QueryStringRouter>
 	);
