@@ -5,58 +5,58 @@ import { get, uniq } from 'lodash';
 import { useQueryStringRouter } from '../query-string-router';
 
 /**
- * Merge the navigation state into the routes.
+ * Merge the navigation state into the steps.
  * Add isComplete and onClick - when visited.
  *
- * @param {Array}    routes        Routes list.
- * @param {string[]} visitedRoutes Key of the visited routes.
- * @param {Function} updateRoute   Function that update the route.
+ * @param {Array}    steps        Steps list.
+ * @param {string[]} visitedSteps Key of the visited steps.
+ * @param {Function} updateRoute  Function that update the step.
  */
-const getRoutesWithNavigationState = ( routes, visitedRoutes, updateRoute ) =>
-	routes.map( ( route, index ) => {
-		const nextKey = get( routes, [ index + 1, 'key' ], null );
+const getStepsWithNavigationState = ( steps, visitedSteps, updateRoute ) =>
+	steps.map( ( step, index ) => {
+		const nextKey = get( steps, [ index + 1, 'key' ], null );
 
-		const routeWithNavigationState = {
-			...route,
-			isComplete: visitedRoutes.includes( nextKey ),
+		const stepWithNavigationState = {
+			...step,
+			isComplete: visitedSteps.includes( nextKey ),
 		};
 
-		if ( visitedRoutes.includes( route.key ) ) {
-			routeWithNavigationState.onClick = () => {
-				updateRoute( route.key );
+		if ( visitedSteps.includes( step.key ) ) {
+			stepWithNavigationState.onClick = () => {
+				updateRoute( step.key );
 			};
 		}
 
-		return routeWithNavigationState;
+		return stepWithNavigationState;
 	} );
 
 /**
  * Navigation component.
  */
-const Navigation = ( { routes } ) => {
+const Navigation = ( { steps } ) => {
 	const { currentRoute, updateRoute } = useQueryStringRouter();
 
-	// Visited routes.
-	const [ visitedRoutes, setVisitedRoutes ] = useState( [] );
+	// Visited steps.
+	const [ visitedSteps, setVisitedSteps ] = useState( [] );
 
 	useEffect( () => {
-		setVisitedRoutes( ( prevState ) =>
+		setVisitedSteps( ( prevState ) =>
 			uniq( [ ...prevState, currentRoute ] )
 		);
 	}, [ currentRoute ] );
 
-	// Update routes with navigation state.
-	const routesWithNavigationState = useMemo(
+	// Update steps with navigation state.
+	const stepsWithNavigationState = useMemo(
 		() =>
-			getRoutesWithNavigationState( routes, visitedRoutes, updateRoute ),
-		[ routes, visitedRoutes ]
+			getStepsWithNavigationState( steps, visitedSteps, updateRoute ),
+		[ steps, visitedSteps ]
 	);
 
 	return (
 		<div className="sensei-onboarding__header">
 			<Stepper
-				steps={ routesWithNavigationState }
-				currentStep={ currentRoute }
+				steps={ stepsWithNavigationState }
+				currentStep={ currentRoute || steps[ 0 ].key }
 			/>
 		</div>
 	);
