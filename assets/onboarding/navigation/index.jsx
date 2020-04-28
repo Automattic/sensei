@@ -18,7 +18,7 @@ const getStepsWithNavigationState = ( steps, visitedSteps, updateRoute ) =>
 
 		const stepWithNavigationState = {
 			...step,
-			isComplete: visitedSteps.includes( nextKey ),
+			isComplete: nextKey && visitedSteps.includes( nextKey ),
 		};
 
 		if ( visitedSteps.includes( step.key ) ) {
