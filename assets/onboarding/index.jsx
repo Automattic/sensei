@@ -18,18 +18,15 @@ const SenseiOnboardingPage = () => {
 				<Navigation steps={ steps } />
 			</div>
 			<div className="sensei-onboarding__container">
-				<Route route="welcome" defaultRoute>
-					{ steps[0].container }
-				</Route>
-				<Route route="purpose">
-					{ steps[1].container }
-				</Route>
-				<Route route="features">
-					{ steps[2].container }
-				</Route>
-				<Route route="ready">
-					{ steps[3].container }
-				</Route>
+				{ steps.map( ( step, i ) =>
+					<Route
+						key={ step.key }
+						route={ step.key }
+						defaultRoute={ 0 === i }
+					>
+						{ step.container }
+					</Route>
+				) }
 			</div>
 		</QueryStringRouter>
 	);
