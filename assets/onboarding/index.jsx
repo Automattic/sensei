@@ -1,5 +1,5 @@
 import { render } from '@wordpress/element';
-import { useFullScreen } from '../react-hooks';
+import { useWpAdminFullscreen } from '../react-hooks';
 import { steps } from './steps.jsx';
 import { QueryStringRouter, Route } from './query-string-router';
 import Navigation from './navigation';
@@ -10,7 +10,7 @@ import Navigation from './navigation';
 const PARAM_NAME = 'step';
 
 const SenseiOnboardingPage = () => {
-	useFullScreen( [ 'sensei-color', 'sensei-onboarding__page' ] );
+	useWpAdminFullscreen( [ 'sensei-color', 'sensei-onboarding__page' ] );
 
 	return (
 		<QueryStringRouter paramName={ PARAM_NAME }>
