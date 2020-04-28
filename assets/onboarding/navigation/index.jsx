@@ -48,7 +48,7 @@ const Navigation = ( { steps } ) => {
 	// Update steps with navigation state.
 	const stepsWithNavigationState = useMemo(
 		() => getStepsWithNavigationState( steps, visitedSteps, goTo ),
-		[ steps, visitedSteps ]
+		[ steps, visitedSteps, goTo ]
 	);
 
 	return (

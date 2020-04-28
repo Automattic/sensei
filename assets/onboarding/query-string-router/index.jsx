@@ -33,7 +33,7 @@ export const QueryStringRouter = ( { paramName, children } ) => {
 			currentRoute,
 			goTo,
 		};
-	}, [ currentRoute, paramName, setRoute ] );
+	}, [ currentRoute, paramName ] );
 
 	// Handle history changes through popstate.
 	useEventListener(
@@ -41,7 +41,7 @@ export const QueryStringRouter = ( { paramName, children } ) => {
 		() => {
 			setRoute( getCurrentRouteFromURL( paramName ) );
 		},
-		[ setRoute, paramName ]
+		[ paramName ]
 	);
 
 	return (
