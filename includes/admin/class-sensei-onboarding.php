@@ -36,6 +36,7 @@ class Sensei_Onboarding {
 
 		if ( is_admin() ) {
 			add_action( 'admin_menu', [ $this, 'admin_menu' ], 20 );
+			add_action( 'current_screen', [ $this, 'add_onboarding_help_tab' ] );
 
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
 			if ( isset( $_GET['page'] ) && ( $_GET['page'] === $this->page_slug ) ) {
@@ -95,6 +96,42 @@ class Sensei_Onboarding {
 
 		</div>
 		<?php
+	}
+
+	/**
+	 * Check if should show help tab or not.
+	 *
+	 * @param string $screen_id Screen ID to check if should show the help tab.
+	 *
+	 * @return boolean
+	 */
+	private function should_show_help_screen( $screen_id ) {
+		return 'edit-course' === $screen_id;
+	}
+
+	/**
+	 * Add onboarding help tab.
+	 *
+	 * @access private
+	 */
+	public function add_onboarding_help_tab() {
+		$screen = get_current_screen();
+
+		if ( ! $screen || ! $this->should_show_help_screen( $screen->id ) ) {
+			return;
+		}
+
+		$screen->add_help_tab(
+			[
+				'id'      => 'sensei_lms_onboarding_tab',
+				'title'   => __( 'Setup wizard', 'sensei-lms' ),
+				'content' =>
+					'<h2>' . __( 'Sensei LMS Onboarding', 'sensei-lms' ) . '</h2>' .
+					'<h3>' . __( 'Setup Wizard', 'sensei-lms' ) . '</h3>' .
+					'<p>' . __( 'If you need to access the setup wizard again, please click on the button bellow.', 'sensei-lms' ) . '</p>' .
+					'<p><a href="' . admin_url( 'admin.php?page=' . $this->page_slug ) . '" class="button button-primary">' . __( 'Setup wizard', 'sensei-lms' ) . '</a></p>',
+			]
+		);
 	}
 
 }
