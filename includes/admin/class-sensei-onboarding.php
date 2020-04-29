@@ -116,7 +116,8 @@ class Sensei_Onboarding {
 	 * @access private
 	 */
 	public function add_onboarding_help_tab() {
-		$screen = get_current_screen();
+		$screen           = get_current_screen();
+		$link_track_event = 'sensei_setup_wizard_click';
 
 		if ( ! $screen || ! $this->should_show_help_screen( $screen->id ) ) {
 			return;
@@ -130,7 +131,7 @@ class Sensei_Onboarding {
 					'<h2>' . __( 'Sensei LMS Onboarding', 'sensei-lms' ) . '</h2>' .
 					'<h3>' . __( 'Setup Wizard', 'sensei-lms' ) . '</h3>' .
 					'<p>' . __( 'If you need to access the setup wizard again, please click on the button bellow.', 'sensei-lms' ) . '</p>' .
-					'<p><a href="' . admin_url( 'admin.php?page=' . $this->page_slug ) . '" class="button button-primary">' . __( 'Setup wizard', 'sensei-lms' ) . '</a></p>',
+					'<p><a href="' . admin_url( 'admin.php?page=' . $this->page_slug ) . '" class="button button-primary" data-sensei-log-event="' . $link_track_event . '">' . __( 'Setup wizard', 'sensei-lms' ) . '</a></p>',
 			]
 		);
 	}
