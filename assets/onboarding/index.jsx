@@ -11,8 +11,6 @@ const PARAM_NAME = 'step';
 
 /**
  * Sensei onboarding page.
- *
- * @return {Object} Sensei onboarding page.
  */
 const SenseiOnboardingPage = () => {
 	useWpAdminFullscreen( [ 'sensei-color', 'sensei-onboarding__page' ] );

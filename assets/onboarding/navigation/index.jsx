@@ -11,6 +11,8 @@ import { useQueryStringRouter } from '../query-string-router';
  * @param {Array}    steps        Steps list.
  * @param {string[]} visitedSteps Key of the visited steps.
  * @param {Function} goTo         Function that update the step.
+ *
+ * @return {Object} Steps with navigation state merged.
  */
 const getStepsWithNavigationState = ( steps, visitedSteps, goTo ) =>
 	steps.map( ( step, index ) => {

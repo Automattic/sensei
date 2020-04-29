@@ -22,8 +22,6 @@ const QueryStringRouterContext = createContext();
  * @param {Object} props
  * @param {string} props.paramName Param used as reference in the query string.
  * @param {Object} props.children  Render this children if it matches the route.
- *
- * @return {Object|null} Provider component.
  */
 const QueryStringRouter = ( { paramName, children } ) => {
 	// Current route.
