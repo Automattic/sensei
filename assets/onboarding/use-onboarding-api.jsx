@@ -1,13 +1,27 @@
 import { useEffect, useState } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 
-export function usePageApi( page ) {
+/**
+ * Use Onboarding REST API for the given step.
+ *
+ * Loads data via the GET method for the endpoint, and provides a submit function that sends data to the endpoint
+ * via POST request.
+ *
+ * @param {string} step Onboarding step endpoint name.
+ * @return {
+ * {isBusy: boolean,
+ * data: {},
+ * submit: submit
+ * }
+ * }
+ */
+export function useOnboardingApi( step ) {
 	const [ data, setData ] = useState( {} );
 	const [ isBusy, setBusy ] = useState( false );
-	let path = `/sensei/v1/onboarding/${ page }`;
+	let path = `/sensei/v1/onboarding/${ step }`;
 	useEffect( () => {
 		fetchData();
-	}, [ page ] );
+	}, [ step ] );
 
 	async function fetchData() {
 		setBusy( true );
@@ -26,7 +40,7 @@ export function usePageApi( page ) {
 			data: formData,
 		} );
 		setBusy( false );
-		path = `${path}?skip-preloaded`;
+		path = `${ path }?skip-preloaded`;
 		await fetchData();
 	}
 

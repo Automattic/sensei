@@ -3,12 +3,12 @@ import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { UsageModal } from './usage-modal.jsx';
-import { usePageApi } from './use-page-api.jsx';
+import { useOnboardingApi } from './use-onboarding-api.jsx';
 
 export function Welcome() {
 	const [ usageModalActive, toggleUsageModal ] = useState( false );
 
-	const { data, submit, isBusy } = usePageApi( 'welcome' );
+	const { data, submit, isBusy } = useOnboardingApi( 'welcome' );
 
 	async function submitPage( allowUsageTracking ) {
 		await submit( { usage_tracking: allowUsageTracking } );
