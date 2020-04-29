@@ -5,6 +5,11 @@ import { useState } from '@wordpress/element';
 import { UsageModal } from './usage-modal.jsx';
 import { useOnboardingApi } from './use-onboarding-api.jsx';
 
+/**
+ * Welcome step for Onboarding Wizard.
+ *
+ * @class
+ */
 export function Welcome() {
 	const [ usageModalActive, toggleUsageModal ] = useState( false );
 
@@ -39,7 +44,9 @@ export function Welcome() {
 				</Button>
 			</Card>
 			<div className="sensei-onboarding__skip">
-				<Link href="edit.php?post_type=course" type="wp-admin">{ __( 'Not right now', 'sensei-lms' ) }</Link>
+				<Link href="edit.php?post_type=course" type="wp-admin">
+					{ __( 'Not right now', 'sensei-lms' ) }
+				</Link>
 			</div>
 			{ usageModalActive && (
 				<UsageModal

@@ -8,12 +8,12 @@ import apiFetch from '@wordpress/api-fetch';
  * via POST request.
  *
  * @param {string} step Onboarding step endpoint name.
- * @return {
- * {isBusy: boolean,
- * data: {},
- * submit: submit
- * }
- * }
+ * @return {OnboardingApiHandle} handle
+ *
+ * @typedef {Object} OnboardingApiHandle
+ * @property {boolean} isBusy Loading state.
+ * @property {Object} data API response from GET call to endpoint.
+ * @property {function(Object)} submit Method to POST to endpoint.
  */
 export function useOnboardingApi( step ) {
 	const [ data, setData ] = useState( {} );
