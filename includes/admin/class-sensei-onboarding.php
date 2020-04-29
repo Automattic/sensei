@@ -116,10 +116,11 @@ class Sensei_Onboarding {
 	 * @access private
 	 */
 	public function add_onboarding_help_tab() {
-		$screen           = get_current_screen();
-		$link_track_event = 'sensei_setup_wizard_click';
+		$screen                 = get_current_screen();
+		$setup_wizard_completed = get_option( 'sensei_setup_wizard_completed' );
+		$link_track_event       = 'sensei_setup_wizard_click';
 
-		if ( ! $screen || ! $this->should_show_help_screen( $screen->id ) ) {
+		if ( ! $screen || ! $this->should_show_help_screen( $screen->id ) || $setup_wizard_completed ) {
 			return;
 		}
 
