@@ -1,5 +1,9 @@
 *** Changelog ***
 
+2020.04.29 - version 3.0.1
+* Tweak: Prevent some queries from running unnecessarily [#3022](https://github.com/Automattic/sensei/pull/3022)
+* Fix: Skip enrollment checking completely for guests [#3086](https://github.com/Automattic/sensei/pull/3086)
+
 2020.04.27 - version 3.0.0
 * New: Add Recalculate Enrolment data update [#2998](https://github.com/Automattic/sensei/pull/2998)
 * New: Add a filter for the course archive page URL [#2899](https://github.com/Automattic/sensei/pull/2899)
