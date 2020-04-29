@@ -54,7 +54,7 @@ echo "Getting merge base for ${base_branch}"
 
 if [[ "master" != "${base_branch}" ]]; then
 	git fetch origin ${base_branch}
-	git branch ${base_branch} FETCH_HEAD
+	git branch ${base_branch} FETCH_HEAD || true
 fi
 
 merge_base=`git merge-base HEAD ${base_branch}`
