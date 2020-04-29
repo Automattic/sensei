@@ -37,6 +37,7 @@ class Sensei_Onboarding {
 		if ( is_admin() ) {
 			add_action( 'admin_menu', [ $this, 'admin_menu' ], 20 );
 			add_action( 'current_screen', [ $this, 'add_onboarding_help_tab' ] );
+			add_filter( 'woocommerce_screen_ids', [ $this, 'filter_woocommerce_screen_ids' ], 11 );
 
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
 			if ( isset( $_GET['page'] ) && ( $_GET['page'] === $this->page_slug ) ) {
@@ -134,4 +135,22 @@ class Sensei_Onboarding {
 		);
 	}
 
+	/**
+	 * Filter the woocommerce screens to prevent show the WooCommerce
+	 * help tab together with the onboarding tab.
+	 *
+	 * @access private
+	 *
+	 * @param string[] $screen_ids List of screen IDs considered as WooCommerce screen.
+	 *
+	 * @return $screen_ids Filtered screens.
+	 */
+	public function filter_woocommerce_screen_ids( $screen_ids ) {
+		return array_filter(
+			$screen_ids,
+			function( $screen_id ) {
+				return ! $this->should_show_help_screen( $screen_id );
+			}
+		);
+	}
 }
