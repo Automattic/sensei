@@ -93,7 +93,7 @@ class Sensei_Course_Enrolment {
 	 * @return bool
 	 */
 	public function is_enrolled( $user_id, $check_cache = true ) {
-		if ( empty( $user_id ) ) {
+		if ( ! $user_id ) {
 			return false;
 		}
 
