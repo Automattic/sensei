@@ -1,4 +1,4 @@
-import { useQueryStringRouter } from '../query-string-router';
+import { useQueryStringRouter } from './index';
 
 /**
  * Route component. It works inner the `QueryStringRouter context.

@@ -72,7 +72,7 @@ export default QueryStringRouter;
 /**
  * Export `Route` component as part of the query string router.
  */
-export { default as Route } from './Route';
+export { default as Route } from './route';
 
 /**
  * Hook to access the query string router values from the context.
