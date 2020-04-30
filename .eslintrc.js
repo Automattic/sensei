@@ -13,6 +13,7 @@ module.exports = {
 				allowedTextDomain: 'sensei-lms',
 			},
 		],
+		'react-hooks/exhaustive-deps': 'warn'
 	},
 	plugins: [ 'jest' ],
 };

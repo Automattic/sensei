@@ -8,20 +8,22 @@ import { useLayoutEffect } from '@wordpress/element';
  *
  * @param {string[]} bodyClasses Additional classes to be set.
  */
-export function useFullScreen( bodyClasses = [] ) {
+const useWpAdminFullscreen = ( bodyClasses = [] ) => {
 	const classes = [ ...bodyClasses, 'sensei-wp-admin-fullscreen' ];
 
-	function setupGlobalStyles() {
+	const setupGlobalStyles = () => {
 		toggleGlobalStyles( true );
 		return toggleGlobalStyles.bind( null, false );
-	}
+	};
 
-	function toggleGlobalStyles( enabled ) {
+	const toggleGlobalStyles = ( enabled ) => {
 		if ( enabled ) document.body.classList.add( ...classes );
 		else document.body.classList.remove( ...classes );
 
 		document.documentElement.classList.toggle( 'wp-toolbar', ! enabled );
-	}
+	};
 
 	useLayoutEffect( setupGlobalStyles, [ bodyClasses ] );
-}
+};
+
+export default useWpAdminFullscreen;
