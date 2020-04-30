@@ -46,6 +46,7 @@ class Sensei_Onboarding {
 		if ( is_admin() ) {
 
 			add_action( 'admin_menu', [ $this, 'admin_menu' ], 20 );
+			add_action( 'admin_notices', [ $this, 'onboarding_wizard_notice' ] );
 			add_action( 'current_screen', [ $this, 'add_onboarding_help_tab' ] );
 
 			if ( $this->should_prevent_woocommerce_help_tab() ) {
@@ -122,6 +123,29 @@ class Sensei_Onboarding {
 		?>
 		<div id="sensei-onboarding-page" class="sensei-onboarding">
 
+		</div>
+		<?php
+	}
+
+	/**
+	 * Onboarding wizard notice.
+	 *
+	 * @access private
+	 */
+	public function onboarding_wizard_notice() {
+		?>
+		<div id="message" class="updated sensei-message sensei-connect">
+			<p><?php echo wp_kses_post( __( '<strong>Welcome to Sensei LMS</strong> &#8211; You\'re almost ready to start creating online courses!', 'sensei-lms' ) ); ?></p>
+
+			<p class="submit">
+				<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . $this->page_slug ) ); ?>" class="button-primary">
+					<?php esc_html_e( 'Run the Setup Wizard', 'sensei-lms' ); ?>
+				</a>
+
+				<a class="skip button" href="<?php echo esc_url( add_query_arg( 'skip_onboarding_wizard', 'true', admin_url( 'admin.php?page=sensei-settings' ) ) ); ?>">
+					<?php esc_html_e( 'Skip setup', 'sensei-lms' ); ?>
+				</a>
+			</p>
 		</div>
 		<?php
 	}
