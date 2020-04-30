@@ -58,6 +58,7 @@ class Sensei_Data_Cleaner {
 		'sensei_course_enrolment_site_salt',
 		'sensei_course_order',
 		'skip_install_sensei_pages',
+		'sensei_skip_setup_wizard',
 		'sensei_flush_rewrite_rules',
 		'sensei_needs_language_pack_install',
 		'woothemes_sensei_language_pack_version',
