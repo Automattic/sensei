@@ -18,6 +18,21 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 		parent::setup();
 
 		$this->onboarding_instance = new Sensei_Onboarding();
+
+		// Save original current screen.
+		global $current_screen;
+		$this->original_screen = $current_screen;
+	}
+
+	/**
+	 * Tear down after each test.
+	 */
+	public function tearDown() {
+		parent::tearDown();
+
+		// Restore current screen.
+		global $current_screen;
+		$current_screen = $this->original_screen;
 	}
 
 	/**
