@@ -19,7 +19,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since   3.1.0
  */
 class Sensei_Onboarding {
-	const SKIP_SETUP_WIZARD_OPTION = 'sensei_skip_setup_wizard';
+	const SKIP_SETUP_WIZARD_OPTION      = 'sensei_skip_setup_wizard';
+	const SETUP_WIZARD_COMPLETED_OPTION = 'sensei_setup_wizard_completed';
 
 	/**
 	 * URL Slug for Onboarding Wizard page
@@ -135,7 +136,10 @@ class Sensei_Onboarding {
 	 * @access private
 	 */
 	public function onboarding_wizard_notice() {
-		if ( get_option( self::SKIP_SETUP_WIZARD_OPTION, 0 ) ) {
+		if (
+			get_option( self::SKIP_SETUP_WIZARD_OPTION, 0 )
+			|| get_option( self::SETUP_WIZARD_COMPLETED_OPTION, 0 )
+		) {
 			return;
 		}
 
