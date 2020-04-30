@@ -4,6 +4,7 @@ import { Button } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { UsageModal } from './usage-modal.jsx';
 import { useOnboardingApi } from './use-onboarding-api.jsx';
+import { useQueryStringRouter } from './query-string-router';
 
 /**
  * Welcome step for Onboarding Wizard.
@@ -13,11 +14,14 @@ import { useOnboardingApi } from './use-onboarding-api.jsx';
 export function Welcome() {
 	const [ usageModalActive, toggleUsageModal ] = useState( false );
 
+	const { goTo } = useQueryStringRouter();
+
 	const { data, submit, isBusy } = useOnboardingApi( 'welcome' );
 
 	async function submitPage( allowUsageTracking ) {
 		await submit( { usage_tracking: allowUsageTracking } );
 		toggleUsageModal( false );
+		goTo( 'purpose' );
 	}
 
 	return (
