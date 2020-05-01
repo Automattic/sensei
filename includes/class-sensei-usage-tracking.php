@@ -197,4 +197,17 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 			}
 		);
 	}
+
+	/**
+	 * Collect system data to track.
+	 *
+	 * @return array
+	 */
+	public function get_system_data() {
+		$system_data                 = [];
+		$system_data['version']      = Sensei()->version;
+		$system_data['wcpc_version'] = defined( 'SENSEI_WC_PAID_COURSES_VERSION' ) ? SENSEI_WC_PAID_COURSES_VERSION : null;
+
+		return array_merge( $system_data, parent::get_system_data() );
+	}
 }
