@@ -46,8 +46,18 @@ rm -rf diffs/
 mkdir -p diffs/branch
 mkdir -p diffs/master
 
+base_branch=${TRAVIS_BRANCH:-master}
+
+echo "Getting merge base for ${base_branch}"
+
 # Get merge-base with master
-merge_base=`git merge-base HEAD master`
+
+if [[ "master" != "${base_branch}" ]]; then
+	git fetch origin ${base_branch}
+	git branch ${base_branch} FETCH_HEAD || true
+fi
+
+merge_base=`git merge-base HEAD ${base_branch}`
 
 if ! git diff $merge_base.. --name-only | grep '\.php$' > diffs/changed-files
 then
