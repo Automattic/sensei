@@ -67,15 +67,17 @@
     text-align: center;
   }
 
-  &__title {
-    text-align: center;
-    margin: 40px 0;
+	&__title {
 
-    h2 {
-      font-weight: normal;
-      font-size: 24px;
-    }
-  }
+		text-align: center;
+		margin: 40px 0 20px 0;
+
+		h2 {
+			color: $text_primary;
+			font-weight: normal;
+			font-size: 24px;
+		}
+	}
 
   &__card {
     p {
