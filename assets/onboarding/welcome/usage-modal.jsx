@@ -5,13 +5,13 @@ import { __ } from '@wordpress/i18n';
 import { useState } from '@wordpress/element';
 
 /**
- * Usage tracking modal.
+ * Modal for usage tracking opt-in.
  *
- * @param {Object} props
- * @param {boolean} props.tracking Initial tracking state.
- * @param {Function} props.onContinue Callback for user pressing the continue button.
- * @param {Function} props.onClose Callback for closing the modal.
- * @param {boolean} props.isSubmitting Indicate loading state.
+ * @param {Object}   props
+ * @param {boolean}  props.tracking     Initial tracking state.
+ * @param {Function} props.onContinue   Callback for user pressing the continue button.
+ * @param {Function} props.onClose      Callback for closing the modal.
+ * @param {boolean}  props.isSubmitting Indicate loading state.
  * @class
  */
 export function UsageModal( { tracking, onContinue, onClose, isSubmitting } ) {

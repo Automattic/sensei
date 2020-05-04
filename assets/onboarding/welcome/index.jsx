@@ -8,8 +8,6 @@ import { useQueryStringRouter } from '../query-string-router';
 
 /**
  * Welcome step for Onboarding Wizard.
- *
- * @class
  */
 export function Welcome() {
 	const [ usageModalActive, toggleUsageModal ] = useState( false );

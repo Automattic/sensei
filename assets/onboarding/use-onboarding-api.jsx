@@ -2,6 +2,14 @@ import { useEffect, useState } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 
 /**
+ *
+ * @typedef {Object} OnboardingApiHandle
+ *
+ * @property {boolean}          isBusy Loading state.
+ * @property {Object}           data   API response from GET call to endpoint.
+ * @property {function(Object)} submit Method to POST to endpoint.
+ */
+/**
  * Use Onboarding REST API for the given step.
  *
  * Loads data via the GET method for the endpoint, and provides a submit function that sends data to the endpoint
@@ -9,11 +17,6 @@ import apiFetch from '@wordpress/api-fetch';
  *
  * @param {string} step Onboarding step endpoint name.
  * @return {OnboardingApiHandle} handle
- *
- * @typedef {Object} OnboardingApiHandle
- * @property {boolean} isBusy Loading state.
- * @property {Object} data API response from GET call to endpoint.
- * @property {function(Object)} submit Method to POST to endpoint.
  */
 export function useOnboardingApi( step ) {
 	const [ data, setData ] = useState( {} );
