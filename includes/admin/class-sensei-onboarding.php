@@ -19,8 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since   3.1.0
  */
 class Sensei_Onboarding {
-	const SKIP_SETUP_WIZARD_OPTION      = 'sensei_skip_setup_wizard';
-	const SETUP_WIZARD_COMPLETED_OPTION = 'sensei_setup_wizard_completed';
+	const SUGGEST_ONBOARDING_OPTION = 'sensei_suggest_onboarding';
 
 	/**
 	 * URL Slug for Onboarding Wizard page
@@ -136,10 +135,7 @@ class Sensei_Onboarding {
 	 * @access private
 	 */
 	public function onboarding_wizard_notice() {
-		if (
-			get_option( self::SKIP_SETUP_WIZARD_OPTION, 0 )
-			|| get_option( self::SETUP_WIZARD_COMPLETED_OPTION, 0 )
-		) {
+		if ( ! get_option( self::SUGGEST_ONBOARDING_OPTION, 0 ) ) {
 			return;
 		}
 
@@ -178,7 +174,7 @@ class Sensei_Onboarding {
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Don't touch the nonce.
 			&& wp_verify_nonce( wp_unslash( $_GET['_wpnonce'] ), 'sensei_skip_setup_wizard' )
 		) {
-			update_option( self::SKIP_SETUP_WIZARD_OPTION, 1 );
+			update_option( self::SUGGEST_ONBOARDING_OPTION, 0 );
 		}
 	}
 
