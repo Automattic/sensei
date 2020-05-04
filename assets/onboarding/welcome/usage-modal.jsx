@@ -14,7 +14,12 @@ import { useState } from '@wordpress/element';
  * @param {boolean}  props.isSubmitting Indicate loading state.
  * @class
  */
-export function UsageModal( { tracking, onContinue, onClose, isSubmitting } ) {
+export const UsageModal = ( {
+	tracking,
+	onContinue,
+	onClose,
+	isSubmitting,
+} ) => {
 	const trackingMessage = interpolateComponents( {
 		mixedString: __(
 			'Get improved features and faster fixes by sharing non-sensitive data via {{link}}usage tracking{{/link}} ' +
@@ -64,4 +69,4 @@ export function UsageModal( { tracking, onContinue, onClose, isSubmitting } ) {
 			</div>
 		</Modal>
 	);
-}
+};

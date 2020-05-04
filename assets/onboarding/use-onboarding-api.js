@@ -18,7 +18,7 @@ import apiFetch from '@wordpress/api-fetch';
  * @param {string} step Onboarding step endpoint name.
  * @return {OnboardingApiHandle} handle
  */
-export function useOnboardingApi( step ) {
+export const useOnboardingApi = ( step ) => {
 	const [ data, setData ] = useState( {} );
 	const [ isBusy, setBusy ] = useState( false );
 	let path = `/sensei/v1/onboarding/${ step }`;
@@ -48,4 +48,4 @@ export function useOnboardingApi( step ) {
 	}
 
 	return { data, submit, isBusy };
-}
+};

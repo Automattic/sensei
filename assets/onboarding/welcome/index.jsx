@@ -9,7 +9,7 @@ import { useQueryStringRouter } from '../query-string-router';
 /**
  * Welcome step for Onboarding Wizard.
  */
-export function Welcome() {
+export const Welcome = () => {
 	const [ usageModalActive, toggleUsageModal ] = useState( false );
 
 	const { goTo } = useQueryStringRouter();
@@ -60,4 +60,4 @@ export function Welcome() {
 			) }
 		</>
 	);
-}
+};
