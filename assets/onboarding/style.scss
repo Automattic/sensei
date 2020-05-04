@@ -43,7 +43,7 @@
 		margin-right: auto;
 	}
 
-  &__button.components-button.is-button {
+  &__button.components-button {
     display: flex;
     margin: 8px auto 0;
 
@@ -60,11 +60,11 @@
     align-items: center;
   }
 
-  &__button-card.components-button.is-button {
+  &__button-card.components-button {
     width: 310px;
   }
 
-  &__button-modal.components-button.is-button {
+  &__button-modal.components-button {
     margin-right: 0;
   }
 

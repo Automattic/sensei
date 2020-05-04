@@ -55,7 +55,6 @@ export function UsageModal( { tracking, onContinue, onClose, isSubmitting } ) {
 				<Button
 					className="sensei-onboarding__button sensei-onboarding__button-modal"
 					isPrimary
-					isDefault
 					isBusy={ isSubmitting }
 					disabled={ isSubmitting }
 					onClick={ () => onContinue( allowTracking ) }
