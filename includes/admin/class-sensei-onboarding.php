@@ -41,7 +41,7 @@ class Sensei_Onboarding {
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
 			if ( isset( $_GET['post_type'] ) && 'course' === $_GET['post_type'] ) {
 				// Prevent WooCommerce help tab.
-				add_filter( 'woocommerce_enable_admin_help_tab', __return_false );
+				add_filter( 'woocommerce_enable_admin_help_tab', '__return_false' );
 			}
 
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
