@@ -48,7 +48,7 @@ class Sensei_Onboarding {
 
 			add_action( 'admin_menu', [ $this, 'admin_menu' ], 20 );
 			add_action( 'admin_notices', [ $this, 'onboarding_wizard_notice' ] );
-			add_action( 'admin_init', array( $this, 'sensei_skip_setup_wizard' ) );
+			add_action( 'admin_init', array( $this, 'skip_setup_wizard' ) );
 			add_action( 'current_screen', [ $this, 'add_onboarding_help_tab' ] );
 
 			if ( $this->should_prevent_woocommerce_help_tab() ) {
@@ -201,7 +201,7 @@ class Sensei_Onboarding {
 	 *
 	 * @access private
 	 */
-	public function sensei_skip_setup_wizard() {
+	public function skip_setup_wizard() {
 		if (
 			isset( $_GET['sensei_skip_setup_wizard'] )
 			&& '1' === $_GET['sensei_skip_setup_wizard']
