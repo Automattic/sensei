@@ -3,6 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { Button, CheckboxControl, TextControl } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
 import { useQueryStringRouter } from '../query-string-router';
+import { isEqual } from 'lodash';
 
 const purposes = [
 	{
@@ -46,6 +47,10 @@ export const Purpose = () => {
 		selected: [],
 		other: '',
 	} );
+
+	const isEmpty =
+		! selected.length ||
+		( isEqual( [ 'other' ], selected ) && ! other.length );
 
 	function selectItem( id ) {
 		setState( {
@@ -103,6 +108,7 @@ export const Purpose = () => {
 
 				<Button
 					isPrimary
+					disabled={ isEmpty }
 					className="sensei-onboarding__button sensei-onboarding__button-card"
 					onClick={ submitPage }
 				>
