@@ -688,6 +688,10 @@ class Sensei_Main {
 			update_option( 'sensei_show_email_signup_form', true );
 		}
 
+		if ( false === get_option( Sensei_Onboarding::SUGGEST_ONBOARDING_OPTION, false ) ) {
+			update_option( Sensei_Onboarding::SUGGEST_ONBOARDING_OPTION, 1 );
+		}
+
 		update_option( 'skip_install_sensei_pages', 0 );
 		update_option( 'sensei_installed', 1 );
 
