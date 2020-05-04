@@ -80,7 +80,7 @@ class Sensei_Onboarding {
 	public function admin_menu() {
 		if ( current_user_can( 'manage_sensei' ) ) {
 			add_submenu_page(
-				'sensei',
+				null,
 				__( 'Onboarding', 'sensei-lms' ),
 				__( 'Onboarding', 'sensei-lms' ),
 				'manage_sensei',
