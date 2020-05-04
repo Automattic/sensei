@@ -240,8 +240,8 @@ class Sensei_Admin {
 	 */
 	function create_page( $slug, $page_title = '', $page_content = '', $post_parent = 0 ) {
 
-		return Sensei()->onboarding->pages->create_pages( $slug, $page_title, $page_content, $post_parent );
 		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_onboarding\Pages::create_page' );
+		return Sensei()->onboarding->pages->create_page( $slug, $page_title, $page_content, $post_parent );
 
 	}
 
