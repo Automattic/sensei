@@ -228,7 +228,7 @@ class Sensei_Admin {
 	/**
 	 * create_page function.
 	 *
-	 * @deprecated since 4.0.0 use Sensei_onboarding\Pages::create_page
+	 * @deprecated since 3.1.0 use Sensei_onboarding\Pages::create_page
 	 *
 	 * @access public
 	 * @param mixed  $slug
@@ -241,6 +241,7 @@ class Sensei_Admin {
 	function create_page( $slug, $page_title = '', $page_content = '', $post_parent = 0 ) {
 
 		return Sensei()->onboarding->pages->create_pages( $slug, $page_title, $page_content, $post_parent );
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_onboarding\Pages::create_page' );
 
 	}
 
@@ -248,14 +249,14 @@ class Sensei_Admin {
 	/**
 	 * create_pages function.
 	 *
-	 * @deprecated since 4.0.0 use Sensei_onboarding\Pages::create_pages
+	 * @deprecated since 3.1.0 use Sensei_onboarding\Pages::create_pages
 	 *
 	 * @access public
 	 * @return void
 	 */
 	function create_pages() {
 
-		_deprecated_function( __METHOD__, '4.0.0', 'Sensei_onboarding\Pages::create_pages' );
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_onboarding\Pages::create_pages' );
 		Sensei()->onboarding->pages->create_pages();
 
 	}
