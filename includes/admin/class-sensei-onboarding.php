@@ -130,12 +130,47 @@ class Sensei_Onboarding {
 	}
 
 	/**
+	 * Check if current screen is selected to display the wizard notice.
+	 *
+	 * @return boolean
+	 */
+	private function is_current_screen_selected_to_wizard_notice() {
+		$screen = get_current_screen();
+
+		if ( false !== strpos( $screen->id, 'sensei-lms_page_sensei' ) ) {
+			return true;
+		}
+
+		$screens_without_sensei_prefix = [
+			'dashboard',
+			'plugins',
+			'edit-sensei_message',
+			'edit-course',
+			'edit-course-category',
+			'course_page_course-order',
+			'edit-module',
+			'course_page_module-order',
+			'edit-lesson',
+			'edit-lesson-tag',
+			'lesson_page_lesson-order',
+			'edit-question',
+			'question',
+			'edit-question-category',
+		];
+
+		return in_array( $screen->id, $screens_without_sensei_prefix, true );
+	}
+
+	/**
 	 * Onboarding wizard notice.
 	 *
 	 * @access private
 	 */
 	public function onboarding_wizard_notice() {
-		if ( ! get_option( self::SUGGEST_ONBOARDING_OPTION, 0 ) ) {
+		if (
+			! $this->is_current_screen_selected_to_wizard_notice()
+			|| ! get_option( self::SUGGEST_ONBOARDING_OPTION, 0 )
+		) {
 			return;
 		}
 
