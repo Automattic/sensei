@@ -21,7 +21,7 @@ import apiFetch from '@wordpress/api-fetch';
 export const useOnboardingApi = ( step ) => {
 	const [ data, setData ] = useState( {} );
 	const [ isBusy, setBusy ] = useState( false );
-	let path = `/sensei/v1/onboarding/${ step }`;
+	const path = `/sensei/v1/onboarding/${ step }`;
 
 	const fetchData = useCallback( async () => {
 		setBusy( true );
@@ -44,7 +44,6 @@ export const useOnboardingApi = ( step ) => {
 			data: formData,
 		} );
 		setBusy( false );
-		path = `${ path }?skip-preloaded`;
 		await fetchData();
 	}
 

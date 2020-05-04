@@ -60,7 +60,6 @@ class Sensei_Onboarding {
 					'admin_print_scripts',
 					function() {
 						Sensei()->assets->enqueue( 'sensei-onboarding', 'onboarding/index.js', [], true );
-						Sensei()->assets->preload_data( [ '/sensei/v1/onboarding/welcome' ] );
 					}
 				);
 
