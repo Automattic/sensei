@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { UsageModal } from './usage-modal.jsx';
-import { useOnboardingApi } from '../use-onboarding-api.jsx';
+import { useOnboardingApi } from '../use-onboarding-api.js';
 import { useQueryStringRouter } from '../query-string-router';
 
 /**
