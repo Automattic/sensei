@@ -1,4 +1,4 @@
-import { useEffect, useState } from '@wordpress/element';
+import { useEffect, useState, useCallback } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 
 /**
@@ -22,18 +22,19 @@ export const useOnboardingApi = ( step ) => {
 	const [ data, setData ] = useState( {} );
 	const [ isBusy, setBusy ] = useState( false );
 	let path = `/sensei/v1/onboarding/${ step }`;
-	useEffect( () => {
-		fetchData();
-	}, [ step ] );
 
-	async function fetchData() {
+	const fetchData = useCallback( async () => {
 		setBusy( true );
 		const result = await apiFetch( {
 			path,
 		} );
 		setData( result );
 		setBusy( false );
-	}
+	}, [ path ] );
+
+	useEffect( () => {
+		fetchData();
+	}, [ fetchData ] );
 
 	async function submit( formData ) {
 		setBusy( true );
