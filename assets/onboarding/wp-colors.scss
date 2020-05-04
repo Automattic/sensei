@@ -82,6 +82,8 @@ body.sensei-color {
 
   .components-checkbox-control__input[type='checkbox'] {
 
+    border: 2px solid $gray-50;
+
     &:checked {
       background-color: $primary;
       border-color: $primary;
@@ -94,11 +96,22 @@ body.sensei-color {
 
   }
 
+  .components-checkbox-control__checked {
+    transform: scale(0.75);
+  }
+
+  input[type='text'] {
+    &:focus {
+      border-color: $primary;
+      box-shadow: 0 0 0 1px $primary;
+    }
+  }
+
   .woocommerce-stepper {
 
     &__step.is-complete, &__step.is-active {
       .woocommerce-stepper__step-icon {
-        background: $secondary;
+        background: $primary;
       }
     }
   }
