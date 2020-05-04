@@ -44,7 +44,6 @@ class Sensei_Onboarding_API_Test extends WP_Test_REST_TestCase {
 	/**
 	 * Tests if only privileged users can access the Onboarding API.
 	 *
-	 * @since  2.3.0
 	 * @covers Sensei_Onboarding::handle_api_request
 	 */
 	public function testOnlyAdminUserCanAccessOnboardingAPI() {
@@ -58,7 +57,7 @@ class Sensei_Onboarding_API_Test extends WP_Test_REST_TestCase {
 
 		$this->assertEquals( 403, $response->get_status() );
 
-		// Test an administrator can access the API.
+		// Test that an administrator with manage_sensei cap can access the API.
 		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
 		wp_set_current_user( $admin_id );
 		$user = wp_get_current_user();
