@@ -3,6 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { Button, CheckboxControl, TextControl } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
 import { useQueryStringRouter } from '../query-string-router';
+import { useOnboardingApi } from '../use-onboarding-api';
 
 const purposes = [
 	{
@@ -45,10 +46,16 @@ const purposes = [
 export const Purpose = () => {
 	const { goTo } = useQueryStringRouter();
 
+	const { data, submit, isBusy } = useOnboardingApi( 'purpose' );
+
 	const [ { selected, other }, setFormState ] = useState( {
 		selected: [],
 		other: '',
 	} );
+
+	useEffect( () => {
+		if ( data && data.selected ) setFormState( data );
+	}, [ data ] );
 
 	const isEmpty = ! selected.length;
 
@@ -61,7 +68,8 @@ export const Purpose = () => {
 		} ) );
 	};
 
-	const submitPage = () => {
+	const submitPage = async () => {
+		await submit( { selected, other } );
 		goTo( 'features' );
 	};
 
@@ -105,7 +113,8 @@ export const Purpose = () => {
 
 				<Button
 					isPrimary
-					disabled={ isEmpty }
+					isBusy={ isBusy }
+					disabled={ isBusy || isEmpty }
 					className="sensei-onboarding__button sensei-onboarding__button-card"
 					onClick={ submitPage }
 				>
