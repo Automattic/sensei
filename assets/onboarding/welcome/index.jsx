@@ -3,8 +3,8 @@ import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { UsageModal } from './usage-modal.jsx';
-import { useOnboardingApi } from './use-onboarding-api.jsx';
-import { useQueryStringRouter } from './query-string-router';
+import { useOnboardingApi } from '../use-onboarding-api.jsx';
+import { useQueryStringRouter } from '../query-string-router';
 
 /**
  * Welcome step for Onboarding Wizard.

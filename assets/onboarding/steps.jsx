@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { Welcome } from './welcome.jsx';
+import { Welcome } from './welcome';
 
 export const steps = [
 	{
