@@ -43,24 +43,6 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test remove some Sensei screens from WooCommerce screens.
-	 *
-	 * @covers Sensei_Onboarding::should_show_help_screen
-	 * @covers Sensei_Onboarding::remove_some_sensei_screens_from_woocommerce_screens
-	 */
-	public function testRemoveSomeSenseiScreensFromWoocommerceScreens() {
-		$previous_screen_ids          = [
-			'a',
-			'b',
-			'edit-course',
-		];
-		$expected_filtered_screen_ids = [ 'a', 'b' ];
-		$filtered_screen_ids          = $this->onboarding_instance->remove_some_sensei_screens_from_woocommerce_screens( $previous_screen_ids );
-
-		$this->assertEquals( $expected_filtered_screen_ids, $filtered_screen_ids, 'Should filter removing edit course screens.' );
-	}
-
-	/**
 	 * Test add onboarding help tab to edit course screen.
 	 *
 	 * @covers Sensei_Onboarding::add_onboarding_help_tab
