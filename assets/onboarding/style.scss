@@ -7,7 +7,7 @@
 
 	&__page {
 		background: #f6f7f7;
-		color: #50575e;
+		color: $text_secondary;
 
 		* {
 			box-sizing: border-box;
@@ -76,6 +76,13 @@
 			color: $text_primary;
 			font-weight: normal;
 			font-size: 24px;
+			line-height: 32px;
+			margin: 0;
+			margin-bottom: 8px;
+		}
+
+		p {
+			font-size: 16px;
 		}
 	}
 
