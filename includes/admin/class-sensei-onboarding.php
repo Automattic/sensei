@@ -118,10 +118,11 @@ class Sensei_Onboarding {
 	/**
 	 * Add onboarding help tab.
 	 *
+	 * @param WP_Screen $screen Current screen.
+	 *
 	 * @access private
 	 */
-	public function add_onboarding_help_tab() {
-		$screen           = get_current_screen();
+	public function add_onboarding_help_tab( $screen ) {
 		$link_track_event = 'sensei_setup_wizard_click';
 
 		if ( ! $screen || ! $this->should_show_help_screen( $screen->id ) ) {

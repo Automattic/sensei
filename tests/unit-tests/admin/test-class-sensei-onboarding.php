@@ -49,10 +49,9 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	 */
 	public function testAddOnboardingHelpTab() {
 		set_current_screen( 'edit-course' );
+		$screen = get_current_screen();
 
-		$this->onboarding_instance->add_onboarding_help_tab();
-
-		$screen      = get_current_screen();
+		$this->onboarding_instance->add_onboarding_help_tab( $screen );
 		$created_tab = $screen->get_help_tab( 'sensei_lms_onboarding_tab' );
 
 		$this->assertNotNull( $created_tab, 'Should create the onboarding tab to edit course screens.' );
@@ -65,10 +64,9 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	 */
 	public function testAddOnboardingHelpTabNonEditCourseScreen() {
 		set_current_screen( 'edit-lesson' );
+		$screen = get_current_screen();
 
-		$this->onboarding_instance->add_onboarding_help_tab();
-
-		$screen      = get_current_screen();
+		$this->onboarding_instance->add_onboarding_help_tab( $screen );
 		$created_tab = $screen->get_help_tab( 'sensei_lms_onboarding_tab' );
 
 		$this->assertNull( $created_tab, 'Should not create the onboarding tab to non edit course screens.' );
