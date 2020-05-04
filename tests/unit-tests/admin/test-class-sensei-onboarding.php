@@ -41,6 +41,105 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test onboarding wizard notice in dashboard.
+	 *
+	 * @covers Sensei_Onboarding::onboarding_wizard_notice
+	 * @covers Sensei_Onboarding::is_current_screen_selected_to_wizard_notice
+	 */
+	public function testOnboardingWizardNoticeInDashboard() {
+		set_current_screen( 'dashboard' );
+		update_option( \Sensei_Onboarding::SUGGEST_ONBOARDING_OPTION, 1 );
+
+		ob_start();
+		Sensei()->onboarding->onboarding_wizard_notice();
+		$html = ob_get_clean();
+
+		$this->assertNotEmpty( $html, 'Should return the notice HTML' );
+	}
+
+	/**
+	 * Test onboarding wizard notice in screen with Sensei prefix.
+	 *
+	 * @covers Sensei_Onboarding::onboarding_wizard_notice
+	 * @covers Sensei_Onboarding::is_current_screen_selected_to_wizard_notice
+	 */
+	public function testOnboardingWizardNoticeInSenseiScreen() {
+		set_current_screen( 'sensei-lms_page_sensei_test' );
+		update_option( \Sensei_Onboarding::SUGGEST_ONBOARDING_OPTION, 1 );
+
+		ob_start();
+		Sensei()->onboarding->onboarding_wizard_notice();
+		$html = ob_get_clean();
+
+		$this->assertNotEmpty( $html, 'Should return the notice HTML' );
+	}
+
+	/**
+	 * Test onboarding wizard notice in no Sensei screen.
+	 *
+	 * @covers Sensei_Onboarding::onboarding_wizard_notice
+	 * @covers Sensei_Onboarding::is_current_screen_selected_to_wizard_notice
+	 */
+	public function testOnboardingWizardNoticeInOtherScreen() {
+		set_current_screen( 'other' );
+		update_option( \Sensei_Onboarding::SUGGEST_ONBOARDING_OPTION, 1 );
+
+		ob_start();
+		Sensei()->onboarding->onboarding_wizard_notice();
+		$html = ob_get_clean();
+
+		$this->assertEmpty( $html, 'Should return empty string' );
+	}
+
+	/**
+	 * Test onboarding wizard notice with suggest option as 0.
+	 *
+	 * @covers Sensei_Onboarding::onboarding_wizard_notice
+	 * @covers Sensei_Onboarding::is_current_screen_selected_to_wizard_notice
+	 */
+	public function testOnboardingWizardNoticeSuggest0() {
+		set_current_screen( 'dashboard' );
+		update_option( \Sensei_Onboarding::SUGGEST_ONBOARDING_OPTION, 0 );
+
+		ob_start();
+		Sensei()->onboarding->onboarding_wizard_notice();
+		$html = ob_get_clean();
+
+		$this->assertEmpty( $html, 'Should return empty string' );
+	}
+
+	/**
+	 * Test onboarding wizard notice without suggest option.
+	 *
+	 * @covers Sensei_Onboarding::onboarding_wizard_notice
+	 * @covers Sensei_Onboarding::is_current_screen_selected_to_wizard_notice
+	 */
+	public function testOnboardingWizardNoticeWithoutSuggest() {
+		set_current_screen( 'dashboard' );
+
+		ob_start();
+		Sensei()->onboarding->onboarding_wizard_notice();
+		$html = ob_get_clean();
+
+		$this->assertEmpty( $html, 'Should return empty string' );
+	}
+
+	/**
+	 * Test skip setup wizard.
+	 *
+	 * @covers Sensei_Onboarding::skip_setup_wizard
+	 */
+	public function testSkipSetupWizard() {
+		$_GET['sensei_skip_setup_wizard'] = '1';
+		$_GET['_wpnonce']                 = wp_create_nonce( 'sensei_skip_setup_wizard' );
+
+		Sensei()->onboarding->skip_setup_wizard();
+		$option_value = get_option( \Sensei_Onboarding::SUGGEST_ONBOARDING_OPTION, false );
+
+		$this->assertEquals( '0', $option_value, 'Should update option to 0' );
+	}
+
+	/**
 	 * Test add onboarding help tab to edit course screen.
 	 *
 	 * @covers Sensei_Onboarding::add_onboarding_help_tab
