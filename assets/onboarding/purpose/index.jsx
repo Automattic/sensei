@@ -1,7 +1,7 @@
 import { Card, H } from '@woocommerce/components';
 import { __ } from '@wordpress/i18n';
 import { Button, CheckboxControl, TextControl } from '@wordpress/components';
-import { useState } from '@wordpress/element';
+import { useState, useEffect } from '@wordpress/element';
 import { useQueryStringRouter } from '../query-string-router';
 
 const purposes = [
