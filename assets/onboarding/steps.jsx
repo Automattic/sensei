@@ -1,5 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { Welcome } from './welcome';
+import { Purpose } from './purpose';
+
 
 export const steps = [
 	{
@@ -10,7 +12,7 @@ export const steps = [
 	},
 	{
 		key: 'purpose',
-		container: <div>Purpose</div>,
+		container: <Purpose />,
 		label: __( 'Purpose', 'sensei-lms' ),
 		isComplete: false,
 	},
