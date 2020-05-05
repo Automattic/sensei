@@ -29,6 +29,7 @@ class Sensei_Onboarding_API_Test extends WP_Test_REST_TestCase {
 		$this->server   = $wp_rest_server;
 
 		do_action( 'rest_api_init' );
+
 	}
 
 	/**
@@ -39,6 +40,9 @@ class Sensei_Onboarding_API_Test extends WP_Test_REST_TestCase {
 
 		global $wp_rest_server;
 		$wp_rest_server = null;
+
+		// Restore Usage tracking option.
+		Sensei()->usage_tracking->set_tracking_enabled( true );
 	}
 
 	/**
