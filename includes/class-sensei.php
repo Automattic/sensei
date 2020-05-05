@@ -199,7 +199,7 @@ class Sensei_Main {
 	 *
 	 * @var Sensei_Onboarding
 	 */
-	private $onboarding;
+	public $onboarding;
 
 	/**
 	 * Constructor method.
