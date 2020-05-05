@@ -19,6 +19,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since   3.1.0
  */
 class Sensei_Onboarding {
+	const ONBOARDINGDATA_OPTION_NAME = 'sensei-onboarding-data';
+
+	private $onboarding_data_defaults = [
+		'features'      => [],
+		'purpose'       => [],
+		'purpose_other' => '',
+	];
 
 	/**
 	 * URL Slug for Onboarding Wizard page
@@ -222,7 +229,7 @@ class Sensei_Onboarding {
 	/**
 	 * Welcome step data.
 	 *
-	 * @return array Data used on welcome page.
+	 * @return array Data used on purpose step.
 	 */
 	public function api_welcome_get() {
 		return [
@@ -244,4 +251,80 @@ class Sensei_Onboarding {
 		return true;
 	}
 
+	/**
+	 * Submit form on purpose step.
+	 *
+	 * @param array $data Form data.
+	 *
+	 * @return bool Success.
+	 */
+	public function api_purpose_submit( $data ) {
+
+		$purpose       = array_map( 'sanitize_key', array_values( $data['selected'] ) );
+		$purpose_other = in_array( 'other', $purpose, true ) ? sanitize_text_field( $data['other'] ) : '';
+
+		return $this->update_onboarding_user_data(
+			[
+				'purpose'       => $purpose,
+				'purpose_other' => $purpose_other,
+			]
+		);
+	}
+
+
+	/**
+	 * Purpose step data.
+	 *
+	 * @return array Data used on features page.
+	 */
+	public function api_features_get() {
+		$data = $this->get_onboarding_user_data();
+
+		return [
+			'selected' => $data['features'],
+			'plugins'  => [],
+		];
+	}
+
+	/**
+	 * Submit form on purpose step.
+	 *
+	 * @param array $data Form data.
+	 *
+	 * @return bool Success.
+	 */
+	public function api_features_submit( $data ) {
+
+		if ( ! is_array( $data['selected'] ) ) {
+			$data['selected'] = [];
+		}
+
+		$features = array_map( 'sanitize_key', array_values( $data['selected'] ) );
+
+		return $this->update_onboarding_user_data(
+			[
+				'features' => $features,
+			]
+		);
+	}
+
+	/**
+	 * Get saved onboarding user data.
+	 *
+	 * @return mixed
+	 */
+	public function get_onboarding_user_data() {
+		return get_option( self::ONBOARDINGDATA_OPTION_NAME, $this->onboarding_data_defaults );
+	}
+
+	/**
+	 * Save onboarding user data.
+	 *
+	 * @param array $changes Key-value pair of updates to save.
+	 * @return bool Whether value was updated.
+	 */
+	private function update_onboarding_user_data( $changes ) {
+		$option = array_merge( $this->get_onboarding_user_data(), $changes );
+		return update_option( self::ONBOARDINGDATA_OPTION_NAME, $option );
+	}
 }
