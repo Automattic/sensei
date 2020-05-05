@@ -39,7 +39,7 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	 * Testing the onboarding class to make sure it is loaded.
 	 */
 	public function testClassInstance() {
-		$this->assertTrue( class_exists( 'Sensei_Onboarding' ), 'Sensei Admin class does not exist' );
+		$this->assertTrue( class_exists( 'Sensei_Onboarding' ), 'Sensei Onboarding class does not exist' );
 	}
 
 	/**
