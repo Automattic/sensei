@@ -123,7 +123,7 @@ class Sensei_Onboarding {
 	 * @access private
 	 */
 	public function add_onboarding_help_tab( $screen ) {
-		$link_track_event = 'sensei_setup_wizard_click';
+		$link_track_event = 'setup_wizard_click';
 
 		if ( ! $screen || ! $this->should_show_help_screen( $screen->id ) ) {
 			return;
