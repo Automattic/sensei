@@ -686,9 +686,6 @@ class Sensei_Main {
 
 		if ( false === get_option( 'sensei_installed', false ) ) {
 			update_option( 'sensei_show_email_signup_form', true );
-		}
-
-		if ( false === get_option( Sensei_Onboarding::SUGGEST_ONBOARDING_OPTION, false ) ) {
 			update_option( Sensei_Onboarding::SUGGEST_ONBOARDING_OPTION, 1 );
 		}
 
