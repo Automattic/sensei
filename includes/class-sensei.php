@@ -397,6 +397,9 @@ class Sensei_Main {
 		$this->enrolment_scheduler = Sensei_Enrolment_Job_Scheduler::instance();
 		$this->enrolment_scheduler->init();
 
+		// Onboarding Wizard.
+		$this->onboarding = new Sensei_Onboarding();
+
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
 			// Load Admin Class
@@ -404,9 +407,6 @@ class Sensei_Main {
 
 			// Load Analysis Reports
 			$this->analysis = new Sensei_Analysis( $this->main_plugin_file_name );
-
-			// Loading onboarding page
-			$this->onboarding = new Sensei_Onboarding();
 
 			if ( $this->feature_flags->is_enabled( 'rest_api_testharness' ) ) {
 				$this->test_harness = new Sensei_Admin_Rest_Api_Testharness( $this->main_plugin_file_name );

@@ -17,8 +17,6 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	public function setup() {
 		parent::setup();
 
-		Sensei()->onboarding = new Sensei_Onboarding();
-
 		// Save original current screen.
 		global $current_screen;
 		$this->original_screen = $current_screen;
