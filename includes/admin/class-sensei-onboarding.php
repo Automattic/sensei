@@ -176,8 +176,7 @@ class Sensei_Onboarding {
 
 		$setup_url = admin_url( 'admin.php?page=' . $this->page_slug );
 
-		$skip_url = admin_url( 'admin.php?page=sensei-settings' );
-		$skip_url = add_query_arg( 'sensei_skip_setup_wizard', '1', $skip_url );
+		$skip_url = add_query_arg( 'sensei_skip_setup_wizard', '1' );
 		$skip_url = wp_nonce_url( $skip_url, 'sensei_skip_setup_wizard' );
 		?>
 		<div id="message" class="updated sensei-message sensei-connect">
