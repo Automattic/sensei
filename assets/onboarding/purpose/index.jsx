@@ -42,7 +42,7 @@ const purposes = [
 export const Purpose = () => {
 	const { goTo } = useQueryStringRouter();
 
-	const [ { selected, other }, setState ] = useState( {
+	const [ { selected, other }, setFormState ] = useState( {
 		selected: [],
 		other: '',
 	} );
@@ -50,12 +50,12 @@ export const Purpose = () => {
 	const isEmpty = ! selected.length;
 
 	const selectItem = ( id ) => {
-		setState( {
-			other,
+		setFormState( ( formState ) => ( {
+			...formState,
 			selected: selected.includes( id )
 				? selected.filter( ( item ) => item !== id )
 				: [ id, ...selected ],
-		} );
+		} ) );
 	};
 
 	const submitPage = () => {
@@ -98,7 +98,10 @@ export const Purpose = () => {
 							value={ other }
 							placeholder={ __( 'Description', 'sensei-lms' ) }
 							onChange={ ( value ) =>
-								setState( { selected, other: value } )
+								setFormState( ( formState ) => ( {
+									...formState,
+									other: value,
+								} ) )
 							}
 						/>
 					) }
