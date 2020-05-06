@@ -47,6 +47,10 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Onboarding::is_current_screen_selected_to_wizard_notice
 	 */
 	public function testOnboardingWizardNoticeInDashboard() {
+		// Create and login as admin.
+		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $admin_id );
+
 		set_current_screen( 'dashboard' );
 		update_option( \Sensei_Onboarding::SUGGEST_ONBOARDING_OPTION, 1 );
 
@@ -64,6 +68,10 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Onboarding::is_current_screen_selected_to_wizard_notice
 	 */
 	public function testOnboardingWizardNoticeInSenseiScreen() {
+		// Create and login as admin.
+		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $admin_id );
+
 		set_current_screen( 'sensei-lms_page_sensei_test' );
 		update_option( \Sensei_Onboarding::SUGGEST_ONBOARDING_OPTION, 1 );
 
@@ -81,6 +89,10 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Onboarding::is_current_screen_selected_to_wizard_notice
 	 */
 	public function testOnboardingWizardNoticeInOtherScreen() {
+		// Create and login as admin.
+		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $admin_id );
+
 		set_current_screen( 'other' );
 		update_option( \Sensei_Onboarding::SUGGEST_ONBOARDING_OPTION, 1 );
 
@@ -98,6 +110,10 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Onboarding::is_current_screen_selected_to_wizard_notice
 	 */
 	public function testOnboardingWizardNoticeSuggest0() {
+		// Create and login as admin.
+		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $admin_id );
+
 		set_current_screen( 'dashboard' );
 		update_option( \Sensei_Onboarding::SUGGEST_ONBOARDING_OPTION, 0 );
 
@@ -115,7 +131,32 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Onboarding::is_current_screen_selected_to_wizard_notice
 	 */
 	public function testOnboardingWizardNoticeWithoutSuggest() {
+		// Create and login as admin.
+		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $admin_id );
+
 		set_current_screen( 'dashboard' );
+
+		ob_start();
+		Sensei()->onboarding->onboarding_wizard_notice();
+		$html = ob_get_clean();
+
+		$this->assertEmpty( $html, 'Should return empty string' );
+	}
+
+	/**
+	 * Test onboarding wizard notice for no admin user.
+	 *
+	 * @covers Sensei_Onboarding::onboarding_wizard_notice
+	 * @covers Sensei_Onboarding::is_current_screen_selected_to_wizard_notice
+	 */
+	public function testOnboardingWizardNoticeNoAdmin() {
+		// Create and login as teacher.
+		$teacher_id = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		wp_set_current_user( $teacher_id );
+
+		set_current_screen( 'dashboard' );
+		update_option( \Sensei_Onboarding::SUGGEST_ONBOARDING_OPTION, 0 );
 
 		ob_start();
 		Sensei()->onboarding->onboarding_wizard_notice();
@@ -130,6 +171,10 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Onboarding::skip_setup_wizard
 	 */
 	public function testSkipSetupWizard() {
+		// Create and login as admin.
+		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $admin_id );
+
 		$_GET['sensei_skip_setup_wizard'] = '1';
 		$_GET['_wpnonce']                 = wp_create_nonce( 'sensei_skip_setup_wizard' );
 
@@ -137,6 +182,25 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 		$option_value = get_option( \Sensei_Onboarding::SUGGEST_ONBOARDING_OPTION, false );
 
 		$this->assertEquals( '0', $option_value, 'Should update option to 0' );
+	}
+
+	/**
+	 * Test skip setup wizard.
+	 *
+	 * @covers Sensei_Onboarding::skip_setup_wizard
+	 */
+	public function testSkipSetupWizardNoAdmin() {
+		// Create and login as teacher.
+		$teacher_id = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		wp_set_current_user( $teacher_id );
+
+		$_GET['sensei_skip_setup_wizard'] = '1';
+		$_GET['_wpnonce']                 = wp_create_nonce( 'sensei_skip_setup_wizard' );
+
+		Sensei()->onboarding->skip_setup_wizard();
+		$option_value = get_option( \Sensei_Onboarding::SUGGEST_ONBOARDING_OPTION, false );
+
+		$this->assertFalse( $option_value, 'Should not update option' );
 	}
 
 	/**

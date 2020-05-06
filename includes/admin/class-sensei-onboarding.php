@@ -170,6 +170,7 @@ class Sensei_Onboarding {
 		if (
 			! $this->is_current_screen_selected_to_wizard_notice()
 			|| ! get_option( self::SUGGEST_ONBOARDING_OPTION, 0 )
+			|| ! current_user_can( 'manage_sensei' )
 		) {
 			return;
 		}
@@ -207,6 +208,7 @@ class Sensei_Onboarding {
 			&& isset( $_GET['_wpnonce'] )
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Don't touch the nonce.
 			&& wp_verify_nonce( wp_unslash( $_GET['_wpnonce'] ), 'sensei_skip_setup_wizard' )
+			&& current_user_can( 'manage_sensei' )
 		) {
 			update_option( self::SUGGEST_ONBOARDING_OPTION, 0 );
 		}
