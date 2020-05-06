@@ -75,6 +75,8 @@ class Sensei_Unit_Tests_Bootstrap {
 		// reload capabilities after install, see https://core.trac.wordpress.org/ticket/28374
 		$GLOBALS['wp_roles']->for_site();
 		echo 'Installing Sensei...' . PHP_EOL;
+
+		Sensei()->activate();
 	}
 	/**
 	 * Load Sensei-specific test cases and factories.
