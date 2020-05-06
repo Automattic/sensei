@@ -2,7 +2,7 @@ import { Button, Modal, CheckboxControl } from '@wordpress/components';
 import { Link } from '@woocommerce/components';
 import interpolateComponents from 'interpolate-components';
 import { __ } from '@wordpress/i18n';
-import { useState } from '@wordpress/element';
+import { useState, useEffect } from '@wordpress/element';
 
 /**
  * Modal for usage tracking opt-in.
@@ -37,7 +37,8 @@ export const UsageModal = ( {
 		},
 	} );
 
-	const [ allowTracking, setAllowTracking ] = useState( tracking );
+	const [ allowTracking, setAllowTracking ] = useState( false );
+	useEffect( () => setAllowTracking( tracking ), [ tracking ] );
 
 	return (
 		<Modal
