@@ -202,12 +202,13 @@ class Sensei_Course {
 		/**
 		 * Filters if a visitor can view course content.
 		 *
-		 * @since 3.0.0.
+		 * @since 3.0.0
+		 * @hook sensei_can_access_course_content
 		 *
-		 * @param bool   $can_view_course_content True if they can view the course content.
-		 * @param int    $course_id               Course post ID.
-		 * @param int    $user_id                 User ID if user is logged in.
-		 * @param string $context                 Context that we're checking for course content
+		 * @param {bool}   $can_view_course_content True if they can view the course content.
+		 * @param {int}    $course_id               Course post ID.
+		 * @param {int}    $user_id                 User ID if user is logged in.
+		 * @param {string} $context                 Context that we're checking for course content
 		 *                                        access (`lesson`, `quiz`, or `module`).
 		 */
 		return apply_filters( 'sensei_can_access_course_content', $can_view_course_content, $course_id, $user_id, $context );
