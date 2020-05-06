@@ -23,7 +23,7 @@ export const UsageModal = ( {
 	const trackingMessage = interpolateComponents( {
 		mixedString: __(
 			'Get improved features and faster fixes by sharing non-sensitive data via {{link}}usage tracking{{/link}} ' +
-				'that shows us how WooCommerce is used. No personal data is tracked or stored.',
+				'that shows us how Sensei LMS is used. No personal data is tracked or stored.',
 			'sensei-lms'
 		),
 		components: {
