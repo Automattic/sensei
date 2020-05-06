@@ -21,11 +21,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Onboarding {
 	const ONBOARDINGDATA_OPTION_NAME = 'sensei-onboarding-data';
 
-	private $onboarding_data_defaults = [
+	/**
+	 * @var array Default value for onboarding user data.
+	 */
+	private $onboarding_user_data_defaults = [
 		'features'      => [],
 		'purpose'       => [],
 		'purpose_other' => '',
 	];
+
+	public $plugin_slugs  = [];
 
 	/**
 	 * URL Slug for Onboarding Wizard page
@@ -211,16 +216,17 @@ class Sensei_Onboarding {
 	 * @return mixed
 	 */
 	public function get_onboarding_user_data() {
-		return get_option( self::ONBOARDINGDATA_OPTION_NAME, $this->onboarding_data_defaults );
+		return get_option( self::ONBOARDINGDATA_OPTION_NAME, $this->onboarding_user_data_defaults );
 	}
 
 	/**
 	 * Save onboarding user data.
 	 *
 	 * @param array $changes Key-value pair of updates to save.
+	 *
 	 * @return bool Whether value was updated.
 	 */
-	private function update_onboarding_user_data( $changes ) {
+	public function update_onboarding_user_data( $changes ) {
 		$option = array_merge( $this->get_onboarding_user_data(), $changes );
 		return update_option( self::ONBOARDINGDATA_OPTION_NAME, $option );
 	}
