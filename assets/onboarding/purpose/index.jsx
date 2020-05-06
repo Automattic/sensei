@@ -99,6 +99,7 @@ export const Purpose = () => {
 						<TextControl
 							className="sensei-onboarding__textcontrol-other"
 							value={ other }
+							placeholder={ __( 'Description', 'sensei-lms' ) }
 							onChange={ ( value ) =>
 								setState( { selected, other: value } )
 							}
