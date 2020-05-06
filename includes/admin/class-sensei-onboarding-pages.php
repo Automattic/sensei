@@ -3,7 +3,7 @@
  * Create Sensei pages during onboarding.
  *
  * @package Sensei\Onboarding
- * @since   1.3.0
+ * @since   3.1.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -67,6 +67,7 @@ class Sensei_Onboarding_Pages {
 		$new_my_course_page_id = $this->create_page( esc_sql( _x( 'my-courses', 'page_slug', 'sensei-lms' ) ), __( 'My Courses', 'sensei-lms' ), '[sensei_user_courses]' );
 		Sensei()->settings->set( 'my_course_page', $new_my_course_page_id );
 
+		update_option( 'sensei_flush_rewrite_rules', '2' );
 	}
 
 
