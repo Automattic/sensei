@@ -1,6 +1,6 @@
 import { render } from '@wordpress/element';
 import { useWpAdminFullscreen } from '../react-hooks';
-import { steps } from './steps.jsx';
+import { steps } from './steps';
 import QueryStringRouter, { Route } from './query-string-router';
 import Navigation from './navigation';
 
