@@ -48,9 +48,7 @@ export const Purpose = () => {
 		other: '',
 	} );
 
-	const isEmpty =
-		! selected.length ||
-		( isEqual( [ 'other' ], selected ) && ! other.length );
+	const isEmpty = ! selected.length;
 
 	function selectItem( id ) {
 		setState( {
