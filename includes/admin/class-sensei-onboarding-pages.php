@@ -67,7 +67,7 @@ class Sensei_Onboarding_Pages {
 		$new_my_course_page_id = $this->create_page( esc_sql( _x( 'my-courses', 'page_slug', 'sensei-lms' ) ), __( 'My Courses', 'sensei-lms' ), '[sensei_user_courses]' );
 		Sensei()->settings->set( 'my_course_page', $new_my_course_page_id );
 
-		update_option( 'sensei_flush_rewrite_rules', '2' );
+		Sensei()->initiate_rewrite_rules_flush();
 	}
 
 
