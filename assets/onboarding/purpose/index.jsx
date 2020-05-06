@@ -36,7 +36,6 @@ const purposes = [
 	},
 ];
 
-
 /**
  * Purpose step for Onboarding Wizard.
  */
@@ -50,18 +49,18 @@ export const Purpose = () => {
 
 	const isEmpty = ! selected.length;
 
-	function selectItem( id ) {
+	const selectItem = ( id ) => {
 		setState( {
 			other,
 			selected: selected.includes( id )
 				? selected.filter( ( item ) => item !== id )
 				: [ id, ...selected ],
 		} );
-	}
+	};
 
-	async function submitPage() {
+	const submitPage = () => {
 		goTo( 'features' );
-	}
+	};
 
 	return (
 		<>
