@@ -40,4 +40,43 @@ class Sensei_REST_API_Helper {
 	public function base_namespace_url() {
 		return $this->rest_url() . $this->api->get_api_prefix();
 	}
+
+
+	/**
+	 * Helper to register multiple REST API endpoints with some common options.
+	 * Registered callbacks are passed the request parameters as the first argument.
+	 *
+	 * @param string $namespace      URL prefix.
+	 * @param array  $endpoints      Endpoint descriptors.
+	 * @param array  $common_options Shared options between endpoint or arguments.
+	 */
+	public static function register_endpoints( $namespace, $endpoints, $common_options ) {
+
+		$add_arg_common = function( $arg ) use ( $common_options ) {
+			return array_merge( $common_options['arg'], $arg );
+		};
+
+		$add_endpoint_common = function( $endpoint ) use ( $common_options, $add_arg_common ) {
+			$endpoint = array_merge( $common_options['endpoint'], $endpoint );
+			if ( $endpoint['args'] ) {
+				$endpoint['args'] = array_map( $add_arg_common, $endpoint['args'] );
+			}
+			$callback = $endpoint['callback'];
+
+			$endpoint['callback'] = function( $request ) use ( $callback ) {
+				return call_user_func( $callback, $request->get_params(), $request );
+			};
+
+			return $endpoint;
+		};
+
+		foreach ( $endpoints as $name => $endpoint ) {
+			register_rest_route(
+				$namespace,
+				$name,
+				array_map( $add_endpoint_common, $endpoint )
+			);
+		}
+	}
+
 }
