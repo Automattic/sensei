@@ -49,6 +49,7 @@ class Sensei_Onboarding {
 			add_action( 'admin_menu', [ $this, 'admin_menu' ], 20 );
 			add_action( 'admin_notices', [ $this, 'setup_wizard_notice' ] );
 			add_action( 'admin_init', array( $this, 'skip_setup_wizard' ) );
+			add_action( 'admin_init', array( $this, 'activation_redirect' ) );
 			add_action( 'current_screen', [ $this, 'add_setup_wizard_help_tab' ] );
 
 			// Maybe prevent WooCommerce help tab.
@@ -115,6 +116,34 @@ class Sensei_Onboarding {
 				[ $this, 'setup_wizard_page' ]
 			);
 		}
+	}
+
+	/**
+	 * Redirect after first activation.
+	 */
+	public function activation_redirect() {
+		if (
+			// Check if activation redirect is needed.
+			! get_transient( 'sensei_activation_redirect' )
+			// Test whether the context of execution comes from async action scheduler.
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
+			|| ( isset( $_REQUEST['action'] ) && 'as_async_request_queue_runner' === $_REQUEST['action'] )
+			// On these pages, or during these events, postpone the redirect.
+			|| wp_doing_ajax() || wp_doing_cron() || is_network_admin() || ! current_user_can( 'manage_sensei' )
+		) {
+			return;
+		}
+
+		delete_transient( 'sensei_activation_redirect' );
+		$this->redirect_to_onboarding();
+	}
+
+	/**
+	 * Redirect to the onboarding.
+	 */
+	protected function redirect_to_onboarding() {
+		wp_safe_redirect( admin_url( 'admin.php?page=' . $this->page_slug ) );
+		exit;
 	}
 
 	/**
