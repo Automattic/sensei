@@ -66,7 +66,7 @@ class Sensei_Onboarding {
 
 		if ( is_admin() ) {
 
-			add_action( 'admin_menu', [ $this, 'admin_menu' ], 20 );
+			add_action( 'admin_menu', [ $this, 'register_onboarding_page' ], 20 );
 			add_action( 'current_screen', [ $this, 'add_onboarding_help_tab' ] );
 
 			if ( $this->should_prevent_woocommerce_help_tab() ) {
@@ -76,33 +76,57 @@ class Sensei_Onboarding {
 
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
 			if ( isset( $_GET['page'] ) && ( $_GET['page'] === $this->page_slug ) ) {
-
-				add_action(
-					'admin_print_scripts',
-					function() {
-						Sensei()->assets->enqueue( 'sensei-onboarding', 'onboarding/index.js', [], true );
-					}
-				);
-
-				add_action(
-					'admin_print_styles',
-					function() {
-						Sensei()->assets->enqueue( 'sensei-onboarding', 'onboarding/style.css', [ 'wp-components' ] );
-					}
-				);
-
-				add_filter(
-					'admin_body_class',
-					function( $classes ) {
-						$classes .= ' sensei-wp-admin-fullscreen ';
-						return $classes;
-					}
-				);
-				add_filter( 'show_admin_bar', '__return_false' );
+				$this->setup_onboarding_page();
 			}
 		}
 
 	}
+
+	/**
+	 * Register an Onboarding admin page.
+	 */
+	public function register_onboarding_page() {
+		if ( current_user_can( 'manage_sensei' ) ) {
+			add_submenu_page(
+				null,
+				__( 'Onboarding', 'sensei-lms' ),
+				__( 'Onboarding', 'sensei-lms' ),
+				'manage_sensei',
+				$this->page_slug,
+				[ $this, 'render_onboarding_page' ]
+			);
+		}
+
+	}
+
+	/**
+	 * Set up hooks for loading Onboarding page assets.
+	 */
+	public function setup_onboarding_page() {
+		add_action(
+			'admin_print_scripts',
+			function() {
+				Sensei()->assets->enqueue( 'sensei-onboarding', 'onboarding/index.js', [], true );
+			}
+		);
+
+		add_action(
+			'admin_print_styles',
+			function() {
+				Sensei()->assets->enqueue( 'sensei-onboarding', 'onboarding/style.css', [ 'wp-components' ] );
+			}
+		);
+
+		add_filter(
+			'admin_body_class',
+			function( $classes ) {
+				$classes .= ' sensei-wp-admin-fullscreen ';
+				return $classes;
+			}
+		);
+		add_filter( 'show_admin_bar', '__return_false' );
+	}
+
 
 	/**
 	 * Check if should prevent woocommerce help tab or not.
@@ -138,7 +162,7 @@ class Sensei_Onboarding {
 	/**
 	 * Render app container for Onboarding Wizard.
 	 */
-	public function onboarding_page() {
+	public function render_onboarding_page() {
 
 		?>
 		<div id="sensei-onboarding-page" class="sensei-onboarding">
