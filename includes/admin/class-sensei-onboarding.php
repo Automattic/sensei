@@ -42,14 +42,23 @@ class Sensei_Onboarding {
 	public $pages;
 
 	/**
+	 * REST API for Onboarding.
+	 *
+	 * @var Sensei_Onboarding_API
+	 */
+	public $api;
+
+	/**
 	 * Sensei_Onboarding constructor.
 	 */
 	public function __construct() {
 
 		$this->page_slug = 'sensei_onboarding';
 		$this->pages     = new Sensei_Onboarding_Pages();
+		$this->api       = new Sensei_Onboarding_API( $this );
 
-		add_action( 'rest_api_init', [ $this, 'register_rest_api' ] );
+		add_action( 'rest_api_init', [ $this->api, 'register' ] );
+
 		if ( is_admin() ) {
 
 			add_action( 'admin_menu', [ $this, 'admin_menu' ], 20 );
@@ -170,61 +179,6 @@ class Sensei_Onboarding {
 			]
 		);
 	}
-	/**
-	 * Register REST API route.
-	 */
-	public function register_rest_api() {
-
-		register_rest_route(
-			'sensei/v1',
-			'/onboarding/(?P<page>[a-zA-Z0-9-]+)',
-			array(
-				'methods'             => [ 'GET', 'POST' ],
-				'callback'            => [ $this, 'handle_api_request' ],
-				'permission_callback' => [ $this, 'can_user_access_rest_api' ],
-			)
-		);
-	}
-
-	/**
-	 * Check user permission for REST API access.
-	 *
-	 * @return bool Whether the user can access the Onboarding REST API.
-	 */
-	public function can_user_access_rest_api() {
-		return current_user_can( 'manage_sensei' );
-	}
-
-	/**
-	 * Process onboarding API request.
-	 *
-	 * @param WP_REST_Request $request The request object.
-	 *
-	 * @return mixed Result for the called endpoint.
-	 */
-	public function handle_api_request( $request ) {
-
-		$page      = $request->get_param( 'page' );
-		$method    = $request->get_method();
-		$endpoints = [
-			'welcome' => [
-				'GET'  => [ $this, 'api_welcome_get' ],
-				'POST' => [ $this, 'api_welcome_submit' ],
-			],
-		];
-
-		if ( ! ( array_key_exists( $page, $endpoints ) && array_key_exists( $method, $endpoints[ $page ] ) ) ) {
-			return new WP_Error( 'invalid_page', __( 'Page not found', 'sensei-lms' ), [ 'status' => 404 ] );
-		}
-		$endpoint = $endpoints[ $page ][ $method ];
-
-		if ( 'POST' === $method ) {
-			$data = $request->get_json_params();
-			return call_user_func( $endpoint, $data );
-		} else {
-			return call_user_func( $endpoint );
-		}
-	}
 
 	/**
 	 * Welcome step data.
@@ -249,63 +203,6 @@ class Sensei_Onboarding {
 		$this->pages->create_pages();
 
 		return true;
-	}
-
-	/**
-	 * Submit form on purpose step.
-	 *
-	 * @param array $data Form data.
-	 *
-	 * @return bool Success.
-	 */
-	public function api_purpose_submit( $data ) {
-
-		$purpose       = array_map( 'sanitize_key', array_values( $data['selected'] ) );
-		$purpose_other = in_array( 'other', $purpose, true ) ? sanitize_text_field( $data['other'] ) : '';
-
-		return $this->update_onboarding_user_data(
-			[
-				'purpose'       => $purpose,
-				'purpose_other' => $purpose_other,
-			]
-		);
-	}
-
-
-	/**
-	 * Purpose step data.
-	 *
-	 * @return array Data used on features page.
-	 */
-	public function api_features_get() {
-		$data = $this->get_onboarding_user_data();
-
-		return [
-			'selected' => $data['features'],
-			'plugins'  => [],
-		];
-	}
-
-	/**
-	 * Submit form on purpose step.
-	 *
-	 * @param array $data Form data.
-	 *
-	 * @return bool Success.
-	 */
-	public function api_features_submit( $data ) {
-
-		if ( ! is_array( $data['selected'] ) ) {
-			$data['selected'] = [];
-		}
-
-		$features = array_map( 'sanitize_key', array_values( $data['selected'] ) );
-
-		return $this->update_onboarding_user_data(
-			[
-				'features' => $features,
-			]
-		);
 	}
 
 	/**
