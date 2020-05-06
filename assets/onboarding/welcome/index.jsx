@@ -33,7 +33,7 @@ export const Welcome = () => {
 				</p>
 				<p>
 					{ __(
-						'This setup wizard will help you get started creating online courses more quickly. It is optional and should only take a few minutes.',
+						'This setup wizard will help you get started creating online courses more quickly. It is optional and should take only a few minutes.',
 						'sensei-lms'
 					) }
 				</p>
