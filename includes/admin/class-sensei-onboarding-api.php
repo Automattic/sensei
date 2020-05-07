@@ -185,7 +185,7 @@ class Sensei_Onboarding_API {
 		return $this->onboarding->update_onboarding_user_data(
 			[
 				'purpose'       => $form['selected'],
-				'purpose_other' => ( $form['other'] ),
+				'purpose_other' => ( in_array( 'other', $form['selected'], true ) ? $form['other'] : '' ),
 			]
 		);
 	}
