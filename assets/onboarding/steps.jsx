@@ -2,7 +2,6 @@ import { __ } from '@wordpress/i18n';
 import { Welcome } from './welcome';
 import { Purpose } from './purpose';
 
-
 export const steps = [
 	{
 		key: 'welcome',
