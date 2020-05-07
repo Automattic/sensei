@@ -49,7 +49,7 @@ export const Purpose = () => {
 
 	const isEmpty = ! selected.length;
 
-	const selectItem = ( id ) => {
+	const toggleItem = ( id ) => {
 		setFormState( ( formState ) => ( {
 			...formState,
 			selected: selected.includes( id )
@@ -80,7 +80,7 @@ export const Purpose = () => {
 							key={ id }
 							label={ title }
 							help={ description }
-							onChange={ () => selectItem( id ) }
+							onChange={ () => toggleItem( id ) }
 							checked={ selected.includes( id ) }
 							className="sensei-onboarding__checkbox"
 						/>
