@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Superclass of data import/export jobs. It provides basic functionality like logging, maintaining state, cleanup and
  * running data port tasks which are registered by subclasses.
  */
-abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface {
+abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, JsonSerializable {
 	const OPTION_PREFIX = 'sensei-tools-';
 
 	/**
@@ -67,6 +67,13 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface {
 	private $has_changed;
 
 	/**
+	 * True if the job has been cleaned up.
+	 *
+	 * @var bool
+	 */
+	private $is_deleted;
+
+	/**
 	 * Estimate of completion percentage.
 	 *
 	 * @var float
@@ -89,6 +96,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface {
 	protected function __construct( $job_id, $json = '' ) {
 		$this->job_id      = $job_id;
 		$this->has_changed = false;
+		$this->is_deleted  = false;
 
 		if ( '' !== $json ) {
 			$this->restore_from_json( $json );
@@ -176,7 +184,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface {
 			$task->clean_up();
 		}
 
-		$this->has_changed = false;
+		$this->is_deleted = true;
 		delete_option( self::get_option_name( $this->job_id ) );
 	}
 
@@ -262,7 +270,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface {
 	 * @access private
 	 */
 	public function persist() {
-		if ( $this->has_changed ) {
+		if ( ! $this->is_deleted && $this->has_changed ) {
 			update_option( self::get_option_name( $this->job_id ), wp_slash( wp_json_encode( $this ) ) );
 		}
 
