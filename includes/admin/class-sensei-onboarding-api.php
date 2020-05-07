@@ -185,7 +185,7 @@ class Sensei_Onboarding_API {
 		return $this->onboarding->update_onboarding_user_data(
 			[
 				'purpose'       => $form['selected'],
-				'purpose_other' => sanitize_text_field( $form['other'] ),
+				'purpose_other' => ( $form['other'] ),
 			]
 		);
 	}
