@@ -64,8 +64,6 @@ class Sensei_Onboarding_API_Test extends WP_Test_REST_TestCase {
 		// Test that an administrator with manage_sensei cap can access the API.
 		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
 		wp_set_current_user( $admin_id );
-		$user = wp_get_current_user();
-		$user->add_cap( 'manage_sensei' );
 
 		$request  = new WP_REST_Request( 'GET', '/sensei/v1/onboarding/welcome' );
 		$response = $this->server->dispatch( $request );
