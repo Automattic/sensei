@@ -34,6 +34,10 @@ const purposes = [
 		description:
 			'You work at a company that regularly trains new or existing employees.',
 	},
+	{
+		id: 'other',
+		title: 'Other',
+	},
 ];
 
 /**
@@ -85,13 +89,6 @@ export const Purpose = () => {
 							className="sensei-onboarding__checkbox"
 						/>
 					) ) }
-					<CheckboxControl
-						key="other"
-						label="Other"
-						onChange={ () => selectItem( 'other' ) }
-						checked={ selected.includes( 'other' ) }
-						className="sensei-onboarding__checkbox"
-					/>
 					{ selected.includes( 'other' ) && (
 						<TextControl
 							className="sensei-onboarding__textcontrol-other"
