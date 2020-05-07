@@ -63,7 +63,7 @@ export const Welcome = () => {
 					{ __( 'Continue', 'sensei-lms' ) }
 				</Button>
 			</Card>
-			<div className="sensei-onboarding__skip">
+			<div className="sensei-onboarding__bottom-actions">
 				<Link href="edit.php?post_type=course" type="wp-admin">
 					{ __( 'Not right now', 'sensei-lms' ) }
 				</Link>

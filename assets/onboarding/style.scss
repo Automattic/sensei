@@ -70,7 +70,24 @@
 		margin-right: 0;
 	}
 
-	&__skip {
+	&__group-buttons {
+		display: flex;
+
+		&.group-right {
+			justify-content: flex-end;
+
+			.components-button {
+				margin-left: 10px
+			}
+		}
+
+		.components-button {
+			margin-right: 0;
+			margin-left: 0;
+		}
+	}
+
+	&__bottom-actions {
 		text-align: center;
 	}
 
@@ -136,8 +153,26 @@
 				padding-right: 20px;
 				padding-bottom: 14px;
 				border-bottom: 1px solid $gray-5;
+
+				a {
+					white-space: nowrap;
+					color: $primary;
+
+					&:hover,
+					&:active {
+						color: lighten($primary, 20%);
+					}
+
+					&:focus {
+						color: darken($primary, 20%);
+					}
+				}
 			}
 
+			&:last-child .components-base-control__help {
+				border-bottom: none;
+				padding-bottom: 0;
+			}
 		}
 		.sensei-onboarding__textcontrol-other {
 			margin-left: 40px;
