@@ -19,10 +19,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since   3.1.0
  */
 class Sensei_Onboarding {
-	const ONBOARDINGDATA_OPTION_NAME = 'sensei-onboarding-data';
+	const ONBOARDING_USER_DATA_OPTION_NAME = 'sensei-onboarding-data';
 
 	/**
-	 * @var array Default value for onboarding user data.
+	 * Default value for onboarding user data.
+	 *
+	 * @var array
 	 */
 	private $onboarding_user_data_defaults = [
 		'features'      => [],
@@ -30,7 +32,12 @@ class Sensei_Onboarding {
 		'purpose_other' => '',
 	];
 
-	public $plugin_slugs  = [];
+	/**
+	 * Sensei plugins whitelist.
+	 *
+	 * @var array
+	 */
+	public $plugin_slugs = [];
 
 	/**
 	 * URL Slug for Onboarding Wizard page
@@ -215,7 +222,7 @@ class Sensei_Onboarding {
 	 * @return mixed
 	 */
 	public function get_onboarding_user_data() {
-		return get_option( self::ONBOARDINGDATA_OPTION_NAME, $this->onboarding_user_data_defaults );
+		return get_option( self::ONBOARDING_USER_DATA_OPTION_NAME, $this->onboarding_user_data_defaults );
 	}
 
 	/**
@@ -227,6 +234,6 @@ class Sensei_Onboarding {
 	 */
 	public function update_onboarding_user_data( $changes ) {
 		$option = array_merge( $this->get_onboarding_user_data(), $changes );
-		return update_option( self::ONBOARDINGDATA_OPTION_NAME, $option );
+		return update_option( self::ONBOARDING_USER_DATA_OPTION_NAME, $option );
 	}
 }
