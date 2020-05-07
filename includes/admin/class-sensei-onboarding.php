@@ -86,7 +86,6 @@ class Sensei_Onboarding {
 				$this->setup_onboarding_page();
 			}
 		}
-
 	}
 
 	/**
@@ -103,7 +102,6 @@ class Sensei_Onboarding {
 				[ $this, 'render_onboarding_page' ]
 			);
 		}
-
 	}
 
 	/**
@@ -148,22 +146,6 @@ class Sensei_Onboarding {
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
 			in_array( $_GET['post_type'], $post_types_to_prevent, true )
 		);
-	}
-
-	/**
-	 * Register an Onboarding submenu.
-	 */
-	public function admin_menu() {
-		if ( current_user_can( 'manage_sensei' ) ) {
-			add_submenu_page(
-				null,
-				__( 'Onboarding', 'sensei-lms' ),
-				__( 'Onboarding', 'sensei-lms' ),
-				'manage_sensei',
-				$this->page_slug,
-				[ $this, 'onboarding_page' ]
-			);
-		}
 	}
 
 	/**
