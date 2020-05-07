@@ -1,5 +1,7 @@
 @import '~@woocommerce/components/build-style/style.css';
 @import 'fullscreen';
+@import 'variables';
+@import 'wp-colors';
 
 .sensei-onboarding {
 
@@ -33,6 +35,66 @@
 		max-width: 476px;
 		margin-left: auto;
 		margin-right: auto;
-		font-size: 16px;
 	}
+
+  &__button.components-button {
+    display: flex;
+    margin: 8px auto 0;
+
+    max-width: 100%;
+    justify-content: center;
+
+    height: 48px;
+    padding-left: 25px;
+    padding-right: 25px;
+    text-align: center;
+    font-size: 14px;
+    line-height: 36px;
+    font-weight: 500;
+    align-items: center;
+  }
+
+  &__button-card.components-button {
+    width: 310px;
+  }
+
+  &__button-modal.components-button {
+    margin-right: 0;
+  }
+
+
+  &__skip {
+    text-align: center;
+  }
+
+  &__title {
+    text-align: center;
+    margin: 40px 0;
+
+    h2 {
+      font-weight: normal;
+      font-size: 24px;
+    }
+  }
+
+  &__card {
+    p {
+      font-size: 14px;
+      line-height: 1.65;
+    }
+  }
+
+  &__usage-modal {
+    width: 600px;
+    max-width: 100%;
+
+    .components-modal__header {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+  }
+
+  &__tracking {
+    margin: 1rem 0;
+  }
 }

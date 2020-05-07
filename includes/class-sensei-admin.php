@@ -228,6 +228,8 @@ class Sensei_Admin {
 	/**
 	 * create_page function.
 	 *
+	 * @deprecated since 3.1.0 use Sensei_Onboarding_Pages::create_page
+	 *
 	 * @access public
 	 * @param mixed  $slug
 	 * @param mixed  $option
@@ -237,48 +239,27 @@ class Sensei_Admin {
 	 * @return integer $page_id
 	 */
 	function create_page( $slug, $page_title = '', $page_content = '', $post_parent = 0 ) {
-		global $wpdb;
 
-		$page_id = $wpdb->get_var( $wpdb->prepare( 'SELECT ID FROM ' . $wpdb->posts . ' WHERE post_name = %s LIMIT 1;', $slug ) );
-		if ( $page_id ) :
-			return $page_id;
-		endif;
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding_Pages::create_page' );
+		return Sensei()->onboarding->pages->create_page( $slug, $page_title, $page_content, $post_parent );
 
-		$page_data = array(
-			'post_status'    => 'publish',
-			'post_type'      => 'page',
-			'post_author'    => 1,
-			'post_name'      => $slug,
-			'post_title'     => $page_title,
-			'post_content'   => $page_content,
-			'post_parent'    => $post_parent,
-			'comment_status' => 'closed',
-		);
-
-		$page_id = wp_insert_post( $page_data );
-
-		return $page_id;
-
-	} // End create_page()
+	}
 
 
 	/**
 	 * create_pages function.
+	 *
+	 * @deprecated since 3.1.0 use Sensei_Onboarding_Pages::create_pages
 	 *
 	 * @access public
 	 * @return void
 	 */
 	function create_pages() {
 
-		// Courses page
-		$new_course_page_id = $this->create_page( esc_sql( _x( 'courses-overview', 'page_slug', 'sensei-lms' ) ), __( 'Courses', 'sensei-lms' ), '' );
-		Sensei()->settings->set( 'course_page', $new_course_page_id );
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding_Pages::create_pages' );
+		Sensei()->onboarding->pages->create_pages();
 
-		// User Dashboard page
-		$new_my_course_page_id = $this->create_page( esc_sql( _x( 'my-courses', 'page_slug', 'sensei-lms' ) ), __( 'My Courses', 'sensei-lms' ), '[sensei_user_courses]' );
-		Sensei()->settings->set( 'my_course_page', $new_my_course_page_id );
-
-	} // End create_pages()
+	}
 
 	/**
 	 * Load the global admin styles for the menu icon and the relevant page icon.

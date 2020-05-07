@@ -160,4 +160,23 @@ class Sensei_Assets {
 	private function asset_url( $filename ) {
 		return rtrim( $this->plugin_url, '/' ) . '/assets/dist/' . $filename;
 	}
+
+	/**
+	 * Preload the given REST routes and pass data to Javascript.
+	 *
+	 * @param string[] $rest_routes REST routes to preload.
+	 */
+	public function preload_data( $rest_routes ) {
+		$preload_data = array_reduce(
+			$rest_routes,
+			'rest_preload_api_request',
+			[]
+		);
+		wp_add_inline_script(
+			'wp-api-fetch',
+			sprintf( 'wp.apiFetch.use( wp.apiFetch.createPreloadingMiddleware( %s ) );', wp_json_encode( $preload_data ) ),
+			'after'
+		);
+
+	}
 }
