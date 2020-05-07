@@ -120,6 +120,105 @@ class Sensei_Onboarding_API_Test extends WP_Test_REST_TestCase {
 	}
 
 	/**
+	 * Tests that submitting to purpose endpoint saves submitted data
+	 *
+	 * @covers Sensei_Onboarding_API::purpose_submit
+	 */
+	public function testSubmitPurposeSavesData() {
+
+		$this->request(
+			'POST',
+			'purpose',
+			[
+				'selected' => [ 'share_knowledge', 'other' ],
+				'other'    => 'Test',
+			]
+		);
+
+		$data = Sensei()->onboarding->get_onboarding_user_data();
+
+		$this->assertEquals( [ 'share_knowledge', 'other' ], $data['purpose'] );
+		$this->assertEquals( 'Test', $data['purpose_other'] );
+	}
+
+	/**
+	 * Tests that not selecting other clears text value.
+	 *
+	 * @covers Sensei_Onboarding_API::purpose_submit
+	 */
+	public function testSubmitPurposeOtherClearedWhenNotSelected() {
+
+		Sensei()->onboarding->update_onboarding_user_data(
+			[
+				'purpose'       => [ 'other' ],
+				'purpose_other' => 'Test',
+			]
+		);
+
+		$this->request(
+			'POST',
+			'purpose',
+			[
+				'selected' => [ 'share_knowledge' ],
+				'other'    => 'Discard this',
+			]
+		);
+
+		$data = Sensei()->onboarding->get_onboarding_user_data();
+
+		$this->assertEmpty( $data['purpose_other'] );
+	}
+
+
+	/**
+	 * Tests that submitting to purpose endpoint validates input against whitelist
+	 *
+	 * @covers Sensei_Onboarding_API::purpose_submit
+	 */
+	public function testSubmitPurposeValidated() {
+
+		$this->request(
+			'POST',
+			'purpose',
+			[
+				'selected' => [ 'invalid_data' ],
+				'other'    => '',
+			]
+		);
+
+		$data = Sensei()->onboarding->get_onboarding_user_data();
+
+		$this->assertNotContains( [ 'invalid_data' ], $data['purpose'] );
+	}
+
+
+	/**
+	 * Tests that purpose get endpoint returns user data
+	 *
+	 * @covers Sensei_Onboarding_API::purpose_get
+	 */
+	public function testGetPurposeReturnsUserData() {
+
+		Sensei()->onboarding->update_onboarding_user_data(
+			[
+				'purpose'       => [ 'share_knowledge', 'other' ],
+				'purpose_other' => 'Test',
+			]
+		);
+
+		$data = $this->request( 'GET', 'purpose' );
+
+		$this->assertEquals(
+			[
+				'selected' => [ 'share_knowledge', 'other' ],
+				'other'    => 'Test',
+			],
+			$data
+		);
+	}
+
+
+	/**
 	 * Create and dispatch a REST API request.
 	 *
 	 * @param string $method The request method.
