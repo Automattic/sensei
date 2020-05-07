@@ -48,7 +48,7 @@ class Sensei_Onboarding_API_Test extends WP_Test_REST_TestCase {
 	/**
 	 * Tests if only privileged users can access the Onboarding API.
 	 *
-	 * @covers Sensei_Onboarding::handle_api_request
+	 * @covers Sensei_Onboarding_API::can_user_access_rest_api
 	 */
 	public function testOnlyAdminUserCanAccessOnboardingAPI() {
 
@@ -74,7 +74,7 @@ class Sensei_Onboarding_API_Test extends WP_Test_REST_TestCase {
 	/**
 	 * Tests welcome endpoint returning the current usage tracking setting.
 	 *
-	 * @covers Sensei_Onboarding::api_welcome_get
+	 * @covers Sensei_Onboarding_API::welcome_get
 	 */
 	public function testGetWelcomeReturnsUsageTrackingData() {
 
@@ -92,7 +92,7 @@ class Sensei_Onboarding_API_Test extends WP_Test_REST_TestCase {
 	/**
 	 * Tests that submitting to welcome endpoint updates usage tracking preference.
 	 *
-	 * @covers Sensei_Onboarding::api_welcome_submit
+	 * @covers Sensei_Onboarding_API::welcome_submit
 	 */
 	public function testSubmitWelcomeUpdatesUsageTrackingSetting() {
 
@@ -105,7 +105,7 @@ class Sensei_Onboarding_API_Test extends WP_Test_REST_TestCase {
 	/**
 	 * Tests that submitting to welcome endpoint creates Sensei Courses and My Courses pages.
 	 *
-	 * @covers Sensei_Onboarding::api_welcome_submit
+	 * @covers Sensei_Onboarding_API::welcome_submit
 	 * @covers Sensei_Onboarding_Pages::create_pages
 	 */
 	public function testSubmitWelcomeCreatesSenseiPages() {
