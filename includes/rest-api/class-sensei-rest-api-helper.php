@@ -50,21 +50,24 @@ class Sensei_REST_API_Helper {
 	 * @param array  $endpoints      Endpoint descriptors.
 	 * @param array  $common_options Shared options between endpoint or arguments.
 	 */
-	public static function register_endpoints( $namespace, $endpoints, $common_options ) {
+	public static function register_endpoints( $namespace, $endpoints, $common_options = [] ) {
 
 		$add_arg_common = function( $arg ) use ( $common_options ) {
-			return array_merge( $common_options['arg'], $arg );
+			return isset( $common_options['arg'] ) ? array_merge( $common_options['arg'], $arg ) : $arg;
 		};
 
 		$add_endpoint_common = function( $endpoint ) use ( $common_options, $add_arg_common ) {
-			$endpoint = array_merge( $common_options['endpoint'], $endpoint );
-			if ( $endpoint['args'] ) {
+			if ( isset( $common_options['endpoint'] ) ) {
+				$endpoint = array_merge( $common_options['endpoint'], $endpoint );
+			}
+			if ( isset( $endpoint['args'] ) ) {
 				$endpoint['args'] = array_map( $add_arg_common, $endpoint['args'] );
 			}
 			$callback = $endpoint['callback'];
 
 			$endpoint['callback'] = function( $request ) use ( $callback ) {
-				return call_user_func( $callback, $request->get_params(), $request );
+				$data = $request->get_params();
+				return call_user_func( $callback, $data, $request );
 			};
 
 			return $endpoint;
