@@ -210,31 +210,6 @@ class Sensei_Onboarding {
 	}
 
 	/**
-	 * Welcome step data.
-	 *
-	 * @return array Data used on purpose step.
-	 */
-	public function api_welcome_get() {
-		return [
-			'usage_tracking' => Sensei()->usage_tracking->get_tracking_enabled(),
-		];
-	}
-
-	/**
-	 * Submit form on welcome step.
-	 *
-	 * @param array $data Form data.
-	 *
-	 * @return bool Success.
-	 */
-	public function api_welcome_submit( $data ) {
-		Sensei()->usage_tracking->set_tracking_enabled( (bool) $data['usage_tracking'] );
-		$this->pages->create_pages();
-
-		return true;
-	}
-
-	/**
 	 * Get saved onboarding user data.
 	 *
 	 * @return mixed
