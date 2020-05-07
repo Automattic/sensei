@@ -43,6 +43,6 @@ interface Sensei_Data_Port_Task_Interface {
 	/**
 	 * Performs any required cleanup of the task.
 	 */
-	public function cleanup();
+	public function clean_up();
 
 }

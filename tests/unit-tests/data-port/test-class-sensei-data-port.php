@@ -87,13 +87,13 @@ class Sensei_Data_Port_Job_Test extends WP_UnitTestCase {
 
 
 	public function testCleanupCallsAllTaskCleanup() {
-		$first_completed  = $this->mock_task_method( true, 100, 100, 'cleanup' );
-		$second_completed = $this->mock_task_method( true, 100, 100, 'cleanup' );
+		$first_completed  = $this->mock_task_method( true, 100, 100, 'clean_up' );
+		$second_completed = $this->mock_task_method( true, 100, 100, 'clean_up' );
 
 		$job = Sensei_Data_Port_Job_Mock::create( [ $first_completed, $second_completed ] );
 
-		$first_completed->expects( $this->once() )->method( 'cleanup' );
-		$second_completed->expects( $this->once() )->method( 'cleanup' );
+		$first_completed->expects( $this->once() )->method( 'clean_up' );
+		$second_completed->expects( $this->once() )->method( 'clean_up' );
 
 		$job->clean_up();
 	}

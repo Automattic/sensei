@@ -173,9 +173,10 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface {
 	 */
 	public function clean_up() {
 		foreach ( $this->tasks as $task ) {
-			$task->cleanup();
+			$task->clean_up();
 		}
 
+		$this->has_changed = false;
 		delete_option( self::get_option_name( $this->job_id ) );
 	}
 
