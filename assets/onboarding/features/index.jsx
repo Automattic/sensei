@@ -1,9 +1,11 @@
 import { useState } from '@wordpress/element';
-import { Card, H, Link } from '@woocommerce/components';
+import { Card, H } from '@woocommerce/components';
 import { Button, CheckboxControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 import { useQueryStringRouter } from '../query-string-router';
+import FeatureDescription from './feature-description';
+import ConfirmationModal from './confirmation-modal';
 
 // TODO: Make it dynamic.
 const features = [
@@ -13,6 +15,10 @@ const features = [
 		price: '$129.00 per year',
 		description: __(
 			'Sell your online courses using the most popular eCommerce plataform on the web - WooCommerce.',
+			'sensei-lms'
+		),
+		confirmationExtraDescription: __(
+			'(The WooCommerce plugin may also be installed and activated for free.)',
 			'sensei-lms'
 		),
 		learnMoreLink:
@@ -62,29 +68,29 @@ const features = [
 	title: `${ feature.title } — ${
 		feature.price ? feature.price : __( 'Free', 'sensei-lms' )
 	}`,
-	description: (
-		<>
-			{ feature.description }&nbsp;
-			<Link
-				href={ feature.learnMoreLink }
-				target="_blank"
-				type="external"
-			>
-				{ __( 'Learn more', 'sensei-lms' ) }
-			</Link>
-		</>
-	),
 } ) );
 
 /**
  * Features step for Onboarding Wizard.
  */
 const Features = () => {
+	const [ confirmationModalActive, toggleConfirmationModal ] = useState(
+		false
+	);
 	const [ isInstalling, setInstalling ] = useState( false );
-	const [ selectedFeatures, setSelectedFeatures ] = useState( [] );
+	const [ selectedFeatureIds, setSelectedFeatureIds ] = useState( [] );
 	const { goTo } = useQueryStringRouter();
 
+	const finishSelection = () => {
+		if ( 0 === selectedFeatureIds.length ) {
+			goToNextStep();
+		}
+
+		toggleConfirmationModal( true );
+	};
+
 	const goToInstallation = () => {
+		toggleConfirmationModal( false );
 		setInstalling( true );
 	};
 
@@ -97,7 +103,7 @@ const Features = () => {
 	};
 
 	const toggleItem = ( id ) => {
-		setSelectedFeatures( ( selected ) => [
+		setSelectedFeatureIds( ( selected ) => [
 			...( selected.includes( id )
 				? selected.filter( ( item ) => item !== id )
 				: [ id, ...selected ] ),
@@ -126,21 +132,35 @@ const Features = () => {
 				) : (
 					<>
 						<div className="sensei-onboarding__checkbox-list">
-							{ features.map( ( { id, title, description } ) => (
-								<CheckboxControl
-									key={ id }
-									label={ title }
-									help={ description }
-									onChange={ () => toggleItem( id ) }
-									checked={ selectedFeatures.includes( id ) }
-									className="sensei-onboarding__checkbox"
-								/>
-							) ) }
+							{ features.map(
+								( {
+									id,
+									title,
+									description,
+									learnMoreLink,
+								} ) => (
+									<CheckboxControl
+										key={ id }
+										label={ title }
+										help={
+											<FeatureDescription
+												description={ description }
+												learnMoreLink={ learnMoreLink }
+											/>
+										}
+										onChange={ () => toggleItem( id ) }
+										checked={ selectedFeatureIds.includes(
+											id
+										) }
+										className="sensei-onboarding__checkbox"
+									/>
+								)
+							) }
 						</div>
 						<Button
 							isPrimary
 							className="sensei-onboarding__button sensei-onboarding__button-card"
-							onClick={ goToInstallation }
+							onClick={ finishSelection }
 						>
 							{ __( 'Continue', 'sensei-lms' ) }
 						</Button>
@@ -155,6 +175,16 @@ const Features = () => {
 						{ __( 'Back to optional features', 'sensei-lms' ) }
 					</Button>
 				</div>
+			) }
+
+			{ confirmationModalActive && (
+				<ConfirmationModal
+					features={ features.filter( ( feature ) =>
+						selectedFeatureIds.includes( feature.id )
+					) }
+					install={ goToInstallation }
+					skip={ goToNextStep }
+				/>
 			) }
 		</>
 	);
