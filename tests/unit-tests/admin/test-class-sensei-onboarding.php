@@ -208,6 +208,34 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test if WooCommerce help tab is being prevented in the Sensei pages.
+	 *
+	 * @covers Sensei_Onboarding::should_enable_woocommerce_help_tab
+	 */
+	public function testShouldEnableWooCommerceHelpTab() {
+		$_GET['post_type'] = 'course';
+
+		$this->assertFalse(
+			Sensei()->onboarding->should_enable_woocommerce_help_tab( true ),
+			'Should not allow WooCommerce help tab for course post type'
+		);
+	}
+
+	/**
+	 * Test if WooCommerce help tab is being untouched in no Sensei pages.
+	 *
+	 * @covers Sensei_Onboarding::should_enable_woocommerce_help_tab
+	 */
+	public function testShouldEnableWooCommerceHelpTabNoSenseiPage() {
+		$_GET['post_type'] = 'woocommerce';
+
+		$this->assertTrue(
+			Sensei()->onboarding->should_enable_woocommerce_help_tab( true ),
+			'Should not touch WooCommerce help tab for no Sensei pages'
+		);
+	}
+
+	/**
 	 * Test add onboarding help tab to edit course screen.
 	 *
 	 * @covers Sensei_Onboarding::add_onboarding_help_tab

@@ -51,10 +51,8 @@ class Sensei_Onboarding {
 			add_action( 'admin_init', array( $this, 'skip_setup_wizard' ) );
 			add_action( 'current_screen', [ $this, 'add_onboarding_help_tab' ] );
 
-			if ( $this->should_prevent_woocommerce_help_tab() ) {
-				// Prevent WooCommerce help tab.
-				add_filter( 'woocommerce_enable_admin_help_tab', '__return_false' );
-			}
+			// Maybe prevent WooCommerce help tab.
+			add_filter( 'woocommerce_enable_admin_help_tab', [ $this, 'should_enable_woocommerce_help_tab' ] );
 
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
 			if ( isset( $_GET['page'] ) && ( $_GET['page'] === $this->page_slug ) ) {
@@ -84,21 +82,6 @@ class Sensei_Onboarding {
 			}
 		}
 
-	}
-
-	/**
-	 * Check if should prevent woocommerce help tab or not.
-	 *
-	 * @return boolean
-	 */
-	private function should_prevent_woocommerce_help_tab() {
-		$post_types_to_prevent = [ 'course', 'lesson', 'sensei_message' ];
-
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
-		return isset( $_GET['post_type'] ) && (
-			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
-			in_array( $_GET['post_type'], $post_types_to_prevent, true )
-		);
 	}
 
 	/**
@@ -212,6 +195,26 @@ class Sensei_Onboarding {
 		) {
 			update_option( self::SUGGEST_SETUP_WIZARD_OPTION, 0 );
 		}
+	}
+
+	/**
+	 * Prevent displaying WooCommerce help tab in Sensei admin pages.
+	 *
+	 * @access private
+	 *
+	 * @param boolean $allow Allow showing the WooCommerce help tab.
+	 *
+	 * @return boolean
+	 */
+	public function should_enable_woocommerce_help_tab( $allow ) {
+		$post_types_to_prevent = [ 'course', 'lesson', 'sensei_message' ];
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
+		if ( isset( $_GET['post_type'] ) && in_array( $_GET['post_type'], $post_types_to_prevent, true ) ) {
+			return false;
+		}
+
+		return $allow;
 	}
 
 	/**
