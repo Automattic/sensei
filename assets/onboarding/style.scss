@@ -203,6 +203,7 @@
 	}
 
 	&__features-list-item {
+		display: flex;
 		margin: 0;
 		padding: 14px;
 		margin: 0;
@@ -217,6 +218,40 @@
 
 		.sensei-onboarding__feature-description {
 			margin: 0;
+		}
+
+		.sensei-onboarding__icon-status {
+			flex: 0 0 32px;
+		}
+
+		.components-spinner {
+			margin: 0;
+		}
+	}
+
+	&__circle-icon-wrapper {
+		display: inline-block;
+		width: 18px;
+		height: 18px;
+		line-height: 18px;
+		text-align: center;
+		color: $white;
+		border-radius: 100%;
+		font-style: normal;
+
+		&.success-icon-wrapper {
+			background-color: $primary;
+		}
+		&.error-icon-wrapper {
+			background-color: $alert-red;
+		}
+		&.alert-icon {
+			&::before {
+				display: inherit;
+				width: inherit;
+				height: inherit;
+				content: '!';
+			}
 		}
 	}
 }
