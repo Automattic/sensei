@@ -41,21 +41,21 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test onboarding wizard notice in dashboard.
+	 * Test setup wizard notice in dashboard.
 	 *
-	 * @covers Sensei_Onboarding::onboarding_wizard_notice
+	 * @covers Sensei_Onboarding::setup_wizard_notice
 	 * @covers Sensei_Onboarding::should_current_page_display_setup_wizard
 	 */
-	public function testOnboardingWizardNoticeInDashboard() {
+	public function testSetupWizardNoticeInDashboard() {
 		// Create and login as admin.
 		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
 		wp_set_current_user( $admin_id );
 
 		set_current_screen( 'dashboard' );
-		update_option( \Sensei_Onboarding::SUGGEST_ONBOARDING_OPTION, 1 );
+		update_option( \Sensei_Onboarding::SUGGEST_SETUP_WIZARD_OPTION, 1 );
 
 		ob_start();
-		Sensei()->onboarding->onboarding_wizard_notice();
+		Sensei()->onboarding->setup_wizard_notice();
 		$html = ob_get_clean();
 
 		$pos_setup_button = strpos( $html, 'Run the Setup Wizard' );
@@ -64,21 +64,21 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test onboarding wizard notice in screen with Sensei prefix.
+	 * Test setup wizard notice in screen with Sensei prefix.
 	 *
-	 * @covers Sensei_Onboarding::onboarding_wizard_notice
+	 * @covers Sensei_Onboarding::setup_wizard_notice
 	 * @covers Sensei_Onboarding::should_current_page_display_setup_wizard
 	 */
-	public function testOnboardingWizardNoticeInSenseiScreen() {
+	public function testSetupWizardNoticeInSenseiScreen() {
 		// Create and login as admin.
 		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
 		wp_set_current_user( $admin_id );
 
 		set_current_screen( 'sensei-lms_page_sensei_test' );
-		update_option( \Sensei_Onboarding::SUGGEST_ONBOARDING_OPTION, 1 );
+		update_option( \Sensei_Onboarding::SUGGEST_SETUP_WIZARD_OPTION, 1 );
 
 		ob_start();
-		Sensei()->onboarding->onboarding_wizard_notice();
+		Sensei()->onboarding->setup_wizard_notice();
 		$html = ob_get_clean();
 
 		$pos_setup_button = strpos( $html, 'Run the Setup Wizard' );
@@ -87,54 +87,54 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test onboarding wizard notice in no Sensei screen.
+	 * Test setup wizard notice in no Sensei screen.
 	 *
-	 * @covers Sensei_Onboarding::onboarding_wizard_notice
+	 * @covers Sensei_Onboarding::setup_wizard_notice
 	 * @covers Sensei_Onboarding::should_current_page_display_setup_wizard
 	 */
-	public function testOnboardingWizardNoticeInOtherScreen() {
+	public function testSetupWizardNoticeInOtherScreen() {
 		// Create and login as admin.
 		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
 		wp_set_current_user( $admin_id );
 
 		set_current_screen( 'other' );
-		update_option( \Sensei_Onboarding::SUGGEST_ONBOARDING_OPTION, 1 );
+		update_option( \Sensei_Onboarding::SUGGEST_SETUP_WIZARD_OPTION, 1 );
 
 		ob_start();
-		Sensei()->onboarding->onboarding_wizard_notice();
+		Sensei()->onboarding->setup_wizard_notice();
 		$html = ob_get_clean();
 
 		$this->assertEmpty( $html, 'Should return empty string' );
 	}
 
 	/**
-	 * Test onboarding wizard notice with suggest option as 0.
+	 * Test setup wizard notice with suggest option as 0.
 	 *
-	 * @covers Sensei_Onboarding::onboarding_wizard_notice
+	 * @covers Sensei_Onboarding::setup_wizard_notice
 	 * @covers Sensei_Onboarding::should_current_page_display_setup_wizard
 	 */
-	public function testOnboardingWizardNoticeSuggestOptionAsZero() {
+	public function testSetupWizardNoticeSuggestOptionAsZero() {
 		// Create and login as admin.
 		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
 		wp_set_current_user( $admin_id );
 
 		set_current_screen( 'dashboard' );
-		update_option( \Sensei_Onboarding::SUGGEST_ONBOARDING_OPTION, 0 );
+		update_option( \Sensei_Onboarding::SUGGEST_SETUP_WIZARD_OPTION, 0 );
 
 		ob_start();
-		Sensei()->onboarding->onboarding_wizard_notice();
+		Sensei()->onboarding->setup_wizard_notice();
 		$html = ob_get_clean();
 
 		$this->assertEmpty( $html, 'Should return empty string' );
 	}
 
 	/**
-	 * Test onboarding wizard notice with suggest option empty.
+	 * Test setup wizard notice with suggest option empty.
 	 *
-	 * @covers Sensei_Onboarding::onboarding_wizard_notice
+	 * @covers Sensei_Onboarding::setup_wizard_notice
 	 * @covers Sensei_Onboarding::should_current_page_display_setup_wizard
 	 */
-	public function testOnboardingWizardNoticeSuggestOptionEmpty() {
+	public function testSetupWizardNoticeSuggestOptionEmpty() {
 		// Create and login as admin.
 		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
 		wp_set_current_user( $admin_id );
@@ -142,28 +142,28 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 		set_current_screen( 'dashboard' );
 
 		ob_start();
-		Sensei()->onboarding->onboarding_wizard_notice();
+		Sensei()->onboarding->setup_wizard_notice();
 		$html = ob_get_clean();
 
 		$this->assertEmpty( $html, 'Should return empty string' );
 	}
 
 	/**
-	 * Test onboarding wizard notice for no admin user.
+	 * Test setup wizard notice for no admin user.
 	 *
-	 * @covers Sensei_Onboarding::onboarding_wizard_notice
+	 * @covers Sensei_Onboarding::setup_wizard_notice
 	 * @covers Sensei_Onboarding::should_current_page_display_setup_wizard
 	 */
-	public function testOnboardingWizardNoticeNoAdmin() {
+	public function testSetupWizardNoticeNoAdmin() {
 		// Create and login as teacher.
 		$teacher_id = $this->factory->user->create( array( 'role' => 'teacher' ) );
 		wp_set_current_user( $teacher_id );
 
 		set_current_screen( 'dashboard' );
-		update_option( \Sensei_Onboarding::SUGGEST_ONBOARDING_OPTION, 0 );
+		update_option( \Sensei_Onboarding::SUGGEST_SETUP_WIZARD_OPTION, 0 );
 
 		ob_start();
-		Sensei()->onboarding->onboarding_wizard_notice();
+		Sensei()->onboarding->setup_wizard_notice();
 		$html = ob_get_clean();
 
 		$this->assertEmpty( $html, 'Should return empty string' );
@@ -183,7 +183,7 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 		$_GET['_wpnonce']                 = wp_create_nonce( 'sensei_skip_setup_wizard' );
 
 		Sensei()->onboarding->skip_setup_wizard();
-		$option_value = get_option( \Sensei_Onboarding::SUGGEST_ONBOARDING_OPTION, false );
+		$option_value = get_option( \Sensei_Onboarding::SUGGEST_SETUP_WIZARD_OPTION, false );
 
 		$this->assertEquals( '0', $option_value, 'Should update option to 0' );
 	}
@@ -202,7 +202,7 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 		$_GET['_wpnonce']                 = wp_create_nonce( 'sensei_skip_setup_wizard' );
 
 		Sensei()->onboarding->skip_setup_wizard();
-		$option_value = get_option( \Sensei_Onboarding::SUGGEST_ONBOARDING_OPTION, false );
+		$option_value = get_option( \Sensei_Onboarding::SUGGEST_SETUP_WIZARD_OPTION, false );
 
 		$this->assertFalse( $option_value, 'Should not update option' );
 	}

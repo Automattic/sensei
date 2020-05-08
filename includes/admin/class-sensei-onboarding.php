@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since   3.1.0
  */
 class Sensei_Onboarding {
-	const SUGGEST_ONBOARDING_OPTION = 'sensei_suggest_onboarding';
+	const SUGGEST_SETUP_WIZARD_OPTION = 'sensei_suggest_setup_wizard';
 
 	/**
 	 * URL Slug for Onboarding Wizard page
@@ -47,7 +47,7 @@ class Sensei_Onboarding {
 		if ( is_admin() ) {
 
 			add_action( 'admin_menu', [ $this, 'admin_menu' ], 20 );
-			add_action( 'admin_notices', [ $this, 'onboarding_wizard_notice' ] );
+			add_action( 'admin_notices', [ $this, 'setup_wizard_notice' ] );
 			add_action( 'admin_init', array( $this, 'skip_setup_wizard' ) );
 			add_action( 'current_screen', [ $this, 'add_onboarding_help_tab' ] );
 
@@ -162,14 +162,14 @@ class Sensei_Onboarding {
 	}
 
 	/**
-	 * Onboarding wizard notice.
+	 * Setup wizard notice.
 	 *
 	 * @access private
 	 */
-	public function onboarding_wizard_notice() {
+	public function setup_wizard_notice() {
 		if (
 			! $this->should_current_page_display_setup_wizard()
-			|| ! get_option( self::SUGGEST_ONBOARDING_OPTION, 0 )
+			|| ! get_option( self::SUGGEST_SETUP_WIZARD_OPTION, 0 )
 			|| ! current_user_can( 'manage_sensei' )
 		) {
 			return;
@@ -197,7 +197,7 @@ class Sensei_Onboarding {
 	}
 
 	/**
-	 * Skip onboarding wizard.
+	 * Skip setup wizard.
 	 *
 	 * @access private
 	 */
@@ -210,7 +210,7 @@ class Sensei_Onboarding {
 			&& wp_verify_nonce( wp_unslash( $_GET['_wpnonce'] ), 'sensei_skip_setup_wizard' )
 			&& current_user_can( 'manage_sensei' )
 		) {
-			update_option( self::SUGGEST_ONBOARDING_OPTION, 0 );
+			update_option( self::SUGGEST_SETUP_WIZARD_OPTION, 0 );
 		}
 	}
 
