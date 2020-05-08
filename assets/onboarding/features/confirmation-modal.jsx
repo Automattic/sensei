@@ -5,10 +5,10 @@ import FeaturesList from './features-list';
 
 /**
  * @typedef  {Object} Feature
- * @property {string} id                           Feature ID.
- * @property {string} title                        Feature title.
- * @property {string} description                  Feature description.
- * @property {string} confirmationExtraDescription Extra description that appears only in confirmation modal.
+ * @property {string} id                             Feature ID.
+ * @property {string} title                          Feature title.
+ * @property {string} description                    Feature description.
+ * @property {string} [confirmationExtraDescription] Extra description that appears only in confirmation modal.
  */
 /**
  * Modal for usage tracking opt-in.
