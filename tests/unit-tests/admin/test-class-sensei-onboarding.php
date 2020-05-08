@@ -58,7 +58,9 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 		Sensei()->onboarding->onboarding_wizard_notice();
 		$html = ob_get_clean();
 
-		$this->assertNotEmpty( $html, 'Should return the notice HTML' );
+		$pos_setup_button = strpos( $html, 'Run the Setup Wizard' );
+
+		$this->assertNotFalse( $pos_setup_button, 'Should return the notice HTML' );
 	}
 
 	/**
@@ -79,7 +81,9 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 		Sensei()->onboarding->onboarding_wizard_notice();
 		$html = ob_get_clean();
 
-		$this->assertNotEmpty( $html, 'Should return the notice HTML' );
+		$pos_setup_button = strpos( $html, 'Run the Setup Wizard' );
+
+		$this->assertNotFalse( $pos_setup_button, 'Should return the notice HTML' );
 	}
 
 	/**
@@ -109,7 +113,7 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Onboarding::onboarding_wizard_notice
 	 * @covers Sensei_Onboarding::is_current_screen_selected_to_wizard_notice
 	 */
-	public function testOnboardingWizardNoticeSuggest0() {
+	public function testOnboardingWizardNoticeSuggestOptionAsZero() {
 		// Create and login as admin.
 		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
 		wp_set_current_user( $admin_id );
@@ -125,12 +129,12 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test onboarding wizard notice without suggest option.
+	 * Test onboarding wizard notice with suggest option empty.
 	 *
 	 * @covers Sensei_Onboarding::onboarding_wizard_notice
 	 * @covers Sensei_Onboarding::is_current_screen_selected_to_wizard_notice
 	 */
-	public function testOnboardingWizardNoticeWithoutSuggest() {
+	public function testOnboardingWizardNoticeSuggestOptionEmpty() {
 		// Create and login as admin.
 		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
 		wp_set_current_user( $admin_id );
