@@ -120,6 +120,8 @@ class Sensei_Onboarding {
 
 	/**
 	 * Redirect after first activation.
+	 *
+	 * @access private
 	 */
 	public function activation_redirect() {
 		if (
