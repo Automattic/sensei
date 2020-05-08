@@ -44,7 +44,7 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	 * Test onboarding wizard notice in dashboard.
 	 *
 	 * @covers Sensei_Onboarding::onboarding_wizard_notice
-	 * @covers Sensei_Onboarding::is_current_screen_selected_to_wizard_notice
+	 * @covers Sensei_Onboarding::should_current_page_display_setup_wizard
 	 */
 	public function testOnboardingWizardNoticeInDashboard() {
 		// Create and login as admin.
@@ -67,7 +67,7 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	 * Test onboarding wizard notice in screen with Sensei prefix.
 	 *
 	 * @covers Sensei_Onboarding::onboarding_wizard_notice
-	 * @covers Sensei_Onboarding::is_current_screen_selected_to_wizard_notice
+	 * @covers Sensei_Onboarding::should_current_page_display_setup_wizard
 	 */
 	public function testOnboardingWizardNoticeInSenseiScreen() {
 		// Create and login as admin.
@@ -90,7 +90,7 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	 * Test onboarding wizard notice in no Sensei screen.
 	 *
 	 * @covers Sensei_Onboarding::onboarding_wizard_notice
-	 * @covers Sensei_Onboarding::is_current_screen_selected_to_wizard_notice
+	 * @covers Sensei_Onboarding::should_current_page_display_setup_wizard
 	 */
 	public function testOnboardingWizardNoticeInOtherScreen() {
 		// Create and login as admin.
@@ -111,7 +111,7 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	 * Test onboarding wizard notice with suggest option as 0.
 	 *
 	 * @covers Sensei_Onboarding::onboarding_wizard_notice
-	 * @covers Sensei_Onboarding::is_current_screen_selected_to_wizard_notice
+	 * @covers Sensei_Onboarding::should_current_page_display_setup_wizard
 	 */
 	public function testOnboardingWizardNoticeSuggestOptionAsZero() {
 		// Create and login as admin.
@@ -132,7 +132,7 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	 * Test onboarding wizard notice with suggest option empty.
 	 *
 	 * @covers Sensei_Onboarding::onboarding_wizard_notice
-	 * @covers Sensei_Onboarding::is_current_screen_selected_to_wizard_notice
+	 * @covers Sensei_Onboarding::should_current_page_display_setup_wizard
 	 */
 	public function testOnboardingWizardNoticeSuggestOptionEmpty() {
 		// Create and login as admin.
@@ -152,7 +152,7 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	 * Test onboarding wizard notice for no admin user.
 	 *
 	 * @covers Sensei_Onboarding::onboarding_wizard_notice
-	 * @covers Sensei_Onboarding::is_current_screen_selected_to_wizard_notice
+	 * @covers Sensei_Onboarding::should_current_page_display_setup_wizard
 	 */
 	public function testOnboardingWizardNoticeNoAdmin() {
 		// Create and login as teacher.

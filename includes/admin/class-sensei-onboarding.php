@@ -134,7 +134,7 @@ class Sensei_Onboarding {
 	 *
 	 * @return boolean
 	 */
-	private function is_current_screen_selected_to_wizard_notice() {
+	private function should_current_page_display_setup_wizard() {
 		$screen = get_current_screen();
 
 		if ( false !== strpos( $screen->id, 'sensei-lms_page_sensei' ) ) {
@@ -168,7 +168,7 @@ class Sensei_Onboarding {
 	 */
 	public function onboarding_wizard_notice() {
 		if (
-			! $this->is_current_screen_selected_to_wizard_notice()
+			! $this->should_current_page_display_setup_wizard()
 			|| ! get_option( self::SUGGEST_ONBOARDING_OPTION, 0 )
 			|| ! current_user_can( 'manage_sensei' )
 		) {
