@@ -4,18 +4,19 @@ import { __ } from '@wordpress/i18n';
 import FeatureDescription from './feature-description';
 
 /**
- * Modal for usage tracking opt-in.
- *
- * @param {Object}    props
- * @param {Feature[]} props.features Features list.
- * @param {Function} props.install   Callback to install the features.
- * @param {Function} props.skip      Callback to skip the installation.
- *
  * @typedef  {Object} Feature
  * @property {string} id                           Feature ID.
  * @property {string} title                        Feature title.
  * @property {string} description                  Feature description.
  * @property {string} confirmationExtraDescription Extra description that appears only in confirmation modal.
+ */
+/**
+ * Modal for usage tracking opt-in.
+ *
+ * @param {Object}    props
+ * @param {Feature[]} props.features Features list.
+ * @param {Function}  props.install  Callback to install the features.
+ * @param {Function}  props.skip     Callback to skip the installation.
  */
 const ConfirmationModal = ( { features = [], install, skip } ) => (
 	<Modal
