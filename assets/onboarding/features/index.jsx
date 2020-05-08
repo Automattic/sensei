@@ -6,6 +6,8 @@ import { __ } from '@wordpress/i18n';
 import { useQueryStringRouter } from '../query-string-router';
 import FeatureDescription from './feature-description';
 import ConfirmationModal from './confirmation-modal';
+import FeaturesInstalling from './features-installing';
+import FeaturesList from './features-list';
 
 // TODO: Make it dynamic.
 const features = [
@@ -23,6 +25,7 @@ const features = [
 		),
 		learnMoreLink:
 			'https://woocommerce.com/products/woocommerce-paid-courses/',
+		status: FeaturesList.LOADING_STATUS,
 	},
 	{
 		id: 'course_progress',
@@ -33,6 +36,7 @@ const features = [
 		),
 		learnMoreLink:
 			'https://woocommerce.com/products/sensei-course-progress/',
+		status: FeaturesList.SUCCESS_STATUS,
 	},
 	{
 		id: 'certificates',
@@ -42,6 +46,7 @@ const features = [
 			'sensei-lms'
 		),
 		learnMoreLink: 'https://woocommerce.com/products/sensei-certificates/',
+		status: FeaturesList.ERROR_STATUS,
 	},
 	{
 		id: 'media_attachments',
@@ -52,6 +57,7 @@ const features = [
 		),
 		learnMoreLink:
 			'https://woocommerce.com/products/sensei-media-attachments/',
+		status: FeaturesList.SUCCESS_STATUS,
 	},
 	{
 		id: 'content_drip',
@@ -62,6 +68,7 @@ const features = [
 			'sensei-lms'
 		),
 		learnMoreLink: 'https://woocommerce.com/products/sensei-content-drip/',
+		status: FeaturesList.LOADING_STATUS,
 	},
 ].map( ( feature ) => ( {
 	...feature,
@@ -110,6 +117,11 @@ const Features = () => {
 		] );
 	};
 
+	const getSelectedFeatures = () =>
+		features.filter( ( feature ) =>
+			selectedFeatureIds.includes( feature.id )
+		);
+
 	return (
 		<>
 			<div className="sensei-onboarding__title">
@@ -122,13 +134,10 @@ const Features = () => {
 			</div>
 			<Card className="sensei-onboarding__card">
 				{ isInstalling ? (
-					<Button
-						isPrimary
-						className="sensei-onboarding__button sensei-onboarding__button-card"
-						onClick={ goToNextStep }
-					>
-						{ __( 'Continue', 'sensei-lms' ) }
-					</Button>
+					<FeaturesInstalling
+						features={ getSelectedFeatures() }
+						onContinue={ goToNextStep }
+					/>
 				) : (
 					<>
 						<div className="sensei-onboarding__checkbox-list">
@@ -179,9 +188,7 @@ const Features = () => {
 
 			{ confirmationModalActive && (
 				<ConfirmationModal
-					features={ features.filter( ( feature ) =>
-						selectedFeatureIds.includes( feature.id )
-					) }
+					features={ getSelectedFeatures() }
 					install={ goToInstallation }
 					skip={ goToNextStep }
 				/>

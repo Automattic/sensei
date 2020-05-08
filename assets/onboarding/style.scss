@@ -81,6 +81,15 @@
 			}
 		}
 
+		&.group-center {
+			justify-content: center;
+
+			.components-button {
+				margin-left: 4px;
+				margin-right: 4px;
+			}
+		}
+
 		.components-button {
 			margin-right: 0;
 			margin-left: 0;
