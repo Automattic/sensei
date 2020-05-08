@@ -99,7 +99,7 @@ class Sensei_Onboarding {
 	}
 
 	/**
-	 * Register an Onboarding submenu.
+	 * Register an setup wizard hidden submenu.
 	 *
 	 * @link https://developer.wordpress.org/reference/functions/add_submenu_page/#comment-445
 	 */
@@ -107,19 +107,19 @@ class Sensei_Onboarding {
 		if ( current_user_can( 'manage_sensei' ) ) {
 			add_submenu_page(
 				'options.php',
-				__( 'Onboarding', 'sensei-lms' ),
-				__( 'Onboarding', 'sensei-lms' ),
+				__( 'Setup Wizard', 'sensei-lms' ),
+				__( 'Setup Wizard', 'sensei-lms' ),
 				'manage_sensei',
 				$this->page_slug,
-				[ $this, 'onboarding_page' ]
+				[ $this, 'setup_wizard_page' ]
 			);
 		}
 	}
 
 	/**
-	 * Render app container for Onboarding Wizard.
+	 * Render app container for setup wizard.
 	 */
-	public function onboarding_page() {
+	public function setup_wizard_page() {
 
 		?>
 		<div id="sensei-onboarding-page" class="sensei-onboarding">
