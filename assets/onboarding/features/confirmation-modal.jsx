@@ -1,7 +1,7 @@
 import { Button, Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
-import FeatureList from './feature-list';
+import FeaturesList from './features-list';
 
 /**
  * @typedef  {Object} Feature
@@ -27,7 +27,7 @@ const ConfirmationModal = ( { features = [], install, skip } ) => (
 		isDismissible={ false }
 		className="sensei-onboarding__features-confirmation-modal"
 	>
-		<FeatureList>
+		<FeaturesList>
 			{ features.map(
 				( {
 					id,
@@ -35,7 +35,7 @@ const ConfirmationModal = ( { features = [], install, skip } ) => (
 					description,
 					confirmationExtraDescription,
 				} ) => (
-					<FeatureList.Item
+					<FeaturesList.Item
 						key={ id }
 						title={ title }
 						description={ description }
@@ -45,7 +45,7 @@ const ConfirmationModal = ( { features = [], install, skip } ) => (
 					/>
 				)
 			) }
-		</FeatureList>
+		</FeaturesList>
 
 		<p>
 			{ __(

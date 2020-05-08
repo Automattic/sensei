@@ -9,7 +9,7 @@ import CheckIcon from './check-icon';
  * @param {Object} props
  * @param {Object} props.children React children.
  */
-const FeatureList = ( { children } ) => (
+const FeaturesList = ( { children } ) => (
 	<ul className="sensei-onboarding__features-list">{ children }</ul>
 );
 
@@ -22,7 +22,7 @@ const FeatureList = ( { children } ) => (
  * @param {string} props.description                    Feature description.
  * @param {string} [props.confirmationExtraDescription] Extra description that appears only in confirmation modal.
  */
-FeatureList.Item = ( {
+FeaturesList.Item = ( {
 	status,
 	title,
 	description,
@@ -31,11 +31,11 @@ FeatureList.Item = ( {
 	<li className="sensei-onboarding__features-list-item">
 		{ status && (
 			<div className="sensei-onboarding__icon-status">
-				{ status === FeatureList.LOADING_STATUS && <Spinner /> }
-				{ status === FeatureList.ERROR_STATUS && (
+				{ status === FeaturesList.LOADING_STATUS && <Spinner /> }
+				{ status === FeaturesList.ERROR_STATUS && (
 					<i className="sensei-onboarding__circle-icon-wrapper error-icon-wrapper alert-icon" />
 				) }
-				{ status === FeatureList.SUCCESS_STATUS && (
+				{ status === FeaturesList.SUCCESS_STATUS && (
 					<i className="sensei-onboarding__circle-icon-wrapper success-icon-wrapper">
 						<CheckIcon />
 					</i>
@@ -57,8 +57,8 @@ FeatureList.Item = ( {
 	</li>
 );
 
-FeatureList.LOADING_STATUS = 'loading';
-FeatureList.ERROR_STATUS = 'error';
-FeatureList.SUCCESS_STATUS = 'success';
+FeaturesList.LOADING_STATUS = 'loading';
+FeaturesList.ERROR_STATUS = 'error';
+FeaturesList.SUCCESS_STATUS = 'success';
 
-export default FeatureList;
+export default FeaturesList;
