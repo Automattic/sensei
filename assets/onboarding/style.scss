@@ -200,6 +200,12 @@
 
 	&__features-list {
 		margin: 0;
+
+		&.no-last-line {
+			.sensei-onboarding__features-list-item:last-child {
+				border: 0;
+			}
+		}
 	}
 
 	&__features-list-item {

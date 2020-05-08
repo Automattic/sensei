@@ -7,10 +7,13 @@ import CheckIcon from './check-icon';
  * Feature list.
  *
  * @param {Object} props
- * @param {Object} props.children React children.
+ * @param {string} props.className Additional class name to the list.
+ * @param {Object} props.children  React children.
  */
-const FeaturesList = ( { children } ) => (
-	<ul className="sensei-onboarding__features-list">{ children }</ul>
+const FeaturesList = ( { className, children } ) => (
+	<ul className={ className + ' sensei-onboarding__features-list' }>
+		{ children }
+	</ul>
 );
 
 /**
