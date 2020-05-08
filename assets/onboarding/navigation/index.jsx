@@ -5,14 +5,23 @@ import { get, uniq } from 'lodash';
 import { useQueryStringRouter } from '../query-string-router';
 
 /**
+ * @typedef  {Object} Step
+ * @property {string} key  Step key.
+ */
+/**
+ * @typedef  {Object}   StepWithNavigationState
+ * @property {boolean}  [isComplete]            Flag if it is complete.
+ * @property {Function} [onClick]               Function to navigate to the step (Enables the click on the Stepper).
+ */
+/**
  * Merge the navigation state into the steps.
  * Add isComplete and onClick - when visited.
  *
- * @param {Array}    steps        Steps list.
+ * @param {Step[]}   steps        Steps list.
  * @param {string[]} visitedSteps Key of the visited steps.
  * @param {Function} goTo         Function that update the step.
  *
- * @return {Object} Steps with navigation state merged.
+ * @return {StepWithNavigationState} Steps with navigation state merged.
  */
 const getStepsWithNavigationState = ( steps, visitedSteps, goTo ) =>
 	steps.map( ( step, index ) => {
