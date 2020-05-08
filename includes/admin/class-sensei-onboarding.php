@@ -135,6 +135,12 @@ class Sensei_Onboarding {
 		}
 
 		delete_transient( 'sensei_activation_redirect' );
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
+		if ( isset( $_GET['activate-multi'] ) ) {
+			return;
+		}
+
 		$this->redirect_to_setup_wizard();
 	}
 
