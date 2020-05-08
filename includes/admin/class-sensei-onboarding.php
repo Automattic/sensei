@@ -100,11 +100,13 @@ class Sensei_Onboarding {
 
 	/**
 	 * Register an Onboarding submenu.
+	 *
+	 * @link https://developer.wordpress.org/reference/functions/add_submenu_page/#comment-445
 	 */
 	public function admin_menu() {
 		if ( current_user_can( 'manage_sensei' ) ) {
 			add_submenu_page(
-				null,
+				'options.php',
 				__( 'Onboarding', 'sensei-lms' ),
 				__( 'Onboarding', 'sensei-lms' ),
 				'manage_sensei',
