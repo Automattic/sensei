@@ -135,13 +135,13 @@ class Sensei_Onboarding {
 		}
 
 		delete_transient( 'sensei_activation_redirect' );
-		$this->redirect_to_onboarding();
+		$this->redirect_to_setup_wizard();
 	}
 
 	/**
-	 * Redirect to the onboarding.
+	 * Redirect to setup wizard.
 	 */
-	protected function redirect_to_onboarding() {
+	protected function redirect_to_setup_wizard() {
 		wp_safe_redirect( admin_url( 'admin.php?page=' . $this->page_slug ) );
 		exit;
 	}

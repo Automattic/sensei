@@ -218,11 +218,11 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 		set_transient( 'sensei_activation_redirect', 1, 30 );
 
 		$onboarding_mock = $this->getMockBuilder( 'Sensei_Onboarding' )
-			->setMethods( [ 'redirect_to_onboarding' ] )
+			->setMethods( [ 'redirect_to_setup_wizard' ] )
 			->getMock();
 
 		$onboarding_mock->expects( $this->once() )
-			->method( 'redirect_to_onboarding' );
+			->method( 'redirect_to_setup_wizard' );
 
 		$onboarding_mock->activation_redirect();
 
@@ -240,11 +240,11 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 		set_transient( 'sensei_activation_redirect', 1, 30 );
 
 		$onboarding_mock = $this->getMockBuilder( 'Sensei_Onboarding' )
-			->setMethods( [ 'redirect_to_onboarding' ] )
+			->setMethods( [ 'redirect_to_setup_wizard' ] )
 			->getMock();
 
 		$onboarding_mock->expects( $this->never() )
-			->method( 'redirect_to_onboarding' );
+			->method( 'redirect_to_setup_wizard' );
 
 		$onboarding_mock->activation_redirect();
 
@@ -260,11 +260,11 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 		wp_set_current_user( $admin_id );
 
 		$onboarding_mock = $this->getMockBuilder( 'Sensei_Onboarding' )
-			->setMethods( [ 'redirect_to_onboarding' ] )
+			->setMethods( [ 'redirect_to_setup_wizard' ] )
 			->getMock();
 
 		$onboarding_mock->expects( $this->never() )
-			->method( 'redirect_to_onboarding' );
+			->method( 'redirect_to_setup_wizard' );
 
 		$onboarding_mock->activation_redirect();
 	}
