@@ -49,7 +49,7 @@ class Sensei_Onboarding {
 			add_action( 'admin_menu', [ $this, 'admin_menu' ], 20 );
 			add_action( 'admin_notices', [ $this, 'setup_wizard_notice' ] );
 			add_action( 'admin_init', array( $this, 'skip_setup_wizard' ) );
-			add_action( 'current_screen', [ $this, 'add_onboarding_help_tab' ] );
+			add_action( 'current_screen', [ $this, 'add_setup_wizard_help_tab' ] );
 
 			// Maybe prevent WooCommerce help tab.
 			add_filter( 'woocommerce_enable_admin_help_tab', [ $this, 'should_enable_woocommerce_help_tab' ] );
@@ -229,13 +229,13 @@ class Sensei_Onboarding {
 	}
 
 	/**
-	 * Add onboarding help tab.
+	 * Add setup wizard help tab.
 	 *
 	 * @param WP_Screen $screen Current screen.
 	 *
 	 * @access private
 	 */
-	public function add_onboarding_help_tab( $screen ) {
+	public function add_setup_wizard_help_tab( $screen ) {
 		$link_track_event = 'setup_wizard_click';
 
 		if ( ! $screen || ! $this->should_show_help_screen( $screen->id ) || ! current_user_can( 'manage_sensei' ) ) {
@@ -244,7 +244,7 @@ class Sensei_Onboarding {
 
 		$screen->add_help_tab(
 			[
-				'id'      => 'sensei_lms_onboarding_tab',
+				'id'      => 'sensei_lms_setup_wizard_tab',
 				'title'   => __( 'Setup wizard', 'sensei-lms' ),
 				'content' =>
 					'<h2>' . __( 'Sensei LMS Onboarding', 'sensei-lms' ) . '</h2>' .
