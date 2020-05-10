@@ -1139,7 +1139,7 @@ class Sensei_Core_Modules {
 											$html .= '<input type="hidden" name="module-order" value="' . esc_attr( $order_string ) . '" />' . "\n";
 											$html .= '<input type="hidden" name="course_id" value="' . esc_attr( $course_id ) . '" />' . "\n";
 											$html .= '<input type="submit" class="button-primary" value="' . esc_attr__( 'Save module order', 'sensei-lms' ) . '" />' . "\n";
-											$html .= '<a href="' . esc_url( admin_url( 'post.php?post=' . $course_id . '&action=edit' ) ) . '" class="button-secondary">' . esc_html__( 'Edit course', 'sensei-lms' ) . '</a>' . "\n";
+											$html .= '<a href="' . esc_url( admin_url( 'post.php?post=' . $course_id . '&action=edit' ) ) . '" class="button-secondary" id="edit-course-order-modules-button">' . esc_html__( 'Edit course', 'sensei-lms' ) . '</a>' . "\n";
 											$html .= '</form>';
 										}
 									}

@@ -218,3 +218,8 @@ jQuery( document ).ready( function () {
 		});
 	});
 });
+
+// Log event: user clicks Edit Course button on the Order Modules page.
+jQuery( '#edit-course-order-modules-button').on( 'click', function(){
+  sensei_log_event( 'module_order_edit_course_click', '' );
+});
