@@ -2628,6 +2628,13 @@ class Sensei_Lesson {
 				++$o;
 			}
 			update_post_meta( $quiz_data['quiz_id'], '_question_order', $questions );
+
+			// Log event: when a user edits the order of questions in a quiz.
+			$event_properties = array(
+				'question_count' => count( $questions ),
+			);
+			sensei_log_event( 'quiz_question_order_update', $event_properties );
+
 		}
 		die();
 	}
