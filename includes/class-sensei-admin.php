@@ -1387,6 +1387,12 @@ class Sensei_Admin {
 
 		update_option( 'sensei_course_order', implode( ',', $order ) );
 
+		// Log event: when the course order is updated.
+		$event_properties = array(
+			'course_count' => count( $order ),
+		);
+		sensei_log_event( 'course_order_update', $event_properties );
+
 		return true;
 	}
 
