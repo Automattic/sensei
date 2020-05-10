@@ -1227,6 +1227,13 @@ class Sensei_Core_Modules {
 		if ( $order_string && $course_id ) {
 			$order = explode( ',', $order_string );
 			update_post_meta( intval( $course_id ), '_module_order', $order );
+
+			// Log event: when the module order is updated.
+			$event_properties = array(
+				'module_count' => count( $order ),
+			);
+			sensei_log_event( 'module_order_update', $event_properties );
+
 			return true;
 		}
 		return false;
