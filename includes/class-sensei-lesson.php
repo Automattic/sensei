@@ -2974,6 +2974,9 @@ class Sensei_Lesson {
 		foreach ( $quizzes as $quiz_id ) {
 			if ( $quiz_id == $data['quiz_id'] ) {
 				delete_post_meta( $question_id, '_quiz_id', $quiz_id );
+				// Log event: when a user removes a question from a quiz.
+				$event_properties = array();
+				sensei_log_event( 'quiz_question_remove', $event_properties );
 			}
 		}
 
