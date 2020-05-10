@@ -40,6 +40,10 @@ class Sensei_Question {
 		} // End If Statement
 
 		add_action( 'sensei_question_initial_publish', [ $this, 'log_initial_publish_event' ] );
+
+		// Log event when question category created.
+		add_action( 'created_question-category', array( $this, 'log_add_question_category_event' ), 10, 2 );
+
 	} // End __construct()
 
 	public function question_types() {
@@ -1283,6 +1287,37 @@ class Sensei_Question {
 		}
 
 		sensei_log_event( 'question_add', $event_properties );
+	}
+
+	/**
+	 * Log an event when a question category is created.
+	 *
+	 * @since 3.1.0
+	 * @access public
+	 *
+	 * @param int $term_id Term id.
+	 * @param int $tt_id Term taxonomy id.
+	 */
+	public function log_add_question_category_event( $term_id, $tt_id ) {
+
+		$event_properties = array(
+			'page'      => 'unknown',
+			'parent_id' => -1,
+		);
+
+		// phpcs:ignore WordPress.Security.NonceVerification
+		if ( isset( $_REQUEST['action'] ) && 'add-tag' === $_REQUEST['action'] ) {
+			$event_properties['page'] = 'question-category';
+			// phpcs:ignore WordPress.Security.NonceVerification
+		} elseif ( isset( $_REQUEST['action'] ) && 'add-question-category' === $_REQUEST['action'] ) {
+			$event_properties['page'] = 'question';
+		}
+
+		// Get the term parent.
+		$parent                        = get_term( $term_id, 'question-category' )->parent;
+		$event_properties['parent_id'] = $parent;
+
+		sensei_log_event( 'question_category_add', $event_properties );
 	}
 
 } // End Class
