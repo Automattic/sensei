@@ -85,7 +85,7 @@ const InstallationFeedback = ( { features, onContinue } ) => {
 							description={ description }
 							learnMoreLink={ learnMoreLink }
 							errorMessage={ errorMessage }
-							onRetryClick={ () => {} }
+							onFeatureRetry={ () => {} }
 							status={ status }
 						/>
 					)

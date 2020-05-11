@@ -26,7 +26,7 @@ const FeaturesList = ( { className, children } ) => (
  * @param {string} [props.confirmationExtraDescription] Extra description that appears only in confirmation modal.
  * @param {string} [props.learnMoreLink]                Learn more link.
  * @param {string} [props.errorMessage]                 Error message.
- * @param {string} [props.onRetryClick]                 Retry click callback.
+ * @param {string} [props.onFeatureRetry]               Retry feature installation callback.
  * @param {string} [props.status]                       Feature status.
  */
 FeaturesList.Item = ( {
@@ -35,7 +35,7 @@ FeaturesList.Item = ( {
 	confirmationExtraDescription,
 	learnMoreLink,
 	errorMessage,
-	onRetryClick,
+	onFeatureRetry,
 	status,
 } ) => (
 	<li className="sensei-onboarding__features-list-item">
@@ -77,13 +77,13 @@ FeaturesList.Item = ( {
 			{ errorMessage && (
 				<p className="sensei-onboarding__error-message">
 					{ errorMessage }
-					{ onRetryClick && (
+					{ onFeatureRetry && (
 						<>
 							{ ' ' }
 							<button
 								className="sensei-onboarding__retry-button"
 								type="button"
-								onClick={ onRetryClick }
+								onClick={ onFeatureRetry }
 							>
 								{ __( 'Retry?', 'sensei-lms' ) }
 							</button>
