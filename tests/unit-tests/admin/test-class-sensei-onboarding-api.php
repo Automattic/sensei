@@ -1,15 +1,15 @@
 <?php
 /**
- * Sensei Onboarding REST API tests
+ * Sensei Setup Wizard REST API tests
  *
  * @package sensei-lms
  * @since   3.1.0
  */
 
 /**
- * Class for Sensei_Onboarding API tests.
+ * Class for Sensei_Setup_Wizard_API tests.
  */
-class Sensei_Onboarding_API_Test extends WP_Test_REST_TestCase {
+class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 
 	/**
 	 * A server instance that we use in tests to dispatch requests.
@@ -46,11 +46,11 @@ class Sensei_Onboarding_API_Test extends WP_Test_REST_TestCase {
 	}
 
 	/**
-	 * Tests if only privileged users can access the Onboarding API.
+	 * Tests that unprivileged users cannot access the Setup Wizard API.
 	 *
-	 * @covers Sensei_Onboarding_API::can_user_access_rest_api
+	 * @covers Sensei_Setup_Wizard_API::can_user_access_rest_api
 	 */
-	public function testOnlyAdminUserCanAccessOnboardingAPI() {
+	public function testTeacherUserCannotAccessSetupWizardAPI() {
 
 		// Test that a non-admin user cannot access the API.
 		$teacher_id = $this->factory->user->create( array( 'role' => 'teacher' ) );
@@ -74,7 +74,7 @@ class Sensei_Onboarding_API_Test extends WP_Test_REST_TestCase {
 	/**
 	 * Tests welcome endpoint returning the current usage tracking setting.
 	 *
-	 * @covers Sensei_Onboarding_API::welcome_get
+	 * @covers Sensei_Setup_Wizard_API::get_welcome
 	 */
 	public function testGetWelcomeReturnsUsageTrackingData() {
 
@@ -92,7 +92,7 @@ class Sensei_Onboarding_API_Test extends WP_Test_REST_TestCase {
 	/**
 	 * Tests that submitting to welcome endpoint updates usage tracking preference.
 	 *
-	 * @covers Sensei_Onboarding_API::welcome_submit
+	 * @covers Sensei_Setup_Wizard_API::submit_welcome
 	 */
 	public function testSubmitWelcomeUpdatesUsageTrackingSetting() {
 
@@ -105,7 +105,7 @@ class Sensei_Onboarding_API_Test extends WP_Test_REST_TestCase {
 	/**
 	 * Tests that submitting to welcome endpoint creates Sensei Courses and My Courses pages.
 	 *
-	 * @covers Sensei_Onboarding_API::welcome_submit
+	 * @covers Sensei_Setup_Wizard_API::submit_welcome
 	 * @covers Sensei_Onboarding_Pages::create_pages
 	 */
 	public function testSubmitWelcomeCreatesSenseiPages() {
@@ -122,7 +122,7 @@ class Sensei_Onboarding_API_Test extends WP_Test_REST_TestCase {
 	/**
 	 * Tests that submitting to purpose endpoint saves submitted data
 	 *
-	 * @covers Sensei_Onboarding_API::purpose_submit
+	 * @covers Sensei_Setup_Wizard_API::submit_purpose
 	 */
 	public function testSubmitPurposeSavesData() {
 
@@ -144,7 +144,7 @@ class Sensei_Onboarding_API_Test extends WP_Test_REST_TestCase {
 	/**
 	 * Tests that not selecting other clears text value.
 	 *
-	 * @covers Sensei_Onboarding_API::purpose_submit
+	 * @covers Sensei_Setup_Wizard_API::submit_purpose
 	 */
 	public function testSubmitPurposeOtherClearedWhenNotSelected() {
 
@@ -173,7 +173,7 @@ class Sensei_Onboarding_API_Test extends WP_Test_REST_TestCase {
 	/**
 	 * Tests that submitting to purpose endpoint validates input against whitelist
 	 *
-	 * @covers Sensei_Onboarding_API::purpose_submit
+	 * @covers Sensei_Setup_Wizard_API::submit_purpose
 	 */
 	public function testSubmitPurposeValidated() {
 
@@ -195,7 +195,7 @@ class Sensei_Onboarding_API_Test extends WP_Test_REST_TestCase {
 	/**
 	 * Tests that purpose get endpoint returns user data
 	 *
-	 * @covers Sensei_Onboarding_API::purpose_get
+	 * @covers Sensei_Setup_Wizard_API::get_purpose
 	 */
 	public function testGetPurposeReturnsUserData() {
 
@@ -222,7 +222,7 @@ class Sensei_Onboarding_API_Test extends WP_Test_REST_TestCase {
 	 * Create and dispatch a REST API request.
 	 *
 	 * @param string $method The request method.
-	 * @param string $route  The endpoint under Sensei Onboarding API.
+	 * @param string $route  The endpoint under Sensei Setup Wizard API.
 	 * @param array  $data   Request body.
 	 *
 	 * @return Object Response data.
