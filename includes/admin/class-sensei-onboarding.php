@@ -85,25 +85,42 @@ class Sensei_Onboarding {
 	}
 
 	/**
-	 * Register an Onboarding submenu.
+	 * Check if should prevent woocommerce help tab or not.
+	 *
+	 * @return boolean
+	 */
+	private function should_prevent_woocommerce_help_tab() {
+		$post_types_to_prevent = [ 'course', 'lesson', 'sensei_message' ];
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
+		return isset( $_GET['post_type'] ) && (
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
+			in_array( $_GET['post_type'], $post_types_to_prevent, true )
+		);
+	}
+
+	/**
+	 * Register the hidden setup wizard submenu.
+	 *
+	 * @link https://developer.wordpress.org/reference/functions/add_submenu_page/#comment-445
 	 */
 	public function admin_menu() {
 		if ( current_user_can( 'manage_sensei' ) ) {
 			add_submenu_page(
-				null,
-				__( 'Onboarding', 'sensei-lms' ),
-				__( 'Onboarding', 'sensei-lms' ),
+				'options.php',
+				__( 'Sensei LMS - Setup Wizard', 'sensei-lms' ),
+				__( 'Sensei LMS - Setup Wizard', 'sensei-lms' ),
 				'manage_sensei',
 				$this->page_slug,
-				[ $this, 'onboarding_page' ]
+				[ $this, 'setup_wizard_page' ]
 			);
 		}
 	}
 
 	/**
-	 * Render app container for Onboarding Wizard.
+	 * Render app container for setup wizard.
 	 */
-	public function onboarding_page() {
+	public function setup_wizard_page() {
 
 		?>
 		<div id="sensei-onboarding-page" class="sensei-onboarding">
