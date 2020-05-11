@@ -76,7 +76,7 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 	 */
 	public function init() {
 		foreach ( $this->data_port_jobs as $job ) {
-			add_action( Sensei_Data_Port_Job::get_option_name( $job['id'] ), [ $this, 'run_data_port_job' ] );
+			add_action( Sensei_Data_Port_Job::SCHEDULED_ACTION_NAME, [ $this, 'run_data_port_job' ] );
 		}
 
 		add_action( 'shutdown', [ $this, 'persist' ] );

@@ -14,7 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * running data port tasks which are registered by subclasses.
  */
 abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, JsonSerializable {
-	const OPTION_PREFIX = 'sensei-tools-job-';
+	const OPTION_PREFIX         = 'sensei-tools-job-';
+	const SCHEDULED_ACTION_NAME = 'sensei-data-port-job';
 
 	/**
 	 * An array which holds the results of the data port job and populated in subclasses.
@@ -327,7 +328,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 * @return string
 	 */
 	public function get_name() {
-		return self::get_option_name( $this->job_id );
+		return self::SCHEDULED_ACTION_NAME;
 	}
 
 	/**
@@ -337,7 +338,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 *
 	 * @return string The option name.
 	 */
-	public static function get_option_name( $job_id ) {
+	private static function get_option_name( $job_id ) {
 		return self::OPTION_PREFIX . $job_id;
 	}
 }
