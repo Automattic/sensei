@@ -254,6 +254,7 @@ class Sensei_Onboarding {
 			]
 		);
 	}
+
 	/**
 	 * Register REST API route.
 	 */
