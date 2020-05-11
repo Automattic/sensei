@@ -41,32 +41,257 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test add onboarding help tab to edit course screen.
+	 * Test setup wizard notice in dashboard.
 	 *
-	 * @covers Sensei_Onboarding::add_onboarding_help_tab
+	 * @covers Sensei_Onboarding::setup_wizard_notice
+	 * @covers Sensei_Onboarding::should_current_page_display_setup_wizard
 	 */
-	public function testAddOnboardingHelpTab() {
-		set_current_screen( 'edit-course' );
-		$screen = get_current_screen();
+	public function testSetupWizardNoticeInDashboard() {
+		// Create and login as admin.
+		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $admin_id );
 
-		Sensei()->onboarding->add_onboarding_help_tab( $screen );
-		$created_tab = $screen->get_help_tab( 'sensei_lms_onboarding_tab' );
+		set_current_screen( 'dashboard' );
+		update_option( \Sensei_Onboarding::SUGGEST_SETUP_WIZARD_OPTION, 1 );
 
-		$this->assertNotNull( $created_tab, 'Should create the onboarding tab to edit course screens.' );
+		ob_start();
+		Sensei()->onboarding->setup_wizard_notice();
+		$html = ob_get_clean();
+
+		$pos_setup_button = strpos( $html, 'Run the Setup Wizard' );
+
+		$this->assertNotFalse( $pos_setup_button, 'Should return the notice HTML' );
 	}
 
 	/**
-	 * Test add onboarding help tab in non edit course screens.
+	 * Test setup wizard notice in screen with Sensei prefix.
 	 *
-	 * @covers Sensei_Onboarding::add_onboarding_help_tab
+	 * @covers Sensei_Onboarding::setup_wizard_notice
+	 * @covers Sensei_Onboarding::should_current_page_display_setup_wizard
 	 */
-	public function testAddOnboardingHelpTabNonEditCourseScreen() {
+	public function testSetupWizardNoticeInSenseiScreen() {
+		// Create and login as admin.
+		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $admin_id );
+
+		set_current_screen( 'sensei-lms_page_sensei_test' );
+		update_option( \Sensei_Onboarding::SUGGEST_SETUP_WIZARD_OPTION, 1 );
+
+		ob_start();
+		Sensei()->onboarding->setup_wizard_notice();
+		$html = ob_get_clean();
+
+		$pos_setup_button = strpos( $html, 'Run the Setup Wizard' );
+
+		$this->assertNotFalse( $pos_setup_button, 'Should return the notice HTML' );
+	}
+
+	/**
+	 * Test setup wizard notice in no Sensei screen.
+	 *
+	 * @covers Sensei_Onboarding::setup_wizard_notice
+	 * @covers Sensei_Onboarding::should_current_page_display_setup_wizard
+	 */
+	public function testSetupWizardNoticeInOtherScreen() {
+		// Create and login as admin.
+		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $admin_id );
+
+		set_current_screen( 'other' );
+		update_option( \Sensei_Onboarding::SUGGEST_SETUP_WIZARD_OPTION, 1 );
+
+		ob_start();
+		Sensei()->onboarding->setup_wizard_notice();
+		$html = ob_get_clean();
+
+		$this->assertEmpty( $html, 'Should return empty string' );
+	}
+
+	/**
+	 * Test setup wizard notice with suggest option as 0.
+	 *
+	 * @covers Sensei_Onboarding::setup_wizard_notice
+	 * @covers Sensei_Onboarding::should_current_page_display_setup_wizard
+	 */
+	public function testSetupWizardNoticeSuggestOptionAsZero() {
+		// Create and login as admin.
+		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $admin_id );
+
+		set_current_screen( 'dashboard' );
+		update_option( \Sensei_Onboarding::SUGGEST_SETUP_WIZARD_OPTION, 0 );
+
+		ob_start();
+		Sensei()->onboarding->setup_wizard_notice();
+		$html = ob_get_clean();
+
+		$this->assertEmpty( $html, 'Should return empty string' );
+	}
+
+	/**
+	 * Test setup wizard notice with suggest option empty.
+	 *
+	 * @covers Sensei_Onboarding::setup_wizard_notice
+	 * @covers Sensei_Onboarding::should_current_page_display_setup_wizard
+	 */
+	public function testSetupWizardNoticeSuggestOptionEmpty() {
+		// Create and login as admin.
+		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $admin_id );
+
+		set_current_screen( 'dashboard' );
+
+		ob_start();
+		Sensei()->onboarding->setup_wizard_notice();
+		$html = ob_get_clean();
+
+		$this->assertEmpty( $html, 'Should return empty string' );
+	}
+
+	/**
+	 * Test setup wizard notice for no admin user.
+	 *
+	 * @covers Sensei_Onboarding::setup_wizard_notice
+	 * @covers Sensei_Onboarding::should_current_page_display_setup_wizard
+	 */
+	public function testSetupWizardNoticeNoAdmin() {
+		// Create and login as teacher.
+		$teacher_id = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		wp_set_current_user( $teacher_id );
+
+		set_current_screen( 'dashboard' );
+		update_option( \Sensei_Onboarding::SUGGEST_SETUP_WIZARD_OPTION, 0 );
+
+		ob_start();
+		Sensei()->onboarding->setup_wizard_notice();
+		$html = ob_get_clean();
+
+		$this->assertEmpty( $html, 'Should return empty string' );
+	}
+
+	/**
+	 * Test skip setup wizard.
+	 *
+	 * @covers Sensei_Onboarding::skip_setup_wizard
+	 */
+	public function testSkipSetupWizard() {
+		// Create and login as admin.
+		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $admin_id );
+
+		$_GET['sensei_skip_setup_wizard'] = '1';
+		$_GET['_wpnonce']                 = wp_create_nonce( 'sensei_skip_setup_wizard' );
+
+		Sensei()->onboarding->skip_setup_wizard();
+		$option_value = get_option( \Sensei_Onboarding::SUGGEST_SETUP_WIZARD_OPTION, false );
+
+		$this->assertEquals( '0', $option_value, 'Should update option to 0' );
+	}
+
+	/**
+	 * Test skip setup wizard.
+	 *
+	 * @covers Sensei_Onboarding::skip_setup_wizard
+	 */
+	public function testSkipSetupWizardNoAdmin() {
+		// Create and login as teacher.
+		$teacher_id = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		wp_set_current_user( $teacher_id );
+
+		$_GET['sensei_skip_setup_wizard'] = '1';
+		$_GET['_wpnonce']                 = wp_create_nonce( 'sensei_skip_setup_wizard' );
+
+		Sensei()->onboarding->skip_setup_wizard();
+		$option_value = get_option( \Sensei_Onboarding::SUGGEST_SETUP_WIZARD_OPTION, false );
+
+		$this->assertFalse( $option_value, 'Should not update option' );
+	}
+
+	/**
+	 * Test if WooCommerce help tab is being prevented in the Sensei pages.
+	 *
+	 * @covers Sensei_Onboarding::should_enable_woocommerce_help_tab
+	 */
+	public function testShouldEnableWooCommerceHelpTab() {
+		$_GET['post_type'] = 'course';
+
+		$this->assertFalse(
+			Sensei()->onboarding->should_enable_woocommerce_help_tab( true ),
+			'Should not allow WooCommerce help tab for course post type'
+		);
+	}
+
+	/**
+	 * Test if WooCommerce help tab is being untouched in no Sensei pages.
+	 *
+	 * @covers Sensei_Onboarding::should_enable_woocommerce_help_tab
+	 */
+	public function testShouldEnableWooCommerceHelpTabNoSenseiPage() {
+		$_GET['post_type'] = 'woocommerce';
+
+		$this->assertTrue(
+			Sensei()->onboarding->should_enable_woocommerce_help_tab( true ),
+			'Should not touch WooCommerce help tab for no Sensei pages'
+		);
+	}
+
+	/**
+	 * Test add setup wizard help tab to edit course screen.
+	 *
+	 * @covers Sensei_Onboarding::add_setup_wizard_help_tab
+	 */
+	public function testAddSetupWizardHelpTab() {
+		// Create and login as administrator.
+		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $admin_id );
+
+		set_current_screen( 'edit-course' );
+		$screen = get_current_screen();
+
+		$screen->remove_help_tab( 'sensei_lms_setup_wizard_tab' );
+		Sensei()->onboarding->add_setup_wizard_help_tab( $screen );
+		$created_tab = $screen->get_help_tab( 'sensei_lms_setup_wizard_tab' );
+
+		$this->assertNotNull( $created_tab, 'Should create the setup wizard tab to edit course screens.' );
+	}
+
+	/**
+	 * Test add setup wizard help tab in non edit course screens.
+	 *
+	 * @covers Sensei_Onboarding::add_setup_wizard_help_tab
+	 */
+	public function testAddSetupWizardHelpTabNonEditCourseScreen() {
+		// Create and login as administrator.
+		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $admin_id );
+
 		set_current_screen( 'edit-lesson' );
 		$screen = get_current_screen();
 
-		Sensei()->onboarding->add_onboarding_help_tab( $screen );
-		$created_tab = $screen->get_help_tab( 'sensei_lms_onboarding_tab' );
+		$screen->remove_help_tab( 'sensei_lms_setup_wizard_tab' );
+		Sensei()->onboarding->add_setup_wizard_help_tab( $screen );
+		$created_tab = $screen->get_help_tab( 'sensei_lms_setup_wizard_tab' );
 
-		$this->assertNull( $created_tab, 'Should not create the onboarding tab to non edit course screens.' );
+		$this->assertNull( $created_tab, 'Should not create the setup wizard tab to non edit course screens.' );
+	}
+
+	/**
+	 * Test add setup wizard help tab for no admin user.
+	 *
+	 * @covers Sensei_Onboarding::add_setup_wizard_help_tab
+	 */
+	public function testAddSetupWizardHelpTabNoAdmin() {
+		// Create and login as teacher.
+		$teacher_id = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		wp_set_current_user( $teacher_id );
+
+		set_current_screen( 'edit-course' );
+		$screen = get_current_screen();
+
+		$screen->remove_help_tab( 'sensei_lms_setup_wizard_tab' );
+		Sensei()->onboarding->add_setup_wizard_help_tab( $screen );
+		$created_tab = $screen->get_help_tab( 'sensei_lms_setup_wizard_tab' );
+
+		$this->assertNull( $created_tab, 'Should not create the setup wizard tab to no admin user.' );
 	}
 }
