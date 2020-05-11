@@ -5,7 +5,7 @@ import FeatureDescription from './feature-description';
 import CheckIcon from './check-icon';
 
 /**
- * Feature list.
+ * Features list.
  *
  * @param {Object} props
  * @param {string} props.className Additional class name to the list.
@@ -18,7 +18,7 @@ const FeaturesList = ( { className, children } ) => (
 );
 
 /**
- * Feature list item.
+ * Features list item.
  *
  * @param {Object} props
  * @param {string} props.title                          Feature title.
@@ -96,6 +96,9 @@ FeaturesList.Item = ( {
 );
 FeaturesList.Item.displayName = 'FeaturesList.Item';
 
+/**
+ * Status constants.
+ */
 FeaturesList.LOADING_STATUS = 'loading';
 FeaturesList.ERROR_STATUS = 'error';
 FeaturesList.SUCCESS_STATUS = 'success';
