@@ -208,8 +208,10 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 
 		Sensei()->onboarding->update_wizard_user_data(
 			[
-				'purpose'       => [ 'share_knowledge', 'other' ],
-				'purpose_other' => 'Test',
+				'purpose' => [
+					'selected' => [ 'share_knowledge', 'other' ],
+					'other'    => 'Test',
+				],
 			]
 		);
 

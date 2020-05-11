@@ -28,9 +28,13 @@ class Sensei_Onboarding {
 	 * @var array
 	 */
 	private $user_data_defaults = [
-		'features'      => [],
-		'purpose'       => [],
-		'purpose_other' => '',
+		'features'  => [],
+		'purpose'   => [
+			'selected' => [],
+			'other'    => '',
+		],
+		'steps'     => [],
+		'__version' => '1',
 	];
 
 	/**
@@ -307,10 +311,20 @@ class Sensei_Onboarding {
 	/**
 	 * Get saved Setup Wizard user data.
 	 *
+	 * @param string $key Limit data returned to selected key.
+	 *
 	 * @return mixed
 	 */
-	public function get_wizard_user_data() {
-		return get_option( self::USER_DATA_OPTION, $this->user_data_defaults );
+	public function get_wizard_user_data( $key = null ) {
+		$data = get_option( self::USER_DATA_OPTION, [] );
+
+		// Reset data if the schema changed.
+		if ( ! empty( array_diff_key( $this->user_data_defaults, $data ) ) ) {
+			$data = $this->user_data_defaults;
+			update_option( self::USER_DATA_OPTION, $data );
+		}
+
+		return empty( $key ) ? $data : $data[ $key ];
 	}
 
 	/**

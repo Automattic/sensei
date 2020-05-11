@@ -165,11 +165,11 @@ class Sensei_Setup_Wizard_API {
 	 * @return array Data used on purpose step.
 	 */
 	public function get_purpose() {
-		$data = $this->setupwizard->get_wizard_user_data();
+		$data = $this->setupwizard->get_wizard_user_data( 'purpose' );
 
 		return [
-			'selected' => $data['purpose'],
-			'other'    => $data['purpose_other'],
+			'selected' => $data['selected'],
+			'other'    => $data['other'],
 		];
 	}
 
@@ -197,10 +197,11 @@ class Sensei_Setup_Wizard_API {
 	 * @return array Data used on features page.
 	 */
 	public function get_features() {
-		$data = $this->setupwizard->get_wizard_user_data();
+
+		$data = $this->setupwizard->get_wizard_user_data( 'features' );
 
 		return [
-			'selected' => $data['features'],
+			'selected' => $data,
 			'plugins'  => $this->setupwizard->plugin_slugs,
 		];
 	}
