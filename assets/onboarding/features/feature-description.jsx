@@ -7,7 +7,7 @@ import { __ } from '@wordpress/i18n';
  * @param {Object} props
  * @param {string} props.description                    Feature description.
  * @param {string} [props.confirmationExtraDescription] Extra description that appears only in confirmation modal.
- * @param {string} props.learnMoreLink                  Learn more link.
+ * @param {string} [props.learnMoreLink]                Learn more link.
  */
 const FeatureDescription = ( {
 	description,
@@ -19,7 +19,12 @@ const FeatureDescription = ( {
 		{ learnMoreLink && (
 			<>
 				{ ' ' }
-				<Link href={ learnMoreLink } target="_blank" type="external">
+				<Link
+					className="sensei-onboarding__learn-more"
+					href={ learnMoreLink }
+					target="_blank"
+					type="external"
+				>
 					{ __( 'Learn more', 'sensei-lms' ) }
 				</Link>
 			</>

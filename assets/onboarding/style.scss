@@ -19,6 +19,20 @@
 		* {
 			box-sizing: border-box;
 		}
+
+		.sensei-onboarding__learn-more {
+			white-space: nowrap;
+			color: $primary;
+
+			&:hover,
+			&:active {
+				color: lighten($primary, 20%);
+			}
+
+			&:focus {
+				color: darken($primary, 20%);
+			}
+		}
 	}
 
 	&__header {
@@ -162,20 +176,6 @@
 				padding-right: 20px;
 				padding-bottom: 14px;
 				border-bottom: 1px solid $gray-5;
-
-				a {
-					white-space: nowrap;
-					color: $primary;
-
-					&:hover,
-					&:active {
-						color: lighten($primary, 20%);
-					}
-
-					&:focus {
-						color: darken($primary, 20%);
-					}
-				}
 			}
 
 			&:last-child .components-base-control__help {
@@ -233,6 +233,20 @@
 
 		.sensei-onboarding__feature-description {
 			margin: 0;
+		}
+
+		.sensei-onboarding__error-message {
+			margin: 0;
+			color: $alert-red;
+
+			.sensei-onboarding__retry-button {
+				color: inherit;
+				background: transparent;
+				border: 0;
+				padding: 0;
+				text-decoration: underline;
+				cursor: pointer;
+			}
 		}
 
 		.sensei-onboarding__icon-status {

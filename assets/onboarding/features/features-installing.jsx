@@ -9,6 +9,8 @@ import FeaturesList from './features-list';
  * @property {string} title                          Feature title.
  * @property {string} description                    Feature description.
  * @property {string} [confirmationExtraDescription] Extra description that appears only in confirmation modal.
+ * @property {string} [props.learnMoreLink]          Learn more link.
+ * @property {string} [errorMessage]                 Error message.
  * @property {string} status                         Feature status.
  */
 /**
@@ -76,6 +78,8 @@ const FeaturesInstalling = ( { features, onContinue } ) => {
 						title,
 						description,
 						confirmationExtraDescription,
+						learnMoreLink,
+						errorMessage,
 						status,
 					} ) => (
 						<FeaturesList.Item
@@ -85,6 +89,9 @@ const FeaturesInstalling = ( { features, onContinue } ) => {
 							confirmationExtraDescription={
 								confirmationExtraDescription
 							}
+							learnMoreLink={ learnMoreLink }
+							errorMessage={ errorMessage }
+							onRetryClick={ () => {} }
 							status={ status }
 						/>
 					)

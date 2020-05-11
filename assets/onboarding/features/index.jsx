@@ -46,6 +46,10 @@ const features = [
 			'sensei-lms'
 		),
 		learnMoreLink: 'https://woocommerce.com/products/sensei-certificates/',
+		errorMessage: __(
+			'Error message here, maecenas faucibus mollis interdum tristique euismod.',
+			'sensei-lms'
+		),
 		status: FeaturesList.ERROR_STATUS,
 	},
 	{

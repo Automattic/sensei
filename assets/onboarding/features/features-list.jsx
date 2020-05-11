@@ -1,4 +1,5 @@
 import { Spinner } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 
 import FeatureDescription from './feature-description';
 import CheckIcon from './check-icon';
@@ -20,16 +21,22 @@ const FeaturesList = ( { className, children } ) => (
  * Feature list item.
  *
  * @param {Object} props
- * @param {string} [props.status]                       Feature status.
  * @param {string} props.title                          Feature title.
  * @param {string} props.description                    Feature description.
  * @param {string} [props.confirmationExtraDescription] Extra description that appears only in confirmation modal.
+ * @param {string} [props.learnMoreLink]                Learn more link.
+ * @param {string} [props.errorMessage]                 Error message.
+ * @param {string} [props.onRetryClick]                 Retry click callback.
+ * @param {string} [props.status]                       Feature status.
  */
 FeaturesList.Item = ( {
-	status,
 	title,
 	description,
 	confirmationExtraDescription,
+	learnMoreLink,
+	errorMessage,
+	onRetryClick,
+	status,
 } ) => (
 	<li className="sensei-onboarding__features-list-item">
 		{ status && (
@@ -54,8 +61,26 @@ FeaturesList.Item = ( {
 					confirmationExtraDescription={
 						confirmationExtraDescription
 					}
+					learnMoreLink={ learnMoreLink }
 				/>
 			</p>
+			{ errorMessage && (
+				<p className="sensei-onboarding__error-message">
+					{ errorMessage }
+					{ onRetryClick && (
+						<>
+							{ ' ' }
+							<button
+								className="sensei-onboarding__retry-button"
+								type="button"
+								onClick={ onRetryClick }
+							>
+								{ __( 'Retry?', 'sensei-lms' ) }
+							</button>
+						</>
+					) }
+				</p>
+			) }
 		</div>
 	</li>
 );
