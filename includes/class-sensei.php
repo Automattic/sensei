@@ -163,7 +163,7 @@ class Sensei_Main {
 	 *
 	 * @var Sensei_Usage_Tracking
 	 */
-	private $usage_tracking;
+	public $usage_tracking;
 
 	/**
 	 * @var $id
@@ -686,6 +686,7 @@ class Sensei_Main {
 
 		if ( false === get_option( 'sensei_installed', false ) ) {
 			update_option( 'sensei_show_email_signup_form', true );
+			update_option( Sensei_Onboarding::SUGGEST_SETUP_WIZARD_OPTION, 1 );
 		}
 
 		update_option( 'skip_install_sensei_pages', 0 );

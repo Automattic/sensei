@@ -31,6 +31,7 @@
     "@woocommerce/components": "4.0.0",
     "@wordpress/components": "9.4.1",
     "@wordpress/i18n": "3.11.0",
+    "interpolate-components": "1.1.1",
     "select2": "4.0.5"
   },
   "scripts": {
@@ -38,7 +39,7 @@
     "build:docs": "rm -rf hookdocs/ && jsdoc -c hookdoc-conf.json",
     "lint-css": "wp-scripts lint-style **/*.scss",
     "lint-css:fix": "npm run lint-css -- --fix",
-    "lint-js": "wp-scripts lint-js",
+    "lint-js": "wp-scripts lint-js --ext js,jsx assets",
     "lint-js:fix": "npm run lint-js -- --fix",
     "package": "gulp package",
     "run-phpcs": "./vendor/bin/phpcs --encoding=utf-8",

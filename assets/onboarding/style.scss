@@ -1,11 +1,13 @@
 @import '~@woocommerce/components/build-style/style.css';
+@import 'variables';
+@import 'wp-colors';
 @import 'fullscreen';
 
 .sensei-onboarding {
 
 	&__page {
 		background: #f6f7f7;
-		color: #50575e;
+		color: $text_secondary;
 
 		* {
 			box-sizing: border-box;
@@ -34,5 +36,109 @@
 		margin-left: auto;
 		margin-right: auto;
 		font-size: 16px;
+	}
+
+	&__button.components-button {
+		display: flex;
+		margin: 8px auto 0;
+
+		max-width: 100%;
+		justify-content: center;
+
+		height: 48px;
+		padding-left: 25px;
+		padding-right: 25px;
+		text-align: center;
+		font-size: 14px;
+		line-height: 36px;
+		font-weight: 500;
+		align-items: center;
+	}
+
+	&__button-card.components-button {
+		width: 310px;
+	}
+
+	&__button-modal.components-button {
+		margin-right: 0;
+	}
+
+	&__skip {
+		text-align: center;
+	}
+
+	&__title {
+
+		text-align: center;
+		margin: 40px 0 20px 0;
+
+		h2 {
+			color: $text_primary;
+			font-weight: normal;
+			font-size: 24px;
+			line-height: 32px;
+			margin: 0;
+			margin-bottom: 8px;
+		}
+
+		p {
+			font-size: 16px;
+		}
+	}
+
+	&__card {
+		p {
+			font-size: 14px;
+			line-height: 1.65;
+		}
+	}
+
+	&__usage-modal {
+		width: 600px;
+		max-width: 100%;
+
+		.components-modal__header {
+			border-bottom: none;
+			margin-bottom: 0;
+		}
+	}
+
+	&__tracking {
+		margin: 1rem 0;
+	}
+
+	&__checkbox-list {
+
+		margin-bottom: 26px;
+
+		.sensei-onboarding__checkbox {
+
+			position: relative;
+
+			.components-checkbox-control__label {
+				color: $text_primary;
+				font-size: 16px;
+				margin-left: 8px;
+				padding-right: 20px;
+			}
+
+			.components-base-control__help {
+				font-style: normal;
+				margin-left: 40px;
+				padding-top: 4px;
+				padding-right: 20px;
+				padding-bottom: 14px;
+				border-bottom: 1px solid $gray-5;
+			}
+
+		}
+		.sensei-onboarding__textcontrol-other {
+			margin-left: 40px;
+			margin-right: 20px;
+
+			.components-text-control__input {
+				padding: 8px 12px;
+			}
+		}
 	}
 }

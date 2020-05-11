@@ -1,18 +1,18 @@
 import { render } from '@wordpress/element';
 import { useWpAdminFullscreen } from '../react-hooks';
-import { steps } from './steps.jsx';
+import { steps } from './steps';
 import QueryStringRouter, { Route } from './query-string-router';
 import Navigation from './navigation';
 
 /**
- * Param name used to route the onboarding wizard.
+ * Param name used to route the setup wizard.
  */
 const PARAM_NAME = 'step';
 
 /**
- * Sensei onboarding page.
+ * Sensei setup wizard page.
  */
-const SenseiOnboardingPage = () => {
+const SenseiSetupWizardPage = () => {
 	useWpAdminFullscreen( [ 'sensei-color', 'sensei-onboarding__page' ] );
 
 	return (
@@ -36,6 +36,6 @@ const SenseiOnboardingPage = () => {
 };
 
 render(
-	<SenseiOnboardingPage />,
+	<SenseiSetupWizardPage />,
 	document.getElementById( 'sensei-onboarding-page' )
 );

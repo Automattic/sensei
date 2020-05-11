@@ -1,25 +1,6 @@
 import { __ } from '@wordpress/i18n';
-import { useQueryStringRouter } from './query-string-router';
-
-/**
- * Mock component for tests purpose. REMOVE ME when the final is ready!
- */
-const Welcome = () => {
-	const { goTo } = useQueryStringRouter();
-
-	return (
-		<>
-			<h1>Welcome!</h1>
-			<button
-				onClick={ () => {
-					goTo( 'purpose' );
-				} }
-			>
-				Next
-			</button>
-		</>
-	);
-};
+import { Welcome } from './welcome';
+import { Purpose } from './purpose';
 
 export const steps = [
 	{
@@ -30,7 +11,7 @@ export const steps = [
 	},
 	{
 		key: 'purpose',
-		container: <div>Purpose</div>,
+		container: <Purpose />,
 		label: __( 'Purpose', 'sensei-lms' ),
 		isComplete: false,
 	},
