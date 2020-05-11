@@ -52,7 +52,6 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	 */
 	public function testTeacherUserCannotAccessSetupWizardAPI() {
 
-		// Test that a non-admin user cannot access the API.
 		$teacher_id = $this->factory->user->create( array( 'role' => 'teacher' ) );
 		wp_set_current_user( $teacher_id );
 
@@ -61,7 +60,15 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 
 		$this->assertEquals( 403, $response->get_status() );
 
-		// Test that an administrator with manage_sensei cap can access the API.
+	}
+
+	/**
+	 * Tests that privileged users can access the Setup Wizard API.
+	 *
+	 * @covers Sensei_Setup_Wizard_API::can_user_access_rest_api
+	 */
+	public function testAdminUserCanAccessSetupWizardAPI() {
+
 		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
 		wp_set_current_user( $admin_id );
 
