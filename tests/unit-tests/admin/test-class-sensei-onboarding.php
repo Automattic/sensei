@@ -208,11 +208,39 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test add onboarding help tab to edit course screen.
+	 * Test if WooCommerce help tab is being prevented in the Sensei pages.
 	 *
-	 * @covers Sensei_Onboarding::add_onboarding_help_tab
+	 * @covers Sensei_Onboarding::should_enable_woocommerce_help_tab
 	 */
-	public function testAddOnboardingHelpTab() {
+	public function testShouldEnableWooCommerceHelpTab() {
+		$_GET['post_type'] = 'course';
+
+		$this->assertFalse(
+			Sensei()->onboarding->should_enable_woocommerce_help_tab( true ),
+			'Should not allow WooCommerce help tab for course post type'
+		);
+	}
+
+	/**
+	 * Test if WooCommerce help tab is being untouched in no Sensei pages.
+	 *
+	 * @covers Sensei_Onboarding::should_enable_woocommerce_help_tab
+	 */
+	public function testShouldEnableWooCommerceHelpTabNoSenseiPage() {
+		$_GET['post_type'] = 'woocommerce';
+
+		$this->assertTrue(
+			Sensei()->onboarding->should_enable_woocommerce_help_tab( true ),
+			'Should not touch WooCommerce help tab for no Sensei pages'
+		);
+	}
+
+	/**
+	 * Test add setup wizard help tab to edit course screen.
+	 *
+	 * @covers Sensei_Onboarding::add_setup_wizard_help_tab
+	 */
+	public function testAddSetupWizardHelpTab() {
 		// Create and login as administrator.
 		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
 		wp_set_current_user( $admin_id );
@@ -220,19 +248,19 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 		set_current_screen( 'edit-course' );
 		$screen = get_current_screen();
 
-		$screen->remove_help_tab( 'sensei_lms_onboarding_tab' );
-		Sensei()->onboarding->add_onboarding_help_tab( $screen );
-		$created_tab = $screen->get_help_tab( 'sensei_lms_onboarding_tab' );
+		$screen->remove_help_tab( 'sensei_lms_setup_wizard_tab' );
+		Sensei()->onboarding->add_setup_wizard_help_tab( $screen );
+		$created_tab = $screen->get_help_tab( 'sensei_lms_setup_wizard_tab' );
 
-		$this->assertNotNull( $created_tab, 'Should create the onboarding tab to edit course screens.' );
+		$this->assertNotNull( $created_tab, 'Should create the setup wizard tab to edit course screens.' );
 	}
 
 	/**
-	 * Test add onboarding help tab in non edit course screens.
+	 * Test add setup wizard help tab in non edit course screens.
 	 *
-	 * @covers Sensei_Onboarding::add_onboarding_help_tab
+	 * @covers Sensei_Onboarding::add_setup_wizard_help_tab
 	 */
-	public function testAddOnboardingHelpTabNonEditCourseScreen() {
+	public function testAddSetupWizardHelpTabNonEditCourseScreen() {
 		// Create and login as administrator.
 		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
 		wp_set_current_user( $admin_id );
@@ -240,19 +268,19 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 		set_current_screen( 'edit-lesson' );
 		$screen = get_current_screen();
 
-		$screen->remove_help_tab( 'sensei_lms_onboarding_tab' );
-		Sensei()->onboarding->add_onboarding_help_tab( $screen );
-		$created_tab = $screen->get_help_tab( 'sensei_lms_onboarding_tab' );
+		$screen->remove_help_tab( 'sensei_lms_setup_wizard_tab' );
+		Sensei()->onboarding->add_setup_wizard_help_tab( $screen );
+		$created_tab = $screen->get_help_tab( 'sensei_lms_setup_wizard_tab' );
 
-		$this->assertNull( $created_tab, 'Should not create the onboarding tab to non edit course screens.' );
+		$this->assertNull( $created_tab, 'Should not create the setup wizard tab to non edit course screens.' );
 	}
 
 	/**
-	 * Test add onboarding help tab for no admin user.
+	 * Test add setup wizard help tab for no admin user.
 	 *
-	 * @covers Sensei_Onboarding::add_onboarding_help_tab
+	 * @covers Sensei_Onboarding::add_setup_wizard_help_tab
 	 */
-	public function testAddOnboardingHelpTabNoAdmin() {
+	public function testAddSetupWizardHelpTabNoAdmin() {
 		// Create and login as teacher.
 		$teacher_id = $this->factory->user->create( array( 'role' => 'teacher' ) );
 		wp_set_current_user( $teacher_id );
@@ -260,10 +288,10 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 		set_current_screen( 'edit-course' );
 		$screen = get_current_screen();
 
-		$screen->remove_help_tab( 'sensei_lms_onboarding_tab' );
-		Sensei()->onboarding->add_onboarding_help_tab( $screen );
-		$created_tab = $screen->get_help_tab( 'sensei_lms_onboarding_tab' );
+		$screen->remove_help_tab( 'sensei_lms_setup_wizard_tab' );
+		Sensei()->onboarding->add_setup_wizard_help_tab( $screen );
+		$created_tab = $screen->get_help_tab( 'sensei_lms_setup_wizard_tab' );
 
-		$this->assertNull( $created_tab, 'Should not create the onboarding tab to no admin user.' );
+		$this->assertNull( $created_tab, 'Should not create the setup wizard tab to no admin user.' );
 	}
 }
