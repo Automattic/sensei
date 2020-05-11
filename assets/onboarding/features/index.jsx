@@ -193,8 +193,8 @@ const Features = () => {
 			{ confirmationModalActive && (
 				<ConfirmationModal
 					features={ getSelectedFeatures() }
-					install={ goToInstallation }
-					skip={ goToNextStep }
+					onInstall={ goToInstallation }
+					onSkip={ goToNextStep }
 				/>
 			) }
 		</>

@@ -11,21 +11,21 @@ import FeaturesList from './features-list';
  * @property {string} [confirmationExtraDescription] Extra description that appears only in confirmation modal.
  */
 /**
- * Modal for usage tracking opt-in.
+ * Features confirmation modal.
  *
  * @param {Object}    props
- * @param {Feature[]} props.features Features list.
- * @param {Function}  props.install  Callback to install the features.
- * @param {Function}  props.skip     Callback to skip the installation.
+ * @param {Feature[]} props.features  Features list.
+ * @param {Function}  props.onInstall Callback to install the features.
+ * @param {Function}  props.onSkip    Callback to skip the installation.
  */
-const ConfirmationModal = ( { features = [], install, skip } ) => (
+const ConfirmationModal = ( { features = [], onInstall, onSkip } ) => (
 	<Modal
+		className="sensei-onboarding__features-confirmation-modal"
 		title={ __(
 			'Would you like to install the following features now?',
 			'sensei-lms'
 		) }
 		isDismissible={ false }
-		className="sensei-onboarding__features-confirmation-modal"
 	>
 		<FeaturesList>
 			{ features.map(
@@ -58,14 +58,14 @@ const ConfirmationModal = ( { features = [], install, skip } ) => (
 			<Button
 				className="sensei-onboarding__button"
 				isTertiary
-				onClick={ skip }
+				onClick={ onSkip }
 			>
 				{ __( "I'll do it later", 'sensei-lms' ) }
 			</Button>
 			<Button
 				className="sensei-onboarding__button"
 				isPrimary
-				onClick={ install }
+				onClick={ onInstall }
 			>
 				{ __( 'Install now', 'sensei-lms' ) }
 			</Button>
