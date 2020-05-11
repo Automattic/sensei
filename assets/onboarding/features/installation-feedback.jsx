@@ -13,13 +13,13 @@ import FeaturesList from './features-list';
  * @property {string} status          Feature status.
  */
 /**
- * Features installing component.
+ * Installation feedback component.
  *
  * @param {Object}    props
  * @param {Feature[]} props.features   Features list.
  * @param {Function}  props.onContinue Callback to continue to the next step.
  */
-const FeaturesInstalling = ( { features, onContinue } ) => {
+const InstallationFeedback = ( { features, onContinue } ) => {
 	const hasLoading = features.some(
 		( feature ) => feature.status === FeaturesList.LOADING_STATUS
 	);
@@ -98,4 +98,4 @@ const FeaturesInstalling = ( { features, onContinue } ) => {
 	);
 };
 
-export default FeaturesInstalling;
+export default InstallationFeedback;

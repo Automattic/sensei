@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { useQueryStringRouter } from '../query-string-router';
 import FeatureDescription from './feature-description';
 import ConfirmationModal from './confirmation-modal';
-import FeaturesInstalling from './features-installing';
+import InstallationFeedback from './installation-feedback';
 import FeaturesList from './features-list';
 
 // TODO: Make it dynamic.
@@ -88,13 +88,16 @@ const Features = () => {
 	const [ confirmationModalActive, toggleConfirmationModal ] = useState(
 		false
 	);
-	const [ isInstalling, setInstalling ] = useState( false );
+	const [ showInstallationFeedback, toggleInstallationFeedback ] = useState(
+		false
+	);
 	const [ selectedFeatureIds, setSelectedFeatureIds ] = useState( [] );
 	const { goTo } = useQueryStringRouter();
 
 	const finishSelection = () => {
 		if ( 0 === selectedFeatureIds.length ) {
 			goToNextStep();
+			return;
 		}
 
 		toggleConfirmationModal( true );
@@ -102,11 +105,11 @@ const Features = () => {
 
 	const goToInstallation = () => {
 		toggleConfirmationModal( false );
-		setInstalling( true );
+		toggleInstallationFeedback( true );
 	};
 
 	const goBackToSelection = () => {
-		setInstalling( false );
+		toggleInstallationFeedback( false );
 	};
 
 	const goToNextStep = () => {
@@ -137,8 +140,8 @@ const Features = () => {
 				</H>
 			</div>
 			<Card className="sensei-onboarding__card">
-				{ isInstalling ? (
-					<FeaturesInstalling
+				{ showInstallationFeedback ? (
+					<InstallationFeedback
 						features={ getSelectedFeatures() }
 						onContinue={ goToNextStep }
 					/>
@@ -181,7 +184,7 @@ const Features = () => {
 				) }
 			</Card>
 
-			{ isInstalling && (
+			{ showInstallationFeedback && (
 				<div className="sensei-onboarding__bottom-actions">
 					<Button isTertiary onClick={ goBackToSelection }>
 						&larr;&nbsp;
