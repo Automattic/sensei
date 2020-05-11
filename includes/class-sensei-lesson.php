@@ -2557,19 +2557,19 @@ class Sensei_Lesson {
 
 				foreach ( $questions as $question_id ) {
 
-					++$question_count;
-
 					$quizzes = get_post_meta( $question_id, '_quiz_id', false );
+
 					if ( ! in_array( $quiz_id, $quizzes ) ) {
+
+						++$question_count;
 						add_post_meta( $question_id, '_quiz_id', $quiz_id, false );
 						$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
 						update_post_meta( $lesson_id, '_quiz_has_questions', '1' );
+						add_post_meta( $question_id, '_quiz_question_order' . $quiz_id, $quiz_id . '000' . $question_count );
+						$question_type = Sensei()->question->get_question_type( $question_id );
+						$return       .= $this->quiz_panel_question( $question_type, $question_count, $question_id );
+
 					}
-
-					add_post_meta( $question_id, '_quiz_question_order' . $quiz_id, $quiz_id . '000' . $question_count );
-					$question_type = Sensei()->question->get_question_type( $question_id );
-
-					$return .= $this->quiz_panel_question( $question_type, $question_count, $question_id );
 				}
 			}
 		}
