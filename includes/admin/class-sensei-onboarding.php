@@ -147,7 +147,7 @@ class Sensei_Onboarding {
 	public function add_onboarding_help_tab( $screen ) {
 		$link_track_event = 'setup_wizard_click';
 
-		if ( ! $screen || ! $this->should_show_help_screen( $screen->id ) ) {
+		if ( ! $screen || ! $this->should_show_help_screen( $screen->id ) || ! current_user_can( 'manage_sensei' ) ) {
 			return;
 		}
 
