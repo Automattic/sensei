@@ -56,7 +56,7 @@ class Sensei_Onboarding_API_Test extends WP_Test_REST_TestCase {
 		$teacher_id = $this->factory->user->create( array( 'role' => 'teacher' ) );
 		wp_set_current_user( $teacher_id );
 
-		$request  = new WP_REST_Request( 'GET', '/sensei/internal/onboarding/welcome' );
+		$request  = new WP_REST_Request( 'GET', '/sensei-internal/v1/onboarding/welcome' );
 		$response = $this->server->dispatch( $request );
 
 		$this->assertEquals( 403, $response->get_status() );
@@ -65,7 +65,7 @@ class Sensei_Onboarding_API_Test extends WP_Test_REST_TestCase {
 		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
 		wp_set_current_user( $admin_id );
 
-		$request  = new WP_REST_Request( 'GET', '/sensei/internal/onboarding/welcome' );
+		$request  = new WP_REST_Request( 'GET', '/sensei-internal/v1/onboarding/welcome' );
 		$response = $this->server->dispatch( $request );
 
 		$this->assertEquals( 200, $response->get_status() );
@@ -234,7 +234,7 @@ class Sensei_Onboarding_API_Test extends WP_Test_REST_TestCase {
 		$user = wp_get_current_user();
 		$user->add_cap( 'manage_sensei' );
 
-		$request = new WP_REST_Request( $method, '/sensei/internal/onboarding/' . $route );
+		$request = new WP_REST_Request( $method, '/sensei-internal/v1/onboarding/' . $route );
 
 		if ( null !== $data && 'POST' === $method ) {
 			$request->set_header( 'content-type', 'application/json' );

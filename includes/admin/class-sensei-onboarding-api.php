@@ -114,7 +114,7 @@ class Sensei_Onboarding_API {
 		];
 
 		Sensei_REST_API_Helper::register_endpoints(
-			'sensei/internal',
+			'sensei-internal/v1',
 			[
 				'onboarding/welcome'  => $welcome_endpoint,
 				'onboarding/purpose'  => $purpose_endpoint,
