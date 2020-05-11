@@ -227,6 +227,47 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	}
 
 	/**
+	 * Tests that completed steps are empty when nothing has been submitted.
+	 *
+	 * @covers Sensei_Setup_Wizard_API::get_progress
+	 */
+	public function testDefaultProgressIsEmpty() {
+		$data = $this->request( 'GET', 'progress' );
+		$this->assertEquals( [ 'steps' => [] ], $data );
+	}
+
+	/**
+	 * Tests that welcome step is completed after submitting it.
+	 *
+	 * @dataProvider step_form_data
+	 * @covers       Sensei_Setup_Wizard_API::submit_welcome
+	 * @covers       Sensei_Setup_Wizard_API::submit_purpose
+	 * @covers       Sensei_Setup_Wizard_API::submit_features
+	 *
+	 * @param string $step      Step.
+	 * @param mixed  $form_data Data submitted.
+	 */
+	public function testStepCompletedAfterSubmit( $step, $form_data ) {
+		$this->request( 'POST', $step, $form_data );
+		$data = $this->request( 'GET', 'progress' );
+		$this->assertEquals( [ 'steps' => [ $step ] ], $data );
+	}
+
+	public function testMultipleStepsCompleted() {
+
+		$steps_data = $this->step_form_data();
+
+		foreach ( $steps_data as $step_data ) {
+			list( $step, $form_data ) = $step_data;
+			$this->request( 'POST', $step, $form_data );
+		}
+
+		$data = $this->request( 'GET', 'progress' );
+		$this->assertEqualSets( [ 'welcome', 'features', 'purpose' ], $data['steps'] );
+
+	}
+
+	/**
 	 * Tests that submitting to features endpoint saves submitted data
 	 *
 	 * @covers Sensei_Setup_Wizard_API::submit_features
@@ -291,5 +332,25 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 		}
 
 		return $this->server->dispatch( $request )->get_data();
+	}
+
+	/**
+	 * Valid form data for step submissions.
+	 *
+	 * @access private
+	 * @return array
+	 */
+	public function step_form_data() {
+		return [
+			'Welcome'  => [ 'welcome', [ 'usage_tracking' => true ] ],
+			'Purpose'  => [
+				'purpose',
+				[
+					'selected' => [ 'share_knowledge', 'other' ],
+					'other'    => 'Test',
+				],
+			],
+			'Features' => [ 'features', [ 'selected' => [ 'sensei-certificates' ] ] ],
+		];
 	}
 }

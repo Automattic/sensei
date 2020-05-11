@@ -50,6 +50,13 @@ class Sensei_Setup_Wizard_API {
 			],
 		];
 
+		$progress_endpoint = [
+			[
+				'methods'  => WP_REST_Server::READABLE,
+				'callback' => [ $this, 'get_progress' ],
+			],
+		];
+
 		$welcome_endpoint = [
 			[
 				'methods'  => WP_REST_Server::READABLE,
@@ -116,6 +123,7 @@ class Sensei_Setup_Wizard_API {
 		Sensei_REST_API_Helper::register_endpoints(
 			'sensei-internal/v1',
 			[
+				'onboarding/progress' => $progress_endpoint,
 				'onboarding/welcome'  => $welcome_endpoint,
 				'onboarding/purpose'  => $purpose_endpoint,
 				'onboarding/features' => $features_endpoint,
@@ -133,6 +141,31 @@ class Sensei_Setup_Wizard_API {
 		return current_user_can( 'manage_sensei' );
 	}
 
+	/**
+	 * Get completed steps.
+	 *
+	 * @return mixed List of steps completed.
+	 */
+	public function get_progress() {
+		return [
+			'steps' => $this->setupwizard->get_wizard_user_data( 'steps' ),
+		];
+	}
+
+	/**
+	 * Mark the given step as completed.
+	 *
+	 * @param string $step Step.
+	 *
+	 * @return bool Success.
+	 */
+	public function mark_step_complete( $step ) {
+		return $this->setupwizard->update_wizard_user_data(
+			[
+				'steps' => array_unique( array_merge( $this->setupwizard->get_wizard_user_data( 'steps' ), [ $step ] ) ),
+			]
+		);
+	}
 
 	/**
 	 * Welcome step data.
@@ -153,6 +186,8 @@ class Sensei_Setup_Wizard_API {
 	 * @return bool Success.
 	 */
 	public function submit_welcome( $data ) {
+
+		$this->mark_step_complete( 'welcome' );
 		Sensei()->usage_tracking->set_tracking_enabled( (bool) $data['usage_tracking'] );
 		$this->setupwizard->pages->create_pages();
 
@@ -181,6 +216,8 @@ class Sensei_Setup_Wizard_API {
 	 * @return bool Success.
 	 */
 	public function submit_purpose( $form ) {
+
+		$this->mark_step_complete( 'purpose' );
 
 		return $this->setupwizard->update_wizard_user_data(
 			[
@@ -214,6 +251,9 @@ class Sensei_Setup_Wizard_API {
 	 * @return bool Success.
 	 */
 	public function submit_features( $data ) {
+
+		$this->mark_step_complete( 'features' );
+
 		return $this->setupwizard->update_wizard_user_data(
 			[
 				'features' => $data['selected'],
