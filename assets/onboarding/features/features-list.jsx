@@ -21,18 +21,16 @@ const FeaturesList = ( { className, children } ) => (
  * Features list item.
  *
  * @param {Object} props
- * @param {string} props.title                          Feature title.
- * @param {string} props.description                    Feature description.
- * @param {string} [props.confirmationExtraDescription] Extra description that appears only in confirmation modal.
- * @param {string} [props.learnMoreLink]                Learn more link.
- * @param {string} [props.errorMessage]                 Error message.
- * @param {string} [props.onFeatureRetry]               Retry feature installation callback.
- * @param {string} [props.status]                       Feature status.
+ * @param {string} props.title            Feature title.
+ * @param {string} props.description      Feature description.
+ * @param {string} [props.learnMoreLink]  Learn more link.
+ * @param {string} [props.errorMessage]   Error message.
+ * @param {string} [props.onFeatureRetry] Retry feature installation callback.
+ * @param {string} [props.status]         Feature status.
  */
 FeaturesList.Item = ( {
 	title,
 	description,
-	confirmationExtraDescription,
 	learnMoreLink,
 	errorMessage,
 	onFeatureRetry,
@@ -68,9 +66,6 @@ FeaturesList.Item = ( {
 			<p className="sensei-onboarding__feature-description">
 				<FeatureDescription
 					description={ description }
-					confirmationExtraDescription={
-						confirmationExtraDescription
-					}
 					learnMoreLink={ learnMoreLink }
 				/>
 			</p>

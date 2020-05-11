@@ -38,10 +38,7 @@ const ConfirmationModal = ( { features = [], onInstall, onSkip } ) => (
 					<FeaturesList.Item
 						key={ id }
 						title={ title }
-						description={ description }
-						confirmationExtraDescription={
-							confirmationExtraDescription
-						}
+						description={ `${ description } ${ confirmationExtraDescription }` }
 					/>
 				)
 			) }

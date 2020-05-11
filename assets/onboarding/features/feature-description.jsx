@@ -4,17 +4,12 @@ import { __ } from '@wordpress/i18n';
  * Feature description component
  *
  * @param {Object} props
- * @param {string} props.description                    Feature description.
- * @param {string} [props.confirmationExtraDescription] Extra description that appears only in confirmation modal.
- * @param {string} [props.learnMoreLink]                Learn more link.
+ * @param {string} props.description     Feature description.
+ * @param {string} [props.learnMoreLink] Learn more link.
  */
-const FeatureDescription = ( {
-	description,
-	confirmationExtraDescription,
-	learnMoreLink,
-} ) => (
+const FeatureDescription = ( { description, learnMoreLink } ) => (
 	<>
-		{ description } { confirmationExtraDescription }
+		{ description }
 		{ learnMoreLink && (
 			<>
 				{ ' ' }
