@@ -54,7 +54,9 @@ export const Purpose = () => {
 	} );
 
 	useEffect( () => {
-		if ( data && data.selected ) setFormState( data );
+		if ( data && data.selected ) {
+			setFormState( data );
+		}
 	}, [ data ] );
 
 	const isEmpty = ! selected.length;
