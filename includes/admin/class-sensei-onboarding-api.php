@@ -52,12 +52,12 @@ class Sensei_Setup_Wizard_API {
 
 		$welcome_endpoint = [
 			[
-				'methods'  => 'GET',
-				'callback' => [ $this, 'welcome_get' ],
+				'methods'  => WP_REST_Server::READABLE,
+				'callback' => [ $this, 'get_welcome' ],
 			],
 			[
-				'methods'  => 'POST',
-				'callback' => [ $this, 'welcome_submit' ],
+				'methods'  => WP_REST_Server::EDITABLE,
+				'callback' => [ $this, 'submit_welcome' ],
 				'args'     => [
 					'usage_tracking' => [
 						'required' => true,
@@ -69,12 +69,12 @@ class Sensei_Setup_Wizard_API {
 
 		$purpose_endpoint = [
 			[
-				'methods'  => 'GET',
-				'callback' => [ $this, 'purpose_get' ],
+				'methods'  => WP_REST_Server::READABLE,
+				'callback' => [ $this, 'get_purpose' ],
 			],
 			[
-				'methods'  => 'POST',
-				'callback' => [ $this, 'purpose_submit' ],
+				'methods'  => WP_REST_Server::EDITABLE,
+				'callback' => [ $this, 'submit_purpose' ],
 				'args'     => [
 					'selected' => [
 						'required' => true,
@@ -94,12 +94,12 @@ class Sensei_Setup_Wizard_API {
 
 		$features_endpoint = [
 			[
-				'methods'  => 'GET',
-				'callback' => [ $this, 'features_get' ],
+				'methods'  => WP_REST_Server::READABLE,
+				'callback' => [ $this, 'get_features' ],
 			],
 			[
-				'methods'  => 'POST',
-				'callback' => [ $this, 'features_submit' ],
+				'methods'  => WP_REST_Server::EDITABLE,
+				'callback' => [ $this, 'submit_features' ],
 				'args'     => [
 					'selected' => [
 						'required' => true,
@@ -139,7 +139,7 @@ class Sensei_Setup_Wizard_API {
 	 *
 	 * @return array Data used on purpose step.
 	 */
-	public function welcome_get() {
+	public function get_welcome() {
 		return [
 			'usage_tracking' => Sensei()->usage_tracking->get_tracking_enabled(),
 		];
@@ -152,7 +152,7 @@ class Sensei_Setup_Wizard_API {
 	 *
 	 * @return bool Success.
 	 */
-	public function welcome_submit( $data ) {
+	public function submit_welcome( $data ) {
 		Sensei()->usage_tracking->set_tracking_enabled( (bool) $data['usage_tracking'] );
 		$this->setupwizard->pages->create_pages();
 
@@ -164,7 +164,7 @@ class Sensei_Setup_Wizard_API {
 	 *
 	 * @return array Data used on purpose step.
 	 */
-	public function purpose_get() {
+	public function get_purpose() {
 		$data = $this->setupwizard->get_wizard_user_data();
 
 		return [
@@ -180,7 +180,7 @@ class Sensei_Setup_Wizard_API {
 	 *
 	 * @return bool Success.
 	 */
-	public function purpose_submit( $form ) {
+	public function submit_purpose( $form ) {
 
 		return $this->setupwizard->update_wizard_user_data(
 			[
@@ -196,7 +196,7 @@ class Sensei_Setup_Wizard_API {
 	 *
 	 * @return array Data used on features page.
 	 */
-	public function features_get() {
+	public function get_features() {
 		$data = $this->setupwizard->get_wizard_user_data();
 
 		return [
@@ -212,7 +212,7 @@ class Sensei_Setup_Wizard_API {
 	 *
 	 * @return bool Success.
 	 */
-	public function features_submit( $data ) {
+	public function submit_features( $data ) {
 		return $this->setupwizard->update_wizard_user_data(
 			[
 				'features' => $data['selected'],
