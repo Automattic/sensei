@@ -41,13 +41,23 @@ FeaturesList.Item = ( {
 	<li className="sensei-onboarding__features-list-item">
 		{ status && (
 			<div className="sensei-onboarding__icon-status">
-				{ status === FeaturesList.LOADING_STATUS && <Spinner /> }
+				{ status === FeaturesList.LOADING_STATUS && (
+					<>
+						<Spinner />
+						<span className="screen-reader-text">
+							{ __( 'Loading', 'sensei-lms' ) }
+						</span>
+					</>
+				) }
 				{ status === FeaturesList.ERROR_STATUS && (
-					<i className="sensei-onboarding__circle-icon-wrapper error-icon-wrapper alert-icon" />
+					<i className="sensei-onboarding__circle-icon-wrapper error-icon-wrapper alert-icon">
+						{ __( 'Error', 'sensei-lms' ) }
+					</i>
 				) }
 				{ status === FeaturesList.SUCCESS_STATUS && (
 					<i className="sensei-onboarding__circle-icon-wrapper success-icon-wrapper">
 						<CheckIcon />
+						{ __( 'Success', 'sensei-lms' ) }
 					</i>
 				) }
 			</div>
