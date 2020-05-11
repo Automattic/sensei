@@ -18,13 +18,4 @@
 	li {
 		list-style:none outside;
 	}
-	.submit  {
-
-		a  {
-
-			&.skip  {
-				@include opacity(0.6);
-			}
-		}
-	}
 }
