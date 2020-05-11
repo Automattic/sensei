@@ -19,6 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since   3.1.0
  */
 class Sensei_Onboarding {
+	const SUGGEST_SETUP_WIZARD_OPTION = 'sensei_suggest_setup_wizard';
 
 	/**
 	 * URL Slug for Onboarding Wizard page
@@ -46,6 +47,8 @@ class Sensei_Onboarding {
 		if ( is_admin() ) {
 
 			add_action( 'admin_menu', [ $this, 'admin_menu' ], 20 );
+			add_action( 'admin_notices', [ $this, 'setup_wizard_notice' ] );
+			add_action( 'admin_init', array( $this, 'skip_setup_wizard' ) );
 			add_action( 'current_screen', [ $this, 'add_onboarding_help_tab' ] );
 
 			if ( $this->should_prevent_woocommerce_help_tab() ) {
@@ -124,6 +127,91 @@ class Sensei_Onboarding {
 
 		</div>
 		<?php
+	}
+
+	/**
+	 * Check if current screen is selected to display the wizard notice.
+	 *
+	 * @return boolean
+	 */
+	private function should_current_page_display_setup_wizard() {
+		$screen = get_current_screen();
+
+		if ( false !== strpos( $screen->id, 'sensei-lms_page_sensei' ) ) {
+			return true;
+		}
+
+		$screens_without_sensei_prefix = [
+			'dashboard',
+			'plugins',
+			'edit-sensei_message',
+			'edit-course',
+			'edit-course-category',
+			'course_page_course-order',
+			'edit-module',
+			'course_page_module-order',
+			'edit-lesson',
+			'edit-lesson-tag',
+			'lesson_page_lesson-order',
+			'edit-question',
+			'question',
+			'edit-question-category',
+		];
+
+		return in_array( $screen->id, $screens_without_sensei_prefix, true );
+	}
+
+	/**
+	 * Setup wizard notice.
+	 *
+	 * @access private
+	 */
+	public function setup_wizard_notice() {
+		if (
+			! $this->should_current_page_display_setup_wizard()
+			|| ! get_option( self::SUGGEST_SETUP_WIZARD_OPTION, 0 )
+			|| ! current_user_can( 'manage_sensei' )
+		) {
+			return;
+		}
+
+		$setup_url = admin_url( 'admin.php?page=' . $this->page_slug );
+
+		$skip_url = add_query_arg( 'sensei_skip_setup_wizard', '1' );
+		$skip_url = wp_nonce_url( $skip_url, 'sensei_skip_setup_wizard' );
+		?>
+		<div id="message" class="updated sensei-message sensei-connect">
+			<p><?php echo wp_kses_post( __( '<strong>Welcome to Sensei LMS</strong> &#8211; You\'re almost ready to start creating online courses!', 'sensei-lms' ) ); ?></p>
+
+			<p class="submit">
+				<a href="<?php echo esc_url( $setup_url ); ?>" class="button-primary">
+					<?php esc_html_e( 'Run the Setup Wizard', 'sensei-lms' ); ?>
+				</a>
+
+				<a class="button" href="<?php echo esc_url( $skip_url ); ?>">
+					<?php esc_html_e( 'Skip setup', 'sensei-lms' ); ?>
+				</a>
+			</p>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Skip setup wizard.
+	 *
+	 * @access private
+	 */
+	public function skip_setup_wizard() {
+		if (
+			isset( $_GET['sensei_skip_setup_wizard'] )
+			&& '1' === $_GET['sensei_skip_setup_wizard']
+			&& isset( $_GET['_wpnonce'] )
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Don't touch the nonce.
+			&& wp_verify_nonce( wp_unslash( $_GET['_wpnonce'] ), 'sensei_skip_setup_wizard' )
+			&& current_user_can( 'manage_sensei' )
+		) {
+			update_option( self::SUGGEST_SETUP_WIZARD_OPTION, 0 );
+		}
 	}
 
 	/**
