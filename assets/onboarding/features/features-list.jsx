@@ -59,6 +59,7 @@ FeaturesList.Item = ( {
 		</div>
 	</li>
 );
+FeaturesList.Item.displayName = 'FeaturesList.Item';
 
 FeaturesList.LOADING_STATUS = 'loading';
 FeaturesList.ERROR_STATUS = 'error';
