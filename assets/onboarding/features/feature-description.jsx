@@ -1,4 +1,3 @@
-import { Link } from '@woocommerce/components';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -19,14 +18,14 @@ const FeatureDescription = ( {
 		{ learnMoreLink && (
 			<>
 				{ ' ' }
-				<Link
+				<a
 					className="sensei-onboarding__learn-more"
 					href={ learnMoreLink }
 					target="_blank"
-					type="external"
+					rel="noopener noreferrer"
 				>
 					{ __( 'Learn more', 'sensei-lms' ) }
-				</Link>
+				</a>
 			</>
 		) }
 	</>
