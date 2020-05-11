@@ -7,7 +7,7 @@
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     1.9.0
+ * @version     3.1.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -41,7 +41,12 @@ get_sensei_header();
 
 	<section class="entry fix">
 
-		<?php the_content(); ?>
+		<?php
+		while ( have_posts() ) {
+			the_post();
+			the_content();
+		}
+		?>
 
 	</section>
 
