@@ -82,7 +82,7 @@ const features = [
 } ) );
 
 /**
- * Features step for Onboarding Wizard.
+ * Features step for setup wizard.
  */
 const Features = () => {
 	const [ confirmationModalActive, toggleConfirmationModal ] = useState(
