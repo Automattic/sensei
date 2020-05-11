@@ -2432,6 +2432,12 @@ class Sensei_Lesson {
 			}
 		}
 
+		// Log event: when a category question is added to a quiz. Sends number of questions added.
+		$event_properties = array(
+			'question_count' => $question_data['question_number'],
+		);
+		sensei_log_event( 'quiz_question_add_category', $event_properties );
+
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in methods that generate `$return`.
 		echo $return;
 
