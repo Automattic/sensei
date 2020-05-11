@@ -107,8 +107,8 @@ class Sensei_Onboarding {
 		if ( current_user_can( 'manage_sensei' ) ) {
 			add_submenu_page(
 				'options.php',
-				__( 'Setup Wizard', 'sensei-lms' ),
-				__( 'Setup Wizard', 'sensei-lms' ),
+				__( 'Sensei LMS - Setup Wizard', 'sensei-lms' ),
+				__( 'Sensei LMS - Setup Wizard', 'sensei-lms' ),
 				'manage_sensei',
 				$this->page_slug,
 				[ $this, 'setup_wizard_page' ]
