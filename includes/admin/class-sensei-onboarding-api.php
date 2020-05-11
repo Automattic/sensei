@@ -1,8 +1,8 @@
 <?php
 /**
- * Onboarding REST API.
+ * Setup Wizard REST API.
  *
- * @package Sensei\Onboarding
+ * @package Sensei\SetupWizard
  * @since   3.1.0
  */
 
@@ -11,34 +11,34 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Sensei Onboarding REST API endpoints.
+ * Sensei Setup Wizard REST API endpoints.
  *
  * @package Sensei
  * @author  Automattic
  * @since   3.1.0
  */
-class Sensei_Onboarding_API {
+class Sensei_Setup_Wizard_API {
 
 	/**
-	 * Main Onboarding instance.
+	 * Main Setup Wizard instance.
 	 *
 	 * @var Sensei_Onboarding
 	 */
-	private $onboarding;
+	private $setupwizard;
 
 	const PURPOSES = [ 'share_knowledge', 'generate_income', 'promote_business', 'provide_certification', 'train_employees', 'other' ];
 
 	/**
-	 * Sensei_Onboarding_API constructor.
+	 * Sensei_Setup_Wizard_API constructor.
 	 *
-	 * @param Sensei_Onboarding $onboarding Onboarding instance.
+	 * @param Sensei_Onboarding $setupwizard Setup Wizard instance.
 	 */
-	public function __construct( $onboarding ) {
-		$this->onboarding = $onboarding;
+	public function __construct( $setupwizard ) {
+		$this->setupwizard = $setupwizard;
 	}
 
 	/**
-	 * Register the REST API endpoints for Onboarding.
+	 * Register the REST API endpoints for Setup Wizard.
 	 */
 	public function register() {
 		$common = [
@@ -106,7 +106,7 @@ class Sensei_Onboarding_API {
 						'type'     => 'array',
 						'items'    => [
 							'type' => 'string',
-							'enum' => $this->onboarding->plugin_slugs,
+							'enum' => $this->setupwizard->plugin_slugs,
 						],
 					],
 				],
@@ -127,7 +127,7 @@ class Sensei_Onboarding_API {
 	/**
 	 * Check user permission for REST API access.
 	 *
-	 * @return bool Whether the user can access the Onboarding REST API.
+	 * @return bool Whether the user can access the Setup Wizard REST API.
 	 */
 	public function can_user_access_rest_api() {
 		return current_user_can( 'manage_sensei' );
@@ -154,18 +154,18 @@ class Sensei_Onboarding_API {
 	 */
 	public function welcome_submit( $data ) {
 		Sensei()->usage_tracking->set_tracking_enabled( (bool) $data['usage_tracking'] );
-		$this->onboarding->pages->create_pages();
+		$this->setupwizard->pages->create_pages();
 
 		return true;
 	}
 
 	/**
-	 * Process onboarding API request.
+	 * Purpose step data.
 	 *
 	 * @return array Data used on purpose step.
 	 */
 	public function purpose_get() {
-		$data = $this->onboarding->get_onboarding_user_data();
+		$data = $this->setupwizard->get_wizard_user_data();
 
 		return [
 			'selected' => $data['purpose'],
@@ -182,7 +182,7 @@ class Sensei_Onboarding_API {
 	 */
 	public function purpose_submit( $form ) {
 
-		return $this->onboarding->update_onboarding_user_data(
+		return $this->setupwizard->update_wizard_user_data(
 			[
 				'purpose'       => $form['selected'],
 				'purpose_other' => ( in_array( 'other', $form['selected'], true ) ? $form['other'] : '' ),
@@ -192,28 +192,28 @@ class Sensei_Onboarding_API {
 
 
 	/**
-	 * Purpose step data.
+	 * Feature step data.
 	 *
 	 * @return array Data used on features page.
 	 */
 	public function features_get() {
-		$data = $this->onboarding->get_onboarding_user_data();
+		$data = $this->setupwizard->get_wizard_user_data();
 
 		return [
 			'selected' => $data['features'],
-			'plugins'  => $this->onboarding->plugin_slugs,
+			'plugins'  => $this->setupwizard->plugin_slugs,
 		];
 	}
 
 	/**
-	 * Submit form on purpose step.
+	 * Submit form on features step.
 	 *
 	 * @param array $data Form data.
 	 *
 	 * @return bool Success.
 	 */
 	public function features_submit( $data ) {
-		return $this->onboarding->update_onboarding_user_data(
+		return $this->setupwizard->update_wizard_user_data(
 			[
 				'features' => $data['selected'],
 			]

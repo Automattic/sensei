@@ -135,7 +135,7 @@ class Sensei_Onboarding_API_Test extends WP_Test_REST_TestCase {
 			]
 		);
 
-		$data = Sensei()->onboarding->get_onboarding_user_data();
+		$data = Sensei()->onboarding->get_wizard_user_data();
 
 		$this->assertEquals( [ 'share_knowledge', 'other' ], $data['purpose'] );
 		$this->assertEquals( 'Test', $data['purpose_other'] );
@@ -148,7 +148,7 @@ class Sensei_Onboarding_API_Test extends WP_Test_REST_TestCase {
 	 */
 	public function testSubmitPurposeOtherClearedWhenNotSelected() {
 
-		Sensei()->onboarding->update_onboarding_user_data(
+		Sensei()->onboarding->update_wizard_user_data(
 			[
 				'purpose'       => [ 'other' ],
 				'purpose_other' => 'Test',
@@ -164,7 +164,7 @@ class Sensei_Onboarding_API_Test extends WP_Test_REST_TestCase {
 			]
 		);
 
-		$data = Sensei()->onboarding->get_onboarding_user_data();
+		$data = Sensei()->onboarding->get_wizard_user_data();
 
 		$this->assertEmpty( $data['purpose_other'] );
 	}
@@ -186,7 +186,7 @@ class Sensei_Onboarding_API_Test extends WP_Test_REST_TestCase {
 			]
 		);
 
-		$data = Sensei()->onboarding->get_onboarding_user_data();
+		$data = Sensei()->onboarding->get_wizard_user_data();
 
 		$this->assertNotContains( [ 'invalid_data' ], $data['purpose'] );
 	}
@@ -199,7 +199,7 @@ class Sensei_Onboarding_API_Test extends WP_Test_REST_TestCase {
 	 */
 	public function testGetPurposeReturnsUserData() {
 
-		Sensei()->onboarding->update_onboarding_user_data(
+		Sensei()->onboarding->update_wizard_user_data(
 			[
 				'purpose'       => [ 'share_knowledge', 'other' ],
 				'purpose_other' => 'Test',

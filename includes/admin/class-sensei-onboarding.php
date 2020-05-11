@@ -1,9 +1,9 @@
 <?php
 /**
- * Onboarding.
+ * Setup Wizard.
  *
- * @package Sensei\Onboarding
- * @since   1.3.0
+ * @package Sensei\SetupWizard
+ * @since   3.1.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -11,23 +11,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Sensei Onboarding Class
- * All onboarding functionality.
+ * Sensei Setup Wizard Class
+ * All setup wizard functionality.
  *
  * @package Sensei
  * @author  Automattic
  * @since   3.1.0
  */
 class Sensei_Onboarding {
-	const SUGGEST_SETUP_WIZARD_OPTION      = 'sensei_suggest_setup_wizard';
-	const ONBOARDING_USER_DATA_OPTION_NAME = 'sensei-onboarding-data';
+	const SUGGEST_SETUP_WIZARD_OPTION = 'sensei_suggest_setup_wizard';
+	const USER_DATA_OPTION            = 'sensei_setup_wizard_data';
 
 	/**
 	 * Default value for onboarding user data.
 	 *
 	 * @var array
 	 */
-	private $onboarding_user_data_defaults = [
+	private $user_data_defaults = [
 		'features'      => [],
 		'purpose'       => [],
 		'purpose_other' => '',
@@ -41,7 +41,7 @@ class Sensei_Onboarding {
 	public $plugin_slugs = [];
 
 	/**
-	 * URL Slug for Onboarding Wizard page
+	 * URL Slug for Setup Wizard Wizard page
 	 *
 	 * @var string
 	 */
@@ -50,31 +50,31 @@ class Sensei_Onboarding {
 	/**
 	 * Creation of Sensei pages.
 	 *
-	 * @var Sensei_Onboarding_Pages
+	 * @var Sensei_Setup Wizard_Pages
 	 */
 	public $pages;
 
 	/**
-	 * REST API for Onboarding.
+	 * REST API for Setup Wizard.
 	 *
-	 * @var Sensei_Onboarding_API
+	 * @var Sensei_Setup Wizard_API
 	 */
 	public $api;
 
 	/**
-	 * Sensei_Onboarding constructor.
+	 * Sensei_Setup Wizard constructor.
 	 */
 	public function __construct() {
 
 		$this->page_slug = 'sensei_onboarding';
 		$this->pages     = new Sensei_Onboarding_Pages();
-		$this->api       = new Sensei_Onboarding_API( $this );
+		$this->api       = new Sensei_Setup_Wizard_API( $this );
 
 		add_action( 'rest_api_init', [ $this->api, 'register' ] );
 
 		if ( is_admin() ) {
 
-			add_action( 'admin_menu', [ $this, 'register_setup_page' ], 20 );
+			add_action( 'admin_menu', [ $this, 'register_wizard_page' ], 20 );
 			add_action( 'admin_notices', [ $this, 'setup_wizard_notice' ] );
 			add_action( 'admin_init', [ $this, 'skip_setup_wizard' ] );
 			add_action( 'current_screen', [ $this, 'add_setup_wizard_help_tab' ] );
@@ -84,17 +84,17 @@ class Sensei_Onboarding {
 
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
 			if ( isset( $_GET['page'] ) && ( $_GET['page'] === $this->page_slug ) ) {
-				$this->setup_onboarding_page();
+				$this->prepare_wizard_page();
 			}
 		}
 	}
 
 	/**
-	 * Register the hidden Setup Wizard submenu.
+	 * Register the Setup Wizard admin page via a hidden submenu.
 	 *
 	 * @link https://developer.wordpress.org/reference/functions/add_submenu_page/#comment-445
 	 */
-	public function register_setup_page() {
+	public function register_wizard_page() {
 		if ( current_user_can( 'manage_sensei' ) ) {
 			add_submenu_page(
 				'options.php',
@@ -102,7 +102,7 @@ class Sensei_Onboarding {
 				__( 'Sensei LMS - Setup Wizard', 'sensei-lms' ),
 				'manage_sensei',
 				$this->page_slug,
-				[ $this, 'setup_wizard_page' ]
+				[ $this, 'render_wizard_page' ]
 			);
 		}
 	}
@@ -138,7 +138,7 @@ class Sensei_Onboarding {
 	/**
 	 * Render app container for setup wizard.
 	 */
-	public function setup_wizard_page() {
+	public function render_wizard_page() {
 
 		?>
 		<div id="sensei-onboarding-page" class="sensei-onboarding">
@@ -152,7 +152,7 @@ class Sensei_Onboarding {
 	 *
 	 * @return boolean
 	 */
-	private function should_current_page_display_setup_wizard() {
+	private function should_current_page_display_wizard() {
 		$screen = get_current_screen();
 
 		if ( false !== strpos( $screen->id, 'sensei-lms_page_sensei' ) ) {
@@ -186,7 +186,7 @@ class Sensei_Onboarding {
 	 */
 	public function setup_wizard_notice() {
 		if (
-			! $this->should_current_page_display_setup_wizard()
+			! $this->should_current_page_display_wizard()
 			|| ! get_option( self::SUGGEST_SETUP_WIZARD_OPTION, 0 )
 			|| ! current_user_can( 'manage_sensei' )
 		) {
@@ -282,7 +282,7 @@ class Sensei_Onboarding {
 				'id'      => 'sensei_lms_setup_wizard_tab',
 				'title'   => __( 'Setup wizard', 'sensei-lms' ),
 				'content' =>
-					'<h2>' . __( 'Sensei LMS Onboarding', 'sensei-lms' ) . '</h2>' .
+					'<h2>' . __( 'Sensei LMS Setup Wizard', 'sensei-lms' ) . '</h2>' .
 					'<h3>' . __( 'Setup Wizard', 'sensei-lms' ) . '</h3>' .
 					'<p>' . __( 'If you need to access the setup wizard again, please click on the button below.', 'sensei-lms' ) . '</p>' .
 					'<p><a href="' . admin_url( 'admin.php?page=' . $this->page_slug ) . '" class="button button-primary" data-sensei-log-event="' . $link_track_event . '">' . __( 'Setup wizard', 'sensei-lms' ) . '</a></p>',
@@ -291,23 +291,23 @@ class Sensei_Onboarding {
 	}
 
 	/**
-	 * Get saved onboarding user data.
+	 * Get saved Setup Wizard user data.
 	 *
 	 * @return mixed
 	 */
-	public function get_onboarding_user_data() {
-		return get_option( self::ONBOARDING_USER_DATA_OPTION_NAME, $this->onboarding_user_data_defaults );
+	public function get_wizard_user_data() {
+		return get_option( self::USER_DATA_OPTION, $this->user_data_defaults );
 	}
 
 	/**
-	 * Save onboarding user data.
+	 * Save Setup Wizard user data.
 	 *
 	 * @param array $changes Key-value pair of updates to save.
 	 *
 	 * @return bool Whether value was updated.
 	 */
-	public function update_onboarding_user_data( $changes ) {
-		$option = array_merge( $this->get_onboarding_user_data(), $changes );
-		return update_option( self::ONBOARDING_USER_DATA_OPTION_NAME, $option );
+	public function update_wizard_user_data( $changes ) {
+		$option = array_merge( $this->get_wizard_user_data(), $changes );
+		return update_option( self::USER_DATA_OPTION, $option );
 	}
 }
