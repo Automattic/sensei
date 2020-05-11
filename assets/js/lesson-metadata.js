@@ -1118,6 +1118,9 @@ jQuery(document).ready( function() {
 
 			dataToPost = 'questions=' + questions;
 			dataToPost += '&quiz_id=' + jQuery( '#quiz_id' ).attr( 'value' );
+			dataToPost += '&question_status=' + jQuery( '#existing-status' ).attr( 'value' );
+			dataToPost += '&question_type=' + jQuery( '#existing-type' ).attr( 'value' );
+			dataToPost += '&question_category=' + jQuery( '#existing-category' ).attr( 'value' );
 
 			var questionCount = parseInt( jQuery( '#question_counter' ).attr( 'value' ) );
 			dataToPost += '&question_count=' + questionCount;

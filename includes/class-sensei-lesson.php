@@ -2547,6 +2547,10 @@ class Sensei_Lesson {
 
 		$return = '';
 
+		// Variables used for logging.
+		$number_of_added_questions   = 0;
+		$at_least_one_question_added = false;
+
 		if ( is_array( $question_data ) ) {
 
 			if ( isset( $question_data['questions'] ) && '' != $question_data['questions'] ) {
@@ -2561,6 +2565,8 @@ class Sensei_Lesson {
 
 					if ( ! in_array( $quiz_id, $quizzes ) ) {
 
+						$at_least_one_question_added = true;
+						$number_of_added_questions++;
 						++$question_count;
 						add_post_meta( $question_id, '_quiz_id', $quiz_id, false );
 						$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
@@ -2572,6 +2578,19 @@ class Sensei_Lesson {
 					}
 				}
 			}
+		}
+
+		// Log event: when an existing question is added to a quiz.
+		if ( $at_least_one_question_added ) {
+
+			$event_properties = array(
+				'question_status'      => $question_data['question_status'],
+				'question_type'        => $question_data['question_type'] ? $question_data['question_type'] : 'all',
+				'question_category_id' => $question_data['question_category'] ? get_term_by( 'slug', $question_data['question_category'], 'question-category' )->term_id : 'all',
+				'question_count'       => $number_of_added_questions,
+			);
+
+			sensei_log_event( 'quiz_question_add_existing', $event_properties );
 		}
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in methods that generate `$return`.
