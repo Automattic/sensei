@@ -5,22 +5,20 @@ import FeaturesList from './features-list';
 
 /**
  * @typedef  {Object} Feature
- * @property {string} id                             Feature ID.
- * @property {string} title                          Feature title.
- * @property {string} description                    Feature description.
- * @property {string} [confirmationExtraDescription] Extra description that appears only in confirmation modal.
- * @property {string} [props.learnMoreLink]          Learn more link.
- * @property {string} [errorMessage]                 Error message.
- * @property {string} status                         Feature status.
+ * @property {string} id              Feature ID.
+ * @property {string} title           Feature title.
+ * @property {string} description     Feature description.
+ * @property {string} [learnMoreLink] Learn more link.
+ * @property {string} [errorMessage]  Error message.
+ * @property {string} status          Feature status.
  */
 /**
- * Modal for usage tracking opt-in.
+ * Features installing component.
  *
  * @param {Object}    props
  * @param {Feature[]} props.features   Features list.
- * @param {Function}  props.onContinue Callback to install the features.
+ * @param {Function}  props.onContinue Callback to continue to the next step.
  */
-
 const FeaturesInstalling = ( { features, onContinue } ) => {
 	const hasLoading = features.some(
 		( feature ) => feature.status === FeaturesList.LOADING_STATUS
@@ -77,7 +75,6 @@ const FeaturesInstalling = ( { features, onContinue } ) => {
 						id,
 						title,
 						description,
-						confirmationExtraDescription,
 						learnMoreLink,
 						errorMessage,
 						status,
@@ -86,9 +83,6 @@ const FeaturesInstalling = ( { features, onContinue } ) => {
 							key={ id }
 							title={ title }
 							description={ description }
-							confirmationExtraDescription={
-								confirmationExtraDescription
-							}
 							learnMoreLink={ learnMoreLink }
 							errorMessage={ errorMessage }
 							onRetryClick={ () => {} }
