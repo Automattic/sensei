@@ -224,6 +224,46 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 		);
 	}
 
+	/**
+	 * Tests that submitting to features endpoint saves submitted data
+	 *
+	 * @covers Sensei_Setup_Wizard_API::submit_features
+	 */
+	public function testSubmitFeaturesSavesData() {
+
+		$this->request(
+			'POST',
+			'features',
+			[
+				'selected' => [ 'sensei-certificates' ],
+			]
+		);
+
+		$data = Sensei()->onboarding->get_wizard_user_data();
+
+		$this->assertEquals( [ 'sensei-certificates' ], $data['features'] );
+	}
+
+
+	/**
+	 * Tests that submitting to features endpoint validates input against whitelist
+	 *
+	 * @covers Sensei_Setup_Wizard_API::submit_features
+	 */
+	public function testSubmitFeaturesValidated() {
+
+		$this->request(
+			'POST',
+			'features',
+			[
+				'selected' => [ 'invalid-plugin' ],
+			]
+		);
+
+		$data = Sensei()->onboarding->get_wizard_user_data();
+
+		$this->assertNotContains( [ 'invalid-plugin' ], $data['features'] );
+	}
 
 	/**
 	 * Create and dispatch a REST API request.
