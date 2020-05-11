@@ -21,7 +21,7 @@ import apiFetch from '@wordpress/api-fetch';
 export const useOnboardingApi = ( step ) => {
 	const [ data, setData ] = useState( {} );
 	const [ isBusy, setBusy ] = useState( false );
-	const path = `sensei-internal/v1/onboarding/${ step }`;
+	const path = `sensei-internal/v1/setup-wizard/${ step }`;
 
 	const fetchData = useCallback( async () => {
 		setBusy( true );

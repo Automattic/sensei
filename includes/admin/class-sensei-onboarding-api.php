@@ -123,10 +123,10 @@ class Sensei_Setup_Wizard_API {
 		Sensei_REST_API_Helper::register_endpoints(
 			'sensei-internal/v1',
 			[
-				'onboarding/progress' => $progress_endpoint,
-				'onboarding/welcome'  => $welcome_endpoint,
-				'onboarding/purpose'  => $purpose_endpoint,
-				'onboarding/features' => $features_endpoint,
+				'setup-wizard/progress' => $progress_endpoint,
+				'setup-wizard/welcome'  => $welcome_endpoint,
+				'setup-wizard/purpose'  => $purpose_endpoint,
+				'setup-wizard/features' => $features_endpoint,
 			],
 			$common
 		);
