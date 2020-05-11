@@ -99,7 +99,7 @@ class Sensei_Onboarding {
 	}
 
 	/**
-	 * Register an setup wizard hidden submenu.
+	 * Register the hidden setup wizard submenu.
 	 *
 	 * @link https://developer.wordpress.org/reference/functions/add_submenu_page/#comment-445
 	 */
