@@ -108,30 +108,44 @@ class Sensei_Onboarding {
 	}
 
 	/**
-	 * Set up hooks for loading Onboarding page assets.
+	 * Enqueue JS for Setup Wizard page.
+	 *
+	 * @access private
 	 */
-	public function setup_onboarding_page() {
-		add_action(
-			'admin_print_scripts',
-			function() {
-				Sensei()->assets->enqueue( 'sensei-onboarding', 'onboarding/index.js', [], true );
-			}
-		);
+	public function enqueue_scripts() {
+		Sensei()->assets->enqueue( 'sensei-setupwizard', 'onboarding/index.js', [], true );
+	}
 
-		add_action(
-			'admin_print_styles',
-			function() {
-				Sensei()->assets->enqueue( 'sensei-onboarding', 'onboarding/style.css', [ 'wp-components' ] );
-			}
-		);
+	/**
+	 * Enqueue CSS for Setup Wizard page.
+	 *
+	 * @access private
+	 */
+	public function enqueue_styles() {
+		Sensei()->assets->enqueue( 'sensei-setupwizard', 'onboarding/style.css', [ 'wp-components' ] );
+	}
 
-		add_filter(
-			'admin_body_class',
-			function( $classes ) {
-				$classes .= ' sensei-wp-admin-fullscreen ';
-				return $classes;
-			}
-		);
+	/**
+	 * Add global classes for Setup Wizard page.
+	 *
+	 * @param string $classes Current class list.
+	 *
+	 * @access private
+	 * @return string Extended class list.
+	 */
+	public function filter_body_class( $classes ) {
+		$classes .= ' sensei-wp-admin-fullscreen ';
+		return $classes;
+	}
+
+	/**
+	 * Set up hooks for loading Setup Wizard page assets.
+	 */
+	public function prepare_wizard_page() {
+		add_action( 'admin_print_scripts', [ $this, 'enqueue_scripts' ] );
+		add_action( 'admin_print_styles', [ $this, 'enqueue_styles' ] );
+		add_action( 'admin_body_class', [ $this, 'filter_body_class' ] );
+
 		add_filter( 'show_admin_bar', '__return_false' );
 	}
 
