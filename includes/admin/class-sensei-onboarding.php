@@ -34,7 +34,7 @@ class Sensei_Onboarding {
 			'other'    => '',
 		],
 		'steps'     => [],
-		'__version' => '1',
+		'__version' => '1-dev1',
 	];
 
 	/**
@@ -319,7 +319,7 @@ class Sensei_Onboarding {
 		$data = get_option( self::USER_DATA_OPTION, [] );
 
 		// Reset data if the schema changed.
-		if ( ! empty( array_diff_key( $this->user_data_defaults, $data ) ) ) {
+		if ( empty( $data['__version'] ) || $data['__version'] !== $this->user_data_defaults['__version'] ) {
 			$data = $this->user_data_defaults;
 			update_option( self::USER_DATA_OPTION, $data );
 		}
