@@ -1,6 +1,10 @@
 import { render, fireEvent } from '@testing-library/react';
 
-import FeaturesList from './features-list';
+import FeaturesList, {
+	LOADING_STATUS,
+	ERROR_STATUS,
+	SUCCESS_STATUS,
+} from './features-list';
 
 describe( '<FeaturesList />', () => {
 	it( 'Should render the list with the content and the custom class', () => {
@@ -42,8 +46,6 @@ describe( '<FeaturesList />', () => {
 			fireEvent.click( queryByText( 'Retry?' ) );
 			expect( onFeatureRetryMock ).toBeCalled();
 		} );
-
-		const { LOADING_STATUS, ERROR_STATUS, SUCCESS_STATUS } = FeaturesList;
 
 		describe.each`
 			status            | expected

@@ -1,7 +1,7 @@
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
-import FeaturesList from './features-list';
+import FeaturesList, { LOADING_STATUS, ERROR_STATUS } from './features-list';
 
 /**
  * @typedef  {Object} Feature
@@ -21,11 +21,11 @@ import FeaturesList from './features-list';
  */
 const InstallationFeedback = ( { features, onContinue } ) => {
 	const hasLoading = features.some(
-		( feature ) => feature.status === FeaturesList.LOADING_STATUS
+		( feature ) => feature.status === LOADING_STATUS
 	);
 
 	const hasError = features.some(
-		( feature ) => feature.status === FeaturesList.ERROR_STATUS
+		( feature ) => feature.status === ERROR_STATUS
 	);
 
 	let actionButtons;

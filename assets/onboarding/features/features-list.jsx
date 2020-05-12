@@ -39,7 +39,7 @@ FeaturesList.Item = ( {
 	<li className="sensei-onboarding__features-list-item">
 		{ status && (
 			<div className="sensei-onboarding__icon-status">
-				{ status === FeaturesList.LOADING_STATUS && (
+				{ status === LOADING_STATUS && (
 					<>
 						<Spinner />
 						<span className="screen-reader-text">
@@ -47,12 +47,12 @@ FeaturesList.Item = ( {
 						</span>
 					</>
 				) }
-				{ status === FeaturesList.ERROR_STATUS && (
+				{ status === ERROR_STATUS && (
 					<i className="sensei-onboarding__circle-icon-wrapper error-icon-wrapper alert-icon">
 						{ __( 'Error', 'sensei-lms' ) }
 					</i>
 				) }
-				{ status === FeaturesList.SUCCESS_STATUS && (
+				{ status === SUCCESS_STATUS && (
 					<i className="sensei-onboarding__circle-icon-wrapper success-icon-wrapper">
 						<CheckIcon />
 						{ __( 'Success', 'sensei-lms' ) }
@@ -94,8 +94,8 @@ FeaturesList.Item.displayName = 'FeaturesList.Item';
 /**
  * Status constants.
  */
-FeaturesList.LOADING_STATUS = 'loading';
-FeaturesList.ERROR_STATUS = 'error';
-FeaturesList.SUCCESS_STATUS = 'success';
+export const LOADING_STATUS = 'loading';
+export const ERROR_STATUS = 'error';
+export const SUCCESS_STATUS = 'success';
 
 export default FeaturesList;

@@ -7,7 +7,7 @@ import { useQueryStringRouter } from '../query-string-router';
 import FeatureDescription from './feature-description';
 import ConfirmationModal from './confirmation-modal';
 import InstallationFeedback from './installation-feedback';
-import FeaturesList from './features-list';
+import { LOADING_STATUS, ERROR_STATUS, SUCCESS_STATUS } from './features-list';
 
 // TODO: Make it dynamic.
 const features = [
@@ -25,7 +25,7 @@ const features = [
 		),
 		learnMoreLink:
 			'https://woocommerce.com/products/woocommerce-paid-courses/',
-		status: FeaturesList.LOADING_STATUS,
+		status: LOADING_STATUS,
 	},
 	{
 		id: 'course_progress',
@@ -36,7 +36,7 @@ const features = [
 		),
 		learnMoreLink:
 			'https://woocommerce.com/products/sensei-course-progress/',
-		status: FeaturesList.SUCCESS_STATUS,
+		status: SUCCESS_STATUS,
 	},
 	{
 		id: 'certificates',
@@ -50,7 +50,7 @@ const features = [
 			'Error message here, maecenas faucibus mollis interdum tristique euismod.',
 			'sensei-lms'
 		),
-		status: FeaturesList.ERROR_STATUS,
+		status: ERROR_STATUS,
 	},
 	{
 		id: 'media_attachments',
@@ -61,7 +61,7 @@ const features = [
 		),
 		learnMoreLink:
 			'https://woocommerce.com/products/sensei-media-attachments/',
-		status: FeaturesList.SUCCESS_STATUS,
+		status: SUCCESS_STATUS,
 	},
 	{
 		id: 'content_drip',
@@ -72,7 +72,7 @@ const features = [
 			'sensei-lms'
 		),
 		learnMoreLink: 'https://woocommerce.com/products/sensei-content-drip/',
-		status: FeaturesList.LOADING_STATUS,
+		status: LOADING_STATUS,
 	},
 ].map( ( feature ) => ( {
 	...feature,
