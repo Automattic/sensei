@@ -112,6 +112,7 @@ class Sensei_Unsupported_Theme_Handler_CPT_Test extends WP_UnitTestCase {
 	 */
 	public function testShouldUseSinglePostRenderer() {
 		$this->handler->handle_request();
+		remove_filter( 'the_content', array( $this->handler, 'cpt_page_content_filter' ) );
 
 		$renderer         = new Sensei_Renderer_Single_Post(
 			$this->course->ID,
