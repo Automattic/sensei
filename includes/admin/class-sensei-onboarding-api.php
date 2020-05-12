@@ -221,8 +221,10 @@ class Sensei_Setup_Wizard_API {
 
 		return $this->setupwizard->update_wizard_user_data(
 			[
-				'purpose'       => $form['selected'],
-				'purpose_other' => ( in_array( 'other', $form['selected'], true ) ? $form['other'] : '' ),
+				'purpose' => [
+					'selected' => $form['selected'],
+					'other'    => ( in_array( 'other', $form['selected'], true ) ? $form['other'] : '' ),
+				],
 			]
 		);
 	}

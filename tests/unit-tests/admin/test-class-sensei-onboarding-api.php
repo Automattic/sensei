@@ -144,8 +144,8 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 
 		$data = Sensei()->onboarding->get_wizard_user_data();
 
-		$this->assertEquals( [ 'share_knowledge', 'other' ], $data['purpose'] );
-		$this->assertEquals( 'Test', $data['purpose_other'] );
+		$this->assertEquals( [ 'share_knowledge', 'other' ], $data['purpose']['selected'] );
+		$this->assertEquals( 'Test', $data['purpose']['other'] );
 	}
 
 	/**
@@ -157,8 +157,10 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 
 		Sensei()->onboarding->update_wizard_user_data(
 			[
-				'purpose'       => [ 'other' ],
-				'purpose_other' => 'Test',
+				'purpose' => [
+					'selected' => [ 'other' ],
+					'other'    => 'Test',
+				],
 			]
 		);
 
@@ -173,7 +175,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 
 		$data = Sensei()->onboarding->get_wizard_user_data();
 
-		$this->assertEmpty( $data['purpose_other'] );
+		$this->assertEmpty( $data['purpose']['other'] );
 	}
 
 
