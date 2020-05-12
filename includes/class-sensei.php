@@ -685,6 +685,8 @@ class Sensei_Main {
 	public function activate_sensei() {
 
 		if ( false === get_option( 'sensei_installed', false ) ) {
+			set_transient( 'sensei_activation_redirect', 1, 30 );
+
 			update_option( 'sensei_show_email_signup_form', true );
 			update_option( Sensei_Onboarding::SUGGEST_SETUP_WIZARD_OPTION, 1 );
 		}
