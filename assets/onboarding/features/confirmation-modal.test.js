@@ -6,12 +6,12 @@ import ConfirmationModal from './confirmation-modal';
 const features = [
 	{
 		title: 'First',
-		description: 'First description',
+		description: 'Dolor',
 	},
 	{
 		title: 'Second',
-		description: 'a',
-		confirmationExtraDescription: 'b',
+		description: 'Lorem',
+		confirmationExtraDescription: 'Ipsum',
 	},
 ];
 
@@ -28,7 +28,8 @@ describe( '<ConfirmationModal />', () => {
 		expect( document.querySelectorAll( 'li' ).length ).toEqual(
 			features.length
 		);
-		expect( screen.queryByText( 'a b' ) ).toBeTruthy();
+		expect( screen.queryByText( 'Dolor' ) ).toBeTruthy();
+		expect( screen.queryByText( 'Lorem Ipsum' ) ).toBeTruthy();
 	} );
 
 	it( 'Should call the callbacks', () => {

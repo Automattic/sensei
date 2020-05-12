@@ -29,7 +29,9 @@ const ConfirmationModal = ( { features = [], onInstall, onSkip } ) => (
 			items={ features.map(
 				( { title, description, confirmationExtraDescription } ) => ( {
 					title,
-					content: `${ description } ${ confirmationExtraDescription }`,
+					content: confirmationExtraDescription
+						? `${ description } ${ confirmationExtraDescription }`
+						: description,
 				} )
 			) }
 		/>
