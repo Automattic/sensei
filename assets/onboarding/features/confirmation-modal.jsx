@@ -38,7 +38,7 @@ const ConfirmationModal = ( { features = [], onInstall, onSkip } ) => (
 
 		<p>
 			{ __(
-				"You won't have access to this funcitonality until the extensions have been installed.",
+				"You won't have access to this functionality until the extensions have been installed.",
 				'sensei-lms'
 			) }
 		</p>
