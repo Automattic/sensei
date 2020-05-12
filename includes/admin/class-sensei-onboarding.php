@@ -80,7 +80,7 @@ class Sensei_Onboarding {
 
 			add_action( 'admin_menu', [ $this, 'register_wizard_page' ], 20 );
 			add_action( 'admin_notices', [ $this, 'setup_wizard_notice' ] );
-			add_action( 'admin_init',[ $this, 'skip_setup_wizard' ] );
+			add_action( 'admin_init', [ $this, 'skip_setup_wizard' ] );
 			add_action( 'admin_init', [ $this, 'activation_redirect' ] );
 			add_action( 'current_screen', [ $this, 'add_setup_wizard_help_tab' ] );
 
