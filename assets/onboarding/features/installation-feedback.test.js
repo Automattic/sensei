@@ -1,25 +1,22 @@
 import { render, fireEvent } from '@testing-library/react';
 
 import InstallationFeedback from './installation-feedback';
-import { LOADING_STATUS, ERROR_STATUS, SUCCESS_STATUS } from './features-list';
+import { LOADING_STATUS, ERROR_STATUS, SUCCESS_STATUS } from './feature-status';
 
 describe( '<InstallationFeedback />', () => {
 	it( 'Should render with loading status', () => {
 		const features = [
 			{
-				id: 'first',
 				title: 'Test',
 				description: 'Test',
 				status: LOADING_STATUS,
 			},
 			{
-				id: 'second',
 				title: 'Test',
 				description: 'Test',
 				status: ERROR_STATUS,
 			},
 			{
-				id: 'third',
 				title: 'Test',
 				description: 'Test',
 				status: SUCCESS_STATUS,
@@ -39,7 +36,6 @@ describe( '<InstallationFeedback />', () => {
 	it( 'Should render all success', () => {
 		const features = [
 			{
-				id: 'first',
 				title: 'Test',
 				description: 'Test',
 				status: SUCCESS_STATUS,
@@ -64,13 +60,11 @@ describe( '<InstallationFeedback />', () => {
 	it( 'Should render errors without loading', () => {
 		const features = [
 			{
-				id: 'first',
 				title: 'Test',
 				description: 'Test',
 				status: ERROR_STATUS,
 			},
 			{
-				id: 'second',
 				title: 'Test',
 				description: 'Test',
 				status: SUCCESS_STATUS,

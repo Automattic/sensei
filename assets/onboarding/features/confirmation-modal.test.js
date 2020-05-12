@@ -1,17 +1,17 @@
 import { render, fireEvent } from '@testing-library/react';
+import { screen } from '@testing-library/dom';
 
 import ConfirmationModal from './confirmation-modal';
 
 const features = [
 	{
-		id: 'first',
 		title: 'First',
 		description: 'First description',
 	},
 	{
-		id: 'second',
 		title: 'Second',
-		description: 'Second description',
+		description: 'a',
+		confirmationExtraDescription: 'b',
 	},
 ];
 
@@ -28,6 +28,7 @@ describe( '<ConfirmationModal />', () => {
 		expect( document.querySelectorAll( 'li' ).length ).toEqual(
 			features.length
 		);
+		expect( screen.queryByText( 'a b' ) ).toBeTruthy();
 	} );
 
 	it( 'Should call the callbacks', () => {

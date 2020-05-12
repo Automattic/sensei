@@ -7,7 +7,7 @@ import { useQueryStringRouter } from '../query-string-router';
 import FeatureDescription from './feature-description';
 import ConfirmationModal from './confirmation-modal';
 import InstallationFeedback from './installation-feedback';
-import { LOADING_STATUS, ERROR_STATUS, SUCCESS_STATUS } from './features-list';
+import { LOADING_STATUS, ERROR_STATUS, SUCCESS_STATUS } from './feature-status';
 
 // TODO: Make it dynamic.
 const features = [

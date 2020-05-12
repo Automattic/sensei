@@ -1,11 +1,9 @@
+import { List } from '@woocommerce/components';
 import { Button, Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
-import FeaturesList from './features-list';
-
 /**
  * @typedef  {Object} Feature
- * @property {string} id                             Feature ID.
  * @property {string} title                          Feature title.
  * @property {string} description                    Feature description.
  * @property {string} [confirmationExtraDescription] Extra description that appears only in confirmation modal.
@@ -27,22 +25,14 @@ const ConfirmationModal = ( { features = [], onInstall, onSkip } ) => (
 		) }
 		isDismissible={ false }
 	>
-		<FeaturesList>
-			{ features.map(
-				( {
-					id,
+		<List
+			items={ features.map(
+				( { title, description, confirmationExtraDescription } ) => ( {
 					title,
-					description,
-					confirmationExtraDescription,
-				} ) => (
-					<FeaturesList.Item
-						key={ id }
-						title={ title }
-						description={ `${ description } ${ confirmationExtraDescription }` }
-					/>
-				)
+					content: `${ description } ${ confirmationExtraDescription }`,
+				} )
 			) }
-		</FeaturesList>
+		/>
 
 		<p>
 			{ __(

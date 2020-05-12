@@ -1,11 +1,12 @@
+import { List } from '@woocommerce/components';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
-import FeaturesList, { LOADING_STATUS, ERROR_STATUS } from './features-list';
+import FeatureDescription from './feature-description';
+import FeatureStatus, { LOADING_STATUS, ERROR_STATUS } from './feature-status';
 
 /**
  * @typedef  {Object} Feature
- * @property {string} id              Feature ID.
  * @property {string} title           Feature title.
  * @property {string} description     Feature description.
  * @property {string} [learnMoreLink] Learn more link.
@@ -68,29 +69,29 @@ const InstallationFeedback = ( { features, onContinue } ) => {
 	}
 
 	return (
-		<div>
-			<FeaturesList className="no-last-line">
-				{ features.map(
+		<div className="sensei-onboarding__features-installation-feedback">
+			<List
+				items={ features.map(
 					( {
-						id,
 						title,
 						description,
 						learnMoreLink,
 						errorMessage,
 						status,
-					} ) => (
-						<FeaturesList.Item
-							key={ id }
-							title={ title }
-							description={ description }
-							learnMoreLink={ learnMoreLink }
-							errorMessage={ errorMessage }
-							onFeatureRetry={ () => {} }
-							status={ status }
-						/>
-					)
+					} ) => ( {
+						title,
+						content: (
+							<FeatureDescription
+								description={ description }
+								learnMoreLink={ learnMoreLink }
+								errorMessage={ errorMessage }
+								onFeatureRetry={ () => {} }
+							/>
+						),
+						before: <FeatureStatus status={ status } />,
+					} )
 				) }
-			</FeaturesList>
+			/>
 			<div className="sensei-onboarding__group-buttons group-center">
 				{ actionButtons }
 			</div>
