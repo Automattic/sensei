@@ -240,6 +240,21 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 			}
 		}
 
+		// Log event: when course completion (without notification) is bulk recalculated.
+		if ( 'recalculate_course_completion' === $sensei_bulk_action ) {
+
+			$filter_value = ! empty( $_POST['sensei_learners_bulk_action_filter'] ) ? sanitize_text_field( wp_unslash( $_POST['sensei_learners_bulk_action_filter'] ) ) : '-1'; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce already checked.
+
+			$event_properties = array(
+				'course_id'     => $filter_value,
+				'course_count'  => count( $course_ids ),
+				'learner_count' => count( $user_ids ),
+			);
+
+			sensei_log_event( 'learner_management_course_completion_bulk_recalculate_no_notify', $event_properties );
+
+		} // End log event.
+
 		$this->redirect_to_learner_admin_index( 'action-success' );
 	}
 
