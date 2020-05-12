@@ -208,6 +208,7 @@ class Sensei_Data_Cleaner {
 		'sensei_answers_feedback_[0-9]+_[0-9]+',
 		'quiz_grades_[0-9]+_[0-9]+',
 		'sensei_comment_counts_[0-9]+',
+		'sensei_activation_redirect',
 	);
 
 	/**

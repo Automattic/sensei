@@ -207,6 +207,68 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 		$this->assertFalse( $option_value, 'Should not update option' );
 	}
 
+	/*
+	 * Testing if activation redirect works properly.
+	 */
+	public function testActivationRedirect() {
+		// Create and login as administrator.
+		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $admin_id );
+
+		set_transient( 'sensei_activation_redirect', 1, 30 );
+
+		$onboarding_mock = $this->getMockBuilder( 'Sensei_Onboarding' )
+			->setMethods( [ 'redirect_to_setup_wizard' ] )
+			->getMock();
+
+		$onboarding_mock->expects( $this->once() )
+			->method( 'redirect_to_setup_wizard' );
+
+		$onboarding_mock->activation_redirect();
+
+		$this->assertFalse( get_transient( 'sensei_activation_redirect' ), 'Transient should be removed' );
+	}
+
+	/**
+	 * Testing if activation doesn't redirect for no admin user.
+	 */
+	public function testActivationRedirectNoAdmin() {
+		// Create and login as subscriber.
+		$subscriber_id = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+		wp_set_current_user( $subscriber_id );
+
+		set_transient( 'sensei_activation_redirect', 1, 30 );
+
+		$onboarding_mock = $this->getMockBuilder( 'Sensei_Onboarding' )
+			->setMethods( [ 'redirect_to_setup_wizard' ] )
+			->getMock();
+
+		$onboarding_mock->expects( $this->never() )
+			->method( 'redirect_to_setup_wizard' );
+
+		$onboarding_mock->activation_redirect();
+
+		$this->assertNotFalse( get_transient( 'sensei_activation_redirect' ), 'Transient should not be removed' );
+	}
+
+	/**
+	 * Testing if activation doesn't redirect when transient is not defined.
+	 */
+	public function testActivationRedirectWithoutTransient() {
+		// Create and login as administrator.
+		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $admin_id );
+
+		$onboarding_mock = $this->getMockBuilder( 'Sensei_Onboarding' )
+			->setMethods( [ 'redirect_to_setup_wizard' ] )
+			->getMock();
+
+		$onboarding_mock->expects( $this->never() )
+			->method( 'redirect_to_setup_wizard' );
+
+		$onboarding_mock->activation_redirect();
+	}
+
 	/**
 	 * Test if WooCommerce help tab is being prevented in the Sensei pages.
 	 *
