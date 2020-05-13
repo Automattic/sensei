@@ -241,7 +241,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 		}
 
 		// Log event: when learners are bulk added to a course.
-		if ( 'manually_enrol' === $sensei_bulk_action ) {
+		if ( self::MANUALLY_ENROL === $sensei_bulk_action ) {
 
 			$filter_value = ! empty( $_POST['sensei_learners_bulk_action_filter'] ) ? sanitize_text_field( wp_unslash( $_POST['sensei_learners_bulk_action_filter'] ) ) : '-1'; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce already checked.
 
