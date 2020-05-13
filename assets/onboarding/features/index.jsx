@@ -122,7 +122,7 @@ const Features = () => {
 			<div className="sensei-onboarding__title">
 				<H>
 					{ __(
-						'Enhance your online courses with these optional features!',
+						'Enhance your online courses with these optional features.',
 						'sensei-lms'
 					) }
 				</H>
