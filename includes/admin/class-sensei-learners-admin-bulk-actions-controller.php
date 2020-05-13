@@ -241,7 +241,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 		}
 
 		// Log event: when course progress is bulk reset.
-		if ( 'remove_progress' === $sensei_bulk_action ) {
+		if ( self::REMOVE_PROGRESS === $sensei_bulk_action ) {
 
 			$filter_value = ! empty( $_POST['sensei_learners_bulk_action_filter'] ) ? sanitize_text_field( wp_unslash( $_POST['sensei_learners_bulk_action_filter'] ) ) : '-1'; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce already checked.
 
