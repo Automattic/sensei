@@ -83,6 +83,9 @@ class Sensei_Learner_Management {
 
 			add_action( 'admin_notices', array( $this, 'add_learner_notices' ) );
 			$this->bulk_actions_controller = new Sensei_Learners_Admin_Bulk_Actions_Controller( $this );
+
+			// Log event: when a learner is manually removed from a course.
+			add_action( 'sensei_manual_enrolment_learner_withdrawn', array( $this, 'log_manually_remove_learner' ), 10, 2 );
 		} // End If Statement
 
 		// Ajax functions.
@@ -837,6 +840,24 @@ class Sensei_Learner_Management {
 	 */
 	public function get_name() {
 		return $this->name;
+	}
+
+	/**
+	 * Logs when a learner is manually removed from a course.
+	 *
+	 * @since 3.0.2
+	 *
+	 * @param int $user_id   User being removed from course.
+	 * @param int $course_id Course from which user is being removed.
+	 */
+	public function log_manually_remove_learner( $user_id, $course_id ) {
+
+		$event_properties = array(
+			'course_id' => $course_id,
+		);
+
+		sensei_log_event( 'learner_management_learner_remove', $event_properties );
+
 	}
 
 } // End Class
