@@ -219,11 +219,6 @@ class Sensei_Main {
 		// Initialize the core Sensei functionality
 		$this->init();
 
-		// Installation
-		if ( is_admin() && ! defined( 'DOING_AJAX' ) ) {
-			$this->install();
-		}
-
 		// Run this on deactivation.
 		register_deactivation_hook( $this->main_plugin_file_name, array( $this, 'deactivation' ) );
 
@@ -588,14 +583,13 @@ class Sensei_Main {
 	/**
 	 * Register activation hooks.
 	 *
+	 * @deprecated since 3.1.0 use Sensei_Main::activate
 	 * @access public
 	 * @since  1.0.0
 	 * @return void
 	 */
 	public function install() {
-
-		register_activation_hook( $this->main_plugin_file_name, array( $this, 'activate_sensei' ) );
-		register_activation_hook( $this->main_plugin_file_name, array( $this, 'initiate_rewrite_rules_flush' ) );
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Main::activate' );
 
 	} // End install()
 
@@ -678,13 +672,14 @@ class Sensei_Main {
 	/**
 	 * Run on activation of the plugin.
 	 *
+	 * @deprecated since 3.1.0 use Sensei_Main::activate
 	 * @access public
 	 * @since  1.0.0
 	 * @return void
 	 */
 	public function activate_sensei() {
-
-	} // End activate_sensei()
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Main::activate' );
+	}
 
 	/**
 	 * Register the plugin's version.
