@@ -1,6 +1,5 @@
 import { useState } from '@wordpress/element';
 import { Card, H } from '@woocommerce/components';
-import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 import { useQueryStringRouter } from '../query-string-router';
@@ -109,10 +108,6 @@ const Features = () => {
 		toggleFeedback( true );
 	};
 
-	const goBackToSelection = () => {
-		toggleFeedback( false );
-	};
-
 	const goToNextStep = () => {
 		goTo( 'ready' );
 	};
@@ -142,15 +137,6 @@ const Features = () => {
 					/>
 				) }
 			</Card>
-
-			{ feedbackActive && (
-				<div className="sensei-onboarding__bottom-actions">
-					<Button isTertiary onClick={ goBackToSelection }>
-						&larr;&nbsp;
-						{ __( 'Back to optional features', 'sensei-lms' ) }
-					</Button>
-				</div>
-			) }
 
 			{ confirmationActive && (
 				<ConfirmationModal
