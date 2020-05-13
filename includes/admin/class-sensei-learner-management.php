@@ -435,6 +435,18 @@ class Sensei_Learner_Management {
 
 		$updated = update_comment_meta( $comment_id, 'start', $mysql_date, $date_started );
 
+		// Log event: when the course or lesson start date of a learner is manually updated.
+		if ( $updated ) {
+
+			$event_properties = array(
+				'course_id' => 'course' === $action_data['post_type'] ? $action_data['post_id'] : '',
+				'lesson_id' => 'lesson' === $action_data['post_type'] ? $action_data['post_id'] : '',
+			);
+
+			sensei_log_event( 'learner_management_start_date_update', $event_properties );
+
+		} // End log event.
+
 		if ( false === $updated ) {
 			exit( '' );
 		}
