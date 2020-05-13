@@ -205,6 +205,7 @@ class Sensei_Category_Courses_Widget extends WP_Widget {
 				$user_info           = get_userdata( absint( $post_item->post_author ) );
 				$author_link         = get_author_posts_url( absint( $post_item->post_author ) );
 				$author_display_name = $user_info->display_name;
+				$lesson_count        = Sensei()->course->course_lesson_count( $post_id );
 				?>
 				<li class="fix">
 					<?php do_action( 'sensei_course_image', $post_id ); ?>
@@ -224,7 +225,12 @@ class Sensei_Category_Courses_Widget extends WP_Widget {
 						</span>
 						<br />
 					<?php } // End If Statement ?>
-					<span class="course-lesson-count"><?php echo esc_html( Sensei()->course->course_lesson_count( $post_id ) ) . '&nbsp;' . esc_html__( 'Lessons', 'sensei-lms' ); ?></span>
+					<span class="course-lesson-count">
+						<?php
+						// translators: Placeholder %d is the lesson count.
+						printf( esc_html( _n( '%d Lesson', '%d Lessons', $lesson_count, 'sensei-lms' ) ), $lesson_count );
+						?>
+					</span>
 					<br />
 					<?php
 					/** This action is documented in includes/class-sensei-frontend.php */

@@ -1472,7 +1472,10 @@ class Sensei_Course {
 					$lesson_count = 1;
 
 				} // End If Statement
-				$active_html .= '<span class="course-lesson-count">' . esc_html( $lesson_count ) . '&nbsp;' . esc_html__( 'Lessons', 'sensei-lms' ) . '</span>';
+				$active_html .= '<span class="course-lesson-count">' .
+					// translators: Placeholder %d is the lesson count.
+					sprintf( esc_html( _n( '%d Lesson', '%d Lessons', $lesson_count, 'sensei-lms' ) ), $lesson_count ) .
+				'</span>';
 				// Course Categories
 				if ( '' != $category_output ) {
 
@@ -1589,7 +1592,8 @@ class Sensei_Course {
 			}
 
 			foreach ( $completed_courses as $course_item ) {
-				$course = $course_item;
+				$course       = $course_item;
+				$lesson_count = intval( Sensei()->course->course_lesson_count( absint( $course_item->ID ) ) );
 
 				// Get Course Categories
 				$category_output = get_the_term_list( $course_item->ID, 'course-category', '', ', ', '' );
@@ -1617,10 +1621,10 @@ class Sensei_Course {
 						$complete_html .= '<p class="sensei-course-meta">';
 
 							// Lesson count for this author
-							$complete_html .= '<span class="course-lesson-count">'
-								. esc_html( Sensei()->course->course_lesson_count( absint( $course_item->ID ) ) )
-								. '&nbsp;' . esc_html__( 'Lessons', 'sensei-lms' )
-								. '</span>';
+							$complete_html .= '<span class="course-lesson-count">' .
+								// translators: Placeholder %d is the lesson count.
+								sprintf( esc_html( _n( '%d Lesson', '%d Lessons', $lesson_count, 'sensei-lms' ) ), $lesson_count ) .
+							'</span>';
 
 							// Course Categories
 				if ( '' != $category_output ) {
@@ -2175,6 +2179,7 @@ class Sensei_Course {
 		$course              = get_post( $course_id );
 		$category_output     = get_the_term_list( $course->ID, 'course-category', '', ', ', '' );
 		$author_display_name = get_the_author_meta( 'display_name', $course->post_author );
+		$lesson_count        = intval( Sensei()->course->course_lesson_count( $course_id ) );
 
 		if ( isset( Sensei()->settings->settings['course_author'] ) && ( Sensei()->settings->settings['course_author'] ) ) {
 			echo '<span class="course-author">' .
@@ -2189,7 +2194,8 @@ class Sensei_Course {
 		do_action( 'sensei_course_meta_inside_before', $course->ID );
 
 		echo '<span class="course-lesson-count">' .
-			esc_html( Sensei()->course->course_lesson_count( $course->ID ) ) . '&nbsp;' . esc_html__( 'Lessons', 'sensei-lms' ) .
+			// translators: Placeholder %d is the lesson count.
+			sprintf( esc_html( _n( '%d Lesson', '%d Lessons', $lesson_count, 'sensei-lms' ) ), $lesson_count ) .
 		'</span>';
 
 		if ( ! empty( $category_output ) ) {
