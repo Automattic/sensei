@@ -240,6 +240,36 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 			}
 		}
 
+		// Log bulk actions events.
+		$filter_value = ! empty( $_POST['sensei_learners_bulk_action_filter'] ) ? sanitize_text_field( wp_unslash( $_POST['sensei_learners_bulk_action_filter'] ) ) : '-1'; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce already checked.
+
+		$event_properties = array(
+			'course_id'     => $filter_value,
+			'course_count'  => count( $course_ids ),
+			'learner_count' => count( $user_ids ),
+		);
+
+		switch ( $sensei_bulk_action ) {
+			case self::MANUALLY_ENROL:
+				$this->learner_management_bulk_actions_logger( 'learner_management_learner_bulk_add', $event_properties );
+				break;
+			case self::REMOVE_MANUAL_ENROLMENT:
+				$this->learner_management_bulk_actions_logger( 'learner_management_learner_bulk_remove', $event_properties );
+				break;
+			case self::REMOVE_PROGRESS:
+				$this->learner_management_bulk_actions_logger( 'learner_management_progress_bulk_reset', $event_properties );
+				break;
+			case self::COMPLETE_COURSE:
+				$this->learner_management_bulk_actions_logger( 'learner_management_course_completion_bulk_recalculate_notify', $event_properties );
+				break;
+			case self::RECALCULATE_COURSE_COMPLETION:
+				$this->learner_management_bulk_actions_logger( 'learner_management_course_completion_bulk_recalculate_no_notify', $event_properties );
+				break;
+			default:
+				break;
+		}
+		// End logging.
+
 		$this->redirect_to_learner_admin_index( 'action-success' );
 	}
 
@@ -418,6 +448,17 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 			<p><?php echo esc_html( $msg ); ?></p>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Helper method to log sensei events.
+	 *
+	 * @since 3.0.2
+	 * @param string $event_name       The name of the event to log.
+	 * @param array  $event_properties The properties to log for the event.
+	 */
+	public function learner_management_bulk_actions_logger( $event_name = '', $event_properties = array() ) {
+		sensei_log_event( $event_name, $event_properties );
 	}
 
 }
