@@ -684,16 +684,6 @@ class Sensei_Main {
 	 */
 	public function activate_sensei() {
 
-		if ( false === get_option( 'sensei_installed', false ) ) {
-			set_transient( 'sensei_activation_redirect', 1, 30 );
-
-			update_option( 'sensei_show_email_signup_form', true );
-			update_option( Sensei_Onboarding::SUGGEST_SETUP_WIZARD_OPTION, 1 );
-		}
-
-		update_option( 'skip_install_sensei_pages', 0 );
-		update_option( 'sensei_installed', 1 );
-
 	} // End activate_sensei()
 
 	/**
@@ -1475,6 +1465,17 @@ class Sensei_Main {
 	 * @since 1.9.13
 	 */
 	public function activate() {
+
+		if ( false === get_option( 'sensei_installed', false ) ) {
+			set_transient( 'sensei_activation_redirect', 1, 30 );
+
+			update_option( 'sensei_show_email_signup_form', true );
+			update_option( Sensei_Onboarding::SUGGEST_SETUP_WIZARD_OPTION, 1 );
+		}
+
+		update_option( 'skip_install_sensei_pages', 0 );
+		update_option( 'sensei_installed', 1 );
+
 		// Create the teacher role on activation and ensure that it has all the needed capabilities.
 		$this->teacher->create_role();
 
