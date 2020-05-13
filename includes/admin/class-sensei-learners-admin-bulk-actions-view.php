@@ -294,6 +294,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		<input type="hidden" id="bulk-action-user-ids"  name="bulk_action_user_ids" value="">
 		<input type="hidden" id="sensei-bulk-action"  name="sensei_bulk_action" value="">
 		<input type="hidden" id="bulk-action-course-ids"  name="bulk_action_course_ids" value="">
+		<input type="hidden" id="sensei-learners-bulk-action-filter"  name="sensei_learners_bulk_action_filter" value="<?php echo esc_attr( $this->query_args['filter_by_course_id'] ); ?>">
 		<?php wp_nonce_field( Sensei_Learners_Admin_Bulk_Actions_Controller::NONCE_SENSEI_BULK_LEARNER_ACTIONS, Sensei_Learners_Admin_Bulk_Actions_Controller::SENSEI_BULK_LEARNER_ACTIONS_NONCE_FIELD ); ?>
 		<button type="submit" id="bulk-learner-action-submit" class="button button-primary action"><?php echo esc_html__( 'Apply', 'sensei-lms' ); ?></button>
 		</form>
