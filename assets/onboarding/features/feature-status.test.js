@@ -9,9 +9,9 @@ import FeatureStatus, {
 describe( '<FeatureStatus />', () => {
 	describe.each`
 		status            | expected
-		${LOADING_STATUS} | ${'Loading'}
-		${ERROR_STATUS}   | ${'Error'}
-		${SUCCESS_STATUS} | ${'Success'}
+		${LOADING_STATUS} | ${'Installing plugin'}
+		${ERROR_STATUS}   | ${'Error installing plugin'}
+		${SUCCESS_STATUS} | ${'Plugin installed'}
 	`( 'Should render with status $status', ( { status, expected } ) => {
 		it( `Render correctly status ${ status }`, () => {
 			const { queryByText } = render(

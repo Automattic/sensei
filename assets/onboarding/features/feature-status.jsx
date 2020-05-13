@@ -15,19 +15,19 @@ const statusComponents = {
 		<>
 			<Spinner />
 			<span className="screen-reader-text">
-				{ __( 'Loading', 'sensei-lms' ) }
+				{ __( 'Installing plugin', 'sensei-lms' ) }
 			</span>
 		</>
 	),
 	[ ERROR_STATUS ]: (
 		<i className="sensei-onboarding__circle-icon-wrapper error-icon-wrapper alert-icon">
-			{ __( 'Error', 'sensei-lms' ) }
+			{ __( 'Error installing plugin', 'sensei-lms' ) }
 		</i>
 	),
 	[ SUCCESS_STATUS ]: (
 		<i className="sensei-onboarding__circle-icon-wrapper success-icon-wrapper">
 			<CheckIcon />
-			{ __( 'Success', 'sensei-lms' ) }
+			{ __( 'Plugin installed', 'sensei-lms' ) }
 		</i>
 	),
 };
