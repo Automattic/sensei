@@ -1,12 +1,12 @@
 import { useState } from '@wordpress/element';
 import { Card, H } from '@woocommerce/components';
-import { Button, CheckboxControl } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 import { useQueryStringRouter } from '../query-string-router';
-import FeatureDescription from './feature-description';
 import ConfirmationModal from './confirmation-modal';
 import InstallationFeedback from './installation-feedback';
+import FeaturesSelection from './features-selection';
 import { LOADING_STATUS, ERROR_STATUS, SUCCESS_STATUS } from './feature-status';
 
 // TODO: Make it dynamic.
@@ -85,14 +85,15 @@ const features = [
  * Features step for setup wizard.
  */
 const Features = () => {
-	const [ confirmationModalActive, toggleConfirmationModal ] = useState(
-		false
-	);
-	const [ showInstallationFeedback, toggleInstallationFeedback ] = useState(
-		false
-	);
+	const [ confirmationActive, toggleConfirmation ] = useState( false );
+	const [ feedbackActive, toggleFeedback ] = useState( false );
 	const [ selectedFeatureIds, setSelectedFeatureIds ] = useState( [] );
 	const { goTo } = useQueryStringRouter();
+
+	const getSelectedFeatures = () =>
+		features.filter( ( feature ) =>
+			selectedFeatureIds.includes( feature.id )
+		);
 
 	const finishSelection = () => {
 		if ( 0 === selectedFeatureIds.length ) {
@@ -100,34 +101,21 @@ const Features = () => {
 			return;
 		}
 
-		toggleConfirmationModal( true );
+		toggleConfirmation( true );
 	};
 
 	const goToInstallation = () => {
-		toggleConfirmationModal( false );
-		toggleInstallationFeedback( true );
+		toggleConfirmation( false );
+		toggleFeedback( true );
 	};
 
 	const goBackToSelection = () => {
-		toggleInstallationFeedback( false );
+		toggleFeedback( false );
 	};
 
 	const goToNextStep = () => {
 		goTo( 'ready' );
 	};
-
-	const toggleItem = ( id ) => {
-		setSelectedFeatureIds( ( selected ) => [
-			...( selected.includes( id )
-				? selected.filter( ( item ) => item !== id )
-				: [ id, ...selected ] ),
-		] );
-	};
-
-	const getSelectedFeatures = () =>
-		features.filter( ( feature ) =>
-			selectedFeatureIds.includes( feature.id )
-		);
 
 	return (
 		<>
@@ -140,51 +128,22 @@ const Features = () => {
 				</H>
 			</div>
 			<Card className="sensei-onboarding__card">
-				{ showInstallationFeedback ? (
+				{ feedbackActive ? (
 					<InstallationFeedback
 						features={ getSelectedFeatures() }
 						onContinue={ goToNextStep }
 					/>
 				) : (
-					<>
-						<div className="sensei-onboarding__checkbox-list">
-							{ features.map(
-								( {
-									id,
-									title,
-									description,
-									learnMoreLink,
-								} ) => (
-									<CheckboxControl
-										key={ id }
-										label={ title }
-										help={
-											<FeatureDescription
-												description={ description }
-												learnMoreLink={ learnMoreLink }
-											/>
-										}
-										onChange={ () => toggleItem( id ) }
-										checked={ selectedFeatureIds.includes(
-											id
-										) }
-										className="sensei-onboarding__checkbox"
-									/>
-								)
-							) }
-						</div>
-						<Button
-							isPrimary
-							className="sensei-onboarding__button sensei-onboarding__button-card"
-							onClick={ finishSelection }
-						>
-							{ __( 'Continue', 'sensei-lms' ) }
-						</Button>
-					</>
+					<FeaturesSelection
+						features={ features }
+						selectedIds={ selectedFeatureIds }
+						onChange={ setSelectedFeatureIds }
+						onContinue={ finishSelection }
+					/>
 				) }
 			</Card>
 
-			{ showInstallationFeedback && (
+			{ feedbackActive && (
 				<div className="sensei-onboarding__bottom-actions">
 					<Button isTertiary onClick={ goBackToSelection }>
 						&larr;&nbsp;
@@ -193,7 +152,7 @@ const Features = () => {
 				</div>
 			) }
 
-			{ confirmationModalActive && (
+			{ confirmationActive && (
 				<ConfirmationModal
 					features={ getSelectedFeatures() }
 					onInstall={ goToInstallation }
