@@ -4,6 +4,9 @@ import { steps } from './steps';
 import QueryStringRouter, { Route } from './query-string-router';
 import Navigation from './navigation';
 
+// Register store
+import './data/index';
+
 /**
  * Param name used to route the setup wizard.
  */
