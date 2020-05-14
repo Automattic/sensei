@@ -55,27 +55,6 @@ export const Ready = () => {
 								),
 							},
 							{
-								title: 'Import content',
-								content: `Transfer existing content to your site — just import a CSV file.`,
-								after: (
-									<Button isSecondary>Import content</Button>
-								),
-							},
-							{
-								title: 'Install a sample course',
-								content: formatString(
-									__(
-										'Install the {{em}}Getting Started with Sensei LMS{{/em}} course.',
-										'sensei-lms'
-									)
-								),
-								after: (
-									<Button isSecondary>
-										Install sample course
-									</Button>
-								),
-							},
-							{
 								title: 'Learn more',
 								content: formatString(
 									__(
