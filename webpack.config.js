@@ -28,7 +28,6 @@ const files = [
 
 	'css/admin/email-signup.scss',
 	'css/frontend/sensei.scss',
-	'css/activation.scss',
 	'css/admin-custom.css',
 	'css/extensions.scss',
 	'css/global.css',
