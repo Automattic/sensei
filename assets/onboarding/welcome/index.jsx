@@ -30,11 +30,11 @@ export const Welcome = () => {
 
 	const isBusy = isFetching || isSubmitting;
 
-	async function submitPage( allowUsageTracking ) {
+	const submitPage = async ( allowUsageTracking ) => {
 		await submitUsageTracking( allowUsageTracking );
 		toggleUsageModal( false );
 		goTo( 'purpose' );
-	}
+	};
 
 	return (
 		<>
