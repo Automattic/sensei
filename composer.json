@@ -8,7 +8,7 @@
 		"dealerdirect/phpcodesniffer-composer-installer": "0.6.2",
 		"phpcompatibility/phpcompatibility-wp": "2.1.0",
 		"squizlabs/php_codesniffer": "3.5.4",
-		"wp-coding-standards/wpcs": "2.2.1",
+		"wp-coding-standards/wpcs": "2.3.0",
 		"sirbrillig/phpcs-variable-analysis": "2.8.1",
 		"sirbrillig/phpcs-no-get-current-user": "1.0.1"
 	},
