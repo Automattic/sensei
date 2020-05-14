@@ -160,6 +160,7 @@ class Sensei_Main {
 
 	/**
 	 * Internal REST API.
+	 *
 	 * @var Sensei_REST_API_Internal
 	 */
 	public $rest_api_internal;
