@@ -44,6 +44,7 @@ class Sensei_REST_API_Internal {
 	public function register() {
 
 		$this->controllers = [
+			new Sensei_REST_API_Setup_Wizard_Controller( $this->namespace ),
 		];
 
 		foreach ( $this->controllers as $controller ) {

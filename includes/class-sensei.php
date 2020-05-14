@@ -406,7 +406,7 @@ class Sensei_Main {
 		$this->enrolment_scheduler->init();
 
 		// Onboarding Wizard.
-		$this->onboarding = new Sensei_Onboarding();
+		$this->onboarding = Sensei_Onboarding::instance();
 
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {

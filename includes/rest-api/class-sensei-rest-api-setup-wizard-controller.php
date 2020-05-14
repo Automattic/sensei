@@ -17,7 +17,22 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @author  Automattic
  * @since   3.1.0
  */
-class Sensei_REST_API_Setup_Wizard_Controller {
+class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
+
+	/**
+	 * Routes namespace.
+	 *
+	 * @var string
+	 */
+	protected $namespace;
+
+	/**
+	 * Routes prefix.
+	 *
+	 * @var string
+	 */
+	protected $rest_base = 'setup-wizard';
+
 
 	/**
 	 * Main Setup Wizard instance.
@@ -26,21 +41,24 @@ class Sensei_REST_API_Setup_Wizard_Controller {
 	 */
 	private $setupwizard;
 
+	/**
+	 * Available 'purpose' options.
+	 */
 	const PURPOSES = [ 'share_knowledge', 'generate_income', 'promote_business', 'provide_certification', 'train_employees', 'other' ];
 
 	/**
-	 * Sensei_Setup_Wizard_API constructor.
+	 * Sensei_REST_API_Setup_Wizard_Controller constructor.
 	 *
-	 * @param Sensei_Onboarding $setupwizard Setup Wizard instance.
+	 * @param string $namespace Routes namespace.
 	 */
-	public function __construct( $setupwizard ) {
-		$this->setupwizard = $setupwizard;
+	public function __construct( $namespace ) {
+		$this->namespace   = $namespace;
+		$this->setupwizard = Sensei_Onboarding::instance();
 	}
 
 	/**
 	 * Register the REST API endpoints for Setup Wizard.
 	 */
-	public function register() {
 		$common = [
 			'endpoint' => [
 				'permission_callback' => [ $this, 'can_user_access_rest_api' ],
@@ -49,6 +67,7 @@ class Sensei_REST_API_Setup_Wizard_Controller {
 				'validate_callback' => 'rest_validate_request_arg',
 			],
 		];
+	public function register_routes() {
 
 		$progress_endpoint = [
 			[

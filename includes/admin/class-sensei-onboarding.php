@@ -59,11 +59,24 @@ class Sensei_Onboarding {
 	public $pages;
 
 	/**
-	 * REST API for Setup Wizard.
+	 * Instance of singleton.
 	 *
-	 * @var Sensei_Setup Wizard_API
+	 * @var self
 	 */
-	public $api;
+	private static $instance;
+
+	/**
+	 * Fetches the instance of the class.
+	 *
+	 * @return self
+	 */
+	public static function instance() {
+		if ( ! self::$instance ) {
+			self::$instance = new self();
+		}
+
+		return self::$instance;
+	}
 
 	/**
 	 * Sensei_Setup Wizard constructor.
@@ -72,9 +85,6 @@ class Sensei_Onboarding {
 
 		$this->page_slug = 'sensei_onboarding';
 		$this->pages     = new Sensei_Onboarding_Pages();
-		$this->api       = new Sensei_REST_API_Setup_Wizard_Controller( $this );
-
-		add_action( 'rest_api_init', [ $this->api, 'register' ] );
 
 		if ( is_admin() ) {
 
