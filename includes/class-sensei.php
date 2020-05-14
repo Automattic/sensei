@@ -219,11 +219,6 @@ class Sensei_Main {
 		// Initialize the core Sensei functionality
 		$this->init();
 
-		// Installation
-		if ( is_admin() && ! defined( 'DOING_AJAX' ) ) {
-			$this->install();
-		}
-
 		// Run this on deactivation.
 		register_deactivation_hook( $this->main_plugin_file_name, array( $this, 'deactivation' ) );
 
@@ -588,14 +583,13 @@ class Sensei_Main {
 	/**
 	 * Register activation hooks.
 	 *
+	 * @deprecated since 3.1.0 use Sensei_Main::activate
 	 * @access public
 	 * @since  1.0.0
 	 * @return void
 	 */
 	public function install() {
-
-		register_activation_hook( $this->main_plugin_file_name, array( $this, 'activate_sensei' ) );
-		register_activation_hook( $this->main_plugin_file_name, array( $this, 'initiate_rewrite_rules_flush' ) );
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Main::activate' );
 
 	} // End install()
 
@@ -678,23 +672,14 @@ class Sensei_Main {
 	/**
 	 * Run on activation of the plugin.
 	 *
+	 * @deprecated since 3.1.0 use Sensei_Main::activate
 	 * @access public
 	 * @since  1.0.0
 	 * @return void
 	 */
 	public function activate_sensei() {
-
-		if ( false === get_option( 'sensei_installed', false ) ) {
-			set_transient( 'sensei_activation_redirect', 1, 30 );
-
-			update_option( 'sensei_show_email_signup_form', true );
-			update_option( Sensei_Onboarding::SUGGEST_SETUP_WIZARD_OPTION, 1 );
-		}
-
-		update_option( 'skip_install_sensei_pages', 0 );
-		update_option( 'sensei_installed', 1 );
-
-	} // End activate_sensei()
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Main::activate' );
+	}
 
 	/**
 	 * Register the plugin's version.
@@ -1475,6 +1460,17 @@ class Sensei_Main {
 	 * @since 1.9.13
 	 */
 	public function activate() {
+
+		if ( false === get_option( 'sensei_installed', false ) ) {
+			set_transient( 'sensei_activation_redirect', 1, 30 );
+
+			update_option( 'sensei_show_email_signup_form', true );
+			update_option( Sensei_Onboarding::SUGGEST_SETUP_WIZARD_OPTION, 1 );
+		}
+
+		update_option( 'skip_install_sensei_pages', 0 );
+		update_option( 'sensei_installed', 1 );
+
 		// Create the teacher role on activation and ensure that it has all the needed capabilities.
 		$this->teacher->create_role();
 
