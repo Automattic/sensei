@@ -2,6 +2,8 @@
 /**
  * Reusable Usage Tracking library. For sending plugin usage data and events to
  * Tracks.
+ *
+ * @package Sensei
  **/
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -162,7 +164,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * subclass.
 	 *
 	 * @param string $subclass the name of the subclass.
-	 * @return static 	Instance of subclass.
+	 * @return static Instance of subclass.
 	 */
 	protected static function get_instance_for_subclass( $subclass ) {
 		if ( ! isset( self::$instances[ $subclass ] ) ) {
@@ -217,7 +219,7 @@ abstract class Sensei_Usage_Tracking_Base {
 		// Use site domain as the userid to enable usage tracking at the site level.
 		// Note that we would likely want to use site domain + user ID for userid if we were
 		// to ever add event tracking at the user level.
-		$properties['_ui'] = str_replace( 'www.', '', parse_url( site_url(), PHP_URL_HOST ) );
+		$properties['_ui'] = str_replace( 'www.', '', wp_parse_url( site_url(), PHP_URL_HOST ) );
 		$properties['_ul'] = $user->user_login;
 		$properties['_en'] = $event_name;
 		$properties['_ts'] = $event_timestamp . '000';
