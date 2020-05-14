@@ -48,7 +48,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	/**
 	 * Tests that unprivileged users cannot access the Setup Wizard API.
 	 *
-	 * @covers Sensei_Setup_Wizard_API::can_user_access_rest_api
+	 * @covers Sensei_REST_API_Setup_Wizard_Controller::can_user_access_rest_api
 	 */
 	public function testTeacherUserCannotAccessSetupWizardAPI() {
 
@@ -65,7 +65,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	/**
 	 * Tests that privileged users can access the Setup Wizard API.
 	 *
-	 * @covers Sensei_Setup_Wizard_API::can_user_access_rest_api
+	 * @covers Sensei_REST_API_Setup_Wizard_Controller::can_user_access_rest_api
 	 */
 	public function testAdminUserCanAccessSetupWizardAPI() {
 
@@ -81,7 +81,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	/**
 	 * Tests welcome endpoint returning the current usage tracking setting.
 	 *
-	 * @covers Sensei_Setup_Wizard_API::get_welcome
+	 * @covers Sensei_REST_API_Setup_Wizard_Controller::get_welcome
 	 */
 	public function testGetWelcomeReturnsUsageTrackingData() {
 
@@ -99,7 +99,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	/**
 	 * Tests that submitting to welcome endpoint updates usage tracking preference.
 	 *
-	 * @covers Sensei_Setup_Wizard_API::submit_welcome
+	 * @covers Sensei_REST_API_Setup_Wizard_Controller::submit_welcome
 	 */
 	public function testSubmitWelcomeUpdatesUsageTrackingSetting() {
 
@@ -112,7 +112,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	/**
 	 * Tests that submitting to welcome endpoint creates Sensei Courses and My Courses pages.
 	 *
-	 * @covers Sensei_Setup_Wizard_API::submit_welcome
+	 * @covers Sensei_REST_API_Setup_Wizard_Controller::submit_welcome
 	 * @covers Sensei_Onboarding_Pages::create_pages
 	 */
 	public function testSubmitWelcomeCreatesSenseiPages() {
@@ -129,7 +129,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	/**
 	 * Tests that submitting to purpose endpoint saves submitted data
 	 *
-	 * @covers Sensei_Setup_Wizard_API::submit_purpose
+	 * @covers Sensei_REST_API_Setup_Wizard_Controller::submit_purpose
 	 */
 	public function testSubmitPurposeSavesData() {
 
@@ -151,7 +151,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	/**
 	 * Tests that not selecting other clears text value.
 	 *
-	 * @covers Sensei_Setup_Wizard_API::submit_purpose
+	 * @covers Sensei_REST_API_Setup_Wizard_Controller::submit_purpose
 	 */
 	public function testSubmitPurposeOtherClearedWhenNotSelected() {
 
@@ -182,7 +182,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	/**
 	 * Tests that submitting to purpose endpoint validates input against whitelist
 	 *
-	 * @covers Sensei_Setup_Wizard_API::submit_purpose
+	 * @covers Sensei_REST_API_Setup_Wizard_Controller::submit_purpose
 	 */
 	public function testSubmitPurposeValidated() {
 
@@ -204,7 +204,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	/**
 	 * Tests that purpose get endpoint returns user data
 	 *
-	 * @covers Sensei_Setup_Wizard_API::get_purpose
+	 * @covers Sensei_REST_API_Setup_Wizard_Controller::get_purpose
 	 */
 	public function testGetPurposeReturnsUserData() {
 
@@ -231,7 +231,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	/**
 	 * Tests that completed steps are empty when nothing has been submitted.
 	 *
-	 * @covers Sensei_Setup_Wizard_API::get_progress
+	 * @covers Sensei_REST_API_Setup_Wizard_Controller::get_progress
 	 */
 	public function testDefaultProgressIsEmpty() {
 		$data = $this->request( 'GET', 'progress' );
@@ -242,9 +242,9 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	 * Tests that welcome step is completed after submitting it.
 	 *
 	 * @dataProvider step_form_data
-	 * @covers       Sensei_Setup_Wizard_API::submit_welcome
-	 * @covers       Sensei_Setup_Wizard_API::submit_purpose
-	 * @covers       Sensei_Setup_Wizard_API::submit_features
+	 * @covers       Sensei_REST_API_Setup_Wizard_Controller::submit_welcome
+	 * @covers       Sensei_REST_API_Setup_Wizard_Controller::submit_purpose
+	 * @covers       Sensei_REST_API_Setup_Wizard_Controller::submit_features
 	 *
 	 * @param string $step      Step.
 	 * @param mixed  $form_data Data submitted.
@@ -272,7 +272,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	/**
 	 * Tests that submitting to features endpoint saves submitted data
 	 *
-	 * @covers Sensei_Setup_Wizard_API::submit_features
+	 * @covers Sensei_REST_API_Setup_Wizard_Controller::submit_features
 	 */
 	public function testSubmitFeaturesSavesData() {
 
@@ -293,7 +293,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	/**
 	 * Tests that submitting to features endpoint validates input against whitelist
 	 *
-	 * @covers Sensei_Setup_Wizard_API::submit_features
+	 * @covers Sensei_REST_API_Setup_Wizard_Controller::submit_features
 	 */
 	public function testSubmitFeaturesValidated() {
 

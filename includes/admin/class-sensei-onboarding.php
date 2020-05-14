@@ -72,7 +72,7 @@ class Sensei_Onboarding {
 
 		$this->page_slug = 'sensei_onboarding';
 		$this->pages     = new Sensei_Onboarding_Pages();
-		$this->api       = new Sensei_Setup_Wizard_API( $this );
+		$this->api       = new Sensei_REST_API_Setup_Wizard_Controller( $this );
 
 		add_action( 'rest_api_init', [ $this->api, 'register' ] );
 

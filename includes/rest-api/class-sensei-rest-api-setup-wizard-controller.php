@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @author  Automattic
  * @since   3.1.0
  */
-class Sensei_Setup_Wizard_API {
+class Sensei_REST_API_Setup_Wizard_Controller {
 
 	/**
 	 * Main Setup Wizard instance.
