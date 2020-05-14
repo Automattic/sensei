@@ -691,7 +691,6 @@ class Sensei_Main {
 			update_option( Sensei_Onboarding::SUGGEST_SETUP_WIZARD_OPTION, 1 );
 		}
 
-		update_option( 'skip_install_sensei_pages', 0 );
 		update_option( 'sensei_installed', 1 );
 
 	} // End activate_sensei()
