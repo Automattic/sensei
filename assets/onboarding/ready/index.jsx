@@ -79,14 +79,14 @@ export const Ready = () => {
 								title: 'Learn more',
 								content: formatString(
 									__(
-										'Visit SenseiLMS.com to learn more about {{link}}getting started.{{/link}}',
+										'Visit SenseiLMS.com to learn how to {{link}}create your first course.{{/link}}',
 										'sensei-lms'
 									),
 									{
 										link: (
 											<Link
 												className="link__color-primary"
-												href="https://senseilms.com/documentation/getting-started-with-sensei/"
+												href="https://senseilms.com/lesson/courses/"
 												target="_blank"
 												type="external"
 											/>
