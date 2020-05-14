@@ -78,6 +78,19 @@ body.sensei-color {
 			color: darken($link, 20%);
 		}
 
+		&.link__color-primary {
+			color: $primary;
+
+			&:hover,
+			&:active {
+				color: lighten($primary, 20%);
+			}
+
+			&:focus {
+				color: darken($primary, 20%);
+			}
+		}
+
 	}
 
 	.components-checkbox-control__input[type='checkbox'] {
@@ -100,7 +113,11 @@ body.sensei-color {
 		transform: scale(0.75);
 	}
 
-	input[type='text'] {
+	.components-text-control__input {
+		padding: 6px 8px;
+	}
+
+	input[type='text'], input[type='email'] {
 		&:focus {
 			border-color: $primary;
 			box-shadow: 0 0 0 1px $primary;

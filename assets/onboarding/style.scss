@@ -91,6 +91,10 @@
 			font-size: 14px;
 			line-height: 1.65;
 		}
+		h4 {
+			font-size: 1.2em;
+			margin: 0.8em 0;
+		}
 	}
 
 	&__usage-modal {
@@ -139,6 +143,29 @@
 			.components-text-control__input {
 				padding: 8px 12px;
 			}
+		}
+	}
+
+	&__item-list {
+		.woocommerce-list__item-title {
+			font-weight: 500;
+		}
+		.woocommerce-list__item-inner {
+			padding-left: 0;
+			padding-right: 0;
+		}
+		.woocommerce-list__item-after {
+
+			.components-button {
+				width: 150px;
+				margin-left: 10px;
+				justify-content: center;
+			}
+		}
+	}
+	&__mailinglist-signup-form {
+		.woocommerce-list__item-inner {
+			padding: 0;
 		}
 	}
 }
