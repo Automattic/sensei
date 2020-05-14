@@ -45,7 +45,11 @@ export const MailingListSignupForm = () => {
 							/>
 						),
 						after: (
-							<Button isPrimary type="submit">
+							<Button
+								className="sensei-onboarding__button"
+								isPrimary
+								type="submit"
+							>
 								{ __( 'Yes, please!', 'sensei-lms' ) }
 							</Button>
 						),

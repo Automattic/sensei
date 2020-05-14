@@ -40,12 +40,11 @@
 
 	&__button.components-button {
 		display: flex;
-		margin: 8px auto 0;
 
 		max-width: 100%;
 		justify-content: center;
 
-		height: 48px;
+		height: 42px;
 		padding-left: 25px;
 		padding-right: 25px;
 		text-align: center;
@@ -56,10 +55,12 @@
 	}
 
 	&__button-card.components-button {
+		margin: 8px auto 0;
 		width: 310px;
 	}
 
 	&__button-modal.components-button {
+		margin-left: auto;
 		margin-right: 0;
 	}
 
@@ -91,9 +92,11 @@
 			font-size: 14px;
 			line-height: 1.65;
 		}
+
 		h4 {
 			font-size: 1.2em;
 			margin: 0.8em 0;
+			color: $text_primary;
 		}
 	}
 
@@ -136,6 +139,7 @@
 			}
 
 		}
+
 		.sensei-onboarding__textcontrol-other {
 			margin-left: 40px;
 			margin-right: 20px;
@@ -150,22 +154,39 @@
 		.woocommerce-list__item-title {
 			font-weight: 500;
 		}
+
 		.woocommerce-list__item-inner {
 			padding-left: 0;
 			padding-right: 0;
 		}
+
+		.woocommerce-list__item-content {
+			margin-top: 0;
+		}
+
 		.woocommerce-list__item-after {
 
 			.components-button {
-				width: 150px;
+				width: 160px;
 				margin-left: 10px;
 				justify-content: center;
 			}
 		}
 	}
+
 	&__mailinglist-signup-form {
+		.woocommerce-list__item-text {
+			flex: 1;
+		}
+		.components-base-control__field {
+			margin-bottom: 0;
+		}
+
 		.woocommerce-list__item-inner {
 			padding: 0;
 		}
+	}
+	&__mailinglist-signup {
+		margin-bottom: 40px;
 	}
 }

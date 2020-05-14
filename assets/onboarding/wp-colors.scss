@@ -79,15 +79,15 @@ body.sensei-color {
 		}
 
 		&.link__color-primary {
-			color: $primary;
+			color: $link-primary;
 
 			&:hover,
 			&:active {
-				color: lighten($primary, 20%);
+				color: lighten($link-primary, 20%);
 			}
 
 			&:focus {
-				color: darken($primary, 20%);
+				color: darken($link-primary, 20%);
 			}
 		}
 

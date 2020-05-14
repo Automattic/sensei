@@ -46,6 +46,7 @@ export const Ready = () => {
 								content: `You're ready to create online courses.`,
 								after: (
 									<Button
+										className="sensei-onboarding__button"
 										isPrimary
 										href="edit.php?post_type=course"
 									>
