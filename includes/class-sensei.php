@@ -159,6 +159,12 @@ class Sensei_Main {
 	public $rest_api;
 
 	/**
+	 * Internal REST API.
+	 * @var Sensei_REST_API_Internal
+	 */
+	public $rest_api_internal;
+
+	/**
 	 * Global Usage Tracking object.
 	 *
 	 * @var Sensei_Usage_Tracking
@@ -439,6 +445,8 @@ class Sensei_Main {
 		$this->Sensei_WPML = new Sensei_WPML();
 
 		$this->rest_api = new Sensei_REST_API_V1();
+
+		$this->rest_api_internal = new Sensei_REST_API_Internal();
 	}
 
 	/**
