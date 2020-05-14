@@ -1,9 +1,9 @@
+import { useSelect, useDispatch } from '@wordpress/data';
 import { Card, H, Link } from '@woocommerce/components';
 import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { UsageModal } from './usage-modal';
-import { useOnboardingApi } from '../use-onboarding-api';
 import { useQueryStringRouter } from '../query-string-router';
 
 /**
@@ -14,10 +14,24 @@ export const Welcome = () => {
 
 	const { goTo } = useQueryStringRouter();
 
-	const { data, submit, isBusy } = useOnboardingApi( 'welcome' );
+	const { usageTracking, isFetching, isSubmitting } = useSelect(
+		( select ) => ( {
+			usageTracking: select( 'sensei-setup-wizard' ).getUsageTracking(),
+			isFetching: select(
+				'sensei-setup-wizard'
+			).isFetchingUsageTracking(),
+			isSubmitting: select(
+				'sensei-setup-wizard'
+			).isSubmittingUsageTracking(),
+		} ),
+		[]
+	);
+	const { submitUsageTracking } = useDispatch( 'sensei-setup-wizard' );
+
+	const isBusy = isFetching || isSubmitting;
 
 	async function submitPage( allowUsageTracking ) {
-		await submit( { usage_tracking: allowUsageTracking } );
+		await submitUsageTracking( allowUsageTracking );
 		toggleUsageModal( false );
 		goTo( 'purpose' );
 	}
@@ -52,7 +66,7 @@ export const Welcome = () => {
 			</div>
 			{ usageModalActive && (
 				<UsageModal
-					tracking={ data.usage_tracking }
+					tracking={ usageTracking }
 					isSubmitting={ isBusy }
 					onClose={ () => toggleUsageModal( false ) }
 					onContinue={ submitPage }
