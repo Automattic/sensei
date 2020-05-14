@@ -12,14 +12,13 @@ export const formattingComponents = {
 	del: <del />,
 };
 
-
 /**
  * Interpolate components and create a node from the given template string.
  *
  * @example formatString(' Welcome to {{strong}}Sensei{{/strong}}!')
  *
  * @param {string} mixedString Template string.
- * @param {object} components Replacements.
+ * @param {Object} components Replacements.
  */
 export const formatString = ( mixedString, components = {} ) =>
 	interpolateComponents( {

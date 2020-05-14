@@ -4,9 +4,10 @@ import { __ } from '@wordpress/i18n';
 import { useOnboardingApi } from '../use-onboarding-api.js';
 
 /**
+ * Sign up to Sensei Mailing list.
  *
- * @returns {*}
- * @constructor
+ * Submits form to mailing list provider signup page in new tab.
+ * Fills in site administrator e-mail address.
  */
 export const MailingListSignupForm = () => {
 	const { data, isBusy } = useOnboardingApi( 'ready' );
