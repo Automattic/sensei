@@ -59,96 +59,12 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Register the REST API endpoints for Setup Wizard.
 	 */
-		$common = [
-			'endpoint' => [
-				'permission_callback' => [ $this, 'can_user_access_rest_api' ],
-			],
-			'arg'      => [
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-		];
 	public function register_routes() {
 
-		$progress_endpoint = [
-			[
-				'methods'  => WP_REST_Server::READABLE,
-				'callback' => [ $this, 'get_progress' ],
-			],
-		];
-
-		$welcome_endpoint = [
-			[
-				'methods'  => WP_REST_Server::READABLE,
-				'callback' => [ $this, 'get_welcome' ],
-			],
-			[
-				'methods'  => WP_REST_Server::EDITABLE,
-				'callback' => [ $this, 'submit_welcome' ],
-				'args'     => [
-					'usage_tracking' => [
-						'required' => true,
-						'type'     => 'boolean',
-					],
-				],
-			],
-		];
-
-		$purpose_endpoint = [
-			[
-				'methods'  => WP_REST_Server::READABLE,
-				'callback' => [ $this, 'get_purpose' ],
-			],
-			[
-				'methods'  => WP_REST_Server::EDITABLE,
-				'callback' => [ $this, 'submit_purpose' ],
-				'args'     => [
-					'selected' => [
-						'required' => true,
-						'type'     => 'array',
-						'items'    => [
-							'type' => 'string',
-							'enum' => self::PURPOSES,
-						],
-					],
-					'other'    => [
-						'required' => true,
-						'type'     => 'string',
-					],
-				],
-			],
-		];
-
-		$features_endpoint = [
-			[
-				'methods'  => WP_REST_Server::READABLE,
-				'callback' => [ $this, 'get_features' ],
-			],
-			[
-				'methods'  => WP_REST_Server::EDITABLE,
-				'callback' => [ $this, 'submit_features' ],
-				'args'     => [
-					'selected' => [
-						'required' => true,
-						'type'     => 'array',
-						'items'    => [
-							'type' => 'string',
-							'enum' => $this->setupwizard->plugin_slugs,
-						],
-					],
-				],
-			],
-		];
-
-		Sensei_REST_API_Helper::register_endpoints(
-			'sensei-internal/v1',
-			[
-				'setup-wizard/progress' => $progress_endpoint,
-				'setup-wizard/welcome'  => $welcome_endpoint,
-				'setup-wizard/purpose'  => $purpose_endpoint,
-				'setup-wizard/features' => $features_endpoint,
-			],
-			$common
-		);
+		$this->register_progress_route();
+		$this->register_welcome_route();
+		$this->register_purpose_route();
+		$this->register_features_route();
 	}
 
 	/**
@@ -158,6 +74,123 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 */
 	public function can_user_access_rest_api() {
 		return current_user_can( 'manage_sensei' );
+	}
+
+	/**
+	 * Register /welcome endpoint.
+	 */
+	public function register_welcome_route() {
+		register_rest_route(
+			$this->namespace,
+			$this->rest_base . '/welcome',
+			[
+				[
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => [ $this, 'get_welcome' ],
+					'permission_callback' => [ $this, 'can_user_access_rest_api' ],
+				],
+				[
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => [ $this, 'submit_welcome' ],
+					'permission_callback' => [ $this, 'can_user_access_rest_api' ],
+					'args'                => [
+						'usage_tracking' => [
+							'required' => true,
+							'type'     => 'boolean',
+						],
+					],
+				],
+				'schema' => [ $this, 'welcome_schema' ],
+			]
+		);
+	}
+
+	/**
+	 * Register /purpose endpoint.
+	 */
+	public function register_purpose_route() {
+		register_rest_route(
+			$this->namespace,
+			$this->rest_base . '/purpose',
+			[
+				[
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => [ $this, 'get_purpose' ],
+					'permission_callback' => [ $this, 'can_user_access_rest_api' ],
+				],
+				[
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => [ $this, 'submit_purpose' ],
+					'permission_callback' => [ $this, 'can_user_access_rest_api' ],
+					'args'                => [
+						'selected' => [
+							'required' => true,
+							'type'     => 'array',
+							'items'    => [
+								'type' => 'string',
+								'enum' => self::PURPOSES,
+							],
+						],
+						'other'    => [
+							'required' => true,
+							'type'     => 'string',
+						],
+					],
+				],
+				'schema' => [ $this, 'purpose_schema' ],
+			]
+		);
+	}
+
+	/**
+	 * Register /features endpoint.
+	 */
+	public function register_features_route() {
+		register_rest_route(
+			$this->namespace,
+			$this->rest_base . '/features',
+			[
+				[
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => [ $this, 'get_features' ],
+					'permission_callback' => [ $this, 'can_user_access_rest_api' ],
+				],
+				[
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => [ $this, 'submit_features' ],
+					'permission_callback' => [ $this, 'can_user_access_rest_api' ],
+					'args'                => [
+						'selected' => [
+							'required' => true,
+							'type'     => 'array',
+							'items'    => [
+								'type' => 'string',
+								'enum' => $this->setupwizard->plugin_slugs,
+							],
+						],
+					],
+				],
+				'schema' => [ $this, 'features_schema' ],
+			]
+		);
+	}
+
+	/**
+	 * Register /progress endpoint.
+	 */
+	public function register_progress_route() {
+		register_rest_route(
+			$this->namespace,
+			$this->rest_base . '/progress',
+			[
+				[
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => [ $this, 'get_progress' ],
+					'permission_callback' => [ $this, 'can_user_access_rest_api' ],
+				],
+				'schema' => [ $this, 'progress_schema' ],
+			]
+		);
 	}
 
 	/**
@@ -187,9 +220,27 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	}
 
 	/**
-	 * Welcome step data.
+	 * Schema for Progress endpoint.
 	 *
-	 * @return array Data used on purpose step.
+	 * @return array Schema object.
+	 */
+	public function progress_schema() {
+		return [
+			'type'       => 'object',
+			'properties' => [
+				'steps' => [
+					'description' => 'Completed steps.',
+					'type'        => 'array',
+					'readonly'    => true,
+				],
+			],
+		];
+	}
+
+	/**
+	 * Schema for Welcome endpoint.
+	 *
+	 * @return array Schema object.
 	 */
 	public function get_welcome() {
 		return [
@@ -211,6 +262,23 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 		$this->setupwizard->pages->create_pages();
 
 		return true;
+	}
+
+	/**
+	 * Schema for Welcome endpoint.
+	 *
+	 * @return array Schema object.
+	 */
+	public function welcome_schema() {
+		return [
+			'type'       => 'object',
+			'properties' => [
+				'usage_tracking' => [
+					'description' => 'Usage tracking preference given by the site owner.',
+					'type'        => 'boolean',
+				],
+			],
+		];
 	}
 
 	/**
@@ -248,6 +316,26 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 		);
 	}
 
+	/**
+	 * Schema for Purpose endpoint.
+	 *
+	 * @return array Schema object.
+	 */
+	public function purpose_schema() {
+		return [
+			'type'       => 'object',
+			'properties' => [
+				'selected' => [
+					'description' => 'Purposes selected by the site owner.',
+					'type'        => 'array',
+				],
+				'other'    => [
+					'description' => 'Other free-text purpose.',
+					'type'        => 'string',
+				],
+			],
+		];
+	}
 
 	/**
 	 * Feature step data.
@@ -282,5 +370,24 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 		);
 	}
 
-
+	/**
+	 * Schema for Features endpoint.
+	 *
+	 * @return array Schema object.
+	 */
+	public function features_schema() {
+		return [
+			'type'       => 'object',
+			'properties' => [
+				'selected' => [
+					'description' => 'Slugs of plugins selected by the site owner.',
+					'type'        => 'array',
+				],
+				'plugins'  => [
+					'description' => 'Slugs of selectable plugins.',
+					'type'        => 'array',
+				],
+			],
+		];
+	}
 }
