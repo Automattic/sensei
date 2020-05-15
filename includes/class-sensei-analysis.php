@@ -41,6 +41,12 @@ class Sensei_Analysis {
 
 			add_filter( 'user_search_columns', array( $this, 'user_search_columns_filter' ), 10, 3 );
 		} // End If Statement
+
+		// Log events: page views for analysis section.
+		if ( isset( $_GET['page'] ) && $this->page_slug === $_GET['page'] && is_admin() ) { // phpcs:ignore WordPress.Security.NonceVerification
+			$this->analysis_log_page_views();
+		}
+
 	} // End __construct()
 
 
@@ -702,6 +708,38 @@ class Sensei_Analysis {
 		// Alter $search_columns to include the fields you want to search on
 		array_push( $search_columns, 'display_name' );
 		return $search_columns;
+	}
+
+	/**
+	 * Logs analysis section page views.
+	 *
+	 * @since 3.0.2
+	 */
+	public function analysis_log_page_views() {
+
+		$view      = isset( $_GET['view'] ) ? sanitize_text_field( wp_unslash( $_GET['view'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+		$course_id = isset( $_GET['course_id'] ) ? sanitize_text_field( wp_unslash( $_GET['course_id'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+		$lesson_id = isset( $_GET['lesson_id'] ) ? sanitize_text_field( wp_unslash( $_GET['lesson_id'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+		$user_id   = isset( $_GET['user_id'] ) ? sanitize_text_field( wp_unslash( $_GET['user_id'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+
+		// Handle default view case. Analysis (Learners) case.
+		if ( '' === $view && '' === $course_id && '' === $lesson_id && '' === $user_id ) {
+			$view = 'users';
+		}
+
+		// Handle Analysis > Course Name (Lessons) case.
+		if ( '' === $view && '' !== $course_id && '' === $lesson_id && '' === $user_id ) {
+			$view = 'lesson';
+		}
+
+		$event_properties = array(
+			'view'      => $view,
+			'course_id' => $course_id,
+			'lesson_id' => $lesson_id,
+			'user_id'   => $user_id,
+		);
+		sensei_log_event( 'analysis_view', $event_properties );
+
 	}
 
 } // End Class
