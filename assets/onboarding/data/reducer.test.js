@@ -63,11 +63,17 @@ describe( 'Setup wizard reducer', () => {
 
 	it( 'Should set error on ERROR_SUBMIT_SETUP_WIZARD_DATA action', () => {
 		const error = { msg: 'Error' };
-		const state = reducer( undefined, {
-			type: ERROR_SUBMIT_SETUP_WIZARD_DATA,
-			error,
-		} );
+		const state = reducer(
+			{
+				isSubmitting: true,
+			},
+			{
+				type: ERROR_SUBMIT_SETUP_WIZARD_DATA,
+				error,
+			}
+		);
 
+		expect( state.isSubmitting ).toBeFalsy();
 		expect( state.error ).toEqual( error );
 	} );
 

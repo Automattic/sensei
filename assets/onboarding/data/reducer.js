@@ -61,6 +61,7 @@ export default ( state = DEFAULT_STATE, action ) => {
 		case ERROR_SUBMIT_SETUP_WIZARD_DATA:
 			return {
 				...state,
+				isSubmitting: false,
 				error: action.error,
 			};
 
