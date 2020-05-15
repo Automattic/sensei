@@ -248,28 +248,16 @@ class Sensei_Main {
 
 		$this->initialize_global_objects();
 
-		$this->maybe_init_email_signup_modal();
-	}
-
-	/**
-	 * Load the email signup modal if we haven't already.
-	 */
-	private function maybe_init_email_signup_modal() {
-		add_action( 'admin_init', array( $this, 'load_email_signup_modal' ) );
 	}
 
 	/**
 	 * Load the email signup modal form.
 	 *
-	 * @access private
+	 * @deprecated 3.1.0 - The modal was removed.
+	 * @access     private
 	 */
 	public function load_email_signup_modal() {
-		if ( ! get_option( 'sensei_show_email_signup_form', false ) ) {
-			return;
-		}
-
-		Sensei_Email_Signup_Form::instance()->init();
-		update_option( 'sensei_show_email_signup_form', false );
+		_deprecated_function( __METHOD__, '3.1.0' );
 	}
 
 	/**
@@ -687,7 +675,6 @@ class Sensei_Main {
 		if ( false === get_option( 'sensei_installed', false ) ) {
 			set_transient( 'sensei_activation_redirect', 1, 30 );
 
-			update_option( 'sensei_show_email_signup_form', true );
 			update_option( Sensei_Onboarding::SUGGEST_SETUP_WIZARD_OPTION, 1 );
 		}
 
