@@ -22,7 +22,7 @@ export const Ready = () => {
 				<Section className="sensei-onboarding__mailinglist-signup">
 					<H>
 						{ __(
-							`Join Sensei LMS's Mailing List!`,
+							`Join our mailing list`,
 							'sensei-lms'
 						) }
 					</H>
