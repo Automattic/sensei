@@ -721,6 +721,12 @@ class Sensei_Grading {
 
 		}
 
+		// Log event: when a quiz is graded.
+		$event_properties = array(
+			'question_count' => $count,
+		);
+		sensei_log_event( 'grading_quiz_grade', $event_properties );
+
 		wp_safe_redirect( esc_url_raw( $load_url ) );
 		exit;
 
