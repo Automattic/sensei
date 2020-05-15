@@ -30,7 +30,7 @@ export const fetchFromAPI = ( request ) => ( {
  * Fetch setup wizard data action creator.
  */
 export function* fetchSetupWizardData() {
-	yield { type: START_FETCH_SETUP_WIZARD_DATA };
+	yield startFetchSetupWizardData();
 
 	// TODO: Refactory to get a single endpoint with all data.
 	const data = yield fetchFromAPI( {
@@ -42,6 +42,15 @@ export function* fetchSetupWizardData() {
 		},
 	} );
 }
+
+/**
+ * Start fetch setup wizard data action creator.
+ *
+ * @return {{type: string}} Start fetch action.
+ */
+export const startFetchSetupWizardData = () => ( {
+	type: START_FETCH_SETUP_WIZARD_DATA,
+} );
 
 /**
  * @typedef  {Object} SetSetupWizardDataAction

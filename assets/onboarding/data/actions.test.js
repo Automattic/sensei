@@ -11,6 +11,7 @@ import {
 import {
 	fetchFromAPI,
 	fetchSetupWizardData,
+	startFetchSetupWizardData,
 	setSetupWizardData,
 	startSubmit,
 	successSubmit,
@@ -57,6 +58,14 @@ describe( 'Setup wizard actions', () => {
 		expect( gen.next( welcomeObject ).value ).toEqual(
 			expectedSetDataAction
 		);
+	} );
+
+	it( 'Should return the set start fetch setup wizard data action', () => {
+		const expectedAction = {
+			type: START_FETCH_SETUP_WIZARD_DATA,
+		};
+
+		expect( startFetchSetupWizardData() ).toEqual( expectedAction );
 	} );
 
 	it( 'Should return the set setup wizard data action', () => {
