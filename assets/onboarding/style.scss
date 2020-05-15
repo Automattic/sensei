@@ -162,6 +162,17 @@
 
 			position: relative;
 
+			&.installed-status {
+				.components-checkbox-control__label,
+				.components-base-control__help {
+					color: $gray-10;
+				}
+
+				.sensei-onboarding__learn-more {
+					color: lighten($primary, 30%);
+				}
+			}
+
 			.components-checkbox-control__label {
 				color: $text_primary;
 				font-size: 16px;

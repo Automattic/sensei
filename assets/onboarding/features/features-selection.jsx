@@ -1,6 +1,7 @@
 import { Button, CheckboxControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
+import { INSTALLED_STATUS } from './feature-status';
 import FeatureDescription from './feature-description';
 
 /**
@@ -9,6 +10,7 @@ import FeatureDescription from './feature-description';
  * @property {string} title           Feature title.
  * @property {string} description     Feature description.
  * @property {string} [learnMoreLink] Feature description.
+ * @property {string} [status]        Feature status.
  */
 /**
  * Features confirmation modal.
@@ -37,7 +39,7 @@ const FeaturesSelection = ( {
 		<>
 			<div className="sensei-onboarding__checkbox-list">
 				{ features.map(
-					( { id, title, description, learnMoreLink } ) => (
+					( { id, title, description, learnMoreLink, status } ) => (
 						<CheckboxControl
 							key={ id }
 							label={ title }
@@ -48,8 +50,16 @@ const FeaturesSelection = ( {
 								/>
 							}
 							onChange={ toggleItem( id ) }
-							checked={ selectedIds.includes( id ) }
-							className="sensei-onboarding__checkbox"
+							checked={
+								selectedIds.includes( id ) ||
+								status === INSTALLED_STATUS
+							}
+							disabled={ status === INSTALLED_STATUS }
+							className={ `sensei-onboarding__checkbox ${
+								status === INSTALLED_STATUS
+									? 'installed-status'
+									: ''
+							}` }
 						/>
 					)
 				) }
