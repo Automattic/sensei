@@ -141,6 +141,13 @@ jQuery(document).ready( function( $ ) {
 		jQuery( '.question_box' ).removeClass( 'user_wrong' ).removeClass( 'user_right' ).removeClass( 'ungraded' );
 		jQuery( '.question-grade' ).val( '0' );
 		jQuery.fn.calculateTotalGrade();
+
+		// Log event: when quiz grades are reset.
+		var event_properties = {
+		  question_count : jQuery( '.question_box' ).length
+    };
+		sensei_log_event( 'grading_quiz_reset', event_properties );
+
 	};
 
 	jQuery.fn.getQueryVariable = function(variable) {
