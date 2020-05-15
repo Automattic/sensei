@@ -92,6 +92,12 @@ class Sensei_Learner_Management {
 			add_action( 'wp_ajax_reset_user_post', array( $this, 'reset_user_post' ) );
 			add_action( 'wp_ajax_sensei_json_search_users', array( $this, 'json_search_users' ) );
 		}
+
+		// Log events: page views for learner management section.
+		if ( isset( $_GET['page'] ) && $this->page_slug === $_GET['page'] && is_admin() ) { // phpcs:ignore WordPress.Security.NonceVerification
+			$this->learner_management_log_page_views();
+		}
+
 	} // End __construct()
 
 	/**
@@ -837,6 +843,30 @@ class Sensei_Learner_Management {
 	 */
 	public function get_name() {
 		return $this->name;
+	}
+
+	/**
+	 * Logs learner management section page views.
+	 *
+	 * @since 3.0.2
+	 */
+	public function learner_management_log_page_views() {
+
+		$view               = isset( $_GET['view'] ) ? sanitize_text_field( wp_unslash( $_GET['view'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+		$course_id          = isset( $_GET['course_id'] ) ? sanitize_text_field( wp_unslash( $_GET['course_id'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+		$lesson_id          = isset( $_GET['lesson_id'] ) ? sanitize_text_field( wp_unslash( $_GET['lesson_id'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+		$course_category_id = isset( $_GET['course_cat'] ) ? sanitize_text_field( wp_unslash( $_GET['course_cat'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+
+		// Filter out bulk actions screens inside learner management.
+		if ( 'sensei_learner_admin' !== $view ) {
+			$event_properties = array(
+				'view'               => $view,
+				'course_category_id' => $course_category_id,
+				'course_id'          => $course_id,
+				'lesson_id'          => $lesson_id,
+			);
+			sensei_log_event( 'learner_management_view', $event_properties );
+		}
 	}
 
 } // End Class
