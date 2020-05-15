@@ -354,8 +354,8 @@ class Sensei_Onboarding {
 				'GET'  => [ $this, 'api_welcome_get' ],
 				'POST' => [ $this, 'api_welcome_submit' ],
 			],
-			'ready' => [
-				'GET'  => [ $this, 'api_ready_get' ],
+			'ready'   => [
+				'GET' => [ $this, 'api_ready_get' ],
 			],
 		];
 
