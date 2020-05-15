@@ -1,21 +1,26 @@
 import {
 	API_BASE_PATH,
 	FETCH_FROM_API,
-	FETCH_USAGE_TRACKING,
-	SUBMIT_USAGE_TRACKING,
-	ERROR_USAGE_TRACKING,
-	SET_USAGE_TRACKING,
+	START_FETCH_SETUP_WIZARD_DATA,
+	SET_SETUP_WIZARD_DATA,
+	START_SUBMIT_SETUP_WIZARD_DATA,
+	SUCCESS_SUBMIT_SETUP_WIZARD_DATA,
+	ERROR_SUBMIT_SETUP_WIZARD_DATA,
+	SET_WELCOME_STEP_DATA,
 } from './constants';
 import {
 	fetchFromAPI,
-	fetchUsageTracking,
-	submitUsageTracking,
-	errorUsageTracking,
-	setUsageTracking,
+	fetchSetupWizardData,
+	setSetupWizardData,
+	startSubmit,
+	successSubmit,
+	errorSubmit,
+	submitWelcomeStep,
+	setWelcomeStepData,
 } from './actions';
 
 describe( 'Setup wizard actions', () => {
-	it( 'Fetch from API action', () => {
+	it( 'Should return the fetch from API action', () => {
 		const requestObject = { path: '/test' };
 		const expectedAction = {
 			type: FETCH_FROM_API,
@@ -25,59 +30,129 @@ describe( 'Setup wizard actions', () => {
 		expect( fetchFromAPI( requestObject ) ).toEqual( expectedAction );
 	} );
 
-	it( 'Fetch usage tracking action', () => {
-		const expectedAction = {
-			type: FETCH_USAGE_TRACKING,
+	it( 'Should generate the fetch setup wizard data action', () => {
+		const gen = fetchSetupWizardData();
+
+		// Start fetch action.
+		const expectedStartFetchAction = {
+			type: START_FETCH_SETUP_WIZARD_DATA,
 		};
+		expect( gen.next().value ).toEqual( expectedStartFetchAction );
 
-		expect( fetchUsageTracking() ).toEqual( expectedAction );
-	} );
-
-	it( 'Submit usage tracking action', () => {
-		const gen = submitUsageTracking( true );
-
-		// Start submit.
-		const expectedSubmitAction = { type: SUBMIT_USAGE_TRACKING };
-		expect( gen.next().value ).toEqual( expectedSubmitAction );
-
-		// Call fetch action to POST.
+		// Fetch action.
 		const expectedFetchAction = {
 			type: FETCH_FROM_API,
 			request: {
 				path: API_BASE_PATH + 'welcome',
-				method: 'POST',
-				data: { usage_tracking: true },
 			},
 		};
 		expect( gen.next().value ).toEqual( expectedFetchAction );
 
-		// Set usage tracking.
-		const expectedSetAction = {
-			type: SET_USAGE_TRACKING,
-			usageTracking: true,
+		// Set data action.
+		const welcomeObject = { x: 1 };
+		const expectedSetDataAction = {
+			type: SET_SETUP_WIZARD_DATA,
+			data: { welcome: welcomeObject },
 		};
-		expect( gen.next().value ).toEqual( expectedSetAction );
-
-		// Generator is done.
-		expect( gen.next().done ).toBeTruthy();
+		expect( gen.next( welcomeObject ).value ).toEqual(
+			expectedSetDataAction
+		);
 	} );
 
-	it( 'Error usage tracking action', () => {
-		const error = { err: 'Error message' };
+	it( 'Should return the set setup wizard data action', () => {
+		const data = { x: 1 };
 		const expectedAction = {
-			type: ERROR_USAGE_TRACKING,
+			type: SET_SETUP_WIZARD_DATA,
+			data,
+		};
+
+		expect( setSetupWizardData( data ) ).toEqual( expectedAction );
+	} );
+
+	it( 'Should return the start submit action', () => {
+		const expectedAction = { type: START_SUBMIT_SETUP_WIZARD_DATA };
+
+		expect( startSubmit() ).toEqual( expectedAction );
+	} );
+
+	it( 'Should return the success submit action', () => {
+		const expectedAction = { type: SUCCESS_SUBMIT_SETUP_WIZARD_DATA };
+
+		expect( successSubmit() ).toEqual( expectedAction );
+	} );
+
+	it( 'Should return the error submit action', () => {
+		const error = { err: 'Error' };
+		const expectedAction = {
+			type: ERROR_SUBMIT_SETUP_WIZARD_DATA,
 			error,
 		};
 
-		expect( errorUsageTracking( error ) ).toEqual( expectedAction );
+		expect( errorSubmit( error ) ).toEqual( expectedAction );
 	} );
 
-	it( 'Set usage tracking action', () => {
+	it( 'Should generate the submit welcome step action', () => {
+		const usageTracking = true;
+		const gen = submitWelcomeStep( usageTracking );
+
+		// Start submit action.
+		const expectedStartSubmitAction = {
+			type: START_SUBMIT_SETUP_WIZARD_DATA,
+		};
+		expect( gen.next().value ).toEqual( expectedStartSubmitAction );
+
+		// Submit action.
+		const expectedSubmitAction = {
+			type: FETCH_FROM_API,
+			request: {
+				path: API_BASE_PATH + 'welcome',
+				method: 'POST',
+				data: {
+					usage_tracking: usageTracking,
+				},
+			},
+		};
+		expect( gen.next().value ).toEqual( expectedSubmitAction );
+
+		// Success action.
+		const expectedSuccessAction = {
+			type: SUCCESS_SUBMIT_SETUP_WIZARD_DATA,
+		};
+		expect( gen.next().value ).toEqual( expectedSuccessAction );
+
+		// Set data action.
+		const expectedSetDataAction = {
+			type: SET_WELCOME_STEP_DATA,
+			data: { usage_tracking: usageTracking },
+		};
+		expect( gen.next().value ).toEqual( expectedSetDataAction );
+	} );
+
+	it( 'Should catch error on the submit welcome step action', () => {
+		const gen = submitWelcomeStep( true );
+
+		// Start submit action.
+		gen.next();
+
+		// Fetch action.
+		gen.next();
+
+		// Error action.
+		const error = { msg: 'Error' };
+		const expectedErrorAction = {
+			type: ERROR_SUBMIT_SETUP_WIZARD_DATA,
+			error,
+		};
+		expect( gen.throw( error ).value ).toEqual( expectedErrorAction );
+	} );
+
+	it( 'Should return the set welcome step data action', () => {
+		const data = { usage_tracking: true };
 		const expectedAction = {
-			type: SET_USAGE_TRACKING,
-			usageTracking: true,
+			type: SET_WELCOME_STEP_DATA,
+			data,
 		};
 
-		expect( setUsageTracking( true ) ).toEqual( expectedAction );
+		expect( setWelcomeStepData( data ) ).toEqual( expectedAction );
 	} );
 } );

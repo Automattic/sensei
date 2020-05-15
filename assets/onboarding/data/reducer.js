@@ -1,17 +1,19 @@
 import {
-	FETCH_USAGE_TRACKING,
-	SUBMIT_USAGE_TRACKING,
-	ERROR_USAGE_TRACKING,
-	SET_USAGE_TRACKING,
+	START_FETCH_SETUP_WIZARD_DATA,
+	SET_SETUP_WIZARD_DATA,
+	START_SUBMIT_SETUP_WIZARD_DATA,
+	SUCCESS_SUBMIT_SETUP_WIZARD_DATA,
+	ERROR_SUBMIT_SETUP_WIZARD_DATA,
+	SET_WELCOME_STEP_DATA,
 } from './constants';
 
 const DEFAULT_STATE = {
-	welcome: {
-		isFetching: false,
-		isSubmitting: false,
-		error: false,
-		data: {
-			usageTracking: false,
+	isFetching: false,
+	isSubmitting: false,
+	error: false,
+	data: {
+		welcome: {
+			usage_tracking: false,
 		},
 	},
 };
@@ -26,46 +28,50 @@ const DEFAULT_STATE = {
  */
 export default ( state = DEFAULT_STATE, action ) => {
 	switch ( action.type ) {
-		case FETCH_USAGE_TRACKING:
+		case START_FETCH_SETUP_WIZARD_DATA:
 			return {
 				...state,
-				welcome: {
-					...state.welcome,
-					isFetching: true,
+				isFetching: true,
+			};
+
+		case SET_SETUP_WIZARD_DATA:
+			return {
+				...state,
+				isFetching: false,
+				isSubmitting: false,
+				error: false,
+				data: {
+					...state.data,
+					...action.data,
 				},
 			};
 
-		case SUBMIT_USAGE_TRACKING:
+		case START_SUBMIT_SETUP_WIZARD_DATA:
 			return {
 				...state,
-				welcome: {
-					...state.welcome,
-					isSubmitting: true,
-				},
+				isSubmitting: true,
 			};
 
-		case ERROR_USAGE_TRACKING:
+		case SUCCESS_SUBMIT_SETUP_WIZARD_DATA:
 			return {
 				...state,
-				welcome: {
-					...state.welcome,
-					isFetching: false,
-					isSubmitting: false,
-					error: action.error,
-				},
+				isSubmitting: false,
 			};
 
-		case SET_USAGE_TRACKING:
+		case ERROR_SUBMIT_SETUP_WIZARD_DATA:
 			return {
 				...state,
-				welcome: {
-					...state.welcome,
-					isFetching: false,
-					isSubmitting: false,
-					error: false,
-					data: {
-						...state.welcome.data,
-						usageTracking: action.usageTracking,
+				error: action.error,
+			};
+
+		case SET_WELCOME_STEP_DATA:
+			return {
+				...state,
+				data: {
+					...state.data,
+					welcome: {
+						...state.data.welcome,
+						...action.data,
 					},
 				},
 			};

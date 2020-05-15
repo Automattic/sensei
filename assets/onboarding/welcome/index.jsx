@@ -14,24 +14,17 @@ export const Welcome = () => {
 
 	const { goTo } = useQueryStringRouter();
 
-	const { usageTracking, isFetching, isSubmitting } = useSelect(
+	const { usageTracking, isSubmitting } = useSelect(
 		( select ) => ( {
 			usageTracking: select( 'sensei-setup-wizard' ).getUsageTracking(),
-			isFetching: select(
-				'sensei-setup-wizard'
-			).isFetchingUsageTracking(),
-			isSubmitting: select(
-				'sensei-setup-wizard'
-			).isSubmittingUsageTracking(),
+			isSubmitting: select( 'sensei-setup-wizard' ).isSubmitting(),
 		} ),
 		[]
 	);
-	const { submitUsageTracking } = useDispatch( 'sensei-setup-wizard' );
-
-	const isBusy = isFetching || isSubmitting;
+	const { submitWelcomeStep } = useDispatch( 'sensei-setup-wizard' );
 
 	const submitPage = async ( allowUsageTracking ) => {
-		await submitUsageTracking( allowUsageTracking );
+		await submitWelcomeStep( allowUsageTracking );
 		toggleUsageModal( false );
 		goTo( 'purpose' );
 	};
@@ -67,7 +60,7 @@ export const Welcome = () => {
 			{ usageModalActive && (
 				<UsageModal
 					tracking={ usageTracking }
-					isSubmitting={ isBusy }
+					isSubmitting={ isSubmitting }
 					onClose={ () => toggleUsageModal( false ) }
 					onContinue={ submitPage }
 				/>

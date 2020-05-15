@@ -1,44 +1,92 @@
 import {
-	FETCH_USAGE_TRACKING,
-	SUBMIT_USAGE_TRACKING,
-	ERROR_USAGE_TRACKING,
-	SET_USAGE_TRACKING,
-} from './constants'
+	START_FETCH_SETUP_WIZARD_DATA,
+	SET_SETUP_WIZARD_DATA,
+	START_SUBMIT_SETUP_WIZARD_DATA,
+	SUCCESS_SUBMIT_SETUP_WIZARD_DATA,
+	ERROR_SUBMIT_SETUP_WIZARD_DATA,
+	SET_WELCOME_STEP_DATA,
+} from './constants';
 import reducer from './reducer';
 
 describe( 'Setup wizard reducer', () => {
-	it( 'FETCH_USAGE_TRACKING action', () => {
+	it( 'Should set isFetching to true on START_FETCH_SETUP_WIZARD_DATA action', () => {
 		const state = reducer( undefined, {
-			type: FETCH_USAGE_TRACKING,
+			type: START_FETCH_SETUP_WIZARD_DATA,
 		} );
 
-		expect( state.welcome.isFetching ).toBeTruthy();
+		expect( state.isFetching ).toBeTruthy();
 	} );
 
-	it( 'SUBMIT_USAGE_TRACKING action', () => {
+	it( 'Should set data and set states to false on SET_SETUP_WIZARD_DATA action', () => {
+		const data = { a: 1 };
+		const state = reducer(
+			{
+				isFetching: true,
+				isSubmitting: true,
+				error: { msg: 'Error' },
+			},
+			{
+				type: SET_SETUP_WIZARD_DATA,
+				data,
+			}
+		);
+
+		const expectedState = {
+			isFetching: false,
+			isSubmitting: false,
+			error: false,
+			data,
+		};
+		expect( state ).toEqual( expectedState );
+	} );
+
+	it( 'Should set isSubmitting to true on START_SUBMIT_SETUP_WIZARD_DATA action', () => {
 		const state = reducer( undefined, {
-			type: SUBMIT_USAGE_TRACKING,
+			type: START_SUBMIT_SETUP_WIZARD_DATA,
 		} );
 
-		expect( state.welcome.isSubmitting ).toBeTruthy();
+		expect( state.isSubmitting ).toBeTruthy();
 	} );
 
-	it( 'ERROR_USAGE_TRACKING action', () => {
-		const error = { err: 'Error message' };
+	it( 'Should set isSubmitting to false on SUCCESS_SUBMIT_SETUP_WIZARD_DATA action', () => {
+		const state = reducer(
+			{
+				isSubmitting: true,
+			},
+			{
+				type: SUCCESS_SUBMIT_SETUP_WIZARD_DATA,
+			}
+		);
+
+		expect( state.isSubmitting ).toBeFalsy();
+	} );
+
+	it( 'Should set error on ERROR_SUBMIT_SETUP_WIZARD_DATA action', () => {
+		const error = { msg: 'Error' };
 		const state = reducer( undefined, {
-			type: ERROR_USAGE_TRACKING,
+			type: ERROR_SUBMIT_SETUP_WIZARD_DATA,
 			error,
 		} );
 
-		expect( state.welcome.error ).toEqual( error );
+		expect( state.error ).toEqual( error );
 	} );
 
-	it( 'SET_USAGE_TRACKING action', () => {
+	it( 'Should set the welcome data on SET_WELCOME_STEP_DATA action', () => {
+		const data = { usage_tracking: true };
 		const state = reducer( undefined, {
-			type: SET_USAGE_TRACKING,
-			usageTracking: true,
+			type: SET_WELCOME_STEP_DATA,
+			data,
 		} );
 
-		expect( state.welcome.data.usageTracking ).toBeTruthy();
+		expect( state.data.welcome ).toEqual( data );
+	} );
+
+	it( 'Should return the current state for unknown types', () => {
+		const currentState = { x: 1 };
+		const state = reducer( currentState, {
+			type: 'UNKNOWN',
+		} );
+
+		expect( state ).toEqual( currentState );
 	} );
 } );

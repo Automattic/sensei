@@ -1,10 +1,12 @@
 import {
 	API_BASE_PATH,
 	FETCH_FROM_API,
-	FETCH_USAGE_TRACKING,
-	SUBMIT_USAGE_TRACKING,
-	ERROR_USAGE_TRACKING,
-	SET_USAGE_TRACKING,
+	START_FETCH_SETUP_WIZARD_DATA,
+	SET_SETUP_WIZARD_DATA,
+	START_SUBMIT_SETUP_WIZARD_DATA,
+	SUCCESS_SUBMIT_SETUP_WIZARD_DATA,
+	ERROR_SUBMIT_SETUP_WIZARD_DATA,
+	SET_WELCOME_STEP_DATA,
 } from './constants';
 
 /**
@@ -25,68 +27,109 @@ export const fetchFromAPI = ( request ) => ( {
 } );
 
 /**
- * @typedef  {Object} FetchUsageTrackingAction
+ * Fetch setup wizard data action creator.
+ */
+export function* fetchSetupWizardData() {
+	yield { type: START_FETCH_SETUP_WIZARD_DATA };
+
+	// TODO: Refactory to get a single endpoint with all data.
+	const data = yield fetchFromAPI( {
+		path: API_BASE_PATH + 'welcome',
+	} );
+	yield setSetupWizardData( {
+		welcome: {
+			...data,
+		},
+	} );
+}
+
+/**
+ * @typedef  {Object} SetSetupWizardDataAction
  * @property {string} type                     Action type.
+ * @property {Object} data                     Setup wizard data.
  */
 /**
- * Fetch usage tracking action creator.
+ * Set usage tracking action creator.
  *
- * @return {FetchUsageTrackingAction} Fetch usage tracking action.
+ * @param {Object} data Setup wizard data.
+ *
+ * @return {SetSetupWizardDataAction} Set usage tracking action.
  */
-export const fetchUsageTracking = () => ( {
-	type: FETCH_USAGE_TRACKING,
+export const setSetupWizardData = ( data ) => ( {
+	type: SET_SETUP_WIZARD_DATA,
+	data,
 } );
 
 /**
- * Submit usage tracking action creator.
+ * Start submit action creator.
+ *
+ * @return {{type: string}} Start submit action.
+ */
+export const startSubmit = () => ( {
+	type: START_SUBMIT_SETUP_WIZARD_DATA,
+} );
+
+/**
+ * Success submit action creator.
+ *
+ * @return {{type: string}} Success submit action.
+ */
+export const successSubmit = () => ( {
+	type: SUCCESS_SUBMIT_SETUP_WIZARD_DATA,
+} );
+
+/**
+ * @typedef  {Object}         ErrorSubmitAction
+ * @property {string}         type              Action type.
+ * @property {Object|boolean} error             Error object or false.
+ */
+/**
+ * Error submit action creator.
+ *
+ * @param {Object|boolean} error Error object or false.
+ *
+ * @return {ErrorSubmitAction} Error action.
+ */
+export const errorSubmit = ( error ) => ( {
+	type: ERROR_SUBMIT_SETUP_WIZARD_DATA,
+	error,
+} );
+
+/**
+ * Submit welcome step action creator.
  *
  * @param {boolean} usageTracking Usage tracking.
  */
-export function* submitUsageTracking( usageTracking ) {
-	yield { type: SUBMIT_USAGE_TRACKING };
+export function* submitWelcomeStep( usageTracking ) {
+	const welcomeStepData = { usage_tracking: usageTracking };
+	yield startSubmit();
 
 	try {
 		yield fetchFromAPI( {
 			path: API_BASE_PATH + 'welcome',
 			method: 'POST',
-			data: { usage_tracking: usageTracking },
+			data: welcomeStepData,
 		} );
-		yield setUsageTracking( usageTracking );
+		yield successSubmit();
+		yield setWelcomeStepData( welcomeStepData );
 	} catch ( error ) {
-		yield errorUsageTracking( error );
+		yield errorSubmit( error );
 	}
 }
 
 /**
- * @typedef  {Object}         ErrorUsageTrackingAction
- * @property {string}         type                     Action type.
- * @property {string|boolean} error                    Usage tracking error or false.
+ * @typedef  {Object} SetWelcomeStepDataAction
+ * @property {string} type                     Action type.
+ * @property {Object} data                     Welcome step data.
  */
 /**
- * Error usage tracking action creator.
+ * Set welcome step data action creator.
  *
- * @param {string|boolean} error Usage tracking error or false.
+ * @param {Object} data Welcome data object.
  *
- * @return {ErrorUsageTrackingAction} Error usage tracking action.
+ * @return {SetWelcomeStepDataAction} Set welcome step data action.
  */
-export const errorUsageTracking = ( error ) => ( {
-	type: ERROR_USAGE_TRACKING,
-	error,
-} );
-
-/**
- * @typedef  {Object}  SetUsageTrackingAction
- * @property {string}  type                   Action type.
- * @property {boolean} usageTracking          Usage tracking.
- */
-/**
- * Set usage tracking action creator.
- *
- * @param {boolean} usageTracking Usage tracking.
- *
- * @return {SetUsageTrackingAction} Set usage tracking action.
- */
-export const setUsageTracking = ( usageTracking ) => ( {
-	type: SET_USAGE_TRACKING,
-	usageTracking,
+export const setWelcomeStepData = ( data ) => ( {
+	type: SET_WELCOME_STEP_DATA,
+	data,
 } );

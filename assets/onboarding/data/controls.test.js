@@ -4,7 +4,7 @@ import controls from './controls';
 jest.mock( '@wordpress/api-fetch', () => () => 'result' );
 
 describe( 'Setup wizard controls', () => {
-	it( 'Fetch from API control', () => {
+	it( 'Should fetch from API', () => {
 		const action = {
 			request: {
 				path: '/',
