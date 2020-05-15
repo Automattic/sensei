@@ -50,6 +50,12 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		// Actions
 		add_action( 'sensei_before_list_table', array( $this, 'data_table_header' ) );
 		add_action( 'sensei_after_list_table', array( $this, 'data_table_footer' ) );
+
+		// Log events: page views for grading section.
+		if ( isset( $_GET['page'] ) && $this->page_slug === $_GET['page'] && is_admin() ) { // phpcs:ignore WordPress.Security.NonceVerification
+			$this->grading_log_page_views();
+		}
+
 	} // End __construct()
 
 	/**
@@ -513,6 +519,38 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 	public function data_table_footer() {
 		// Nothing right now
 	} // End data_table_footer()
+
+	/**
+	 * Logs grading section page views.
+	 *
+	 * @since 3.0.2
+	 */
+	public function grading_log_page_views() {
+
+		$view      = isset( $_GET['view'] ) ? sanitize_text_field( wp_unslash( $_GET['view'] ) ) : 'all'; // phpcs:ignore WordPress.Security.NonceVerification
+		$course_id = isset( $_GET['course_id'] ) ? sanitize_text_field( wp_unslash( $_GET['course_id'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+		$lesson_id = isset( $_GET['lesson_id'] ) ? sanitize_text_field( wp_unslash( $_GET['lesson_id'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+		$quiz_id   = isset( $_GET['quiz_id'] ) ? sanitize_text_field( wp_unslash( $_GET['quiz_id'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+
+		if ( isset( $_GET['user_id'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+			$user_id = sanitize_text_field( wp_unslash( $_GET['user_id'] ) ); // phpcs:ignore WordPress.Security.NonceVerification
+		} elseif ( isset( $_GET['user'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+			// Handle case for Grading > Course Name > Lesson Name; where query var is 'user' instead of 'user_id'.
+			$user_id = sanitize_text_field( wp_unslash( $_GET['user'] ) ); // phpcs:ignore WordPress.Security.NonceVerification
+		} else {
+			$user_id = '';
+		}
+
+			$event_properties = array(
+				'view'      => $view,
+				'course_id' => $course_id,
+				'lesson_id' => $lesson_id,
+				'quiz_id'   => $quiz_id,
+				'user_id'   => $user_id,
+			);
+			sensei_log_event( 'grading_view', $event_properties );
+
+	}
 
 } // End Class
 
