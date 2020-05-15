@@ -8,7 +8,7 @@ import CheckIcon from './check-icon';
  */
 export const LOADING_STATUS = 'loading';
 export const ERROR_STATUS = 'error';
-export const SUCCESS_STATUS = 'success';
+export const INSTALLED_STATUS = 'installed';
 
 const statusComponents = {
 	[ LOADING_STATUS ]: (
@@ -24,7 +24,7 @@ const statusComponents = {
 			{ __( 'Error installing plugin', 'sensei-lms' ) }
 		</i>
 	),
-	[ SUCCESS_STATUS ]: (
+	[ INSTALLED_STATUS ]: (
 		<i className="sensei-onboarding__circle-icon-wrapper success-icon-wrapper">
 			<CheckIcon />
 			{ __( 'Plugin installed', 'sensei-lms' ) }

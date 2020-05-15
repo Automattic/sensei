@@ -6,7 +6,11 @@ import { useQueryStringRouter } from '../query-string-router';
 import ConfirmationModal from './confirmation-modal';
 import InstallationFeedback from './installation-feedback';
 import FeaturesSelection from './features-selection';
-import { LOADING_STATUS, ERROR_STATUS, SUCCESS_STATUS } from './feature-status';
+import {
+	LOADING_STATUS,
+	ERROR_STATUS,
+	INSTALLED_STATUS,
+} from './feature-status';
 
 // TODO: Make it dynamic.
 const features = [
@@ -35,7 +39,7 @@ const features = [
 		),
 		learnMoreLink:
 			'https://woocommerce.com/products/sensei-course-progress/',
-		status: SUCCESS_STATUS,
+		status: INSTALLED_STATUS,
 	},
 	{
 		id: 'certificates',
@@ -60,7 +64,7 @@ const features = [
 		),
 		learnMoreLink:
 			'https://woocommerce.com/products/sensei-media-attachments/',
-		status: SUCCESS_STATUS,
+		status: INSTALLED_STATUS,
 	},
 	{
 		id: 'content_drip',
