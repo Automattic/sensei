@@ -167,20 +167,20 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 			[
 				[
 					'methods'             => WP_REST_Server::READABLE,
-					'callback'            => [ $this, 'get_progress' ],
+					'callback'            => [ $this, 'get_data' ],
 					'permission_callback' => [ $this, 'can_user_access_rest_api' ],
 				],
-				'schema' => [ $this, 'progress_schema' ],
+				'schema' => [ $this, 'get_schema' ],
 			]
 		);
 	}
 
 	/**
-	 * Get completed steps.
+	 * Get data for Setup Wizard frontend.
 	 *
-	 * @return mixed List of steps completed.
+	 * @return mixed Setup Wizard data
 	 */
-	public function get_progress() {
+	public function get_data() {
 
 		$user_data = $this->setupwizard->get_wizard_user_data();
 
@@ -216,11 +216,11 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	}
 
 	/**
-	 * Schema for Progress endpoint.
+	 * Schema for the endpoint.
 	 *
 	 * @return array Schema object.
 	 */
-	public function progress_schema() {
+	public function get_schema() {
 		return [
 			'type'       => 'object',
 			'properties' => [

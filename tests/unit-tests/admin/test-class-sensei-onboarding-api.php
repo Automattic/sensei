@@ -81,7 +81,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	/**
 	 * Tests welcome endpoint returning the current usage tracking setting.
 	 *
-	 * @covers Sensei_REST_API_Setup_Wizard_Controller::get_welcome
+	 * @covers Sensei_REST_API_Setup_Wizard_Controller::get_data
 	 */
 	public function testGetWelcomeReturnsUsageTrackingData() {
 
@@ -204,7 +204,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	/**
 	 * Tests that purpose get endpoint returns user data
 	 *
-	 * @covers Sensei_REST_API_Setup_Wizard_Controller::get_purpose
+	 * @covers Sensei_REST_API_Setup_Wizard_Controller::get_data
 	 */
 	public function testGetPurposeReturnsUserData() {
 
@@ -231,7 +231,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	/**
 	 * Tests that completed steps are empty when nothing has been submitted.
 	 *
-	 * @covers Sensei_REST_API_Setup_Wizard_Controller::get_progress
+	 * @covers Sensei_REST_API_Setup_Wizard_Controller::get_data
 	 */
 	public function testDefaultProgressIsEmpty() {
 		$data = $this->request( 'GET', '' );
