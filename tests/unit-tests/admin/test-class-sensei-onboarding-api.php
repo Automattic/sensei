@@ -55,7 +55,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 		$teacher_id = $this->factory->user->create( array( 'role' => 'teacher' ) );
 		wp_set_current_user( $teacher_id );
 
-		$request  = new WP_REST_Request( 'GET', '/sensei-internal/v1/setup-wizard/welcome' );
+		$request  = new WP_REST_Request( 'GET', '/sensei-internal/v1/setup-wizard' );
 		$response = $this->server->dispatch( $request );
 
 		$this->assertEquals( 403, $response->get_status() );
@@ -72,7 +72,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
 		wp_set_current_user( $admin_id );
 
-		$request  = new WP_REST_Request( 'GET', '/sensei-internal/v1/setup-wizard/welcome' );
+		$request  = new WP_REST_Request( 'GET', '/sensei-internal/v1/setup-wizard' );
 		$response = $this->server->dispatch( $request );
 
 		$this->assertEquals( 200, $response->get_status() );
@@ -86,14 +86,14 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	public function testGetWelcomeReturnsUsageTrackingData() {
 
 		Sensei()->usage_tracking->set_tracking_enabled( true );
-		$result = $this->request( 'GET', 'welcome' );
+		$result = $this->request( 'GET', '' );
 
-		$this->assertEquals( array( 'usage_tracking' => true ), $result );
+		$this->assertEquals( array( 'usage_tracking' => true ), $result['welcome'] );
 
 		Sensei()->usage_tracking->set_tracking_enabled( false );
-		$result = $this->request( 'GET', 'welcome' );
+		$result = $this->request( 'GET', '' );
 
-		$this->assertEquals( array( 'usage_tracking' => false ), $result );
+		$this->assertEquals( array( 'usage_tracking' => false ), $result['welcome'] );
 	}
 
 	/**
@@ -217,14 +217,14 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 			]
 		);
 
-		$data = $this->request( 'GET', 'purpose' );
+		$data = $this->request( 'GET', '' );
 
 		$this->assertEquals(
 			[
 				'selected' => [ 'share_knowledge', 'other' ],
 				'other'    => 'Test',
 			],
-			$data
+			$data['purpose']
 		);
 	}
 
@@ -234,8 +234,8 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	 * @covers Sensei_REST_API_Setup_Wizard_Controller::get_progress
 	 */
 	public function testDefaultProgressIsEmpty() {
-		$data = $this->request( 'GET', 'progress' );
-		$this->assertEquals( [ 'steps' => [] ], $data );
+		$data = $this->request( 'GET', '' );
+		$this->assertEquals( [], $data['completed_steps'] );
 	}
 
 	/**
@@ -251,8 +251,8 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	 */
 	public function testStepCompletedAfterSubmit( $step, $form_data ) {
 		$this->request( 'POST', $step, $form_data );
-		$data = $this->request( 'GET', 'progress' );
-		$this->assertEquals( [ 'steps' => [ $step ] ], $data );
+		$data = $this->request( 'GET', '' );
+		$this->assertEquals( [ $step ], $data['completed_steps'] );
 	}
 
 	public function testMultipleStepsCompleted() {
@@ -264,8 +264,8 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 			$this->request( 'POST', $step, $form_data );
 		}
 
-		$data = $this->request( 'GET', 'progress' );
-		$this->assertEqualSets( [ 'welcome', 'features', 'purpose' ], $data['steps'] );
+		$data = $this->request( 'GET', '' );
+		$this->assertEqualSets( [ 'welcome', 'features', 'purpose' ], $data['completed_steps'] );
 
 	}
 
@@ -326,7 +326,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 		$user = wp_get_current_user();
 		$user->add_cap( 'manage_sensei' );
 
-		$request = new WP_REST_Request( $method, '/sensei-internal/v1/setup-wizard/' . $route );
+		$request = new WP_REST_Request( $method, rtrim( '/sensei-internal/v1/setup-wizard/' . $route, '/' ) );
 
 		if ( null !== $data && 'POST' === $method ) {
 			$request->set_header( 'content-type', 'application/json' );
