@@ -457,7 +457,6 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 				$all_class = 'current';
 				break;
 			case 'ungraded':
-			default:
 				$ungraded_class = 'current';
 				break;
 			case 'graded':
@@ -465,6 +464,9 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 				break;
 			case 'in-progress':
 				$inprogress_class = 'current';
+				break;
+			default:
+				$all_class = 'current';
 				break;
 		endswitch;
 
