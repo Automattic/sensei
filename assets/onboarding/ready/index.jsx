@@ -48,7 +48,7 @@ export const Ready = () => {
 									<Button
 										className="sensei-onboarding__button"
 										isPrimary
-										href="edit.php?post_type=course"
+										href="post-new.php?post_type=course"
 									>
 										Create a course
 									</Button>
