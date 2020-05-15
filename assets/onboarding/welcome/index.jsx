@@ -2,7 +2,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { Card, H, Link } from '@woocommerce/components';
 import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
-import { useState } from '@wordpress/element';
+import { useState, useEffect } from '@wordpress/element';
 import { UsageModal } from './usage-modal';
 import { useQueryStringRouter } from '../query-string-router';
 
@@ -11,22 +11,30 @@ import { useQueryStringRouter } from '../query-string-router';
  */
 export const Welcome = () => {
 	const [ usageModalActive, toggleUsageModal ] = useState( false );
+	const [ dataSaved, toggleDataSaved ] = useState( false );
 
 	const { goTo } = useQueryStringRouter();
 
-	const { usageTracking, isSubmitting } = useSelect(
+	const { usageTracking, isSubmitting, error } = useSelect(
 		( select ) => ( {
 			usageTracking: select( 'sensei-setup-wizard' ).getUsageTracking(),
 			isSubmitting: select( 'sensei-setup-wizard' ).isSubmitting(),
+			error: select( 'sensei-setup-wizard' ).getSubmitError(),
 		} ),
 		[]
 	);
 	const { submitWelcomeStep } = useDispatch( 'sensei-setup-wizard' );
 
+	useEffect( () => {
+		if ( dataSaved && ! error ) {
+			toggleUsageModal( false );
+			goTo( 'purpose' );
+		}
+	}, [ dataSaved, error, goTo ] );
+
 	const submitPage = async ( allowUsageTracking ) => {
 		await submitWelcomeStep( allowUsageTracking );
-		toggleUsageModal( false );
-		goTo( 'purpose' );
+		toggleDataSaved( true );
 	};
 
 	return (
