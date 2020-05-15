@@ -20,12 +20,7 @@ export const Ready = () => {
 			</div>
 			<Card className="sensei-onboarding__card">
 				<Section className="sensei-onboarding__mailinglist-signup">
-					<H>
-						{ __(
-							`Join our mailing list`,
-							'sensei-lms'
-						) }
-					</H>
+					<H>{ __( `Join our mailing list`, 'sensei-lms' ) }</H>
 					<p>
 						{ __(
 							`We're here for you — Get tips, product updates, and inspiration straight to your mailbox.`,
