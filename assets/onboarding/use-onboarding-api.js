@@ -28,7 +28,7 @@ export const useOnboardingApi = ( step ) => {
 		const result = await apiFetch( {
 			path,
 		} );
-		setData( result[step] );
+		setData( result[ step ] );
 		setBusy( false );
 	}, [ path, step ] );
 
