@@ -419,48 +419,50 @@ abstract class Sensei_Usage_Tracking_Base {
 
 	/**
 	 * Hide the opt-in for enabling usage tracking.
+	 *
+	 * @deprecated 3.1.0 - Opt-in moved to Setup Wizard
 	 **/
 	protected function hide_tracking_opt_in() {
-		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding' );
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding::skip_setup_wizard' );
 	}
 
 	/**
 	 * Determine whether the opt-in for enabling usage tracking is hidden.
 	 *
-	 * @deprecated since 3.1.0
+	 * @deprecated 3.1.0 - Opt-in moved to Setup Wizard
 	 **/
 	protected function is_opt_in_hidden() {
-		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding' );
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding::setup_wizard_notice' );
 	}
 
 	/**
 	 * Allowed html tags, used by wp_kses, for the translated opt-in dialog
 	 * text.
 	 *
-	 * @deprecated since 3.1.0
+	 * @deprecated 3.1.0 - Opt-in moved to Setup Wizard
 	 **/
 	protected function opt_in_dialog_text_allowed_html() {
-		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding' );
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding::setup_wizard_notice' );
 	}
 
 	/**
 	 * If needed, display opt-in dialog to enable tracking. Should not be
 	 * called externally.
 	 *
-	 * @deprecated since 3.1.0 handled through Sensei_Onboarding
+	 * @deprecated 3.1.0 - Opt-in moved to Setup Wizard
 	 **/
 	public function maybe_display_tracking_opt_in() {
-		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding' );
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding::setup_wizard_notice' );
 	}
 
 	/**
 	 * Handle ajax request from the opt-in dialog. Should not be called
 	 * externally.
 	 *
-	 * @deprecated since 3.1.0
+	 * @deprecated 3.1.0 - Opt-in moved to Setup Wizard
 	 **/
 	public function handle_tracking_opt_in() {
-		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding' );
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding::setup_wizard_notice' );
 	}
 
 	/**
@@ -470,7 +472,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * @deprecated since 3.1.0
 	 **/
 	public function enqueue_script_deps() {
-		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding' );
+		_deprecated_function( __METHOD__, '3.1.0' );
 	}
 
 	/**
@@ -480,6 +482,6 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * @deprecated since 3.1.0
 	 **/
 	public function output_opt_in_js() {
-		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding' );
+		_deprecated_function( __METHOD__, '3.1.0' );
 	}
 }

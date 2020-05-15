@@ -199,12 +199,12 @@ class Sensei_Admin {
 	 *
 	 * Handles installation of the 2 pages needs for courses and my courses
 	 *
-	 * @deprecated since 3.1.0 moved to Sensei_Onboarding
+	 * @deprecated since 3.1.0 use Sensei_Onboarding_Pages::create_pages
 	 * @access public
 	 * @return void
 	 */
 	function install_pages_output() {
-		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding' );
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding_Pages::create_pages' );
 
 	}
 
@@ -331,7 +331,7 @@ class Sensei_Admin {
 	 * @return void
 	 */
 	function admin_install_notice() {
-		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding' );
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding::setup_wizard_notice' );
 	}
 
 
@@ -343,7 +343,7 @@ class Sensei_Admin {
 	 * @return void
 	 */
 	function admin_installed_notice() {
-		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding' );
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding::setup_wizard_notice' );
 	}
 
 	/**
@@ -354,7 +354,7 @@ class Sensei_Admin {
 	 * @return void
 	 */
 	function admin_notices_styles() {
-		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding' );
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding::setup_wizard_notice' );
 	}
 
 	/**
@@ -1706,7 +1706,7 @@ class Sensei_Admin {
 	 * @since 1.8.7
 	 */
 	public static function install_pages() {
-		_deprecated_function( __METHOD__, "Sensei_Onboarding" );
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding_Pages::create_pages' );
 	}
 
 	/**
