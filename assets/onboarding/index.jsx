@@ -23,10 +23,10 @@ const SenseiSetupWizardPage = () => {
 
 	const isFetching = useSelect(
 		( select ) =>
-			select( 'sensei-setup-wizard' ).isFetchingSetupWizardData(),
+			select( 'sensei/setup-wizard' ).isFetchingSetupWizardData(),
 		[]
 	);
-	const { fetchSetupWizardData } = useDispatch( 'sensei-setup-wizard' );
+	const { fetchSetupWizardData } = useDispatch( 'sensei/setup-wizard' );
 
 	// We want to show the loading before any content.
 	useLayoutEffect( () => {

@@ -5,7 +5,7 @@ import * as actions from './actions';
 import * as selectors from './selectors';
 import controls from './controls';
 
-registerStore( 'sensei-setup-wizard', {
+registerStore( 'sensei/setup-wizard', {
 	reducer,
 	actions,
 	selectors,

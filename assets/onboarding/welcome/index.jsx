@@ -17,13 +17,13 @@ export const Welcome = () => {
 
 	const { usageTracking, isSubmitting, error } = useSelect(
 		( select ) => ( {
-			usageTracking: select( 'sensei-setup-wizard' ).getUsageTracking(),
-			isSubmitting: select( 'sensei-setup-wizard' ).isSubmitting(),
-			error: select( 'sensei-setup-wizard' ).getSubmitError(),
+			usageTracking: select( 'sensei/setup-wizard' ).getUsageTracking(),
+			isSubmitting: select( 'sensei/setup-wizard' ).isSubmitting(),
+			error: select( 'sensei/setup-wizard' ).getSubmitError(),
 		} ),
 		[]
 	);
-	const { submitWelcomeStep } = useDispatch( 'sensei-setup-wizard' );
+	const { submitWelcomeStep } = useDispatch( 'sensei/setup-wizard' );
 
 	useEffect( () => {
 		if ( dataSaved && ! error ) {
