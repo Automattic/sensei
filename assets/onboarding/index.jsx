@@ -2,13 +2,16 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { render, useLayoutEffect } from '@wordpress/element';
 import { Spinner } from '@woocommerce/components';
 
+import registerSetupWizardStore from './data';
 import { useWpAdminFullscreen } from '../react-hooks';
 import { steps } from './steps';
 import QueryStringRouter, { Route } from './query-string-router';
 import Navigation from './navigation';
 
-// Register store
-import './data/index';
+/**
+ * Register setup wizard store.
+ */
+registerSetupWizardStore();
 
 /**
  * Param name used to route the setup wizard.
