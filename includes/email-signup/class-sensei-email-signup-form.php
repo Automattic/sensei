@@ -4,11 +4,13 @@
  *
  * @package sensei
  * @since   2.0.0
+ * @deprecated 3.1.0 Email signup flow moved to Setup Wizard
  */
 
 /**
  * Class for displaying the modal email signup form.
  *
+ * @deprecated 3.1.0 Email signup flow moved to Setup Wizard
  * @class Sensei_Email_Signup_Form
  */
 class Sensei_Email_Signup_Form {
@@ -75,6 +77,7 @@ class Sensei_Email_Signup_Form {
 	 * @return self
 	 */
 	public static function instance() {
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding::instance' );
 		if ( ! self::$instance ) {
 			self::$instance = new self();
 		}
