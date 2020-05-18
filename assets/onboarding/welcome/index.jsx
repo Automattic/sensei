@@ -64,7 +64,7 @@ export const Welcome = () => {
 			</div>
 			{ usageModalActive && (
 				<UsageModal
-					tracking={ stepData.usageTracking }
+					tracking={ stepData.usage_tracking }
 					isSubmitting={ isSubmitting }
 					onClose={ () => toggleUsageModal( false ) }
 					onContinue={ submitPage }
