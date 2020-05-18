@@ -18,7 +18,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
  * @param {string} step Onboarding step endpoint name.
  * @return {OnboardingApiHandle} handle
  */
-export const useOnboardingApi = ( step ) => {
+export const useSetupWizardStore = ( step ) => {
 	const { stepData, isSubmitting, error } = useSelect(
 		( select ) => ( {
 			stepData: select( 'sensei/setup-wizard' ).getStepData( step ),
