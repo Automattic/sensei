@@ -41,11 +41,18 @@ describe( 'Setup wizard reducer', () => {
 	} );
 
 	it( 'Should set isSubmitting to true on START_SUBMIT_SETUP_WIZARD_DATA action', () => {
-		const state = reducer( undefined, {
-			type: START_SUBMIT_SETUP_WIZARD_DATA,
-		} );
+		const state = reducer(
+			{
+				isSubmitting: false,
+				error: { msg: 'Error' },
+			},
+			{
+				type: START_SUBMIT_SETUP_WIZARD_DATA,
+			}
+		);
 
 		expect( state.isSubmitting ).toBeTruthy();
+		expect( state.error ).toBeFalsy();
 	} );
 
 	it( 'Should set isSubmitting to false on SUCCESS_SUBMIT_SETUP_WIZARD_DATA action', () => {

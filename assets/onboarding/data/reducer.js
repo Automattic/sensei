@@ -39,7 +39,6 @@ export default ( state = DEFAULT_STATE, action ) => {
 				...state,
 				isFetching: false,
 				isSubmitting: false,
-				error: false,
 				data: {
 					...state.data,
 					...action.data,
@@ -50,6 +49,7 @@ export default ( state = DEFAULT_STATE, action ) => {
 			return {
 				...state,
 				isSubmitting: true,
+				error: false,
 			};
 
 		case SUCCESS_SUBMIT_SETUP_WIZARD_DATA:
