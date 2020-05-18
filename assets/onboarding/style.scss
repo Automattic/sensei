@@ -19,6 +19,20 @@
 		* {
 			box-sizing: border-box;
 		}
+
+		.sensei-onboarding__learn-more {
+			white-space: nowrap;
+			color: $primary;
+
+			&:hover,
+			&:active {
+				color: lighten($primary, 20%);
+			}
+
+			&:focus {
+				color: darken($primary, 20%);
+			}
+		}
 	}
 
 	&__header {
@@ -70,7 +84,33 @@
 		margin-right: 0;
 	}
 
-	&__skip {
+	&__group-buttons {
+		display: flex;
+
+		&.group-right {
+			justify-content: flex-end;
+
+			.components-button {
+				margin-left: 8px
+			}
+		}
+
+		&.group-center {
+			justify-content: center;
+
+			.components-button {
+				margin-left: 4px;
+				margin-right: 4px;
+			}
+		}
+
+		.components-button {
+			margin-right: 0;
+			margin-left: 0;
+		}
+	}
+
+	&__bottom-actions {
 		text-align: center;
 	}
 
@@ -122,6 +162,17 @@
 
 			position: relative;
 
+			&.installed-status {
+				.components-checkbox-control__label,
+				.components-base-control__help {
+					color: $gray-10;
+				}
+
+				.sensei-onboarding__learn-more {
+					color: lighten($primary, 30%);
+				}
+			}
+
 			.components-checkbox-control__label {
 				color: $text_primary;
 				font-size: 16px;
@@ -138,6 +189,10 @@
 				border-bottom: 1px solid $gray-5;
 			}
 
+			&:last-child .components-base-control__help {
+				border-bottom: none;
+				padding-bottom: 0;
+			}
 		}
 		.sensei-onboarding__textcontrol-other {
 			margin-left: 40px;
@@ -145,6 +200,87 @@
 
 			.components-text-control__input {
 				padding: 8px 12px;
+			}
+		}
+	}
+
+	&__features-confirmation-modal {
+		width: 520px;
+		max-width: 100%;
+
+		.components-modal__header {
+			padding: 25px 0;
+			margin: 0;
+			height: auto;
+
+			.components-modal__header-heading {
+				font-size: 20px;
+			}
+		}
+
+		.woocommerce-list {
+			margin-top: 0;
+		}
+
+		.woocommerce-list__item {
+			border-bottom: 1px solid $gray-5;
+		}
+	}
+
+	&__features-installation-feedback {
+		.woocommerce-list {
+			margin-top: 0;
+
+			&__item-inner {
+				align-items: flex-start;
+			}
+		}
+
+		.components-spinner {
+			margin: 0;
+		}
+
+		.sensei-onboarding__error-message {
+			margin: 0;
+			color: $alert-red;
+
+			.sensei-onboarding__retry-button {
+				color: inherit;
+				background: transparent;
+				border: 0;
+				padding: 0;
+				text-decoration: underline;
+				cursor: pointer;
+			}
+		}
+
+		.sensei-onboarding__icon-status {
+			padding-top: 2px;
+		}
+
+		.sensei-onboarding__circle-icon-wrapper {
+			display: inline-block;
+			width: 18px;
+			height: 18px;
+			line-height: 18px;
+			text-align: center;
+			color: $white;
+			border-radius: 100%;
+			font-style: normal;
+
+			&.success-icon-wrapper {
+				background-color: $primary;
+			}
+			&.error-icon-wrapper {
+				background-color: $alert-red;
+			}
+			&.alert-icon {
+				&::before {
+					display: inherit;
+					width: inherit;
+					height: inherit;
+					content: '!';
+				}
 			}
 		}
 	}

@@ -64,6 +64,10 @@ body.sensei-color {
 		&.is-tertiary {
 			color: $button;
 		}
+
+		&.is-tertiary:focus:not(:disabled) {
+			box-shadow: 0 0 0 1.5px $button;
+		}
 	}
 
 	a, .button-link, .components-button.is-link {
