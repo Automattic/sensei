@@ -469,7 +469,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * Ensure that jQuery has been enqueued since the opt-in dialog JS depends
 	 * on it. Should not be called externally.
 	 *
-	 * @deprecated since 3.1.0
+	 * @deprecated 3.1.0
 	 **/
 	public function enqueue_script_deps() {
 		_deprecated_function( __METHOD__, '3.1.0' );
@@ -479,7 +479,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * Output the JS code to handle the opt-in dialog. Should not be called
 	 * externally.
 	 *
-	 * @deprecated since 3.1.0
+	 * @deprecated 3.1.0
 	 **/
 	public function output_opt_in_js() {
 		_deprecated_function( __METHOD__, '3.1.0' );

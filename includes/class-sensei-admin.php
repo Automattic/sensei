@@ -199,7 +199,7 @@ class Sensei_Admin {
 	 *
 	 * Handles installation of the 2 pages needs for courses and my courses
 	 *
-	 * @deprecated since 3.1.0 use Sensei_Onboarding_Pages::create_pages
+	 * @deprecated 3.1.0 use Sensei_Onboarding_Pages::create_pages instead.
 	 * @access public
 	 * @return void
 	 */
@@ -212,7 +212,7 @@ class Sensei_Admin {
 	/**
 	 * create_page function.
 	 *
-	 * @deprecated since 3.1.0 use Sensei_Onboarding_Pages::create_page
+	 * @deprecated 3.1.0 use Sensei_Onboarding_Pages::create_page instead.
 	 *
 	 * @access public
 	 * @param mixed  $slug
@@ -233,7 +233,7 @@ class Sensei_Admin {
 	/**
 	 * create_pages function.
 	 *
-	 * @deprecated since 3.1.0 use Sensei_Onboarding_Pages::create_pages
+	 * @deprecated 3.1.0 use Sensei_Onboarding_Pages::create_pages instead.
 	 *
 	 * @access public
 	 * @return void
@@ -326,7 +326,7 @@ class Sensei_Admin {
 	/**
 	 * admin_install_notice function.
 	 *
-	 * @deprecated since 3.1.0
+	 * @deprecated 3.1.0
 	 * @access public
 	 * @return void
 	 */
@@ -338,7 +338,7 @@ class Sensei_Admin {
 	/**
 	 * admin_installed_notice function.
 	 *
-	 * @deprecated since 3.1.0
+	 * @deprecated 3.1.0
 	 * @access public
 	 * @return void
 	 */
@@ -349,7 +349,7 @@ class Sensei_Admin {
 	/**
 	 * admin_notices_styles function.
 	 *
-	 * @deprecated since 3.1.0
+	 * @deprecated 3.1.0
 	 * @access public
 	 * @return void
 	 */
@@ -1701,7 +1701,7 @@ class Sensei_Admin {
 	 * Hooked onto admin_init. Listens for install_sensei_pages and skip_install_sensei_pages query args
 	 * on the sensei settings page.
 	 *
-	 * @deprecated since 3.1.0 use Sensei()->onboarding->pages->create_pages()
+	 * @deprecated 3.1.0 use Sensei()->onboarding->pages->create_pages() instead
 	 *
 	 * @since 1.8.7
 	 */
