@@ -1,9 +1,9 @@
+import { useSelect, useDispatch } from '@wordpress/data';
 import { Card, H, Link } from '@woocommerce/components';
 import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
-import { useState } from '@wordpress/element';
+import { useState, useEffect } from '@wordpress/element';
 import { UsageModal } from './usage-modal';
-import { useOnboardingApi } from '../use-onboarding-api';
 import { useQueryStringRouter } from '../query-string-router';
 
 /**
@@ -11,16 +11,34 @@ import { useQueryStringRouter } from '../query-string-router';
  */
 export const Welcome = () => {
 	const [ usageModalActive, toggleUsageModal ] = useState( false );
+	const [ submittedData, toggleSubmittedData ] = useState( false );
 
 	const { goTo } = useQueryStringRouter();
 
-	const { data, submit, isBusy } = useOnboardingApi( 'welcome' );
+	const { usageTracking, isSubmitting, error } = useSelect(
+		( select ) => ( {
+			usageTracking: select( 'sensei/setup-wizard' ).getUsageTracking(),
+			isSubmitting: select( 'sensei/setup-wizard' ).isSubmitting(),
+			error: select( 'sensei/setup-wizard' ).getSubmitError(),
+		} ),
+		[]
+	);
+	const { submitWelcomeStep } = useDispatch( 'sensei/setup-wizard' );
 
-	async function submitPage( allowUsageTracking ) {
-		await submit( { usage_tracking: allowUsageTracking } );
-		toggleUsageModal( false );
-		goTo( 'purpose' );
-	}
+	useEffect( () => {
+		if ( submittedData && ! error ) {
+			toggleUsageModal( false );
+			goTo( 'purpose' );
+		}
+
+		// Clear in case of error.
+		toggleSubmittedData( false );
+	}, [ submittedData, error, goTo ] );
+
+	const submitPage = async ( allowUsageTracking ) => {
+		await submitWelcomeStep( allowUsageTracking );
+		toggleSubmittedData( true );
+	};
 
 	return (
 		<>
@@ -52,8 +70,8 @@ export const Welcome = () => {
 			</div>
 			{ usageModalActive && (
 				<UsageModal
-					tracking={ data.usage_tracking }
-					isSubmitting={ isBusy }
+					tracking={ usageTracking }
+					isSubmitting={ isSubmitting }
 					onClose={ () => toggleUsageModal( false ) }
 					onContinue={ submitPage }
 				/>
