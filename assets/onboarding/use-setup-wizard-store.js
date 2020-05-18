@@ -2,7 +2,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 
 /**
  *
- * @typedef {Object} OnboardingApiHandle
+ * @typedef {Object} StepStoreHookHandle
  *
  * @property {boolean}          isSubmitting Submitting state.
  * @property {Object}           stepData     API response from GET call to endpoint.
@@ -10,13 +10,13 @@ import { useSelect, useDispatch } from '@wordpress/data';
  * @property {function(Object)} submitStep   Method to POST to endpoint.
  */
 /**
- * Use Onboarding REST API for the given step.
+ * Use Setup Wizard State store and REST API for the given step.
  *
- * Loads data via the GET method for the endpoint, and provides a submit function that sends data to the endpoint
+ * Gets step-specific data, and provides a submit function that sends step form data to the step endpoint
  * via POST request.
  *
- * @param {string} step Onboarding step endpoint name.
- * @return {OnboardingApiHandle} handle
+ * @param {string} step Setup Wizard step endpoint name.
+ * @return {StepStoreHookHandle} handle
  */
 export const useSetupWizardStore = ( step ) => {
 	const { stepData, isSubmitting, error } = useSelect(
