@@ -8,7 +8,9 @@ export const API_BASE_PATH = '/sensei/v1/onboarding/';
  */
 export const FETCH_FROM_API = 'FETCH_FROM_API';
 export const START_FETCH_SETUP_WIZARD_DATA = 'START_FETCH_SETUP_WIZARD_DATA';
-export const SET_SETUP_WIZARD_DATA = 'SET_SETUP_WIZARD_DATA';
+export const SUCCESS_FETCH_SETUP_WIZARD_DATA =
+	'SUCCESS_FETCH_SETUP_WIZARD_DATA';
+export const ERROR_FETCH_SETUP_WIZARD_DATA = 'ERROR_FETCH_SETUP_WIZARD_DATA';
 
 /**
  * Submit action type constants.

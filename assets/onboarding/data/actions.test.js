@@ -2,7 +2,8 @@ import {
 	API_BASE_PATH,
 	FETCH_FROM_API,
 	START_FETCH_SETUP_WIZARD_DATA,
-	SET_SETUP_WIZARD_DATA,
+	SUCCESS_FETCH_SETUP_WIZARD_DATA,
+	ERROR_FETCH_SETUP_WIZARD_DATA,
 	START_SUBMIT_SETUP_WIZARD_DATA,
 	SUCCESS_SUBMIT_SETUP_WIZARD_DATA,
 	ERROR_SUBMIT_SETUP_WIZARD_DATA,
@@ -11,8 +12,9 @@ import {
 import {
 	fetchFromAPI,
 	fetchSetupWizardData,
-	startFetchSetupWizardData,
-	setSetupWizardData,
+	startFetch,
+	successFetch,
+	errorFetch,
 	startSubmit,
 	successSubmit,
 	errorSubmit,
@@ -52,7 +54,7 @@ describe( 'Setup wizard actions', () => {
 		// Set data action.
 		const welcomeObject = { x: 1 };
 		const expectedSetDataAction = {
-			type: SET_SETUP_WIZARD_DATA,
+			type: SUCCESS_FETCH_SETUP_WIZARD_DATA,
 			data: { welcome: welcomeObject },
 		};
 		expect( gen.next( welcomeObject ).value ).toEqual(
@@ -60,22 +62,50 @@ describe( 'Setup wizard actions', () => {
 		);
 	} );
 
-	it( 'Should return the set start fetch setup wizard data action', () => {
+	it( 'Should catch error on the fetch setup wizard data action', () => {
+		const gen = fetchSetupWizardData();
+
+		// Start fetch action.
+		gen.next();
+
+		// Fetch action.
+		gen.next();
+
+		// Error action.
+		const error = { msg: 'Error' };
+		const expectedErrorAction = {
+			type: ERROR_FETCH_SETUP_WIZARD_DATA,
+			error,
+		};
+		expect( gen.throw( error ).value ).toEqual( expectedErrorAction );
+	} );
+
+	it( 'Should return the start fetch setup wizard data action', () => {
 		const expectedAction = {
 			type: START_FETCH_SETUP_WIZARD_DATA,
 		};
 
-		expect( startFetchSetupWizardData() ).toEqual( expectedAction );
+		expect( startFetch() ).toEqual( expectedAction );
 	} );
 
-	it( 'Should return the set setup wizard data action', () => {
+	it( 'Should return the success fetch action', () => {
 		const data = { x: 1 };
 		const expectedAction = {
-			type: SET_SETUP_WIZARD_DATA,
+			type: SUCCESS_FETCH_SETUP_WIZARD_DATA,
 			data,
 		};
 
-		expect( setSetupWizardData( data ) ).toEqual( expectedAction );
+		expect( successFetch( data ) ).toEqual( expectedAction );
+	} );
+
+	it( 'Should return the error fetch action', () => {
+		const error = { err: 'Error' };
+		const expectedAction = {
+			type: ERROR_FETCH_SETUP_WIZARD_DATA,
+			error,
+		};
+
+		expect( errorFetch( error ) ).toEqual( expectedAction );
 	} );
 
 	it( 'Should return the start submit action', () => {

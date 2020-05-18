@@ -1,6 +1,7 @@
 import {
 	START_FETCH_SETUP_WIZARD_DATA,
-	SET_SETUP_WIZARD_DATA,
+	SUCCESS_FETCH_SETUP_WIZARD_DATA,
+	ERROR_FETCH_SETUP_WIZARD_DATA,
 	START_SUBMIT_SETUP_WIZARD_DATA,
 	SUCCESS_SUBMIT_SETUP_WIZARD_DATA,
 	ERROR_SUBMIT_SETUP_WIZARD_DATA,
@@ -9,8 +10,9 @@ import {
 
 const DEFAULT_STATE = {
 	isFetching: false,
+	fetchError: false,
 	isSubmitting: false,
-	error: false,
+	submitError: false,
 	data: {
 		welcome: {
 			usage_tracking: false,
@@ -32,24 +34,31 @@ export default ( state = DEFAULT_STATE, action ) => {
 			return {
 				...state,
 				isFetching: true,
+				fetchError: false,
 			};
 
-		case SET_SETUP_WIZARD_DATA:
+		case SUCCESS_FETCH_SETUP_WIZARD_DATA:
 			return {
 				...state,
 				isFetching: false,
-				isSubmitting: false,
 				data: {
 					...state.data,
 					...action.data,
 				},
 			};
 
+		case ERROR_FETCH_SETUP_WIZARD_DATA:
+			return {
+				...state,
+				isFetching: false,
+				fetchError: action.error,
+			};
+
 		case START_SUBMIT_SETUP_WIZARD_DATA:
 			return {
 				...state,
 				isSubmitting: true,
-				error: false,
+				submitError: false,
 			};
 
 		case SUCCESS_SUBMIT_SETUP_WIZARD_DATA:
@@ -62,7 +71,7 @@ export default ( state = DEFAULT_STATE, action ) => {
 			return {
 				...state,
 				isSubmitting: false,
-				error: action.error,
+				submitError: action.error,
 			};
 
 		case SET_WELCOME_STEP_DATA:

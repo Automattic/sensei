@@ -1,5 +1,6 @@
 import {
-	isFetchingSetupWizardData,
+	isFetching,
+	getFetchError,
 	isSubmitting,
 	getSubmitError,
 	getUsageTracking,
@@ -11,7 +12,16 @@ describe( 'Setup wizard selectors', () => {
 			isFetching: true,
 		};
 
-		expect( isFetchingSetupWizardData( state ) ).toBeTruthy();
+		expect( isFetching( state ) ).toBeTruthy();
+	} );
+
+	it( 'Should get the fetch error', () => {
+		const error = { err: 'Error message' };
+		const state = {
+			fetchError: error,
+		};
+
+		expect( getFetchError( state ) ).toEqual( error );
 	} );
 
 	it( 'Should get the is submitting data', () => {
@@ -22,10 +32,10 @@ describe( 'Setup wizard selectors', () => {
 		expect( isSubmitting( state ) ).toBeTruthy();
 	} );
 
-	it( 'Should get the submit error data', () => {
+	it( 'Should get the submit error', () => {
 		const error = { err: 'Error message' };
 		const state = {
-			error,
+			submitError: error,
 		};
 
 		expect( getSubmitError( state ) ).toEqual( error );

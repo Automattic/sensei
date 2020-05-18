@@ -5,7 +5,16 @@
  *
  * @return {boolean} Is fetching.
  */
-export const isFetchingSetupWizardData = ( state ) => state.isFetching;
+export const isFetching = ( state ) => state.isFetching;
+
+/**
+ * Fetch setup wizard error selector.
+ *
+ * @param {Object} state Current state.
+ *
+ * @return {Object|boolean} Error object or false.
+ */
+export const getFetchError = ( state ) => state.fetchError;
 
 /**
  * Is submitting setup wizard data selector.
@@ -23,7 +32,7 @@ export const isSubmitting = ( state ) => state.isSubmitting;
  *
  * @return {Object|boolean} Error object or false.
  */
-export const getSubmitError = ( state ) => state.error;
+export const getSubmitError = ( state ) => state.submitError;
 
 /**
  * Usage tracking selector.

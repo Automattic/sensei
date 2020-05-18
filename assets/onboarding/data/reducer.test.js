@@ -1,6 +1,7 @@
 import {
 	START_FETCH_SETUP_WIZARD_DATA,
-	SET_SETUP_WIZARD_DATA,
+	SUCCESS_FETCH_SETUP_WIZARD_DATA,
+	ERROR_FETCH_SETUP_WIZARD_DATA,
 	START_SUBMIT_SETUP_WIZARD_DATA,
 	SUCCESS_SUBMIT_SETUP_WIZARD_DATA,
 	ERROR_SUBMIT_SETUP_WIZARD_DATA,
@@ -17,34 +18,46 @@ describe( 'Setup wizard reducer', () => {
 		expect( state.isFetching ).toBeTruthy();
 	} );
 
-	it( 'Should set data and set states to false on SET_SETUP_WIZARD_DATA action', () => {
+	it( 'Should set data and set states to false on SUCCESS_FETCH_SETUP_WIZARD_DATA action', () => {
 		const data = { a: 1 };
 		const state = reducer(
 			{
 				isFetching: true,
-				isSubmitting: true,
-				error: { msg: 'Error' },
 			},
 			{
-				type: SET_SETUP_WIZARD_DATA,
+				type: SUCCESS_FETCH_SETUP_WIZARD_DATA,
 				data,
 			}
 		);
 
 		const expectedState = {
 			isFetching: false,
-			isSubmitting: false,
-			error: false,
 			data,
 		};
 		expect( state ).toEqual( expectedState );
+	} );
+
+	it( 'Should set error on ERROR_FETCH_SETUP_WIZARD_DATA action', () => {
+		const error = { msg: 'Error' };
+		const state = reducer(
+			{
+				isFetching: true,
+			},
+			{
+				type: ERROR_FETCH_SETUP_WIZARD_DATA,
+				error,
+			}
+		);
+
+		expect( state.isFetching ).toBeFalsy();
+		expect( state.fetchError ).toEqual( error );
 	} );
 
 	it( 'Should set isSubmitting to true on START_SUBMIT_SETUP_WIZARD_DATA action', () => {
 		const state = reducer(
 			{
 				isSubmitting: false,
-				error: { msg: 'Error' },
+				submitError: { msg: 'Error' },
 			},
 			{
 				type: START_SUBMIT_SETUP_WIZARD_DATA,
@@ -52,7 +65,7 @@ describe( 'Setup wizard reducer', () => {
 		);
 
 		expect( state.isSubmitting ).toBeTruthy();
-		expect( state.error ).toBeFalsy();
+		expect( state.submitError ).toBeFalsy();
 	} );
 
 	it( 'Should set isSubmitting to false on SUCCESS_SUBMIT_SETUP_WIZARD_DATA action', () => {
@@ -81,7 +94,7 @@ describe( 'Setup wizard reducer', () => {
 		);
 
 		expect( state.isSubmitting ).toBeFalsy();
-		expect( state.error ).toEqual( error );
+		expect( state.submitError ).toEqual( error );
 	} );
 
 	it( 'Should set the welcome data on SET_WELCOME_STEP_DATA action', () => {

@@ -2,7 +2,8 @@ import {
 	API_BASE_PATH,
 	FETCH_FROM_API,
 	START_FETCH_SETUP_WIZARD_DATA,
-	SET_SETUP_WIZARD_DATA,
+	SUCCESS_FETCH_SETUP_WIZARD_DATA,
+	ERROR_FETCH_SETUP_WIZARD_DATA,
 	START_SUBMIT_SETUP_WIZARD_DATA,
 	SUCCESS_SUBMIT_SETUP_WIZARD_DATA,
 	ERROR_SUBMIT_SETUP_WIZARD_DATA,
@@ -30,43 +31,64 @@ export const fetchFromAPI = ( request ) => ( {
  * Fetch setup wizard data action creator.
  */
 export function* fetchSetupWizardData() {
-	yield startFetchSetupWizardData();
+	yield startFetch();
 
 	// TODO: Refactory to get a single endpoint with all data.
-	const data = yield fetchFromAPI( {
-		path: API_BASE_PATH + 'welcome',
-	} );
-	yield setSetupWizardData( {
-		welcome: {
-			...data,
-		},
-	} );
+	try {
+		const data = yield fetchFromAPI( {
+			path: API_BASE_PATH + 'welcome',
+		} );
+		yield successFetch( {
+			welcome: {
+				...data,
+			},
+		} );
+	} catch ( error ) {
+		yield errorFetch( error );
+	}
 }
+
+/**
+ * @typedef  {Object} SuccessSetupWizardDataAction
+ * @property {string} type                         Action type.
+ * @property {Object} data                         Setup wizard data.
+ */
+/**
+ * Success fetch action creator.
+ *
+ * @param {Object} data Setup wizard data.
+ *
+ * @return {SuccessSetupWizardDataAction} Success fetch action.
+ */
+export const successFetch = ( data ) => ( {
+	type: SUCCESS_FETCH_SETUP_WIZARD_DATA,
+	data,
+} );
+
+/**
+ * @typedef  {Object}         ErrorFetchAction
+ * @property {string}         type             Action type.
+ * @property {Object|boolean} error            Error object or false.
+ */
+/**
+ * Error fetch action creator.
+ *
+ * @param {Object|boolean} error Error object or false.
+ *
+ * @return {ErrorFetchAction} Error action.
+ */
+export const errorFetch = ( error ) => ( {
+	type: ERROR_FETCH_SETUP_WIZARD_DATA,
+	error,
+} );
 
 /**
  * Start fetch setup wizard data action creator.
  *
  * @return {{type: string}} Start fetch action.
  */
-export const startFetchSetupWizardData = () => ( {
+export const startFetch = () => ( {
 	type: START_FETCH_SETUP_WIZARD_DATA,
-} );
-
-/**
- * @typedef  {Object} SetSetupWizardDataAction
- * @property {string} type                     Action type.
- * @property {Object} data                     Setup wizard data.
- */
-/**
- * Set usage tracking action creator.
- *
- * @param {Object} data Setup wizard data.
- *
- * @return {SetSetupWizardDataAction} Set usage tracking action.
- */
-export const setSetupWizardData = ( data ) => ( {
-	type: SET_SETUP_WIZARD_DATA,
-	data,
 } );
 
 /**
