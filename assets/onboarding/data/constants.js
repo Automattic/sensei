@@ -4,9 +4,13 @@
 export const API_BASE_PATH = '/sensei/v1/onboarding/';
 
 /**
- * Setup wizard action type constants.
+ * Generic fetch action type constants.
  */
 export const FETCH_FROM_API = 'FETCH_FROM_API';
+
+/**
+ * Fetch action type constants.
+ */
 export const START_FETCH_SETUP_WIZARD_DATA = 'START_FETCH_SETUP_WIZARD_DATA';
 export const SUCCESS_FETCH_SETUP_WIZARD_DATA =
 	'SUCCESS_FETCH_SETUP_WIZARD_DATA';
