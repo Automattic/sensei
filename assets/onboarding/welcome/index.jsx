@@ -11,7 +11,7 @@ import { useQueryStringRouter } from '../query-string-router';
  */
 export const Welcome = () => {
 	const [ usageModalActive, toggleUsageModal ] = useState( false );
-	const [ dataSaved, toggleDataSaved ] = useState( false );
+	const [ submittedData, toggleSubmittedData ] = useState( false );
 
 	const { goTo } = useQueryStringRouter();
 
@@ -26,15 +26,18 @@ export const Welcome = () => {
 	const { submitWelcomeStep } = useDispatch( 'sensei/setup-wizard' );
 
 	useEffect( () => {
-		if ( dataSaved && ! error ) {
+		if ( submittedData && ! error ) {
 			toggleUsageModal( false );
 			goTo( 'purpose' );
 		}
-	}, [ dataSaved, error, goTo ] );
+
+		// Clear in case of error.
+		toggleSubmittedData( false );
+	}, [ submittedData, error, goTo ] );
 
 	const submitPage = async ( allowUsageTracking ) => {
 		await submitWelcomeStep( allowUsageTracking );
-		toggleDataSaved( true );
+		toggleSubmittedData( true );
 	};
 
 	return (
