@@ -178,7 +178,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Get data for Setup Wizard frontend.
 	 *
-	 * @return mixed Setup Wizard data
+	 * @return array Setup Wizard data
 	 */
 	public function get_data() {
 
