@@ -36,7 +36,7 @@ export function* fetchSetupWizardData() {
 	// TODO: Refactory to get a single endpoint with all data.
 	try {
 		const data = yield fetchFromAPI( {
-			path: API_BASE_PATH + 'welcome',
+			path: API_BASE_PATH,
 		} );
 		yield successFetch( {
 			welcome: {

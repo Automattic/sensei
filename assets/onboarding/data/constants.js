@@ -1,7 +1,7 @@
 /**
  * Setup wizard constants.
  */
-export const API_BASE_PATH = '/sensei/v1/onboarding/';
+export const API_BASE_PATH = '/sensei-internal/v1/setup-wizard/';
 
 /**
  * Generic fetch action type constants.
