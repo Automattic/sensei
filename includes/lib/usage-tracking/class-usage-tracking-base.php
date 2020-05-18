@@ -24,13 +24,6 @@ abstract class Sensei_Usage_Tracking_Base {
 	 */
 
 	/**
-	 * The name of the option for hiding the Usage Tracking opt-in dialog.
-	 *
-	 * @var string
-	 **/
-	protected $hide_tracking_opt_in_option_name;
-
-	/**
 	 * The name of the cron job action for regularly logging usage data.
 	 *
 	 * @var string
@@ -151,7 +144,6 @@ abstract class Sensei_Usage_Tracking_Base {
 	 **/
 	protected function __construct() {
 		// Init instance vars.
-		$this->hide_tracking_opt_in_option_name = $this->get_prefix() . '_usage_tracking_opt_in_hide';
 		$this->job_name                         = $this->get_prefix() . '_usage_tracking_send_usage_data';
 
 		// Set up schedule and action needed for cron job.
