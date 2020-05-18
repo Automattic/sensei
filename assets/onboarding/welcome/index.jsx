@@ -1,10 +1,10 @@
-import { useSelect, useDispatch } from '@wordpress/data';
 import { Card, H, Link } from '@woocommerce/components';
 import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
 import { UsageModal } from './usage-modal';
 import { useQueryStringRouter } from '../query-string-router';
+import { useSetupWizardStore } from '../use-setup-wizard-store.js';
 
 /**
  * Welcome step for Onboarding Wizard.
@@ -15,15 +15,9 @@ export const Welcome = () => {
 
 	const { goTo } = useQueryStringRouter();
 
-	const { usageTracking, isSubmitting, error } = useSelect(
-		( select ) => ( {
-			usageTracking: select( 'sensei/setup-wizard' ).getUsageTracking(),
-			isSubmitting: select( 'sensei/setup-wizard' ).isSubmitting(),
-			error: select( 'sensei/setup-wizard' ).getSubmitError(),
-		} ),
-		[]
+	const { stepData, submitStep, isSubmitting, error } = useSetupWizardStore(
+		'welcome'
 	);
-	const { submitWelcomeStep } = useDispatch( 'sensei/setup-wizard' );
 
 	useEffect( () => {
 		if ( submittedData && ! error ) {
@@ -36,7 +30,7 @@ export const Welcome = () => {
 	}, [ submittedData, error, goTo ] );
 
 	const submitPage = async ( allowUsageTracking ) => {
-		await submitWelcomeStep( allowUsageTracking );
+		await submitStep( { usage_tracking: allowUsageTracking } );
 		toggleSubmittedData( true );
 	};
 
@@ -70,7 +64,7 @@ export const Welcome = () => {
 			</div>
 			{ usageModalActive && (
 				<UsageModal
-					tracking={ usageTracking }
+					tracking={ stepData.usageTracking }
 					isSubmitting={ isSubmitting }
 					onClose={ () => toggleUsageModal( false ) }
 					onContinue={ submitPage }
