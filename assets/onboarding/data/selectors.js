@@ -35,12 +35,11 @@ export const isSubmitting = ( state ) => state.isSubmitting;
 export const getSubmitError = ( state ) => state.submitError;
 
 /**
- * Usage tracking selector.
+ * Step state selector.
  *
  * @param {Object} state Current state.
+ * @param {string} step Step name.
  *
- * @return {boolean} Usage tracking value.
+ * @return {Object} Step data.
  */
-export const getUsageTracking = ( state ) => state.data.welcome.usage_tracking;
-
 export const getStepData = ( state, step ) => state.data[ step ];
