@@ -38,14 +38,11 @@ class Sensei_Admin {
 		// register admin scripts
 		add_action( 'admin_enqueue_scripts', array( $this, 'register_scripts' ) );
 
-		add_action( 'admin_print_styles', array( $this, 'admin_notices_styles' ) );
-		add_action( 'settings_before_form', array( $this, 'install_pages_output' ) );
 		add_action( 'admin_menu', array( $this, 'admin_menu' ), 10 );
 		add_action( 'menu_order', array( $this, 'admin_menu_order' ) );
 		add_action( 'admin_head', array( $this, 'admin_menu_highlight' ) );
 		add_action( 'admin_init', array( $this, 'page_redirect' ) );
 		add_action( 'admin_init', array( $this, 'sensei_add_custom_menu_items' ) );
-		add_action( 'admin_init', array( __CLASS__, 'install_pages' ) );
 
 		// Duplicate lesson & courses
 		add_filter( 'post_row_actions', array( $this, 'duplicate_action_link' ), 10, 2 );
@@ -202,33 +199,20 @@ class Sensei_Admin {
 	 *
 	 * Handles installation of the 2 pages needs for courses and my courses
 	 *
+	 * @deprecated 3.1.0 use Sensei_Onboarding_Pages::create_pages instead.
 	 * @access public
 	 * @return void
 	 */
 	function install_pages_output() {
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding_Pages::create_pages' );
 
-		if ( isset( $_GET['sensei_install_complete'] ) && 'true' == $_GET['sensei_install_complete'] ) {
-
-			?>
-			<div id="message" class="updated sensei-message sensei-connect">
-				<p><?php echo wp_kses_post( __( '<strong>Congratulations!</strong> &#8211; Sensei LMS has been installed and set up.', 'sensei-lms' ) ); ?></p>
-				<p>
-					<a href="<?php echo esc_url( admin_url( 'post-new.php?post_type=course' ) ); ?>" class="button-primary">
-						<?php esc_html_e( 'Create a Course', 'sensei-lms' ); ?>
-					</a>
-				</p>
-			</div>
-			<?php
-
-		}
-
-	} // End install_pages_output()
+	}
 
 
 	/**
 	 * create_page function.
 	 *
-	 * @deprecated since 3.1.0 use Sensei_Onboarding_Pages::create_page
+	 * @deprecated 3.1.0 use Sensei_Onboarding_Pages::create_page instead.
 	 *
 	 * @access public
 	 * @param mixed  $slug
@@ -249,7 +233,7 @@ class Sensei_Admin {
 	/**
 	 * create_pages function.
 	 *
-	 * @deprecated since 3.1.0 use Sensei_Onboarding_Pages::create_pages
+	 * @deprecated 3.1.0 use Sensei_Onboarding_Pages::create_pages instead.
 	 *
 	 * @access public
 	 * @return void
@@ -342,92 +326,36 @@ class Sensei_Admin {
 	/**
 	 * admin_install_notice function.
 	 *
+	 * @deprecated 3.1.0
 	 * @access public
 	 * @return void
 	 */
 	function admin_install_notice() {
-		?>
-		<div id="message" class="updated sensei-message sensei-connect">
-
-			<p>
-				<?php echo wp_kses_post( __( '<strong>Welcome to Sensei LMS</strong> &#8211; You\'re almost ready to create some courses!', 'sensei-lms' ) ); ?>
-			</p>
-
-			<p class="submit">
-
-				<a href="<?php echo esc_url( add_query_arg( 'install_sensei_pages', 'true', admin_url( 'admin.php?page=sensei-settings' ) ) ); ?>"
-				   class="button-primary">
-
-					<?php esc_html_e( 'Install Sensei LMS Pages', 'sensei-lms' ); ?>
-
-				</a>
-
-				<a class="skip button" href="<?php echo esc_url( add_query_arg( 'skip_install_sensei_pages', 'true', admin_url( 'admin.php?page=sensei-settings' ) ) ); ?>">
-
-					<?php esc_html_e( 'Skip setup', 'sensei-lms' ); ?>
-
-				</a>
-
-			</p>
-		</div>
-		<?php
-	} // End admin_install_notice()
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding::setup_wizard_notice' );
+	}
 
 
 	/**
 	 * admin_installed_notice function.
 	 *
+	 * @deprecated 3.1.0
 	 * @access public
 	 * @return void
 	 */
 	function admin_installed_notice() {
-		?>
-		<div id="message" class="updated sensei-message sensei-connect">
-
-			<p>
-				<?php echo wp_kses_post( __( '<strong>Sensei LMS has been installed</strong> &#8211; You\'re ready to start creating courses!', 'sensei-lms' ) ); ?>
-			</p>
-
-			<p class="submit">
-				<a href="<?php echo esc_url( admin_url( 'admin.php?page=sensei-settings' ) ); ?>" class="button-primary"><?php esc_html_e( 'Settings', 'sensei-lms' ); ?></a> <a class="docs button" href="http://www.woothemes.com/sensei-docs/">
-					<?php esc_html_e( 'Documentation', 'sensei-lms' ); ?>
-				</a>
-			</p>
-
-			<p>
-				<a href="<?php echo esc_url( admin_url( 'post-new.php?post_type=course' ) ); ?>" class="button-primary">
-					<?php esc_html_e( 'Create a Course', 'sensei-lms' ); ?>
-				</a>
-			</p>
-
-		</div>
-		<?php
-
-		// Set installed option
-		update_option( 'sensei_installed', 0 );
-	} // End admin_installed_notice()
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding::setup_wizard_notice' );
+	}
 
 	/**
 	 * admin_notices_styles function.
 	 *
+	 * @deprecated 3.1.0
 	 * @access public
 	 * @return void
 	 */
 	function admin_notices_styles() {
-
-		// Installed notices
-		if ( 1 == get_option( 'sensei_installed' ) ) {
-
-			Sensei()->assets->enqueue( 'sensei-activation', 'css/activation.css' );
-
-			if ( get_option( 'skip_install_sensei_pages' ) != 1 && Sensei()->get_page_id( 'course' ) < 1 && ! isset( $_GET['install_sensei_pages'] ) && ! isset( $_GET['skip_install_sensei_pages'] ) ) {
-				add_action( 'admin_notices', array( $this, 'admin_install_notice' ) );
-			} elseif ( ! isset( $_GET['page'] ) || $_GET['page'] !== 'sensei-settings' ) {
-				add_action( 'admin_notices', array( $this, 'admin_installed_notice' ) );
-			} // End If Statement
-		} // End If Statement
-
-	} // End admin_notices_styles()
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding::setup_wizard_notice' );
+	}
 
 	/**
 	 * Add links for duplicating lessons & courses
@@ -1773,58 +1701,13 @@ class Sensei_Admin {
 	 * Hooked onto admin_init. Listens for install_sensei_pages and skip_install_sensei_pages query args
 	 * on the sensei settings page.
 	 *
-	 * The function
+	 * @deprecated 3.1.0 use Sensei()->onboarding->pages->create_pages() instead
 	 *
 	 * @since 1.8.7
 	 */
 	public static function install_pages() {
-
-		// only fire on the settings page
-		if ( ! isset( $_GET['page'] )
-			|| 'sensei-settings' !== $_GET['page']
-			|| 1 == get_option( 'skip_install_sensei_pages' ) ) {
-
-			return;
-
-		}
-
-		// Install/page installer
-		$install_complete = false;
-
-		// Add pages button
-		$settings_url = '';
-		if ( isset( $_GET['install_sensei_pages'] ) && $_GET['install_sensei_pages'] ) {
-
-			Sensei()->admin->create_pages();
-
-			update_option( 'skip_install_sensei_pages', 1 );
-
-			$install_complete = true;
-			$settings_url     = remove_query_arg( 'install_sensei_pages' );
-
-			// Skip button
-		} elseif ( isset( $_GET['skip_install_sensei_pages'] ) && $_GET['skip_install_sensei_pages'] ) {
-
-			update_option( 'skip_install_sensei_pages', 1 );
-			$install_complete = true;
-			$settings_url     = remove_query_arg( 'skip_install_sensei_pages' );
-
-		}
-
-		if ( $install_complete ) {
-
-			// refresh the rewrite rules on init
-			update_option( 'sensei_flush_rewrite_rules', '1' );
-
-			// Set installed option
-			update_option( 'sensei_installed', 0 );
-
-			$complete_url = add_query_arg( 'sensei_install_complete', 'true', $settings_url );
-			wp_redirect( $complete_url );
-
-		}
-
-	}//end install_pages()
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding_Pages::create_pages' );
+	}
 
 	/**
 	 * Remove a course from course order option when trashed

@@ -1,9 +1,9 @@
 <?php
 /**
- * Onboarding.
+ * Setup Wizard.
  *
- * @package Sensei\Onboarding
- * @since   1.3.0
+ * @package Sensei\SetupWizard
+ * @since   3.1.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -11,8 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Sensei Onboarding Class
- * All onboarding functionality.
+ * Sensei Setup Wizard Class
+ * All setup wizard functionality.
  *
  * @package Sensei
  * @author  Automattic
@@ -20,13 +20,36 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Onboarding {
 	const SUGGEST_SETUP_WIZARD_OPTION = 'sensei_suggest_setup_wizard';
+	const USER_DATA_OPTION            = 'sensei_setup_wizard_data';
 	const MC_LIST_ID                  = '4fa225a515';
 	const MC_USER_ID                  = '7a061a9141b0911d6d9bafe3a';
 	const MC_GDPR_FIELD               = '23563';
 	const MC_URL                      = 'https://senseilms.us19.list-manage.com/subscribe/post?u=' . self::MC_USER_ID . '&id=' . self::MC_LIST_ID;
 
 	/**
-	 * URL Slug for Onboarding Wizard page
+	 * Default value for onboarding user data.
+	 *
+	 * @var array
+	 */
+	private $user_data_defaults = [
+		'features'  => [],
+		'purpose'   => [
+			'selected' => [],
+			'other'    => '',
+		],
+		'steps'     => [],
+		'__version' => '1-dev1',
+	];
+
+	/**
+	 * Sensei plugins whitelist.
+	 *
+	 * @var array
+	 */
+	public $plugin_slugs = [ 'sensei-wc-paid-courses', 'sensei-course-progress', 'sensei-certificates', 'sensei-media-attachments', 'sensei-content-drip' ];
+
+	/**
+	 * URL Slug for Setup Wizard Wizard page
 	 *
 	 * @var string
 	 */
@@ -35,25 +58,44 @@ class Sensei_Onboarding {
 	/**
 	 * Creation of Sensei pages.
 	 *
-	 * @var Sensei_Onboarding_Pages
+	 * @var Sensei_Setup Wizard_Pages
 	 */
 	public $pages;
 
 	/**
-	 * Sensei_Onboarding constructor.
+	 * Instance of singleton.
+	 *
+	 * @var self
+	 */
+	private static $instance;
+
+	/**
+	 * Fetches the instance of the class.
+	 *
+	 * @return self
+	 */
+	public static function instance() {
+		if ( ! self::$instance ) {
+			self::$instance = new self();
+		}
+
+		return self::$instance;
+	}
+
+	/**
+	 * Sensei_Setup Wizard constructor.
 	 */
 	public function __construct() {
 
 		$this->page_slug = 'sensei_onboarding';
 		$this->pages     = new Sensei_Onboarding_Pages();
 
-		add_action( 'rest_api_init', [ $this, 'register_rest_api' ] );
 		if ( is_admin() ) {
 
-			add_action( 'admin_menu', [ $this, 'admin_menu' ], 20 );
+			add_action( 'admin_menu', [ $this, 'register_wizard_page' ], 20 );
 			add_action( 'admin_notices', [ $this, 'setup_wizard_notice' ] );
-			add_action( 'admin_init', array( $this, 'skip_setup_wizard' ) );
-			add_action( 'admin_init', array( $this, 'activation_redirect' ) );
+			add_action( 'admin_init', [ $this, 'skip_setup_wizard' ] );
+			add_action( 'admin_init', [ $this, 'activation_redirect' ] );
 			add_action( 'current_screen', [ $this, 'add_setup_wizard_help_tab' ] );
 
 			// Maybe prevent WooCommerce help tab.
@@ -61,55 +103,17 @@ class Sensei_Onboarding {
 
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
 			if ( isset( $_GET['page'] ) && ( $_GET['page'] === $this->page_slug ) ) {
-
-				add_action(
-					'admin_print_scripts',
-					function() {
-						Sensei()->assets->enqueue( 'sensei-onboarding', 'onboarding/index.js', [], true );
-					}
-				);
-
-				add_action(
-					'admin_print_styles',
-					function() {
-						Sensei()->assets->enqueue( 'sensei-onboarding', 'onboarding/style.css', [ 'wp-components' ] );
-					}
-				);
-
-				add_filter(
-					'admin_body_class',
-					function( $classes ) {
-						$classes .= ' sensei-wp-admin-fullscreen ';
-						return $classes;
-					}
-				);
-				add_filter( 'show_admin_bar', '__return_false' );
+				$this->prepare_wizard_page();
 			}
 		}
-
 	}
 
 	/**
-	 * Check if should prevent woocommerce help tab or not.
-	 *
-	 * @return boolean
-	 */
-	private function should_prevent_woocommerce_help_tab() {
-		$post_types_to_prevent = [ 'course', 'lesson', 'sensei_message' ];
-
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
-		return isset( $_GET['post_type'] ) && (
-			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
-			in_array( $_GET['post_type'], $post_types_to_prevent, true )
-		);
-	}
-
-	/**
-	 * Register the hidden setup wizard submenu.
+	 * Register the Setup Wizard admin page via a hidden submenu.
 	 *
 	 * @link https://developer.wordpress.org/reference/functions/add_submenu_page/#comment-445
 	 */
-	public function admin_menu() {
+	public function register_wizard_page() {
 		if ( current_user_can( 'manage_sensei' ) ) {
 			add_submenu_page(
 				'options.php',
@@ -117,9 +121,51 @@ class Sensei_Onboarding {
 				__( 'Sensei LMS - Setup Wizard', 'sensei-lms' ),
 				'manage_sensei',
 				$this->page_slug,
-				[ $this, 'setup_wizard_page' ]
+				[ $this, 'render_wizard_page' ]
 			);
 		}
+	}
+
+	/**
+	 * Enqueue JS for Setup Wizard page.
+	 *
+	 * @access private
+	 */
+	public function enqueue_scripts() {
+		Sensei()->assets->enqueue( 'sensei-setupwizard', 'onboarding/index.js', [], true );
+	}
+
+	/**
+	 * Enqueue CSS for Setup Wizard page.
+	 *
+	 * @access private
+	 */
+	public function enqueue_styles() {
+		Sensei()->assets->enqueue( 'sensei-setupwizard', 'onboarding/style.css', [ 'wp-components' ] );
+	}
+
+	/**
+	 * Add global classes for Setup Wizard page.
+	 *
+	 * @param string $classes Current class list.
+	 *
+	 * @access private
+	 * @return string Extended class list.
+	 */
+	public function filter_body_class( $classes ) {
+		$classes .= ' sensei-wp-admin-fullscreen ';
+		return $classes;
+	}
+
+	/**
+	 * Set up hooks for loading Setup Wizard page assets.
+	 */
+	public function prepare_wizard_page() {
+		add_action( 'admin_print_scripts', [ $this, 'enqueue_scripts' ] );
+		add_action( 'admin_print_styles', [ $this, 'enqueue_styles' ] );
+		add_action( 'admin_body_class', [ $this, 'filter_body_class' ] );
+
+		add_filter( 'show_admin_bar', '__return_false' );
 	}
 
 	/**
@@ -161,7 +207,7 @@ class Sensei_Onboarding {
 	/**
 	 * Render app container for setup wizard.
 	 */
-	public function setup_wizard_page() {
+	public function render_wizard_page() {
 
 		?>
 		<div id="sensei-onboarding-page" class="sensei-onboarding">
@@ -175,7 +221,7 @@ class Sensei_Onboarding {
 	 *
 	 * @return boolean
 	 */
-	private function should_current_page_display_setup_wizard() {
+	private function should_current_page_display_wizard() {
 		$screen = get_current_screen();
 
 		if ( false !== strpos( $screen->id, 'sensei-lms_page_sensei' ) ) {
@@ -209,7 +255,7 @@ class Sensei_Onboarding {
 	 */
 	public function setup_wizard_notice() {
 		if (
-			! $this->should_current_page_display_setup_wizard()
+			! $this->should_current_page_display_wizard()
 			|| ! get_option( self::SUGGEST_SETUP_WIZARD_OPTION, 0 )
 			|| ! current_user_can( 'manage_sensei' )
 		) {
@@ -305,7 +351,7 @@ class Sensei_Onboarding {
 				'id'      => 'sensei_lms_setup_wizard_tab',
 				'title'   => __( 'Setup wizard', 'sensei-lms' ),
 				'content' =>
-					'<h2>' . __( 'Sensei LMS Onboarding', 'sensei-lms' ) . '</h2>' .
+					'<h2>' . __( 'Sensei LMS Setup Wizard', 'sensei-lms' ) . '</h2>' .
 					'<h3>' . __( 'Setup Wizard', 'sensei-lms' ) . '</h3>' .
 					'<p>' . __( 'If you need to access the setup wizard again, please click on the button below.', 'sensei-lms' ) . '</p>' .
 					'<p><a href="' . admin_url( 'admin.php?page=' . $this->page_slug ) . '" class="button button-primary" data-sensei-log-event="' . $link_track_event . '">' . __( 'Setup wizard', 'sensei-lms' ) . '</a></p>',
@@ -314,87 +360,34 @@ class Sensei_Onboarding {
 	}
 
 	/**
-	 * Register REST API route.
-	 */
-	public function register_rest_api() {
-
-		register_rest_route(
-			'sensei/v1',
-			'/onboarding/(?P<page>[a-zA-Z0-9-]+)',
-			array(
-				'methods'             => [ 'GET', 'POST' ],
-				'callback'            => [ $this, 'handle_api_request' ],
-				'permission_callback' => [ $this, 'can_user_access_rest_api' ],
-			)
-		);
-	}
-
-	/**
-	 * Check user permission for REST API access.
+	 * Get saved Setup Wizard user data.
 	 *
-	 * @return bool Whether the user can access the Onboarding REST API.
-	 */
-	public function can_user_access_rest_api() {
-		return current_user_can( 'manage_sensei' );
-	}
-
-	/**
-	 * Process onboarding API request.
+	 * @param string $key Limit data returned to selected key.
 	 *
-	 * @param WP_REST_Request $request The request object.
-	 *
-	 * @return mixed Result for the called endpoint.
+	 * @return mixed
 	 */
-	public function handle_api_request( $request ) {
+	public function get_wizard_user_data( $key = null ) {
+		$data = get_option( self::USER_DATA_OPTION, [] );
 
-		$page      = $request->get_param( 'page' );
-		$method    = $request->get_method();
-		$endpoints = [
-			'welcome' => [
-				'GET'  => [ $this, 'api_welcome_get' ],
-				'POST' => [ $this, 'api_welcome_submit' ],
-			],
-			'ready'   => [
-				'GET' => [ $this, 'api_ready_get' ],
-			],
-		];
-
-		if ( ! ( array_key_exists( $page, $endpoints ) && array_key_exists( $method, $endpoints[ $page ] ) ) ) {
-			return new WP_Error( 'invalid_page', __( 'Page not found', 'sensei-lms' ), [ 'status' => 404 ] );
+		// Reset data if the schema changed.
+		if ( empty( $data['__version'] ) || $data['__version'] !== $this->user_data_defaults['__version'] ) {
+			$data = $this->user_data_defaults;
+			update_option( self::USER_DATA_OPTION, $data );
 		}
-		$endpoint = $endpoints[ $page ][ $method ];
 
-		if ( 'POST' === $method ) {
-			$data = $request->get_json_params();
-			return call_user_func( $endpoint, $data );
-		} else {
-			return call_user_func( $endpoint );
-		}
+		return empty( $key ) ? $data : $data[ $key ];
 	}
 
 	/**
-	 * Welcome step data.
+	 * Save Setup Wizard user data.
 	 *
-	 * @return array Data used on welcome page.
+	 * @param array $changes Key-value pair of updates to save.
+	 *
+	 * @return bool Whether value was updated.
 	 */
-	public function api_welcome_get() {
-		return [
-			'usage_tracking' => Sensei()->usage_tracking->get_tracking_enabled(),
-		];
-	}
-
-	/**
-	 * Submit form on welcome step.
-	 *
-	 * @param array $data Form data.
-	 *
-	 * @return bool Success.
-	 */
-	public function api_welcome_submit( $data ) {
-		Sensei()->usage_tracking->set_tracking_enabled( (bool) $data['usage_tracking'] );
-		$this->pages->create_pages();
-
-		return true;
+	public function update_wizard_user_data( $changes ) {
+		$option = array_merge( $this->get_wizard_user_data(), $changes );
+		return update_option( self::USER_DATA_OPTION, $option );
 	}
 
 	/**

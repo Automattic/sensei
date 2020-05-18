@@ -5,6 +5,13 @@
 
 .sensei-onboarding {
 
+	&__main-loader {
+		position: fixed;
+		left: 50%;
+		top:50%;
+		transform: translate(-50%, -50%);
+	}
+
 	&__page {
 		background: #f6f7f7;
 		color: $text_secondary;

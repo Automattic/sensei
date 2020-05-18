@@ -159,6 +159,13 @@ class Sensei_Main {
 	public $rest_api;
 
 	/**
+	 * Internal REST API.
+	 *
+	 * @var Sensei_REST_API_Internal
+	 */
+	public $rest_api_internal;
+
+	/**
 	 * Global Usage Tracking object.
 	 *
 	 * @var Sensei_Usage_Tracking
@@ -248,28 +255,16 @@ class Sensei_Main {
 
 		$this->initialize_global_objects();
 
-		$this->maybe_init_email_signup_modal();
-	}
-
-	/**
-	 * Load the email signup modal if we haven't already.
-	 */
-	private function maybe_init_email_signup_modal() {
-		add_action( 'admin_init', array( $this, 'load_email_signup_modal' ) );
 	}
 
 	/**
 	 * Load the email signup modal form.
 	 *
-	 * @access private
+	 * @deprecated 3.1.0 The modal was removed.
+	 * @access     private
 	 */
 	public function load_email_signup_modal() {
-		if ( ! get_option( 'sensei_show_email_signup_form', false ) ) {
-			return;
-		}
-
-		Sensei_Email_Signup_Form::instance()->init();
-		update_option( 'sensei_show_email_signup_form', false );
+		_deprecated_function( __METHOD__, '3.1.0' );
 	}
 
 	/**
@@ -400,7 +395,7 @@ class Sensei_Main {
 		$this->enrolment_scheduler->init();
 
 		// Onboarding Wizard.
-		$this->onboarding = new Sensei_Onboarding();
+		$this->onboarding = Sensei_Onboarding::instance();
 
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
@@ -439,6 +434,8 @@ class Sensei_Main {
 		$this->Sensei_WPML = new Sensei_WPML();
 
 		$this->rest_api = new Sensei_REST_API_V1();
+
+		$this->rest_api_internal = new Sensei_REST_API_Internal();
 	}
 
 	/**
@@ -687,11 +684,9 @@ class Sensei_Main {
 		if ( false === get_option( 'sensei_installed', false ) ) {
 			set_transient( 'sensei_activation_redirect', 1, 30 );
 
-			update_option( 'sensei_show_email_signup_form', true );
 			update_option( Sensei_Onboarding::SUGGEST_SETUP_WIZARD_OPTION, 1 );
 		}
 
-		update_option( 'skip_install_sensei_pages', 0 );
 		update_option( 'sensei_installed', 1 );
 
 	} // End activate_sensei()
