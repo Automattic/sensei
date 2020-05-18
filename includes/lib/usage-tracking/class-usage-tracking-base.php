@@ -144,7 +144,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 **/
 	protected function __construct() {
 		// Init instance vars.
-		$this->job_name                         = $this->get_prefix() . '_usage_tracking_send_usage_data';
+		$this->job_name = $this->get_prefix() . '_usage_tracking_send_usage_data';
 
 		// Set up schedule and action needed for cron job.
 		add_filter( 'cron_schedules', array( $this, 'add_usage_tracking_two_week_schedule' ) );
