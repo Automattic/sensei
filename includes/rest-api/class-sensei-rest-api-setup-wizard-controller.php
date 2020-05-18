@@ -61,10 +61,10 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 */
 	public function register_routes() {
 
-		$this->register_progress_route();
-		$this->register_welcome_route();
-		$this->register_purpose_route();
-		$this->register_features_route();
+		$this->register_submit_progress_route();
+		$this->register_submit_welcome_route();
+		$this->register_submit_purpose_route();
+		$this->register_submit_features_route();
 	}
 
 	/**
@@ -79,7 +79,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Register /welcome endpoint.
 	 */
-	public function register_welcome_route() {
+	public function register_submit_welcome_route() {
 		register_rest_route(
 			$this->namespace,
 			$this->rest_base . '/welcome',
@@ -102,7 +102,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Register /purpose endpoint.
 	 */
-	public function register_purpose_route() {
+	public function register_submit_purpose_route() {
 		register_rest_route(
 			$this->namespace,
 			$this->rest_base . '/purpose',
@@ -133,7 +133,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Register /features endpoint.
 	 */
-	public function register_features_route() {
+	public function register_submit_features_route() {
 		register_rest_route(
 			$this->namespace,
 			$this->rest_base . '/features',
@@ -160,7 +160,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Register GET / endpoint.
 	 */
-	public function register_progress_route() {
+	public function register_submit_progress_route() {
 		register_rest_route(
 			$this->namespace,
 			$this->rest_base,
