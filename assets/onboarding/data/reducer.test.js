@@ -5,7 +5,7 @@ import {
 	START_SUBMIT_SETUP_WIZARD_DATA,
 	SUCCESS_SUBMIT_SETUP_WIZARD_DATA,
 	ERROR_SUBMIT_SETUP_WIZARD_DATA,
-	SET_WELCOME_STEP_DATA,
+	SET_STEP_DATA,
 } from './constants';
 import reducer from './reducer';
 
@@ -97,11 +97,12 @@ describe( 'Setup wizard reducer', () => {
 		expect( state.submitError ).toEqual( error );
 	} );
 
-	it( 'Should set the welcome data on SET_WELCOME_STEP_DATA action', () => {
+	it( 'Should set the step data on SET_STEP_DATA action', () => {
 		const data = { usage_tracking: true };
 		const state = reducer( undefined, {
-			type: SET_WELCOME_STEP_DATA,
+			type: SET_STEP_DATA,
 			data,
+			step: 'welcome',
 		} );
 
 		expect( state.data.welcome ).toEqual( data );

@@ -42,3 +42,5 @@ export const getSubmitError = ( state ) => state.submitError;
  * @return {boolean} Usage tracking value.
  */
 export const getUsageTracking = ( state ) => state.data.welcome.usage_tracking;
+
+export const getStepData = ( state, step ) => state.data[ step ];

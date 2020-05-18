@@ -5,7 +5,7 @@ import {
 	START_SUBMIT_SETUP_WIZARD_DATA,
 	SUCCESS_SUBMIT_SETUP_WIZARD_DATA,
 	ERROR_SUBMIT_SETUP_WIZARD_DATA,
-	SET_WELCOME_STEP_DATA,
+	SET_STEP_DATA,
 } from './constants';
 
 const DEFAULT_STATE = {
@@ -74,13 +74,13 @@ export default ( state = DEFAULT_STATE, action ) => {
 				submitError: action.error,
 			};
 
-		case SET_WELCOME_STEP_DATA:
+		case SET_STEP_DATA:
 			return {
 				...state,
 				data: {
 					...state.data,
-					welcome: {
-						...state.data.welcome,
+					[ action.step ]: {
+						...state.data[ action.step ],
 						...action.data,
 					},
 				},

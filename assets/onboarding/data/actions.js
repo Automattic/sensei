@@ -7,7 +7,7 @@ import {
 	START_SUBMIT_SETUP_WIZARD_DATA,
 	SUCCESS_SUBMIT_SETUP_WIZARD_DATA,
 	ERROR_SUBMIT_SETUP_WIZARD_DATA,
-	SET_WELCOME_STEP_DATA,
+	SET_STEP_DATA,
 } from './constants';
 
 /**
@@ -124,40 +124,43 @@ export const errorSubmit = ( error ) => ( {
 } );
 
 /**
- * Submit welcome step action creator.
+ * Submit step action creator.
  *
- * @param {boolean} usageTracking Usage tracking.
+ * @param {string} step     Step name.
+ * @param {Object} stepData Data to submit.
  */
-export function* submitWelcomeStep( usageTracking ) {
-	const welcomeStepData = { usage_tracking: usageTracking };
+export function* submitStep( step, stepData ) {
 	yield startSubmit();
 
 	try {
 		yield fetchFromAPI( {
-			path: API_BASE_PATH + 'welcome',
+			path: API_BASE_PATH + step,
 			method: 'POST',
-			data: welcomeStepData,
+			data: stepData,
 		} );
 		yield successSubmit();
-		yield setWelcomeStepData( welcomeStepData );
+		yield setStepData( step, stepData );
 	} catch ( error ) {
 		yield errorSubmit( error );
 	}
 }
 
 /**
- * @typedef  {Object} SetWelcomeStepDataAction
+ * @typedef  {Object} SetStepDataAction
  * @property {string} type                     Action type.
- * @property {Object} data                     Welcome step data.
+ * @property {string} step                     Step name.
+ * @property {Object} data                     Step data.
  */
 /**
  * Set welcome step data action creator.
  *
- * @param {Object} data Welcome data object.
+ * @param {string} step Step name.
+ * @param {Object} data Step data object.
  *
- * @return {SetWelcomeStepDataAction} Set welcome step data action.
+ * @return {SetStepDataAction} Set welcome step data action.
  */
-export const setWelcomeStepData = ( data ) => ( {
-	type: SET_WELCOME_STEP_DATA,
+export const setStepData = ( step, data ) => ( {
+	type: SET_STEP_DATA,
+	step,
 	data,
 } );
