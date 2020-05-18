@@ -4,7 +4,7 @@ import { Button } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
 import { UsageModal } from './usage-modal';
 import { useQueryStringRouter } from '../query-string-router';
-import { useSetupWizardStore } from '../use-setup-wizard-store.js';
+import { useSetupWizardStep } from '../use-setup-wizard-step.js';
 
 /**
  * Welcome step for Onboarding Wizard.
@@ -15,7 +15,7 @@ export const Welcome = () => {
 
 	const { goTo } = useQueryStringRouter();
 
-	const { stepData, submitStep, isSubmitting, error } = useSetupWizardStore(
+	const { stepData, submitStep, isSubmitting, error } = useSetupWizardStep(
 		'welcome'
 	);
 

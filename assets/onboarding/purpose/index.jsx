@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { Button, CheckboxControl, TextControl } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
 import { useQueryStringRouter } from '../query-string-router';
-import { useSetupWizardStore } from '../use-setup-wizard-store.js';
+import { useSetupWizardStep } from '../use-setup-wizard-step.js';
 
 const purposes = [
 	{
@@ -46,7 +46,7 @@ const purposes = [
 export const Purpose = () => {
 	const { goTo } = useQueryStringRouter();
 
-	const { stepData, submitStep, isSubmitting } = useSetupWizardStore(
+	const { stepData, submitStep, isSubmitting } = useSetupWizardStep(
 		'purpose'
 	);
 

@@ -18,7 +18,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
  * @param {string} step Setup Wizard step endpoint name.
  * @return {StepStoreHookHandle} handle
  */
-export const useSetupWizardStore = ( step ) => {
+export const useSetupWizardStep = ( step ) => {
 	const { stepData, isSubmitting, error } = useSelect(
 		( select ) => ( {
 			stepData: select( 'sensei/setup-wizard' ).getStepData( step ),
