@@ -21,16 +21,16 @@ import apiFetch from '@wordpress/api-fetch';
 export const useOnboardingApi = ( step ) => {
 	const [ data, setData ] = useState( {} );
 	const [ isBusy, setBusy ] = useState( false );
-	const path = `/sensei/v1/onboarding/${ step }`;
+	const path = `sensei-internal/v1/setup-wizard`;
 
 	const fetchData = useCallback( async () => {
 		setBusy( true );
 		const result = await apiFetch( {
 			path,
 		} );
-		setData( result );
+		setData( result[ step ] );
 		setBusy( false );
-	}, [ path ] );
+	}, [ path, step ] );
 
 	useEffect( () => {
 		fetchData();
@@ -39,12 +39,11 @@ export const useOnboardingApi = ( step ) => {
 	async function submit( formData ) {
 		setBusy( true );
 		await apiFetch( {
-			path,
+			path: `${ path }/${ step }`,
 			method: 'POST',
 			data: formData,
 		} );
 		setBusy( false );
-		await fetchData();
 	}
 
 	return { data, submit, isBusy };
