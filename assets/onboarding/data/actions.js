@@ -33,15 +33,12 @@ export const fetchFromAPI = ( request ) => ( {
 export function* fetchSetupWizardData() {
 	yield startFetch();
 
-	// TODO: Refactory to get a single endpoint with all data.
 	try {
 		const data = yield fetchFromAPI( {
 			path: API_BASE_PATH,
 		} );
 		yield successFetch( {
-			welcome: {
-				...data,
-			},
+			...data,
 		} );
 	} catch ( error ) {
 		yield errorFetch( error );
