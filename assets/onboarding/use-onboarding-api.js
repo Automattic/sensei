@@ -1,13 +1,13 @@
-import { useEffect, useState, useCallback } from '@wordpress/element';
-import apiFetch from '@wordpress/api-fetch';
+import { useSelect, useDispatch } from '@wordpress/data';
 
 /**
  *
  * @typedef {Object} OnboardingApiHandle
  *
- * @property {boolean}          isBusy Loading state.
- * @property {Object}           data   API response from GET call to endpoint.
- * @property {function(Object)} submit Method to POST to endpoint.
+ * @property {boolean}          isSubmitting Submitting state.
+ * @property {Object}           stepData     API response from GET call to endpoint.
+ * @property {Object}           error        Submit error.
+ * @property {function(Object)} submitStep   Method to POST to endpoint.
  */
 /**
  * Use Onboarding REST API for the given step.
@@ -19,32 +19,20 @@ import apiFetch from '@wordpress/api-fetch';
  * @return {OnboardingApiHandle} handle
  */
 export const useOnboardingApi = ( step ) => {
-	const [ data, setData ] = useState( {} );
-	const [ isBusy, setBusy ] = useState( false );
-	const path = `sensei-internal/v1/setup-wizard`;
+	const { stepData, isSubmitting, error } = useSelect(
+		( select ) => ( {
+			stepData: select( 'sensei/setup-wizard' ).getStepData( step ),
+			isSubmitting: select( 'sensei/setup-wizard' ).isSubmitting(),
+			error: select( 'sensei/setup-wizard' ).getSubmitError(),
+		} ),
+		[]
+	);
+	const { submitStep } = useDispatch( 'sensei/setup-wizard' );
 
-	const fetchData = useCallback( async () => {
-		setBusy( true );
-		const result = await apiFetch( {
-			path,
-		} );
-		setData( result[ step ] );
-		setBusy( false );
-	}, [ path, step ] );
-
-	useEffect( () => {
-		fetchData();
-	}, [ fetchData ] );
-
-	async function submit( formData ) {
-		setBusy( true );
-		await apiFetch( {
-			path: `${ path }/${ step }`,
-			method: 'POST',
-			data: formData,
-		} );
-		setBusy( false );
-	}
-
-	return { data, submit, isBusy };
+	return {
+		stepData,
+		submitStep: submitStep.bind( null, step ),
+		isSubmitting,
+		error,
+	};
 };
