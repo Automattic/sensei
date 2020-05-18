@@ -1,6 +1,7 @@
 import { useSelect, useDispatch } from '@wordpress/data';
 import { render, useLayoutEffect } from '@wordpress/element';
 import { Spinner } from '@woocommerce/components';
+import { __ } from '@wordpress/i18n';
 
 import registerSetupWizardStore from './data';
 import { useWpAdminFullscreen } from '../react-hooks';
@@ -24,9 +25,11 @@ const PARAM_NAME = 'step';
 const SenseiSetupWizardPage = () => {
 	useWpAdminFullscreen( [ 'sensei-color', 'sensei-onboarding__page' ] );
 
-	const isFetching = useSelect(
-		( select ) =>
-			select( 'sensei/setup-wizard' ).isFetchingSetupWizardData(),
+	const { isFetching, error } = useSelect(
+		( select ) => ( {
+			isFetching: select( 'sensei/setup-wizard' ).isFetching(),
+			error: select( 'sensei/setup-wizard' ).getFetchError(),
+		} ),
 		[]
 	);
 	const { fetchSetupWizardData } = useDispatch( 'sensei/setup-wizard' );
@@ -36,9 +39,18 @@ const SenseiSetupWizardPage = () => {
 		fetchSetupWizardData();
 	}, [ fetchSetupWizardData ] );
 
-	return isFetching ? (
-		<Spinner className="sensei-onboarding__main-loader" />
-	) : (
+	if ( isFetching ) {
+		return <Spinner className="sensei-onboarding__main-loader" />;
+	}
+
+	if ( error ) {
+		return __(
+			'An error has occurred. Please try again later!',
+			'sensei-lms'
+		);
+	}
+
+	return (
 		<QueryStringRouter paramName={ PARAM_NAME }>
 			<div className="sensei-onboarding__header">
 				<Navigation steps={ steps } />
