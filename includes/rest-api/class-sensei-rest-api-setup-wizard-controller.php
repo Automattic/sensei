@@ -39,7 +39,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 *
 	 * @var Sensei_Onboarding
 	 */
-	private $setupwizard;
+	private $setup_wizard;
 
 	/**
 	 * Available 'purpose' options.
@@ -52,8 +52,8 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 * @param string $namespace Routes namespace.
 	 */
 	public function __construct( $namespace ) {
-		$this->namespace   = $namespace;
-		$this->setupwizard = Sensei_Onboarding::instance();
+		$this->namespace    = $namespace;
+		$this->setup_wizard = Sensei_Onboarding::instance();
 	}
 
 	/**
@@ -148,7 +148,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 							'type'     => 'array',
 							'items'    => [
 								'type' => 'string',
-								'enum' => $this->setupwizard->plugin_slugs,
+								'enum' => $this->setup_wizard->plugin_slugs,
 							],
 						],
 					],
@@ -182,7 +182,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 */
 	public function get_data() {
 
-		$user_data = $this->setupwizard->get_wizard_user_data();
+		$user_data = $this->setup_wizard->get_wizard_user_data();
 
 		return [
 			'completed_steps' => $user_data['steps'],
@@ -208,9 +208,9 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 * @return bool Success.
 	 */
 	public function mark_step_complete( $step ) {
-		return $this->setupwizard->update_wizard_user_data(
+		return $this->setup_wizard->update_wizard_user_data(
 			[
-				'steps' => array_unique( array_merge( $this->setupwizard->get_wizard_user_data( 'steps' ), [ $step ] ) ),
+				'steps' => array_unique( array_merge( $this->setup_wizard->get_wizard_user_data( 'steps' ), [ $step ] ) ),
 			]
 		);
 	}
@@ -282,7 +282,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 
 		$this->mark_step_complete( 'welcome' );
 		Sensei()->usage_tracking->set_tracking_enabled( (bool) $data['usage_tracking'] );
-		$this->setupwizard->pages->create_pages();
+		$this->setup_wizard->pages->create_pages();
 
 		return true;
 	}
@@ -298,7 +298,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 
 		$this->mark_step_complete( 'purpose' );
 
-		return $this->setupwizard->update_wizard_user_data(
+		return $this->setup_wizard->update_wizard_user_data(
 			[
 				'purpose' => [
 					'selected' => $form['selected'],
@@ -319,7 +319,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 
 		$this->mark_step_complete( 'features' );
 
-		return $this->setupwizard->update_wizard_user_data(
+		return $this->setup_wizard->update_wizard_user_data(
 			[
 				'features' => $data['selected'],
 			]
