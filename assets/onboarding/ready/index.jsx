@@ -2,7 +2,7 @@ import { Card, H, Link, List, Section } from '@woocommerce/components';
 import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
 import { MailingListSignupForm } from './mailinglist-signup-form';
-import { formatString } from '../../tests-helper/format-string';
+import { formatString } from '../helpers/format-string.js';
 
 /**
  * Ready step for Setup Wizard.
