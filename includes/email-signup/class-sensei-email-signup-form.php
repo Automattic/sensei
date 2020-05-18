@@ -4,7 +4,7 @@
  *
  * @package sensei
  * @since   2.0.0
- * @deprecated 3.1.0 - Email signup flow moved to Setup Wizard
+ * @deprecated 3.1.0 Email signup flow moved to Setup Wizard
  */
 
 /**

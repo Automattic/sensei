@@ -253,7 +253,7 @@ class Sensei_Main {
 	/**
 	 * Load the email signup modal form.
 	 *
-	 * @deprecated 3.1.0 - The modal was removed.
+	 * @deprecated 3.1.0 The modal was removed.
 	 * @access     private
 	 */
 	public function load_email_signup_modal() {
