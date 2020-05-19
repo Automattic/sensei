@@ -7,7 +7,7 @@ import {
 	START_SUBMIT_SETUP_WIZARD_DATA,
 	SUCCESS_SUBMIT_SETUP_WIZARD_DATA,
 	ERROR_SUBMIT_SETUP_WIZARD_DATA,
-	SET_WELCOME_STEP_DATA,
+	SET_STEP_DATA,
 } from './constants';
 import {
 	fetchFromAPI,
@@ -18,8 +18,8 @@ import {
 	startSubmit,
 	successSubmit,
 	errorSubmit,
-	submitWelcomeStep,
-	setWelcomeStepData,
+	submitStep,
+	setStepData,
 } from './actions';
 
 describe( 'Setup wizard actions', () => {
@@ -128,9 +128,8 @@ describe( 'Setup wizard actions', () => {
 		expect( errorSubmit( error ) ).toEqual( expectedAction );
 	} );
 
-	it( 'Should generate the submit welcome step action', () => {
-		const usageTracking = true;
-		const gen = submitWelcomeStep( usageTracking );
+	it( 'Should generate the submit step action', () => {
+		const gen = submitStep( 'welcome', { usage_tracking: true } );
 
 		// Start submit action.
 		const expectedStartSubmitAction = {
@@ -145,7 +144,7 @@ describe( 'Setup wizard actions', () => {
 				path: API_BASE_PATH + 'welcome',
 				method: 'POST',
 				data: {
-					usage_tracking: usageTracking,
+					usage_tracking: true,
 				},
 			},
 		};
@@ -159,14 +158,15 @@ describe( 'Setup wizard actions', () => {
 
 		// Set data action.
 		const expectedSetDataAction = {
-			type: SET_WELCOME_STEP_DATA,
-			data: { usage_tracking: usageTracking },
+			type: SET_STEP_DATA,
+			step: 'welcome',
+			data: { usage_tracking: true },
 		};
 		expect( gen.next().value ).toEqual( expectedSetDataAction );
 	} );
 
-	it( 'Should catch error on the submit welcome step action', () => {
-		const gen = submitWelcomeStep( true );
+	it( 'Should catch error on the submit step action', () => {
+		const gen = submitStep( 'test', true );
 
 		// Start submit action.
 		gen.next();
@@ -183,13 +183,14 @@ describe( 'Setup wizard actions', () => {
 		expect( gen.throw( error ).value ).toEqual( expectedErrorAction );
 	} );
 
-	it( 'Should return the set welcome step data action', () => {
+	it( 'Should return the set step data action', () => {
 		const data = { usage_tracking: true };
 		const expectedAction = {
-			type: SET_WELCOME_STEP_DATA,
+			type: SET_STEP_DATA,
 			data,
+			step: 'welcome',
 		};
 
-		expect( setWelcomeStepData( data ) ).toEqual( expectedAction );
+		expect( setStepData( 'welcome', data ) ).toEqual( expectedAction );
 	} );
 } );

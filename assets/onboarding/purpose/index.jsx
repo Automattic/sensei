@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { Button, CheckboxControl, TextControl } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
 import { useQueryStringRouter } from '../query-string-router';
-import { useOnboardingApi } from '../use-onboarding-api';
+import { useSetupWizardStep } from '../use-setup-wizard-step.js';
 
 const purposes = [
 	{
@@ -45,19 +45,22 @@ const purposes = [
  */
 export const Purpose = () => {
 	const { goTo } = useQueryStringRouter();
+	const [ submittedData, toggleSubmittedData ] = useState( false );
 
-	const { data, submit, isBusy } = useOnboardingApi( 'purpose' );
+	const {
+		stepData,
+		submitStep,
+		isSubmitting,
+		errorNotice,
+		error,
+	} = useSetupWizardStep( 'purpose' );
 
 	const [ { selected, other }, setFormState ] = useState( {
 		selected: [],
 		other: '',
 	} );
 
-	useEffect( () => {
-		if ( data && data.selected ) {
-			setFormState( data );
-		}
-	}, [ data ] );
+	useEffect( () => setFormState( stepData ), [ stepData ] );
 
 	const isEmpty = ! selected.length;
 
@@ -70,9 +73,16 @@ export const Purpose = () => {
 		} ) );
 	};
 
+	useEffect( () => {
+		if ( submittedData && ! error ) {
+			goTo( 'features' );
+		}
+		toggleSubmittedData( false );
+	}, [ submittedData, error, goTo ] );
+
 	const submitPage = async () => {
-		await submit( { selected, other } );
-		goTo( 'features' );
+		await submitStep( { selected, other } );
+		toggleSubmittedData( true );
 	};
 
 	return (
@@ -112,11 +122,11 @@ export const Purpose = () => {
 						/>
 					) }
 				</div>
-
+				{ errorNotice }
 				<Button
 					isPrimary
-					isBusy={ isBusy }
-					disabled={ isBusy || isEmpty }
+					isBusy={ isSubmitting }
+					disabled={ isSubmitting || isEmpty }
 					className="sensei-onboarding__button sensei-onboarding__button-card"
 					onClick={ submitPage }
 				>

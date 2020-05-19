@@ -3,7 +3,7 @@ import {
 	getFetchError,
 	isSubmitting,
 	getSubmitError,
-	getUsageTracking,
+	getStepData,
 } from './selectors';
 
 describe( 'Setup wizard selectors', () => {
@@ -50,6 +50,8 @@ describe( 'Setup wizard selectors', () => {
 			},
 		};
 
-		expect( getUsageTracking( state ) ).toBeTruthy();
+		expect( getStepData( state, 'welcome' ) ).toEqual( {
+			usage_tracking: true,
+		} );
 	} );
 } );
