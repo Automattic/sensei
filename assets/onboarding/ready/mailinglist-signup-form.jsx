@@ -1,7 +1,7 @@
 import { List, Spinner } from '@woocommerce/components';
 import { Button, TextControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useOnboardingApi } from '../use-onboarding-api.js';
+import { useSetupWizardStep } from '../use-setup-wizard-step';
 
 /**
  * Sign up to Sensei Mailing list.
@@ -10,26 +10,18 @@ import { useOnboardingApi } from '../use-onboarding-api.js';
  * Fills in site administrator e-mail address.
  */
 export const MailingListSignupForm = () => {
-	const { data, isBusy } = useOnboardingApi( 'ready' );
-
-	if ( isBusy ) {
-		return (
-			<div style={ { textAlign: 'center' } }>
-				<Spinner />
-			</div>
-		);
-	}
+	const { stepData } = useSetupWizardStep( 'ready' );
 
 	return (
 		<form
-			action={ data.mc_url }
+			action={ stepData.mc_url }
 			method="post"
 			target="_blank"
 			className="sensei-onboarding__mailinglist-signup-form"
 		>
 			<input
 				type="hidden"
-				name={ `gdpr[${ data.gdpr_field }]` }
+				name={ `gdpr[${ stepData.gdpr_field }]` }
 				value="Y"
 			/>
 			<List
@@ -41,7 +33,7 @@ export const MailingListSignupForm = () => {
 							<TextControl
 								type="email"
 								name="EMAIL"
-								defaultValue={ data.admin_email }
+								defaultValue={ stepData.admin_email }
 							/>
 						),
 						after: (
