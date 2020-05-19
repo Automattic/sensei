@@ -2,11 +2,16 @@ import { List } from '@woocommerce/components';
 import { Button, Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
+const WC_EXTRA_DESCRIPTION = __(
+	'(The WooCommerce plugin may also be installed and activated for free.)',
+	'sensei-lms'
+);
+
 /**
  * @typedef  {Object} Feature
- * @property {string} title                          Feature title.
- * @property {string} description                    Feature description.
- * @property {string} [confirmationExtraDescription] Extra description that appears only in confirmation modal.
+ * @property {string} id          Feature id.
+ * @property {string} title       Feature title.
+ * @property {string} description Feature description.
  */
 /**
  * Features confirmation modal.
@@ -26,14 +31,13 @@ const ConfirmationModal = ( { features = [], onInstall, onSkip } ) => (
 		isDismissible={ false }
 	>
 		<List
-			items={ features.map(
-				( { title, description, confirmationExtraDescription } ) => ( {
-					title,
-					content: confirmationExtraDescription
-						? `${ description } ${ confirmationExtraDescription }`
+			items={ features.map( ( { id, title, description } ) => ( {
+				title,
+				content:
+					'sensei-wc-paid-courses' === id
+						? `${ description } ${ WC_EXTRA_DESCRIPTION }`
 						: description,
-				} )
-			) }
+			} ) ) }
 		/>
 
 		<p>
