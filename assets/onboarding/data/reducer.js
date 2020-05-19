@@ -17,6 +17,13 @@ const DEFAULT_STATE = {
 		welcome: {
 			usage_tracking: false,
 		},
+		purpose: {
+			selected: [],
+			other: '',
+		},
+		features: {
+			selected: [],
+		},
 	},
 };
 
