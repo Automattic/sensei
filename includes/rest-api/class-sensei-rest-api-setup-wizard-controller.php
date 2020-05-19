@@ -196,9 +196,10 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 			'features'        => [
 				'selected' => $user_data['features'],
 			],
-			'ready'           => [],
+			'ready'           => $this->setup_wizard->get_mailing_list_form_data(),
 		];
 	}
+
 
 	/**
 	 * Mark the given step as completed.

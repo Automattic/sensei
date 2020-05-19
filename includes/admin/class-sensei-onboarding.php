@@ -391,11 +391,11 @@ class Sensei_Onboarding {
 	}
 
 	/**
-	 * Welcome step data.
+	 * Get data used for Mailing list sign-up form.
 	 *
-	 * @return array Data used on welcome page.
+	 * @return array The data.
 	 */
-	public function api_ready_get() {
+	public function get_mailing_list_form_data() {
 
 		return [
 			'admin_email' => get_option( 'admin_email', '' ),
