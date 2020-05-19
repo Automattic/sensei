@@ -15,9 +15,13 @@ export const Welcome = () => {
 
 	const { goTo } = useQueryStringRouter();
 
-	const { stepData, submitStep, isSubmitting, error } = useSetupWizardStep(
-		'welcome'
-	);
+	const {
+		stepData,
+		submitStep,
+		isSubmitting,
+		errorNotice,
+		error,
+	} = useSetupWizardStep( 'welcome' );
 
 	useEffect( () => {
 		if ( submittedData && ! error ) {
@@ -68,7 +72,9 @@ export const Welcome = () => {
 					isSubmitting={ isSubmitting }
 					onClose={ () => toggleUsageModal( false ) }
 					onContinue={ submitPage }
-				/>
+				>
+					{ errorNotice }
+				</UsageModal>
 			) }
 		</>
 	);
