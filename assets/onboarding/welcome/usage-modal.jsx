@@ -19,6 +19,7 @@ export const UsageModal = ( {
 	onContinue,
 	onClose,
 	isSubmitting,
+	children,
 } ) => {
 	const trackingMessage = interpolateComponents( {
 		mixedString: __(
@@ -58,6 +59,7 @@ export const UsageModal = ( {
 						onChange={ () => setAllowTracking( ! allowTracking ) }
 					/>
 				</div>
+				{ children }
 				<Button
 					className="sensei-onboarding__button sensei-onboarding__button-modal"
 					isPrimary

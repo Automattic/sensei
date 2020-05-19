@@ -27,4 +27,4 @@ export const ERROR_SUBMIT_SETUP_WIZARD_DATA = 'ERROR_SUBMIT_SETUP_WIZARD_DATA';
 /**
  * Welcome step action type constants.
  */
-export const SET_WELCOME_STEP_DATA = 'SET_WELCOME_STEP_DATA';
+export const SET_STEP_DATA = 'SET_STEP_DATA';
