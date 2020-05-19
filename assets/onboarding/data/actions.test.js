@@ -165,7 +165,7 @@ describe( 'Setup wizard actions', () => {
 		expect( gen.next().value ).toEqual( expectedSetDataAction );
 	} );
 
-	it( 'Should catch error on the submit welcome step action', () => {
+	it( 'Should catch error on the submit step action', () => {
 		const gen = submitStep( 'test', true );
 
 		// Start submit action.
@@ -183,7 +183,7 @@ describe( 'Setup wizard actions', () => {
 		expect( gen.throw( error ).value ).toEqual( expectedErrorAction );
 	} );
 
-	it( 'Should return the set welcome step data action', () => {
+	it( 'Should return the set step data action', () => {
 		const data = { usage_tracking: true };
 		const expectedAction = {
 			type: SET_STEP_DATA,
