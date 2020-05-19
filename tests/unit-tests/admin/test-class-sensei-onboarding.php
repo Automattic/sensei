@@ -358,41 +358,15 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that get sensei extensions returns normalized object.
+	 * Tests that get sensei extensions and returns with decoded prices and slug.
 	 *
 	 * @covers Sensei_Onboarding::get_sensei_extensions
-	 * @covers Sensei_Onboarding::normalize_sensei_extensions
 	 */
-	public function testGetSenseiExtensionsReturnsNormalizedObject() {
-		$expected_extensions = [
-			[
-				'id'            => 'slug-1',
-				'title'         => 'Title 1',
-				'description'   => 'Excerpt 1',
-				'learnMoreLink' => 'https://senseilms.com/product/test-1/',
-				'price'         => '$1.00',
-				'plugin_file'   => 'path/file-1.php',
-			],
-			[
-				'id'    => 'slug-2',
-				'price' => 0,
-			],
-		];
-
+	public function testGetSenseiExtensionsAndReturnsWithDecodedPrices() {
 		$response_body = '{
 			"products": [
-				{
-					"product_slug": "slug-1",
-					"title": "Title 1",
-					"excerpt": "Excerpt 1",
-					"link": "https:\/\/senseilms.com\/product\/test-1\/",
-					"price": "&#36;1.00",
-					"plugin_file": "path\/file-1.php"
-				},
-				{
-					"product_slug": "slug-2",
-					"price": 0
-				}
+				{ "product_slug": "slug-1", "price": "&#36;1.00" },
+				{ "product_slug": "slug-2", "price": 0 }
 			]
 		}';
 
@@ -406,9 +380,9 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 
 		$extensions = Sensei()->onboarding->get_sensei_extensions();
 
-		$this->assertEquals( $expected_extensions, $extensions );
-
-		$transient_extensions = get_transient( \Sensei_Onboarding::EXTENSIONS_TRANSIENT );
-		$this->assertEquals( $expected_extensions, $transient_extensions );
+		$this->assertEquals( $extensions[0]->slug, 'slug-1' );
+		$this->assertEquals( $extensions[0]->price, '$1.00' );
+		$this->assertEquals( $extensions[1]->slug, 'slug-2' );
+		$this->assertEquals( $extensions[1]->price, 0 );
 	}
 }

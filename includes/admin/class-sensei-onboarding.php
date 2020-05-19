@@ -388,63 +388,27 @@ class Sensei_Onboarding {
 	}
 
 	/**
-	 * Normalize sensei extensions array.
-	 *
-	 * @param array $raw_extensions Raw extensions.
-	 *
-	 * @return array Normalized extensions.
-	 */
-	private function normalize_sensei_extensions( $raw_extensions ) {
-		$json = json_decode( $raw_extensions['body'], true );
-
-		// Normalize property names.
-		$properties = [
-			'product_slug' => 'id',
-			'excerpt'      => 'description',
-			'link'         => 'learnMoreLink',
-		];
-		$extensions = array_map(
-			function( $extension ) use ( $properties ) {
-				foreach ( $properties as $from => $to ) {
-					if ( ! isset( $extension[ $from ] ) ) {
-						continue;
-					}
-
-					$extension[ $to ] = $extension[ $from ];
-					unset( $extension[ $from ] );
-				}
-
-				// Decode price.
-				if ( isset( $extension['price'] ) && 0 !== $extension['price'] ) {
-					$extension['price'] = html_entity_decode( $extension['price'] );
-				}
-
-				return $extension;
-			},
-			$json['products']
-		);
-
-		return $extensions;
-	}
-
-	/**
 	 * Get Sensei extensions for setup wizard.
 	 *
 	 * @return array Sensei extensions.
 	 */
 	public function get_sensei_extensions() {
-		$extensions = get_transient( self::EXTENSIONS_TRANSIENT );
+		$sensei_extensions = Sensei_Extensions::instance();
 
-		if ( false === $extensions ) {
-			$data = wp_remote_get( 'https://senseilms.com/wp-json/senseilms-products/1.0/search?category=setup-wizard-extensions' );
-			if ( is_wp_error( $data ) ) {
-				return [];
-			}
+		$extensions = array_map(
+			function( $extension ) {
+				// Decode price.
+				if ( isset( $extension->price ) && 0 !== $extension->price ) {
+					$extension->price = html_entity_decode( $extension->price );
+				}
 
-			$extensions = $this->normalize_sensei_extensions( $data );
+				// Add slug property.
+				$extension->slug = $extension->product_slug;
 
-			set_transient( self::EXTENSIONS_TRANSIENT, $extensions, DAY_IN_SECONDS );
-		}
+				return $extension;
+			},
+			$sensei_extensions->get_extensions( 'plugin', 'setup-wizard-extensions' )
+		);
 
 		return $extensions;
 	}

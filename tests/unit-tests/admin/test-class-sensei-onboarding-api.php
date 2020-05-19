@@ -330,7 +330,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 
 		$data = $this->request( 'GET', '' );
 
-		$this->assertEquals( $data['features']['options'][0]['id'], 'slug-1' );
+		$this->assertEquals( $data['features']['options'][0]->slug, 'slug-1' );
 	}
 
 	/**
