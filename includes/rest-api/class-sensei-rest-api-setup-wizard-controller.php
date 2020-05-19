@@ -195,6 +195,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 			],
 			'features'        => [
 				'selected' => $user_data['features'],
+				'options'  => $this->setup_wizard->get_sensei_extensions(),
 			],
 			'ready'           => [],
 		];
