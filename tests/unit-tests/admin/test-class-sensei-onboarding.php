@@ -358,13 +358,12 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that get sensei extensions returns normalized and overriden object.
+	 * Tests that get sensei extensions returns normalized object.
 	 *
 	 * @covers Sensei_Onboarding::get_sensei_extensions
 	 * @covers Sensei_Onboarding::normalize_sensei_extensions
-	 * @covers Sensei_Onboarding::override_sensei_extensions
 	 */
-	public function testGetSenseiExtensionsReturnsNormalizedAndOverridenObject() {
+	public function testGetSenseiExtensionsReturnsNormalizedObject() {
 		$expected_extensions = [
 			[
 				'id'            => 'slug-1',
@@ -377,11 +376,6 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 			[
 				'id'    => 'slug-2',
 				'price' => 0,
-			],
-			[
-				'id'     => 'sensei-certificates',
-				'title'  => 'Certificates',
-				'status' => 'error',
 			],
 		];
 
@@ -398,10 +392,6 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 				{
 					"product_slug": "slug-2",
 					"price": 0
-				},
-				{
-					"product_slug": "sensei-certificates",
-					"title": "Sensei Certificates"
 				}
 			]
 		}';

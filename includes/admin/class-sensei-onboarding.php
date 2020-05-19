@@ -388,56 +388,6 @@ class Sensei_Onboarding {
 	}
 
 	/**
-	 * Override sensei extensions.
-	 *
-	 * @param array $original_extensions Original extensions.
-	 *
-	 * @return array Overridden extensions.
-	 */
-	private function override_sensei_extensions( $original_extensions ) {
-		$override_extensions = [
-			'sensei-course-progress' => [
-				'title'  => __( 'Course progress', 'sensei-lms' ),
-				'status' => 'installed',
-			],
-			'sensei-certificates'    => [
-				'title'  => __( 'Certificates', 'sensei-lms' ),
-				'status' => 'error',
-			],
-			'sensei-wc-paid-courses' => [
-				'title'                        => __( 'WooCommerce Paid Courses', 'sensei-lms' ),
-				'confirmationExtraDescription' => __(
-					'(The WooCommerce plugin may also be installed and activated for free.)',
-					'sensei-lms'
-				),
-				'status'                       => 'loading',
-			],
-		];
-
-		return array_map(
-			function( $extension ) use ( $override_extensions ) {
-				// Decode price.
-				if ( isset( $extension['price'] ) && 0 !== $extension['price'] ) {
-					$extension['price'] = html_entity_decode( $extension['price'] );
-				}
-
-				$extension_id = $extension['id'];
-
-				if ( ! isset( $override_extensions[ $extension_id ] ) ) {
-					return $extension;
-				}
-
-				foreach ( $override_extensions[ $extension_id ] as $key => $value ) {
-					$extension[ $key ] = $value;
-				}
-
-				return $extension;
-			},
-			$original_extensions
-		);
-	}
-
-	/**
 	 * Normalize sensei extensions array.
 	 *
 	 * @param array $raw_extensions Raw extensions.
@@ -464,6 +414,11 @@ class Sensei_Onboarding {
 					unset( $extension[ $from ] );
 				}
 
+				// Decode price.
+				if ( isset( $extension['price'] ) && 0 !== $extension['price'] ) {
+					$extension['price'] = html_entity_decode( $extension['price'] );
+				}
+
 				return $extension;
 			},
 			$json['products']
@@ -487,7 +442,6 @@ class Sensei_Onboarding {
 			}
 
 			$extensions = $this->normalize_sensei_extensions( $data );
-			$extensions = $this->override_sensei_extensions( $extensions );
 
 			set_transient( self::EXTENSIONS_TRANSIENT, $extensions, DAY_IN_SECONDS );
 		}
