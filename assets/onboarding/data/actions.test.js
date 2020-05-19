@@ -46,20 +46,18 @@ describe( 'Setup wizard actions', () => {
 		const expectedFetchAction = {
 			type: FETCH_FROM_API,
 			request: {
-				path: API_BASE_PATH + 'welcome',
+				path: API_BASE_PATH,
 			},
 		};
 		expect( gen.next().value ).toEqual( expectedFetchAction );
 
 		// Set data action.
-		const welcomeObject = { x: 1 };
+		const dataObject = { x: 1 };
 		const expectedSetDataAction = {
 			type: SUCCESS_FETCH_SETUP_WIZARD_DATA,
-			data: { welcome: welcomeObject },
+			data: dataObject,
 		};
-		expect( gen.next( welcomeObject ).value ).toEqual(
-			expectedSetDataAction
-		);
+		expect( gen.next( dataObject ).value ).toEqual( expectedSetDataAction );
 	} );
 
 	it( 'Should catch error on the fetch setup wizard data action', () => {
