@@ -33,7 +33,7 @@ const addPriceToTitle = ( features ) =>
 const Features = () => {
 	const [ confirmationActive, toggleConfirmation ] = useState( false );
 	const [ feedbackActive, toggleFeedback ] = useState( false );
-	const [ selectedFeatureIds, setSelectedFeatureIds ] = useState( [] );
+	const [ selectedSlugs, setSelectedSlugs ] = useState( [] );
 	const { goTo } = useQueryStringRouter();
 
 	const { features } = useSelect(
@@ -47,11 +47,11 @@ const Features = () => {
 
 	const getSelectedFeatures = () =>
 		features.filter( ( feature ) =>
-			selectedFeatureIds.includes( feature.id )
+			selectedSlugs.includes( feature.slug )
 		);
 
 	const finishSelection = () => {
-		if ( 0 === selectedFeatureIds.length ) {
+		if ( 0 === selectedSlugs.length ) {
 			goToNextStep();
 			return;
 		}
@@ -87,8 +87,8 @@ const Features = () => {
 				) : (
 					<FeaturesSelection
 						features={ features }
-						selectedIds={ selectedFeatureIds }
-						onChange={ setSelectedFeatureIds }
+						selectedSlugs={ selectedSlugs }
+						onChange={ setSelectedSlugs }
 						onContinue={ finishSelection }
 					/>
 				) }

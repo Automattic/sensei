@@ -5,14 +5,14 @@ import ConfirmationModal from './confirmation-modal';
 
 const features = [
 	{
-		id: 'first',
+		slug: 'first',
 		title: 'First',
-		description: 'Dolor',
+		excerpt: 'Dolor',
 	},
 	{
-		id: 'sensei-wc-paid-courses',
+		slug: 'sensei-wc-paid-courses',
 		title: 'Second',
-		description: 'Lorem',
+		excerpt: 'Lorem',
 	},
 ];
 

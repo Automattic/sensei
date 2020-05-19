@@ -4,14 +4,14 @@ import FeaturesSelection from './features-selection';
 
 const features = [
 	{
-		id: 'a',
+		slug: 'a',
 		title: 'Lorem',
-		description: 'Ipsum',
+		excerpt: 'Ipsum',
 	},
 	{
-		id: 'b',
+		slug: 'b',
 		title: 'Lorem',
-		description: 'Ipsum',
+		excerpt: 'Ipsum',
 	},
 ];
 
@@ -22,7 +22,7 @@ describe( '<FeaturesSelection />', () => {
 		const { container } = render(
 			<FeaturesSelection
 				features={ features }
-				selectedIds={ selectedIds }
+				selectedSlugs={ selectedIds }
 				onChange={ () => {} }
 				onContinue={ () => {} }
 			/>
@@ -43,7 +43,7 @@ describe( '<FeaturesSelection />', () => {
 		const { container, queryByText } = render(
 			<FeaturesSelection
 				features={ features }
-				selectedIds={ [ 'b' ] }
+				selectedSlugs={ [ 'b' ] }
 				onChange={ onChangeMock }
 				onContinue={ onContinueMock }
 			/>
