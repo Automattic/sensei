@@ -50,10 +50,7 @@ const FeaturesSelection = ( {
 								/>
 							}
 							onChange={ toggleItem( id ) }
-							checked={
-								selectedIds.includes( id ) ||
-								status === INSTALLED_STATUS
-							}
+							checked={ selectedIds.includes( id ) }
 							disabled={ status === INSTALLED_STATUS }
 							className={ `sensei-onboarding__checkbox ${
 								status === INSTALLED_STATUS
