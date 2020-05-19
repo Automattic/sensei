@@ -356,4 +356,69 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 
 		$this->assertNull( $created_tab, 'Should not create the setup wizard tab to no admin user.' );
 	}
+
+	/**
+	 * Tests that get sensei extensions returns normalized and overriden object.
+	 *
+	 * @covers Sensei_Onboarding::get_sensei_extensions
+	 * @covers Sensei_Onboarding::normalize_sensei_extensions
+	 * @covers Sensei_Onboarding::override_sensei_extensions
+	 */
+	public function testGetSenseiExtensionsReturnsNormalizedAndOverridenObject() {
+		$expected_extensions = [
+			[
+				'id'            => 'slug-1',
+				'title'         => 'Title 1',
+				'description'   => 'Excerpt 1',
+				'learnMoreLink' => 'https://senseilms.com/product/test-1/',
+				'price'         => '$1.00',
+				'plugin_file'   => 'path/file-1.php',
+			],
+			[
+				'id'    => 'slug-2',
+				'price' => 0,
+			],
+			[
+				'id'     => 'sensei-certificates',
+				'title'  => 'Certificates',
+				'status' => 'error',
+			],
+		];
+
+		$response_body = '{
+			"products": [
+				{
+					"product_slug": "slug-1",
+					"title": "Title 1",
+					"excerpt": "Excerpt 1",
+					"link": "https:\/\/senseilms.com\/product\/test-1\/",
+					"price": "&#36;1.00",
+					"plugin_file": "path\/file-1.php"
+				},
+				{
+					"product_slug": "slug-2",
+					"price": 0
+				},
+				{
+					"product_slug": "sensei-certificates",
+					"title": "Sensei Certificates"
+				}
+			]
+		}';
+
+		// Mock fetch from senseilms.com.
+		add_filter(
+			'pre_http_request',
+			function() use ( $response_body ) {
+				return [ 'body' => $response_body ];
+			}
+		);
+
+		$extensions = Sensei()->onboarding->get_sensei_extensions();
+
+		$this->assertEquals( $expected_extensions, $extensions );
+
+		$transient_extensions = get_transient( \Sensei_Onboarding::EXTENSIONS_TRANSIENT );
+		$this->assertEquals( $expected_extensions, $transient_extensions );
+	}
 }

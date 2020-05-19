@@ -21,6 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Onboarding {
 	const SUGGEST_SETUP_WIZARD_OPTION = 'sensei_suggest_setup_wizard';
 	const USER_DATA_OPTION            = 'sensei_setup_wizard_data';
+	const EXTENSIONS_TRANSIENT        = 'sensei_setup_wizard_extensions';
 
 	/**
 	 * Default value for onboarding user data.
@@ -384,5 +385,113 @@ class Sensei_Onboarding {
 	public function update_wizard_user_data( $changes ) {
 		$option = array_merge( $this->get_wizard_user_data(), $changes );
 		return update_option( self::USER_DATA_OPTION, $option );
+	}
+
+	/**
+	 * Override sensei extensions.
+	 *
+	 * @param array $original_extensions Original extensions.
+	 *
+	 * @return array Overridden extensions.
+	 */
+	private function override_sensei_extensions( $original_extensions ) {
+		$override_extensions = [
+			'sensei-course-progress' => [
+				'title'  => __( 'Course progress', 'sensei-lms' ),
+				'status' => 'installed',
+			],
+			'sensei-certificates'    => [
+				'title'  => __( 'Certificates', 'sensei-lms' ),
+				'status' => 'error',
+			],
+			'sensei-wc-paid-courses' => [
+				'title'                        => __( 'WooCommerce Paid Courses', 'sensei-lms' ),
+				'confirmationExtraDescription' => __(
+					'(The WooCommerce plugin may also be installed and activated for free.)',
+					'sensei-lms'
+				),
+				'status'                       => 'loading',
+			],
+		];
+
+		return array_map(
+			function( $extension ) use ( $override_extensions ) {
+				// Decode price.
+				if ( isset( $extension['price'] ) && 0 !== $extension['price'] ) {
+					$extension['price'] = html_entity_decode( $extension['price'] );
+				}
+
+				$extension_id = $extension['id'];
+
+				if ( ! isset( $override_extensions[ $extension_id ] ) ) {
+					return $extension;
+				}
+
+				foreach ( $override_extensions[ $extension_id ] as $key => $value ) {
+					$extension[ $key ] = $value;
+				}
+
+				return $extension;
+			},
+			$original_extensions
+		);
+	}
+
+	/**
+	 * Normalize sensei extensions array.
+	 *
+	 * @param array $raw_extensions Raw extensions.
+	 *
+	 * @return array Normalized extensions.
+	 */
+	private function normalize_sensei_extensions( $raw_extensions ) {
+		$json = json_decode( $raw_extensions['body'], true );
+
+		// Normalize property names.
+		$properties = [
+			'product_slug' => 'id',
+			'excerpt'      => 'description',
+			'link'         => 'learnMoreLink',
+		];
+		$extensions = array_map(
+			function( $extension ) use ( $properties ) {
+				foreach ( $properties as $from => $to ) {
+					if ( ! isset( $extension[ $from ] ) ) {
+						continue;
+					}
+
+					$extension[ $to ] = $extension[ $from ];
+					unset( $extension[ $from ] );
+				}
+
+				return $extension;
+			},
+			$json['products']
+		);
+
+		return $extensions;
+	}
+
+	/**
+	 * Get Sensei extensions for setup wizard.
+	 *
+	 * @return array Sensei extensions.
+	 */
+	public function get_sensei_extensions() {
+		$extensions = get_transient( self::EXTENSIONS_TRANSIENT );
+
+		if ( false === $extensions ) {
+			$data = wp_remote_get( 'https://senseilms.com/wp-json/senseilms-products/1.0/search?category=setup-wizard-extensions' );
+			if ( is_wp_error( $data ) ) {
+				return [];
+			}
+
+			$extensions = $this->normalize_sensei_extensions( $data );
+			$extensions = $this->override_sensei_extensions( $extensions );
+
+			set_transient( self::EXTENSIONS_TRANSIENT, $extensions, DAY_IN_SECONDS );
+		}
+
+		return $extensions;
 	}
 }
