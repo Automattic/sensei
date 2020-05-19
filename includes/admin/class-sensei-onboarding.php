@@ -21,7 +21,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Onboarding {
 	const SUGGEST_SETUP_WIZARD_OPTION = 'sensei_suggest_setup_wizard';
 	const USER_DATA_OPTION            = 'sensei_setup_wizard_data';
-	const EXTENSIONS_TRANSIENT        = 'sensei_setup_wizard_extensions';
 
 	/**
 	 * Default value for onboarding user data.
