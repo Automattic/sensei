@@ -45,12 +45,14 @@ const purposes = [
  */
 export const Purpose = () => {
 	const { goTo } = useQueryStringRouter();
+	const [ submittedData, toggleSubmittedData ] = useState( false );
 
 	const {
 		stepData,
 		submitStep,
 		isSubmitting,
 		errorNotice,
+		error,
 	} = useSetupWizardStep( 'purpose' );
 
 	const [ { selected, other }, setFormState ] = useState( {
@@ -71,7 +73,17 @@ export const Purpose = () => {
 		} ) );
 	};
 
-	const submitPage = () => submitStep( { selected, other } );
+	useEffect( () => {
+		if ( submittedData && ! error ) {
+			goTo( 'features' );
+		}
+		toggleSubmittedData( false );
+	}, [ submittedData, error, goTo ] );
+
+	const submitPage = async () => {
+		await submitStep( { selected, other } );
+		toggleSubmittedData( true );
+	};
 
 	return (
 		<>
