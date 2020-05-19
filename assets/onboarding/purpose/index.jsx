@@ -46,20 +46,19 @@ const purposes = [
 export const Purpose = () => {
 	const { goTo } = useQueryStringRouter();
 
-	const { stepData, submitStep, isSubmitting } = useSetupWizardStep(
-		'purpose'
-	);
+	const {
+		stepData,
+		submitStep,
+		isSubmitting,
+		errorNotice,
+	} = useSetupWizardStep( 'purpose' );
 
 	const [ { selected, other }, setFormState ] = useState( {
 		selected: [],
 		other: '',
 	} );
 
-	useEffect( () => {
-		if ( stepData && stepData.selected ) {
-			setFormState( stepData );
-		}
-	}, [ stepData ] );
+	useEffect( () => setFormState( stepData ), [ stepData ] );
 
 	const isEmpty = ! selected.length;
 
@@ -72,10 +71,7 @@ export const Purpose = () => {
 		} ) );
 	};
 
-	const submitPage = async () => {
-		await submitStep( { selected, other } );
-		goTo( 'features' );
-	};
+	const submitPage = () => submitStep( { selected, other } );
 
 	return (
 		<>
@@ -114,7 +110,7 @@ export const Purpose = () => {
 						/>
 					) }
 				</div>
-
+				{ errorNotice }
 				<Button
 					isPrimary
 					isBusy={ isSubmitting }
