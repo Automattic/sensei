@@ -147,9 +147,9 @@ export function* submitStep( step, stepData ) {
 
 /**
  * @typedef  {Object} SetStepDataAction
- * @property {string} type                     Action type.
- * @property {string} step                     Step name.
- * @property {Object} data                     Step data.
+ * @property {string} type Action type.
+ * @property {string} step Step name.
+ * @property {Object} data Step data.
  */
 /**
  * Set welcome step data action creator.

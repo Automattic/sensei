@@ -2,14 +2,13 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { Notice } from '@wordpress/components';
 
 /**
- *
  * @typedef {Object} StepStoreHookHandle
  *
- * @property {boolean}          isSubmitting     Submitting state.
- * @property {Object}           stepData         Data for the step.
- * @property {Object}           error            Submit error.
- * @property {Element}          errorNotice      Error notice element.
- * @property {Function}         submitStep       Method to POST to endpoint.
+ * @property {boolean}  isSubmitting Submitting state.
+ * @property {Object}   stepData     Data for the step.
+ * @property {Object}   error        Submit error.
+ * @property {Element}  errorNotice  Error notice element.
+ * @property {Function} submitStep   Method to POST to endpoint.
  */
 /**
  * Use Setup Wizard State store and REST API for the given step.
