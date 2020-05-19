@@ -1,31 +1,12 @@
 import { useState } from '@wordpress/element';
 import { Card, H } from '@woocommerce/components';
-import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 
-import { INSTALLED_STATUS } from './feature-status';
 import { useQueryStringRouter } from '../query-string-router';
 import ConfirmationModal from './confirmation-modal';
 import InstallationFeedback from './installation-feedback';
 import FeaturesSelection from './features-selection';
-
-const addPriceToTitle = ( features ) =>
-	features.map( ( feature ) => {
-		let titleComplement;
-
-		if ( feature.status === INSTALLED_STATUS ) {
-			titleComplement = __( 'Installed', 'sensei-lms' );
-		} else {
-			titleComplement = feature.price
-				? `${ feature.price } ${ __( 'per year', 'sensei-lms' ) }`
-				: __( 'Free', 'sensei-lms' );
-		}
-
-		return {
-			...feature,
-			title: `${ feature.title } — ${ titleComplement }`,
-		};
-	} );
+import { useSetupWizardStep } from '../use-setup-wizard-step.js';
 
 /**
  * Features step for setup wizard.
@@ -36,14 +17,8 @@ const Features = () => {
 	const [ selectedSlugs, setSelectedSlugs ] = useState( [] );
 	const { goTo } = useQueryStringRouter();
 
-	const { features } = useSelect(
-		( select ) => ( {
-			features: addPriceToTitle(
-				select( 'sensei/setup-wizard' ).getStepData( 'features' )
-			),
-		} ),
-		[]
-	);
+	const { stepData } = useSetupWizardStep( 'features' );
+	const features = stepData.options;
 
 	const getSelectedFeatures = () =>
 		features.filter( ( feature ) =>

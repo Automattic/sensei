@@ -314,10 +314,8 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	 * Tests that features get endpoint returns fetched data.
 	 *
 	 * @covers Sensei_REST_API_Setup_Wizard_Controller::get_data
-	 * @covers Sensei_Onboarding::get_sensei_extensions
-	 * @covers Sensei_Onboarding::normalize_sensei_extensions
 	 */
-	public function testGetFeaturesReturnsNormalizedObject() {
+	public function testGetFeaturesReturnsFetchedData() {
 		$response_body = '{ "products": [ { "product_slug": "slug-1" } ] }';
 
 		// Mock fetch from senseilms.com.
@@ -330,7 +328,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 
 		$data = $this->request( 'GET', '' );
 
-		$this->assertEquals( $data['features']['options'][0]->slug, 'slug-1' );
+		$this->assertEquals( count( $data['features']['options'] ), 1 );
 	}
 
 	/**

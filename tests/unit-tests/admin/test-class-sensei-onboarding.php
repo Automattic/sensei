@@ -358,15 +358,15 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that get sensei extensions and returns with decoded prices and slug.
+	 * Tests that get sensei extensions and returns with decoded prices.
 	 *
 	 * @covers Sensei_Onboarding::get_sensei_extensions
 	 */
 	public function testGetSenseiExtensionsAndReturnsWithDecodedPrices() {
 		$response_body = '{
 			"products": [
-				{ "product_slug": "slug-1", "price": "&#36;1.00" },
-				{ "product_slug": "slug-2", "price": 0 }
+				{ "price": "&#36;1.00" },
+				{ "price": 0 }
 			]
 		}';
 
@@ -380,9 +380,7 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 
 		$extensions = Sensei()->onboarding->get_sensei_extensions();
 
-		$this->assertEquals( $extensions[0]->slug, 'slug-1' );
 		$this->assertEquals( $extensions[0]->price, '$1.00' );
-		$this->assertEquals( $extensions[1]->slug, 'slug-2' );
 		$this->assertEquals( $extensions[1]->price, 0 );
 	}
 }

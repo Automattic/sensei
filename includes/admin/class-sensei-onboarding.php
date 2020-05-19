@@ -395,15 +395,12 @@ class Sensei_Onboarding {
 	public function get_sensei_extensions() {
 		$sensei_extensions = Sensei_Extensions::instance();
 
+		// Decode prices.
 		$extensions = array_map(
 			function( $extension ) {
-				// Decode price.
 				if ( isset( $extension->price ) && 0 !== $extension->price ) {
 					$extension->price = html_entity_decode( $extension->price );
 				}
-
-				// Add slug property.
-				$extension->slug = $extension->product_slug;
 
 				return $extension;
 			},
