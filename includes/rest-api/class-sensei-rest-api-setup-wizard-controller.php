@@ -65,6 +65,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 		$this->register_submit_welcome_route();
 		$this->register_submit_purpose_route();
 		$this->register_submit_features_route();
+		$this->register_complete_wizard_route();
 	}
 
 	/**
@@ -152,6 +153,23 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 							],
 						],
 					],
+				],
+			]
+		);
+	}
+
+	/**
+	 * Register /ready endpoint.
+	 */
+	public function register_complete_wizard_route() {
+		register_rest_route(
+			$this->namespace,
+			$this->rest_base . '/ready',
+			[
+				[
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => [ $this, 'complete_setup_wizard' ],
+					'permission_callback' => [ $this, 'can_user_access_rest_api' ],
 				],
 			]
 		);
@@ -325,6 +343,16 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 				'features' => $data['selected'],
 			]
 		);
+	}
+
+	/**
+	 * Complete setup wizard
+	 */
+	public function complete_setup_wizard() {
+
+		$this->mark_step_complete( 'ready' );
+		$this->setup_wizard->finish_setup_wizard();
+
 	}
 
 }

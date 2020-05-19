@@ -297,8 +297,15 @@ class Sensei_Onboarding {
 			&& wp_verify_nonce( wp_unslash( $_GET['_wpnonce'] ), 'sensei_skip_setup_wizard' )
 			&& current_user_can( 'manage_sensei' )
 		) {
-			update_option( self::SUGGEST_SETUP_WIZARD_OPTION, 0 );
+			$this->finish_setup_wizard();
 		}
+	}
+
+	/**
+	 * Mark the setup wizard as finished.
+	 */
+	public function finish_setup_wizard() {
+		update_option( self::SUGGEST_SETUP_WIZARD_OPTION, 0 );
 	}
 
 	/**
