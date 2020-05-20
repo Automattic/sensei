@@ -148,7 +148,14 @@ describe( 'Setup wizard actions', () => {
 	} );
 
 	it( 'Should generate the submit step action', () => {
-		const gen = submitStep( 'welcome', { usage_tracking: true } );
+		const onSuccessMock = jest.fn();
+		const onErrorMock = jest.fn();
+		const gen = submitStep(
+			'welcome',
+			{ usage_tracking: true },
+			onSuccessMock,
+			onErrorMock
+		);
 
 		// Start submit action.
 		const expectedStartSubmitAction = {
@@ -182,10 +189,18 @@ describe( 'Setup wizard actions', () => {
 			data: { usage_tracking: true },
 		};
 		expect( gen.next().value ).toEqual( expectedSetDataAction );
+
+		// Continue to callback.
+		gen.next();
+
+		expect( onSuccessMock ).toBeCalled();
+		expect( onErrorMock ).not.toBeCalled();
 	} );
 
 	it( 'Should catch error on the submit step action', () => {
-		const gen = submitStep( 'test', true );
+		const onSuccessMock = jest.fn();
+		const onErrorMock = jest.fn();
+		const gen = submitStep( 'test', true, onSuccessMock, onErrorMock );
 
 		// Start submit action.
 		gen.next();
@@ -200,6 +215,12 @@ describe( 'Setup wizard actions', () => {
 			error,
 		};
 		expect( gen.throw( error ).value ).toEqual( expectedErrorAction );
+
+		// Continue to callback.
+		gen.next();
+
+		expect( onSuccessMock ).not.toBeCalled();
+		expect( onErrorMock ).toBeCalled();
 	} );
 
 	it( 'Should return the set step data action', () => {

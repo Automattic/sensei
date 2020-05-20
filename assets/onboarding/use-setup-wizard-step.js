@@ -40,7 +40,7 @@ export const useSetupWizardStep = ( step ) => {
 		</Notice>
 	) : null;
 
-	const submitStepForComponent = ( formData ) => submitStep( step, formData );
+	const submitStepForComponent = ( ...args ) => submitStep( step, ...args );
 
 	return {
 		stepData,
