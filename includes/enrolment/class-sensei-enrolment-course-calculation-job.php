@@ -107,7 +107,7 @@ class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Background_Job_I
 
 		add_action( 'pre_user_query', [ $this, 'modify_user_query_add_user_id' ] );
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $this->course_id );
-		$user_query       = new WP_User_Query( $this->get_query_args( $course_enrolment ) );
+		$user_query       = new WP_User_Query( $this->get_query_args() );
 		remove_action( 'pre_user_query', [ $this, 'modify_user_query_add_user_id' ] );
 
 		$user_ids = $user_query->get_results();
@@ -140,31 +140,14 @@ class Sensei_Enrolment_Course_Calculation_Job implements Sensei_Background_Job_I
 	/**
 	 * Get the query arguments for the user query.
 	 *
-	 * @param Sensei_Course_Enrolment $course_enrolment Course enrolment handler.
-	 *
 	 * @return array
 	 */
-	private function get_query_args( $course_enrolment ) {
+	private function get_query_args() {
 		$user_args = [
 			'fields'  => 'ID',
 			'number'  => $this->batch_size,
 			'orderby' => 'ID',
 			'order'   => 'ASC',
-		];
-
-		$meta_key = $course_enrolment->get_enrolment_results_meta_key();
-
-		// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Ran inside of async job.
-		$user_args['meta_query'] = [
-			'relation' => 'OR',
-			[
-				'key'   => $meta_key,
-				'value' => '',
-			],
-			[
-				'key'     => $meta_key,
-				'compare' => 'NOT EXISTS',
-			],
 		];
 
 		return $user_args;
