@@ -1,7 +1,7 @@
 import { Card, H, Link } from '@woocommerce/components';
 import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
-import { useState, useEffect } from '@wordpress/element';
+import { useState } from '@wordpress/element';
 import { UsageModal } from './usage-modal';
 import { useQueryStringRouter } from '../query-string-router';
 import { useSetupWizardStep } from '../use-setup-wizard-step.js';
@@ -11,7 +11,6 @@ import { useSetupWizardStep } from '../use-setup-wizard-step.js';
  */
 export const Welcome = () => {
 	const [ usageModalActive, toggleUsageModal ] = useState( false );
-	const [ submittedData, toggleSubmittedData ] = useState( false );
 
 	const { goTo } = useQueryStringRouter();
 
@@ -20,22 +19,15 @@ export const Welcome = () => {
 		submitStep,
 		isSubmitting,
 		errorNotice,
-		error,
 	} = useSetupWizardStep( 'welcome' );
 
-	useEffect( () => {
-		if ( submittedData && ! error ) {
-			toggleUsageModal( false );
-			goTo( 'purpose' );
-		}
-
-		// Clear in case of error.
-		toggleSubmittedData( false );
-	}, [ submittedData, error, goTo ] );
+	const onSubmitSuccess = () => {
+		toggleUsageModal( false );
+		goTo( 'purpose' );
+	};
 
 	const submitPage = async ( allowUsageTracking ) => {
-		await submitStep( { usage_tracking: allowUsageTracking } );
-		toggleSubmittedData( true );
+		submitStep( { usage_tracking: allowUsageTracking }, onSubmitSuccess );
 	};
 
 	return (
