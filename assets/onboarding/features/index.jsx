@@ -17,7 +17,12 @@ const Features = () => {
 	const [ selectedSlugs, setSelectedSlugs ] = useState( [] );
 	const { goTo } = useQueryStringRouter();
 
-	const { stepData } = useSetupWizardStep( 'features' );
+	const {
+		stepData,
+		submitStep,
+		isSubmitting,
+		errorNotice,
+	} = useSetupWizardStep( 'features' );
 	const features = stepData.options;
 
 	const getSelectedFeatures = () =>
@@ -34,9 +39,13 @@ const Features = () => {
 		toggleConfirmation( true );
 	};
 
-	const goToInstallation = () => {
+	const onSubmitSuccess = () => {
 		toggleConfirmation( false );
 		toggleFeedback( true );
+	};
+
+	const goToInstallation = () => {
+		submitStep( { selected: selectedSlugs }, onSubmitSuccess );
 	};
 
 	const goToNextStep = () => {
@@ -72,6 +81,8 @@ const Features = () => {
 			{ confirmationActive && (
 				<ConfirmationModal
 					features={ getSelectedFeatures() }
+					isSubmitting={ isSubmitting }
+					errorNotice={ errorNotice }
 					onInstall={ goToInstallation }
 					onSkip={ goToNextStep }
 				/>

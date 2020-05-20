@@ -8,7 +8,16 @@ import Features from './index';
 jest.mock( '../use-setup-wizard-step.js', () => ( {
 	useSetupWizardStep: () => ( {
 		stepData: {
-			options: [ { slug: 'test', title: 'Test' } ],
+			options: [
+				{ slug: 'test-1', title: 'Test 1' },
+				{ slug: 'test-2', title: 'Test 2' },
+			],
+		},
+		submitStep: ( data, onSuccess ) => {
+			// Simulate success selecting only one item.
+			if ( data.selected.length === 1 ) {
+				onSuccess();
+			}
 		},
 	} ),
 } ) );
@@ -75,5 +84,30 @@ describe( '<Features />', () => {
 		expect(
 			container.querySelector( '.sensei-onboarding__icon-status' )
 		).toBeTruthy();
+	} );
+
+	it( 'Should continue to the confirmation and then simulate an error installing 2 items', () => {
+		const { container, queryByText } = render(
+			<QueryStringRouter>
+				<Features />
+			</QueryStringRouter>
+		);
+
+		// Check the 2 features.
+		const checkboxes = container.querySelectorAll(
+			'input[type="checkbox"]'
+		);
+		fireEvent.click( checkboxes[ 0 ] );
+		fireEvent.click( checkboxes[ 1 ] );
+
+		// Continue to confirmation.
+		fireEvent.click( queryByText( 'Continue' ) );
+
+		// Confirm the installation.
+		fireEvent.click( queryByText( 'Install now' ) );
+
+		expect(
+			container.querySelector( '.sensei-onboarding__icon-status' )
+		).toBeFalsy();
 	} );
 } );
