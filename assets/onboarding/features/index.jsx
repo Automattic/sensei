@@ -92,7 +92,6 @@ const Features = () => {
 	const [ feedbackActive, toggleFeedback ] = useState( false );
 	const [ selectedFeatureIds, setSelectedFeatureIds ] = useState( [] );
 	const { goTo } = useQueryStringRouter();
-	const { completeSetupWizard } = useDispatch( 'sensei/setup-wizard' );
 
 	const getSelectedFeatures = () =>
 		features.filter( ( feature ) =>
@@ -114,7 +113,6 @@ const Features = () => {
 	};
 
 	const goToNextStep = () => {
-		completeSetupWizard();
 		goTo( 'ready' );
 	};
 
