@@ -37,6 +37,9 @@ class Sensei_Unit_Tests_Bootstrap {
 		// Enrolment checks should happen immediately in tests. Filter can be removed for specific tests.
 		tests_add_filter( 'sensei_should_defer_enrolment_check', '__return_false' );
 
+		// Prevent requests from `WP_Http::request` while testing. Filter can be overrided for specific tests.
+		tests_add_filter( 'pre_http_request', '__return_empty_array' );
+
 		// load the WP testing environment
 		require_once $this->wp_tests_dir . '/includes/bootstrap.php';
 
