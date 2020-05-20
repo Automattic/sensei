@@ -1,7 +1,7 @@
 import { useState } from '@wordpress/element';
 import { Card, H } from '@woocommerce/components';
 import { __ } from '@wordpress/i18n';
-
+import { useDispatch } from '@wordpress/data';
 import { useQueryStringRouter } from '../query-string-router';
 import ConfirmationModal from './confirmation-modal';
 import InstallationFeedback from './installation-feedback';
@@ -92,6 +92,7 @@ const Features = () => {
 	const [ feedbackActive, toggleFeedback ] = useState( false );
 	const [ selectedFeatureIds, setSelectedFeatureIds ] = useState( [] );
 	const { goTo } = useQueryStringRouter();
+	const { completeSetupWizard } = useDispatch( 'sensei/setup-wizard' );
 
 	const getSelectedFeatures = () =>
 		features.filter( ( feature ) =>
@@ -113,6 +114,7 @@ const Features = () => {
 	};
 
 	const goToNextStep = () => {
+		completeSetupWizard();
 		goTo( 'ready' );
 	};
 
