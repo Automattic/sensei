@@ -1,0 +1,63 @@
+$primary: #32af7d;
+
+.sensei-import-wrapper {
+	text-align: center;
+	max-width: 700px;
+	margin: 40px auto;
+
+	.sensei-progress-steps {
+		padding: 0 0 24px;
+		margin: 0;
+		list-style: none outside;
+		overflow: hidden;
+		color: #ccc;
+		width: 100%;
+		display: -webkit-inline-flex;
+		display: -ms-inline-flexbox;
+		display: inline-flex;
+
+		li {
+			width: 25%;
+			float: left;
+			padding: 0 0 0.8em;
+			margin: 0;
+			text-align: center;
+			position: relative;
+			border-bottom: 4px solid #ccc;
+			line-height: 1.4em;
+		}
+
+		li::before {
+			content: "";
+			border: 4px solid #ccc;
+			border-radius: 100%;
+			width: 4px;
+			height: 4px;
+			position: absolute;
+			bottom: 0;
+			left: 50%;
+			margin-left: -6px;
+			margin-bottom: -8px;
+			background: #fff;
+		}
+
+		li.active {
+			border-color: $primary;
+			color: $primary;
+
+			&::before {
+				border-color: $primary;
+			}
+		}
+
+		li.done {
+			border-color: $primary;
+			color: $primary;
+
+			&::before {
+				border-color: $primary;
+				background: $primary;
+			}
+		}
+	}
+}
