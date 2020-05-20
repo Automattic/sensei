@@ -13,8 +13,6 @@ jest.mock( '../use-setup-wizard-step', () => ( {
 } ) );
 
 describe( '<Ready />', () => {
-	afterEach( () => {} );
-
 	it( 'Should have a sign-up form pointing to the mailing list provider', () => {
 		const { container } = render( <Ready /> );
 
