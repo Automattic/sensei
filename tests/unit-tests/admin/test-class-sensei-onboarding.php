@@ -356,4 +356,31 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 
 		$this->assertNull( $created_tab, 'Should not create the setup wizard tab to no admin user.' );
 	}
+
+	/**
+	 * Tests that get sensei extensions and returns with decoded prices.
+	 *
+	 * @covers Sensei_Onboarding::get_sensei_extensions
+	 */
+	public function testGetSenseiExtensionsAndReturnsWithDecodedPrices() {
+		$response_body = '{
+			"products": [
+				{ "price": "&#36;1.00" },
+				{ "price": 0 }
+			]
+		}';
+
+		// Mock fetch from senseilms.com.
+		add_filter(
+			'pre_http_request',
+			function() use ( $response_body ) {
+				return [ 'body' => $response_body ];
+			}
+		);
+
+		$extensions = Sensei()->onboarding->get_sensei_extensions();
+
+		$this->assertEquals( $extensions[0]->price, '$1.00' );
+		$this->assertEquals( $extensions[1]->price, 0 );
+	}
 }

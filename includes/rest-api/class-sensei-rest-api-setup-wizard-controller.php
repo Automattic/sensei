@@ -195,6 +195,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 			],
 			'features'        => [
 				'selected' => $user_data['features'],
+				'options'  => $this->setup_wizard->get_sensei_extensions(),
 			],
 			'ready'           => [],
 		];
@@ -245,8 +246,8 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 							'description' => 'Slugs of plugins selected by the site owner.',
 							'type'        => 'array',
 						],
-						'plugins'  => [
-							'description' => 'Slugs of selectable plugins.',
+						'options'  => [
+							'description' => 'Sensei extensions.',
 							'type'        => 'array',
 						],
 					],

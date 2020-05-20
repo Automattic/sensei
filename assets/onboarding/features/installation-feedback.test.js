@@ -12,17 +12,17 @@ describe( '<InstallationFeedback />', () => {
 		const features = [
 			{
 				title: 'Test',
-				description: 'Test',
+				excerpt: 'Test',
 				status: LOADING_STATUS,
 			},
 			{
 				title: 'Test',
-				description: 'Test',
+				excerpt: 'Test',
 				status: ERROR_STATUS,
 			},
 			{
 				title: 'Test',
-				description: 'Test',
+				excerpt: 'Test',
 				status: INSTALLED_STATUS,
 			},
 		];
@@ -41,7 +41,7 @@ describe( '<InstallationFeedback />', () => {
 		const features = [
 			{
 				title: 'Test',
-				description: 'Test',
+				excerpt: 'Test',
 				status: INSTALLED_STATUS,
 			},
 		];
@@ -65,12 +65,12 @@ describe( '<InstallationFeedback />', () => {
 		const features = [
 			{
 				title: 'Test',
-				description: 'Test',
+				excerpt: 'Test',
 				status: ERROR_STATUS,
 			},
 			{
 				title: 'Test',
-				description: 'Test',
+				excerpt: 'Test',
 				status: INSTALLED_STATUS,
 			},
 		];

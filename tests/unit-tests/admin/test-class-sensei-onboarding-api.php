@@ -30,6 +30,8 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 
 		do_action( 'rest_api_init' );
 
+		// Prevent requests.
+		add_filter( 'pre_http_request', '__return_empty_array' );
 	}
 
 	/**
@@ -308,6 +310,27 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 		$data = Sensei()->onboarding->get_wizard_user_data();
 
 		$this->assertNotContains( [ 'invalid-plugin' ], $data['features'] );
+	}
+
+	/**
+	 * Tests that features get endpoint returns fetched data.
+	 *
+	 * @covers Sensei_REST_API_Setup_Wizard_Controller::get_data
+	 */
+	public function testGetFeaturesReturnsFetchedData() {
+		$response_body = '{ "products": [ { "product_slug": "slug-1" } ] }';
+
+		// Mock fetch from senseilms.com.
+		add_filter(
+			'pre_http_request',
+			function() use ( $response_body ) {
+				return [ 'body' => $response_body ];
+			}
+		);
+
+		$data = $this->request( 'GET', '' );
+
+		$this->assertEquals( count( $data['features']['options'] ), 1 );
 	}
 
 	/**

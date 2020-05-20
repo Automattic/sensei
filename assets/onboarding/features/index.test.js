@@ -4,6 +4,15 @@ import QueryStringRouter, { Route } from '../query-string-router';
 import { updateRouteURL } from '../query-string-router/url-functions';
 import Features from './index';
 
+// Mock features data.
+jest.mock( '../use-setup-wizard-step.js', () => ( {
+	useSetupWizardStep: () => ( {
+		stepData: {
+			options: [ { slug: 'test', title: 'Test' } ],
+		},
+	} ),
+} ) );
+
 describe( '<Features />', () => {
 	afterEach( () => {
 		// Clear URL param.

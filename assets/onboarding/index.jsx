@@ -1,6 +1,7 @@
 import { useSelect, useDispatch } from '@wordpress/data';
 import { render, useLayoutEffect } from '@wordpress/element';
 import { Spinner } from '@woocommerce/components';
+import { Notice } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 import registerSetupWizardStore from './data';
@@ -44,9 +45,15 @@ const SenseiSetupWizardPage = () => {
 	}
 
 	if ( error ) {
-		return __(
-			'An error has occurred. Please try again later!',
-			'sensei-lms'
+		return (
+			<Notice status="error" isDismissible={ false }>
+				{ __(
+					'An error has occurred while fetching the data. Please try again later!',
+					'sensei-lms'
+				) }
+				<br />
+				{ __( 'Error details:', 'sensei-lms' ) } { error.message }
+			</Notice>
 		);
 	}
 
