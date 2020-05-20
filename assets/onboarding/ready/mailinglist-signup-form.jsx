@@ -1,4 +1,4 @@
-import { List, Spinner } from '@woocommerce/components';
+import { List } from '@woocommerce/components';
 import { Button, TextControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useSetupWizardStep } from '../use-setup-wizard-step';
