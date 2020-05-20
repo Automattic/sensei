@@ -247,7 +247,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 							'type'        => 'array',
 						],
 						'options'  => [
-							'description' => 'Slugs Sensei extensions.',
+							'description' => 'Sensei extensions.',
 							'type'        => 'array',
 						],
 					],
