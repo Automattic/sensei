@@ -30,6 +30,8 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 
 		do_action( 'rest_api_init' );
 
+		// Prevent requests.
+		add_filter( 'pre_http_request', '__return_empty_array' );
 	}
 
 	/**
