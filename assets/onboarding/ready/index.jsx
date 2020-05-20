@@ -22,7 +22,7 @@ export const Ready = () => (
 				<H>{ __( `Join our mailing list`, 'sensei-lms' ) }</H>
 				<p>
 					{ __(
-						`We're here for you — Get tips, product updates, and inspiration straight to your mailbox.`,
+						`We're here for you — get tips, product updates, and inspiration straight to your mailbox.`,
 						'sensei-lms'
 					) }
 				</p>
