@@ -96,6 +96,10 @@ class Sensei_Autoloader {
 			new Sensei_Autoloader_Bundle( 'enrolment' ),
 		);
 
+		if ( is_admin() ) {
+			$this->autoloader_bundles[] = new Sensei_Autoloader_Bundle( 'data-port' );
+		}
+
 		// add Sensei custom auto loader
 		spl_autoload_register( array( $this, 'autoload' ) );
 
