@@ -215,7 +215,7 @@ class Sensei_Data_Port_Job_Test extends WP_UnitTestCase {
 
 		$job->persist();
 
-		$this->assertNotFalse( get_option( $job->get_name() ), 'Option should be stored if persist is called.' );
+		$this->assertNotFalse( get_option( Sensei_Data_Port_Job::OPTION_PREFIX . 'test-job' ), 'Option should be stored if persist is called.' );
 
 		$job->clean_up();
 		$job->persist();

@@ -146,7 +146,7 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 	 */
 	public function cancel_all_jobs() {
 		foreach ( $this->data_port_jobs as $job ) {
-			if ( $job['handler'] instanceof \Sensei_Data_Port_Job ) {
+			if ( is_subclass_of( $job['handler'], 'Sensei_Data_Port_Job', true ) ) {
 				$job_instance = $job['handler']::get( $job['id'] );
 
 				if ( null !== $job_instance ) {
@@ -191,7 +191,7 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 	private function get_job( $job_id ) {
 
 		foreach ( $this->data_port_jobs as $job ) {
-			if ( $job_id === $job['id'] && is_a( $job['handler'], 'Sensei_Data_Port_Job', true ) ) {
+			if ( $job_id === $job['id'] && is_subclass_of( $job['handler'], 'Sensei_Data_Port_Job', true ) ) {
 				return $job['handler']::get( $job['id'] );
 			}
 		}
