@@ -78,6 +78,15 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	}
 
 	/**
+	 * Check user permission for install plugins.
+	 *
+	 * @return bool Whether the user can install plugins.
+	 */
+	public function can_user_install_plugins() {
+		return current_user_can( 'manage_sensei' ) && current_user_can( 'install_plugins' );
+	}
+
+	/**
 	 * Register /welcome endpoint.
 	 */
 	public function register_submit_welcome_route() {
@@ -142,7 +151,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 				[
 					'methods'             => WP_REST_Server::EDITABLE,
 					'callback'            => [ $this, 'submit_features' ],
-					'permission_callback' => [ $this, 'can_user_access_rest_api' ],
+					'permission_callback' => [ $this, 'can_user_install_plugins' ],
 					'args'                => [
 						'selected' => [
 							'required' => true,
