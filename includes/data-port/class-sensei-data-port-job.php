@@ -54,6 +54,13 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	private $logs;
 
 	/**
+	 * True if the job is started.
+	 *
+	 * @var bool
+	 */
+	private $is_started;
+
+	/**
 	 * True if the job is completed.
 	 *
 	 * @var bool
@@ -100,6 +107,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 			$this->logs         = [];
 			$this->results      = [];
 			$this->is_completed = false;
+			$this->is_started   = false;
 			$this->has_changed  = true;
 			$this->task_state   = [];
 			$this->percentage   = 0;
@@ -123,6 +131,14 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 		}
 
 		return new static( $job_id, [], $json );
+	}
+
+	/**
+	 * Set up a job to start.
+	 */
+	public function start() {
+		$this->has_changed = true;
+		$this->is_started = true;
 	}
 
 	/**
@@ -183,13 +199,27 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	}
 
 	/**
+	 * Get the job ID.
+	 *
+	 * @return string
+	 */
+	public function get_job_id() {
+		return $this->job_id;
+	}
+
+	/**
 	 * Get the completion status of the job.
 	 *
 	 * @return array
 	 */
 	public function get_status() {
+		$status = 'setup';
+		if ( $this->is_started ) {
+			$status = $this->is_completed ? 'completed' : 'pending';
+		}
+
 		return [
-			'status'     => $this->is_completed ? 'completed' : 'pending',
+			'status'     => $status,
 			'percentage' => $this->percentage,
 		];
 	}
@@ -212,6 +242,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 			'l' => $this->logs,
 			'r' => $this->results,
 			'c' => $this->is_completed,
+			'i' => $this->is_started,
 			'p' => $this->percentage,
 		];
 	}
@@ -232,6 +263,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 		$this->logs         = $json_arr['l'];
 		$this->results      = $json_arr['r'];
 		$this->is_completed = $json_arr['c'];
+		$this->is_started   = $json_arr['i'];
 		$this->percentage   = $json_arr['p'];
 	}
 
@@ -275,7 +307,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 * Run the job.
 	 */
 	public function run() {
-		if ( $this->is_completed ) {
+		if ( $this->is_completed || ! $this->is_started ) {
 			return;
 		}
 
@@ -311,6 +343,15 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 */
 	public function is_complete() {
 		return $this->is_completed;
+	}
+
+	/**
+	 * Returns true if job is started.
+	 *
+	 * @return bool True if job is completed.
+	 */
+	public function is_started() {
+		return $this->is_started;
 	}
 
 	/**
