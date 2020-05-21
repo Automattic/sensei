@@ -5,7 +5,7 @@ import { updateRouteURL } from '../query-string-router/url-functions';
 import Features from './index';
 
 // Mock features data.
-jest.mock( '../use-setup-wizard-step.js', () => ( {
+jest.mock( '../data/use-setup-wizard-step.js', () => ( {
 	useSetupWizardStep: () => ( {
 		stepData: {
 			options: [

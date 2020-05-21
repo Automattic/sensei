@@ -4,7 +4,7 @@ import { Button } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { UsageModal } from './usage-modal';
 import { useQueryStringRouter } from '../query-string-router';
-import { useSetupWizardStep } from '../use-setup-wizard-step.js';
+import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 
 /**
  * Welcome step for Onboarding Wizard.

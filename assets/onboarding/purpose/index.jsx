@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { Button, CheckboxControl, TextControl } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
 import { useQueryStringRouter } from '../query-string-router';
-import { useSetupWizardStep } from '../use-setup-wizard-step.js';
+import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 
 const purposes = [
 	{
