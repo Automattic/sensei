@@ -4253,10 +4253,17 @@ class Sensei_Lesson {
 
 		if ( intval( $lesson_prerequisite ) > 0 ) {
 
-			// If the user hasn't completed the prereq then hide the current actions.
-			// (If the user is either the lesson creator or admin, show actions)
-			$show_actions = Sensei_Utils::user_completed_lesson( $lesson_prerequisite, $user_id ) || (int) get_post_field( 'post_author', $lesson_id ) === $user_id || current_user_can( 'create_users' );
-
+			// If the user hasn't completed the prerequisites then hide the current actions.
+			// (If the user is either the lesson creator or admin, show actions).
+			if (
+					$has_user_completed_lesson
+					|| Sensei_Utils::sensei_is_lesson_author( $lesson_id, $user_id )
+					|| Sensei_Utils::sensei_current_user_is_administrator()
+			) {
+				$show_actions = true;
+			} else {
+				$show_actions = false;
+			}
 		}
 
 		?>
