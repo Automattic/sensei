@@ -147,7 +147,7 @@ class Sensei_Course_Enrolment {
 	/**
 	 * Marks all enrolment results as invalid for a course and enqueues an async job to recalculate.
 	 *
-	 * @return Sensei_Enrolment_Course_Calculation_Job
+	 * @return Sensei_Enrolment_Course_Calculation_Job|null
 	 */
 	public function recalculate_enrolment() {
 		$this->invalidate_all_learner_results();
