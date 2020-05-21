@@ -4,9 +4,7 @@ import FeatureDescription from './feature-description';
 
 describe( '<FeatureDescription />', () => {
 	it( 'Should render with the description', () => {
-		const { container } = render(
-			<FeatureDescription description="test" />
-		);
+		const { container } = render( <FeatureDescription excerpt="test" /> );
 
 		expect( container.firstChild ).toMatchInlineSnapshot( 'test' );
 	} );
@@ -14,7 +12,7 @@ describe( '<FeatureDescription />', () => {
 	it( 'Should render with learn more link', () => {
 		const link = 'https://senseilms.com/';
 		const { queryByText } = render(
-			<FeatureDescription description="test" learnMoreLink={ link } />
+			<FeatureDescription excerpt="test" link={ link } />
 		);
 
 		const href = queryByText( 'Learn more' ).getAttribute( 'href' );
@@ -27,7 +25,7 @@ describe( '<FeatureDescription />', () => {
 
 		const { queryByText } = render(
 			<FeatureDescription
-				description="test"
+				excerpt="test"
 				errorMessage="Error message"
 				onFeatureRetry={ onFeatureRetryMock }
 			/>

@@ -23,6 +23,7 @@ const DEFAULT_STATE = {
 		},
 		features: {
 			selected: [],
+			options: [],
 		},
 		ready: {},
 	},

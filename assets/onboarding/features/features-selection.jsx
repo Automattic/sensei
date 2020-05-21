@@ -6,60 +6,58 @@ import FeatureDescription from './feature-description';
 
 /**
  * @typedef  {Object} Feature
- * @property {string} id              Feature id.
- * @property {string} title           Feature title.
- * @property {string} description     Feature description.
- * @property {string} [learnMoreLink] Feature description.
- * @property {string} [status]        Feature status.
+ * @property {string} slug     Feature slug.
+ * @property {string} title    Feature title.
+ * @property {string} excerpt  Feature excerpt.
+ * @property {string} [link]   Feature link.
+ * @property {string} [status] Feature status.
  */
 /**
  * Features confirmation modal.
  *
  * @param {Object}    props
- * @param {Feature[]} props.features    Features list.
- * @param {string[]}  props.selectedIds Selected ids.
- * @param {Function}  props.onChange    Callback to change the selection.
- * @param {Function}  props.onContinue  Callback to continue after selection.
+ * @param {Feature[]} props.features      Features list.
+ * @param {string[]}  props.selectedSlugs Selected slugs.
+ * @param {Function}  props.onChange      Callback to change the selection.
+ * @param {Function}  props.onContinue    Callback to continue after selection.
  */
 const FeaturesSelection = ( {
 	features,
-	selectedIds,
+	selectedSlugs,
 	onChange,
 	onContinue,
 } ) => {
-	const toggleItem = ( id ) => ( checked ) => {
+	const toggleItem = ( slug ) => ( checked ) => {
 		onChange( [
 			...( checked
-				? [ id, ...selectedIds ]
-				: selectedIds.filter( ( item ) => item !== id ) ),
+				? [ slug, ...selectedSlugs ]
+				: selectedSlugs.filter( ( i ) => i !== slug ) ),
 		] );
 	};
 
 	return (
 		<>
 			<div className="sensei-onboarding__checkbox-list">
-				{ features.map(
-					( { id, title, description, learnMoreLink, status } ) => (
-						<CheckboxControl
-							key={ id }
-							label={ title }
-							help={
-								<FeatureDescription
-									description={ description }
-									learnMoreLink={ learnMoreLink }
-								/>
-							}
-							onChange={ toggleItem( id ) }
-							checked={ selectedIds.includes( id ) }
-							disabled={ status === INSTALLED_STATUS }
-							className={ `sensei-onboarding__checkbox ${
-								status === INSTALLED_STATUS
-									? 'installed-status'
-									: ''
-							}` }
-						/>
-					)
-				) }
+				{ features.map( ( { slug, title, excerpt, link, status } ) => (
+					<CheckboxControl
+						key={ slug }
+						label={ title }
+						help={
+							<FeatureDescription
+								excerpt={ excerpt }
+								link={ link }
+							/>
+						}
+						onChange={ toggleItem( slug ) }
+						checked={ selectedSlugs.includes( slug ) }
+						disabled={ status === INSTALLED_STATUS }
+						className={ `sensei-onboarding__checkbox ${
+							status === INSTALLED_STATUS
+								? 'installed-status'
+								: ''
+						}` }
+					/>
+				) ) }
 			</div>
 			<Button
 				isPrimary

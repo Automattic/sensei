@@ -410,4 +410,27 @@ class Sensei_Onboarding {
 			'gdpr_field'  => self::MC_GDPR_FIELD,
 		];
 	}
+
+	/**
+	 * Get Sensei extensions for setup wizard.
+	 *
+	 * @return array Sensei extensions.
+	 */
+	public function get_sensei_extensions() {
+		$sensei_extensions = Sensei_Extensions::instance();
+
+		// Decode prices.
+		$extensions = array_map(
+			function( $extension ) {
+				if ( isset( $extension->price ) && 0 !== $extension->price ) {
+					$extension->price = html_entity_decode( $extension->price );
+				}
+
+				return $extension;
+			},
+			$sensei_extensions->get_extensions( 'plugin', 'setup-wizard-extensions' )
+		);
+
+		return $extensions;
+	}
 }
