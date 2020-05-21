@@ -6,15 +6,10 @@ import { __ } from '@wordpress/i18n';
  * @param {Object} props
  * @param {string} props.excerpt          Feature excerpt.
  * @param {string} [props.link]           Feature link.
- * @param {string} [props.errorMessage]   Error message.
+ * @param {string} [props.error]          Error message.
  * @param {string} [props.onFeatureRetry] Retry feature installation callback.
  */
-const FeatureDescription = ( {
-	excerpt,
-	link,
-	errorMessage,
-	onFeatureRetry,
-} ) => (
+const FeatureDescription = ( { excerpt, link, error, onFeatureRetry } ) => (
 	<>
 		{ excerpt }
 		{ link && (
@@ -31,9 +26,9 @@ const FeatureDescription = ( {
 			</>
 		) }
 
-		{ errorMessage && (
+		{ error && (
 			<p className="sensei-onboarding__error-message">
-				{ errorMessage }
+				{ error }
 				{ onFeatureRetry && (
 					<>
 						{ ' ' }

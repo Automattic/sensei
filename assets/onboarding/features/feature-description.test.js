@@ -26,7 +26,7 @@ describe( '<FeatureDescription />', () => {
 		const { queryByText } = render(
 			<FeatureDescription
 				excerpt="test"
-				errorMessage="Error message"
+				error="Error message"
 				onFeatureRetry={ onFeatureRetryMock }
 			/>
 		);
