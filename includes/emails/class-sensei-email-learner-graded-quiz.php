@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-if ( ! class_exists( 'Sensei_Email_Learner_Graded_Quiz' ) ) :
+if ( ! class_exists( 'Sensei_Email_Learner_Graded_Quiz', false ) ) :
 
 	/**
 	 * Learner Graded Quiz
@@ -106,5 +106,3 @@ if ( ! class_exists( 'Sensei_Email_Learner_Graded_Quiz' ) ) :
 	}
 
 endif;
-
-return new Sensei_Email_Learner_Graded_Quiz();
