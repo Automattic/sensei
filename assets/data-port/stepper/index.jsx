@@ -50,10 +50,10 @@ const completeCurrentStep = ( steps ) => {
  * @return {string}       The key of the active step.
  */
 const getCurrentStep = ( steps ) => {
-	for ( const step of steps ) {
-		if ( step.isActive ) {
-			return step.key;
-		}
+	const currentStep = steps.find( ( step ) => step.isActive );
+
+	if ( currentStep ) {
+		return currentStep.key;
 	}
 
 	throw new Error( 'No active step.' );
@@ -71,16 +71,16 @@ const stepsReducer = ( state, action ) => {
 };
 
 /**
- * @typedef  {Object} Step
- * @property {string} key          Unique key for the step.
- * @property {string} description  A description of the step that is going to be displayed.
- * @property {string} isActive     True if the step is the currently active one.
- * @property {string} isComplete   True if the step is completed.
+ * @typedef  {Object}   Step
+ * @property {string}   key          Unique key for the step.
+ * @property {string}   description  A description of the step that is going to be displayed.
+ * @property {boolean}  isActive     True if the step is the currently active one.
+ * @property {boolean}  isComplete   True if the step is completed.
  */
 /**
  * A simple component to display a stepper on data port pages.
  *
- * @param {Array} steps The array of the steps.
+ * @param {Step[]} steps The array of the steps.
  */
 const DataPortStepper = ( { steps } ) => (
 	<ol className="sensei-progress-steps">
