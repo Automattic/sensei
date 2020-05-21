@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { logEvent } from '../log_event';
+import { logLink } from '../log-event';
 
 /**
  * Feature description component
@@ -20,11 +20,9 @@ const FeatureDescription = ( { slug, excerpt, link } ) => (
 					href={ link }
 					target="_blank"
 					rel="noopener noreferrer"
-					onClick={ () =>
-						logEvent( 'sensei_setup_wizard_features_learn_more', {
-							slug,
-						} )
-					}
+					{ ...logLink( 'setup_wizard_features_learn_more', {
+						slug,
+					} ) }
 				>
 					{ __( 'Learn more', 'sensei-lms' ) }
 				</a>
