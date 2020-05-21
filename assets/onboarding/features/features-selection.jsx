@@ -48,6 +48,7 @@ const FeaturesSelection = ( {
 						label={ title }
 						help={
 							<FeatureDescription
+								slug={ slug }
 								excerpt={ excerpt }
 								link={ link }
 							/>

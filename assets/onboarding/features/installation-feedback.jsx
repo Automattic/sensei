@@ -98,6 +98,7 @@ const InstallationFeedback = ( { onContinue, onRetry } ) => {
 						content: (
 							<>
 								<FeatureDescription
+									slug={ slug }
 									excerpt={ excerpt }
 									link={ link }
 								/>
