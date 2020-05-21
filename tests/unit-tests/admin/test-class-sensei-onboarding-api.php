@@ -272,26 +272,6 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 
 	}
 
-	/**
-	 * Tests that submitting to features endpoint saves submitted data
-	 *
-	 * @covers Sensei_REST_API_Setup_Wizard_Controller::submit_features
-	 */
-	public function testSubmitFeaturesSavesData() {
-
-		$this->request(
-			'POST',
-			'features',
-			[
-				'selected' => [ 'sensei-certificates' ],
-			]
-		);
-
-		$data = Sensei()->onboarding->get_wizard_user_data();
-
-		$this->assertEquals( [ 'sensei-certificates' ], $data['features'] );
-	}
-
 
 	/**
 	 * Tests that submitting to features endpoint validates input against whitelist
