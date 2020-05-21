@@ -2,7 +2,7 @@ import { render, fireEvent } from '@testing-library/react';
 
 import InstallationFeedback from './installation-feedback';
 import {
-	LOADING_STATUS,
+	INSTALLING_STATUS,
 	ERROR_STATUS,
 	INSTALLED_STATUS,
 } from './feature-status';
@@ -13,7 +13,7 @@ describe( '<InstallationFeedback />', () => {
 			{
 				title: 'Test',
 				excerpt: 'Test',
-				status: LOADING_STATUS,
+				status: INSTALLING_STATUS,
 			},
 			{
 				title: 'Test',

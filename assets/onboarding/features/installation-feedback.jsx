@@ -3,7 +3,10 @@ import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 import FeatureDescription from './feature-description';
-import FeatureStatus, { LOADING_STATUS, ERROR_STATUS } from './feature-status';
+import FeatureStatus, {
+	INSTALLING_STATUS,
+	ERROR_STATUS,
+} from './feature-status';
 
 /**
  * @typedef  {Object} Feature
@@ -22,7 +25,7 @@ import FeatureStatus, { LOADING_STATUS, ERROR_STATUS } from './feature-status';
  */
 const InstallationFeedback = ( { features, onContinue } ) => {
 	const hasLoading = features.some(
-		( feature ) => feature.status === LOADING_STATUS
+		( feature ) => feature.status === INSTALLING_STATUS
 	);
 
 	const hasError = features.some(

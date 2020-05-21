@@ -6,12 +6,12 @@ import CheckIcon from './check-icon';
 /**
  * Status constants.
  */
-export const LOADING_STATUS = 'loading';
+export const INSTALLING_STATUS = 'installing';
 export const ERROR_STATUS = 'error';
 export const INSTALLED_STATUS = 'installed';
 
 const statusComponents = {
-	[ LOADING_STATUS ]: (
+	[ INSTALLING_STATUS ]: (
 		<>
 			<Spinner />
 			<span className="screen-reader-text">
