@@ -94,7 +94,6 @@ class Sensei_Autoloader {
 			new Sensei_Autoloader_Bundle( '' ),
 			new Sensei_Autoloader_Bundle( 'background-jobs' ),
 			new Sensei_Autoloader_Bundle( 'enrolment' ),
-			new Sensei_Autoloader_Bundle( 'data-port' ),
 		);
 
 		// add Sensei custom auto loader
