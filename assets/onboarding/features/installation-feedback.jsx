@@ -8,6 +8,8 @@ import FeatureStatus, {
 	ERROR_STATUS,
 } from './feature-status';
 
+const getStatus = ( status = INSTALLING_STATUS ) => status;
+
 /**
  * @typedef  {Object} Feature
  * @property {string} title   Feature title.
@@ -25,11 +27,11 @@ import FeatureStatus, {
  */
 const InstallationFeedback = ( { features, onContinue } ) => {
 	const hasLoading = features.some(
-		( feature ) => feature.status === INSTALLING_STATUS
+		( feature ) => getStatus( feature.status ) === INSTALLING_STATUS
 	);
 
 	const hasError = features.some(
-		( feature ) => feature.status === ERROR_STATUS
+		( feature ) => getStatus( feature.status ) === ERROR_STATUS
 	);
 
 	let actionButtons;
@@ -85,7 +87,9 @@ const InstallationFeedback = ( { features, onContinue } ) => {
 								onFeatureRetry={ () => {} }
 							/>
 						),
-						before: <FeatureStatus status={ status } />,
+						before: (
+							<FeatureStatus status={ getStatus( status ) } />
+						),
 					} )
 				) }
 			/>

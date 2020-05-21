@@ -37,6 +37,24 @@ describe( '<InstallationFeedback />', () => {
 		expect( queryByText( 'Installing…' ) ).toBeTruthy();
 	} );
 
+	it( 'Should render with empty status as loading', () => {
+		const features = [
+			{
+				title: 'Test',
+				excerpt: 'Test',
+			},
+		];
+
+		const { queryByText } = render(
+			<InstallationFeedback
+				features={ features }
+				onContinue={ () => {} }
+			/>
+		);
+
+		expect( queryByText( 'Installing…' ) ).toBeTruthy();
+	} );
+
 	it( 'Should render all success', () => {
 		const features = [
 			{
