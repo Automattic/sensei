@@ -472,7 +472,6 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				 * This filter runs on the learner management screen for a specific course.
 				 * It provides the learner row column details.
 				 *
-				 * @param string	tag
 				 * @param array		$columns {
 				 * 	@type string	$title						Learner name.
 				 * 	@type string	$date_started			Course start date.
