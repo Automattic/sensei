@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
-import { render, useState } from '@wordpress/element';
-import DataPortStepper from './stepper';
+import { render, useReducer } from '@wordpress/element';
+import { DataPortStepper, stepsReducer, getCurrentStep } from './stepper';
 
 const initialSteps = [
 	{
@@ -27,30 +27,15 @@ const initialSteps = [
  * Sensei onboarding page.
  */
 const SenseiImportPage = () => {
-	const [ steps, setSteps ] = useState( initialSteps );
-
-	function moveToNext() {
-		const newSteps = [ ...steps ];
-
-		for ( let i = 0; i < newSteps.length; i++ ) {
-			if ( ! newSteps[ i ].isComplete ) {
-				newSteps[ i ].isComplete = true;
-				newSteps[ i ].isActive = false;
-
-				if ( i + 1 < newSteps.length ) {
-					newSteps[ i + 1 ].isActive = true;
-				}
-
-				setSteps( newSteps );
-				return;
-			}
-		}
-	}
+	const [ steps, dispatch ] = useReducer( stepsReducer, initialSteps );
 
 	return (
 		<div className="sensei-import-wrapper">
 			<DataPortStepper steps={ steps } />
-			<button onClick={ moveToNext }>Try me!</button>
+			<button onClick={ () => dispatch( { type: 'MOVE_TO_NEXT'} ) }>Move to next step!</button>
+			<button onClick={ () => dispatch( { type: 'COMPLETE_CURRENT'} ) }>Complete current!</button>
+			{ /* eslint-disable-next-line no-console */ }
+			<button onClick={ () => console.log( getCurrentStep( steps ) ) }>Check current step!</button>
 		</div>
 	);
 };
