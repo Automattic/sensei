@@ -24,6 +24,7 @@ class Sensei_Data_Port_Job_Test extends WP_UnitTestCase {
 		$second_completed = $this->mock_task_method( true, 100, 100, 'run' );
 
 		$job = new Sensei_Data_Port_Job_Mock( 'test-job', [ $first_completed, $second_completed ] );
+		$job->start();
 
 		$first_completed->expects( $this->never() )->method( 'run' );
 		$second_completed->expects( $this->never() )->method( 'run' );
@@ -46,6 +47,7 @@ class Sensei_Data_Port_Job_Test extends WP_UnitTestCase {
 		$pending   = $this->mock_task_method( false, 25, 100, 'run' );
 
 		$job = new Sensei_Data_Port_Job_Mock( 'test-job', [ $completed, $pending ] );
+		$job->start();
 
 		$completed->expects( $this->never() )->method( 'run' );
 		$pending->expects( $this->once() )->method( 'run' );
@@ -68,6 +70,7 @@ class Sensei_Data_Port_Job_Test extends WP_UnitTestCase {
 		$second_pending = $this->mock_task_method( false, 0, 100, 'run' );
 
 		$job = new Sensei_Data_Port_Job_Mock( 'test-job', [ $first_pending, $second_pending ] );
+		$job->start();
 
 		$first_pending->expects( $this->once() )->method( 'run' );
 		$second_pending->expects( $this->never() )->method( 'run' );
