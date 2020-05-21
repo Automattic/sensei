@@ -10,6 +10,8 @@ import {
 	SET_STEP_DATA,
 } from './constants';
 
+import { normalizeSetupWizardData } from './normalizer';
+
 /**
  * @typedef  {Object} FetchFromAPIAction
  * @property {string} type               Action type.
@@ -37,9 +39,7 @@ export function* fetchSetupWizardData() {
 		const data = yield fetchFromAPI( {
 			path: API_BASE_PATH,
 		} );
-		yield successFetch( {
-			...data,
-		} );
+		yield successFetch( normalizeSetupWizardData( data ) );
 	} catch ( error ) {
 		yield errorFetch( error );
 	}

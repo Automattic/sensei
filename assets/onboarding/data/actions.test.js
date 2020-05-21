@@ -52,10 +52,29 @@ describe( 'Setup wizard actions', () => {
 		expect( gen.next().value ).toEqual( expectedFetchAction );
 
 		// Set data action.
-		const dataObject = { x: 1 };
+		const dataObject = {
+			features: {
+				options: [
+					{
+						product_slug: 'test',
+						title: 'Test',
+					},
+				],
+			},
+		};
 		const expectedSetDataAction = {
 			type: SUCCESS_FETCH_SETUP_WIZARD_DATA,
-			data: dataObject,
+			data: {
+				features: {
+					options: [
+						{
+							product_slug: 'test',
+							slug: 'test',
+							title: 'Test — Free',
+						},
+					],
+				},
+			},
 		};
 		expect( gen.next( dataObject ).value ).toEqual( expectedSetDataAction );
 	} );

@@ -4,25 +4,25 @@ import { __ } from '@wordpress/i18n';
  * Feature description component
  *
  * @param {Object} props
- * @param {string} props.description      Feature description.
- * @param {string} [props.learnMoreLink]  Learn more link.
+ * @param {string} props.excerpt          Feature excerpt.
+ * @param {string} [props.link]           Feature link.
  * @param {string} [props.errorMessage]   Error message.
  * @param {string} [props.onFeatureRetry] Retry feature installation callback.
  */
 const FeatureDescription = ( {
-	description,
-	learnMoreLink,
+	excerpt,
+	link,
 	errorMessage,
 	onFeatureRetry,
 } ) => (
 	<>
-		{ description }
-		{ learnMoreLink && (
+		{ excerpt }
+		{ link && (
 			<>
 				{ ' ' }
 				<a
 					className="sensei-onboarding__learn-more"
-					href={ learnMoreLink }
+					href={ link }
 					target="_blank"
 					rel="noopener noreferrer"
 				>

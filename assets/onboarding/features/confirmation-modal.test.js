@@ -5,13 +5,14 @@ import ConfirmationModal from './confirmation-modal';
 
 const features = [
 	{
+		slug: 'first',
 		title: 'First',
-		description: 'Dolor',
+		excerpt: 'Dolor',
 	},
 	{
+		slug: 'sensei-wc-paid-courses',
 		title: 'Second',
-		description: 'Lorem',
-		confirmationExtraDescription: 'Ipsum',
+		excerpt: 'Lorem',
 	},
 ];
 
@@ -29,7 +30,11 @@ describe( '<ConfirmationModal />', () => {
 			features.length
 		);
 		expect( screen.queryByText( 'Dolor' ) ).toBeTruthy();
-		expect( screen.queryByText( 'Lorem Ipsum' ) ).toBeTruthy();
+		expect(
+			screen.queryByText(
+				'Lorem (The WooCommerce plugin may also be installed and activated for free.)'
+			)
+		).toBeTruthy();
 	} );
 
 	it( 'Should call the callbacks', () => {

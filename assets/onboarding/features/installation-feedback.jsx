@@ -7,11 +7,11 @@ import FeatureStatus, { LOADING_STATUS, ERROR_STATUS } from './feature-status';
 
 /**
  * @typedef  {Object} Feature
- * @property {string} title           Feature title.
- * @property {string} description     Feature description.
- * @property {string} [learnMoreLink] Learn more link.
- * @property {string} [errorMessage]  Error message.
- * @property {string} status          Feature status.
+ * @property {string} title          Feature title.
+ * @property {string} excerpt        Feature excerpt.
+ * @property {string} [link]         Feature link.
+ * @property {string} [errorMessage] Error message.
+ * @property {string} status         Feature status.
  */
 /**
  * Installation feedback component.
@@ -72,18 +72,12 @@ const InstallationFeedback = ( { features, onContinue } ) => {
 		<div className="sensei-onboarding__features-installation-feedback">
 			<List
 				items={ features.map(
-					( {
-						title,
-						description,
-						learnMoreLink,
-						errorMessage,
-						status,
-					} ) => ( {
+					( { title, excerpt, link, errorMessage, status } ) => ( {
 						title,
 						content: (
 							<FeatureDescription
-								description={ description }
-								learnMoreLink={ learnMoreLink }
+								excerpt={ excerpt }
+								link={ link }
 								errorMessage={ errorMessage }
 								onFeatureRetry={ () => {} }
 							/>
