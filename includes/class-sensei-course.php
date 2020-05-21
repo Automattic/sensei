@@ -2195,7 +2195,7 @@ class Sensei_Course {
 
 		echo '<span class="course-lesson-count">' .
 			// translators: Placeholder %d is the lesson count.
-			sprintf( esc_html( _n( '%d Lesson', '%d Lessons', $lesson_count, 'sensei-lms' ) ), $lesson_count ) .
+			sprintf( esc_html( _n( '%d Lesson', '%d Lessons', $lesson_count, 'sensei-lms' ) ), intval( $lesson_count ) ) .
 		'</span>';
 
 		if ( ! empty( $category_output ) ) {
