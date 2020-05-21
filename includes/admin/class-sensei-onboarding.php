@@ -410,13 +410,31 @@ class Sensei_Onboarding {
 	 * @return array Sensei extensions.
 	 */
 	public function get_sensei_extensions() {
-		$sensei_extensions = Sensei_Extensions::instance();
+		$sensei_extensions    = Sensei_Extensions::instance();
+		$plugins_installation = Sensei_Plugins_Installation::instance();
+		$installing_plugins   = $plugins_installation->get_installing_plugins();
 
-		// Decode prices.
 		$extensions = array_map(
-			function( $extension ) {
+			function( $extension ) use ( $installing_plugins ) {
+				// Decode price.
 				if ( isset( $extension->price ) && 0 !== $extension->price ) {
 					$extension->price = html_entity_decode( $extension->price );
+				}
+
+				// Add error and status.
+				$installing_key = array_search(
+					$extension->product_slug,
+					array_column( $installing_plugins, 'product_slug' ),
+					true
+				);
+				if ( false !== $installing_key ) {
+					$error = $installing_plugins[ $installing_key ]->error;
+					if ( $error ) {
+						$extension->error  = $error;
+						$extension->status = 'error';
+					} else {
+						$extension->status = 'installing';
+					}
 				}
 
 				return $extension;

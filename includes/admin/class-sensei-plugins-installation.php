@@ -97,13 +97,23 @@ class Sensei_Plugins_Installation {
 	}
 
 	/**
+	 * Get installing plugins.
+	 *
+	 * @return stdClass[] Installing plugins.
+	 */
+	public function get_installing_plugins() {
+		$installing_plugins = get_transient( self::INSTALLING_PLUGINS_TRANSIENT );
+
+		return $installing_plugins ? $installing_plugins : [];
+	}
+
+	/**
 	 * Install plugins
 	 *
 	 * @param stdClass[] $plugins_to_install Plugin objects to install.
 	 */
 	public function install_plugins( $plugins_to_install ) {
-		$installing_plugins = get_transient( self::INSTALLING_PLUGINS_TRANSIENT );
-		$installing_plugins = $installing_plugins ? $installing_plugins : [];
+		$installing_plugins = $this->get_installing_plugins();
 		$new_installations  = [];
 
 		foreach ( $plugins_to_install as $plugin ) {
@@ -127,7 +137,7 @@ class Sensei_Plugins_Installation {
 	 * @param string $message Error message.
 	 */
 	private function save_error( $slug, $message ) {
-		$installing_plugins = get_transient( self::INSTALLING_PLUGINS_TRANSIENT );
+		$installing_plugins = $this->get_installing_plugins();
 		$key                = array_search( $slug, array_column( $installing_plugins, 'product_slug' ), true );
 
 		if ( false !== $key ) {
@@ -307,9 +317,9 @@ class Sensei_Plugins_Installation {
 			}
 
 			// Remove from transient when complete.
-			$installing_plugins = get_transient( self::INSTALLING_PLUGINS_TRANSIENT );
+			$installing_plugins = $this->get_installing_plugins();
 
-			if ( $installing_plugins ) {
+			if ( ! empty( $installing_plugins ) ) {
 				$installing_plugins = array_filter(
 					$installing_plugins,
 					function( $plugin ) use ( $plugin_slug ) {
