@@ -97,17 +97,6 @@ class Sensei_Plugins_Installation {
 	}
 
 	/**
-	 * Get installing plugins.
-	 *
-	 * @return stdClass[] Installing plugins.
-	 */
-	public function get_installing_plugins() {
-		$installing_plugins = get_transient( self::INSTALLING_PLUGINS_TRANSIENT );
-
-		return $installing_plugins ? $installing_plugins : [];
-	}
-
-	/**
 	 * Install plugins
 	 *
 	 * @param stdClass[] $plugins_to_install Plugin objects to install.
@@ -131,20 +120,14 @@ class Sensei_Plugins_Installation {
 	}
 
 	/**
-	 * Save error
+	 * Get installing plugins.
 	 *
-	 * @param string $slug    Plugin slug.
-	 * @param string $message Error message.
+	 * @return stdClass[] Installing plugins.
 	 */
-	private function save_error( $slug, $message ) {
-		$installing_plugins = $this->get_installing_plugins();
-		$key                = array_search( $slug, array_column( $installing_plugins, 'product_slug' ), true );
+	public function get_installing_plugins() {
+		$installing_plugins = get_transient( self::INSTALLING_PLUGINS_TRANSIENT );
 
-		if ( false !== $key ) {
-			$installing_plugins[ $key ]->error = $message;
-		}
-
-		set_transient( self::INSTALLING_PLUGINS_TRANSIENT, $installing_plugins, DAY_IN_SECONDS );
+		return $installing_plugins ? $installing_plugins : [];
 	}
 
 	/**
@@ -172,6 +155,57 @@ class Sensei_Plugins_Installation {
 	}
 
 	/**
+	 * Get installed plugins.
+	 *
+	 * @return array Installed plugins.
+	 */
+	private function get_installed_plugins() {
+		require_once ABSPATH . 'wp-admin/includes/plugin.php';
+
+		return array_reduce( array_keys( get_plugins() ), [ $this, 'associate_plugin_file' ] );
+	}
+
+	/**
+	 * Check whether plugin is active.
+	 *
+	 * @param string $plugin_file       Plugin filename or path.
+	 * @param array  $installed_plugins Installed plugins. If it's not passed, it will get the installed plugins.
+	 *
+	 * @return boolean Is plugin active.
+	 */
+	public function is_plugin_active( $plugin_file, $installed_plugins = null ) {
+		if ( ! $installed_plugins ) {
+			$installed_plugins = $this->get_installed_plugins();
+		}
+
+		// Get filename if it is the complete path.
+		$plugin_file = $this->get_file_name_from_path( $plugin_file );
+
+		if ( ! isset( $installed_plugins[ $plugin_file ] ) ) {
+			return false;
+		}
+
+		return is_plugin_active( $installed_plugins[ $plugin_file ] );
+	}
+
+	/**
+	 * Save error
+	 *
+	 * @param string $slug    Plugin slug.
+	 * @param string $message Error message.
+	 */
+	private function save_error( $slug, $message ) {
+		$installing_plugins = $this->get_installing_plugins();
+		$key                = array_search( $slug, array_column( $installing_plugins, 'product_slug' ), true );
+
+		if ( false !== $key ) {
+			$installing_plugins[ $key ]->error = $message;
+		}
+
+		set_transient( self::INSTALLING_PLUGINS_TRANSIENT, $installing_plugins, DAY_IN_SECONDS );
+	}
+
+	/**
 	 * Install a plugin from WP.org.
 	 *
 	 * @param stdClass[] $plugin_to_install Plugin information.
@@ -183,13 +217,12 @@ class Sensei_Plugins_Installation {
 			require_once ABSPATH . 'wp-admin/includes/file.php';
 			require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
 			require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
-			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 
 			WP_Filesystem();
 
 			$skin              = new Automatic_Upgrader_Skin();
 			$upgrader          = new WP_Upgrader( $skin );
-			$installed_plugins = array_reduce( array_keys( get_plugins() ), [ $this, 'associate_plugin_file' ] );
+			$installed_plugins = $this->get_installed_plugins();
 			if ( empty( $installed_plugins ) ) {
 				$installed_plugins = [];
 			}

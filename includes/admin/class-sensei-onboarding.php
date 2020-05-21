@@ -415,7 +415,7 @@ class Sensei_Onboarding {
 		$installing_plugins   = $plugins_installation->get_installing_plugins();
 
 		$extensions = array_map(
-			function( $extension ) use ( $installing_plugins ) {
+			function( $extension ) use ( $plugins_installation, $installing_plugins ) {
 				// Decode price.
 				if ( isset( $extension->price ) && 0 !== $extension->price ) {
 					$extension->price = html_entity_decode( $extension->price );
@@ -435,6 +435,10 @@ class Sensei_Onboarding {
 					} else {
 						$extension->status = 'installing';
 					}
+				}
+
+				if ( $plugins_installation->is_plugin_active( $extension->plugin_file ) ) {
+					$extension->status = 'installed';
 				}
 
 				return $extension;
