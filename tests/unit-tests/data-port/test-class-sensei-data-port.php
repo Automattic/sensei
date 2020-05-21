@@ -23,7 +23,7 @@ class Sensei_Data_Port_Job_Test extends WP_UnitTestCase {
 		$first_completed  = $this->mock_task_method( true, 100, 100, 'run' );
 		$second_completed = $this->mock_task_method( true, 100, 100, 'run' );
 
-		$job = new Sensei_Data_Port_Job_Mock( 'test-job', [ $first_completed, $second_completed ] );
+		$job = Sensei_Data_Port_Job_Mock::create( [ $first_completed, $second_completed ] );
 
 		$first_completed->expects( $this->never() )->method( 'run' );
 		$second_completed->expects( $this->never() )->method( 'run' );
@@ -45,7 +45,7 @@ class Sensei_Data_Port_Job_Test extends WP_UnitTestCase {
 		$completed = $this->mock_task_method( true, 100, 100, 'run' );
 		$pending   = $this->mock_task_method( false, 25, 100, 'run' );
 
-		$job = new Sensei_Data_Port_Job_Mock( 'test-job', [ $completed, $pending ] );
+		$job = Sensei_Data_Port_Job_Mock::create( [ $completed, $pending ] );
 
 		$completed->expects( $this->never() )->method( 'run' );
 		$pending->expects( $this->once() )->method( 'run' );
@@ -67,7 +67,7 @@ class Sensei_Data_Port_Job_Test extends WP_UnitTestCase {
 		$first_pending  = $this->mock_task_method( false, 50, 100, 'run' );
 		$second_pending = $this->mock_task_method( false, 0, 100, 'run' );
 
-		$job = new Sensei_Data_Port_Job_Mock( 'test-job', [ $first_pending, $second_pending ] );
+		$job = Sensei_Data_Port_Job_Mock::create( [ $first_pending, $second_pending ] );
 
 		$first_pending->expects( $this->once() )->method( 'run' );
 		$second_pending->expects( $this->never() )->method( 'run' );
@@ -90,7 +90,7 @@ class Sensei_Data_Port_Job_Test extends WP_UnitTestCase {
 		$first_completed  = $this->mock_task_method( true, 100, 100, 'clean_up' );
 		$second_completed = $this->mock_task_method( true, 100, 100, 'clean_up' );
 
-		$job = new Sensei_Data_Port_Job_Mock( 'test-job', [ $first_completed, $second_completed ] );
+		$job = Sensei_Data_Port_Job_Mock::create( [ $first_completed, $second_completed ] );
 
 		$first_completed->expects( $this->once() )->method( 'clean_up' );
 		$second_completed->expects( $this->once() )->method( 'clean_up' );
@@ -99,7 +99,7 @@ class Sensei_Data_Port_Job_Test extends WP_UnitTestCase {
 	}
 
 	public function testLogMessagePagination() {
-		$job = new Sensei_Data_Port_Job_Mock( 'test-job', [ new Sensei_Data_Port_Task_Mock( true, 100, 100 ) ] );
+		$job = Sensei_Data_Port_Job_Mock::create( [ new Sensei_Data_Port_Task_Mock( true, 100, 100 ) ] );
 
 		$job->log( 'First course', 'First failed', 'course', '1' );
 		$job->log( 'First lesson', 'First failed', 'lesson', '1' );
@@ -209,9 +209,9 @@ class Sensei_Data_Port_Job_Test extends WP_UnitTestCase {
 	}
 
 	public function testStateIsPersisted() {
-		$job = new Sensei_Data_Port_Job_Mock( 'test-job', [ new Sensei_Data_Port_Task_Mock( true, 100, 100 ) ] );
+		$job = Sensei_Data_Port_Job_Mock::create( [ new Sensei_Data_Port_Task_Mock( true, 100, 100 ) ] );
 
-		$this->assertFalse( get_option( $job->get_name() ), 'Option should not be stored if persist is not called.' );
+		$this->assertFalse( get_option( Sensei_Data_Port_Job::OPTION_PREFIX . 'test-job' ), 'Option should not be stored if persist is not called.' );
 
 		$job->persist();
 
@@ -220,7 +220,7 @@ class Sensei_Data_Port_Job_Test extends WP_UnitTestCase {
 		$job->clean_up();
 		$job->persist();
 
-		$this->assertFalse( get_option( $job->get_name() ), 'Option should not be stored if persist is not called.' );
+		$this->assertFalse( get_option( Sensei_Data_Port_Job::OPTION_PREFIX . 'test-job' ), 'Option should not be stored if persist is not called.' );
 	}
 
 	private function mock_task_method( $is_complete, $completed_cycles, $total_cycles, $method ) {

@@ -8,29 +8,24 @@
 
 class Sensei_Data_Port_Job_Mock extends Sensei_Data_Port_Job {
 
-	private $tasks;
+	private static $tasks;
 
-	private static $restore_mock;
+	public static function create( $tasks ) {
+		self::$tasks = $tasks;
 
-	public function __construct( $job_id, $args = [], $json = '' ) {
-		parent::__construct( $job_id, $args, $json );
+		return new self( 'test-job' );
+	}
 
-		$this->tasks = $args;
+	public function get_name() {
+		return 'test-job';
 	}
 
 	public function get_tasks() {
-		return $this->tasks;
+		return self::$tasks;
 	}
 
 	public function log( $title, $message, $type, $id ) {
 		$this->add_log_entry( $title, $message, $type, $id );
 	}
 
-	public static function get( $job_id ) {
-		return self::$restore_mock;
-	}
-
-	public static function set_restore_mock( $mock ) {
-		self::$restore_mock = $mock;
-	}
 }

@@ -14,8 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * running data port tasks which are registered by subclasses.
  */
 abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, JsonSerializable {
-	const OPTION_PREFIX         = 'sensei-data-port-job-';
-	const SCHEDULED_ACTION_NAME = 'sensei-data-port-job';
+	const OPTION_PREFIX = 'sensei-data-port-';
 
 	/**
 	 * An array which holds the results of the data port job and populated in subclasses.
@@ -82,14 +81,19 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	private $percentage;
 
 	/**
-	 * Sensei_Data_Port_Job constructor. A data port instance can be created either when a new data port job is
-	 * registered or when an existing one is restored from a JSON string.
+	 * The tasks that consist this data port job.
+	 *
+	 * @var Sensei_Data_Port_Task_Interface[]
+	 */
+	private $tasks;
+
+	/**
+	 * Sensei_Data_Port_Job constructor.
 	 *
 	 * @param string $job_id   Unique job id.
-	 * @param array  $args     Arguments to be used by subclasses.
 	 * @param string $json     A json string to restore internal state from.
 	 */
-	protected function __construct( $job_id, $args = [], $json = '' ) {
+	protected function __construct( $job_id, $json = '' ) {
 		$this->job_id      = $job_id;
 		$this->has_changed = false;
 		$this->is_deleted  = false;
@@ -105,6 +109,8 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 			$this->percentage   = 0;
 		}
 
+		$this->tasks = $this->get_tasks();
+
 		add_action( 'shutdown', [ $this, 'persist' ] );
 	}
 
@@ -116,13 +122,13 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 * @return Sensei_Data_Port_Job|null instance.
 	 */
 	public static function get( $job_id ) {
-		$json = get_option( self::get_option_name( $job_id ), '' );
+		$json = get_option( self::get_option_name(), '' );
 
 		if ( empty( $json ) ) {
 			return null;
 		}
 
-		return new static( $job_id, [], $json );
+		return new static( $job_id, $json );
 	}
 
 	/**
@@ -174,7 +180,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 * Delete any stored state for this job.
 	 */
 	public function clean_up() {
-		foreach ( $this->get_tasks() as $task ) {
+		foreach ( $this->tasks as $task ) {
 			$task->clean_up();
 		}
 
@@ -265,7 +271,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 */
 	public function persist() {
 		if ( ! $this->is_deleted && $this->has_changed ) {
-			update_option( self::get_option_name( $this->job_id ), wp_json_encode( $this ) );
+			update_option( self::get_option_name( $this->job_id ), wp_slash( wp_json_encode( $this ) ) );
 		}
 
 		$this->has_changed = false;
@@ -283,7 +289,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 		$total_cycles       = 0;
 		$has_processed_task = false;
 
-		foreach ( $this->get_tasks() as $task ) {
+		foreach ( $this->tasks as $task ) {
 
 			if ( ! $has_processed_task && ! $task->is_completed() ) {
 				$task->run();
@@ -314,21 +320,12 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	}
 
 	/**
-	 * Returns the arguments for data port jobs.
+	 * No a arguments are needed for data port jobs.
 	 *
 	 * @return array
 	 */
 	public function get_args() {
-		return [ 'job_id' => $this->job_id ];
-	}
-
-	/**
-	 * Get the action name for the scheduled job.
-	 *
-	 * @return string
-	 */
-	public function get_name() {
-		return self::SCHEDULED_ACTION_NAME;
+		return [];
 	}
 
 	/**
