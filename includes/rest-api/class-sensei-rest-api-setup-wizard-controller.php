@@ -226,7 +226,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 			'type'       => 'object',
 			'properties' => [
 				'completed_steps' => [
-					'description' => 'Completed steps.',
+					'description' => __( 'Completed steps.', 'sensei-lms' ),
 					'type'        => 'array',
 					'readonly'    => true,
 				],
@@ -234,7 +234,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 					'type'       => 'object',
 					'properties' => [
 						'usage_tracking' => [
-							'description' => 'Usage tracking preference given by the site owner.',
+							'description' => __( 'Usage tracking preference given by the site owner.', 'sensei-lms' ),
 							'type'        => 'boolean',
 						],
 					],
@@ -243,11 +243,11 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 					'type'       => 'object',
 					'properties' => [
 						'selected' => [
-							'description' => 'Slugs of plugins selected by the site owner.',
+							'description' => __( 'Slugs of plugins selected by the site owner.', 'sensei-lms' ),
 							'type'        => 'array',
 						],
 						'options'  => [
-							'description' => 'Sensei extensions.',
+							'description' => __( 'Sensei extensions.', 'sensei-lms' ),
 							'type'        => 'array',
 						],
 					],
@@ -256,11 +256,11 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 					'type'       => 'object',
 					'properties' => [
 						'selected' => [
-							'description' => 'Purposes selected by the site owner.',
+							'description' => __( 'Purposes selected by the site owner.', 'sensei-lms' ),
 							'type'        => 'array',
 						],
 						'other'    => [
-							'description' => 'Other free-text purpose.',
+							'description' => __( 'Other free-text purpose.', 'sensei-lms' ),
 							'type'        => 'string',
 						],
 					],
