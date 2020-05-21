@@ -59,7 +59,6 @@ class Sensei_Data_Cleaner {
 		'sensei_course_order',
 		'skip_install_sensei_pages', // @deprecated since 3.1.0.
 		'sensei_suggest_setup_wizard',
-		'sensei-data-port-jobs',
 		'sensei_flush_rewrite_rules',
 		'sensei_needs_language_pack_install',
 		'woothemes_sensei_language_pack_version',
