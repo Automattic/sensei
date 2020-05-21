@@ -127,7 +127,7 @@ class Sensei_Onboarding {
 	 * @access private
 	 */
 	public function enqueue_scripts() {
-		Sensei()->assets->enqueue( 'sensei-setupwizard', 'onboarding/index.js', [ 'wp-i18n' ], true );
+		Sensei()->assets->enqueue( 'sensei-setupwizard', 'onboarding/index.js', [ 'sensei-event-logging', 'wp-i18n' ], true );
 		$this->setup_wizard_set_script_translations();
 	}
 
