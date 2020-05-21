@@ -36,15 +36,6 @@ abstract class Sensei_REST_API_Data_Port_Base extends \WP_REST_Controller {
 	}
 
 	/**
-	 * Check user permission for REST API access.
-	 *
-	 * @return bool Whether the user can access the Setup Wizard REST API.
-	 */
-	public function can_user_access_rest_api() {
-		return current_user_can( 'manage_sensei' );
-	}
-
-	/**
 	 * Register the REST API endpoints for the Importer.
 	 */
 	public function register_routes() {
@@ -150,6 +141,15 @@ abstract class Sensei_REST_API_Data_Port_Base extends \WP_REST_Controller {
 	 */
 	protected function get_active_job() {
 		return Sensei_Data_Port_Manager::instance()->get_active_job( $this->handler_class, get_current_user_id() );
+	}
+
+	/**
+	 * Check user permission for REST API access.
+	 *
+	 * @return bool Whether the user can access the Setup Wizard REST API.
+	 */
+	public function can_user_access_rest_api() {
+		return current_user_can( 'manage_sensei' );
 	}
 
 	/**
