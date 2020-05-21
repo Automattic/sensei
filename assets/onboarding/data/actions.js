@@ -126,10 +126,13 @@ export const errorSubmit = ( error ) => ( {
 /**
  * Submit step action creator.
  *
- * @param {string} step     Step name.
- * @param {Object} stepData Data to submit.
+ * @param {string}   step      Step name.
+ * @param {Object}   stepData  Data to submit.
+ * @param {Object}   options
+ * @param {Function} options.onSuccess Step name.
+ * @param {Function} options.onError   Data to submit.
  */
-export function* submitStep( step, stepData ) {
+export function* submitStep( step, stepData, { onSuccess, onError } ) {
 	yield startSubmit();
 
 	try {
@@ -140,8 +143,16 @@ export function* submitStep( step, stepData ) {
 		} );
 		yield successSubmit();
 		yield setStepData( step, stepData );
+
+		if ( onSuccess ) {
+			onSuccess();
+		}
 	} catch ( error ) {
 		yield errorSubmit( error );
+
+		if ( onError ) {
+			onError( error );
+		}
 	}
 }
 

@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { Button, CheckboxControl, TextControl } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
 import { useQueryStringRouter } from '../query-string-router';
-import { useSetupWizardStep } from '../use-setup-wizard-step.js';
+import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 
 const purposes = [
 	{
@@ -45,14 +45,12 @@ const purposes = [
  */
 export const Purpose = () => {
 	const { goTo } = useQueryStringRouter();
-	const [ submittedData, toggleSubmittedData ] = useState( false );
 
 	const {
 		stepData,
 		submitStep,
 		isSubmitting,
 		errorNotice,
-		error,
 	} = useSetupWizardStep( 'purpose' );
 
 	const [ { selected, other }, setFormState ] = useState( {
@@ -73,16 +71,12 @@ export const Purpose = () => {
 		} ) );
 	};
 
-	useEffect( () => {
-		if ( submittedData && ! error ) {
-			goTo( 'features' );
-		}
-		toggleSubmittedData( false );
-	}, [ submittedData, error, goTo ] );
+	const onSubmitSuccess = () => {
+		goTo( 'features' );
+	};
 
-	const submitPage = async () => {
-		await submitStep( { selected, other } );
-		toggleSubmittedData( true );
+	const submitPage = () => {
+		submitStep( { selected, other }, { onSuccess: onSubmitSuccess } );
 	};
 
 	return (

@@ -6,7 +6,7 @@ import { useQueryStringRouter } from '../query-string-router';
 import ConfirmationModal from './confirmation-modal';
 import InstallationFeedback from './installation-feedback';
 import FeaturesSelection from './features-selection';
-import { useSetupWizardStep } from '../use-setup-wizard-step.js';
+import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 
 /**
  * Features step for setup wizard.
@@ -17,7 +17,12 @@ const Features = () => {
 	const [ selectedSlugs, setSelectedSlugs ] = useState( [] );
 	const { goTo } = useQueryStringRouter();
 
-	const { stepData } = useSetupWizardStep( 'features' );
+	const {
+		stepData,
+		submitStep,
+		isSubmitting,
+		errorNotice,
+	} = useSetupWizardStep( 'features' );
 	const features = stepData.options;
 
 	const getSelectedFeatures = () =>
@@ -34,9 +39,16 @@ const Features = () => {
 		toggleConfirmation( true );
 	};
 
-	const goToInstallation = () => {
+	const onSubmitSuccess = () => {
 		toggleConfirmation( false );
 		toggleFeedback( true );
+	};
+
+	const goToInstallation = () => {
+		submitStep(
+			{ selected: selectedSlugs },
+			{ onSuccess: onSubmitSuccess }
+		);
 	};
 
 	const goToNextStep = () => {
@@ -72,6 +84,8 @@ const Features = () => {
 			{ confirmationActive && (
 				<ConfirmationModal
 					features={ getSelectedFeatures() }
+					isSubmitting={ isSubmitting }
+					errorNotice={ errorNotice }
 					onInstall={ goToInstallation }
 					onSkip={ goToNextStep }
 				/>
