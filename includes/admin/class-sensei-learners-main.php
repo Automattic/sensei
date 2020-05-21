@@ -472,17 +472,17 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				 * This filter runs on the learner management screen for a specific course.
 				 * It provides the learner row column details.
 				 *
-				 * @param array		$columns {
-				 * 	@type string	$title						Learner name.
-				 * 	@type string	$date_started			Course start date.
-				 * 	@type string	$date_completed		Course completion date (if completed).
-				 * 	@type string	$course_status		Course status (e.g. completed, started etc).
-				 * 	@type string	$enrolment_status	Enrolment status.
-				 *	@type html		$action_buttons		Actions that can be taken for this learner.
+				 * @param array   $columns {
+				 *   @type string   $title             Learner name.
+				 *   @type string   $date_started      Course start date.
+				 *   @type string   $date_completed    Course completion date (if completed).
+				 *   @type string   $course_status     Course status (e.g. completed, started etc).
+				 *   @type string   $enrolment_status  Enrolment status.
+				 *   @type html     $action_buttons    Actions that can be taken for this learner.
 				 * }
-				 * @param object	$item				Current WP_Comment item.
-				 * @param int			$post_id		Course ID.
-				 * @param string	$post_type	Post type.
+				 * @param object  $item       Current WP_Comment item.
+				 * @param int     $post_id    Course ID.
+				 * @param string  $post_type  Post type.
 				 */
 				$column_data = apply_filters(
 					'sensei_learners_main_column_data',
