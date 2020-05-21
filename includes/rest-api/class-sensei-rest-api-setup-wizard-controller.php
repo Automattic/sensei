@@ -270,7 +270,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 					'type'       => 'object',
 					'properties' => [
 						'selected' => [
-							'description' => __( 'Slugs of plugins selected by the site owner.', 'sensei-lms' ),
+							'description' => __( 'Slugs of extensions selected by the site owner.', 'sensei-lms' ),
 							'type'        => 'array',
 						],
 						'options'  => [
@@ -356,7 +356,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	public function submit_features( $data ) {
 
 		$this->mark_step_complete( 'features' );
-		$this->setup_wizard->install_plugins( $data['selected'] );
+		$this->setup_wizard->install_extensions( $data['selected'] );
 
 		return true;
 	}

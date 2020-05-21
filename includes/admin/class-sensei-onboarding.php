@@ -446,24 +446,24 @@ class Sensei_Onboarding {
 	}
 
 	/**
-	 * Prepare plugins and call installation.
+	 * Prepare extensions and call installation.
 	 *
-	 * @param string[] $plugin_slugs Plugin slugs to install.
+	 * @param string[] $extension_slugs Extension slugs to install.
 	 */
-	public function install_plugins( $plugin_slugs ) {
+	public function install_extensions( $extension_slugs ) {
 		$sensei_extensions = $this->get_sensei_extensions();
 
-		$plugins_to_install = array_filter(
+		$extensions_to_install = array_filter(
 			array_map(
 				function( $slug ) use ( $sensei_extensions ) {
 					$key = array_search( $slug, array_column( $sensei_extensions, 'product_slug' ), true );
 
 					return false !== $key ? $sensei_extensions[ $key ] : false;
 				},
-				$plugin_slugs
+				$extension_slugs
 			)
 		);
 
-		Sensei_Plugins_Installation::instance()->install_plugins( $plugins_to_install );
+		Sensei_Plugins_Installation::instance()->install_plugins( $extensions_to_install );
 	}
 }
