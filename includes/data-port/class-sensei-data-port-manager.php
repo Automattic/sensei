@@ -122,7 +122,7 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 	/**
 	 * Starts a data port job.
 	 *
-	 * @param int $user_id  The user which started the job.
+	 * @param Sensei_Data_Port_Job $job Job object.
 	 */
 	public function start_job( Sensei_Data_Port_Job $job ) {
 		$this->has_changed = true;
@@ -211,8 +211,10 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 	}
 
 	/**
-	 * @param $handler_class
-	 * @param $user_id
+	 * Get the active job for a user.
+	 *
+	 * @param string $handler_class Class for the data port job.
+	 * @param int    $user_id       User ID.
 	 *
 	 * @return Sensei_Data_Port_Job|null
 	 */
