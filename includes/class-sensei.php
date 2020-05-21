@@ -393,6 +393,7 @@ class Sensei_Main {
 		Sensei_Course_Enrolment_Manager::instance()->init();
 		$this->enrolment_scheduler = Sensei_Enrolment_Job_Scheduler::instance();
 		$this->enrolment_scheduler->init();
+		Sensei_Data_Port_Manager::instance()->init();
 
 		// Setup Wizard.
 		$this->setup_wizard = Sensei_Setup_Wizard::instance();
@@ -580,6 +581,7 @@ class Sensei_Main {
 	public function deactivation() {
 		$this->usage_tracking->unschedule_tracking_task();
 		Sensei_Scheduler::instance()->cancel_all_jobs();
+		Sensei_Data_Port_Manager::instance()->cancel_all_jobs();
 	}
 
 	/**
