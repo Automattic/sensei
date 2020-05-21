@@ -116,6 +116,7 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 			'id'      => $job_id,
 		];
 
+		// TODO: This method should break to two steps, create and start.
 		$job = new Sensei_Import_Job( $job_id );
 		Sensei_Scheduler::instance()->schedule_job( $job );
 	}
