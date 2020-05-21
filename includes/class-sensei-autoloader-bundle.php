@@ -40,8 +40,8 @@ class Sensei_Autoloader_Bundle {
 
 		// Check for file in the main includes directory.
 		$class_file_path = $this->include_path . 'class-' . str_replace( '_', '-', strtolower( $class ) ) . '.php';
-		if ( file_exists( $class_file_path ) ) {
 
+		if ( file_exists( $class_file_path ) ) {
 			require_once $class_file_path;
 			return true;
 		}
@@ -49,8 +49,8 @@ class Sensei_Autoloader_Bundle {
 		// Lastly check legacy types.
 		$stripped_woothemes_from_class = str_replace( 'woothemes_', '', strtolower( $class ) ); // Remove woothemes.
 		$legacy_class_file_path        = $this->include_path . 'class-' . str_replace( '_', '-', strtolower( $stripped_woothemes_from_class ) ) . '.php';
-		if ( file_exists( $legacy_class_file_path ) ) {
 
+		if ( file_exists( $legacy_class_file_path ) ) {
 			require_once $legacy_class_file_path;
 			return true;
 		}
