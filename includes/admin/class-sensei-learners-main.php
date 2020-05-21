@@ -472,12 +472,17 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				 * This filter runs on the learner management screen for a specific course.
 				 * It provides the learner row column details.
 				 *
-				 * @param array $columns{
-				 *   type string $title
-				 *   type string $date_started
-				 *   type string $course_status (completed, started etc)
-				 *   type html $action_buttons
+				 * @param string tag
+				 * @param array $columns {
+				 *   @type string $title
+				 *   @type string $date_started
+				 *   @type string $date_completed
+				 *   @type string $course_status (completed, started etc)
+				 *   @type html $action_buttons
 				 * }
+				 * @param array $item
+				 * @param int $post_id
+				 * @param string $post_type
 				 */
 				$column_data = apply_filters(
 					'sensei_learners_main_column_data',
