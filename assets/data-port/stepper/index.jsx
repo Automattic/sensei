@@ -66,32 +66,37 @@ const stepsReducer = ( state, action ) => {
 		case 'COMPLETE_CURRENT':
 			return completeCurrentStep( state );
 		default:
-			throw new Error( `Unknown action ${ action.type }.`);
+			throw new Error( `Unknown action ${ action.type }.` );
 	}
 };
 
+/**
+ * @typedef  {Object} Step
+ * @property {string} key          Unique key for the step.
+ * @property {string} description  A description of the step that is going to be displayed.
+ * @property {string} isActive     True if the step is the currently active one.
+ * @property {string} isComplete   True if the step is completed.
+ */
 /**
  * A simple component to display a stepper on data port pages.
  *
  * @param {Array} steps The array of the steps.
  */
-const DataPortStepper = ( { steps } ) => {
-	return (
-		<ol className="sensei-progress-steps">
-			{ steps.map( ( step ) => {
-				const stepClass = classnames( {
-					active: step.isActive,
-					done: step.isComplete,
-				} );
+const DataPortStepper = ( { steps } ) => (
+	<ol className="sensei-progress-steps">
+		{ steps.map( ( step ) => {
+			const stepClass = classnames( {
+				active: step.isActive,
+				done: step.isComplete,
+			} );
 
-				return (
-					<li key={ step.key } className={ stepClass }>
-						{ step.description }
-					</li>
-				);
-			} ) }
-		</ol>
-	);
-};
+			return (
+				<li key={ step.key } className={ stepClass }>
+					{ step.description }
+				</li>
+			);
+		} ) }
+	</ol>
+);
 
 export { DataPortStepper, getCurrentStep, stepsReducer };
