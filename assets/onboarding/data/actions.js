@@ -128,10 +128,11 @@ export const errorSubmit = ( error ) => ( {
  *
  * @param {string}   step      Step name.
  * @param {Object}   stepData  Data to submit.
- * @param {Function} onSuccess Step name.
- * @param {Function} onError   Data to submit.
+ * @param {Object}   options
+ * @param {Function} options.onSuccess Step name.
+ * @param {Function} options.onError   Data to submit.
  */
-export function* submitStep( step, stepData, onSuccess, onError ) {
+export function* submitStep( step, stepData, { onSuccess, onError } ) {
 	yield startSubmit();
 
 	try {

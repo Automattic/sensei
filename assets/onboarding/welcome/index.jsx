@@ -26,8 +26,11 @@ export const Welcome = () => {
 		goTo( 'purpose' );
 	};
 
-	const submitPage = async ( allowUsageTracking ) => {
-		submitStep( { usage_tracking: allowUsageTracking }, onSubmitSuccess );
+	const submitPage = ( allowUsageTracking ) => {
+		submitStep(
+			{ usage_tracking: allowUsageTracking },
+			{ onSuccess: onSubmitSuccess }
+		);
 	};
 
 	return (

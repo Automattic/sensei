@@ -45,7 +45,10 @@ const Features = () => {
 	};
 
 	const goToInstallation = () => {
-		submitStep( { selected: selectedSlugs }, onSubmitSuccess );
+		submitStep(
+			{ selected: selectedSlugs },
+			{ onSuccess: onSubmitSuccess }
+		);
 	};
 
 	const goToNextStep = () => {

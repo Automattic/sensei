@@ -75,8 +75,8 @@ export const Purpose = () => {
 		goTo( 'features' );
 	};
 
-	const submitPage = async () => {
-		await submitStep( { selected, other }, onSubmitSuccess );
+	const submitPage = () => {
+		submitStep( { selected, other }, { onSuccess: onSubmitSuccess } );
 	};
 
 	return (

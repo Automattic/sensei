@@ -13,7 +13,7 @@ jest.mock( '../data/use-setup-wizard-step.js', () => ( {
 				{ slug: 'test-2', title: 'Test 2' },
 			],
 		},
-		submitStep: ( data, onSuccess ) => {
+		submitStep: ( data, { onSuccess } ) => {
 			// Simulate success selecting only one item.
 			if ( data.selected.length === 1 ) {
 				onSuccess();

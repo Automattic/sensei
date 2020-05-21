@@ -150,12 +150,12 @@ describe( 'Setup wizard actions', () => {
 	it( 'Should generate the submit step action', () => {
 		const onSuccessMock = jest.fn();
 		const onErrorMock = jest.fn();
-		const gen = submitStep(
-			'welcome',
-			{ usage_tracking: true },
-			onSuccessMock,
-			onErrorMock
-		);
+		const options = {
+			onSuccess: onSuccessMock,
+			onError: onErrorMock,
+		};
+
+		const gen = submitStep( 'welcome', { usage_tracking: true }, options );
 
 		// Start submit action.
 		const expectedStartSubmitAction = {
@@ -200,7 +200,12 @@ describe( 'Setup wizard actions', () => {
 	it( 'Should catch error on the submit step action', () => {
 		const onSuccessMock = jest.fn();
 		const onErrorMock = jest.fn();
-		const gen = submitStep( 'test', true, onSuccessMock, onErrorMock );
+		const options = {
+			onSuccess: onSuccessMock,
+			onError: onErrorMock,
+		};
+
+		const gen = submitStep( 'test', true, options );
 
 		// Start submit action.
 		gen.next();
