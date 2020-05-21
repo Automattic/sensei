@@ -138,7 +138,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 */
 	public function start() {
 		$this->has_changed = true;
-		$this->is_started = true;
+		$this->is_started  = true;
 	}
 
 	/**
