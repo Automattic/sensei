@@ -101,23 +101,30 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 	}
 
 	/**
-	 * Starts a data import job.
+	 * Create a data import job.
 	 *
 	 * @param int $user_id  The user which started the job.
 	 */
-	public function start_import_job( $user_id ) {
+	public function create_import_job( $user_id ) {
 		$job_id = md5( uniqid( '', true ) );
 
 		$this->has_changed      = true;
 		$this->data_port_jobs[] = [
 			'user_id' => $user_id,
 			'time'    => time(),
-			'handler' => 'Sensei_Import_Job',
+			'handler' => Sensei_Import_Job::class,
 			'id'      => $job_id,
 		];
 
-		// TODO: This method should break to two steps, create and start.
-		$job = new Sensei_Import_Job( $job_id );
+		return new Sensei_Import_Job( $job_id );
+	}
+
+	/**
+	 * Starts a data port job.
+	 *
+	 * @param int $user_id  The user which started the job.
+	 */
+	public function start_job( Sensei_Data_Port_Job $job ) {
 		Sensei_Scheduler::instance()->schedule_job( $job );
 	}
 
