@@ -42,13 +42,6 @@ class Sensei_Onboarding {
 	];
 
 	/**
-	 * Sensei plugins whitelist.
-	 *
-	 * @var array
-	 */
-	public $plugin_slugs = [ 'sensei-wc-paid-courses', 'sensei-course-progress', 'sensei-certificates', 'sensei-media-attachments', 'sensei-content-drip' ];
-
-	/**
 	 * URL Slug for Setup Wizard Wizard page
 	 *
 	 * @var string

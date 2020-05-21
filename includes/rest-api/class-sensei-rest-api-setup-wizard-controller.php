@@ -149,7 +149,6 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 							'type'     => 'array',
 							'items'    => [
 								'type' => 'string',
-								'enum' => $this->setup_wizard->plugin_slugs,
 							],
 						],
 					],
