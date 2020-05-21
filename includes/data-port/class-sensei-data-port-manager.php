@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * This class is responsible creating, deleting and keeping track of data port jobs.
  */
 class Sensei_Data_Port_Manager implements JsonSerializable {
-	const OPTION_NAME = 'sensei-tools-jobs';
+	const OPTION_NAME = 'sensei-data-port-jobs';
 
 	/**
 	 * An array of all in progress data port jobs. It has the following format:

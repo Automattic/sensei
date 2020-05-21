@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * running data port tasks which are registered by subclasses.
  */
 abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, JsonSerializable {
-	const OPTION_PREFIX         = 'sensei-tools-job-';
+	const OPTION_PREFIX         = 'sensei-data-port-job-';
 	const SCHEDULED_ACTION_NAME = 'sensei-data-port-job';
 
 	/**
