@@ -2178,9 +2178,12 @@ class Sensei_Course {
 
 		if ( isset( Sensei()->settings->settings['course_author'] ) && ( Sensei()->settings->settings['course_author'] ) ) {
 			echo '<span class="course-author">' .
-				esc_html( 'by ', 'sensei-lms' ) .
-				'<a href="' . esc_attr( get_author_posts_url( $course->post_author ) ) . '" title="' . esc_attr( $author_display_name ) . '">' . esc_attr( $author_display_name ) . '</a>
-			</span>';
+				sprintf(
+					// translators: Placeholder %s is the author link.
+					esc_html__( 'by %s', 'sensei-lms' ),
+					'<a href="' . esc_attr( get_author_posts_url( $course->post_author ) ) . '" title="' . esc_attr( $author_display_name ) . '">' . esc_attr( $author_display_name ) . '</a>'
+				) .
+			'</span>';
 		}
 
 		echo '<div class="sensei-course-meta">';
