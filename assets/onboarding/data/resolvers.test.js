@@ -15,7 +15,7 @@ describe( 'Setup wizard resolvers', () => {
 		expect( gen.next().value ).toEqual( expectedFetchAction );
 
 		// Set data action.
-		const dataObject = { step: 'test' };
+		const dataObject = { selected: [], options: [] };
 		const expectedSetDataAction = {
 			type: SET_STEP_DATA,
 			step: 'features',
