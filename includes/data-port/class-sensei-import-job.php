@@ -44,9 +44,9 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 	 * Ensure the task files have been included.
 	 */
 	private function import_task_files() {
-		include_once __DIR__ . '/import-tasks/class-sensei-import-questions.php';
-		include_once __DIR__ . '/import-tasks/class-sensei-import-courses.php';
-		include_once __DIR__ . '/import-tasks/class-sensei-import-lessons.php';
+		require_once __DIR__ . '/import-tasks/class-sensei-import-questions.php';
+		require_once __DIR__ . '/import-tasks/class-sensei-import-courses.php';
+		require_once __DIR__ . '/import-tasks/class-sensei-import-lessons.php';
 	}
 
 	/**
