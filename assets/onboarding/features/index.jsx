@@ -66,10 +66,7 @@ const Features = () => {
 			</div>
 			<Card className="sensei-onboarding__card">
 				{ feedbackActive ? (
-					<InstallationFeedback
-						features={ getSelectedFeatures() }
-						onContinue={ goToNextStep }
-					/>
+					<InstallationFeedback onContinue={ goToNextStep } />
 				) : (
 					<FeaturesSelection
 						features={ features }

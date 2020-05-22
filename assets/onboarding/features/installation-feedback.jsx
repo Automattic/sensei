@@ -1,3 +1,4 @@
+import { useState, useEffect } from '@wordpress/element';
 import { List } from '@woocommerce/components';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -7,36 +8,44 @@ import FeatureStatus, {
 	INSTALLING_STATUS,
 	ERROR_STATUS,
 } from './feature-status';
+import useFeaturesPolling from './use-features-polling';
 
 const getStatus = ( status = INSTALLING_STATUS ) => status;
 
 /**
- * @typedef  {Object} Feature
- * @property {string} title   Feature title.
- * @property {string} excerpt Feature excerpt.
- * @property {string} [link]  Feature link.
- * @property {string} [error] Error message.
- * @property {string} status  Feature status.
- */
-/**
  * Installation feedback component.
  *
  * @param {Object}    props
- * @param {Feature[]} props.features   Features list.
  * @param {Function}  props.onContinue Callback to continue to the next step.
  */
-const InstallationFeedback = ( { features, onContinue } ) => {
-	const hasLoading = features.some(
-		( feature ) => getStatus( feature.status ) === INSTALLING_STATUS
+const InstallationFeedback = ( { onContinue } ) => {
+	const [ hasInstalling, setHasInstalling ] = useState( true );
+	const [ hasError, setHasError ] = useState( false );
+
+	// Polling is active while some feature is installing.
+	const featuresData = useFeaturesPolling( hasInstalling );
+	const features = featuresData.options.filter( ( feature ) =>
+		featuresData.selected.includes( feature.slug )
 	);
 
-	const hasError = features.some(
-		( feature ) => getStatus( feature.status ) === ERROR_STATUS
-	);
+	// Update general statuses when features is updated.
+	useEffect( () => {
+		setHasInstalling(
+			features.some(
+				( feature ) => getStatus( feature.status ) === INSTALLING_STATUS
+			)
+		);
+
+		setHasError(
+			features.some(
+				( feature ) => getStatus( feature.status ) === ERROR_STATUS
+			)
+		);
+	}, [ features ] );
 
 	let actionButtons;
 
-	if ( hasLoading ) {
+	if ( hasInstalling ) {
 		actionButtons = (
 			<Button isPrimary className="sensei-onboarding__button">
 				{ __( 'Installing…', 'sensei-lms' ) }

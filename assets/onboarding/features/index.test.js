@@ -5,7 +5,7 @@ import { updateRouteURL } from '../query-string-router/url-functions';
 import Features from './index';
 
 // Mock features data.
-jest.mock( '../data/use-setup-wizard-step.js', () => ( {
+jest.mock( '../data/use-setup-wizard-step', () => ( {
 	useSetupWizardStep: () => ( {
 		stepData: {
 			options: [
@@ -20,6 +20,12 @@ jest.mock( '../data/use-setup-wizard-step.js', () => ( {
 			}
 		},
 	} ),
+} ) );
+
+// Mock features polling.
+jest.mock( './use-features-polling', () => () => ( {
+	selected: [ 'test-1' ],
+	options: [ { slug: 'test-1', title: 'Test 1' } ],
 } ) );
 
 describe( '<Features />', () => {
