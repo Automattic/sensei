@@ -14,6 +14,7 @@ const DEFAULT_STATE = {
 	isSubmitting: false,
 	submitError: false,
 	data: {
+		completedSteps: [],
 		welcome: {
 			usage_tracking: false,
 		},
