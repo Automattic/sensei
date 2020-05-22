@@ -31,17 +31,14 @@ const moveToNext = ( steps ) => {
  * @param  {Array} steps  The current steps.
  * @return {Array}        The steps after completing the current one.
  */
-const completeCurrentStep = ( steps ) => {
-	const newSteps = steps.map( ( step ) => {
+const completeCurrentStep = ( steps ) =>
+	steps.map( ( step ) => {
 		if ( step.isActive ) {
 			step.isComplete = true;
 		}
 
 		return step;
 	} );
-
-	return newSteps;
-};
 
 /**
  * Get the key of the current active step.
