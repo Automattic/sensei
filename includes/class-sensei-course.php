@@ -1474,7 +1474,7 @@ class Sensei_Course {
 				} // End If Statement
 				$active_html .= '<span class="course-lesson-count">' .
 					// translators: Placeholder %d is the lesson count.
-					sprintf( esc_html( _n( '%d Lesson', '%d Lessons', $lesson_count, 'sensei-lms' ) ), $lesson_count ) .
+					esc_html( sprintf( _n( '%d Lesson', '%d Lessons', $lesson_count, 'sensei-lms' ), $lesson_count ) ) .
 				'</span>';
 				// Course Categories
 				if ( '' != $category_output ) {
@@ -1623,7 +1623,7 @@ class Sensei_Course {
 							// Lesson count for this author
 							$complete_html .= '<span class="course-lesson-count">' .
 								// translators: Placeholder %d is the lesson count.
-								sprintf( esc_html( _n( '%d Lesson', '%d Lessons', $lesson_count, 'sensei-lms' ) ), $lesson_count ) .
+								esc_html( sprintf( _n( '%d Lesson', '%d Lessons', $lesson_count, 'sensei-lms' ), $lesson_count ) ) .
 							'</span>';
 
 							// Course Categories
@@ -2195,7 +2195,7 @@ class Sensei_Course {
 
 		echo '<span class="course-lesson-count">' .
 			// translators: Placeholder %d is the lesson count.
-			sprintf( esc_html( _n( '%d Lesson', '%d Lessons', $lesson_count, 'sensei-lms' ) ), $lesson_count ) .
+			esc_html( sprintf( _n( '%d Lesson', '%d Lessons', $lesson_count, 'sensei-lms' ), $lesson_count ) ) .
 		'</span>';
 
 		if ( ! empty( $category_output ) ) {

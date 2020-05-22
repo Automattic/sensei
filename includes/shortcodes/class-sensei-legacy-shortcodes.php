@@ -419,7 +419,7 @@ class Sensei_Legacy_Shortcodes {
 						<span class="course-lesson-count">
 							<?php
 							// translators: Placeholder %d is the lesson count.
-							printf( esc_html( _n( '%d Lesson', '%d Lessons', $lesson_count, 'sensei-lms' ) ), $lesson_count );
+							echo esc_html( sprintf( _n( '%d Lesson', '%d Lessons', $lesson_count, 'sensei-lms' ), $lesson_count ) );
 							?>
 						</span>
 
