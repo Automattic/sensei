@@ -101,9 +101,11 @@ export const startSubmit = () => ( {
  * Success submit action creator.
  *
  * @return {{type: string}} Success submit action.
+ * @param {string} step Completed step.
  */
-export const successSubmit = () => ( {
+export const successSubmit = ( step ) => ( {
 	type: SUCCESS_SUBMIT_SETUP_WIZARD_DATA,
+	step,
 } );
 
 /**
@@ -141,7 +143,7 @@ export function* submitStep( step, stepData, { onSuccess, onError } ) {
 			method: 'POST',
 			data: stepData,
 		} );
-		yield successSubmit();
+		yield successSubmit( step );
 		yield setStepData( step, stepData );
 
 		if ( onSuccess ) {

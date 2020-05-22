@@ -74,6 +74,13 @@ export default ( state = DEFAULT_STATE, action ) => {
 			return {
 				...state,
 				isSubmitting: false,
+				data: {
+					...state.data,
+					completedSteps: [
+						...state.data.completedSteps,
+						action.step,
+					],
+				},
 			};
 
 		case ERROR_SUBMIT_SETUP_WIZARD_DATA:
