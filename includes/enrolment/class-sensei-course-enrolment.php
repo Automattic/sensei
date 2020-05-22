@@ -147,10 +147,13 @@ class Sensei_Course_Enrolment {
 	/**
 	 * Marks all enrolment results as invalid for a course and enqueues an async job to recalculate.
 	 *
+	 * This will still cause a delay when users visit My Courses or another page that relies on the term.
+	 * We aren't invalidating the entire user for this.
+	 *
 	 * @return Sensei_Enrolment_Course_Calculation_Job|null
 	 */
 	public function recalculate_enrolment() {
-		$this->invalidate_all_learner_results();
+		$this->reset_course_enrolment_salt();
 		$job_scheduler = Sensei_Enrolment_Job_Scheduler::instance();
 
 		return $job_scheduler->start_course_calculation_job( $this->course_id );
@@ -166,29 +169,6 @@ class Sensei_Course_Enrolment {
 	 */
 	public function invalidate_learner_result( $user_id ) {
 		update_user_meta( $user_id, $this->get_enrolment_results_meta_key(), '' );
-	}
-
-	/**
-	 * Bulk invalidate all learner results for all users.
-	 *
-	 * This could still cause a delay when users visit My Courses or another page that relies on the term.
-	 * We aren't invalidating the entire user for this.
-	 *
-	 * Since we're doing a direct database edit here, we combine this with a salt reset to invalidate cached results.
-	 */
-	private function invalidate_all_learner_results() {
-		global $wpdb;
-
-		// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- Infrequent query that is much faster than alternatives.
-		$invalidated_data = [ 'meta_value' => '' ];
-
-		// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Infrequent query that is much faster than alternatives.
-		$where = [ 'meta_key' => $this->get_enrolment_results_meta_key() ];
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Caching is invalidated by a reset of the course salt below.
-		$wpdb->update( $wpdb->usermeta, $invalidated_data, $where );
-
-		$this->reset_course_enrolment_salt();
 	}
 
 	/**
