@@ -5,22 +5,27 @@ import { updateRouteURL } from '../query-string-router/url-functions';
 import Features from './index';
 
 // Mock features data.
-jest.mock( '../data/use-setup-wizard-step', () => ( {
-	useSetupWizardStep: () => ( {
-		stepData: {
-			options: [
-				{ slug: 'test-1', title: 'Test 1' },
-				{ slug: 'test-2', title: 'Test 2' },
-			],
-		},
-		submitStep: ( data, { onSuccess } ) => {
-			// Simulate success selecting only one item.
-			if ( data.selected.length === 1 ) {
-				onSuccess();
-			}
-		},
-	} ),
-} ) );
+jest.mock( '../data/use-setup-wizard-step', () => {
+	const stepData = {
+		selected: [],
+		options: [
+			{ slug: 'test-1', title: 'Test 1' },
+			{ slug: 'test-2', title: 'Test 2' },
+		],
+	};
+
+	return {
+		useSetupWizardStep: () => ( {
+			stepData,
+			submitStep: ( data, { onSuccess } ) => {
+				// Simulate success selecting only one item.
+				if ( data.selected.length === 1 ) {
+					onSuccess();
+				}
+			},
+		} ),
+	};
+} );
 
 // Mock features polling.
 jest.mock( './use-features-polling', () => () => ( {
