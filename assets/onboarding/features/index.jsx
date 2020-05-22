@@ -1,6 +1,8 @@
-import { useState } from '@wordpress/element';
+import { useState, useEffect } from '@wordpress/element';
 import { Card, H } from '@woocommerce/components';
 import { __ } from '@wordpress/i18n';
+import { uniq } from 'lodash';
+
 import { useQueryStringRouter } from '../query-string-router';
 import ConfirmationModal from './confirmation-modal';
 import InstallationFeedback from './installation-feedback';
@@ -23,6 +25,14 @@ const Features = () => {
 		errorNotice,
 	} = useSetupWizardStep( 'features' );
 	const features = stepData.options;
+	const submittedSlugs = stepData.selected;
+
+	// Mark as selected also the already submitted slugs.
+	useEffect( () => {
+		setSelectedSlugs( ( currentSelected ) =>
+			uniq( [ ...currentSelected, ...submittedSlugs ] )
+		);
+	}, [ submittedSlugs ] );
 
 	const getSelectedFeatures = () =>
 		features.filter( ( feature ) =>
@@ -71,6 +81,7 @@ const Features = () => {
 					<FeaturesSelection
 						features={ features }
 						selectedSlugs={ selectedSlugs }
+						submittedSlugs={ submittedSlugs }
 						onChange={ setSelectedSlugs }
 						onContinue={ finishSelection }
 					/>
