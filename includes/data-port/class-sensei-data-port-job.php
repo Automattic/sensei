@@ -89,6 +89,17 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	private $percentage;
 
 	/**
+	 * Files that have been saved and associated with this job.
+	 *
+	 * @var array {
+	 *     File attachment IDs indexed with the file key.
+	 *
+	 *     @type int $$file_key Attachment post ID.
+	 * }
+	 */
+	private $files;
+
+	/**
 	 * Sensei_Data_Port_Job constructor. A data port instance can be created either when a new data port job is
 	 * registered or when an existing one is restored from a JSON string.
 	 *
@@ -106,6 +117,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 		} else {
 			$this->logs         = [];
 			$this->results      = [];
+			$this->files        = [];
 			$this->is_completed = false;
 			$this->is_started   = false;
 			$this->has_changed  = true;
@@ -194,6 +206,10 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 			$task->clean_up();
 		}
 
+		foreach ( array_keys( $this->files ) as $file_key ) {
+			$this->delete_file( $file_key );
+		}
+
 		$this->is_deleted = true;
 		delete_option( self::get_option_name( $this->job_id ) );
 	}
@@ -232,6 +248,31 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	abstract public function get_tasks();
 
 	/**
+	 * Get the configuration for expected files.
+	 *
+	 * @return array {
+	 *    @type array $$component {
+	 *        @type callable $validator  Callback to handle validating the file before save (optional).
+	 *        @type array    $mime_types Expected mime-types for the file.
+	 *    }
+	 * }
+	 */
+	abstract public static function get_file_config();
+
+	/**
+	 * Initialize and restore state of task.
+	 *
+	 * @param string $task_class Class name of task class.
+	 *
+	 * @return Sensei_Data_Port_Task_Interface
+	 */
+	protected function initialize_task( $task_class ) {
+		// @todo Implement restoring of task state.
+
+		return new $task_class( $this );
+	}
+
+	/**
 	 * Serialize state to JSON.
 	 *
 	 * @return array
@@ -244,6 +285,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 			'c' => $this->is_completed,
 			'i' => $this->is_started,
 			'p' => $this->percentage,
+			'f' => $this->files,
 		];
 	}
 
@@ -265,6 +307,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 		$this->is_completed = $json_arr['c'];
 		$this->is_started   = $json_arr['i'];
 		$this->percentage   = $json_arr['p'];
+		$this->files        = $json_arr['f'];
 	}
 
 	/**
@@ -334,6 +377,162 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 		} else {
 			$this->percentage = 100 * $completed_cycles / $total_cycles;
 		}
+	}
+
+	/**
+	 * Save a file associated with this job.
+	 *
+	 * @param string       $file_key Key for the file being saved.
+	 * @param string|array $tmp_file Temporary path where the file is stored or array from `$_FILES`.
+	 *
+	 * @return true|WP_Error
+	 */
+	public function save_file( $file_key, $tmp_file ) {
+		$file_configs = static::get_file_config();
+
+		if ( ! isset( $file_configs[ $file_key ] ) ) {
+			return new WP_Error( 'sensei_data_port_unknown_file_key', __( 'Unexpected file key used', 'sensei-lms' ) );
+		}
+
+		// Include filesystem functions to get access to wp_handle_upload().
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+
+		if ( is_array( $tmp_file ) ) {
+			if ( ! isset( $tmp_file['tmp_name'], $tmp_file['name'], $tmp_file['type'] ) ) {
+				return new WP_Error( 'sensei_data_port_unexpected_file_input', __( 'Unexpected file passed for saving', 'sensei-lms' ) );
+			}
+
+			$tmp_file_path = $tmp_file['tmp_name'];
+		} else {
+			$tmp_file_path = $tmp_file;
+			$tmp_file      = [
+				'name'     => basename( $tmp_file_path ),
+				'type'     => wp_check_filetype_and_ext( $tmp_file_path, basename( $tmp_file_path ) ),
+				'tmp_name' => $tmp_file_path,
+				'size'     => filesize( $tmp_file_path ),
+				'error'    => UPLOAD_ERR_OK,
+			];
+		}
+
+		if (
+			! file_exists( $tmp_file_path )
+			|| ( isset( $tmp_file['error'] ) && UPLOAD_ERR_OK !== $tmp_file['error'] )
+		) {
+			return new WP_Error( 'sensei_data_port_upload_error', __( 'File upload failed', 'sensei-lms' ) );
+		}
+
+		$file_config = $file_configs[ $file_key ];
+
+		if ( isset( $file_config['validator'] ) ) {
+			$validation_result = call_user_func( $file_config['validator'], $tmp_file_path );
+			if ( is_wp_error( $validation_result ) ) {
+				return $validation_result;
+			}
+		}
+
+		$overrides = [
+			'test_form' => false,
+			'mimes'     => $file_config['mime_types'],
+		];
+
+		$uploaded_file_name = $tmp_file['name'];
+
+		// Make the file path less predictable.
+		$tmp_file['name'] = substr( md5( uniqid() ), 0, 8 ) . '_' . $tmp_file['name'];
+
+		$file = wp_handle_upload( $tmp_file, $overrides );
+		if ( isset( $file['error'] ) ) {
+			return new WP_Error( 'sensei_data_port_file_save_error', $file['error'] );
+		}
+
+		// Construct the object array.
+		$attachment_args = array(
+			'post_title'     => $uploaded_file_name,
+			'post_content'   => $file['url'],
+			'post_mime_type' => $file['type'],
+			'guid'           => $file['url'],
+			'context'        => 'sensei-import',
+			'post_status'    => 'private',
+		);
+
+		// Save the attachment.
+		$id = wp_insert_attachment( $attachment_args, $file['file'] );
+
+		// Make sure to clean up any previous file.
+		if ( isset( $this->files[ $file_key ] ) ) {
+			$this->delete_file( $file_key );
+		}
+
+		$this->files[ $file_key ] = $id;
+		$this->has_changed        = true;
+
+		return true;
+	}
+
+	/**
+	 * Get the files associated with this job.
+	 *
+	 * @return array
+	 */
+	public function get_files() {
+		return $this->files;
+	}
+
+	/**
+	 * Get injectable files data.
+	 *
+	 * @return array
+	 */
+	public function get_files_data() {
+		$data = [];
+		foreach ( $this->files as $file_key => $file_post_id ) {
+			$file = get_post( $file_post_id );
+			if ( ! $file ) {
+				continue;
+			}
+
+			$data[ $file_key ] = [
+				'name' => $file->post_title,
+				'url'  => wp_get_attachment_url( $file_post_id ),
+			];
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Get the file path for the stored file.
+	 *
+	 * @param string $file_key Key for the file being saved.
+	 *
+	 * @return false|string
+	 */
+	public function get_file_path( $file_key ) {
+		if ( ! isset( $this->files[ $file_key ] ) ) {
+			return false;
+		}
+
+		return get_attached_file( $this->files[ $file_key ] );
+	}
+
+	/**
+	 * Delete the attachment and file for an associated file.
+	 *
+	 * @param string $file_key Key for the file being saved.
+	 *
+	 * @return bool
+	 */
+	public function delete_file( $file_key ) {
+		if ( ! isset( $this->files[ $file_key ] ) ) {
+			return false;
+		}
+
+		$file_id = $this->files[ $file_key ];
+
+		unset( $this->files[ $file_key ] );
+		$this->has_changed = true;
+
+		return wp_delete_attachment( $file_id, true );
 	}
 
 	/**
