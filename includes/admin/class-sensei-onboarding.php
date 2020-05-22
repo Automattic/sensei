@@ -431,9 +431,8 @@ class Sensei_Onboarding {
 					true
 				);
 				if ( false !== $installing_key ) {
-					$error = $installing_plugins[ $installing_key ]->error;
-					if ( $error ) {
-						$extension->error  = $error;
+					if ( isset( $installing_plugins[ $installing_key ]->error ) ) {
+						$extension->error  = $installing_plugins[ $installing_key ]->error;
 						$extension->status = 'error';
 					} else {
 						$extension->status = 'installing';
