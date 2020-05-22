@@ -75,6 +75,9 @@
     "*.{js,jsx}": [
       "npm run format-js",
       "wp-scripts lint-js"
+    ],
+    "*.php": [
+      "scripts/linter-new-php"
     ]
   }
 }
