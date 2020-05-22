@@ -21,10 +21,9 @@ const useFeaturesPolling = ( active ) => {
 			return;
 		}
 
-		// Invalidate resolution to get fresh content from the server.
-		invalidateResolution( 'getStepData', [ 'features', true ] );
-
 		const timer = setTimeout( () => {
+			// Invalidate resolution to get fresh content from the server.
+			invalidateResolution( 'getStepData', [ 'features', true ] );
 			setPollingCount( ( n ) => n + 1 );
 		}, 5000 );
 
