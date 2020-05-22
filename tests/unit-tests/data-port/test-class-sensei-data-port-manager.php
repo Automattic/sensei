@@ -45,7 +45,8 @@ class Sensei_Data_Port_Manager_Test extends WP_UnitTestCase {
 	}
 
 	public function testStartingJobStoresState() {
-		Sensei_Data_Port_Manager::instance()->start_import_job( 1234 );
+		$job = Sensei_Data_Port_Manager::instance()->create_import_job( 1234 );
+		Sensei_Data_Port_Manager::instance()->start_job( $job );
 		Sensei_Data_Port_Manager::instance()->persist();
 
 		$json = get_option( Sensei_Data_Port_Manager::OPTION_NAME );
@@ -54,7 +55,8 @@ class Sensei_Data_Port_Manager_Test extends WP_UnitTestCase {
 	}
 
 	public function testCancelledJobsAreRemoved() {
-		Sensei_Data_Port_Manager::instance()->start_import_job( 1 );
+		$job = Sensei_Data_Port_Manager::instance()->create_import_job( 1 );
+		Sensei_Data_Port_Manager::instance()->start_job( $job );
 		$this->set_data_port_jobs(
 			[
 				[

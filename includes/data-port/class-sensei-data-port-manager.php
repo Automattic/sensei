@@ -101,23 +101,33 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 	}
 
 	/**
-	 * Starts a data import job.
+	 * Create a data import job.
 	 *
 	 * @param int $user_id  The user which started the job.
 	 */
-	public function start_import_job( $user_id ) {
+	public function create_import_job( $user_id ) {
 		$job_id = md5( uniqid( '', true ) );
 
 		$this->has_changed      = true;
 		$this->data_port_jobs[] = [
-			'user_id' => $user_id,
+			'user_id' => (int) $user_id,
 			'time'    => time(),
-			'handler' => 'Sensei_Import_Job',
+			'handler' => Sensei_Import_Job::class,
 			'id'      => $job_id,
 		];
 
-		// TODO: This method should break to two steps, create and start.
-		$job = new Sensei_Import_Job( $job_id );
+		return new Sensei_Import_Job( $job_id );
+	}
+
+	/**
+	 * Starts a data port job.
+	 *
+	 * @param Sensei_Data_Port_Job $job Job object.
+	 */
+	public function start_job( Sensei_Data_Port_Job $job ) {
+		$this->has_changed = true;
+
+		$job->start();
 		Sensei_Scheduler::instance()->schedule_job( $job );
 	}
 
@@ -193,6 +203,29 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 
 		foreach ( $this->data_port_jobs as $job ) {
 			if ( $job_id === $job['id'] && is_subclass_of( $job['handler'], 'Sensei_Data_Port_Job', true ) ) {
+				return $job['handler']::get( $job['id'] );
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Get the active job for a user.
+	 *
+	 * @param string $handler_class Class for the data port job.
+	 * @param int    $user_id       User ID.
+	 *
+	 * @return Sensei_Data_Port_Job|null
+	 */
+	public function get_active_job( $handler_class, $user_id ) {
+
+		foreach ( $this->data_port_jobs as $job ) {
+			if (
+				$handler_class === $job['handler']
+				&& is_subclass_of( $job['handler'], 'Sensei_Data_Port_Job', true )
+				&& (int) $user_id === $job['user_id']
+			) {
 				return $job['handler']::get( $job['id'] );
 			}
 		}
