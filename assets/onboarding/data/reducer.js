@@ -9,7 +9,7 @@ import {
 } from './constants';
 
 const DEFAULT_STATE = {
-	isFetching: false,
+	isFetching: true,
 	fetchError: false,
 	isSubmitting: false,
 	submitError: false,
