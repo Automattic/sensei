@@ -26,9 +26,11 @@ class Sensei_REST_API_Import_Controller extends Sensei_REST_API_Data_Port_Contro
 	protected $rest_base = 'import';
 
 	/**
-	 * Job class name that this controller handles.
+	 * Get the handler class job this REST API controller handles.
 	 *
-	 * @var string
+	 * @return string
 	 */
-	protected $handler_class = Sensei_Import_Job::class;
+	protected function get_handler_class() {
+		return Sensei_Import_Job::class;
+	}
 }
