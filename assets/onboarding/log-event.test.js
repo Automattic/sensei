@@ -16,5 +16,7 @@ describe( 'logOnClick', () => {
 		expect( window.sensei_log_event ).toHaveBeenCalledWith( 'test-event', {
 			prop: 'test',
 		} );
+
+		delete window.sensei_log_event;
 	} );
 } );
