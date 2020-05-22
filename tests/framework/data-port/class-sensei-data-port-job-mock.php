@@ -33,4 +33,9 @@ class Sensei_Data_Port_Job_Mock extends Sensei_Data_Port_Job {
 	public static function set_restore_mock( $mock ) {
 		self::$restore_mock = $mock;
 	}
+
+	public static function get_file_config() {
+		return [];
+	}
+
 }
