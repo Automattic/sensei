@@ -45,7 +45,7 @@ class Sensei_Data_Port_Manager_Test extends WP_UnitTestCase {
 	}
 
 	public function testStartingJobStoresState() {
-		$job = Sensei_Data_Port_Manager::instance()->create_import_job( 1234 );;
+		$job = Sensei_Data_Port_Manager::instance()->create_import_job( 1234 );
 		Sensei_Data_Port_Manager::instance()->start_job( $job );
 		Sensei_Data_Port_Manager::instance()->persist();
 
