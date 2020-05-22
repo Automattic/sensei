@@ -39,8 +39,7 @@ class Sensei_REST_API_Import_Controller extends Sensei_REST_API_Data_Port_Contro
 	 *
 	 * @return Sensei_Data_Port_Job
 	 */
-	protected function create_job()
-	{
+	protected function create_job() {
 		return Sensei_Data_Port_Manager::instance()->create_import_job( get_current_user_id() );
 	}
 }
