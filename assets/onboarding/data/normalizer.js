@@ -25,6 +25,22 @@ const getTitleWithDetails = ( { title, price, status } ) => {
 };
 
 /**
+ * Normalize features data.
+ *
+ * @param {Object} data Fatures data.
+ *
+ * @return {Object} Normalized features data.
+ */
+export const normalizeFeaturesData = ( data ) => ( {
+	...data,
+	options: data.options.map( ( feature ) => ( {
+		...feature,
+		slug: feature.product_slug,
+		title: getTitleWithDetails( feature ),
+	} ) ),
+} );
+
+/**
  * Normalize setup wizard data.
  *
  * @param {Object} data Setup wizard data.
@@ -33,12 +49,5 @@ const getTitleWithDetails = ( { title, price, status } ) => {
  */
 export const normalizeSetupWizardData = ( data ) => ( {
 	...data,
-	features: {
-		...data.features,
-		options: data.features.options.map( ( feature ) => ( {
-			...feature,
-			slug: feature.product_slug,
-			title: getTitleWithDetails( feature ),
-		} ) ),
-	},
+	features: normalizeFeaturesData( data.features ),
 } );
