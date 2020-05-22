@@ -71,6 +71,17 @@ class Sensei_Plugins_Installation {
 	}
 
 	/**
+	 * Wrapper for set_time_limit to see if it is enabled.
+	 *
+	 * @param int $limit Time limit.
+	 */
+	private function set_time_limit( $limit = 0 ) {
+		if ( function_exists( 'set_time_limit' ) && false === strpos( ini_get( 'disable_functions' ), 'set_time_limit' ) && ! ini_get( 'safe_mode' ) ) {
+			@set_time_limit( $limit );
+		}
+	}
+
+	/**
 	 * Finishes replying to the client, but keeps the process running for further (async) code execution.
 	 *
 	 * @see https://core.trac.wordpress.org/ticket/41358
@@ -81,7 +92,7 @@ class Sensei_Plugins_Installation {
 			session_write_close();
 		}
 
-		wc_set_time_limit( 0 );
+		$this->set_time_limit( 0 );
 
 		// fastcgi_finish_request is the cleanest way to send the response and keep the script running, but not every server has it.
 		if ( is_callable( 'fastcgi_finish_request' ) ) {
