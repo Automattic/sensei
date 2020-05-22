@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @author  Automattic
  * @since   3.1.0
  */
-abstract class Sensei_REST_API_Data_Port_Base extends \WP_REST_Controller {
+abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller {
 
 	/**
 	 * Routes namespace.
