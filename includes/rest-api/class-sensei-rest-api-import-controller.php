@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @author  Automattic
  * @since   3.1.0
  */
-class Sensei_REST_API_Import_Controller extends Sensei_REST_API_Data_Port_Base {
+class Sensei_REST_API_Import_Controller extends Sensei_REST_API_Data_Port_Controller {
 	/**
 	 * Routes prefix.
 	 *
