@@ -4,6 +4,7 @@ import reducer from './reducer';
 import * as actions from './actions';
 import * as selectors from './selectors';
 import controls from './controls';
+import * as resolvers from './resolvers';
 
 const registerSetupWizardStore = () => {
 	registerStore( 'sensei/setup-wizard', {
@@ -11,6 +12,7 @@ const registerSetupWizardStore = () => {
 		actions,
 		selectors,
 		controls,
+		resolvers,
 	} );
 };
 
