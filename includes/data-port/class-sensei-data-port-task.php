@@ -20,6 +20,11 @@ abstract class Sensei_Data_Port_Task {
 	 */
 	private $job;
 
+	/**
+	 * Sensei_Data_Port_Task constructor.
+	 *
+	 * @param Sensei_Data_Port_Job $job Job object for this task.
+	 */
 	public function __construct( Sensei_Data_Port_Job $job ) {
 		$this->job = $job;
 	}
