@@ -65,7 +65,7 @@ const SenseiSetupWizardPage = () => {
 	return (
 		<QueryStringRouter
 			paramName={ PARAM_NAME }
-			defaultRoute={ navigationSteps.find( ( step ) => step.isNext ) }
+			defaultRoute={ navigationSteps.find( ( step ) => step.isNext ).key }
 		>
 			<div className="sensei-onboarding__header">
 				<Navigation steps={ navigationSteps } />
