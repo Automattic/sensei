@@ -1,13 +1,30 @@
 {
   "name": "sensei-lms",
   "version": "3.1.0",
+  "description": "Sensei LMS",
+  "author": "Automattic",
+  "license": "GPL-2.0-or-later",
+  "keywords": [
+    "wordpress-plugin"
+  ],
   "homepage": "https://woocommerce.com/products/sensei/",
   "repository": {
     "type": "git",
     "url": "https://github.com/Automattic/sensei.git"
   },
-  "license": "GPL-2.0+",
+  "bugs": {
+    "url": "https://github.com/Automattic/sensei/issues"
+  },
   "main": "gulpfile.js",
+  "dependencies": {
+    "@woocommerce/components": "4.0.0",
+    "@wordpress/api-fetch": "3.14.0",
+    "@wordpress/components": "9.4.1",
+    "@wordpress/i18n": "3.11.0",
+    "@wordpress/url": "2.14.0",
+    "interpolate-components": "1.1.1",
+    "select2": "4.0.5"
+  },
   "devDependencies": {
     "@automattic/calypso-build": "6.0.0",
     "@testing-library/react": "10.0.3",
@@ -23,31 +40,41 @@
     "gulp-sort": "2.0.0",
     "gulp-wp-pot": "2.4.2",
     "gulp-zip": "4.2.0",
+    "husky": "4.2.5",
     "jsdoc": "3.6.4",
+    "lint-staged": "10.2.4",
     "prettier": "npm:wp-prettier@1.19.1",
     "wp-hookdoc": "0.2.0"
-  },
-  "dependencies": {
-    "@woocommerce/components": "4.0.0",
-    "@wordpress/api-fetch": "3.14.0",
-    "@wordpress/components": "9.4.1",
-    "@wordpress/i18n": "3.11.0",
-    "@wordpress/url": "2.14.0",
-    "interpolate-components": "1.1.1",
-    "select2": "4.0.5"
   },
   "scripts": {
     "build": "cross-env NODE_ENV=production npx calypso-build",
     "build:docs": "rm -rf hookdocs/ && jsdoc -c hookdoc-conf.json",
+    "format-js": "wp-scripts format-js",
     "lint-css": "wp-scripts lint-style **/*.scss",
     "lint-css:fix": "npm run lint-css -- --fix",
     "lint-js": "wp-scripts lint-js --ext js,jsx assets",
     "lint-js:fix": "npm run lint-js -- --fix",
+    "lint-pkg-json": "wp-scripts lint-pkg-json",
     "package": "gulp package",
     "run-phpcs": "./vendor/bin/phpcs --encoding=utf-8",
     "start": "calypso-build --watch",
     "test": "npm run test-php && npm run test-js",
     "test-js": "wp-scripts test-unit-js --passWithNoTests",
     "test-php": "./vendor/bin/phpunit"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "post-commit": "git update-index --again"
+    }
+  },
+  "lint-staged": {
+    "package.json": [
+      "npm run lint-pkg-json"
+    ],
+    "*.{js,jsx}": [
+      "npm run format-js",
+      "wp-scripts lint-js"
+    ]
   }
 }
