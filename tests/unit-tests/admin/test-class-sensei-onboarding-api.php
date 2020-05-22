@@ -274,23 +274,23 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 
 
 	/**
-	 * Tests that submitting to features endpoint validates input against whitelist
+	 * Tests that submitting to features endpoint saves submitted data
 	 *
 	 * @covers Sensei_REST_API_Setup_Wizard_Controller::submit_features
 	 */
-	public function testSubmitFeaturesValidated() {
+	public function testSubmitFeaturesSavesData() {
 
 		$this->request(
 			'POST',
 			'features',
 			[
-				'selected' => [ 'invalid-plugin' ],
+				'selected' => [ 'sensei-certificates' ],
 			]
 		);
 
 		$data = Sensei()->onboarding->get_wizard_user_data();
 
-		$this->assertNotContains( [ 'invalid-plugin' ], $data['features'] );
+		$this->assertEquals( [ 'selected' => [ 'sensei-certificates' ] ], $data['features'] );
 	}
 
 	/**
@@ -321,7 +321,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	 * @covers Sensei_REST_API_Setup_Wizard_Controller::get_data
 	 */
 	public function testGetFeaturesReturnsFetchedData() {
-		$response_body = '{ "products": [ { "product_slug": "slug-1" } ] }';
+		$response_body = '{ "products": [ { "product_slug": "slug-1", "plugin_file": "test/test.php" } ] }';
 
 		// Mock fetch from senseilms.com.
 		add_filter(
@@ -331,9 +331,9 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 			}
 		);
 
-		$data = $this->request( 'GET', '' );
+		$data = $this->request( 'GET', 'features' );
 
-		$this->assertEquals( count( $data['features']['options'] ), 1 );
+		$this->assertEquals( $data['options'][0]->product_slug, 'slug-1' );
 	}
 
 	/**

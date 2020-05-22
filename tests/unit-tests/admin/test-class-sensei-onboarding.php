@@ -365,8 +365,8 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	public function testGetSenseiExtensionsAndReturnsWithDecodedPrices() {
 		$response_body = '{
 			"products": [
-				{ "price": "&#36;1.00" },
-				{ "price": 0 }
+				{ "product_slug": "slug-1", "price": "&#36;1.00", "plugin_file": "test/test.php" },
+				{ "product_slug": "slug-2", "price": 0, "plugin_file": "test/test.php" }
 			]
 		}';
 

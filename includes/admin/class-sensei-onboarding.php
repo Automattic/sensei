@@ -32,7 +32,10 @@ class Sensei_Onboarding {
 	 * @var array
 	 */
 	private $user_data_defaults = [
-		'features'  => [],
+		'features'  => [
+			'selected' => [],
+			'options'  => [],
+		],
 		'purpose'   => [
 			'selected' => [],
 			'other'    => '',
