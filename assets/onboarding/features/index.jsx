@@ -52,6 +52,7 @@ const Features = () => {
 	};
 
 	const goToNextStep = () => {
+		submitStep( { selected: selectedSlugs } );
 		goTo( 'ready' );
 	};
 
