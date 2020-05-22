@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -e
+
+created=`git log --diff-filter=A --follow --format=%at -- "$1" | tail -1`
+
+# Created after 2020-01-01
+if [[ $created > 1577833200 ]] ;
+then
+    echo "Linting $1"
+    ./vendor/bin/phpcs -q $1
+else
+  echo "Skipping linting for $1"
+  exit 0
+fi
