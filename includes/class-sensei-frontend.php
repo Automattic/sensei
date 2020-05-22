@@ -1002,7 +1002,7 @@ class Sensei_Frontend {
 		$post_id           = get_the_ID();
 		$category_output   = get_the_term_list( $post_id, 'course-category', '', ', ', '' );
 		$free_lesson_count = intval( Sensei()->course->course_lesson_preview_count( $post_id ) );
-		$lesson_count      = intval( Sensei()->course->course_lesson_count( $post_id ) );
+		$lesson_count      = Sensei()->course->course_lesson_count( $post_id );
 		?>
 		<section class="entry">
 			<p class="sensei-course-meta">
@@ -1025,7 +1025,7 @@ class Sensei_Frontend {
 				<span class="course-lesson-count">
 					<?php
 					// translators: Placeholder %d is the lesson count.
-					printf( esc_html( _n( '%d Lesson', '%d Lessons', $lesson_count, 'sensei-lms' ) ), intval( $lesson_count ) );
+					printf( esc_html( _n( '%d Lesson', '%d Lessons', $lesson_count, 'sensei-lms' ) ), $lesson_count );
 					?>
 				</span>
 			<?php

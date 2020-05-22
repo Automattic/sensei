@@ -379,7 +379,7 @@ class Sensei_Legacy_Shortcodes {
 		$author_display_name   = $user_info->display_name;
 		$category_output       = get_the_term_list( $course_id, 'course-category', '', ', ', '' );
 		$preview_lesson_count  = intval( Sensei()->course->course_lesson_preview_count( $course_id ) );
-		$lesson_count          = intval( Sensei()->course->course_lesson_count( $course_id ) );
+		$lesson_count          = Sensei()->course->course_lesson_count( $course_id );
 		$is_user_taking_course = Sensei_Course::is_user_enrolled( $course_id, get_current_user_id() );
 		?>
 
@@ -419,7 +419,7 @@ class Sensei_Legacy_Shortcodes {
 						<span class="course-lesson-count">
 							<?php
 							// translators: Placeholder %d is the lesson count.
-							printf( esc_html( _n( '%d Lesson', '%d Lessons', $lesson_count, 'sensei-lms' ) ), intval( $lesson_count ) );
+							printf( esc_html( _n( '%d Lesson', '%d Lessons', $lesson_count, 'sensei-lms' ) ), $lesson_count );
 							?>
 						</span>
 
