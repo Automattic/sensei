@@ -43,6 +43,13 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 	abstract protected function get_handler_class();
 
 	/**
+	 * Create a data port job for the current user.
+	 *
+	 * @return Sensei_Data_Port_Job
+	 */
+	abstract protected function create_job();
+
+	/**
 	 * Register the REST API endpoints for the Importer.
 	 */
 	public function register_routes() {
@@ -100,7 +107,7 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 		$job     = $this->get_active_job();
 		$created = false;
 		if ( ! $job ) {
-			$job     = Sensei_Data_Port_Manager::instance()->create_import_job( get_current_user_id() );
+			$job     = $this->create_job();
 			$created = true;
 		}
 
