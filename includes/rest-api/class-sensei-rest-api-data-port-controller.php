@@ -36,6 +36,13 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 	}
 
 	/**
+	 * Get the handler class job this REST API controller handles.
+	 *
+	 * @return string
+	 */
+	abstract protected function get_handler_class();
+
+	/**
 	 * Register the REST API endpoints for the Importer.
 	 */
 	public function register_routes() {
@@ -140,7 +147,7 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 	 * @return Sensei_Data_Port_Job|null
 	 */
 	protected function get_active_job() {
-		return Sensei_Data_Port_Manager::instance()->get_active_job( $this->handler_class, get_current_user_id() );
+		return Sensei_Data_Port_Manager::instance()->get_active_job( $this->get_handler_class(), get_current_user_id() );
 	}
 
 	/**
