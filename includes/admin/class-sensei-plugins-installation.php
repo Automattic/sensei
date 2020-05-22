@@ -337,8 +337,9 @@ class Sensei_Plugins_Installation {
 					$error   = true;
 					$message = sprintf(
 						// translators: 1: plugin name.
-						__( '%1$s is installed but could not be activated.', 'sensei-lms' ),
-						$plugin_title
+						__( '%1$s is installed but could not be activated (%2$s).', 'sensei-lms' ),
+						$plugin_title,
+						$e->getMessage()
 					);
 
 					$this->save_error( $plugin_slug, $message );
