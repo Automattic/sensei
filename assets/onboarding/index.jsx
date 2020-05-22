@@ -63,17 +63,16 @@ const SenseiSetupWizardPage = () => {
 	}
 
 	return (
-		<QueryStringRouter paramName={ PARAM_NAME }>
+		<QueryStringRouter
+			paramName={ PARAM_NAME }
+			defaultRoute={ navigationSteps.find( ( step ) => step.isNext ) }
+		>
 			<div className="sensei-onboarding__header">
 				<Navigation steps={ navigationSteps } />
 			</div>
 			<div className="sensei-onboarding__container">
-				{ steps.map( ( step, i ) => (
-					<Route
-						key={ step.key }
-						route={ step.key }
-						defaultRoute={ 0 === i }
-					>
+				{ navigationSteps.map( ( step ) => (
+					<Route key={ step.key } route={ step.key }>
 						{ step.container }
 					</Route>
 				) ) }

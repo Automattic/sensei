@@ -19,8 +19,8 @@ const NextButton = ( { nextKey } ) => {
 describe( '<QueryStringRouter />', () => {
 	it( 'Should navigate to the next route', () => {
 		const { queryByText, queryByTestId } = render(
-			<QueryStringRouter paramName="route">
-				<Route route="one" defaultRoute>
+			<QueryStringRouter paramName="route" defaultRoute="one">
+				<Route route="one">
 					One <NextButton nextKey="two" />
 				</Route>
 				<Route route="two">
@@ -36,8 +36,8 @@ describe( '<QueryStringRouter />', () => {
 
 	it( 'Should go to the correct route after on popstate', () => {
 		const { queryByText } = render(
-			<QueryStringRouter paramName="route">
-				<Route route="one" defaultRoute>
+			<QueryStringRouter paramName="route" defaultRoute="one">
+				<Route route="one">
 					One <NextButton nextKey="two" />
 				</Route>
 				<Route route="two">

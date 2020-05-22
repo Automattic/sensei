@@ -23,7 +23,7 @@ const QueryStringRouterContext = createContext();
  * @param {string} props.paramName Param used as reference in the query string.
  * @param {Object} props.children  Render this children if it matches the route.
  */
-const QueryStringRouter = ( { paramName, children } ) => {
+const QueryStringRouter = ( { paramName, defaultRoute, children } ) => {
 	// Current route.
 	const [ currentRoute, setRoute ] = useState(
 		getCurrentRouteFromURL( paramName )
@@ -43,11 +43,15 @@ const QueryStringRouter = ( { paramName, children } ) => {
 			setRoute( newRoute );
 		};
 
+		if ( ! currentRoute ) {
+			goTo( defaultRoute, true );
+		}
+
 		return {
 			currentRoute,
 			goTo,
 		};
-	}, [ currentRoute, paramName ] );
+	}, [ currentRoute, paramName, defaultRoute ] );
 
 	// Handle history changes through popstate.
 	useEventListener(

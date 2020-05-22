@@ -30,8 +30,8 @@ describe( '<Features />', () => {
 
 	it( 'Should continue to the ready step when nothing is selected', () => {
 		const { container, queryByText } = render(
-			<QueryStringRouter paramName="step">
-				<Route route="features" defaultRoute>
+			<QueryStringRouter paramName="step" defaultRoute="features">
+				<Route route="features">
 					<Features />
 				</Route>
 				<Route route="ready">Ready</Route>
@@ -45,8 +45,8 @@ describe( '<Features />', () => {
 
 	it( 'Should continue to the ready step when the user chooses to install later', () => {
 		const { container, queryByText } = render(
-			<QueryStringRouter paramName="step">
-				<Route route="features" defaultRoute>
+			<QueryStringRouter paramName="step" defaultRoute="features">
+				<Route route="features">
 					<Features />
 				</Route>
 				<Route route="ready">Ready</Route>
