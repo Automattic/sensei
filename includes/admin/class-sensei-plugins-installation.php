@@ -114,7 +114,6 @@ class Sensei_Plugins_Installation {
 	 */
 	public function install_plugins( $plugins_to_install ) {
 		$installing_plugins = $this->get_installing_plugins();
-		$new_installations  = [];
 
 		foreach ( $plugins_to_install as $plugin ) {
 			if ( false === array_search( $plugin->product_slug, array_column( $installing_plugins, 'product_slug' ), true ) ) {
