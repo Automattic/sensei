@@ -1,4 +1,5 @@
 import { Button, CheckboxControl } from '@wordpress/components';
+import classnames from 'classnames';
 import { __ } from '@wordpress/i18n';
 
 import { INSTALLED_STATUS } from './feature-status';
@@ -56,11 +57,9 @@ const FeaturesSelection = ( {
 							status === INSTALLED_STATUS ||
 							submittedSlugs.includes( slug )
 						}
-						className={ `sensei-onboarding__checkbox ${
-							status === INSTALLED_STATUS
-								? 'installed-status'
-								: ''
-						}` }
+						className={ classnames( 'sensei-onboarding__checkbox', {
+							'installed-status': status === INSTALLED_STATUS,
+						} ) }
 					/>
 				) ) }
 			</div>
