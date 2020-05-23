@@ -367,7 +367,7 @@ class Sensei_Plugins_Installation {
 				$installing_plugins = array_filter(
 					$installing_plugins,
 					function( $plugin ) use ( $plugin_slug ) {
-						$plugin->product_slug !== $plugin_slug;
+						return $plugin->product_slug !== $plugin_slug;
 					}
 				);
 
