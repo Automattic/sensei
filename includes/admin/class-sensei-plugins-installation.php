@@ -116,8 +116,17 @@ class Sensei_Plugins_Installation {
 		$installing_plugins = $this->get_installing_plugins();
 
 		foreach ( $plugins_to_install as $plugin ) {
-			if ( false === array_search( $plugin->product_slug, array_column( $installing_plugins, 'product_slug' ), true ) ) {
-				$installing_plugins[] = $plugin;
+			$key = array_search( $plugin->product_slug, array_column( $installing_plugins, 'product_slug' ), true );
+			if ( false === $key || isset( $installing_plugins[ $key ]->error ) ) {
+				// Clean error.
+				unset( $plugin->error );
+				unset( $plugin->status );
+
+				if ( false !== $key ) {
+					$installing_plugins[ $key ] = $plugin;
+				} else {
+					$installing_plugins[] = $plugin;
+				}
 
 				$this->deferred_actions[] = [
 					'func' => [ $this, 'background_installer' ],
