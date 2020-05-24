@@ -28,6 +28,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 		$wp_rest_server = new WP_REST_Server();
 		$this->server   = $wp_rest_server;
 
+		Sensei_Test_Events::reset();
 		do_action( 'rest_api_init' );
 
 		// Prevent requests.
@@ -310,6 +311,28 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 		$data = Sensei()->onboarding->get_wizard_user_data();
 
 		$this->assertNotContains( [ 'invalid-plugin' ], $data['features'] );
+	}
+
+	/**
+	 * Tests that submitting to features endpoint validates input against whitelist
+	 *
+	 * @covers Sensei_REST_API_Setup_Wizard_Controller::submit_purpose
+	 */
+	public function testSubmitPurposeLogged() {
+
+		$this->request(
+			'POST',
+			'purpose',
+			[
+				'selected' => [ 'share_knowledge', 'other' ],
+				'other'    => 'Test',
+			]
+		);
+
+		$events = Sensei_Test_Events::get_logged_events( 'sensei_setup_wizard_purpose_continue' );
+		$this->assertCount( 1, $events );
+		$this->assertEquals( 'share_knowledge,other', $events[0]['url_args']['purpose'] );
+		$this->assertEquals( 'Test', $events[0]['url_args']['purpose_details'] );
 	}
 
 	/**
