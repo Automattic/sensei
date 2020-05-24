@@ -334,6 +334,19 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	}
 
 	/**
+	 * Tests that the complete wizard endpoint clears setup wizard prompts.
+	 *
+	 * @covers Sensei_REST_API_Setup_Wizard_Controller::complete_setup_wizard
+	 */
+	public function testCompleteWizardUpdatesOption() {
+
+		update_option( 'sensei_suggest_setup_wizard', 1 );
+		$this->request( 'POST', 'ready' );
+
+		$this->assertEquals( 0, get_option( 'sensei_suggest_setup_wizard' ) );
+	}
+
+	/**
 	 * Create and dispatch a REST API request.
 	 *
 	 * @param string $method The request method.

@@ -21,6 +21,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Onboarding {
 	const SUGGEST_SETUP_WIZARD_OPTION = 'sensei_suggest_setup_wizard';
 	const USER_DATA_OPTION            = 'sensei_setup_wizard_data';
+	const MC_LIST_ID                  = '4fa225a515';
+	const MC_USER_ID                  = '7a061a9141b0911d6d9bafe3a';
+	const MC_GDPR_FIELD               = '23563';
+	const MC_URL                      = 'https://senseilms.us19.list-manage.com/subscribe/post?u=' . self::MC_USER_ID . '&id=' . self::MC_LIST_ID;
 
 	/**
 	 * Default value for onboarding user data.
@@ -293,8 +297,15 @@ class Sensei_Onboarding {
 			&& wp_verify_nonce( wp_unslash( $_GET['_wpnonce'] ), 'sensei_skip_setup_wizard' )
 			&& current_user_can( 'manage_sensei' )
 		) {
-			update_option( self::SUGGEST_SETUP_WIZARD_OPTION, 0 );
+			$this->finish_setup_wizard();
 		}
+	}
+
+	/**
+	 * Mark the setup wizard as finished.
+	 */
+	public function finish_setup_wizard() {
+		update_option( self::SUGGEST_SETUP_WIZARD_OPTION, 0 );
 	}
 
 	/**
@@ -384,6 +395,20 @@ class Sensei_Onboarding {
 	public function update_wizard_user_data( $changes ) {
 		$option = array_merge( $this->get_wizard_user_data(), $changes );
 		return update_option( self::USER_DATA_OPTION, $option );
+	}
+
+	/**
+	 * Get data used for Mailing list sign-up form.
+	 *
+	 * @return array The data.
+	 */
+	public function get_mailing_list_form_data() {
+
+		return [
+			'admin_email' => get_option( 'admin_email', '' ),
+			'mc_url'      => self::MC_URL,
+			'gdpr_field'  => self::MC_GDPR_FIELD,
+		];
 	}
 
 	/**
