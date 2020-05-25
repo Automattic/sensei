@@ -19,7 +19,7 @@ import FeatureDescription from './feature-description';
  * @param {Object}    props
  * @param {Feature[]} props.features      Features list.
  * @param {boolean}   props.isSubmitting  Is submitting state.
- * @param {Element}   [props.errorNotice] Is submitting state.
+ * @param {Element}   [props.errorNotice] Submit error notice.
  * @param {string[]}  props.selectedSlugs Selected slugs.
  * @param {Function}  props.onChange      Callback to change the selection.
  * @param {Function}  props.onContinue    Callback to continue after selection.
