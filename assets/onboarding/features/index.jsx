@@ -66,6 +66,10 @@ const Features = () => {
 		);
 	}, [ submittedSlugs, features ] );
 
+	useEffect( () => {
+		setSelectedSlugs( stepData.selected || [] );
+	}, [ stepData.selected ] );
+
 	const getSelectedFeatures = () =>
 		features.filter( ( feature ) =>
 			selectedSlugs.includes( feature.slug )
