@@ -18,6 +18,7 @@ const Features = () => {
 	const [ selectedSlugs, setSelectedSlugs ] = useState( [] );
 	const { goTo } = useQueryStringRouter();
 
+	// Features data.
 	const {
 		stepData,
 		submitStep,
@@ -26,6 +27,11 @@ const Features = () => {
 	} = useSetupWizardStep( 'features' );
 	const features = stepData.options;
 	const submittedSlugs = stepData.selected;
+
+	// Features installation.
+	const { submitStep: submitInstallation } = useSetupWizardStep(
+		'features-installation'
+	);
 
 	// Mark as selected also the already submitted slugs.
 	useEffect( () => {
@@ -51,9 +57,20 @@ const Features = () => {
 		);
 	};
 
-	const goToInstallation = () => {
-		toggleConfirmation( false );
-		toggleFeedback( true );
+	const startInstallation = () => {
+		submitInstallation(
+			{ selected: selectedSlugs },
+			{
+				onSuccess: () => {
+					toggleConfirmation( false );
+					toggleFeedback( true );
+				},
+			}
+		);
+	};
+
+	const retryInstallation = ( selected ) => {
+		submitInstallation( { selected } );
 	};
 
 	const goToNextStep = () => {
@@ -74,7 +91,7 @@ const Features = () => {
 				{ feedbackActive ? (
 					<InstallationFeedback
 						onContinue={ goToNextStep }
-						onRetry={ () => {} }
+						onRetry={ retryInstallation }
 					/>
 				) : (
 					<FeaturesSelection
@@ -91,7 +108,9 @@ const Features = () => {
 			{ confirmationActive && (
 				<ConfirmationModal
 					features={ getSelectedFeatures() }
-					onInstall={ goToInstallation }
+					isSubmitting={ isSubmitting }
+					errorNotice={ errorNotice }
+					onInstall={ startInstallation }
 					onSkip={ goToNextStep }
 				/>
 			) }

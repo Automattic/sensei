@@ -55,4 +55,32 @@ describe( '<ConfirmationModal />', () => {
 		fireEvent.click( queryByText( 'Install now' ) );
 		expect( onInstallMock ).toBeCalled();
 	} );
+
+	it( 'Should render the confirmation modal with submitting status', () => {
+		render(
+			<ConfirmationModal
+				isSubmitting
+				features={ features }
+				onInstall={ () => {} }
+				onSkip={ () => {} }
+			/>
+		);
+
+		expect( document.querySelectorAll( 'button:disabled' ) ).toHaveLength(
+			2
+		);
+	} );
+
+	it( 'Should render the confirmation modal with error', () => {
+		const { queryByText } = render(
+			<ConfirmationModal
+				features={ features }
+				onInstall={ () => {} }
+				onSkip={ () => {} }
+				errorNotice="Error"
+			/>
+		);
+
+		expect( queryByText( 'Error' ) ).toBeTruthy();
+	} );
 } );

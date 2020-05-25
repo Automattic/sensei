@@ -17,11 +17,19 @@ const WC_EXTRA_DESCRIPTION = __(
  * Features confirmation modal.
  *
  * @param {Object}    props
- * @param {Feature[]} props.features  Features list.
- * @param {Function}  props.onInstall Callback to install the features.
- * @param {Function}  props.onSkip    Callback to skip the installation.
+ * @param {Feature[]} props.features      Features list.
+ * @param {boolean}   props.isSubmitting  Is submitting state.
+ * @param {Element}   [props.errorNotice] Is submitting state.
+ * @param {Function}  props.onInstall     Callback to install the features.
+ * @param {Function}  props.onSkip        Callback to skip the installation.
  */
-const ConfirmationModal = ( { features = [], onInstall, onSkip } ) => (
+const ConfirmationModal = ( {
+	features = [],
+	isSubmitting,
+	errorNotice,
+	onInstall,
+	onSkip,
+} ) => (
 	<Modal
 		className="sensei-onboarding__features-confirmation-modal"
 		title={ __(
@@ -47,10 +55,14 @@ const ConfirmationModal = ( { features = [], onInstall, onSkip } ) => (
 			) }
 		</p>
 
+		{ errorNotice }
+
 		<div className="sensei-onboarding__group-buttons group-right">
 			<Button
 				className="sensei-onboarding__button"
 				isTertiary
+				isBusy={ isSubmitting }
+				disabled={ isSubmitting }
 				onClick={ onSkip }
 			>
 				{ __( "I'll do it later", 'sensei-lms' ) }
@@ -58,6 +70,8 @@ const ConfirmationModal = ( { features = [], onInstall, onSkip } ) => (
 			<Button
 				className="sensei-onboarding__button"
 				isPrimary
+				isBusy={ isSubmitting }
+				disabled={ isSubmitting }
 				onClick={ onInstall }
 			>
 				{ __( 'Install now', 'sensei-lms' ) }

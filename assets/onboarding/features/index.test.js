@@ -89,7 +89,7 @@ describe( '<Features />', () => {
 		// Continue to confirmation.
 		fireEvent.click( queryByText( 'Continue' ) );
 
-		// Confirm the installation.
+		// Start the installation.
 		fireEvent.click( queryByText( 'Install now' ) );
 
 		expect(
