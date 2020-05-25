@@ -4,26 +4,32 @@ import FeaturesSelection from './features-selection';
 
 const features = [
 	{
-		slug: 'a',
+		slug: 'empty-status',
 		title: 'Lorem',
 		excerpt: 'Ipsum',
 	},
 	{
-		slug: 'b',
+		slug: 'installing',
 		title: 'Lorem',
 		excerpt: 'Ipsum',
+		status: 'installing',
+	},
+	{
+		slug: 'installed',
+		title: 'Lorem',
+		excerpt: 'Ipsum',
+		status: 'installed',
 	},
 ];
 
 describe( '<FeaturesSelection />', () => {
 	it( 'Should render the checkboxes for each feature', () => {
-		const selectedIds = [ 'b' ];
+		const selectedSlugs = [ 'installing' ];
 
 		const { container } = render(
 			<FeaturesSelection
 				features={ features }
-				selectedSlugs={ selectedIds }
-				submittedSlugs={ [] }
+				selectedSlugs={ selectedSlugs }
 				onChange={ () => {} }
 				onContinue={ () => {} }
 			/>
@@ -33,7 +39,7 @@ describe( '<FeaturesSelection />', () => {
 			features.length
 		);
 		expect( container.querySelectorAll( 'input:checked' ).length ).toEqual(
-			selectedIds.length
+			selectedSlugs.length
 		);
 	} );
 
@@ -44,8 +50,7 @@ describe( '<FeaturesSelection />', () => {
 		const { container, queryByText } = render(
 			<FeaturesSelection
 				features={ features }
-				selectedSlugs={ [ 'b' ] }
-				submittedSlugs={ [] }
+				selectedSlugs={ [ 'installing' ] }
 				onChange={ onChangeMock }
 				onContinue={ onContinueMock }
 			/>
@@ -54,7 +59,10 @@ describe( '<FeaturesSelection />', () => {
 		fireEvent.click(
 			container.querySelectorAll( 'input[type="checkbox"]' )[ 0 ]
 		);
-		expect( onChangeMock ).toBeCalledWith( [ 'a', 'b' ] );
+		expect( onChangeMock ).toBeCalledWith( [
+			'empty-status',
+			'installing',
+		] );
 
 		fireEvent.click(
 			container.querySelectorAll( 'input[type="checkbox"]' )[ 1 ]
@@ -65,20 +73,21 @@ describe( '<FeaturesSelection />', () => {
 		expect( onContinueMock ).toBeCalled();
 	} );
 
-	it( 'Should render the submitted features as checked and disabled', () => {
-		const submittedSlugs = [ 'b' ];
-
+	it( 'Should render the features with installation status as disabled and the installed with specific class', () => {
+		const selectedSlugs = [ 'empty-status', 'installing', 'installed' ];
 		const { container } = render(
 			<FeaturesSelection
 				features={ features }
-				selectedSlugs={ submittedSlugs }
-				submittedSlugs={ submittedSlugs }
+				selectedSlugs={ selectedSlugs }
 				onChange={ () => {} }
 				onContinue={ () => {} }
 			/>
 		);
 		expect(
 			container.querySelectorAll( 'input:checked:disabled' ).length
-		).toEqual( submittedSlugs.length );
+		).toEqual( 2 );
+		expect(
+			container.querySelectorAll( '.installed-status' ).length
+		).toEqual( 1 );
 	} );
 } );

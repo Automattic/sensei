@@ -17,16 +17,14 @@ import FeatureDescription from './feature-description';
  * Features confirmation modal.
  *
  * @param {Object}    props
- * @param {Feature[]} props.features       Features list.
- * @param {string[]}  props.selectedSlugs  Selected slugs.
- * @param {string[]}  props.submittedSlugs Submitted slugs.
- * @param {Function}  props.onChange       Callback to change the selection.
- * @param {Function}  props.onContinue     Callback to continue after selection.
+ * @param {Feature[]} props.features      Features list.
+ * @param {string[]}  props.selectedSlugs Selected slugs.
+ * @param {Function}  props.onChange      Callback to change the selection.
+ * @param {Function}  props.onContinue    Callback to continue after selection.
  */
 const FeaturesSelection = ( {
 	features,
 	selectedSlugs,
-	submittedSlugs,
 	onChange,
 	onContinue,
 } ) => {
@@ -53,10 +51,7 @@ const FeaturesSelection = ( {
 						}
 						onChange={ toggleItem( slug ) }
 						checked={ selectedSlugs.includes( slug ) }
-						disabled={
-							status === INSTALLED_STATUS ||
-							submittedSlugs.includes( slug )
-						}
+						disabled={ !! status }
 						className={ classnames( 'sensei-onboarding__checkbox', {
 							'installed-status': status === INSTALLED_STATUS,
 						} ) }

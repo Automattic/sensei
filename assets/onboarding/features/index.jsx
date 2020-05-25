@@ -84,7 +84,6 @@ const Features = () => {
 					<FeaturesSelection
 						features={ features }
 						selectedSlugs={ selectedSlugs }
-						submittedSlugs={ submittedSlugs }
 						onChange={ setSelectedSlugs }
 						onContinue={ finishSelection }
 					/>
