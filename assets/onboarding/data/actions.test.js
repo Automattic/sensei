@@ -202,6 +202,10 @@ describe( 'Setup wizard actions', () => {
 			step,
 			data: { usage_tracking: true },
 		};
+
+		// Apply side effects
+		gen.next();
+
 		expect( gen.next().value ).toEqual( expectedSetDataAction );
 
 		// Continue to callback.
