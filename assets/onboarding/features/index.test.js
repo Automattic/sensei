@@ -35,9 +35,14 @@ jest.mock( './use-features-polling', () => () => ( {
 } ) );
 
 describe( '<Features />', () => {
+	beforeEach( () => {
+		window.sensei_log_event = jest.fn();
+	} );
 	afterEach( () => {
 		// Clear URL param.
 		updateRouteURL( 'step', '' );
+
+		delete window.sensei_log_event;
 	} );
 
 	it( 'Should not check installed features', () => {
@@ -108,24 +113,59 @@ describe( '<Features />', () => {
 		).toBeTruthy();
 	} );
 
-	it( 'Should continue to the confirmation and then simulate an error installing 2 items', () => {
-		const { container, queryByText } = render(
+	it( 'Should display installation error', () => {
+		const { queryByText, getByLabelText } = render(
+			<QueryStringRouter>
+				<Features />
+			</QueryStringRouter>
+		);
+		fireEvent.click( getByLabelText( 'Test 2' ) );
+
+		// Submit data.
+		fireEvent.click( queryByText( 'Continue' ) );
+
+		// Confirm the installation.
+		fireEvent.click( queryByText( 'Install now' ) );
+
+		expect( queryByText( 'Error installing plugin' ) ).toBeTruthy();
+	} );
+
+	it( 'Should log event on Continue when no features selected', () => {
+		const { queryByText } = render(
 			<QueryStringRouter>
 				<Features />
 			</QueryStringRouter>
 		);
 
-		// Check the 2 features.
-		const checkboxes = container.querySelectorAll(
-			'input[type="checkbox"]'
-		);
-		fireEvent.click( checkboxes[ 0 ] );
-		fireEvent.click( checkboxes[ 1 ] );
-
-		// Submit data.
 		fireEvent.click( queryByText( 'Continue' ) );
 
-		// Should not open the modal because the error.
-		expect( queryByText( 'Install now' ) ).toBeFalsy();
+		expect( window.sensei_log_event ).toHaveBeenCalledWith(
+			'setup_wizard_features_continue',
+			{
+				slug: [],
+			}
+		);
+	} );
+
+	it( 'Should log event after installing when features selected', () => {
+		const { queryByText, getByLabelText } = render(
+			<QueryStringRouter>
+				<Features />
+			</QueryStringRouter>
+		);
+
+		// Check the first feature.
+		fireEvent.click( getByLabelText( 'Test 1' ) );
+
+		fireEvent.click( queryByText( 'Continue' ) );
+		fireEvent.click( queryByText( 'Install now' ) );
+		fireEvent.click( queryByText( 'Continue' ) );
+
+		expect( window.sensei_log_event ).toHaveBeenCalledWith(
+			'setup_wizard_features_continue',
+			{
+				slug: [ 'test-1' ],
+			}
+		);
 	} );
 } );
