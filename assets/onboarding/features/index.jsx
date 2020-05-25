@@ -4,10 +4,10 @@ import { __ } from '@wordpress/i18n';
 import { uniq } from 'lodash';
 
 import { useQueryStringRouter } from '../query-string-router';
+import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 import ConfirmationModal from './confirmation-modal';
 import InstallationFeedback from './installation-feedback';
 import FeaturesSelection from './features-selection';
-import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 
 /**
  * Features step for setup wizard.
