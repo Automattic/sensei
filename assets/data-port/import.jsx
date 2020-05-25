@@ -1,6 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { render, useReducer } from '@wordpress/element';
 import { DataPortStepper, stepsReducer, getCurrentStep } from './stepper';
+import { UploadPage } from './import/upload';
 
 const initialSteps = [
 	{
@@ -32,16 +33,14 @@ const SenseiImportPage = () => {
 	return (
 		<div className="sensei-import-wrapper">
 			<DataPortStepper steps={ steps } />
-			<button onClick={ () => dispatch( { type: 'MOVE_TO_NEXT' } ) }>
-				Move to next step!
-			</button>
-			<button onClick={ () => dispatch( { type: 'COMPLETE_CURRENT' } ) }>
-				Complete current!
-			</button>
-			{ /* eslint-disable-next-line no-console */ }
-			<button onClick={ () => console.log( getCurrentStep( steps ) ) }>
-				Check current step!
-			</button>
+			{ ( () => {
+				switch ( getCurrentStep( steps ) ) {
+					case 'upload':
+						return <UploadPage />;
+					default:
+						return null;
+				}
+			} )() }
 		</div>
 	);
 };
