@@ -408,42 +408,49 @@ class Sensei_Onboarding {
 	}
 
 	/**
+	 * Get feature with status.
+	 *
+	 * @param stdClass   $extension          Extension object.
+	 * @param stdClass[] $installing_plugins Plugins which are installing.
+	 *
+	 * @return stdClass Extension with status.
+	 */
+	private function get_feature_with_status( $extension, $installing_plugins ) {
+		$installing_key = array_search( $extension->product_slug, array_column( $installing_plugins, 'product_slug' ), true );
+
+		if ( false !== $installing_key ) {
+			if ( isset( $installing_plugins[ $installing_key ]->error ) ) {
+				$extension->error  = $installing_plugins[ $installing_key ]->error;
+				$extension->status = 'error';
+			} else {
+				$extension->status = 'installing';
+			}
+		}
+
+		if ( Sensei_Plugins_Installation::instance()->is_plugin_active( $extension->plugin_file ) ) {
+			$extension->status = 'installed';
+		}
+
+		return $extension;
+	}
+
+	/**
 	 * Get Sensei extensions for setup wizard.
 	 *
 	 * @return array Sensei extensions.
 	 */
 	public function get_sensei_extensions() {
-		$sensei_extensions    = Sensei_Extensions::instance();
-		$plugins_installation = Sensei_Plugins_Installation::instance();
-		$installing_plugins   = $plugins_installation->get_installing_plugins();
+		$sensei_extensions  = Sensei_Extensions::instance();
+		$installing_plugins = Sensei_Plugins_Installation::instance()->get_installing_plugins();
 
 		$extensions = array_map(
-			function( $extension ) use ( $plugins_installation, $installing_plugins ) {
+			function( $extension ) use ( $installing_plugins ) {
 				// Decode price.
 				if ( isset( $extension->price ) && 0 !== $extension->price ) {
 					$extension->price = html_entity_decode( $extension->price );
 				}
 
-				// Add error and status.
-				$installing_key = array_search(
-					$extension->product_slug,
-					array_column( $installing_plugins, 'product_slug' ),
-					true
-				);
-				if ( false !== $installing_key ) {
-					if ( isset( $installing_plugins[ $installing_key ]->error ) ) {
-						$extension->error  = $installing_plugins[ $installing_key ]->error;
-						$extension->status = 'error';
-					} else {
-						$extension->status = 'installing';
-					}
-				}
-
-				if ( $plugins_installation->is_plugin_active( $extension->plugin_file ) ) {
-					$extension->status = 'installed';
-				}
-
-				return $extension;
+				return $this->get_feature_with_status( $extension, $installing_plugins );
 			},
 			$sensei_extensions->get_extensions( 'plugin', 'setup-wizard-extensions' )
 		);
@@ -452,7 +459,7 @@ class Sensei_Onboarding {
 	}
 
 	/**
-	 * Prepare extensions and call installation.
+	 * Filter extensions to install and call installation.
 	 *
 	 * @param string[] $extension_slugs Extension slugs to install.
 	 */
