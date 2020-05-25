@@ -43,6 +43,34 @@ describe( '<FeaturesSelection />', () => {
 		);
 	} );
 
+	it( 'Should render features selection with submitting status', () => {
+		const { container } = render(
+			<FeaturesSelection
+				features={ features }
+				isSubmitting
+				selectedSlugs={ [ features[ 0 ].slug ] }
+				onChange={ () => {} }
+				onContinue={ () => {} }
+			/>
+		);
+
+		expect( container.querySelector( 'button:disabled' ) ).toBeTruthy();
+	} );
+
+	it( 'Should render features selection with error', () => {
+		const { queryByText } = render(
+			<FeaturesSelection
+				features={ features }
+				errorNotice="Error"
+				selectedSlugs={ [ features[ 0 ].slug ] }
+				onChange={ () => {} }
+				onContinue={ () => {} }
+			/>
+		);
+
+		expect( queryByText( 'Error' ) ).toBeTruthy();
+	} );
+
 	it( 'Should call the callbacks correctly', () => {
 		const onChangeMock = jest.fn();
 		const onContinueMock = jest.fn();

@@ -37,21 +37,6 @@ describe( '<ConfirmationModal />', () => {
 		).toBeTruthy();
 	} );
 
-	it( 'Should run the confirmation modal as submitting', () => {
-		render(
-			<ConfirmationModal
-				features={ features }
-				isSubmitting
-				onInstall={ () => {} }
-				onSkip={ () => {} }
-			/>
-		);
-
-		expect( document.querySelectorAll( 'button:disabled' ).length ).toEqual(
-			2
-		);
-	} );
-
 	it( 'Should call the callbacks', () => {
 		const onInstallMock = jest.fn();
 		const onSkipMock = jest.fn();

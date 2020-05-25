@@ -45,19 +45,15 @@ const Features = () => {
 			return;
 		}
 
-		toggleConfirmation( true );
-	};
-
-	const onSubmitSuccess = () => {
-		toggleConfirmation( false );
-		toggleFeedback( true );
+		submitStep(
+			{ selected: selectedSlugs },
+			{ onSuccess: () => toggleConfirmation( true ) }
+		);
 	};
 
 	const goToInstallation = () => {
-		submitStep(
-			{ selected: selectedSlugs },
-			{ onSuccess: onSubmitSuccess }
-		);
+		toggleConfirmation( false );
+		toggleFeedback( true );
 	};
 
 	const goToNextStep = () => {
@@ -83,6 +79,8 @@ const Features = () => {
 				) : (
 					<FeaturesSelection
 						features={ features }
+						isSubmitting={ isSubmitting }
+						errorNotice={ errorNotice }
 						selectedSlugs={ selectedSlugs }
 						onChange={ setSelectedSlugs }
 						onContinue={ finishSelection }
@@ -93,8 +91,6 @@ const Features = () => {
 			{ confirmationActive && (
 				<ConfirmationModal
 					features={ getSelectedFeatures() }
-					isSubmitting={ isSubmitting }
-					errorNotice={ errorNotice }
 					onInstall={ goToInstallation }
 					onSkip={ goToNextStep }
 				/>

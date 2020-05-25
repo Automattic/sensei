@@ -111,14 +111,10 @@ describe( '<Features />', () => {
 		fireEvent.click( checkboxes[ 0 ] );
 		fireEvent.click( checkboxes[ 1 ] );
 
-		// Continue to confirmation.
+		// Submit data.
 		fireEvent.click( queryByText( 'Continue' ) );
 
-		// Confirm the installation.
-		fireEvent.click( queryByText( 'Install now' ) );
-
-		expect(
-			container.querySelector( '.sensei-onboarding__icon-status' )
-		).toBeFalsy();
+		// Should not open the modal because the error.
+		expect( queryByText( 'Install now' ) ).toBeFalsy();
 	} );
 } );

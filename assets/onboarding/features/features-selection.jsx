@@ -18,12 +18,16 @@ import FeatureDescription from './feature-description';
  *
  * @param {Object}    props
  * @param {Feature[]} props.features      Features list.
+ * @param {boolean}   props.isSubmitting  Is submitting state.
+ * @param {Element}   [props.errorNotice] Is submitting state.
  * @param {string[]}  props.selectedSlugs Selected slugs.
  * @param {Function}  props.onChange      Callback to change the selection.
  * @param {Function}  props.onContinue    Callback to continue after selection.
  */
 const FeaturesSelection = ( {
 	features,
+	isSubmitting,
+	errorNotice,
 	selectedSlugs,
 	onChange,
 	onContinue,
@@ -58,8 +62,13 @@ const FeaturesSelection = ( {
 					/>
 				) ) }
 			</div>
+
+			{ errorNotice }
+
 			<Button
 				isPrimary
+				isBusy={ isSubmitting }
+				disabled={ isSubmitting }
 				className="sensei-onboarding__button sensei-onboarding__button-card"
 				onClick={ onContinue }
 			>
