@@ -66,6 +66,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 		$this->register_submit_welcome_route();
 		$this->register_submit_purpose_route();
 		$this->register_submit_features_route();
+		$this->register_submit_features_installation_route();
 		$this->register_complete_wizard_route();
 	}
 
@@ -142,7 +143,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	}
 
 	/**
-	 * Register /features endpoint.
+	 * Register /features-installation endpoint.
 	 */
 	public function register_submit_features_route() {
 		register_rest_route(
@@ -152,6 +153,32 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 				[
 					'methods'             => WP_REST_Server::EDITABLE,
 					'callback'            => [ $this, 'submit_features' ],
+					'permission_callback' => [ $this, 'can_user_access_rest_api' ],
+					'args'                => [
+						'selected' => [
+							'required' => true,
+							'type'     => 'array',
+							'items'    => [
+								'type' => 'string',
+							],
+						],
+					],
+				],
+			]
+		);
+	}
+
+	/**
+	 * Register /features endpoint.
+	 */
+	public function register_submit_features_installation_route() {
+		register_rest_route(
+			$this->namespace,
+			$this->rest_base . '/features-installation',
+			[
+				[
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => [ $this, 'submit_features_installation' ],
 					'permission_callback' => [ $this, 'can_user_install_plugins' ],
 					'args'                => [
 						'selected' => [
@@ -399,7 +426,6 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	public function submit_features( $form ) {
 
 		$this->mark_step_complete( 'features' );
-		// $this->setup_wizard->install_extensions( $form['selected'] );
 
 		return $this->setup_wizard->update_wizard_user_data(
 			[
@@ -408,6 +434,19 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 				],
 			]
 		);
+	}
+
+	/**
+	 * Submit features installation step.
+	 *
+	 * @param array $form Form data.
+	 *
+	 * @return bool Success.
+	 */
+	public function submit_features_installation( $form ) {
+		$this->setup_wizard->install_extensions( $form['selected'] );
+
+		return true;
 	}
 
 	/**
