@@ -4,6 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { uniq } from 'lodash';
 
 import { INSTALLED_STATUS } from './feature-status';
+import { logEvent } from '../log-event';
 import { useQueryStringRouter } from '../query-string-router';
 import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 import ConfirmationModal from './confirmation-modal';
@@ -100,6 +101,7 @@ const Features = () => {
 
 	const goToNextStep = () => {
 		goTo( 'ready' );
+		logEvent( 'setup_wizard_features_continue', { slug: selectedSlugs } );
 	};
 
 	return (

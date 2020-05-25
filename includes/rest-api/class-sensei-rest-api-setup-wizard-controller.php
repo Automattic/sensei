@@ -437,13 +437,6 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 
 		$selected_features = $form['selected'];
 
-		sensei_log_event(
-			'setup_wizard_features_continue',
-			[
-				'slug' => join( ',', $selected_features ),
-			]
-		);
-
 		return $this->setup_wizard->update_wizard_user_data(
 			[
 				'features' => $selected_features,
