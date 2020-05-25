@@ -17,8 +17,9 @@ const getStatus = ( status = INSTALLING_STATUS ) => status;
  *
  * @param {Object}    props
  * @param {Function}  props.onContinue Callback to continue to the next step.
+ * @param {Function}  props.onRetry    Callback to retry installations.
  */
-const InstallationFeedback = ( { onContinue } ) => {
+const InstallationFeedback = ( { onContinue, onRetry } ) => {
 	const [ hasInstalling, setHasInstalling ] = useState( true );
 	const [ hasError, setHasError ] = useState( false );
 
@@ -52,12 +53,22 @@ const InstallationFeedback = ( { onContinue } ) => {
 			</Button>
 		);
 	} else if ( hasError ) {
+		const onRetryAll = () => {
+			onRetry(
+				features
+					.filter(
+						( feature ) =>
+							getStatus( feature.status ) === ERROR_STATUS
+					)
+					.map( ( feature ) => feature.slug )
+			);
+		};
 		actionButtons = (
 			<>
 				<Button
 					isPrimary
 					className="sensei-onboarding__button"
-					onClick={ () => {} }
+					onClick={ onRetryAll }
 				>
 					{ __( 'Retry', 'sensei-lms' ) }
 				</Button>
@@ -86,14 +97,14 @@ const InstallationFeedback = ( { onContinue } ) => {
 		<div className="sensei-onboarding__features-installation-feedback">
 			<List
 				items={ features.map(
-					( { title, excerpt, link, error, status } ) => ( {
+					( { slug, title, excerpt, link, error, status } ) => ( {
 						title,
 						content: (
 							<FeatureDescription
 								excerpt={ excerpt }
 								link={ link }
 								error={ error }
-								onFeatureRetry={ () => {} }
+								onFeatureRetry={ () => onRetry( [ slug ] ) }
 							/>
 						),
 						before: (

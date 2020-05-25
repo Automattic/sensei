@@ -22,6 +22,14 @@ const featuresOptions = [
 		slug: 'test-error',
 		title: 'Test error',
 		excerpt: 'Test error',
+		error: 'Error message',
+		status: ERROR_STATUS,
+	},
+	{
+		slug: 'test-error-2',
+		title: 'Test error 2',
+		excerpt: 'Test error 2',
+		error: 'Error message',
 		status: ERROR_STATUS,
 	},
 	{
@@ -47,7 +55,10 @@ describe( '<InstallationFeedback />', () => {
 		useFeaturesPolling.mockImplementation( () => features );
 
 		const { queryByText } = render(
-			<InstallationFeedback onContinue={ () => {} } />
+			<InstallationFeedback
+				onContinue={ () => {} }
+				onRetry={ () => {} }
+			/>
 		);
 
 		expect( queryByText( 'Installing…' ) ).toBeTruthy();
@@ -62,7 +73,10 @@ describe( '<InstallationFeedback />', () => {
 		useFeaturesPolling.mockImplementation( () => features );
 
 		const { queryByText } = render(
-			<InstallationFeedback onContinue={ () => {} } />
+			<InstallationFeedback
+				onContinue={ () => {} }
+				onRetry={ () => {} }
+			/>
 		);
 
 		expect( queryByText( 'Installing…' ) ).toBeTruthy();
@@ -79,7 +93,10 @@ describe( '<InstallationFeedback />', () => {
 		const onContinueMock = jest.fn();
 
 		const { container, queryByText } = render(
-			<InstallationFeedback onContinue={ onContinueMock } />
+			<InstallationFeedback
+				onContinue={ onContinueMock }
+				onRetry={ () => {} }
+			/>
 		);
 
 		expect( container.querySelectorAll( 'button' ).length ).toEqual( 1 );
@@ -99,12 +116,44 @@ describe( '<InstallationFeedback />', () => {
 		const onContinueMock = jest.fn();
 
 		const { queryByText } = render(
-			<InstallationFeedback onContinue={ onContinueMock } />
+			<InstallationFeedback
+				onContinue={ onContinueMock }
+				onRetry={ () => {} }
+			/>
 		);
 
 		expect( queryByText( 'Retry' ) ).toBeTruthy();
 
 		fireEvent.click( queryByText( 'Continue' ) );
 		expect( onContinueMock ).toBeCalled();
+	} );
+
+	it( 'Should retry installations with error', () => {
+		const features = {
+			selected: [ 'test-error', 'test-error-2', 'test-installed' ],
+			options: featuresOptions,
+		};
+
+		useFeaturesPolling.mockImplementation( () => features );
+
+		const onRetryMock = jest.fn();
+
+		const { queryByText, queryAllByText } = render(
+			<InstallationFeedback
+				onContinue={ () => {} }
+				onRetry={ onRetryMock }
+			/>
+		);
+
+		fireEvent.click( queryByText( 'Retry' ) );
+		expect( onRetryMock ).toBeCalledWith( [
+			'test-error',
+			'test-error-2',
+		] );
+
+		onRetryMock.mockReset();
+
+		fireEvent.click( queryAllByText( 'Retry?' )[ 0 ] );
+		expect( onRetryMock ).toBeCalledWith( [ 'test-error' ] );
 	} );
 } );
