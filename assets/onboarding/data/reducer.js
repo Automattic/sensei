@@ -30,6 +30,34 @@ const DEFAULT_STATE = {
 };
 
 /**
+ * @typedef  {Object} Feature
+ * @property {string} slug    Feature slug.
+ * @property {string} status  Feature status.
+ * @property {Object} error   Feature error.
+ */
+/**
+ * Remove error and status from selected options.
+ *
+ * @param {string[]}  selected Feature slugs.
+ * @param {Feature[]} options  Options.
+ *
+ * @return {Feature[]} Updated options.
+ */
+const removeErrorFromSelected = ( selected, options ) =>
+	options.map( ( feature ) => {
+		if ( selected.includes( feature.slug ) ) {
+			// Remove status and error props from the object.
+			const {
+				status, // eslint-disable-line no-unused-vars
+				error, // eslint-disable-line no-unused-vars
+				...featureWithoutError
+			} = feature;
+			return featureWithoutError;
+		}
+		return feature;
+	} );
+
+/**
  * Setup wizard reducer.
  *
  * @param {Object}         state  Current state.
@@ -64,8 +92,28 @@ export default ( state = DEFAULT_STATE, action ) => {
 			};
 
 		case START_SUBMIT_SETUP_WIZARD_DATA:
+			const { stepData, step } = action;
+			let newState = null;
+
+			// Clear status and error for retry.
+			if ( 'features-installation' === step ) {
+				newState = {
+					...state,
+					data: {
+						...state.data,
+						features: {
+							...state.data.features,
+							options: removeErrorFromSelected(
+								stepData.selected,
+								state.data.features.options
+							),
+						},
+					},
+				};
+			}
+
 			return {
-				...state,
+				...( newState || state ),
 				isSubmitting: true,
 				submitError: false,
 			};
