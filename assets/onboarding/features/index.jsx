@@ -72,9 +72,17 @@ const Features = () => {
 		);
 
 	const finishSelection = () => {
+		submitStep(
+			{ selected: selectedSlugs },
+			{ onSuccess: onSubmitSuccess }
+		);
+	};
+
+	const onSubmitSuccess = () => {
 		if ( 0 === selectedSlugs.length ) {
 			goToNextStep();
-			return;
+		} else {
+			toggleConfirmation( true );
 		}
 
 		submitStep(
