@@ -430,6 +430,7 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 
 		$property = new ReflectionProperty( 'Sensei_Plugins_Installation', 'instance' );
 		$property->setAccessible( true );
+		$real_instance = $property->getValue();
 		$property->setValue( $mock );
 
 		$expected_extensions = [
@@ -455,6 +456,9 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 			],
 		];
 		$extensions          = Sensei()->onboarding->get_sensei_extensions();
+
+		// Revert mocked instance
+		$property->setValue( $real_instance );
 
 		$this->assertEquals( $expected_extensions, $extensions );
 	}
@@ -494,10 +498,14 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 
 		$property = new ReflectionProperty( 'Sensei_Plugins_Installation', 'instance' );
 		$property->setAccessible( true );
+		$real_instance = $property->getValue();
 		$property->setValue( $mock );
 
 		$mock->expects( $this->once() )->method( 'install_plugins' )->with( $this->equalTo( $expected_extensions ) );
 
 		Sensei()->onboarding->install_extensions( [ 'allowed', 'not-allowed' ] );
+
+		// Revert mocked instance
+		$property->setValue( $real_instance );
 	}
 }
