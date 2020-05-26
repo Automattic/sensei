@@ -256,6 +256,21 @@ class Sensei_Plugins_Installation {
 	}
 
 	/**
+	 * Wrapper to get error message and give the `get_error_data` as fallback.
+	 *
+	 * @param WP_Error $error
+	 *
+	 * @return string Error message.
+	 */
+	private function get_error_message( $error ) {
+		if ( $error->get_error_message() ) {
+			return $error->get_error_message();
+		}
+
+		return $error->get_error_data();
+	}
+
+	/**
 	 * Install a plugin from WP.org.
 	 *
 	 * @param stdClass[] $plugin_to_install Plugin information.
@@ -321,20 +336,20 @@ class Sensei_Plugins_Installation {
 					);
 
 					if ( is_wp_error( $plugin_information ) ) {
-						throw new Exception( $plugin_information->get_error_message() );
+						throw new Exception( $this->get_error_message( $plugin_information ) );
 					}
 
 					$package  = $plugin_information->download_link;
 					$download = $upgrader->download_package( $package );
 
 					if ( is_wp_error( $download ) ) {
-						throw new Exception( $download->get_error_message() );
+						throw new Exception( $this->get_error_message( $download ) );
 					}
 
 					$working_dir = $upgrader->unpack_package( $download, true );
 
 					if ( is_wp_error( $working_dir ) ) {
-						throw new Exception( $working_dir->get_error_message() );
+						throw new Exception( $this->get_error_message( $working_dir ) );
 					}
 
 					$result = $upgrader->install_package(
@@ -352,7 +367,7 @@ class Sensei_Plugins_Installation {
 					);
 
 					if ( is_wp_error( $result ) ) {
-						throw new Exception( $result->get_error_message() );
+						throw new Exception( $this->get_error_message( $result ) );
 					}
 
 					$activate = true;
@@ -381,7 +396,7 @@ class Sensei_Plugins_Installation {
 					$result = activate_plugin( $installed ? $installed_plugins[ $plugin_file ] : $plugin_slug . '/' . $plugin_file );
 
 					if ( is_wp_error( $result ) ) {
-						throw new Exception( $result->get_error_message() );
+						throw new Exception( $this->get_error_message( $result ) );
 					}
 				} catch ( Exception $e ) {
 					$error   = true;
