@@ -142,7 +142,7 @@ describe( '<Features />', () => {
 		expect( window.sensei_log_event ).toHaveBeenCalledWith(
 			'setup_wizard_features_continue',
 			{
-				slug: [],
+				slug: '',
 			}
 		);
 	} );
@@ -156,6 +156,7 @@ describe( '<Features />', () => {
 
 		// Check the first feature.
 		fireEvent.click( getByLabelText( 'Test 1' ) );
+		fireEvent.click( getByLabelText( 'Test 2' ) );
 
 		fireEvent.click( queryByText( 'Continue' ) );
 		fireEvent.click( queryByText( 'Install now' ) );
@@ -164,7 +165,7 @@ describe( '<Features />', () => {
 		expect( window.sensei_log_event ).toHaveBeenCalledWith(
 			'setup_wizard_features_continue',
 			{
-				slug: [ 'test-1' ],
+				slug: 'test-2,test-1',
 			}
 		);
 	} );

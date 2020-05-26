@@ -113,7 +113,9 @@ const Features = () => {
 
 	const goToNextStep = () => {
 		goTo( 'ready' );
-		logEvent( 'setup_wizard_features_continue', { slug: selectedSlugs } );
+		logEvent( 'setup_wizard_features_continue', {
+			slug: selectedSlugs.join( ',' ),
+		} );
 	};
 
 	return (
