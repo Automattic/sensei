@@ -30,6 +30,9 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 
 		do_action( 'rest_api_init' );
 
+		// Make sure CSVs are allowed on WordPress multi-site.
+		update_site_option( 'upload_filetypes', 'csv' );
+
 		// We need to re-instansiate the controller on each tests to register any hooks.
 		new Sensei_REST_API_Messages_Controller( 'sensei_message' );
 	}
@@ -269,6 +272,10 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 	 * @param bool   $is_authorized Is the user authenticated and authorized.
 	 */
 	public function testPostFileValidFile( $user_role, $is_authorized ) {
+		if ( ! version_compare( get_bloginfo( 'version' ), '5.0.0', '>=' ) ) {
+			$this->markTestSkipped( 'Test fails with 4.9 due to text/csv getting interpretted as text/plain.' );
+		}
+
 		wp_logout();
 
 		$user_description = 'Guest';
@@ -405,6 +412,10 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 	 * @param bool   $is_authorized Is the user authenticated and authorized.
 	 */
 	public function testDeleteFileExists( $user_role, $is_authorized ) {
+		if ( ! version_compare( get_bloginfo( 'version' ), '5.0.0', '>=' ) ) {
+			$this->markTestSkipped( 'Test fails with 4.9 due to text/csv getting interpretted as text/plain.' );
+		}
+
 		wp_logout();
 
 		$user_description = 'Guest';

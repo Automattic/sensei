@@ -19,6 +19,16 @@ require_once SENSEI_TEST_FRAMEWORK_DIR . '/data-port/class-sensei-data-port-task
  */
 class Sensei_Data_Port_Job_Test extends WP_UnitTestCase {
 
+	/**
+	 * Set up the tests.
+	 */
+	public function setUp() {
+		// Make sure CSVs are allowed on WordPress multi-site.
+		update_site_option( 'upload_filetypes', 'csv' );
+
+		return parent::setUp();
+	}
+
 	public function testJobWithCompletedTasksIsCompleted() {
 		$first_completed  = $this->mock_task_method( true, 100, 100, 'run' );
 		$second_completed = $this->mock_task_method( true, 100, 100, 'run' );
@@ -230,6 +240,10 @@ class Sensei_Data_Port_Job_Test extends WP_UnitTestCase {
 	 * Test saving a valid file to the job.
 	 */
 	public function testSaveFileValid() {
+		if ( ! version_compare( get_bloginfo( 'version' ), '5.0.0', '>=' ) ) {
+			$this->markTestSkipped( 'Test fails with 4.9 due to text/csv getting interpretted as text/plain.' );
+		}
+
 		$test_file = SENSEI_TEST_FRAMEWORK_DIR . '/data-port/data-files/questions.csv';
 		$test_file = $this->get_tmp_file( $test_file );
 		$job       = new Sensei_Data_Port_Job_Mock( 'test-job' );
@@ -277,6 +291,10 @@ class Sensei_Data_Port_Job_Test extends WP_UnitTestCase {
 	 * Test deleting an existing file from a job.
 	 */
 	public function testDeleteFileExists() {
+		if ( ! version_compare( get_bloginfo( 'version' ), '5.0.0', '>=' ) ) {
+			$this->markTestSkipped( 'Test fails with 4.9 due to text/csv getting interpretted as text/plain.' );
+		}
+
 		$test_file = SENSEI_TEST_FRAMEWORK_DIR . '/data-port/data-files/questions.csv';
 		$test_file = $this->get_tmp_file( $test_file );
 		$job       = new Sensei_Data_Port_Job_Mock( 'test-job' );
