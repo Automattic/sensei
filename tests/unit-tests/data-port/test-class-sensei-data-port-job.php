@@ -226,10 +226,101 @@ class Sensei_Data_Port_Job_Test extends WP_UnitTestCase {
 		$this->assertFalse( get_option( $job->get_name() ), 'Option should not be stored if persist is not called.' );
 	}
 
+	/**
+	 * Test saving a valid file to the job.
+	 */
+	public function testSaveFileValid() {
+		$test_file = SENSEI_TEST_FRAMEWORK_DIR . '/data-port/data-files/questions.csv';
+		$test_file = $this->get_tmp_file( $test_file );
+		$job       = new Sensei_Data_Port_Job_Mock( 'test-job' );
+
+		$result = $job->save_file( 'questions', $test_file, basename( $test_file ) );
+
+		$this->assertTrue( $result, 'Valid file with a valid file key should be stored' );
+		$this->assertTrue( isset( $job->get_files()['questions'] ) );
+
+		$attachment = get_post( $job->get_files()['questions'] );
+		$this->assertTrue( $attachment instanceof WP_Post );
+
+		$this->assertEquals( basename( $test_file ), $attachment->post_title );
+	}
+
+	/**
+	 * Test saving a non CSV file to a job.
+	 */
+	public function testSaveFileBadFile() {
+		$test_file = SENSEI_TEST_FRAMEWORK_DIR . '/data-port/data-files/invalid_file_type.tsv';
+		$test_file = $this->get_tmp_file( $test_file );
+		$job       = new Sensei_Data_Port_Job_Mock( 'test-job' );
+
+		$result = $job->save_file( 'questions', $test_file, basename( $test_file ) );
+
+		$this->assertWPError( $result, 'Invalid file should result in a WP Error' );
+		$this->assertEquals( 'sensei_data_port_unexpected_file_type', $result->get_error_code() );
+	}
+
+	/**
+	 * Test saving a unknown file key to a job.
+	 */
+	public function testSaveFileBadFileKey() {
+		$test_file = SENSEI_TEST_FRAMEWORK_DIR . '/data-port/data-files/questions.csv';
+		$test_file = $this->get_tmp_file( $test_file );
+		$job       = new Sensei_Data_Port_Job_Mock( 'test-job' );
+
+		$result = $job->save_file( 'dinosaurs', $test_file, basename( $test_file ) );
+
+		$this->assertWPError( $result, 'Invalid file key should result in a WP Error' );
+		$this->assertEquals( 'sensei_data_port_unknown_file_key', $result->get_error_code() );
+	}
+
+	/**
+	 * Test deleting an existing file from a job.
+	 */
+	public function testDeleteFileExists() {
+		$test_file = SENSEI_TEST_FRAMEWORK_DIR . '/data-port/data-files/questions.csv';
+		$test_file = $this->get_tmp_file( $test_file );
+		$job       = new Sensei_Data_Port_Job_Mock( 'test-job' );
+
+		$job->save_file( 'questions', $test_file, basename( $test_file ) );
+		$result = $job->delete_file( 'questions' );
+
+		$this->assertNotFalse( $result, 'File should be deleted' );
+		$this->assertFalse( isset( $job->get_files()['questions'] ) );
+	}
+
+
+	/**
+	 * Test deleting an non-existing file from a job.
+	 */
+	public function testDeleteFileNotExists() {
+		$job = new Sensei_Data_Port_Job_Mock( 'test-job' );
+
+		$result = $job->delete_file( 'questions' );
+
+		$this->assertFalse( $result, 'Should pass back false as there was no file' );
+		$this->assertFalse( isset( $job->get_files()['questions'] ) );
+	}
+
 	private function mock_task_method( $is_complete, $completed_cycles, $total_cycles, $method ) {
 		return $this->getMockBuilder( Sensei_Data_Port_Task_Mock::class )
 			->setConstructorArgs( [ $is_complete, $completed_cycles, $total_cycles ] )
 			->setMethods( [ $method ] )
 			->getMock();
+	}
+
+	/**
+	 * Get a temporary file from a source file.
+	 *
+	 * @param string $file_path File to copy.
+	 *
+	 * @return string
+	 */
+	private function get_tmp_file( $file_path ) {
+		$tmp = wp_tempnam( basename( $file_path ) ) . '.' . pathinfo( $file_path, PATHINFO_EXTENSION );
+
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_file_put_contents, WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		file_put_contents( $tmp, file_get_contents( $file_path ) );
+
+		return $tmp;
 	}
 }

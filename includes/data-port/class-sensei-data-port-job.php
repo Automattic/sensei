@@ -422,7 +422,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 		$file_save_url = $uploads['url'] . "/$filename";
 		$wp_filetype   = wp_check_filetype_and_ext( $file_save_path, $file_name, $mime_types );
 
-		// Construct the object array.
+		// Construct the attachment arguments array.
 		$attachment_args = array(
 			'post_title'     => $file_name,
 			'post_content'   => $file_save_url,

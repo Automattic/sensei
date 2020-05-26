@@ -35,7 +35,21 @@ class Sensei_Data_Port_Job_Mock extends Sensei_Data_Port_Job {
 	}
 
 	public static function get_file_config() {
-		return [];
+		$files = [];
+
+		$csv_mime_types = [
+			'csv' => 'text/csv',
+			'txt' => 'text/plain',
+		];
+
+		$files['questions'] = [
+			'validator'  => function( $file ) {
+				return true;
+			},
+			'mime_types' => $csv_mime_types,
+		];
+
+		return $files;
 	}
 
 }
