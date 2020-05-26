@@ -508,7 +508,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	private function mime_types_extensions( $mime_types ) {
 		$extensions = [];
 		foreach ( array_keys( $mime_types ) as $ext_list ) {
-			$extensions = array_merge( $extensions, explode( ',', $ext_list ) );
+			$extensions = array_merge( $extensions, explode( '|', $ext_list ) );
 		}
 
 		return array_unique( $extensions );
