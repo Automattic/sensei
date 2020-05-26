@@ -255,6 +255,8 @@ class Sensei_Main {
 
 		$this->initialize_global_objects();
 
+		$this->maybe_init_email_deactivation_survey_modal();
+
 	}
 
 	/**
@@ -265,6 +267,24 @@ class Sensei_Main {
 	 */
 	public function load_email_signup_modal() {
 		_deprecated_function( __METHOD__, '3.1.0' );
+	}
+
+	/**
+	 * Load the deactivation survey form in plugins screen.
+	 */
+	public function maybe_init_email_deactivation_survey_modal() {
+		add_action( 'current_screen', array( $this, 'load_deactivation_survey_modal' ) );
+	}
+
+	/**
+	 * Load the deactivation survey modal.
+	 */
+	public function load_deactivation_survey_modal() {
+		if ( ! Sensei_Utils::sensei_is_plugins_page() ) {
+			return;
+		}
+
+		Sensei_Deactivation_Survey_Form::instance()->init();
 	}
 
 	/**
