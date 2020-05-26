@@ -103,7 +103,7 @@ class Sensei_REST_API_Import_Controller extends Sensei_REST_API_Data_Port_Contro
 		// Check to make sure the upload succeeded.
 		if (
 			! isset( $files['file']['tmp_name'], $files['file']['error'] )
-			|| ! is_uploaded_file( $files['file']['tmp_name'] )
+			|| ! $this->is_uploaded_file( $files['file']['tmp_name'] )
 			|| UPLOAD_ERR_OK !== $files['file']['error']
 		) {
 			return new WP_Error(
@@ -123,6 +123,23 @@ class Sensei_REST_API_Import_Controller extends Sensei_REST_API_Data_Port_Contro
 		$response->set_data( $this->prepare_to_serve_job( $job ) );
 
 		return $response;
+	}
+
+	/**
+	 * Check if a file was uploaded.
+	 *
+	 * @param string $filename Temporary file path to check.
+	 *
+	 * @return bool
+	 */
+	private function is_uploaded_file( $filename ) {
+		// Disable this check in tests as it isn't possible to bypass. This is the constant
+		// WordPress core uses to see if we're within tests.
+		if ( defined( 'DIR_TESTDATA' ) && DIR_TESTDATA ) {
+			return true;
+		}
+
+		return is_uploaded_file( $filename );
 	}
 
 	/**
