@@ -477,9 +477,15 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 		if ( isset( $file_config['mime_types'] ) ) {
 			$wp_filetype = wp_check_filetype_and_ext( $tmp_file, $file_name, $file_config['mime_types'] );
 
-			if ( empty( $wp_filetype['type'] ) || ! in_array( $wp_filetype['type'], $file_config['mime_types'], true ) ) {
-				$valid_extensions = $this->mime_types_extensions( $file_config['mime_types'] );
+			$valid_mime_type  = $wp_filetype['type'] && in_array( $wp_filetype['type'], $file_config['mime_types'], true );
+			$valid_extensions = $this->mime_types_extensions( $file_config['mime_types'] );
 
+			// If we cannot determine the type, allow check based on extension for administrators.
+			if ( ! $wp_filetype['type'] && current_user_can( 'unfiltered_upload' ) ) {
+				$valid_mime_type = in_array( pathinfo( $file_name, PATHINFO_EXTENSION ), $valid_extensions, true );
+			}
+
+			if ( ! $valid_mime_type ) {
 				return new WP_Error(
 					'sensei_data_port_unexpected_file_type',
 					// translators: Placeholder is list of file extensions.
