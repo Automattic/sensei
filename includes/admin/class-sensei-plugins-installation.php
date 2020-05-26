@@ -236,6 +236,26 @@ class Sensei_Plugins_Installation {
 	}
 
 	/**
+	 * Complete installation removing the plugin from the transient.
+	 *
+	 * @param string $plugin_slug
+	 */
+	private function complete_installation( $plugin_slug ) {
+		$installing_plugins = $this->get_installing_plugins();
+
+		if ( ! empty( $installing_plugins ) ) {
+			$installing_plugins = array_filter(
+				$installing_plugins,
+				function( $plugin ) use ( $plugin_slug ) {
+					return $plugin->product_slug !== $plugin_slug;
+				}
+			);
+
+			$this->set_installing_plugins( $installing_plugins );
+		}
+	}
+
+	/**
 	 * Install a plugin from WP.org.
 	 *
 	 * @param stdClass[] $plugin_to_install Plugin information.
@@ -380,19 +400,7 @@ class Sensei_Plugins_Installation {
 				return;
 			}
 
-			// Remove from transient when complete.
-			$installing_plugins = $this->get_installing_plugins();
-
-			if ( ! empty( $installing_plugins ) ) {
-				$installing_plugins = array_filter(
-					$installing_plugins,
-					function( $plugin ) use ( $plugin_slug ) {
-						return $plugin->product_slug !== $plugin_slug;
-					}
-				);
-
-				$this->set_installing_plugins( $installing_plugins );
-			}
+			$this->complete_installation( $plugin_slug );
 		}
 	}
 }
