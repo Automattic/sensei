@@ -117,6 +117,8 @@ class Sensei_Plugins_Installation {
 
 		foreach ( $plugins_to_install as $plugin ) {
 			$key = array_search( $plugin->product_slug, array_column( $installing_plugins, 'product_slug' ), true );
+
+			// Add to the queue if it is not there yet, or if it is there with error.
 			if ( false === $key || isset( $installing_plugins[ $key ]->error ) ) {
 				// Clean error.
 				unset( $plugin->error );
@@ -135,7 +137,7 @@ class Sensei_Plugins_Installation {
 			}
 		}
 
-		set_transient( self::INSTALLING_PLUGINS_TRANSIENT, $installing_plugins, DAY_IN_SECONDS );
+		$this->set_installing_plugins( $installing_plugins );
 	}
 
 	/**
@@ -147,6 +149,15 @@ class Sensei_Plugins_Installation {
 		$installing_plugins = get_transient( self::INSTALLING_PLUGINS_TRANSIENT );
 
 		return $installing_plugins ? $installing_plugins : [];
+	}
+
+	/**
+	 * Set installing plugins.
+	 *
+	 * @paran stdClass[] Installing plugins.
+	 */
+	public function set_installing_plugins( $installing_plugins ) {
+		set_transient( self::INSTALLING_PLUGINS_TRANSIENT, $installing_plugins, DAY_IN_SECONDS );
 	}
 
 	/**
@@ -221,7 +232,7 @@ class Sensei_Plugins_Installation {
 			$installing_plugins[ $key ]->error = $message;
 		}
 
-		set_transient( self::INSTALLING_PLUGINS_TRANSIENT, $installing_plugins, DAY_IN_SECONDS );
+		$this->set_installing_plugins( $installing_plugins );
 	}
 
 	/**
@@ -380,7 +391,7 @@ class Sensei_Plugins_Installation {
 					}
 				);
 
-				set_transient( self::INSTALLING_PLUGINS_TRANSIENT, $installing_plugins, DAY_IN_SECONDS );
+				$this->set_installing_plugins( $installing_plugins );
 			}
 		}
 	}
