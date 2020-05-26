@@ -1,3 +1,6 @@
+$green: #32af7d;
+$green-darker: #29966b;
+
 $primary: $green;
 $secondary: #674399;
 $link: #50575e;
@@ -15,9 +18,6 @@ $gray-80: #2c3338;
 $gray-90: #1d2327;
 $gray-100: #101517;
 $gray: #646970;
-
-$green: #32af7d;
-$green-darker: #29966b;
 
 $text_primary: $gray-80;
 $text_secondary: $gray-60;
@@ -116,7 +116,7 @@ $alert-red: #d94f4f;
 			margin: 24px 0;
 		}
 
-		.sensei-import-form__body {
+		&__body {
 			padding: 0 24px;
 			margin: 0;
 
@@ -137,8 +137,29 @@ $alert-red: #d94f4f;
 				height: 62px;
 
 				&__description {
-					width: 30%;
+					flex-basis: 25%;
 					margin: 18px 0;
+					flex-shrink: 0;
+				}
+
+				.components-form-file-upload {
+					flex-basis: 18%;
+					flex-shrink: 0;
+				}
+
+				&__message {
+					flex-basis: 55%;
+					padding: 0;
+					margin: auto 0;
+					flex-grow: 0;
+				}
+
+				.error {
+					color: $alert-red
+				}
+
+				&__icon {
+					margin: 21px 5px 21px 0;
 				}
 
 				.components-button {
