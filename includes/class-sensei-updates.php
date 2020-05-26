@@ -1642,6 +1642,7 @@ class Sensei_Updates {
 							);
 						}
 					}
+					clean_comment_cache( $comment_ID );
 				}
 			}
 		}
@@ -1788,6 +1789,7 @@ class Sensei_Updates {
 							);
 						}
 					}
+					clean_comment_cache( $comment_ID );
 				}
 			}
 		}
@@ -2023,6 +2025,7 @@ class Sensei_Updates {
 							);
 						}
 					}
+					clean_comment_cache( $comment_ID );
 				}
 			}
 		}
@@ -2045,10 +2048,14 @@ class Sensei_Updates {
 		global $wpdb;
 
 		// Update 'sensei_user_answer' entries to use comment_approved = 'log' so they don't appear in counts
+		$comment_ids = $wpdb->get_col( "SELECT comment_ID FROM $wpdb->comments WHERE comment_type = 'sensei_user_answer'" );
 		$wpdb->query( "UPDATE $wpdb->comments SET comment_approved = 'log' WHERE comment_type = 'sensei_user_answer' " );
+		clean_comment_cache( $comment_ids );
 
 		// Mark all old Sensei comment types with comment_approved = 'legacy' so they no longer appear in counts, but can be restored if required
+		$comment_ids = $wpdb->get_col( "SELECT comment_ID FROM $wpdb->comments WHERE comment_type IN ('sensei_course_start', 'sensei_course_end', 'sensei_lesson_start', 'sensei_lesson_end', 'sensei_quiz_  asked', 'sensei_user_grade', 'sensei_answer_notes', 'sensei_quiz_grade')" );
 		$wpdb->query( "UPDATE $wpdb->comments SET comment_approved = 'legacy' WHERE comment_type IN ('sensei_course_start', 'sensei_course_end', 'sensei_lesson_start', 'sensei_lesson_end', 'sensei_quiz_asked', 'sensei_user_grade', 'sensei_answer_notes', 'sensei_quiz_grade') " );
+		clean_comment_cache( $comment_ids );
 
 		return true;
 	}
@@ -2099,7 +2106,9 @@ class Sensei_Updates {
 	public function remove_legacy_comments() {
 		global $wpdb;
 
+		$comment_ids = $wpdb->get_col( "SELECT comment_ID FROM $wpdb->comments WHERE comment_approved = 'legacy'" );
 		$wpdb->delete( $wpdb->comments, array( 'comment_approved' => 'legacy' ) );
+		clean_comment_cache( $comment_ids );
 
 		return true;
 	}
