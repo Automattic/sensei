@@ -1,0 +1,25 @@
+#sensei_deactivation_form_wrapper {
+  display: none;
+  border-radius: 0;
+  font-family: Futura, sans-serif;
+  border: 7px solid #00ace6;
+  font-size: 16px; }
+  #sensei_deactivation_form_wrapper p, #sensei_deactivation_form_wrapper input, #sensei_deactivation_form_wrapper button, #sensei_deactivation_form_wrapper a {
+    font-size: 16px; }
+  #sensei_deactivation_form_wrapper h2 {
+    text-transform: uppercase;
+    margin-bottom: 2em;
+    font-size: 23px;
+    line-height: 1em; }
+  #sensei_deactivation_form_wrapper .buttons {
+    margin-top: 2em;
+    margin-bottom: 2em;
+    text-align: right; }
+  #sensei_deactivation_form_wrapper .buttons .button, #sensei_deactivation_form_wrapper .buttons .button-primary {
+    border: none;
+    text-shadow: none;
+    box-shadow: none; }
+  #sensei_deactivation_form_wrapper .buttons .button-primary {
+    background: #00ace6; }
+  #sensei_deactivation_form_wrapper .buttons .button {
+    background: rgba(255, 255, 255, 0); }

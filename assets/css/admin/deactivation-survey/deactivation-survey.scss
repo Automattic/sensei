@@ -1,0 +1,42 @@
+$email_signup_blue: #00ace6;
+
+#sensei_deactivation_form_wrapper {
+  display: none;
+  border-radius: 0;
+  font-family: Futura, sans-serif;
+  border: 7px solid $email_signup_blue;
+  font-size: 16px;
+
+  p, input, button, a {
+    font-size: 16px;
+  }
+
+  h2 {
+    text-transform: uppercase;
+    margin-bottom: 2em;
+    font-size: 23px;
+    line-height: 1em;
+  }
+
+  .buttons {
+    margin-top: 2em;
+    margin-bottom: 2em;
+    text-align: right;
+  }
+
+  .buttons {
+    .button, .button-primary {
+      border: none;
+      text-shadow: none;
+      box-shadow: none;
+    }
+
+    .button-primary {
+      background: $email_signup_blue;
+    }
+
+    .button {
+      background: rgba( 255, 255, 255, 0 );
+    }
+  }
+}
