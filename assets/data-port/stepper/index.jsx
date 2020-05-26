@@ -11,11 +11,11 @@ const moveToNext = ( steps ) => {
 
 	for ( let i = 0; i < newSteps.length; i++ ) {
 		if ( newSteps[ i ].isActive ) {
-			newSteps[ i ].isComplete = true;
+			newSteps[ i ] = { ...newSteps[ i ], isComplete: true };
 
 			if ( i + 1 < newSteps.length ) {
-				newSteps[ i + 1 ].isActive = true;
-				newSteps[ i ].isActive = false;
+				newSteps[ i + 1 ] = { ...newSteps[ i + 1 ], isActive: true };
+				newSteps[ i ] = { ...newSteps[ i ], isActive: false };
 			}
 
 			return newSteps;
@@ -34,7 +34,7 @@ const moveToNext = ( steps ) => {
 const completeCurrentStep = ( steps ) =>
 	steps.map( ( step ) => {
 		if ( step.isActive ) {
-			step.isComplete = true;
+			return { ...step, isComplete: true };
 		}
 
 		return step;
