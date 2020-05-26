@@ -318,12 +318,11 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	/**
 	 * Tests that features get endpoint returns fetched data.
 	 *
-	 * @covers Sensei_REST_API_Setup_Wizard_Controller::get_data
+	 * @covers Sensei_REST_API_Setup_Wizard_Controller::get_features_data
 	 */
 	public function testGetFeaturesReturnsFetchedData() {
-		$response_body = '{ "products": [ { "product_slug": "slug-1", "plugin_file": "test/test.php" } ] }';
-
 		// Mock fetch from senseilms.com.
+		$response_body = '{ "products": [ { "product_slug": "slug-1", "plugin_file": "test/test.php" } ] }';
 		add_filter(
 			'pre_http_request',
 			function() use ( $response_body ) {
@@ -333,7 +332,69 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 
 		$data = $this->request( 'GET', 'features' );
 
-		$this->assertEquals( $data['options'][0]->product_slug, 'slug-1' );
+		$expected_data = [
+			'options'  => [
+				(object) [
+					'product_slug' => 'slug-1',
+					'plugin_file'  => 'test/test.php',
+				],
+			],
+			'selected' => [],
+		];
+
+		$this->assertEquals( $data, $expected_data );
+	}
+
+	/**
+	 * Tests that submitting features installation starts installation.
+	 *
+	 * @covers Sensei_REST_API_Setup_Wizard_Controller::submit_features_installation
+	 */
+	public function testSubmitFeaturesInstallation() {
+		// Mock fetch from senseilms.com.
+		$response_body = '{ "products": [ { "product_slug": "slug-1", "plugin_file": "test/test.php" } ] }';
+		add_filter(
+			'pre_http_request',
+			function() use ( $response_body ) {
+				return [ 'body' => $response_body ];
+			}
+		);
+
+		$this->request( 'POST', 'features-installation', [ 'selected' => [ 'slug-1' ] ] );
+
+		$expected_extensions = [
+			(object) [
+				'product_slug' => 'slug-1',
+				'plugin_file'  => 'test/test.php',
+				'status'       => 'installing',
+			],
+		];
+		$sensei_extensions   = Sensei()->onboarding->get_sensei_extensions();
+
+		$this->assertEquals( $expected_extensions, $sensei_extensions );
+	}
+
+	/**
+	 * Tests that user cannot install features without capability.
+	 *
+	 * @covers Sensei_REST_API_Setup_Wizard_Controller::can_user_install_plugins
+	 */
+	public function testUserCannotInstallFeaturesWithoutCapability() {
+		$user_id = $this->factory->user->create();
+		$user    = get_user_by( 'id', $user_id );
+
+		$user->add_cap( 'manage_sensei' ); // Without install_plugins capability.
+		wp_set_current_user( $user_id );
+
+		$this->assertEquals( current_user_can( 'install_plugins' ), false );
+
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/setup-wizard/features-installation' );
+		$request->set_header( 'content-type', 'application/json' );
+		$request->set_body( wp_json_encode( [ 'selected' => [] ] ) );
+
+		$response = $this->server->dispatch( $request );
+
+		$this->assertEquals( 403, $response->get_status() );
 	}
 
 	/**

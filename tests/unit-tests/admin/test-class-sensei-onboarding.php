@@ -363,14 +363,13 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Onboarding::get_sensei_extensions
 	 */
 	public function testGetSenseiExtensionsAndReturnsWithDecodedPrices() {
+		// Mock fetch from senseilms.com.
 		$response_body = '{
 			"products": [
 				{ "product_slug": "slug-1", "price": "&#36;1.00", "plugin_file": "test/test.php" },
 				{ "product_slug": "slug-2", "price": 0, "plugin_file": "test/test.php" }
 			]
 		}';
-
-		// Mock fetch from senseilms.com.
 		add_filter(
 			'pre_http_request',
 			function() use ( $response_body ) {
@@ -382,5 +381,123 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 
 		$this->assertEquals( $extensions[0]->price, '$1.00' );
 		$this->assertEquals( $extensions[1]->price, 0 );
+	}
+
+	/**
+	 * Tests that get sensei extensions and returns with decoded prices.
+	 *
+	 * @covers Sensei_Onboarding::get_feature_with_status
+	 * @covers Sensei_Onboarding::get_sensei_extensions
+	 */
+	public function testGetSenseiExtensionsWithStatuses() {
+		// Set installing plugins
+		$installing_plugins = [
+			(object) [
+				'product_slug' => 'slug-1',
+			],
+			(object) [
+				'product_slug' => 'slug-2',
+				'error'        => 'Error message',
+			],
+		];
+		$transient          = Sensei_Plugins_Installation::INSTALLING_PLUGINS_TRANSIENT;
+		set_transient( $transient, $installing_plugins, DAY_IN_SECONDS );
+
+		// Mock fetch from senseilms.com.
+		$response_body = '{
+			"products": [
+				{ "product_slug": "slug-1", "plugin_file": "test/test.php" },
+				{ "product_slug": "slug-2", "plugin_file": "test/test.php" },
+				{ "product_slug": "slug-3", "plugin_file": "test/test-installed.php" },
+				{ "product_slug": "slug-4", "plugin_file": "test/test.php" }
+			]
+		}';
+		add_filter(
+			'pre_http_request',
+			function() use ( $response_body ) {
+				return [ 'body' => $response_body ];
+			}
+		);
+
+		// Mock active plugins.
+		$mock = $this->getMockBuilder( Sensei_Plugins_Installation::class )
+			->disableOriginalConstructor()
+			->setMethods( [ 'is_plugin_active' ] )
+			->getMock();
+
+		$mock->method( 'is_plugin_active' )
+			->will( $this->onConsecutiveCalls( false, false, true, false ) );
+
+		$property = new ReflectionProperty( 'Sensei_Plugins_Installation', 'instance' );
+		$property->setAccessible( true );
+		$property->setValue( $mock );
+
+		$expected_extensions = [
+			(object) [
+				'product_slug' => 'slug-1',
+				'status'       => 'installing',
+				'plugin_file'  => 'test/test.php',
+			],
+			(object) [
+				'product_slug' => 'slug-2',
+				'status'       => 'error',
+				'error'        => 'Error message',
+				'plugin_file'  => 'test/test.php',
+			],
+			(object) [
+				'product_slug' => 'slug-3',
+				'status'       => 'installed',
+				'plugin_file'  => 'test/test-installed.php',
+			],
+			(object) [
+				'product_slug' => 'slug-4',
+				'plugin_file'  => 'test/test.php',
+			],
+		];
+		$extensions          = Sensei()->onboarding->get_sensei_extensions();
+
+		$this->assertEquals( $expected_extensions, $extensions );
+	}
+
+	/**
+	 * Tests that not allowed extensions are not installed.
+	 *
+	 * @covers Sensei_Onboarding::install_extensions
+	 */
+	public function testInstallNotAllowedExtension() {
+		// Mock fetch from senseilms.com.
+		$response_body = '{
+			"products": [
+				{ "product_slug": "allowed", "plugin_file": "test/test.php" },
+				{ "product_slug": "allowed-2", "plugin_file": "test/test.php" }
+			]
+		}';
+		add_filter(
+			'pre_http_request',
+			function() use ( $response_body ) {
+				return [ 'body' => $response_body ];
+			}
+		);
+
+		$expected_extensions = [
+			(object) [
+				'product_slug' => 'allowed',
+				'plugin_file'  => 'test/test.php',
+			],
+		];
+
+		// Mock install plugins method
+		$mock = $this->getMockBuilder( Sensei_Plugins_Installation::class )
+			->disableOriginalConstructor()
+			->setMethods( [ 'install_plugins' ] )
+			->getMock();
+
+		$property = new ReflectionProperty( 'Sensei_Plugins_Installation', 'instance' );
+		$property->setAccessible( true );
+		$property->setValue( $mock );
+
+		$mock->expects( $this->once() )->method( 'install_plugins' )->with( $this->equalTo( $expected_extensions ) );
+
+		Sensei()->onboarding->install_extensions( [ 'allowed', 'not-allowed' ] );
 	}
 }
