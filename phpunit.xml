@@ -3,9 +3,9 @@
         bootstrap="tests/bootstrap.php"
         backupGlobals="false"
         colors="true"
-        convertErrorsToExceptions="true"
-        convertNoticesToExceptions="true"
-        convertWarningsToExceptions="true"
+		convertErrorsToExceptions="false"
+		convertNoticesToExceptions="false"
+		convertWarningsToExceptions="false"
         verbose="true"
         syntaxCheck="true"
 >
