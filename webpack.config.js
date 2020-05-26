@@ -24,6 +24,8 @@ const files = [
 	'js/user-dashboard.js',
 	'onboarding/index.jsx',
 	'onboarding/style.scss',
+	'data-port/import.jsx',
+	'data-port/style.scss',
 
 	'css/frontend/sensei.scss',
 	'css/admin-custom.css',
