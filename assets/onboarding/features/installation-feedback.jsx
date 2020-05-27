@@ -48,7 +48,12 @@ const InstallationFeedback = ( { onContinue, onRetry } ) => {
 
 	if ( hasInstalling ) {
 		actionButtons = (
-			<Button isPrimary className="sensei-onboarding__button">
+			<Button
+				isPrimary
+				isBusy
+				disabled
+				className="sensei-onboarding__button"
+			>
 				{ __( 'Installing…', 'sensei-lms' ) }
 			</Button>
 		);
