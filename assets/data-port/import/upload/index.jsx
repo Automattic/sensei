@@ -2,9 +2,12 @@ import { __ } from '@wordpress/i18n';
 import { Section, H } from '@woocommerce/components';
 import { UploadLines } from "../upload-line";
 import { Button } from '@wordpress/components';
+import { useState } from '@wordpress/element';
 
 // TODO: calculate max file size.
 export const UploadPage = () => {
+	const [ isReady, setStatus ] = useState( false );
+
 	return (
 		<section className={ 'sensei-import-form' }>
 			<header className={ 'sensei-import-form__header' }>
@@ -17,9 +20,9 @@ export const UploadPage = () => {
 				<p>
 					{ __( 'Choose one or more CSV files to upload from your computer (maximum file size is 300MB).', 'sensei-lms' ) }
 				</p>
-				<UploadLines/>
+				<UploadLines onStatusChange={ setStatus }/>
 				<div className={ 'continue-container'} >
-					<Button isPrimary>{ __( 'Continue', 'sensei-lms' ) }</Button>
+					<Button isPrimary disabled={ ! isReady } >{ __( 'Continue', 'sensei-lms' ) }</Button>
 				</div>
 			</Section>
 		</section>

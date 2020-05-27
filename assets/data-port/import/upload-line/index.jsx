@@ -1,7 +1,7 @@
 /* global FormData */
 
 import { FormFileUpload, Dashicon } from '@wordpress/components';
-import { useReducer } from '@wordpress/element';
+import { useReducer, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import {
@@ -77,8 +77,14 @@ const uploadFile = ( files, lineKey, dispatch ) => {
 		} );
 };
 
-export const UploadLines = () => {
+const isReady = ( lines ) => {
+	return lines.some( ( line ) => line.isUploaded );
+};
+
+export const UploadLines = ( { onStatusChange } ) => {
 	const [ lines, dispatch ] = useReducer( uploadLineReducer, initialLines );
+
+	onStatusChange( useMemo( () => isReady( lines ), [ lines ] ) );
 
 	const getLineMessage = ( line ) => {
 		if ( line.hasError ) {

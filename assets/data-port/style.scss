@@ -1,5 +1,4 @@
 $green: #32af7d;
-$green-darker: #29966b;
 
 $primary: $green;
 $secondary: #674399;
@@ -167,11 +166,11 @@ $alert-red: #d94f4f;
 					border: 1px solid $primary;
 					border-radius: 3px;
 					color: $primary;
-				}
 
-				.components-button:not(:disabled):not([aria-disabled="true"]):hover {
-					color: $green-darker;
-					box-shadow: inset 0 0 0 1px $green-darker, inset 0 0 0 2px $white;
+					&:not(:disabled):not([aria-disabled="true"]):hover {
+						color: darken($primary, 20%);
+						box-shadow: inset 0 0 0 1px $green-darker, inset 0 0 0 2px $white;
+					}
 				}
 			}
 
@@ -188,11 +187,16 @@ $alert-red: #d94f4f;
 					background: $green;
 					border-color: $green;
 					height: 40px;
-				}
 
-				.components-button:not(:disabled):not([aria-disabled="true"]):hover {
-					background: $green-darker;
-					border-color: $green-darker;
+					&:not(:disabled):not([aria-disabled="true"]):hover {
+						background: darken($primary, 20%);
+						border-color: darken($primary, 20%);
+					}
+
+					&:disabled,
+					&[aria-disabled="true"] {
+						color: lighten($primary, 30%);
+					}
 				}
 			}
 		}
