@@ -100,7 +100,7 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 
 		if ( $is_authorized ) {
 			$this->assertTrue( isset( $response->get_data()['code'] ) );
-			$this->assertEquals( 'rest_no_active_job', $response->get_data()['code'] );
+			$this->assertEquals( 'sensei_data_port_no_active_job', $response->get_data()['code'] );
 		}
 	}
 
@@ -215,7 +215,7 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 
 		if ( $is_authorized ) {
 			$this->assertTrue( isset( $response->get_data()['code'] ) );
-			$this->assertEquals( 'rest_no_active_job', $response->get_data()['code'] );
+			$this->assertEquals( 'sensei_data_port_no_active_job', $response->get_data()['code'] );
 		}
 	}
 

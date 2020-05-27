@@ -95,6 +95,17 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 	}
 
 	/**
+	 * Check if a job is ready to be started.
+	 *
+	 * @return bool
+	 */
+	public function is_ready() {
+		$files = $this->get_files();
+
+		return isset( $files['questions'] ) || isset( $files['courses'] ) || isset( $files['lessons'] );
+	}
+
+	/**
 	 * Save a file associated with this job. If this is an uploaded file, `is_uploaded_file()` check should
 	 * occur prior to this method.
 	 *

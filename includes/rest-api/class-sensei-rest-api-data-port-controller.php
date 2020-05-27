@@ -75,6 +75,20 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 				'schema' => [ $this, 'get_item_schema' ],
 			]
 		);
+
+		// Endpoint to start the job.
+		register_rest_route(
+			$this->namespace,
+			$this->rest_base . '/start',
+			[
+				[
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => [ $this, 'request_post_start_job' ],
+					'permission_callback' => [ $this, 'can_user_access_rest_api' ],
+				],
+				'schema' => [ $this, 'get_item_schema' ],
+			]
+		);
 	}
 
 	/**
@@ -86,7 +100,7 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 		$job = $this->get_active_job();
 		if ( ! $job ) {
 			return new WP_Error(
-				'rest_no_active_job',
+				'sensei_data_port_no_active_job',
 				__( 'No job has been created.', 'sensei-lms' ),
 				array( 'status' => 404 )
 			);
@@ -129,7 +143,7 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 		$job = $this->get_active_job();
 		if ( ! $job ) {
 			return new WP_Error(
-				'rest_no_active_job',
+				'sensei_data_port_no_active_job',
 				__( 'No job has been created.', 'sensei-lms' ),
 				array( 'status' => 404 )
 			);
@@ -144,6 +158,43 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 				'previous' => $this->prepare_to_serve_job( $job ),
 			]
 		);
+
+		return $response;
+	}
+
+	/**
+	 * Start the currently active job.
+	 *
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function request_post_start_job() {
+		$job = $this->get_active_job();
+		if ( ! $job ) {
+			return new WP_Error(
+				'sensei_data_port_no_active_job',
+				__( 'No job has been created.', 'sensei-lms' ),
+				array( 'status' => 404 )
+			);
+		}
+
+		if ( ! $job->is_ready() ) {
+			return new WP_Error(
+				'sensei_data_port_job_not_ready',
+				__( 'Job is not ready to be started.', 'sensei-lms' ),
+				array( 'status' => 400 )
+			);
+		}
+
+		if ( ! Sensei_Data_Port_Manager::instance()->start_job( $job ) ) {
+			return new WP_Error(
+				'sensei_data_port_job_could_not_be_started',
+				__( 'Job could not be started', 'sensei-lms' ),
+				array( 'status' => 500 )
+			);
+		}
+
+		$response = new WP_REST_Response();
+		$response->set_data( $this->prepare_to_serve_job( $job ) );
 
 		return $response;
 	}
