@@ -1,7 +1,7 @@
 import { List } from '@woocommerce/components';
 import { Button, TextControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useSetupWizardStep } from '../use-setup-wizard-step';
+import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 
 /**
  * Sign up to Sensei Mailing list.
