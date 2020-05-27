@@ -34,14 +34,13 @@ class Sensei_Onboarding {
 	private $user_data_defaults = [
 		'features'  => [
 			'selected' => [],
-			'options'  => [],
 		],
 		'purpose'   => [
 			'selected' => [],
 			'other'    => '',
 		],
 		'steps'     => [],
-		'__version' => '1-dev1',
+		'__version' => '1',
 	];
 
 	/**
