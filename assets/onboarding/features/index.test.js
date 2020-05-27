@@ -7,10 +7,11 @@ import Features from './index';
 // Mock features data.
 jest.mock( '../data/use-setup-wizard-step', () => {
 	const stepData = {
-		selected: [],
+		selected: [ 'installed' ],
 		options: [
 			{ slug: 'test-1', title: 'Test 1' },
 			{ slug: 'test-2', title: 'Test 2' },
+			{ slug: 'installed', title: 'Test 2', status: 'installed' },
 		],
 	};
 
@@ -37,6 +38,16 @@ describe( '<Features />', () => {
 	afterEach( () => {
 		// Clear URL param.
 		updateRouteURL( 'step', '' );
+	} );
+
+	it( 'Should not check installed features', () => {
+		const { container } = render(
+			<QueryStringRouter paramName="step">
+				<Features />
+			</QueryStringRouter>
+		);
+
+		expect( container.querySelector( 'input:checked' ) ).toBeFalsy();
 	} );
 
 	it( 'Should continue to the ready step when nothing is selected', () => {

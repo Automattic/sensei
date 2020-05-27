@@ -3,11 +3,33 @@ import { Card, H } from '@woocommerce/components';
 import { __ } from '@wordpress/i18n';
 import { uniq } from 'lodash';
 
+import { INSTALLED_STATUS } from './feature-status';
 import { useQueryStringRouter } from '../query-string-router';
 import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 import ConfirmationModal from './confirmation-modal';
 import InstallationFeedback from './installation-feedback';
 import FeaturesSelection from './features-selection';
+
+/**
+ * @typedef  {Object} Feature
+ * @property {string} slug    Feature slug.
+ */
+/**
+ * Filter installed features to don't select them.
+ *
+ * @param {string[]}  submittedSlugs Submitted slugs.
+ * @param {Feature[]} features       Features list.
+ */
+const filterInstalledFeatures = ( submittedSlugs, features ) =>
+	submittedSlugs.filter( ( slug ) => {
+		const feature = features.find( ( f ) => f.slug === slug );
+
+		if ( ! feature ) {
+			return false;
+		}
+
+		return INSTALLED_STATUS !== feature.status;
+	} );
 
 /**
  * Features step for setup wizard.
@@ -33,12 +55,15 @@ const Features = () => {
 		'features-installation'
 	);
 
-	// Mark as selected also the already submitted slugs.
+	// Mark as selected also the already submitted slugs (Except the installed ones).
 	useEffect( () => {
 		setSelectedSlugs( ( currentSelected ) =>
-			uniq( [ ...currentSelected, ...submittedSlugs ] )
+			uniq( [
+				...currentSelected,
+				...filterInstalledFeatures( submittedSlugs, features ),
+			] )
 		);
-	}, [ submittedSlugs ] );
+	}, [ submittedSlugs, features ] );
 
 	const getSelectedFeatures = () =>
 		features.filter( ( feature ) =>
