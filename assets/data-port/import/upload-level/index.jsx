@@ -1,17 +1,17 @@
 /* global FormData */
 
 import { FormFileUpload, Dashicon } from '@wordpress/components';
-import { useReducer, useMemo } from '@wordpress/element';
+import { useReducer, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import {
 	startUploadAction,
 	uploadFailureAction,
 	uploadSuccessAction,
-	uploadLineReducer,
+	uploadLevelReducer,
 } from './data';
 
-const initialLines = [
+const initialLevels = [
 	{
 		key: 'courses',
 		description: __( 'Courses CSV File', 'sensei-lms' ),
@@ -41,7 +41,14 @@ const initialLines = [
 	},
 ];
 
-const uploadFile = ( files, lineKey, dispatch ) => {
+/**
+ * Helper method to upload a file.
+ *
+ * @param {FileList} files     The files of the input.
+ * @param {string}   levelKey  The level key.
+ * @param {Function} dispatch  Dispatch function to update state on success/failure.
+ */
+const uploadFile = ( files, levelKey, dispatch ) => {
 	if ( files.length < 1 ) {
 		return;
 	}
@@ -51,7 +58,7 @@ const uploadFile = ( files, lineKey, dispatch ) => {
 	if ( file.name.split( '.' ).pop() !== 'csv' ) {
 		dispatch(
 			uploadFailureAction(
-				lineKey,
+				levelKey,
 				__( 'Only CSV files are supported.', 'sensei-lms' )
 			)
 		);
@@ -59,35 +66,63 @@ const uploadFile = ( files, lineKey, dispatch ) => {
 		return;
 	}
 
-	dispatch( startUploadAction( lineKey, file.name ) );
+	dispatch( startUploadAction( levelKey, file.name ) );
 
 	const data = new FormData();
 	data.append( 'file', file );
 
 	apiFetch( {
-		path: `/sensei-internal/v1/import/file/${ lineKey }`,
+		path: `/sensei-internal/v1/import/file/${ levelKey }`,
 		method: 'POST',
 		body: data,
 	} )
 		.then( () => {
-			dispatch( uploadSuccessAction( lineKey ) );
+			dispatch( uploadSuccessAction( levelKey ) );
 		} )
 		.catch( ( error ) => {
-			dispatch( uploadFailureAction( lineKey, error.message ) );
+			dispatch( uploadFailureAction( levelKey, error.message ) );
 		} );
 };
 
-const isReady = ( lines ) => {
-	return lines.some( ( line ) => line.isUploaded );
+/**
+ * Helper method which calculates if the files are ready to be imported.
+ *
+ * @param {Array}    levels  The array of the Levels.
+ * @return {boolean}         True if the files are ready.
+ */
+const isReady = ( levels ) => {
+	let hasUploaded = false;
+
+	for ( const level of levels ) {
+		if ( level.inProgress ) {
+			return false;
+		}
+
+		hasUploaded = hasUploaded || level.isUploaded;
+	}
+
+	return hasUploaded;
 };
 
-export const UploadLines = ( { onStatusChange } ) => {
-	const [ lines, dispatch ] = useReducer( uploadLineReducer, initialLines );
+/**
+ * A component which displays a list of upload levels. Each level has each own description, upload button and a
+ * placeholder for messages.
+ *
+ * @param {Function} setReadyStatus  A callback which sets the state true if the levels are ready to be uploaded.
+ */
+export const UploadLevels = ( { setReadyStatus } ) => {
+	const [ levels, dispatch ] = useReducer(
+		uploadLevelReducer,
+		initialLevels
+	);
 
-	onStatusChange( useMemo( () => isReady( lines ), [ lines ] ) );
+	useEffect( () => setReadyStatus( isReady( levels ) ), [
+		levels,
+		setReadyStatus,
+	] );
 
-	const getLineMessage = ( line ) => {
-		if ( line.hasError ) {
+	const getLevelMessage = ( level ) => {
+		if ( level.hasError ) {
 			return (
 				<>
 					<Dashicon
@@ -95,14 +130,14 @@ export const UploadLines = ( { onStatusChange } ) => {
 						icon={ 'warning' }
 					/>
 					<p className={ 'sensei-upload-file-line__message error' }>
-						{ line.errorMsg }
+						{ level.errorMsg }
 					</p>
 				</>
 			);
-		} else if ( line.isUploaded ) {
+		} else if ( level.isUploaded ) {
 			return (
 				<p className={ 'sensei-upload-file-line__message' }>
-					{ line.filename }
+					{ level.filename }
 				</p>
 			);
 		}
@@ -110,28 +145,28 @@ export const UploadLines = ( { onStatusChange } ) => {
 
 	return (
 		<ol>
-			{ lines.map( ( line ) => {
-				const message = getLineMessage( line );
+			{ levels.map( ( level ) => {
+				const message = getLevelMessage( level );
 
 				return (
 					<li
-						key={ line.key }
+						key={ level.key }
 						className={ 'sensei-upload-file-line' }
 					>
 						<p className={ 'sensei-upload-file-line__description' }>
-							{ line.description }
+							{ level.description }
 						</p>
 						<FormFileUpload
 							accept={ '.csv' }
 							onChange={ ( event ) =>
 								uploadFile(
 									event.target.files,
-									line.key,
+									level.key,
 									dispatch
 								)
 							}
 						>
-							{ line.inProgress
+							{ level.inProgress
 								? __( 'Uploading…', 'sensei-lms' )
 								: __( 'Upload', 'sensei-lms' ) }
 						</FormFileUpload>
