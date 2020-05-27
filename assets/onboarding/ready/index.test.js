@@ -6,7 +6,7 @@ const mockStepData = {
 	mc_url: 'http://external.local/campaign',
 	gdpr_field: 'SDCTZX3',
 };
-jest.mock( '../use-setup-wizard-step', () => ( {
+jest.mock( '../data/use-setup-wizard-step', () => ( {
 	useSetupWizardStep: jest.fn().mockImplementation( () => ( {
 		stepData: mockStepData,
 	} ) ),
