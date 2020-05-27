@@ -351,6 +351,10 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	 * @covers Sensei_REST_API_Setup_Wizard_Controller::submit_features_installation
 	 */
 	public function testSubmitFeaturesInstallation() {
+		if ( is_multisite() ) {
+			$this->markTestSkipped( 'Skip test for multisite because user will not have the needed permissions.' );
+		}
+
 		// Mock fetch from senseilms.com.
 		$response_body = '{ "products": [ { "product_slug": "slug-1", "plugin_file": "test/test.php" } ] }';
 		add_filter(
@@ -360,7 +364,15 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 			}
 		);
 
-		$this->request( 'POST', 'features-installation', [ 'selected' => [ 'slug-1' ] ] );
+		// Create user with needed capabilities.
+		$user_id = $this->factory->user->create();
+		$user    = get_user_by( 'id', $user_id );
+
+		$user->add_cap( 'manage_sensei' );
+		$user->add_cap( 'install_plugins' );
+		wp_set_current_user( $user_id );
+
+		$this->request( 'POST', 'features-installation', [ 'selected' => [ 'slug-1' ] ], $user );
 
 		$expected_extensions = [
 			(object) [
@@ -419,12 +431,14 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	 *
 	 * @return Object Response data.
 	 */
-	private function request( $method = '', $route = '', $data = null ) {
+	private function request( $method = '', $route = '', $data = null, $user = null ) {
 
-		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
-		wp_set_current_user( $admin_id );
-		$user = wp_get_current_user();
-		$user->add_cap( 'manage_sensei' );
+		if ( ! $user ) {
+			$admin_id = $this->factory->user->create( [ 'role' => 'administrator' ] );
+			wp_set_current_user( $admin_id );
+			$user = wp_get_current_user();
+			$user->add_cap( 'manage_sensei' );
+		}
 
 		$request = new WP_REST_Request( $method, rtrim( '/sensei-internal/v1/setup-wizard/' . $route, '/' ) );
 
