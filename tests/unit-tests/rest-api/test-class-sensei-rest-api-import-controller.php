@@ -275,7 +275,7 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 	 */
 	public function testPostFileValidFile( $user_role, $is_authorized ) {
 		if ( ! version_compare( get_bloginfo( 'version' ), '5.0.0', '>=' ) ) {
-			$this->markTestSkipped( 'Test fails with 4.9 due to text/csv getting interpretted as text/plain.' );
+			$this->markTestSkipped( 'Test fails with 4.9 due to text/csv getting interpreted as text/plain.' );
 		}
 
 		wp_logout();
@@ -415,7 +415,7 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 	 */
 	public function testDeleteFileExists( $user_role, $is_authorized ) {
 		if ( ! version_compare( get_bloginfo( 'version' ), '5.0.0', '>=' ) ) {
-			$this->markTestSkipped( 'Test fails with 4.9 due to text/csv getting interpretted as text/plain.' );
+			$this->markTestSkipped( 'Test fails with 4.9 due to text/csv getting interpreted as text/plain.' );
 		}
 
 		wp_logout();
