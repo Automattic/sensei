@@ -116,7 +116,7 @@ class Sensei_Plugins_Installation {
 		$installing_plugins = $this->get_installing_plugins();
 
 		foreach ( $plugins_to_install as $plugin ) {
-			$key = array_search( $plugin->product_slug, array_column( $installing_plugins, 'product_slug' ), true );
+			$key = array_search( $plugin->product_slug, wp_list_pluck( $installing_plugins, 'product_slug' ), true );
 
 			// Add to the queue if it is not there yet, or if it is there with error.
 			if ( false === $key || isset( $installing_plugins[ $key ]->error ) ) {
@@ -226,7 +226,7 @@ class Sensei_Plugins_Installation {
 	 */
 	private function save_error( $slug, $message ) {
 		$installing_plugins = $this->get_installing_plugins();
-		$key                = array_search( $slug, array_column( $installing_plugins, 'product_slug' ), true );
+		$key                = array_search( $slug, wp_list_pluck( $installing_plugins, 'product_slug' ), true );
 
 		if ( false !== $key ) {
 			$installing_plugins[ $key ]->error = $message;

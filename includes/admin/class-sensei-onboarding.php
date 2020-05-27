@@ -416,7 +416,7 @@ class Sensei_Onboarding {
 	 * @return stdClass Extension with status.
 	 */
 	private function get_feature_with_status( $extension, $installing_plugins ) {
-		$installing_key = array_search( $extension->product_slug, array_column( $installing_plugins, 'product_slug' ), true );
+		$installing_key = array_search( $extension->product_slug, wp_list_pluck( $installing_plugins, 'product_slug' ), true );
 
 		if ( false !== $installing_key ) {
 			if ( isset( $installing_plugins[ $installing_key ]->error ) ) {
@@ -469,7 +469,7 @@ class Sensei_Onboarding {
 		$extensions_to_install = array_filter(
 			array_map(
 				function( $slug ) use ( $sensei_extensions ) {
-					$key = array_search( $slug, array_column( $sensei_extensions, 'product_slug' ), true );
+					$key = array_search( $slug, wp_list_pluck( $sensei_extensions, 'product_slug' ), true );
 
 					return false !== $key ? $sensei_extensions[ $key ] : false;
 				},
