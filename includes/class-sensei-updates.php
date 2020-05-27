@@ -2074,7 +2074,7 @@ class Sensei_Updates {
 	public function update_comment_course_lesson_comment_counts( $n = 50, $offset = 0 ) {
 		global $wpdb;
 
-		$item_count_result = $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->posts WHERE post_type IN ('course', 'lesson') " );
+		$item_count_result = $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->posts WHERE post_type IN ('course', 'lesson') " ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- intentionally running a direct SQL query for not triggering all the filters and actions.
 
 		if ( 0 == $item_count_result ) {
 			return true;
