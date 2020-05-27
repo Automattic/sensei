@@ -154,7 +154,7 @@ class Sensei_Plugins_Installation {
 	/**
 	 * Set installing plugins.
 	 *
-	 * @paran stdClass[] Installing plugins.
+	 * @param stdClass[] $installing_plugins Installing plugins.
 	 */
 	public function set_installing_plugins( $installing_plugins ) {
 		set_transient( self::INSTALLING_PLUGINS_TRANSIENT, $installing_plugins, DAY_IN_SECONDS );
