@@ -260,6 +260,13 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	abstract public static function get_file_config();
 
 	/**
+	 * Check if a job is ready to be started.
+	 *
+	 * @return bool
+	 */
+	abstract public function is_ready();
+
+	/**
 	 * Initialize and restore state of task.
 	 *
 	 * @param string $task_class Class name of task class.

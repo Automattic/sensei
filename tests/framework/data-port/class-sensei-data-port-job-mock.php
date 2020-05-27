@@ -52,4 +52,7 @@ class Sensei_Data_Port_Job_Mock extends Sensei_Data_Port_Job {
 		return $files;
 	}
 
+	public function is_ready() {
+		return true;
+	}
 }
