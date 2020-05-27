@@ -29,6 +29,15 @@ class Sensei_Data_Port_Job_Test extends WP_UnitTestCase {
 		return parent::setUp();
 	}
 
+	/**
+	 * Tear down after tests.
+	 */
+	public function tearDown() {
+		parent::tearDown();
+
+		delete_site_option( 'upload_filetypes' );
+	}
+
 	public function testJobWithCompletedTasksIsCompleted() {
 		$first_completed  = $this->mock_task_method( true, 100, 100, 'run' );
 		$second_completed = $this->mock_task_method( true, 100, 100, 'run' );

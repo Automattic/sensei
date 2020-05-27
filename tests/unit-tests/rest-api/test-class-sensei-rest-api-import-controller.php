@@ -45,6 +45,8 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 
 		global $wp_rest_server;
 		$wp_rest_server = null;
+
+		delete_site_option( 'upload_filetypes' );
 	}
 
 	/**
