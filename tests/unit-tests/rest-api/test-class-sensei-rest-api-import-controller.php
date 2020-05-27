@@ -492,6 +492,184 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 	}
 
 	/**
+	 * Tests `POST /import/start` when the job is ready.
+	 *
+	 * @dataProvider userDataSources
+	 *
+	 * @param string $user_role     User role to run the request as.
+	 * @param bool   $is_authorized Is the user authenticated and authorized.
+	 */
+	public function testStartJobIsReady( $user_role, $is_authorized ) {
+		if ( ! version_compare( get_bloginfo( 'version' ), '5.0.0', '>=' ) ) {
+			$this->markTestSkipped( 'Test fails with 4.9 due to text/csv getting interpreted as text/plain.' );
+		}
+
+		wp_logout();
+
+		$user_description = 'Guest';
+		if ( $user_role ) {
+			$user_id          = $this->factory->user->create( [ 'role' => $user_role ] );
+			$user_description = ucfirst( $user_role );
+			wp_set_current_user( $user_id );
+		}
+
+		$expected_status_codes = [ 401, 403 ];
+		if ( $is_authorized ) {
+			$expected_status_codes = [ 200 ];
+
+			$test_file = SENSEI_TEST_FRAMEWORK_DIR . '/data-port/data-files/questions.csv';
+			$test_file = $this->get_tmp_file( $test_file );
+
+			$job = Sensei_Data_Port_Manager::instance()->create_import_job( get_current_user_id() );
+			$job->save_file( 'questions', $test_file, basename( $test_file ) );
+			$job->persist();
+			Sensei_Data_Port_Manager::instance()->persist();
+		}
+
+		$request  = new WP_REST_Request( 'POST', '/sensei-internal/v1/import/start' );
+		$response = $this->server->dispatch( $request );
+
+		$this->assertTrue( in_array( $response->get_status(), $expected_status_codes, true ), "{$user_description} requests should produce status of " . implode( ', ', $expected_status_codes ) );
+
+		if ( $is_authorized ) {
+			$data = $response->get_data();
+			$this->assertResultValidJob( $data );
+		}
+	}
+
+	/**
+	 * Tests `POST /import/start` when the job is already running.
+	 *
+	 * @dataProvider userDataSources
+	 *
+	 * @param string $user_role     User role to run the request as.
+	 * @param bool   $is_authorized Is the user authenticated and authorized.
+	 */
+	public function testStartJobIsStarted( $user_role, $is_authorized ) {
+		if ( ! version_compare( get_bloginfo( 'version' ), '5.0.0', '>=' ) ) {
+			$this->markTestSkipped( 'Test fails with 4.9 due to text/csv getting interpreted as text/plain.' );
+		}
+
+		wp_logout();
+
+		$user_description = 'Guest';
+		if ( $user_role ) {
+			$user_id          = $this->factory->user->create( [ 'role' => $user_role ] );
+			$user_description = ucfirst( $user_role );
+			wp_set_current_user( $user_id );
+		}
+
+		$expected_status_codes = [ 401, 403 ];
+		if ( $is_authorized ) {
+			$expected_status_codes = [ 400 ];
+
+			$test_file = SENSEI_TEST_FRAMEWORK_DIR . '/data-port/data-files/questions.csv';
+			$test_file = $this->get_tmp_file( $test_file );
+
+			$job = Sensei_Data_Port_Manager::instance()->create_import_job( get_current_user_id() );
+			$job->save_file( 'questions', $test_file, basename( $test_file ) );
+			$job->start();
+			$job->persist();
+			Sensei_Data_Port_Manager::instance()->persist();
+		}
+
+		$request  = new WP_REST_Request( 'POST', '/sensei-internal/v1/import/start' );
+		$response = $this->server->dispatch( $request );
+
+		$this->assertTrue( in_array( $response->get_status(), $expected_status_codes, true ), "{$user_description} requests should produce status of " . implode( ', ', $expected_status_codes ) );
+
+		if ( $is_authorized ) {
+			$data = $response->get_data();
+			$this->assertResultError( $data, 'sensei_data_port_job_already_started' );
+		}
+	}
+
+	/**
+	 * Tests `POST /import/start` when the job is not ready.
+	 *
+	 * @dataProvider userDataSources
+	 *
+	 * @param string $user_role     User role to run the request as.
+	 * @param bool   $is_authorized Is the user authenticated and authorized.
+	 */
+	public function testStartJobNotReady( $user_role, $is_authorized ) {
+		wp_logout();
+
+		$user_description = 'Guest';
+		if ( $user_role ) {
+			$user_id          = $this->factory->user->create( [ 'role' => $user_role ] );
+			$user_description = ucfirst( $user_role );
+			wp_set_current_user( $user_id );
+		}
+
+		$expected_status_codes = [ 401, 403 ];
+		if ( $is_authorized ) {
+			$data_port_manager = Sensei_Data_Port_Manager::instance();
+			$job               = $data_port_manager->create_import_job( get_current_user_id() );
+			$job->persist();
+			$data_port_manager->persist();
+
+			$expected_status_codes = [ 400 ];
+		}
+
+		$request  = new WP_REST_Request( 'POST', '/sensei-internal/v1/import/start' );
+		$response = $this->server->dispatch( $request );
+
+		$this->assertTrue( in_array( $response->get_status(), $expected_status_codes, true ), "{$user_description} requests should produce status of " . implode( ', ', $expected_status_codes ) );
+
+		if ( $is_authorized ) {
+			$data = $response->get_data();
+			$this->assertResultError( $data, 'sensei_data_port_job_not_ready' );
+		}
+	}
+
+
+	/**
+	 * Tests `POST /import/start` when the job hasn't been created.
+	 *
+	 * @dataProvider userDataSources
+	 *
+	 * @param string $user_role     User role to run the request as.
+	 * @param bool   $is_authorized Is the user authenticated and authorized.
+	 */
+	public function testStartJobNotCreated( $user_role, $is_authorized ) {
+		wp_logout();
+
+		$user_description = 'Guest';
+		if ( $user_role ) {
+			$user_id          = $this->factory->user->create( [ 'role' => $user_role ] );
+			$user_description = ucfirst( $user_role );
+			wp_set_current_user( $user_id );
+		}
+
+		$expected_status_codes = [ 401, 403 ];
+		if ( $is_authorized ) {
+			$expected_status_codes = [ 404 ];
+		}
+
+		$request  = new WP_REST_Request( 'POST', '/sensei-internal/v1/import/start' );
+		$response = $this->server->dispatch( $request );
+
+		$this->assertTrue( in_array( $response->get_status(), $expected_status_codes, true ), "{$user_description} requests should produce status of " . implode( ', ', $expected_status_codes ) );
+
+		if ( $is_authorized ) {
+			$data = $response->get_data();
+			$this->assertResultError( $data, 'sensei_data_port_no_active_job' );
+		}
+	}
+
+	/**
+	 * Assert that a REST API response is an WP error with a specific code
+	 *
+	 * @param array  $result        REST API result.
+	 * @param string $expected_code Expected status code.
+	 */
+	protected function assertResultError( $result, $expected_code ) {
+		$this->assertTrue( isset( $result['message'], $result['code'] ) );
+		$this->assertEquals( $expected_code, $result['code'] );
+	}
+
+	/**
 	 * Assert that a REST API response is valid.
 	 *
 	 * @param $result
@@ -522,6 +700,12 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_file_put_contents, WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 		file_put_contents( $tmp, file_get_contents( $file_path ) );
+
+		register_shutdown_function(
+			function() use ( $tmp ) {
+				unlink( $tmp );
+			}
+		);
 
 		return $tmp;
 	}
