@@ -127,7 +127,7 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 	 * @return bool
 	 */
 	public function start_job( Sensei_Data_Port_Job $job ) {
-		if ( ! $job->is_ready() ) {
+		if ( ! $job->is_ready() || $job->is_started() ) {
 			return false;
 		}
 
