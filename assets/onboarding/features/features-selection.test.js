@@ -115,7 +115,7 @@ describe( '<FeaturesSelection />', () => {
 			container.querySelectorAll( 'input:checked:disabled' ).length
 		).toEqual( 2 );
 		expect(
-			container.querySelectorAll( '.installed-status' ).length
+			container.querySelectorAll( '.status-installed' ).length
 		).toEqual( 1 );
 	} );
 } );
