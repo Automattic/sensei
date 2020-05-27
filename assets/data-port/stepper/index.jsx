@@ -56,6 +56,23 @@ const getCurrentStep = ( steps ) => {
 	throw new Error( 'No active step.' );
 };
 
+/**
+ * Returns an action which moves the stepper to the next step.
+ */
+const moveToNextAction = () => ( { type: 'MOVE_TO_NEXT' } );
+
+/**
+ * Returns an action which completes the stepper's current step.
+ */
+const completeCurrentAction = () => ( { type: 'COMPLETE_CURRENT' } );
+
+/**
+ * Reducer function for the stepper state.
+ *
+ * @param {Array}  state   An array of Steps.
+ * @param {Object} action  The action to apply.
+ * @return {Array} The new state.
+ */
 const stepsReducer = ( state, action ) => {
 	switch ( action.type ) {
 		case 'MOVE_TO_NEXT':
@@ -96,4 +113,10 @@ const DataPortStepper = ( { steps } ) => (
 	</ol>
 );
 
-export { DataPortStepper, getCurrentStep, stepsReducer };
+export {
+	DataPortStepper,
+	getCurrentStep,
+	stepsReducer,
+	moveToNextAction,
+	completeCurrentAction,
+};

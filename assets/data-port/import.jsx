@@ -25,7 +25,7 @@ const initialSteps = [
 ];
 
 /**
- * Sensei onboarding page.
+ * Sensei import page.
  */
 const SenseiImportPage = () => {
 	const [ steps, dispatch ] = useReducer( stepsReducer, initialSteps );
@@ -36,7 +36,7 @@ const SenseiImportPage = () => {
 			{ ( () => {
 				switch ( getCurrentStep( steps ) ) {
 					case 'upload':
-						return <UploadPage />;
+						return <UploadPage importerDispatch={ dispatch } />;
 					default:
 						return null;
 				}
