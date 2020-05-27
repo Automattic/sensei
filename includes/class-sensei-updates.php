@@ -1642,6 +1642,7 @@ class Sensei_Updates {
 							);
 						}
 					}
+					update_meta_cache( 'comment', array( $comment_ID ) );
 					clean_comment_cache( $comment_ID );
 				}
 			}
@@ -1789,6 +1790,7 @@ class Sensei_Updates {
 							);
 						}
 					}
+					update_meta_cache( 'comment', array( $comment_ID ) );
 					clean_comment_cache( $comment_ID );
 				}
 			}
@@ -2025,6 +2027,7 @@ class Sensei_Updates {
 							);
 						}
 					}
+					update_meta_cache( 'comment', array( $comment_ID ) );
 					clean_comment_cache( $comment_ID );
 				}
 			}
