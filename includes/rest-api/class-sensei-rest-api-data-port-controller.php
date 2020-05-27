@@ -185,6 +185,14 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 			);
 		}
 
+		if ( $job->is_started() ) {
+			return new WP_Error(
+				'sensei_data_port_job_already_started',
+				__( 'Job has already been started.', 'sensei-lms' ),
+				array( 'status' => 400 )
+			);
+		}
+
 		if ( ! Sensei_Data_Port_Manager::instance()->start_job( $job ) ) {
 			return new WP_Error(
 				'sensei_data_port_job_could_not_be_started',
