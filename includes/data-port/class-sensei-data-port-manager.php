@@ -123,12 +123,20 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 	 * Starts a data port job.
 	 *
 	 * @param Sensei_Data_Port_Job $job Job object.
+	 *
+	 * @return bool
 	 */
 	public function start_job( Sensei_Data_Port_Job $job ) {
+		if ( ! $job->is_ready() ) {
+			return false;
+		}
+
 		$this->has_changed = true;
 
 		$job->start();
 		Sensei_Scheduler::instance()->schedule_job( $job );
+
+		return true;
 	}
 
 	/**
