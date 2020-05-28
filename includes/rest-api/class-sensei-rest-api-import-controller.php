@@ -106,10 +106,7 @@ class Sensei_REST_API_Import_Controller extends Sensei_REST_API_Data_Port_Contro
 			|| ! $this->is_uploaded_file( $files['file']['tmp_name'] )
 			|| UPLOAD_ERR_OK !== $files['file']['error']
 		) {
-			return new WP_Error(
-				'sensei_data_port_job_upload_failed',
-				__( 'Upload was not successful.', 'sensei-lms' )
-			);
+			return $this->describe_upload_error( $files['file'] );
 		}
 
 		$result = $job->save_file( $request->get_param( 'file_key' ), $files['file']['tmp_name'], $files['file']['name'] );
@@ -140,6 +137,44 @@ class Sensei_REST_API_Import_Controller extends Sensei_REST_API_Data_Port_Contro
 		}
 
 		return is_uploaded_file( $filename );
+	}
+
+	/**
+	 * Describe an upload error.
+	 *
+	 * @param array $file Array entry from `$_FILES`.
+	 *
+	 * @return WP_Error
+	 */
+	private function describe_upload_error( $file ) {
+		switch ( $file['error_code'] ) {
+			case 1:
+			case 2:
+				$error_message = __( 'The file uploaded exceeds the maximum file size allowed.', 'sensei-lms' );
+				break;
+			case 3:
+				$error_message = __( 'The file was only partially uploaded. Please try again.', 'sensei-lms' );
+				break;
+			case 4:
+				$error_message = __( 'No file was uploaded.', 'sensei-lms' );
+				break;
+			case 6:
+				$error_message = __( 'Missing a temporary folder to store the uploaded file.', 'sensei-lms' );
+				break;
+			case 7:
+				$error_message = __( 'Failed to write the uploaded file to disk. Please contact your host to fix a possible permissions issue.', 'sensei-lms' );
+				break;
+			case 8:
+				$error_message = __( 'A PHP Extension prevented the file upload. Please contact your host.', 'sensei-lms' );
+				break;
+			default:
+				$error_message = __( 'File upload error.', 'sensei-lms' );
+		}
+
+		return new WP_Error(
+			'sensei_data_port_job_upload_failed',
+			$error_message
+		);
 	}
 
 	/**
