@@ -127,6 +127,24 @@ $alert-red: #d94f4f;
 				margin-left: 0;
 			}
 
+			.error {
+				color: $alert-red
+			}
+
+			.sensei-data-port-notice {
+				display: inline-flex;
+				align-items: center;
+
+				&__icon {
+					margin-right: 5px;
+					flex-shrink: 0;
+				}
+
+				&__message {
+					margin: auto;
+				}
+			}
+
 			.sensei-upload-file-line {
 				width: 100%;
 				display: inline-flex;
@@ -144,21 +162,6 @@ $alert-red: #d94f4f;
 				.components-form-file-upload {
 					flex-basis: 18%;
 					flex-shrink: 0;
-				}
-
-				&__message {
-					flex-basis: 55%;
-					padding: 0;
-					margin: auto 0;
-					flex-grow: 0;
-				}
-
-				.error {
-					color: $alert-red
-				}
-
-				&__icon {
-					margin: 21px 5px 21px 0;
 				}
 
 				.components-button {
@@ -180,13 +183,16 @@ $alert-red: #d94f4f;
 
 			.continue-container {
 				padding: 24px 0;
-				text-align: right;
+				display: flex;
+				justify-content: flex-end;
+				align-items: center;
 
 				.components-button {
 					padding: 6px 24px;
 					background: $green;
 					border-color: $green;
 					height: 40px;
+					margin-left: 10px;
 
 					&:not(:disabled):not([aria-disabled="true"]):hover {
 						background: darken($primary, 20%);

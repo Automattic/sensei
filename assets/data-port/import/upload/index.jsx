@@ -4,6 +4,8 @@ import { UploadLevels } from '../upload-level';
 import { Button } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { moveToNextAction } from '../../stepper';
+import apiFetch from '@wordpress/api-fetch';
+import { Notice } from '../../notice';
 
 /**
  * This component displays the upload page of the importer.
@@ -12,12 +14,27 @@ import { moveToNextAction } from '../../stepper';
  */
 export const UploadPage = ( { importerDispatch } ) => {
 	const [ isReady, setStatus ] = useState( false );
+	const [ continueClicked, setContinueClicked ] = useState( false );
+	const [ errorMsg, setErrorMsg ] = useState( null );
 
 	/**
 	 * Helper method to begin importing.
 	 */
 	const startImport = () => {
-		importerDispatch( moveToNextAction() );
+		setContinueClicked( true );
+		setErrorMsg( null );
+
+		apiFetch( {
+			path: '/sensei-internal/v1/import/start',
+			method: 'POST',
+		} )
+			.then( () => {
+				importerDispatch( moveToNextAction() );
+			} )
+			.catch( ( error ) => {
+				setErrorMsg( error.message );
+			} )
+			.finally( () => setContinueClicked( false ) );
 	};
 
 	return (
@@ -43,9 +60,12 @@ export const UploadPage = ( { importerDispatch } ) => {
 				</p>
 				<UploadLevels setReadyStatus={ setStatus } />
 				<div className={ 'continue-container' }>
+					{ errorMsg !== null && (
+						<Notice message={ errorMsg } isError />
+					) }
 					<Button
 						isPrimary
-						disabled={ ! isReady }
+						disabled={ ! isReady || continueClicked }
 						onClick={ startImport }
 					>
 						{ __( 'Continue', 'sensei-lms' ) }

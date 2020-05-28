@@ -1,6 +1,7 @@
 /* global FormData */
 
-import { FormFileUpload, Dashicon } from '@wordpress/components';
+import { FormFileUpload } from '@wordpress/components';
+import { Notice } from '../../notice';
 import { useReducer, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
@@ -55,7 +56,7 @@ const uploadFile = ( files, levelKey, dispatch ) => {
 
 	const file = files[ 0 ];
 
-	if ( file.name.split( '.' ).pop() !== 'csv' ) {
+	if ( ! [ 'csv', 'txt' ].includes( file.name.split( '.' ).pop() ) ) {
 		dispatch(
 			uploadFailureAction(
 				levelKey,
@@ -125,23 +126,9 @@ export const UploadLevels = ( {
 
 	const getLevelMessage = ( level ) => {
 		if ( level.hasError ) {
-			return (
-				<>
-					<Dashicon
-						className={ 'sensei-upload-file-line__icon error' }
-						icon={ 'warning' }
-					/>
-					<p className={ 'sensei-upload-file-line__message error' }>
-						{ level.errorMsg }
-					</p>
-				</>
-			);
+			return <Notice message={ level.errorMsg } isError />;
 		} else if ( level.isUploaded ) {
-			return (
-				<p className={ 'sensei-upload-file-line__message' }>
-					{ level.filename }
-				</p>
-			);
+			return <Notice message={ level.filename } />;
 		}
 	};
 
