@@ -93,4 +93,93 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 
 		return $files;
 	}
+
+	/**
+	 * Save a file associated with this job. If this is an uploaded file, `is_uploaded_file()` check should
+	 * occur prior to this method.
+	 *
+	 * @param string $file_key  Key for the file being saved.
+	 * @param string $tmp_file  Temporary path where the file is stored.
+	 * @param string $file_name File name.
+	 *
+	 * @return true|WP_Error
+	 */
+	public function save_file( $file_key, $tmp_file, $file_name ) {
+		$check_file = $this->check_file( $file_key, $tmp_file, $file_name );
+
+		if ( is_wp_error( $check_file ) ) {
+			return $check_file;
+		}
+
+		return parent::save_file( $file_key, $tmp_file, $file_name );
+	}
+
+	/**
+	 * Check a file before saving it.
+	 *
+	 * @param string $file_key  Key for the file being saved.
+	 * @param string $tmp_file  Temporary path where the file is stored.
+	 * @param string $file_name File name.
+	 *
+	 * @return true|WP_Error
+	 */
+	private function check_file( $file_key, $tmp_file, $file_name ) {
+		$file_configs = static::get_file_config();
+
+		if ( ! isset( $file_configs[ $file_key ] ) ) {
+			return new WP_Error(
+				'sensei_data_port_unknown_file_key',
+				__( 'Unexpected file key used', 'sensei-lms' )
+			);
+		}
+
+		$file_config = $file_configs[ $file_key ];
+
+		if ( isset( $file_config['validator'] ) ) {
+			$validation_result = call_user_func( $file_config['validator'], $tmp_file );
+			if ( is_wp_error( $validation_result ) ) {
+				return $validation_result;
+			}
+		}
+
+		if ( isset( $file_config['mime_types'] ) ) {
+			$wp_filetype = wp_check_filetype_and_ext( $tmp_file, $file_name, $file_config['mime_types'] );
+
+			$valid_mime_type  = $wp_filetype['type'] && in_array( $wp_filetype['type'], $file_config['mime_types'], true );
+			$valid_extensions = $this->mime_types_extensions( $file_config['mime_types'] );
+
+			// If we cannot determine the type, allow check based on extension for administrators.
+			if ( ! $wp_filetype['type'] && current_user_can( 'unfiltered_upload' ) ) {
+				$valid_mime_type = in_array( pathinfo( $file_name, PATHINFO_EXTENSION ), $valid_extensions, true );
+			}
+
+			if ( ! $valid_mime_type ) {
+				return new WP_Error(
+					'sensei_data_port_unexpected_file_type',
+					// translators: Placeholder is list of file extensions.
+					sprintf( __( 'File type is not supported. Must be one of the following: %s', 'sensei-lms' ), implode( ', ', $valid_extensions ) ),
+					[ 'status' => 400 ]
+				);
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Get an array of extensions.
+	 *
+	 * @param array $mime_types Array of mime types.
+	 *
+	 * @return array Array of valid extensions.
+	 */
+	private function mime_types_extensions( $mime_types ) {
+		$extensions = [];
+		foreach ( array_keys( $mime_types ) as $ext_list ) {
+			$extensions = array_merge( $extensions, explode( '|', $ext_list ) );
+		}
+
+		return array_unique( $extensions );
+	}
+
 }
