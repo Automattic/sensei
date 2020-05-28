@@ -153,7 +153,7 @@ class Sensei_Onboarding {
 	 * @return string Extended class list.
 	 */
 	public function filter_body_class( $classes ) {
-		$classes .= ' sensei-wp-admin-fullscreen ';
+		$classes .= ' sensei-wp-admin-fullscreen sensei-wp-admin-fullscreen--active ';
 		return $classes;
 	}
 

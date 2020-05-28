@@ -10,9 +10,10 @@ import { useLayoutEffect } from '@wordpress/element';
  * @param {boolean} [active]     Enable or disable fullscreen.
  */
 const useWpAdminFullscreen = ( bodyClasses = [], active = true ) => {
-	const classes = [ ...bodyClasses, 'sensei-wp-admin-fullscreen' ];
+	const classes = [ ...bodyClasses, 'sensei-wp-admin-fullscreen--active' ];
 
 	const setupGlobalStyles = () => {
+		document.body.classList.add( 'sensei-wp-admin-fullscreen' );
 		toggleGlobalStyles( active );
 		return toggleGlobalStyles.bind( null, ! active );
 	};
@@ -20,8 +21,6 @@ const useWpAdminFullscreen = ( bodyClasses = [], active = true ) => {
 	const toggleGlobalStyles = ( enabled ) => {
 		if ( enabled ) document.body.classList.add( ...classes );
 		else document.body.classList.remove( ...classes );
-
-		document.documentElement.classList.toggle( 'wp-toolbar', ! enabled );
 	};
 
 	useLayoutEffect( setupGlobalStyles, [ bodyClasses ] );

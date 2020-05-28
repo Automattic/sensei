@@ -1,5 +1,18 @@
 
 body.sensei-wp-admin-fullscreen {
+	#adminmenumain, #wpcontent {
+		transition: margin-left 300ms cubic-bezier(0.42, 0, 0.58, 1);
+	}
+	#adminmenumain {
+		margin-left: 0;
+	}
+}
+
+body.sensei-wp-admin-fullscreen--active {
+
+	#adminmenumain {
+		margin-left: -160px;
+	}
 
 	#wpwrap {
 		top: 0;
@@ -9,7 +22,6 @@ body.sensei-wp-admin-fullscreen {
 		min-height: 100%;
 	}
 
-	#adminmenumain,
 	#wpcontent > *,
 	.error,
 	.notice,
@@ -17,6 +29,13 @@ body.sensei-wp-admin-fullscreen {
 	.updated,
 	#wpfooter {
 		display: none;
+	}
+
+	#wpadminbar {
+		display: block;
+		* {
+			display: none;
+		}
 	}
 
 	#wpcontent {
