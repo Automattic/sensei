@@ -2230,8 +2230,7 @@ class Sensei_Lesson {
 		if ( isset( $defaults['date'] ) ) {
 			$new_columns['date'] = $defaults['date'];
 		}
-
-		foreach($defaults as $column_key => $column_value) {
+		foreach ( $defaults as $column_key => $column_value ) {
 			if ( ! isset( $new_columns[ $column_key ] ) ) {
 				$new_columns[ $column_key ] = $column_value;
 			}
@@ -2246,22 +2245,23 @@ class Sensei_Lesson {
 	 * @access public
 	 * @since  3.1.0-dev
 	 * @param  array $hidden_columns
-	 * @return WP_Screen $screen
+	 * @param  WP_Screen $screen
+	 * @return array $hidden_columns
 	 */
-	public function set_default_visible_columns( $hidden_columns, $screen ){
+	public function set_default_visible_columns( $hidden_columns, $screen ) {
 		$default_lesson_columns = [
 			'cb',
 			'title',
 			'lesson-course',
 			'lesson-prerequisite',
-			'date'
+			'date',
 		];
-		if ( ! $screen instanceof WP_Screen || 'edit-lesson' !== $screen->id ){
+		if ( ! $screen instanceof WP_Screen || 'edit-lesson' !== $screen->id ) {
 			return $hidden_columns;
 		}
-		$columns = get_column_headers ($screen);
-		foreach( $columns as $column => $column_value ) {
-			if ( !in_array ( $column, $default_lesson_columns, true ) ) {
+		$columns = get_column_headers( $screen );
+		foreach ( $columns as $column => $column_value ) {
+			if ( ! in_array( $column, $default_lesson_columns, true ) ) {
 				$hidden_columns[] = $column;
 			}
 		}
