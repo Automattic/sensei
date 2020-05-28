@@ -2793,7 +2793,7 @@ class Sensei_Course {
 		// show header if there are lessons the number of lesson in the course is the same as those that isn't assigned to a module
 		if ( ! empty( $course_lessons ) && count( $course_lessons ) == count( $none_module_lessons ) ) {
 
-			$title = __( 'Lessons', 'sensei-lms' );
+			$title = ( 1 === count( $course_lessons ) ) ? __( 'Lesson', 'sensei-lms' ) : __( 'Lessons', 'sensei-lms' );
 
 		} elseif ( empty( $none_module_lessons ) ) { // if the none module lessons are simply empty the title should not be shown
 
