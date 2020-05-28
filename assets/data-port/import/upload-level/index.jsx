@@ -108,13 +108,15 @@ const isReady = ( levels ) => {
  * A component which displays a list of upload levels. Each level has each own description, upload button and a
  * placeholder for messages.
  *
- * @param {Function} setReadyStatus  A callback which sets the state true if the levels are ready to be uploaded.
+ * @param {Object}   props
+ * @param {Function} props.setReadyStatus  A callback which sets the state true if the levels are ready to be uploaded.
+ * @param {Array}    props.initialState    The initial state of the levels.
  */
-export const UploadLevels = ( { setReadyStatus } ) => {
-	const [ levels, dispatch ] = useReducer(
-		uploadLevelReducer,
-		initialLevels
-	);
+export const UploadLevels = ( {
+	setReadyStatus,
+	initialState = initialLevels,
+} ) => {
+	const [ levels, dispatch ] = useReducer( uploadLevelReducer, initialState );
 
 	useEffect( () => setReadyStatus( isReady( levels ) ), [
 		levels,
