@@ -17,6 +17,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Import_Job_Test extends WP_UnitTestCase {
 
 	/**
+	 * Set up the tests.
+	 */
+	public function setUp() {
+		// Make sure CSVs are allowed on WordPress multi-site.
+		update_site_option( 'upload_filetypes', 'csv' );
+
+		return parent::setUp();
+	}
+
+	/**
+	 * Tear down after tests.
+	 */
+	public function tearDown() {
+		parent::tearDown();
+
+		delete_site_option( 'upload_filetypes' );
+	}
+
+	/**
 	 * Test saving a valid file to the job.
 	 */
 	public function testSaveFileValid() {
