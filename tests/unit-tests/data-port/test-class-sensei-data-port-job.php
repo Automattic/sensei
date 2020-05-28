@@ -246,43 +246,6 @@ class Sensei_Data_Port_Job_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test saving a valid file to the job.
-	 */
-	public function testSaveFileValid() {
-		if ( ! version_compare( get_bloginfo( 'version' ), '5.0.0', '>=' ) ) {
-			$this->markTestSkipped( 'Test fails with 4.9 due to text/csv getting interpretted as text/plain.' );
-		}
-
-		$test_file = SENSEI_TEST_FRAMEWORK_DIR . '/data-port/data-files/questions.csv';
-		$test_file = $this->get_tmp_file( $test_file );
-		$job       = new Sensei_Data_Port_Job_Mock( 'test-job' );
-
-		$result = $job->save_file( 'questions', $test_file, basename( $test_file ) );
-
-		$this->assertTrue( $result, 'Valid file with a valid file key should be stored' );
-		$this->assertTrue( isset( $job->get_files()['questions'] ) );
-
-		$attachment = get_post( $job->get_files()['questions'] );
-		$this->assertTrue( $attachment instanceof WP_Post );
-
-		$this->assertEquals( basename( $test_file ), $attachment->post_title );
-	}
-
-	/**
-	 * Test saving a non CSV file to a job.
-	 */
-	public function testSaveFileBadFile() {
-		$test_file = SENSEI_TEST_FRAMEWORK_DIR . '/data-port/data-files/invalid_file_type.tsv';
-		$test_file = $this->get_tmp_file( $test_file );
-		$job       = new Sensei_Data_Port_Job_Mock( 'test-job' );
-
-		$result = $job->save_file( 'questions', $test_file, basename( $test_file ) );
-
-		$this->assertWPError( $result, 'Invalid file should result in a WP Error' );
-		$this->assertEquals( 'sensei_data_port_unexpected_file_type', $result->get_error_code() );
-	}
-
-	/**
 	 * Test saving a unknown file key to a job.
 	 */
 	public function testSaveFileBadFileKey() {
