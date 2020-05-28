@@ -410,8 +410,16 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 		}
 
 		$file_configs = static::get_file_config();
-		$file_config  = $file_configs[ $file_key ];
-		$mime_types   = isset( $file_config['mime_types'] ) ? $file_config['mime_types'] : null;
+
+		if ( ! isset( $file_configs[ $file_key ] ) ) {
+			return new WP_Error(
+				'sensei_data_port_unknown_file_key',
+				__( 'Unexpected file key used.', 'sensei-lms' )
+			);
+		}
+
+		$file_config = $file_configs[ $file_key ];
+		$mime_types  = isset( $file_config['mime_types'] ) ? $file_config['mime_types'] : null;
 
 		$file_save_url = $uploads['url'] . "/$filename";
 		$wp_filetype   = wp_check_filetype_and_ext( $file_save_path, $file_name, $mime_types );
