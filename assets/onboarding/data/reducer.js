@@ -26,6 +26,7 @@ const DEFAULT_STATE = {
 			selected: [],
 			options: [],
 		},
+		ready: {},
 	},
 };
 

@@ -159,6 +159,29 @@ export function* submitStep( step, stepData, { onSuccess, onError } ) {
 }
 
 /**
+ * POST to an API endpoint in the background.
+ *
+ * @param {string} endpoint Endpoint path.
+ * @param {Object} data     Data to submit.
+ */
+export function* postInBackground( endpoint, data = [] ) {
+	try {
+		yield fetchFromAPI( {
+			path: API_BASE_PATH + endpoint,
+			method: 'POST',
+			data,
+		} );
+	} catch ( error ) {}
+}
+
+/**
+ * Finish the setup wizard.
+ */
+export function* completeSetupWizard() {
+	yield postInBackground( 'ready' );
+}
+
+/**
  * @typedef  {Object} SetStepDataAction
  * @property {string} type Action type.
  * @property {string} step Step name.
