@@ -129,7 +129,7 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 		if ( ! isset( $file_configs[ $file_key ] ) ) {
 			return new WP_Error(
 				'sensei_data_port_unknown_file_key',
-				__( 'Unexpected file key used', 'sensei-lms' )
+				__( 'Unexpected file key used.', 'sensei-lms' )
 			);
 		}
 
@@ -157,7 +157,7 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 				return new WP_Error(
 					'sensei_data_port_unexpected_file_type',
 					// translators: Placeholder is list of file extensions.
-					sprintf( __( 'File type is not supported. Must be one of the following: %s', 'sensei-lms' ), implode( ', ', $valid_extensions ) ),
+					sprintf( __( 'File type is not supported. Must be one of the following: %s.', 'sensei-lms' ), implode( ', ', $valid_extensions ) ),
 					[ 'status' => 400 ]
 				);
 			}
