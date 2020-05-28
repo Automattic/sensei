@@ -659,7 +659,7 @@ class Sensei_Course {
 			admin_url( 'admin.php' )
 		);
 
-		echo '<ul><li><a href=' . esc_url( $manage_url ) . '>' . esc_html__( 'Manage Learners', 'sensei-lms' ) . '</a></li>';
+		echo '<ul><li><a id="manage-learners-course-button" href=' . esc_url( $manage_url ) . '>' . esc_html__( 'Manage Learners', 'sensei-lms' ) . '</a></li>';
 		echo '<li><a href=' . esc_url( $grading_url ) . '>' . esc_html__( 'Manage Grading', 'sensei-lms' ) . '</a></li></ul>';
 	} // End course_manage_meta_box_content()
 
