@@ -29,6 +29,7 @@ class Sensei_Question {
 		if ( is_admin() ) {
 			// Custom Write Panel Columns
 			add_filter( 'manage_edit-question_columns', array( $this, 'add_column_headings' ), 10, 1 );
+			add_filter( 'default_hidden_columns', array( $this, 'set_default_visible_columns' ), 10, 2 );
 			add_action( 'manage_posts_custom_column', array( $this, 'add_column_data' ), 10, 2 );
 			add_action( 'add_meta_boxes', array( $this, 'question_edit_panel_metabox' ), 10, 2 );
 
@@ -56,7 +57,8 @@ class Sensei_Question {
 	}
 
 	/**
-	 * Add column headings to the "lesson" post list screen.
+	 * Add column headings to the "question" post list screen,
+	 * while moving the existing ones to the end.
 	 *
 	 * @access public
 	 * @since  1.3.0
@@ -64,7 +66,7 @@ class Sensei_Question {
 	 * @return array $new_columns
 	 */
 	public function add_column_headings( $defaults ) {
-		$new_columns                      = array();
+		$new_columns                      = [];
 		$new_columns['cb']                = '<input type="checkbox" />';
 		$new_columns['title']             = _x( 'Question', 'column name', 'sensei-lms' );
 		$new_columns['question-type']     = _x( 'Type', 'column name', 'sensei-lms' );
@@ -72,9 +74,48 @@ class Sensei_Question {
 		if ( isset( $defaults['date'] ) ) {
 			$new_columns['date'] = $defaults['date'];
 		}
+		// unset renamed columns
+		unset( $defaults['taxonomy-question-type'] ); 
+		unset( $defaults['taxonomy-question-category'] ); 
+		
+		foreach($defaults as $column_key => $column_value) {
+			if ( ! isset( $new_columns[ $column_key ] ) ) {
+				$new_columns[ $column_key ] = $column_value;
+			}
+		}
 
 		return $new_columns;
 	} // End add_column_headings()
+
+
+	/**
+	 * Hide all columns by default, leaving only a default set.
+	 *
+	 * @access public
+	 * @since  3.1.0-dev
+	 * @param  array $hidden_columns
+	 * @return WP_Screen $screen
+	 */
+	public function set_default_visible_columns( $hidden_columns, $screen ){
+		$default_question_columns = [
+			'cb',
+			'title',
+			'question-type',
+			'question-category',
+			'date'
+		];
+		if ( ! $screen instanceof WP_Screen || 'edit-question' !== $screen->id ){
+			return $hidden_columns;
+		}
+		$columns = get_column_headers ($screen);
+		foreach( $columns as $column => $column_value ) {
+			if ( !in_array ( $column, $default_question_columns, true ) ) {
+				$hidden_columns[] = $column;
+			}
+		}
+
+		return $hidden_columns;
+	} // End set_default_visible_columns()
 
 	/**
 	 * Add data for our newly-added custom columns.
