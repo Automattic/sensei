@@ -157,7 +157,7 @@ export const UploadLevels = ( { setReadyStatus } ) => {
 							{ level.description }
 						</p>
 						<FormFileUpload
-							accept={ '.csv' }
+							accept={ [ '.csv', '.txt' ] }
 							onChange={ ( event ) =>
 								uploadFile(
 									event.target.files,
