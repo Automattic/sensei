@@ -21,4 +21,10 @@ jQuery( document ).ready( function( $ ) {
 
 	// Log when the "Edit Lesson" link is clicked.
 	$( 'a.edit-lesson-action' ).click( trackLinkClickCallback( 'course_edit_lesson_click' ) );
+
+	// Log when the "Manage Grading" link on the Edit Course page is clicked.
+	jQuery( '#manage-grading-course-button').on( 'click', function(){
+		sensei_log_event( 'course_manage_grading_click', '' );
+	});
+
 } );
