@@ -80,7 +80,7 @@ class Sensei_REST_API_Import_Controller extends Sensei_REST_API_Data_Port_Contro
 		if ( ! isset( $files['file'] ) ) {
 			return new WP_Error(
 				'sensei_data_port_invalid_file',
-				__( 'No file was uploaded', 'sensei-lms' ),
+				__( 'No file was uploaded.', 'sensei-lms' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -95,7 +95,7 @@ class Sensei_REST_API_Import_Controller extends Sensei_REST_API_Data_Port_Contro
 		if ( ! $job || $job->is_started() ) {
 			return new WP_Error(
 				'sensei_data_port_job_started',
-				__( 'Job has already been started', 'sensei-lms' ),
+				__( 'Job has already been started.', 'sensei-lms' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -108,7 +108,7 @@ class Sensei_REST_API_Import_Controller extends Sensei_REST_API_Data_Port_Contro
 		) {
 			return new WP_Error(
 				'sensei_data_port_job_upload_failed',
-				__( 'Upload was not successful', 'sensei-lms' )
+				__( 'Upload was not successful.', 'sensei-lms' )
 			);
 		}
 
@@ -155,7 +155,7 @@ class Sensei_REST_API_Import_Controller extends Sensei_REST_API_Data_Port_Contro
 		if ( ! $job ) {
 			return new WP_Error(
 				'sensei_data_port_job_does_not_exist',
-				__( 'No active job has been found', 'sensei-lms' ),
+				__( 'No active job has been found.', 'sensei-lms' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -163,7 +163,7 @@ class Sensei_REST_API_Import_Controller extends Sensei_REST_API_Data_Port_Contro
 		if ( ! $job->get_file_path( $request->get_param( 'file_key' ) ) ) {
 			return new WP_Error(
 				'sensei_data_port_job_file_not_found',
-				__( 'File does not exist', 'sensei-lms' ),
+				__( 'File does not exist.', 'sensei-lms' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -171,7 +171,7 @@ class Sensei_REST_API_Import_Controller extends Sensei_REST_API_Data_Port_Contro
 		if ( $job->is_started() ) {
 			return new WP_Error(
 				'sensei_data_port_job_started',
-				__( 'Job has already been started', 'sensei-lms' ),
+				__( 'Job has already been started.', 'sensei-lms' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -181,7 +181,7 @@ class Sensei_REST_API_Import_Controller extends Sensei_REST_API_Data_Port_Contro
 		if ( ! $result ) {
 			return new WP_Error(
 				'sensei_data_port_unable_to_delete_file',
-				__( 'Job file could not be deleted', 'sensei-lms' ),
+				__( 'Job file could not be deleted.', 'sensei-lms' ),
 				[ 'status' => 500 ]
 			);
 		}
