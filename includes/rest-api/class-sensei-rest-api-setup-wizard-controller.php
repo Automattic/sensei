@@ -215,7 +215,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 				'selected' => $user_data['features'],
 				'options'  => $this->setup_wizard->get_sensei_extensions(),
 			],
-			'ready'           => $this->setup_wizard->get_mailing_list_form_data(),
+			'ready'          => $this->setup_wizard->get_mailing_list_form_data(),
 		];
 	}
 
