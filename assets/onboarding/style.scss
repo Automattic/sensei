@@ -33,6 +33,11 @@
 				color: darken($primary, 20%);
 			}
 		}
+
+		#wpcontent,
+		#wpbody-content {
+			padding: 0;
+		}
 	}
 
 	&__header {

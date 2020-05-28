@@ -1,73 +1,81 @@
 import { Card, H, Link, List, Section } from '@woocommerce/components';
 import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
+import { useWpAdminFullscreen } from '../../react-hooks';
 import { MailingListSignupForm } from './mailinglist-signup-form';
 import { formatString } from '../helpers/format-string.js';
 
 /**
  * Ready step for Setup Wizard.
  */
-export const Ready = () => (
-	<>
-		<div className="sensei-onboarding__title">
-			<H>
-				{ __(
-					`You're ready to start creating online courses!`,
-					'sensei-lms'
-				) }
-			</H>
-		</div>
-		<Card className="sensei-onboarding__card">
-			<Section className="sensei-onboarding__mailinglist-signup">
-				<H>{ __( `Join our mailing list`, 'sensei-lms' ) }</H>
-				<p>
+export const Ready = () => {
+	useWpAdminFullscreen( [], false );
+
+	return (
+		<>
+			<div className="sensei-onboarding__title">
+				<H>
 					{ __(
-						`We're here for you — get tips, product updates, and inspiration straight to your mailbox.`,
+						`You're ready to start creating online courses!`,
 						'sensei-lms'
 					) }
-				</p>
-				<MailingListSignupForm />
-			</Section>
-			<Section>
-				<H>{ __( `What's next?`, 'sensei-lms' ) }</H>
-				<List
-					items={ [
-						{
-							title: __( 'Create some courses', 'sensei-lms' ),
-							content: `You're ready to create online courses.`,
-							after: (
-								<Button
-									className="sensei-onboarding__button"
-									isPrimary
-									href="post-new.php?post_type=course"
-								>
-									Create a course
-								</Button>
-							),
-						},
-						{
-							title: 'Learn more',
-							content: formatString(
-								__(
-									'Visit SenseiLMS.com to learn how to {{link}}create your first course.{{/link}}',
+				</H>
+			</div>
+			<Card className="sensei-onboarding__card">
+				<Section className="sensei-onboarding__mailinglist-signup">
+					<H>{ __( `Join our mailing list`, 'sensei-lms' ) }</H>
+					<p>
+						{ __(
+							`We're here for you — get tips, product updates, and inspiration straight to your mailbox.`,
+							'sensei-lms'
+						) }
+					</p>
+					<MailingListSignupForm />
+				</Section>
+				<Section>
+					<H>{ __( `What's next?`, 'sensei-lms' ) }</H>
+					<List
+						items={ [
+							{
+								title: __(
+									'Create some courses',
 									'sensei-lms'
 								),
-								{
-									link: (
-										<Link
-											className="link__color-primary"
-											href="https://senseilms.com/lesson/courses/"
-											target="_blank"
-											type="external"
-										/>
+								content: `You're ready to create online courses.`,
+								after: (
+									<Button
+										className="sensei-onboarding__button"
+										isPrimary
+										href="post-new.php?post_type=course"
+									>
+										Create a course
+									</Button>
+								),
+							},
+							{
+								title: 'Learn more',
+								content: formatString(
+									__(
+										'Visit SenseiLMS.com to learn how to {{link}}create your first course.{{/link}}',
+										'sensei-lms'
 									),
-								}
-							),
-						},
-					] }
-					className="sensei-onboarding__item-list"
-				/>
-			</Section>
-		</Card>
-	</>
-);
+									{
+										link: (
+											<Link
+												className="link__color-primary"
+												href="https://senseilms.com/lesson/courses/"
+												target="_blank"
+												type="external"
+											/>
+										),
+									}
+								),
+							},
+						] }
+						className="sensei-onboarding__item-list"
+					/>
+				</Section>
+			</Card>
+		</>
+	);
+};

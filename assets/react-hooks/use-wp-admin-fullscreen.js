@@ -7,13 +7,14 @@ import { useLayoutEffect } from '@wordpress/element';
  * Fullscreen and classes are added when the component is mounted, and removed when unmounted.
  *
  * @param {string[]} bodyClasses Additional classes to be set.
+ * @param {boolean} [active]     Enable or disable fullscreen.
  */
-const useWpAdminFullscreen = ( bodyClasses = [] ) => {
+const useWpAdminFullscreen = ( bodyClasses = [], active = true ) => {
 	const classes = [ ...bodyClasses, 'sensei-wp-admin-fullscreen' ];
 
 	const setupGlobalStyles = () => {
-		toggleGlobalStyles( true );
-		return toggleGlobalStyles.bind( null, false );
+		toggleGlobalStyles( active );
+		return toggleGlobalStyles.bind( null, ! active );
 	};
 
 	const toggleGlobalStyles = ( enabled ) => {
