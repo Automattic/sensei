@@ -50,7 +50,7 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 	abstract protected function create_job();
 
 	/**
-	 * Register the REST API endpoints for the Importer.
+	 * Register the REST API endpoints for the class..
 	 */
 	public function register_routes() {
 		register_rest_route(
@@ -177,6 +177,7 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 		return [
 			'id'     => $job->get_job_id(),
 			'status' => $job->get_status(),
+			'files'  => $job->get_files_data(),
 		];
 	}
 
@@ -186,6 +187,27 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 	 * @return array
 	 */
 	public function get_item_schema() {
+		$file_properties = [];
+
+		$handler_class = $this->get_handler_class();
+		$files         = $handler_class::get_file_config();
+
+		foreach ( $files as $file_key => $file_config ) {
+			$file_properties[ $file_key ] = [
+				'type'       => 'object',
+				'properties' => [
+					'name' => [
+						'description' => __( 'File name', 'sensei-lms' ),
+						'type'        => 'string',
+					],
+					'url'  => [
+						'description' => __( 'Direct download URL for the file', 'sensei-lms' ),
+						'type'        => 'string',
+					],
+				],
+			];
+		}
+
 		return [
 			'type'       => 'object',
 			'properties' => [
@@ -198,14 +220,18 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 					'type'       => 'object',
 					'properties' => [
 						'status'     => [
-							'description' => __( 'Status of the job (setup, pending, or complete).', 'sensei-lms' ),
+							'description' => __( 'Status of the job (setup, pending, or complete)', 'sensei-lms' ),
 							'type'        => 'string',
 						],
 						'percentage' => [
-							'description' => __( 'Percent complete.', 'sensei-lms' ),
+							'description' => __( 'Percent complete', 'sensei-lms' ),
 							'type'        => 'integer',
 						],
 					],
+				],
+				'files'  => [
+					'type'       => 'object',
+					'properties' => $file_properties,
 				],
 			],
 		];
