@@ -696,9 +696,9 @@ class Sensei_Course {
 	 *
 	 * @access public
 	 * @since  3.1.0-dev
-	 * @param  array $hidden_columns
+	 * @param  array     $hidden_columns
 	 * @param  WP_Screen $screen
-	 * @return array $hidden_columns
+	 * @return array     $hidden_columns
 	 */
 	public function set_default_visible_columns( $hidden_columns, $screen ) {
 		$default_course_columns = [

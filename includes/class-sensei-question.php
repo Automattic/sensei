@@ -75,8 +75,8 @@ class Sensei_Question {
 			$new_columns['date'] = $defaults['date'];
 		}
 		// Unset renamed existing columns.
-		unset( $defaults[ 'taxonomy-question-type' ] );
-		unset( $defaults[ 'taxonomy-question-category' ] );
+		unset( $defaults['taxonomy-question-type'] );
+		unset( $defaults['taxonomy-question-category'] );
 
 		foreach ( $defaults as $column_key => $column_value ) {
 			if ( ! isset( $new_columns[ $column_key ] ) ) {
@@ -93,9 +93,9 @@ class Sensei_Question {
 	 *
 	 * @access public
 	 * @since  3.1.0-dev
-	 * @param  array $hidden_columns
+	 * @param  array     $hidden_columns
 	 * @param  WP_Screen $screen
-	 * @return array $hidden_columns
+	 * @return array     $hidden_columns
 	 */
 	public function set_default_visible_columns( $hidden_columns, $screen ) {
 		$default_question_columns = [
