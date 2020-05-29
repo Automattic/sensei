@@ -1,5 +1,13 @@
 @import 'variables';
 
+@import "~@wordpress/base-styles/_colors.scss";
+@import "~@wordpress/base-styles/_variables.scss";
+@import "~@wordpress/base-styles/_mixins.scss";
+@import "~@wordpress/base-styles/_breakpoints.scss";
+@import "~@wordpress/base-styles/_animations.scss";
+@import "~@wordpress/base-styles/_z-index.scss";
+@import '~@wordpress/components/src/style.scss';
+
 body.sensei-color {
 
 	$button: $primary;
