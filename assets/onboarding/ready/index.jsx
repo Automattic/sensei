@@ -70,7 +70,11 @@ export const Ready = () => (
 			</Section>
 		</Card>
 		<div className="sensei-onboarding__bottom-actions">
-			<Link href="edit.php?post_type=course" type="wp-admin">
+			<Link
+				href="edit.php?post_type=course"
+				type="wp-admin"
+				className="link__secondary"
+			>
 				{ __( 'Exit to Courses', 'sensei-lms' ) }
 			</Link>
 		</div>

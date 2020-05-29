@@ -57,7 +57,11 @@ export const Welcome = () => {
 				</Button>
 			</Card>
 			<div className="sensei-onboarding__bottom-actions">
-				<Link href="edit.php?post_type=course" type="wp-admin">
+				<Link
+					href="edit.php?post_type=course"
+					type="wp-admin"
+					className="link__secondary"
+				>
 					{ __( 'Not right now', 'sensei-lms' ) }
 				</Link>
 			</div>
