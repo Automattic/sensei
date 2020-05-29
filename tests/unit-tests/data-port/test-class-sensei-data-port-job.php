@@ -264,7 +264,7 @@ class Sensei_Data_Port_Job_Test extends WP_UnitTestCase {
 	 */
 	public function testDeleteFileExists() {
 		if ( ! version_compare( get_bloginfo( 'version' ), '5.0.0', '>=' ) ) {
-			$this->markTestSkipped( 'Test fails with 4.9 due to text/csv getting interpretted as text/plain.' );
+			$this->markTestSkipped( 'Test fails with 4.9 due to text/csv getting interpreted as text/plain.' );
 		}
 
 		$test_file = SENSEI_TEST_FRAMEWORK_DIR . '/data-port/data-files/questions.csv';
