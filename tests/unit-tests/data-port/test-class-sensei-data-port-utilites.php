@@ -22,4 +22,98 @@ class Sensei_Data_Port_Utilities_Test extends WP_UnitTestCase {
 
 		$this->assertEquals( $user_id, get_user_by( 'login', 'testuser' )->ID );
 	}
+
+	/**
+	 * Tests a simple term name path with one entry.
+	 */
+	public function testGetTermSingleCourseCategory() {
+		$term_path     = [ 'Dinosaurs & Dogs' ];
+		$taxonomy_name = 'course-category';
+
+		$term = Sensei_Data_Port_Utilities::get_term( implode( ' > ', $term_path ), $taxonomy_name );
+		$this->assertTermPathValid( $term_path, $term, $taxonomy_name );
+	}
+
+	/**
+	 * Tests a simple term name path.
+	 */
+	public function testGetTermSimplePathCourseCategory() {
+		$term_path     = [ 'Just', 'A Very Nice', 'Simple', 'A Very Nice', 'Dinosaur' ];
+		$taxonomy_name = 'course-category';
+
+		$term = Sensei_Data_Port_Utilities::get_term( implode( ' > ', $term_path ), $taxonomy_name );
+		$this->assertTermPathValid( $term_path, $term, $taxonomy_name );
+	}
+
+	/**
+	 * Tests a term path on a non-hierarchical taxonomy.
+	 */
+	public function testGetTermNonHierarchicalPath() {
+		$term_path     = [ 'Just > A > Sneaky > Dinosaur' ];
+		$taxonomy_name = 'lesson-tag';
+
+		$term = Sensei_Data_Port_Utilities::get_term( implode( ' > ', $term_path ), $taxonomy_name );
+		$this->assertTermPathValid( $term_path, $term, $taxonomy_name );
+	}
+
+	/**
+	 * Tests a term path for modules with a teacher.
+	 */
+	public function testGetTermModulePathTeacher() {
+		$teacher_id      = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		$term_path       = [ 'Module A', 'Module A.1', 'Module A.2', 'Module A.3' ];
+		$term_path_slugs = [ $teacher_id . '-module-a', $teacher_id . '-module-a-1', $teacher_id . '-module-a-2', $teacher_id . '-module-a-3' ];
+
+		$taxonomy_name = 'module';
+
+		$term = Sensei_Data_Port_Utilities::get_term( implode( ' > ', $term_path ), $taxonomy_name, $teacher_id );
+		$this->assertTermPathValid( $term_path_slugs, $term, $taxonomy_name, 'slug' );
+	}
+
+	/**
+	 * Tests a term path for modules with a teacher.
+	 */
+	public function testGetTermModulePathAdmin() {
+		$admin_id        = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		$term_path       = [ 'Module A', 'Module A.1', 'Module A.2', 'Module A.3' ];
+		$term_path_slugs = [ 'module-a', 'module-a-1', 'module-a-2', 'module-a-3' ];
+
+		$taxonomy_name = 'module';
+
+		$term = Sensei_Data_Port_Utilities::get_term( implode( ' > ', $term_path ), $taxonomy_name, $admin_id );
+		$this->assertTermPathValid( $term_path_slugs, $term, $taxonomy_name, 'slug' );
+	}
+
+	/**
+	 * Assert a term path is valid.
+	 *
+	 * @param array         $term_path     Remaining term path.
+	 * @param WP_Term|false $last_term     Latest term to be found.
+	 * @param string        $taxonomy_name Name of taxonomy.
+	 * @param string        $validate_with Name or slug.
+	 */
+	private function assertTermPathValid( $term_path, $last_term, $taxonomy_name, $validate_with = 'name' ) {
+		$term_path_ids = [];
+		while ( ! empty( $term_path ) ) {
+			$latest_term_name = array_pop( $term_path );
+			$this->assertNotFalse( $last_term, "When we expected the term '{$latest_term_name}', no term was found." );
+
+			/**
+			 * Last term object.
+			 *
+			 * @var WP_Term $last_term
+			 */
+			$this->assertFalse( in_array( $last_term->term_id, $term_path_ids, true ), 'Detected a loop in the term path' );
+
+			$term_path_ids[] = $last_term->term_id;
+			$this->assertEquals( $taxonomy_name, $last_term->taxonomy, "Term should be taxonomy '{$taxonomy_name}' but is instead '{$last_term->taxonomy}'" );
+			$this->assertEquals( html_entity_decode( $last_term->{$validate_with} ), $latest_term_name, "Expected term {$validate_with} of '{$latest_term_name}', but found '{$last_term->{$validate_with}}'" );
+
+			if ( empty( $last_term->parent ) ) {
+				$this->assertEmpty( $term_path, 'Latest term had no parent. We expected no further path, but instead found: ' . implode( ' > ', $term_path ) );
+			}
+
+			$last_term = get_term_by( 'id', $last_term->parent, $taxonomy_name );
+		}
+	}
 }
