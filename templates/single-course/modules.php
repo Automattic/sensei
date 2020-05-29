@@ -96,10 +96,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 							<h3>
 								<?php
-								$course_id    = Sensei()->lesson->get_course_id( get_the_ID() );
-								$lesson_count = Sensei()->course->course_lesson_count( $course_id );
-
-								if ( 1 === $lesson_count ) {
+								if ( 1 === sensei_module_lesson_count() ) {
 									esc_html_e( 'Lesson', 'sensei-lms' );
 								} else {
 									esc_html_e( 'Lessons', 'sensei-lms' );
@@ -123,6 +120,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 										<?php the_title(); ?>
 
 										<?php
+										$course_id = Sensei()->lesson->get_course_id( get_the_ID() );
 										if ( Sensei_Utils::is_preview_lesson( get_the_ID() ) && ! Sensei_Course::is_user_enrolled( $course_id ) ) {
 
 											echo wp_kses_post( Sensei()->frontend->sensei_lesson_preview_title_tag( $course_id ) );

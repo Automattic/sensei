@@ -33,9 +33,7 @@ global $course;
 
 		<h2>
 			<?php
-			$lesson_count = Sensei()->course->course_lesson_count( $course->ID );
-
-			if ( 1 === $lesson_count ) {
+			if ( 1 === Sensei()->course->course_lesson_count( $course->ID ) ) {
 				esc_html_e( 'Lesson', 'sensei-lms' );
 			} else {
 				esc_html_e( 'Lessons', 'sensei-lms' );
