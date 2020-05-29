@@ -444,7 +444,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 		// Save the attachment.
 		$id = wp_insert_attachment( $attachment_args, $file_save_path );
 
-		// Make sure to clean up any previous file.
+		// Make sure to clean up any previous file if it wasn't already removed.
 		if ( isset( $this->files[ $file_key ] ) ) {
 			$this->delete_file( $file_key );
 		}
