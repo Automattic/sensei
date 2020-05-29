@@ -1,12 +1,12 @@
 @import 'variables';
 
-@import "~@wordpress/base-styles/_colors.scss";
-@import "~@wordpress/base-styles/_variables.scss";
-@import "~@wordpress/base-styles/_mixins.scss";
-@import "~@wordpress/base-styles/_breakpoints.scss";
-@import "~@wordpress/base-styles/_animations.scss";
-@import "~@wordpress/base-styles/_z-index.scss";
-@import '~@wordpress/components/src/style.scss';
+@import '~@wordpress/base-styles/colors';
+@import '~@wordpress/base-styles/variables';
+@import '~@wordpress/base-styles/mixins';
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/animations';
+@import '~@wordpress/base-styles/z-index';
+@import '~@wordpress/components/src/style';
 
 body.sensei-color {
 

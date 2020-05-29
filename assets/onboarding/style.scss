@@ -1,6 +1,5 @@
 @import '~@woocommerce/components/build-style/style.css';
-@import 'variables';
-@import 'wp-colors';
+@import '../shared/styles/variables';
 @import 'fullscreen';
 
 .sensei-onboarding {
