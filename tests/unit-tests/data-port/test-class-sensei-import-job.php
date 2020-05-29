@@ -40,7 +40,7 @@ class Sensei_Import_Job_Test extends WP_UnitTestCase {
 	 */
 	public function testSaveFileValid() {
 		if ( ! version_compare( get_bloginfo( 'version' ), '5.0.0', '>=' ) ) {
-			$this->markTestSkipped( 'Test fails with 4.9 due to text/csv getting interpretted as text/plain.' );
+			$this->markTestSkipped( 'Test fails with 4.9 due to text/csv getting interpreted as text/plain.' );
 		}
 
 		$test_file = SENSEI_TEST_FRAMEWORK_DIR . '/data-port/data-files/questions.csv';
@@ -56,6 +56,33 @@ class Sensei_Import_Job_Test extends WP_UnitTestCase {
 		$this->assertTrue( $attachment instanceof WP_Post );
 
 		$this->assertEquals( basename( $test_file ), $attachment->post_title );
+	}
+
+	/**
+	 * Test saving an invalid file to the job when it already has a valid file. Should immediately remove
+	 * the valid file.
+	 */
+	public function testSaveFileInvalidAfterValid() {
+		if ( ! version_compare( get_bloginfo( 'version' ), '5.0.0', '>=' ) ) {
+			$this->markTestSkipped( 'Test fails with 4.9 due to text/csv getting interpreted as text/plain.' );
+		}
+
+		$test_file_valid   = SENSEI_TEST_FRAMEWORK_DIR . '/data-port/data-files/questions.csv';
+		$test_file_valid   = $this->get_tmp_file( $test_file_valid );
+		$test_file_invalid = SENSEI_TEST_FRAMEWORK_DIR . '/data-port/data-files/invalid_file_type.tsv';
+		$test_file_invalid = $this->get_tmp_file( $test_file_invalid );
+
+		$job = new Sensei_Import_Job( 'test-job' );
+
+		$result_valid = $job->save_file( 'questions', $test_file_valid, basename( $test_file_valid ) );
+
+		$this->assertTrue( $result_valid, 'Valid file with a valid file key should be stored' );
+		$this->assertTrue( isset( $job->get_files()['questions'] ) );
+
+		$result_invalid = $job->save_file( 'questions', $test_file_invalid, basename( $test_file_invalid ) );
+
+		$this->assertWPError( $result_invalid, 'Invalid file should not be stored' );
+		$this->assertFalse( isset( $job->get_files()['questions'] ), 'Old valid file should be removed on invalid attempt' );
 	}
 
 	/**
