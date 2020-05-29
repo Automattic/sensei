@@ -11,17 +11,14 @@
  *
  */
 
-var checktextdomain = require( 'gulp-checktextdomain' );
-var del             = require( 'del' );
-var exec            = require( 'child_process' ).exec;
-var gulp            = require( 'gulp' );
-var sort            = require( 'gulp-sort' );
-var wpPot           = require( 'gulp-wp-pot' );
-var zip             = require( 'gulp-zip' );
-var process         = require( 'process' );
+var del = require( 'del' );
+var exec = require( 'child_process' ).exec;
+var gulp = require( 'gulp' );
+var zip = require( 'gulp-zip' );
+var process = require( 'process' );
 
-function npm_run ( command ) {
-	var npmProcess = exec( `npm run ${command}` );
+function npm_run( command ) {
+	var npmProcess = exec( `npm run ${ command }` );
 	npmProcess.stdout.pipe( process.stdout );
 	npmProcess.stderr.pipe( process.stderr );
 	return npmProcess;
@@ -31,7 +28,7 @@ var paths = {
 	select2: [
 		'node_modules/select2/dist/css/select2.min.css',
 		'node_modules/select2/dist/js/select2.full.js',
-		'node_modules/select2/dist/js/select2.full.min.js'
+		'node_modules/select2/dist/js/select2.full.min.js',
 	],
 	packageContents: [
 		'assets/**/*',
@@ -49,85 +46,65 @@ var paths = {
 		'wpml-config.xml',
 	],
 	packageDir: 'build/sensei-lms',
-	packageZip: 'build/sensei-lms.zip'
+	packageZip: 'build/sensei-lms.zip',
 };
 
-gulp.task( 'clean', gulp.series( function( cb ) {
-	return del( [
-		'assets/dist/**',
-		'assets/vendor/select2/**',
-		'build'
-	], cb );
-} ) );
+gulp.task(
+	'clean',
+	gulp.series( function( cb ) {
+		return del(
+			[ 'assets/dist/**', 'assets/vendor/select2/**', 'build' ],
+			cb
+		);
+	} )
+);
 
-function buildWebpack () {
-	return npm_run( 'build' )
+function buildWebpack() {
+	return npm_run( 'build' );
 }
 
 gulp.task( 'webpack', gulp.series( buildWebpack ) );
 
-gulp.task( 'block-editor-assets', gulp.series( function( cb ) {
-	exec( 'npm run block-editor-assets', cb );
-} ) );
-
-gulp.task( 'pot', gulp.series( function() {
-	return gulp.src( [ '**/**.php', '!node_modules/**', '!vendor/**', '!build/**', '!tests/**' ] )
-		.pipe( sort() )
-		.pipe( wpPot( {
-			domain: 'sensei-lms',
-			bugReport: 'https://translate.wordpress.org/projects/wp-plugins/sensei-lms/'
-		} ) )
-		.pipe( gulp.dest( 'lang/sensei-lms.pot' ) );
-} ) );
-
-gulp.task( 'textdomain', gulp.series( function() {
-	return gulp.src( [ '**/*.php', '!node_modules/**', '!build/**' , '!vendor/**' ] )
-		.pipe( checktextdomain( {
-			text_domain: 'sensei-lms',
-			keywords: [
-				'__:1,2d',
-				'_e:1,2d',
-				'_x:1,2c,3d',
-				'esc_html__:1,2d',
-				'esc_html_e:1,2d',
-				'esc_html_x:1,2c,3d',
-				'esc_attr__:1,2d',
-				'esc_attr_e:1,2d',
-				'esc_attr_x:1,2c,3d',
-				'_ex:1,2c,3d',
-				'_n:1,2,4d',
-				'_nx:1,2,4c,5d',
-				'_n_noop:1,2,3d',
-				'_nx_noop:1,2,3c,4d'
-			]
-		} ) );
-} ) );
+gulp.task(
+	'block-editor-assets',
+	gulp.series( function( cb ) {
+		exec( 'npm run block-editor-assets', cb );
+	} )
+);
 
 gulp.task( 'vendor', function() {
-	return gulp.src( paths.select2 )
+	return gulp
+		.src( paths.select2 )
 		.pipe( gulp.dest( 'assets/vendor/select2' ) );
 } );
 
-gulp.task( 'test', gulp.series( function npm_test ( ) {
-	npm_run( 'test' )
-} ) );
+gulp.task(
+	'test',
+	gulp.series( function npm_test() {
+		npm_run( 'test' );
+	} )
+);
 
 gulp.task( 'build', gulp.series( 'test', 'clean', 'webpack', 'vendor' ) );
 gulp.task( 'build-unsafe', gulp.series( 'clean', 'webpack', 'vendor' ) );
 
-
 gulp.task( 'copy-package', function() {
-	return gulp.src( paths.packageContents, { base: '.' } )
+	return gulp
+		.src( paths.packageContents, { base: '.' } )
 		.pipe( gulp.dest( paths.packageDir ) );
 } );
 
 gulp.task( 'zip-package', function() {
-	return gulp.src( paths.packageDir + '/**/*', { base: paths.packageDir + '/..' } )
+	return gulp
+		.src( paths.packageDir + '/**/*', { base: paths.packageDir + '/..' } )
 		.pipe( zip( paths.packageZip ) )
 		.pipe( gulp.dest( '.' ) );
 } );
 
 gulp.task( 'package', gulp.series( 'build', 'copy-package', 'zip-package' ) );
-gulp.task( 'package-unsafe', gulp.series( 'build-unsafe', 'copy-package', 'zip-package' ) );
+gulp.task(
+	'package-unsafe',
+	gulp.series( 'build-unsafe', 'copy-package', 'zip-package' )
+);
 
 gulp.task( 'default', gulp.series( 'build' ) );
