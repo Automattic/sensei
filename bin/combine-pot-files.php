@@ -1,4 +1,6 @@
 <?php
+// phpcs:ignoreFile -- This is a borrowed file from woocommerce-admin
+
 /**
  * Command line script for merging two .pot files.
  *
@@ -62,7 +64,9 @@ function woocommerce_admin_parse_pot( $file_name ) {
 		if ( $have_msgid ) {
 			$messages[]   = $line;
 		} else {
-			$references[] = $line;
+			// Replace fixing problem to generate json through wp i18n make-json.
+			// It gets only .js extensions.
+			$references[] = str_replace( '.jsx', '.jsx.js', $line );
 		}
 	}
 
