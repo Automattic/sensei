@@ -265,6 +265,9 @@ class Sensei_Admin {
 		// Sensei styling for WordPress and WooCommerce components.
 		Sensei()->assets->register( 'sensei-theme', 'shared/styles/sensei-theme.css', [], 'screen' );
 
+		// WooCommerce component styles.
+		Sensei()->assets->register( 'sensei-wc-components', 'shared/styles/wc-components.css', [], 'screen' );
+
 		// Select 2 styles
 		Sensei()->assets->enqueue( 'sensei-core-select2', '../vendor/select2/select2.min.css', [], 'screen' );
 

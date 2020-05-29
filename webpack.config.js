@@ -25,6 +25,7 @@ const files = [
 	'onboarding/index.jsx',
 	'onboarding/style.scss',
 	'shared/styles/sensei-theme.scss',
+	'shared/styles/wc-components.scss',
 
 	'css/frontend/sensei.scss',
 	'css/admin-custom.css',
