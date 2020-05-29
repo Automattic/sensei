@@ -136,8 +136,8 @@ $alert-red: #d94f4f;
 				align-items: center;
 
 				&__icon {
-					margin-right: 5px;
-					flex-shrink: 0;
+					margin-right: 3px;
+					vertical-align: text-bottom;
 				}
 
 				&__message {
