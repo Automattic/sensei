@@ -192,7 +192,7 @@ $alert-red: #d94f4f;
 					background: $green;
 					border-color: $green;
 					height: 40px;
-					margin-left: 10px;
+					margin-left: auto;
 
 					&:not(:disabled):not([aria-disabled="true"]):hover {
 						background: darken($primary, 20%);

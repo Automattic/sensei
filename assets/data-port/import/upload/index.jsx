@@ -40,7 +40,7 @@ export const UploadPage = ( { importerDispatch } ) => {
 	return (
 		<section className={ 'sensei-import-form' }>
 			<header className={ 'sensei-import-form__header' }>
-				<H>{ __( 'Import products from a CSV file', 'sensei-lms' ) }</H>
+				<H>{ __( 'Import Content', 'sensei-lms' ) }</H>
 				<p>
 					{ __(
 						'This tool allows you to import courses, lessons, and questions from a CSV file.',
