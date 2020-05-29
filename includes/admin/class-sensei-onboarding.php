@@ -132,7 +132,7 @@ class Sensei_Onboarding {
 	 * @access private
 	 */
 	public function enqueue_scripts() {
-		Sensei()->assets->enqueue( 'sensei-setupwizard', 'onboarding/index.js', [], true );
+		Sensei()->assets->enqueue( 'sensei-setupwizard', 'onboarding/index.js', [ 'wp-i18n' ], true );
 	}
 
 	/**
@@ -142,6 +142,15 @@ class Sensei_Onboarding {
 	 */
 	public function enqueue_styles() {
 		Sensei()->assets->enqueue( 'sensei-setupwizard', 'onboarding/style.css', [ 'wp-components' ] );
+	}
+
+	/**
+	 * Set script translations.
+	 *
+	 * @access private
+	 */
+	public function setup_wizard_set_script_translations() {
+		wp_set_script_translations( 'sensei-setupwizard', 'sensei-lms', Sensei()->plugin_path() . 'lang' );
 	}
 
 	/**
@@ -164,6 +173,7 @@ class Sensei_Onboarding {
 		add_action( 'admin_print_scripts', [ $this, 'enqueue_scripts' ] );
 		add_action( 'admin_print_styles', [ $this, 'enqueue_styles' ] );
 		add_action( 'admin_body_class', [ $this, 'filter_body_class' ] );
+		add_action( 'init', [ $this, 'setup_wizard_set_script_translations' ] );
 
 		add_filter( 'show_admin_bar', '__return_false' );
 	}
