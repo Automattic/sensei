@@ -2282,6 +2282,7 @@ class Sensei_Utils {
 					'class' => array(),
 					'id'    => array(),
 					'name'  => array(),
+					'style'  => array(),
 				),
 			)
 		);
