@@ -116,6 +116,13 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 	 * @return true|WP_Error
 	 */
 	public function save_file( $file_key, $tmp_file, $file_name ) {
+		$files = $this->get_files();
+
+		// Make sure to clean up any previous file.
+		if ( isset( $files[ $file_key ] ) ) {
+			$this->delete_file( $file_key );
+		}
+
 		$check_file = $this->check_file( $file_key, $tmp_file, $file_name );
 
 		if ( is_wp_error( $check_file ) ) {
