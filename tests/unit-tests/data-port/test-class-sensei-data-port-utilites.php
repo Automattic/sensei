@@ -46,6 +46,48 @@ class Sensei_Data_Port_Utilities_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests a matching non-parent name from a different path is not used.
+	 */
+	public function testGetTermComplexPathCourseCategory() {
+		$term_path_a   = [ 'Dinosaur', 'Pizza', 'Taco' ];
+		$term_path_b   = [ 'Pizza', 'Taco', 'Dinosaur' ];
+		$taxonomy_name = 'course-category';
+
+		$term_a = Sensei_Data_Port_Utilities::get_term( implode( ' > ', $term_path_a ), $taxonomy_name );
+		$term_b = Sensei_Data_Port_Utilities::get_term( implode( ' > ', $term_path_b ), $taxonomy_name );
+
+		$this->assertTermPathValid( $term_path_a, $term_a, $taxonomy_name );
+		$this->assertTermPathValid( $term_path_b, $term_b, $taxonomy_name );
+
+		$term_path_a_ids = [];
+		while ( $term_a ) {
+			$term_path_a_ids[] = $term_a->term_id;
+
+			if ( ! $term_a->parent ) {
+				break;
+			}
+
+			$term_a = get_term_by( 'id', $term_a->parent, $taxonomy_name );
+		}
+
+		$term_path_b_ids = [];
+		while ( $term_b ) {
+			$term_path_b_ids[] = $term_b->term_id;
+
+			if ( ! $term_b->parent ) {
+				break;
+			}
+
+			$term_b = get_term_by( 'id', $term_b->parent, $taxonomy_name );
+		}
+
+		$this->assertEquals( count( $term_path_a ), count( $term_path_a_ids ), 'A: IDs should match size of path' );
+		$this->assertEquals( count( $term_path_b ), count( $term_path_b_ids ), 'B: IDs should match size of path' );
+		$this->assertEmpty( array_intersect( $term_path_a_ids, $term_path_b_ids ), 'There should be no similar IDs in the paths' );
+	}
+
+
+	/**
 	 * Tests a term path on a non-hierarchical taxonomy.
 	 */
 	public function testGetTermNonHierarchicalPath() {

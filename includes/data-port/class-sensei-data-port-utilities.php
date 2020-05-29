@@ -63,7 +63,7 @@ class Sensei_Data_Port_Utilities {
 
 		foreach ( $term_path as $term_name ) {
 			$term_name = trim( $term_name );
-			$parent_id = isset( $last_term ) ? $last_term->term_id : null;
+			$parent_id = isset( $last_term ) ? $last_term->term_id : 0;
 
 			$term_query = new WP_Term_Query( self::get_term_query_args( $term_name, $taxonomy_name, $teacher_user_id, $parent_id ) );
 			$terms      = $term_query->get_terms();
@@ -109,20 +109,17 @@ class Sensei_Data_Port_Utilities {
 	 *
 	 * @return array
 	 */
-	private static function get_term_query_args( $term_name, $taxonomy_name, $teacher_user_id, $parent_id = null ) {
+	private static function get_term_query_args( $term_name, $taxonomy_name, $teacher_user_id, $parent_id = 0 ) {
 		$args               = [];
 		$args['number']     = 1;
 		$args['taxonomy']   = $taxonomy_name;
 		$args['hide_empty'] = false;
+		$args['parent']     = $parent_id;
 
 		if ( 'module' === $taxonomy_name ) {
 			$args['slug'] = self::get_term_slug( $term_name, $taxonomy_name, $teacher_user_id );
 		} else {
 			$args['name'] = $term_name;
-		}
-
-		if ( $parent_id ) {
-			$args['parent'] = $parent_id;
 		}
 
 		return $args;
