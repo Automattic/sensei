@@ -375,7 +375,7 @@ class Sensei_Plugins_Installation {
 				} catch ( Exception $e ) {
 					$error   = true;
 					$message = sprintf(
-						// translators: 1: plugin name, 2: error message.
+						// translators: Placeholder %1$s is the plugin title, %2$s is the error message.
 						__( '%1$s could not be installed (%2$s).', 'sensei-lms' ),
 						$plugin_title,
 						$e->getMessage()
@@ -401,7 +401,7 @@ class Sensei_Plugins_Installation {
 				} catch ( Exception $e ) {
 					$error   = true;
 					$message = sprintf(
-						// translators: 1: plugin name.
+						// translators: Placeholder %1$s is the plugin title, %2$s is the error message.
 						__( '%1$s is installed but could not be activated (%2$s).', 'sensei-lms' ),
 						$plugin_title,
 						$e->getMessage()
