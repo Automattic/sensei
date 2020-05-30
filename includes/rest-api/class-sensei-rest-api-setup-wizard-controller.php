@@ -143,7 +143,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	}
 
 	/**
-	 * Register /features-installation endpoint.
+	 * Register /features endpoint.
 	 */
 	public function register_submit_features_route() {
 		register_rest_route(
@@ -169,7 +169,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	}
 
 	/**
-	 * Register /features endpoint.
+	 * Register /features-installation endpoint.
 	 */
 	public function register_submit_features_installation_route() {
 		register_rest_route(
