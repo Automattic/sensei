@@ -2514,6 +2514,18 @@ class Sensei_Utils {
 		 */
 		return apply_filters( 'sensei_course_show_lessons', true, $course_id );
 	}
+
+	/**
+	 * Determine whether the current page is the plugins page.
+	 *
+	 * @since 3.0.2
+	 *
+	 * @return bool Whether the current page is the plugins page.
+	 */
+	public static function sensei_is_plugins_page() {
+		return in_array( get_current_screen()->id, array( 'plugins', 'plugins-network' ), true );
+	}
+
 } // End Class
 
 /**
