@@ -299,10 +299,11 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 * @return bool Success.
 	 */
 	public function submit_welcome( $data ) {
-
 		$this->mark_step_complete( 'welcome' );
-		Sensei()->usage_tracking->set_tracking_enabled( (bool) $data['usage_tracking'] );
 		$this->setup_wizard->pages->create_pages();
+
+		Sensei()->usage_tracking->set_tracking_enabled( (bool) $data['usage_tracking'] );
+		Sensei()->usage_tracking->send_usage_data();
 
 		return true;
 	}
