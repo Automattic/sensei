@@ -436,9 +436,15 @@ class Sensei_Onboarding {
 	/**
 	 * Get Sensei extensions for setup wizard.
 	 *
+	 * @param boolean $clear_active_plugins_cache Clear cache for `is_plugin_active`.
+	 *
 	 * @return array Sensei extensions.
 	 */
-	public function get_sensei_extensions() {
+	public function get_sensei_extensions( $clear_active_plugins_cache = false ) {
+		if ( $clear_active_plugins_cache ) {
+			wp_cache_delete( 'alloptions', 'options' );
+		}
+
 		$sensei_extensions  = Sensei_Extensions::instance();
 		$installing_plugins = Sensei_Plugins_Installation::instance()->get_installing_plugins();
 

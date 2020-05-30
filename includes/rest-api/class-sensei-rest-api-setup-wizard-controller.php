@@ -279,13 +279,20 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 * @return array Features data
 	 */
 	public function get_features_data( $user_data = null ) {
+		$clear_active_plugins_cache = false;
+
 		if ( ! $user_data || ! isset( $user_data['features'] ) ) {
 			$user_data = $this->setup_wizard->get_wizard_user_data();
+
+			// There is a problem with the `active_plugins` option cache in the first
+			// fetch after starting the installation. This argument fixes that for the
+			// cases where the `/features` endpoint is called.
+			$clear_active_plugins_cache = true;
 		}
 
 		return [
 			'selected' => $user_data['features']['selected'],
-			'options'  => $this->setup_wizard->get_sensei_extensions(),
+			'options'  => $this->setup_wizard->get_sensei_extensions( $clear_active_plugins_cache ),
 		];
 	}
 
