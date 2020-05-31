@@ -96,12 +96,26 @@ const InstallationFeedback = ( { onContinue, onRetry } ) => {
 					( { slug, title, excerpt, link, error, status } ) => ( {
 						title,
 						content: (
-							<FeatureDescription
-								excerpt={ excerpt }
-								link={ link }
-								error={ error }
-								onFeatureRetry={ () => onRetry( [ slug ] ) }
-							/>
+							<>
+								<FeatureDescription
+									excerpt={ excerpt }
+									link={ link }
+								/>
+								{ error && (
+									<p className="sensei-onboarding__error-message">
+										{ error }{ ' ' }
+										<button
+											className="sensei-onboarding__retry-button"
+											type="button"
+											onClick={ () =>
+												onRetry( [ slug ] )
+											}
+										>
+											{ __( 'Retry?', 'sensei-lms' ) }
+										</button>
+									</p>
+								) }
+							</>
 						),
 						before: <FeatureStatus status={ status } />,
 					} )
