@@ -10,8 +10,6 @@ import FeatureStatus, {
 } from './feature-status';
 import useFeaturesPolling from './use-features-polling';
 
-const getStatus = ( status = INSTALLING_STATUS ) => status;
-
 /**
  * Installation feedback component.
  *
@@ -32,15 +30,11 @@ const InstallationFeedback = ( { onContinue, onRetry } ) => {
 	// Update general statuses when features is updated.
 	useEffect( () => {
 		setHasInstalling(
-			features.some(
-				( feature ) => getStatus( feature.status ) === INSTALLING_STATUS
-			)
+			features.some( ( feature ) => feature.status === INSTALLING_STATUS )
 		);
 
 		setHasError(
-			features.some(
-				( feature ) => getStatus( feature.status ) === ERROR_STATUS
-			)
+			features.some( ( feature ) => feature.status === ERROR_STATUS )
 		);
 	}, [ features ] );
 
@@ -61,10 +55,7 @@ const InstallationFeedback = ( { onContinue, onRetry } ) => {
 		const onRetryAll = () => {
 			onRetry(
 				features
-					.filter(
-						( feature ) =>
-							getStatus( feature.status ) === ERROR_STATUS
-					)
+					.filter( ( feature ) => feature.status === ERROR_STATUS )
 					.map( ( feature ) => feature.slug )
 			);
 		};
@@ -112,9 +103,7 @@ const InstallationFeedback = ( { onContinue, onRetry } ) => {
 								onFeatureRetry={ () => onRetry( [ slug ] ) }
 							/>
 						),
-						before: (
-							<FeatureStatus status={ getStatus( status ) } />
-						),
+						before: <FeatureStatus status={ status } />,
 					} )
 				) }
 			/>

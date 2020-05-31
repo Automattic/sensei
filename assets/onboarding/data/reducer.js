@@ -8,6 +8,8 @@ import {
 	SET_STEP_DATA,
 } from './constants';
 
+import { INSTALLING_STATUS } from '../features/feature-status';
+
 const DEFAULT_STATE = {
 	isFetching: false,
 	fetchError: false,
@@ -36,23 +38,21 @@ const DEFAULT_STATE = {
  * @property {Object} error   Feature error.
  */
 /**
- * Remove error and status from selected options.
+ * Update status pre-installation.
  *
  * @param {string[]}  selected Feature slugs.
  * @param {Feature[]} options  Options.
  *
  * @return {Feature[]} Updated options.
  */
-const removeErrorFromSelected = ( selected, options ) =>
+const updatePreInstallation = ( selected, options ) =>
 	options.map( ( feature ) => {
 		if ( selected.includes( feature.slug ) ) {
-			// Remove status and error props from the object.
-			const {
-				status, // eslint-disable-line no-unused-vars
-				error, // eslint-disable-line no-unused-vars
-				...featureWithoutError
-			} = feature;
-			return featureWithoutError;
+			return {
+				...feature,
+				status: INSTALLING_STATUS,
+				error: null,
+			};
 		}
 		return feature;
 	} );
@@ -103,7 +103,7 @@ export default ( state = DEFAULT_STATE, action ) => {
 						...state.data,
 						features: {
 							...state.data.features,
-							options: removeErrorFromSelected(
+							options: updatePreInstallation(
 								stepData.selected,
 								state.data.features.options
 							),

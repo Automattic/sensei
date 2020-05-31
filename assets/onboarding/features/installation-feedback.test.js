@@ -64,24 +64,6 @@ describe( '<InstallationFeedback />', () => {
 		expect( queryByText( 'Installing…' ) ).toBeTruthy();
 	} );
 
-	it( 'Should render with empty status as loading', () => {
-		const features = {
-			selected: [ 'test-empty' ],
-			options: featuresOptions,
-		};
-
-		useFeaturesPolling.mockImplementation( () => features );
-
-		const { queryByText } = render(
-			<InstallationFeedback
-				onContinue={ () => {} }
-				onRetry={ () => {} }
-			/>
-		);
-
-		expect( queryByText( 'Installing…' ) ).toBeTruthy();
-	} );
-
 	it( 'Should render all success', () => {
 		const features = {
 			selected: [ 'test-installed' ],

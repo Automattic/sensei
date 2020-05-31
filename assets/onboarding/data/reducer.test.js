@@ -70,7 +70,7 @@ describe( 'Setup wizard reducer', () => {
 		expect( state.submitError ).toBeFalsy();
 	} );
 
-	it( 'Should clear status and error on START_SUBMIT_SETUP_WIZARD_DATA action for features-installation step', () => {
+	it( 'Should update the features statuses on START_SUBMIT_SETUP_WIZARD_DATA action', () => {
 		const state = reducer(
 			{
 				data: {
@@ -86,6 +86,9 @@ describe( 'Setup wizard reducer', () => {
 								status: 'error',
 								error: { msg: 'Error message' },
 							},
+							{
+								slug: 'starting-installation',
+							},
 						],
 					},
 				},
@@ -93,18 +96,25 @@ describe( 'Setup wizard reducer', () => {
 			{
 				type: START_SUBMIT_SETUP_WIZARD_DATA,
 				step: 'features-installation',
-				stepData: { selected: [ 'slug-1' ] },
+				stepData: { selected: [ 'slug-1', 'starting-installation' ] },
 			}
 		);
 
 		expect( state.data.features.options ).toEqual( [
 			{
 				slug: 'slug-1',
+				status: 'installing',
+				error: null,
 			},
 			{
 				slug: 'slug-2',
 				status: 'error',
 				error: { msg: 'Error message' },
+			},
+			{
+				slug: 'starting-installation',
+				status: 'installing',
+				error: null,
 			},
 		] );
 	} );
