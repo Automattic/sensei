@@ -1,4 +1,4 @@
-import { render, fireEvent } from '@testing-library/react';
+import { render, fireEvent, waitFor } from '@testing-library/react';
 import { UploadPage } from './index';
 import { moveToNextAction } from '../../stepper';
 
@@ -11,8 +11,10 @@ jest.mock( '../upload-level', () => ( {
 	},
 } ) );
 
+jest.mock( '@wordpress/api-fetch', () => () => Promise.resolve() );
+
 describe( '<UploadPage /> continue button', () => {
-	it( "should be enabled when it's ready.", () => {
+	it( "should be enabled when it's ready.", async () => {
 		let dispatchedAction = null;
 
 		mockReadyStatus = true;
@@ -27,7 +29,9 @@ describe( '<UploadPage /> continue button', () => {
 
 		fireEvent.click( getByText( 'Continue' ) );
 
-		expect( dispatchedAction ).toEqual( moveToNextAction() );
+		await waitFor( () =>
+			expect( dispatchedAction ).toEqual( moveToNextAction() )
+		);
 	} );
 
 	it( "should be disabled when it's not ready.", () => {
