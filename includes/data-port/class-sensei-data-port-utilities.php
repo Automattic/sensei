@@ -33,7 +33,7 @@ class Sensei_Data_Port_Utilities {
 	}
 
 	/**
-	 * Cet a term based on human readable string and create it if needed. If the taxonomy is hierarchical,
+	 * Get a term based on human readable string and create it if needed. If the taxonomy is hierarchical,
 	 * this method processes that as well and returns the \WP_Term object for the last in their hierarchy.
 	 *
 	 * @param string $term_name_path  Term name with optional hierarchy path, separated by " > ".
@@ -49,7 +49,7 @@ class Sensei_Data_Port_Utilities {
 		}
 
 		if ( $taxonomy->hierarchical ) {
-			$term_path = preg_split( '/ ?\> ?/', $term_name_path );
+			$term_path = preg_split( '/ ?> ?/', $term_name_path );
 		} else {
 			$term_path = [ $term_name_path ];
 		}
