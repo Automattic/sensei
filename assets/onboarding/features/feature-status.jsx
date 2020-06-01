@@ -21,13 +21,17 @@ const statusComponents = {
 	),
 	[ ERROR_STATUS ]: (
 		<i className="sensei-onboarding__circle-icon-wrapper error-icon-wrapper alert-icon">
-			{ __( 'Error installing plugin', 'sensei-lms' ) }
+			<span className="screen-reader-text">
+				{ __( 'Error installing plugin', 'sensei-lms' ) }
+			</span>
 		</i>
 	),
 	[ INSTALLED_STATUS ]: (
 		<i className="sensei-onboarding__circle-icon-wrapper success-icon-wrapper">
 			<CheckIcon />
-			{ __( 'Plugin installed', 'sensei-lms' ) }
+			<span className="screen-reader-text">
+				{ __( 'Plugin installed', 'sensei-lms' ) }
+			</span>
 		</i>
 	),
 };
