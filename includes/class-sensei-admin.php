@@ -262,10 +262,10 @@ class Sensei_Admin {
 		// Global Styles for icons and menu items
 		Sensei()->assets->enqueue( 'sensei-global', 'css/global.css', [], 'screen' );
 
-		// Sensei styling for WordPress and WooCommerce components.
-		Sensei()->assets->register( 'sensei-theme', 'shared/styles/sensei-theme.css', [], 'screen' );
+		// WordPress component styles with Sensei theming.
+		Sensei()->assets->register( 'sensei-wp-components', 'shared/styles/wp-components.css', [], 'screen' );
 
-		// WooCommerce component styles.
+		// WooCommerce component styles with Sensei theming.
 		Sensei()->assets->register( 'sensei-wc-components', 'shared/styles/wc-components.css', [], 'screen' );
 
 		// Select 2 styles

@@ -68,13 +68,5 @@ body.sensei-color {
 		}
 	}
 
-	.woocommerce-stepper {
-
-		&__step.is-complete, &__step.is-active {
-			.woocommerce-stepper__step-icon {
-				background: $primary;
-			}
-		}
-	}
 
 }

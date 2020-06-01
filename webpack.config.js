@@ -24,7 +24,7 @@ const files = [
 	'js/user-dashboard.js',
 	'onboarding/index.jsx',
 	'onboarding/style.scss',
-	'shared/styles/sensei-theme.scss',
+	'shared/styles/wp-components.scss',
 	'shared/styles/wc-components.scss',
 
 	'css/frontend/sensei.scss',

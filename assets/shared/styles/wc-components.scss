@@ -1,2 +1,14 @@
-
+@import 'variables';
 @import '~@woocommerce/components/build-style/style.css';
+
+body.sensei-color {
+
+	.woocommerce-stepper {
+
+		&__step.is-complete, &__step.is-active {
+			.woocommerce-stepper__step-icon {
+				background: $primary;
+			}
+		}
+	}
+}
