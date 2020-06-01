@@ -21,7 +21,7 @@ const FeatureDescription = ( {
 			<>
 				{ ' ' }
 				<a
-					className="sensei-onboarding__learn-more"
+					className="sensei-onboarding__learn-more link__color-primary"
 					href={ link }
 					target="_blank"
 					rel="noopener noreferrer"

@@ -20,16 +20,6 @@
 
 		.sensei-onboarding__learn-more {
 			white-space: nowrap;
-			color: $primary;
-
-			&:hover,
-			&:active {
-				color: lighten($primary, 20%);
-			}
-
-			&:focus {
-				color: darken($primary, 20%);
-			}
 		}
 	}
 
