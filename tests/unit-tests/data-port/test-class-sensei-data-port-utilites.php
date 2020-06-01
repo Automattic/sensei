@@ -168,7 +168,8 @@ class Sensei_Data_Port_Utilities_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Assert a term path is valid.
+	 * Assert a term path is valid by traversing up the parent path of the last term and making
+	 * sure it matches the array `$term_path`.
 	 *
 	 * @param array         $term_path     Remaining term path.
 	 * @param WP_Term|false $last_term     Latest term to be found.
