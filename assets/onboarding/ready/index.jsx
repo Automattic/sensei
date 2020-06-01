@@ -3,6 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
 import { MailingListSignupForm } from './mailinglist-signup-form';
 import { formatString } from '../helpers/format-string.js';
+import { logLink } from '../log-event';
 
 /**
  * Ready step for Setup Wizard.
@@ -40,6 +41,7 @@ export const Ready = () => (
 									className="sensei-onboarding__button"
 									isPrimary
 									href="post-new.php?post_type=course"
+									{ ...logLink( 'setup_wizard_ready_create_course' ) }
 								>
 									Create a course
 								</Button>
@@ -60,6 +62,7 @@ export const Ready = () => (
 											href="https://senseilms.com/lesson/courses/"
 											target="_blank"
 											rel="noopener noreferrer"
+											{ ...logLink( 'setup_wizard_ready_learn_more' ) }
 										/>
 									),
 								}

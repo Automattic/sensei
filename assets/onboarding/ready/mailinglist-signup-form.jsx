@@ -1,6 +1,7 @@
 import { List } from '@woocommerce/components';
 import { Button, TextControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { logLink } from '../log-event';
 import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 
 /**
@@ -41,6 +42,9 @@ export const MailingListSignupForm = () => {
 								className="sensei-onboarding__button"
 								isPrimary
 								type="submit"
+								{ ...logLink(
+									'setup_wizard_ready_mailing_list'
+								) }
 							>
 								{ __( 'Yes, please!', 'sensei-lms' ) }
 							</Button>
