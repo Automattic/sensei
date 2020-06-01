@@ -1,10 +1,11 @@
 import { render, fireEvent } from '@testing-library/react';
+import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 
 import QueryStringRouter, { Route } from '../query-string-router';
 import { updateRouteURL } from '../query-string-router/url-functions';
 import Features from './index';
+import useFeaturesPolling from './use-features-polling';
 
-// Mock features data.
 jest.mock( '../data/use-setup-wizard-step', () => {
 	const stepData = {
 		selected: [ 'installed' ],
@@ -28,15 +29,30 @@ jest.mock( '../data/use-setup-wizard-step', () => {
 	};
 } );
 
+// Mock features data.
+const mockStepData = ( mockData ) => {
+	useSetupWizardStep.mockReturnValue( {
+		stepData: mockData,
+		submitStep: ( data, { onSuccess } ) => {
+			onSuccess();
+		},
+	} );
+};
+
 // Mock features polling.
-jest.mock( './use-features-polling', () => () => ( {
-	selected: [ 'test-1' ],
-	options: [ { slug: 'test-1', title: 'Test 1' } ],
-} ) );
+jest.mock( './use-features-polling', () => jest.fn() );
 
 describe( '<Features />', () => {
 	beforeEach( () => {
 		window.sensei_log_event = jest.fn();
+
+		mockStepData( {
+			selected: [],
+			options: [
+				{ slug: 'test-1', title: 'Test 1' },
+				{ slug: 'test-2', title: 'Test 2' },
+			],
+		} );
 	} );
 	afterEach( () => {
 		// Clear URL param.
@@ -46,6 +62,14 @@ describe( '<Features />', () => {
 	} );
 
 	it( 'Should not check installed features', () => {
+		mockStepData( {
+			selected: [ 'installed' ],
+			options: [
+				{ slug: 'test-1', title: 'Test 1' },
+				{ slug: 'installed', title: 'Test 2', status: 'installed' },
+			],
+		} );
+
 		const { container } = render(
 			<QueryStringRouter paramName="step">
 				<Features />
@@ -93,14 +117,21 @@ describe( '<Features />', () => {
 	} );
 
 	it( 'Should continue to the confirmation and then installation feedback when some feature is selected', () => {
-		const { container, queryByText } = render(
+		useFeaturesPolling.mockReturnValue( {
+			selected: [ 'test-1' ],
+			options: [
+				{ slug: 'test-1', title: 'Test 1', status: 'installed' },
+			],
+		} );
+
+		const { container, queryByText, getByLabelText } = render(
 			<QueryStringRouter>
 				<Features />
 			</QueryStringRouter>
 		);
 
 		// Check the first feature.
-		fireEvent.click( container.querySelector( 'input[type="checkbox"]' ) );
+		fireEvent.click( getByLabelText( 'Test 1' ) );
 
 		// Continue to confirmation.
 		fireEvent.click( queryByText( 'Continue' ) );
@@ -114,6 +145,11 @@ describe( '<Features />', () => {
 	} );
 
 	it( 'Should display installation error', () => {
+		useFeaturesPolling.mockReturnValue( {
+			selected: [ 'test-2' ],
+			options: [ { slug: 'test-2', title: 'Test 2', status: 'error' } ],
+		} );
+
 		const { queryByText, getByLabelText } = render(
 			<QueryStringRouter>
 				<Features />
