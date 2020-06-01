@@ -469,16 +469,14 @@ class Sensei_Onboarding {
 	 * @param string[] $extension_slugs Extension slugs to install.
 	 */
 	public function install_extensions( $extension_slugs ) {
-		$sensei_extensions = $this->get_sensei_extensions();
-
 		$extensions_to_install = array_filter(
 			array_map(
-				function( $slug ) use ( $sensei_extensions ) {
-					$key = array_search( $slug, wp_list_pluck( $sensei_extensions, 'product_slug' ), true );
+				function( $extension ) use ( $extension_slugs ) {
+					$key = array_search( $extension->product_slug, $extension_slugs, true );
 
-					return false !== $key ? $sensei_extensions[ $key ] : false;
+					return false !== $key ? $extension : false;
 				},
-				$extension_slugs
+				$this->get_sensei_extensions()
 			)
 		);
 
