@@ -56,7 +56,7 @@ class Sensei_Import {
 		if ( current_user_can( 'manage_sensei' ) ) {
 			add_submenu_page(
 				'sensei',
-				__( 'Import', 'sensei-lms' ),
+				__( 'Import Content', 'sensei-lms' ),
 				__( 'Import', 'sensei-lms' ),
 				'manage_sensei',
 				$this->page_slug,
@@ -71,8 +71,13 @@ class Sensei_Import {
 	public function import_page() {
 
 		?>
-		<div id="sensei-import-page" class="sensei-import">
+		<div id="sensei-import-page-wrapper" class="wrap">
+			<h1>
+				<?php echo wp_kses_post( get_admin_page_title() ); ?>
+			</h1>
+			<div id="sensei-import-page" class="sensei-import">
 
+			</div>
 		</div>
 		<?php
 	}
