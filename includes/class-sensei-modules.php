@@ -2019,20 +2019,9 @@ class Sensei_Core_Modules {
 
 		?>
 		<div id="taxonomy-<?php echo esc_attr( $tax_name ); ?>" class="categorydiv">
-			<ul id="<?php echo esc_attr( $tax_name ); ?>-tabs" class="category-tabs">
-				<li class="tabs"><a href="#<?php echo esc_url( $tax_name ); ?>-all"><?php echo esc_html( $taxonomy->labels->all_items ); ?></a></li>
-				<li class="hide-if-no-js"><a href="#<?php echo esc_url( $tax_name ); ?>-pop"><?php esc_html_e( 'Most Used', 'sensei-lms' ); ?></a></li>
-			</ul>
-
-			<div id="<?php echo esc_attr( $tax_name ); ?>-pop" class="tabs-panel" style="display: none;">
-				<ul id="<?php echo esc_attr( $tax_name ); ?>checklist-pop" class="categorychecklist form-no-clear" >
-					<?php $popular_ids = wp_popular_terms_checklist( $tax_name ); ?>
-				</ul>
-			</div>
-
 			<div id="<?php echo esc_attr( $tax_name ); ?>-all" class="tabs-panel">
 				<?php
-				$name = ( $tax_name == 'category' ) ? 'post_category' : 'tax_input[' . $tax_name . ']';
+				$name = ( $tax_name === 'category' ) ? 'post_category' : 'tax_input[' . $tax_name . ']';
 				echo "<input type='hidden' name='" . esc_attr( $name ) . "[]' value='0' />"; // Allows for an empty term set to be sent. 0 is an invalid Term ID and will be ignored by empty() checks.
 				?>
 				<ul id="<?php echo esc_attr( $tax_name ); ?>checklist" data-wp-lists="list:<?php echo esc_attr( $tax_name ); ?>" class="categorychecklist form-no-clear">
@@ -2040,8 +2029,7 @@ class Sensei_Core_Modules {
 					wp_terms_checklist(
 						$post->ID,
 						array(
-							'taxonomy'     => $tax_name,
-							'popular_cats' => $popular_ids,
+							'taxonomy' => $tax_name,
 						)
 					);
 					?>
