@@ -92,15 +92,9 @@ const Features = () => {
 	};
 
 	const startInstallation = () => {
-		submitInstallation(
-			{ selected: selectedSlugs },
-			{
-				onSuccess: () => {
-					toggleConfirmation( false );
-					toggleFeedback( true );
-				},
-			}
-		);
+		toggleConfirmation( false );
+		toggleFeedback( true );
+		submitInstallation( { selected: selectedSlugs } );
 	};
 
 	const retryInstallation = ( selected ) => {
