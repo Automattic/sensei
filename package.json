@@ -59,7 +59,7 @@
     "run-phpcs": "./vendor/bin/phpcs --encoding=utf-8",
     "start": "calypso-build --watch",
     "test": "npm run test-php && npm run test-js",
-    "test-js": "wp-scripts test-unit-js --passWithNoTests",
+    "test-js": "wp-scripts test-unit-js",
     "test-php": "./vendor/bin/phpunit"
   },
   "husky": {

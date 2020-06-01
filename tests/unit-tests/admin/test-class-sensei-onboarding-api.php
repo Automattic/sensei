@@ -272,6 +272,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 
 	}
 
+
 	/**
 	 * Tests that submitting to features endpoint saves submitted data
 	 *
@@ -289,28 +290,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 
 		$data = Sensei()->onboarding->get_wizard_user_data();
 
-		$this->assertEquals( [ 'sensei-certificates' ], $data['features'] );
-	}
-
-
-	/**
-	 * Tests that submitting to features endpoint validates input against whitelist
-	 *
-	 * @covers Sensei_REST_API_Setup_Wizard_Controller::submit_features
-	 */
-	public function testSubmitFeaturesValidated() {
-
-		$this->request(
-			'POST',
-			'features',
-			[
-				'selected' => [ 'invalid-plugin' ],
-			]
-		);
-
-		$data = Sensei()->onboarding->get_wizard_user_data();
-
-		$this->assertNotContains( [ 'invalid-plugin' ], $data['features'] );
+		$this->assertEquals( [ 'selected' => [ 'sensei-certificates' ] ], $data['features'] );
 	}
 
 	/**
@@ -338,12 +318,11 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	/**
 	 * Tests that features get endpoint returns fetched data.
 	 *
-	 * @covers Sensei_REST_API_Setup_Wizard_Controller::get_data
+	 * @covers Sensei_REST_API_Setup_Wizard_Controller::get_features_data
 	 */
 	public function testGetFeaturesReturnsFetchedData() {
-		$response_body = '{ "products": [ { "product_slug": "slug-1" } ] }';
-
 		// Mock fetch from senseilms.com.
+		$response_body = '{ "products": [ { "product_slug": "slug-1", "plugin_file": "test/test.php" } ] }';
 		add_filter(
 			'pre_http_request',
 			function() use ( $response_body ) {
@@ -351,9 +330,83 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 			}
 		);
 
-		$data = $this->request( 'GET', '' );
+		$data = $this->request( 'GET', 'features' );
 
-		$this->assertEquals( count( $data['features']['options'] ), 1 );
+		$expected_data = [
+			'options'  => [
+				(object) [
+					'product_slug' => 'slug-1',
+					'plugin_file'  => 'test/test.php',
+				],
+			],
+			'selected' => [],
+		];
+
+		$this->assertEquals( $data, $expected_data );
+	}
+
+	/**
+	 * Tests that submitting features installation starts installation.
+	 *
+	 * @covers Sensei_REST_API_Setup_Wizard_Controller::submit_features_installation
+	 */
+	public function testSubmitFeaturesInstallation() {
+		if ( is_multisite() ) {
+			$this->markTestSkipped( 'Skip test for multisite because user will not have the needed permissions.' );
+		}
+
+		// Mock fetch from senseilms.com.
+		$response_body = '{ "products": [ { "product_slug": "slug-1", "plugin_file": "test/test.php" } ] }';
+		add_filter(
+			'pre_http_request',
+			function() use ( $response_body ) {
+				return [ 'body' => $response_body ];
+			}
+		);
+
+		// Create user with needed capabilities.
+		$user_id = $this->factory->user->create();
+		$user    = get_user_by( 'id', $user_id );
+
+		$user->add_cap( 'manage_sensei' );
+		$user->add_cap( 'install_plugins' );
+		wp_set_current_user( $user_id );
+
+		$this->request( 'POST', 'features-installation', [ 'selected' => [ 'slug-1' ] ], $user );
+
+		$expected_extensions = [
+			(object) [
+				'product_slug' => 'slug-1',
+				'plugin_file'  => 'test/test.php',
+				'status'       => 'installing',
+			],
+		];
+		$sensei_extensions   = Sensei()->onboarding->get_sensei_extensions();
+
+		$this->assertEquals( $expected_extensions, $sensei_extensions );
+	}
+
+	/**
+	 * Tests that user cannot install features without capability.
+	 *
+	 * @covers Sensei_REST_API_Setup_Wizard_Controller::can_user_install_plugins
+	 */
+	public function testUserCannotInstallFeaturesWithoutCapability() {
+		$user_id = $this->factory->user->create();
+		$user    = get_user_by( 'id', $user_id );
+
+		$user->add_cap( 'manage_sensei' ); // Without install_plugins capability.
+		wp_set_current_user( $user_id );
+
+		$this->assertEquals( current_user_can( 'install_plugins' ), false );
+
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/setup-wizard/features-installation' );
+		$request->set_header( 'content-type', 'application/json' );
+		$request->set_body( wp_json_encode( [ 'selected' => [] ] ) );
+
+		$response = $this->server->dispatch( $request );
+
+		$this->assertEquals( 403, $response->get_status() );
 	}
 
 	/**
@@ -378,12 +431,14 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	 *
 	 * @return Object Response data.
 	 */
-	private function request( $method = '', $route = '', $data = null ) {
+	private function request( $method = '', $route = '', $data = null, $user = null ) {
 
-		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
-		wp_set_current_user( $admin_id );
-		$user = wp_get_current_user();
-		$user->add_cap( 'manage_sensei' );
+		if ( ! $user ) {
+			$admin_id = $this->factory->user->create( [ 'role' => 'administrator' ] );
+			wp_set_current_user( $admin_id );
+			$user = wp_get_current_user();
+			$user->add_cap( 'manage_sensei' );
+		}
 
 		$request = new WP_REST_Request( $method, rtrim( '/sensei-internal/v1/setup-wizard/' . $route, '/' ) );
 

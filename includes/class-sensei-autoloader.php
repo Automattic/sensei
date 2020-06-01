@@ -140,6 +140,7 @@ class Sensei_Autoloader {
 			'Sensei_Email_Signup_Form'                   => 'email-signup/class-sensei-email-signup-form.php', // @deprecated since 3.1.0
 			'Sensei_Onboarding'                          => 'admin/class-sensei-onboarding.php',
 			'Sensei_Onboarding_Pages'                    => 'admin/class-sensei-onboarding-pages.php',
+			'Sensei_Plugins_Installation'                => 'admin/class-sensei-plugins-installation.php',
 
 			/**
 			 * Shortcodes

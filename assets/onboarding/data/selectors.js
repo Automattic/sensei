@@ -34,14 +34,17 @@ export const isSubmitting = ( state ) => state.isSubmitting;
  */
 export const getSubmitError = ( state ) => state.submitError;
 
+/* eslint-disable jsdoc/check-param-names */
 /**
  * Step state selector.
  *
- * @param {Object} state Current state.
- * @param {string} step Step name.
+ * @param {Object}  state         Current state.
+ * @param {string}  step          Step name.
+ * @param {boolean} shouldResolve Flag whether should invoke the resolver.
  *
  * @return {Object} Step data.
  */
+/* eslint-enable */
 export const getStepData = ( state, step ) => state.data[ step ];
 
 /**

@@ -1,7 +1,7 @@
 import { Button, CheckboxControl } from '@wordpress/components';
+import classnames from 'classnames';
 import { __ } from '@wordpress/i18n';
 
-import { INSTALLED_STATUS } from './feature-status';
 import FeatureDescription from './feature-description';
 
 /**
@@ -17,12 +17,16 @@ import FeatureDescription from './feature-description';
  *
  * @param {Object}    props
  * @param {Feature[]} props.features      Features list.
+ * @param {boolean}   props.isSubmitting  Is submitting state.
+ * @param {Element}   [props.errorNotice] Submit error notice.
  * @param {string[]}  props.selectedSlugs Selected slugs.
  * @param {Function}  props.onChange      Callback to change the selection.
  * @param {Function}  props.onContinue    Callback to continue after selection.
  */
 const FeaturesSelection = ( {
 	features,
+	isSubmitting,
+	errorNotice,
 	selectedSlugs,
 	onChange,
 	onContinue,
@@ -50,17 +54,20 @@ const FeaturesSelection = ( {
 						}
 						onChange={ toggleItem( slug ) }
 						checked={ selectedSlugs.includes( slug ) }
-						disabled={ status === INSTALLED_STATUS }
-						className={ `sensei-onboarding__checkbox ${
-							status === INSTALLED_STATUS
-								? 'installed-status'
-								: ''
-						}` }
+						disabled={ !! status }
+						className={ classnames( 'sensei-onboarding__checkbox', {
+							[ `status-${ status }` ]: status,
+						} ) }
 					/>
 				) ) }
 			</div>
+
+			{ errorNotice }
+
 			<Button
 				isPrimary
+				isBusy={ isSubmitting }
+				disabled={ isSubmitting }
 				className="sensei-onboarding__button sensei-onboarding__button-card"
 				onClick={ onContinue }
 			>

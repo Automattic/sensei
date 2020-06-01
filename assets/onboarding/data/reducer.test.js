@@ -61,11 +61,62 @@ describe( 'Setup wizard reducer', () => {
 			},
 			{
 				type: START_SUBMIT_SETUP_WIZARD_DATA,
+				step: 'step',
+				stepData: { selected: [ 'slug-1' ] },
 			}
 		);
 
 		expect( state.isSubmitting ).toBeTruthy();
 		expect( state.submitError ).toBeFalsy();
+	} );
+
+	it( 'Should update the features statuses on START_SUBMIT_SETUP_WIZARD_DATA action', () => {
+		const state = reducer(
+			{
+				data: {
+					features: {
+						options: [
+							{
+								slug: 'slug-1',
+								status: 'error',
+								error: { msg: 'Error message' },
+							},
+							{
+								slug: 'slug-2',
+								status: 'error',
+								error: { msg: 'Error message' },
+							},
+							{
+								slug: 'starting-installation',
+							},
+						],
+					},
+				},
+			},
+			{
+				type: START_SUBMIT_SETUP_WIZARD_DATA,
+				step: 'features-installation',
+				stepData: { selected: [ 'slug-1', 'starting-installation' ] },
+			}
+		);
+
+		expect( state.data.features.options ).toEqual( [
+			{
+				slug: 'slug-1',
+				status: 'installing',
+				error: null,
+			},
+			{
+				slug: 'slug-2',
+				status: 'error',
+				error: { msg: 'Error message' },
+			},
+			{
+				slug: 'starting-installation',
+				status: 'installing',
+				error: null,
+			},
+		] );
 	} );
 
 	it( 'Should set isSubmitting to false on SUCCESS_SUBMIT_SETUP_WIZARD_DATA action', () => {
