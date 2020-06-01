@@ -37,21 +37,6 @@ describe( '<ConfirmationModal />', () => {
 		).toBeTruthy();
 	} );
 
-	it( 'Should run the confirmation modal as submitting', () => {
-		render(
-			<ConfirmationModal
-				features={ features }
-				isSubmitting
-				onInstall={ () => {} }
-				onSkip={ () => {} }
-			/>
-		);
-
-		expect( document.querySelectorAll( 'button:disabled' ).length ).toEqual(
-			2
-		);
-	} );
-
 	it( 'Should call the callbacks', () => {
 		const onInstallMock = jest.fn();
 		const onSkipMock = jest.fn();
@@ -69,5 +54,33 @@ describe( '<ConfirmationModal />', () => {
 
 		fireEvent.click( queryByText( 'Install now' ) );
 		expect( onInstallMock ).toBeCalled();
+	} );
+
+	it( 'Should render the confirmation modal with submitting status', () => {
+		render(
+			<ConfirmationModal
+				isSubmitting
+				features={ features }
+				onInstall={ () => {} }
+				onSkip={ () => {} }
+			/>
+		);
+
+		expect( document.querySelectorAll( 'button:disabled' ) ).toHaveLength(
+			2
+		);
+	} );
+
+	it( 'Should render the confirmation modal with error', () => {
+		const { queryByText } = render(
+			<ConfirmationModal
+				features={ features }
+				onInstall={ () => {} }
+				onSkip={ () => {} }
+				errorNotice="Error"
+			/>
+		);
+
+		expect( queryByText( 'Error' ) ).toBeTruthy();
 	} );
 } );

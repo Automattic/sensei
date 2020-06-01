@@ -5,27 +5,49 @@ import { updateRouteURL } from '../query-string-router/url-functions';
 import Features from './index';
 
 // Mock features data.
-jest.mock( '../data/use-setup-wizard-step.js', () => ( {
-	useSetupWizardStep: () => ( {
-		stepData: {
-			options: [
-				{ slug: 'test-1', title: 'Test 1' },
-				{ slug: 'test-2', title: 'Test 2' },
-			],
-		},
-		submitStep: ( data, { onSuccess } ) => {
-			// Simulate success selecting only one item.
-			if ( data.selected.length === 1 ) {
-				onSuccess();
-			}
-		},
-	} ),
+jest.mock( '../data/use-setup-wizard-step', () => {
+	const stepData = {
+		selected: [ 'installed' ],
+		options: [
+			{ slug: 'test-1', title: 'Test 1' },
+			{ slug: 'test-2', title: 'Test 2' },
+			{ slug: 'installed', title: 'Test 2', status: 'installed' },
+		],
+	};
+
+	return {
+		useSetupWizardStep: () => ( {
+			stepData,
+			submitStep: ( data, { onSuccess } ) => {
+				// Simulate success selecting only one item.
+				if ( data.selected.length === 1 ) {
+					onSuccess();
+				}
+			},
+		} ),
+	};
+} );
+
+// Mock features polling.
+jest.mock( './use-features-polling', () => () => ( {
+	selected: [ 'test-1' ],
+	options: [ { slug: 'test-1', title: 'Test 1' } ],
 } ) );
 
 describe( '<Features />', () => {
 	afterEach( () => {
 		// Clear URL param.
 		updateRouteURL( 'step', '' );
+	} );
+
+	it( 'Should not check installed features', () => {
+		const { container } = render(
+			<QueryStringRouter paramName="step">
+				<Features />
+			</QueryStringRouter>
+		);
+
+		expect( container.querySelector( 'input:checked' ) ).toBeFalsy();
 	} );
 
 	it( 'Should continue to the ready step when nothing is selected', () => {
@@ -78,7 +100,7 @@ describe( '<Features />', () => {
 		// Continue to confirmation.
 		fireEvent.click( queryByText( 'Continue' ) );
 
-		// Confirm the installation.
+		// Start the installation.
 		fireEvent.click( queryByText( 'Install now' ) );
 
 		expect(
@@ -100,14 +122,10 @@ describe( '<Features />', () => {
 		fireEvent.click( checkboxes[ 0 ] );
 		fireEvent.click( checkboxes[ 1 ] );
 
-		// Continue to confirmation.
+		// Submit data.
 		fireEvent.click( queryByText( 'Continue' ) );
 
-		// Confirm the installation.
-		fireEvent.click( queryByText( 'Install now' ) );
-
-		expect(
-			container.querySelector( '.sensei-onboarding__icon-status' )
-		).toBeFalsy();
+		// Should not open the modal because the error.
+		expect( queryByText( 'Install now' ) ).toBeFalsy();
 	} );
 } );

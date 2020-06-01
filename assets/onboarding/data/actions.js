@@ -91,10 +91,15 @@ export const startFetch = () => ( {
 /**
  * Start submit action creator.
  *
+ * @param {string} step     Step name.
+ * @param {Object} stepData Data to submit.
+ *
  * @return {{type: string}} Start submit action.
  */
-export const startSubmit = () => ( {
+export const startSubmit = ( step, stepData ) => ( {
 	type: START_SUBMIT_SETUP_WIZARD_DATA,
+	step,
+	stepData,
 } );
 
 /**
@@ -126,14 +131,14 @@ export const errorSubmit = ( error ) => ( {
 /**
  * Submit step action creator.
  *
- * @param {string}   step      Step name.
- * @param {Object}   stepData  Data to submit.
- * @param {Object}   options
- * @param {Function} options.onSuccess Step name.
- * @param {Function} options.onError   Data to submit.
+ * @param {string}   step                Step name.
+ * @param {Object}   stepData            Data to submit.
+ * @param {Object}   [options]
+ * @param {Function} [options.onSuccess] Step name.
+ * @param {Function} [options.onError]   Data to submit.
  */
-export function* submitStep( step, stepData, { onSuccess, onError } ) {
-	yield startSubmit();
+export function* submitStep( step, stepData, { onSuccess, onError } = {} ) {
+	yield startSubmit( step, stepData );
 
 	try {
 		yield fetchFromAPI( {

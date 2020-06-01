@@ -19,7 +19,7 @@ const WC_EXTRA_DESCRIPTION = __(
  * @param {Object}    props
  * @param {Feature[]} props.features      Features list.
  * @param {boolean}   props.isSubmitting  Is submitting state.
- * @param {Element}   [props.errorNotice] Is submitting state.
+ * @param {Element}   [props.errorNotice] Submit error notice.
  * @param {Function}  props.onInstall     Callback to install the features.
  * @param {Function}  props.onSkip        Callback to skip the installation.
  */
