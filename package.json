@@ -43,6 +43,7 @@
     "gulp": "4.0.2",
     "gulp-zip": "4.2.0",
     "husky": "4.2.5",
+    "jest-environment-jsdom-sixteen": "1.0.3",
     "jsdoc": "3.6.4",
     "lint-staged": "10.2.4",
     "postcss-color-function": "4.1.0",
@@ -66,7 +67,7 @@
     "run-phpcs": "./vendor/bin/phpcs --encoding=utf-8",
     "start": "calypso-build --watch",
     "test": "npm run test-php && npm run test-js",
-    "test-js": "wp-scripts test-unit-js",
+    "test-js": "wp-scripts test-unit-js --env=jest-environment-jsdom-sixteen",
     "test-php": "./vendor/bin/phpunit"
   },
   "husky": {
