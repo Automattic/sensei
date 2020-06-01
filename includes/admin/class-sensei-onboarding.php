@@ -457,7 +457,7 @@ class Sensei_Onboarding {
 
 				return $this->get_feature_with_status( $extension, $installing_plugins );
 			},
-			$sensei_extensions->get_extensions( 'plugin', 'setup-wizard-extensions' )
+			$sensei_extensions->get_extensions( 'plugin', 'setup-wizard-extensions', [ 'hosted-location' => 'dotorg' ] )
 		);
 
 		return $extensions;
