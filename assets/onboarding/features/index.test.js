@@ -33,8 +33,8 @@ jest.mock( '../data/use-setup-wizard-step', () => {
 const mockStepData = ( mockData ) => {
 	useSetupWizardStep.mockReturnValue( {
 		stepData: mockData,
-		submitStep: ( data, { onSuccess } ) => {
-			onSuccess();
+		submitStep: ( data, { onSuccess } = {} ) => {
+			if ( onSuccess ) onSuccess();
 		},
 	} );
 };
