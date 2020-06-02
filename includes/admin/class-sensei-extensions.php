@@ -61,26 +61,30 @@ final class Sensei_Extensions {
 	 * @since  2.0.0
 	 * @since  3.1.0 The method is public.
 	 *
-	 * @param  string $type      Product type ('plugin' or 'theme').
-	 * @param  string $category  Category to fetch (null = all).
+	 * @param  string $type                  Product type ('plugin' or 'theme').
+	 * @param  string $category              Category to fetch (null = all).
+	 * @param  string $additional_query_args Additional query arguments.
 	 * @return array
 	 */
-	public function get_extensions( $type = null, $category = null ) {
-		$extension_request_key = md5( $type . '|' . $category );
+	public function get_extensions( $type = null, $category = null, $additional_query_args = [] ) {
+		$extension_request_key = md5( $type . '|' . $category . '|' . wp_json_encode( $additional_query_args ) );
 		$extensions            = get_transient( 'sensei_extensions_' . $extension_request_key );
 
 		if ( false === $extensions ) {
-			$raw_extensions = wp_safe_remote_get(
-				add_query_arg(
-					array(
-						array(
+			$url = add_query_arg(
+				[
+					array_merge(
+						[
 							'category' => $category,
 							'type'     => $type,
-						),
+						],
+						$additional_query_args
 					),
-					self::SENSEILMS_PRODUCTS_API_BASE_URL . '/search'
-				)
+				],
+				self::SENSEILMS_PRODUCTS_API_BASE_URL . '/search'
 			);
+
+			$raw_extensions = wp_safe_remote_get( $url );
 			if ( ! is_wp_error( $raw_extensions ) ) {
 				$json       = json_decode( wp_remote_retrieve_body( $raw_extensions ) );
 				$extensions = isset( $json->products ) ? $json->products : [];
