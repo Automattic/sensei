@@ -205,4 +205,59 @@ describe( '<Features />', () => {
 			}
 		);
 	} );
+
+	it( 'Should log installation skipping', () => {
+		const { queryByText, getByLabelText } = render(
+			<QueryStringRouter>
+				<Features />
+			</QueryStringRouter>
+		);
+
+		// Check the first feature.
+		fireEvent.click( getByLabelText( 'Test 1' ) );
+
+		fireEvent.click( queryByText( 'Continue' ) );
+		fireEvent.click( queryByText( "I'll do it later" ) );
+
+		expect( window.sensei_log_event ).toHaveBeenCalledWith(
+			'setup_wizard_features_install_cancel',
+			{
+				slug: 'test-1',
+			}
+		);
+	} );
+
+	it( 'Should log installation retries', () => {
+		useFeaturesPolling.mockReturnValue( {
+			selected: [ 'test-1', 'test-2' ],
+			options: [
+				{ slug: 'test-1', title: 'Test 1', status: 'error' },
+				{ slug: 'test-2', title: 'Test 2', status: 'error' },
+			],
+		} );
+
+		const { queryByText, getByLabelText } = render(
+			<QueryStringRouter>
+				<Features />
+			</QueryStringRouter>
+		);
+		fireEvent.click( getByLabelText( 'Test 1' ) );
+		fireEvent.click( getByLabelText( 'Test 2' ) );
+
+		// Submit data.
+		fireEvent.click( queryByText( 'Continue' ) );
+
+		// Confirm the installation.
+		fireEvent.click( queryByText( 'Install now' ) );
+
+		// Retry installations.
+		fireEvent.click( queryByText( 'Retry' ) );
+
+		expect( window.sensei_log_event ).toHaveBeenCalledWith(
+			'setup_wizard_features_install_retry',
+			{
+				slug: 'test-1,test-2',
+			}
+		);
+	} );
 } );
