@@ -115,13 +115,11 @@ global $course;
 		if ( 0 < count( $lessons ) ) :
 			?>
 
-			<?php 
+			<?php
 			// lesson title will already appear above
-			if ( $course_has_lessons_in_modules ) : 
+			if ( $course_has_lessons_in_modules ) :
 				?>
-			
-				<h3><?php esc_html_e( 'Other Lessons', 'sensei-lms' ) ?></h3>;
-			
+				<h3><?php esc_html_e( 'Other Lessons', 'sensei-lms' ); ?></h3>
 			<?php endif; // $course_has_lessons_in_modules ?>
 
 			<?php foreach ( $lessons as $lesson ) : ?>
@@ -156,7 +154,7 @@ global $course;
 					</a>
 
 					<span class="lesson-grade"><?php echo esc_html( $lesson_grade ); ?></span>
-				
+
 				<?php echo $course_has_lessons_in_modules ? '</h4>' : '</h3>'; ?>
 
 			<?php endforeach; // lessons ?>
