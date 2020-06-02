@@ -1,4 +1,4 @@
-import { Card, H, Link, List, Section } from '@woocommerce/components';
+import { Card, H, List, Section } from '@woocommerce/components';
 import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
 import { MailingListSignupForm } from './mailinglist-signup-form';
@@ -54,11 +54,12 @@ export const Ready = () => (
 								),
 								{
 									link: (
-										<Link
+										// eslint-disable-next-line jsx-a11y/anchor-has-content
+										<a
 											className="link__color-primary"
 											href="https://senseilms.com/lesson/courses/"
 											target="_blank"
-											type="external"
+											rel="noopener noreferrer"
 										/>
 									),
 								}
@@ -70,13 +71,9 @@ export const Ready = () => (
 			</Section>
 		</Card>
 		<div className="sensei-onboarding__bottom-actions">
-			<Link
-				href="edit.php?post_type=course"
-				type="wp-admin"
-				className="link__secondary"
-			>
+			<a href="edit.php?post_type=course" className="link__secondary">
 				{ __( 'Exit to Courses', 'sensei-lms' ) }
-			</Link>
+			</a>
 		</div>
 	</>
 );
