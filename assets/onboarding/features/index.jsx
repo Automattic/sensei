@@ -72,17 +72,9 @@ const Features = () => {
 		);
 
 	const finishSelection = () => {
-		submitStep(
-			{ selected: selectedSlugs },
-			{ onSuccess: onSubmitSuccess }
-		);
-	};
-
-	const onSubmitSuccess = () => {
 		if ( 0 === selectedSlugs.length ) {
 			goToNextStep();
-		} else {
-			toggleConfirmation( true );
+			return;
 		}
 
 		submitStep(
@@ -92,9 +84,15 @@ const Features = () => {
 	};
 
 	const startInstallation = () => {
-		toggleConfirmation( false );
-		toggleFeedback( true );
-		submitInstallation( { selected: selectedSlugs } );
+		submitInstallation(
+			{ selected: selectedSlugs },
+			{
+				onSuccess: () => {
+					toggleConfirmation( false );
+					toggleFeedback( true );
+				},
+			}
+		);
 	};
 
 	const retryInstallation = ( selected ) => {
@@ -103,6 +101,7 @@ const Features = () => {
 
 	const goToNextStep = () => {
 		goTo( 'ready' );
+
 		logEvent( 'setup_wizard_features_continue', {
 			slug: selectedSlugs.join( ',' ),
 		} );

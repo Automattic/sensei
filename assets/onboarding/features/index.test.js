@@ -6,26 +6,10 @@ import { updateRouteURL } from '../query-string-router/url-functions';
 import Features from './index';
 import useFeaturesPolling from './use-features-polling';
 
+// Mock features data.
 jest.mock( '../data/use-setup-wizard-step', () => {
-	const stepData = {
-		selected: [ 'installed' ],
-		options: [
-			{ slug: 'test-1', title: 'Test 1' },
-			{ slug: 'test-2', title: 'Test 2' },
-			{ slug: 'installed', title: 'Test 2', status: 'installed' },
-		],
-	};
-
 	return {
-		useSetupWizardStep: () => ( {
-			stepData,
-			submitStep: ( data, { onSuccess } ) => {
-				// Simulate success selecting only one item.
-				if ( data.selected.length === 1 ) {
-					onSuccess();
-				}
-			},
-		} ),
+		useSetupWizardStep: jest.fn(),
 	};
 } );
 
@@ -54,6 +38,7 @@ describe( '<Features />', () => {
 			],
 		} );
 	} );
+
 	afterEach( () => {
 		// Clear URL param.
 		updateRouteURL( 'step', '' );

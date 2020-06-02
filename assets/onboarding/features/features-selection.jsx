@@ -23,7 +23,6 @@ import FeatureDescription from './feature-description';
  * @param {Function}  props.onChange      Callback to change the selection.
  * @param {Function}  props.onContinue    Callback to continue after selection.
  */
-
 const FeaturesSelection = ( {
 	features,
 	isSubmitting,
