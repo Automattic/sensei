@@ -262,6 +262,12 @@ class Sensei_Admin {
 		// Global Styles for icons and menu items
 		Sensei()->assets->enqueue( 'sensei-global', 'css/global.css', [], 'screen' );
 
+		// WordPress component styles with Sensei theming.
+		Sensei()->assets->register( 'sensei-wp-components', 'shared/styles/wp-components.css', [], 'screen' );
+
+		// WooCommerce component styles with Sensei theming.
+		Sensei()->assets->register( 'sensei-wc-components', 'shared/styles/wc-components.css', [], 'screen' );
+
 		// Select 2 styles
 		Sensei()->assets->enqueue( 'sensei-core-select2', '../vendor/select2/select2.min.css', [], 'screen' );
 

@@ -78,9 +78,8 @@ body.sensei-color {
 			color: lighten($link, 20%);
 		}
 
-		&:not(.components-button):focus {
+		&:focus {
 			color: darken($link, 20%);
-			box-shadow: 0 0 0 1px $link-primary, 0 0 2px 1px rgba($link-primary, 0.8);
 		}
 
 		&.link__color-primary {
@@ -95,6 +94,7 @@ body.sensei-color {
 				color: darken($link-primary, 20%);
 			}
 		}
+
 	}
 
 	.components-checkbox-control__input[type='checkbox'] {

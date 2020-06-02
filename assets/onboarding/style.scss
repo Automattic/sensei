@@ -1,6 +1,4 @@
-@import '~@woocommerce/components/build-style/style.css';
-@import 'variables';
-@import 'wp-colors';
+@import '../shared/styles/variables';
 @import 'fullscreen';
 
 .sensei-onboarding {
@@ -22,16 +20,6 @@
 
 		.sensei-onboarding__learn-more {
 			white-space: nowrap;
-			color: $primary;
-
-			&:hover,
-			&:active {
-				color: lighten($primary, 20%);
-			}
-
-			&:focus {
-				color: darken($primary, 20%);
-			}
 		}
 	}
 
@@ -78,6 +66,10 @@
 	&__button-card.components-button {
 		margin: 8px auto 0;
 		width: 310px;
+		
+		body.sensei-color &.is-primary.is-busy {
+			background-size: 200px 100%;
+		}
 	}
 
 	&__button-modal.components-button {

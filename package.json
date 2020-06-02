@@ -19,6 +19,7 @@
   "dependencies": {
     "@woocommerce/components": "4.0.0",
     "@wordpress/api-fetch": "3.14.0",
+    "@wordpress/base-styles": "1.9.0",
     "@wordpress/components": "9.4.1",
     "@wordpress/i18n": "3.11.0",
     "@wordpress/url": "2.14.0",
@@ -33,6 +34,7 @@
     "@wordpress/babel-plugin-makepot": "3.5.0",
     "@wordpress/babel-preset-default": "4.12.1",
     "@wordpress/jest-preset-default": "6.0.0",
+    "@wordpress/postcss-themes": "2.4.0",
     "@wordpress/scripts": "8.0.1",
     "cross-env": "7.0.2",
     "del": "5.1.0",
@@ -43,6 +45,7 @@
     "husky": "4.2.5",
     "jsdoc": "3.6.4",
     "lint-staged": "10.2.4",
+    "postcss-color-function": "4.1.0",
     "prettier": "npm:wp-prettier@1.19.1",
     "wp-hookdoc": "0.2.0"
   },

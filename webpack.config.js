@@ -24,6 +24,8 @@ const files = [
 	'js/user-dashboard.js',
 	'onboarding/index.jsx',
 	'onboarding/style.scss',
+	'shared/styles/wp-components.scss',
+	'shared/styles/wc-components.scss',
 
 	'css/frontend.scss',
 	'css/admin-custom.css',

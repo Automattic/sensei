@@ -137,7 +137,7 @@ class Sensei_Onboarding {
 	 * @access private
 	 */
 	public function enqueue_styles() {
-		Sensei()->assets->enqueue( 'sensei-setupwizard', 'onboarding/style.css', [ 'wp-components' ] );
+		Sensei()->assets->enqueue( 'sensei-setupwizard', 'onboarding/style.css', [ 'sensei-wc-components', 'sensei-wp-components' ] );
 	}
 
 	/**
