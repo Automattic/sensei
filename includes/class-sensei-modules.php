@@ -1446,7 +1446,7 @@ class Sensei_Core_Modules {
 		if ( isset( $course_id ) && 0 < $course_id ) {
 
 			// the course should contain the same module taxonomy term for this to be valid
-			if ( ! has_term( $module, $this->taxonomy, $course_id ) ) {
+			if ( ! has_term( $module->term_id, $this->taxonomy, $course_id ) ) {
 				return false;
 			}
 
