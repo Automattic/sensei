@@ -1810,16 +1810,18 @@ class Sensei_Core_Modules {
 		$labels = array(
 			'name'              => __( 'Modules', 'sensei-lms' ),
 			'singular_name'     => __( 'Module', 'sensei-lms' ),
-			'search_items'      => __( 'Search Modules', 'sensei-lms' ),
+			'search_items'    	  => __( 'Search Modules', 'sensei-lms' ),
 			'all_items'         => __( 'All Modules', 'sensei-lms' ),
 			'parent_item'       => __( 'Parent Module', 'sensei-lms' ),
 			'parent_item_colon' => __( 'Parent Module:', 'sensei-lms' ),
 			'edit_item'         => __( 'Edit Module', 'sensei-lms' ),
+			'view_item'         => __( 'View Module', 'sensei-lms' ),
 			'update_item'       => __( 'Update Module', 'sensei-lms' ),
 			'add_new_item'      => __( 'Add New Module', 'sensei-lms' ),
 			'new_item_name'     => __( 'New Module Name', 'sensei-lms' ),
 			'menu_name'         => __( 'Modules', 'sensei-lms' ),
 			'not_found'         => __( 'No modules found.', 'sensei-lms' ),
+			'back_to_items'     => __( '&larr; Back to Modules', 'sensei-lms' ),
 		);
 
 		/**
