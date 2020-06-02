@@ -435,11 +435,11 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 
 		$this->mark_step_complete( 'features' );
 
-		$selected_features = $form['selected'];
-
 		return $this->setup_wizard->update_wizard_user_data(
 			[
-				'features' => $selected_features,
+				'features' => [
+					'selected' => $form['selected'],
+				],
 			]
 		);
 	}
