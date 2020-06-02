@@ -127,7 +127,8 @@ class Sensei_Onboarding {
 	 * @access private
 	 */
 	public function enqueue_scripts() {
-		Sensei()->assets->enqueue( 'sensei-setupwizard', 'onboarding/index.js', [], true );
+		Sensei()->assets->enqueue( 'sensei-setupwizard', 'onboarding/index.js', [ 'wp-i18n' ], true );
+		$this->setup_wizard_set_script_translations();
 	}
 
 	/**
@@ -137,6 +138,15 @@ class Sensei_Onboarding {
 	 */
 	public function enqueue_styles() {
 		Sensei()->assets->enqueue( 'sensei-setupwizard', 'onboarding/style.css', [ 'wp-components' ] );
+	}
+
+	/**
+	 * Set script translations.
+	 *
+	 * @access private
+	 */
+	public function setup_wizard_set_script_translations() {
+		wp_set_script_translations( 'sensei-setupwizard', 'sensei-lms' );
 	}
 
 	/**
