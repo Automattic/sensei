@@ -20,20 +20,25 @@ describe( '<FeatureDescription />', () => {
 		expect( href ).toEqual( link );
 	} );
 
-	it( 'Should render with error', () => {
-		const onFeatureRetryMock = jest.fn();
-
+	it( 'Should log event when clicking learn more link', () => {
+		window.sensei_log_event = jest.fn();
 		const { queryByText } = render(
 			<FeatureDescription
 				excerpt="test"
-				errorMessage="Error message"
-				onFeatureRetry={ onFeatureRetryMock }
+				link="https://senseilms.com/"
+				slug="plugin_slug"
 			/>
 		);
 
-		expect( queryByText( 'Error message' ) ).toBeTruthy();
+		fireEvent.click( queryByText( 'Learn more' ) );
 
-		fireEvent.click( queryByText( 'Retry?' ) );
-		expect( onFeatureRetryMock ).toBeCalled();
+		expect( window.sensei_log_event ).toHaveBeenCalledWith(
+			'setup_wizard_features_learn_more',
+			{
+				slug: 'plugin_slug',
+			}
+		);
+
+		delete window.sensei_log_event;
 	} );
 } );

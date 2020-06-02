@@ -8,6 +8,7 @@ import {
 	SUCCESS_SUBMIT_SETUP_WIZARD_DATA,
 	ERROR_SUBMIT_SETUP_WIZARD_DATA,
 	SET_STEP_DATA,
+	APPLY_STEP_DATA,
 } from './constants';
 
 import { normalizeSetupWizardData } from './normalizer';
@@ -91,19 +92,26 @@ export const startFetch = () => ( {
 /**
  * Start submit action creator.
  *
+ * @param {string} step     Step name.
+ * @param {Object} stepData Data to submit.
+ *
  * @return {{type: string}} Start submit action.
  */
-export const startSubmit = () => ( {
+export const startSubmit = ( step, stepData ) => ( {
 	type: START_SUBMIT_SETUP_WIZARD_DATA,
+	step,
+	stepData,
 } );
 
 /**
  * Success submit action creator.
  *
- * @return {{type: string}} Success submit action.
+ * @param {string} step Completed step.
+ * @return {{type: string, step: string}} Success submit action.
  */
-export const successSubmit = () => ( {
+export const successSubmit = ( step ) => ( {
 	type: SUCCESS_SUBMIT_SETUP_WIZARD_DATA,
+	step,
 } );
 
 /**
@@ -126,14 +134,14 @@ export const errorSubmit = ( error ) => ( {
 /**
  * Submit step action creator.
  *
- * @param {string}   step      Step name.
- * @param {Object}   stepData  Data to submit.
- * @param {Object}   options
- * @param {Function} options.onSuccess Step name.
- * @param {Function} options.onError   Data to submit.
+ * @param {string}   step                Step name.
+ * @param {Object}   stepData            Data to submit.
+ * @param {Object}   [options]
+ * @param {Function} [options.onSuccess] Step name.
+ * @param {Function} [options.onError]   Data to submit.
  */
-export function* submitStep( step, stepData, { onSuccess, onError } ) {
-	yield startSubmit();
+export function* submitStep( step, stepData, { onSuccess, onError } = {} ) {
+	yield startSubmit( step, stepData );
 
 	try {
 		yield fetchFromAPI( {
@@ -141,7 +149,8 @@ export function* submitStep( step, stepData, { onSuccess, onError } ) {
 			method: 'POST',
 			data: stepData,
 		} );
-		yield successSubmit();
+		yield successSubmit( step );
+		yield applyStepData( step, stepData );
 		yield setStepData( step, stepData );
 
 		if ( onSuccess ) {
@@ -195,6 +204,18 @@ export function* completeSetupWizard() {
  */
 export const setStepData = ( step, data ) => ( {
 	type: SET_STEP_DATA,
+	step,
+	data,
+} );
+
+/**
+ * Apply side-effects for data change.
+ *
+ * @param {string} step Step name.
+ * @param {Object} data Step data object.
+ */
+export const applyStepData = ( step, data ) => ( {
+	type: APPLY_STEP_DATA,
 	step,
 	data,
 } );

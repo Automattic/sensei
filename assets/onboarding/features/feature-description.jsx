@@ -1,20 +1,15 @@
 import { __ } from '@wordpress/i18n';
+import { logLink } from '../log-event';
 
 /**
  * Feature description component
  *
  * @param {Object} props
- * @param {string} props.excerpt          Feature excerpt.
- * @param {string} [props.link]           Feature link.
- * @param {string} [props.errorMessage]   Error message.
- * @param {string} [props.onFeatureRetry] Retry feature installation callback.
+ * @param {string} props.slug    Feature slug.
+ * @param {string} props.excerpt Feature excerpt.
+ * @param {string} [props.link]  Feature link.
  */
-const FeatureDescription = ( {
-	excerpt,
-	link,
-	errorMessage,
-	onFeatureRetry,
-} ) => (
+const FeatureDescription = ( { slug, excerpt, link } ) => (
 	<>
 		{ excerpt }
 		{ link && (
@@ -25,28 +20,13 @@ const FeatureDescription = ( {
 					href={ link }
 					target="_blank"
 					rel="noopener noreferrer"
+					{ ...logLink( 'setup_wizard_features_learn_more', {
+						slug,
+					} ) }
 				>
 					{ __( 'Learn more', 'sensei-lms' ) }
 				</a>
 			</>
-		) }
-
-		{ errorMessage && (
-			<p className="sensei-onboarding__error-message">
-				{ errorMessage }
-				{ onFeatureRetry && (
-					<>
-						{ ' ' }
-						<button
-							className="sensei-onboarding__retry-button"
-							type="button"
-							onClick={ onFeatureRetry }
-						>
-							{ __( 'Retry?', 'sensei-lms' ) }
-						</button>
-					</>
-				) }
-			</p>
 		) }
 	</>
 );

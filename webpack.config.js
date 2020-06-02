@@ -27,7 +27,7 @@ const files = [
 	'shared/styles/wp-components.scss',
 	'shared/styles/wc-components.scss',
 
-	'css/frontend/sensei.scss',
+	'css/frontend.scss',
 	'css/admin-custom.css',
 	'css/extensions.scss',
 	'css/global.css',

@@ -28,7 +28,10 @@
   },
   "devDependencies": {
     "@automattic/calypso-build": "6.0.0",
+    "@babel/cli": "7.10.1",
+    "@babel/core": "7.10.1",
     "@testing-library/react": "10.0.3",
+    "@wordpress/babel-plugin-makepot": "3.5.0",
     "@wordpress/babel-preset-default": "4.12.1",
     "@wordpress/jest-preset-default": "6.0.0",
     "@wordpress/postcss-themes": "2.4.0",
@@ -38,9 +41,6 @@
     "eslint": "6.8.0",
     "eslint-config-prettier": "6.11.0",
     "gulp": "4.0.2",
-    "gulp-checktextdomain": "2.2.1",
-    "gulp-sort": "2.0.0",
-    "gulp-wp-pot": "2.4.2",
     "gulp-zip": "4.2.0",
     "husky": "4.2.5",
     "jsdoc": "3.6.4",
@@ -52,6 +52,10 @@
   "scripts": {
     "build": "cross-env NODE_ENV=production npx calypso-build",
     "build:docs": "rm -rf hookdocs/ && jsdoc -c hookdoc-conf.json",
+    "i18n:clean": "rm -f ./lang/tmp-*",
+    "i18n:js": "npx babel --config-file ./babel.makepot.js -o ./lang/tmp-babel.log assets --ignore \"**/*.test.js\",\"./assets/dist\",\"./assets/vendor\",\"./build\"",
+    "i18n:php": "wp i18n make-pot --merge=lang/tmp-sensei-lms-js.pot --skip-js --exclude=build --headers='{\"Last-Translator\":null,\"Language-Team\":null}' . lang/sensei-lms.pot",
+    "i18n:build": "npm run i18n:clean && npm run i18n:js && npm run i18n:php && node ./bin/pot-dist-references.js && npm run i18n:clean",
     "format-js": "wp-scripts format-js",
     "lint-css": "wp-scripts lint-style **/*.scss",
     "lint-css:fix": "npm run lint-css -- --fix",
@@ -62,7 +66,7 @@
     "run-phpcs": "./vendor/bin/phpcs --encoding=utf-8",
     "start": "calypso-build --watch",
     "test": "npm run test-php && npm run test-js",
-    "test-js": "wp-scripts test-unit-js --passWithNoTests",
+    "test-js": "wp-scripts test-unit-js",
     "test-php": "./vendor/bin/phpunit"
   },
   "husky": {

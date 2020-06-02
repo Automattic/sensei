@@ -8,12 +8,15 @@ import {
 	SET_STEP_DATA,
 } from './constants';
 
+import { INSTALLING_STATUS } from '../features/feature-status';
+
 const DEFAULT_STATE = {
-	isFetching: false,
+	isFetching: true,
 	fetchError: false,
 	isSubmitting: false,
 	submitError: false,
 	data: {
+		completedSteps: [],
 		welcome: {
 			usage_tracking: false,
 		},
@@ -28,6 +31,32 @@ const DEFAULT_STATE = {
 		ready: {},
 	},
 };
+
+/**
+ * @typedef  {Object} Feature
+ * @property {string} slug    Feature slug.
+ * @property {string} status  Feature status.
+ * @property {Object} error   Feature error.
+ */
+/**
+ * Update status pre-installation.
+ *
+ * @param {string[]}  selected Feature slugs.
+ * @param {Feature[]} options  Options.
+ *
+ * @return {Feature[]} Updated options.
+ */
+const updatePreInstallation = ( selected, options ) =>
+	options.map( ( feature ) => {
+		if ( selected.includes( feature.slug ) ) {
+			return {
+				...feature,
+				status: INSTALLING_STATUS,
+				error: null,
+			};
+		}
+		return feature;
+	} );
 
 /**
  * Setup wizard reducer.
@@ -64,8 +93,28 @@ export default ( state = DEFAULT_STATE, action ) => {
 			};
 
 		case START_SUBMIT_SETUP_WIZARD_DATA:
+			const { stepData, step } = action;
+			let newState = null;
+
+			// Clear status and error for retry.
+			if ( 'features-installation' === step ) {
+				newState = {
+					...state,
+					data: {
+						...state.data,
+						features: {
+							...state.data.features,
+							options: updatePreInstallation(
+								stepData.selected,
+								state.data.features.options
+							),
+						},
+					},
+				};
+			}
+
 			return {
-				...state,
+				...( newState || state ),
 				isSubmitting: true,
 				submitError: false,
 			};
@@ -74,6 +123,13 @@ export default ( state = DEFAULT_STATE, action ) => {
 			return {
 				...state,
 				isSubmitting: false,
+				data: {
+					...state.data,
+					completedSteps: [
+						...state.data.completedSteps,
+						action.step,
+					],
+				},
 			};
 
 		case ERROR_SUBMIT_SETUP_WIZARD_DATA:

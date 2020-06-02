@@ -126,15 +126,24 @@ describe( 'Setup wizard actions', () => {
 	} );
 
 	it( 'Should return the start submit action', () => {
-		const expectedAction = { type: START_SUBMIT_SETUP_WIZARD_DATA };
+		const step = 'step';
+		const stepData = { a: 1 };
+		const expectedAction = {
+			type: START_SUBMIT_SETUP_WIZARD_DATA,
+			step,
+			stepData,
+		};
 
-		expect( startSubmit() ).toEqual( expectedAction );
+		expect( startSubmit( step, stepData ) ).toEqual( expectedAction );
 	} );
 
 	it( 'Should return the success submit action', () => {
-		const expectedAction = { type: SUCCESS_SUBMIT_SETUP_WIZARD_DATA };
+		const expectedAction = {
+			type: SUCCESS_SUBMIT_SETUP_WIZARD_DATA,
+			step: 'test',
+		};
 
-		expect( successSubmit() ).toEqual( expectedAction );
+		expect( successSubmit( 'test' ) ).toEqual( expectedAction );
 	} );
 
 	it( 'Should return the error submit action', () => {
@@ -155,11 +164,15 @@ describe( 'Setup wizard actions', () => {
 			onError: onErrorMock,
 		};
 
-		const gen = submitStep( 'welcome', { usage_tracking: true }, options );
+		const step = 'welcome';
+		const stepData = { usage_tracking: true };
+		const gen = submitStep( step, stepData, options );
 
 		// Start submit action.
 		const expectedStartSubmitAction = {
 			type: START_SUBMIT_SETUP_WIZARD_DATA,
+			step,
+			stepData,
 		};
 		expect( gen.next().value ).toEqual( expectedStartSubmitAction );
 
@@ -167,7 +180,7 @@ describe( 'Setup wizard actions', () => {
 		const expectedSubmitAction = {
 			type: FETCH_FROM_API,
 			request: {
-				path: API_BASE_PATH + 'welcome',
+				path: API_BASE_PATH + step,
 				method: 'POST',
 				data: {
 					usage_tracking: true,
@@ -179,15 +192,20 @@ describe( 'Setup wizard actions', () => {
 		// Success action.
 		const expectedSuccessAction = {
 			type: SUCCESS_SUBMIT_SETUP_WIZARD_DATA,
+			step: 'welcome',
 		};
 		expect( gen.next().value ).toEqual( expectedSuccessAction );
 
 		// Set data action.
 		const expectedSetDataAction = {
 			type: SET_STEP_DATA,
-			step: 'welcome',
+			step,
 			data: { usage_tracking: true },
 		};
+
+		// Apply side effects
+		gen.next();
+
 		expect( gen.next().value ).toEqual( expectedSetDataAction );
 
 		// Continue to callback.

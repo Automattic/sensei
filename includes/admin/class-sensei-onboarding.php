@@ -32,21 +32,16 @@ class Sensei_Onboarding {
 	 * @var array
 	 */
 	private $user_data_defaults = [
-		'features'  => [],
+		'features'  => [
+			'selected' => [],
+		],
 		'purpose'   => [
 			'selected' => [],
 			'other'    => '',
 		],
 		'steps'     => [],
-		'__version' => '1-dev1',
+		'__version' => '1',
 	];
-
-	/**
-	 * Sensei plugins whitelist.
-	 *
-	 * @var array
-	 */
-	public $plugin_slugs = [ 'sensei-wc-paid-courses', 'sensei-course-progress', 'sensei-certificates', 'sensei-media-attachments', 'sensei-content-drip' ];
 
 	/**
 	 * URL Slug for Setup Wizard Wizard page
@@ -132,7 +127,8 @@ class Sensei_Onboarding {
 	 * @access private
 	 */
 	public function enqueue_scripts() {
-		Sensei()->assets->enqueue( 'sensei-setupwizard', 'onboarding/index.js', [], true );
+		Sensei()->assets->enqueue( 'sensei-setupwizard', 'onboarding/index.js', [ 'sensei-event-logging', 'wp-i18n' ], true );
+		$this->setup_wizard_set_script_translations();
 	}
 
 	/**
@@ -142,6 +138,15 @@ class Sensei_Onboarding {
 	 */
 	public function enqueue_styles() {
 		Sensei()->assets->enqueue( 'sensei-setupwizard', 'onboarding/style.css', [ 'sensei-wc-components', 'sensei-wp-components' ] );
+	}
+
+	/**
+	 * Set script translations.
+	 *
+	 * @access private
+	 */
+	public function setup_wizard_set_script_translations() {
+		wp_set_script_translations( 'sensei-setupwizard', 'sensei-lms' );
 	}
 
 	/**
@@ -412,25 +417,79 @@ class Sensei_Onboarding {
 	}
 
 	/**
+	 * Get feature with status.
+	 *
+	 * @param stdClass   $extension          Extension object.
+	 * @param stdClass[] $installing_plugins Plugins which are installing.
+	 *
+	 * @return stdClass Extension with status.
+	 */
+	private function get_feature_with_status( $extension, $installing_plugins ) {
+		$installing_key = array_search( $extension->product_slug, wp_list_pluck( $installing_plugins, 'product_slug' ), true );
+
+		if ( false !== $installing_key ) {
+			if ( isset( $installing_plugins[ $installing_key ]->error ) ) {
+				$extension->error  = $installing_plugins[ $installing_key ]->error;
+				$extension->status = 'error';
+			} else {
+				$extension->status = 'installing';
+			}
+		}
+
+		if ( Sensei_Plugins_Installation::instance()->is_plugin_active( $extension->plugin_file ) ) {
+			$extension->status = 'installed';
+		}
+
+		return $extension;
+	}
+
+	/**
 	 * Get Sensei extensions for setup wizard.
+	 *
+	 * @param boolean $clear_active_plugins_cache Clear cache for `is_plugin_active`.
 	 *
 	 * @return array Sensei extensions.
 	 */
-	public function get_sensei_extensions() {
-		$sensei_extensions = Sensei_Extensions::instance();
+	public function get_sensei_extensions( $clear_active_plugins_cache = false ) {
+		if ( $clear_active_plugins_cache ) {
+			wp_cache_delete( 'alloptions', 'options' );
+		}
 
-		// Decode prices.
+		$sensei_extensions  = Sensei_Extensions::instance();
+		$installing_plugins = Sensei_Plugins_Installation::instance()->get_installing_plugins();
+
 		$extensions = array_map(
-			function( $extension ) {
+			function( $extension ) use ( $installing_plugins ) {
+				// Decode price.
 				if ( isset( $extension->price ) && 0 !== $extension->price ) {
 					$extension->price = html_entity_decode( $extension->price );
 				}
 
-				return $extension;
+				return $this->get_feature_with_status( $extension, $installing_plugins );
 			},
-			$sensei_extensions->get_extensions( 'plugin', 'setup-wizard-extensions' )
+			$sensei_extensions->get_extensions( 'plugin', 'setup-wizard-extensions', [ 'hosted-location' => 'dotorg' ] )
 		);
 
 		return $extensions;
+	}
+
+	/**
+	 * Filter extensions to install and call installation.
+	 *
+	 * @param string[] $extension_slugs Extension slugs to install.
+	 */
+	public function install_extensions( $extension_slugs ) {
+		$extensions_to_install = array_filter(
+			array_map(
+				function( $extension ) use ( $extension_slugs ) {
+					$key = array_search( $extension->product_slug, $extension_slugs, true );
+
+					return false !== $key ? $extension : false;
+				},
+				$this->get_sensei_extensions()
+			)
+		);
+
+		Sensei_Plugins_Installation::instance()->install_plugins( $extensions_to_install );
 	}
 }

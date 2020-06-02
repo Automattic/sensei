@@ -1,49 +1,70 @@
+import { useState, useEffect } from '@wordpress/element';
 import { List } from '@woocommerce/components';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 import FeatureDescription from './feature-description';
-import FeatureStatus, { LOADING_STATUS, ERROR_STATUS } from './feature-status';
+import FeatureStatus, {
+	INSTALLING_STATUS,
+	ERROR_STATUS,
+} from './feature-status';
+import useFeaturesPolling from './use-features-polling';
 
-/**
- * @typedef  {Object} Feature
- * @property {string} title          Feature title.
- * @property {string} excerpt        Feature excerpt.
- * @property {string} [link]         Feature link.
- * @property {string} [errorMessage] Error message.
- * @property {string} status         Feature status.
- */
 /**
  * Installation feedback component.
  *
  * @param {Object}    props
- * @param {Feature[]} props.features   Features list.
  * @param {Function}  props.onContinue Callback to continue to the next step.
+ * @param {Function}  props.onRetry    Callback to retry installations.
  */
-const InstallationFeedback = ( { features, onContinue } ) => {
-	const hasLoading = features.some(
-		( feature ) => feature.status === LOADING_STATUS
+const InstallationFeedback = ( { onContinue, onRetry } ) => {
+	const [ hasInstalling, setHasInstalling ] = useState( true );
+	const [ hasError, setHasError ] = useState( false );
+
+	// Polling is active while some feature is installing.
+	const featuresData = useFeaturesPolling( hasInstalling );
+	const features = featuresData.options.filter( ( feature ) =>
+		featuresData.selected.includes( feature.slug )
 	);
 
-	const hasError = features.some(
-		( feature ) => feature.status === ERROR_STATUS
-	);
+	// Update general statuses when features is updated.
+	useEffect( () => {
+		setHasInstalling(
+			features.some( ( feature ) => feature.status === INSTALLING_STATUS )
+		);
+
+		setHasError(
+			features.some( ( feature ) => feature.status === ERROR_STATUS )
+		);
+	}, [ features ] );
 
 	let actionButtons;
 
-	if ( hasLoading ) {
+	if ( hasInstalling ) {
 		actionButtons = (
-			<Button isPrimary className="sensei-onboarding__button">
+			<Button
+				isPrimary
+				isBusy
+				disabled
+				className="sensei-onboarding__button"
+			>
 				{ __( 'Installing…', 'sensei-lms' ) }
 			</Button>
 		);
 	} else if ( hasError ) {
+		const onRetryAll = () => {
+			onRetry(
+				features
+					.filter( ( feature ) => feature.status === ERROR_STATUS )
+					.map( ( feature ) => feature.slug )
+			);
+		};
 		actionButtons = (
 			<>
 				<Button
 					isPrimary
 					className="sensei-onboarding__button"
-					onClick={ () => {} }
+					onClick={ onRetryAll }
 				>
 					{ __( 'Retry', 'sensei-lms' ) }
 				</Button>
@@ -72,15 +93,30 @@ const InstallationFeedback = ( { features, onContinue } ) => {
 		<div className="sensei-onboarding__features-installation-feedback">
 			<List
 				items={ features.map(
-					( { title, excerpt, link, errorMessage, status } ) => ( {
+					( { slug, title, excerpt, link, error, status } ) => ( {
 						title,
 						content: (
-							<FeatureDescription
-								excerpt={ excerpt }
-								link={ link }
-								errorMessage={ errorMessage }
-								onFeatureRetry={ () => {} }
-							/>
+							<>
+								<FeatureDescription
+									slug={ slug }
+									excerpt={ excerpt }
+									link={ link }
+								/>
+								{ error && (
+									<p className="sensei-onboarding__error-message">
+										{ error }{ ' ' }
+										<button
+											className="sensei-onboarding__retry-button"
+											type="button"
+											onClick={ () =>
+												onRetry( [ slug ] )
+											}
+										>
+											{ __( 'Retry?', 'sensei-lms' ) }
+										</button>
+									</p>
+								) }
+							</>
 						),
 						before: <FeatureStatus status={ status } />,
 					} )

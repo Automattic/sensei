@@ -105,6 +105,7 @@
 
 	&__bottom-actions {
 		text-align: center;
+		font-size: 14px;
 	}
 
 	&__title {
@@ -161,7 +162,7 @@
 
 			position: relative;
 
-			&.installed-status {
+			&.status-installed {
 				.components-checkbox-control__label,
 				.components-base-control__help {
 					color: $gray-10;
