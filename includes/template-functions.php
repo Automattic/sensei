@@ -731,13 +731,13 @@ function sensei_the_module_id() {
  *
  * @since 3.1.0
  *
- * @return int|false Number of lessons in the current module, or `false` on failure.
+ * @return int Number of lessons in the current module.
  */
 function sensei_module_lesson_count() {
 	global $sensei_modules_loop;
 
-	if ( ! isset( $sensei_modules_loop['course_id'] ) || ! isset( $sensei_modules_loop['current_module']->term_id ) ) {
-		return false;
+	if ( ! isset( $sensei_modules_loop['course_id'] ) || ! isset( $sensei_modules_loop['current_module'] ) || ! isset( $sensei_modules_loop['current_module']->term_id ) ) {
+		return 0;
 	}
 
 	$course_id      = $sensei_modules_loop['course_id'];
