@@ -1810,7 +1810,7 @@ class Sensei_Core_Modules {
 		$labels = array(
 			'name'              => __( 'Modules', 'sensei-lms' ),
 			'singular_name'     => __( 'Module', 'sensei-lms' ),
-			'search_items'    	  => __( 'Search Modules', 'sensei-lms' ),
+			'search_items'      => __( 'Search Modules', 'sensei-lms' ),
 			'all_items'         => __( 'All Modules', 'sensei-lms' ),
 			'parent_item'       => __( 'Parent Module', 'sensei-lms' ),
 			'parent_item_colon' => __( 'Parent Module:', 'sensei-lms' ),
