@@ -110,9 +110,11 @@ const Features = () => {
 	const goToNextStep = ( skip = false ) => {
 		goTo( 'ready' );
 
-		const eventName = skip
-			? 'setup_wizard_features_install_cancel'
-			: 'setup_wizard_features_continue';
+		const eventName =
+			true === skip
+				? 'setup_wizard_features_install_cancel'
+				: 'setup_wizard_features_continue';
+
 		logEvent( eventName, {
 			slug: selectedSlugs.join( ',' ),
 		} );

@@ -169,13 +169,21 @@ describe( '<Features />', () => {
 	} );
 
 	it( 'Should log event after installing when features selected', () => {
+		useFeaturesPolling.mockReturnValue( {
+			selected: [ 'test-1', 'test-2' ],
+			options: [
+				{ slug: 'test-1', title: 'Test 1' },
+				{ slug: 'test-2', title: 'Test 2' },
+			],
+		} );
+
 		const { queryByText, getByLabelText } = render(
 			<QueryStringRouter>
 				<Features />
 			</QueryStringRouter>
 		);
 
-		// Check the first feature.
+		// Check the two features.
 		fireEvent.click( getByLabelText( 'Test 1' ) );
 		fireEvent.click( getByLabelText( 'Test 2' ) );
 
