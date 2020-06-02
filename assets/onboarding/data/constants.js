@@ -28,3 +28,8 @@ export const ERROR_SUBMIT_SETUP_WIZARD_DATA = 'ERROR_SUBMIT_SETUP_WIZARD_DATA';
  * Welcome step action type constants.
  */
 export const SET_STEP_DATA = 'SET_STEP_DATA';
+
+/**
+ * Run any side-effect for state changes.
+ */
+export const APPLY_STEP_DATA = 'APPLY_STEP_DATA';

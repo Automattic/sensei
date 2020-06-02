@@ -8,6 +8,7 @@ import {
 	SUCCESS_SUBMIT_SETUP_WIZARD_DATA,
 	ERROR_SUBMIT_SETUP_WIZARD_DATA,
 	SET_STEP_DATA,
+	APPLY_STEP_DATA,
 } from './constants';
 
 import { normalizeSetupWizardData } from './normalizer';
@@ -149,6 +150,7 @@ export function* submitStep( step, stepData, { onSuccess, onError } = {} ) {
 			data: stepData,
 		} );
 		yield successSubmit( step );
+		yield applyStepData( step, stepData );
 		yield setStepData( step, stepData );
 
 		if ( onSuccess ) {
@@ -202,6 +204,18 @@ export function* completeSetupWizard() {
  */
 export const setStepData = ( step, data ) => ( {
 	type: SET_STEP_DATA,
+	step,
+	data,
+} );
+
+/**
+ * Apply side-effects for data change.
+ *
+ * @param {string} step Step name.
+ * @param {Object} data Step data object.
+ */
+export const applyStepData = ( step, data ) => ( {
+	type: APPLY_STEP_DATA,
 	step,
 	data,
 } );

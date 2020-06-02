@@ -1,5 +1,4 @@
 import { render, fireEvent } from '@testing-library/react';
-
 import FeaturesSelection from './features-selection';
 
 const features = [

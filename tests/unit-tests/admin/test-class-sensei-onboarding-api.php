@@ -29,6 +29,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 		$this->server   = $wp_rest_server;
 
 		Sensei_Test_Events::reset();
+
 		do_action( 'rest_api_init' );
 
 		// Prevent requests.
