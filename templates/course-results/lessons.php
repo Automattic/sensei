@@ -149,14 +149,14 @@ global $course;
 
 					<span class="lesson-grade"><?php echo esc_html( $lesson_grade ); ?></span>
 				
-				<?php echo $course_has_lessons_in_modules ? '<\h4>' : '<\h3>'; ?>
+				<?php echo $course_has_lessons_in_modules ? '</h4>' : '</h3>'; ?>
 
 			<?php endforeach; // lessons ?>
 
 		<?php endif; // lessons count > 0 ?>
 
 
-		<h2 class="total-grade">
+		<h3 class="total-grade">
 
 			<?php esc_html_e( 'Total Grade', 'sensei-lms' ); ?>
 			<span class="lesson-grade">
@@ -170,7 +170,7 @@ global $course;
 
 			</span>
 
-		</h2>
+		</h3>
 
 	</article>
 
