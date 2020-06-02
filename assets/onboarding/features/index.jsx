@@ -97,6 +97,10 @@ const Features = () => {
 
 	const retryInstallation = ( selected ) => {
 		submitInstallation( { selected } );
+
+		logEvent( 'setup_wizard_features_install_retry', {
+			slug: selected.join( ',' ),
+		} );
 	};
 
 	const goToNextStep = () => {
