@@ -107,10 +107,13 @@ const Features = () => {
 		} );
 	};
 
-	const goToNextStep = () => {
+	const goToNextStep = ( skip = false ) => {
 		goTo( 'ready' );
 
-		logEvent( 'setup_wizard_features_continue', {
+		const eventName = skip
+			? 'setup_wizard_features_install_cancel'
+			: 'setup_wizard_features_continue';
+		logEvent( eventName, {
 			slug: selectedSlugs.join( ',' ),
 		} );
 	};
@@ -149,7 +152,7 @@ const Features = () => {
 					isSubmitting={ isSubmitting }
 					errorNotice={ errorNotice }
 					onInstall={ startInstallation }
-					onSkip={ goToNextStep }
+					onSkip={ () => goToNextStep( true ) }
 				/>
 			) }
 		</>
