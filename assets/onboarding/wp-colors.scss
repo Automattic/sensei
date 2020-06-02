@@ -95,13 +95,6 @@ body.sensei-color {
 				color: darken($link-primary, 20%);
 			}
 		}
-
-		&.link__secondary {
-			transition: none;
-			&:not(:hover) {
-				text-decoration: none;
-			}
-		}
 	}
 
 	.components-checkbox-control__input[type='checkbox'] {
