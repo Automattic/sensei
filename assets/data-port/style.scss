@@ -170,9 +170,9 @@ $alert-red: #d94f4f;
 					border-radius: 3px;
 					color: $primary;
 
-					&:not(:disabled):not([aria-disabled="true"]):hover {
-						color: darken($primary, 20%);
-						box-shadow: inset 0 0 0 1px darken($primary, 20%), inset 0 0 0 2px $white;
+					&:not(:disabled):not([aria-disabled="true"]):not(.is-primary):hover {
+						color: darken($primary, 10%);
+						box-shadow: inset 0 0 0 1px lighten($primary, 20%), inset 0 0 0 2px $white;
 					}
 				}
 			}
