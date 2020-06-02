@@ -74,7 +74,7 @@ global $course;
 						}
 					}
 					?>
-					<h2>
+					<h4>
 
 						<a href="<?php echo esc_url_raw( get_permalink( $lesson->ID ) ); ?>"
 						   title="
@@ -92,7 +92,7 @@ global $course;
 							<?php echo esc_html( $lesson_grade ); ?>
 						</span>
 
-					</h2>
+					</h4>
 
 					<?php
 
@@ -107,16 +107,14 @@ global $course;
 		if ( 0 < count( $lessons ) ) :
 			?>
 
-			<h3>
-
-				<?php
-				// lesson title will already appear above
-				if ( $course_has_lessons_in_modules ) {
-					esc_html_e( 'Other Lessons', 'sensei-lms' );
-				}
+			<?php 
+			// lesson title will already appear above
+			if ( $course_has_lessons_in_modules ) : 
 				?>
-
-			</h3>
+			
+				<h3><?php esc_html_e( 'Other Lessons', 'sensei-lms' ) ?></h3>;
+			
+			<?php endif; // $course_has_lessons_in_modules ?>
 
 			<?php foreach ( $lessons as $lesson ) : ?>
 
@@ -136,7 +134,7 @@ global $course;
 				}
 				?>
 
-				<h2>
+				<?php echo $course_has_lessons_in_modules ? '<h4>' : '<h3>'; ?>
 
 					<a href="<?php echo esc_url_raw( get_permalink( $lesson->ID ) ); ?>" title="
 										<?php
@@ -150,8 +148,8 @@ global $course;
 					</a>
 
 					<span class="lesson-grade"><?php echo esc_html( $lesson_grade ); ?></span>
-
-				</h2>
+				
+				<?php echo $course_has_lessons_in_modules ? '<\h4>' : '<\h3>'; ?>
 
 			<?php endforeach; // lessons ?>
 
