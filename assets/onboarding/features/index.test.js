@@ -168,7 +168,7 @@ describe( '<Features />', () => {
 		);
 	} );
 
-	it( 'Should log event after installing when features selected', () => {
+	it( 'Should log events after installing features and continuing', () => {
 		useFeaturesPolling.mockReturnValue( {
 			selected: [ 'test-1', 'test-2' ],
 			options: [
@@ -189,6 +189,13 @@ describe( '<Features />', () => {
 
 		fireEvent.click( queryByText( 'Continue' ) );
 		fireEvent.click( queryByText( 'Install now' ) );
+		expect( window.sensei_log_event ).toHaveBeenCalledWith(
+			'setup_wizard_features_install',
+			{
+				slug: 'test-2,test-1',
+			}
+		);
+
 		fireEvent.click( queryByText( 'Continue' ) );
 
 		expect( window.sensei_log_event ).toHaveBeenCalledWith(
