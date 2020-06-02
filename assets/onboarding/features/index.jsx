@@ -93,6 +93,10 @@ const Features = () => {
 				},
 			}
 		);
+
+		logEvent( 'setup_wizard_features_install', {
+			slug: selectedSlugs.join( ',' ),
+		} );
 	};
 
 	const retryInstallation = ( selected ) => {
