@@ -66,6 +66,10 @@
 	&__button-card.components-button {
 		margin: 8px auto 0;
 		width: 310px;
+		
+		body.sensei-color &.is-primary.is-busy {
+			background-size: 200px 100%;
+		}
 	}
 
 	&__button-modal.components-button {

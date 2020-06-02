@@ -10,6 +10,10 @@
 
 body.sensei-color {
 
+	.components-button.is-primary.is-busy {
+		background-size: 100px 100%;
+	}
+
 	a, .button-link, .components-button.is-link {
 		color: $link;
 
