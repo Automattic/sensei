@@ -862,7 +862,6 @@ class Sensei_Teacher {
 		}
 
 		// load the email class
-		include dirname( __FILE__ ) . '/emails/class-sensei-email-teacher-new-course-assignment.php';
 		$email = new Sensei_Email_Teacher_New_Course_Assignment();
 		$email->trigger( $teacher_id, $course_id );
 

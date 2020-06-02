@@ -2,6 +2,8 @@
 /**
  * Reusable Usage Tracking library. For sending plugin usage data and events to
  * Tracks.
+ *
+ * @package Sensei
  **/
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,13 +22,6 @@ abstract class Sensei_Usage_Tracking_Base {
 	/*
 	 * Instance variables.
 	 */
-
-	/**
-	 * The name of the option for hiding the Usage Tracking opt-in dialog.
-	 *
-	 * @var string
-	 **/
-	protected $hide_tracking_opt_in_option_name;
 
 	/**
 	 * The name of the cron job action for regularly logging usage data.
@@ -134,7 +129,6 @@ abstract class Sensei_Usage_Tracking_Base {
 	 */
 	abstract protected function do_track_plugin( $plugin_slug );
 
-
 	/*
 	 * Initialization.
 	 */
@@ -150,14 +144,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 **/
 	protected function __construct() {
 		// Init instance vars.
-		$this->hide_tracking_opt_in_option_name = $this->get_prefix() . '_usage_tracking_opt_in_hide';
-		$this->job_name                         = $this->get_prefix() . '_usage_tracking_send_usage_data';
-
-		// Set up the opt-in dialog.
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_script_deps' ) );
-		add_action( 'admin_footer', array( $this, 'output_opt_in_js' ) );
-		add_action( 'admin_notices', array( $this, 'maybe_display_tracking_opt_in' ) );
-		add_action( 'wp_ajax_' . $this->get_prefix() . '_handle_tracking_opt_in', array( $this, 'handle_tracking_opt_in' ) );
+		$this->job_name = $this->get_prefix() . '_usage_tracking_send_usage_data';
 
 		// Set up schedule and action needed for cron job.
 		add_filter( 'cron_schedules', array( $this, 'add_usage_tracking_two_week_schedule' ) );
@@ -169,6 +156,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * subclass.
 	 *
 	 * @param string $subclass the name of the subclass.
+	 * @return static Instance of subclass.
 	 */
 	protected static function get_instance_for_subclass( $subclass ) {
 		if ( ! isset( self::$instances[ $subclass ] ) ) {
@@ -223,7 +211,7 @@ abstract class Sensei_Usage_Tracking_Base {
 		// Use site domain as the userid to enable usage tracking at the site level.
 		// Note that we would likely want to use site domain + user ID for userid if we were
 		// to ever add event tracking at the user level.
-		$properties['_ui'] = str_replace( 'www.', '', parse_url( site_url(), PHP_URL_HOST ) );
+		$properties['_ui'] = str_replace( 'www.', '', wp_parse_url( site_url(), PHP_URL_HOST ) );
 		$properties['_ul'] = $user->user_login;
 		$properties['_en'] = $event_name;
 		$properties['_ts'] = $event_timestamp . '000';
@@ -423,163 +411,69 @@ abstract class Sensei_Usage_Tracking_Base {
 
 	/**
 	 * Hide the opt-in for enabling usage tracking.
+	 *
+	 * @deprecated 3.1.0 - Opt-in moved to Setup Wizard
 	 **/
 	protected function hide_tracking_opt_in() {
-		update_option( $this->hide_tracking_opt_in_option_name, true );
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding::skip_setup_wizard' );
 	}
 
 	/**
 	 * Determine whether the opt-in for enabling usage tracking is hidden.
 	 *
-	 * @return bool true if the opt-in is hidden, false otherwise.
+	 * @deprecated 3.1.0 - Opt-in moved to Setup Wizard
 	 **/
 	protected function is_opt_in_hidden() {
-		return (bool) get_option( $this->hide_tracking_opt_in_option_name );
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding::setup_wizard_notice' );
 	}
 
 	/**
 	 * Allowed html tags, used by wp_kses, for the translated opt-in dialog
 	 * text.
 	 *
-	 * @return array the html tags.
+	 * @deprecated 3.1.0 - Opt-in moved to Setup Wizard
 	 **/
 	protected function opt_in_dialog_text_allowed_html() {
-		return array(
-			'a'      => array(
-				'href'   => array(),
-				'title'  => array(),
-				'target' => array(),
-			),
-			'em'     => array(),
-			'strong' => array(),
-		);
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding::setup_wizard_notice' );
 	}
 
 	/**
 	 * If needed, display opt-in dialog to enable tracking. Should not be
 	 * called externally.
+	 *
+	 * @deprecated 3.1.0 - Opt-in moved to Setup Wizard
 	 **/
 	public function maybe_display_tracking_opt_in() {
-		$opt_in_hidden         = $this->is_opt_in_hidden();
-		$user_tracking_enabled = $this->is_tracking_enabled();
-		$can_manage_tracking   = $this->current_user_can_manage_tracking();
-
-		if ( ! $user_tracking_enabled && ! $opt_in_hidden && $can_manage_tracking ) { ?>
-			<div id="<?php echo esc_attr( $this->get_prefix() ); ?>-usage-tracking-notice" class="notice notice-info"
-				data-nonce="<?php echo esc_attr( wp_create_nonce( 'tracking-opt-in' ) ); ?>">
-				<p>
-					<?php echo wp_kses( $this->opt_in_dialog_text(), $this->opt_in_dialog_text_allowed_html() ); ?>
-				</p>
-				<p>
-					<button class="button button-primary" data-enable-tracking="yes">
-						<?php esc_html_e( 'Enable Usage Tracking', $this->get_text_domain() ); ?>
-					</button>
-					<button class="button" data-enable-tracking="no">
-						<?php esc_html_e( 'Disable Usage Tracking', $this->get_text_domain() ); ?>
-					</button>
-					<span id="progress" class="spinner alignleft"></span>
-				</p>
-			</div>
-			<div id="<?php echo esc_attr( $this->get_prefix() ); ?>-usage-tracking-enable-success" class="notice notice-success hidden">
-				<p><?php esc_html_e( 'Usage data enabled. Thank you!', $this->get_text_domain() ); ?></p>
-			</div>
-			<div id="<?php echo esc_attr( $this->get_prefix() ); ?>-usage-tracking-disable-success" class="notice notice-success hidden">
-				<p><?php esc_html_e( 'Disabled usage tracking.', $this->get_text_domain() ); ?></p>
-			</div>
-			<div id="<?php echo esc_attr( $this->get_prefix() ); ?>-usage-tracking-failure" class="notice notice-error hidden">
-				<p><?php esc_html_e( 'Something went wrong. Please try again later.', $this->get_text_domain() ); ?></p>
-			</div>
-			<?php
-		}
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding::setup_wizard_notice' );
 	}
 
 	/**
 	 * Handle ajax request from the opt-in dialog. Should not be called
 	 * externally.
+	 *
+	 * @deprecated 3.1.0 - Opt-in moved to Setup Wizard
 	 **/
 	public function handle_tracking_opt_in() {
-		check_ajax_referer( 'tracking-opt-in', 'nonce' );
-
-		if ( ! $this->current_user_can_manage_tracking() ) {
-			wp_die( '', '', 403 );
-		}
-
-		$enable_tracking = isset( $_POST['enable_tracking'] ) && '1' === $_POST['enable_tracking'];
-		$this->set_tracking_enabled( $enable_tracking );
-		$this->hide_tracking_opt_in();
-		$this->send_usage_data();
-		wp_die();
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding::setup_wizard_notice' );
 	}
 
 	/**
 	 * Ensure that jQuery has been enqueued since the opt-in dialog JS depends
 	 * on it. Should not be called externally.
+	 *
+	 * @deprecated 3.1.0
 	 **/
 	public function enqueue_script_deps() {
-		// Ensure jQuery is loaded.
-		wp_enqueue_script(
-			$this->get_prefix() . '_usage-tracking-notice',
-			'',
-			array( 'jquery' ),
-			null,
-			true
-		);
+		_deprecated_function( __METHOD__, '3.1.0' );
 	}
 
 	/**
 	 * Output the JS code to handle the opt-in dialog. Should not be called
 	 * externally.
+	 *
+	 * @deprecated 3.1.0
 	 **/
 	public function output_opt_in_js() {
-		?>
-<script type="text/javascript">
-	(function( prefix ) {
-		jQuery( document ).ready( function() {
-			function displayProgressIndicator() {
-				jQuery( '#' + prefix + '-usage-tracking-notice #progress' ).addClass( 'is-active' );
-			}
-
-			function displaySuccess( enabledTracking ) {
-				if ( enabledTracking ) {
-					jQuery( '#' + prefix + '-usage-tracking-enable-success' ).show();
-				} else {
-					jQuery( '#' + prefix + '-usage-tracking-disable-success' ).show();
-				}
-				jQuery( '#' + prefix + '-usage-tracking-notice' ).hide();
-			}
-
-			function displayError() {
-				jQuery( '#' + prefix + '-usage-tracking-failure' ).show();
-				jQuery( '#' + prefix + '-usage-tracking-notice' ).hide();
-			}
-
-			// Handle button clicks
-			jQuery( '#' + prefix + '-usage-tracking-notice button' ).click( function( event ) {
-				event.preventDefault();
-
-				var enableTracking = jQuery( this ).data( 'enable-tracking' ) == 'yes';
-				var nonce          = jQuery( '#' + prefix + '-usage-tracking-notice' ).data( 'nonce' );
-
-				displayProgressIndicator();
-
-				jQuery.ajax( {
-					type: 'POST',
-					url: ajaxurl,
-					data: {
-						action: prefix + '_handle_tracking_opt_in',
-						enable_tracking: enableTracking ? 1 : 0,
-						nonce: nonce,
-					},
-					success: function() {
-						displaySuccess( enableTracking );
-					},
-					error: displayError,
-				} );
-			});
-		});
-	})( "<?php echo esc_js( $this->get_prefix() ); ?>" );
-</script>
-		<?php
+		_deprecated_function( __METHOD__, '3.1.0' );
 	}
 }
-// phpcs: enable

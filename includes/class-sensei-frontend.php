@@ -164,7 +164,7 @@ class Sensei_Frontend {
 
 		if ( ! $disable_styles ) {
 
-			Sensei()->assets->enqueue( Sensei()->token . '-frontend', 'css/frontend/sensei.css', [], 'screen' );
+			Sensei()->assets->enqueue( Sensei()->token . '-frontend', 'css/frontend.css', [], 'screen' );
 
 			// Allow additional stylesheets to be loaded.
 			do_action( 'sensei_additional_styles' );
@@ -1002,6 +1002,7 @@ class Sensei_Frontend {
 		$post_id           = get_the_ID();
 		$category_output   = get_the_term_list( $post_id, 'course-category', '', ', ', '' );
 		$free_lesson_count = intval( Sensei()->course->course_lesson_preview_count( $post_id ) );
+		$lesson_count      = Sensei()->course->course_lesson_count( $post_id );
 		?>
 		<section class="entry">
 			<p class="sensei-course-meta">
@@ -1017,11 +1018,16 @@ class Sensei_Frontend {
 
 				if ( isset( Sensei()->settings->settings['course_author'] ) && ( Sensei()->settings->settings['course_author'] ) ) {
 					?>
-			   <span class="course-author"><?php esc_html_e( 'by', 'sensei-lms' ); ?><?php the_author_link(); ?></span>
+					<span class="course-author"><?php esc_html_e( 'by', 'sensei-lms' ); ?><?php the_author_link(); ?></span>
 					<?php
 				} // End If Statement
 				?>
-			   <span class="course-lesson-count"><?php echo esc_html( Sensei()->course->course_lesson_count( $post_id ) ) . '&nbsp;' . esc_html__( 'Lessons', 'sensei-lms' ); ?></span>
+				<span class="course-lesson-count">
+					<?php
+					// translators: Placeholder %d is the lesson count.
+					echo esc_html( sprintf( _n( '%d Lesson', '%d Lessons', $lesson_count, 'sensei-lms' ), $lesson_count ) );
+					?>
+				</span>
 			<?php
 			if ( ! empty( $category_output ) ) {
 				?>

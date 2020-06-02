@@ -1,8 +1,9 @@
 import { Card, H } from '@woocommerce/components';
 import { __ } from '@wordpress/i18n';
 import { Button, CheckboxControl, TextControl } from '@wordpress/components';
-import { useState } from '@wordpress/element';
+import { useState, useEffect } from '@wordpress/element';
 import { useQueryStringRouter } from '../query-string-router';
+import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 
 const purposes = [
 	{
@@ -45,10 +46,19 @@ const purposes = [
 export const Purpose = () => {
 	const { goTo } = useQueryStringRouter();
 
+	const {
+		stepData,
+		submitStep,
+		isSubmitting,
+		errorNotice,
+	} = useSetupWizardStep( 'purpose' );
+
 	const [ { selected, other }, setFormState ] = useState( {
 		selected: [],
 		other: '',
 	} );
+
+	useEffect( () => setFormState( stepData ), [ stepData ] );
 
 	const isEmpty = ! selected.length;
 
@@ -61,8 +71,12 @@ export const Purpose = () => {
 		} ) );
 	};
 
-	const submitPage = () => {
+	const onSubmitSuccess = () => {
 		goTo( 'features' );
+	};
+
+	const submitPage = () => {
+		submitStep( { selected, other }, { onSuccess: onSubmitSuccess } );
 	};
 
 	return (
@@ -102,10 +116,11 @@ export const Purpose = () => {
 						/>
 					) }
 				</div>
-
+				{ errorNotice }
 				<Button
 					isPrimary
-					disabled={ isEmpty }
+					isBusy={ isSubmitting }
+					disabled={ isSubmitting || isEmpty }
 					className="sensei-onboarding__button sensei-onboarding__button-card"
 					onClick={ submitPage }
 				>

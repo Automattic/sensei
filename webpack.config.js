@@ -6,7 +6,6 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
 
 const files = [
 	'js/admin/course-edit.js',
-	'js/admin/email-signup.js',
 	'js/admin/event-logging.js',
 	'js/admin/lesson-bulk-edit.js',
 	'js/admin/lesson-quick-edit.js',
@@ -25,10 +24,10 @@ const files = [
 	'js/user-dashboard.js',
 	'onboarding/index.jsx',
 	'onboarding/style.scss',
+	'shared/styles/wp-components.scss',
+	'shared/styles/wc-components.scss',
 
-	'css/admin/email-signup.scss',
-	'css/frontend/sensei.scss',
-	'css/activation.scss',
+	'css/frontend.scss',
 	'css/admin-custom.css',
 	'css/extensions.scss',
 	'css/global.css',

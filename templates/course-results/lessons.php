@@ -7,7 +7,7 @@
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     2.0.0
+ * @version     3.1.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -31,7 +31,15 @@ global $course;
 
 	<header>
 
-		<h2>  <?php esc_html_e( 'Lessons', 'sensei-lms' ); ?> </h2>
+		<h2>
+			<?php
+			if ( 1 === Sensei()->course->course_lesson_count( $course->ID ) ) {
+				esc_html_e( 'Lesson', 'sensei-lms' );
+			} else {
+				esc_html_e( 'Lessons', 'sensei-lms' );
+			}
+			?>
+		</h2>
 
 	</header>
 

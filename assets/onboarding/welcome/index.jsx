@@ -3,8 +3,8 @@ import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { UsageModal } from './usage-modal';
-import { useOnboardingApi } from '../use-onboarding-api';
 import { useQueryStringRouter } from '../query-string-router';
+import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 
 /**
  * Welcome step for Onboarding Wizard.
@@ -14,13 +14,24 @@ export const Welcome = () => {
 
 	const { goTo } = useQueryStringRouter();
 
-	const { data, submit, isBusy } = useOnboardingApi( 'welcome' );
+	const {
+		stepData,
+		submitStep,
+		isSubmitting,
+		errorNotice,
+	} = useSetupWizardStep( 'welcome' );
 
-	async function submitPage( allowUsageTracking ) {
-		await submit( { usage_tracking: allowUsageTracking } );
+	const onSubmitSuccess = () => {
 		toggleUsageModal( false );
 		goTo( 'purpose' );
-	}
+	};
+
+	const submitPage = ( allowUsageTracking ) => {
+		submitStep(
+			{ usage_tracking: allowUsageTracking },
+			{ onSuccess: onSubmitSuccess }
+		);
+	};
 
 	return (
 		<>
@@ -45,18 +56,24 @@ export const Welcome = () => {
 					{ __( 'Continue', 'sensei-lms' ) }
 				</Button>
 			</Card>
-			<div className="sensei-onboarding__skip">
-				<Link href="edit.php?post_type=course" type="wp-admin">
+			<div className="sensei-onboarding__bottom-actions">
+				<Link
+					href="edit.php?post_type=course"
+					type="wp-admin"
+					className="link__secondary"
+				>
 					{ __( 'Not right now', 'sensei-lms' ) }
 				</Link>
 			</div>
 			{ usageModalActive && (
 				<UsageModal
-					tracking={ data.usage_tracking }
-					isSubmitting={ isBusy }
+					tracking={ stepData.usage_tracking }
+					isSubmitting={ isSubmitting }
 					onClose={ () => toggleUsageModal( false ) }
 					onContinue={ submitPage }
-				/>
+				>
+					{ errorNotice }
+				</UsageModal>
 			) }
 		</>
 	);

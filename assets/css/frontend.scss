@@ -15,7 +15,8 @@
 /**
  * Mixins
  */
-@import "../mixins";
+@import 'mixins';
+@import 'fontawesome';
 
 /**
  * Fonts
@@ -27,25 +28,12 @@ $fontawesome: FontAwesomeSensei, FontAwesome;
  */
  .clearfix {
       &:before, &:after {
-          content: "";
+          content: '';
           display: table;
       }
       &:after {
           clear: both;
       }
-}
-
-/* Font Awesome Icons */
-@font-face {
-  font-family: 'FontAwesomeSensei';
-  src: url('../fonts/fontawesome-webfont.eot');
-  src: url('../fonts/fontawesome-webfont.eot?#iefix') format('embedded-opentype'),
-     url('../fonts/fontawesome-webfont.woff2') format('woff2'),
-     url('../fonts/fontawesome-webfont.woff') format('woff'),
-     url('../fonts/fontawesome-webfont.ttf')  format('truetype'),
-     url('../fonts/fontawesome-webfont.svg#svgFontName') format('svg');
-  font-weight: 400;
-  font-style: normal;
 }
 
 a.view-results,
@@ -228,12 +216,12 @@ a.sensei-certificate-link {
     &.completed  {
       background: $success;
       &:before  {
-        content: "\f00c";
+        content: '\f00c';
       }
     }
     &.in-progress  {
       &:before  {
-        content: "\f110";
+        content: '\f110';
       }
     }
     &.register  {
@@ -525,7 +513,7 @@ section.entry span.course-lesson-progress { margin-left: 10px; }
     label {
       display: block;
     }
-    input[type="text"], input[type="password"] {
+    input[type='text'], input[type='password'] {
       width: 90%;
     }
   }
@@ -621,7 +609,7 @@ section.entry span.course-lesson-progress { margin-left: 10px; }
   }
   .learner-content {
     float: left;
-    @include calc_width(#{"100% - 140px"});
+    @include calc_width(#{'100% - 140px'});
     h2 {
       margin-top: 0;
     }
@@ -774,14 +762,14 @@ section.entry span.course-lesson-progress { margin-left: 10px; }
 .nav-next  {
   float: right;
   .meta-nav:before {
-    content: "\2192";
+    content: '\2192';
   }
 }
 
 .nav-prev  {
   float: left;
   .meta-nav:before {
-    content: "\2190";
+    content: '\2190';
   }
 }
 
@@ -796,7 +784,7 @@ section.entry span.course-lesson-progress { margin-left: 10px; }
     border:none!important;
     @include border_radius(5px);
     &:after {
-      content: "";
+      content: '';
       clear: both;
       display: block;
     }

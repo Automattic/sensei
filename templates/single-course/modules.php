@@ -10,7 +10,7 @@
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     3.0.0
+ * @version     3.1.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -94,7 +94,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 						<header>
 
-							<h3><?php esc_html_e( 'Lessons', 'sensei-lms' ); ?></h3>
+							<h3>
+								<?php
+								if ( 1 === sensei_module_lesson_count() ) {
+									esc_html_e( 'Lesson', 'sensei-lms' );
+								} else {
+									esc_html_e( 'Lessons', 'sensei-lms' );
+								}
+								?>
+							</h3>
 
 						</header>
 
