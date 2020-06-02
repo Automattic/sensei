@@ -20,8 +20,9 @@ const QueryStringRouterContext = createContext();
  * - `goTo`: Functions that send the user to another route.
  *
  * @param {Object} props
- * @param {string} props.paramName Param used as reference in the query string.
- * @param {Object} props.children  Render this children if it matches the route.
+ * @param {string} props.paramName    Param used as reference in the query string.
+ * @param {string} props.defaultRoute Default route to open if there is nothing in the URL.
+ * @param {Object} props.children     Render this children if it matches the route.
  */
 const QueryStringRouter = ( { paramName, defaultRoute, children } ) => {
 	// Current route.
