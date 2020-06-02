@@ -11,11 +11,12 @@ import {
 import { INSTALLING_STATUS } from '../features/feature-status';
 
 const DEFAULT_STATE = {
-	isFetching: false,
+	isFetching: true,
 	fetchError: false,
 	isSubmitting: false,
 	submitError: false,
 	data: {
+		completedSteps: [],
 		welcome: {
 			usage_tracking: false,
 		},
@@ -122,6 +123,13 @@ export default ( state = DEFAULT_STATE, action ) => {
 			return {
 				...state,
 				isSubmitting: false,
+				data: {
+					...state.data,
+					completedSteps: [
+						...state.data.completedSteps,
+						action.step,
+					],
+				},
 			};
 
 		case ERROR_SUBMIT_SETUP_WIZARD_DATA:

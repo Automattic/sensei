@@ -123,13 +123,30 @@ describe( 'Setup wizard reducer', () => {
 		const state = reducer(
 			{
 				isSubmitting: true,
+				data: { completedSteps: [] },
 			},
 			{
 				type: SUCCESS_SUBMIT_SETUP_WIZARD_DATA,
+				step: 'test',
 			}
 		);
 
 		expect( state.isSubmitting ).toBeFalsy();
+	} );
+
+	it( 'Should mark step as completed on SUCCESS_SUBMIT_SETUP_WIZARD_DATA action', () => {
+		const state = reducer(
+			{
+				isSubmitting: true,
+				data: { completedSteps: [] },
+			},
+			{
+				type: SUCCESS_SUBMIT_SETUP_WIZARD_DATA,
+				step: 'test',
+			}
+		);
+
+		expect( state.data.completedSteps ).toContain( 'test' );
 	} );
 
 	it( 'Should set error on ERROR_SUBMIT_SETUP_WIZARD_DATA action', () => {

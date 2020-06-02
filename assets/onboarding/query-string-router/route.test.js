@@ -16,10 +16,8 @@ const GoToSecondRoute = () => {
 describe( '<Route />', () => {
 	it( 'Should render the default route', () => {
 		const { queryByText } = render(
-			<QueryStringRouter queryStringName="route">
-				<Route route="one" defaultRoute>
-					One
-				</Route>
+			<QueryStringRouter queryStringName="route" defaultRoute="one">
+				<Route route="one">One</Route>
 				<Route route="two">Two</Route>
 			</QueryStringRouter>
 		);
@@ -29,10 +27,8 @@ describe( '<Route />', () => {
 
 	it( 'Should render the current route', () => {
 		const { queryByText } = render(
-			<QueryStringRouter queryStringName="route">
-				<Route route="one" defaultRoute>
-					One
-				</Route>
+			<QueryStringRouter queryStringName="route" defaultRoute="one">
+				<Route route="one">One</Route>
 				<Route route="two">Two</Route>
 				<GoToSecondRoute />
 			</QueryStringRouter>

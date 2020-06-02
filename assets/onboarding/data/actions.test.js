@@ -138,9 +138,12 @@ describe( 'Setup wizard actions', () => {
 	} );
 
 	it( 'Should return the success submit action', () => {
-		const expectedAction = { type: SUCCESS_SUBMIT_SETUP_WIZARD_DATA };
+		const expectedAction = {
+			type: SUCCESS_SUBMIT_SETUP_WIZARD_DATA,
+			step: 'test',
+		};
 
-		expect( successSubmit() ).toEqual( expectedAction );
+		expect( successSubmit( 'test' ) ).toEqual( expectedAction );
 	} );
 
 	it( 'Should return the error submit action', () => {
@@ -189,6 +192,7 @@ describe( 'Setup wizard actions', () => {
 		// Success action.
 		const expectedSuccessAction = {
 			type: SUCCESS_SUBMIT_SETUP_WIZARD_DATA,
+			step: 'welcome',
 		};
 		expect( gen.next().value ).toEqual( expectedSuccessAction );
 

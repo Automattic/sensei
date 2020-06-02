@@ -238,7 +238,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	 */
 	public function testDefaultProgressIsEmpty() {
 		$data = $this->request( 'GET', '' );
-		$this->assertEquals( [], $data['completed_steps'] );
+		$this->assertEquals( [], $data['completedSteps'] );
 	}
 
 	/**
@@ -255,7 +255,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	public function testStepCompletedAfterSubmit( $step, $form_data ) {
 		$this->request( 'POST', $step, $form_data );
 		$data = $this->request( 'GET', '' );
-		$this->assertEquals( [ $step ], $data['completed_steps'] );
+		$this->assertEquals( [ $step ], $data['completedSteps'] );
 	}
 
 	public function testMultipleStepsCompleted() {
@@ -268,7 +268,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 		}
 
 		$data = $this->request( 'GET', '' );
-		$this->assertEqualSets( [ 'welcome', 'features', 'purpose' ], $data['completed_steps'] );
+		$this->assertEqualSets( [ 'welcome', 'features', 'purpose' ], $data['completedSteps'] );
 
 	}
 

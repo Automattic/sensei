@@ -4,6 +4,7 @@ import {
 	isSubmitting,
 	getSubmitError,
 	getStepData,
+	getNavigationSteps,
 } from './selectors';
 
 describe( 'Setup wizard selectors', () => {
@@ -53,5 +54,23 @@ describe( 'Setup wizard selectors', () => {
 		expect( getStepData( state, 'welcome' ) ).toEqual( {
 			usage_tracking: true,
 		} );
+	} );
+
+	it( 'Should get navigation data', () => {
+		const state = {
+			data: {
+				completedSteps: [ 'welcome' ],
+			},
+		};
+
+		expect(
+			getNavigationSteps( state, [
+				{ key: 'welcome' },
+				{ key: 'features' },
+			] )
+		).toEqual( [
+			{ key: 'welcome', isComplete: true, isNext: false },
+			{ key: 'features', isComplete: false, isNext: true },
+		] );
 	} );
 } );
