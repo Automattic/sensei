@@ -41,7 +41,9 @@ export const Ready = () => (
 									className="sensei-onboarding__button"
 									isPrimary
 									href="post-new.php?post_type=course"
-									{ ...logLink( 'setup_wizard_ready_create_course' ) }
+									{ ...logLink(
+										'setup_wizard_ready_create_course'
+									) }
 								>
 									Create a course
 								</Button>
@@ -62,7 +64,9 @@ export const Ready = () => (
 											href="https://senseilms.com/lesson/courses/"
 											target="_blank"
 											rel="noopener noreferrer"
-											{ ...logLink( 'setup_wizard_ready_learn_more' ) }
+											{ ...logLink(
+												'setup_wizard_ready_learn_more'
+											) }
 										/>
 									),
 								}
@@ -74,7 +78,11 @@ export const Ready = () => (
 			</Section>
 		</Card>
 		<div className="sensei-onboarding__bottom-actions">
-			<a href="edit.php?post_type=course" className="link__secondary">
+			<a
+				className="link__secondary"
+				href="edit.php?post_type=course"
+				{ ...logLink( 'setup_wizard_ready_exit' ) }
+			>
 				{ __( 'Exit to Courses', 'sensei-lms' ) }
 			</a>
 		</div>

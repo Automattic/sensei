@@ -89,4 +89,15 @@ describe( '<Ready />', () => {
 			undefined
 		);
 	} );
+
+	it( 'Should log event when clicking to exit', () => {
+		const { queryByText } = render( <Ready /> );
+
+		fireEvent.click( queryByText( 'Exit to Courses' ) );
+
+		expect( window.sensei_log_event ).toHaveBeenCalledWith(
+			'setup_wizard_ready_exit',
+			undefined
+		);
+	} );
 } );
