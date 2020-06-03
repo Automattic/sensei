@@ -2,7 +2,7 @@
 /**
  * Setup Wizard.
  *
- * @package Sensei\SetupWizard
+ * @package Sensei\Setup_Wizard
  * @since   3.1.0
  */
 
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @author  Automattic
  * @since   3.1.0
  */
-class Sensei_Onboarding {
+class Sensei_Setup_Wizard {
 	const SUGGEST_SETUP_WIZARD_OPTION = 'sensei_suggest_setup_wizard';
 	const USER_DATA_OPTION            = 'sensei_setup_wizard_data';
 	const MC_LIST_ID                  = '4fa225a515';
@@ -27,7 +27,7 @@ class Sensei_Onboarding {
 	const MC_URL                      = 'https://senseilms.us19.list-manage.com/subscribe/post?u=' . self::MC_USER_ID . '&id=' . self::MC_LIST_ID;
 
 	/**
-	 * Default value for onboarding user data.
+	 * Default value for setup wizard user data.
 	 *
 	 * @var array
 	 */
@@ -82,8 +82,8 @@ class Sensei_Onboarding {
 	 */
 	public function __construct() {
 
-		$this->page_slug = 'sensei_onboarding';
-		$this->pages     = new Sensei_Onboarding_Pages();
+		$this->page_slug = 'sensei_setup_wizard';
+		$this->pages     = new Sensei_Setup_Wizard_Pages();
 
 		if ( is_admin() ) {
 
@@ -127,7 +127,7 @@ class Sensei_Onboarding {
 	 * @access private
 	 */
 	public function enqueue_scripts() {
-		Sensei()->assets->enqueue( 'sensei-setupwizard', 'onboarding/index.js', [ 'sensei-event-logging', 'wp-i18n' ], true );
+		Sensei()->assets->enqueue( 'sensei-setup-wizard', 'setup-wizard/index.js', [ 'sensei-event-logging', 'wp-i18n' ], true );
 		$this->setup_wizard_set_script_translations();
 	}
 
@@ -137,7 +137,7 @@ class Sensei_Onboarding {
 	 * @access private
 	 */
 	public function enqueue_styles() {
-		Sensei()->assets->enqueue( 'sensei-setupwizard', 'onboarding/style.css', [ 'sensei-wc-components', 'sensei-wp-components' ] );
+		Sensei()->assets->enqueue( 'sensei-setup-wizard', 'setup-wizard/style.css', [ 'sensei-wc-components', 'sensei-wp-components' ] );
 	}
 
 	/**
@@ -146,7 +146,7 @@ class Sensei_Onboarding {
 	 * @access private
 	 */
 	public function setup_wizard_set_script_translations() {
-		wp_set_script_translations( 'sensei-setupwizard', 'sensei-lms' );
+		wp_set_script_translations( 'sensei-setup-wizard', 'sensei-lms' );
 	}
 
 	/**
@@ -215,7 +215,7 @@ class Sensei_Onboarding {
 	public function render_wizard_page() {
 
 		?>
-		<div id="sensei-onboarding-page" class="sensei-onboarding">
+		<div id="sensei-setup-wizard-page" class="sensei-setup-wizard">
 
 		</div>
 		<?php

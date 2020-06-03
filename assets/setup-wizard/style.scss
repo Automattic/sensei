@@ -1,7 +1,7 @@
 @import '../shared/styles/variables';
 @import 'fullscreen';
 
-.sensei-onboarding {
+.sensei-setup-wizard {
 
 	&__main-loader {
 		position: fixed;
@@ -18,7 +18,7 @@
 			box-sizing: border-box;
 		}
 
-		.sensei-onboarding__learn-more {
+		.sensei-setup-wizard__learn-more {
 			white-space: nowrap;
 		}
 	}
@@ -66,7 +66,7 @@
 	&__button-card.components-button {
 		margin: 8px auto 0;
 		width: 310px;
-		
+
 		body.sensei-color &.is-primary.is-busy {
 			background-size: 200px 100%;
 		}
@@ -158,7 +158,7 @@
 
 		margin-bottom: 26px;
 
-		.sensei-onboarding__checkbox {
+		.sensei-setup-wizard__checkbox {
 
 			position: relative;
 
@@ -168,7 +168,7 @@
 					color: $gray-10;
 				}
 
-				.sensei-onboarding__learn-more {
+				.sensei-setup-wizard__learn-more {
 					color: lighten($primary, 30%);
 				}
 			}
@@ -195,7 +195,7 @@
 			}
 		}
 
-		.sensei-onboarding__textcontrol-other {
+		.sensei-setup-wizard__textcontrol-other {
 			margin-left: 40px;
 			margin-right: 20px;
 
@@ -241,11 +241,11 @@
 			margin: 0;
 		}
 
-		.sensei-onboarding__error-message {
+		.sensei-setup-wizard__error-message {
 			margin: 0;
 			color: $alert-red;
 
-			.sensei-onboarding__retry-button {
+			.sensei-setup-wizard__retry-button {
 				color: inherit;
 				background: transparent;
 				border: 0;
@@ -255,11 +255,11 @@
 			}
 		}
 
-		.sensei-onboarding__icon-status {
+		.sensei-setup-wizard__icon-status {
 			padding-top: 2px;
 		}
 
-		.sensei-onboarding__circle-icon-wrapper {
+		.sensei-setup-wizard__circle-icon-wrapper {
 			display: inline-block;
 			width: 18px;
 			height: 18px;

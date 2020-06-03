@@ -202,11 +202,11 @@ class Sensei_Main {
 	private $enrolment_scheduler;
 
 	/**
-	 * Onboarding wizard.
+	 * Setup wizard.
 	 *
-	 * @var Sensei_Onboarding
+	 * @var Sensei_Wizard
 	 */
-	public $onboarding;
+	public $setup_wizard;
 
 	/**
 	 * Constructor method.
@@ -394,8 +394,8 @@ class Sensei_Main {
 		$this->enrolment_scheduler = Sensei_Enrolment_Job_Scheduler::instance();
 		$this->enrolment_scheduler->init();
 
-		// Onboarding Wizard.
-		$this->onboarding = Sensei_Onboarding::instance();
+		// Setup Wizard.
+		$this->setup_wizard = Sensei_Setup_Wizard::instance();
 
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
@@ -684,7 +684,7 @@ class Sensei_Main {
 		if ( false === get_option( 'sensei_installed', false ) ) {
 			set_transient( 'sensei_activation_redirect', 1, 30 );
 
-			update_option( Sensei_Onboarding::SUGGEST_SETUP_WIZARD_OPTION, 1 );
+			update_option( Sensei_Setup_Wizard::SUGGEST_SETUP_WIZARD_OPTION, 1 );
 		}
 
 		update_option( 'sensei_installed', 1 );

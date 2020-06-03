@@ -41,7 +41,7 @@ const FeaturesSelection = ( {
 
 	return (
 		<>
-			<div className="sensei-onboarding__checkbox-list">
+			<div className="sensei-setup-wizard__checkbox-list">
 				{ features.map( ( { slug, title, excerpt, link, status } ) => (
 					<CheckboxControl
 						key={ slug }
@@ -56,9 +56,12 @@ const FeaturesSelection = ( {
 						onChange={ toggleItem( slug ) }
 						checked={ selectedSlugs.includes( slug ) }
 						disabled={ !! status }
-						className={ classnames( 'sensei-onboarding__checkbox', {
-							[ `status-${ status }` ]: status,
-						} ) }
+						className={ classnames(
+							'sensei-setup-wizard__checkbox',
+							{
+								[ `status-${ status }` ]: status,
+							}
+						) }
 					/>
 				) ) }
 			</div>
@@ -69,7 +72,7 @@ const FeaturesSelection = ( {
 				isPrimary
 				isBusy={ isSubmitting }
 				disabled={ isSubmitting }
-				className="sensei-onboarding__button sensei-onboarding__button-card"
+				className="sensei-setup-wizard__button sensei-setup-wizard__button-card"
 				onClick={ onContinue }
 			>
 				{ __( 'Continue', 'sensei-lms' ) }

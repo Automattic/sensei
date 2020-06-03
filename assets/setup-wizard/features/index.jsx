@@ -122,7 +122,7 @@ const Features = () => {
 
 	return (
 		<>
-			<div className="sensei-onboarding__title">
+			<div className="sensei-setup-wizard__title">
 				<H>
 					{ __(
 						'Enhance your online courses with these optional features.',
@@ -130,7 +130,7 @@ const Features = () => {
 					) }
 				</H>
 			</div>
-			<Card className="sensei-onboarding__card">
+			<Card className="sensei-setup-wizard__card">
 				{ feedbackActive ? (
 					<InstallationFeedback
 						onContinue={ goToNextStep }

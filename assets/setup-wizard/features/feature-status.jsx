@@ -20,14 +20,14 @@ const statusComponents = {
 		</>
 	),
 	[ ERROR_STATUS ]: (
-		<i className="sensei-onboarding__circle-icon-wrapper error-icon-wrapper alert-icon">
+		<i className="sensei-setup-wizard__circle-icon-wrapper error-icon-wrapper alert-icon">
 			<span className="screen-reader-text">
 				{ __( 'Error installing plugin', 'sensei-lms' ) }
 			</span>
 		</i>
 	),
 	[ INSTALLED_STATUS ]: (
-		<i className="sensei-onboarding__circle-icon-wrapper success-icon-wrapper">
+		<i className="sensei-setup-wizard__circle-icon-wrapper success-icon-wrapper">
 			<CheckIcon />
 			<span className="screen-reader-text">
 				{ __( 'Plugin installed', 'sensei-lms' ) }
@@ -43,7 +43,7 @@ const statusComponents = {
  * @param {('loading'|'error'|'success')} props.status Feature status.
  */
 const FeatureStatus = ( { status } ) => (
-	<div className="sensei-onboarding__icon-status">
+	<div className="sensei-setup-wizard__icon-status">
 		{ statusComponents[ status ] }
 	</div>
 );

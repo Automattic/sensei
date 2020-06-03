@@ -7,7 +7,7 @@ import { useQueryStringRouter } from '../query-string-router';
 import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 
 /**
- * Welcome step for Onboarding Wizard.
+ * Welcome step for Setup Wizard.
  */
 export const Welcome = () => {
 	const [ usageModalActive, toggleUsageModal ] = useState( false );
@@ -35,10 +35,10 @@ export const Welcome = () => {
 
 	return (
 		<>
-			<div className="sensei-onboarding__title">
+			<div className="sensei-setup-wizard__title">
 				<H> { __( 'Welcome to Sensei LMS!', 'sensei-lms' ) } </H>
 			</div>
-			<Card className="sensei-onboarding__card">
+			<Card className="sensei-setup-wizard__card">
 				<p>
 					{ __( 'Thank you for choosing Sensei LMS!', 'sensei-lms' ) }
 				</p>
@@ -50,13 +50,13 @@ export const Welcome = () => {
 				</p>
 				<Button
 					isPrimary
-					className="sensei-onboarding__button sensei-onboarding__button-card"
+					className="sensei-setup-wizard__button sensei-setup-wizard__button-card"
 					onClick={ () => toggleUsageModal( true ) }
 				>
 					{ __( 'Continue', 'sensei-lms' ) }
 				</Button>
 			</Card>
-			<div className="sensei-onboarding__bottom-actions">
+			<div className="sensei-setup-wizard__bottom-actions">
 				<Link
 					href="edit.php?post_type=course"
 					type="wp-admin"

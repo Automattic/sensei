@@ -199,12 +199,12 @@ class Sensei_Admin {
 	 *
 	 * Handles installation of the 2 pages needs for courses and my courses
 	 *
-	 * @deprecated 3.1.0 use Sensei_Onboarding_Pages::create_pages instead.
+	 * @deprecated 3.1.0 use Sensei_Setup_Wizard_Pages::create_pages instead.
 	 * @access public
 	 * @return void
 	 */
 	function install_pages_output() {
-		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding_Pages::create_pages' );
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Setup_Wizard_Pages::create_pages' );
 
 	}
 
@@ -212,7 +212,7 @@ class Sensei_Admin {
 	/**
 	 * create_page function.
 	 *
-	 * @deprecated 3.1.0 use Sensei_Onboarding_Pages::create_page instead.
+	 * @deprecated 3.1.0 use Sensei_Setup_Wizard_Pages::create_page instead.
 	 *
 	 * @access public
 	 * @param mixed  $slug
@@ -224,8 +224,8 @@ class Sensei_Admin {
 	 */
 	function create_page( $slug, $page_title = '', $page_content = '', $post_parent = 0 ) {
 
-		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding_Pages::create_page' );
-		return Sensei()->onboarding->pages->create_page( $slug, $page_title, $page_content, $post_parent );
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Setup_Wizard_Pages::create_page' );
+		return Sensei()->setup_wizard->pages->create_page( $slug, $page_title, $page_content, $post_parent );
 
 	}
 
@@ -233,15 +233,15 @@ class Sensei_Admin {
 	/**
 	 * create_pages function.
 	 *
-	 * @deprecated 3.1.0 use Sensei_Onboarding_Pages::create_pages instead.
+	 * @deprecated 3.1.0 use Sensei_Setup_Wizard_Pages::create_pages instead.
 	 *
 	 * @access public
 	 * @return void
 	 */
 	function create_pages() {
 
-		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding_Pages::create_pages' );
-		Sensei()->onboarding->pages->create_pages();
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Setup_Wizard_Pages::create_pages' );
+		Sensei()->setup_wizard->pages->create_pages();
 
 	}
 
@@ -337,7 +337,7 @@ class Sensei_Admin {
 	 * @return void
 	 */
 	function admin_install_notice() {
-		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding::setup_wizard_notice' );
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Setup_Wizard::setup_wizard_notice' );
 	}
 
 
@@ -349,7 +349,7 @@ class Sensei_Admin {
 	 * @return void
 	 */
 	function admin_installed_notice() {
-		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding::setup_wizard_notice' );
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Setup_Wizard::setup_wizard_notice' );
 	}
 
 	/**
@@ -360,7 +360,7 @@ class Sensei_Admin {
 	 * @return void
 	 */
 	function admin_notices_styles() {
-		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding::setup_wizard_notice' );
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Setup_Wizard::setup_wizard_notice' );
 	}
 
 	/**
@@ -1707,12 +1707,12 @@ class Sensei_Admin {
 	 * Hooked onto admin_init. Listens for install_sensei_pages and skip_install_sensei_pages query args
 	 * on the sensei settings page.
 	 *
-	 * @deprecated 3.1.0 use Sensei()->onboarding->pages->create_pages() instead
+	 * @deprecated 3.1.0 use Sensei()->setup_wizard->pages->create_pages() instead
 	 *
 	 * @since 1.8.7
 	 */
 	public static function install_pages() {
-		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding_Pages::create_pages' );
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Setup_Wizard_Pages::create_pages' );
 	}
 
 	/**

@@ -41,7 +41,7 @@ const purposes = [
 ];
 
 /**
- * Purpose step for Onboarding Wizard.
+ * Purpose step for Setup Wizard.
  */
 export const Purpose = () => {
 	const { goTo } = useQueryStringRouter();
@@ -81,7 +81,7 @@ export const Purpose = () => {
 
 	return (
 		<>
-			<div className="sensei-onboarding__title">
+			<div className="sensei-setup-wizard__title">
 				<H>
 					{ __(
 						'What is your primary purpose for offering online courses?',
@@ -90,8 +90,8 @@ export const Purpose = () => {
 				</H>
 				<p> { __( 'Choose any that apply', 'sensei-lms' ) } </p>
 			</div>
-			<Card className="sensei-onboarding__card">
-				<div className="sensei-onboarding__checkbox-list">
+			<Card className="sensei-setup-wizard__card">
+				<div className="sensei-setup-wizard__checkbox-list">
 					{ purposes.map( ( { id, title, description } ) => (
 						<CheckboxControl
 							key={ id }
@@ -99,12 +99,12 @@ export const Purpose = () => {
 							help={ description }
 							onChange={ () => toggleItem( id ) }
 							checked={ selected.includes( id ) }
-							className="sensei-onboarding__checkbox"
+							className="sensei-setup-wizard__checkbox"
 						/>
 					) ) }
 					{ selected.includes( 'other' ) && (
 						<TextControl
-							className="sensei-onboarding__textcontrol-other"
+							className="sensei-setup-wizard__textcontrol-other"
 							value={ other }
 							placeholder={ __( 'Description', 'sensei-lms' ) }
 							onChange={ ( value ) =>
@@ -121,7 +121,7 @@ export const Purpose = () => {
 					isPrimary
 					isBusy={ isSubmitting }
 					disabled={ isSubmitting || isEmpty }
-					className="sensei-onboarding__button sensei-onboarding__button-card"
+					className="sensei-setup-wizard__button sensei-setup-wizard__button-card"
 					onClick={ submitPage }
 				>
 					{ __( 'Continue', 'sensei-lms' ) }

@@ -125,7 +125,7 @@ describe( '<Features />', () => {
 		fireEvent.click( queryByText( 'Install now' ) );
 
 		expect(
-			container.querySelector( '.sensei-onboarding__icon-status' )
+			container.querySelector( '.sensei-setup-wizard__icon-status' )
 		).toBeTruthy();
 	} );
 

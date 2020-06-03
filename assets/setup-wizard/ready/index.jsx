@@ -10,7 +10,7 @@ import { logLink } from '../log-event';
  */
 export const Ready = () => (
 	<>
-		<div className="sensei-onboarding__title">
+		<div className="sensei-setup-wizard__title">
 			<H>
 				{ __(
 					`You're ready to start creating online courses!`,
@@ -18,8 +18,8 @@ export const Ready = () => (
 				) }
 			</H>
 		</div>
-		<Card className="sensei-onboarding__card">
-			<Section className="sensei-onboarding__mailinglist-signup">
+		<Card className="sensei-setup-wizard__card">
+			<Section className="sensei-setup-wizard__mailinglist-signup">
 				<H>{ __( `Join our mailing list`, 'sensei-lms' ) }</H>
 				<p>
 					{ __(
@@ -38,7 +38,7 @@ export const Ready = () => (
 							content: `You're ready to create online courses.`,
 							after: (
 								<Button
-									className="sensei-onboarding__button"
+									className="sensei-setup-wizard__button"
 									isPrimary
 									href="post-new.php?post_type=course"
 									{ ...logLink(
@@ -73,11 +73,11 @@ export const Ready = () => (
 							),
 						},
 					] }
-					className="sensei-onboarding__item-list"
+					className="sensei-setup-wizard__item-list"
 				/>
 			</Section>
 		</Card>
-		<div className="sensei-onboarding__bottom-actions">
+		<div className="sensei-setup-wizard__bottom-actions">
 			<a
 				className="link__secondary"
 				href="edit.php?post_type=course"

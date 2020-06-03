@@ -7,8 +7,8 @@ const PATH = './lang/sensei-lms.pot';
  */
 const additionalReferences = [
 	{
-		re: /^#: assets\/onboarding\//gm,
-		reference: '#: assets/dist/onboarding/index.js:1',
+		re: /^#: assets\/setup-wizard\//gm,
+		reference: '#: assets/dist/setup-wizard/index.js:1',
 	},
 ];
 
