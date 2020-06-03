@@ -69,8 +69,29 @@ class Sensei_Import_Questions
 	 * @return true|WP_Error
 	 */
 	public static function validate_source_file( $file_path ) {
-		// @todo Implement.
+		$required_columns = [
+			'question',
+			'answer',
+		];
 
-		return true;
+		$optional_columns = [
+			'id',
+			'slug',
+			'description',
+			'status',
+			'type',
+			'grade',
+			'randomise',
+			'media',
+			'categories',
+			'feedback',
+			'text before gap',
+			'gap',
+			'text after gap',
+			'upload notes',
+			'teacher notes',
+		];
+
+		return Sensei_Import_CSV_Reader::validate_csv_file( $file_path, $required_columns, $optional_columns );
 	}
 }
