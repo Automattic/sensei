@@ -2,7 +2,7 @@
 /**
  * Setup Wizard REST API.
  *
- * @package Sensei\SetupWizard
+ * @package Sensei\Setup_Wizard
  * @since   3.1.0
  */
 
@@ -37,7 +37,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Main Setup Wizard instance.
 	 *
-	 * @var Sensei_Onboarding
+	 * @var Sensei_Setup_Wizard
 	 */
 	private $setup_wizard;
 
@@ -53,7 +53,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 */
 	public function __construct( $namespace ) {
 		$this->namespace    = $namespace;
-		$this->setup_wizard = Sensei_Onboarding::instance();
+		$this->setup_wizard = Sensei_Setup_Wizard::instance();
 	}
 
 	/**

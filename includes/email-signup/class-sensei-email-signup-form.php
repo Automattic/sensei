@@ -77,7 +77,7 @@ class Sensei_Email_Signup_Form {
 	 * @return self
 	 */
 	public static function instance() {
-		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding::instance' );
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Setup_Wizard::instance' );
 		if ( ! self::$instance ) {
 			self::$instance = new self();
 		}

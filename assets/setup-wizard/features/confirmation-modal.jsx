@@ -31,7 +31,7 @@ const ConfirmationModal = ( {
 	onSkip,
 } ) => (
 	<Modal
-		className="sensei-onboarding__features-confirmation-modal"
+		className="sensei-setup-wizard__features-confirmation-modal"
 		title={ __(
 			'Would you like to install the following features now?',
 			'sensei-lms'
@@ -57,9 +57,9 @@ const ConfirmationModal = ( {
 
 		{ errorNotice }
 
-		<div className="sensei-onboarding__group-buttons group-right">
+		<div className="sensei-setup-wizard__group-buttons group-right">
 			<Button
-				className="sensei-onboarding__button"
+				className="sensei-setup-wizard__button"
 				isTertiary
 				isBusy={ isSubmitting }
 				disabled={ isSubmitting }
@@ -68,7 +68,7 @@ const ConfirmationModal = ( {
 				{ __( "I'll do it later", 'sensei-lms' ) }
 			</Button>
 			<Button
-				className="sensei-onboarding__button"
+				className="sensei-setup-wizard__button"
 				isPrimary
 				isBusy={ isSubmitting }
 				disabled={ isSubmitting }

@@ -415,7 +415,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * @deprecated 3.1.0 - Opt-in moved to Setup Wizard
 	 **/
 	protected function hide_tracking_opt_in() {
-		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding::skip_setup_wizard' );
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Setup_Wizard::skip_setup_wizard' );
 	}
 
 	/**
@@ -424,7 +424,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * @deprecated 3.1.0 - Opt-in moved to Setup Wizard
 	 **/
 	protected function is_opt_in_hidden() {
-		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding::setup_wizard_notice' );
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Setup_Wizard::setup_wizard_notice' );
 	}
 
 	/**
@@ -434,7 +434,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * @deprecated 3.1.0 - Opt-in moved to Setup Wizard
 	 **/
 	protected function opt_in_dialog_text_allowed_html() {
-		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding::setup_wizard_notice' );
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Setup_Wizard::setup_wizard_notice' );
 	}
 
 	/**
@@ -444,7 +444,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * @deprecated 3.1.0 - Opt-in moved to Setup Wizard
 	 **/
 	public function maybe_display_tracking_opt_in() {
-		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding::setup_wizard_notice' );
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Setup_Wizard::setup_wizard_notice' );
 	}
 
 	/**
@@ -454,7 +454,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * @deprecated 3.1.0 - Opt-in moved to Setup Wizard
 	 **/
 	public function handle_tracking_opt_in() {
-		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Onboarding::setup_wizard_notice' );
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Setup_Wizard::setup_wizard_notice' );
 	}
 
 	/**

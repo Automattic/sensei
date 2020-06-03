@@ -46,7 +46,7 @@ const InstallationFeedback = ( { onContinue, onRetry } ) => {
 				isPrimary
 				isBusy
 				disabled
-				className="sensei-onboarding__button"
+				className="sensei-setup-wizard__button"
 			>
 				{ __( 'Installing…', 'sensei-lms' ) }
 			</Button>
@@ -63,14 +63,14 @@ const InstallationFeedback = ( { onContinue, onRetry } ) => {
 			<>
 				<Button
 					isPrimary
-					className="sensei-onboarding__button"
+					className="sensei-setup-wizard__button"
 					onClick={ onRetryAll }
 				>
 					{ __( 'Retry', 'sensei-lms' ) }
 				</Button>
 				<Button
 					isSecondary
-					className="sensei-onboarding__button"
+					className="sensei-setup-wizard__button"
 					onClick={ onContinue }
 				>
 					{ __( 'Continue', 'sensei-lms' ) }
@@ -81,7 +81,7 @@ const InstallationFeedback = ( { onContinue, onRetry } ) => {
 		actionButtons = (
 			<Button
 				isPrimary
-				className="sensei-onboarding__button"
+				className="sensei-setup-wizard__button"
 				onClick={ onContinue }
 			>
 				{ __( 'Continue', 'sensei-lms' ) }
@@ -90,7 +90,7 @@ const InstallationFeedback = ( { onContinue, onRetry } ) => {
 	}
 
 	return (
-		<div className="sensei-onboarding__features-installation-feedback">
+		<div className="sensei-setup-wizard__features-installation-feedback">
 			<List
 				items={ features.map(
 					( { slug, title, excerpt, link, error, status } ) => ( {
@@ -103,10 +103,10 @@ const InstallationFeedback = ( { onContinue, onRetry } ) => {
 									link={ link }
 								/>
 								{ error && (
-									<p className="sensei-onboarding__error-message">
+									<p className="sensei-setup-wizard__error-message">
 										{ error }{ ' ' }
 										<button
-											className="sensei-onboarding__retry-button"
+											className="sensei-setup-wizard__retry-button"
 											type="button"
 											onClick={ () =>
 												onRetry( [ slug ] )
@@ -122,7 +122,7 @@ const InstallationFeedback = ( { onContinue, onRetry } ) => {
 					} )
 				) }
 			/>
-			<div className="sensei-onboarding__group-buttons group-center">
+			<div className="sensei-setup-wizard__group-buttons group-center">
 				{ actionButtons }
 			</div>
 		</div>

@@ -33,7 +33,7 @@ export const useSetupWizardStep = ( step ) => {
 	const errorNotice = error ? (
 		<Notice
 			status="error"
-			className="sensei-onboarding__submit-error"
+			className="sensei-setup-wizard__submit-error"
 			isDismissible={ false }
 		>
 			{ error.message }

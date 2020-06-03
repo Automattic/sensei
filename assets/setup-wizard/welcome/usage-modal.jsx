@@ -45,15 +45,15 @@ export const UsageModal = ( {
 		<Modal
 			title={ __( 'Build a Better Sensei LMS', 'sensei-lms' ) }
 			onRequestClose={ onClose }
-			className="sensei-onboarding__usage-modal"
+			className="sensei-setup-wizard__usage-modal"
 		>
-			<div className="sensei-onboarding__usage-wrapper">
-				<div className="sensei-onboarding__usage-modal-message">
+			<div className="sensei-setup-wizard__usage-wrapper">
+				<div className="sensei-setup-wizard__usage-modal-message">
 					{ trackingMessage }
 				</div>
-				<div className="sensei-onboarding__tracking">
+				<div className="sensei-setup-wizard__tracking">
 					<CheckboxControl
-						className="sensei-onboarding__tracking-checkbox"
+						className="sensei-setup-wizard__tracking-checkbox"
 						checked={ allowTracking }
 						label={ __( 'Yes, count me in!', 'sensei-lms' ) }
 						onChange={ () => setAllowTracking( ! allowTracking ) }
@@ -61,7 +61,7 @@ export const UsageModal = ( {
 				</div>
 				{ children }
 				<Button
-					className="sensei-onboarding__button sensei-onboarding__button-modal"
+					className="sensei-setup-wizard__button sensei-setup-wizard__button-modal"
 					isPrimary
 					isBusy={ isSubmitting }
 					disabled={ isSubmitting }

@@ -25,7 +25,7 @@ const PARAM_NAME = 'step';
  * Sensei setup wizard page.
  */
 const SenseiSetupWizardPage = () => {
-	useWpAdminFullscreen( [ 'sensei-color', 'sensei-onboarding__page' ] );
+	useWpAdminFullscreen( [ 'sensei-color', 'sensei-setup-wizard__page' ] );
 
 	const { isFetching, error, navigationSteps } = useSelect(
 		( select ) => {
@@ -46,7 +46,7 @@ const SenseiSetupWizardPage = () => {
 	}, [ fetchSetupWizardData ] );
 
 	if ( isFetching ) {
-		return <Spinner className="sensei-onboarding__main-loader" />;
+		return <Spinner className="sensei-setup-wizard__main-loader" />;
 	}
 
 	if ( error ) {
@@ -67,10 +67,10 @@ const SenseiSetupWizardPage = () => {
 			paramName={ PARAM_NAME }
 			defaultRoute={ navigationSteps.find( ( step ) => step.isNext ).key }
 		>
-			<div className="sensei-onboarding__header">
+			<div className="sensei-setup-wizard__header">
 				<Navigation steps={ navigationSteps } />
 			</div>
-			<div className="sensei-onboarding__container">
+			<div className="sensei-setup-wizard__container">
 				{ navigationSteps.map( ( step ) => (
 					<Route key={ step.key } route={ step.key }>
 						{ step.container }
@@ -83,5 +83,5 @@ const SenseiSetupWizardPage = () => {
 
 render(
 	<SenseiSetupWizardPage />,
-	document.getElementById( 'sensei-onboarding-page' )
+	document.getElementById( 'sensei-setup-wizard-page' )
 );

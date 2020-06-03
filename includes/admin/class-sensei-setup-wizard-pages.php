@@ -1,8 +1,8 @@
 <?php
 /**
- * Create Sensei pages during onboarding.
+ * Create Sensei pages during setup wizard.
  *
- * @package Sensei\Onboarding
+ * @package Sensei\Setup_Wizard
  * @since   3.1.0
  */
 
@@ -13,9 +13,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Create Sensei base pages.
  *
- * @package Sensei_Onboarding
+ * @package Sensei_Setup_Wizard
  */
-class Sensei_Onboarding_Pages {
+class Sensei_Setup_Wizard_Pages {
 
 	/**
 	 * Create a page unless one already exists with the given slug.

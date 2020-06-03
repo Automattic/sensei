@@ -18,7 +18,7 @@ export const MailingListSignupForm = () => {
 			action={ stepData.mc_url }
 			method="post"
 			target="_blank"
-			className="sensei-onboarding__mailinglist-signup-form"
+			className="sensei-setup-wizard__mailinglist-signup-form"
 		>
 			<input
 				type="hidden"
@@ -26,7 +26,7 @@ export const MailingListSignupForm = () => {
 				value="Y"
 			/>
 			<List
-				className="sensei-onboarding__item-list"
+				className="sensei-setup-wizard__item-list"
 				items={ [
 					{
 						title: '',
@@ -39,7 +39,7 @@ export const MailingListSignupForm = () => {
 						),
 						after: (
 							<Button
-								className="sensei-onboarding__button"
+								className="sensei-setup-wizard__button"
 								isPrimary
 								type="submit"
 								{ ...logLink(

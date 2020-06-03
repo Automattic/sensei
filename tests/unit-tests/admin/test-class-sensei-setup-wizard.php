@@ -1,16 +1,16 @@
 <?php
 /**
- * This file contains the Sensei_Onboarding_Test class.
+ * This file contains the Sensei_Setup_Wizard_Test class.
  *
  * @package sensei
  */
 
 /**
- * Tests for Sensei_Onboarding_Test class.
+ * Tests for Sensei_Setup_Wizard_Test class.
  *
- * @group onboarding
+ * @group setup_wizard
  */
-class Sensei_Onboarding_Test extends WP_UnitTestCase {
+class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 	/**
 	 * Set up before each test.
 	 */
@@ -34,17 +34,17 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Testing the onboarding class to make sure it is loaded.
+	 * Testing the setup wizard class to make sure it is loaded.
 	 */
 	public function testClassInstance() {
-		$this->assertTrue( class_exists( 'Sensei_Onboarding' ), 'Sensei Onboarding class does not exist' );
+		$this->assertTrue( class_exists( 'Sensei_Setup_Wizard' ), 'Sensei Setup Wizard class does not exist' );
 	}
 
 	/**
 	 * Test setup wizard notice in dashboard.
 	 *
-	 * @covers Sensei_Onboarding::setup_wizard_notice
-	 * @covers Sensei_Onboarding::should_current_page_display_setup_wizard
+	 * @covers Sensei_Setup_Wizard::setup_wizard_notice
+	 * @covers Sensei_Setup_Wizard::should_current_page_display_setup_wizard
 	 */
 	public function testSetupWizardNoticeInDashboard() {
 		// Create and login as admin.
@@ -52,10 +52,10 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 		wp_set_current_user( $admin_id );
 
 		set_current_screen( 'dashboard' );
-		update_option( \Sensei_Onboarding::SUGGEST_SETUP_WIZARD_OPTION, 1 );
+		update_option( \Sensei_Setup_Wizard::SUGGEST_SETUP_WIZARD_OPTION, 1 );
 
 		ob_start();
-		Sensei()->onboarding->setup_wizard_notice();
+		Sensei()->setup_wizard->setup_wizard_notice();
 		$html = ob_get_clean();
 
 		$pos_setup_button = strpos( $html, 'Run the Setup Wizard' );
@@ -66,8 +66,8 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	/**
 	 * Test setup wizard notice in screen with Sensei prefix.
 	 *
-	 * @covers Sensei_Onboarding::setup_wizard_notice
-	 * @covers Sensei_Onboarding::should_current_page_display_setup_wizard
+	 * @covers Sensei_Setup_Wizard::setup_wizard_notice
+	 * @covers Sensei_Setup_Wizard::should_current_page_display_setup_wizard
 	 */
 	public function testSetupWizardNoticeInSenseiScreen() {
 		// Create and login as admin.
@@ -75,10 +75,10 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 		wp_set_current_user( $admin_id );
 
 		set_current_screen( 'sensei-lms_page_sensei_test' );
-		update_option( \Sensei_Onboarding::SUGGEST_SETUP_WIZARD_OPTION, 1 );
+		update_option( \Sensei_Setup_Wizard::SUGGEST_SETUP_WIZARD_OPTION, 1 );
 
 		ob_start();
-		Sensei()->onboarding->setup_wizard_notice();
+		Sensei()->setup_wizard->setup_wizard_notice();
 		$html = ob_get_clean();
 
 		$pos_setup_button = strpos( $html, 'Run the Setup Wizard' );
@@ -89,8 +89,8 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	/**
 	 * Test setup wizard notice in no Sensei screen.
 	 *
-	 * @covers Sensei_Onboarding::setup_wizard_notice
-	 * @covers Sensei_Onboarding::should_current_page_display_setup_wizard
+	 * @covers Sensei_Setup_Wizard::setup_wizard_notice
+	 * @covers Sensei_Setup_Wizard::should_current_page_display_setup_wizard
 	 */
 	public function testSetupWizardNoticeInOtherScreen() {
 		// Create and login as admin.
@@ -98,10 +98,10 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 		wp_set_current_user( $admin_id );
 
 		set_current_screen( 'other' );
-		update_option( \Sensei_Onboarding::SUGGEST_SETUP_WIZARD_OPTION, 1 );
+		update_option( \Sensei_Setup_Wizard::SUGGEST_SETUP_WIZARD_OPTION, 1 );
 
 		ob_start();
-		Sensei()->onboarding->setup_wizard_notice();
+		Sensei()->setup_wizard->setup_wizard_notice();
 		$html = ob_get_clean();
 
 		$this->assertEmpty( $html, 'Should return empty string' );
@@ -110,8 +110,8 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	/**
 	 * Test setup wizard notice with suggest option as 0.
 	 *
-	 * @covers Sensei_Onboarding::setup_wizard_notice
-	 * @covers Sensei_Onboarding::should_current_page_display_setup_wizard
+	 * @covers Sensei_Setup_Wizard::setup_wizard_notice
+	 * @covers Sensei_Setup_Wizard::should_current_page_display_setup_wizard
 	 */
 	public function testSetupWizardNoticeSuggestOptionAsZero() {
 		// Create and login as admin.
@@ -119,10 +119,10 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 		wp_set_current_user( $admin_id );
 
 		set_current_screen( 'dashboard' );
-		update_option( \Sensei_Onboarding::SUGGEST_SETUP_WIZARD_OPTION, 0 );
+		update_option( \Sensei_Setup_Wizard::SUGGEST_SETUP_WIZARD_OPTION, 0 );
 
 		ob_start();
-		Sensei()->onboarding->setup_wizard_notice();
+		Sensei()->setup_wizard->setup_wizard_notice();
 		$html = ob_get_clean();
 
 		$this->assertEmpty( $html, 'Should return empty string' );
@@ -131,8 +131,8 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	/**
 	 * Test setup wizard notice with suggest option empty.
 	 *
-	 * @covers Sensei_Onboarding::setup_wizard_notice
-	 * @covers Sensei_Onboarding::should_current_page_display_setup_wizard
+	 * @covers Sensei_Setup_Wizard::setup_wizard_notice
+	 * @covers Sensei_Setup_Wizard::should_current_page_display_setup_wizard
 	 */
 	public function testSetupWizardNoticeSuggestOptionEmpty() {
 		// Create and login as admin.
@@ -142,7 +142,7 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 		set_current_screen( 'dashboard' );
 
 		ob_start();
-		Sensei()->onboarding->setup_wizard_notice();
+		Sensei()->setup_wizard->setup_wizard_notice();
 		$html = ob_get_clean();
 
 		$this->assertEmpty( $html, 'Should return empty string' );
@@ -151,8 +151,8 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	/**
 	 * Test setup wizard notice for no admin user.
 	 *
-	 * @covers Sensei_Onboarding::setup_wizard_notice
-	 * @covers Sensei_Onboarding::should_current_page_display_setup_wizard
+	 * @covers Sensei_Setup_Wizard::setup_wizard_notice
+	 * @covers Sensei_Setup_Wizard::should_current_page_display_setup_wizard
 	 */
 	public function testSetupWizardNoticeNoAdmin() {
 		// Create and login as teacher.
@@ -160,10 +160,10 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 		wp_set_current_user( $teacher_id );
 
 		set_current_screen( 'dashboard' );
-		update_option( \Sensei_Onboarding::SUGGEST_SETUP_WIZARD_OPTION, 0 );
+		update_option( \Sensei_Setup_Wizard::SUGGEST_SETUP_WIZARD_OPTION, 0 );
 
 		ob_start();
-		Sensei()->onboarding->setup_wizard_notice();
+		Sensei()->setup_wizard->setup_wizard_notice();
 		$html = ob_get_clean();
 
 		$this->assertEmpty( $html, 'Should return empty string' );
@@ -172,7 +172,7 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	/**
 	 * Test skip setup wizard.
 	 *
-	 * @covers Sensei_Onboarding::skip_setup_wizard
+	 * @covers Sensei_Setup_Wizard::skip_setup_wizard
 	 */
 	public function testSkipSetupWizard() {
 		// Create and login as admin.
@@ -182,8 +182,8 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 		$_GET['sensei_skip_setup_wizard'] = '1';
 		$_GET['_wpnonce']                 = wp_create_nonce( 'sensei_skip_setup_wizard' );
 
-		Sensei()->onboarding->skip_setup_wizard();
-		$option_value = get_option( \Sensei_Onboarding::SUGGEST_SETUP_WIZARD_OPTION, false );
+		Sensei()->setup_wizard->skip_setup_wizard();
+		$option_value = get_option( \Sensei_Setup_Wizard::SUGGEST_SETUP_WIZARD_OPTION, false );
 
 		$this->assertEquals( '0', $option_value, 'Should update option to 0' );
 	}
@@ -191,7 +191,7 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	/**
 	 * Test skip setup wizard.
 	 *
-	 * @covers Sensei_Onboarding::skip_setup_wizard
+	 * @covers Sensei_Setup_Wizard::skip_setup_wizard
 	 */
 	public function testSkipSetupWizardNoAdmin() {
 		// Create and login as teacher.
@@ -201,8 +201,8 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 		$_GET['sensei_skip_setup_wizard'] = '1';
 		$_GET['_wpnonce']                 = wp_create_nonce( 'sensei_skip_setup_wizard' );
 
-		Sensei()->onboarding->skip_setup_wizard();
-		$option_value = get_option( \Sensei_Onboarding::SUGGEST_SETUP_WIZARD_OPTION, false );
+		Sensei()->setup_wizard->skip_setup_wizard();
+		$option_value = get_option( \Sensei_Setup_Wizard::SUGGEST_SETUP_WIZARD_OPTION, false );
 
 		$this->assertFalse( $option_value, 'Should not update option' );
 	}
@@ -217,14 +217,14 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 
 		set_transient( 'sensei_activation_redirect', 1, 30 );
 
-		$onboarding_mock = $this->getMockBuilder( 'Sensei_Onboarding' )
+		$setup_wizard_mock = $this->getMockBuilder( 'Sensei_Setup_Wizard' )
 			->setMethods( [ 'redirect_to_setup_wizard' ] )
 			->getMock();
 
-		$onboarding_mock->expects( $this->once() )
+		$setup_wizard_mock->expects( $this->once() )
 			->method( 'redirect_to_setup_wizard' );
 
-		$onboarding_mock->activation_redirect();
+		$setup_wizard_mock->activation_redirect();
 
 		$this->assertFalse( get_transient( 'sensei_activation_redirect' ), 'Transient should be removed' );
 	}
@@ -239,14 +239,14 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 
 		set_transient( 'sensei_activation_redirect', 1, 30 );
 
-		$onboarding_mock = $this->getMockBuilder( 'Sensei_Onboarding' )
+		$setup_wizard_mock = $this->getMockBuilder( 'Sensei_Setup_Wizard' )
 			->setMethods( [ 'redirect_to_setup_wizard' ] )
 			->getMock();
 
-		$onboarding_mock->expects( $this->never() )
+		$setup_wizard_mock->expects( $this->never() )
 			->method( 'redirect_to_setup_wizard' );
 
-		$onboarding_mock->activation_redirect();
+		$setup_wizard_mock->activation_redirect();
 
 		$this->assertNotFalse( get_transient( 'sensei_activation_redirect' ), 'Transient should not be removed' );
 	}
@@ -259,26 +259,26 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
 		wp_set_current_user( $admin_id );
 
-		$onboarding_mock = $this->getMockBuilder( 'Sensei_Onboarding' )
+		$setup_wizard_mock = $this->getMockBuilder( 'Sensei_Setup_Wizard' )
 			->setMethods( [ 'redirect_to_setup_wizard' ] )
 			->getMock();
 
-		$onboarding_mock->expects( $this->never() )
+		$setup_wizard_mock->expects( $this->never() )
 			->method( 'redirect_to_setup_wizard' );
 
-		$onboarding_mock->activation_redirect();
+		$setup_wizard_mock->activation_redirect();
 	}
 
 	/**
 	 * Test if WooCommerce help tab is being prevented in the Sensei pages.
 	 *
-	 * @covers Sensei_Onboarding::should_enable_woocommerce_help_tab
+	 * @covers Sensei_Setup_Wizard::should_enable_woocommerce_help_tab
 	 */
 	public function testShouldEnableWooCommerceHelpTab() {
 		$_GET['post_type'] = 'course';
 
 		$this->assertFalse(
-			Sensei()->onboarding->should_enable_woocommerce_help_tab( true ),
+			Sensei()->setup_wizard->should_enable_woocommerce_help_tab( true ),
 			'Should not allow WooCommerce help tab for course post type'
 		);
 	}
@@ -286,13 +286,13 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	/**
 	 * Test if WooCommerce help tab is being untouched in no Sensei pages.
 	 *
-	 * @covers Sensei_Onboarding::should_enable_woocommerce_help_tab
+	 * @covers Sensei_Setup_Wizard::should_enable_woocommerce_help_tab
 	 */
 	public function testShouldEnableWooCommerceHelpTabNoSenseiPage() {
 		$_GET['post_type'] = 'woocommerce';
 
 		$this->assertTrue(
-			Sensei()->onboarding->should_enable_woocommerce_help_tab( true ),
+			Sensei()->setup_wizard->should_enable_woocommerce_help_tab( true ),
 			'Should not touch WooCommerce help tab for no Sensei pages'
 		);
 	}
@@ -300,7 +300,7 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	/**
 	 * Test add setup wizard help tab to edit course screen.
 	 *
-	 * @covers Sensei_Onboarding::add_setup_wizard_help_tab
+	 * @covers Sensei_Setup_Wizard::add_setup_wizard_help_tab
 	 */
 	public function testAddSetupWizardHelpTab() {
 		// Create and login as administrator.
@@ -311,7 +311,7 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 		$screen = get_current_screen();
 
 		$screen->remove_help_tab( 'sensei_lms_setup_wizard_tab' );
-		Sensei()->onboarding->add_setup_wizard_help_tab( $screen );
+		Sensei()->setup_wizard->add_setup_wizard_help_tab( $screen );
 		$created_tab = $screen->get_help_tab( 'sensei_lms_setup_wizard_tab' );
 
 		$this->assertNotNull( $created_tab, 'Should create the setup wizard tab to edit course screens.' );
@@ -320,7 +320,7 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	/**
 	 * Test add setup wizard help tab in non edit course screens.
 	 *
-	 * @covers Sensei_Onboarding::add_setup_wizard_help_tab
+	 * @covers Sensei_Setup_Wizard::add_setup_wizard_help_tab
 	 */
 	public function testAddSetupWizardHelpTabNonEditCourseScreen() {
 		// Create and login as administrator.
@@ -331,7 +331,7 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 		$screen = get_current_screen();
 
 		$screen->remove_help_tab( 'sensei_lms_setup_wizard_tab' );
-		Sensei()->onboarding->add_setup_wizard_help_tab( $screen );
+		Sensei()->setup_wizard->add_setup_wizard_help_tab( $screen );
 		$created_tab = $screen->get_help_tab( 'sensei_lms_setup_wizard_tab' );
 
 		$this->assertNull( $created_tab, 'Should not create the setup wizard tab to non edit course screens.' );
@@ -340,7 +340,7 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	/**
 	 * Test add setup wizard help tab for no admin user.
 	 *
-	 * @covers Sensei_Onboarding::add_setup_wizard_help_tab
+	 * @covers Sensei_Setup_Wizard::add_setup_wizard_help_tab
 	 */
 	public function testAddSetupWizardHelpTabNoAdmin() {
 		// Create and login as teacher.
@@ -351,7 +351,7 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 		$screen = get_current_screen();
 
 		$screen->remove_help_tab( 'sensei_lms_setup_wizard_tab' );
-		Sensei()->onboarding->add_setup_wizard_help_tab( $screen );
+		Sensei()->setup_wizard->add_setup_wizard_help_tab( $screen );
 		$created_tab = $screen->get_help_tab( 'sensei_lms_setup_wizard_tab' );
 
 		$this->assertNull( $created_tab, 'Should not create the setup wizard tab to no admin user.' );
@@ -360,7 +360,7 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	/**
 	 * Tests that get sensei extensions and returns with decoded prices.
 	 *
-	 * @covers Sensei_Onboarding::get_sensei_extensions
+	 * @covers Sensei_Setup_Wizard::get_sensei_extensions
 	 */
 	public function testGetSenseiExtensionsAndReturnsWithDecodedPrices() {
 		// Mock fetch from senseilms.com.
@@ -377,7 +377,7 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 			}
 		);
 
-		$extensions = Sensei()->onboarding->get_sensei_extensions();
+		$extensions = Sensei()->setup_wizard->get_sensei_extensions();
 
 		$this->assertEquals( $extensions[0]->price, '$1.00' );
 		$this->assertEquals( $extensions[1]->price, 0 );
@@ -386,8 +386,8 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	/**
 	 * Tests that get sensei extensions and returns with decoded prices.
 	 *
-	 * @covers Sensei_Onboarding::get_feature_with_status
-	 * @covers Sensei_Onboarding::get_sensei_extensions
+	 * @covers Sensei_Setup_Wizard::get_feature_with_status
+	 * @covers Sensei_Setup_Wizard::get_sensei_extensions
 	 */
 	public function testGetSenseiExtensionsWithStatuses() {
 		// Set installing plugins
@@ -455,7 +455,7 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 				'plugin_file'  => 'test/test.php',
 			],
 		];
-		$extensions          = Sensei()->onboarding->get_sensei_extensions();
+		$extensions          = Sensei()->setup_wizard->get_sensei_extensions();
 
 		// Revert mocked instance
 		$property->setValue( $real_instance );
@@ -466,7 +466,7 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 	/**
 	 * Tests that not allowed extensions are not installed.
 	 *
-	 * @covers Sensei_Onboarding::install_extensions
+	 * @covers Sensei_Setup_Wizard::install_extensions
 	 */
 	public function testInstallNotAllowedExtension() {
 		// Mock fetch from senseilms.com.
@@ -503,7 +503,7 @@ class Sensei_Onboarding_Test extends WP_UnitTestCase {
 
 		$mock->expects( $this->once() )->method( 'install_plugins' )->with( $this->equalTo( $expected_extensions ) );
 
-		Sensei()->onboarding->install_extensions( [ 'allowed', 'not-allowed' ] );
+		Sensei()->setup_wizard->install_extensions( [ 'allowed', 'not-allowed' ] );
 
 		// Revert mocked instance
 		$property->setValue( $real_instance );

@@ -117,7 +117,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	 * Tests that submitting to welcome endpoint creates Sensei Courses and My Courses pages.
 	 *
 	 * @covers Sensei_REST_API_Setup_Wizard_Controller::submit_welcome
-	 * @covers Sensei_Onboarding_Pages::create_pages
+	 * @covers Sensei_Setup_Wizard_Pages::create_pages
 	 */
 	public function testSubmitWelcomeCreatesSenseiPages() {
 
@@ -146,7 +146,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 			]
 		);
 
-		$data = Sensei()->onboarding->get_wizard_user_data();
+		$data = Sensei()->setup_wizard->get_wizard_user_data();
 
 		$this->assertEquals( [ 'share_knowledge', 'other' ], $data['purpose']['selected'] );
 		$this->assertEquals( 'Test', $data['purpose']['other'] );
@@ -159,7 +159,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	 */
 	public function testSubmitPurposeOtherClearedWhenNotSelected() {
 
-		Sensei()->onboarding->update_wizard_user_data(
+		Sensei()->setup_wizard->update_wizard_user_data(
 			[
 				'purpose' => [
 					'selected' => [ 'other' ],
@@ -177,7 +177,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 			]
 		);
 
-		$data = Sensei()->onboarding->get_wizard_user_data();
+		$data = Sensei()->setup_wizard->get_wizard_user_data();
 
 		$this->assertEmpty( $data['purpose']['other'] );
 	}
@@ -199,7 +199,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 			]
 		);
 
-		$data = Sensei()->onboarding->get_wizard_user_data();
+		$data = Sensei()->setup_wizard->get_wizard_user_data();
 
 		$this->assertNotContains( [ 'invalid_data' ], $data['purpose'] );
 	}
@@ -212,7 +212,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	 */
 	public function testGetPurposeReturnsUserData() {
 
-		Sensei()->onboarding->update_wizard_user_data(
+		Sensei()->setup_wizard->update_wizard_user_data(
 			[
 				'purpose' => [
 					'selected' => [ 'share_knowledge', 'other' ],
@@ -289,7 +289,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 			]
 		);
 
-		$data = Sensei()->onboarding->get_wizard_user_data();
+		$data = Sensei()->setup_wizard->get_wizard_user_data();
 
 		$this->assertEquals( [ 'selected' => [ 'sensei-certificates' ] ], $data['features'] );
 	}
@@ -382,7 +382,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 				'status'       => 'installing',
 			],
 		];
-		$sensei_extensions   = Sensei()->onboarding->get_sensei_extensions();
+		$sensei_extensions   = Sensei()->setup_wizard->get_sensei_extensions();
 
 		$this->assertEquals( $expected_extensions, $sensei_extensions );
 	}
