@@ -16,6 +16,8 @@ class Sensei_Import_Questions
 	extends Sensei_Data_Port_Task
 	implements Sensei_Data_Port_Task_Interface {
 
+	const POST_TYPE = 'question';
+
 	const COLUMN_QUESTION        = 'question';
 	const COLUMN_ANSWER          = 'answer';
 	const COLUMN_ID              = 'id';
@@ -35,10 +37,88 @@ class Sensei_Import_Questions
 	const COLUMN_TEACHER_NOTES   = 'teacher notes';
 
 	/**
+	 * Sensei_Import_Questions constructor.
+	 *
+	 * @param Sensei_Data_Port_Job $job
+	 */
+	public function __construct( Sensei_Data_Port_Job $job ) {
+		parent::__construct( $job );
+
+		$files = $this->get_job()->get_files();
+		if ( ! isset( $files['questions'] ) ) {
+			$this->is_completed    = true;
+			$this->completed_lines = 0;
+			$this->total_lines     = 0;
+		} else {
+			$question_attachment_id = $files['questions'];
+			$task_state             = $this->get_job()->get_task_state( 'questions' );
+			$completed_lines        = isset( $task_state['completed-lines'] ) ? $task_state['completed-lines'] : 0;
+			$this->reader           = new Sensei_Import_CSV_Reader( get_attached_file( $question_attachment_id ), $completed_lines );
+
+			$this->is_completed    = $this->reader->is_completed();
+			$this->total_lines     = $this->reader->get_total_lines();
+			$this->completed_lines = $completed_lines;
+		}
+	}
+
+	/**
 	 * Run this task.
 	 */
 	public function run() {
-		// @todo Implement.
+		if ( $this->is_completed ) {
+			return;
+		}
+
+		$lines = $this->reader->read_lines();
+
+		foreach ( $lines as $line ) {
+			$result = $this->import_row( $line );
+		}
+
+		$this->completed_lines = $this->reader->get_completed_lines();
+		$this->total_lines     = $this->reader->get_total_lines();
+
+		$this->get_job()->set_task_state( 'courses', [ 'completed-lines' => $this->completed_lines ] );
+		$this->get_job()->persist();
+	}
+
+	/**
+	 * Import a row of data.
+	 *
+	 * @param array $row Row data.
+	 *
+	 * @return array {
+	 *     @type string $action What type of action was taken (created, updated, skipped).
+	 *     @type string $error  Error message, if it exists.
+	 * }
+	 */
+	private function import_row( $row ) {
+		$result = [
+			'action' => null,
+			'error'  => null,
+		];
+
+		$post_args  = [];
+		$taxonomies = [];
+		$meta_data  = [];
+
+		if ( ! empty( $row[ self::COLUMN_SLUG ] ) ) {
+			$existing_posts = get_posts(
+				[
+					'post_type'      => self::POST_TYPE,
+					'name'           => $row[ self::COLUMN_SLUG ],
+					'posts_per_page' => 1,
+				]
+			);
+
+			if ( ! empty( $existing_posts[0] ) ) {
+				$post_args['id'] = $existing_posts[0];
+			}
+		}
+
+		// @todo Build post args.
+
+		return $result;
 	}
 
 	/**
