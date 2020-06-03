@@ -2,7 +2,7 @@ import { render } from '@testing-library/react';
 import { UploadLevels } from './index';
 
 describe( '<UploadLevels />', () => {
-	it( 'should not be ready when no file is uploaded', async () => {
+	it( 'should not be ready when no file is uploaded', () => {
 		const initialLevels = [
 			{
 				key: 'courses',
@@ -37,11 +37,11 @@ describe( '<UploadLevels />', () => {
 
 		expect( readyStatus ).toBe( false );
 
-		const uploadButtons = await queryAllByText( 'Upload' );
+		const uploadButtons = queryAllByText( 'Upload' );
 		expect( uploadButtons ).toHaveLength( 2 );
 	} );
 
-	it( 'should be ready when a file is uploaded', async () => {
+	it( 'should be ready when a file is uploaded', () => {
 		const initialLevels = [
 			{
 				key: 'courses',
@@ -76,14 +76,14 @@ describe( '<UploadLevels />', () => {
 
 		expect( readyStatus ).toBe( true );
 
-		const uploadButtons = await queryAllByText( 'Upload' );
+		const uploadButtons = queryAllByText( 'Upload' );
 		expect( uploadButtons ).toHaveLength( 2 );
 
-		const files = await queryAllByText( 'coursesfile.csv' );
+		const files = queryAllByText( 'coursesfile.csv' );
 		expect( files ).toHaveLength( 1 );
 	} );
 
-	it( 'should not be ready when a file is uploading', async () => {
+	it( 'should not be ready when a file is uploading', () => {
 		const initialLevels = [
 			{
 				key: 'courses',
@@ -118,17 +118,17 @@ describe( '<UploadLevels />', () => {
 
 		expect( readyStatus ).toBe( false );
 
-		const uploadButtons = await queryAllByText( 'Upload' );
+		const uploadButtons = queryAllByText( 'Upload' );
 		expect( uploadButtons ).toHaveLength( 1 );
 
-		const uploadingButtons = await queryAllByText( 'Uploading…' );
+		const uploadingButtons = queryAllByText( 'Uploading…' );
 		expect( uploadingButtons ).toHaveLength( 1 );
 
-		const files = await queryAllByText( 'lessonsfile.csv' );
+		const files = queryAllByText( 'lessonsfile.csv' );
 		expect( files ).toHaveLength( 1 );
 	} );
 
-	it( 'should display the error when there is one', async () => {
+	it( 'should display the error when there is one', () => {
 		const initialLevels = [
 			{
 				key: 'courses',
@@ -163,10 +163,10 @@ describe( '<UploadLevels />', () => {
 
 		expect( readyStatus ).toBe( true );
 
-		const uploadButtons = await queryAllByText( 'Upload' );
+		const uploadButtons = queryAllByText( 'Upload' );
 		expect( uploadButtons ).toHaveLength( 2 );
 
-		const error = await queryAllByText( 'The error' );
+		const error = queryAllByText( 'The error' );
 		expect( error ).toHaveLength( 1 );
 	} );
 } );
