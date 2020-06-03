@@ -233,26 +233,39 @@ class Sensei_Plugins_Installation {
 		}
 
 		$this->set_installing_plugins( $installing_plugins );
+
+		sensei_log_event(
+			'setup_wizard_features_install_error',
+			[
+				'slug'  => $slug,
+				'error' => $message,
+			]
+		);
 	}
 
 	/**
 	 * Complete installation removing the plugin from the transient.
 	 *
-	 * @param string $plugin_slug
+	 * @param string $slug
 	 */
-	private function complete_installation( $plugin_slug ) {
+	private function complete_installation( $slug ) {
 		$installing_plugins = $this->get_installing_plugins();
 
 		if ( ! empty( $installing_plugins ) ) {
 			$installing_plugins = array_filter(
 				$installing_plugins,
-				function( $plugin ) use ( $plugin_slug ) {
-					return $plugin->product_slug !== $plugin_slug;
+				function( $plugin ) use ( $slug ) {
+					return $plugin->product_slug !== $slug;
 				}
 			);
 
 			$this->set_installing_plugins( $installing_plugins );
 		}
+
+		sensei_log_event(
+			'setup_wizard_features_install_success',
+			[ 'slug' => $slug ]
+		);
 	}
 
 	/**
