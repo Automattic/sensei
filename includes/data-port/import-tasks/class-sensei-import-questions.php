@@ -16,6 +16,24 @@ class Sensei_Import_Questions
 	extends Sensei_Data_Port_Task
 	implements Sensei_Data_Port_Task_Interface {
 
+	const COLUMN_QUESTION        = 'question';
+	const COLUMN_ANSWER          = 'answer';
+	const COLUMN_ID              = 'id';
+	const COLUMN_SLUG            = 'slug';
+	const COLUMN_DESCRIPTION     = 'description';
+	const COLUMN_STATUS          = 'status';
+	const COLUMN_TYPE            = 'type';
+	const COLUMN_GRADE           = 'grade';
+	const COLUMN_RANDOMISE       = 'randomise';
+	const COLUMN_MEDIA           = 'media';
+	const COLUMN_CATEGORIES      = 'categories';
+	const COLUMN_FEEDBACK        = 'feedback';
+	const COLUMN_TEXT_BEFORE_GAP = 'text before gap';
+	const COLUMN_GAP             = 'gap';
+	const COLUMN_TEXT_AFTER_GAP  = 'text after gap';
+	const COLUMN_UPLOAD_NOTES    = 'upload notes';
+	const COLUMN_TEACHER_NOTES   = 'teacher notes';
+
 	/**
 	 * Run this task.
 	 */
@@ -70,26 +88,26 @@ class Sensei_Import_Questions
 	 */
 	public static function validate_source_file( $file_path ) {
 		$required_columns = [
-			'question',
-			'answer',
+			self::COLUMN_QUESTION,
+			self::COLUMN_ANSWER,
 		];
 
 		$optional_columns = [
-			'id',
-			'slug',
-			'description',
-			'status',
-			'type',
-			'grade',
-			'randomise',
-			'media',
-			'categories',
-			'feedback',
-			'text before gap',
-			'gap',
-			'text after gap',
-			'upload notes',
-			'teacher notes',
+			self::COLUMN_ID,
+			self::COLUMN_SLUG,
+			self::COLUMN_DESCRIPTION,
+			self::COLUMN_STATUS,
+			self::COLUMN_TYPE,
+			self::COLUMN_GRADE,
+			self::COLUMN_RANDOMISE,
+			self::COLUMN_MEDIA,
+			self::COLUMN_CATEGORIES,
+			self::COLUMN_FEEDBACK,
+			self::COLUMN_TEXT_BEFORE_GAP,
+			self::COLUMN_GAP,
+			self::COLUMN_TEXT_AFTER_GAP,
+			self::COLUMN_UPLOAD_NOTES,
+			self::COLUMN_TEACHER_NOTES,
 		];
 
 		return Sensei_Import_CSV_Reader::validate_csv_file( $file_path, $required_columns, $optional_columns );
