@@ -83,9 +83,7 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 			 * users what data Sensei tracks.
 			 */
 			__(
-				"We'd love if you helped us make Sensei LMS better by allowing us to collect " .
-				"<a href=\"%s\" target=\"_blank\">usage tracking data</a>. " .
-				"No sensitive information is collected, and you can opt out at any time.",
+				"We'd love if you helped us make Sensei LMS better by allowing us to collect <a href=\"%s\" target=\"_blank\">usage tracking data</a>. No sensitive information is collected, and you can opt out at any time.",
 				'sensei-lms'
 			),
 			self::SENSEI_TRACKING_INFO_URL
@@ -128,9 +126,7 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 				 * users what data Sensei tracks.
 				 */
 				__(
-					'Help us make Sensei LMS better by allowing us to collect ' .
-					'<a href="%s" target="_blank">usage tracking data</a>. ' .
-					'No sensitive information is collected.',
+					'Help us make Sensei LMS better by allowing us to collect <a href="%s" target="_blank">usage tracking data</a>. No sensitive information is collected.',
 					'sensei-lms'
 				),
 				self::SENSEI_TRACKING_INFO_URL
