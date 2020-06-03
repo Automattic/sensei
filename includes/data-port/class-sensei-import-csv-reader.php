@@ -58,6 +58,14 @@ class Sensei_Import_CSV_Reader {
 	public function __construct( $csv_file, $completed_lines = 0, $lines_per_batch = 30 ) {
 		$this->file = new SplFileObject( $csv_file );
 		$this->file->setFlags( SplFileObject::READ_CSV );
+
+		/**
+		 * Change the default CSV delimiter.
+		 *
+		 * @since 3.2.0
+		 *
+		 * @param string  $delimiter The CSV file delimiter.
+		 */
 		$this->file->setCsvControl( apply_filters( 'sensei_import_csv_delimiter', ',' ) );
 
 		$this->file->seek( PHP_INT_MAX );
