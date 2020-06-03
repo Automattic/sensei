@@ -37,31 +37,31 @@ function is_sensei() {
 
 			$is_sensei = true;
 
-		} elseif ( is_sensei_learner_profile() ) {
+		} elseif ( sensei_is_learner_profile() ) {
 
 			$is_sensei = true;
 
-		} elseif ( is_sensei_course_results_page() ) {
+		} elseif ( sensei_is_course_results_page() ) {
 
 			$is_sensei = true;
 
-		} else  {
-			
-			$is_sensei = is_sensei_teacher_archive();
+		} else {
+
+			$is_sensei = sensei_is_teacher_archive();
 		}
 	}
-	
+
 	return apply_filters( 'is_sensei', $is_sensei, $post );
 }
 
 /**
  * Determine if the current page is a Sensei learner profile page
- * 
+ *
  * @since 3.1.0-dev
- * 
+ *
  * @return boolean
  */
-function is_sensei_learner_profile() {
+function sensei_is_learner_profile() {
 	global $wp_query;
 
 	return isset( $wp_query->query_vars['learner_profile'] );
@@ -69,28 +69,28 @@ function is_sensei_learner_profile() {
 
 /**
  * Determine if the current page is a Sensei course results page
- * 
+ *
  * @since 3.1.0-dev
- * 
+ *
  * @return boolean
  */
-function is_sensei_course_results_page() {
+function sensei_is_course_results_page() {
 	global $wp_query;
-		
+
 	return isset( $wp_query->query_vars['course_results'] );
 }
 
 /**
  * Determine if the current page is a Sensei teacher archive
- * 
+ *
  * @since 3.1.0-dev
- * 
+ *
  * @return boolean
  */
-function is_sensei_teacher_archive() {
+function sensei_is_teacher_archive() {
 
-	if ( is_author() 
-		&& Sensei()->teacher->is_a_teacher( get_query_var( 'author' ) ) 
+	if ( is_author()
+		&& Sensei()->teacher->is_a_teacher( get_query_var( 'author' ) )
 		&& ! user_can( get_query_var( 'author' ), 'manage_options' ) ) {
 
 		return true;
