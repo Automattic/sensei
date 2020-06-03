@@ -8,6 +8,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Global Sensei functions
  */
 
+/**
+ * Determine if a page is a Sensei LMS page
+ *
+ * @since 1.5.0
+ * @since 3.1.0-dev Added learners page, teacher archive and course results page.
+ *
+ * @return boolean
+ */
 function is_sensei() {
 	global $post;
 
@@ -20,9 +28,7 @@ function is_sensei() {
 
 		$is_sensei = true;
 
-	}
-
-	if ( is_object( $post ) && ! is_wp_error( $post ) ) {
+	} elseif ( is_object( $post ) && ! is_wp_error( $post ) ) {
 
 		$course_page_id     = intval( Sensei()->settings->settings['course_page'] );
 		$my_courses_page_id = intval( Sensei()->settings->settings['my_course_page'] );
@@ -31,10 +37,66 @@ function is_sensei() {
 
 			$is_sensei = true;
 
+		} elseif ( is_sensei_learner_profile() ) {
+
+			$is_sensei = true;
+
+		} elseif ( is_sensei_course_results_page() ) {
+
+			$is_sensei = true;
+
+		} else  {
+			
+			$is_sensei = is_sensei_teacher_archive();
 		}
 	}
-
+	
 	return apply_filters( 'is_sensei', $is_sensei, $post );
+}
+
+/**
+ * Determine if the current page is a Sensei learner profile page
+ * 
+ * @since 3.1.0-dev
+ * 
+ * @return boolean
+ */
+function is_sensei_learner_profile() {
+	global $wp_query;
+
+	return isset( $wp_query->query_vars['learner_profile'] );
+}
+
+/**
+ * Determine if the current page is a Sensei course results page
+ * 
+ * @since 3.1.0-dev
+ * 
+ * @return boolean
+ */
+function is_sensei_course_results_page() {
+	global $wp_query;
+		
+	return isset( $wp_query->query_vars['course_results'] );
+}
+
+/**
+ * Determine if the current page is a Sensei teacher archive
+ * 
+ * @since 3.1.0-dev
+ * 
+ * @return boolean
+ */
+function is_sensei_teacher_archive() {
+
+	if ( is_author() 
+		&& Sensei()->teacher->is_a_teacher( get_query_var( 'author' ) ) 
+		&& ! user_can( get_query_var( 'author' ), 'manage_options' ) ) {
+
+		return true;
+	}
+
+	return false;
 }
 
 /**
