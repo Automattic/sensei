@@ -139,11 +139,6 @@ abstract class Sensei_Import_File_Process_Task
 	abstract protected function process_line( $line_number, $line );
 
 	/**
-	 * Performs any required cleanup of the task.
-	 */
-	abstract public function clean_up();
-
-	/**
 	 * Validate an uploaded source file before saving it.
 	 *
 	 * @param string $file_path File path of the file to validate.
