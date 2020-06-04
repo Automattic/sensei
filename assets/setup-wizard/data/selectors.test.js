@@ -64,15 +64,23 @@ describe( 'Setup wizard selectors', () => {
 			},
 		};
 
-		expect(
-			getNavigationSteps( state, [
-				{ key: 'welcome' },
-				{ key: 'features' },
-			] )
-		).toEqual( [
-			{ key: 'welcome', isComplete: true, isNext: false },
-			{ key: 'features', isComplete: false, isNext: true },
-		] );
+		expect( getNavigationSteps( state )[ 0 ] ).toHaveProperty(
+			'isComplete',
+			true
+		);
+		expect( getNavigationSteps( state )[ 0 ] ).toHaveProperty(
+			'isNext',
+			false
+		);
+
+		expect( getNavigationSteps( state )[ 1 ] ).toHaveProperty(
+			'isComplete',
+			false
+		);
+		expect( getNavigationSteps( state )[ 1 ] ).toHaveProperty(
+			'isNext',
+			true
+		);
 	} );
 
 	it( 'Should return whether step is complete or not', () => {

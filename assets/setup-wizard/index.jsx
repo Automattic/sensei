@@ -9,7 +9,6 @@ import { useWpAdminFullscreen } from '../react-hooks';
 
 import QueryStringRouter, { Route } from './query-string-router';
 import Navigation from './navigation';
-import { steps } from './steps';
 
 /**
  * Register setup wizard store.
@@ -27,17 +26,14 @@ const PARAM_NAME = 'step';
 const SenseiSetupWizardPage = () => {
 	useWpAdminFullscreen( [ 'sensei-color', 'sensei-setup-wizard__page' ] );
 
-	const { isFetching, error, navigationSteps } = useSelect(
-		( select ) => {
-			const store = select( 'sensei/setup-wizard' );
-			return {
-				isFetching: store.isFetching(),
-				error: store.getFetchError(),
-				navigationSteps: store.getNavigationSteps( steps ),
-			};
-		},
-		[ steps ]
-	);
+	const { isFetching, error, navigationSteps } = useSelect( ( select ) => {
+		const store = select( 'sensei/setup-wizard' );
+		return {
+			isFetching: store.isFetching(),
+			error: store.getFetchError(),
+			navigationSteps: store.getNavigationSteps(),
+		};
+	}, [] );
 	const { fetchSetupWizardData } = useDispatch( 'sensei/setup-wizard' );
 
 	// We want to show the loading before any content.
