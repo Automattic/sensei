@@ -68,6 +68,7 @@ class Sensei_Autoloader {
 			new Sensei_Autoloader_Bundle( 'background-jobs' ),
 			new Sensei_Autoloader_Bundle( 'enrolment' ),
 			new Sensei_Autoloader_Bundle( 'data-port' ),
+			new Sensei_Autoloader_Bundle( 'data-port/import-tasks' ),
 		);
 
 		if ( is_admin() ) {
