@@ -378,7 +378,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 			$total_cycles     += $ratio['total'];
 		}
 
-		if ( ! $has_processed_task ) {
+		if ( ! $has_processed_task || 0 === $total_cycles ) {
 			$this->is_completed = true;
 			$this->percentage   = 100;
 		} else {
