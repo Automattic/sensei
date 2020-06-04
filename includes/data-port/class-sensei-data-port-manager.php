@@ -13,7 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * This class is responsible creating, deleting and keeping track of data port jobs.
  */
 class Sensei_Data_Port_Manager implements JsonSerializable {
-	const OPTION_NAME = 'sensei-data-port-jobs';
+	const OPTION_NAME           = 'sensei-data-port-jobs';
+	const JOB_STALE_AGE_SECONDS = DAY_IN_SECONDS;
 
 	/**
 	 * An array of all in progress data port jobs. It has the following format:
@@ -75,11 +76,31 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 	 * Initializes the data port manager.
 	 */
 	public function init() {
-		foreach ( $this->data_port_jobs as $job ) {
-			add_action( Sensei_Data_Port_Job::SCHEDULED_ACTION_NAME, [ $this, 'run_data_port_job' ] );
-		}
-
+		add_action( 'init', [ $this, 'maybe_schedule_cron_jobs' ] );
+		add_action( 'sensei_data_port_garbage_collection', [ $this, 'clean_old_jobs' ] );
+		add_action( Sensei_Data_Port_Job::SCHEDULED_ACTION_NAME, [ $this, 'run_data_port_job' ] );
 		add_action( 'shutdown', [ $this, 'persist' ] );
+	}
+
+	/**
+	 * Schedule garbage collection event if needed.
+	 */
+	public function maybe_schedule_cron_jobs() {
+		if ( ! wp_next_scheduled( 'sensei_data_port_garbage_collection' ) ) {
+			wp_schedule_event( time(), 'daily', 'sensei_data_port_garbage_collection' );
+		}
+	}
+
+	/**
+	 * Clean old jobs.
+	 */
+	public function clean_old_jobs() {
+		foreach ( $this->data_port_jobs as $job ) {
+			$age = time() - $job['time'];
+			if ( $age > self::JOB_STALE_AGE_SECONDS ) {
+				$this->cancel_job( $job['id'] );
+			}
+		}
 	}
 
 	/**
