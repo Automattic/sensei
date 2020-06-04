@@ -25,11 +25,11 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	protected $results;
 
 	/**
-	 * An array which contains the state for each task.
+	 * An array which contains job state.
 	 *
 	 * @var array
 	 */
-	protected $task_state;
+	private $state;
 
 	/**
 	 * Unique id for the job.
@@ -121,7 +121,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 			$this->is_completed = false;
 			$this->is_started   = false;
 			$this->has_changed  = true;
-			$this->task_state   = [];
+			$this->state        = [];
 			$this->percentage   = 0;
 		}
 
@@ -286,7 +286,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 */
 	public function jsonSerialize() {
 		return [
-			's' => $this->task_state,
+			's' => $this->state,
 			'l' => $this->logs,
 			'r' => $this->results,
 			'c' => $this->is_completed,
@@ -308,7 +308,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 			return;
 		}
 
-		$this->task_state   = $json_arr['s'];
+		$this->state        = $json_arr['s'];
 		$this->logs         = $json_arr['l'];
 		$this->results      = $json_arr['r'];
 		$this->is_completed = $json_arr['c'];
@@ -384,6 +384,8 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 		} else {
 			$this->percentage = 100 * $completed_cycles / $total_cycles;
 		}
+
+		$this->has_changed = true;
 	}
 
 	/**
@@ -566,5 +568,27 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 */
 	private static function get_option_name( $job_id ) {
 		return self::OPTION_PREFIX . $job_id;
+	}
+
+	/**
+	 * Get the state for a specific key.
+	 *
+	 * @param string $state_key  The key of the state.
+	 *
+	 * @return mixed  The state.
+	 */
+	public function get_state( $state_key ) {
+		return isset( $this->state[ $state_key ] ) ? $this->state[ $state_key ] : [];
+	}
+
+	/**
+	 * Update the state of a specific key.
+	 *
+	 * @param string $state_key  The key of the state.
+	 * @param mixed  $state      The state.
+	 */
+	public function set_state( $state_key, $state ) {
+		$this->has_changed         = true;
+		$this->state[ $state_key ] = $state;
 	}
 }

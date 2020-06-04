@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * This class represents a data import job.
  */
 class Sensei_Import_Job extends Sensei_Data_Port_Job {
+	const MAPPED_ID_STATE_KEY = '_map';
 
 	/**
 	 * The array of the import tasks.
@@ -199,5 +200,44 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 
 		return array_unique( $extensions );
 	}
+
+	/**
+	 * Retrieves the post ID for the imported item based on the ID in the source file.
+	 *
+	 * @param string $post_type   Post type for the imported object.
+	 * @param int    $original_id ID that was provided in the source file.
+	 *
+	 * @return int|null
+	 */
+	public function get_import_id( $post_type, $original_id ) {
+		$map = $this->get_state( self::MAPPED_ID_STATE_KEY );
+
+		if ( isset( $map[ $post_type ][ $original_id ] ) ) {
+			return $map[ $post_type ][ $original_id ];
+		}
+
+		return null;
+	}
+
+	/**
+	 * Store the post ID for the imported item with the ID in the source file.
+	 *
+	 * @param string $post_type   Post type for the imported object.
+	 * @param int    $original_id ID that was provided in the source file.
+	 * @param int    $post_id     Post ID that was created during the import.
+	 */
+	public function set_import_id( $post_type, $original_id, $post_id ) {
+		$map = $this->get_state( self::MAPPED_ID_STATE_KEY );
+
+		if ( ! isset( $map[ $post_type ] ) ) {
+			$map[ $post_type ] = [];
+		}
+
+		$map[ $post_type ][ $original_id ] = $post_id;
+
+		$this->set_state( self::MAPPED_ID_STATE_KEY, $map );
+	}
+
+
 
 }
