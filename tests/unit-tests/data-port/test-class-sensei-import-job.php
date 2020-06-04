@@ -100,6 +100,29 @@ class Sensei_Import_Job_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests setting import ID in a job.
+	 */
+	public function testSetImportId() {
+		$job = new Sensei_Import_Job( 'test-job' );
+		$job->set_import_id( 'question', 100, 101 );
+
+		$state = $job->jsonSerialize()['s'][ Sensei_Import_Job::MAPPED_ID_STATE_KEY ];
+
+		$this->assertTrue( isset( $state['question'][100] ) );
+		$this->assertEquals( 101, $state['question'][100] );
+	}
+
+	/**
+	 * Tests getting import ID in a job.
+	 */
+	public function testGetImportId() {
+		$job = new Sensei_Import_Job( 'test-job' );
+		$job->set_import_id( 'question', 100, 101 );
+
+		$this->assertEquals( 101, $job->get_import_id( 'question', 100 ) );
+	}
+
+	/**
 	 * Get a temporary file from a source file.
 	 *
 	 * @param string $file_path File to copy.
