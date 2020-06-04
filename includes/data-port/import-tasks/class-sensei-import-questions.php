@@ -13,45 +13,43 @@ if ( ! defined( 'ABSPATH' ) ) {
  * This class handles the import task for questions.
  */
 class Sensei_Import_Questions
-	extends Sensei_Data_Port_Task
+	extends Sensei_Import_File_Process_Task
 	implements Sensei_Data_Port_Task_Interface {
 
 	/**
-	 * Run this task.
+	 * Return a unique key for the task.
+	 *
+	 * @return string
 	 */
-	public function run() {
-		// @todo Implement.
+	public function get_task_key() {
+		return 'questions';
 	}
 
 	/**
-	 * Returns true if the task is completed.
+	 * Process a single CSV line.
 	 *
-	 * @return boolean
+	 * @param int   $line_number  The line number in the file.
+	 * @param array $line         The current line as returned from Sensei_Import_CSV_Reader::read_lines().
+	 *
+	 * @return mixed
 	 */
-	public function is_completed() {
-		// @todo Implement.
+	protected function process_line( $line_number, $line ) {
+		$model = Sensei_Data_Port_Question_Model::from_source_array( $line );
+		if ( ! $model->is_valid() ) {
+			// @todo Mark as skipped.
 
-		return false;
-	}
+			return false;
+		}
 
-	/**
-	 * Returns the completion ratio of this task. The ration has the following format:
-	 *
-	 * {
-	 *
-	 *     @type integer $completed  Number of completed actions.
-	 *     @type integer $total      Number of total actions.
-	 * }
-	 *
-	 * @return array
-	 */
-	public function get_completion_ratio() {
-		// @todo Implement.
+		if ( ! $model->sync_post() ) {
+			// @todo Mark as failed.
 
-		return [
-			'completed' => 0,
-			'total'     => 0,
-		];
+			return false;
+		}
+
+		// @todo Mark as successful.
+
+		return true;
 	}
 
 	/**
@@ -69,8 +67,9 @@ class Sensei_Import_Questions
 	 * @return true|WP_Error
 	 */
 	public static function validate_source_file( $file_path ) {
-		// @todo Implement.
+		$required_fields = Sensei_Data_Port_Question_Model::get_required_fields();
+		$optional_fields = Sensei_Data_Port_Question_Model::get_optional_fields();
 
-		return true;
+		return Sensei_Import_CSV_Reader::validate_csv_file( $file_path, $required_fields, $optional_fields );
 	}
 }
