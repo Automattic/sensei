@@ -11,9 +11,7 @@ class Sensei_Import_File_Process_Task_Mock extends Sensei_Import_File_Process_Ta
 		return 'mock-key';
 	}
 
-	protected function process_line( $line_number, $line ) {
-		print_r('asdf');
-	}
+	protected function process_line( $line_number, $line ) {}
 
 
 	public function clean_up() {}

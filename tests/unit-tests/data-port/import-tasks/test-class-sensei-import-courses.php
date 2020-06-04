@@ -16,13 +16,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Import_Courses_Tests extends WP_UnitTestCase {
 	/**
-	 * Set up before class.
-	 */
-	public static function setUpBeforeClass() {
-		new Sensei_Import_Job( '' );
-	}
-
-	/**
 	 * Placeholder test.
 	 */
 	public function testClassExists() {

@@ -16,19 +16,16 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Import_File_Process_Task_Tests extends WP_UnitTestCase {
 
-
 	/**
 	 * Set up before class.
 	 */
 	public static function setUpBeforeClass() {
-		new Sensei_Import_Job( '' );
-
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/data-port/class-sensei-import-file-process-task-mock.php';
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/data-port/class-sensei-data-port-job-mock.php';
 	}
 
 	/**
-	 * Tets that process_line is called with correct data.
+	 * Tests that process_line is called with correct data.
 	 */
 	public function testProcessLineIsCalled() {
 		$attachment_id     = wp_insert_attachment( [], SENSEI_TEST_FRAMEWORK_DIR . '/data-port/data-files/test_csv_reader.csv' );

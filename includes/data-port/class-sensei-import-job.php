@@ -32,23 +32,11 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 	public function __construct( $job_id, $args = [], $json = '' ) {
 		parent::__construct( $job_id, $args, $json );
 
-		$this->import_task_files();
-
 		// TODO: Generate the tasks from the arguments and/or from the internal state.
 		$this->tasks              = [];
 		$this->tasks['questions'] = $this->initialize_task( Sensei_Import_Questions::class );
 		$this->tasks['lessons']   = $this->initialize_task( Sensei_Import_Lessons::class );
 		$this->tasks['courses']   = $this->initialize_task( Sensei_Import_Courses::class );
-	}
-
-	/**
-	 * Ensure the task files have been included.
-	 */
-	private function import_task_files() {
-		require_once __DIR__ . '/import-tasks/class-sensei-import-file-process-task.php';
-		require_once __DIR__ . '/import-tasks/class-sensei-import-questions.php';
-		require_once __DIR__ . '/import-tasks/class-sensei-import-courses.php';
-		require_once __DIR__ . '/import-tasks/class-sensei-import-lessons.php';
 	}
 
 	/**
