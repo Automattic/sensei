@@ -79,7 +79,7 @@ abstract class Sensei_Data_Port_Model {
 
 		foreach ( self::get_schema() as $field => $field_config ) {
 			if (
-				empty( $data[ $field ] )
+				is_null( $data[ $field ] )
 				&& ! self::allow_empty_field( $field_config )
 			) {
 				return false;
