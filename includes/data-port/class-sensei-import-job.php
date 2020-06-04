@@ -45,6 +45,7 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 	 * Ensure the task files have been included.
 	 */
 	private function import_task_files() {
+		require_once __DIR__ . '/import-tasks/class-sensei-import-file-process-task.php';
 		require_once __DIR__ . '/import-tasks/class-sensei-import-questions.php';
 		require_once __DIR__ . '/import-tasks/class-sensei-import-courses.php';
 		require_once __DIR__ . '/import-tasks/class-sensei-import-lessons.php';
@@ -237,7 +238,4 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 
 		$this->set_state( self::MAPPED_ID_STATE_KEY, $map );
 	}
-
-
-
 }
