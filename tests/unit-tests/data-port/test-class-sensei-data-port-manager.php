@@ -97,6 +97,48 @@ class Sensei_Data_Port_Manager_Test extends WP_UnitTestCase {
 		$this->assertCount( 0, $port_jobs );
 	}
 
+	/**
+	 * Make sure garbage collection removes old jobs.
+	 */
+	public function testOldJobAreRemoved() {
+		$job = Sensei_Data_Port_Manager::instance()->create_import_job( 1 );
+		Sensei_Data_Port_Manager::instance()->start_job( $job );
+		$this->set_data_port_jobs(
+			[
+				[
+					'user_id' => 1,
+					'time'    => time() - ( Sensei_Data_Port_Manager::JOB_STALE_AGE_SECONDS ) - 1,
+					'handler' => 'Sensei_Data_Port_Job_Mock',
+					'id'      => 'first-job',
+				],
+				[
+					'user_id' => 1,
+					'time'    => time() - ( Sensei_Data_Port_Manager::JOB_STALE_AGE_SECONDS / 2 ),
+					'handler' => 'Sensei_Data_Port_Job_Mock',
+					'id'      => 'second-job',
+				],
+				[
+					'user_id' => 1,
+					'time'    => time(),
+					'handler' => 'Sensei_Data_Port_Job_Mock',
+					'id'      => 'third-job',
+				],
+			]
+		);
+
+		Sensei_Data_Port_Manager::instance()->persist();
+		$port_jobs = json_decode( get_option( Sensei_Data_Port_Manager::OPTION_NAME ), true );
+		$this->assertCount( 3, $port_jobs );
+
+		Sensei_Data_Port_Manager::instance()->clean_old_jobs();
+		Sensei_Data_Port_Manager::instance()->persist();
+
+		$port_jobs = json_decode( get_option( Sensei_Data_Port_Manager::OPTION_NAME ), true );
+		$this->assertCount( 2, $port_jobs );
+		$this->assertEquals( 'second-job', array_values( $port_jobs )[0]['id'] );
+		$this->assertEquals( 'third-job', array_values( $port_jobs )[1]['id'] );
+	}
+
 	private function set_data_port_jobs( $jobs ) {
 		$property = new ReflectionProperty( 'Sensei_Data_Port_Manager', 'data_port_jobs' );
 		$property->setAccessible( true );
