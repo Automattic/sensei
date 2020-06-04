@@ -1,3 +1,4 @@
+import { useCallback } from '@wordpress/element';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { Notice } from '@wordpress/components';
 
@@ -40,8 +41,10 @@ export const useSetupWizardStep = ( step ) => {
 		</Notice>
 	) : null;
 
-	const submitStepForComponent = ( formData, options ) =>
-		submitStep( step, formData, options );
+	const submitStepForComponent = useCallback(
+		( formData, options ) => submitStep( step, formData, options ),
+		[ step, submitStep ]
+	);
 
 	return {
 		stepData,
