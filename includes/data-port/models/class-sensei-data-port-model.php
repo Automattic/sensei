@@ -141,6 +141,10 @@ abstract class Sensei_Data_Port_Model {
 					&& 1 !== preg_match( $data['pattern'], $value )
 				) {
 					$value = null;
+				} elseif ( ! empty( $schema['allow_html'] ) ) {
+					$value = wp_kses_post( $value );
+				} else {
+					$value = esc_html( $value );
 				}
 			}
 
