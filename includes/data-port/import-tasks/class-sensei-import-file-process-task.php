@@ -122,7 +122,8 @@ abstract class Sensei_Import_File_Process_Task
 	}
 
 	/**
-	 * Return a unique key for the task.
+	 * Return a unique key for the task. This is used as a key in both Sensei_Data_Port_Job::files array and
+	 * Sensei_Data_Port_Job::state.
 	 *
 	 * @return string
 	 */
