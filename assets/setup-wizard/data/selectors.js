@@ -68,3 +68,14 @@ export const getNavigationSteps = ( { data: { completedSteps } }, steps ) => {
 
 	return navSteps;
 };
+
+/**
+ * Get whether step is complete or not.
+ *
+ * @param {Object} state Current state.
+ * @param {string} step  Step name.
+ *
+ * @return {boolean} Step complete.
+ */
+export const isCompleteStep = ( { data: { completedSteps } }, step ) =>
+	completedSteps.includes( step );

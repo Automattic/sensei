@@ -5,6 +5,7 @@ import {
 	getSubmitError,
 	getStepData,
 	getNavigationSteps,
+	isCompleteStep,
 } from './selectors';
 
 describe( 'Setup wizard selectors', () => {
@@ -72,5 +73,16 @@ describe( 'Setup wizard selectors', () => {
 			{ key: 'welcome', isComplete: true, isNext: false },
 			{ key: 'features', isComplete: false, isNext: true },
 		] );
+	} );
+
+	it( 'Should return whether step is complete or not', () => {
+		const state = {
+			data: {
+				completedSteps: [ 'welcome' ],
+			},
+		};
+
+		expect( isCompleteStep( state, 'welcome' ) ).toBeTruthy();
+		expect( isCompleteStep( state, 'other' ) ).toBeFalsy();
 	} );
 } );
