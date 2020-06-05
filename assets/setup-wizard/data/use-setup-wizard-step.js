@@ -1,3 +1,4 @@
+import { useCallback } from '@wordpress/element';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { Notice } from '@wordpress/components';
 
@@ -20,11 +21,12 @@ import { Notice } from '@wordpress/components';
  * @return {StepStoreHookHandle} handle
  */
 export const useSetupWizardStep = ( step ) => {
-	const { stepData, isSubmitting, error } = useSelect(
+	const { stepData, isSubmitting, error, isComplete } = useSelect(
 		( select ) => ( {
 			stepData: select( 'sensei/setup-wizard' ).getStepData( step ),
 			isSubmitting: select( 'sensei/setup-wizard' ).isSubmitting(),
 			error: select( 'sensei/setup-wizard' ).getSubmitError(),
+			isComplete: select( 'sensei/setup-wizard' ).isCompleteStep( step ),
 		} ),
 		[]
 	);
@@ -40,8 +42,10 @@ export const useSetupWizardStep = ( step ) => {
 		</Notice>
 	) : null;
 
-	const submitStepForComponent = ( formData, options ) =>
-		submitStep( step, formData, options );
+	const submitStepForComponent = useCallback(
+		( formData, options ) => submitStep( step, formData, options ),
+		[ step, submitStep ]
+	);
 
 	return {
 		stepData,
@@ -49,5 +53,6 @@ export const useSetupWizardStep = ( step ) => {
 		isSubmitting,
 		error,
 		errorNotice,
+		isComplete,
 	};
 };

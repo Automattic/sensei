@@ -7,11 +7,9 @@ import Features from './index';
 import useFeaturesPolling from './use-features-polling';
 
 // Mock features data.
-jest.mock( '../data/use-setup-wizard-step', () => {
-	return {
-		useSetupWizardStep: jest.fn(),
-	};
-} );
+jest.mock( '../data/use-setup-wizard-step', () => ( {
+	useSetupWizardStep: jest.fn(),
+} ) );
 
 // Mock features data.
 const mockStepData = ( mockData ) => {
