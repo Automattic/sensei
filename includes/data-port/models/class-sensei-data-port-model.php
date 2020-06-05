@@ -196,6 +196,12 @@ abstract class Sensei_Data_Port_Model {
 					case 'url':
 						$value = esc_url_raw( $value );
 						break;
+					case 'username':
+						$value = sanitize_user( $value );
+						break;
+					case 'video':
+						$value = Sensei_Wp_Kses::maybe_sanitize( $value, Sensei_Course::$allowed_html );
+						break;
 					default:
 						if (
 							isset( $config['pattern'] )
@@ -296,7 +302,7 @@ abstract class Sensei_Data_Port_Model {
 	 *
 	 * @return array {
 	 *     @type array $$field_name {
-	 *          @type string   $type       Type of data. Options: string, int, float, bool, slug, ref, email, url.
+	 *          @type string   $type       Type of data. Options: string, int, float, bool, slug, ref, email, url, username, video.
 	 *          @type string   $pattern    Regular expression that the value should match (Optional).
 	 *          @type mixed    $default    Default value if not set or invalid. Default is `null` (Optional).
 	 *          @type bool     $required   True if a non-empty value is required. Default is `false` (Optional).
