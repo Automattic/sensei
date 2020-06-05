@@ -1380,11 +1380,6 @@ class Sensei_Main {
 			$custom_actions['docs'] = sprintf( '<a href="%s" target="_blank">%s</a>', $this->get_documentation_url(), esc_html__( 'Docs', 'sensei-lms' ) );
 		}
 
-		// support url if any.
-		if ( $this->get_support_url() ) {
-			$custom_actions['support'] = sprintf( '<a href="%s" target="_blank">%s</a>', $this->get_support_url(), esc_html_x( 'Support', 'noun', 'sensei-lms' ) );
-		}
-
 		// add the links to the front of the actions list.
 		return array_merge( $custom_actions, $actions );
 	}
@@ -1418,29 +1413,33 @@ class Sensei_Main {
 		return admin_url( 'admin.php?page=sensei-settings&tab=general' );
 	}
 
-		/**
-		 * Gets the plugin documentation url, used for the 'Docs' plugin action
-		 *
-		 * @return string documentation URL
-		 */
+	/**
+	 * Gets the plugin documentation url, used for the 'Docs' plugin action
+	 *
+	 * @return string documentation URL
+	 */
 	public function get_documentation_url() {
 		return sprintf( 'https://docs.woothemes.com/documentation/plugins/sensei/?utm_source=SenseiPlugin&utm_medium=PluginPage&utm_content=Docs&utm_campaign=SenseiPlugin' );
 	}
 
-		/**
-		 * Gets the support URL, used for the 'Support' plugin action link
-		 *
-		 * @return string support url
-		 */
+	/**
+	 * Gets the support URL, used for the 'Support' plugin action link
+	 *
+	 * @deprecated 3.1.1
+	 *
+	 * @return string support url
+	 */
 	public function get_support_url() {
+		_deprecated_function( __METHOD__, '3.1.1' );
+
 		return 'https://www.woothemes.com/my-account/create-a-ticket/?utm_source=SenseiPlugin&utm_medium=PluginPage&utm_content=Support&utm_campaign=SenseiPlugin';
 	}
 
-		/**
-		 * Returns the plugin id
-		 *
-		 * @return string plugin id
-		 */
+	/**
+	 * Returns the plugin id
+	 *
+	 * @return string plugin id
+	 */
 	public function get_id() {
 		return $this->id;
 	}
