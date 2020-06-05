@@ -1419,7 +1419,7 @@ class Sensei_Main {
 	 * @return string documentation URL
 	 */
 	public function get_documentation_url() {
-		return sprintf( 'https://docs.woothemes.com/documentation/plugins/sensei/?utm_source=SenseiPlugin&utm_medium=PluginPage&utm_content=Docs&utm_campaign=SenseiPlugin' );
+		return sprintf( 'https://senseilms.com/documentation/' );
 	}
 
 	/**
