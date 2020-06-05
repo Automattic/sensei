@@ -78,9 +78,20 @@ abstract class Sensei_Data_Port_Model {
 		$data = $this->get_data();
 
 		foreach ( static::get_schema() as $field => $field_config ) {
+			if ( isset( $data[ $field ] ) ) {
+				continue;
+			}
+
+			// If the field is required, it must be set.
+			if ( ! empty( $field_config['required'] ) ) {
+				return false;
+			}
+
+			// If a default exists as well as a pattern, a `null` value is for a field that didn't match the pattern.
 			if (
-				is_null( $data[ $field ] )
-				&& ! self::allow_empty_field( $field_config )
+				array_key_exists( $field, $data )
+				&& ! empty( $field_config['default'] )
+				&& ! empty( $field_config['pattern'] )
 			) {
 				return false;
 			}
@@ -226,26 +237,6 @@ abstract class Sensei_Data_Port_Model {
 				)
 			)
 		);
-	}
-
-	/**
-	 * Check if a field requires a value based on its configuration.
-	 *
-	 * @param array $field_config Schema field configuration.
-	 *
-	 * @return bool
-	 */
-	private static function allow_empty_field( $field_config ) {
-		if ( ! empty( $field_config['required'] ) ) {
-			return false;
-		}
-
-		// If a default exists as well as a pattern, a `null` value is for a field that didn't match the pattern.
-		if ( ! empty( $field_config['default'] ) && ! empty( $field_config['pattern'] ) ) {
-			return false;
-		}
-
-		return true;
 	}
 
 	/**
