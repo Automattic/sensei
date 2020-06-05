@@ -143,13 +143,6 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 
 		$file_config = $file_configs[ $file_key ];
 
-		if ( isset( $file_config['validator'] ) ) {
-			$validation_result = call_user_func( $file_config['validator'], $tmp_file );
-			if ( is_wp_error( $validation_result ) ) {
-				return $validation_result;
-			}
-		}
-
 		if ( isset( $file_config['mime_types'] ) ) {
 			$wp_filetype = wp_check_filetype_and_ext( $tmp_file, $file_name, $file_config['mime_types'] );
 
@@ -168,6 +161,13 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 					sprintf( __( 'File type is not supported. Must be one of the following: %s.', 'sensei-lms' ), implode( ', ', $valid_extensions ) ),
 					[ 'status' => 400 ]
 				);
+			}
+		}
+
+		if ( isset( $file_config['validator'] ) ) {
+			$validation_result = call_user_func( $file_config['validator'], $tmp_file );
+			if ( is_wp_error( $validation_result ) ) {
+				return $validation_result;
 			}
 		}
 
