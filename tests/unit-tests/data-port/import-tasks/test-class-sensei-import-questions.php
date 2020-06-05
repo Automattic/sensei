@@ -32,7 +32,7 @@ EOL;
 
 		$tmp_file = wp_tempnam();
 		$file     = new SplFileObject( $tmp_file, 'w+' );
-		$file->fwrite($csv);
+		$file->fwrite( $csv );
 
 		$result = Sensei_Import_Questions::validate_source_file( $tmp_file );
 
@@ -51,7 +51,7 @@ EOL;
 
 		$tmp_file = wp_tempnam();
 		$file     = new SplFileObject( $tmp_file, 'w+' );
-		$file->fwrite($csv);
+		$file->fwrite( $csv );
 
 		$result = Sensei_Import_Questions::validate_source_file( $tmp_file );
 
@@ -69,7 +69,7 @@ EOL;
 
 		$tmp_file = wp_tempnam();
 		$file     = new SplFileObject( $tmp_file, 'w+' );
-		$file->fwrite($csv);
+		$file->fwrite( $csv );
 
 		$result = Sensei_Import_Questions::validate_source_file( $tmp_file );
 

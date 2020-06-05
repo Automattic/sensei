@@ -74,7 +74,7 @@ class Sensei_Data_Port_Model_Test extends WP_UnitTestCase {
 	 * Check to make sure a valid data set comes back the same.
 	 */
 	public function testSanitizeHasUnknownColumn() {
-		$data = $expected = [
+		$data = [
 			'test-string-allow-html' => '<em>This is great HTML</em>',
 			'test-string-no-html'    => 'Cool',
 			'favorite_int'           => 1000,
@@ -83,6 +83,8 @@ class Sensei_Data_Port_Model_Test extends WP_UnitTestCase {
 			'slug'                   => 'my-favorite-animal',
 			'type'                   => 'cool',
 		];
+
+		$expected = $data;
 
 		$data['unknown_column'] = 1;
 
