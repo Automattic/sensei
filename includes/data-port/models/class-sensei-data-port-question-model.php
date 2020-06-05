@@ -109,7 +109,7 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 			self::COLUMN_TYPE            => [
 				'type'    => 'string',
 				'default' => 'multiple-choice',
-				'pattern' => 'boolean|gap\-fill|single\-line|multiple\-line|file\-upload',
+				'pattern' => '/boolean|gap\-fill|single\-line|multiple\-line|file\-upload/',
 			],
 			self::COLUMN_GRADE           => [
 				'type'    => 'int',

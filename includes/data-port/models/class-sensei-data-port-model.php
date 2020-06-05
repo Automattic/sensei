@@ -77,7 +77,7 @@ abstract class Sensei_Data_Port_Model {
 	public function is_valid() {
 		$data = $this->get_data();
 
-		foreach ( self::get_schema() as $field => $field_config ) {
+		foreach ( static::get_schema() as $field => $field_config ) {
 			if (
 				is_null( $data[ $field ] )
 				&& ! self::allow_empty_field( $field_config )
@@ -98,22 +98,23 @@ abstract class Sensei_Data_Port_Model {
 		$sanitized_data = [];
 		$schema         = static::get_schema();
 
-		foreach ( $schema as $key => $config ) {
+		foreach ( $data as $key => $value ) {
+			if ( ! isset( $schema[ $key ] ) ) {
+				continue;
+			}
+
+			$config = $schema[ $key ];
+
 			if ( ! isset( $config['default'] ) ) {
 				$config['default'] = null;
 			}
 
-			if (
-				! isset( $schema[ $key ] )
-				|| '' === $schema[ $key ]
-			) {
+			if ( '' === $value ) {
 				$value = $config['default'];
-			} else {
-				$value = $schema[ $key ];
 			}
 
 			if ( null !== $value ) {
-				switch ( $schema['type'] ) {
+				switch ( $config['type'] ) {
 					case 'int':
 						$value = intval( $value );
 						break;
@@ -133,18 +134,16 @@ abstract class Sensei_Data_Port_Model {
 						$value = esc_url_raw( $value );
 						break;
 					default:
-						$value = sanitize_text_field( $value );
-				}
-
-				if (
-					isset( $data['pattern'] )
-					&& 1 !== preg_match( $data['pattern'], $value )
-				) {
-					$value = null;
-				} elseif ( ! empty( $schema['allow_html'] ) ) {
-					$value = wp_kses_post( $value );
-				} else {
-					$value = esc_html( $value );
+						if (
+							isset( $config['pattern'] )
+							&& 1 !== preg_match( $config['pattern'], $value )
+						) {
+							$value = null;
+						} elseif ( ! empty( $config['allow_html'] ) ) {
+							$value = wp_kses_post( $value );
+						} else {
+							$value = sanitize_text_field( $value );
+						}
 				}
 			}
 
@@ -189,16 +188,18 @@ abstract class Sensei_Data_Port_Model {
 	public static function get_optional_fields() {
 		$schema = static::get_schema();
 
-		return array_filter(
-			array_map(
-				function( $field ) use ( $schema ) {
-					if ( empty( $schema[ $field ]['required'] ) ) {
-						return $field;
-					}
+		return array_values(
+			array_filter(
+				array_map(
+					function( $field ) use ( $schema ) {
+						if ( empty( $schema[ $field ]['required'] ) ) {
+							return $field;
+						}
 
-					return false;
-				},
-				array_keys( $schema )
+						return false;
+					},
+					array_keys( $schema )
+				)
 			)
 		);
 	}
@@ -211,16 +212,18 @@ abstract class Sensei_Data_Port_Model {
 	public static function get_required_fields() {
 		$schema = static::get_schema();
 
-		return array_filter(
-			array_map(
-				function( $field ) use ( $schema ) {
-					if ( ! empty( $schema[ $field ]['required'] ) ) {
-						return $field;
-					}
+		return array_values(
+			array_filter(
+				array_map(
+					function( $field ) use ( $schema ) {
+						if ( ! empty( $schema[ $field ]['required'] ) ) {
+							return $field;
+						}
 
-					return false;
-				},
-				array_keys( $schema )
+						return false;
+					},
+					array_keys( $schema )
+				)
 			)
 		);
 	}
