@@ -690,7 +690,7 @@ section.entry span.course-lesson-progress { margin-left: 10px; }
 
 /* Course Results */
 .course-results-lessons {
-  h2 {
+  h2, h3, h4 {
     margin: 20px 0;
     &.total-grade {
       text-decoration: underline;
