@@ -30,7 +30,7 @@ class Sensei_Question {
 			// Custom Write Panel Columns
 			add_filter( 'manage_edit-question_columns', array( $this, 'add_column_headings' ), 10, 1 );
 			add_action( 'manage_posts_custom_column', array( $this, 'add_column_data' ), 10, 2 );
-			add_filter( 'default_hidden_columns', array( $this, 'set_default_visible_columns' ), 10, 2 ); 
+			add_filter( 'default_hidden_columns', array( $this, 'set_default_visible_columns' ), 10, 2 );
 			add_action( 'add_meta_boxes', array( $this, 'question_edit_panel_metabox' ), 10, 2 );
 
 			// Quesitno list table filters
@@ -88,7 +88,7 @@ class Sensei_Question {
 		return $new_columns;
 	} // End add_column_headings()
 
- 	/**
+	/**
 	 * Hide all columns by default, leaving only a default set.
 	 *
 	 * @access public

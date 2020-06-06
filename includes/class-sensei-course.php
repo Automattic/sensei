@@ -713,7 +713,7 @@ class Sensei_Course {
 		if ( ! $screen instanceof WP_Screen || 'edit-course' !== $screen->id ) {
 			return $hidden_columns;
 		}
-		
+
 		$columns = get_column_headers( $screen );
 		foreach ( $columns as $column => $column_value ) {
 			if ( ! in_array( $column, $default_course_columns, true ) ) {

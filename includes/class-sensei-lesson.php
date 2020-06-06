@@ -2240,7 +2240,7 @@ class Sensei_Lesson {
 		return $new_columns;
 	} // End add_column_headings()
 
-		/**
+	/**
 	 * Hide all columns by default, leaving only a default set.
 	 *
 	 * @access public
