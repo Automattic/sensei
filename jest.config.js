@@ -6,5 +6,6 @@ module.exports = {
 		'/node_modules/',
 		'<rootDir>/build/',
 		'<rootDir>/assets/dist/',
+		'<rootDir>/tests/e2e/',
 	],
 };

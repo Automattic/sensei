@@ -1,5 +1,9 @@
 sudo: false
 dist: trusty
+services:
+  - xvfb
+  - mysql
+  - docker
 language: php
 notifications:
   email:
@@ -110,3 +114,12 @@ jobs:
       script:
         - composer install
         - ./scripts/linter-ci
+    - stage: test
+      language: node_js
+      node_js: '10.17'
+      script:
+        - npm run build
+        - npm run e2e-docker:up
+        - npm run test:e2e
+      after_script:
+        - npm run docker:down
