@@ -5,6 +5,9 @@
  * @package sensei
  */
 
+use Jom\PersonalLog\Cli\ClearCache;
+use Jom\PersonalLog\Cli\Import;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -80,6 +83,10 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 		add_action( 'sensei_data_port_garbage_collection', [ $this, 'clean_old_jobs' ] );
 		add_action( Sensei_Data_Port_Job::SCHEDULED_ACTION_NAME, [ $this, 'run_data_port_job' ] );
 		add_action( 'shutdown', [ $this, 'persist' ] );
+
+		if ( defined( 'WP_CLI' ) && WP_CLI ) {
+			WP_CLI::add_command( 'sensei-import', new Sensei_Import_Job_CLI() );
+		}
 	}
 
 	/**
