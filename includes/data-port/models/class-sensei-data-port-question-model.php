@@ -65,7 +65,87 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 	 * @return true|WP_Error
 	 */
 	public function sync_post() {
-		// @todo Implement magic.
+		$post_object_result = $this->sync_post_object();
+		if ( is_wp_error( $post_object_result ) ) {
+			return $post_object_result;
+		}
+
+		$meta_result = $this->sync_meta();
+		if ( is_wp_error( $meta_result ) ) {
+			return $meta_result;
+		}
+
+		$taxonomy_result = $this->sync_taxonomies();
+		if ( is_wp_error( $taxonomy_result ) ) {
+			return $taxonomy_result;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Synchronize the post object.
+	 *
+	 * @return true|WP_Error
+	 */
+	private function sync_post_object() {
+		$postarr = [
+			'post_type' => self::POST_TYPE,
+		];
+
+		if ( $this->get_post_id() ) {
+			$postarr['ID'] = $this->get_post_id();
+		}elseif ( get_current_user_id() ) {
+			$postarr['post_author'] = get_current_user_id();
+		}
+
+		$data = $this->get_data();
+
+		$postarr['post_title'] = $data[ self::COLUMN_QUESTION ];
+
+		if ( isset( $data[ self::COLUMN_SLUG ] ) ) {
+			$postarr['post_name'] = $data[ self::COLUMN_SLUG ];
+		}
+
+		if ( isset( $data[ self::COLUMN_DESCRIPTION ] ) ) {
+			$postarr['post_content'] = $data[ self::COLUMN_DESCRIPTION ];
+		}
+
+		if ( isset( $data[ self::COLUMN_STATUS ] ) ) {
+			$postarr['post_status'] = $data[ self::COLUMN_STATUS ];
+		}
+
+		if ( isset( $postarr['ID'] ) ) {
+			return wp_update_post( $postarr );
+		}
+
+		$post_id = wp_insert_post( $postarr );
+
+		if ( is_wp_error( $post_id ) )  {
+			return $post_id;
+		}
+
+		$this->set_post_id( $post_id );
+
+		return $post_id;
+	}
+
+	/**
+	 * Synchronize the post meta.
+	 *
+	 * @return true|WP_Error
+	 */
+	private function sync_meta() {
+
+		return true;
+	}
+
+	/**
+	 * Synchronize the post taxonomies.
+	 *
+	 * @return true|WP_Error
+	 */
+	private function sync_taxonomies() {
 
 		return true;
 	}
@@ -111,7 +191,7 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 			self::COLUMN_TYPE            => [
 				'type'    => 'string',
 				'default' => 'multiple-choice',
-				'pattern' => '/boolean|gap\-fill|single\-line|multiple\-line|file\-upload/',
+				'pattern' => '/multiple\-choice|boolean|gap\-fill|single\-line|multiple\-line|file\-upload/',
 			],
 			self::COLUMN_GRADE           => [
 				'type'    => 'int',

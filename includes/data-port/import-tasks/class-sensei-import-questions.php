@@ -46,6 +46,7 @@ class Sensei_Import_Questions
 		$model = Sensei_Data_Port_Question_Model::from_source_array( $line );
 		if ( ! $model->is_valid() ) {
 			// @todo Mark as skipped.
+			$this->get_job()->add_log_entry( 'Invalid entry found on line {$line_number} of the questions file', Sensei_Data_Port_Job::LOG_LEVEL_NOTICE );
 
 			return false;
 		}
