@@ -16,6 +16,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, JsonSerializable {
 	const OPTION_PREFIX         = 'sensei-data-port-job-';
 	const SCHEDULED_ACTION_NAME = 'sensei-data-port-job';
+	const LOG_LEVEL_INFO        = 0;
+	const LOG_LEVEL_NOTICE      = 1;
+	const LOG_LEVEL_ERROR       = 2;
 
 	/**
 	 * An array which holds the results of the data port job and populated in subclasses.
@@ -320,24 +323,18 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	/**
 	 * Add an entry to the logs.
 	 *
-	 * @param string $post_tile Post title of the entity this log applies to.
-	 * @param string $message   Log message.
-	 * @param string $type      Post type this message.
-	 * @param string $id        Id of the entity this log applies to.
+	 * @param string $message Log message.
+	 * @param int    $level   Log level (see constants).
+	 * @param array  $data    Data to include with the message.
 	 */
-	protected function add_log_entry( $post_tile, $message, $type, $id = '' ) {
+	public function add_log_entry( $message, $level = self::LOG_LEVEL_INFO, $data = [] ) {
 		$this->has_changed = true;
 
-		$entry = [
-			'title' => sanitize_text_field( $post_tile ),
-			'msg'   => sanitize_text_field( $message ),
+		$this->logs[] = [
+			sanitize_text_field( $message ),
+			(int) $level,
+			$data,
 		];
-
-		if ( ! empty( $id ) ) {
-			$entry['id'] = sanitize_text_field( $id );
-		}
-
-		$this->logs[ sanitize_text_field( $type ) ][] = $entry;
 	}
 
 	/**
