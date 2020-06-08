@@ -13,45 +13,28 @@ if ( ! defined( 'ABSPATH' ) ) {
  * This class handles the import task for courses.
  */
 class Sensei_Import_Courses
-	extends Sensei_Data_Port_Task
+	extends Sensei_Import_File_Process_Task
 	implements Sensei_Data_Port_Task_Interface {
 
 	/**
-	 * Run this task.
+	 * Return a unique key for the task.
+	 *
+	 * @return string
 	 */
-	public function run() {
-		// @todo Implement.
+	public function get_task_key() {
+		return 'courses';
 	}
 
 	/**
-	 * Returns true if the task is completed.
+	 * Process a single CSV line.
 	 *
-	 * @return boolean
+	 * @param int   $line_number  The line number in the file.
+	 * @param array $line         The current line as returned from Sensei_Import_CSV_Reader::read_lines().
+	 *
+	 * @return mixed
 	 */
-	public function is_completed() {
-		// @todo Implement.
-
-		return false;
-	}
-
-	/**
-	 * Returns the completion ratio of this task. The ration has the following format:
-	 *
-	 * {
-	 *
-	 *     @type integer $completed  Number of completed actions.
-	 *     @type integer $total      Number of total actions.
-	 * }
-	 *
-	 * @return array
-	 */
-	public function get_completion_ratio() {
-		// @todo Implement.
-
-		return [
-			'completed' => 0,
-			'total'     => 0,
-		];
+	protected function process_line( $line_number, $line ) {
+		return true;
 	}
 
 	/**
