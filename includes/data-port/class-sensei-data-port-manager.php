@@ -124,7 +124,9 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 		$job = $this->get_job( $args['job_id'] );
 
 		if ( null !== $job ) {
+			wp_set_current_user( $args['user_id'] );
 			Sensei_Scheduler::instance()->run( $job );
+			wp_set_current_user( 0 );
 		}
 	}
 
