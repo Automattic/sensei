@@ -412,7 +412,10 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 
 		// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- Check done with file_exists.
 		$move_new_file = @copy( $tmp_file, $file_save_path );
-		unlink( $tmp_file );
+
+		if ( 0 === strpos( $tmp_file, sys_get_temp_dir() ) ) {
+			unlink( $tmp_file );
+		}
 
 		if ( ! $move_new_file || ! file_exists( $file_save_path ) ) {
 			return new WP_Error( 'sensei_data_port_file_save_failed', __( 'Error saving file.', 'sensei-lms' ) );
