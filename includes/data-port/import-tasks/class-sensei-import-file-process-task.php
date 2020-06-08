@@ -89,6 +89,7 @@ abstract class Sensei_Import_File_Process_Task
 
 		$this->completed_lines = $this->reader->get_completed_lines();
 		$this->total_lines     = $this->reader->get_total_lines();
+		$this->is_completed    = $this->reader->is_completed();
 
 		$this->get_job()->set_state( $this->get_task_key(), [ 'completed-lines' => $this->completed_lines ] );
 		$this->get_job()->persist();
