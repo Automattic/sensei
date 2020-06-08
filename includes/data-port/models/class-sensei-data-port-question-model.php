@@ -104,7 +104,9 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 				'type' => 'string',
 			],
 			self::COLUMN_STATUS          => [
-				'type' => 'string',
+				'type'    => 'string',
+				'default' => 'draft',
+				'pattern' => '/publish|pending|draft/',
 			],
 			self::COLUMN_TYPE            => [
 				'type'    => 'string',
