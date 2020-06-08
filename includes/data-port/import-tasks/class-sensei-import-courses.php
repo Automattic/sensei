@@ -12,9 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * This class handles the import task for courses.
  */
-class Sensei_Import_Courses
-	extends Sensei_Import_File_Process_Task
-	implements Sensei_Data_Port_Task_Interface {
+class Sensei_Import_Courses extends Sensei_Import_File_Process_Task {
 
 	/**
 	 * Return a unique key for the task.
@@ -45,6 +43,28 @@ class Sensei_Import_Courses
 	 * @return mixed
 	 */
 	protected function process_line( $line_number, $line ) {
+		if ( is_wp_error( $line ) ) {
+			// @todo Mark as failed.
+			error_log(print_r($line,true));
+			return false;
+		}
+
+		error_log('in process line');
+		$model = Sensei_Data_Port_Course_Model::from_source_array( $line );
+		if ( ! $model->is_valid() ) {
+			// @todo Mark as skipped.
+			error_log('not valid');
+			return false;
+		}
+
+		if ( ! $model->sync_post() ) {
+			// @todo Mark as failed.
+
+			return false;
+		}
+
+		// @todo Mark as successful.
+
 		return true;
 	}
 
@@ -63,8 +83,9 @@ class Sensei_Import_Courses
 	 * @return true|WP_Error
 	 */
 	public static function validate_source_file( $file_path ) {
-		// @todo Implement.
+		$required_fields = Sensei_Data_Port_Course_Model::get_required_fields();
+		$optional_fields = Sensei_Data_Port_Course_Model::get_optional_fields();
 
-		return true;
+		return Sensei_Import_CSV_Reader::validate_csv_file( $file_path, $required_fields, $optional_fields );
 	}
 }

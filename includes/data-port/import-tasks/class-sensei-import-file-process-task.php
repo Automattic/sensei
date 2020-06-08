@@ -74,7 +74,7 @@ abstract class Sensei_Import_File_Process_Task
 	 * Run this task.
 	 */
 	public function run() {
-		if ( $this->is_completed ) {
+		if ( $this->is_completed() ) {
 			return;
 		}
 
