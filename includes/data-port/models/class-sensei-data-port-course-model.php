@@ -63,7 +63,32 @@ class Sensei_Data_Port_Course_Model extends Sensei_Data_Port_Model {
 	 */
 	public function sync_post() {
 		$post_id = wp_insert_post( $this->get_course_args() );
-		error_log('in proasdfadsfadsfds');
+
+		if ( is_wp_error( $post_id ) ) {
+			return $post_id;
+		}
+
+		if ( 0 === $post_id ) {
+			return new WP_Error(
+				'sensei_data_port_creation_failure',
+				__( 'Course insertion failed.', 'sensei-lms' )
+			);
+		}
+
+		$course_data = $this->get_data();
+
+		if ( array_key_exists( self::COLUMN_IMAGE, $course_data ) ) {
+			if ( empty( $course_data[ self::COLUMN_IMAGE ] ) ) {
+				delete_post_meta( $post_id, '_thumbnail_id' );
+			} else {
+				$result = Sensei_Data_Port_Utilities::attach_image_to_post( $course_data[ self::COLUMN_IMAGE ], $post_id );
+
+				if ( is_wp_error( $result ) ) {
+					return $result;
+				}
+			}
+		}
+
 		return true;
 	}
 
@@ -77,28 +102,49 @@ class Sensei_Data_Port_Course_Model extends Sensei_Data_Port_Model {
 		}
 
 		$args = [
-			'ID'           => $this->get_post_id(),
-			'post_author'  => $author,
-			'post_content' => $course_data[ self::COLUMN_DESCRIPTION ],
-			'post_title'   => $course_data[ self::COLUMN_COURSE ],
-			'post_excerpt' => $course_data[ self::COLUMN_EXCERPT ],
-			'post_status'  => 'draft',
-			'post_type'    => 'course',
-			'post_name'    => $course_data[ self::COLUMN_SLUG ],
-			'meta_input'   => $this->get_course_meta(),
+			'ID'          => $this->get_post_id(),
+			'post_author' => $author,
+			'post_status' => 'draft',
+			'post_type'   => 'course',
+			'meta_input'  => $this->get_course_meta(),
 		];
+
+		if ( array_key_exists( self::COLUMN_DESCRIPTION, $course_data ) ) {
+			$args['post_content'] = $course_data[ self::COLUMN_DESCRIPTION ];
+		}
+
+		if ( array_key_exists( self::COLUMN_COURSE, $course_data ) ) {
+			$args['post_title'] = $course_data[ self::COLUMN_COURSE ];
+		}
+
+		if ( array_key_exists( self::COLUMN_EXCERPT, $course_data ) ) {
+			$args['post_excerpt'] = $course_data[ self::COLUMN_EXCERPT ];
+		}
+
+		if ( array_key_exists( self::COLUMN_SLUG, $course_data ) ) {
+			$args['post_name'] = $course_data[ self::COLUMN_SLUG ];
+		}
 
 		return $args;
 	}
 
-	private function get_course_meta(){
+	private function get_course_meta() {
 		$course_data = $this->get_data();
+		$meta        = [];
 
-		return [
-			'course_featured'             => $course_data[ self::COLUMN_FEATURED ],
-			'course_video_embed'          => $course_data[ self::COLUMN_VIDEO ],
-			'_sensei_course_notification' => $course_data[ self::COLUMN_NOTIFICATIONS ],
-		];
+		if ( array_key_exists( self::COLUMN_FEATURED, $course_data ) ) {
+			$meta['course_featured'] = $course_data[ self::COLUMN_FEATURED ];
+		}
+
+		if ( array_key_exists( self::COLUMN_VIDEO, $course_data ) ) {
+			$meta['course_video_embed'] = $course_data[ self::COLUMN_VIDEO ];
+		}
+
+		if ( array_key_exists( self::COLUMN_NOTIFICATIONS, $course_data ) ) {
+			$meta['_sensei_course_notification'] = $course_data[ self::COLUMN_NOTIFICATIONS ];
+		}
+
+		return $meta;
 	}
 
 	/**
