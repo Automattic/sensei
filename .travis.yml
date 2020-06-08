@@ -123,3 +123,4 @@ jobs:
         - npm run test:e2e
       after_script:
         - npm run docker:down
+        - bash tests/e2e/bin/upload-screenshots.sh
