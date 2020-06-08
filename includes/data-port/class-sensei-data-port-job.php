@@ -110,7 +110,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 * @param array  $args     Arguments to be used by subclasses.
 	 * @param string $json     A json string to restore internal state from.
 	 */
-	protected function __construct( $job_id, $args = [], $json = '' ) {
+	public function __construct( $job_id, $args = [], $json = '' ) {
 		$this->job_id      = $job_id;
 		$this->has_changed = false;
 		$this->is_deleted  = false;
