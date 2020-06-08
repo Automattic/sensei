@@ -73,6 +73,7 @@ class Sensei_Import_Job_CLI {
 			$status    = $job->get_status();
 			$diff_tick = $status['percentage'] - $last_tick;
 			$progress->tick( $diff_tick );
+			$last_tick = $last_tick + $diff_tick;
 		}
 
 		$job->clean_up();
