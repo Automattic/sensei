@@ -86,34 +86,10 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 	/**
 	 * Synchronize the post object.
 	 *
-	 * @return true|WP_Error
+	 * @return bool|WP_Error
 	 */
 	private function sync_post_object() {
-		$postarr = [
-			'post_type' => self::POST_TYPE,
-		];
-
-		if ( $this->get_post_id() ) {
-			$postarr['ID'] = $this->get_post_id();
-		}elseif ( get_current_user_id() ) {
-			$postarr['post_author'] = get_current_user_id();
-		}
-
-		$data = $this->get_data();
-
-		$postarr['post_title'] = $data[ self::COLUMN_QUESTION ];
-
-		if ( isset( $data[ self::COLUMN_SLUG ] ) ) {
-			$postarr['post_name'] = $data[ self::COLUMN_SLUG ];
-		}
-
-		if ( isset( $data[ self::COLUMN_DESCRIPTION ] ) ) {
-			$postarr['post_content'] = $data[ self::COLUMN_DESCRIPTION ];
-		}
-
-		if ( isset( $data[ self::COLUMN_STATUS ] ) ) {
-			$postarr['post_status'] = $data[ self::COLUMN_STATUS ];
-		}
+		$postarr = $this->get_post_array();
 
 		if ( isset( $postarr['ID'] ) ) {
 			return wp_update_post( $postarr );
@@ -121,13 +97,48 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 
 		$post_id = wp_insert_post( $postarr );
 
-		if ( is_wp_error( $post_id ) )  {
+		if ( is_wp_error( $post_id ) ) {
 			return $post_id;
 		}
 
 		$this->set_post_id( $post_id );
 
-		return $post_id;
+		return true;
+	}
+
+	/**
+	 * Generates the post array.
+	 *
+	 * @return array
+	 */
+	private function get_post_array() {
+		$postarr = [
+			'post_type' => self::POST_TYPE,
+		];
+
+		if ( $this->get_post_id() ) {
+			$postarr['ID'] = $this->get_post_id();
+		} elseif ( get_current_user_id() ) {
+			$postarr['post_author'] = get_current_user_id();
+		}
+
+		$data = $this->get_data();
+
+		$postarr['post_title'] = $data[ self::COLUMN_QUESTION ];
+
+		if ( array_key_exists( self::COLUMN_SLUG, $data ) ) {
+			$postarr['post_name'] = $data[ self::COLUMN_SLUG ];
+		}
+
+		if ( array_key_exists( self::COLUMN_DESCRIPTION, $data ) ) {
+			$postarr['post_content'] = $data[ self::COLUMN_DESCRIPTION ];
+		}
+
+		if ( array_key_exists( self::COLUMN_STATUS, $data ) ) {
+			$postarr['post_status'] = $data[ self::COLUMN_STATUS ];
+		}
+
+		return $postarr;
 	}
 
 	/**
@@ -136,6 +147,7 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 	 * @return true|WP_Error
 	 */
 	private function sync_meta() {
+		$current_meta = get_post_meta( $this->get_post_id() );
 
 		return true;
 	}
