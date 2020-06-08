@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Sensei_Import_Job class.
+ * File containing the Sensei_Import_Job_CLI class.
  *
  * @package sensei
  */
@@ -66,7 +66,7 @@ class Sensei_Import_Job_CLI {
 		}
 		$job->start();
 
-		$progress  = \WP_CLI\Utils\make_progress_bar( 'Importing day data', 100 );
+		$progress  = \WP_CLI\Utils\make_progress_bar( 'Importing', 100 );
 		$last_tick = 0;
 		while ( ! $job->is_complete() ) {
 			$job->run();
