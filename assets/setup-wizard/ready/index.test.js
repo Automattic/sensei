@@ -1,20 +1,34 @@
 import { fireEvent, render } from '@testing-library/react';
+
+import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 import { Ready } from './index';
 
-const mockStepData = {
+const stepData = {
 	admin_email: 'admin@test.local',
 	mc_url: 'http://external.local/campaign',
 	gdpr_field: 'SDCTZX3',
 };
+
+// Mock features data.
 jest.mock( '../data/use-setup-wizard-step', () => ( {
-	useSetupWizardStep: jest.fn().mockImplementation( () => ( {
-		stepData: mockStepData,
-	} ) ),
+	useSetupWizardStep: jest.fn(),
 } ) );
+
+// Mock features data.
+const mockStepData = ( mockData = {} ) => {
+	useSetupWizardStep.mockReturnValue( {
+		stepData,
+		isComplete: false,
+		submitStep: () => {},
+		...mockData,
+	} );
+};
 
 describe( '<Ready />', () => {
 	beforeEach( () => {
 		window.sensei_log_event = jest.fn();
+
+		mockStepData();
 	} );
 
 	afterEach( () => {
@@ -25,7 +39,7 @@ describe( '<Ready />', () => {
 		const { container } = render( <Ready /> );
 
 		const form = container.querySelector( 'form' );
-		expect( form.getAttribute( 'action' ) ).toEqual( mockStepData.mc_url );
+		expect( form.getAttribute( 'action' ) ).toEqual( stepData.mc_url );
 	} );
 
 	it( 'Should have the admin e-mail pre-filled in the sign-up form', () => {
@@ -33,7 +47,7 @@ describe( '<Ready />', () => {
 
 		const form = container.querySelector( 'form' );
 		expect( form.querySelector( 'input[type=email]' ).value ).toEqual(
-			mockStepData.admin_email
+			stepData.admin_email
 		);
 	} );
 
@@ -99,5 +113,31 @@ describe( '<Ready />', () => {
 			'setup_wizard_ready_exit',
 			undefined
 		);
+	} );
+
+	it( 'Should submit the ready step', () => {
+		const submitMock = jest.fn();
+
+		mockStepData( {
+			isComplete: false,
+			submitStep: submitMock,
+		} );
+
+		render( <Ready /> );
+
+		expect( submitMock ).toBeCalled();
+	} );
+
+	it( 'Should not submit the ready step when it is already complete', () => {
+		const submitMock = jest.fn();
+
+		mockStepData( {
+			isComplete: true,
+			submitStep: submitMock,
+		} );
+
+		render( <Ready /> );
+
+		expect( submitMock ).not.toBeCalled();
 	} );
 } );

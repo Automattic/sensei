@@ -2,14 +2,14 @@
 # This file is distributed under the GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html.
 msgid ""
 msgstr ""
-"Project-Id-Version: Sensei LMS 3.1.0\n"
+"Project-Id-Version: Sensei LMS 3.1.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sensei\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2020-06-04T18:09:42+00:00\n"
+"POT-Creation-Date: 2020-06-05T13:33:45+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.5.0-alpha-0263ed1\n"
 "X-Domain: sensei-lms\n"
@@ -104,12 +104,12 @@ msgstr ""
 msgid "Retry"
 msgstr ""
 
-#: assets/setup-wizard/index.jsx:55
+#: assets/setup-wizard/index.jsx:51
 #: assets/dist/setup-wizard/index.js:1
 msgid "An error has occurred while fetching the data. Please try again later!"
 msgstr ""
 
-#: assets/setup-wizard/index.jsx:60
+#: assets/setup-wizard/index.jsx:56
 #: assets/dist/setup-wizard/index.js:1
 msgid "Error details:"
 msgstr ""
@@ -129,40 +129,40 @@ msgstr ""
 msgid "Choose any that apply"
 msgstr ""
 
-#: assets/setup-wizard/ready/index.jsx:15
+#: assets/setup-wizard/ready/index.jsx:101
+#: assets/dist/setup-wizard/index.js:1
+msgid "Exit to Courses"
+msgstr ""
+
+#: assets/setup-wizard/ready/index.jsx:27
 #: assets/dist/setup-wizard/index.js:1
 msgid "You're ready to start creating online courses!"
 msgstr ""
 
-#: assets/setup-wizard/ready/index.jsx:23
+#: assets/setup-wizard/ready/index.jsx:35
 #: assets/dist/setup-wizard/index.js:1
 msgid "Join our mailing list"
 msgstr ""
 
-#: assets/setup-wizard/ready/index.jsx:25
+#: assets/setup-wizard/ready/index.jsx:37
 #: includes/email-signup/template.php:25
 #: assets/dist/setup-wizard/index.js:1
 msgid "We're here for you — get tips, product updates, and inspiration straight to your mailbox."
 msgstr ""
 
-#: assets/setup-wizard/ready/index.jsx:33
+#: assets/setup-wizard/ready/index.jsx:45
 #: assets/dist/setup-wizard/index.js:1
 msgid "What's next?"
 msgstr ""
 
-#: assets/setup-wizard/ready/index.jsx:37
+#: assets/setup-wizard/ready/index.jsx:49
 #: assets/dist/setup-wizard/index.js:1
 msgid "Create some courses"
 msgstr ""
 
-#: assets/setup-wizard/ready/index.jsx:55
+#: assets/setup-wizard/ready/index.jsx:70
 #: assets/dist/setup-wizard/index.js:1
 msgid "Visit SenseiLMS.com to learn how to {{link}}create your first course.{{/link}}"
-msgstr ""
-
-#: assets/setup-wizard/ready/index.jsx:86
-#: assets/dist/setup-wizard/index.js:1
-msgid "Exit to Courses"
 msgstr ""
 
 #: assets/setup-wizard/ready/mailinglist-signup-form.jsx:49
@@ -3906,12 +3906,7 @@ msgstr ""
 msgid "Docs"
 msgstr ""
 
-#: includes/class-sensei.php:1385
-msgctxt "noun"
-msgid "Support"
-msgstr ""
-
-#: includes/class-sensei.php:1403
+#: includes/class-sensei.php:1398
 msgctxt "plugin action link"
 msgid "Configure"
 msgstr ""

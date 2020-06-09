@@ -60,6 +60,7 @@ class Sensei_Data_Cleaner {
 		'skip_install_sensei_pages', // @deprecated since 3.1.0.
 		'sensei_suggest_setup_wizard',
 		'sensei-data-port-jobs',
+		'sensei_setup_wizard_data',
 		'sensei_flush_rewrite_rules',
 		'sensei_needs_language_pack_install',
 		'woothemes_sensei_language_pack_version',

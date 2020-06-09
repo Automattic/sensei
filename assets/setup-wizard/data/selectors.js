@@ -1,3 +1,5 @@
+import { steps } from '../steps';
+
 /**
  * Is fetching setup wizard data selector.
  *
@@ -51,11 +53,10 @@ export const getStepData = ( state, step ) => state.data[ step ];
  * Get navigation steps with their state.
  *
  * @param {Object} state current state.
- * @param {Array}  steps List of steps.
  *
  * @return {Array} Navigation steps.
  */
-export const getNavigationSteps = ( { data: { completedSteps } }, steps ) => {
+export const getNavigationSteps = ( { data: { completedSteps } } ) => {
 	const navSteps = steps.map( ( step ) => ( {
 		...step,
 		isComplete: completedSteps.includes( step.key ),
@@ -68,3 +69,14 @@ export const getNavigationSteps = ( { data: { completedSteps } }, steps ) => {
 
 	return navSteps;
 };
+
+/**
+ * Get whether step is complete or not.
+ *
+ * @param {Object} state Current state.
+ * @param {string} step  Step name.
+ *
+ * @return {boolean} Step complete.
+ */
+export const isCompleteStep = ( { data: { completedSteps } }, step ) =>
+	completedSteps.includes( step );
