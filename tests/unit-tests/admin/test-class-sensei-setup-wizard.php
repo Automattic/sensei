@@ -358,6 +358,56 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests that get sensei extensions fetch from the correct URL filtering by the dotorg only.
+	 *
+	 * @covers Sensei_Setup_Wizard::get_sensei_extensions
+	 */
+	public function testGetSenseiExtensionsWithoutWCExtensions() {
+		// Mock fetch from senseilms.com.
+		$request_url = null;
+		add_filter(
+			'pre_http_request',
+			function( $preempt, $parsed_args, $url ) use ( &$request_url ) {
+				$request_url = $url;
+				return [ 'body' => '{}' ];
+			},
+			10,
+			3
+		);
+
+		$extensions = Sensei()->setup_wizard->get_sensei_extensions();
+
+		$this->assertEquals( 'https://senseilms.com/wp-json/senseilms-products/1.0/search?category=setup-wizard-extensions&type=plugin&hosted-location=dotorg', $request_url );
+	}
+
+	/**
+	 * Tests that get sensei extensions fetch from the correct URL with WC extensions.
+	 *
+	 * @covers Sensei_Setup_Wizard::get_sensei_extensions
+	 */
+	public function testGetSenseiExtensionsWithWCExtensions() {
+		// Activate feature.
+		// It is usually activated by defining a const.
+		add_filter( 'sensei_feature_flag_setup_wizard_wc_extensions', '__return_true' );
+
+		// Mock fetch from senseilms.com.
+		$request_url = null;
+		add_filter(
+			'pre_http_request',
+			function( $preempt, $parsed_args, $url ) use ( &$request_url ) {
+				$request_url = $url;
+				return [ 'body' => '{}' ];
+			},
+			10,
+			3
+		);
+
+		$extensions = Sensei()->setup_wizard->get_sensei_extensions();
+
+		$this->assertEquals( 'https://senseilms.com/wp-json/senseilms-products/1.0/search?category=setup-wizard-extensions&type=plugin', $request_url );
+	}
+
+	/**
 	 * Tests that get sensei extensions and returns with decoded prices.
 	 *
 	 * @covers Sensei_Setup_Wizard::get_sensei_extensions
