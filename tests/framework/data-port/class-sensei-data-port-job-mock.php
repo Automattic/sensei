@@ -12,18 +12,25 @@ class Sensei_Data_Port_Job_Mock extends Sensei_Data_Port_Job {
 
 	private static $restore_mock;
 
-	public function __construct( $job_id, $args = [], $json = '' ) {
-		parent::__construct( $job_id, $args, $json );
+	public function __construct( $job_id, $json = '' ) {
+		parent::__construct( $job_id, $json );
 
-		$this->tasks = $args;
+		$this->tasks = [];
+	}
+
+	public static function create_with_tasks( $job_id, $tasks = [], $user_id = 0 ) {
+		$job = static::create( $job_id, $user_id );
+		$job->set_tasks( $tasks );
+
+		return $job;
+	}
+
+	private function set_tasks( $tasks ) {
+		$this->tasks = $tasks;
 	}
 
 	public function get_tasks() {
 		return $this->tasks;
-	}
-
-	public function log( $title, $message, $type, $id ) {
-		$this->add_log_entry( $title, $message, $type, $id );
 	}
 
 	public static function get( $job_id ) {

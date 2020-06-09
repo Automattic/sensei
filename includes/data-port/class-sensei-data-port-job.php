@@ -16,6 +16,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, JsonSerializable {
 	const OPTION_PREFIX         = 'sensei-data-port-job-';
 	const SCHEDULED_ACTION_NAME = 'sensei-data-port-job';
+	const LOG_LEVEL_INFO        = 0;
+	const LOG_LEVEL_NOTICE      = 1;
+	const LOG_LEVEL_ERROR       = 2;
 
 	/**
 	 * An array which holds the results of the data port job and populated in subclasses.
@@ -89,6 +92,13 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	private $percentage;
 
 	/**
+	 * User ID.
+	 *
+	 * @var int
+	 */
+	private $user_id;
+
+	/**
 	 * Files that have been saved and associated with this job.
 	 *
 	 * @var array {
@@ -103,11 +113,10 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 * Sensei_Data_Port_Job constructor. A data port instance can be created either when a new data port job is
 	 * registered or when an existing one is restored from a JSON string.
 	 *
-	 * @param string $job_id   Unique job id.
-	 * @param array  $args     Arguments to be used by subclasses.
-	 * @param string $json     A json string to restore internal state from.
+	 * @param string $job_id Unique job id.
+	 * @param string $json   A json string to restore internal state from.
 	 */
-	protected function __construct( $job_id, $args = [], $json = '' ) {
+	protected function __construct( $job_id, $json = '' ) {
 		$this->job_id      = $job_id;
 		$this->has_changed = false;
 		$this->is_deleted  = false;
@@ -142,7 +151,22 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 			return null;
 		}
 
-		return new static( $job_id, [], $json );
+		return new static( $job_id, $json );
+	}
+
+	/**
+	 * Create a new job.
+	 *
+	 * @param string $job_id  The job id.
+	 * @param int    $user_id The user id.
+	 *
+	 * @return Sensei_Data_Port_Job
+	 */
+	public static function create( $job_id, $user_id ) {
+		$job = new static( $job_id );
+		$job->set_user_id( $user_id );
+
+		return $job;
 	}
 
 	/**
@@ -163,39 +187,21 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	}
 
 	/**
-	 * Get the logs of the job. The logs are grouped by type. The pagination works on the total number of logs which
-	 * means that depending on the arguments, multiple type of logs can be returned.
-	 *
-	 * @param int $offset  Offset for pagination.
-	 * @param int $limit   Limit for pagination.
+	 * Get the logs of the job.
 	 *
 	 * @return array The logs.
 	 */
-	public function get_logs( $offset = 0, $limit = 20 ) {
-
-		$result_logs = [];
-
-		foreach ( $this->logs as $type => $messages ) {
-
-			// Check if the logs should start from this group.
-			if ( $offset < count( $messages ) ) {
-				$added_logs           = array_slice( $messages, $offset, $limit );
-				$offset               = 0;
-				$result_logs[ $type ] = $added_logs;
-
-				if ( count( $added_logs ) >= $limit ) {
-					return $result_logs;
-				} else {
-					// Adjust the limit to take into account added logs.
-					$limit -= count( $added_logs );
-				}
-			} else {
-				// Adjust the offset for the skipped log entries.
-				$offset -= count( $messages );
-			}
-		}
-
-		return $result_logs;
+	public function get_logs() {
+		return array_map(
+			function ( $log ) {
+				return [
+					'message' => $log[0],
+					'level'   => $log[1],
+					'data'    => $log[2],
+				];
+			},
+			$this->logs
+		);
 	}
 
 	/**
@@ -293,6 +299,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 			'i' => $this->is_started,
 			'p' => $this->percentage,
 			'f' => $this->files,
+			'u' => $this->user_id,
 		];
 	}
 
@@ -315,29 +322,24 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 		$this->is_started   = $json_arr['i'];
 		$this->percentage   = $json_arr['p'];
 		$this->files        = $json_arr['f'];
+		$this->user_id      = $json_arr['u'];
 	}
 
 	/**
 	 * Add an entry to the logs.
 	 *
-	 * @param string $post_tile Post title of the entity this log applies to.
-	 * @param string $message   Log message.
-	 * @param string $type      Post type this message.
-	 * @param string $id        Id of the entity this log applies to.
+	 * @param string $message Log message.
+	 * @param int    $level   Log level (see constants).
+	 * @param array  $data    Data to include with the message.
 	 */
-	protected function add_log_entry( $post_tile, $message, $type, $id = '' ) {
+	public function add_log_entry( $message, $level = self::LOG_LEVEL_INFO, $data = [] ) {
 		$this->has_changed = true;
 
-		$entry = [
-			'title' => sanitize_text_field( $post_tile ),
-			'msg'   => sanitize_text_field( $message ),
+		$this->logs[] = [
+			sanitize_text_field( $message ),
+			(int) $level,
+			$data,
 		];
-
-		if ( ! empty( $id ) ) {
-			$entry['id'] = sanitize_text_field( $id );
-		}
-
-		$this->logs[ sanitize_text_field( $type ) ][] = $entry;
 	}
 
 	/**
@@ -412,7 +414,10 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 
 		// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- Check done with file_exists.
 		$move_new_file = @copy( $tmp_file, $file_save_path );
-		unlink( $tmp_file );
+
+		if ( 0 === strpos( $tmp_file, sys_get_temp_dir() ) ) {
+			unlink( $tmp_file );
+		}
 
 		if ( ! $move_new_file || ! file_exists( $file_save_path ) ) {
 			return new WP_Error( 'sensei_data_port_file_save_failed', __( 'Error saving file.', 'sensei-lms' ) );
@@ -590,5 +595,23 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	public function set_state( $state_key, $state ) {
 		$this->has_changed         = true;
 		$this->state[ $state_key ] = $state;
+	}
+
+	/**
+	 * Get the user ID.
+	 *
+	 * @return int
+	 */
+	public function get_user_id() {
+		return $this->user_id;
+	}
+
+	/**
+	 * Set the user ID.
+	 *
+	 * @param int $user_id User ID.
+	 */
+	private function set_user_id( $user_id ) {
+		$this->user_id = $user_id;
 	}
 }

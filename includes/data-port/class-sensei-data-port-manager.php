@@ -80,6 +80,10 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 		add_action( 'sensei_data_port_garbage_collection', [ $this, 'clean_old_jobs' ] );
 		add_action( Sensei_Data_Port_Job::SCHEDULED_ACTION_NAME, [ $this, 'run_data_port_job' ] );
 		add_action( 'shutdown', [ $this, 'persist' ] );
+
+		if ( defined( 'WP_CLI' ) && WP_CLI ) {
+			WP_CLI::add_command( 'sensei-import', new Sensei_Import_Job_CLI() );
+		}
 	}
 
 	/**
@@ -117,7 +121,9 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 		$job = $this->get_job( $args['job_id'] );
 
 		if ( null !== $job ) {
+			wp_set_current_user( $job->get_user_id() );
 			Sensei_Scheduler::instance()->run( $job );
+			wp_set_current_user( 0 );
 		}
 	}
 
@@ -137,7 +143,7 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 			'id'      => $job_id,
 		];
 
-		return new Sensei_Import_Job( $job_id );
+		return Sensei_Import_Job::create( $job_id, (int) $user_id );
 	}
 
 	/**

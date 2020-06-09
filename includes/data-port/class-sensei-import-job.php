@@ -23,28 +23,18 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 	private $tasks;
 
 	/**
-	 * Sensei_Import_Job constructor.
-	 *
-	 * @param string $job_id  The job id.
-	 * @param array  $args    Arguments for the import job.
-	 * @param string $json    JSON string to restore the state from.
-	 */
-	public function __construct( $job_id, $args = [], $json = '' ) {
-		parent::__construct( $job_id, $args, $json );
-
-		// TODO: Generate the tasks from the arguments and/or from the internal state.
-		$this->tasks              = [];
-		$this->tasks['questions'] = $this->initialize_task( Sensei_Import_Questions::class );
-		$this->tasks['lessons']   = $this->initialize_task( Sensei_Import_Lessons::class );
-		$this->tasks['courses']   = $this->initialize_task( Sensei_Import_Courses::class );
-	}
-
-	/**
 	 * Get the tasks of this import job.
 	 *
 	 * @return Sensei_Data_Port_Task_Interface[]
 	 */
 	public function get_tasks() {
+		if ( ! isset( $this->tasks ) ) {
+			$this->tasks              = [];
+			$this->tasks['questions'] = $this->initialize_task( Sensei_Import_Questions::class );
+			$this->tasks['lessons']   = $this->initialize_task( Sensei_Import_Lessons::class );
+			$this->tasks['courses']   = $this->initialize_task( Sensei_Import_Courses::class );
+		}
+
 		return $this->tasks;
 	}
 
@@ -143,13 +133,6 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 
 		$file_config = $file_configs[ $file_key ];
 
-		if ( isset( $file_config['validator'] ) ) {
-			$validation_result = call_user_func( $file_config['validator'], $tmp_file );
-			if ( is_wp_error( $validation_result ) ) {
-				return $validation_result;
-			}
-		}
-
 		if ( isset( $file_config['mime_types'] ) ) {
 			$wp_filetype = wp_check_filetype_and_ext( $tmp_file, $file_name, $file_config['mime_types'] );
 
@@ -168,6 +151,13 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 					sprintf( __( 'File type is not supported. Must be one of the following: %s.', 'sensei-lms' ), implode( ', ', $valid_extensions ) ),
 					[ 'status' => 400 ]
 				);
+			}
+		}
+
+		if ( isset( $file_config['validator'] ) ) {
+			$validation_result = call_user_func( $file_config['validator'], $tmp_file );
+			if ( is_wp_error( $validation_result ) ) {
+				return $validation_result;
 			}
 		}
 

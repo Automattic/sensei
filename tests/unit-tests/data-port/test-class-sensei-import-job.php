@@ -45,7 +45,7 @@ class Sensei_Import_Job_Test extends WP_UnitTestCase {
 
 		$test_file = SENSEI_TEST_FRAMEWORK_DIR . '/data-port/data-files/questions.csv';
 		$test_file = $this->get_tmp_file( $test_file );
-		$job       = new Sensei_Import_Job( 'test-job' );
+		$job       = Sensei_Import_Job::create( 'test-job', 0 );
 
 		$result = $job->save_file( 'questions', $test_file, basename( $test_file ) );
 
@@ -72,7 +72,7 @@ class Sensei_Import_Job_Test extends WP_UnitTestCase {
 		$test_file_invalid = SENSEI_TEST_FRAMEWORK_DIR . '/data-port/data-files/invalid_file_type.tsv';
 		$test_file_invalid = $this->get_tmp_file( $test_file_invalid );
 
-		$job = new Sensei_Import_Job( 'test-job' );
+		$job = Sensei_Import_Job::create( 'test-job', 0 );
 
 		$result_valid = $job->save_file( 'questions', $test_file_valid, basename( $test_file_valid ) );
 
@@ -91,7 +91,7 @@ class Sensei_Import_Job_Test extends WP_UnitTestCase {
 	public function testSaveFileBadFile() {
 		$test_file = SENSEI_TEST_FRAMEWORK_DIR . '/data-port/data-files/invalid_file_type.tsv';
 		$test_file = $this->get_tmp_file( $test_file );
-		$job       = new Sensei_Import_Job( 'test-job' );
+		$job       = Sensei_Import_Job::create( 'test-job', 0 );
 
 		$result = $job->save_file( 'questions', $test_file, basename( $test_file ) );
 
@@ -103,7 +103,7 @@ class Sensei_Import_Job_Test extends WP_UnitTestCase {
 	 * Tests setting import ID in a job.
 	 */
 	public function testSetImportId() {
-		$job = new Sensei_Import_Job( 'test-job' );
+		$job = Sensei_Import_Job::create( 'test-job', 0 );
 		$job->set_import_id( 'question', 100, 101 );
 
 		$state = $job->jsonSerialize()['s'][ Sensei_Import_Job::MAPPED_ID_STATE_KEY ];
@@ -116,7 +116,7 @@ class Sensei_Import_Job_Test extends WP_UnitTestCase {
 	 * Tests getting import ID in a job.
 	 */
 	public function testGetImportId() {
-		$job = new Sensei_Import_Job( 'test-job' );
+		$job = Sensei_Import_Job::create( 'test-job', 0 );
 		$job->set_import_id( 'question', 100, 101 );
 
 		$this->assertEquals( 101, $job->get_import_id( 'question', 100 ) );
