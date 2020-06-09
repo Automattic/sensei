@@ -125,4 +125,26 @@ class Sensei_Data_Port_Model_Test extends WP_UnitTestCase {
 		$this->assertEquals( $expected, $model->get_data() );
 		$this->assertFalse( $model->is_valid(), 'Type did not match a valid field so should invalidate the entry' );
 	}
+
+	/**
+	 * Tests various scenarios with get value.
+	 */
+	public function testGetValue() {
+		$data = [
+			'test-string-allow-html' => '<em>This is great HTML</em>',
+			'test-string-no-html'    => 'Cool',
+			'email'                  => 'dinosaur@example.com',
+			'type'                   => 'cool',
+		];
+
+		$model = Sensei_Data_Port_Model_Mock::from_source_array( $data );
+
+		$this->assertEquals( 0, $model->get_value( 'favorite_int', true ), 'Default should be provided when not included in data' );
+		$this->assertEquals( null, $model->get_value( 'favorite_int', false ), 'Null should be provided when not included in data' );
+
+		$this->assertEquals( 'neat-slug', $model->get_value( 'slug', true ), 'Default should be provided when not included in data' );
+		$this->assertEquals( null, $model->get_value( 'slug', false ), 'Null should be provided when not included in data' );
+
+		$this->assertEquals( $data['email'], $model->get_value( 'email', true ), 'Actual value should be provided' );
+	}
 }

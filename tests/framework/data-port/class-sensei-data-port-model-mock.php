@@ -26,7 +26,8 @@ class Sensei_Data_Port_Model_Mock extends Sensei_Data_Port_Model {
 				'allow_html' => false,
 			],
 			'favorite_int'           => [
-				'type' => 'int',
+				'type'    => 'int',
+				'default' => 0,
 			],
 			'favorite_float'         => [
 				'type' => 'float',
@@ -36,7 +37,8 @@ class Sensei_Data_Port_Model_Mock extends Sensei_Data_Port_Model {
 				'required' => true,
 			],
 			'slug'                   => [
-				'type' => 'slug',
+				'type'    => 'slug',
+				'default' => 'neat-slug',
 			],
 			'type'                   => [
 				'type'     => 'string',
