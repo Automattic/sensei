@@ -5,9 +5,6 @@
  * @package sensei
  */
 
-use Jom\PersonalLog\Cli\ClearCache;
-use Jom\PersonalLog\Cli\Import;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
