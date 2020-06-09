@@ -117,7 +117,7 @@ abstract class Sensei_Data_Port_Model {
 			if ( isset( $data[ $field ] ) ) {
 				if (
 					isset( $field_config['validator'] )
-					&& ! call_user_func( $field_config['validator'], $data )
+					&& ! call_user_func( $field_config['validator'], $field, $data )
 				) {
 					return false;
 				}
