@@ -82,7 +82,7 @@ class Sensei_Import_Job_CLI extends WP_CLI_Command {
 				} else {
 					WP_CLI::error(
 						sprintf(
-						// translators: Placeholder %1$s is the name of the file; %2$s is the path provided.
+							// translators: Placeholder %1$s is the name of the file; %2$s is the path provided.
 							__( 'File provided for "%1$s" (%1$s) was not found', 'sensei-lms' ),
 							$file_key,
 							$file_path
@@ -115,7 +115,7 @@ class Sensei_Import_Job_CLI extends WP_CLI_Command {
 			if ( is_wp_error( $result ) ) {
 				WP_CLI::error(
 					sprintf(
-					// translators: Placeholder %1$s is the name of the file; %2$s is the path provided; %3$s is the validation error.
+						// translators: Placeholder %1$s is the name of the file; %2$s is the path provided; %3$s is the validation error.
 						__( 'File provided for "%1$s" (%2$s) was not not valid. Error: %3$s', 'sensei-lms' ),
 						$file_key,
 						$file_path,
