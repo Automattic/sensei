@@ -189,8 +189,18 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 				'allow_html' => true,
 			],
 			self::COLUMN_ANSWER          => [
-				'type'     => 'string',
-				'required' => true,
+				'type'      => 'string',
+				'validator' => static::validate_for_question_type( 'multiple-choice', true ),
+				'default'   => function( $field, $data ) {
+					if (
+						isset( $data[ self::COLUMN_TYPE ] )
+						&& 'boolean' === $data[ self::COLUMN_TYPE ]
+					) {
+						return 1;
+					}
+
+					return null;
+				},
 			],
 			self::COLUMN_ID              => [
 				'type' => 'string',
@@ -229,13 +239,16 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 				'type' => 'string',
 			],
 			self::COLUMN_TEXT_BEFORE_GAP => [
-				'type' => 'string',
+				'type'      => 'string',
+				'validator' => static::validate_for_question_type( 'gap-fill', false ),
 			],
 			self::COLUMN_GAP             => [
-				'type' => 'string',
+				'type'      => 'string',
+				'validator' => static::validate_for_question_type( 'gap-fill', false ),
 			],
 			self::COLUMN_TEXT_AFTER_GAP  => [
-				'type' => 'string',
+				'type'      => 'string',
+				'validator' => static::validate_for_question_type( 'gap-fill', false ),
 			],
 			self::COLUMN_UPLOAD_NOTES    => [
 				'type' => 'string',
@@ -244,6 +257,28 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 				'type' => 'string',
 			],
 		];
+	}
+
+	/**
+	 * Get a validator for a field that is only required when the question type is a specific value.
+	 *
+	 * @param string $type            Question type that makes this field required.
+	 * @param bool   $default_no_type Default validation result when no type value is set.
+	 *
+	 * @return closure
+	 */
+	private static function validate_for_question_type( $type, $default_no_type = true ) {
+		return function ( $field, $data ) use ( $type, $default_no_type ) {
+			if ( ! isset( $data[ self::COLUMN_TYPE ] ) ) {
+				return $default_no_type;
+			}
+
+			if ( $type === $data[ self::COLUMN_TYPE ] ) {
+				return isset( $data[ $field ] );
+			}
+
+			return true;
+		};
 	}
 
 	/**
