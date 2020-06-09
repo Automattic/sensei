@@ -171,7 +171,16 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 * @return array The logs.
 	 */
 	public function get_logs() {
-		return $this->logs;
+		return array_map(
+			function ( $log ) {
+				return [
+					'message' => $log[0],
+					'level'   => $log[1],
+					'data'    => $log[2],
+				];
+			},
+			$this->logs
+		);
 	}
 
 	/**

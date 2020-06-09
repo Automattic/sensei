@@ -120,37 +120,28 @@ class Sensei_Data_Port_Job_Test extends WP_UnitTestCase {
 		$job->clean_up();
 	}
 
-	public function testLogMessagePagination() {
+	public function testGetLogs() {
 		$job = new Sensei_Data_Port_Job_Mock( 'test-job', [ new Sensei_Data_Port_Task_Mock( true, 100, 100 ) ] );
-
-		$job->log( 'First course', 'First failed', 'course', '1' );
-		$job->log( 'First lesson', 'First failed', 'lesson', '1' );
-		$job->log( 'Third course', 'Third failed', 'course', '3' );
-		$job->log( 'Second lesson', 'Second failed', 'lesson', '2' );
+		$job->add_log_entry( 'First log entry', Sensei_Data_Port_Job::LOG_LEVEL_NOTICE );
+		$job->add_log_entry( 'Second log entry', Sensei_Data_Port_Job::LOG_LEVEL_ERROR );
+		$job->add_log_entry( 'Third log entry', Sensei_Data_Port_Job::LOG_LEVEL_INFO, [ 'test' => true ] );
 
 		$expected = [
-			'course' => [
-				[
-					'title' => 'First course',
-					'msg'   => 'First failed',
-					'id'    => '1',
-				],
-				[
-					'title' => 'Third course',
-					'msg'   => 'Third failed',
-					'id'    => '3',
-				],
+			[
+				'message' => 'First log entry',
+				'level'   => Sensei_Data_Port_Job::LOG_LEVEL_NOTICE,
+				'data'    => [],
 			],
-			'lesson' => [
-				[
-					'title' => 'First lesson',
-					'msg'   => 'First failed',
-					'id'    => '1',
-				],
-				[
-					'title' => 'Second lesson',
-					'msg'   => 'Second failed',
-					'id'    => '2',
+			[
+				'message' => 'Second log entry',
+				'level'   => Sensei_Data_Port_Job::LOG_LEVEL_ERROR,
+				'data'    => [],
+			],
+			[
+				'message' => 'Third log entry',
+				'level'   => Sensei_Data_Port_Job::LOG_LEVEL_INFO,
+				'data'    => [
+					'test' => true,
 				],
 			],
 		];
