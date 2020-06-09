@@ -22,6 +22,10 @@ describe( 'Admin can login and make sure Sensei LMS is activated', () => {
 		}
 
 		await page.click( `tr[data-slug="${ slug }"] .activate a` );
+
+		// Go to the plugins page again to make sure it's in the plugin page.
+		// It can be the setup wizard.
+		await AdminFlow.goToPlugins();
 		deactivateLink = await page.waitForSelector(
 			`tr[data-slug="${ slug }"] .deactivate a`
 		);
