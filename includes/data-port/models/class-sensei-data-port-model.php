@@ -117,12 +117,10 @@ abstract class Sensei_Data_Port_Model {
 			$config = $schema[ $key ];
 
 			if ( ! isset( $config['default'] ) ) {
-				$config['default'] = null;
+				$config['default'] = '';
 			}
 
-			if ( '' === $value ) {
-				$value = $config['default'];
-			}
+			$value = trim( $value );
 
 			if ( null !== $value ) {
 				switch ( $config['type'] ) {
