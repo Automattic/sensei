@@ -30,6 +30,7 @@
     "@automattic/calypso-build": "6.0.0",
     "@babel/cli": "7.10.1",
     "@babel/core": "7.10.1",
+    "@sheerun/mutationobserver-shim": "0.3.3",
     "@testing-library/react": "10.0.3",
     "@wordpress/babel-plugin-makepot": "3.5.0",
     "@wordpress/babel-preset-default": "4.12.1",
