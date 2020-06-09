@@ -10,60 +10,43 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * This class represents a data import job.
+ * This class represents a data import job CLI command.
  */
-class Sensei_Import_Job_CLI {
+class Sensei_Import_Job_CLI extends WP_CLI_Command {
 	/**
-	 * Run the import command.
+	 * Import CSV files with courses, lessons, and questions into Sensei LMS.
 	 *
-	 * @param array $args       Arguments passed without a name.
-	 * @param array $assoc_args Arguments passed with a name.
+	 * ## OPTIONS
+	 *
+	 * At least one of the following file parameters are required. It is also strongly recommended that you
+	 * provide the global option `--user`.
+	 *
+	 * [--questions=<path>]
+	 * : Path to the CSV file containing the questions.
+	 *
+	 * [--courses=<path>]
+	 * : Path to the CSV file containing the courses.
+	 *
+	 * [--lessons=<path>]
+	 * : Path to the CSV file containing the lessons and quizzes.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp sensei-import --user=admin --questions=questions.csv --courses=courses.csv --lessons=lessons.csv
+	 *
+	 * @when after_wp_load
+	 * @param array $args       Command arguments.
+	 * @param array $assoc_args Command arguments with names.
 	 */
 	public function __invoke( $args = [], $assoc_args = [] ) {
-		$files = [];
-		if ( ! empty( $assoc_args['questions'] ) ) {
-			$question_csv_file = getcwd() . DIRECTORY_SEPARATOR . $assoc_args['questions'];
-			if ( file_exists( $question_csv_file ) && is_readable( $question_csv_file ) ) {
-				$files['questions'] = $question_csv_file;
-			} else {
-				WP_CLI::error( "Questions file {$question_csv_file} does not exist." );
-				die();
-			}
+		if ( ! get_current_user_id() ) {
+			WP_CLI::confirm( __( 'No `--user` argument was provided. Do you want to create posts as a guest?', 'sensei-lms' ) );
 		}
 
-		if ( ! empty( $assoc_args['courses'] ) ) {
-			$courses_csv_file = getcwd() . DIRECTORY_SEPARATOR . $assoc_args['courses'];
-			if ( file_exists( $courses_csv_file ) && is_readable( $courses_csv_file ) ) {
-				$files['courses'] = $courses_csv_file;
-			} else {
-				WP_CLI::error( "Courses file {$courses_csv_file} does not exist." );
-				die();
-			}
-		}
-
-		if ( ! empty( $assoc_args['lessons'] ) ) {
-			$lessons_csv_file = getcwd() . DIRECTORY_SEPARATOR . $assoc_args['lessons'];
-			if ( file_exists( $courses_csv_file ) && is_readable( $lessons_csv_file ) ) {
-				$files['lessons'] = $lessons_csv_file;
-			} else {
-				WP_CLI::error( "Lessons file {$lessons_csv_file} does not exist." );
-				die();
-			}
-		}
-
-		if ( empty( $files ) ) {
-			WP_CLI::error( 'No file arguments were provided.' );
-			die();
-		}
+		$files = $this->collect_files( $assoc_args );
 
 		$job = new Sensei_Import_Job( uniqid() );
-		foreach ( $files as $file_key => $file_path ) {
-			$result = $job->save_file( $file_key, $file_path, basename( $file_path ) );
-			if ( is_wp_error( $result ) ) {
-				WP_CLI::error( "File for {$file_key} was not valid. Error: " . $result->get_error_message() );
-				die();
-			}
-		}
+		$this->set_files( $job, $files );
 		$job->start();
 
 		$progress  = \WP_CLI\Utils\make_progress_bar( 'Importing', 100 );
@@ -73,9 +56,75 @@ class Sensei_Import_Job_CLI {
 			$status    = $job->get_status();
 			$diff_tick = $status['percentage'] - $last_tick;
 			$progress->tick( $diff_tick );
-			$last_tick = $last_tick + $diff_tick;
+			$last_tick += $diff_tick;
 		}
 
 		$job->clean_up();
+	}
+
+	/**
+	 * Collect the files from passed arguments.
+	 *
+	 * @param array $assoc_args Arguments passed to the command.
+	 *
+	 * @return array
+	 */
+	private function collect_files( $assoc_args ) {
+		$files = [];
+
+		$file_keys = [ 'questions', 'courses', 'lessons' ];
+		foreach ( $file_keys as $file_key ) {
+			if ( ! empty( $assoc_args[ $file_key ] ) ) {
+				$file_path = getcwd() . DIRECTORY_SEPARATOR . $assoc_args['questions'];
+
+				if ( file_exists( $file_path ) && is_readable( $file_path ) ) {
+					$files[ $file_key ] = $file_path;
+				} else {
+					WP_CLI::error(
+						sprintf(
+						// translators: Placeholder %1$s is the name of the file; %2$s is the path provided.
+							__( 'File provided for "%1$s" (%1$s) was not found', 'sensei-lms' ),
+							$file_key,
+							$file_path
+						)
+					);
+
+					wp_die();
+				}
+			}
+		}
+
+		if ( empty( $files ) ) {
+			WP_CLI::error( __( 'No file arguments were provided.', 'sensei-lms' ) );
+
+			wp_die();
+		}
+
+		return $files;
+	}
+
+	/**
+	 * Add the files ot the job.
+	 *
+	 * @param Sensei_Import_Job $job   Job object.
+	 * @param array             $files Files to set.
+	 */
+	private function set_files( Sensei_Import_Job $job, $files ) {
+		foreach ( $files as $file_key => $file_path ) {
+			$result = $job->save_file( $file_key, $file_path, basename( $file_path ) );
+			if ( is_wp_error( $result ) ) {
+				WP_CLI::error(
+					sprintf(
+					// translators: Placeholder %1$s is the name of the file; %2$s is the path provided; %3$s is the validation error.
+						__( 'File provided for "%1$s" (%2$s) was not not valid. Error: %3$s', 'sensei-lms' ),
+						$file_key,
+						$file_path,
+						$result->get_error_message()
+					)
+				);
+
+				wp_die();
+			}
+		}
 	}
 }
