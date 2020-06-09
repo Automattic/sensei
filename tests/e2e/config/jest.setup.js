@@ -15,7 +15,7 @@ const takeScreenshot = ( testName, pageInstance = page ) => {
 
 	const filePath = path.join( screenshotsPath, fileName );
 
-	return pageInstance.screenshot( { path: filePath } );
+	return pageInstance.screenshot( { path: filePath, fullPage: true } );
 };
 
 /**
