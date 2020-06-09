@@ -1,9 +1,5 @@
 sudo: false
 dist: trusty
-services:
-  - xvfb
-  - mysql
-  - docker
 language: php
 notifications:
   email:
@@ -123,5 +119,5 @@ jobs:
         - npm run e2e-docker:up
         - npm run test:e2e
       after_script:
-        - npm run docker:down
+        - npm run e2e-docker:down
         - bash tests/e2e/bin/upload-screenshots.sh
