@@ -166,39 +166,12 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	}
 
 	/**
-	 * Get the logs of the job. The logs are grouped by type. The pagination works on the total number of logs which
-	 * means that depending on the arguments, multiple type of logs can be returned.
-	 *
-	 * @param int $offset  Offset for pagination.
-	 * @param int $limit   Limit for pagination.
+	 * Get the logs of the job.
 	 *
 	 * @return array The logs.
 	 */
-	public function get_logs( $offset = 0, $limit = 20 ) {
-
-		$result_logs = [];
-
-		foreach ( $this->logs as $type => $messages ) {
-
-			// Check if the logs should start from this group.
-			if ( $offset < count( $messages ) ) {
-				$added_logs           = array_slice( $messages, $offset, $limit );
-				$offset               = 0;
-				$result_logs[ $type ] = $added_logs;
-
-				if ( count( $added_logs ) >= $limit ) {
-					return $result_logs;
-				} else {
-					// Adjust the limit to take into account added logs.
-					$limit -= count( $added_logs );
-				}
-			} else {
-				// Adjust the offset for the skipped log entries.
-				$offset -= count( $messages );
-			}
-		}
-
-		return $result_logs;
+	public function get_logs() {
+		return $this->logs;
 	}
 
 	/**
