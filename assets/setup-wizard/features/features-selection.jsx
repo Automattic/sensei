@@ -1,4 +1,4 @@
-import { Button, CheckboxControl } from '@wordpress/components';
+import { Button, CheckboxControl, Notice } from '@wordpress/components';
 import classnames from 'classnames';
 import { __ } from '@wordpress/i18n';
 
@@ -42,6 +42,11 @@ const FeaturesSelection = ( {
 	return (
 		<>
 			<div className="sensei-setup-wizard__checkbox-list">
+				{ ( ! features || features.length === 0 ) && (
+					<Notice status="error" isDismissible={ false }>
+						{ __( 'No features found.', 'sensei-lms' ) }
+					</Notice>
+				) }
 				{ features.map( ( { slug, title, excerpt, link, status } ) => (
 					<CheckboxControl
 						key={ slug }

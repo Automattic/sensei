@@ -455,8 +455,13 @@ class Sensei_Setup_Wizard {
 			wp_cache_delete( 'alloptions', 'options' );
 		}
 
-		$sensei_extensions  = Sensei_Extensions::instance();
+		$extensions_filter  = [ 'hosted-location' => 'dotorg' ];
+		$extensions         = Sensei_Extensions::instance()->get_extensions( 'plugin', 'setup-wizard-extensions', $extensions_filter );
 		$installing_plugins = Sensei_Plugins_Installation::instance()->get_installing_plugins();
+
+		if ( ! $extensions ) {
+			$extensions = [];
+		}
 
 		$extensions = array_map(
 			function( $extension ) use ( $installing_plugins ) {
@@ -467,7 +472,7 @@ class Sensei_Setup_Wizard {
 
 				return $this->get_feature_with_status( $extension, $installing_plugins );
 			},
-			$sensei_extensions->get_extensions( 'plugin', 'setup-wizard-extensions', [ 'hosted-location' => 'dotorg' ] )
+			$extensions
 		);
 
 		return $extensions;
