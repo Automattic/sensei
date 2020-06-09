@@ -42,7 +42,7 @@ class Sensei_Data_Port_Job_Test extends WP_UnitTestCase {
 		$first_completed  = $this->mock_task_method( true, 100, 100, 'run' );
 		$second_completed = $this->mock_task_method( true, 100, 100, 'run' );
 
-		$job = new Sensei_Data_Port_Job_Mock( 'test-job', [ $first_completed, $second_completed ] );
+		$job = Sensei_Data_Port_Job_Mock::create_with_tasks( 'test-job', [ $first_completed, $second_completed ] );
 		$job->start();
 
 		$first_completed->expects( $this->never() )->method( 'run' );
@@ -65,7 +65,7 @@ class Sensei_Data_Port_Job_Test extends WP_UnitTestCase {
 		$completed = $this->mock_task_method( true, 100, 100, 'run' );
 		$pending   = $this->mock_task_method( false, 25, 100, 'run' );
 
-		$job = new Sensei_Data_Port_Job_Mock( 'test-job', [ $completed, $pending ] );
+		$job = Sensei_Data_Port_Job_Mock::create_with_tasks( 'test-job', [ $completed, $pending ] );
 		$job->start();
 
 		$completed->expects( $this->never() )->method( 'run' );
@@ -88,7 +88,7 @@ class Sensei_Data_Port_Job_Test extends WP_UnitTestCase {
 		$first_pending  = $this->mock_task_method( false, 50, 100, 'run' );
 		$second_pending = $this->mock_task_method( false, 0, 100, 'run' );
 
-		$job = new Sensei_Data_Port_Job_Mock( 'test-job', [ $first_pending, $second_pending ] );
+		$job = Sensei_Data_Port_Job_Mock::create_with_tasks( 'test-job', [ $first_pending, $second_pending ] );
 		$job->start();
 
 		$first_pending->expects( $this->once() )->method( 'run' );
@@ -112,7 +112,7 @@ class Sensei_Data_Port_Job_Test extends WP_UnitTestCase {
 		$first_completed  = $this->mock_task_method( true, 100, 100, 'clean_up' );
 		$second_completed = $this->mock_task_method( true, 100, 100, 'clean_up' );
 
-		$job = new Sensei_Data_Port_Job_Mock( 'test-job', [ $first_completed, $second_completed ] );
+		$job = Sensei_Data_Port_Job_Mock::create_with_tasks( 'test-job', [ $first_completed, $second_completed ] );
 
 		$first_completed->expects( $this->once() )->method( 'clean_up' );
 		$second_completed->expects( $this->once() )->method( 'clean_up' );
@@ -121,7 +121,7 @@ class Sensei_Data_Port_Job_Test extends WP_UnitTestCase {
 	}
 
 	public function testGetLogs() {
-		$job = new Sensei_Data_Port_Job_Mock( 'test-job', [ new Sensei_Data_Port_Task_Mock( true, 100, 100 ) ] );
+		$job = Sensei_Data_Port_Job_Mock::create_with_tasks( 'test-job', [ new Sensei_Data_Port_Task_Mock( true, 100, 100 ) ] );
 		$job->add_log_entry( 'First log entry', Sensei_Data_Port_Job::LOG_LEVEL_NOTICE );
 		$job->add_log_entry( 'Second log entry', Sensei_Data_Port_Job::LOG_LEVEL_ERROR );
 		$job->add_log_entry( 'Third log entry', Sensei_Data_Port_Job::LOG_LEVEL_INFO, [ 'test' => true ] );
@@ -150,7 +150,7 @@ class Sensei_Data_Port_Job_Test extends WP_UnitTestCase {
 	}
 
 	public function testStateIsPersisted() {
-		$job = new Sensei_Data_Port_Job_Mock( 'test-job', [ new Sensei_Data_Port_Task_Mock( true, 100, 100 ) ] );
+		$job = Sensei_Data_Port_Job_Mock::create_with_tasks( 'test-job', [ new Sensei_Data_Port_Task_Mock( true, 100, 100 ) ] );
 
 		$this->assertFalse( get_option( $job->get_name() ), 'Option should not be stored if persist is not called.' );
 
@@ -170,7 +170,7 @@ class Sensei_Data_Port_Job_Test extends WP_UnitTestCase {
 	public function testSaveFileBadFileKey() {
 		$test_file = SENSEI_TEST_FRAMEWORK_DIR . '/data-port/data-files/questions.csv';
 		$test_file = $this->get_tmp_file( $test_file );
-		$job       = new Sensei_Data_Port_Job_Mock( 'test-job' );
+		$job       = Sensei_Data_Port_Job_Mock::create( 'test-job', 0 );
 
 		$result = $job->save_file( 'dinosaurs', $test_file, basename( $test_file ) );
 
@@ -188,7 +188,7 @@ class Sensei_Data_Port_Job_Test extends WP_UnitTestCase {
 
 		$test_file = SENSEI_TEST_FRAMEWORK_DIR . '/data-port/data-files/questions.csv';
 		$test_file = $this->get_tmp_file( $test_file );
-		$job       = new Sensei_Data_Port_Job_Mock( 'test-job' );
+		$job       = Sensei_Data_Port_Job_Mock::create( 'test-job', 0 );
 
 		$job->save_file( 'questions', $test_file, basename( $test_file ) );
 		$result = $job->delete_file( 'questions' );
@@ -202,7 +202,7 @@ class Sensei_Data_Port_Job_Test extends WP_UnitTestCase {
 	 * Test deleting an non-existing file from a job.
 	 */
 	public function testDeleteFileNotExists() {
-		$job = new Sensei_Data_Port_Job_Mock( 'test-job' );
+		$job = Sensei_Data_Port_Job_Mock::create( 'test-job', 0 );
 
 		$result = $job->delete_file( 'questions' );
 

@@ -92,6 +92,13 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	private $percentage;
 
 	/**
+	 * User ID.
+	 *
+	 * @var int
+	 */
+	private $user_id;
+
+	/**
 	 * Files that have been saved and associated with this job.
 	 *
 	 * @var array {
@@ -106,11 +113,10 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 * Sensei_Data_Port_Job constructor. A data port instance can be created either when a new data port job is
 	 * registered or when an existing one is restored from a JSON string.
 	 *
-	 * @param string $job_id   Unique job id.
-	 * @param array  $args     Arguments to be used by subclasses.
-	 * @param string $json     A json string to restore internal state from.
+	 * @param string $job_id Unique job id.
+	 * @param string $json   A json string to restore internal state from.
 	 */
-	public function __construct( $job_id, $args = [], $json = '' ) {
+	protected function __construct( $job_id, $json = '' ) {
 		$this->job_id      = $job_id;
 		$this->has_changed = false;
 		$this->is_deleted  = false;
@@ -145,7 +151,22 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 			return null;
 		}
 
-		return new static( $job_id, [], $json );
+		return new static( $job_id, $json );
+	}
+
+	/**
+	 * Create a new job.
+	 *
+	 * @param string $job_id  The job id.
+	 * @param int    $user_id The user id.
+	 *
+	 * @return Sensei_Data_Port_Job
+	 */
+	public static function create( $job_id, $user_id ) {
+		$job = new static( $job_id );
+		$job->set_user_id( $user_id );
+
+		return $job;
 	}
 
 	/**
@@ -278,6 +299,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 			'i' => $this->is_started,
 			'p' => $this->percentage,
 			'f' => $this->files,
+			'u' => $this->user_id,
 		];
 	}
 
@@ -300,6 +322,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 		$this->is_started   = $json_arr['i'];
 		$this->percentage   = $json_arr['p'];
 		$this->files        = $json_arr['f'];
+		$this->user_id      = $json_arr['u'];
 	}
 
 	/**
@@ -572,5 +595,23 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	public function set_state( $state_key, $state ) {
 		$this->has_changed         = true;
 		$this->state[ $state_key ] = $state;
+	}
+
+	/**
+	 * Get the user ID.
+	 *
+	 * @return int
+	 */
+	public function get_user_id() {
+		return $this->user_id;
+	}
+
+	/**
+	 * Set the user ID.
+	 *
+	 * @param int $user_id User ID.
+	 */
+	private function set_user_id( $user_id ) {
+		$this->user_id = $user_id;
 	}
 }

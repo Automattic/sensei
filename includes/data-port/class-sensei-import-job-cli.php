@@ -45,7 +45,7 @@ class Sensei_Import_Job_CLI extends WP_CLI_Command {
 
 		$files = $this->collect_files( $assoc_args );
 
-		$job = new Sensei_Import_Job( uniqid() );
+		$job = Sensei_Import_Job::create( uniqid(), get_current_user_id() );
 		$this->set_files( $job, $files );
 		$job->start();
 
