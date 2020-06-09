@@ -116,7 +116,9 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 			'post_type' => self::POST_TYPE,
 		];
 
+		$use_defaults = true;
 		if ( $this->get_post_id() ) {
+			$use_defaults  = false;
 			$postarr['ID'] = $this->get_post_id();
 		} elseif ( get_current_user_id() ) {
 			$postarr['post_author'] = get_current_user_id();
@@ -126,16 +128,19 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 
 		$postarr['post_title'] = $data[ self::COLUMN_QUESTION ];
 
-		if ( array_key_exists( self::COLUMN_SLUG, $data ) ) {
-			$postarr['post_name'] = $data[ self::COLUMN_SLUG ];
+		$post_name = $this->get_value( self::COLUMN_SLUG, $use_defaults );
+		if ( null !== $post_name ) {
+			$postarr['post_name'] = $post_name;
 		}
 
-		if ( array_key_exists( self::COLUMN_DESCRIPTION, $data ) ) {
-			$postarr['post_content'] = $data[ self::COLUMN_DESCRIPTION ];
+		$post_content = $this->get_value( self::COLUMN_DESCRIPTION, $use_defaults );
+		if ( null !== $post_content ) {
+			$postarr['post_content'] = $post_content;
 		}
 
-		if ( array_key_exists( self::COLUMN_STATUS, $data ) ) {
-			$postarr['post_status'] = $data[ self::COLUMN_STATUS ];
+		$post_status = $this->get_value( self::COLUMN_STATUS, $use_defaults );
+		if ( null !== $post_status ) {
+			$postarr['post_status'] = $post_status;
 		}
 
 		return $postarr;
@@ -167,11 +172,12 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 	 *
 	 * @return array {
 	 *     @type array $$field_name {
-	 *          @type string $type       Type of data. Options: string, int, float, bool, slug, ref, email, url.
-	 *          @type string $pattern    Regular expression that the value should match (Optional).
-	 *          @type mixed  $default    Default value if not set or invalid. Default is `null` (Optional).
-	 *          @type bool   $required   True if a non-empty value is required. Default is `false` (Optional).
-	 *          @type bool   $allow_html True if HTML should be allowed. Default is `false` (Optional).
+	 *          @type string   $type       Type of data. Options: string, int, float, bool, slug, ref, email, url.
+	 *          @type string   $pattern    Regular expression that the value should match (Optional).
+	 *          @type mixed    $default    Default value if not set or invalid. Default is `null` (Optional).
+	 *          @type bool     $required   True if a non-empty value is required. Default is `false` (Optional).
+	 *          @type bool     $allow_html True if HTML should be allowed. Default is `false` (Optional).
+	 *          @type callable $validator  Callable to use when validating data (Optional).
 	 *     }
 	 * }
 	 */
