@@ -96,7 +96,7 @@ abstract class Sensei_Data_Port_Model {
 
 		if ( $fallback_default && isset( $config['default'] ) ) {
 			if ( is_callable( $config['default'] ) ) {
-				return call_user_func( $config['default'], $field );
+				return call_user_func( $config['default'], $field, $this->data );
 			}
 
 			return $config['default'];
