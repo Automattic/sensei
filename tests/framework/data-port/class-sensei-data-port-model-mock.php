@@ -14,6 +14,10 @@ class Sensei_Data_Port_Model_Mock extends Sensei_Data_Port_Model {
 		return true;
 	}
 
+	public function set_post_id( $id ) {
+		parent::set_post_id( $id );
+	}
+
 	public static function get_schema() {
 		return [
 			'test-string-allow-html' => [

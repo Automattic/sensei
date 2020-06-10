@@ -72,12 +72,11 @@ abstract class Sensei_Data_Port_Model {
 	/**
 	 * Get the value of a field.
 	 *
-	 * @param string $field            Field name.
-	 * @param bool   $fallback_default Fallback to default value if no value exists.
+	 * @param string $field Field name.
 	 *
 	 * @return mixed
 	 */
-	public function get_value( $field, $fallback_default = false ) {
+	public function get_value( $field ) {
 		if (
 			isset( $this->data[ $field ] )
 			&& '' !== $this->data[ $field ]
@@ -94,7 +93,7 @@ abstract class Sensei_Data_Port_Model {
 		$value  = isset( $this->data[ $field ] ) ? '' : null;
 		$config = $schema[ $field ];
 
-		if ( $fallback_default && isset( $config['default'] ) ) {
+		if ( ! $this->get_post_id() && isset( $config['default'] ) ) {
 			if ( is_callable( $config['default'] ) ) {
 				return call_user_func( $config['default'], $field, $this->data );
 			}

@@ -139,12 +139,13 @@ class Sensei_Data_Port_Model_Test extends WP_UnitTestCase {
 
 		$model = Sensei_Data_Port_Model_Mock::from_source_array( $data );
 
-		$this->assertEquals( 0, $model->get_value( 'favorite_int', true ), 'Default should be provided when not included in data' );
-		$this->assertEquals( null, $model->get_value( 'favorite_int', false ), 'Null should be provided when not included in data' );
+		$model->set_post_id(1);
+		$this->assertEquals( null, $model->get_value( 'favorite_int' ), 'Null should be provided when not included in data' );
+		$this->assertEquals( null, $model->get_value( 'slug' ), 'Null should be provided when not included in data' );
 
-		$this->assertEquals( 'neat-slug', $model->get_value( 'slug', true ), 'Default should be provided when not included in data' );
-		$this->assertEquals( null, $model->get_value( 'slug', false ), 'Null should be provided when not included in data' );
-
-		$this->assertEquals( $data['email'], $model->get_value( 'email', true ), 'Actual value should be provided' );
+		$model->set_post_id(null);
+		$this->assertEquals( 0, $model->get_value( 'favorite_int' ), 'Default should be provided when not included in data' );
+		$this->assertEquals( 'neat-slug', $model->get_value( 'slug' ), 'Default should be provided when not included in data' );
+		$this->assertEquals( $data['email'], $model->get_value( 'email' ), 'Actual value should be provided' );
 	}
 }
