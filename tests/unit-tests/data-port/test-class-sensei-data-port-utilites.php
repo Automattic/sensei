@@ -225,4 +225,41 @@ class Sensei_Data_Port_Utilities_Test extends WP_UnitTestCase {
 	public function testReplaceCurlyQuotes( $curly, $straight ) {
 		$this->assertEquals( $straight, Sensei_Data_Port_Utilities::replace_curly_quotes( $curly ) );
 	}
+
+	/**
+	 * Get a list separated by comma..
+	 */
+	public function commaSeparatedLists() {
+		return [
+			[
+				'A, B, "C, D", E',
+				[ 'A', 'B', 'C, D', 'E' ],
+				[ 'A', 'B', '"C, D"', 'E' ],
+			],
+			[
+				'My favorite animal is a dinosaur, "This is a long, long sentence", "This doesn\'t have any commas"',
+				[ 'My favorite animal is a dinosaur', 'This is a long, long sentence', 'This doesn\'t have any commas' ],
+				[ 'My favorite animal is a dinosaur', '"This is a long, long sentence"', '"This doesn\'t have any commas"' ],
+			],
+			[
+				'“Dogs, Cats”, "Mixed quotes", Awesome',
+				[ 'Dogs, Cats', 'Mixed quotes', 'Awesome' ],
+				[ '"Dogs, Cats"', '"Mixed quotes"', 'Awesome' ],
+			],
+		];
+	}
+
+	/**
+	 * Make sure curly quotes are replaced with straight quotes.
+	 *
+	 * @param string $list_str         List as a string.
+	 * @param array  $list_no_quotes   List with the quotes stripped.
+	 * @param array  $list_with_quotes List with the quotes still.
+	 *
+	 * @dataProvider commaSeparatedLists
+	 */
+	public function testSplitListSafely( $list_str, $list_no_quotes, $list_with_quotes ) {
+		$this->assertEquals( $list_no_quotes, Sensei_Data_Port_Utilities::split_list_safely( $list_str, true ) );
+		$this->assertEquals( $list_with_quotes, Sensei_Data_Port_Utilities::split_list_safely( $list_str, false ) );
+	}
 }

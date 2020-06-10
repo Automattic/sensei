@@ -14,6 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Data_Port_Utilities {
 
+	const CHARS_WHITESPACE_AND_QUOTES = " \"\t\n\r\0\x0B";
+
 	/**
 	 * Create a user. If the user exists, the method simply returns the user id..
 	 *
@@ -149,6 +151,32 @@ class Sensei_Data_Port_Utilities {
 		}
 
 		return get_term_by( 'id', $term_arr['term_id'], $taxonomy_name );
+	}
+
+	/**
+	 * Split a list and ignore commas enclosed in quotes. Legitimate quotes should be HTML escaped.
+	 *
+	 * @param string $str_list      List in string form, separated by commas.
+	 * @param bool   $remove_quotes Remove the surrounding quotes.
+	 *
+	 * @return array|string[]
+	 */
+	public static function split_list_safely( $str_list, $remove_quotes = false ) {
+		$str_list = self::replace_curly_quotes( $str_list );
+		$list     = preg_split( '/,(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)/', $str_list );
+
+		if ( $remove_quotes ) {
+			$list = array_map(
+				function ( $value ) {
+					return trim( $value, self::CHARS_WHITESPACE_AND_QUOTES );
+				},
+				$list
+			);
+		} else {
+			$list = array_map( 'trim', $list );
+		}
+
+		return $list;
 	}
 
 	/**
