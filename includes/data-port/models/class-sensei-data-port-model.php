@@ -45,11 +45,9 @@ abstract class Sensei_Data_Port_Model {
 		$self = new static();
 		$self->restore_from_source_array( $data );
 
-		if ( $self->is_valid() ) {
-			$post_id = $self->get_existing_post_id();
-			if ( $post_id ) {
-				$self->set_post_id( $post_id );
-			}
+		$post_id = $self->get_existing_post_id();
+		if ( $post_id ) {
+			$self->set_post_id( $post_id );
 		}
 
 		return $self;
