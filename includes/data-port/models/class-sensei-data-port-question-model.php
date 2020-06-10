@@ -326,10 +326,10 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 				$values['_question_wrong_answers'][] = $answer;
 			}
 
-			// @todo This isn't working.
 			$values['_answer_order'][] = md5( $answer );
 		}
 
+		$values['_answer_order']       = implode( ',', $values['_answer_order'] );
 		$values['_right_answer_count'] = count( $values['_question_right_answer'] );
 		$values['_wrong_answer_count'] = count( $values['_question_wrong_answers'] );
 
@@ -342,7 +342,6 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 	 * @return true|WP_Error
 	 */
 	private function sync_taxonomies() {
-
 		$taxonomies = $this->get_taxonomy_terms();
 
 		foreach ( $taxonomies as $taxonomy_type => $terms ) {
