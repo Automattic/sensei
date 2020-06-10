@@ -15,6 +15,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 	const POST_TYPE = 'question';
 
+	const TAXONOMY_QUESTION_TYPE     = 'question-type';
+	const TAXONOMY_QUESTION_CATEGORY = 'question-category';
+
 	const COLUMN_QUESTION        = 'question';
 	const COLUMN_ANSWER          = 'answer';
 	const COLUMN_ID              = 'id';
@@ -55,6 +58,7 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 					'post_type'      => self::POST_TYPE,
 					'name'           => $data[ self::COLUMN_SLUG ],
 					'posts_per_page' => 1,
+					'post_status'    => 'any',
 				]
 			);
 
@@ -171,11 +175,11 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 
 			$current_value = null;
 			if ( ! empty( $current_meta[ $field ] ) ) {
-				$value = $current_meta[ $field ][0];
+				$current_value = $current_meta[ $field ][0];
 			}
 
-			if ( $value !== $current_value ) {
-				update_post_meta( $this->get_post_id(), $field, $value );
+			if ( $new_value !== $current_value ) {
+				update_post_meta( $this->get_post_id(), $field, $new_value );
 			}
 		}
 
@@ -226,7 +230,6 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 		// Process answers.
 		$values = [
 			'_question_right_answer'  => '',
-			'_question_right_answers' => '',
 			'_question_wrong_answers' => '',
 			'_wrong_answer_count'     => '',
 			'_right_answer_count'     => '',
@@ -242,7 +245,7 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 			case 'boolean':
 				$answers_raw = $this->get_value( self::COLUMN_ANSWER );
 				$values      = [
-					'_question_right_answers' => 1 === intval( $answers_raw ) ? 1 : 0,
+					'_question_right_answer' => 1 === intval( $answers_raw ) ? 1 : 0,
 				];
 
 				break;
@@ -253,7 +256,7 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 				$answer[] = $this->get_value( self::COLUMN_TEXT_AFTER_GAP );
 
 				$values = [
-					'_question_right_answers' => implode( '||', $answer ),
+					'_question_right_answer' => implode( '||', $answer ),
 				];
 
 				break;
@@ -298,18 +301,16 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 	 */
 	private function parse_multiple_choice_answers() {
 		$values = [
-			'_question_right_answers' => [],
+			'_question_right_answer'  => [],
 			'_question_wrong_answers' => [],
 			'_right_answer_count'     => null,
 			'_wrong_answer_count'     => null,
 			'_answer_order'           => [],
 		];
 
-		$answers_raw   = Sensei_Data_Port_Utilities::replace_curly_quotes( $this->get_value( self::COLUMN_ANSWER ) );
-		$split_answers = preg_split( '/,(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)/', $answers_raw );
+		$split_answers = Sensei_Data_Port_Utilities::split_list_safely( $this->get_value( self::COLUMN_ANSWER ), false );
 		foreach ( $split_answers as $answer_raw ) {
-			$answer_raw = trim( $answer_raw );
-			$type       = strtolower( substr( $answer_raw, 0, 6 ) );
+			$type = strtolower( substr( $answer_raw, 0, 6 ) );
 
 			if ( ! in_array( $type, [ 'right:', 'wrong:' ], true ) ) {
 				continue;
@@ -317,18 +318,19 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 
 			$type   = substr( $type, 0, 5 );
 			$answer = trim( substr( $answer_raw, 6 ) );
-			$answer = trim( preg_replace( '/^(\'(.*)\'|"(.*)")$/', '$2$3', $answer ) );
+			$answer = trim( $answer, Sensei_Data_Port_Utilities::CHARS_WHITESPACE_AND_QUOTES );
 
 			if ( 'right' === $type ) {
-				$values['_question_right_answers'][] = $answer;
+				$values['_question_right_answer'][] = $answer;
 			} else {
 				$values['_question_wrong_answers'][] = $answer;
 			}
 
+			// @todo This isn't working.
 			$values['_answer_order'][] = md5( $answer );
 		}
 
-		$values['_right_answer_count'] = count( $values['_question_right_answers'] );
+		$values['_right_answer_count'] = count( $values['_question_right_answer'] );
 		$values['_wrong_answer_count'] = count( $values['_question_wrong_answers'] );
 
 		return $values;
@@ -341,7 +343,44 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 	 */
 	private function sync_taxonomies() {
 
+		$taxonomies = $this->get_taxonomy_terms();
+
+		foreach ( $taxonomies as $taxonomy_type => $terms ) {
+			if ( ! wp_set_post_terms( $this->get_post_id(), $terms, $taxonomy_type ) ) {
+				// translators: Placeholder is taxonomy type.
+				return new WP_Error( 'sensei_data_port_import_taxonomy_failed', sprintf( __( 'Unable to set "%s" taxonomies', 'sensei-lms' ), $taxonomy_type ) );
+			}
+		}
+
 		return true;
+	}
+
+	/**
+	 * Get the terms for the question, keyed by taxonomy type.
+	 *
+	 * @return array
+	 */
+	private function get_taxonomy_terms() {
+		$taxonomy_terms = [];
+
+		$question_type = $this->get_value( self::COLUMN_TYPE );
+		if ( $question_type ) {
+			$taxonomy_terms[ self::TAXONOMY_QUESTION_TYPE ] = [ $question_type ];
+		}
+
+		$taxonomy_terms[ self::TAXONOMY_QUESTION_CATEGORY ] = [];
+
+		$category_list = Sensei_Data_Port_Utilities::split_list_safely( $this->get_value( self::COLUMN_CATEGORIES ), true );
+		if ( ! empty( $category_list ) ) {
+			foreach ( $category_list as $category ) {
+				$category_term = Sensei_Data_Port_Utilities::get_term( $category, self::TAXONOMY_QUESTION_CATEGORY );
+				if ( $category_term ) {
+					$taxonomy_terms[ self::TAXONOMY_QUESTION_CATEGORY ][] = $category_term->term_id;
+				}
+			}
+		}
+
+		return $taxonomy_terms;
 	}
 
 	/**
