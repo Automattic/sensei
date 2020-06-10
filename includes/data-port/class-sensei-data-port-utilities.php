@@ -150,4 +150,15 @@ class Sensei_Data_Port_Utilities {
 
 		return get_term_by( 'id', $term_arr['term_id'], $taxonomy_name );
 	}
+
+	/**
+	 * Replace the curly quotes with straight quotes in the string.
+	 *
+	 * @param string $string String that possibly has curly quotes.
+	 *
+	 * @return string
+	 */
+	public static function replace_curly_quotes( $string ) {
+		return str_replace( [ '“', '”' ], '"', $string );
+	}
 }

@@ -200,4 +200,29 @@ class Sensei_Data_Port_Utilities_Test extends WP_UnitTestCase {
 			$last_term = get_term_by( 'id', $last_term->parent, $taxonomy_name );
 		}
 	}
+
+	/**
+	 * Get curly quote test strings.
+	 */
+	public function curlyStrings() {
+		return [
+			[
+				'I think “scary” dinosaurs aren\'t that scary',
+				'I think "scary" dinosaurs aren\'t that scary',
+			],
+			[
+				'“mean dog”',
+				'"mean dog"',
+			],
+		];
+	}
+
+	/**
+	 * Make sure curly quotes are replaced with straight quotes.
+	 *
+	 * @dataProvider curlyStrings
+	 */
+	public function testReplaceCurlyQuotes( $curly, $straight ) {
+		$this->assertEquals( $straight, Sensei_Data_Port_Utilities::replace_curly_quotes( $curly ) );
+	}
 }
