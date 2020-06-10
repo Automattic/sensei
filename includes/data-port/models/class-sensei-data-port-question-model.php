@@ -77,14 +77,14 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 			return $post_object_result;
 		}
 
-		$meta_result = $this->sync_meta();
-		if ( is_wp_error( $meta_result ) ) {
-			return $meta_result;
-		}
-
 		$taxonomy_result = $this->sync_taxonomies();
 		if ( is_wp_error( $taxonomy_result ) ) {
 			return $taxonomy_result;
+		}
+
+		$meta_result = $this->sync_meta();
+		if ( is_wp_error( $meta_result ) ) {
+			return $meta_result;
 		}
 
 		return true;
@@ -160,8 +160,10 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 		$current_meta = get_post_meta( $this->get_post_id() );
 		$meta_fields  = $this->get_meta_fields();
 
-		foreach ( $meta_fields as $field => $config ) {
-			$new_value = call_user_func( $config['callable'], $field );
+		foreach ( $meta_fields as $field => $new_value ) {
+			if ( is_callable( $new_value ) ) {
+				$new_value = call_user_func( $new_value, $field );
+			}
 
 			if ( null === $new_value ) {
 				continue;
@@ -181,41 +183,56 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 	}
 
 	/**
-	 * Get the meta fields and their value generator.
+	 * Get the meta fields and their values.
 	 *
 	 * @return array
 	 */
 	private function get_meta_fields() {
 		$fields = [];
 
-		$fields['_question_grade'] = [
-			'callable' => $this->get_simple_mapped_value( self::COLUMN_GRADE ),
-		];
+		$fields['_question_grade']  = $this->get_value( self::COLUMN_GRADE );
+		$fields['_random_order']    = $this->get_value( self::COLUMN_RANDOMISE );
+		$fields['_answer_feedback'] = $this->get_value( self::COLUMN_FEEDBACK );
+		$fields['_question_media']  = $this->get_question_media_value();
 
-		$fields['_question_grade'] = [
-			'callable' => $this->get_simple_mapped_value( self::COLUMN_GRADE ),
-		];
-
-		$answer_field_callback = $this->get_answer_field();
-
-		$fields['_question_right_answer']  = [ 'callable' => $answer_field_callback ];
-		$fields['_question_right_answers'] = [ 'callable' => $answer_field_callback ];
-		$fields['_question_wrong_answers'] = [ 'callable' => $answer_field_callback ];
-		$fields['_wrong_answer_count']     = [ 'callable' => $answer_field_callback ];
-		$fields['_right_answer_count']     = [ 'callable' => $answer_field_callback ];
-		$fields['_answer_order']           = [ 'callable' => $answer_field_callback ];
+		$answer_field_values = $this->get_answer_field_values();
+		$fields              = array_merge( $fields, $answer_field_values );
 
 		return $fields;
 	}
 
 	/**
-	 * Process answer field and return callback for various fields.
+	 * Get the question media value.
 	 *
-	 * @return Closure
+	 * @return null|string
 	 */
-	private function get_answer_field() {
+	private function get_question_media_value() {
+		$value = $this->get_value( self::COLUMN_MEDIA );
+		if ( null === $value ) {
+			return null;
+		}
+
+		// @todo Implement.
+
+		return null;
+	}
+
+	/**
+	 * Process answer field and return fields..
+	 *
+	 * @return array
+	 */
+	private function get_answer_field_values() {
 		// Process answers.
-		$values        = [];
+		$values = [
+			'_question_right_answer'  => '',
+			'_question_right_answers' => '',
+			'_question_wrong_answers' => '',
+			'_wrong_answer_count'     => '',
+			'_right_answer_count'     => '',
+			'_answer_order'           => '',
+		];
+
 		$question_type = $this->get_value( self::COLUMN_TYPE );
 
 		switch ( $question_type ) {
@@ -225,7 +242,7 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 			case 'boolean':
 				$answers_raw = $this->get_value( self::COLUMN_ANSWER );
 				$values      = [
-					'_question_right_answers' => '1' === $answers_raw ? 1 : 0,
+					'_question_right_answers' => 1 === intval( $answers_raw ) ? 1 : 0,
 				];
 
 				break;
@@ -249,9 +266,7 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 				break;
 		}
 
-		return function( $field ) use ( $values ) {
-			return isset( $values[ $field ] ) ? $values[ $field ] : null;
-		};
+		return $values;
 	}
 
 	/**
@@ -290,8 +305,8 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 			'_answer_order'           => [],
 		];
 
-		$answers_raw   = $this->get_value( self::COLUMN_ANSWER );
-		$split_answers = preg_split( ',(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)', $answers_raw );
+		$answers_raw   = Sensei_Data_Port_Utilities::replace_curly_quotes( $this->get_value( self::COLUMN_ANSWER ) );
+		$split_answers = preg_split( '/,(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)/', $answers_raw );
 		foreach ( $split_answers as $answer_raw ) {
 			$answer_raw = trim( $answer_raw );
 			$type       = strtolower( substr( $answer_raw, 0, 6 ) );
@@ -317,25 +332,6 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 		$values['_wrong_answer_count'] = count( $values['_question_wrong_answers'] );
 
 		return $values;
-	}
-
-	/**
-	 * Get a simple callable that returns a one-for-one mapped value.
-	 *
-	 * @param string $field Get the mapped value for a field.
-	 *
-	 * @return Closure
-	 */
-	private function get_simple_mapped_value( $field ) {
-		return function() use ( $field ) {
-			$data = $this->get_data();
-
-			if ( isset( $data[ $field ] ) ) {
-				return $data[ $field ];
-			}
-
-			return null;
-		};
 	}
 
 	/**
