@@ -93,6 +93,7 @@ abstract class Sensei_Data_Port_Model {
 		$value  = isset( $this->data[ $field ] ) ? '' : null;
 		$config = $schema[ $field ];
 
+		// If we're creating a new post, get the default value.
 		if ( ! $this->get_post_id() && isset( $config['default'] ) ) {
 			if ( is_callable( $config['default'] ) ) {
 				return call_user_func( $config['default'], $field, $this->data );
