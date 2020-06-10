@@ -26,8 +26,8 @@ class Sensei_Import_Questions_Tests extends WP_UnitTestCase {
 	 */
 	public function testValidateSourceFileMissingColumns() {
 		$csv = <<< EOL
-ID,Question,Description
-1,"Do you like dogs?","This is a great question"
+ID,Slug,Description
+1,"do-you-like-dogs","This is a great question"
 EOL;
 
 		$tmp_file = wp_tempnam();
