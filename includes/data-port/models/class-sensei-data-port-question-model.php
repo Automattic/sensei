@@ -34,6 +34,13 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 	const COLUMN_TEACHER_NOTES   = 'teacher notes';
 
 	/**
+	 * Cached question type.
+	 *
+	 * @var string
+	 */
+	private $question_type;
+
+	/**
 	 * Check to see if the post already exists in the database.
 	 *
 	 * @return int
@@ -116,9 +123,7 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 			'post_type' => self::POST_TYPE,
 		];
 
-		$use_defaults = true;
 		if ( $this->get_post_id() ) {
-			$use_defaults  = false;
 			$postarr['ID'] = $this->get_post_id();
 		} elseif ( get_current_user_id() ) {
 			$postarr['post_author'] = get_current_user_id();
@@ -128,17 +133,17 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 
 		$postarr['post_title'] = $data[ self::COLUMN_QUESTION ];
 
-		$post_name = $this->get_value( self::COLUMN_SLUG, $use_defaults );
+		$post_name = $this->get_value( self::COLUMN_SLUG );
 		if ( null !== $post_name ) {
 			$postarr['post_name'] = $post_name;
 		}
 
-		$post_content = $this->get_value( self::COLUMN_DESCRIPTION, $use_defaults );
+		$post_content = $this->get_value( self::COLUMN_DESCRIPTION );
 		if ( null !== $post_content ) {
 			$postarr['post_content'] = $post_content;
 		}
 
-		$post_status = $this->get_value( self::COLUMN_STATUS, $use_defaults );
+		$post_status = $this->get_value( self::COLUMN_STATUS );
 		if ( null !== $post_status ) {
 			$postarr['post_status'] = $post_status;
 		}
@@ -247,6 +252,28 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 		return function( $field ) use ( $values ) {
 			return isset( $values[ $field ] ) ? $values[ $field ] : null;
 		};
+	}
+
+	/**
+	 * Get the question type.
+	 *
+	 * @return string|null
+	 */
+	public function get_question_type() {
+		$data_column = $this->get_value( self::COLUMN_TYPE );
+		if ( $data_column ) {
+			return $data_column;
+		}
+
+		if ( ! $this->get_post_id() ) {
+			return null;
+		}
+
+		if ( ! $this->question_type ) {
+			$this->question_type = Sensei()->question->get_question_type( $this->get_post_id() );
+		}
+
+		return $this->question_type;
 	}
 
 	/**
@@ -422,12 +449,15 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 	 * @return closure
 	 */
 	private static function validate_for_question_type( $type, $default_no_type = true ) {
-		return function ( $field, $data ) use ( $type, $default_no_type ) {
-			if ( ! isset( $data[ self::COLUMN_TYPE ] ) ) {
+		return function ( $field, Sensei_Data_Port_Question_Model $model ) use ( $type, $default_no_type ) {
+			$data          = $model->get_data();
+			$question_type = $model->get_question_type();
+
+			if ( ! $question_type ) {
 				return $default_no_type;
 			}
 
-			if ( $type === $data[ self::COLUMN_TYPE ] ) {
+			if ( $type === $question_type ) {
 				return isset( $data[ $field ] );
 			}
 

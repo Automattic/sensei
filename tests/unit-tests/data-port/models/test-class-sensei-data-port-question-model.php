@@ -62,7 +62,6 @@ class Sensei_Data_Port_Question_Model_Test extends WP_UnitTestCase {
 			Sensei_Data_Port_Question_Model::COLUMN_ANSWER => 'Right:Yes, Wrong: No',
 			Sensei_Data_Port_Question_Model::COLUMN_SLUG   => 'do-you-like-dinosaurs',
 		];
-
 		$post_id = $this->factory->post->create(
 			[
 				'post_type' => 'question',
