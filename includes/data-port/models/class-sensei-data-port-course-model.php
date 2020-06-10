@@ -68,6 +68,7 @@ class Sensei_Data_Port_Course_Model extends Sensei_Data_Port_Model {
 					'post_type'      => self::POST_TYPE,
 					'name'           => $data[ self::COLUMN_SLUG ],
 					'posts_per_page' => 1,
+					'post_status'    => 'any',
 				]
 			);
 
@@ -85,7 +86,15 @@ class Sensei_Data_Port_Course_Model extends Sensei_Data_Port_Model {
 	 * @return true|WP_Error
 	 */
 	public function sync_post() {
-		$post_id = wp_insert_post( $this->get_course_args() );
+		$teacher = $this->default_author;
+
+		$teacher_username = $this->get_value( self::COLUMN_TEACHER_USERNAME );
+
+		if ( ! empty( $teacher_username ) ) {
+			$teacher = Sensei_Data_Port_Utilities::create_user( $teacher_username, $this->get_value( self::COLUMN_TEACHER_EMAIL ) );
+		}
+
+		$post_id = wp_insert_post( $this->get_course_args( $teacher ) );
 
 		if ( is_wp_error( $post_id ) ) {
 			return $post_id;
@@ -98,6 +107,12 @@ class Sensei_Data_Port_Course_Model extends Sensei_Data_Port_Model {
 			);
 		}
 
+		$result = $this->set_course_modules( $post_id, $teacher );
+
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+
 		$result = $this->add_thumbnail_to_post( self::COLUMN_IMAGE, $post_id );
 
 		return is_wp_error( $result ) ? $result : true;
@@ -106,20 +121,16 @@ class Sensei_Data_Port_Course_Model extends Sensei_Data_Port_Model {
 	/**
 	 * Retrieve the arguments for wp_insert_post for this course.
 	 *
+	 * @param int $teacher  The teacher id.
+	 *
 	 * @return array
 	 */
-	private function get_course_args() {
-		$author = $this->default_author;
+	private function get_course_args( $teacher ) {
 
-		$teacher_username = $this->get_value( self::COLUMN_TEACHER_USERNAME );
-
-		if ( ! empty( $teacher_username ) ) {
-			$author = Sensei_Data_Port_Utilities::create_user( $teacher_username, $this->get_value( self::COLUMN_TEACHER_EMAIL ) );
-		}
-
+		//todo check post status on update
 		$args = [
 			'ID'          => $this->get_post_id(),
-			'post_author' => $author,
+			'post_author' => $teacher,
 			'post_status' => 'draft',
 			'post_type'   => 'course',
 		];
@@ -176,6 +187,63 @@ class Sensei_Data_Port_Course_Model extends Sensei_Data_Port_Model {
 		}
 
 		return $meta;
+	}
+
+	private function set_course_modules( $course_id, $teacher ) {
+		$new_modules = $this->get_value( self::COLUMN_MODULES );
+		if ( null === $new_modules ) {
+			return true;
+		}
+
+		if ( '' === $new_modules ) {
+			$this->delete_course_modules( $course_id );
+			return true;
+		}
+
+		$new_modules = explode( ',', $new_modules );
+		$terms       = [];
+
+		foreach ( $new_modules as $new_module ) {
+			$term = Sensei_Data_Port_Utilities::get_term( $new_module, 'module', $teacher );
+
+			if ( false === $term ) {
+				return new WP_Error(
+					'sensei_data_port_creation_failure',
+					// translators: Placeholder is the term which errored.
+					sprintf( __( 'Error getting term: %s.', 'sensei-lms' ), $new_module )
+				);
+			}
+
+			$terms[] = $term;
+		}
+
+		$new_module_order = array_map(
+			function( $term_id ) {
+				return (string) $term_id;
+			},
+			wp_list_pluck( $terms, 'term_id' )
+		);
+
+		$old_module_order = get_post_meta( $course_id, '_module_order', true );
+
+		if ( $new_module_order === $old_module_order ) {
+			return true;
+		}
+
+		$result = wp_set_object_terms( $course_id, wp_list_pluck( $terms, 'term_id' ), 'module' );
+
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+
+		update_post_meta( $course_id, '_module_order', $new_module_order );
+
+		return true;
+	}
+
+	private function delete_course_modules( $course_id ) {
+		wp_delete_object_term_relationships( $course_id, 'module' );
+		delete_post_meta( $course_id, '_module_order' );
 	}
 
 	/**

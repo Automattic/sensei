@@ -43,6 +43,10 @@ class Sensei_Import_Courses extends Sensei_Import_File_Process_Task {
 	 * @return mixed
 	 */
 	protected function process_line( $line_number, $line ) {
+		if ( empty( $line ) ) {
+			return true;
+		}
+
 		if ( is_wp_error( $line ) ) {
 			// @todo Mark as failed.
 			return false;

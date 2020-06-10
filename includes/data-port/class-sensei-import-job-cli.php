@@ -75,7 +75,7 @@ class Sensei_Import_Job_CLI extends WP_CLI_Command {
 		$file_keys = [ 'questions', 'courses', 'lessons' ];
 		foreach ( $file_keys as $file_key ) {
 			if ( ! empty( $assoc_args[ $file_key ] ) ) {
-				$file_path = getcwd() . DIRECTORY_SEPARATOR . $assoc_args['questions'];
+				$file_path = getcwd() . DIRECTORY_SEPARATOR . $assoc_args[ $file_key ];
 
 				if ( file_exists( $file_path ) && is_readable( $file_path ) ) {
 					$files[ $file_key ] = $file_path;
