@@ -31,6 +31,29 @@ class Sensei_Data_Port_Course_Model extends Sensei_Data_Port_Model {
 	const COLUMN_NOTIFICATIONS    = 'notifications';
 
 	/**
+	 * The default author to be used in courses if none is provided.
+	 *
+	 * @var int
+	 */
+	private $default_author;
+
+	/**
+	 * Set up item from an array.
+	 *
+	 * @param array $data            Data to restore item from.
+	 * @param int   $default_author  The default author.
+	 *
+	 * @return Sensei_Data_Port_Model
+	 */
+	public static function from_source_array( $data, $default_author = 0 ) {
+		$course_model                 = parent::from_source_array( $data );
+		$course_model->default_author = $default_author;
+
+		return $course_model;
+	}
+
+
+	/**
 	 * Check to see if the post already exists in the database.
 	 *
 	 * @return int
@@ -80,13 +103,18 @@ class Sensei_Data_Port_Course_Model extends Sensei_Data_Port_Model {
 		return is_wp_error( $result ) ? $result : true;
 	}
 
+	/**
+	 * Retrieve the arguments for wp_insert_post for this course.
+	 *
+	 * @return array
+	 */
 	private function get_course_args() {
-		$course_data = $this->get_data();
+		$author = $this->default_author;
 
-		$author = get_current_user_id();
+		$teacher_username = $this->get_value( self::COLUMN_TEACHER_USERNAME );
 
-		if ( ! empty( $course_data[ self::COLUMN_TEACHER_USERNAME ] ) ) {
-			$author = Sensei_Data_Port_Utilities::create_user( $course_data[ self::COLUMN_TEACHER_USERNAME ], $course_data[ self::COLUMN_TEACHER_EMAIL ] );
+		if ( ! empty( $teacher_username ) ) {
+			$author = Sensei_Data_Port_Utilities::create_user( $teacher_username, $this->get_value( self::COLUMN_TEACHER_EMAIL ) );
 		}
 
 		$args = [
@@ -94,42 +122,57 @@ class Sensei_Data_Port_Course_Model extends Sensei_Data_Port_Model {
 			'post_author' => $author,
 			'post_status' => 'draft',
 			'post_type'   => 'course',
-			'meta_input'  => $this->get_course_meta(),
 		];
 
-		if ( array_key_exists( self::COLUMN_DESCRIPTION, $course_data ) ) {
-			$args['post_content'] = $course_data[ self::COLUMN_DESCRIPTION ];
+		$value = $this->get_value( self::COLUMN_DESCRIPTION );
+		if ( null !== $value ) {
+			$args['post_content'] = $value;
 		}
 
-		if ( array_key_exists( self::COLUMN_COURSE, $course_data ) ) {
-			$args['post_title'] = $course_data[ self::COLUMN_COURSE ];
+		$value = $this->get_value( self::COLUMN_COURSE );
+		if ( null !== $value ) {
+			$args['post_title'] = $value;
 		}
 
-		if ( array_key_exists( self::COLUMN_EXCERPT, $course_data ) ) {
-			$args['post_excerpt'] = $course_data[ self::COLUMN_EXCERPT ];
+		$value = $this->get_value( self::COLUMN_EXCERPT );
+		if ( null !== $value ) {
+			$args['post_excerpt'] = $value;
 		}
 
-		if ( array_key_exists( self::COLUMN_SLUG, $course_data ) ) {
-			$args['post_name'] = $course_data[ self::COLUMN_SLUG ];
+		$value = $this->get_value( self::COLUMN_SLUG );
+		if ( null !== $value ) {
+			$args['post_name'] = $value;
+		}
+
+		$meta = $this->get_course_meta();
+		if ( ! empty( $meta ) ) {
+			$args['meta_input'] = $meta;
 		}
 
 		return $args;
 	}
 
+	/**
+	 * * Retrieve the meta arguments to be used in wp_insert_post.
+	 *
+	 * @return array
+	 */
 	private function get_course_meta() {
-		$course_data = $this->get_data();
-		$meta        = [];
+		$meta = [];
 
-		if ( array_key_exists( self::COLUMN_FEATURED, $course_data ) ) {
-			$meta['course_featured'] = $course_data[ self::COLUMN_FEATURED ];
+		$value = $this->get_value( self::COLUMN_FEATURED );
+		if ( null !== $value ) {
+			$meta['course_featured'] = $value;
 		}
 
-		if ( array_key_exists( self::COLUMN_VIDEO, $course_data ) ) {
-			$meta['course_video_embed'] = $course_data[ self::COLUMN_VIDEO ];
+		$value = $this->get_value( self::COLUMN_VIDEO );
+		if ( null !== $value ) {
+			$meta['course_video_embed'] = $value;
 		}
 
-		if ( array_key_exists( self::COLUMN_NOTIFICATIONS, $course_data ) ) {
-			$meta['_sensei_course_notification'] = $course_data[ self::COLUMN_NOTIFICATIONS ];
+		$value = $this->get_value( self::COLUMN_NOTIFICATIONS );
+		if ( null !== $value ) {
+			$meta['_sensei_course_notification'] = $value;
 		}
 
 		return $meta;

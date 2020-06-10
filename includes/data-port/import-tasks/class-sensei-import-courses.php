@@ -45,15 +45,12 @@ class Sensei_Import_Courses extends Sensei_Import_File_Process_Task {
 	protected function process_line( $line_number, $line ) {
 		if ( is_wp_error( $line ) ) {
 			// @todo Mark as failed.
-			error_log(print_r($line,true));
 			return false;
 		}
 
-		error_log('in process line');
-		$model = Sensei_Data_Port_Course_Model::from_source_array( $line );
+		$model = Sensei_Data_Port_Course_Model::from_source_array( $line, $this->get_job()->get_user_id() );
 		if ( ! $model->is_valid() ) {
 			// @todo Mark as skipped.
-			error_log('not valid');
 			return false;
 		}
 
