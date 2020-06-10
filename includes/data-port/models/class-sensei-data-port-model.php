@@ -94,7 +94,7 @@ abstract class Sensei_Data_Port_Model {
 		// If we're creating a new post, get the default value.
 		if ( ! $this->get_post_id() && isset( $config['default'] ) ) {
 			if ( is_callable( $config['default'] ) ) {
-				return call_user_func( $config['default'], $field, $this->data );
+				return call_user_func( $config['default'], $field, $this );
 			}
 
 			return $config['default'];
@@ -115,7 +115,7 @@ abstract class Sensei_Data_Port_Model {
 			if ( isset( $data[ $field ] ) ) {
 				if (
 					isset( $field_config['validator'] )
-					&& ! call_user_func( $field_config['validator'], $field, $data )
+					&& ! call_user_func( $field_config['validator'], $field, $this )
 				) {
 					return false;
 				}
