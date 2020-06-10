@@ -111,3 +111,14 @@ jobs:
       script:
         - composer install
         - ./scripts/linter-ci
+    - stage: test
+      language: node_js
+      node_js: '10.17'
+      env: RUN_E2E=1
+      script:
+        - npm run build
+        - npm run e2e-docker:up
+        - npm run test:e2e
+      after_script:
+        - npm run e2e-docker:down
+        - bash tests/e2e/bin/upload-screenshots.sh
