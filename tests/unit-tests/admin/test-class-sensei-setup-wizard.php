@@ -358,11 +358,12 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that get sensei extensions fetch from the correct URL filtering by the dotorg only.
+	 * Tests that get sensei extensions fetch from the correct URL
+	 * filtering by the dotorg only as default.
 	 *
 	 * @covers Sensei_Setup_Wizard::get_sensei_extensions
 	 */
-	public function testGetSenseiExtensionsWithoutWCExtensions() {
+	public function testGetSenseiExtensionsDotOrgExtensions() {
 		// Mock fetch from senseilms.com.
 		$request_url = null;
 		add_filter(
@@ -381,14 +382,15 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that get sensei extensions fetch from the correct URL with WC extensions.
+	 * Tests that get sensei extensions fetch from the correct URL
+	 * with all extensions type.
 	 *
 	 * @covers Sensei_Setup_Wizard::get_sensei_extensions
 	 */
-	public function testGetSenseiExtensionsWithWCExtensions() {
+	public function testGetSenseiExtensionsAllExtensions() {
 		// Activate feature.
 		// It is usually activated by defining a const.
-		add_filter( 'sensei_feature_flag_setup_wizard_wc_extensions', '__return_true' );
+		add_filter( 'sensei_feature_flag_setup_wizard_all_extensions', '__return_true' );
 
 		// Mock fetch from senseilms.com.
 		$request_url = null;

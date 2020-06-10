@@ -457,7 +457,7 @@ class Sensei_Setup_Wizard {
 
 		$extensions_filter = [ 'hosted-location' => 'dotorg' ];
 
-		if ( Sensei()->feature_flags->is_enabled( 'setup_wizard_wc_extensions' ) ) {
+		if ( Sensei()->feature_flags->is_enabled( 'setup_wizard_all_extensions' ) ) {
 			unset( $extensions_filter['hosted-location'] );
 		}
 
