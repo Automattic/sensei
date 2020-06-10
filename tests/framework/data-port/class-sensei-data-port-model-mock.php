@@ -14,6 +14,7 @@ class Sensei_Data_Port_Model_Mock extends Sensei_Data_Port_Model {
 		return true;
 	}
 
+	// phpcs:ignore Generic.CodeAnalysis.UselessOverridingMethod.Found
 	public function set_post_id( $id ) {
 		parent::set_post_id( $id );
 	}
