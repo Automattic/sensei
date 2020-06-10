@@ -75,21 +75,9 @@ class Sensei_Data_Port_Course_Model extends Sensei_Data_Port_Model {
 			);
 		}
 
-		$course_data = $this->get_data();
+		$result = $this->add_thumbnail_to_post( self::COLUMN_IMAGE, $post_id );
 
-		if ( array_key_exists( self::COLUMN_IMAGE, $course_data ) ) {
-			if ( empty( $course_data[ self::COLUMN_IMAGE ] ) ) {
-				delete_post_meta( $post_id, '_thumbnail_id' );
-			} else {
-				$result = Sensei_Data_Port_Utilities::attach_image_to_post( $course_data[ self::COLUMN_IMAGE ], $post_id );
-
-				if ( is_wp_error( $result ) ) {
-					return $result;
-				}
-			}
-		}
-
-		return true;
+		return is_wp_error( $result ) ? $result : true;
 	}
 
 	private function get_course_args() {
