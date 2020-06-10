@@ -42,6 +42,20 @@ describe( '<FeaturesSelection />', () => {
 		);
 	} );
 
+	it( 'Should render with no features', () => {
+		const { queryAllByText } = render(
+			<FeaturesSelection
+				features={ [] }
+				selectedSlugs={ [] }
+				onChange={ () => {} }
+				onContinue={ () => {} }
+			/>
+		);
+
+		// The notice renders more than one div for accessibility.
+		expect( queryAllByText( 'No features found.' ) ).not.toHaveLength( 0 );
+	} );
+
 	it( 'Should render features selection with submitting status', () => {
 		const { container } = render(
 			<FeaturesSelection
