@@ -70,6 +70,42 @@ abstract class Sensei_Data_Port_Model {
 	abstract public function sync_post();
 
 	/**
+	 * Get the value of a field.
+	 *
+	 * @param string $field Field name.
+	 *
+	 * @return mixed
+	 */
+	public function get_value( $field ) {
+		if (
+			isset( $this->data[ $field ] )
+			&& '' !== $this->data[ $field ]
+		) {
+			return $this->data[ $field ];
+		}
+
+		$schema = static::get_schema();
+		if ( ! isset( $schema[ $field ] ) ) {
+			return null;
+		}
+
+		// If the field exists, assume it is an empty string. Otherwise, set it to null.
+		$value  = isset( $this->data[ $field ] ) ? '' : null;
+		$config = $schema[ $field ];
+
+		// If we're creating a new post, get the default value.
+		if ( ! $this->get_post_id() && isset( $config['default'] ) ) {
+			if ( is_callable( $config['default'] ) ) {
+				return call_user_func( $config['default'], $field, $this->data );
+			}
+
+			return $config['default'];
+		}
+
+		return $value;
+	}
+
+	/**
 	 * Check if all required fields are set.
 	 *
 	 * @return bool
@@ -79,6 +115,13 @@ abstract class Sensei_Data_Port_Model {
 
 		foreach ( static::get_schema() as $field => $field_config ) {
 			if ( isset( $data[ $field ] ) ) {
+				if (
+					isset( $field_config['validator'] )
+					&& ! call_user_func( $field_config['validator'], $field, $data )
+				) {
+					return false;
+				}
+
 				continue;
 			}
 
@@ -115,12 +158,7 @@ abstract class Sensei_Data_Port_Model {
 			}
 
 			$config = $schema[ $key ];
-
-			if ( ! isset( $config['default'] ) ) {
-				$config['default'] = '';
-			}
-
-			$value = trim( $value );
+			$value  = trim( $value );
 
 			if ( null !== $value ) {
 				switch ( $config['type'] ) {
@@ -242,11 +280,12 @@ abstract class Sensei_Data_Port_Model {
 	 *
 	 * @return array {
 	 *     @type array $$field_name {
-	 *          @type string $type       Type of data. Options: string, int, float, bool, slug, ref, email, url.
-	 *          @type string $pattern    Regular expression that the value should match (Optional).
-	 *          @type mixed  $default    Default value if not set or invalid. Default is `null` (Optional).
-	 *          @type bool   $required   True if a non-empty value is required. Default is `false` (Optional).
-	 *          @type bool   $allow_html True if HTML should be allowed. Default is `false` (Optional).
+	 *          @type string   $type       Type of data. Options: string, int, float, bool, slug, ref, email, url.
+	 *          @type string   $pattern    Regular expression that the value should match (Optional).
+	 *          @type mixed    $default    Default value if not set or invalid. Default is `null` (Optional).
+	 *          @type bool     $required   True if a non-empty value is required. Default is `false` (Optional).
+	 *          @type bool     $allow_html True if HTML should be allowed. Default is `false` (Optional).
+	 *          @type callable $validator  Callable to use when validating data (Optional).
 	 *     }
 	 * }
 	 */

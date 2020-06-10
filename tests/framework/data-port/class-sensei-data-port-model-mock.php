@@ -14,6 +14,11 @@ class Sensei_Data_Port_Model_Mock extends Sensei_Data_Port_Model {
 		return true;
 	}
 
+	// phpcs:ignore Generic.CodeAnalysis.UselessOverridingMethod.Found
+	public function set_post_id( $id ) {
+		parent::set_post_id( $id );
+	}
+
 	public static function get_schema() {
 		return [
 			'test-string-allow-html' => [
@@ -26,7 +31,8 @@ class Sensei_Data_Port_Model_Mock extends Sensei_Data_Port_Model {
 				'allow_html' => false,
 			],
 			'favorite_int'           => [
-				'type' => 'int',
+				'type'    => 'int',
+				'default' => 0,
 			],
 			'favorite_float'         => [
 				'type' => 'float',
@@ -36,7 +42,8 @@ class Sensei_Data_Port_Model_Mock extends Sensei_Data_Port_Model {
 				'required' => true,
 			],
 			'slug'                   => [
-				'type' => 'slug',
+				'type'    => 'slug',
+				'default' => 'neat-slug',
 			],
 			'type'                   => [
 				'type'     => 'string',
