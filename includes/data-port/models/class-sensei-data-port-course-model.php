@@ -107,7 +107,13 @@ class Sensei_Data_Port_Course_Model extends Sensei_Data_Port_Model {
 			);
 		}
 
-		$result = $this->set_course_modules( $post_id, $teacher );
+		$result = $this->set_course_terms( self::COLUMN_MODULES, $post_id, 'module', $teacher );
+
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+
+		$result = $this->set_course_terms( self::COLUMN_CATEGORIES, $post_id, 'course-category' );
 
 		if ( is_wp_error( $result ) ) {
 			return $result;
@@ -127,7 +133,7 @@ class Sensei_Data_Port_Course_Model extends Sensei_Data_Port_Model {
 	 */
 	private function get_course_args( $teacher ) {
 
-		//todo check post status on update
+		// todo check post status on update.
 		$args = [
 			'ID'          => $this->get_post_id(),
 			'post_author' => $teacher,
@@ -189,61 +195,79 @@ class Sensei_Data_Port_Course_Model extends Sensei_Data_Port_Model {
 		return $meta;
 	}
 
-	private function set_course_modules( $course_id, $teacher ) {
-		$new_modules = $this->get_value( self::COLUMN_MODULES );
-		if ( null === $new_modules ) {
+	/**
+	 * Updates the terms of a course. The old terms are overwritten.
+	 *
+	 * @param string $column_name  The CSV column name which contains the terms.
+	 * @param int    $course_id    The course id.
+	 * @param string $taxonomy     The taxonomy of the terms.
+	 * @param int    $teacher      The teacher id.
+	 *
+	 * @return array|bool|WP_Error
+	 */
+	private function set_course_terms( $column_name, $course_id, $taxonomy, $teacher = null ) {
+		$new_terms = $this->get_value( $column_name );
+
+		if ( null === $new_terms ) {
 			return true;
 		}
 
-		if ( '' === $new_modules ) {
-			$this->delete_course_modules( $course_id );
+		if ( '' === $new_terms ) {
+			$this->delete_course_terms( $course_id, $taxonomy );
 			return true;
 		}
 
-		$new_modules = explode( ',', $new_modules );
-		$terms       = [];
+		$new_terms = explode( ',', $new_terms );
+		$terms     = [];
 
-		foreach ( $new_modules as $new_module ) {
-			$term = Sensei_Data_Port_Utilities::get_term( $new_module, 'module', $teacher );
+		foreach ( $new_terms as $new_term ) {
+			$term = Sensei_Data_Port_Utilities::get_term( $new_term, $taxonomy, $teacher );
 
 			if ( false === $term ) {
 				return new WP_Error(
 					'sensei_data_port_creation_failure',
 					// translators: Placeholder is the term which errored.
-					sprintf( __( 'Error getting term: %s.', 'sensei-lms' ), $new_module )
+					sprintf( __( 'Error getting term: %s.', 'sensei-lms' ), $new_term )
 				);
 			}
 
 			$terms[] = $term;
 		}
 
-		$new_module_order = array_map(
-			function( $term_id ) {
-				return (string) $term_id;
-			},
-			wp_list_pluck( $terms, 'term_id' )
-		);
+		$new_term_ids = wp_list_pluck( $terms, 'term_id' );
 
-		$old_module_order = get_post_meta( $course_id, '_module_order', true );
-
-		if ( $new_module_order === $old_module_order ) {
-			return true;
-		}
-
-		$result = wp_set_object_terms( $course_id, wp_list_pluck( $terms, 'term_id' ), 'module' );
+		$result = wp_set_object_terms( $course_id, $new_term_ids, $taxonomy );
 
 		if ( is_wp_error( $result ) ) {
 			return $result;
 		}
 
-		update_post_meta( $course_id, '_module_order', $new_module_order );
+		if ( 'module' === $taxonomy ) {
+			$new_module_order = array_map(
+				function( $term_id ) {
+					return (string) $term_id;
+				},
+				$new_term_ids
+			);
+
+			update_post_meta( $course_id, '_module_order', $new_module_order );
+		}
 
 		return true;
 	}
 
-	private function delete_course_modules( $course_id ) {
-		wp_delete_object_term_relationships( $course_id, 'module' );
-		delete_post_meta( $course_id, '_module_order' );
+	/**
+	 * Deletes the terms of a course.
+	 *
+	 * @param int    $course_id  The course id.
+	 * @param string $taxonomy   The taxonomy to delete the terms for.
+	 */
+	private function delete_course_terms( $course_id, $taxonomy ) {
+		wp_delete_object_term_relationships( $course_id, $taxonomy );
+
+		if ( 'module' === $taxonomy ) {
+			delete_post_meta( $course_id, '_module_order' );
+		}
 	}
 
 	/**
