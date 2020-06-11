@@ -133,13 +133,15 @@ class Sensei_Data_Port_Course_Model extends Sensei_Data_Port_Model {
 	 */
 	private function get_course_args( $teacher ) {
 
-		// todo check post status on update.
 		$args = [
 			'ID'          => $this->get_post_id(),
 			'post_author' => $teacher,
-			'post_status' => 'draft',
 			'post_type'   => 'course',
 		];
+
+		if ( empty( $this->get_post_id() ) ) {
+			$args['post_status'] = 'draft';
+		}
 
 		$value = $this->get_value( self::COLUMN_DESCRIPTION );
 		if ( null !== $value ) {
@@ -295,7 +297,7 @@ class Sensei_Data_Port_Course_Model extends Sensei_Data_Port_Model {
 				'allow_html' => true,
 			],
 			self::COLUMN_TEACHER_USERNAME => [
-				'type' => 'string',
+				'type' => 'username',
 			],
 			self::COLUMN_TEACHER_EMAIL    => [
 				'type' => 'email',

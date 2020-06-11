@@ -48,23 +48,42 @@ class Sensei_Import_Courses extends Sensei_Import_File_Process_Task {
 		}
 
 		if ( is_wp_error( $line ) ) {
-			// @todo Mark as failed.
+			$this->get_job()->add_log_entry(
+				$line->get_error_message(),
+				Sensei_Data_Port_Job::LOG_LEVEL_ERROR,
+				[
+					'line' => $line_number,
+				]
+			);
+
 			return false;
 		}
 
 		$model = Sensei_Data_Port_Course_Model::from_source_array( $line, $this->get_job()->get_user_id() );
 		if ( ! $model->is_valid() ) {
-			// @todo Mark as skipped.
+			$this->get_job()->add_log_entry(
+				__( 'A required field is missing or one of the fields is malformed. Line skipped.', 'sensei-lms' ),
+				Sensei_Data_Port_Job::LOG_LEVEL_NOTICE,
+				[
+					'line' => $line_number,
+				]
+			);
+
 			return false;
 		}
 
-		if ( ! $model->sync_post() ) {
-			// @todo Mark as failed.
+		$result = $model->sync_post();
+		if ( is_wp_error( $result ) ) {
+			$this->get_job()->add_log_entry(
+				$result->get_error_message(),
+				Sensei_Data_Port_Job::LOG_LEVEL_ERROR,
+				[
+					'line' => $line_number,
+				]
+			);
 
 			return false;
 		}
-
-		// @todo Mark as successful.
 
 		return true;
 	}
@@ -73,7 +92,7 @@ class Sensei_Import_Courses extends Sensei_Import_File_Process_Task {
 	 * Performs any required cleanup of the task.
 	 */
 	public function clean_up() {
-		// @todo Implement.
+		// Nothing to do.
 	}
 
 	/**
