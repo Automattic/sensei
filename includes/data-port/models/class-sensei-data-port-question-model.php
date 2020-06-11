@@ -173,13 +173,34 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 				continue;
 			}
 
+			if ( is_wp_error( $new_value ) ) {
+				return new WP_Error(
+					'sensei_import_question_meta_field_invalid',
+					sprintf(
+						// translators: First placeholder is name of field, second placeholder is error returned.
+						__( 'Meta field "%1$s" is invalid: %2$s', 'sensei-lms' ),
+						$field,
+						$new_value->get_error_message()
+					)
+				);
+			}
+
 			$current_value = null;
 			if ( ! empty( $current_meta[ $field ] ) ) {
 				$current_value = $current_meta[ $field ][0];
 			}
 
 			if ( $new_value !== $current_value ) {
-				update_post_meta( $this->get_post_id(), $field, $new_value );
+				if ( false === update_post_meta( $this->get_post_id(), $field, $new_value ) ) {
+					return new WP_Error(
+						'sensei_import_question_meta_field_failed',
+						sprintf(
+							// translators: First placeholder is name of field.
+							__( 'Meta field "$1%s" is could not be saved.', 'sensei-lms' ),
+							$field
+						)
+					);
+				}
 			}
 		}
 
@@ -216,9 +237,11 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 			return null;
 		}
 
-		// @todo Implement.
+		if ( empty( $value ) ) {
+			return '';
+		}
 
-		return null;
+		return Sensei_Data_Port_Utilities::get_attachment_from_source( $value, $this->get_post_id() );
 	}
 
 	/**
@@ -346,8 +369,14 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 
 		foreach ( $taxonomies as $taxonomy_type => $terms ) {
 			if ( ! wp_set_post_terms( $this->get_post_id(), $terms, $taxonomy_type ) ) {
-				// translators: Placeholder is taxonomy type.
-				return new WP_Error( 'sensei_data_port_import_taxonomy_failed', sprintf( __( 'Unable to set "%s" taxonomies', 'sensei-lms' ), $taxonomy_type ) );
+				return new WP_Error(
+					'sensei_import_question_taxonomy_failed',
+					sprintf(
+						// translators: Placeholder is taxonomy type.
+						__( 'Unable to set "%s" taxonomies', 'sensei-lms' ),
+						$taxonomy_type
+					)
+				);
 			}
 		}
 
