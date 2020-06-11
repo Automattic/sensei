@@ -294,4 +294,33 @@ abstract class Sensei_Data_Port_Model {
 
 		return [];
 	}
+
+	/**
+	 * Adds a thumbnail to a post. The source of the thumbnail can be either a filename from the media library or an
+	 * external URL.
+	 *
+	 * @param string $column_name  The CSV column name which has the image source.
+	 * @param int    $post_id      The post id.
+	 *
+	 * @return bool|WP_Error  True on success, WP_Error on failure.
+	 */
+	protected function add_thumbnail_to_post( $column_name, $post_id ) {
+		$thumbnail = $this->get_value( $column_name );
+
+		if ( null === $thumbnail ) {
+			return true;
+		}
+
+		if ( '' === $thumbnail ) {
+			delete_post_meta( $post_id, '_thumbnail_id' );
+		} else {
+			$result = Sensei_Data_Port_Utilities::attach_image_to_post( $thumbnail, $post_id );
+
+			if ( is_wp_error( $result ) ) {
+				return $result;
+			}
+		}
+
+		return true;
+	}
 }

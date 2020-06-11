@@ -26,10 +26,130 @@ class Sensei_Data_Port_Utilities {
 		$user = get_user_by( 'login', $username );
 
 		if ( ! $user ) {
-			return wp_create_user( $username, $email, wp_generate_password() );
+			return wp_create_user( $username, wp_generate_password(), $email );
 		}
 
 		return $user->ID;
+	}
+
+	/**
+	 * Attach an image to a post. The image source can be a URL or a filename from the media library. If the source
+	 * is an external URL, it will be retrieved and an appropriate attachment will be created.
+	 *
+	 * @param string $source   Filename or URL.
+	 * @param int    $post_id  Id of the post.
+	 *
+	 * @return bool|WP_Error
+	 */
+	public static function attach_image_to_post( $source, $post_id ) {
+		if ( false === filter_var( $source, FILTER_VALIDATE_URL ) ) {
+
+			$attachments = get_posts(
+				[
+					'fields'         => 'ids',
+					'post_type'      => 'attachment',
+					'posts_per_page' => 1,
+					'post_status'    => 'any',
+					'meta_compare'   => 'REGEXP',
+					'meta_key'       => '_wp_attached_file', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- No faster way to search an attachment from its filename.
+					'meta_value'     => '(^|/)' . sanitize_file_name( $source ) . '$', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- See above.
+				]
+			);
+
+			if ( empty( $attachments ) ) {
+				return new WP_Error(
+					'sensei_data_port_attachment_not_found',
+					__( 'No attachment with the specified file name was found.', 'sensei-lms' )
+				);
+			}
+
+			$attachment_id = $attachments[0];
+		} else {
+			// In case a local URL is provided, try to convert it to the attachment.
+			$attachment_id = attachment_url_to_postid( $source );
+
+			if ( ! $attachment_id ) {
+				$attachment_id = self::create_attachment_from_url( $source );
+			}
+		}
+
+		if ( is_wp_error( $attachment_id ) ) {
+			return $attachment_id;
+		}
+
+		update_post_meta( $post_id, '_thumbnail_id', $attachment_id );
+
+		return true;
+	}
+
+	/**
+	 * This method retrieves a file from an external url, creates an attachment and links the attachment with the
+	 * downloaded file. If the file has been already downloaded an linked to an attachment, it returns the existing
+	 * attachment instead.
+	 *
+	 * @param string $external_url  The external url.
+	 *
+	 * @return int|WP_Error  The attachment id or an error.
+	 */
+	public static function create_attachment_from_url( $external_url ) {
+
+		$existing_attachment = get_posts(
+			[
+				'fields'         => 'ids',
+				'post_type'      => 'attachment',
+				'posts_per_page' => 1,
+				'post_status'    => 'inherit',
+				'meta_key'       => '_sensei_attachment_source_key', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Only attachments are checked.
+				'meta_value'     => md5( $external_url ), // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- See above.
+			]
+		);
+
+		if ( ! empty( $existing_attachment ) ) {
+			return $existing_attachment[0];
+		}
+
+		$response = wp_safe_remote_get( $external_url );
+
+		if ( is_wp_error( $response ) ) {
+			return $response;
+		}
+
+		$upload_result = wp_upload_bits( basename( $external_url ), null, wp_remote_retrieve_body( $response ) );
+
+		if ( ! empty( $upload_result['error'] ) ) {
+			return new WP_Error( 'sensei_data_port_storing_file_failure', $upload_result['error'] );
+		}
+
+		$file_path = $upload_result['file'];
+		$file_url  = $upload_result['url'];
+
+		$wp_filetype = wp_check_filetype_and_ext( $file_path, basename( $file_path ) );
+
+		$attachment_args = [
+			'post_content'   => $file_url,
+			'post_title'     => basename( $file_path ),
+			'post_mime_type' => $wp_filetype['type'],
+			'guid'           => $file_url,
+			'post_status'    => 'inherit',
+		];
+
+		$attachment_id = wp_insert_attachment( $attachment_args, $file_path );
+		update_post_meta( $attachment_id, '_sensei_attachment_source_key', md5( $external_url ) );
+
+		if ( is_wp_error( $attachment_id ) ) {
+			return $attachment_id;
+		}
+
+		if ( 0 === $attachment_id ) {
+			return new WP_Error(
+				'sensei_data_port_attachment_failure',
+				__( 'Attachment insertion failed.', 'sensei-lms' )
+			);
+		}
+
+		wp_update_attachment_metadata( $attachment_id, wp_generate_attachment_metadata( $attachment_id, $file_path ) );
+
+		return $attachment_id;
 	}
 
 	/**
