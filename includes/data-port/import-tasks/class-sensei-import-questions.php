@@ -26,6 +26,15 @@ class Sensei_Import_Questions
 	}
 
 	/**
+	 * Get the class name of the model handled by this task.
+	 *
+	 * @return string
+	 */
+	public function get_model_class() {
+		return Sensei_Data_Port_Question_Model::class;
+	}
+
+	/**
 	 * Process a single CSV line.
 	 *
 	 * @param int   $line_number  The line number in the file.
