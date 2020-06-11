@@ -79,11 +79,11 @@ abstract class Sensei_Data_Port_Model {
 	/**
 	 * Get the data to return with any errors.
 	 *
-	 * @param array $base_data Base error data to pass along.
+	 * @param array $data Base error data to pass along.
 	 *
 	 * @return array
 	 */
-	abstract public function get_error_data( $base_data = [] );
+	abstract public function get_error_data( $data = [] );
 
 	/**
 	 * Get the value of a field.
@@ -347,7 +347,7 @@ abstract class Sensei_Data_Port_Model {
 	 *
 	 * @return int
 	 */
-	public function get_default_author(): int {
+	public function get_default_author() {
 		return $this->default_author;
 	}
 }
