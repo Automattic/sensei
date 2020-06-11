@@ -455,7 +455,12 @@ class Sensei_Setup_Wizard {
 			wp_cache_delete( 'alloptions', 'options' );
 		}
 
-		$extensions_filter  = [ 'hosted-location' => 'dotorg' ];
+		$extensions_filter = [ 'hosted-location' => 'dotorg' ];
+
+		if ( Sensei()->feature_flags->is_enabled( 'setup_wizard_all_extensions' ) ) {
+			unset( $extensions_filter['hosted-location'] );
+		}
+
 		$extensions         = Sensei_Extensions::instance()->get_extensions( 'plugin', 'setup-wizard-extensions', $extensions_filter );
 		$installing_plugins = Sensei_Plugins_Installation::instance()->get_installing_plugins();
 
