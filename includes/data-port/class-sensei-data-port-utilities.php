@@ -99,7 +99,7 @@ class Sensei_Data_Port_Utilities {
 				'post_type'      => 'attachment',
 				'posts_per_page' => 1,
 				'title'          => md5( $external_url ),
-				'post_status'    => 'private',
+				'post_status'    => 'inherit',
 			]
 		);
 
@@ -129,7 +129,7 @@ class Sensei_Data_Port_Utilities {
 			'post_title'     => md5( $external_url ),
 			'post_mime_type' => $wp_filetype['type'],
 			'guid'           => $file_url,
-			'post_status'    => 'private',
+			'post_status'    => 'inherit',
 		];
 
 		$attachment_id = wp_insert_attachment( $attachment_args, $file_path );
