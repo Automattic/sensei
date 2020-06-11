@@ -217,7 +217,7 @@ class Sensei_Data_Port_Course_Model extends Sensei_Data_Port_Model {
 			return true;
 		}
 
-		$new_terms = explode( ',', $new_terms );
+		$new_terms = Sensei_Data_Port_Utilities::split_list_safely( $new_terms, true );
 		$terms     = [];
 
 		foreach ( $new_terms as $new_term ) {
