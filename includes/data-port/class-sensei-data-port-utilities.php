@@ -35,15 +35,15 @@ class Sensei_Data_Port_Utilities {
 	}
 
 	/**
-	 * Attach an image to a post. The image source can be a URL or a filename from the media library. If the source
-	 * is an external URL, it will be retrieved and an appropriate attachment will be created.
+	 * Get an attachment by providing its source. The source can be a URL or a filename from the media library. If the
+	 * source is an external URL, it will be retrieved and an appropriate attachment will be created.
 	 *
-	 * @param string $source   Filename or URL.
-	 * @param int    $post_id  Id of the post.
+	 * @param string $source     Filename or URL.
+	 * @param int    $parent_id  Id of the parent post.
 	 *
 	 * @return bool|WP_Error
 	 */
-	public static function attach_image_to_post( $source, $post_id ) {
+	public static function get_attachment_from_source( $source, $parent_id = 0 ) {
 		if ( false === filter_var( $source, FILTER_VALIDATE_URL ) ) {
 
 			$attachments = get_posts(
@@ -53,6 +53,7 @@ class Sensei_Data_Port_Utilities {
 					'posts_per_page' => 1,
 					'post_status'    => 'any',
 					'meta_compare'   => 'REGEXP',
+					'post_parent'    => $parent_id,
 					'meta_key'       => '_wp_attached_file', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- No faster way to search an attachment from its filename.
 					'meta_value'     => '(^|/)' . sanitize_file_name( $source ) . '$', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- See above.
 				]
@@ -71,17 +72,11 @@ class Sensei_Data_Port_Utilities {
 			$attachment_id = attachment_url_to_postid( $source );
 
 			if ( ! $attachment_id ) {
-				$attachment_id = self::create_attachment_from_url( $source );
+				$attachment_id = self::create_attachment_from_url( $source, $parent_id );
 			}
 		}
 
-		if ( is_wp_error( $attachment_id ) ) {
-			return $attachment_id;
-		}
-
-		update_post_meta( $post_id, '_thumbnail_id', $attachment_id );
-
-		return true;
+		return $attachment_id;
 	}
 
 	/**
@@ -90,10 +85,11 @@ class Sensei_Data_Port_Utilities {
 	 * attachment instead.
 	 *
 	 * @param string $external_url  The external url.
+	 * @param int    $parent_id     The attachment's parent id.
 	 *
 	 * @return int|WP_Error  The attachment id or an error.
 	 */
-	public static function create_attachment_from_url( $external_url ) {
+	public static function create_attachment_from_url( $external_url, $parent_id = 0 ) {
 
 		$existing_attachment = get_posts(
 			[
@@ -101,6 +97,7 @@ class Sensei_Data_Port_Utilities {
 				'post_type'      => 'attachment',
 				'posts_per_page' => 1,
 				'post_status'    => 'inherit',
+				'post_parent'    => $parent_id,
 				'meta_key'       => '_sensei_attachment_source_key', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Only attachments are checked.
 				'meta_value'     => md5( $external_url ), // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- See above.
 			]
@@ -135,7 +132,7 @@ class Sensei_Data_Port_Utilities {
 			'post_status'    => 'inherit',
 		];
 
-		$attachment_id = wp_insert_attachment( $attachment_args, $file_path );
+		$attachment_id = wp_insert_attachment( $attachment_args, $file_path, $parent_id );
 		update_post_meta( $attachment_id, '_sensei_attachment_source_key', md5( $external_url ) );
 
 		if ( is_wp_error( $attachment_id ) ) {
