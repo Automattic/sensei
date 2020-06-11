@@ -312,11 +312,13 @@ abstract class Sensei_Data_Port_Model {
 		if ( '' === $thumbnail ) {
 			delete_post_meta( $post_id, '_thumbnail_id' );
 		} else {
-			$result = Sensei_Data_Port_Utilities::attach_image_to_post( $thumbnail, $post_id );
+			$attachment_id = Sensei_Data_Port_Utilities::get_attachment_from_source( $thumbnail, $post_id );
 
-			if ( is_wp_error( $result ) ) {
-				return $result;
+			if ( is_wp_error( $attachment_id ) ) {
+				return $attachment_id;
 			}
+
+			update_post_meta( $post_id, '_thumbnail_id', $attachment_id );
 		}
 
 		return true;
