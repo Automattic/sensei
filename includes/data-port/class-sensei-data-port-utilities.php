@@ -52,7 +52,7 @@ class Sensei_Data_Port_Utilities {
 					'post_status'    => 'any',
 					'meta_compare'   => 'REGEXP',
 					'meta_key'       => '_wp_attached_file', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- No faster way to search an attachment from its filename.
-					'meta_value'     => sanitize_file_name( $source ) . '$', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- See above.
+					'meta_value'     => '(^|/)' . sanitize_file_name( $source ) . '$', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- See above.
 				]
 			);
 
