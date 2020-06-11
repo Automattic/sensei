@@ -98,8 +98,9 @@ class Sensei_Data_Port_Utilities {
 				'fields'         => 'ids',
 				'post_type'      => 'attachment',
 				'posts_per_page' => 1,
-				'title'          => md5( $external_url ),
 				'post_status'    => 'inherit',
+				'meta_key'       => '_sensei_attachment_source_key', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Only attachments are checked.
+				'meta_value'     => md5( $external_url ), // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- See above.
 			]
 		);
 
@@ -125,14 +126,15 @@ class Sensei_Data_Port_Utilities {
 		$wp_filetype = wp_check_filetype_and_ext( $file_path, basename( $file_path ) );
 
 		$attachment_args = [
-			'post_content'   => basename( $file_path ),
-			'post_title'     => md5( $external_url ),
+			'post_content'   => $file_url,
+			'post_title'     => basename( $file_path ),
 			'post_mime_type' => $wp_filetype['type'],
 			'guid'           => $file_url,
 			'post_status'    => 'inherit',
 		];
 
 		$attachment_id = wp_insert_attachment( $attachment_args, $file_path );
+		update_post_meta( $attachment_id, '_sensei_attachment_source_key', md5( $external_url ) );
 
 		if ( is_wp_error( $attachment_id ) ) {
 			return $attachment_id;
