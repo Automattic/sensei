@@ -200,4 +200,66 @@ class Sensei_Data_Port_Utilities_Test extends WP_UnitTestCase {
 			$last_term = get_term_by( 'id', $last_term->parent, $taxonomy_name );
 		}
 	}
+
+	/**
+	 * Get curly quote test strings.
+	 */
+	public function curlyStrings() {
+		return [
+			[
+				'I think “scary” dinosaurs aren\'t that scary',
+				'I think "scary" dinosaurs aren\'t that scary',
+			],
+			[
+				'“mean dog”',
+				'"mean dog"',
+			],
+		];
+	}
+
+	/**
+	 * Make sure curly quotes are replaced with straight quotes.
+	 *
+	 * @dataProvider curlyStrings
+	 */
+	public function testReplaceCurlyQuotes( $curly, $straight ) {
+		$this->assertEquals( $straight, Sensei_Data_Port_Utilities::replace_curly_quotes( $curly ) );
+	}
+
+	/**
+	 * Get a list separated by comma..
+	 */
+	public function commaSeparatedLists() {
+		return [
+			[
+				'A, B, "C, D", E',
+				[ 'A', 'B', 'C, D', 'E' ],
+				[ 'A', 'B', '"C, D"', 'E' ],
+			],
+			[
+				'My favorite animal is a dinosaur, "This is a long, long sentence", "This doesn\'t have any commas"',
+				[ 'My favorite animal is a dinosaur', 'This is a long, long sentence', 'This doesn\'t have any commas' ],
+				[ 'My favorite animal is a dinosaur', '"This is a long, long sentence"', '"This doesn\'t have any commas"' ],
+			],
+			[
+				'“Dogs, Cats”, "Mixed quotes", Awesome',
+				[ 'Dogs, Cats', 'Mixed quotes', 'Awesome' ],
+				[ '"Dogs, Cats"', '"Mixed quotes"', 'Awesome' ],
+			],
+		];
+	}
+
+	/**
+	 * Make sure curly quotes are replaced with straight quotes.
+	 *
+	 * @param string $list_str         List as a string.
+	 * @param array  $list_no_quotes   List with the quotes stripped.
+	 * @param array  $list_with_quotes List with the quotes still.
+	 *
+	 * @dataProvider commaSeparatedLists
+	 */
+	public function testSplitListSafely( $list_str, $list_no_quotes, $list_with_quotes ) {
+		$this->assertEquals( $list_no_quotes, Sensei_Data_Port_Utilities::split_list_safely( $list_str, true ) );
+		$this->assertEquals( $list_with_quotes, Sensei_Data_Port_Utilities::split_list_safely( $list_str, false ) );
+	}
 }
