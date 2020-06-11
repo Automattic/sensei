@@ -102,10 +102,6 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 	private function sync_post_object() {
 		$postarr = $this->get_post_array();
 
-		if ( isset( $postarr['ID'] ) ) {
-			return wp_update_post( $postarr );
-		}
-
 		$post_id = wp_insert_post( $postarr );
 
 		if ( is_wp_error( $post_id ) ) {
