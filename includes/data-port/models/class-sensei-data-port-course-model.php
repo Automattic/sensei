@@ -226,13 +226,7 @@ class Sensei_Data_Port_Course_Model extends Sensei_Data_Port_Model {
 		}
 
 		if ( 'module' === $taxonomy ) {
-			$new_module_order = array_map(
-				function( $term_id ) {
-					return (string) $term_id;
-				},
-				$new_term_ids
-			);
-
+			$new_module_order = array_map( 'strval', $new_term_ids );
 			update_post_meta( $course_id, '_module_order', $new_module_order );
 		}
 
