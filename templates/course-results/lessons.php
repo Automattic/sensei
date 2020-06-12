@@ -139,7 +139,8 @@ global $course;
 					}
 				}
 
-				echo $course_has_lessons_in_modules ? '<h4>' : '<h3>'; ?>
+				echo $course_has_lessons_in_modules ? '<h4>' : '<h3>'; 
+				?>
 
 					<a href="<?php echo esc_url_raw( get_permalink( $lesson->ID ) ); ?>" title="
 										<?php
