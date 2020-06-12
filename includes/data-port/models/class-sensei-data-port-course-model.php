@@ -68,7 +68,11 @@ class Sensei_Data_Port_Course_Model extends Sensei_Data_Port_Model {
 		$teacher_username = $this->get_value( self::COLUMN_TEACHER_USERNAME );
 
 		if ( ! empty( $teacher_username ) ) {
-			$teacher = Sensei_Data_Port_Utilities::create_user( $teacher_username, $this->get_value( self::COLUMN_TEACHER_EMAIL ) );
+			$teacher = Sensei_Data_Port_Utilities::create_user( $teacher_username, $this->get_value( self::COLUMN_TEACHER_EMAIL ), 'teacher' );
+
+			if ( is_wp_error( $teacher ) ) {
+				return $teacher;
+			}
 		}
 
 		$post_id = wp_insert_post( $this->get_course_args( $teacher ) );

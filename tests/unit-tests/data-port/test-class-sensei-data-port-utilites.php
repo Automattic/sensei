@@ -20,7 +20,15 @@ class Sensei_Data_Port_Utilities_Test extends WP_UnitTestCase {
 	public function testUserIsCreatedIfDoesNotExist() {
 		$user_id = Sensei_Data_Port_Utilities::create_user( 'testuser', 'testemail@test.com' );
 
-		$this->assertEquals( $user_id, get_user_by( 'login', 'testuser' )->ID );
+		$user = get_user_by( 'login', 'testuser' );
+		$this->assertEquals( $user_id, $user->ID );
+		$this->assertContains( 'subscriber', $user->roles );
+
+		$user_id = Sensei_Data_Port_Utilities::create_user( 'testuser2', 'testemail2@test.com', 'teacher' );
+
+		$user = get_user_by( 'login', 'testuser2' );
+		$this->assertEquals( $user_id, $user->ID );
+		$this->assertContains( 'teacher', $user->roles );
 	}
 
 	/**
