@@ -2,7 +2,7 @@ import { render, fireEvent } from '@testing-library/react';
 import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 
 import QueryStringRouter, { Route } from '../query-string-router';
-import { updateRouteURL } from '../query-string-router/url-functions';
+import { updateQueryString } from '../query-string-router/url-functions';
 import Features from './index';
 import useFeaturesPolling from './use-features-polling';
 
@@ -39,7 +39,7 @@ describe( '<Features />', () => {
 
 	afterEach( () => {
 		// Clear URL param.
-		updateRouteURL( 'step', '' );
+		updateQueryString( 'step', '' );
 
 		delete window.sensei_log_event;
 	} );
