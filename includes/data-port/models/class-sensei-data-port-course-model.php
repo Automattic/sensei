@@ -31,29 +31,6 @@ class Sensei_Data_Port_Course_Model extends Sensei_Data_Port_Model {
 	const COLUMN_NOTIFICATIONS    = 'notifications';
 
 	/**
-	 * The default author to be used in courses if none is provided.
-	 *
-	 * @var int
-	 */
-	private $default_author;
-
-	/**
-	 * Set up item from an array.
-	 *
-	 * @param array $data            Data to restore item from.
-	 * @param int   $default_author  The default author.
-	 *
-	 * @return Sensei_Data_Port_Model
-	 */
-	public static function from_source_array( $data, $default_author = 0 ) {
-		$course_model                 = parent::from_source_array( $data );
-		$course_model->default_author = $default_author;
-
-		return $course_model;
-	}
-
-
-	/**
 	 * Check to see if the post already exists in the database.
 	 *
 	 * @return int
@@ -86,7 +63,7 @@ class Sensei_Data_Port_Course_Model extends Sensei_Data_Port_Model {
 	 * @return true|WP_Error
 	 */
 	public function sync_post() {
-		$teacher = $this->default_author;
+		$teacher = $this->get_default_author();
 
 		$teacher_username = $this->get_value( self::COLUMN_TEACHER_USERNAME );
 
@@ -270,6 +247,32 @@ class Sensei_Data_Port_Course_Model extends Sensei_Data_Port_Model {
 		if ( 'module' === $taxonomy ) {
 			delete_post_meta( $course_id, '_module_order' );
 		}
+	}
+
+	/**
+	 * Get the data to return with any errors.
+	 *
+	 * @param array $data Base error data to pass along.
+	 *
+	 * @return array
+	 */
+	public function get_error_data( $data = [] ) {
+		$entry_id = $this->get_value( self::COLUMN_ID );
+		if ( $entry_id ) {
+			$data['entry_id'] = $entry_id;
+		}
+
+		$entry_title = $this->get_value( self::COLUMN_COURSE );
+		if ( $entry_id ) {
+			$data['entry_title'] = $entry_title;
+		}
+
+		$post_id = $this->get_post_id();
+		if ( $post_id ) {
+			$data['post_id'] = $post_id;
+		}
+
+		return $data;
 	}
 
 	/**
