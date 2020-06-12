@@ -23,7 +23,7 @@ class Sensei_Data_Port_Utilities {
 	 * @param string $email     User's email.
 	 * @param string $role      The user's role.
 	 *
-	 * @return int|WP_Error
+	 * @return int|WP_Error  User id on success, WP_Error on failure.
 	 */
 	public static function create_user( $username, $email = '', $role = '' ) {
 		$user = get_user_by( 'login', $username );
@@ -56,7 +56,7 @@ class Sensei_Data_Port_Utilities {
 	 * @param string $source     Filename or URL.
 	 * @param int    $parent_id  Id of the parent post.
 	 *
-	 * @return bool|WP_Error
+	 * @return int|WP_Error  Attachment id on success, WP_Error on failure.
 	 */
 	public static function get_attachment_from_source( $source, $parent_id = 0 ) {
 		if ( false === filter_var( $source, FILTER_VALIDATE_URL ) ) {

@@ -153,7 +153,7 @@ class Sensei_Data_Port_Course_Model extends Sensei_Data_Port_Model {
 	}
 
 	/**
-	 * * Retrieve the meta arguments to be used in wp_insert_post.
+	 * Retrieve the meta arguments to be used in wp_insert_post.
 	 *
 	 * @return array
 	 */
@@ -186,7 +186,7 @@ class Sensei_Data_Port_Course_Model extends Sensei_Data_Port_Model {
 	 * @param string $taxonomy     The taxonomy of the terms.
 	 * @param int    $teacher      The teacher id.
 	 *
-	 * @return array|bool|WP_Error
+	 * @return bool|WP_Error True on success, WP_Error on failure.
 	 */
 	private function set_course_terms( $column_name, $course_id, $taxonomy, $teacher = null ) {
 		$new_terms = $this->get_value( $column_name );
