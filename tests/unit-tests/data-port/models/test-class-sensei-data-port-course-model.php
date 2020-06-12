@@ -234,8 +234,8 @@ class Sensei_Data_Port_Course_Model_Test extends WP_UnitTestCase {
 		$this->assertEquals( $line_data[ Sensei_Data_Port_Course_Model::COLUMN_EXCERPT ], $course->post_excerpt );
 
 		// Assert that post meta have the correct values.
-		$this->assertEquals( $line_data[ Sensei_Data_Port_Course_Model::COLUMN_FEATURED ], get_post_meta( $course->ID, 'course_featured', true ) );
-		$this->assertEquals( $line_data[ Sensei_Data_Port_Course_Model::COLUMN_VIDEO ], get_post_meta( $course->ID, 'course_video_embed', true ) );
+		$this->assertEquals( $line_data[ Sensei_Data_Port_Course_Model::COLUMN_FEATURED ], get_post_meta( $course->ID, '_course_featured', true ) );
+		$this->assertEquals( $line_data[ Sensei_Data_Port_Course_Model::COLUMN_VIDEO ], get_post_meta( $course->ID, '_course_video_embed', true ) );
 		$this->assertEquals( $line_data[ Sensei_Data_Port_Course_Model::COLUMN_NOTIFICATIONS ], get_post_meta( $course->ID, '_sensei_course_notification', true ) );
 
 		// Calculate the module order and compare it with the post's one.

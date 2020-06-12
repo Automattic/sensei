@@ -162,12 +162,12 @@ class Sensei_Data_Port_Course_Model extends Sensei_Data_Port_Model {
 
 		$value = $this->get_value( self::COLUMN_FEATURED );
 		if ( null !== $value ) {
-			$meta['course_featured'] = $value;
+			$meta['_course_featured'] = $value;
 		}
 
 		$value = $this->get_value( self::COLUMN_VIDEO );
 		if ( null !== $value ) {
-			$meta['course_video_embed'] = $value;
+			$meta['_course_video_embed'] = $value;
 		}
 
 		$value = $this->get_value( self::COLUMN_NOTIFICATIONS );
