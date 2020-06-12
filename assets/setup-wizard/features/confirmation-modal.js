@@ -2,14 +2,8 @@ import { List } from '@woocommerce/components';
 import { Button, Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
-const WC_EXTRA_DESCRIPTION = __(
-	'(The WooCommerce plugin may also be installed and activated for free.)',
-	'sensei-lms'
-);
-
 /**
  * @typedef  {Object} Feature
- * @property {string} slug    Feature slug.
  * @property {string} title   Feature title.
  * @property {string} excerpt Feature excerpt.
  */
@@ -39,12 +33,9 @@ const ConfirmationModal = ( {
 		isDismissible={ false }
 	>
 		<List
-			items={ features.map( ( { slug, title, excerpt } ) => ( {
+			items={ features.map( ( { title, excerpt } ) => ( {
 				title,
-				content:
-					'sensei-wc-paid-courses' === slug
-						? `${ excerpt } ${ WC_EXTRA_DESCRIPTION }`
-						: excerpt,
+				content: excerpt,
 			} ) ) }
 		/>
 
