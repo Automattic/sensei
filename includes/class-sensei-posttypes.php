@@ -487,12 +487,14 @@ class Sensei_PostTypes {
 			'all_items'         => __( 'All Course Categories', 'sensei-lms' ),
 			'parent_item'       => __( 'Parent Course Category', 'sensei-lms' ),
 			'parent_item_colon' => __( 'Parent Course Category:', 'sensei-lms' ),
+			'view_item'         => __( 'View Course Category', 'sensei-lms' ),
 			'edit_item'         => __( 'Edit Course Category', 'sensei-lms' ),
 			'update_item'       => __( 'Update Course Category', 'sensei-lms' ),
 			'add_new_item'      => __( 'Add New Course Category', 'sensei-lms' ),
 			'new_item_name'     => __( 'New Course Category Name', 'sensei-lms' ),
 			'menu_name'         => __( 'Course Categories', 'sensei-lms' ),
 			'popular_items'     => null, // Hides the "Popular" section above the "add" form in the admin.
+			'back_to_items'     => __( '&larr; Back to Course Categories', 'sensei-lms' ),
 		);
 
 		$args = array(
@@ -605,11 +607,13 @@ class Sensei_PostTypes {
 			'all_items'         => __( 'All Question Categories', 'sensei-lms' ),
 			'parent_item'       => __( 'Parent Question Category', 'sensei-lms' ),
 			'parent_item_colon' => __( 'Parent Question Category:', 'sensei-lms' ),
+			'view_item'         => __( 'View Question Category', 'sensei-lms' ),
 			'edit_item'         => __( 'Edit Question Category', 'sensei-lms' ),
 			'update_item'       => __( 'Update Question Category', 'sensei-lms' ),
 			'add_new_item'      => __( 'Add New Question Category', 'sensei-lms' ),
 			'new_item_name'     => __( 'New Question Category Name', 'sensei-lms' ),
 			'menu_name'         => __( 'Categories', 'sensei-lms' ),
+			'back_to_items'     => __( '&larr; Back to Question Categories', 'sensei-lms' ),
 		);
 
 		$args = array(
@@ -647,11 +651,13 @@ class Sensei_PostTypes {
 			'all_items'         => __( 'All Lesson Tags', 'sensei-lms' ),
 			'parent_item'       => __( 'Parent Tag', 'sensei-lms' ),
 			'parent_item_colon' => __( 'Parent Tag:', 'sensei-lms' ),
+			'view_item'         => __( 'View Lesson Tag', 'sensei-lms' ),
 			'edit_item'         => __( 'Edit Lesson Tag', 'sensei-lms' ),
 			'update_item'       => __( 'Update Lesson Tag', 'sensei-lms' ),
 			'add_new_item'      => __( 'Add New Lesson Tag', 'sensei-lms' ),
 			'new_item_name'     => __( 'New Tag Name', 'sensei-lms' ),
 			'menu_name'         => __( 'Lesson Tags', 'sensei-lms' ),
+			'back_to_items'     => __( '&larr; Back to Lesson Tags', 'sensei-lms' ),
 		);
 
 		$args = array(
