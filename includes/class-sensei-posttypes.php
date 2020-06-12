@@ -607,7 +607,7 @@ class Sensei_PostTypes {
 			'all_items'         => __( 'All Question Categories', 'sensei-lms' ),
 			'parent_item'       => __( 'Parent Question Category', 'sensei-lms' ),
 			'parent_item_colon' => __( 'Parent Question Category:', 'sensei-lms' ),
-			'view_item'         => __( 'View Course Category', 'sensei-lms' ),
+			'view_item'         => __( 'View Question Category', 'sensei-lms' ),
 			'edit_item'         => __( 'Edit Question Category', 'sensei-lms' ),
 			'update_item'       => __( 'Update Question Category', 'sensei-lms' ),
 			'add_new_item'      => __( 'Add New Question Category', 'sensei-lms' ),
