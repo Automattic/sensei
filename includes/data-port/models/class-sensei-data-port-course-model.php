@@ -162,7 +162,7 @@ class Sensei_Data_Port_Course_Model extends Sensei_Data_Port_Model {
 
 		$value = $this->get_value( self::COLUMN_FEATURED );
 		if ( null !== $value ) {
-			$meta['_course_featured'] = $value;
+			$meta['_course_featured'] = true === $value ? 'featured' : '';
 		}
 
 		$value = $this->get_value( self::COLUMN_VIDEO );
@@ -172,7 +172,7 @@ class Sensei_Data_Port_Course_Model extends Sensei_Data_Port_Model {
 
 		$value = $this->get_value( self::COLUMN_NOTIFICATIONS );
 		if ( null !== $value ) {
-			$meta['_sensei_course_notification'] = $value;
+			$meta['disable_notification'] = $value;
 		}
 
 		return $meta;
