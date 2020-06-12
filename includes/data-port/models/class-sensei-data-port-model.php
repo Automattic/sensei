@@ -28,6 +28,13 @@ abstract class Sensei_Data_Port_Model {
 	private $post_id;
 
 	/**
+	 * The default author to be used in courses if none is provided.
+	 *
+	 * @var int
+	 */
+	private $default_author;
+
+	/**
 	 * Sensei_Data_Port_Model constructor.
 	 */
 	private function __construct() {
@@ -37,13 +44,15 @@ abstract class Sensei_Data_Port_Model {
 	/**
 	 * Set up item from an array.
 	 *
-	 * @param array $data Data to restore item from.
+	 * @param array $data            Data to restore item from.
+	 * @param int   $default_author  The default author.
 	 *
 	 * @return static
 	 */
-	public static function from_source_array( $data ) {
+	public static function from_source_array( $data, $default_author = 0 ) {
 		$self = new static();
 		$self->restore_from_source_array( $data );
+		$self->default_author = $default_author;
 
 		$post_id = $self->get_existing_post_id();
 		if ( $post_id ) {
@@ -66,6 +75,15 @@ abstract class Sensei_Data_Port_Model {
 	 * @return true|WP_Error
 	 */
 	abstract public function sync_post();
+
+	/**
+	 * Get the data to return with any errors.
+	 *
+	 * @param array $data Base error data to pass along.
+	 *
+	 * @return array
+	 */
+	abstract public function get_error_data( $data = [] );
 
 	/**
 	 * Get the value of a field.
@@ -322,5 +340,14 @@ abstract class Sensei_Data_Port_Model {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Get the default author.
+	 *
+	 * @return int
+	 */
+	public function get_default_author() {
+		return $this->default_author;
 	}
 }

@@ -131,16 +131,6 @@ abstract class Sensei_Import_File_Process_Task
 	abstract public function get_task_key();
 
 	/**
-	 * Process a single CSV line.
-	 *
-	 * @param int   $line_number  The line number in the file.
-	 * @param array $line         The current line as returned from Sensei_Import_CSV_Reader::read_lines().
-	 *
-	 * @return mixed
-	 */
-	abstract protected function process_line( $line_number, $line );
-
-	/**
 	 * Validate an uploaded source file before saving it.
 	 *
 	 * @param string $file_path File path of the file to validate.
@@ -148,4 +138,75 @@ abstract class Sensei_Import_File_Process_Task
 	 * @return true|WP_Error
 	 */
 	abstract public static function validate_source_file( $file_path );
+
+	/**
+	 * Get the class name of the model handled by this task.
+	 *
+	 * @return string
+	 */
+	abstract public function get_model_class();
+
+	/**
+	 * Process a single CSV line.
+	 *
+	 * @param int            $line_number  The line number in the file.
+	 * @param WP_Error|array $line         The current line as returned from Sensei_Import_CSV_Reader::read_lines().
+	 *
+	 * @return mixed
+	 */
+	protected function process_line( $line_number, $line ) {
+		if ( empty( $line ) ) {
+			return true;
+		}
+
+		if ( $line instanceof WP_Error ) {
+			$this->get_job()->add_log_entry(
+				$line->get_error_message(),
+				Sensei_Data_Port_Job::LOG_LEVEL_ERROR,
+				[
+					'line' => $line_number,
+				]
+			);
+
+			return false;
+		}
+
+		$model_class = static::get_model_class();
+		if ( ! is_a( $model_class, Sensei_Data_Port_Model::class, true ) ) {
+			return false;
+		}
+
+		$model = $model_class::from_source_array( $line, $this->get_job()->get_user_id() );
+		if ( ! $model->is_valid() ) {
+			$this->get_job()->add_log_entry(
+				__( 'A required field is missing or one of the fields is malformed. Line skipped.', 'sensei-lms' ),
+				Sensei_Data_Port_Job::LOG_LEVEL_NOTICE,
+				$model->get_error_data(
+					[
+						'line' => $line_number,
+					]
+				)
+			);
+
+			return false;
+		}
+
+		$result = $model->sync_post();
+		if ( $result instanceof WP_Error ) {
+			$this->get_job()->add_log_entry(
+				$result->get_error_message(),
+				Sensei_Data_Port_Job::LOG_LEVEL_ERROR,
+				$model->get_error_data(
+					[
+						'line' => $line_number,
+					]
+				)
+			);
+
+			return false;
+		}
+
+		return true;
+	}
+
 }

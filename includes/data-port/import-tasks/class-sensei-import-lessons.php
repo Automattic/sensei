@@ -26,15 +26,14 @@ class Sensei_Import_Lessons
 	}
 
 	/**
-	 * Process a single CSV line.
+	 * Get the class name of the model handled by this task.
 	 *
-	 * @param int   $line_number  The line number in the file.
-	 * @param array $line         The current line as returned from Sensei_Import_CSV_Reader::read_lines().
-	 *
-	 * @return mixed
+	 * @return string
 	 */
-	protected function process_line( $line_number, $line ) {
-		return true;
+	public function get_model_class() {
+		// @todo Implement.
+
+		return null;
 	}
 
 	/**

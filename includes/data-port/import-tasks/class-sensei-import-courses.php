@@ -26,6 +26,17 @@ class Sensei_Import_Courses
 	}
 
 	/**
+	 * Get the class name of the model handled by this task.
+	 *
+	 * @return string
+	 */
+	public function get_model_class() {
+		// @todo Implement.
+
+		return null;
+	}
+
+	/**
 	 * Process a single CSV line.
 	 *
 	 * @param int   $line_number  The line number in the file.

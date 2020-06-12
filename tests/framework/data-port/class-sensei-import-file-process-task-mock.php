@@ -11,8 +11,9 @@ class Sensei_Import_File_Process_Task_Mock extends Sensei_Import_File_Process_Ta
 		return 'mock-key';
 	}
 
-	protected function process_line( $line_number, $line ) {}
-
+	public function get_model_class() {
+		return Sensei_Data_Port_Model_Mock::class;
+	}
 
 	public function clean_up() {}
 
