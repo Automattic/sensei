@@ -7,7 +7,7 @@
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     3.1.0
+ * @version     3.2.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -120,7 +120,7 @@ global $course;
 			if ( $course_has_lessons_in_modules ) :
 				?>
 				<h3><?php esc_html_e( 'Other Lessons', 'sensei-lms' ); ?></h3>
-			<?php endif; // $course_has_lessons_in_modules ?>
+			<?php endif; ?>
 
 			<?php foreach ( $lessons as $lesson ) : ?>
 
@@ -138,9 +138,8 @@ global $course;
 						}
 					}
 				}
-				?>
 
-				<?php echo $course_has_lessons_in_modules ? '<h4>' : '<h3>'; ?>
+				echo $course_has_lessons_in_modules ? '<h4>' : '<h3>'; ?>
 
 					<a href="<?php echo esc_url_raw( get_permalink( $lesson->ID ) ); ?>" title="
 										<?php
