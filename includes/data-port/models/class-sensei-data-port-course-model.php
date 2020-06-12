@@ -319,7 +319,7 @@ class Sensei_Data_Port_Course_Model extends Sensei_Data_Port_Model {
 				'type' => 'string',
 			],
 			self::COLUMN_IMAGE            => [
-				'type' => 'url',
+				'type' => 'url-or-file',
 			],
 			self::COLUMN_VIDEO            => [
 				'type' => 'video',
