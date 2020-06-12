@@ -484,6 +484,37 @@ class Sensei_Setup_Wizard {
 	}
 
 	/**
+	 * Extensions to be installed.
+	 *
+	 * @param array $extensions Extensions to be installed.
+	 *
+	 * @return array Extensions, maybe with WooCommerce added to the list.
+	 */
+	private function maybe_add_woocommerce_to_installation( $extensions ) {
+		$has_wc_extensions = ! empty(
+			array_filter(
+				$extensions,
+				function( $extension ) {
+					return ! empty( $extension->wccom_product_id );
+				}
+			)
+		);
+
+		if ( $has_wc_extensions ) {
+			array_unshift(
+				$extensions,
+				(object) [
+					'title'        => 'WooCommerce',
+					'product_slug' => 'woocommerce',
+					'plugin_file'  => 'woocommerce/woocommerce.php',
+				]
+			);
+		}
+
+		return $extensions;
+	}
+
+	/**
 	 * Filter extensions to install and call installation.
 	 *
 	 * @param string[] $extension_slugs Extension slugs to install.
@@ -499,6 +530,8 @@ class Sensei_Setup_Wizard {
 				$this->get_sensei_extensions()
 			)
 		);
+
+		$extensions_to_install = $this->maybe_add_woocommerce_to_installation( $extensions_to_install );
 
 		Sensei_Plugins_Installation::instance()->install_plugins( $extensions_to_install );
 	}
