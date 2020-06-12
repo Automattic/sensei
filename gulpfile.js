@@ -17,10 +17,15 @@ var gulp = require( 'gulp' );
 var zip = require( 'gulp-zip' );
 var process = require( 'process' );
 
-function npm_run( command ) {
+function npm_run( command, cb ) {
 	var npmProcess = exec( `npm run ${ command }` );
 	npmProcess.stdout.pipe( process.stdout );
 	npmProcess.stderr.pipe( process.stderr );
+
+	if ( cb ) {
+		npmProcess.on( 'exit', cb );
+	}
+
 	return npmProcess;
 }
 
@@ -80,8 +85,8 @@ gulp.task( 'vendor', function() {
 
 gulp.task(
 	'test',
-	gulp.series( function npm_test() {
-		npm_run( 'test' );
+	gulp.series( function npm_test( cb ) {
+		npm_run( 'test', cb );
 	} )
 );
 
