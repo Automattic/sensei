@@ -43,7 +43,7 @@ class Sensei_Data_Port_Course_Model extends Sensei_Data_Port_Model {
 			$existing_posts = get_posts(
 				[
 					'post_type'      => self::POST_TYPE,
-					'name'           => $data[ self::COLUMN_SLUG ],
+					'post_name__in'  => [ $data[ self::COLUMN_SLUG ] ],
 					'posts_per_page' => 1,
 					'post_status'    => 'any',
 				]
@@ -288,9 +288,8 @@ class Sensei_Data_Port_Course_Model extends Sensei_Data_Port_Model {
 				'type' => 'string',
 			],
 			self::COLUMN_COURSE           => [
-				'type'       => 'string',
-				'required'   => true,
-				'allow_html' => true,
+				'type'     => 'string',
+				'required' => true,
 			],
 			self::COLUMN_SLUG             => [
 				'type' => 'slug',
