@@ -1100,11 +1100,11 @@ function the_no_permissions_message( $post_id ) {
  * Output the sensei excerpt
  *
  * @since 1.9.0
- * @deprecated
+ * @deprecated 3.2.0
  */
 function sensei_the_excerpt( $post_id ) {
 
-	_deprecated_function( __FUNCTION__, '3.1.0' );
+	_deprecated_function( __FUNCTION__, '3.2.0' );
 
 	global $post;
 	the_excerpt( $post );
