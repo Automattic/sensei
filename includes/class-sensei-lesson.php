@@ -2586,7 +2586,7 @@ class Sensei_Lesson {
 			$event_properties = array(
 				'question_status'      => $question_data['question_status'],
 				'question_type'        => $question_data['question_type'] ? $question_data['question_type'] : 'all',
-				'question_category_id' => $question_data['question_category'] ? get_term_by( 'slug', $question_data['question_category'], 'question-category' )->term_id : 'all',
+				'question_category' => $question_data['question_category'] ? get_term_by( 'slug', $question_data['question_category'], 'question-category' )->term_id : 'all',
 				'question_count'       => $number_of_added_questions,
 			);
 
