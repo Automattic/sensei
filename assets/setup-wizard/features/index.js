@@ -1,4 +1,4 @@
-import { useState, useEffect } from '@wordpress/element';
+import { useState, useEffect, useCallback } from '@wordpress/element';
 import { Card, H } from '@woocommerce/components';
 import { __ } from '@wordpress/i18n';
 import { uniq } from 'lodash';
@@ -62,9 +62,9 @@ const Features = () => {
 
 	// Mark as selected also the already submitted slugs (Except the installed ones).
 	useEffect( () => {
-		setSelectedSlugs( ( currentSelected ) =>
+		setSelectedSlugs( ( prev ) =>
 			uniq( [
-				...currentSelected,
+				...prev,
 				...filterInstalledFeatures( submittedSlugs, features ),
 			] )
 		);
@@ -79,10 +79,31 @@ const Features = () => {
 		}
 	}, [] );
 
-	const getSelectedFeatures = () =>
-		features.filter( ( feature ) =>
-			selectedSlugs.includes( feature.slug )
+	const getSelectedFeatures = useCallback(
+		() =>
+			features.filter( ( feature ) =>
+				selectedSlugs.includes( feature.slug )
+			),
+		[ features, selectedSlugs ]
+	);
+
+	// Add or remove WooCommerce.
+	useEffect( () => {
+		const wcSlug = 'woocommerce';
+		const selectedFeatures = getSelectedFeatures();
+		const needWooCommerce = selectedFeatures.some(
+			( feature ) => feature.wccom_product_id
 		);
+		const isWooCommerceSelected = selectedSlugs.includes( wcSlug );
+
+		if ( needWooCommerce && ! isWooCommerceSelected ) {
+			setSelectedSlugs( ( prev ) => [ wcSlug, ...prev ] );
+		} else if ( ! needWooCommerce && isWooCommerceSelected ) {
+			setSelectedSlugs( ( prev ) =>
+				prev.filter( ( slug ) => slug !== wcSlug )
+			);
+		}
+	}, [ getSelectedFeatures, selectedSlugs ] );
 
 	const finishSelection = () => {
 		if ( 0 === selectedSlugs.length ) {

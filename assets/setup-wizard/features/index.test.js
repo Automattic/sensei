@@ -276,4 +276,27 @@ describe( '<Features />', () => {
 		expect( queryByText( 'Plugin installed' ) ).toBeTruthy();
 		mockSearch( '' );
 	} );
+
+	it( 'Should select WooCommerce when some feature with `wccom_product_id` is selected', () => {
+		mockStepData( {
+			selected: [],
+			options: [
+				{ slug: 'woocommerce', title: 'WooCommerce' },
+				{ slug: 'need-wc', title: 'Need', wccom_product_id: '123' },
+				{ slug: 'no-need-wc', title: 'No need' },
+			],
+		} );
+
+		const { getByLabelText } = render(
+			<QueryStringRouter paramName="step">
+				<Features />
+			</QueryStringRouter>
+		);
+
+		fireEvent.click( getByLabelText( /No need/ ) );
+		expect( getByLabelText( /WooCommerce/ ).checked ).toBeFalsy();
+
+		fireEvent.click( getByLabelText( /Need/ ) );
+		expect( getByLabelText( /WooCommerce/ ).checked ).toBeTruthy();
+	} );
 } );
