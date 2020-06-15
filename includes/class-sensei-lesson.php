@@ -4256,7 +4256,7 @@ class Sensei_Lesson {
 			// If the user hasn't completed the prerequisites then hide the current actions.
 			// (If the user is either the lesson creator or admin, show actions).
 			if (
-					$has_user_completed_lesson
+					Sensei_Utils::user_completed_lesson( $lesson_prerequisite, $user_id )
 					|| Sensei_Utils::sensei_is_lesson_author( $lesson_id, $user_id )
 					|| Sensei_Utils::sensei_current_user_is_administrator()
 			) {
