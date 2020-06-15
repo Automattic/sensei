@@ -2519,7 +2519,7 @@ class Sensei_Utils {
 	 * Determine if the current page is a Sensei learner profile page.
 	 *
 	 * @since 3.2.0
-	 * 
+	 *
 	 * @return bool True if the current page is a Sensei learner profile page.
 	 */
 	public static function is_learner_profile_page() {
@@ -2531,7 +2531,7 @@ class Sensei_Utils {
 	 * Determine if the current page is a Sensei course results page.
 	 *
 	 * @since 3.2.0
-	 * 
+	 *
 	 * @return bool True if the current page is a Sensei course results page.
 	 */
 	public static function is_course_results_page() {

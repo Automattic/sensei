@@ -24,8 +24,8 @@ function is_sensei() {
 	$taxonomies = array( 'course-category', 'quiz-type', 'question-type', 'lesson-tag', 'module' );
 
 	if ( is_post_type_archive( $post_types )
-		|| is_singular( $post_types ) 
-		|| is_tax( $taxonomies ) 
+		|| is_singular( $post_types )
+		|| is_tax( $taxonomies )
 	) {
 		$is_sensei = true;
 	} elseif ( is_object( $post ) && ! is_wp_error( $post ) ) {
