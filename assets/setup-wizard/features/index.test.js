@@ -128,6 +128,23 @@ describe( '<Features />', () => {
 		).toBeTruthy();
 	} );
 
+	it( 'Should display installation feedback when feedback is an URL param', () => {
+		mockSearch( 'feedback=1' );
+		useFeaturesPolling.mockReturnValue( {
+			selected: [ 'test' ],
+			options: [ { slug: 'test', title: 'Test', status: 'installed' } ],
+		} );
+
+		const { queryByText } = render(
+			<QueryStringRouter>
+				<Features />
+			</QueryStringRouter>
+		);
+
+		expect( queryByText( 'Plugin installed' ) ).toBeTruthy();
+		mockSearch( '' );
+	} );
+
 	it( 'Should display installation error', () => {
 		useFeaturesPolling.mockReturnValue( {
 			selected: [ 'test-2' ],
@@ -258,23 +275,6 @@ describe( '<Features />', () => {
 				slug: 'test-1,test-2',
 			}
 		);
-	} );
-
-	it( 'Should display installation feedback when feedback is an URL param', () => {
-		mockSearch( 'feedback=1' );
-		useFeaturesPolling.mockReturnValue( {
-			selected: [ 'test' ],
-			options: [ { slug: 'test', title: 'Test', status: 'installed' } ],
-		} );
-
-		const { queryByText } = render(
-			<QueryStringRouter>
-				<Features />
-			</QueryStringRouter>
-		);
-
-		expect( queryByText( 'Plugin installed' ) ).toBeTruthy();
-		mockSearch( '' );
 	} );
 
 	it( 'Should auto-select WooCommerce when some feature with `wccom_product_id` is selected', () => {

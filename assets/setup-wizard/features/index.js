@@ -55,10 +55,19 @@ const Features = () => {
 	const features = stepData.options;
 	const submittedSlugs = stepData.selected;
 
-	// Features installation.
+	// Features installation data.
 	const { submitStep: submitInstallation } = useSetupWizardStep(
 		'features-installation'
 	);
+
+	// Open directly in the feedback screen when there is a temporary feedback param.
+	useEffect( () => {
+		if ( getParam( 'feedback' ) ) {
+			// Remove temporary param.
+			updateQueryString( 'feedback', null, true );
+			toggleFeedback( true );
+		}
+	}, [] );
 
 	// Mark as selected also the already submitted slugs (Except the installed ones).
 	useEffect( () => {
@@ -70,20 +79,13 @@ const Features = () => {
 		);
 	}, [ submittedSlugs, features ] );
 
-	// Open directly in the feedback screen when there is a temporary feedback param.
-	useEffect( () => {
-		if ( getParam( 'feedback' ) ) {
-			// Remove temporary param.
-			updateQueryString( 'feedback', null, true );
-			toggleFeedback( true );
-		}
-	}, [] );
-
+	// Get selected features based on the selectedSlugs.
 	const getSelectedFeatures = () =>
 		features.filter( ( feature ) =>
 			selectedSlugs.includes( feature.slug )
 		);
 
+	// Add or remove WooCommerce to the selection.
 	const getSelectedSlugs = () => {
 		const wcSlug = 'woocommerce';
 		const selectedFeatures = getSelectedFeatures();
@@ -103,6 +105,7 @@ const Features = () => {
 		return [ wcSlug, ...selectedSlugs ];
 	};
 
+	// Finish and submit features selection.
 	const finishSelection = () => {
 		const selected = getSelectedSlugs();
 		if ( 0 === selected.length ) {
@@ -116,6 +119,7 @@ const Features = () => {
 		);
 	};
 
+	// Start features installation.
 	const startInstallation = () => {
 		const selected = getSelectedSlugs();
 		submitInstallation(
@@ -133,6 +137,7 @@ const Features = () => {
 		} );
 	};
 
+	// Retry features installation.
 	const retryInstallation = ( selected ) => {
 		submitInstallation( { selected } );
 
@@ -141,6 +146,7 @@ const Features = () => {
 		} );
 	};
 
+	// Go to the next step.
 	const goToNextStep = ( skip = false ) => {
 		goTo( 'ready' );
 
