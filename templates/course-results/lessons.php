@@ -119,7 +119,7 @@ global $course;
 			// lesson title will already appear above
 			if ( $course_has_lessons_in_modules ) :
 				?>
-				<h3><?php esc_html_e( 'Other Lessons', 'sensei-lms' ); ?></h3>
+				<h2><?php esc_html_e( 'Other Lessons', 'sensei-lms' ); ?></h2>
 			<?php endif; ?>
 
 			<?php foreach ( $lessons as $lesson ) : ?>
@@ -138,15 +138,15 @@ global $course;
 						}
 					}
 				}
-
-				echo $course_has_lessons_in_modules ? '<h4>' : '<h3>';
 				?>
 
+				<h3>
+
 					<a href="<?php echo esc_url_raw( get_permalink( $lesson->ID ) ); ?>" title="
-										<?php
-										// translators: Placeholder it the lesson title.
-										esc_attr( sprintf( __( 'Start %s', 'sensei-lms' ), $lesson->post_title ) )
-										?>
+						<?php
+						// translators: Placeholder it the lesson title.
+						esc_attr( sprintf( __( 'Start %s', 'sensei-lms' ), $lesson->post_title ) )
+						?>
 					" >
 
 						<?php echo esc_html( $lesson->post_title ); ?>
@@ -155,14 +155,14 @@ global $course;
 
 					<span class="lesson-grade"><?php echo esc_html( $lesson_grade ); ?></span>
 
-				<?php echo $course_has_lessons_in_modules ? '</h4>' : '</h3>'; ?>
+				</h3>
 
 			<?php endforeach; // lessons ?>
 
 		<?php endif; // lessons count > 0 ?>
 
 
-		<h3 class="total-grade">
+		<h2 class="total-grade">
 
 			<?php esc_html_e( 'Total Grade', 'sensei-lms' ); ?>
 			<span class="lesson-grade">
@@ -176,7 +176,7 @@ global $course;
 
 			</span>
 
-		</h3>
+		</h2>
 
 	</article>
 
