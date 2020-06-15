@@ -379,7 +379,7 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 	 *
 	 * @return array {
 	 *     @type array $$field_name {
-	 *          @type string   $type       Type of data. Options: string, int, float, bool, slug, ref, email, url.
+	 *          @type string   $type       Type of data. Options: string, int, float, bool, slug, ref, email, url-or-file, username, video.
 	 *          @type string   $pattern    Regular expression that the value should match (Optional).
 	 *          @type mixed    $default    Default value if not set or invalid. Default is `null` (Optional).
 	 *          @type bool     $required   True if a non-empty value is required. Default is `false` (Optional).
@@ -398,7 +398,9 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 			self::COLUMN_ANSWER          => [
 				'type'      => 'string',
 				'validator' => static::validate_for_question_type( 'multiple-choice', true ),
-				'default'   => function( $field, $data ) {
+				'default'   => function( $field, $self ) {
+					$data = $self->get_data();
+
 					if (
 						isset( $data[ self::COLUMN_TYPE ] )
 						&& 'boolean' === $data[ self::COLUMN_TYPE ]
@@ -416,7 +418,8 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 				'type' => 'slug',
 			],
 			self::COLUMN_DESCRIPTION     => [
-				'type' => 'string',
+				'type'       => 'string',
+				'allow_html' => true,
 			],
 			self::COLUMN_STATUS          => [
 				'type'    => 'string',
@@ -443,25 +446,31 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 				'type' => 'string',
 			],
 			self::COLUMN_FEEDBACK        => [
-				'type' => 'string',
+				'type'       => 'string',
+				'allow_html' => true,
 			],
 			self::COLUMN_TEXT_BEFORE_GAP => [
-				'type'      => 'string',
-				'validator' => static::validate_for_question_type( 'gap-fill', false ),
+				'type'       => 'string',
+				'validator'  => static::validate_for_question_type( 'gap-fill', false ),
+				'allow_html' => true,
 			],
 			self::COLUMN_GAP             => [
-				'type'      => 'string',
-				'validator' => static::validate_for_question_type( 'gap-fill', false ),
+				'type'       => 'string',
+				'validator'  => static::validate_for_question_type( 'gap-fill', false ),
+				'allow_html' => true,
 			],
 			self::COLUMN_TEXT_AFTER_GAP  => [
-				'type'      => 'string',
-				'validator' => static::validate_for_question_type( 'gap-fill', false ),
+				'type'       => 'string',
+				'validator'  => static::validate_for_question_type( 'gap-fill', false ),
+				'allow_html' => true,
 			],
 			self::COLUMN_UPLOAD_NOTES    => [
-				'type' => 'string',
+				'type'       => 'string',
+				'allow_html' => true,
 			],
 			self::COLUMN_TEACHER_NOTES   => [
-				'type' => 'string',
+				'type'       => 'string',
+				'allow_html' => true,
 			],
 		];
 	}
