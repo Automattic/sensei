@@ -76,30 +76,6 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 	 * @return true|WP_Error
 	 */
 	public function sync_post() {
-		$post_object_result = $this->sync_post_object();
-		if ( is_wp_error( $post_object_result ) ) {
-			return $post_object_result;
-		}
-
-		$taxonomy_result = $this->sync_taxonomies();
-		if ( is_wp_error( $taxonomy_result ) ) {
-			return $taxonomy_result;
-		}
-
-		$meta_result = $this->sync_meta();
-		if ( is_wp_error( $meta_result ) ) {
-			return $meta_result;
-		}
-
-		return true;
-	}
-
-	/**
-	 * Synchronize the post object.
-	 *
-	 * @return bool|WP_Error
-	 */
-	private function sync_post_object() {
 		$postarr = $this->get_post_array();
 
 		$post_id = wp_insert_post( $postarr );
@@ -109,6 +85,12 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 		}
 
 		$this->set_post_id( $post_id );
+
+		// Sync meta. This happens outside of the post save because question media needs the post ID.
+		$meta_result = $this->sync_meta();
+		if ( is_wp_error( $meta_result ) ) {
+			return $meta_result;
+		}
 
 		return true;
 	}
@@ -147,6 +129,8 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 		if ( null !== $post_status ) {
 			$postarr['post_status'] = $post_status;
 		}
+
+		$postarr['tax_input'] = $this->get_taxonomy_terms();
 
 		return $postarr;
 	}
@@ -206,7 +190,7 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 	/**
 	 * Get the meta fields and their values.
 	 *
-	 * @return array
+	 * @return array|WP_Error
 	 */
 	private function get_meta_fields() {
 		$fields = [];
@@ -353,30 +337,6 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 		$values['_wrong_answer_count'] = count( $values['_question_wrong_answers'] );
 
 		return $values;
-	}
-
-	/**
-	 * Synchronize the post taxonomies.
-	 *
-	 * @return true|WP_Error
-	 */
-	private function sync_taxonomies() {
-		$taxonomies = $this->get_taxonomy_terms();
-
-		foreach ( $taxonomies as $taxonomy_type => $terms ) {
-			if ( ! wp_set_post_terms( $this->get_post_id(), $terms, $taxonomy_type ) ) {
-				return new WP_Error(
-					'sensei_import_question_taxonomy_failed',
-					sprintf(
-						// translators: Placeholder is taxonomy type.
-						__( 'Unable to set "%s" taxonomies', 'sensei-lms' ),
-						$taxonomy_type
-					)
-				);
-			}
-		}
-
-		return true;
 	}
 
 	/**
