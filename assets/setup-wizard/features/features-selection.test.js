@@ -84,6 +84,30 @@ describe( '<FeaturesSelection />', () => {
 		expect( queryByText( 'Error' ) ).toBeTruthy();
 	} );
 
+	it( 'Should not show unselectable features', () => {
+		const featuresWithUnselectable = [
+			...features,
+			{
+				slug: 'unselectable',
+				title: 'Unselectable',
+				excerpt: 'Test',
+				unselectable: true,
+			},
+		];
+		const { container } = render(
+			<FeaturesSelection
+				features={ featuresWithUnselectable }
+				selectedSlugs={ [] }
+				onChange={ () => {} }
+				onContinue={ () => {} }
+			/>
+		);
+
+		expect( container.querySelectorAll( 'input' ).length ).toEqual(
+			features.length
+		);
+	} );
+
 	it( 'Should call the callbacks correctly', () => {
 		const onChangeMock = jest.fn();
 		const onContinueMock = jest.fn();

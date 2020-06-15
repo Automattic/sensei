@@ -6,11 +6,12 @@ import FeatureDescription from './feature-description';
 
 /**
  * @typedef  {Object} Feature
- * @property {string} slug     Feature slug.
- * @property {string} title    Feature title.
- * @property {string} excerpt  Feature excerpt.
- * @property {string} [link]   Feature link.
- * @property {string} [status] Feature status.
+ * @property {string} slug           Feature slug.
+ * @property {string} title          Feature title.
+ * @property {string} excerpt        Feature excerpt.
+ * @property {string} [link]         Feature link.
+ * @property {string} [unselectable] Feature is unselectable.
+ * @property {string} [status]       Feature status.
  */
 /**
  * Features confirmation modal.
@@ -47,28 +48,30 @@ const FeaturesSelection = ( {
 						{ __( 'No features found.', 'sensei-lms' ) }
 					</Notice>
 				) }
-				{ features.map( ( { slug, title, excerpt, link, status } ) => (
-					<CheckboxControl
-						key={ slug }
-						label={ title }
-						help={
-							<FeatureDescription
-								slug={ slug }
-								excerpt={ excerpt }
-								link={ link }
-							/>
-						}
-						onChange={ toggleItem( slug ) }
-						checked={ selectedSlugs.includes( slug ) }
-						disabled={ !! status }
-						className={ classnames(
-							'sensei-setup-wizard__checkbox',
-							{
-								[ `status-${ status }` ]: status,
+				{ features
+					.filter( ( { unselectable } ) => ! unselectable )
+					.map( ( { slug, title, excerpt, link, status } ) => (
+						<CheckboxControl
+							key={ slug }
+							label={ title }
+							help={
+								<FeatureDescription
+									slug={ slug }
+									excerpt={ excerpt }
+									link={ link }
+								/>
 							}
-						) }
-					/>
-				) ) }
+							onChange={ toggleItem( slug ) }
+							checked={ selectedSlugs.includes( slug ) }
+							disabled={ !! status }
+							className={ classnames(
+								'sensei-setup-wizard__checkbox',
+								{
+									[ `status-${ status }` ]: status,
+								}
+							) }
+						/>
+					) ) }
 			</div>
 
 			{ errorNotice }
