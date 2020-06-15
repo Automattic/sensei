@@ -19,6 +19,25 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	protected $server;
 
 	/**
+	 * Set up before the class.
+	 */
+	public static function setUpBeforeClass() {
+		// Mock WooCommerce plugin information.
+		set_transient(
+			Sensei_Setup_Wizard::WC_INFORMATION_TRANSIENT,
+			(object) [
+				'product_slug' => 'woocommerce',
+				'title'        => 'WooCommerce',
+				'excerpt'      => 'Lorem ipsum',
+				'plugin_file'  => 'woocommerce/woocommerce.php',
+				'link'         => 'https://wordpress.org/plugins/woocommerce',
+				'unselectable' => true,
+			],
+			DAY_IN_SECONDS
+		);
+	}
+
+	/**
 	 * Test specific setup.
 	 */
 	public function setUp() {
@@ -333,17 +352,8 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 
 		$data = $this->request( 'GET', 'features' );
 
-		$expected_data = [
-			'options'  => [
-				(object) [
-					'product_slug' => 'slug-1',
-					'plugin_file'  => 'test/test.php',
-				],
-			],
-			'selected' => [],
-		];
-
-		$this->assertEquals( $data, $expected_data );
+		$this->assertEquals( $data['options'][1]->product_slug, 'slug-1' );
+		$this->assertEquals( $data['selected'], [] );
 	}
 
 	/**
@@ -375,16 +385,14 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 
 		$this->request( 'POST', 'features-installation', [ 'selected' => [ 'slug-1' ] ], $user );
 
-		$expected_extensions = [
-			(object) [
-				'product_slug' => 'slug-1',
-				'plugin_file'  => 'test/test.php',
-				'status'       => 'installing',
-			],
+		$expected_extension = (object) [
+			'product_slug' => 'slug-1',
+			'plugin_file'  => 'test/test.php',
+			'status'       => 'installing',
 		];
-		$sensei_extensions   = Sensei()->setup_wizard->get_sensei_extensions();
+		$sensei_extensions  = Sensei()->setup_wizard->get_sensei_extensions();
 
-		$this->assertEquals( $expected_extensions, $sensei_extensions );
+		$this->assertEquals( $expected_extension, $sensei_extensions[1] );
 	}
 
 	/**

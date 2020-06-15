@@ -12,6 +12,25 @@
  */
 class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 	/**
+	 * Set up before the class.
+	 */
+	public static function setUpBeforeClass() {
+		// Mock WooCommerce plugin information.
+		set_transient(
+			Sensei_Setup_Wizard::WC_INFORMATION_TRANSIENT,
+			(object) [
+				'product_slug' => 'woocommerce',
+				'title'        => 'WooCommerce',
+				'excerpt'      => 'Lorem ipsum',
+				'plugin_file'  => 'woocommerce/woocommerce.php',
+				'link'         => 'https://wordpress.org/plugins/woocommerce',
+				'unselectable' => true,
+			],
+			DAY_IN_SECONDS
+		);
+	}
+
+	/**
 	 * Set up before each test.
 	 */
 	public function setup() {
@@ -431,13 +450,14 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 
 		$extensions = Sensei()->setup_wizard->get_sensei_extensions();
 
-		$this->assertEquals( $extensions[0]->price, '$1.00' );
-		$this->assertEquals( $extensions[1]->price, 0 );
+		$this->assertEquals( $extensions[1]->price, '$1.00' );
+		$this->assertEquals( $extensions[2]->price, 0 );
 	}
 
 	/**
-	 * Tests that get sensei extensions and returns with decoded prices.
+	 * Tests that get sensei extensions with statuses.
 	 *
+	 * @covers Sensei_Setup_Wizard::get_woocommerce_information
 	 * @covers Sensei_Setup_Wizard::get_feature_with_status
 	 * @covers Sensei_Setup_Wizard::get_sensei_extensions
 	 */
@@ -478,7 +498,7 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 			->getMock();
 
 		$mock->method( 'is_plugin_active' )
-			->will( $this->onConsecutiveCalls( false, false, true, false ) );
+			->will( $this->onConsecutiveCalls( false, false, false, true, false ) );
 
 		$property = new ReflectionProperty( 'Sensei_Plugins_Installation', 'instance' );
 		$property->setAccessible( true );
@@ -486,6 +506,7 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 		$property->setValue( $mock );
 
 		$expected_extensions = [
+			get_transient( Sensei_Setup_Wizard::WC_INFORMATION_TRANSIENT ),
 			(object) [
 				'product_slug' => 'slug-1',
 				'status'       => 'installing',
@@ -536,7 +557,7 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 		);
 
 		$expected_extensions = [
-			(object) [
+			1 => (object) [
 				'product_slug' => 'allowed',
 				'plugin_file'  => 'test/test.php',
 			],
