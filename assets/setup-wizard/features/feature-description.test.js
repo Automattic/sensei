@@ -20,6 +20,14 @@ describe( '<FeatureDescription />', () => {
 		expect( href ).toEqual( link );
 	} );
 
+	it( 'Should render WooCommerce description with observation', () => {
+		const { queryByText } = render(
+			<FeatureDescription slug="woocommerce" excerpt="test" />
+		);
+
+		expect( queryByText( /WooCommerce is required to/ ) ).toBeTruthy();
+	} );
+
 	it( 'Should log event when clicking learn more link', () => {
 		window.sensei_log_event = jest.fn();
 		const { queryByText } = render(

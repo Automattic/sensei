@@ -2,8 +2,11 @@ import { List } from '@woocommerce/components';
 import { Button, Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
+import FeatureDescription from './feature-description';
+
 /**
  * @typedef  {Object} Feature
+ * @property {string} slug    Feature slug.
  * @property {string} title   Feature title.
  * @property {string} excerpt Feature excerpt.
  */
@@ -33,9 +36,11 @@ const ConfirmationModal = ( {
 		isDismissible={ false }
 	>
 		<List
-			items={ features.map( ( { title, excerpt } ) => ( {
+			items={ features.map( ( { slug, title, excerpt } ) => ( {
 				title,
-				content: excerpt,
+				content: (
+					<FeatureDescription slug={ slug } excerpt={ excerpt } />
+				),
 			} ) ) }
 		/>
 

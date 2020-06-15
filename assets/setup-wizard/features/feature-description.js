@@ -28,6 +28,14 @@ const FeatureDescription = ( { slug, excerpt, link } ) => (
 				</a>
 			</>
 		) }
+		{ 'woocommerce' === slug && (
+			<span className="sensei-setup-wizard__woocommerce-observation">
+				{ __(
+					'* WooCommerce is required to receive updates for Sensei Content Drip and WooCommerce Paid Courses. Once WooCommerce is installed, you will be taken to WooCommerce.com to complete the purchase process.',
+					'sensei-lms'
+				) }
+			</span>
+		) }
 	</>
 );
 
