@@ -209,7 +209,7 @@ abstract class Sensei_Data_Port_Model {
 						) {
 							$value = null;
 						} elseif ( ! empty( $config['allow_html'] ) ) {
-							$value = wp_kses_post( $value );
+							$value = trim( wp_kses_post( $value ) );
 						} else {
 							$value = sanitize_text_field( $value );
 						}
