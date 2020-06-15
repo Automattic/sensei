@@ -193,8 +193,14 @@ abstract class Sensei_Data_Port_Model {
 					case 'email':
 						$value = sanitize_email( $value );
 						break;
-					case 'url':
-						$value = esc_url_raw( $value );
+					case 'url-or-file':
+						$value = 0 === strpos( $value, 'http' ) ? esc_url_raw( $value ) : sanitize_file_name( $value );
+						break;
+					case 'username':
+						$value = sanitize_user( $value );
+						break;
+					case 'video':
+						$value = Sensei_Wp_Kses::maybe_sanitize( $value, Sensei_Course::$allowed_html );
 						break;
 					default:
 						if (
@@ -296,7 +302,7 @@ abstract class Sensei_Data_Port_Model {
 	 *
 	 * @return array {
 	 *     @type array $$field_name {
-	 *          @type string   $type       Type of data. Options: string, int, float, bool, slug, ref, email, url.
+	 *          @type string   $type       Type of data. Options: string, int, float, bool, slug, ref, email, url-or-file, username, video.
 	 *          @type string   $pattern    Regular expression that the value should match (Optional).
 	 *          @type mixed    $default    Default value if not set or invalid. Default is `null` (Optional).
 	 *          @type bool     $required   True if a non-empty value is required. Default is `false` (Optional).
@@ -330,7 +336,7 @@ abstract class Sensei_Data_Port_Model {
 		if ( '' === $thumbnail ) {
 			delete_post_meta( $post_id, '_thumbnail_id' );
 		} else {
-			$attachment_id = Sensei_Data_Port_Utilities::get_attachment_from_source( $thumbnail, $post_id );
+			$attachment_id = Sensei_Data_Port_Utilities::get_attachment_from_source( $thumbnail );
 
 			if ( is_wp_error( $attachment_id ) ) {
 				return $attachment_id;

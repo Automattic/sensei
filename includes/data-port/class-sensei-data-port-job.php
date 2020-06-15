@@ -359,7 +359,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 * Run the job.
 	 */
 	public function run() {
-		if ( $this->is_completed || ! $this->is_started ) {
+		if ( $this->is_complete() || ! $this->is_started() ) {
 			return;
 		}
 

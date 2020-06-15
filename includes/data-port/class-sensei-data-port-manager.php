@@ -258,10 +258,14 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 		foreach ( $this->data_port_jobs as $job ) {
 			if (
 				$handler_class === $job['handler']
-				&& is_subclass_of( $job['handler'], 'Sensei_Data_Port_Job', true )
+				&& is_a( $job['handler'], 'Sensei_Data_Port_Job', true )
 				&& (int) $user_id === $job['user_id']
 			) {
-				return $job['handler']::get( $job['id'] );
+				$current_job = $job['handler']::get( $job['id'] );
+
+				if ( ! $current_job->is_complete() ) {
+					return $current_job;
+				}
 			}
 		}
 
