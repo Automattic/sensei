@@ -4257,7 +4257,7 @@ class Sensei_Lesson {
 			// (If the user is either the lesson creator or admin, show actions).
 			if (
 					Sensei_Utils::user_completed_lesson( $lesson_prerequisite, $user_id )
-					|| Sensei_Utils::sensei_is_lesson_author( $lesson_id, $user_id )
+					|| self::is_lesson_author( $lesson_id, $user_id )
 					|| Sensei_Utils::sensei_current_user_is_administrator()
 			) {
 				$show_actions = true;
@@ -4481,6 +4481,32 @@ class Sensei_Lesson {
 		}
 
 		sensei_log_event( 'lesson_publish', $event_properties );
+	}
+
+	/**
+	 * Check if a user is the lesson author.
+	 *
+	 * @since 3.0.2
+	 *
+	 * @param int $lesson_id ID of lesson being checked.
+	 * @param int $user_id ID of user being checked. Defaults to current user ID.
+	 * @return boolean Returns TRUE if user is the lesson author, returns FALSE otherwise.
+	 */
+	private static function is_lesson_author( $lesson_id, $user_id = null ) {
+
+		if ( is_null( $user_id ) ) {
+			$user_id = get_current_user_id();
+		}
+
+		if ( empty( $user_id ) ) {
+			return false;
+		}
+
+		if ( (int) get_post_field( 'post_author', $lesson_id ) === $user_id ) {
+			return true;
+		}
+
+		return false;
 	}
 
 } // End Class

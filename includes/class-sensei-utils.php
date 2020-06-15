@@ -2514,27 +2514,6 @@ class Sensei_Utils {
 		return apply_filters( 'sensei_course_show_lessons', true, $course_id );
 	}
 
-	/**
-	 * Check if a user is the lesson author.
-	 *
-	 * @since 3.0.2
-	 *
-	 * @param int $lesson_id
-	 * @param int $user_id
-	 * @return boolean
-	 */
-	public static function sensei_is_lesson_author( $lesson_id = 0, $user_id = 0 ) {
-
-		if ( ! $lesson_id || ! $user_id ) {
-			return false;
-		}
-
-		if ( (int) get_post_field( 'post_author', (int) $lesson_id ) === (int) $user_id ) {
-			return true;
-		}
-
-		return false;
-	}
 
 	/**
 	 * Check if the current user is an admin.
