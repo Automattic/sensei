@@ -252,6 +252,13 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 				];
 
 				break;
+			case 'file-upload':
+				$values = [
+					'_question_right_answer'  => $this->get_value( self::COLUMN_UPLOAD_NOTES ),
+					'_question_wrong_answers' => $this->get_value( self::COLUMN_TEACHER_NOTES ),
+				];
+
+				break;
 			case 'gap-fill':
 				$answer   = [];
 				$answer[] = $this->get_value( self::COLUMN_TEXT_BEFORE_GAP );
