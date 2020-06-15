@@ -109,6 +109,8 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 			$postarr['ID'] = $this->get_post_id();
 		} elseif ( get_current_user_id() ) {
 			$postarr['post_author'] = get_current_user_id();
+		} elseif ( $this->get_default_author() ) {
+			$postarr['post_author'] = $this->get_default_author();
 		}
 
 		$data = $this->get_data();
