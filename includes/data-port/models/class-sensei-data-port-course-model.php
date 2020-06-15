@@ -75,7 +75,15 @@ class Sensei_Data_Port_Course_Model extends Sensei_Data_Port_Model {
 			}
 		}
 
+		remove_action( 'transition_post_status', array( Sensei()->teacher, 'notify_admin_teacher_course_creation' ), 10 );
+		remove_action( 'save_post', array( Sensei()->course, 'save_course_notification_meta_box' ) );
+		remove_action( 'save_post', array( Sensei()->course, 'meta_box_save' ) );
+
 		$post_id = wp_insert_post( $this->get_course_args( $teacher ) );
+
+		add_action( 'transition_post_status', array( Sensei()->teacher, 'notify_admin_teacher_course_creation' ), 10, 3 );
+		add_action( 'save_post', array( Sensei()->course, 'save_course_notification_meta_box' ) );
+		add_action( 'save_post', array( Sensei()->course, 'meta_box_save' ) );
 
 		if ( is_wp_error( $post_id ) ) {
 			return $post_id;
