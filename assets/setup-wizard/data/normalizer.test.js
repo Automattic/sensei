@@ -23,6 +23,12 @@ describe( 'Data normalizer', () => {
 				price: 0,
 				status: 'installed',
 			},
+			{
+				product_slug: 'woocommerce',
+				slug: 'woocommerce',
+				title: 'WooCommerce* — Free',
+				price: 0,
+			},
 		],
 	};
 
@@ -44,6 +50,11 @@ describe( 'Data normalizer', () => {
 				title: 'Title',
 				price: 0,
 				status: 'installed',
+			},
+			{
+				product_slug: 'woocommerce',
+				title: 'WooCommerce',
+				price: 0,
 			},
 		],
 	};
