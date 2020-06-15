@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Sensei_Data_Port_Model class.
+ * File containing the Sensei_Data_Port_Course_Model class.
  *
  * @package sensei
  */
