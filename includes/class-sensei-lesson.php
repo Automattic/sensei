@@ -2548,8 +2548,7 @@ class Sensei_Lesson {
 		$return = '';
 
 		// Variables used for logging.
-		$number_of_added_questions   = 0;
-		$at_least_one_question_added = false;
+		$number_of_added_questions = 0;
 
 		if ( is_array( $question_data ) ) {
 
@@ -2564,7 +2563,6 @@ class Sensei_Lesson {
 					$quizzes = get_post_meta( $question_id, '_quiz_id', false );
 
 					if ( ! in_array( $quiz_id, $quizzes ) ) {
-
 						$at_least_one_question_added = true;
 						$number_of_added_questions++;
 						++$question_count;
@@ -2574,14 +2572,13 @@ class Sensei_Lesson {
 						add_post_meta( $question_id, '_quiz_question_order' . $quiz_id, $quiz_id . '000' . $question_count );
 						$question_type = Sensei()->question->get_question_type( $question_id );
 						$return       .= $this->quiz_panel_question( $question_type, $question_count, $question_id );
-
 					}
 				}
 			}
 		}
 
 		// Log event: when an existing question is added to a quiz.
-		if ( $at_least_one_question_added ) {
+		if ( count( $number_of_added_questions ) > 0 ) {
 
 			$event_properties = array(
 				'question_status'   => $question_data['question_status'],
