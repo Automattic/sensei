@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from '@wordpress/element';
+import { useState, useEffect } from '@wordpress/element';
 import { Card, H } from '@woocommerce/components';
 import { __ } from '@wordpress/i18n';
 import { uniq } from 'lodash';
@@ -79,55 +79,47 @@ const Features = () => {
 		}
 	}, [] );
 
-	const getSelectedFeatures = useCallback(
-		() =>
-			features.filter( ( feature ) =>
-				selectedSlugs.includes( feature.slug )
-			),
-		[ features, selectedSlugs ]
-	);
+	const getSelectedFeatures = () =>
+		features.filter( ( feature ) =>
+			selectedSlugs.includes( feature.slug )
+		);
 
-	// Add or remove WooCommerce.
-	useEffect( () => {
+	const getSelectedSlugs = () => {
 		const wcSlug = 'woocommerce';
 		const selectedFeatures = getSelectedFeatures();
-		const wooCommerceFeature = features.find( ( f ) => wcSlug === f.slug );
 		const needWooCommerce = selectedFeatures.some(
 			( feature ) => feature.wccom_product_id
 		);
-		const isWooCommerceSelected = selectedSlugs.includes( wcSlug );
+
+		const wooCommerceFeature = features.find( ( f ) => wcSlug === f.slug );
 		const isWooCommerceInstalled =
 			wooCommerceFeature &&
 			INSTALLED_STATUS === wooCommerceFeature.status;
 
-		if (
-			needWooCommerce &&
-			! isWooCommerceSelected &&
-			! isWooCommerceInstalled
-		) {
-			setSelectedSlugs( ( prev ) => [ wcSlug, ...prev ] );
-		} else if ( ! needWooCommerce && isWooCommerceSelected ) {
-			setSelectedSlugs( ( prev ) =>
-				prev.filter( ( slug ) => slug !== wcSlug )
-			);
+		if ( ! needWooCommerce || isWooCommerceInstalled ) {
+			return selectedSlugs.filter( ( slug ) => slug !== wcSlug );
 		}
-	}, [ getSelectedFeatures, features, selectedSlugs ] );
+
+		return [ wcSlug, ...selectedSlugs ];
+	};
 
 	const finishSelection = () => {
-		if ( 0 === selectedSlugs.length ) {
+		const selected = getSelectedSlugs();
+		if ( 0 === selected.length ) {
 			goToNextStep();
 			return;
 		}
 
 		submitStep(
-			{ selected: selectedSlugs },
+			{ selected },
 			{ onSuccess: () => toggleConfirmation( true ) }
 		);
 	};
 
 	const startInstallation = () => {
+		const selected = getSelectedSlugs();
 		submitInstallation(
-			{ selected: selectedSlugs },
+			{ selected },
 			{
 				onSuccess: () => {
 					toggleConfirmation( false );
@@ -137,7 +129,7 @@ const Features = () => {
 		);
 
 		logEvent( 'setup_wizard_features_install', {
-			slug: selectedSlugs.join( ',' ),
+			slug: selected.join( ',' ),
 		} );
 	};
 
@@ -158,7 +150,7 @@ const Features = () => {
 				: 'setup_wizard_features_continue';
 
 		logEvent( eventName, {
-			slug: selectedSlugs.join( ',' ),
+			slug: getSelectedSlugs().join( ',' ),
 		} );
 	};
 
@@ -183,7 +175,7 @@ const Features = () => {
 						features={ features }
 						isSubmitting={ isSubmitting }
 						errorNotice={ errorNotice }
-						selectedSlugs={ selectedSlugs }
+						selectedSlugs={ getSelectedSlugs() }
 						onChange={ setSelectedSlugs }
 						onContinue={ finishSelection }
 					/>
