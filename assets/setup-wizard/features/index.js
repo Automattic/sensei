@@ -91,19 +91,27 @@ const Features = () => {
 	useEffect( () => {
 		const wcSlug = 'woocommerce';
 		const selectedFeatures = getSelectedFeatures();
+		const wooCommerceFeature = features.find( ( f ) => wcSlug === f.slug );
 		const needWooCommerce = selectedFeatures.some(
 			( feature ) => feature.wccom_product_id
 		);
 		const isWooCommerceSelected = selectedSlugs.includes( wcSlug );
+		const isWooCommerceInstalled =
+			wooCommerceFeature &&
+			INSTALLED_STATUS === wooCommerceFeature.status;
 
-		if ( needWooCommerce && ! isWooCommerceSelected ) {
+		if (
+			needWooCommerce &&
+			! isWooCommerceSelected &&
+			! isWooCommerceInstalled
+		) {
 			setSelectedSlugs( ( prev ) => [ wcSlug, ...prev ] );
 		} else if ( ! needWooCommerce && isWooCommerceSelected ) {
 			setSelectedSlugs( ( prev ) =>
 				prev.filter( ( slug ) => slug !== wcSlug )
 			);
 		}
-	}, [ getSelectedFeatures, selectedSlugs ] );
+	}, [ getSelectedFeatures, features, selectedSlugs ] );
 
 	const finishSelection = () => {
 		if ( 0 === selectedSlugs.length ) {

@@ -277,7 +277,7 @@ describe( '<Features />', () => {
 		mockSearch( '' );
 	} );
 
-	it( 'Should select WooCommerce when some feature with `wccom_product_id` is selected', () => {
+	it( 'Should auto-select WooCommerce when some feature with `wccom_product_id` is selected', () => {
 		mockStepData( {
 			selected: [],
 			options: [
@@ -298,5 +298,28 @@ describe( '<Features />', () => {
 
 		fireEvent.click( getByLabelText( /Need/ ) );
 		expect( getByLabelText( /WooCommerce/ ).checked ).toBeTruthy();
+	} );
+
+	it( 'Should not auto-select WooCommerce when it is already installed', () => {
+		mockStepData( {
+			selected: [],
+			options: [
+				{
+					slug: 'woocommerce',
+					title: 'WooCommerce',
+					status: 'installed',
+				},
+				{ slug: 'need-wc', title: 'Need', wccom_product_id: '123' },
+			],
+		} );
+
+		const { getByLabelText } = render(
+			<QueryStringRouter paramName="step">
+				<Features />
+			</QueryStringRouter>
+		);
+
+		fireEvent.click( getByLabelText( /Need/ ) );
+		expect( getByLabelText( /WooCommerce/ ).checked ).toBeFalsy();
 	} );
 } );
