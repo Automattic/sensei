@@ -6,7 +6,7 @@ import {
 } from '@wordpress/element';
 
 import { useEventListener } from '../../react-hooks';
-import { updateRouteURL, getCurrentRouteFromURL } from './url-functions';
+import { updateQueryString, getParam } from './url-functions';
 
 /**
  * Query string router context.
@@ -26,9 +26,7 @@ const QueryStringRouterContext = createContext();
  */
 const QueryStringRouter = ( { paramName, defaultRoute, children } ) => {
 	// Current route.
-	const [ currentRoute, setRoute ] = useState(
-		getCurrentRouteFromURL( paramName )
-	);
+	const [ currentRoute, setRoute ] = useState( getParam( paramName ) );
 
 	// Provider value.
 	const providerValue = useMemo( () => {
@@ -40,7 +38,7 @@ const QueryStringRouter = ( { paramName, defaultRoute, children } ) => {
 		 * @param {boolean} replace  Flag to mark if should replace or push state.
 		 */
 		const goTo = ( newRoute, replace = false ) => {
-			updateRouteURL( paramName, newRoute, replace );
+			updateQueryString( paramName, newRoute, replace );
 			setRoute( newRoute );
 		};
 
@@ -58,7 +56,7 @@ const QueryStringRouter = ( { paramName, defaultRoute, children } ) => {
 	useEventListener(
 		'popstate',
 		() => {
-			setRoute( getCurrentRouteFromURL( paramName ) );
+			setRoute( getParam( paramName ) );
 		},
 		[ paramName ]
 	);

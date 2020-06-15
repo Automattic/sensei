@@ -6,6 +6,10 @@ import { uniq } from 'lodash';
 import { INSTALLED_STATUS } from './feature-status';
 import { logEvent } from '../log-event';
 import { useQueryStringRouter } from '../query-string-router';
+import {
+	getParam,
+	updateQueryString,
+} from '../query-string-router/url-functions';
 import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 import ConfirmationModal from './confirmation-modal';
 import InstallationFeedback from './installation-feedback';
@@ -65,6 +69,15 @@ const Features = () => {
 			] )
 		);
 	}, [ submittedSlugs, features ] );
+
+	// Open directly in the feedback screen when there is a temporary feedback param.
+	useEffect( () => {
+		if ( getParam( 'feedback' ) ) {
+			// Remove temporary param.
+			updateQueryString( 'feedback', null, true );
+			toggleFeedback( true );
+		}
+	}, [] );
 
 	const getSelectedFeatures = () =>
 		features.filter( ( feature ) =>
