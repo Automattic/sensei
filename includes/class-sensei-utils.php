@@ -2514,17 +2514,6 @@ class Sensei_Utils {
 		return apply_filters( 'sensei_course_show_lessons', true, $course_id );
 	}
 
-
-	/**
-	 * Check if the current user is an admin.
-	 *
-	 * @since 3.0.2
-	 *
-	 * @return boolean
-	 */
-	public static function sensei_current_user_is_administrator() {
-		return current_user_can( 'manage_options' );
-	}
 } // End Class
 
 /**

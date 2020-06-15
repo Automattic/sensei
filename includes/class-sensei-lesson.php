@@ -4258,7 +4258,7 @@ class Sensei_Lesson {
 			if (
 					Sensei_Utils::user_completed_lesson( $lesson_prerequisite, $user_id )
 					|| self::is_lesson_author( $lesson_id, $user_id )
-					|| Sensei_Utils::sensei_current_user_is_administrator()
+					|| current_user_can( 'manage_options' )
 			) {
 				$show_actions = true;
 			} else {
