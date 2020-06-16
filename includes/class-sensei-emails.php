@@ -59,14 +59,14 @@ class Sensei_Emails {
 	 */
 	function init() {
 
-		$this->emails['learner-graded-quiz']      = include dirname( __FILE__ ) . '/emails/class-sensei-email-learner-graded-quiz.php';
-		$this->emails['learner-completed-course'] = include dirname( __FILE__ ) . '/emails/class-sensei-email-learner-completed-course.php';
-		$this->emails['teacher-completed-course'] = include dirname( __FILE__ ) . '/emails/class-sensei-email-teacher-completed-course.php';
-		$this->emails['teacher-started-course']   = include dirname( __FILE__ ) . '/emails/class-sensei-email-teacher-started-course.php';
-		$this->emails['teacher-completed-lesson'] = include dirname( __FILE__ ) . '/emails/class-sensei-email-teacher-completed-lesson.php';
-		$this->emails['teacher-quiz-submitted']   = include dirname( __FILE__ ) . '/emails/class-sensei-email-teacher-quiz-submitted.php';
-		$this->emails['teacher-new-message']      = include dirname( __FILE__ ) . '/emails/class-sensei-email-teacher-new-message.php';
-		$this->emails['new-message-reply']        = include dirname( __FILE__ ) . '/emails/class-sensei-email-new-message-reply.php';
+		$this->emails['learner-graded-quiz']      = new Sensei_Email_Learner_Graded_Quiz();
+		$this->emails['learner-completed-course'] = new Sensei_Email_Learner_Completed_Course();
+		$this->emails['teacher-completed-course'] = new Sensei_Email_Teacher_Completed_Course();
+		$this->emails['teacher-started-course']   = new Sensei_Email_Teacher_Started_Course();
+		$this->emails['teacher-completed-lesson'] = new Sensei_Email_Teacher_Completed_Lesson();
+		$this->emails['teacher-quiz-submitted']   = new Sensei_Email_Teacher_Quiz_Submitted();
+		$this->emails['teacher-new-message']      = new Sensei_Email_Teacher_New_Message();
+		$this->emails['new-message-reply']        = new Sensei_Email_New_Message_Reply();
 		$this->emails                             = apply_filters( 'sensei_email_classes', $this->emails );
 	}
 

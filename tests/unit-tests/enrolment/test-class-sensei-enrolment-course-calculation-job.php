@@ -137,20 +137,7 @@ class Sensei_Enrolment_Course_Calculation_Job_Test extends WP_UnitTestCase {
 	 * @param Sensei_Course_Enrolment $course_enrolment
 	 */
 	private function invalidateAllCourseResults( $course_enrolment ) {
-		$method = new ReflectionMethod( Sensei_Course_Enrolment::class, 'invalidate_all_learner_results' );
-		$method->setAccessible( true );
-		$method->invoke( $course_enrolment );
+		$course_enrolment->reset_course_enrolment_salt();
 		wp_cache_flush();
-	}
-
-	/**
-	 * Invalidate enrolled user course enrolment results.
-	 *
-	 * @param Sensei_Course_Enrolment $course_enrolment
-	 */
-	private function invalidateEnrolledCourseResults( $course_enrolment ) {
-		$method = new ReflectionMethod( Sensei_Course_Enrolment::class, 'invalidate_enrolled_learner_results' );
-		$method->setAccessible( true );
-		$method->invoke( $course_enrolment );
 	}
 }

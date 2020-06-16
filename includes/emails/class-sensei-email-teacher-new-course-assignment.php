@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-if ( class_exists( 'Sensei_Email_Teacher_New_Course_Assignment' ) ) {
+if ( class_exists( 'Sensei_Email_Teacher_New_Course_Assignment', false ) ) {
 	return;
 }
 
@@ -85,8 +85,3 @@ class Sensei_Email_Teacher_New_Course_Assignment {
 		do_action( 'sensei_after_sending_email' );
 	}
 }
-
-/**
- * Return a new instance of this files class
- */
-return new Sensei_Email_Teacher_New_Course_Assignment();

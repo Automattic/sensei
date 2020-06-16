@@ -1010,16 +1010,13 @@ class Sensei_Settings_API {
 	 */
 	public function enqueue_scripts() {
 
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-
-		wp_enqueue_script( 'farbtastic' );
-		wp_enqueue_script( 'sensei-settings', esc_url( Sensei()->plugin_url . 'assets/js/settings' . $suffix . '.js' ), array( 'jquery', 'farbtastic' ), Sensei()->version );
+		Sensei()->assets->enqueue( 'sensei-settings', 'js/settings.js', [ 'jquery', 'farbtastic' ] );
 
 		if ( $this->has_range ) {
-			wp_enqueue_script( 'sensei-settings-ranges', esc_url( Sensei()->plugin_url . 'assets/js/ranges' . $suffix . '.js' ), array( 'jquery-ui-slider' ), Sensei()->version );
+			Sensei()->assets->enqueue( 'sensei-settings-ranges', 'js/ranges.js', [ 'jquery-ui-slider' ] );
 		}
 
-		wp_register_script( 'sensei-settings-imageselectors', esc_url( Sensei()->plugin_url . 'assets/js/image-selectors' . $suffix . '.js' ), array( 'jquery' ), Sensei()->version );
+		Sensei()->assets->register( 'sensei-settings-imageselectors', 'js/image-selectors.js', [ 'jquery' ] );
 
 		if ( $this->has_imageselector ) {
 			wp_enqueue_script( 'sensei-settings-imageselectors' );
@@ -1039,7 +1036,7 @@ class Sensei_Settings_API {
 		wp_enqueue_style( $this->token . '-admin' );
 
 		wp_enqueue_style( 'farbtastic' );
-		wp_enqueue_style( 'sensei-settings-api', esc_url( Sensei()->plugin_url . 'assets/css/settings.css' ), array( 'farbtastic' ), Sensei()->version );
+		Sensei()->assets->enqueue( 'sensei-settings-api', 'css/settings.css', [ 'farbtastic' ] );
 
 		$this->enqueue_field_styles();
 	} // End enqueue_styles()
@@ -1054,10 +1051,10 @@ class Sensei_Settings_API {
 	public function enqueue_field_styles() {
 
 		if ( $this->has_range ) {
-			wp_enqueue_style( 'sensei-settings-ranges', esc_url( Sensei()->plugin_url . 'assets/css/ranges.css' ), '', Sensei()->version );
+			Sensei()->assets->enqueue( 'sensei-settings-ranges', 'css/ranges.css' );
 		}
 
-		wp_register_style( 'sensei-settings-imageselectors', esc_url( Sensei()->plugin_url . 'assets/css/image-selectors.css' ), '', Sensei()->version );
+		Sensei()->assets->register( 'sensei-settings-imageselectors', 'css/image-selectors.css' );
 
 		if ( $this->has_imageselector ) {
 			wp_enqueue_style( 'sensei-settings-imageselectors' );

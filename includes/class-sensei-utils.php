@@ -2282,6 +2282,7 @@ class Sensei_Utils {
 					'class' => array(),
 					'id'    => array(),
 					'name'  => array(),
+					'style' => array(),
 				),
 			)
 		);
@@ -2512,6 +2513,46 @@ class Sensei_Utils {
 		 * @param int|false $course_id Course ID.
 		 */
 		return apply_filters( 'sensei_course_show_lessons', true, $course_id );
+	}
+
+	/**
+	 * Determine if the current page is a Sensei learner profile page.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @return bool True if the current page is a Sensei learner profile page.
+	 */
+	public static function is_learner_profile_page() {
+		global $wp_query;
+		return isset( $wp_query->query_vars['learner_profile'] );
+	}
+
+	/**
+	 * Determine if the current page is a Sensei course results page.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @return bool True if the current page is a Sensei course results page.
+	 */
+	public static function is_course_results_page() {
+		global $wp_query;
+		return isset( $wp_query->query_vars['course_results'] );
+	}
+
+	/**
+	 * Determine if the current page is a Sensei teacher archive page.
+	 *
+	 * @access  public
+	 * @since 3.2.0
+	 * @return bool True if the current page is a Sensei teacher archive page.
+	 */
+	public static function is_teacher_archive_page() {
+		if ( is_author()
+			&& Sensei()->teacher->is_a_teacher( get_query_var( 'author' ) )
+			&& ! user_can( get_query_var( 'author' ), 'manage_options' ) ) {
+			return true;
+		}
+		return false;
 	}
 
 } // End Class

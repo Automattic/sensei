@@ -1,50 +1,12 @@
 <?php
+/**
+ * File containing the class Sensei_Autoloader.
+ *
+ * @package sensei
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // security check, don't load file outside WP
-}
-
-class Sensei_Autoloader_Bundle {
-	/**
-	 * @var path to the includes directory within Sensei.
-	 */
-	private $include_path = 'includes';
-
-	/**
-	 * Sensei_Autoloader_Bundle constructor.
-	 *
-	 * @param string $namespace_path path relative to includes
-	 */
-	public function __construct( $bundle_identifier_path = '' ) {
-		// setup a relative path for the current autoload instance
-		$this->include_path = trailingslashit( trailingslashit( untrailingslashit( dirname( __FILE__ ) ) ) . $bundle_identifier_path );
-	}
-
-	/**
-	 * @param $class string
-	 * @return bool
-	 */
-	public function load_class( $class ) {
-
-		// check for file in the main includes directory
-		$class_file_path = $this->include_path . 'class-' . str_replace( '_', '-', strtolower( $class ) ) . '.php';
-		if ( file_exists( $class_file_path ) ) {
-
-			require_once $class_file_path;
-			return true;
-		}
-
-		// lastly check legacy types
-		$stripped_woothemes_from_class = str_replace( 'woothemes_', '', strtolower( $class ) ); // remove woothemes
-		$legacy_class_file_path        = $this->include_path . 'class-' . str_replace( '_', '-', strtolower( $stripped_woothemes_from_class ) ) . '.php';
-		if ( file_exists( $legacy_class_file_path ) ) {
-
-			require_once $legacy_class_file_path;
-			return true;
-		}
-
-		return false;
-
-	}//end load_class()
+	exit; // security check, don't load file outside WP.
 }
 
 /**
@@ -59,16 +21,25 @@ class Sensei_Autoloader_Bundle {
 class Sensei_Autoloader {
 
 	/**
-	 * @var path to the includes directory within Sensei.
+	 * Path to the includes directory within Sensei.
+	 *
+	 * @var string
 	 */
 	private $include_path = 'includes';
 
 	/**
-	 * @var array $class_file_map. List of classes mapped to their files
+	 * List of classes mapped to their files.
+	 *
+	 * @var array
 	 */
-	private $class_file_map = array();
+	private $class_file_map;
 
-	private $autoloader_bundles = array();
+	/**
+	 * An array of bundle directories to be loaded.
+	 *
+	 * @var array
+	 */
+	private $autoloader_bundles;
 
 	/**
 	 * Constructor
@@ -77,16 +48,18 @@ class Sensei_Autoloader {
 	 */
 	public function __construct() {
 
-		// make sure we do not override an existing autoload function
+		// Make sure we do not override an existing autoload function.
 		if ( function_exists( '__autoload' ) ) {
 			spl_autoload_register( '__autoload' );
 		}
 
-		// setup a relative path for the current autoload instance
-		$this->include_path = trailingslashit( untrailingslashit( dirname( __FILE__ ) ) );
+		// Setup a relative path for the current autoload instance.
+		$this->include_path = trailingslashit( untrailingslashit( __DIR__ ) );
 
-		// setup the class file map
+		// Setup the class file map.
 		$this->initialize_class_file_map();
+
+		require_once __DIR__ . '/class-sensei-autoloader-bundle.php';
 
 		$this->autoloader_bundles = array(
 			new Sensei_Autoloader_Bundle( 'rest-api' ),
@@ -94,9 +67,12 @@ class Sensei_Autoloader {
 			new Sensei_Autoloader_Bundle( '' ),
 			new Sensei_Autoloader_Bundle( 'background-jobs' ),
 			new Sensei_Autoloader_Bundle( 'enrolment' ),
+			new Sensei_Autoloader_Bundle( 'data-port' ),
+			new Sensei_Autoloader_Bundle( 'data-port/import-tasks' ),
+			new Sensei_Autoloader_Bundle( 'data-port/models' ),
 		);
 
-		// add Sensei custom auto loader
+		// Add Sensei custom auto loader.
 		spl_autoload_register( array( $this, 'autoload' ) );
 
 	}
@@ -117,6 +93,19 @@ class Sensei_Autoloader {
 			'Sensei_Main'                                => 'class-sensei.php',
 
 			/**
+			 * Emails
+			 */
+			'Sensei_Email_Learner_Completed_Course'      => 'emails/class-sensei-email-learner-completed-course.php',
+			'Sensei_Email_Learner_Graded_Quiz'           => 'emails/class-sensei-email-learner-graded-quiz.php',
+			'Sensei_Email_New_Message_Reply'             => 'emails/class-sensei-email-new-message-reply.php',
+			'Sensei_Email_Teacher_Completed_Course'      => 'emails/class-sensei-email-teacher-completed-course.php',
+			'Sensei_Email_Teacher_Completed_Lesson'      => 'emails/class-sensei-email-teacher-completed-lesson.php',
+			'Sensei_Email_Teacher_New_Course_Assignment' => 'emails/class-sensei-email-teacher-new-course-assignment.php',
+			'Sensei_Email_Teacher_New_Message'           => 'emails/class-sensei-email-teacher-new-message.php',
+			'Sensei_Email_Teacher_Quiz_Submitted'        => 'emails/class-sensei-email-teacher-quiz-submitted.php',
+			'Sensei_Email_Teacher_Started_Course'        => 'emails/class-sensei-email-teacher-started-course.php',
+
+			/**
 			 * Admin
 			 */
 			'Sensei_Learner_Management'                  => 'admin/class-sensei-learner-management.php',
@@ -124,7 +113,10 @@ class Sensei_Autoloader {
 			'Sensei_Learners_Admin_Bulk_Actions_Controller' => 'admin/class-sensei-learners-admin-bulk-actions-controller.php',
 			'Sensei_Learners_Admin_Bulk_Actions_View'    => 'admin/class-sensei-learners-admin-bulk-actions-view.php',
 			'Sensei_Learners_Main'                       => 'admin/class-sensei-learners-main.php',
-			'Sensei_Email_Signup_Form'                   => 'email-signup/class-sensei-email-signup-form.php',
+			'Sensei_Email_Signup_Form'                   => 'email-signup/class-sensei-email-signup-form.php', // @deprecated since 3.1.0
+			'Sensei_Setup_Wizard'                        => 'admin/class-sensei-setup-wizard.php',
+			'Sensei_Setup_Wizard_Pages'                  => 'admin/class-sensei-setup-wizard-pages.php',
+			'Sensei_Plugins_Installation'                => 'admin/class-sensei-plugins-installation.php',
 
 			/**
 			 * Shortcodes
@@ -186,17 +178,19 @@ class Sensei_Autoloader {
 
 	/**
 	 * Autoload all sensei files as the class names are used.
+	 *
+	 * @param string $class The class name.
 	 */
 	public function autoload( $class ) {
 
-		// only handle classes with the word `sensei` in it
+		// Only handle classes with the word `sensei` in it.
 		if ( ! is_numeric( strpos( strtolower( $class ), 'sensei' ) ) ) {
 
 			return;
 
 		}
 
-		// exit if we didn't provide mapping for this class
+		// Exit if we didn't provide mapping for this class.
 		if ( isset( $this->class_file_map[ $class ] ) ) {
 
 			$file_location = $this->include_path . $this->class_file_map[ $class ];
@@ -210,9 +204,5 @@ class Sensei_Autoloader {
 				return;
 			}
 		}
-
-		return;
-
-	}//end autoload()
-
+	}
 }

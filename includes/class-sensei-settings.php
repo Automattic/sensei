@@ -41,6 +41,9 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		// Log when settings are updated by the user.
 		add_action( 'update_option_sensei-settings', [ $this, 'log_settings_update' ], 10, 2 );
+
+		// Make sure we don't trigger queries if legacy options aren't loaded in pre-loaded options.
+		add_filter( 'alloptions', [ $this, 'no_special_query_for_legacy_options' ] );
 	} // End __construct()
 
 	/**
@@ -98,6 +101,27 @@ class Sensei_Settings extends Sensei_Settings_API {
 			add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
 		}
 	} // End register_settings_screen()
+
+	/**
+	 * Add legacy options to alloptions if they don't exist.
+	 *
+	 * @since 3.0.1
+	 *
+	 * @param array $alloptions All options that are preloaded by WordPress.
+	 *
+	 * @return array
+	 */
+	public function no_special_query_for_legacy_options( $alloptions ) {
+		if ( ! isset( $alloptions['woothemes-sensei_user_dashboard_page_id'] ) ) {
+			$alloptions['woothemes-sensei_user_dashboard_page_id'] = 0;
+		}
+
+		if ( ! isset( $alloptions['woothemes-sensei_courses_page_id'] ) ) {
+			$alloptions['woothemes-sensei_courses_page_id'] = 0;
+		}
+
+		return $alloptions;
+	}
 
 	/**
 	 * Add settings sections.
@@ -653,6 +677,10 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 * @return array
 	 */
 	private function pages_array() {
+		if ( ! is_admin() ) {
+			return [];
+		}
+
 		// REFACTOR - Transform this into a field type instead.
 		// Setup an array of portfolio gallery terms for a dropdown.
 		$pages_dropdown = wp_dropdown_pages(
@@ -721,7 +749,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 */
 	public function log_settings_update( $old_value, $value ) {
 		// Only process user-initiated settings updates.
-		if ( ! ( 'POST' === $_SERVER['REQUEST_METHOD'] && 'options' === get_current_screen()->id ) ) {
+		if ( ! ( 'POST' === $_SERVER['REQUEST_METHOD'] && ! defined( 'REST_REQUEST' ) && 'options' === get_current_screen()->id ) ) {
 			return;
 		}
 

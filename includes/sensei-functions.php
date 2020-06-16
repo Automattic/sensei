@@ -8,6 +8,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Global Sensei functions
  */
 
+/**
+ * Determine if the current page is a Sensei LMS page.
+ *
+ * @since 1.5.0
+ *
+ * @return bool True if current page is a Sensei LMS page.
+ */
 function is_sensei() {
 	global $post;
 
@@ -16,21 +23,20 @@ function is_sensei() {
 	$post_types = array( 'lesson', 'course', 'quiz', 'question', 'sensei_message' );
 	$taxonomies = array( 'course-category', 'quiz-type', 'question-type', 'lesson-tag', 'module' );
 
-	if ( is_post_type_archive( $post_types ) || is_singular( $post_types ) || is_tax( $taxonomies ) ) {
-
+	if ( is_post_type_archive( $post_types )
+		|| is_singular( $post_types )
+		|| is_tax( $taxonomies )
+	) {
 		$is_sensei = true;
-
-	}
-
-	if ( is_object( $post ) && ! is_wp_error( $post ) ) {
-
+	} elseif ( is_object( $post ) && ! is_wp_error( $post ) ) {
 		$course_page_id     = intval( Sensei()->settings->settings['course_page'] );
 		$my_courses_page_id = intval( Sensei()->settings->settings['my_course_page'] );
-
-		if ( in_array( $post->ID, array( $course_page_id, $my_courses_page_id ) ) ) {
-
+		if ( in_array( $post->ID, array( $course_page_id, $my_courses_page_id ) )
+			|| Sensei_Utils::is_learner_profile_page()
+			|| Sensei_Utils::is_course_results_page()
+			|| Sensei_Utils::is_teacher_archive_page()
+		) {
 			$is_sensei = true;
-
 		}
 	}
 

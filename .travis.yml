@@ -13,6 +13,8 @@ notifications:
 branches:
   only:
   - master
+  - /^release\//
+  - /^feature\//
 cache:
   directories:
   - vendor
@@ -55,7 +57,7 @@ jobs:
         - ./tests/bin/run-wp-unit-tests.sh
     - stage: test
       php: 5.6
-      env: WP_VERSION=4.9
+      env: WP_VERSION=5.0
       script:
         - ./tests/bin/run-wp-unit-tests.sh
     - stage: test
@@ -87,7 +89,7 @@ jobs:
       language: node_js
       node_js: '10.17'
       script:
-        - npm run lint-js-wpcom
+        - npm run build
     - stage: test
       php: 7.2
       script:
@@ -109,3 +111,14 @@ jobs:
       script:
         - composer install
         - ./scripts/linter-ci
+    - stage: test
+      language: node_js
+      node_js: '10.17'
+      env: RUN_E2E=1
+      script:
+        - npm run build
+        - npm run e2e-docker:up
+        - npm run test:e2e
+      after_script:
+        - npm run e2e-docker:down
+        - bash tests/e2e/bin/upload-screenshots.sh

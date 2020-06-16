@@ -138,11 +138,8 @@ class Sensei_Course {
 	public function register_admin_scripts() {
 		$screen = get_current_screen();
 
-		// Allow developers to load non-minified versions of scripts.
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-
 		if ( 'course' === $screen->id ) {
-			wp_enqueue_script( 'sensei-admin-course-edit', Sensei()->plugin_url . 'assets/js/admin/course-edit' . $suffix . '.js', array( 'jquery', 'sensei-core-select2' ), Sensei()->version, true );
+			Sensei()->assets->enqueue( 'sensei-admin-course-edit', 'js/admin/course-edit.js', [ 'jquery', 'sensei-core-select2' ], true );
 		}
 	}
 
@@ -205,12 +202,13 @@ class Sensei_Course {
 		/**
 		 * Filters if a visitor can view course content.
 		 *
-		 * @since 3.0.0.
+		 * @since 3.0.0
+		 * @hook sensei_can_access_course_content
 		 *
-		 * @param bool   $can_view_course_content True if they can view the course content.
-		 * @param int    $course_id               Course post ID.
-		 * @param int    $user_id                 User ID if user is logged in.
-		 * @param string $context                 Context that we're checking for course content
+		 * @param {bool}   $can_view_course_content True if they can view the course content.
+		 * @param {int}    $course_id               Course post ID.
+		 * @param {int}    $user_id                 User ID if user is logged in.
+		 * @param {string} $context                 Context that we're checking for course content
 		 *                                        access (`lesson`, `quiz`, or `module`).
 		 */
 		return apply_filters( 'sensei_can_access_course_content', $can_view_course_content, $course_id, $user_id, $context );
@@ -1474,7 +1472,10 @@ class Sensei_Course {
 					$lesson_count = 1;
 
 				} // End If Statement
-				$active_html .= '<span class="course-lesson-count">' . esc_html( $lesson_count ) . '&nbsp;' . esc_html__( 'Lessons', 'sensei-lms' ) . '</span>';
+				$active_html .= '<span class="course-lesson-count">' .
+					// translators: Placeholder %d is the lesson count.
+					esc_html( sprintf( _n( '%d Lesson', '%d Lessons', $lesson_count, 'sensei-lms' ), $lesson_count ) ) .
+				'</span>';
 				// Course Categories
 				if ( '' != $category_output ) {
 
@@ -1591,7 +1592,8 @@ class Sensei_Course {
 			}
 
 			foreach ( $completed_courses as $course_item ) {
-				$course = $course_item;
+				$course       = $course_item;
+				$lesson_count = Sensei()->course->course_lesson_count( absint( $course_item->ID ) );
 
 				// Get Course Categories
 				$category_output = get_the_term_list( $course_item->ID, 'course-category', '', ', ', '' );
@@ -1619,10 +1621,10 @@ class Sensei_Course {
 						$complete_html .= '<p class="sensei-course-meta">';
 
 							// Lesson count for this author
-							$complete_html .= '<span class="course-lesson-count">'
-								. esc_html( Sensei()->course->course_lesson_count( absint( $course_item->ID ) ) )
-								. '&nbsp;' . esc_html__( 'Lessons', 'sensei-lms' )
-								. '</span>';
+							$complete_html .= '<span class="course-lesson-count">' .
+								// translators: Placeholder %d is the lesson count.
+								esc_html( sprintf( _n( '%d Lesson', '%d Lessons', $lesson_count, 'sensei-lms' ), $lesson_count ) ) .
+							'</span>';
 
 							// Course Categories
 				if ( '' != $category_output ) {
@@ -2177,12 +2179,26 @@ class Sensei_Course {
 		$course              = get_post( $course_id );
 		$category_output     = get_the_term_list( $course->ID, 'course-category', '', ', ', '' );
 		$author_display_name = get_the_author_meta( 'display_name', $course->post_author );
+		$lesson_count        = Sensei()->course->course_lesson_count( $course_id );
 
 		if ( isset( Sensei()->settings->settings['course_author'] ) && ( Sensei()->settings->settings['course_author'] ) ) {
 			echo '<span class="course-author">' .
-				esc_html( 'by ', 'sensei-lms' ) .
-				'<a href="' . esc_attr( get_author_posts_url( $course->post_author ) ) . '" title="' . esc_attr( $author_display_name ) . '">' . esc_attr( $author_display_name ) . '</a>
-			</span>';
+				wp_kses(
+					sprintf(
+						// translators: %1$s is the author posts URL, %2$s and %3$s are the author name.
+						__( 'by <a href="%1$s" title="%2$s">%3$s</a>', 'sensei-lms' ),
+						esc_url( get_author_posts_url( $course->post_author ) ),
+						esc_attr( $author_display_name ),
+						esc_html( $author_display_name )
+					),
+					array(
+						'a' => array(
+							'href'  => array(),
+							'title' => array(),
+						),
+					)
+				) .
+			'</span>';
 		}
 
 		echo '<div class="sensei-course-meta">';
@@ -2191,7 +2207,8 @@ class Sensei_Course {
 		do_action( 'sensei_course_meta_inside_before', $course->ID );
 
 		echo '<span class="course-lesson-count">' .
-			esc_html( Sensei()->course->course_lesson_count( $course->ID ) ) . '&nbsp;' . esc_html__( 'Lessons', 'sensei-lms' ) .
+			// translators: Placeholder %d is the lesson count.
+			esc_html( sprintf( _n( '%d Lesson', '%d Lessons', $lesson_count, 'sensei-lms' ), $lesson_count ) ) .
 		'</span>';
 
 		if ( ! empty( $category_output ) ) {
@@ -2789,7 +2806,7 @@ class Sensei_Course {
 		// show header if there are lessons the number of lesson in the course is the same as those that isn't assigned to a module
 		if ( ! empty( $course_lessons ) && count( $course_lessons ) == count( $none_module_lessons ) ) {
 
-			$title = __( 'Lessons', 'sensei-lms' );
+			$title = ( 1 === count( $course_lessons ) ) ? __( 'Lesson', 'sensei-lms' ) : __( 'Lessons', 'sensei-lms' );
 
 		} elseif ( empty( $none_module_lessons ) ) { // if the none module lessons are simply empty the title should not be shown
 

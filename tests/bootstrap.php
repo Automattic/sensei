@@ -37,12 +37,30 @@ class Sensei_Unit_Tests_Bootstrap {
 		// Enrolment checks should happen immediately in tests. Filter can be removed for specific tests.
 		tests_add_filter( 'sensei_should_defer_enrolment_check', '__return_false' );
 
+		// Prevent requests from `WP_Http::request` while testing.
+		tests_add_filter( 'pre_http_request', [ $this, 'prevent_requests' ], 99 );
+
 		// load the WP testing environment
 		require_once $this->wp_tests_dir . '/includes/bootstrap.php';
 
 		// load Sensei testing framework
 		$this->includes();
 	}
+
+	/**
+	 * Filter to alert to prevent requests in the tests.
+	 *
+	 * @param mixed $preempt
+	 * @return mixed
+	 */
+	public function prevent_requests( $preempt ) {
+		$error = 'You should use the filter `pre_http_request` to prevent requests in the tests';
+		if ( false === $preempt ) {
+			throw new Exception( $error );
+		}
+		return $preempt;
+	}
+
 	/**
 	 * Load Sensei.
 	 *
@@ -75,6 +93,8 @@ class Sensei_Unit_Tests_Bootstrap {
 		// reload capabilities after install, see https://core.trac.wordpress.org/ticket/28374
 		$GLOBALS['wp_roles']->for_site();
 		echo 'Installing Sensei...' . PHP_EOL;
+
+		Sensei()->activate();
 	}
 	/**
 	 * Load Sensei-specific test cases and factories.

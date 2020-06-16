@@ -146,6 +146,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				$columns = array(
 					'title'            => __( 'Learner', 'sensei-lms' ),
 					'date_started'     => __( 'Date Started', 'sensei-lms' ),
+					'date_completed'   => __( 'Date Completed', 'sensei-lms' ),
 					'user_status'      => __( 'Status', 'sensei-lms' ),
 					'enrolment_status' => __( 'Enrollment', 'sensei-lms' ),
 				);
@@ -471,18 +472,24 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				 * This filter runs on the learner management screen for a specific course.
 				 * It provides the learner row column details.
 				 *
-				 * @param array $columns{
-				 *   type string $title
-				 *   type string $date_started
-				 *   type string $course_status (completed, started etc)
-				 *   type html $action_buttons
+				 * @param array   $columns {
+				 *   @type string   $title             Learner name.
+				 *   @type string   $date_started      Course start date.
+				 *   @type string   $date_completed    Course completion date (if completed).
+				 *   @type string   $course_status     Course status (e.g. completed, started etc).
+				 *   @type string   $enrolment_status  Enrolment status.
+				 *   @type html     $action_buttons    Actions that can be taken for this learner.
 				 * }
+				 * @param object  $item       Current WP_Comment item.
+				 * @param int     $post_id    Course ID.
+				 * @param string  $post_type  Post type.
 				 */
 				$column_data = apply_filters(
 					'sensei_learners_main_column_data',
 					array(
 						'title'            => '<strong><a class="row-title" href="' . esc_url( admin_url( 'user-edit.php?user_id=' . $user_activity->user_id ) ) . '" title="' . esc_attr( $a_title ) . '">' . esc_html( $title ) . '</a></strong>',
 						'date_started'     => get_comment_meta( $user_activity->comment_ID, 'start', true ),
+						'date_completed'   => ( 'complete' === $user_activity->comment_approved ) ? $user_activity->comment_date : '',
 						'user_status'      => $progress_status_html,
 						'enrolment_status' => $enrolment_status_html,
 						// translators: Placeholder is the "object type"; lesson or course.
