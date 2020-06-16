@@ -4251,7 +4251,7 @@ class Sensei_Lesson {
 			// (If the user is either the lesson creator or admin, show actions).
 			if (
 					Sensei_Utils::user_completed_lesson( $lesson_prerequisite, $user_id )
-					|| $this->is_lesson_author( $lesson_id, $user_id )
+					|| Sensei()->lesson->is_lesson_author( $lesson_id, $user_id )
 					|| current_user_can( 'manage_options' )
 			) {
 				$show_actions = true;
