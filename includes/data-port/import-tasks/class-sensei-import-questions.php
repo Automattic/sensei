@@ -35,37 +35,10 @@ class Sensei_Import_Questions
 	}
 
 	/**
-	 * Process a single CSV line.
-	 *
-	 * @param int   $line_number  The line number in the file.
-	 * @param array $line         The current line as returned from Sensei_Import_CSV_Reader::read_lines().
-	 *
-	 * @return mixed
-	 */
-	protected function process_line( $line_number, $line ) {
-		$model = Sensei_Data_Port_Question_Model::from_source_array( $line );
-		if ( ! $model->is_valid() ) {
-			// @todo Mark as skipped.
-
-			return false;
-		}
-
-		if ( ! $model->sync_post() ) {
-			// @todo Mark as failed.
-
-			return false;
-		}
-
-		// @todo Mark as successful.
-
-		return true;
-	}
-
-	/**
 	 * Performs any required cleanup of the task.
 	 */
 	public function clean_up() {
-		// @todo Implement.
+		// Nothing to clean.
 	}
 
 	/**

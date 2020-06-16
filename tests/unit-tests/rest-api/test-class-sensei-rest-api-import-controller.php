@@ -703,7 +703,9 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 
 		register_shutdown_function(
 			function() use ( $tmp ) {
-				unlink( $tmp );
+				if ( file_exists( $tmp ) ) {
+					unlink( $tmp );
+				}
 			}
 		);
 

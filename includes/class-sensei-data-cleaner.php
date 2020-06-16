@@ -235,6 +235,7 @@ class Sensei_Data_Cleaner {
 	private static $post_meta = array(
 		'sensei_payment_complete',
 		'sensei_products_processed',
+		'_sensei_attachment_source_key',
 	);
 
 	/**
