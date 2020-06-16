@@ -39,7 +39,11 @@ const ConfirmationModal = ( {
 			items={ features.map( ( { slug, title, excerpt } ) => ( {
 				title,
 				content: (
-					<FeatureDescription slug={ slug } excerpt={ excerpt } />
+					<FeatureDescription
+						slug={ slug }
+						excerpt={ excerpt }
+						selectedFeatures={ features }
+					/>
 				),
 			} ) ) }
 		/>

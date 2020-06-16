@@ -101,6 +101,7 @@ const InstallationFeedback = ( { onContinue, onRetry } ) => {
 									slug={ slug }
 									excerpt={ excerpt }
 									link={ link }
+									selectedFeatures={ features }
 								/>
 								{ error && (
 									<p className="sensei-setup-wizard__error-message">

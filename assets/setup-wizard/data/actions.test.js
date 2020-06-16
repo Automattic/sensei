@@ -71,6 +71,7 @@ describe( 'Setup wizard actions', () => {
 							product_slug: 'test',
 							slug: 'test',
 							title: 'Test — Free',
+							rawTitle: 'Test',
 						},
 					],
 				},

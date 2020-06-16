@@ -41,6 +41,7 @@ export const normalizeFeaturesData = ( data ) => ( {
 		...feature,
 		slug: feature.product_slug,
 		title: getTitleWithDetails( feature ),
+		rawTitle: feature.title,
 	} ) ),
 } );
 
