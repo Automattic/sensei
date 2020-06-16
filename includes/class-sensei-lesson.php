@@ -4141,6 +4141,41 @@ class Sensei_Lesson {
 	}
 
 	/**
+	 * Show a message offering a login link when login is required 
+	 * and user is not logged in yet.
+	 *
+	 * @since 3.2.0
+	 */
+	public static function login_notice() {
+
+		$course_id = Sensei()->lesson->get_course_id( get_the_ID() );
+
+		// bail out when user is logged in or login is not required
+		if ( is_user_logged_in() 
+			|| empty( $course_id )
+			|| 'course' !== get_post_type( $course_id ) 
+			|| sensei_all_access()
+			|| Sensei_Utils::is_preview_lesson( get_the_ID()
+			|| ! sensei_is_login_required() ) 
+		) {
+			return;
+		}
+
+		$anchor_before = '<a href="' . esc_url( sensei_user_login_url() ) . '" >';
+		$anchor_after  = '</a>';
+		$message       = sprintf(
+			// translators: Placeholders are an opening and closing <a> tag linking to the login URL.
+			__( 'or %1$slog in%2$s to access the lesson content, when you are already enrolled in this course.', 'sensei-lms' ),
+			$anchor_before,
+			$anchor_after
+		);
+		$notice_level = 'info';
+
+		Sensei()->notices->add_notice( $message, $notice_level );
+
+	}
+
+	/**
 	 * Outputs the the lesson archive header.
 	 *
 	 * @since  1.9.0
