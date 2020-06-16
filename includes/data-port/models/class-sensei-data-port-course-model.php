@@ -290,8 +290,9 @@ class Sensei_Data_Port_Course_Model extends Sensei_Data_Port_Model {
 				'type' => 'string',
 			],
 			self::COLUMN_COURSE           => [
-				'type'     => 'string',
-				'required' => true,
+				'type'       => 'string',
+				'required'   => true,
+				'allow_html' => true,
 			],
 			self::COLUMN_SLUG             => [
 				'type' => 'slug',
