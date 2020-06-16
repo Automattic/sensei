@@ -4141,7 +4141,7 @@ class Sensei_Lesson {
 	}
 
 	/**
-	 * Show a message offering a login link when login is required 
+	 * Show a message offering a login link when login is required
 	 * and user is not logged in yet.
 	 *
 	 * @since 3.2.0
@@ -4150,13 +4150,13 @@ class Sensei_Lesson {
 
 		$course_id = Sensei()->lesson->get_course_id( get_the_ID() );
 
-		// bail out when user is logged in or login is not required
-		if ( is_user_logged_in() 
+		// Bail out when user is logged in or login is not required.
+		if ( is_user_logged_in()
 			|| empty( $course_id )
-			|| 'course' !== get_post_type( $course_id ) 
+			|| 'course' !== get_post_type( $course_id )
 			|| sensei_all_access()
-			|| Sensei_Utils::is_preview_lesson( get_the_ID()
-			|| ! sensei_is_login_required() ) 
+			|| Sensei_Utils::is_preview_lesson( get_the_ID() )
+			|| ! sensei_is_login_required()
 		) {
 			return;
 		}
