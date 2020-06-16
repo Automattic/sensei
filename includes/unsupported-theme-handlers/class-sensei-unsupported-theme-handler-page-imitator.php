@@ -81,16 +81,16 @@ abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 		 * as well so we can reset it back to this later.
 		 */
 		// phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited -- Used to mock our own page within a custom loop. Reset afterwards.
-		$post                        = $this->dummy_post;
-		$wp_query                    = clone $wp_query;
-		$wp_query->post              = $post;
-		$wp_query->posts             = array( $post );
+		$post            = $this->dummy_post;
+		$wp_query        = clone $wp_query;
+		$wp_query->post  = $post;
+		$wp_query->posts = array( $post );
 		// On taxonomy pages the queried_object must remain a WP_Term object.
 		if ( ! is_tax() ) {
 			$wp_query->queried_object    = $post;
 			$wp_query->queried_object_id = $post->ID;
 		}
-		$wp_the_query                = $wp_query;
+		$wp_the_query = $wp_query;
 		// phpcs:enable WordPress.WP.GlobalVariablesOverride.Prohibited
 
 		// Prevent comments form from appearing.
