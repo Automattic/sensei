@@ -442,7 +442,7 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 				'default' => true,
 			],
 			self::COLUMN_MEDIA           => [
-				'type' => 'url',
+				'type' => 'url-or-file',
 			],
 			self::COLUMN_CATEGORIES      => [
 				'type' => 'string',
