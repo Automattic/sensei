@@ -1,2 +1,2 @@
-ID,Question,Slug,Description,Status,Type,Grade,Randomise,Media,Categories,Answer,Feedback,Text Before Gap,Gap,Text After Gap,Upload Notes,Teacher Notes
+ID,Question,Slug,Description,Status,Type,Grade,Random Answer Order,Media,Categories,Answer,Feedback,Text Before Gap,Gap,Text After Gap,Upload Notes,Teacher Notes
 100,Do you like dinosaurs?,do-you-like-dinosaurs,A simple question about liking dinosaurs.,publish,multiple-choice,1,0,,Dinosaurs,"Right: Yes, Wrong: No",,,,,,
