@@ -4257,7 +4257,7 @@ class Sensei_Lesson {
 			// (If the user is either the lesson creator or admin, show actions).
 			if (
 					Sensei_Utils::user_completed_lesson( $lesson_prerequisite, $user_id )
-					|| self::is_lesson_author( $lesson_id, $user_id )
+					|| $this->is_lesson_author( $lesson_id, $user_id )
 					|| current_user_can( 'manage_options' )
 			) {
 				$show_actions = true;
@@ -4492,7 +4492,7 @@ class Sensei_Lesson {
 	 * @param int|null $user_id ID of user being checked. Defaults to null.
 	 * @return boolean Returns TRUE if user is the lesson author, returns FALSE otherwise.
 	 */
-	private static function is_lesson_author( $lesson_id, $user_id = null ) {
+	private function is_lesson_author( $lesson_id, $user_id = null ) {
 
 		if ( is_null( $user_id ) ) {
 			$user_id = get_current_user_id();
