@@ -4488,8 +4488,8 @@ class Sensei_Lesson {
 	 *
 	 * @since 3.2.0
 	 *
-	 * @param int $lesson_id ID of lesson being checked.
-	 * @param int $user_id ID of user being checked. Defaults to current user ID.
+	 * @param int      $lesson_id ID of lesson being checked.
+	 * @param int|null $user_id ID of user being checked. Defaults to null.
 	 * @return boolean Returns TRUE if user is the lesson author, returns FALSE otherwise.
 	 */
 	private static function is_lesson_author( $lesson_id, $user_id = null ) {
