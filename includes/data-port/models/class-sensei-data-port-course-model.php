@@ -128,7 +128,7 @@ class Sensei_Data_Port_Course_Model extends Sensei_Data_Port_Model {
 			'post_type'   => 'course',
 		];
 
-		if ( empty( $this->get_post_id() ) ) {
+		if ( $this->is_new() ) {
 			$args['post_status'] = 'draft';
 		}
 

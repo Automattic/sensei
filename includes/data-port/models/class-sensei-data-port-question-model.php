@@ -105,7 +105,7 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 			'post_type' => self::POST_TYPE,
 		];
 
-		if ( $this->get_post_id() ) {
+		if ( $this->is_new() ) {
 			$postarr['ID'] = $this->get_post_id();
 		} elseif ( get_current_user_id() ) {
 			$postarr['post_author'] = get_current_user_id();

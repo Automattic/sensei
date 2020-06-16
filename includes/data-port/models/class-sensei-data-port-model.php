@@ -35,6 +35,13 @@ abstract class Sensei_Data_Port_Model {
 	private $default_author;
 
 	/**
+	 * True if this is a new entity.
+	 *
+	 * @var bool
+	 */
+	private $is_new;
+
+	/**
 	 * Sensei_Data_Port_Model constructor.
 	 */
 	private function __construct() {
@@ -57,6 +64,9 @@ abstract class Sensei_Data_Port_Model {
 		$post_id = $self->get_existing_post_id();
 		if ( $post_id ) {
 			$self->set_post_id( $post_id );
+			$self->is_new = false;
+		} else {
+			$self->is_new = true;
 		}
 
 		return $self;
@@ -110,7 +120,7 @@ abstract class Sensei_Data_Port_Model {
 		$config = $schema[ $field ];
 
 		// If we're creating a new post, get the default value.
-		if ( ! $this->get_post_id() && isset( $config['default'] ) ) {
+		if ( $this->is_new() && isset( $config['default'] ) ) {
 			if ( is_callable( $config['default'] ) ) {
 				return call_user_func( $config['default'], $field, $this );
 			}
@@ -355,5 +365,14 @@ abstract class Sensei_Data_Port_Model {
 	 */
 	public function get_default_author() {
 		return $this->default_author;
+	}
+
+	/**
+	 * Whether this is a new data port entity.
+	 *
+	 * @return bool
+	 */
+	public function is_new() {
+		return $this->is_new;
 	}
 }
