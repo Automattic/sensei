@@ -160,7 +160,7 @@ class Sensei_Grading_User_Quiz {
 								$answer_media_url      = wp_get_attachment_url( $attachment_id );
 								$answer_media_filename = basename( $answer_media_url );
 								if ( $answer_media_url && $answer_media_filename ) {
-									// translators: Placeholder is a link to the submitted file.
+									// translators: Placeholder %1$s is a link to the submitted file.
 									$user_answer_content = sprintf( __( 'Submitted file: %1$s', 'sensei-lms' ), '<a href="' . esc_url( $answer_media_url ) . '" target="_blank">' . esc_html( $answer_media_filename ) . '</a>' );
 								}
 							}

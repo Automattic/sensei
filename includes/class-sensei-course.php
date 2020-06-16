@@ -1629,7 +1629,7 @@ class Sensei_Course {
 							// Course Categories
 				if ( '' != $category_output ) {
 
-					// translators: Placeholder is comma-separated list of course categories.
+					// translators: Placeholder is a comma-separated list of the Course categories.
 					$complete_html .= '<span class="course-category">' . sprintf( __( 'in %s', 'sensei-lms' ), $category_output ) . '</span>';
 
 				} // End If Statement
@@ -2213,7 +2213,7 @@ class Sensei_Course {
 
 		if ( ! empty( $category_output ) ) {
 			echo '<span class="course-category">' .
-				// translators: Placeholder is a comma-separated list of the course categories.
+				// translators: Placeholder is a comma-separated list of the Course categories.
 				wp_kses_post( sprintf( __( 'in %s', 'sensei-lms' ), $category_output ) ) .
 			'</span>';
 		} // End If Statement
@@ -2224,7 +2224,7 @@ class Sensei_Course {
 
 			$completed    = count( $this->get_completed_lesson_ids( $course->ID, get_current_user_id() ) );
 			$lesson_count = count( $this->course_lessons( $course->ID ) );
-			// translators: Placeholders are the number of lessons completed and the total number of lessons, respectively.
+			// translators: Placeholders are the counts for lessons completed and total lessons, respectively.
 			echo '<span class="course-lesson-progress">' . esc_html( sprintf( __( '%1$d of %2$d lessons completed', 'sensei-lms' ), $completed, $lesson_count ) ) . '</span>';
 		}
 

@@ -1033,7 +1033,7 @@ class Sensei_Frontend {
 				?>
 				<span class="course-category">
 					<?php
-					// translators: Placeholder is a comma-separated list of course categories.
+					// translators: Placeholder is a comma-separated list of the Course categories.
 					echo sprintf( esc_html__( 'in %s', 'sensei-lms' ), wp_kses_post( $category_output ) );
 					?>
 				</span>
@@ -1187,7 +1187,7 @@ class Sensei_Frontend {
 					<?php
 					echo '&nbsp;' . wp_kses_post(
 						sprintf(
-							// translators: Placeholder is a link to view the course.
+							// translators: Placeholder is a link to the Course permalink.
 							__( 'Part of: %s', 'sensei-lms' ),
 							'<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '" title="' . esc_attr__( 'View course', 'sensei-lms' ) . '"><em>' . esc_html( get_the_title( $lesson_course_id ) ) . '</em></a>'
 						)

@@ -216,6 +216,7 @@ function sensei_do_deprecated_action( $hook_tag, $version, $alternative = '', $a
 
 	if ( has_action( $hook_tag ) ) {
 
+		// translators: Placeholders are the hook tag and the version which it was deprecated, respectively.
 		$error_message = sprintf( __( "SENSEI: The hook '%1\$s', has been deprecated since '%2\$s'.", 'sensei-lms' ), $hook_tag, $version );
 
 		if ( ! empty( $alternative ) ) {

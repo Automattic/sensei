@@ -4086,7 +4086,7 @@ class Sensei_Lesson {
 			$course_link .= esc_html__( 'course', 'sensei-lms' );
 			$course_link .= '</a>';
 
-			// translators: Placeholder is a link to the Course.
+			// translators: The placeholder %1$s is a link to the Course.
 			$message_default = sprintf( esc_html__( 'Please sign up for the %1$s before starting the lesson.', 'sensei-lms' ), $course_link );
 
 			/**
