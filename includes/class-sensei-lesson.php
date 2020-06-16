@@ -4486,7 +4486,7 @@ class Sensei_Lesson {
 	/**
 	 * Check if a user is the lesson author.
 	 *
-	 * @since 3.0.2
+	 * @since 3.2.0
 	 *
 	 * @param int $lesson_id ID of lesson being checked.
 	 * @param int $user_id ID of user being checked. Defaults to current user ID.
