@@ -7,7 +7,7 @@
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     3.1.0
+ * @version     3.2.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -82,7 +82,7 @@ global $course;
 						}
 					}
 					?>
-					<h2>
+					<h4>
 
 						<a href="<?php echo esc_url_raw( get_permalink( $lesson->ID ) ); ?>"
 						   title="
@@ -100,7 +100,7 @@ global $course;
 							<?php echo esc_html( $lesson_grade ); ?>
 						</span>
 
-					</h2>
+					</h4>
 
 					<?php
 
@@ -115,16 +115,12 @@ global $course;
 		if ( 0 < count( $lessons ) ) :
 			?>
 
-			<h3>
-
-				<?php
-				// lesson title will already appear above
-				if ( $course_has_lessons_in_modules ) {
-					esc_html_e( 'Other Lessons', 'sensei-lms' );
-				}
+			<?php
+			// lesson title will already appear above
+			if ( $course_has_lessons_in_modules ) :
 				?>
-
-			</h3>
+				<h2><?php esc_html_e( 'Other Lessons', 'sensei-lms' ); ?></h2>
+			<?php endif; ?>
 
 			<?php foreach ( $lessons as $lesson ) : ?>
 
@@ -144,13 +140,13 @@ global $course;
 				}
 				?>
 
-				<h2>
+				<h3>
 
 					<a href="<?php echo esc_url_raw( get_permalink( $lesson->ID ) ); ?>" title="
-										<?php
-										// translators: Placeholder it the lesson title.
-										esc_attr( sprintf( __( 'Start %s', 'sensei-lms' ), $lesson->post_title ) )
-										?>
+						<?php
+						// translators: Placeholder it the lesson title.
+						esc_attr( sprintf( __( 'Start %s', 'sensei-lms' ), $lesson->post_title ) )
+						?>
 					" >
 
 						<?php echo esc_html( $lesson->post_title ); ?>
@@ -159,7 +155,7 @@ global $course;
 
 					<span class="lesson-grade"><?php echo esc_html( $lesson_grade ); ?></span>
 
-				</h2>
+				</h3>
 
 			<?php endforeach; // lessons ?>
 

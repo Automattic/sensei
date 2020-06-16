@@ -692,14 +692,18 @@ section.entry span.course-lesson-progress { margin-left: 10px; }
 .course-results-lessons {
   h2 {
     margin: 20px 0;
-    &.total-grade {
-      text-decoration: underline;
-      .lesson-grade {
-        text-decoration: underline;
-      }
-    }
+  }
+  h3, h4 {
+    margin: 20px 0;
+
     .lesson-grade {
       float: right;
+    }
+  }
+  h3.total-grade {
+    text-decoration: underline;
+    .lesson-grade {
+      text-decoration: underline;
     }
   }
 }
