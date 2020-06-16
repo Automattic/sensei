@@ -2563,7 +2563,6 @@ class Sensei_Lesson {
 					$quizzes = get_post_meta( $question_id, '_quiz_id', false );
 
 					if ( ! in_array( $quiz_id, $quizzes ) ) {
-						$at_least_one_question_added = true;
 						$number_of_added_questions++;
 						++$question_count;
 						add_post_meta( $question_id, '_quiz_id', $quiz_id, false );
