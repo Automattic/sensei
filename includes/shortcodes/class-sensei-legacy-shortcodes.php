@@ -426,7 +426,7 @@ class Sensei_Legacy_Shortcodes {
 						<?php if ( ! empty( $category_output ) ) { ?>
 							<span class="course-category">
 								<?php
-								// translators: Placeholder is a comma-separated list of categories.
+								// translators: Placeholder is a comma-separated list of the Course categories.
 								echo wp_kses_post( sprintf( __( 'in %s', 'sensei-lms' ), $category_output ) );
 								?>
 							</span>

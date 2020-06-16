@@ -144,7 +144,7 @@ global $course;
 
 					<a href="<?php echo esc_url_raw( get_permalink( $lesson->ID ) ); ?>" title="
 						<?php
-						// translators: Placeholder it the lesson title.
+						// translators: Placeholder is the lesson title.
 						esc_attr( sprintf( __( 'Start %s', 'sensei-lms' ), $lesson->post_title ) )
 						?>
 					" >

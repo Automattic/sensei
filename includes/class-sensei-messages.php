@@ -849,7 +849,7 @@ class Sensei_Messages {
 		$sender          = get_user_by( 'login', $sender_username );
 
 		if ( $sender_username && $sender instanceof WP_User ) {
-			// translators: Placeholders are the sender's display name and the date.
+			// translators: Placeholders are the sender's display name and the date, respectively.
 			$sender_display_name = sprintf( __( 'Sent by %1$s on %2$s.', 'sensei-lms' ), $sender->display_name, get_the_date() );
 			?>
 			<p class="message-meta">
