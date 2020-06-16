@@ -93,7 +93,7 @@ class Sensei_Data_Port_Question_Model_Test extends WP_UnitTestCase {
 					Sensei_Data_Port_Question_Model::COLUMN_STATUS          => 'publish',
 					Sensei_Data_Port_Question_Model::COLUMN_TYPE            => 'multiple-choice',
 					Sensei_Data_Port_Question_Model::COLUMN_GRADE           => ' 22',
-					Sensei_Data_Port_Question_Model::COLUMN_RANDOMISE       => '1',
+					Sensei_Data_Port_Question_Model::COLUMN_RANDOM_ORDER    => '1',
 					Sensei_Data_Port_Question_Model::COLUMN_MEDIA           => '',
 					Sensei_Data_Port_Question_Model::COLUMN_CATEGORIES      => ' <strong>Test</strong>, Long > Category ',
 					Sensei_Data_Port_Question_Model::COLUMN_FEEDBACK        => ' I <strong>hope</strong> they did well.',
@@ -112,7 +112,7 @@ class Sensei_Data_Port_Question_Model_Test extends WP_UnitTestCase {
 					Sensei_Data_Port_Question_Model::COLUMN_STATUS          => 'publish',
 					Sensei_Data_Port_Question_Model::COLUMN_TYPE            => 'multiple-choice',
 					Sensei_Data_Port_Question_Model::COLUMN_GRADE           => '22',
-					Sensei_Data_Port_Question_Model::COLUMN_RANDOMISE       => '1',
+					Sensei_Data_Port_Question_Model::COLUMN_RANDOM_ORDER    => '1',
 					Sensei_Data_Port_Question_Model::COLUMN_MEDIA           => '',
 					Sensei_Data_Port_Question_Model::COLUMN_CATEGORIES      => 'Test, Long > Category',
 					Sensei_Data_Port_Question_Model::COLUMN_FEEDBACK        => 'I <strong>hope</strong> they did well.',
@@ -234,7 +234,7 @@ class Sensei_Data_Port_Question_Model_Test extends WP_UnitTestCase {
 			Sensei_Data_Port_Question_Model::COLUMN_STATUS,
 			Sensei_Data_Port_Question_Model::COLUMN_TYPE,
 			Sensei_Data_Port_Question_Model::COLUMN_GRADE,
-			Sensei_Data_Port_Question_Model::COLUMN_RANDOMISE,
+			Sensei_Data_Port_Question_Model::COLUMN_RANDOM_ORDER,
 			Sensei_Data_Port_Question_Model::COLUMN_MEDIA,
 			Sensei_Data_Port_Question_Model::COLUMN_CATEGORIES,
 			Sensei_Data_Port_Question_Model::COLUMN_FEEDBACK,
@@ -286,7 +286,7 @@ class Sensei_Data_Port_Question_Model_Test extends WP_UnitTestCase {
 		);
 		$this->assertEquals( 1, get_post_meta( $post->ID, '_right_answer_count', true ) );
 		$this->assertEquals( 2, get_post_meta( $post->ID, '_wrong_answer_count', true ) );
-		$this->assertEquals( $expected_data[ Sensei_Data_Port_Question_Model::COLUMN_RANDOMISE ], get_post_meta( $post->ID, '_random_order', true ) );
+		$this->assertEquals( $expected_data[ Sensei_Data_Port_Question_Model::COLUMN_RANDOM_ORDER ], get_post_meta( $post->ID, '_random_order', true ) );
 		$this->assertEquals( $expected_data[ Sensei_Data_Port_Question_Model::COLUMN_GRADE ], get_post_meta( $post->ID, '_question_grade', true ) );
 
 		$this->assertEquals( $expected_answer_order, get_post_meta( $post->ID, '_answer_order', true ) );

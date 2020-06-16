@@ -26,7 +26,7 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 	const COLUMN_STATUS          = 'status';
 	const COLUMN_TYPE            = 'type';
 	const COLUMN_GRADE           = 'grade';
-	const COLUMN_RANDOMISE       = 'randomise';
+	const COLUMN_RANDOM_ORDER    = 'random answer order';
 	const COLUMN_MEDIA           = 'media';
 	const COLUMN_CATEGORIES      = 'categories';
 	const COLUMN_FEEDBACK        = 'feedback';
@@ -198,7 +198,7 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 		$fields = [];
 
 		$fields['_question_grade']  = $this->get_value( self::COLUMN_GRADE );
-		$fields['_random_order']    = $this->get_value( self::COLUMN_RANDOMISE );
+		$fields['_random_order']    = $this->get_value( self::COLUMN_RANDOM_ORDER );
 		$fields['_answer_feedback'] = $this->get_value( self::COLUMN_FEEDBACK );
 		$fields['_question_media']  = $this->get_question_media_value();
 
@@ -437,7 +437,7 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 				'type'    => 'int',
 				'default' => 1,
 			],
-			self::COLUMN_RANDOMISE       => [
+			self::COLUMN_RANDOM_ORDER    => [
 				'type'    => 'bool',
 				'default' => true,
 			],
