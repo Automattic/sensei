@@ -85,8 +85,11 @@ abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 		$wp_query                    = clone $wp_query;
 		$wp_query->post              = $post;
 		$wp_query->posts             = array( $post );
-		$wp_query->queried_object    = $post;
-		$wp_query->queried_object_id = $post->ID;
+		// On taxonomy pages the queried_object must remain a WP_Term object.
+		if ( ! is_tax() ) {
+			$wp_query->queried_object    = $post;
+			$wp_query->queried_object_id = $post->ID;
+		}
 		$wp_the_query                = $wp_query;
 		// phpcs:enable WordPress.WP.GlobalVariablesOverride.Prohibited
 
