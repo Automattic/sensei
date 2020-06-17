@@ -18,7 +18,7 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 	const TAXONOMY_QUESTION_TYPE     = 'question-type';
 	const TAXONOMY_QUESTION_CATEGORY = 'question-category';
 
-	const COLUMN_QUESTION        = 'question';
+	const COLUMN_TITLE           = 'question';
 	const COLUMN_ANSWER          = 'answer';
 	const COLUMN_ID              = 'id';
 	const COLUMN_SLUG            = 'slug';
@@ -88,7 +88,7 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 
 		$data = $this->get_data();
 
-		$postarr['post_title'] = $data[ self::COLUMN_QUESTION ];
+		$postarr['post_title'] = $data[ self::COLUMN_TITLE ];
 
 		$post_name = $this->get_value( self::COLUMN_SLUG );
 		if ( null !== $post_name ) {
@@ -365,7 +365,7 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 	 */
 	public static function get_schema() {
 		return [
-			self::COLUMN_QUESTION        => [
+			self::COLUMN_TITLE           => [
 				'type'       => 'string',
 				'required'   => true,
 				'allow_html' => true,
@@ -473,31 +473,5 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 
 			return true;
 		};
-	}
-
-	/**
-	 * Get the data to return with any errors.
-	 *
-	 * @param array $data Base error data to pass along.
-	 *
-	 * @return array
-	 */
-	public function get_error_data( $data = [] ) {
-		$entry_id = $this->get_value( self::COLUMN_ID );
-		if ( $entry_id ) {
-			$data['entry_id'] = $entry_id;
-		}
-
-		$entry_title = $this->get_value( self::COLUMN_QUESTION );
-		if ( $entry_id ) {
-			$data['entry_title'] = $entry_title;
-		}
-
-		$post_id = $this->get_post_id();
-		if ( $post_id ) {
-			$data['post_id'] = $post_id;
-		}
-
-		return $data;
 	}
 }

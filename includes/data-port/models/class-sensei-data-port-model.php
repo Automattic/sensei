@@ -113,7 +113,24 @@ abstract class Sensei_Data_Port_Model {
 	 *
 	 * @return array
 	 */
-	abstract public function get_error_data( $data = [] );
+	public function get_error_data( $data = [] ) {
+		$entry_id = $this->get_value( self::COLUMN_ID );
+		if ( $entry_id ) {
+			$data['entry_id'] = $entry_id;
+		}
+
+		$entry_title = $this->get_value( self::COLUMN_TITLE );
+		if ( $entry_id ) {
+			$data['entry_title'] = $entry_title;
+		}
+
+		$post_id = $this->get_post_id();
+		if ( $post_id ) {
+			$data['post_id'] = $post_id;
+		}
+
+		return $data;
+	}
 
 	/**
 	 * Get the value of a field.

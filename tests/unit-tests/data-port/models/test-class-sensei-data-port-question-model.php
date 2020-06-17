@@ -36,7 +36,7 @@ class Sensei_Data_Port_Question_Model_Test extends WP_UnitTestCase {
 	 */
 	public function testExistingPostFound() {
 		$data = [
-			Sensei_Data_Port_Question_Model::COLUMN_QUESTION => 'Do you like dinosaurs?',
+			Sensei_Data_Port_Question_Model::COLUMN_TITLE  => 'Do you like dinosaurs?',
 			Sensei_Data_Port_Question_Model::COLUMN_ANSWER => 'Right:Yes, Wrong: No',
 			Sensei_Data_Port_Question_Model::COLUMN_SLUG   => 'do-you-like-dinosaurs',
 		];
@@ -58,7 +58,7 @@ class Sensei_Data_Port_Question_Model_Test extends WP_UnitTestCase {
 	 */
 	public function testCloseExistingPostNotFound() {
 		$data    = [
-			Sensei_Data_Port_Question_Model::COLUMN_QUESTION => 'Do you like dinosaurs?',
+			Sensei_Data_Port_Question_Model::COLUMN_TITLE  => 'Do you like dinosaurs?',
 			Sensei_Data_Port_Question_Model::COLUMN_ANSWER => 'Right:Yes, Wrong: No',
 			Sensei_Data_Port_Question_Model::COLUMN_SLUG   => 'do-you-like-dinosaurs',
 		];
@@ -86,7 +86,7 @@ class Sensei_Data_Port_Question_Model_Test extends WP_UnitTestCase {
 			'full'                            => [
 				[
 					Sensei_Data_Port_Question_Model::COLUMN_ID              => '<strong>1234</strong>',
-					Sensei_Data_Port_Question_Model::COLUMN_QUESTION        => 'Do you like dogs? <script>alert("Uhoh");</script>',
+					Sensei_Data_Port_Question_Model::COLUMN_TITLE           => 'Do you like dogs? <script>alert("Uhoh");</script>',
 					Sensei_Data_Port_Question_Model::COLUMN_ANSWER          => 'Wrong:No, Right:Yes, Wrong:"Maybe, it depends"',
 					Sensei_Data_Port_Question_Model::COLUMN_SLUG            => ' do-you-like-dogs  ',
 					Sensei_Data_Port_Question_Model::COLUMN_DESCRIPTION     => '  This is a really great question.   ',
@@ -105,7 +105,7 @@ class Sensei_Data_Port_Question_Model_Test extends WP_UnitTestCase {
 				],
 				[
 					Sensei_Data_Port_Question_Model::COLUMN_ID              => '1234',
-					Sensei_Data_Port_Question_Model::COLUMN_QUESTION        => 'Do you like dogs? alert("Uhoh");',
+					Sensei_Data_Port_Question_Model::COLUMN_TITLE           => 'Do you like dogs? alert("Uhoh");',
 					Sensei_Data_Port_Question_Model::COLUMN_ANSWER          => 'Wrong:No, Right:Yes, Wrong:"Maybe, it depends"',
 					Sensei_Data_Port_Question_Model::COLUMN_SLUG            => 'do-you-like-dogs',
 					Sensei_Data_Port_Question_Model::COLUMN_DESCRIPTION     => 'This is a really great question.',
@@ -140,7 +140,7 @@ class Sensei_Data_Port_Question_Model_Test extends WP_UnitTestCase {
 			'valid-gap-fill'                  => [
 				[
 					Sensei_Data_Port_Question_Model::COLUMN_ID              => '<strong>1234</strong>',
-					Sensei_Data_Port_Question_Model::COLUMN_QUESTION        => 'Simple gap fill',
+					Sensei_Data_Port_Question_Model::COLUMN_TITLE           => 'Simple gap fill',
 					Sensei_Data_Port_Question_Model::COLUMN_ANSWER          => '',
 					Sensei_Data_Port_Question_Model::COLUMN_STATUS          => 'publish',
 					Sensei_Data_Port_Question_Model::COLUMN_TYPE            => 'gap-fill',
@@ -150,7 +150,7 @@ class Sensei_Data_Port_Question_Model_Test extends WP_UnitTestCase {
 				],
 				[
 					Sensei_Data_Port_Question_Model::COLUMN_ID              => '1234',
-					Sensei_Data_Port_Question_Model::COLUMN_QUESTION        => 'Simple gap fill',
+					Sensei_Data_Port_Question_Model::COLUMN_TITLE           => 'Simple gap fill',
 					Sensei_Data_Port_Question_Model::COLUMN_ANSWER          => '',
 					Sensei_Data_Port_Question_Model::COLUMN_STATUS          => 'publish',
 					Sensei_Data_Port_Question_Model::COLUMN_TYPE            => 'gap-fill',
@@ -163,7 +163,7 @@ class Sensei_Data_Port_Question_Model_Test extends WP_UnitTestCase {
 			'valid-file-upload'               => [
 				[
 					Sensei_Data_Port_Question_Model::COLUMN_ID            => '12345',
-					Sensei_Data_Port_Question_Model::COLUMN_QUESTION      => 'File upload',
+					Sensei_Data_Port_Question_Model::COLUMN_TITLE         => 'File upload',
 					Sensei_Data_Port_Question_Model::COLUMN_ANSWER        => '',
 					Sensei_Data_Port_Question_Model::COLUMN_STATUS        => 'draft',
 					Sensei_Data_Port_Question_Model::COLUMN_TYPE          => 'file-upload',
@@ -172,7 +172,7 @@ class Sensei_Data_Port_Question_Model_Test extends WP_UnitTestCase {
 				],
 				[
 					Sensei_Data_Port_Question_Model::COLUMN_ID            => '12345',
-					Sensei_Data_Port_Question_Model::COLUMN_QUESTION      => 'File upload',
+					Sensei_Data_Port_Question_Model::COLUMN_TITLE         => 'File upload',
 					Sensei_Data_Port_Question_Model::COLUMN_ANSWER        => '',
 					Sensei_Data_Port_Question_Model::COLUMN_STATUS        => 'draft',
 					Sensei_Data_Port_Question_Model::COLUMN_TYPE          => 'file-upload',
@@ -183,35 +183,35 @@ class Sensei_Data_Port_Question_Model_Test extends WP_UnitTestCase {
 			],
 			'valid-boolean'                   => [
 				[
-					Sensei_Data_Port_Question_Model::COLUMN_ID       => '12345',
-					Sensei_Data_Port_Question_Model::COLUMN_QUESTION => 'Boolean question',
-					Sensei_Data_Port_Question_Model::COLUMN_ANSWER   => '1',
-					Sensei_Data_Port_Question_Model::COLUMN_STATUS   => 'draft',
-					Sensei_Data_Port_Question_Model::COLUMN_TYPE     => 'boolean',
+					Sensei_Data_Port_Question_Model::COLUMN_ID     => '12345',
+					Sensei_Data_Port_Question_Model::COLUMN_TITLE  => 'Boolean question',
+					Sensei_Data_Port_Question_Model::COLUMN_ANSWER => '1',
+					Sensei_Data_Port_Question_Model::COLUMN_STATUS => 'draft',
+					Sensei_Data_Port_Question_Model::COLUMN_TYPE   => 'boolean',
 				],
 				[
-					Sensei_Data_Port_Question_Model::COLUMN_ID       => '12345',
-					Sensei_Data_Port_Question_Model::COLUMN_QUESTION => 'Boolean question',
-					Sensei_Data_Port_Question_Model::COLUMN_ANSWER   => '1',
-					Sensei_Data_Port_Question_Model::COLUMN_STATUS   => 'draft',
-					Sensei_Data_Port_Question_Model::COLUMN_TYPE     => 'boolean',
+					Sensei_Data_Port_Question_Model::COLUMN_ID     => '12345',
+					Sensei_Data_Port_Question_Model::COLUMN_TITLE  => 'Boolean question',
+					Sensei_Data_Port_Question_Model::COLUMN_ANSWER => '1',
+					Sensei_Data_Port_Question_Model::COLUMN_STATUS => 'draft',
+					Sensei_Data_Port_Question_Model::COLUMN_TYPE   => 'boolean',
 				],
 				true,
 			],
 			'valid-single-line'               => [
 				[
-					Sensei_Data_Port_Question_Model::COLUMN_ID       => '12345',
-					Sensei_Data_Port_Question_Model::COLUMN_QUESTION => 'Single line question',
-					Sensei_Data_Port_Question_Model::COLUMN_ANSWER   => 'Fill the answer below',
-					Sensei_Data_Port_Question_Model::COLUMN_STATUS   => 'draft',
-					Sensei_Data_Port_Question_Model::COLUMN_TYPE     => 'single-line',
+					Sensei_Data_Port_Question_Model::COLUMN_ID     => '12345',
+					Sensei_Data_Port_Question_Model::COLUMN_TITLE  => 'Single line question',
+					Sensei_Data_Port_Question_Model::COLUMN_ANSWER => 'Fill the answer below',
+					Sensei_Data_Port_Question_Model::COLUMN_STATUS => 'draft',
+					Sensei_Data_Port_Question_Model::COLUMN_TYPE   => 'single-line',
 				],
 				[
-					Sensei_Data_Port_Question_Model::COLUMN_ID       => '12345',
-					Sensei_Data_Port_Question_Model::COLUMN_QUESTION => 'Single line question',
-					Sensei_Data_Port_Question_Model::COLUMN_ANSWER   => 'Fill the answer below',
-					Sensei_Data_Port_Question_Model::COLUMN_STATUS   => 'draft',
-					Sensei_Data_Port_Question_Model::COLUMN_TYPE     => 'single-line',
+					Sensei_Data_Port_Question_Model::COLUMN_ID     => '12345',
+					Sensei_Data_Port_Question_Model::COLUMN_TITLE  => 'Single line question',
+					Sensei_Data_Port_Question_Model::COLUMN_ANSWER => 'Fill the answer below',
+					Sensei_Data_Port_Question_Model::COLUMN_STATUS => 'draft',
+					Sensei_Data_Port_Question_Model::COLUMN_TYPE   => 'single-line',
 				],
 				true,
 			],
@@ -226,7 +226,7 @@ class Sensei_Data_Port_Question_Model_Test extends WP_UnitTestCase {
 	public function testInputIsSanitized( $input_line, $expected_model_content, $is_valid ) {
 		$model         = Sensei_Data_Port_Question_Model::from_source_array( $input_line, 1 );
 		$tested_fields = [
-			Sensei_Data_Port_Question_Model::COLUMN_QUESTION,
+			Sensei_Data_Port_Question_Model::COLUMN_TITLE,
 			Sensei_Data_Port_Question_Model::COLUMN_ANSWER,
 			Sensei_Data_Port_Question_Model::COLUMN_ID,
 			Sensei_Data_Port_Question_Model::COLUMN_SLUG,
@@ -271,7 +271,7 @@ class Sensei_Data_Port_Question_Model_Test extends WP_UnitTestCase {
 
 		$post = get_post( $model->get_post_id() );
 
-		$this->assertEquals( $expected_data[ Sensei_Data_Port_Question_Model::COLUMN_QUESTION ], $post->post_title, 'Post title should match the title column' );
+		$this->assertEquals( $expected_data[ Sensei_Data_Port_Question_Model::COLUMN_TITLE ], $post->post_title, 'Post title should match the title column' );
 		$this->assertEquals( $expected_data[ Sensei_Data_Port_Question_Model::COLUMN_DESCRIPTION ], $post->post_content, 'Post content should match the description column' );
 		$this->assertEquals( $expected_data[ Sensei_Data_Port_Question_Model::COLUMN_STATUS ], $post->post_status, 'Post status should match the status column' );
 		$this->assertEquals( $expected_data[ Sensei_Data_Port_Question_Model::COLUMN_SLUG ], $post->post_name, 'Post name should match the slug column' );
@@ -317,10 +317,10 @@ class Sensei_Data_Port_Question_Model_Test extends WP_UnitTestCase {
 
 		$post = get_post( $model->get_post_id() );
 		$this->commit_transaction();
-		$this->assertEquals( $expected_data[ Sensei_Data_Port_Question_Model::COLUMN_QUESTION ], $post->post_title, 'Post title should match the title column' );
+		$this->assertEquals( $expected_data[ Sensei_Data_Port_Question_Model::COLUMN_TITLE ], $post->post_title, 'Post title should match the title column' );
 		$this->assertEquals( '', $post->post_content, 'Post content should match the description column' );
 		$this->assertEquals( 'publish', $post->post_status, 'Post status should match the status column' );
-		$this->assertEquals( sanitize_title( $expected_data[ Sensei_Data_Port_Question_Model::COLUMN_QUESTION ] ), $post->post_name, 'Post name should match the slug column' );
+		$this->assertEquals( sanitize_title( $expected_data[ Sensei_Data_Port_Question_Model::COLUMN_TITLE ] ), $post->post_name, 'Post name should match the slug column' );
 
 		$this->assertEquals( $expected_answer_data, get_post_meta( $post->ID, '_question_right_answer', true ) );
 		$this->assertEquals( null, get_post_meta( $post->ID, '_question_wrong_answers', true ) );
@@ -347,7 +347,7 @@ class Sensei_Data_Port_Question_Model_Test extends WP_UnitTestCase {
 
 		$post = get_post( $model->get_post_id() );
 		$this->commit_transaction();
-		$this->assertEquals( $expected_data[ Sensei_Data_Port_Question_Model::COLUMN_QUESTION ], $post->post_title, 'Post title should match the title column' );
+		$this->assertEquals( $expected_data[ Sensei_Data_Port_Question_Model::COLUMN_TITLE ], $post->post_title, 'Post title should match the title column' );
 		$this->assertEquals( '', $post->post_content, 'Post content should match the description column' );
 		$this->assertEquals( 'draft', $post->post_status, 'Post status should be draft by default' );
 		$this->assertEquals( '', $post->post_name, 'Post name should be empty for drafts' );
@@ -377,7 +377,7 @@ class Sensei_Data_Port_Question_Model_Test extends WP_UnitTestCase {
 
 		$post = get_post( $model->get_post_id() );
 		$this->commit_transaction();
-		$this->assertEquals( $expected_data[ Sensei_Data_Port_Question_Model::COLUMN_QUESTION ], $post->post_title, 'Post title should match the title column' );
+		$this->assertEquals( $expected_data[ Sensei_Data_Port_Question_Model::COLUMN_TITLE ], $post->post_title, 'Post title should match the title column' );
 		$this->assertEquals( '', $post->post_content, 'Post content should match the description column' );
 		$this->assertEquals( 'draft', $post->post_status, 'Post status should be draft by default' );
 		$this->assertEquals( '', $post->post_name, 'Post name should be empty for drafts' );
@@ -407,7 +407,7 @@ class Sensei_Data_Port_Question_Model_Test extends WP_UnitTestCase {
 
 		$post = get_post( $model->get_post_id() );
 		$this->commit_transaction();
-		$this->assertEquals( $expected_data[ Sensei_Data_Port_Question_Model::COLUMN_QUESTION ], $post->post_title, 'Post title should match the title column' );
+		$this->assertEquals( $expected_data[ Sensei_Data_Port_Question_Model::COLUMN_TITLE ], $post->post_title, 'Post title should match the title column' );
 		$this->assertEquals( '', $post->post_content, 'Post content should match the description column' );
 		$this->assertEquals( 'draft', $post->post_status, 'Post status should be draft by default' );
 		$this->assertEquals( '', $post->post_name, 'Post name should be empty for drafts' );

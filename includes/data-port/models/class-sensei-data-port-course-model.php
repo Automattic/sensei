@@ -16,7 +16,7 @@ class Sensei_Data_Port_Course_Model extends Sensei_Data_Port_Model {
 	const POST_TYPE = 'course';
 
 	const COLUMN_ID               = 'id';
-	const COLUMN_COURSE           = 'course';
+	const COLUMN_TITLE            = 'course';
 	const COLUMN_SLUG             = 'slug';
 	const COLUMN_DESCRIPTION      = 'description';
 	const COLUMN_EXCERPT          = 'excerpt';
@@ -110,7 +110,7 @@ class Sensei_Data_Port_Course_Model extends Sensei_Data_Port_Model {
 			$args['post_content'] = $value;
 		}
 
-		$value = $this->get_value( self::COLUMN_COURSE );
+		$value = $this->get_value( self::COLUMN_TITLE );
 		if ( null !== $value ) {
 			$args['post_title'] = $value;
 		}
@@ -229,32 +229,6 @@ class Sensei_Data_Port_Course_Model extends Sensei_Data_Port_Model {
 	}
 
 	/**
-	 * Get the data to return with any errors.
-	 *
-	 * @param array $data Base error data to pass along.
-	 *
-	 * @return array
-	 */
-	public function get_error_data( $data = [] ) {
-		$entry_id = $this->get_value( self::COLUMN_ID );
-		if ( $entry_id ) {
-			$data['entry_id'] = $entry_id;
-		}
-
-		$entry_title = $this->get_value( self::COLUMN_COURSE );
-		if ( $entry_id ) {
-			$data['entry_title'] = $entry_title;
-		}
-
-		$post_id = $this->get_post_id();
-		if ( $post_id ) {
-			$data['post_id'] = $post_id;
-		}
-
-		return $data;
-	}
-
-	/**
 	 * Implementation of get_schema as documented in superclass.
 	 */
 	public static function get_schema() {
@@ -262,7 +236,7 @@ class Sensei_Data_Port_Course_Model extends Sensei_Data_Port_Model {
 			self::COLUMN_ID               => [
 				'type' => 'string',
 			],
-			self::COLUMN_COURSE           => [
+			self::COLUMN_TITLE            => [
 				'type'       => 'string',
 				'required'   => true,
 				'allow_html' => true,
