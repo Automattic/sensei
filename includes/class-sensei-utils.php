@@ -1394,8 +1394,7 @@ class Sensei_Utils {
 	 * in a given context, and user is not logged in yet.
 	 *
 	 * @since 3.2.0
-	 * @param string $context
-	 * @param int    $id Post id.
+	 * @param string $context Either 'lesson' or 'quiz'.
 	 * @return bool|string false When user doesn't need to login, or a string message containing a login link.
 	 */
 	public static function login_notice( $context = 'lesson' ) {
