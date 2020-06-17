@@ -12,7 +12,7 @@ import { logLink } from '../log-event';
  * @param {string}    props.slug               Feature slug.
  * @param {string}    props.excerpt            Feature excerpt.
  * @param {string}    [props.link]             Feature link.
- * @param {Feature[]} [props.selectedFeatures] Feature link.
+ * @param {Feature[]} [props.selectedFeatures] Features list.
  */
 const FeatureDescription = ( { slug, excerpt, link, selectedFeatures } ) => {
 	let wcObservation = null;

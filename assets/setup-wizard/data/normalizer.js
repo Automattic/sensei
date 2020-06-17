@@ -6,7 +6,7 @@ import { INSTALLED_STATUS } from '../features/feature-status';
  * Add details to title.
  *
  * @param {Object}        feature
- * @param {string}        feature.product_slug Feature title.
+ * @param {string}        feature.product_slug Feature slug.
  * @param {string}        feature.title        Feature title.
  * @param {string|number} feature.price        Feature price.
  * @param {string}        [feature.status]     Feature status.
