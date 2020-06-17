@@ -77,7 +77,27 @@ abstract class Sensei_Data_Port_Model {
 	 *
 	 * @return int
 	 */
-	abstract protected function get_existing_post_id();
+	protected function get_existing_post_id() {
+		$post_id = null;
+		$data    = $this->get_data();
+
+		if ( ! empty( $data[ static::COLUMN_SLUG ] ) ) {
+			$existing_posts = get_posts(
+				[
+					'post_type'      => static::POST_TYPE,
+					'post_name__in'  => [ $data[ static::COLUMN_SLUG ] ],
+					'posts_per_page' => 1,
+					'post_status'    => 'any',
+				]
+			);
+
+			if ( ! empty( $existing_posts[0] ) ) {
+				return $existing_posts[0]->ID;
+			}
+		}
+
+		return $post_id;
+	}
 
 	/**
 	 * Create a new post or update an existing post.

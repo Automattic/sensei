@@ -44,33 +44,6 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 	private $question_type;
 
 	/**
-	 * Check to see if the post already exists in the database.
-	 *
-	 * @return int
-	 */
-	protected function get_existing_post_id() {
-		$post_id = null;
-		$data    = $this->get_data();
-
-		if ( ! empty( $data[ self::COLUMN_SLUG ] ) ) {
-			$existing_posts = get_posts(
-				[
-					'post_type'      => self::POST_TYPE,
-					'name'           => $data[ self::COLUMN_SLUG ],
-					'posts_per_page' => 1,
-					'post_status'    => 'any',
-				]
-			);
-
-			if ( ! empty( $existing_posts[0] ) ) {
-				return $existing_posts[0]->ID;
-			}
-		}
-
-		return $post_id;
-	}
-
-	/**
 	 * Create a new question or update an existing question.
 	 *
 	 * @return true|WP_Error
