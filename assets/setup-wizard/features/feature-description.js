@@ -53,9 +53,9 @@ const FeatureDescription = ( { slug, excerpt, link, selectedFeatures } ) => {
 				</>
 			) }
 			{ wcObservation && (
-				<span className="sensei-setup-wizard__woocommerce-observation">
+				<em className="sensei-setup-wizard__woocommerce-observation">
 					{ wcObservation }
-				</span>
+				</em>
 			) }
 		</>
 	);
