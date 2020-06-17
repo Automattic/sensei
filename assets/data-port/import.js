@@ -1,46 +1,56 @@
 import { __ } from '@wordpress/i18n';
-import { render, useReducer } from '@wordpress/element';
-import { DataPortStepper, stepsReducer, getCurrentStep } from './stepper';
-import { UploadPage } from './import/upload';
+import { useSelect, useDispatch } from '@wordpress/data';
+import { render, useLayoutEffect } from '@wordpress/element';
+import { DataPortStepper } from './stepper';
+import registerImportStore from './import/data';
+import { Spinner } from '@woocommerce/components';
+import { Notice } from '@wordpress/components';
 
-const initialSteps = [
-	{
-		key: 'upload',
-		description: __( 'Upload CSV Files', 'sensei-lms' ),
-		isActive: true,
-		isComplete: false,
-	},
-	{
-		key: 'import',
-		description: __( 'Import', 'sensei-lms' ),
-		isActive: false,
-		isComplete: false,
-	},
-	{
-		key: 'completed',
-		description: __( 'Done', 'sensei-lms' ),
-		isActive: false,
-		isComplete: false,
-	},
-];
+registerImportStore();
 
 /**
  * Sensei import page.
  */
 const SenseiImportPage = () => {
-	const [ steps, dispatch ] = useReducer( stepsReducer, initialSteps );
+	const { isFetching, error, navigationSteps } = useSelect( ( select ) => {
+		const store = select( 'sensei/import' );
+		return {
+			isFetching: store.isFetching(),
+			error: store.getFetchError(),
+			navigationSteps: store.getNavigationSteps(),
+		};
+	}, [] );
+
+	const { fetchImporterData } = useDispatch( 'sensei/import' );
+
+	// We want to show the loading before any content.
+	useLayoutEffect( () => {
+		fetchImporterData();
+	}, [ fetchImporterData ] );
+
+	if ( isFetching ) {
+		return <Spinner className="sensei-import__main-loader" />;
+	}
+
+	if ( error ) {
+		return (
+			<Notice status="error" isDismissible={ false }>
+				{ __(
+					'An error has occurred while fetching the data. Please try again later!',
+					'sensei-lms'
+				) }
+				<br />
+				{ __( 'Error details:', 'sensei-lms' ) } { error.message }
+			</Notice>
+		);
+	}
+
+	const currentStep = navigationSteps.find( ( step ) => step.isNext );
 
 	return (
 		<div className="sensei-import-wrapper">
-			<DataPortStepper steps={ steps } />
-			{ ( () => {
-				switch ( getCurrentStep( steps ) ) {
-					case 'upload':
-						return <UploadPage importerDispatch={ dispatch } />;
-					default:
-						return null;
-				}
-			} )() }
+			<DataPortStepper steps={ navigationSteps } />
+			{ currentStep.container }
 		</div>
 	);
 };
