@@ -1,41 +1,25 @@
 import { __ } from '@wordpress/i18n';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { Section, H } from '@woocommerce/components';
 import { UploadLevels } from '../upload-level';
 import { Button } from '@wordpress/components';
-import { useState } from '@wordpress/element';
-import { moveToNextAction } from '../../stepper';
-import apiFetch from '@wordpress/api-fetch';
 import { Notice } from '../../notice';
 
 /**
  * This component displays the upload page of the importer.
- *
- * @param {Function} importerDispatch  The dispatch method of the importer.
  */
-export const UploadPage = ( { importerDispatch } ) => {
-	const [ isReady, setStatus ] = useState( false );
-	const [ continueClicked, setContinueClicked ] = useState( false );
-	const [ errorMsg, setErrorMsg ] = useState( null );
+export const UploadPage = () => {
+	const { submitStartImport } = useDispatch( 'sensei/import' );
 
-	/**
-	 * Helper method to begin importing.
-	 */
-	const startImport = () => {
-		setContinueClicked( true );
-		setErrorMsg( null );
+	const { state, isReady } = useSelect( ( select ) => {
+		const store = select( 'sensei/import' );
+		return {
+			state: store.getStepData( 'upload' ),
+			isReady: store.isReadyToStart(),
+		};
+	}, [] );
 
-		apiFetch( {
-			path: '/sensei-internal/v1/import/start',
-			method: 'POST',
-		} )
-			.then( () => {
-				importerDispatch( moveToNextAction() );
-			} )
-			.catch( ( error ) => {
-				setErrorMsg( error.message );
-			} )
-			.finally( () => setContinueClicked( false ) );
-	};
+	const { isSubmitting, errorMsg } = state;
 
 	return (
 		<section className={ 'sensei-import-form' }>
@@ -58,15 +42,15 @@ export const UploadPage = ( { importerDispatch } ) => {
 						'sensei-lms'
 					) }
 				</p>
-				<UploadLevels setReadyStatus={ setStatus } />
+				<UploadLevels />
 				<div className={ 'continue-container' }>
 					{ errorMsg !== null && (
 						<Notice message={ errorMsg } isError />
 					) }
 					<Button
 						isPrimary
-						disabled={ ! isReady || continueClicked }
-						onClick={ startImport }
+						disabled={ ! isReady || isSubmitting }
+						onClick={ submitStartImport }
 					>
 						{ __( 'Continue', 'sensei-lms' ) }
 					</Button>
