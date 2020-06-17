@@ -2,6 +2,7 @@ import { List } from '@woocommerce/components';
 import { Button, Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
+import { getFeatureObservation } from './feature-description-utils';
 import FeatureDescription from './feature-description';
 
 /**
@@ -42,7 +43,7 @@ const ConfirmationModal = ( {
 					<FeatureDescription
 						slug={ slug }
 						excerpt={ excerpt }
-						selectedFeatures={ features }
+						observation={ getFeatureObservation( slug, features ) }
 					/>
 				),
 			} ) ) }

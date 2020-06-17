@@ -20,36 +20,12 @@ describe( '<FeatureDescription />', () => {
 		expect( href ).toEqual( link );
 	} );
 
-	it( 'Should render WooCommerce description with observation for one plugin', () => {
+	it( 'Should render with observation', () => {
 		const { queryByText } = render(
-			<FeatureDescription
-				slug="woocommerce"
-				excerpt="test"
-				selectedFeatures={ [
-					{ rawTitle: 'Title 1', wccom_product_id: '123' },
-					{ rawTitle: 'Title 2' },
-				] }
-			/>
+			<FeatureDescription excerpt="test" observation="Lorem ipsum" />
 		);
 
-		expect( queryByText( /updates for Title 1\./ ) ).toBeTruthy();
-	} );
-
-	it( 'Should render WooCommerce description with observation for two plugins', () => {
-		const { queryByText } = render(
-			<FeatureDescription
-				slug="woocommerce"
-				excerpt="test"
-				selectedFeatures={ [
-					{ rawTitle: 'Title 1', wccom_product_id: '123' },
-					{ rawTitle: 'Title 2', wccom_product_id: '456' },
-				] }
-			/>
-		);
-
-		expect(
-			queryByText( /updates for Title 1 and Title 2\./ )
-		).toBeTruthy();
+		expect( queryByText( /Lorem ipsum/ ) ).toBeTruthy();
 	} );
 
 	it( 'Should log event when clicking learn more link', () => {

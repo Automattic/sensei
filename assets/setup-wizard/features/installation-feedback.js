@@ -3,6 +3,7 @@ import { List } from '@woocommerce/components';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
+import { getFeatureObservation } from './feature-description-utils';
 import FeatureDescription from './feature-description';
 import FeatureStatus, {
 	INSTALLING_STATUS,
@@ -101,7 +102,10 @@ const InstallationFeedback = ( { onContinue, onRetry } ) => {
 									slug={ slug }
 									excerpt={ excerpt }
 									link={ link }
-									selectedFeatures={ features }
+									observation={ getFeatureObservation(
+										slug,
+										features
+									) }
 								/>
 								{ error && (
 									<p className="sensei-setup-wizard__error-message">
