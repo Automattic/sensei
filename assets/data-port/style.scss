@@ -25,6 +25,8 @@ $white: #ffffff;
 
 $alert-red: #d94f4f;
 
+@import "import/done/import-done";
+
 .sensei-import {
 	&__main-loader {
 		position: fixed;
@@ -237,6 +239,25 @@ $alert-red: #d94f4f;
 				background-color: $primary;
 				transition: width 1s ease;
 			}
+
+			.sensei-import-footer {
+				margin: 24px -24px 0;
+				border-top: 1px solid #eee;
+				padding: 24px;
+			}
+		}
+	}
+}
+
+.sensei-data-table {
+	width: 100%;
+	border-spacing: 0;
+	td, th {
+		padding: 5px;
+	}
+	tbody tr:nth-child(2n+1) {
+		td, th {
+			background-color: #fcfcfc;
 		}
 	}
 }

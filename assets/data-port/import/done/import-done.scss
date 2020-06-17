@@ -1,0 +1,26 @@
+.sensei-import-done {
+	&__result {
+		margin-top: 2rem;
+	}
+	&__result, &__errors, &__log {
+		text-align: center;
+	}
+
+	&__result-icon {
+		color: $primary;
+	}
+
+	&__log {
+		.sensei-import-log-data {
+			text-align: left;
+		}
+		.sensei-data-table thead th {
+			padding-top: 1rem;
+		}
+		.sensei-import-log-row__title {
+			background: #f2f2f2;
+			padding: 1px;
+		}
+	}
+
+}
