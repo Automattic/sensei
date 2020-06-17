@@ -128,6 +128,23 @@ describe( '<Features />', () => {
 		).toBeTruthy();
 	} );
 
+	it( 'Should display installation feedback when feedback is an URL param', () => {
+		mockSearch( 'feedback=1' );
+		useFeaturesPolling.mockReturnValue( {
+			selected: [ 'test' ],
+			options: [ { slug: 'test', title: 'Test', status: 'installed' } ],
+		} );
+
+		const { queryByText } = render(
+			<QueryStringRouter>
+				<Features />
+			</QueryStringRouter>
+		);
+
+		expect( queryByText( 'Plugin installed' ) ).toBeTruthy();
+		mockSearch( '' );
+	} );
+
 	it( 'Should display installation error', () => {
 		useFeaturesPolling.mockReturnValue( {
 			selected: [ 'test-2' ],
@@ -260,20 +277,49 @@ describe( '<Features />', () => {
 		);
 	} );
 
-	it( 'Should display installation feedback when feedback is an URL param', () => {
-		mockSearch( 'feedback=1' );
-		useFeaturesPolling.mockReturnValue( {
-			selected: [ 'test' ],
-			options: [ { slug: 'test', title: 'Test', status: 'installed' } ],
+	it( 'Should auto-select WooCommerce when some feature with `wccom_product_id` is selected', () => {
+		mockStepData( {
+			selected: [],
+			options: [
+				{ slug: 'woocommerce', title: 'WooCommerce' },
+				{ slug: 'need-wc', title: 'Need', wccom_product_id: '123' },
+				{ slug: 'no-need-wc', title: 'No need' },
+			],
 		} );
 
-		const { queryByText } = render(
-			<QueryStringRouter>
+		const { getByLabelText } = render(
+			<QueryStringRouter paramName="step">
 				<Features />
 			</QueryStringRouter>
 		);
 
-		expect( queryByText( 'Plugin installed' ) ).toBeTruthy();
-		mockSearch( '' );
+		fireEvent.click( getByLabelText( /No need/ ) );
+		expect( getByLabelText( /WooCommerce/ ).checked ).toBeFalsy();
+
+		fireEvent.click( getByLabelText( /Need/ ) );
+		expect( getByLabelText( /WooCommerce/ ).checked ).toBeTruthy();
+	} );
+
+	it( 'Should not auto-select WooCommerce when it is already installed', () => {
+		mockStepData( {
+			selected: [],
+			options: [
+				{
+					slug: 'woocommerce',
+					title: 'WooCommerce',
+					status: 'installed',
+				},
+				{ slug: 'need-wc', title: 'Need', wccom_product_id: '123' },
+			],
+		} );
+
+		const { getByLabelText } = render(
+			<QueryStringRouter paramName="step">
+				<Features />
+			</QueryStringRouter>
+		);
+
+		fireEvent.click( getByLabelText( /Need/ ) );
+		expect( getByLabelText( /WooCommerce/ ).checked ).toBeFalsy();
 	} );
 } );

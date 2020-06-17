@@ -12,6 +12,25 @@
  */
 class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 	/**
+	 * Set up before the class.
+	 */
+	public static function setUpBeforeClass() {
+		// Mock WooCommerce plugin information.
+		set_transient(
+			Sensei_Setup_Wizard::WC_INFORMATION_TRANSIENT,
+			(object) [
+				'product_slug' => 'woocommerce',
+				'title'        => 'WooCommerce',
+				'excerpt'      => 'Lorem ipsum',
+				'plugin_file'  => 'woocommerce/woocommerce.php',
+				'link'         => 'https://wordpress.org/plugins/woocommerce',
+				'unselectable' => true,
+			],
+			DAY_IN_SECONDS
+		);
+	}
+
+	/**
 	 * Set up before each test.
 	 */
 	public function setup() {
@@ -436,13 +455,14 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that get sensei extensions and returns with decoded prices.
+	 * Tests that get sensei extensions with statuses.
 	 *
+	 * @covers Sensei_Setup_Wizard::get_woocommerce_information
 	 * @covers Sensei_Setup_Wizard::get_feature_with_status
 	 * @covers Sensei_Setup_Wizard::get_sensei_extensions
 	 */
 	public function testGetSenseiExtensionsWithStatuses() {
-		// Set installing plugins
+		// Set installing plugins.
 		$installing_plugins = [
 			(object) [
 				'product_slug' => 'slug-1',
@@ -478,7 +498,7 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 			->getMock();
 
 		$mock->method( 'is_plugin_active' )
-			->will( $this->onConsecutiveCalls( false, false, true, false ) );
+			->will( $this->onConsecutiveCalls( false, false, true, false, false ) );
 
 		$property = new ReflectionProperty( 'Sensei_Plugins_Installation', 'instance' );
 		$property->setAccessible( true );
@@ -506,10 +526,11 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 				'product_slug' => 'slug-4',
 				'plugin_file'  => 'test/test.php',
 			],
+			get_transient( Sensei_Setup_Wizard::WC_INFORMATION_TRANSIENT ),
 		];
 		$extensions          = Sensei()->setup_wizard->get_sensei_extensions();
 
-		// Revert mocked instance
+		// Revert mocked instance.
 		$property->setValue( $real_instance );
 
 		$this->assertEquals( $expected_extensions, $extensions );
@@ -542,7 +563,7 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 			],
 		];
 
-		// Mock install plugins method
+		// Mock install plugins method.
 		$mock = $this->getMockBuilder( Sensei_Plugins_Installation::class )
 			->disableOriginalConstructor()
 			->setMethods( [ 'install_plugins' ] )
@@ -557,7 +578,7 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 
 		Sensei()->setup_wizard->install_extensions( [ 'allowed', 'not-allowed' ] );
 
-		// Revert mocked instance
+		// Revert mocked instance.
 		$property->setValue( $real_instance );
 	}
 }

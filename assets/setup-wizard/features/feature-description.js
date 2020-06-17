@@ -5,11 +5,12 @@ import { logLink } from '../log-event';
  * Feature description component
  *
  * @param {Object} props
- * @param {string} props.slug    Feature slug.
- * @param {string} props.excerpt Feature excerpt.
- * @param {string} [props.link]  Feature link.
+ * @param {string} props.slug          Feature slug.
+ * @param {string} props.excerpt       Feature excerpt.
+ * @param {string} [props.link]        Feature link.
+ * @param {string} [props.observation] Feature observation.
  */
-const FeatureDescription = ( { slug, excerpt, link } ) => (
+const FeatureDescription = ( { slug, excerpt, link, observation } ) => (
 	<>
 		{ excerpt }
 		{ link && (
@@ -27,6 +28,11 @@ const FeatureDescription = ( { slug, excerpt, link } ) => (
 					{ __( 'Learn more', 'sensei-lms' ) }
 				</a>
 			</>
+		) }
+		{ observation && (
+			<em className="sensei-setup-wizard__feature-observation">
+				{ observation }
+			</em>
 		) }
 	</>
 );

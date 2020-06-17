@@ -1,4 +1,4 @@
-import { useState, useEffect } from '@wordpress/element';
+import { useState, useEffect, useCallback } from '@wordpress/element';
 import { Card, H } from '@woocommerce/components';
 import { __ } from '@wordpress/i18n';
 import { uniq } from 'lodash';
@@ -55,20 +55,10 @@ const Features = () => {
 	const features = stepData.options;
 	const submittedSlugs = stepData.selected;
 
-	// Features installation.
+	// Features installation data.
 	const { submitStep: submitInstallation } = useSetupWizardStep(
 		'features-installation'
 	);
-
-	// Mark as selected also the already submitted slugs (Except the installed ones).
-	useEffect( () => {
-		setSelectedSlugs( ( currentSelected ) =>
-			uniq( [
-				...currentSelected,
-				...filterInstalledFeatures( submittedSlugs, features ),
-			] )
-		);
-	}, [ submittedSlugs, features ] );
 
 	// Open directly in the feedback screen when there is a temporary feedback param.
 	useEffect( () => {
@@ -79,11 +69,58 @@ const Features = () => {
 		}
 	}, [] );
 
-	const getSelectedFeatures = () =>
-		features.filter( ( feature ) =>
-			selectedSlugs.includes( feature.slug )
+	// Mark as selected also the already submitted slugs (Except the installed ones).
+	useEffect( () => {
+		setSelectedSlugs( ( prev ) =>
+			uniq( [
+				...prev,
+				...filterInstalledFeatures( submittedSlugs, features ),
+			] )
+		);
+	}, [ submittedSlugs, features ] );
+
+	// Get selected features based on the selectedSlugs.
+	const getSelectedFeatures = useCallback(
+		() =>
+			features.filter( ( feature ) =>
+				selectedSlugs.includes( feature.slug )
+			),
+		[ features, selectedSlugs ]
+	);
+
+	// Add or remove WooCommerce to the selected slugs.
+	useEffect( () => {
+		const wcSlug = 'woocommerce';
+		const selectedFeatures = getSelectedFeatures();
+		const isWooCommerceSelected = selectedFeatures.some(
+			( feature ) => feature.slug === wcSlug
+		);
+		const needWooCommerce = selectedFeatures.some(
+			( feature ) => feature.wccom_product_id
 		);
 
+		if ( ! needWooCommerce && isWooCommerceSelected ) {
+			setSelectedSlugs( ( prev ) =>
+				prev.filter( ( slug ) => slug !== wcSlug )
+			);
+			return;
+		}
+
+		const wooCommerceFeature = features.find( ( f ) => wcSlug === f.slug );
+		const isWooCommerceInstalled =
+			wooCommerceFeature &&
+			INSTALLED_STATUS === wooCommerceFeature.status;
+
+		if (
+			needWooCommerce &&
+			! isWooCommerceSelected &&
+			! isWooCommerceInstalled
+		) {
+			setSelectedSlugs( ( prev ) => [ ...prev, wcSlug ] );
+		}
+	}, [ getSelectedFeatures, features ] );
+
+	// Finish and submit features selection.
 	const finishSelection = () => {
 		if ( 0 === selectedSlugs.length ) {
 			goToNextStep();
@@ -96,6 +133,7 @@ const Features = () => {
 		);
 	};
 
+	// Start features installation.
 	const startInstallation = () => {
 		submitInstallation(
 			{ selected: selectedSlugs },
@@ -112,6 +150,7 @@ const Features = () => {
 		} );
 	};
 
+	// Retry features installation.
 	const retryInstallation = ( selected ) => {
 		submitInstallation( { selected } );
 
@@ -120,6 +159,7 @@ const Features = () => {
 		} );
 	};
 
+	// Go to the next step.
 	const goToNextStep = ( skip = false ) => {
 		goTo( 'ready' );
 
