@@ -35,8 +35,16 @@ if ( have_posts() ) {
 		 * @param integer $lesson_id
 		 *
 		 * @hooked deprecated_lesson_image_hook - 10
-		 * @hooked Sensei_Lesson::lesson_image() -  17
+		 * @hooked Sensei_Lesson::maybe_start_lesson - 10
+		 * @hooked Sensei_Lesson::the_title - 15
+		 * @hooked Sensei_Lesson::lesson_image -  17
+		 * @hooked Sensei_Lesson::user_lesson_quiz_status_message - 20
+		 * @hooked Sensei_Lesson::prerequisite_complete_message - 20
 		 * @hooked deprecate_lesson_single_main_content_hook - 20
+		 * @hooked Sensei_Lesson::course_signup_link - 30
+		 * @hooked Sensei_Lesson::login_notice - 30
+		 * @hooked Sensei_Messages::send_message_link - 30
+		 * @hooked Sensei_Notices::maybe_print_notices 40
 		 */
 		do_action( 'sensei_single_lesson_content_inside_before', get_the_ID() );
 

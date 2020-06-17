@@ -4141,34 +4141,44 @@ class Sensei_Lesson {
 	}
 
 	/**
-	 * Show a message offering a login link when login is required
-	 * and user is not logged in yet.
+	 * Determine if user should login in to get acces to a lesson and quiz.
 	 *
 	 * @since 3.2.0
+	 * @param int $lesson_id
+	 * @return bool True if login for the lesson is required.
 	 */
-	public static function login_notice() {
-
-		$course_id = Sensei()->lesson->get_course_id( get_the_ID() );
-
-		// Bail out when user is logged in or login is not required.
+	public static function user_should_login( $lesson_id ) {
+		if ( 'integer' != gettype($lesson_id) || $lesson_id <= 0 ) {
+			return false;
+		}
+		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
 		if ( is_user_logged_in()
 			|| empty( $course_id )
 			|| 'course' !== get_post_type( $course_id )
 			|| sensei_all_access()
-			|| Sensei_Utils::is_preview_lesson( get_the_ID() )
+			|| Sensei_Utils::is_preview_lesson( $lesson_id )
 			|| ! sensei_is_login_required()
 		) {
-			return;
+			return false;
 		}
 
-		$anchor_before = '<a href="' . esc_url( sensei_user_login_url() ) . '" >';
-		$anchor_after  = '</a>';
-		$message       = sprintf(
-			// translators: Placeholders are an opening and closing <a> tag linking to the login URL.
-			__( 'or %1$slog in%2$s to access the lesson content, when you are already enrolled in this course.', 'sensei-lms' ),
-			$anchor_before,
-			$anchor_after
-		);
+		return true;
+	}
+
+	/**
+	 * Creates a login notice when appropriate.
+	 * 
+	 * @version 3.2.0
+	 * 
+	 * @return;
+	 */
+	public static function login_notice() {
+
+		$login_notice = Sensei_Utils::login_notice('lesson');
+        if ( false === $login_notice ) {
+            return;
+        }
+		$message      = wp_kses_post($login_notice);
 		$notice_level = 'info';
 
 		Sensei()->notices->add_notice( $message, $notice_level );

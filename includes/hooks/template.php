@@ -140,6 +140,10 @@ add_action( 'sensei_single_quiz_content_inside_before', array( 'Sensei_Quiz', 's
 // hook in the quiz user message
 add_action( 'sensei_single_quiz_content_inside_before', array( 'Sensei_Quiz', 'the_user_status_message' ), 40 );
 
+// since 3.2.0
+// hook in the login notice
+add_action( 'sensei_single_quiz_content_inside_before', array( 'Sensei_Quiz', 'login_notice' ), 40 );
+
 // @since 1.9.0
 // hook in the question title, description and quesiton media
 add_action( 'sensei_quiz_question_inside_before', array( 'Sensei_Question', 'the_question_title' ), 10 );
@@ -333,5 +337,6 @@ add_action( 'sensei_teacher_archive_course_loop_before', array( 'Sensei_Teacher'
 add_action( 'sensei_course_results_content_inside_before', array( $sensei->notices, 'maybe_print_notices' ) );
 add_action( 'sensei_single_course_content_inside_before', array( $sensei->notices, 'maybe_print_notices' ), 40 );
 add_action( 'sensei_single_lesson_content_inside_before', array( $sensei->notices, 'maybe_print_notices' ), 40 );
+add_action( 'sensei_single_quiz_content_inside_before', array( $sensei->notices, 'maybe_print_notices' ), 40 );
 add_action( 'sensei_taxonomy_module_content_inside_before', array( $sensei->notices, 'maybe_print_notices' ), 40 );
 

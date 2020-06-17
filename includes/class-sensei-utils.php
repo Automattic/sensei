@@ -1390,6 +1390,42 @@ class Sensei_Utils {
 	}
 
 	/**
+	 * Show a message offering a login link when login is required,
+	 * in a given context, and user is not logged in yet.
+	 *
+	 * @since 3.2.0
+	 * @param string $context 'lesson' or 'quiz'
+	 * @param int $id post id
+	 * @return bool|string false when user doesn't need to login, or a string message containing a login link.
+	 */
+	public static function login_notice( $context = 'lesson' ) {
+		$lesson_id = get_the_ID();
+
+		if ( ! in_array( $context, ['lesson', 'quiz'], true )
+ 			|| $context !== get_post_type( $id ) ) {
+			return false;
+		}
+		if ( 'quiz' === $context ) {
+			$lesson_id = Sensei()->quiz->get_lesson_id( $lesson_id );
+		}
+		if ( ! Sensei()->lesson->user_should_login( $lesson_id ) ) {
+			return false;
+		}
+
+		$anchor_before = '<a href="' . esc_url( sensei_user_login_url() ) . '" >';
+		$anchor_after  = '</a>';
+		$message       = sprintf(
+			// translators: Placeholders %1$s and %2$s are an opening and closing <a> tag linking to the login URL, %3$s is the context ("lesson" or "quiz")
+			__( 'or %1$slog in%2$s to access the %3$s content, when you are already enrolled in this course.', 'sensei-lms' ),
+			$anchor_before,
+			$anchor_after,
+			$context
+		);
+
+		return $message;
+	}
+
+	/**
 	 * Start course for user
 	 *
 	 * @since  1.4.8

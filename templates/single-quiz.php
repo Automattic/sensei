@@ -26,8 +26,14 @@ get_sensei_header();
 		 *
 		 * @since 1.9.0
 		 *
-		 * @hooked Sensei_Quiz::the_title               - 20
-		 * @hooked Sensei_Quiz::the_user_status_message - 40
+		 * @hooked Sensei_Quiz::start_quiz_questions_loop       - 10
+		 * @hooked Sensei_Quiz::user_quiz_submit_listener       - 10
+		 * @hooked Sensei_Quiz::user_save_quiz_answers_listener - 10
+		 * @hooked Sensei_Quiz::the_title                       - 20
+		 * @hooked Sensei_Quiz::the_user_status_message         - 40
+		 * @hooked Sensei_Quiz::login_notice                    - 40
+		 * @hooked Sensei_Quiz::maybe_print_notices             - 40
+		 * @hooked Sensei_Quiz::load_global_quiz_data           - 80
 		 * @param integer $quiz_id
 		 */
 		do_action( 'sensei_single_quiz_content_inside_before', get_the_ID() );
