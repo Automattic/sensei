@@ -1390,12 +1390,13 @@ class Sensei_Utils {
 	}
 
 	/**
-	 * Show a message offering a login link when login is required,
-	 * in a given context, and user is not logged in yet.
+	 * Determines if a user still has to log in to see a given content (lesson or quiz).
+	 * Returns false, when no login action is needed,
+	 * or a message containing a invitation to login and a link to do so.
 	 *
 	 * @since 3.2.0
 	 * @param string $context Either 'lesson' or 'quiz'.
-	 * @return bool|string false When user doesn't need to login, or a string message containing a login link.
+	 * @return bool|string False When user doesn't need to login, or a string message containing a login link.
 	 */
 	public static function login_notice( $context = 'lesson' ) {
 		$lesson_id = get_the_ID();
