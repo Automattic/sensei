@@ -116,7 +116,7 @@ const Features = () => {
 			! isWooCommerceSelected &&
 			! isWooCommerceInstalled
 		) {
-			setSelectedSlugs( ( prev ) => [ wcSlug, ...prev ] );
+			setSelectedSlugs( ( prev ) => [ ...prev, wcSlug ] );
 		}
 	}, [ getSelectedFeatures, features ] );
 

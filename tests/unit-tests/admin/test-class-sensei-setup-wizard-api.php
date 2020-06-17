@@ -352,7 +352,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 
 		$data = $this->request( 'GET', 'features' );
 
-		$this->assertEquals( $data['options'][1]->product_slug, 'slug-1' );
+		$this->assertEquals( $data['options'][0]->product_slug, 'slug-1' );
 		$this->assertEquals( $data['selected'], [] );
 	}
 
@@ -392,7 +392,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 		];
 		$sensei_extensions  = Sensei()->setup_wizard->get_sensei_extensions();
 
-		$this->assertEquals( $expected_extension, $sensei_extensions[1] );
+		$this->assertEquals( $expected_extension, $sensei_extensions[0] );
 	}
 
 	/**

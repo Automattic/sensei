@@ -528,7 +528,7 @@ class Sensei_Setup_Wizard {
 		$extensions = Sensei_Extensions::instance()->get_extensions( 'plugin', 'setup-wizard-extensions', $extensions_filter );
 
 		// Add WooCommerce.
-		array_unshift( $extensions, $this->get_woocommerce_information() );
+		array_push( $extensions, $this->get_woocommerce_information() );
 
 		$installing_plugins = Sensei_Plugins_Installation::instance()->get_installing_plugins();
 
