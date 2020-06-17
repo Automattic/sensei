@@ -1402,7 +1402,7 @@ class Sensei_Utils {
 		$lesson_id = get_the_ID();
 
 		if ( ! in_array( $context, ['lesson', 'quiz'], true )
- 			|| $context !== get_post_type( $id ) ) {
+ 			|| $context !== get_post_type( $lesson_id ) ) {
 			return false;
 		}
 		if ( 'quiz' === $context ) {
