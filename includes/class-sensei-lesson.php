@@ -4148,7 +4148,7 @@ class Sensei_Lesson {
 	 * @return bool True if login for the lesson is required.
 	 */
 	public static function user_should_login( $lesson_id ) {
-		if ( 'integer' != gettype($lesson_id) || $lesson_id <= 0 ) {
+		if ( 'integer' !== gettype( $lesson_id ) || $lesson_id <= 0 ) {
 			return false;
 		}
 		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
@@ -4167,18 +4167,18 @@ class Sensei_Lesson {
 
 	/**
 	 * Creates a login notice when appropriate.
-	 * 
+	 *
 	 * @version 3.2.0
-	 * 
+	 *
 	 * @return;
 	 */
 	public static function login_notice() {
 
-		$login_notice = Sensei_Utils::login_notice('lesson');
-        if ( false === $login_notice ) {
-            return;
-        }
-		$message      = wp_kses_post($login_notice);
+		$login_notice = Sensei_Utils::login_notice( 'lesson' );
+		if ( false === $login_notice ) {
+			return;
+		}
+		$message      = wp_kses_post( $login_notice );
 		$notice_level = 'info';
 
 		Sensei()->notices->add_notice( $message, $notice_level );

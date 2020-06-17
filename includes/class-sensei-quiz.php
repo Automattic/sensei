@@ -1225,23 +1225,22 @@ class Sensei_Quiz {
 
 	/**
 	 * Creates a login notice when appropriate.
-	 * 
+	 *
 	 * @version 3.2.0
-	 * 
-	 * @param $quiz_id
+	 * @return  void
 	 */
-	public static function login_notice( $quiz_id ) {
+	public static function login_notice() {
 
-		$login_notice = Sensei_Utils::login_notice('quiz');
-        if ( false === $login_notice ) {
-            return;
-        }
-		$message      = wp_kses_post($login_notice);
+		$login_notice = Sensei_Utils::login_notice( 'quiz' );
+		if ( false === $login_notice ) {
+			return;
+		}
+		$message      = wp_kses_post( $login_notice );
 		$notice_level = 'info';
 
 		Sensei()->notices->add_notice( $message, $notice_level );
 	}
-	
+
 	/**
 	 * The quiz action buttons needed to output quiz
 	 * action such as reset complete and save.

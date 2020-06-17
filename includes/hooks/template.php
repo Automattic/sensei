@@ -141,7 +141,7 @@ add_action( 'sensei_single_quiz_content_inside_before', array( 'Sensei_Quiz', 's
 add_action( 'sensei_single_quiz_content_inside_before', array( 'Sensei_Quiz', 'the_user_status_message' ), 40 );
 
 // since 3.2.0
-// hook in the login notice
+// hook in the login notice.
 add_action( 'sensei_single_quiz_content_inside_before', array( 'Sensei_Quiz', 'login_notice' ), 40 );
 
 // @since 1.9.0
