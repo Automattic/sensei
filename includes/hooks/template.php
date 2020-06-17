@@ -195,8 +195,8 @@ add_action( 'sensei_single_lesson_content_inside_before', array( 'Sensei_Lesson'
 // hook the single lesson course_signup_link
 add_action( 'sensei_single_lesson_content_inside_before', array( 'Sensei_Lesson', 'course_signup_link' ), 30 );
 
-// @since 1.9.0
-// hook the single lesson course_signup_link
+// @since 3.2.0
+// hook the single lesson login_notice
 add_action( 'sensei_single_lesson_content_inside_before', array( 'Sensei_Lesson', 'login_notice' ), 30 );
 
 // @since 1.9.0
