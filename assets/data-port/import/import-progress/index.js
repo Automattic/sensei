@@ -6,11 +6,11 @@ import { Section, H } from '@woocommerce/components';
  */
 export const ImportProgressPage = () => {
 	return (
-		<section className={ 'sensei-import-progress' }>
-			<header className={ 'sensei-import-progress__header' }>
+		<section className="sensei-import-progress">
+			<header className="sensei-import-progress__header">
 				<H>{ __( 'Import', 'sensei-lms' ) }</H>
 			</header>
-			<Section component={ 'section' }>
+			<Section component="section">
 				<p>Placeholder.</p>
 			</Section>
 		</section>

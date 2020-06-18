@@ -6,11 +6,11 @@ import { Section, H } from '@woocommerce/components';
  */
 export const DonePage = () => {
 	return (
-		<section className={ 'sensei-import-form' }>
-			<header className={ 'sensei-import-form__header' }>
+		<section className="sensei-done-page">
+			<header className="sensei-import-form__header">
 				<H>{ __( 'Done', 'sensei-lms' ) }</H>
 			</header>
-			<Section component={ 'section' }>
+			<Section component="section">
 				<p>Placeholder.</p>
 			</Section>
 		</section>

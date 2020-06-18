@@ -64,11 +64,8 @@ export const UploadLevels = ( {
 				const message = getLevelMessage( levelState );
 
 				return (
-					<li
-						key={ level.key }
-						className={ 'sensei-upload-file-line' }
-					>
-						<p className={ 'sensei-upload-file-line__description' }>
+					<li key={ level.key } className="sensei-upload-file-line">
+						<p className="sensei-upload-file-line__description">
 							{ level.description }
 						</p>
 						<FormFileUpload
