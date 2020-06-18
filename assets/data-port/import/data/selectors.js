@@ -71,7 +71,7 @@ export const isCompleteStep = ( { completedSteps }, step ) =>
  * @return {boolean} If the importer is ready.
  */
 export const isReadyToStart = ( state ) => {
-	const firstUploadedKey = findKey( state.upload, function( level ) {
+	const firstUploadedKey = findKey( state.upload, ( level ) => {
 		if ( ! level || typeof level !== 'object' ) {
 			return false;
 		}
@@ -79,7 +79,7 @@ export const isReadyToStart = ( state ) => {
 		return level.isUploaded;
 	} );
 
-	const firstInProgressKey = findKey( state.upload, function( level ) {
+	const firstInProgressKey = findKey( state.upload, ( level ) => {
 		if ( ! level || typeof level !== 'object' ) {
 			return false;
 		}
