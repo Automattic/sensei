@@ -83,13 +83,13 @@ export const errorFetch = ( error ) => ( {
 } );
 
 /**
- * @typedef  {Object} startFetchAction
+ * @typedef  {Object} StartFetchAction
  * @property {string} type Action type.
  */
 /**
  * Start fetch importer data action creator.
  *
- * @return {startFetchAction} Start fetch action.
+ * @return {StartFetchAction} Start fetch action.
  */
 export const startFetch = () => ( {
 	type: START_FETCH_IMPORT_DATA,
@@ -126,20 +126,20 @@ export function* submitStartImport( { onSuccess, onError } = {} ) {
 }
 
 /**
- * @typedef  {Object} startStartImportAction
+ * @typedef  {Object} StartStartImportAction
  * @property {string} type Action type.
  */
 /**
  * Start action to start import.
  *
- * @return {startStartImportAction} Start import action.
+ * @return {StartStartImportAction} Start import action.
  */
 export const startStartImport = () => ( {
 	type: START_START_IMPORT,
 } );
 
 /**
- * @typedef  {Object} successStartImportAction
+ * @typedef  {Object} SuccessStartImportAction
  * @property {string} type Action type.
  * @property {Object} data Data object.
  */
@@ -147,7 +147,7 @@ export const startStartImport = () => ( {
  * Success submit action creator.
  *
  * @param {Object} data Importer data.
- * @return {successStartImportAction} Success submit action.
+ * @return {SuccessStartImportAction} Success submit action.
  */
 export const successStartImport = ( data ) => ( {
 	type: SUCCESS_START_IMPORT,
@@ -155,7 +155,7 @@ export const successStartImport = ( data ) => ( {
 } );
 
 /**
- * @typedef  {Object}         errorStartImportAction
+ * @typedef  {Object}         ErrorStartImportAction
  * @property {string}         type   Action type.
  * @property {Object|boolean} error  Error object or false.
  */
@@ -164,7 +164,7 @@ export const successStartImport = ( data ) => ( {
  *
  * @param {Object|boolean} error Error object or false.
  *
- * @return {errorStartImportAction} Error action.
+ * @return {ErrorStartImportAction} Error action.
  */
 export const errorStartImport = ( error ) => ( {
 	type: ERROR_START_IMPORT,
@@ -222,7 +222,7 @@ export function* throwEarlyUploadError( level, errorMsg ) {
 }
 
 /**
- * @typedef  {Object} startFileUploadAction
+ * @typedef  {Object} StartFileUploadAction
  * @property {string} type        Action type.
  * @property {string} level       Level identifier.
  * @property {Object} uploadData  Error object or false.
@@ -233,7 +233,7 @@ export function* throwEarlyUploadError( level, errorMsg ) {
  * @param {string} level      Level identifier.
  * @param {Object} uploadData Data to submit.
  *
- * @return {startFileUploadAction} Start file upload action.
+ * @return {StartFileUploadAction} Start file upload action.
  */
 export const startFileUploadAction = ( level, uploadData ) => ( {
 	type: START_UPLOAD_IMPORT_DATA_FILE,
@@ -242,17 +242,17 @@ export const startFileUploadAction = ( level, uploadData ) => ( {
 } );
 
 /**
- * @typedef  {Object}         successFileUploadAction
- * @property {string}         type              Action type.
- * @property {string}         level             Level identifier.
- * @property {Object|boolean} error             Error object or false.
+ * @typedef  {Object} SuccessFileUploadAction
+ * @property {string} type    Action type.
+ * @property {string} level   Level identifier.
+ * @property {Object} data    Data object.
  */
 /**
  * Success upload file action.
  *
  * @param {string} level Level identifier.
  * @param {Object} data  Importer data.
- * @return {successFileUploadAction} Success file upload action.
+ * @return {SuccessFileUploadAction} Success file upload action.
  */
 export const successFileUpload = ( level, data ) => ( {
 	type: SUCCESS_UPLOAD_IMPORT_DATA_FILE,
@@ -261,7 +261,7 @@ export const successFileUpload = ( level, data ) => ( {
 } );
 
 /**
- * @typedef  {Object}         errorFileUploadAction
+ * @typedef  {Object}         ErrorFileUploadAction
  * @property {string}         type              Action type.
  * @property {string}         level             Level identifier.
  * @property {Object|boolean} error             Error object or false.
@@ -272,7 +272,7 @@ export const successFileUpload = ( level, data ) => ( {
  * @param {string}         level Level identifier.
  * @param {Object|boolean} error Error object or false.
  *
- * @return {errorFileUploadAction} Error action.
+ * @return {ErrorFileUploadAction} Error action.
  */
 export const errorFileUpload = ( level, error ) => ( {
 	type: ERROR_UPLOAD_IMPORT_DATA_FILE,

@@ -10,7 +10,7 @@ import { levels } from '../levels';
  *
  * @param {FileList} files                 The files of the input.
  * @param {string}   levelKey              The level key.
- * @param {Function} uploadFileForLevel       Callback for action to upload file.
+ * @param {Function} uploadFileForLevel    Callback for action to upload file.
  * @param {Function} throwEarlyUploadError Callback for throwing an early upload error.
  */
 const uploadFile = (
