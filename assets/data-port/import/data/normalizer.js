@@ -8,10 +8,10 @@
 export const normalizeUploadsState = ( files ) => {
 	const levels = {};
 
-	Object.entries( files ).forEach( ( pair ) => {
-		if ( pair[ 1 ].name ) {
-			levels[ pair[ 0 ] ] = {
-				filename: pair[ 1 ].name,
+	Object.entries( files ).forEach( ( [ level, file ] ) => {
+		if ( file.name ) {
+			levels[ level ] = {
+				filename: file.name,
 				isUploaded: true,
 			};
 		}
