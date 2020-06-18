@@ -418,6 +418,36 @@ class Sensei_Setup_Wizard {
 	}
 
 	/**
+	 * Get data used for WooCommerce.com purchase redirect for feature installation.
+	 *
+	 * @return array The data.
+	 */
+	public function get_woocommerce_connect_data() {
+
+		$is_woocommerce_installed = Sensei_Utils::is_plugin_present_and_activated( 'Woocommerce', 'woocommerce/woocommerce.php' );
+
+		if ( ! $is_woocommerce_installed ) {
+			return [];
+		}
+
+		$back_admin_path = add_query_arg(
+			[
+				'page'     => $this->page_slug,
+				'step'     => 'features',
+				'feedback' => 1,
+			],
+			'admin.php'
+		);
+
+		return [
+			'wccom-site'          => site_url(),
+			'wccom-back'          => $back_admin_path,
+			'wccom-woo-version'   => WC()->version,
+			'wccom-connect-nonce' => wp_create_nonce( 'connect' ),
+		];
+	}
+
+	/**
 	 * Get feature with status.
 	 *
 	 * @param stdClass   $extension          Extension object.
