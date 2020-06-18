@@ -72,7 +72,7 @@ export const isCompleteStep = ( { completedSteps }, step ) =>
  */
 export const isReadyToStart = ( state ) => {
 	const firstUploadedKey = findKey( state.upload, function( level ) {
-		if ( typeof level !== 'object' ) {
+		if ( ! level || typeof level !== 'object' ) {
 			return false;
 		}
 
@@ -80,7 +80,7 @@ export const isReadyToStart = ( state ) => {
 	} );
 
 	const firstInProgressKey = findKey( state.upload, function( level ) {
-		if ( typeof level !== 'object' ) {
+		if ( ! level || typeof level !== 'object' ) {
 			return false;
 		}
 

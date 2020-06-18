@@ -7,7 +7,7 @@ export default compose(
 		const store = select( 'sensei/import' );
 
 		return {
-			levelsState: store.getStepData( 'upload' ).levels,
+			state: store.getStepData( 'upload' ),
 		};
 	} ),
 	withDispatch( ( dispatch ) => {

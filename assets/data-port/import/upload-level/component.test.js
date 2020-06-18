@@ -29,7 +29,7 @@ describe( '<UploadLevels />', () => {
 
 		const { queryAllByText } = render(
 			<UploadLevels
-				levelsState={ levelsState }
+				state={ levelsState }
 				uploadFileForLevel={ jest.fn() }
 				throwEarlyUploadError={ jest.fn() }
 			/>

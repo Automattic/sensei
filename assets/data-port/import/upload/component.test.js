@@ -11,7 +11,6 @@ describe( '<UploadPage /> continue button', () => {
 		const state = {
 			isSubmitting: false,
 			errorMsg: null,
-			levels: {},
 		};
 		const submitStartImport = jest.fn();
 		const isReady = true;
@@ -34,7 +33,6 @@ describe( '<UploadPage /> continue button', () => {
 		const state = {
 			isSubmitting: false,
 			errorMsg: null,
-			levels: {},
 		};
 		const submitStartImport = jest.fn();
 		const isReady = false;
@@ -57,7 +55,6 @@ describe( '<UploadPage /> continue button', () => {
 		const state = {
 			isSubmitting: true,
 			errorMsg: null,
-			levels: {},
 		};
 		const submitStartImport = jest.fn();
 		const isReady = true;

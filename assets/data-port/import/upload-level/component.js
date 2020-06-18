@@ -45,7 +45,7 @@ const uploadFile = (
  * placeholder for messages.
  */
 export const UploadLevels = ( {
-	levelsState,
+	state,
 	uploadFileForLevel,
 	throwEarlyUploadError,
 } ) => {
@@ -60,7 +60,7 @@ export const UploadLevels = ( {
 	return (
 		<ol>
 			{ levels.map( ( level ) => {
-				const levelState = levelsState[ level.key ];
+				const levelState = state[ level.key ];
 				const message = getLevelMessage( levelState );
 
 				return (
