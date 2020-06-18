@@ -93,7 +93,7 @@ describe( 'Importer selectors', () => {
 		expect( isReadyToStart( state ) ).toBeFalsy();
 	} );
 
-	it( 'Should return as ready to start when no files have been uploaded', () => {
+	it( 'Should return as ready to start when files have been uploaded', () => {
 		const state = {
 			upload: {
 				courses: {
