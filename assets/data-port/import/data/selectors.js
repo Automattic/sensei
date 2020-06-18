@@ -1,5 +1,5 @@
 import { steps } from '../steps';
-import { findKey } from 'lodash';
+import { levels } from '../levels';
 
 /**
  * Is fetching importer data selector.
@@ -70,22 +70,7 @@ export const isCompleteStep = ( { completedSteps }, step ) =>
  *
  * @return {boolean} If the importer is ready.
  */
-export const isReadyToStart = ( state ) => {
-	const firstUploadedKey = findKey( state.upload, ( level ) => {
-		if ( ! level || typeof level !== 'object' ) {
-			return false;
-		}
-
-		return level.isUploaded;
-	} );
-
-	const firstInProgressKey = findKey( state.upload, ( level ) => {
-		if ( ! level || typeof level !== 'object' ) {
-			return false;
-		}
-
-		return level.inProgress;
-	} );
-
-	return !! firstUploadedKey && ! firstInProgressKey;
-};
+export const isReadyToStart = ( state ) =>
+	levels
+		.map( ( { key } ) => state.upload[ key ] )
+		.some( ( level ) => level.isUploaded && ! level.inProgress );
