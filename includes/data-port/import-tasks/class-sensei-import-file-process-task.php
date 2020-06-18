@@ -140,11 +140,13 @@ abstract class Sensei_Import_File_Process_Task
 	abstract public static function validate_source_file( $file_path );
 
 	/**
-	 * Get the class name of the model handled by this task.
+	 * Get the model which will handle the processing for a line.
 	 *
-	 * @return string
+	 * @param array $line  An associated array with the CSV line.
+	 *
+	 * @return Sensei_Data_Port_Model
 	 */
-	abstract public function get_model_class();
+	abstract public function get_model( $line );
 
 	/**
 	 * Process a single CSV line.
@@ -171,12 +173,11 @@ abstract class Sensei_Import_File_Process_Task
 			return false;
 		}
 
-		$model_class = static::get_model_class();
-		if ( ! is_a( $model_class, Sensei_Data_Port_Model::class, true ) ) {
+		$model = $this->get_model( $line );
+		if ( ! is_a( $model, Sensei_Data_Port_Model::class ) ) {
 			return false;
 		}
 
-		$model = $model_class::from_source_array( $line, $this->get_job()->get_user_id() );
 		if ( ! $model->is_valid() ) {
 			$this->get_job()->add_log_entry(
 				__( 'A required field is missing or one of the fields is malformed. Line skipped.', 'sensei-lms' ),

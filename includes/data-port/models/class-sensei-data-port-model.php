@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Defines the expected data to port to/from and handles the port.
+ * This class handles the port for a single post.
  */
 abstract class Sensei_Data_Port_Model {
 	/**
@@ -42,6 +42,13 @@ abstract class Sensei_Data_Port_Model {
 	private $is_new;
 
 	/**
+	 * The schema for the model.
+	 *
+	 * @var Sensei_Data_Port_Schema
+	 */
+	protected $schema;
+
+	/**
 	 * Sensei_Data_Port_Model constructor.
 	 */
 	private function __construct() {
@@ -51,15 +58,17 @@ abstract class Sensei_Data_Port_Model {
 	/**
 	 * Set up item from an array.
 	 *
-	 * @param array $data            Data to restore item from.
-	 * @param int   $default_author  The default author.
+	 * @param array                   $data            Data to restore item from.
+	 * @param Sensei_Data_Port_Schema $schema          The schema for the item.
+	 * @param int                     $default_author  The default author.
 	 *
 	 * @return static
 	 */
-	public static function from_source_array( $data, $default_author = 0 ) {
-		$self = new static();
-		$self->restore_from_source_array( $data );
+	public static function from_source_array( $data, Sensei_Data_Port_Schema $schema, $default_author = 0 ) {
+		$self                 = new static();
+		$self->schema         = $schema;
 		$self->default_author = $default_author;
+		$self->restore_from_source_array( $data );
 
 		$post_id = $self->get_existing_post_id();
 		if ( $post_id ) {
@@ -81,11 +90,11 @@ abstract class Sensei_Data_Port_Model {
 		$post_id = null;
 		$data    = $this->get_data();
 
-		if ( ! empty( $data[ static::COLUMN_SLUG ] ) ) {
+		if ( ! empty( $data[ $this->schema->get_column_slug() ] ) ) {
 			$existing_posts = get_posts(
 				[
-					'post_type'      => static::POST_TYPE,
-					'post_name__in'  => [ $data[ static::COLUMN_SLUG ] ],
+					'post_type'      => $this->schema->get_post_type(),
+					'post_name__in'  => [ $data[ $this->schema->get_column_slug() ] ],
 					'posts_per_page' => 1,
 					'post_status'    => 'any',
 				]
@@ -107,12 +116,12 @@ abstract class Sensei_Data_Port_Model {
 	 * @return array
 	 */
 	public function get_error_data( $data = [] ) {
-		$entry_id = $this->get_value( static::COLUMN_ID );
+		$entry_id = $this->get_value( $this->schema->get_column_id() );
 		if ( $entry_id ) {
 			$data['entry_id'] = $entry_id;
 		}
 
-		$entry_title = $this->get_value( static::COLUMN_TITLE );
+		$entry_title = $this->get_value( $this->schema->get_column_title() );
 		if ( $entry_id ) {
 			$data['entry_title'] = $entry_title;
 		}
@@ -140,14 +149,14 @@ abstract class Sensei_Data_Port_Model {
 			return $this->data[ $field ];
 		}
 
-		$schema = static::get_schema();
-		if ( ! isset( $schema[ $field ] ) ) {
+		$schema_array = $this->schema->get_schema();
+		if ( ! isset( $schema_array[ $field ] ) ) {
 			return null;
 		}
 
 		// If the field exists, assume it is an empty string. Otherwise, set it to null.
 		$value  = isset( $this->data[ $field ] ) ? '' : null;
-		$config = $schema[ $field ];
+		$config = $schema_array[ $field ];
 
 		// If we're creating a new post, get the default value.
 		if ( $this->is_new() && isset( $config['default'] ) ) {
@@ -169,7 +178,7 @@ abstract class Sensei_Data_Port_Model {
 	public function is_valid() {
 		$data = $this->get_data();
 
-		foreach ( static::get_schema() as $field => $field_config ) {
+		foreach ( $this->schema->get_schema() as $field => $field_config ) {
 			if ( isset( $data[ $field ] ) ) {
 				if (
 					isset( $field_config['validator'] )
@@ -206,14 +215,14 @@ abstract class Sensei_Data_Port_Model {
 	 */
 	private function restore_from_source_array( $data ) {
 		$sanitized_data = [];
-		$schema         = static::get_schema();
+		$schema_array   = $this->schema->get_schema();
 
 		foreach ( $data as $key => $value ) {
-			if ( ! isset( $schema[ $key ] ) ) {
+			if ( ! isset( $schema_array[ $key ] ) ) {
 				continue;
 			}
 
-			$config = $schema[ $key ];
+			$config = $schema_array[ $key ];
 			$value  = trim( $value );
 
 			if ( null !== $value ) {
@@ -287,74 +296,6 @@ abstract class Sensei_Data_Port_Model {
 	 */
 	public function get_data() {
 		return $this->data;
-	}
-
-	/**
-	 * Get the optional fields in the schema.
-	 *
-	 * @return array Field names.
-	 */
-	public static function get_optional_fields() {
-		$schema = static::get_schema();
-
-		return array_values(
-			array_filter(
-				array_map(
-					function( $field ) use ( $schema ) {
-						if ( empty( $schema[ $field ]['required'] ) ) {
-							return $field;
-						}
-
-						return false;
-					},
-					array_keys( $schema )
-				)
-			)
-		);
-	}
-
-	/**
-	 * Get the optional fields in the schema.
-	 *
-	 * @return array Field names.
-	 */
-	public static function get_required_fields() {
-		$schema = static::get_schema();
-
-		return array_values(
-			array_filter(
-				array_map(
-					function( $field ) use ( $schema ) {
-						if ( ! empty( $schema[ $field ]['required'] ) ) {
-							return $field;
-						}
-
-						return false;
-					},
-					array_keys( $schema )
-				)
-			)
-		);
-	}
-
-	/**
-	 * Get the schema for the data type.
-	 *
-	 * @return array {
-	 *     @type array $$field_name {
-	 *          @type string   $type       Type of data. Options: string, int, float, bool, slug, ref, email, url-or-file, username, video.
-	 *          @type string   $pattern    Regular expression that the value should match (Optional).
-	 *          @type mixed    $default    Default value if not set or invalid. Default is `null` (Optional).
-	 *          @type bool     $required   True if a non-empty value is required. Default is `false` (Optional).
-	 *          @type bool     $allow_html True if HTML should be allowed. Default is `false` (Optional).
-	 *          @type callable $validator  Callable to use when validating data (Optional).
-	 *     }
-	 * }
-	 */
-	public static function get_schema() {
-		_doing_it_wrong( __METHOD__, 'This should be implemented by the child classes.', '3.1.0' );
-
-		return [];
 	}
 
 	/**

@@ -30,7 +30,7 @@ class Sensei_Import_Lessons
 	 *
 	 * @return string
 	 */
-	public function get_model_class() {
+	public function get_model( $line ) {
 		// @todo Implement.
 
 		return null;

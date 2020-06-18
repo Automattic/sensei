@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Sensei_Data_Port_Model class.
+ * File containing the Sensei_Data_Port_Question_Schema class.
  *
  * @package sensei
  */
@@ -10,9 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Defines the expected data to port to/from and handles the port.
+ * Defines the expected data to port to/from.
  */
-class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
+class Sensei_Data_Port_Question_Schema extends Sensei_Data_Port_Schema {
 	const POST_TYPE = 'question';
 
 	const TAXONOMY_QUESTION_TYPE     = 'question-type';
@@ -20,8 +20,6 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 
 	const COLUMN_TITLE           = 'question';
 	const COLUMN_ANSWER          = 'answer';
-	const COLUMN_ID              = 'id';
-	const COLUMN_SLUG            = 'slug';
 	const COLUMN_DESCRIPTION     = 'description';
 	const COLUMN_STATUS          = 'status';
 	const COLUMN_TYPE            = 'type';
@@ -50,7 +48,7 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 	 *     }
 	 * }
 	 */
-	public static function get_schema() {
+	public function get_schema() {
 		return [
 			self::COLUMN_TITLE           => [
 				'type'       => 'string',
@@ -59,9 +57,9 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 			],
 			self::COLUMN_ANSWER          => [
 				'type'      => 'string',
-				'validator' => static::validate_for_question_type( 'multiple-choice', true ),
-				'default'   => function( $field, $self ) {
-					$data = $self->get_data();
+				'validator' => $this->validate_for_question_type( 'multiple-choice', true ),
+				'default'   => function( $field, Sensei_Import_Question_Model $model ) {
+					$data = $model->get_data();
 
 					if (
 						isset( $data[ self::COLUMN_TYPE ] )
@@ -113,17 +111,17 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 			],
 			self::COLUMN_TEXT_BEFORE_GAP => [
 				'type'       => 'string',
-				'validator'  => static::validate_for_question_type( 'gap-fill', false ),
+				'validator'  => $this->validate_for_question_type( 'gap-fill', false ),
 				'allow_html' => true,
 			],
 			self::COLUMN_GAP             => [
 				'type'       => 'string',
-				'validator'  => static::validate_for_question_type( 'gap-fill', false ),
+				'validator'  => $this->validate_for_question_type( 'gap-fill', false ),
 				'allow_html' => true,
 			],
 			self::COLUMN_TEXT_AFTER_GAP  => [
 				'type'       => 'string',
-				'validator'  => static::validate_for_question_type( 'gap-fill', false ),
+				'validator'  => $this->validate_for_question_type( 'gap-fill', false ),
 				'allow_html' => true,
 			],
 			self::COLUMN_UPLOAD_NOTES    => [
@@ -145,8 +143,8 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 	 *
 	 * @return closure
 	 */
-	private static function validate_for_question_type( $type, $default_no_type = true ) {
-		return function ( $field, Sensei_Data_Port_Question_Model $model ) use ( $type, $default_no_type ) {
+	private function validate_for_question_type( $type, $default_no_type = true ) {
+		return function ( $field, Sensei_Import_Question_Model $model ) use ( $type, $default_no_type ) {
 			$data          = $model->get_data();
 			$question_type = $model->get_question_type();
 
@@ -160,5 +158,23 @@ class Sensei_Data_Port_Question_Model extends Sensei_Data_Port_Model {
 
 			return true;
 		};
+	}
+
+	/**
+	 * Get question post type.
+	 *
+	 * @return string
+	 */
+	public function get_post_type() {
+		return self::POST_TYPE;
+	}
+
+	/**
+	 * Get the column name for the title.
+	 *
+	 * @return string
+	 */
+	public function get_column_title() {
+		return self::COLUMN_TITLE;
 	}
 }

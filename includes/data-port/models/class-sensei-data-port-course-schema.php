@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Sensei_Data_Port_Course_Model class.
+ * File containing the Sensei_Data_Port_Course_Schema class.
  *
  * @package sensei
  */
@@ -10,14 +10,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Defines the expected data to port to/from and handles the port.
+ * Defines the expected data for a single course.
  */
-class Sensei_Data_Port_Course_Model extends Sensei_Data_Port_Model {
+class Sensei_Data_Port_Course_Schema extends Sensei_Data_Port_Schema {
 	const POST_TYPE = 'course';
 
-	const COLUMN_ID               = 'id';
 	const COLUMN_TITLE            = 'course';
-	const COLUMN_SLUG             = 'slug';
 	const COLUMN_DESCRIPTION      = 'description';
 	const COLUMN_EXCERPT          = 'excerpt';
 	const COLUMN_TEACHER_USERNAME = 'teacher username';
@@ -34,7 +32,7 @@ class Sensei_Data_Port_Course_Model extends Sensei_Data_Port_Model {
 	/**
 	 * Implementation of get_schema as documented in superclass.
 	 */
-	public static function get_schema() {
+	public function get_schema() {
 		return [
 			self::COLUMN_ID               => [
 				'type' => 'string',
@@ -85,5 +83,23 @@ class Sensei_Data_Port_Course_Model extends Sensei_Data_Port_Model {
 				'default' => false,
 			],
 		];
+	}
+
+	/**
+	 * Get course post type.
+	 *
+	 * @return string
+	 */
+	public function get_post_type() {
+		return self::POST_TYPE;
+	}
+
+	/**
+	 * Get the column name for the title.
+	 *
+	 * @return string
+	 */
+	public function get_column_title() {
+		return self::COLUMN_TITLE;
 	}
 }

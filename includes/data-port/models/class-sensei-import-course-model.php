@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Sensei_Data_Port_Course_Model class.
+ * File containing the Sensei_Import_Course_Model class.
  *
  * @package sensei
  */
@@ -10,9 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Defines the expected data to port to/from and handles the port.
+ * This class is responsible for importing the data for a single course.
  */
-class Sensei_Import_Course_Model extends Sensei_Data_Port_Course_Model {
+class Sensei_Import_Course_Model extends Sensei_Data_Port_Model {
 
 	/**
 	 * Create a new question or update an existing question.
@@ -22,10 +22,10 @@ class Sensei_Import_Course_Model extends Sensei_Data_Port_Course_Model {
 	public function sync_post() {
 		$teacher = $this->get_default_author();
 
-		$teacher_username = $this->get_value( self::COLUMN_TEACHER_USERNAME );
+		$teacher_username = $this->get_value( Sensei_Data_Port_Course_Schema::COLUMN_TEACHER_USERNAME );
 
 		if ( ! empty( $teacher_username ) ) {
-			$teacher = Sensei_Data_Port_Utilities::create_user( $teacher_username, $this->get_value( self::COLUMN_TEACHER_EMAIL ), 'teacher' );
+			$teacher = Sensei_Data_Port_Utilities::create_user( $teacher_username, $this->get_value( Sensei_Data_Port_Course_Schema::COLUMN_TEACHER_EMAIL ), 'teacher' );
 
 			if ( is_wp_error( $teacher ) ) {
 				return $teacher;
@@ -53,19 +53,19 @@ class Sensei_Import_Course_Model extends Sensei_Data_Port_Course_Model {
 			);
 		}
 
-		$result = $this->set_course_terms( self::COLUMN_MODULES, $post_id, 'module', $teacher );
+		$result = $this->set_course_terms( Sensei_Data_Port_Course_Schema::COLUMN_MODULES, $post_id, 'module', $teacher );
 
 		if ( is_wp_error( $result ) ) {
 			return $result;
 		}
 
-		$result = $this->set_course_terms( self::COLUMN_CATEGORIES, $post_id, 'course-category' );
+		$result = $this->set_course_terms( Sensei_Data_Port_Course_Schema::COLUMN_CATEGORIES, $post_id, 'course-category' );
 
 		if ( is_wp_error( $result ) ) {
 			return $result;
 		}
 
-		$result = $this->add_thumbnail_to_post( self::COLUMN_IMAGE, $post_id );
+		$result = $this->add_thumbnail_to_post( Sensei_Data_Port_Course_Schema::COLUMN_IMAGE, $post_id );
 
 		return is_wp_error( $result ) ? $result : true;
 	}
@@ -89,22 +89,22 @@ class Sensei_Import_Course_Model extends Sensei_Data_Port_Course_Model {
 			$args['post_status'] = 'draft';
 		}
 
-		$value = $this->get_value( self::COLUMN_DESCRIPTION );
+		$value = $this->get_value( Sensei_Data_Port_Course_Schema::COLUMN_DESCRIPTION );
 		if ( null !== $value ) {
 			$args['post_content'] = $value;
 		}
 
-		$value = $this->get_value( self::COLUMN_TITLE );
+		$value = $this->get_value( Sensei_Data_Port_Course_Schema::COLUMN_TITLE );
 		if ( null !== $value ) {
 			$args['post_title'] = $value;
 		}
 
-		$value = $this->get_value( self::COLUMN_EXCERPT );
+		$value = $this->get_value( Sensei_Data_Port_Course_Schema::COLUMN_EXCERPT );
 		if ( null !== $value ) {
 			$args['post_excerpt'] = $value;
 		}
 
-		$value = $this->get_value( self::COLUMN_SLUG );
+		$value = $this->get_value( Sensei_Data_Port_Course_Schema::COLUMN_SLUG );
 		if ( null !== $value ) {
 			$args['post_name'] = $value;
 		}
@@ -125,17 +125,17 @@ class Sensei_Import_Course_Model extends Sensei_Data_Port_Course_Model {
 	private function get_course_meta() {
 		$meta = [];
 
-		$value = $this->get_value( self::COLUMN_FEATURED );
+		$value = $this->get_value( Sensei_Data_Port_Course_Schema::COLUMN_FEATURED );
 		if ( null !== $value ) {
 			$meta['_course_featured'] = true === $value ? 'featured' : '';
 		}
 
-		$value = $this->get_value( self::COLUMN_VIDEO );
+		$value = $this->get_value( Sensei_Data_Port_Course_Schema::COLUMN_VIDEO );
 		if ( null !== $value ) {
 			$meta['_course_video_embed'] = $value;
 		}
 
-		$value = $this->get_value( self::COLUMN_NOTIFICATIONS );
+		$value = $this->get_value( Sensei_Data_Port_Course_Schema::COLUMN_NOTIFICATIONS );
 		if ( null !== $value ) {
 			$meta['disable_notification'] = $value;
 		}

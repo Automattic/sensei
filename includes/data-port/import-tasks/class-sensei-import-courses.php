@@ -24,12 +24,14 @@ class Sensei_Import_Courses extends Sensei_Import_File_Process_Task {
 	}
 
 	/**
-	 * Get the class name of the model handled by this task.
+	 * Get the model which handles this task.
 	 *
-	 * @return string
+	 * @param array $line  An associated array with the CSV line.
+	 *
+	 * @return Sensei_Import_Course_Model
 	 */
-	public function get_model_class() {
-		return Sensei_Import_Course_Model::class;
+	public function get_model( $line ) {
+		return Sensei_Import_Course_Model::from_source_array( $line, new Sensei_Data_Port_Course_Schema(), $this->get_job()->get_user_id() );
 	}
 
 	/**
@@ -47,8 +49,9 @@ class Sensei_Import_Courses extends Sensei_Import_File_Process_Task {
 	 * @return true|WP_Error
 	 */
 	public static function validate_source_file( $file_path ) {
-		$required_fields = Sensei_Data_Port_Course_Model::get_required_fields();
-		$optional_fields = Sensei_Data_Port_Course_Model::get_optional_fields();
+		$schema          = new Sensei_Data_Port_Course_Schema();
+		$required_fields = $schema->get_required_fields();
+		$optional_fields = $schema->get_optional_fields();
 
 		return Sensei_Import_CSV_Reader::validate_csv_file( $file_path, $required_fields, $optional_fields );
 	}

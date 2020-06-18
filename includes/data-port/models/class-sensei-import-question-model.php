@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Sensei_Data_Port_Model class.
+ * File containing the Sensei_Import_Question_Model class.
  *
  * @package sensei
  */
@@ -10,9 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Defines the expected data to port to/from and handles the port.
+ * This class is responsible for importing a single question.
  */
-class Sensei_Import_Question_Model extends Sensei_Data_Port_Question_Model {
+class Sensei_Import_Question_Model extends Sensei_Data_Port_Model {
 
 	/**
 	 * Cached question type.
@@ -53,7 +53,7 @@ class Sensei_Import_Question_Model extends Sensei_Data_Port_Question_Model {
 	 */
 	private function get_post_array() {
 		$postarr = [
-			'post_type' => self::POST_TYPE,
+			'post_type' => Sensei_Data_Port_Question_Schema::POST_TYPE,
 		];
 
 		if ( $this->is_new() ) {
@@ -66,19 +66,19 @@ class Sensei_Import_Question_Model extends Sensei_Data_Port_Question_Model {
 
 		$data = $this->get_data();
 
-		$postarr['post_title'] = $data[ self::COLUMN_TITLE ];
+		$postarr['post_title'] = $data[ Sensei_Data_Port_Question_Schema::COLUMN_TITLE ];
 
-		$post_name = $this->get_value( self::COLUMN_SLUG );
+		$post_name = $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_SLUG );
 		if ( null !== $post_name ) {
 			$postarr['post_name'] = $post_name;
 		}
 
-		$post_content = $this->get_value( self::COLUMN_DESCRIPTION );
+		$post_content = $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_DESCRIPTION );
 		if ( null !== $post_content ) {
 			$postarr['post_content'] = $post_content;
 		}
 
-		$post_status = $this->get_value( self::COLUMN_STATUS );
+		$post_status = $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_STATUS );
 		if ( null !== $post_status ) {
 			$postarr['post_status'] = $post_status;
 		}
@@ -148,9 +148,9 @@ class Sensei_Import_Question_Model extends Sensei_Data_Port_Question_Model {
 	private function get_meta_fields() {
 		$fields = [];
 
-		$fields['_question_grade']  = $this->get_value( self::COLUMN_GRADE );
-		$fields['_random_order']    = $this->get_value( self::COLUMN_RANDOM_ORDER );
-		$fields['_answer_feedback'] = $this->get_value( self::COLUMN_FEEDBACK );
+		$fields['_question_grade']  = $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_GRADE );
+		$fields['_random_order']    = $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_RANDOM_ORDER );
+		$fields['_answer_feedback'] = $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_FEEDBACK );
 		$fields['_question_media']  = $this->get_question_media_value();
 
 		$answer_field_values = $this->get_answer_field_values();
@@ -165,7 +165,7 @@ class Sensei_Import_Question_Model extends Sensei_Data_Port_Question_Model {
 	 * @return null|string
 	 */
 	private function get_question_media_value() {
-		$value = $this->get_value( self::COLUMN_MEDIA );
+		$value = $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_MEDIA );
 		if ( null === $value ) {
 			return null;
 		}
@@ -192,14 +192,14 @@ class Sensei_Import_Question_Model extends Sensei_Data_Port_Question_Model {
 			'_answer_order'           => '',
 		];
 
-		$question_type = $this->get_value( self::COLUMN_TYPE );
+		$question_type = $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_TYPE );
 
 		switch ( $question_type ) {
 			case 'multiple-choice':
 				$values = $this->parse_multiple_choice_answers();
 				break;
 			case 'boolean':
-				$answers_raw = $this->get_value( self::COLUMN_ANSWER );
+				$answers_raw = $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_ANSWER );
 				$values      = [
 					'_question_right_answer' => 1 === intval( $answers_raw ) ? 1 : 0,
 				];
@@ -207,16 +207,16 @@ class Sensei_Import_Question_Model extends Sensei_Data_Port_Question_Model {
 				break;
 			case 'file-upload':
 				$values = [
-					'_question_right_answer'  => $this->get_value( self::COLUMN_UPLOAD_NOTES ),
-					'_question_wrong_answers' => $this->get_value( self::COLUMN_TEACHER_NOTES ),
+					'_question_right_answer'  => $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_UPLOAD_NOTES ),
+					'_question_wrong_answers' => $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_TEACHER_NOTES ),
 				];
 
 				break;
 			case 'gap-fill':
 				$answer   = [];
-				$answer[] = $this->get_value( self::COLUMN_TEXT_BEFORE_GAP );
-				$answer[] = $this->get_value( self::COLUMN_GAP );
-				$answer[] = $this->get_value( self::COLUMN_TEXT_AFTER_GAP );
+				$answer[] = $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_TEXT_BEFORE_GAP );
+				$answer[] = $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_GAP );
+				$answer[] = $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_TEXT_AFTER_GAP );
 
 				$values = [
 					'_question_right_answer' => implode( '||', $answer ),
@@ -226,7 +226,7 @@ class Sensei_Import_Question_Model extends Sensei_Data_Port_Question_Model {
 			case 'single-line':
 			case 'multi-line':
 				$values = [
-					'_question_right_answer' => $this->get_value( self::COLUMN_ANSWER ),
+					'_question_right_answer' => $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_ANSWER ),
 				];
 
 				break;
@@ -241,7 +241,7 @@ class Sensei_Import_Question_Model extends Sensei_Data_Port_Question_Model {
 	 * @return string|null
 	 */
 	public function get_question_type() {
-		$data_column = $this->get_value( self::COLUMN_TYPE );
+		$data_column = $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_TYPE );
 		if ( $data_column ) {
 			return $data_column;
 		}
@@ -271,7 +271,7 @@ class Sensei_Import_Question_Model extends Sensei_Data_Port_Question_Model {
 			'_answer_order'           => [],
 		];
 
-		$split_answers = Sensei_Data_Port_Utilities::split_list_safely( $this->get_value( self::COLUMN_ANSWER ), false );
+		$split_answers = Sensei_Data_Port_Utilities::split_list_safely( $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_ANSWER ), false );
 		foreach ( $split_answers as $answer_raw ) {
 			$type = strtolower( substr( $answer_raw, 0, 6 ) );
 
@@ -307,19 +307,19 @@ class Sensei_Import_Question_Model extends Sensei_Data_Port_Question_Model {
 	private function get_taxonomy_terms() {
 		$taxonomy_terms = [];
 
-		$question_type = $this->get_value( self::COLUMN_TYPE );
+		$question_type = $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_TYPE );
 		if ( $question_type ) {
-			$taxonomy_terms[ self::TAXONOMY_QUESTION_TYPE ] = [ $question_type ];
+			$taxonomy_terms[ Sensei_Data_Port_Question_Schema::TAXONOMY_QUESTION_TYPE ] = [ $question_type ];
 		}
 
-		$taxonomy_terms[ self::TAXONOMY_QUESTION_CATEGORY ] = [];
+		$taxonomy_terms[ Sensei_Data_Port_Question_Schema::TAXONOMY_QUESTION_CATEGORY ] = [];
 
-		$category_list = Sensei_Data_Port_Utilities::split_list_safely( $this->get_value( self::COLUMN_CATEGORIES ), true );
+		$category_list = Sensei_Data_Port_Utilities::split_list_safely( $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_CATEGORIES ), true );
 		if ( ! empty( $category_list ) ) {
 			foreach ( $category_list as $category ) {
-				$category_term = Sensei_Data_Port_Utilities::get_term( $category, self::TAXONOMY_QUESTION_CATEGORY );
+				$category_term = Sensei_Data_Port_Utilities::get_term( $category, Sensei_Data_Port_Question_Schema::TAXONOMY_QUESTION_CATEGORY );
 				if ( $category_term ) {
-					$taxonomy_terms[ self::TAXONOMY_QUESTION_CATEGORY ][] = $category_term->term_id;
+					$taxonomy_terms[ Sensei_Data_Port_Question_Schema::TAXONOMY_QUESTION_CATEGORY ][] = $category_term->term_id;
 				}
 			}
 		}
