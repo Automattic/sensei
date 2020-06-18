@@ -10,7 +10,7 @@ export const steps = [
 		label: __( 'Upload CSV Files', 'sensei-lms' ),
 	},
 	{
-		key: 'import',
+		key: 'progress',
 		container: <ImportProgressPage />,
 		label: __( 'Import', 'sensei-lms' ),
 	},

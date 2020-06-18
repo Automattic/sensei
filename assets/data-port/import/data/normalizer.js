@@ -34,7 +34,7 @@ export const parseCompletedSteps = ( data ) => {
 		return [ 'upload' ];
 	}
 	if ( data.status === 'complete' ) {
-		return [ 'upload', 'import' ];
+		return [ 'upload', 'progress' ];
 	}
 
 	return [];

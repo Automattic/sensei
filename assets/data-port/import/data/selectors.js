@@ -29,7 +29,7 @@ export const getFetchError = ( state ) => state.fetchError;
  * @return {Object} Step data.
  */
 /* eslint-enable */
-export const getStepData = ( state, step ) => state.data[ step ];
+export const getStepData = ( state, step ) => state[ step ];
 
 /**
  * Get navigation steps with their state.
@@ -38,7 +38,7 @@ export const getStepData = ( state, step ) => state.data[ step ];
  *
  * @return {Array} Navigation steps.
  */
-export const getNavigationSteps = ( { data: { completedSteps } } ) => {
+export const getNavigationSteps = ( { completedSteps } ) => {
 	const navSteps = steps.map( ( step ) => ( {
 		...step,
 		isComplete: completedSteps.includes( step.key ),
@@ -60,7 +60,7 @@ export const getNavigationSteps = ( { data: { completedSteps } } ) => {
  *
  * @return {boolean} Step complete.
  */
-export const isCompleteStep = ( { data: { completedSteps } }, step ) =>
+export const isCompleteStep = ( { completedSteps }, step ) =>
 	completedSteps.includes( step );
 
 /**
@@ -71,15 +71,11 @@ export const isCompleteStep = ( { data: { completedSteps } }, step ) =>
  * @return {boolean} If the importer is ready.
  */
 export const isReadyToStart = ( state ) => {
-	const firstUploadedKey = findKey( state.data.upload.levels, function(
-		level
-	) {
+	const firstUploadedKey = findKey( state.upload.levels, function( level ) {
 		return level.isUploaded;
 	} );
 
-	const firstInProgressKey = findKey( state.data.upload.levels, function(
-		level
-	) {
+	const firstInProgressKey = findKey( state.upload.levels, function( level ) {
 		return level.inProgress;
 	} );
 

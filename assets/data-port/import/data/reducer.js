@@ -15,57 +15,52 @@ import { merge } from 'lodash';
 const DEFAULT_STATE = {
 	isFetching: true,
 	fetchError: false,
-	data: {
-		completedSteps: [],
-		upload: {
-			isSubmitting: false,
-			errorMsg: null,
-			levels: {
-				courses: {
-					isUploaded: false,
-					inProgress: false,
-					hasError: false,
-					errorMsg: null,
-					filename: null,
-				},
-				lessons: {
-					isUploaded: false,
-					inProgress: false,
-					hasError: false,
-					errorMsg: null,
-					filename: null,
-				},
-				questions: {
-					isUploaded: false,
-					inProgress: false,
-					hasError: false,
-					errorMsg: null,
-					filename: null,
-				},
+	completedSteps: [],
+	upload: {
+		isSubmitting: false,
+		errorMsg: null,
+		levels: {
+			courses: {
+				isUploaded: false,
+				inProgress: false,
+				hasError: false,
+				errorMsg: null,
+				filename: null,
+			},
+			lessons: {
+				isUploaded: false,
+				inProgress: false,
+				hasError: false,
+				errorMsg: null,
+				filename: null,
+			},
+			questions: {
+				isUploaded: false,
+				inProgress: false,
+				hasError: false,
+				errorMsg: null,
+				filename: null,
 			},
 		},
-		import: {
-			status: '',
-			percentage: 0,
-		},
+	},
+	progress: {
+		status: '',
+		percentage: 0,
 	},
 };
 
 function updateLevelState( state, levelKey, attributes ) {
 	const newState = {
 		...state,
-		data: {
-			...state.data,
-			upload: {
-				...state.data.upload,
-				levels: {
-					...state.data.upload.levels,
-				},
+		upload: {
+			...state.upload,
+			levels: {
+				...state.upload.levels,
 			},
 		},
 	};
 
-	newState.data.upload.levels[ levelKey ] = attributes;
+	newState.upload.levels[ levelKey ] = attributes;
 
 	return newState;
 }
@@ -89,9 +84,8 @@ export default ( state = DEFAULT_STATE, action ) => {
 
 		case SUCCESS_FETCH_IMPORT_DATA:
 			return {
-				...state,
+				...merge( state, action.data ),
 				isFetching: false,
-				data: merge( state.data, action.data ),
 			};
 
 		case ERROR_FETCH_IMPORT_DATA:
@@ -108,42 +102,33 @@ export default ( state = DEFAULT_STATE, action ) => {
 		case START_START_IMPORT:
 			return {
 				...state,
-				data: {
-					...state.data,
-					upload: {
-						...state.data.upload,
-						isSubmitting: true,
-					},
+				upload: {
+					...state.upload,
+					isSubmitting: true,
 				},
 			};
 
 		case ERROR_START_IMPORT:
 			return {
 				...state,
-				data: {
-					...state.data,
-					upload: {
-						...state.data.upload,
-						errorMsg: action.error.message,
-						isSubmitting: false,
-					},
+				upload: {
+					...state.upload,
+					errorMsg: action.error.message,
+					isSubmitting: false,
 				},
 			};
 
 		case SUCCESS_START_IMPORT:
 			return {
 				...state,
-				data: {
-					...state.data,
-					completedSteps: action.data.completedSteps,
-					upload: {
-						...state.data.upload,
-						isSubmitting: false,
-					},
-					import: {
-						...state.data.import,
-						...action.data.import,
-					},
+				completedSteps: action.data.completedSteps,
+				upload: {
+					...state.upload,
+					isSubmitting: false,
+				},
+				progress: {
+					...state.progress,
+					...action.data.progress,
 				},
 			};
 

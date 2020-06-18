@@ -31,7 +31,7 @@ describe( 'Importer reducer', () => {
 		} );
 
 		expect( state.isFetching ).toBeFalsy();
-		expect( state.data.test ).toBe( data.test );
+		expect( state.test ).toBe( data.test );
 	} );
 
 	it( 'Should set isFetching to false and set fetchError on ERROR_FETCH_IMPORT_DATA action', () => {
@@ -54,7 +54,7 @@ describe( 'Importer reducer', () => {
 			type: START_START_IMPORT,
 		} );
 
-		expect( state.data.upload.isSubmitting ).toBeTruthy();
+		expect( state.upload.isSubmitting ).toBeTruthy();
 	} );
 
 	it( 'Should set isSubmitting to false and errorMsg to the error message on ERROR_START_IMPORT action', () => {
@@ -68,13 +68,14 @@ describe( 'Importer reducer', () => {
 			error,
 		} );
 
-		expect( state.data.upload.isSubmitting ).toBeFalsy();
-		expect( state.data.upload.errorMsg ).toBe( error.message );
+		expect( state.upload.isSubmitting ).toBeFalsy();
+		expect( state.upload.errorMsg ).toBe( error.message );
 	} );
 
 	it( 'Should set isSubmitting to false and update upload and import state data on SUCCESS_START_IMPORT action', () => {
 		const data = {
-			import: {
+			completedSteps: [],
+			progress: {
 				dinosaur: 'test',
 			},
 		};
@@ -84,8 +85,8 @@ describe( 'Importer reducer', () => {
 			data,
 		} );
 
-		expect( state.data.upload.isSubmitting ).toBeFalsy();
-		expect( state.data.import.dinosaur ).toBe( data.import.dinosaur );
+		expect( state.upload.isSubmitting ).toBeFalsy();
+		expect( state.progress.dinosaur ).toBe( data.progress.dinosaur );
 	} );
 
 	it( 'Should set inProgress to true for file level state on START_UPLOAD_IMPORT_DATA_FILE action', () => {
@@ -95,7 +96,7 @@ describe( 'Importer reducer', () => {
 			level,
 		} );
 
-		expect( state.data.upload.levels[ level ].inProgress ).toBeTruthy();
+		expect( state.upload.levels[ level ].inProgress ).toBeTruthy();
 	} );
 
 	it( 'Should set inProgress to false and update level state on SUCCESS_UPLOAD_IMPORT_DATA_FILE action', () => {
@@ -116,8 +117,8 @@ describe( 'Importer reducer', () => {
 			data,
 		} );
 
-		expect( state.data.upload.levels[ level ].inProgress ).toBeFalsy();
-		expect( state.data.upload.levels[ level ].isUploaded ).toBeTruthy();
+		expect( state.upload.levels[ level ].inProgress ).toBeFalsy();
+		expect( state.upload.levels[ level ].isUploaded ).toBeTruthy();
 	} );
 
 	it( 'Should set inProgress to false, hasError to true, and errorMsg for file level on ERROR_UPLOAD_IMPORT_DATA_FILE action', () => {
@@ -133,9 +134,7 @@ describe( 'Importer reducer', () => {
 			level,
 		} );
 
-		expect( state.data.upload.levels[ level ].inProgress ).toBeFalsy();
-		expect( state.data.upload.levels[ level ].errorMsg ).toBe(
-			error.message
-		);
+		expect( state.upload.levels[ level ].inProgress ).toBeFalsy();
+		expect( state.upload.levels[ level ].errorMsg ).toBe( error.message );
 	} );
 } );
