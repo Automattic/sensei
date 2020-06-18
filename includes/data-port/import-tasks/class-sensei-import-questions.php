@@ -31,7 +31,7 @@ class Sensei_Import_Questions
 	 * @return string
 	 */
 	public function get_model_class() {
-		return Sensei_Data_Port_Question_Model::class;
+		return Sensei_Import_Question_Model::class;
 	}
 
 	/**

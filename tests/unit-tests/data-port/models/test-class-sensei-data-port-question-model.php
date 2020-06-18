@@ -1,6 +1,6 @@
 <?php
 /**
- * This file contains the Sensei_Data_Port_Question_Model_Test class.
+ * This file contains the Sensei_Import_Question_Model_Test class.
  *
  * @package sensei
  */
@@ -10,11 +10,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Tests for Sensei_Data_Port_Question_Model class.
+ * Tests for Sensei_Import_Question_Model class.
  *
  * @group data-port
  */
-class Sensei_Data_Port_Question_Model_Test extends WP_UnitTestCase {
+class Sensei_Import_Question_Model_Test extends WP_UnitTestCase {
 	/**
 	 * Sensei factory object.
 	 *
@@ -48,7 +48,7 @@ class Sensei_Data_Port_Question_Model_Test extends WP_UnitTestCase {
 			]
 		);
 
-		$model = Sensei_Data_Port_Question_Model::from_source_array( $data );
+		$model = Sensei_Import_Question_Model::from_source_array( $data );
 
 		$this->assertEquals( $post_id, $model->get_post_id() );
 	}
@@ -69,7 +69,7 @@ class Sensei_Data_Port_Question_Model_Test extends WP_UnitTestCase {
 			]
 		);
 
-		$model = Sensei_Data_Port_Question_Model::from_source_array( $data );
+		$model = Sensei_Import_Question_Model::from_source_array( $data );
 
 		$this->assertEquals( null, $model->get_post_id() );
 	}
@@ -224,7 +224,7 @@ class Sensei_Data_Port_Question_Model_Test extends WP_UnitTestCase {
 	 * @dataProvider lineData
 	 */
 	public function testInputIsSanitized( $input_line, $expected_model_content, $is_valid ) {
-		$model         = Sensei_Data_Port_Question_Model::from_source_array( $input_line, 1 );
+		$model         = Sensei_Import_Question_Model::from_source_array( $input_line, 1 );
 		$tested_fields = [
 			Sensei_Data_Port_Question_Model::COLUMN_TITLE,
 			Sensei_Data_Port_Question_Model::COLUMN_ANSWER,
@@ -265,7 +265,7 @@ class Sensei_Data_Port_Question_Model_Test extends WP_UnitTestCase {
 		$expected_data         = $this->lineData()['full'][1];
 		$expected_answer_order = implode( ',', [ md5( 'No' ), md5( 'Yes' ), md5( 'Maybe, it depends' ) ] );
 
-		$model  = Sensei_Data_Port_Question_Model::from_source_array( $test_data );
+		$model  = Sensei_Import_Question_Model::from_source_array( $test_data );
 		$result = $model->sync_post();
 		$this->assertTrue( $result );
 
@@ -311,7 +311,7 @@ class Sensei_Data_Port_Question_Model_Test extends WP_UnitTestCase {
 			]
 		);
 
-		$model  = Sensei_Data_Port_Question_Model::from_source_array( $test_data );
+		$model  = Sensei_Import_Question_Model::from_source_array( $test_data );
 		$result = $model->sync_post();
 		$this->assertTrue( $result );
 
@@ -341,7 +341,7 @@ class Sensei_Data_Port_Question_Model_Test extends WP_UnitTestCase {
 		$test_data     = $this->lineData()['valid-file-upload'][0];
 		$expected_data = $this->lineData()['valid-file-upload'][1];
 
-		$model  = Sensei_Data_Port_Question_Model::from_source_array( $test_data );
+		$model  = Sensei_Import_Question_Model::from_source_array( $test_data );
 		$result = $model->sync_post();
 		$this->assertTrue( $result );
 
@@ -371,7 +371,7 @@ class Sensei_Data_Port_Question_Model_Test extends WP_UnitTestCase {
 		$test_data     = $this->lineData()['valid-boolean'][0];
 		$expected_data = $this->lineData()['valid-boolean'][1];
 
-		$model  = Sensei_Data_Port_Question_Model::from_source_array( $test_data );
+		$model  = Sensei_Import_Question_Model::from_source_array( $test_data );
 		$result = $model->sync_post();
 		$this->assertTrue( $result );
 
@@ -401,7 +401,7 @@ class Sensei_Data_Port_Question_Model_Test extends WP_UnitTestCase {
 		$test_data     = $this->lineData()['valid-single-line'][0];
 		$expected_data = $this->lineData()['valid-single-line'][1];
 
-		$model  = Sensei_Data_Port_Question_Model::from_source_array( $test_data );
+		$model  = Sensei_Import_Question_Model::from_source_array( $test_data );
 		$result = $model->sync_post();
 		$this->assertTrue( $result );
 

@@ -29,7 +29,7 @@ class Sensei_Import_Courses extends Sensei_Import_File_Process_Task {
 	 * @return string
 	 */
 	public function get_model_class() {
-		return Sensei_Data_Port_Course_Model::class;
+		return Sensei_Import_Course_Model::class;
 	}
 
 	/**

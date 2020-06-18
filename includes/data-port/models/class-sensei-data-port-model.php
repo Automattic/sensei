@@ -100,13 +100,6 @@ abstract class Sensei_Data_Port_Model {
 	}
 
 	/**
-	 * Create a new post or update an existing post.
-	 *
-	 * @return true|WP_Error
-	 */
-	abstract public function sync_post();
-
-	/**
 	 * Get the data to return with any errors.
 	 *
 	 * @param array $data Base error data to pass along.
@@ -114,12 +107,12 @@ abstract class Sensei_Data_Port_Model {
 	 * @return array
 	 */
 	public function get_error_data( $data = [] ) {
-		$entry_id = $this->get_value( self::COLUMN_ID );
+		$entry_id = $this->get_value( static::COLUMN_ID );
 		if ( $entry_id ) {
 			$data['entry_id'] = $entry_id;
 		}
 
-		$entry_title = $this->get_value( self::COLUMN_TITLE );
+		$entry_title = $this->get_value( static::COLUMN_TITLE );
 		if ( $entry_id ) {
 			$data['entry_title'] = $entry_title;
 		}

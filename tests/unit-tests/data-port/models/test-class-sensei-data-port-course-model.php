@@ -1,6 +1,6 @@
 <?php
 /**
- * This file contains the Sensei_Data_Port_Course_Model_Test class.
+ * This file contains the Sensei_Import_Course_Model_Test class.
  *
  * @package sensei
  */
@@ -10,11 +10,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Tests for Sensei_Data_Port_Course_Model class.
+ * Tests for Sensei_Import_Course_Model class.
  *
  * @group data-port
  */
-class Sensei_Data_Port_Course_Model_Test extends WP_UnitTestCase {
+class Sensei_Import_Course_Model_Test extends WP_UnitTestCase {
 	/**
 	 * Sensei factory object.
 	 *
@@ -117,7 +117,7 @@ class Sensei_Data_Port_Course_Model_Test extends WP_UnitTestCase {
 					Sensei_Data_Port_Course_Model::COLUMN_VIDEO       => '<video autoplay>video</video>',
 				],
 				[
-					Sensei_Data_Port_Course_Model::COLUMN_TITLE         => 'Course title',
+					Sensei_Data_Port_Course_Model::COLUMN_TITLE         => 'Course <p>title</p>',
 					Sensei_Data_Port_Course_Model::COLUMN_DESCRIPTION   => '<p>description</p>',
 					Sensei_Data_Port_Course_Model::COLUMN_EXCERPT       => '<p>excerpt</p>',
 					Sensei_Data_Port_Course_Model::COLUMN_FEATURED      => false,
@@ -135,7 +135,7 @@ class Sensei_Data_Port_Course_Model_Test extends WP_UnitTestCase {
 	 * @dataProvider lineData
 	 */
 	public function testInputIsSanitized( $input_line, $expected_model_content ) {
-		$model         = Sensei_Data_Port_Course_Model::from_source_array( $input_line, 1 );
+		$model         = Sensei_Import_Course_Model::from_source_array( $input_line, 1 );
 		$tested_fields = [
 			Sensei_Data_Port_Course_Model::COLUMN_ID,
 			Sensei_Data_Port_Course_Model::COLUMN_TITLE,
@@ -164,7 +164,7 @@ class Sensei_Data_Port_Course_Model_Test extends WP_UnitTestCase {
 	 * Tests that error data has the correct values.
 	 */
 	public function testErrorDataAreGeneratedCorrectly() {
-		$model      = Sensei_Data_Port_Course_Model::from_source_array( $this->lineData()[0][0] );
+		$model      = Sensei_Import_Course_Model::from_source_array( $this->lineData()[0][0] );
 		$error_data = $model->get_error_data( [ 'line' => 1 ] );
 
 		$expected = [
@@ -180,7 +180,7 @@ class Sensei_Data_Port_Course_Model_Test extends WP_UnitTestCase {
 	 */
 	public function testCourseIsInsertedAndUpdated() {
 		$thumbnail_id = $this->factory->attachment->create( [ 'file' => 'localfilename.png' ] );
-		$model        = Sensei_Data_Port_Course_Model::from_source_array( $this->lineData()[0][0] );
+		$model        = Sensei_Import_Course_Model::from_source_array( $this->lineData()[0][0] );
 		$result       = $model->sync_post();
 
 		$this->assertTrue( $result );
@@ -197,7 +197,7 @@ class Sensei_Data_Port_Course_Model_Test extends WP_UnitTestCase {
 		$this->verify_course( $created_post, $this->lineData()[0][1], $thumbnail_id );
 
 		$thumbnail_id = $this->factory->attachment->create( [ 'file' => 'updatedfilename.png' ] );
-		$model        = Sensei_Data_Port_Course_Model::from_source_array( $this->lineData()[1][0] );
+		$model        = Sensei_Import_Course_Model::from_source_array( $this->lineData()[1][0] );
 		$result       = $model->sync_post();
 
 		$this->assertTrue( $result );
@@ -277,7 +277,7 @@ class Sensei_Data_Port_Course_Model_Test extends WP_UnitTestCase {
 	 * Tests that an error is returned when the attachment does not exist.
 	 */
 	public function testSyncPostFailsWhenAttachmentNotFound() {
-		$model  = Sensei_Data_Port_Course_Model::from_source_array( $this->lineData()[0][0] );
+		$model  = Sensei_Import_Course_Model::from_source_array( $this->lineData()[0][0] );
 		$result = $model->sync_post();
 
 		$this->assertInstanceOf( 'WP_Error', $result );
