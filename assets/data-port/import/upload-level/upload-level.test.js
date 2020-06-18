@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import { UploadLevels } from './component';
+import { UploadLevels } from './upload-level';
 
 describe( '<UploadLevels />', () => {
 	it( 'should display the error when there is one', () => {

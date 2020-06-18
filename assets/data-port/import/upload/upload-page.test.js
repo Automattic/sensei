@@ -1,5 +1,5 @@
 import { render, fireEvent } from '@testing-library/react';
-import { UploadPage } from './component';
+import { UploadPage } from './upload-page';
 
 jest.mock( '@wordpress/api-fetch', () => () => Promise.resolve() );
 jest.mock( '../upload-level', () =>

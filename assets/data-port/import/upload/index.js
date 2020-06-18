@@ -1,6 +1,6 @@
 import { withSelect, withDispatch } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
-import { UploadPage } from './component';
+import { UploadPage } from './upload-page';
 
 export default compose(
 	withSelect( ( select ) => {
