@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * This class is responsible for importing a single question.
  */
-class Sensei_Import_Question_Model extends Sensei_Data_Port_Model {
+class Sensei_Import_Question_Model extends Sensei_Import_Model {
 
 	/**
 	 * Cached question type.
@@ -35,7 +35,15 @@ class Sensei_Import_Question_Model extends Sensei_Data_Port_Model {
 			return $post_id;
 		}
 
+		if ( 0 === $post_id ) {
+			return new WP_Error(
+				'sensei_data_port_creation_failure',
+				__( 'Question insertion failed.', 'sensei-lms' )
+			);
+		}
+
 		$this->set_post_id( $post_id );
+		$this->store_import_id();
 
 		// Sync meta. This happens outside of the post save because question media needs the post ID.
 		$meta_result = $this->sync_meta();

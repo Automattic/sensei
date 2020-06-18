@@ -224,7 +224,7 @@ class Sensei_Import_Question_Model_Test extends WP_UnitTestCase {
 	 * @dataProvider lineData
 	 */
 	public function testInputIsSanitized( $input_line, $expected_model_content, $is_valid ) {
-		$model         = Sensei_Import_Question_Model::from_source_array( $input_line, new Sensei_Data_Port_Question_Schema(), 1 );
+		$model         = Sensei_Import_Question_Model::from_source_array( $input_line, new Sensei_Data_Port_Question_Schema() );
 		$tested_fields = [
 			Sensei_Data_Port_Question_Schema::COLUMN_TITLE,
 			Sensei_Data_Port_Question_Schema::COLUMN_ANSWER,

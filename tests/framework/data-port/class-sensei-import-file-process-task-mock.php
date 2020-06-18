@@ -12,7 +12,7 @@ class Sensei_Import_File_Process_Task_Mock extends Sensei_Import_File_Process_Ta
 	}
 
 	public function get_model( $line ) {
-		return Sensei_Data_Port_Model_Mock::from_source_array( $line, new Sensei_Data_Port_Schema_Mock() );
+		return Sensei_Import_Model_Mock::from_source_array( $line, new Sensei_Data_Port_Schema_Mock() );
 	}
 
 	public function clean_up() {}

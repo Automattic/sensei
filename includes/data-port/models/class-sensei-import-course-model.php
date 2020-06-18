@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * This class is responsible for importing the data for a single course.
  */
-class Sensei_Import_Course_Model extends Sensei_Data_Port_Model {
+class Sensei_Import_Course_Model extends Sensei_Import_Model {
 
 	/**
 	 * Create a new question or update an existing question.
@@ -53,19 +53,22 @@ class Sensei_Import_Course_Model extends Sensei_Data_Port_Model {
 			);
 		}
 
-		$result = $this->set_course_terms( Sensei_Data_Port_Course_Schema::COLUMN_MODULES, $post_id, 'module', $teacher );
+		$this->set_post_id( $post_id );
+		$this->store_import_id();
+
+		$result = $this->set_course_terms( Sensei_Data_Port_Course_Schema::COLUMN_MODULES, 'module', $teacher );
 
 		if ( is_wp_error( $result ) ) {
 			return $result;
 		}
 
-		$result = $this->set_course_terms( Sensei_Data_Port_Course_Schema::COLUMN_CATEGORIES, $post_id, 'course-category' );
+		$result = $this->set_course_terms( Sensei_Data_Port_Course_Schema::COLUMN_CATEGORIES, 'course-category' );
 
 		if ( is_wp_error( $result ) ) {
 			return $result;
 		}
 
-		$result = $this->add_thumbnail_to_post( Sensei_Data_Port_Course_Schema::COLUMN_IMAGE, $post_id );
+		$result = $this->add_thumbnail_to_post( Sensei_Data_Port_Course_Schema::COLUMN_IMAGE );
 
 		return is_wp_error( $result ) ? $result : true;
 	}
@@ -147,13 +150,13 @@ class Sensei_Import_Course_Model extends Sensei_Data_Port_Model {
 	 * Updates the terms of a course. The old terms are overwritten.
 	 *
 	 * @param string $column_name  The CSV column name which contains the terms.
-	 * @param int    $course_id    The course id.
 	 * @param string $taxonomy     The taxonomy of the terms.
 	 * @param int    $teacher      The teacher id.
 	 *
 	 * @return bool|WP_Error True on success, WP_Error on failure.
 	 */
-	private function set_course_terms( $column_name, $course_id, $taxonomy, $teacher = null ) {
+	private function set_course_terms( $column_name, $taxonomy, $teacher = null ) {
+		$course_id = $this->get_post_id();
 		$new_terms = $this->get_value( $column_name );
 
 		if ( null === $new_terms ) {

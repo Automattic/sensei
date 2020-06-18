@@ -1,11 +1,11 @@
 <?php
 /**
- * This file contains the Sensei_Data_Port_Model_Mock class.
+ * This file contains the Sensei_Import_Model_Mock class.
  *
  * @package sensei
  */
 
-class Sensei_Data_Port_Model_Mock extends Sensei_Data_Port_Model {
+class Sensei_Import_Model_Mock extends Sensei_Import_Model {
 	protected function get_existing_post_id() {
 		return null;
 	}

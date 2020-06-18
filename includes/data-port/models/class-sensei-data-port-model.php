@@ -28,20 +28,6 @@ abstract class Sensei_Data_Port_Model {
 	private $post_id;
 
 	/**
-	 * The default author to be used in courses if none is provided.
-	 *
-	 * @var int
-	 */
-	private $default_author;
-
-	/**
-	 * True if this is a new entity.
-	 *
-	 * @var bool
-	 */
-	private $is_new;
-
-	/**
 	 * The schema for the model.
 	 *
 	 * @var Sensei_Data_Port_Schema
@@ -51,61 +37,8 @@ abstract class Sensei_Data_Port_Model {
 	/**
 	 * Sensei_Data_Port_Model constructor.
 	 */
-	private function __construct() {
+	protected function __construct() {
 		// Silence is golden.
-	}
-
-	/**
-	 * Set up item from an array.
-	 *
-	 * @param array                   $data            Data to restore item from.
-	 * @param Sensei_Data_Port_Schema $schema          The schema for the item.
-	 * @param int                     $default_author  The default author.
-	 *
-	 * @return static
-	 */
-	public static function from_source_array( $data, Sensei_Data_Port_Schema $schema, $default_author = 0 ) {
-		$self                 = new static();
-		$self->schema         = $schema;
-		$self->default_author = $default_author;
-		$self->restore_from_source_array( $data );
-
-		$post_id = $self->get_existing_post_id();
-		if ( $post_id ) {
-			$self->set_post_id( $post_id );
-			$self->is_new = false;
-		} else {
-			$self->is_new = true;
-		}
-
-		return $self;
-	}
-
-	/**
-	 * Check to see if the post already exists in the database.
-	 *
-	 * @return int
-	 */
-	protected function get_existing_post_id() {
-		$post_id = null;
-		$data    = $this->get_data();
-
-		if ( ! empty( $data[ $this->schema->get_column_slug() ] ) ) {
-			$existing_posts = get_posts(
-				[
-					'post_type'      => $this->schema->get_post_type(),
-					'post_name__in'  => [ $data[ $this->schema->get_column_slug() ] ],
-					'posts_per_page' => 1,
-					'post_status'    => 'any',
-				]
-			);
-
-			if ( ! empty( $existing_posts[0] ) ) {
-				return $existing_posts[0]->ID;
-			}
-		}
-
-		return $post_id;
 	}
 
 	/**
@@ -209,69 +142,6 @@ abstract class Sensei_Data_Port_Model {
 	}
 
 	/**
-	 * Restore object from an array.
-	 *
-	 * @param array $data Data to restore item from.
-	 */
-	private function restore_from_source_array( $data ) {
-		$sanitized_data = [];
-		$schema_array   = $this->schema->get_schema();
-
-		foreach ( $data as $key => $value ) {
-			if ( ! isset( $schema_array[ $key ] ) ) {
-				continue;
-			}
-
-			$config = $schema_array[ $key ];
-			$value  = trim( $value );
-
-			if ( null !== $value ) {
-				switch ( $config['type'] ) {
-					case 'int':
-						$value = intval( $value );
-						break;
-					case 'float':
-						$value = floatval( $value );
-						break;
-					case 'bool':
-						$value = boolval( $value );
-						break;
-					case 'slug':
-						$value = sanitize_title( $value );
-						break;
-					case 'email':
-						$value = sanitize_email( $value );
-						break;
-					case 'url-or-file':
-						$value = 0 === strpos( $value, 'http' ) ? esc_url_raw( $value ) : sanitize_file_name( $value );
-						break;
-					case 'username':
-						$value = sanitize_user( $value );
-						break;
-					case 'video':
-						$value = Sensei_Wp_Kses::maybe_sanitize( $value, Sensei_Course::$allowed_html );
-						break;
-					default:
-						if (
-							isset( $config['pattern'] )
-							&& 1 !== preg_match( $config['pattern'], $value )
-						) {
-							$value = null;
-						} elseif ( ! empty( $config['allow_html'] ) ) {
-							$value = trim( wp_kses_post( $value ) );
-						} else {
-							$value = sanitize_text_field( $value );
-						}
-				}
-			}
-
-			$sanitized_data[ $key ] = $value;
-		}
-
-		$this->data = $sanitized_data;
-	}
-
-	/**
 	 * Get the post ID that this references.
 	 *
 	 * @return int
@@ -299,51 +169,11 @@ abstract class Sensei_Data_Port_Model {
 	}
 
 	/**
-	 * Adds a thumbnail to a post. The source of the thumbnail can be either a filename from the media library or an
-	 * external URL.
+	 * Set the data for the model.
 	 *
-	 * @param string $column_name  The CSV column name which has the image source.
-	 * @param int    $post_id      The post id.
-	 *
-	 * @return bool|WP_Error  True on success, WP_Error on failure.
+	 * @param array $data The data array.
 	 */
-	protected function add_thumbnail_to_post( $column_name, $post_id ) {
-		$thumbnail = $this->get_value( $column_name );
-
-		if ( null === $thumbnail ) {
-			return true;
-		}
-
-		if ( '' === $thumbnail ) {
-			delete_post_meta( $post_id, '_thumbnail_id' );
-		} else {
-			$attachment_id = Sensei_Data_Port_Utilities::get_attachment_from_source( $thumbnail );
-
-			if ( is_wp_error( $attachment_id ) ) {
-				return $attachment_id;
-			}
-
-			update_post_meta( $post_id, '_thumbnail_id', $attachment_id );
-		}
-
-		return true;
-	}
-
-	/**
-	 * Get the default author.
-	 *
-	 * @return int
-	 */
-	public function get_default_author() {
-		return $this->default_author;
-	}
-
-	/**
-	 * Whether this is a new data port entity.
-	 *
-	 * @return bool
-	 */
-	public function is_new() {
-		return $this->is_new;
+	public function set_data( $data ) {
+		$this->data = $data;
 	}
 }

@@ -142,7 +142,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 *
 	 * @param string $job_id  The job id.
 	 *
-	 * @return Sensei_Data_Port_Job|null instance.
+	 * @return Sensei_Import_Job|null instance.
 	 */
 	public static function get( $job_id ) {
 		$json = get_option( self::get_option_name( $job_id ), '' );
@@ -160,7 +160,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 * @param string $job_id  The job id.
 	 * @param int    $user_id The user id.
 	 *
-	 * @return Sensei_Data_Port_Job
+	 * @return Sensei_Import_Job
 	 */
 	public static function create( $job_id, $user_id ) {
 		$job = new static( $job_id );

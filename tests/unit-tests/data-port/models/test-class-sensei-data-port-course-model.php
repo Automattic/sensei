@@ -135,7 +135,7 @@ class Sensei_Import_Course_Model_Test extends WP_UnitTestCase {
 	 * @dataProvider lineData
 	 */
 	public function testInputIsSanitized( $input_line, $expected_model_content ) {
-		$model         = Sensei_Import_Course_Model::from_source_array( $input_line, new Sensei_Data_Port_Course_Schema(), 1 );
+		$model         = Sensei_Import_Course_Model::from_source_array( $input_line, new Sensei_Data_Port_Course_Schema(), Sensei_Import_Job::create( 'test', 0 ) );
 		$tested_fields = [
 			Sensei_Data_Port_Course_Schema::COLUMN_ID,
 			Sensei_Data_Port_Course_Schema::COLUMN_TITLE,
@@ -180,7 +180,7 @@ class Sensei_Import_Course_Model_Test extends WP_UnitTestCase {
 	 */
 	public function testCourseIsInsertedAndUpdated() {
 		$thumbnail_id = $this->factory->attachment->create( [ 'file' => 'localfilename.png' ] );
-		$model        = Sensei_Import_Course_Model::from_source_array( $this->lineData()[0][0], new Sensei_Data_Port_Course_Schema() );
+		$model        = Sensei_Import_Course_Model::from_source_array( $this->lineData()[0][0], new Sensei_Data_Port_Course_Schema(), Sensei_Import_Job::create( 'test', 0 ) );
 		$result       = $model->sync_post();
 
 		$this->assertTrue( $result );
@@ -197,7 +197,7 @@ class Sensei_Import_Course_Model_Test extends WP_UnitTestCase {
 		$this->verify_course( $created_post, $this->lineData()[0][1], $thumbnail_id );
 
 		$thumbnail_id = $this->factory->attachment->create( [ 'file' => 'updatedfilename.png' ] );
-		$model        = Sensei_Import_Course_Model::from_source_array( $this->lineData()[1][0], new Sensei_Data_Port_Course_Schema() );
+		$model        = Sensei_Import_Course_Model::from_source_array( $this->lineData()[1][0], new Sensei_Data_Port_Course_Schema(), Sensei_Import_Job::create( 'test', 0 ) );
 		$result       = $model->sync_post();
 
 		$this->assertTrue( $result );
@@ -277,7 +277,7 @@ class Sensei_Import_Course_Model_Test extends WP_UnitTestCase {
 	 * Tests that an error is returned when the attachment does not exist.
 	 */
 	public function testSyncPostFailsWhenAttachmentNotFound() {
-		$model  = Sensei_Import_Course_Model::from_source_array( $this->lineData()[0][0], new Sensei_Data_Port_Course_Schema() );
+		$model  = Sensei_Import_Course_Model::from_source_array( $this->lineData()[0][0], new Sensei_Data_Port_Course_Schema(), Sensei_Import_Job::create( 'test', 0 ) );
 		$result = $model->sync_post();
 
 		$this->assertInstanceOf( 'WP_Error', $result );
