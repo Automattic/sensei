@@ -3,7 +3,7 @@ import {
 	START_FETCH_IMPORT_DATA,
 	SUCCESS_FETCH_IMPORT_DATA,
 	ERROR_FETCH_IMPORT_DATA,
-	START_START_IMPORT,
+	START_IMPORT,
 	SUCCESS_START_IMPORT,
 	ERROR_START_IMPORT,
 	ERROR_UPLOAD_IMPORT_DATA_FILE,
@@ -49,9 +49,9 @@ describe( 'Importer reducer', () => {
 		expect( state.fetchError ).toBe( error );
 	} );
 
-	it( 'Should set isSubmitting to true in upload step on START_START_IMPORT action', () => {
+	it( 'Should set isSubmitting to true in upload step on START_IMPORT action', () => {
 		const state = reducer( undefined, {
-			type: START_START_IMPORT,
+			type: START_IMPORT,
 		} );
 
 		expect( state.upload.isSubmitting ).toBeTruthy();

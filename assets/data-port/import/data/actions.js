@@ -4,7 +4,7 @@ import {
 	START_FETCH_IMPORT_DATA,
 	SUCCESS_FETCH_IMPORT_DATA,
 	ERROR_FETCH_IMPORT_DATA,
-	START_START_IMPORT,
+	START_IMPORT,
 	SUCCESS_START_IMPORT,
 	ERROR_START_IMPORT,
 	START_UPLOAD_IMPORT_DATA_FILE,
@@ -103,7 +103,7 @@ export const startFetch = () => ( {
  * @param {Function} [options.onError]   On Error handler.
  */
 export function* submitStartImport( { onSuccess, onError } = {} ) {
-	yield startStartImport();
+	yield startImport();
 
 	try {
 		const data = yield fetchFromAPI( {
@@ -126,16 +126,16 @@ export function* submitStartImport( { onSuccess, onError } = {} ) {
 }
 
 /**
- * @typedef  {Object} StartStartImportAction
+ * @typedef  {Object} StartImportAction
  * @property {string} type Action type.
  */
 /**
  * Start action to start import.
  *
- * @return {StartStartImportAction} Start import action.
+ * @return {StartImportAction} Start import action.
  */
-export const startStartImport = () => ( {
-	type: START_START_IMPORT,
+export const startImport = () => ( {
+	type: START_IMPORT,
 } );
 
 /**

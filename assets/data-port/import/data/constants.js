@@ -18,7 +18,7 @@ export const ERROR_FETCH_IMPORT_DATA = 'ERROR_FETCH_IMPORT_DATA';
 /**
  * Start import job action type constants.
  */
-export const START_START_IMPORT = 'START_START_IMPORT';
+export const START_IMPORT = 'START_IMPORT';
 export const SUCCESS_START_IMPORT = 'SUCCESS_START_IMPORT';
 export const ERROR_START_IMPORT = 'ERROR_START_IMPORT';
 

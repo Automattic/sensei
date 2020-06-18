@@ -4,7 +4,7 @@ import {
 	START_FETCH_IMPORT_DATA,
 	SUCCESS_FETCH_IMPORT_DATA,
 	ERROR_FETCH_IMPORT_DATA,
-	START_START_IMPORT,
+	START_IMPORT,
 	SUCCESS_START_IMPORT,
 	ERROR_START_IMPORT,
 	START_UPLOAD_IMPORT_DATA_FILE,
@@ -19,7 +19,7 @@ import {
 	successFetch,
 	errorFetch,
 	submitStartImport,
-	startStartImport,
+	startImport,
 	successStartImport,
 	errorStartImport,
 	uploadFileForLevel,
@@ -155,7 +155,7 @@ describe( 'Importer actions', () => {
 
 		// Start action to start the import process.
 		const expectedStartImportAction = {
-			type: START_START_IMPORT,
+			type: START_IMPORT,
 		};
 		expect( gen.next().value ).toEqual( expectedStartImportAction );
 
@@ -214,10 +214,10 @@ describe( 'Importer actions', () => {
 
 	it( 'Should return the start start import action', () => {
 		const expectedAction = {
-			type: START_START_IMPORT,
+			type: START_IMPORT,
 		};
 
-		expect( startStartImport() ).toEqual( expectedAction );
+		expect( startImport() ).toEqual( expectedAction );
 	} );
 
 	it( 'Should return the success start import action', () => {

@@ -2,7 +2,7 @@ import {
 	START_FETCH_IMPORT_DATA,
 	SUCCESS_FETCH_IMPORT_DATA,
 	ERROR_FETCH_IMPORT_DATA,
-	START_START_IMPORT,
+	START_IMPORT,
 	SUCCESS_START_IMPORT,
 	ERROR_START_IMPORT,
 	ERROR_UPLOAD_IMPORT_DATA_FILE,
@@ -96,7 +96,7 @@ export default ( state = DEFAULT_STATE, action ) => {
 				fetchError: isErrorNoActiveJob ? false : action.error,
 			};
 
-		case START_START_IMPORT:
+		case START_IMPORT:
 			return {
 				...state,
 				upload: {
