@@ -77,5 +77,11 @@ export const isReadyToStart = ( state ) => {
 		return level.isUploaded;
 	} );
 
-	return !! firstUploadedKey;
+	const firstInProgressKey = findKey( state.data.upload.levels, function(
+		level
+	) {
+		return level.inProgress;
+	} );
+
+	return !! firstUploadedKey && ! firstInProgressKey;
 };
