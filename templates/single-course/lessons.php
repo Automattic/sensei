@@ -27,7 +27,7 @@ if ( have_posts() ) :
 	?>
 
 	<section class="course-lessons">
-	
+
 	<?php
 	// start course lessons loop
 	while ( have_posts() ) :
