@@ -111,7 +111,7 @@ export default ( state = DEFAULT_STATE, action ) => {
 				data: {
 					...state.data,
 					upload: {
-						...state.upload,
+						...state.data.upload,
 						isSubmitting: true,
 					},
 				},
@@ -123,7 +123,7 @@ export default ( state = DEFAULT_STATE, action ) => {
 				data: {
 					...state.data,
 					upload: {
-						...state.upload,
+						...state.data.upload,
 						errorMsg: action.error.message,
 						isSubmitting: false,
 					},
