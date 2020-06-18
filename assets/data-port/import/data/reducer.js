@@ -101,6 +101,7 @@ export default ( state = DEFAULT_STATE, action ) => {
 				...state,
 				upload: {
 					...state.upload,
+					errorMsg: null,
 					isSubmitting: true,
 				},
 			};
