@@ -47,18 +47,20 @@ const DEFAULT_STATE = {
 	},
 };
 
-function updateLevelState( state, levelKey, attributes ) {
-	const newState = {
-		...state,
-		upload: {
-			...state.upload,
-		},
-	};
-
-	newState.upload[ levelKey ] = attributes;
-
-	return newState;
-}
+/**
+ *
+ * @param {Object}         state      Current state.
+ * @param {{type: string}} levelKey   Level to update.
+ * @param {Object}         attributes Attributes to set.
+ * @return {Object} State updated.
+ */
+const updateLevelState = ( state, levelKey, attributes ) => ( {
+	...state,
+	upload: {
+		...state.upload,
+		[ levelKey ]: attributes,
+	},
+} );
 
 /**
  * Data importer reducer.
