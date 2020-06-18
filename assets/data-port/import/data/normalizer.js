@@ -18,7 +18,7 @@ export const normalizeUploadsState = ( files ) => {
 	} );
 
 	return {
-		levels,
+		...levels,
 	};
 };
 

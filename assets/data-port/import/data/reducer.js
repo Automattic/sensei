@@ -19,28 +19,26 @@ const DEFAULT_STATE = {
 	upload: {
 		isSubmitting: false,
 		errorMsg: null,
-		levels: {
-			courses: {
-				isUploaded: false,
-				inProgress: false,
-				hasError: false,
-				errorMsg: null,
-				filename: null,
-			},
-			lessons: {
-				isUploaded: false,
-				inProgress: false,
-				hasError: false,
-				errorMsg: null,
-				filename: null,
-			},
-			questions: {
-				isUploaded: false,
-				inProgress: false,
-				hasError: false,
-				errorMsg: null,
-				filename: null,
-			},
+		courses: {
+			isUploaded: false,
+			inProgress: false,
+			hasError: false,
+			errorMsg: null,
+			filename: null,
+		},
+		lessons: {
+			isUploaded: false,
+			inProgress: false,
+			hasError: false,
+			errorMsg: null,
+			filename: null,
+		},
+		questions: {
+			isUploaded: false,
+			inProgress: false,
+			hasError: false,
+			errorMsg: null,
+			filename: null,
 		},
 	},
 	progress: {
@@ -54,13 +52,10 @@ function updateLevelState( state, levelKey, attributes ) {
 		...state,
 		upload: {
 			...state.upload,
-			levels: {
-				...state.upload.levels,
-			},
 		},
 	};
 
-	newState.upload.levels[ levelKey ] = attributes;
+	newState.upload[ levelKey ] = attributes;
 
 	return newState;
 }
@@ -142,8 +137,8 @@ export default ( state = DEFAULT_STATE, action ) => {
 			} );
 
 		case SUCCESS_UPLOAD_IMPORT_DATA_FILE:
-			action.data.upload.levels[ action.level ] = {
-				...action.data.upload.levels[ action.level ],
+			action.data.upload[ action.level ] = {
+				...action.data.upload[ action.level ],
 				inProgress: false,
 				hasError: false,
 				errorMsg: null,
@@ -152,7 +147,7 @@ export default ( state = DEFAULT_STATE, action ) => {
 			return updateLevelState(
 				state,
 				action.level,
-				action.data.upload.levels[ action.level ]
+				action.data.upload[ action.level ]
 			);
 
 		case ERROR_UPLOAD_IMPORT_DATA_FILE:

@@ -89,11 +89,9 @@ describe( 'Importer actions', () => {
 					status: 'setup',
 				},
 				upload: {
-					levels: {
-						courses: {
-							filename: 'courses-sample.csv',
-							isUploaded: true,
-						},
+					courses: {
+						filename: 'courses-sample.csv',
+						isUploaded: true,
 					},
 				},
 			},
@@ -184,9 +182,7 @@ describe( 'Importer actions', () => {
 		const expectedSetDataAction = {
 			data: {
 				id: 'test',
-				upload: {
-					levels: {},
-				},
+				upload: {},
 				import: {
 					status: 'pending',
 					percentage: 0,
@@ -285,9 +281,7 @@ describe( 'Importer actions', () => {
 		const expectedSetDataAction = {
 			data: {
 				id: 'test',
-				upload: {
-					levels: {},
-				},
+				upload: {},
 				import: {
 					status: 'setup',
 					percentage: 0,

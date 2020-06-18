@@ -31,9 +31,7 @@ describe( 'Importer selectors', () => {
 		};
 
 		const state = {
-			data: {
-				stepA: stepData,
-			},
+			stepA: stepData,
 		};
 
 		expect( getStepData( state, 'stepA' ) ).toEqual( stepData );
@@ -41,9 +39,7 @@ describe( 'Importer selectors', () => {
 
 	it( 'Should get navigation steps', () => {
 		const state = {
-			data: {
-				completedSteps: [ 'upload' ],
-			},
+			completedSteps: [ 'upload' ],
 		};
 
 		const navSteps = getNavigationSteps( state );
@@ -58,9 +54,7 @@ describe( 'Importer selectors', () => {
 
 	it( 'Should return whether step is complete or not', () => {
 		const state = {
-			data: {
-				completedSteps: [ 'welcome' ],
-			},
+			completedSteps: [ 'welcome' ],
 		};
 
 		expect( isCompleteStep( state, 'welcome' ) ).toBeTruthy();
@@ -71,28 +65,26 @@ describe( 'Importer selectors', () => {
 		const state = {
 			data: {
 				upload: {
-					levels: {
-						courses: {
-							isUploaded: false,
-							inProgress: false,
-							hasError: false,
-							errorMsg: null,
-							filename: null,
-						},
-						lessons: {
-							isUploaded: false,
-							inProgress: false,
-							hasError: false,
-							errorMsg: null,
-							filename: null,
-						},
-						questions: {
-							isUploaded: false,
-							inProgress: false,
-							hasError: false,
-							errorMsg: null,
-							filename: null,
-						},
+					courses: {
+						isUploaded: false,
+						inProgress: false,
+						hasError: false,
+						errorMsg: null,
+						filename: null,
+					},
+					lessons: {
+						isUploaded: false,
+						inProgress: false,
+						hasError: false,
+						errorMsg: null,
+						filename: null,
+					},
+					questions: {
+						isUploaded: false,
+						inProgress: false,
+						hasError: false,
+						errorMsg: null,
+						filename: null,
 					},
 				},
 			},
@@ -103,31 +95,27 @@ describe( 'Importer selectors', () => {
 
 	it( 'Should return as ready to start when no files have been uploaded', () => {
 		const state = {
-			data: {
-				upload: {
-					levels: {
-						courses: {
-							isUploaded: false,
-							inProgress: false,
-							hasError: false,
-							errorMsg: null,
-							filename: null,
-						},
-						lessons: {
-							isUploaded: true,
-							inProgress: false,
-							hasError: false,
-							errorMsg: null,
-							filename: 'test.csv',
-						},
-						questions: {
-							isUploaded: false,
-							inProgress: false,
-							hasError: false,
-							errorMsg: null,
-							filename: null,
-						},
-					},
+			upload: {
+				courses: {
+					isUploaded: false,
+					inProgress: false,
+					hasError: false,
+					errorMsg: null,
+					filename: null,
+				},
+				lessons: {
+					isUploaded: true,
+					inProgress: false,
+					hasError: false,
+					errorMsg: null,
+					filename: 'test.csv',
+				},
+				questions: {
+					isUploaded: false,
+					inProgress: false,
+					hasError: false,
+					errorMsg: null,
+					filename: null,
 				},
 			},
 		};

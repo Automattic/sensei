@@ -96,18 +96,16 @@ describe( 'Importer reducer', () => {
 			level,
 		} );
 
-		expect( state.upload.levels[ level ].inProgress ).toBeTruthy();
+		expect( state.upload[ level ].inProgress ).toBeTruthy();
 	} );
 
 	it( 'Should set inProgress to false and update level state on SUCCESS_UPLOAD_IMPORT_DATA_FILE action', () => {
 		const level = 'questions';
 		const data = {
 			upload: {
-				levels: {
-					questions: {
-						filename: 'test.csv',
-						isUploaded: true,
-					},
+				questions: {
+					filename: 'test.csv',
+					isUploaded: true,
 				},
 			},
 		};
@@ -117,8 +115,8 @@ describe( 'Importer reducer', () => {
 			data,
 		} );
 
-		expect( state.upload.levels[ level ].inProgress ).toBeFalsy();
-		expect( state.upload.levels[ level ].isUploaded ).toBeTruthy();
+		expect( state.upload[ level ].inProgress ).toBeFalsy();
+		expect( state.upload[ level ].isUploaded ).toBeTruthy();
 	} );
 
 	it( 'Should set inProgress to false, hasError to true, and errorMsg for file level on ERROR_UPLOAD_IMPORT_DATA_FILE action', () => {
@@ -134,7 +132,7 @@ describe( 'Importer reducer', () => {
 			level,
 		} );
 
-		expect( state.upload.levels[ level ].inProgress ).toBeFalsy();
-		expect( state.upload.levels[ level ].errorMsg ).toBe( error.message );
+		expect( state.upload[ level ].inProgress ).toBeFalsy();
+		expect( state.upload[ level ].errorMsg ).toBe( error.message );
 	} );
 } );

@@ -4,19 +4,17 @@ describe( 'Importer data normalizer', () => {
 	const expectedStateData = {
 		id: 'test',
 		upload: {
-			levels: {
-				questions: {
-					filename: 'questions.csv',
-					isUploaded: true,
-				},
-				courses: {
-					filename: 'lessons.csv',
-					isUploaded: true,
-				},
-				lessons: {
-					filename: 'lessons.csv',
-					isUploaded: true,
-				},
+			questions: {
+				filename: 'questions.csv',
+				isUploaded: true,
+			},
+			courses: {
+				filename: 'lessons.csv',
+				isUploaded: true,
+			},
+			lessons: {
+				filename: 'lessons.csv',
+				isUploaded: true,
 			},
 		},
 		import: {
