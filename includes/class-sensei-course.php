@@ -2810,7 +2810,7 @@ class Sensei_Course {
 
 		} elseif ( empty( $none_module_lessons ) ) { // if the none module lessons are simply empty the title should not be shown
 
-			$title = '';
+			return;
 		}
 
 		/**

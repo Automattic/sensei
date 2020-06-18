@@ -7,97 +7,90 @@
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     1.9.0
+ * @version     3.2.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-?>
 
-<section class="course-lessons">
+/**
+ * Actions just before the sensei single course lessons loop begins
+ *
+ * @hooked Sensei_Course::load_single_course_lessons_query
+ * @since 1.9.0
+ */
+do_action( 'sensei_single_course_lessons_before' );
 
-	<?php
-
-		/**
-		 * Actions just before the sensei single course lessons loop begins
-		 *
-		 * @hooked Sensei_Course::load_single_course_lessons_query
-		 * @since 1.9.0
-		 */
-		do_action( 'sensei_single_course_lessons_before' );
-
+// lessons loaded into loop in the sensei_single_course_lessons_before hook
+if ( have_posts() ) :
 	?>
 
+	<section class="course-lessons">
+	
 	<?php
+	// start course lessons loop
+	while ( have_posts() ) :
+		the_post();
+		?>
 
-	// lessons loaded into loop in the sensei_single_course_lessons_before hook
-	if ( have_posts() ) :
+		<article <?php post_class(); ?> >
 
-		// start course lessons loop
-		while ( have_posts() ) :
-			the_post();
+			<?php
+
+				/**
+				 * The hook is inside the course lesson on the single course. It fires
+				 * for each lesson. It is just before the lesson excerpt.
+				 *
+				 * @since 1.9.0
+				 *
+				 * @param $lessons_id
+				 *
+				 * @hooked Sensei_Lesson::the_lesson_meta -  5
+				 * @hooked Sensei_Lesson::the_lesson_thumbnail - 8
+				 */
+				do_action( 'sensei_single_course_inside_before_lesson', get_the_ID() );
+
 			?>
 
-			<article <?php post_class(); ?> >
+			<section class="entry">
 
 				<?php
-
-					/**
-					 * The hook is inside the course lesson on the single course. It fires
-					 * for each lesson. It is just before the lesson excerpt.
-					 *
-					 * @since 1.9.0
-					 *
-					 * @param $lessons_id
-					 *
-					 * @hooked Sensei_Lesson::the_lesson_meta -  5
-					 * @hooked Sensei_Lesson::the_lesson_thumbnail - 8
-					 */
-					do_action( 'sensei_single_course_inside_before_lesson', get_the_ID() );
-
+				/**
+				 * Display the lesson excerpt
+				 */
+				the_excerpt();
 				?>
 
-				<section class="entry">
+			</section>
 
-					<?php
-					/**
-					 * Display the lesson excerpt
-					 */
-					the_excerpt();
-					?>
+			<?php
 
-				</section>
+				/**
+				 * The hook is inside the course lesson on the single course. It is just before the lesson closing markup.
+				 * It fires for each lesson.
+				 *
+				 * @since 1.9.0
+				 */
+				do_action( 'sensei_single_course_inside_after_lesson', get_the_ID() );
 
-				<?php
+			?>
 
-					/**
-					 * The hook is inside the course lesson on the single course. It is just before the lesson closing markup.
-					 * It fires for each lesson.
-					 *
-					 * @since 1.9.0
-					 */
-					do_action( 'sensei_single_course_inside_after_lesson', get_the_ID() );
+		</article>
 
-				?>
+	<?php endwhile; // end course lessons loop ?>
 
-			</article>
+	</section>
 
-		<?php endwhile; // end course lessons loop ?>
+<?php endif;
 
-	<?php endif; ?>
+/**
+ * Actions just before the sensei single course lessons loop begins
+ *
+ * @hooked Sensei_Course::reset_single_course_query
+ *
+ * @since 1.9.0
+ */
+do_action( 'sensei_single_course_lessons_after' );
 
-	<?php
-
-		/**
-		 * Actions just before the sensei single course lessons loop begins
-		 *
-		 * @hooked Sensei_Course::reset_single_course_query
-		 *
-		 * @since 1.9.0
-		 */
-		do_action( 'sensei_single_course_lessons_after' );
-
-	?>
-
-</section>
+?>
