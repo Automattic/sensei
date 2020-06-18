@@ -363,8 +363,8 @@ describe( 'Importer actions', () => {
 			error,
 		};
 
-		const gen = throwEarlyUploadError( level, 'Test' );
-
-		expect( gen.next().value ).toEqual( expectedAction );
+		expect( throwEarlyUploadError( level, 'Test' ) ).toEqual(
+			expectedAction
+		);
 	} );
 } );
