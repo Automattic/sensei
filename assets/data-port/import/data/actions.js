@@ -214,12 +214,11 @@ export function* uploadFileForLevel(
  * @param {string} level    Level identifier.
  * @param {string} errorMsg Error object or false.
  */
-export function* throwEarlyUploadError( level, errorMsg ) {
-	yield errorFileUpload( level, {
+export const throwEarlyUploadError = ( level, errorMsg ) =>
+	errorFileUpload( level, {
 		code: '',
 		message: errorMsg,
 	} );
-}
 
 /**
  * @typedef  {Object} StartFileUploadAction
