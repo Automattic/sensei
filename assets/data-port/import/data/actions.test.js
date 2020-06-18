@@ -294,7 +294,7 @@ describe( 'Importer actions', () => {
 		expect( gen.next( dataObject ).value ).toEqual( expectedSetDataAction );
 	} );
 
-	it( 'Should catch error on the file upload action action', () => {
+	it( 'Should catch error on the file upload action', () => {
 		const formData = {};
 
 		const gen = uploadFileForLevel( 'test', formData );
