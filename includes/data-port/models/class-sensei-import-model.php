@@ -205,6 +205,9 @@ abstract class Sensei_Import_Model extends Sensei_Data_Port_Model {
 	 * @return int|null The post id if the post exists, null otherwise.
 	 */
 	protected function translate_import_id( $post_type, $import_id ) {
+		if ( empty( $import_id ) ) {
+			return null;
+		}
 
 		if ( 0 === strpos( 'id:', $import_id ) ) {
 			return $this->import_job->get_import_id( $post_type, substr( $import_id, 3 ) );
