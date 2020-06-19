@@ -35,6 +35,12 @@ const purposes = [
 			'You work at a company that regularly trains new or existing employees.',
 	},
 	{
+		id: 'educate_students',
+		title: 'Educate students',
+		description:
+			'You are an educator who would like to create an online classroom.',
+	},
+	{
 		id: 'other',
 		title: 'Other',
 	},
