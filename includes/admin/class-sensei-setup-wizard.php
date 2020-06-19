@@ -590,9 +590,10 @@ class Sensei_Setup_Wizard {
 		$extensions_to_install = array_filter(
 			array_map(
 				function( $extension ) use ( $extension_slugs ) {
-					$key = array_search( $extension->product_slug, $extension_slugs, true );
+					$key       = array_search( $extension->product_slug, $extension_slugs, true );
+					$is_wc_com = isset( $extension->wccom_product_id );
 
-					return false !== $key ? $extension : false;
+					return ( false !== $key && ! $is_wc_com ) ? $extension : false;
 				},
 				$this->get_sensei_extensions()
 			)
