@@ -270,4 +270,76 @@ class Sensei_Data_Port_Utilities_Test extends WP_UnitTestCase {
 		$this->assertEquals( $list_no_quotes, Sensei_Data_Port_Utilities::split_list_safely( $list_str, true ) );
 		$this->assertEquals( $list_with_quotes, Sensei_Data_Port_Utilities::split_list_safely( $list_str, false ) );
 	}
+
+	/**
+	 * Tests that a WP_Error is returned when a filename which does not exist is supplied.
+	 */
+	public function testAttachmentRetrievalFailWhenFileNotExists() {
+		$result = Sensei_Data_Port_Utilities::get_attachment_from_source( 'not-existant-file.png' );
+
+		$this->assertInstanceOf( 'WP_Error', $result );
+		$this->assertEquals( 'sensei_data_port_attachment_not_found', $result->get_error_code() );
+	}
+
+	/**
+	 * Tests that the attachment is returned if the filename or the internal url is correct.
+	 */
+	public function testAttachmentRetrievedWhenFileExists() {
+		$thumbnail_id = $this->factory->attachment->create( [ 'file' => 'existant-file.png' ] );
+
+		$result = Sensei_Data_Port_Utilities::get_attachment_from_source( 'existant-file.png' );
+		$this->assertEquals( $thumbnail_id, $result );
+
+		$result = Sensei_Data_Port_Utilities::get_attachment_from_source( 'http://example.org/wp-content/uploads/existant-file.png' );
+		$this->assertEquals( $thumbnail_id, $result );
+	}
+
+	/**
+	 * Tests that if a file has been already uploaded from an external url, the existing attachment is returned.
+	 */
+	public function testAttachmentRetrievedIfPreviouslyDownloaded() {
+		$thumbnail_id = $this->factory->attachment->create( [ 'file' => 'existant-file.png' ] );
+		$external_url = 'http://anexternalurl.com/files/downloaded-file.png';
+		update_post_meta( $thumbnail_id, '_sensei_attachment_source_key', md5( $external_url ) );
+
+		$result = Sensei_Data_Port_Utilities::get_attachment_from_source( $external_url );
+		$this->assertEquals( $thumbnail_id, $result );
+	}
+
+	/**
+	 * Tests that an error is returned if the HTTP call to get the file fails.
+	 */
+	public function testAttachmentCreationFailsWhenHTTPCallFails() {
+		tests_add_filter(
+			'pre_http_request',
+			function() {
+				return new WP_Error( 'error_code', 'An HTTP error' );
+			}
+		);
+
+		$result = Sensei_Data_Port_Utilities::get_attachment_from_source( 'http://anexternalurl.com/files/downloaded-file.png' );
+		$this->assertInstanceOf( 'WP_Error', $result );
+		$this->assertEquals( 'error_code', $result->get_error_code() );
+	}
+
+	/**
+	 * Tests that a file is uploaded and an attachment is created if the HTTP call is successful.
+	 */
+	public function testAttachmentIsCreatedWhenHTTPCallSuccessful() {
+		tests_add_filter(
+			'pre_http_request',
+			function() {
+				return [ 'body' => 'random content' ];
+			}
+		);
+
+		$external_url = 'http://anexternalurl.com/files/new-file.png';
+
+		$attachment_id = Sensei_Data_Port_Utilities::get_attachment_from_source( $external_url );
+
+		$attachment = get_post( $attachment_id );
+		$this->assertEquals( 'attachment', $attachment->post_type );
+		$this->assertEquals( md5( $external_url ), get_post_meta( $attachment_id, '_sensei_attachment_source_key', true ) );
+	}
+
 }
