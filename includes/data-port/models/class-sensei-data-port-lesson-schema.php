@@ -66,7 +66,7 @@ class Sensei_Data_Port_Lesson_Schema extends Sensei_Data_Port_Schema {
 			self::COLUMN_STATUS         => [
 				'type'    => 'string',
 				'default' => 'draft',
-				'pattern' => '/publish|pending|draft/',
+				'pattern' => '/^(publish|pending|draft|)$/',
 			],
 			self::COLUMN_COURSE         => [
 				'type' => 'string',
@@ -92,7 +92,7 @@ class Sensei_Data_Port_Lesson_Schema extends Sensei_Data_Port_Schema {
 			],
 			self::COLUMN_COMPLEXITY     => [
 				'type'    => 'string',
-				'pattern' => '/easy|std|hard/',
+				'pattern' => '/^(easy|std|hard|)$/',
 			],
 			self::COLUMN_VIDEO          => [
 				'type' => 'video',
