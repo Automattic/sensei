@@ -4234,7 +4234,7 @@ class Sensei_Lesson {
 	public static function footer_quiz_call_to_action( $lesson_id = 0, $user_id = 0 ) {
 
 		$lesson_id = empty( $lesson_id ) ? get_the_ID() : $lesson_id;
-		$user_id   = empty( $lesson_id ) ? get_current_user_id() : $user_id;
+		$user_id   = empty( $user_id ) ? get_current_user_id() : $user_id;
 
 		if ( ! sensei_can_user_view_lesson( $lesson_id, $user_id ) ) {
 			return;
@@ -4247,9 +4247,17 @@ class Sensei_Lesson {
 
 		if ( intval( $lesson_prerequisite ) > 0 ) {
 
-			// If the user hasn't completed the prereq then hide the current actions
-			$show_actions = Sensei_Utils::user_completed_lesson( $lesson_prerequisite, $user_id );
-
+			// If the user hasn't completed the prerequisites then hide the current actions.
+			// (If the user is either the lesson creator or admin, show actions).
+			if (
+					Sensei_Utils::user_completed_lesson( $lesson_prerequisite, $user_id )
+					|| Sensei()->lesson->is_lesson_author( $lesson_id, $user_id )
+					|| current_user_can( 'manage_options' )
+			) {
+				$show_actions = true;
+			} else {
+				$show_actions = false;
+			}
 		}
 
 		?>
@@ -4467,6 +4475,32 @@ class Sensei_Lesson {
 		}
 
 		sensei_log_event( 'lesson_publish', $event_properties );
+	}
+
+	/**
+	 * Check if a user is the lesson author.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @param int      $lesson_id ID of lesson being checked.
+	 * @param int|null $user_id ID of user being checked. Defaults to null.
+	 * @return boolean Returns TRUE if user is the lesson author, returns FALSE otherwise.
+	 */
+	private function is_lesson_author( $lesson_id, $user_id = null ) {
+
+		if ( is_null( $user_id ) ) {
+			$user_id = get_current_user_id();
+		}
+
+		if ( empty( $user_id ) ) {
+			return false;
+		}
+
+		if ( (int) get_post_field( 'post_author', $lesson_id ) === $user_id ) {
+			return true;
+		}
+
+		return false;
 	}
 
 } // End Class
