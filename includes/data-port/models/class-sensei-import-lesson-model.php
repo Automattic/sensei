@@ -245,7 +245,7 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 				return new WP_Error(
 					'sensei_data_port_course_not_found',
 					// translators: Placeholder is the term which errored.
-					sprintf( __( 'Course does not exist: %s.', 'sensei-lms' ), $course )
+					sprintf( __( 'Course does not exist: %s.', 'sensei-lms' ), $value )
 				);
 			}
 
