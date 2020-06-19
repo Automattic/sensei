@@ -452,12 +452,16 @@ class Sensei_Setup_Wizard {
 	 *
 	 * @param stdClass   $extension          Extension object.
 	 * @param stdClass[] $installing_plugins Plugins which are installing.
+	 * @param stdClass[] $selected_plugins   Plugins selected for installation.
 	 *
 	 * @return stdClass Extension with status.
 	 */
-	private function get_feature_with_status( $extension, $installing_plugins ) {
+	private function get_feature_with_status( $extension, $installing_plugins, $selected_plugins ) {
 		$installing_key = array_search( $extension->product_slug, wp_list_pluck( $installing_plugins, 'product_slug' ), true );
 
+		if ( in_array( $extension->product_slug, $selected_plugins, true ) ) {
+			$extension->status = 'selected';
+		}
 		if ( false !== $installing_key ) {
 			if ( isset( $installing_plugins[ $installing_key ]->error ) ) {
 				$extension->error  = $installing_plugins[ $installing_key ]->error;
@@ -561,19 +565,20 @@ class Sensei_Setup_Wizard {
 		array_push( $extensions, $this->get_woocommerce_information() );
 
 		$installing_plugins = Sensei_Plugins_Installation::instance()->get_installing_plugins();
+		$selected_plugins   = $this->get_wizard_user_data( 'features' )['selected'];
 
 		if ( ! $extensions ) {
 			$extensions = [];
 		}
 
 		$extensions = array_map(
-			function( $extension ) use ( $installing_plugins ) {
+			function( $extension ) use ( $installing_plugins, $selected_plugins ) {
 				// Decode price.
 				if ( isset( $extension->price ) && 0 !== $extension->price ) {
 					$extension->price = html_entity_decode( $extension->price );
 				}
 
-				return $this->get_feature_with_status( $extension, $installing_plugins );
+				return $this->get_feature_with_status( $extension, $installing_plugins, $selected_plugins );
 			},
 			$extensions
 		);
