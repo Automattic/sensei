@@ -13,6 +13,7 @@ import {
 import { merge } from 'lodash';
 
 const DEFAULT_STATE = {
+	id: null,
 	isFetching: true,
 	fetchError: false,
 	completedSteps: [],

@@ -11,6 +11,15 @@ import { levels } from '../levels';
 export const isFetching = ( state ) => state.isFetching;
 
 /**
+ * Get the import job ID.
+ *
+ * @param {Object} state Current state.
+ *
+ * @return {boolean} Has fetched.
+ */
+export const getId = ( state ) => state.id;
+
+/**
  * Fetch importer error selector.
  *
  * @param {Object} state Current state.
