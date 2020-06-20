@@ -94,14 +94,21 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 	/**
 	 * Get the current import job.
 	 *
+	 * @param WP_REST_Request $request Request object.
+	 *
 	 * @return WP_REST_Response|WP_Error
 	 */
-	public function request_get_job() {
-		$job = $this->get_active_job();
+	public function request_get_job( $request ) {
+		if ( ! empty( $request['job_id'] ) ) {
+			$job = $this->get_job( sanitize_text_field( $request['job_id'] ) );
+		} else {
+			$job = $this->get_active_job();
+		}
+
 		if ( ! $job ) {
 			return new WP_Error(
 				'sensei_data_port_no_active_job',
-				__( 'No job has been created.', 'sensei-lms' ),
+				__( 'No job could be found.', 'sensei-lms' ),
 				array( 'status' => 404 )
 			);
 		}
@@ -214,6 +221,17 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 	 */
 	protected function get_active_job() {
 		return Sensei_Data_Port_Manager::instance()->get_active_job( $this->get_handler_class(), get_current_user_id() );
+	}
+
+	/**
+	 * Get a specific job for this user.
+	 *
+	 * @param string $job_id The job ID.
+	 *
+	 * @return Sensei_Data_Port_Job|null
+	 */
+	protected function get_job( $job_id ) {
+		return Sensei_Data_Port_Manager::instance()->get_job_for_user( $this->get_handler_class(), $job_id, get_current_user_id() );
 	}
 
 	/**
