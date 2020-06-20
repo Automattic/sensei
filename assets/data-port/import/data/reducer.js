@@ -142,12 +142,19 @@ export default ( state = DEFAULT_STATE, action ) => {
 			} );
 
 		case SUCCESS_UPLOAD_IMPORT_DATA_FILE:
-			return updateLevelState( state, action.level, {
-				...action.data.upload[ action.level ],
-				inProgress: false,
-				hasError: false,
-				errorMsg: null,
-			} );
+			return updateLevelState(
+				{
+					...state,
+					id: action.data.id,
+				},
+				action.level,
+				{
+					...action.data.upload[ action.level ],
+					inProgress: false,
+					hasError: false,
+					errorMsg: null,
+				}
+			);
 
 		case ERROR_UPLOAD_IMPORT_DATA_FILE:
 			return updateLevelState( state, action.level, {
