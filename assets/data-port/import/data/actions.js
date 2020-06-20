@@ -7,6 +7,7 @@ import {
 	START_IMPORT,
 	SUCCESS_START_IMPORT,
 	ERROR_START_IMPORT,
+	SET_STEP_DATA,
 	START_UPLOAD_IMPORT_DATA_FILE,
 	SUCCESS_UPLOAD_IMPORT_DATA_FILE,
 	ERROR_UPLOAD_IMPORT_DATA_FILE,
@@ -277,4 +278,24 @@ export const errorFileUpload = ( level, error ) => ( {
 	type: ERROR_UPLOAD_IMPORT_DATA_FILE,
 	level,
 	error,
+} );
+
+/**
+ * @typedef  {Object} SetStepDataAction
+ * @property {string} type Action type.
+ * @property {string} step Step name.
+ * @property {Object} data Step data.
+ */
+/**
+ * Set welcome step data action creator.
+ *
+ * @param {string} step Step name.
+ * @param {Object} data Step data object.
+ *
+ * @return {SetStepDataAction} Set welcome step data action.
+ */
+export const setStepData = ( step, data ) => ( {
+	type: SET_STEP_DATA,
+	step,
+	data,
 } );
