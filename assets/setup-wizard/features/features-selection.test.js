@@ -138,7 +138,7 @@ describe( '<FeaturesSelection />', () => {
 		expect( onContinueMock ).toBeCalled();
 	} );
 
-	it( 'Should render the features with installation status as disabled and the installed with specific class', () => {
+	it( 'Should render the features with installed status as disabled and the installed with specific class', () => {
 		const selectedSlugs = [ 'empty-status', 'installing', 'installed' ];
 		const { container } = render(
 			<FeaturesSelection
@@ -150,7 +150,7 @@ describe( '<FeaturesSelection />', () => {
 		);
 		expect(
 			container.querySelectorAll( 'input:checked:disabled' ).length
-		).toEqual( 2 );
+		).toEqual( 1 );
 		expect(
 			container.querySelectorAll( '.status-installed' ).length
 		).toEqual( 1 );
