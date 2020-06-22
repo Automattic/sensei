@@ -55,6 +55,16 @@ const ConfirmationModal = ( {
 				'sensei-lms'
 			) }
 		</p>
+		{ features.some( ( { slug } ) => 'woocommerce' === slug ) && (
+			<p>
+				<strong>
+					{ __(
+						'WooCommerce.com will open in a new tab so that you can complete the purchase process.',
+						'sensei-lms'
+					) }
+				</strong>
+			</p>
+		) }
 
 		{ errorNotice }
 

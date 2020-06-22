@@ -142,6 +142,7 @@ const Features = () => {
 		} );
 
 		installFromWpOrg();
+		installFromWooCommerce();
 	};
 
 	const installFromWpOrg = () => {
@@ -156,22 +157,18 @@ const Features = () => {
 		);
 	};
 
-	const installFromWooCommerce = useCallback( () => {
+	const installFromWooCommerce = () => {
 		const pendingWcFeatures = getSelectedFeatures().filter(
 			( feature ) =>
 				getWcProductId( feature ) && INSTALLED_STATUS !== feature.status
 		);
+		if ( ! pendingWcFeatures.length ) return;
 		const wcPurchaseUrl = getWoocommerceComPurchaseUrl(
 			pendingWcFeatures.map( getWcProductId ),
 			stepData.wccom
 		);
-		window.location.href = wcPurchaseUrl;
-	}, [ getSelectedFeatures, stepData.wccom ] );
-
-	useEffect( () => {
-		if ( feedbackActive && isWooCommerceInstalled() )
-			installFromWooCommerce();
-	}, [ feedbackActive, isWooCommerceInstalled, installFromWooCommerce ] );
+		window.open( wcPurchaseUrl );
+	};
 
 	// Retry features installation.
 	const retryInstallation = ( selected ) => {

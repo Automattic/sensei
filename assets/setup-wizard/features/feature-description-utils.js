@@ -25,7 +25,7 @@ export const getFeatureObservation = ( slug, selectedFeatures ) => {
 	return sprintf(
 		// translators: Placeholder is the plugin titles.
 		__(
-			'* WooCommerce is required to receive updates for %1$s. Once WooCommerce is installed, you will be taken to WooCommerce.com to complete the purchase process.',
+			'* WooCommerce is required to receive updates for %1$s.',
 			'sensei-lms'
 		),
 		titles
