@@ -112,6 +112,11 @@ abstract class Sensei_Data_Port_Model {
 		$data = $this->get_data();
 
 		foreach ( $this->schema->get_schema() as $field => $field_config ) {
+			// If the field is required, it must be set.
+			if ( ! empty( $field_config['required'] ) && empty( $data[ $field ] ) ) {
+				return false;
+			}
+
 			if ( isset( $data[ $field ] ) ) {
 				if (
 					isset( $field_config['validator'] )
@@ -121,11 +126,6 @@ abstract class Sensei_Data_Port_Model {
 				}
 
 				continue;
-			}
-
-			// If the field is required, it must be set.
-			if ( ! empty( $field_config['required'] ) ) {
-				return false;
 			}
 
 			// If a default exists as well as a pattern, a `null` value is for a field that didn't match the pattern.
