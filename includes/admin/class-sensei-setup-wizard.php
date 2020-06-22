@@ -466,8 +466,8 @@ class Sensei_Setup_Wizard {
 	private function get_feature_with_status( $extension, $installing_plugins, $selected_plugins ) {
 		$installing_key = array_search( $extension->product_slug, wp_list_pluck( $installing_plugins, 'product_slug' ), true );
 
-		if ( in_array( $extension->product_slug, $selected_plugins, true ) ) {
-			$extension->status = isset( $extension->wccom_product_id ) ? 'external' : 'selected';
+		if ( in_array( $extension->product_slug, $selected_plugins, true ) && isset( $extension->wccom_product_id ) ) {
+			$extension->status = 'installing';
 		}
 		if ( false !== $installing_key ) {
 			if ( isset( $installing_plugins[ $installing_key ]->error ) ) {
