@@ -2463,6 +2463,29 @@ class Sensei_Utils {
 	}
 
 	/**
+	 * Checks if the given version pf WooCommerce plugin is installed and activated.
+	 *
+	 * @param string $minimum_version
+	 *
+	 * @return bool
+	 * @since Sensei 3.2.0
+	 */
+	public static function is_woocommerce_active( $minimum_version = null ) {
+		$is_active = self::is_plugin_present_and_activated( 'Woocommerce', 'woocommerce/woocommerce.php' );
+
+		if ( ! $is_active ) {
+			return false;
+		}
+
+		if ( null !== $minimum_version ) {
+			return version_compare( WC()->version, $minimum_version, '>=' );
+		}
+
+		return true;
+	}
+
+
+	/**
 	 * Hard - Resets a Learner's Course Progress
 	 *
 	 * @param $course_id int

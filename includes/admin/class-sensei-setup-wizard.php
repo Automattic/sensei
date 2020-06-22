@@ -424,13 +424,7 @@ class Sensei_Setup_Wizard {
 	 */
 	public function get_woocommerce_connect_data() {
 
-		$is_woocommerce_installed = Sensei_Utils::is_plugin_present_and_activated( 'Woocommerce', 'woocommerce/woocommerce.php' );
-
-		if ( ! $is_woocommerce_installed ) {
-			return [];
-		}
-
-		$back_admin_path = add_query_arg(
+		$back_admin_path          = add_query_arg(
 			[
 				'page'     => $this->page_slug,
 				'step'     => 'features',
@@ -438,13 +432,26 @@ class Sensei_Setup_Wizard {
 			],
 			'admin.php'
 		);
+		$wc_params                = [];
+		$is_woocommerce_installed = Sensei_Utils::is_woocommerce_active( '3.7.0' ) && class_exists( 'WC_Admin_Addons' );
 
-		return [
-			'wccom-site'          => site_url(),
-			'wccom-back'          => $back_admin_path,
-			'wccom-woo-version'   => WC()->version,
-			'wccom-connect-nonce' => wp_create_nonce( 'connect' ),
-		];
+		if ( $is_woocommerce_installed ) {
+			$wc_params = WC_Admin_Addons::get_in_app_purchase_url_params();
+
+		} else {
+			$wc_info = $this->get_woocommerce_information();
+
+			$wc_params = [
+				'wccom-site'          => site_url(),
+				'wccom-woo-version'   => $wc_info->version,
+				'wccom-connect-nonce' => wp_create_nonce( 'connect' ),
+			];
+		}
+
+		$wc_params['wccom-back'] = rawurlencode( $back_admin_path );
+
+		return $wc_params;
+
 	}
 
 	/**
@@ -534,6 +541,7 @@ class Sensei_Setup_Wizard {
 			'plugin_file'  => 'woocommerce/woocommerce.php',
 			'link'         => 'https://wordpress.org/plugins/' . $wc_slug,
 			'unselectable' => true,
+			'version'      => $plugin_information->version,
 		];
 
 		set_transient( self::WC_INFORMATION_TRANSIENT, $wc_information, DAY_IN_SECONDS );
