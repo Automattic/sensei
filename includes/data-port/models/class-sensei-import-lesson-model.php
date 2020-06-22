@@ -282,7 +282,7 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 			update_post_meta( $this->course_id, '_lesson_order', $new_lesson_order );
 
 			$current_lesson_index = count( explode( ',', $new_lesson_order ) );
-			update_post_meta( $this->get_post_id(), '_order_ ' . $this->course_id, $current_lesson_index );
+			update_post_meta( $this->get_post_id(), '_order_' . $this->course_id, $current_lesson_index );
 		}
 
 		$result = $this->set_lesson_terms( Sensei_Data_Port_Lesson_Schema::COLUMN_MODULE, 'module' );
@@ -345,7 +345,7 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 
 		$value = $this->get_value( Sensei_Data_Port_Lesson_Schema::COLUMN_ALLOW_COMMENTS );
 		if ( null !== $value ) {
-			$args['comment_status'] = $value;
+			$args['comment_status'] = true === $value ? 'open' : 'closed';
 		}
 
 		$meta = $this->get_lesson_meta();

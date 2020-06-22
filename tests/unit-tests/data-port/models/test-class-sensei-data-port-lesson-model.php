@@ -1,0 +1,460 @@
+<?php
+/**
+ * This file contains the Sensei_Import_Lesson_Model_Test class.
+ *
+ * @package sensei
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * Tests for Sensei_Import_Lesson_Model class.
+ *
+ * @group data-port
+ */
+class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
+	/**
+	 * Sensei factory object.
+	 *
+	 * @var Sensei_Factory
+	 */
+	private $factory;
+
+	/**
+	 * Setup function.
+	 */
+	public function setUp() {
+		parent::setUp();
+
+		$this->factory = new Sensei_Factory();
+	}
+
+	/**
+	 * Returns an array with the data used by the tests. Each element is an array of line input data and expected
+	 * output following the format of Sensei_Data_Port_Lesson_Model::data.
+	 *
+	 * The first and second elements of the array, refer to the same Lesson and are used in the test scenario which
+	 * creates a post and then updates it.
+	 */
+	public function lineData() {
+		return [
+			[
+				[
+					Sensei_Data_Port_Lesson_Schema::COLUMN_ID             => '<tag>id</tag>',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE          => 'Lesson <randomtag>title</randomtag>',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_SLUG           => '<randomtag>slug</randomtag>',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_DESCRIPTION    => '<randomtag>description</randomtag>',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_EXCERPT        => '<randomtag>excerpt</randomtag>',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_STATUS         => 'publish',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_PREREQUISITE   => '<randomtag>prerequisite</randomtag>',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_PREVIEW        => 'preview',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_TAGS           => '<randomtag>   First,Second   </randomtag>',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_IMAGE          => 'localfilename.png',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_LENGTH         => '12',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_COMPLEXITY     => 'easy',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_VIDEO          => '<randomtag>video</randomtag>',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_PASS_REQUIRED  => 'true',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_PASSMARK       => 23,
+					Sensei_Data_Port_Lesson_Schema::COLUMN_NUM_QUESTIONS  => 'b4',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_RANDOMIZE      => 'false',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_AUTO_GRADE     => 'false',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_QUIZ_RESET     => 'true',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_ALLOW_COMMENTS => 'true',
+				],
+				[
+					Sensei_Data_Port_Lesson_Schema::COLUMN_ID             => 'id',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE          => 'Lesson title',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_SLUG           => 'slug',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_DESCRIPTION    => 'description',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_EXCERPT        => 'excerpt',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_STATUS         => 'publish',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_PREREQUISITE   => 'prerequisite',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_PREVIEW        => true,
+					Sensei_Data_Port_Lesson_Schema::COLUMN_TAGS           => 'First,Second',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_IMAGE          => 'localfilename.png',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_LENGTH         => 12,
+					Sensei_Data_Port_Lesson_Schema::COLUMN_COMPLEXITY     => 'easy',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_VIDEO          => 'video',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_PASS_REQUIRED  => true,
+					Sensei_Data_Port_Lesson_Schema::COLUMN_PASSMARK       => 23,
+					Sensei_Data_Port_Lesson_Schema::COLUMN_NUM_QUESTIONS  => 0,
+					Sensei_Data_Port_Lesson_Schema::COLUMN_RANDOMIZE      => true,
+					Sensei_Data_Port_Lesson_Schema::COLUMN_AUTO_GRADE     => true,
+					Sensei_Data_Port_Lesson_Schema::COLUMN_QUIZ_RESET     => true,
+					Sensei_Data_Port_Lesson_Schema::COLUMN_ALLOW_COMMENTS => true,
+				],
+			],
+			[
+				[
+					Sensei_Data_Port_Lesson_Schema::COLUMN_ID             => 'id',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE          => 'Updated Lesson title',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_SLUG           => 'slug',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_DESCRIPTION    => 'Updated description',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_EXCERPT        => 'Updated excerpt',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_STATUS         => 'draft',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_PREVIEW        => false,
+					Sensei_Data_Port_Lesson_Schema::COLUMN_TAGS           => 'New First, New Second ',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_LENGTH         => 15,
+					Sensei_Data_Port_Lesson_Schema::COLUMN_COMPLEXITY     => 'hard',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_VIDEO          => 'Updated video',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_PASS_REQUIRED  => false,
+					Sensei_Data_Port_Lesson_Schema::COLUMN_PASSMARK       => 85,
+					Sensei_Data_Port_Lesson_Schema::COLUMN_NUM_QUESTIONS  => 6,
+					Sensei_Data_Port_Lesson_Schema::COLUMN_RANDOMIZE      => false,
+					Sensei_Data_Port_Lesson_Schema::COLUMN_AUTO_GRADE     => false,
+					Sensei_Data_Port_Lesson_Schema::COLUMN_QUIZ_RESET     => false,
+					Sensei_Data_Port_Lesson_Schema::COLUMN_ALLOW_COMMENTS => false,
+				],
+				[
+					Sensei_Data_Port_Lesson_Schema::COLUMN_ID             => 'id',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE          => 'Updated Lesson title',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_SLUG           => 'slug',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_DESCRIPTION    => 'Updated description',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_EXCERPT        => 'Updated excerpt',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_STATUS         => 'draft',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_PREVIEW        => false,
+					Sensei_Data_Port_Lesson_Schema::COLUMN_TAGS           => 'New First, New Second',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_LENGTH         => 15,
+					Sensei_Data_Port_Lesson_Schema::COLUMN_COMPLEXITY     => 'hard',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_VIDEO          => 'Updated video',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_PASS_REQUIRED  => false,
+					Sensei_Data_Port_Lesson_Schema::COLUMN_PASSMARK       => 85,
+					Sensei_Data_Port_Lesson_Schema::COLUMN_NUM_QUESTIONS  => 6,
+					Sensei_Data_Port_Lesson_Schema::COLUMN_RANDOMIZE      => false,
+					Sensei_Data_Port_Lesson_Schema::COLUMN_AUTO_GRADE     => false,
+					Sensei_Data_Port_Lesson_Schema::COLUMN_QUIZ_RESET     => false,
+					Sensei_Data_Port_Lesson_Schema::COLUMN_ALLOW_COMMENTS => false,
+				],
+			],
+			[
+				[
+					Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE          => 'Lesson <p>title</p>',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_DESCRIPTION    => '<p>description</p>',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_EXCERPT        => '<p>excerpt</p>',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_STATUS         => 'random_status',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_MODULE         => '<randomtag>Module</randomtag>',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_COURSE         => '<randomtag>course_id</randomtag>',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_IMAGE          => 'http://randomurl<>.com/nice%20image.png',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_LENGTH         => '12',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_COMPLEXITY     => 'random_complexity',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_VIDEO          => '<video autoplay>video</video>',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_QUESTIONS      => '<randomtag>id:44</randomtag>',
+				],
+				[
+					Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE          => 'Lesson <p>title</p>',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_DESCRIPTION    => '<p>description</p>',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_EXCERPT        => '<p>excerpt</p>',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_STATUS         => null,
+					Sensei_Data_Port_Lesson_Schema::COLUMN_MODULE         => 'Module',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_COURSE         => 'course_id',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_IMAGE          => 'http://randomurl.com/nice%20image.png',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_LENGTH         => 12,
+					Sensei_Data_Port_Lesson_Schema::COLUMN_COMPLEXITY     => null,
+					Sensei_Data_Port_Lesson_Schema::COLUMN_VIDEO          => '<video autoplay>video</video>',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_QUESTIONS      => 'id:44',
+				],
+			],
+		];
+	}
+
+	/**
+	 * Make sure that input coming from the CSV file is sanitized properly.
+	 *
+	 * @dataProvider lineData
+	 */
+	public function testInputIsSanitized( $input_line, $expected_model_content ) {
+		$model         = Sensei_Import_Lesson_Model::from_source_array( $input_line, new Sensei_Data_Port_Lesson_Schema(), Sensei_Import_Job::create( 'test', 0 ) );
+		$tested_fields = [
+			Sensei_Data_Port_Lesson_Schema::COLUMN_ID,
+			Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE,
+			Sensei_Data_Port_Lesson_Schema::COLUMN_SLUG,
+			Sensei_Data_Port_Lesson_Schema::COLUMN_DESCRIPTION,
+			Sensei_Data_Port_Lesson_Schema::COLUMN_EXCERPT,
+			Sensei_Data_Port_Lesson_Schema::COLUMN_STATUS,
+			Sensei_Data_Port_Lesson_Schema::COLUMN_COURSE,
+			Sensei_Data_Port_Lesson_Schema::COLUMN_MODULE,
+			Sensei_Data_Port_Lesson_Schema::COLUMN_PREREQUISITE,
+			Sensei_Data_Port_Lesson_Schema::COLUMN_PREVIEW,
+			Sensei_Data_Port_Lesson_Schema::COLUMN_TAGS,
+			Sensei_Data_Port_Lesson_Schema::COLUMN_IMAGE,
+			Sensei_Data_Port_Lesson_Schema::COLUMN_LENGTH,
+			Sensei_Data_Port_Lesson_Schema::COLUMN_COMPLEXITY,
+			Sensei_Data_Port_Lesson_Schema::COLUMN_VIDEO,
+			Sensei_Data_Port_Lesson_Schema::COLUMN_PASS_REQUIRED,
+			Sensei_Data_Port_Lesson_Schema::COLUMN_PASSMARK,
+			Sensei_Data_Port_Lesson_Schema::COLUMN_NUM_QUESTIONS,
+			Sensei_Data_Port_Lesson_Schema::COLUMN_RANDOMIZE,
+			Sensei_Data_Port_Lesson_Schema::COLUMN_AUTO_GRADE,
+			Sensei_Data_Port_Lesson_Schema::COLUMN_QUIZ_RESET,
+			Sensei_Data_Port_Lesson_Schema::COLUMN_ALLOW_COMMENTS,
+			Sensei_Data_Port_Lesson_Schema::COLUMN_QUESTIONS,
+		];
+
+		foreach ( $tested_fields as $tested_field ) {
+			if ( isset( $expected_model_content[ $tested_field ] ) ) {
+				$this->assertEquals( $expected_model_content[ $tested_field ], $model->get_value( $tested_field ) );
+			}
+		}
+	}
+
+	/**
+	 * Tests creating a less and updating all its values.
+	 */
+	public function testLessonIsInsertedAndUpdated() {
+		$thumbnail_id = $this->factory->attachment->create( [ 'file' => 'localfilename.png' ] );
+		$model        = Sensei_Import_Lesson_Model::from_source_array( $this->lineData()[0][0], new Sensei_Data_Port_Lesson_Schema(), Sensei_Import_Job::create( 'test', 0 ) );
+		$result       = $model->sync_post();
+
+		$this->assertTrue( $result, 'Lesson with correct data should be created successfully.' );
+
+		$created_post = get_posts(
+			[
+				'post_type'      => 'lesson',
+				'post_name__in'  => [ 'slug' ],
+				'posts_per_page' => 1,
+				'post_status'    => 'any',
+			]
+		)[0];
+
+		$this->verify_lesson( $created_post, $this->lineData()[0][1], $thumbnail_id );
+
+		$model  = Sensei_Import_Lesson_Model::from_source_array( $this->lineData()[1][0], new Sensei_Data_Port_Lesson_Schema(), Sensei_Import_Job::create( 'test', 0 ) );
+		$result = $model->sync_post();
+
+		$this->assertTrue( $result, 'Lesson with correct data should be updated successfully.' );
+
+		$updated_post = get_posts(
+			[
+				'post_type'      => 'lesson',
+				'post_name__in'  => [ 'slug' ],
+				'posts_per_page' => 1,
+				'post_status'    => 'any',
+			]
+		)[0];
+
+		$this->assertEquals( $created_post->ID, $updated_post->ID );
+
+		$this->verify_lesson( $updated_post, $this->lineData()[1][1], $thumbnail_id );
+	}
+
+	/**
+	 * Helper method to verify that all the fields of a lesson are correct.
+	 *
+	 * @param WP_Post $lesson        The lesson to verify.
+	 * @param array   $line_data     An array which has all the expected values. It follows the format of Sensei_Data_Port_Lesson_Model::data.
+	 * @param int     $thumbnail_id  The post id of the image attachment.
+	 */
+	private function verify_lesson( WP_Post $lesson, $line_data, $thumbnail_id = 0 ) {
+
+		// Assert that post columns have the correct values.
+		$this->assertEquals( $line_data[ Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE ], $lesson->post_title );
+		$this->assertEquals( $line_data[ Sensei_Data_Port_Lesson_Schema::COLUMN_SLUG ], $lesson->post_name );
+		$this->assertEquals( $line_data[ Sensei_Data_Port_Lesson_Schema::COLUMN_DESCRIPTION ], $lesson->post_content );
+		$this->assertEquals( $line_data[ Sensei_Data_Port_Lesson_Schema::COLUMN_EXCERPT ], $lesson->post_excerpt );
+		$this->assertEquals( $line_data[ Sensei_Data_Port_Lesson_Schema::COLUMN_STATUS ], $lesson->post_status );
+
+		if ( true === (bool) $line_data[ Sensei_Data_Port_Lesson_Schema::COLUMN_ALLOW_COMMENTS ] ) {
+			$this->assertEquals( 'open', $lesson->comment_status );
+		} else {
+			$this->assertEquals( 'closed', $lesson->comment_status );
+		}
+
+		// Assert that post meta have the correct values.
+		$this->assertEquals( $line_data[ Sensei_Data_Port_Lesson_Schema::COLUMN_VIDEO ], get_post_meta( $lesson->ID, '_lesson_video_embed', true ) );
+		$this->assertEquals( $line_data[ Sensei_Data_Port_Lesson_Schema::COLUMN_COMPLEXITY ], get_post_meta( $lesson->ID, '_lesson_complexity', true ) );
+		$this->assertEquals( $line_data[ Sensei_Data_Port_Lesson_Schema::COLUMN_LENGTH ], get_post_meta( $lesson->ID, '_lesson_length', true ) );
+
+		if ( true === (bool) $line_data[ Sensei_Data_Port_Lesson_Schema::COLUMN_PREVIEW ] ) {
+			$this->assertEquals( 'preview', get_post_meta( $lesson->ID, '_lesson_preview', true ) );
+		} else {
+			$this->assertEmpty( get_post_meta( $lesson->ID, '_lesson_preview', true ) );
+		}
+
+		// Assert that the lesson has the correct terms.
+		$expected_lesson_tags = Sensei_Data_Port_Utilities::split_list_safely( $line_data[ Sensei_Data_Port_Lesson_Schema::COLUMN_TAGS ] );
+		if ( ! empty( $expected_lesson_tags ) ) {
+			$actual_lesson_tags = wp_get_object_terms( $lesson->ID, 'lesson-tag', [ 'fields' => 'names' ] );
+			$this->assertArraySubset( $expected_lesson_tags, $actual_lesson_tags, false, 'Lesson should have the supplied tags.' );
+		}
+
+		if ( 0 !== $thumbnail_id ) {
+			$this->assertEquals( $thumbnail_id, get_post_meta( $lesson->ID, '_thumbnail_id', true ), 'Lesson should have the supplied thumbnail.' );
+		}
+	}
+
+	/**
+	 * Tests that the course is linked correctly to a course.
+	 */
+	public function testLessonCourseIsLinkedCorrectly() {
+		$job                     = Sensei_Import_Job::create( 'test', 0 );
+		$lesson_data_with_course = array_merge( $this->lineData()[0][1], [ Sensei_Data_Port_Lesson_Schema::COLUMN_COURSE => 'id:the-import-id' ] );
+		unset( $lesson_data_with_course[ Sensei_Data_Port_Lesson_Schema::COLUMN_IMAGE ] );
+
+		$model  = Sensei_Import_Lesson_Model::from_source_array( $lesson_data_with_course, new Sensei_Data_Port_Lesson_Schema(), $job );
+		$result = $model->sync_post();
+
+		$this->assertInstanceOf( 'WP_Error', $result, 'Lesson creation should fail when a course which does not exist is supplied.' );
+		$this->assertEquals( 'sensei_data_port_course_not_found', $result->get_error_code() );
+
+		$course_data = [
+			Sensei_Data_Port_Course_Schema::COLUMN_ID    => 'the-import-id',
+			Sensei_Data_Port_Course_Schema::COLUMN_TITLE => 'Course title',
+		];
+
+		$course_model = Sensei_Import_Course_Model::from_source_array( $course_data, new Sensei_Data_Port_Course_Schema(), $job );
+		$course_model->sync_post();
+
+		$created_course = get_posts(
+			[
+				'post_type'      => 'course',
+				'post_title'     => [ 'Course title' ],
+				'posts_per_page' => 1,
+				'post_status'    => 'any',
+			]
+		)[0];
+
+		$model  = Sensei_Import_Lesson_Model::from_source_array( $lesson_data_with_course, new Sensei_Data_Port_Lesson_Schema(), $job );
+		$result = $model->sync_post();
+
+		$this->assertTrue( $result, 'Lesson creation should not fail when the linked course exists.' );
+
+		$created_lesson = get_posts(
+			[
+				'post_type'      => 'lesson',
+				'post_name__in'  => [ 'slug' ],
+				'posts_per_page' => 1,
+				'post_status'    => 'any',
+			]
+		)[0];
+
+		$this->assertEquals( $created_course->ID, get_post_meta( $created_lesson->ID, '_lesson_course', true ), 'Lesson should be linked to the supplied course.' );
+	}
+
+	/**
+	 * Tests that the module is linked correctly to a lesson.
+	 */
+	public function testLessonModuleIsLinkedCorrectly() {
+		$job                     = Sensei_Import_Job::create( 'test', 0 );
+		$lesson_data_with_module = array_merge( $this->lineData()[0][1], [ Sensei_Data_Port_Lesson_Schema::COLUMN_MODULE => 'the-module' ] );
+		unset( $lesson_data_with_module[ Sensei_Data_Port_Lesson_Schema::COLUMN_IMAGE ] );
+
+		$model  = Sensei_Import_Lesson_Model::from_source_array( $lesson_data_with_module, new Sensei_Data_Port_Lesson_Schema(), $job );
+		$result = $model->sync_post();
+
+		$this->assertInstanceOf( 'WP_Error', $result, 'Lesson creation should fail when a course module was supplied but course was empty.' );
+		$this->assertEquals( 'sensei_data_port_course_empty', $result->get_error_code() );
+
+		$course_model = Sensei_Import_Course_Model::from_source_array(
+			[
+				Sensei_Data_Port_Course_Schema::COLUMN_ID => 'the-import-id',
+				Sensei_Data_Port_Course_Schema::COLUMN_TITLE => 'Course title',
+			],
+			new Sensei_Data_Port_Course_Schema(),
+			$job
+		);
+		$course_model->sync_post();
+		$lesson_data_with_module[ Sensei_Data_Port_Lesson_Schema::COLUMN_COURSE ] = 'id:the-import-id';
+
+		$model  = Sensei_Import_Lesson_Model::from_source_array( $lesson_data_with_module, new Sensei_Data_Port_Lesson_Schema(), $job );
+		$result = $model->sync_post();
+
+		$this->assertInstanceOf( 'WP_Error', $result, 'Lesson creation should fail when the module does not exist.' );
+		$this->assertEquals( 'sensei_data_port_module_not_found', $result->get_error_code() );
+
+		$term   = Sensei_Data_Port_Utilities::get_term( 'the-module', 'module' );
+		$model  = Sensei_Import_Lesson_Model::from_source_array( $lesson_data_with_module, new Sensei_Data_Port_Lesson_Schema(), $job );
+		$result = $model->sync_post();
+
+		$this->assertInstanceOf( 'WP_Error', $result, 'Lesson creation should fail when the module is not part of the linked course.' );
+		$this->assertEquals( 'sensei_data_port_module_not_part_of_course', $result->get_error_code() );
+
+		$created_course = get_posts(
+			[
+				'post_type'      => 'course',
+				'post_title'     => [ 'Course title' ],
+				'posts_per_page' => 1,
+				'post_status'    => 'any',
+			]
+		)[0];
+		wp_set_object_terms( $created_course->ID, $term->term_id, 'module' );
+
+		$model  = Sensei_Import_Lesson_Model::from_source_array( $lesson_data_with_module, new Sensei_Data_Port_Lesson_Schema(), $job );
+		$result = $model->sync_post();
+
+		$this->assertTrue( $result, 'Lesson should be created successfully when module data are correct.' );
+	}
+
+	/**
+	 * Tests that the lesson order is created correctly.
+	 */
+	public function testLessonOrderIsGeneratedCorrectly() {
+		$job          = Sensei_Import_Job::create( 'test', 0 );
+		$course_model = Sensei_Import_Course_Model::from_source_array(
+			[
+				Sensei_Data_Port_Course_Schema::COLUMN_ID => 'the-import-id',
+				Sensei_Data_Port_Course_Schema::COLUMN_TITLE => 'Course title',
+			],
+			new Sensei_Data_Port_Course_Schema(),
+			$job
+		);
+		$course_model->sync_post();
+
+		$course_id = get_posts(
+			[
+				'post_type'      => 'course',
+				'post_title'     => 'Course title',
+				'posts_per_page' => 1,
+				'post_status'    => 'any',
+			]
+		)[0]->ID;
+
+		$lessons = [
+			[
+				Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE  => 'First lesson',
+				Sensei_Data_Port_Lesson_Schema::COLUMN_SLUG   => 'first',
+				Sensei_Data_Port_Lesson_Schema::COLUMN_COURSE => 'id:the-import-id',
+			],
+			[
+				Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE => 'Second lesson',
+				Sensei_Data_Port_Lesson_Schema::COLUMN_SLUG  => 'second',
+			],
+			[
+				Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE  => 'Third lesson',
+				Sensei_Data_Port_Lesson_Schema::COLUMN_SLUG   => 'third',
+				Sensei_Data_Port_Lesson_Schema::COLUMN_COURSE => 'id:the-import-id',
+			],
+			[
+				Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE  => 'Fourth lesson',
+				Sensei_Data_Port_Lesson_Schema::COLUMN_SLUG   => 'fourth',
+				Sensei_Data_Port_Lesson_Schema::COLUMN_COURSE => 'id:the-import-id',
+			],
+		];
+
+		$lesson_ids = [];
+		foreach ( $lessons as $lesson ) {
+			$model = Sensei_Import_Lesson_Model::from_source_array( $lesson, new Sensei_Data_Port_Lesson_Schema(), $job );
+			$model->sync_post();
+
+			$lesson_ids[] = get_posts(
+				[
+					'post_type'      => 'lesson',
+					'post_name__in'  => [ $lesson[ Sensei_Data_Port_Lesson_Schema::COLUMN_SLUG ] ],
+					'posts_per_page' => 1,
+					'post_status'    => 'any',
+				]
+			)[0]->ID;
+		}
+
+		unset( $lesson_ids[1] );
+
+		$this->assertEquals( implode( ',', $lesson_ids ), get_post_meta( $course_id, '_lesson_order', true ) );
+
+		$order = 1;
+		foreach ( $lesson_ids as $lesson_id ) {
+			$this->assertEquals( $order, get_post_meta( $lesson_id, '_order_' . $course_id, true ) );
+			$order++;
+		}
+	}
+}
