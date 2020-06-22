@@ -191,8 +191,8 @@ abstract class Sensei_Import_Model extends Sensei_Data_Port_Model {
 	protected function store_import_id() {
 		$import_id = $this->get_value( $this->schema->get_column_id() );
 
-		if ( ! empty( $import_id ) && 0 === strpos( 'id:', $import_id ) ) {
-			$this->import_job->set_import_id( $this->schema->get_post_type(), substr( $import_id, 3 ), $this->get_post_id() );
+		if ( ! empty( $import_id ) ) {
+			$this->import_job->set_import_id( $this->schema->get_post_type(), $import_id, $this->get_post_id() );
 		}
 	}
 
@@ -209,7 +209,7 @@ abstract class Sensei_Import_Model extends Sensei_Data_Port_Model {
 			return null;
 		}
 
-		if ( 0 === strpos( 'id:', $import_id ) ) {
+		if ( 0 === strpos( $import_id, 'id:' ) ) {
 			return $this->import_job->get_import_id( $post_type, substr( $import_id, 3 ) );
 		}
 
