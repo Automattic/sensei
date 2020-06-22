@@ -11,7 +11,10 @@ import {
 	updateQueryString,
 } from '../query-string-router/url-functions';
 import { useSetupWizardStep } from '../data/use-setup-wizard-step';
-import { getWoocommerceComPurchaseUrl } from '../helpers/woocommerce-com';
+import {
+	getWcProductId,
+	getWoocommerceComPurchaseUrl,
+} from '../helpers/woocommerce-com';
 import ConfirmationModal from './confirmation-modal';
 import InstallationFeedback from './installation-feedback';
 import FeaturesSelection from './features-selection';
@@ -38,7 +41,7 @@ const filterInstalledFeatures = ( submittedSlugs, features ) =>
 	} );
 
 const wcSlug = 'woocommerce';
-const getWcProductId = ( feature ) => feature.wccom_product_id;
+
 /**
  * Features step for setup wizard.
  */
@@ -164,7 +167,7 @@ const Features = () => {
 		);
 		if ( ! pendingWcFeatures.length ) return;
 		const wcPurchaseUrl = getWoocommerceComPurchaseUrl(
-			pendingWcFeatures.map( getWcProductId ),
+			pendingWcFeatures,
 			stepData.wccom
 		);
 		window.open( wcPurchaseUrl );

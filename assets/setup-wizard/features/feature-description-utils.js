@@ -1,4 +1,5 @@
 import { sprintf, __ } from '@wordpress/i18n';
+import { getWcProductId } from '../helpers/woocommerce-com';
 
 /**
  * @typedef  {Object} Feature
@@ -18,7 +19,7 @@ export const getFeatureObservation = ( slug, selectedFeatures ) => {
 	}
 
 	const titles = selectedFeatures
-		.filter( ( feature ) => feature.wccom_product_id )
+		.filter( getWcProductId )
 		.map( ( feature ) => feature.rawTitle )
 		.join( __( ' and ', 'sensei-lms' ) );
 
