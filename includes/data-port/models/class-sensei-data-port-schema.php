@@ -1,4 +1,9 @@
 <?php
+/**
+ * File containing the Sensei_Data_Port_Schema class.
+ *
+ * @package sensei
+ */
 
 /**
  * Class Sensei_Data_Port_Schema
