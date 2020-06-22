@@ -238,7 +238,7 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 	private function sync_lesson() {
 
 		$value = $this->get_value( Sensei_Data_Port_Lesson_Schema::COLUMN_COURSE );
-		if ( null !== $value ) {
+		if ( ! empty( $value ) ) {
 			$course = $this->translate_import_id( Sensei_Data_Port_Course_Schema::POST_TYPE, $value );
 
 			if ( empty( $course ) ) {
