@@ -100,7 +100,7 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 					Sensei_Data_Port_Lesson_Schema::COLUMN_COMPLEXITY     => 'hard',
 					Sensei_Data_Port_Lesson_Schema::COLUMN_VIDEO          => 'Updated video',
 					Sensei_Data_Port_Lesson_Schema::COLUMN_PASS_REQUIRED  => false,
-					Sensei_Data_Port_Lesson_Schema::COLUMN_PASSMARK       => 85,
+					Sensei_Data_Port_Lesson_Schema::COLUMN_PASSMARK       => 0,
 					Sensei_Data_Port_Lesson_Schema::COLUMN_NUM_QUESTIONS  => 6,
 					Sensei_Data_Port_Lesson_Schema::COLUMN_RANDOMIZE      => false,
 					Sensei_Data_Port_Lesson_Schema::COLUMN_AUTO_GRADE     => false,
@@ -120,7 +120,7 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 					Sensei_Data_Port_Lesson_Schema::COLUMN_COMPLEXITY     => 'hard',
 					Sensei_Data_Port_Lesson_Schema::COLUMN_VIDEO          => 'Updated video',
 					Sensei_Data_Port_Lesson_Schema::COLUMN_PASS_REQUIRED  => false,
-					Sensei_Data_Port_Lesson_Schema::COLUMN_PASSMARK       => 85,
+					Sensei_Data_Port_Lesson_Schema::COLUMN_PASSMARK       => 0,
 					Sensei_Data_Port_Lesson_Schema::COLUMN_NUM_QUESTIONS  => 6,
 					Sensei_Data_Port_Lesson_Schema::COLUMN_RANDOMIZE      => false,
 					Sensei_Data_Port_Lesson_Schema::COLUMN_AUTO_GRADE     => false,
@@ -309,7 +309,7 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 		$created_course = get_posts(
 			[
 				'post_type'      => 'course',
-				'title'          => [ 'Course title' ],
+				'title'          => 'Course title',
 				'posts_per_page' => 1,
 				'post_status'    => 'any',
 			]
@@ -373,7 +373,7 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 		$created_course = get_posts(
 			[
 				'post_type'      => 'course',
-				'title'          => [ 'Course title' ],
+				'title'          => 'Course title',
 				'posts_per_page' => 1,
 				'post_status'    => 'any',
 			]

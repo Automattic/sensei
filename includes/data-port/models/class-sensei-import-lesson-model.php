@@ -119,8 +119,8 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 		$pass_mark     = $this->get_value( Sensei_Data_Port_Lesson_Schema::COLUMN_PASSMARK );
 
 		if (
-			( empty( $pass_required ) && null !== $pass_mark ) ||
-			( ! empty( $pass_required ) && null === $pass_mark ) ) {
+			( empty( $pass_required ) && ! empty( $pass_mark ) ) ||
+			( ! empty( $pass_required ) && empty( $pass_mark ) ) ) {
 			return new WP_Error(
 				'sensei_data_port_passmark_incorrect',
 				__( 'Both Passmark and Pass Required should be supplied.', 'sensei-lms' )
