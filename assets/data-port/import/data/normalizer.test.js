@@ -17,7 +17,7 @@ describe( 'Importer data normalizer', () => {
 				isUploaded: true,
 			},
 		},
-		import: {
+		progress: {
 			status: 'pending',
 			percentage: 0,
 		},
