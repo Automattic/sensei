@@ -22,7 +22,6 @@ class Sensei_Feature_Flags {
 				'rest_api_v1_skip_permissions' => false,
 				'enrolment_provider_tooltip'   => false,
 				'importer'                     => false,
-				'setup_wizard_all_extensions'  => false,
 			)
 		);
 	}
