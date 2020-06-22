@@ -109,6 +109,7 @@ class Sensei_Grading {
 		$classes_to_load = array(
 			'list-table',
 			'grading-main',
+			'grading-answers',
 			'grading-user-quiz',
 		);
 		foreach ( $classes_to_load as $class_file ) {
@@ -150,6 +151,8 @@ class Sensei_Grading {
 
 		if ( isset( $_GET['quiz_id'] ) && 0 < intval( $_GET['quiz_id'] ) && isset( $_GET['user'] ) && 0 < intval( $_GET['user'] ) ) {
 			$this->grading_user_quiz_view();
+		} elseif ( isset( $_GET['quiz_id'] ) && 0 < intval( $_GET['quiz_id'] ) && isset( $_GET['answers'] ) ) {
+				$this->grading_answers_view();
 		} else {
 			$this->grading_default_view();
 		} // End If Statement
@@ -200,6 +203,39 @@ class Sensei_Grading {
 		do_action( 'grading_wrapper_container', 'bottom' );
 		do_action( 'grading_after_container' );
 	} // End grading_default_view()
+
+	/**
+	 * grading_answers_view all quiz answers page
+	 *
+	 * @since  3.1.1
+	 * @return void
+	 */
+	public function grading_answers_view() {
+
+		// Load Grading data
+		$user_id = 0;
+		$quiz_id = 0;
+		if ( isset( $_GET['user'] ) ) {
+			$user_id = intval( $_GET['user'] );
+		}
+		if ( isset( $_GET['quiz_id'] ) ) {
+			$quiz_id = intval( $_GET['quiz_id'] );
+		}
+		$sensei_answers = $this->load_data_object( 'Answers', $user_id, $quiz_id );
+		// Wrappers
+		do_action( 'grading_before_container' );
+		do_action( 'grading_wrapper_container', 'top' );
+		$this->grading_headers( array( 'nav' => 'user_quiz' ) );
+		?>
+		<div id="poststuff" class="sensei-grading-wrap user-profile">
+			<div class="sensei-grading-main">
+				<?php $sensei_answers->display(); ?>
+			</div>
+		</div>
+		<?php
+		do_action( 'grading_wrapper_container', 'bottom' );
+		do_action( 'grading_after_container' );
+	} // End grading_answers_view()
 
 	/**
 	 * grading_user_quiz_view user quiz answers view for grading page
