@@ -12,8 +12,8 @@ export const ImportProgressPage = ( { jobId, state } ) => {
 	useProgressPolling( isActive, jobId );
 
 	return (
-		<section className="sensei-import-step sensei-import-progress-page">
-			<header className="sensei-import-step__header">
+		<section className="sensei-data-port-step sensei-import-progress-page">
+			<header className="sensei-data-port-step__header">
 				<H>{ __( 'Importing', 'sensei-lms' ) }</H>
 				<p>
 					{ __(
@@ -22,7 +22,10 @@ export const ImportProgressPage = ( { jobId, state } ) => {
 					) }
 				</p>
 			</header>
-			<Section className="sensei-import-step__body" component="section">
+			<Section
+				className="sensei-data-port-step__body"
+				component="section"
+			>
 				<p>
 					<progress
 						className="sensei-import-progress-page__progress"

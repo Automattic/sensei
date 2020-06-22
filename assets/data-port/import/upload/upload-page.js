@@ -11,8 +11,8 @@ export const UploadPage = ( { state, isReady, submitStartImport } ) => {
 	const { isSubmitting, errorMsg } = state;
 
 	return (
-		<section className="sensei-import-step sensei-upload-page">
-			<header className="sensei-import-step__header">
+		<section className="sensei-data-port-step sensei-upload-page">
+			<header className="sensei-data-port-step__header">
 				<H>{ __( 'Import content from a CSV file', 'sensei-lms' ) }</H>
 				<p>
 					{ __(
@@ -21,7 +21,10 @@ export const UploadPage = ( { state, isReady, submitStartImport } ) => {
 					) }
 				</p>
 			</header>
-			<Section className="sensei-import-step__body" component="section">
+			<Section
+				className="sensei-data-port-step__body"
+				component="section"
+			>
 				<p>
 					{ __(
 						'Choose one or more CSV files to upload from your computer.',

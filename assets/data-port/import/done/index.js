@@ -7,7 +7,7 @@ import { Section, H } from '@woocommerce/components';
 export const DonePage = () => {
 	return (
 		<section className="sensei-done-page">
-			<header className="sensei-import-step__header">
+			<header className="sensei-data-port-step__header">
 				<H>{ __( 'Done', 'sensei-lms' ) }</H>
 			</header>
 			<Section component="section">
