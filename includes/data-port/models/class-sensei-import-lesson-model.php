@@ -50,7 +50,7 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 			return $quiz_args;
 		}
 
-		$quiz_id = wp_insert_post( $quiz_args );
+		$quiz_id = wp_insert_post( $quiz_args, true );
 
 		if ( is_wp_error( $quiz_id ) ) {
 			return $quiz_id;
@@ -119,8 +119,8 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 		$pass_mark     = $this->get_value( Sensei_Data_Port_Lesson_Schema::COLUMN_PASSMARK );
 
 		if (
-			( null === $pass_required && null !== $pass_mark ) ||
-			( null !== $pass_required && null === $pass_mark ) ) {
+			( empty( $pass_required ) && null !== $pass_mark ) ||
+			( ! empty( $pass_required ) && null === $pass_mark ) ) {
 			return new WP_Error(
 				'sensei_data_port_passmark_incorrect',
 				__( 'Both Passmark and Pass Required should be supplied.', 'sensei-lms' )
@@ -179,7 +179,7 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 			return true;
 		}
 
-		$question_import_ids = Sensei_Data_Port_Utilities::split_list_safely( $questions, true );
+		$question_import_ids = array_unique( Sensei_Data_Port_Utilities::split_list_safely( $questions, true ) );
 		$question_ids        = [];
 
 		foreach ( $question_import_ids as $question_import_id ) {
@@ -260,7 +260,7 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 			return $lesson_args;
 		}
 
-		$post_id = wp_insert_post( $lesson_args );
+		$post_id = wp_insert_post( $lesson_args, true );
 
 		if ( is_wp_error( $post_id ) ) {
 			return $post_id;

@@ -29,7 +29,7 @@ class Sensei_Import_Question_Model extends Sensei_Import_Model {
 	public function sync_post() {
 		$postarr = $this->get_post_array();
 
-		$post_id = wp_insert_post( $postarr );
+		$post_id = wp_insert_post( $postarr, true );
 
 		if ( is_wp_error( $post_id ) ) {
 			return $post_id;

@@ -200,7 +200,7 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests creating a less and updating all its values.
+	 * Tests creating a lesson and updating all its values.
 	 */
 	public function testLessonIsInsertedAndUpdated() {
 		$thumbnail_id = $this->factory->attachment->create( [ 'file' => 'localfilename.png' ] );
@@ -309,7 +309,7 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 		$created_course = get_posts(
 			[
 				'post_type'      => 'course',
-				'post_title'     => [ 'Course title' ],
+				'title'          => [ 'Course title' ],
 				'posts_per_page' => 1,
 				'post_status'    => 'any',
 			]
@@ -373,7 +373,7 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 		$created_course = get_posts(
 			[
 				'post_type'      => 'course',
-				'post_title'     => [ 'Course title' ],
+				'title'          => [ 'Course title' ],
 				'posts_per_page' => 1,
 				'post_status'    => 'any',
 			]
@@ -404,7 +404,7 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 		$course_id = get_posts(
 			[
 				'post_type'      => 'course',
-				'post_title'     => 'Course title',
+				'title'          => 'Course title',
 				'posts_per_page' => 1,
 				'post_status'    => 'any',
 			]
@@ -456,5 +456,187 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 			$this->assertEquals( $order, get_post_meta( $lesson_id, '_order_' . $course_id, true ) );
 			$order++;
 		}
+	}
+
+	/**
+	 * Tests creation and updating of quizzes.
+	 */
+	public function testQuizIsInsertedAndUpdated() {
+		$this->factory->attachment->create( [ 'file' => 'localfilename.png' ] );
+		$model  = Sensei_Import_Lesson_Model::from_source_array( $this->lineData()[0][0], new Sensei_Data_Port_Lesson_Schema(), Sensei_Import_Job::create( 'test', 0 ) );
+		$result = $model->sync_post();
+
+		$this->assertTrue( $result, 'Quiz with correct data should be created successfully.' );
+
+		$created_post = get_posts(
+			[
+				'post_type'      => 'quiz',
+				'posts_per_page' => 1,
+				'post_status'    => 'any',
+			]
+		)[0];
+
+		$this->verify_quiz( $created_post, $this->lineData()[0][1] );
+
+		$model  = Sensei_Import_Lesson_Model::from_source_array( $this->lineData()[1][0], new Sensei_Data_Port_Lesson_Schema(), Sensei_Import_Job::create( 'test', 0 ) );
+		$result = $model->sync_post();
+
+		$this->assertTrue( $result, 'Quiz with correct data should be updated successfully.' );
+
+		$updated_post = get_posts(
+			[
+				'post_type'      => 'quiz',
+				'posts_per_page' => 1,
+				'post_status'    => 'any',
+			]
+		)[0];
+
+		$this->assertEquals( $created_post->ID, $updated_post->ID );
+
+		$this->verify_quiz( $updated_post, $this->lineData()[1][1] );
+	}
+
+	/**
+	 * Helper method to verify that all the fields of a quiz are correct.
+	 *
+	 * @param WP_Post $quiz        The quiz to verify.
+	 * @param array   $line_data   An array which has all the expected values. It follows the format of Sensei_Data_Port_Lesson_Model::data.
+	 */
+	private function verify_quiz( WP_Post $quiz, $line_data ) {
+
+		// Assert that post columns have the correct values.
+		$this->assertEquals( $line_data[ Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE ], $quiz->post_title );
+		$this->assertEquals( $line_data[ Sensei_Data_Port_Lesson_Schema::COLUMN_STATUS ], $quiz->post_status );
+
+		// Assert that post meta have the correct values.
+		$this->assertEquals( $line_data[ Sensei_Data_Port_Lesson_Schema::COLUMN_NUM_QUESTIONS ], get_post_meta( $quiz->ID, '_show_questions', true ) );
+
+		if ( true === (bool) $line_data[ Sensei_Data_Port_Lesson_Schema::COLUMN_PASS_REQUIRED ] ) {
+			$this->assertEquals( 'on', get_post_meta( $quiz->ID, '_pass_required', true ) );
+			$this->assertEquals( $line_data[ Sensei_Data_Port_Lesson_Schema::COLUMN_PASSMARK ], get_post_meta( $quiz->ID, '_quiz_passmark', true ) );
+		} else {
+			$this->assertEmpty( get_post_meta( $quiz->ID, '_pass_required', true ) );
+			$this->assertEquals( 0, get_post_meta( $quiz->ID, '_quiz_passmark', true ), 'Passmark should be 0 when pass is not required.' );
+		}
+
+		if ( true === (bool) $line_data[ Sensei_Data_Port_Lesson_Schema::COLUMN_RANDOMIZE ] ) {
+			$this->assertEquals( 'yes', get_post_meta( $quiz->ID, '_random_question_order', true ) );
+		} else {
+			$this->assertEquals( 'no', get_post_meta( $quiz->ID, '_random_question_order', true ) );
+		}
+
+		if ( true === (bool) $line_data[ Sensei_Data_Port_Lesson_Schema::COLUMN_AUTO_GRADE ] ) {
+			$this->assertEquals( 'auto', get_post_meta( $quiz->ID, '_quiz_grade_type', true ) );
+		} else {
+			$this->assertEquals( 'manual', get_post_meta( $quiz->ID, '_quiz_grade_type', true ) );
+		}
+
+		if ( true === (bool) $line_data[ Sensei_Data_Port_Lesson_Schema::COLUMN_AUTO_GRADE ] ) {
+			$this->assertEquals( 'on', get_post_meta( $quiz->ID, '_enable_quiz_reset', true ) );
+		} else {
+			$this->assertEmpty( get_post_meta( $quiz->ID, '_enable_quiz_reset', true ) );
+		}
+	}
+
+	/**
+	 * Tests that the quiz question order is created correctly.
+	 */
+	public function testQuizOrderIsGeneratedCorrectly() {
+		// Create the common job and 3 questions.
+		$job       = Sensei_Import_Job::create( 'test', 0 );
+		$questions = [
+			[
+				Sensei_Data_Port_Question_Schema::COLUMN_ID => 'burgers',
+				Sensei_Data_Port_Question_Schema::COLUMN_TITLE => 'Do you like burgers?',
+				Sensei_Data_Port_Question_Schema::COLUMN_ANSWER => 'Right:Yes, Wrong: No',
+				Sensei_Data_Port_Question_Schema::COLUMN_SLUG  => 'do-you-like-burgers',
+			],
+			[
+				Sensei_Data_Port_Question_Schema::COLUMN_ID => 'ice-cream',
+				Sensei_Data_Port_Question_Schema::COLUMN_TITLE => 'Do you like ice cream?',
+				Sensei_Data_Port_Question_Schema::COLUMN_ANSWER => 'Right:Yes, Wrong: No',
+				Sensei_Data_Port_Question_Schema::COLUMN_SLUG  => 'do-you-like-ice-cream',
+			],
+			[
+				Sensei_Data_Port_Question_Schema::COLUMN_ID => 'pizza',
+				Sensei_Data_Port_Question_Schema::COLUMN_TITLE => 'Do you like pizza?',
+				Sensei_Data_Port_Question_Schema::COLUMN_ANSWER => 'Right:Yes, Wrong: No',
+				Sensei_Data_Port_Question_Schema::COLUMN_SLUG  => 'do-you-like-pizza',
+			],
+		];
+
+		$question_ids = [];
+		foreach ( $questions as $question ) {
+			$model = Sensei_Import_Question_Model::from_source_array( $question, new Sensei_Data_Port_Question_Schema(), $job );
+			$model->sync_post();
+
+			$question_ids[ $question[ Sensei_Data_Port_Question_Schema::COLUMN_ID ] ] = get_posts(
+				[
+					'post_type'      => 'question',
+					'post_name__in'  => [ $question[ Sensei_Data_Port_Question_Schema::COLUMN_SLUG ] ],
+					'posts_per_page' => 1,
+					'post_status'    => 'any',
+				]
+			)[0]->ID;
+		}
+
+		// Create 2 lessons and quizzes and specify an order.
+		$lessons = [
+			[
+				Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE     => 'First lesson',
+				Sensei_Data_Port_Lesson_Schema::COLUMN_SLUG      => 'first',
+				Sensei_Data_Port_Lesson_Schema::COLUMN_QUESTIONS => 'id:ice-cream,id:pizza,id:burgers',
+			],
+			[
+				Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE     => 'Second lesson',
+				Sensei_Data_Port_Lesson_Schema::COLUMN_SLUG      => 'second',
+				Sensei_Data_Port_Lesson_Schema::COLUMN_QUESTIONS => 'id:burgers,id:pizza',
+			],
+		];
+
+		$quiz_ids = [];
+		foreach ( $lessons as $lesson ) {
+			$model = Sensei_Import_Lesson_Model::from_source_array( $lesson, new Sensei_Data_Port_Lesson_Schema(), $job );
+			$model->sync_post();
+
+			$quiz_ids[] = get_posts(
+				[
+					'post_type'      => 'quiz',
+					'title'          => $lesson[ Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE ],
+					'posts_per_page' => 1,
+					'post_status'    => 'any',
+				]
+			)[0]->ID;
+		}
+
+		// Assert that the correct order meta values are stored.
+		$first_quiz_order  = [ (string) $question_ids['ice-cream'], (string) $question_ids['pizza'], (string) $question_ids['burgers'] ];
+		$second_quiz_order = [ (string) $question_ids['burgers'], (string) $question_ids['pizza'] ];
+
+		$this->assertEquals( $first_quiz_order, get_post_meta( $quiz_ids[0], '_question_order', true ) );
+		$this->assertEquals( $second_quiz_order, get_post_meta( $quiz_ids[1], '_question_order', true ) );
+		$this->assertEquals( [ $quiz_ids[0], $quiz_ids[1] ], get_post_meta( $question_ids['pizza'], '_quiz_id' ) );
+		$this->assertEquals( [ $quiz_ids[0] ], get_post_meta( $question_ids['ice-cream'], '_quiz_id' ) );
+		$this->assertEquals( $quiz_ids[0] . '000' . 3, get_post_meta( $question_ids['burgers'], '_quiz_question_order' . $quiz_ids[0], true ) );
+		$this->assertEquals( $quiz_ids[1] . '000' . 1, get_post_meta( $question_ids['burgers'], '_quiz_question_order' . $quiz_ids[1], true ) );
+
+		// Update the order in one of the quizzes.
+		$model = Sensei_Import_Lesson_Model::from_source_array(
+			[
+				Sensei_Data_Port_Lesson_Schema::COLUMN_SLUG      => 'first',
+				Sensei_Data_Port_Lesson_Schema::COLUMN_QUESTIONS => 'id:pizza,id:ice-cream,id:burgers',
+				Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE     => 'First lesson',
+			],
+			new Sensei_Data_Port_Lesson_Schema(),
+			$job
+		);
+		$model->sync_post();
+
+		// Assert that the correct order meta values are updated correctly.
+		$quiz_order = [ (string) $question_ids['pizza'], (string) $question_ids['ice-cream'], (string) $question_ids['burgers'] ];
+
+		$this->assertEquals( $quiz_order, get_post_meta( $quiz_ids[0], '_question_order', true ) );
+		$this->assertEquals( $quiz_ids[0] . '000' . 3, get_post_meta( $question_ids['burgers'], '_quiz_question_order' . $quiz_ids[0], true ) );
+		$this->assertEquals( $quiz_ids[0] . '000' . 1, get_post_meta( $question_ids['pizza'], '_quiz_question_order' . $quiz_ids[0], true ) );
 	}
 }
