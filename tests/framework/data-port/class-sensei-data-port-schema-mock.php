@@ -1,29 +1,13 @@
 <?php
 /**
- * This file contains the Sensei_Data_Port_Model_Mock class.
+ * This file contains the Sensei_Data_Port_Schema_Mock class.
  *
  * @package sensei
  */
 
-class Sensei_Data_Port_Model_Mock extends Sensei_Data_Port_Model {
-	protected function get_existing_post_id() {
-		return null;
-	}
+class Sensei_Data_Port_Schema_Mock extends Sensei_Data_Port_Schema {
 
-	public function sync_post() {
-		return true;
-	}
-
-	// phpcs:ignore Generic.CodeAnalysis.UselessOverridingMethod.Found
-	public function set_post_id( $id ) {
-		parent::set_post_id( $id );
-	}
-
-	public function get_error_data( $data = [] ) {
-		return $data;
-	}
-
-	public static function get_schema() {
+	public function get_schema() {
 		return [
 			'test-string-allow-html' => [
 				'type'       => 'string',
@@ -55,5 +39,13 @@ class Sensei_Data_Port_Model_Mock extends Sensei_Data_Port_Model {
 				'required' => true,
 			],
 		];
+	}
+
+	public function get_post_type() {
+		return 'mock_post_type';
+	}
+
+	public function get_column_title() {
+		return 'mock_title';
 	}
 }
