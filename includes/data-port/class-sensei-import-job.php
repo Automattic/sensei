@@ -184,7 +184,7 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 	 * Retrieves the post ID for the imported item based on the ID in the source file.
 	 *
 	 * @param string $post_type   Post type for the imported object.
-	 * @param int    $original_id ID that was provided in the source file.
+	 * @param string $original_id ID that was provided in the source file.
 	 *
 	 * @return int|null
 	 */
@@ -202,7 +202,7 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 	 * Store the post ID for the imported item with the ID in the source file.
 	 *
 	 * @param string $post_type   Post type for the imported object.
-	 * @param int    $original_id ID that was provided in the source file.
+	 * @param string $original_id ID that was provided in the source file.
 	 * @param int    $post_id     Post ID that was created during the import.
 	 */
 	public function set_import_id( $post_type, $original_id, $post_id ) {
