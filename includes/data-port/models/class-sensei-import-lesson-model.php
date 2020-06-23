@@ -298,7 +298,7 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 			return $result;
 		}
 
-		$result = $this->add_thumbnail_to_post( Sensei_Data_Port_Course_Schema::COLUMN_IMAGE );
+		$result = $this->add_thumbnail_to_post( Sensei_Data_Port_Lesson_Schema::COLUMN_IMAGE );
 
 		return is_wp_error( $result ) ? $result : true;
 	}
