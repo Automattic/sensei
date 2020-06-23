@@ -59,6 +59,29 @@ class Sensei_Import_Job_CLI extends WP_CLI_Command {
 			$last_tick += $diff_tick;
 		}
 
+		WP_CLI::log( PHP_EOL . PHP_EOL . 'Log Entries' );
+		WP_CLI::log( str_repeat( '=', 100 ) );
+		$logs = $job->get_logs();
+
+		foreach ( $logs as $log_message ) {
+			$message = $log_message['message'];
+			if ( ! empty( $log_message['data'] ) ) {
+				$message .= ' ' . wp_json_encode( $log_message['data'] );
+			}
+
+			switch ( $log_message['level'] ) {
+				case Sensei_Data_Port_Job::LOG_LEVEL_INFO:
+					WP_CLI::log( $message );
+					break;
+				case Sensei_Data_Port_Job::LOG_LEVEL_NOTICE:
+					WP_CLI::warning( $message );
+					break;
+				case Sensei_Data_Port_Job::LOG_LEVEL_ERROR:
+					WP_CLI::error( $message, false );
+					break;
+			}
+		}
+
 		$job->clean_up();
 	}
 
