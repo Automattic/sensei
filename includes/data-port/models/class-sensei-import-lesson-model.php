@@ -174,9 +174,11 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 			return true;
 		}
 
-		$this->delete_quiz_questions( $quiz_id );
-
 		if ( empty( $questions ) ) {
+			$this->delete_quiz_question_meta( $quiz_id );
+			delete_post_meta( $this->get_post_id(), '_quiz_has_questions' );
+			delete_post_meta( $quiz_id, '_question_order' );
+
 			return true;
 		}
 
@@ -197,6 +199,12 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 			$question_ids[] = $question_id;
 		}
 
+		if ( array_map( 'strval', $question_ids ) === get_post_meta( $quiz_id, '_question_order', true ) ) {
+			return true;
+		}
+
+		$this->delete_quiz_question_meta( $quiz_id );
+
 		$question_count = 1;
 		foreach ( $question_ids as $question_id ) {
 			add_post_meta( $question_id, '_quiz_id', $quiz_id, false );
@@ -215,7 +223,7 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 	 *
 	 * @param int $quiz_id  The quiz id.
 	 */
-	private function delete_quiz_questions( $quiz_id ) {
+	private function delete_quiz_question_meta( $quiz_id ) {
 		$question_order = get_post_meta( $quiz_id, '_question_order', true );
 
 		if ( empty( $question_order ) ) {
@@ -226,9 +234,6 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 			delete_post_meta( $question_id, '_quiz_id', $quiz_id );
 			delete_post_meta( $question_id, '_quiz_question_order' . $quiz_id );
 		}
-
-		delete_post_meta( $this->get_post_id(), '_quiz_has_questions' );
-		delete_post_meta( $quiz_id, '_question_order' );
 	}
 
 	/**
