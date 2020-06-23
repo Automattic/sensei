@@ -11,7 +11,7 @@ const additionalReferences = [
 		reference: '#: assets/dist/setup-wizard/index.js:1',
 	},
 	{
-		re: /^#: assets\/data-port\/\//gm,
+		re: /^#: assets\/data-port\//gm,
 		reference: '#: assets/dist/data-port/import.js:1',
 	},
 ];
