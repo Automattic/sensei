@@ -301,6 +301,7 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 		$course_data = [
 			Sensei_Data_Port_Course_Schema::COLUMN_ID    => 'the-import-id',
 			Sensei_Data_Port_Course_Schema::COLUMN_TITLE => 'Course title',
+			Sensei_Data_Port_Course_Schema::COLUMN_SLUG  => 'course-slug',
 		];
 
 		$course_model = Sensei_Import_Course_Model::from_source_array( $course_data, new Sensei_Data_Port_Course_Schema(), $job );
@@ -330,6 +331,26 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 		)[0];
 
 		$this->assertEquals( $created_course->ID, get_post_meta( $created_lesson->ID, '_lesson_course', true ), 'Lesson should be linked to the supplied course.' );
+
+		$lesson_with_course_slug = [
+			Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE  => 'Slug lesson',
+			Sensei_Data_Port_Lesson_Schema::COLUMN_SLUG   => 'lesson-slug',
+			Sensei_Data_Port_Lesson_Schema::COLUMN_COURSE => 'slug:course-slug',
+		];
+
+		$model = Sensei_Import_Lesson_Model::from_source_array( $lesson_with_course_slug, new Sensei_Data_Port_Lesson_Schema(), $job );
+		$model->sync_post();
+
+		$lesson_with_slug = get_posts(
+			[
+				'post_type'      => 'lesson',
+				'post_name__in'  => [ 'lesson-slug' ],
+				'posts_per_page' => 1,
+				'post_status'    => 'any',
+			]
+		)[0];
+
+		$this->assertEquals( $created_course->ID, get_post_meta( $lesson_with_slug->ID, '_lesson_course', true ), 'Lesson should be linked to the supplied course.' );
 	}
 
 	/**

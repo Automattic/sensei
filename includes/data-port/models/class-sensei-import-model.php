@@ -213,6 +213,20 @@ abstract class Sensei_Import_Model extends Sensei_Data_Port_Model {
 			return $this->import_job->get_import_id( $post_type, substr( $import_id, 3 ) );
 		}
 
+		if ( 0 === strpos( $import_id, 'slug:' ) ) {
+			$post = get_posts(
+				[
+					'post_type'      => $post_type,
+					'post_name__in'  => [ substr( $import_id, 5 ) ],
+					'posts_per_page' => 1,
+					'post_status'    => 'any',
+					'fields'         => 'ids',
+				]
+			);
+
+			return empty( $post ) ? null : $post[0];
+		}
+
 		if ( null !== get_post( (int) $import_id ) ) {
 			return (int) $import_id;
 		}
