@@ -199,17 +199,29 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 			$question_ids[] = $question_id;
 		}
 
-		if ( array_map( 'strval', $question_ids ) === get_post_meta( $quiz_id, '_question_order', true ) ) {
+		$old_question_order = get_post_meta( $quiz_id, '_question_order', true );
+		$old_question_order = empty( $old_question_order ) ? [] : array_map( 'intval', $old_question_order );
+
+		if ( $question_ids === $old_question_order ) {
 			return true;
 		}
 
-		$this->delete_quiz_question_meta( $quiz_id );
+		$added_questions   = array_diff( $question_ids, $old_question_order );
+		$removed_questions = array_diff( $old_question_order, $question_ids );
+
+		// Delete question meta from the questions that were removed from the quiz.
+		if ( ! empty( $removed_questions ) ) {
+			$this->delete_quiz_question_meta( $quiz_id, $removed_questions );
+		}
 
 		$question_count = 1;
 		foreach ( $question_ids as $question_id ) {
-			add_post_meta( $question_id, '_quiz_id', $quiz_id, false );
-			add_post_meta( $question_id, '_quiz_question_order' . $quiz_id, $quiz_id . '000' . $question_count );
+			update_post_meta( $question_id, '_quiz_question_order' . $quiz_id, $quiz_id . '000' . $question_count );
 			$question_count++;
+		}
+
+		foreach ( $added_questions as $added_question ) {
+			add_post_meta( $added_question, '_quiz_id', $quiz_id, false );
 		}
 
 		update_post_meta( $this->get_post_id(), '_quiz_has_questions', '1' );
@@ -221,16 +233,19 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 	/**
 	 * Helper method to delete all related meta of quiz's questions.
 	 *
-	 * @param int $quiz_id  The quiz id.
+	 * @param int   $quiz_id       The quiz id.
+	 * @param array $question_ids  A list of quiz ids to remove the meta from.
 	 */
-	private function delete_quiz_question_meta( $quiz_id ) {
-		$question_order = get_post_meta( $quiz_id, '_question_order', true );
+	private function delete_quiz_question_meta( $quiz_id, $question_ids = null ) {
+		if ( null === $question_ids ) {
+			$question_ids = get_post_meta( $quiz_id, '_question_order', true );
+		}
 
-		if ( empty( $question_order ) ) {
+		if ( empty( $question_ids ) ) {
 			return;
 		}
 
-		foreach ( $question_order as $question_id ) {
+		foreach ( $question_ids as $question_id ) {
 			delete_post_meta( $question_id, '_quiz_id', $quiz_id );
 			delete_post_meta( $question_id, '_quiz_question_order' . $quiz_id );
 		}
