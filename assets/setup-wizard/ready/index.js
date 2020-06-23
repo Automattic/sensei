@@ -50,7 +50,10 @@ export const Ready = () => {
 									'Create some courses',
 									'sensei-lms'
 								),
-								content: `You're ready to create online courses.`,
+								content: __(
+									`You're ready to create online courses.`,
+									'sensei-lms'
+								),
 								after: (
 									<Button
 										className="sensei-setup-wizard__button"
