@@ -123,7 +123,7 @@ const Features = () => {
 		) {
 			setSelectedSlugs( ( prev ) => [ ...prev, wcSlug ] );
 		}
-	}, [ getSelectedFeatures, features, isWooCommerceInstalled ] );
+	}, [ getSelectedFeatures, isWooCommerceInstalled ] );
 
 	// Finish and submit features selection.
 	const finishSelection = () => {
