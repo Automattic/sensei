@@ -8,35 +8,47 @@ import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 const purposes = [
 	{
 		id: 'share_knowledge',
-		title: 'Share your knowledge',
-		description: 'You are a hobbyist interested in sharing your knowledge.',
+		title: __( 'Share your knowledge', 'sensei-lms' ),
+		description: __(
+			'You are a hobbyist interested in sharing your knowledge.',
+			'sensei-lms'
+		),
 	},
 	{
 		id: 'generate_income',
-		title: 'Generate income',
-		description:
+		title: __( 'Generate income', 'sensei-lms' ),
+		description: __(
 			'You would like to generate additional income for yourself or your business.',
+			'sensei-lms'
+		),
 	},
 	{
 		id: 'promote_business',
-		title: 'Promote your business',
-		description:
+		title: __( 'Promote your business', 'sensei-lms' ),
+		description: __(
 			'You own a business and would like to use online courses to promote it.',
+			'sensei-lms'
+		),
 	},
 	{
 		id: 'provide_certification',
-		title: 'Provide certification training',
-		description: 'You want to help people become certified professionals.',
+		title: __( 'Provide certification training', 'sensei-lms' ),
+		description: __(
+			'You want to help people become certified professionals.',
+			'sensei-lms'
+		),
 	},
 	{
 		id: 'train_employees',
-		title: 'Train employees',
-		description:
+		title: __( 'Train employees', 'sensei-lms' ),
+		description: __(
 			'You work at a company that regularly trains new or existing employees.',
+			'sensei-lms'
+		),
 	},
 	{
 		id: 'other',
-		title: 'Other',
+		title: __( 'Other', 'sensei-lms' ),
 	},
 ];
 
