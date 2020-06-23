@@ -14,7 +14,7 @@ import {
 import { merge } from 'lodash';
 
 const DEFAULT_STATE = {
-	id: null,
+	jobId: null,
 	isFetching: true,
 	fetchError: false,
 	completedSteps: [],
@@ -145,7 +145,7 @@ export default ( state = DEFAULT_STATE, action ) => {
 			return updateLevelState(
 				{
 					...state,
-					id: action.data.id,
+					jobId: action.data.jobId,
 				},
 				action.level,
 				{

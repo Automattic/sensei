@@ -15,9 +15,9 @@ export const isFetching = ( state ) => state.isFetching;
  *
  * @param {Object} state Current state.
  *
- * @return {boolean} Has fetched.
+ * @return {string} Job ID.
  */
-export const getId = ( state ) => state.id;
+export const getJobId = ( state ) => state.jobId;
 
 /**
  * Fetch importer error selector.

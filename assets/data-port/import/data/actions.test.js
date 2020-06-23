@@ -84,7 +84,7 @@ describe( 'Importer actions', () => {
 		const expectedSetDataAction = {
 			data: {
 				completedSteps: [],
-				id: 'test',
+				jobId: 'test',
 				progress: {
 					percentage: 0,
 					status: 'setup',
@@ -182,7 +182,7 @@ describe( 'Importer actions', () => {
 
 		const expectedSetDataAction = {
 			data: {
-				id: 'test',
+				jobId: 'test',
 				upload: {},
 				progress: {
 					status: 'pending',
@@ -281,7 +281,7 @@ describe( 'Importer actions', () => {
 
 		const expectedSetDataAction = {
 			data: {
-				id: 'test',
+				jobId: 'test',
 				upload: {},
 				progress: {
 					status: 'setup',
@@ -372,7 +372,7 @@ describe( 'Importer actions', () => {
 	it( 'Should return the set step data action', () => {
 		// Set data action.
 		const dataObject = {
-			id: 'test',
+			jobId: 'test',
 			progress: {
 				status: 'pending',
 				percentage: 0,
@@ -383,7 +383,7 @@ describe( 'Importer actions', () => {
 
 		const expectedSetStepDataAction = {
 			data: {
-				id: 'test',
+				jobId: 'test',
 				progress: {
 					status: 'pending',
 					percentage: 0,

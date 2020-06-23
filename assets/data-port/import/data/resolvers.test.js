@@ -23,9 +23,10 @@ describe( 'Setup wizard resolvers', () => {
 			},
 			files: {},
 		};
+
 		// Set data action.
 		const expectedDataObject = {
-			id: 'test-id',
+			jobId: 'test-id',
 			progress: {
 				status: 'pending',
 				percentage: 44,

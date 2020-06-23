@@ -7,7 +7,7 @@ export default compose(
 		const store = select( 'sensei/import' );
 
 		return {
-			jobId: store.getId(),
+			jobId: store.getJobId(),
 			state: store.getStepData( 'progress' ),
 		};
 	} )

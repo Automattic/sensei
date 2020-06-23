@@ -1,6 +1,6 @@
 import {
 	getFetchError,
-	getId,
+	getJobId,
 	getNavigationSteps,
 	getStepData,
 	isCompleteStep,
@@ -19,10 +19,10 @@ describe( 'Importer selectors', () => {
 
 	it( 'Should get job id', () => {
 		const state = {
-			id: 'test',
+			jobId: 'test',
 		};
 
-		expect( getId( state ) ).toEqual( state.id );
+		expect( getJobId( state ) ).toEqual( state.jobId );
 	} );
 
 	it( 'Should get the fetch error', () => {

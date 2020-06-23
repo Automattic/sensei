@@ -2,7 +2,7 @@ import { normalizeImportData } from './normalizer';
 
 describe( 'Importer data normalizer', () => {
 	const expectedStateData = {
-		id: 'test',
+		jobId: 'test',
 		upload: {
 			questions: {
 				filename: 'questions.csv',
