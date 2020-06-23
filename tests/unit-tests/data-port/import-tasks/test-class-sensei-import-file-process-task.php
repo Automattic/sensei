@@ -41,7 +41,7 @@ class Sensei_Import_File_Process_Task_Tests extends WP_UnitTestCase {
 			->method( 'process_line' )
 			->withConsecutive(
 				[
-					10,
+					11,
 					[
 						'first column'  => 'first data 6',
 						'second column' => 'second data 6',
@@ -49,7 +49,7 @@ class Sensei_Import_File_Process_Task_Tests extends WP_UnitTestCase {
 					],
 				],
 				[
-					11,
+					12,
 					[
 						'first column'  => 'first data 7',
 						'second column' => 'second data 7',
@@ -57,7 +57,7 @@ class Sensei_Import_File_Process_Task_Tests extends WP_UnitTestCase {
 					],
 				],
 				[
-					12,
+					13,
 					[],
 				]
 			);

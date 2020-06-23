@@ -83,8 +83,7 @@ abstract class Sensei_Import_File_Process_Task
 		$current_line = $this->completed_lines;
 
 		foreach ( $lines as $line ) {
-			$this->process_line( $current_line, $line );
-			$current_line++;
+			$this->process_line( ++$current_line, $line );
 		}
 
 		$this->completed_lines = $this->reader->get_completed_lines();
