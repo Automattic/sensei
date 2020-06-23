@@ -89,7 +89,7 @@ class Sensei_Data_Port_Question_Schema extends Sensei_Data_Port_Schema {
 			self::COLUMN_TYPE            => [
 				'type'    => 'string',
 				'default' => 'multiple-choice',
-				'pattern' => '/^(multiple\-choice|boolean|gap\-fill|single\-line|multiple\-line|file\-upload|)$/',
+				'pattern' => '/^(multiple\-choice|boolean|gap\-fill|single\-line|multi\-line|file\-upload|)$/',
 			],
 			self::COLUMN_GRADE           => [
 				'type'    => 'int',
