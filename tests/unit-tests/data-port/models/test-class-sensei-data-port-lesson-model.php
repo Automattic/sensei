@@ -289,8 +289,11 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 	 */
 	public function testLessonCourseIsLinkedCorrectly() {
 		$job                     = Sensei_Import_Job::create( 'test', 0 );
-		$lesson_data_with_course = array_merge( $this->lineData()[0][1], [ Sensei_Data_Port_Lesson_Schema::COLUMN_COURSE => 'id:the-import-id' ] );
-		unset( $lesson_data_with_course[ Sensei_Data_Port_Lesson_Schema::COLUMN_IMAGE ] );
+		$lesson_data_with_course = [
+			Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE  => 'Course lesson',
+			Sensei_Data_Port_Lesson_Schema::COLUMN_SLUG   => 'course-lesson',
+			Sensei_Data_Port_Lesson_Schema::COLUMN_COURSE => 'id:the-import-id',
+		];
 
 		$model  = Sensei_Import_Lesson_Model::from_source_array( $lesson_data_with_course, new Sensei_Data_Port_Lesson_Schema(), $job );
 		$result = $model->sync_post();
@@ -324,7 +327,7 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 		$created_lesson = get_posts(
 			[
 				'post_type'      => 'lesson',
-				'post_name__in'  => [ 'slug' ],
+				'post_name__in'  => [ 'course-lesson' ],
 				'posts_per_page' => 1,
 				'post_status'    => 'any',
 			]
@@ -358,8 +361,11 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 	 */
 	public function testLessonModuleIsLinkedCorrectly() {
 		$job                     = Sensei_Import_Job::create( 'test', 0 );
-		$lesson_data_with_module = array_merge( $this->lineData()[0][1], [ Sensei_Data_Port_Lesson_Schema::COLUMN_MODULE => 'the-module' ] );
-		unset( $lesson_data_with_module[ Sensei_Data_Port_Lesson_Schema::COLUMN_IMAGE ] );
+		$lesson_data_with_module = [
+			Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE  => 'Module lesson',
+			Sensei_Data_Port_Lesson_Schema::COLUMN_SLUG   => 'module-lesson',
+			Sensei_Data_Port_Lesson_Schema::COLUMN_MODULE => 'the-module',
+		];
 
 		$model  = Sensei_Import_Lesson_Model::from_source_array( $lesson_data_with_module, new Sensei_Data_Port_Lesson_Schema(), $job );
 		$result = $model->sync_post();
