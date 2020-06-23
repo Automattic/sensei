@@ -8,13 +8,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @package Assessment
  * @author Automattic
- * @since 1.3.0
+ * @since 3.1.1
  */
 class Sensei_Grading_Answers extends Sensei_List_Table {
 
 	public $user_id;
 	public $course_id;
 	public $lesson_id;
+	public $quiz_id;
 	public $view;
 	public $user_ids  = false;
 	public $page_slug = 'sensei_grading';
@@ -22,26 +23,23 @@ class Sensei_Grading_Answers extends Sensei_List_Table {
 	/**
 	 * Constructor
 	 *
-	 * @since  1.3.0
+	 * @since  3.1.1
 	 */
 	public function __construct( $args = null ) {
 
 		$defaults = array(
 			'course_id' => 0,
 			'lesson_id' => 0,
+			'quiz_id'   => 0,
 			'user_id'   => false,
-			'view'      => 'ungraded',
 		);
 		$args     = wp_parse_args( $args, $defaults );
 
 		$this->course_id = intval( $args['course_id'] );
 		$this->lesson_id = intval( $args['lesson_id'] );
+		$this->quiz_id   = intval( $args['quiz_id'] );
 		if ( ! empty( $args['user_id'] ) ) {
 			$this->user_id = intval( $args['user_id'] );
-		}
-
-		if ( ! empty( $args['view'] ) && in_array( $args['view'], array( 'in-progress', 'graded', 'ungraded', 'all' ) ) ) {
-			$this->view = $args['view'];
 		}
 
 		// Load Parent token into constructor
@@ -55,16 +53,14 @@ class Sensei_Grading_Answers extends Sensei_List_Table {
 	/**
 	 * Define the columns that are going to be used in the table
 	 *
-	 * @since  1.7.0
+	 * @since  3.1.1
 	 * @return array $columns, the array of columns to use with the table
 	 */
 	function get_columns() {
 		$columns = array(
 			'title'       => __( 'Learner', 'sensei-lms' ),
-			'course'      => __( 'Question', 'sensei-lms' ),
-			'lesson'      => __( 'Lesson', 'sensei-lms' ),
-			'updated'     => __( 'Updated', 'sensei-lms' ),
-			'user_status' => __( 'Status', 'sensei-lms' ),
+			'question'    => __( 'Question', 'sensei-lms' ),
+			'answer'      => __( 'Answer', 'sensei-lms' ),
 			'user_grade'  => __( 'Grade', 'sensei-lms' ),
 			'action'      => '',
 		);
@@ -76,13 +72,13 @@ class Sensei_Grading_Answers extends Sensei_List_Table {
 	/**
 	 * Define the columns that are going to be used in the table
 	 *
-	 * @since  1.7.0
+	 * @since  3.1.1
 	 * @return array $columns, the array of columns to use with the table
 	 */
 	function get_sortable_columns() {
 		$columns = array(
 			'title'       => array( 'title', false ),
-			'course'      => array( 'course', false ),
+			'course'      => array( 'question', false ),
 			'lesson'      => array( 'lesson', false ),
 			'updated'     => array( 'updated', false ),
 			'user_status' => array( 'user_status', false ),
@@ -405,10 +401,13 @@ class Sensei_Grading_Answers extends Sensei_List_Table {
 		echo '</div>' . "\n";
 
 		if ( $this->course_id && $this->lesson_id ) {
+			$quiz_id          = get_post_meta( $this->lesson_id, '_lesson_quiz', true );
+			$query_all_grades = add_query_arg( array( 'quiz_id' => $quiz_id, 'answers' => true ) );
 
 			echo '<div class="select-box reset-filter">' . "\n";
 
 				echo '<a class="button-secondary" href="' . esc_url( remove_query_arg( array( 'lesson_id', 'course_id' ) ) ) . '">' . esc_html__( 'Reset filter', 'sensei-lms' ) . '</a>' . "\n";
+				echo '<a class="button-secondary" href="' . esc_url( $query_all_grades ) . '">' . esc_html__( 'Show All Grades', 'sensei-lms' ) . '</a>' . "\n";
 
 			echo '</div>' . "\n";
 
@@ -505,7 +504,7 @@ class Sensei_Grading_Answers extends Sensei_List_Table {
 	/**
 	 * Output for table footer
 	 *
-	 * @since  1.3.0
+	 * @since  3.1.1
 	 * @return void
 	 */
 	public function data_table_footer() {

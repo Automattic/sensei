@@ -213,15 +213,23 @@ class Sensei_Grading {
 	public function grading_answers_view() {
 
 		// Load Grading data
-		$user_id = 0;
-		$quiz_id = 0;
-		if ( isset( $_GET['user'] ) ) {
-			$user_id = intval( $_GET['user'] );
+		$course_id  = 0;
+		$lesson_id  = 0;
+		$quiz_id    = 0;
+		$user_id    = 0;
+		if ( isset( $_GET['course_id'] ) ) {
+			$course_id = intval( $_GET['course_id'] );
+		}
+		if ( isset( $_GET['lesson_id'] ) ) {
+			$lesson_id = intval( $_GET['lesson_id'] );
 		}
 		if ( isset( $_GET['quiz_id'] ) ) {
 			$quiz_id = intval( $_GET['quiz_id'] );
 		}
-		$sensei_answers = $this->load_data_object( 'Answers', $user_id, $quiz_id );
+		if ( isset( $_GET['user'] ) ) {
+			$user_id = intval( $_GET['user'] );
+		}
+		$sensei_answers = $this->load_data_object( 'Answers', compact( 'course_id', 'lesson_id', 'quiz_id', 'user_id' ) );
 		// Wrappers
 		do_action( 'grading_before_container' );
 		do_action( 'grading_wrapper_container', 'top' );
