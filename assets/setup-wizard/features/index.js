@@ -12,7 +12,7 @@ import {
 } from '../query-string-router/url-functions';
 import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 import {
-	getWcProductId,
+	getWccomProductId,
 	getWoocommerceComPurchaseUrl,
 } from '../helpers/woocommerce-com';
 import ConfirmationModal from './confirmation-modal';
@@ -107,7 +107,7 @@ const Features = () => {
 		const isWooCommerceSelected = selectedFeatures.some(
 			( feature ) => feature.slug === wcSlug
 		);
-		const needWooCommerce = selectedFeatures.some( getWcProductId );
+		const needWooCommerce = selectedFeatures.some( getWccomProductId );
 
 		if ( ! needWooCommerce && isWooCommerceSelected ) {
 			setSelectedSlugs( ( prev ) =>
@@ -163,7 +163,8 @@ const Features = () => {
 	const installFromWooCommerce = () => {
 		const pendingWcFeatures = getSelectedFeatures().filter(
 			( feature ) =>
-				getWcProductId( feature ) && INSTALLED_STATUS !== feature.status
+				getWccomProductId( feature ) &&
+				INSTALLED_STATUS !== feature.status
 		);
 		if ( ! pendingWcFeatures.length ) return;
 		const wcPurchaseUrl = getWoocommerceComPurchaseUrl(

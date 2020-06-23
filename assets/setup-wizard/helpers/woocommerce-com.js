@@ -13,7 +13,7 @@ import { addQueryArgs } from '@wordpress/url';
  */
 export const getWoocommerceComPurchaseUrl = ( features, wccomData ) => {
 	return addQueryArgs( 'https://woocommerce.com/cart', {
-		'wccom-replace-with': features.map( getWcProductId ).join( ',' ),
+		'wccom-replace-with': features.map( getWccomProductId ).join( ',' ),
 		...( wccomData || {} ),
 	} );
 };
@@ -25,4 +25,4 @@ export const getWoocommerceComPurchaseUrl = ( features, wccomData ) => {
  *
  * @return {string} The product ID.
  */
-export const getWcProductId = ( feature ) => feature.wccom_product_id;
+export const getWccomProductId = ( feature ) => feature.wccom_product_id;

@@ -1,7 +1,7 @@
 import { List } from '@woocommerce/components';
 import { Button, Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { getWcProductId } from '../helpers/woocommerce-com';
+import { getWccomProductId } from '../helpers/woocommerce-com';
 
 import { getFeatureObservation } from './feature-description-utils';
 import FeatureDescription from './feature-description';
@@ -56,7 +56,7 @@ const ConfirmationModal = ( {
 				'sensei-lms'
 			) }
 		</p>
-		{ features.some( getWcProductId ) && (
+		{ features.some( getWccomProductId ) && (
 			<p>
 				<strong>
 					{ __(
