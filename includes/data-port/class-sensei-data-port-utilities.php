@@ -122,7 +122,18 @@ class Sensei_Data_Port_Utilities {
 			return $existing_attachment[0];
 		}
 
-		$response = wp_safe_remote_get( $external_url );
+		/**
+		 * Filters the timeout value for the HTTP request which retrieves an external attachment.
+		 *
+		 * Increase this value in case big attachments are imported and the request to get them
+		 * times out.
+		 *
+		 * @since 3.3.0
+		 *
+		 * @param float  $timeout  Time in seconds until a request times out. Default 10.
+		 */
+		$timeout  = apply_filters( 'sensei_import_attachment_request_timeout', 10 );
+		$response = wp_safe_remote_get( $external_url, [ 'timeout' => $timeout ] );
 
 		if ( is_wp_error( $response ) ) {
 			return $response;
