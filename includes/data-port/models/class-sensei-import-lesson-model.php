@@ -192,7 +192,7 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 				return new WP_Error(
 					'sensei_data_port_question_not_found',
 					// translators: Placeholder is the term which errored.
-					sprintf( __( 'Question does not exist: %s.', 'sensei-lms' ), $question_id )
+					sprintf( __( 'Question does not exist: %s.', 'sensei-lms' ), $question_import_id )
 				);
 			}
 
