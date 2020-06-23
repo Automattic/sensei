@@ -424,14 +424,6 @@ class Sensei_Setup_Wizard {
 	 */
 	public function get_woocommerce_connect_data() {
 
-		$back_admin_path          = add_query_arg(
-			[
-				'page'     => $this->page_slug,
-				'step'     => 'features',
-				'feedback' => 1,
-			],
-			'admin.php'
-		);
 		$wc_params                = [];
 		$is_woocommerce_installed = Sensei_Utils::is_woocommerce_active( '3.7.0' ) && class_exists( 'WC_Admin_Addons' );
 
@@ -448,7 +440,7 @@ class Sensei_Setup_Wizard {
 			];
 		}
 
-		$wc_params['wccom-back'] = rawurlencode( $back_admin_path );
+		$wc_params['wccom-back'] = rawurlencode( 'admin.php' );
 
 		return $wc_params;
 
