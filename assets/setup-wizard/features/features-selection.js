@@ -63,7 +63,7 @@ const FeaturesSelection = ( {
 							}
 							onChange={ toggleItem( slug ) }
 							checked={ selectedSlugs.includes( slug ) }
-							disabled={ 'installed' === status }
+							disabled={ !! status }
 							className={ classnames(
 								'sensei-setup-wizard__checkbox',
 								{
