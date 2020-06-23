@@ -233,7 +233,7 @@ class Sensei_Grading {
 		// Wrappers
 		do_action( 'grading_before_container' );
 		do_action( 'grading_wrapper_container', 'top' );
-		$this->grading_headers( array( 'nav' => 'user_quiz' ) );
+		$this->grading_headers( array( 'nav' => 'answers' ) );
 		?>
 		<div id="poststuff" class="sensei-grading-wrap user-profile">
 			<div class="sensei-grading-main">
@@ -345,6 +345,47 @@ class Sensei_Grading {
 			<h1><?php echo wp_kses_post( apply_filters( 'sensei_grading_nav_title', $title ) ); ?></h1>
 		<?php
 	} // End grading_default_nav()
+
+	/**
+	 * Nav area for All Answers
+	 *
+	 * @since  3.1.1
+	 * @return void
+	 */
+	public function grading_answers_nav() {
+		global  $wp_version;
+
+		$title = esc_html( $this->name );
+
+		if ( isset( $_GET['quiz_id'] ) ) {
+			$quiz_id   = intval( $_GET['quiz_id'] );
+			$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
+			$course_id = get_post_meta( $lesson_id, '_lesson_course', true );
+			if ( version_compare( $wp_version, '4.1', '>=' ) ) {
+				$url    = add_query_arg(
+					array(
+						'page'      => $this->page_slug,
+						'course_id' => $course_id,
+					),
+					admin_url( 'admin.php' )
+				);
+				$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), esc_html( get_the_title( $course_id ) ) );
+			} else {
+				$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;%s</span>', esc_html( get_the_title( $course_id ) ) );
+			}
+			$url    = add_query_arg(
+				array(
+					'page'      => $this->page_slug,
+					'lesson_id' => $lesson_id,
+				),
+				admin_url( 'admin.php' )
+			);
+			$title .= sprintf( '&nbsp;&nbsp;<span class="lesson-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>&nbsp;&nbsp;&gt;&nbsp;&nbsp;Answers', esc_url( $url ), esc_html( get_the_title( $lesson_id ) ) );
+		}
+		?>
+			<h2><?php echo wp_kses_post( apply_filters( 'sensei_grading_nav_title', $title ) ); ?></h2>
+		<?php
+	} // End grading_answers_nav()
 
 	/**
 	 * Nav area for Grading specific users' quiz answers
