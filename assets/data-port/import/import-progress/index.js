@@ -1,18 +1,14 @@
-import { __ } from '@wordpress/i18n';
-import { Section, H } from '@woocommerce/components';
+import { withSelect } from '@wordpress/data';
+import { compose } from '@wordpress/compose';
+import { ImportProgressPage } from './import-progress-page';
 
-/**
- * This component displays the final page when import has completed.
- */
-export const ImportProgressPage = () => {
-	return (
-		<section className="sensei-import-progress">
-			<header className="sensei-import-progress__header">
-				<H>{ __( 'Import', 'sensei-lms' ) }</H>
-			</header>
-			<Section component="section">
-				<p>Placeholder.</p>
-			</Section>
-		</section>
-	);
-};
+export default compose(
+	withSelect( ( select ) => {
+		const store = select( 'sensei/import' );
+
+		return {
+			jobId: store.getJobId(),
+			state: store.getStepData( 'progress' ),
+		};
+	} )
+)( ImportProgressPage );

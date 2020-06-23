@@ -24,6 +24,7 @@ import {
 	errorStartImport,
 	uploadFileForLevel,
 	errorFileUpload,
+	setStepData,
 	startFileUploadAction,
 	successFileUpload,
 	throwEarlyUploadError,
@@ -83,8 +84,8 @@ describe( 'Importer actions', () => {
 		const expectedSetDataAction = {
 			data: {
 				completedSteps: [],
-				id: 'test',
-				import: {
+				jobId: 'test',
+				progress: {
 					percentage: 0,
 					status: 'setup',
 				},
@@ -181,9 +182,9 @@ describe( 'Importer actions', () => {
 
 		const expectedSetDataAction = {
 			data: {
-				id: 'test',
+				jobId: 'test',
 				upload: {},
-				import: {
+				progress: {
 					status: 'pending',
 					percentage: 0,
 				},
@@ -280,9 +281,9 @@ describe( 'Importer actions', () => {
 
 		const expectedSetDataAction = {
 			data: {
-				id: 'test',
+				jobId: 'test',
 				upload: {},
-				import: {
+				progress: {
 					status: 'setup',
 					percentage: 0,
 				},
@@ -365,6 +366,37 @@ describe( 'Importer actions', () => {
 
 		expect( throwEarlyUploadError( level, 'Test' ) ).toEqual(
 			expectedAction
+		);
+	} );
+
+	it( 'Should return the set step data action', () => {
+		// Set data action.
+		const dataObject = {
+			jobId: 'test',
+			progress: {
+				status: 'pending',
+				percentage: 0,
+			},
+			upload: {},
+			completedSteps: [ 'upload' ],
+		};
+
+		const expectedSetStepDataAction = {
+			data: {
+				jobId: 'test',
+				progress: {
+					status: 'pending',
+					percentage: 0,
+				},
+				completedSteps: [ 'upload' ],
+				upload: {},
+			},
+			step: 'progress',
+			type: 'SET_STEP_DATA',
+		};
+
+		expect( setStepData( 'progress', dataObject ) ).toEqual(
+			expectedSetStepDataAction
 		);
 	} );
 } );

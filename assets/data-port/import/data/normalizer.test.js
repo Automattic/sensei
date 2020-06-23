@@ -2,7 +2,7 @@ import { normalizeImportData } from './normalizer';
 
 describe( 'Importer data normalizer', () => {
 	const expectedStateData = {
-		id: 'test',
+		jobId: 'test',
 		upload: {
 			questions: {
 				filename: 'questions.csv',
@@ -17,7 +17,7 @@ describe( 'Importer data normalizer', () => {
 				isUploaded: true,
 			},
 		},
-		import: {
+		progress: {
 			status: 'pending',
 			percentage: 0,
 		},

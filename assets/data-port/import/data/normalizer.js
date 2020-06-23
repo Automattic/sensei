@@ -31,7 +31,7 @@ export const parseCompletedSteps = ( data ) => {
 	if ( data.status === 'pending' ) {
 		return [ 'upload' ];
 	}
-	if ( data.status === 'complete' ) {
+	if ( data.status === 'completed' ) {
 		return [ 'upload', 'progress' ];
 	}
 
@@ -45,9 +45,10 @@ export const parseCompletedSteps = ( data ) => {
  *
  * @return {Object} Normalized importer data.
  */
-export const normalizeImportData = ( { files, status, ...data } ) => ( {
+export const normalizeImportData = ( { id, files, status, ...data } ) => ( {
 	...data,
-	import: status,
+	jobId: id,
+	progress: status,
 	upload: normalizeUploadsState( files ),
 	completedSteps: parseCompletedSteps( status ),
 } );

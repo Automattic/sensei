@@ -2,6 +2,7 @@ import {
 	START_FETCH_IMPORT_DATA,
 	SUCCESS_FETCH_IMPORT_DATA,
 	ERROR_FETCH_IMPORT_DATA,
+	SET_STEP_DATA,
 	START_IMPORT,
 	SUCCESS_START_IMPORT,
 	ERROR_START_IMPORT,
@@ -13,6 +14,7 @@ import {
 import { merge } from 'lodash';
 
 const DEFAULT_STATE = {
+	jobId: null,
 	isFetching: true,
 	fetchError: false,
 	completedSteps: [],
@@ -140,12 +142,19 @@ export default ( state = DEFAULT_STATE, action ) => {
 			} );
 
 		case SUCCESS_UPLOAD_IMPORT_DATA_FILE:
-			return updateLevelState( state, action.level, {
-				...action.data.upload[ action.level ],
-				inProgress: false,
-				hasError: false,
-				errorMsg: null,
-			} );
+			return updateLevelState(
+				{
+					...state,
+					jobId: action.data.jobId,
+				},
+				action.level,
+				{
+					...action.data.upload[ action.level ],
+					inProgress: false,
+					hasError: false,
+					errorMsg: null,
+				}
+			);
 
 		case ERROR_UPLOAD_IMPORT_DATA_FILE:
 			return updateLevelState( state, action.level, {
@@ -155,6 +164,16 @@ export default ( state = DEFAULT_STATE, action ) => {
 				errorMsg: action.error.message,
 				filename: null,
 			} );
+
+		case SET_STEP_DATA:
+			return {
+				...state,
+				completedSteps: action.data.completedSteps,
+				[ action.step ]: {
+					...state[ action.step ],
+					...action.data[ action.step ],
+				},
+			};
 
 		default:
 			return state;

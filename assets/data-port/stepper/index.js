@@ -13,7 +13,7 @@ import classnames from 'classnames';
  * @param {Step[]} steps The array of the steps.
  */
 const DataPortStepper = ( { steps } ) => (
-	<ol className="sensei-progress-steps">
+	<ol className="sensei-data-port-steps">
 		{ steps.map( ( step ) => {
 			const stepClass = classnames( {
 				active: step.isNext,
