@@ -459,7 +459,7 @@ class Sensei_Setup_Wizard {
 		$installing_key = array_search( $extension->product_slug, wp_list_pluck( $installing_plugins, 'product_slug' ), true );
 
 		if ( in_array( $extension->product_slug, $selected_plugins, true ) && isset( $extension->wccom_product_id ) ) {
-			$extension->status = 'installing';
+			$extension->status = 'external';
 		}
 		if ( false !== $installing_key ) {
 			if ( isset( $installing_plugins[ $installing_key ]->error ) ) {

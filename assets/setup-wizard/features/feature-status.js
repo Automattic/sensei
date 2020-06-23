@@ -1,4 +1,4 @@
-import { Spinner } from '@wordpress/components';
+import { Dashicon, Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 import CheckIcon from './check-icon';
@@ -9,6 +9,7 @@ import CheckIcon from './check-icon';
 export const INSTALLING_STATUS = 'installing';
 export const ERROR_STATUS = 'error';
 export const INSTALLED_STATUS = 'installed';
+export const EXTERNAL_STATUS = 'external';
 
 const statusComponents = {
 	[ INSTALLING_STATUS ]: (
@@ -33,6 +34,13 @@ const statusComponents = {
 				{ __( 'Plugin installed', 'sensei-lms' ) }
 			</span>
 		</i>
+	),
+	[ EXTERNAL_STATUS ]: (
+		<Dashicon icon="external">
+			<span className="screen-reader-text">
+				{ __( 'Purchasing plugin', 'sensei-lms' ) }
+			</span>
+		</Dashicon>
 	),
 };
 
