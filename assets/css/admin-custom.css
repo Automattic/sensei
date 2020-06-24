@@ -115,10 +115,11 @@ div.question_boolean_fields { margin-bottom: 10px; }
 }
 
 DIV.wp_list_table_grading_answers_wrapper {
-    width: 100%;
     overflow-x: auto;
+    width: 100%;
 }
 .wp_list_table_grading_answers {
+    min-width: 100%;
     width: auto;
 }
 .wp_list_table_grading_answers TR:hover {
