@@ -171,6 +171,7 @@ class Sensei_Import_Course_Model_Test extends WP_UnitTestCase {
 			'line'        => 1,
 			'entry_id'    => 'id',
 			'entry_title' => 'Course title',
+			'type'        => 'course',
 		];
 		$this->assertEquals( $expected, $error_data );
 	}
