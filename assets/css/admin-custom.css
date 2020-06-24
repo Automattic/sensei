@@ -125,3 +125,6 @@ DIV.wp_list_table_grading_answers_wrapper {
 .wp_list_table_grading_answers TR:hover {
     background-color: #f2faff;
 }
+.wp_list_table_grading_answers TH {
+    min-width: 12em;
+}
