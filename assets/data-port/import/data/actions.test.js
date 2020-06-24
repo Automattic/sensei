@@ -60,7 +60,7 @@ describe( 'Importer actions', () => {
 		const expectedFetchAction = {
 			type: FETCH_FROM_API,
 			request: {
-				path: API_BASE_PATH,
+				path: API_BASE_PATH + 'active',
 			},
 		};
 		expect( gen.next().value ).toEqual( expectedFetchAction );
