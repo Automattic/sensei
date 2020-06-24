@@ -6,10 +6,6 @@ import { uniq } from 'lodash';
 import { INSTALLED_STATUS } from './feature-status';
 import { logEvent } from '../log-event';
 import { useQueryStringRouter } from '../query-string-router';
-import {
-	getParam,
-	updateQueryString,
-} from '../query-string-router/url-functions';
 import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 import {
 	getWccomProductId,
@@ -65,15 +61,6 @@ const Features = () => {
 	const { submitStep: submitInstallation } = useSetupWizardStep(
 		'features-installation'
 	);
-
-	// Open directly in the feedback screen when there is a temporary feedback param.
-	useEffect( () => {
-		if ( getParam( 'feedback' ) ) {
-			// Remove temporary param.
-			updateQueryString( 'feedback', null, true );
-			toggleFeedback( true );
-		}
-	}, [] );
 
 	// Mark as selected also the already submitted slugs (Except the installed ones).
 	useEffect( () => {
