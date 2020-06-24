@@ -42,6 +42,13 @@ abstract class Sensei_Data_Port_Model {
 	}
 
 	/**
+	 * Get the model key to identify items in log entries.
+	 *
+	 * @return string
+	 */
+	abstract protected function get_model_key();
+
+	/**
 	 * Get the data to return with any errors.
 	 *
 	 * @param array $data Base error data to pass along.
@@ -49,6 +56,8 @@ abstract class Sensei_Data_Port_Model {
 	 * @return array
 	 */
 	public function get_error_data( $data = [] ) {
+		$data['type'] = $this->get_model_key();
+
 		$entry_id = $this->get_value( $this->schema->get_column_id() );
 		if ( $entry_id ) {
 			$data['entry_id'] = $entry_id;
