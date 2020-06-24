@@ -1,6 +1,5 @@
 import { render, fireEvent } from '@testing-library/react';
 
-import { mockSearch } from '../../tests-helper/functions';
 import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 import QueryStringRouter, { Route } from '../query-string-router';
 import { updateQueryString } from '../query-string-router/url-functions';
@@ -126,23 +125,6 @@ describe( '<Features />', () => {
 		expect(
 			container.querySelector( '.sensei-setup-wizard__icon-status' )
 		).toBeTruthy();
-	} );
-
-	it( 'Should display installation feedback when feedback is an URL param', () => {
-		mockSearch( 'feedback=1' );
-		useFeaturesPolling.mockReturnValue( {
-			selected: [ 'test' ],
-			options: [ { slug: 'test', title: 'Test', status: 'installed' } ],
-		} );
-
-		const { queryByText } = render(
-			<QueryStringRouter>
-				<Features />
-			</QueryStringRouter>
-		);
-
-		expect( queryByText( 'Plugin installed' ) ).toBeTruthy();
-		mockSearch( '' );
 	} );
 
 	it( 'Should display installation error', () => {
