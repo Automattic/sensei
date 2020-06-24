@@ -209,7 +209,7 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 			$expected_status_codes = [ 404 ];
 		}
 
-		$request  = new WP_REST_Request( 'DELETE', '/sensei-internal/v1/import/does-not-exist' );
+		$request  = new WP_REST_Request( 'DELETE', '/sensei-internal/v1/import/doesnotexist' );
 		$response = $this->server->dispatch( $request );
 		$this->assertTrue( in_array( $response->get_status(), $expected_status_codes, true ), "{$user_description} requests should produce status of " . implode( ', ', $expected_status_codes ) );
 
@@ -718,7 +718,7 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 			$expected_status_codes = [ 404 ];
 		}
 
-		$request  = new WP_REST_Request( 'POST', '/sensei-internal/v1/import/does-not-exist/start' );
+		$request  = new WP_REST_Request( 'POST', '/sensei-internal/v1/import/doesnotexist/start' );
 		$response = $this->server->dispatch( $request );
 
 		$this->assertTrue( in_array( $response->get_status(), $expected_status_codes, true ), "{$user_description} requests should produce status of " . implode( ', ', $expected_status_codes ) );

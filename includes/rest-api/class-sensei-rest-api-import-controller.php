@@ -51,7 +51,7 @@ class Sensei_REST_API_Import_Controller extends Sensei_REST_API_Data_Port_Contro
 
 		register_rest_route(
 			$this->namespace,
-			$this->rest_base . '/(?P<job_id>[0-9a-z-]+)/file/(?P<file_key>[a-z-]+)',
+			$this->rest_base . '/(?P<job_id>[0-9a-z]+)/file/(?P<file_key>[a-z-]+)',
 			[
 				[
 					'methods'             => WP_REST_Server::CREATABLE,

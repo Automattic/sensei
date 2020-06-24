@@ -68,7 +68,7 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 
 		register_rest_route(
 			$this->namespace,
-			$this->rest_base . '/(?P<job_id>[0-9a-z-]+)',
+			$this->rest_base . '/(?P<job_id>[0-9a-z]+)',
 			[
 				[
 					'methods'             => WP_REST_Server::READABLE,
@@ -87,7 +87,7 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 		// Endpoint to start the job.
 		register_rest_route(
 			$this->namespace,
-			$this->rest_base . '/(?P<job_id>[0-9a-z-]+)/start',
+			$this->rest_base . '/(?P<job_id>[0-9a-z]+)/start',
 			[
 				[
 					'methods'             => WP_REST_Server::EDITABLE,
