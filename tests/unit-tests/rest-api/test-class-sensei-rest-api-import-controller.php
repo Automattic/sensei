@@ -72,7 +72,7 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 	}
 
 	/**
-	 * Tests `GET /import` when the job hasn't been started.
+	 * Tests `GET /import/active` when the job hasn't been started.
 	 *
 	 * @dataProvider userDataSources
 	 *
@@ -94,18 +94,18 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 			$expected_status_codes = [ 404 ];
 		}
 
-		$request  = new WP_REST_Request( 'GET', '/sensei-internal/v1/import' );
+		$request  = new WP_REST_Request( 'GET', '/sensei-internal/v1/import/active' );
 		$response = $this->server->dispatch( $request );
 		$this->assertTrue( in_array( $response->get_status(), $expected_status_codes, true ), "{$user_description} requests should produce status of " . implode( ', ', $expected_status_codes ) );
 
 		if ( $is_authorized ) {
 			$this->assertTrue( isset( $response->get_data()['code'] ) );
-			$this->assertEquals( 'sensei_data_port_no_active_job', $response->get_data()['code'] );
+			$this->assertEquals( 'sensei_data_port_job_not_found', $response->get_data()['code'] );
 		}
 	}
 
 	/**
-	 * Tests `GET /import` when the job has been started.
+	 * Tests `GET /import/active` when the job has been started.
 	 *
 	 * @dataProvider userDataSources
 	 *
@@ -131,7 +131,7 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 			Sensei_Data_Port_Manager::instance()->persist();
 		}
 
-		$request  = new WP_REST_Request( 'GET', '/sensei-internal/v1/import' );
+		$request  = new WP_REST_Request( 'GET', '/sensei-internal/v1/import/active' );
 		$response = $this->server->dispatch( $request );
 		$this->assertTrue( in_array( $response->get_status(), $expected_status_codes, true ), "{$user_description} requests should produce status code of " . implode( ', ', $expected_status_codes ) );
 
@@ -187,7 +187,7 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 	}
 
 	/**
-	 * Tests `DELETE /import` when job has not been started.
+	 * Tests `DELETE /import/{job_id}` when job has not been created.
 	 *
 	 * @dataProvider userDataSources
 	 *
@@ -209,18 +209,18 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 			$expected_status_codes = [ 404 ];
 		}
 
-		$request  = new WP_REST_Request( 'DELETE', '/sensei-internal/v1/import' );
+		$request  = new WP_REST_Request( 'DELETE', '/sensei-internal/v1/import/does-not-exist' );
 		$response = $this->server->dispatch( $request );
 		$this->assertTrue( in_array( $response->get_status(), $expected_status_codes, true ), "{$user_description} requests should produce status of " . implode( ', ', $expected_status_codes ) );
 
 		if ( $is_authorized ) {
 			$this->assertTrue( isset( $response->get_data()['code'] ) );
-			$this->assertEquals( 'sensei_data_port_no_active_job', $response->get_data()['code'] );
+			$this->assertEquals( 'sensei_data_port_job_not_found', $response->get_data()['code'] );
 		}
 	}
 
 	/**
-	 * Tests `DELETE /import` when job has been started.
+	 * Tests `DELETE /import/{job_id}` when job has been started.
 	 *
 	 * @dataProvider userDataSources
 	 *
@@ -238,15 +238,17 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 		}
 
 		$expected_status_codes = [ 401, 403 ];
+		$job_id                = 'current';
 		if ( $is_authorized ) {
 			$expected_status_codes = [ 200 ];
 
 			$job = Sensei_Data_Port_Manager::instance()->create_import_job( get_current_user_id() );
 			$job->persist();
 			Sensei_Data_Port_Manager::instance()->persist();
+			$job_id = $job->get_job_id();
 		}
 
-		$request  = new WP_REST_Request( 'DELETE', '/sensei-internal/v1/import' );
+		$request  = new WP_REST_Request( 'DELETE', '/sensei-internal/v1/import/' . $job_id );
 		$response = $this->server->dispatch( $request );
 		$this->assertTrue( in_array( $response->get_status(), $expected_status_codes, true ), "{$user_description} requests should produce status of " . implode( ', ', $expected_status_codes ) );
 
@@ -266,14 +268,14 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 	}
 
 	/**
-	 * Tests `POST /import/file/{file_key}`.
+	 * Tests `POST /import/active/file/{file_key}` and create a new job.
 	 *
 	 * @dataProvider userDataSources
 	 *
 	 * @param string $user_role     User role to run the request as.
 	 * @param bool   $is_authorized Is the user authenticated and authorized.
 	 */
-	public function testPostFileValidFile( $user_role, $is_authorized ) {
+	public function testPostFileValidFileNewJob( $user_role, $is_authorized ) {
 		if ( ! version_compare( get_bloginfo( 'version' ), '5.0.0', '>=' ) ) {
 			$this->markTestSkipped( 'Test fails with 4.9 due to text/csv getting interpreted as text/plain.' );
 		}
@@ -290,16 +292,12 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 		$expected_status_codes = [ 401, 403 ];
 		if ( $is_authorized ) {
 			$expected_status_codes = [ 200 ];
-
-			$job = Sensei_Data_Port_Manager::instance()->create_import_job( get_current_user_id() );
-			$job->persist();
-			Sensei_Data_Port_Manager::instance()->persist();
 		}
 
 		$test_file = SENSEI_TEST_FRAMEWORK_DIR . '/data-port/data-files/questions.csv';
 		$test_file = $this->get_tmp_file( $test_file );
 
-		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/import/file/questions' );
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/import/active/file/questions' );
 		$request->set_file_params(
 			[
 				'file' => [
@@ -326,7 +324,70 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 	}
 
 	/**
-	 * Tests `POST /import/file/{file_key}` with an invalid file type.
+	 * Tests `POST /import/{job_id}/file/{file_key}` for existing job ID.
+	 *
+	 * @dataProvider userDataSources
+	 *
+	 * @param string $user_role     User role to run the request as.
+	 * @param bool   $is_authorized Is the user authenticated and authorized.
+	 */
+	public function testPostFileValidFileExistingJob( $user_role, $is_authorized ) {
+		if ( ! version_compare( get_bloginfo( 'version' ), '5.0.0', '>=' ) ) {
+			$this->markTestSkipped( 'Test fails with 4.9 due to text/csv getting interpreted as text/plain.' );
+		}
+
+		wp_logout();
+
+		$user_description = 'Guest';
+		if ( $user_role ) {
+			$user_id          = $this->factory->user->create( [ 'role' => $user_role ] );
+			$user_description = ucfirst( $user_role );
+			wp_set_current_user( $user_id );
+		}
+
+		$expected_status_codes = [ 401, 403 ];
+		$job_id                = 'current';
+		if ( $is_authorized ) {
+			$expected_status_codes = [ 200 ];
+
+			$job = Sensei_Data_Port_Manager::instance()->create_import_job( get_current_user_id() );
+			$job->persist();
+			Sensei_Data_Port_Manager::instance()->persist();
+
+			$job_id = $job->get_job_id();
+		}
+
+		$test_file = SENSEI_TEST_FRAMEWORK_DIR . '/data-port/data-files/questions.csv';
+		$test_file = $this->get_tmp_file( $test_file );
+
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/import/' . $job_id . '/file/questions' );
+		$request->set_file_params(
+			[
+				'file' => [
+					'name'     => basename( $test_file ),
+					'size'     => filesize( $test_file ),
+					'tmp_name' => $test_file,
+					'type'     => 'text/csv',
+					'error'    => UPLOAD_ERR_OK,
+				],
+			]
+		);
+
+		$response = $this->server->dispatch( $request );
+
+		$this->assertTrue( in_array( $response->get_status(), $expected_status_codes, true ), "{$user_description} requests should produce status of " . implode( ', ', $expected_status_codes ) );
+
+		if ( $is_authorized ) {
+			$data = $response->get_data();
+			$this->assertResultValidJob( $data );
+
+			$this->assertTrue( isset( $data['files']['questions']['name'] ) );
+			$this->assertEquals( basename( $test_file ), $data['files']['questions']['name'] );
+		}
+	}
+
+	/**
+	 * Tests `POST /import/{job_id}/file/{file_key}` with an invalid file type.
 	 */
 	public function testPostFileInvalidFileType() {
 		wp_logout();
@@ -342,7 +403,7 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 		$test_file = SENSEI_TEST_FRAMEWORK_DIR . '/data-port/data-files/invalid_file_type.tsv';
 		$test_file = $this->get_tmp_file( $test_file );
 
-		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/import/file/questions' );
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/import/' . $job->get_job_id() . '/file/questions' );
 		$request->set_file_params(
 			[
 				'file' => [
@@ -366,7 +427,7 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 	}
 
 	/**
-	 * Tests `POST /import/file/{file_key}` with an invalid file key.
+	 * Tests `POST /import/{job_id}/file/{file_key}` with an invalid file key.
 	 */
 	public function testPostFileInvalidFileKey() {
 		wp_logout();
@@ -382,7 +443,7 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 		$test_file = SENSEI_TEST_FRAMEWORK_DIR . '/data-port/data-files/questions.csv';
 		$test_file = $this->get_tmp_file( $test_file );
 
-		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/import/file/dinosaurs' );
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/import/' . $job->get_job_id() . '/file/dinosaurs' );
 		$request->set_file_params(
 			[
 				'file' => [
@@ -406,7 +467,7 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 	}
 
 	/**
-	 * Tests `DELETE /import/file/{file_key}` for a file that exists.
+	 * Tests `DELETE /import/{job_id}/file/{file_key}` for a file that exists.
 	 *
 	 * @dataProvider userDataSources
 	 *
@@ -429,6 +490,7 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 
 		$test_file             = SENSEI_TEST_FRAMEWORK_DIR . '/data-port/data-files/questions.csv';
 		$test_file             = $this->get_tmp_file( $test_file );
+		$job_id                = 'current';
 		$expected_status_codes = [ 401, 403 ];
 		if ( $is_authorized ) {
 			$expected_status_codes = [ 200 ];
@@ -437,9 +499,10 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 			$job->save_file( 'questions', $test_file, basename( $test_file ) );
 			$job->persist();
 			Sensei_Data_Port_Manager::instance()->persist();
+			$job_id = $job->get_job_id();
 		}
 
-		$request  = new WP_REST_Request( 'DELETE', '/sensei-internal/v1/import/file/questions' );
+		$request  = new WP_REST_Request( 'DELETE', '/sensei-internal/v1/import/' . $job_id . '/file/questions' );
 		$response = $this->server->dispatch( $request );
 
 		$this->assertTrue( in_array( $response->get_status(), $expected_status_codes, true ), "{$user_description} requests should produce status of " . implode( ', ', $expected_status_codes ) );
@@ -453,7 +516,7 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 	}
 
 	/**
-	 * Tests `DELETE /import/file/{file_key}` when file does not exist.
+	 * Tests `DELETE /import/{job_id}/file/{file_key}` when file does not exist.
 	 *
 	 * @dataProvider userDataSources
 	 *
@@ -470,6 +533,7 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 			wp_set_current_user( $user_id );
 		}
 
+		$job_id                = 'current';
 		$expected_status_codes = [ 401, 403 ];
 		if ( $is_authorized ) {
 			$expected_status_codes = [ 404 ];
@@ -477,9 +541,10 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 			$job = Sensei_Data_Port_Manager::instance()->create_import_job( get_current_user_id() );
 			$job->persist();
 			Sensei_Data_Port_Manager::instance()->persist();
+			$job_id = $job->get_job_id();
 		}
 
-		$request  = new WP_REST_Request( 'DELETE', '/sensei-internal/v1/import/file/questions' );
+		$request  = new WP_REST_Request( 'DELETE', '/sensei-internal/v1/import/' . $job_id . '/file/questions' );
 		$response = $this->server->dispatch( $request );
 
 		$this->assertTrue( in_array( $response->get_status(), $expected_status_codes, true ), "{$user_description} requests should produce status of " . implode( ', ', $expected_status_codes ) );
@@ -492,7 +557,7 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 	}
 
 	/**
-	 * Tests `POST /import/start` when the job is ready.
+	 * Tests `POST /import/{job_id}/start` when the job is ready.
 	 *
 	 * @dataProvider userDataSources
 	 *
@@ -514,6 +579,7 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 		}
 
 		$expected_status_codes = [ 401, 403 ];
+		$job_id                = 'current';
 		if ( $is_authorized ) {
 			$expected_status_codes = [ 200 ];
 
@@ -523,10 +589,11 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 			$job = Sensei_Data_Port_Manager::instance()->create_import_job( get_current_user_id() );
 			$job->save_file( 'questions', $test_file, basename( $test_file ) );
 			$job->persist();
+			$job_id = $job->get_job_id();
 			Sensei_Data_Port_Manager::instance()->persist();
 		}
 
-		$request  = new WP_REST_Request( 'POST', '/sensei-internal/v1/import/start' );
+		$request  = new WP_REST_Request( 'POST', '/sensei-internal/v1/import/' . $job_id . '/start' );
 		$response = $this->server->dispatch( $request );
 
 		$this->assertTrue( in_array( $response->get_status(), $expected_status_codes, true ), "{$user_description} requests should produce status of " . implode( ', ', $expected_status_codes ) );
@@ -538,7 +605,7 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 	}
 
 	/**
-	 * Tests `POST /import/start` when the job is already running.
+	 * Tests `POST /import/{job_id}/start` when the job is already running.
 	 *
 	 * @dataProvider userDataSources
 	 *
@@ -560,6 +627,7 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 		}
 
 		$expected_status_codes = [ 401, 403 ];
+		$job_id                = 'current';
 		if ( $is_authorized ) {
 			$expected_status_codes = [ 400 ];
 
@@ -571,9 +639,10 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 			$job->start();
 			$job->persist();
 			Sensei_Data_Port_Manager::instance()->persist();
+			$job_id = $job->get_job_id();
 		}
 
-		$request  = new WP_REST_Request( 'POST', '/sensei-internal/v1/import/start' );
+		$request  = new WP_REST_Request( 'POST', '/sensei-internal/v1/import/' . $job_id . '/start' );
 		$response = $this->server->dispatch( $request );
 
 		$this->assertTrue( in_array( $response->get_status(), $expected_status_codes, true ), "{$user_description} requests should produce status of " . implode( ', ', $expected_status_codes ) );
@@ -585,7 +654,7 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 	}
 
 	/**
-	 * Tests `POST /import/start` when the job is not ready.
+	 * Tests `POST /import/{job_id}/start` when the job is not ready.
 	 *
 	 * @dataProvider userDataSources
 	 *
@@ -603,6 +672,7 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 		}
 
 		$expected_status_codes = [ 401, 403 ];
+		$job_id                = 'current';
 		if ( $is_authorized ) {
 			$data_port_manager = Sensei_Data_Port_Manager::instance();
 			$job               = $data_port_manager->create_import_job( get_current_user_id() );
@@ -610,9 +680,10 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 			$data_port_manager->persist();
 
 			$expected_status_codes = [ 400 ];
+			$job_id                = $job->get_job_id();
 		}
 
-		$request  = new WP_REST_Request( 'POST', '/sensei-internal/v1/import/start' );
+		$request  = new WP_REST_Request( 'POST', '/sensei-internal/v1/import/' . $job_id . '/start' );
 		$response = $this->server->dispatch( $request );
 
 		$this->assertTrue( in_array( $response->get_status(), $expected_status_codes, true ), "{$user_description} requests should produce status of " . implode( ', ', $expected_status_codes ) );
@@ -625,7 +696,7 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 
 
 	/**
-	 * Tests `POST /import/start` when the job hasn't been created.
+	 * Tests `POST /import/{job_id}/start` when the job hasn't been created.
 	 *
 	 * @dataProvider userDataSources
 	 *
@@ -647,14 +718,14 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 			$expected_status_codes = [ 404 ];
 		}
 
-		$request  = new WP_REST_Request( 'POST', '/sensei-internal/v1/import/start' );
+		$request  = new WP_REST_Request( 'POST', '/sensei-internal/v1/import/does-not-exist/start' );
 		$response = $this->server->dispatch( $request );
 
 		$this->assertTrue( in_array( $response->get_status(), $expected_status_codes, true ), "{$user_description} requests should produce status of " . implode( ', ', $expected_status_codes ) );
 
 		if ( $is_authorized ) {
 			$data = $response->get_data();
-			$this->assertResultError( $data, 'sensei_data_port_no_active_job' );
+			$this->assertResultError( $data, 'sensei_data_port_job_not_found' );
 		}
 	}
 
