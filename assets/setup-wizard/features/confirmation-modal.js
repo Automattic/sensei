@@ -1,6 +1,7 @@
 import { List } from '@woocommerce/components';
 import { Button, Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { getWccomProductId } from '../helpers/woocommerce-com';
 
 import { getFeatureObservation } from './feature-description-utils';
 import FeatureDescription from './feature-description';
@@ -55,6 +56,16 @@ const ConfirmationModal = ( {
 				'sensei-lms'
 			) }
 		</p>
+		{ features.some( getWccomProductId ) && (
+			<p>
+				<strong>
+					{ __(
+						'WooCommerce.com will open in a new tab so that you can complete the purchase process.',
+						'sensei-lms'
+					) }
+				</strong>
+			</p>
+		) }
 
 		{ errorNotice }
 

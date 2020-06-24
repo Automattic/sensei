@@ -32,6 +32,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 				'plugin_file'  => 'woocommerce/woocommerce.php',
 				'link'         => 'https://wordpress.org/plugins/woocommerce',
 				'unselectable' => true,
+				'version'      => '4.0.0',
 			],
 			DAY_IN_SECONDS
 		);

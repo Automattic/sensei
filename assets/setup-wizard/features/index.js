@@ -11,6 +11,10 @@ import {
 	updateQueryString,
 } from '../query-string-router/url-functions';
 import { useSetupWizardStep } from '../data/use-setup-wizard-step';
+import {
+	getWccomProductId,
+	getWoocommerceComPurchaseUrl,
+} from '../helpers/woocommerce-com';
 import ConfirmationModal from './confirmation-modal';
 import InstallationFeedback from './installation-feedback';
 import FeaturesSelection from './features-selection';
@@ -35,6 +39,8 @@ const filterInstalledFeatures = ( submittedSlugs, features ) =>
 
 		return INSTALLED_STATUS !== feature.status;
 	} );
+
+const wcSlug = 'woocommerce';
 
 /**
  * Features step for setup wizard.
@@ -88,16 +94,20 @@ const Features = () => {
 		[ features, selectedSlugs ]
 	);
 
+	const isWooCommerceInstalled = useCallback( () => {
+		const wooCommerceFeature = features.find( ( f ) => wcSlug === f.slug );
+		return (
+			wooCommerceFeature && INSTALLED_STATUS === wooCommerceFeature.status
+		);
+	}, [ features ] );
+
 	// Add or remove WooCommerce to the selected slugs.
 	useEffect( () => {
-		const wcSlug = 'woocommerce';
 		const selectedFeatures = getSelectedFeatures();
 		const isWooCommerceSelected = selectedFeatures.some(
 			( feature ) => feature.slug === wcSlug
 		);
-		const needWooCommerce = selectedFeatures.some(
-			( feature ) => feature.wccom_product_id
-		);
+		const needWooCommerce = selectedFeatures.some( getWccomProductId );
 
 		if ( ! needWooCommerce && isWooCommerceSelected ) {
 			setSelectedSlugs( ( prev ) =>
@@ -106,19 +116,14 @@ const Features = () => {
 			return;
 		}
 
-		const wooCommerceFeature = features.find( ( f ) => wcSlug === f.slug );
-		const isWooCommerceInstalled =
-			wooCommerceFeature &&
-			INSTALLED_STATUS === wooCommerceFeature.status;
-
 		if (
 			needWooCommerce &&
 			! isWooCommerceSelected &&
-			! isWooCommerceInstalled
+			! isWooCommerceInstalled()
 		) {
 			setSelectedSlugs( ( prev ) => [ ...prev, wcSlug ] );
 		}
-	}, [ getSelectedFeatures, features ] );
+	}, [ getSelectedFeatures, isWooCommerceInstalled ] );
 
 	// Finish and submit features selection.
 	const finishSelection = () => {
@@ -135,6 +140,15 @@ const Features = () => {
 
 	// Start features installation.
 	const startInstallation = () => {
+		logEvent( 'setup_wizard_features_install', {
+			slug: selectedSlugs.join( ',' ),
+		} );
+
+		installFromWpOrg();
+		installFromWooCommerce();
+	};
+
+	const installFromWpOrg = () => {
 		submitInstallation(
 			{ selected: selectedSlugs },
 			{
@@ -144,10 +158,20 @@ const Features = () => {
 				},
 			}
 		);
+	};
 
-		logEvent( 'setup_wizard_features_install', {
-			slug: selectedSlugs.join( ',' ),
-		} );
+	const installFromWooCommerce = () => {
+		const pendingWcFeatures = getSelectedFeatures().filter(
+			( feature ) =>
+				getWccomProductId( feature ) &&
+				INSTALLED_STATUS !== feature.status
+		);
+		if ( ! pendingWcFeatures.length ) return;
+		const wcPurchaseUrl = getWoocommerceComPurchaseUrl(
+			pendingWcFeatures,
+			stepData.wccom
+		);
+		window.open( wcPurchaseUrl );
 	};
 
 	// Retry features installation.
