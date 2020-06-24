@@ -113,3 +113,14 @@ div.question_boolean_fields { margin-bottom: 10px; }
     margin-bottom: 2em !important;
     padding-left: 0.5em;
 }
+
+DIV.wp_list_table_grading_answers_wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+.wp_list_table_grading_answers {
+    width: auto;
+}
+.wp_list_table_grading_answers TR:hover {
+    background-color: #f2faff;
+}

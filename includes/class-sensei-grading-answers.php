@@ -43,7 +43,7 @@ class Sensei_Grading_Answers extends Sensei_List_Table {
 		}
 
 		// Load Parent token into constructor
-		parent::__construct( 'grading_main' );
+		parent::__construct( 'grading_answer' );
 
 		// Actions
 		add_action( 'sensei_before_list_table', array( $this, 'data_table_header' ) );
@@ -510,6 +510,49 @@ class Sensei_Grading_Answers extends Sensei_List_Table {
 	public function data_table_footer() {
 		// Nothing right now
 	} // End data_table_footer()
+
+
+	/**
+	 * Displays the table.
+	 *
+	 * @since 3.1.1
+	 */
+	public function display() {
+		$singular = $this->_args['singular'];
+
+		$this->display_tablenav( 'top' );
+
+		$this->screen->render_screen_reader_content( 'heading_list' );
+		?>
+<div class="wp_list_table_grading_answers_wrapper">
+	<table class="wp-list-table <?php echo implode( ' ', $this->get_table_classes() ); ?>">
+		<thead>
+		<tr>
+			<?php $this->print_column_headers(); ?>
+		</tr>
+		</thead>
+
+		<tbody id="the-list"
+			<?php
+			if ( $singular ) {
+				echo " data-wp-lists='list:$singular'";
+			}
+			?>
+			>
+			<?php $this->display_rows_or_placeholder(); ?>
+		</tbody>
+
+		<tfoot>
+		<tr>
+			<?php $this->print_column_headers( false ); ?>
+		</tr>
+		</tfoot>
+
+	</table>
+</div>
+		<?php
+		$this->display_tablenav( 'bottom' );
+	}
 
 } // End Class
 
