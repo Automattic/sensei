@@ -36,9 +36,11 @@ const purposes = [
 	},
 	{
 		id: 'educate_students',
-		title: 'Educate students',
-		description:
+		title: __( 'Educate students', 'sensei-lms' ),
+		description: __(
 			'You are an educator who would like to create an online classroom.',
+			'sensei-lms'
+		),
 	},
 	{
 		id: 'other',
