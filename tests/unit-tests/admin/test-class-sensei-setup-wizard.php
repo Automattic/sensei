@@ -569,7 +569,7 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 				'products' => [
 					(object) [
 						'product_slug'     => 'test-wccom-plugin',
-						'plugin_file'      => 'test-plugin/test-plugin.php',
+						'plugin_file'      => 'test-wccom-plugin/test-wccom-plugin.php',
 						'wccom_product_id' => '00000',
 					],
 				],
