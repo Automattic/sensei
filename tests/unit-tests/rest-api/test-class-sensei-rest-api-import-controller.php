@@ -137,6 +137,7 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 
 		if ( $is_authorized ) {
 			$expected_parts = [
+				'id'     => $job->get_job_id(),
 				'status' => [
 					'status'     => 'setup',
 					'percentage' => 0,
@@ -144,6 +145,114 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 			];
 
 			$this->assertResultValidJob( $response->get_data(), $expected_parts );
+		}
+	}
+
+	/**
+	 * Tests `GET /import/{job_id}/logs`.
+	 *
+	 * @dataProvider userDataSources
+	 *
+	 * @param string $user_role     User role to run the request as.
+	 * @param bool   $is_authorized Is the user authenticated and authorized.
+	 */
+	public function testGetImportLogs( $user_role, $is_authorized ) {
+		wp_logout();
+
+		$user_description = 'Guest';
+		if ( $user_role ) {
+			$user_id          = $this->factory->user->create( [ 'role' => $user_role ] );
+			$user_description = ucfirst( $user_role );
+			wp_set_current_user( $user_id );
+		}
+
+		$expected_status_codes = [ 401, 403 ];
+		$job_id                = 'doesnotexit';
+
+		$entries = [
+			[
+				'input'    => [
+					'message' => 'Test message A',
+					'level'   => Sensei_Data_Port_Job::LOG_LEVEL_NOTICE,
+					'data'    => [
+						'type'        => 'course',
+						'line'        => 100,
+						'entry_title' => 'Test Course A',
+						'entry_id'    => '123',
+					],
+				],
+				'expected' => [
+					'type'       => 'course',
+					'line'       => 100,
+					'severity'   => 'notice',
+					'descriptor' => 'Test Course A; ID: 123',
+					'message'    => 'Test message A',
+				],
+			],
+			[
+				'input'    => [
+					'message' => 'Test message B',
+					'level'   => Sensei_Data_Port_Job::LOG_LEVEL_NOTICE,
+					'data'    => [
+						'type'        => 'course',
+						'line'        => 101,
+						'entry_title' => 'Test Course B',
+						'entry_id'    => null,
+					],
+				],
+				'expected' => [
+					'type'       => 'course',
+					'line'       => 101,
+					'severity'   => 'notice',
+					'descriptor' => 'Test Course B',
+					'message'    => 'Test message B',
+				],
+			],
+			[
+				'input'    => [
+					'message' => 'Test message C',
+					'level'   => Sensei_Data_Port_Job::LOG_LEVEL_ERROR,
+					'data'    => [
+						'type'        => 'course',
+						'line'        => 102,
+						'entry_title' => null,
+						'entry_id'    => null,
+					],
+				],
+				'expected' => [
+					'type'       => 'course',
+					'line'       => 102,
+					'severity'   => 'error',
+					'descriptor' => null,
+					'message'    => 'Test message C',
+				],
+			],
+		];
+
+		if ( $is_authorized ) {
+			$expected_status_codes = [ 200 ];
+
+			$job = Sensei_Data_Port_Manager::instance()->create_import_job( get_current_user_id() );
+			foreach ( $entries as $entry ) {
+				$job->add_log_entry( $entry['input']['message'], $entry['input']['level'], $entry['input']['data'] );
+			}
+
+			$job->persist();
+			Sensei_Data_Port_Manager::instance()->persist();
+			$job_id = $job->get_job_id();
+		}
+
+		$request  = new WP_REST_Request( 'GET', '/sensei-internal/v1/import/' . $job_id . '/logs' );
+		$response = $this->server->dispatch( $request );
+		$this->assertTrue( in_array( $response->get_status(), $expected_status_codes, true ), "{$user_description} requests should produce status code of " . implode( ', ', $expected_status_codes ) );
+
+		$result = $response->get_data();
+		if ( $is_authorized ) {
+			$this->assertEquals( 3, $result['total'] );
+			foreach ( $entries as $index => $entry ) {
+				$this->assertTrue( isset( $result['items'][ $index ] ) );
+				$this->assertEquals( $entry['expected'], $result['items'][ $index ] );
+			}
 		}
 	}
 

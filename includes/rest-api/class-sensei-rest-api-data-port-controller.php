@@ -18,6 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since   3.1.0
  */
 abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller {
+	const LOG_PAGE_SIZE = 1000;
 
 	/**
 	 * Routes namespace.
@@ -97,6 +98,20 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 				'schema' => [ $this, 'get_item_schema' ],
 			]
 		);
+
+		// Endpoint to start the job.
+		register_rest_route(
+			$this->namespace,
+			$this->rest_base . '/(?P<job_id>[0-9a-z]+)/logs',
+			[
+				[
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => [ $this, 'request_get_job_logs' ],
+					'permission_callback' => [ $this, 'can_user_access_rest_api' ],
+				],
+				'schema' => [ $this, 'get_logs_schema' ],
+			]
+		);
 	}
 
 	/**
@@ -135,6 +150,32 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 
 		$response = new WP_REST_Response();
 		$response->set_data( $this->prepare_to_serve_job( $job ) );
+
+		return $response;
+	}
+
+	/**
+	 * Get the current import job logs.
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 *
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function request_get_job_logs( $request ) {
+		$job = $this->resolve_job( sanitize_text_field( $request->get_param( 'job_id' ) ), true );
+
+		if ( ! $job ) {
+			return new WP_Error(
+				'sensei_data_port_no_active_job',
+				__( 'No job could be found.', 'sensei-lms' ),
+				array( 'status' => 404 )
+			);
+		}
+
+		$offset = isset( $request['offset'] ) ? absint( $request['offset'] ) : 0;
+
+		$response = new WP_REST_Response();
+		$response->set_data( $this->prepare_to_serve_job_logs( $job, $offset ) );
 
 		return $response;
 	}
@@ -283,7 +324,40 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 	}
 
 	/**
-	 * Get the schema for the client.
+	 * Prepare job logs to be sent to the client.
+	 *
+	 * @param Sensei_Data_Port_Job $job    Job to be prepared for the client.
+	 * @param int                  $offset Offset.
+	 *
+	 * @return array
+	 */
+	public function prepare_to_serve_job_logs( Sensei_Data_Port_Job $job, $offset = 0 ) {
+		$log_entries = $job->get_logs();
+
+		$logs_refactored = array_map(
+			function( $entry ) {
+				$data = ! empty( $entry['data'] ) ? $entry['data'] : [];
+
+				return [
+					'type'       => isset( $data['type'] ) ? $data['type'] : null,
+					'line'       => isset( $data['line'] ) ? $data['line'] : null,
+					'severity'   => Sensei_Data_Port_Job::translate_log_severity_level( $entry['level'] ),
+					'descriptor' => Sensei_Data_Port_Job::get_log_entry_descriptor( $entry ),
+					'message'    => $entry['message'],
+				];
+			},
+			array_slice( $log_entries, $offset, self::LOG_PAGE_SIZE )
+		);
+
+		return [
+			'offset' => $offset,
+			'total'  => count( $log_entries ),
+			'items'  => $logs_refactored,
+		];
+	}
+
+	/**
+	 * Get the job schema for the client.
 	 *
 	 * @return array
 	 */
@@ -333,6 +407,53 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 				'files'  => [
 					'type'       => 'object',
 					'properties' => $file_properties,
+				],
+			],
+		];
+	}
+
+	/**
+	 * Get the logs schema for the client.
+	 *
+	 * @return array
+	 */
+	public function get_logs_schema() {
+		return [
+			'type' => 'object',
+			'properties' => [
+				'items' => [
+					'type'       => 'array',
+					'items'      => [
+						'type'       => 'object',
+						'properties' => [
+							'type'     => [
+								'description' => __( 'Object type', 'sensei-lms' ),
+								'type'        => 'string',
+								'readonly'    => true,
+							],
+							'line'     => [
+								'description' => __( 'Source file line', 'sensei-lms' ),
+								'type'        => 'integer',
+								'readonly'    => true,
+							],
+							'severity'     => [
+								'description' => __( 'Log severity level ', 'sensei-lms' ),
+								'type'        => 'string',
+								"enum"        => [ 'info', 'notice', 'error' ],
+								'readonly'    => true,
+							],
+							'descriptor'     => [
+								'description' => __( 'Object descriptor', 'sensei-lms' ),
+								'type'        => 'string',
+								'readonly'    => true,
+							],
+							'message'     => [
+								'description' => __( 'Log message', 'sensei-lms' ),
+								'type'        => 'string',
+								'readonly'    => true,
+							],
+						],
+					],
 				],
 			],
 		];
