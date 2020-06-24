@@ -63,9 +63,8 @@ class Sensei_Grading_Answers extends Sensei_List_Table {
 		$question_count = 0;
 		foreach ($this->questions as $question) {
 			++$question_count;
-			// translators: Placeholder is the question or answer number.
-			$columns['question'.$question_count] = sprintf( __( 'Question %d', 'sensei-lms' ), $question_count );
-			$columns['answer'.$question_count]   = sprintf( __( 'Answer %d', 'sensei-lms' ), $question_count );
+			// translators: Placeholder is the question number.
+			$columns['question'.$question_count] = sprintf( __( 'Question %d: ', 'sensei-lms' ), $question_count ) . wp_kses_post( apply_filters( 'sensei_question_title', $question->post_title ) );
 		}
 
 		$columns = apply_filters( 'sensei_grading_default_columns', $columns, $this );
@@ -90,23 +89,20 @@ class Sensei_Grading_Answers extends Sensei_List_Table {
 	}
 
 	/**
-	 * Prepare the table with different parameters, pagination, columns and table elements
+	 * Prepare a user answer for display
 	 *
 	 * @since  3.1.1
 	 * @return void
 	 */
-	public function prepare_questions($user_id, $return_answer=false) {
-		$question_count        = 0;
-		$graded_count          = 0;
-		$user_quiz_grade_total = 0;
-		$quiz_grade_total      = 0;
-		$quiz_grade            = 0;
-		$lesson_id             = $this->lesson_id;
-		$temp_return           = '';
+	public function get_answer($user_id, $question) {
+		if ( ! isset( $user_id ) || ! isset( $question ) ) {
+			return false;
+		} else {
+			$graded_count          = 0;
+			$quiz_grade            = 0;
+			$lesson_id             = $this->lesson_id;
 
-		foreach ( $this->questions as $question ) {
 			$question_id = $question->ID;
-			++$question_count;
 
 			$type      = false;
 			$type_name = '';
@@ -116,7 +112,6 @@ class Sensei_Grading_Answers extends Sensei_List_Table {
 			$question_answer_notes = Sensei()->quiz->get_user_question_feedback( $lesson_id, $question_id, $user_id );
 
 			$question_grade_total = Sensei()->question->get_question_grade( $question_id );
-			$quiz_grade_total    += $question_grade_total;
 
 			$right_answer        = get_post_meta( $question_id, '_question_right_answer', true );
 			$user_answer_content = Sensei()->quiz->get_user_question_answer( $lesson_id, $question_id, $user_id );
@@ -191,9 +186,6 @@ class Sensei_Grading_Answers extends Sensei_List_Table {
 					// Nothing
 					break;
 			}
-			// translators: Placeholder is the question number.
-			$question_title = sprintf( __( 'Question %d: ', 'sensei-lms' ), $question_count );
-			$question_title .= wp_kses_post( apply_filters( 'sensei_question_title', $question->post_title ) );
 
 			$question_answer = '';
 			$user_answer_content = (array) $user_answer_content;
@@ -211,15 +203,38 @@ class Sensei_Grading_Answers extends Sensei_List_Table {
 				$question_answer .= wp_kses_post( apply_filters( 'sensei_answer_text', $_user_answer ) ) . '<br>';
 			}
 
-			// TEMP: Add to the return string
-			if ( $return_answer ) {
-				$temp_return .= $question_answer;
-			} else {
-				$temp_return .= $question_title;
+			$quiz_grade_type = get_post_meta( $this->quiz_id, '_quiz_grade_type', true );
+			// Don't auto-grade if "Grade quiz automatically" isn't selected in Quiz Settings,
+			// regardless of question type.
+			if ( 'manual' === $quiz_grade_type ) {
+				$grade_type = 'manual-grade';
 			}
-		}// End foreach
+			$user_question_grade = Sensei()->quiz->get_user_question_grade( $lesson_id, $question_id, $user_id );
+			$graded_class        = 'ungraded';
 
-		return $temp_return;
+			// Question with no grade value associated with it.
+			if ( 0 === $question_grade_total ) {
+				$grade_type          = 'zero-graded';
+				$graded_class        = '';
+				$user_question_grade = 0;
+			} else {
+				$user_right = intval( $user_question_grade ) > 0;
+				// The user's grade will be 0 if they answered incorrectly.
+				// Don't set a grade for questions that are part of an auto-graded quiz, but that must be manually graded.
+				$user_wrong =
+					( 'manual' === $quiz_grade_type && 0 === intval( $user_question_grade ) )
+					|| ( 'auto' === $quiz_grade_type && 'manual-grade' !== $grade_type && 0 === intval( $user_question_grade ) );
+
+				if ( $user_right ) {
+					$graded_class        = 'user_right';
+				} elseif ( $user_wrong ) {
+					$graded_class        = 'user_wrong';
+					$user_question_grade = 0;
+				}
+			}
+
+			return '<div class="' . $graded_class . '">' . $question_answer . '</div>';
+		}
 	}
 
 	/**
@@ -399,22 +414,29 @@ class Sensei_Grading_Answers extends Sensei_List_Table {
 
 		$course_id    = get_post_meta( $item->comment_post_ID, '_lesson_course', true );
 
-		$column_data = apply_filters(
+		$column_filter  = array(
+			'title'       => '<strong><a class="row-title" href="' . esc_url(
+				add_query_arg(
+					array(
+						'page'    => $this->page_slug,
+						'user_id' => $item->user_id,
+					),
+					admin_url( 'admin.php' )
+				)
+			) . '">' . esc_html( $title ) . '</a></strong>',
+		);
+		$question_count = 0;
+		foreach ($this->questions as $question) {
+			++$question_count;
+			// translators: Placeholder is the question number.
+			$column_filter['question'.$question_count]  = $this->get_answer( $item->user_id, $question );
+		}
+
+		$column_filter['user_grade']    = $grade;
+
+		$column_data  = apply_filters(
 			'sensei_grading_main_column_data',
-			array(
-				'title'       => '<strong><a class="row-title" href="' . esc_url(
-					add_query_arg(
-						array(
-							'page'    => $this->page_slug,
-							'user_id' => $item->user_id,
-						),
-						admin_url( 'admin.php' )
-					)
-				) . '">' . esc_html( $title ) . '</a></strong>',
-				'question1'  	=> '', //$this->prepare_questions( $item->user_id ),
-				'answer1'  		=> '', //$this->prepare_questions( $item->user_id, true ),
-				'user_grade'  => $grade,
-			),
+			$column_filter,
 			$item,
 			$course_id
 		);
