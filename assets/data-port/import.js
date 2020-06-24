@@ -28,6 +28,13 @@ const SenseiImportPage = () => {
 		fetchImporterData();
 	}, [ fetchImporterData ] );
 
+	// Add `sensei-color` to body tag.
+	useLayoutEffect( () => {
+		document.body.classList.add( [ 'sensei-color' ] );
+
+		return () => document.body.classList.remove( [ 'sensei-color' ] );
+	} );
+
 	if ( isFetching ) {
 		return <Spinner className="sensei-import__main-loader" />;
 	}

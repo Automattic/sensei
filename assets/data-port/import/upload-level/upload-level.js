@@ -71,6 +71,7 @@ export const UploadLevels = ( {
 						<FormFileUpload
 							// Include key to redraw after each upload attempt for onChange of the same file.
 							key={ levelState.inProgress }
+							isSecondary
 							accept={ [ '.csv', '.txt' ] }
 							onChange={ ( event ) =>
 								uploadFile(
