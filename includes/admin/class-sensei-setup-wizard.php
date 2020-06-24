@@ -21,6 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Setup_Wizard {
 	const SUGGEST_SETUP_WIZARD_OPTION = 'sensei_suggest_setup_wizard';
 	const WC_INFORMATION_TRANSIENT    = 'sensei_woocommerce_plugin_information';
+	const WCCOM_INSTALLING            = 'sensei_setup_wizard_wccom_installing';
 	const USER_DATA_OPTION            = 'sensei_setup_wizard_data';
 	const MC_LIST_ID                  = '4fa225a515';
 	const MC_USER_ID                  = '7a061a9141b0911d6d9bafe3a';
@@ -85,6 +86,8 @@ class Sensei_Setup_Wizard {
 
 		$this->page_slug = 'sensei_setup_wizard';
 		$this->pages     = new Sensei_Setup_Wizard_Pages();
+
+		add_action( 'activated_plugin', [ $this, 'log_wccom_plugin_install' ] );
 
 		if ( is_admin() ) {
 
@@ -586,18 +589,57 @@ class Sensei_Setup_Wizard {
 	 * @param string[] $extension_slugs Extension slugs to install.
 	 */
 	public function install_extensions( $extension_slugs ) {
-		$extensions_to_install = array_filter(
-			array_map(
-				function( $extension ) use ( $extension_slugs ) {
-					$key       = array_search( $extension->product_slug, $extension_slugs, true );
-					$is_wc_com = isset( $extension->wccom_product_id );
 
-					return ( false !== $key && ! $is_wc_com ) ? $extension : false;
-				},
-				$this->get_sensei_extensions()
-			)
-		);
+		$extensions_to_install = [];
+		$wccom_extensions      = [];
+
+		foreach ( $this->get_sensei_extensions() as $extension ) {
+			if ( ! in_array( $extension->product_slug, $extension_slugs, true ) ) {
+				continue;
+			}
+
+			if ( isset( $extension->wccom_product_id ) ) {
+				$wccom_extensions[] = $extension->plugin_file;
+			} else {
+				$extensions_to_install[] = $extension;
+			}
+		}
+
+		set_transient( self::WCCOM_INSTALLING, $wccom_extensions, 10 * 60 );
 
 		Sensei_Plugins_Installation::instance()->install_plugins( $extensions_to_install );
+	}
+
+	/**
+	 * Log plugin installation success for WooCommerce.com plugin on activation.
+	 *
+	 * @param string $plugin_file The activated plugin.
+	 */
+	public function log_wccom_plugin_install( $plugin_file ) {
+
+		$plugin_file   = plugin_basename( $plugin_file );
+		$wccom_plugins = get_transient( self::WCCOM_INSTALLING );
+
+		if ( empty( $wccom_plugins ) ) {
+			return;
+		}
+
+		if ( in_array( $plugin_file, $wccom_plugins, true ) ) {
+
+			$extensions = $this->get_sensei_extensions();
+			$plugin     = array_filter(
+				$extensions,
+				function( $extension ) use ( $plugin_file ) {
+					return $plugin_file === $extension->plugin_file;
+				}
+			);
+
+			if ( ! empty( $plugin ) ) {
+				sensei_log_event(
+					'setup_wizard_features_install_success',
+					[ 'slug' => $plugin[0]->product_slug ]
+				);
+			}
+		}
 	}
 }
