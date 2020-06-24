@@ -584,7 +584,7 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 
 		Sensei()->setup_wizard->install_extensions( [ 'test-wccom-plugin' ] );
 
-		do_action( 'activated_plugin', 'test-plugin/test-plugin.php' );
+		do_action( 'activated_plugin', 'test-wccom-plugin/test-wccom-plugin.php' );
 
 		$events = Sensei_Test_Events::get_logged_events( 'sensei_setup_wizard_features_install_success' );
 

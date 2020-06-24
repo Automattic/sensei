@@ -617,7 +617,7 @@ class Sensei_Setup_Wizard {
 	 */
 	public function log_wccom_plugin_install( $plugin_file ) {
 
-		$plugin_file   = plugin_basename( $plugin_file );
+		$plugin_name   = dirname( $plugin_file );
 		$wccom_plugins = get_transient( self::WCCOM_INSTALLING );
 
 		if ( empty( $wccom_plugins ) ) {
@@ -625,21 +625,11 @@ class Sensei_Setup_Wizard {
 		}
 
 		if ( in_array( $plugin_file, $wccom_plugins, true ) ) {
-
-			$extensions = $this->get_sensei_extensions();
-			$plugin     = array_filter(
-				$extensions,
-				function( $extension ) use ( $plugin_file ) {
-					return $plugin_file === $extension->plugin_file;
-				}
+			sensei_log_event(
+				'setup_wizard_features_install_success',
+				[ 'slug' => $plugin_name ]
 			);
 
-			if ( ! empty( $plugin ) ) {
-				sensei_log_event(
-					'setup_wizard_features_install_success',
-					[ 'slug' => $plugin[0]->product_slug ]
-				);
-			}
 		}
 	}
 }
