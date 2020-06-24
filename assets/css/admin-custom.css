@@ -114,7 +114,7 @@ div.question_boolean_fields { margin-bottom: 10px; }
     padding-left: 0.5em;
 }
 
-DIV.wp_list_table_grading_answers_wrapper {
+div.wp_list_table_grading_answers_wrapper {
     overflow-x: auto;
     width: 100%;
 }
@@ -122,9 +122,12 @@ DIV.wp_list_table_grading_answers_wrapper {
     min-width: 100%;
     width: auto;
 }
-.wp_list_table_grading_answers TR:hover {
+.wp_list_table_grading_answers tbody tr:hover {
     background-color: #f2faff;
 }
-.wp_list_table_grading_answers TH {
+.wp_list_table_grading_answers th {
     min-width: 12em;
+}
+.wp_list_table_grading_answers div.user_wrong {
+    background-color: #FFDDDD;
 }
