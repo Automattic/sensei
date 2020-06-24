@@ -90,7 +90,7 @@ export default ( state = DEFAULT_STATE, action ) => {
 		case ERROR_FETCH_IMPORT_DATA:
 			// No need to start a new job until we have our first active upload.
 			const isErrorNoActiveJob =
-				action.error.code === 'sensei_data_port_no_active_job';
+				action.error.code === 'sensei_data_port_job_not_found';
 
 			return {
 				...state,

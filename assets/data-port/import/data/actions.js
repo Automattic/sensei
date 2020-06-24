@@ -1,5 +1,6 @@
 import {
 	API_BASE_PATH,
+	API_SPECIAL_ACTIVE_JOB_ID,
 	FETCH_FROM_API,
 	START_FETCH_IMPORT_DATA,
 	SUCCESS_FETCH_IMPORT_DATA,
@@ -34,13 +35,19 @@ export const fetchFromAPI = ( request ) => ( {
 
 /**
  * Fetch importer data action creator.
+ *
+ * @param {string} jobId Job identifier.
  */
-export function* fetchImporterData() {
+export function* fetchImporterData( jobId ) {
 	yield startFetch();
 
 	try {
+		if ( ! jobId ) {
+			jobId = API_SPECIAL_ACTIVE_JOB_ID;
+		}
+
 		const data = yield fetchFromAPI( {
-			path: API_BASE_PATH,
+			path: API_BASE_PATH + jobId,
 		} );
 
 		yield successFetch( normalizeImportData( data ) );
@@ -99,16 +106,17 @@ export const startFetch = () => ( {
 /**
  * Start import.
  *
+ * @param {string}   jobId               The job identifier.
  * @param {Object}   [options]
  * @param {Function} [options.onSuccess] On Success handler.
  * @param {Function} [options.onError]   On Error handler.
  */
-export function* submitStartImport( { onSuccess, onError } = {} ) {
+export function* submitStartImport( jobId, { onSuccess, onError } = {} ) {
 	yield startImport();
 
 	try {
 		const data = yield fetchFromAPI( {
-			path: API_BASE_PATH + 'start',
+			path: API_BASE_PATH + jobId + '/start',
 			method: 'POST',
 		} );
 
@@ -175,13 +183,15 @@ export const errorStartImport = ( error ) => ( {
 /**
  * Upload a file for a level.
  *
+ * @param {string}   jobId                 The job identifier.
  * @param {string}   level                 Level identifier.
  * @param {Object}   uploadData            Data to submit.
  * @param {Object}   [options]
- * @param {Function} [options.onSuccess] Step name.
- * @param {Function} [options.onError]   Data to submit.
+ * @param {Function} [options.onSuccess]   Step name.
+ * @param {Function} [options.onError]     Data to submit.
  */
 export function* uploadFileForLevel(
+	jobId,
 	level,
 	uploadData,
 	{ onSuccess, onError } = {}
@@ -189,8 +199,12 @@ export function* uploadFileForLevel(
 	yield startFileUploadAction( level, uploadData );
 
 	try {
+		if ( ! jobId ) {
+			jobId = API_SPECIAL_ACTIVE_JOB_ID;
+		}
+
 		const data = yield fetchFromAPI( {
-			path: API_BASE_PATH + 'file/' + level,
+			path: API_BASE_PATH + jobId + '/file/' + level,
 			method: 'POST',
 			body: uploadData,
 		} );

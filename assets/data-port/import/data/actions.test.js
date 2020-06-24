@@ -152,7 +152,7 @@ describe( 'Importer actions', () => {
 	 * Start import actions.
 	 */
 	it( 'Should generate the start import action', () => {
-		const gen = submitStartImport();
+		const gen = submitStartImport( 'test-id' );
 
 		// Start action to start the import process.
 		const expectedStartImportAction = {
@@ -165,7 +165,7 @@ describe( 'Importer actions', () => {
 			type: FETCH_FROM_API,
 			request: {
 				method: 'POST',
-				path: API_BASE_PATH + 'start',
+				path: API_BASE_PATH + 'test-id/start',
 			},
 		};
 		expect( gen.next().value ).toEqual( expectedStartAction );
@@ -196,7 +196,7 @@ describe( 'Importer actions', () => {
 	} );
 
 	it( 'Should catch error on the start import action', () => {
-		const gen = submitStartImport();
+		const gen = submitStartImport( 'test-id' );
 
 		// Start submit start import action.
 		gen.next();
@@ -248,7 +248,7 @@ describe( 'Importer actions', () => {
 		const level = 'test';
 		const uploadData = {};
 
-		const gen = uploadFileForLevel( level, uploadData );
+		const gen = uploadFileForLevel( 'test-id', level, uploadData );
 
 		// Start upload action.
 		const expectedUploadFileAction = {
@@ -263,7 +263,7 @@ describe( 'Importer actions', () => {
 			type: FETCH_FROM_API,
 			request: {
 				method: 'POST',
-				path: API_BASE_PATH + 'file/' + level,
+				path: API_BASE_PATH + 'test-id/file/' + level,
 				body: uploadData,
 			},
 		};
@@ -298,7 +298,7 @@ describe( 'Importer actions', () => {
 	it( 'Should catch error on the file upload action', () => {
 		const formData = {};
 
-		const gen = uploadFileForLevel( 'test', formData );
+		const gen = uploadFileForLevel( 'test-id', 'test', formData );
 
 		// Start file upload action.
 		gen.next();

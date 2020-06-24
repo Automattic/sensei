@@ -2,6 +2,7 @@
  * Data import constants.
  */
 export const API_BASE_PATH = '/sensei-internal/v1/import/';
+export const API_SPECIAL_ACTIVE_JOB_ID = 'active';
 
 /**
  * Generic fetch action type constants.

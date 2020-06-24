@@ -1,4 +1,3 @@
-import { addQueryArgs } from '@wordpress/url';
 import { API_BASE_PATH } from './constants';
 import { fetchFromAPI, setStepData } from './actions';
 import { normalizeImportData } from './normalizer';
@@ -9,7 +8,7 @@ export function* getStepData( step, jobId, shouldResolve ) {
 	}
 
 	const data = yield fetchFromAPI( {
-		path: addQueryArgs( API_BASE_PATH, { job_id: jobId } ),
+		path: API_BASE_PATH + jobId,
 	} );
 
 	return setStepData( step, normalizeImportData( data ) );
