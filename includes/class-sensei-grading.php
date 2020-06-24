@@ -134,7 +134,7 @@ class Sensei_Grading {
 		} else {
 			$sensei_grading_object = new $object_name( $data, $optional_data );
 		} // End If Statement
-		if ( 'Main' == $name ) {
+		if ( 'Main' == $name || 'Answers' == $name ) {
 			$sensei_grading_object->prepare_items();
 		} // End If Statement
 		return $sensei_grading_object;
@@ -216,7 +216,6 @@ class Sensei_Grading {
 		$course_id  = 0;
 		$lesson_id  = 0;
 		$quiz_id    = 0;
-		$user_id    = 0;
 		if ( isset( $_GET['course_id'] ) ) {
 			$course_id = intval( $_GET['course_id'] );
 		}
@@ -226,10 +225,7 @@ class Sensei_Grading {
 		if ( isset( $_GET['quiz_id'] ) ) {
 			$quiz_id = intval( $_GET['quiz_id'] );
 		}
-		if ( isset( $_GET['user'] ) ) {
-			$user_id = intval( $_GET['user'] );
-		}
-		$sensei_answers = $this->load_data_object( 'Answers', compact( 'course_id', 'lesson_id', 'quiz_id', 'user_id' ) );
+		$sensei_answers = $this->load_data_object( 'Answers', compact( 'course_id', 'lesson_id', 'quiz_id' ) );
 		// Wrappers
 		do_action( 'grading_before_container' );
 		do_action( 'grading_wrapper_container', 'top' );
