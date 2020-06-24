@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Setup_Wizard {
 	const SUGGEST_SETUP_WIZARD_OPTION = 'sensei_suggest_setup_wizard';
 	const WC_INFORMATION_TRANSIENT    = 'sensei_woocommerce_plugin_information';
-	const WCCOM_INSTALLING            = 'sensei_setup_wizard_wccom_installing';
+	const WCCOM_INSTALLING_TRANSIENT  = 'sensei_setup_wizard_wccom_installing';
 	const USER_DATA_OPTION            = 'sensei_setup_wizard_data';
 	const MC_LIST_ID                  = '4fa225a515';
 	const MC_USER_ID                  = '7a061a9141b0911d6d9bafe3a';
@@ -605,7 +605,7 @@ class Sensei_Setup_Wizard {
 			}
 		}
 
-		set_transient( self::WCCOM_INSTALLING, $wccom_extensions, 10 * 60 );
+		set_transient( self::WCCOM_INSTALLING_TRANSIENT, $wccom_extensions, 10 * 60 );
 
 		Sensei_Plugins_Installation::instance()->install_plugins( $extensions_to_install );
 	}
@@ -618,7 +618,7 @@ class Sensei_Setup_Wizard {
 	public function log_wccom_plugin_install( $plugin_file ) {
 
 		$plugin_name   = dirname( $plugin_file );
-		$wccom_plugins = get_transient( self::WCCOM_INSTALLING );
+		$wccom_plugins = get_transient( self::WCCOM_INSTALLING_TRANSIENT );
 
 		if ( empty( $wccom_plugins ) ) {
 			return;
