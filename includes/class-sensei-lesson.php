@@ -3779,7 +3779,7 @@ class Sensei_Lesson {
 				$single_lesson_complete = Sensei_Utils::user_completed_lesson( get_the_ID(), get_current_user_id() );
 				if ( $single_lesson_complete ) {
 
-					$lesson_classes[] = 'lesson-completed';
+					$lesson_classes[] = 'completed';
 
 				} // End If Statement
 			} // End If Statement
@@ -3787,7 +3787,7 @@ class Sensei_Lesson {
 			$is_user_taking_course = Sensei_Course::is_user_enrolled( $course_id );
 			if ( Sensei_Utils::is_preview_lesson( get_the_ID() ) && ! $is_user_taking_course ) {
 
-				$lesson_classes[] = 'lesson-preview';
+				$lesson_classes[] = 'preview';
 
 			}
 
