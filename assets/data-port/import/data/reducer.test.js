@@ -1,8 +1,8 @@
 import reducer from './reducer';
 import {
-	START_FETCH_IMPORT_DATA,
-	SUCCESS_FETCH_IMPORT_DATA,
-	ERROR_FETCH_IMPORT_DATA,
+	START_FETCH_CURRENT_JOB_STATE,
+	SUCCESS_FETCH_CURRENT_JOB_STATE,
+	ERROR_FETCH_CURRENT_JOB_STATE,
 	SET_STEP_DATA,
 	START_IMPORT,
 	SUCCESS_START_IMPORT,
@@ -13,21 +13,21 @@ import {
 } from './constants';
 
 describe( 'Importer reducer', () => {
-	it( 'Should set isFetching to true on START_FETCH_IMPORT_DATA action', () => {
+	it( 'Should set isFetching to true on START_FETCH_CURRENT_JOB_STATE action', () => {
 		const state = reducer( undefined, {
-			type: START_FETCH_IMPORT_DATA,
+			type: START_FETCH_CURRENT_JOB_STATE,
 		} );
 
 		expect( state.isFetching ).toBeTruthy();
 	} );
 
-	it( 'Should set isFetching to false and update data on SUCCESS_FETCH_IMPORT_DATA action', () => {
+	it( 'Should set isFetching to false and update data on SUCCESS_FETCH_CURRENT_JOB_STATE action', () => {
 		const data = {
 			test: 'data',
 		};
 
 		const state = reducer( undefined, {
-			type: SUCCESS_FETCH_IMPORT_DATA,
+			type: SUCCESS_FETCH_CURRENT_JOB_STATE,
 			data,
 		} );
 
@@ -35,14 +35,14 @@ describe( 'Importer reducer', () => {
 		expect( state.test ).toBe( data.test );
 	} );
 
-	it( 'Should set isFetching to false and set fetchError on ERROR_FETCH_IMPORT_DATA action', () => {
+	it( 'Should set isFetching to false and set fetchError on ERROR_FETCH_CURRENT_JOB_STATE action', () => {
 		const error = {
 			code: '',
 			message: 'test',
 		};
 
 		const state = reducer( undefined, {
-			type: ERROR_FETCH_IMPORT_DATA,
+			type: ERROR_FETCH_CURRENT_JOB_STATE,
 			error,
 		} );
 

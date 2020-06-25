@@ -21,12 +21,12 @@ const SenseiImportPage = () => {
 		};
 	}, [] );
 
-	const { fetchImporterData } = useDispatch( 'sensei/import' );
+	const { fetchCurrentJobState } = useDispatch( 'sensei/import' );
 
 	// We want to show the loading before any content.
 	useLayoutEffect( () => {
-		fetchImporterData();
-	}, [ fetchImporterData ] );
+		fetchCurrentJobState();
+	}, [ fetchCurrentJobState ] );
 
 	// Add `sensei-color` to body tag.
 	useLayoutEffect( () => {

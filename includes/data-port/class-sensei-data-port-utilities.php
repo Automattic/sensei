@@ -105,6 +105,9 @@ class Sensei_Data_Port_Utilities {
 	 * @return int|WP_Error  The attachment id or an error.
 	 */
 	public static function create_attachment_from_url( $external_url, $parent_id = 0 ) {
+		require_once ABSPATH . 'wp-admin/includes/image.php';
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		require_once ABSPATH . 'wp-admin/includes/media.php';
 
 		$existing_attachment = get_posts(
 			[

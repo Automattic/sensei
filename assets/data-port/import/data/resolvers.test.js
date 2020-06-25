@@ -9,7 +9,7 @@ describe( 'Setup wizard resolvers', () => {
 		const expectedFetchAction = {
 			type: FETCH_FROM_API,
 			request: {
-				path: API_BASE_PATH + '?job_id=test-id',
+				path: API_BASE_PATH + 'test-id',
 			},
 		};
 		expect( gen.next().value ).toEqual( expectedFetchAction );

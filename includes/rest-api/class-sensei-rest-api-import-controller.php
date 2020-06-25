@@ -51,7 +51,7 @@ class Sensei_REST_API_Import_Controller extends Sensei_REST_API_Data_Port_Contro
 
 		register_rest_route(
 			$this->namespace,
-			$this->rest_base . '/file/(?P<file_key>[a-z-]+)',
+			$this->rest_base . '/(?P<job_id>[0-9a-z]+)/file/(?P<file_key>[a-z-]+)',
 			[
 				[
 					'methods'             => WP_REST_Server::CREATABLE,
@@ -85,8 +85,7 @@ class Sensei_REST_API_Import_Controller extends Sensei_REST_API_Data_Port_Contro
 			);
 		}
 
-		$data_port_manager = Sensei_Data_Port_Manager::instance();
-		$job               = $data_port_manager->get_active_job( $this->get_handler_class(), get_current_user_id() );
+		$job = $this->resolve_job( sanitize_text_field( $request->get_param( 'job_id' ) ), true );
 		if ( ! $job ) {
 			$job = $this->create_job();
 		}

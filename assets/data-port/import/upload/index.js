@@ -9,6 +9,7 @@ export default compose(
 		return {
 			state: store.getStepData( 'upload' ),
 			isReady: store.isReadyToStart(),
+			jobId: store.getJobId(),
 		};
 	} ),
 	withDispatch( ( dispatch ) => {

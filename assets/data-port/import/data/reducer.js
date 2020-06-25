@@ -1,7 +1,7 @@
 import {
-	START_FETCH_IMPORT_DATA,
-	SUCCESS_FETCH_IMPORT_DATA,
-	ERROR_FETCH_IMPORT_DATA,
+	START_FETCH_CURRENT_JOB_STATE,
+	SUCCESS_FETCH_CURRENT_JOB_STATE,
+	ERROR_FETCH_CURRENT_JOB_STATE,
 	SET_STEP_DATA,
 	START_IMPORT,
 	SUCCESS_START_IMPORT,
@@ -74,23 +74,23 @@ const updateLevelState = ( state, levelKey, attributes ) => ( {
  */
 export default ( state = DEFAULT_STATE, action ) => {
 	switch ( action.type ) {
-		case START_FETCH_IMPORT_DATA:
+		case START_FETCH_CURRENT_JOB_STATE:
 			return {
 				...state,
 				isFetching: true,
 				fetchError: false,
 			};
 
-		case SUCCESS_FETCH_IMPORT_DATA:
+		case SUCCESS_FETCH_CURRENT_JOB_STATE:
 			return {
 				...merge( state, action.data ),
 				isFetching: false,
 			};
 
-		case ERROR_FETCH_IMPORT_DATA:
+		case ERROR_FETCH_CURRENT_JOB_STATE:
 			// No need to start a new job until we have our first active upload.
 			const isErrorNoActiveJob =
-				action.error.code === 'sensei_data_port_no_active_job';
+				action.error.code === 'sensei_data_port_job_not_found';
 
 			return {
 				...state,

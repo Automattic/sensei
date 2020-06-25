@@ -58,13 +58,21 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 			$this->rest_base,
 			[
 				[
-					'methods'             => WP_REST_Server::READABLE,
-					'callback'            => [ $this, 'request_get_job' ],
-					'permission_callback' => [ $this, 'can_user_access_rest_api' ],
-				],
-				[
 					'methods'             => WP_REST_Server::CREATABLE,
 					'callback'            => [ $this, 'request_post_job' ],
+					'permission_callback' => [ $this, 'can_user_access_rest_api' ],
+				],
+				'schema' => [ $this, 'get_item_schema' ],
+			]
+		);
+
+		register_rest_route(
+			$this->namespace,
+			$this->rest_base . '/(?P<job_id>[0-9a-z]+)',
+			[
+				[
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => [ $this, 'request_get_job' ],
 					'permission_callback' => [ $this, 'can_user_access_rest_api' ],
 				],
 				[
@@ -79,7 +87,7 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 		// Endpoint to start the job.
 		register_rest_route(
 			$this->namespace,
-			$this->rest_base . '/start',
+			$this->rest_base . '/(?P<job_id>[0-9a-z]+)/start',
 			[
 				[
 					'methods'             => WP_REST_Server::EDITABLE,
@@ -92,6 +100,22 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 	}
 
 	/**
+	 * Resolve the job ID parameter.
+	 *
+	 * @param int  $job_id        Job ID.
+	 * @param bool $allow_current Allow special ID of `current` to get the active job.
+	 *
+	 * @return Sensei_Data_Port_Job|null
+	 */
+	protected function resolve_job( $job_id, $allow_current = false ) {
+		if ( $allow_current && 'active' === $job_id ) {
+			return $this->get_active_job();
+		}
+
+		return $this->get_job( $job_id );
+	}
+
+	/**
 	 * Get the current import job.
 	 *
 	 * @param WP_REST_Request $request Request object.
@@ -99,16 +123,12 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function request_get_job( $request ) {
-		if ( ! empty( $request['job_id'] ) ) {
-			$job = $this->get_job( sanitize_text_field( $request['job_id'] ) );
-		} else {
-			$job = $this->get_active_job();
-		}
+		$job = $this->resolve_job( sanitize_text_field( $request->get_param( 'job_id' ) ), true );
 
 		if ( ! $job ) {
 			return new WP_Error(
-				'sensei_data_port_no_active_job',
-				__( 'No job could be found.', 'sensei-lms' ),
+				'sensei_data_port_job_not_found',
+				__( 'Job not found.', 'sensei-lms' ),
 				array( 'status' => 404 )
 			);
 		}
@@ -142,16 +162,18 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 	}
 
 	/**
-	 * Cancel the currently active job.
+	 * Cancel a job.
+	 *
+	 * @param WP_REST_Request $request Request object.
 	 *
 	 * @return WP_REST_Response|WP_Error
 	 */
-	public function request_delete_job() {
-		$job = $this->get_active_job();
+	public function request_delete_job( $request ) {
+		$job = $this->resolve_job( sanitize_text_field( $request->get_param( 'job_id' ) ), false );
 		if ( ! $job ) {
 			return new WP_Error(
-				'sensei_data_port_no_active_job',
-				__( 'No job has been created.', 'sensei-lms' ),
+				'sensei_data_port_job_not_found',
+				__( 'Job not found.', 'sensei-lms' ),
 				array( 'status' => 404 )
 			);
 		}
@@ -172,13 +194,15 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 	/**
 	 * Start the currently active job.
 	 *
+	 * @param WP_REST_Request $request Request object.
+	 *
 	 * @return WP_REST_Response|WP_Error
 	 */
-	public function request_post_start_job() {
-		$job = $this->get_active_job();
+	public function request_post_start_job( $request ) {
+		$job = $this->resolve_job( sanitize_text_field( $request->get_param( 'job_id' ) ), false );
 		if ( ! $job ) {
 			return new WP_Error(
-				'sensei_data_port_no_active_job',
+				'sensei_data_port_job_not_found',
 				__( 'No job has been created.', 'sensei-lms' ),
 				array( 'status' => 404 )
 			);

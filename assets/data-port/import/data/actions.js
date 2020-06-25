@@ -1,9 +1,9 @@
 import {
-	API_BASE_PATH,
+	API_SPECIAL_ACTIVE_JOB_ID,
 	FETCH_FROM_API,
-	START_FETCH_IMPORT_DATA,
-	SUCCESS_FETCH_IMPORT_DATA,
-	ERROR_FETCH_IMPORT_DATA,
+	START_FETCH_CURRENT_JOB_STATE,
+	SUCCESS_FETCH_CURRENT_JOB_STATE,
+	ERROR_FETCH_CURRENT_JOB_STATE,
 	START_IMPORT,
 	SUCCESS_START_IMPORT,
 	ERROR_START_IMPORT,
@@ -14,6 +14,7 @@ import {
 } from './constants';
 
 import { normalizeImportData } from './normalizer';
+import { buildJobEndpointUrl } from '../helpers/url';
 
 /**
  * @typedef  {Object} FetchFromAPIAction
@@ -33,82 +34,91 @@ export const fetchFromAPI = ( request ) => ( {
 } );
 
 /**
- * Fetch importer data action creator.
+ * Fetch importer data for current job.
  */
-export function* fetchImporterData() {
-	yield startFetch();
+export function* fetchCurrentJobState() {
+	yield startFetchCurrentJobState();
 
 	try {
 		const data = yield fetchFromAPI( {
-			path: API_BASE_PATH,
+			path: buildJobEndpointUrl( API_SPECIAL_ACTIVE_JOB_ID ),
 		} );
 
-		yield successFetch( normalizeImportData( data ) );
+		yield successFetchCurrentJobState( normalizeImportData( data ) );
 	} catch ( error ) {
-		yield errorFetch( error );
+		yield errorFetchCurrentJobState( error );
 	}
 }
 
 /**
- * @typedef  {Object} SuccessImporterDataAction
+ * @typedef  {Object} SuccessFetchCurrentJobStateAction
  * @property {string} type                         Action type.
  * @property {Object} data                         Importer data.
  */
 /**
- * Success fetch action creator.
+ * Success get current job state action creator.
  *
  * @param {Object} data Importer data.
  *
- * @return {SuccessImporterDataAction} Success fetch action.
+ * @return {SuccessFetchCurrentJobStateAction} Success get current job state action.
  */
-export const successFetch = ( data ) => ( {
-	type: SUCCESS_FETCH_IMPORT_DATA,
+export const successFetchCurrentJobState = ( data ) => ( {
+	type: SUCCESS_FETCH_CURRENT_JOB_STATE,
 	data,
 } );
 
 /**
- * @typedef  {Object}         ErrorFetchAction
+ * @typedef  {Object}         ErrorFetchCurrentJobStateAction
  * @property {string}         type             Action type.
  * @property {Object|boolean} error            Error object or false.
  */
 /**
- * Error fetch action creator.
+ * Error get current job state action creator.
  *
  * @param {Object|boolean} error Error object or false.
  *
- * @return {ErrorFetchAction} Error action.
+ * @return {ErrorFetchCurrentJobStateAction} Error action.
  */
-export const errorFetch = ( error ) => ( {
-	type: ERROR_FETCH_IMPORT_DATA,
+export const errorFetchCurrentJobState = ( error ) => ( {
+	type: ERROR_FETCH_CURRENT_JOB_STATE,
 	error,
 } );
 
 /**
- * @typedef  {Object} StartFetchAction
+ * @typedef  {Object} StartFetchCurrentJobStateAction
  * @property {string} type Action type.
  */
 /**
- * Start fetch importer data action creator.
+ * Start get current job state action creator.
  *
- * @return {StartFetchAction} Start fetch action.
+ * @return {StartFetchCurrentJobStateAction} Start get current job state action.
  */
-export const startFetch = () => ( {
-	type: START_FETCH_IMPORT_DATA,
+export const startFetchCurrentJobState = () => ( {
+	type: START_FETCH_CURRENT_JOB_STATE,
 } );
 
 /**
  * Start import.
  *
+ * @param {string}   jobId               The job identifier.
  * @param {Object}   [options]
  * @param {Function} [options.onSuccess] On Success handler.
  * @param {Function} [options.onError]   On Error handler.
  */
-export function* submitStartImport( { onSuccess, onError } = {} ) {
+export function* submitStartImport( jobId, { onSuccess, onError } = {} ) {
 	yield startImport();
 
 	try {
+		if ( ! jobId ) {
+			yield errorStartImport( {
+				message: null, // Internal error. No actionable message to user.
+			} );
+
+			return;
+		}
+
 		const data = yield fetchFromAPI( {
-			path: API_BASE_PATH + 'start',
+			path: buildJobEndpointUrl( jobId, [ 'start' ] ),
 			method: 'POST',
 		} );
 
@@ -163,7 +173,7 @@ export const successStartImport = ( data ) => ( {
 /**
  * Error start import job creator.
  *
- * @param {Object|boolean} error Error object or false.
+ * @param {Object} error Error object or false.
  *
  * @return {ErrorStartImportAction} Error action.
  */
@@ -175,13 +185,15 @@ export const errorStartImport = ( error ) => ( {
 /**
  * Upload a file for a level.
  *
+ * @param {string}   jobId                 The job identifier.
  * @param {string}   level                 Level identifier.
  * @param {Object}   uploadData            Data to submit.
  * @param {Object}   [options]
- * @param {Function} [options.onSuccess] Step name.
- * @param {Function} [options.onError]   Data to submit.
+ * @param {Function} [options.onSuccess]   Step name.
+ * @param {Function} [options.onError]     Data to submit.
  */
 export function* uploadFileForLevel(
+	jobId,
 	level,
 	uploadData,
 	{ onSuccess, onError } = {}
@@ -189,8 +201,12 @@ export function* uploadFileForLevel(
 	yield startFileUploadAction( level, uploadData );
 
 	try {
+		if ( ! jobId ) {
+			jobId = API_SPECIAL_ACTIVE_JOB_ID;
+		}
+
 		const data = yield fetchFromAPI( {
-			path: API_BASE_PATH + 'file/' + level,
+			path: buildJobEndpointUrl( jobId, [ 'file', level ] ),
 			method: 'POST',
 			body: uploadData,
 		} );

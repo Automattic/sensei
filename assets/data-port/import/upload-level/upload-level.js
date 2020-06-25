@@ -8,12 +8,14 @@ import { levels } from '../levels';
 /**
  * Helper method to upload a file.
  *
+ * @param {string}   jobId                 The job identifier.
  * @param {FileList} files                 The files of the input.
  * @param {string}   levelKey              The level key.
  * @param {Function} uploadFileForLevel    Callback for action to upload file.
  * @param {Function} throwEarlyUploadError Callback for throwing an early upload error.
  */
 const uploadFile = (
+	jobId,
 	files,
 	levelKey,
 	uploadFileForLevel,
@@ -37,7 +39,7 @@ const uploadFile = (
 	const data = new FormData();
 	data.append( 'file', file );
 
-	uploadFileForLevel( levelKey, data );
+	uploadFileForLevel( jobId, levelKey, data );
 };
 
 /**
@@ -45,6 +47,7 @@ const uploadFile = (
  * placeholder for messages.
  */
 export const UploadLevels = ( {
+	jobId,
 	state,
 	uploadFileForLevel,
 	throwEarlyUploadError,
@@ -75,6 +78,7 @@ export const UploadLevels = ( {
 							accept={ [ '.csv', '.txt' ] }
 							onChange={ ( event ) =>
 								uploadFile(
+									jobId,
 									event.target.files,
 									level.key,
 									uploadFileForLevel,
