@@ -14,6 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Import_Job extends Sensei_Data_Port_Job {
 	const MAPPED_ID_STATE_KEY = '_map';
+	const RESULT_ERROR        = 'error';
+	const RESULT_SUCCESS      = 'success';
 
 	/**
 	 * The array of the import tasks.
@@ -21,6 +23,20 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 	 * @var Sensei_Data_Port_Task_Interface[]
 	 */
 	private $tasks;
+
+	/**
+	 * Sensei_Import_Job constructor.
+	 *
+	 * @param string $job_id Unique job id.
+	 * @param string $json   A json string to restore internal state from.
+	 */
+	public function __construct( $job_id, $json = '' ) {
+		parent::__construct( $job_id, $json );
+
+		if ( empty( $this->results ) ) {
+			$this->results = self::get_default_results();
+		}
+	}
 
 	/**
 	 * Get the tasks of this import job.
@@ -36,6 +52,20 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 		}
 
 		return $this->tasks;
+	}
+
+	/**
+	 * Increment result count for a model.
+	 *
+	 * @param string $model_key Model key.
+	 * @param string $result    Result key (success, error).
+	 */
+	public function increment_result( $model_key, $result ) {
+		if ( ! isset( $this->results[ $model_key ][ $result ] ) ) {
+			return;
+		}
+
+		$this->results[ $model_key ][ $result ]++;
 	}
 
 	/**
@@ -215,5 +245,35 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 		$map[ $post_type ][ $original_id ] = $post_id;
 
 		$this->set_state( self::MAPPED_ID_STATE_KEY, $map );
+	}
+
+	/**
+	 * Get the default results array.
+	 *
+	 * @return array
+	 */
+	public static function get_default_results() {
+		$model_keys = [
+			Sensei_Import_Question_Model::MODEL_KEY,
+			Sensei_Import_Course_Model::MODEL_KEY,
+			Sensei_Import_Lesson_Model::MODEL_KEY,
+		];
+
+		$result_keys = [
+			self::RESULT_SUCCESS,
+			self::RESULT_ERROR,
+		];
+
+		$results = [];
+
+		foreach ( $model_keys as $model_key ) {
+			$results[ $model_key ] = [];
+
+			foreach ( $result_keys as $result_key ) {
+				$results[ $model_key ][ $result_key ] = 0;
+			}
+		}
+
+		return $results;
 	}
 }
