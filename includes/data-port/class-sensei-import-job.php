@@ -65,6 +65,7 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 			return;
 		}
 
+		$this->has_changed = true;
 		$this->results[ $model_key ][ $result ]++;
 	}
 
