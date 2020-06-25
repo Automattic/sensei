@@ -408,7 +408,7 @@ class Sensei_Plugins_Installation {
 				try {
 					// Prevent WC wizard open after programmatically installation.
 					if ( 'woocommerce' === $plugin_slug ) {
-						add_filter( 'woocommerce_enable_setup_wizard', '__return_false' );
+						add_filter( 'pre_set_transient__wc_activation_redirect', '__return_false' );
 					}
 					$result = activate_plugin( $installed ? $installed_plugins[ $plugin_file ] : $plugin_slug . '/' . $plugin_file );
 
