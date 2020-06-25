@@ -13,6 +13,16 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Handles the import for lessons and quizzes.
  */
 class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
+	const MODEL_KEY = 'lesson';
+
+	/**
+	 * Get the model key to identify items in log entries.
+	 *
+	 * @return string
+	 */
+	public function get_model_key() {
+		return self::MODEL_KEY;
+	}
 
 	/**
 	 * Lesson's course.
