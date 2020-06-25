@@ -13,13 +13,15 @@ if ( ! defined( 'ABSPATH' ) ) {
  * This class is responsible for importing the data for a single course.
  */
 class Sensei_Import_Course_Model extends Sensei_Import_Model {
+	const MODEL_KEY = 'course';
+
 	/**
 	 * Get the model key to identify items in log entries.
 	 *
 	 * @return string
 	 */
-	protected function get_model_key() {
-		return 'course';
+	public function get_model_key() {
+		return self::MODEL_KEY;
 	}
 
 	/**

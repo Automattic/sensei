@@ -46,7 +46,7 @@ abstract class Sensei_Data_Port_Model {
 	 *
 	 * @return string
 	 */
-	abstract protected function get_model_key();
+	abstract public function get_model_key();
 
 	/**
 	 * Get the data to return with any errors.
