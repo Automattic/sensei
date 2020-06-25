@@ -6,7 +6,7 @@
  */
 
 class Sensei_Import_Model_Mock extends Sensei_Import_Model {
-	protected function get_model_key() {
+	public function get_model_key() {
 		return 'mock-model';
 	}
 
