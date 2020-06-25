@@ -1,9 +1,9 @@
 import {
 	API_SPECIAL_ACTIVE_JOB_ID,
 	FETCH_FROM_API,
-	START_GET_CURRENT_JOB_STATE,
-	SUCCESS_GET_CURRENT_JOB_STATE,
-	ERROR_GET_CURRENT_JOB_STATE,
+	START_FETCH_CURRENT_JOB_STATE,
+	SUCCESS_FETCH_CURRENT_JOB_STATE,
+	ERROR_FETCH_CURRENT_JOB_STATE,
 	START_IMPORT,
 	SUCCESS_START_IMPORT,
 	ERROR_START_IMPORT,
@@ -36,22 +36,22 @@ export const fetchFromAPI = ( request ) => ( {
 /**
  * Fetch importer data for current job.
  */
-export function* getCurrentJobState() {
-	yield startGetCurrentJobState();
+export function* fetchCurrentJobState() {
+	yield startFetchCurrentJobState();
 
 	try {
 		const data = yield fetchFromAPI( {
 			path: buildJobEndpointUrl( API_SPECIAL_ACTIVE_JOB_ID ),
 		} );
 
-		yield successGetCurrentJobState( normalizeImportData( data ) );
+		yield successFetchCurrentJobState( normalizeImportData( data ) );
 	} catch ( error ) {
-		yield errorGetCurrentJobState( error );
+		yield errorFetchCurrentJobState( error );
 	}
 }
 
 /**
- * @typedef  {Object} SuccessGetCurrentJobStateAction
+ * @typedef  {Object} SuccessFetchCurrentJobStateAction
  * @property {string} type                         Action type.
  * @property {Object} data                         Importer data.
  */
@@ -60,15 +60,15 @@ export function* getCurrentJobState() {
  *
  * @param {Object} data Importer data.
  *
- * @return {SuccessGetCurrentJobStateAction} Success get current job state action.
+ * @return {SuccessFetchCurrentJobStateAction} Success get current job state action.
  */
-export const successGetCurrentJobState = ( data ) => ( {
-	type: SUCCESS_GET_CURRENT_JOB_STATE,
+export const successFetchCurrentJobState = ( data ) => ( {
+	type: SUCCESS_FETCH_CURRENT_JOB_STATE,
 	data,
 } );
 
 /**
- * @typedef  {Object}         ErrorGetCurrentJobStateAction
+ * @typedef  {Object}         ErrorFetchCurrentJobStateAction
  * @property {string}         type             Action type.
  * @property {Object|boolean} error            Error object or false.
  */
@@ -77,24 +77,24 @@ export const successGetCurrentJobState = ( data ) => ( {
  *
  * @param {Object|boolean} error Error object or false.
  *
- * @return {ErrorGetCurrentJobStateAction} Error action.
+ * @return {ErrorFetchCurrentJobStateAction} Error action.
  */
-export const errorGetCurrentJobState = ( error ) => ( {
-	type: ERROR_GET_CURRENT_JOB_STATE,
+export const errorFetchCurrentJobState = ( error ) => ( {
+	type: ERROR_FETCH_CURRENT_JOB_STATE,
 	error,
 } );
 
 /**
- * @typedef  {Object} StartGetCurrentJobStateAction
+ * @typedef  {Object} StartFetchCurrentJobStateAction
  * @property {string} type Action type.
  */
 /**
  * Start get current job state action creator.
  *
- * @return {StartGetCurrentJobStateAction} Start get current job state action.
+ * @return {StartFetchCurrentJobStateAction} Start get current job state action.
  */
-export const startGetCurrentJobState = () => ( {
-	type: START_GET_CURRENT_JOB_STATE,
+export const startFetchCurrentJobState = () => ( {
+	type: START_FETCH_CURRENT_JOB_STATE,
 } );
 
 /**

@@ -1,9 +1,9 @@
 import {
 	API_BASE_PATH,
 	FETCH_FROM_API,
-	START_GET_CURRENT_JOB_STATE,
-	SUCCESS_GET_CURRENT_JOB_STATE,
-	ERROR_GET_CURRENT_JOB_STATE,
+	START_FETCH_CURRENT_JOB_STATE,
+	SUCCESS_FETCH_CURRENT_JOB_STATE,
+	ERROR_FETCH_CURRENT_JOB_STATE,
 	START_IMPORT,
 	SUCCESS_START_IMPORT,
 	ERROR_START_IMPORT,
@@ -14,10 +14,10 @@ import {
 
 import {
 	fetchFromAPI,
-	getCurrentJobState,
-	startGetCurrentJobState,
-	successGetCurrentJobState,
-	errorGetCurrentJobState,
+	fetchCurrentJobState,
+	startFetchCurrentJobState,
+	successFetchCurrentJobState,
+	errorFetchCurrentJobState,
 	submitStartImport,
 	startImport,
 	successStartImport,
@@ -48,11 +48,11 @@ describe( 'Importer actions', () => {
 	 * Fetch importer data action.
 	 */
 	it( 'Should generate the get current job state importer data action', () => {
-		const gen = getCurrentJobState();
+		const gen = fetchCurrentJobState();
 
 		// Start fetch action.
 		const expectedStartFetchAction = {
-			type: START_GET_CURRENT_JOB_STATE,
+			type: START_FETCH_CURRENT_JOB_STATE,
 		};
 		expect( gen.next().value ).toEqual( expectedStartFetchAction );
 
@@ -96,14 +96,14 @@ describe( 'Importer actions', () => {
 					},
 				},
 			},
-			type: 'SUCCESS_FETCH_IMPORT_DATA',
+			type: 'SUCCESS_FETCH_CURRENT_JOB_STATE',
 		};
 
 		expect( gen.next( dataObject ).value ).toEqual( expectedSetDataAction );
 	} );
 
 	it( 'Should catch error on the get current job state action', () => {
-		const gen = getCurrentJobState();
+		const gen = fetchCurrentJobState();
 
 		// Start fetch action.
 		gen.next();
@@ -114,7 +114,7 @@ describe( 'Importer actions', () => {
 		// Error action.
 		const error = { code: '', message: 'Error' };
 		const expectedErrorAction = {
-			type: ERROR_GET_CURRENT_JOB_STATE,
+			type: ERROR_FETCH_CURRENT_JOB_STATE,
 			error,
 		};
 		expect( gen.throw( error ).value ).toEqual( expectedErrorAction );
@@ -122,30 +122,30 @@ describe( 'Importer actions', () => {
 
 	it( 'Should return the start get current job state action', () => {
 		const expectedAction = {
-			type: START_GET_CURRENT_JOB_STATE,
+			type: START_FETCH_CURRENT_JOB_STATE,
 		};
 
-		expect( startGetCurrentJobState() ).toEqual( expectedAction );
+		expect( startFetchCurrentJobState() ).toEqual( expectedAction );
 	} );
 
 	it( 'Should return the success get current job state action', () => {
 		const data = { x: 1 };
 		const expectedAction = {
-			type: SUCCESS_GET_CURRENT_JOB_STATE,
+			type: SUCCESS_FETCH_CURRENT_JOB_STATE,
 			data,
 		};
 
-		expect( successGetCurrentJobState( data ) ).toEqual( expectedAction );
+		expect( successFetchCurrentJobState( data ) ).toEqual( expectedAction );
 	} );
 
 	it( 'Should return the error get current job state action', () => {
 		const error = { code: '', message: 'Error' };
 		const expectedAction = {
-			type: ERROR_GET_CURRENT_JOB_STATE,
+			type: ERROR_FETCH_CURRENT_JOB_STATE,
 			error,
 		};
 
-		expect( errorGetCurrentJobState( error ) ).toEqual( expectedAction );
+		expect( errorFetchCurrentJobState( error ) ).toEqual( expectedAction );
 	} );
 
 	/**
