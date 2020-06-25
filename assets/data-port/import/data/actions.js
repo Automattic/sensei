@@ -109,6 +109,14 @@ export function* submitStartImport( jobId, { onSuccess, onError } = {} ) {
 	yield startImport();
 
 	try {
+		if ( ! jobId ) {
+			yield errorStartImport( {
+				message: null, // Internal error. No actionable message to user.
+			} );
+
+			return;
+		}
+
 		const data = yield fetchFromAPI( {
 			path: buildJobEndpointUrl( jobId, [ 'start' ] ),
 			method: 'POST',
@@ -165,7 +173,7 @@ export const successStartImport = ( data ) => ( {
 /**
  * Error start import job creator.
  *
- * @param {Object|boolean} error Error object or false.
+ * @param {Object} error Error object or false.
  *
  * @return {ErrorStartImportAction} Error action.
  */
