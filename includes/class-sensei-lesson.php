@@ -2579,10 +2579,16 @@ class Sensei_Lesson {
 		// Log event: when an existing question is added to a quiz.
 		if ( count( $number_of_added_questions ) > 0 ) {
 
+			// If no question category received, log 'all'. If question category received, but term not found, log '0'.
+			$question_category_to_log = 'all';
+			if ( $question_data['question_category'] ) {
+				$question_category_to_log = get_term_by( 'slug', $question_data['question_category'], 'question-category' ) ? get_term_by( 'slug', $question_data['question_category'], 'question-category' )->term_id : '0';
+			}
+
 			$event_properties = array(
 				'question_status'   => $question_data['question_status'],
 				'question_type'     => $question_data['question_type'] ? $question_data['question_type'] : 'all',
-				'question_category' => $question_data['question_category'] ? get_term_by( 'slug', $question_data['question_category'], 'question-category' )->term_id : 'all',
+				'question_category' => $question_category_to_log,
 				'question_count'    => $number_of_added_questions,
 			);
 
