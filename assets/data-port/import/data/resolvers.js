@@ -1,6 +1,6 @@
-import { API_BASE_PATH } from './constants';
 import { fetchFromAPI, setStepData } from './actions';
 import { normalizeImportData } from './normalizer';
+import { buildJobEndpointUrl } from '../helpers/url';
 
 export function* getStepData( step, jobId, shouldResolve ) {
 	if ( ! shouldResolve ) {
@@ -8,7 +8,7 @@ export function* getStepData( step, jobId, shouldResolve ) {
 	}
 
 	const data = yield fetchFromAPI( {
-		path: API_BASE_PATH + jobId,
+		path: buildJobEndpointUrl( jobId ),
 	} );
 
 	return setStepData( step, normalizeImportData( data ) );

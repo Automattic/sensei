@@ -1,5 +1,4 @@
 import {
-	API_BASE_PATH,
 	API_SPECIAL_ACTIVE_JOB_ID,
 	FETCH_FROM_API,
 	START_GET_CURRENT_JOB_STATE,
@@ -15,6 +14,7 @@ import {
 } from './constants';
 
 import { normalizeImportData } from './normalizer';
+import { buildJobEndpointUrl } from '../helpers/url';
 
 /**
  * @typedef  {Object} FetchFromAPIAction
@@ -41,7 +41,7 @@ export function* getCurrentJobState() {
 
 	try {
 		const data = yield fetchFromAPI( {
-			path: API_BASE_PATH + API_SPECIAL_ACTIVE_JOB_ID,
+			path: buildJobEndpointUrl( API_SPECIAL_ACTIVE_JOB_ID ),
 		} );
 
 		yield successGetCurrentJobState( normalizeImportData( data ) );
@@ -110,7 +110,7 @@ export function* submitStartImport( jobId, { onSuccess, onError } = {} ) {
 
 	try {
 		const data = yield fetchFromAPI( {
-			path: API_BASE_PATH + jobId + '/start',
+			path: buildJobEndpointUrl( jobId, [ 'start' ] ),
 			method: 'POST',
 		} );
 
@@ -198,7 +198,7 @@ export function* uploadFileForLevel(
 		}
 
 		const data = yield fetchFromAPI( {
-			path: API_BASE_PATH + jobId + '/file/' + level,
+			path: buildJobEndpointUrl( jobId, [ 'file', level ] ),
 			method: 'POST',
 			body: uploadData,
 		} );
