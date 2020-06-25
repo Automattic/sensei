@@ -21,12 +21,12 @@ const SenseiImportPage = () => {
 		};
 	}, [] );
 
-	const { fetchImporterData } = useDispatch( 'sensei/import' );
+	const { getCurrentJobState } = useDispatch( 'sensei/import' );
 
 	// We want to show the loading before any content.
 	useLayoutEffect( () => {
-		fetchImporterData();
-	}, [ fetchImporterData ] );
+		getCurrentJobState();
+	}, [ getCurrentJobState ] );
 
 	if ( isFetching ) {
 		return <Spinner className="sensei-import__main-loader" />;

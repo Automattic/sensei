@@ -1,8 +1,8 @@
 import reducer from './reducer';
 import {
-	START_FETCH_IMPORT_DATA,
-	SUCCESS_FETCH_IMPORT_DATA,
-	ERROR_FETCH_IMPORT_DATA,
+	START_GET_CURRENT_JOB_STATE,
+	SUCCESS_GET_CURRENT_JOB_STATE,
+	ERROR_GET_CURRENT_JOB_STATE,
 	SET_STEP_DATA,
 	START_IMPORT,
 	SUCCESS_START_IMPORT,
@@ -15,7 +15,7 @@ import {
 describe( 'Importer reducer', () => {
 	it( 'Should set isFetching to true on START_FETCH_IMPORT_DATA action', () => {
 		const state = reducer( undefined, {
-			type: START_FETCH_IMPORT_DATA,
+			type: START_GET_CURRENT_JOB_STATE,
 		} );
 
 		expect( state.isFetching ).toBeTruthy();
@@ -27,7 +27,7 @@ describe( 'Importer reducer', () => {
 		};
 
 		const state = reducer( undefined, {
-			type: SUCCESS_FETCH_IMPORT_DATA,
+			type: SUCCESS_GET_CURRENT_JOB_STATE,
 			data,
 		} );
 
@@ -42,7 +42,7 @@ describe( 'Importer reducer', () => {
 		};
 
 		const state = reducer( undefined, {
-			type: ERROR_FETCH_IMPORT_DATA,
+			type: ERROR_GET_CURRENT_JOB_STATE,
 			error,
 		} );
 

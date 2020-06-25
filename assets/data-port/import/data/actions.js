@@ -2,9 +2,9 @@ import {
 	API_BASE_PATH,
 	API_SPECIAL_ACTIVE_JOB_ID,
 	FETCH_FROM_API,
-	START_FETCH_IMPORT_DATA,
-	SUCCESS_FETCH_IMPORT_DATA,
-	ERROR_FETCH_IMPORT_DATA,
+	START_GET_CURRENT_JOB_STATE,
+	SUCCESS_GET_CURRENT_JOB_STATE,
+	ERROR_GET_CURRENT_JOB_STATE,
 	START_IMPORT,
 	SUCCESS_START_IMPORT,
 	ERROR_START_IMPORT,
@@ -34,73 +34,67 @@ export const fetchFromAPI = ( request ) => ( {
 } );
 
 /**
- * Fetch importer data action creator.
- *
- * @param {string} jobId Job identifier.
+ * Fetch importer data for current job.
  */
-export function* fetchImporterData( jobId ) {
-	yield startFetch();
+export function* getCurrentJobState() {
+	yield startGetCurrentJobState();
 
 	try {
-		if ( ! jobId ) {
-			jobId = API_SPECIAL_ACTIVE_JOB_ID;
-		}
-
 		const data = yield fetchFromAPI( {
-			path: API_BASE_PATH + jobId,
+			path: API_BASE_PATH + API_SPECIAL_ACTIVE_JOB_ID,
 		} );
 
-		yield successFetch( normalizeImportData( data ) );
+		yield successGetCurrentJobState( normalizeImportData( data ) );
 	} catch ( error ) {
-		yield errorFetch( error );
+		yield errorGetCurrentJobState( error );
 	}
 }
 
 /**
- * @typedef  {Object} SuccessImporterDataAction
+ * @typedef  {Object} SuccessGetCurrentJobStateAction
  * @property {string} type                         Action type.
  * @property {Object} data                         Importer data.
  */
 /**
- * Success fetch action creator.
+ * Success get current job state action creator.
  *
  * @param {Object} data Importer data.
  *
- * @return {SuccessImporterDataAction} Success fetch action.
+ * @return {SuccessGetCurrentJobStateAction} Success get current job state action.
  */
-export const successFetch = ( data ) => ( {
-	type: SUCCESS_FETCH_IMPORT_DATA,
+export const successGetCurrentJobState = ( data ) => ( {
+	type: SUCCESS_GET_CURRENT_JOB_STATE,
 	data,
 } );
 
 /**
- * @typedef  {Object}         ErrorFetchAction
+ * @typedef  {Object}         ErrorGetCurrentJobStateAction
  * @property {string}         type             Action type.
  * @property {Object|boolean} error            Error object or false.
  */
 /**
- * Error fetch action creator.
+ * Error get current job state action creator.
  *
  * @param {Object|boolean} error Error object or false.
  *
- * @return {ErrorFetchAction} Error action.
+ * @return {ErrorGetCurrentJobStateAction} Error action.
  */
-export const errorFetch = ( error ) => ( {
-	type: ERROR_FETCH_IMPORT_DATA,
+export const errorGetCurrentJobState = ( error ) => ( {
+	type: ERROR_GET_CURRENT_JOB_STATE,
 	error,
 } );
 
 /**
- * @typedef  {Object} StartFetchAction
+ * @typedef  {Object} StartGetCurrentJobStateAction
  * @property {string} type Action type.
  */
 /**
- * Start fetch importer data action creator.
+ * Start get current job state action creator.
  *
- * @return {StartFetchAction} Start fetch action.
+ * @return {StartGetCurrentJobStateAction} Start get current job state action.
  */
-export const startFetch = () => ( {
-	type: START_FETCH_IMPORT_DATA,
+export const startGetCurrentJobState = () => ( {
+	type: START_GET_CURRENT_JOB_STATE,
 } );
 
 /**
