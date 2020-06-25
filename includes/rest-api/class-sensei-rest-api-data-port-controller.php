@@ -419,35 +419,35 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 	 */
 	public function get_logs_schema() {
 		return [
-			'type' => 'object',
+			'type'       => 'object',
 			'properties' => [
 				'items' => [
-					'type'       => 'array',
-					'items'      => [
+					'type'  => 'array',
+					'items' => [
 						'type'       => 'object',
 						'properties' => [
-							'type'     => [
+							'type'       => [
 								'description' => __( 'Object type', 'sensei-lms' ),
 								'type'        => 'string',
 								'readonly'    => true,
 							],
-							'line'     => [
+							'line'       => [
 								'description' => __( 'Source file line', 'sensei-lms' ),
 								'type'        => 'integer',
 								'readonly'    => true,
 							],
-							'severity'     => [
+							'severity'   => [
 								'description' => __( 'Log severity level ', 'sensei-lms' ),
 								'type'        => 'string',
-								"enum"        => [ 'info', 'notice', 'error' ],
+								'enum'        => [ 'info', 'notice', 'error' ],
 								'readonly'    => true,
 							],
-							'descriptor'     => [
+							'descriptor' => [
 								'description' => __( 'Object descriptor', 'sensei-lms' ),
 								'type'        => 'string',
 								'readonly'    => true,
 							],
-							'message'     => [
+							'message'    => [
 								'description' => __( 'Log message', 'sensei-lms' ),
 								'type'        => 'string',
 								'readonly'    => true,
