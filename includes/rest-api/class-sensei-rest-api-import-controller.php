@@ -228,6 +228,36 @@ class Sensei_REST_API_Import_Controller extends Sensei_REST_API_Data_Port_Contro
 	}
 
 	/**
+	 * Get the job schema for the client.
+	 *
+	 * @return array
+	 */
+	public function get_item_schema() {
+		$schema = parent::get_item_schema();
+
+		$results_schema = [];
+
+		foreach( Sensei_Import_Job::get_default_results() as $model_key => $results ) {
+			$results_schema[ $model_key ] = [
+				'type'       => 'object',
+				'properties' => [],
+			];
+
+			foreach ( $results as $result_key => $result ) {
+				$results_schema[ $model_key ]['properties'][ $result_key ] = [
+					// translators: %1$s placeholder is object type; %2$s is result descriptor (success, error).
+					'description' => sprintf( __( 'Number of %1$s items with %2$s result', 'sensei-lms' ), $model_key, $result_key ),
+					'type'        => 'integer',
+				];
+			}
+		}
+
+		$schema['properties']['results']['properties'] = $results_schema;
+
+		return $schema;
+	}
+
+	/**
 	 * Get the schema for the client on file related requests.
 	 *
 	 * @return array
