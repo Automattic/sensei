@@ -2926,10 +2926,10 @@ class Sensei_Course {
 	 * @since 1.9.0
 	 * @global $wp_query
 	 *
-	 * @deprecated 3.1.0 Use `Sensei_Course::get_single_course_lessons_query` instead.
+	 * @deprecated 3.2.0 Use `Sensei_Course::get_single_course_lessons_query` instead.
 	 */
 	public static function load_single_course_lessons_query() {
-		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Course::get_single_course_lessons_query' );
+		_deprecated_function( __METHOD__, '3.2.0', 'Sensei_Course::get_single_course_lessons_query' );
 
 		global $wp_query;
 
@@ -2947,7 +2947,7 @@ class Sensei_Course {
 	 * This function excludes lessons belonging to modules as they are
 	 * queried separately.
 	 *
-	 * @since 3.1.0
+	 * @since 3.2.0
 	 *
 	 * @return WP_Query $wp_query
 	 */

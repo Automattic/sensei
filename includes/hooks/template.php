@@ -82,7 +82,7 @@ add_filter( 'the_content', array( 'Sensei_Course', 'single_course_content' ) );
 add_action( 'sensei_single_course_content_inside_after', array( 'Sensei_Course', 'the_course_lessons_title' ), 9 );
 
 // @since 1.9.0
-// @since 3.0.0 Use secondary query to loop the lessons.
+// @since 3.2.0 Use secondary query to loop the lessons.
 // Load the course lessons template
 add_action( 'sensei_single_course_content_inside_after', 'course_single_lessons', 10 );
 
