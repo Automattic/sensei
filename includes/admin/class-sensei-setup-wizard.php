@@ -96,6 +96,7 @@ class Sensei_Setup_Wizard {
 			add_action( 'admin_init', [ $this, 'skip_setup_wizard' ] );
 			add_action( 'admin_init', [ $this, 'activation_redirect' ] );
 			add_action( 'current_screen', [ $this, 'add_setup_wizard_help_tab' ] );
+			add_action( 'admin_init', [ $this, 'close_wccom_install' ] );
 
 			// Maybe prevent WooCommerce help tab.
 			add_filter( 'woocommerce_enable_admin_help_tab', [ $this, 'should_enable_woocommerce_help_tab' ] );
@@ -630,6 +631,24 @@ class Sensei_Setup_Wizard {
 				[ 'slug' => $plugin_name ]
 			);
 
+		}
+	}
+
+	/**
+	 * Close the browser tab if it's a redirect from WooCommerce.com after a successful extension install.
+	 */
+	public static function close_wccom_install() {
+		if (
+			isset( $_SERVER['HTTP_REFERER'] ) &&
+			0 === strpos( $_SERVER['HTTP_REFERER'], 'https://woocommerce.com/checkout' ) && // phpcs:ignore sanitization ok.
+			false !== get_transient( self::WCCOM_INSTALLING_TRANSIENT )
+		) {
+			delete_transient( self::WCCOM_INSTALLING_TRANSIENT );
+
+			// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NoExplicitVersion -- Inline script.
+			wp_register_script( 'sensei-close-window', '', [], false, false );
+			wp_enqueue_script( 'sensei-close-window' );
+			wp_add_inline_script( 'sensei-close-window', ' window.close() ' );
 		}
 	}
 }
