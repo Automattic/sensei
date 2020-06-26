@@ -271,6 +271,8 @@ class Sensei_Setup_Wizard {
 			return;
 		}
 
+		$setup_wizard_in_progress = (bool) get_option( self::USER_DATA_OPTION, false );
+
 		$setup_url = admin_url( 'admin.php?page=' . $this->page_slug );
 
 		$skip_url = add_query_arg( 'sensei_skip_setup_wizard', '1' );
@@ -281,7 +283,13 @@ class Sensei_Setup_Wizard {
 
 			<p class="submit">
 				<a href="<?php echo esc_url( $setup_url ); ?>" class="button-primary">
-					<?php esc_html_e( 'Run the Setup Wizard', 'sensei-lms' ); ?>
+					<?php
+					if ( $setup_wizard_in_progress ) {
+						esc_html_e( 'Continue the Setup Wizard', 'sensei-lms' );
+					} else {
+						esc_html_e( 'Run the Setup Wizard', 'sensei-lms' );
+					}
+					?>
 				</a>
 
 				<a class="button" href="<?php echo esc_url( $skip_url ); ?>">
