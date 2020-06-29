@@ -47,6 +47,10 @@ const DEFAULT_STATE = {
 		status: '',
 		percentage: 0,
 	},
+	done: {
+		results: null,
+		logs: null,
+	},
 };
 
 /**
@@ -168,7 +172,8 @@ export default ( state = DEFAULT_STATE, action ) => {
 		case SET_STEP_DATA:
 			return {
 				...state,
-				completedSteps: action.data.completedSteps,
+				completedSteps:
+					action.data.completedSteps || state.completedSteps,
 				[ action.step ]: {
 					...state[ action.step ],
 					...action.data[ action.step ],

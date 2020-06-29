@@ -315,3 +315,11 @@ export const setStepData = ( step, data ) => ( {
 	step,
 	data,
 } );
+
+export function* fetchImportLog( jobId ) {
+	const data = yield fetchFromAPI( {
+		path: buildJobEndpointUrl( jobId, [ 'logs' ] ),
+	} );
+
+	yield setStepData( 'done', { done: { logs: data } } );
+}
