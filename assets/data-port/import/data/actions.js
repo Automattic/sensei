@@ -10,6 +10,9 @@ import {
 	START_UPLOAD_IMPORT_DATA_FILE,
 	SUCCESS_UPLOAD_IMPORT_DATA_FILE,
 	ERROR_UPLOAD_IMPORT_DATA_FILE,
+	START_DELETE_IMPORT_DATA_FILE,
+	SUCCESS_DELETE_IMPORT_DATA_FILE,
+	ERROR_DELETE_IMPORT_DATA_FILE,
 	RESET_STATE,
 	SET_JOB_STATE,
 	SUCCESS_FETCH_IMPORT_LOG,
@@ -179,8 +182,8 @@ export const errorStartImport = ( error ) => ( {
  * @param {string}   level                 Level identifier.
  * @param {Object}   uploadData            Data to submit.
  * @param {Object}   [options]
- * @param {Function} [options.onSuccess]   Step name.
- * @param {Function} [options.onError]     Data to submit.
+ * @param {Function} [options.onSuccess]   Callback on success.
+ * @param {Function} [options.onError]     Callback on error.
  */
 export function* uploadFileForLevel(
 	jobId,
@@ -282,6 +285,94 @@ export const successFileUpload = ( level, data ) => ( {
  */
 export const errorFileUpload = ( level, error ) => ( {
 	type: ERROR_UPLOAD_IMPORT_DATA_FILE,
+	level,
+	error,
+} );
+
+/**
+ * Delete a level file.
+ *
+ * @param {string} jobId The job identifier.
+ * @param {string} level Level identifier.
+ */
+export function* deleteLevelFile( jobId, level ) {
+	yield startDeleteLevelFileAction( level );
+
+	try {
+		if ( ! jobId ) {
+			yield errorDeleteLevelFileAction( {
+				message: null, // Internal error. No actionable message to user.
+			} );
+
+			return;
+		}
+
+		const data = yield fetchFromAPI( {
+			path: buildJobEndpointUrl( jobId, [ 'file', level ] ),
+			method: 'DELETE',
+		} );
+
+		yield successDeleteLevelFileAction(
+			level,
+			normalizeImportData( data )
+		);
+	} catch ( error ) {
+		yield errorDeleteLevelFileAction( level, error );
+	}
+}
+
+/**
+ * @typedef  {Object} StartDeleteLevelFileAction
+ * @property {string} type        Action type.
+ * @property {string} level       Level identifier.
+ */
+/**
+ * Start file upload action creator.
+ *
+ * @param {string} level Level identifier.
+ *
+ * @return {StartDeleteLevelFileAction} Start delete file action.
+ */
+export const startDeleteLevelFileAction = ( level ) => ( {
+	type: START_DELETE_IMPORT_DATA_FILE,
+	level,
+} );
+
+/**
+ * @typedef  {Object} SuccessDeleteLevelFileAction
+ * @property {string} type    Action type.
+ * @property {string} level   Level identifier.
+ * @property {Object} data    Data object.
+ */
+/**
+ * Success delete level file action.
+ *
+ * @param {string} level Level identifier.
+ * @param {Object} data  Importer data.
+ * @return {SuccessDeleteLevelFileAction} Success delete level file action.
+ */
+export const successDeleteLevelFileAction = ( level, data ) => ( {
+	type: SUCCESS_DELETE_IMPORT_DATA_FILE,
+	level,
+	data,
+} );
+
+/**
+ * @typedef  {Object}         ErrorSuccessDeleteLevelFileAction
+ * @property {string}         type              Action type.
+ * @property {string}         level             Level identifier.
+ * @property {Object|boolean} error             Error object or false.
+ */
+/**
+ * Error delete level file action creator.
+ *
+ * @param {string}         level Level identifier.
+ * @param {Object|boolean} error Error object or false.
+ *
+ * @return {ErrorSuccessDeleteLevelFileAction} Error delete level file action.
+ */
+export const errorDeleteLevelFileAction = ( level, error ) => ( {
+	type: ERROR_DELETE_IMPORT_DATA_FILE,
 	level,
 	error,
 } );

@@ -10,6 +10,9 @@ import {
 	START_UPLOAD_IMPORT_DATA_FILE,
 	SUCCESS_UPLOAD_IMPORT_DATA_FILE,
 	ERROR_UPLOAD_IMPORT_DATA_FILE,
+	START_DELETE_IMPORT_DATA_FILE,
+	ERROR_DELETE_IMPORT_DATA_FILE,
+	SUCCESS_DELETE_IMPORT_DATA_FILE,
 	START_FETCH_IMPORT_LOG,
 	SUCCESS_FETCH_IMPORT_LOG,
 } from './constants';
@@ -28,6 +31,10 @@ import {
 	throwEarlyUploadError,
 	updateJobState,
 	fetchImportLog,
+	deleteLevelFile,
+	startDeleteLevelFileAction,
+	successDeleteLevelFileAction,
+	errorDeleteLevelFileAction,
 } from './actions';
 
 const RESPONSE_FULL = {
@@ -405,6 +412,115 @@ describe( 'Importer actions', () => {
 		};
 
 		expect( throwEarlyUploadError( level, 'Test' ) ).toEqual(
+			expectedAction
+		);
+	} );
+
+	/**
+	 * Delete level file actions.
+	 */
+	it( 'Should generate the delete level file action', () => {
+		const level = 'test';
+
+		const gen = deleteLevelFile( 'test-id', level );
+
+		// Start delete level file action.
+		const expectedDeleteFileAction = {
+			type: START_DELETE_IMPORT_DATA_FILE,
+			level,
+		};
+		expect( gen.next().value ).toEqual( expectedDeleteFileAction );
+
+		// File upload request action.
+		const expectedApiRequest = {
+			type: FETCH_FROM_API,
+			request: {
+				method: 'DELETE',
+				path: API_BASE_PATH + 'test-id/file/' + level,
+			},
+		};
+		expect( gen.next().value ).toEqual( expectedApiRequest );
+
+		// Set data action.
+		const dataObject = {
+			id: 'test',
+			status: {
+				status: 'setup',
+				percentage: 0,
+			},
+			files: {},
+		};
+
+		const expectedSetDataAction = {
+			data: {
+				jobId: 'test',
+				upload: {},
+				progress: {
+					status: 'setup',
+					percentage: 0,
+				},
+				completedSteps: [],
+			},
+			level: 'test',
+			type: 'SUCCESS_DELETE_IMPORT_DATA_FILE',
+		};
+		expect( gen.next( dataObject ).value ).toEqual( expectedSetDataAction );
+	} );
+
+	it( 'Should catch error on the level file delete action', () => {
+		const gen = deleteLevelFile( 'test-id', 'test' );
+
+		// Start file upload action.
+		gen.next();
+
+		// File upload request action.
+		gen.next();
+
+		const error = { code: '', message: 'Error' };
+
+		// Error action.
+		const expectedErrorAction = {
+			type: ERROR_DELETE_IMPORT_DATA_FILE,
+			level: 'test',
+			error,
+		};
+		expect( gen.throw( error ).value ).toEqual( expectedErrorAction );
+	} );
+
+	it( 'Should return the start file delete action', () => {
+		const level = 'test';
+		const expectedAction = {
+			type: START_DELETE_IMPORT_DATA_FILE,
+			level,
+		};
+
+		expect( startDeleteLevelFileAction( level ) ).toEqual( expectedAction );
+	} );
+
+	it( 'Should return the success file delete action', () => {
+		const level = 'test';
+		const data = {};
+		const expectedAction = {
+			type: SUCCESS_DELETE_IMPORT_DATA_FILE,
+			level,
+			data,
+		};
+
+		expect( successDeleteLevelFileAction( level, data ) ).toEqual(
+			expectedAction
+		);
+	} );
+
+	it( 'Should return the error file delete action', () => {
+		const level = 'test';
+		const error = { code: '', message: 'Test' };
+		const expectedAction = {
+			type: ERROR_DELETE_IMPORT_DATA_FILE,
+			level,
+			error,
+		};
+
+		expect( errorDeleteLevelFileAction( level, error ) ).toEqual(
 			expectedAction
 		);
 	} );
