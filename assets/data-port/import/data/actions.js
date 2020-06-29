@@ -358,16 +358,16 @@ export const successDeleteLevelFileAction = ( level, data ) => ( {
 } );
 
 /**
- * @typedef  {Object}         ErrorSuccessDeleteLevelFileAction
- * @property {string}         type              Action type.
- * @property {string}         level             Level identifier.
- * @property {Object|boolean} error             Error object or false.
+ * @typedef  {Object}  ErrorSuccessDeleteLevelFileAction
+ * @property {string}  type              Action type.
+ * @property {string}  level             Level identifier.
+ * @property {Object}  error             Error object or false.
  */
 /**
  * Error delete level file action creator.
  *
- * @param {string}         level Level identifier.
- * @param {Object|boolean} error Error object or false.
+ * @param {string}  level Level identifier.
+ * @param {Object}  error Error object or false.
  *
  * @return {ErrorSuccessDeleteLevelFileAction} Error delete level file action.
  */
