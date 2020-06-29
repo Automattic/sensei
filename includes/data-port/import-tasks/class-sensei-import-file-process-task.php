@@ -188,6 +188,8 @@ abstract class Sensei_Import_File_Process_Task
 				)
 			);
 
+			$this->get_job()->increment_result( $model->get_model_key(), Sensei_Import_Job::RESULT_ERROR );
+
 			return false;
 		}
 
@@ -203,8 +205,12 @@ abstract class Sensei_Import_File_Process_Task
 				)
 			);
 
+			$this->get_job()->increment_result( $model->get_model_key(), Sensei_Import_Job::RESULT_ERROR );
+
 			return false;
 		}
+
+		$this->get_job()->increment_result( $model->get_model_key(), Sensei_Import_Job::RESULT_SUCCESS );
 
 		return true;
 	}
