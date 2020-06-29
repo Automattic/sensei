@@ -97,7 +97,7 @@ export const Ready = () => {
 			</Card>
 			<div className="sensei-setup-wizard__bottom-actions">
 				<a
-					className="link__secondary"
+					className="link__color-secondary"
 					href="edit.php?post_type=course"
 					{ ...logLink( 'setup_wizard_ready_exit' ) }
 				>

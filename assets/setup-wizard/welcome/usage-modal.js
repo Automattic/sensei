@@ -31,6 +31,7 @@ export const UsageModal = ( {
 			link: (
 				<Link
 					href="https://senseilms.com/documentation/what-data-does-sensei-track/"
+					className="link__color-secondary"
 					target="_blank"
 					type="external"
 				/>

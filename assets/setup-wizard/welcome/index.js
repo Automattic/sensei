@@ -60,7 +60,7 @@ export const Welcome = () => {
 				<Link
 					href="edit.php?post_type=course"
 					type="wp-admin"
-					className="link__secondary"
+					className="link__color-secondary"
 				>
 					{ __( 'Not right now', 'sensei-lms' ) }
 				</Link>
