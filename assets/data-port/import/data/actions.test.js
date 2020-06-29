@@ -28,7 +28,47 @@ import {
 	startFileUploadAction,
 	successFileUpload,
 	throwEarlyUploadError,
+	updateJobState,
 } from './actions';
+
+const RESPONSE_FULL = {
+	id: 'test',
+	status: {
+		status: 'setup',
+		percentage: 0,
+	},
+	files: {
+		courses: {
+			name: 'courses-sample.csv',
+			url:
+				'http://example.com/wp-content/uploads/2020/06/b6f91f0d_courses-sample.csv',
+		},
+	},
+	results: {
+		question: { success: 0, error: 0 },
+		course: { success: 0, error: 0 },
+		lesson: { success: 0, error: 0 },
+	},
+};
+
+const RESPONSE_SETUP = {
+	id: 'test',
+	status: {
+		status: 'setup',
+		percentage: 0,
+	},
+	files: {},
+	results: {},
+};
+const RESPONSE_PENDING = {
+	id: 'test',
+	status: {
+		status: 'pending',
+		percentage: 0,
+	},
+	files: {},
+	results: {},
+};
 
 describe( 'Importer actions', () => {
 	/**
@@ -65,22 +105,6 @@ describe( 'Importer actions', () => {
 		};
 		expect( gen.next().value ).toEqual( expectedFetchAction );
 
-		// Set data action.
-		const dataObject = {
-			id: 'test',
-			status: {
-				status: 'setup',
-				percentage: 0,
-			},
-			files: {
-				courses: {
-					name: 'courses-sample.csv',
-					url:
-						'http://example.com/wp-content/uploads/2020/06/b6f91f0d_courses-sample.csv',
-				},
-			},
-		};
-
 		const expectedSetDataAction = {
 			data: {
 				completedSteps: [],
@@ -95,11 +119,20 @@ describe( 'Importer actions', () => {
 						isUploaded: true,
 					},
 				},
+				done: {
+					results: {
+						question: { success: 0, error: 0 },
+						course: { success: 0, error: 0 },
+						lesson: { success: 0, error: 0 },
+					},
+				},
 			},
 			type: 'SUCCESS_FETCH_CURRENT_JOB_STATE',
 		};
 
-		expect( gen.next( dataObject ).value ).toEqual( expectedSetDataAction );
+		expect( gen.next( RESPONSE_FULL ).value ).toEqual(
+			expectedSetDataAction
+		);
 	} );
 
 	it( 'Should catch error on the get current job state action', () => {
@@ -118,6 +151,51 @@ describe( 'Importer actions', () => {
 			error,
 		};
 		expect( gen.throw( error ).value ).toEqual( expectedErrorAction );
+	} );
+
+	/**
+	 * Fetch importer data action.
+	 */
+	it( 'Should generate the update job state action', () => {
+		const gen = updateJobState( 'test-id' );
+
+		// Fetch action.
+		const expectedFetchAction = {
+			type: FETCH_FROM_API,
+			request: {
+				path: API_BASE_PATH + 'test-id',
+			},
+		};
+		expect( gen.next().value ).toEqual( expectedFetchAction );
+
+		const expectedSetDataAction = {
+			data: {
+				completedSteps: [],
+				jobId: 'test',
+				progress: {
+					percentage: 0,
+					status: 'setup',
+				},
+				upload: {
+					courses: {
+						filename: 'courses-sample.csv',
+						isUploaded: true,
+					},
+				},
+				done: {
+					results: {
+						question: { success: 0, error: 0 },
+						course: { success: 0, error: 0 },
+						lesson: { success: 0, error: 0 },
+					},
+				},
+			},
+			type: 'SET_JOB_STATE',
+		};
+
+		expect( gen.next( RESPONSE_FULL ).value ).toEqual(
+			expectedSetDataAction
+		);
 	} );
 
 	it( 'Should return the start get current job state action', () => {
@@ -170,16 +248,6 @@ describe( 'Importer actions', () => {
 		};
 		expect( gen.next().value ).toEqual( expectedStartAction );
 
-		// Set data action.
-		const dataObject = {
-			id: 'test',
-			status: {
-				status: 'pending',
-				percentage: 0,
-			},
-			files: {},
-		};
-
 		const expectedSetDataAction = {
 			data: {
 				jobId: 'test',
@@ -189,10 +257,15 @@ describe( 'Importer actions', () => {
 					percentage: 0,
 				},
 				completedSteps: [ 'upload' ],
+				done: {
+					results: {},
+				},
 			},
 			type: 'SUCCESS_START_IMPORT',
 		};
-		expect( gen.next( dataObject ).value ).toEqual( expectedSetDataAction );
+		expect( gen.next( RESPONSE_PENDING ).value ).toEqual(
+			expectedSetDataAction
+		);
 	} );
 
 	it( 'Should catch error on the start import action', () => {
@@ -269,16 +342,6 @@ describe( 'Importer actions', () => {
 		};
 		expect( gen.next().value ).toEqual( expectedApiRequest );
 
-		// Set data action.
-		const dataObject = {
-			id: 'test',
-			status: {
-				status: 'setup',
-				percentage: 0,
-			},
-			files: {},
-		};
-
 		const expectedSetDataAction = {
 			data: {
 				jobId: 'test',
@@ -288,11 +351,16 @@ describe( 'Importer actions', () => {
 					percentage: 0,
 				},
 				completedSteps: [],
+				done: {
+					results: {},
+				},
 			},
 			level: 'test',
 			type: 'SUCCESS_UPLOAD_IMPORT_DATA_FILE',
 		};
-		expect( gen.next( dataObject ).value ).toEqual( expectedSetDataAction );
+		expect( gen.next( RESPONSE_SETUP ).value ).toEqual(
+			expectedSetDataAction
+		);
 	} );
 
 	it( 'Should catch error on the file upload action', () => {
