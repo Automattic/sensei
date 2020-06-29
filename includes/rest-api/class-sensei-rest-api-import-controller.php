@@ -237,7 +237,7 @@ class Sensei_REST_API_Import_Controller extends Sensei_REST_API_Data_Port_Contro
 
 		$results_schema = [];
 
-		foreach( Sensei_Import_Job::get_default_results() as $model_key => $results ) {
+		foreach ( Sensei_Import_Job::get_default_results() as $model_key => $results ) {
 			$results_schema[ $model_key ] = [
 				'type'       => 'object',
 				'properties' => [],

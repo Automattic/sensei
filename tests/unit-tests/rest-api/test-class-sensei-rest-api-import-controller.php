@@ -134,7 +134,7 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 			$job->increment_result( Sensei_Import_Course_Model::MODEL_KEY, Sensei_Import_Job::RESULT_ERROR );
 
 			$job_results[ Sensei_Import_Course_Model::MODEL_KEY ][ Sensei_Import_Job::RESULT_SUCCESS ] = 2;
-			$job_results[ Sensei_Import_Course_Model::MODEL_KEY ][ Sensei_Import_Job::RESULT_ERROR ] = 1;
+			$job_results[ Sensei_Import_Course_Model::MODEL_KEY ][ Sensei_Import_Job::RESULT_ERROR ]   = 1;
 
 			$job->persist();
 
@@ -147,8 +147,8 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 
 		if ( $is_authorized ) {
 			$expected_parts = [
-				'id'     => $job->get_job_id(),
-				'status' => [
+				'id'      => $job->get_job_id(),
+				'status'  => [
 					'status'     => 'setup',
 					'percentage' => 0,
 				],
@@ -296,7 +296,7 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 
 		if ( $is_authorized ) {
 			$expected_parts = [
-				'status' => [
+				'status'  => [
 					'status'     => 'setup',
 					'percentage' => 0,
 				],
@@ -375,7 +375,7 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 
 		if ( $is_authorized ) {
 			$expected_parts = [
-				'status' => [
+				'status'  => [
 					'status'     => 'setup',
 					'percentage' => 0,
 				],
