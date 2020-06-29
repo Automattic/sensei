@@ -156,13 +156,6 @@ $alert-red: #d94f4f;
 				}
 			}
 
-			.continue-container {
-				padding: 24px 0;
-				display: flex;
-				justify-content: flex-end;
-				align-items: center;
-			}
-
 			.components-button {
 				padding: 6px 24px;
 				height: 40px;
@@ -239,13 +232,16 @@ $alert-red: #d94f4f;
 				background-color: $primary;
 				transition: width 1s ease;
 			}
-
-			.sensei-import-footer {
-				margin: 24px -24px 0;
-				border-top: 1px solid #eee;
-				padding: 24px;
-			}
 		}
+	}
+
+	.sensei-import-footer {
+		margin: 24px -24px 0;
+		border-top: 1px solid #eee;
+		padding: 24px;
+		display: flex;
+		justify-content: flex-end;
+		align-items: center;
 	}
 }
 

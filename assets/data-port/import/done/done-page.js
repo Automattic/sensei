@@ -75,7 +75,7 @@ export const DonePage = ( {
 					</>
 				) }
 
-				<div className="continue-container sensei-import-footer">
+				<div className="sensei-import-footer">
 					<Button isPrimary onClick={ restartImporter }>
 						{ __( 'Import More Content', 'sensei-lms' ) }
 					</Button>
