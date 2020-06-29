@@ -104,7 +104,7 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 		Sensei()->setup_wizard->setup_wizard_notice();
 		$html = ob_get_clean();
 
-		$pos_setup_button = strpos( $html, 'Continue the Setup Wizard' );
+		$pos_setup_button = strpos( $html, 'Complete Setup' );
 
 		$this->assertNotFalse( $pos_setup_button, 'Should return the notice HTML' );
 	}

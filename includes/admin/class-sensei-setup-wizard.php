@@ -286,7 +286,7 @@ class Sensei_Setup_Wizard {
 				<a href="<?php echo esc_url( $setup_url ); ?>" class="button-primary">
 					<?php
 					if ( $setup_wizard_in_progress ) {
-						esc_html_e( 'Continue the Setup Wizard', 'sensei-lms' );
+						esc_html_e( 'Complete Setup', 'sensei-lms' );
 					} else {
 						esc_html_e( 'Run the Setup Wizard', 'sensei-lms' );
 					}
