@@ -8,6 +8,7 @@ import FeatureDescription from './feature-description';
 import FeatureStatus, {
 	INSTALLING_STATUS,
 	ERROR_STATUS,
+	EXTERNAL_STATUS,
 } from './feature-status';
 import useFeaturesPolling from './use-features-polling';
 
@@ -20,10 +21,11 @@ import useFeaturesPolling from './use-features-polling';
  */
 const InstallationFeedback = ( { onContinue, onRetry } ) => {
 	const [ hasInstalling, setHasInstalling ] = useState( true );
+	const [ isPolling, setIsPolling ] = useState( true );
 	const [ hasError, setHasError ] = useState( false );
 
 	// Polling is active while some feature is installing.
-	const featuresData = useFeaturesPolling( hasInstalling );
+	const featuresData = useFeaturesPolling( isPolling );
 	const features = featuresData.options.filter( ( feature ) =>
 		featuresData.selected.includes( feature.slug )
 	);
@@ -32,6 +34,13 @@ const InstallationFeedback = ( { onContinue, onRetry } ) => {
 	useEffect( () => {
 		setHasInstalling(
 			features.some( ( feature ) => feature.status === INSTALLING_STATUS )
+		);
+		setIsPolling(
+			features.some( ( feature ) =>
+				[ INSTALLING_STATUS, EXTERNAL_STATUS ].includes(
+					feature.status
+				)
+			)
 		);
 
 		setHasError(
