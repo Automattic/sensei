@@ -85,6 +85,31 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test setup wizard notice says continue when user completed a step.
+	 *
+	 * @covers Sensei_Setup_Wizard::setup_wizard_notice
+	 * @covers Sensei_Setup_Wizard::should_current_page_display_setup_wizard
+	 */
+	public function testSetupWizardNoticeContinue() {
+		// Create and login as admin.
+		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $admin_id );
+
+		set_current_screen( 'dashboard' );
+		update_option( \Sensei_Setup_Wizard::SUGGEST_SETUP_WIZARD_OPTION, 1 );
+
+		Sensei()->setup_wizard->update_wizard_user_data( [ 'steps' => [ 'welcome' ] ] );
+
+		ob_start();
+		Sensei()->setup_wizard->setup_wizard_notice();
+		$html = ob_get_clean();
+
+		$pos_setup_button = strpos( $html, 'Complete Setup' );
+
+		$this->assertNotFalse( $pos_setup_button, 'Should return the notice HTML' );
+	}
+
+	/**
 	 * Test setup wizard notice in screen with Sensei prefix.
 	 *
 	 * @covers Sensei_Setup_Wizard::setup_wizard_notice
