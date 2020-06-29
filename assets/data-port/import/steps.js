@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import UploadPage from './upload';
 import ImportProgressPage from './import-progress';
-import { DonePage } from './done';
+import DonePage from './done';
 
 export const steps = [
 	{

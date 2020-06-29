@@ -13,12 +13,12 @@ export default compose(
 		};
 	} ),
 	withDispatch( ( dispatch, ownProps, { select } ) => {
-		const { fetchImportLog, restart } = dispatch( 'sensei/import' );
+		const { fetchImportLog, restartImporter } = dispatch( 'sensei/import' );
 
 		return {
 			fetchImportLog: () =>
 				fetchImportLog( select( 'sensei/import' ).getJobId() ),
-			resetState: restart,
+			restartImporter,
 		};
 	} )
 )( DonePage );

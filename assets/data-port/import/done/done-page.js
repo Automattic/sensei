@@ -9,7 +9,12 @@ import { groupResults, ImportResults } from './import-results';
 /**
  * Done page of the importer.
  */
-export const DonePage = ( { resetState, results, logs, fetchImportLog } ) => {
+export const DonePage = ( {
+	restartImporter,
+	results,
+	logs,
+	fetchImportLog,
+} ) => {
 	const { success: resultSuccess, error: resultErrors } = groupResults(
 		results
 	);
@@ -71,7 +76,7 @@ export const DonePage = ( { resetState, results, logs, fetchImportLog } ) => {
 				) }
 
 				<div className="continue-container sensei-import-footer">
-					<Button isPrimary onClick={ resetState }>
+					<Button isPrimary onClick={ restartImporter }>
 						{ __( 'Import More Content', 'sensei-lms' ) }
 					</Button>
 				</div>

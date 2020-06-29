@@ -9,6 +9,7 @@ import {
 	ERROR_UPLOAD_IMPORT_DATA_FILE,
 	START_UPLOAD_IMPORT_DATA_FILE,
 	SUCCESS_UPLOAD_IMPORT_DATA_FILE,
+	RESET_STATE,
 } from './constants';
 
 import { merge } from 'lodash';
@@ -179,6 +180,8 @@ export default ( state = DEFAULT_STATE, action ) => {
 					...action.data[ action.step ],
 				},
 			};
+		case RESET_STATE:
+			return { ...DEFAULT_STATE };
 
 		default:
 			return state;

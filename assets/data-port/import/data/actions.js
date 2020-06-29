@@ -11,6 +11,7 @@ import {
 	START_UPLOAD_IMPORT_DATA_FILE,
 	SUCCESS_UPLOAD_IMPORT_DATA_FILE,
 	ERROR_UPLOAD_IMPORT_DATA_FILE,
+	RESET_STATE,
 } from './constants';
 
 import { normalizeImportData } from './normalizer';
@@ -322,4 +323,19 @@ export function* fetchImportLog( jobId ) {
 	} );
 
 	yield setStepData( 'done', { done: { logs: data } } );
+}
+
+/**
+ * Reset importer state.
+ */
+export const resetState = () => ( {
+	type: RESET_STATE,
+} );
+
+/**
+ * Restart importer.
+ */
+export function* restartImporter() {
+	yield resetState();
+	yield fetchCurrentJobState();
 }
