@@ -13,6 +13,11 @@
 			flex-shrink: 0;
 		}
 
+		&__delete-button,
+		&__delete-button:disabled:hover {
+			color: $gray-30;
+		}
+
 		.components-form-file-upload {
 			flex-basis: 18%;
 			flex-shrink: 0;

@@ -1,7 +1,8 @@
 /* global FormData */
 
-import { FormFileUpload } from '@wordpress/components';
+import { Button, FormFileUpload } from '@wordpress/components';
 import { Notice } from '../../notice';
+import deleteIcon from './delete-icon';
 import { __ } from '@wordpress/i18n';
 import { levels } from '../levels';
 
@@ -51,6 +52,7 @@ export const UploadLevels = ( {
 	state,
 	uploadFileForLevel,
 	throwEarlyUploadError,
+	deleteLevelFile,
 } ) => {
 	const getLevelMessage = ( levelState ) => {
 		if ( levelState.hasError ) {
@@ -66,6 +68,21 @@ export const UploadLevels = ( {
 				const levelState = state[ level.key ];
 				const message = getLevelMessage( levelState );
 
+				let deleteButton;
+				if ( levelState.isUploaded ) {
+					deleteButton = (
+						<Button
+							className="sensei-upload-file-line__delete-button"
+							icon={ deleteIcon }
+							label={ __( 'Delete File', 'sensei-lms' ) }
+							onClick={ () =>
+								deleteLevelFile( jobId, level.key )
+							}
+							disabled={ levelState.isDeleting }
+						/>
+					);
+				}
+
 				return (
 					<li key={ level.key } className="sensei-upload-file-line">
 						<p className="sensei-upload-file-line__description">
@@ -76,6 +93,9 @@ export const UploadLevels = ( {
 							key={ levelState.inProgress }
 							isSecondary
 							accept={ [ '.csv', '.txt' ] }
+							disabled={
+								levelState.inProgress || levelState.isDeleting
+							}
 							onChange={ ( event ) =>
 								uploadFile(
 									jobId,
@@ -91,6 +111,7 @@ export const UploadLevels = ( {
 								: __( 'Upload', 'sensei-lms' ) }
 						</FormFileUpload>
 						{ message }
+						{ deleteButton }
 					</li>
 				);
 			} ) }
