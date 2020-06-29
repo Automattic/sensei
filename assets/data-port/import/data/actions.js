@@ -12,6 +12,7 @@ import {
 	SUCCESS_UPLOAD_IMPORT_DATA_FILE,
 	ERROR_UPLOAD_IMPORT_DATA_FILE,
 	RESET_STATE,
+	SET_JOB_STATE,
 } from './constants';
 
 import { normalizeImportData } from './normalizer';
@@ -52,6 +53,23 @@ export function* fetchCurrentJobState() {
 }
 
 /**
+ * Update job state in the background.
+ *
+ * @param {string} jobId The job ID.
+ */
+export function* updateJobState( jobId ) {
+	try {
+		const data = yield fetchFromAPI( {
+			path: buildJobEndpointUrl( jobId ),
+		} );
+
+		yield setJobState( normalizeImportData( data ) );
+	} catch ( error ) {
+		// Silent.
+	}
+}
+
+/**
  * @typedef  {Object} SuccessFetchCurrentJobStateAction
  * @property {string} type                         Action type.
  * @property {Object} data                         Importer data.
@@ -65,6 +83,22 @@ export function* fetchCurrentJobState() {
  */
 export const successFetchCurrentJobState = ( data ) => ( {
 	type: SUCCESS_FETCH_CURRENT_JOB_STATE,
+	data,
+} );
+
+/**
+ * @typedef  {Object} SetJobStateAction
+ * @property {string} type Action type.
+ * @property {Object} data Job state.
+ */
+/**
+ * Set job state action creator.
+ *
+ * @param {Object} data Job state.
+ * @return {SetJobStateAction} Set job state action.
+ */
+export const setJobState = ( data ) => ( {
+	type: SET_JOB_STATE,
 	data,
 } );
 

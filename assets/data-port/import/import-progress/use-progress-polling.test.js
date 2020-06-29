@@ -9,17 +9,17 @@ jest.mock( '@wordpress/data', () => ( {
 } ) );
 
 describe( 'useProgressPolling', () => {
-	const invalidateResolutionMock = jest.fn();
+	const updateJobStateMock = jest.fn();
 
 	useDispatch.mockImplementation( () => ( {
-		invalidateResolution: invalidateResolutionMock,
+		updateJobState: updateJobStateMock,
 	} ) );
 
 	afterEach( () => {
-		invalidateResolutionMock.mockReset();
+		updateJobStateMock.mockReset();
 	} );
 
-	it( 'Should invalidate resolution after the timer if polling is active', () => {
+	it( 'Should dispatch updateJobState after the timer if polling is active', () => {
 		const TestComponent = () => {
 			useProgressPolling( true, 'test-job' );
 
@@ -32,10 +32,10 @@ describe( 'useProgressPolling', () => {
 			jest.runOnlyPendingTimers();
 		} );
 
-		expect( invalidateResolutionMock ).toBeCalled();
+		expect( updateJobStateMock ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'Should not invalidate resolution after the timer if polling is not active', () => {
+	it( 'Should not update after the timer if polling is not active', () => {
 		const TestComponent = () => {
 			useProgressPolling( false, 'test-job' );
 
@@ -46,6 +46,6 @@ describe( 'useProgressPolling', () => {
 		render( <TestComponent /> );
 		jest.runOnlyPendingTimers();
 
-		expect( invalidateResolutionMock ).not.toBeCalled();
+		expect( updateJobStateMock ).not.toBeCalled();
 	} );
 } );

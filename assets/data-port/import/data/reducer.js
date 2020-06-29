@@ -10,6 +10,7 @@ import {
 	START_UPLOAD_IMPORT_DATA_FILE,
 	SUCCESS_UPLOAD_IMPORT_DATA_FILE,
 	RESET_STATE,
+	SET_JOB_STATE,
 } from './constants';
 
 import { merge } from 'lodash';
@@ -90,6 +91,11 @@ export default ( state = DEFAULT_STATE, action ) => {
 			return {
 				...merge( state, action.data ),
 				isFetching: false,
+			};
+
+		case SET_JOB_STATE:
+			return {
+				...merge( state, action.data ),
 			};
 
 		case ERROR_FETCH_CURRENT_JOB_STATE:

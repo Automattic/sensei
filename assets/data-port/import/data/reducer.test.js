@@ -10,6 +10,7 @@ import {
 	ERROR_UPLOAD_IMPORT_DATA_FILE,
 	START_UPLOAD_IMPORT_DATA_FILE,
 	SUCCESS_UPLOAD_IMPORT_DATA_FILE,
+	SET_JOB_STATE,
 } from './constants';
 
 describe( 'Importer reducer', () => {
@@ -32,6 +33,19 @@ describe( 'Importer reducer', () => {
 		} );
 
 		expect( state.isFetching ).toBeFalsy();
+		expect( state.test ).toBe( data.test );
+	} );
+
+	it( 'Should update data on SET_JOB_STATE action', () => {
+		const data = {
+			test: 'data',
+		};
+
+		const state = reducer( undefined, {
+			type: SET_JOB_STATE,
+			data,
+		} );
+
 		expect( state.test ).toBe( data.test );
 	} );
 
