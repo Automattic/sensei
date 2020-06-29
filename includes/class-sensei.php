@@ -204,7 +204,7 @@ class Sensei_Main {
 	/**
 	 * Setup wizard.
 	 *
-	 * @var Sensei_Wizard
+	 * @var Sensei_Setup_Wizard
 	 */
 	public $setup_wizard;
 
