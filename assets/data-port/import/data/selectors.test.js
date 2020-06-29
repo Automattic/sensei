@@ -75,21 +75,21 @@ describe( 'Importer selectors', () => {
 			upload: {
 				courses: {
 					isUploaded: false,
-					inProgress: false,
+					isUploading: false,
 					hasError: false,
 					errorMsg: null,
 					filename: null,
 				},
 				lessons: {
 					isUploaded: false,
-					inProgress: false,
+					isUploading: false,
 					hasError: false,
 					errorMsg: null,
 					filename: null,
 				},
 				questions: {
 					isUploaded: false,
-					inProgress: false,
+					isUploading: false,
 					hasError: false,
 					errorMsg: null,
 					filename: null,
@@ -105,21 +105,21 @@ describe( 'Importer selectors', () => {
 			upload: {
 				courses: {
 					isUploaded: false,
-					inProgress: false,
+					isUploading: false,
 					hasError: false,
 					errorMsg: null,
 					filename: null,
 				},
 				lessons: {
 					isUploaded: true,
-					inProgress: false,
+					isUploading: false,
 					hasError: false,
 					errorMsg: null,
 					filename: 'test.csv',
 				},
 				questions: {
 					isUploaded: false,
-					inProgress: false,
+					isUploading: false,
 					hasError: false,
 					errorMsg: null,
 					filename: null,

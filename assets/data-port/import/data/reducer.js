@@ -30,7 +30,7 @@ const DEFAULT_STATE = {
 		errorMsg: null,
 		courses: {
 			isUploaded: false,
-			inProgress: false,
+			isUploading: false,
 			isDeleting: false,
 			hasError: false,
 			errorMsg: null,
@@ -38,7 +38,7 @@ const DEFAULT_STATE = {
 		},
 		lessons: {
 			isUploaded: false,
-			inProgress: false,
+			isUploading: false,
 			isDeleting: false,
 			hasError: false,
 			errorMsg: null,
@@ -46,7 +46,7 @@ const DEFAULT_STATE = {
 		},
 		questions: {
 			isUploaded: false,
-			inProgress: false,
+			isUploading: false,
 			isDeleting: false,
 			hasError: false,
 			errorMsg: null,
@@ -154,7 +154,7 @@ export default ( state = DEFAULT_STATE, action ) => {
 		case START_UPLOAD_IMPORT_DATA_FILE:
 			return updateLevelState( state, action.level, {
 				isUploaded: false,
-				inProgress: true,
+				isUploading: true,
 				isDeleting: false,
 				hasError: false,
 				errorMsg: null,
@@ -170,7 +170,7 @@ export default ( state = DEFAULT_STATE, action ) => {
 				action.level,
 				{
 					...action.data.upload[ action.level ],
-					inProgress: false,
+					isUploading: false,
 					isDeleting: false,
 					hasError: false,
 					errorMsg: null,
@@ -180,7 +180,7 @@ export default ( state = DEFAULT_STATE, action ) => {
 		case ERROR_UPLOAD_IMPORT_DATA_FILE:
 			return updateLevelState( state, action.level, {
 				isUploaded: false,
-				inProgress: false,
+				isUploading: false,
 				isDeleting: false,
 				hasError: true,
 				errorMsg: action.error.message,

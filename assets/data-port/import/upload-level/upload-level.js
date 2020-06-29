@@ -90,11 +90,11 @@ export const UploadLevels = ( {
 						</p>
 						<FormFileUpload
 							// Include key to redraw after each upload attempt for onChange of the same file.
-							key={ levelState.inProgress }
+							key={ levelState.isUploading }
 							isSecondary
 							accept={ [ '.csv', '.txt' ] }
 							disabled={
-								levelState.inProgress || levelState.isDeleting
+								levelState.isUploading || levelState.isDeleting
 							}
 							onChange={ ( event ) =>
 								uploadFile(
@@ -106,7 +106,7 @@ export const UploadLevels = ( {
 								)
 							}
 						>
-							{ levelState.inProgress
+							{ levelState.isUploading
 								? __( 'Uploading…', 'sensei-lms' )
 								: __( 'Upload', 'sensei-lms' ) }
 						</FormFileUpload>

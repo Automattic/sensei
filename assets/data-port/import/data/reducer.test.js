@@ -106,17 +106,17 @@ describe( 'Importer reducer', () => {
 		expect( state.progress.dinosaur ).toBe( data.progress.dinosaur );
 	} );
 
-	it( 'Should set inProgress to true for file level state on START_UPLOAD_IMPORT_DATA_FILE action', () => {
+	it( 'Should set isUploading to true for file level state on START_UPLOAD_IMPORT_DATA_FILE action', () => {
 		const level = 'questions';
 		const state = reducer( undefined, {
 			type: START_UPLOAD_IMPORT_DATA_FILE,
 			level,
 		} );
 
-		expect( state.upload[ level ].inProgress ).toBeTruthy();
+		expect( state.upload[ level ].isUploading ).toBeTruthy();
 	} );
 
-	it( 'Should set inProgress to false and update level state on SUCCESS_UPLOAD_IMPORT_DATA_FILE action', () => {
+	it( 'Should set isUploading to false and update level state on SUCCESS_UPLOAD_IMPORT_DATA_FILE action', () => {
 		const level = 'questions';
 		const data = {
 			upload: {
@@ -132,11 +132,11 @@ describe( 'Importer reducer', () => {
 			data,
 		} );
 
-		expect( state.upload[ level ].inProgress ).toBeFalsy();
+		expect( state.upload[ level ].isUploading ).toBeFalsy();
 		expect( state.upload[ level ].isUploaded ).toBeTruthy();
 	} );
 
-	it( 'Should set inProgress to false, hasError to true, and errorMsg for file level on ERROR_UPLOAD_IMPORT_DATA_FILE action', () => {
+	it( 'Should set isUploading to false, hasError to true, and errorMsg for file level on ERROR_UPLOAD_IMPORT_DATA_FILE action', () => {
 		const level = 'questions';
 		const error = {
 			code: '',
@@ -149,7 +149,7 @@ describe( 'Importer reducer', () => {
 			level,
 		} );
 
-		expect( state.upload[ level ].inProgress ).toBeFalsy();
+		expect( state.upload[ level ].isUploading ).toBeFalsy();
 		expect( state.upload[ level ].errorMsg ).toBe( error.message );
 	} );
 
@@ -174,7 +174,7 @@ describe( 'Importer reducer', () => {
 			upload: {
 				[ level ]: {
 					isUploaded: true,
-					inProgress: false,
+					isUploading: false,
 					isDeleting: true,
 					hasError: false,
 					errorMsg: null,

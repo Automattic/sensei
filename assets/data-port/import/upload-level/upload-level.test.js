@@ -6,7 +6,7 @@ describe( '<UploadLevels />', () => {
 		const levelsState = {
 			courses: {
 				isUploaded: true,
-				inProgress: false,
+				isUploading: false,
 				isDeleting: false,
 				hasError: false,
 				errorMsg: null,
@@ -14,7 +14,7 @@ describe( '<UploadLevels />', () => {
 			},
 			lessons: {
 				isUploaded: false,
-				inProgress: false,
+				isUploading: false,
 				isDeleting: false,
 				hasError: true,
 				errorMsg: 'The error',
@@ -22,7 +22,7 @@ describe( '<UploadLevels />', () => {
 			},
 			questions: {
 				isUploaded: true,
-				inProgress: false,
+				isUploading: false,
 				isDeleting: false,
 				hasError: false,
 				errorMsg: null,
@@ -49,7 +49,7 @@ describe( '<UploadLevels />', () => {
 		const levelsState = {
 			courses: {
 				isUploaded: true,
-				inProgress: false,
+				isUploading: false,
 				isDeleting: false,
 				hasError: false,
 				errorMsg: null,
@@ -57,7 +57,7 @@ describe( '<UploadLevels />', () => {
 			},
 			lessons: {
 				isUploaded: false,
-				inProgress: false,
+				isUploading: false,
 				isDeleting: false,
 				hasError: false,
 				errorMsg: null,
@@ -65,7 +65,7 @@ describe( '<UploadLevels />', () => {
 			},
 			questions: {
 				isUploaded: false,
-				inProgress: false,
+				isUploading: false,
 				isDeleting: false,
 				hasError: false,
 				errorMsg: null,

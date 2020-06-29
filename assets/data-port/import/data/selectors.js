@@ -82,4 +82,4 @@ export const isCompleteStep = ( { completedSteps }, step ) =>
 export const isReadyToStart = ( state ) =>
 	levels
 		.map( ( { key } ) => state.upload[ key ] )
-		.some( ( level ) => level.isUploaded && ! level.inProgress );
+		.some( ( level ) => level.isUploaded && ! level.isUploading );
