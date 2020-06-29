@@ -1,5 +1,5 @@
 import { Button } from '@wordpress/components';
-import { useState, Fragment } from '@wordpress/element';
+import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
 export const ImportLog = ( { result } ) => {
@@ -18,37 +18,42 @@ export const ImportLog = ( { result } ) => {
 				{ __( 'View Import Log', 'sensei-lms' ) }
 			</Button>
 			<div hidden={ ! isOpen } className="sensei-import-log-data">
-				<table className="sensei-data-table">
-					{ result
-						.filter( ( { errors } ) => errors.length )
-						.map( ( { type, errors } ) => (
-							<Fragment key={ type }>
-								<thead>
-									<tr>
-										<th> { postTypeLabels[ type ] } </th>
-										<th>
+				{ result && (
+					<table className="sensei-data-table">
+						<thead>
+							<tr>
+								<th>{ __( 'Entry', 'sensei-lms' ) }</th>
+								<th>
+									{ __( 'Reason for Failure', 'sensei-lms' ) }
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							{ result.items.map( ( item ) => (
+								<tr key={ item.descriptor }>
+									<td
+										className="sensei-import-log-row__header"
+										title={ item.descriptor }
+									>
+										<strong className="sensei-import-log-row__title">
+											{ item.descriptor }
+										</strong>
+										<div className="sensei-import-log-row__source">
+											{ postTypeLabels[ item.type ] }
+											{ ', ' }
 											{ __(
-												'Reason for Failure',
+												'Line:',
 												'sensei-lms'
-											) }
-										</th>
-									</tr>
-								</thead>
-								<tbody>
-									{ errors.map( ( error ) => (
-										<tr key={ error.title }>
-											<td>
-												<span className="sensei-import-log-row__title">
-													{ error.title }
-												</span>
-											</td>
-											<td>{ error.reason }</td>
-										</tr>
-									) ) }
-								</tbody>
-							</Fragment>
-						) ) }
-				</table>
+											) }{ ' ' }
+											{ item.line }
+										</div>
+									</td>
+									<td>{ item.message }</td>
+								</tr>
+							) ) }
+						</tbody>
+					</table>
+				) }
 			</div>
 		</>
 	);

@@ -257,7 +257,7 @@ $alert-red: #d94f4f;
 	}
 	tbody tr:nth-child(2n+1) {
 		td, th {
-			background-color: #fcfcfc;
+			background-color: $gray-0;
 		}
 	}
 }

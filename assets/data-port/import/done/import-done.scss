@@ -6,8 +6,11 @@
 		text-align: center;
 	}
 
-	&__result-icon {
+	&__result-icon--success {
 		color: $primary;
+	}
+	&__result-icon--warning {
+		color: $gray-10;
 	}
 
 	&__log {
@@ -17,9 +20,14 @@
 		.sensei-data-table thead th {
 			padding-top: 1rem;
 		}
-		.sensei-import-log-row__title {
-			background: #f2f2f2;
-			padding: 1px;
+
+
+		.sensei-import-log-row__header {
+			max-width: 0;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			width: 50%;
 		}
 	}
 
