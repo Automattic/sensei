@@ -125,7 +125,6 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 			$this->restore_from_json( $json );
 		} else {
 			$this->logs         = [];
-			$this->results      = [];
 			$this->files        = [];
 			$this->is_completed = false;
 			$this->is_started   = false;

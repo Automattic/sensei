@@ -33,7 +33,7 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 	public function __construct( $job_id, $json = '' ) {
 		parent::__construct( $job_id, $json );
 
-		if ( empty( $this->results ) ) {
+		if ( null === $this->results ) {
 			$this->results = self::get_default_results();
 		}
 	}
