@@ -153,6 +153,7 @@ export default ( state = DEFAULT_STATE, action ) => {
 
 		case START_UPLOAD_IMPORT_DATA_FILE:
 			return updateLevelState( state, action.level, {
+				...state.upload[ action.level ],
 				isUploaded: false,
 				isUploading: true,
 				isDeleting: false,
@@ -169,6 +170,7 @@ export default ( state = DEFAULT_STATE, action ) => {
 				},
 				action.level,
 				{
+					...state.upload[ action.level ],
 					...action.data.upload[ action.level ],
 					isUploading: false,
 					isDeleting: false,
@@ -179,6 +181,7 @@ export default ( state = DEFAULT_STATE, action ) => {
 
 		case ERROR_UPLOAD_IMPORT_DATA_FILE:
 			return updateLevelState( state, action.level, {
+				...state.upload[ action.level ],
 				isUploaded: false,
 				isUploading: false,
 				isDeleting: false,
