@@ -9,6 +9,9 @@ import {
 	ERROR_UPLOAD_IMPORT_DATA_FILE,
 	START_UPLOAD_IMPORT_DATA_FILE,
 	SUCCESS_UPLOAD_IMPORT_DATA_FILE,
+	START_DELETE_IMPORT_DATA_FILE,
+	SUCCESS_DELETE_IMPORT_DATA_FILE,
+	ERROR_DELETE_IMPORT_DATA_FILE,
 	SET_JOB_STATE,
 } from './constants';
 
@@ -148,5 +151,83 @@ describe( 'Importer reducer', () => {
 
 		expect( state.upload[ level ].inProgress ).toBeFalsy();
 		expect( state.upload[ level ].errorMsg ).toBe( error.message );
+	} );
+
+	it( 'Should set isDeleting to true on START_DELETE_IMPORT_DATA_FILE action', () => {
+		const level = 'questions';
+		const state = reducer( undefined, {
+			type: START_DELETE_IMPORT_DATA_FILE,
+			level,
+		} );
+
+		expect( state.upload[ level ].isDeleting ).toBeTruthy();
+	} );
+
+	it( 'Should set isDeleting to false and reset other attributes for level file on SUCCESS_DELETE_IMPORT_DATA_FILE action', () => {
+		const level = 'questions';
+		const data = {
+			completedSteps: [],
+			upload: {},
+		};
+
+		const currentState = {
+			upload: {
+				[ level ]: {
+					isUploaded: true,
+					inProgress: false,
+					isDeleting: true,
+					hasError: false,
+					errorMsg: null,
+					filename: 'test.csv',
+				},
+			},
+		};
+
+		const state = reducer( currentState, {
+			type: SUCCESS_DELETE_IMPORT_DATA_FILE,
+			level,
+			data,
+		} );
+
+		expect( state.upload[ level ].isDeleting ).toBeFalsy();
+		expect( state.upload[ level ].isUploaded ).toBeFalsy();
+		expect( state.upload[ level ].filename ).toBeNull();
+	} );
+
+	it( 'Should set isDeleting to false on ERROR_DELETE_IMPORT_DATA_FILE action', () => {
+		const level = 'questions';
+		const error = {
+			code: '',
+			message: 'test',
+		};
+
+		const state = reducer( undefined, {
+			type: ERROR_DELETE_IMPORT_DATA_FILE,
+			level,
+			error,
+		} );
+
+		expect( state.upload[ level ].hasError ).toBeTruthy();
+		expect( state.upload[ level ].errorMsg ).toBe( error.message );
+	} );
+
+	it( 'Should set completedSteps and individual step data on SET_STEP_DATA action', () => {
+		const step = 'progress';
+		const data = {
+			progress: {
+				status: 'test',
+				percentage: 44,
+			},
+			completedSteps: [ 'awesome' ],
+		};
+		const state = reducer( undefined, {
+			type: SET_STEP_DATA,
+			step,
+			data,
+		} );
+
+		expect( state.progress.status ).toEqual( data.progress.status );
+		expect( state.progress.percentage ).toEqual( data.progress.percentage );
+		expect( state.completedSteps ).toEqual( data.completedSteps );
 	} );
 } );

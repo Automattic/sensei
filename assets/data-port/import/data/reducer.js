@@ -8,6 +8,9 @@ import {
 	ERROR_UPLOAD_IMPORT_DATA_FILE,
 	START_UPLOAD_IMPORT_DATA_FILE,
 	SUCCESS_UPLOAD_IMPORT_DATA_FILE,
+	START_DELETE_IMPORT_DATA_FILE,
+	SUCCESS_DELETE_IMPORT_DATA_FILE,
+	ERROR_DELETE_IMPORT_DATA_FILE,
 	RESET_STATE,
 	SET_JOB_STATE,
 	SUCCESS_FETCH_IMPORT_LOG,
@@ -28,6 +31,7 @@ const DEFAULT_STATE = {
 		courses: {
 			isUploaded: false,
 			inProgress: false,
+			isDeleting: false,
 			hasError: false,
 			errorMsg: null,
 			filename: null,
@@ -35,6 +39,7 @@ const DEFAULT_STATE = {
 		lessons: {
 			isUploaded: false,
 			inProgress: false,
+			isDeleting: false,
 			hasError: false,
 			errorMsg: null,
 			filename: null,
@@ -42,6 +47,7 @@ const DEFAULT_STATE = {
 		questions: {
 			isUploaded: false,
 			inProgress: false,
+			isDeleting: false,
 			hasError: false,
 			errorMsg: null,
 			filename: null,
@@ -149,6 +155,7 @@ export default ( state = DEFAULT_STATE, action ) => {
 			return updateLevelState( state, action.level, {
 				isUploaded: false,
 				inProgress: true,
+				isDeleting: false,
 				hasError: false,
 				errorMsg: null,
 				filename: null,
@@ -164,6 +171,7 @@ export default ( state = DEFAULT_STATE, action ) => {
 				{
 					...action.data.upload[ action.level ],
 					inProgress: false,
+					isDeleting: false,
 					hasError: false,
 					errorMsg: null,
 				}
@@ -173,9 +181,35 @@ export default ( state = DEFAULT_STATE, action ) => {
 			return updateLevelState( state, action.level, {
 				isUploaded: false,
 				inProgress: false,
+				isDeleting: false,
 				hasError: true,
 				errorMsg: action.error.message,
 				filename: null,
+			} );
+
+		case START_DELETE_IMPORT_DATA_FILE:
+			return updateLevelState( state, action.level, {
+				...state.upload[ action.level ],
+				isDeleting: true,
+			} );
+
+		case SUCCESS_DELETE_IMPORT_DATA_FILE:
+			return updateLevelState( state, action.level, {
+				...action.data.upload[ action.level ],
+				isUploaded: false,
+				isDeleting: false,
+				hasError: false,
+				errorMsg: null,
+				filename: null,
+			} );
+
+		case ERROR_DELETE_IMPORT_DATA_FILE:
+			return updateLevelState( state, action.level, {
+				...state.upload[ action.level ],
+				isUploaded: false,
+				isDeleting: false,
+				hasError: true,
+				errorMsg: action.error.message,
 			} );
 
 		case START_FETCH_IMPORT_LOG:
