@@ -66,7 +66,7 @@ class Sensei_Data_Port_Model_Test extends WP_UnitTestCase {
 			'type'                   => 'cool',
 		];
 
-		$model = Sensei_Import_Model_Mock::from_source_array( $data, new Sensei_Data_Port_Schema_Mock() );
+		$model = Sensei_Import_Model_Mock::from_source_array( 1, $data, new Sensei_Data_Port_Schema_Mock() );
 
 		$this->assertEquals( $data, $model->get_data() );
 		$this->assertTrue( $model->is_valid() );
@@ -90,7 +90,7 @@ class Sensei_Data_Port_Model_Test extends WP_UnitTestCase {
 
 		$data['unknown_column'] = 1;
 
-		$model = Sensei_Import_Model_Mock::from_source_array( $data, new Sensei_Data_Port_Schema_Mock() );
+		$model = Sensei_Import_Model_Mock::from_source_array( 1, $data, new Sensei_Data_Port_Schema_Mock() );
 
 		$this->assertEquals( $expected, $model->get_data() );
 		$this->assertTrue( $model->is_valid() );
@@ -122,7 +122,7 @@ class Sensei_Data_Port_Model_Test extends WP_UnitTestCase {
 
 		$data['unknown_column'] = 1;
 
-		$model = Sensei_Import_Model_Mock::from_source_array( $data, new Sensei_Data_Port_Schema_Mock() );
+		$model = Sensei_Import_Model_Mock::from_source_array( 1, $data, new Sensei_Data_Port_Schema_Mock() );
 
 		$this->assertEquals( $expected, $model->get_data() );
 		$this->assertFalse( $model->is_valid(), 'Type did not match a valid field so should invalidate the entry' );
@@ -139,7 +139,7 @@ class Sensei_Data_Port_Model_Test extends WP_UnitTestCase {
 			'type'                   => 'cool',
 		];
 
-		$model = Sensei_Import_Model_Mock::from_source_array( $data, new Sensei_Data_Port_Schema_Mock() );
+		$model = Sensei_Import_Model_Mock::from_source_array( 1, $data, new Sensei_Data_Port_Schema_Mock() );
 
 		$property = new ReflectionProperty( 'Sensei_Import_Model', 'is_new' );
 		$property->setAccessible( true );

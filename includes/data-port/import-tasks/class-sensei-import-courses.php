@@ -26,12 +26,13 @@ class Sensei_Import_Courses extends Sensei_Import_File_Process_Task {
 	/**
 	 * Get the model which handles this task.
 	 *
-	 * @param array $line  An associated array with the CSV line.
+	 * @param int   $line_number Line number for model.
+	 * @param array $data        An associated array with the CSV line.
 	 *
 	 * @return Sensei_Import_Course_Model
 	 */
-	public function get_model( $line ) {
-		return Sensei_Import_Course_Model::from_source_array( $line, new Sensei_Data_Port_Course_Schema(), $this );
+	public function get_model( $line_number, $data ) {
+		return Sensei_Import_Course_Model::from_source_array( $line_number, $data, new Sensei_Data_Port_Course_Schema(), $this );
 	}
 
 	/**

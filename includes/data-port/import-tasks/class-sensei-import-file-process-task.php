@@ -97,8 +97,10 @@ abstract class Sensei_Import_File_Process_Task
 
 			$current_line = $this->completed_lines;
 
-			foreach ( $lines as $line ) {
-				$this->process_line( ++$current_line, $line );
+			foreach ( $lines as $line_data ) {
+				$current_line++;
+
+				$this->process_line( $current_line + 1, $line_data );
 			}
 
 			$this->completed_lines = $this->reader->get_completed_lines();
@@ -186,30 +188,31 @@ abstract class Sensei_Import_File_Process_Task
 	abstract public static function validate_source_file( $file_path );
 
 	/**
-	 * Get the model which will handle the processing for a line.
+	 * Get the model which handles this task.
 	 *
-	 * @param array $line  An associated array with the CSV line.
+	 * @param int   $line_number Line number for model.
+	 * @param array $data        An associated array with the CSV line.
 	 *
-	 * @return Sensei_Data_Port_Model
+	 * @return Sensei_Import_Model
 	 */
-	abstract public function get_model( $line );
+	abstract public function get_model( $line_number, $data );
 
 	/**
 	 * Process a single CSV line.
 	 *
 	 * @param int            $line_number  The line number in the file.
-	 * @param WP_Error|array $line         The current line as returned from Sensei_Import_CSV_Reader::read_lines().
+	 * @param WP_Error|array $data         The current line as returned from Sensei_Import_CSV_Reader::read_lines().
 	 *
 	 * @return mixed
 	 */
-	protected function process_line( $line_number, $line ) {
-		if ( empty( $line ) ) {
+	protected function process_line( $line_number, $data ) {
+		if ( empty( $data ) ) {
 			return true;
 		}
 
-		if ( $line instanceof WP_Error ) {
+		if ( $data instanceof WP_Error ) {
 			$this->get_job()->add_log_entry(
-				$line->get_error_message(),
+				$data->get_error_message(),
 				Sensei_Data_Port_Job::LOG_LEVEL_ERROR,
 				[
 					'line' => $line_number,
@@ -219,7 +222,7 @@ abstract class Sensei_Import_File_Process_Task
 			return false;
 		}
 
-		$model = $this->get_model( $line );
+		$model = $this->get_model( $line_number, $data );
 		if ( ! is_a( $model, Sensei_Data_Port_Model::class ) ) {
 			return false;
 		}

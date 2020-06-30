@@ -15,6 +15,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class Sensei_Import_Model extends Sensei_Data_Port_Model {
 
 	/**
+	 * The line number being imported.
+	 *
+	 * @var int
+	 */
+	protected $line_number;
+
+	/**
 	 * The default author to be used in courses if none is provided.
 	 *
 	 * @var int
@@ -38,14 +45,16 @@ abstract class Sensei_Import_Model extends Sensei_Data_Port_Model {
 	/**
 	 * Set up item from an array.
 	 *
-	 * @param array                           $data   Data to restore item from.
-	 * @param Sensei_Data_Port_Schema         $schema The schema for the item.
-	 * @param Sensei_Import_File_Process_Task $task   The import task.
+	 * @param int                             $line_number Line number.
+	 * @param array                           $data        Data to restore item from.
+	 * @param Sensei_Data_Port_Schema         $schema      The schema for the item.
+	 * @param Sensei_Import_File_Process_Task $task        The import task.
 	 *
 	 * @return static
 	 */
-	public static function from_source_array( $data, Sensei_Data_Port_Schema $schema, Sensei_Import_File_Process_Task $task = null ) {
+	public static function from_source_array( $line_number, $data, Sensei_Data_Port_Schema $schema, Sensei_Import_File_Process_Task $task = null ) {
 		$self                 = new static();
+		$self->line_number    = $line_number;
 		$self->schema         = $schema;
 		$self->task           = $task;
 		$self->default_author = null === $task ? 0 : $task->get_job()->get_user_id();

@@ -165,7 +165,8 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 	 * @dataProvider lineData
 	 */
 	public function testInputIsSanitized( $input_line, $expected_model_content ) {
-		$model         = Sensei_Import_Lesson_Model::from_source_array( $input_line, new Sensei_Data_Port_Lesson_Schema(), Sensei_Import_Job::create( 'test', 0 ) );
+		$task          = new Sensei_Import_Lessons( Sensei_Import_Job::create( 'test', 0 ) );
+		$model         = Sensei_Import_Lesson_Model::from_source_array( 1, $input_line, new Sensei_Data_Port_Lesson_Schema(), $task );
 		$tested_fields = [
 			Sensei_Data_Port_Lesson_Schema::COLUMN_ID,
 			Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE,
@@ -204,9 +205,10 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 	 */
 	public function testLessonIsInsertedAndUpdated() {
 		$thumbnail_id = $this->factory->attachment->create( [ 'file' => 'localfilename.png' ] );
-		$model        = Sensei_Import_Lesson_Model::from_source_array( $this->lineData()[0][0], new Sensei_Data_Port_Lesson_Schema(), Sensei_Import_Job::create( 'test', 0 ) );
+		$task         = new Sensei_Import_Lessons( Sensei_Import_Job::create( 'test', 0 ) );
+		$model        = Sensei_Import_Lesson_Model::from_source_array( 1, $this->lineData()[0][0], new Sensei_Data_Port_Lesson_Schema(), $task );
 		$result       = $model->sync_post();
-
+		$post         = get_post( $model->get_post_id() );
 		$this->assertTrue( $result, 'Lesson with correct data should be created successfully.' );
 
 		$created_post = get_posts(
@@ -220,7 +222,8 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 
 		$this->verify_lesson( $created_post, $this->lineData()[0][1], $thumbnail_id );
 
-		$model  = Sensei_Import_Lesson_Model::from_source_array( $this->lineData()[1][0], new Sensei_Data_Port_Lesson_Schema(), Sensei_Import_Job::create( 'test', 0 ) );
+		$task   = new Sensei_Import_Lessons( Sensei_Import_Job::create( 'test', 0 ) );
+		$model  = Sensei_Import_Lesson_Model::from_source_array( 1, $this->lineData()[1][0], new Sensei_Data_Port_Lesson_Schema(), $task );
 		$result = $model->sync_post();
 
 		$this->assertTrue( $result, 'Lesson with correct data should be updated successfully.' );
@@ -295,7 +298,8 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 			Sensei_Data_Port_Lesson_Schema::COLUMN_COURSE => 'id:the-import-id',
 		];
 
-		$model  = Sensei_Import_Lesson_Model::from_source_array( $lesson_data_with_course, new Sensei_Data_Port_Lesson_Schema(), $job );
+		$task   = new Sensei_Import_Lessons( $job );
+		$model  = Sensei_Import_Lesson_Model::from_source_array( 1, $lesson_data_with_course, new Sensei_Data_Port_Lesson_Schema(), $task );
 		$result = $model->sync_post();
 
 		$this->assertInstanceOf( 'WP_Error', $result, 'Lesson creation should fail when a course which does not exist is supplied.' );
@@ -307,7 +311,8 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 			Sensei_Data_Port_Course_Schema::COLUMN_SLUG  => 'course-slug',
 		];
 
-		$course_model = Sensei_Import_Course_Model::from_source_array( $course_data, new Sensei_Data_Port_Course_Schema(), $job );
+		$task         = new Sensei_Import_Lessons( $job );
+		$course_model = Sensei_Import_Course_Model::from_source_array( 1, $course_data, new Sensei_Data_Port_Course_Schema(), $task );
 		$course_model->sync_post();
 
 		$created_course = get_posts(
@@ -319,7 +324,8 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 			]
 		)[0];
 
-		$model  = Sensei_Import_Lesson_Model::from_source_array( $lesson_data_with_course, new Sensei_Data_Port_Lesson_Schema(), $job );
+		$task   = new Sensei_Import_Lessons( $job );
+		$model  = Sensei_Import_Lesson_Model::from_source_array( 1, $lesson_data_with_course, new Sensei_Data_Port_Lesson_Schema(), $task );
 		$result = $model->sync_post();
 
 		$this->assertTrue( $result, 'Lesson creation should not fail when the linked course exists.' );
@@ -341,7 +347,8 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 			Sensei_Data_Port_Lesson_Schema::COLUMN_COURSE => 'slug:course-slug',
 		];
 
-		$model = Sensei_Import_Lesson_Model::from_source_array( $lesson_with_course_slug, new Sensei_Data_Port_Lesson_Schema(), $job );
+		$task  = new Sensei_Import_Lessons( $job );
+		$model = Sensei_Import_Lesson_Model::from_source_array( 1, $lesson_with_course_slug, new Sensei_Data_Port_Lesson_Schema(), $task );
 		$model->sync_post();
 
 		$lesson_with_slug = get_posts(
@@ -367,31 +374,34 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 			Sensei_Data_Port_Lesson_Schema::COLUMN_MODULE => 'the-module',
 		];
 
-		$model  = Sensei_Import_Lesson_Model::from_source_array( $lesson_data_with_module, new Sensei_Data_Port_Lesson_Schema(), $job );
+		$task   = new Sensei_Import_Lessons( $job );
+		$model  = Sensei_Import_Lesson_Model::from_source_array( 1, $lesson_data_with_module, new Sensei_Data_Port_Lesson_Schema(), $task );
 		$result = $model->sync_post();
 
 		$this->assertInstanceOf( 'WP_Error', $result, 'Lesson creation should fail when a course module was supplied but course was empty.' );
 		$this->assertEquals( 'sensei_data_port_course_empty', $result->get_error_code() );
 
 		$course_model = Sensei_Import_Course_Model::from_source_array(
+			1,
 			[
 				Sensei_Data_Port_Course_Schema::COLUMN_ID => 'the-import-id',
 				Sensei_Data_Port_Course_Schema::COLUMN_TITLE => 'Course title',
 			],
 			new Sensei_Data_Port_Course_Schema(),
-			$job
+			$task
 		);
 		$course_model->sync_post();
 		$lesson_data_with_module[ Sensei_Data_Port_Lesson_Schema::COLUMN_COURSE ] = 'id:the-import-id';
 
-		$model  = Sensei_Import_Lesson_Model::from_source_array( $lesson_data_with_module, new Sensei_Data_Port_Lesson_Schema(), $job );
+		$task   = new Sensei_Import_Lessons( $job );
+		$model  = Sensei_Import_Lesson_Model::from_source_array( 1, $lesson_data_with_module, new Sensei_Data_Port_Lesson_Schema(), $task );
 		$result = $model->sync_post();
 
 		$this->assertInstanceOf( 'WP_Error', $result, 'Lesson creation should fail when the module does not exist.' );
 		$this->assertEquals( 'sensei_data_port_module_not_found', $result->get_error_code() );
 
 		$term   = Sensei_Data_Port_Utilities::get_term( 'the-module', 'module' );
-		$model  = Sensei_Import_Lesson_Model::from_source_array( $lesson_data_with_module, new Sensei_Data_Port_Lesson_Schema(), $job );
+		$model  = Sensei_Import_Lesson_Model::from_source_array( 1, $lesson_data_with_module, new Sensei_Data_Port_Lesson_Schema(), $task );
 		$result = $model->sync_post();
 
 		$this->assertInstanceOf( 'WP_Error', $result, 'Lesson creation should fail when the module is not part of the linked course.' );
@@ -407,7 +417,8 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 		)[0];
 		wp_set_object_terms( $created_course->ID, $term->term_id, 'module' );
 
-		$model  = Sensei_Import_Lesson_Model::from_source_array( $lesson_data_with_module, new Sensei_Data_Port_Lesson_Schema(), $job );
+		$task   = new Sensei_Import_Lessons( $job );
+		$model  = Sensei_Import_Lesson_Model::from_source_array( 1, $lesson_data_with_module, new Sensei_Data_Port_Lesson_Schema(), $task );
 		$result = $model->sync_post();
 
 		$this->assertTrue( $result, 'Lesson should be created successfully when module data are correct.' );
@@ -418,13 +429,15 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 	 */
 	public function testLessonOrderIsGeneratedCorrectly() {
 		$job          = Sensei_Import_Job::create( 'test', 0 );
+		$task         = new Sensei_Import_Lessons( $job );
 		$course_model = Sensei_Import_Course_Model::from_source_array(
+			1,
 			[
 				Sensei_Data_Port_Course_Schema::COLUMN_ID => 'the-import-id',
 				Sensei_Data_Port_Course_Schema::COLUMN_TITLE => 'Course title',
 			],
 			new Sensei_Data_Port_Course_Schema(),
-			$job
+			$task
 		);
 		$course_model->sync_post();
 
@@ -461,7 +474,7 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 
 		$lesson_ids = [];
 		foreach ( $lessons as $lesson ) {
-			$model = Sensei_Import_Lesson_Model::from_source_array( $lesson, new Sensei_Data_Port_Lesson_Schema(), $job );
+			$model = Sensei_Import_Lesson_Model::from_source_array( 1, $lesson, new Sensei_Data_Port_Lesson_Schema(), $task );
 			$model->sync_post();
 
 			$lesson_ids[] = get_posts(
@@ -490,7 +503,8 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 	 */
 	public function testQuizIsInsertedAndUpdated() {
 		$this->factory->attachment->create( [ 'file' => 'localfilename.png' ] );
-		$model  = Sensei_Import_Lesson_Model::from_source_array( $this->lineData()[0][0], new Sensei_Data_Port_Lesson_Schema(), Sensei_Import_Job::create( 'test', 0 ) );
+		$task   = new Sensei_Import_Lessons( Sensei_Import_Job::create( 'test', 0 ) );
+		$model  = Sensei_Import_Lesson_Model::from_source_array( 1, $this->lineData()[0][0], new Sensei_Data_Port_Lesson_Schema(), $task );
 		$result = $model->sync_post();
 
 		$this->assertTrue( $result, 'Quiz with correct data should be created successfully.' );
@@ -505,7 +519,8 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 
 		$this->verify_quiz( $created_post, $this->lineData()[0][1] );
 
-		$model  = Sensei_Import_Lesson_Model::from_source_array( $this->lineData()[1][0], new Sensei_Data_Port_Lesson_Schema(), Sensei_Import_Job::create( 'test', 0 ) );
+		$task   = new Sensei_Import_Lessons( Sensei_Import_Job::create( 'test', 0 ) );
+		$model  = Sensei_Import_Lesson_Model::from_source_array( 1, $this->lineData()[1][0], new Sensei_Data_Port_Lesson_Schema(), $task );
 		$result = $model->sync_post();
 
 		$this->assertTrue( $result, 'Quiz with correct data should be updated successfully.' );
@@ -570,8 +585,10 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 	 */
 	public function testQuizOrderIsGeneratedCorrectly() {
 		// Create the common job and 3 questions.
-		$job       = Sensei_Import_Job::create( 'test', 0 );
-		$questions = [
+		$job           = Sensei_Import_Job::create( 'test', 0 );
+		$task          = new Sensei_Import_Lessons( $job );
+		$question_task = new Sensei_Import_Questions( $job );
+		$questions     = [
 			[
 				Sensei_Data_Port_Question_Schema::COLUMN_ID => 'burgers',
 				Sensei_Data_Port_Question_Schema::COLUMN_TITLE => 'Do you like burgers?',
@@ -594,7 +611,7 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 
 		$question_ids = [];
 		foreach ( $questions as $question ) {
-			$model = Sensei_Import_Question_Model::from_source_array( $question, new Sensei_Data_Port_Question_Schema(), $job );
+			$model = Sensei_Import_Question_Model::from_source_array( 1, $question, new Sensei_Data_Port_Question_Schema(), $question_task );
 			$model->sync_post();
 
 			$question_ids[ $question[ Sensei_Data_Port_Question_Schema::COLUMN_ID ] ] = get_posts(
@@ -623,7 +640,7 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 
 		$quiz_ids = [];
 		foreach ( $lessons as $lesson ) {
-			$model = Sensei_Import_Lesson_Model::from_source_array( $lesson, new Sensei_Data_Port_Lesson_Schema(), $job );
+			$model = Sensei_Import_Lesson_Model::from_source_array( 1, $lesson, new Sensei_Data_Port_Lesson_Schema(), $task );
 			$model->sync_post();
 
 			$quiz_ids[] = get_posts(
@@ -649,13 +666,14 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 
 		// Update the order in one of the quizzes.
 		$model = Sensei_Import_Lesson_Model::from_source_array(
+			1,
 			[
 				Sensei_Data_Port_Lesson_Schema::COLUMN_SLUG      => 'first',
 				Sensei_Data_Port_Lesson_Schema::COLUMN_QUESTIONS => 'id:pizza,id:ice-cream,id:burgers',
 				Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE     => 'First lesson',
 			],
 			new Sensei_Data_Port_Lesson_Schema(),
-			$job
+			$task
 		);
 		$model->sync_post();
 

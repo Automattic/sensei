@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * This class handles the import task for lessons.
  */
 class Sensei_Import_Lessons extends Sensei_Import_File_Process_Task {
+	use Sensei_Import_Prerequisite_Trait;
 
 	/**
 	 * Return a unique key for the task.
@@ -26,12 +27,13 @@ class Sensei_Import_Lessons extends Sensei_Import_File_Process_Task {
 	/**
 	 * Get the model which handles this task.
 	 *
-	 * @param array $line  An associated array with the CSV line.
+	 * @param int   $line_number Line number for model.
+	 * @param array $data        An associated array with the CSV line.
 	 *
 	 * @return Sensei_Import_Lesson_Model
 	 */
-	public function get_model( $line ) {
-		return Sensei_Import_Lesson_Model::from_source_array( $line, new Sensei_Data_Port_Lesson_Schema(), $this );
+	public function get_model( $line_number, $data ) {
+		return Sensei_Import_Lesson_Model::from_source_array( $line_number, $data, new Sensei_Data_Port_Lesson_Schema(), $this );
 	}
 
 	/**
