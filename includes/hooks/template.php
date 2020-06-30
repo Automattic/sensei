@@ -89,10 +89,6 @@ add_action( 'sensei_single_course_content_inside_after', 'course_single_lessons'
 add_action( 'sensei_single_course_lessons_after', array( 'Sensei_Utils', 'restore_wp_query' ) );
 
 // @since 1.9.0
-// add post classes to the lessons on the single course page
-add_filter( 'post_class', array( 'Sensei_Lesson', 'single_course_lessons_classes' ) );
-
-// @since 1.9.0
 // lesson meta information on the single course page
 add_action( 'sensei_single_course_inside_before_lesson', array( 'Sensei_Lesson', 'the_lesson_meta' ), 5 );
 
