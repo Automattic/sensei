@@ -2,7 +2,7 @@
 
 import { Button, FormFileUpload } from '@wordpress/components';
 import { Notice } from '../../notice';
-import deleteIcon from './delete-icon';
+import { closeSmall } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
 import { levels } from '../levels';
 
@@ -73,7 +73,7 @@ export const UploadLevels = ( {
 					deleteButton = (
 						<Button
 							className="sensei-upload-file-line__delete-button"
-							icon={ deleteIcon }
+							icon={ closeSmall }
 							label={ __( 'Delete File', 'sensei-lms' ) }
 							onClick={ () =>
 								deleteLevelFile( jobId, level.key )

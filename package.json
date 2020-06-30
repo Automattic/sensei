@@ -27,7 +27,7 @@
     "select2": "4.0.5"
   },
   "devDependencies": {
-    "@automattic/calypso-build": "6.0.0",
+    "@automattic/calypso-build": "6.1.0",
     "@automattic/puppeteer-utils": "github:Automattic/puppeteer-utils",
     "@babel/cli": "7.10.1",
     "@babel/core": "7.10.1",
@@ -37,6 +37,7 @@
     "@wordpress/babel-plugin-makepot": "3.5.0",
     "@wordpress/babel-preset-default": "4.12.1",
     "@wordpress/e2e-test-utils": "4.8.0",
+    "@wordpress/icons": "2.3.0",
     "@wordpress/jest-preset-default": "6.0.0",
     "@wordpress/postcss-themes": "2.4.0",
     "@wordpress/scripts": "8.0.1",
