@@ -277,4 +277,43 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 
 		return $results;
 	}
+
+	/**
+	 * Returns the post id for an import id or check if the post exists.
+	 *
+	 * @param string $post_type  The post type.
+	 * @param string $import_id  The import id.
+	 *
+	 * @return int|null The post id if the post exists, null otherwise.
+	 */
+	public function translate_import_id( $post_type, $import_id ) {
+		if ( empty( $import_id ) ) {
+			return null;
+		}
+
+		if ( 0 === strpos( $import_id, 'id:' ) ) {
+			return $this->get_import_id( $post_type, substr( $import_id, 3 ) );
+		}
+
+		if ( 0 === strpos( $import_id, 'slug:' ) ) {
+			$post = get_posts(
+				[
+					'post_type'      => $post_type,
+					'post_name__in'  => [ substr( $import_id, 5 ) ],
+					'posts_per_page' => 1,
+					'post_status'    => 'any',
+					'fields'         => 'ids',
+				]
+			);
+
+			return empty( $post ) ? null : $post[0];
+		}
+
+		if ( null !== get_post( (int) $import_id ) ) {
+			return (int) $import_id;
+		}
+
+		return null;
+	}
+
 }

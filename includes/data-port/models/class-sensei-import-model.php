@@ -29,26 +29,26 @@ abstract class Sensei_Import_Model extends Sensei_Data_Port_Model {
 	private $is_new;
 
 	/**
-	 * The import job.
+	 * The import task.
 	 *
-	 * @var Sensei_Import_Job
+	 * @var Sensei_Import_File_Process_Task
 	 */
-	protected $import_job;
+	protected $task;
 
 	/**
 	 * Set up item from an array.
 	 *
-	 * @param array                   $data            Data to restore item from.
-	 * @param Sensei_Data_Port_Schema $schema          The schema for the item.
-	 * @param Sensei_Import_Job       $import_job      The import job.
+	 * @param array                           $data   Data to restore item from.
+	 * @param Sensei_Data_Port_Schema         $schema The schema for the item.
+	 * @param Sensei_Import_File_Process_Task $task   The import task.
 	 *
 	 * @return static
 	 */
-	public static function from_source_array( $data, Sensei_Data_Port_Schema $schema, Sensei_Import_Job $import_job = null ) {
+	public static function from_source_array( $data, Sensei_Data_Port_Schema $schema, Sensei_Import_File_Process_Task $task = null ) {
 		$self                 = new static();
 		$self->schema         = $schema;
-		$self->import_job     = $import_job;
-		$self->default_author = null === $import_job ? 0 : $import_job->get_user_id();
+		$self->task           = $task;
+		$self->default_author = null === $task ? 0 : $task->get_job()->get_user_id();
 		$self->restore_from_source_array( $data );
 
 		$post_id = $self->get_existing_post_id();
@@ -191,47 +191,9 @@ abstract class Sensei_Import_Model extends Sensei_Data_Port_Model {
 	protected function store_import_id() {
 		$import_id = $this->get_value( $this->schema->get_column_id() );
 
-		if ( ! empty( $import_id ) ) {
-			$this->import_job->set_import_id( $this->schema->get_post_type(), $import_id, $this->get_post_id() );
+		if ( ! empty( $import_id ) && $this->task ) {
+			$this->task->get_job()->set_import_id( $this->schema->get_post_type(), $import_id, $this->get_post_id() );
 		}
-	}
-
-	/**
-	 * Returns the post id for an import id or check if the post exists.
-	 *
-	 * @param string $post_type  The post type.
-	 * @param string $import_id  The import id.
-	 *
-	 * @return int|null The post id if the post exists, null otherwise.
-	 */
-	protected function translate_import_id( $post_type, $import_id ) {
-		if ( empty( $import_id ) ) {
-			return null;
-		}
-
-		if ( 0 === strpos( $import_id, 'id:' ) ) {
-			return $this->import_job->get_import_id( $post_type, substr( $import_id, 3 ) );
-		}
-
-		if ( 0 === strpos( $import_id, 'slug:' ) ) {
-			$post = get_posts(
-				[
-					'post_type'      => $post_type,
-					'post_name__in'  => [ substr( $import_id, 5 ) ],
-					'posts_per_page' => 1,
-					'post_status'    => 'any',
-					'fields'         => 'ids',
-				]
-			);
-
-			return empty( $post ) ? null : $post[0];
-		}
-
-		if ( null !== get_post( (int) $import_id ) ) {
-			return (int) $import_id;
-		}
-
-		return null;
 	}
 
 	/**

@@ -196,7 +196,7 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 		$question_ids        = [];
 
 		foreach ( $question_import_ids as $question_import_id ) {
-			$question_id = $this->translate_import_id( Sensei_Data_Port_Question_Schema::POST_TYPE, $question_import_id );
+			$question_id = $this->task->get_job()->translate_import_id( Sensei_Data_Port_Question_Schema::POST_TYPE, $question_import_id );
 
 			if ( empty( $question_id ) ) {
 				return new WP_Error(
@@ -270,7 +270,7 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 
 		$value = $this->get_value( Sensei_Data_Port_Lesson_Schema::COLUMN_COURSE );
 		if ( ! empty( $value ) ) {
-			$course = $this->translate_import_id( Sensei_Data_Port_Course_Schema::POST_TYPE, $value );
+			$course = $this->task->get_job()->translate_import_id( Sensei_Data_Port_Course_Schema::POST_TYPE, $value );
 
 			if ( empty( $course ) ) {
 				return new WP_Error(

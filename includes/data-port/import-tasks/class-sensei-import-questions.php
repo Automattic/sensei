@@ -33,7 +33,7 @@ class Sensei_Import_Questions
 	 * @return Sensei_Import_Question_Model
 	 */
 	public function get_model( $line ) {
-		return Sensei_Import_Question_Model::from_source_array( $line, new Sensei_Data_Port_Question_Schema(), $this->get_job() );
+		return Sensei_Import_Question_Model::from_source_array( $line, new Sensei_Data_Port_Question_Schema(), $this );
 	}
 
 	/**
