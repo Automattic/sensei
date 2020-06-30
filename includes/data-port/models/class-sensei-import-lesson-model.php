@@ -307,6 +307,13 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 		$this->set_post_id( $post_id );
 		$this->store_import_id();
 
+		$prerequisite = $this->get_value( Sensei_Data_Port_Lesson_Schema::COLUMN_PREREQUISITE );
+		if ( $prerequisite ) {
+			$this->task->add_prerequisite_task( $post_id, $prerequisite );
+		} elseif ( '' === $prerequisite ) {
+			delete_post_meta( $post_id, '_lesson_prerequisite' );
+		}
+
 		if ( null !== $this->course_id && $this->is_new() ) {
 			$old_lesson_order = get_post_meta( $this->course_id, '_lesson_order', true );
 			$new_lesson_order = empty( $old_lesson_order ) ? $this->get_post_id() : $old_lesson_order . ',' . $this->get_post_id();
