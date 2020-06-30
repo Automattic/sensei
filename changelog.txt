@@ -1,5 +1,17 @@
 *** Changelog ***
 
+2020.06.30 - version 3.2.0
+* New: Add paid extensions to the setup wizard [#3297](https://github.com/Automattic/sensei/pull/3297), [#3309](https://github.com/Automattic/sensei/pull/3309), [#3323](https://github.com/Automattic/sensei/pull/3323), [#3322](https://github.com/Automattic/sensei/pull/3322), [#3326](https://github.com/Automattic/sensei/pull/3326), [#3329](https://github.com/Automattic/sensei/pull/3329), [#3332](https://github.com/Automattic/sensei/pull/3332), [#3331](https://github.com/Automattic/sensei/pull/3331), [#3330](https://github.com/Automattic/sensei/pull/3330)
+* New: Enable admins and lesson author to view quiz for lesson with an unmet prerequisite [#3080](https://github.com/Automattic/sensei/pull/3080) 👏 @JuanchoPestana
+* New: Deprecate sensei_the_excerpt function [#3248](https://github.com/Automattic/sensei/pull/3248) 👏 @truongwp
+* Tweak: Add "Educate students" option to Purpose step of setup wizard [#3311](https://github.com/Automattic/sensei/pull/3311)
+* Tweak: Setup Wizard: Allow purpose options to be translated [#3320](https://github.com/Automattic/sensei/pull/3320)
+* Tweak: Add "sensei" CSS class to all Sensei LMS pages [#3275](https://github.com/Automattic/sensei/pull/3275) 👏 @hansschuijff
+* Tweak: Use semantic heading structure on course results page [#3271](https://github.com/Automattic/sensei/pull/3271) 👏 @hansschuijff
+* Tweak: Add missing taxonomy labels [#3276](https://github.com/Automattic/sensei/pull/3276) 👏 @hansschuijff
+* Tweak: Fail gracefully if no extensions found in the setup wizard [#3283](https://github.com/Automattic/sensei/pull/3283)
+* Fix: Fix incorrect parameter being passed to has_term function [#3274](https://github.com/Automattic/sensei/pull/3274) 👏 @hansschuijff
+
 2020.06.05 - version 3.1.1
 * Fix: Clear setup wizard user data option on uninstall [#3263](https://github.com/Automattic/sensei/pull/3263)
 * Fix: Mark setup wizard as completed at the "Ready" step [#3265](https://github.com/Automattic/sensei/pull/3265)
