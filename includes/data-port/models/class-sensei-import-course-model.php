@@ -66,6 +66,13 @@ class Sensei_Import_Course_Model extends Sensei_Import_Model {
 		$this->set_post_id( $post_id );
 		$this->store_import_id();
 
+		$prerequisite = $this->get_value( Sensei_Data_Port_Course_Schema::COLUMN_PREREQUISITE );
+		if ( $prerequisite ) {
+			$this->task->add_prerequisite_task( $post_id, $prerequisite );
+		} elseif ( '' === $prerequisite ) {
+			delete_post_meta( $post_id, '_course_prerequisite' );
+		}
+
 		$result = $this->set_course_terms( Sensei_Data_Port_Course_Schema::COLUMN_MODULES, 'module', $teacher );
 
 		if ( is_wp_error( $result ) ) {
