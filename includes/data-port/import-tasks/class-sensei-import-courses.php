@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * This class handles the import task for courses.
  */
 class Sensei_Import_Courses extends Sensei_Import_File_Process_Task {
+	use Sensei_Import_Prerequisite_Trait;
 
 	/**
 	 * Return a unique key for the task.
@@ -65,43 +66,11 @@ class Sensei_Import_Courses extends Sensei_Import_File_Process_Task {
 	 * @param array $task Prerequisite task arguments.
 	 */
 	protected function handle_prerequisite( $task ) {
-		$post_id           = (int) $task[0];
-		$reference         = sanitize_text_field( $task[1] );
-		$reference_post_id = $this->get_job()->translate_import_id( Sensei_Data_Port_Course_Schema::POST_TYPE, $reference );
-
-		if (
-			! $reference_post_id
-			|| (int) $reference_post_id === $post_id
-		) {
-			$this->get_job()->add_log_entry(
-			// translators: Placeholder is reference to another post.
-				sprintf( __( 'Unable to set the prerequisite to "%s"', 'sensei-lms' ), $reference ),
-				Sensei_Data_Port_Job::LOG_LEVEL_NOTICE,
-				[
-					'type'    => Sensei_Import_Course_Model::MODEL_KEY,
-					'post_id' => $post_id,
-				]
-			);
-
-			return;
-		}
-
-		update_post_meta( $post_id, '_course_prerequisite', $reference_post_id );
-	}
-
-	/**
-	 * Add prerequisite task for course.
-	 *
-	 * @param int    $post_id   Post ID.
-	 * @param string $reference Reference to the prerequisite.
-	 */
-	public function add_prerequisite_task( $post_id, $reference ) {
-		return $this->add_post_process_task(
-			'prerequisite',
-			[
-				$post_id,
-				$reference,
-			]
+		self::handle_prerequisite_helper(
+			$task,
+			'_course_prerequisite',
+			Sensei_Data_Port_Course_Schema::POST_TYPE,
+			Sensei_Import_Course_Model::MODEL_KEY
 		);
 	}
 }

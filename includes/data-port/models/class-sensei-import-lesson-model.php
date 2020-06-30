@@ -309,7 +309,7 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 
 		$prerequisite = $this->get_value( Sensei_Data_Port_Lesson_Schema::COLUMN_PREREQUISITE );
 		if ( $prerequisite ) {
-			$this->task->add_prerequisite_task( $post_id, $prerequisite );
+			$this->task->add_prerequisite_task( $post_id, $prerequisite, $this->line_number );
 		} elseif ( '' === $prerequisite ) {
 			delete_post_meta( $post_id, '_lesson_prerequisite' );
 		}
