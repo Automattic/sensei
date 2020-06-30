@@ -68,11 +68,14 @@ class Sensei_Import_Lessons extends Sensei_Import_File_Process_Task {
 		$reference         = sanitize_text_field( $task[1] );
 		$reference_post_id = $this->get_job()->translate_import_id( Sensei_Data_Port_Lesson_Schema::POST_TYPE, $reference );
 
-		if ( ! $reference_post_id ) {
+		if (
+			! $reference_post_id
+			|| (int) $reference_post_id === $post_id
+		) {
 			$this->get_job()->add_log_entry(
 				// translators: Placeholder is reference to another post.
 				sprintf( __( 'Unable to set the prerequisite to "%s"', 'sensei-lms' ), $reference ),
-				Sensei_Data_Port_Job::LOG_LEVEL_ERROR,
+				Sensei_Data_Port_Job::LOG_LEVEL_NOTICE,
 				[
 					'type'    => Sensei_Import_Lesson_Model::MODEL_KEY,
 					'post_id' => $post_id,
