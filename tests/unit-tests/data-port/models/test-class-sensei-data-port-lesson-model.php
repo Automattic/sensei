@@ -32,6 +32,50 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test to make sure prerequisites are queued for processing after all other lines have been processed.
+	 */
+	public function testPrerequisiteQueued() {
+		$lesson_id = $this->factory->lesson->create(
+			[
+				'post_name' => 'the-last-lesson',
+			]
+		);
+		$job       = Sensei_Import_Job::create( 'test', 0 );
+		$task      = $this->getMockBuilder( Sensei_Import_Lessons::class )
+						->setConstructorArgs( [ $job ] )
+						->setMethods( [ 'add_prerequisite_task' ] )
+						->getMock();
+
+		$data_a = [
+			Sensei_Data_Port_Lesson_Schema::COLUMN_ID    => '1234',
+			Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE => 'lesson title a',
+			Sensei_Data_Port_Lesson_Schema::COLUMN_SLUG  => 'the-last-lesson',
+			Sensei_Data_Port_Lesson_Schema::COLUMN_PREREQUISITE => 'slug:a-prereq-lesson',
+		];
+
+		$data_b = [
+			Sensei_Data_Port_Lesson_Schema::COLUMN_ID    => '1235',
+			Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE => 'lesson title b',
+			Sensei_Data_Port_Lesson_Schema::COLUMN_SLUG  => 'the-very-last-lesson',
+			Sensei_Data_Port_Lesson_Schema::COLUMN_PREREQUISITE => '',
+		];
+
+		$task->expects( $this->once() )
+			->method( 'add_prerequisite_task' )
+			->with(
+				$this->equalTo( $lesson_id ),
+				$this->equalTo( 'slug:a-prereq-lesson' ),
+				$this->equalTo( 1 )
+			);
+
+		$model_a = Sensei_Import_Lesson_Model::from_source_array( 1, $data_a, new Sensei_Data_Port_Lesson_Schema(), $task );
+		$model_a->sync_post();
+
+		$model_b = Sensei_Import_Lesson_Model::from_source_array( 2, $data_b, new Sensei_Data_Port_Lesson_Schema(), $task );
+		$model_b->sync_post();
+	}
+
+	/**
 	 * Returns an array with the data used by the tests. Each element is an array of line input data and expected
 	 * output following the format of Sensei_Data_Port_Lesson_Model::data.
 	 *
