@@ -12,6 +12,15 @@ export const ImportLog = ( { result } ) => {
 		question: __( 'Questions', 'sensei-lms' ),
 	};
 
+	if ( result && result.error ) {
+		return (
+			<div>
+				{ __( 'Failed to load import log.', 'sensei-lms' ) }{ ' ' }
+				{ result.error.message }
+			</div>
+		);
+	}
+
 	return (
 		<>
 			<Button isLink onClick={ toggle }>
