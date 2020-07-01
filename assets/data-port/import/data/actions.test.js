@@ -15,9 +15,6 @@ import {
 import {
 	fetchFromAPI,
 	fetchCurrentJobState,
-	startFetchCurrentJobState,
-	successFetchCurrentJobState,
-	errorFetchCurrentJobState,
 	submitStartImport,
 	startImport,
 	successStartImport,
@@ -127,7 +124,7 @@ describe( 'Importer actions', () => {
 					},
 				},
 			},
-			type: 'SUCCESS_FETCH_CURRENT_JOB_STATE',
+			type: SUCCESS_FETCH_CURRENT_JOB_STATE,
 		};
 
 		expect( gen.next( RESPONSE_FULL ).value ).toEqual(
@@ -196,34 +193,6 @@ describe( 'Importer actions', () => {
 		expect( gen.next( RESPONSE_FULL ).value ).toEqual(
 			expectedSetDataAction
 		);
-	} );
-
-	it( 'Should return the start get current job state action', () => {
-		const expectedAction = {
-			type: START_FETCH_CURRENT_JOB_STATE,
-		};
-
-		expect( startFetchCurrentJobState() ).toEqual( expectedAction );
-	} );
-
-	it( 'Should return the success get current job state action', () => {
-		const data = { x: 1 };
-		const expectedAction = {
-			type: SUCCESS_FETCH_CURRENT_JOB_STATE,
-			data,
-		};
-
-		expect( successFetchCurrentJobState( data ) ).toEqual( expectedAction );
-	} );
-
-	it( 'Should return the error get current job state action', () => {
-		const error = { code: '', message: 'Error' };
-		const expectedAction = {
-			type: ERROR_FETCH_CURRENT_JOB_STATE,
-			error,
-		};
-
-		expect( errorFetchCurrentJobState( error ) ).toEqual( expectedAction );
 	} );
 
 	/**
