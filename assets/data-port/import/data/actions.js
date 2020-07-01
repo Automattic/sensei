@@ -45,8 +45,7 @@ export const fetchCurrentJobState = composeFetchAction(
 	START_FETCH_CURRENT_JOB_STATE,
 	function*() {
 		const data = yield fetchFromAPI( {
-			//path: buildJobEndpointUrl( API_SPECIAL_ACTIVE_JOB_ID ),
-			path: buildJobEndpointUrl( '3efc3b695a2a85c2ac635923cc604d4c' ),
+			path: buildJobEndpointUrl( API_SPECIAL_ACTIVE_JOB_ID ),
 		} );
 
 		return normalizeImportData( data );
