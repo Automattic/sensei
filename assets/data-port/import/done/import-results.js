@@ -1,19 +1,11 @@
 import { _n } from '@wordpress/i18n';
-import { formatString } from '../../../setup-wizard/helpers/format-string';
 
-const getPostTypeLabel = ( { type, count, withLink = false } ) => {
-	const typeLabel = {
+const getPostTypeLabel = ( { type, count } ) => {
+	return {
 		course: _n( 'course', 'courses', count, 'sensei-lms' ),
 		lesson: _n( 'lesson', 'lessons', count, 'sensei-lms' ),
 		question: _n( 'question', 'questions', count, 'sensei-lms' ),
 	}[ type ];
-
-	return withLink
-		? formatString( `{{link}}${ typeLabel }{{/link}}`, {
-				// eslint-disable-next-line jsx-a11y/anchor-has-content
-				link: <a href={ `edit.php?post_type=${ type }` } />,
-		  } )
-		: typeLabel;
 };
 
 export const groupResults = ( results ) =>
@@ -28,7 +20,7 @@ export const groupResults = ( results ) =>
 		  )
 		: { success: [], error: [] };
 
-export const ImportResults = ( { entries, showLink } ) => (
+export const ImportResults = ( { entries } ) => (
 	<ul>
 		{ entries.map( ( [ type, count ] ) => (
 			<li key={ type }>
@@ -36,7 +28,6 @@ export const ImportResults = ( { entries, showLink } ) => (
 				{ getPostTypeLabel( {
 					type,
 					count,
-					withLink: showLink,
 				} ) }
 			</li>
 		) ) }

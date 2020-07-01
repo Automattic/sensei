@@ -48,10 +48,7 @@ export const DonePage = ( {
 							'sensei-lms'
 						) }
 					</p>
-					<ImportResults
-						entries={ resultSuccess }
-						showLink={ true }
-					/>
+					<ImportResults entries={ resultSuccess } />
 				</section>
 				{ hasErrors && (
 					<>
@@ -64,10 +61,7 @@ export const DonePage = ( {
 									)
 								) }
 							</p>
-							<ImportResults
-								entries={ resultErrors }
-								showLink={ false }
-							/>
+							<ImportResults entries={ resultErrors } />
 						</section>
 						<section className="sensei-import-done__log">
 							<ImportLog result={ logs } />
