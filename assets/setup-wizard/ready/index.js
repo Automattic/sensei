@@ -63,7 +63,10 @@ export const Ready = () => {
 											'setup_wizard_ready_create_course'
 										) }
 									>
-										Create a course
+										{ __(
+											'Create a course',
+											'sensei-lms'
+										) }
 									</Button>
 								),
 							},
