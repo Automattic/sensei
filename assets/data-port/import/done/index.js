@@ -1,6 +1,7 @@
 import { withSelect, withDispatch } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
 import { DonePage } from './done-page';
+import { partial } from 'lodash';
 
 export default compose(
 	withSelect( ( select ) => {
@@ -16,8 +17,10 @@ export default compose(
 		const { fetchImportLog, restartImporter } = dispatch( 'sensei/import' );
 
 		return {
-			fetchImportLog: () =>
-				fetchImportLog( select( 'sensei/import' ).getJobId() ),
+			fetchImportLog: partial(
+				fetchImportLog,
+				select( 'sensei/import' ).getJobId()
+			),
 			restartImporter,
 		};
 	} )
