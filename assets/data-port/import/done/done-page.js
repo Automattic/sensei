@@ -23,7 +23,8 @@ export const DonePage = ( {
 		fetchImportLog();
 	}, [ fetchImportLog ] );
 
-	const hasErrors = resultErrors.some( ( [ , errors ] ) => errors );
+	const hasErrors = resultErrors.some( ( [ , count ] ) => count );
+	const hasSuccess = resultSuccess.some( ( [ , count ] ) => count );
 
 	return (
 		<section className="sensei-data-port-step sensei-import-done">
@@ -42,13 +43,17 @@ export const DonePage = ( {
 							className="sensei-import-done__result-icon--success"
 						/>
 					) }
-					<p>
-						{ __(
-							'The following content was imported:',
-							'sensei-lms'
-						) }
-					</p>
-					<ImportResults entries={ resultSuccess } />
+					{ hasSuccess && (
+						<>
+							<p>
+								{ __(
+									'The following content was imported:',
+									'sensei-lms'
+								) }
+							</p>
+							<ImportResults entries={ resultSuccess } />
+						</>
+					) }
 				</section>
 				{ hasErrors && (
 					<>

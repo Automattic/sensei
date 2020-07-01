@@ -22,14 +22,16 @@ export const groupResults = ( results ) =>
 
 export const ImportResults = ( { entries } ) => (
 	<ul>
-		{ entries.map( ( [ type, count ] ) => (
-			<li key={ type }>
-				{ count }{ ' ' }
-				{ getPostTypeLabel( {
-					type,
-					count,
-				} ) }
-			</li>
-		) ) }
+		{ entries
+			.filter( ( [ , count ] ) => 0 < count )
+			.map( ( [ type, count ] ) => (
+				<li key={ type }>
+					{ count }{ ' ' }
+					{ getPostTypeLabel( {
+						type,
+						count,
+					} ) }
+				</li>
+			) ) }
 	</ul>
 );
