@@ -210,24 +210,4 @@ describe( 'Importer reducer', () => {
 		expect( state.upload[ level ].hasError ).toBeTruthy();
 		expect( state.upload[ level ].errorMsg ).toBe( error.message );
 	} );
-
-	it( 'Should set completedSteps and individual step data on SET_STEP_DATA action', () => {
-		const step = 'progress';
-		const data = {
-			progress: {
-				status: 'test',
-				percentage: 44,
-			},
-			completedSteps: [ 'awesome' ],
-		};
-		const state = reducer( undefined, {
-			type: SET_STEP_DATA,
-			step,
-			data,
-		} );
-
-		expect( state.progress.status ).toEqual( data.progress.status );
-		expect( state.progress.percentage ).toEqual( data.progress.percentage );
-		expect( state.completedSteps ).toEqual( data.completedSteps );
-	} );
 } );
