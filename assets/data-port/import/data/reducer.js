@@ -91,13 +91,13 @@ export default ( state = DEFAULT_STATE, action ) => {
 
 		case SUCCESS_FETCH_CURRENT_JOB_STATE:
 			return {
-				...merge( state, action.data ),
+				...merge( {}, state, action.data ),
 				isFetching: false,
 			};
 
 		case SET_JOB_STATE:
 			return {
-				...merge( state, action.data ),
+				...merge( {}, state, action.data ),
 			};
 
 		case ERROR_FETCH_CURRENT_JOB_STATE:
