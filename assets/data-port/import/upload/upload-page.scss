@@ -1,16 +1,23 @@
 .sensei-upload-page {
 	.sensei-upload-file-line {
-		width: 100%;
-		display: inline-flex;
+		display: flex;
 		list-style-type: none;
 		margin: 0 -24px;
 		padding: 0 24px;
-		height: 62px;
+
+		@media (max-width: 783px) {
+			display: block;
+		}
+
+		&__field-wrapper {
+			display: flex;
+			flex: 0 0 43%;
+		}
 
 		&__description {
-			flex-basis: 25%;
-			margin: 18px 0;
-			flex-shrink: 0;
+			flex: 1;
+			margin: 24px 0;
+			font-size: 14px;
 		}
 
 		&__delete-button,
@@ -25,8 +32,7 @@
 		}
 
 		.components-form-file-upload {
-			flex-basis: 18%;
-			flex-shrink: 0;
+			flex: 0 0 120px;
 		}
 
 		.components-button {
