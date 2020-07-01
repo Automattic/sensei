@@ -2,7 +2,7 @@ import { Button } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
-export const ImportLog = ( { result } ) => {
+export const ImportLog = ( { result, reload } ) => {
 	const [ isOpen, setOpen ] = useState( false );
 	const toggle = () => setOpen( ( prevOpen ) => ! prevOpen );
 
@@ -17,6 +17,9 @@ export const ImportLog = ( { result } ) => {
 			<div>
 				{ __( 'Failed to load import log.', 'sensei-lms' ) }{ ' ' }
 				{ result.error.message }
+				<Button onClick={ reload } isLink isSmall>
+					{ __( 'Retry', 'sensei-lms' ) }
+				</Button>
 			</div>
 		);
 	}

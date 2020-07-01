@@ -69,7 +69,10 @@ export const DonePage = ( {
 							<ImportResults entries={ resultErrors } />
 						</section>
 						<section className="sensei-import-done__log">
-							<ImportLog result={ logs } />
+							<ImportLog
+								result={ logs }
+								reload={ fetchImportLog }
+							/>
 						</section>
 					</>
 				) }
