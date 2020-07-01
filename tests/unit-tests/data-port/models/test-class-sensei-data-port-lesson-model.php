@@ -49,7 +49,7 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 					Sensei_Data_Port_Lesson_Schema::COLUMN_EXCERPT        => '<randomtag>excerpt</randomtag>',
 					Sensei_Data_Port_Lesson_Schema::COLUMN_STATUS         => 'publish',
 					Sensei_Data_Port_Lesson_Schema::COLUMN_PREREQUISITE   => '<randomtag>prerequisite</randomtag>',
-					Sensei_Data_Port_Lesson_Schema::COLUMN_PREVIEW        => 'preview',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_PREVIEW        => 'badvalue',
 					Sensei_Data_Port_Lesson_Schema::COLUMN_TAGS           => '<randomtag>   First,Second   </randomtag>',
 					Sensei_Data_Port_Lesson_Schema::COLUMN_IMAGE          => 'localfilename.png',
 					Sensei_Data_Port_Lesson_Schema::COLUMN_LENGTH         => '12',
@@ -71,7 +71,7 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 					Sensei_Data_Port_Lesson_Schema::COLUMN_EXCERPT        => 'excerpt',
 					Sensei_Data_Port_Lesson_Schema::COLUMN_STATUS         => 'publish',
 					Sensei_Data_Port_Lesson_Schema::COLUMN_PREREQUISITE   => 'prerequisite',
-					Sensei_Data_Port_Lesson_Schema::COLUMN_PREVIEW        => true,
+					Sensei_Data_Port_Lesson_Schema::COLUMN_PREVIEW        => null,
 					Sensei_Data_Port_Lesson_Schema::COLUMN_TAGS           => 'First,Second',
 					Sensei_Data_Port_Lesson_Schema::COLUMN_IMAGE          => 'localfilename.png',
 					Sensei_Data_Port_Lesson_Schema::COLUMN_LENGTH         => 12,
@@ -80,8 +80,8 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 					Sensei_Data_Port_Lesson_Schema::COLUMN_PASS_REQUIRED  => true,
 					Sensei_Data_Port_Lesson_Schema::COLUMN_PASSMARK       => 23,
 					Sensei_Data_Port_Lesson_Schema::COLUMN_NUM_QUESTIONS  => 0,
-					Sensei_Data_Port_Lesson_Schema::COLUMN_RANDOMIZE      => true,
-					Sensei_Data_Port_Lesson_Schema::COLUMN_AUTO_GRADE     => true,
+					Sensei_Data_Port_Lesson_Schema::COLUMN_RANDOMIZE      => false,
+					Sensei_Data_Port_Lesson_Schema::COLUMN_AUTO_GRADE     => false,
 					Sensei_Data_Port_Lesson_Schema::COLUMN_QUIZ_RESET     => true,
 					Sensei_Data_Port_Lesson_Schema::COLUMN_ALLOW_COMMENTS => true,
 				],
@@ -94,18 +94,18 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 					Sensei_Data_Port_Lesson_Schema::COLUMN_DESCRIPTION    => 'Updated description',
 					Sensei_Data_Port_Lesson_Schema::COLUMN_EXCERPT        => 'Updated excerpt',
 					Sensei_Data_Port_Lesson_Schema::COLUMN_STATUS         => 'draft',
-					Sensei_Data_Port_Lesson_Schema::COLUMN_PREVIEW        => false,
+					Sensei_Data_Port_Lesson_Schema::COLUMN_PREVIEW        => 'false',
 					Sensei_Data_Port_Lesson_Schema::COLUMN_TAGS           => 'New First, New Second ',
 					Sensei_Data_Port_Lesson_Schema::COLUMN_LENGTH         => 15,
 					Sensei_Data_Port_Lesson_Schema::COLUMN_COMPLEXITY     => 'hard',
 					Sensei_Data_Port_Lesson_Schema::COLUMN_VIDEO          => 'Updated video',
-					Sensei_Data_Port_Lesson_Schema::COLUMN_PASS_REQUIRED  => false,
+					Sensei_Data_Port_Lesson_Schema::COLUMN_PASS_REQUIRED  => 'false',
 					Sensei_Data_Port_Lesson_Schema::COLUMN_PASSMARK       => 0,
 					Sensei_Data_Port_Lesson_Schema::COLUMN_NUM_QUESTIONS  => 6,
-					Sensei_Data_Port_Lesson_Schema::COLUMN_RANDOMIZE      => false,
-					Sensei_Data_Port_Lesson_Schema::COLUMN_AUTO_GRADE     => false,
-					Sensei_Data_Port_Lesson_Schema::COLUMN_QUIZ_RESET     => false,
-					Sensei_Data_Port_Lesson_Schema::COLUMN_ALLOW_COMMENTS => false,
+					Sensei_Data_Port_Lesson_Schema::COLUMN_RANDOMIZE      => 'false',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_AUTO_GRADE     => 'false',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_QUIZ_RESET     => 'false',
+					Sensei_Data_Port_Lesson_Schema::COLUMN_ALLOW_COMMENTS => 'false',
 				],
 				[
 					Sensei_Data_Port_Lesson_Schema::COLUMN_ID             => 'id',
@@ -194,7 +194,7 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 
 		foreach ( $tested_fields as $tested_field ) {
 			if ( isset( $expected_model_content[ $tested_field ] ) ) {
-				$this->assertEquals( $expected_model_content[ $tested_field ], $model->get_value( $tested_field ) );
+				$this->assertEquals( $expected_model_content[ $tested_field ], $model->get_value( $tested_field ), "The field {$tested_field} did not match what was expected" );
 			}
 		}
 	}
@@ -558,7 +558,7 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 			$this->assertEquals( 'manual', get_post_meta( $quiz->ID, '_quiz_grade_type', true ) );
 		}
 
-		if ( true === (bool) $line_data[ Sensei_Data_Port_Lesson_Schema::COLUMN_AUTO_GRADE ] ) {
+		if ( true === (bool) $line_data[ Sensei_Data_Port_Lesson_Schema::COLUMN_QUIZ_RESET ] ) {
 			$this->assertEquals( 'on', get_post_meta( $quiz->ID, '_enable_quiz_reset', true ) );
 		} else {
 			$this->assertEmpty( get_post_meta( $quiz->ID, '_enable_quiz_reset', true ) );
