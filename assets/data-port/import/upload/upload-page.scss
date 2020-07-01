@@ -1,0 +1,31 @@
+.sensei-upload-page {
+	.sensei-upload-file-line {
+		width: 100%;
+		display: inline-flex;
+		list-style-type: none;
+		margin: 0 -24px;
+		padding: 0 24px;
+		height: 62px;
+
+		&__description {
+			flex-basis: 25%;
+			margin: 18px 0;
+			flex-shrink: 0;
+		}
+
+		.components-form-file-upload {
+			flex-basis: 18%;
+			flex-shrink: 0;
+		}
+
+		.components-button {
+			padding: 6px 14px;
+			margin: 13px 0;
+			border-radius: 3px;
+		}
+	}
+
+	.sensei-upload-file-line:nth-child(odd) {
+		background: $gray-0;
+	}
+}
