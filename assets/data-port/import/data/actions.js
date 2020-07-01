@@ -7,12 +7,14 @@ import {
 	START_IMPORT,
 	SUCCESS_START_IMPORT,
 	ERROR_START_IMPORT,
-	SET_STEP_DATA,
 	START_UPLOAD_IMPORT_DATA_FILE,
 	SUCCESS_UPLOAD_IMPORT_DATA_FILE,
 	ERROR_UPLOAD_IMPORT_DATA_FILE,
 	RESET_STATE,
 	SET_JOB_STATE,
+	SUCCESS_FETCH_IMPORT_LOG,
+	START_FETCH_IMPORT_LOG,
+	ERROR_FETCH_IMPORT_LOG,
 } from './constants';
 
 import { composeFetchAction } from '../../../shared/data/store-helpers';
@@ -43,7 +45,8 @@ export const fetchCurrentJobState = composeFetchAction(
 	START_FETCH_CURRENT_JOB_STATE,
 	function*() {
 		const data = yield fetchFromAPI( {
-			path: buildJobEndpointUrl( API_SPECIAL_ACTIVE_JOB_ID ),
+			//path: buildJobEndpointUrl( API_SPECIAL_ACTIVE_JOB_ID ),
+			path: buildJobEndpointUrl( '3efc3b695a2a85c2ac635923cc604d4c' ),
 		} );
 
 		return normalizeImportData( data );
@@ -285,32 +288,22 @@ export const errorFileUpload = ( level, error ) => ( {
 } );
 
 /**
- * @typedef  {Object} SetStepDataAction
- * @property {string} type Action type.
- * @property {string} step Step name.
- * @property {Object} data Step data.
- */
-/**
- * Set welcome step data action creator.
+ * Load the import log for the given job.
  *
- * @param {string} step Step name.
- * @param {Object} data Step data object.
- *
- * @return {SetStepDataAction} Set welcome step data action.
+ * @param {string} jobId The job id.
  */
-export const setStepData = ( step, data ) => ( {
-	type: SET_STEP_DATA,
-	step,
-	data,
-} );
+export const fetchImportLog = composeFetchAction(
+	START_FETCH_IMPORT_LOG,
+	function*( jobId ) {
+		const data = yield fetchFromAPI( {
+			path: buildJobEndpointUrl( jobId, [ 'logs' ] ),
+		} );
 
-export function* fetchImportLog( jobId ) {
-	const data = yield fetchFromAPI( {
-		path: buildJobEndpointUrl( jobId, [ 'logs' ] ),
-	} );
-
-	yield setStepData( 'done', { done: { logs: data } } );
-}
+		return data;
+	},
+	SUCCESS_FETCH_IMPORT_LOG,
+	ERROR_FETCH_IMPORT_LOG
+);
 
 /**
  * Reset importer state.

@@ -10,6 +10,8 @@ import {
 	START_UPLOAD_IMPORT_DATA_FILE,
 	SUCCESS_UPLOAD_IMPORT_DATA_FILE,
 	ERROR_UPLOAD_IMPORT_DATA_FILE,
+	START_FETCH_IMPORT_LOG,
+	SUCCESS_FETCH_IMPORT_LOG,
 } from './constants';
 
 import {
@@ -21,11 +23,11 @@ import {
 	errorStartImport,
 	uploadFileForLevel,
 	errorFileUpload,
-	setStepData,
 	startFileUploadAction,
 	successFileUpload,
 	throwEarlyUploadError,
 	updateJobState,
+	fetchImportLog,
 } from './actions';
 
 const RESPONSE_FULL = {
@@ -91,6 +93,7 @@ describe( 'Importer actions', () => {
 		const expectedStartFetchAction = {
 			type: START_FETCH_CURRENT_JOB_STATE,
 		};
+
 		expect( gen.next().value ).toEqual( expectedStartFetchAction );
 
 		// Fetch action.
@@ -406,34 +409,28 @@ describe( 'Importer actions', () => {
 		);
 	} );
 
-	it( 'Should return the set step data action', () => {
-		// Set data action.
-		const dataObject = {
-			jobId: 'test',
-			progress: {
-				status: 'pending',
-				percentage: 0,
+	/**
+	 * Fetch import log action.
+	 */
+	it( 'Should generate load import log actions', () => {
+		const gen = fetchImportLog( 'test-job' );
+
+		expect( gen.next().value ).toEqual( {
+			type: START_FETCH_IMPORT_LOG,
+		} );
+
+		expect( gen.next().value ).toEqual( {
+			type: FETCH_FROM_API,
+			request: {
+				path: API_BASE_PATH + 'test-job/logs',
 			},
-			upload: {},
-			completedSteps: [ 'upload' ],
+		} );
+
+		const expectedSetDataAction = {
+			data: 'response',
+			type: SUCCESS_FETCH_IMPORT_LOG,
 		};
 
-		const expectedSetStepDataAction = {
-			data: {
-				jobId: 'test',
-				progress: {
-					status: 'pending',
-					percentage: 0,
-				},
-				completedSteps: [ 'upload' ],
-				upload: {},
-			},
-			step: 'progress',
-			type: 'SET_STEP_DATA',
-		};
-
-		expect( setStepData( 'progress', dataObject ) ).toEqual(
-			expectedSetStepDataAction
-		);
+		expect( gen.next( 'response' ).value ).toEqual( expectedSetDataAction );
 	} );
 } );

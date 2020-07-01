@@ -19,11 +19,6 @@ export const ERROR_FETCH_CURRENT_JOB_STATE = 'ERROR_FETCH_CURRENT_JOB_STATE';
 export const SET_JOB_STATE = 'SET_JOB_STATE';
 
 /**
- * Import step action type constants.
- */
-export const SET_STEP_DATA = 'SET_STEP_DATA';
-
-/**
  * Start import job action type constants.
  */
 export const START_IMPORT = 'START_IMPORT';
@@ -37,6 +32,10 @@ export const START_UPLOAD_IMPORT_DATA_FILE = 'START_UPLOAD_IMPORT_DATA_FILE';
 export const SUCCESS_UPLOAD_IMPORT_DATA_FILE =
 	'SUCCESS_UPLOAD_IMPORT_DATA_FILE';
 export const ERROR_UPLOAD_IMPORT_DATA_FILE = 'ERROR_UPLOAD_IMPORT_DATA_FILE';
+
+export const START_FETCH_IMPORT_LOG = 'START_FETCH_IMPORT_LOG';
+export const SUCCESS_FETCH_IMPORT_LOG = 'SUCCESS_FETCH_IMPORT_LOG';
+export const ERROR_FETCH_IMPORT_LOG = 'ERROR_FETCH_IMPORT_LOG';
 
 /**
  * Reset to default state.

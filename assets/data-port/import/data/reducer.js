@@ -2,7 +2,6 @@ import {
 	START_FETCH_CURRENT_JOB_STATE,
 	SUCCESS_FETCH_CURRENT_JOB_STATE,
 	ERROR_FETCH_CURRENT_JOB_STATE,
-	SET_STEP_DATA,
 	START_IMPORT,
 	SUCCESS_START_IMPORT,
 	ERROR_START_IMPORT,
@@ -11,6 +10,9 @@ import {
 	SUCCESS_UPLOAD_IMPORT_DATA_FILE,
 	RESET_STATE,
 	SET_JOB_STATE,
+	SUCCESS_FETCH_IMPORT_LOG,
+	START_FETCH_IMPORT_LOG,
+	ERROR_FETCH_IMPORT_LOG,
 } from './constants';
 
 import { merge } from 'lodash';
@@ -176,16 +178,32 @@ export default ( state = DEFAULT_STATE, action ) => {
 				filename: null,
 			} );
 
-		case SET_STEP_DATA:
+		case START_FETCH_IMPORT_LOG:
 			return {
 				...state,
-				completedSteps:
-					action.data.completedSteps || state.completedSteps,
-				[ action.step ]: {
-					...state[ action.step ],
-					...action.data[ action.step ],
+				done: {
+					...state.done,
+					logs: null,
 				},
 			};
+		case SUCCESS_FETCH_IMPORT_LOG:
+			return {
+				...state,
+				done: {
+					...state.done,
+					logs: action.data,
+				},
+			};
+
+		case ERROR_FETCH_IMPORT_LOG:
+			return {
+				...state,
+				done: {
+					...state.done,
+					logs: { error: action.error },
+				},
+			};
+
 		case RESET_STATE:
 			return { ...DEFAULT_STATE };
 
