@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { Section } from '@woocommerce/components';
 import { useEffect } from '@wordpress/element';
-import { formatString } from '../../../setup-wizard/helpers/format-string';
+import { formatString } from '../../../shared/helpers/format-string';
 import { Button, Dashicon } from '@wordpress/components';
 import { ImportLog } from './import-log';
 import { groupResults, ImportResults } from './import-results';
