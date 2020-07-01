@@ -14,11 +14,9 @@ describe( '<UploadPage /> continue button', () => {
 		};
 		const submitStartImport = jest.fn();
 		const isReady = true;
-		const jobId = 'test-id';
 
 		const { getByText } = render(
 			<UploadPage
-				jobId={ jobId }
 				state={ state }
 				isReady={ isReady }
 				submitStartImport={ submitStartImport }
@@ -38,11 +36,9 @@ describe( '<UploadPage /> continue button', () => {
 		};
 		const submitStartImport = jest.fn();
 		const isReady = false;
-		const jobId = 'test-id';
 
 		const { getByText } = render(
 			<UploadPage
-				jobId={ jobId }
 				state={ state }
 				isReady={ isReady }
 				submitStartImport={ submitStartImport }

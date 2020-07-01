@@ -7,7 +7,7 @@ import { Button } from '@wordpress/components';
 /**
  * This component displays the upload page of the importer.
  */
-export const UploadPage = ( { jobId, state, isReady, submitStartImport } ) => {
+export const UploadPage = ( { state, isReady, submitStartImport } ) => {
 	const { isSubmitting, errorMsg } = state;
 
 	return (
@@ -40,7 +40,7 @@ export const UploadPage = ( { jobId, state, isReady, submitStartImport } ) => {
 						isPrimary
 						className="continue-button"
 						disabled={ ! isReady || isSubmitting }
-						onClick={ () => submitStartImport( jobId ) }
+						onClick={ submitStartImport }
 					>
 						{ __( 'Continue', 'sensei-lms' ) }
 					</Button>
