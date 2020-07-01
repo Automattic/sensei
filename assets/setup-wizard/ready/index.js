@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
 
 import { MailingListSignupForm } from './mailinglist-signup-form';
-import { formatString } from '../helpers/format-string.js';
+import { formatString } from '../../shared/helpers/format-string.js';
 import { logLink } from '../log-event';
 import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 
