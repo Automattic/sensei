@@ -131,7 +131,7 @@ class Sensei_Data_Port_Lesson_Schema extends Sensei_Data_Port_Schema {
 	}
 
 	/**
-	 * Get question post type.
+	 * Get lesson post type.
 	 *
 	 * @return string
 	 */
