@@ -18,6 +18,12 @@
 			color: $gray-30;
 		}
 
+		&__delete-spinner {
+			width: 20px;
+			height: 20px;
+			margin: 21px 7px;
+		}
+
 		.components-form-file-upload {
 			flex-basis: 18%;
 			flex-shrink: 0;

@@ -1,6 +1,7 @@
 /* global FormData */
 
 import { Button, FormFileUpload } from '@wordpress/components';
+import { Spinner } from '@woocommerce/components';
 import { Notice } from '../../notice';
 import { closeSmall } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
@@ -69,7 +70,11 @@ export const UploadLevels = ( {
 				const message = getLevelMessage( levelState );
 
 				let deleteButton;
-				if ( levelState.isUploaded ) {
+				if ( levelState.isDeleting ) {
+					deleteButton = (
+						<Spinner className="sensei-upload-file-line__delete-spinner" />
+					);
+				} else if ( levelState.isUploaded ) {
 					deleteButton = (
 						<Button
 							className="sensei-upload-file-line__delete-button"
