@@ -1,18 +1,27 @@
-import { __ } from '@wordpress/i18n';
-import { Section, H } from '@woocommerce/components';
+import { withSelect, withDispatch } from '@wordpress/data';
+import { compose } from '@wordpress/compose';
+import { DonePage } from './done-page';
+import { partial } from 'lodash';
 
-/**
- * This component displays the final page when import has completed.
- */
-export const DonePage = () => {
-	return (
-		<section className="sensei-done-page">
-			<header className="sensei-data-port-step__header">
-				<H>{ __( 'Done', 'sensei-lms' ) }</H>
-			</header>
-			<Section component="section">
-				<p>Placeholder.</p>
-			</Section>
-		</section>
-	);
-};
+export default compose(
+	withSelect( ( select ) => {
+		const store = select( 'sensei/import' );
+
+		const { results, logs } = store.getStepData( 'done' );
+		return {
+			results,
+			logs,
+		};
+	} ),
+	withDispatch( ( dispatch, ownProps, { select } ) => {
+		const { fetchImportLog, restartImporter } = dispatch( 'sensei/import' );
+
+		return {
+			fetchImportLog: partial(
+				fetchImportLog,
+				select( 'sensei/import' ).getJobId()
+			),
+			restartImporter,
+		};
+	} )
+)( DonePage );

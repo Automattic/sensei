@@ -21,6 +21,13 @@ describe( 'Importer data normalizer', () => {
 			status: 'pending',
 			percentage: 0,
 		},
+		done: {
+			results: {
+				question: { success: 0, error: 0 },
+				course: { success: 0, error: 0 },
+				lesson: { success: 0, error: 0 },
+			},
+		},
 		completedSteps: [ 'upload' ],
 	};
 
@@ -43,6 +50,11 @@ describe( 'Importer data normalizer', () => {
 				name: 'lessons.csv',
 				url: 'http://example.com/lessons.csv',
 			},
+		},
+		results: {
+			question: { success: 0, error: 0 },
+			course: { success: 0, error: 0 },
+			lesson: { success: 0, error: 0 },
 		},
 	};
 

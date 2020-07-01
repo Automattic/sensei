@@ -3,13 +3,13 @@ import {
 	START_FETCH_CURRENT_JOB_STATE,
 	SUCCESS_FETCH_CURRENT_JOB_STATE,
 	ERROR_FETCH_CURRENT_JOB_STATE,
-	SET_STEP_DATA,
 	START_IMPORT,
 	SUCCESS_START_IMPORT,
 	ERROR_START_IMPORT,
 	ERROR_UPLOAD_IMPORT_DATA_FILE,
 	START_UPLOAD_IMPORT_DATA_FILE,
 	SUCCESS_UPLOAD_IMPORT_DATA_FILE,
+	SET_JOB_STATE,
 } from './constants';
 
 describe( 'Importer reducer', () => {
@@ -32,6 +32,19 @@ describe( 'Importer reducer', () => {
 		} );
 
 		expect( state.isFetching ).toBeFalsy();
+		expect( state.test ).toBe( data.test );
+	} );
+
+	it( 'Should update data on SET_JOB_STATE action', () => {
+		const data = {
+			test: 'data',
+		};
+
+		const state = reducer( undefined, {
+			type: SET_JOB_STATE,
+			data,
+		} );
+
 		expect( state.test ).toBe( data.test );
 	} );
 
@@ -135,25 +148,5 @@ describe( 'Importer reducer', () => {
 
 		expect( state.upload[ level ].inProgress ).toBeFalsy();
 		expect( state.upload[ level ].errorMsg ).toBe( error.message );
-	} );
-
-	it( 'Should set completedSteps and individual step data on SET_STEP_DATA action', () => {
-		const step = 'progress';
-		const data = {
-			progress: {
-				status: 'test',
-				percentage: 44,
-			},
-			completedSteps: [ 'awesome' ],
-		};
-		const state = reducer( undefined, {
-			type: SET_STEP_DATA,
-			step,
-			data,
-		} );
-
-		expect( state.progress.status ).toEqual( data.progress.status );
-		expect( state.progress.percentage ).toEqual( data.progress.percentage );
-		expect( state.completedSteps ).toEqual( data.completedSteps );
 	} );
 } );

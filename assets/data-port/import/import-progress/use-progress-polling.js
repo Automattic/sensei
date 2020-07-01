@@ -9,11 +9,10 @@ import { useSelect, useDispatch } from '@wordpress/data';
  */
 const useProgressPolling = ( isActive, jobId ) => {
 	const [ pollingCount, setPollingCount ] = useState( 0 );
-	const { invalidateResolution } = useDispatch( 'sensei/import' );
+	const { updateJobState } = useDispatch( 'sensei/import' );
 
 	const stepState = useSelect(
-		( select ) =>
-			select( 'sensei/import' ).getStepData( 'progress', jobId, true ),
+		( select ) => select( 'sensei/import' ).getStepData( 'progress' ),
 		[ pollingCount ]
 	);
 
@@ -21,16 +20,15 @@ const useProgressPolling = ( isActive, jobId ) => {
 		if ( ! isActive ) {
 			return;
 		}
-
 		const timer = setTimeout( () => {
-			invalidateResolution( 'getStepData', [ 'progress', jobId, true ] );
+			updateJobState( jobId );
 			setPollingCount( ( n ) => n + 1 );
 		}, 5000 );
 
 		return () => {
 			clearTimeout( timer );
 		};
-	}, [ pollingCount, isActive, jobId, invalidateResolution ] );
+	}, [ pollingCount, isActive, jobId, updateJobState ] );
 
 	return stepState;
 };

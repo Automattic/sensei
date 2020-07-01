@@ -7,12 +7,17 @@ import {
 	START_IMPORT,
 	SUCCESS_START_IMPORT,
 	ERROR_START_IMPORT,
-	SET_STEP_DATA,
 	START_UPLOAD_IMPORT_DATA_FILE,
 	SUCCESS_UPLOAD_IMPORT_DATA_FILE,
 	ERROR_UPLOAD_IMPORT_DATA_FILE,
+	RESET_STATE,
+	SET_JOB_STATE,
+	SUCCESS_FETCH_IMPORT_LOG,
+	START_FETCH_IMPORT_LOG,
+	ERROR_FETCH_IMPORT_LOG,
 } from './constants';
 
+import { composeFetchAction } from '../../../shared/data/store-helpers';
 import { normalizeImportData } from './normalizer';
 import { buildJobEndpointUrl } from '../helpers/url';
 
@@ -36,65 +41,50 @@ export const fetchFromAPI = ( request ) => ( {
 /**
  * Fetch importer data for current job.
  */
-export function* fetchCurrentJobState() {
-	yield startFetchCurrentJobState();
-
-	try {
+export const fetchCurrentJobState = composeFetchAction(
+	START_FETCH_CURRENT_JOB_STATE,
+	function*() {
 		const data = yield fetchFromAPI( {
 			path: buildJobEndpointUrl( API_SPECIAL_ACTIVE_JOB_ID ),
 		} );
 
-		yield successFetchCurrentJobState( normalizeImportData( data ) );
+		return normalizeImportData( data );
+	},
+	SUCCESS_FETCH_CURRENT_JOB_STATE,
+	ERROR_FETCH_CURRENT_JOB_STATE
+);
+
+/**
+ * Update job state in the background.
+ *
+ * @param {string} jobId The job ID.
+ */
+export function* updateJobState( jobId ) {
+	try {
+		const data = yield fetchFromAPI( {
+			path: buildJobEndpointUrl( jobId ),
+		} );
+
+		yield setJobState( normalizeImportData( data ) );
 	} catch ( error ) {
-		yield errorFetchCurrentJobState( error );
+		// Silent.
 	}
 }
 
 /**
- * @typedef  {Object} SuccessFetchCurrentJobStateAction
- * @property {string} type                         Action type.
- * @property {Object} data                         Importer data.
- */
-/**
- * Success get current job state action creator.
- *
- * @param {Object} data Importer data.
- *
- * @return {SuccessFetchCurrentJobStateAction} Success get current job state action.
- */
-export const successFetchCurrentJobState = ( data ) => ( {
-	type: SUCCESS_FETCH_CURRENT_JOB_STATE,
-	data,
-} );
-
-/**
- * @typedef  {Object}         ErrorFetchCurrentJobStateAction
- * @property {string}         type             Action type.
- * @property {Object|boolean} error            Error object or false.
- */
-/**
- * Error get current job state action creator.
- *
- * @param {Object|boolean} error Error object or false.
- *
- * @return {ErrorFetchCurrentJobStateAction} Error action.
- */
-export const errorFetchCurrentJobState = ( error ) => ( {
-	type: ERROR_FETCH_CURRENT_JOB_STATE,
-	error,
-} );
-
-/**
- * @typedef  {Object} StartFetchCurrentJobStateAction
+ * @typedef  {Object} SetJobStateAction
  * @property {string} type Action type.
+ * @property {Object} data Job state.
  */
 /**
- * Start get current job state action creator.
+ * Set job state action creator.
  *
- * @return {StartFetchCurrentJobStateAction} Start get current job state action.
+ * @param {Object} data Job state.
+ * @return {SetJobStateAction} Set job state action.
  */
-export const startFetchCurrentJobState = () => ( {
-	type: START_FETCH_CURRENT_JOB_STATE,
+export const setJobState = ( data ) => ( {
+	type: SET_JOB_STATE,
+	data,
 } );
 
 /**
@@ -297,21 +287,34 @@ export const errorFileUpload = ( level, error ) => ( {
 } );
 
 /**
- * @typedef  {Object} SetStepDataAction
- * @property {string} type Action type.
- * @property {string} step Step name.
- * @property {Object} data Step data.
+ * Load the import log for the given job.
+ *
+ * @param {string} jobId The job id.
  */
+export const fetchImportLog = composeFetchAction(
+	START_FETCH_IMPORT_LOG,
+	function*( jobId ) {
+		const data = yield fetchFromAPI( {
+			path: buildJobEndpointUrl( jobId, [ 'logs' ] ),
+		} );
+
+		return data;
+	},
+	SUCCESS_FETCH_IMPORT_LOG,
+	ERROR_FETCH_IMPORT_LOG
+);
+
 /**
- * Set welcome step data action creator.
- *
- * @param {string} step Step name.
- * @param {Object} data Step data object.
- *
- * @return {SetStepDataAction} Set welcome step data action.
+ * Reset importer state.
  */
-export const setStepData = ( step, data ) => ( {
-	type: SET_STEP_DATA,
-	step,
-	data,
+export const resetState = () => ( {
+	type: RESET_STATE,
 } );
+
+/**
+ * Restart importer.
+ */
+export function* restartImporter() {
+	yield resetState();
+	yield fetchCurrentJobState();
+}

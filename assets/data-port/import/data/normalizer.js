@@ -45,10 +45,19 @@ export const parseCompletedSteps = ( data ) => {
  *
  * @return {Object} Normalized importer data.
  */
-export const normalizeImportData = ( { id, files, status, ...data } ) => ( {
+export const normalizeImportData = ( {
+	id,
+	files,
+	status,
+	results,
+	...data
+} ) => ( {
 	...data,
 	jobId: id,
 	progress: status,
 	upload: normalizeUploadsState( files ),
 	completedSteps: parseCompletedSteps( status ),
+	done: {
+		results,
+	},
 } );
