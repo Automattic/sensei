@@ -449,6 +449,7 @@ describe( 'Importer actions', () => {
 				percentage: 0,
 			},
 			files: {},
+			results: {},
 		};
 
 		const expectedSetDataAction = {
@@ -458,6 +459,9 @@ describe( 'Importer actions', () => {
 				progress: {
 					status: 'setup',
 					percentage: 0,
+				},
+				done: {
+					results: {},
 				},
 				completedSteps: [],
 			},

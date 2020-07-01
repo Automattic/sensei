@@ -11,9 +11,7 @@ describe( '<ImportProgressPage /> progress bar', () => {
 			percentage: 33,
 		};
 
-		const { getByRole } = render(
-			<ImportProgressPage jobId="test-job" state={ state } />
-		);
+		const { getByRole } = render( <ImportProgressPage state={ state } /> );
 
 		expect( getByRole( 'progressbar' ).getAttribute( 'value' ) ).toEqual(
 			'33'
