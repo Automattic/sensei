@@ -71,6 +71,25 @@ export const Ready = () => {
 								),
 							},
 							{
+								title: __( 'Import content', 'sensei-lms' ),
+								content: __(
+									'Transfer existing content to your site — just import a CSV file.',
+									'sensei-lms'
+								),
+								after: (
+									<Button
+										className="sensei-setup-wizard__button"
+										isSecondary
+										href="admin.php?page=sensei_import"
+										{ ...logLink(
+											'setup_wizard_ready_import_content'
+										) }
+									>
+										{ __( 'Import content', 'sensei-lms' ) }
+									</Button>
+								),
+							},
+							{
 								title: 'Learn more',
 								content: formatString(
 									__(
