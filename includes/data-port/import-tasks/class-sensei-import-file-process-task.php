@@ -78,7 +78,7 @@ abstract class Sensei_Import_File_Process_Task
 			$this->reader             = new Sensei_Import_CSV_Reader( get_attached_file( $attachment_id ), $completed_lines );
 			$this->post_process_tasks = isset( $task_state[ self::STATE_POST_PROCESS_TASKS ] ) ? $task_state[ self::STATE_POST_PROCESS_TASKS ] : [];
 
-			$this->is_completed    = $this->reader->is_completed();
+			$this->is_completed    = $this->reader->is_completed() && empty( $this->post_process_tasks );
 			$this->total_lines     = $this->reader->get_total_lines();
 			$this->completed_lines = $completed_lines;
 		}
