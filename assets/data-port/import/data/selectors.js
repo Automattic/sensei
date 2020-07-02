@@ -79,7 +79,12 @@ export const isCompleteStep = ( { completedSteps }, step ) =>
  *
  * @return {boolean} If the importer is ready.
  */
-export const isReadyToStart = ( state ) =>
-	levels
-		.map( ( { key } ) => state.upload[ key ] )
-		.some( ( level ) => level.isUploaded && ! level.inProgress );
+export const isReadyToStart = ( state ) => {
+	const levelsState = levels.map( ( { key } ) => state.upload[ key ] );
+	const hasUploaded = levelsState.some( ( level ) => level.isUploaded );
+	const inProgress = levelsState.some(
+		( level ) => level.isUploading || level.isDeleting
+	);
+
+	return hasUploaded && ! inProgress;
+};

@@ -4,7 +4,10 @@ import { useDispatch } from '@wordpress/data';
 import useProgressPolling from './use-progress-polling';
 
 jest.mock( '@wordpress/data', () => ( {
-	useSelect: () => {},
+	useSelect: () => ( {
+		jobId: 'test-job',
+		stepState: {},
+	} ),
 	useDispatch: jest.fn(),
 } ) );
 
@@ -21,7 +24,7 @@ describe( 'useProgressPolling', () => {
 
 	it( 'Should dispatch updateJobState after the timer if polling is active', () => {
 		const TestComponent = () => {
-			useProgressPolling( true, 'test-job' );
+			useProgressPolling( true );
 
 			return <div />;
 		};
@@ -37,7 +40,7 @@ describe( 'useProgressPolling', () => {
 
 	it( 'Should not update after the timer if polling is not active', () => {
 		const TestComponent = () => {
-			useProgressPolling( false, 'test-job' );
+			useProgressPolling( false );
 
 			return <div />;
 		};

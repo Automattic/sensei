@@ -1,7 +1,9 @@
 /* global FormData */
 
-import { FormFileUpload } from '@wordpress/components';
+import { Button, FormFileUpload } from '@wordpress/components';
+import { Spinner } from '@woocommerce/components';
 import { Notice } from '../../notice';
+import { closeSmall } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
 import { levels } from '../levels';
 
@@ -51,6 +53,7 @@ export const UploadLevels = ( {
 	state,
 	uploadFileForLevel,
 	throwEarlyUploadError,
+	deleteLevelFile,
 } ) => {
 	const getLevelMessage = ( levelState ) => {
 		if ( levelState.hasError ) {
@@ -66,6 +69,25 @@ export const UploadLevels = ( {
 				const levelState = state[ level.key ];
 				const message = getLevelMessage( levelState );
 
+				let deleteButton;
+				if ( levelState.isDeleting ) {
+					deleteButton = (
+						<Spinner className="sensei-upload-file-line__delete-spinner" />
+					);
+				} else if ( levelState.isUploaded ) {
+					deleteButton = (
+						<Button
+							className="sensei-upload-file-line__delete-button"
+							icon={ closeSmall }
+							label={ __( 'Delete File', 'sensei-lms' ) }
+							onClick={ () =>
+								deleteLevelFile( jobId, level.key )
+							}
+							disabled={ levelState.isDeleting }
+						/>
+					);
+				}
+
 				return (
 					<li key={ level.key } className="sensei-upload-file-line">
 						<p className="sensei-upload-file-line__description">
@@ -73,9 +95,12 @@ export const UploadLevels = ( {
 						</p>
 						<FormFileUpload
 							// Include key to redraw after each upload attempt for onChange of the same file.
-							key={ levelState.inProgress }
+							key={ levelState.isUploading }
 							isSecondary
 							accept={ [ '.csv', '.txt' ] }
+							disabled={
+								levelState.isUploading || levelState.isDeleting
+							}
 							onChange={ ( event ) =>
 								uploadFile(
 									jobId,
@@ -86,11 +111,12 @@ export const UploadLevels = ( {
 								)
 							}
 						>
-							{ levelState.inProgress
+							{ levelState.isUploading
 								? __( 'Uploading…', 'sensei-lms' )
 								: __( 'Upload', 'sensei-lms' ) }
 						</FormFileUpload>
 						{ message }
+						{ deleteButton }
 					</li>
 				);
 			} ) }

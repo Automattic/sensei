@@ -5,11 +5,11 @@ import { __ } from '@wordpress/i18n';
 /**
  * This component displays the import progress page of the importer.
  */
-export const ImportProgressPage = ( { jobId, state } ) => {
+export const ImportProgressPage = ( { state } ) => {
 	const { status, percentage } = state;
 	const isActive = status !== 'completed';
 
-	useProgressPolling( isActive, jobId );
+	useProgressPolling( isActive );
 
 	return (
 		<section className="sensei-data-port-step sensei-import-progress-page">

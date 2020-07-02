@@ -5,14 +5,20 @@ import { useSelect, useDispatch } from '@wordpress/data';
  * Progress polling hook.
  *
  * @param {boolean} isActive Flag whether polling is active.
- * @param {string}  jobId    ID for the current job.
  */
-const useProgressPolling = ( isActive, jobId ) => {
+const useProgressPolling = ( isActive ) => {
 	const [ pollingCount, setPollingCount ] = useState( 0 );
 	const { updateJobState } = useDispatch( 'sensei/import' );
 
-	const stepState = useSelect(
-		( select ) => select( 'sensei/import' ).getStepData( 'progress' ),
+	const { jobId, stepState } = useSelect(
+		( select ) => {
+			const store = select( 'sensei/import' );
+
+			return {
+				jobId: store.getJobId(),
+				stepState: store.getStepData( 'progress' ),
+			};
+		},
 		[ pollingCount ]
 	);
 

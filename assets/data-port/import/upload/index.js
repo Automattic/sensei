@@ -1,6 +1,7 @@
 import { withSelect, withDispatch } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
 import { UploadPage } from './upload-page';
+import { partial } from 'lodash';
 
 export default compose(
 	withSelect( ( select ) => {
@@ -9,14 +10,16 @@ export default compose(
 		return {
 			state: store.getStepData( 'upload' ),
 			isReady: store.isReadyToStart(),
-			jobId: store.getJobId(),
 		};
 	} ),
-	withDispatch( ( dispatch ) => {
+	withDispatch( ( dispatch, ownProps, { select } ) => {
 		const { submitStartImport } = dispatch( 'sensei/import' );
 
 		return {
-			submitStartImport,
+			submitStartImport: partial(
+				submitStartImport,
+				select( 'sensei/import' ).getJobId()
+			),
 		};
 	} )
 )( UploadPage );

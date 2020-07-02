@@ -75,21 +75,24 @@ describe( 'Importer selectors', () => {
 			upload: {
 				courses: {
 					isUploaded: false,
-					inProgress: false,
+					isUploading: false,
+					isDeleting: false,
 					hasError: false,
 					errorMsg: null,
 					filename: null,
 				},
 				lessons: {
 					isUploaded: false,
-					inProgress: false,
+					isUploading: false,
+					isDeleting: false,
 					hasError: false,
 					errorMsg: null,
 					filename: null,
 				},
 				questions: {
 					isUploaded: false,
-					inProgress: false,
+					isUploading: false,
+					isDeleting: false,
 					hasError: false,
 					errorMsg: null,
 					filename: null,
@@ -105,21 +108,24 @@ describe( 'Importer selectors', () => {
 			upload: {
 				courses: {
 					isUploaded: false,
-					inProgress: false,
+					isUploading: false,
+					isDeleting: false,
 					hasError: false,
 					errorMsg: null,
 					filename: null,
 				},
 				lessons: {
 					isUploaded: true,
-					inProgress: false,
+					isUploading: false,
+					isDeleting: false,
 					hasError: false,
 					errorMsg: null,
 					filename: 'test.csv',
 				},
 				questions: {
 					isUploaded: false,
-					inProgress: false,
+					isUploading: false,
+					isDeleting: false,
 					hasError: false,
 					errorMsg: null,
 					filename: null,
@@ -128,5 +134,71 @@ describe( 'Importer selectors', () => {
 		};
 
 		expect( isReadyToStart( state ) ).toBeTruthy();
+	} );
+
+	it( 'Should return as not ready to start when files have been uploaded but one file is being deleted', () => {
+		const state = {
+			upload: {
+				courses: {
+					isUploaded: false,
+					isUploading: false,
+					isDeleting: false,
+					hasError: false,
+					errorMsg: null,
+					filename: null,
+				},
+				lessons: {
+					isUploaded: true,
+					isUploading: false,
+					isDeleting: false,
+					hasError: false,
+					errorMsg: null,
+					filename: 'test.csv',
+				},
+				questions: {
+					isUploaded: true,
+					isUploading: false,
+					isDeleting: true,
+					hasError: false,
+					errorMsg: null,
+					filename: 'test2.csv',
+				},
+			},
+		};
+
+		expect( isReadyToStart( state ) ).toBeFalsy();
+	} );
+
+	it( 'Should return as not ready to start when files have been uploaded but one file is being uploaded', () => {
+		const state = {
+			upload: {
+				courses: {
+					isUploaded: false,
+					isUploading: false,
+					isDeleting: false,
+					hasError: false,
+					errorMsg: null,
+					filename: null,
+				},
+				lessons: {
+					isUploaded: true,
+					isUploading: false,
+					isDeleting: false,
+					hasError: false,
+					errorMsg: null,
+					filename: 'test.csv',
+				},
+				questions: {
+					isUploaded: true,
+					isUploading: true,
+					isDeleting: false,
+					hasError: false,
+					errorMsg: null,
+					filename: 'test2.csv',
+				},
+			},
+		};
+
+		expect( isReadyToStart( state ) ).toBeFalsy();
 	} );
 } );
