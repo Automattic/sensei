@@ -218,7 +218,15 @@ class Sensei_Learner {
 			'include_children' => false,
 		];
 
-		return $query_args;
+		/**
+		 * Filters the arguments of the query which fetches a user's enrolled courses.
+		 *
+		 * @since 3.3.0
+		 *
+		 * @param array $query_args  The query args.
+		 * @param int   $user_id     The user id.
+		 */
+		return apply_filters( 'sensei_user_enrolled_courses_args', $query_args, $user_id );
 	}
 
 	/**
