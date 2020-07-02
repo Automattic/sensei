@@ -48,7 +48,7 @@ class Sensei_Import_Question_Model_Test extends WP_UnitTestCase {
 			]
 		);
 
-		$model = Sensei_Import_Question_Model::from_source_array( $data, new Sensei_Data_Port_Question_Schema() );
+		$model = Sensei_Import_Question_Model::from_source_array( 1, $data, new Sensei_Data_Port_Question_Schema() );
 
 		$this->assertEquals( $post_id, $model->get_post_id() );
 	}
@@ -69,7 +69,7 @@ class Sensei_Import_Question_Model_Test extends WP_UnitTestCase {
 			]
 		);
 
-		$model = Sensei_Import_Question_Model::from_source_array( $data, new Sensei_Data_Port_Question_Schema() );
+		$model = Sensei_Import_Question_Model::from_source_array( 1, $data, new Sensei_Data_Port_Question_Schema() );
 
 		$this->assertEquals( null, $model->get_post_id() );
 	}
@@ -224,7 +224,7 @@ class Sensei_Import_Question_Model_Test extends WP_UnitTestCase {
 	 * @dataProvider lineData
 	 */
 	public function testInputIsSanitized( $input_line, $expected_model_content, $is_valid ) {
-		$model         = Sensei_Import_Question_Model::from_source_array( $input_line, new Sensei_Data_Port_Question_Schema() );
+		$model         = Sensei_Import_Question_Model::from_source_array( 1, $input_line, new Sensei_Data_Port_Question_Schema() );
 		$tested_fields = [
 			Sensei_Data_Port_Question_Schema::COLUMN_TITLE,
 			Sensei_Data_Port_Question_Schema::COLUMN_ANSWER,
@@ -265,7 +265,8 @@ class Sensei_Import_Question_Model_Test extends WP_UnitTestCase {
 		$expected_data         = $this->lineData()['full'][1];
 		$expected_answer_order = implode( ',', [ md5( 'No' ), md5( 'Yes' ), md5( 'Maybe, it depends' ) ] );
 
-		$model  = Sensei_Import_Question_Model::from_source_array( $test_data, new Sensei_Data_Port_Question_Schema(), Sensei_Import_Job::create( 'test', 0 ) );
+		$task   = new Sensei_Import_Questions( Sensei_Import_Job::create( 'test', 0 ) );
+		$model  = Sensei_Import_Question_Model::from_source_array( 1, $test_data, new Sensei_Data_Port_Question_Schema(), $task );
 		$result = $model->sync_post();
 		$this->assertTrue( $result );
 
@@ -311,7 +312,8 @@ class Sensei_Import_Question_Model_Test extends WP_UnitTestCase {
 			]
 		);
 
-		$model  = Sensei_Import_Question_Model::from_source_array( $test_data, new Sensei_Data_Port_Question_Schema(), Sensei_Import_Job::create( 'test', 0 ) );
+		$task   = new Sensei_Import_Questions( Sensei_Import_Job::create( 'test', 0 ) );
+		$model  = Sensei_Import_Question_Model::from_source_array( 1, $test_data, new Sensei_Data_Port_Question_Schema(), $task );
 		$result = $model->sync_post();
 		$this->assertTrue( $result );
 
@@ -341,7 +343,8 @@ class Sensei_Import_Question_Model_Test extends WP_UnitTestCase {
 		$test_data     = $this->lineData()['valid-file-upload'][0];
 		$expected_data = $this->lineData()['valid-file-upload'][1];
 
-		$model  = Sensei_Import_Question_Model::from_source_array( $test_data, new Sensei_Data_Port_Question_Schema(), Sensei_Import_Job::create( 'test', 0 ) );
+		$task   = new Sensei_Import_Questions( Sensei_Import_Job::create( 'test', 0 ) );
+		$model  = Sensei_Import_Question_Model::from_source_array( 1, $test_data, new Sensei_Data_Port_Question_Schema(), $task );
 		$result = $model->sync_post();
 		$this->assertTrue( $result );
 
@@ -371,7 +374,8 @@ class Sensei_Import_Question_Model_Test extends WP_UnitTestCase {
 		$test_data     = $this->lineData()['valid-boolean'][0];
 		$expected_data = $this->lineData()['valid-boolean'][1];
 
-		$model  = Sensei_Import_Question_Model::from_source_array( $test_data, new Sensei_Data_Port_Question_Schema(), Sensei_Import_Job::create( 'test', 0 ) );
+		$task   = new Sensei_Import_Questions( Sensei_Import_Job::create( 'test', 0 ) );
+		$model  = Sensei_Import_Question_Model::from_source_array( 1, $test_data, new Sensei_Data_Port_Question_Schema(), $task );
 		$result = $model->sync_post();
 		$this->assertTrue( $result );
 
@@ -401,7 +405,8 @@ class Sensei_Import_Question_Model_Test extends WP_UnitTestCase {
 		$test_data     = $this->lineData()['valid-single-line'][0];
 		$expected_data = $this->lineData()['valid-single-line'][1];
 
-		$model  = Sensei_Import_Question_Model::from_source_array( $test_data, new Sensei_Data_Port_Question_Schema(), Sensei_Import_Job::create( 'test', 0 ) );
+		$task   = new Sensei_Import_Questions( Sensei_Import_Job::create( 'test', 0 ) );
+		$model  = Sensei_Import_Question_Model::from_source_array( 1, $test_data, new Sensei_Data_Port_Question_Schema(), $task );
 		$result = $model->sync_post();
 		$this->assertTrue( $result );
 

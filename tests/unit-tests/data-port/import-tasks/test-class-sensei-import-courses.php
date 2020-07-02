@@ -1,6 +1,6 @@
 <?php
 /**
- * This file contains the Sensei_Import_Lessons class.
+ * This file contains the Sensei_Import_Courses_Tests class.
  *
  * @package sensei
  */
@@ -10,11 +10,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Tests for Sensei_Import_Lessons class.
+ * Tests for Sensei_Import_Courses class.
  *
  * @group data-port
  */
-class Sensei_Import_Lessons_Tests extends WP_UnitTestCase {
+class Sensei_Import_Courses_Tests extends WP_UnitTestCase {
 
 	/**
 	 * Setup function.
@@ -29,54 +29,54 @@ class Sensei_Import_Lessons_Tests extends WP_UnitTestCase {
 	 * Test to make sure prerequisites are handled correctly.
 	 */
 	public function testHandlePrerequisiteHandled() {
-		$lesson_id        = $this->factory->lesson->create();
-		$lesson_prereq_id = $this->factory->lesson->create(
+		$course_id        = $this->factory->course->create();
+		$course_prereq_id = $this->factory->course->create(
 			[
-				'post_name' => 'a-secret-lesson',
+				'post_name' => 'a-secret-course',
 			]
 		);
 
 		$job    = Sensei_Import_Job::create( 'test', 0 );
-		$task   = new Sensei_Import_Lessons( $job );
+		$task   = new Sensei_Import_courses( $job );
 		$method = new ReflectionMethod( $task, 'handle_prerequisite' );
 		$method->setAccessible( true );
 
 		$task_args = [
-			$lesson_id,
-			'slug:a-secret-lesson',
+			$course_id,
+			'slug:a-secret-course',
 			1,
 		];
 
 		$method->invoke( $task, $task_args );
 
-		$this->assertEquals( (string) $lesson_prereq_id, get_post_meta( $lesson_id, '_lesson_prerequisite', true ) );
+		$this->assertEquals( (string) $course_prereq_id, get_post_meta( $course_id, '_course_prerequisite', true ) );
 	}
 
 	/**
 	 * Test to make sure prerequisites can't be set to themselves.
 	 */
 	public function testHandlePrerequisiteNoLoop() {
-		$lesson_prereq_id = $this->factory->lesson->create(
+		$course_prereq_id = $this->factory->course->create(
 			[
-				'post_name' => 'a-secret-lesson',
+				'post_name' => 'a-secret-course',
 			]
 		);
-		$lesson_id        = $lesson_prereq_id;
+		$course_id        = $course_prereq_id;
 
 		$job    = Sensei_Import_Job::create( 'test', 0 );
-		$task   = new Sensei_Import_Lessons( $job );
+		$task   = new Sensei_Import_courses( $job );
 		$method = new ReflectionMethod( $task, 'handle_prerequisite' );
 		$method->setAccessible( true );
 
 		$task_args = [
-			$lesson_id,
-			'slug:a-secret-lesson',
+			$course_id,
+			'slug:a-secret-course',
 			1,
 		];
 
 		$method->invoke( $task, $task_args );
 
-		$this->assertEquals( null, get_post_meta( $lesson_id, '_lesson_prerequisite', true ) );
+		$this->assertEquals( null, get_post_meta( $course_id, '_course_prerequisite', true ) );
 
 		$logs = $job->get_logs();
 		$this->assertTrue( isset( $logs[0] ), 'A log entry should have been written' );
@@ -87,25 +87,25 @@ class Sensei_Import_Lessons_Tests extends WP_UnitTestCase {
 	 * Test to make we log when a bad reference comes through.
 	 */
 	public function testHandlePrerequisiteLogNoticeBad() {
-		$lesson_id = $this->factory->lesson->create();
+		$course_id = $this->factory->course->create();
 
 		$job    = Sensei_Import_Job::create( 'test', 0 );
-		$task   = new Sensei_Import_Lessons( $job );
+		$task   = new Sensei_Import_courses( $job );
 		$method = new ReflectionMethod( $task, 'handle_prerequisite' );
 		$method->setAccessible( true );
 
 		$task_args = [
-			$lesson_id,
-			'slug:a-missing-lesson',
+			$course_id,
+			'slug:a-missing-course',
 			1,
 		];
 
 		$method->invoke( $task, $task_args );
 
-		$this->assertEquals( null, get_post_meta( $lesson_id, '_lesson_prerequisite', true ) );
+		$this->assertEquals( null, get_post_meta( $course_id, '_course_prerequisite', true ) );
 
 		$logs = $job->get_logs();
 		$this->assertTrue( isset( $logs[0] ), 'A log entry should have been written' );
-		$this->assertEquals( 'Unable to set the prerequisite to "slug:a-missing-lesson"', $logs[0]['message'], 'Log entry should warn users when they try to set a prereq to the same object' );
+		$this->assertEquals( 'Unable to set the prerequisite to "slug:a-missing-course"', $logs[0]['message'], 'Log entry should warn users when they try to set a prereq to the same object' );
 	}
 }

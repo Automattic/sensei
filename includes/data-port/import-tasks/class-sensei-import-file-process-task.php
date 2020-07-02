@@ -16,6 +16,10 @@ abstract class Sensei_Import_File_Process_Task
 	extends Sensei_Data_Port_Task
 	implements Sensei_Data_Port_Task_Interface {
 
+	const STATE_COMPLETED_LINES    = 'completed-lines';
+	const STATE_POST_PROCESS_TASKS = 'post-process-tasks';
+	const POST_PROCESS_BATCH_SIZE  = 50;
+
 	/**
 	 * True if the task is completed.
 	 *
@@ -45,6 +49,13 @@ abstract class Sensei_Import_File_Process_Task
 	private $reader;
 
 	/**
+	 * Post-process tasks.
+	 *
+	 * @var array
+	 */
+	private $post_process_tasks;
+
+	/**
 	 * Sensei_Import_File_Process_Task constructor.
 	 *
 	 * @param Sensei_Data_Port_Job $job
@@ -55,16 +66,19 @@ abstract class Sensei_Import_File_Process_Task
 		$files = $this->get_job()->get_files();
 
 		if ( ! isset( $files[ $this->get_task_key() ] ) ) {
-			$this->is_completed    = true;
-			$this->completed_lines = 0;
-			$this->total_lines     = 0;
+			$this->is_completed       = true;
+			$this->completed_lines    = 0;
+			$this->total_lines        = 0;
+			$this->post_process_tasks = [];
 		} else {
 			$attachment_id   = $files[ $this->get_task_key() ];
 			$task_state      = $this->get_job()->get_state( $this->get_task_key() );
-			$completed_lines = isset( $task_state['completed-lines'] ) ? $task_state['completed-lines'] : 0;
-			$this->reader    = new Sensei_Import_CSV_Reader( get_attached_file( $attachment_id ), $completed_lines );
+			$completed_lines = isset( $task_state[ self::STATE_COMPLETED_LINES ] ) ? $task_state[ self::STATE_COMPLETED_LINES ] : 0;
 
-			$this->is_completed    = $this->reader->is_completed();
+			$this->reader             = new Sensei_Import_CSV_Reader( get_attached_file( $attachment_id ), $completed_lines );
+			$this->post_process_tasks = isset( $task_state[ self::STATE_POST_PROCESS_TASKS ] ) ? $task_state[ self::STATE_POST_PROCESS_TASKS ] : [];
+
+			$this->is_completed    = $this->reader->is_completed() && empty( $this->post_process_tasks );
 			$this->total_lines     = $this->reader->get_total_lines();
 			$this->completed_lines = $completed_lines;
 		}
@@ -78,20 +92,55 @@ abstract class Sensei_Import_File_Process_Task
 			return;
 		}
 
-		$lines = $this->reader->read_lines();
+		if ( ! $this->reader->is_completed() ) {
+			$lines = $this->reader->read_lines();
 
-		$current_line = $this->completed_lines;
+			$current_line = $this->completed_lines;
 
-		foreach ( $lines as $line ) {
-			$this->process_line( ++$current_line, $line );
+			foreach ( $lines as $line_data ) {
+				$current_line++;
+
+				$this->process_line( $current_line + 1, $line_data );
+			}
+
+			$this->completed_lines = $this->reader->get_completed_lines();
+			$this->total_lines     = $this->reader->get_total_lines();
+		} elseif ( $this->reader->is_completed() ) {
+			// Running this in an else so that post process tasks run in a fresh batch.
+			$this->run_post_process_tasks();
 		}
 
-		$this->completed_lines = $this->reader->get_completed_lines();
-		$this->total_lines     = $this->reader->get_total_lines();
-		$this->is_completed    = $this->reader->is_completed();
+		$this->is_completed = $this->reader->is_completed() && empty( $this->post_process_tasks );
 
-		$this->get_job()->set_state( $this->get_task_key(), [ 'completed-lines' => $this->completed_lines ] );
+		$this->get_job()->set_state(
+			$this->get_task_key(),
+			[
+				self::STATE_COMPLETED_LINES    => $this->completed_lines,
+				self::STATE_POST_PROCESS_TASKS => $this->post_process_tasks,
+			]
+		);
 		$this->get_job()->persist();
+	}
+
+	/**
+	 * Execute post process tasks.
+	 */
+	private function run_post_process_tasks() {
+		$post_process_batch_left = self::POST_PROCESS_BATCH_SIZE;
+		while ( $post_process_batch_left > 0 && ! empty( $this->post_process_tasks ) ) {
+			$post_process_batch_left--;
+			$tasks          = array_keys( $this->post_process_tasks );
+			$next_task      = $tasks[0];
+			$next_task_args = array_shift( $this->post_process_tasks[ $next_task ] );
+
+			$task_method = 'handle_' . $next_task;
+			$callback    = [ $this, $task_method ];
+			call_user_func( $callback, $next_task_args );
+
+			if ( empty( $this->post_process_tasks[ $next_task ] ) ) {
+				unset( $this->post_process_tasks[ $next_task ] );
+			}
+		}
 	}
 
 	/**
@@ -139,30 +188,31 @@ abstract class Sensei_Import_File_Process_Task
 	abstract public static function validate_source_file( $file_path );
 
 	/**
-	 * Get the model which will handle the processing for a line.
+	 * Get the model which handles this task.
 	 *
-	 * @param array $line  An associated array with the CSV line.
+	 * @param int   $line_number Line number for model.
+	 * @param array $data        An associated array with the CSV line.
 	 *
-	 * @return Sensei_Data_Port_Model
+	 * @return Sensei_Import_Model
 	 */
-	abstract public function get_model( $line );
+	abstract public function get_model( $line_number, $data );
 
 	/**
 	 * Process a single CSV line.
 	 *
 	 * @param int            $line_number  The line number in the file.
-	 * @param WP_Error|array $line         The current line as returned from Sensei_Import_CSV_Reader::read_lines().
+	 * @param WP_Error|array $data         The current line as returned from Sensei_Import_CSV_Reader::read_lines().
 	 *
 	 * @return mixed
 	 */
-	protected function process_line( $line_number, $line ) {
-		if ( empty( $line ) ) {
+	protected function process_line( $line_number, $data ) {
+		if ( empty( $data ) ) {
 			return true;
 		}
 
-		if ( $line instanceof WP_Error ) {
+		if ( $data instanceof WP_Error ) {
 			$this->get_job()->add_log_entry(
-				$line->get_error_message(),
+				$data->get_error_message(),
 				Sensei_Data_Port_Job::LOG_LEVEL_ERROR,
 				[
 					'line' => $line_number,
@@ -172,7 +222,7 @@ abstract class Sensei_Import_File_Process_Task
 			return false;
 		}
 
-		$model = $this->get_model( $line );
+		$model = $this->get_model( $line_number, $data );
 		if ( ! is_a( $model, Sensei_Data_Port_Model::class ) ) {
 			return false;
 		}
@@ -215,4 +265,17 @@ abstract class Sensei_Import_File_Process_Task
 		return true;
 	}
 
+	/**
+	 * Add a post process task.
+	 *
+	 * @param string $task Task name. Handler should be a method with the name `handle_{$task}`.
+	 * @param array  $args Arguments to pass to the task.
+	 */
+	public function add_post_process_task( $task, $args ) {
+		if ( ! isset( $this->post_process_tasks[ $task ] ) ) {
+			$this->post_process_tasks[ $task ] = [];
+		}
+
+		$this->post_process_tasks[ $task ][] = $args;
+	}
 }

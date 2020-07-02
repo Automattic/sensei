@@ -32,6 +32,50 @@ class Sensei_Import_Course_Model_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test to make sure prerequisites are queued for processing after all other lines have been processed.
+	 */
+	public function testPrerequisiteQueued() {
+		$course_id = $this->factory->course->create(
+			[
+				'post_name' => 'the-last-course',
+			]
+		);
+		$job       = Sensei_Import_Job::create( 'test', 0 );
+		$task      = $this->getMockBuilder( Sensei_Import_Courses::class )
+						->setConstructorArgs( [ $job ] )
+						->setMethods( [ 'add_prerequisite_task' ] )
+						->getMock();
+
+		$data_a = [
+			Sensei_Data_Port_Course_Schema::COLUMN_ID    => '1234',
+			Sensei_Data_Port_Course_Schema::COLUMN_TITLE => 'Course title a',
+			Sensei_Data_Port_Course_Schema::COLUMN_SLUG  => 'the-last-course',
+			Sensei_Data_Port_Course_Schema::COLUMN_PREREQUISITE => 'slug:a-prereq-course',
+		];
+
+		$data_b = [
+			Sensei_Data_Port_Course_Schema::COLUMN_ID    => '1235',
+			Sensei_Data_Port_Course_Schema::COLUMN_TITLE => 'Course title b',
+			Sensei_Data_Port_Course_Schema::COLUMN_SLUG  => 'the-very-last-course',
+			Sensei_Data_Port_Course_Schema::COLUMN_PREREQUISITE => '',
+		];
+
+		$task->expects( $this->once() )
+			->method( 'add_prerequisite_task' )
+			->with(
+				$this->equalTo( $course_id ),
+				$this->equalTo( 'slug:a-prereq-course' ),
+				$this->equalTo( 1 )
+			);
+
+		$model_a = Sensei_Import_Course_Model::from_source_array( 1, $data_a, new Sensei_Data_Port_Course_Schema(), $task );
+		$model_a->sync_post();
+
+		$model_b = Sensei_Import_Course_Model::from_source_array( 2, $data_b, new Sensei_Data_Port_Course_Schema(), $task );
+		$model_b->sync_post();
+	}
+
+	/**
 	 * Returns an array with the data used by the tests. Each element is an array of line input data and expected
 	 * output following the format of Sensei_Data_Port_Course_Model::data.
 	 *
@@ -135,7 +179,8 @@ class Sensei_Import_Course_Model_Test extends WP_UnitTestCase {
 	 * @dataProvider lineData
 	 */
 	public function testInputIsSanitized( $input_line, $expected_model_content ) {
-		$model         = Sensei_Import_Course_Model::from_source_array( $input_line, new Sensei_Data_Port_Course_Schema(), Sensei_Import_Job::create( 'test', 0 ) );
+		$task          = new Sensei_Import_Courses( Sensei_Import_Job::create( 'test', 0 ) );
+		$model         = Sensei_Import_Course_Model::from_source_array( 1, $input_line, new Sensei_Data_Port_Course_Schema(), $task );
 		$tested_fields = [
 			Sensei_Data_Port_Course_Schema::COLUMN_ID,
 			Sensei_Data_Port_Course_Schema::COLUMN_TITLE,
@@ -164,7 +209,7 @@ class Sensei_Import_Course_Model_Test extends WP_UnitTestCase {
 	 * Tests that error data has the correct values.
 	 */
 	public function testErrorDataAreGeneratedCorrectly() {
-		$model      = Sensei_Import_Course_Model::from_source_array( $this->lineData()[0][0], new Sensei_Data_Port_Course_Schema() );
+		$model      = Sensei_Import_Course_Model::from_source_array( 1, $this->lineData()[0][0], new Sensei_Data_Port_Course_Schema() );
 		$error_data = $model->get_error_data( [ 'line' => 1 ] );
 
 		$expected = [
@@ -181,7 +226,8 @@ class Sensei_Import_Course_Model_Test extends WP_UnitTestCase {
 	 */
 	public function testCourseIsInsertedAndUpdated() {
 		$thumbnail_id = $this->factory->attachment->create( [ 'file' => 'localfilename.png' ] );
-		$model        = Sensei_Import_Course_Model::from_source_array( $this->lineData()[0][0], new Sensei_Data_Port_Course_Schema(), Sensei_Import_Job::create( 'test', 0 ) );
+		$task         = new Sensei_Import_Courses( Sensei_Import_Job::create( 'test', 0 ) );
+		$model        = Sensei_Import_Course_Model::from_source_array( 1, $this->lineData()[0][0], new Sensei_Data_Port_Course_Schema(), $task );
 		$result       = $model->sync_post();
 
 		$this->assertTrue( $result );
@@ -198,7 +244,8 @@ class Sensei_Import_Course_Model_Test extends WP_UnitTestCase {
 		$this->verify_course( $created_post, $this->lineData()[0][1], $thumbnail_id );
 
 		$thumbnail_id = $this->factory->attachment->create( [ 'file' => 'updatedfilename.png' ] );
-		$model        = Sensei_Import_Course_Model::from_source_array( $this->lineData()[1][0], new Sensei_Data_Port_Course_Schema(), Sensei_Import_Job::create( 'test', 0 ) );
+		$task         = new Sensei_Import_Courses( Sensei_Import_Job::create( 'test', 0 ) );
+		$model        = Sensei_Import_Course_Model::from_source_array( 1, $this->lineData()[1][0], new Sensei_Data_Port_Course_Schema(), $task );
 		$result       = $model->sync_post();
 
 		$this->assertTrue( $result );
@@ -278,7 +325,8 @@ class Sensei_Import_Course_Model_Test extends WP_UnitTestCase {
 	 * Tests that an error is returned when the attachment does not exist.
 	 */
 	public function testSyncPostFailsWhenAttachmentNotFound() {
-		$model  = Sensei_Import_Course_Model::from_source_array( $this->lineData()[0][0], new Sensei_Data_Port_Course_Schema(), Sensei_Import_Job::create( 'test', 0 ) );
+		$task   = new Sensei_Import_Courses( Sensei_Import_Job::create( 'test', 0 ) );
+		$model  = Sensei_Import_Course_Model::from_source_array( 1, $this->lineData()[0][0], new Sensei_Data_Port_Course_Schema(), $task );
 		$result = $model->sync_post();
 
 		$this->assertInstanceOf( 'WP_Error', $result );
