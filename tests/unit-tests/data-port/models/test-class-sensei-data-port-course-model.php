@@ -51,7 +51,7 @@ class Sensei_Import_Course_Model_Test extends WP_UnitTestCase {
 					Sensei_Data_Port_Course_Schema::COLUMN_TEACHER_EMAIL    => 'em\<ail#@host.com',
 					Sensei_Data_Port_Course_Schema::COLUMN_MODULES          => '<randomtag>   First,Second   </randomtag>',
 					Sensei_Data_Port_Course_Schema::COLUMN_PREREQUISITE     => '<randomtag>prerequisite</randomtag>',
-					Sensei_Data_Port_Course_Schema::COLUMN_FEATURED         => '<randomtag>featured</randomtag>',
+					Sensei_Data_Port_Course_Schema::COLUMN_FEATURED         => 'true',
 					Sensei_Data_Port_Course_Schema::COLUMN_CATEGORIES       => '<randomtag>   First,Second   </randomtag>',
 					Sensei_Data_Port_Course_Schema::COLUMN_IMAGE            => 'localfilename.png',
 					Sensei_Data_Port_Course_Schema::COLUMN_VIDEO            => '<randomtag>video</randomtag>',
@@ -71,7 +71,7 @@ class Sensei_Import_Course_Model_Test extends WP_UnitTestCase {
 					Sensei_Data_Port_Course_Schema::COLUMN_CATEGORIES       => 'First,Second',
 					Sensei_Data_Port_Course_Schema::COLUMN_IMAGE            => 'localfilename.png',
 					Sensei_Data_Port_Course_Schema::COLUMN_VIDEO            => 'video',
-					Sensei_Data_Port_Course_Schema::COLUMN_NOTIFICATIONS    => true,
+					Sensei_Data_Port_Course_Schema::COLUMN_NOTIFICATIONS    => null,
 				],
 			],
 			[
@@ -85,11 +85,11 @@ class Sensei_Import_Course_Model_Test extends WP_UnitTestCase {
 					Sensei_Data_Port_Course_Schema::COLUMN_TEACHER_EMAIL    => 'otheremail@host.com',
 					Sensei_Data_Port_Course_Schema::COLUMN_MODULES          => 'Second,First',
 					Sensei_Data_Port_Course_Schema::COLUMN_PREREQUISITE     => 'Updated prerequisite',
-					Sensei_Data_Port_Course_Schema::COLUMN_FEATURED         => false,
+					Sensei_Data_Port_Course_Schema::COLUMN_FEATURED         => 'false',
 					Sensei_Data_Port_Course_Schema::COLUMN_CATEGORIES       => 'First,Third',
 					Sensei_Data_Port_Course_Schema::COLUMN_IMAGE            => 'updatedfilename.png',
 					Sensei_Data_Port_Course_Schema::COLUMN_VIDEO            => 'Updated video',
-					Sensei_Data_Port_Course_Schema::COLUMN_NOTIFICATIONS    => false,
+					Sensei_Data_Port_Course_Schema::COLUMN_NOTIFICATIONS    => 'false',
 				],
 				[
 					Sensei_Data_Port_Course_Schema::COLUMN_ID               => 'id',
@@ -155,7 +155,7 @@ class Sensei_Import_Course_Model_Test extends WP_UnitTestCase {
 
 		foreach ( $tested_fields as $tested_field ) {
 			if ( isset( $expected_model_content[ $tested_field ] ) ) {
-				$this->assertEquals( $expected_model_content[ $tested_field ], $model->get_value( $tested_field ) );
+				$this->assertEquals( $expected_model_content[ $tested_field ], $model->get_value( $tested_field ), "Field {$tested_field} did not match the expected value" );
 			}
 		}
 	}

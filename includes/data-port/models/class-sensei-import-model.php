@@ -116,7 +116,11 @@ abstract class Sensei_Import_Model extends Sensei_Data_Port_Model {
 						$value = floatval( $value );
 						break;
 					case 'bool':
-						$value = boolval( $value );
+						if ( ! in_array( $value, [ '0', '1', 'true', 'false' ], true ) ) {
+							$value = null;
+						} else {
+							$value = in_array( $value, [ '1', 'true' ], true );
+						}
 						break;
 					case 'slug':
 						$value = sanitize_title( $value );
