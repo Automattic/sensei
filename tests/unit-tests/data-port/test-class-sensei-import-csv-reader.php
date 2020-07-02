@@ -123,6 +123,34 @@ class Sensei_Import_CSV_Reader_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test that latin1 characters are converted to UTF-8.
+	 */
+	public function testEncodingIsNormalized() {
+		$file = SENSEI_TEST_FRAMEWORK_DIR . '/data-port/data-files/test_csv_reader_latin1.csv';
+
+		$reader = new Sensei_Import_CSV_Reader( $file, 0, 4 );
+
+		$batch = $reader->read_lines();
+
+		$this->assertEquals(
+			[
+				'first column'  => 'première',
+				'second column' => '© Dinosaurs',
+			],
+			$batch[0]
+		);
+
+		$this->assertEquals(
+			[
+				'first column'  => '°äöüßÄÖÜâêáé',
+				'second column' => 'second data 2',
+			],
+			$batch[1]
+		);
+
+	}
+
+	/**
 	 * Test the values of various data lines.
 	 */
 	public function testValuesReturnedAreCorrect() {

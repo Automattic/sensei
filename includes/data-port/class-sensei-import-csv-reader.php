@@ -13,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * This class is responsible for reading a CSV file.
  */
 class Sensei_Import_CSV_Reader {
+	const MB_ENCODING_DETECTION_ORDER = 'UTF-8, ISO-8859-1, ISO-8859-15, EUC-JP, eucJP-win, JIS, ISO-2022-JP, ASCII';
+
 	/**
 	 * The file to be read.
 	 *
@@ -102,6 +104,8 @@ class Sensei_Import_CSV_Reader {
 		$lines_processed = 0;
 		$lines           = [];
 
+		$convert_to_utf8 = in_array( get_option( 'blog_charset' ), [ 'utf8', 'utf-8', 'UTF8', 'UTF-8' ], true );
+
 		while ( $lines_processed < $this->lines_per_batch ) {
 			$lines_processed++;
 
@@ -116,6 +120,10 @@ class Sensei_Import_CSV_Reader {
 						__( 'Line has incorrect number of columns.', 'sensei-lms' )
 					);
 				} else {
+					if ( $convert_to_utf8 ) {
+						$indexed_line = array_map( [ $this, 'convert_to_utf8' ], $indexed_line );
+					}
+
 					$lines[] = array_combine( $columns, $indexed_line );
 				}
 			} else {
@@ -136,6 +144,36 @@ class Sensei_Import_CSV_Reader {
 		$this->completed_lines += $lines_processed;
 
 		return $lines;
+	}
+
+	/**
+	 * Normalize all strings to UTF-8.
+	 *
+	 * @param string $value Value to be converted to UTF-8.
+	 *
+	 * @return string|null
+	 */
+	private function convert_to_utf8( $value ) {
+		if ( null === $value || '' === $value ) {
+			return $value;
+		}
+
+		$use_mb = function_exists( 'mb_convert_encoding' );
+
+		// Convert to UTF-8.
+		if ( $use_mb ) {
+			$encoding = mb_detect_encoding( $value, self::MB_ENCODING_DETECTION_ORDER, true );
+
+			if ( $encoding ) {
+				$value = mb_convert_encoding( $value, 'UTF-8', $encoding );
+			} else {
+				$value = mb_convert_encoding( $value, 'UTF-8', 'UTF-8' );
+			}
+		} else {
+			$value = wp_check_invalid_utf8( $value, true );
+		}
+
+		return $value;
 	}
 
 	/**
