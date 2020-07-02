@@ -82,7 +82,7 @@ export const Ready = () => {
 										isSecondary
 										href="admin.php?page=sensei_import"
 										{ ...logLink(
-											'setup_wizard_ready_import_content'
+											'setup_wizard_ready_import'
 										) }
 									>
 										{ __( 'Import content', 'sensei-lms' ) }
