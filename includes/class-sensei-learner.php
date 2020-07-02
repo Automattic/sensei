@@ -1,4 +1,9 @@
 <?php
+/**
+ * File containing the class Sensei_Learner.
+ *
+ * @package sensei
+ */
 
 /**
  * Responsible for all student specific functionality and helper functions
@@ -222,15 +227,18 @@ class Sensei_Learner {
 		 * Filters the arguments of the query which fetches a user's enrolled courses.
 		 *
 		 * @since 3.3.0
+		 * @hook sensei_user_enrolled_courses_args
 		 *
-		 * @param array $query_args  The query args.
-		 * @param int   $user_id     The user id.
+		 * @param {array} $query_args  The query args.
+		 * @param {int}   $user_id     The user id.
 		 */
 		return apply_filters( 'sensei_user_enrolled_courses_args', $query_args, $user_id );
 	}
 
 	/**
 	 * Notify that a user's enrolled courses are about to be queried.
+	 *
+	 * @param int $user_id  The user id.
 	 */
 	private function before_enrolled_courses_query( $user_id ) {
 		/**
@@ -345,7 +353,7 @@ class Sensei_Learner {
 			return false;
 		}
 
-		// get the user details
+		// Get the user details.
 		$user = get_user_by( 'id', $user_id );
 
 		if ( ! empty( $user->first_name ) && ! empty( $user->last_name ) ) {
@@ -367,7 +375,7 @@ class Sensei_Learner {
 		 */
 		return apply_filters( 'sensei_learner_full_name', $full_name, $user_id );
 
-	}//end get_full_name()
+	}
 
 	/**
 	 * Get all active learner ids for a course.
@@ -375,6 +383,8 @@ class Sensei_Learner {
 	 * @param int $course_id Course ID.
 	 *
 	 * @deprecated 3.0.0
+	 *
+	 * @return array
 	 */
 	public static function get_all_active_learner_ids_for_course( $course_id ) {
 		_deprecated_function( __METHOD__, '3.0.0' );
@@ -408,6 +418,8 @@ class Sensei_Learner {
 	 * @param array $args
 	 *
 	 * @deprecated 3.0.0
+	 *
+	 * @return mixed | int
 	 */
 	public static function get_all( $args ) {
 		_deprecated_function( __METHOD__, '3.0.0' );
@@ -437,13 +449,13 @@ class Sensei_Learner {
 			'order'   => $args['order'],
 		);
 
-		// Searching users on statuses requires sub-selecting the statuses by user_ids
+		// Searching users on statuses requires sub-selecting the statuses by user_ids.
 		if ( $args['search'] ) {
 			$user_args = array(
 				'search' => '*' . $args['search'] . '*',
 				'fields' => 'ID',
 			);
-			// Filter for extending
+			// Filter for extending.
 			$user_args = apply_filters( 'sensei_learners_search_users', $user_args );
 			if ( ! empty( $user_args ) ) {
 				$learners_search          = new WP_User_Query( $user_args );
@@ -453,7 +465,7 @@ class Sensei_Learner {
 
 		$activity_args = apply_filters( 'sensei_learners_filter_users', $activity_args );
 
-		// WP_Comment_Query doesn't support SQL_CALC_FOUND_ROWS, so instead do this twice
+		// WP_Comment_Query doesn't support SQL_CALC_FOUND_ROWS, so instead do this twice.
 		$total_learners = Sensei_Utils::sensei_check_for_activity(
 			array_merge(
 				$activity_args,
@@ -470,13 +482,13 @@ class Sensei_Learner {
 			$activity_args['offset'] = $new_paged * $activity_args['number'];
 		}
 		$learners = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
-		// Need to always return an array, even with only 1 item
+		// Need to always return an array, even with only 1 item.
 		if ( ! is_array( $learners ) ) {
 			$learners = array( $learners );
 		}
 
 		return $learners;
-	} // End get_learners()
+	}
 
 	/**
 	 * Get learner from Query Var
@@ -489,11 +501,11 @@ class Sensei_Learner {
 			return false;
 		}
 		if ( false !== filter_var( $query_var, FILTER_VALIDATE_INT ) ) {
-			return get_user_by( 'id', $query_var ); // get requested learner object by id
+			return get_user_by( 'id', $query_var ); // Get requested learner object by id.
 		}
 
 		if ( false !== filter_var( $query_var, FILTER_VALIDATE_EMAIL ) ) {
-			return get_user_by( 'email', $query_var ); // get requested learner object by email
+			return get_user_by( 'email', $query_var ); // Get requested learner object by email.
 		}
 
 		$by_slug = get_user_by( 'slug', $query_var );
