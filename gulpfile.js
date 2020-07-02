@@ -36,6 +36,7 @@ var paths = {
 		'node_modules/select2/dist/js/select2.full.min.js',
 	],
 	packageContents: [
+		'assets/**/*.js',
 		'assets/dist/**/*',
 		'assets/vendor/**/*',
 		'changelog.txt',
@@ -96,7 +97,7 @@ gulp.task( 'build-unsafe', gulp.series( 'clean', 'webpack', 'vendor' ) );
 
 gulp.task( 'copy-package', function() {
 	return gulp
-		.src( paths.packageContents, { base: '.' } )
+		.src( paths.packageContents, { base: '.', ignore: '**/*.test.js' } )
 		.pipe( gulp.dest( paths.packageDir ) );
 } );
 
