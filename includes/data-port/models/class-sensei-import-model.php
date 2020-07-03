@@ -198,6 +198,21 @@ abstract class Sensei_Import_Model extends Sensei_Data_Port_Model {
 	}
 
 	/**
+	 * Add warning for a line in the model.
+	 *
+	 * @param string $message  Warning message.
+	 * @param array  $log_data Log data.
+	 */
+	protected function add_line_warning( $message, $log_data = [] ) {
+		$this->task->get_job()->add_line_warning(
+			$this->get_model_key(),
+			$this->line_number,
+			$message,
+			$this->get_error_data( $log_data )
+		);
+	}
+
+	/**
 	 * Stores an import id to the job.
 	 */
 	protected function store_import_id() {
