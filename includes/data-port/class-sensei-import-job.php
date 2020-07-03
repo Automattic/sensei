@@ -58,6 +58,8 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 	/**
 	 * Set a line result value.
 	 *
+	 * @access private
+	 *
 	 * @param string $model_key   Model key.
 	 * @param int    $line_number Line number.
 	 * @param int    $result      Result value from class constants RESULT_ERROR, RESULT_WARNING, RESULT_SUCCESS.
@@ -75,6 +77,8 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 
 	/**
 	 * Add warning for a line.
+	 *
+	 * @access private
 	 *
 	 * @param string $model_key   Model key.
 	 * @param int    $line_number Line number.
