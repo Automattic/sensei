@@ -99,7 +99,7 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 			]
 		);
 
-		// Endpoint to start the job.
+		// Endpoint to get the logs.
 		register_rest_route(
 			$this->namespace,
 			$this->rest_base . '/(?P<job_id>[0-9a-z]+)/logs',
@@ -118,7 +118,7 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 	 * Resolve the job ID parameter.
 	 *
 	 * @param int  $job_id        Job ID.
-	 * @param bool $allow_current Allow special ID of `current` to get the active job.
+	 * @param bool $allow_current Allow special ID of `active` to get the active job.
 	 *
 	 * @return Sensei_Data_Port_Job|null
 	 */

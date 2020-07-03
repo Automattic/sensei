@@ -539,7 +539,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	/**
 	 * Returns true if job is started.
 	 *
-	 * @return bool True if job is completed.
+	 * @return bool True if job is started.
 	 */
 	public function is_started() {
 		return $this->is_started;
@@ -577,9 +577,9 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	/**
 	 * Get the state for a specific key.
 	 *
-	 * @param string $state_key  The key of the state.
+	 * @param string $state_key The key of the state.
 	 *
-	 * @return mixed  The state.
+	 * @return mixed The state.
 	 */
 	public function get_state( $state_key ) {
 		return isset( $this->state[ $state_key ] ) ? $this->state[ $state_key ] : [];
@@ -588,8 +588,8 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	/**
 	 * Update the state of a specific key.
 	 *
-	 * @param string $state_key  The key of the state.
-	 * @param mixed  $state      The state.
+	 * @param string $state_key The key of the state.
+	 * @param mixed  $state     The state.
 	 */
 	public function set_state( $state_key, $state ) {
 		$this->has_changed         = true;
