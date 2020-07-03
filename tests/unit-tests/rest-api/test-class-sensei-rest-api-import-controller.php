@@ -122,19 +122,22 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 			wp_set_current_user( $user_id );
 		}
 
-		$job_results = Sensei_Import_Job::get_default_results();
+		$job_results = $this->get_default_result_counts();
 
 		$expected_status_codes = [ 401, 403 ];
 		if ( $is_authorized ) {
 			$expected_status_codes = [ 200 ];
 
 			$job = Sensei_Data_Port_Manager::instance()->create_import_job( get_current_user_id() );
-			$job->increment_result( Sensei_Import_Course_Model::MODEL_KEY, Sensei_Import_Job::RESULT_SUCCESS );
-			$job->increment_result( Sensei_Import_Course_Model::MODEL_KEY, Sensei_Import_Job::RESULT_SUCCESS );
-			$job->increment_result( Sensei_Import_Course_Model::MODEL_KEY, Sensei_Import_Job::RESULT_ERROR );
+			$job->set_line_result( Sensei_Import_Course_Model::MODEL_KEY, 1, Sensei_Import_Job::RESULT_SUCCESS );
+			$job->set_line_result( Sensei_Import_Course_Model::MODEL_KEY, 2, Sensei_Import_Job::RESULT_SUCCESS );
+			$job->set_line_result( Sensei_Import_Course_Model::MODEL_KEY, 3, Sensei_Import_Job::RESULT_ERROR );
+			$job->set_line_result( Sensei_Import_Course_Model::MODEL_KEY, 1, Sensei_Import_Job::RESULT_WARNING );
+			$job->set_line_result( Sensei_Import_Course_Model::MODEL_KEY, 4, Sensei_Import_Job::RESULT_WARNING );
 
-			$job_results[ Sensei_Import_Course_Model::MODEL_KEY ][ Sensei_Import_Job::RESULT_SUCCESS ] = 2;
-			$job_results[ Sensei_Import_Course_Model::MODEL_KEY ][ Sensei_Import_Job::RESULT_ERROR ]   = 1;
+			$job_results[ Sensei_Import_Course_Model::MODEL_KEY ]['success'] = 1;
+			$job_results[ Sensei_Import_Course_Model::MODEL_KEY ]['error']   = 1;
+			$job_results[ Sensei_Import_Course_Model::MODEL_KEY ]['warning'] = 2;
 
 			$job->persist();
 
@@ -300,7 +303,7 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 					'status'     => 'setup',
 					'percentage' => 0,
 				],
-				'results' => Sensei_Import_Job::get_default_results(),
+				'results' => $this->get_default_result_counts(),
 			];
 
 			$this->assertResultValidJob( $response->get_data(), $expected_parts );
@@ -379,7 +382,7 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 					'status'     => 'setup',
 					'percentage' => 0,
 				],
-				'results' => Sensei_Import_Job::get_default_results(),
+				'results' => $this->get_default_result_counts(),
 			];
 
 			$this->assertTrue( isset( $response->get_data()['deleted'] ) );
@@ -903,5 +906,27 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 		);
 
 		return $tmp;
+	}
+
+	/**
+	 * Get the default value for the result counts.
+	 *
+	 * @return array
+	 */
+	private function get_default_result_counts() {
+		$results     = Sensei_Import_Job::get_default_results();
+		$result_keys = [
+			'error',
+			'warning',
+			'success',
+		];
+
+		foreach ( $results as $model_key => $counts ) {
+			foreach ( $result_keys as $result_key ) {
+				$results[ $model_key ][ $result_key ] = 0;
+			}
+		}
+
+		return $results;
 	}
 }

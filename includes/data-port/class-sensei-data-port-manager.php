@@ -131,6 +131,8 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 	 * Create a data import job.
 	 *
 	 * @param int $user_id  The user which started the job.
+	 *
+	 * @return Sensei_Import_Job
 	 */
 	public function create_import_job( $user_id ) {
 		$job_id = md5( uniqid( '', true ) );

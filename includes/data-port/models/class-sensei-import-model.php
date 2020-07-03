@@ -71,7 +71,6 @@ abstract class Sensei_Import_Model extends Sensei_Data_Port_Model {
 		return $self;
 	}
 
-
 	/**
 	 * Check to see if the post already exists in the database.
 	 *

@@ -14,8 +14,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Import_Job extends Sensei_Data_Port_Job {
 	const MAPPED_ID_STATE_KEY = '_map';
-	const RESULT_ERROR        = 'error';
-	const RESULT_SUCCESS      = 'success';
+	const RESULT_ERROR        = -1;
+	const RESULT_WARNING      = 0;
+	const RESULT_SUCCESS      = 1;
 
 	/**
 	 * The array of the import tasks.
@@ -55,18 +56,21 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 	}
 
 	/**
-	 * Increment result count for a model.
+	 * Set a line result value.
 	 *
-	 * @param string $model_key Model key.
-	 * @param string $result    Result key (success, error).
+	 * @param string $model_key   Model key.
+	 * @param int    $line_number Line number.
+	 * @param int    $result      Result value from class constants RESULT_ERROR, RESULT_WARNING, RESULT_SUCCESS.
 	 */
-	public function increment_result( $model_key, $result ) {
-		if ( ! isset( $this->results[ $model_key ][ $result ] ) ) {
-			return;
+	public function set_line_result( $model_key, $line_number, $result ) {
+		if (
+			! isset( $this->results[ $model_key ][ $line_number ] )
+			|| $this->results[ $model_key ][ $line_number ] > $result
+		) {
+			// Once a result is set, it can only get worse.
+			$this->has_changed                           = true;
+			$this->results[ $model_key ][ $line_number ] = $result;
 		}
-
-		$this->has_changed = true;
-		$this->results[ $model_key ][ $result ]++;
 	}
 
 	/**
@@ -249,11 +253,9 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 	}
 
 	/**
-	 * Get the default results array.
-	 *
-	 * @return array
+	 * Get the result counts for each model.
 	 */
-	public static function get_default_results() {
+	public function get_result_counts() {
 		$model_keys = [
 			Sensei_Import_Question_Model::MODEL_KEY,
 			Sensei_Import_Course_Model::MODEL_KEY,
@@ -261,21 +263,39 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 		];
 
 		$result_keys = [
-			self::RESULT_SUCCESS,
-			self::RESULT_ERROR,
+			'error'   => self::RESULT_ERROR,
+			'warning' => self::RESULT_WARNING,
+			'success' => self::RESULT_SUCCESS,
 		];
 
 		$results = [];
-
 		foreach ( $model_keys as $model_key ) {
-			$results[ $model_key ] = [];
+			if ( ! isset( $this->results[ $model_key ] ) ) {
+				$this->results[ $model_key ] = [];
+			}
 
-			foreach ( $result_keys as $result_key ) {
-				$results[ $model_key ][ $result_key ] = 0;
+			$results[ $model_key ] = [];
+			$value_counts          = array_count_values( $this->results[ $model_key ] );
+
+			foreach ( $result_keys as $friendly_name => $result_value ) {
+				$results[ $model_key ][ $friendly_name ] = isset( $value_counts[ $result_value ] ) ? $value_counts[ $result_value ] : 0;
 			}
 		}
 
 		return $results;
+	}
+
+	/**
+	 * Get the default results array.
+	 *
+	 * @return array
+	 */
+	public static function get_default_results() {
+		return [
+			Sensei_Import_Question_Model::MODEL_KEY => [],
+			Sensei_Import_Course_Model::MODEL_KEY   => [],
+			Sensei_Import_Lesson_Model::MODEL_KEY   => [],
+		];
 	}
 
 	/**

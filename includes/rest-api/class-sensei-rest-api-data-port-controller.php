@@ -320,7 +320,7 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 			'id'      => $job->get_job_id(),
 			'status'  => $job->get_status(),
 			'files'   => $job->get_files_data(),
-			'results' => $job->get_results(),
+			'results' => $job->get_result_counts(),
 		];
 	}
 
