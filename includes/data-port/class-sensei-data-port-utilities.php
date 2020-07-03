@@ -181,6 +181,51 @@ class Sensei_Data_Port_Utilities {
 	}
 
 	/**
+	 * Validate file mime type.
+	 *
+	 * @param array  $wp_filetype        File type returned from the function `wp_check_filetype_and_ext`.
+	 * @param array  $allowed_mime_types Allowed mime types.
+	 * @param string $file_name          File name to validate by extension, as fallback for administrators.
+	 *
+	 * @return true|WP_Error
+	 */
+	public static function validate_file_mime_type( $wp_filetype, $allowed_mime_types, $file_name = null ) {
+		$valid_mime_type  = $wp_filetype['type'] && in_array( $wp_filetype['type'], $allowed_mime_types, true );
+		$valid_extensions = self::mime_types_extensions( $allowed_mime_types );
+
+		// If we cannot determine the type, allow check based on extension for administrators.
+		if ( ! $wp_filetype['type'] && current_user_can( 'unfiltered_upload' ) && null !== $file_name ) {
+			$valid_mime_type = in_array( pathinfo( $file_name, PATHINFO_EXTENSION ), $valid_extensions, true );
+		}
+
+		if ( ! $valid_mime_type ) {
+			return new WP_Error(
+				'sensei_data_port_unexpected_file_type',
+				// translators: Placeholder is list of file extensions.
+				sprintf( __( 'File type is not supported. Must be one of the following: %s.', 'sensei-lms' ), implode( ', ', $valid_extensions ) )
+			);
+		}
+
+		return true;
+	}
+
+	/**
+	 * Get an array of extensions.
+	 *
+	 * @param array $mime_types Array of mime types.
+	 *
+	 * @return array Array of valid extensions.
+	 */
+	private static function mime_types_extensions( $mime_types ) {
+		$extensions = [];
+		foreach ( array_keys( $mime_types ) as $ext_list ) {
+			$extensions = array_merge( $extensions, explode( '|', $ext_list ) );
+		}
+
+		return array_unique( $extensions );
+	}
+
+	/**
 	 * Get a term based on human readable string and create it if needed. If the taxonomy is hierarchical,
 	 * this method processes that as well and returns the \WP_Term object for the last in their hierarchy.
 	 *
