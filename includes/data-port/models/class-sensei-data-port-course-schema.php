@@ -73,7 +73,8 @@ class Sensei_Data_Port_Course_Schema extends Sensei_Data_Port_Schema {
 				'type' => 'string',
 			],
 			self::COLUMN_IMAGE            => [
-				'type' => 'url-or-file',
+				'type'       => 'url-or-file',
+				'mime_types' => $this->get_allowed_mime_types( 'image' ),
 			],
 			self::COLUMN_VIDEO            => [
 				'type' => 'video',

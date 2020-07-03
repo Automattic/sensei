@@ -100,7 +100,8 @@ class Sensei_Data_Port_Question_Schema extends Sensei_Data_Port_Schema {
 				'default' => true,
 			],
 			self::COLUMN_MEDIA           => [
-				'type' => 'url-or-file',
+				'type'       => 'url-or-file',
+				'mime_types' => $this->get_allowed_mime_types(),
 			],
 			self::COLUMN_CATEGORIES      => [
 				'type' => 'string',
