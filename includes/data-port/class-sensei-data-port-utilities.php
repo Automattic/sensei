@@ -53,12 +53,13 @@ class Sensei_Data_Port_Utilities {
 	 * Get an attachment by providing its source. The source can be a URL or a filename from the media library. If the
 	 * source is an external URL, it will be retrieved and an appropriate attachment will be created.
 	 *
-	 * @param string $source     Filename or URL.
-	 * @param int    $parent_id  Id of the parent post.
+	 * @param string $source             Filename or URL.
+	 * @param int    $parent_id          Id of the parent post.
+	 * @param array  $allowed_mime_types Allowed mime types.
 	 *
 	 * @return int|WP_Error  Attachment id on success, WP_Error on failure.
 	 */
-	public static function get_attachment_from_source( $source, $parent_id = 0 ) {
+	public static function get_attachment_from_source( $source, $parent_id = 0, $allowed_mime_types = null ) {
 		if ( false === filter_var( $source, FILTER_VALIDATE_URL ) ) {
 
 			$attachments = get_posts(
@@ -87,7 +88,7 @@ class Sensei_Data_Port_Utilities {
 			$attachment_id = attachment_url_to_postid( $source );
 
 			if ( ! $attachment_id ) {
-				$attachment_id = self::create_attachment_from_url( $source, $parent_id );
+				$attachment_id = self::create_attachment_from_url( $source, $parent_id, $allowed_mime_types );
 			}
 		}
 
@@ -99,12 +100,13 @@ class Sensei_Data_Port_Utilities {
 	 * downloaded file. If the file has been already downloaded an linked to an attachment, it returns the existing
 	 * attachment instead.
 	 *
-	 * @param string $external_url  The external url.
-	 * @param int    $parent_id     The attachment's parent id.
+	 * @param string $external_url       The external url.
+	 * @param int    $parent_id          The attachment's parent id.
+	 * @param array  $allowed_mime_types Allowed mime types.
 	 *
 	 * @return int|WP_Error  The attachment id or an error.
 	 */
-	public static function create_attachment_from_url( $external_url, $parent_id = 0 ) {
+	public static function create_attachment_from_url( $external_url, $parent_id = 0, $allowed_mime_types = null ) {
 		require_once ABSPATH . 'wp-admin/includes/image.php';
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 		require_once ABSPATH . 'wp-admin/includes/media.php';
@@ -138,8 +140,11 @@ class Sensei_Data_Port_Utilities {
 		$timeout  = apply_filters( 'sensei_import_attachment_request_timeout', 10 );
 		$response = wp_safe_remote_get( $external_url, [ 'timeout' => $timeout ] );
 
-		if ( is_wp_error( $response ) ) {
-			return $response;
+		if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
+			return new WP_Error(
+				'sensei_data_port_attachment_failure',
+				__( 'No attachment with the specified file name was found.', 'sensei-lms' )
+			);
 		}
 
 		$upload_result = wp_upload_bits( basename( $external_url ), null, wp_remote_retrieve_body( $response ) );
@@ -152,6 +157,14 @@ class Sensei_Data_Port_Utilities {
 		$file_url  = $upload_result['url'];
 
 		$wp_filetype = wp_check_filetype_and_ext( $file_path, basename( $file_path ) );
+
+		if ( null !== $allowed_mime_types ) {
+			$valid_mime_type = self::validate_file_mime_type( $wp_filetype, $allowed_mime_types, $file_path );
+
+			if ( is_wp_error( $valid_mime_type ) ) {
+				return $valid_mime_type;
+			}
+		}
 
 		$attachment_args = [
 			'post_content'   => $file_url,

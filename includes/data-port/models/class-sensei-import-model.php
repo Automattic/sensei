@@ -186,7 +186,7 @@ abstract class Sensei_Import_Model extends Sensei_Data_Port_Model {
 		if ( '' === $thumbnail ) {
 			delete_post_meta( $post_id, '_thumbnail_id' );
 		} else {
-			$attachment_id = Sensei_Data_Port_Utilities::get_attachment_from_source( $thumbnail );
+			$attachment_id = Sensei_Data_Port_Utilities::get_attachment_from_source( $thumbnail, 0, $this->schema->get_schema()[ $column_name ]['mime_types'] );
 
 			if ( is_wp_error( $attachment_id ) ) {
 				return $attachment_id;

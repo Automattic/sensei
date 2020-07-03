@@ -183,7 +183,9 @@ class Sensei_Import_Question_Model extends Sensei_Import_Model {
 	 * @return null|string
 	 */
 	private function get_question_media_value() {
-		$value = $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_MEDIA );
+		$column_name = Sensei_Data_Port_Question_Schema::COLUMN_MEDIA;
+
+		$value = $this->get_value( $column_name );
 		if ( null === $value ) {
 			return null;
 		}
@@ -192,7 +194,7 @@ class Sensei_Import_Question_Model extends Sensei_Import_Model {
 			return '';
 		}
 
-		return Sensei_Data_Port_Utilities::get_attachment_from_source( $value, $this->get_post_id() );
+		return Sensei_Data_Port_Utilities::get_attachment_from_source( $value, $this->get_post_id(), $this->schema->get_schema()[ $column_name ]['mime_types'] );
 	}
 
 	/**
