@@ -74,6 +74,21 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 	}
 
 	/**
+	 * Add warning for a line.
+	 *
+	 * @param string $model_key   Model key.
+	 * @param int    $line_number Line number.
+	 * @param string $message     Warning message.
+	 * @param array  $log_data    Log data.
+	 */
+	public function add_line_warning( $model_key, $line_number, $message, $log_data = [] ) {
+		$log_data['line'] = $line_number;
+
+		$this->set_line_result( $model_key, $line_number, self::RESULT_WARNING );
+		$this->add_log_entry( $message, self::LOG_LEVEL_NOTICE, $log_data );
+	}
+
+	/**
 	 * Get the configuration for expected files.
 	 *
 	 * @return array {

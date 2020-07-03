@@ -154,6 +154,39 @@ class Sensei_Import_Job_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test `Sensei_Import_Job::add_line_warning` marks line as having a warning and adds log entries.
+	 */
+	public function testAddLineWarning() {
+		$expected_results = $this->get_default_result_counts();
+		$job              = Sensei_Import_Job::create( 'test-job', 0 );
+		$this->assertEquals( $expected_results, $job->get_result_counts(), 'Should equal the default value' );
+
+		$expected_logs = [
+			[
+				'message' => 'Test warning A',
+				'level'   => Sensei_Import_Job::LOG_LEVEL_NOTICE,
+				'data'    => [
+					'line' => 1,
+				],
+			],
+			[
+				'message' => 'Test warning B',
+				'level'   => Sensei_Import_Job::LOG_LEVEL_NOTICE,
+				'data'    => [
+					'line' => 1,
+				],
+			],
+		];
+
+		$job->add_line_warning( Sensei_Import_Course_Model::MODEL_KEY, 1, $expected_logs[0]['message'] );
+		$job->add_line_warning( Sensei_Import_Course_Model::MODEL_KEY, 1, $expected_logs[1]['message'] );
+		$expected_results[ Sensei_Import_Course_Model::MODEL_KEY ]['warning']++;
+
+		$this->assertEquals( $expected_results, $job->get_result_counts(), 'Should have 1 warning' );
+		$this->assertEquals( $expected_logs, $job->get_logs() );
+	}
+
+	/**
 	 * Get a temporary file from a source file.
 	 *
 	 * @param string $file_path File to copy.
