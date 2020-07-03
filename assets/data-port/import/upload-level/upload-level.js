@@ -88,37 +88,42 @@ export const UploadLevels = ( {
 					);
 				}
 
+				/* eslint-disable jsx-a11y/label-has-for */
 				return (
 					<li key={ level.key } className="sensei-upload-file-line">
-						<p className="sensei-upload-file-line__description">
-							{ level.description }
-						</p>
-						<FormFileUpload
-							// Include key to redraw after each upload attempt for onChange of the same file.
-							key={ levelState.isUploading }
-							isSecondary
-							accept={ [ '.csv', '.txt' ] }
-							disabled={
-								levelState.isUploading || levelState.isDeleting
-							}
-							onChange={ ( event ) =>
-								uploadFile(
-									jobId,
-									event.target.files,
-									level.key,
-									uploadFileForLevel,
-									throwEarlyUploadError
-								)
-							}
-						>
-							{ levelState.isUploading
-								? __( 'Uploading…', 'sensei-lms' )
-								: __( 'Upload', 'sensei-lms' ) }
-						</FormFileUpload>
+						<label className="sensei-upload-file-line__field-wrapper">
+							<span className="sensei-upload-file-line__description">
+								{ level.description }
+							</span>
+							<FormFileUpload
+								// Include key to redraw after each upload attempt for onChange of the same file.
+								key={ levelState.isUploading }
+								isSecondary
+								accept={ [ '.csv', '.txt' ] }
+								disabled={
+									levelState.isUploading ||
+									levelState.isDeleting
+								}
+								onChange={ ( event ) =>
+									uploadFile(
+										jobId,
+										event.target.files,
+										level.key,
+										uploadFileForLevel,
+										throwEarlyUploadError
+									)
+								}
+							>
+								{ levelState.isUploading
+									? __( 'Uploading…', 'sensei-lms' )
+									: __( 'Upload', 'sensei-lms' ) }
+							</FormFileUpload>
+						</label>
 						{ message }
 						{ deleteButton }
 					</li>
 				);
+				/* eslint-enable */
 			} ) }
 		</ol>
 	);
