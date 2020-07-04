@@ -8,18 +8,36 @@ const adminTracking = [
 ];
 
 window.sensei_log_event = function( event_name, properties ) {
-	if ( sensei_event_logging.enabled ) {
-		let data = {
-			action: 'sensei_log_event',
-			event_name: event_name,
-		};
+	const actionName = 'sensei_log_event';
+
+	if ( ! sensei_event_logging.enabled ) {
+		return;
+	}
+
+	if ( navigator.sendBeacon ) {
+		const formData = new FormData();
+
+		formData.append( 'action', actionName );
+		formData.append( 'event_name', event_name );
 
 		if ( properties ) {
-			data.properties = properties;
+			formData.append( 'properties', JSON.stringify( properties ) );
 		}
 
-		jQuery.get( ajaxurl, data );
+		navigator.sendBeacon( ajaxurl, formData );
+		return;
 	}
+
+	let data = {
+		action: actionName,
+		event_name: event_name,
+	};
+
+	if ( properties ) {
+		data.properties = properties;
+	}
+
+	jQuery.get( ajaxurl, data );
 };
 
 jQuery( document ).ready( function( $ ) {
