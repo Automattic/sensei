@@ -200,6 +200,10 @@ class Sensei_Data_Port_Utilities {
 	 * @return true|WP_Error
 	 */
 	public static function validate_file_mime_type( $mime_type, $allowed_mime_types = null, $file_name = null ) {
+		if ( null === $allowed_mime_types ) {
+			return true;
+		}
+
 		$valid_mime_type  = $mime_type && in_array( $mime_type, $allowed_mime_types, true );
 		$valid_extensions = self::mime_types_extensions( $allowed_mime_types );
 
