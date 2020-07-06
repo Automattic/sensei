@@ -156,14 +156,11 @@ class Sensei_Data_Port_Utilities {
 		$file_path = $upload_result['file'];
 		$file_url  = $upload_result['url'];
 
-		$wp_filetype = wp_check_filetype_and_ext( $file_path, basename( $file_path ) );
+		$wp_filetype     = wp_check_filetype_and_ext( $file_path, basename( $file_path ) );
+		$valid_mime_type = self::validate_file_mime_type( $wp_filetype['type'], $allowed_mime_types, $file_path );
 
-		if ( null !== $allowed_mime_types ) {
-			$valid_mime_type = self::validate_file_mime_type( $wp_filetype, $allowed_mime_types, $file_path );
-
-			if ( is_wp_error( $valid_mime_type ) ) {
-				return $valid_mime_type;
-			}
+		if ( is_wp_error( $valid_mime_type ) ) {
+			return $valid_mime_type;
 		}
 
 		$attachment_args = [
@@ -196,18 +193,18 @@ class Sensei_Data_Port_Utilities {
 	/**
 	 * Validate file mime type.
 	 *
-	 * @param array  $wp_filetype        File type returned from the function `wp_check_filetype_and_ext`.
+	 * @param string $mime_type          File mime type.
 	 * @param array  $allowed_mime_types Allowed mime types.
 	 * @param string $file_name          File name to validate by extension, as fallback for administrators.
 	 *
 	 * @return true|WP_Error
 	 */
-	public static function validate_file_mime_type( $wp_filetype, $allowed_mime_types, $file_name = null ) {
-		$valid_mime_type  = $wp_filetype['type'] && in_array( $wp_filetype['type'], $allowed_mime_types, true );
+	public static function validate_file_mime_type( $mime_type, $allowed_mime_types = null, $file_name = null ) {
+		$valid_mime_type  = $mime_type && in_array( $mime_type, $allowed_mime_types, true );
 		$valid_extensions = self::mime_types_extensions( $allowed_mime_types );
 
 		// If we cannot determine the type, allow check based on extension for administrators.
-		if ( ! $wp_filetype['type'] && current_user_can( 'unfiltered_upload' ) && null !== $file_name ) {
+		if ( ! $mime_type && current_user_can( 'unfiltered_upload' ) && null !== $file_name ) {
 			$valid_mime_type = in_array( pathinfo( $file_name, PATHINFO_EXTENSION ), $valid_extensions, true );
 		}
 

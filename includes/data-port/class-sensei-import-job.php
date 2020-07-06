@@ -167,7 +167,7 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 		if ( isset( $file_config['mime_types'] ) ) {
 			$wp_filetype = wp_check_filetype_and_ext( $tmp_file, $file_name, $file_config['mime_types'] );
 
-			$valid_mime_type = Sensei_Data_Port_Utilities::validate_file_mime_type( $wp_filetype, $file_config['mime_types'], $file_name );
+			$valid_mime_type = Sensei_Data_Port_Utilities::validate_file_mime_type( $wp_filetype['type'], $file_config['mime_types'], $file_name );
 
 			if ( is_wp_error( $valid_mime_type ) ) {
 				$valid_mime_type->add_data( [ 'status' => 400 ] );
