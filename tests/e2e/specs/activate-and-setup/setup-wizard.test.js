@@ -50,6 +50,7 @@ describe( 'Setup Wizard', () => {
 		await expect( page ).toClick( '.sensei-message a', {
 			text: 'Setup Wizard',
 		} );
+		await page.waitForNavigation();
 		await expect( page ).toMatch( 'Welcome to Sensei LMS!' );
 	} );
 
