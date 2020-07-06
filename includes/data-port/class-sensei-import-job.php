@@ -281,8 +281,8 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 	/**
 	 * Returns the post id for an import id or check if the post exists.
 	 *
-	 * @param string $post_type  The post type.
-	 * @param string $import_id  The import id.
+	 * @param string $post_type The post type.
+	 * @param string $import_id The import id.
 	 *
 	 * @return int|null The post id if the post exists, null otherwise.
 	 */

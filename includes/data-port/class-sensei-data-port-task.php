@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * This class has the shared logic for data port tasks..
+ * This class has the shared logic for data port tasks.
  */
 abstract class Sensei_Data_Port_Task {
 	/**
