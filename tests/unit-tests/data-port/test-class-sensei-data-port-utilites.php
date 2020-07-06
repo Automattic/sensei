@@ -325,7 +325,27 @@ class Sensei_Data_Port_Utilities_Test extends WP_UnitTestCase {
 	/**
 	 * Tests that an error is returned when mime type is invalid.
 	 */
-	public function testAttachmentCreationFailsWhenMimeTypeIsInvalid() {
+	public function testAttachmentMimeType() {
+		$thumbnail_id = $this->factory->attachment->create(
+			[
+				'file'           => 'existant-file.png',
+				'post_mime_type' => 'image/png',
+			]
+		);
+
+		$allowed_mime_types = [
+			'jpg|jpeg|jpe' => 'image/jpeg',
+		];
+
+		$result = Sensei_Data_Port_Utilities::get_attachment_from_source( 'existant-file.png', 0, $allowed_mime_types );
+		$this->assertInstanceOf( 'WP_Error', $result );
+		$this->assertEquals( 'sensei_data_port_unexpected_file_type', $result->get_error_code() );
+	}
+
+	/**
+	 * Tests that an error is returned when mime type is invalid.
+	 */
+	public function testExternalAttachmentMimeType() {
 		tests_add_filter(
 			'pre_http_request',
 			function() {

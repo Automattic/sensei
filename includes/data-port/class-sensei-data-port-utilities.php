@@ -83,6 +83,13 @@ class Sensei_Data_Port_Utilities {
 			}
 
 			$attachment_id = $attachments[0];
+
+			$attachment_mime_type = get_post_mime_type( $attachment_id );
+			$valid_mime_type      = self::validate_file_mime_type( $attachment_mime_type, $allowed_mime_types, $source );
+
+			if ( is_wp_error( $valid_mime_type ) ) {
+				return $valid_mime_type;
+			}
 		} else {
 			// In case a local URL is provided, try to convert it to the attachment.
 			$attachment_id = attachment_url_to_postid( $source );
