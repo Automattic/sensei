@@ -420,7 +420,8 @@ class Sensei_Utils {
 		 */
 		$file_upload_args = apply_filters( 'sensei_file_upload_args', array( 'test_form' => false ) );
 
-		$file_return = wp_handle_upload( $file, $file_upload_args );
+		$file['name'] = md5( uniqid() ) . '_' . $file['name'];
+		$file_return  = wp_handle_upload( $file, $file_upload_args );
 
 		if ( isset( $file_return['error'] ) || isset( $file_return['upload_error_handler'] ) ) {
 			return false;

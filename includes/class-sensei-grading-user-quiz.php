@@ -155,10 +155,11 @@ class Sensei_Grading_User_Quiz {
 						// Get uploaded file
 						if ( $user_answer_content ) {
 							$attachment_id    = $user_answer_content;
-							$answer_media_url = $answer_media_filename = '';
 							if ( 0 < intval( $attachment_id ) ) {
 								$answer_media_url      = wp_get_attachment_url( $attachment_id );
-								$answer_media_filename = basename( $answer_media_url );
+								$filename_raw          = basename( $answer_media_url );
+								$answer_media_filename = preg_match( '/^[a-f0-9]{32}_/', $filename_raw ) ? substr( $filename_raw, 33 ) : $filename_raw;
+
 								if ( $answer_media_url && $answer_media_filename ) {
 									// translators: Placeholder %1$s is a link to the submitted file.
 									$user_answer_content = sprintf( __( 'Submitted file: %1$s', 'sensei-lms' ), '<a href="' . esc_url( $answer_media_url ) . '" target="_blank">' . esc_html( $answer_media_filename ) . '</a>' );
