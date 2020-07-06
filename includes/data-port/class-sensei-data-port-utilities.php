@@ -85,7 +85,8 @@ class Sensei_Data_Port_Utilities {
 			$attachment_id = $attachments[0];
 
 			$attachment_mime_type = get_post_mime_type( $attachment_id );
-			$valid_mime_type      = self::validate_file_mime_type( $attachment_mime_type, $allowed_mime_types, $source );
+			$file                 = get_attached_file( $attachment_id );
+			$valid_mime_type      = self::validate_file_mime_type( $attachment_mime_type, $allowed_mime_types, $file );
 
 			if ( is_wp_error( $valid_mime_type ) ) {
 				return $valid_mime_type;
@@ -130,15 +131,18 @@ class Sensei_Data_Port_Utilities {
 			]
 		);
 
+		$attachment_id = $existing_attachment[0];
+
 		if ( ! empty( $existing_attachment ) ) {
-			$attachment_mime_type = get_post_mime_type( $existing_attachment[0] );
-			$valid_mime_type      = self::validate_file_mime_type( $attachment_mime_type, $allowed_mime_types, $external_url );
+			$attachment_mime_type = get_post_mime_type( $attachment_id );
+			$file                 = get_attached_file( $attachment_id );
+			$valid_mime_type      = self::validate_file_mime_type( $attachment_mime_type, $allowed_mime_types, $file );
 
 			if ( is_wp_error( $valid_mime_type ) ) {
 				return $valid_mime_type;
 			}
 
-			return $existing_attachment[0];
+			return $attachment_id;
 		}
 
 		/**
