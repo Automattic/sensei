@@ -359,6 +359,28 @@ class Sensei_Data_Port_Utilities_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests that if a file has been already uploaded from an external url, but the mime type is invalid.
+	 */
+	public function testAttachmentFailsWhenExistantMimeTypeIsInvalid() {
+		$thumbnail_id = $this->factory->attachment->create(
+			[
+				'file'           => 'existant-file.png',
+				'post_mime_type' => 'image/png',
+			]
+		);
+		$external_url = 'http://anexternalurl.com/files/downloaded-file.png';
+		update_post_meta( $thumbnail_id, '_sensei_attachment_source_key', md5( $external_url ) );
+
+		$allowed_mime_types = [
+			'jpg|jpeg|jpe' => 'image/jpeg',
+		];
+
+		$result = Sensei_Data_Port_Utilities::get_attachment_from_source( $external_url, 0, $allowed_mime_types );
+		$this->assertInstanceOf( 'WP_Error', $result );
+		$this->assertEquals( 'sensei_data_port_unexpected_file_type', $result->get_error_code() );
+	}
+
+	/**
 	 * Tests that a file is uploaded and an attachment is created if the HTTP call is successful.
 	 */
 	public function testAttachmentIsCreatedWhenHTTPCallSuccessful() {

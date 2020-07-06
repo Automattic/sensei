@@ -124,6 +124,13 @@ class Sensei_Data_Port_Utilities {
 		);
 
 		if ( ! empty( $existing_attachment ) ) {
+			$attachment_mime_type = get_post_mime_type( $existing_attachment[0] );
+			$valid_mime_type      = self::validate_file_mime_type( $attachment_mime_type, $allowed_mime_types, $external_url );
+
+			if ( is_wp_error( $valid_mime_type ) ) {
+				return $valid_mime_type;
+			}
+
 			return $existing_attachment[0];
 		}
 
