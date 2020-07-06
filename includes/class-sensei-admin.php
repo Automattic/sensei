@@ -1831,6 +1831,10 @@ class Sensei_Admin {
 		$event_name = $_REQUEST['event_name'];
 		$properties = isset( $_REQUEST['properties'] ) ? $_REQUEST['properties'] : [];
 
+		if ( is_string( $properties ) ) {
+			$properties = json_decode( stripslashes( $properties ), true );
+		}
+
 		// Set the source to js-event.
 		add_filter(
 			'sensei_event_logging_source',
