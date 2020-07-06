@@ -29,3 +29,13 @@ export function cleanupSenseiData() {
 	`;
 	return wpcli( `eval "${ code }"` );
 }
+
+export function siteUrl( url ) {
+	const baseUrl = process.env.WP_BASE_URL;
+	return [ baseUrl, url ].join( '/' );
+}
+
+export function adminUrl( url ) {
+	const baseUrl = process.env.WP_BASE_URL;
+	return [ baseUrl, 'wp-admin', url ].join( '/' );
+}
