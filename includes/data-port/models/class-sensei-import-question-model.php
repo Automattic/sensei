@@ -125,8 +125,7 @@ class Sensei_Import_Question_Model extends Sensei_Import_Model {
 			}
 
 			if ( is_wp_error( $new_value ) ) {
-				return new WP_Error(
-					'sensei_import_question_meta_field_invalid',
+				$this->add_line_warning(
 					sprintf(
 						// translators: First placeholder is name of field, second placeholder is error returned.
 						__( 'Meta field "%1$s" is invalid: %2$s', 'sensei-lms' ),
@@ -134,6 +133,8 @@ class Sensei_Import_Question_Model extends Sensei_Import_Model {
 						$new_value->get_error_message()
 					)
 				);
+
+				continue;
 			}
 
 			$current_value = null;

@@ -203,7 +203,7 @@ abstract class Sensei_Import_File_Process_Task
 	 * @param int            $line_number  The line number in the file.
 	 * @param WP_Error|array $data         The current line as returned from Sensei_Import_CSV_Reader::read_lines().
 	 *
-	 * @return mixed
+	 * @return bool
 	 */
 	protected function process_line( $line_number, $data ) {
 		if ( empty( $data ) ) {
@@ -238,7 +238,7 @@ abstract class Sensei_Import_File_Process_Task
 				)
 			);
 
-			$this->get_job()->increment_result( $model->get_model_key(), Sensei_Import_Job::RESULT_ERROR );
+			$this->get_job()->set_line_result( $model->get_model_key(), $line_number, Sensei_Import_Job::RESULT_ERROR );
 
 			return false;
 		}
@@ -255,12 +255,12 @@ abstract class Sensei_Import_File_Process_Task
 				)
 			);
 
-			$this->get_job()->increment_result( $model->get_model_key(), Sensei_Import_Job::RESULT_ERROR );
+			$this->get_job()->set_line_result( $model->get_model_key(), $line_number, Sensei_Import_Job::RESULT_ERROR );
 
 			return false;
 		}
 
-		$this->get_job()->increment_result( $model->get_model_key(), Sensei_Import_Job::RESULT_SUCCESS );
+		$this->get_job()->set_line_result( $model->get_model_key(), $line_number, Sensei_Import_Job::RESULT_SUCCESS );
 
 		return true;
 	}

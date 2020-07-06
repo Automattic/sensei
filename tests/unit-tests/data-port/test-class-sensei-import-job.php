@@ -123,22 +123,67 @@ class Sensei_Import_Job_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test incrementResult method.
+	 * Test set_line_result method.
 	 */
-	public function testIncrementResult() {
-		$expected_results = Sensei_Import_Job::get_default_results();
+	public function testSetLineResults() {
+		$expected_results = $this->get_default_result_counts();
 		$job              = Sensei_Import_Job::create( 'test-job', 0 );
-		$this->assertEquals( $expected_results, $job->get_results(), 'Should equal the default value' );
+		$this->assertEquals( $expected_results, $job->get_result_counts(), 'Should equal the default value' );
 
 		// Try incrementing a known result.
-		$job->increment_result( Sensei_Import_Course_Model::MODEL_KEY, Sensei_Import_Job::RESULT_SUCCESS );
-		$job->increment_result( Sensei_Import_Course_Model::MODEL_KEY, Sensei_Import_Job::RESULT_SUCCESS );
-		$expected_results[ Sensei_Import_Course_Model::MODEL_KEY ][ Sensei_Import_Job::RESULT_SUCCESS ] += 2;
-		$this->assertEquals( $expected_results, $job->get_results(), 'Should have the known result incremented by 2' );
+		$job->set_line_result( Sensei_Import_Course_Model::MODEL_KEY, 1, Sensei_Import_Job::RESULT_SUCCESS );
+		$job->set_line_result( Sensei_Import_Course_Model::MODEL_KEY, 1, Sensei_Import_Job::RESULT_SUCCESS );
 
-		// Try incrementing a known result.
-		$job->increment_result( Sensei_Import_Course_Model::MODEL_KEY, 'meh' );
-		$this->assertEquals( $expected_results, $job->get_results(), 'Should not have changed' );
+		$expected_results[ Sensei_Import_Course_Model::MODEL_KEY ]['success']++;
+		$this->assertEquals( $expected_results, $job->get_result_counts(), 'Should have the known result incremented by 1' );
+
+		$job->set_line_result( Sensei_Import_Course_Model::MODEL_KEY, 2, Sensei_Import_Job::RESULT_SUCCESS );
+		$expected_results[ Sensei_Import_Course_Model::MODEL_KEY ]['success']++;
+		$this->assertEquals( $expected_results, $job->get_result_counts(), 'Should have the known result incremented by 1' );
+
+		$job->set_line_result( Sensei_Import_Course_Model::MODEL_KEY, 2, Sensei_Import_Job::RESULT_WARNING );
+		$job->set_line_result( Sensei_Import_Course_Model::MODEL_KEY, 3, Sensei_Import_Job::RESULT_ERROR );
+		$expected_results[ Sensei_Import_Course_Model::MODEL_KEY ]['success']--;
+		$expected_results[ Sensei_Import_Course_Model::MODEL_KEY ]['error']++;
+		$expected_results[ Sensei_Import_Course_Model::MODEL_KEY ]['warning']++;
+
+		$this->assertEquals( $expected_results, $job->get_result_counts(), 'Line 2 should have moved the success to warning and a new line error' );
+
+		$job->set_line_result( Sensei_Import_Course_Model::MODEL_KEY, 3, Sensei_Import_Job::RESULT_SUCCESS );
+		$this->assertEquals( $expected_results, $job->get_result_counts(), 'Result should not have changed. Once an error always an error.' );
+	}
+
+	/**
+	 * Test `Sensei_Import_Job::add_line_warning` marks line as having a warning and adds log entries.
+	 */
+	public function testAddLineWarning() {
+		$expected_results = $this->get_default_result_counts();
+		$job              = Sensei_Import_Job::create( 'test-job', 0 );
+		$this->assertEquals( $expected_results, $job->get_result_counts(), 'Should equal the default value' );
+
+		$expected_logs = [
+			[
+				'message' => 'Test warning A',
+				'level'   => Sensei_Import_Job::LOG_LEVEL_NOTICE,
+				'data'    => [
+					'line' => 1,
+				],
+			],
+			[
+				'message' => 'Test warning B',
+				'level'   => Sensei_Import_Job::LOG_LEVEL_NOTICE,
+				'data'    => [
+					'line' => 1,
+				],
+			],
+		];
+
+		$job->add_line_warning( Sensei_Import_Course_Model::MODEL_KEY, 1, $expected_logs[0]['message'] );
+		$job->add_line_warning( Sensei_Import_Course_Model::MODEL_KEY, 1, $expected_logs[1]['message'] );
+		$expected_results[ Sensei_Import_Course_Model::MODEL_KEY ]['warning']++;
+
+		$this->assertEquals( $expected_results, $job->get_result_counts(), 'Should have 1 warning' );
+		$this->assertEquals( $expected_logs, $job->get_logs() );
 	}
 
 	/**
@@ -155,5 +200,27 @@ class Sensei_Import_Job_Test extends WP_UnitTestCase {
 		file_put_contents( $tmp, file_get_contents( $file_path ) );
 
 		return $tmp;
+	}
+
+	/**
+	 * Get the default value for the result counts.
+	 *
+	 * @return array
+	 */
+	private function get_default_result_counts() {
+		$results     = Sensei_Import_Job::get_default_results();
+		$result_keys = [
+			'error',
+			'warning',
+			'success',
+		];
+
+		foreach ( $results as $model_key => $counts ) {
+			foreach ( $result_keys as $result_key ) {
+				$results[ $model_key ][ $result_key ] = 0;
+			}
+		}
+
+		return $results;
 	}
 }

@@ -236,6 +236,11 @@ class Sensei_REST_API_Import_Controller extends Sensei_REST_API_Data_Port_Contro
 		$schema = parent::get_item_schema();
 
 		$results_schema = [];
+		$result_keys    = [
+			'error',
+			'warning',
+			'success',
+		];
 
 		foreach ( Sensei_Import_Job::get_default_results() as $model_key => $results ) {
 			$results_schema[ $model_key ] = [
@@ -243,7 +248,7 @@ class Sensei_REST_API_Import_Controller extends Sensei_REST_API_Data_Port_Contro
 				'properties' => [],
 			];
 
-			foreach ( $results as $result_key => $result ) {
+			foreach ( $result_keys as $result_key => $count ) {
 				$results_schema[ $model_key ]['properties'][ $result_key ] = [
 					// translators: %1$s placeholder is object type; %2$s is result descriptor (success, error).
 					'description' => sprintf( __( 'Number of %1$s items with %2$s result', 'sensei-lms' ), $model_key, $result_key ),
