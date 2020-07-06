@@ -37,9 +37,7 @@ class Sensei_Import_Question_Model extends Sensei_Import_Model {
 	 * @return true|WP_Error
 	 */
 	public function sync_post() {
-		$postarr = $this->get_post_array();
-
-		$post_id = wp_insert_post( $postarr, true );
+		$post_id = wp_insert_post( $this->get_post_array(), true );
 
 		if ( is_wp_error( $post_id ) ) {
 			return $post_id;
@@ -56,10 +54,7 @@ class Sensei_Import_Question_Model extends Sensei_Import_Model {
 		$this->store_import_id();
 
 		// Sync meta. This happens outside of the post save because question media needs the post ID.
-		$meta_result = $this->sync_meta();
-		if ( is_wp_error( $meta_result ) ) {
-			return $meta_result;
-		}
+		$this->sync_meta();
 
 		return true;
 	}
@@ -108,8 +103,6 @@ class Sensei_Import_Question_Model extends Sensei_Import_Model {
 
 	/**
 	 * Synchronize the post meta.
-	 *
-	 * @return true|WP_Error
 	 */
 	private function sync_meta() {
 		$current_meta = get_post_meta( $this->get_post_id() );
@@ -143,20 +136,9 @@ class Sensei_Import_Question_Model extends Sensei_Import_Model {
 			}
 
 			if ( $new_value !== $current_value ) {
-				if ( false === update_post_meta( $this->get_post_id(), $field, $new_value ) ) {
-					return new WP_Error(
-						'sensei_import_question_meta_field_failed',
-						sprintf(
-							// translators: First placeholder is name of field.
-							__( 'Meta field "$1%s" is could not be saved.', 'sensei-lms' ),
-							$field
-						)
-					);
-				}
+				update_post_meta( $this->get_post_id(), $field, $new_value );
 			}
 		}
-
-		return true;
 	}
 
 	/**
