@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Sensei_Import_Lessons class.
+ * File containing the Sensei_Import_Prerequisite_Trait trait.
  *
  * @package sensei
  */
@@ -33,10 +33,11 @@ trait Sensei_Import_Prerequisite_Trait {
 		];
 
 		if ( ! $reference_post_id ) {
-			$this->get_job()->add_log_entry(
+			$this->get_job()->add_line_warning(
+				$model_key,
+				$line_number,
 				// translators: Placeholder is reference to another post.
 				sprintf( __( 'Unable to set the prerequisite to "%s"', 'sensei-lms' ), $reference ),
-				Sensei_Data_Port_Job::LOG_LEVEL_NOTICE,
 				$error_data
 			);
 
@@ -44,9 +45,10 @@ trait Sensei_Import_Prerequisite_Trait {
 		}
 
 		if ( (int) $reference_post_id === $post_id ) {
-			$this->get_job()->add_log_entry(
+			$this->get_job()->add_line_warning(
+				$model_key,
+				$line_number,
 				__( 'Unable to set the prerequisite to the same entry', 'sensei-lms' ),
-				Sensei_Data_Port_Job::LOG_LEVEL_NOTICE,
 				$error_data
 			);
 
@@ -64,7 +66,7 @@ trait Sensei_Import_Prerequisite_Trait {
 	 * @param int    $line_number Line number.
 	 */
 	public function add_prerequisite_task( $post_id, $reference, $line_number ) {
-		return $this->add_post_process_task(
+		$this->add_post_process_task(
 			'prerequisite',
 			[
 				$post_id,
