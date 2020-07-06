@@ -1,6 +1,12 @@
 <?php
+/**
+ * File containing the Sensei_Grading_User_Quiz class.
+ *
+ * @package sensei
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -12,32 +18,50 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.3.0
  */
 class Sensei_Grading_User_Quiz {
-	public $user_id;
-	public $lesson_id;
-	public $quiz_id;
+	/**
+	 * The user id which this quiz is for.
+	 *
+	 * @var int
+	 */
+	private $user_id;
 
 	/**
-	 * Constructor
+	 * The lesson id which the quiz belongs to.
+	 *
+	 * @var int
+	 */
+	private $lesson_id;
+
+	/**
+	 * The quiz id.
+	 *
+	 * @var int
+	 */
+	private $quiz_id;
+
+	/**
+	 * Sensei_Grading_User_Quiz constructor.
 	 *
 	 * @since  1.3.0
+	 *
+	 * @param int $user_id  The user id.
+	 * @param int $quiz_id  The quiz id.
 	 */
 	public function __construct( $user_id = 0, $quiz_id = 0 ) {
 		$this->user_id   = intval( $user_id );
 		$this->quiz_id   = intval( $quiz_id );
 		$this->lesson_id = get_post_meta( $this->quiz_id, '_quiz_lesson', true );
-	} // End __construct()
+	}
 
 	/**
-	 * build_data_array builds the data for use on the page
-	 * Overloads the parent method
+	 * Builds the data for use on the page.
 	 *
 	 * @since  1.3.0
 	 * @return array
 	 */
-	public function build_data_array() {
-		$data_array = Sensei_Utils::sensei_get_quiz_questions( $this->quiz_id );
-		return $data_array;
-	} // End build_data_array()
+	private function build_data_array() {
+		return Sensei_Utils::sensei_get_quiz_questions( $this->quiz_id );
+	}
 
 	/**
 	 * Display output to the admin view
@@ -45,10 +69,9 @@ class Sensei_Grading_User_Quiz {
 	 * This view is shown when grading a quiz for a single user in admin under grading
 	 *
 	 * @since  1.3.0
-	 * @return html
 	 */
 	public function display() {
-		// Get data for the user
+		// Get data for the user.
 		$questions = $this->build_data_array();
 
 		$count                 = 0;
@@ -152,9 +175,9 @@ class Sensei_Grading_User_Quiz {
 						$type_name  = __( 'File Upload', 'sensei-lms' );
 						$grade_type = 'manual-grade';
 
-						// Get uploaded file
+						// Get uploaded file.
 						if ( $user_answer_content ) {
-							$attachment_id    = $user_answer_content;
+							$attachment_id = $user_answer_content;
 							if ( 0 < intval( $attachment_id ) ) {
 								$answer_media_url      = wp_get_attachment_url( $attachment_id );
 								$filename_raw          = basename( $answer_media_url );
@@ -170,7 +193,7 @@ class Sensei_Grading_User_Quiz {
 						}
 						break;
 					default:
-						// Nothing
+						// Nothing.
 						break;
 				}
 
@@ -260,7 +283,7 @@ class Sensei_Grading_User_Quiz {
 							<?php
 							foreach ( $right_answer as $_right_answer ) {
 
-								if ( 'multi-line' == Sensei()->question->get_question_type( $question->ID ) ) {
+								if ( 'multi-line' === Sensei()->question->get_question_type( $question->ID ) ) {
 									$_right_answer = htmlspecialchars_decode( nl2br( $_right_answer ) );
 								}
 
@@ -282,12 +305,12 @@ class Sensei_Grading_User_Quiz {
 
 			$quiz_grade = intval( $user_quiz_grade );
 			$all_graded = 'no';
-			if ( intval( $count ) == intval( $graded_count ) ) {
+			if ( intval( $count ) === intval( $graded_count ) ) {
 				$all_graded = 'yes';
 			}
 
 			?>
-		  <input type="hidden" name="total_grade" id="total_grade" value="<?php echo esc_attr( $user_quiz_grade_total ); ?>" />
+			<input type="hidden" name="total_grade" id="total_grade" value="<?php echo esc_attr( $user_quiz_grade_total ); ?>" />
 			<input type="hidden" name="total_questions" id="total_questions" value="<?php echo esc_attr( $count ); ?>" />
 			<input type="hidden" name="quiz_grade_total" id="quiz_grade_total" value="<?php echo esc_attr( $quiz_grade_total ); ?>" />
 			<input type="hidden" name="total_graded_questions" id="total_graded_questions" value="<?php echo esc_attr( $graded_count ); ?>" />
@@ -310,9 +333,8 @@ class Sensei_Grading_User_Quiz {
 			</script>
 		</form>
 		<?php
-	} // End display()
-
-} // End Class
+	}
+}
 
 /**
  * Class WooThemes_Sensei_Grading_User_Quiz
