@@ -120,12 +120,17 @@ class Sensei_Grading {
 	 * load_data_object creates new instance of class
 	 *
 	 * @since  1.3.0
+	 * @deprecated 3.3.0  Use constructors instead.
+	 *
 	 * @param  string    $name          Name of class
 	 * @param  integer   $data          constructor arguments
 	 * @param  undefined $optional_data optional constructor arguments
 	 * @return object                 class instance object
 	 */
 	public function load_data_object( $name = '', $data = 0, $optional_data = null ) {
+		// User constructors directly.
+		_deprecated_function( __METHOD__, '2.0.0' );
+
 		// Load Analysis data
 		$object_name = 'Sensei_Grading_' . $name;
 		if ( is_null( $optional_data ) ) {
@@ -181,7 +186,9 @@ class Sensei_Grading {
 		if ( ! empty( $_GET['view'] ) ) {
 			$view = esc_html( $_GET['view'] );
 		}
-		$sensei_grading_overview = $this->load_data_object( 'Main', compact( 'course_id', 'lesson_id', 'user_id', 'view' ) );
+
+		$sensei_grading_overview = new Sensei_Grading_Main( compact( 'course_id', 'lesson_id', 'user_id', 'view' ) );
+		$sensei_grading_overview->prepare_items();
 
 		// Wrappers
 		do_action( 'grading_before_container' );
@@ -218,7 +225,9 @@ class Sensei_Grading {
 		if ( isset( $_GET['quiz_id'] ) ) {
 			$quiz_id = intval( $_GET['quiz_id'] );
 		}
-		$sensei_grading_user_profile = $this->load_data_object( 'User_Quiz', $user_id, $quiz_id );
+
+		$sensei_grading_user_profile = new Sensei_Grading_User_Quiz( $user_id, $quiz_id );
+
 		// Wrappers
 		do_action( 'grading_before_container' );
 		do_action( 'grading_wrapper_container', 'top' );
