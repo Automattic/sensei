@@ -203,7 +203,7 @@ abstract class Sensei_Import_File_Process_Task
 	 * @param int            $line_number  The line number in the file.
 	 * @param WP_Error|array $data         The current line as returned from Sensei_Import_CSV_Reader::read_lines().
 	 *
-	 * @return mixed
+	 * @return bool
 	 */
 	protected function process_line( $line_number, $data ) {
 		if ( empty( $data ) ) {
