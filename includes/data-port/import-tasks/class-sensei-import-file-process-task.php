@@ -230,7 +230,7 @@ abstract class Sensei_Import_File_Process_Task
 		if ( ! $model->is_valid() ) {
 			$this->get_job()->add_log_entry(
 				__( 'A required field is missing or one of the fields is malformed. Line skipped.', 'sensei-lms' ),
-				Sensei_Data_Port_Job::LOG_LEVEL_NOTICE,
+				Sensei_Data_Port_Job::LOG_LEVEL_ERROR,
 				$model->get_error_data(
 					[
 						'line' => $line_number,
