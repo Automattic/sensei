@@ -323,6 +323,42 @@ class Sensei_Data_Port_Utilities_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests that an error is returned when mime type is invalid.
+	 */
+	public function testAttachmentCreationFailsWhenMimeTypeIsInvalid() {
+		tests_add_filter(
+			'pre_http_request',
+			function() {
+				return [
+					'body'     => 'random content',
+					'response' => [
+						'code' => 200,
+					],
+				];
+			}
+		);
+
+		$allowed_mime_types = [
+			'jpg|jpeg|jpe' => 'image/jpeg',
+		];
+
+		tests_add_filter(
+			'wp_check_filetype_and_ext',
+			function() {
+				return [
+					'ext'             => 'png',
+					'type'            => 'image/png',
+					'proper_filename' => false,
+				];
+			}
+		);
+
+		$result = Sensei_Data_Port_Utilities::get_attachment_from_source( 'http://anexternalurl.com/files/downloaded-file.png', 0, $allowed_mime_types );
+		$this->assertInstanceOf( 'WP_Error', $result );
+		$this->assertEquals( 'sensei_data_port_unexpected_file_type', $result->get_error_code() );
+	}
+
+	/**
 	 * Tests that a file is uploaded and an attachment is created if the HTTP call is successful.
 	 */
 	public function testAttachmentIsCreatedWhenHTTPCallSuccessful() {
@@ -347,4 +383,45 @@ class Sensei_Data_Port_Utilities_Test extends WP_UnitTestCase {
 		$this->assertEquals( md5( $external_url ), get_post_meta( $attachment_id, '_sensei_attachment_source_key', true ) );
 	}
 
+	/**
+	 * Tests that a file with accepted mimetype returns true.
+	 */
+	public function testMimeTypeValid() {
+		$external_url = 'http://anexternalurl.com/files/new-file.png';
+
+		$wp_filetype = [
+			'ext'             => 'png',
+			'type'            => 'image/png',
+			'proper_filename' => false,
+		];
+
+		$allowed_mime_types = [
+			'png' => 'image/png',
+		];
+
+		$is_valid = Sensei_Data_Port_Utilities::validate_file_mime_type( $wp_filetype, $allowed_mime_types, $external_url );
+
+		$this->assertTrue( $is_valid );
+	}
+
+	/**
+	 * Tests that a file with not accepted mimetype returns an error.
+	 */
+	public function testMimeTypeInvalid() {
+		$external_url = 'http://anexternalurl.com/files/new-file.png';
+
+		$wp_filetype = [
+			'ext'             => 'png',
+			'type'            => 'image/png',
+			'proper_filename' => false,
+		];
+
+		$allowed_mime_types = [
+			'jpg|jpeg|jpe' => 'image/jpeg',
+		];
+
+		$is_valid = Sensei_Data_Port_Utilities::validate_file_mime_type( $wp_filetype, $allowed_mime_types, $external_url );
+
+		$this->assertInstanceOf( 'WP_Error', $is_valid );
+	}
 }
