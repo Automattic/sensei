@@ -319,7 +319,7 @@ class Sensei_Data_Port_Utilities_Test extends WP_UnitTestCase {
 
 		$result = Sensei_Data_Port_Utilities::get_attachment_from_source( 'http://anexternalurl.com/files/downloaded-file.png' );
 		$this->assertInstanceOf( 'WP_Error', $result );
-		$this->assertEquals( 'error_code', $result->get_error_code() );
+		$this->assertEquals( 'sensei_data_port_attachment_failure', $result->get_error_code() );
 	}
 
 	/**
@@ -329,7 +329,12 @@ class Sensei_Data_Port_Utilities_Test extends WP_UnitTestCase {
 		tests_add_filter(
 			'pre_http_request',
 			function() {
-				return [ 'body' => 'random content' ];
+				return [
+					'body'     => 'random content',
+					'response' => [
+						'code' => 200,
+					],
+				];
 			}
 		);
 
