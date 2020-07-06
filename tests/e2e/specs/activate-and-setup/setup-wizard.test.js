@@ -1,4 +1,3 @@
-import { deactivatePlugin } from '@wordpress/e2e-test-utils';
 import { cleanupSenseiData, resetSetupWizard } from '../../utils/helpers';
 import { AdminFlow } from '../../utils/flows';
 
@@ -128,8 +127,8 @@ describe( 'Setup Wizard', () => {
 
 	describe( 'Features step', () => {
 		beforeAll( async () => {
-			await deactivatePlugin( 'sensei-media-attachments' );
-			await deactivatePlugin( 'sensei-certificates' );
+			await AdminFlow.deactivatePlugin( 'sensei-media-attachments' );
+			await AdminFlow.deactivatePlugin( 'sensei-certificates' );
 			await openSetupWizard();
 		} );
 
