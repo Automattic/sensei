@@ -114,14 +114,16 @@ const Features = () => {
 
 	// Finish and submit features selection.
 	const finishSelection = () => {
-		if ( 0 === selectedSlugs.length ) {
-			goToNextStep();
-			return;
-		}
-
 		submitStep(
 			{ selected: selectedSlugs },
-			{ onSuccess: () => toggleConfirmation( true ) }
+			{
+				onSuccess: () => {
+					toggleConfirmation( true );
+					if ( 0 === selectedSlugs.length ) {
+						goToNextStep();
+					}
+				},
+			}
 		);
 	};
 
