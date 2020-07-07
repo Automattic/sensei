@@ -323,16 +323,10 @@ class Sensei_Data_Port_Utilities_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that an error is returned when mime type is invalid.
+	 * Tests attachment mime type validation for existant local file.
 	 */
-	public function testAttachmentMimeType() {
-		$thumbnail_id = $this->factory->attachment->create(
-			[
-				'file'           => 'existant-file.png',
-				'post_mime_type' => 'image/png',
-			]
-		);
-
+	public function testExistantLocalAttachmentMimeTypeValidation() {
+		$thumbnail_id       = $this->factory->attachment->create( [ 'file' => 'existant-file.png' ] );
 		$allowed_mime_types = [
 			'jpg|jpeg|jpe' => 'image/jpeg',
 		];
@@ -340,12 +334,19 @@ class Sensei_Data_Port_Utilities_Test extends WP_UnitTestCase {
 		$result = Sensei_Data_Port_Utilities::get_attachment_from_source( 'existant-file.png', 0, $allowed_mime_types );
 		$this->assertInstanceOf( 'WP_Error', $result );
 		$this->assertEquals( 'sensei_data_port_unexpected_file_type', $result->get_error_code() );
+
+		$allowed_mime_types = [
+			'png' => 'image/png',
+		];
+
+		$result = Sensei_Data_Port_Utilities::get_attachment_from_source( 'existant-file.png', 0, $allowed_mime_types );
+		$this->assertEquals( $thumbnail_id, $result );
 	}
 
 	/**
-	 * Tests that an error is returned when mime type is invalid.
+	 * Tests attachment mime type validation for external file.
 	 */
-	public function testExternalAttachmentMimeType() {
+	public function testExternalAttachmentMimeTypeValidation() {
 		tests_add_filter(
 			'pre_http_request',
 			function() {
@@ -358,10 +359,6 @@ class Sensei_Data_Port_Utilities_Test extends WP_UnitTestCase {
 			}
 		);
 
-		$allowed_mime_types = [
-			'jpg|jpeg|jpe' => 'image/jpeg',
-		];
-
 		tests_add_filter(
 			'wp_check_filetype_and_ext',
 			function() {
@@ -373,21 +370,27 @@ class Sensei_Data_Port_Utilities_Test extends WP_UnitTestCase {
 			}
 		);
 
+		$allowed_mime_types = [
+			'jpg|jpeg|jpe' => 'image/jpeg',
+		];
+
 		$result = Sensei_Data_Port_Utilities::get_attachment_from_source( 'http://anexternalurl.com/files/downloaded-file.png', 0, $allowed_mime_types );
 		$this->assertInstanceOf( 'WP_Error', $result );
 		$this->assertEquals( 'sensei_data_port_unexpected_file_type', $result->get_error_code() );
+
+		$allowed_mime_types = [
+			'png' => 'image/png',
+		];
+
+		$result = Sensei_Data_Port_Utilities::get_attachment_from_source( 'http://anexternalurl.com/files/downloaded-file.png', 0, $allowed_mime_types );
+		$this->assertTrue( is_int( $result ) );
 	}
 
 	/**
-	 * Tests that if a file has been already uploaded from an external url, but the mime type is invalid.
+	 * Tests attachment mime type validation for existant external file.
 	 */
-	public function testAttachmentFailsWhenExistantMimeTypeIsInvalid() {
-		$thumbnail_id = $this->factory->attachment->create(
-			[
-				'file'           => 'existant-file.png',
-				'post_mime_type' => 'image/png',
-			]
-		);
+	public function testExistantExternalAttachmentMimeTypeValidation() {
+		$thumbnail_id = $this->factory->attachment->create( [ 'file' => 'existant-file.png' ] );
 		$external_url = 'http://anexternalurl.com/files/downloaded-file.png';
 		update_post_meta( $thumbnail_id, '_sensei_attachment_source_key', md5( $external_url ) );
 
@@ -398,6 +401,13 @@ class Sensei_Data_Port_Utilities_Test extends WP_UnitTestCase {
 		$result = Sensei_Data_Port_Utilities::get_attachment_from_source( $external_url, 0, $allowed_mime_types );
 		$this->assertInstanceOf( 'WP_Error', $result );
 		$this->assertEquals( 'sensei_data_port_unexpected_file_type', $result->get_error_code() );
+
+		$allowed_mime_types = [
+			'png' => 'image/png',
+		];
+
+		$result = Sensei_Data_Port_Utilities::get_attachment_from_source( $external_url, 0, $allowed_mime_types );
+		$this->assertEquals( $thumbnail_id, $result );
 	}
 
 	/**
@@ -426,31 +436,21 @@ class Sensei_Data_Port_Utilities_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that a file with accepted mimetype returns true.
+	 * Tests mime type validation.
 	 */
-	public function testMimeTypeValid() {
-		$external_url = 'http://anexternalurl.com/files/new-file.png';
-
+	public function testMimeTypeValidation() {
+		$file_name          = '/new-file.png';
 		$allowed_mime_types = [
 			'png' => 'image/png',
 		];
-
-		$is_valid = Sensei_Data_Port_Utilities::validate_file_mime_type( 'image/png', $allowed_mime_types, $external_url );
+		$is_valid           = Sensei_Data_Port_Utilities::validate_file_mime_type( 'image/png', $allowed_mime_types, $file_name );
 
 		$this->assertTrue( $is_valid );
-	}
-
-	/**
-	 * Tests that a file with not accepted mimetype returns an error.
-	 */
-	public function testMimeTypeInvalid() {
-		$external_url = 'http://anexternalurl.com/files/new-file.png';
 
 		$allowed_mime_types = [
 			'jpg|jpeg|jpe' => 'image/jpeg',
 		];
-
-		$is_valid = Sensei_Data_Port_Utilities::validate_file_mime_type( 'image/png', $allowed_mime_types, $external_url );
+		$is_valid           = Sensei_Data_Port_Utilities::validate_file_mime_type( 'image/png', $allowed_mime_types, $file_name );
 
 		$this->assertInstanceOf( 'WP_Error', $is_valid );
 	}
