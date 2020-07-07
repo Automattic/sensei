@@ -393,10 +393,7 @@ class Sensei_Main {
 		Sensei_Course_Enrolment_Manager::instance()->init();
 		$this->enrolment_scheduler = Sensei_Enrolment_Job_Scheduler::instance();
 		$this->enrolment_scheduler->init();
-
-		if ( $this->feature_flags->is_enabled( 'importer' ) ) {
-			Sensei_Data_Port_Manager::instance()->init();
-		}
+		Sensei_Data_Port_Manager::instance()->init();
 
 		// Setup Wizard.
 		$this->setup_wizard = Sensei_Setup_Wizard::instance();
@@ -409,9 +406,7 @@ class Sensei_Main {
 			// Load Analysis Reports
 			$this->analysis = new Sensei_Analysis( $this->main_plugin_file_name );
 
-			if ( $this->feature_flags->is_enabled( 'importer' ) ) {
-				new Sensei_Import();
-			}
+			new Sensei_Import();
 
 			if ( $this->feature_flags->is_enabled( 'rest_api_testharness' ) ) {
 				$this->test_harness = new Sensei_Admin_Rest_Api_Testharness( $this->main_plugin_file_name );
@@ -588,10 +583,7 @@ class Sensei_Main {
 	public function deactivation() {
 		$this->usage_tracking->unschedule_tracking_task();
 		Sensei_Scheduler::instance()->cancel_all_jobs();
-
-		if ( $this->feature_flags->is_enabled( 'importer' ) ) {
-			Sensei_Data_Port_Manager::instance()->cancel_all_jobs();
-		}
+		Sensei_Data_Port_Manager::instance()->cancel_all_jobs();
 	}
 
 	/**
