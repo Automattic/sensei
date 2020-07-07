@@ -35,6 +35,8 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 
 		// We need to re-instansiate the controller on each tests to register any hooks.
 		new Sensei_REST_API_Messages_Controller( 'sensei_message' );
+
+		Sensei_Test_Events::reset();
 	}
 
 	/**
@@ -445,6 +447,9 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 
 			$this->assertTrue( isset( $data['files']['questions']['name'] ) );
 			$this->assertEquals( basename( $test_file ), $data['files']['questions']['name'] );
+
+			$events = Sensei_Test_Events::get_logged_events( 'sensei_import_upload_error' );
+			$this->assertEmpty( $events );
 		}
 	}
 
@@ -508,6 +513,9 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 
 			$this->assertTrue( isset( $data['files']['questions']['name'] ) );
 			$this->assertEquals( basename( $test_file ), $data['files']['questions']['name'] );
+
+			$events = Sensei_Test_Events::get_logged_events( 'sensei_import_upload_error' );
+			$this->assertEmpty( $events );
 		}
 	}
 
@@ -549,6 +557,11 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 
 		$this->assertTrue( isset( $data['code'], $data['message'] ) );
 		$this->assertEquals( 'sensei_data_port_unexpected_file_type', $data['code'] );
+
+		$events = Sensei_Test_Events::get_logged_events( 'sensei_import_upload_error' );
+		$this->assertNotEmpty( $events );
+		$this->assertEquals( 'questions', $events[0]['url_args']['type'] );
+		$this->assertEquals( 'sensei_data_port_unexpected_file_type', $events[0]['url_args']['error'] );
 	}
 
 	/**
@@ -589,6 +602,11 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 
 		$this->assertTrue( isset( $data['code'], $data['message'] ) );
 		$this->assertEquals( 'sensei_data_port_unknown_file_key', $data['code'] );
+
+		$events = Sensei_Test_Events::get_logged_events( 'sensei_import_upload_error' );
+		$this->assertNotEmpty( $events );
+		$this->assertEquals( 'dinosaurs', $events[0]['url_args']['type'] );
+		$this->assertEquals( 'sensei_data_port_unknown_file_key', $events[0]['url_args']['error'] );
 	}
 
 	/**
