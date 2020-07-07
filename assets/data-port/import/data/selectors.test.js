@@ -6,6 +6,7 @@ import {
 	isCompleteStep,
 	isFetching,
 	isReadyToStart,
+	getUploadedLevelKeys,
 } from './selectors';
 
 describe( 'Importer selectors', () => {
@@ -200,5 +201,25 @@ describe( 'Importer selectors', () => {
 		};
 
 		expect( isReadyToStart( state ) ).toBeFalsy();
+	} );
+
+	it( 'Should return the uploaded level keys', () => {
+		const state = {
+			upload: {
+				courses: {
+					isUploaded: false,
+				},
+				lessons: {
+					isUploaded: true,
+				},
+				questions: {
+					isUploaded: true,
+				},
+			},
+		};
+
+		const expected = [ 'lessons', 'questions' ];
+
+		expect( getUploadedLevelKeys( state ) ).toEqual( expected );
 	} );
 } );
