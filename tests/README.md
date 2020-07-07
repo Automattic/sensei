@@ -4,7 +4,7 @@
 
 ### Using Varying Vagrant Vagrants
 
-1) `$ vagrant SSH` into the machine running your Sensei setup.
+1) `$ vagrant ssh` into the machine running your Sensei setup.
 
 2) `$ cd /srv/www/wordpress-default/public_html` or `$ cd /srv/www/wordpress-develop/public_html/src` depending on where you run Sensei from.
 
@@ -16,32 +16,52 @@
 
 ### In your local machine
 
-1) Install [PHPUnit](http://phpunit.de/) by following their [installation guide](https://phpunit.de/getting-started.html). If you've installed it correctly, this should display the version:
+The following instructions should work on Linux and macOS. If you want to run the tests on Windows please see [this guide](https://github.com/Automattic/sensei/wiki/Setting-Up-Development-Environment) and the instructions on using Varying Vagrant Vagrants above.
 
-    `$ phpunit --version`
+#### Prerequisites
 
+To run the tests locally, you will need the following:
+1. [Composer](https://getcomposer.org/).
+2. A MySQL database. 
 
-2) Install WordPress and the WP Unit Test lib using the `install.sh` script. Change to the plugin root directory and type:
+Do not use an existing database or you will lose data. To install a database locally, there are two options.
 
-    `$ tests/bin/install.sh`
+##### Install a MySQL database using Docker
 
-**Important**: You might need to change the DB parameters accordingly within the `install.sh` file.
+1. Install docker by following the instructions [here](https://docs.docker.com/get-docker/).
+2. Run `docker run --name mysql_57 -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=<test_db_name> -e MYSQL_USER=<test_user_name> -e MYSQL_PASSWORD=<test_user_password> --rm -d mysql:5.7`
+
+The above will start a MySQL server container and create a database with the specified name and a user with the supplied username and password. To stop the container you can use `docker container stop mysql_57`.
+
+##### Use MySQL Server
+
+To install MySQL follow the instructions provided [here](https://dev.mysql.com/doc/refman/5.7/en/installing.html).
+
+#### Install WP test suite
+
+To install the WP test suite you need to first run `composer install` and `npm install` in the top level directory. Then you need to use the `tests/bin/install-wp-tests.sh` script to install the WP test suite.
+
+If you used Docker to create a database, you need to pass the database name and the user credentials from the previous step. You also need to skip creating a new database:
+
+`TMPDIR=/tmp ./tests/bin/install-wp-tests.sh <test_db_name> <test_user_name> <test_user_password> 127.0.0.1 latest true`
+
+If you used MySQL Server you need to supply the values for the new database only:
+
+`TMPDIR=/tmp ./tests/bin/install-wp-tests.sh <test_db_name> <test_user_name> <test_user_password>`
 
 ## Running Tests
 
-Simply change to the plugin root directory and type:
+To run both PHPUnit and Jest tests you can use the following command in the plugin root directory:
 
     $ gulp test
 
-The tests will execute and you'll be presented with a summary. Code coverage documentation is automatically generated as HTML in the `tmp/coverage` directory.
+If you are interested in PHPUnit tests only, you can use the following:
+    
+    $ ./vendor/bin/phpunit
 
-You can run specific tests by providing the path and filename to the test class:
+You can run specific tests by providing the path and filename to the test class. For example:
 
-    $ phpunit tests/unit-tests/api/webhooks
-
-A text code coverage summary can be displayed using the `--coverage-text` option:
-
-    $ phpunit --coverage-text
+    $ ./vendor/bin/phpunit tests/unit-tests/test-class-admin
 
 ## Writing Tests
 
