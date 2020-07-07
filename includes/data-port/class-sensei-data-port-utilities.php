@@ -82,11 +82,8 @@ class Sensei_Data_Port_Utilities {
 				);
 			}
 
-			$attachment_id = $attachments[0];
-
-			$attachment_mime_type = get_post_mime_type( $attachment_id );
-			$file                 = get_attached_file( $attachment_id );
-			$valid_mime_type      = self::validate_file_mime_type( $attachment_mime_type, $allowed_mime_types, $file );
+			$attachment_id   = $attachments[0];
+			$valid_mime_type = self::validate_file_mime_type_by_attachment_id( $attachment_id, $allowed_mime_types );
 
 			if ( is_wp_error( $valid_mime_type ) ) {
 				return $valid_mime_type;
@@ -131,12 +128,9 @@ class Sensei_Data_Port_Utilities {
 			]
 		);
 
-		$attachment_id = $existing_attachment[0];
-
 		if ( ! empty( $existing_attachment ) ) {
-			$attachment_mime_type = get_post_mime_type( $attachment_id );
-			$file                 = get_attached_file( $attachment_id );
-			$valid_mime_type      = self::validate_file_mime_type( $attachment_mime_type, $allowed_mime_types, $file );
+			$attachment_id   = $existing_attachment[0];
+			$valid_mime_type = self::validate_file_mime_type_by_attachment_id( $attachment_id, $allowed_mime_types );
 
 			if ( is_wp_error( $valid_mime_type ) ) {
 				return $valid_mime_type;
@@ -206,6 +200,21 @@ class Sensei_Data_Port_Utilities {
 		wp_update_attachment_metadata( $attachment_id, wp_generate_attachment_metadata( $attachment_id, $file_path ) );
 
 		return $attachment_id;
+	}
+
+	/**
+	 * Validate file mime type by attachment ID.
+	 *
+	 * @param int   $attachment_id      Attachment ID.
+	 * @param array $allowed_mime_types Allowed mime types.
+	 *
+	 * @return true|WP_Error
+	 */
+	private static function validate_file_mime_type_by_attachment_id( $attachment_id, $allowed_mime_types = null ) {
+		$file_path   = get_attached_file( $attachment_id );
+		$wp_filetype = wp_check_filetype_and_ext( $file_path, basename( $file_path ) );
+
+		return self::validate_file_mime_type( $wp_filetype['type'], $allowed_mime_types, $file_path );
 	}
 
 	/**
