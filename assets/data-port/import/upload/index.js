@@ -1,7 +1,6 @@
 import { withSelect, withDispatch } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
 import { UploadPage } from './upload-page';
-import { partial } from 'lodash';
 
 export default compose(
 	withSelect( ( select ) => {
@@ -16,10 +15,15 @@ export default compose(
 		const { submitStartImport } = dispatch( 'sensei/import' );
 
 		return {
-			submitStartImport: partial(
-				submitStartImport,
-				select( 'sensei/import' ).getJobId()
-			),
+			submitStartImport: () => {
+				submitStartImport( select( 'sensei/import' ).getJobId() );
+
+				// Log continue to import from uploaded files.
+				const type = select( 'sensei/import' )
+					.getUploadedLevelKeys()
+					.join( ',' );
+				window.sensei_log_event( 'import_continue_click', { type } );
+			},
 		};
 	} )
 )( UploadPage );
