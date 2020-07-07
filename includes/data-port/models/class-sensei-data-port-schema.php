@@ -109,4 +109,24 @@ abstract class Sensei_Data_Port_Schema {
 			)
 		);
 	}
+
+	/**
+	 * Get allowed mime types.
+	 *
+	 * @param string $filter_type Filter to get the allowed mime types filtered by a specific type.
+	 *
+	 * @return array Allowed mime types.
+	 */
+	protected function get_allowed_mime_types( $filter_type = null ) {
+		if ( null === $filter_type ) {
+			return get_allowed_mime_types();
+		}
+
+		return array_filter(
+			get_allowed_mime_types(),
+			function( $mime_type ) use ( $filter_type ) {
+				return 0 === strpos( $mime_type, $filter_type );
+			}
+		);
+	}
 }

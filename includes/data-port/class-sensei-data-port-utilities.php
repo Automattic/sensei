@@ -53,12 +53,13 @@ class Sensei_Data_Port_Utilities {
 	 * Get an attachment by providing its source. The source can be a URL or a filename from the media library. If the
 	 * source is an external URL, it will be retrieved and an appropriate attachment will be created.
 	 *
-	 * @param string $source     Filename or URL.
-	 * @param int    $parent_id  Id of the parent post.
+	 * @param string $source             Filename or URL.
+	 * @param int    $parent_id          Id of the parent post.
+	 * @param array  $allowed_mime_types Allowed mime types.
 	 *
 	 * @return int|WP_Error  Attachment id on success, WP_Error on failure.
 	 */
-	public static function get_attachment_from_source( $source, $parent_id = 0 ) {
+	public static function get_attachment_from_source( $source, $parent_id = 0, $allowed_mime_types = null ) {
 		if ( false === filter_var( $source, FILTER_VALIDATE_URL ) ) {
 
 			$attachments = get_posts(
@@ -81,13 +82,18 @@ class Sensei_Data_Port_Utilities {
 				);
 			}
 
-			$attachment_id = $attachments[0];
+			$attachment_id   = $attachments[0];
+			$valid_mime_type = self::validate_file_mime_type_by_attachment_id( $attachment_id, $allowed_mime_types );
+
+			if ( is_wp_error( $valid_mime_type ) ) {
+				return $valid_mime_type;
+			}
 		} else {
 			// In case a local URL is provided, try to convert it to the attachment.
 			$attachment_id = attachment_url_to_postid( $source );
 
 			if ( ! $attachment_id ) {
-				$attachment_id = self::create_attachment_from_url( $source, $parent_id );
+				$attachment_id = self::create_attachment_from_url( $source, $parent_id, $allowed_mime_types );
 			}
 		}
 
@@ -99,12 +105,13 @@ class Sensei_Data_Port_Utilities {
 	 * downloaded file. If the file has been already downloaded an linked to an attachment, it returns the existing
 	 * attachment instead.
 	 *
-	 * @param string $external_url  The external url.
-	 * @param int    $parent_id     The attachment's parent id.
+	 * @param string $external_url       The external url.
+	 * @param int    $parent_id          The attachment's parent id.
+	 * @param array  $allowed_mime_types Allowed mime types.
 	 *
 	 * @return int|WP_Error  The attachment id or an error.
 	 */
-	public static function create_attachment_from_url( $external_url, $parent_id = 0 ) {
+	public static function create_attachment_from_url( $external_url, $parent_id = 0, $allowed_mime_types = null ) {
 		require_once ABSPATH . 'wp-admin/includes/image.php';
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 		require_once ABSPATH . 'wp-admin/includes/media.php';
@@ -122,7 +129,14 @@ class Sensei_Data_Port_Utilities {
 		);
 
 		if ( ! empty( $existing_attachment ) ) {
-			return $existing_attachment[0];
+			$attachment_id   = $existing_attachment[0];
+			$valid_mime_type = self::validate_file_mime_type_by_attachment_id( $attachment_id, $allowed_mime_types );
+
+			if ( is_wp_error( $valid_mime_type ) ) {
+				return $valid_mime_type;
+			}
+
+			return $attachment_id;
 		}
 
 		/**
@@ -138,8 +152,11 @@ class Sensei_Data_Port_Utilities {
 		$timeout  = apply_filters( 'sensei_import_attachment_request_timeout', 10 );
 		$response = wp_safe_remote_get( $external_url, [ 'timeout' => $timeout ] );
 
-		if ( is_wp_error( $response ) ) {
-			return $response;
+		if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
+			return new WP_Error(
+				'sensei_data_port_attachment_failure',
+				__( 'No attachment with the specified file name was found.', 'sensei-lms' )
+			);
 		}
 
 		$upload_result = wp_upload_bits( basename( $external_url ), null, wp_remote_retrieve_body( $response ) );
@@ -151,7 +168,12 @@ class Sensei_Data_Port_Utilities {
 		$file_path = $upload_result['file'];
 		$file_url  = $upload_result['url'];
 
-		$wp_filetype = wp_check_filetype_and_ext( $file_path, basename( $file_path ) );
+		$wp_filetype     = wp_check_filetype_and_ext( $file_path, basename( $file_path ) );
+		$valid_mime_type = self::validate_file_mime_type( $wp_filetype['type'], $allowed_mime_types, $file_path );
+
+		if ( is_wp_error( $valid_mime_type ) ) {
+			return $valid_mime_type;
+		}
 
 		$attachment_args = [
 			'post_content'   => $file_url,
@@ -178,6 +200,70 @@ class Sensei_Data_Port_Utilities {
 		wp_update_attachment_metadata( $attachment_id, wp_generate_attachment_metadata( $attachment_id, $file_path ) );
 
 		return $attachment_id;
+	}
+
+	/**
+	 * Validate file mime type by attachment ID.
+	 *
+	 * @param int   $attachment_id      Attachment ID.
+	 * @param array $allowed_mime_types Allowed mime types.
+	 *
+	 * @return true|WP_Error
+	 */
+	private static function validate_file_mime_type_by_attachment_id( $attachment_id, $allowed_mime_types = null ) {
+		$file_path   = get_attached_file( $attachment_id );
+		$wp_filetype = wp_check_filetype_and_ext( $file_path, basename( $file_path ) );
+
+		return self::validate_file_mime_type( $wp_filetype['type'], $allowed_mime_types, $file_path );
+	}
+
+	/**
+	 * Validate file mime type.
+	 *
+	 * @param string $mime_type          File mime type.
+	 * @param array  $allowed_mime_types Allowed mime types.
+	 * @param string $file_name          File name to validate by extension, as fallback for administrators.
+	 *
+	 * @return true|WP_Error
+	 */
+	public static function validate_file_mime_type( $mime_type, $allowed_mime_types = null, $file_name = null ) {
+		if ( null === $allowed_mime_types ) {
+			return true;
+		}
+
+		$valid_mime_type  = $mime_type && in_array( $mime_type, $allowed_mime_types, true );
+		$valid_extensions = self::mime_types_extensions( $allowed_mime_types );
+
+		// If we cannot determine the type, allow check based on extension for administrators.
+		if ( ! $mime_type && current_user_can( 'unfiltered_upload' ) && null !== $file_name ) {
+			$valid_mime_type = in_array( pathinfo( $file_name, PATHINFO_EXTENSION ), $valid_extensions, true );
+		}
+
+		if ( ! $valid_mime_type ) {
+			return new WP_Error(
+				'sensei_data_port_unexpected_file_type',
+				// translators: Placeholder is list of file extensions.
+				sprintf( __( 'File type is not supported. Must be one of the following: %s.', 'sensei-lms' ), implode( ', ', $valid_extensions ) )
+			);
+		}
+
+		return true;
+	}
+
+	/**
+	 * Get an array of extensions.
+	 *
+	 * @param array $mime_types Array of mime types.
+	 *
+	 * @return array Array of valid extensions.
+	 */
+	private static function mime_types_extensions( $mime_types ) {
+		$extensions = [];
+		foreach ( array_keys( $mime_types ) as $ext_list ) {
+			$extensions = array_merge( $extensions, explode( '|', $ext_list ) );
+		}
+
+		return array_unique( $extensions );
 	}
 
 	/**

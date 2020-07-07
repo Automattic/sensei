@@ -190,21 +190,11 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 		if ( isset( $file_config['mime_types'] ) ) {
 			$wp_filetype = wp_check_filetype_and_ext( $tmp_file, $file_name, $file_config['mime_types'] );
 
-			$valid_mime_type  = $wp_filetype['type'] && in_array( $wp_filetype['type'], $file_config['mime_types'], true );
-			$valid_extensions = $this->mime_types_extensions( $file_config['mime_types'] );
+			$valid_mime_type = Sensei_Data_Port_Utilities::validate_file_mime_type( $wp_filetype['type'], $file_config['mime_types'], $file_name );
 
-			// If we cannot determine the type, allow check based on extension for administrators.
-			if ( ! $wp_filetype['type'] && current_user_can( 'unfiltered_upload' ) ) {
-				$valid_mime_type = in_array( pathinfo( $file_name, PATHINFO_EXTENSION ), $valid_extensions, true );
-			}
-
-			if ( ! $valid_mime_type ) {
-				return new WP_Error(
-					'sensei_data_port_unexpected_file_type',
-					// translators: Placeholder is list of file extensions.
-					sprintf( __( 'File type is not supported. Must be one of the following: %s.', 'sensei-lms' ), implode( ', ', $valid_extensions ) ),
-					[ 'status' => 400 ]
-				);
+			if ( is_wp_error( $valid_mime_type ) ) {
+				$valid_mime_type->add_data( [ 'status' => 400 ] );
+				return $valid_mime_type;
 			}
 		}
 
@@ -216,22 +206,6 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 		}
 
 		return true;
-	}
-
-	/**
-	 * Get an array of extensions.
-	 *
-	 * @param array $mime_types Array of mime types.
-	 *
-	 * @return array Array of valid extensions.
-	 */
-	private function mime_types_extensions( $mime_types ) {
-		$extensions = [];
-		foreach ( array_keys( $mime_types ) as $ext_list ) {
-			$extensions = array_merge( $extensions, explode( '|', $ext_list ) );
-		}
-
-		return array_unique( $extensions );
 	}
 
 	/**
