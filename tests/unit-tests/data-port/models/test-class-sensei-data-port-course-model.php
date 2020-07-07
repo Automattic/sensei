@@ -9,12 +9,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+require_once SENSEI_TEST_FRAMEWORK_DIR . '/data-port/trait-sensei-data-port-test-helpers.php';
+
 /**
  * Tests for Sensei_Import_Course_Model class.
  *
  * @group data-port
  */
 class Sensei_Import_Course_Model_Test extends WP_UnitTestCase {
+	use Sensei_Data_Port_Test_Helpers;
+
 	/**
 	 * Sensei factory object.
 	 *
@@ -322,14 +326,15 @@ class Sensei_Import_Course_Model_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that an error is returned when the attachment does not exist.
+	 * Tests that a warning is logged when the attachment does not exist.
 	 */
-	public function testSyncPostFailsWhenAttachmentNotFound() {
-		$task   = new Sensei_Import_Courses( Sensei_Import_Job::create( 'test', 0 ) );
+	public function testSyncPostWarnsWhenAttachmentNotFound() {
+		$job    = Sensei_Import_Job::create( 'test', 0 );
+		$task   = new Sensei_Import_Courses( $job );
 		$model  = Sensei_Import_Course_Model::from_source_array( 1, $this->lineData()[0][0], new Sensei_Data_Port_Course_Schema(), $task );
 		$result = $model->sync_post();
 
-		$this->assertInstanceOf( 'WP_Error', $result );
-		$this->assertEquals( 'sensei_data_port_attachment_not_found', $result->get_error_code() );
+		$this->assertTrue( $result );
+		$this->assertJobHasLogEntry( $job, 'No attachment with the specified file name was found.' );
 	}
 }

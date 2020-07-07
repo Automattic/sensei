@@ -9,12 +9,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+require_once SENSEI_TEST_FRAMEWORK_DIR . '/data-port/trait-sensei-data-port-test-helpers.php';
+
 /**
  * Tests for Sensei_Import_Lesson_Model class.
  *
  * @group data-port
  */
 class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
+	use Sensei_Data_Port_Test_Helpers;
+
 	/**
 	 * Sensei factory object.
 	 *
@@ -373,8 +377,8 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 		$model  = Sensei_Import_Lesson_Model::from_source_array( 1, $lesson_data_with_course, new Sensei_Data_Port_Lesson_Schema(), $task );
 		$result = $model->sync_post();
 
-		$this->assertInstanceOf( 'WP_Error', $result, 'Lesson creation should fail when a course which does not exist is supplied.' );
-		$this->assertEquals( 'sensei_data_port_course_not_found', $result->get_error_code() );
+		$this->assertTrue( $result, 'Lesson should still be created when a course which does not exist is supplied.' );
+		$this->assertJobHasLogEntry( $job, "Course does not exist: {$lesson_data_with_course[ Sensei_Data_Port_Lesson_Schema::COLUMN_COURSE ]}." );
 
 		$course_data = [
 			Sensei_Data_Port_Course_Schema::COLUMN_ID    => 'the-import-id',
@@ -449,8 +453,8 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 		$model  = Sensei_Import_Lesson_Model::from_source_array( 1, $lesson_data_with_module, new Sensei_Data_Port_Lesson_Schema(), $task );
 		$result = $model->sync_post();
 
-		$this->assertInstanceOf( 'WP_Error', $result, 'Lesson creation should fail when a course module was supplied but course was empty.' );
-		$this->assertEquals( 'sensei_data_port_course_empty', $result->get_error_code() );
+		$this->assertTrue( $result, 'Lesson should still be created when a module supplied when no course is.' );
+		$this->assertJobHasLogEntry( $job, 'Module is defined while no course is specified.' );
 
 		$course_model = Sensei_Import_Course_Model::from_source_array(
 			1,
@@ -468,15 +472,15 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 		$model  = Sensei_Import_Lesson_Model::from_source_array( 1, $lesson_data_with_module, new Sensei_Data_Port_Lesson_Schema(), $task );
 		$result = $model->sync_post();
 
-		$this->assertInstanceOf( 'WP_Error', $result, 'Lesson creation should fail when the module does not exist.' );
-		$this->assertEquals( 'sensei_data_port_module_not_found', $result->get_error_code() );
+		$this->assertTrue( $result, 'Lesson should still be created when a module supplied for a lesson does not exist.' );
+		$this->assertJobHasLogEntry( $job, "Module does not exist: {$lesson_data_with_module[ Sensei_Data_Port_Lesson_Schema::COLUMN_MODULE ]}." );
 
 		$term   = Sensei_Data_Port_Utilities::get_term( 'the-module', 'module' );
 		$model  = Sensei_Import_Lesson_Model::from_source_array( 1, $lesson_data_with_module, new Sensei_Data_Port_Lesson_Schema(), $task );
 		$result = $model->sync_post();
 
-		$this->assertInstanceOf( 'WP_Error', $result, 'Lesson creation should fail when the module is not part of the linked course.' );
-		$this->assertEquals( 'sensei_data_port_module_not_part_of_course', $result->get_error_code() );
+		$this->assertTrue( $result, 'Lesson should still be created when a module supplied for a lesson is not associated with the course.' );
+		$this->assertJobHasLogEntry( $job, "Module the-module is not part of course {$course_model->get_post_id()}." );
 
 		$created_course = get_posts(
 			[

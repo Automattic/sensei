@@ -11,6 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * This class is responsible for importing the data for a single course.
+ *
+ * @property Sensei_Import_Courses $task Task for importing courses.
  */
 class Sensei_Import_Course_Model extends Sensei_Import_Model {
 	const MODEL_KEY = 'course';
@@ -59,12 +61,17 @@ class Sensei_Import_Course_Model extends Sensei_Import_Model {
 		if ( 0 === $post_id ) {
 			return new WP_Error(
 				'sensei_data_port_creation_failure',
-				__( 'Course insertion failed.', 'sensei-lms' )
+				__( 'Course creation failed.', 'sensei-lms' )
 			);
 		}
 
 		$this->set_post_id( $post_id );
 		$this->store_import_id();
+
+		$result = $this->add_thumbnail_to_post( Sensei_Data_Port_Course_Schema::COLUMN_IMAGE );
+		if ( $result instanceof WP_Error ) {
+			$this->add_line_warning( $result->get_error_message() );
+		}
 
 		$prerequisite = $this->get_value( Sensei_Data_Port_Course_Schema::COLUMN_PREREQUISITE );
 		if ( $prerequisite ) {
@@ -73,21 +80,10 @@ class Sensei_Import_Course_Model extends Sensei_Import_Model {
 			delete_post_meta( $post_id, '_course_prerequisite' );
 		}
 
-		$result = $this->set_course_terms( Sensei_Data_Port_Course_Schema::COLUMN_MODULES, 'module', $teacher );
+		$this->set_course_terms( Sensei_Data_Port_Course_Schema::COLUMN_MODULES, 'module', $teacher );
+		$this->set_course_terms( Sensei_Data_Port_Course_Schema::COLUMN_CATEGORIES, 'course-category' );
 
-		if ( is_wp_error( $result ) ) {
-			return $result;
-		}
-
-		$result = $this->set_course_terms( Sensei_Data_Port_Course_Schema::COLUMN_CATEGORIES, 'course-category' );
-
-		if ( is_wp_error( $result ) ) {
-			return $result;
-		}
-
-		$result = $this->add_thumbnail_to_post( Sensei_Data_Port_Course_Schema::COLUMN_IMAGE );
-
-		return is_wp_error( $result ) ? $result : true;
+		return true;
 	}
 
 	/**
@@ -169,53 +165,54 @@ class Sensei_Import_Course_Model extends Sensei_Import_Model {
 	 * @param string $column_name  The CSV column name which contains the terms.
 	 * @param string $taxonomy     The taxonomy of the terms.
 	 * @param int    $teacher      The teacher id.
-	 *
-	 * @return bool|WP_Error True on success, WP_Error on failure.
 	 */
 	private function set_course_terms( $column_name, $taxonomy, $teacher = null ) {
 		$course_id = $this->get_post_id();
 		$new_terms = $this->get_value( $column_name );
 
 		if ( null === $new_terms ) {
-			return true;
+			return;
 		}
 
 		if ( '' === $new_terms ) {
 			$this->delete_course_terms( $course_id, $taxonomy );
-			return true;
+			return;
 		}
 
-		$new_terms = Sensei_Data_Port_Utilities::split_list_safely( $new_terms, true );
-		$terms     = [];
+		$new_terms    = Sensei_Data_Port_Utilities::split_list_safely( $new_terms, true );
+		$terms        = [];
+		$failed_terms = [];
 
 		foreach ( $new_terms as $new_term ) {
 			$term = Sensei_Data_Port_Utilities::get_term( $new_term, $taxonomy, $teacher );
 
 			if ( false === $term ) {
-				return new WP_Error(
-					'sensei_data_port_creation_failure',
-					// translators: Placeholder is the term which errored.
-					sprintf( __( 'Error getting term: %s.', 'sensei-lms' ), $new_term )
-				);
+				$failed_terms[] = $new_term;
+				continue;
 			}
 
 			$terms[] = $term;
 		}
 
-		$new_term_ids = wp_list_pluck( $terms, 'term_id' );
-
-		$result = wp_set_object_terms( $course_id, $new_term_ids, $taxonomy );
-
-		if ( is_wp_error( $result ) ) {
-			return $result;
+		if ( ! empty( $failed_terms ) ) {
+			$this->add_line_warning(
+				sprintf(
+				// translators: Placeholder is comma separated list of terms that failed to save.
+					__( 'The following terms failed to save: %s', 'sensei-lms' ),
+					implode( ', ', $failed_terms )
+				)
+			);
 		}
 
-		if ( 'module' === $taxonomy ) {
+		$new_term_ids = wp_list_pluck( $terms, 'term_id' );
+		$result       = wp_set_object_terms( $course_id, $new_term_ids, $taxonomy );
+
+		if ( is_wp_error( $result ) ) {
+			$this->add_line_warning( $result->get_error_message() );
+		} elseif ( 'module' === $taxonomy ) {
 			$new_module_order = array_map( 'strval', $new_term_ids );
 			update_post_meta( $course_id, '_module_order', $new_module_order );
 		}
-
-		return true;
 	}
 
 	/**
