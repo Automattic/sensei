@@ -105,16 +105,49 @@ class Sensei_Import_CSV_Reader {
 
 		foreach ( $delimiters as $delimiter ) {
 			$this->file->setCsvControl( $delimiter );
-			$this->file->seek( 0 );
-			$columns = count( $this->file->current() );
 
-			if ( $columns > $max_columns ) {
+			$columns = $this->get_columns_number();
+
+			if ( false !== $columns && $columns > $max_columns ) {
 				$max_columns        = $columns;
 				$selected_delimiter = $delimiter;
 			}
 		}
 
 		$this->file->setCsvControl( $selected_delimiter );
+	}
+
+	/**
+	 * Get the number of columns matching the header with the content.
+	 *
+	 * @return int|false Number of columns or
+	 *                   `false` if the number of columns in the header and content doesn't match.
+	 */
+	private function get_columns_number() {
+		$this->file->seek( 0 );
+		$first_line_columns = count( $this->file->current() );
+
+		// Skip the header.
+		$this->file->next();
+
+		while ( ! $this->file->eof() ) {
+			$second_line         = $this->file->current();
+			$second_line_columns = count( $second_line );
+
+			// SplFileObject->current() returns [ 0 => null ] on empty lines.
+			if ( 1 === $second_line_columns && empty( $second_line[0] ) ) {
+				$this->file->next();
+				continue;
+			}
+
+			if ( $first_line_columns === $second_line_columns ) {
+				return $first_line_columns;
+			}
+
+			return false;
+		}
+
+		return false;
 	}
 
 	/**
