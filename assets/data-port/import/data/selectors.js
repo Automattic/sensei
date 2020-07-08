@@ -31,13 +31,11 @@ export const getFetchError = ( state ) => state.fetchError;
 /**
  * Step state selector.
  *
- * @param {Object}  state         Current state.
- * @param {string}  step          Step name.
- * @param {boolean} shouldResolve Flag whether should invoke the resolver.
+ * @param {Object}  state Current state.
+ * @param {string}  step  Step name.
  *
  * @return {Object} Step data.
  */
-/* eslint-enable */
 export const getStepData = ( state, step ) => state[ step ];
 
 /**
