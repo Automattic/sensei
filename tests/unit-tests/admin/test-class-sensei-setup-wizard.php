@@ -581,38 +581,4 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 		// Revert mocked instance.
 		$property->setValue( $real_instance );
 	}
-
-	/**
-	 * Tests that WCCOM extensions are logged as sensei_plugin_install when activated.
-	 *
-	 * @covers Sensei_Setup_Wizard::log_wccom_plugin_install
-	 */
-	public function testWccomInstallSuccessLogged() {
-
-		$get_sensei_extensions = wp_json_encode(
-			[
-				'products' => [
-					(object) [
-						'product_slug'     => 'test-wccom-plugin',
-						'plugin_file'      => 'test-wccom-plugin/test-wccom-plugin.php',
-						'wccom_product_id' => '00000',
-					],
-				],
-			]
-		);
-		add_filter(
-			'pre_http_request',
-			function() use ( $get_sensei_extensions ) {
-				return [ 'body' => $get_sensei_extensions ];
-			}
-		);
-
-		Sensei()->setup_wizard->update_wizard_user_data( [ 'steps' => [ 'welcome' ] ] );
-
-		do_action( 'activated_plugin', 'test-wccom-plugin/test-wccom-plugin.php' );
-
-		$events = Sensei_Test_Events::get_logged_events( 'sensei_plugin_install' );
-
-		$this->assertEquals( 'test-wccom-plugin', $events[0]['url_args']['slug'] );
-	}
 }

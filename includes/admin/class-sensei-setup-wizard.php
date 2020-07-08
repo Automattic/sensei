@@ -87,8 +87,6 @@ class Sensei_Setup_Wizard {
 		$this->page_slug = 'sensei_setup_wizard';
 		$this->pages     = new Sensei_Setup_Wizard_Pages();
 
-		add_action( 'activated_plugin', [ $this, 'log_wccom_plugin_install' ] );
-
 		if ( is_admin() ) {
 
 			add_action( 'admin_menu', [ $this, 'register_wizard_page' ], 20 );
@@ -618,43 +616,6 @@ class Sensei_Setup_Wizard {
 		set_transient( self::WCCOM_INSTALLING_TRANSIENT, $wccom_extensions, 10 * 60 );
 
 		Sensei_Plugins_Installation::instance()->install_plugins( $extensions_to_install );
-	}
-
-	/**
-	 * Log plugin installation success for WooCommerce.com plugin on activation.
-	 *
-	 * @param string $plugin_file The activated plugin.
-	 */
-	public function log_wccom_plugin_install( $plugin_file ) {
-		if ( empty( $this->get_wizard_user_data( 'steps' ) ) ) {
-			return;
-		}
-
-		$plugin_name = dirname( $plugin_file );
-
-		if ( in_array( $plugin_file, $this->get_wccom_extensions(), true ) ) {
-			sensei_log_event(
-				'plugin_install',
-				[ 'slug' => $plugin_name ]
-			);
-		}
-	}
-
-	/**
-	 * Get the WooCommerce.com plugins files.
-	 *
-	 * @return string[]
-	 */
-	private function get_wccom_extensions() {
-		$wccom_extensions = [];
-
-		foreach ( $this->get_sensei_extensions() as $extension ) {
-			if ( isset( $extension->wccom_product_id ) ) {
-				$wccom_extensions[] = $extension->plugin_file;
-			}
-		}
-
-		return $wccom_extensions;
 	}
 
 	/**
