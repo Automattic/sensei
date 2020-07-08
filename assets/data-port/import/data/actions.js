@@ -15,9 +15,7 @@ import {
 	ERROR_DELETE_IMPORT_DATA_FILE,
 	RESET_STATE,
 	SET_JOB_STATE,
-	SUCCESS_FETCH_IMPORT_LOG,
-	START_FETCH_IMPORT_LOG,
-	ERROR_FETCH_IMPORT_LOG,
+	SET_IMPORT_LOG,
 } from './constants';
 
 import { composeFetchAction } from '../../../shared/data/store-helpers';
@@ -378,22 +376,21 @@ export const errorDeleteLevelFileAction = ( level, error ) => ( {
 } );
 
 /**
- * Load the import log for the given job.
- *
- * @param {string} jobId The job id.
+ * @typedef  {Object} SetImportLogAction
+ * @property {string} type Action type.
+ * @property {Object} data Logs object.
  */
-export const fetchImportLog = composeFetchAction(
-	START_FETCH_IMPORT_LOG,
-	function*( jobId ) {
-		const data = yield fetchFromAPI( {
-			path: buildJobEndpointUrl( jobId, [ 'logs' ] ),
-		} );
-
-		return data;
-	},
-	SUCCESS_FETCH_IMPORT_LOG,
-	ERROR_FETCH_IMPORT_LOG
-);
+/**
+ * Set import logs action creator.
+ *
+ * @param {Object} data Logs object.
+ *
+ * @return {SetImportLogAction} Set import logs action.
+ */
+export const setImportLog = ( data ) => ( {
+	type: SET_IMPORT_LOG,
+	data,
+} );
 
 /**
  * Reset importer state.

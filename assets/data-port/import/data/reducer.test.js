@@ -13,6 +13,7 @@ import {
 	SUCCESS_DELETE_IMPORT_DATA_FILE,
 	ERROR_DELETE_IMPORT_DATA_FILE,
 	SET_JOB_STATE,
+	SET_IMPORT_LOG,
 } from './constants';
 
 describe( 'Importer reducer', () => {
@@ -209,5 +210,15 @@ describe( 'Importer reducer', () => {
 
 		expect( state.upload[ level ].hasError ).toBeTruthy();
 		expect( state.upload[ level ].errorMsg ).toBe( error.message );
+	} );
+
+	it( 'Should set the logs on SET_IMPORT_LOG action', () => {
+		const data = { a: 1 };
+		const state = reducer( undefined, {
+			type: SET_IMPORT_LOG,
+			data,
+		} );
+
+		expect( state.done.logs ).toEqual( data );
 	} );
 } );

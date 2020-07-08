@@ -42,11 +42,9 @@ export const SUCCESS_DELETE_IMPORT_DATA_FILE =
 export const ERROR_DELETE_IMPORT_DATA_FILE = 'ERROR_DELETE_IMPORT_DATA_FILE';
 
 /**
- * Fetch import log constants.
+ * Import log constants.
  */
-export const START_FETCH_IMPORT_LOG = 'START_FETCH_IMPORT_LOG';
-export const SUCCESS_FETCH_IMPORT_LOG = 'SUCCESS_FETCH_IMPORT_LOG';
-export const ERROR_FETCH_IMPORT_LOG = 'ERROR_FETCH_IMPORT_LOG';
+export const SET_IMPORT_LOG = 'SET_IMPORT_LOG';
 
 /**
  * Reset to default state.
