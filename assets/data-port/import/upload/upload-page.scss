@@ -23,12 +23,14 @@
 		&__delete-button,
 		&__delete-button:disabled:hover {
 			color: $gray-30;
+			flex-shrink: 0;
 		}
 
 		&__delete-spinner {
 			width: 20px;
 			height: 20px;
-			margin: 21px 7px;
+			margin: 21px 14px;
+			flex-shrink: 0;
 		}
 
 		.components-form-file-upload {
