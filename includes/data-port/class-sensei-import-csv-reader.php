@@ -190,6 +190,9 @@ class Sensei_Import_CSV_Reader {
 			return [];
 		}
 
+		// Remove BOM if it's present.
+		$column_names[0] = str_replace( "\xEF\xBB\xBF", '', $column_names[0] );
+
 		// Make the column names of the CSV file case insensitive.
 		return array_map(
 			function ( $name ) {
