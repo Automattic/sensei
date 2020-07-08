@@ -7,6 +7,8 @@ import {
 	isFetching,
 	isReadyToStart,
 	getUploadedLevelKeys,
+	getSuccessResults,
+	getLogsBySeverity,
 } from './selectors';
 
 describe( 'Importer selectors', () => {
@@ -221,5 +223,84 @@ describe( 'Importer selectors', () => {
 		const expected = [ 'lessons', 'questions' ];
 
 		expect( getUploadedLevelKeys( state ) ).toEqual( expected );
+	} );
+
+	it( 'Should return a list with the success results', () => {
+		const state = {
+			done: {
+				results: {
+					course: {
+						success: 1,
+					},
+					lesson: {
+						success: 2,
+					},
+					question: {
+						success: 3,
+					},
+				},
+			},
+		};
+
+		const expected = [
+			{
+				key: 'course',
+				count: 1,
+			},
+			{
+				key: 'lesson',
+				count: 2,
+			},
+			{
+				key: 'question',
+				count: 3,
+			},
+		];
+
+		expect( getSuccessResults( state ) ).toEqual( expected );
+	} );
+
+	it( 'Should return the logs by severity', () => {
+		const state = {
+			done: {
+				logs: {
+					items: [
+						{
+							severity: 'error',
+							line: 1,
+						},
+						{
+							severity: 'notice',
+							line: 2,
+						},
+						{
+							severity: 'notice',
+							line: 3,
+						},
+					],
+				},
+			},
+		};
+
+		const expected = {
+			error: [
+				{
+					severity: 'error',
+					line: 1,
+				},
+			],
+			notice: [
+				{
+					severity: 'notice',
+					line: 2,
+				},
+				{
+					severity: 'notice',
+					line: 3,
+				},
+			],
+		};
+
+		expect( getLogsBySeverity( state ) ).toEqual( expected );
 	} );
 } );

@@ -1,5 +1,8 @@
 import { steps } from '../steps';
 import { levels } from '../levels';
+import { get, groupBy } from 'lodash';
+
+const DONE_KEYS = [ 'course', 'lesson', 'question' ];
 
 /**
  * Is fetching importer data selector.
@@ -98,3 +101,26 @@ export const getUploadedLevelKeys = ( { upload } ) =>
 	levels
 		.filter( ( { key } ) => upload[ key ].isUploaded )
 		.map( ( { key } ) => key );
+
+/**
+ * Get success results.
+ *
+ * @param {Object} state Current state.
+ *
+ * @return {Array} Success results.
+ */
+export const getSuccessResults = ( { done } ) =>
+	DONE_KEYS.map( ( key ) => ( {
+		key,
+		count: get( done, [ 'results', key, 'success' ], 0 ),
+	} ) );
+
+/**
+ * Get logs by severity.
+ *
+ * @param {Object} state Current state.
+ *
+ * @return {Object} Object with the logs by severity.
+ */
+export const getLogsBySeverity = ( { done } ) =>
+	groupBy( get( done, 'logs.items', [] ), 'severity' );
