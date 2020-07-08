@@ -224,15 +224,15 @@ class Sensei_Learner {
 		];
 
 		/**
-		 * Filters the arguments of the query which fetches a user's enrolled courses.
+		 * Filters the arguments of the query which fetches a learner's enrolled courses.
 		 *
 		 * @since 3.3.0
-		 * @hook sensei_user_enrolled_courses_args
+		 * @hook sensei_learner_enrolled_courses_args
 		 *
 		 * @param {array} $query_args  The query args.
 		 * @param {int}   $user_id     The user id.
 		 */
-		return apply_filters( 'sensei_user_enrolled_courses_args', $query_args, $user_id );
+		return apply_filters( 'sensei_learner_enrolled_courses_args', $query_args, $user_id );
 	}
 
 	/**
