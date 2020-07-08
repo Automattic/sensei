@@ -626,21 +626,35 @@ class Sensei_Setup_Wizard {
 	 * @param string $plugin_file The activated plugin.
 	 */
 	public function log_wccom_plugin_install( $plugin_file ) {
-
-		$plugin_name   = dirname( $plugin_file );
-		$wccom_plugins = get_transient( self::WCCOM_INSTALLING_TRANSIENT );
-
-		if ( empty( $wccom_plugins ) ) {
+		if ( empty( $this->get_wizard_user_data( 'steps' ) ) ) {
 			return;
 		}
 
-		if ( in_array( $plugin_file, $wccom_plugins, true ) ) {
+		$plugin_name = dirname( $plugin_file );
+
+		if ( in_array( $plugin_file, $this->get_wccom_extensions(), true ) ) {
 			sensei_log_event(
-				'setup_wizard_features_install_success',
+				'plugin_install',
 				[ 'slug' => $plugin_name ]
 			);
-
 		}
+	}
+
+	/**
+	 * Get the WooCommerce.com plugins files.
+	 *
+	 * @return string[]
+	 */
+	private function get_wccom_extensions() {
+		$wccom_extensions = [];
+
+		foreach ( $this->get_sensei_extensions() as $extension ) {
+			if ( isset( $extension->wccom_product_id ) ) {
+				$wccom_extensions[] = $extension->plugin_file;
+			}
+		}
+
+		return $wccom_extensions;
 	}
 
 	/**
