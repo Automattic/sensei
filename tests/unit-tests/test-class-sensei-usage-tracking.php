@@ -6,6 +6,8 @@
  */
 
 /**
+ * Tests for the class `Sensei_Usage_Tracking`.
+ *
  * @group usage-tracking
  */
 class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
