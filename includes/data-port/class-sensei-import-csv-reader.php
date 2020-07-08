@@ -101,7 +101,7 @@ class Sensei_Import_CSV_Reader {
 		 */
 		$delimiters         = apply_filters( 'sensei_import_csv_delimiter_options', [ ',', ';', "\t", '|' ] );
 		$max_columns        = 0;
-		$selected_delimiter = '';
+		$selected_delimiter = $delimiters[0];
 
 		foreach ( $delimiters as $delimiter ) {
 			$this->file->setCsvControl( $delimiter );
