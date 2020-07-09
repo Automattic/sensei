@@ -46,12 +46,16 @@ class Sensei_E2E {
 	 */
 	public function __construct() {
 
+		$setup_wizard = new Sensei_E2E_Setup_Wizard_Mocks();
+		$setup_wizard->register();
+
 	}
+
 	/**
 	 * Get the single class instance.
 	 *
-	 * @since 3.2
 	 * @return Sensei_E2E
+	 * @since 3.2
 	 */
 	public static function instance() {
 		if ( is_null( self::$instance ) ) {
@@ -60,5 +64,6 @@ class Sensei_E2E {
 		return self::$instance;
 	}
 }
+
 Sensei_E2E::instance();
 
