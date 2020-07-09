@@ -18,8 +18,11 @@ export async function wpcli( command ) {
 	return stdout;
 }
 
-export function resetSetupWizard() {
-	return wpcli( 'option delete sensei_setup_wizard_data' );
+export async function resetSetupWizard() {
+	await wpcli( 'option delete sensei_setup_wizard_data' );
+	try {
+		await wpcli( 'plugin uninstall --deactivate sensei-certificates' );
+	} catch ( err ) {}
 }
 
 export function cleanupSenseiData() {
