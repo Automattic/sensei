@@ -12,7 +12,7 @@ Usage_Tracking_Test_Subclass::get_instance();
  *
  * @group usage-tracking
  */
-class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
+class Sensei_Base_Usage_Tracking_Test extends WP_UnitTestCase {
 	private $event_counts       = array();
 	private $track_http_request = array();
 
