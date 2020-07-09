@@ -14,6 +14,7 @@ import {
 	ERROR_DELETE_IMPORT_DATA_FILE,
 	SET_JOB_STATE,
 	SET_IMPORT_LOG,
+	ERROR_FETCH_IMPORT_LOG,
 } from './constants';
 
 describe( 'Importer reducer', () => {
@@ -220,5 +221,19 @@ describe( 'Importer reducer', () => {
 		} );
 
 		expect( state.done.logs ).toEqual( data );
+	} );
+
+	it( 'Should set fetchError on ERROR_FETCH_IMPORT_LOG action', () => {
+		const error = {
+			code: '',
+			message: 'test',
+		};
+
+		const state = reducer( undefined, {
+			type: ERROR_FETCH_IMPORT_LOG,
+			error,
+		} );
+
+		expect( state.done.logs.fetchError ).toBe( error );
 	} );
 } );

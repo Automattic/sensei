@@ -14,6 +14,7 @@ import {
 	RESET_STATE,
 	SET_JOB_STATE,
 	SET_IMPORT_LOG,
+	ERROR_FETCH_IMPORT_LOG,
 } from './constants';
 
 import { merge } from 'lodash';
@@ -219,6 +220,15 @@ export default ( state = DEFAULT_STATE, action ) => {
 				done: {
 					...state.done,
 					logs: action.data,
+				},
+			};
+
+		case ERROR_FETCH_IMPORT_LOG:
+			return {
+				...state,
+				done: {
+					...state.done,
+					logs: { fetchError: action.error },
 				},
 			};
 

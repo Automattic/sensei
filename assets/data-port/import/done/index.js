@@ -11,13 +11,19 @@ export default compose(
 			successResults: store.getSuccessResults(),
 			logs: store.getLogsBySeverity( jobId ),
 			isFetching: store.isResolving( 'getLogsBySeverity', [ jobId ] ),
+			fetchError: store.getLogsFetchError(),
 		};
 	} ),
 	withDispatch( ( dispatch ) => {
-		const { restartImporter } = dispatch( 'sensei/import' );
+		const {
+			restartImporter,
+			invalidateResolutionForStoreSelector,
+		} = dispatch( 'sensei/import' );
 
 		return {
 			restartImporter,
+			retry: () =>
+				invalidateResolutionForStoreSelector( 'getLogsBySeverity' ),
 		};
 	} )
 )( DonePage );

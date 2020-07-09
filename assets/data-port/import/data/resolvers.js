@@ -1,10 +1,14 @@
-import { fetchFromAPI, setImportLog } from './actions';
+import { fetchFromAPI, setImportLog, errorFetchImportLog } from './actions';
 import { buildJobEndpointUrl } from '../helpers/url';
 
 export function* getLogsBySeverity( jobId ) {
-	const data = yield fetchFromAPI( {
-		path: buildJobEndpointUrl( jobId, [ 'logs' ] ),
-	} );
+	try {
+		const data = yield fetchFromAPI( {
+			path: buildJobEndpointUrl( jobId, [ 'logs' ] ),
+		} );
 
-	return setImportLog( data );
+		yield setImportLog( data );
+	} catch ( error ) {
+		yield errorFetchImportLog( error );
+	}
 }

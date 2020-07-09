@@ -89,13 +89,17 @@ describe( '<DonePage />', () => {
 	} );
 
 	it( 'should show error message', () => {
+		const retryMock = jest.fn();
 		const fetchError = {
 			message: 'Error message.',
 		};
 		const { getAllByText } = render(
-			<DonePage fetchError={ fetchError } />
+			<DonePage fetchError={ fetchError } retry={ retryMock } />
 		);
 
 		expect( getAllByText( /Error message./ ) ).toBeTruthy();
+
+		fireEvent.click( getAllByText( 'Retry' )[ 0 ] );
+		expect( retryMock ).toBeCalled();
 	} );
 } );

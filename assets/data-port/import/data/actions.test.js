@@ -14,6 +14,7 @@ import {
 	ERROR_DELETE_IMPORT_DATA_FILE,
 	SUCCESS_DELETE_IMPORT_DATA_FILE,
 	SET_IMPORT_LOG,
+	ERROR_FETCH_IMPORT_LOG,
 } from './constants';
 
 import {
@@ -34,6 +35,7 @@ import {
 	successDeleteLevelFileAction,
 	errorDeleteLevelFileAction,
 	setImportLog,
+	errorFetchImportLog,
 } from './actions';
 
 const RESPONSE_FULL = {
@@ -536,5 +538,15 @@ describe( 'Importer actions', () => {
 		};
 
 		expect( setImportLog( data ) ).toEqual( expectedAction );
+	} );
+
+	it( 'Should return the error fetch import log action', () => {
+		const error = { code: '', message: 'Error' };
+		const expectedAction = {
+			type: ERROR_FETCH_IMPORT_LOG,
+			error,
+		};
+
+		expect( errorFetchImportLog( error ) ).toEqual( expectedAction );
 	} );
 } );

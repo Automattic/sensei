@@ -13,6 +13,7 @@ export const DonePage = ( {
 	logs = {},
 	isFetching = false,
 	fetchError = false,
+	retry,
 } ) => {
 	let logsElement = (
 		<>
@@ -61,7 +62,7 @@ export const DonePage = ( {
 			<Notice status="error" isDismissible={ false }>
 				{ __( 'Failed to load import log.', 'sensei-lms' ) }{ ' ' }
 				{ fetchError.message }
-				<Button onClick={ () => {} } isLink isSmall>
+				<Button onClick={ retry } isLink isSmall>
 					{ __( 'Retry', 'sensei-lms' ) }
 				</Button>
 			</Notice>

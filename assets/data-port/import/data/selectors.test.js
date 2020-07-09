@@ -9,6 +9,7 @@ import {
 	getUploadedLevelKeys,
 	getSuccessResults,
 	getLogsBySeverity,
+	getLogsFetchError,
 } from './selectors';
 
 describe( 'Importer selectors', () => {
@@ -302,5 +303,18 @@ describe( 'Importer selectors', () => {
 		};
 
 		expect( getLogsBySeverity( state ) ).toEqual( expected );
+	} );
+
+	it( 'Should get the logs fetch error', () => {
+		const error = { code: '', message: 'Error message' };
+		const state = {
+			done: {
+				logs: {
+					fetchError: error,
+				},
+			},
+		};
+
+		expect( getLogsFetchError( state ) ).toEqual( error );
 	} );
 } );

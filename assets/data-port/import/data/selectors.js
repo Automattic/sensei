@@ -124,3 +124,13 @@ export const getSuccessResults = ( { done } ) =>
  */
 export const getLogsBySeverity = ( { done } ) =>
 	groupBy( get( done, 'logs.items', [] ), 'severity' );
+
+/**
+ * Get logs fetch error.
+ *
+ * @param {Object} state Current state.
+ *
+ * @return {Object|boolean} Error object or false.
+ */
+export const getLogsFetchError = ( { done } ) =>
+	get( done, 'logs.fetchError', false );
