@@ -1,26 +1,22 @@
 import { withSelect, withDispatch } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
 import { DonePage } from './done-page';
-import { partial } from 'lodash';
 
 export default compose(
 	withSelect( ( select ) => {
 		const store = select( 'sensei/import' );
+		const jobId = store.getJobId();
 
-		const { results, logs } = store.getStepData( 'done' );
 		return {
-			results,
-			logs,
+			successResults: store.getSuccessResults(),
+			logs: store.getLogsBySeverity( jobId ),
+			isFetching: store.isResolving( 'getLogsBySeverity', [ jobId ] ),
 		};
 	} ),
-	withDispatch( ( dispatch, ownProps, { select } ) => {
-		const { fetchImportLog, restartImporter } = dispatch( 'sensei/import' );
+	withDispatch( ( dispatch ) => {
+		const { restartImporter } = dispatch( 'sensei/import' );
 
 		return {
-			fetchImportLog: partial(
-				fetchImportLog,
-				select( 'sensei/import' ).getJobId()
-			),
 			restartImporter,
 		};
 	} )

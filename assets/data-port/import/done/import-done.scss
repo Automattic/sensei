@@ -1,33 +1,24 @@
 .sensei-import-done {
-	&__result {
-		margin-top: 2rem;
-	}
-	&__result, &__errors, &__log {
-		text-align: center;
+	&__section-description {
+		font-style: italic;
 	}
 
-	&__result-icon--success {
-		color: $primary;
-	}
-	&__result-icon--warning {
-		color: $gray-10;
-	}
+	&__log-fetching {
+		display: flex;
+		justify-content: center;
+		align-items: center;
 
-	&__log {
-		.sensei-import-log-data {
-			text-align: left;
+		.components-spinner {
+			margin-top: 0;
 		}
+	}
+
+	&__log-data {
+		padding-bottom: 24px;
+		text-align: left;
+
 		.sensei-data-table thead th {
-			padding-top: 1rem;
-		}
-
-
-		.sensei-import-log-row__header {
-			max-width: 0;
-			overflow: hidden;
 			white-space: nowrap;
-			text-overflow: ellipsis;
-			width: 50%;
 		}
 	}
 

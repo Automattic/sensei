@@ -1,20 +1,11 @@
 import { render, fireEvent } from '@testing-library/react';
 import { DonePage } from './done-page';
-const defaults = {
-	fetchImportLog: () => {},
-};
+
 describe( '<DonePage />', () => {
-	it( 'should load import log when opened.', () => {
-		const mockFetchImportLog = jest.fn();
-		render( <DonePage fetchImportLog={ mockFetchImportLog } /> );
-
-		expect( mockFetchImportLog ).toHaveBeenCalledTimes( 1 );
-	} );
-
 	it( 'should allow restarting importer', () => {
 		const mockRestartImporter = jest.fn();
 		const { getByRole } = render(
-			<DonePage restartImporter={ mockRestartImporter } { ...defaults } />
+			<DonePage restartImporter={ mockRestartImporter } />
 		);
 
 		fireEvent.click(
@@ -23,44 +14,24 @@ describe( '<DonePage />', () => {
 		expect( mockRestartImporter ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'should show success icon', () => {
-		const { container } = render(
-			<DonePage
-				results={ { question: { success: 4, error: 0 } } }
-				{ ...defaults }
-			/>
-		);
-
-		expect(
-			container
-				.querySelector( '.dashicon' )
-				.classList.contains( 'dashicons-yes-alt' )
-		).toBeTruthy();
-	} );
-	it( 'should show warning icon', () => {
-		const { container } = render(
-			<DonePage
-				results={ { question: { success: 0, error: 4 } } }
-				{ ...defaults }
-			/>
-		);
-
-		expect(
-			container
-				.querySelector( '.dashicon' )
-				.classList.contains( 'dashicons-warning' )
-		).toBeTruthy();
-	} );
-
-	it( 'should show results summary', () => {
-		const results = {
-			question: { success: 4, error: 7 },
-			course: { success: 2, error: 0 },
-			lesson: { success: 0, error: 0 },
-		};
+	it( 'should show completed summary', () => {
+		const successResults = [
+			{
+				count: 4,
+				key: 'question',
+			},
+			{
+				count: 2,
+				key: 'course',
+			},
+			{
+				count: 0,
+				key: 'lesson',
+			},
+		];
 
 		const { queryByText } = render(
-			<DonePage results={ results } { ...defaults } />
+			<DonePage successResults={ successResults } />
 		);
 
 		const success = queryByText( 'The following content was imported:' )
@@ -68,64 +39,63 @@ describe( '<DonePage />', () => {
 
 		expect( success ).toContain( '4 questions' );
 		expect( success ).toContain( '2 courses' );
-		expect( success ).not.toContain( 'lessons' );
-
-		const errors = queryByText(
-			( content, node ) =>
-				node.textContent === 'The following content failed to import:'
-		).nextSibling.textContent;
-
-		expect( errors ).toContain( '7 questions' );
-		expect( errors ).not.toContain( 'courses' );
-		expect( errors ).not.toContain( 'lessons' );
+		expect( success ).toContain( '0 lessons' );
 	} );
 
 	it( 'should show import log', () => {
-		const results = {
-			question: { success: 4, error: 1 },
-			course: { success: 2, error: 0 },
-			lesson: { success: 0, error: 1 },
-		};
 		const logs = {
-			offset: 0,
-			total: 2,
-			items: [
-				{
-					type: 'question',
-					line: 1,
-					severity: 'error',
-					descriptor: 'ID: 1',
-					message: 'Question 1 Meta field invalid.',
-				},
+			error: [
 				{
 					type: 'lesson',
+					title: 'Lesson title',
 					line: 7,
 					severity: 'error',
 					descriptor: 'ID: 7',
-					message: 'Lesson 7 Invalid.',
+					message: 'Error message.',
+				},
+			],
+			notice: [
+				{
+					type: 'question',
+					title: 'Question title',
+					line: 1,
+					severity: 'notice',
+					descriptor: 'ID: 1',
+					message: 'Warning message.',
 				},
 			],
 		};
 
-		const { getByRole } = render(
-			<DonePage logs={ logs } results={ results } { ...defaults } />
+		const { getByText, container } = render( <DonePage logs={ logs } /> );
+
+		expect( getByText( 'Failed' ) ).toBeTruthy();
+		expect( getByText( 'Partial' ) ).toBeTruthy();
+
+		const rows = container.querySelectorAll(
+			'.sensei-import-done__log-data tbody tr'
 		);
-
-		fireEvent.click( getByRole( 'button', { name: 'View Import Log' } ) );
-
-		const table = getByRole( 'button', { name: 'View Import Log' } )
-			.nextSibling;
-
-		const rows = table.querySelectorAll( 'tr' );
+		expect( rows[ 0 ].textContent ).toMatch(
+			[ 'Lessons', 'Lesson title', '7', 'Error message.' ].join( '' )
+		);
 		expect( rows[ 1 ].textContent ).toMatch(
-			[
-				'ID: 1',
-				'Questions, Line: 1',
-				'Question 1 Meta field invalid.',
-			].join( '' )
+			[ 'Question title', '1', 'Warning message.' ].join( '' )
 		);
-		expect( rows[ 2 ].textContent ).toMatch(
-			[ 'ID: 7', 'Lessons, Line: 7', 'Lesson 7 Invalid.' ].join( '' )
+	} );
+
+	it( 'should show fetching state', () => {
+		const { getByText } = render( <DonePage isFetching /> );
+
+		expect( getByText( 'Fetching log details…' ) ).toBeTruthy();
+	} );
+
+	it( 'should show error message', () => {
+		const fetchError = {
+			message: 'Error message.',
+		};
+		const { getAllByText } = render(
+			<DonePage fetchError={ fetchError } />
 		);
+
+		expect( getAllByText( /Error message./ ) ).toBeTruthy();
 	} );
 } );

@@ -1,72 +1,45 @@
-import { Button } from '@wordpress/components';
-import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { kebabCase } from 'lodash';
 
-export const ImportLog = ( { result, reload } ) => {
-	const [ isOpen, setOpen ] = useState( false );
-	const toggle = () => setOpen( ( prevOpen ) => ! prevOpen );
-
-	const postTypeLabels = {
-		course: __( 'Courses', 'sensei-lms' ),
-		lesson: __( 'Lessons', 'sensei-lms' ),
-		question: __( 'Questions', 'sensei-lms' ),
-	};
-
-	if ( result && result.error ) {
-		return (
-			<div>
-				{ __( 'Failed to load import log.', 'sensei-lms' ) }{ ' ' }
-				{ result.error.message }
-				<Button onClick={ reload } isLink isSmall>
-					{ __( 'Retry', 'sensei-lms' ) }
-				</Button>
-			</div>
-		);
-	}
-
-	return (
-		<>
-			<Button isLink onClick={ toggle }>
-				{ __( 'View Import Log', 'sensei-lms' ) }
-			</Button>
-			<div hidden={ ! isOpen } className="sensei-import-log-data">
-				{ result && (
-					<table className="sensei-data-table">
-						<thead>
-							<tr>
-								<th>{ __( 'Entry', 'sensei-lms' ) }</th>
-								<th>
-									{ __( 'Reason for Failure', 'sensei-lms' ) }
-								</th>
-							</tr>
-						</thead>
-						<tbody>
-							{ result.items.map( ( item ) => (
-								<tr key={ item.descriptor }>
-									<td
-										className="sensei-import-log-row__header"
-										title={ item.descriptor }
-									>
-										<strong className="sensei-import-log-row__title">
-											{ item.descriptor }
-										</strong>
-										<div className="sensei-import-log-row__source">
-											{ postTypeLabels[ item.type ] }
-											{ ', ' }
-											{ __(
-												'Line:',
-												'sensei-lms'
-											) }{ ' ' }
-											{ item.line }
-										</div>
-									</td>
-									<td>{ item.message }</td>
-								</tr>
-							) ) }
-						</tbody>
-					</table>
-				) }
-			</div>
-		</>
-	);
+const postTypeLabels = {
+	course: __( 'Courses', 'sensei-lms' ),
+	lesson: __( 'Lessons', 'sensei-lms' ),
+	question: __( 'Questions', 'sensei-lms' ),
 };
+
+const logTypeLabel = {
+	error: __( 'Error', 'sensei-lms' ),
+	warning: __( 'Warning', 'sensei-lms' ),
+};
+
+/**
+ * ImportLog component.
+ */
+export const ImportLog = ( { items, type } ) => (
+	<div className="sensei-import-done__log-data">
+		<table className="sensei-data-table">
+			<thead>
+				<tr>
+					{ type === 'error' && (
+						<th>{ __( 'File', 'sensei-lms' ) }</th>
+					) }
+					<th>{ __( 'Title', 'sensei-lms' ) }</th>
+					<th>{ __( 'Line #', 'sensei-lms' ) }</th>
+					<th>{ logTypeLabel[ type ] }</th>
+				</tr>
+			</thead>
+			<tbody>
+				{ items.map( ( item ) => (
+					<tr key={ kebabCase( Object.entries( item ).join( '' ) ) }>
+						{ type === 'error' && (
+							<td>{ postTypeLabels[ item.type ] }</td>
+						) }
+						<td>{ item.title }</td>
+						<td>{ item.line }</td>
+						<td>{ item.message }</td>
+					</tr>
+				) ) }
+			</tbody>
+		</table>
+	</div>
+);
