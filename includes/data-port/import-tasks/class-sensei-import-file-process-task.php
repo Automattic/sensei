@@ -198,6 +198,13 @@ abstract class Sensei_Import_File_Process_Task
 	abstract public function get_model( $line_number, $data );
 
 	/**
+	 * Get the model key for this task.
+	 *
+	 * @return string
+	 */
+	abstract public function get_model_key();
+
+	/**
 	 * Process a single CSV line.
 	 *
 	 * @param int            $line_number  The line number in the file.
@@ -215,6 +222,7 @@ abstract class Sensei_Import_File_Process_Task
 				$data->get_error_message(),
 				Sensei_Data_Port_Job::LOG_LEVEL_ERROR,
 				[
+					'type' => $this->get_model_key(),
 					'line' => $line_number,
 				]
 			);

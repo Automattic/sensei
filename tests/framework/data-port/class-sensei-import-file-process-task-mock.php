@@ -15,6 +15,10 @@ class Sensei_Import_File_Process_Task_Mock extends Sensei_Import_File_Process_Ta
 		return Sensei_Import_Model_Mock::from_source_array( $line_number, $data, new Sensei_Data_Port_Schema_Mock() );
 	}
 
+	public function get_model_key() {
+		return Sensei_Import_Model_Mock::MODEL_KEY;
+	}
+
 	public function clean_up() {}
 
 	public static function validate_source_file( $file_path ) {}

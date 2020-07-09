@@ -37,6 +37,15 @@ class Sensei_Import_Courses extends Sensei_Import_File_Process_Task {
 	}
 
 	/**
+	 * Get the model key for this task.
+	 *
+	 * @return string
+	 */
+	public function get_model_key() {
+		return Sensei_Import_Course_Model::MODEL_KEY;
+	}
+
+	/**
 	 * Performs any required cleanup of the task.
 	 */
 	public function clean_up() {
