@@ -224,6 +224,7 @@ abstract class Sensei_Import_File_Process_Task
 				[
 					'type' => $this->get_model_key(),
 					'line' => $line_number,
+					'code' => $data->get_error_code(),
 				]
 			);
 
@@ -242,6 +243,7 @@ abstract class Sensei_Import_File_Process_Task
 				$model->get_error_data(
 					[
 						'line' => $line_number,
+						'code' => 'sensei_data_port_required_field_missing',
 					]
 				)
 			);
@@ -259,6 +261,7 @@ abstract class Sensei_Import_File_Process_Task
 				$model->get_error_data(
 					[
 						'line' => $line_number,
+						'code' => $result->get_error_code(),
 					]
 				)
 			);
