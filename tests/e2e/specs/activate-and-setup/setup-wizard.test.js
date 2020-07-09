@@ -1,4 +1,9 @@
-import { cleanupSenseiData, resetSetupWizard } from '../../utils/helpers';
+import toClick from 'expect-puppeteer/lib/matchers/toClick';
+import {
+	adminUrl,
+	cleanupSenseiData,
+	resetSetupWizard,
+} from '../../utils/helpers';
 import { AdminFlow } from '../../utils/flows';
 
 async function openSetupWizard() {
@@ -192,13 +197,44 @@ describe( 'Setup Wizard', () => {
 	} );
 
 	describe( 'Ready step', () => {
-		it( 'opens when it is the active step', async () => {
+		beforeEach( async () => {
 			await openSetupWizard();
+			await toClick( page, '.woocommerce-stepper__step', {
+				text: 'Ready',
+			} );
+		} );
+		it( 'is available if it is the active step', async () => {
 			await stepIsComplete( 'Features' );
 			await stepIsActive( 'Ready' );
 			await expect( page ).toMatch(
 				"You're ready to start creating online courses!"
 			);
+		} );
+		it( 'links to course creation', async () => {
+			await expect( page ).toClick( 'a', {
+				text: 'Create a course',
+			} );
+			await page.waitForNavigation();
+			await expect( page.url() ).toMatch(
+				adminUrl( 'post-new.php?post_type=course' )
+			);
+		} );
+		it( 'links to importer', async () => {
+			await expect( page ).toClick( 'a', {
+				text: 'Import content',
+			} );
+			await page.waitForNavigation();
+			await expect( page.url() ).toMatch(
+				adminUrl( 'admin.php?page=sensei_import' )
+			);
+		} );
+		it( 'has newsletter sign-up form', async () => {
+			expect( page ).toMatchElement(
+				'input[name="EMAIL"][value="admin@woocommercecoree2etestsuite.com"]'
+			);
+			expect( page ).toMatchElement( 'button', {
+				text: 'Yes, please!',
+			} );
 		} );
 	} );
 } );
