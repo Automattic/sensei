@@ -189,7 +189,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * @param array    $properties Event Properties.
 	 * @param null|int $event_timestamp When the event occurred.
 	 *
-	 * @return null|WP_Error
+	 * @return bool
 	 **/
 	public function send_event( $event, $properties = array(), $event_timestamp = null ) {
 
@@ -198,7 +198,7 @@ abstract class Sensei_Usage_Tracking_Base {
 			return false;
 		}
 
-		$pixel      = 'http://pixel.wp.com/t.gif';
+		$pixel      = 'https://pixel.wp.com/t.gif';
 		$event_name = $this->get_event_prefix() . '_' . $event;
 		$user       = wp_get_current_user();
 
@@ -222,27 +222,18 @@ abstract class Sensei_Usage_Tracking_Base {
 			$p[] = rawurlencode( $key ) . '=' . rawurlencode( $value );
 		}
 
-		$pixel   .= '?' . implode( '&', $p ) . '&_=_'; // EOF marker.
-		$response = wp_remote_get(
+		$pixel .= '?' . implode( '&', $p ) . '&_=_'; // EOF marker.
+
+		wp_safe_remote_get(
 			$pixel,
 			array(
-				'blocking'    => true,
+				'blocking'    => false,
 				'timeout'     => 1,
 				'redirection' => 2,
 				'httpversion' => '1.1',
 				'user-agent'  => $this->get_event_prefix() . '_usage_tracking',
 			)
 		);
-
-		if ( is_wp_error( $response ) ) {
-			return $response;
-		}
-
-		$code = isset( $response['response']['code'] ) ? $response['response']['code'] : 0;
-
-		if ( 200 !== $code ) {
-			return new WP_Error( 'request_failed', 'HTTP Request failed', $code );
-		}
 
 		return true;
 	}
