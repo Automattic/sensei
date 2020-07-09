@@ -225,12 +225,12 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 		sensei_log_event(
 			'import_complete',
 			[
-				'courses'          => $results[ Sensei_Import_Course_Model::MODEL_KEY ]['success'] + $results[ Sensei_Import_Course_Model::MODEL_KEY ]['warning'],
-				'lessons'          => $results[ Sensei_Import_Lesson_Model::MODEL_KEY ]['success'] + $results[ Sensei_Import_Lesson_Model::MODEL_KEY ]['warning'],
-				'questions'        => $results[ Sensei_Import_Question_Model::MODEL_KEY ]['success'] + $results[ Sensei_Import_Question_Model::MODEL_KEY ]['warning'],
-				'failed_courses'   => $results[ Sensei_Import_Course_Model::MODEL_KEY ]['error'],
-				'failed_lessons'   => $results[ Sensei_Import_Lesson_Model::MODEL_KEY ]['error'],
-				'failed_questions' => $results[ Sensei_Import_Question_Model::MODEL_KEY ]['error'],
+				'imported_courses'   => $results[ Sensei_Import_Course_Model::MODEL_KEY ]['success'] + $results[ Sensei_Import_Course_Model::MODEL_KEY ]['warning'],
+				'imported_lessons'   => $results[ Sensei_Import_Lesson_Model::MODEL_KEY ]['success'] + $results[ Sensei_Import_Lesson_Model::MODEL_KEY ]['warning'],
+				'imported_questions' => $results[ Sensei_Import_Question_Model::MODEL_KEY ]['success'] + $results[ Sensei_Import_Question_Model::MODEL_KEY ]['warning'],
+				'failed_courses'     => $results[ Sensei_Import_Course_Model::MODEL_KEY ]['error'],
+				'failed_lessons'     => $results[ Sensei_Import_Lesson_Model::MODEL_KEY ]['error'],
+				'failed_questions'   => $results[ Sensei_Import_Question_Model::MODEL_KEY ]['error'],
 			]
 		);
 	}

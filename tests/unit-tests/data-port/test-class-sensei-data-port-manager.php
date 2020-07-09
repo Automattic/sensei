@@ -185,12 +185,12 @@ class Sensei_Data_Port_Manager_Test extends WP_UnitTestCase {
 		$this->assertCount( 1, $events );
 
 		$expected_data = [
-			'courses'          => 4,
-			'lessons'          => 4,
-			'questions'        => 5,
-			'failed_courses'   => 2,
-			'failed_lessons'   => 2,
-			'failed_questions' => 1,
+			'imported_courses'   => 4,
+			'imported_lessons'   => 4,
+			'imported_questions' => 5,
+			'failed_courses'     => 2,
+			'failed_lessons'     => 2,
+			'failed_questions'   => 1,
 		];
 
 		foreach ( $expected_data as $key => $value ) {
