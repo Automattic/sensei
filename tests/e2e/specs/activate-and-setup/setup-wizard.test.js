@@ -3,6 +3,7 @@ import {
 	adminUrl,
 	cleanupSenseiData,
 	resetSetupWizard,
+	wpcli,
 } from '../../utils/helpers';
 import { AdminFlow } from '../../utils/flows';
 
@@ -36,6 +37,7 @@ async function stepIsActive( label ) {
  */
 describe( 'Setup Wizard', () => {
 	beforeAll( async () => {
+		await wpcli( 'plugin activate sensei-e2e' );
 		await AdminFlow.login();
 	} );
 

@@ -7,7 +7,9 @@ services:
       # This path is relative to the first config file
       # which is in node_modules/@woocommerce/e2e/env
       - "../../../:/var/www/html/wp-content/plugins/sensei"
+      - "../../../tests/e2e/mocks:/var/www/html/wp-content/plugins/sensei-e2e"
 
   wordpress-cli:
     volumes:
       - "../../../:/var/www/html/wp-content/plugins/sensei"
+      - "../../../tests/e2e/mocks:/var/www/html/wp-content/plugins/sensei-e2e"
