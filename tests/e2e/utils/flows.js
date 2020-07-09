@@ -105,7 +105,6 @@ export const AdminFlow = {
 	},
 
 	deactivatePlugin: async ( slug ) => {
-		await AdminFlow.login();
 		await AdminFlow.goToPlugins();
 
 		const deactivateLink = await AdminFlow.findPlugin( slug );
@@ -115,7 +114,6 @@ export const AdminFlow = {
 		}
 	},
 	activatePlugin: async ( slug, forceReactivate = false ) => {
-		await AdminFlow.login();
 		await AdminFlow.goToPlugins();
 
 		const deactivateLink = await AdminFlow.findPlugin( slug );
