@@ -77,6 +77,7 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 	 */
 	public function init() {
 		add_action( 'init', [ $this, 'maybe_schedule_cron_jobs' ] );
+		add_action( 'sensei_data_port_complete', [ $this, 'log_complete_import_jobs' ] );
 		add_action( 'sensei_data_port_garbage_collection', [ $this, 'clean_old_jobs' ] );
 		add_action( Sensei_Data_Port_Job::SCHEDULED_ACTION_NAME, [ $this, 'run_data_port_job' ] );
 		add_action( 'shutdown', [ $this, 'persist' ] );
@@ -205,6 +206,33 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 
 		$this->has_changed    = true;
 		$this->data_port_jobs = [];
+	}
+
+	/**
+	 * Log when an import job is complete.
+	 *
+	 * @access private
+	 *
+	 * @param Sensei_Data_Port_Job $job The job object.
+	 */
+	public function log_complete_import_jobs( Sensei_Data_Port_Job $job ) {
+		if ( ! $job instanceof Sensei_Import_Job ) {
+			return;
+		}
+
+		$results = $job->get_result_counts();
+
+		sensei_log_event(
+			'import_complete',
+			[
+				'courses'          => $results[ Sensei_Import_Course_Model::MODEL_KEY ]['success'] + $results[ Sensei_Import_Course_Model::MODEL_KEY ]['warning'],
+				'lessons'          => $results[ Sensei_Import_Lesson_Model::MODEL_KEY ]['success'] + $results[ Sensei_Import_Lesson_Model::MODEL_KEY ]['warning'],
+				'questions'        => $results[ Sensei_Import_Question_Model::MODEL_KEY ]['success'] + $results[ Sensei_Import_Question_Model::MODEL_KEY ]['warning'],
+				'failed_courses'   => $results[ Sensei_Import_Course_Model::MODEL_KEY ]['error'],
+				'failed_lessons'   => $results[ Sensei_Import_Lesson_Model::MODEL_KEY ]['error'],
+				'failed_questions' => $results[ Sensei_Import_Question_Model::MODEL_KEY ]['error'],
+			]
+		);
 	}
 
 	/**

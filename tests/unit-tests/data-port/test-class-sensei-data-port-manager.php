@@ -18,6 +18,15 @@ require_once SENSEI_TEST_FRAMEWORK_DIR . '/data-port/class-sensei-data-port-job-
  */
 class Sensei_Data_Port_Manager_Test extends WP_UnitTestCase {
 
+	/**
+	 * Set up the tests.
+	 */
+	public function setUp() {
+		parent::setUp();
+
+		Sensei_Test_Events::reset();
+	}
+
 	public function tearDown() {
 		parent::tearDown();
 
@@ -137,6 +146,70 @@ class Sensei_Data_Port_Manager_Test extends WP_UnitTestCase {
 		$this->assertCount( 2, $port_jobs );
 		$this->assertEquals( 'second-job', array_values( $port_jobs )[0]['id'] );
 		$this->assertEquals( 'third-job', array_values( $port_jobs )[1]['id'] );
+	}
+
+	/**
+	 * Tests to make sure import jobs are logged successfully.
+	 */
+	public function testLogCompleteImportJobs() {
+		$job = $this->getMockBuilder( Sensei_Import_Job::class )
+					->setConstructorArgs( [ 'test-job' ] )
+					->setMethods( [ 'get_result_counts' ] )
+					->getMock();
+
+		$job->expects( $this->exactly( 1 ) )
+			->method( 'get_result_counts' )
+			->willReturn(
+				[
+					Sensei_Import_Course_Model::MODEL_KEY => [
+						'success' => 3,
+						'warning' => 1,
+						'error'   => 2,
+					],
+					Sensei_Import_Lesson_Model::MODEL_KEY => [
+						'success' => 1,
+						'warning' => 3,
+						'error'   => 2,
+					],
+					Sensei_Import_Question_Model::MODEL_KEY => [
+						'success' => 2,
+						'warning' => 3,
+						'error'   => 1,
+					],
+				]
+			);
+
+		Sensei_Data_Port_Manager::instance()->log_complete_import_jobs( $job );
+
+		$events = Sensei_Test_Events::get_logged_events( 'sensei_import_complete' );
+		$this->assertCount( 1, $events );
+
+		$expected_data = [
+			'courses'          => 4,
+			'lessons'          => 4,
+			'questions'        => 5,
+			'failed_courses'   => 2,
+			'failed_lessons'   => 2,
+			'failed_questions' => 1,
+		];
+
+		foreach ( $expected_data as $key => $value ) {
+			$this->assertEquals( $value, $events[0]['url_args'][ $key ], "'{$key}' does not match" );
+		}
+	}
+
+	/**
+	 * Tests to make sure non-import data port jobs are not logged.
+	 */
+	public function testLogCompleteImportJobsNonImportJobFail() {
+		$job = $this->getMockBuilder( Sensei_Data_Port_Job_Mock::class )
+					->setConstructorArgs( [ 'test-id' ] )
+					->getMock();
+
+		Sensei_Data_Port_Manager::instance()->log_complete_import_jobs( $job );
+
+		$events = Sensei_Test_Events::get_logged_events( 'sensei_import_complete' );
+		$this->assertCount( 0, $events );
 	}
 
 	private function set_data_port_jobs( $jobs ) {
