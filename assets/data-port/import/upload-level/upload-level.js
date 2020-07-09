@@ -122,10 +122,12 @@ export const UploadLevels = ( {
 									: __( 'Upload', 'sensei-lms' ) }
 							</FormFileUpload>
 						</label>
-						<div className="sensei-upload-file-line__info">
-							{ message }
-							{ deleteButton }
-						</div>
+						{ ( message || deleteButton ) && (
+							<div className="sensei-upload-file-line__info">
+								{ message }
+								{ deleteButton }
+							</div>
+						) }
 					</li>
 				);
 				/* eslint-enable */
