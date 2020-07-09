@@ -124,7 +124,10 @@ class Sensei_Import_Question_Model extends Sensei_Import_Model {
 						__( 'Meta field "%1$s" is invalid: %2$s', 'sensei-lms' ),
 						$field,
 						$new_value->get_error_message()
-					)
+					),
+					[
+						'code' => 'sensei_data_port_invalid_meta',
+					]
 				);
 
 				continue;

@@ -26,7 +26,8 @@ trait Sensei_Import_Prerequisite_Trait {
 		$reference         = sanitize_text_field( $task[1] );
 		$line_number       = (int) $task[2];
 		$reference_post_id = $this->get_job()->translate_import_id( $post_type, $reference );
-		$error_data        = [
+
+		$error_data = [
 			'line'    => $line_number,
 			'type'    => $model_key,
 			'post_id' => $post_id,
@@ -38,7 +39,12 @@ trait Sensei_Import_Prerequisite_Trait {
 				$line_number,
 				// translators: Placeholder is reference to another post.
 				sprintf( __( 'Unable to set the prerequisite to "%s"', 'sensei-lms' ), $reference ),
-				$error_data
+				array_merge(
+					$error_data,
+					[
+						'code' => 'sensei_data_port_prerequisite_bad_reference',
+					]
+				)
 			);
 
 			return;
@@ -49,7 +55,12 @@ trait Sensei_Import_Prerequisite_Trait {
 				$model_key,
 				$line_number,
 				__( 'Unable to set the prerequisite to the same entry', 'sensei-lms' ),
-				$error_data
+				array_merge(
+					$error_data,
+					[
+						'code' => 'sensei_data_port_prerequisite_ref_match',
+					]
+				)
 			);
 
 			return;

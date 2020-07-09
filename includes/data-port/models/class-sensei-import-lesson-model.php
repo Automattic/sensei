@@ -124,7 +124,12 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 		) {
 			$pass_required = null;
 			$pass_mark     = null;
-			$this->add_line_warning( __( 'Both Passmark and Pass Required should be supplied.', 'sensei-lms' ) );
+			$this->add_line_warning(
+				__( 'Both Passmark and Pass Required should be supplied.', 'sensei-lms' ),
+				[
+					'code' => 'sensei_data_port_lesson_passmark_pass_required_missing',
+				]
+			);
 		}
 
 		if ( null !== $pass_required ) {
@@ -188,7 +193,10 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 			if ( empty( $question_id ) ) {
 				$this->add_line_warning(
 					// translators: Placeholder is the term which errored.
-					sprintf( __( 'Question does not exist: %s.', 'sensei-lms' ), $question_import_id )
+					sprintf( __( 'Question does not exist: %s.', 'sensei-lms' ), $question_import_id ),
+					[
+						'code' => 'sensei_data_port_quiz_missing_question',
+					]
 				);
 
 				continue;
@@ -263,7 +271,10 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 			if ( empty( $this->course_id ) ) {
 				$this->add_line_warning(
 					// translators: Placeholder is the term which errored.
-					sprintf( __( 'Course does not exist: %s.', 'sensei-lms' ), $value )
+					sprintf( __( 'Course does not exist: %s.', 'sensei-lms' ), $value ),
+					[
+						'code' => 'sensei_data_port_lesson_course_missing',
+					]
 				);
 
 				$this->course_id = null;
@@ -290,7 +301,12 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 
 		$result = $this->add_thumbnail_to_post( Sensei_Data_Port_Lesson_Schema::COLUMN_IMAGE );
 		if ( $result instanceof WP_Error ) {
-			$this->add_line_warning( $result->get_error_message() );
+			$this->add_line_warning(
+				$result->get_error_message(),
+				[
+					'code' => $result->get_error_code(),
+				]
+			);
 		}
 
 		$prerequisite = $this->get_value( Sensei_Data_Port_Lesson_Schema::COLUMN_PREREQUISITE );
@@ -428,7 +444,12 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 			$term = $this->get_lesson_module( $new_terms );
 
 			if ( is_wp_error( $term ) ) {
-				$this->add_line_warning( $term->get_error_message() );
+				$this->add_line_warning(
+					$term->get_error_message(),
+					[
+						'code' => $term->get_error_code(),
+					]
+				);
 			} else {
 				$terms[] = $term;
 			}
@@ -453,7 +474,10 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 						// translators: Placeholder is comma separated list of terms that failed to save.
 						__( 'The following terms failed to save: %s', 'sensei-lms' ),
 						implode( ', ', $failed_terms )
-					)
+					),
+					[
+						'code' => 'sensei_data_port_lesson_terms_failed_to_save',
+					]
 				);
 			}
 		}
@@ -462,7 +486,12 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 		$result       = wp_set_object_terms( $this->get_post_id(), $new_term_ids, $taxonomy );
 
 		if ( is_wp_error( $result ) ) {
-			$this->add_line_warning( $result->get_error_message() );
+			$this->add_line_warning(
+				$result->get_error_message(),
+				[
+					'code' => $result->get_error_code(),
+				]
+			);
 		}
 	}
 
