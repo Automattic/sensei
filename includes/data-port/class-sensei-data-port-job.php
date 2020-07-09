@@ -423,6 +423,15 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 			return new WP_Error( 'sensei_data_port_upload_path_unavailable', $uploads['error'] );
 		}
 
+		$file_configs = static::get_file_config();
+
+		if ( ! isset( $file_configs[ $file_key ] ) ) {
+			return new WP_Error(
+				'sensei_data_port_unknown_file_key',
+				__( 'Unexpected file key used.', 'sensei-lms' )
+			);
+		}
+
 		$filename       = wp_unique_filename( $uploads['path'], $stored_file_name );
 		$file_save_path = $uploads['path'] . "/$filename";
 
@@ -435,15 +444,6 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 
 		if ( ! $move_new_file || ! file_exists( $file_save_path ) ) {
 			return new WP_Error( 'sensei_data_port_file_save_failed', __( 'Error saving file.', 'sensei-lms' ) );
-		}
-
-		$file_configs = static::get_file_config();
-
-		if ( ! isset( $file_configs[ $file_key ] ) ) {
-			return new WP_Error(
-				'sensei_data_port_unknown_file_key',
-				__( 'Unexpected file key used.', 'sensei-lms' )
-			);
 		}
 
 		$file_config = $file_configs[ $file_key ];

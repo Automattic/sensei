@@ -78,10 +78,13 @@ class Sensei_REST_API_Import_Controller extends Sensei_REST_API_Data_Port_Contro
 	public function request_post_file( $request ) {
 		$files = $request->get_file_params();
 		if ( ! isset( $files['file'] ) ) {
-			return new WP_Error(
-				'sensei_data_port_invalid_file',
-				__( 'No file was uploaded.', 'sensei-lms' ),
-				[ 'status' => 400 ]
+			return $this->report_upload_file_failed(
+				$request,
+				new WP_Error(
+					'sensei_data_port_missing_file',
+					__( 'No file was uploaded.', 'sensei-lms' ),
+					[ 'status' => 400 ]
+				)
 			);
 		}
 
@@ -92,10 +95,13 @@ class Sensei_REST_API_Import_Controller extends Sensei_REST_API_Data_Port_Contro
 
 		// Check if the job has started or if there was an error creating the job.
 		if ( ! $job || $job->is_started() ) {
-			return new WP_Error(
-				'sensei_data_port_job_started',
-				__( 'Job has already been started.', 'sensei-lms' ),
-				[ 'status' => 400 ]
+			return $this->report_upload_file_failed(
+				$request,
+				new WP_Error(
+					'sensei_data_port_job_started',
+					__( 'Job has already been started.', 'sensei-lms' ),
+					[ 'status' => 400 ]
+				)
 			);
 		}
 
@@ -105,18 +111,38 @@ class Sensei_REST_API_Import_Controller extends Sensei_REST_API_Data_Port_Contro
 			|| ! $this->is_uploaded_file( $files['file']['tmp_name'] )
 			|| UPLOAD_ERR_OK !== $files['file']['error']
 		) {
-			return $this->describe_upload_error( $files['file'] );
+			return $this->report_upload_file_failed( $request, $this->describe_upload_error( $files['file'] ) );
 		}
 
 		$result = $job->save_file( $request->get_param( 'file_key' ), $files['file']['tmp_name'], $files['file']['name'] );
 
 		if ( is_wp_error( $result ) ) {
-			return $result;
+			return $this->report_upload_file_failed( $request, $result );
 		}
 
 		$response = new WP_REST_Response();
 		$response->set_status( 200 );
 		$response->set_data( $this->prepare_to_serve_job( $job ) );
+
+		return $response;
+	}
+
+	/**
+	 * Logs errors during file upload.
+	 *
+	 * @param WP_REST_Request $request  Request object.
+	 * @param WP_Error        $response Error response object.
+	 *
+	 * @return WP_Error
+	 */
+	private function report_upload_file_failed( WP_REST_Request $request, WP_Error $response ) {
+		sensei_log_event(
+			'import_upload_error',
+			[
+				'type'  => $request->get_param( 'file_key' ),
+				'error' => $response->get_error_code(),
+			]
+		);
 
 		return $response;
 	}
@@ -146,32 +172,39 @@ class Sensei_REST_API_Import_Controller extends Sensei_REST_API_Data_Port_Contro
 	 * @return WP_Error
 	 */
 	private function describe_upload_error( $file ) {
-		switch ( $file['error_code'] ) {
+		switch ( $file['error'] ) {
 			case 1:
 			case 2:
+				$error_code    = 'sensei_import_upload_failed_max_file_size';
 				$error_message = __( 'The file uploaded exceeds the maximum file size allowed.', 'sensei-lms' );
 				break;
 			case 3:
+				$error_code    = 'sensei_import_upload_failed_partial_upload';
 				$error_message = __( 'The file was only partially uploaded. Please try again.', 'sensei-lms' );
 				break;
 			case 4:
+				$error_code    = 'sensei_import_upload_failed_no_file';
 				$error_message = __( 'No file was uploaded.', 'sensei-lms' );
 				break;
 			case 6:
+				$error_code    = 'sensei_import_upload_failed_missing_tmp_folder';
 				$error_message = __( 'Missing a temporary folder to store the uploaded file.', 'sensei-lms' );
 				break;
 			case 7:
+				$error_code    = 'sensei_import_upload_failed_unwritable';
 				$error_message = __( 'Failed to write the uploaded file to disk. Please contact your host to fix a possible permissions issue.', 'sensei-lms' );
 				break;
 			case 8:
+				$error_code    = 'sensei_import_upload_failed_php_extension';
 				$error_message = __( 'A PHP Extension prevented the file upload. Please contact your host.', 'sensei-lms' );
 				break;
 			default:
+				$error_code    = 'sensei_import_upload_failed_unknown';
 				$error_message = __( 'File upload error.', 'sensei-lms' );
 		}
 
 		return new WP_Error(
-			'sensei_data_port_job_upload_failed',
+			$error_code,
 			$error_message
 		);
 	}
