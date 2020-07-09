@@ -362,9 +362,10 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 			return;
 		}
 
-		$completed_cycles   = 0;
-		$total_cycles       = 0;
-		$has_processed_task = false;
+		$completed_cycles    = 0;
+		$total_cycles        = 0;
+		$has_processed_task  = false;
+		$has_incomplete_task = false;
 
 		foreach ( $this->get_tasks() as $task ) {
 
@@ -373,13 +374,17 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 				$has_processed_task = true;
 			}
 
+			if ( ! $task->is_completed() ) {
+				$has_incomplete_task = true;
+			}
+
 			$ratio = $task->get_completion_ratio();
 
 			$completed_cycles += $ratio['completed'];
 			$total_cycles     += $ratio['total'];
 		}
 
-		if ( ! $has_processed_task || 0 === $total_cycles ) {
+		if ( ! $has_incomplete_task || 0 === $total_cycles ) {
 			$this->is_completed = true;
 			$this->percentage   = 100;
 		} else {
