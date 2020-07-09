@@ -88,3 +88,15 @@ export const isReadyToStart = ( state ) => {
 
 	return hasUploaded && ! inProgress;
 };
+
+/**
+ * Get uploaded level keys.
+ *
+ * @param {Object} state Current state.
+ *
+ * @return {string[]} Array of uploaded level keys.
+ */
+export const getUploadedLevelKeys = ( { upload } ) =>
+	levels
+		.filter( ( { key } ) => upload[ key ].isUploaded )
+		.map( ( { key } ) => key );
