@@ -153,7 +153,7 @@ class Sensei_Import_Question_Model extends Sensei_Import_Model {
 		$fields = [];
 
 		$fields['_question_grade']  = $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_GRADE );
-		$fields['_random_order']    = $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_RANDOM_ORDER );
+		$fields['_random_order']    = $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_RANDOM_ORDER ) ? 'yes' : 'no';
 		$fields['_answer_feedback'] = $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_FEEDBACK );
 		$fields['_question_media']  = $this->get_question_media_value();
 
