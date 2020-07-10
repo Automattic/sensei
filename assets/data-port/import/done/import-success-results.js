@@ -16,9 +16,9 @@ const getPostTypeLabel = ( { key, count } ) => {
 };
 
 /**
- * ImportSuccess component.
+ * ImportSuccessResults component.
  */
-const ImportSuccess = ( { successResults } ) => (
+const ImportSuccessResults = ( { successResults } ) => (
 	<ul className="sensei-import-bullet-list">
 		{ successResults.map( ( { key, count } ) => (
 			<li key={ key }>
@@ -32,4 +32,4 @@ const ImportSuccess = ( { successResults } ) => (
 	</ul>
 );
 
-export default ImportSuccess;
+export default ImportSuccessResults;

@@ -2,7 +2,7 @@ import { __ } from '@wordpress/i18n';
 import { Section } from '@woocommerce/components';
 import { Button, Spinner, Notice } from '@wordpress/components';
 import { ImportLog } from './import-log';
-import ImportSuccess from './import-success';
+import ImportSuccessResults from './import-success-results';
 
 /**
  * Done page of the importer.
@@ -81,7 +81,7 @@ export const DonePage = ( {
 						) }
 					</p>
 
-					<ImportSuccess successResults={ successResults } />
+					<ImportSuccessResults successResults={ successResults } />
 
 					<div className="sensei-data-port-step__footer">
 						<Button isPrimary onClick={ restartImporter }>
