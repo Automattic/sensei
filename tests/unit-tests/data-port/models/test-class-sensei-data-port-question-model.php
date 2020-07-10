@@ -287,7 +287,7 @@ class Sensei_Import_Question_Model_Test extends WP_UnitTestCase {
 		);
 		$this->assertEquals( 1, get_post_meta( $post->ID, '_right_answer_count', true ) );
 		$this->assertEquals( 2, get_post_meta( $post->ID, '_wrong_answer_count', true ) );
-		$this->assertEquals( $expected_data[ Sensei_Data_Port_Question_Schema::COLUMN_RANDOM_ORDER ], get_post_meta( $post->ID, '_random_order', true ) );
+		$this->assertEquals( 'yes', get_post_meta( $post->ID, '_random_order', true ) );
 		$this->assertEquals( $expected_data[ Sensei_Data_Port_Question_Schema::COLUMN_GRADE ], get_post_meta( $post->ID, '_question_grade', true ) );
 
 		$this->assertEquals( $expected_answer_order, get_post_meta( $post->ID, '_answer_order', true ) );
