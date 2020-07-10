@@ -230,9 +230,14 @@ class Sensei_Import_Question_Model extends Sensei_Import_Model {
 
 				break;
 			case 'single-line':
-			case 'multi-line':
 				$values = [
 					'_question_right_answer' => $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_ANSWER ),
+				];
+
+				break;
+			case 'multi-line':
+				$values = [
+					'_question_right_answer' => $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_TEACHER_NOTES ),
 				];
 
 				break;
