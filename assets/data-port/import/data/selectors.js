@@ -112,7 +112,9 @@ export const getUploadedLevelKeys = ( { upload } ) =>
 export const getSuccessResults = ( { done } ) =>
 	DONE_KEYS.map( ( key ) => ( {
 		key,
-		count: get( done, [ 'results', key, 'success' ], 0 ),
+		count:
+			get( done, [ 'results', key, 'success' ], 0 ) +
+			get( done, [ 'results', key, 'warning' ], 0 ),
 	} ) );
 
 /**

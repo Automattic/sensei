@@ -232,6 +232,7 @@ describe( 'Importer selectors', () => {
 				results: {
 					course: {
 						success: 1,
+						warning: 4,
 					},
 					lesson: {
 						success: 2,
@@ -246,7 +247,7 @@ describe( 'Importer selectors', () => {
 		const expected = [
 			{
 				key: 'course',
-				count: 1,
+				count: 5,
 			},
 			{
 				key: 'lesson',
