@@ -69,7 +69,6 @@ class Sensei_Data_Port_Utilities {
 					'posts_per_page' => 1,
 					'post_status'    => 'any',
 					'meta_compare'   => 'REGEXP',
-					'post_parent'    => $parent_id,
 					'meta_key'       => '_wp_attached_file', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- No faster way to search an attachment from its filename.
 					'meta_value'     => '(^|/)' . sanitize_file_name( $source ) . '$', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- See above.
 				]
