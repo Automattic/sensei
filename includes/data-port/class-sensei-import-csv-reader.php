@@ -60,7 +60,7 @@ class Sensei_Import_CSV_Reader {
 	public function __construct( $csv_file, $completed_lines = 0, $lines_per_batch = 30 ) {
 		$this->file = new SplFileObject( $csv_file );
 		$this->file->setFlags( SplFileObject::READ_CSV );
-		$this->set_delimiter();
+		$this->detect_delimiter();
 
 		$this->file->seek( PHP_INT_MAX );
 		$this->total_lines     = $this->file->key();
@@ -74,7 +74,7 @@ class Sensei_Import_CSV_Reader {
 	 *
 	 * The delimiter detection works testing the delimiter which find more columns.
 	 */
-	private function set_delimiter() {
+	private function detect_delimiter() {
 		/**
 		 * Filters the default CSV delimiter.
 		 *
