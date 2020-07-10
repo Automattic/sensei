@@ -176,7 +176,7 @@ class Sensei_Data_Port_Utilities {
 		}
 
 		$attachment_args = [
-			'post_content'   => $file_url,
+			'post_content'   => '',
 			'post_title'     => basename( $file_path ),
 			'post_mime_type' => $wp_filetype['type'],
 			'guid'           => $file_url,
