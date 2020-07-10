@@ -15,8 +15,6 @@ import {
 	ERROR_DELETE_IMPORT_DATA_FILE,
 	RESET_STATE,
 	SET_JOB_STATE,
-	SET_IMPORT_LOG,
-	ERROR_FETCH_IMPORT_LOG,
 } from './constants';
 
 import { composeFetchAction } from '../../../shared/data/store-helpers';
@@ -373,40 +371,6 @@ export const successDeleteLevelFileAction = ( level, data ) => ( {
 export const errorDeleteLevelFileAction = ( level, error ) => ( {
 	type: ERROR_DELETE_IMPORT_DATA_FILE,
 	level,
-	error,
-} );
-
-/**
- * @typedef  {Object} SetImportLogAction
- * @property {string} type Action type.
- * @property {Object} data Logs object.
- */
-/**
- * Set import logs action creator.
- *
- * @param {Object} data Logs object.
- *
- * @return {SetImportLogAction} Set import logs action.
- */
-export const setImportLog = ( data ) => ( {
-	type: SET_IMPORT_LOG,
-	data,
-} );
-
-/**
- * @typedef  {Object}         ErrorFetchImportLogAction
- * @property {string}         type   Action type.
- * @property {Object|boolean} error  Error object or false.
- */
-/**
- * Error fetch import log action creator.
- *
- * @param {Object} error Error object or false.
- *
- * @return {ErrorFetchImportLogAction} Error action.
- */
-export const errorFetchImportLog = ( error ) => ( {
-	type: ERROR_FETCH_IMPORT_LOG,
 	error,
 } );
 

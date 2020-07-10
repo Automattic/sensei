@@ -14,7 +14,9 @@ export const composeFetchAction = (
 	errorAction
 ) =>
 	function*( ...args ) {
-		yield { type: startAction };
+		if ( startAction ) {
+			yield { type: startAction };
+		}
 
 		try {
 			const data = yield* fetchFn( ...args );
