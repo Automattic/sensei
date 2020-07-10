@@ -45,6 +45,7 @@ class Sensei_Import_Lessons_Tests extends WP_UnitTestCase {
 			$lesson_id,
 			'slug:a-secret-lesson',
 			1,
+			'Post title',
 		];
 
 		$method->invoke( $task, $task_args );
@@ -72,6 +73,7 @@ class Sensei_Import_Lessons_Tests extends WP_UnitTestCase {
 			$lesson_id,
 			'slug:a-secret-lesson',
 			1,
+			'Post title',
 		];
 
 		$method->invoke( $task, $task_args );
@@ -98,6 +100,7 @@ class Sensei_Import_Lessons_Tests extends WP_UnitTestCase {
 			$lesson_id,
 			'slug:a-missing-lesson',
 			1,
+			'Post title',
 		];
 
 		$method->invoke( $task, $task_args );

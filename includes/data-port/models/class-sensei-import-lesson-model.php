@@ -283,7 +283,8 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 			$this->course_id = null;
 		}
 
-		$post_id = wp_insert_post( $this->get_lesson_args(), true );
+		$post_args = $this->get_lesson_args();
+		$post_id   = wp_insert_post( $post_args, true );
 
 		if ( is_wp_error( $post_id ) ) {
 			return $post_id;
@@ -311,7 +312,7 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 
 		$prerequisite = $this->get_value( Sensei_Data_Port_Lesson_Schema::COLUMN_PREREQUISITE );
 		if ( $prerequisite ) {
-			$this->task->add_prerequisite_task( $post_id, $prerequisite, $this->line_number );
+			$this->task->add_prerequisite_task( $post_id, $prerequisite, $this->line_number, $post_args['post_title'] );
 		} elseif ( '' === $prerequisite ) {
 			delete_post_meta( $post_id, '_lesson_prerequisite' );
 		}

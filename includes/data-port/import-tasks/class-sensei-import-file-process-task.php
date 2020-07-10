@@ -135,6 +135,7 @@ abstract class Sensei_Import_File_Process_Task
 
 			$task_method = 'handle_' . $next_task;
 			$callback    = [ $this, $task_method ];
+
 			call_user_func( $callback, $next_task_args );
 
 			if ( empty( $this->post_process_tasks[ $next_task ] ) ) {

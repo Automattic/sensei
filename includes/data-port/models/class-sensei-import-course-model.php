@@ -48,7 +48,8 @@ class Sensei_Import_Course_Model extends Sensei_Import_Model {
 		remove_action( 'save_post', array( Sensei()->course, 'save_course_notification_meta_box' ) );
 		remove_action( 'save_post', array( Sensei()->course, 'meta_box_save' ) );
 
-		$post_id = wp_insert_post( $this->get_course_args( $teacher ), true );
+		$post_args = $this->get_course_args( $teacher );
+		$post_id   = wp_insert_post( $post_args, true );
 
 		add_action( 'transition_post_status', array( Sensei()->teacher, 'notify_admin_teacher_course_creation' ), 10, 3 );
 		add_action( 'save_post', array( Sensei()->course, 'save_course_notification_meta_box' ) );
@@ -80,7 +81,7 @@ class Sensei_Import_Course_Model extends Sensei_Import_Model {
 
 		$prerequisite = $this->get_value( Sensei_Data_Port_Course_Schema::COLUMN_PREREQUISITE );
 		if ( $prerequisite ) {
-			$this->task->add_prerequisite_task( $post_id, $prerequisite, $this->line_number );
+			$this->task->add_prerequisite_task( $post_id, $prerequisite, $this->line_number, $post_args['post_title'] );
 		} elseif ( '' === $prerequisite ) {
 			delete_post_meta( $post_id, '_course_prerequisite' );
 		}

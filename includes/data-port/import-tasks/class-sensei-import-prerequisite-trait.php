@@ -26,11 +26,13 @@ trait Sensei_Import_Prerequisite_Trait {
 		$reference         = sanitize_text_field( $task[1] );
 		$line_number       = (int) $task[2];
 		$reference_post_id = $this->get_job()->translate_import_id( $post_type, $reference );
+		$post_title        = $task[3];
 
 		$error_data = [
-			'line'    => $line_number,
-			'type'    => $model_key,
-			'post_id' => $post_id,
+			'line'        => $line_number,
+			'type'        => $model_key,
+			'post_id'     => $post_id,
+			'entry_title' => $post_title,
 		];
 
 		if ( ! $reference_post_id ) {
@@ -76,13 +78,14 @@ trait Sensei_Import_Prerequisite_Trait {
 	 * @param string $reference   Reference to the prerequisite.
 	 * @param int    $line_number Line number.
 	 */
-	public function add_prerequisite_task( $post_id, $reference, $line_number ) {
+	public function add_prerequisite_task( $post_id, $reference, $line_number, $post_title ) {
 		$this->add_post_process_task(
 			'prerequisite',
 			[
 				$post_id,
 				$reference,
 				$line_number,
+				$post_title,
 			]
 		);
 	}
