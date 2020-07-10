@@ -153,7 +153,7 @@ class Sensei_Import_Question_Model extends Sensei_Import_Model {
 		$fields = [];
 
 		$fields['_question_grade']  = $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_GRADE );
-		$fields['_random_order']    = $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_RANDOM_ORDER );
+		$fields['_random_order']    = $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_RANDOM_ORDER ) ? 'yes' : 'no';
 		$fields['_answer_feedback'] = $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_FEEDBACK );
 		$fields['_question_media']  = $this->get_question_media_value();
 
@@ -207,7 +207,7 @@ class Sensei_Import_Question_Model extends Sensei_Import_Model {
 			case 'boolean':
 				$answers_raw = $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_ANSWER );
 				$values      = [
-					'_question_right_answer' => 1 === intval( $answers_raw ) ? 1 : 0,
+					'_question_right_answer' => in_array( $answers_raw, [ '1', 'true' ], true ) ? 'true' : 'false',
 				];
 
 				break;
@@ -230,9 +230,14 @@ class Sensei_Import_Question_Model extends Sensei_Import_Model {
 
 				break;
 			case 'single-line':
-			case 'multi-line':
 				$values = [
 					'_question_right_answer' => $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_ANSWER ),
+				];
+
+				break;
+			case 'multi-line':
+				$values = [
+					'_question_right_answer' => $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_TEACHER_NOTES ),
 				];
 
 				break;
