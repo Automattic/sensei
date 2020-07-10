@@ -207,7 +207,7 @@ class Sensei_Import_Question_Model extends Sensei_Import_Model {
 			case 'boolean':
 				$answers_raw = $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_ANSWER );
 				$values      = [
-					'_question_right_answer' => in_array( $answers_raw, [ '1', 'true' ], true ) ? 1 : 0,
+					'_question_right_answer' => in_array( $answers_raw, [ '1', 'true' ], true ) ? 'true' : 'false',
 				];
 
 				break;

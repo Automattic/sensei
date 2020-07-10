@@ -386,7 +386,7 @@ class Sensei_Import_Question_Model_Test extends WP_UnitTestCase {
 		$this->assertEquals( 'draft', $post->post_status, 'Post status should be draft by default' );
 		$this->assertEquals( '', $post->post_name, 'Post name should be empty for drafts' );
 
-		$this->assertEquals( $expected_data[ Sensei_Data_Port_Question_Schema::COLUMN_ANSWER ], get_post_meta( $post->ID, '_question_right_answer', true ) );
+		$this->assertEquals( 'true', get_post_meta( $post->ID, '_question_right_answer', true ) );
 		$this->assertEquals( null, get_post_meta( $post->ID, '_question_wrong_answers', true ) );
 		$this->assertEquals( null, get_post_meta( $post->ID, '_right_answer_count', true ) );
 		$this->assertEquals( null, get_post_meta( $post->ID, '_wrong_answer_count', true ) );
