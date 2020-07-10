@@ -157,21 +157,21 @@ $alert-red: #d94f4f;
 					margin: 6px auto;
 				}
 			}
+		}
+
+		&__footer {
+			margin: 24px -24px 0;
+			border-top: 1px solid #eee;
+			padding: 24px;
+			display: flex;
+			justify-content: flex-end;
+			align-items: center;
 
 			.components-button {
 				padding: 6px 24px;
 				height: 40px;
 			}
 		}
-	}
-
-	.sensei-import-footer {
-		margin: 24px -24px 0;
-		border-top: 1px solid #eee;
-		padding: 24px;
-		display: flex;
-		justify-content: flex-end;
-		align-items: center;
 	}
 }
 

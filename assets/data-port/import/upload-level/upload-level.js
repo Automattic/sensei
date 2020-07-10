@@ -72,19 +72,22 @@ export const UploadLevels = ( {
 				let deleteButton;
 				if ( levelState.isDeleting ) {
 					deleteButton = (
-						<Spinner className="sensei-upload-file-line__delete-spinner" />
+						<div className="sensei-upload-file-line__delete-button-wrapper">
+							<Spinner />
+						</div>
 					);
 				} else if ( levelState.isUploaded ) {
 					deleteButton = (
-						<Button
-							className="sensei-upload-file-line__delete-button"
-							icon={ closeSmall }
-							label={ __( 'Delete File', 'sensei-lms' ) }
-							onClick={ () =>
-								deleteLevelFile( jobId, level.key )
-							}
-							disabled={ levelState.isDeleting }
-						/>
+						<div className="sensei-upload-file-line__delete-button-wrapper">
+							<Button
+								icon={ closeSmall }
+								label={ __( 'Delete File', 'sensei-lms' ) }
+								onClick={ () =>
+									deleteLevelFile( jobId, level.key )
+								}
+								disabled={ levelState.isDeleting }
+							/>
+						</div>
 					);
 				}
 
@@ -119,8 +122,12 @@ export const UploadLevels = ( {
 									: __( 'Upload', 'sensei-lms' ) }
 							</FormFileUpload>
 						</label>
-						{ message }
-						{ deleteButton }
+						{ ( message || deleteButton ) && (
+							<div className="sensei-upload-file-line__info">
+								{ message }
+								{ deleteButton }
+							</div>
+						) }
 					</li>
 				);
 				/* eslint-enable */

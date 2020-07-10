@@ -32,7 +32,7 @@ export const UploadPage = ( { state, isReady, submitStartImport } ) => {
 					) }
 				</p>
 				<UploadLevels />
-				<div className="sensei-import-footer">
+				<div className="sensei-data-port-step__footer">
 					{ errorMsg !== null && (
 						<Notice message={ errorMsg } isError />
 					) }
