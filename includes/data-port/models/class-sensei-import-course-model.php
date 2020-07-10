@@ -70,7 +70,12 @@ class Sensei_Import_Course_Model extends Sensei_Import_Model {
 
 		$result = $this->add_thumbnail_to_post( Sensei_Data_Port_Course_Schema::COLUMN_IMAGE );
 		if ( $result instanceof WP_Error ) {
-			$this->add_line_warning( $result->get_error_message() );
+			$this->add_line_warning(
+				$result->get_error_message(),
+				[
+					'code' => $result->get_error_code(),
+				]
+			);
 		}
 
 		$prerequisite = $this->get_value( Sensei_Data_Port_Course_Schema::COLUMN_PREREQUISITE );
@@ -200,7 +205,10 @@ class Sensei_Import_Course_Model extends Sensei_Import_Model {
 				// translators: Placeholder is comma separated list of terms that failed to save.
 					__( 'The following terms failed to save: %s', 'sensei-lms' ),
 					implode( ', ', $failed_terms )
-				)
+				),
+				[
+					'code' => 'sensei_data_port_course_terms_failed_to_save',
+				]
 			);
 		}
 
@@ -208,7 +216,12 @@ class Sensei_Import_Course_Model extends Sensei_Import_Model {
 		$result       = wp_set_object_terms( $course_id, $new_term_ids, $taxonomy );
 
 		if ( is_wp_error( $result ) ) {
-			$this->add_line_warning( $result->get_error_message() );
+			$this->add_line_warning(
+				$result->get_error_message(),
+				[
+					'code' => $result->get_error_code(),
+				]
+			);
 		} elseif ( 'module' === $taxonomy ) {
 			$new_module_order = array_map( 'strval', $new_term_ids );
 			update_post_meta( $course_id, '_module_order', $new_module_order );

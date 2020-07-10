@@ -6,8 +6,10 @@
  */
 
 class Sensei_Import_Model_Mock extends Sensei_Import_Model {
+	const MODEL_KEY = 'mock-model';
+
 	public function get_model_key() {
-		return 'mock-model';
+		return self::MODEL_KEY;
 	}
 
 	protected function get_existing_post_id() {

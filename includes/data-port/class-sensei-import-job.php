@@ -93,6 +93,33 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 	}
 
 	/**
+	 * Add an entry to the logs.
+	 *
+	 * @param string $message Log message.
+	 * @param int    $level   Log level (see constants).
+	 * @param array  $data    Data to include with the message.
+	 */
+	public function add_log_entry( $message, $level = self::LOG_LEVEL_INFO, $data = [] ) {
+		if ( isset( $data['code'], $data['type'] ) ) {
+			$event_data = [
+				'type'  => $data['type'],
+				'error' => $data['code'],
+			];
+
+			if ( self::LOG_LEVEL_ERROR === $level ) {
+				sensei_log_event( 'import_error', $event_data );
+			} elseif ( self::LOG_LEVEL_NOTICE === $level ) {
+				sensei_log_event( 'import_warning', $event_data );
+			}
+		}
+
+		// We don't use the error code after this.
+		unset( $data['code'] );
+
+		parent::add_log_entry( $message, $level, $data );
+	}
+
+	/**
 	 * Get the configuration for expected files.
 	 *
 	 * @return array {
