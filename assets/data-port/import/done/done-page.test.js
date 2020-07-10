@@ -47,21 +47,38 @@ describe( '<DonePage />', () => {
 			error: [
 				{
 					type: 'lesson',
-					title: 'Lesson title',
 					line: 7,
 					severity: 'error',
 					descriptor: 'ID: 7',
 					message: 'Error message.',
+					post: {
+						title: null,
+						edit_link: null,
+					},
 				},
 			],
 			notice: [
 				{
 					type: 'question',
-					title: 'Question title',
 					line: 1,
 					severity: 'notice',
 					descriptor: 'ID: 1',
 					message: 'Warning message.',
+					post: {
+						title: 'Question title 1',
+						edit_link: 'http://test.com/',
+					},
+				},
+				{
+					type: 'question',
+					line: 2,
+					severity: 'notice',
+					descriptor: 'ID: 1',
+					message: 'Warning message.',
+					post: {
+						title: 'Question title 2',
+						edit_link: null,
+					},
 				},
 			],
 		};
@@ -70,15 +87,21 @@ describe( '<DonePage />', () => {
 
 		expect( getByText( 'Failed' ) ).toBeTruthy();
 		expect( getByText( 'Partial' ) ).toBeTruthy();
+		expect(
+			getByText( 'Question title 1' ).getAttribute( 'href' )
+		).toEqual( 'http://test.com/' );
 
 		const rows = container.querySelectorAll(
 			'.sensei-import-done__log-data tbody tr'
 		);
 		expect( rows[ 0 ].textContent ).toMatch(
-			[ 'Lessons', 'Lesson title', '7', 'Error message.' ].join( '' )
+			[ 'Lessons', 'No title', '7', 'Error message.' ].join( '' )
 		);
 		expect( rows[ 1 ].textContent ).toMatch(
-			[ 'Question title', '1', 'Warning message.' ].join( '' )
+			[ 'Question title 1', '1', 'Warning message.' ].join( '' )
+		);
+		expect( rows[ 2 ].textContent ).toMatch(
+			[ 'Question title 2', '2', 'Warning message.' ].join( '' )
 		);
 	} );
 

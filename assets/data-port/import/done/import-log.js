@@ -13,6 +13,26 @@ const logTypeLabel = {
 };
 
 /**
+ * Create title with link.
+ *
+ * @param {string} title    Post title.
+ * @param {string} editLink Post edit link.
+ */
+const createTitleWithLink = ( title, editLink ) => {
+	const titleText = title || __( 'No title', 'sensei-lms' );
+
+	if ( editLink ) {
+		return (
+			<a href={ editLink } target="_blank" rel="noreferrer">
+				{ titleText }
+			</a>
+		);
+	}
+
+	return titleText;
+};
+
+/**
  * ImportLog component.
  */
 export const ImportLog = ( { items, type } ) => (
@@ -34,7 +54,12 @@ export const ImportLog = ( { items, type } ) => (
 						{ type === 'error' && (
 							<td>{ postTypeLabels[ item.type ] }</td>
 						) }
-						<td>{ item.title }</td>
+						<td>
+							{ createTitleWithLink(
+								item.post.title,
+								item.post.edit_link
+							) }
+						</td>
 						<td>{ item.line }</td>
 						<td>{ item.message }</td>
 					</tr>
