@@ -277,6 +277,10 @@ class Sensei_Data_Port_Utilities {
 	 * @return WP_Term|false
 	 */
 	public static function get_term( $term_name_path, $taxonomy_name, $teacher_user_id = null ) {
+		if ( ! $term_name_path ) {
+			return false;
+		}
+
 		$taxonomy = get_taxonomy( $taxonomy_name );
 		if ( ! $taxonomy ) {
 			return false;
@@ -394,6 +398,10 @@ class Sensei_Data_Port_Utilities {
 	 * @return array|string[]
 	 */
 	public static function split_list_safely( $str_list, $remove_quotes = false ) {
+		if ( empty( trim( $str_list ) ) ) {
+			return [];
+		}
+
 		$str_list = self::replace_curly_quotes( $str_list );
 		$list     = preg_split( '/,(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)/', $str_list );
 
