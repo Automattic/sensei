@@ -60,21 +60,94 @@ class Sensei_Import_CSV_Reader {
 	public function __construct( $csv_file, $completed_lines = 0, $lines_per_batch = 30 ) {
 		$this->file = new SplFileObject( $csv_file );
 		$this->file->setFlags( SplFileObject::READ_CSV );
-
-		/**
-		 * Change the default CSV delimiter.
-		 *
-		 * @since 3.2.0
-		 *
-		 * @param string  $delimiter The CSV file delimiter.
-		 */
-		$this->file->setCsvControl( apply_filters( 'sensei_import_csv_delimiter', ',' ) );
+		$this->detect_delimiter();
 
 		$this->file->seek( PHP_INT_MAX );
 		$this->total_lines     = $this->file->key();
 		$this->completed_lines = $completed_lines;
 		$this->is_completed    = $this->completed_lines >= $this->total_lines;
 		$this->lines_per_batch = $lines_per_batch;
+	}
+
+	/**
+	 * Set the delimiter to read the CSV file.
+	 *
+	 * The delimiter detection works testing the delimiter which find more columns.
+	 */
+	private function detect_delimiter() {
+		/**
+		 * Filters the default CSV delimiter.
+		 *
+		 * @since 3.2.0
+		 * @since 3.3.0 Updated the default to `false`, so it'll get through the delimiter detection.
+		 * @hook sensei_import_csv_delimiter
+		 *
+		 * @param {string} $delimiter The CSV file delimiter.
+		 */
+		$forced_delimiter = apply_filters( 'sensei_import_csv_delimiter', false );
+
+		if ( $forced_delimiter ) {
+			$this->file->setCsvControl( $forced_delimiter );
+			return;
+		}
+
+		/**
+		 * Filters the CSV delimiter options.
+		 *
+		 * @since 3.3.0
+		 * @hook sensei_import_csv_delimiter_options
+		 *
+		 * @param {string[]} $delimiters The CSV file delimiter options.
+		 */
+		$delimiters         = apply_filters( 'sensei_import_csv_delimiter_options', [ ',', ';', "\t", '|' ] );
+		$max_columns        = 0;
+		$selected_delimiter = $delimiters[0];
+
+		foreach ( $delimiters as $delimiter ) {
+			$this->file->setCsvControl( $delimiter );
+
+			$columns = $this->get_columns_number();
+
+			if ( false !== $columns && $columns > $max_columns ) {
+				$max_columns        = $columns;
+				$selected_delimiter = $delimiter;
+			}
+		}
+
+		$this->file->setCsvControl( $selected_delimiter );
+	}
+
+	/**
+	 * Get the number of columns matching the header with the content.
+	 *
+	 * @return int|false Number of columns or
+	 *                   `false` if the number of columns in the header and content doesn't match.
+	 */
+	private function get_columns_number() {
+		$this->file->seek( 0 );
+		$first_line_columns = count( $this->file->current() );
+
+		// Skip the header.
+		$this->file->next();
+
+		while ( ! $this->file->eof() ) {
+			$second_line         = $this->file->current();
+			$second_line_columns = count( $second_line );
+
+			// SplFileObject->current() returns [ 0 => null ] on empty lines.
+			if ( 1 === $second_line_columns && empty( $second_line[0] ) ) {
+				$this->file->next();
+				continue;
+			}
+
+			if ( $first_line_columns === $second_line_columns ) {
+				return $first_line_columns;
+			}
+
+			return false;
+		}
+
+		return false;
 	}
 
 	/**

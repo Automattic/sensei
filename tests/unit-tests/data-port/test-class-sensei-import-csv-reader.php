@@ -78,6 +78,15 @@ class Sensei_Import_CSV_Reader_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests that file with tab delimiter passes validation.
+	 */
+	public function testFileWithTabDelimiterPassValidation() {
+		$file = SENSEI_TEST_FRAMEWORK_DIR . '/data-port/data-files/test_csv_reader_tabs.csv';
+
+		$this->assertTrue( Sensei_Import_CSV_Reader::validate_csv_file( $file, [], [ 'first column', 'second column', 'third column' ] ) );
+	}
+
+	/**
 	 * Tests that lines that are empty are returned by read_lines() as empty arrays.
 	 */
 	public function testEmptyLinesAreReturnedAsEmpty() {
