@@ -607,9 +607,21 @@ class Sensei_Setup_Wizard {
 			}
 
 			if ( isset( $extension->wccom_product_id ) ) {
-				$wccom_extensions[] = $extension->plugin_file;
+				$wccom_extensions[] = $extension->product_slug;
 			} else {
 				$extensions_to_install[] = $extension;
+			}
+		}
+
+		if ( ! empty( $wccom_extensions ) ) {
+			$event_name       = 'setup_wizard_features_install_paid';
+			$event_properties = [ 'slug' => join( ',', $wccom_extensions ) ];
+
+			if ( class_exists( 'Automattic\Jetpack\Tracking' ) ) {
+				$tracking = new Automattic\Jetpack\Tracking( 'sensei' );
+				$tracking->record_user_event( $event_name, $event_properties );
+			} else {
+				sensei_log_event( $event_name, $event_properties );
 			}
 		}
 
