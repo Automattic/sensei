@@ -94,20 +94,21 @@ export const AdminFlow = {
 		return AdminFlow.goTo( 'plugins.php' );
 	},
 
-	async findPlugin( slug ) {
-		const deactivateLink = await page.$(
-			`tr[data-slug="${ slug }"] .deactivate a`
-		);
+	async isPluginActive( slug ) {
+		return !! ( await AdminFlow.findPluginAction( slug, 'deactivate' ) );
+	},
 
-		if ( ! deactivateLink ) return false;
-
-		return deactivateLink;
+	async findPluginAction( slug, action ) {
+		return page.$( `tr[data-slug="${ slug }"] .${ action } a` );
 	},
 
 	deactivatePlugin: async ( slug ) => {
 		await AdminFlow.goToPlugins();
 
-		const deactivateLink = await AdminFlow.findPlugin( slug );
+		const deactivateLink = await AdminFlow.findPluginAction(
+			slug,
+			'deactivate'
+		);
 
 		if ( deactivateLink ) {
 			await deactivateLink.click();
@@ -116,7 +117,10 @@ export const AdminFlow = {
 	activatePlugin: async ( slug, forceReactivate = false ) => {
 		await AdminFlow.goToPlugins();
 
-		const deactivateLink = await AdminFlow.findPlugin( slug );
+		const deactivateLink = await AdminFlow.findPluginAction(
+			slug,
+			'deactivate'
+		);
 
 		if ( deactivateLink ) {
 			if ( forceReactivate ) {
@@ -125,6 +129,7 @@ export const AdminFlow = {
 			} else return;
 		}
 
-		await page.click( `tr[data-slug="${ slug }"] .activate a` );
+		const activate = await AdminFlow.findPluginAction( slug, 'activate' );
+		await activate.click();
 	},
 };

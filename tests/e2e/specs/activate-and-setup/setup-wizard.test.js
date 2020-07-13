@@ -44,6 +44,7 @@ describe( 'Setup Wizard', () => {
 		await cleanupSenseiData();
 
 		await AdminFlow.activatePlugin( 'sensei-lms', true );
+		await page.waitForNavigation();
 		await expect( page.url() ).toMatch(
 			'admin.php?page=sensei_setup_wizard'
 		);
@@ -180,7 +181,7 @@ describe( 'Setup Wizard', () => {
 
 			await AdminFlow.goToPlugins();
 			expect(
-				await AdminFlow.findPlugin( 'sensei-certificates' )
+				await AdminFlow.isPluginActive( 'sensei-certificates' )
 			).toBeTruthy();
 		} );
 
