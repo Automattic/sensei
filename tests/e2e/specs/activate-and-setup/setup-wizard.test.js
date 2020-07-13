@@ -214,6 +214,19 @@ describe( 'Setup Wizard', () => {
 			);
 		} );
 
+		it( 'has newsletter sign-up form', async () => {
+			const form = await expect( page ).toMatchElement(
+				'form[action="https://senseilms.us19.list-manage.com/subscribe/post?u=7a061a9141b0911d6d9bafe3a&id=4fa225a515"]'
+			);
+
+			await expect( form ).toMatchElement(
+				'input[name="EMAIL"][value="admin@woocommercecoree2etestsuite.com"]'
+			);
+			await expect( form ).toMatchElement( 'button', {
+				text: 'Yes, please!',
+			} );
+		} );
+
 		it( 'links to course creation', async () => {
 			await expect( page ).toClick( 'a', {
 				text: 'Create a course',
@@ -232,19 +245,6 @@ describe( 'Setup Wizard', () => {
 			await expect( page.url() ).toMatch(
 				adminUrl( 'admin.php?page=sensei_import' )
 			);
-		} );
-
-		it( 'has newsletter sign-up form', async () => {
-			const form = await expect( page ).toMatchElement(
-				'form[action="https://senseilms.us19.list-manage.com/subscribe/post?u=7a061a9141b0911d6d9bafe3a&id=4fa225a515"]'
-			);
-
-			await expect( form ).toMatchElement(
-				'input[name="EMAIL"][value="admin@woocommercecoree2etestsuite.com"]'
-			);
-			await expect( form ).toMatchElement( 'button', {
-				text: 'Yes, please!',
-			} );
 		} );
 	} );
 } );
