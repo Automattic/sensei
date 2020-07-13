@@ -613,7 +613,7 @@ class Sensei_Setup_Wizard {
 			}
 		}
 
-		if ( ! empty( $wccom_extensions ) ) {
+		if ( Sensei()->usage_tracking->is_tracking_enabled() && ! empty( $wccom_extensions ) ) {
 			$event_name       = 'setup_wizard_features_install_paid';
 			$event_properties = [ 'slug' => join( ',', $wccom_extensions ) ];
 			$event_tracked    = false;
