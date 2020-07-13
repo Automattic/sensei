@@ -235,10 +235,14 @@ describe( 'Setup Wizard', () => {
 		} );
 
 		it( 'has newsletter sign-up form', async () => {
-			expect( page ).toMatchElement(
+			const form = await expect( page ).toMatchElement(
+				'form[action="https://senseilms.us19.list-manage.com/subscribe/post?u=7a061a9141b0911d6d9bafe3a&id=4fa225a515"]'
+			);
+
+			await expect( form ).toMatchElement(
 				'input[name="EMAIL"][value="admin@woocommercecoree2etestsuite.com"]'
 			);
-			expect( page ).toMatchElement( 'button', {
+			await expect( form ).toMatchElement( 'button', {
 				text: 'Yes, please!',
 			} );
 		} );
