@@ -288,6 +288,10 @@ class Sensei_Import_Question_Model extends Sensei_Import_Model {
 	 * @return array
 	 */
 	private function parse_multiple_choice_answers() {
+		if ( isset( $this->processed_multiple_choice_answers ) ) {
+			return $this->processed_multiple_choice_answers;
+		}
+
 		$values = [
 			'_question_right_answer'  => [],
 			'_question_wrong_answers' => [],
@@ -320,6 +324,8 @@ class Sensei_Import_Question_Model extends Sensei_Import_Model {
 		$values['_answer_order']       = implode( ',', $values['_answer_order'] );
 		$values['_right_answer_count'] = count( $values['_question_right_answer'] );
 		$values['_wrong_answer_count'] = count( $values['_question_wrong_answers'] );
+
+		$this->processed_multiple_choice_answers = $values;
 
 		return $values;
 	}
