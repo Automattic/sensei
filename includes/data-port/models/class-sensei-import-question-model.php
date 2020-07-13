@@ -69,7 +69,7 @@ class Sensei_Import_Question_Model extends Sensei_Import_Model {
 			'post_type' => Sensei_Data_Port_Question_Schema::POST_TYPE,
 		];
 
-		if ( $this->is_new() ) {
+		if ( ! $this->is_new() ) {
 			$postarr['ID'] = $this->get_post_id();
 		} elseif ( get_current_user_id() ) {
 			$postarr['post_author'] = get_current_user_id();
@@ -213,8 +213,8 @@ class Sensei_Import_Question_Model extends Sensei_Import_Model {
 				break;
 			case 'file-upload':
 				$values = [
-					'_question_right_answer'  => $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_UPLOAD_NOTES ),
-					'_question_wrong_answers' => $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_TEACHER_NOTES ),
+					'_question_right_answer'  => $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_TEACHER_NOTES ),
+					'_question_wrong_answers' => [ $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_UPLOAD_NOTES ) ],
 				];
 
 				break;

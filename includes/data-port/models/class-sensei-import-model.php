@@ -118,10 +118,10 @@ abstract class Sensei_Import_Model extends Sensei_Data_Port_Model {
 			if ( null !== $value ) {
 				switch ( $config['type'] ) {
 					case 'int':
-						$value = intval( $value );
+						$value = '' === $value ? null : intval( $value );
 						break;
 					case 'float':
-						$value = floatval( $value );
+						$value = '' === $value ? null : floatval( $value );
 						break;
 					case 'bool':
 						if ( ! in_array( $value, [ '0', '1', 'true', 'false' ], true ) ) {
