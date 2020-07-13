@@ -37,6 +37,20 @@ class Sensei_Import_Question_Model extends Sensei_Import_Model {
 	 * @return true|WP_Error
 	 */
 	public function sync_post() {
+		$question_type = $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_TYPE );
+
+		// Check if multiple choice has a right answer.
+		if ( 'multiple-choice' === $question_type ) {
+			$answers = $this->parse_multiple_choice_answers();
+
+			if ( empty( $answers['_question_right_answer'] ) ) {
+				return new WP_Error(
+					'sensei_data_port_question_without_right_answer',
+					__( 'Question does not contain a right answer.', 'sensei-lms' )
+				);
+			}
+		}
+
 		$post_id = wp_insert_post( $this->get_post_array(), true );
 
 		if ( is_wp_error( $post_id ) ) {
