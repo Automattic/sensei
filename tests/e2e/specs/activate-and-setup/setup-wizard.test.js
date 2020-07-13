@@ -134,7 +134,6 @@ describe( 'Setup Wizard', () => {
 
 	describe( 'Features step', () => {
 		beforeAll( async () => {
-			await AdminFlow.deactivatePlugin( 'sensei-media-attachments' );
 			await AdminFlow.deactivatePlugin( 'sensei-certificates' );
 			await openSetupWizard();
 		} );
