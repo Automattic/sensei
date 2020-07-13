@@ -42,6 +42,15 @@ describe( '<DonePage />', () => {
 		expect( success ).toContain( '0 lessons' );
 	} );
 
+	it( 'should show message saying that no content was imported', () => {
+		const { queryByText } = render( <DonePage successResults={ [] } /> );
+
+		expect(
+			queryByText( 'The following content was imported:' )
+		).toBeFalsy();
+		expect( queryByText( 'No content was imported.' ) ).toBeTruthy();
+	} );
+
 	it( 'should show import log', () => {
 		const logs = {
 			error: [

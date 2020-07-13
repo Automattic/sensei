@@ -238,7 +238,7 @@ describe( 'Importer selectors', () => {
 						success: 2,
 					},
 					question: {
-						success: 3,
+						success: 0,
 					},
 				},
 			},
@@ -252,10 +252,6 @@ describe( 'Importer selectors', () => {
 			{
 				key: 'lesson',
 				count: 2,
-			},
-			{
-				key: 'question',
-				count: 3,
 			},
 		];
 
