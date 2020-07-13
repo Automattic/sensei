@@ -84,6 +84,7 @@ describe( 'Setup Wizard', () => {
 				}
 			);
 		} );
+
 		it( 'marks welcome step done and goes to purpose step', async () => {
 			await stepIsComplete( 'Welcome' );
 			await stepIsActive( 'Purpose' );
@@ -165,6 +166,7 @@ describe( 'Setup Wizard', () => {
 				}
 			);
 		} );
+
 		it( 'installs selected plugins', async () => {
 			await expect( page ).toClick( 'button', { text: 'Install now' } );
 
@@ -203,6 +205,7 @@ describe( 'Setup Wizard', () => {
 				text: 'Ready',
 			} );
 		} );
+
 		it( 'is available if it is the active step', async () => {
 			await stepIsComplete( 'Features' );
 			await stepIsActive( 'Ready' );
@@ -210,6 +213,7 @@ describe( 'Setup Wizard', () => {
 				"You're ready to start creating online courses!"
 			);
 		} );
+
 		it( 'links to course creation', async () => {
 			await expect( page ).toClick( 'a', {
 				text: 'Create a course',
@@ -219,6 +223,7 @@ describe( 'Setup Wizard', () => {
 				adminUrl( 'post-new.php?post_type=course' )
 			);
 		} );
+
 		it( 'links to importer', async () => {
 			await expect( page ).toClick( 'a', {
 				text: 'Import content',
@@ -228,6 +233,7 @@ describe( 'Setup Wizard', () => {
 				adminUrl( 'admin.php?page=sensei_import' )
 			);
 		} );
+
 		it( 'has newsletter sign-up form', async () => {
 			expect( page ).toMatchElement(
 				'input[name="EMAIL"][value="admin@woocommercecoree2etestsuite.com"]'
