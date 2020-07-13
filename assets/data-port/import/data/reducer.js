@@ -13,8 +13,7 @@ import {
 	ERROR_DELETE_IMPORT_DATA_FILE,
 	RESET_STATE,
 	SET_JOB_STATE,
-	SUCCESS_FETCH_IMPORT_LOG,
-	START_FETCH_IMPORT_LOG,
+	SET_IMPORT_LOG,
 	ERROR_FETCH_IMPORT_LOG,
 } from './constants';
 
@@ -215,15 +214,7 @@ export default ( state = DEFAULT_STATE, action ) => {
 				errorMsg: action.error.message,
 			} );
 
-		case START_FETCH_IMPORT_LOG:
-			return {
-				...state,
-				done: {
-					...state.done,
-					logs: null,
-				},
-			};
-		case SUCCESS_FETCH_IMPORT_LOG:
+		case SET_IMPORT_LOG:
 			return {
 				...state,
 				done: {
@@ -237,7 +228,7 @@ export default ( state = DEFAULT_STATE, action ) => {
 				...state,
 				done: {
 					...state.done,
-					logs: { error: action.error },
+					logs: { fetchError: action.error },
 				},
 			};
 

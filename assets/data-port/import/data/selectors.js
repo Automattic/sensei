@@ -1,5 +1,8 @@
 import { steps } from '../steps';
 import { levels } from '../levels';
+import { get, groupBy } from 'lodash';
+
+const DONE_KEYS = [ 'course', 'lesson', 'question' ];
 
 /**
  * Is fetching importer data selector.
@@ -31,13 +34,11 @@ export const getFetchError = ( state ) => state.fetchError;
 /**
  * Step state selector.
  *
- * @param {Object}  state         Current state.
- * @param {string}  step          Step name.
- * @param {boolean} shouldResolve Flag whether should invoke the resolver.
+ * @param {Object}  state Current state.
+ * @param {string}  step  Step name.
  *
  * @return {Object} Step data.
  */
-/* eslint-enable */
 export const getStepData = ( state, step ) => state[ step ];
 
 /**
@@ -100,3 +101,38 @@ export const getUploadedLevelKeys = ( { upload } ) =>
 	levels
 		.filter( ( { key } ) => upload[ key ].isUploaded )
 		.map( ( { key } ) => key );
+
+/**
+ * Get success results.
+ *
+ * @param {Object} state Current state.
+ *
+ * @return {Array} Success results.
+ */
+export const getSuccessResults = ( { done } ) =>
+	DONE_KEYS.map( ( key ) => ( {
+		key,
+		count:
+			get( done, [ 'results', key, 'success' ], 0 ) +
+			get( done, [ 'results', key, 'warning' ], 0 ),
+	} ) );
+
+/**
+ * Get logs by severity.
+ *
+ * @param {Object} state Current state.
+ *
+ * @return {Object} Object with the logs by severity.
+ */
+export const getLogsBySeverity = ( { done } ) =>
+	groupBy( get( done, 'logs.items', [] ), 'severity' );
+
+/**
+ * Get logs fetch error.
+ *
+ * @param {Object} state Current state.
+ *
+ * @return {Object|boolean} Error object or false.
+ */
+export const getLogsFetchError = ( { done } ) =>
+	get( done, 'logs.fetchError', false );

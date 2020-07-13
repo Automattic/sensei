@@ -13,8 +13,6 @@ import {
 	START_DELETE_IMPORT_DATA_FILE,
 	ERROR_DELETE_IMPORT_DATA_FILE,
 	SUCCESS_DELETE_IMPORT_DATA_FILE,
-	START_FETCH_IMPORT_LOG,
-	SUCCESS_FETCH_IMPORT_LOG,
 } from './constants';
 
 import {
@@ -30,7 +28,6 @@ import {
 	successFileUpload,
 	throwEarlyUploadError,
 	updateJobState,
-	fetchImportLog,
 	deleteLevelFile,
 	startDeleteLevelFileAction,
 	successDeleteLevelFileAction,
@@ -527,30 +524,5 @@ describe( 'Importer actions', () => {
 		expect( errorDeleteLevelFileAction( level, error ) ).toEqual(
 			expectedAction
 		);
-	} );
-
-	/**
-	 * Fetch import log action.
-	 */
-	it( 'Should generate load import log actions', () => {
-		const gen = fetchImportLog( 'test-job' );
-
-		expect( gen.next().value ).toEqual( {
-			type: START_FETCH_IMPORT_LOG,
-		} );
-
-		expect( gen.next().value ).toEqual( {
-			type: FETCH_FROM_API,
-			request: {
-				path: API_BASE_PATH + 'test-job/logs',
-			},
-		} );
-
-		const expectedSetDataAction = {
-			data: 'response',
-			type: SUCCESS_FETCH_IMPORT_LOG,
-		};
-
-		expect( gen.next( 'response' ).value ).toEqual( expectedSetDataAction );
 	} );
 } );
