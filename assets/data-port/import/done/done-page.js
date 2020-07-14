@@ -6,6 +6,14 @@ import ImportSuccessResults from './import-success-results';
 
 /**
  * Done page of the importer.
+ *
+ * @param {Object}   input                  DonePage input.
+ * @param {Function} input.restartImporter  A callback to be called when the importer gets restarted.
+ * @param {Array}    input.successResults   The results of the job.
+ * @param {Object}   input.logs             The logs of the job.
+ * @param {boolean}  input.isFetching       Whether the logs of the job are currently fetching.
+ * @param {boolean}  input.fetchError       Whether there was an error during fetching.
+ * @param {Function} input.retry            Callback to be called when fetching is retried.
  */
 export const DonePage = ( {
 	restartImporter,

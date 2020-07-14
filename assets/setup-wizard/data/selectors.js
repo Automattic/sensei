@@ -52,7 +52,9 @@ export const getStepData = ( state, step ) => state.data[ step ];
 /**
  * Get navigation steps with their state.
  *
- * @param {Object} state current state.
+ * @param {Object} input                      getNavigationSteps input.
+ * @param {Object} input.data                 The current state.
+ * @param {Array}  input.data.completedSteps  The completed steps.
  *
  * @return {Array} Navigation steps.
  */
@@ -73,8 +75,10 @@ export const getNavigationSteps = ( { data: { completedSteps } } ) => {
 /**
  * Get whether step is complete or not.
  *
- * @param {Object} state Current state.
- * @param {string} step  Step name.
+ * @param {Object} input                      getNavigationSteps input.
+ * @param {Object} input.data                 The current state.
+ * @param {Array}  input.data.completedSteps  The completed steps.
+ * @param {Array}  step                       The step to check if it is completed.
  *
  * @return {boolean} Step complete.
  */

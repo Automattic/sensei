@@ -13,7 +13,7 @@ export const composeFetchAction = (
 	successAction,
 	errorAction
 ) =>
-	function*( ...args ) {
+	function* ( ...args ) {
 		if ( startAction ) {
 			yield { type: startAction };
 		}

@@ -39,9 +39,14 @@ export const parseCompletedSteps = ( data ) => {
 };
 
 /**
- * Normalize importer data.
+ *  * Normalize importer data.
  *
- * @param {Object} data Importer data.
+ * @param {Object} input          Importer data.
+ * @param {number} input.id       The job id.
+ * @param {Object} input.files    Files raw data.
+ * @param {string} input.status   Job status.
+ * @param {Object} input.results  Results of the job.
+ * @param {Object} input.data     Job data.
  *
  * @return {Object} Normalized importer data.
  */

@@ -47,6 +47,13 @@ const uploadFile = (
 /**
  * A component which displays a list of upload levels. Each level has each own description, upload button and a
  * placeholder for messages.
+ *
+ * @param {Object}   input                        UploadLevels input.
+ * @param {number}   input.jobId                  The job id.
+ * @param {Object}   input.state                  The import state.
+ * @param {Function} input.uploadFileForLevel     Callback for action to upload file.
+ * @param {Function} input.throwEarlyUploadError  Callback for throwing an early upload error.
+ * @param {Function} input.deleteLevelFile        The import state.
  */
 export const UploadLevels = ( {
 	jobId,

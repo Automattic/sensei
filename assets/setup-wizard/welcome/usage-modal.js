@@ -12,6 +12,7 @@ import { useState, useEffect } from '@wordpress/element';
  * @param {Function} props.onContinue   Callback for user pressing the continue button.
  * @param {Function} props.onClose      Callback for closing the modal.
  * @param {boolean}  props.isSubmitting Indicate loading state.
+ * @param {string}   props.children     Children elements of the modal.
  * @class
  */
 export const UsageModal = ( {
