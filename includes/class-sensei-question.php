@@ -966,7 +966,8 @@ class Sensei_Question {
 			if ( 0 < intval( $attachment_id ) ) {
 
 				$answer_media_url      = wp_get_attachment_url( $attachment_id );
-				$answer_media_filename = basename( $answer_media_url );
+				$filename_raw          = basename( $answer_media_url );
+				$answer_media_filename = Sensei_Grading_User_Quiz::remove_hash_prefix( $filename_raw );
 
 			}
 
