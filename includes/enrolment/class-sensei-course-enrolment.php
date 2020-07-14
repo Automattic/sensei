@@ -456,4 +456,40 @@ class Sensei_Course_Enrolment {
 	private function get_removed_learner_meta_key( $user_id ) {
 		return self::META_PREFIX_REMOVED_LEARNER . $user_id;
 	}
+
+	/**
+	 * Remove learner from the course, overriding the providers rule.
+	 *
+	 * @param int $user_id User ID.
+	 *
+	 * @return int|false Meta ID on success, false on failure.
+	 */
+	public function remove_learner( $user_id ) {
+		$meta_key = $this->get_removed_learner_meta_key( $user_id );
+		return add_post_meta( $this->course_id, $meta_key, true, true );
+	}
+
+	/**
+	 * Restore removed learner enrolment, giving the control back to the providers.
+	 *
+	 * @param int $user_id User ID.
+	 *
+	 * @return boolean Success flag.
+	 */
+	public function restore_removed_learner( $user_id ) {
+		$meta_key = $this->get_removed_learner_meta_key( $user_id );
+		return delete_post_meta( $this->course_id, $meta_key );
+	}
+
+	/**
+	 * Check if the user is removed.
+	 *
+	 * @param int $user_id
+	 *
+	 * @return boolean Whether the learner is removed.
+	 */
+	public function check_removed_learner( $user_id ) {
+		$meta_key = $this->get_removed_learner_meta_key( $user_id );
+		return (bool) get_post_meta( $this->course_id, $meta_key, true );
+	}
 }
