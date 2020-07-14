@@ -64,6 +64,23 @@ class Sensei_Grading_User_Quiz {
 	}
 
 	/**
+	 * Helper method which removes the hash from a filename if it starts with one.
+	 *
+	 * @param string $filename  The filename.
+	 *
+	 * @return string
+	 */
+	public static function remove_hash_prefix( $filename ) {
+		$starts_with_hash = preg_match( '/^[a-f0-9]{32}_/', $filename );
+
+		if ( $starts_with_hash ) {
+			return substr( $filename, 33 );
+		}
+
+		return $filename;
+	}
+
+	/**
 	 * Display output to the admin view
 	 *
 	 * This view is shown when grading a quiz for a single user in admin under grading
@@ -181,7 +198,7 @@ class Sensei_Grading_User_Quiz {
 							if ( 0 < intval( $attachment_id ) ) {
 								$answer_media_url      = wp_get_attachment_url( $attachment_id );
 								$filename_raw          = basename( $answer_media_url );
-								$answer_media_filename = preg_match( '/^[a-f0-9]{32}_/', $filename_raw ) ? substr( $filename_raw, 33 ) : $filename_raw;
+								$answer_media_filename = self::remove_hash_prefix( $filename_raw );
 
 								if ( $answer_media_url && $answer_media_filename ) {
 									// translators: Placeholder %1$s is a link to the submitted file.

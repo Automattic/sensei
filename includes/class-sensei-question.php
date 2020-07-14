@@ -967,7 +967,7 @@ class Sensei_Question {
 
 				$answer_media_url      = wp_get_attachment_url( $attachment_id );
 				$filename_raw          = basename( $answer_media_url );
-				$answer_media_filename = preg_match( '/^[a-f0-9]{32}_/', $filename_raw ) ? substr( $filename_raw, 33 ) : $filename_raw;
+				$answer_media_filename = Sensei_Grading_User_Quiz::remove_hash_prefix( $filename_raw );
 
 			}
 
