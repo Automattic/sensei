@@ -59,7 +59,7 @@ class Sensei_Grading_User_Quiz {
 	 * @since  1.3.0
 	 * @return array
 	 */
-	private function build_data_array() {
+	public function build_data_array() {
 		return Sensei_Utils::sensei_get_quiz_questions( $this->quiz_id );
 	}
 

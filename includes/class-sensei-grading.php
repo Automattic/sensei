@@ -128,8 +128,8 @@ class Sensei_Grading {
 	 * @return object                 class instance object
 	 */
 	public function load_data_object( $name = '', $data = 0, $optional_data = null ) {
-		// User constructors directly.
-		_deprecated_function( __METHOD__, '2.0.0' );
+		// Use constructors directly.
+		_deprecated_function( __METHOD__, '3.3.0', 'new Sensei_Grading_{$name}' );
 
 		// Load Analysis data
 		$object_name = 'Sensei_Grading_' . $name;
