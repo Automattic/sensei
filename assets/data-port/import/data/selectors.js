@@ -44,7 +44,8 @@ export const getStepData = ( state, step ) => state[ step ];
 /**
  * Get navigation steps with their state.
  *
- * @param {Object} state current state.
+ * @param {Object} state                 Current state.
+ * @param {Array}  state.completedSteps  An array of the completed steps.
  *
  * @return {Array} Navigation steps.
  */
@@ -65,8 +66,9 @@ export const getNavigationSteps = ( { completedSteps } ) => {
 /**
  * Get whether step is complete or not.
  *
- * @param {Object} state Current state.
- * @param {string} step  Step name.
+ * @param {Object} state                 Current state.
+ * @param {Array}  state.completedSteps  An array of the completed steps.
+ * @param {string} step                  Step name.
  *
  * @return {boolean} Step complete.
  */
@@ -93,7 +95,8 @@ export const isReadyToStart = ( state ) => {
 /**
  * Get uploaded level keys.
  *
- * @param {Object} state Current state.
+ * @param {Object} state         Current state.
+ * @param {Object} state.upload  The upload status of all levels.
  *
  * @return {string[]} Array of uploaded level keys.
  */
@@ -105,7 +108,8 @@ export const getUploadedLevelKeys = ( { upload } ) =>
 /**
  * Get success results.
  *
- * @param {Object} state Current state.
+ * @param {Object} state       Current state.
+ * @param {Object} state.done  The object which contains the results of the job.
  *
  * @return {Array} Success results.
  */
@@ -120,7 +124,8 @@ export const getSuccessResults = ( { done } ) =>
 /**
  * Get logs by severity.
  *
- * @param {Object} state Current state.
+ * @param {Object} state       Current state.
+ * @param {Object} state.done  The object which contains the logs of the job.
  *
  * @return {Object} Object with the logs by severity.
  */
@@ -130,7 +135,8 @@ export const getLogsBySeverity = ( { done } ) =>
 /**
  * Get logs fetch error.
  *
- * @param {Object} state Current state.
+ * @param {Object} state       Current state.
+ * @param {Object} state.done  The object which contains the logs of the job.
  *
  * @return {Object|boolean} Error object or false.
  */

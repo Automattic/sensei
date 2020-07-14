@@ -4,6 +4,9 @@ import { __ } from '@wordpress/i18n';
 
 /**
  * This component displays the import progress page of the importer.
+ *
+ * @param {Object} input        ImportProgressPage input.
+ * @param {Object} input.state  The import state.
  */
 export const ImportProgressPage = ( { state } ) => {
 	const { status, percentage } = state;

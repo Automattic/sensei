@@ -5,7 +5,7 @@ import { buildJobEndpointUrl } from '../helpers/url';
 
 export const getLogsBySeverity = composeFetchAction(
 	null,
-	function*( jobId ) {
+	function* ( jobId ) {
 		return yield fetchFromAPI( {
 			path: buildJobEndpointUrl( jobId, [ 'logs' ] ),
 		} );

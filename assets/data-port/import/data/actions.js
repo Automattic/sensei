@@ -43,7 +43,7 @@ export const fetchFromAPI = ( request ) => ( {
  */
 export const fetchCurrentJobState = composeFetchAction(
 	START_FETCH_CURRENT_JOB_STATE,
-	function*() {
+	function* () {
 		const data = yield fetchFromAPI( {
 			path: buildJobEndpointUrl( API_SPECIAL_ACTIVE_JOB_ID ),
 		} );
