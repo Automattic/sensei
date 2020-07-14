@@ -406,7 +406,8 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				$a_title              = sprintf( esc_html__( 'Edit &#8220;%s&#8221;', 'sensei-lms' ), esc_html( $title ) );
 				$edit_start_date_form = $this->get_edit_start_date_form( $user_activity, $post_id, $post_type, $object_type );
 
-				$actions = [];
+				$actions     = [];
+				$row_actions = [];
 
 				$enrolment_manager         = Sensei_Course_Enrolment_Manager::instance();
 				$manual_enrolment_provider = $enrolment_manager->get_manual_enrolment_provider();
@@ -428,7 +429,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 							'sensei-learner-action-withdraw'
 						);
 
-						$actions[] = '<a class="learner-action button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="withdraw" href="' . esc_url( $withdraw_action_url ) . '">' . esc_html__( 'Remove manual enrollment', 'sensei-lms' ) . '</a>';
+						$row_actions[] = '<span class="delete"><a class="learner-action delete" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="withdraw" href="' . esc_url( $withdraw_action_url ) . '">' . esc_html__( 'Remove enrollment', 'sensei-lms' ) . '</a></span>';
 					} elseif ( ! $is_user_enrolled ) {
 						$enrol_action_url = wp_nonce_url(
 							add_query_arg(
@@ -445,11 +446,11 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 							'sensei-learner-action-enrol'
 						);
 
-						$actions[] = '<a class="learner-action button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="enrol" href="' . esc_url( $enrol_action_url ) . '">' . esc_html__( 'Manually enroll learner', 'sensei-lms' ) . '</a>';
+						$row_actions[] = '<span><a class="learner-action" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="enrol" href="' . esc_url( $enrol_action_url ) . '">' . esc_html__( 'Enroll', 'sensei-lms' ) . '</a></span>';
 					} else {
 						$manual_enrolment_disabled_reason = __( 'Enrollment is given by another provider.', 'sensei-lms' );
 
-						$actions[] = '<a class="learner-action button disabled" disabled="disabled" title="' . esc_attr( $manual_enrolment_disabled_reason ) . '">' . esc_html__( 'Manually enroll learner', 'sensei-lms' ) . '</a>';
+						$row_actions[] = '<span><a class="learner-action disabled" disabled="disabled" title="' . esc_attr( $manual_enrolment_disabled_reason ) . '">' . esc_html__( 'Enroll', 'sensei-lms' ) . '</a></span>';
 					}
 				}
 
@@ -460,7 +461,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 					$reset_label  = esc_html__( 'Remove progress', 'sensei-lms' );
 				}
 
-				$actions[] = '<a class="learner-async-action button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="' . esc_attr( $reset_action ) . '" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '">' . $reset_label . '</a>';
+				$row_actions[] = '<span class="delete"><a class="learner-async-action delete" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="' . esc_attr( $reset_action ) . '" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '">' . $reset_label . '</a></span>';
 
 				if ( $edit_start_date_form ) {
 					$actions[] = $edit_start_date_form;
@@ -487,7 +488,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				$column_data = apply_filters(
 					'sensei_learners_main_column_data',
 					array(
-						'title'            => '<strong><a class="row-title" href="' . esc_url( admin_url( 'user-edit.php?user_id=' . $user_activity->user_id ) ) . '" title="' . esc_attr( $a_title ) . '">' . esc_html( $title ) . '</a></strong>',
+						'title'            => '<strong><a class="row-title" href="' . esc_url( admin_url( 'user-edit.php?user_id=' . $user_activity->user_id ) ) . '" title="' . esc_attr( $a_title ) . '">' . esc_html( $title ) . '</a></strong><div class="row-actions visible">' . implode( ' | ', $row_actions ) . '</div>',
 						'date_started'     => get_comment_meta( $user_activity->comment_ID, 'start', true ),
 						'date_completed'   => ( 'complete' === $user_activity->comment_approved ) ? $user_activity->comment_date : '',
 						'user_status'      => $progress_status_html,
