@@ -1,6 +1,5 @@
 import { loginUser } from '@wordpress/e2e-test-utils';
-
-const baseUrl = process.env.WP_BASE_URL;
+import { adminUrl } from './helpers';
 
 const isSessionCookieSet = function( cookies ) {
 	let result = false;
@@ -85,9 +84,52 @@ export const AdminFlow = {
 		await CommonFlow.login( 'admin', 'password' );
 	},
 
-	goToPlugins: async () => {
-		await page.goto( baseUrl + '/wp-admin/plugins.php', {
+	goTo: async ( url ) => {
+		await page.goto( adminUrl( url ), {
 			waitUntil: 'networkidle2',
 		} );
+	},
+
+	goToPlugins: async () => {
+		return AdminFlow.goTo( 'plugins.php' );
+	},
+
+	async isPluginActive( slug ) {
+		return !! ( await AdminFlow.findPluginAction( slug, 'deactivate' ) );
+	},
+
+	async findPluginAction( slug, action ) {
+		return page.$( `tr[data-slug="${ slug }"] .${ action } a` );
+	},
+
+	deactivatePlugin: async ( slug ) => {
+		await AdminFlow.goToPlugins();
+
+		const deactivateLink = await AdminFlow.findPluginAction(
+			slug,
+			'deactivate'
+		);
+
+		if ( deactivateLink ) {
+			await deactivateLink.click();
+		}
+	},
+	activatePlugin: async ( slug, forceReactivate = false ) => {
+		await AdminFlow.goToPlugins();
+
+		const deactivateLink = await AdminFlow.findPluginAction(
+			slug,
+			'deactivate'
+		);
+
+		if ( deactivateLink ) {
+			if ( forceReactivate ) {
+				await deactivateLink.click();
+				await page.waitForNavigation();
+			} else return;
+		}
+
+		const activate = await AdminFlow.findPluginAction( slug, 'activate' );
+		await activate.click();
 	},
 };
