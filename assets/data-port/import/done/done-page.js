@@ -82,14 +82,24 @@ export const DonePage = ( {
 			<section className="sensei-data-port-step">
 				<Section className="sensei-data-port-step__body">
 					<h2>{ __( 'Completed', 'sensei-lms' ) }</h2>
-					<p className="sensei-import-done__section-description">
-						{ __(
-							'The following content was imported:',
-							'sensei-lms'
-						) }
-					</p>
+					{ successResults.length > 0 ? (
+						<>
+							<p className="sensei-import-done__section-description">
+								{ __(
+									'The following content was imported:',
+									'sensei-lms'
+								) }
+							</p>
 
-					<ImportSuccessResults successResults={ successResults } />
+							<ImportSuccessResults
+								successResults={ successResults }
+							/>
+						</>
+					) : (
+						<p className="sensei-import-done__section-description">
+							{ __( 'No content was imported.', 'sensei-lms' ) }
+						</p>
+					) }
 
 					<div className="sensei-data-port-step__footer">
 						<Button isPrimary onClick={ restartImporter }>

@@ -119,7 +119,7 @@ export const getSuccessResults = ( { done } ) =>
 		count:
 			get( done, [ 'results', key, 'success' ], 0 ) +
 			get( done, [ 'results', key, 'warning' ], 0 ),
-	} ) );
+	} ) ).filter( ( { count } ) => count > 0 );
 
 /**
  * Get logs by severity.
