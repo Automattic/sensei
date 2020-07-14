@@ -492,7 +492,6 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 						'date_completed'   => ( 'complete' === $user_activity->comment_approved ) ? $user_activity->comment_date : '',
 						'user_status'      => $progress_status_html,
 						'enrolment_status' => $enrolment_status_html,
-						// translators: Placeholder is the "object type"; lesson or course.
 						'actions'          => implode( ' ', $actions ),
 					),
 					$item,
