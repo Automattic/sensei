@@ -618,8 +618,11 @@ class Sensei_Setup_Wizard {
 			$event_properties = [ 'slug' => join( ',', $wccom_extensions ) ];
 
 			if ( class_exists( 'Automattic\Jetpack\Tracking' ) ) {
-				$tracking = new Automattic\Jetpack\Tracking( 'sensei' );
-				$tracking->record_user_event( $event_name, $event_properties );
+				$jetpack_connection = Jetpack::connection();
+				if ( $jetpack_connection->is_user_connected() ) {
+					$tracking = new Automattic\Jetpack\Tracking( 'sensei', $jetpack_connection );
+					$tracking->record_user_event( $event_name, $event_properties );
+				}
 			}
 		}
 
