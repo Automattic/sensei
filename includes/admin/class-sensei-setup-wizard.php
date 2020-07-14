@@ -616,15 +616,10 @@ class Sensei_Setup_Wizard {
 		if ( Sensei()->usage_tracking->is_tracking_enabled() && ! empty( $wccom_extensions ) ) {
 			$event_name       = 'setup_wizard_features_install_paid';
 			$event_properties = [ 'slug' => join( ',', $wccom_extensions ) ];
-			$event_tracked    = false;
 
 			if ( class_exists( 'Automattic\Jetpack\Tracking' ) ) {
-				$tracking      = new Automattic\Jetpack\Tracking( 'sensei' );
-				$event_tracked = $tracking->record_user_event( $event_name, $event_properties );
-			}
-
-			if ( ! $event_tracked ) {
-				sensei_log_event( $event_name, $event_properties );
+				$tracking = new Automattic\Jetpack\Tracking( 'sensei' );
+				$tracking->record_user_event( $event_name, $event_properties );
 			}
 		}
 
