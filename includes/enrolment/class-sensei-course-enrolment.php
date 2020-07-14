@@ -29,6 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Course_Enrolment {
 	const META_PREFIX_ENROLMENT_RESULTS = 'sensei_course_enrolment_';
 	const META_COURSE_ENROLMENT_VERSION = '_course_enrolment_version';
+	const META_PREFIX_REMOVED_LEARNER   = 'sensei_removed_learner_';
 
 	/**
 	 * Courses instances.
@@ -443,5 +444,16 @@ class Sensei_Course_Enrolment {
 		update_post_meta( $this->course_id, self::META_COURSE_ENROLMENT_VERSION, $new_salt );
 
 		return $new_salt;
+	}
+
+	/**
+	 * Get removed learner meta key.
+	 *
+	 * @param int $user_id User ID.
+	 *
+	 * @return string The meta key.
+	 */
+	private function get_removed_learner_meta_key( $user_id ) {
+		return self::META_PREFIX_REMOVED_LEARNER . $user_id;
 	}
 }
