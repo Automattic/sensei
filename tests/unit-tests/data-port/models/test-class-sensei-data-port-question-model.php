@@ -137,6 +137,19 @@ class Sensei_Import_Question_Model_Test extends WP_UnitTestCase {
 				],
 				false,
 			],
+			'invalid-multiple-choice'         => [
+				[
+					Sensei_Data_Port_Question_Schema::COLUMN_ID     => '<strong>1234</strong>',
+					Sensei_Data_Port_Question_Schema::COLUMN_ANSWER => 'Wrong:No, Wrong:"Maybe, it depends"',
+					Sensei_Data_Port_Question_Schema::COLUMN_TYPE   => 'multiple-choice',
+				],
+				[
+					Sensei_Data_Port_Question_Schema::COLUMN_ID     => '1234',
+					Sensei_Data_Port_Question_Schema::COLUMN_ANSWER => 'Wrong:No, Wrong:"Maybe, it depends"',
+					Sensei_Data_Port_Question_Schema::COLUMN_TYPE   => 'multiple-choice',
+				],
+				false,
+			],
 			'valid-gap-fill'                  => [
 				[
 					Sensei_Data_Port_Question_Schema::COLUMN_ID              => '<strong>1234</strong>',
@@ -292,6 +305,20 @@ class Sensei_Import_Question_Model_Test extends WP_UnitTestCase {
 
 		$this->assertEquals( $expected_answer_order, get_post_meta( $post->ID, '_answer_order', true ) );
 		$this->assertTrue( has_term( 'multiple-choice', Sensei_Data_Port_Question_Schema::TAXONOMY_QUESTION_TYPE, $post->ID ), 'Expected the question type to be correct' );
+	}
+
+	/**
+	 * Check to make sure multiple choice with no answer throws error.
+	 */
+	public function testMultipleChoiceNoAnswer() {
+		$test_data = $this->lineData()['invalid-multiple-choice'][0];
+
+		$task   = new Sensei_Import_Questions( Sensei_Import_Job::create( 'test', 0 ) );
+		$model  = Sensei_Import_Question_Model::from_source_array( 1, $test_data, new Sensei_Data_Port_Question_Schema(), $task );
+		$result = $model->sync_post();
+
+		$this->assertWPError( $result );
+		$this->assertEquals( 'sensei_data_port_question_without_right_answer', $result->get_error_code() );
 	}
 
 	/**
