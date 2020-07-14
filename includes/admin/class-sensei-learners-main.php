@@ -488,7 +488,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				$column_data = apply_filters(
 					'sensei_learners_main_column_data',
 					array(
-						'title'            => '<strong><a class="row-title" href="' . esc_url( admin_url( 'user-edit.php?user_id=' . $user_activity->user_id ) ) . '" title="' . esc_attr( $a_title ) . '">' . esc_html( $title ) . '</a></strong><div class="row-actions visible">' . implode( ' | ', $row_actions ) . '</div>',
+						'title'            => '<strong><a class="row-title" href="' . esc_url( admin_url( 'user-edit.php?user_id=' . $user_activity->user_id ) ) . '" title="' . esc_attr( $a_title ) . '">' . esc_html( $title ) . '</a></strong><div class="row-actions">' . implode( ' | ', $row_actions ) . '</div>',
 						'date_started'     => get_comment_meta( $user_activity->comment_ID, 'start', true ),
 						'date_completed'   => ( 'complete' === $user_activity->comment_approved ) ? $user_activity->comment_date : '',
 						'user_status'      => $progress_status_html,
