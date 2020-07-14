@@ -184,6 +184,7 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 
 		$expected_status_codes = [ 401, 403 ];
 		$job_id                = 'doesnotexit';
+		$course_id             = $this->factory->post->create();
 
 		$entries = [
 			[
@@ -195,6 +196,7 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 						'line'        => 100,
 						'entry_title' => 'Test Course A',
 						'entry_id'    => '123',
+						'post_id'     => $course_id,
 					],
 				],
 				'expected' => [
@@ -203,6 +205,11 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 					'severity'   => 'notice',
 					'descriptor' => 'Test Course A; ID: 123',
 					'message'    => 'Test message A',
+					'post'       => [
+						'id'        => $course_id,
+						'title'     => 'Test Course A',
+						'edit_link' => 'http://example.org/wp-admin/post.php?post=' . $course_id . '&action=edit',
+					],
 				],
 			],
 			[
@@ -222,6 +229,11 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 					'severity'   => 'notice',
 					'descriptor' => 'Test Course B',
 					'message'    => 'Test message B',
+					'post'       => [
+						'id'        => null,
+						'title'     => 'Test Course B',
+						'edit_link' => null,
+					],
 				],
 			],
 			[
@@ -241,6 +253,11 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 					'severity'   => 'error',
 					'descriptor' => null,
 					'message'    => 'Test message C',
+					'post'       => [
+						'id'        => null,
+						'title'     => null,
+						'edit_link' => null,
+					],
 				],
 			],
 		];

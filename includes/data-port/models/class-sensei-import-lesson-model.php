@@ -262,28 +262,23 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 	 */
 	private function sync_lesson() {
 
-		$value = $this->get_value( Sensei_Data_Port_Lesson_Schema::COLUMN_COURSE );
+		$course_not_found = false;
+		$value            = $this->get_value( Sensei_Data_Port_Lesson_Schema::COLUMN_COURSE );
 		if ( ! empty( $value ) ) {
 			$course = $this->task->get_job()->translate_import_id( Sensei_Data_Port_Course_Schema::POST_TYPE, $value );
 
 			$this->course_id = $course;
 
 			if ( empty( $this->course_id ) ) {
-				$this->add_line_warning(
-					// translators: Placeholder is the term which errored.
-					sprintf( __( 'Course does not exist: %s.', 'sensei-lms' ), $value ),
-					[
-						'code' => 'sensei_data_port_lesson_course_missing',
-					]
-				);
-
-				$this->course_id = null;
+				$course_not_found = true;
+				$this->course_id  = null;
 			}
 		} else {
 			$this->course_id = null;
 		}
 
-		$post_id = wp_insert_post( $this->get_lesson_args(), true );
+		$post_args = $this->get_lesson_args();
+		$post_id   = wp_insert_post( $post_args, true );
 
 		if ( is_wp_error( $post_id ) ) {
 			return $post_id;
@@ -297,6 +292,17 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 		}
 
 		$this->set_post_id( $post_id );
+
+		if ( $course_not_found ) {
+			$this->add_line_warning(
+				// translators: Placeholder is the term which errored.
+				sprintf( __( 'Course does not exist: %s.', 'sensei-lms' ), $value ),
+				[
+					'code' => 'sensei_data_port_lesson_course_missing',
+				]
+			);
+		}
+
 		$this->store_import_id();
 
 		$result = $this->add_thumbnail_to_post( Sensei_Data_Port_Lesson_Schema::COLUMN_IMAGE );
@@ -311,7 +317,7 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 
 		$prerequisite = $this->get_value( Sensei_Data_Port_Lesson_Schema::COLUMN_PREREQUISITE );
 		if ( $prerequisite ) {
-			$this->task->add_prerequisite_task( $post_id, $prerequisite, $this->line_number );
+			$this->task->add_prerequisite_task( $post_id, $prerequisite, $this->line_number, $post_args['post_title'] );
 		} elseif ( '' === $prerequisite ) {
 			delete_post_meta( $post_id, '_lesson_prerequisite' );
 		}

@@ -345,6 +345,11 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 					'severity'   => Sensei_Data_Port_Job::translate_log_severity_level( $entry['level'] ),
 					'descriptor' => Sensei_Data_Port_Job::get_log_entry_descriptor( $entry ),
 					'message'    => $entry['message'],
+					'post'       => [
+						'id'        => isset( $data['post_id'] ) ? $data['post_id'] : null,
+						'title'     => isset( $data['entry_title'] ) ? $data['entry_title'] : null,
+						'edit_link' => isset( $data['post_id'] ) ? get_edit_post_link( $data['post_id'], '&' ) : null,
+					],
 				];
 			},
 			array_slice( $log_entries, $offset, self::LOG_PAGE_SIZE )
