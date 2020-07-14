@@ -351,11 +351,17 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 				if ( 'complete' === $user_activity->comment_approved || 'graded' === $user_activity->comment_approved || 'passed' === $user_activity->comment_approved ) {
 
-					$progress_status_html = '<span class="graded">' . esc_html__( 'Completed', 'sensei-lms' ) . '</span>';
+					$progress_status_html =
+						'<span class="graded">' .
+							esc_html__( 'Completed', 'sensei-lms' ) .
+						'</span>';
 
 				} else {
 
-					$progress_status_html = '<span class="in-progress">' . esc_html__( 'In Progress', 'sensei-lms' ) . '</span>';
+					$progress_status_html =
+						'<span class="in-progress">' .
+							esc_html__( 'In Progress', 'sensei-lms' ) .
+						'</span>';
 
 				}
 
@@ -381,7 +387,10 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 								$item_class = 'provides-enrolment';
 							}
 
-							$enrolment_tooltip_html[] = '<li class="' . esc_attr( $item_class ) . '">' . esc_html( $name ) . '</li>';
+							$enrolment_tooltip_html[] =
+								'<li class="' . esc_attr( $item_class ) . '">' .
+									esc_html( $name ) .
+								'</li>';
 						}
 
 						$enrolment_tooltip_html[] = '</ul>';
@@ -399,7 +408,10 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 					$enrolment_label_extra_class = 'not-enrolled';
 				}
 
-				$enrolment_status_html = '<span class="sensei-tooltip ' . esc_attr( $enrolment_label_extra_class ) . '" data-tooltip="' . esc_attr( htmlentities( $enrolment_tooltip_html ) ) . '">' . esc_html( $enrolment_label ) . '</span>';
+				$enrolment_status_html =
+					'<span class="sensei-tooltip ' . esc_attr( $enrolment_label_extra_class ) . '" data-tooltip="' . esc_attr( htmlentities( $enrolment_tooltip_html ) ) . '">' .
+						esc_html( $enrolment_label ) .
+					'</span>';
 
 				$title = Sensei_Learner::get_full_name( $user_activity->user_id );
 				// translators: Placeholder is the full name of the learner.
@@ -429,7 +441,12 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 							'sensei-learner-action-withdraw'
 						);
 
-						$row_actions[] = '<span class="delete"><a class="learner-action delete" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="withdraw" href="' . esc_url( $withdraw_action_url ) . '">' . esc_html__( 'Remove enrollment', 'sensei-lms' ) . '</a></span>';
+						$row_actions[] =
+							'<span class="delete">' .
+								'<a class="learner-action delete" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="withdraw" href="' . esc_url( $withdraw_action_url ) . '">' .
+									esc_html__( 'Remove enrollment', 'sensei-lms' ) .
+								'</a>' .
+							'</span>';
 					} elseif ( ! $is_user_enrolled ) {
 						$enrol_action_url = wp_nonce_url(
 							add_query_arg(
@@ -446,11 +463,21 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 							'sensei-learner-action-enrol'
 						);
 
-						$row_actions[] = '<span><a class="learner-action" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="enrol" href="' . esc_url( $enrol_action_url ) . '">' . esc_html__( 'Enroll', 'sensei-lms' ) . '</a></span>';
+						$row_actions[] =
+							'<span>' .
+								'<a class="learner-action" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="enrol" href="' . esc_url( $enrol_action_url ) . '">' .
+									esc_html__( 'Enroll', 'sensei-lms' ) .
+								'</a>' .
+							'</span>';
 					} else {
 						$manual_enrolment_disabled_reason = __( 'Enrollment is given by another provider.', 'sensei-lms' );
 
-						$row_actions[] = '<span><a class="learner-action disabled" disabled="disabled" title="' . esc_attr( $manual_enrolment_disabled_reason ) . '">' . esc_html__( 'Enroll', 'sensei-lms' ) . '</a></span>';
+						$row_actions[] =
+							'<span>' .
+								'<a class="learner-action disabled" disabled="disabled" title="' . esc_attr( $manual_enrolment_disabled_reason ) . '">' .
+									esc_html__( 'Enroll', 'sensei-lms' ) .
+								'</a>' .
+							'</span>';
 					}
 				}
 
@@ -461,7 +488,12 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 					$reset_label  = esc_html__( 'Remove progress', 'sensei-lms' );
 				}
 
-				$row_actions[] = '<span class="delete"><a class="learner-async-action delete" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="' . esc_attr( $reset_action ) . '" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '">' . $reset_label . '</a></span>';
+				$row_actions[] =
+					'<span class="delete">' .
+						'<a class="learner-async-action delete" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="' . esc_attr( $reset_action ) . '" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '">' .
+							$reset_label .
+						'</a>' .
+					'</span>';
 
 				if ( $edit_start_date_form ) {
 					$actions[] = $edit_start_date_form;
@@ -488,7 +520,15 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				$column_data = apply_filters(
 					'sensei_learners_main_column_data',
 					array(
-						'title'            => '<strong><a class="row-title" href="' . esc_url( admin_url( 'user-edit.php?user_id=' . $user_activity->user_id ) ) . '" title="' . esc_attr( $a_title ) . '">' . esc_html( $title ) . '</a></strong><div class="row-actions">' . implode( ' | ', $row_actions ) . '</div>',
+						'title'            =>
+							'<strong>' .
+								'<a class="row-title" href="' . esc_url( admin_url( 'user-edit.php?user_id=' . $user_activity->user_id ) ) . '" title="' . esc_attr( $a_title ) . '">' .
+									esc_html( $title ) .
+								'</a>' .
+							'</strong>' .
+							'<div class="row-actions">' .
+								implode( ' | ', $row_actions ) .
+							'</div>',
 						'date_started'     => get_comment_meta( $user_activity->comment_ID, 'start', true ),
 						'date_completed'   => ( 'complete' === $user_activity->comment_approved ) ? $user_activity->comment_date : '',
 						'user_status'      => $progress_status_html,
@@ -558,7 +598,12 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				$column_data = apply_filters(
 					'sensei_learners_main_column_data',
 					array(
-						'title'        => '<strong><a class="row-title" href="' . esc_url( admin_url( 'post.php?action=edit&post=' . $item->ID ) ) . '" title="' . esc_attr( $a_title ) . '">' . esc_html( $title ) . '</a></strong>',
+						'title'        =>
+							'<strong>' .
+								'<a class="row-title" href="' . esc_url( admin_url( 'post.php?action=edit&post=' . $item->ID ) ) . '" title="' . esc_attr( $a_title ) . '">' .
+									esc_html( $title ) .
+								'</a>' .
+							'</strong>',
 						'num_learners' => esc_html( $lesson_learners ),
 						'updated'      => esc_html( $item->post_modified ),
 						'actions'      => '<a class="button" href="' . esc_url(
@@ -612,16 +657,21 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				$column_data = apply_filters(
 					'sensei_learners_main_column_data',
 					array(
-						'title'        => '<strong><a class="row-title" href="' . esc_url(
-							add_query_arg(
-								array(
-									'page'      => 'sensei_learners',
-									'course_id' => $item->ID,
-									'view'      => 'learners',
-								),
-								admin_url( 'admin.php' )
-							)
-						) . '" title="' . esc_attr( $a_title ) . '">' . esc_html( $title ) . '</a></strong>',
+						'title'        =>
+							'<strong>' .
+								'<a class="row-title" href="' . esc_url(
+									add_query_arg(
+										array(
+											'page'      => 'sensei_learners',
+											'course_id' => $item->ID,
+											'view'      => 'learners',
+										),
+										admin_url( 'admin.php' )
+									)
+								) . '" title="' . esc_attr( $a_title ) . '">' .
+									esc_html( $title ) .
+								'</a>' .
+							'</strong>',
 						'num_learners' => esc_html( $course_learners ),
 						'updated'      => esc_html( $item->post_modified ),
 						'actions'      => '<a class="button" href="' . esc_url(
