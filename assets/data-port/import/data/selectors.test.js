@@ -269,7 +269,7 @@ describe( 'Importer selectors', () => {
 							line: 1,
 						},
 						{
-							type: 'lesson',
+							type: 'question',
 							severity: 'notice',
 							line: 2,
 						},
@@ -307,14 +307,14 @@ describe( 'Importer selectors', () => {
 				{
 					type: 'lesson',
 					severity: 'notice',
-					line: 2,
+					line: 3,
 					filename: 'l.csv',
 				},
 				{
-					type: 'lesson',
+					type: 'question',
 					severity: 'notice',
-					line: 3,
-					filename: 'l.csv',
+					line: 2,
+					filename: 'q.csv',
 				},
 			],
 		};

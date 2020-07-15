@@ -130,14 +130,26 @@ export const getSuccessResults = ( { done } ) =>
  *
  * @return {Object} Object with the logs by severity.
  */
-export const getLogsBySeverity = ( { done, upload } ) =>
-	groupBy(
-		get( done, 'logs.items', [] ).map( ( i ) => ( {
+export const getLogsBySeverity = ( { done, upload } ) => {
+	const sortObject = DONE_KEYS.reduce(
+		( acc, cur, index ) => ( {
+			...acc,
+			[ cur ]: index,
+		} ),
+		{}
+	);
+
+	const items = get( done, 'logs.items', [] )
+		// Add filename to the results.
+		.map( ( i ) => ( {
 			...i,
 			filename: get( upload, i.type + 's.filename', '' ),
-		} ) ),
-		'severity'
-	);
+		} ) )
+		// Sort the results by type.
+		.sort( ( a, b ) => sortObject[ a.type ] - sortObject[ b.type ] );
+
+	return groupBy( items, 'severity' );
+};
 
 /**
  * Get logs fetch error.
