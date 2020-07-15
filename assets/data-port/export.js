@@ -1,11 +1,13 @@
 import { H } from '@woocommerce/components';
 import { __ } from '@wordpress/i18n';
 import { render } from '@wordpress/element';
+import { useSenseiColorTheme } from '../react-hooks/use-sensei-color-theme';
 
 /**
- * Sensei import page.
+ * Sensei export page.
  */
 const SenseiExportPage = () => {
+	useSenseiColorTheme();
 	return (
 		<div className="sensei-import-wrapper">
 			<section className="sensei-data-port-step sensei-export-page">
