@@ -469,15 +469,6 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 									esc_html__( 'Enroll', 'sensei-lms' ) .
 								'</a>' .
 							'</span>';
-					} else {
-						$manual_enrolment_disabled_reason = __( 'Enrollment is given by another provider.', 'sensei-lms' );
-
-						$row_actions[] =
-							'<span>' .
-								'<a class="learner-action disabled" disabled="disabled" title="' . esc_attr( $manual_enrolment_disabled_reason ) . '">' .
-									esc_html__( 'Enroll', 'sensei-lms' ) .
-								'</a>' .
-							'</span>';
 					}
 				}
 
