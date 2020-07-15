@@ -167,12 +167,12 @@ $alert-red: #d94f4f;
 			border-top: 1px solid #eee;
 			padding: 24px;
 			display: flex;
-			justify-content: flex-end;
 			align-items: center;
 
 			.components-button {
 				padding: 6px 24px;
-				height: 40px;
+				height: 42px;
+				font-weight: 500;
 			}
 		}
 	}
