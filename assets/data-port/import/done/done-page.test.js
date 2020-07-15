@@ -64,6 +64,7 @@ describe( '<DonePage />', () => {
 						title: null,
 						edit_link: null,
 					},
+					filename: 'l.csv',
 				},
 			],
 			notice: [
@@ -77,6 +78,7 @@ describe( '<DonePage />', () => {
 						title: 'Question title 1',
 						edit_link: 'http://test.com/',
 					},
+					filename: 'q.csv',
 				},
 				{
 					type: 'question',
@@ -88,6 +90,7 @@ describe( '<DonePage />', () => {
 						title: 'Question title 2',
 						edit_link: null,
 					},
+					filename: 'q.csv',
 				},
 			],
 		};
@@ -104,7 +107,7 @@ describe( '<DonePage />', () => {
 			'.sensei-import-done__log-data tbody tr'
 		);
 		expect( rows[ 0 ].textContent ).toMatch(
-			[ 'Lessons', 'No title', '7', 'Error message.' ].join( '' )
+			[ 'l.csv', '', '7', 'Error message.' ].join( '' )
 		);
 		expect( rows[ 1 ].textContent ).toMatch(
 			[ 'Question title 1', '1', 'Warning message.' ].join( '' )

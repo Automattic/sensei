@@ -1,12 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { kebabCase } from 'lodash';
 
-const postTypeLabels = {
-	course: __( 'Courses', 'sensei-lms' ),
-	lesson: __( 'Lessons', 'sensei-lms' ),
-	question: __( 'Questions', 'sensei-lms' ),
-};
-
 const logTypeLabel = {
 	error: __( 'Error', 'sensei-lms' ),
 	warning: __( 'Warning', 'sensei-lms' ),
@@ -19,17 +13,15 @@ const logTypeLabel = {
  * @param {string} editLink Post edit link.
  */
 const createTitleWithLink = ( title, editLink ) => {
-	const titleText = title || __( 'No title', 'sensei-lms' );
-
 	if ( editLink ) {
 		return (
 			<a href={ editLink } target="_blank" rel="noreferrer">
-				{ titleText }
+				{ title }
 			</a>
 		);
 	}
 
-	return titleText;
+	return title;
 };
 
 /**
@@ -55,9 +47,7 @@ export const ImportLog = ( { items, type } ) => (
 			<tbody>
 				{ items.map( ( item ) => (
 					<tr key={ kebabCase( Object.entries( item ).join( '' ) ) }>
-						{ type === 'error' && (
-							<td>{ postTypeLabels[ item.type ] }</td>
-						) }
+						{ type === 'error' && <td>{ item.filename }</td> }
 						<td>
 							{ createTitleWithLink(
 								item.post.title,

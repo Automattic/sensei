@@ -264,18 +264,32 @@ describe( 'Importer selectors', () => {
 				logs: {
 					items: [
 						{
+							type: 'course',
 							severity: 'error',
 							line: 1,
 						},
 						{
+							type: 'question',
 							severity: 'notice',
 							line: 2,
 						},
 						{
+							type: 'lesson',
 							severity: 'notice',
 							line: 3,
 						},
 					],
+				},
+			},
+			upload: {
+				courses: {
+					filename: 'c.csv',
+				},
+				lessons: {
+					filename: 'l.csv',
+				},
+				questions: {
+					filename: 'q.csv',
 				},
 			},
 		};
@@ -283,18 +297,24 @@ describe( 'Importer selectors', () => {
 		const expected = {
 			error: [
 				{
+					type: 'course',
 					severity: 'error',
 					line: 1,
+					filename: 'c.csv',
 				},
 			],
 			notice: [
 				{
-					severity: 'notice',
-					line: 2,
-				},
-				{
+					type: 'lesson',
 					severity: 'notice',
 					line: 3,
+					filename: 'l.csv',
+				},
+				{
+					type: 'question',
+					severity: 'notice',
+					line: 2,
+					filename: 'q.csv',
 				},
 			],
 		};
