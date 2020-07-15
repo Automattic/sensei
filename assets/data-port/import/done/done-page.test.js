@@ -104,7 +104,7 @@ describe( '<DonePage />', () => {
 			'.sensei-import-done__log-data tbody tr'
 		);
 		expect( rows[ 0 ].textContent ).toMatch(
-			[ 'Lessons', 'No title', '7', 'Error message.' ].join( '' )
+			[ 'Lessons', '', '7', 'Error message.' ].join( '' )
 		);
 		expect( rows[ 1 ].textContent ).toMatch(
 			[ 'Question title 1', '1', 'Warning message.' ].join( '' )
