@@ -42,6 +42,9 @@ $alert-red: #d94f4f;
 	text-align: center;
 	max-width: 700px;
 	margin: 40px auto;
+	* {
+		font-size: 14px;
+	}
 
 	.sensei-data-port-steps {
 		padding: 0 0 24px;
@@ -133,7 +136,7 @@ $alert-red: #d94f4f;
 			margin: 0;
 
 			p {
-				font-size: 14px;
+				font-size: 16px;
 			}
 
 			ol {

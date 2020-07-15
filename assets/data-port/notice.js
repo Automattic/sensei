@@ -16,7 +16,7 @@ export const Notice = ( { message, isError } ) => {
 
 	return (
 		<div className="sensei-data-port-notice">
-			<p className={ messageClasses }>
+			<span className={ messageClasses }>
 				{ isError && (
 					<Dashicon
 						className="sensei-data-port-notice__icon error"
@@ -24,7 +24,7 @@ export const Notice = ( { message, isError } ) => {
 					/>
 				) }
 				{ message }
-			</p>
+			</span>
 		</div>
 	);
 };
