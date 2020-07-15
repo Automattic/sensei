@@ -124,13 +124,20 @@ export const getSuccessResults = ( { done } ) =>
 /**
  * Get logs by severity.
  *
- * @param {Object} state       Current state.
- * @param {Object} state.done  The object which contains the logs of the job.
+ * @param {Object} state        Current state.
+ * @param {Object} state.done   The object which contains the logs of the job.
+ * @param {Object} state.upload The object which contains the uploads.
  *
  * @return {Object} Object with the logs by severity.
  */
-export const getLogsBySeverity = ( { done } ) =>
-	groupBy( get( done, 'logs.items', [] ), 'severity' );
+export const getLogsBySeverity = ( { done, upload } ) =>
+	groupBy(
+		get( done, 'logs.items', [] ).map( ( i ) => ( {
+			...i,
+			filename: get( upload, i.type + 's.filename', '' ),
+		} ) ),
+		'severity'
+	);
 
 /**
  * Get logs fetch error.
