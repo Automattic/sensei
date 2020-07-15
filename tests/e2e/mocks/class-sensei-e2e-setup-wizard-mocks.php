@@ -33,7 +33,7 @@ class Sensei_E2E_Setup_Wizard_Mocks {
 	 */
 	public function plugins_api( $result, $action, $args ) {
 		$dir = __DIR__;
-		error_log( 'plugins_api ' . $action );
+
 		if ( 'plugin_information' === $action && 'sensei-certificates' === $args->slug ) {
 
 			$plugin_file = tempnam( sys_get_temp_dir(), 'sensei' );
@@ -45,7 +45,7 @@ class Sensei_E2E_Setup_Wizard_Mocks {
 			link( path_join( $dir, 'sensei-certificates.zip' ), $plugin_file );
 
 			return (object) [
-				'download_link' => $plugin_file
+				'download_link' => $plugin_file,
 			];
 		}
 		return $result;

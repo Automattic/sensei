@@ -28,7 +28,8 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-require_once __DIR__ . '/class-sensei-setup-wizard-mocks.php';
+require_once __DIR__ . '/class-sensei-e2e-setup-wizard-mocks.php';
+
 
 /**
  * Sensei E2E Test Helper
@@ -36,7 +37,11 @@ require_once __DIR__ . '/class-sensei-setup-wizard-mocks.php';
  * @since 3.3
  */
 class Sensei_E2E {
-	/** @var \Sensei_E2E instance */
+	/**
+	 * Instance of class.
+	 *
+	 * @var Sensei_E2E instance
+	 */
 	protected static $instance = null;
 
 	/**
