@@ -8,9 +8,10 @@ import { useSenseiColorTheme } from '../react-hooks/use-sensei-color-theme';
  */
 const SenseiExportPage = () => {
 	useSenseiColorTheme();
+
 	return (
-		<div className="sensei-import-wrapper">
-			<section className="sensei-data-port-step sensei-export-page">
+		<div className="sensei-page-export">
+			<section className="sensei-data-port-step">
 				<header className="sensei-data-port-step__header">
 					<H>
 						{ __( 'Export content to a CSV file', 'sensei-lms' ) }

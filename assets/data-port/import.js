@@ -51,7 +51,7 @@ const SenseiImportPage = () => {
 	const currentStep = navigationSteps.find( ( step ) => step.isNext );
 
 	return (
-		<div className="sensei-import-wrapper">
+		<div className="sensei-page-import">
 			<DataPortStepper steps={ navigationSteps } />
 			{ currentStep.container }
 		</div>
