@@ -1,5 +1,12 @@
 import { useLayoutEffect } from '@wordpress/element';
 
+const toggleGlobalStyles = ( enabled, classes ) => {
+	if ( enabled ) document.body.classList.add( ...classes );
+	else document.body.classList.remove( ...classes );
+
+	document.documentElement.classList.toggle( 'wp-toolbar', ! enabled );
+};
+
 /**
  * Apply fullscreen view by hiding wp-admin elements via CSS.
  *
@@ -9,21 +16,15 @@ import { useLayoutEffect } from '@wordpress/element';
  * @param {string[]} bodyClasses Additional classes to be set.
  */
 const useWpAdminFullscreen = ( bodyClasses = [] ) => {
-	const classes = [ ...bodyClasses, 'sensei-wp-admin-fullscreen' ];
+	useLayoutEffect( () => {
+		const classes = [ ...bodyClasses, 'sensei-wp-admin-fullscreen' ];
 
-	const setupGlobalStyles = () => {
-		toggleGlobalStyles( true );
-		return toggleGlobalStyles.bind( null, false );
-	};
+		toggleGlobalStyles( true, classes );
 
-	const toggleGlobalStyles = ( enabled ) => {
-		if ( enabled ) document.body.classList.add( ...classes );
-		else document.body.classList.remove( ...classes );
-
-		document.documentElement.classList.toggle( 'wp-toolbar', ! enabled );
-	};
-
-	useLayoutEffect( setupGlobalStyles, [ bodyClasses ] );
+		return () => {
+			toggleGlobalStyles( false, classes );
+		};
+	}, [ bodyClasses ] );
 };
 
 export default useWpAdminFullscreen;
