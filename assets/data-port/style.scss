@@ -40,8 +40,11 @@ $alert-red: #d94f4f;
 
 .sensei-import-wrapper {
 	text-align: center;
-	max-width: 700px;
+	max-width: 65rem;
 	margin: 40px auto;
+	* {
+		font-size: 14px;
+	}
 
 	.sensei-data-port-steps {
 		padding: 0 0 24px;
@@ -133,7 +136,7 @@ $alert-red: #d94f4f;
 			margin: 0;
 
 			p {
-				font-size: 14px;
+				font-size: 16px;
 			}
 
 			ol {
@@ -164,12 +167,12 @@ $alert-red: #d94f4f;
 			border-top: 1px solid #eee;
 			padding: 24px;
 			display: flex;
-			justify-content: flex-end;
 			align-items: center;
 
 			.components-button {
 				padding: 6px 24px;
-				height: 40px;
+				height: 42px;
+				font-weight: 500;
 			}
 		}
 	}
