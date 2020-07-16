@@ -17,6 +17,8 @@ export const SelectExportContentPage = ( { onSubmit } ) => {
 		onSubmit( values );
 	};
 
+	const hasSelected = Object.values( values ).some( ( v ) => v );
+
 	return (
 		<form onSubmit={ submit }>
 			<div className="sensei-data-port-step__body">
@@ -40,7 +42,7 @@ export const SelectExportContentPage = ( { onSubmit } ) => {
 					) ) }
 				</div>
 				<div className="sensei-data-port-step__footer">
-					<Button type="submit" isPrimary>
+					<Button type="submit" isPrimary disabled={ ! hasSelected }>
 						{ __( 'Generate CSV', 'sensei-lms' ) }
 					</Button>
 				</div>
