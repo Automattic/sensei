@@ -53,6 +53,15 @@ class Sensei_Course_Enrolment {
 	private $course_id;
 
 	/**
+	 * An array of removed learners from the course.
+	 *
+	 * @var array {
+	 *     @type string $date  Timestamp of when the the learner was removed.
+	 * }
+	 */
+	private $removed_learners;
+
+	/**
 	 * Sensei_Course_Enrolment constructor.
 	 *
 	 * @param int $course_id Course ID to handle checks for.
@@ -489,10 +498,10 @@ class Sensei_Course_Enrolment {
 	 *
 	 * @return boolean Whether the learner is removed.
 	 */
-	public function check_removed_learner( $user_id ) {
+	public function is_learner_removed( $user_id ) {
 		$removed_learners = $this->get_removed_learners();
 
-		return in_array( $user_id, array_keys( $removed_learners ), true );
+		return array_key_exists( $user_id, $removed_learners );
 	}
 
 	/**
@@ -505,12 +514,18 @@ class Sensei_Course_Enrolment {
 			return $this->removed_learners;
 		}
 
-		$removed_learners_meta = get_post_meta( $this->course_id, self::META_REMOVED_LEARNERS, true );
+		$removed_learners_json = get_post_meta( $this->course_id, self::META_REMOVED_LEARNERS, true );
 
-		if ( empty( $removed_learners_meta ) ) {
+		if ( empty( $removed_learners_json ) ) {
 			$this->removed_learners = [];
 		} else {
-			$this->removed_learners = json_decode( $removed_learners_meta, true );
+			$removed_learners = json_decode( $removed_learners_json, true );
+
+			if ( ! $removed_learners ) {
+				$this->removed_learners = [];
+			} else {
+				$this->removed_learners = $removed_learners;
+			}
 		}
 
 		return $this->removed_learners;
@@ -524,8 +539,13 @@ class Sensei_Course_Enrolment {
 	 * @return bool Whether it was updated.
 	 */
 	private function update_removed_learners( $removed_learners ) {
-		$this->removed_learners = $removed_learners;
+		$result = update_post_meta( $this->course_id, self::META_REMOVED_LEARNERS, wp_json_encode( $removed_learners ) );
 
-		return (bool) update_post_meta( $this->course_id, self::META_REMOVED_LEARNERS, wp_json_encode( $removed_learners ) );
+		if ( $result ) {
+			$this->removed_learners = $removed_learners;
+			return true;
+		}
+
+		return false;
 	}
 }
