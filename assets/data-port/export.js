@@ -12,13 +12,17 @@ import { ExportSelectContentPage } from './export/export-select-content-page';
 const SenseiExportPage = () => {
 	useSenseiColorTheme();
 
-	const [ { inProgress, progress }, updateState ] = useMergeReducer( {
-		inProgress: false,
+	const [ { progress }, updateState ] = useMergeReducer( {
 		progress: null,
 	} );
 
 	const startExport = ( types ) => {
-		updateState( { inProgress: true } );
+		updateState( {
+			progress: {
+				status: 'started',
+				percentage: 0,
+			},
+		} );
 
 		// Mock server updates.
 
@@ -49,6 +53,10 @@ const SenseiExportPage = () => {
 		);
 	};
 
+	const resetExport = () => {
+		updateState( { inProgress: false, progress: null } );
+	};
+
 	return (
 		<div className="sensei-page-export">
 			<section className="sensei-data-port-step">
@@ -64,8 +72,11 @@ const SenseiExportPage = () => {
 						) }
 					</p>
 				</header>
-				{ inProgress ? (
-					<ExportProgressPage state={ progress } />
+				{ progress ? (
+					<ExportProgressPage
+						state={ progress }
+						reset={ resetExport }
+					/>
 				) : (
 					<ExportSelectContentPage onSubmit={ startExport } />
 				) }
