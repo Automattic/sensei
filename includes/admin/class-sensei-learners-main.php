@@ -444,7 +444,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 						$row_actions[] =
 							'<span class="delete">' .
 								'<a class="learner-action delete" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="withdraw" href="' . esc_url( $withdraw_action_url ) . '">' .
-									esc_html__( 'Remove enrollment', 'sensei-lms' ) .
+									esc_html__( 'Remove Enrollment', 'sensei-lms' ) .
 								'</a>' .
 							'</span>';
 					} elseif ( ! $is_user_enrolled ) {
@@ -473,10 +473,10 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				}
 
 				$reset_action = 'reset_progress';
-				$reset_label  = esc_html__( 'Reset progress', 'sensei-lms' );
+				$reset_label  = esc_html__( 'Reset Progress', 'sensei-lms' );
 				if ( 'course' === $post_type && ! $is_user_enrolled ) {
 					$reset_action = 'remove_progress';
-					$reset_label  = esc_html__( 'Remove progress', 'sensei-lms' );
+					$reset_label  = esc_html__( 'Remove Progress', 'sensei-lms' );
 				}
 
 				$row_actions[] =
