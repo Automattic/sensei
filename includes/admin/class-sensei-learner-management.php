@@ -597,7 +597,7 @@ class Sensei_Learner_Management {
 		if ( $manual_enrolment_provider->is_enrolled( $user_id, $course_id ) ) {
 			$manual_enrolment_provider->withdraw_learner( $user_id, $course_id );
 
-			if ( ! $course_enrolment->is_enrolled( $user_id ) ) {
+			if ( ! $course_enrolment->is_enrolled( $user_id, false ) ) {
 				return true;
 			}
 		}
@@ -605,7 +605,7 @@ class Sensei_Learner_Management {
 		// If user is still enrolled for some reason, remove them.
 		$course_enrolment->remove_learner( $user_id );
 
-		return ! $course_enrolment->is_enrolled( $user_id );
+		return ! $course_enrolment->is_enrolled( $user_id, false );
 	}
 
 	/**
@@ -623,7 +623,7 @@ class Sensei_Learner_Management {
 		if ( $course_enrolment->check_removed_learner( $user_id ) ) {
 			$course_enrolment->restore_removed_learner( $user_id );
 
-			if ( $course_enrolment->is_enrolled( $user_id ) ) {
+			if ( $course_enrolment->is_enrolled( $user_id, false ) ) {
 				return true;
 			}
 		}
