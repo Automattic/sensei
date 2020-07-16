@@ -3,6 +3,7 @@ import { render, useLayoutEffect } from '@wordpress/element';
 import { Spinner } from '@woocommerce/components';
 import { Notice } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { useSenseiColorTheme } from '../react-hooks/use-sensei-color-theme';
 
 import registerSetupWizardStore from './data';
 import { useWpAdminFullscreen } from '../react-hooks';
@@ -24,7 +25,8 @@ const PARAM_NAME = 'step';
  * Sensei setup wizard page.
  */
 const SenseiSetupWizardPage = () => {
-	useWpAdminFullscreen( [ 'sensei-color', 'sensei-setup-wizard__page' ] );
+	useWpAdminFullscreen( [ 'sensei-setup-wizard__page' ] );
+	useSenseiColorTheme();
 
 	const { isFetching, error, navigationSteps } = useSelect( ( select ) => {
 		const store = select( 'sensei/setup-wizard' );

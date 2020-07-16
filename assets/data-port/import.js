@@ -1,6 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { render, useLayoutEffect } from '@wordpress/element';
+import { useSenseiColorTheme } from '../react-hooks/use-sensei-color-theme';
 import { DataPortStepper } from './stepper';
 import registerImportStore from './import/data';
 import { Spinner } from '@woocommerce/components';
@@ -28,12 +29,7 @@ const SenseiImportPage = () => {
 		fetchCurrentJobState();
 	}, [ fetchCurrentJobState ] );
 
-	// Add `sensei-color` to body tag.
-	useLayoutEffect( () => {
-		document.body.classList.add( [ 'sensei-color' ] );
-
-		return () => document.body.classList.remove( [ 'sensei-color' ] );
-	} );
+	useSenseiColorTheme();
 
 	if ( isFetching ) {
 		return <Spinner className="sensei-import__main-loader" />;
@@ -55,7 +51,7 @@ const SenseiImportPage = () => {
 	const currentStep = navigationSteps.find( ( step ) => step.isNext );
 
 	return (
-		<div className="sensei-import-wrapper">
+		<div className="sensei-page-import">
 			<DataPortStepper steps={ navigationSteps } />
 			{ currentStep.container }
 		</div>
