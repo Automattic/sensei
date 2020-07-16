@@ -483,7 +483,7 @@ class Sensei_Course_Enrolment {
 	 *
 	 * @return boolean Success flag.
 	 */
-	public function restore_removed_learner( $user_id ) {
+	public function restore_learner( $user_id ) {
 		$removed_learners = $this->get_removed_learners();
 
 		unset( $removed_learners[ $user_id ] );

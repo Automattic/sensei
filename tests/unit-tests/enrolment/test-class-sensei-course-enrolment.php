@@ -475,7 +475,7 @@ class Sensei_Course_Enrolment_Test extends WP_UnitTestCase {
 		$this->assertNotFalse( $course_enrolment->remove_learner( $user_id ) );
 		$this->assertTrue( $course_enrolment->is_learner_removed( $user_id ) );
 
-		$this->assertTrue( $course_enrolment->restore_removed_learner( $user_id ) );
+		$this->assertTrue( $course_enrolment->restore_learner( $user_id ) );
 		$this->assertFalse( $course_enrolment->is_learner_removed( $user_id ) );
 	}
 
