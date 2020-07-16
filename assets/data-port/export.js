@@ -2,6 +2,7 @@ import { H } from '@woocommerce/components';
 import { __ } from '@wordpress/i18n';
 import { render } from '@wordpress/element';
 import { useSenseiColorTheme } from '../react-hooks/use-sensei-color-theme';
+import { SelectExportContentPage } from './export/select-export-content-page';
 
 /**
  * Sensei export page.
@@ -24,6 +25,8 @@ const SenseiExportPage = () => {
 						) }
 					</p>
 				</header>
+
+				<SelectExportContentPage />
 			</section>
 		</div>
 	);
