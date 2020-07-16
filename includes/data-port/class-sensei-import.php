@@ -28,7 +28,7 @@ class Sensei_Import {
 
 		$this->page_slug = 'sensei_import';
 
-		add_action( 'admin_menu', [ $this, 'admin_menu' ], 20 );
+		add_action( 'admin_menu', [ $this, 'admin_menu' ], 40 );
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
 		if ( isset( $_GET['page'] ) && ( $_GET['page'] === $this->page_slug ) ) {
