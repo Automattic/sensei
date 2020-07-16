@@ -17,8 +17,36 @@ const SenseiExportPage = () => {
 		progress: null,
 	} );
 
-	const startExport = () => {
+	const startExport = ( types ) => {
 		updateState( { inProgress: true } );
+
+		// Mock server updates.
+
+		setTimeout(
+			() =>
+				updateState( {
+					progress: {
+						status: 'progress',
+						percentage: 40,
+					},
+				} ),
+			1000
+		);
+		setTimeout(
+			() =>
+				updateState( {
+					progress: {
+						status: 'completed',
+						error: 'Lessons failed to export: No lesson found',
+						files: types.map( ( t ) => ( {
+							name: `${ t }.csv`,
+							url:
+								'/wp-content/uploads/2020/02/sample_tax_rates.csv',
+						} ) ),
+					},
+				} ),
+			2000
+		);
 	};
 
 	return (
