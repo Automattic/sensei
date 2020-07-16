@@ -465,6 +465,33 @@ class Sensei_Course_Enrolment_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests remove and restore learner.
+	 */
+	public function testRemoveAndRestoreLearner() {
+		$course_id        = $this->getSimpleCourse();
+		$user_id          = 123;
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+
+		$this->assertNotFalse( $course_enrolment->remove_learner( $user_id ) );
+		$this->assertTrue( $course_enrolment->is_learner_removed( $user_id ) );
+
+		$this->assertTrue( $course_enrolment->restore_learner( $user_id ) );
+		$this->assertFalse( $course_enrolment->is_learner_removed( $user_id ) );
+	}
+
+	/**
+	 * Tests that it is not possible to remove again a learner already removed.
+	 */
+	public function testRemoveLearnerTwice() {
+		$course_id        = $this->getSimpleCourse();
+		$user_id          = 123;
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+
+		$this->assertNotFalse( $course_enrolment->remove_learner( $user_id ) );
+		$this->assertFalse( $course_enrolment->remove_learner( $user_id ) );
+	}
+
+	/**
 	 * Helper for `\Sensei_Class_Course_Enrolment_Test::testEnrolmentCheckVersionCachingWorks`.
 	 */
 	private function resetAndSetUpVersionedProvider( $bump_version ) {

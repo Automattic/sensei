@@ -29,6 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Course_Enrolment {
 	const META_PREFIX_ENROLMENT_RESULTS = 'sensei_course_enrolment_';
 	const META_COURSE_ENROLMENT_VERSION = '_course_enrolment_version';
+	const META_REMOVED_LEARNERS         = 'sensei_removed_learners';
 
 	/**
 	 * Courses instances.
@@ -50,6 +51,15 @@ class Sensei_Course_Enrolment {
 	 * @var int
 	 */
 	private $course_id;
+
+	/**
+	 * An array of removed learners from the course.
+	 *
+	 * @var array {
+	 *     @type string $date  Timestamp of when the the learner was removed.
+	 * }
+	 */
+	private $removed_learners;
 
 	/**
 	 * Sensei_Course_Enrolment constructor.
@@ -443,5 +453,99 @@ class Sensei_Course_Enrolment {
 		update_post_meta( $this->course_id, self::META_COURSE_ENROLMENT_VERSION, $new_salt );
 
 		return $new_salt;
+	}
+
+	/**
+	 * Remove learner from the course, overriding the providers rule.
+	 *
+	 * @param int $user_id User ID.
+	 *
+	 * @return boolean Success flag.
+	 */
+	public function remove_learner( $user_id ) {
+		$removed_learners = $this->get_removed_learners();
+
+		if ( isset( $removed_learners[ $user_id ] ) ) {
+			return false;
+		}
+
+		$removed_learners[ $user_id ] = [ 'date' => time() ];
+
+		$this->save_enrolment( $user_id, false );
+
+		return $this->update_removed_learners( $removed_learners );
+	}
+
+	/**
+	 * Restore removed learner enrolment, giving the control back to the providers.
+	 *
+	 * @param int $user_id User ID.
+	 *
+	 * @return boolean Success flag.
+	 */
+	public function restore_learner( $user_id ) {
+		$removed_learners = $this->get_removed_learners();
+
+		unset( $removed_learners[ $user_id ] );
+
+		return $this->update_removed_learners( $removed_learners );
+	}
+
+	/**
+	 * Check if the user is removed.
+	 *
+	 * @param int $user_id User ID.
+	 *
+	 * @return boolean Whether the learner is removed.
+	 */
+	public function is_learner_removed( $user_id ) {
+		$removed_learners = $this->get_removed_learners();
+
+		return array_key_exists( $user_id, $removed_learners );
+	}
+
+	/**
+	 * Get removed learners meta.
+	 *
+	 * @return array Removed learners array.
+	 */
+	private function get_removed_learners() {
+		if ( isset( $this->removed_learners ) ) {
+			return $this->removed_learners;
+		}
+
+		$removed_learners_json = get_post_meta( $this->course_id, self::META_REMOVED_LEARNERS, true );
+
+		if ( empty( $removed_learners_json ) ) {
+			$this->removed_learners = [];
+		} else {
+			$removed_learners = json_decode( $removed_learners_json, true );
+
+			if ( ! $removed_learners ) {
+				$this->removed_learners = [];
+			} else {
+				$this->removed_learners = $removed_learners;
+			}
+		}
+
+		return $this->removed_learners;
+	}
+
+	/**
+	 * Update removed learners meta.
+	 *
+	 * @param array $removed_learners Removed learners array.
+	 *
+	 * @return bool Whether it was updated.
+	 */
+	private function update_removed_learners( $removed_learners ) {
+		$result = update_post_meta( $this->course_id, self::META_REMOVED_LEARNERS, wp_json_encode( $removed_learners ) );
+
+		if ( $result ) {
+			$this->removed_learners = $removed_learners;
+			return true;
+		}
+
+		return false;
 	}
 }
