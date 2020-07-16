@@ -1,12 +1,7 @@
 import { Button, CheckboxControl } from '@wordpress/components';
 import { useReducer } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-
-const labels = {
-	course: __( 'Courses', 'sensei-lms' ),
-	lesson: __( 'Lessons', 'sensei-lms' ),
-	question: __( 'Questions', 'sensei-lms' ),
-};
+import { postTypeLabels } from '../../shared/helpers/labels';
 
 export const SelectExportContentPage = ( { onSubmit } ) => {
 	const [ values, setValue ] = useReducer(
@@ -40,7 +35,7 @@ export const SelectExportContentPage = ( { onSubmit } ) => {
 							name={ type }
 							checked={ value }
 							onChange={ ( v ) => setValue( { [ type ]: v } ) }
-							label={ labels[ type ] }
+							label={ postTypeLabels[ type ] }
 						/>
 					) ) }
 				</div>
