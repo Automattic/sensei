@@ -127,8 +127,8 @@ class Sensei_Course_Enrolment {
 			return $is_enrolled;
 		}
 
-		// Users can only be enrolled in a published course.
-		if ( 'publish' !== get_post_status( $this->course_id ) ) {
+		// User is not enrolled if the course is not published or he is removed.
+		if ( 'publish' !== get_post_status( $this->course_id ) || $this->is_learner_removed( $user_id ) ) {
 			return false;
 		}
 
