@@ -558,11 +558,6 @@ class Sensei_Learner_Management {
 			exit;
 		}
 
-		if ( ! ( $manual_enrolment_provider instanceof Sensei_Course_Manual_Enrolment_Provider ) ) {
-			wp_safe_redirect( esc_url_raw( $failed_redirect_url ) );
-			exit;
-		}
-
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 		$result           = false;
 
