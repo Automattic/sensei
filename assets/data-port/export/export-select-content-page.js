@@ -3,7 +3,7 @@ import { useReducer } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { postTypeLabels } from '../../shared/helpers/labels';
 
-export const SelectExportContentPage = ( { onSubmit } ) => {
+export const ExportSelectContentPage = ( { onSubmit } ) => {
 	const [ values, setValue ] = useReducer(
 		( state, newValues ) => ( { ...state, ...newValues } ),
 		{

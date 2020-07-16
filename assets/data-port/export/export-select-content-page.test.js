@@ -1,11 +1,11 @@
 import { render, fireEvent } from '@testing-library/react';
-import { SelectExportContentPage } from './select-export-content-page';
+import { ExportSelectContentPage } from './export-select-content-page';
 
 describe( '<SelectExportContentPage />', () => {
 	it( 'should allow selecting content types', () => {
 		const onSubmit = jest.fn();
 		const { getByRole, getByLabelText } = render(
-			<SelectExportContentPage onSubmit={ onSubmit } />
+			<ExportSelectContentPage onSubmit={ onSubmit } />
 		);
 
 		fireEvent.click( getByLabelText( 'Lessons' ) );
@@ -20,7 +20,7 @@ describe( '<SelectExportContentPage />', () => {
 	it( 'should disable submit button until one is selected', () => {
 		const onSubmit = jest.fn();
 		const { getByRole, getByLabelText } = render(
-			<SelectExportContentPage onSubmit={ onSubmit } />
+			<ExportSelectContentPage onSubmit={ onSubmit } />
 		);
 
 		expect(
