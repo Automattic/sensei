@@ -1,17 +1,14 @@
 import { Button, CheckboxControl } from '@wordpress/components';
-import { useReducer } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useMergeReducer } from '../../react-hooks/use-merge-reducer';
 import { postTypeLabels } from '../../shared/helpers/labels';
 
 export const ExportSelectContentPage = ( { onSubmit } ) => {
-	const [ values, setValue ] = useReducer(
-		( state, newValues ) => ( { ...state, ...newValues } ),
-		{
-			course: false,
-			lesson: false,
-			question: false,
-		}
-	);
+	const [ values, updateValues ] = useMergeReducer( {
+		course: false,
+		lesson: false,
+		question: false,
+	} );
 	const submit = ( event ) => {
 		event.preventDefault();
 		const selectedTypes = Object.entries( values ).reduce(
@@ -43,7 +40,9 @@ export const ExportSelectContentPage = ( { onSubmit } ) => {
 							key={ type }
 							name={ type }
 							checked={ value }
-							onChange={ ( v ) => setValue( { [ type ]: v } ) }
+							onChange={ ( v ) =>
+								updateValues( { [ type ]: v } )
+							}
 							label={ postTypeLabels[ type ] }
 						/>
 					) ) }
