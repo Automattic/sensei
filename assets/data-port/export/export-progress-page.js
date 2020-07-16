@@ -68,7 +68,7 @@ export const ExportProgressPage = ( { state, reset } ) => {
 					</div>
 					<div className="sensei-data-port-step__footer">
 						<Button isPrimary onClick={ reset }>
-							{ __( 'Start again', 'sensei-lms' ) }
+							{ __( 'New Export', 'sensei-lms' ) }
 						</Button>
 					</div>
 				</>
