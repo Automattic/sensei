@@ -14,7 +14,14 @@ export const ExportSelectContentPage = ( { onSubmit } ) => {
 	);
 	const submit = ( event ) => {
 		event.preventDefault();
-		onSubmit( values );
+		const selectedTypes = Object.entries( values ).reduce(
+			( m, [ type, value ] ) => {
+				if ( value ) m.push( type );
+				return m;
+			},
+			[]
+		);
+		onSubmit( selectedTypes );
 	};
 
 	const hasSelected = Object.values( values ).some( ( v ) => v );

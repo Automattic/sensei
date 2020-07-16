@@ -1,7 +1,9 @@
 import { H } from '@woocommerce/components';
 import { __ } from '@wordpress/i18n';
 import { render } from '@wordpress/element';
+import { useMergeReducer } from '../react-hooks/use-merge-reducer';
 import { useSenseiColorTheme } from '../react-hooks/use-sensei-color-theme';
+import { ExportProgressPage } from './export/export-progress-page';
 import { ExportSelectContentPage } from './export/export-select-content-page';
 
 /**
@@ -9,6 +11,15 @@ import { ExportSelectContentPage } from './export/export-select-content-page';
  */
 const SenseiExportPage = () => {
 	useSenseiColorTheme();
+
+	const [ { inProgress, progress }, updateState ] = useMergeReducer( {
+		inProgress: false,
+		progress: null,
+	} );
+
+	const startExport = () => {
+		updateState( { inProgress: true } );
+	};
 
 	return (
 		<div className="sensei-page-export">
@@ -25,8 +36,11 @@ const SenseiExportPage = () => {
 						) }
 					</p>
 				</header>
-
-				<ExportSelectContentPage />
+				{ inProgress ? (
+					<ExportProgressPage state={ progress } />
+				) : (
+					<ExportSelectContentPage onSubmit={ startExport } />
+				) }
 			</section>
 		</div>
 	);
