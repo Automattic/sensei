@@ -548,4 +548,55 @@ class Sensei_Course_Enrolment {
 
 		return false;
 	}
+
+	/**
+	 * Withdraw learner. It removes the manual enrolment and/or remove the learner,
+	 * depending on the user enrollment situation.
+	 *
+	 * @param int $user_id User ID.
+	 *
+	 * @return boolean If user is withdrawn.
+	 */
+	public function withdraw( $user_id ) {
+		$enrolment_manager         = Sensei_Course_Enrolment_Manager::instance();
+		$manual_enrolment_provider = $enrolment_manager->get_manual_enrolment_provider();
+
+		// If user is manually enrolled, withdraw from manual provider.
+		if ( $manual_enrolment_provider->is_enrolled( $user_id, $this->course_id ) ) {
+			$manual_enrolment_provider->withdraw_learner( $user_id, $this->course_id );
+
+			if ( ! $this->is_enrolled( $user_id, false ) ) {
+				return true;
+			}
+		}
+
+		// If user is still enrolled for some reason, remove them.
+		$this->remove_learner( $user_id );
+
+		return ! $this->is_enrolled( $user_id, false );
+	}
+
+	/**
+	 * Enroll learner. It restore a learner, if they are enrolled through a provider,
+	 * otherwise, give them a manually enrollment.
+	 *
+	 * @param int $user_id User ID.
+	 *
+	 * @return boolean If user is enrolled.
+	 */
+	public function enrol( $user_id ) {
+		// If user is removed, just restore.
+		if ( $this->is_learner_removed( $user_id ) ) {
+			$this->restore_learner( $user_id );
+
+			if ( $this->is_enrolled( $user_id, false ) ) {
+				return true;
+			}
+		}
+
+		// If user isn't still enrolled, enroll manually.
+		$enrolment_manager         = Sensei_Course_Enrolment_Manager::instance();
+		$manual_enrolment_provider = $enrolment_manager->get_manual_enrolment_provider();
+		return $manual_enrolment_provider->enrol_learner( $user_id, $this->course_id );
+	}
 }

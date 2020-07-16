@@ -563,11 +563,13 @@ class Sensei_Learner_Management {
 			exit;
 		}
 
-		$result = false;
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$result           = false;
+
 		if ( 'withdraw' === $learner_action ) {
-			$result = $this->withdraw( $user_id, $course_id );
+			$result = $course_enrolment->withdraw( $user_id );
 		} elseif ( 'enrol' === $learner_action ) {
-			$result = $this->enrol( $user_id, $course_id );
+			$result = $course_enrolment->enrol( $user_id );
 		}
 
 		if ( ! $result ) {
@@ -578,60 +580,6 @@ class Sensei_Learner_Management {
 			wp_safe_redirect( esc_url_raw( $success_redirect_url ) );
 			exit;
 		}
-	}
-
-	/**
-	 * Withdraw user from a course.
-	 *
-	 * @param int $user_id   User ID.
-	 * @param int $course_id Course ID.
-	 *
-	 * @return boolean If user is withdrawn.
-	 */
-	private function withdraw( $user_id, $course_id ) {
-		$enrolment_manager         = Sensei_Course_Enrolment_Manager::instance();
-		$manual_enrolment_provider = $enrolment_manager->get_manual_enrolment_provider();
-		$course_enrolment          = Sensei_Course_Enrolment::get_course_instance( $course_id );
-
-		// If user is manually enrolled, withdraw from manual provider.
-		if ( $manual_enrolment_provider->is_enrolled( $user_id, $course_id ) ) {
-			$manual_enrolment_provider->withdraw_learner( $user_id, $course_id );
-
-			if ( ! $course_enrolment->is_enrolled( $user_id, false ) ) {
-				return true;
-			}
-		}
-
-		// If user is still enrolled for some reason, remove them.
-		$course_enrolment->remove_learner( $user_id );
-
-		return ! $course_enrolment->is_enrolled( $user_id, false );
-	}
-
-	/**
-	 * Enroll user in a course.
-	 *
-	 * @param int $user_id   User ID.
-	 * @param int $course_id Course ID.
-	 *
-	 * @return boolean If user is enrolled.
-	 */
-	private function enrol( $user_id, $course_id ) {
-		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
-
-		// If user is removed, just restore.
-		if ( $course_enrolment->check_removed_learner( $user_id ) ) {
-			$course_enrolment->restore_removed_learner( $user_id );
-
-			if ( $course_enrolment->is_enrolled( $user_id, false ) ) {
-				return true;
-			}
-		}
-
-		// If user isn't still enrolled, enroll manually.
-		$enrolment_manager         = Sensei_Course_Enrolment_Manager::instance();
-		$manual_enrolment_provider = $enrolment_manager->get_manual_enrolment_provider();
-		return $manual_enrolment_provider->enrol_learner( $user_id, $course_id );
 	}
 
 	/**
