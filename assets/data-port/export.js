@@ -20,7 +20,7 @@ const SenseiExportPage = () => {
 					<p>
 						{ __(
 							'This tool enables you to generate and download one or more CSV files containing a list of all courses, ' +
-								'lessons and quizzes, or questions. Separate CSV files are generated for each content type.',
+								'lessons, or questions. Separate CSV files are generated for each content type.',
 							'sensei-lms'
 						) }
 					</p>
