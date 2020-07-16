@@ -31,7 +31,7 @@ export const ImportProgressPage = ( { state } ) => {
 			>
 				<p>
 					<progress
-						className="sensei-import-progress-page__progress"
+						className="sensei-data-port__progressbar sensei-import-progress-page__progress"
 						max="100"
 						value={ percentage }
 					/>

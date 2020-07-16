@@ -32,7 +32,7 @@ export const ExportSelectContentPage = ( { onSubmit } ) => {
 				<div className="sensei-export__select-content__options">
 					{ Object.entries( values ).map( ( [ type, value ] ) => (
 						<CheckboxControl
-							className="sensei-export__select-content__option"
+							className="sensei-export__select-content__option sensei-data-port-step__line"
 							key={ type }
 							name={ type }
 							checked={ value }

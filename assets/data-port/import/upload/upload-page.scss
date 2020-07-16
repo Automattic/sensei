@@ -2,8 +2,8 @@
 	.sensei-upload-file-line {
 		display: flex;
 		list-style-type: none;
-		margin: 0 -24px;
-		padding: 0 24px;
+		padding-top: 0;
+		padding-bottom: 0;
 
 		@media (max-width: 783px) {
 			display: block;
@@ -55,9 +55,5 @@
 				border-radius: 3px;
 			}
 		}
-	}
-
-	.sensei-upload-file-line:nth-child(odd) {
-		background: $gray-0;
 	}
 }

@@ -100,7 +100,10 @@ export const UploadLevels = ( {
 
 				/* eslint-disable jsx-a11y/label-has-for */
 				return (
-					<li key={ level.key } className="sensei-upload-file-line">
+					<li
+						key={ level.key }
+						className="sensei-upload-file-line sensei-data-port-step__line"
+					>
 						<label className="sensei-upload-file-line__field-wrapper">
 							<span className="sensei-upload-file-line__description">
 								{ level.description }
