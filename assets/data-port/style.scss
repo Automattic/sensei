@@ -158,7 +158,8 @@ $alert-red: #d94f4f;
 
 			&__icon {
 				margin-right: 3px;
-				vertical-align: text-bottom;
+				vertical-align: baseline;
+				margin-bottom: -0.3em;
 			}
 
 			&__message {
