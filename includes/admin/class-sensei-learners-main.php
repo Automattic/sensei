@@ -368,15 +368,20 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				$is_user_enrolled  = Sensei_Course::is_user_enrolled( $this->course_id, $user_activity->user_id );
 				$course_enrolment  = Sensei_Course_Enrolment::get_course_instance( $this->course_id );
 				$enrolment_results = $course_enrolment->get_enrolment_check_results( $user_activity->user_id );
+				$provider_results  = [];
+
+				if ( $enrolment_results ) {
+					$provider_results = $enrolment_results->get_provider_results();
+				}
 
 				$enrolment_tooltip_html = '';
 
 				if ( Sensei()->feature_flags->is_enabled( 'enrolment_provider_tooltip' ) ) {
-					if ( $enrolment_results && ! empty( $enrolment_results->get_provider_results() ) ) {
+					if ( ! empty( $provider_results ) ) {
 						$enrolment_tooltip_html   = [];
 						$enrolment_tooltip_html[] = '<ul class="enrolment-helper">';
 
-						foreach ( $enrolment_results->get_provider_results() as $id => $result ) {
+						foreach ( $provider_results as $id => $result ) {
 							$name = Sensei_Course_Enrolment_Manager::instance()->get_enrolment_provider_name_by_id( $id );
 							if ( ! $name ) {
 								$name = $id;
@@ -421,11 +426,8 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				$actions     = [];
 				$row_actions = [];
 
-				$enrolment_manager         = Sensei_Course_Enrolment_Manager::instance();
-				$manual_enrolment_provider = $enrolment_manager->get_manual_enrolment_provider();
-
-				if ( 'course' === $post_type && $manual_enrolment_provider instanceof Sensei_Course_Manual_Enrolment_Provider ) {
-					if ( $manual_enrolment_provider->is_enrolled( $user_activity->user_id, $post_id ) ) {
+				if ( 'course' === $post_type ) {
+					if ( $is_user_enrolled ) {
 						$withdraw_action_url = wp_nonce_url(
 							add_query_arg(
 								array(
@@ -447,7 +449,14 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 									esc_html__( 'Remove Enrollment', 'sensei-lms' ) .
 								'</a>' .
 							'</span>';
-					} elseif ( ! $is_user_enrolled ) {
+					} else {
+						$enrol_label = esc_html__( 'Enroll', 'sensei-lms' );
+
+						// Check if it's enrolled by some provider.
+						if ( ! empty( $provider_results ) && in_array( true, $provider_results, true ) ) {
+							$enrol_label = esc_html__( 'Restore Enrollment', 'sensei-lms' );
+						}
+
 						$enrol_action_url = wp_nonce_url(
 							add_query_arg(
 								array(
@@ -466,7 +475,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 						$row_actions[] =
 							'<span>' .
 								'<a class="learner-action" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="enrol" href="' . esc_url( $enrol_action_url ) . '">' .
-									esc_html__( 'Enroll', 'sensei-lms' ) .
+									$enrol_label .
 								'</a>' .
 							'</span>';
 					}

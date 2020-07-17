@@ -558,18 +558,13 @@ class Sensei_Learner_Management {
 			exit;
 		}
 
-		$enrolment_manager         = Sensei_Course_Enrolment_Manager::instance();
-		$manual_enrolment_provider = $enrolment_manager->get_manual_enrolment_provider();
-		if ( ! ( $manual_enrolment_provider instanceof Sensei_Course_Manual_Enrolment_Provider ) ) {
-			wp_safe_redirect( esc_url_raw( $failed_redirect_url ) );
-			exit;
-		}
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$result           = false;
 
-		$result = false;
 		if ( 'withdraw' === $learner_action ) {
-			$result = $manual_enrolment_provider->withdraw_learner( $user_id, $course_id );
+			$result = $course_enrolment->withdraw( $user_id );
 		} elseif ( 'enrol' === $learner_action ) {
-			$result = $manual_enrolment_provider->enrol_learner( $user_id, $course_id );
+			$result = $course_enrolment->enrol( $user_id );
 		}
 
 		if ( ! $result ) {
