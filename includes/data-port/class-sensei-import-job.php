@@ -252,7 +252,7 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 		// Do basic extension validation and MIME mapping.
 		$wp_filetype = wp_check_filetype( $filename, $mimes );
 		$type        = $wp_filetype['type'];
-		$allowed     = array_intersect( get_allowed_mime_types(), $mimes );
+		$allowed     = is_multisite() ? $mimes : array_intersect( get_allowed_mime_types(), $mimes );
 
 		if ( ! in_array( $type, $allowed, true ) ) {
 			return false;
