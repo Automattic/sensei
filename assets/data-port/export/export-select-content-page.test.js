@@ -2,7 +2,7 @@ import { render, fireEvent } from '@testing-library/react';
 import { ExportSelectContentPage } from './export-select-content-page';
 
 describe( '<SelectExportContentPage />', () => {
-	it( 'should allow selecting content types', () => {
+	it( 'allows selecting content types', () => {
 		const onSubmit = jest.fn();
 		const { getByRole, getByLabelText } = render(
 			<ExportSelectContentPage onSubmit={ onSubmit } />
@@ -10,14 +10,10 @@ describe( '<SelectExportContentPage />', () => {
 
 		fireEvent.click( getByLabelText( 'Lessons' ) );
 		fireEvent.click( getByRole( 'button', { name: 'Generate CSV' } ) );
-		expect( onSubmit ).toHaveBeenCalledWith( {
-			course: false,
-			lesson: true,
-			question: false,
-		} );
+		expect( onSubmit ).toHaveBeenCalledWith( [ 'lesson' ] );
 	} );
 
-	it( 'should disable submit button until one is selected', () => {
+	it( 'disables submit button until one is selected', () => {
 		const onSubmit = jest.fn();
 		const { getByRole, getByLabelText } = render(
 			<ExportSelectContentPage onSubmit={ onSubmit } />
