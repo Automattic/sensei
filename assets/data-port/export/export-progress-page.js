@@ -4,14 +4,12 @@ import { __ } from '@wordpress/i18n';
 import { downloadFile } from '../../shared/helpers/download-file';
 import { Notice } from '../notice';
 
-export { __ } from '@wordpress/i18n';
-
 /**
  * @typedef ExportProgressPageState
- * @property {string} status  Export status.
- * @property {number} percentage Export progress percentage.
- * @property {ExportFile[]}   Exported files.
- * @property {string} error Error message.
+ * @property {string} status      Export status.
+ * @property {number} percentage  Export progress percentage.
+ * @property {ExportFile[]} files Exported files.
+ * @property {string} error       Error message.
  */
 /**
  * @typedef ExportFile
@@ -22,8 +20,8 @@ export { __ } from '@wordpress/i18n';
  * Exporter progress and result.
  *
  * @param {Object} props
- * @param {ExportProgressPageState} props.state
- * @param {Function} props.reset Function to return to initial export screen.
+ * @param {ExportProgressPageState} props.state Export state.
+ * @param {Function} props.reset                Function to return to initial export screen.
  */
 export const ExportProgressPage = ( { state, reset } ) => {
 	const { status, percentage, files, error } = state || {};
