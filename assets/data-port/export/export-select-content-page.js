@@ -1,6 +1,7 @@
 import { Button, CheckboxControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useMergeReducer } from '../../react-hooks/use-merge-reducer';
+import { getSelectedKeys } from '../../shared/helpers/data';
 import { postTypeLabels } from '../../shared/helpers/labels';
 
 export const ExportSelectContentPage = ( { onSubmit } ) => {
@@ -11,14 +12,7 @@ export const ExportSelectContentPage = ( { onSubmit } ) => {
 	} );
 	const submit = ( event ) => {
 		event.preventDefault();
-		const selectedTypes = Object.entries( values ).reduce(
-			( m, [ type, value ] ) => {
-				if ( value ) m.push( type );
-				return m;
-			},
-			[]
-		);
-		onSubmit( selectedTypes );
+		onSubmit( getSelectedKeys( values ) );
 	};
 
 	const hasSelected = Object.values( values ).some( ( v ) => v );
