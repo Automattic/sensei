@@ -592,13 +592,13 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 	 */
 	public function testLessonWithPassmarkButNotRequired() {
 		$lesson = [
-			Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE         => 'Lesson title',
+			Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE => 'Lesson title',
 			Sensei_Data_Port_Lesson_Schema::COLUMN_PASS_REQUIRED => 'false',
-			Sensei_Data_Port_Lesson_Schema::COLUMN_PASSMARK      => 55,
+			Sensei_Data_Port_Lesson_Schema::COLUMN_PASSMARK => 55,
 		];
 
-		$task   = new Sensei_Import_Lessons( Sensei_Import_Job::create( 'test', 0 ) );
-		$model  = Sensei_Import_Lesson_Model::from_source_array( 1, $lesson, new Sensei_Data_Port_Lesson_Schema(), $task );
+		$task  = new Sensei_Import_Lessons( Sensei_Import_Job::create( 'test', 0 ) );
+		$model = Sensei_Import_Lesson_Model::from_source_array( 1, $lesson, new Sensei_Data_Port_Lesson_Schema(), $task );
 		$model->sync_post();
 
 		$created_post = get_posts(
@@ -620,14 +620,14 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 	 */
 	public function testPassmarkRangeValidation() {
 		$negative     = [
-			Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE         => 'Required title',
+			Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE => 'Required title',
 			Sensei_Data_Port_Lesson_Schema::COLUMN_PASS_REQUIRED => true,
-			Sensei_Data_Port_Lesson_Schema::COLUMN_PASSMARK      => -1,
+			Sensei_Data_Port_Lesson_Schema::COLUMN_PASSMARK => -1,
 		];
 		$out_of_range = [
-			Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE         => 'Required title',
+			Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE => 'Required title',
 			Sensei_Data_Port_Lesson_Schema::COLUMN_PASS_REQUIRED => true,
-			Sensei_Data_Port_Lesson_Schema::COLUMN_PASSMARK      => 101,
+			Sensei_Data_Port_Lesson_Schema::COLUMN_PASSMARK => 101,
 		];
 		$task         = new Sensei_Import_Lessons( Sensei_Import_Job::create( 'test', 0 ) );
 
