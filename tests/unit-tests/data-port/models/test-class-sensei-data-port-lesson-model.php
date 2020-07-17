@@ -249,33 +249,6 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests passmark validation.
-	 */
-	public function testPassmarkValidation() {
-		$lesson_data_with_invalid_minimum_passmark = [
-			Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE => 'Required title',
-			Sensei_Data_Port_Lesson_Schema::COLUMN_PASSMARK => -1,
-		];
-		$lesson_data_with_invalid_maximum_passmark = [
-			Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE => 'Required title',
-			Sensei_Data_Port_Lesson_Schema::COLUMN_PASSMARK => 101,
-		];
-		$lesson_data_with_valid_passmark           = [
-			Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE => 'Required title',
-			Sensei_Data_Port_Lesson_Schema::COLUMN_PASSMARK => 50,
-		];
-
-		$model = Sensei_Import_Lesson_Model::from_source_array( 1, $lesson_data_with_invalid_minimum_passmark, new Sensei_Data_Port_Lesson_Schema() );
-		$this->assertFalse( $model->is_valid() );
-
-		$model = Sensei_Import_Lesson_Model::from_source_array( 1, $lesson_data_with_invalid_maximum_passmark, new Sensei_Data_Port_Lesson_Schema() );
-		$this->assertFalse( $model->is_valid() );
-
-		$model = Sensei_Import_Lesson_Model::from_source_array( 1, $lesson_data_with_valid_passmark, new Sensei_Data_Port_Lesson_Schema() );
-		$this->assertTrue( $model->is_valid() );
-	}
-
-	/**
 	 * Tests creating a lesson and updating all its values.
 	 */
 	public function testLessonIsInsertedAndUpdated() {
@@ -626,7 +599,7 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 
 		$task   = new Sensei_Import_Lessons( Sensei_Import_Job::create( 'test', 0 ) );
 		$model  = Sensei_Import_Lesson_Model::from_source_array( 1, $lesson, new Sensei_Data_Port_Lesson_Schema(), $task );
-		$result = $model->sync_post();
+		$model->sync_post();
 
 		$created_post = get_posts(
 			[
@@ -638,6 +611,51 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 
 		$this->assertEmpty( get_post_meta( $created_post->ID, '_pass_required', true ) );
 		$this->assertEquals( 0, get_post_meta( $created_post->ID, '_quiz_passmark', true ), 'Passmark should be 0 when pass is not required.' );
+	}
+
+
+
+	/**
+	 * Tests passmark range validation.
+	 */
+	public function testPassmarkRangeValidation() {
+		$negative     = [
+			Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE         => 'Required title',
+			Sensei_Data_Port_Lesson_Schema::COLUMN_PASS_REQUIRED => true,
+			Sensei_Data_Port_Lesson_Schema::COLUMN_PASSMARK      => -1,
+		];
+		$out_of_range = [
+			Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE         => 'Required title',
+			Sensei_Data_Port_Lesson_Schema::COLUMN_PASS_REQUIRED => true,
+			Sensei_Data_Port_Lesson_Schema::COLUMN_PASSMARK      => 101,
+		];
+		$task         = new Sensei_Import_Lessons( Sensei_Import_Job::create( 'test', 0 ) );
+
+		$model = Sensei_Import_Lesson_Model::from_source_array( 1, $negative, new Sensei_Data_Port_Lesson_Schema(), $task );
+		$model->sync_post();
+
+		$created_post = get_posts(
+			[
+				'post_type'      => 'quiz',
+				'posts_per_page' => 1,
+				'post_status'    => 'any',
+			]
+		)[0];
+
+		$this->assertEquals( 0, get_post_meta( $created_post->ID, '_quiz_passmark', true ) );
+
+		$model = Sensei_Import_Lesson_Model::from_source_array( 1, $out_of_range, new Sensei_Data_Port_Lesson_Schema(), $task );
+		$model->sync_post();
+
+		$created_post = get_posts(
+			[
+				'post_type'      => 'quiz',
+				'posts_per_page' => 1,
+				'post_status'    => 'any',
+			]
+		)[0];
+
+		$this->assertEquals( 0, get_post_meta( $created_post->ID, '_quiz_passmark', true ) );
 	}
 
 	/**
