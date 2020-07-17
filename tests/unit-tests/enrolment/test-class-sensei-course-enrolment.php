@@ -503,4 +503,24 @@ class Sensei_Course_Enrolment_Test extends WP_UnitTestCase {
 			Sensei_Test_Enrolment_Provider_Version_Morph::$version++;
 		}
 	}
+
+	/**
+	 * Check that is_enrolled returns false when a user has been removed.
+	 */
+	public function testEnrolmentCheckFalseWhenUserRemoved() {
+		$course_id  = $this->getSimpleCourse();
+		$student_id = $this->createStandardStudent();
+		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Always_Provides::class );
+		$this->prepareEnrolmentManager();
+
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+
+		$course_enrolment->remove_learner( $student_id );
+
+		$this->assertFalse( $course_enrolment->is_enrolled( $student_id ) );
+
+		$course_enrolment->restore_learner( $student_id );
+
+		$this->assertTrue( $course_enrolment->is_enrolled( $student_id ) );
+	}
 }
