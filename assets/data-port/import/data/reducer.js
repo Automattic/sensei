@@ -1,7 +1,8 @@
 import {
-	START_FETCH_IMPORT_DATA,
-	SUCCESS_FETCH_IMPORT_DATA,
-	ERROR_FETCH_IMPORT_DATA,
+	START_FETCH_CURRENT_JOB_STATE,
+	SUCCESS_FETCH_CURRENT_JOB_STATE,
+	ERROR_FETCH_CURRENT_JOB_STATE,
+	SET_STEP_DATA,
 	START_IMPORT,
 	SUCCESS_START_IMPORT,
 	ERROR_START_IMPORT,
@@ -13,6 +14,7 @@ import {
 import { merge } from 'lodash';
 
 const DEFAULT_STATE = {
+	jobId: null,
 	isFetching: true,
 	fetchError: false,
 	completedSteps: [],
@@ -72,23 +74,23 @@ const updateLevelState = ( state, levelKey, attributes ) => ( {
  */
 export default ( state = DEFAULT_STATE, action ) => {
 	switch ( action.type ) {
-		case START_FETCH_IMPORT_DATA:
+		case START_FETCH_CURRENT_JOB_STATE:
 			return {
 				...state,
 				isFetching: true,
 				fetchError: false,
 			};
 
-		case SUCCESS_FETCH_IMPORT_DATA:
+		case SUCCESS_FETCH_CURRENT_JOB_STATE:
 			return {
 				...merge( state, action.data ),
 				isFetching: false,
 			};
 
-		case ERROR_FETCH_IMPORT_DATA:
+		case ERROR_FETCH_CURRENT_JOB_STATE:
 			// No need to start a new job until we have our first active upload.
 			const isErrorNoActiveJob =
-				action.error.code === 'sensei_data_port_no_active_job';
+				action.error.code === 'sensei_data_port_job_not_found';
 
 			return {
 				...state,
@@ -140,12 +142,19 @@ export default ( state = DEFAULT_STATE, action ) => {
 			} );
 
 		case SUCCESS_UPLOAD_IMPORT_DATA_FILE:
-			return updateLevelState( state, action.level, {
-				...action.data.upload[ action.level ],
-				inProgress: false,
-				hasError: false,
-				errorMsg: null,
-			} );
+			return updateLevelState(
+				{
+					...state,
+					jobId: action.data.jobId,
+				},
+				action.level,
+				{
+					...action.data.upload[ action.level ],
+					inProgress: false,
+					hasError: false,
+					errorMsg: null,
+				}
+			);
 
 		case ERROR_UPLOAD_IMPORT_DATA_FILE:
 			return updateLevelState( state, action.level, {
@@ -155,6 +164,16 @@ export default ( state = DEFAULT_STATE, action ) => {
 				errorMsg: action.error.message,
 				filename: null,
 			} );
+
+		case SET_STEP_DATA:
+			return {
+				...state,
+				completedSteps: action.data.completedSteps,
+				[ action.step ]: {
+					...state[ action.step ],
+					...action.data[ action.step ],
+				},
+			};
 
 		default:
 			return state;

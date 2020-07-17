@@ -1,4 +1,5 @@
 import { sprintf, __ } from '@wordpress/i18n';
+import { getWccomProductId } from '../helpers/woocommerce-com';
 
 /**
  * @typedef  {Object} Feature
@@ -18,14 +19,14 @@ export const getFeatureObservation = ( slug, selectedFeatures ) => {
 	}
 
 	const titles = selectedFeatures
-		.filter( ( feature ) => feature.wccom_product_id )
+		.filter( getWccomProductId )
 		.map( ( feature ) => feature.rawTitle )
 		.join( __( ' and ', 'sensei-lms' ) );
 
 	return sprintf(
 		// translators: Placeholder is the plugin titles.
 		__(
-			'* WooCommerce is required to receive updates for %1$s. Once WooCommerce is installed, you will be taken to WooCommerce.com to complete the purchase process.',
+			'* WooCommerce is required to receive updates for %1$s.',
 			'sensei-lms'
 		),
 		titles

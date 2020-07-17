@@ -2,6 +2,7 @@
  * Data import constants.
  */
 export const API_BASE_PATH = '/sensei-internal/v1/import/';
+export const API_SPECIAL_ACTIVE_JOB_ID = 'active';
 
 /**
  * Generic fetch action type constants.
@@ -11,9 +12,15 @@ export const FETCH_FROM_API = 'FETCH_FROM_API';
 /**
  * Fetch action type constants.
  */
-export const START_FETCH_IMPORT_DATA = 'START_FETCH_IMPORT_DATA';
-export const SUCCESS_FETCH_IMPORT_DATA = 'SUCCESS_FETCH_IMPORT_DATA';
-export const ERROR_FETCH_IMPORT_DATA = 'ERROR_FETCH_IMPORT_DATA';
+export const START_FETCH_CURRENT_JOB_STATE = 'START_FETCH_CURRENT_JOB_STATE';
+export const SUCCESS_FETCH_CURRENT_JOB_STATE =
+	'SUCCESS_FETCH_CURRENT_JOB_STATE';
+export const ERROR_FETCH_CURRENT_JOB_STATE = 'ERROR_FETCH_CURRENT_JOB_STATE';
+
+/**
+ * Import step action type constants.
+ */
+export const SET_STEP_DATA = 'SET_STEP_DATA';
 
 /**
  * Start import job action type constants.

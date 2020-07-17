@@ -138,7 +138,7 @@ describe( '<FeaturesSelection />', () => {
 		expect( onContinueMock ).toBeCalled();
 	} );
 
-	it( 'Should render the features with installation status as disabled and the installed with specific class', () => {
+	it( 'Should render the features with installed status as disabled and the installed with specific class', () => {
 		const selectedSlugs = [ 'empty-status', 'installing', 'installed' ];
 		const { container } = render(
 			<FeaturesSelection

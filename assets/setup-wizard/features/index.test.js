@@ -1,6 +1,5 @@
 import { render, fireEvent } from '@testing-library/react';
 
-import { mockSearch } from '../../tests-helper/functions';
 import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 import QueryStringRouter, { Route } from '../query-string-router';
 import { updateQueryString } from '../query-string-router/url-functions';
@@ -126,23 +125,6 @@ describe( '<Features />', () => {
 		expect(
 			container.querySelector( '.sensei-setup-wizard__icon-status' )
 		).toBeTruthy();
-	} );
-
-	it( 'Should display installation feedback when feedback is an URL param', () => {
-		mockSearch( 'feedback=1' );
-		useFeaturesPolling.mockReturnValue( {
-			selected: [ 'test' ],
-			options: [ { slug: 'test', title: 'Test', status: 'installed' } ],
-		} );
-
-		const { queryByText } = render(
-			<QueryStringRouter>
-				<Features />
-			</QueryStringRouter>
-		);
-
-		expect( queryByText( 'Plugin installed' ) ).toBeTruthy();
-		mockSearch( '' );
 	} );
 
 	it( 'Should display installation error', () => {
@@ -321,5 +303,51 @@ describe( '<Features />', () => {
 
 		fireEvent.click( getByLabelText( /Need/ ) );
 		expect( getByLabelText( /WooCommerce/ ).checked ).toBeFalsy();
+	} );
+
+	it( 'Should open WooCommerce.com cart when selecting paid features', () => {
+		window.open = jest.fn();
+
+		mockStepData( {
+			selected: [],
+			options: [
+				{
+					slug: 'woocommerce',
+					title: 'WooCommerce',
+					status: 'installed',
+				},
+				{ slug: 'wc-1', title: 'WC1', wccom_product_id: '123' },
+				{ slug: 'wc-2', title: 'WC2', wccom_product_id: '456' },
+			],
+			wccom: {
+				'wccom-site': 'http://localhost',
+				'wccom-woo-version': '4.0.0',
+				'wccom-connect-nonce': '0000',
+			},
+		} );
+
+		useFeaturesPolling.mockReturnValue( {
+			selected: [ 'wc-1', 'wc-2' ],
+			options: [
+				{ slug: 'wc-1', title: 'WC1', status: 'external' },
+				{ slug: 'wc-2', title: 'WC2', status: 'external' },
+			],
+		} );
+
+		const { queryByText, getByLabelText } = render(
+			<QueryStringRouter paramName="step">
+				<Features />
+			</QueryStringRouter>
+		);
+
+		fireEvent.click( getByLabelText( 'WC1' ) );
+		fireEvent.click( getByLabelText( 'WC2' ) );
+
+		fireEvent.click( queryByText( 'Continue' ) );
+		fireEvent.click( queryByText( 'Install now' ) );
+
+		expect( window.open ).toHaveBeenCalledWith(
+			'https://woocommerce.com/cart?wccom-replace-with=123%2C456&wccom-site=http%3A%2F%2Flocalhost&wccom-woo-version=4.0.0&wccom-connect-nonce=0000'
+		);
 	} );
 } );

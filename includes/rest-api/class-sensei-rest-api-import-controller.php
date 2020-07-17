@@ -51,7 +51,7 @@ class Sensei_REST_API_Import_Controller extends Sensei_REST_API_Data_Port_Contro
 
 		register_rest_route(
 			$this->namespace,
-			$this->rest_base . '/file/(?P<file_key>[a-z-]+)',
+			$this->rest_base . '/(?P<job_id>[0-9a-z]+)/file/(?P<file_key>[a-z-]+)',
 			[
 				[
 					'methods'             => WP_REST_Server::CREATABLE,
@@ -85,8 +85,7 @@ class Sensei_REST_API_Import_Controller extends Sensei_REST_API_Data_Port_Contro
 			);
 		}
 
-		$data_port_manager = Sensei_Data_Port_Manager::instance();
-		$job               = $data_port_manager->get_active_job( $this->get_handler_class(), get_current_user_id() );
+		$job = $this->resolve_job( sanitize_text_field( $request->get_param( 'job_id' ) ), true );
 		if ( ! $job ) {
 			$job = $this->create_job();
 		}
@@ -226,6 +225,36 @@ class Sensei_REST_API_Import_Controller extends Sensei_REST_API_Data_Port_Contro
 		$response->set_data( $this->prepare_to_serve_job( $job ) );
 
 		return $response;
+	}
+
+	/**
+	 * Get the job schema for the client.
+	 *
+	 * @return array
+	 */
+	public function get_item_schema() {
+		$schema = parent::get_item_schema();
+
+		$results_schema = [];
+
+		foreach ( Sensei_Import_Job::get_default_results() as $model_key => $results ) {
+			$results_schema[ $model_key ] = [
+				'type'       => 'object',
+				'properties' => [],
+			];
+
+			foreach ( $results as $result_key => $result ) {
+				$results_schema[ $model_key ]['properties'][ $result_key ] = [
+					// translators: %1$s placeholder is object type; %2$s is result descriptor (success, error).
+					'description' => sprintf( __( 'Number of %1$s items with %2$s result', 'sensei-lms' ), $model_key, $result_key ),
+					'type'        => 'integer',
+				];
+			}
+		}
+
+		$schema['properties']['results']['properties'] = $results_schema;
+
+		return $schema;
 	}
 
 	/**

@@ -271,4 +271,29 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 
 		return null;
 	}
+
+	/**
+	 * Get a specific job for a user.
+	 *
+	 * @param string $handler_class Class for the data port job.
+	 * @param string $job_id        Job ID.
+	 * @param int    $user_id       User ID.
+	 *
+	 * @return Sensei_Data_Port_Job|null
+	 */
+	public function get_job_for_user( $handler_class, $job_id, $user_id ) {
+
+		foreach ( $this->data_port_jobs as $job ) {
+			if (
+				$handler_class === $job['handler']
+				&& is_a( $job['handler'], 'Sensei_Data_Port_Job', true )
+				&& (string) $job_id === $job['id']
+				&& (int) $user_id === $job['user_id']
+			) {
+				return $job['handler']::get( $job['id'] );
+			}
+		}
+
+		return null;
+	}
 }

@@ -105,6 +105,9 @@ class Sensei_Data_Port_Utilities {
 	 * @return int|WP_Error  The attachment id or an error.
 	 */
 	public static function create_attachment_from_url( $external_url, $parent_id = 0 ) {
+		require_once ABSPATH . 'wp-admin/includes/image.php';
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		require_once ABSPATH . 'wp-admin/includes/media.php';
 
 		$existing_attachment = get_posts(
 			[
@@ -122,7 +125,18 @@ class Sensei_Data_Port_Utilities {
 			return $existing_attachment[0];
 		}
 
-		$response = wp_safe_remote_get( $external_url );
+		/**
+		 * Filters the timeout value for the HTTP request which retrieves an external attachment.
+		 *
+		 * Increase this value in case big attachments are imported and the request to get them
+		 * times out.
+		 *
+		 * @since 3.3.0
+		 *
+		 * @param float  $timeout  Time in seconds until a request times out. Default 10.
+		 */
+		$timeout  = apply_filters( 'sensei_import_attachment_request_timeout', 10 );
+		$response = wp_safe_remote_get( $external_url, [ 'timeout' => $timeout ] );
 
 		if ( is_wp_error( $response ) ) {
 			return $response;

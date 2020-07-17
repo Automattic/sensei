@@ -14,6 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Import_Job extends Sensei_Data_Port_Job {
 	const MAPPED_ID_STATE_KEY = '_map';
+	const RESULT_ERROR        = 'error';
+	const RESULT_SUCCESS      = 'success';
 
 	/**
 	 * The array of the import tasks.
@@ -21,6 +23,20 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 	 * @var Sensei_Data_Port_Task_Interface[]
 	 */
 	private $tasks;
+
+	/**
+	 * Sensei_Import_Job constructor.
+	 *
+	 * @param string $job_id Unique job id.
+	 * @param string $json   A json string to restore internal state from.
+	 */
+	public function __construct( $job_id, $json = '' ) {
+		parent::__construct( $job_id, $json );
+
+		if ( null === $this->results ) {
+			$this->results = self::get_default_results();
+		}
+	}
 
 	/**
 	 * Get the tasks of this import job.
@@ -31,11 +47,26 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 		if ( ! isset( $this->tasks ) ) {
 			$this->tasks              = [];
 			$this->tasks['questions'] = $this->initialize_task( Sensei_Import_Questions::class );
-			$this->tasks['lessons']   = $this->initialize_task( Sensei_Import_Lessons::class );
 			$this->tasks['courses']   = $this->initialize_task( Sensei_Import_Courses::class );
+			$this->tasks['lessons']   = $this->initialize_task( Sensei_Import_Lessons::class );
 		}
 
 		return $this->tasks;
+	}
+
+	/**
+	 * Increment result count for a model.
+	 *
+	 * @param string $model_key Model key.
+	 * @param string $result    Result key (success, error).
+	 */
+	public function increment_result( $model_key, $result ) {
+		if ( ! isset( $this->results[ $model_key ][ $result ] ) ) {
+			return;
+		}
+
+		$this->has_changed = true;
+		$this->results[ $model_key ][ $result ]++;
 	}
 
 	/**
@@ -184,7 +215,7 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 	 * Retrieves the post ID for the imported item based on the ID in the source file.
 	 *
 	 * @param string $post_type   Post type for the imported object.
-	 * @param int    $original_id ID that was provided in the source file.
+	 * @param string $original_id ID that was provided in the source file.
 	 *
 	 * @return int|null
 	 */
@@ -202,7 +233,7 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 	 * Store the post ID for the imported item with the ID in the source file.
 	 *
 	 * @param string $post_type   Post type for the imported object.
-	 * @param int    $original_id ID that was provided in the source file.
+	 * @param string $original_id ID that was provided in the source file.
 	 * @param int    $post_id     Post ID that was created during the import.
 	 */
 	public function set_import_id( $post_type, $original_id, $post_id ) {
@@ -215,5 +246,35 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 		$map[ $post_type ][ $original_id ] = $post_id;
 
 		$this->set_state( self::MAPPED_ID_STATE_KEY, $map );
+	}
+
+	/**
+	 * Get the default results array.
+	 *
+	 * @return array
+	 */
+	public static function get_default_results() {
+		$model_keys = [
+			Sensei_Import_Question_Model::MODEL_KEY,
+			Sensei_Import_Course_Model::MODEL_KEY,
+			Sensei_Import_Lesson_Model::MODEL_KEY,
+		];
+
+		$result_keys = [
+			self::RESULT_SUCCESS,
+			self::RESULT_ERROR,
+		];
+
+		$results = [];
+
+		foreach ( $model_keys as $model_key ) {
+			$results[ $model_key ] = [];
+
+			foreach ( $result_keys as $result_key ) {
+				$results[ $model_key ][ $result_key ] = 0;
+			}
+		}
+
+		return $results;
 	}
 }

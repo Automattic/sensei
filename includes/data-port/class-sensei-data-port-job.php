@@ -75,7 +75,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 *
 	 * @var bool
 	 */
-	private $has_changed;
+	protected $has_changed;
 
 	/**
 	 * True if the job has been cleaned up.
@@ -125,7 +125,6 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 			$this->restore_from_json( $json );
 		} else {
 			$this->logs         = [];
-			$this->results      = [];
 			$this->files        = [];
 			$this->is_completed = false;
 			$this->is_started   = false;
@@ -613,5 +612,49 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 */
 	private function set_user_id( $user_id ) {
 		$this->user_id = $user_id;
+	}
+
+	/**
+	 * Get the descriptor for a log entry.
+	 *
+	 * @param array $entry Log entry.
+	 *
+	 * @return string|null
+	 */
+	public static function get_log_entry_descriptor( $entry ) {
+		$data = ! empty( $entry['data'] ) ? $entry['data'] : [];
+
+		$descriptor = [];
+		if ( ! empty( $data['entry_title'] ) ) {
+			$descriptor[] = $data['entry_title'];
+		}
+
+		if ( ! empty( $data['entry_id'] ) ) {
+			// translators: Placeholder is ID of entry in source file.
+			$descriptor[] = sprintf( __( 'ID: %s', 'sensei-lms' ), $data['entry_id'] );
+		}
+
+		if ( empty( $descriptor ) ) {
+			return null;
+		}
+
+		return implode( '; ', $descriptor );
+	}
+
+	/**
+	 * Translate error severity level from integer to string.
+	 *
+	 * @param int $level Integer level.
+	 *
+	 * @return string
+	 */
+	public static function translate_log_severity_level( $level ) {
+		$map = [
+			self::LOG_LEVEL_INFO   => 'info',
+			self::LOG_LEVEL_NOTICE => 'notice',
+			self::LOG_LEVEL_ERROR  => 'error',
+		];
+
+		return isset( $map[ $level ] ) ? $map[ $level ] : 'info';
 	}
 }

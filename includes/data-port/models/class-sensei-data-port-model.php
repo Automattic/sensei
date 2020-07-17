@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Defines the expected data to port to/from and handles the port.
+ * This class handles the port for a single post.
  */
 abstract class Sensei_Data_Port_Model {
 	/**
@@ -28,53 +28,25 @@ abstract class Sensei_Data_Port_Model {
 	private $post_id;
 
 	/**
-	 * The default author to be used in courses if none is provided.
+	 * The schema for the model.
 	 *
-	 * @var int
+	 * @var Sensei_Data_Port_Schema
 	 */
-	private $default_author;
+	protected $schema;
 
 	/**
 	 * Sensei_Data_Port_Model constructor.
 	 */
-	private function __construct() {
+	protected function __construct() {
 		// Silence is golden.
 	}
 
 	/**
-	 * Set up item from an array.
+	 * Get the model key to identify items in log entries.
 	 *
-	 * @param array $data            Data to restore item from.
-	 * @param int   $default_author  The default author.
-	 *
-	 * @return static
+	 * @return string
 	 */
-	public static function from_source_array( $data, $default_author = 0 ) {
-		$self = new static();
-		$self->restore_from_source_array( $data );
-		$self->default_author = $default_author;
-
-		$post_id = $self->get_existing_post_id();
-		if ( $post_id ) {
-			$self->set_post_id( $post_id );
-		}
-
-		return $self;
-	}
-
-	/**
-	 * Check to see if the post already exists in the database.
-	 *
-	 * @return int
-	 */
-	abstract protected function get_existing_post_id();
-
-	/**
-	 * Create a new post or update an existing post.
-	 *
-	 * @return true|WP_Error
-	 */
-	abstract public function sync_post();
+	abstract public function get_model_key();
 
 	/**
 	 * Get the data to return with any errors.
@@ -83,7 +55,26 @@ abstract class Sensei_Data_Port_Model {
 	 *
 	 * @return array
 	 */
-	abstract public function get_error_data( $data = [] );
+	public function get_error_data( $data = [] ) {
+		$data['type'] = $this->get_model_key();
+
+		$entry_id = $this->get_value( $this->schema->get_column_id() );
+		if ( $entry_id ) {
+			$data['entry_id'] = $entry_id;
+		}
+
+		$entry_title = $this->get_value( $this->schema->get_column_title() );
+		if ( $entry_id ) {
+			$data['entry_title'] = $entry_title;
+		}
+
+		$post_id = $this->get_post_id();
+		if ( $post_id ) {
+			$data['post_id'] = $post_id;
+		}
+
+		return $data;
+	}
 
 	/**
 	 * Get the value of a field.
@@ -100,17 +91,17 @@ abstract class Sensei_Data_Port_Model {
 			return $this->data[ $field ];
 		}
 
-		$schema = static::get_schema();
-		if ( ! isset( $schema[ $field ] ) ) {
+		$schema_array = $this->schema->get_schema();
+		if ( ! isset( $schema_array[ $field ] ) ) {
 			return null;
 		}
 
 		// If the field exists, assume it is an empty string. Otherwise, set it to null.
 		$value  = isset( $this->data[ $field ] ) ? '' : null;
-		$config = $schema[ $field ];
+		$config = $schema_array[ $field ];
 
 		// If we're creating a new post, get the default value.
-		if ( ! $this->get_post_id() && isset( $config['default'] ) ) {
+		if ( $this->is_new() && isset( $config['default'] ) ) {
 			if ( is_callable( $config['default'] ) ) {
 				return call_user_func( $config['default'], $field, $this );
 			}
@@ -129,7 +120,12 @@ abstract class Sensei_Data_Port_Model {
 	public function is_valid() {
 		$data = $this->get_data();
 
-		foreach ( static::get_schema() as $field => $field_config ) {
+		foreach ( $this->schema->get_schema() as $field => $field_config ) {
+			// If the field is required, it must be set.
+			if ( ! empty( $field_config['required'] ) && empty( $data[ $field ] ) ) {
+				return false;
+			}
+
 			if ( isset( $data[ $field ] ) ) {
 				if (
 					isset( $field_config['validator'] )
@@ -139,11 +135,6 @@ abstract class Sensei_Data_Port_Model {
 				}
 
 				continue;
-			}
-
-			// If the field is required, it must be set.
-			if ( ! empty( $field_config['required'] ) ) {
-				return false;
 			}
 
 			// If a default exists as well as a pattern, a `null` value is for a field that didn't match the pattern.
@@ -157,69 +148,6 @@ abstract class Sensei_Data_Port_Model {
 		}
 
 		return true;
-	}
-
-	/**
-	 * Restore object from an array.
-	 *
-	 * @param array $data Data to restore item from.
-	 */
-	private function restore_from_source_array( $data ) {
-		$sanitized_data = [];
-		$schema         = static::get_schema();
-
-		foreach ( $data as $key => $value ) {
-			if ( ! isset( $schema[ $key ] ) ) {
-				continue;
-			}
-
-			$config = $schema[ $key ];
-			$value  = trim( $value );
-
-			if ( null !== $value ) {
-				switch ( $config['type'] ) {
-					case 'int':
-						$value = intval( $value );
-						break;
-					case 'float':
-						$value = floatval( $value );
-						break;
-					case 'bool':
-						$value = boolval( $value );
-						break;
-					case 'slug':
-						$value = sanitize_title( $value );
-						break;
-					case 'email':
-						$value = sanitize_email( $value );
-						break;
-					case 'url-or-file':
-						$value = 0 === strpos( $value, 'http' ) ? esc_url_raw( $value ) : sanitize_file_name( $value );
-						break;
-					case 'username':
-						$value = sanitize_user( $value );
-						break;
-					case 'video':
-						$value = Sensei_Wp_Kses::maybe_sanitize( $value, Sensei_Course::$allowed_html );
-						break;
-					default:
-						if (
-							isset( $config['pattern'] )
-							&& 1 !== preg_match( $config['pattern'], $value )
-						) {
-							$value = null;
-						} elseif ( ! empty( $config['allow_html'] ) ) {
-							$value = trim( wp_kses_post( $value ) );
-						} else {
-							$value = sanitize_text_field( $value );
-						}
-				}
-			}
-
-			$sanitized_data[ $key ] = $value;
-		}
-
-		$this->data = $sanitized_data;
 	}
 
 	/**
@@ -250,110 +178,11 @@ abstract class Sensei_Data_Port_Model {
 	}
 
 	/**
-	 * Get the optional fields in the schema.
+	 * Set the data for the model.
 	 *
-	 * @return array Field names.
+	 * @param array $data The data array.
 	 */
-	public static function get_optional_fields() {
-		$schema = static::get_schema();
-
-		return array_values(
-			array_filter(
-				array_map(
-					function( $field ) use ( $schema ) {
-						if ( empty( $schema[ $field ]['required'] ) ) {
-							return $field;
-						}
-
-						return false;
-					},
-					array_keys( $schema )
-				)
-			)
-		);
-	}
-
-	/**
-	 * Get the optional fields in the schema.
-	 *
-	 * @return array Field names.
-	 */
-	public static function get_required_fields() {
-		$schema = static::get_schema();
-
-		return array_values(
-			array_filter(
-				array_map(
-					function( $field ) use ( $schema ) {
-						if ( ! empty( $schema[ $field ]['required'] ) ) {
-							return $field;
-						}
-
-						return false;
-					},
-					array_keys( $schema )
-				)
-			)
-		);
-	}
-
-	/**
-	 * Get the schema for the data type.
-	 *
-	 * @return array {
-	 *     @type array $$field_name {
-	 *          @type string   $type       Type of data. Options: string, int, float, bool, slug, ref, email, url-or-file, username, video.
-	 *          @type string   $pattern    Regular expression that the value should match (Optional).
-	 *          @type mixed    $default    Default value if not set or invalid. Default is `null` (Optional).
-	 *          @type bool     $required   True if a non-empty value is required. Default is `false` (Optional).
-	 *          @type bool     $allow_html True if HTML should be allowed. Default is `false` (Optional).
-	 *          @type callable $validator  Callable to use when validating data (Optional).
-	 *     }
-	 * }
-	 */
-	public static function get_schema() {
-		_doing_it_wrong( __METHOD__, 'This should be implemented by the child classes.', '3.1.0' );
-
-		return [];
-	}
-
-	/**
-	 * Adds a thumbnail to a post. The source of the thumbnail can be either a filename from the media library or an
-	 * external URL.
-	 *
-	 * @param string $column_name  The CSV column name which has the image source.
-	 * @param int    $post_id      The post id.
-	 *
-	 * @return bool|WP_Error  True on success, WP_Error on failure.
-	 */
-	protected function add_thumbnail_to_post( $column_name, $post_id ) {
-		$thumbnail = $this->get_value( $column_name );
-
-		if ( null === $thumbnail ) {
-			return true;
-		}
-
-		if ( '' === $thumbnail ) {
-			delete_post_meta( $post_id, '_thumbnail_id' );
-		} else {
-			$attachment_id = Sensei_Data_Port_Utilities::get_attachment_from_source( $thumbnail );
-
-			if ( is_wp_error( $attachment_id ) ) {
-				return $attachment_id;
-			}
-
-			update_post_meta( $post_id, '_thumbnail_id', $attachment_id );
-		}
-
-		return true;
-	}
-
-	/**
-	 * Get the default author.
-	 *
-	 * @return int
-	 */
-	public function get_default_author() {
-		return $this->default_author;
+	public function set_data( $data ) {
+		$this->data = $data;
 	}
 }

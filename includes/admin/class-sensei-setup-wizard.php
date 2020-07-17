@@ -21,6 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Setup_Wizard {
 	const SUGGEST_SETUP_WIZARD_OPTION = 'sensei_suggest_setup_wizard';
 	const WC_INFORMATION_TRANSIENT    = 'sensei_woocommerce_plugin_information';
+	const WCCOM_INSTALLING_TRANSIENT  = 'sensei_setup_wizard_wccom_installing';
 	const USER_DATA_OPTION            = 'sensei_setup_wizard_data';
 	const MC_LIST_ID                  = '4fa225a515';
 	const MC_USER_ID                  = '7a061a9141b0911d6d9bafe3a';
@@ -86,6 +87,8 @@ class Sensei_Setup_Wizard {
 		$this->page_slug = 'sensei_setup_wizard';
 		$this->pages     = new Sensei_Setup_Wizard_Pages();
 
+		add_action( 'activated_plugin', [ $this, 'log_wccom_plugin_install' ] );
+
 		if ( is_admin() ) {
 
 			add_action( 'admin_menu', [ $this, 'register_wizard_page' ], 20 );
@@ -93,6 +96,7 @@ class Sensei_Setup_Wizard {
 			add_action( 'admin_init', [ $this, 'skip_setup_wizard' ] );
 			add_action( 'admin_init', [ $this, 'activation_redirect' ] );
 			add_action( 'current_screen', [ $this, 'add_setup_wizard_help_tab' ] );
+			add_action( 'admin_init', [ $this, 'close_wccom_install' ] );
 
 			// Maybe prevent WooCommerce help tab.
 			add_filter( 'woocommerce_enable_admin_help_tab', [ $this, 'should_enable_woocommerce_help_tab' ] );
@@ -268,6 +272,9 @@ class Sensei_Setup_Wizard {
 			return;
 		}
 
+		$setup_wizard_user_data   = get_option( self::USER_DATA_OPTION, false );
+		$setup_wizard_in_progress = $setup_wizard_user_data && ! empty( $setup_wizard_user_data['steps'] );
+
 		$setup_url = admin_url( 'admin.php?page=' . $this->page_slug );
 
 		$skip_url = add_query_arg( 'sensei_skip_setup_wizard', '1' );
@@ -278,7 +285,13 @@ class Sensei_Setup_Wizard {
 
 			<p class="submit">
 				<a href="<?php echo esc_url( $setup_url ); ?>" class="button-primary">
-					<?php esc_html_e( 'Run the Setup Wizard', 'sensei-lms' ); ?>
+					<?php
+					if ( $setup_wizard_in_progress ) {
+						esc_html_e( 'Complete Setup', 'sensei-lms' );
+					} else {
+						esc_html_e( 'Run the Setup Wizard', 'sensei-lms' );
+					}
+					?>
 				</a>
 
 				<a class="button" href="<?php echo esc_url( $skip_url ); ?>">
@@ -418,16 +431,49 @@ class Sensei_Setup_Wizard {
 	}
 
 	/**
+	 * Get data used for WooCommerce.com purchase redirect for feature installation.
+	 *
+	 * @return array The data.
+	 */
+	public function get_woocommerce_connect_data() {
+
+		$wc_params                = [];
+		$is_woocommerce_installed = Sensei_Utils::is_woocommerce_active( '3.7.0' ) && class_exists( 'WC_Admin_Addons' );
+
+		if ( $is_woocommerce_installed ) {
+			$wc_params = WC_Admin_Addons::get_in_app_purchase_url_params();
+
+		} else {
+			$wc_info = $this->get_woocommerce_information();
+
+			$wc_params = [
+				'wccom-site'          => site_url(),
+				'wccom-woo-version'   => $wc_info->version,
+				'wccom-connect-nonce' => wp_create_nonce( 'connect' ),
+			];
+		}
+
+		$wc_params['wccom-back'] = rawurlencode( 'admin.php' );
+
+		return $wc_params;
+
+	}
+
+	/**
 	 * Get feature with status.
 	 *
 	 * @param stdClass   $extension          Extension object.
 	 * @param stdClass[] $installing_plugins Plugins which are installing.
+	 * @param stdClass[] $selected_plugins   Plugins selected for installation.
 	 *
 	 * @return stdClass Extension with status.
 	 */
-	private function get_feature_with_status( $extension, $installing_plugins ) {
+	private function get_feature_with_status( $extension, $installing_plugins, $selected_plugins ) {
 		$installing_key = array_search( $extension->product_slug, wp_list_pluck( $installing_plugins, 'product_slug' ), true );
 
+		if ( in_array( $extension->product_slug, $selected_plugins, true ) && isset( $extension->wccom_product_id ) ) {
+			$extension->status = 'external';
+		}
 		if ( false !== $installing_key ) {
 			if ( isset( $installing_plugins[ $installing_key ]->error ) ) {
 				$extension->error  = $installing_plugins[ $installing_key ]->error;
@@ -500,6 +546,7 @@ class Sensei_Setup_Wizard {
 			'plugin_file'  => 'woocommerce/woocommerce.php',
 			'link'         => 'https://wordpress.org/plugins/' . $wc_slug,
 			'unselectable' => true,
+			'version'      => $plugin_information->version,
 		];
 
 		set_transient( self::WC_INFORMATION_TRANSIENT, $wc_information, DAY_IN_SECONDS );
@@ -519,31 +566,26 @@ class Sensei_Setup_Wizard {
 			wp_cache_delete( 'alloptions', 'options' );
 		}
 
-		$extensions_filter = [ 'hosted-location' => 'dotorg' ];
-
-		if ( Sensei()->feature_flags->is_enabled( 'setup_wizard_all_extensions' ) ) {
-			unset( $extensions_filter['hosted-location'] );
-		}
-
-		$extensions = Sensei_Extensions::instance()->get_extensions( 'plugin', 'setup-wizard-extensions', $extensions_filter );
+		$extensions = Sensei_Extensions::instance()->get_extensions( 'plugin', 'setup-wizard-extensions' );
 
 		// Add WooCommerce.
 		array_push( $extensions, $this->get_woocommerce_information() );
 
 		$installing_plugins = Sensei_Plugins_Installation::instance()->get_installing_plugins();
+		$selected_plugins   = $this->get_wizard_user_data( 'features' )['selected'];
 
 		if ( ! $extensions ) {
 			$extensions = [];
 		}
 
 		$extensions = array_map(
-			function( $extension ) use ( $installing_plugins ) {
+			function( $extension ) use ( $installing_plugins, $selected_plugins ) {
 				// Decode price.
 				if ( isset( $extension->price ) && 0 !== $extension->price ) {
 					$extension->price = html_entity_decode( $extension->price );
 				}
 
-				return $this->get_feature_with_status( $extension, $installing_plugins );
+				return $this->get_feature_with_status( $extension, $installing_plugins, $selected_plugins );
 			},
 			$extensions
 		);
@@ -557,17 +599,65 @@ class Sensei_Setup_Wizard {
 	 * @param string[] $extension_slugs Extension slugs to install.
 	 */
 	public function install_extensions( $extension_slugs ) {
-		$extensions_to_install = array_filter(
-			array_map(
-				function( $extension ) use ( $extension_slugs ) {
-					$key = array_search( $extension->product_slug, $extension_slugs, true );
 
-					return false !== $key ? $extension : false;
-				},
-				$this->get_sensei_extensions()
-			)
-		);
+		$extensions_to_install = [];
+		$wccom_extensions      = [];
+
+		foreach ( $this->get_sensei_extensions() as $extension ) {
+			if ( ! in_array( $extension->product_slug, $extension_slugs, true ) ) {
+				continue;
+			}
+
+			if ( isset( $extension->wccom_product_id ) ) {
+				$wccom_extensions[] = $extension->plugin_file;
+			} else {
+				$extensions_to_install[] = $extension;
+			}
+		}
+
+		set_transient( self::WCCOM_INSTALLING_TRANSIENT, $wccom_extensions, 10 * 60 );
 
 		Sensei_Plugins_Installation::instance()->install_plugins( $extensions_to_install );
+	}
+
+	/**
+	 * Log plugin installation success for WooCommerce.com plugin on activation.
+	 *
+	 * @param string $plugin_file The activated plugin.
+	 */
+	public function log_wccom_plugin_install( $plugin_file ) {
+
+		$plugin_name   = dirname( $plugin_file );
+		$wccom_plugins = get_transient( self::WCCOM_INSTALLING_TRANSIENT );
+
+		if ( empty( $wccom_plugins ) ) {
+			return;
+		}
+
+		if ( in_array( $plugin_file, $wccom_plugins, true ) ) {
+			sensei_log_event(
+				'setup_wizard_features_install_success',
+				[ 'slug' => $plugin_name ]
+			);
+
+		}
+	}
+
+	/**
+	 * Close the browser tab if it's a redirect from WooCommerce.com after a successful extension install.
+	 */
+	public static function close_wccom_install() {
+		if (
+			isset( $_SERVER['HTTP_REFERER'] ) &&
+			0 === strpos( $_SERVER['HTTP_REFERER'], 'https://woocommerce.com/checkout' ) && // phpcs:ignore sanitization ok.
+			false !== get_transient( self::WCCOM_INSTALLING_TRANSIENT )
+		) {
+			delete_transient( self::WCCOM_INSTALLING_TRANSIENT );
+
+			// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NoExplicitVersion -- Inline script.
+			wp_register_script( 'sensei-close-window', '', [], false, false );
+			wp_enqueue_script( 'sensei-close-window' );
+			wp_add_inline_script( 'sensei-close-window', ' window.close() ' );
+		}
 	}
 }

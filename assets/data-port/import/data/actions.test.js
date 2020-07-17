@@ -1,9 +1,9 @@
 import {
 	API_BASE_PATH,
 	FETCH_FROM_API,
-	START_FETCH_IMPORT_DATA,
-	SUCCESS_FETCH_IMPORT_DATA,
-	ERROR_FETCH_IMPORT_DATA,
+	START_FETCH_CURRENT_JOB_STATE,
+	SUCCESS_FETCH_CURRENT_JOB_STATE,
+	ERROR_FETCH_CURRENT_JOB_STATE,
 	START_IMPORT,
 	SUCCESS_START_IMPORT,
 	ERROR_START_IMPORT,
@@ -14,16 +14,17 @@ import {
 
 import {
 	fetchFromAPI,
-	fetchImporterData,
-	startFetch,
-	successFetch,
-	errorFetch,
+	fetchCurrentJobState,
+	startFetchCurrentJobState,
+	successFetchCurrentJobState,
+	errorFetchCurrentJobState,
 	submitStartImport,
 	startImport,
 	successStartImport,
 	errorStartImport,
 	uploadFileForLevel,
 	errorFileUpload,
+	setStepData,
 	startFileUploadAction,
 	successFileUpload,
 	throwEarlyUploadError,
@@ -46,12 +47,12 @@ describe( 'Importer actions', () => {
 	/**
 	 * Fetch importer data action.
 	 */
-	it( 'Should generate the fetch importer data action', () => {
-		const gen = fetchImporterData();
+	it( 'Should generate the get current job state importer data action', () => {
+		const gen = fetchCurrentJobState();
 
 		// Start fetch action.
 		const expectedStartFetchAction = {
-			type: START_FETCH_IMPORT_DATA,
+			type: START_FETCH_CURRENT_JOB_STATE,
 		};
 		expect( gen.next().value ).toEqual( expectedStartFetchAction );
 
@@ -59,7 +60,7 @@ describe( 'Importer actions', () => {
 		const expectedFetchAction = {
 			type: FETCH_FROM_API,
 			request: {
-				path: API_BASE_PATH,
+				path: API_BASE_PATH + 'active',
 			},
 		};
 		expect( gen.next().value ).toEqual( expectedFetchAction );
@@ -83,8 +84,8 @@ describe( 'Importer actions', () => {
 		const expectedSetDataAction = {
 			data: {
 				completedSteps: [],
-				id: 'test',
-				import: {
+				jobId: 'test',
+				progress: {
 					percentage: 0,
 					status: 'setup',
 				},
@@ -95,14 +96,14 @@ describe( 'Importer actions', () => {
 					},
 				},
 			},
-			type: 'SUCCESS_FETCH_IMPORT_DATA',
+			type: 'SUCCESS_FETCH_CURRENT_JOB_STATE',
 		};
 
 		expect( gen.next( dataObject ).value ).toEqual( expectedSetDataAction );
 	} );
 
-	it( 'Should catch error on the fetch importer data action', () => {
-		const gen = fetchImporterData();
+	it( 'Should catch error on the get current job state action', () => {
+		const gen = fetchCurrentJobState();
 
 		// Start fetch action.
 		gen.next();
@@ -113,45 +114,45 @@ describe( 'Importer actions', () => {
 		// Error action.
 		const error = { code: '', message: 'Error' };
 		const expectedErrorAction = {
-			type: ERROR_FETCH_IMPORT_DATA,
+			type: ERROR_FETCH_CURRENT_JOB_STATE,
 			error,
 		};
 		expect( gen.throw( error ).value ).toEqual( expectedErrorAction );
 	} );
 
-	it( 'Should return the start fetch import data action', () => {
+	it( 'Should return the start get current job state action', () => {
 		const expectedAction = {
-			type: START_FETCH_IMPORT_DATA,
+			type: START_FETCH_CURRENT_JOB_STATE,
 		};
 
-		expect( startFetch() ).toEqual( expectedAction );
+		expect( startFetchCurrentJobState() ).toEqual( expectedAction );
 	} );
 
-	it( 'Should return the success fetch import data action', () => {
+	it( 'Should return the success get current job state action', () => {
 		const data = { x: 1 };
 		const expectedAction = {
-			type: SUCCESS_FETCH_IMPORT_DATA,
+			type: SUCCESS_FETCH_CURRENT_JOB_STATE,
 			data,
 		};
 
-		expect( successFetch( data ) ).toEqual( expectedAction );
+		expect( successFetchCurrentJobState( data ) ).toEqual( expectedAction );
 	} );
 
-	it( 'Should return the error fetch import data action', () => {
+	it( 'Should return the error get current job state action', () => {
 		const error = { code: '', message: 'Error' };
 		const expectedAction = {
-			type: ERROR_FETCH_IMPORT_DATA,
+			type: ERROR_FETCH_CURRENT_JOB_STATE,
 			error,
 		};
 
-		expect( errorFetch( error ) ).toEqual( expectedAction );
+		expect( errorFetchCurrentJobState( error ) ).toEqual( expectedAction );
 	} );
 
 	/**
 	 * Start import actions.
 	 */
 	it( 'Should generate the start import action', () => {
-		const gen = submitStartImport();
+		const gen = submitStartImport( 'test-id' );
 
 		// Start action to start the import process.
 		const expectedStartImportAction = {
@@ -164,7 +165,7 @@ describe( 'Importer actions', () => {
 			type: FETCH_FROM_API,
 			request: {
 				method: 'POST',
-				path: API_BASE_PATH + 'start',
+				path: API_BASE_PATH + 'test-id/start',
 			},
 		};
 		expect( gen.next().value ).toEqual( expectedStartAction );
@@ -181,9 +182,9 @@ describe( 'Importer actions', () => {
 
 		const expectedSetDataAction = {
 			data: {
-				id: 'test',
+				jobId: 'test',
 				upload: {},
-				import: {
+				progress: {
 					status: 'pending',
 					percentage: 0,
 				},
@@ -195,7 +196,7 @@ describe( 'Importer actions', () => {
 	} );
 
 	it( 'Should catch error on the start import action', () => {
-		const gen = submitStartImport();
+		const gen = submitStartImport( 'test-id' );
 
 		// Start submit start import action.
 		gen.next();
@@ -247,7 +248,7 @@ describe( 'Importer actions', () => {
 		const level = 'test';
 		const uploadData = {};
 
-		const gen = uploadFileForLevel( level, uploadData );
+		const gen = uploadFileForLevel( 'test-id', level, uploadData );
 
 		// Start upload action.
 		const expectedUploadFileAction = {
@@ -262,7 +263,7 @@ describe( 'Importer actions', () => {
 			type: FETCH_FROM_API,
 			request: {
 				method: 'POST',
-				path: API_BASE_PATH + 'file/' + level,
+				path: API_BASE_PATH + 'test-id/file/' + level,
 				body: uploadData,
 			},
 		};
@@ -280,9 +281,9 @@ describe( 'Importer actions', () => {
 
 		const expectedSetDataAction = {
 			data: {
-				id: 'test',
+				jobId: 'test',
 				upload: {},
-				import: {
+				progress: {
 					status: 'setup',
 					percentage: 0,
 				},
@@ -297,7 +298,7 @@ describe( 'Importer actions', () => {
 	it( 'Should catch error on the file upload action', () => {
 		const formData = {};
 
-		const gen = uploadFileForLevel( 'test', formData );
+		const gen = uploadFileForLevel( 'test-id', 'test', formData );
 
 		// Start file upload action.
 		gen.next();
@@ -365,6 +366,37 @@ describe( 'Importer actions', () => {
 
 		expect( throwEarlyUploadError( level, 'Test' ) ).toEqual(
 			expectedAction
+		);
+	} );
+
+	it( 'Should return the set step data action', () => {
+		// Set data action.
+		const dataObject = {
+			jobId: 'test',
+			progress: {
+				status: 'pending',
+				percentage: 0,
+			},
+			upload: {},
+			completedSteps: [ 'upload' ],
+		};
+
+		const expectedSetStepDataAction = {
+			data: {
+				jobId: 'test',
+				progress: {
+					status: 'pending',
+					percentage: 0,
+				},
+				completedSteps: [ 'upload' ],
+				upload: {},
+			},
+			step: 'progress',
+			type: 'SET_STEP_DATA',
+		};
+
+		expect( setStepData( 'progress', dataObject ) ).toEqual(
+			expectedSetStepDataAction
 		);
 	} );
 } );

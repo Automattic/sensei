@@ -123,6 +123,25 @@ class Sensei_Import_Job_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test incrementResult method.
+	 */
+	public function testIncrementResult() {
+		$expected_results = Sensei_Import_Job::get_default_results();
+		$job              = Sensei_Import_Job::create( 'test-job', 0 );
+		$this->assertEquals( $expected_results, $job->get_results(), 'Should equal the default value' );
+
+		// Try incrementing a known result.
+		$job->increment_result( Sensei_Import_Course_Model::MODEL_KEY, Sensei_Import_Job::RESULT_SUCCESS );
+		$job->increment_result( Sensei_Import_Course_Model::MODEL_KEY, Sensei_Import_Job::RESULT_SUCCESS );
+		$expected_results[ Sensei_Import_Course_Model::MODEL_KEY ][ Sensei_Import_Job::RESULT_SUCCESS ] += 2;
+		$this->assertEquals( $expected_results, $job->get_results(), 'Should have the known result incremented by 2' );
+
+		// Try incrementing a known result.
+		$job->increment_result( Sensei_Import_Course_Model::MODEL_KEY, 'meh' );
+		$this->assertEquals( $expected_results, $job->get_results(), 'Should not have changed' );
+	}
+
+	/**
 	 * Get a temporary file from a source file.
 	 *
 	 * @param string $file_path File to copy.

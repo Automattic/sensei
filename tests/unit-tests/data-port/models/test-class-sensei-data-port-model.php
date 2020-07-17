@@ -9,7 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-require_once SENSEI_TEST_FRAMEWORK_DIR . '/data-port/class-sensei-data-port-model-mock.php';
+require_once SENSEI_TEST_FRAMEWORK_DIR . '/data-port/class-sensei-import-model-mock.php';
+require_once SENSEI_TEST_FRAMEWORK_DIR . '/data-port/class-sensei-data-port-schema-mock.php';
+require_once SENSEI_TEST_FRAMEWORK_DIR . '/data-port/class-sensei-data-port-job-mock.php';
 
 /**
  * Tests for Sensei_Data_Port_Model class.
@@ -30,7 +32,7 @@ class Sensei_Data_Port_Model_Test extends WP_UnitTestCase {
 
 		$this->assertEquals(
 			$optional_mock_fields,
-			Sensei_Data_Port_Model_Mock::get_optional_fields()
+			( new Sensei_Data_Port_Schema_Mock() )->get_optional_fields()
 		);
 	}
 
@@ -46,7 +48,7 @@ class Sensei_Data_Port_Model_Test extends WP_UnitTestCase {
 
 		$this->assertEquals(
 			$optional_mock_fields,
-			Sensei_Data_Port_Model_Mock::get_required_fields()
+			( new Sensei_Data_Port_Schema_Mock() )->get_required_fields()
 		);
 	}
 
@@ -64,7 +66,7 @@ class Sensei_Data_Port_Model_Test extends WP_UnitTestCase {
 			'type'                   => 'cool',
 		];
 
-		$model = Sensei_Data_Port_Model_Mock::from_source_array( $data );
+		$model = Sensei_Import_Model_Mock::from_source_array( $data, new Sensei_Data_Port_Schema_Mock() );
 
 		$this->assertEquals( $data, $model->get_data() );
 		$this->assertTrue( $model->is_valid() );
@@ -88,7 +90,7 @@ class Sensei_Data_Port_Model_Test extends WP_UnitTestCase {
 
 		$data['unknown_column'] = 1;
 
-		$model = Sensei_Data_Port_Model_Mock::from_source_array( $data );
+		$model = Sensei_Import_Model_Mock::from_source_array( $data, new Sensei_Data_Port_Schema_Mock() );
 
 		$this->assertEquals( $expected, $model->get_data() );
 		$this->assertTrue( $model->is_valid() );
@@ -120,7 +122,7 @@ class Sensei_Data_Port_Model_Test extends WP_UnitTestCase {
 
 		$data['unknown_column'] = 1;
 
-		$model = Sensei_Data_Port_Model_Mock::from_source_array( $data );
+		$model = Sensei_Import_Model_Mock::from_source_array( $data, new Sensei_Data_Port_Schema_Mock() );
 
 		$this->assertEquals( $expected, $model->get_data() );
 		$this->assertFalse( $model->is_valid(), 'Type did not match a valid field so should invalidate the entry' );
@@ -137,13 +139,17 @@ class Sensei_Data_Port_Model_Test extends WP_UnitTestCase {
 			'type'                   => 'cool',
 		];
 
-		$model = Sensei_Data_Port_Model_Mock::from_source_array( $data );
+		$model = Sensei_Import_Model_Mock::from_source_array( $data, new Sensei_Data_Port_Schema_Mock() );
 
-		$model->set_post_id( 1 );
+		$property = new ReflectionProperty( 'Sensei_Import_Model', 'is_new' );
+		$property->setAccessible( true );
+		$property->setValue( $model, false );
+
 		$this->assertEquals( null, $model->get_value( 'favorite_int' ), 'Null should be provided when not included in data' );
 		$this->assertEquals( null, $model->get_value( 'slug' ), 'Null should be provided when not included in data' );
 
-		$model->set_post_id( null );
+		$property->setValue( $model, true );
+
 		$this->assertEquals( 0, $model->get_value( 'favorite_int' ), 'Default should be provided when not included in data' );
 		$this->assertEquals( 'neat-slug', $model->get_value( 'slug' ), 'Default should be provided when not included in data' );
 		$this->assertEquals( $data['email'], $model->get_value( 'email' ), 'Actual value should be provided' );

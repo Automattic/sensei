@@ -7,12 +7,12 @@ import { Button } from '@wordpress/components';
 /**
  * This component displays the upload page of the importer.
  */
-export const UploadPage = ( { state, isReady, submitStartImport } ) => {
+export const UploadPage = ( { jobId, state, isReady, submitStartImport } ) => {
 	const { isSubmitting, errorMsg } = state;
 
 	return (
-		<section className="sensei-import-form">
-			<header className="sensei-import-form__header">
+		<section className="sensei-data-port-step sensei-upload-page">
+			<header className="sensei-data-port-step__header">
 				<H>{ __( 'Import content from a CSV file', 'sensei-lms' ) }</H>
 				<p>
 					{ __(
@@ -21,7 +21,10 @@ export const UploadPage = ( { state, isReady, submitStartImport } ) => {
 					) }
 				</p>
 			</header>
-			<Section className="sensei-import-form__body" component="section">
+			<Section
+				className="sensei-data-port-step__body"
+				component="section"
+			>
 				<p>
 					{ __(
 						'Choose one or more CSV files to upload from your computer.',
@@ -37,7 +40,7 @@ export const UploadPage = ( { state, isReady, submitStartImport } ) => {
 						isPrimary
 						className="continue-button"
 						disabled={ ! isReady || isSubmitting }
-						onClick={ submitStartImport }
+						onClick={ () => submitStartImport( jobId ) }
 					>
 						{ __( 'Continue', 'sensei-lms' ) }
 					</Button>

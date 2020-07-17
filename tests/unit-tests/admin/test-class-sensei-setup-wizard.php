@@ -39,6 +39,8 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 		// Save original current screen.
 		global $current_screen;
 		$this->original_screen = $current_screen;
+
+		Sensei_Test_Events::reset();
 	}
 
 	/**
@@ -78,6 +80,31 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 		$html = ob_get_clean();
 
 		$pos_setup_button = strpos( $html, 'Run the Setup Wizard' );
+
+		$this->assertNotFalse( $pos_setup_button, 'Should return the notice HTML' );
+	}
+
+	/**
+	 * Test setup wizard notice says continue when user completed a step.
+	 *
+	 * @covers Sensei_Setup_Wizard::setup_wizard_notice
+	 * @covers Sensei_Setup_Wizard::should_current_page_display_setup_wizard
+	 */
+	public function testSetupWizardNoticeContinue() {
+		// Create and login as admin.
+		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $admin_id );
+
+		set_current_screen( 'dashboard' );
+		update_option( \Sensei_Setup_Wizard::SUGGEST_SETUP_WIZARD_OPTION, 1 );
+
+		Sensei()->setup_wizard->update_wizard_user_data( [ 'steps' => [ 'welcome' ] ] );
+
+		ob_start();
+		Sensei()->setup_wizard->setup_wizard_notice();
+		$html = ob_get_clean();
+
+		$pos_setup_button = strpos( $html, 'Complete Setup' );
 
 		$this->assertNotFalse( $pos_setup_button, 'Should return the notice HTML' );
 	}
@@ -378,38 +405,11 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 
 	/**
 	 * Tests that get sensei extensions fetch from the correct URL
-	 * filtering by the dotorg only as default.
-	 *
-	 * @covers Sensei_Setup_Wizard::get_sensei_extensions
-	 */
-	public function testGetSenseiExtensionsDotOrgExtensions() {
-		// Mock fetch from senseilms.com.
-		$request_url = null;
-		add_filter(
-			'pre_http_request',
-			function( $preempt, $parsed_args, $url ) use ( &$request_url ) {
-				$request_url = $url;
-				return [ 'body' => '{}' ];
-			},
-			10,
-			3
-		);
-
-		$extensions = Sensei()->setup_wizard->get_sensei_extensions();
-
-		$this->assertEquals( 'https://senseilms.com/wp-json/senseilms-products/1.0/search?category=setup-wizard-extensions&type=plugin&hosted-location=dotorg', $request_url );
-	}
-
-	/**
-	 * Tests that get sensei extensions fetch from the correct URL
 	 * with all extensions type.
 	 *
 	 * @covers Sensei_Setup_Wizard::get_sensei_extensions
 	 */
 	public function testGetSenseiExtensionsAllExtensions() {
-		// Activate feature.
-		// It is usually activated by defining a const.
-		add_filter( 'sensei_feature_flag_setup_wizard_all_extensions', '__return_true' );
 
 		// Mock fetch from senseilms.com.
 		$request_url = null;
@@ -580,5 +580,39 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 
 		// Revert mocked instance.
 		$property->setValue( $real_instance );
+	}
+
+	/**
+	 * Tests that WCCOM extensions are logged as setup_wizard_features_install_success when activated.
+	 *
+	 * @covers Sensei_Setup_Wizard::log_wccom_plugin_install
+	 */
+	public function testWccomInstallSuccessLogged() {
+
+		$get_sensei_extensions = wp_json_encode(
+			[
+				'products' => [
+					(object) [
+						'product_slug'     => 'test-wccom-plugin',
+						'plugin_file'      => 'test-wccom-plugin/test-wccom-plugin.php',
+						'wccom_product_id' => '00000',
+					],
+				],
+			]
+		);
+		add_filter(
+			'pre_http_request',
+			function() use ( $get_sensei_extensions ) {
+				return [ 'body' => $get_sensei_extensions ];
+			}
+		);
+
+		Sensei()->setup_wizard->install_extensions( [ 'test-wccom-plugin' ] );
+
+		do_action( 'activated_plugin', 'test-wccom-plugin/test-wccom-plugin.php' );
+
+		$events = Sensei_Test_Events::get_logged_events( 'sensei_setup_wizard_features_install_success' );
+
+		$this->assertEquals( 'test-wccom-plugin', $events[0]['url_args']['slug'] );
 	}
 }

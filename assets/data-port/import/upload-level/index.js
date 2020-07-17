@@ -7,6 +7,7 @@ export default compose(
 		const store = select( 'sensei/import' );
 
 		return {
+			jobId: store.getJobId(),
 			state: store.getStepData( 'upload' ),
 		};
 	} ),
