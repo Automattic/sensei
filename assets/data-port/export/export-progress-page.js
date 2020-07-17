@@ -55,18 +55,18 @@ export const ExportProgressPage = ( { state, reset } ) => {
 										'sensei-lms'
 									) }
 								</p>
-								<div className="sensei-export__output-files">
+								<ul className="sensei-export__output-files">
 									{ files.map( ( { name, url } ) => (
-										<div
+										<li
 											className="sensei-export__output-file sensei-data-port-step__line"
 											key={ name }
 										>
 											<a href={ url } download={ name }>
 												{ name }
 											</a>
-										</div>
+										</li>
 									) ) }
-								</div>
+								</ul>
 							</>
 						) }
 						{ error && (

@@ -182,10 +182,9 @@ $alert-red: #d94f4f;
 	}
 
 	&__line {
-
 		margin: 0 -24px;
-		//padding: 0 24px;
 		padding: 12px 24px;
+		list-style-type: none;
 
 		&:nth-child(odd) {
 			background: $gray-0;
