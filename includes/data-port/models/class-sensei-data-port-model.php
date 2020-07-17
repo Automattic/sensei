@@ -64,7 +64,7 @@ abstract class Sensei_Data_Port_Model {
 		}
 
 		$entry_title = $this->get_value( $this->schema->get_column_title() );
-		if ( $entry_id ) {
+		if ( $entry_title ) {
 			$data['entry_title'] = $entry_title;
 		}
 
