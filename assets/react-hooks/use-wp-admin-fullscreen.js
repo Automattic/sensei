@@ -1,8 +1,11 @@
 import { useLayoutEffect } from '@wordpress/element';
 
 const toggleGlobalStyles = ( enabled, classes ) => {
-	if ( enabled ) document.body.classList.add( ...classes );
-	else document.body.classList.remove( ...classes );
+	if ( enabled ) {
+		document.body.classList.add( ...classes );
+	} else {
+		document.body.classList.remove( ...classes );
+	}
 
 	document.documentElement.classList.toggle( 'wp-toolbar', ! enabled );
 };
