@@ -118,12 +118,9 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 		$pass_required = $this->get_value( Sensei_Data_Port_Lesson_Schema::COLUMN_PASS_REQUIRED );
 		$pass_mark     = $this->get_value( Sensei_Data_Port_Lesson_Schema::COLUMN_PASSMARK );
 
-		if (
-			( empty( $pass_required ) && ! empty( $pass_mark ) ) ||
-			( ! empty( $pass_required ) && empty( $pass_mark ) )
-		) {
-			$pass_required = null;
-			$pass_mark     = null;
+		if ( empty( $pass_required ) && ! empty( $pass_mark ) ) {
+			$pass_required = false;
+
 			$this->add_line_warning(
 				__( 'Both Passmark and Pass Required should be supplied.', 'sensei-lms' ),
 				[

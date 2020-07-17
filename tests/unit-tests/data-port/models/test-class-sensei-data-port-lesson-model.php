@@ -613,6 +613,33 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 		$this->verify_quiz( $updated_post, $this->lineData()[1][1] );
 	}
 
+
+	/**
+	 * Tests lesson with passmark but not required.
+	 */
+	public function testLessonWithPassmarkButNotRequired() {
+		$lesson = [
+			Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE         => 'Lesson title',
+			Sensei_Data_Port_Lesson_Schema::COLUMN_PASS_REQUIRED => 'false',
+			Sensei_Data_Port_Lesson_Schema::COLUMN_PASSMARK      => 55,
+		];
+
+		$task   = new Sensei_Import_Lessons( Sensei_Import_Job::create( 'test', 0 ) );
+		$model  = Sensei_Import_Lesson_Model::from_source_array( 1, $lesson, new Sensei_Data_Port_Lesson_Schema(), $task );
+		$result = $model->sync_post();
+
+		$created_post = get_posts(
+			[
+				'post_type'      => 'quiz',
+				'posts_per_page' => 1,
+				'post_status'    => 'any',
+			]
+		)[0];
+
+		$this->assertEmpty( get_post_meta( $created_post->ID, '_pass_required', true ) );
+		$this->assertEquals( 0, get_post_meta( $created_post->ID, '_quiz_passmark', true ), 'Passmark should be 0 when pass is not required.' );
+	}
+
 	/**
 	 * Helper method to verify that all the fields of a quiz are correct.
 	 *
