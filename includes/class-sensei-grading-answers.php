@@ -15,10 +15,10 @@ class Sensei_Grading_Answers extends Sensei_List_Table {
 	public $course_id;
 	public $lesson_id;
 	public $quiz_id;
-	public $user_ids        = false;
-	public $view            = 'all';
-	public $page_slug       = 'sensei_grading';
-	public $questions       = array();
+	public $user_ids  = false;
+	public $view      = 'all';
+	public $page_slug = 'sensei_grading';
+	public $questions = array();
 
 	/**
 	 * Constructor
@@ -32,22 +32,22 @@ class Sensei_Grading_Answers extends Sensei_List_Table {
 			'lesson_id' => 0,
 			'quiz_id'   => 0,
 		);
-		$args             = wp_parse_args( $args, $defaults );
+		$args = wp_parse_args( $args, $defaults );
 
-		$this->course_id  = intval( $args['course_id'] );
-		$this->lesson_id  = intval( $args['lesson_id'] );
-		$this->quiz_id    = intval( $args['quiz_id'] );
+		$this->course_id = intval( $args['course_id'] );
+		$this->lesson_id = intval( $args['lesson_id'] );
+		$this->quiz_id   = intval( $args['quiz_id'] );
 
-		// Load Parent token into constructor
+		// Load Parent token into constructor.
 		parent::__construct( 'grading_answer' );
 
-		// Prepare questions
+		// Prepare questions.
 		$this->questions  = Sensei_Utils::sensei_get_quiz_questions( $this->quiz_id );
 
-		// Actions
+		// Actions.
 		add_action( 'sensei_before_list_table', array( $this, 'data_table_header' ) );
 		add_action( 'sensei_after_list_table', array( $this, 'data_table_footer' ) );
-	} // End __construct()
+	} // End __construct().
 
 	/**
 	 * Define the columns that are going to be used in the table
@@ -55,16 +55,16 @@ class Sensei_Grading_Answers extends Sensei_List_Table {
 	 * @since  3.1.1
 	 * @return array $columns, the array of columns to use with the table
 	 */
-	function get_columns() {
+	public function get_columns() {
 		$columns = array(
-			'title'       => __( 'Learner', 'sensei-lms' ),
-			'user_grade'  => __( 'Grade', 'sensei-lms' ),
+			'title'      => __( 'Learner', 'sensei-lms' ),
+			'user_grade' => __( 'Grade', 'sensei-lms' ),
 		);
 		$question_count = 0;
-		foreach ($this->questions as $question) {
+		foreach ( $this->questions as $question ) {
 			++$question_count;
 			// translators: Placeholder is the question number.
-			$columns['question'.$question_count] = sprintf( __( 'Question %d: ', 'sensei-lms' ), $question_count ) . wp_kses_post( apply_filters( 'sensei_question_title', $question->post_title ) );
+			$columns[ 'question' . $question_count ] = sprintf( __( 'Question %d: ', 'sensei-lms' ), $question_count ) . wp_kses_post( apply_filters( 'sensei_question_title', $question->post_title ) );
 		}
 
 		$columns = apply_filters( 'sensei_grading_default_columns', $columns, $this );
@@ -77,12 +77,10 @@ class Sensei_Grading_Answers extends Sensei_List_Table {
 	 * @since  3.1.1
 	 * @return array $columns, the array of columns to use with the table
 	 */
-	function get_sortable_columns() {
+	public function get_sortable_columns() {
 		$columns = array(
-			'title'       => array( 'title', false ),
-			'user_grade'  => array( 'user_grade', false ),
-			/*'question'    => array( 'question', false ),
-			'answer'      => array( 'answer', false ),*/
+			'title'      => array( 'title', false ),
+			'user_grade' => array( 'user_grade', false ),
 		);
 		$columns = apply_filters( 'sensei_grading_default_columns_sortable', $columns, $this );
 		return $columns;
@@ -92,15 +90,15 @@ class Sensei_Grading_Answers extends Sensei_List_Table {
 	 * Prepare a user answer for display
 	 *
 	 * @since  3.1.1
-	 * @return void
+	 * @return mixed
 	 */
-	public function get_answer($user_id, $question) {
+	public function get_answer( $user_id, $question ) {
 		if ( ! isset( $user_id ) || ! isset( $question ) ) {
 			return false;
 		} else {
-			$graded_count          = 0;
-			$quiz_grade            = 0;
-			$lesson_id             = $this->lesson_id;
+			$graded_count = 0;
+			$quiz_grade   = 0;
+			$lesson_id    = $this->lesson_id;
 
 			$question_id = $question->ID;
 
@@ -166,7 +164,7 @@ class Sensei_Grading_Answers extends Sensei_List_Table {
 					$type_name  = __( 'File Upload', 'sensei-lms' );
 					$grade_type = 'manual-grade';
 
-					// Get uploaded file
+					// Get uploaded file.
 					if ( $user_answer_content ) {
 						$attachment_id    = $user_answer_content;
 						$answer_media_url = $answer_media_filename = '';
@@ -183,7 +181,7 @@ class Sensei_Grading_Answers extends Sensei_List_Table {
 					}
 					break;
 				default:
-					// Nothing
+					// Nothing.
 					break;
 			}
 
