@@ -550,22 +550,18 @@ class Sensei_Grading_Answers extends Sensei_List_Table {
 		$this->display_tablenav( 'top' );
 
 		$this->screen->render_screen_reader_content( 'heading_list' );
+
+		$table_classes = implode( ' ', $this->get_table_classes() );
 		?>
 <div class="wp_list_table_grading_answers_wrapper">
-	<table class="wp-list-table <?php echo esc_attr__( implode( ' ', $this->get_table_classes() ) ); ?>">
+	<table class="wp-list-table <?php echo esc_attr__( $table_classes, 'default' ); ?>">
 		<thead>
 		<tr>
 			<?php $this->print_column_headers(); ?>
 		</tr>
 		</thead>
 
-		<tbody id="the-list"
-			<?php
-			if ( $singular ) {
-				echo wp_kses_one_attr( " data-wp-lists='list:$singular'", 'tbody' );
-			}
-			?>
-			>
+		<tbody id="the-list">
 			<?php $this->display_rows_or_placeholder(); ?>
 		</tbody>
 
