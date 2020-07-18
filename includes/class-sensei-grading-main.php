@@ -406,7 +406,12 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 
 		if ( $this->course_id && $this->lesson_id ) {
 			$quiz_id          = get_post_meta( $this->lesson_id, '_lesson_quiz', true );
-			$query_all_grades = add_query_arg( array( 'quiz_id' => $quiz_id, 'answers' => true ) );
+			$query_all_grades = add_query_arg(
+				array(
+					'quiz_id' => $quiz_id,
+					'answers' => true
+				)
+			);
 
 			echo '<div class="select-box reset-filter">' . "\n";
 

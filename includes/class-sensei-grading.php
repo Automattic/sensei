@@ -134,7 +134,7 @@ class Sensei_Grading {
 		} else {
 			$sensei_grading_object = new $object_name( $data, $optional_data );
 		} // End If Statement
-		if ( 'Main' == $name || 'Answers' == $name ) {
+		if ( 'Main' === $name || 'Answers' === $name ) {
 			$sensei_grading_object->prepare_items();
 		} // End If Statement
 		return $sensei_grading_object;
