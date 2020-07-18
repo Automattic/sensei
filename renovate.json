@@ -11,6 +11,11 @@
     {
       "depTypeList": ["dependencies"],
       "extends": ["schedule:monthly"]
+    },
+    {
+      "depTypeList": ["require-dev"],
+      "extends": ["schedule:monthly"],
+      "groupName": "require-dev"
     }
   ]
 }
