@@ -9,7 +9,7 @@
 		"phpcompatibility/phpcompatibility-wp": "2.1.0",
 		"squizlabs/php_codesniffer": "3.5.5",
 		"wp-coding-standards/wpcs": "2.3.0",
-		"sirbrillig/phpcs-variable-analysis": "2.8.1",
+		"sirbrillig/phpcs-variable-analysis": "2.8.3",
 		"sirbrillig/phpcs-no-get-current-user": "1.0.1"
 	},
 	"prefer-stable": true
