@@ -154,7 +154,7 @@ class Sensei_Data_Port_Question_Schema extends Sensei_Data_Port_Schema {
 			}
 
 			if ( $type === $question_type ) {
-				return isset( $data[ $field ] );
+				return ! empty( $data[ $field ] );
 			}
 
 			return true;
