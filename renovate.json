@@ -10,8 +10,7 @@
     },
     {
       "depTypeList": ["dependencies"],
-      "extends": ["schedule:monthly"],
-      "groupName": "dependencies"
+      "extends": ["schedule:monthly"]
     }
   ]
 }
