@@ -1,29 +1,69 @@
 <?php
+/**
+ * Sensei Grading Answers Class
+ *
+ * All functionality pertaining to the showing all the Answers for Learners in Admin Grading screen in Sensei.
+ */
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
  * Admin Grading Overview Data Table in Sensei.
  *
- * @package Assessment
  * @author Automattic
  * @since 3.1.1
  */
 class Sensei_Grading_Answers extends Sensei_List_Table {
-
+	/**
+	 * Course ID.
+	 *
+	 *  @var $course_id
+	 */
 	public $course_id;
+	/**
+	 * Lesson ID.
+	 *
+	 *  @var $lesson_id
+	 */
 	public $lesson_id;
+	/**
+	 * Quiz ID.
+	 *
+	 *  @var $quiz_id
+	 */
 	public $quiz_id;
+	/**
+	 * User IDs.
+	 *
+	 *  @var mixed $user_ids
+	 */
 	public $user_ids  = false;
+	/**
+	 * View.
+	 *
+	 *  @var string $view
+	 */
 	public $view      = 'all';
+	/**
+	 * Page Slug.
+	 *
+	 *  @var string $page_slug
+	 */
 	public $page_slug = 'sensei_grading';
+	/**
+	 * Questions.
+	 *
+	 *  @var array $questions
+	 */
 	public $questions = array();
 
 	/**
 	 * Constructor
 	 *
 	 * @since  3.1.1
+	 *
+	 * @param $args
 	 */
 	public function __construct( $args = null ) {
 

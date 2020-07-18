@@ -409,7 +409,7 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 			$query_all_grades = add_query_arg(
 				array(
 					'quiz_id' => $quiz_id,
-					'answers' => true
+					'answers' => true,
 				)
 			);
 
