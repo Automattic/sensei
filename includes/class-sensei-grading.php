@@ -213,9 +213,9 @@ class Sensei_Grading {
 	public function grading_answers_view() {
 
 		// Load Grading data
-		$course_id  = 0;
-		$lesson_id  = 0;
-		$quiz_id    = 0;
+		$course_id = 0;
+		$lesson_id = 0;
+		$quiz_id   = 0;
 		if ( isset( $_GET['course_id'] ) ) {
 			$course_id = intval( $_GET['course_id'] );
 		}
@@ -226,7 +226,7 @@ class Sensei_Grading {
 			$quiz_id = intval( $_GET['quiz_id'] );
 		}
 		$sensei_answers = $this->load_data_object( 'Answers', compact( 'course_id', 'lesson_id', 'quiz_id' ) );
-		// Wrappers
+		// Wrappers.
 		do_action( 'grading_before_container' );
 		do_action( 'grading_wrapper_container', 'top' );
 		$this->grading_headers( array( 'nav' => 'answers' ) );
@@ -239,7 +239,7 @@ class Sensei_Grading {
 		<?php
 		do_action( 'grading_wrapper_container', 'bottom' );
 		do_action( 'grading_after_container' );
-	} // End grading_answers_view()
+	} // End grading_answers_view().
 
 	/**
 	 * grading_user_quiz_view user quiz answers view for grading page

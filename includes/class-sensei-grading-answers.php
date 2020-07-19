@@ -303,7 +303,7 @@ class Sensei_Grading_Answers extends Sensei_List_Table {
 		// Handle order.
 		$order = 'DESC';
 		if ( ! empty( $_GET['order'] ) ) {
-			$order = ( 'ASC' === strtoupper( wp_unslash( $_GET['order'] ) ) ) ? 'ASC' : 'DESC';
+			$order = ( 'ASC' === strtoupper( sanitize_text_field( wp_unslash( $_GET['order'] ) ) ) ) ? 'ASC' : 'DESC';
 		}
 
 		// Handle search.
@@ -586,8 +586,8 @@ class Sensei_Grading_Answers extends Sensei_List_Table {
 	 * @return void
 	 */
 	public function data_table_footer() {
-		// Nothing right now
-	} // End data_table_footer()
+		// Nothing right now.
+	} // End data_table_footer().
 
 
 	/**
