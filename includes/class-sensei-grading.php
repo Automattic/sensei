@@ -227,7 +227,9 @@ class Sensei_Grading {
 		}
 		$sensei_answers = $this->load_data_object( 'Answers', compact( 'course_id', 'lesson_id', 'quiz_id' ) );
 		// Wrappers.
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		do_action( 'grading_before_container' );
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		do_action( 'grading_wrapper_container', 'top' );
 		$this->grading_headers( array( 'nav' => 'answers' ) );
 		?>
@@ -237,19 +239,21 @@ class Sensei_Grading {
 			</div>
 		</div>
 		<?php
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		do_action( 'grading_wrapper_container', 'bottom' );
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		do_action( 'grading_after_container' );
-	} // End grading_answers_view().
+	} // End grading_answers_view()
 
 	/**
-	 * grading_user_quiz_view user quiz answers view for grading page
+	 * User quiz answers view for grading page
 	 *
 	 * @since  1.2.0
 	 * @return void
 	 */
 	public function grading_user_quiz_view() {
 
-		// Load Grading data
+		// Load Grading data.
 		$user_id = 0;
 		$quiz_id = 0;
 		if ( isset( $_GET['user'] ) ) {
