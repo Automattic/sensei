@@ -135,7 +135,7 @@ class Sensei_Grading_Answers extends Sensei_List_Table {
 	 *
 	 * @since  3.1.1
 	 *
-	 * @param int $user_id
+	 * @param int    $user_id
 	 * @param object $question
 	 * @return mixed
 	 */
@@ -213,8 +213,9 @@ class Sensei_Grading_Answers extends Sensei_List_Table {
 
 					// Get uploaded file.
 					if ( $user_answer_content ) {
-						$attachment_id    = $user_answer_content;
-						$answer_media_url = $answer_media_filename = '';
+						$attachment_id         = $user_answer_content;
+						$answer_media_url      = '';
+						$answer_media_filename = '';
 						if ( 0 < intval( $attachment_id ) ) {
 							$answer_media_url      = wp_get_attachment_url( $attachment_id );
 							$answer_media_filename = basename( $answer_media_url );
@@ -232,12 +233,12 @@ class Sensei_Grading_Answers extends Sensei_List_Table {
 					break;
 			}
 
-			$question_answer = '';
+			$question_answer     = '';
 			$user_answer_content = (array) $user_answer_content;
 			foreach ( $user_answer_content as $_user_answer ) {
 
 				if ( 'multi-line' === Sensei()->question->get_question_type( $question->ID ) ) {
-					$is_plaintext = sanitize_text_field( $_user_answer ) == $_user_answer;
+					$is_plaintext = sanitize_text_field( $_user_answer ) === $_user_answer;
 					if ( $is_plaintext ) {
 						$_user_answer = nl2br( $_user_answer );
 					}
@@ -271,7 +272,7 @@ class Sensei_Grading_Answers extends Sensei_List_Table {
 					|| ( 'auto' === $quiz_grade_type && 'manual-grade' !== $grade_type && 0 === intval( $user_question_grade ) );
 
 				if ( $user_right ) {
-					$graded_class        = 'user_right';
+					$graded_class = 'user_right';
 				} elseif ( $user_wrong ) {
 					$graded_class        = 'user_wrong';
 					$user_question_grade = 0;
@@ -291,41 +292,41 @@ class Sensei_Grading_Answers extends Sensei_List_Table {
 	public function prepare_items() {
 		global $wp_version;
 
-		// Handle orderby
+		// Handle orderby.
 		$orderby = '';
 		if ( ! empty( $_GET['orderby'] ) ) {
-			if ( array_key_exists( esc_html( $_GET['orderby'] ), $this->get_sortable_columns() ) ) {
-				$orderby = esc_html( $_GET['orderby'] );
-			} // End If Statement
+			if ( array_key_exists( sanitize_text_field( wp_unslash( $_GET['orderby'] ) ), $this->get_sortable_columns() ) ) {
+				$orderby = sanitize_text_field( wp_unslash( $_GET['orderby'] ) );
+			} // End If Statement.
 		}
 
-		// Handle order
+		// Handle order.
 		$order = 'DESC';
 		if ( ! empty( $_GET['order'] ) ) {
-			$order = ( 'ASC' == strtoupper( $_GET['order'] ) ) ? 'ASC' : 'DESC';
+			$order = ( 'ASC' === strtoupper( wp_unslash( $_GET['order'] ) ) ) ? 'ASC' : 'DESC';
 		}
 
-		// Handle search
+		// Handle search.
 		$search = false;
 		if ( ! empty( $_GET['s'] ) ) {
-			$search = esc_html( $_GET['s'] );
-		} // End If Statement
+			$search = sanitize_text_field( wp_unslash( $_GET['s'] ) );
+		} // End If Statement.
 		$this->search = $search;
 
-		// Searching users on statuses requires sub-selecting the statuses by user_ids
+		// Searching users on statuses requires sub-selecting the statuses by user_ids.
 		if ( $this->search ) {
 			$user_args = array(
 				'search' => '*' . $this->search . '*',
 				'fields' => 'ID',
 			);
-			// Filter for extending
+			// Filter for extending.
 			$user_args = apply_filters( 'sensei_grading_search_users', $user_args );
 			if ( ! empty( $user_args ) ) {
 				$learners_search = new WP_User_Query( $user_args );
-				// Store for reuse on counts
+				// Store for reuse on counts.
 				$this->user_ids = $learners_search->get_results();
 			}
-		} // End If Statement
+		} // End If Statement.
 
 		$per_page = $this->get_items_per_page( 'sensei_comments_per_page' );
 		$per_page = apply_filters( 'sensei_comments_per_page', $per_page, 'sensei_comments' );
@@ -334,7 +335,7 @@ class Sensei_Grading_Answers extends Sensei_List_Table {
 		$offset = 0;
 		if ( ! empty( $paged ) ) {
 			$offset = $per_page * ( $paged - 1 );
-		} // End If Statement
+		} // End If Statement.
 
 		$activity_args = array(
 			'type'    => 'sensei_lesson_status',
@@ -348,17 +349,17 @@ class Sensei_Grading_Answers extends Sensei_List_Table {
 		if ( $this->lesson_id ) {
 			$activity_args['post_id'] = $this->lesson_id;
 		} elseif ( $this->course_id ) {
-			// Currently not possible to restrict to a single Course, as that requires WP_Comment to support multiple
-			// post_ids (i.e. every lesson within the Course), WP 4.1 ( https://core.trac.wordpress.org/changeset/29808 )
+			// Currently not possible to restrict to a single Course, as that requires WP_Comment to support multiple.
+			// post_ids (i.e. every lesson within the Course), WP 4.1 ( https://core.trac.wordpress.org/changeset/29808 ).
 			if ( version_compare( $wp_version, '4.1', '>=' ) ) {
 				$activity_args['post__in'] = Sensei()->course->course_lessons( $this->course_id, 'any', 'ids' );
 			}
 		}
-		// Sub select to group of learners
+		// Sub select to group of learners.
 		if ( $this->user_ids ) {
 			$activity_args['user_id'] = (array) $this->user_ids;
 		}
-		// Restrict to a single Learner
+		// Restrict to a single Learner.
 		if ( $this->user_id ) {
 			$activity_args['user_id'] = $this->user_id;
 		}
@@ -384,7 +385,7 @@ class Sensei_Grading_Answers extends Sensei_List_Table {
 
 		$activity_args = apply_filters( 'sensei_grading_filter_statuses', $activity_args );
 
-		// WP_Comment_Query doesn't support SQL_CALC_FOUND_ROWS, so instead do this twice
+		// WP_Comment_Query doesn't support SQL_CALC_FOUND_ROWS, so instead do this twice.
 		$total_statuses = Sensei_Utils::sensei_check_for_activity(
 			array_merge(
 				$activity_args,
@@ -402,7 +403,7 @@ class Sensei_Grading_Answers extends Sensei_List_Table {
 			$activity_args['offset'] = $new_paged * $activity_args['number'];
 		}
 		$statuses = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
-		// Need to always return an array, even with only 1 item
+		// Need to always return an array, even with only 1 item.
 		if ( ! is_array( $statuses ) ) {
 			$statuses = array( $statuses );
 		}
@@ -424,29 +425,29 @@ class Sensei_Grading_Answers extends Sensei_List_Table {
 	 * Generates content for a single row of the table, overriding parent
 	 *
 	 * @since  3.1.1
-	 * @param object $item The current item
+	 * @param object $item The current item.
 	 */
 	protected function get_row_data( $item ) {
 		global $wp_version;
 
 		$grade = '';
-		if ( 'complete' == $item->comment_approved ) {
-			$grade       = __( 'No Grade', 'sensei-lms' );
-		} elseif ( 'graded' == $item->comment_approved ) {
-			$grade       = get_comment_meta( $item->comment_ID, 'grade', true ) . '%';
-		} elseif ( 'passed' == $item->comment_approved ) {
-			$grade       = get_comment_meta( $item->comment_ID, 'grade', true ) . '%';
-		} elseif ( 'failed' == $item->comment_approved ) {
-			$grade       = get_comment_meta( $item->comment_ID, 'grade', true ) . '%';
-		} elseif ( 'ungraded' == $item->comment_approved ) {
-			$grade       = __( 'N/A', 'sensei-lms' );
+		if ( 'complete' === $item->comment_approved ) {
+			$grade = __( 'No Grade', 'sensei-lms' );
+		} elseif ( 'graded' === $item->comment_approved ) {
+			$grade = get_comment_meta( $item->comment_ID, 'grade', true ) . '%';
+		} elseif ( 'passed' === $item->comment_approved ) {
+			$grade = get_comment_meta( $item->comment_ID, 'grade', true ) . '%';
+		} elseif ( 'failed' === $item->comment_approved ) {
+			$grade = get_comment_meta( $item->comment_ID, 'grade', true ) . '%';
+		} elseif ( 'ungraded' === $item->comment_approved ) {
+			$grade = __( 'N/A', 'sensei-lms' );
 		} else {
-			$grade       = __( 'N/A', 'sensei-lms' );
+			$grade = __( 'N/A', 'sensei-lms' );
 		}
 
 		$title = Sensei_Learner::get_full_name( $item->user_id );
 
-		// QuizID to be deprecated
+		// QuizID to be deprecated.
 		$quiz_id   = get_post_meta( $item->comment_post_ID, '_lesson_quiz', true );
 		$quiz_link = add_query_arg(
 			array(
@@ -457,10 +458,10 @@ class Sensei_Grading_Answers extends Sensei_List_Table {
 			admin_url( 'admin.php' )
 		);
 
-		$course_id    = get_post_meta( $item->comment_post_ID, '_lesson_course', true );
+		$course_id = get_post_meta( $item->comment_post_ID, '_lesson_course', true );
 
-		$column_filter  = array(
-			'title'       => '<strong><a class="row-title" href="' . esc_url(
+		$column_filter = array(
+			'title' => '<strong><a class="row-title" href="' . esc_url(
 				add_query_arg(
 					array(
 						'page'    => $this->page_slug,
@@ -471,15 +472,15 @@ class Sensei_Grading_Answers extends Sensei_List_Table {
 			) . '">' . esc_html( $title ) . '</a></strong>',
 		);
 		$question_count = 0;
-		foreach ($this->questions as $question) {
+		foreach ( $this->questions as $question ) {
 			++$question_count;
 			// translators: Placeholder is the question number.
-			$column_filter['question'.$question_count]  = $this->get_answer( $item->user_id, $question );
+			$column_filter[ 'question' . $question_count ] = $this->get_answer( $item->user_id, $question );
 		}
 
-		$column_filter['user_grade']    = $grade;
+		$column_filter['user_grade'] = $grade;
 
-		$column_data  = apply_filters(
+		$column_data = apply_filters(
 			'sensei_grading_main_column_data',
 			$column_filter,
 			$item,
@@ -558,7 +559,12 @@ class Sensei_Grading_Answers extends Sensei_List_Table {
 
 		if ( $this->course_id && $this->lesson_id ) {
 			$quiz_id          = get_post_meta( $this->lesson_id, '_lesson_quiz', true );
-			$query_all_grades = add_query_arg( array( 'quiz_id' => $quiz_id, 'answers' => true ) );
+			$query_all_grades = add_query_arg(
+				array(
+					'quiz_id' => $quiz_id,
+					'answers' => true,
+				)
+			);
 
 			echo '<div class="select-box reset-filter">' . "\n";
 
@@ -571,7 +577,7 @@ class Sensei_Grading_Answers extends Sensei_List_Table {
 
 		echo '</div><!-- /.grading-selects -->';
 
-	} // End data_table_header()
+	} // End data_table_header().
 
 	/**
 	 * Output for table footer
