@@ -103,7 +103,7 @@ class Sensei_Data_Port_Lesson_Schema extends Sensei_Data_Port_Schema {
 				'default' => false,
 			],
 			self::COLUMN_PASSMARK       => [
-				'type' => 'decimal',
+				'type' => 'float',
 			],
 			self::COLUMN_NUM_QUESTIONS  => [
 				'type'    => 'int',
