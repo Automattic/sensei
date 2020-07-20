@@ -109,6 +109,7 @@ class Sensei_Grading {
 		$classes_to_load = array(
 			'list-table',
 			'grading-main',
+			'grading-answers',
 			'grading-user-quiz',
 		);
 		foreach ( $classes_to_load as $class_file ) {
@@ -133,7 +134,7 @@ class Sensei_Grading {
 		} else {
 			$sensei_grading_object = new $object_name( $data, $optional_data );
 		} // End If Statement
-		if ( 'Main' == $name ) {
+		if ( 'Main' === $name || 'Answers' === $name ) {
 			$sensei_grading_object->prepare_items();
 		} // End If Statement
 		return $sensei_grading_object;
@@ -150,6 +151,8 @@ class Sensei_Grading {
 
 		if ( isset( $_GET['quiz_id'] ) && 0 < intval( $_GET['quiz_id'] ) && isset( $_GET['user'] ) && 0 < intval( $_GET['user'] ) ) {
 			$this->grading_user_quiz_view();
+		} elseif ( isset( $_GET['quiz_id'] ) && 0 < intval( $_GET['quiz_id'] ) && isset( $_GET['answers'] ) ) {
+				$this->grading_answers_view();
 		} else {
 			$this->grading_default_view();
 		} // End If Statement
@@ -202,14 +205,55 @@ class Sensei_Grading {
 	} // End grading_default_view()
 
 	/**
-	 * grading_user_quiz_view user quiz answers view for grading page
+	 * grading_answers_view all quiz answers page
+	 *
+	 * @since  3.1.1
+	 * @return void
+	 */
+	public function grading_answers_view() {
+
+		// Load Grading data
+		$course_id = 0;
+		$lesson_id = 0;
+		$quiz_id   = 0;
+		if ( isset( $_GET['course_id'] ) ) {
+			$course_id = intval( $_GET['course_id'] );
+		}
+		if ( isset( $_GET['lesson_id'] ) ) {
+			$lesson_id = intval( $_GET['lesson_id'] );
+		}
+		if ( isset( $_GET['quiz_id'] ) ) {
+			$quiz_id = intval( $_GET['quiz_id'] );
+		}
+		$sensei_answers = $this->load_data_object( 'Answers', compact( 'course_id', 'lesson_id', 'quiz_id' ) );
+		// Wrappers.
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		do_action( 'grading_before_container' );
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		do_action( 'grading_wrapper_container', 'top' );
+		$this->grading_headers( array( 'nav' => 'answers' ) );
+		?>
+		<div id="poststuff" class="sensei-grading-wrap user-profile">
+			<div class="sensei-grading-main">
+				<?php $sensei_answers->display(); ?>
+			</div>
+		</div>
+		<?php
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		do_action( 'grading_wrapper_container', 'bottom' );
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		do_action( 'grading_after_container' );
+	} // End grading_answers_view()
+
+	/**
+	 * User quiz answers view for grading page
 	 *
 	 * @since  1.2.0
 	 * @return void
 	 */
 	public function grading_user_quiz_view() {
 
-		// Load Grading data
+		// Load Grading data.
 		$user_id = 0;
 		$quiz_id = 0;
 		if ( isset( $_GET['user'] ) ) {
@@ -301,6 +345,47 @@ class Sensei_Grading {
 			<h1><?php echo wp_kses_post( apply_filters( 'sensei_grading_nav_title', $title ) ); ?></h1>
 		<?php
 	} // End grading_default_nav()
+
+	/**
+	 * Nav area for All Answers
+	 *
+	 * @since  3.1.1
+	 * @return void
+	 */
+	public function grading_answers_nav() {
+		global  $wp_version;
+
+		$title = esc_html( $this->name );
+
+		if ( isset( $_GET['quiz_id'] ) ) {
+			$quiz_id   = intval( $_GET['quiz_id'] );
+			$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
+			$course_id = get_post_meta( $lesson_id, '_lesson_course', true );
+			if ( version_compare( $wp_version, '4.1', '>=' ) ) {
+				$url    = add_query_arg(
+					array(
+						'page'      => $this->page_slug,
+						'course_id' => $course_id,
+					),
+					admin_url( 'admin.php' )
+				);
+				$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), esc_html( get_the_title( $course_id ) ) );
+			} else {
+				$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;%s</span>', esc_html( get_the_title( $course_id ) ) );
+			}
+			$url    = add_query_arg(
+				array(
+					'page'      => $this->page_slug,
+					'lesson_id' => $lesson_id,
+				),
+				admin_url( 'admin.php' )
+			);
+			$title .= sprintf( '&nbsp;&nbsp;<span class="lesson-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>&nbsp;&nbsp;&gt;&nbsp;&nbsp;Answers', esc_url( $url ), esc_html( get_the_title( $lesson_id ) ) );
+		}
+		?>
+			<h2><?php echo wp_kses_post( apply_filters( 'sensei_grading_nav_title', $title ) ); ?></h2>
+		<?php
+	} // End grading_answers_nav()
 
 	/**
 	 * Nav area for Grading specific users' quiz answers

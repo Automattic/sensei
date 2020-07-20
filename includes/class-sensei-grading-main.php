@@ -405,10 +405,18 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		echo '</div>' . "\n";
 
 		if ( $this->course_id && $this->lesson_id ) {
+			$quiz_id          = get_post_meta( $this->lesson_id, '_lesson_quiz', true );
+			$query_all_grades = add_query_arg(
+				array(
+					'quiz_id' => $quiz_id,
+					'answers' => true,
+				)
+			);
 
 			echo '<div class="select-box reset-filter">' . "\n";
 
 				echo '<a class="button-secondary" href="' . esc_url( remove_query_arg( array( 'lesson_id', 'course_id' ) ) ) . '">' . esc_html__( 'Reset filter', 'sensei-lms' ) . '</a>' . "\n";
+				echo '<a class="button-secondary" href="' . esc_url( $query_all_grades ) . '">' . esc_html__( 'Show All Grades', 'sensei-lms' ) . '</a>' . "\n";
 
 			echo '</div>' . "\n";
 
