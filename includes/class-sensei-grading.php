@@ -227,9 +227,9 @@ class Sensei_Grading {
 		}
 		$sensei_answers = $this->load_data_object( 'Answers', compact( 'course_id', 'lesson_id', 'quiz_id' ) );
 		// Wrappers.
-		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Copy of grading_user_quiz_view().
 		do_action( 'grading_before_container' );
-		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Copy of grading_user_quiz_view().
 		do_action( 'grading_wrapper_container', 'top' );
 		$this->grading_headers( array( 'nav' => 'answers' ) );
 		?>
@@ -239,9 +239,9 @@ class Sensei_Grading {
 			</div>
 		</div>
 		<?php
-		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Copy of grading_user_quiz_view().
 		do_action( 'grading_wrapper_container', 'bottom' );
-		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Copy of grading_user_quiz_view().
 		do_action( 'grading_after_container' );
 	} // End grading_answers_view()
 
