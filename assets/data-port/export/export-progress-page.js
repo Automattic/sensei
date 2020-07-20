@@ -19,11 +19,12 @@ import { Notice } from '../notice';
 /**
  * Exporter progress and result.
  *
- * @param {Object} props
- * @param {ExportProgressPageState} props.state Export state.
- * @param {Function} props.reset                Function to return to initial export screen.
+ * @param {Object}                  props
+ * @param {ExportProgressPageState} props.state  Export state.
+ * @param {Function}                props.reset  Function to return to initial export screen.
+ * @param {Function}                props.cancel Function to request job cancellation.
  */
-export const ExportProgressPage = ( { state, reset } ) => {
+export const ExportProgressPage = ( { state, reset, cancel } ) => {
 	const { status, percentage, files, error } = state || {};
 
 	const inProgress = 'completed' !== status;
@@ -37,13 +38,20 @@ export const ExportProgressPage = ( { state, reset } ) => {
 	return (
 		<section className="sensei-data-port-step__body">
 			{ inProgress ? (
-				<p>
-					<progress
-						className="sensei-data-port__progressbar"
-						max="100"
-						value={ percentage || 0 }
-					/>
-				</p>
+				<>
+					<p>
+						<progress
+							className="sensei-data-port__progressbar"
+							max="100"
+							value={ percentage || 0 }
+						/>
+					</p>
+					<div className="sensei-data-port-step__footer">
+						<Button isLink onClick={ cancel }>
+							{ __( 'Cancel', 'sensei-lms' ) }
+						</Button>
+					</div>
+				</>
 			) : (
 				<>
 					<div className="sensei-export__output-result">

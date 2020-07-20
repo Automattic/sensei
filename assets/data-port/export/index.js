@@ -1,54 +1,65 @@
+import { Spinner } from '@wordpress/components';
 import { useMergeReducer } from '../../react-hooks/use-merge-reducer';
+import { ExportJob } from './export-job';
 import { ExportPage } from './export-page';
+import { useMemo, useEffect } from '@wordpress/element';
 
 /**
- * Sensei export page.
+ * Sensei export page data wrapper.
  */
 export const SenseiExportPage = () => {
-	const [ { progress }, updateState ] = useMergeReducer( {
+	const [ { initializing, progress }, updateState ] = useMergeReducer( {
 		progress: null,
+		initializing: true,
 	} );
 
-	const startExport = ( types ) => {
-		updateState( {
-			progress: {
-				status: 'started',
-				percentage: 0,
-			},
-		} );
+	/**
+	 * Export API client.
+	 *
+	 * @type {ExportJob}
+	 */
+	const exportJob = useMemo(
+		() =>
+			new ExportJob( ( jobState ) =>
+				updateState( { progress: jobState } )
+			),
+		[ updateState ]
+	);
 
-		// Mock server updates.
+	useEffect( () => {
+		exportJob.update().then( () => updateState( { initializing: false } ) );
+	}, [ exportJob, updateState ] );
 
-		setTimeout(
-			() =>
-				updateState( {
-					progress: {
-						status: 'progress',
-						percentage: 40,
-					},
-				} ),
-			1000
-		);
-		setTimeout(
-			() =>
-				updateState( {
-					progress: {
-						status: 'completed',
-						error: 'Lessons failed to export: No lesson found',
-						files: types.map( ( t ) => ( {
-							name: `${ t }.csv`,
-							url:
-								'/wp-content/uploads/2020/02/sample_tax_rates.csv',
-						} ) ),
-					},
-				} ),
-			2000
-		);
-	};
+	/**
+	 * Start exporting.
+	 *
+	 * @param {string[]} types Content types.
+	 */
+	const startExport = ( types ) => exportJob.start( types );
 
+	/**
+	 * Cancel current export
+	 */
+	const cancelExport = () => exportJob.cancel();
+
+	/**
+	 * Reset export page to content type selection screen.
+	 */
 	const resetExport = () => {
-		updateState( { inProgress: false, progress: null } );
+		updateState( { progress: null } );
 	};
 
-	return <ExportPage { ...{ progress, resetExport, startExport } } />;
+	if ( initializing ) {
+		return (
+			<div className="sensei-import__main-loader">
+				<Spinner />
+			</div>
+		);
+	}
+
+	return (
+		<ExportPage
+			{ ...{ progress, resetExport, startExport, cancelExport } }
+		/>
+	);
 };

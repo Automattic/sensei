@@ -10,8 +10,14 @@ import { ExportSelectContentPage } from './export-select-content-page';
  * @param {Object} props.progress
  * @param {Function} props.startExport
  * @param {Function} props.resetExport
+ * @param {Function} props.cancelExport
  */
-export const ExportPage = ( { progress, startExport, resetExport } ) => {
+export const ExportPage = ( {
+	progress,
+	startExport,
+	resetExport,
+	cancelExport,
+} ) => {
 	useSenseiColorTheme();
 
 	return (
@@ -33,6 +39,7 @@ export const ExportPage = ( { progress, startExport, resetExport } ) => {
 					<ExportProgressPage
 						state={ progress }
 						reset={ resetExport }
+						cancel={ cancelExport }
 					/>
 				) : (
 					<ExportSelectContentPage onSubmit={ startExport } />
