@@ -89,7 +89,7 @@ class Sensei_Data_Port_Lesson_Schema extends Sensei_Data_Port_Schema {
 				'mime_types' => $this->get_allowed_mime_types( 'image' ),
 			],
 			self::COLUMN_LENGTH         => [
-				'type' => 'int',
+				'type' => 'float',
 			],
 			self::COLUMN_COMPLEXITY     => [
 				'type'    => 'string',

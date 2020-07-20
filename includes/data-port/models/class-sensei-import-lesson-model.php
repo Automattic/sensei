@@ -422,7 +422,7 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 		$value = $this->get_value( Sensei_Data_Port_Lesson_Schema::COLUMN_LENGTH );
 
 		if ( null !== $value ) {
-			if ( ! is_int( $value ) ) {
+			if ( floatval( 0 ) !== $value - floor( $value ) ) { // Check if the float has decimal numbers.
 				$this->add_line_warning(
 					__( 'Length must be a whole number.', 'sensei-lms' ),
 					[
@@ -437,7 +437,7 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 					]
 				);
 			} else {
-				$meta['_lesson_length'] = $value;
+				$meta['_lesson_length'] = intval( $value );
 			}
 		}
 
