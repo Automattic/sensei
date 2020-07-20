@@ -132,9 +132,7 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 		if ( null !== $pass_required ) {
 			if ( true === $pass_required ) {
 				$meta['_pass_required'] = 'on';
-				if ( is_numeric( $pass_mark ) && 0 <= $pass_mark && 100 >= $pass_mark ) {
-					$meta['_quiz_passmark'] = $pass_mark;
-				} else {
+				if ( is_numeric( $pass_mark ) && ( 0 > $pass_mark || 100 < $pass_mark ) ) {
 					$meta['_quiz_passmark'] = 0;
 
 					$this->add_line_warning(
@@ -143,6 +141,8 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 							'code' => 'sensei_data_port_lesson_passmark_out_of_range',
 						]
 					);
+				} else {
+					$meta['_quiz_passmark'] = is_numeric( $pass_mark ) ? $pass_mark : 0;
 				}
 			} else {
 				$meta['_pass_required'] = '';
