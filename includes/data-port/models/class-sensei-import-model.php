@@ -125,7 +125,23 @@ abstract class Sensei_Import_Model extends Sensei_Data_Port_Model {
 			if ( null !== $value ) {
 				switch ( $config['type'] ) {
 					case 'int':
-						$value = '' === $value ? null : intval( $value );
+						if ( '' === $value ) {
+							$value = null;
+						} else {
+							if ( ! is_numeric( $value ) || floor( $value ) !== floatval( $value ) ) {
+								$this->add_line_warning(
+									sprintf(
+										// translators: Placeholder is the column name.
+										__( 'Error in column "%s": It must be a whole number.', 'sensei-lms' ),
+										$key
+									),
+									[
+										'code' => 'sensei_data_port_int_sanitation',
+									]
+								);
+							}
+							$value = intval( $value );
+						}
 						break;
 					case 'float':
 						$value = '' === $value ? null : floatval( $value );
