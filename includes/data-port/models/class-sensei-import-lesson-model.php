@@ -118,12 +118,9 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 		$pass_required = $this->get_value( Sensei_Data_Port_Lesson_Schema::COLUMN_PASS_REQUIRED );
 		$pass_mark     = $this->get_value( Sensei_Data_Port_Lesson_Schema::COLUMN_PASSMARK );
 
-		if (
-			( empty( $pass_required ) && ! empty( $pass_mark ) ) ||
-			( ! empty( $pass_required ) && empty( $pass_mark ) )
-		) {
-			$pass_required = null;
-			$pass_mark     = null;
+		if ( empty( $pass_required ) && ! empty( $pass_mark ) ) {
+			$pass_required = false;
+
 			$this->add_line_warning(
 				__( 'Both Passmark and Pass Required should be supplied.', 'sensei-lms' ),
 				[
@@ -135,7 +132,18 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 		if ( null !== $pass_required ) {
 			if ( true === $pass_required ) {
 				$meta['_pass_required'] = 'on';
-				$meta['_quiz_passmark'] = $pass_mark;
+				if ( is_numeric( $pass_mark ) && ( 0 > $pass_mark || 100 < $pass_mark ) ) {
+					$meta['_quiz_passmark'] = 0;
+
+					$this->add_line_warning(
+						__( 'Passmark must be between 0 and 100.', 'sensei-lms' ),
+						[
+							'code' => 'sensei_data_port_lesson_passmark_out_of_range',
+						]
+					);
+				} else {
+					$meta['_quiz_passmark'] = is_numeric( $pass_mark ) ? $pass_mark : 0;
+				}
 			} else {
 				$meta['_pass_required'] = '';
 				$meta['_quiz_passmark'] = 0;
