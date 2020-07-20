@@ -15,6 +15,7 @@ branches:
   - master
   - /^release\//
   - /^feature\//
+  - timwiel-*
 cache:
   directories:
   - vendor
