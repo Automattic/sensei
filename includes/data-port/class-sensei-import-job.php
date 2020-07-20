@@ -215,9 +215,9 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 		$file_config = $file_configs[ $file_key ];
 
 		if ( isset( $file_config['mime_types'] ) ) {
-			$wp_filetype = wp_check_filetype_and_ext( $tmp_file, $file_name, $file_config['mime_types'] );
+			$filetype = $this->check_filetype( $tmp_file, $file_name, $file_config['mime_types'] );
 
-			$valid_mime_type = Sensei_Data_Port_Utilities::validate_file_mime_type( $wp_filetype['type'], $file_config['mime_types'], $file_name );
+			$valid_mime_type = Sensei_Data_Port_Utilities::validate_file_mime_type( $filetype, $file_config['mime_types'], $file_name );
 
 			if ( is_wp_error( $valid_mime_type ) ) {
 				$valid_mime_type->add_data( [ 'status' => 400 ] );
@@ -233,6 +233,48 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Check filetype  based in the `wp_check_filetype_and_ext` core.
+	 *
+	 * It's not using the `wp_check_filetype_and_ext` directly because in some cases the
+	 * `finfo_file` can interpret a valid file as a `text/html`.
+	 *
+	 * @param string   $file     Full path to the file.
+	 * @param string   $filename The name of the file (may differ from $file due to $file being
+	 *                           in a tmp directory).
+	 * @param string[] $mimes    Array of accepted mime types.
+	 *
+	 * @return string|false The file type or false if it's not accepted.
+	 */
+	private function check_filetype( $file, $filename, $mimes ) {
+		// Do basic extension validation and MIME mapping.
+		$wp_filetype = wp_check_filetype( $filename, $mimes );
+		$type        = $wp_filetype['type'];
+		$allowed     = is_multisite() ? $mimes : array_intersect( get_allowed_mime_types(), $mimes );
+
+		if ( ! in_array( $type, $allowed, true ) ) {
+			return false;
+		}
+
+		$real_mime = false;
+
+		// Validate file.
+		if ( extension_loaded( 'fileinfo' ) ) {
+			$finfo     = finfo_open( FILEINFO_MIME_TYPE );
+			$real_mime = finfo_file( $finfo, $file );
+			finfo_close( $finfo );
+
+			// When importing a CSV with HTML content, it can be interpreted as `text/html`.
+			$allowed_with_html = array_merge( $allowed, [ 'text/html' ] );
+
+			if ( ! in_array( $real_mime, $allowed_with_html, true ) ) {
+				return false;
+			}
+		}
+
+		return $type;
 	}
 
 	/**
