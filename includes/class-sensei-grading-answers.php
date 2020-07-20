@@ -294,22 +294,22 @@ class Sensei_Grading_Answers extends Sensei_List_Table {
 
 		// Handle orderby.
 		$orderby = '';
-		if ( ! empty( $_GET['orderby'] ) ) {
-			if ( array_key_exists( sanitize_text_field( wp_unslash( $_GET['orderby'] ) ), $this->get_sortable_columns() ) ) {
-				$orderby = sanitize_text_field( wp_unslash( $_GET['orderby'] ) );
+		if ( ! empty( $_GET['orderby'] ) ) { // phpcs:ignore
+			if ( array_key_exists( sanitize_text_field( wp_unslash( $_GET['orderby'] ) ), $this->get_sortable_columns() ) ) { // phpcs:ignore
+				$orderby = sanitize_text_field( wp_unslash( $_GET['orderby'] ) ); // phpcs:ignore
 			} // End If Statement.
 		}
 
 		// Handle order.
 		$order = 'DESC';
-		if ( ! empty( $_GET['order'] ) ) {
-			$order = ( 'ASC' === strtoupper( sanitize_text_field( wp_unslash( $_GET['order'] ) ) ) ) ? 'ASC' : 'DESC';
+		if ( ! empty( $_GET['order'] ) ) { // phpcs:ignore
+			$order = ( 'ASC' === strtoupper( sanitize_text_field( wp_unslash( $_GET['order'] ) ) ) ) ? 'ASC' : 'DESC'; // phpcs:ignore
 		}
 
 		// Handle search.
 		$search = false;
-		if ( ! empty( $_GET['s'] ) ) {
-			$search = sanitize_text_field( wp_unslash( $_GET['s'] ) );
+		if ( ! empty( $_GET['s'] ) ) { // phpcs:ignore
+			$search = sanitize_text_field( wp_unslash( $_GET['s'] ) ); // phpcs:ignore
 		} // End If Statement.
 		$this->search = $search;
 
@@ -471,6 +471,7 @@ class Sensei_Grading_Answers extends Sensei_List_Table {
 				)
 			) . '">' . esc_html( $title ) . '</a></strong>',
 		);
+
 		$question_count = 0;
 		foreach ( $this->questions as $question ) {
 			++$question_count;
@@ -634,4 +635,4 @@ class Sensei_Grading_Answers extends Sensei_List_Table {
  * @ignore only for backward compatibility
  * @since 1.9.0
  */
-class WooThemes_Sensei_Grading_Answers extends Sensei_Grading_Main{}
+class WooThemes_Sensei_Grading_Answers extends Sensei_Grading_Main{} // phpcs:ignore
