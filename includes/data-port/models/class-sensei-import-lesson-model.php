@@ -34,6 +34,13 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 	private $course_id;
 
 	/**
+	 * Deferred warnings. So it can get the correct post ID.
+	 *
+	 * @var array
+	 */
+	private $deferred_warnings = [];
+
+	/**
 	 * Create a new lesson or update an existing lesson.
 	 *
 	 * @return true|WP_Error
@@ -269,7 +276,7 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 			$this->course_id = $course;
 
 			if ( empty( $this->course_id ) ) {
-				$this->add_line_warning(
+				$this->defer_warning(
 					// translators: Placeholder is the term which errored.
 					sprintf( __( 'Course does not exist: %s.', 'sensei-lms' ), $value ),
 					[
@@ -298,6 +305,8 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 		}
 
 		$this->set_post_id( $post_id );
+
+		$this->add_deferred_warnings();
 		$this->store_import_id();
 
 		$result = $this->add_thumbnail_to_post( Sensei_Data_Port_Lesson_Schema::COLUMN_IMAGE );
@@ -418,14 +427,14 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 
 		if ( null !== $value ) {
 			if ( floatval( 0 ) !== $value - floor( $value ) ) { // Check if the float has decimal numbers.
-				$this->add_line_warning(
+				$this->defer_warning(
 					__( 'Length must be a whole number.', 'sensei-lms' ),
 					[
 						'code' => 'sensei_data_port_lesson_length_not_int',
 					]
 				);
 			} elseif ( 0 >= $value ) {
-				$this->add_line_warning(
+				$this->defer_warning(
 					__( 'Length must be greater than or equal to 1.', 'sensei-lms' ),
 					[
 						'code' => 'sensei_data_port_lesson_length_negative',
@@ -551,5 +560,29 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 		}
 
 		return $module;
+	}
+
+	/**
+	 * Defer warning. So it can get the correct post ID.
+	 *
+	 * @param string $message  Warning message.
+	 * @param array  $log_data Log data.
+	 */
+	private function defer_warning( $message, $log_data = [] ) {
+		$this->deferred_warnings[] = [
+			'message'  => $message,
+			'log_data' => $log_data,
+		];
+	}
+
+	/**
+	 * Add deferred warnings.
+	 */
+	private function add_deferred_warnings() {
+		foreach ( $this->deferred_warnings as $warning ) {
+			$this->add_line_warning( $warning['message'], $warning['log_data'] );
+		}
+
+		$this->deferred_warnings = [];
 	}
 }
