@@ -13,9 +13,7 @@ notifications:
 branches:
   only:
   - master
-  - /^release\//
-  - /^feature\//
-  - timwiel-*
+  - /.*/
 cache:
   directories:
   - vendor
