@@ -595,17 +595,27 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 		$model = Sensei_Import_Lesson_Model::from_source_array( 1, $lesson_data_with_not_int_length, new Sensei_Data_Port_Lesson_Schema(), $task );
 		$model->sync_post();
 
+		$lesson_data_with_not_int_length = [
+			Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE  => 'Required title',
+			Sensei_Data_Port_Lesson_Schema::COLUMN_LENGTH => 0,
+		];
+
+		$task  = new Sensei_Import_Lessons( Sensei_Import_Job::create( 'test', 0 ) );
+		$model = Sensei_Import_Lesson_Model::from_source_array( 1, $lesson_data_with_not_int_length, new Sensei_Data_Port_Lesson_Schema(), $task );
+		$model->sync_post();
+
 		$created_posts_ids = get_posts(
 			[
 				'post_type'      => 'lesson',
-				'posts_per_page' => 2,
+				'posts_per_page' => 3,
 				'post_status'    => 'any',
 				'fields'         => 'ids',
 			]
 		);
 
-		$this->assertEmpty( get_post_meta( $created_posts_ids[0], '_lesson_length', true ) );
-		$this->assertEmpty( get_post_meta( $created_posts_ids[1], '_lesson_length', true ) );
+		$this->assertEquals( get_post_meta( $created_posts_ids[0], '_lesson_length', true ), '' );
+		$this->assertEquals( get_post_meta( $created_posts_ids[1], '_lesson_length', true ), '' );
+		$this->assertEquals( get_post_meta( $created_posts_ids[2], '_lesson_length', true ), '' );
 	}
 
 	/**

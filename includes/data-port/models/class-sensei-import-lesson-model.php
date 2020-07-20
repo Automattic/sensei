@@ -429,7 +429,7 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 						'code' => 'sensei_data_port_lesson_length_not_int',
 					]
 				);
-			} elseif ( 0 > $value ) {
+			} elseif ( 0 >= $value ) {
 				$this->add_line_warning(
 					__( 'Length must be greater than or equal to 1.', 'sensei-lms' ),
 					[
