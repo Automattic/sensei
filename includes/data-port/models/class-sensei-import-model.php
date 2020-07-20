@@ -43,6 +43,13 @@ abstract class Sensei_Import_Model extends Sensei_Data_Port_Model {
 	protected $task;
 
 	/**
+	 * Deferred warnings. So it can get the correct post ID.
+	 *
+	 * @var array
+	 */
+	private $deferred_warnings = [];
+
+	/**
 	 * Set up item from an array.
 	 *
 	 * @param int                             $line_number Line number.
@@ -198,18 +205,32 @@ abstract class Sensei_Import_Model extends Sensei_Data_Port_Model {
 	}
 
 	/**
-	 * Add warning for a line in the model.
+	 * Add warning to a deferred queue for a line in the model.
 	 *
 	 * @param string $message  Warning message.
 	 * @param array  $log_data Log data.
 	 */
 	protected function add_line_warning( $message, $log_data = [] ) {
-		$this->task->get_job()->add_line_warning(
-			$this->get_model_key(),
-			$this->line_number,
-			$message,
-			$this->get_error_data( $log_data )
-		);
+		$this->deferred_warnings[] = [
+			'message'  => $message,
+			'log_data' => $log_data,
+		];
+	}
+
+	/**
+	 * Add deferred warnings to the job.
+	 */
+	public function add_warnings_to_job() {
+		foreach ( $this->deferred_warnings as $warning ) {
+			$this->task->get_job()->add_line_warning(
+				$this->get_model_key(),
+				$this->line_number,
+				$warning['message'],
+				$this->get_error_data( $warning['log_data'] )
+			);
+		}
+
+		$this->deferred_warnings = [];
 	}
 
 	/**
