@@ -30,24 +30,7 @@ export const SenseiExportPage = () => {
 		exportJob.update().then( () => updateState( { initializing: false } ) );
 	}, [ exportJob, updateState ] );
 
-	/**
-	 * Start exporting.
-	 *
-	 * @param {string[]} types Content types.
-	 */
-	const startExport = ( types ) => exportJob.start( types );
-
-	/**
-	 * Cancel current export
-	 */
-	const cancelExport = () => exportJob.cancel();
-
-	/**
-	 * Reset export page to content type selection screen.
-	 */
-	const resetExport = () => {
-		updateState( { progress: null } );
-	};
+	const { start, cancel, reset } = exportJob;
 
 	if ( initializing ) {
 		return (
@@ -57,9 +40,5 @@ export const SenseiExportPage = () => {
 		);
 	}
 
-	return (
-		<ExportPage
-			{ ...{ progress, resetExport, startExport, cancelExport } }
-		/>
-	);
+	return <ExportPage { ...{ progress, start, cancel, reset } } />;
 };

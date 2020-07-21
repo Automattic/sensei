@@ -56,6 +56,47 @@ export class ExportJob {
 	}
 
 	/**
+	 * Start an export.
+	 *
+	 * @access public
+	 * @param {string[]} types Content types.
+	 */
+	start = async ( types ) => {
+		this.updateState( {
+			status: 'started',
+			percentage: 0,
+		} );
+
+		await this.createJob();
+		await this.startJob( types );
+	};
+
+	/**
+	 * Reset state.
+	 *
+	 * @access public
+	 */
+	reset = () => {
+		this.updateState( null );
+		this.clearPoll();
+		this.id = null;
+	};
+
+	/**
+	 * Request to delete the job.
+	 *
+	 * @access public
+	 */
+	cancel = () => {
+		this.updateState( null );
+		this.clearPoll();
+		return this.request( {
+			path: `${ ExportJob.apiPrefix }/${ this.id }`,
+			method: 'DELETE',
+		} );
+	};
+
+	/**
 	 * Update job state from REST API.
 	 */
 	async update() {
@@ -96,18 +137,6 @@ export class ExportJob {
 	}
 
 	/**
-	 * Request to delete the job.
-	 */
-	cancel() {
-		this.updateState( null );
-		this.clearPoll();
-		return this.request( {
-			path: `${ ExportJob.apiPrefix }/${ this.id }`,
-			method: 'DELETE',
-		} );
-	}
-
-	/**
 	 * Request to start job.
 	 *
 	 * @param {string[]} types Content types to export.
@@ -138,22 +167,6 @@ export class ExportJob {
 		if ( 'completed' !== job.status.status ) {
 			this.poll();
 		}
-	}
-
-	/**
-	 * Start an export.
-	 *
-	 * @access public
-	 * @param {string[]} types Content types.
-	 */
-	async start( types ) {
-		this.updateState( {
-			status: 'started',
-			percentage: 0,
-		} );
-
-		await this.createJob();
-		await this.startJob( types );
 	}
 
 	/**
