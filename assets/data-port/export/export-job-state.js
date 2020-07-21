@@ -10,6 +10,7 @@ import apiFetch from '@wordpress/api-fetch';
  * @property {boolean}  deleted           Was the job deleted.
  * @property {Object}   result            Job result.
  * @property {Object[]} files             Job files.
+ * @property {Object}   error             Error message.
  */
 
 /**
@@ -92,13 +93,9 @@ export function ExportJobState( updateState ) {
 	 * Update job state from REST API.
 	 */
 	const update = async () => {
-		try {
-			await request( {
-				path: `${ apiPrefix }/${ id || 'active' }`,
-			} );
-		} catch ( err ) {
-			setState( null );
-		}
+		return request( {
+			path: `${ apiPrefix }/${ id || 'active' }`,
+		} );
 	};
 
 	/**
@@ -109,13 +106,17 @@ export function ExportJobState( updateState ) {
 	 */
 	const request = async ( options ) => {
 		const requestId = ++lastApiRequestId;
-		const job = await apiFetch( options );
-		// Drop old responses.
-		if ( lastApiRequestId > requestId ) {
-			return;
+		try {
+			const job = await apiFetch( options );
+			// Drop old responses.
+			if ( lastApiRequestId > requestId ) {
+				return;
+			}
+			setState( job );
+			return job;
+		} catch ( error ) {
+			setState( { error: error.message } );
 		}
-		setState( job );
-		return job;
 	};
 
 	/**
@@ -148,15 +149,16 @@ export function ExportJobState( updateState ) {
 	 * @param {Job|null} job
 	 */
 	const setState = ( job ) => {
-		if ( ! job || job.deleted ) {
+		if ( ! job || ! job.id || job.deleted ) {
 			id = null;
 			updateState( null );
 			return;
 		}
 		id = job.id;
-		updateState( { ...job.status } );
+		const { status, error } = job;
+		updateState( { ...job, ...status } );
 
-		if ( 'completed' !== job.status.status ) {
+		if ( ! error && 'pending' === status.status ) {
 			poll();
 		}
 	};
