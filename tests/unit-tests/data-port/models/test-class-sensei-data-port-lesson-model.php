@@ -576,6 +576,31 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests number of questions validation.
+	 */
+	public function testLessonNumQuestionsValidation() {
+		$lesson_data_with_less_than_one_num_questions = [
+			Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE         => 'Required title',
+			Sensei_Data_Port_Lesson_Schema::COLUMN_NUM_QUESTIONS => 0,
+		];
+
+		$task  = new Sensei_Import_Lessons( Sensei_Import_Job::create( 'test', 0 ) );
+		$model = Sensei_Import_Lesson_Model::from_source_array( 1, $lesson_data_with_less_than_one_num_questions, new Sensei_Data_Port_Lesson_Schema(), $task );
+		$model->sync_post();
+
+		$created_post_id = get_posts(
+			[
+				'post_type'      => 'lesson',
+				'posts_per_page' => 1,
+				'post_status'    => 'any',
+				'fields'         => 'ids',
+			]
+		)[0];
+
+		$this->assertEquals( get_post_meta( $created_post_id, '_show_questions', true ), '' );
+	}
+
+	/**
 	 * Tests creation and updating of quizzes.
 	 */
 	public function testQuizIsInsertedAndUpdated() {
