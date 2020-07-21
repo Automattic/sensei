@@ -28,7 +28,9 @@ class Sensei_Data_Port_Model_Test extends WP_UnitTestCase {
 		$optional_mock_fields = [
 			'test-string-no-html',
 			'favorite_int',
+			'other_int',
 			'favorite_float',
+			'favorite_bool',
 			'slug',
 		];
 
