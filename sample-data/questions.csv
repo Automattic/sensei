@@ -1,0 +1,8 @@
+ID,Question,Slug,Description,Status,Type,Grade,Random Answer Order,Media,Categories,Answer,Feedback,Text Before Gap,Gap,Text After Gap,Upload Notes,Teacher Notes
+1,How many keys are there on a standard piano?,,(Hint: The one in the lesson video is a standard piano),draft,,1,1,,,"Right:88,Wrong:99,Wrong:1042,Wrong:12,Wrong:78",There are 88 keys on a standard piano.,,,,,
+2,Where can you find C on the piano keyboard?,,,pending,multiple-choice,1,0,,,"Right:To the left of any group of two black notes,Wrong:At each end of the keyboard,Wrong:Under the keyboard,Wrong:All the white notes are C",You can find a C note directly to the left of any group of two black notes.,,,,,
+3,Which of these notes are in the C major scale?,,Select all correct answers.,publish,multiple-choice,1,1,,,"Right:C,Wrong:H,Right:A,Wrong:F#,Right:G,Wrong:Bb","The notes in the C Major scale are A, B, C, D, E, F and G",There are,52,white keys.,,
+4,What is a chord?,what-is-a-chord,Complete the sentence.,draft,gap-fill,3,,,,,,A chord is two or more,notes,played at the same time.,,
+5,How many notes are played together in a triad?,,,pending,multiple-choice,1,1,,,"Right:3,Wrong:30,Wrong:13,Wrong:2,Wrong:4",A triad is 3 notes played together.,,,,,
+6,What is a metronome?,,Complete the sentence.,publish,gap-fill,2,,,,,,A metronome is a tool to help you keep your,counts|beats,even while you are practicing.,,
+7,A dotted half note is held for 2 beats.,,,,boolean,1,,,,0,A dotted half note is held for 3 beats (1.5 times the length of a half note).,,,,,
