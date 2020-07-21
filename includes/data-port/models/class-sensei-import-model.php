@@ -136,7 +136,7 @@ abstract class Sensei_Import_Model extends Sensei_Data_Port_Model {
 										$key
 									),
 									[
-										'code' => 'sensei_data_port_int_sanitation',
+										'code' => 'sensei_data_port_int_sanitization',
 									]
 								);
 							}
@@ -155,7 +155,7 @@ abstract class Sensei_Import_Model extends Sensei_Data_Port_Model {
 										$key
 									),
 									[
-										'code' => 'sensei_data_port_float_sanitation',
+										'code' => 'sensei_data_port_float_sanitization',
 									]
 								);
 							}
@@ -176,7 +176,7 @@ abstract class Sensei_Import_Model extends Sensei_Data_Port_Model {
 									implode( ', ', $accepted_options )
 								),
 								[
-									'code' => 'sensei_data_port_float_sanitation',
+									'code' => 'sensei_data_port_float_sanitization',
 								]
 							);
 							$value = null;
