@@ -1,5 +1,5 @@
 import { useStateManager } from '../../react-hooks/use-state-manager';
-import { ExportStore } from './export-job';
+import { ExportJobState } from './export-job-state';
 import { ExportPage } from './export-page';
 
 /**
@@ -7,7 +7,7 @@ import { ExportPage } from './export-page';
  */
 export const SenseiExportPage = () => {
 	const [ progress, { start, cancel, reset } ] = useStateManager(
-		ExportStore
+		ExportJobState
 	);
 
 	return <ExportPage { ...{ progress, start, cancel, reset } } />;

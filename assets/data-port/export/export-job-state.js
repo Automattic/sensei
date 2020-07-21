@@ -18,7 +18,7 @@ import apiFetch from '@wordpress/api-fetch';
  * @param {Function} updateState
  * @return {{cancel: Function, start: Function, reset: Function, update: Function}} Export store actions.
  */
-export function ExportStore( updateState ) {
+export function ExportJobState( updateState ) {
 	/**
 	 * API endpoint prefix.
 	 *
