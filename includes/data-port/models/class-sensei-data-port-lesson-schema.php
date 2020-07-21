@@ -106,8 +106,7 @@ class Sensei_Data_Port_Lesson_Schema extends Sensei_Data_Port_Schema {
 				'type' => 'float',
 			],
 			self::COLUMN_NUM_QUESTIONS  => [
-				'type'    => 'int',
-				'default' => '',
+				'type' => 'int',
 			],
 			self::COLUMN_RANDOMIZE      => [
 				'type'    => 'bool',
