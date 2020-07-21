@@ -3,7 +3,7 @@ import { render, useLayoutEffect } from '@wordpress/element';
 import { Spinner } from '@woocommerce/components';
 import { Notice } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-
+import '../shared/data/api-fetch-preloaded-once';
 import registerSetupWizardStore from './data';
 import { useWpAdminFullscreen } from '../react-hooks';
 
