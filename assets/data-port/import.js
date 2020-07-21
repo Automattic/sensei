@@ -4,6 +4,7 @@ import { render, useLayoutEffect } from '@wordpress/element';
 import { DataPortStepper } from './stepper';
 import registerImportStore from './import/data';
 import { Notice } from '@wordpress/components';
+import '../shared/data/api-fetch-preloaded-once';
 
 registerImportStore();
 
