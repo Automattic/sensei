@@ -6,12 +6,6 @@
 			margin: 12px 0;
 		}
 		&__option {
-			margin: 0 -24px;
-			padding: 12px 24px;
-
-			&:nth-child(odd) {
-				background: $gray-0;
-			}
 
 			.components-base-control__field {
 				margin: 0;

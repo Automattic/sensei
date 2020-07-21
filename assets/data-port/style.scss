@@ -28,7 +28,7 @@ $alert-red: #d94f4f;
 @import 'import/done/import-done';
 @import 'export/export';
 @import 'import/upload/upload-page';
-@import 'import/import-progress/import-progress-page';
+@import 'import/import-progress/progressbar';
 
 .sensei-import {
 	&__main-loader {
@@ -158,7 +158,8 @@ $alert-red: #d94f4f;
 
 			&__icon {
 				margin-right: 3px;
-				vertical-align: text-bottom;
+				vertical-align: baseline;
+				margin-bottom: -0.3em;
 			}
 
 			&__message {
@@ -178,6 +179,16 @@ $alert-red: #d94f4f;
 		.components-button {
 			padding: 6px 24px;
 			height: 40px;
+		}
+	}
+
+	&__line {
+		margin: 0 -24px;
+		padding: 12px 24px;
+		list-style-type: none;
+
+		&:nth-child(odd) {
+			background: $gray-0;
 		}
 	}
 }

@@ -1,7 +1,9 @@
 import { H } from '@woocommerce/components';
 import { __ } from '@wordpress/i18n';
 import { render } from '@wordpress/element';
+import { useMergeReducer } from '../react-hooks/use-merge-reducer';
 import { useSenseiColorTheme } from '../react-hooks/use-sensei-color-theme';
+import { ExportProgressPage } from './export/export-progress-page';
 import { ExportSelectContentPage } from './export/export-select-content-page';
 
 /**
@@ -9,6 +11,51 @@ import { ExportSelectContentPage } from './export/export-select-content-page';
  */
 const SenseiExportPage = () => {
 	useSenseiColorTheme();
+
+	const [ { progress }, updateState ] = useMergeReducer( {
+		progress: null,
+	} );
+
+	const startExport = ( types ) => {
+		updateState( {
+			progress: {
+				status: 'started',
+				percentage: 0,
+			},
+		} );
+
+		// Mock server updates.
+
+		setTimeout(
+			() =>
+				updateState( {
+					progress: {
+						status: 'progress',
+						percentage: 40,
+					},
+				} ),
+			1000
+		);
+		setTimeout(
+			() =>
+				updateState( {
+					progress: {
+						status: 'completed',
+						error: 'Lessons failed to export: No lesson found',
+						files: types.map( ( t ) => ( {
+							name: `${ t }.csv`,
+							url:
+								'/wp-content/uploads/2020/02/sample_tax_rates.csv',
+						} ) ),
+					},
+				} ),
+			2000
+		);
+	};
+
+	const resetExport = () => {
+		updateState( { inProgress: false, progress: null } );
+	};
 
 	return (
 		<div className="sensei-page-export">
@@ -25,8 +72,14 @@ const SenseiExportPage = () => {
 						) }
 					</p>
 				</header>
-
-				<ExportSelectContentPage />
+				{ progress ? (
+					<ExportProgressPage
+						state={ progress }
+						reset={ resetExport }
+					/>
+				) : (
+					<ExportSelectContentPage onSubmit={ startExport } />
+				) }
 			</section>
 		</div>
 	);

@@ -1,20 +1,18 @@
 import { Button, CheckboxControl } from '@wordpress/components';
-import { useReducer } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useMergeReducer } from '../../react-hooks/use-merge-reducer';
+import { getSelectedKeys } from '../../shared/helpers/data';
 import { postTypeLabels } from '../../shared/helpers/labels';
 
 export const ExportSelectContentPage = ( { onSubmit } ) => {
-	const [ values, setValue ] = useReducer(
-		( state, newValues ) => ( { ...state, ...newValues } ),
-		{
-			course: false,
-			lesson: false,
-			question: false,
-		}
-	);
+	const [ values, updateValues ] = useMergeReducer( {
+		course: false,
+		lesson: false,
+		question: false,
+	} );
 	const submit = ( event ) => {
 		event.preventDefault();
-		onSubmit( values );
+		onSubmit( getSelectedKeys( values ) );
 	};
 
 	const hasSelected = Object.values( values ).some( ( v ) => v );
@@ -32,11 +30,13 @@ export const ExportSelectContentPage = ( { onSubmit } ) => {
 				<div className="sensei-export__select-content__options">
 					{ Object.entries( values ).map( ( [ type, value ] ) => (
 						<CheckboxControl
-							className="sensei-export__select-content__option"
+							className="sensei-export__select-content__option sensei-data-port-step__line"
 							key={ type }
 							name={ type }
 							checked={ value }
-							onChange={ ( v ) => setValue( { [ type ]: v } ) }
+							onChange={ ( v ) =>
+								updateValues( { [ type ]: v } )
+							}
 							label={ postTypeLabels[ type ] }
 						/>
 					) ) }
