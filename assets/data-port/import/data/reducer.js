@@ -106,14 +106,10 @@ export default ( state = DEFAULT_STATE, action ) => {
 			};
 
 		case ERROR_FETCH_CURRENT_JOB_STATE:
-			// No need to start a new job until we have our first active upload.
-			const isErrorNoActiveJob =
-				action.error.code === 'sensei_data_port_job_not_found';
-
 			return {
 				...state,
 				isFetching: false,
-				fetchError: isErrorNoActiveJob ? false : action.error,
+				fetchError: action.error,
 			};
 
 		case START_IMPORT:

@@ -60,8 +60,8 @@ export const normalizeImportData = ( {
 	...data,
 	jobId: id,
 	progress: status,
-	upload: normalizeUploadsState( files ),
-	completedSteps: parseCompletedSteps( status ),
+	upload: normalizeUploadsState( files || [] ),
+	completedSteps: parseCompletedSteps( status || {} ),
 	done: {
 		results,
 	},
