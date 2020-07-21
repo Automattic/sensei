@@ -144,7 +144,23 @@ abstract class Sensei_Import_Model extends Sensei_Data_Port_Model {
 						}
 						break;
 					case 'float':
-						$value = '' === $value ? null : floatval( $value );
+						if ( '' === $value ) {
+							$value = null;
+						} else {
+							if ( ! is_numeric( $value ) ) {
+								$this->add_line_warning(
+									sprintf(
+										// translators: Placeholder is the column name.
+										__( 'Error in column "%s": It must be a number.', 'sensei-lms' ),
+										$key
+									),
+									[
+										'code' => 'sensei_data_port_float_sanitation',
+									]
+								);
+							}
+							$value = floatval( $value );
+						}
 						break;
 					case 'bool':
 						if ( ! in_array( $value, [ '0', '1', 'true', 'false' ], true ) ) {
