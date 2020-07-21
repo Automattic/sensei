@@ -43,12 +43,18 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 
 	/**
 	 * An array containing log entries (e.g. errors). It has the following format:
-	 * {
 	 *
-	 *     @type array $type {
-	 *         @type string $title The post title of the entity this entry applies to.
-	 *         @type string $id    The id of the entity this entry applies to.
-	 *         @type string $msg   The log message.
+	 * @type array {
+	 *     @type string The message of the log entry.
+	 *     @type string The log level.
+	 *     @type array {
+	 *          Log entry's companion data.
+	 *
+	 *          @type string type         The log type (course, lesson, etc.)
+	 *          @type int    line         The line number which this log message refers to.
+	 *          @type string entry_id     The import id of the related entry.
+	 *          @type string entry_title  The title of the related entry.
+	 *          @type int    post_id      The post id of the related entry.
 	 *     }
 	 * }
 	 *
@@ -191,6 +197,32 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 * @return array The logs.
 	 */
 	public function get_logs() {
+		usort(
+			$this->logs,
+			function( $first_log, $second_log ) {
+
+				// Get the type ordering and compare the two logs based on that.
+				$log_order                = $this->get_log_type_order();
+				$first_type_order_exists  = isset( $first_log[2]['type'] ) && in_array( $first_log[2]['type'], $log_order, true );
+				$second_type_order_exists = isset( $second_log[2]['type'] ) && in_array( $second_log[2]['type'], $log_order, true );
+
+				$compare_type_result = $this->compare_null_integers(
+					$first_type_order_exists ? array_search( $first_log[2]['type'], $log_order, true ) : null,
+					$second_type_order_exists ? array_search( $second_log[2]['type'], $log_order, true ) : null
+				);
+
+				// If the logs have the same type, compare them based on line number.
+				if ( 0 === $compare_type_result ) {
+					return $this->compare_null_integers(
+						isset( $first_log[2]['line'] ) ? $first_log[2]['line'] : null,
+						isset( $second_log[2]['line'] ) ? $second_log[2]['line'] : null
+					);
+				}
+
+				return $compare_type_result;
+			}
+		);
+
 		return array_map(
 			function ( $log ) {
 				return [
@@ -201,6 +233,30 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 			},
 			$this->logs
 		);
+	}
+
+	/**
+	 * Helper method that compares two integers which are possibly null. If an integer is null it gains precedence.
+	 *
+	 * @param int $first   The first integer.
+	 * @param int $second  The second integer.
+	 *
+	 * @return int
+	 */
+	private function compare_null_integers( $first, $second ) {
+		if ( $first === $second ) {
+			return 0;
+		}
+
+		if ( null === $first ) {
+			return -1;
+		}
+
+		if ( null === $second ) {
+			return 1;
+		}
+
+		return $first < $second ? -1 : 1;
 	}
 
 	/**
@@ -270,6 +326,13 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 * @return bool
 	 */
 	abstract public function is_ready();
+
+	/**
+	 * Logs are order by log type first and then by line number. The method defines the ordering by type.
+	 *
+	 * @return array An array of log types which defines the log order.
+	 */
+	abstract protected function get_log_type_order();
 
 	/**
 	 * Initialize and restore state of task.

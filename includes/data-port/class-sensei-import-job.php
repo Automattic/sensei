@@ -398,4 +398,12 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 		return null;
 	}
 
+	/**
+	 * Logs are order by log type first and then by line number. The method defines the ordering by type.
+	 *
+	 * @return array An array of log types which defines the log order.
+	 */
+	protected function get_log_type_order() {
+		return [ Sensei_Import_Course_Model::MODEL_KEY, Sensei_Import_Lesson_Model::MODEL_KEY, Sensei_Import_Question_Model::MODEL_KEY ];
+	}
 }
