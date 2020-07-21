@@ -19,6 +19,8 @@ require_once SENSEI_TEST_FRAMEWORK_DIR . '/data-port/class-sensei-data-port-job-
  * @group data-port
  */
 class Sensei_Data_Port_Model_Test extends WP_UnitTestCase {
+	use Sensei_Data_Port_Test_Helpers;
+
 	/**
 	 * Test getting optional field from schema.
 	 */
@@ -126,6 +128,75 @@ class Sensei_Data_Port_Model_Test extends WP_UnitTestCase {
 
 		$this->assertEquals( $expected, $model->get_data() );
 		$this->assertFalse( $model->is_valid(), 'Type did not match a valid field so should invalidate the entry' );
+	}
+
+	/**
+	 * Check that int is sanitized correctly and adds the warnings.
+	 */
+	public function testSanitizeInt() {
+		$data = [
+			'favorite_int' => '10.22',
+			'other_int'    => 'abc',
+		];
+
+		$expected = [
+			'favorite_int' => 10,
+			'other_int'    => 0,
+		];
+
+		$job   = Sensei_Import_Job::create( 'test', 0 );
+		$task  = new Sensei_Import_Courses( $job );
+		$model = Sensei_Import_Model_Mock::from_source_array( 1, $data, new Sensei_Data_Port_Schema_Mock(), $task );
+
+		$this->assertEquals( $expected, $model->get_data() );
+
+		$model->add_warnings_to_job();
+		$this->assertJobHasLogEntry( $job, 'Error in column "favorite_int": It must be a whole number.' );
+		$this->assertJobHasLogEntry( $job, 'Error in column "other_int": It must be a whole number.' );
+	}
+
+	/**
+	 * Check that float is sanitized correctly and adds the warnings.
+	 */
+	public function testSanitizeFloat() {
+		$data = [
+			'favorite_float' => 'abc',
+		];
+
+		$expected = [
+			'favorite_float' => 0,
+		];
+
+		$job   = Sensei_Import_Job::create( 'test', 0 );
+		$task  = new Sensei_Import_Courses( $job );
+		$model = Sensei_Import_Model_Mock::from_source_array( 1, $data, new Sensei_Data_Port_Schema_Mock(), $task );
+
+		$this->assertEquals( $expected, $model->get_data() );
+
+		$model->add_warnings_to_job();
+		$this->assertJobHasLogEntry( $job, 'Error in column "favorite_float": It must be a number.' );
+	}
+
+	/**
+	 * Check that bool is sanitized correctly and adds the warnings.
+	 */
+	public function testSanitizeBool() {
+		$data = [
+			'favorite_bool' => 'abc',
+		];
+
+		$expected = [
+			'favorite_bool' => null,
+		];
+
+		$job   = Sensei_Import_Job::create( 'test', 0 );
+		$task  = new Sensei_Import_Courses( $job );
+		$model = Sensei_Import_Model_Mock::from_source_array( 1, $data, new Sensei_Data_Port_Schema_Mock(), $task );
+
+		$this->assertEquals( $expected, $model->get_data() );
+
+		$model->add_warnings_to_job();
+		$this->assertJobHasLogEntry( $job, 'Error in column "favorite_bool": It must be one of the following: 0, 1, true, false.' );
 	}
 
 	/**

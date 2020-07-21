@@ -22,8 +22,15 @@ class Sensei_Data_Port_Schema_Mock extends Sensei_Data_Port_Schema {
 				'type'    => 'int',
 				'default' => 0,
 			],
+			'other_int'              => [
+				'type'    => 'int',
+				'default' => 0,
+			],
 			'favorite_float'         => [
 				'type' => 'float',
+			],
+			'favorite_bool'          => [
+				'type' => 'bool',
 			],
 			'email'                  => [
 				'type'     => 'email',
