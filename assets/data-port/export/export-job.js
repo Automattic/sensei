@@ -15,45 +15,37 @@ import apiFetch from '@wordpress/api-fetch';
 /**
  * Client for the export API.
  *
- * @class ExportJob
+ * @param {Function} updateState
+ * @return {{cancel: Function, start: Function, reset: Function, update: Function}} Export store actions.
  */
-export class ExportJob {
+export function ExportStore( updateState ) {
 	/**
 	 * API endpoint prefix.
 	 *
 	 * @type {string}
 	 */
-	static apiPrefix = '/sensei-internal/v1/export';
+	const apiPrefix = '/sensei-internal/v1/export';
 
 	/**
 	 * Counter to track latest API request to discard old responses.
 	 *
 	 * @type {number}
 	 */
-	apiHit = 0;
+	let lastApiRequestId = 0;
 
 	/**
 	 * Timer handle if polling is active, or false.
 	 *
 	 * @type {number|null}
 	 */
-	polling = null;
+	let polling = null;
 
 	/**
 	 * Current job ID.
 	 *
 	 * @type {string|null}
 	 */
-	id = null;
-
-	/**
-	 * Constructor.
-	 *
-	 * @param {Function} updateState Callback for job state change.
-	 */
-	constructor( updateState ) {
-		this.updateState = updateState;
-	}
+	let id = null;
 
 	/**
 	 * Start an export.
@@ -61,14 +53,14 @@ export class ExportJob {
 	 * @access public
 	 * @param {string[]} types Content types.
 	 */
-	start = async ( types ) => {
-		this.updateState( {
+	const start = async ( types ) => {
+		updateState( {
 			status: 'started',
 			percentage: 0,
 		} );
 
-		await this.createJob();
-		await this.startJob( types );
+		await createJob();
+		await startJob( types );
 	};
 
 	/**
@@ -76,10 +68,10 @@ export class ExportJob {
 	 *
 	 * @access public
 	 */
-	reset = () => {
-		this.updateState( null );
-		this.clearPoll();
-		this.id = null;
+	const reset = () => {
+		updateState( null );
+		clearPoll();
+		id = null;
 	};
 
 	/**
@@ -87,11 +79,11 @@ export class ExportJob {
 	 *
 	 * @access public
 	 */
-	cancel = () => {
-		this.updateState( null );
-		this.clearPoll();
-		return this.request( {
-			path: `${ ExportJob.apiPrefix }/${ this.id }`,
+	const cancel = () => {
+		updateState( null );
+		clearPoll();
+		return request( {
+			path: `${ apiPrefix }/${ id }`,
 			method: 'DELETE',
 		} );
 	};
@@ -99,55 +91,55 @@ export class ExportJob {
 	/**
 	 * Update job state from REST API.
 	 */
-	async update() {
+	const update = async () => {
 		try {
-			await this.request( {
-				path: `${ ExportJob.apiPrefix }/${ this.id || 'active' }`,
+			await request( {
+				path: `${ apiPrefix }/${ id || 'active' }`,
 			} );
 		} catch ( err ) {
-			this.setState( null );
+			setState( null );
 		}
-	}
+	};
 
 	/**
 	 * Perform REST API request and apply returned job state.
 	 *
-	 * @param {Object} request Request object.
+	 * @param {Object} options Request object.
 	 * @return {Promise<Job|void>} Job state.
 	 */
-	async request( request ) {
-		const apiHit = ++this.apiHit;
-		const job = await apiFetch( request );
+	const request = async ( options ) => {
+		const requestId = ++lastApiRequestId;
+		const job = await apiFetch( options );
 		// Drop old responses.
-		if ( this.apiHit > apiHit ) {
+		if ( lastApiRequestId > requestId ) {
 			return;
 		}
-		this.setState( job );
+		setState( job );
 		return job;
-	}
+	};
 
 	/**
 	 * Request to create a new job.
 	 */
-	createJob() {
-		return this.request( {
-			path: `${ ExportJob.apiPrefix }`,
+	const createJob = () => {
+		return request( {
+			path: `${ apiPrefix }`,
 			method: 'POST',
 		} );
-	}
+	};
 
 	/**
 	 * Request to start job.
 	 *
 	 * @param {string[]} types Content types to export.
 	 */
-	startJob( types ) {
-		return this.request( {
-			path: `${ ExportJob.apiPrefix }/${ this.id }/start`,
+	const startJob = ( types ) => {
+		return request( {
+			path: `${ apiPrefix }/${ id }/start`,
 			method: 'POST',
 			data: { content_types: types },
 		} );
-	}
+	};
 
 	/**
 	 * Set job state from response and call updateState callback.
@@ -155,33 +147,38 @@ export class ExportJob {
 	 *
 	 * @param {Job|null} job
 	 */
-	setState( job ) {
+	const setState = ( job ) => {
 		if ( ! job || job.deleted ) {
-			this.id = null;
-			this.updateState( null );
+			id = null;
+			updateState( null );
 			return;
 		}
-		this.id = job.id;
-		this.updateState( { ...job.status } );
+		id = job.id;
+		updateState( { ...job.status } );
 
 		if ( 'completed' !== job.status.status ) {
-			this.poll();
+			poll();
 		}
-	}
+	};
 
 	/**
 	 * Schedule an update request.
 	 */
-	poll() {
-		this.polling = setTimeout( () => this.update(), 1000 );
-	}
+	const poll = () => {
+		polling = setTimeout( () => update(), 1000 );
+	};
 
 	/**
 	 * Clear scheduled update request.
 	 */
-	clearPoll() {
-		if ( this.polling ) {
-			clearTimeout( this.polling );
+	const clearPoll = () => {
+		if ( polling ) {
+			clearTimeout( polling );
 		}
-	}
+	};
+
+	updateState( null );
+	update();
+
+	return { start, cancel, reset, update };
 }
