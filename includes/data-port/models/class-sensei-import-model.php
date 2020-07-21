@@ -163,7 +163,22 @@ abstract class Sensei_Import_Model extends Sensei_Data_Port_Model {
 						}
 						break;
 					case 'bool':
-						if ( ! in_array( $value, [ '0', '1', 'true', 'false' ], true ) ) {
+						$accepted_options = [ '0', '1', 'true', 'false' ];
+
+						if ( '' === $value ) {
+							$value = null;
+						} elseif ( ! in_array( $value, $accepted_options, true ) ) {
+							$this->add_line_warning(
+								sprintf(
+									// translators: Placeholder %1$s is the column name. %2$s is the accepted values.
+									__( 'Error in column "%1$s": It must be one of the following: %2$s.', 'sensei-lms' ),
+									$key,
+									implode( ', ', $accepted_options )
+								),
+								[
+									'code' => 'sensei_data_port_float_sanitation',
+								]
+							);
 							$value = null;
 						} else {
 							$value = in_array( $value, [ '1', 'true' ], true );
