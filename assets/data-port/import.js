@@ -3,7 +3,6 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { render, useLayoutEffect } from '@wordpress/element';
 import { DataPortStepper } from './stepper';
 import registerImportStore from './import/data';
-import { Spinner } from '@woocommerce/components';
 import { Notice } from '@wordpress/components';
 
 registerImportStore();
@@ -12,7 +11,7 @@ registerImportStore();
  * Sensei import page.
  */
 const SenseiImportPage = () => {
-	const { isFetching, error, navigationSteps } = useSelect( ( select ) => {
+	const { error, navigationSteps } = useSelect( ( select ) => {
 		const store = select( 'sensei/import' );
 		return {
 			isFetching: store.isFetching(),
@@ -34,10 +33,6 @@ const SenseiImportPage = () => {
 
 		return () => document.body.classList.remove( [ 'sensei-color' ] );
 	} );
-
-	if ( isFetching ) {
-		return <Spinner className="sensei-import__main-loader" />;
-	}
 
 	if ( error ) {
 		return (
