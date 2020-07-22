@@ -1,17 +1,17 @@
 # Copyright (C) 2020 Automattic
-# This file is distributed under the same license as the Sensei LMS plugin.
+# This file is distributed under the GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html.
 msgid ""
 msgstr ""
-"Project-Id-Version: Sensei LMS 3.2.0\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sensei\n"
+"Project-Id-Version: Sensei LMS 3.3.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sensei-lms\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2020-06-29T21:01:02+00:00\n"
+"POT-Creation-Date: 2020-07-22T19:16:39+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.4.0\n"
+"X-Generator: WP-CLI 2.5.0-alpha\n"
 "X-Domain: sensei-lms\n"
 
 #: assets/data-port/import.js:45
@@ -28,18 +28,141 @@ msgstr ""
 msgid "Error details:"
 msgstr ""
 
-#: assets/data-port/import/done/index.js:11
-#: assets/data-port/import/steps.js:20
+#: assets/data-port/import/done/done-page.js:100
 #: assets/dist/data-port/import.js:1
-msgid "Done"
+msgid "No content was imported."
 msgstr ""
 
-#: assets/data-port/import/import-progress/import-progress-page.js:17
+#: assets/data-port/import/done/done-page.js:106
+#: assets/dist/data-port/import.js:1
+msgid "Import More Content"
+msgstr ""
+
+#: assets/data-port/import/done/done-page.js:31
+#: includes/class-sensei-analysis-course-list-table.php:385
+#: includes/class-sensei-analysis-lesson-list-table.php:213
+#: includes/class-sensei-grading-main.php:253
+#: assets/dist/data-port/import.js:1
+msgid "Failed"
+msgstr ""
+
+#: assets/data-port/import/done/done-page.js:33
+#: assets/dist/data-port/import.js:1
+msgid "The following content was not imported. Please make the necessary corrections to the import file and try again."
+msgstr ""
+
+#: assets/data-port/import/done/done-page.js:47
+#: assets/dist/data-port/import.js:1
+msgid "Partial"
+msgstr ""
+
+#: assets/data-port/import/done/done-page.js:49
+#: assets/dist/data-port/import.js:1
+msgid "The following content was partially imported. The import process encountered some issues that you can resolve manually by clicking the link and making the necessary adjustments."
+msgstr ""
+
+#: assets/data-port/import/done/done-page.js:65
+#: assets/dist/data-port/import.js:1
+msgid "Fetching log details…"
+msgstr ""
+
+#: assets/data-port/import/done/done-page.js:71
+#: assets/dist/data-port/import.js:1
+msgid "Failed to load import log."
+msgstr ""
+
+#: assets/data-port/import/done/done-page.js:74
+#: assets/setup-wizard/features/installation-feedback.js:79
+#: assets/dist/setup-wizard/index.js:1
+#: assets/dist/data-port/import.js:1
+msgid "Retry"
+msgstr ""
+
+#: assets/data-port/import/done/done-page.js:84
+#: includes/admin/class-sensei-learners-admin-bulk-actions-view.php:415
+#: includes/admin/class-sensei-learners-main.php:354
+#: includes/class-sensei-analysis-course-list-table.php:86
+#: includes/class-sensei-analysis-course-list-table.php:302
+#: includes/class-sensei-analysis-course-list-table.php:370
+#: includes/class-sensei-analysis-lesson-list-table.php:204
+#: includes/class-sensei-analysis-overview-list-table.php:51
+#: includes/class-sensei-analysis-overview-list-table.php:61
+#: includes/class-sensei-analysis-user-profile-list-table.php:206
+#: includes/class-sensei-course.php:2966
+#: includes/class-sensei-grading-main.php:244
+#: includes/class-sensei-modules.php:759
+#: includes/template-functions.php:652
+#: assets/dist/data-port/import.js:1
+msgid "Completed"
+msgstr ""
+
+#: assets/data-port/import/done/done-page.js:88
+#: assets/dist/data-port/import.js:1
+msgid "The following content was imported:"
+msgstr ""
+
+#: assets/data-port/import/done/import-log.js:40
+#: assets/dist/data-port/import.js:1
+msgid "File"
+msgstr ""
+
+#: assets/data-port/import/done/import-log.js:42
+#: assets/dist/data-port/import.js:1
+msgid "Title"
+msgstr ""
+
+#: assets/data-port/import/done/import-log.js:43
+#: assets/dist/data-port/import.js:1
+msgid "Line #"
+msgstr ""
+
+#: assets/data-port/import/done/import-log.js:5
+#: assets/dist/data-port/import.js:1
+msgid "Error"
+msgstr ""
+
+#: assets/data-port/import/done/import-log.js:6
+#: assets/dist/data-port/import.js:1
+msgid "Warning"
+msgstr ""
+
+#: assets/data-port/import/done/import-success-results.js:12
+#: includes/admin/class-sensei-learners-main.php:347
+#: includes/class-sensei-lesson.php:4080
+#: includes/class-sensei-modules.php:846
+#: includes/class-sensei-utils.php:1352
+#: includes/class-sensei.php:801
+#: includes/class-sensei.php:840
+#: includes/class-sensei.php:900
+#: includes/class-sensei.php:914
+#: assets/dist/data-port/import.js:1
+msgid "course"
+msgid_plural "courses"
+msgstr[0] ""
+msgstr[1] ""
+
+#: assets/data-port/import/done/import-success-results.js:13
+#: includes/admin/class-sensei-learners-main.php:341
+#: includes/class-sensei.php:884
+#: assets/dist/data-port/import.js:1
+msgid "lesson"
+msgid_plural "lessons"
+msgstr[0] ""
+msgstr[1] ""
+
+#: assets/data-port/import/done/import-success-results.js:14
+#: assets/dist/data-port/import.js:1
+msgid "question"
+msgid_plural "questions"
+msgstr[0] ""
+msgstr[1] ""
+
+#: assets/data-port/import/import-progress/import-progress-page.js:20
 #: assets/dist/data-port/import.js:1
 msgid "Importing"
 msgstr ""
 
-#: assets/data-port/import/import-progress/import-progress-page.js:19
+#: assets/data-port/import/import-progress/import-progress-page.js:22
 #: assets/dist/data-port/import.js:1
 msgid "Your content is now being imported…"
 msgstr ""
@@ -70,42 +193,52 @@ msgstr ""
 msgid "Import"
 msgstr ""
 
-#: assets/data-port/import/upload-level/upload-level.js:33
+#: assets/data-port/import/steps.js:20
 #: assets/dist/data-port/import.js:1
-msgid "Only CSV files are supported."
+msgid "Done"
 msgstr ""
 
-#: assets/data-port/import/upload-level/upload-level.js:90
+#: assets/data-port/import/upload-level/upload-level.js:130
 #: assets/dist/data-port/import.js:1
 msgid "Uploading…"
 msgstr ""
 
-#: assets/data-port/import/upload-level/upload-level.js:91
+#: assets/data-port/import/upload-level/upload-level.js:131
 #: assets/dist/data-port/import.js:1
 msgid "Upload"
 msgstr ""
 
-#: assets/data-port/import/upload/upload-page.js:16
+#: assets/data-port/import/upload-level/upload-level.js:35
+#: assets/dist/data-port/import.js:1
+msgid "Only CSV files are supported."
+msgstr ""
+
+#: assets/data-port/import/upload-level/upload-level.js:91
+#: assets/dist/data-port/import.js:1
+msgid "Delete File"
+msgstr ""
+
+#: assets/data-port/import/upload/upload-page.js:23
 #: assets/dist/data-port/import.js:1
 msgid "Import content from a CSV file"
 msgstr ""
 
-#: assets/data-port/import/upload/upload-page.js:18
+#: assets/data-port/import/upload/upload-page.js:26
 #: assets/dist/data-port/import.js:1
-msgid "This tool allows you to import courses, lessons, and questions from a CSV file."
+msgid "This tool enables you to import courses, lessons, and questions from a CSV file. Please review the {{link}}documentation{{/link}} to learn more about the expected file structure."
 msgstr ""
 
-#: assets/data-port/import/upload/upload-page.js:29
+#: assets/data-port/import/upload/upload-page.js:50
 #: assets/dist/data-port/import.js:1
 msgid "Choose one or more CSV files to upload from your computer."
 msgstr ""
 
-#: assets/data-port/import/upload/upload-page.js:45
+#: assets/data-port/import/upload/upload-page.js:66
 #: assets/setup-wizard/features/features-selection.js:90
 #: assets/setup-wizard/features/installation-feedback.js:97
 #: assets/setup-wizard/purpose/index.js:147
 #: assets/setup-wizard/welcome/index.js:56
-#: assets/setup-wizard/welcome/usage-modal.js:70
+#: assets/setup-wizard/welcome/usage-modal.js:72
 #: assets/dist/setup-wizard/index.js:1
 #: assets/dist/data-port/import.js:1
 msgid "Continue"
@@ -193,7 +326,7 @@ msgstr ""
 msgid "No features found."
 msgstr ""
 
-#: assets/setup-wizard/features/index.js:191
+#: assets/setup-wizard/features/index.js:193
 #: assets/dist/setup-wizard/index.js:1
 msgid "Enhance your online courses with these optional features."
 msgstr ""
@@ -206,11 +339,6 @@ msgstr ""
 #: assets/setup-wizard/features/installation-feedback.js:61
 #: assets/dist/setup-wizard/index.js:1
 msgid "Installing…"
-msgstr ""
-
-#: assets/setup-wizard/features/installation-feedback.js:79
-#: assets/dist/setup-wizard/index.js:1
-msgid "Retry"
 msgstr ""
 
 #: assets/setup-wizard/purpose/index.js:106
@@ -293,7 +421,7 @@ msgstr ""
 msgid "Other"
 msgstr ""
 
-#: assets/setup-wizard/ready/index.js:104
+#: assets/setup-wizard/ready/index.js:126
 #: assets/dist/setup-wizard/index.js:1
 msgid "Exit to Courses"
 msgstr ""
@@ -329,7 +457,22 @@ msgstr ""
 msgid "You're ready to create online courses."
 msgstr ""
 
-#: assets/setup-wizard/ready/index.js:73
+#: assets/setup-wizard/ready/index.js:66
+#: assets/dist/setup-wizard/index.js:1
+msgid "Create a course"
+msgstr ""
+
+#: assets/setup-wizard/ready/index.js:75
+#: assets/dist/setup-wizard/index.js:1
+msgid "Transfer existing content to your site — just import a CSV file."
+msgstr ""
+
+#: assets/setup-wizard/ready/index.js:88
+#: assets/dist/setup-wizard/index.js:1
+msgid "Import content"
+msgstr ""
+
+#: assets/setup-wizard/ready/index.js:95
 #: assets/dist/setup-wizard/index.js:1
 msgid "Visit SenseiLMS.com to learn how to {{link}}create your first course.{{/link}}"
 msgstr ""
@@ -380,17 +523,17 @@ msgstr ""
 msgid "Not right now"
 msgstr ""
 
-#: assets/setup-wizard/welcome/usage-modal.js:25
+#: assets/setup-wizard/welcome/usage-modal.js:26
 #: assets/dist/setup-wizard/index.js:1
 msgid "Get improved features and faster fixes by sharing non-sensitive data via {{link}}usage tracking{{/link}} that shows us how Sensei LMS is used. No personal data is tracked or stored."
 msgstr ""
 
-#: assets/setup-wizard/welcome/usage-modal.js:46
+#: assets/setup-wizard/welcome/usage-modal.js:48
 #: assets/dist/setup-wizard/index.js:1
 msgid "Build a Better Sensei LMS"
 msgstr ""
 
-#: assets/setup-wizard/welcome/usage-modal.js:58
+#: assets/setup-wizard/welcome/usage-modal.js:60
 #: assets/dist/setup-wizard/index.js:1
 msgid "Yes, count me in!"
 msgstr ""
@@ -443,7 +586,7 @@ msgstr ""
 #: includes/class-sensei-course.php:2988
 #: includes/class-sensei-grading-main.php:259
 #: includes/class-sensei-grading-main.php:490
-#: includes/class-sensei-lesson.php:3891
+#: includes/class-sensei-lesson.php:3885
 msgid "In Progress"
 msgstr ""
 
@@ -486,7 +629,7 @@ msgstr ""
 #: includes/class-sensei-lesson.php:296
 #: includes/class-sensei-lesson.php:1248
 #: includes/class-sensei-modules.php:225
-#: includes/class-sensei-utils.php:2255
+#: includes/class-sensei-utils.php:2256
 msgid "None"
 msgstr ""
 
@@ -654,22 +797,6 @@ msgstr ""
 msgid "Courses"
 msgstr ""
 
-#: includes/admin/class-sensei-learners-admin-bulk-actions-view.php:415
-#: includes/admin/class-sensei-learners-main.php:354
-#: includes/class-sensei-analysis-course-list-table.php:86
-#: includes/class-sensei-analysis-course-list-table.php:302
-#: includes/class-sensei-analysis-course-list-table.php:370
-#: includes/class-sensei-analysis-lesson-list-table.php:204
-#: includes/class-sensei-analysis-overview-list-table.php:51
-#: includes/class-sensei-analysis-overview-list-table.php:61
-#: includes/class-sensei-analysis-user-profile-list-table.php:206
-#: includes/class-sensei-course.php:2966
-#: includes/class-sensei-grading-main.php:244
-#: includes/class-sensei-modules.php:759
-#: includes/template-functions.php:648
-msgid "Completed"
-msgstr ""
-
 #: includes/admin/class-sensei-learners-admin-bulk-actions-view.php:418
 msgid "more"
 msgstr ""
@@ -735,22 +862,6 @@ msgstr ""
 #: includes/class-sensei-lesson.php:168
 #: includes/class-sensei-posttypes.php:697
 msgid "Course"
-msgstr ""
-
-#: includes/admin/class-sensei-learners-main.php:341
-#: includes/class-sensei.php:892
-msgid "lesson"
-msgstr ""
-
-#: includes/admin/class-sensei-learners-main.php:347
-#: includes/class-sensei-lesson.php:4086
-#: includes/class-sensei-modules.php:846
-#: includes/class-sensei-utils.php:1351
-#: includes/class-sensei.php:809
-#: includes/class-sensei.php:848
-#: includes/class-sensei.php:908
-#: includes/class-sensei.php:922
-msgid "course"
 msgstr ""
 
 #: includes/admin/class-sensei-learners-main.php:390
@@ -917,41 +1028,41 @@ msgstr ""
 msgid "My Courses"
 msgstr ""
 
-#: includes/admin/class-sensei-setup-wizard.php:120
-#: includes/admin/class-sensei-setup-wizard.php:121
+#: includes/admin/class-sensei-setup-wizard.php:118
+#: includes/admin/class-sensei-setup-wizard.php:119
 msgid "Sensei LMS - Setup Wizard"
 msgstr ""
 
-#: includes/admin/class-sensei-setup-wizard.php:284
+#: includes/admin/class-sensei-setup-wizard.php:282
 msgid "<strong>Welcome to Sensei LMS</strong> &#8211; You're almost ready to start creating online courses!"
 msgstr ""
 
-#: includes/admin/class-sensei-setup-wizard.php:290
+#: includes/admin/class-sensei-setup-wizard.php:288
 msgid "Complete Setup"
 msgstr ""
 
-#: includes/admin/class-sensei-setup-wizard.php:292
+#: includes/admin/class-sensei-setup-wizard.php:290
 msgid "Run the Setup Wizard"
 msgstr ""
 
-#: includes/admin/class-sensei-setup-wizard.php:298
+#: includes/admin/class-sensei-setup-wizard.php:296
 msgid "Skip setup"
 msgstr ""
 
-#: includes/admin/class-sensei-setup-wizard.php:378
-#: includes/admin/class-sensei-setup-wizard.php:383
+#: includes/admin/class-sensei-setup-wizard.php:376
+#: includes/admin/class-sensei-setup-wizard.php:381
 msgid "Setup wizard"
 msgstr ""
 
-#: includes/admin/class-sensei-setup-wizard.php:380
+#: includes/admin/class-sensei-setup-wizard.php:378
 msgid "Sensei LMS Setup Wizard"
 msgstr ""
 
-#: includes/admin/class-sensei-setup-wizard.php:381
+#: includes/admin/class-sensei-setup-wizard.php:379
 msgid "Setup Wizard"
 msgstr ""
 
-#: includes/admin/class-sensei-setup-wizard.php:382
+#: includes/admin/class-sensei-setup-wizard.php:380
 msgid "If you need to access the setup wizard again, please click on the button below."
 msgstr ""
 
@@ -1053,7 +1164,7 @@ msgstr ""
 
 #: includes/class-sensei-admin.php:1387
 #: includes/class-sensei-grading-main.php:391
-#: includes/class-sensei-grading.php:488
+#: includes/class-sensei-grading.php:497
 #: includes/class-sensei-modules.php:1087
 msgid "Select a course"
 msgstr ""
@@ -1169,12 +1280,6 @@ msgstr ""
 #: includes/class-sensei-analysis-lesson-list-table.php:210
 #: includes/class-sensei-grading-main.php:250
 msgid "Passed"
-msgstr ""
-
-#: includes/class-sensei-analysis-course-list-table.php:385
-#: includes/class-sensei-analysis-lesson-list-table.php:213
-#: includes/class-sensei-grading-main.php:253
-msgid "Failed"
 msgstr ""
 
 #: includes/class-sensei-analysis-course-list-table.php:390
@@ -1568,7 +1673,7 @@ msgstr ""
 #. translators: Placeholder $1$s is the course title.
 #. translators: Placeholder is the lesson prerequisite title.
 #: includes/class-sensei-course.php:3403
-#: includes/class-sensei-lesson.php:4132
+#: includes/class-sensei-lesson.php:4126
 msgid "You must first complete: %1$s"
 msgstr ""
 
@@ -1755,96 +1860,96 @@ msgstr ""
 msgid "Reset filter"
 msgstr ""
 
-#: includes/class-sensei-grading-user-quiz.php:67
-#: includes/class-sensei-grading-user-quiz.php:295
+#: includes/class-sensei-grading-user-quiz.php:107
+#: includes/class-sensei-grading-user-quiz.php:336
 msgid "Grade:"
 msgstr ""
 
-#: includes/class-sensei-grading-user-quiz.php:71
-#: includes/class-sensei-grading-user-quiz.php:299
+#: includes/class-sensei-grading-user-quiz.php:111
+#: includes/class-sensei-grading-user-quiz.php:340
 msgid "Save"
 msgstr ""
 
-#: includes/class-sensei-grading-user-quiz.php:72
-#: includes/class-sensei-grading-user-quiz.php:300
+#: includes/class-sensei-grading-user-quiz.php:112
+#: includes/class-sensei-grading-user-quiz.php:341
 msgid "Auto grade"
 msgstr ""
 
-#: includes/class-sensei-grading-user-quiz.php:73
-#: includes/class-sensei-grading-user-quiz.php:301
+#: includes/class-sensei-grading-user-quiz.php:113
+#: includes/class-sensei-grading-user-quiz.php:342
 msgid "Reset"
 msgstr ""
 
-#: includes/class-sensei-grading-user-quiz.php:104
-#: includes/class-sensei-grading-user-quiz.php:114
+#: includes/class-sensei-grading-user-quiz.php:144
+#: includes/class-sensei-grading-user-quiz.php:154
 #: includes/class-sensei-lesson.php:1063
 #: includes/class-sensei-question.php:47
 msgid "Multiple Choice"
 msgstr ""
 
-#: includes/class-sensei-grading-user-quiz.php:108
+#: includes/class-sensei-grading-user-quiz.php:148
 #: includes/class-sensei-lesson.php:1063
 #: includes/class-sensei-question.php:48
 msgid "True/False"
 msgstr ""
 
-#: includes/class-sensei-grading-user-quiz.php:118
+#: includes/class-sensei-grading-user-quiz.php:158
 #: includes/class-sensei-lesson.php:1063
 #: includes/class-sensei-question.php:49
 msgid "Gap Fill"
 msgstr ""
 
-#: includes/class-sensei-grading-user-quiz.php:144
+#: includes/class-sensei-grading-user-quiz.php:184
 #: includes/class-sensei-lesson.php:1063
 #: includes/class-sensei-question.php:51
 msgid "Multi Line"
 msgstr ""
 
-#: includes/class-sensei-grading-user-quiz.php:148
+#: includes/class-sensei-grading-user-quiz.php:188
 #: includes/class-sensei-lesson.php:1063
 #: includes/class-sensei-question.php:50
 msgid "Single Line"
 msgstr ""
 
-#: includes/class-sensei-grading-user-quiz.php:152
+#: includes/class-sensei-grading-user-quiz.php:192
 #: includes/class-sensei-lesson.php:1063
 #: includes/class-sensei-question.php:52
 msgid "File Upload"
 msgstr ""
 
 #. translators: Placeholder %1$s is a link to the submitted file.
-#: includes/class-sensei-grading-user-quiz.php:164
+#: includes/class-sensei-grading-user-quiz.php:205
 #: templates/single-quiz/question-type-file-upload.php:41
 msgid "Submitted file: %1$s"
 msgstr ""
 
 #. translators: Placeholder is the question number.
-#: includes/class-sensei-grading-user-quiz.php:187
+#: includes/class-sensei-grading-user-quiz.php:228
 msgid "Question %d: "
 msgstr ""
 
-#: includes/class-sensei-grading-user-quiz.php:257
+#: includes/class-sensei-grading-user-quiz.php:298
 msgid "Correct answer"
 msgstr ""
 
-#: includes/class-sensei-grading-user-quiz.php:273
+#: includes/class-sensei-grading-user-quiz.php:314
 msgid "Grading Notes"
 msgstr ""
 
-#: includes/class-sensei-grading-user-quiz.php:274
+#: includes/class-sensei-grading-user-quiz.php:315
 msgid "Add notes here..."
 msgstr ""
 
-#: includes/class-sensei-grading.php:579
+#: includes/class-sensei-grading.php:588
 msgid "Select a lesson"
 msgstr ""
 
-#: includes/class-sensei-grading.php:812
-#: includes/class-sensei-grading.php:826
+#: includes/class-sensei-grading.php:821
+#: includes/class-sensei-grading.php:835
 msgid "Quiz Graded Successfully!"
 msgstr ""
 
-#: includes/class-sensei-grading.php:905
+#: includes/class-sensei-grading.php:914
 msgid "This quiz is not able to be automatically graded."
 msgstr ""
 
@@ -1860,7 +1965,7 @@ msgstr ""
 msgid "Courses %s is taking"
 msgstr ""
 
-#: includes/class-sensei-learner.php:292
+#: includes/class-sensei-learner.php:308
 msgid "Learner term could not be created for user."
 msgstr ""
 
@@ -2134,13 +2239,13 @@ msgid "Add wrong answer"
 msgstr ""
 
 #: includes/class-sensei-lesson.php:1722
-#: includes/class-sensei-question.php:1213
+#: includes/class-sensei-question.php:1214
 #: templates/single-quiz/question-type-boolean.php:85
 msgid "True"
 msgstr ""
 
 #: includes/class-sensei-lesson.php:1723
-#: includes/class-sensei-question.php:1215
+#: includes/class-sensei-question.php:1216
 #: templates/single-quiz/question-type-boolean.php:89
 msgid "False"
 msgstr ""
@@ -2304,57 +2409,57 @@ msgid "Enable quiz reset button"
 msgstr ""
 
 #. translators: Placeholder is the lesson title.
-#: includes/class-sensei-lesson.php:3847
+#: includes/class-sensei-lesson.php:3841
 #: templates/course-results/lessons.php:91
 #: templates/course-results/lessons.php:148
 msgid "Start %s"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:3870
+#: includes/class-sensei-lesson.php:3864
 msgid "Length:"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:3870
+#: includes/class-sensei-lesson.php:3864
 msgid "minutes"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:3876
+#: includes/class-sensei-lesson.php:3870
 msgid "Author:"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:3881
+#: includes/class-sensei-lesson.php:3875
 msgid "Complexity:"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:3887
+#: includes/class-sensei-lesson.php:3881
 msgid "Complete"
 msgstr ""
 
 #. translators: Placeholders are an opening and closing <a> tag linking to the course permalink.
-#: includes/class-sensei-lesson.php:4085
+#: includes/class-sensei-lesson.php:4079
 #: includes/class-sensei-modules.php:845
-#: includes/class-sensei-utils.php:1262
-#: includes/class-sensei-utils.php:1350
+#: includes/class-sensei-utils.php:1263
+#: includes/class-sensei-utils.php:1351
 msgid "Sign Up"
 msgstr ""
 
 #. translators: The placeholder %1$s is a link to the Course.
-#: includes/class-sensei-lesson.php:4090
-#: includes/class-sensei.php:864
+#: includes/class-sensei-lesson.php:4084
+#: includes/class-sensei.php:856
 msgid "Please sign up for the %1$s before starting the lesson."
 msgstr ""
 
 #. translators: Placeholder is the link to the prerequisite lesson.
-#: includes/class-sensei-lesson.php:4137
+#: includes/class-sensei-lesson.php:4131
 msgid "You must first complete %1$s before viewing this Lesson"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:4157
+#: includes/class-sensei-lesson.php:4151
 msgid "Lessons Archive"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:4277
-#: includes/class-sensei-lesson.php:4279
+#: includes/class-sensei-lesson.php:4271
+#: includes/class-sensei-lesson.php:4273
 msgid "View the Lesson Quiz"
 msgstr ""
 
@@ -2508,7 +2613,7 @@ msgid "Back to the module"
 msgstr ""
 
 #: includes/class-sensei-modules.php:762
-#: includes/template-functions.php:653
+#: includes/template-functions.php:657
 msgid "In progress"
 msgstr ""
 
@@ -3075,7 +3180,7 @@ msgid "Grade: %d"
 msgstr ""
 
 #. translators: Placeholders are the upload size and the measurement (e.g. 5 MB)
-#: includes/class-sensei-question.php:991
+#: includes/class-sensei-question.php:992
 msgid "Maximum upload file size: %1$d%2$s"
 msgstr ""
 
@@ -3926,16 +4031,16 @@ msgid "Want to know what these upgrades are all about? %1$sFind out more here%2$
 msgstr ""
 
 #. translators: The href tag contains the URL for the page telling users what data Sensei tracks.
-#: includes/class-sensei-usage-tracking.php:85
+#: includes/class-sensei-usage-tracking.php:88
 msgid "We'd love if you helped us make Sensei LMS better by allowing us to collect <a href=\"%s\" target=\"_blank\">usage tracking data</a>. No sensitive information is collected, and you can opt out at any time."
 msgstr ""
 
-#: includes/class-sensei-usage-tracking.php:122
+#: includes/class-sensei-usage-tracking.php:125
 msgid "Enable usage tracking"
 msgstr ""
 
 #. translators: The href tag contains the URL for the page telling users what data Sensei tracks.
-#: includes/class-sensei-usage-tracking.php:128
+#: includes/class-sensei-usage-tracking.php:131
 msgid "Help us make Sensei LMS better by allowing us to collect <a href=\"%s\" target=\"_blank\">usage tracking data</a>. No sensitive information is collected."
 msgstr ""
 
@@ -3944,91 +4049,91 @@ msgstr ""
 msgid "At no point should user_id be equal to 0."
 msgstr ""
 
-#: includes/class-sensei-utils.php:1175
+#: includes/class-sensei-utils.php:1176
 msgid "You have not started this course yet."
 msgstr ""
 
 #. translators: Placeholder is the user's grade.
-#: includes/class-sensei-utils.php:1188
+#: includes/class-sensei-utils.php:1189
 msgid "You have passed this course with a grade of %1$d%%."
 msgstr ""
 
 #. translators: Placeholders are the required grade and the actual grade, respectively.
-#: includes/class-sensei-utils.php:1193
+#: includes/class-sensei-utils.php:1194
 msgid "You require %1$d%% to pass this course. Your grade is %2$s%%."
 msgstr ""
 
-#: includes/class-sensei-utils.php:1218
+#: includes/class-sensei-utils.php:1219
 msgid "You have not taken this lesson's quiz yet"
 msgstr ""
 
 #. translators: Placeholders are an opening and closing <a> tag linking to the course permalink.
-#: includes/class-sensei-utils.php:1262
+#: includes/class-sensei-utils.php:1263
 msgid "Please sign up for %1$sthe course%2$s before taking this quiz"
 msgstr ""
 
-#: includes/class-sensei-utils.php:1268
+#: includes/class-sensei-utils.php:1269
 msgid "You must be logged in to take this quiz"
 msgstr ""
 
-#: includes/class-sensei-utils.php:1278
+#: includes/class-sensei-utils.php:1279
 msgid "Congratulations! You have passed this lesson."
 msgstr ""
 
-#: includes/class-sensei-utils.php:1282
+#: includes/class-sensei-utils.php:1283
 msgid "Congratulations! You have completed this lesson."
 msgstr ""
 
 #. translators: Placeholder is the quiz grade.
-#: includes/class-sensei-utils.php:1288
+#: includes/class-sensei-utils.php:1289
 msgid "Congratulations! You have passed this lesson's quiz achieving %s%%"
 msgstr ""
 
 #. translators: Placeholder is the quiz grade.
-#: includes/class-sensei-utils.php:1291
+#: includes/class-sensei-utils.php:1292
 msgid "Congratulations! You have passed this quiz achieving %s%%"
 msgstr ""
 
-#: includes/class-sensei-utils.php:1301
+#: includes/class-sensei-utils.php:1302
 msgid "Next Lesson"
 msgstr ""
 
 #. translators: Placeholders are an opening and closing <a> tag linking to the quiz permalink.
-#: includes/class-sensei-utils.php:1313
+#: includes/class-sensei-utils.php:1314
 msgid "You have completed this lesson's quiz and it will be graded soon. %1$sView the lesson quiz%2$s"
 msgstr ""
 
 #. translators: Placeholder is the quiz passmark.
-#: includes/class-sensei-utils.php:1316
+#: includes/class-sensei-utils.php:1317
 msgid "You have completed this quiz and it will be graded soon. You require %1$s%% to pass."
 msgstr ""
 
 #. translators: Placeholders are the quiz passmark and the learner's grade, respectively.
-#: includes/class-sensei-utils.php:1325
+#: includes/class-sensei-utils.php:1326
 msgid "You require %1$d%% to pass this lesson's quiz. Your grade is %2$s%%"
 msgstr ""
 
 #. translators: Placeholders are the quiz passmark and the learner's grade, respectively.
-#: includes/class-sensei-utils.php:1328
+#: includes/class-sensei-utils.php:1329
 msgid "You require %1$d%% to pass this quiz. Your grade is %2$s%%"
 msgstr ""
 
 #. translators: Placeholder is the quiz passmark.
-#: includes/class-sensei-utils.php:1340
+#: includes/class-sensei-utils.php:1341
 msgid "You require %1$d%% to pass this lesson's quiz."
 msgstr ""
 
 #. translators: Placeholder is the quiz passmark.
-#: includes/class-sensei-utils.php:1343
+#: includes/class-sensei-utils.php:1344
 msgid "You require %1$d%% to pass this quiz."
 msgstr ""
 
 #. translators: Placeholder is a link to the course permalink.
-#: includes/class-sensei-utils.php:1355
+#: includes/class-sensei-utils.php:1356
 msgid "Please sign up for the %1$s before taking this quiz."
 msgstr ""
 
-#: includes/class-sensei-utils.php:1374
+#: includes/class-sensei-utils.php:1375
 msgid "View the lesson quiz"
 msgstr ""
 
@@ -4043,116 +4148,122 @@ msgid "Cheatin&#8217; huh?"
 msgstr ""
 
 #. translators: The placeholder %s is a link to the course.
-#: includes/class-sensei.php:812
+#: includes/class-sensei.php:804
 msgid "Please complete the previous %1$s before taking this course."
 msgstr ""
 
 #. translators: The placeholders are the opening and closing tags for a link to log in.
-#: includes/class-sensei.php:817
+#: includes/class-sensei.php:809
 msgid "Or %1$s login %2$s to access your purchased courses"
 msgstr ""
 
-#: includes/class-sensei.php:847
-#: includes/class-sensei.php:891
-#: includes/class-sensei.php:907
-#: includes/class-sensei.php:921
+#: includes/class-sensei.php:839
+#: includes/class-sensei.php:883
+#: includes/class-sensei.php:899
+#: includes/class-sensei.php:913
 msgid "Restricted Access"
 msgstr ""
 
 #. translators: The placeholder %1$s is a link to the Course.
-#: includes/class-sensei.php:853
+#: includes/class-sensei.php:845
 msgid "This is a preview lesson. Please purchase the %1$s to access all lessons."
 msgstr ""
 
 #. translators: The placeholder %1$s is a link to the Course.
-#: includes/class-sensei.php:856
+#: includes/class-sensei.php:848
 msgid "Please purchase the %1$s before starting this Lesson."
 msgstr ""
 
 #. translators: The placeholder %1$s is a link to the Course.
-#: includes/class-sensei.php:861
+#: includes/class-sensei.php:853
 msgid "This is a preview lesson. Please sign up for the %1$s to access all lessons."
 msgstr ""
 
 #. translators: The placeholder %1$s is a link to the Lesson.
-#: includes/class-sensei.php:894
+#: includes/class-sensei.php:886
 msgid "Please complete the previous %1$s before taking this Quiz."
 msgstr ""
 
 #. translators: The placeholder %1$s is a link to the Course.
-#: includes/class-sensei.php:912
+#: includes/class-sensei.php:904
 msgid "Please purchase the %1$s before starting this Quiz."
 msgstr ""
 
 #. translators: The placeholder %1$s is a link to the Course.
-#: includes/class-sensei.php:915
+#: includes/class-sensei.php:907
 msgid "Please sign up for the %1$s before starting this Quiz."
 msgstr ""
 
 #. translators: The placeholder %1$s is a link to the Course.
-#: includes/class-sensei.php:924
+#: includes/class-sensei.php:916
 msgid "Please sign up for the %1$s before taking this Quiz."
 msgstr ""
 
 #. translators: Docs as in Documentation
-#: includes/class-sensei.php:1392
+#: includes/class-sensei.php:1384
 msgid "Docs"
 msgstr ""
 
-#: includes/class-sensei.php:1410
+#: includes/class-sensei.php:1402
 msgctxt "plugin action link"
 msgid "Configure"
 msgstr ""
 
-#: includes/data-port/class-sensei-data-port-job.php:422
-msgid "Error saving file."
-msgstr ""
-
-#: includes/data-port/class-sensei-data-port-job.php:430
-#: includes/data-port/class-sensei-import-job.php:161
+#: includes/data-port/class-sensei-data-port-job.php:494
+#: includes/data-port/class-sensei-import-job.php:211
 msgid "Unexpected file key used."
 msgstr ""
 
+#: includes/data-port/class-sensei-data-port-job.php:509
+msgid "Error saving file."
+msgstr ""
+
 #. translators: Placeholder is ID of entry in source file.
-#: includes/data-port/class-sensei-data-port-job.php:634
+#: includes/data-port/class-sensei-data-port-job.php:712
 msgid "ID: %s"
 msgstr ""
 
-#: includes/data-port/class-sensei-data-port-utilities.php:80
+#: includes/data-port/class-sensei-data-port-utilities.php:76
+#: includes/data-port/class-sensei-data-port-utilities.php:153
 msgid "No attachment with the specified file name was found."
 msgstr ""
 
-#: includes/data-port/class-sensei-data-port-utilities.php:174
+#: includes/data-port/class-sensei-data-port-utilities.php:191
 msgid "Attachment insertion failed."
 msgstr ""
 
-#: includes/data-port/class-sensei-import-csv-reader.php:116
+#. translators: Placeholder is list of file extensions.
+#: includes/data-port/class-sensei-data-port-utilities.php:241
+msgid "File type is not supported. Must be one of the following: %s."
+msgstr ""
+
+#: includes/data-port/class-sensei-import-csv-reader.php:193
 msgid "Line has incorrect number of columns."
 msgstr ""
 
-#: includes/data-port/class-sensei-import-csv-reader.php:204
+#: includes/data-port/class-sensei-import-csv-reader.php:318
 msgid "Uploaded file could not be opened."
 msgstr ""
 
-#: includes/data-port/class-sensei-import-csv-reader.php:221
+#: includes/data-port/class-sensei-import-csv-reader.php:335
 msgid "Uploaded file was not a valid CSV."
 msgstr ""
 
 #. translators: Placeholder is list of columns that are missing.
-#: includes/data-port/class-sensei-import-csv-reader.php:233
+#: includes/data-port/class-sensei-import-csv-reader.php:347
 msgid "Source file is missing the required column: %s"
 msgid_plural "Source file is missing the required columns: %s"
 msgstr[0] ""
 msgstr[1] ""
 
 #. translators: Placeholder is list of columns that are unknown.
-#: includes/data-port/class-sensei-import-csv-reader.php:251
+#: includes/data-port/class-sensei-import-csv-reader.php:365
 msgid "The following column is unknown: %s"
 msgid_plural "The following columns are unknown: %s"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/data-port/class-sensei-import-csv-reader.php:279
+#: includes/data-port/class-sensei-import-csv-reader.php:393
 msgid "Uploaded file is empty."
 msgstr ""
 
@@ -4174,74 +4285,112 @@ msgstr ""
 msgid "File provided for \"%1$s\" (%2$s) was not not valid. Error: %3$s"
 msgstr ""
 
-#. translators: Placeholder is list of file extensions.
-#: includes/data-port/class-sensei-import-job.php:182
-msgid "File type is not supported. Must be one of the following: %s."
-msgstr ""
-
 #: includes/data-port/class-sensei-import.php:60
 msgid "Import Content"
 msgstr ""
 
-#: includes/data-port/import-tasks/class-sensei-import-file-process-task.php:182
+#: includes/data-port/import-tasks/class-sensei-import-file-process-task.php:242
 msgid "A required field is missing or one of the fields is malformed. Line skipped."
 msgstr ""
 
-#: includes/data-port/models/class-sensei-import-course-model.php:62
-msgid "Course insertion failed."
+#. translators: Placeholder is reference to another post.
+#: includes/data-port/import-tasks/class-sensei-import-prerequisite-trait.php:43
+msgid "Unable to set the prerequisite to \"%s\""
 msgstr ""
 
-#. translators: Placeholder is the term which errored.
-#: includes/data-port/models/class-sensei-import-course-model.php:191
-#: includes/data-port/models/class-sensei-import-lesson-model.php:470
-msgid "Error getting term: %s."
+#: includes/data-port/import-tasks/class-sensei-import-prerequisite-trait.php:59
+msgid "Unable to set the prerequisite to the same entry"
 msgstr ""
 
-#: includes/data-port/models/class-sensei-import-lesson-model.php:137
+#: includes/data-port/models/class-sensei-import-course-model.php:49
+msgid "The user with the supplied username has a different email. Teacher email will be ignored."
+msgstr ""
+
+#: includes/data-port/models/class-sensei-import-course-model.php:60
+msgid "Teacher Username is empty. Course teacher is set to the currently logged in user."
+msgstr ""
+
+#: includes/data-port/models/class-sensei-import-course-model.php:86
+msgid "Course creation failed."
+msgstr ""
+
+#. translators: Placeholder is comma separated list of terms that failed to save.
+#: includes/data-port/models/class-sensei-import-course-model.php:228
+#: includes/data-port/models/class-sensei-import-lesson-model.php:504
+msgid "The following terms failed to save: %s"
+msgstr ""
+
+#: includes/data-port/models/class-sensei-import-lesson-model.php:125
 msgid "Both Passmark and Pass Required should be supplied."
 msgstr ""
 
+#: includes/data-port/models/class-sensei-import-lesson-model.php:139
+msgid "Passmark must be between 0 and 100."
+msgstr ""
+
+#: includes/data-port/models/class-sensei-import-lesson-model.php:157
+msgid "Number of Questions must be greater than or equal to 1."
+msgstr ""
+
 #. translators: Placeholder is the term which errored.
-#: includes/data-port/models/class-sensei-import-lesson-model.php:205
+#: includes/data-port/models/class-sensei-import-lesson-model.php:213
 msgid "Question does not exist: %s."
 msgstr ""
 
 #. translators: Placeholder is the term which errored.
-#: includes/data-port/models/class-sensei-import-lesson-model.php:279
+#: includes/data-port/models/class-sensei-import-lesson-model.php:291
 msgid "Course does not exist: %s."
 msgstr ""
 
-#: includes/data-port/models/class-sensei-import-lesson-model.php:303
+#: includes/data-port/models/class-sensei-import-lesson-model.php:313
 msgid "Lesson insertion failed."
 msgstr ""
 
+#: includes/data-port/models/class-sensei-import-lesson-model.php:439
+msgid "Length must be greater than or equal to 1."
+msgstr ""
+
 #. translators: Placeholder is the term which errored.
-#: includes/data-port/models/class-sensei-import-lesson-model.php:501
+#: includes/data-port/models/class-sensei-import-lesson-model.php:539
 msgid "Module is defined while no course is specified."
 msgstr ""
 
 #. translators: Placeholder is the term which errored.
-#: includes/data-port/models/class-sensei-import-lesson-model.php:511
+#: includes/data-port/models/class-sensei-import-lesson-model.php:549
 msgid "Module does not exist: %s."
 msgstr ""
 
 #. translators: First placeholder is the term which errored, second is the course id.
-#: includes/data-port/models/class-sensei-import-lesson-model.php:521
+#: includes/data-port/models/class-sensei-import-lesson-model.php:559
 msgid "Module %1$s is not part of course %2$s."
 msgstr ""
 
-#: includes/data-port/models/class-sensei-import-question-model.php:51
+#. translators: Placeholder is the column name.
+#: includes/data-port/models/class-sensei-import-model.php:135
+msgid "Error in column \"%s\": It must be a whole number."
+msgstr ""
+
+#. translators: Placeholder is the column name.
+#: includes/data-port/models/class-sensei-import-model.php:154
+msgid "Error in column \"%s\": It must be a number."
+msgstr ""
+
+#. translators: Placeholder %1$s is the column name. %2$s is the accepted values.
+#: includes/data-port/models/class-sensei-import-model.php:174
+msgid "Error in column \"%1$s\": It must be one of the following: %2$s."
+msgstr ""
+
+#: includes/data-port/models/class-sensei-import-question-model.php:49
+msgid "Question does not contain a right answer."
+msgstr ""
+
+#: includes/data-port/models/class-sensei-import-question-model.php:63
 msgid "Question insertion failed."
 msgstr ""
 
 #. translators: First placeholder is name of field, second placeholder is error returned.
-#: includes/data-port/models/class-sensei-import-question-model.php:132
+#: includes/data-port/models/class-sensei-import-question-model.php:138
 msgid "Meta field \"%1$s\" is invalid: %2$s"
-msgstr ""
-
-#. translators: First placeholder is name of field.
-#: includes/data-port/models/class-sensei-import-question-model.php:150
-msgid "Meta field \"$1%s\" is could not be saved."
 msgstr ""
 
 #: includes/domain-models/class-sensei-domain-models-course.php:30
@@ -4499,8 +4648,8 @@ msgid "Job is not ready to be started."
 msgstr ""
 
 #: includes/rest-api/class-sensei-rest-api-data-port-controller.php:263
-#: includes/rest-api/class-sensei-rest-api-import-controller.php:97
-#: includes/rest-api/class-sensei-rest-api-import-controller.php:208
+#: includes/rest-api/class-sensei-rest-api-import-controller.php:102
+#: includes/rest-api/class-sensei-rest-api-import-controller.php:241
 msgid "Job has already been started."
 msgstr ""
 
@@ -4508,43 +4657,43 @@ msgstr ""
 msgid "Job could not be started"
 msgstr ""
 
-#: includes/rest-api/class-sensei-rest-api-data-port-controller.php:376
+#: includes/rest-api/class-sensei-rest-api-data-port-controller.php:381
 msgid "File name"
 msgstr ""
 
-#: includes/rest-api/class-sensei-rest-api-data-port-controller.php:380
+#: includes/rest-api/class-sensei-rest-api-data-port-controller.php:385
 msgid "Direct download URL for the file"
 msgstr ""
 
-#: includes/rest-api/class-sensei-rest-api-data-port-controller.php:391
+#: includes/rest-api/class-sensei-rest-api-data-port-controller.php:396
 msgid "Unique identifier for the job"
 msgstr ""
 
-#: includes/rest-api/class-sensei-rest-api-data-port-controller.php:399
+#: includes/rest-api/class-sensei-rest-api-data-port-controller.php:404
 msgid "Status of the job (setup, pending, or complete)"
 msgstr ""
 
-#: includes/rest-api/class-sensei-rest-api-data-port-controller.php:403
+#: includes/rest-api/class-sensei-rest-api-data-port-controller.php:408
 msgid "Percent complete"
 msgstr ""
 
-#: includes/rest-api/class-sensei-rest-api-data-port-controller.php:434
+#: includes/rest-api/class-sensei-rest-api-data-port-controller.php:439
 msgid "Object type"
 msgstr ""
 
-#: includes/rest-api/class-sensei-rest-api-data-port-controller.php:439
+#: includes/rest-api/class-sensei-rest-api-data-port-controller.php:444
 msgid "Source file line"
 msgstr ""
 
-#: includes/rest-api/class-sensei-rest-api-data-port-controller.php:444
+#: includes/rest-api/class-sensei-rest-api-data-port-controller.php:449
 msgid "Log severity level "
 msgstr ""
 
-#: includes/rest-api/class-sensei-rest-api-data-port-controller.php:450
+#: includes/rest-api/class-sensei-rest-api-data-port-controller.php:455
 msgid "Object descriptor"
 msgstr ""
 
-#: includes/rest-api/class-sensei-rest-api-data-port-controller.php:455
+#: includes/rest-api/class-sensei-rest-api-data-port-controller.php:460
 msgid "Log message"
 msgstr ""
 
@@ -4565,49 +4714,49 @@ msgstr ""
 msgid "Module not found"
 msgstr ""
 
-#: includes/rest-api/class-sensei-rest-api-import-controller.php:83
-#: includes/rest-api/class-sensei-rest-api-import-controller.php:158
+#: includes/rest-api/class-sensei-rest-api-import-controller.php:85
+#: includes/rest-api/class-sensei-rest-api-import-controller.php:187
 msgid "No file was uploaded."
 msgstr ""
 
-#: includes/rest-api/class-sensei-rest-api-import-controller.php:152
+#: includes/rest-api/class-sensei-rest-api-import-controller.php:179
 msgid "The file uploaded exceeds the maximum file size allowed."
 msgstr ""
 
-#: includes/rest-api/class-sensei-rest-api-import-controller.php:155
+#: includes/rest-api/class-sensei-rest-api-import-controller.php:183
 msgid "The file was only partially uploaded. Please try again."
 msgstr ""
 
-#: includes/rest-api/class-sensei-rest-api-import-controller.php:161
+#: includes/rest-api/class-sensei-rest-api-import-controller.php:191
 msgid "Missing a temporary folder to store the uploaded file."
 msgstr ""
 
-#: includes/rest-api/class-sensei-rest-api-import-controller.php:164
+#: includes/rest-api/class-sensei-rest-api-import-controller.php:195
 msgid "Failed to write the uploaded file to disk. Please contact your host to fix a possible permissions issue."
 msgstr ""
 
-#: includes/rest-api/class-sensei-rest-api-import-controller.php:167
+#: includes/rest-api/class-sensei-rest-api-import-controller.php:199
 msgid "A PHP Extension prevented the file upload. Please contact your host."
 msgstr ""
 
-#: includes/rest-api/class-sensei-rest-api-import-controller.php:170
+#: includes/rest-api/class-sensei-rest-api-import-controller.php:203
 msgid "File upload error."
 msgstr ""
 
-#: includes/rest-api/class-sensei-rest-api-import-controller.php:192
+#: includes/rest-api/class-sensei-rest-api-import-controller.php:225
 msgid "No active job has been found."
 msgstr ""
 
-#: includes/rest-api/class-sensei-rest-api-import-controller.php:200
+#: includes/rest-api/class-sensei-rest-api-import-controller.php:233
 msgid "File does not exist."
 msgstr ""
 
-#: includes/rest-api/class-sensei-rest-api-import-controller.php:218
+#: includes/rest-api/class-sensei-rest-api-import-controller.php:251
 msgid "Job file could not be deleted."
 msgstr ""
 
 #. translators: %1$s placeholder is object type; %2$s is result descriptor (success, error).
-#: includes/rest-api/class-sensei-rest-api-import-controller.php:249
+#: includes/rest-api/class-sensei-rest-api-import-controller.php:287
 msgid "Number of %1$s items with %2$s result"
 msgstr ""
 
@@ -4735,7 +4884,7 @@ msgstr ""
 msgid "You do not have any messages."
 msgstr ""
 
-#: includes/template-functions.php:100
+#: includes/template-functions.php:104
 msgid "Take This Course"
 msgstr ""
 
