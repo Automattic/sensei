@@ -57,7 +57,7 @@ class Sensei_Import_Course_Model extends Sensei_Import_Model {
 		} else {
 			if ( ! empty( $teacher_email ) ) {
 				$this->add_line_warning(
-					__( 'Teacher username is empty, email will be ignored.', 'sensei-lms' ),
+					__( 'Teacher Username is empty. Course teacher is set to the currently logged in user.', 'sensei-lms' ),
 					[
 						'code' => 'sensei_data_port_no_teacher',
 					]

@@ -381,7 +381,7 @@ class Sensei_Import_Course_Model_Test extends WP_UnitTestCase {
 		$logs = $job->get_logs();
 
 		$this->assertCount( 2, $logs, 'There should be two warnings created.' );
-		$this->assertStringStartsWith( 'Teacher username is empty', $logs[0]['message'], 'The first warning should be about username being empty.' );
+		$this->assertStringStartsWith( 'Teacher Username is empty', $logs[0]['message'], 'The first warning should be about username being empty.' );
 		$this->assertStringStartsWith( 'The user with the supplied username has a different email', $logs[1]['message'], 'The second warning should be about email being different.' );
 
 	}
