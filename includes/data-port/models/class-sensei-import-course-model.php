@@ -35,12 +35,33 @@ class Sensei_Import_Course_Model extends Sensei_Import_Model {
 		$teacher = $this->get_default_author();
 
 		$teacher_username = $this->get_value( Sensei_Data_Port_Course_Schema::COLUMN_TEACHER_USERNAME );
+		$teacher_email    = $this->get_value( Sensei_Data_Port_Course_Schema::COLUMN_TEACHER_EMAIL );
 
 		if ( ! empty( $teacher_username ) ) {
-			$teacher = Sensei_Data_Port_Utilities::create_user( $teacher_username, $this->get_value( Sensei_Data_Port_Course_Schema::COLUMN_TEACHER_EMAIL ), 'teacher' );
+			$teacher_user = Sensei_Data_Port_Utilities::create_user( $teacher_username, $teacher_email, 'teacher' );
 
-			if ( is_wp_error( $teacher ) ) {
-				return $teacher;
+			if ( is_wp_error( $teacher_user ) ) {
+				return $teacher_user;
+			}
+
+			if ( ! empty( $teacher_email ) && $teacher_email !== $teacher_user->user_email ) {
+				$this->add_line_warning(
+					__( 'The user with the supplied username has a different email. Teacher email will be ignored.', 'sensei-lms' ),
+					[
+						'code' => 'sensei_data_port_wrong_teacher_email',
+					]
+				);
+			}
+
+			$teacher = $teacher_user->ID;
+		} else {
+			if ( ! empty( $teacher_email ) ) {
+				$this->add_line_warning(
+					__( 'Teacher username is empty, email will be ignored.', 'sensei-lms' ),
+					[
+						'code' => 'sensei_data_port_no_teacher',
+					]
+				);
 			}
 		}
 
