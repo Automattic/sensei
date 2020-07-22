@@ -72,6 +72,25 @@ export function* updateJobState( jobId ) {
 }
 
 /**
+ * Run job batches and query progress until it is completed.
+ *
+ * @param {string} jobId Job ID.
+ */
+export const pollJobProgress = function* ( jobId ) {
+	const job = yield fetchFromAPI( {
+		path: buildJobEndpointUrl( jobId, [ 'process' ] ),
+		method: 'POST',
+	} );
+
+	yield setJobState( normalizeImportData( job ) );
+
+	const { status } = job.status;
+	if ( status !== 'completed' ) {
+		yield* pollJobProgress( jobId );
+	}
+};
+
+/**
  * @typedef  {Object} SetJobStateAction
  * @property {string} type Action type.
  * @property {Object} data Job state.
