@@ -333,6 +333,7 @@ class Sensei_Import_Course_Model_Test extends WP_UnitTestCase {
 		$task   = new Sensei_Import_Courses( $job );
 		$model  = Sensei_Import_Course_Model::from_source_array( 1, $this->lineData()[0][0], new Sensei_Data_Port_Course_Schema(), $task );
 		$result = $model->sync_post();
+		$model->add_warnings_to_job();
 
 		$this->assertTrue( $result );
 		$this->assertJobHasLogEntry( $job, 'No attachment with the specified file name was found.' );

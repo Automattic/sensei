@@ -43,6 +43,13 @@ abstract class Sensei_Import_Model extends Sensei_Data_Port_Model {
 	protected $task;
 
 	/**
+	 * Deferred warnings. So it can get the correct post ID.
+	 *
+	 * @var array
+	 */
+	private $deferred_warnings = [];
+
+	/**
 	 * Set up item from an array.
 	 *
 	 * @param int                             $line_number Line number.
@@ -118,13 +125,60 @@ abstract class Sensei_Import_Model extends Sensei_Data_Port_Model {
 			if ( null !== $value ) {
 				switch ( $config['type'] ) {
 					case 'int':
-						$value = '' === $value ? null : intval( $value );
+						if ( '' === $value ) {
+							$value = null;
+						} else {
+							if ( ! is_numeric( $value ) || floor( $value ) !== floatval( $value ) ) {
+								$this->add_line_warning(
+									sprintf(
+										// translators: Placeholder is the column name.
+										__( 'Error in column "%s": It must be a whole number.', 'sensei-lms' ),
+										$key
+									),
+									[
+										'code' => 'sensei_data_port_int_sanitization',
+									]
+								);
+							}
+							$value = intval( $value );
+						}
 						break;
 					case 'float':
-						$value = '' === $value ? null : floatval( $value );
+						if ( '' === $value ) {
+							$value = null;
+						} else {
+							if ( ! is_numeric( $value ) ) {
+								$this->add_line_warning(
+									sprintf(
+										// translators: Placeholder is the column name.
+										__( 'Error in column "%s": It must be a number.', 'sensei-lms' ),
+										$key
+									),
+									[
+										'code' => 'sensei_data_port_float_sanitization',
+									]
+								);
+							}
+							$value = floatval( $value );
+						}
 						break;
 					case 'bool':
-						if ( ! in_array( $value, [ '0', '1', 'true', 'false' ], true ) ) {
+						$accepted_options = [ '0', '1', 'true', 'false' ];
+
+						if ( '' === $value ) {
+							$value = null;
+						} elseif ( ! in_array( $value, $accepted_options, true ) ) {
+							$this->add_line_warning(
+								sprintf(
+									// translators: Placeholder %1$s is the column name. %2$s is the accepted values.
+									__( 'Error in column "%1$s": It must be one of the following: %2$s.', 'sensei-lms' ),
+									$key,
+									implode( ', ', $accepted_options )
+								),
+								[
+									'code' => 'sensei_data_port_bool_sanitization',
+								]
+							);
 							$value = null;
 						} else {
 							$value = in_array( $value, [ '1', 'true' ], true );
@@ -198,18 +252,32 @@ abstract class Sensei_Import_Model extends Sensei_Data_Port_Model {
 	}
 
 	/**
-	 * Add warning for a line in the model.
+	 * Add warning to a deferred queue for a line in the model.
 	 *
 	 * @param string $message  Warning message.
 	 * @param array  $log_data Log data.
 	 */
 	protected function add_line_warning( $message, $log_data = [] ) {
-		$this->task->get_job()->add_line_warning(
-			$this->get_model_key(),
-			$this->line_number,
-			$message,
-			$this->get_error_data( $log_data )
-		);
+		$this->deferred_warnings[] = [
+			'message'  => $message,
+			'log_data' => $log_data,
+		];
+	}
+
+	/**
+	 * Add deferred warnings to the job.
+	 */
+	public function add_warnings_to_job() {
+		foreach ( $this->deferred_warnings as $warning ) {
+			$this->task->get_job()->add_line_warning(
+				$this->get_model_key(),
+				$this->line_number,
+				$warning['message'],
+				$this->get_error_data( $warning['log_data'] )
+			);
+		}
+
+		$this->deferred_warnings = [];
 	}
 
 	/**

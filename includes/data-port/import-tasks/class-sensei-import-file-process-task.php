@@ -272,6 +272,9 @@ abstract class Sensei_Import_File_Process_Task
 			return false;
 		}
 
+		// Add warnings to the job when post sync is ready.
+		$model->add_warnings_to_job();
+
 		$this->get_job()->set_line_result( $model->get_model_key(), $line_number, Sensei_Import_Job::RESULT_SUCCESS );
 
 		return true;

@@ -349,6 +349,7 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 		$task   = new Sensei_Import_Lessons( $job );
 		$model  = Sensei_Import_Lesson_Model::from_source_array( 1, $lesson_data_with_course, new Sensei_Data_Port_Lesson_Schema(), $task );
 		$result = $model->sync_post();
+		$model->add_warnings_to_job();
 
 		$this->assertTrue( $result, 'Lesson should still be created when a course which does not exist is supplied.' );
 		$this->assertJobHasLogEntry( $job, "Course does not exist: {$lesson_data_with_course[ Sensei_Data_Port_Lesson_Schema::COLUMN_COURSE ]}." );
@@ -425,6 +426,7 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 		$task   = new Sensei_Import_Lessons( $job );
 		$model  = Sensei_Import_Lesson_Model::from_source_array( 1, $lesson_data_with_module, new Sensei_Data_Port_Lesson_Schema(), $task );
 		$result = $model->sync_post();
+		$model->add_warnings_to_job();
 
 		$this->assertTrue( $result, 'Lesson should still be created when a module supplied when no course is.' );
 		$this->assertJobHasLogEntry( $job, 'Module is defined while no course is specified.' );
@@ -444,6 +446,7 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 		$task   = new Sensei_Import_Lessons( $job );
 		$model  = Sensei_Import_Lesson_Model::from_source_array( 1, $lesson_data_with_module, new Sensei_Data_Port_Lesson_Schema(), $task );
 		$result = $model->sync_post();
+		$model->add_warnings_to_job();
 
 		$this->assertTrue( $result, 'Lesson should still be created when a module supplied for a lesson does not exist.' );
 		$this->assertJobHasLogEntry( $job, "Module does not exist: {$lesson_data_with_module[ Sensei_Data_Port_Lesson_Schema::COLUMN_MODULE ]}." );
@@ -451,6 +454,7 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 		$term   = Sensei_Data_Port_Utilities::get_term( 'the-module', 'module' );
 		$model  = Sensei_Import_Lesson_Model::from_source_array( 1, $lesson_data_with_module, new Sensei_Data_Port_Lesson_Schema(), $task );
 		$result = $model->sync_post();
+		$model->add_warnings_to_job();
 
 		$this->assertTrue( $result, 'Lesson should still be created when a module supplied for a lesson is not associated with the course.' );
 		$this->assertJobHasLogEntry( $job, "Module the-module is not part of course {$course_model->get_post_id()}." );
