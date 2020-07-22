@@ -15,7 +15,6 @@ const SenseiImportPage = () => {
 	const { error, navigationSteps } = useSelect( ( select ) => {
 		const store = select( 'sensei/import' );
 		return {
-			isFetching: store.isFetching(),
 			error: store.getFetchError(),
 			navigationSteps: store.getNavigationSteps(),
 		};
