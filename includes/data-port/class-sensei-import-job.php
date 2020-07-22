@@ -377,25 +377,28 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 			return $this->get_import_id( $post_type, substr( $import_id, 3 ) );
 		}
 
+		$post_args = [
+			'post_type'      => $post_type,
+			'posts_per_page' => 1,
+			'post_status'    => 'any',
+			'fields'         => 'ids',
+		];
+
 		if ( 0 === strpos( $import_id, 'slug:' ) ) {
-			$post = get_posts(
-				[
-					'post_type'      => $post_type,
-					'post_name__in'  => [ substr( $import_id, 5 ) ],
-					'posts_per_page' => 1,
-					'post_status'    => 'any',
-					'fields'         => 'ids',
-				]
-			);
+			$post_args['post_name__in'] = [ substr( $import_id, 5 ) ];
+		} else {
+			$post_id = (int) $import_id;
 
-			return empty( $post ) ? null : $post[0];
+			if ( empty( $post_id ) ) {
+				return null;
+			}
+
+			$post_args['p'] = $post_id;
 		}
 
-		if ( null !== get_post( (int) $import_id ) ) {
-			return (int) $import_id;
-		}
+		$post = get_posts( $post_args );
 
-		return null;
+		return empty( $post ) ? null : $post[0];
 	}
 
 }
