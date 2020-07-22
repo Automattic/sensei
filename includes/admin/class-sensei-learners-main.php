@@ -451,10 +451,12 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 							'</span>';
 					} else {
 						$enrol_label = esc_html__( 'Enroll', 'sensei-lms' );
+						$data_action = 'enrol';
 
 						// Check if it's enrolled by some provider.
 						if ( ! empty( $provider_results ) && in_array( true, $provider_results, true ) ) {
 							$enrol_label = esc_html__( 'Restore Enrollment', 'sensei-lms' );
+							$data_action = 'restore';
 						}
 
 						$enrol_action_url = wp_nonce_url(
@@ -474,7 +476,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 						$row_actions[] =
 							'<span>' .
-								'<a class="learner-action" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="enrol" href="' . esc_url( $enrol_action_url ) . '">' .
+								'<a class="learner-action" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="' . $data_action . '" href="' . esc_url( $enrol_action_url ) . '">' .
 									$enrol_label .
 								'</a>' .
 							'</span>';
