@@ -174,16 +174,16 @@ class Sensei_Import_Job_Test extends WP_UnitTestCase {
 				'message' => 'Test warning B',
 				'level'   => Sensei_Import_Job::LOG_LEVEL_NOTICE,
 				'data'    => [
-					'line' => 1,
+					'line' => 2,
 				],
 			],
 		];
 
 		$job->add_line_warning( Sensei_Import_Course_Model::MODEL_KEY, 1, $expected_logs[0]['message'] );
-		$job->add_line_warning( Sensei_Import_Course_Model::MODEL_KEY, 1, $expected_logs[1]['message'] );
-		$expected_results[ Sensei_Import_Course_Model::MODEL_KEY ]['warning']++;
+		$job->add_line_warning( Sensei_Import_Course_Model::MODEL_KEY, 2, $expected_logs[1]['message'] );
+		$expected_results[ Sensei_Import_Course_Model::MODEL_KEY ]['warning'] = 2;
 
-		$this->assertEquals( $expected_results, $job->get_result_counts(), 'Should have 1 warning' );
+		$this->assertEquals( $expected_results, $job->get_result_counts(), 'Should have 2 warnings' );
 		$this->assertEquals( $expected_logs, $job->get_logs() );
 	}
 
