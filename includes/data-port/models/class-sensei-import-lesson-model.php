@@ -152,6 +152,15 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 
 		$value = $this->get_value( Sensei_Data_Port_Lesson_Schema::COLUMN_NUM_QUESTIONS );
 		if ( null !== $value ) {
+			if ( 1 > $value ) {
+				$this->add_line_warning(
+					__( 'Number of Questions must be greater than or equal to 1.', 'sensei-lms' ),
+					[
+						'code' => 'sensei_data_port_lesson_num_questions_negative',
+					]
+				);
+				$value = null;
+			}
 			$meta['_show_questions'] = $value;
 		}
 
