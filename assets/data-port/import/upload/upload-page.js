@@ -1,8 +1,10 @@
 import { H, Section } from '@woocommerce/components';
 import { __ } from '@wordpress/i18n';
+import { Button } from '@wordpress/components';
+
 import UploadLevels from '../upload-level';
 import { Notice } from '../../notice';
-import { Button } from '@wordpress/components';
+import { formatString } from '../../../shared/helpers/format-string.js';
 
 /**
  * This component displays the upload page of the importer.
@@ -20,9 +22,23 @@ export const UploadPage = ( { state, isReady, submitStartImport } ) => {
 			<header className="sensei-data-port-step__header">
 				<H>{ __( 'Import content from a CSV file', 'sensei-lms' ) }</H>
 				<p>
-					{ __(
-						'This tool allows you to import courses, lessons, and questions from a CSV file.',
-						'sensei-lms'
+					{ formatString(
+						__(
+							'This tool enables you to import courses, lessons, and questions from a CSV file. Please review the {{link}}documentation{{/link}} to learn more about the expected file structure.',
+							'sensei-lms'
+						),
+						{
+							link: (
+								// eslint-disable-next-line jsx-a11y/anchor-has-content
+								<a
+									className="link__color-secondary"
+									href="https://senseilms.com/lesson/import/"
+									target="_blank"
+									type="external"
+									rel="noopener noreferrer"
+								/>
+							),
+						}
 					) }
 				</p>
 			</header>
