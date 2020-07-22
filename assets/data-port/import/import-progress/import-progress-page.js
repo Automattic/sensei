@@ -9,10 +9,9 @@ import { __ } from '@wordpress/i18n';
  * @param {Object} input.state  The import state.
  */
 export const ImportProgressPage = ( { state } ) => {
-	const { status, percentage } = state;
-	const isActive = status !== 'completed';
+	const { percentage } = state;
 
-	useProgressPolling( isActive );
+	useProgressPolling();
 
 	return (
 		<section className="sensei-data-port-step sensei-import-progress-page">
