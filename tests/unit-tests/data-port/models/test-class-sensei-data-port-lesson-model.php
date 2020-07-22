@@ -127,7 +127,7 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 					Sensei_Data_Port_Lesson_Schema::COLUMN_VIDEO          => 'video',
 					Sensei_Data_Port_Lesson_Schema::COLUMN_PASS_REQUIRED  => true,
 					Sensei_Data_Port_Lesson_Schema::COLUMN_PASSMARK       => 23.5,
-					Sensei_Data_Port_Lesson_Schema::COLUMN_NUM_QUESTIONS  => 0,
+					Sensei_Data_Port_Lesson_Schema::COLUMN_NUM_QUESTIONS  => null,
 					Sensei_Data_Port_Lesson_Schema::COLUMN_RANDOMIZE      => false,
 					Sensei_Data_Port_Lesson_Schema::COLUMN_AUTO_GRADE     => false,
 					Sensei_Data_Port_Lesson_Schema::COLUMN_QUIZ_RESET     => true,

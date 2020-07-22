@@ -375,9 +375,17 @@ class Sensei_Import_Course_Model_Test extends WP_UnitTestCase {
 			Sensei_Data_Port_Course_Schema::COLUMN_TEACHER_EMAIL => 'an_email@email.com',
 		];
 
-		Sensei_Import_Course_Model::from_source_array( 1, $no_username, new Sensei_Data_Port_Course_Schema(), $task )->sync_post();
-		Sensei_Import_Course_Model::from_source_array( 2, $wrong_email, new Sensei_Data_Port_Course_Schema(), $task )->sync_post();
-		Sensei_Import_Course_Model::from_source_array( 3, $correct_line, new Sensei_Data_Port_Course_Schema(), $task )->sync_post();
+		$model_no_username = Sensei_Import_Course_Model::from_source_array( 1, $no_username, new Sensei_Data_Port_Course_Schema(), $task );
+		$model_no_username->sync_post();
+		$model_no_username->add_warnings_to_job();
+
+		$model_wrong_email = Sensei_Import_Course_Model::from_source_array( 2, $wrong_email, new Sensei_Data_Port_Course_Schema(), $task );
+		$model_wrong_email->sync_post();
+		$model_wrong_email->add_warnings_to_job();
+
+		$model_correct_line = Sensei_Import_Course_Model::from_source_array( 3, $correct_line, new Sensei_Data_Port_Course_Schema(), $task );
+		$model_correct_line->sync_post();
+		$model_correct_line->add_warnings_to_job();
 
 		$logs = $job->get_logs();
 
