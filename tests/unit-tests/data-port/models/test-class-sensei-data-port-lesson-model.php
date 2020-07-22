@@ -580,7 +580,7 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 	 */
 	public function testLessonNumQuestionsValidation() {
 		$lesson_data_with_less_than_one_num_questions = [
-			Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE         => 'Required title',
+			Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE => 'Required title',
 			Sensei_Data_Port_Lesson_Schema::COLUMN_NUM_QUESTIONS => 0,
 		];
 
