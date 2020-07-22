@@ -269,14 +269,14 @@ describe( 'Importer selectors', () => {
 							line: 1,
 						},
 						{
-							type: 'question',
-							severity: 'notice',
-							line: 2,
-						},
-						{
 							type: 'lesson',
 							severity: 'notice',
 							line: 3,
+						},
+						{
+							type: 'question',
+							severity: 'notice',
+							line: 2,
 						},
 					],
 				},
