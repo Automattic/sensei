@@ -456,7 +456,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 						// Check if it's enrolled by some provider.
 						if ( ! empty( $provider_results ) && in_array( true, $provider_results, true ) ) {
 							$enrol_label = esc_html__( 'Restore Enrollment', 'sensei-lms' );
-							$data_action = 'restore';
+							$data_action = 'restore_enrollment';
 						}
 
 						$enrol_action_url = wp_nonce_url(
