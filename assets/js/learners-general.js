@@ -190,6 +190,8 @@ jQuery( document ).ready( function ( $ ) {
 					}
 				}
 			);
+
+			window.sensei_log_event( 'learner_management_' + current_action );
 		}
 	} );
 
