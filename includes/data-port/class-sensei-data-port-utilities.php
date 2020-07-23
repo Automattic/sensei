@@ -428,4 +428,29 @@ class Sensei_Data_Port_Utilities {
 	public static function replace_curly_quotes( $string ) {
 		return str_replace( [ '“', '”' ], '"', $string );
 	}
+
+	/**
+	 * Render a list of terms into comma-separated list.
+	 * Adds quotes if name contains commas.
+	 *
+	 * @param WP_Term[] $terms
+	 *
+	 * @return string
+	 */
+	public static function serialize_term_list( $terms ) {
+		// TODO Hierarchy support.
+
+		$names = array_map(
+			function( $term ) {
+				$name = $term->name;
+				if ( false !== strpos( ',', $name ) ) {
+					$name = '"' . str_replace( '"', '\"', $name ) . '"';
+				}
+				return $name;
+			},
+			$terms
+		);
+		return implode( ',', $names );
+	}
+
 }
