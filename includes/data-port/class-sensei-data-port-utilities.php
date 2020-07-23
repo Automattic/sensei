@@ -19,9 +19,9 @@ class Sensei_Data_Port_Utilities {
 	/**
 	 * Create a user. If the user exists, the method simply returns the user id..
 	 *
-	 * @param string $username  The username.
-	 * @param string $email     User's email.
-	 * @param string $role      The user's role.
+	 * @param string $username The username.
+	 * @param string $email User's email.
+	 * @param string $role The user's role.
 	 *
 	 * @return int|WP_Error  User id on success, WP_Error on failure.
 	 */
@@ -53,8 +53,8 @@ class Sensei_Data_Port_Utilities {
 	 * Get an attachment by providing its source. The source can be a URL or a filename from the media library. If the
 	 * source is an external URL, it will be retrieved and an appropriate attachment will be created.
 	 *
-	 * @param string $source             Filename or URL.
-	 * @param int    $parent_id          Id of the parent post.
+	 * @param string $source Filename or URL.
+	 * @param int    $parent_id Id of the parent post.
 	 * @param array  $allowed_mime_types Allowed mime types.
 	 *
 	 * @return int|WP_Error  Attachment id on success, WP_Error on failure.
@@ -104,8 +104,8 @@ class Sensei_Data_Port_Utilities {
 	 * downloaded file. If the file has been already downloaded an linked to an attachment, it returns the existing
 	 * attachment instead.
 	 *
-	 * @param string $external_url       The external url.
-	 * @param int    $parent_id          The attachment's parent id.
+	 * @param string $external_url The external url.
+	 * @param int    $parent_id The attachment's parent id.
 	 * @param array  $allowed_mime_types Allowed mime types.
 	 *
 	 * @return int|WP_Error  The attachment id or an error.
@@ -144,9 +144,9 @@ class Sensei_Data_Port_Utilities {
 		 * Increase this value in case big attachments are imported and the request to get them
 		 * times out.
 		 *
-		 * @since 3.3.0
+		 * @param float $timeout Time in seconds until a request times out. Default 10.
 		 *
-		 * @param float  $timeout  Time in seconds until a request times out. Default 10.
+		 * @since 3.3.0
 		 */
 		$timeout  = apply_filters( 'sensei_import_attachment_request_timeout', 10 );
 		$response = wp_safe_remote_get( $external_url, [ 'timeout' => $timeout ] );
@@ -204,7 +204,7 @@ class Sensei_Data_Port_Utilities {
 	/**
 	 * Validate file mime type by attachment ID.
 	 *
-	 * @param int   $attachment_id      Attachment ID.
+	 * @param int   $attachment_id Attachment ID.
 	 * @param array $allowed_mime_types Allowed mime types.
 	 *
 	 * @return true|WP_Error
@@ -219,9 +219,9 @@ class Sensei_Data_Port_Utilities {
 	/**
 	 * Validate file mime type.
 	 *
-	 * @param string $mime_type          File mime type.
+	 * @param string $mime_type File mime type.
 	 * @param array  $allowed_mime_types Allowed mime types.
-	 * @param string $file_name          File name to validate by extension, as fallback for administrators.
+	 * @param string $file_name File name to validate by extension, as fallback for administrators.
 	 *
 	 * @return true|WP_Error
 	 */
@@ -269,8 +269,8 @@ class Sensei_Data_Port_Utilities {
 	 * Get a term based on human readable string and create it if needed. If the taxonomy is hierarchical,
 	 * this method processes that as well and returns the \WP_Term object for the last in their hierarchy.
 	 *
-	 * @param string $term_name_path  Term name with optional hierarchy path, separated by " > ".
-	 * @param string $taxonomy_name   Name of the taxonomy.
+	 * @param string $term_name_path Term name with optional hierarchy path, separated by " > ".
+	 * @param string $taxonomy_name Name of the taxonomy.
 	 * @param int    $teacher_user_id User ID for the teacher (only needed for modules).
 	 *
 	 * @return WP_Term|false
@@ -322,8 +322,8 @@ class Sensei_Data_Port_Utilities {
 	/**
 	 * Generate the term slug.
 	 *
-	 * @param string $term_name       Term name.
-	 * @param string $taxonomy_name   Name of the taxonomy.
+	 * @param string $term_name Term name.
+	 * @param string $taxonomy_name Name of the taxonomy.
 	 * @param int    $teacher_user_id User ID for the teacher.
 	 *
 	 * @return string
@@ -339,10 +339,10 @@ class Sensei_Data_Port_Utilities {
 	/**
 	 * Generate the arguments for the term query.
 	 *
-	 * @param string $term_name       Term name.
-	 * @param string $taxonomy_name   Name of the taxonomy.
+	 * @param string $term_name Term name.
+	 * @param string $taxonomy_name Name of the taxonomy.
 	 * @param int    $teacher_user_id User ID for the teacher.
-	 * @param int    $parent_id       Parent ID (optional).
+	 * @param int    $parent_id Parent ID (optional).
 	 *
 	 * @return array
 	 */
@@ -365,10 +365,10 @@ class Sensei_Data_Port_Utilities {
 	/**
 	 * Create a new term.
 	 *
-	 * @param string $term_name       Term name.
-	 * @param string $taxonomy_name   Name of the taxonomy.
+	 * @param string $term_name Term name.
+	 * @param string $taxonomy_name Name of the taxonomy.
 	 * @param int    $teacher_user_id User ID for the teacher.
-	 * @param int    $parent_id       Parent ID (optional).
+	 * @param int    $parent_id Parent ID (optional).
 	 *
 	 * @return WP_Term|false
 	 */
@@ -391,7 +391,7 @@ class Sensei_Data_Port_Utilities {
 	/**
 	 * Split a list and ignore commas enclosed in quotes. Legitimate quotes should be HTML escaped.
 	 *
-	 * @param string $str_list      List in string form, separated by commas.
+	 * @param string $str_list List in string form, separated by commas.
 	 * @param bool   $remove_quotes Remove the surrounding quotes.
 	 *
 	 * @return array|string[]
@@ -406,7 +406,7 @@ class Sensei_Data_Port_Utilities {
 
 		if ( $remove_quotes ) {
 			$list = array_map(
-				function ( $value ) {
+				function( $value ) {
 					return trim( $value, self::CHARS_WHITESPACE_AND_QUOTES );
 				},
 				$list
