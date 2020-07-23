@@ -974,9 +974,14 @@ class Sensei_Core_Modules {
 	 */
 	public function calculate_user_module_progress( $user_id = 0, $module_id = 0, $course_id = 0 ) {
 
+		$post_status = array( 'publish' );
+		if ( user_can( $user_id, 'read_private_posts' ) ) {
+			$post_status[] = 'private';
+		}
+
 		$args    = array(
 			'post_type'      => 'lesson',
-			'post_status'    => 'publish',
+			'post_status'    => $post_status,
 			'posts_per_page' => -1,
 			'tax_query'      => array(
 				array(
@@ -1278,7 +1283,7 @@ class Sensei_Core_Modules {
 	public function taxonomy_column_content( $column_data, $column_name, $term_id ) {
 
 		$args = array(
-			'post_status'    => 'publish',
+			'post_status'    => array( 'publish', 'private' ),
 			'posts_per_page' => -1,
 			'tax_query'      => array(
 				array(
@@ -1687,7 +1692,12 @@ class Sensei_Core_Modules {
 
 		}
 
-		$course_lessons_post_status = isset( $wp_query ) && $wp_query->is_preview() ? 'all' : 'publish';
+		$course_lessons_post_status = isset( $wp_query ) && $wp_query->is_preview() ? 'all' : array( 'publish' );
+
+		// Only get private posts if user has proper capabilities.
+		if ( current_user_can( 'read_private_posts' ) && ! $wp_query->is_preview() ) {
+			$course_lessons_post_status[] = 'private';
+		}
 
 		$args = array(
 			'post_type'        => 'lesson',

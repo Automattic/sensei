@@ -285,7 +285,7 @@ class Sensei_Lesson {
 			'order'            => 'ASC',
 			'exclude'          => $post->ID,
 			'suppress_filters' => 0,
-			'post_status'      => [ 'publish', 'draft' ],
+			'post_status'      => array( 'publish', 'draft', 'private' ),
 		);
 		$posts_array = get_posts( $post_args );
 		// Build the HTML to Output
@@ -438,7 +438,7 @@ class Sensei_Lesson {
 			return;
 		}
 
-		if ( ! in_array( get_post_status( $lesson_id ), array( 'publish', 'future', 'pending' ), true ) ) {
+		if ( ! in_array( get_post_status( $lesson_id ), array( 'publish', 'future', 'pending', 'private' ), true ) ) {
 			return;
 		}
 

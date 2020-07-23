@@ -320,6 +320,7 @@ class Sensei_Course {
 			'order'            => 'DESC',
 			'exclude'          => $post->ID,
 			'suppress_filters' => 0,
+			'post_status'      => array( 'publish', 'private' ),
 		);
 		$posts_array = get_posts( $post_args );
 
@@ -1094,7 +1095,7 @@ class Sensei_Course {
 	 * @param string $fields (default: 'all'). WP only allows 3 types, but we will limit it to only 'ids' or 'all'
 	 * @return array{ type WP_Post }  $posts_array
 	 */
-	public function course_lessons( $course_id = 0, $post_status = 'publish', $fields = 'all' ) {
+	public function course_lessons( $course_id = 0, $post_status = array( 'publish', 'private' ), $fields = 'all' ) {
 
 		if ( is_a( $course_id, 'WP_Post' ) ) {
 			$course_id = $course_id->ID;
@@ -1241,7 +1242,7 @@ class Sensei_Course {
 			'author'           => $author_id,
 			'meta_key'         => '_lesson_course',
 			'meta_value'       => $course_id,
-			'post_status'      => 'publish',
+			'post_status'      => array( 'publish', 'private' ),
 			'suppress_filters' => 0,
 			'fields'           => 'ids', // less data to retrieve
 		);
@@ -1260,12 +1261,18 @@ class Sensei_Course {
 	 */
 	public function course_lesson_count( $course_id = 0 ) {
 
+		// Only get private posts if user has proper capabilities.
+		$post_status = array( 'publish' );
+		if ( current_user_can( 'read_private_posts' ) ) {
+			$post_status[] = 'private';
+		}
+
 		$lesson_args   = array(
 			'post_type'        => 'lesson',
 			'posts_per_page'   => -1,
 			'meta_key'         => '_lesson_course',
 			'meta_value'       => $course_id,
-			'post_status'      => 'publish',
+			'post_status'      => $post_status,
 			'suppress_filters' => 0,
 			'fields'           => 'ids', // less data to retrieve
 		);
@@ -2862,7 +2869,12 @@ class Sensei_Course {
 			return;
 		}
 
-		$course_lessons_post_status = isset( $wp_query ) && $wp_query->is_preview() ? 'all' : 'publish';
+		$course_lessons_post_status = isset( $wp_query ) && $wp_query->is_preview() ? 'all' : array( 'publish' );
+
+		// Only get private posts if user has proper capabilities.
+		if ( current_user_can( 'read_private_posts' ) && ! $wp_query->is_preview() ) {
+			$course_lessons_post_status[] = 'private';
+		}
 
 		$course_lesson_query_args = array(
 			'post_status'      => $course_lessons_post_status,
@@ -2909,6 +2921,7 @@ class Sensei_Course {
 				'fields'         => 'ids',
 				'meta_key'       => '_lesson_course',
 				'meta_value'     => intval( $course_id ),
+				'post_status'    => $course_lessons_post_status,
 			)
 		);
 		if ( ! empty( $course_lesson_order ) ) {

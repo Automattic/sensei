@@ -117,8 +117,8 @@ class Sensei_Course_Enrolment {
 			return $is_enrolled;
 		}
 
-		// Users can only be enrolled in a published course.
-		if ( 'publish' !== get_post_status( $this->course_id ) ) {
+		// Users can only be enrolled in a published course. Or in a private one.
+		if ( ! in_array( get_post_status( $this->course_id ), array( 'publish', 'private' ), true ) ) {
 			return false;
 		}
 

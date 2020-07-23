@@ -1500,9 +1500,10 @@ class Sensei_Utils {
 	 * and then updates the course metadata with that information.
 	 *
 	 * @since  1.7.0
-	 * @param  integer $course_id Course ID
-	 * @param  integer $user_id   User ID
-	 * @return mixed boolean or comment_ID
+	 * @param  integer $course_id Course ID.
+	 * @param  integer $user_id   User ID.
+	 * @param  bool    $trigger_completion_action
+	 * @return mixed boolean or comment_ID.
 	 */
 	public static function user_complete_course( $course_id = 0, $user_id = 0, $trigger_completion_action = true ) {
 		global  $wp_version;
@@ -1515,15 +1516,16 @@ class Sensei_Utils {
 			$course_status      = 'in-progress';
 			$course_metadata    = array();
 			$course_completion  = Sensei()->settings->settings['course_completion'];
-			$lessons_completed  = $total_lessons = 0;
+			$lessons_completed  = 0;
+			$total_lessons      = 0;
 			$lesson_status_args = array(
 				'user_id' => $user_id,
 				'status'  => 'any',
 				'type'    => 'sensei_lesson_status', /* FIELD SIZE 20 */
 			);
 
-			// Grab all of this Courses' lessons, looping through each...
-			$lesson_ids    = Sensei()->course->course_lessons( $course_id, 'publish', 'ids' );
+			// Grab all of this Courses' lessons (publish and private status), looping through each...
+			$lesson_ids    = Sensei()->course->course_lessons( $course_id, array( 'publish', 'private' ), 'ids' );
 			$total_lessons = count( $lesson_ids );
 				// ...if course completion not set to 'passed', and all lessons are complete or graded,
 				// ......then all lessons are 'passed'
@@ -1535,11 +1537,11 @@ class Sensei_Utils {
 				// ...if all lessons 'passed' then update the course status to complete
 			// The below checks if a lesson is fully completed, though maybe should be Utils::user_completed_lesson()
 			$all_lesson_statuses = array();
-			// In WordPress 4.1 get_comments() allows a single query to cover multiple comment_post_IDs
+			// In WordPress 4.1 get_comments() allows a single query to cover multiple comment_post_IDs.
 			if ( version_compare( $wp_version, '4.1', '>=' ) ) {
 				$lesson_status_args['post__in'] = $lesson_ids;
 				$all_lesson_statuses            = self::sensei_check_for_activity( $lesson_status_args, true );
-				// Need to always return an array, even with only 1 item
+				// Need to always return an array, even with only 1 item.
 				if ( ! is_array( $all_lesson_statuses ) ) {
 					$all_lesson_statuses = array( $all_lesson_statuses );
 				}
@@ -1549,18 +1551,18 @@ class Sensei_Utils {
 				foreach ( $lesson_ids as $lesson_id ) {
 					$lesson_status_args['post_id'] = $lesson_id;
 					$each_lesson_status            = self::sensei_check_for_activity( $lesson_status_args, true );
-					// Check for valid return before using
+					// Check for valid return before using.
 					if ( ! empty( $each_lesson_status->comment_approved ) ) {
 						$all_lesson_statuses[] = $each_lesson_status;
 					}
 				}
 			}
 			foreach ( $all_lesson_statuses as $lesson_status ) {
-				// If lessons are complete without needing quizzes to be passed
+				// If lessons are complete without needing quizzes to be passed.
 				if ( 'passed' != $course_completion ) {
 					// A user cannot 'complete' a course if a lesson...
 					// ...is still in progress
-					// ...hasn't yet been graded
+					// ...hasn't yet been graded.
 					$lesson_not_complete_stati = array( 'in-progress', 'ungraded' );
 					if ( ! in_array( $lesson_status->comment_approved, $lesson_not_complete_stati, true ) ) {
 						$lessons_completed++;
@@ -1576,14 +1578,14 @@ class Sensei_Utils {
 				$course_status = 'complete';
 			}
 
-			// Update meta data on how many lessons have been completed
+			// Update meta data on how many lessons have been completed.
 			$course_metadata['complete'] = $lessons_completed;
-			// update the overall percentage of the course lessons complete (or graded) compared to 'in-progress' regardless of the above
+			// Update the overall percentage of the course lessons complete (or graded) compared to 'in-progress' regardless of the above.
 			$course_metadata['percent'] = self::quotient_as_absolute_rounded_percentage( $lessons_completed, $total_lessons );
 
 			$activity_logged = self::update_course_status( $user_id, $course_id, $course_status, $course_metadata );
 
-			// Allow further actions
+			// Allow further actions.
 			if ( 'complete' == $course_status && true === $trigger_completion_action ) {
 				do_action( 'sensei_user_course_end', $user_id, $course_id );
 			}
