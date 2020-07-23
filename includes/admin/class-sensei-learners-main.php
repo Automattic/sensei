@@ -464,14 +464,14 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 								array(
 									'page'             => 'sensei_learners',
 									'view'             => 'learners',
-									'learner_action'   => 'enrol',
+									'learner_action'   => $data_action,
 									'course_id'        => $this->course_id,
 									'user_id'          => $user_activity->user_id,
 									'enrolment_status' => $this->enrolment_status,
 								),
 								admin_url( 'admin.php' )
 							),
-							'sensei-learner-action-enrol'
+							'sensei-learner-action-' . $data_action
 						);
 
 						$row_actions[] =

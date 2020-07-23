@@ -525,7 +525,7 @@ class Sensei_Learner_Management {
 
 		// phpcs:ignore WordPress.Security.NonceVerification -- Nonce checked below.
 		$learner_action = sanitize_text_field( wp_unslash( $_GET['learner_action'] ) );
-		if ( ! in_array( $learner_action, [ 'enrol', 'withdraw' ], true ) ) {
+		if ( ! in_array( $learner_action, [ 'enrol', 'restore', 'withdraw' ], true ) ) {
 			wp_safe_redirect( esc_url_raw( $redirect_url ) );
 			exit;
 		}
@@ -564,7 +564,7 @@ class Sensei_Learner_Management {
 
 		if ( 'withdraw' === $learner_action ) {
 			$result = $course_enrolment->withdraw( $user_id );
-		} elseif ( 'enrol' === $learner_action ) {
+		} elseif ( in_array( $learner_action, [ 'enrol', 'restore' ], true ) ) {
 			$result = $course_enrolment->enrol( $user_id );
 		}
 
