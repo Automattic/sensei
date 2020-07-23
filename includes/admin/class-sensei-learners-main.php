@@ -423,8 +423,9 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				$a_title              = sprintf( esc_html__( 'Edit &#8220;%s&#8221;', 'sensei-lms' ), esc_html( $title ) );
 				$edit_start_date_form = $this->get_edit_start_date_form( $user_activity, $post_id, $post_type, $object_type );
 
-				$actions     = [];
-				$row_actions = [];
+				$actions                      = [];
+				$row_actions                  = [];
+				$provider_ids_with_enrollment = array_keys( $provider_results, true, true );
 
 				if ( 'course' === $post_type ) {
 					if ( $is_user_enrolled ) {
@@ -454,7 +455,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 						$data_action = 'enrol';
 
 						// Check if it's enrolled by some provider.
-						if ( ! empty( $provider_results ) && in_array( true, $provider_results, true ) ) {
+						if ( ! empty( $provider_ids_with_enrollment ) ) {
 							$enrol_label = esc_html__( 'Restore Enrollment', 'sensei-lms' );
 							$data_action = 'restore_enrollment';
 						}
@@ -468,6 +469,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 									'course_id'        => $this->course_id,
 									'user_id'          => $user_activity->user_id,
 									'enrolment_status' => $this->enrolment_status,
+									'providers'        => implode( ',', $provider_ids_with_enrollment ),
 								),
 								admin_url( 'admin.php' )
 							),

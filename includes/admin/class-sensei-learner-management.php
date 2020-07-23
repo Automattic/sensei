@@ -545,6 +545,7 @@ class Sensei_Learner_Management {
 
 		$user_id   = intval( $_GET['user_id'] );
 		$course_id = intval( $_GET['course_id'] );
+		$providers = isset( $_GET['providers'] ) ? sanitize_text_field( wp_unslash( $_GET['providers'] ) ) : '';
 		$post      = get_post( $course_id );
 
 		$may_manage_enrolment = false;
@@ -566,6 +567,14 @@ class Sensei_Learner_Management {
 			$result = $course_enrolment->withdraw( $user_id );
 		} elseif ( in_array( $learner_action, [ 'enrol', 'restore_enrollment' ], true ) ) {
 			$result = $course_enrolment->enrol( $user_id );
+
+			$log_properties = [];
+
+			if ( 'restore_enrollment' === $learner_action ) {
+				$log_properties['provider'] = $providers;
+			}
+
+			sensei_log_event( 'learner_management_' . $learner_action, $log_properties );
 		}
 
 		if ( ! $result ) {
