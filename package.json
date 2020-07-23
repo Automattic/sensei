@@ -98,8 +98,5 @@
     "*.php": [
       "scripts/linter-new-php"
     ]
-  },
-  "resolutions": {
-    "@babel/preset-env": "7.10.4"
   }
 }
