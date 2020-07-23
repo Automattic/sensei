@@ -105,7 +105,7 @@ jQuery( document ).ready( function ( $ ) {
 			withdraw:
 				window.woo_learners_general_data.remove_from_course_confirm,
 			enrol: window.woo_learners_general_data.enrol_in_course_confirm,
-			restore:
+			restore_enrollment:
 				window.woo_learners_general_data.restore_enrollment_confirm,
 		};
 
