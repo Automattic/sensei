@@ -755,6 +755,12 @@ class Sensei_Learner_Management {
 						__( 'An error occurred while manually enrolling the learner.', 'sensei-lms' ),
 					];
 					break;
+				case 'error_restore_enrollment':
+					$notice = [
+						'error',
+						__( 'An error occurred while restoring learner enrollment.', 'sensei-lms' ),
+					];
+					break;
 				case 'error_enrol_multiple':
 					$notice = [
 						'error',
@@ -777,6 +783,12 @@ class Sensei_Learner_Management {
 					$notice = [
 						'updated',
 						__( 'Learner has been manually enrolled.', 'sensei-lms' ),
+					];
+					break;
+				case 'success_restore_enrollment':
+					$notice = [
+						'updated',
+						__( 'Learner enrollment has been restored.', 'sensei-lms' ),
 					];
 					break;
 				case 'success_bulk':
