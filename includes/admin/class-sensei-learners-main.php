@@ -425,7 +425,10 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 				$actions                      = [];
 				$row_actions                  = [];
-				$provider_ids_with_enrollment = array_keys( $provider_results, true, true );
+				$provider_ids_with_enrollment = implode(
+					',',
+					array_keys( $provider_results, true, true )
+				);
 
 				if ( 'course' === $post_type ) {
 					if ( $is_user_enrolled ) {
@@ -438,6 +441,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 									'course_id'        => $this->course_id,
 									'user_id'          => $user_activity->user_id,
 									'enrolment_status' => $this->enrolment_status,
+									'providers'        => $provider_ids_with_enrollment,
 								),
 								admin_url( 'admin.php' )
 							),
@@ -469,7 +473,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 									'course_id'        => $this->course_id,
 									'user_id'          => $user_activity->user_id,
 									'enrolment_status' => $this->enrolment_status,
-									'providers'        => implode( ',', $provider_ids_with_enrollment ),
+									'providers'        => $provider_ids_with_enrollment,
 								),
 								admin_url( 'admin.php' )
 							),
