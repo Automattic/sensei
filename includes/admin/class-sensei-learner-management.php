@@ -752,38 +752,38 @@ class Sensei_Learner_Management {
 				case 'error_enrol':
 					$notice = [
 						'error',
-						__( 'An error occurred while manually enrolling the learner.', 'sensei-lms' ),
+						__( 'An error occurred while enrolling the learner.', 'sensei-lms' ),
 					];
 					break;
 				case 'error_enrol_multiple':
 					$notice = [
 						'error',
-						__( 'An error occurred while manually enrolling the learners.', 'sensei-lms' ),
+						__( 'An error occurred while enrolling the learners.', 'sensei-lms' ),
 					];
 					break;
 				case 'error_withdraw':
 					$notice = [
 						'error',
-						__( 'An error occurred removing the learner\'s manual enrollment', 'sensei-lms' ),
+						__( 'An error occurred removing the learner\'s enrollment', 'sensei-lms' ),
 					];
 					break;
 				case 'success_withdraw':
 					$notice = [
 						'updated',
-						__( 'Learner\'s manual enrollment has been removed.', 'sensei-lms' ),
+						__( 'Learner\'s enrollment has been removed.', 'sensei-lms' ),
 					];
 					break;
 				case 'success_enrol':
 					$notice = [
 						'updated',
-						__( 'Learner has been manually enrolled.', 'sensei-lms' ),
+						__( 'Learner has been enrolled.', 'sensei-lms' ),
 					];
 					break;
 				case 'success_bulk':
 				case 'success_enrol_multiple':
 					$notice = [
 						'updated',
-						__( 'Learners have been manually enrolled.', 'sensei-lms' ),
+						__( 'Learners have been enrolled.', 'sensei-lms' ),
 					];
 					break;
 			}
