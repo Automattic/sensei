@@ -561,16 +561,12 @@ class Sensei_Course_Enrolment {
 		$enrolment_manager         = Sensei_Course_Enrolment_Manager::instance();
 		$manual_enrolment_provider = $enrolment_manager->get_manual_enrolment_provider();
 
-		// If user is manually enrolled, withdraw from manual provider.
-		if (
-			$manual_enrolment_provider instanceof Sensei_Course_Manual_Enrolment_Provider &&
-			$manual_enrolment_provider->is_enrolled( $user_id, $this->course_id )
-		) {
+		if ( $manual_enrolment_provider instanceof Sensei_Course_Manual_Enrolment_Provider ) {
 			$manual_enrolment_provider->withdraw_learner( $user_id, $this->course_id );
+		}
 
-			if ( ! $this->is_enrolled( $user_id, false ) ) {
-				return true;
-			}
+		if ( ! $this->is_enrolled( $user_id, false ) ) {
+			return true;
 		}
 
 		// If user is still enrolled for some reason, remove them.
@@ -591,10 +587,10 @@ class Sensei_Course_Enrolment {
 		// If user is removed, just restore.
 		if ( $this->is_learner_removed( $user_id ) ) {
 			$this->restore_learner( $user_id );
+		}
 
-			if ( $this->is_enrolled( $user_id, false ) ) {
-				return true;
-			}
+		if ( $this->is_enrolled( $user_id, false ) ) {
+			return true;
 		}
 
 		// If user isn't still enrolled, enroll manually.
