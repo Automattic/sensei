@@ -111,6 +111,9 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller_Test extends WP_UnitTestCase
 		$_POST['bulk_action_course_ids'] = implode( ',', $courses );
 		$_POST['bulk_action_user_ids']   = implode( ',', $users );
 
+		$this->mockCourseEnrolmentIsEnrolled( $courses[0], false );
+		$this->mockCourseEnrolmentIsEnrolled( $courses[1], false );
+
 		$mock_provider = $this->getMockBuilder( Sensei_Course_Manual_Enrolment_Provider::class )
 			->disableOriginalConstructor()
 			->setMethods( [ 'withdraw_learner', 'is_enrolled' ] )
@@ -175,5 +178,33 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller_Test extends WP_UnitTestCase
 		$property = new ReflectionProperty( 'Sensei_Course_Enrolment_Manager', 'enrolment_providers' );
 		$property->setAccessible( true );
 		$property->setValue( Sensei_Course_Enrolment_Manager::instance(), [ $mock_provider->get_id() => $mock_provider ] );
+	}
+
+	/**
+	 * Helper method to mock is_enrolled method in the Sensei_Course_Enrolment class.
+	 *
+	 * @param int  $course_id   Course ID.
+	 * @param bool $is_enrolled Value that is_enrolled method will return.
+	 *
+	 * @throws ReflectionException
+	 */
+	private function mockCourseEnrolmentIsEnrolled( $course_id, $is_enrolled ) {
+		$mock = $this->getMockBuilder( Sensei_Course_Enrolment::class )
+			->disableOriginalConstructor()
+			->setMethods( [ 'is_enrolled' ] )
+			->getMock();
+
+		$mock->method( 'is_enrolled' )->willReturn( $is_enrolled );
+
+		$instances_property = new ReflectionProperty( 'Sensei_Course_Enrolment', 'instances' );
+		$instances_property->setAccessible( true );
+
+		$instances               = $instances_property->getValue();
+		$instances[ $course_id ] = $mock;
+		$instances_property->setValue( $instances );
+
+		$course_id_property = new ReflectionProperty( 'Sensei_Course_Enrolment', 'course_id' );
+		$course_id_property->setAccessible( true );
+		$course_id_property->setValue( $mock, $course_id );
 	}
 }
