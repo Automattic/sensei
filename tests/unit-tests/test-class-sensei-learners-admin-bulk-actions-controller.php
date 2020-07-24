@@ -100,8 +100,41 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller_Test extends WP_UnitTestCase
 	}
 
 	/**
-	 * Tests that the manual enrolment is removed when the action is REMOVE_ENROLMENT and the user is not already
-	 * manually enroled.
+	 * Tests that the enrolment is restored when the action is ENROL_RESTORE_ENROLMENT and the user is
+	 * enroled by any provider.
+	 */
+	public function testRestoreProviderEnrolments() {
+		$users   = $this->factory->user->create_many( 2 );
+		$courses = $this->factory->course->create_many( 2 );
+
+		$_POST['sensei_bulk_action']     = Sensei_Learners_Admin_Bulk_Actions_Controller::ENROL_RESTORE_ENROLMENT;
+		$_POST['bulk_action_course_ids'] = implode( ',', $courses );
+		$_POST['bulk_action_user_ids']   = implode( ',', $users );
+
+		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Always_Provides::class );
+		$this->prepareEnrolmentManager();
+
+		foreach ( $courses as $course_id ) {
+			$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+			foreach ( $users as $user_id ) {
+				$this->assertTrue( $course_enrolment->is_enrolled( $user_id ) );
+				$course_enrolment->remove_learner( $user_id );
+				$this->assertFalse( $course_enrolment->is_enrolled( $user_id ) );
+			}
+		}
+
+		$this->controller->handle_http_post();
+
+		foreach ( $courses as $course_id ) {
+			$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+			foreach ( $users as $user_id ) {
+				$this->assertTrue( $course_enrolment->is_enrolled( $user_id ) );
+			}
+		}
+	}
+
+	/**
+	 * Tests that the manual enrolment is called to be removed when the action is REMOVE_ENROLMENT].
 	 */
 	public function testUsersAreUnEnroledWhenActionIsRemoveManualEnrolment() {
 		$users   = $this->factory->user->create_many( 2 );
@@ -116,20 +149,53 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller_Test extends WP_UnitTestCase
 
 		$mock_provider = $this->getMockBuilder( Sensei_Course_Manual_Enrolment_Provider::class )
 			->disableOriginalConstructor()
-			->setMethods( [ 'withdraw_learner', 'is_enrolled' ] )
+			->setMethods( [ 'withdraw_learner' ] )
 			->getMock();
 
-		$mock_provider->method( 'is_enrolled' )->willReturn( true, true, false, false );
 		$this->registerMockProvider( $mock_provider );
 
-		$mock_provider->expects( $this->exactly( 2 ) )
+		$mock_provider->expects( $this->exactly( 4 ) )
 			->method( 'withdraw_learner' )
 			->withConsecutive(
 				[ $users[0], $courses[0] ],
-				[ $users[0], $courses[1] ]
+				[ $users[0], $courses[1] ],
+				[ $users[1], $courses[0] ],
+				[ $users[1], $courses[1] ]
 			);
 
 		$this->controller->handle_http_post();
+	}
+
+	/**
+	 * Tests that the enrolment is removed when the action is REMOVE_ENROLMENT and the user is
+	 * enroled by any provider.
+	 */
+	public function testRemoveProviderEnrolments() {
+		$users   = $this->factory->user->create_many( 2 );
+		$courses = $this->factory->course->create_many( 2 );
+
+		$_POST['sensei_bulk_action']     = Sensei_Learners_Admin_Bulk_Actions_Controller::REMOVE_ENROLMENT;
+		$_POST['bulk_action_course_ids'] = implode( ',', $courses );
+		$_POST['bulk_action_user_ids']   = implode( ',', $users );
+
+		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Always_Provides::class );
+		$this->prepareEnrolmentManager();
+
+		foreach ( $courses as $course_id ) {
+			$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+			foreach ( $users as $user_id ) {
+				$this->assertTrue( $course_enrolment->is_enrolled( $user_id ) );
+			}
+		}
+
+		$this->controller->handle_http_post();
+
+		foreach ( $courses as $course_id ) {
+			$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+			foreach ( $users as $user_id ) {
+				$this->assertFalse( $course_enrolment->is_enrolled( $user_id ) );
+			}
+		}
 	}
 
 	/**
