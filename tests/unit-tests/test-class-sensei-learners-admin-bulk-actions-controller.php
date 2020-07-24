@@ -59,7 +59,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller_Test extends WP_UnitTestCase
 		$user   = $this->factory->user->create();
 		$course = $this->factory->course->create();
 
-		$_POST['sensei_bulk_action']     = Sensei_Learners_Admin_Bulk_Actions_Controller::MANUALLY_ENROL;
+		$_POST['sensei_bulk_action']     = Sensei_Learners_Admin_Bulk_Actions_Controller::ENROL_RESTORE_ENROLMENT;
 		$_POST['bulk_action_course_ids'] = $course + 1;
 		$_POST['bulk_action_user_ids']   = $user;
 
@@ -71,13 +71,13 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller_Test extends WP_UnitTestCase
 	}
 
 	/**
-	 * Tests that the user gets enrolled when the action is MANUALLY_ENROL and the user is not already manually enroled.
+	 * Tests that the user gets enrolled when the action is ENROL_RESTORE_ENROLMENT and the user is not already manually enroled.
 	 */
 	public function testUsersAreEnroledWhenActionIsManualEnrol() {
 		$users   = $this->factory->user->create_many( 2 );
 		$courses = $this->factory->course->create_many( 2 );
 
-		$_POST['sensei_bulk_action']     = Sensei_Learners_Admin_Bulk_Actions_Controller::MANUALLY_ENROL;
+		$_POST['sensei_bulk_action']     = Sensei_Learners_Admin_Bulk_Actions_Controller::ENROL_RESTORE_ENROLMENT;
 		$_POST['bulk_action_course_ids'] = implode( ',', $courses );
 		$_POST['bulk_action_user_ids']   = implode( ',', $users );
 
@@ -100,14 +100,14 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller_Test extends WP_UnitTestCase
 	}
 
 	/**
-	 * Tests that the manual enrolment is removed when the action is REMOVE_MANUAL_ENROLMENT and the user is not already
+	 * Tests that the manual enrolment is removed when the action is REMOVE_ENROLMENT and the user is not already
 	 * manually enroled.
 	 */
 	public function testUsersAreUnEnroledWhenActionIsRemoveManualEnrolment() {
 		$users   = $this->factory->user->create_many( 2 );
 		$courses = $this->factory->course->create_many( 2 );
 
-		$_POST['sensei_bulk_action']     = Sensei_Learners_Admin_Bulk_Actions_Controller::REMOVE_MANUAL_ENROLMENT;
+		$_POST['sensei_bulk_action']     = Sensei_Learners_Admin_Bulk_Actions_Controller::REMOVE_ENROLMENT;
 		$_POST['bulk_action_course_ids'] = implode( ',', $courses );
 		$_POST['bulk_action_user_ids']   = implode( ',', $users );
 

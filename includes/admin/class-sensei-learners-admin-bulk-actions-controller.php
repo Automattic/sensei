@@ -16,8 +16,8 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 
 	const NONCE_SENSEI_BULK_LEARNER_ACTIONS       = 'sensei-bulk-learner-actions';
 	const SENSEI_BULK_LEARNER_ACTIONS_NONCE_FIELD = '_sensei_bulk_learner_actions_field';
-	const MANUALLY_ENROL                          = 'manually_enrol';
-	const REMOVE_MANUAL_ENROLMENT                 = 'remove_manual_enrolment';
+	const ENROL_RESTORE_ENROLMENT                 = 'enrol_restore_enrolment';
+	const REMOVE_ENROLMENT                        = 'remove_enrolment';
 	const REMOVE_PROGRESS                         = 'remove_progress';
 	const COMPLETE_COURSE                         = 'complete_course';
 	const RECALCULATE_COURSE_COMPLETION           = 'recalculate_course_completion';
@@ -115,9 +115,9 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 		$this->learner_management = $management;
 
 		$this->known_bulk_actions = [
-			self::MANUALLY_ENROL                => __( 'Add manual enrollment', 'sensei-lms' ),
-			self::REMOVE_MANUAL_ENROLMENT       => __( 'Remove manual enrollment', 'sensei-lms' ),
-			self::REMOVE_PROGRESS               => __( 'Reset or remove progress', 'sensei-lms' ),
+			self::ENROL_RESTORE_ENROLMENT       => __( 'Enroll / Restore Enrollment', 'sensei-lms' ),
+			self::REMOVE_ENROLMENT              => __( 'Remove Enrollment', 'sensei-lms' ),
+			self::REMOVE_PROGRESS               => __( 'Reset or Remove Progress', 'sensei-lms' ),
 			self::COMPLETE_COURSE               => __( 'Recalculate Course(s) Completion (notify on complete)', 'sensei-lms' ),
 			self::RECALCULATE_COURSE_COMPLETION => __( 'Recalculate Course(s) Completion (do not notify on complete)', 'sensei-lms' ),
 		];
@@ -267,12 +267,12 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 		}
 
 		switch ( $action ) {
-			case self::MANUALLY_ENROL:
+			case self::ENROL_RESTORE_ENROLMENT:
 				if ( ! $manual_enrolment_provider->is_enrolled( $user_id, $course_id ) ) {
 					$manual_enrolment_provider->enrol_learner( $user_id, $course_id );
 				}
 				break;
-			case self::REMOVE_MANUAL_ENROLMENT:
+			case self::REMOVE_ENROLMENT:
 				if ( $manual_enrolment_provider->is_enrolled( $user_id, $course_id ) ) {
 					$manual_enrolment_provider->withdraw_learner( $user_id, $course_id );
 				}

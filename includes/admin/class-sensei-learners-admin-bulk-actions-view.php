@@ -311,8 +311,8 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 
 		$manual_provider = Sensei_Course_Enrolment_Manager::instance()->get_manual_enrolment_provider();
 		if ( ! $manual_provider ) {
-			unset( $bulk_actions[ Sensei_Learners_Admin_Bulk_Actions_Controller::MANUALLY_ENROL ] );
-			unset( $bulk_actions[ Sensei_Learners_Admin_Bulk_Actions_Controller::REMOVE_MANUAL_ENROLMENT ] );
+			unset( $bulk_actions[ Sensei_Learners_Admin_Bulk_Actions_Controller::ENROL_RESTORE_ENROLMENT ] );
+			unset( $bulk_actions[ Sensei_Learners_Admin_Bulk_Actions_Controller::REMOVE_ENROLMENT ] );
 		}
 
 		foreach ( $bulk_actions as $value => $translation ) {
