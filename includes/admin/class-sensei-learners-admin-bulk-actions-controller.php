@@ -260,12 +260,6 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	 * @param string  $action    The action.
 	 */
 	private function do_user_action( $user_id, $course_id, $action ) {
-		try {
-			$manual_enrolment_provider = Sensei_Course_Enrolment_Manager::instance()->get_manual_enrolment_provider();
-		} catch ( Exception $e ) {
-			$this->redirect_to_learner_admin_index( $e->getMessage() );
-		}
-
 		switch ( $action ) {
 			case self::ENROL_RESTORE_ENROLMENT:
 				$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
