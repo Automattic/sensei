@@ -39,7 +39,7 @@ class Sensei_Export_Courses
 		$image         = get_the_post_thumbnail_url( $post );
 		$video         = get_post_meta( $post->ID, '_course_video_embed', true );
 		$notifications = ! get_post_meta( $post->ID, 'disable_notification', true );
-		$categories    = wp_get_post_categories( $post->ID );
+		$categories    = get_the_terms( $post->ID, 'course-category' );
 		$modules       = Sensei()->modules->get_course_modules( $post->ID );
 
 		return [
@@ -48,12 +48,12 @@ class Sensei_Export_Courses
 			$post->post_name,
 			$post->post_content,
 			$post->post_excerpt,
-			$teacher->display_name,
-			$teacher->user_email,
+			$teacher ? $teacher->display_name : '',
+			$teacher ? $teacher->user_email : '',
 			Sensei_Data_Port_Utilities::serialize_term_list( $modules ),
-			$prerequisite || '',
+			$prerequisite ? $prerequisite : '',
 			$featured ? 1 : 0,
-			Sensei_Data_Port_Utilities::serialize_term_list( $categories ),
+			$categories ? Sensei_Data_Port_Utilities::serialize_term_list( $categories ) : '',
 			$image,
 			$video,
 			$notifications ? 1 : 0,
