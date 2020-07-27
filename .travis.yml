@@ -130,3 +130,12 @@ jobs:
     - stage: test
       <<: *e2e_defaults
       env: WP_VERSION=5.0 RUN_E2E=1
+    - stage: test
+      <<: *e2e_defaults
+      env: WP_VERSION=5.1 RUN_E2E=1
+    - stage: test
+      <<: *e2e_defaults
+      env: WP_VERSION=5.2 RUN_E2E=1
+    - stage: test
+      <<: *e2e_defaults
+      env: WP_VERSION=5.3 RUN_E2E=1
