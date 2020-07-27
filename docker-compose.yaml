@@ -3,6 +3,10 @@ version: '3.3'
 services:
 
   wordpress-www:
+    build:
+      context: ../../../tests/e2e/docker/wordpress
+      args:
+        WP_VERSION: "${WP_VERSION:-latest}"
     volumes:
       # This path is relative to the first config file
       # which is in node_modules/@woocommerce/e2e/env
