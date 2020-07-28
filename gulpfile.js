@@ -58,7 +58,7 @@ var paths = {
 
 gulp.task(
 	'clean',
-	gulp.series( function( cb ) {
+	gulp.series( function ( cb ) {
 		return del(
 			[ 'assets/dist/**', 'assets/vendor/select2/**', 'build' ],
 			cb
@@ -74,12 +74,12 @@ gulp.task( 'webpack', gulp.series( buildWebpack ) );
 
 gulp.task(
 	'block-editor-assets',
-	gulp.series( function( cb ) {
+	gulp.series( function ( cb ) {
 		exec( 'npm run block-editor-assets', cb );
 	} )
 );
 
-gulp.task( 'vendor', function() {
+gulp.task( 'vendor', function () {
 	return gulp
 		.src( paths.select2 )
 		.pipe( gulp.dest( 'assets/vendor/select2' ) );
@@ -95,13 +95,16 @@ gulp.task(
 gulp.task( 'build', gulp.series( 'test', 'clean', 'webpack', 'vendor' ) );
 gulp.task( 'build-unsafe', gulp.series( 'clean', 'webpack', 'vendor' ) );
 
-gulp.task( 'copy-package', function() {
+gulp.task( 'copy-package', function () {
 	return gulp
-		.src( paths.packageContents, { base: '.', ignore: '**/*.test.js' } )
+		.src( paths.packageContents, {
+			base: '.',
+			ignore: [ '**/*.test.js', 'assets/tests-helper/*.js' ],
+		} )
 		.pipe( gulp.dest( paths.packageDir ) );
 } );
 
-gulp.task( 'zip-package', function() {
+gulp.task( 'zip-package', function () {
 	return gulp
 		.src( paths.packageDir + '/**/*', { base: paths.packageDir + '/..' } )
 		.pipe( zip( paths.packageZip ) )
