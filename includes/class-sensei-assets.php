@@ -179,4 +179,56 @@ class Sensei_Assets {
 		);
 
 	}
+
+	/**
+	 * Change implementation for an already registered script.
+	 *
+	 * @param string $handle Name of the script to override.
+	 * @param string $src    New filename.
+	 * @param array  $deps   Specify to change script dependencies.
+	 *
+	 * @since 3.3.1
+	 */
+	public function override_script( $handle, $src, $deps = null ) {
+		$scripts = wp_scripts();
+		$script  = $scripts->query( $handle, 'registered' );
+
+		if ( $script ) {
+			$script->src = $this->asset_url( $src );
+			$script->ver = $this->version;
+
+			if ( null !== $deps ) {
+				$script->deps = $deps;
+			}
+		} else {
+			$this->register( $handle, $src, $deps );
+		}
+	}
+
+	/**
+	 * Use bundled WordPress client libraries for older versions.
+	 *
+	 * @since 3.3.1
+	 */
+	public function wp_compat() {
+		if ( version_compare( $GLOBALS['wp_version'], '5.2', '<' ) ) {
+
+			$this->override_script( 'wp-redux-routine', '../vendor/gutenberg/redux-routine.min.js' );
+			$this->override_script( 'wp-priority-queue', '../vendor/gutenberg/priority-queue.min.js' );
+			$this->override_script( 'wp-primitives', '../vendor/gutenberg/primitives.min.js', [ 'wp-element' ] );
+			$this->override_script( 'react', '../vendor/gutenberg/react.min.js' );
+			$this->override_script( 'react-dom', '../vendor/gutenberg/react-dom.min.js' );
+			$this->override_script( 'wp-polyfill', '../vendor/gutenberg/wp-polyfill.min.js', [] );
+			$this->override_script( 'wp-compose', '../vendor/gutenberg/compose.min.js' );
+			$this->override_script( 'wp-components', '../vendor/gutenberg/components.min.js' );
+			$this->override_script( 'wp-element', '../vendor/gutenberg/element.min.js' );
+			$this->override_script( 'wp-api-fetch', '../vendor/gutenberg/api-fetch.min.js' );
+			$this->override_script(
+				'wp-data',
+				'../vendor/gutenberg/data.min.js',
+				[ 'lodash', 'react', 'wp-compose', 'wp-deprecated', 'wp-element', 'wp-is-shallow-equal', 'wp-polyfill', 'wp-priority-queue', 'wp-redux-routine' ]
+			);
+		}
+	}
+
 }
