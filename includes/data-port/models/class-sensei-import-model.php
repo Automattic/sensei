@@ -185,7 +185,22 @@ abstract class Sensei_Import_Model extends Sensei_Data_Port_Model {
 						}
 						break;
 					case 'slug':
-						$value = sanitize_title( $value );
+						$raw_value = $value;
+						$value     = sanitize_title( $value );
+
+						if ( $raw_value !== $value ) {
+							$this->add_line_warning(
+								sprintf(
+									// translators: Placeholder is the column name.
+									__( 'Error in column "%s": It must only contain letters without accents, numbers and dashes.', 'sensei-lms' ),
+									$key
+								),
+								[
+									'code' => 'sensei_data_port_slug_sanitization',
+								]
+							);
+						}
+
 						break;
 					case 'email':
 						$value = sanitize_email( $value );

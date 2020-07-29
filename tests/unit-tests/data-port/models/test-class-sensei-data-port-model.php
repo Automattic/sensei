@@ -202,6 +202,28 @@ class Sensei_Data_Port_Model_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Check that slug is sanitized correctly and adds the warnings.
+	 */
+	public function testSanitizeSlug() {
+		$data = [
+			'slug' => 'slúg-@',
+		];
+
+		$expected = [
+			'slug' => 'slug',
+		];
+
+		$job   = Sensei_Import_Job::create( 'test', 0 );
+		$task  = new Sensei_Import_Courses( $job );
+		$model = Sensei_Import_Model_Mock::from_source_array( 1, $data, new Sensei_Data_Port_Schema_Mock(), $task );
+
+		$this->assertEquals( $expected, $model->get_data() );
+
+		$model->add_warnings_to_job();
+		$this->assertJobHasLogEntry( $job, 'Error in column "slug": It must only contain letters without accents, numbers and dashes.' );
+	}
+
+	/**
 	 * Tests various scenarios with get value.
 	 */
 	public function testGetValue() {
