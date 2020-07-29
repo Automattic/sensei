@@ -1,7 +1,7 @@
 *** Changelog ***
 
 2020.07.30 - version 3.3.1
-* Fix: Setup wizard and importer in WordPress 5.0 - 5.3
+* Fix: Setup wizard and importer in WordPress 5.0 - 5.3 [#3482](https://github.com/Automattic/sensei/pull/3482)
 
 2020.07.23 - version 3.3.0
 * New: Importer
