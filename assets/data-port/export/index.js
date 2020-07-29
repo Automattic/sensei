@@ -6,9 +6,9 @@ import { ExportPage } from './export-page';
  * Sensei export page data wrapper.
  */
 export const SenseiExportPage = () => {
-	const [ progress, { start, cancel, reset } ] = useStateManager(
+	const [ state, { start, cancel, reset } ] = useStateManager(
 		ExportJobState
 	);
 
-	return <ExportPage { ...{ progress, start, cancel, reset } } />;
+	return <ExportPage { ...{ state, start, cancel, reset } } />;
 };
