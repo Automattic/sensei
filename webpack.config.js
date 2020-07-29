@@ -2,6 +2,8 @@ const path = require( 'path' );
 const process = require( 'process' );
 const { fromPairs } = require( 'lodash' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
+const GenerateChunksMapPlugin = require( './webpack/generate-chunks-map-plugin' );
+
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
 const files = [
@@ -63,13 +65,15 @@ function mapFilesToEntries( filenames ) {
 	);
 }
 
+const baseDist = 'assets/dist/';
+
 function getWebpackConfig( env, argv ) {
 	const webpackConfig = getBaseWebpackConfig( { ...env, WP: true }, argv );
 	return {
 		...webpackConfig,
 		entry: mapFilesToEntries( files ),
 		output: {
-			path: path.resolve( './assets/dist' ),
+			path: path.resolve( '.', baseDist ),
 		},
 		devtool:
 			process.env.SOURCEMAP ||
@@ -80,6 +84,14 @@ function getWebpackConfig( env, argv ) {
 		node: {
 			crypto: 'empty',
 		},
+		plugins: [
+			...webpackConfig.plugins,
+			new GenerateChunksMapPlugin( {
+				output: path.resolve( './webpack/chunks-map.json' ),
+				ignoreSrcPattern: /^node_modules/,
+				baseDist,
+			} ),
+		],
 	};
 }
 
