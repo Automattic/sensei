@@ -461,7 +461,8 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 			 */
 			do_action( 'sensei_data_port_complete', $this );
 		} else {
-			$this->percentage = 100 * $completed_cycles / $total_cycles;
+			// The calc is based in 90% as maximum when it's not completed yet.
+			$this->percentage = 90 * $completed_cycles / $total_cycles;
 		}
 
 		$this->has_changed = true;
