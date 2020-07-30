@@ -1,14 +1,18 @@
-import { useStateManager } from '../../react-hooks/use-state-manager';
-import { ExportJobState } from './export-job-state';
 import { ExportPage } from './export-page';
+import registerExportStore, { EXPORT_STORE } from './store';
+import { withSelect, withDispatch } from '@wordpress/data';
+import { compose } from '@wordpress/compose';
 
-/**
- * Sensei export page data wrapper.
- */
-export const SenseiExportPage = () => {
-	const [ state, { start, cancel, reset } ] = useStateManager(
-		ExportJobState
-	);
+registerExportStore();
 
-	return <ExportPage { ...{ state, start, cancel, reset } } />;
-};
+export default compose(
+	withSelect( ( select ) => {
+		return {
+			state: select( EXPORT_STORE ).getJob(),
+		};
+	} ),
+	withDispatch( ( dispatch ) => {
+		const { start, cancel, reset } = dispatch( EXPORT_STORE );
+		return { start, cancel, reset };
+	} )
+)( ExportPage );

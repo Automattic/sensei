@@ -25,3 +25,11 @@ export const composeFetchAction = (
 			yield { type: errorAction, error };
 		}
 	};
+
+export const createSimpleReducer = ( reducers, defaultState ) => (
+	state = defaultState,
+	action
+) => {
+	const reducer = reducers[ action.type ] || reducers.DEFAULT;
+	return reducer( action, state );
+};
