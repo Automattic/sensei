@@ -21,6 +21,8 @@
     "@wordpress/api-fetch": "3.14.0",
     "@wordpress/base-styles": "1.9.0",
     "@wordpress/components": "9.4.1",
+    "@wordpress/data": "4.22.3",
+    "@wordpress/data-controls": "1.16.3",
     "@wordpress/i18n": "3.11.0",
     "@wordpress/url": "2.14.0",
     "interpolate-components": "1.1.1",
