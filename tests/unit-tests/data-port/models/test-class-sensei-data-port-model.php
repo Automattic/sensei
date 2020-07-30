@@ -220,7 +220,7 @@ class Sensei_Data_Port_Model_Test extends WP_UnitTestCase {
 		$this->assertEquals( $expected, $model->get_data() );
 
 		$model->add_warnings_to_job();
-		$this->assertJobHasLogEntry( $job, 'Error in column "slug": It must only contain letters without accents, numbers and dashes.' );
+		$this->assertJobHasLogEntry( $job, 'Error in column "slug": It contains invalid characters.' );
 	}
 
 	/**

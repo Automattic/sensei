@@ -192,7 +192,7 @@ abstract class Sensei_Import_Model extends Sensei_Data_Port_Model {
 							$this->add_line_warning(
 								sprintf(
 									// translators: Placeholder is the column name.
-									__( 'Error in column "%s": It must only contain letters without accents, numbers and dashes.', 'sensei-lms' ),
+									__( 'Error in column "%s": It contains invalid characters.', 'sensei-lms' ),
 									$key
 								),
 								[
