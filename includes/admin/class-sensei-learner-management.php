@@ -764,7 +764,7 @@ class Sensei_Learner_Management {
 				case 'error_withdraw':
 					$notice = [
 						'error',
-						__( 'An error occurred removing the learner\'s enrollment', 'sensei-lms' ),
+						__( 'An error occurred removing the learner\'s enrollment.', 'sensei-lms' ),
 					];
 					break;
 				case 'success_withdraw':
