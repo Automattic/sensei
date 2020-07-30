@@ -48,6 +48,7 @@
     "del": "5.1.0",
     "eslint": "7.4.0",
     "eslint-config-prettier": "6.11.0",
+    "gettext-parser": "4.0.4",
     "gulp": "4.0.2",
     "gulp-zip": "5.0.2",
     "husky": "4.2.5",
