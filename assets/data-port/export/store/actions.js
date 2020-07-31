@@ -1,6 +1,9 @@
 import { apiFetch, select } from '@wordpress/data-controls';
 import { EXPORT_STORE } from './index';
-import { clearSchedule, schedule } from './schedule';
+import {
+	clearSchedule,
+	schedule,
+} from '../../../shared/data/schedule-controls';
 
 const EXPORT_REST_API = '/sensei-internal/v1/export';
 
@@ -29,7 +32,7 @@ export const setJob = ( job ) => ( { type: 'SET_JOB', job } );
  *
  * @param {string} error Error message.#
  */
-export const setError = ( error ) => ( { type: 'SET_ERROR', error } );
+export const setRequestError = ( error ) => ( { type: 'SET_ERROR', error } );
 
 /**
  * Clear job state.
@@ -79,35 +82,61 @@ export const cancel = function* () {
  * Update job state from REST API.
  */
 export const update = function* () {
-	yield sendJobRequest( {} );
+	yield sendJobRequest();
+};
+
+/**
+ * Check if there is an active job and load it.
+ */
+export const checkForActiveJob = function* () {
+	yield sendJobRequest( { jobId: 'active' } );
+};
+
+/**
+ * Perform REST API request for a job and apply returned job state.
+ *
+ * @param {Object} options        apiFetch request object.
+ * @param {string?} options.path  Request sub-path in exporter API.
+ * @param {string?} options.jobId Override job ID
+ */
+export const sendJobRequest = function* ( options = {} ) {
+	let { path, jobId, ...requestOptions } = options;
+
+	if ( ! jobId ) {
+		jobId = yield select( EXPORT_STORE, 'getJobId' );
+		if ( ! jobId ) {
+			yield setRequestError( 'No job ID' );
+			return;
+		}
+	}
+
+	yield sendRequest( { path, jobId, ...requestOptions } );
 };
 
 /**
  * Perform REST API request and apply returned job state.
  *
  * @param {Object} options Request object.
+ * @param {string} options.path Request sub-path in exporter API.
+ * @param {string?} options.jobId Job ID
  */
-export const sendJobRequest = function* ( options = {} ) {
-	let jobId = yield select( EXPORT_STORE, 'getJobId' );
-	let { path, job: useJob, ...requestOptions } = options;
+export const sendRequest = function* ( options = {} ) {
+	let { path, jobId, ...requestOptions } = options;
 
-	if ( useJob && ! jobId ) {
-		if ( 'active' === useJob ) {
-			jobId = 'active';
-		} else {
-			yield setError( 'No job ID' );
-			return;
-		}
-	}
+	path = [ EXPORT_REST_API, jobId, path ].filter( ( i ) => !! i ).join( '/' );
+
 	try {
-		path = [ EXPORT_REST_API, jobId, path ]
-			.filter( ( i ) => !! i )
-			.join( '/' );
 		const job = yield apiFetch( { path, ...requestOptions } );
 
 		yield handleResult( job );
 	} catch ( error ) {
-		yield setError( error.message );
+		if (
+			'active' === jobId &&
+			'sensei_data_port_job_not_found' === error.code
+		) {
+			return yield clearJob();
+		}
+		yield setRequestError( error.message );
 	}
 };
 
@@ -115,7 +144,7 @@ export const sendJobRequest = function* ( options = {} ) {
  * Request to create a new job.
  */
 export const createJob = function* () {
-	yield sendJobRequest( {
+	yield sendRequest( {
 		method: 'POST',
 	} );
 };

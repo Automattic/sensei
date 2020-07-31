@@ -8,7 +8,8 @@ registerExportStore();
 export default compose(
 	withSelect( ( select ) => {
 		return {
-			state: select( EXPORT_STORE ).getJob(),
+			job: select( EXPORT_STORE ).getJob(),
+			error: select( EXPORT_STORE ).getRequestError(),
 		};
 	} ),
 	withDispatch( ( dispatch ) => {

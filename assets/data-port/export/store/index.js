@@ -16,18 +16,28 @@ const reducers = {
 };
 
 /**
+ * Export store resolvers.
+ */
+const resolvers = {
+	/**
+	 * Check for active job on first access.
+	 */
+	getJob: () => actions.checkForActiveJob(),
+};
+
+/**
  * Export store selectors
  */
 const selectors = {
 	getJobId: ( { job } ) => ( job && job.id ) || null,
-	getJob: ( { job, error } ) =>
+	getJob: ( { job } ) =>
 		job
 			? {
-					error,
 					...job,
 					...job.status,
 			  }
 			: null,
+	getRequestError: ( { error } ) => error,
 };
 
 export const EXPORT_STORE = 'sensei/export';
@@ -37,6 +47,7 @@ const registerExportStore = () => {
 		reducer: createReducerFromActionMap( reducers, {} ),
 		actions,
 		selectors,
+		resolvers,
 		controls: { ...dataControls, ...scheduleControls },
 	} );
 };
