@@ -1,11 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { useSelect, useDispatch } from '@wordpress/data';
-import {
-	render,
-	useState,
-	useEffect,
-	useLayoutEffect,
-} from '@wordpress/element';
+import { render, useLayoutEffect } from '@wordpress/element';
 import { DataPortStepper } from './stepper';
 import registerImportStore from './import/data';
 import { Spinner } from '@woocommerce/components';
@@ -27,20 +22,6 @@ const SenseiImportPage = () => {
 	}, [] );
 
 	const { fetchCurrentJobState } = useDispatch( 'sensei/import' );
-
-	const [ currentStep, setCurrentStep ] = useState();
-
-	useEffect( () => {
-		const newStep = navigationSteps.find( ( step ) => step.isNext );
-
-		if ( 'complete' === newStep.key ) {
-			setTimeout( () => {
-				setCurrentStep( newStep );
-			}, 1000 ); // CSS animation time to complete the progress bar.
-		} else {
-			setCurrentStep( newStep );
-		}
-	}, [ navigationSteps ] );
 
 	// We want to show the loading before any content.
 	useLayoutEffect( () => {
@@ -70,6 +51,8 @@ const SenseiImportPage = () => {
 			</Notice>
 		);
 	}
+
+	const currentStep = navigationSteps.find( ( step ) => step.isNext );
 
 	return (
 		<div className="sensei-import-wrapper">
