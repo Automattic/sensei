@@ -1,6 +1,6 @@
 /**
  * The purpose of this script is to add the dist references to the
- * pot file based on the chunk map (generated through Webpack).
+ * pot file based on the chunks map (generated through Webpack).
  *
  * If a message in the pot file contains `src/file.js` as references
  * and this file was bundled as part of the `dist/dist.js`, the
@@ -9,7 +9,7 @@
 
 const fs = require( 'fs' );
 const { po } = require( 'gettext-parser' );
-const chunkMap = require( '../node_modules/.cache/sensei-lms/chunks-map.json' );
+const chunksMap = require( '../node_modules/.cache/sensei-lms/chunks-map.json' );
 
 const POT_PATH = './lang/sensei-lms.pot';
 
@@ -29,7 +29,7 @@ const run = () => {
  * @return {string} Pot string after adding new references.
  */
 const addDistReferences = ( potString ) => {
-	const chunkMapBySource = getChunkMapBySource( chunkMap );
+	const chunksMapBySource = getChunksMapBySource( chunksMap );
 
 	const potObject = po.parse( potString );
 	const { translations } = potObject;
@@ -46,7 +46,7 @@ const addDistReferences = ( potString ) => {
 			if ( reference ) {
 				message.comments.reference = getReferenceWithDist(
 					reference,
-					chunkMapBySource
+					chunksMapBySource
 				);
 			}
 		} );
@@ -58,22 +58,22 @@ const addDistReferences = ( potString ) => {
 /**
  * Add the dist to the reference.
  *
- * @param {string} referenceString  Current reference string to add the dist references.
- * @param {Object} chunkMapBySource Chunk map by source.
+ * @param {string} referenceString   Current reference string to add the dist references.
+ * @param {Object} chunksMapBySource Chunks map by source.
  *
  * @return {string} References with the respective dist files.
  */
-const getReferenceWithDist = ( referenceString, chunkMapBySource ) => {
+const getReferenceWithDist = ( referenceString, chunksMapBySource ) => {
 	const references = referenceString.split( '\n' );
 	let distReferences = [];
 
 	references.forEach( ( reference ) => {
 		const referencePath = reference.replace( /:[0-9]+$/, '' );
 
-		if ( chunkMapBySource[ referencePath ] ) {
+		if ( chunksMapBySource[ referencePath ] ) {
 			distReferences = [
 				...distReferences,
-				...chunkMapBySource[ referencePath ],
+				...chunksMapBySource[ referencePath ],
 			];
 		}
 	} );
@@ -96,14 +96,14 @@ const addLineToReferences = ( references, line ) =>
 	references.map( ( reference ) => reference + ':' + line );
 
 /**
- * Invert the chunk map, getting by source.
+ * Invert the chunks map, getting by source.
  *
- * @param {Object} chunkMapByDist Chunk map by dist.
+ * @param {Object} chunksMapByDist Chunks map by dist.
  *
- * @return {Object} Chunk map by source.
+ * @return {Object} Chunks map by source.
  */
-const getChunkMapBySource = ( chunkMapByDist ) =>
-	Object.entries( chunkMapByDist ).reduce( ( acc, [ dist, sources ] ) => {
+const getChunksMapBySource = ( chunksMapByDist ) =>
+	Object.entries( chunksMapByDist ).reduce( ( acc, [ dist, sources ] ) => {
 		sources.forEach( ( source ) => {
 			if ( ! acc[ source ] ) {
 				acc[ source ] = [ dist ];

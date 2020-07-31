@@ -34,7 +34,7 @@ class GenerateChunksMapPlugin {
 
 	apply( compiler ) {
 		compiler.hooks.done.tap( PLUGIN_NAME, ( { compilation } ) => {
-			// Generate chunks map
+			// Generate chunks map.
 			const { chunks } = compilation;
 
 			const chunksMap = chunks.reduce( ( map, chunk ) => {
