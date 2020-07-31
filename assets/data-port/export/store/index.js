@@ -42,7 +42,7 @@ const selectors = {
 
 export const EXPORT_STORE = 'sensei/export';
 
-const registerExportStore = () => {
+const registerExportStore = () =>
 	registerStore( EXPORT_STORE, {
 		reducer: createReducerFromActionMap( reducers, {} ),
 		actions,
@@ -50,6 +50,5 @@ const registerExportStore = () => {
 		resolvers,
 		controls: { ...dataControls, ...scheduleControls },
 	} );
-};
 
 export default registerExportStore;

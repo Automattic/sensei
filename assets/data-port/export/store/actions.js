@@ -8,7 +8,7 @@ import {
 const EXPORT_REST_API = '/sensei-internal/v1/export';
 
 /**
- * @typedef Job
+ * @typedef JobResponse
  *
  * @property {Object}   status            Job status.
  * @property {string}   status.status     Job status name.
@@ -21,16 +21,16 @@ const EXPORT_REST_API = '/sensei-internal/v1/export';
  */
 
 /**
- * Set job state.
+ * Set job state. Clears request error.
  *
- * @param {Job} job Job state.
+ * @param {JobResponse} job Job state.
  */
 export const setJob = ( job ) => ( { type: 'SET_JOB', job } );
 
 /**
- * Set error.
+ * Set request error.
  *
- * @param {string} error Error message.#
+ * @param {string} error Error message.
  */
 export const setRequestError = ( error ) => ( { type: 'SET_ERROR', error } );
 
@@ -50,9 +50,12 @@ export const start = function* ( types ) {
 		status: 'started',
 		percentage: 0,
 	} );
-
-	yield createJob();
+	const jobId = yield select( EXPORT_STORE, 'getJobId' );
+	if ( ! jobId ) {
+		yield createJob();
+	}
 	yield startJob( types );
+	yield update();
 };
 
 /**
@@ -61,8 +64,8 @@ export const start = function* ( types ) {
  * @access public
  */
 export const reset = function* () {
-	yield clearJob();
 	yield clearSchedule();
+	yield clearJob();
 };
 
 /**
@@ -82,14 +85,28 @@ export const cancel = function* () {
  * Update job state from REST API.
  */
 export const update = function* () {
-	yield sendJobRequest();
+	const job = yield sendJobRequest();
+
+	// TODO handle outdated response
+
+	if ( job && ! job.error && 'pending' === job.status.status ) {
+		yield schedule( update, 1000 );
+	}
 };
 
 /**
  * Check if there is an active job and load it.
  */
 export const checkForActiveJob = function* () {
-	yield sendJobRequest( { jobId: 'active' } );
+	const job = yield* sendJobRequest( { jobId: 'active' } );
+
+	if ( job ) {
+		if ( 'setup' === job.status.status ) {
+			yield cancel();
+		} else {
+			yield update();
+		}
+	}
 };
 
 /**
@@ -98,6 +115,7 @@ export const checkForActiveJob = function* () {
  * @param {Object} options        apiFetch request object.
  * @param {string?} options.path  Request sub-path in exporter API.
  * @param {string?} options.jobId Override job ID
+ * @return {JobResponse} job
  */
 export const sendJobRequest = function* ( options = {} ) {
 	let { path, jobId, ...requestOptions } = options;
@@ -106,11 +124,11 @@ export const sendJobRequest = function* ( options = {} ) {
 		jobId = yield select( EXPORT_STORE, 'getJobId' );
 		if ( ! jobId ) {
 			yield setRequestError( 'No job ID' );
-			return;
+			return undefined;
 		}
 	}
 
-	yield sendRequest( { path, jobId, ...requestOptions } );
+	return yield* sendRequest( { path, jobId, ...requestOptions } );
 };
 
 /**
@@ -128,7 +146,8 @@ export const sendRequest = function* ( options = {} ) {
 	try {
 		const job = yield apiFetch( { path, ...requestOptions } );
 
-		yield handleResult( job );
+		if ( ! job || ! jobId || jobId === job.id || 'active' === jobId )
+			return yield handleJobResponse( job );
 	} catch ( error ) {
 		if (
 			'active' === jobId &&
@@ -166,16 +185,15 @@ export const startJob = function* ( types ) {
  * Set job state from response.
  * Start polling for changes if the job status is not completed.
  *
- * @param {Job} job
+ * @param {JobResponse} job
+ * @return {JobResponse} Job.
  */
-export const handleResult = function* ( job ) {
+export const handleJobResponse = function* ( job ) {
 	if ( ! job || ! job.id || job.deleted ) {
-		return yield clearJob();
+		yield clearJob();
+		return undefined;
 	}
-	const { status, error } = job;
 	yield setJob( job );
 
-	if ( ! error && 'pending' === status.status ) {
-		yield* schedule( update, 1000 );
-	}
+	return job;
 };
