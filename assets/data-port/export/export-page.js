@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { useSenseiColorTheme } from '../../react-hooks/use-sensei-color-theme';
+import { Notice } from '@wordpress/components';
 import { ExportProgressPage } from './export-progress-page';
 import { ExportSelectContentPage } from './export-select-content-page';
 
@@ -7,12 +8,13 @@ import { ExportSelectContentPage } from './export-select-content-page';
  * Export page.
  *
  * @param {Object} props
- * @param {Object} props.state
+ * @param {Object} props.job
+ * @param {Object} props.error
  * @param {Function} props.start
  * @param {Function} props.reset
  * @param {Function} props.cancel
  */
-export const ExportPage = ( { state, start, reset, cancel } ) => {
+export const ExportPage = ( { job, error, start, reset, cancel } ) => {
 	useSenseiColorTheme();
 
 	return (
@@ -30,11 +32,13 @@ export const ExportPage = ( { state, start, reset, cancel } ) => {
 						) }
 					</p>
 				</header>
-				{ state ? (
-					<ExportProgressPage
-						state={ state }
-						{ ...{ reset, cancel } }
-					/>
+				{ error && (
+					<Notice status="error" isDismissible={ false }>
+						{ error }
+					</Notice>
+				) }
+				{ job ? (
+					<ExportProgressPage job={ job } { ...{ reset, cancel } } />
 				) : (
 					<ExportSelectContentPage onSubmit={ start } />
 				) }

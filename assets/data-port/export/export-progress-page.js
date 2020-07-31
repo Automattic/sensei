@@ -20,12 +20,12 @@ import { Notice } from '../notice';
  * Exporter progress and result.
  *
  * @param {Object}                  props
- * @param {ExportProgressPageState} props.state  Export state.
+ * @param {ExportProgressPageState} props.job    Export job state.
  * @param {Function}                props.reset  Function to return to initial export screen.
  * @param {Function}                props.cancel Function to request job cancellation.
  */
-export const ExportProgressPage = ( { state, reset, cancel } ) => {
-	const { status, percentage, files, error } = state || {};
+export const ExportProgressPage = ( { job, reset, cancel } ) => {
+	const { status, percentage, files, error } = job || {};
 
 	const inProgress = 'completed' !== status;
 
