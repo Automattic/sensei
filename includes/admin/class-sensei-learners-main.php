@@ -426,6 +426,11 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				$actions     = [];
 				$row_actions = [];
 
+				$provider_ids_with_enrollment = implode( ',', array_keys( $provider_results, true, true ) );
+				$providers_attr               = ! empty( $provider_ids_with_enrollment )
+					? 'data-provider="' . $provider_ids_with_enrollment . '"'
+					: '';
+
 				if ( 'course' === $post_type ) {
 					if ( $is_user_enrolled ) {
 						$withdraw_action_url = wp_nonce_url(
@@ -445,18 +450,20 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 						$row_actions[] =
 							'<span class="delete">' .
-								'<a class="learner-action delete" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="withdraw" href="' . esc_url( $withdraw_action_url ) . '">' .
+								'<a class="learner-action delete" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="withdraw" ' . $providers_attr . ' href="' . esc_url( $withdraw_action_url ) . '">' .
 									esc_html__( 'Remove Enrollment', 'sensei-lms' ) .
 								'</a>' .
 							'</span>';
 					} else {
-						$enrol_label = esc_html__( 'Enroll', 'sensei-lms' );
-						$data_action = 'enrol';
+						$enrol_label            = esc_html__( 'Enroll', 'sensei-lms' );
+						$data_action            = 'enrol';
+						$restore_providers_attr = '';
 
 						// Check if it's enrolled by some provider.
-						if ( ! empty( $provider_results ) && in_array( true, $provider_results, true ) ) {
-							$enrol_label = esc_html__( 'Restore Enrollment', 'sensei-lms' );
-							$data_action = 'restore';
+						if ( ! empty( $provider_ids_with_enrollment ) ) {
+							$enrol_label            = esc_html__( 'Restore Enrollment', 'sensei-lms' );
+							$data_action            = 'restore_enrollment';
+							$restore_providers_attr = $providers_attr;
 						}
 
 						$enrol_action_url = wp_nonce_url(
@@ -464,19 +471,19 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 								array(
 									'page'             => 'sensei_learners',
 									'view'             => 'learners',
-									'learner_action'   => 'enrol',
+									'learner_action'   => $data_action,
 									'course_id'        => $this->course_id,
 									'user_id'          => $user_activity->user_id,
 									'enrolment_status' => $this->enrolment_status,
 								),
 								admin_url( 'admin.php' )
 							),
-							'sensei-learner-action-enrol'
+							'sensei-learner-action-' . $data_action
 						);
 
 						$row_actions[] =
 							'<span>' .
-								'<a class="learner-action" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="' . $data_action . '" href="' . esc_url( $enrol_action_url ) . '">' .
+								'<a class="learner-action" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="' . $data_action . '" ' . $restore_providers_attr . ' href="' . esc_url( $enrol_action_url ) . '">' .
 									$enrol_label .
 								'</a>' .
 							'</span>';
@@ -554,6 +561,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 							'data-post-type'  => array(),
 							'data-user-id'    => array(),
 							'data-action'     => array(),
+							'data-provider'   => array(),
 						),
 						// Explicitly allow form tag for WP.com.
 						'form'  => array(

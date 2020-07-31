@@ -101,22 +101,38 @@ jQuery( document ).ready( function ( $ ) {
 
 	jQuery( '.learner-action' ).click( function ( event ) {
 		var current_action = jQuery( this ).attr( 'data-action' );
-		var action_messages = {
-			withdraw:
-				window.woo_learners_general_data.remove_from_course_confirm,
-			enrol: window.woo_learners_general_data.enrol_in_course_confirm,
-			restore:
-				window.woo_learners_general_data.restore_enrollment_confirm,
-		};
+		var provider = jQuery( this ).attr( 'data-provider' );
 
-		if ( typeof action_messages[ current_action ] === 'undefined' ) {
+		var actions = {
+			withdraw: {
+				message:
+					window.woo_learners_general_data.remove_from_course_confirm,
+				eventName: 'learner_management_remove_enrollment',
+			},
+			enrol: {
+				message:
+					window.woo_learners_general_data.enrol_in_course_confirm,
+				eventName: 'learner_management_enroll',
+			},
+			restore_enrollment: {
+				message:
+					window.woo_learners_general_data.restore_enrollment_confirm,
+				eventName: 'learner_management_restore_enrollment',
+			},
+		};
+		var action = actions[ current_action ];
+
+		if ( typeof action === 'undefined' ) {
 			return;
 		}
 
-		var confirm_message = action_messages[ current_action ];
+		var confirm_message = action.message;
 
 		if ( ! confirm( confirm_message ) ) {
 			event.preventDefault();
+		} else {
+			var properties = provider ? { provider: provider } : null;
+			window.sensei_log_event( action.eventName, properties );
 		}
 	} );
 
@@ -190,6 +206,8 @@ jQuery( document ).ready( function ( $ ) {
 					}
 				}
 			);
+
+			window.sensei_log_event( 'learner_management_' + current_action );
 		}
 	} );
 

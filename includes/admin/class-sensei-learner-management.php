@@ -525,7 +525,7 @@ class Sensei_Learner_Management {
 
 		// phpcs:ignore WordPress.Security.NonceVerification -- Nonce checked below.
 		$learner_action = sanitize_text_field( wp_unslash( $_GET['learner_action'] ) );
-		if ( ! in_array( $learner_action, [ 'enrol', 'withdraw' ], true ) ) {
+		if ( ! in_array( $learner_action, [ 'enrol', 'restore_enrollment', 'withdraw' ], true ) ) {
 			wp_safe_redirect( esc_url_raw( $redirect_url ) );
 			exit;
 		}
@@ -564,7 +564,7 @@ class Sensei_Learner_Management {
 
 		if ( 'withdraw' === $learner_action ) {
 			$result = $course_enrolment->withdraw( $user_id );
-		} elseif ( 'enrol' === $learner_action ) {
+		} elseif ( in_array( $learner_action, [ 'enrol', 'restore_enrollment' ], true ) ) {
 			$result = $course_enrolment->enrol( $user_id );
 		}
 
@@ -755,6 +755,12 @@ class Sensei_Learner_Management {
 						__( 'An error occurred while enrolling the learner.', 'sensei-lms' ),
 					];
 					break;
+				case 'error_restore_enrollment':
+					$notice = [
+						'error',
+						__( 'An error occurred while restoring learner enrollment.', 'sensei-lms' ),
+					];
+					break;
 				case 'error_enrol_multiple':
 					$notice = [
 						'error',
@@ -777,6 +783,12 @@ class Sensei_Learner_Management {
 					$notice = [
 						'updated',
 						__( 'Learner has been enrolled.', 'sensei-lms' ),
+					];
+					break;
+				case 'success_restore_enrollment':
+					$notice = [
+						'updated',
+						__( 'Learner enrollment has been restored.', 'sensei-lms' ),
 					];
 					break;
 				case 'success_bulk':
