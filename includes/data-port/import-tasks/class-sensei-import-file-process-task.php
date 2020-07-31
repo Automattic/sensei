@@ -79,11 +79,11 @@ abstract class Sensei_Import_File_Process_Task
 				$this->reader = new Sensei_Import_CSV_Reader( get_attached_file( $attachment_id ), $completed_lines );
 			} catch ( Exception $e ) {
 				$this->get_job()->add_log_entry(
-					__( 'Uploaded file could not be opened while continuing.', 'sensei-lms' ),
+					__( 'Uploaded file could not be opened.', 'sensei-lms' ),
 					Sensei_Data_Port_Job::LOG_LEVEL_ERROR,
 					[
 						'type' => $this->get_model_key(),
-						'code' => 'sensei_data_port_job_unreadable_file_continuing',
+						'code' => 'sensei_data_port_job_unreadable_file',
 					]
 				);
 
