@@ -132,8 +132,8 @@ abstract class Sensei_Import_Model extends Sensei_Data_Port_Model {
 								$this->add_line_warning(
 									sprintf(
 										// translators: Placeholder is the column name.
-										__( 'Error in column "%s": It must be a whole number.', 'sensei-lms' ),
-										$key
+										__( '%s must be a whole number.', 'sensei-lms' ),
+										ucwords( $key )
 									),
 									[
 										'code' => 'sensei_data_port_int_sanitization',
@@ -151,8 +151,8 @@ abstract class Sensei_Import_Model extends Sensei_Data_Port_Model {
 								$this->add_line_warning(
 									sprintf(
 										// translators: Placeholder is the column name.
-										__( 'Error in column "%s": It must be a number.', 'sensei-lms' ),
-										$key
+										__( '%s must be a number.', 'sensei-lms' ),
+										ucwords( $key )
 									),
 									[
 										'code' => 'sensei_data_port_float_sanitization',
@@ -171,8 +171,8 @@ abstract class Sensei_Import_Model extends Sensei_Data_Port_Model {
 							$this->add_line_warning(
 								sprintf(
 									// translators: Placeholder %1$s is the column name. %2$s is the accepted values.
-									__( 'Error in column "%1$s": It must be one of the following: %2$s.', 'sensei-lms' ),
-									$key,
+									__( '%1$s must be one of the following: %2$s.', 'sensei-lms' ),
+									ucwords( $key ),
 									implode( ', ', $accepted_options )
 								),
 								[
@@ -192,8 +192,8 @@ abstract class Sensei_Import_Model extends Sensei_Data_Port_Model {
 							$this->add_line_warning(
 								sprintf(
 									// translators: Placeholder is the column name.
-									__( 'Error in column "%s": It contains invalid characters.', 'sensei-lms' ),
-									$key
+									__( '%s contains invalid characters.', 'sensei-lms' ),
+									ucwords( $key )
 								),
 								[
 									'code' => 'sensei_data_port_slug_sanitization',

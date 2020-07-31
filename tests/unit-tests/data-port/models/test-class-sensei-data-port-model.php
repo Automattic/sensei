@@ -153,8 +153,8 @@ class Sensei_Data_Port_Model_Test extends WP_UnitTestCase {
 		$this->assertEquals( $expected, $model->get_data() );
 
 		$model->add_warnings_to_job();
-		$this->assertJobHasLogEntry( $job, 'Error in column "favorite_int": It must be a whole number.' );
-		$this->assertJobHasLogEntry( $job, 'Error in column "other_int": It must be a whole number.' );
+		$this->assertJobHasLogEntry( $job, 'Favorite_int must be a whole number.' );
+		$this->assertJobHasLogEntry( $job, 'Other_int must be a whole number.' );
 	}
 
 	/**
@@ -176,7 +176,7 @@ class Sensei_Data_Port_Model_Test extends WP_UnitTestCase {
 		$this->assertEquals( $expected, $model->get_data() );
 
 		$model->add_warnings_to_job();
-		$this->assertJobHasLogEntry( $job, 'Error in column "favorite_float": It must be a number.' );
+		$this->assertJobHasLogEntry( $job, 'Favorite_float must be a number.' );
 	}
 
 	/**
@@ -198,7 +198,7 @@ class Sensei_Data_Port_Model_Test extends WP_UnitTestCase {
 		$this->assertEquals( $expected, $model->get_data() );
 
 		$model->add_warnings_to_job();
-		$this->assertJobHasLogEntry( $job, 'Error in column "favorite_bool": It must be one of the following: 0, 1, true, false.' );
+		$this->assertJobHasLogEntry( $job, 'Favorite_bool must be one of the following: 0, 1, true, false.' );
 	}
 
 	/**
@@ -220,7 +220,7 @@ class Sensei_Data_Port_Model_Test extends WP_UnitTestCase {
 		$this->assertEquals( $expected, $model->get_data() );
 
 		$model->add_warnings_to_job();
-		$this->assertJobHasLogEntry( $job, 'Error in column "slug": It contains invalid characters.' );
+		$this->assertJobHasLogEntry( $job, 'Slug contains invalid characters.' );
 	}
 
 	/**
