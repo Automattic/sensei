@@ -78,7 +78,7 @@ class Sensei_Data_Port_Job_Test extends WP_UnitTestCase {
 		$this->assertEquals(
 			[
 				'status'     => 'pending',
-				'percentage' => 62.5,
+				'percentage' => 56.25,
 			],
 			$job->get_status()
 		);
@@ -101,7 +101,7 @@ class Sensei_Data_Port_Job_Test extends WP_UnitTestCase {
 		$this->assertEquals(
 			[
 				'status'     => 'pending',
-				'percentage' => 25,
+				'percentage' => 22.5,
 			],
 			$job->get_status()
 		);
