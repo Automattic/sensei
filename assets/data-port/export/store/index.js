@@ -9,7 +9,12 @@ import * as actions from './actions';
  * Export store reducers.
  */
 const reducers = {
-	SET_JOB: ( { job } ) => ( { job } ),
+	SET_JOB: ( { job } ) => ( {
+		job: {
+			...job,
+			...job.status,
+		},
+	} ),
 	SET_ERROR: ( { error }, state ) => ( { ...state, error } ),
 	CLEAR_JOB: () => ( {} ),
 	DEFAULT: ( action, state ) => state,
@@ -30,13 +35,7 @@ const resolvers = {
  */
 const selectors = {
 	getJobId: ( { job } ) => ( job && job.id ) || null,
-	getJob: ( { job } ) =>
-		job
-			? {
-					...job,
-					...job.status,
-			  }
-			: null,
+	getJob: ( { job } ) => job,
 	getRequestError: ( { error } ) => error,
 };
 
