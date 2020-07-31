@@ -179,7 +179,7 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 		$job = $this->get_job( $this->get_job_id_param( $request ) );
 
 		if ( $job && get_current_user_id() === $job->get_user_id() ) {
-			Sensei_Scheduler::instance()->run( $job );
+			Sensei_Data_Port_Manager::instance()->run_data_port_job( $job );
 		}
 
 		$response = new WP_REST_Response();
