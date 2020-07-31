@@ -22,6 +22,16 @@ class GenerateChunksMapPlugin {
 		this.baseDist = baseDist;
 	}
 
+	writeChunksMap( data ) {
+		const dirname = path.dirname( this.output );
+
+		if ( ! fs.existsSync( dirname ) ) {
+			fs.mkdirSync( dirname, { recursive: true } );
+		}
+
+		fs.writeFileSync( this.output, data );
+	}
+
 	apply( compiler ) {
 		compiler.hooks.done.tap( PLUGIN_NAME, ( { compilation } ) => {
 			// Generate chunks map
@@ -59,8 +69,7 @@ class GenerateChunksMapPlugin {
 				return map;
 			}, {} );
 
-			// Write chunks map
-			fs.writeFileSync( this.output, JSON.stringify( chunksMap ) );
+			this.writeChunksMap( JSON.stringify( chunksMap ) );
 		} );
 	}
 }

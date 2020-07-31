@@ -2,7 +2,7 @@ const path = require( 'path' );
 const process = require( 'process' );
 const { fromPairs } = require( 'lodash' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
-const GenerateChunksMapPlugin = require( './webpack/generate-chunks-map-plugin' );
+const GenerateChunksMapPlugin = require( './scripts/webpack/generate-chunks-map-plugin' );
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
@@ -87,7 +87,9 @@ function getWebpackConfig( env, argv ) {
 		plugins: [
 			...webpackConfig.plugins,
 			new GenerateChunksMapPlugin( {
-				output: path.resolve( './webpack/chunks-map.json' ),
+				output: path.resolve(
+					'./node_modules/.cache/sensei-lms/chunks-map.json'
+				),
 				ignoreSrcPattern: /^node_modules/,
 				baseDist,
 			} ),

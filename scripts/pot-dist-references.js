@@ -9,7 +9,7 @@
 
 const fs = require( 'fs' );
 const { po } = require( 'gettext-parser' );
-const chunkMap = require( '../webpack/chunks-map.json' );
+const chunkMap = require( '../node_modules/.cache/sensei-lms/chunks-map.json' );
 
 const POT_PATH = './lang/sensei-lms.pot';
 
