@@ -1,5 +1,16 @@
 *** Changelog ***
 
+2020.08.06 - version 3.4.0
+* New: Remove / Restore Enrollments
+	* Add meta handler for removing and restoring a learner's enrollment [#3402](https://github.com/Automattic/sensei/pull/3402)
+	* Change learner management actions from buttons to links [#3404](https://github.com/Automattic/sensei/pull/3404)
+	* Implement enrollment actions in Learner Management [#3410](https://github.com/Automattic/sensei/pull/3410)
+	* Update text in confirmation dialogs when removing or restoring enrollments [#3456](https://github.com/Automattic/sensei/pull/3456)
+	* Vertically align column data in Learner Management tables [#3476](https://github.com/Automattic/sensei/pull/3476)
+	* Add the ability to remove and restore enrollments in bulk learner management [#3473](https://github.com/Automattic/sensei/pull/3473)
+	* Update learner management enrollment notices to be more generic [#3466](https://github.com/Automattic/sensei/pull/3466)
+	* Log enrollment and progress actions in Learner Management [#3465](https://github.com/Automattic/sensei/pull/3465)
+
 2020.07.30 - version 3.3.1
 * Fix: Setup wizard and importer in WordPress 5.0 - 5.3 [#3482](https://github.com/Automattic/sensei/pull/3482)
 
