@@ -1,6 +1,19 @@
 sudo: false
 dist: trusty
 language: php
+
+# Shared code for e2e jobs.
+e2e_defaults: &e2e_defaults
+  language: node_js
+  node_js: '10.17'
+  script:
+    - npm run build
+    - npm run e2e-docker:up
+    - npm run test:e2e
+  after_script:
+    - npm run e2e-docker:down
+    - echo "In case of E2E test failures, screenshots can be found in the slack channel `#evergreen-github`"
+
 notifications:
   email:
     on_success: never
@@ -112,13 +125,17 @@ jobs:
         - composer install
         - ./scripts/linter-ci
     - stage: test
-      language: node_js
-      node_js: '10.17'
+      <<: *e2e_defaults
       env: RUN_E2E=1
-      script:
-        - npm run build
-        - npm run e2e-docker:up
-        - npm run test:e2e
-      after_script:
-        - npm run e2e-docker:down
-        - echo "In case of E2E test failures, screenshots can be found in the slack channel `#evergreen-github`"
+    - stage: test
+      <<: *e2e_defaults
+      env: WP_VERSION=5.0 RUN_E2E=1
+    - stage: test
+      <<: *e2e_defaults
+      env: WP_VERSION=5.1 RUN_E2E=1
+    - stage: test
+      <<: *e2e_defaults
+      env: WP_VERSION=5.2 RUN_E2E=1
+    - stage: test
+      <<: *e2e_defaults
+      env: WP_VERSION=5.3 RUN_E2E=1

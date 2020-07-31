@@ -2,14 +2,14 @@
 # This file is distributed under the GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html.
 msgid ""
 msgstr ""
-"Project-Id-Version: Sensei LMS 3.3.0\n"
+"Project-Id-Version: Sensei LMS 3.3.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sensei-lms\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2020-07-22T19:16:39+00:00\n"
+"POT-Creation-Date: 2020-07-29T18:21:28+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.5.0-alpha\n"
 "X-Domain: sensei-lms\n"
@@ -188,7 +188,7 @@ msgid "Upload CSV Files"
 msgstr ""
 
 #: assets/data-port/import/steps.js:15
-#: includes/data-port/class-sensei-import.php:61
+#: includes/data-port/class-sensei-import.php:62
 #: assets/dist/data-port/import.js:1
 msgid "Import"
 msgstr ""
@@ -1033,36 +1033,36 @@ msgstr ""
 msgid "Sensei LMS - Setup Wizard"
 msgstr ""
 
-#: includes/admin/class-sensei-setup-wizard.php:282
+#: includes/admin/class-sensei-setup-wizard.php:283
 msgid "<strong>Welcome to Sensei LMS</strong> &#8211; You're almost ready to start creating online courses!"
 msgstr ""
 
-#: includes/admin/class-sensei-setup-wizard.php:288
+#: includes/admin/class-sensei-setup-wizard.php:289
 msgid "Complete Setup"
 msgstr ""
 
-#: includes/admin/class-sensei-setup-wizard.php:290
+#: includes/admin/class-sensei-setup-wizard.php:291
 msgid "Run the Setup Wizard"
 msgstr ""
 
-#: includes/admin/class-sensei-setup-wizard.php:296
+#: includes/admin/class-sensei-setup-wizard.php:297
 msgid "Skip setup"
 msgstr ""
 
-#: includes/admin/class-sensei-setup-wizard.php:376
-#: includes/admin/class-sensei-setup-wizard.php:381
+#: includes/admin/class-sensei-setup-wizard.php:377
+#: includes/admin/class-sensei-setup-wizard.php:382
 msgid "Setup wizard"
 msgstr ""
 
-#: includes/admin/class-sensei-setup-wizard.php:378
+#: includes/admin/class-sensei-setup-wizard.php:379
 msgid "Sensei LMS Setup Wizard"
 msgstr ""
 
-#: includes/admin/class-sensei-setup-wizard.php:379
+#: includes/admin/class-sensei-setup-wizard.php:380
 msgid "Setup Wizard"
 msgstr ""
 
-#: includes/admin/class-sensei-setup-wizard.php:380
+#: includes/admin/class-sensei-setup-wizard.php:381
 msgid "If you need to access the setup wizard again, please click on the button below."
 msgstr ""
 
@@ -4285,7 +4285,7 @@ msgstr ""
 msgid "File provided for \"%1$s\" (%2$s) was not not valid. Error: %3$s"
 msgstr ""
 
-#: includes/data-port/class-sensei-import.php:60
+#: includes/data-port/class-sensei-import.php:61
 msgid "Import Content"
 msgstr ""
 

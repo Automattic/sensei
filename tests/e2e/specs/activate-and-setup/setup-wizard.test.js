@@ -228,12 +228,11 @@ describe( 'Setup Wizard', () => {
 		} );
 
 		it( 'links to course creation', async () => {
-			await expect( page ).toClick( 'a', {
-				text: 'Create a course',
-			} );
-			await page.waitForNavigation();
-			await expect( page.url() ).toMatch(
-				adminUrl( 'post-new.php?post_type=course' )
+			await expect( page ).toMatchElement(
+				'a[href="post-new.php?post_type=course"]',
+				{
+					text: 'Create a course',
+				}
 			);
 		} );
 

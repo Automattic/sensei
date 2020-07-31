@@ -36,6 +36,7 @@ class Sensei_Import {
 			add_action(
 				'admin_print_scripts',
 				function() {
+					Sensei()->assets->wp_compat();
 					Sensei()->assets->enqueue( 'sensei-import', 'data-port/import.js', [], true );
 					wp_set_script_translations( 'sensei-import', 'sensei-lms' );
 				}
