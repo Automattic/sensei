@@ -1,6 +1,6 @@
 import { registerStore } from '@wordpress/data';
 import { controls as dataControls } from '@wordpress/data-controls';
-import scheduleControls from './schedule';
+import scheduleControls from '../../../shared/data/schedule-controls';
 import { createSimpleReducer } from '../../../shared/data/store-helpers';
 
 import * as actions from './actions';

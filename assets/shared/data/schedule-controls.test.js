@@ -1,5 +1,5 @@
 import { registerStore } from '@wordpress/data';
-import controls, { schedule, clearSchedule } from './schedule';
+import controls, { schedule, clearSchedule } from './schedule-controls';
 
 const delayedAction = () => ( { type: 'TEST_SCHEDULED_ACTION' } );
 
