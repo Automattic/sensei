@@ -3,7 +3,7 @@
 	"description": "A learning management plugin for WordPress, which provides the smoothest platform for helping you teach anything.",
 	"require-dev": {
 		"php": "^5.4 || ^7",
-		"phpunit/phpunit": "6.5.14",
+		"phpunit/phpunit": "9.2.6",
 		"dealerdirect/phpcodesniffer-composer-installer": "0.7.0",
 		"phpcompatibility/phpcompatibility-wp": "2.1.0",
 		"squizlabs/php_codesniffer": "3.5.5",
