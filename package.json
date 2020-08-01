@@ -26,7 +26,7 @@
     "@wordpress/i18n": "3.11.0",
     "@wordpress/url": "2.14.0",
     "interpolate-components": "1.1.1",
-    "select2": "4.0.5"
+    "select2": "4.0.13"
   },
   "devDependencies": {
     "@automattic/calypso-build": "6.1.0",
