@@ -38,7 +38,7 @@ export const ExportPage = ( { job, error, start, reset, cancel } ) => {
 					</Notice>
 				) }
 				{ job ? (
-					<ExportProgressPage job={ job } { ...{ reset, cancel } } />
+					<ExportProgressPage { ...{ job, reset, cancel } } />
 				) : (
 					<ExportSelectContentPage onSubmit={ start } />
 				) }

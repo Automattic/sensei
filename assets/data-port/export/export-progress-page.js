@@ -5,11 +5,11 @@ import { downloadFile } from '../../shared/helpers/download-file';
 import { Notice } from '../notice';
 
 /**
- * @typedef ExportProgressPageState
- * @property {string} status      Export status.
- * @property {number} percentage  Export progress percentage.
- * @property {ExportFile[]} files Exported files.
- * @property {string} error       Error message.
+ * @typedef Job
+ * @property {string}       status      Export status.
+ * @property {number}       percentage  Export progress percentage.
+ * @property {ExportFile[]} files       Exported files.
+ * @property {string}       error       Error message.
  */
 /**
  * @typedef ExportFile
@@ -19,10 +19,10 @@ import { Notice } from '../notice';
 /**
  * Exporter progress and result.
  *
- * @param {Object}                  props
- * @param {ExportProgressPageState} props.job    Export job state.
- * @param {Function}                props.reset  Function to return to initial export screen.
- * @param {Function}                props.cancel Function to request job cancellation.
+ * @param {Object}   props
+ * @param {Job}      props.job    Export job state.
+ * @param {Function} props.reset  Function to return to initial export screen.
+ * @param {Function} props.cancel Function to request job cancellation.
  */
 export const ExportProgressPage = ( { job, reset, cancel } ) => {
 	const { status, percentage, files, error } = job || {};
