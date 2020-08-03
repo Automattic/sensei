@@ -178,9 +178,15 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 	public function request_process_job( $request ) {
 		$job = $this->get_job( $this->get_job_id_param( $request ) );
 
-		if ( $job && get_current_user_id() === $job->get_user_id() ) {
-			Sensei_Data_Port_Manager::instance()->run_data_port_job( $job );
+		if ( ! $job ) {
+			return new WP_Error(
+				'sensei_data_port_job_not_found',
+				__( 'No job could be found.', 'sensei-lms' ),
+				array( 'status' => 404 )
+			);
 		}
+
+		Sensei_Data_Port_Manager::instance()->run_data_port_job( $job );
 
 		$response = new WP_REST_Response();
 		$response->set_data( $this->prepare_to_serve_job( $job ) );
