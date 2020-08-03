@@ -134,11 +134,11 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 	 * @param Sensei_Data_Port_Job $job
 	 */
 	public function run_data_port_job( $job ) {
-		$job_running = get_option( self::OPTION_RUNNING_JOB, false );
+		$job_running = get_transient( self::OPTION_RUNNING_JOB );
 		if ( ! $job_running ) {
-			add_option( self::OPTION_RUNNING_JOB, true );
+			set_transient( self::OPTION_RUNNING_JOB, true, 120 );
 			Sensei_Scheduler::instance()->run( $job );
-			delete_option( self::OPTION_RUNNING_JOB );
+			delete_transient( self::OPTION_RUNNING_JOB );
 		} else {
 			Sensei_Scheduler::instance()->schedule_job( $job );
 		}
