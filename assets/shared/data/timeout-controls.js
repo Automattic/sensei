@@ -2,18 +2,18 @@
  * Schedule to run action creator after the given time.
  *
  * @param {Function} action Action creator to dispatch.
- * @param {number} timeout Timeout in milliseconds.
+ * @param {number}   wait   Timeout in milliseconds.
  */
-export function* schedule( action, timeout ) {
-	yield { type: 'SCHEDULE', timeout };
+export function* timeout( action, wait ) {
+	yield { type: 'TIMEOUT', wait };
 	yield action();
 }
 
 /**
  * Clear current timeout.
  */
-export function clearSchedule() {
-	return { type: 'CLEAR_SCHEDULE' };
+export function cancelTimeout() {
+	return { type: 'CLEAR_TIMEOUT' };
 }
 
 /**
@@ -24,15 +24,15 @@ const scheduledTimeout = {
 	/**
 	 * Create a new timeout promise.
 	 *
-	 * @param {number} timeout Timeout in ms.
+	 * @param {number} wait Timeout in ms.
 	 * @return {Promise} Promise resolved after the timeout.
 	 */
-	create( timeout ) {
+	create( wait ) {
 		return new Promise( ( resolve ) => {
 			scheduledTimeout.clear();
 			scheduledTimeout.current = setTimeout( () => {
 				resolve();
-			}, timeout );
+			}, wait );
 		} );
 	},
 	/**
@@ -47,6 +47,6 @@ const scheduledTimeout = {
 };
 
 export default {
-	SCHEDULE: ( { timeout } ) => scheduledTimeout.create( timeout ),
-	CLEAR_SCHEDULE: () => scheduledTimeout.clear(),
+	TIMEOUT: ( { wait } ) => scheduledTimeout.create( wait ),
+	CLEAR_TIMEOUT: () => scheduledTimeout.clear(),
 };

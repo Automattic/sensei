@@ -1,9 +1,6 @@
 import { apiFetch, select } from '@wordpress/data-controls';
 import { EXPORT_STORE } from './index';
-import {
-	clearSchedule,
-	schedule,
-} from '../../../shared/data/schedule-controls';
+import { cancelTimeout, timeout } from '../../../shared/data/timeout-controls';
 
 const EXPORT_REST_API = '/sensei-internal/v1/export';
 
@@ -64,7 +61,7 @@ export const start = function* ( types ) {
  * @access public
  */
 export const reset = function* () {
-	yield clearSchedule();
+	yield cancelTimeout();
 	yield clearJob();
 };
 
@@ -74,7 +71,7 @@ export const reset = function* () {
  * @access public
  */
 export const cancel = function* () {
-	yield clearSchedule();
+	yield cancelTimeout();
 	yield sendJobRequest( {
 		method: 'DELETE',
 	} );
@@ -90,7 +87,7 @@ export const update = function* () {
 	// TODO handle outdated response
 
 	if ( job && ! job.error && 'pending' === job.status.status ) {
-		yield schedule( update, 1000 );
+		yield timeout( update, 1000 );
 	}
 };
 

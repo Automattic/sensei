@@ -1,14 +1,14 @@
 import { registerStore } from '@wordpress/data';
-import controls, { schedule } from './schedule-controls';
+import controls, { timeout } from './timeout-controls';
 
-const delayedAction = () => ( { type: 'TEST_SCHEDULED_ACTION' } );
+const delayedAction = () => ( { type: 'TEST_TIMEOUT_ACTION' } );
 
-describe( 'schedule-controls', () => {
+describe( 'timeout-controls', () => {
 	let reducer, store;
 
 	beforeEach( () => {
 		reducer = jest.fn();
-		store = registerStore( 'schedule-test', {
+		store = registerStore( 'timeout-test', {
 			reducer,
 			controls,
 		} );
@@ -18,14 +18,14 @@ describe( 'schedule-controls', () => {
 	it( 'runs action after timeout', async () => {
 		jest.useFakeTimers();
 
-		store.dispatch( schedule( delayedAction, 1000 ) );
+		store.dispatch( timeout( delayedAction, 1000 ) );
 
 		expect( reducer ).not.toHaveBeenCalled();
 
 		await jest.runAllTimers();
 
 		expect( reducer ).toHaveBeenCalledWith( undefined, {
-			type: 'TEST_SCHEDULED_ACTION',
+			type: 'TEST_TIMEOUT_ACTION',
 		} );
 	} );
 } );
