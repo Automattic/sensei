@@ -438,19 +438,29 @@ class Sensei_Data_Port_Utilities {
 	 * @return string
 	 */
 	public static function serialize_term_list( $terms ) {
-		// TODO Hierarchy support.
-
-		$names = array_map(
-			function( $term ) {
-				$name = $term->name;
-				if ( false !== strpos( ',', $name ) ) {
-					$name = '"' . str_replace( '"', '\"', $name ) . '"';
-				}
-				return $name;
-			},
-			$terms
-		);
+		$names = array_map( 'Sensei_Data_Port_Utilities::serialize_term', $terms );
 		return implode( ',', $names );
+	}
+
+	/**
+	 * Return term name and hierarchy representation, in the format of 'Parent > Child'.
+	 *
+	 * @param WP_Term $term
+	 *
+	 * @return string
+	 */
+	public static function serialize_term( WP_Term $term ) {
+
+		$name = $term->name;
+		if ( false !== strpos( ',', $name ) ) {
+			$name = '"' . str_replace( '"', '\"', $name ) . '"';
+		}
+		if ( ! empty( $term->parent ) ) {
+			$parent_term = get_term( $term->parent, $term->taxonomy );
+			$parent_str  = self::serialize_term( $parent_term );
+			return $parent_str . ' > ' . $name;
+		}
+		return $name;
 	}
 
 }
