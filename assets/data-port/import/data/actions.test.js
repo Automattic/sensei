@@ -32,6 +32,7 @@ import {
 	startDeleteLevelFileAction,
 	successDeleteLevelFileAction,
 	errorDeleteLevelFileAction,
+	pollJobProgress,
 } from './actions';
 
 const RESPONSE_FULL = {
@@ -68,6 +69,16 @@ const RESPONSE_PENDING = {
 	status: {
 		status: 'pending',
 		percentage: 0,
+	},
+	files: {},
+	results: {},
+};
+
+const RESPONSE_COMPLETED = {
+	id: 'test',
+	status: {
+		status: 'completed',
+		percentage: 100,
 	},
 	files: {},
 	results: {},
@@ -155,6 +166,44 @@ describe( 'Importer actions', () => {
 			error,
 		};
 		expect( gen.throw( error ).value ).toEqual( expectedErrorAction );
+	} );
+
+	/**
+	 * Poll job progress.
+	 */
+	it( 'Should generate job poll actions', () => {
+		const gen = pollJobProgress( 'test-id' );
+
+		// Fetch action.
+		const expectedFetchAction = {
+			type: FETCH_FROM_API,
+			request: {
+				path: API_BASE_PATH + 'test-id/process',
+				method: 'POST',
+			},
+		};
+		expect( gen.next().value ).toEqual( expectedFetchAction );
+
+		const expectedSetDataAction = expect.objectContaining( {
+			type: 'SET_JOB_STATE',
+		} );
+
+		expect( gen.next( RESPONSE_PENDING ).value ).toEqual(
+			expectedSetDataAction
+		);
+		expect( gen.next().value ).toEqual( expectedFetchAction );
+
+		expect( gen.next( RESPONSE_PENDING ).value ).toEqual(
+			expectedSetDataAction
+		);
+
+		expect( gen.next().value ).toEqual( expectedFetchAction );
+
+		expect( gen.next( RESPONSE_COMPLETED ).value ).toEqual(
+			expectedSetDataAction
+		);
+
+		expect( gen.next().done ).toBeTruthy();
 	} );
 
 	/**

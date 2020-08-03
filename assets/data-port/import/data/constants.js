@@ -8,6 +8,7 @@ export const API_SPECIAL_ACTIVE_JOB_ID = 'active';
  * Generic fetch action type constants.
  */
 export const FETCH_FROM_API = 'FETCH_FROM_API';
+export const WAIT = 'WAIT';
 
 /**
  * Fetch action type constants.
