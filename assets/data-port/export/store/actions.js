@@ -98,7 +98,7 @@ export const update = function* () {
  * Check if there is an active job and load it.
  */
 export const checkForActiveJob = function* () {
-	const job = yield* sendJobRequest( { jobId: 'active' } );
+	const job = yield sendJobRequest( { jobId: 'active' } );
 
 	if ( job ) {
 		if ( 'setup' === job.status.status ) {
@@ -112,13 +112,13 @@ export const checkForActiveJob = function* () {
 /**
  * Perform REST API request for a job and apply returned job state.
  *
- * @param {Object} options        apiFetch request object.
- * @param {string?} options.path  Request sub-path in exporter API.
- * @param {string?} options.jobId Override job ID
+ * @param {Object} options            apiFetch request object.
+ * @param {string?} options.endpoint  Request sub-path in exporter API.
+ * @param {string?} options.jobId     Override job ID
  * @return {JobResponse} job
  */
 export const sendJobRequest = function* ( options = {} ) {
-	let { path, jobId, ...requestOptions } = options;
+	let { jobId, ...requestOptions } = options;
 
 	if ( ! jobId ) {
 		jobId = yield select( EXPORT_STORE, 'getJobId' );
@@ -128,20 +128,22 @@ export const sendJobRequest = function* ( options = {} ) {
 		}
 	}
 
-	return yield* sendRequest( { path, jobId, ...requestOptions } );
+	return yield* sendRequest( { jobId, ...requestOptions } );
 };
 
 /**
  * Perform REST API request and apply returned job state.
  *
- * @param {Object} options Request object.
- * @param {string} options.path Request sub-path in exporter API.
- * @param {string?} options.jobId Job ID
+ * @param {Object} options           Request object.
+ * @param {string?} options.endpoint Request endpoint path in exporter API.
+ * @param {string?} options.jobId    Job ID
  */
 export const sendRequest = function* ( options = {} ) {
-	let { path, jobId, ...requestOptions } = options;
+	const { endpoint, jobId, ...requestOptions } = options;
 
-	path = [ EXPORT_REST_API, jobId, path ].filter( ( i ) => !! i ).join( '/' );
+	const path = [ EXPORT_REST_API, jobId, endpoint ]
+		.filter( ( i ) => !! i )
+		.join( '/' );
 
 	try {
 		const job = yield apiFetch( { path, ...requestOptions } );
@@ -175,7 +177,7 @@ export const createJob = function* () {
  */
 export const startJob = function* ( types ) {
 	yield sendJobRequest( {
-		path: 'start',
+		endpoint: 'start',
 		method: 'POST',
 		data: { content_types: types },
 	} );
