@@ -22,6 +22,7 @@ class Sensei_Import_Job_Test extends WP_UnitTestCase {
 	public function setUp() {
 		// Make sure CSVs are allowed on WordPress multi-site.
 		update_site_option( 'upload_filetypes', 'csv' );
+		$this->factory = new Sensei_Factory();
 
 		return parent::setUp();
 	}
@@ -173,17 +174,39 @@ class Sensei_Import_Job_Test extends WP_UnitTestCase {
 				'message' => 'Test warning B',
 				'level'   => Sensei_Import_Job::LOG_LEVEL_NOTICE,
 				'data'    => [
-					'line' => 1,
+					'line' => 2,
 				],
 			],
 		];
 
 		$job->add_line_warning( Sensei_Import_Course_Model::MODEL_KEY, 1, $expected_logs[0]['message'] );
-		$job->add_line_warning( Sensei_Import_Course_Model::MODEL_KEY, 1, $expected_logs[1]['message'] );
-		$expected_results[ Sensei_Import_Course_Model::MODEL_KEY ]['warning']++;
+		$job->add_line_warning( Sensei_Import_Course_Model::MODEL_KEY, 2, $expected_logs[1]['message'] );
+		$expected_results[ Sensei_Import_Course_Model::MODEL_KEY ]['warning'] = 2;
 
-		$this->assertEquals( $expected_results, $job->get_result_counts(), 'Should have 1 warning' );
+		$this->assertEquals( $expected_results, $job->get_result_counts(), 'Should have 2 warnings' );
 		$this->assertEquals( $expected_logs, $job->get_logs() );
+	}
+
+	/**
+	 * Tests translating an import ID.
+	 */
+	public function testTranslateImportId() {
+		$course_id = $this->factory->course->create(
+			[
+				'post_name' => 'a-course',
+			]
+		);
+		$job       = Sensei_Import_Job::create( 'test-job', 0 );
+
+		$this->assertEquals( $course_id, $job->translate_import_id( 'course', $course_id ) );
+		$this->assertNull( $job->translate_import_id( 'lesson', $course_id ) );
+
+		$this->assertEquals( $course_id, $job->translate_import_id( 'course', 'slug:a-course' ) );
+		$this->assertNull( $job->translate_import_id( 'course', 'slug:another-course' ) );
+
+		$job->set_import_id( 'course', 'source_id', $course_id );
+		$this->assertEquals( $course_id, $job->translate_import_id( 'course', 'id:source_id' ) );
+		$this->assertNull( $job->translate_import_id( 'course', 'id:another_source_id' ) );
 	}
 
 	/**

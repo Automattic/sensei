@@ -523,12 +523,13 @@
 	table  {
 		td  {
 			padding: 12px 7px 12px;
-			vertical-align: middle;
 		}
 		.user_status  {
 			span  {
+				display: inline-block;
 				padding: 5px 10px;
 				@include border_radius(3px);
+				white-space: nowrap;
 			}
 			.ungraded  {
 				background: darken($bg_light, 5%);
@@ -552,8 +553,10 @@
 
 		.enrolment_status  {
 			span  {
+				display: inline-block;
 				padding: 5px 10px;
 				@include border_radius(3px);
+				white-space: nowrap;
 			}
 			.not-enrolled  {
 				background: darken($bg_light, 5%);
@@ -561,6 +564,12 @@
 			.enrolled  {
 				background: $success;
 				color: #fff;
+			}
+		}
+
+		.row-actions {
+			a {
+				cursor: pointer;
 			}
 		}
 	}

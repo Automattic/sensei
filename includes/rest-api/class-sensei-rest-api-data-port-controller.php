@@ -99,6 +99,20 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 			]
 		);
 
+		// Endpoint to run the job.
+		register_rest_route(
+			$this->namespace,
+			$this->rest_base . '/(?P<job_id>[0-9a-z]+)/process',
+			[
+				[
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => [ $this, 'request_process_job' ],
+					'permission_callback' => [ $this, 'can_user_access_rest_api' ],
+				],
+				'schema' => [ $this, 'get_item_schema' ],
+			]
+		);
+
 		// Endpoint to get the logs.
 		register_rest_route(
 			$this->namespace,
@@ -117,7 +131,7 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 	/**
 	 * Resolve the job ID parameter.
 	 *
-	 * @param int  $job_id        Job ID.
+	 * @param int  $job_id Job ID.
 	 * @param bool $allow_current Allow special ID of `active` to get the active job.
 	 *
 	 * @return Sensei_Data_Port_Job|null
@@ -138,7 +152,7 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function request_get_job( $request ) {
-		$job = $this->resolve_job( sanitize_text_field( $request->get_param( 'job_id' ) ), true );
+		$job = $this->resolve_job( $this->get_job_id_param( $request ), true );
 
 		if ( ! $job ) {
 			return new WP_Error(
@@ -147,6 +161,32 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 				array( 'status' => 404 )
 			);
 		}
+
+		$response = new WP_REST_Response();
+		$response->set_data( $this->prepare_to_serve_job( $job ) );
+
+		return $response;
+	}
+
+	/**
+	 * Process a batch for the current job.
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 *
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function request_process_job( $request ) {
+		$job = $this->get_job( $this->get_job_id_param( $request ) );
+
+		if ( ! $job ) {
+			return new WP_Error(
+				'sensei_data_port_job_not_found',
+				__( 'No job could be found.', 'sensei-lms' ),
+				array( 'status' => 404 )
+			);
+		}
+
+		Sensei_Data_Port_Manager::instance()->run_data_port_job( $job );
 
 		$response = new WP_REST_Response();
 		$response->set_data( $this->prepare_to_serve_job( $job ) );
@@ -466,5 +506,15 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 				],
 			],
 		];
+	}
+
+	/**
+	 * Get the job_id parameter from the request.
+	 *
+	 * @param WP_REST_Request $request
+	 * @return string Job ID
+	 */
+	protected static function get_job_id_param( $request ) {
+		return sanitize_text_field( $request->get_param( 'job_id' ) );
 	}
 }

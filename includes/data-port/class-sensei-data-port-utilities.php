@@ -17,13 +17,13 @@ class Sensei_Data_Port_Utilities {
 	const CHARS_WHITESPACE_AND_QUOTES = " \"\t\n\r\0\x0B";
 
 	/**
-	 * Create a user. If the user exists, the method simply returns the user id..
+	 * Create a user. If the user exists, the method simply returns the user.
 	 *
 	 * @param string $username  The username.
 	 * @param string $email     User's email.
 	 * @param string $role      The user's role.
 	 *
-	 * @return int|WP_Error  User id on success, WP_Error on failure.
+	 * @return WP_User|WP_Error  WP_User on success, WP_Error on failure.
 	 */
 	public static function create_user( $username, $email = '', $role = '' ) {
 		$user = get_user_by( 'login', $username );
@@ -35,18 +35,14 @@ class Sensei_Data_Port_Utilities {
 				return $user_id;
 			}
 
-			if ( ! empty( $role ) ) {
-				$user = get_user_by( 'ID', $user_id );
+			$user = get_user_by( 'ID', $user_id );
 
-				if ( $user ) {
-					$user->set_role( $role );
-				}
+			if ( ! empty( $role ) && $user ) {
+				$user->set_role( $role );
 			}
-
-			return $user_id;
 		}
 
-		return $user->ID;
+		return $user;
 	}
 
 	/**

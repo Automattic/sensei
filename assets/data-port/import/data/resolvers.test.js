@@ -52,4 +52,11 @@ describe( 'Importer resolvers', () => {
 
 		expect( gen.next().done ).toBeTruthy();
 	} );
+
+	it( 'Should not getLogsBySeverity selector if there is no jobId', () => {
+		const gen = getLogsBySeverity( null );
+
+		gen.next();
+		expect( gen.next().done ).toBeTruthy();
+	} );
 } );

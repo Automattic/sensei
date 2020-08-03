@@ -103,12 +103,10 @@ class Sensei_Data_Port_Lesson_Schema extends Sensei_Data_Port_Schema {
 				'default' => false,
 			],
 			self::COLUMN_PASSMARK       => [
-				'type'      => 'int',
-				'validator' => [ $this, 'validate_passmark' ],
+				'type' => 'float',
 			],
 			self::COLUMN_NUM_QUESTIONS  => [
-				'type'    => 'int',
-				'default' => '',
+				'type' => 'int',
 			],
 			self::COLUMN_RANDOMIZE      => [
 				'type'    => 'bool',
@@ -130,23 +128,6 @@ class Sensei_Data_Port_Lesson_Schema extends Sensei_Data_Port_Schema {
 				'type' => 'string',
 			],
 		];
-	}
-
-	/**
-	 * Validate passmark.
-	 *
-	 * @access private
-	 *
-	 * @param string                     $field Field name.
-	 * @param Sensei_Import_Lesson_Model $model Lesson model.
-	 *
-	 * @return boolean Is valid.
-	 */
-	public function validate_passmark( $field, Sensei_Import_Lesson_Model $model ) {
-		$data  = $model->get_data();
-		$value = $data[ $field ];
-
-		return 0 <= $value && 100 >= $value;
 	}
 
 	/**

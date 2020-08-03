@@ -9,6 +9,7 @@ import { useEffect, useCallback } from '@wordpress/element';
  * @param {Object}   element   Element to attach the event. Default is `window`.
  */
 const useEventListener = ( eventName, handler, deps, element = window ) => {
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const handlerCallback = useCallback( handler, deps );
 
 	useEffect( () => {

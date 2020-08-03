@@ -4,26 +4,17 @@
 		list-style-type: none;
 		padding-top: 0;
 		padding-bottom: 0;
-
-		@media (max-width: 783px) {
-			display: block;
-		}
-
-		&__field-wrapper {
-			display: flex;
-			flex: 0 0 43%;
-			align-items: center;
-		}
+		align-items: baseline;
+		flex-wrap: wrap;
 
 		&__description {
-			flex: 1;
-			font-size: 14px;
+			flex-basis: 10rem;
 		}
 
 		&__info {
 			display: inline-flex;
+			align-self: center;
 		}
-
 
 		&__delete-button-wrapper {
 			flex-shrink: 0;
@@ -36,7 +27,6 @@
 			.components-button:disabled:hover {
 				color: $gray-30;
 				width: 24px;
-				height: 24px;
 			}
 
 			.woocommerce-spinner {

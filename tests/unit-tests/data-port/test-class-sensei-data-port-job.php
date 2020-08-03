@@ -78,7 +78,7 @@ class Sensei_Data_Port_Job_Test extends WP_UnitTestCase {
 		$this->assertEquals(
 			[
 				'status'     => 'pending',
-				'percentage' => 62.5,
+				'percentage' => 56.25,
 			],
 			$job->get_status()
 		);
@@ -101,7 +101,7 @@ class Sensei_Data_Port_Job_Test extends WP_UnitTestCase {
 		$this->assertEquals(
 			[
 				'status'     => 'pending',
-				'percentage' => 25,
+				'percentage' => 22.5,
 			],
 			$job->get_status()
 		);
@@ -122,26 +122,127 @@ class Sensei_Data_Port_Job_Test extends WP_UnitTestCase {
 
 	public function testGetLogs() {
 		$job = Sensei_Data_Port_Job_Mock::create_with_tasks( 'test-job', [ new Sensei_Data_Port_Task_Mock( true, 100, 100 ) ] );
-		$job->add_log_entry( 'First log entry', Sensei_Data_Port_Job::LOG_LEVEL_NOTICE );
-		$job->add_log_entry( 'Second log entry', Sensei_Data_Port_Job::LOG_LEVEL_ERROR );
-		$job->add_log_entry( 'Third log entry', Sensei_Data_Port_Job::LOG_LEVEL_INFO, [ 'test' => true ] );
+		$job->add_log_entry( 'First log entry', Sensei_Data_Port_Job::LOG_LEVEL_NOTICE, [ 'line' => 1 ] );
+		$job->add_log_entry( 'Second log entry', Sensei_Data_Port_Job::LOG_LEVEL_ERROR, [ 'line' => 3 ] );
+		$job->add_log_entry(
+			'Third log entry',
+			Sensei_Data_Port_Job::LOG_LEVEL_INFO,
+			[
+				'line' => 2,
+				'test' => true,
+			]
+		);
 
 		$expected = [
 			[
 				'message' => 'First log entry',
 				'level'   => Sensei_Data_Port_Job::LOG_LEVEL_NOTICE,
-				'data'    => [],
-			],
-			[
-				'message' => 'Second log entry',
-				'level'   => Sensei_Data_Port_Job::LOG_LEVEL_ERROR,
-				'data'    => [],
+				'data'    => [
+					'line' => 1,
+				],
 			],
 			[
 				'message' => 'Third log entry',
 				'level'   => Sensei_Data_Port_Job::LOG_LEVEL_INFO,
 				'data'    => [
 					'test' => true,
+					'line' => 2,
+				],
+			],
+			[
+				'message' => 'Second log entry',
+				'level'   => Sensei_Data_Port_Job::LOG_LEVEL_ERROR,
+				'data'    => [
+					'line' => 3,
+				],
+			],
+		];
+
+		$this->assertEquals( $expected, $job->get_logs() );
+	}
+
+	public function testLogOrder() {
+		$job = Sensei_Data_Port_Job_Mock::create_with_tasks( 'test-job', [ new Sensei_Data_Port_Task_Mock( true, 100, 100 ) ] );
+
+		$job->add_log_entry(
+			'Third Question log entry',
+			Sensei_Data_Port_Job::LOG_LEVEL_INFO,
+			[
+				'type' => Sensei_Import_Question_Model::MODEL_KEY,
+				'line' => 2,
+			]
+		);
+		$job->add_log_entry(
+			'Second Question log entry',
+			Sensei_Data_Port_Job::LOG_LEVEL_INFO,
+			[
+				'type' => Sensei_Import_Question_Model::MODEL_KEY,
+				'line' => 1,
+			]
+		);
+		$job->add_log_entry(
+			'Fourth Question log entry',
+			Sensei_Data_Port_Job::LOG_LEVEL_INFO,
+			[
+				'type' => Sensei_Import_Question_Model::MODEL_KEY,
+				'line' => 3,
+			]
+		);
+
+		$job->add_log_entry( 'Lesson log entry', Sensei_Data_Port_Job::LOG_LEVEL_ERROR, [ 'type' => Sensei_Import_Lesson_Model::MODEL_KEY ] );
+		$job->add_log_entry( 'Course log entry', Sensei_Data_Port_Job::LOG_LEVEL_NOTICE, [ 'type' => Sensei_Import_Course_Model::MODEL_KEY ] );
+		$job->add_log_entry( 'Generic log entry', Sensei_Data_Port_Job::LOG_LEVEL_INFO );
+		$job->add_log_entry( 'First Question log entry', Sensei_Data_Port_Job::LOG_LEVEL_INFO, [ 'type' => Sensei_Import_Question_Model::MODEL_KEY ] );
+
+		$expected = [
+			[
+				'message' => 'Generic log entry',
+				'level'   => Sensei_Data_Port_Job::LOG_LEVEL_INFO,
+				'data'    => [],
+			],
+			[
+				'message' => 'Course log entry',
+				'level'   => Sensei_Data_Port_Job::LOG_LEVEL_NOTICE,
+				'data'    => [
+					'type' => Sensei_Import_Course_Model::MODEL_KEY,
+				],
+			],
+			[
+				'message' => 'Lesson log entry',
+				'level'   => Sensei_Data_Port_Job::LOG_LEVEL_ERROR,
+				'data'    => [
+					'type' => Sensei_Import_Lesson_Model::MODEL_KEY,
+				],
+			],
+			[
+				'message' => 'First Question log entry',
+				'level'   => Sensei_Data_Port_Job::LOG_LEVEL_INFO,
+				'data'    => [
+					'type' => Sensei_Import_Question_Model::MODEL_KEY,
+				],
+			],
+			[
+				'message' => 'Second Question log entry',
+				'level'   => Sensei_Data_Port_Job::LOG_LEVEL_INFO,
+				'data'    => [
+					'type' => Sensei_Import_Question_Model::MODEL_KEY,
+					'line' => 1,
+				],
+			],
+			[
+				'message' => 'Third Question log entry',
+				'level'   => Sensei_Data_Port_Job::LOG_LEVEL_INFO,
+				'data'    => [
+					'type' => Sensei_Import_Question_Model::MODEL_KEY,
+					'line' => 2,
+				],
+			],
+			[
+				'message' => 'Fourth Question log entry',
+				'level'   => Sensei_Data_Port_Job::LOG_LEVEL_INFO,
+				'data'    => [
+					'type' => Sensei_Import_Question_Model::MODEL_KEY,
+					'line' => 3,
 				],
 			],
 		];

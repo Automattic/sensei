@@ -50,7 +50,7 @@ class Sensei_Data_Port_Manager_Test extends WP_UnitTestCase {
 
 		$job->expects( $this->once() )->method( 'run' );
 
-		Sensei_Data_Port_Manager::instance()->run_data_port_job( [ 'job_id' => 'test-job' ] );
+		Sensei_Data_Port_Manager::instance()->run_scheduled_data_port_job( [ 'job_id' => 'test-job' ] );
 	}
 
 	public function testStartingJobStoresState() {
