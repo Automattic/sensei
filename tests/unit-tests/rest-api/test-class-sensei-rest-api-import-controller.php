@@ -101,7 +101,6 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 		$this->assertTrue( in_array( $response->get_status(), $expected_status_codes, true ), "{$user_description} requests should produce status of " . implode( ', ', $expected_status_codes ) );
 
 		if ( $is_authorized ) {
-			$this->assertTrue( isset( $response->get_data()['id'] ) );
 			$this->assertEquals( null, $response->get_data()['id'] );
 		}
 	}
