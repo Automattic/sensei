@@ -1,9 +1,9 @@
 import { registerStore } from '@wordpress/data';
-import controls, { schedule, clearSchedule } from './schedule-controls';
+import controls, { schedule } from './schedule-controls';
 
 const delayedAction = () => ( { type: 'TEST_SCHEDULED_ACTION' } );
 
-describe( 'schedule', () => {
+describe( 'schedule-controls', () => {
 	let reducer, store;
 
 	beforeEach( () => {
@@ -27,17 +27,5 @@ describe( 'schedule', () => {
 		expect( reducer ).toHaveBeenCalledWith( undefined, {
 			type: 'TEST_SCHEDULED_ACTION',
 		} );
-	} );
-
-	it( 'cancels schedules action', async () => {
-		jest.useFakeTimers();
-		store.dispatch( schedule( delayedAction, 1000 ) );
-
-		store.dispatch( clearSchedule() );
-
-		await jest.advanceTimersByTime( 500 );
-		await jest.runAllTimers();
-
-		expect( reducer ).not.toHaveBeenCalled();
 	} );
 } );
