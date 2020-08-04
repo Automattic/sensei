@@ -90,6 +90,31 @@ export const Ready = () => {
 								),
 							},
 							{
+								title: __(
+									'Install a sample course',
+									'sensei-lms'
+								),
+								content: __(
+									'Install the Getting Started with Sensei LMS course.',
+									'sensei-lms'
+								),
+								after: (
+									<Button
+										className="sensei-setup-wizard__button"
+										isSecondary
+										href="#"
+										{ ...logLink(
+											'setup_wizard_ready_install_course'
+										) }
+									>
+										{ __(
+											'Install a sample course',
+											'sensei-lms'
+										) }
+									</Button>
+								),
+							},
+							{
 								title: 'Learn more',
 								content: formatString(
 									__(
