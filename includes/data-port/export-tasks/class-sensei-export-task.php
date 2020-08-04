@@ -166,7 +166,7 @@ abstract class Sensei_Export_Task
 	public function get_completion_ratio() {
 		return [
 			'total'     => $this->query->found_posts,
-			'completed' => $this->completed_posts + $this->query->post_count,
+			'completed' => $this->completed_posts,
 		];
 	}
 
