@@ -30,10 +30,9 @@ export const ExportProgressPage = ( { job, reset, cancel } ) => {
 	const inProgress = 'completed' !== status;
 
 	useEffect( () => {
-		if ( ! files ) return;
-
+		if ( inProgress || ! files ) return;
 		files.forEach( downloadFile );
-	}, [ files ] );
+	}, [ files, inProgress ] );
 
 	return (
 		<section className="sensei-data-port-step__body">
