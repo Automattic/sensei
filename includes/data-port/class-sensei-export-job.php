@@ -49,7 +49,9 @@ class Sensei_Export_Job extends Sensei_Data_Port_Job {
 			];
 
 			foreach ( $this->get_state( self::CONTENT_TYPES_STATE_KEY ) as $type ) {
-				$this->tasks[ $type ] = $this->initialize_task( $task_class[ $type ] );
+				if ( isset( $task_class[ $type ] ) ) {
+					$this->tasks[ $type ] = $this->initialize_task( $task_class[ $type ] );
+				}
 			}
 		}
 
