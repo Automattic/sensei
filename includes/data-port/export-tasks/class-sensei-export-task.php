@@ -72,6 +72,7 @@ abstract class Sensei_Export_Task
 				'post_type'      => $type,
 				'posts_per_page' => $this->batch_size,
 				'offset'         => $this->completed_posts,
+				'post_status'    => 'any',
 			]
 		);
 

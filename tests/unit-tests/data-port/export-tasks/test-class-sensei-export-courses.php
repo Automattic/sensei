@@ -223,6 +223,16 @@ class Sensei_Export_Courses_Tests extends WP_UnitTestCase {
 		return $reader->read_lines();
 	}
 
+	public function testAllPostStatusCoursesExporterd() {
+		$course_published = $this->factory->course->create( [ 'post_status' => 'publish' ] );
+		$course_draft     = $this->factory->course->create( [ 'post_status' => 'draft' ] );
+
+		$result = $this->export();
+
+		$this->assertEqualSets( [ $course_published, $course_draft ], array_column( $result, 'id' ) );
+
+	}
+
 	/**
 	 * Find a course line by ID.
 	 *
