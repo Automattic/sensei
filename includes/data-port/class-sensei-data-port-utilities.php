@@ -19,9 +19,9 @@ class Sensei_Data_Port_Utilities {
 	/**
 	 * Create a user. If the user exists, the method simply returns the user.
 	 *
-	 * @param string $username  The username.
-	 * @param string $email     User's email.
-	 * @param string $role      The user's role.
+	 * @param string $username The username.
+	 * @param string $email    User's email.
+	 * @param string $role     The user's role.
 	 *
 	 * @return WP_User|WP_Error  WP_User on success, WP_Error on failure.
 	 */
@@ -140,9 +140,9 @@ class Sensei_Data_Port_Utilities {
 		 * Increase this value in case big attachments are imported and the request to get them
 		 * times out.
 		 *
-		 * @since 3.3.0
+		 * @param float $timeout Time in seconds until a request times out. Default 10.
 		 *
-		 * @param float  $timeout  Time in seconds until a request times out. Default 10.
+		 * @since 3.3.0
 		 */
 		$timeout  = apply_filters( 'sensei_import_attachment_request_timeout', 10 );
 		$response = wp_safe_remote_get( $external_url, [ 'timeout' => $timeout ] );
@@ -402,7 +402,7 @@ class Sensei_Data_Port_Utilities {
 
 		if ( $remove_quotes ) {
 			$list = array_map(
-				function ( $value ) {
+				function( $value ) {
 					return trim( $value, self::CHARS_WHITESPACE_AND_QUOTES );
 				},
 				$list
@@ -424,4 +424,39 @@ class Sensei_Data_Port_Utilities {
 	public static function replace_curly_quotes( $string ) {
 		return str_replace( [ '“', '”' ], '"', $string );
 	}
+
+	/**
+	 * Serialize a list of terms into comma-separated list.
+	 * Adds quotes if name contains commas.
+	 *
+	 * @param WP_Term[] $terms
+	 *
+	 * @return string
+	 */
+	public static function serialize_term_list( $terms ) {
+		$names = array_map( 'Sensei_Data_Port_Utilities::serialize_term', $terms );
+		return implode( ',', $names );
+	}
+
+	/**
+	 * Return term name and hierarchy representation, in the format of 'Parent > Child'.
+	 *
+	 * @param WP_Term $term
+	 *
+	 * @return string
+	 */
+	public static function serialize_term( WP_Term $term ) {
+
+		$name = $term->name;
+		if ( false !== strpos( ',', $name ) ) {
+			$name = '"' . str_replace( '"', '\"', $name ) . '"';
+		}
+		if ( ! empty( $term->parent ) ) {
+			$parent_term = get_term( $term->parent, $term->taxonomy );
+			$parent_str  = self::serialize_term( $parent_term );
+			return $parent_str . ' > ' . $name;
+		}
+		return $name;
+	}
+
 }

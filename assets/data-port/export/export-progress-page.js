@@ -5,11 +5,11 @@ import { downloadFile } from '../../shared/helpers/download-file';
 import { Notice } from '../notice';
 
 /**
- * @typedef ExportProgressPageState
- * @property {string} status      Export status.
- * @property {number} percentage  Export progress percentage.
- * @property {ExportFile[]} files Exported files.
- * @property {string} error       Error message.
+ * @typedef Job
+ * @property {string}       status      Export status.
+ * @property {number}       percentage  Export progress percentage.
+ * @property {ExportFile[]} files       Exported files.
+ * @property {string}       error       Error message.
  */
 /**
  * @typedef ExportFile
@@ -19,31 +19,38 @@ import { Notice } from '../notice';
 /**
  * Exporter progress and result.
  *
- * @param {Object} props
- * @param {ExportProgressPageState} props.state Export state.
- * @param {Function} props.reset                Function to return to initial export screen.
+ * @param {Object}   props
+ * @param {Job}      props.job    Export job state.
+ * @param {Function} props.reset  Function to return to initial export screen.
+ * @param {Function} props.cancel Function to request job cancellation.
  */
-export const ExportProgressPage = ( { state, reset } ) => {
-	const { status, percentage, files, error } = state || {};
+export const ExportProgressPage = ( { job, reset, cancel } ) => {
+	const { status, percentage, files, error } = job || {};
 
 	const inProgress = 'completed' !== status;
 
 	useEffect( () => {
-		if ( ! files ) return;
-
+		if ( inProgress || ! files ) return;
 		files.forEach( downloadFile );
-	}, [ files ] );
+	}, [ files, inProgress ] );
 
 	return (
 		<section className="sensei-data-port-step__body">
 			{ inProgress ? (
-				<p>
-					<progress
-						className="sensei-data-port__progressbar"
-						max="100"
-						value={ percentage || 0 }
-					/>
-				</p>
+				<>
+					<p>
+						<progress
+							className="sensei-data-port__progressbar"
+							max="100"
+							value={ percentage || 0 }
+						/>
+					</p>
+					<div className="sensei-data-port-step__footer">
+						<Button isLink onClick={ () => cancel() }>
+							{ __( 'Cancel', 'sensei-lms' ) }
+						</Button>
+					</div>
+				</>
 			) : (
 				<>
 					<div className="sensei-export__output-result">
@@ -76,7 +83,7 @@ export const ExportProgressPage = ( { state, reset } ) => {
 						) }
 					</div>
 					<div className="sensei-data-port-step__footer">
-						<Button isPrimary onClick={ reset }>
+						<Button isPrimary onClick={ () => reset() }>
 							{ __( 'New Export', 'sensei-lms' ) }
 						</Button>
 					</div>

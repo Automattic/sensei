@@ -146,24 +146,47 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 	}
 
 	/**
-	 * Create a data import job.
+	 * Create a data import/export job.
 	 *
-	 * @param int $user_id  The user which started the job.
+	 * @param int    $user_id       The user which started the job.
+	 * @param string $handler_class Handler class reference for the job type.
 	 *
-	 * @return Sensei_Import_Job
+	 * @return Sensei_Import_Job|Sensei_Export_Job
 	 */
-	public function create_import_job( $user_id ) {
+	public function create_job( $user_id, $handler_class ) {
 		$job_id = md5( uniqid( '', true ) );
 
 		$this->has_changed      = true;
 		$this->data_port_jobs[] = [
 			'user_id' => (int) $user_id,
 			'time'    => time(),
-			'handler' => Sensei_Import_Job::class,
+			'handler' => $handler_class,
 			'id'      => $job_id,
 		];
 
-		return Sensei_Import_Job::create( $job_id, (int) $user_id );
+		return $handler_class::create( $job_id, (int) $user_id );
+	}
+
+	/**
+	 * Create a data import job.
+	 *
+	 * @param int $user_id The user which started the job.
+	 *
+	 * @return Sensei_Import_Job
+	 */
+	public function create_import_job( $user_id ) {
+		return $this->create_job( $user_id, Sensei_Import_Job::class );
+	}
+
+	/**
+	 * Create a data export job.
+	 *
+	 * @param int $user_id The user which started the job.
+	 *
+	 * @return Sensei_Export_Job
+	 */
+	public function create_export_job( $user_id ) {
+		return $this->create_job( $user_id, Sensei_Export_Job::class );
 	}
 
 	/**

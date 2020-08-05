@@ -25,3 +25,21 @@ export const composeFetchAction = (
 			yield { type: errorAction, error };
 		}
 	};
+
+/**
+ * Create reducer from a map of action type keys and reducer function.
+ *
+ * @example
+ *  createSimpleReducer({ SAMPLE_ACTION: ( { actionProperty }, state ) => ({ ...state, actionProperty }) )
+ *
+ * @param {Object} reducers     Map of action type - reducer functions.
+ * @param {Object} defaultState Default state.
+ *
+ * @return {Function} Store reducer.
+ */
+export const createReducerFromActionMap = ( reducers, defaultState ) => {
+	return ( state = defaultState, action ) => {
+		const reducer = reducers[ action.type ] || reducers.DEFAULT;
+		return reducer( action, state );
+	};
+};
