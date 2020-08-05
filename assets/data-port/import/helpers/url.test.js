@@ -15,4 +15,12 @@ describe( 'URL helpers', () => {
 
 		expect( buildJobEndpointUrl( 'test-id' ) ).toEqual( expectedUrl );
 	} );
+
+	it( 'buildJobEndpointUrl without jobId', () => {
+		const expectedUrl = API_BASE_PATH + 'very/long/path/eh';
+
+		expect(
+			buildJobEndpointUrl( null, [ 'very', 'long', 'path', 'eh' ] )
+		).toEqual( expectedUrl );
+	} );
 } );
