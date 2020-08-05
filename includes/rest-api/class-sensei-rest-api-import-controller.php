@@ -66,6 +66,20 @@ class Sensei_REST_API_Import_Controller extends Sensei_REST_API_Data_Port_Contro
 				'schema' => [ $this, 'get_file_item_schema' ],
 			]
 		);
+
+		// Endpoint to start the job that imports a sample course.
+		register_rest_route(
+			$this->namespace,
+			$this->rest_base . '/start-sample',
+			[
+				[
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => [ $this, 'request_post_start_sample_job' ],
+					'permission_callback' => [ $this, 'can_user_access_rest_api' ],
+				],
+				'schema' => [ $this, 'get_item_schema' ],
+			]
+		);
 	}
 
 	/**
@@ -255,6 +269,45 @@ class Sensei_REST_API_Import_Controller extends Sensei_REST_API_Data_Port_Contro
 
 		$response = new WP_REST_Response();
 		$response->set_status( 200 );
+		$response->set_data( $this->prepare_to_serve_job( $job ) );
+
+		return $response;
+	}
+
+	/**
+	 * Handle the request to start importing sample data.
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 *
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function request_post_start_sample_job( $request ) {
+		$files = [
+			'courses'   => Sensei()->plugin_path() . 'sample-data/courses.csv',
+			'lessons'   => Sensei()->plugin_path() . 'sample-data/lessons.csv',
+			'questions' => Sensei()->plugin_path() . 'sample-data/questions.csv',
+		];
+
+		$job = Sensei_Data_Port_Manager::instance()->create_import_job( get_current_user_id() );
+
+		foreach ( $files as $file_key => $file_path ) {
+			$result = $job->save_file( $file_key, $file_path, basename( $file_path ) );
+
+			if ( is_wp_error( $result ) ) {
+				Sensei_Data_Port_Manager::instance()->cancel_job( $job );
+				return $result;
+			}
+		}
+
+		if ( ! Sensei_Data_Port_Manager::instance()->start_job( $job ) ) {
+			return new WP_Error(
+				'sensei_data_port_job_could_not_be_started',
+				__( 'Job could not be started', 'sensei-lms' ),
+				array( 'status' => 500 )
+			);
+		}
+
+		$response = new WP_REST_Response();
 		$response->set_data( $this->prepare_to_serve_job( $job ) );
 
 		return $response;

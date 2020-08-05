@@ -890,6 +890,41 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 	}
 
 	/**
+	 * Tests `POST /import/start-sample`.
+	 *
+	 * @dataProvider userDataSources
+	 *
+	 * @param string $user_role     User role to run the request as.
+	 * @param bool   $is_authorized Is the user authenticated and authorized.
+	 */
+	public function testStartSampleImporting( $user_role, $is_authorized ) {
+		wp_logout();
+
+		$user_description = 'Guest';
+		if ( $user_role ) {
+			$user_id          = $this->factory->user->create( [ 'role' => $user_role ] );
+			$user_description = ucfirst( $user_role );
+			wp_set_current_user( $user_id );
+		}
+
+		$expected_status_codes = [ 401, 403 ];
+		$job_id                = 'current';
+		if ( $is_authorized ) {
+			$expected_status_codes = [ 200 ];
+		}
+
+		$request  = new WP_REST_Request( 'POST', '/sensei-internal/v1/import/start-sample' );
+		$response = $this->server->dispatch( $request );
+
+		$this->assertTrue( in_array( $response->get_status(), $expected_status_codes, true ), "{$user_description} requests should produce status of " . implode( ', ', $expected_status_codes ) );
+
+		if ( $is_authorized ) {
+			$data = $response->get_data();
+			$this->assertResultValidJob( $data );
+		}
+	}
+
+	/**
 	 * Assert that a REST API response is an WP error with a specific code
 	 *
 	 * @param array  $result        REST API result.
