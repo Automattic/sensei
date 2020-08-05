@@ -59,7 +59,7 @@ class Sensei_REST_API_Export_Controller_Tests extends WP_Test_REST_TestCase {
 
 		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/export/' . $job_id . '/start' );
 		$request->set_header( 'content-type', 'application/json' );
-		$request->set_body( wp_json_encode( [ 'content_types' => [ 'lesson', 'course' ] ] ) );
+		$request->set_body( wp_json_encode( [ 'content_types' => [ 'course' ] ] ) );
 		$response = $this->server->dispatch( $request );
 
 		$this->assertEquals( $response->get_status(), 200 );
@@ -68,8 +68,8 @@ class Sensei_REST_API_Export_Controller_Tests extends WP_Test_REST_TestCase {
 
 		$job = Sensei_Data_Port_Manager::instance()->get_active_job( Sensei_Export_Job::class, get_current_user_id() );
 
-		$this->assertEquals( $job->get_state( 'content_types' ), [ 'lesson', 'course' ] );
-		$this->assertEquals( array_keys( $job->get_tasks() ), [ 'lesson', 'course' ] );
+		$this->assertEquals( $job->get_state( 'content_types' ), [ 'course' ] );
+		$this->assertEquals( array_keys( $job->get_tasks() ), [ 'course' ] );
 
 		$data = $response->get_data();
 		$this->assertResultValidJob( $data );

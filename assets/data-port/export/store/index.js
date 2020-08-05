@@ -13,6 +13,7 @@ const mapJobState = ( job ) => {
 				job: {
 					...job,
 					...job.status,
+					files: job.files && Object.values( job.files ),
 				},
 		  }
 		: EMPTY_STATE;
