@@ -182,12 +182,14 @@ abstract class Sensei_Export_Task
 	/**
 	 * Attach the file to the job.
 	 *
-	 * @param string $filename
+	 * @param string $tmp_file
 	 */
-	public function add_file_to_job( $filename ) {
+	public function add_file_to_job( $tmp_file ) {
 		$type = $this->get_content_type();
-		$this->get_job()->save_file( $type, $filename, 'sensei-' . $type . '.csv' );
-		unlink( $filename );
+		$this->get_job()->save_file( $type, $tmp_file, 'sensei-' . $type . '.csv' );
+		if ( file_exists( $tmp_file ) ) {
+			unlink( $tmp_file );
+		}
 	}
 
 }
