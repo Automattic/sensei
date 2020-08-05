@@ -18,35 +18,35 @@
   "main": "gulpfile.js",
   "dependencies": {
     "@woocommerce/components": "4.0.0",
-    "@wordpress/api-fetch": "3.14.0",
+    "@wordpress/api-fetch": "3.18.0",
     "@wordpress/base-styles": "1.9.0",
     "@wordpress/components": "9.4.1",
-    "@wordpress/data": "4.22.2",
+    "@wordpress/data": "4.22.3",
     "@wordpress/element": "2.16.0",
-    "@wordpress/i18n": "3.11.0",
-    "@wordpress/url": "2.14.0",
+    "@wordpress/i18n": "3.14.0",
+    "@wordpress/url": "2.17.0",
     "interpolate-components": "1.1.1",
-    "select2": "4.0.5"
+    "select2": "4.0.13"
   },
   "devDependencies": {
     "@automattic/calypso-build": "6.1.0",
     "@automattic/puppeteer-utils": "github:Automattic/puppeteer-utils",
-    "@babel/cli": "7.10.4",
-    "@babel/core": "7.10.4",
-    "@babel/preset-env": "7.10.4",
+    "@babel/cli": "7.10.5",
+    "@babel/core": "7.11.1",
+    "@babel/preset-env": "7.11.0",
     "@sheerun/mutationobserver-shim": "0.3.3",
-    "@testing-library/react": "10.4.6",
+    "@testing-library/react": "10.4.8",
     "@woocommerce/e2e-environment": "0.1.5",
     "@wordpress/babel-plugin-makepot": "3.7.0",
     "@wordpress/babel-preset-default": "4.17.0",
-    "@wordpress/e2e-test-utils": "4.11.0",
+    "@wordpress/e2e-test-utils": "4.11.1",
     "@wordpress/icons": "2.4.0",
     "@wordpress/jest-preset-default": "6.2.0",
     "@wordpress/postcss-themes": "2.6.0",
     "@wordpress/scripts": "12.1.1",
     "cross-env": "7.0.2",
     "del": "5.1.0",
-    "eslint": "7.4.0",
+    "eslint": "7.6.0",
     "eslint-config-prettier": "6.11.0",
     "gettext-parser": "4.0.4",
     "gulp": "4.0.2",
@@ -103,6 +103,6 @@
     ]
   },
   "resolutions": {
-    "@babel/preset-env": "7.10.4"
+    "@babel/preset-env": "7.11.0"
   }
 }
