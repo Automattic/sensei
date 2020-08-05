@@ -100,7 +100,11 @@ export const update = function* () {
 	if ( ! jobId ) {
 		return undefined;
 	}
-	const job = yield sendJobRequest( { jobId } );
+	const job = yield sendJobRequest( {
+		endpoint: 'process',
+		method: 'POST',
+		jobId,
+	} );
 
 	jobId = yield getJobId();
 	if ( ! jobId ) {
