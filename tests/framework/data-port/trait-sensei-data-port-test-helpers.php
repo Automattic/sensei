@@ -36,4 +36,24 @@ trait Sensei_Data_Port_Test_Helpers {
 
 		$this->assertTrue( $has_entry, $message );
 	}
+
+
+	/**
+	 * Assert that a REST API response is valid.
+	 *
+	 * @param $result
+	 */
+	protected function assertResultValidJob( $result, $expected = [] ) {
+		$this->assertTrue( isset( $result['id'], $result['status'], $result['files'] ) );
+		$this->assertTrue( is_string( $result['id'] ) );
+		$this->assertTrue( is_array( $result['status'] ) );
+		$this->assertTrue( is_array( $result['files'] ) );
+		$this->assertNotEmpty( $result['id'] );
+		$this->assertNotEmpty( $result['status'] );
+		$this->assertTrue( isset( $result['status']['status'], $result['status']['percentage'] ) );
+
+		foreach ( $expected as $key => $value ) {
+			$this->assertEquals( $result[ $key ], $value );
+		}
+	}
 }

@@ -4,7 +4,7 @@ import { useMergeReducer } from '../../react-hooks/use-merge-reducer';
 import { getSelectedKeys } from '../../shared/helpers/data';
 import { postTypeLabels } from '../../shared/helpers/labels';
 
-export const ExportSelectContentPage = ( { onSubmit } ) => {
+export const ExportSelectContentPage = ( { onSubmit, job } ) => {
 	const [ values, updateValues ] = useMergeReducer( {
 		course: false,
 		lesson: false,
@@ -16,6 +16,7 @@ export const ExportSelectContentPage = ( { onSubmit } ) => {
 	};
 
 	const hasSelected = Object.values( values ).some( ( v ) => v );
+	const isLoading = job && 'creating' === job.status;
 
 	return (
 		<form onSubmit={ submit }>
@@ -42,7 +43,12 @@ export const ExportSelectContentPage = ( { onSubmit } ) => {
 					) ) }
 				</div>
 				<div className="sensei-data-port-step__footer">
-					<Button type="submit" isPrimary disabled={ ! hasSelected }>
+					<Button
+						type="submit"
+						isPrimary
+						disabled={ ! hasSelected || isLoading }
+						isBusy={ isLoading }
+					>
 						{ __( 'Generate CSV', 'sensei-lms' ) }
 					</Button>
 				</div>

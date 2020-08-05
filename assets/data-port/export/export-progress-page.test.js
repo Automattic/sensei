@@ -5,7 +5,7 @@ describe( '<ExportProgressPage />', () => {
 	it( 'shows progress bar until ready', () => {
 		const { getByRole } = render(
 			<ExportProgressPage
-				state={ { status: 'progress', percentage: 20 } }
+				job={ { status: 'progress', percentage: 20 } }
 			/>
 		);
 
@@ -19,7 +19,7 @@ describe( '<ExportProgressPage />', () => {
 		window.addEventListener( 'click', onClick );
 		render(
 			<ExportProgressPage
-				state={ {
+				job={ {
 					status: 'completed',
 					files: [
 						{ url: '/test.csv', name: 'test.csv' },
@@ -47,7 +47,7 @@ describe( '<ExportProgressPage />', () => {
 	it( 'lists exported files', () => {
 		const { getByRole } = render(
 			<ExportProgressPage
-				state={ {
+				job={ {
 					status: 'completed',
 					files: [ { url: '/test.csv', name: 'test.csv' } ],
 				} }
@@ -61,7 +61,7 @@ describe( '<ExportProgressPage />', () => {
 		const onReset = jest.fn();
 		const { getByRole } = render(
 			<ExportProgressPage
-				state={ {
+				job={ {
 					status: 'completed',
 				} }
 				reset={ onReset }
@@ -74,7 +74,7 @@ describe( '<ExportProgressPage />', () => {
 	it( 'shows errors', () => {
 		const { getByText } = render(
 			<ExportProgressPage
-				state={ { status: 'completed', error: 'Error occured' } }
+				job={ { status: 'completed', error: 'Error occured' } }
 			/>
 		);
 
