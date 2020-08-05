@@ -111,7 +111,9 @@ abstract class Sensei_Export_Task
 		$columns = $this->get_type_schema()->get_schema();
 		$headers = array_map( 'ucwords', array_keys( $columns ) );
 
-		$filename = tempnam( sys_get_temp_dir(), 'sensei-export-csv-' . $this->get_content_type() );
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+
+		$filename = wp_tempnam( 'sensei-export-csv-' . $this->get_content_type() );
 		$file     = new SplFileObject( $filename, 'w' );
 		$file->fputcsv( $headers );
 		$file = null;
