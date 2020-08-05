@@ -22,19 +22,32 @@ const EXPORT_REST_API = '/sensei-internal/v1/export';
  *
  * @param {JobResponse} job Job state.
  */
-export const setJob = ( job ) => ( { type: 'SET_JOB', job } );
+const setJob = ( job ) => ( { type: 'SET_JOB', job } );
+const updateJob = ( job ) => ( { type: 'UPDATE_JOB', job } );
 
+const getJobId = () => select( EXPORT_STORE, 'getJobId' );
 /**
  * Set request error.
  *
  * @param {string} error Error message.
  */
-export const setRequestError = ( error ) => ( { type: 'SET_ERROR', error } );
+const setRequestError = ( error ) => ( { type: 'SET_ERROR', error } );
 
 /**
  * Clear job state.
  */
-export const clearJob = () => ( { type: 'CLEAR_JOB' } );
+const clearJob = () => ( { type: 'CLEAR_JOB' } );
+
+/**
+ * Start polling update if job status is pending.
+ *
+ * @param {JobResponse} job
+ */
+const pollIfPending = function* ( job ) {
+	if ( job && ! job.error && 'pending' === job.status.status ) {
+		yield timeout( update, 1000 );
+	}
+};
 
 /**
  * Start an export.
@@ -44,15 +57,11 @@ export const clearJob = () => ( { type: 'CLEAR_JOB' } );
  */
 export const start = function* ( types ) {
 	yield setJob( {
-		status: 'started',
-		percentage: 0,
+		status: 'creating',
 	} );
-	const jobId = yield select( EXPORT_STORE, 'getJobId' );
-	if ( ! jobId ) {
-		yield createJob();
-	}
-	yield startJob( types );
-	yield update();
+	yield createJob();
+	const job = yield startJob( types );
+	yield pollIfPending( job );
 };
 
 /**
@@ -68,27 +77,37 @@ export const reset = function* () {
 /**
  * Request to delete the job.
  *
+ * @param {string?} jobId
  * @access public
  */
-export const cancel = function* () {
+export const cancel = function* ( jobId ) {
 	yield cancelTimeout();
+	if ( ! jobId ) {
+		jobId = yield getJobId();
+	}
+	yield clearJob();
 	yield sendJobRequest( {
 		method: 'DELETE',
+		jobId,
 	} );
-	yield clearJob();
 };
 
 /**
  * Update job state from REST API.
  */
 export const update = function* () {
-	const job = yield sendJobRequest();
-
-	// TODO handle outdated response
-
-	if ( job && ! job.error && 'pending' === job.status.status ) {
-		yield timeout( update, 1000 );
+	let jobId = yield getJobId();
+	if ( ! jobId ) {
+		return undefined;
 	}
+	const job = yield sendJobRequest( { jobId } );
+
+	jobId = yield getJobId();
+	if ( ! jobId ) {
+		return undefined;
+	}
+	yield updateJob( job );
+	yield pollIfPending( job );
 };
 
 /**
@@ -97,11 +116,12 @@ export const update = function* () {
 export const checkForActiveJob = function* () {
 	const job = yield sendJobRequest( { jobId: 'active' } );
 
-	if ( job ) {
+	if ( job && job.id ) {
 		if ( 'setup' === job.status.status ) {
-			yield cancel();
+			yield cancel( job.id );
 		} else {
-			yield update();
+			yield setJob( job );
+			yield pollIfPending( job );
 		}
 	}
 };
@@ -114,11 +134,11 @@ export const checkForActiveJob = function* () {
  * @param {string?} options.jobId     Override job ID
  * @return {JobResponse} job
  */
-export const sendJobRequest = function* ( options = {} ) {
+const sendJobRequest = function* ( options = {} ) {
 	let { jobId, ...requestOptions } = options;
 
 	if ( ! jobId ) {
-		jobId = yield select( EXPORT_STORE, 'getJobId' );
+		jobId = yield getJobId();
 		if ( ! jobId ) {
 			yield setRequestError( 'No job ID' );
 			return undefined;
@@ -135,7 +155,7 @@ export const sendJobRequest = function* ( options = {} ) {
  * @param {string?} options.endpoint Request endpoint path in exporter API.
  * @param {string?} options.jobId    Job ID
  */
-export const sendRequest = function* ( options = {} ) {
+const sendRequest = function* ( options = {} ) {
 	const { endpoint, jobId, ...requestOptions } = options;
 
 	const path = [ EXPORT_REST_API, jobId, endpoint ]
@@ -145,8 +165,9 @@ export const sendRequest = function* ( options = {} ) {
 	try {
 		const job = yield apiFetch( { path, ...requestOptions } );
 
-		if ( ! job || ! jobId || jobId === job.id || 'active' === jobId )
-			return yield handleJobResponse( job );
+		if ( ! job || ! jobId || jobId === job.id || 'active' === jobId ) {
+			return job;
+		}
 	} catch ( error ) {
 		if (
 			'active' === jobId &&
@@ -161,10 +182,12 @@ export const sendRequest = function* ( options = {} ) {
 /**
  * Request to create a new job.
  */
-export const createJob = function* () {
-	yield sendRequest( {
+const createJob = function* () {
+	const job = yield sendRequest( {
 		method: 'POST',
 	} );
+
+	yield setJob( job );
 };
 
 /**
@@ -172,27 +195,13 @@ export const createJob = function* () {
  *
  * @param {string[]} types Content types to export.
  */
-export const startJob = function* ( types ) {
-	yield sendJobRequest( {
+const startJob = function* ( types ) {
+	const job = yield sendJobRequest( {
 		endpoint: 'start',
 		method: 'POST',
 		data: { content_types: types },
 	} );
-};
 
-/**
- * Set job state from response.
- * Start polling for changes if the job status is not completed.
- *
- * @param {JobResponse} job
- * @return {JobResponse} Job.
- */
-export const handleJobResponse = function* ( job ) {
-	if ( ! job || ! job.id || job.deleted ) {
-		yield clearJob();
-		return undefined;
-	}
-	yield setJob( job );
-
+	yield updateJob( job );
 	return job;
 };

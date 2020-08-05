@@ -47,7 +47,7 @@ export const ExportProgressPage = ( { job, reset, cancel } ) => {
 						/>
 					</p>
 					<div className="sensei-data-port-step__footer">
-						<Button isLink onClick={ cancel }>
+						<Button isLink onClick={ () => cancel() }>
 							{ __( 'Cancel', 'sensei-lms' ) }
 						</Button>
 					</div>
@@ -84,7 +84,7 @@ export const ExportProgressPage = ( { job, reset, cancel } ) => {
 						) }
 					</div>
 					<div className="sensei-data-port-step__footer">
-						<Button isPrimary onClick={ reset }>
+						<Button isPrimary onClick={ () => reset() }>
 							{ __( 'New Export', 'sensei-lms' ) }
 						</Button>
 					</div>
