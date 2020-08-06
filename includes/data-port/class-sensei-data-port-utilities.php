@@ -464,8 +464,10 @@ class Sensei_Data_Port_Utilities {
 	 *
 	 * @return string
 	 */
-	public static function serialize_list( $values ) {
-		return implode( ',', array_map( 'Sensei_Data_Port_Utilities::escape_list_item', $values ) );
+	public static function serialize_list( $values = [] ) {
+		return ! empty( $values )
+			? implode( ',', array_map( 'Sensei_Data_Port_Utilities::escape_list_item', $values ) )
+			: '';
 	}
 
 	/**
