@@ -6,7 +6,6 @@ import { logEvent } from '../log-event';
 
 const useSampleCourse = () => {
 	const [ isInstalling, setIsInstalling ] = useState( false );
-	const [ isCompleted, setIsCompleted ] = useState( false );
 	const [ error, setError ] = useState( null );
 	const [ jobId, setJobId ] = useState( null );
 	const [ pollingCount, setPollingCount ] = useState( 0 );
@@ -31,9 +30,7 @@ const useSampleCourse = () => {
 			} )
 				.then( ( res ) => {
 					if ( 'completed' === res.status.status ) {
-						setIsInstalling( false );
-						setIsCompleted( true );
-						setJobId( null );
+						window.location.assign( 'edit.php?post_type=course' );
 
 						return;
 					}
@@ -65,7 +62,7 @@ const useSampleCourse = () => {
 		logEvent( 'setup_wizard_ready_install_course' );
 	};
 
-	return [ start, isInstalling, isCompleted, error ];
+	return [ start, isInstalling, error ];
 };
 
 export default useSampleCourse;

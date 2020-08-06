@@ -24,7 +24,6 @@ export const Ready = () => {
 	const [
 		installSampleCourse,
 		isSampleCourseInstalling,
-		isSampleCourseCompleted,
 		sampleCourseError,
 	] = useSampleCourse();
 
@@ -106,21 +105,7 @@ export const Ready = () => {
 									'Install the Getting Started with Sensei LMS course.',
 									'sensei-lms'
 								),
-								after: isSampleCourseCompleted ? (
-									<Button
-										className="sensei-setup-wizard__button"
-										isSecondary
-										href="edit.php?post_type=course"
-										{ ...logLink(
-											'setup_wizard_ready_go_sample'
-										) }
-									>
-										{ __(
-											'Go to the courses',
-											'sensei-lms'
-										) }
-									</Button>
-								) : (
+								after: (
 									<div>
 										<Button
 											className="sensei-setup-wizard__button"

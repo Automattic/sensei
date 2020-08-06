@@ -194,6 +194,7 @@ describe( '<Ready />', () => {
 
 	it( 'Should run sample installation', async () => {
 		jest.useFakeTimers();
+		window.location.assign = jest.fn();
 
 		const startPromise = Promise.resolve( { id: 1 } );
 		const logsPromisePending = Promise.resolve( {
@@ -216,7 +217,9 @@ describe( '<Ready />', () => {
 		jest.runAllTimers();
 
 		await waitFor( () => {
-			expect( queryByText( 'Go to the courses' ) ).toBeTruthy();
+			expect( window.location.assign ).toBeCalledWith(
+				'edit.php?post_type=course'
+			);
 		} );
 	} );
 } );
