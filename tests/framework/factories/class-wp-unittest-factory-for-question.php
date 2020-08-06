@@ -13,7 +13,7 @@ class WP_UnitTest_Factory_For_Question extends WP_UnitTest_Factory_For_Post_Sens
 		$question_types      = Sensei()->question->question_types();
 		$question_type_slugs = array_keys( $question_types );
 
-		if ( $args['question_type'] ) {
+		if ( isset( $args['question_type'] ) ) {
 			$type = $args['question_type'];
 			unset( $args['question_type'] );
 		} else {
