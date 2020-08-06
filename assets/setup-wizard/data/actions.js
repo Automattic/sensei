@@ -38,7 +38,7 @@ export function* fetchSetupWizardData() {
 
 	try {
 		const data = yield fetchFromAPI( {
-			path: API_BASE_PATH,
+			path: API_BASE_PATH.replace( /\/$/, '' ),
 		} );
 		yield successFetch( normalizeSetupWizardData( data ) );
 	} catch ( error ) {

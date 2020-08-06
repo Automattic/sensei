@@ -18,38 +18,39 @@
   "main": "gulpfile.js",
   "dependencies": {
     "@woocommerce/components": "4.0.0",
-    "@wordpress/api-fetch": "3.14.0",
+    "@wordpress/api-fetch": "3.18.0",
     "@wordpress/base-styles": "1.9.0",
     "@wordpress/components": "9.4.1",
     "@wordpress/data": "4.22.3",
     "@wordpress/data-controls": "1.16.3",
     "@wordpress/element": "2.16.0",
-    "@wordpress/i18n": "3.11.0",
-    "@wordpress/url": "2.14.0",
+    "@wordpress/i18n": "3.14.0",
+    "@wordpress/url": "2.17.0",
     "interpolate-components": "1.1.1",
-    "select2": "4.0.5"
+    "select2": "4.0.13"
   },
   "devDependencies": {
     "@automattic/calypso-build": "6.1.0",
     "@automattic/puppeteer-utils": "github:Automattic/puppeteer-utils",
-    "@babel/cli": "7.10.4",
-    "@babel/core": "7.10.4",
-    "@babel/preset-env": "7.10.4",
+    "@babel/cli": "7.10.5",
+    "@babel/core": "7.11.1",
+    "@babel/preset-env": "7.11.0",
     "@sheerun/mutationobserver-shim": "0.3.3",
-    "@testing-library/react": "10.4.6",
+    "@testing-library/react": "10.4.8",
     "@testing-library/react-hooks": "3.3.0",
     "@woocommerce/e2e-environment": "0.1.5",
     "@wordpress/babel-plugin-makepot": "3.7.0",
     "@wordpress/babel-preset-default": "4.17.0",
-    "@wordpress/e2e-test-utils": "4.11.0",
+    "@wordpress/e2e-test-utils": "4.11.1",
     "@wordpress/icons": "2.4.0",
     "@wordpress/jest-preset-default": "6.2.0",
     "@wordpress/postcss-themes": "2.6.0",
     "@wordpress/scripts": "12.1.1",
     "cross-env": "7.0.2",
     "del": "5.1.0",
-    "eslint": "7.4.0",
+    "eslint": "7.6.0",
     "eslint-config-prettier": "6.11.0",
+    "gettext-parser": "4.0.4",
     "gulp": "4.0.2",
     "gulp-zip": "5.0.2",
     "husky": "4.2.5",
@@ -66,8 +67,8 @@
     "build:docs": "rm -rf hookdocs/ && jsdoc -c hookdoc-conf.json",
     "i18n:clean": "rm -f ./lang/tmp-*",
     "i18n:js": "npx babel --config-file ./babel.makepot.js -o ./lang/tmp-babel.log assets --ignore \"**/*.test.js\",\"./assets/dist\",\"./assets/vendor\",\"./build\"",
-    "i18n:php": "wp i18n make-pot --merge=lang/tmp-sensei-lms-js.pot --skip-js --exclude=build --headers='{\"Last-Translator\":null,\"Language-Team\":null}' . lang/sensei-lms.pot",
-    "i18n:build": "npm run i18n:clean && npm run i18n:js && npm run i18n:php && node ./bin/pot-dist-references.js && npm run i18n:clean",
+    "i18n:php": "wp i18n make-pot --merge=lang/tmp-sensei-lms-js.pot --skip-js --exclude=build --headers='{\"Last-Translator\":null,\"Language-Team\":null,\"Report-Msgid-Bugs-To\":\"https://wordpress.org/support/plugin/sensei-lms\"}' . lang/sensei-lms.pot",
+    "i18n:build": "npm run build && npm run i18n:clean && npm run i18n:js && npm run i18n:php && node ./scripts/pot-dist-references.js && npm run i18n:clean",
     "format-js": "wp-scripts format-js",
     "lint-css": "wp-scripts lint-style **/*.scss",
     "lint-css:fix": "npm run lint-css -- --fix",
@@ -105,6 +106,6 @@
     ]
   },
   "resolutions": {
-    "@babel/preset-env": "7.10.4"
+    "@babel/preset-env": "7.11.0"
   }
 }

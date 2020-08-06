@@ -1,9 +1,9 @@
 import {
 	API_BASE_PATH,
 	FETCH_FROM_API,
-	START_FETCH_CURRENT_JOB_STATE,
-	SUCCESS_FETCH_CURRENT_JOB_STATE,
-	ERROR_FETCH_CURRENT_JOB_STATE,
+	START_LOAD_CURRENT_JOB_STATE,
+	SUCCESS_LOAD_CURRENT_JOB_STATE,
+	ERROR_LOAD_CURRENT_JOB_STATE,
 	START_IMPORT,
 	SUCCESS_START_IMPORT,
 	ERROR_START_IMPORT,
@@ -17,7 +17,7 @@ import {
 
 import {
 	fetchFromAPI,
-	fetchCurrentJobState,
+	loadCurrentJobState,
 	submitStartImport,
 	startImport,
 	successStartImport,
@@ -102,11 +102,11 @@ describe( 'Importer actions', () => {
 	 * Fetch importer data action.
 	 */
 	it( 'Should generate the get current job state importer data action', () => {
-		const gen = fetchCurrentJobState();
+		const gen = loadCurrentJobState();
 
 		// Start fetch action.
 		const expectedStartFetchAction = {
-			type: START_FETCH_CURRENT_JOB_STATE,
+			type: START_LOAD_CURRENT_JOB_STATE,
 		};
 
 		expect( gen.next().value ).toEqual( expectedStartFetchAction );
@@ -142,7 +142,7 @@ describe( 'Importer actions', () => {
 					},
 				},
 			},
-			type: SUCCESS_FETCH_CURRENT_JOB_STATE,
+			type: SUCCESS_LOAD_CURRENT_JOB_STATE,
 		};
 
 		expect( gen.next( RESPONSE_FULL ).value ).toEqual(
@@ -151,7 +151,7 @@ describe( 'Importer actions', () => {
 	} );
 
 	it( 'Should catch error on the get current job state action', () => {
-		const gen = fetchCurrentJobState();
+		const gen = loadCurrentJobState();
 
 		// Start fetch action.
 		gen.next();
@@ -162,7 +162,7 @@ describe( 'Importer actions', () => {
 		// Error action.
 		const error = { code: '', message: 'Error' };
 		const expectedErrorAction = {
-			type: ERROR_FETCH_CURRENT_JOB_STATE,
+			type: ERROR_LOAD_CURRENT_JOB_STATE,
 			error,
 		};
 		expect( gen.throw( error ).value ).toEqual( expectedErrorAction );

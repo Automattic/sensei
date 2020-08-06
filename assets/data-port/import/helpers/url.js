@@ -7,7 +7,7 @@ import { API_BASE_PATH } from '../data/constants';
  * @param {Array}  parts Parts of the URL.
  * @return {string} Combined URL.
  */
-export const buildJobEndpointUrl = ( jobId, parts ) => {
+export const buildJobEndpointUrl = ( jobId, parts = null ) => {
 	const path = parts ? '/' + parts.join( '/' ) : '';
 
 	return API_BASE_PATH + jobId + path;
