@@ -121,7 +121,7 @@ export const Ready = () => {
 										) }
 									</Button>
 								) : (
-									<>
+									<div>
 										<Button
 											className="sensei-setup-wizard__button"
 											isSecondary
@@ -136,10 +136,16 @@ export const Ready = () => {
 												'sensei-lms'
 											) }
 										</Button>
+
 										{ sampleCourseError && (
-											<div>{ sampleCourseError }</div>
+											<div className="sensei-setup-wizard__error-message">
+												{ __(
+													'The sample course could not be imported. Please try again.',
+													'sensei-lms'
+												) }
+											</div>
 										) }
-									</>
+									</div>
 								),
 							},
 							{
