@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @group data-port
  */
-class Sensei_Export_Courses_Tests extends WP_UnitTestCase {
+class Sensei_Export_Courses_Tests extends Sensei_Export_Task_Tests {
 
 	/**
 	 * Factory helper.
@@ -54,7 +54,6 @@ class Sensei_Export_Courses_Tests extends WP_UnitTestCase {
 		];
 		$this->factory->term->add_post_terms( $course->ID, $terms, 'course-category', false );
 
-		$post   = get_post( $course->ID );
 		$result = $this->export();
 
 		$this->assertEquals(
@@ -114,7 +113,6 @@ class Sensei_Export_Courses_Tests extends WP_UnitTestCase {
 		];
 		$this->factory->term->add_post_terms( $course->ID, $terms, Sensei()->modules->taxonomy, false );
 
-		$post   = get_post( $course->ID );
 		$result = $this->export();
 
 		$this->assertEquals(
@@ -222,11 +220,6 @@ class Sensei_Export_Courses_Tests extends WP_UnitTestCase {
 		$this->assertEquals( $course_ids[1], $course_1['prerequisite'] );
 	}
 
-	protected static function read_csv( $filename ) {
-		$reader = new Sensei_Import_CSV_Reader( $filename, 0, 1000 );
-		return $reader->read_lines();
-	}
-
 	public function testAllPostStatusCoursesExporterd() {
 		$course_published = $this->factory->course->create( [ 'post_status' => 'publish' ] );
 		$course_draft     = $this->factory->course->create( [ 'post_status' => 'draft' ] );
@@ -237,30 +230,7 @@ class Sensei_Export_Courses_Tests extends WP_UnitTestCase {
 
 	}
 
-	/**
-	 * Find a course line by ID.
-	 *
-	 * @param array $result    Result data.
-	 * @param int   $course_id The course id.
-	 *
-	 * @return array The line for the course.
-	 */
-	protected static function get_by_id( array $result, $course_id ) {
-		$key = array_search( strval( $course_id ), array_column( $result, 'id' ), true );
-		return $result[ $key ];
+	protected function get_task_class() {
+		return Sensei_Export_Courses::class;
 	}
-
-	/**
-	 * Run the export job and read back the created CSV.
-	 *
-	 * @return array The exported data as read from the CSV file.
-	 */
-	public function export() {
-		$job  = Sensei_Export_Job::create( 'test', 0 );
-		$task = new Sensei_Export_Courses( $job );
-		$task->run();
-
-		return self::read_csv( $job->get_file_path( 'course' ) );
-	}
-
 }

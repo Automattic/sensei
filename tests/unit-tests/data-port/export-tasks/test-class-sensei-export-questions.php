@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @group data-port
  */
-class Sensei_Export_Questions_Tests extends WP_UnitTestCase {
+class Sensei_Export_Questions_Tests extends Sensei_Export_Task_Tests {
 
 	/**
 	 * Factory helper.
@@ -254,34 +254,7 @@ class Sensei_Export_Questions_Tests extends WP_UnitTestCase {
 		);
 	}
 
-	/**
-	 * Find a question line by ID.
-	 *
-	 * @param array $result      Result data.
-	 * @param int   $question_id The question id.
-	 *
-	 * @return array The line for the question.
-	 */
-	protected static function get_by_id( array $result, $question_id ) {
-		$key = array_search( strval( $question_id ), array_column( $result, 'id' ), true );
-		return $result[ $key ];
-	}
-
-	/**
-	 * Run the export job and read back the created CSV.
-	 *
-	 * @return array The exported data as read from the CSV file.
-	 */
-	public function export() {
-		$job  = Sensei_Export_Job::create( 'test', 0 );
-		$task = new Sensei_Export_Questions( $job );
-		$task->run();
-
-		return self::read_csv( $job->get_file_path( 'question' ) );
-	}
-
-	protected static function read_csv( $filename ) {
-		$reader = new Sensei_Import_CSV_Reader( $filename, 0, 1000 );
-		return $reader->read_lines();
+	protected function get_task_class() {
+		return Sensei_Export_Questions::class;
 	}
 }
