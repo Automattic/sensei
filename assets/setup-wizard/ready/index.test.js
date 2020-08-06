@@ -1,4 +1,5 @@
-import { fireEvent, render } from '@testing-library/react';
+import { fireEvent, render, act, waitFor } from '@testing-library/react';
+import apiFetch from '@wordpress/api-fetch';
 
 import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 import { Ready } from './index';
@@ -13,6 +14,9 @@ const stepData = {
 jest.mock( '../data/use-setup-wizard-step', () => ( {
 	useSetupWizardStep: jest.fn(),
 } ) );
+
+// Mock apiFetch.
+jest.mock( '@wordpress/api-fetch', () => jest.fn() );
 
 // Mock features data.
 const mockStepData = ( mockData = {} ) => {
@@ -77,6 +81,14 @@ describe( '<Ready />', () => {
 		).toEqual( 'https://senseilms.com/lesson/courses/' );
 	} );
 
+	it( 'Should have a install sample course button', () => {
+		const { queryByText } = render( <Ready /> );
+
+		expect(
+			queryByText( 'Install a sample course', { selector: 'button' } )
+		).toBeTruthy();
+	} );
+
 	it( 'Should log event when clicking to join mailing list', () => {
 		const { queryByText } = render( <Ready /> );
 		const button = queryByText( 'Yes, please!' );
@@ -112,6 +124,24 @@ describe( '<Ready />', () => {
 			'setup_wizard_ready_import',
 			undefined
 		);
+	} );
+
+	it( 'Should log event when clicking to install sample course', async () => {
+		const fetchPromise = Promise.resolve( { id: 1 } );
+		apiFetch.mockImplementation( () => fetchPromise );
+
+		const { queryByText } = render( <Ready /> );
+
+		fireEvent.click(
+			queryByText( 'Install a sample course', { selector: 'button' } )
+		);
+
+		expect( window.sensei_log_event ).toHaveBeenCalledWith(
+			'setup_wizard_ready_install_course',
+			undefined
+		);
+
+		await act( () => fetchPromise );
 	} );
 
 	it( 'Should log event when clicking to create the first course', () => {
@@ -160,5 +190,33 @@ describe( '<Ready />', () => {
 		render( <Ready /> );
 
 		expect( submitMock ).not.toBeCalled();
+	} );
+
+	it( 'Should run sample installation', async () => {
+		jest.useFakeTimers();
+
+		const startPromise = Promise.resolve( { id: 1 } );
+		const logsPromisePending = Promise.resolve( {
+			status: { status: 'pending' },
+		} );
+		const logsPromiseCompleted = Promise.resolve( {
+			status: { status: 'completed' },
+		} );
+
+		apiFetch.mockImplementationOnce( () => startPromise );
+		apiFetch.mockImplementationOnce( () => logsPromisePending );
+		apiFetch.mockImplementationOnce( () => logsPromiseCompleted );
+
+		const { queryByText } = render( <Ready /> );
+
+		fireEvent.click(
+			queryByText( 'Install a sample course', { selector: 'button' } )
+		);
+
+		jest.runAllTimers();
+
+		await waitFor( () => {
+			expect( queryByText( 'Go to the courses' ) ).toBeTruthy();
+		} );
 	} );
 } );

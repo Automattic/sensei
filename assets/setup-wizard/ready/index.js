@@ -7,6 +7,7 @@ import { MailingListSignupForm } from './mailinglist-signup-form';
 import { formatString } from '../../shared/helpers/format-string.js';
 import { logLink } from '../log-event';
 import { useSetupWizardStep } from '../data/use-setup-wizard-step';
+import useSampleCourse from './use-sample-course';
 
 /**
  * Ready step for Setup Wizard.
@@ -19,6 +20,13 @@ export const Ready = () => {
 			submitStep();
 		}
 	}, [ isComplete, submitStep ] );
+
+	const [
+		installSampleCourse,
+		isSampleCourseInstalling,
+		isSampleCourseCompleted,
+		sampleCourseError,
+	] = useSampleCourse();
 
 	return (
 		<>
@@ -98,20 +106,40 @@ export const Ready = () => {
 									'Install the Getting Started with Sensei LMS course.',
 									'sensei-lms'
 								),
-								after: (
+								after: isSampleCourseCompleted ? (
 									<Button
 										className="sensei-setup-wizard__button"
 										isSecondary
-										href="#"
+										href="edit.php?post_type=course"
 										{ ...logLink(
-											'setup_wizard_ready_install_course'
+											'setup_wizard_ready_go_sample'
 										) }
 									>
 										{ __(
-											'Install a sample course',
+											'Go to the courses',
 											'sensei-lms'
 										) }
 									</Button>
+								) : (
+									<>
+										<Button
+											className="sensei-setup-wizard__button"
+											isSecondary
+											onClick={ installSampleCourse }
+											isBusy={ isSampleCourseInstalling }
+											disabled={
+												isSampleCourseInstalling
+											}
+										>
+											{ __(
+												'Install a sample course',
+												'sensei-lms'
+											) }
+										</Button>
+										{ sampleCourseError && (
+											<div>{ sampleCourseError }</div>
+										) }
+									</>
 								),
 							},
 							{
