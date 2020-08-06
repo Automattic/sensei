@@ -59,6 +59,16 @@ describe( '<Ready />', () => {
 		).toEqual( 'post-new.php?post_type=course' );
 	} );
 
+	it( 'Should have an import content button', () => {
+		const { queryByText } = render( <Ready /> );
+
+		expect(
+			queryByText( 'Import content', {
+				selector: 'a',
+			} ).getAttribute( 'href' )
+		).toEqual( 'admin.php?page=sensei_import' );
+	} );
+
 	it( 'Should have a create your first course link.', () => {
 		const { queryByText } = render( <Ready /> );
 
@@ -93,7 +103,18 @@ describe( '<Ready />', () => {
 		);
 	} );
 
-	it( 'Should log event when clicking to learn more', () => {
+	it( 'Should log event when clicking to import content button', () => {
+		const { queryByText } = render( <Ready /> );
+
+		fireEvent.click( queryByText( 'Import content', { selector: 'a' } ) );
+
+		expect( window.sensei_log_event ).toHaveBeenCalledWith(
+			'setup_wizard_ready_import',
+			undefined
+		);
+	} );
+
+	it( 'Should log event when clicking to create the first course', () => {
 		const { queryByText } = render( <Ready /> );
 
 		fireEvent.click( queryByText( 'create your first course.' ) );
