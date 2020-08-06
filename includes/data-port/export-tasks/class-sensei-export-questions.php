@@ -102,7 +102,7 @@ class Sensei_Export_Questions
 					function( $value ) {
 						return 'Right:' . $value;
 					},
-					$meta['_question_right_answer']
+					is_array( $meta['_question_right_answer'] ) ? $meta['_question_right_answer'] : [ $meta['_question_right_answer'] ]
 				);
 				$answers_wrong = array_map(
 					function( $value ) {
