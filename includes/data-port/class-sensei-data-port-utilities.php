@@ -479,7 +479,7 @@ class Sensei_Data_Port_Utilities {
 	 * @return string
 	 */
 	public static function escape_list_item( $value ) {
-		if ( false !== strpos( ',', $value ) ) {
+		if ( false !== strpos( $value, ',' ) ) {
 			$value = '"' . str_replace( '"', '\"', $value ) . '"';
 		}
 		return $value;
