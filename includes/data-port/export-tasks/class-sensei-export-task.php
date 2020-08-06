@@ -185,8 +185,10 @@ abstract class Sensei_Export_Task
 	 * @param string $tmp_file
 	 */
 	public function add_file_to_job( $tmp_file ) {
-		$type = $this->get_content_type();
-		$this->get_job()->save_file( $type, $tmp_file, 'sensei-' . $type . '.csv' );
+		$type     = $this->get_content_type();
+		$date     = wp_date( 'Y-m-d' );
+		$filename = sanitize_file_name( get_bloginfo( 'name' ) . '-' . ucwords( $type ) . 's-' . $date . '.csv' );
+		$this->get_job()->save_file( $type, $tmp_file, $filename );
 		if ( file_exists( $tmp_file ) ) {
 			unlink( $tmp_file );
 		}
