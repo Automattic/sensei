@@ -14,7 +14,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @group data-port
  */
-class Sensei_Export_Questions_Tests extends Sensei_Export_Task_Tests {
+class Sensei_Export_Questions_Tests extends WP_UnitTestCase {
+
+	use Sensei_Export_Task_Tests;
 
 	/**
 	 * Factory helper.

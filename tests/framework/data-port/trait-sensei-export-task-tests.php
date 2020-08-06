@@ -14,14 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @group data-port
  */
-abstract class Sensei_Export_Task_Tests extends WP_UnitTestCase {
-
-	/**
-	 * Content type.
-	 *
-	 * @return string
-	 */
-	abstract protected function get_task_class();
+trait Sensei_Export_Task_Tests {
 
 	/**
 	 * Find a question line by ID.
@@ -42,9 +35,9 @@ abstract class Sensei_Export_Task_Tests extends WP_UnitTestCase {
 	 * @return array The exported data as read from the CSV file.
 	 */
 	public function export() {
-		$job  = Sensei_Export_Job::create( 'test', 0 );
+		$job               = Sensei_Export_Job::create( 'test', 0 );
 		$export_task_class = $this->get_task_class();
-		$task = new $export_task_class( $job );
+		$task              = new $export_task_class( $job );
 		$task->run();
 
 		return self::read_csv( $job->get_file_path( $task->get_content_type() ) );
