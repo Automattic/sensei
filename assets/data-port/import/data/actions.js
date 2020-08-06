@@ -1,9 +1,9 @@
 import {
 	API_SPECIAL_ACTIVE_JOB_ID,
 	FETCH_FROM_API,
-	START_FETCH_CURRENT_JOB_STATE,
-	SUCCESS_FETCH_CURRENT_JOB_STATE,
-	ERROR_FETCH_CURRENT_JOB_STATE,
+	START_LOAD_CURRENT_JOB_STATE,
+	SUCCESS_LOAD_CURRENT_JOB_STATE,
+	ERROR_LOAD_CURRENT_JOB_STATE,
 	START_IMPORT,
 	SUCCESS_START_IMPORT,
 	ERROR_START_IMPORT,
@@ -47,8 +47,8 @@ export const wait = ( timeout ) => ( {
 /**
  * Fetch importer data for current job.
  */
-export const fetchCurrentJobState = composeFetchAction(
-	START_FETCH_CURRENT_JOB_STATE,
+export const loadCurrentJobState = composeFetchAction(
+	START_LOAD_CURRENT_JOB_STATE,
 	function* () {
 		const data = yield fetchFromAPI( {
 			path: buildJobEndpointUrl( API_SPECIAL_ACTIVE_JOB_ID ),
@@ -56,8 +56,8 @@ export const fetchCurrentJobState = composeFetchAction(
 
 		return normalizeImportData( data );
 	},
-	SUCCESS_FETCH_CURRENT_JOB_STATE,
-	ERROR_FETCH_CURRENT_JOB_STATE
+	SUCCESS_LOAD_CURRENT_JOB_STATE,
+	ERROR_LOAD_CURRENT_JOB_STATE
 );
 
 /**
@@ -416,5 +416,5 @@ export const resetState = () => ( {
  */
 export function* restartImporter() {
 	yield resetState();
-	yield fetchCurrentJobState();
+	yield loadCurrentJobState();
 }

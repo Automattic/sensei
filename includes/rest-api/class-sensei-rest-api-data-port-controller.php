@@ -131,7 +131,7 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 	/**
 	 * Resolve the job ID parameter.
 	 *
-	 * @param int  $job_id Job ID.
+	 * @param int  $job_id        Job ID.
 	 * @param bool $allow_current Allow special ID of `active` to get the active job.
 	 *
 	 * @return Sensei_Data_Port_Job|null
@@ -152,9 +152,13 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function request_get_job( $request ) {
-		$job = $this->resolve_job( $this->get_job_id_param( $request ), true );
+		$job_id = $this->get_job_id_param( $request );
+		$job    = $this->resolve_job( $job_id, true );
 
 		if ( ! $job ) {
+			if ( 'active' === $job_id ) {
+				return [ 'id' => null ];
+			}
 			return new WP_Error(
 				'sensei_data_port_job_not_found',
 				__( 'Job not found.', 'sensei-lms' ),
@@ -512,6 +516,7 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 	 * Get the job_id parameter from the request.
 	 *
 	 * @param WP_REST_Request $request
+	 *
 	 * @return string Job ID
 	 */
 	protected static function get_job_id_param( $request ) {
