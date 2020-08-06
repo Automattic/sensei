@@ -13,13 +13,18 @@ class WP_UnitTest_Factory_For_Question extends WP_UnitTest_Factory_For_Post_Sens
 		$question_types      = Sensei()->question->question_types();
 		$question_type_slugs = array_keys( $question_types );
 
-		// If we have created a question for every type, then shuffle.
-		if ( count( $this->generated_types ) === count( $question_type_slugs ) ) {
-			shuffle( $question_type_slugs );
-			$type = array_pop( $question_type_slugs );
+		if ( $args['question_type'] ) {
+			$type = $args['question_type'];
+			unset( $args['question_type'] );
 		} else {
-			$type                    = $question_type_slugs[ count( $this->generated_types ) ];
-			$this->generated_types[] = $type;
+			// If we have created a question for every type, then shuffle.
+			if ( count( $this->generated_types ) === count( $question_type_slugs ) ) {
+				shuffle( $question_type_slugs );
+				$type = array_pop( $question_type_slugs );
+			} else {
+				$type                    = $question_type_slugs[ count( $this->generated_types ) ];
+				$this->generated_types[] = $type;
+			}
 		}
 		$this->question_count++;
 		if ( isset( $args['quiz_id'] ) && ! isset( $args['post_author'] ) ) {
