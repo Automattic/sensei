@@ -36,7 +36,7 @@ class Sensei_Export_Courses
 		$teacher       = get_user_by( 'id', $post->post_author );
 		$prerequisite  = get_post_meta( $post->ID, '_course_prerequisite', true );
 		$featured      = get_post_meta( $post->ID, '_course_featured', true );
-		$image         = get_the_post_thumbnail_url( $post );
+		$image         = get_the_post_thumbnail_url( $post, 'full' );
 		$video         = get_post_meta( $post->ID, '_course_video_embed', true );
 		$notifications = ! get_post_meta( $post->ID, 'disable_notification', true );
 		$categories    = get_the_terms( $post->ID, 'course-category' );

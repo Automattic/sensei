@@ -86,7 +86,6 @@ class Sensei_Export_Courses_Tests extends WP_UnitTestCase {
 
 		$this->factory->term->add_post_terms( $course->ID, $term, 'course-category', false );
 
-		$post   = get_post( $course->ID );
 		$result = $this->export();
 
 		$this->assertEquals(
@@ -150,14 +149,19 @@ class Sensei_Export_Courses_Tests extends WP_UnitTestCase {
 	public function testCourseImageExported() {
 		$course = $this->factory->course->create_and_get();
 
-		$thumbnail_id = $this->factory->attachment->create( [ 'file' => 'localfilename.png' ] );
+		$thumbnail_id = $this->factory->attachment->create(
+			[
+				'file'           => 'course-img.png',
+				'post_mime_type' => 'image/png',
+			]
+		);
 		set_post_thumbnail( $course, $thumbnail_id );
 
 		$result = $this->export();
 
 		$this->assertArraySubset(
 			[
-				'image' => wp_get_attachment_image_url( $thumbnail_id ),
+				'image' => 'http://example.org/wp-content/uploads/course-img.png',
 			],
 			$result[0]
 		);
