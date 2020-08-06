@@ -159,26 +159,25 @@ describe( 'Export store', () => {
 
 		await jest.runOnlyPendingTimers();
 
+		const pollRequest = {
+			path: '/sensei-internal/v1/export/3/process',
+			method: 'POST',
+		};
+
 		expect( apiFetch ).toHaveBeenCalledTimes( 1 );
-		expect( apiFetch ).toHaveBeenLastCalledWith( {
-			path: '/sensei-internal/v1/export/3',
-		} );
+		expect( apiFetch ).toHaveBeenLastCalledWith( pollRequest );
 		expect( select( EXPORT_STORE ).getJob().percentage ).toEqual( 20 );
 
 		await jest.runOnlyPendingTimers();
 
 		expect( apiFetch ).toHaveBeenCalledTimes( 2 );
-		expect( apiFetch ).toHaveBeenLastCalledWith( {
-			path: '/sensei-internal/v1/export/3',
-		} );
+		expect( apiFetch ).toHaveBeenLastCalledWith( pollRequest );
 		expect( select( EXPORT_STORE ).getJob().percentage ).toEqual( 50 );
 
 		await jest.runOnlyPendingTimers();
 
 		expect( apiFetch ).toHaveBeenCalledTimes( 3 );
-		expect( apiFetch ).toHaveBeenLastCalledWith( {
-			path: '/sensei-internal/v1/export/3',
-		} );
+		expect( apiFetch ).toHaveBeenLastCalledWith( pollRequest );
 		expect( select( EXPORT_STORE ).getJob() ).toEqual( {
 			id: 3,
 			status: 'complete',
