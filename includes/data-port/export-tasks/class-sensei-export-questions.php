@@ -9,23 +9,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use Sensei_Data_Port_Question_Schema as Schema;
+
 /**
  * Export content to a CSV file for the given type.
  */
 class Sensei_Export_Questions
 	extends Sensei_Export_Task {
-
-	/**
-	 * Sensei_Export_Questions constructor.
-	 *
-	 * Export questions.
-	 *
-	 * @param Sensei_Data_Port_Job $job
-	 */
-	public function __construct( Sensei_Data_Port_Job $job ) {
-		parent::__construct( $job );
-		class_alias( 'Sensei_Data_Port_Question_Schema', 'Schema' );
-	}
 
 	/**
 	 * Content type of the task.
@@ -129,7 +119,7 @@ class Sensei_Export_Questions
 
 				break;
 			case 'file-upload':
-				$columns[ Schema::COLUMN_TEACHER_NOTES ] = $meta['_question_right_answer'] ?? '';
+				$columns[ Schema::COLUMN_TEACHER_NOTES ] = $meta['_question_right_answer'];
 				$columns[ Schema::COLUMN_UPLOAD_NOTES ]  = ! empty( $meta['_question_wrong_answers'] ) ? $meta['_question_wrong_answers'][0] : '';
 
 				break;
