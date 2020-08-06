@@ -167,8 +167,9 @@ class Sensei_Learner_Management {
 		$data = array(
 			'remove_generic_confirm'     => __( 'Are you sure you want to remove this learner?', 'sensei-lms' ),
 			'remove_from_lesson_confirm' => __( 'Are you sure you want to remove the learner from this lesson?', 'sensei-lms' ),
-			'remove_from_course_confirm' => __( 'Are you sure you want to remove this learner\'s manual enrollment in the course?', 'sensei-lms' ),
+			'remove_from_course_confirm' => __( 'Are you sure you want to remove this learner\'s enrollment in the course?', 'sensei-lms' ),
 			'enrol_in_course_confirm'    => __( 'Are you sure you want to enroll the learner in this course?', 'sensei-lms' ),
+			'restore_enrollment_confirm' => __( 'Are you sure you want to restore the learner enrollment in this course?', 'sensei-lms' ),
 			'reset_lesson_confirm'       => __( 'Are you sure you want to reset the progress of this learner for this lesson?', 'sensei-lms' ),
 			'reset_course_confirm'       => __( 'Are you sure you want to reset the progress of this learner for this course?', 'sensei-lms' ),
 			'remove_progress_confirm'    => __( 'Are you sure you want to remove the progress of this learner for this course?', 'sensei-lms' ),
@@ -524,7 +525,7 @@ class Sensei_Learner_Management {
 
 		// phpcs:ignore WordPress.Security.NonceVerification -- Nonce checked below.
 		$learner_action = sanitize_text_field( wp_unslash( $_GET['learner_action'] ) );
-		if ( ! in_array( $learner_action, [ 'enrol', 'withdraw' ], true ) ) {
+		if ( ! in_array( $learner_action, [ 'enrol', 'restore_enrollment', 'withdraw' ], true ) ) {
 			wp_safe_redirect( esc_url_raw( $redirect_url ) );
 			exit;
 		}
@@ -558,18 +559,13 @@ class Sensei_Learner_Management {
 			exit;
 		}
 
-		$enrolment_manager         = Sensei_Course_Enrolment_Manager::instance();
-		$manual_enrolment_provider = $enrolment_manager->get_manual_enrolment_provider();
-		if ( ! ( $manual_enrolment_provider instanceof Sensei_Course_Manual_Enrolment_Provider ) ) {
-			wp_safe_redirect( esc_url_raw( $failed_redirect_url ) );
-			exit;
-		}
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$result           = false;
 
-		$result = false;
 		if ( 'withdraw' === $learner_action ) {
-			$result = $manual_enrolment_provider->withdraw_learner( $user_id, $course_id );
-		} elseif ( 'enrol' === $learner_action ) {
-			$result = $manual_enrolment_provider->enrol_learner( $user_id, $course_id );
+			$result = $course_enrolment->withdraw( $user_id );
+		} elseif ( in_array( $learner_action, [ 'enrol', 'restore_enrollment' ], true ) ) {
+			$result = $course_enrolment->enrol( $user_id );
 		}
 
 		if ( ! $result ) {
@@ -756,38 +752,50 @@ class Sensei_Learner_Management {
 				case 'error_enrol':
 					$notice = [
 						'error',
-						__( 'An error occurred while manually enrolling the learner.', 'sensei-lms' ),
+						__( 'An error occurred while enrolling the learner.', 'sensei-lms' ),
+					];
+					break;
+				case 'error_restore_enrollment':
+					$notice = [
+						'error',
+						__( 'An error occurred while restoring learner enrollment.', 'sensei-lms' ),
 					];
 					break;
 				case 'error_enrol_multiple':
 					$notice = [
 						'error',
-						__( 'An error occurred while manually enrolling the learners.', 'sensei-lms' ),
+						__( 'An error occurred while enrolling the learners.', 'sensei-lms' ),
 					];
 					break;
 				case 'error_withdraw':
 					$notice = [
 						'error',
-						__( 'An error occurred removing the learner\'s manual enrollment', 'sensei-lms' ),
+						__( 'An error occurred removing the learner\'s enrollment.', 'sensei-lms' ),
 					];
 					break;
 				case 'success_withdraw':
 					$notice = [
 						'updated',
-						__( 'Learner\'s manual enrollment has been removed.', 'sensei-lms' ),
+						__( 'Learner\'s enrollment has been removed.', 'sensei-lms' ),
 					];
 					break;
 				case 'success_enrol':
 					$notice = [
 						'updated',
-						__( 'Learner has been manually enrolled.', 'sensei-lms' ),
+						__( 'Learner has been enrolled.', 'sensei-lms' ),
+					];
+					break;
+				case 'success_restore_enrollment':
+					$notice = [
+						'updated',
+						__( 'Learner enrollment has been restored.', 'sensei-lms' ),
 					];
 					break;
 				case 'success_bulk':
 				case 'success_enrol_multiple':
 					$notice = [
 						'updated',
-						__( 'Learners have been manually enrolled.', 'sensei-lms' ),
+						__( 'Learners have been enrolled.', 'sensei-lms' ),
 					];
 					break;
 			}

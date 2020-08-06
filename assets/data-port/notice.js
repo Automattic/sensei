@@ -16,15 +16,13 @@ export const Notice = ( { message, isError } ) => {
 
 	return (
 		<div className="sensei-data-port-notice">
-			<p className={ messageClasses }>
-				{ isError && (
-					<Dashicon
-						className="sensei-data-port-notice__icon error"
-						icon="warning"
-					/>
-				) }
-				{ message }
-			</p>
+			{ isError && (
+				<Dashicon
+					className="sensei-data-port-notice__icon error"
+					icon="warning"
+				/>
+			) }
+			<span className={ messageClasses }>{ message }</span>
 		</div>
 	);
 };

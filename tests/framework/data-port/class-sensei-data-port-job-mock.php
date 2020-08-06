@@ -62,4 +62,8 @@ class Sensei_Data_Port_Job_Mock extends Sensei_Data_Port_Job {
 	public function is_ready() {
 		return true;
 	}
+
+	protected function get_log_type_order() {
+		return [ Sensei_Import_Course_Model::MODEL_KEY, Sensei_Import_Lesson_Model::MODEL_KEY, Sensei_Import_Question_Model::MODEL_KEY ];
+	}
 }

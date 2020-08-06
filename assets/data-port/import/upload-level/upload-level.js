@@ -104,34 +104,35 @@ export const UploadLevels = ( {
 						key={ level.key }
 						className="sensei-upload-file-line sensei-data-port-step__line"
 					>
-						<label className="sensei-upload-file-line__field-wrapper">
-							<span className="sensei-upload-file-line__description">
-								{ level.description }
-							</span>
-							<FormFileUpload
-								// Include key to redraw after each upload attempt for onChange of the same file.
-								key={ levelState.isUploading }
-								isSecondary
-								accept={ [ '.csv', '.txt' ] }
-								disabled={
-									levelState.isUploading ||
-									levelState.isDeleting
-								}
-								onChange={ ( event ) =>
-									uploadFile(
-										jobId,
-										event.target.files,
-										level.key,
-										uploadFileForLevel,
-										throwEarlyUploadError
-									)
-								}
-							>
-								{ levelState.isUploading
-									? __( 'Uploading…', 'sensei-lms' )
-									: __( 'Upload', 'sensei-lms' ) }
-							</FormFileUpload>
+						<label
+							className="sensei-upload-file-line__description"
+							htmlFor={ `sensei-upload-file-line-${ level.key }` }
+						>
+							{ level.description }
 						</label>
+						<FormFileUpload
+							// Include key to redraw after each upload attempt for onChange of the same file.
+							key={ levelState.isUploading }
+							isSecondary
+							id={ `sensei-upload-file-line-${ level.key }` }
+							accept={ [ '.csv', '.txt' ] }
+							disabled={
+								levelState.isUploading || levelState.isDeleting
+							}
+							onChange={ ( event ) =>
+								uploadFile(
+									jobId,
+									event.target.files,
+									level.key,
+									uploadFileForLevel,
+									throwEarlyUploadError
+								)
+							}
+						>
+							{ levelState.isUploading
+								? __( 'Uploading…', 'sensei-lms' )
+								: __( 'Upload', 'sensei-lms' ) }
+						</FormFileUpload>
 						{ ( message || deleteButton ) && (
 							<div className="sensei-upload-file-line__info">
 								{ message }

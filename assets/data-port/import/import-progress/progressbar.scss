@@ -9,6 +9,10 @@
 	border-radius: 4px;
 	padding: 0;
 
+	background: linear-gradient(-45deg, $gray-0 38%, #E8E8E8 28%, #E8E8E8 72%, $gray-0 62%);
+	background-size: 100px 100%;
+	animation: sensei-progress-animation 2500ms infinite linear reverse;
+
 	&::-webkit-progress-bar {
 		background: transparent none;
 		border: 0;
@@ -33,5 +37,11 @@
 		border-radius: 3px;
 		background-color: $primary;
 		transition: width 1s ease;
+	}
+}
+
+@keyframes sensei-progress-animation {
+	0% {
+		background-position: 200px 0;
 	}
 }

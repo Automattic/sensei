@@ -4,7 +4,7 @@ import { Spinner } from '@woocommerce/components';
 import { Notice } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useSenseiColorTheme } from '../react-hooks/use-sensei-color-theme';
-
+import '../shared/data/api-fetch-preloaded-once';
 import registerSetupWizardStore from './data';
 import { useWpAdminFullscreen } from '../react-hooks';
 

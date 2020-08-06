@@ -75,7 +75,23 @@ abstract class Sensei_Import_File_Process_Task
 			$task_state      = $this->get_job()->get_state( $this->get_task_key() );
 			$completed_lines = isset( $task_state[ self::STATE_COMPLETED_LINES ] ) ? $task_state[ self::STATE_COMPLETED_LINES ] : 0;
 
-			$this->reader             = new Sensei_Import_CSV_Reader( get_attached_file( $attachment_id ), $completed_lines );
+			try {
+				$this->reader = new Sensei_Import_CSV_Reader( get_attached_file( $attachment_id ), $completed_lines );
+			} catch ( Exception $e ) {
+				$this->get_job()->add_log_entry(
+					__( 'Uploaded file could not be opened.', 'sensei-lms' ),
+					Sensei_Data_Port_Job::LOG_LEVEL_ERROR,
+					[
+						'type' => $this->get_model_key(),
+						'code' => 'sensei_data_port_job_unreadable_file',
+					]
+				);
+
+				$this->is_completed = true;
+
+				return;
+			}
+
 			$this->post_process_tasks = isset( $task_state[ self::STATE_POST_PROCESS_TASKS ] ) ? $task_state[ self::STATE_POST_PROCESS_TASKS ] : [];
 
 			$this->is_completed    = $this->reader->is_completed() && empty( $this->post_process_tasks );
@@ -271,6 +287,9 @@ abstract class Sensei_Import_File_Process_Task
 
 			return false;
 		}
+
+		// Add warnings to the job when post sync is ready.
+		$model->add_warnings_to_job();
 
 		$this->get_job()->set_line_result( $model->get_model_key(), $line_number, Sensei_Import_Job::RESULT_SUCCESS );
 

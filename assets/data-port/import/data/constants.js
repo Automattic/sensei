@@ -8,14 +8,14 @@ export const API_SPECIAL_ACTIVE_JOB_ID = 'active';
  * Generic fetch action type constants.
  */
 export const FETCH_FROM_API = 'FETCH_FROM_API';
+export const WAIT = 'WAIT';
 
 /**
- * Fetch action type constants.
+ * Load action type constants.
  */
-export const START_FETCH_CURRENT_JOB_STATE = 'START_FETCH_CURRENT_JOB_STATE';
-export const SUCCESS_FETCH_CURRENT_JOB_STATE =
-	'SUCCESS_FETCH_CURRENT_JOB_STATE';
-export const ERROR_FETCH_CURRENT_JOB_STATE = 'ERROR_FETCH_CURRENT_JOB_STATE';
+export const START_LOAD_CURRENT_JOB_STATE = 'START_LOAD_CURRENT_JOB_STATE';
+export const SUCCESS_LOAD_CURRENT_JOB_STATE = 'SUCCESS_LOAD_CURRENT_JOB_STATE';
+export const ERROR_LOAD_CURRENT_JOB_STATE = 'ERROR_LOAD_CURRENT_JOB_STATE';
 export const SET_JOB_STATE = 'SET_JOB_STATE';
 
 /**

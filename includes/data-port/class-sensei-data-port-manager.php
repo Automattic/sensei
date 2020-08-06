@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Data_Port_Manager implements JsonSerializable {
 	const OPTION_NAME           = 'sensei-data-port-jobs';
 	const JOB_STALE_AGE_SECONDS = DAY_IN_SECONDS;
+	const OPTION_RUNNING_JOB    = 'sensei-data-port-jobs-running';
 
 	/**
 	 * An array of all in progress data port jobs. It has the following format:
@@ -79,7 +80,7 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 		add_action( 'init', [ $this, 'maybe_schedule_cron_jobs' ] );
 		add_action( 'sensei_data_port_complete', [ $this, 'log_complete_import_jobs' ] );
 		add_action( 'sensei_data_port_garbage_collection', [ $this, 'clean_old_jobs' ] );
-		add_action( Sensei_Data_Port_Job::SCHEDULED_ACTION_NAME, [ $this, 'run_data_port_job' ] );
+		add_action( Sensei_Data_Port_Job::SCHEDULED_ACTION_NAME, [ $this, 'run_scheduled_data_port_job' ] );
 		add_action( 'shutdown', [ $this, 'persist' ] );
 
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
@@ -109,12 +110,11 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 	}
 
 	/**
-	 * Runs a data port job.
+	 * Runs a scheduled data port job.
 	 *
-	 * @param array $args  The arguments of the background job. Only the job_id is included.
+	 * @param array $args The arguments of the background job. Only the job_id is included.
 	 */
-	public function run_data_port_job( $args ) {
-
+	public function run_scheduled_data_port_job( $args ) {
 		if ( empty( $args['job_id'] ) ) {
 			return;
 		}
@@ -123,9 +123,26 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 
 		if ( null !== $job ) {
 			wp_set_current_user( $job->get_user_id() );
-			Sensei_Scheduler::instance()->run( $job );
+			$this->run_data_port_job( $job );
 			wp_set_current_user( 0 );
 		}
+	}
+
+	/**
+	 * Runs a data port job if it's not currently running.
+	 *
+	 * @param Sensei_Data_Port_Job $job
+	 */
+	public function run_data_port_job( $job ) {
+		$job_running = get_transient( self::OPTION_RUNNING_JOB );
+		if ( ! $job_running ) {
+			set_transient( self::OPTION_RUNNING_JOB, true, 120 );
+			Sensei_Scheduler::instance()->run( $job );
+			delete_transient( self::OPTION_RUNNING_JOB );
+		} else {
+			Sensei_Scheduler::instance()->schedule_job( $job );
+		}
+
 	}
 
 	/**

@@ -118,12 +118,9 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 		$pass_required = $this->get_value( Sensei_Data_Port_Lesson_Schema::COLUMN_PASS_REQUIRED );
 		$pass_mark     = $this->get_value( Sensei_Data_Port_Lesson_Schema::COLUMN_PASSMARK );
 
-		if (
-			( empty( $pass_required ) && ! empty( $pass_mark ) ) ||
-			( ! empty( $pass_required ) && empty( $pass_mark ) )
-		) {
-			$pass_required = null;
-			$pass_mark     = null;
+		if ( empty( $pass_required ) && ! empty( $pass_mark ) ) {
+			$pass_required = false;
+
 			$this->add_line_warning(
 				__( 'Both Passmark and Pass Required should be supplied.', 'sensei-lms' ),
 				[
@@ -135,7 +132,18 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 		if ( null !== $pass_required ) {
 			if ( true === $pass_required ) {
 				$meta['_pass_required'] = 'on';
-				$meta['_quiz_passmark'] = $pass_mark;
+				if ( is_numeric( $pass_mark ) && ( 0 > $pass_mark || 100 < $pass_mark ) ) {
+					$meta['_quiz_passmark'] = 0;
+
+					$this->add_line_warning(
+						__( 'Passmark must be between 0 and 100.', 'sensei-lms' ),
+						[
+							'code' => 'sensei_data_port_lesson_passmark_out_of_range',
+						]
+					);
+				} else {
+					$meta['_quiz_passmark'] = is_numeric( $pass_mark ) ? $pass_mark : 0;
+				}
 			} else {
 				$meta['_pass_required'] = '';
 				$meta['_quiz_passmark'] = 0;
@@ -144,6 +152,15 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 
 		$value = $this->get_value( Sensei_Data_Port_Lesson_Schema::COLUMN_NUM_QUESTIONS );
 		if ( null !== $value ) {
+			if ( 1 > $value ) {
+				$this->add_line_warning(
+					__( 'Number of Questions must be greater than or equal to 1.', 'sensei-lms' ),
+					[
+						'code' => 'sensei_data_port_lesson_num_questions_negative',
+					]
+				);
+				$value = null;
+			}
 			$meta['_show_questions'] = $value;
 		}
 
@@ -262,16 +279,22 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 	 */
 	private function sync_lesson() {
 
-		$course_not_found = false;
-		$value            = $this->get_value( Sensei_Data_Port_Lesson_Schema::COLUMN_COURSE );
+		$value = $this->get_value( Sensei_Data_Port_Lesson_Schema::COLUMN_COURSE );
 		if ( ! empty( $value ) ) {
 			$course = $this->task->get_job()->translate_import_id( Sensei_Data_Port_Course_Schema::POST_TYPE, $value );
 
 			$this->course_id = $course;
 
 			if ( empty( $this->course_id ) ) {
-				$course_not_found = true;
-				$this->course_id  = null;
+				$this->add_line_warning(
+					// translators: Placeholder is the term which errored.
+					sprintf( __( 'Course does not exist: %s.', 'sensei-lms' ), $value ),
+					[
+						'code' => 'sensei_data_port_lesson_course_missing',
+					]
+				);
+
+				$this->course_id = null;
 			}
 		} else {
 			$this->course_id = null;
@@ -292,17 +315,6 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 		}
 
 		$this->set_post_id( $post_id );
-
-		if ( $course_not_found ) {
-			$this->add_line_warning(
-				// translators: Placeholder is the term which errored.
-				sprintf( __( 'Course does not exist: %s.', 'sensei-lms' ), $value ),
-				[
-					'code' => 'sensei_data_port_lesson_course_missing',
-				]
-			);
-		}
-
 		$this->store_import_id();
 
 		$result = $this->add_thumbnail_to_post( Sensei_Data_Port_Lesson_Schema::COLUMN_IMAGE );
@@ -418,9 +430,20 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 			$meta['_lesson_complexity'] = $value;
 		}
 
+		// Lesson length.
 		$value = $this->get_value( Sensei_Data_Port_Lesson_Schema::COLUMN_LENGTH );
+
 		if ( null !== $value ) {
-			$meta['_lesson_length'] = $value;
+			if ( 1 > $value ) {
+				$this->add_line_warning(
+					__( 'Length must be greater than or equal to 1.', 'sensei-lms' ),
+					[
+						'code' => 'sensei_data_port_lesson_length_negative',
+					]
+				);
+			} else {
+				$meta['_lesson_length'] = intval( $value );
+			}
 		}
 
 		return $meta;

@@ -331,8 +331,65 @@ class Sensei_Import_Course_Model_Test extends WP_UnitTestCase {
 		$task   = new Sensei_Import_Courses( $job );
 		$model  = Sensei_Import_Course_Model::from_source_array( 1, $this->lineData()[0][0], new Sensei_Data_Port_Course_Schema(), $task );
 		$result = $model->sync_post();
+		$model->add_warnings_to_job();
 
 		$this->assertTrue( $result );
 		$this->assertJobHasLogEntry( $job, 'No attachment with the specified file name was found.' );
+	}
+
+	/**
+	 * Tests that a warning is added when there is a wrong email in a course row.
+	 */
+	public function testWarningsAreAddedForWrongEmail() {
+
+		$job  = Sensei_Import_Job::create( 'test', 0 );
+		$task = new Sensei_Import_Courses( $job );
+		$this->factory->user->create(
+			[
+				'role'       => 'teacher',
+				'user_login' => 'login',
+				'user_email' => 'an_email@email.com',
+			]
+		);
+
+		$no_username = [
+			Sensei_Data_Port_Course_Schema::COLUMN_TITLE => 'Course title',
+			Sensei_Data_Port_Course_Schema::COLUMN_SLUG  => 'the-last-course',
+			Sensei_Data_Port_Course_Schema::COLUMN_TEACHER_USERNAME => '',
+			Sensei_Data_Port_Course_Schema::COLUMN_TEACHER_EMAIL => 'an_email@email.com',
+		];
+
+		$wrong_email = [
+			Sensei_Data_Port_Course_Schema::COLUMN_TITLE => 'Course title',
+			Sensei_Data_Port_Course_Schema::COLUMN_SLUG  => 'another-course',
+			Sensei_Data_Port_Course_Schema::COLUMN_TEACHER_USERNAME => 'login',
+			Sensei_Data_Port_Course_Schema::COLUMN_TEACHER_EMAIL => 'another_email@email.com',
+		];
+
+		$correct_line = [
+			Sensei_Data_Port_Course_Schema::COLUMN_TITLE => 'Course title',
+			Sensei_Data_Port_Course_Schema::COLUMN_SLUG  => 'the-very-last-course',
+			Sensei_Data_Port_Course_Schema::COLUMN_TEACHER_USERNAME => 'login',
+			Sensei_Data_Port_Course_Schema::COLUMN_TEACHER_EMAIL => 'an_email@email.com',
+		];
+
+		$model_no_username = Sensei_Import_Course_Model::from_source_array( 1, $no_username, new Sensei_Data_Port_Course_Schema(), $task );
+		$model_no_username->sync_post();
+		$model_no_username->add_warnings_to_job();
+
+		$model_wrong_email = Sensei_Import_Course_Model::from_source_array( 2, $wrong_email, new Sensei_Data_Port_Course_Schema(), $task );
+		$model_wrong_email->sync_post();
+		$model_wrong_email->add_warnings_to_job();
+
+		$model_correct_line = Sensei_Import_Course_Model::from_source_array( 3, $correct_line, new Sensei_Data_Port_Course_Schema(), $task );
+		$model_correct_line->sync_post();
+		$model_correct_line->add_warnings_to_job();
+
+		$logs = $job->get_logs();
+
+		$this->assertCount( 2, $logs, 'There should be two warnings created.' );
+		$this->assertStringStartsWith( 'Teacher Username is empty', $logs[0]['message'], 'The first warning should be about username being empty.' );
+		$this->assertStringStartsWith( 'The user with the supplied username has a different email', $logs[1]['message'], 'The second warning should be about email being different.' );
+
 	}
 }

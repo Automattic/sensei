@@ -1,9 +1,9 @@
 import {
 	API_SPECIAL_ACTIVE_JOB_ID,
 	FETCH_FROM_API,
-	START_FETCH_CURRENT_JOB_STATE,
-	SUCCESS_FETCH_CURRENT_JOB_STATE,
-	ERROR_FETCH_CURRENT_JOB_STATE,
+	START_LOAD_CURRENT_JOB_STATE,
+	SUCCESS_LOAD_CURRENT_JOB_STATE,
+	ERROR_LOAD_CURRENT_JOB_STATE,
 	START_IMPORT,
 	SUCCESS_START_IMPORT,
 	ERROR_START_IMPORT,
@@ -15,6 +15,7 @@ import {
 	ERROR_DELETE_IMPORT_DATA_FILE,
 	RESET_STATE,
 	SET_JOB_STATE,
+	WAIT,
 } from './constants';
 
 import { composeFetchAction } from '../../../shared/data/store-helpers';
@@ -38,11 +39,16 @@ export const fetchFromAPI = ( request ) => ( {
 	request,
 } );
 
+export const wait = ( timeout ) => ( {
+	type: WAIT,
+	timeout,
+} );
+
 /**
  * Fetch importer data for current job.
  */
-export const fetchCurrentJobState = composeFetchAction(
-	START_FETCH_CURRENT_JOB_STATE,
+export const loadCurrentJobState = composeFetchAction(
+	START_LOAD_CURRENT_JOB_STATE,
 	function* () {
 		const data = yield fetchFromAPI( {
 			path: buildJobEndpointUrl( API_SPECIAL_ACTIVE_JOB_ID ),
@@ -50,8 +56,8 @@ export const fetchCurrentJobState = composeFetchAction(
 
 		return normalizeImportData( data );
 	},
-	SUCCESS_FETCH_CURRENT_JOB_STATE,
-	ERROR_FETCH_CURRENT_JOB_STATE
+	SUCCESS_LOAD_CURRENT_JOB_STATE,
+	ERROR_LOAD_CURRENT_JOB_STATE
 );
 
 /**
@@ -70,6 +76,30 @@ export function* updateJobState( jobId ) {
 		// Silent.
 	}
 }
+
+/**
+ * Run job batches and query progress until it is completed.
+ *
+ * @param {string} jobId Job ID.
+ */
+export const pollJobProgress = function* ( jobId ) {
+	try {
+		const job = yield fetchFromAPI( {
+			path: buildJobEndpointUrl( jobId, [ 'process' ] ),
+			method: 'POST',
+		} );
+
+		yield setJobState( normalizeImportData( job ) );
+
+		const { status } = job.status;
+		if ( status !== 'completed' ) {
+			yield* pollJobProgress( jobId );
+		}
+	} catch ( err ) {
+		yield wait( 2000 );
+		yield* pollJobProgress( jobId );
+	}
+};
 
 /**
  * @typedef  {Object} SetJobStateAction
@@ -386,5 +416,5 @@ export const resetState = () => ( {
  */
 export function* restartImporter() {
 	yield resetState();
-	yield fetchCurrentJobState();
+	yield loadCurrentJobState();
 }
