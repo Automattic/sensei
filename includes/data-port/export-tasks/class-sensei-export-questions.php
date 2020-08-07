@@ -103,7 +103,7 @@ class Sensei_Export_Questions
 					function( $value ) {
 						return 'Right:' . $value;
 					},
-					is_array( $meta['_question_right_answer'] ) ? $meta['_question_right_answer'] : [ $meta['_question_right_answer'] ]
+					(array) $meta['_question_right_answer']
 				);
 				$answers_wrong = array_map(
 					function( $value ) {
@@ -116,7 +116,7 @@ class Sensei_Export_Questions
 
 				break;
 			case 'boolean':
-				$columns[ Schema::COLUMN_ANSWER ] = $meta['_question_right_answer'] ? 'true' : 'false';
+				$columns[ Schema::COLUMN_ANSWER ] = $meta['_question_right_answer'];
 
 				break;
 			case 'file-upload':
