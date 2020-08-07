@@ -196,17 +196,13 @@ describe( '<Ready />', () => {
 		jest.useFakeTimers();
 		window.location.assign = jest.fn();
 
-		const startPromise = Promise.resolve( { id: 1 } );
-		const logsPromisePending = Promise.resolve( {
+		apiFetch.mockResolvedValueOnce( { id: 1 } );
+		apiFetch.mockResolvedValueOnce( {
 			status: { status: 'pending' },
 		} );
-		const logsPromiseCompleted = Promise.resolve( {
+		apiFetch.mockResolvedValueOnce( {
 			status: { status: 'completed' },
 		} );
-
-		apiFetch.mockImplementationOnce( () => startPromise );
-		apiFetch.mockImplementationOnce( () => logsPromisePending );
-		apiFetch.mockImplementationOnce( () => logsPromiseCompleted );
 
 		const { queryByText } = render( <Ready /> );
 
