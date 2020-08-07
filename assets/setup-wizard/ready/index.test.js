@@ -193,7 +193,6 @@ describe( '<Ready />', () => {
 	} );
 
 	it( 'Should run sample installation', async () => {
-		jest.useFakeTimers();
 		window.location.assign = jest.fn();
 
 		apiFetch.mockResolvedValueOnce( { id: 1 } );
@@ -209,8 +208,6 @@ describe( '<Ready />', () => {
 		fireEvent.click(
 			queryByText( 'Install a sample course', { selector: 'button' } )
 		);
-
-		jest.runAllTimers();
 
 		await waitFor( () => {
 			expect( window.location.assign ).toBeCalledWith(

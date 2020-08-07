@@ -10,8 +10,6 @@ const useSampleCourseInstaller = () => {
 	const [ jobId, setJobId ] = useState( null );
 	const [ pollingCount, setPollingCount ] = useState( 0 );
 
-	const pollingInterval = 2000;
-
 	const catchError = ( e ) => {
 		setIsInstalling( false );
 		setError( e.message );
@@ -24,25 +22,20 @@ const useSampleCourseInstaller = () => {
 			return;
 		}
 
-		const timer = setTimeout( () => {
-			apiFetch( {
-				path: buildJobEndpointUrl( jobId ),
+		apiFetch( {
+			path: buildJobEndpointUrl( jobId, [ 'process' ] ),
+			method: 'POST',
+		} )
+			.then( ( res ) => {
+				if ( 'completed' === res.status.status ) {
+					window.location.assign( 'edit.php?post_type=course' );
+
+					return;
+				}
+
+				setPollingCount( ( n ) => n + 1 );
 			} )
-				.then( ( res ) => {
-					if ( 'completed' === res.status.status ) {
-						window.location.assign( 'edit.php?post_type=course' );
-
-						return;
-					}
-
-					setPollingCount( ( n ) => n + 1 );
-				} )
-				.catch( catchError );
-		}, pollingInterval );
-
-		return () => {
-			clearTimeout( timer );
-		};
+			.catch( catchError );
 	}, [ jobId, pollingCount ] );
 
 	// Start installation job.
