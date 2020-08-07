@@ -57,7 +57,7 @@ class WP_UnitTest_Factory_For_Question extends WP_UnitTest_Factory_For_Post_Sens
 
 		} elseif ( 'boolean' === $type ) {
 
-			$test_question_data['question_right_answer_boolean'] = true;
+			$test_question_data['question_right_answer_boolean'] = 'true';
 
 		} elseif ( 'single-line' === $type ) {
 
