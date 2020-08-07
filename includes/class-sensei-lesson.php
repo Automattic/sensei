@@ -2547,6 +2547,9 @@ class Sensei_Lesson {
 
 		$return = '';
 
+		// Variables used for logging.
+		$number_of_added_questions = 0;
+
 		if ( is_array( $question_data ) ) {
 
 			if ( isset( $question_data['questions'] ) && '' != $question_data['questions'] ) {
@@ -2557,21 +2560,39 @@ class Sensei_Lesson {
 
 				foreach ( $questions as $question_id ) {
 
-					++$question_count;
-
 					$quizzes = get_post_meta( $question_id, '_quiz_id', false );
+
 					if ( ! in_array( $quiz_id, $quizzes ) ) {
+						$number_of_added_questions++;
+						++$question_count;
 						add_post_meta( $question_id, '_quiz_id', $quiz_id, false );
 						$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
 						update_post_meta( $lesson_id, '_quiz_has_questions', '1' );
+						add_post_meta( $question_id, '_quiz_question_order' . $quiz_id, $quiz_id . '000' . $question_count );
+						$question_type = Sensei()->question->get_question_type( $question_id );
+						$return       .= $this->quiz_panel_question( $question_type, $question_count, $question_id );
 					}
-
-					add_post_meta( $question_id, '_quiz_question_order' . $quiz_id, $quiz_id . '000' . $question_count );
-					$question_type = Sensei()->question->get_question_type( $question_id );
-
-					$return .= $this->quiz_panel_question( $question_type, $question_count, $question_id );
 				}
 			}
+		}
+
+		// Log event: when an existing question is added to a quiz.
+		if ( count( $number_of_added_questions ) > 0 ) {
+
+			// If no question category received, log 'all'. If question category received, but term not found, log '0'.
+			$question_category_to_log = 'all';
+			if ( $question_data['question_category'] ) {
+				$question_category_to_log = get_term_by( 'slug', $question_data['question_category'], 'question-category' ) ? get_term_by( 'slug', $question_data['question_category'], 'question-category' )->term_id : '0';
+			}
+
+			$event_properties = array(
+				'question_status'   => $question_data['question_status'],
+				'question_type'     => $question_data['question_type'] ? $question_data['question_type'] : 'all',
+				'question_category' => $question_category_to_log,
+				'question_count'    => $number_of_added_questions,
+			);
+
+			sensei_log_event( 'quiz_question_add_existing', $event_properties );
 		}
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in methods that generate `$return`.
