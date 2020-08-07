@@ -447,16 +447,42 @@ class Sensei_Data_Port_Utilities {
 	 */
 	public static function serialize_term( WP_Term $term ) {
 
-		$name = $term->name;
-		if ( false !== strpos( ',', $name ) ) {
-			$name = '"' . str_replace( '"', '\"', $name ) . '"';
-		}
+		$name = self::escape_list_item( $term->name );
 		if ( ! empty( $term->parent ) ) {
 			$parent_term = get_term( $term->parent, $term->taxonomy );
 			$parent_str  = self::serialize_term( $parent_term );
 			return $parent_str . ' > ' . $name;
 		}
 		return $name;
+	}
+
+	/**
+	 * Serialize a list into comma-separated list.
+	 * Wrap values in quotes if they contain a comma.
+	 *
+	 * @param string[] $values
+	 *
+	 * @return string
+	 */
+	public static function serialize_list( $values = [] ) {
+		return ! empty( $values )
+			? implode( ',', array_map( 'Sensei_Data_Port_Utilities::escape_list_item', $values ) )
+			: '';
+	}
+
+	/**
+	 * Wrap value in quotes if it contains a comma.
+	 * Escape quotes if wrapped.
+	 *
+	 * @param string $value
+	 *
+	 * @return string
+	 */
+	public static function escape_list_item( $value ) {
+		if ( false !== strpos( $value, ',' ) ) {
+			$value = '"' . str_replace( '"', '\"', $value ) . '"';
+		}
+		return $value;
 	}
 
 }

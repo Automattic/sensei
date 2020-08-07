@@ -40,6 +40,13 @@ abstract class Sensei_Export_Task
 	protected $completed_posts = 0;
 
 	/**
+	 * Total number of posts to be exported.
+	 *
+	 * @var int
+	 */
+	protected $total_posts = 0;
+
+	/**
 	 * Query of posts in the current batch.
 	 *
 	 * @var WP_Query
@@ -75,6 +82,8 @@ abstract class Sensei_Export_Task
 				'post_status'    => 'any',
 			]
 		);
+
+		$this->total_posts = $this->query->found_posts > 0 ? $this->query->found_posts : $this->completed_posts;
 
 		$this->file = get_attached_file( $files[ $type ] );
 
@@ -151,7 +160,7 @@ abstract class Sensei_Export_Task
 	 * @return boolean
 	 */
 	public function is_completed() {
-		return $this->completed_posts === $this->query->found_posts;
+		return $this->completed_posts === $this->total_posts;
 	}
 
 	/**
@@ -167,7 +176,7 @@ abstract class Sensei_Export_Task
 	 */
 	public function get_completion_ratio() {
 		return [
-			'total'     => $this->query->found_posts,
+			'total'     => $this->total_posts,
 			'completed' => $this->completed_posts,
 		];
 	}
@@ -185,8 +194,10 @@ abstract class Sensei_Export_Task
 	 * @param string $tmp_file
 	 */
 	public function add_file_to_job( $tmp_file ) {
-		$type = $this->get_content_type();
-		$this->get_job()->save_file( $type, $tmp_file, 'sensei-' . $type . '.csv' );
+		$type     = $this->get_content_type();
+		$date     = gmdate( 'Y-m-d' );
+		$filename = sanitize_file_name( get_bloginfo( 'name' ) . '-' . ucwords( $type ) . 's-' . $date . '.csv' );
+		$this->get_job()->save_file( $type, $tmp_file, $filename );
 		if ( file_exists( $tmp_file ) ) {
 			unlink( $tmp_file );
 		}
