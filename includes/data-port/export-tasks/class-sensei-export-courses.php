@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Sensei_Import_File_Process_Task class.
+ * File containing the Sensei_Export_Courses class.
  *
  * @package sensei
  */

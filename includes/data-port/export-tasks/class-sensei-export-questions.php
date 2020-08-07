@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Sensei_Import_File_Process_Task class.
+ * File containing the Sensei_Export_Questions class.
  *
  * @package sensei
  */
@@ -27,9 +27,9 @@ class Sensei_Export_Questions
 	}
 
 	/**
-	 * Collect exported fields of the course.
+	 * Collect exported fields of the question.
 	 *
-	 * @param WP_Post $post The course.
+	 * @param WP_Post $post The question.
 	 *
 	 * @return string[]
 	 */
