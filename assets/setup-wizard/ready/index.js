@@ -7,7 +7,7 @@ import { MailingListSignupForm } from './mailinglist-signup-form';
 import { formatString } from '../../shared/helpers/format-string.js';
 import { logLink } from '../log-event';
 import { useSetupWizardStep } from '../data/use-setup-wizard-step';
-import useSampleCourse from './use-sample-course';
+import useSampleCourseInstaller from './use-sample-course-installer';
 
 /**
  * Ready step for Setup Wizard.
@@ -25,7 +25,7 @@ export const Ready = () => {
 		installSampleCourse,
 		isSampleCourseInstalling,
 		sampleCourseError,
-	] = useSampleCourse();
+	] = useSampleCourseInstaller();
 
 	return (
 		<>

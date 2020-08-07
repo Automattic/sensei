@@ -4,7 +4,7 @@ import apiFetch from '@wordpress/api-fetch';
 import { buildJobEndpointUrl } from '../../data-port/import/helpers/url';
 import { logEvent } from '../log-event';
 
-const useSampleCourse = () => {
+const useSampleCourseInstaller = () => {
 	const [ isInstalling, setIsInstalling ] = useState( false );
 	const [ error, setError ] = useState( null );
 	const [ jobId, setJobId ] = useState( null );
@@ -65,4 +65,4 @@ const useSampleCourse = () => {
 	return [ start, isInstalling, error ];
 };
 
-export default useSampleCourse;
+export default useSampleCourseInstaller;
