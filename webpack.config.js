@@ -30,6 +30,7 @@ const files = [
 	'shared/styles/wc-components.scss',
 	'data-port/import.js',
 	'data-port/style.scss',
+	'course-builder/index.js',
 
 	'css/frontend.scss',
 	'css/admin-custom.css',

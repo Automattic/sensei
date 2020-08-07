@@ -70,6 +70,7 @@ class Sensei_Autoloader {
 			new Sensei_Autoloader_Bundle( 'data-port' ),
 			new Sensei_Autoloader_Bundle( 'data-port/import-tasks' ),
 			new Sensei_Autoloader_Bundle( 'data-port/models' ),
+			new Sensei_Autoloader_Bundle( 'course-builder' ),
 		);
 
 		// Add Sensei custom auto loader.

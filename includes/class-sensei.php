@@ -209,6 +209,13 @@ class Sensei_Main {
 	public $setup_wizard;
 
 	/**
+	 * Course outline.
+	 *
+	 * @var Sensei_Course_Outline
+	 */
+	public $course_outline;
+
+	/**
 	 * Constructor method.
 	 *
 	 * @param  string $file The base file of the plugin.
@@ -370,6 +377,8 @@ class Sensei_Main {
 
 		// Add the quiz class
 		$this->quiz = $this->post_types->quiz;
+
+		$this->course_outline = new Sensei_Course_Outline();
 
 		// load the modules class after all plugsin are loaded
 		$this->load_modules_class();
