@@ -571,7 +571,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 	 * @param array $quiz_args
 	 * @return int
 	 */
-	protected function maybe_create_quiz_for_lesson( $lesson_id, $quiz_args = array() ) {
+	public function maybe_create_quiz_for_lesson( $lesson_id, $quiz_args = array() ) {
 		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
 		if ( empty( $quiz_id ) ) {
 			$default_quiz_args  = array( 'post_parent' => $lesson_id );
