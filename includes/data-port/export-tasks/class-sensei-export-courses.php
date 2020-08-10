@@ -51,7 +51,7 @@ class Sensei_Export_Courses
 			$teacher ? $teacher->display_name : '',
 			$teacher ? $teacher->user_email : '',
 			Sensei_Data_Port_Utilities::serialize_term_list( $modules ),
-			$prerequisite ? $prerequisite : '',
+			$prerequisite ? Sensei_Data_Port_Utilities::serialize_id_field( $prerequisite ) : '',
 			$featured ? 1 : 0,
 			$categories ? Sensei_Data_Port_Utilities::serialize_term_list( $categories ) : '',
 			$image,
