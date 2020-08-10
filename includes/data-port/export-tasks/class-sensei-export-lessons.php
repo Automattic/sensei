@@ -62,9 +62,9 @@ class Sensei_Export_Lessons
 			$meta[ $meta_key ] = get_post_meta( $quiz_id, $meta_key, true );
 		}
 
-		$tags      = get_the_terms( $post->ID, 'lesson-tag' );
-		$module    = Sensei()->modules->get_lesson_module_if_exists( $post );
-		$questions = $this->get_quiz_question_ids( $quiz_id );
+		$tags          = get_the_terms( $post->ID, 'lesson-tag' );
+		$module        = Sensei()->modules->get_lesson_module_if_exists( $post );
+		$questions_ids = $this->get_quiz_question_ids( $quiz_id );
 
 		$columns = [
 			Schema::COLUMN_ID             => $post->ID,
@@ -73,9 +73,9 @@ class Sensei_Export_Lessons
 			Schema::COLUMN_DESCRIPTION    => $post->post_content,
 			Schema::COLUMN_EXCERPT        => $post->post_excerpt,
 			Schema::COLUMN_STATUS         => $post->post_status,
-			Schema::COLUMN_COURSE         => $meta['_lesson_course'],
+			Schema::COLUMN_COURSE         => Sensei_Data_Port_Utilities::serialize_id_field( $meta['_lesson_course'] ),
 			Schema::COLUMN_MODULE         => 0 !== $module ? $module : '',
-			Schema::COLUMN_PREREQUISITE   => $meta['_lesson_prerequisite'],
+			Schema::COLUMN_PREREQUISITE   => Sensei_Data_Port_Utilities::serialize_id_field( $meta['_lesson_prerequisite'] ),
 			Schema::COLUMN_PREVIEW        => 'preview' === $meta['_lesson_preview'] ? 1 : 0,
 			Schema::COLUMN_TAGS           => ! empty( $tags ) ? Sensei_Data_Port_Utilities::serialize_term_list( $tags ) : '',
 			Schema::COLUMN_IMAGE          => get_the_post_thumbnail_url( $post, 'full' ),
@@ -89,7 +89,7 @@ class Sensei_Export_Lessons
 			Schema::COLUMN_AUTO_GRADE     => 'manual' === $meta['_quiz_grade_type'] ? 0 : 1,
 			Schema::COLUMN_QUIZ_RESET     => 'on' === $meta['_enable_quiz_reset'] ? 1 : 0,
 			Schema::COLUMN_ALLOW_COMMENTS => 'closed' === $post->comment_status ? 0 : 1,
-			Schema::COLUMN_QUESTIONS      => implode( ',', $questions ),
+			Schema::COLUMN_QUESTIONS      => Sensei_Data_Port_Utilities::serialize_id_field( $questions_ids ),
 		];
 
 		$schema = array_keys( $this->get_type_schema()->get_schema() );

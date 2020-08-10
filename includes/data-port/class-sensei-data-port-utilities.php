@@ -485,4 +485,26 @@ class Sensei_Data_Port_Utilities {
 		return $value;
 	}
 
+	/**
+	 * Serialize ID field.
+	 *
+	 * @param int|int[] $ids ID or IDs array to format.
+	 *
+	 * @return string Serialized ID field.
+	 */
+	public static function serialize_id_field( $ids ) {
+		if ( empty( $ids ) ) {
+			return '';
+		}
+
+		$ids_with_prefix = array_map(
+			function( $id ) {
+				return 'id:' . $id;
+			},
+			(array) $ids
+		);
+
+		return implode( ',', $ids_with_prefix );
+	}
+
 }
