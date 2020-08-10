@@ -62,8 +62,9 @@ class Sensei_Export_Lessons
 			$meta[ $meta_key ] = get_post_meta( $quiz_id, $meta_key, true );
 		}
 
-		$tags   = get_the_terms( $post->ID, 'lesson-tag' );
-		$module = Sensei()->modules->get_lesson_module_if_exists( $post );
+		$tags      = get_the_terms( $post->ID, 'lesson-tag' );
+		$module    = Sensei()->modules->get_lesson_module_if_exists( $post );
+		$questions = $this->get_quiz_question_ids( $quiz_id );
 
 		$columns = [
 			Schema::COLUMN_ID             => $post->ID,
@@ -88,7 +89,7 @@ class Sensei_Export_Lessons
 			Schema::COLUMN_AUTO_GRADE     => 'manual' === $meta['_quiz_grade_type'] ? 0 : 1,
 			Schema::COLUMN_QUIZ_RESET     => 'on' === $meta['_enable_quiz_reset'] ? 1 : 0,
 			Schema::COLUMN_ALLOW_COMMENTS => 'closed' === $post->comment_status ? 0 : 1,
-			Schema::COLUMN_QUESTIONS      => '',
+			Schema::COLUMN_QUESTIONS      => implode( ',', $questions ),
 		];
 
 		$schema = array_keys( $this->get_type_schema()->get_schema() );
@@ -97,6 +98,24 @@ class Sensei_Export_Lessons
 				return $columns[ $column ];
 			},
 			$schema
+		);
+	}
+
+	/**
+	 * Get question IDs for a Quiz.
+	 *
+	 * @param int $quiz_id Quiz ID.
+	 *
+	 * @return int[] Question IDs.
+	 */
+	private function get_quiz_question_ids( $quiz_id ) {
+		return Sensei_Utils::lesson_quiz_questions(
+			$quiz_id,
+			[
+				'fields'   => 'ids',
+				'meta_key' => '_quiz_question_order' . $quiz_id, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Using the lessons sorter.
+				'orderby'  => 'meta_value_num title',
+			]
 		);
 	}
 
