@@ -36,6 +36,7 @@ class Sensei_Export_Lessons
 	protected function get_post_fields( $post ) {
 		$meta           = [];
 		$meta_keys      = [
+			'_lesson_course',
 			'_lesson_preview',
 			'_lesson_length',
 			'_lesson_complexity',
@@ -60,7 +61,8 @@ class Sensei_Export_Lessons
 			$meta[ $meta_key ] = get_post_meta( $quiz_id, $meta_key, true );
 		}
 
-		$tags = get_the_terms( $post->ID, 'lesson-tag' );
+		$tags   = get_the_terms( $post->ID, 'lesson-tag' );
+		$module = Sensei()->modules->get_lesson_module_if_exists( $post );
 
 		$columns = [
 			Schema::COLUMN_ID             => $post->ID,
@@ -69,8 +71,8 @@ class Sensei_Export_Lessons
 			Schema::COLUMN_DESCRIPTION    => $post->post_content,
 			Schema::COLUMN_EXCERPT        => $post->post_excerpt,
 			Schema::COLUMN_STATUS         => $post->post_status,
-			Schema::COLUMN_COURSE         => '',
-			Schema::COLUMN_MODULE         => '',
+			Schema::COLUMN_COURSE         => $meta['_lesson_course'],
+			Schema::COLUMN_MODULE         => 0 !== $module ? $module : '',
 			Schema::COLUMN_PREREQUISITE   => '',
 			Schema::COLUMN_PREVIEW        => 'preview' === $meta['_lesson_preview'] ? 1 : 0,
 			Schema::COLUMN_TAGS           => ! empty( $tags ) ? Sensei_Data_Port_Utilities::serialize_term_list( $tags ) : '',
