@@ -37,6 +37,7 @@ class Sensei_Export_Lessons
 		$meta           = [];
 		$meta_keys      = [
 			'_lesson_course',
+			'_lesson_prerequisite',
 			'_lesson_preview',
 			'_lesson_length',
 			'_lesson_complexity',
@@ -73,7 +74,7 @@ class Sensei_Export_Lessons
 			Schema::COLUMN_STATUS         => $post->post_status,
 			Schema::COLUMN_COURSE         => $meta['_lesson_course'],
 			Schema::COLUMN_MODULE         => 0 !== $module ? $module : '',
-			Schema::COLUMN_PREREQUISITE   => '',
+			Schema::COLUMN_PREREQUISITE   => $meta['_lesson_prerequisite'],
 			Schema::COLUMN_PREVIEW        => 'preview' === $meta['_lesson_preview'] ? 1 : 0,
 			Schema::COLUMN_TAGS           => ! empty( $tags ) ? Sensei_Data_Port_Utilities::serialize_term_list( $tags ) : '',
 			Schema::COLUMN_IMAGE          => get_the_post_thumbnail_url( $post, 'full' ),
