@@ -497,14 +497,7 @@ class Sensei_Data_Port_Utilities {
 			return '';
 		}
 
-		$ids_with_prefix = array_map(
-			function( $id ) {
-				return 'id:' . $id;
-			},
-			(array) $ids
-		);
-
-		return implode( ',', $ids_with_prefix );
+		return 'id:' . implode( ',id:', (array) $ids );
 	}
 
 }
