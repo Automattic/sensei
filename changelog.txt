@@ -1,5 +1,9 @@
 *** Changelog ***
 
+2020.08.11 - version 3.4.1
+* Fix: Question editor compatibility with WordPress 5.5 [#3510](https://github.com/Automattic/sensei/pull/3510)
+* Fix: Trigger setting updated events only when changed [#3503](https://github.com/Automattic/sensei/pull/3503)
+
 2020.08.06 - version 3.4.0
 * New: Remove / Restore Enrollments
 	* Add meta handler for removing and restoring a learner's enrollment [#3402](https://github.com/Automattic/sensei/pull/3402)
