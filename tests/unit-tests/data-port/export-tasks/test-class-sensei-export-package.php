@@ -21,8 +21,6 @@ class Sensei_Export_Package_Tests extends WP_UnitTestCase {
 	public function setUp() {
 		parent::setUp();
 
-		$this->factory = new Sensei_Factory();
-
 		if ( ! class_exists( 'ZipArchive' ) ) {
 			$this->markTestSkipped( 'Package tests require ZipArchive' );
 		}
