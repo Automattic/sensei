@@ -68,8 +68,13 @@ class Sensei_REST_API_Export_Controller_Tests extends WP_Test_REST_TestCase {
 
 		$job = Sensei_Data_Port_Manager::instance()->get_active_job( Sensei_Export_Job::class, get_current_user_id() );
 
+		$expected_tasks = [ 'course' ];
+		if ( class_exists( 'ZipArchive' ) ) {
+			$expected_tasks[] = 'package';
+		}
+
 		$this->assertEquals( $job->get_state( 'content_types' ), [ 'course' ] );
-		$this->assertEquals( array_keys( $job->get_tasks() ), [ 'course', 'package' ] );
+		$this->assertEquals( array_keys( $job->get_tasks() ), $expected_tasks );
 
 		$data = $response->get_data();
 		$this->assertResultValidJob( $data );
