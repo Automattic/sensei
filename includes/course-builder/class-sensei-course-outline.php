@@ -19,6 +19,8 @@ class Sensei_Course_Outline {
 	 */
 	public function __construct() {
 		add_action( 'init', [ $this, 'register_blocks' ] );
+		// add_action( 'wp_enqueue_scripts', [ $this, 'frontend_scripts' ] );
+		add_action( 'wp_print_scripts', [ $this, 'frontend_scripts' ] );
 		add_action( 'rest_api_init', [ $this, 'register_rest' ] );
 	}
 
@@ -36,6 +38,14 @@ class Sensei_Course_Outline {
 			$block->register_block_type();
 		}
 
+	}
+
+	public function frontend_scripts() {
+		// TOOD: Should load only for the pages with the block.
+		Sensei()->assets->enqueue( 'sensei-course-builder-frontend', 'course-builder/frontend.js', [ 'wp-element' ], true );
+
+		global $post;
+		Sensei()->assets->preload_data( [ '/sensei-internal/v1/course-builder/course-lessons/' . $post->ID ] );
 	}
 
 	/**
@@ -74,9 +84,10 @@ class Sensei_Course_Outline {
 		return array_map(
 			function( $post ) {
 				return [
-					'id'     => $post->ID,
-					'title'  => $post->post_title,
-					'status' => $post->post_status,
+					'id'        => $post->ID,
+					'title'     => $post->post_title,
+					'status'    => $post->post_status,
+					'permalink' => get_permalink( $post->ID ),
 				];
 			},
 			$query->posts

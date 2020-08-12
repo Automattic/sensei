@@ -35,26 +35,14 @@ class Sensei_Course_Outline_Block {
 	/**
 	 * Render course outline block.
 	 *
+	 * @param array  $attributes
+	 * @param string $content
+	 *
 	 * @return string
 	 */
-	public function render() {
-
+	public function render( $attributes, $content ) {
+		// If we need something about the $attributes, or the $content saved, we can use here.
 		global $post;
-
-		$lessons = Sensei()->course_outline->course_lessons( $post->ID );
-
-		$r = '<div style="border-left: 2px solid #32af7d; padding: 1rem; "><h1>Course outline</h1>';
-
-		foreach ( $lessons->posts as $lesson ) {
-			$r .= '
-		<div style="border-bottom: 1px solid #eee; padding: 0.5rem; ">
-			<h2>
-				<a href="' . get_permalink( $lesson ) . '">' . $lesson->post_title . '</a>
-			</h2>
-			</div>';
-		}
-
-		$r .= '</div>';
-		return $r;
+		return '<div id="course-outline-block" data-id="' . $post->ID . '">Loading page!</div>';
 	}
 }

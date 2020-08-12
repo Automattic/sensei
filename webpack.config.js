@@ -31,6 +31,7 @@ const files = [
 	'data-port/import.js',
 	'data-port/style.scss',
 	'course-builder/index.js',
+	'course-builder/frontend.js',
 
 	'css/frontend.scss',
 	'css/admin-custom.css',
