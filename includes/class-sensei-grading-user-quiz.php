@@ -343,7 +343,7 @@ class Sensei_Grading_User_Quiz {
 			</div>
 			<div class="clear"></div>
 			<script type="text/javascript">
-				jQuery( window ).load( function() {
+				jQuery( window ).on( 'load', function() {
 					// Calculate total grade on page load to make sure everything is set up correctly
 					jQuery.fn.autoGrade();
 				});
