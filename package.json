@@ -30,7 +30,7 @@
     "select2": "4.0.13"
   },
   "devDependencies": {
-    "@automattic/calypso-build": "6.1.0",
+    "@automattic/calypso-build": "6.2.0",
     "@automattic/puppeteer-utils": "github:Automattic/puppeteer-utils",
     "@babel/cli": "7.10.5",
     "@babel/core": "7.11.1",
