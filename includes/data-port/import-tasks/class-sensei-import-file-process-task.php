@@ -249,7 +249,7 @@ abstract class Sensei_Import_File_Process_Task
 		}
 
 		$model = $this->get_model( $line_number, $data );
-		if ( ! is_a( $model, Sensei_Data_Port_Model::class ) ) {
+		if ( ! is_a( $model, Sensei_Import_Model::class ) ) {
 			return false;
 		}
 
