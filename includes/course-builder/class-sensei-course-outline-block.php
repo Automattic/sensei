@@ -35,23 +35,27 @@ class Sensei_Course_Outline_Block {
 	/**
 	 * Render course outline block.
 	 *
+	 * @param array  $attributes
+	 * @param string $content
+	 *
 	 * @return string
 	 */
-	public function render() {
+	public function render( $attributes, $content ) {
 
 		global $post;
+
+		$templates = explode( '## template ##', $content );
+
+		$loader = new \Twig\Loader\ArrayLoader( [] );
+		$twig = new \Twig\Environment( $loader );
+		$lesson_template = $twig->createTemplate( $templates[ 1 ] );
 
 		$lessons = Sensei()->course_outline->course_lessons( $post->ID );
 
 		$r = '<div style="border-left: 2px solid #32af7d; padding: 1rem; "><h1>Course outline</h1>';
 
 		foreach ( $lessons->posts as $lesson ) {
-			$r .= '
-		<div style="border-bottom: 1px solid #eee; padding: 0.5rem; ">
-			<h2>
-				<a href="' . get_permalink( $lesson ) . '">' . $lesson->post_title . '</a>
-			</h2>
-			</div>';
+			$r .= $lesson_template->render( [ 'href' => get_permalink( $lesson ), 'lessonTitle' => $lesson->post_title ] );
 		}
 
 		$r .= '</div>';

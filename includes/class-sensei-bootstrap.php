@@ -40,6 +40,7 @@ class Sensei_Bootstrap {
 	}
 
 	private function init_autoloader() {
+		require_once __DIR__ . '/../vendor/autoload.php';
 		require_once dirname( __FILE__ ) . '/class-sensei-autoloader.php';
 		$this->autoloader = new Sensei_Autoloader();
 	}
