@@ -454,4 +454,37 @@ class Sensei_Data_Port_Utilities_Test extends WP_UnitTestCase {
 
 		$this->assertInstanceOf( 'WP_Error', $is_valid );
 	}
+
+	/**
+	 * Tests id field serialization with array of IDs.
+	 */
+	public function testIdFieldSerializationWithArray() {
+		$expected   = 'id:1,id:2,id:3';
+		$ids        = [ 1, 2, 3 ];
+		$serialized = Sensei_Data_Port_Utilities::serialize_id_field( $ids );
+
+		$this->assertEquals( $expected, $serialized );
+	}
+
+	/**
+	 * Tests id field serialization with a single ID.
+	 */
+	public function testIdFieldSerializationWithSingle() {
+		$expected   = 'id:1';
+		$ids        = 1;
+		$serialized = Sensei_Data_Port_Utilities::serialize_id_field( $ids );
+
+		$this->assertEquals( $expected, $serialized );
+	}
+
+	/**
+	 * Tests id field serialization without ID.
+	 */
+	public function testIdFieldSerializationWithEmpty() {
+		$expected   = '';
+		$ids        = '';
+		$serialized = Sensei_Data_Port_Utilities::serialize_id_field( $ids );
+
+		$this->assertEquals( $expected, $serialized );
+	}
 }
