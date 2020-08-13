@@ -20,7 +20,7 @@ class Sensei_Course_Outline_Block {
 		register_block_type(
 			'sensei-lms/course-outline',
 			[
-				'render_callback' => [ __CLASS__, 'render' ],
+				'render_callback' => [ $this, 'render' ],
 				'editor_script'   => 'sensei-course-builder',
 				'attributes'      => [
 					'course_id' => [
