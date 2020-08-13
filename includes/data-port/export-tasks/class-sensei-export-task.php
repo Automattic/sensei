@@ -23,35 +23,35 @@ abstract class Sensei_Export_Task
 	 *
 	 * @var string
 	 */
-	protected $file;
+	private $file;
 
 	/**
 	 * Number of posts per batch.
 	 *
 	 * @var int
 	 */
-	protected $batch_size = 30;
+	private $batch_size = 30;
 
 	/**
 	 * Number of posts exported.
 	 *
 	 * @var int
 	 */
-	protected $completed_posts = 0;
+	private $completed_posts = 0;
 
 	/**
 	 * Total number of posts to be exported.
 	 *
 	 * @var int
 	 */
-	protected $total_posts = 0;
+	private $total_posts = 0;
 
 	/**
 	 * Query of posts in the current batch.
 	 *
 	 * @var WP_Query
 	 */
-	protected $query;
+	private $query;
 
 	/**
 	 * Create an export task for a content type.
