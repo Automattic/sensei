@@ -31,7 +31,7 @@ class Sensei_Export_Lessons
 	 *
 	 * @param WP_Post $post The lesson.
 	 *
-	 * @return string[]
+	 * @return array The columns data per key.
 	 */
 	protected function get_post_fields( $post ) {
 		$meta           = [];
@@ -66,7 +66,7 @@ class Sensei_Export_Lessons
 		$module_term_id = Sensei()->modules->get_lesson_module_if_exists( $post );
 		$questions_ids  = $this->get_quiz_question_ids( $quiz_id );
 
-		$columns = [
+		return [
 			Schema::COLUMN_ID             => $post->ID,
 			Schema::COLUMN_TITLE          => $post->post_title,
 			Schema::COLUMN_SLUG           => $post->post_name,
@@ -91,14 +91,6 @@ class Sensei_Export_Lessons
 			Schema::COLUMN_ALLOW_COMMENTS => 'closed' === $post->comment_status ? 0 : 1,
 			Schema::COLUMN_QUESTIONS      => Sensei_Data_Port_Utilities::serialize_id_field( $questions_ids ),
 		];
-
-		$schema = array_keys( $this->get_type_schema()->get_schema() );
-		return array_map(
-			function( $column ) use ( $columns ) {
-				return $columns[ $column ];
-			},
-			$schema
-		);
 	}
 
 	/**

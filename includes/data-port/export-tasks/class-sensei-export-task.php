@@ -93,12 +93,13 @@ abstract class Sensei_Export_Task
 	 * Run export task.
 	 */
 	public function run() {
-
 		$posts       = $this->query->posts;
 		$output_file = new SplFileObject( $this->file, 'a' );
 
 		foreach ( $posts as $post ) {
-			$output_file->fputcsv( $this->get_post_fields( $post ) );
+			$serialized_posts = $this->get_serialized_post( $post );
+
+			$output_file->fputcsv( $serialized_posts );
 			$this->completed_posts++;
 		}
 		$output_file = null;
@@ -108,6 +109,25 @@ abstract class Sensei_Export_Task
 			[
 				self::STATE_COMPLETED_POSTS => $this->completed_posts,
 			]
+		);
+	}
+
+	/**
+	 * Get serialized post.
+	 *
+	 * @param WP_Post $post The post.
+	 *
+	 * @return string[]
+	 */
+	private function get_serialized_post( $post ) {
+		$columns     = $this->get_post_fields( $post );
+		$column_keys = array_keys( $this->get_type_schema()->get_schema() );
+
+		return array_map(
+			function( $column ) use ( $columns ) {
+				return $columns[ $column ];
+			},
+			$column_keys
 		);
 	}
 
@@ -142,7 +162,7 @@ abstract class Sensei_Export_Task
 	 *
 	 * @param WP_Post $post
 	 *
-	 * @return string[]
+	 * @return array The columns data per key.
 	 */
 	abstract protected function get_post_fields( $post );
 

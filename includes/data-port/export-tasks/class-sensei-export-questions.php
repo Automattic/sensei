@@ -31,7 +31,7 @@ class Sensei_Export_Questions
 	 *
 	 * @param WP_Post $post The question.
 	 *
-	 * @return string[]
+	 * @return array The columns data per key.
 	 */
 	protected function get_post_fields( $post ) {
 
@@ -53,7 +53,7 @@ class Sensei_Export_Questions
 			$meta[ $meta_key ] = get_post_meta( $post->ID, $meta_key, true );
 		}
 
-		$columns = array_merge(
+		return array_merge(
 			[
 				Schema::COLUMN_ID              => $post->ID,
 				Schema::COLUMN_TITLE           => $post->post_title,
@@ -74,14 +74,6 @@ class Sensei_Export_Questions
 				Schema::COLUMN_TEACHER_NOTES   => '',
 			],
 			$this->get_answer_fields( $question_type, $meta )
-		);
-
-		$schema = array_keys( $this->get_type_schema()->get_schema() );
-		return array_map(
-			function( $column ) use ( $columns ) {
-				return $columns[ $column ];
-			},
-			$schema
 		);
 	}
 

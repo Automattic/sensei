@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use Sensei_Data_Port_Course_Schema as Schema;
+
 /**
  * Export content to a CSV file for the given type.
  */
@@ -29,7 +31,7 @@ class Sensei_Export_Courses
 	 *
 	 * @param WP_Post $post The course.
 	 *
-	 * @return string[]
+	 * @return array The columns data per key.
 	 */
 	protected function get_post_fields( $post ) {
 
@@ -43,20 +45,20 @@ class Sensei_Export_Courses
 		$modules       = Sensei()->modules->get_course_modules( $post->ID );
 
 		return [
-			$post->ID,
-			$post->post_title,
-			$post->post_name,
-			$post->post_content,
-			$post->post_excerpt,
-			$teacher ? $teacher->display_name : '',
-			$teacher ? $teacher->user_email : '',
-			Sensei_Data_Port_Utilities::serialize_term_list( $modules ),
-			$prerequisite ? Sensei_Data_Port_Utilities::serialize_id_field( $prerequisite ) : '',
-			$featured ? 1 : 0,
-			$categories ? Sensei_Data_Port_Utilities::serialize_term_list( $categories ) : '',
-			$image,
-			$video,
-			$notifications ? 1 : 0,
+			Schema::COLUMN_ID               => $post->ID,
+			Schema::COLUMN_TITLE            => $post->post_title,
+			Schema::COLUMN_SLUG             => $post->post_name,
+			Schema::COLUMN_DESCRIPTION      => $post->post_content,
+			Schema::COLUMN_EXCERPT          => $post->post_excerpt,
+			Schema::COLUMN_TEACHER_USERNAME => $teacher ? $teacher->display_name : '',
+			Schema::COLUMN_TEACHER_EMAIL    => $teacher ? $teacher->user_email : '',
+			Schema::COLUMN_MODULES          => Sensei_Data_Port_Utilities::serialize_term_list( $modules ),
+			Schema::COLUMN_PREREQUISITE     => $prerequisite ? Sensei_Data_Port_Utilities::serialize_id_field( $prerequisite ) : '',
+			Schema::COLUMN_FEATURED         => $featured ? 1 : 0,
+			Schema::COLUMN_CATEGORIES       => $categories ? Sensei_Data_Port_Utilities::serialize_term_list( $categories ) : '',
+			Schema::COLUMN_IMAGE            => $image,
+			Schema::COLUMN_VIDEO            => $video,
+			Schema::COLUMN_NOTIFICATIONS    => $notifications ? 1 : 0,
 		];
 	}
 
