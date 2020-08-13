@@ -11,5 +11,8 @@
 		"sirbrillig/phpcs-variable-analysis": "2.8.3",
 		"sirbrillig/phpcs-no-get-current-user": "1.0.1"
 	},
-	"prefer-stable": true
+	"prefer-stable": true,
+	"require": {
+		"twig/twig": "^3.0"
+	}
 }
