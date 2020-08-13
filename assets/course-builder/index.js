@@ -135,15 +135,7 @@ const CourseOutlineEditorBlock = ( { clientId, attributes: { _version } } ) => {
 
 const CourseLessonBlock = ( { attributes: { title, id }, setAttributes } ) => {
 	return (
-		<div
-			className="sensei-course-block-editor__lesson"
-			style={ {
-				borderBottom: '1px solid #32af7d',
-				padding: '0.25em',
-				display: 'flex',
-				alignItems: 'center',
-			} }
-		>
+		<Lesson>
 			<div style={ { flex: '1' } }>
 				<PlainText
 					style={ { fontSize: '1.5em', fontWeight: 600 } }
@@ -162,6 +154,6 @@ const CourseLessonBlock = ( { attributes: { title, id }, setAttributes } ) => {
 					Edit Lesson
 				</Button>
 			) }
-		</div>
+		</Lesson>
 	);
 };
