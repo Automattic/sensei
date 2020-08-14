@@ -983,14 +983,17 @@ class Sensei_Utils {
 	/**
 	 * This function returns an array of lesson quiz questions
 	 *
-	 * @since  1.3.2
+	 * @since 1.3.2
+	 * @since 3.5.0 Added $query_args.
+	 *
 	 * @param  integer $quiz_id
+	 * @param  array   $query_args Additional args for the query.
 	 * @return array of quiz questions
 	 */
-	public static function lesson_quiz_questions( $quiz_id = 0 ) {
+	public static function lesson_quiz_questions( $quiz_id = 0, $query_args = [] ) {
 		$questions_array = array();
 		if ( 0 < $quiz_id ) {
-			$question_args   = array(
+			$defaults      = array(
 				'post_type'        => 'question',
 				'posts_per_page'   => -1,
 				'orderby'          => 'ID',
@@ -1004,6 +1007,8 @@ class Sensei_Utils {
 				'post_status'      => 'any',
 				'suppress_filters' => 0,
 			);
+			$question_args = wp_parse_args( $query_args, $defaults );
+
 			$questions_array = get_posts( $question_args );
 		} // End If Statement
 		return $questions_array;

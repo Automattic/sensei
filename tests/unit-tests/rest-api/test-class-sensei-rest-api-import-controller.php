@@ -10,6 +10,7 @@
  * Class Sensei_REST_API_Import_Controller tests.
  */
 class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
+	use Sensei_Data_Port_Test_Helpers;
 
 	/**
 	 * A server instance that we use in tests to dispatch requests.
@@ -897,25 +898,6 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 	protected function assertResultError( $result, $expected_code ) {
 		$this->assertTrue( isset( $result['message'], $result['code'] ) );
 		$this->assertEquals( $expected_code, $result['code'] );
-	}
-
-	/**
-	 * Assert that a REST API response is valid.
-	 *
-	 * @param $result
-	 */
-	protected function assertResultValidJob( $result, $expected = [] ) {
-		$this->assertTrue( isset( $result['id'], $result['status'], $result['files'] ) );
-		$this->assertTrue( is_string( $result['id'] ) );
-		$this->assertTrue( is_array( $result['status'] ) );
-		$this->assertTrue( is_array( $result['files'] ) );
-		$this->assertNotEmpty( $result['id'] );
-		$this->assertNotEmpty( $result['status'] );
-		$this->assertTrue( isset( $result['status']['status'], $result['status']['percentage'] ) );
-
-		foreach ( $expected as $key => $value ) {
-			$this->assertEquals( $result[ $key ], $value );
-		}
 	}
 
 	/**

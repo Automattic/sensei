@@ -29,6 +29,7 @@ const files = [
 	'shared/styles/wp-components.scss',
 	'shared/styles/wc-components.scss',
 	'data-port/import.js',
+	'data-port/export.js',
 	'data-port/style.scss',
 
 	'css/frontend.scss',

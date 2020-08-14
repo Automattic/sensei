@@ -50,29 +50,13 @@ class Sensei_Data_Port_Question_Schema extends Sensei_Data_Port_Schema {
 	 */
 	public function get_schema() {
 		return [
+			self::COLUMN_ID              => [
+				'type' => 'string',
+			],
 			self::COLUMN_TITLE           => [
 				'type'       => 'string',
 				'required'   => true,
 				'allow_html' => true,
-			],
-			self::COLUMN_ANSWER          => [
-				'type'      => 'string',
-				'validator' => $this->validate_for_question_type( 'multiple-choice', true ),
-				'default'   => function( $field, Sensei_Import_Question_Model $model ) {
-					$data = $model->get_data();
-
-					if (
-						isset( $data[ self::COLUMN_TYPE ] )
-						&& 'boolean' === $data[ self::COLUMN_TYPE ]
-					) {
-						return 1;
-					}
-
-					return null;
-				},
-			],
-			self::COLUMN_ID              => [
-				'type' => 'string',
 			],
 			self::COLUMN_SLUG            => [
 				'type' => 'slug',
@@ -105,6 +89,22 @@ class Sensei_Data_Port_Question_Schema extends Sensei_Data_Port_Schema {
 			],
 			self::COLUMN_CATEGORIES      => [
 				'type' => 'string',
+			],
+			self::COLUMN_ANSWER          => [
+				'type'      => 'string',
+				'validator' => $this->validate_for_question_type( 'multiple-choice', true ),
+				'default'   => function( $field, Sensei_Import_Question_Model $model ) {
+					$data = $model->get_data();
+
+					if (
+						isset( $data[ self::COLUMN_TYPE ] )
+						&& 'boolean' === $data[ self::COLUMN_TYPE ]
+					) {
+						return 1;
+					}
+
+					return null;
+				},
 			],
 			self::COLUMN_FEEDBACK        => [
 				'type'       => 'string',

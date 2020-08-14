@@ -69,6 +69,7 @@ class Sensei_Autoloader {
 			new Sensei_Autoloader_Bundle( 'enrolment' ),
 			new Sensei_Autoloader_Bundle( 'data-port' ),
 			new Sensei_Autoloader_Bundle( 'data-port/import-tasks' ),
+			new Sensei_Autoloader_Bundle( 'data-port/export-tasks' ),
 			new Sensei_Autoloader_Bundle( 'data-port/models' ),
 		);
 

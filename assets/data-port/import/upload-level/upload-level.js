@@ -100,7 +100,10 @@ export const UploadLevels = ( {
 
 				/* eslint-disable jsx-a11y/label-has-for */
 				return (
-					<li key={ level.key } className="sensei-upload-file-line">
+					<li
+						key={ level.key }
+						className="sensei-upload-file-line sensei-data-port-step__line"
+					>
 						<label
 							className="sensei-upload-file-line__description"
 							htmlFor={ `sensei-upload-file-line-${ level.key }` }
@@ -130,7 +133,6 @@ export const UploadLevels = ( {
 								? __( 'Uploading…', 'sensei-lms' )
 								: __( 'Upload', 'sensei-lms' ) }
 						</FormFileUpload>
-
 						{ ( message || deleteButton ) && (
 							<div className="sensei-upload-file-line__info">
 								{ message }

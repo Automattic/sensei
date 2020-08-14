@@ -1,10 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { kebabCase } from 'lodash';
-
-const logTypeLabel = {
-	error: __( 'Error', 'sensei-lms' ),
-	warning: __( 'Warning', 'sensei-lms' ),
-};
+import { logTypeLabels } from '../../../shared/helpers/labels';
 
 /**
  * Create title with link.
@@ -41,7 +37,7 @@ export const ImportLog = ( { items, type } ) => (
 					) }
 					<th>{ __( 'Title', 'sensei-lms' ) }</th>
 					<th>{ __( 'Line #', 'sensei-lms' ) }</th>
-					<th>{ logTypeLabel[ type ] }</th>
+					<th>{ logTypeLabels[ type ] }</th>
 				</tr>
 			</thead>
 			<tbody>
