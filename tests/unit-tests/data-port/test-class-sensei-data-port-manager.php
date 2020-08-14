@@ -218,6 +218,35 @@ class Sensei_Data_Port_Manager_Test extends WP_UnitTestCase {
 		$property->setValue( Sensei_Data_Port_Manager::instance(), $jobs );
 	}
 
+	/**
+	 * Tests to make sure export jobs are logged successfully.
+	 */
+	public function testLogCompleteExportJobs() {
+		$job = $this->getMockBuilder( Sensei_Export_Job::class )
+					->setConstructorArgs( [ 'test-job' ] )
+					->setMethods( [ 'get_content_types' ] )
+					->getMock();
+
+		$job->expects( $this->exactly( 1 ) )
+			->method( 'get_content_types' )
+			->willReturn(
+				[ 'lesson', 'course' ]
+			);
+
+		Sensei_Data_Port_Manager::instance()->log_complete_export_jobs( $job );
+
+		$events = Sensei_Test_Events::get_logged_events( 'sensei_export_success' );
+		$this->assertCount( 1, $events );
+
+		$expected_data = [
+			'type' => 'courses,lessons',
+		];
+
+		foreach ( $expected_data as $key => $value ) {
+			$this->assertEquals( $value, $events[0]['url_args'][ $key ], "'{$key}' does not match" );
+		}
+	}
+
 	private function mock_job_method( $job_id, $method ) {
 		return $this->getMockBuilder( Sensei_Data_Port_Job_Mock::class )
 			->setConstructorArgs( [ $job_id ] )
