@@ -21,9 +21,6 @@ const Lesson = ( { id, href, templating, children } ) => {
 
 	return (
 		<>
-			<style>{ `
-				.test_lesson { background: red; }
-			` }</style>
 			<div
 				className={ className }
 				style={ {
@@ -41,6 +38,9 @@ const Lesson = ( { id, href, templating, children } ) => {
 
 const CourseOutlineWrapper = ( { children } ) => (
 	<div style={ { borderLeft: '2px solid #32af7d', padding: '1rem' } }>
+		<style>{ `
+			.test_lesson { background: red; }
+		` }</style>
 		<h1>Course outline</h1>
 		{ children }
 	</div>
