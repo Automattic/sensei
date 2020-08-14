@@ -46,6 +46,7 @@ class Sensei_Export_Job extends Sensei_Data_Port_Job {
 			$this->tasks = [];
 			$task_class  = [
 				'course'   => Sensei_Export_Courses::class,
+				'lesson'   => Sensei_Export_Lessons::class,
 				'question' => Sensei_Export_Questions::class,
 			];
 
