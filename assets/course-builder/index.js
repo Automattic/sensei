@@ -5,25 +5,37 @@ import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { createBlock, registerBlockType } from '@wordpress/blocks';
 import { InnerBlocks, PlainText } from '@wordpress/block-editor';
+import classnames from 'classnames';
 
 /**
  * Components.
  */
-const Lesson = ( { href, children } ) => {
+const Lesson = ( { id, href, templating, children } ) => {
 	const content = href ? <a href={ href }>{ children }</a> : children;
 
+	const className = templating
+		? 'sensei-course-block-editor__lesson {% if lesson.id is divisible by(2) %}test_lesson{% endif %}'
+		: classnames( 'sensei-course-block-editor__lesson', {
+				test_lesson: id % 2 === 0,
+		  } );
+
 	return (
-		<div
-			className="sensei-course-block-editor__lesson"
-			style={ {
-				borderBottom: '1px solid #32af7d',
-				padding: '0.25em',
-				display: 'flex',
-				alignItems: 'center',
-			} }
-		>
-			{ content }
-		</div>
+		<>
+			<style>{ `
+				.test_lesson { background: red; }
+			` }</style>
+			<div
+				className={ className }
+				style={ {
+					borderBottom: '1px solid #32af7d',
+					padding: '0.25em',
+					display: 'flex',
+					alignItems: 'center',
+				} }
+			>
+				{ content }
+			</div>
+		</>
 	);
 };
 
@@ -110,7 +122,9 @@ const CourseOutlineFrontendBlock = ( { innerBlocks } ) => {
 	return (
 		<CourseOutlineWrapper>
 			{ '{% for lesson in data %}' }
-			<Lesson href="{{ lesson.permalink }}">{ `{{ lesson.title }}` }</Lesson>
+			<Lesson href="{{ lesson.permalink }}" templating>
+				{ `{{ lesson.title }}` }
+			</Lesson>
 			{ '{% endfor %}' }
 			<InnerBlocks.Content />
 		</CourseOutlineWrapper>
@@ -154,7 +168,7 @@ registerBlockType( 'sensei/course-lesson', {
 
 const CourseLessonBlock = ( { attributes: { title, id }, setAttributes } ) => {
 	return (
-		<Lesson>
+		<Lesson id={ id }>
 			<div style={ { flex: '1' } }>
 				<PlainText
 					style={ { fontSize: '1.5em', fontWeight: 600 } }
