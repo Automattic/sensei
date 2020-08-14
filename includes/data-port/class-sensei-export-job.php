@@ -55,6 +55,10 @@ class Sensei_Export_Job extends Sensei_Data_Port_Job {
 					$this->tasks[ $type ] = $this->initialize_task( $task_class[ $type ] );
 				}
 			}
+
+			if ( class_exists( 'ZipArchive' ) ) {
+				$this->tasks['package'] = $this->initialize_task( Sensei_Export_Package::class );
+			}
 		}
 
 		return $this->tasks;
@@ -71,6 +75,7 @@ class Sensei_Export_Job extends Sensei_Data_Port_Job {
 			'course'   => [],
 			'lesson'   => [],
 			'question' => [],
+			'package'  => [],
 		];
 	}
 
