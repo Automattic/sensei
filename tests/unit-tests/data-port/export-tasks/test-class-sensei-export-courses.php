@@ -144,7 +144,7 @@ class Sensei_Export_Courses_Tests extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test that course details are exported correctly.
+	 * Test that course image are exported correctly.
 	 */
 	public function testCourseImageExported() {
 		$course = $this->factory->course->create_and_get();
@@ -219,7 +219,7 @@ class Sensei_Export_Courses_Tests extends WP_UnitTestCase {
 		$result = $this->export();
 
 		$course_1 = self::get_by_id( $result, $course_ids[0] );
-		$this->assertEquals( $course_ids[1], $course_1['prerequisite'] );
+		$this->assertEquals( 'id:' . $course_ids[1], $course_1['prerequisite'] );
 	}
 
 	public function testAllPostStatusCoursesExporterd() {

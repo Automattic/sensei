@@ -17,15 +17,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 trait Sensei_Export_Task_Tests {
 
 	/**
-	 * Find a question line by ID.
+	 * Find a line by ID.
 	 *
-	 * @param array $result      Result data.
-	 * @param int   $question_id The question id.
+	 * @param array $result Result data.
+	 * @param int   $id     The id.
 	 *
-	 * @return array The line for the question.
+	 * @return array The found line.
 	 */
-	protected static function get_by_id( array $result, $question_id ) {
-		$key = array_search( strval( $question_id ), array_column( $result, 'id' ), true );
+	protected static function get_by_id( array $result, $id ) {
+		$key = array_search( strval( $id ), array_column( $result, 'id' ), true );
 		return $result[ $key ];
 	}
 

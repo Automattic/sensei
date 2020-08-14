@@ -199,8 +199,8 @@ class Sensei_Core_Modules {
 	 * @param WP_Post $post The post.
 	 * @return int
 	 */
-	private function get_lesson_module_if_exists( $post ) {
-		// Get existing lesson module
+	public function get_lesson_module_if_exists( $post ) {
+		// Get existing lesson module.
 		$lesson_module      = 0;
 		$lesson_module_list = wp_get_post_terms( $post->ID, $this->taxonomy );
 		if ( is_array( $lesson_module_list ) && count( $lesson_module_list ) > 0 ) {
