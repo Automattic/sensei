@@ -74,9 +74,10 @@ class Sensei_Course_Outline {
 		return array_map(
 			function( $post ) {
 				return [
-					'id'     => $post->ID,
-					'title'  => $post->post_title,
-					'status' => $post->post_status,
+					'id'        => $post->ID,
+					'title'     => $post->post_title,
+					'status'    => $post->post_status,
+					'permalink' => get_permalink( $post->ID ),
 				];
 			},
 			$query->posts

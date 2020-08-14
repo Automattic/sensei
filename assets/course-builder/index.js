@@ -6,6 +6,37 @@ import { __ } from '@wordpress/i18n';
 import { createBlock, registerBlockType } from '@wordpress/blocks';
 import { InnerBlocks, PlainText } from '@wordpress/block-editor';
 
+/**
+ * Components.
+ */
+const Lesson = ( { href, children } ) => {
+	const content = href ? <a href={ href }>{ children }</a> : children;
+
+	return (
+		<div
+			className="sensei-course-block-editor__lesson"
+			style={ {
+				borderBottom: '1px solid #32af7d',
+				padding: '0.25em',
+				display: 'flex',
+				alignItems: 'center',
+			} }
+		>
+			{ content }
+		</div>
+	);
+};
+
+const CourseOutlineWrapper = ( { children } ) => (
+	<div style={ { borderLeft: '2px solid #32af7d', padding: '1rem' } }>
+		<h1>Course outline</h1>
+		{ children }
+	</div>
+);
+
+/*
+ * Outline block.
+ */
 registerBlockType( 'sensei-lms/course-outline', {
 	title: __( 'Course Outline', 'sensei-lms' ),
 	icon: {
@@ -30,29 +61,65 @@ registerBlockType( 'sensei-lms/course-outline', {
 		return <CourseOutlineEditorBlock { ...props } />;
 	},
 
-	save( { innerBlocks } ) {
-		const courseId = select( 'core/editor' ).getCurrentPostId();
-		if ( courseId ) {
-			apiFetch( {
-				path: `sensei-internal/v1/course-builder/course-lessons/${ courseId }`,
-				method: 'POST',
-				data: {
-					lessons: innerBlocks.map( ( block ) => block.attributes ),
-				},
-			} );
-		}
-
-		return (
-			<>
-				## template ##
-				<Lesson href="{{ href }}">{ `{{ lessonTitle }}` }</Lesson>
-				## template ##
-				<InnerBlocks.Content />
-			</>
-		);
+	save( props ) {
+		return <CourseOutlineFrontendBlock { ...props } />;
 	},
 } );
 
+const CourseOutlineEditorBlock = ( { clientId, attributes: { _version } } ) => {
+	const courseId = select( 'core/editor' ).getCurrentPostId();
+	useEffect( () => {
+		( async () => {
+			const result = await apiFetch( {
+				path: `sensei-internal/v1/course-builder/course-lessons/${ courseId }`,
+			} );
+
+			const lessonBlocks = result.map( ( lesson ) =>
+				createBlock( 'sensei/course-lesson', {
+					title: lesson.title,
+					id: lesson.id,
+				} )
+			);
+			dispatch( 'core/block-editor' ).replaceInnerBlocks(
+				clientId,
+				lessonBlocks,
+				false
+			);
+		} )();
+	}, [ clientId, courseId, _version ] );
+
+	return (
+		<CourseOutlineWrapper>
+			<InnerBlocks allowedBlocks={ [ 'sensei/course-lesson' ] } />
+		</CourseOutlineWrapper>
+	);
+};
+
+const CourseOutlineFrontendBlock = ( { innerBlocks } ) => {
+	const courseId = select( 'core/editor' ).getCurrentPostId();
+	if ( courseId ) {
+		apiFetch( {
+			path: `sensei-internal/v1/course-builder/course-lessons/${ courseId }`,
+			method: 'POST',
+			data: {
+				lessons: innerBlocks.map( ( block ) => block.attributes ),
+			},
+		} );
+	}
+
+	return (
+		<CourseOutlineWrapper>
+			{ '{% for lesson in data %}' }
+			<Lesson href="{{ lesson.permalink }}">{ `{{ lesson.title }}` }</Lesson>
+			{ '{% endfor %}' }
+			<InnerBlocks.Content />
+		</CourseOutlineWrapper>
+	);
+};
+
+/**
+ * Lesson block.
+ */
 registerBlockType( 'sensei/course-lesson', {
 	title: __( 'Lesson', 'sensei-lms' ),
 	parent: [ 'sensei-lms/course-outline' ],
@@ -84,54 +151,6 @@ registerBlockType( 'sensei/course-lesson', {
 		return null;
 	},
 } );
-
-const Lesson = ( { href, children } ) => {
-	const content = href ? <a href={ href }>{ children }</a> : children;
-
-	return (
-		<div
-			className="sensei-course-block-editor__lesson"
-			style={ {
-				borderBottom: '1px solid #32af7d',
-				padding: '0.25em',
-				display: 'flex',
-				alignItems: 'center',
-			} }
-		>
-			{ content }
-		</div>
-	);
-};
-
-const CourseOutlineEditorBlock = ( { clientId, attributes: { _version } } ) => {
-	const courseId = select( 'core/editor' ).getCurrentPostId();
-	useEffect( () => {
-		( async () => {
-			const result = await apiFetch( {
-				path: `sensei-internal/v1/course-builder/course-lessons/${ courseId }`,
-			} );
-
-			const lessonBlocks = result.map( ( lesson ) =>
-				createBlock( 'sensei/course-lesson', {
-					title: lesson.title,
-					id: lesson.id,
-				} )
-			);
-			dispatch( 'core/block-editor' ).replaceInnerBlocks(
-				clientId,
-				lessonBlocks,
-				false
-			);
-		} )();
-	}, [ clientId, courseId, _version ] );
-
-	return (
-		<div>
-			<h1>Course outline</h1>
-			<InnerBlocks allowedBlocks={ [ 'sensei/course-lesson' ] } />
-		</div>
-	);
-};
 
 const CourseLessonBlock = ( { attributes: { title, id }, setAttributes } ) => {
 	return (
