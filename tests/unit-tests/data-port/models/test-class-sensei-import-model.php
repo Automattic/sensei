@@ -1,6 +1,6 @@
 <?php
 /**
- * This file contains the Sensei_Data_Port_Model_Test class.
+ * This file contains the Sensei_Import_Model_Test class.
  *
  * @package sensei
  */
@@ -14,11 +14,11 @@ require_once SENSEI_TEST_FRAMEWORK_DIR . '/data-port/class-sensei-data-port-sche
 require_once SENSEI_TEST_FRAMEWORK_DIR . '/data-port/class-sensei-data-port-job-mock.php';
 
 /**
- * Tests for Sensei_Data_Port_Model class.
+ * Tests for Sensei_Import_Model class.
  *
  * @group data-port
  */
-class Sensei_Data_Port_Model_Test extends WP_UnitTestCase {
+class Sensei_Import_Model_Test extends WP_UnitTestCase {
 	use Sensei_Data_Port_Test_Helpers;
 
 	/**
