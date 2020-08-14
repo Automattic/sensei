@@ -94,11 +94,4 @@ class Sensei_Export_Package
 			'total'     => 1,
 		];
 	}
-
-	/**
-	 * Performs any required cleanup of the task.
-	 */
-	public function clean_up() {
-		// Nothing to do.
-	}
 }

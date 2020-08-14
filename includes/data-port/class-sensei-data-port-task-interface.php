@@ -40,9 +40,4 @@ interface Sensei_Data_Port_Task_Interface {
 	 */
 	public function get_completion_ratio();
 
-	/**
-	 * Performs any required cleanup of the task.
-	 */
-	public function clean_up();
-
 }

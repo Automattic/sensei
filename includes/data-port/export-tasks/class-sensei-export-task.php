@@ -202,13 +202,6 @@ abstract class Sensei_Export_Task
 	}
 
 	/**
-	 * Performs any required cleanup of the task.
-	 */
-	public function clean_up() {
-
-	}
-
-	/**
 	 * Attach the file to the job.
 	 *
 	 * @param string $tmp_file
