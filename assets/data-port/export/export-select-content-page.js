@@ -49,7 +49,7 @@ export const ExportSelectContentPage = ( { onSubmit, job } ) => {
 						disabled={ ! hasSelected || isLoading }
 						isBusy={ isLoading }
 					>
-						{ __( 'Generate CSV', 'sensei-lms' ) }
+						{ __( 'Continue', 'sensei-lms' ) }
 					</Button>
 				</div>
 			</div>

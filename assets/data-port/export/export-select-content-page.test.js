@@ -9,7 +9,7 @@ describe( '<SelectExportContentPage />', () => {
 		);
 
 		fireEvent.click( getByLabelText( 'Lessons' ) );
-		fireEvent.click( getByRole( 'button', { name: 'Generate CSV' } ) );
+		fireEvent.click( getByRole( 'button', { name: 'Continue' } ) );
 		expect( onSubmit ).toHaveBeenCalledWith( [ 'lesson' ] );
 	} );
 
@@ -20,11 +20,11 @@ describe( '<SelectExportContentPage />', () => {
 		);
 
 		expect(
-			getByRole( 'button', { name: 'Generate CSV' } ).disabled
+			getByRole( 'button', { name: 'Continue' } ).disabled
 		).toBeTruthy();
 		fireEvent.click( getByLabelText( 'Lessons' ) );
 		expect(
-			getByRole( 'button', { name: 'Generate CSV' } ).disabled
+			getByRole( 'button', { name: 'Continue' } ).disabled
 		).toBeFalsy();
 	} );
 } );

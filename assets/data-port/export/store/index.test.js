@@ -3,6 +3,7 @@ import { apiFetch } from '@wordpress/data-controls';
 import registerExportStore, { EXPORT_STORE } from './index';
 import * as actions from './actions';
 
+window.sensei_log_event = jest.fn();
 jest.mock( '@wordpress/data-controls', () => {
 	const originalModule = jest.requireActual( '@wordpress/data-controls' );
 
