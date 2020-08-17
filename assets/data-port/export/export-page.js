@@ -26,8 +26,8 @@ export const ExportPage = ( { job, error, start, reset, cancel } ) => {
 					</h1>
 					<p>
 						{ __(
-							'This tool enables you to generate and download one or more CSV files containing a list of all courses, ' +
-								'lessons, or questions. Separate CSV files are generated for each content type.',
+							'This tool enables you to export courses, lessons, and questions to CSV files. ' +
+								'These files are bundled together and downloaded to your computer in .zip format.',
 							'sensei-lms'
 						) }
 					</p>

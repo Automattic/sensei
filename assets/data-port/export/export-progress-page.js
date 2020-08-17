@@ -1,6 +1,6 @@
 import { Button } from '@wordpress/components';
 import { useEffect } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, _n } from '@wordpress/i18n';
 import { downloadFile } from '../../shared/helpers/download-file';
 import { Notice } from '../notice';
 
@@ -57,8 +57,10 @@ export const ExportProgressPage = ( { job, reset, cancel } ) => {
 						{ files && (
 							<>
 								<p>
-									{ __(
+									{ _n(
+										'The following file was exported:',
 										'The following files were exported:',
+										files.length,
 										'sensei-lms'
 									) }
 								</p>
@@ -84,7 +86,7 @@ export const ExportProgressPage = ( { job, reset, cancel } ) => {
 					</div>
 					<div className="sensei-data-port-step__footer">
 						<Button isPrimary onClick={ () => reset() }>
-							{ __( 'New Export', 'sensei-lms' ) }
+							{ __( 'Export More Content', 'sensei-lms' ) }
 						</Button>
 					</div>
 				</>
