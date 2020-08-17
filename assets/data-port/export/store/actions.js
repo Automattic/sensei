@@ -211,7 +211,7 @@ const startJob = function* ( types ) {
 		.map( ( typeSingular ) => typeSingular + 's' )
 		.join( ',' );
 
-	window.sensei_log_event( 'export_generate_csv_click', { type } );
+	window.sensei_log_event( 'export_continue_click', { type } );
 
 	yield updateJob( job );
 	return job;
