@@ -50,7 +50,7 @@ class Sensei_Export_Job extends Sensei_Data_Port_Job {
 				'question' => Sensei_Export_Questions::class,
 			];
 
-			foreach ( $this->get_state( self::CONTENT_TYPES_STATE_KEY ) as $type ) {
+			foreach ( $this->get_content_types() as $type ) {
 				if ( isset( $task_class[ $type ] ) ) {
 					$this->tasks[ $type ] = $this->initialize_task( $task_class[ $type ] );
 				}
@@ -111,6 +111,15 @@ class Sensei_Export_Job extends Sensei_Data_Port_Job {
 	 */
 	public function set_content_types( $content_types ) {
 		$this->set_state( self::CONTENT_TYPES_STATE_KEY, $content_types );
+	}
+
+	/**
+	 * Get the content types to be exported.
+	 *
+	 * @return array
+	 */
+	public function get_content_types() {
+		return $this->get_state( self::CONTENT_TYPES_STATE_KEY );
 	}
 
 	/**
