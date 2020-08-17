@@ -235,7 +235,7 @@ class Sensei_Data_Port_Manager_Test extends WP_UnitTestCase {
 
 		Sensei_Data_Port_Manager::instance()->log_complete_export_jobs( $job );
 
-		$events = Sensei_Test_Events::get_logged_events( 'sensei_export_success' );
+		$events = Sensei_Test_Events::get_logged_events( 'sensei_export_complete' );
 		$this->assertCount( 1, $events );
 
 		$expected_data = [

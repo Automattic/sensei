@@ -298,7 +298,7 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 		sort( $plural_content_types );
 
 		sensei_log_event(
-			'export_success',
+			'export_complete',
 			[
 				'type' => implode( ',', $plural_content_types ),
 			]
