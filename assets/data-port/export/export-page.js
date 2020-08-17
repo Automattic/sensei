@@ -21,9 +21,9 @@ export const ExportPage = ( { job, error, start, reset, cancel } ) => {
 		<div className="sensei-page-export">
 			<section className="sensei-data-port-step">
 				<header className="sensei-data-port-step__header">
-					<h1>
+					<h2>
 						{ __( 'Export content to a CSV file', 'sensei-lms' ) }
-					</h1>
+					</h2>
 					<p>
 						{ __(
 							'This tool enables you to export courses, lessons, and questions to CSV files. ' +
