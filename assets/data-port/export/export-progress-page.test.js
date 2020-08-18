@@ -67,7 +67,9 @@ describe( '<ExportProgressPage />', () => {
 				reset={ onReset }
 			/>
 		);
-		fireEvent.click( getByRole( 'button', { name: 'New Export' } ) );
+		fireEvent.click(
+			getByRole( 'button', { name: 'Export More Content' } )
+		);
 		expect( onReset ).toHaveBeenCalled();
 	} );
 
