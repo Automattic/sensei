@@ -101,9 +101,11 @@ export const Ready = () => {
 									'Install a sample course',
 									'sensei-lms'
 								),
-								content: __(
-									'Install the Getting Started with Sensei LMS course.',
-									'sensei-lms'
+								content: formatString(
+									__(
+										'Install the {{em}}Getting Started with Sensei LMS{{/em}} course.',
+										'sensei-lms'
+									)
 								),
 								after: (
 									<div>
