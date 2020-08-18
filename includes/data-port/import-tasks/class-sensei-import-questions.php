@@ -47,13 +47,6 @@ class Sensei_Import_Questions
 	}
 
 	/**
-	 * Performs any required cleanup of the task.
-	 */
-	public function clean_up() {
-		// Nothing to clean.
-	}
-
-	/**
 	 * Validate an uploaded source file before saving it.
 	 *
 	 * @param string $file_path File path of the file to validate.

@@ -107,19 +107,6 @@ class Sensei_Data_Port_Job_Test extends WP_UnitTestCase {
 		);
 	}
 
-
-	public function testCleanupCallsAllTaskCleanup() {
-		$first_completed  = $this->mock_task_method( true, 100, 100, 'clean_up' );
-		$second_completed = $this->mock_task_method( true, 100, 100, 'clean_up' );
-
-		$job = Sensei_Data_Port_Job_Mock::create_with_tasks( 'test-job', [ $first_completed, $second_completed ] );
-
-		$first_completed->expects( $this->once() )->method( 'clean_up' );
-		$second_completed->expects( $this->once() )->method( 'clean_up' );
-
-		$job->clean_up();
-	}
-
 	public function testGetLogs() {
 		$job = Sensei_Data_Port_Job_Mock::create_with_tasks( 'test-job', [ new Sensei_Data_Port_Task_Mock( true, 100, 100 ) ] );
 		$job->add_log_entry( 'First log entry', Sensei_Data_Port_Job::LOG_LEVEL_NOTICE, [ 'line' => 1 ] );

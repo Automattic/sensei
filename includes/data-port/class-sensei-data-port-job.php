@@ -263,10 +263,6 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 * Delete any stored state for this job.
 	 */
 	public function clean_up() {
-		foreach ( $this->get_tasks() as $task ) {
-			$task->clean_up();
-		}
-
 		foreach ( array_keys( $this->files ) as $file_key ) {
 			$this->delete_file( $file_key );
 		}
@@ -342,8 +338,6 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 * @return Sensei_Data_Port_Task_Interface
 	 */
 	protected function initialize_task( $task_class ) {
-		// @todo Implement restoring of task state.
-
 		return new $task_class( $this );
 	}
 
