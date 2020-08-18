@@ -462,10 +462,10 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 * Complete setup wizard
 	 */
 	public function complete_setup_wizard() {
-
 		$this->mark_step_complete( 'ready' );
 		$this->setup_wizard->finish_setup_wizard();
 
+		return true;
 	}
 
 }
