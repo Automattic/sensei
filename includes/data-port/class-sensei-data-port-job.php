@@ -439,6 +439,8 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 
 			$completed_cycles += $ratio['completed'];
 			$total_cycles     += $ratio['total'];
+
+			$task->save_state();
 		}
 
 		if ( ! $has_incomplete_task || 0 === $total_cycles ) {
@@ -685,6 +687,22 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 */
 	private function set_user_id( $user_id ) {
 		$this->user_id = $user_id;
+	}
+
+	/**
+	 * Fetch a task object by task key.
+	 *
+	 * @param string $task_key Task key to get the object for.
+	 *
+	 * @return Sensei_Data_Port_Task_Interface|null
+	 */
+	public function get_task( $task_key ) {
+		$tasks = $this->get_tasks();
+		if ( ! isset( $tasks[ $task_key ] ) ) {
+			return null;
+		}
+
+		return $tasks[ $task_key ];
 	}
 
 	/**

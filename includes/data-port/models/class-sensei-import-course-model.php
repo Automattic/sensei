@@ -110,7 +110,89 @@ class Sensei_Import_Course_Model extends Sensei_Import_Model {
 		$this->set_course_terms( Sensei_Data_Port_Course_Schema::COLUMN_MODULES, 'module', $teacher );
 		$this->set_course_terms( Sensei_Data_Port_Course_Schema::COLUMN_CATEGORIES, 'course-category' );
 
+		$this->sync_lessons();
+
 		return true;
+	}
+
+	/**
+	 * Sync the lessons in the course.
+	 */
+	private function sync_lessons() {
+		$new_lessons = array_unique( Sensei_Data_Port_Utilities::split_list_safely( $this->get_value( Sensei_Data_Port_Course_Schema::COLUMN_LESSONS ) ) );
+		if ( null === $new_lessons ) {
+			return;
+		}
+
+		$current_lessons = $this->get_current_lesson_ids();
+		$order_index     = 0;
+		$lesson_order    = [];
+		foreach ( $new_lessons as $lesson_ref ) {
+			$lesson_id = $this->task->get_job()->translate_import_id( Sensei_Data_Port_Lesson_Schema::POST_TYPE, $lesson_ref );
+			if ( empty( $lesson_id ) ) {
+				$this->add_line_warning(
+					// translators: Placeholder is the reference to a lesson which did not exist.
+					sprintf( __( 'Lesson does not exist: %s.', 'sensei-lms' ), $lesson_ref ),
+					[
+						'code' => 'sensei_data_port_course_lesson_not_found',
+					]
+				);
+
+				continue;
+			}
+
+			// Check to see if this lesson was set to multiple courses in the import.
+			$current_lesson_course_id = get_post_meta( $lesson_id, '_lesson_course', true );
+			if (
+				$current_lesson_course_id
+				&& $this->task->get_job()->was_imported( Sensei_Data_Port_Course_Schema::POST_TYPE, $current_lesson_course_id )
+			) {
+				$this->add_line_warning(
+					// translators: Placeholder is the lesson reference (e.g. "id:44").
+					sprintf( __( 'The lesson "%s" can only be associated with one course at a time.', 'sensei-lms' ), $lesson_ref ),
+					[
+						'code' => 'sensei_data_port_lesson_multiple_course',
+					]
+				);
+			}
+
+			$lesson_order[] = $lesson_id;
+			update_post_meta( $lesson_id, '_lesson_course', $this->get_post_id() );
+			update_post_meta( $lesson_id, '_order_' . $this->get_post_id(), $order_index );
+
+			$order_index++;
+		}
+
+		update_post_meta( $this->get_post_id(), '_lesson_order', implode( ',', $lesson_order ) );
+
+		// Remove lessons on the course that weren't included in the course import.
+		$old_lessons = array_diff( $current_lessons, $lesson_order );
+		foreach ( $old_lessons as $lesson_id ) {
+			delete_post_meta( $lesson_id, '_lesson_course' );
+		}
+	}
+
+	/**
+	 * Get the current lesson IDs for a course.
+	 *
+	 * @return int[]
+	 */
+	private function get_current_lesson_ids() {
+		$post_args = [
+			'post_type'        => 'lesson',
+			'posts_per_page'   => -1,
+			'post_status'      => 'any',
+			'suppress_filters' => 0,
+			'fields'           => 'ids',
+			'meta_query'       => [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Only during import.
+				[
+					'key'   => '_lesson_course',
+					'value' => $this->get_post_id(),
+				],
+			],
+		];
+
+		return get_posts( $post_args );
 	}
 
 	/**
@@ -224,7 +306,7 @@ class Sensei_Import_Course_Model extends Sensei_Import_Model {
 		if ( ! empty( $failed_terms ) ) {
 			$this->add_line_warning(
 				sprintf(
-				// translators: Placeholder is comma separated list of terms that failed to save.
+					// translators: Placeholder is comma separated list of terms that failed to save.
 					__( 'The following terms failed to save: %s', 'sensei-lms' ),
 					implode( ', ', $failed_terms )
 				),

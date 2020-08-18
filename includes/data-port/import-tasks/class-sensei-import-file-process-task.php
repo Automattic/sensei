@@ -127,7 +127,12 @@ abstract class Sensei_Import_File_Process_Task
 		}
 
 		$this->is_completed = $this->reader->is_completed() && empty( $this->post_process_tasks );
+	}
 
+	/**
+	 * Save the current task's state.
+	 */
+	public function save_state() {
 		$this->get_job()->set_state(
 			$this->get_task_key(),
 			[
@@ -135,7 +140,6 @@ abstract class Sensei_Import_File_Process_Task
 				self::STATE_POST_PROCESS_TASKS => $this->post_process_tasks,
 			]
 		);
-		$this->get_job()->persist();
 	}
 
 	/**

@@ -37,4 +37,11 @@ abstract class Sensei_Data_Port_Task {
 	public function get_job() {
 		return $this->job;
 	}
+
+	/**
+	 * Save the current task's state.
+	 */
+	public function save_state() {
+		// Silence is golden.
+	}
 }

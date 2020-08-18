@@ -111,4 +111,25 @@ class Sensei_Import_Courses_Tests extends WP_UnitTestCase {
 		$this->assertTrue( isset( $logs[0] ), 'A log entry should have been written' );
 		$this->assertEquals( 'Unable to set the prerequisite to "slug:a-missing-course"', $logs[0]['message'], 'Log entry should warn users when they try to set a prereq to the same object' );
 	}
+
+	/**
+	 * Test to make sure lesson modules are handled correctly.
+	 */
+	public function testHandleLessonModule() {
+		$test_module_name = 'A Very Fancy Module';
+		$term             = Sensei_Data_Port_Utilities::get_term( $test_module_name, 'module', 0 );
+		$course_id        = $this->factory->course->create();
+		$lesson_id        = $this->factory->lesson->create();
+
+		wp_set_object_terms( $course_id, [ $term->term_id ], 'module' );
+		add_post_meta( $lesson_id, '_lesson_course', $course_id );
+
+		$job    = Sensei_Import_Job::create( 'test', 0 );
+		$task   = new Sensei_Import_courses( $job );
+		$task->handle_lesson_module( [ $lesson_id, 'A Very Fancy Module', 1, 'Post title' ] );
+
+		$terms = wp_get_post_terms( $lesson_id, 'module' );
+		$this->assertEquals( $test_module_name, $terms[0]->name );
+	}
+
 }
