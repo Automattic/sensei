@@ -105,21 +105,18 @@ class Sensei_Export_Lessons_Tests extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test that lesson associated course and prerequisite are exported correctly.
+	 * Test that lesson associated prerequisite are exported correctly.
 	 */
 	public function testLessonAssociatedPostsExported() {
 		$lesson              = $this->factory->lesson->create_and_get();
 		$prerequisite_lesson = $this->factory->lesson->create_and_get();
-		$course              = $this->factory->course->create_and_get();
 
-		update_post_meta( $lesson->ID, '_lesson_course', $course->ID );
 		update_post_meta( $lesson->ID, '_lesson_prerequisite', $prerequisite_lesson->ID );
 
 		$result = $this->export();
 
 		$this->assertArraySubset(
 			[
-				'course'       => 'id:' . $course->ID,
 				'prerequisite' => 'id:' . $prerequisite_lesson->ID,
 			],
 			$result[0]
