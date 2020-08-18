@@ -28,7 +28,9 @@ const useSampleCourseInstaller = () => {
 		} )
 			.then( ( res ) => {
 				if ( 'completed' === res.status.status ) {
-					window.location.assign( 'edit.php?post_type=course' );
+					window.location.assign(
+						`post.php?post=${ res.completed_ids.course[ 0 ] }&action=edit`
+					);
 
 					return;
 				}

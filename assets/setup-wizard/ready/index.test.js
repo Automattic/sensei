@@ -201,6 +201,7 @@ describe( '<Ready />', () => {
 		} );
 		apiFetch.mockResolvedValueOnce( {
 			status: { status: 'completed' },
+			completed_ids: { course: [ 123 ] },
 		} );
 
 		const { queryByText } = render( <Ready /> );
@@ -211,7 +212,7 @@ describe( '<Ready />', () => {
 
 		await waitFor( () => {
 			expect( window.location.assign ).toBeCalledWith(
-				'edit.php?post_type=course'
+				'post.php?post=123&action=edit'
 			);
 		} );
 	} );
