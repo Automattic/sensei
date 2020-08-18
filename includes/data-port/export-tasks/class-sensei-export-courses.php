@@ -43,6 +43,7 @@ class Sensei_Export_Courses
 		$notifications = ! get_post_meta( $post->ID, 'disable_notification', true );
 		$categories    = get_the_terms( $post->ID, 'course-category' );
 		$modules       = Sensei()->modules->get_course_modules( $post->ID );
+		$lessons       = Sensei()->course->course_lessons( $post->ID, 'any', 'ids' );
 
 		return [
 			Schema::COLUMN_ID               => $post->ID,
@@ -52,6 +53,7 @@ class Sensei_Export_Courses
 			Schema::COLUMN_EXCERPT          => $post->post_excerpt,
 			Schema::COLUMN_TEACHER_USERNAME => $teacher ? $teacher->display_name : '',
 			Schema::COLUMN_TEACHER_EMAIL    => $teacher ? $teacher->user_email : '',
+			Schema::COLUMN_LESSONS          => Sensei_Data_Port_Utilities::serialize_id_field( $lessons ),
 			Schema::COLUMN_MODULES          => Sensei_Data_Port_Utilities::serialize_term_list( $modules ),
 			Schema::COLUMN_PREREQUISITE     => $prerequisite ? Sensei_Data_Port_Utilities::serialize_id_field( $prerequisite ) : '',
 			Schema::COLUMN_FEATURED         => $featured ? 1 : 0,

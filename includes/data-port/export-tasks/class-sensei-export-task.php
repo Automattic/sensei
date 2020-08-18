@@ -125,6 +125,10 @@ abstract class Sensei_Export_Task
 
 		return array_map(
 			function( $column ) use ( $columns ) {
+				if ( ! isset( $columns[ $column ] ) ) {
+					return '';
+				}
+
 				return $columns[ $column ];
 			},
 			$column_keys
