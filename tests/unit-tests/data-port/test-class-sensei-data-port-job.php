@@ -266,6 +266,25 @@ class Sensei_Data_Port_Job_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test completed IDs.
+	 */
+	public function testCompletedIds() {
+		$expected = [
+			'question' => [],
+			'course'   => [ 10, 11 ],
+			'lesson'   => [ 20 ],
+		];
+
+		$job = Sensei_Data_Port_Job_Mock::create( 'test-job', 0 );
+		$job->add_completed_id( 'course', 10 );
+		$job->add_completed_id( 'lesson', 20 );
+		$job->add_completed_id( 'course', 10 );
+		$job->add_completed_id( 'course', 11 );
+
+		$this->assertEquals( $expected, $job->get_completed_ids() );
+	}
+
+	/**
 	 * Test saving a unknown file key to a job.
 	 */
 	public function testSaveFileBadFileKey() {

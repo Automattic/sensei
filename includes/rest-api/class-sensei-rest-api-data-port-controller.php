@@ -361,10 +361,11 @@ abstract class Sensei_REST_API_Data_Port_Controller extends \WP_REST_Controller 
 	 */
 	public function prepare_to_serve_job( Sensei_Data_Port_Job $job ) {
 		return [
-			'id'      => $job->get_job_id(),
-			'status'  => $job->get_status(),
-			'files'   => $job->get_files_data(),
-			'results' => $job->get_result_counts(),
+			'id'            => $job->get_job_id(),
+			'status'        => $job->get_status(),
+			'files'         => $job->get_files_data(),
+			'results'       => $job->get_result_counts(),
+			'completed_ids' => $job->get_completed_ids(),
 		];
 	}
 

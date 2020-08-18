@@ -99,6 +99,7 @@ abstract class Sensei_Export_Task
 
 		foreach ( $posts as $post ) {
 			$output_file->fputcsv( $this->get_post_fields( $post ) );
+			$this->get_job()->add_completed_id( $this->get_content_type(), $post->ID );
 			$this->completed_posts++;
 		}
 		$output_file = null;

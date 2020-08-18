@@ -28,6 +28,13 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	protected $results;
 
 	/**
+	 * An array which holds the completed post IDs.
+	 *
+	 * @var array
+	 */
+	protected $completed_ids;
+
+	/**
 	 * An array which contains job state.
 	 *
 	 * @var array
@@ -137,6 +144,10 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 			$this->has_changed  = true;
 			$this->state        = [];
 			$this->percentage   = 0;
+		}
+
+		if ( null === $this->completed_ids ) {
+			$this->completed_ids = self::get_array_by_model();
 		}
 
 		add_action( 'shutdown', [ $this, 'persist' ] );
@@ -357,6 +368,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 			's' => $this->state,
 			'l' => $this->logs,
 			'r' => $this->results,
+			'o' => $this->completed_ids,
 			'c' => $this->is_completed,
 			'i' => $this->is_started,
 			'p' => $this->percentage,
@@ -377,14 +389,15 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 			return;
 		}
 
-		$this->state        = $json_arr['s'];
-		$this->logs         = $json_arr['l'];
-		$this->results      = $json_arr['r'];
-		$this->is_completed = $json_arr['c'];
-		$this->is_started   = $json_arr['i'];
-		$this->percentage   = $json_arr['p'];
-		$this->files        = $json_arr['f'];
-		$this->user_id      = $json_arr['u'];
+		$this->state         = $json_arr['s'];
+		$this->logs          = $json_arr['l'];
+		$this->results       = $json_arr['r'];
+		$this->completed_ids = $json_arr['o'];
+		$this->is_completed  = $json_arr['c'];
+		$this->is_started    = $json_arr['i'];
+		$this->percentage    = $json_arr['p'];
+		$this->files         = $json_arr['f'];
+		$this->user_id       = $json_arr['u'];
 	}
 
 	/**
@@ -735,5 +748,41 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 		];
 
 		return isset( $map[ $level ] ) ? $map[ $level ] : 'info';
+	}
+
+	/**
+	 * Get completed IDs.
+	 */
+	public function get_completed_ids() {
+		return $this->completed_ids;
+	}
+
+	/**
+	 * Add completed ID.
+	 *
+	 * @access private
+	 *
+	 * @param string $model_key    Model key.
+	 * @param int    $completed_id Completed ID.
+	 */
+	public function add_completed_id( $model_key, $completed_id ) {
+		if ( in_array( $completed_id, $this->completed_ids[ $model_key ], true ) ) {
+			return;
+		}
+
+		$this->completed_ids[ $model_key ][] = $completed_id;
+	}
+
+	/**
+	 * Get an object with arrays by model.
+	 *
+	 * @return array
+	 */
+	public static function get_array_by_model() {
+		return [
+			Sensei_Import_Question_Model::MODEL_KEY => [],
+			Sensei_Import_Course_Model::MODEL_KEY   => [],
+			Sensei_Import_Lesson_Model::MODEL_KEY   => [],
+		];
 	}
 }

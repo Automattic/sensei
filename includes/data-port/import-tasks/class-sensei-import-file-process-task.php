@@ -292,6 +292,7 @@ abstract class Sensei_Import_File_Process_Task
 		$model->add_warnings_to_job();
 
 		$this->get_job()->set_line_result( $model->get_model_key(), $line_number, Sensei_Import_Job::RESULT_SUCCESS );
+		$this->get_job()->add_completed_id( $model->get_model_key(), $model->get_post_id() );
 
 		return true;
 	}

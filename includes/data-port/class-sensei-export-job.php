@@ -32,7 +32,7 @@ class Sensei_Export_Job extends Sensei_Data_Port_Job {
 		parent::__construct( $job_id, $json );
 
 		if ( null === $this->results ) {
-			$this->results = self::get_default_results();
+			$this->results = [];
 		}
 	}
 
@@ -87,15 +87,6 @@ class Sensei_Export_Job extends Sensei_Data_Port_Job {
 	 * Get the result counts for each model.
 	 */
 	public function get_result_counts() {
-	}
-
-	/**
-	 * Get the default results array.
-	 *
-	 * @return array
-	 */
-	public static function get_default_results() {
-		return [];
 	}
 
 	/**

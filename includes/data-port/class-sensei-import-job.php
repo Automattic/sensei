@@ -35,7 +35,7 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 		parent::__construct( $job_id, $json );
 
 		if ( null === $this->results ) {
-			$this->results = self::get_default_results();
+			$this->results = self::get_array_by_model();
 		}
 	}
 
@@ -345,19 +345,6 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 		}
 
 		return $results;
-	}
-
-	/**
-	 * Get the default results array.
-	 *
-	 * @return array
-	 */
-	public static function get_default_results() {
-		return [
-			Sensei_Import_Question_Model::MODEL_KEY => [],
-			Sensei_Import_Course_Model::MODEL_KEY   => [],
-			Sensei_Import_Lesson_Model::MODEL_KEY   => [],
-		];
 	}
 
 	/**

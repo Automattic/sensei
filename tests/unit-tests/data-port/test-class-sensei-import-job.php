@@ -231,7 +231,7 @@ class Sensei_Import_Job_Test extends WP_UnitTestCase {
 	 * @return array
 	 */
 	private function get_default_result_counts() {
-		$results     = Sensei_Import_Job::get_default_results();
+		$results     = Sensei_Data_Port_Job::get_array_by_model();
 		$result_keys = [
 			'error',
 			'warning',

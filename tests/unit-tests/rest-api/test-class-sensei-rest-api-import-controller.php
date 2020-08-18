@@ -412,6 +412,59 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 	}
 
 	/**
+	 * Tests `GET /import/{job_id}` when job has been started.
+	 *
+	 * @dataProvider userDataSources
+	 *
+	 * @param string $user_role     User role to run the request as.
+	 * @param bool   $is_authorized Is the user authenticated and authorized.
+	 */
+	public function testGetImportStarted( $user_role, $is_authorized ) {
+		wp_logout();
+
+		$user_description = 'Guest';
+		if ( $user_role ) {
+			$user_id          = $this->factory->user->create( [ 'role' => $user_role ] );
+			$user_description = ucfirst( $user_role );
+			wp_set_current_user( $user_id );
+		}
+
+		$expected_status_codes = [ 401, 403 ];
+		$job_id                = 'current';
+		if ( $is_authorized ) {
+			$expected_status_codes = [ 200 ];
+
+			$job = Sensei_Data_Port_Manager::instance()->create_import_job( get_current_user_id() );
+
+			$job->add_completed_id( 'course', 10 );
+			$job->add_completed_id( 'lesson', 20 );
+			$job->add_completed_id( 'course', 11 );
+
+			$job->persist();
+			Sensei_Data_Port_Manager::instance()->persist();
+			$job_id = $job->get_job_id();
+		}
+
+		$request  = new WP_REST_Request( 'GET', '/sensei-internal/v1/import/' . $job_id );
+		$response = $this->server->dispatch( $request );
+
+		$this->assertTrue( in_array( $response->get_status(), $expected_status_codes, true ), "{$user_description} requests should produce status of " . implode( ', ', $expected_status_codes ) );
+
+		if ( $is_authorized ) {
+			$expected_parts = [
+				'completed_ids' => [
+					'question' => [],
+					'course'   => [ 10, 11 ],
+					'lesson'   => [ 20 ],
+				],
+				'results'       => $this->get_default_result_counts(),
+			];
+
+			$this->assertResultValidJob( $response->get_data(), $expected_parts );
+		}
+	}
+
+	/**
 	 * Tests `POST /import/active/file/{file_key}` and create a new job.
 	 *
 	 * @dataProvider userDataSources
@@ -965,7 +1018,7 @@ class Sensei_REST_API_Import_Controller_Tests extends WP_Test_REST_TestCase {
 	 * @return array
 	 */
 	private function get_default_result_counts() {
-		$results     = Sensei_Import_Job::get_default_results();
+		$results     = Sensei_Data_Port_Job::get_array_by_model();
 		$result_keys = [
 			'error',
 			'warning',
