@@ -690,22 +690,6 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	}
 
 	/**
-	 * Fetch a task object by task key.
-	 *
-	 * @param string $task_key Task key to get the object for.
-	 *
-	 * @return Sensei_Data_Port_Task_Interface|null
-	 */
-	public function get_task( $task_key ) {
-		$tasks = $this->get_tasks();
-		if ( ! isset( $tasks[ $task_key ] ) ) {
-			return null;
-		}
-
-		return $tasks[ $task_key ];
-	}
-
-	/**
 	 * Get the descriptor for a log entry.
 	 *
 	 * @param array $entry Log entry.

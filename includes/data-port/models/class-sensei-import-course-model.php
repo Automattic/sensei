@@ -115,7 +115,7 @@ class Sensei_Import_Course_Model extends Sensei_Import_Model {
 		 *
 		 * @var Sensei_Import_Associations $associations_task
 		 */
-		$associations_task = $this->task->get_job()->get_task( 'associations' );
+		$associations_task = $this->task->get_job()->get_associations_task();
 		$associations_task->add_course_lessons(
 			$this->get_post_id(),
 			$this->get_value( Sensei_Data_Port_Course_Schema::COLUMN_LESSONS ),

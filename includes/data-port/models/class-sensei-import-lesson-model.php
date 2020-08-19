@@ -315,8 +315,13 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 			 *
 			 * @var Sensei_Import_Associations $associations_task
 			 */
-			$associations_task = $this->task->get_job()->get_task( 'associations' );
-			$associations_task->add_lesson_module( $this->get_post_id(), $module, $this->line_number, $this->get_value( $this->schema->get_column_title() ) );
+			$associations_task = $this->task->get_job()->get_associations_task();
+			$associations_task->add_lesson_module(
+				$this->get_post_id(),
+				$module,
+				$this->line_number,
+				$this->get_value( $this->schema->get_column_title() )
+			);
 		} else {
 			wp_delete_object_term_relationships( $this->get_post_id(), 'module' );
 		}

@@ -57,6 +57,15 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 	}
 
 	/**
+	 * Fetch a associations task object.
+	 *
+	 * @return Sensei_Import_Associations
+	 */
+	public function get_associations_task() {
+		return $this->get_tasks()['associations'];
+	}
+
+	/**
 	 * Set a line result value.
 	 *
 	 * @access private
