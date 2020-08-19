@@ -213,6 +213,38 @@ class Sensei_Import_Course_Model_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests that the lessons are queued to be linked to their courses in the associations post-process task.
+	 */
+	public function testLessonModuleLinkingIsQueuedWhenValid() {
+		$job = $this->getMockBuilder( Sensei_Import_Job::class )
+					->setConstructorArgs( [ 'test-id', 0 ] )
+					->setMethods( [ 'get_associations_task' ] )
+					->getMock();
+
+		$associations_task = $this->getMockBuilder( Sensei_Import_Associations::class )
+								->setConstructorArgs( [ $job ] )
+								->setMethods( [ 'add_course_lessons' ] )
+								->getMock();
+
+		$associations_task->expects( $this->once() )->method( 'add_course_lessons' );
+
+		$job->expects( $this->once() )
+			->method( 'get_associations_task' )
+			->willReturn( $associations_task );
+
+		$course_data = [
+			Sensei_Data_Port_Course_Schema::COLUMN_ID      => '1234',
+			Sensei_Data_Port_Course_Schema::COLUMN_TITLE   => 'Course title a',
+			Sensei_Data_Port_Course_Schema::COLUMN_SLUG    => 'the-last-course',
+			Sensei_Data_Port_Course_Schema::COLUMN_LESSONS => 'id:33,id:44',
+		];
+
+		$task  = new Sensei_Import_Courses( $job );
+		$model = Sensei_Import_Course_Model::from_source_array( 1, $course_data, new Sensei_Data_Port_Course_Schema(), $task );
+		$model->sync_post();
+	}
+
+	/**
 	 * Tests that error data has the correct values.
 	 */
 	public function testErrorDataAreGeneratedCorrectly() {

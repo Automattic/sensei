@@ -331,27 +331,24 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that the module is queued to be linked in the course post-process.
+	 * Tests that the module is queued to be linked in the associations post-process task.
 	 */
 	public function testLessonModuleLinkingIsQueuedWhenValid() {
 		$job = $this->getMockBuilder( Sensei_Import_Job::class )
 					->setConstructorArgs( [ 'test-id', 0 ] )
-					->setMethods( [ 'get_task' ] )
+					->setMethods( [ 'get_associations_task' ] )
 					->getMock();
 
-		$course_task = $this->getMockBuilder( Sensei_Import_Courses::class )
+		$associations_task = $this->getMockBuilder( Sensei_Import_Associations::class )
 							->setConstructorArgs( [ $job ] )
-							->setMethods( [ 'add_post_process_task' ] )
+							->setMethods( [ 'add_lesson_module' ] )
 							->getMock();
 
-		$course_task->expects( $this->once() )
-					->method( 'add_post_process_task' )
-					->with( $this->equalTo( 'lesson_module' ), $this->anything() );
+		$associations_task->expects( $this->once() )->method( 'add_lesson_module' );
 
 		$job->expects( $this->once() )
-			->method( 'get_task' )
-			->with( $this->equalTo( 'courses' ) )
-			->willReturn( $course_task );
+			->method( 'get_associations_task' )
+			->willReturn( $associations_task );
 
 		$lesson_data_with_module = [
 			Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE  => 'Module lesson',
