@@ -2462,11 +2462,11 @@ class Sensei_Course {
 
 		// Apply "first" and "last" CSS classes for grid-based layouts.
 		if ( 1 !== $sensei_course_loop['columns'] ) {
-			if ( 0 == ( $sensei_course_loop['counter'] - 1 ) % $sensei_course_loop['columns'] || 1 == $sensei_course_loop['columns'] ) {
+			if ( 0 === ( $sensei_course_loop['counter'] - 1 ) % $sensei_course_loop['columns'] ) {
 				$extra_classes[] = 'first';
 			}
 
-			if ( 0 == $sensei_course_loop['counter'] % $sensei_course_loop['columns'] ) {
+			if ( 0 === $sensei_course_loop['counter'] % $sensei_course_loop['columns'] ) {
 				$extra_classes[] = 'last';
 			}
 		}
