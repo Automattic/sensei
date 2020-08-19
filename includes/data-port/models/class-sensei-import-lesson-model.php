@@ -322,7 +322,7 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 				$this->line_number,
 				$this->get_value( $this->schema->get_column_title() )
 			);
-		} else {
+		} elseif ( null !== $module ) {
 			wp_delete_object_term_relationships( $this->get_post_id(), 'module' );
 		}
 
