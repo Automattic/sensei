@@ -31,6 +31,10 @@ class Sensei_Export_Courses_Tests extends WP_UnitTestCase {
 	public function setUp() {
 		parent::setUp();
 
+		if ( ! isset( Sensei()->admin ) ) {
+			Sensei()->admin = new Sensei_Admin();
+		}
+
 		$this->factory = new Sensei_Factory();
 	}
 
@@ -62,6 +66,33 @@ class Sensei_Export_Courses_Tests extends WP_UnitTestCase {
 			'Course Category \'Single\',Course Category "Double"',
 			$result[0]['categories']
 		);
+	}
+
+	/**
+	 * Tests lessons field is exported in the correct order.
+	 */
+	public function testLessonsSerializedInOrder() {
+		$course_id = $this->factory->course->create();
+
+		$course_lesson_args = [
+			'meta_input' => [
+				'_lesson_course' => $course_id,
+			],
+		];
+		$lessons            = $this->factory->lesson->create_many( 3, $course_lesson_args );
+		$lesson_unordered   = $this->factory->lesson->create( $course_lesson_args );
+
+		// Rogue lesson.
+		$this->factory->lesson->create();
+
+		$lesson_order = [ $lessons[1], $lessons[0], $lessons[2] ];
+
+		Sensei()->admin->save_lesson_order( implode( ',', $lesson_order ), $course_id );
+
+		$result = $this->export();
+
+		$lesson_order_str = "id:{$lesson_order[0]},id:{$lesson_order[1]},id:{$lesson_order[2]},id:{$lesson_unordered}";
+		$this->assertEquals( $lesson_order_str, $result[0]['lessons'] );
 	}
 
 	/**

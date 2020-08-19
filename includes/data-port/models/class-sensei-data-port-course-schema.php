@@ -20,6 +20,7 @@ class Sensei_Data_Port_Course_Schema extends Sensei_Data_Port_Schema {
 	const COLUMN_EXCERPT          = 'excerpt';
 	const COLUMN_TEACHER_USERNAME = 'teacher username';
 	const COLUMN_TEACHER_EMAIL    = 'teacher email';
+	const COLUMN_LESSONS          = 'lessons';
 	const COLUMN_MODULES          = 'modules';
 	const COLUMN_PREREQUISITE     = 'prerequisite';
 	const COLUMN_FEATURED         = 'featured';
@@ -58,6 +59,9 @@ class Sensei_Data_Port_Course_Schema extends Sensei_Data_Port_Schema {
 			],
 			self::COLUMN_TEACHER_EMAIL    => [
 				'type' => 'email',
+			],
+			self::COLUMN_LESSONS          => [
+				'type' => 'string',
 			],
 			self::COLUMN_MODULES          => [
 				'type' => 'string',

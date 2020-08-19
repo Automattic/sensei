@@ -73,7 +73,6 @@ class Sensei_Export_Lessons
 			Schema::COLUMN_DESCRIPTION    => $post->post_content,
 			Schema::COLUMN_EXCERPT        => $post->post_excerpt,
 			Schema::COLUMN_STATUS         => $post->post_status,
-			Schema::COLUMN_COURSE         => Sensei_Data_Port_Utilities::serialize_id_field( $meta['_lesson_course'] ),
 			Schema::COLUMN_MODULE         => 0 !== $module_term_id ? get_term( $module_term_id )->name : '',
 			Schema::COLUMN_PREREQUISITE   => Sensei_Data_Port_Utilities::serialize_id_field( $meta['_lesson_prerequisite'] ),
 			Schema::COLUMN_PREVIEW        => 'preview' === $meta['_lesson_preview'] ? 1 : 0,
