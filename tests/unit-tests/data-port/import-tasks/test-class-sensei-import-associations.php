@@ -86,7 +86,7 @@ class Sensei_Import_Associations_Tests extends WP_UnitTestCase {
 
 		$this->assertEmpty( $job->get_logs(), 'No warnings should have been reported' );
 
-		$order_index = 0;
+		$order_index = 1;
 		foreach ( $lesson_map as $original_id => $post_id ) {
 			$this->assertEquals( $course_id, get_post_meta( $post_id, '_lesson_course', true ) );
 			$this->assertEquals( $order_index, get_post_meta( $post_id, '_order_' . $course_id, true ) );
@@ -130,7 +130,7 @@ class Sensei_Import_Associations_Tests extends WP_UnitTestCase {
 		$this->assertEquals( 1, count( $logs ), 'A warnings should have been reported about the missing lesson' );
 		$this->assertEquals( 'Lesson does not exist: id:4.', $logs[0]['message'], 'Warning about missing lesson should have been added' );
 
-		$order_index = 0;
+		$order_index = 1;
 		foreach ( $lesson_map as $original_id => $post_id ) {
 			$this->assertEquals( $course_id, get_post_meta( $post_id, '_lesson_course', true ) );
 			$this->assertEquals( $order_index, get_post_meta( $post_id, '_order_' . $course_id, true ) );
@@ -188,7 +188,7 @@ class Sensei_Import_Associations_Tests extends WP_UnitTestCase {
 		$this->assertEquals( 1, count( $logs ), 'A warnings should have been reported about the lesson associated with multiple courses' );
 		$this->assertEquals( 'The lesson "id:4255" can only be associated with one course at a time.', $logs[0]['message'], 'Warning about missing lesson should have been added' );
 
-		$order_index = 0;
+		$order_index = 1;
 		foreach ( $lesson_map as $original_id => $post_id ) {
 			$this->assertEquals( $course_id_a, get_post_meta( $post_id, '_lesson_course', true ) );
 			$this->assertEquals( $order_index, get_post_meta( $post_id, '_order_' . $course_id_a, true ) );
@@ -255,7 +255,7 @@ class Sensei_Import_Associations_Tests extends WP_UnitTestCase {
 
 		$task->run();
 
-		$order_index = 0;
+		$order_index = 1;
 		foreach ( $loose_lessons as $original_id => $post_id ) {
 			$this->assertEquals( $course_id, get_post_meta( $post_id, '_lesson_course', true ) );
 			$this->assertEquals( $order_index, get_post_meta( $post_id, '_order_' . $course_id, true ) );

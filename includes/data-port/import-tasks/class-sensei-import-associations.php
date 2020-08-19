@@ -128,7 +128,7 @@ class Sensei_Import_Associations
 		};
 
 		$current_lessons = $this->get_current_lesson_ids( $course_id );
-		$order_index     = 0;
+		$order_index     = 1;
 		$module_indices  = [];
 		$lesson_order    = [];
 		$all_lessons     = [];
