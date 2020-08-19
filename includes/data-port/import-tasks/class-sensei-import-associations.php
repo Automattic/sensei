@@ -81,7 +81,7 @@ class Sensei_Import_Associations
 				return;
 			}
 
-			$this->handle_course_lesson( $course_id, $args );
+			$this->handle_course_lessons( $course_id, $args );
 			unset( $this->course_lessons[ $course_id ] );
 		}
 
@@ -101,7 +101,7 @@ class Sensei_Import_Associations
 	 * @param int   $course_id Course post ID.
 	 * @param array $args      Arguments from when this task was enqueued.
 	 */
-	private function handle_course_lesson( $course_id, $args ) {
+	private function handle_course_lessons( $course_id, $args ) {
 		$this->batch_remaining--;
 
 		list( $lessons_str, $line_number, $post_title ) = $args;
@@ -156,6 +156,8 @@ class Sensei_Import_Associations
 					sprintf( __( 'The lesson "%s" can only be associated with one course at a time.', 'sensei-lms' ), $lesson_ref ),
 					'sensei_data_port_lesson_multiple_course'
 				);
+
+				continue;
 			}
 
 			// Add the lesson to the course.
