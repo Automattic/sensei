@@ -90,7 +90,7 @@ class Sensei_Import_Associations
 				return;
 			}
 
-			$this->handle_lesson_modules( $lesson_id, $args );
+			$this->handle_lesson_module( $lesson_id, $args );
 			unset( $this->lesson_modules[ $lesson_id ] );
 		}
 	}
@@ -164,7 +164,7 @@ class Sensei_Import_Associations
 			$module_term_id = false;
 			// Make sure any related module associations are handled.
 			if ( isset( $this->lesson_modules[ $lesson_id ] ) ) {
-				$module_term_id = $this->handle_lesson_modules( $lesson_id, $this->lesson_modules[ $lesson_id ] );
+				$module_term_id = $this->handle_lesson_module( $lesson_id, $this->lesson_modules[ $lesson_id ] );
 				unset( $this->lesson_modules[ $lesson_id ] );
 			}
 
@@ -235,7 +235,7 @@ class Sensei_Import_Associations
 	 *
 	 * @return false|int Module term ID if successful, false if not.
 	 */
-	private function handle_lesson_modules( $lesson_id, $args ) {
+	private function handle_lesson_module( $lesson_id, $args ) {
 		$this->batch_remaining--;
 
 		list( $module_ref, $line_number, $post_title ) = $args;
