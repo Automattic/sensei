@@ -150,6 +150,17 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 * @return Sensei_Data_Port_Job|null instance.
 	 */
 	public static function get( $job_id ) {
+		/**
+		 * It solves an issue when we are working with the `process` endpoint,
+		 * along the scheduled job. Sometimes in the requests racing, a request
+		 * starts, when the other is setting some option, like the job state.
+		 * So it would get the old (cached) option.
+		 *
+		 * It's noticed more frequently when WooCommerce is not installed, and
+		 * the Sensei_Scheduler is using WP Cron.
+		 */
+		wp_cache_delete( 'alloptions', 'options' );
+
 		$json = get_option( self::get_option_name( $job_id ), '' );
 
 		if ( empty( $json ) ) {
