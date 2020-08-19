@@ -96,6 +96,35 @@ class Sensei_Export_Courses_Tests extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests lessons field is exported in the correct order when the course has modules.
+	 */
+	public function testCourseWithModulesGeneratesCorrectOrder() {
+		$module  = $this->factory->module->create_and_get();
+		$lessons = $this->factory->lesson->create_many( 5 );
+		$course  = $this->factory->course->create_and_get();
+
+		wp_set_object_terms( $lessons[0], $module->term_id, 'module' );
+		wp_set_object_terms( $lessons[1], $module->term_id, 'module' );
+		wp_set_object_terms( $lessons[2], $module->term_id, 'module' );
+		wp_set_object_terms( $course->ID, $module->term_id, 'module' );
+
+		foreach ( $lessons as $lesson ) {
+			add_post_meta( $lesson, '_lesson_course', $course->ID );
+		}
+
+		add_post_meta( $lessons[4], '_order_' . $course->ID, 1 );
+		add_post_meta( $lessons[3], '_order_' . $course->ID, 2 );
+		add_post_meta( $lessons[2], '_order_module_' . $module->term_id, 1 );
+		add_post_meta( $lessons[0], '_order_module_' . $module->term_id, 2 );
+		add_post_meta( $lessons[1], '_order_module_' . $module->term_id, 3 );
+
+		$result = $this->export();
+
+		$lesson_order_str = "id:{$lessons[2]},id:{$lessons[0]},id:{$lessons[1]},id:{$lessons[4]},id:{$lessons[3]}";
+		$this->assertEquals( $lesson_order_str, $result[0]['lessons'] );
+	}
+
+	/**
 	 * Test that course category hierarchies are exported correctly.
 	 */
 	public function testHierarchicalCategoriesSerialized() {

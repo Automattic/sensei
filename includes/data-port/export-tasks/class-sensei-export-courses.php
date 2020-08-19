@@ -43,7 +43,7 @@ class Sensei_Export_Courses
 		$notifications = ! get_post_meta( $post->ID, 'disable_notification', true );
 		$categories    = get_the_terms( $post->ID, 'course-category' );
 		$modules       = Sensei()->modules->get_course_modules( $post->ID );
-		$lessons       = Sensei()->course->course_lessons( $post->ID, 'any', 'ids' );
+		$lessons       = $this->get_ordered_course_lessons( $post->ID );
 
 		return [
 			Schema::COLUMN_ID               => $post->ID,
@@ -62,6 +62,54 @@ class Sensei_Export_Courses
 			Schema::COLUMN_VIDEO            => $video,
 			Schema::COLUMN_NOTIFICATIONS    => $notifications ? 1 : 0,
 		];
+	}
+
+	/**
+	 * Returns an ordered list of a course's lessons. The lessons can be ordered either individually or depend on the
+	 * order of the modules they belong to.
+	 *
+	 * @param int $course_id The course.
+	 *
+	 * @return array An ordered list of lessons ids.
+	 */
+	private function get_ordered_course_lessons( $course_id ) {
+		$all_lessons       = Sensei()->course->course_lessons( $course_id, 'any', 'ids' );
+		$no_module_lessons = wp_list_pluck( Sensei()->modules->get_none_module_lessons( $course_id, 'any' ), 'ID' );
+
+		if ( count( $all_lessons ) === count( $no_module_lessons ) ) {
+			return $all_lessons;
+		}
+
+		$course_modules = Sensei()->modules->get_course_modules( $course_id );
+		$terms          = wp_list_pluck( $course_modules, 'term_id' );
+
+		$ordered_lessons = [];
+		foreach ( $terms as $term ) {
+			$args = array(
+				'post_type'      => 'lesson',
+				'post_status'    => 'any',
+				'posts_per_page' => -1,
+				'post__in'       => $all_lessons,
+				'fields'         => 'ids',
+				'tax_query'      => [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- We only return the lessons which belong to a course and module.
+					[
+						'taxonomy' => 'module',
+						'terms'    => $term,
+					],
+				],
+				'meta_key'       => '_order_module_' . $term, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- See above.
+				'orderby'        => 'meta_value_num date',
+				'order'          => 'ASC',
+			);
+
+			$lessons_query   = new WP_Query( $args );
+			$ordered_lessons = array_merge( $ordered_lessons, $lessons_query->get_posts() );
+		}
+
+		// We cannot use $no_module_lessons directly since it's unordered. Instead we intersect it with $all_lessons which is ordered.
+		$ordered_lessons = array_merge( $ordered_lessons, array_intersect( $all_lessons, $no_module_lessons ) );
+
+		return $ordered_lessons;
 	}
 
 	/**
