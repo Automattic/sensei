@@ -16,15 +16,14 @@ class Sensei_Import_Associations
 	extends Sensei_Data_Port_Task
 	implements Sensei_Data_Port_Task_Interface {
 
-	const BATCH_SIZE = 50;
-
+	const BATCH_SIZE           = 50;
 	const TASK_KEY             = 'associations';
 	const STATE_TOTAL_TASKS    = 'total';
 	const STATE_LESSON_MODULES = 'lesson-modules';
 	const STATE_COURSE_LESSONS = 'course-lessons';
 
 	/**
-	 * Total tasks to complete once this task starts.
+	 * Total sub-tasks to complete once this task starts.
 	 *
 	 * @var int
 	 */
@@ -322,7 +321,7 @@ class Sensei_Import_Associations
 	}
 
 	/**
-	 * Add a lesson to set a module for.
+	 * Enqueue a module to be assigned to a lesson.
 	 *
 	 * @param int    $lesson_id   Lesson post ID.
 	 * @param string $module      Module name.
@@ -338,7 +337,7 @@ class Sensei_Import_Associations
 	}
 
 	/**
-	 * Add a course to assign lessons for.
+	 * Enqueue lessons to be associated with a course.
 	 *
 	 * @param int    $course_id   Course post ID.
 	 * @param string $lessons     String list of references to lessons.
@@ -389,7 +388,7 @@ class Sensei_Import_Associations
 	}
 
 	/**
-	 * Get the remaining tasks.
+	 * Get the number of remaining tasks.
 	 *
 	 * @return int
 	 */
