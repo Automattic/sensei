@@ -46,10 +46,11 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 	 */
 	public function get_tasks() {
 		if ( ! isset( $this->tasks ) ) {
-			$this->tasks              = [];
-			$this->tasks['questions'] = $this->initialize_task( Sensei_Import_Questions::class );
-			$this->tasks['lessons']   = $this->initialize_task( Sensei_Import_Lessons::class );
-			$this->tasks['courses']   = $this->initialize_task( Sensei_Import_Courses::class );
+			$this->tasks                 = [];
+			$this->tasks['questions']    = $this->initialize_task( Sensei_Import_Questions::class );
+			$this->tasks['lessons']      = $this->initialize_task( Sensei_Import_Lessons::class );
+			$this->tasks['courses']      = $this->initialize_task( Sensei_Import_Courses::class );
+			$this->tasks['associations'] = $this->initialize_task( Sensei_Import_Associations::class );
 		}
 
 		return $this->tasks;

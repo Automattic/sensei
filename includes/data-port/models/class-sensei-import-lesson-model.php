@@ -27,13 +27,6 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 	}
 
 	/**
-	 * Lesson's course.
-	 *
-	 * @var int
-	 */
-	private $course_id;
-
-	/**
 	 * Create a new lesson or update an existing lesson.
 	 *
 	 * @return true|WP_Error
@@ -318,20 +311,12 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 		$module = $this->get_value( Sensei_Data_Port_Lesson_Schema::COLUMN_MODULE );
 		if ( $module ) {
 			/**
-			 * Course task object for this job.
+			 * Associations task object for this job.
 			 *
-			 * @var Sensei_Import_Courses $course_task
+			 * @var Sensei_Import_Associations $associations_task
 			 */
-			$course_task = $this->task->get_job()->get_task( 'courses' );
-			$course_task->add_post_process_task(
-				'lesson_module',
-				[
-					$this->get_post_id(),
-					$module,
-					$this->line_number,
-					$this->get_value( $this->schema->get_column_title() ),
-				]
-			);
+			$associations_task = $this->task->get_job()->get_task( 'associations' );
+			$associations_task->add_lesson_module( $this->get_post_id(), $module, $this->line_number, $this->get_value( $this->schema->get_column_title() ) );
 		} else {
 			wp_delete_object_term_relationships( $this->get_post_id(), 'module' );
 		}
@@ -400,10 +385,6 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 	 */
 	private function get_lesson_meta() {
 		$meta = [];
-
-		if ( null !== $this->course_id ) {
-			$meta['_lesson_course'] = $this->course_id;
-		}
 
 		$value = $this->get_value( Sensei_Data_Port_Lesson_Schema::COLUMN_VIDEO );
 		if ( null !== $value ) {
@@ -497,44 +478,5 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 				]
 			);
 		}
-	}
-
-	/**
-	 * Helper method which gets a module by name and checks if the module can be applied to the lesson.
-	 *
-	 * @param string $module_name The module name.
-	 *
-	 * @return WP_Error|WP_Term  WP_Error when the module can't be applied to the lesson, WP_Term otherwise.
-	 */
-	private function get_lesson_module( $module_name ) {
-		if ( null === $this->course_id ) {
-			return new WP_Error(
-				'sensei_data_port_course_empty',
-				// translators: Placeholder is the term which errored.
-				__( 'Module is defined while no course is specified.', 'sensei-lms' )
-			);
-		}
-
-		$module = get_term_by( 'name', $module_name, 'module' );
-
-		if ( ! $module ) {
-			return new WP_Error(
-				'sensei_data_port_module_not_found',
-				// translators: Placeholder is the term which errored.
-				sprintf( __( 'Module does not exist: %s.', 'sensei-lms' ), $module_name )
-			);
-		}
-
-		$course_modules = wp_list_pluck( wp_get_post_terms( $this->course_id, 'module' ), 'term_id' );
-
-		if ( ! in_array( $module->term_id, $course_modules, true ) ) {
-			return new WP_Error(
-				'sensei_data_port_module_not_part_of_course',
-				// translators: First placeholder is the term which errored, second is the course id.
-				sprintf( __( 'Module %1$s is not part of course %2$s.', 'sensei-lms' ), $module_name, $this->course_id )
-			);
-		}
-
-		return $module;
 	}
 }
