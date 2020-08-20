@@ -194,4 +194,35 @@ describe( 'Export store', () => {
 			percentage: 100,
 		} );
 	} );
+
+	it( 'gets logs after job is completed', async () => {
+		jest.useFakeTimers();
+
+		mockActiveJob( {
+			id: 3,
+			status: { status: 'pending', percentage: 0 },
+		} );
+
+		apiFetch
+			.mockReturnValueOnce( {
+				id: 3,
+				status: { status: 'completed', percentage: 100 },
+			} )
+			.mockReturnValueOnce( {
+				items: [
+					{
+						message: 'Error 1.',
+					},
+					{
+						message: 'Error 2.',
+					},
+				],
+			} );
+
+		await jest.runOnlyPendingTimers();
+
+		expect( select( EXPORT_STORE ).getError() ).toEqual(
+			'Error 1. Error 2.'
+		);
+	} );
 } );

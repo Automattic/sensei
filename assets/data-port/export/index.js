@@ -9,7 +9,7 @@ export default compose(
 	withSelect( ( select ) => {
 		return {
 			job: select( EXPORT_STORE ).getJob(),
-			error: select( EXPORT_STORE ).getRequestError(),
+			error: select( EXPORT_STORE ).getError(),
 		};
 	} ),
 	withDispatch( ( dispatch ) => {

@@ -46,7 +46,7 @@ const resolvers = {
 const selectors = {
 	getJobId: ( { job } ) => ( job && job.id ) || null,
 	getJob: ( { job } ) => job,
-	getRequestError: ( { error } ) => error,
+	getError: ( { error } ) => error,
 };
 
 export const EXPORT_STORE = 'sensei/export';
