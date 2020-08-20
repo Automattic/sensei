@@ -1727,11 +1727,12 @@ class Sensei_Core_Modules {
 	 * Find the lesson in the given course that doesn't belong
 	 * to any of the courses modules
 	 *
-	 * @param $course_id
+	 * @param int    $course_id    The course id.
+	 * @param string $post_status  The status of the lessons.
 	 *
 	 * @return array $non_module_lessons
 	 */
-	public function get_none_module_lessons( $course_id ) {
+	public function get_none_module_lessons( $course_id, $post_status = 'publish' ) {
 
 		$non_module_lessons = array();
 
@@ -1767,7 +1768,7 @@ class Sensei_Core_Modules {
 
 		$args = array(
 			'post_type'        => 'lesson',
-			'post_status'      => 'publish',
+			'post_status'      => $post_status,
 			'posts_per_page'   => -1,
 			'meta_query'       => array(
 				array(
