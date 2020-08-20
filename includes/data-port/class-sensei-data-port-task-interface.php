@@ -40,4 +40,8 @@ interface Sensei_Data_Port_Task_Interface {
 	 */
 	public function get_completion_ratio();
 
+	/**
+	 * Save the current task's state.
+	 */
+	public function save_state();
 }

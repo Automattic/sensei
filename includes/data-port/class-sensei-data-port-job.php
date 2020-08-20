@@ -439,6 +439,8 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 
 			$completed_cycles += $ratio['completed'];
 			$total_cycles     += $ratio['total'];
+
+			$task->save_state();
 		}
 
 		if ( ! $has_incomplete_task || 0 === $total_cycles ) {

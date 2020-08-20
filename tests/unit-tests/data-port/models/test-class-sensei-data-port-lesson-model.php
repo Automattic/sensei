@@ -181,7 +181,6 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 					Sensei_Data_Port_Lesson_Schema::COLUMN_EXCERPT        => '<p>excerpt</p>',
 					Sensei_Data_Port_Lesson_Schema::COLUMN_STATUS         => 'random_status',
 					Sensei_Data_Port_Lesson_Schema::COLUMN_MODULE         => '<randomtag>Module</randomtag>',
-					Sensei_Data_Port_Lesson_Schema::COLUMN_COURSE         => '<randomtag>course_id</randomtag>',
 					Sensei_Data_Port_Lesson_Schema::COLUMN_IMAGE          => 'http://randomurl<>.com/nice%20image.png',
 					Sensei_Data_Port_Lesson_Schema::COLUMN_LENGTH         => '12',
 					Sensei_Data_Port_Lesson_Schema::COLUMN_COMPLEXITY     => 'random_complexity',
@@ -194,7 +193,6 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 					Sensei_Data_Port_Lesson_Schema::COLUMN_EXCERPT        => '<p>excerpt</p>',
 					Sensei_Data_Port_Lesson_Schema::COLUMN_STATUS         => null,
 					Sensei_Data_Port_Lesson_Schema::COLUMN_MODULE         => 'Module',
-					Sensei_Data_Port_Lesson_Schema::COLUMN_COURSE         => 'course_id',
 					Sensei_Data_Port_Lesson_Schema::COLUMN_IMAGE          => 'http://randomurl.com/nice%20image.png',
 					Sensei_Data_Port_Lesson_Schema::COLUMN_LENGTH         => 12,
 					Sensei_Data_Port_Lesson_Schema::COLUMN_COMPLEXITY     => null,
@@ -220,7 +218,6 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 			Sensei_Data_Port_Lesson_Schema::COLUMN_DESCRIPTION,
 			Sensei_Data_Port_Lesson_Schema::COLUMN_EXCERPT,
 			Sensei_Data_Port_Lesson_Schema::COLUMN_STATUS,
-			Sensei_Data_Port_Lesson_Schema::COLUMN_COURSE,
 			Sensei_Data_Port_Lesson_Schema::COLUMN_MODULE,
 			Sensei_Data_Port_Lesson_Schema::COLUMN_PREREQUISITE,
 			Sensei_Data_Port_Lesson_Schema::COLUMN_PREVIEW,
@@ -334,218 +331,34 @@ class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that the course is linked correctly to a course.
+	 * Tests that the module is queued to be linked in the associations post-process task.
 	 */
-	public function testLessonCourseIsLinkedCorrectly() {
-		$job                     = Sensei_Import_Job::create( 'test', 0 );
-		$lesson_data_with_course = [
-			Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE  => 'Course lesson',
-			Sensei_Data_Port_Lesson_Schema::COLUMN_SLUG   => 'course-lesson',
-			Sensei_Data_Port_Lesson_Schema::COLUMN_COURSE => 'id:the-import-id',
-		];
+	public function testLessonModuleLinkingIsQueuedWhenValid() {
+		$job = $this->getMockBuilder( Sensei_Import_Job::class )
+					->setConstructorArgs( [ 'test-id', 0 ] )
+					->setMethods( [ 'get_associations_task' ] )
+					->getMock();
 
-		$task   = new Sensei_Import_Lessons( $job );
-		$model  = Sensei_Import_Lesson_Model::from_source_array( 1, $lesson_data_with_course, new Sensei_Data_Port_Lesson_Schema(), $task );
-		$result = $model->sync_post();
-		$model->add_warnings_to_job();
+		$associations_task = $this->getMockBuilder( Sensei_Import_Associations::class )
+							->setConstructorArgs( [ $job ] )
+							->setMethods( [ 'add_lesson_module' ] )
+							->getMock();
 
-		$this->assertTrue( $result, 'Lesson should still be created when a course which does not exist is supplied.' );
-		$this->assertJobHasLogEntry( $job, "Course does not exist: {$lesson_data_with_course[ Sensei_Data_Port_Lesson_Schema::COLUMN_COURSE ]}." );
+		$associations_task->expects( $this->once() )->method( 'add_lesson_module' );
 
-		$course_data = [
-			Sensei_Data_Port_Course_Schema::COLUMN_ID    => 'the-import-id',
-			Sensei_Data_Port_Course_Schema::COLUMN_TITLE => 'Course title',
-			Sensei_Data_Port_Course_Schema::COLUMN_SLUG  => 'course-slug',
-		];
+		$job->expects( $this->once() )
+			->method( 'get_associations_task' )
+			->willReturn( $associations_task );
 
-		$task         = new Sensei_Import_Lessons( $job );
-		$course_model = Sensei_Import_Course_Model::from_source_array( 1, $course_data, new Sensei_Data_Port_Course_Schema(), $task );
-		$course_model->sync_post();
-
-		$created_course = get_posts(
-			[
-				'post_type'      => 'course',
-				'title'          => 'Course title',
-				'posts_per_page' => 1,
-				'post_status'    => 'any',
-			]
-		)[0];
-
-		$task   = new Sensei_Import_Lessons( $job );
-		$model  = Sensei_Import_Lesson_Model::from_source_array( 1, $lesson_data_with_course, new Sensei_Data_Port_Lesson_Schema(), $task );
-		$result = $model->sync_post();
-
-		$this->assertTrue( $result, 'Lesson creation should not fail when the linked course exists.' );
-
-		$created_lesson = get_posts(
-			[
-				'post_type'      => 'lesson',
-				'post_name__in'  => [ 'course-lesson' ],
-				'posts_per_page' => 1,
-				'post_status'    => 'any',
-			]
-		)[0];
-
-		$this->assertEquals( $created_course->ID, get_post_meta( $created_lesson->ID, '_lesson_course', true ), 'Lesson should be linked to the supplied course.' );
-
-		$lesson_with_course_slug = [
-			Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE  => 'Slug lesson',
-			Sensei_Data_Port_Lesson_Schema::COLUMN_SLUG   => 'lesson-slug',
-			Sensei_Data_Port_Lesson_Schema::COLUMN_COURSE => 'slug:course-slug',
-		];
-
-		$task  = new Sensei_Import_Lessons( $job );
-		$model = Sensei_Import_Lesson_Model::from_source_array( 1, $lesson_with_course_slug, new Sensei_Data_Port_Lesson_Schema(), $task );
-		$model->sync_post();
-
-		$lesson_with_slug = get_posts(
-			[
-				'post_type'      => 'lesson',
-				'post_name__in'  => [ 'lesson-slug' ],
-				'posts_per_page' => 1,
-				'post_status'    => 'any',
-			]
-		)[0];
-
-		$this->assertEquals( $created_course->ID, get_post_meta( $lesson_with_slug->ID, '_lesson_course', true ), 'Lesson should be linked to the supplied course.' );
-	}
-
-	/**
-	 * Tests that the module is linked correctly to a lesson.
-	 */
-	public function testLessonModuleIsLinkedCorrectly() {
-		$job                     = Sensei_Import_Job::create( 'test', 0 );
 		$lesson_data_with_module = [
 			Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE  => 'Module lesson',
 			Sensei_Data_Port_Lesson_Schema::COLUMN_SLUG   => 'module-lesson',
-			Sensei_Data_Port_Lesson_Schema::COLUMN_MODULE => 'the-module',
+			Sensei_Data_Port_Lesson_Schema::COLUMN_MODULE => 'The Module',
 		];
 
-		$task   = new Sensei_Import_Lessons( $job );
-		$model  = Sensei_Import_Lesson_Model::from_source_array( 1, $lesson_data_with_module, new Sensei_Data_Port_Lesson_Schema(), $task );
-		$result = $model->sync_post();
-		$model->add_warnings_to_job();
-
-		$this->assertTrue( $result, 'Lesson should still be created when a module supplied when no course is.' );
-		$this->assertJobHasLogEntry( $job, 'Module is defined while no course is specified.' );
-
-		$course_model = Sensei_Import_Course_Model::from_source_array(
-			1,
-			[
-				Sensei_Data_Port_Course_Schema::COLUMN_ID => 'the-import-id',
-				Sensei_Data_Port_Course_Schema::COLUMN_TITLE => 'Course title',
-			],
-			new Sensei_Data_Port_Course_Schema(),
-			$task
-		);
-		$course_model->sync_post();
-		$lesson_data_with_module[ Sensei_Data_Port_Lesson_Schema::COLUMN_COURSE ] = 'id:the-import-id';
-
-		$task   = new Sensei_Import_Lessons( $job );
-		$model  = Sensei_Import_Lesson_Model::from_source_array( 1, $lesson_data_with_module, new Sensei_Data_Port_Lesson_Schema(), $task );
-		$result = $model->sync_post();
-		$model->add_warnings_to_job();
-
-		$this->assertTrue( $result, 'Lesson should still be created when a module supplied for a lesson does not exist.' );
-		$this->assertJobHasLogEntry( $job, "Module does not exist: {$lesson_data_with_module[ Sensei_Data_Port_Lesson_Schema::COLUMN_MODULE ]}." );
-
-		$term   = Sensei_Data_Port_Utilities::get_term( 'the-module', 'module' );
-		$model  = Sensei_Import_Lesson_Model::from_source_array( 1, $lesson_data_with_module, new Sensei_Data_Port_Lesson_Schema(), $task );
-		$result = $model->sync_post();
-		$model->add_warnings_to_job();
-
-		$this->assertTrue( $result, 'Lesson should still be created when a module supplied for a lesson is not associated with the course.' );
-		$this->assertJobHasLogEntry( $job, "Module the-module is not part of course {$course_model->get_post_id()}." );
-
-		$created_course = get_posts(
-			[
-				'post_type'      => 'course',
-				'title'          => 'Course title',
-				'posts_per_page' => 1,
-				'post_status'    => 'any',
-			]
-		)[0];
-		wp_set_object_terms( $created_course->ID, $term->term_id, 'module' );
-
-		$task   = new Sensei_Import_Lessons( $job );
-		$model  = Sensei_Import_Lesson_Model::from_source_array( 1, $lesson_data_with_module, new Sensei_Data_Port_Lesson_Schema(), $task );
-		$result = $model->sync_post();
-
-		$this->assertTrue( $result, 'Lesson should be created successfully when module data are correct.' );
-	}
-
-	/**
-	 * Tests that the lesson order is created correctly.
-	 */
-	public function testLessonOrderIsGeneratedCorrectly() {
-		$job          = Sensei_Import_Job::create( 'test', 0 );
-		$task         = new Sensei_Import_Lessons( $job );
-		$course_model = Sensei_Import_Course_Model::from_source_array(
-			1,
-			[
-				Sensei_Data_Port_Course_Schema::COLUMN_ID => 'the-import-id',
-				Sensei_Data_Port_Course_Schema::COLUMN_TITLE => 'Course title',
-			],
-			new Sensei_Data_Port_Course_Schema(),
-			$task
-		);
-		$course_model->sync_post();
-
-		$course_id = get_posts(
-			[
-				'post_type'      => 'course',
-				'title'          => 'Course title',
-				'posts_per_page' => 1,
-				'post_status'    => 'any',
-			]
-		)[0]->ID;
-
-		$lessons = [
-			[
-				Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE  => 'First lesson',
-				Sensei_Data_Port_Lesson_Schema::COLUMN_SLUG   => 'first',
-				Sensei_Data_Port_Lesson_Schema::COLUMN_COURSE => 'id:the-import-id',
-			],
-			[
-				Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE => 'Second lesson',
-				Sensei_Data_Port_Lesson_Schema::COLUMN_SLUG  => 'second',
-			],
-			[
-				Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE  => 'Third lesson',
-				Sensei_Data_Port_Lesson_Schema::COLUMN_SLUG   => 'third',
-				Sensei_Data_Port_Lesson_Schema::COLUMN_COURSE => 'id:the-import-id',
-			],
-			[
-				Sensei_Data_Port_Lesson_Schema::COLUMN_TITLE  => 'Fourth lesson',
-				Sensei_Data_Port_Lesson_Schema::COLUMN_SLUG   => 'fourth',
-				Sensei_Data_Port_Lesson_Schema::COLUMN_COURSE => 'id:the-import-id',
-			],
-		];
-
-		$lesson_ids = [];
-		foreach ( $lessons as $lesson ) {
-			$model = Sensei_Import_Lesson_Model::from_source_array( 1, $lesson, new Sensei_Data_Port_Lesson_Schema(), $task );
-			$model->sync_post();
-
-			$lesson_ids[] = get_posts(
-				[
-					'post_type'      => 'lesson',
-					'post_name__in'  => [ $lesson[ Sensei_Data_Port_Lesson_Schema::COLUMN_SLUG ] ],
-					'posts_per_page' => 1,
-					'post_status'    => 'any',
-				]
-			)[0]->ID;
-		}
-
-		unset( $lesson_ids[1] );
-
-		$this->assertEquals( implode( ',', $lesson_ids ), get_post_meta( $course_id, '_lesson_order', true ) );
-
-		$order = 1;
-		foreach ( $lesson_ids as $lesson_id ) {
-			$this->assertEquals( $order, get_post_meta( $lesson_id, '_order_' . $course_id, true ) );
-			$order++;
-		}
+		$task  = new Sensei_Import_Lessons( $job );
+		$model = Sensei_Import_Lesson_Model::from_source_array( 1, $lesson_data_with_module, new Sensei_Data_Port_Lesson_Schema(), $task );
+		$model->sync_post();
 	}
 
 	/**

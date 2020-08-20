@@ -27,13 +27,6 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 	}
 
 	/**
-	 * Lesson's course.
-	 *
-	 * @var int
-	 */
-	private $course_id;
-
-	/**
 	 * Create a new lesson or update an existing lesson.
 	 *
 	 * @return true|WP_Error
@@ -63,7 +56,7 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 		}
 
 		if ( $this->is_new() ) {
-			wp_set_post_terms( $quiz_id, array( 'multiple-choice' ), 'quiz-type' );
+			wp_set_post_terms( $quiz_id, [ 'multiple-choice' ], 'quiz-type' );
 		}
 
 		update_post_meta( $this->get_post_id(), '_lesson_quiz', $quiz_id );
@@ -185,7 +178,7 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 	/**
 	 * Helper method to parse and store the quiz questions.
 	 *
-	 * @param int $quiz_id  The quiz id.
+	 * @param int $quiz_id The quiz id.
 	 */
 	private function set_quiz_questions( $quiz_id ) {
 		$questions = $this->get_value( Sensei_Data_Port_Lesson_Schema::COLUMN_QUESTIONS );
@@ -209,7 +202,7 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 
 			if ( empty( $question_id ) ) {
 				$this->add_line_warning(
-					// translators: Placeholder is the term which errored.
+					// translators: Placeholder is the question post ID which errored.
 					sprintf( __( 'Question does not exist: %s.', 'sensei-lms' ), $question_import_id ),
 					[
 						'code' => 'sensei_data_port_quiz_missing_question',
@@ -254,8 +247,8 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 	/**
 	 * Helper method to delete all related meta of quiz's questions.
 	 *
-	 * @param int   $quiz_id       The quiz id.
-	 * @param array $question_ids  A list of quiz ids to remove the meta from.
+	 * @param int   $quiz_id      The quiz id.
+	 * @param array $question_ids A list of quiz ids to remove the meta from.
 	 */
 	private function delete_quiz_question_meta( $quiz_id, $question_ids = null ) {
 		if ( null === $question_ids ) {
@@ -278,27 +271,6 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 	 * @return bool|WP_Error  True on success, WP_Error on failure.
 	 */
 	private function sync_lesson() {
-
-		$value = $this->get_value( Sensei_Data_Port_Lesson_Schema::COLUMN_COURSE );
-		if ( ! empty( $value ) ) {
-			$course = $this->task->get_job()->translate_import_id( Sensei_Data_Port_Course_Schema::POST_TYPE, $value );
-
-			$this->course_id = $course;
-
-			if ( empty( $this->course_id ) ) {
-				$this->add_line_warning(
-					// translators: Placeholder is the term which errored.
-					sprintf( __( 'Course does not exist: %s.', 'sensei-lms' ), $value ),
-					[
-						'code' => 'sensei_data_port_lesson_course_missing',
-					]
-				);
-
-				$this->course_id = null;
-			}
-		} else {
-			$this->course_id = null;
-		}
 
 		$post_args = $this->get_lesson_args();
 		$post_id   = wp_insert_post( $post_args, true );
@@ -334,17 +306,25 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 			delete_post_meta( $post_id, '_lesson_prerequisite' );
 		}
 
-		if ( null !== $this->course_id && $this->is_new() ) {
-			$old_lesson_order = get_post_meta( $this->course_id, '_lesson_order', true );
-			$new_lesson_order = empty( $old_lesson_order ) ? $this->get_post_id() : $old_lesson_order . ',' . $this->get_post_id();
-			update_post_meta( $this->course_id, '_lesson_order', $new_lesson_order );
-
-			$current_lesson_index = count( explode( ',', $new_lesson_order ) );
-			update_post_meta( $this->get_post_id(), '_order_' . $this->course_id, $current_lesson_index );
-		}
-
-		$this->set_lesson_terms( Sensei_Data_Port_Lesson_Schema::COLUMN_MODULE, 'module' );
 		$this->set_lesson_terms( Sensei_Data_Port_Lesson_Schema::COLUMN_TAGS, 'lesson-tag' );
+
+		$module = $this->get_value( Sensei_Data_Port_Lesson_Schema::COLUMN_MODULE );
+		if ( $module ) {
+			/**
+			 * Associations task object for this job.
+			 *
+			 * @var Sensei_Import_Associations $associations_task
+			 */
+			$associations_task = $this->task->get_job()->get_associations_task();
+			$associations_task->add_lesson_module(
+				$this->get_post_id(),
+				$module,
+				$this->line_number,
+				$this->get_value( $this->schema->get_column_title() )
+			);
+		} elseif ( null !== $module ) {
+			wp_delete_object_term_relationships( $this->get_post_id(), 'module' );
+		}
 
 		return true;
 	}
@@ -411,10 +391,6 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 	private function get_lesson_meta() {
 		$meta = [];
 
-		if ( null !== $this->course_id ) {
-			$meta['_lesson_course'] = $this->course_id;
-		}
-
 		$value = $this->get_value( Sensei_Data_Port_Lesson_Schema::COLUMN_VIDEO );
 		if ( null !== $value ) {
 			$meta['_lesson_video_embed'] = $value;
@@ -452,8 +428,8 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 	/**
 	 * Updates the terms of a lesson. The old terms are overwritten.
 	 *
-	 * @param string $column_name  The CSV column name which contains the terms.
-	 * @param string $taxonomy     The taxonomy of the terms.
+	 * @param string $column_name The CSV column name which contains the terms.
+	 * @param string $taxonomy The taxonomy of the terms.
 	 */
 	private function set_lesson_terms( $column_name, $taxonomy ) {
 		$new_terms = $this->get_value( $column_name );
@@ -464,51 +440,36 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 
 		if ( '' === $new_terms ) {
 			wp_delete_object_term_relationships( $this->get_post_id(), $taxonomy );
+
 			return;
 		}
 
-		$terms = [];
+		$terms        = [];
+		$failed_terms = [];
+		$new_terms    = Sensei_Data_Port_Utilities::split_list_safely( $new_terms, true );
 
-		if ( 'module' === $taxonomy ) {
-			$term = $this->get_lesson_module( $new_terms );
+		foreach ( $new_terms as $new_term ) {
+			$term = Sensei_Data_Port_Utilities::get_term( $new_term, $taxonomy );
 
-			if ( is_wp_error( $term ) ) {
-				$this->add_line_warning(
-					$term->get_error_message(),
-					[
-						'code' => $term->get_error_code(),
-					]
-				);
-			} else {
-				$terms[] = $term;
-			}
-		} else {
-			$failed_terms = [];
-			$new_terms    = Sensei_Data_Port_Utilities::split_list_safely( $new_terms, true );
-
-			foreach ( $new_terms as $new_term ) {
-				$term = Sensei_Data_Port_Utilities::get_term( $new_term, $taxonomy );
-
-				if ( false === $term ) {
-					$failed_terms[] = $new_term;
-					continue;
-				}
-
-				$terms[] = $term;
+			if ( false === $term ) {
+				$failed_terms[] = $new_term;
+				continue;
 			}
 
-			if ( ! empty( $failed_terms ) ) {
-				$this->add_line_warning(
-					sprintf(
-						// translators: Placeholder is comma separated list of terms that failed to save.
-						__( 'The following terms failed to save: %s', 'sensei-lms' ),
-						implode( ', ', $failed_terms )
-					),
-					[
-						'code' => 'sensei_data_port_lesson_terms_failed_to_save',
-					]
-				);
-			}
+			$terms[] = $term;
+		}
+
+		if ( ! empty( $failed_terms ) ) {
+			$this->add_line_warning(
+				sprintf(
+					// translators: Placeholder is comma separated list of terms that failed to save.
+					__( 'The following terms failed to save: %s', 'sensei-lms' ),
+					implode( ', ', $failed_terms )
+				),
+				[
+					'code' => 'sensei_data_port_lesson_terms_failed_to_save',
+				]
+			);
 		}
 
 		$new_term_ids = wp_list_pluck( $terms, 'term_id' );
@@ -522,44 +483,5 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 				]
 			);
 		}
-	}
-
-	/**
-	 * Helper method which gets a module by name and checks if the module can be applied to the lesson.
-	 *
-	 * @param string $module_name  The module name.
-	 *
-	 * @return WP_Error|WP_Term  WP_Error when the module can't be applied to the lesson, WP_Term otherwise.
-	 */
-	private function get_lesson_module( $module_name ) {
-		if ( null === $this->course_id ) {
-			return new WP_Error(
-				'sensei_data_port_course_empty',
-				// translators: Placeholder is the term which errored.
-				__( 'Module is defined while no course is specified.', 'sensei-lms' )
-			);
-		}
-
-		$module = get_term_by( 'name', $module_name, 'module' );
-
-		if ( ! $module ) {
-			return new WP_Error(
-				'sensei_data_port_module_not_found',
-				// translators: Placeholder is the term which errored.
-				sprintf( __( 'Module does not exist: %s.', 'sensei-lms' ), $module_name )
-			);
-		}
-
-		$course_modules = wp_list_pluck( wp_get_post_terms( $this->course_id, 'module' ), 'term_id' );
-
-		if ( ! in_array( $module->term_id, $course_modules, true ) ) {
-			return new WP_Error(
-				'sensei_data_port_module_not_part_of_course',
-				// translators: First placeholder is the term which errored, second is the course id.
-				sprintf( __( 'Module %1$s is not part of course %2$s.', 'sensei-lms' ), $module_name, $this->course_id )
-			);
-		}
-
-		return $module;
 	}
 }

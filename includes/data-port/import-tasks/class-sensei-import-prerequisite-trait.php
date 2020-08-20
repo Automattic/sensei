@@ -77,6 +77,7 @@ trait Sensei_Import_Prerequisite_Trait {
 	 * @param int    $post_id     Post ID.
 	 * @param string $reference   Reference to the prerequisite.
 	 * @param int    $line_number Line number.
+	 * @param string $post_title  Post title for logging.
 	 */
 	public function add_prerequisite_task( $post_id, $reference, $line_number, $post_title ) {
 		$this->add_post_process_task(

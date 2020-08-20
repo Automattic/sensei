@@ -21,7 +21,6 @@ class Sensei_Data_Port_Lesson_Schema extends Sensei_Data_Port_Schema {
 	const COLUMN_DESCRIPTION    = 'description';
 	const COLUMN_EXCERPT        = 'excerpt';
 	const COLUMN_STATUS         = 'status';
-	const COLUMN_COURSE         = 'course';
 	const COLUMN_MODULE         = 'module';
 	const COLUMN_PREREQUISITE   = 'prerequisite';
 	const COLUMN_PREVIEW        = 'preview';
@@ -67,9 +66,6 @@ class Sensei_Data_Port_Lesson_Schema extends Sensei_Data_Port_Schema {
 				'type'    => 'string',
 				'default' => 'draft',
 				'pattern' => '/^(publish|pending|draft|)$/',
-			],
-			self::COLUMN_COURSE         => [
-				'type' => 'string',
 			],
 			self::COLUMN_MODULE         => [
 				'type' => 'string',
