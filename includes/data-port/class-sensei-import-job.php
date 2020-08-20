@@ -184,6 +184,13 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 			$this->delete_file( $file_key );
 		}
 
+		if ( ! file_exists( $tmp_file ) ) {
+			return new WP_Error(
+				'sensei_data_port_file_save_failed',
+				__( 'Error saving file.', 'sensei-lms' )
+			);
+		}
+
 		$check_file = $this->check_file( $file_key, $tmp_file, $file_name );
 
 		if ( is_wp_error( $check_file ) ) {
