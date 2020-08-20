@@ -162,20 +162,7 @@ class Sensei_Import_Associations
 			// Add the lesson to the course.
 			update_post_meta( $lesson_id, '_lesson_course', $course_id );
 
-			$module_term_id = false;
-			// Make sure any related module associations are handled.
-			if ( isset( $this->lesson_modules[ $lesson_id ] ) ) {
-				$module_term_id = $this->handle_lesson_module( $lesson_id, $this->lesson_modules[ $lesson_id ] );
-				unset( $this->lesson_modules[ $lesson_id ] );
-			}
-
-			if ( ! $module_term_id ) {
-				$module_term = Sensei()->modules->get_lesson_module( $lesson_id );
-				if ( $module_term ) {
-					$module_term_id = $module_term->term_id;
-				}
-			}
-
+			$module_term_id = $this->get_lesson_module( $lesson_id );
 			if ( $module_term_id ) {
 				if ( ! isset( $module_indices[ $module_term_id ] ) ) {
 					$module_indices[ $module_term_id ] = 0;
@@ -201,6 +188,32 @@ class Sensei_Import_Associations
 		foreach ( $old_lessons as $lesson_id ) {
 			delete_post_meta( $lesson_id, '_lesson_course' );
 		}
+	}
+
+	/**
+	 * Get the lesson's module ID.
+	 *
+	 * @param int $lesson_id The lesson post ID.
+	 *
+	 * @return false|int
+	 */
+	private function get_lesson_module( $lesson_id ) {
+		$module_term_id = false;
+
+		// Make sure any related module associations are handled.
+		if ( isset( $this->lesson_modules[ $lesson_id ] ) ) {
+			$module_term_id = $this->handle_lesson_module( $lesson_id, $this->lesson_modules[ $lesson_id ] );
+			unset( $this->lesson_modules[ $lesson_id ] );
+		}
+
+		if ( ! $module_term_id ) {
+			$module_term = Sensei()->modules->get_lesson_module( $lesson_id );
+			if ( $module_term ) {
+				$module_term_id = $module_term->term_id;
+			}
+		}
+
+		return $module_term_id;
 	}
 
 	/**
@@ -271,7 +284,7 @@ class Sensei_Import_Associations
 			return false;
 		}
 
-		$term = $this->get_lesson_module( $module_ref, $course_id );
+		$term = $this->get_module_for_course( $module_ref, $course_id );
 		if ( is_wp_error( $term ) ) {
 			$add_warning_helper( $term->get_error_message(), $term->get_error_code() );
 
@@ -296,7 +309,7 @@ class Sensei_Import_Associations
 	 *
 	 * @return WP_Error|WP_Term  WP_Error when the module can't be applied to the lesson, WP_Term otherwise.
 	 */
-	private function get_lesson_module( $module_name, $course_id ) {
+	private function get_module_for_course( $module_name, $course_id ) {
 		$module = get_term_by( 'name', $module_name, 'module' );
 
 		if ( ! $module ) {
