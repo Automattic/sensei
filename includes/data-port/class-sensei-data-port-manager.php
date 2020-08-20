@@ -321,7 +321,7 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 	 */
 	public function persist() {
 		if ( $this->has_changed ) {
-			update_option( self::OPTION_NAME, wp_json_encode( $this ) );
+			update_option( self::OPTION_NAME, wp_json_encode( $this ), false );
 		}
 
 		$this->has_changed = false;
