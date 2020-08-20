@@ -110,18 +110,21 @@ class Sensei_Import_Course_Model extends Sensei_Import_Model {
 		$this->set_course_terms( Sensei_Data_Port_Course_Schema::COLUMN_MODULES, 'module', $teacher );
 		$this->set_course_terms( Sensei_Data_Port_Course_Schema::COLUMN_CATEGORIES, 'course-category' );
 
-		/**
-		 * Associations task object for this job.
-		 *
-		 * @var Sensei_Import_Associations $associations_task
-		 */
-		$associations_task = $this->task->get_job()->get_associations_task();
-		$associations_task->add_course_lessons(
-			$this->get_post_id(),
-			$this->get_value( Sensei_Data_Port_Course_Schema::COLUMN_LESSONS ),
-			$this->line_number,
-			$this->get_value( $this->schema->get_column_title() )
-		);
+		$course_lessons = $this->get_value( Sensei_Data_Port_Course_Schema::COLUMN_LESSONS );
+		if ( null !== $course_lessons ) {
+			/**
+			 * Associations task object for this job.
+			 *
+			 * @var Sensei_Import_Associations $associations_task
+			 */
+			$associations_task = $this->task->get_job()->get_associations_task();
+			$associations_task->add_course_lessons(
+				$this->get_post_id(),
+				$course_lessons,
+				$this->line_number,
+				$this->get_value( $this->schema->get_column_title() )
+			);
+		}
 
 		return true;
 	}
