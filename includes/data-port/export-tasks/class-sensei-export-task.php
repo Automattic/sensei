@@ -17,6 +17,7 @@ abstract class Sensei_Export_Task
 	implements Sensei_Data_Port_Task_Interface {
 
 	const STATE_COMPLETED_POSTS = 'completed-posts';
+	const STATE_ABORTED         = 'aborted';
 
 	/**
 	 * Output CSV file name.
@@ -47,6 +48,13 @@ abstract class Sensei_Export_Task
 	private $total_posts = 0;
 
 	/**
+	 * Flag if task was aborted.
+	 *
+	 * @var boolean
+	 */
+	private $is_aborted = false;
+
+	/**
 	 * Query of posts in the current batch.
 	 *
 	 * @var WP_Query
@@ -74,6 +82,10 @@ abstract class Sensei_Export_Task
 		$task_state            = $this->get_job()->get_state( $type );
 		$this->completed_posts = isset( $task_state[ self::STATE_COMPLETED_POSTS ] ) ? $task_state[ self::STATE_COMPLETED_POSTS ] : 0;
 
+		if ( isset( $task_state[ self::STATE_ABORTED ] ) ) {
+			$this->is_aborted = $task_state[ self::STATE_ABORTED ];
+		}
+
 		$this->query = new WP_Query(
 			[
 				'post_type'      => $type,
@@ -93,8 +105,33 @@ abstract class Sensei_Export_Task
 	 * Run export task.
 	 */
 	public function run() {
-		$posts       = $this->query->posts;
-		$output_file = new SplFileObject( $this->file, 'a' );
+		$posts = $this->query->posts;
+		$job   = $this->get_job();
+
+		try {
+			$output_file = new SplFileObject( $this->file, 'a' );
+		} catch ( Exception $e ) {
+			$this->is_aborted = true;
+
+			$job->set_state(
+				$this->get_content_type(),
+				[
+					self::STATE_ABORTED => $this->is_aborted,
+				]
+			);
+
+			$this->get_job()->add_log_entry(
+				// translators: Placeholder is the content file being exported.
+				sprintf( __( 'Error exporting the %s file.', 'sensei-lms' ), $this->get_content_type() ),
+				Sensei_Data_Port_Job::LOG_LEVEL_ERROR,
+				[
+					'type' => $this->get_content_type(),
+					'code' => 'sensei_data_port_job_export_file',
+				]
+			);
+
+			return;
+		}
 
 		foreach ( $posts as $post ) {
 			$serialized_posts = $this->get_serialized_post( $post );
@@ -104,7 +141,7 @@ abstract class Sensei_Export_Task
 		}
 		$output_file = null;
 
-		$this->get_job()->set_state(
+		$job->set_state(
 			$this->get_content_type(),
 			[
 				self::STATE_COMPLETED_POSTS => $this->completed_posts,
@@ -184,7 +221,7 @@ abstract class Sensei_Export_Task
 	 * @return boolean
 	 */
 	public function is_completed() {
-		return $this->completed_posts === $this->total_posts;
+		return $this->completed_posts === $this->total_posts || $this->is_aborted;
 	}
 
 	/**
