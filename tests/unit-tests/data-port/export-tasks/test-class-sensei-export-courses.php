@@ -262,7 +262,7 @@ class Sensei_Export_Courses_Tests extends WP_UnitTestCase {
 			[
 				'featured'      => '1',
 				'video'         => '<iframe>',
-				'notifications' => '1',
+				'notifications' => '0',
 			],
 			$result[0]
 		);
