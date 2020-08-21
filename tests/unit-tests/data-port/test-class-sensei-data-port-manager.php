@@ -247,6 +247,66 @@ class Sensei_Data_Port_Manager_Test extends WP_UnitTestCase {
 		}
 	}
 
+	/**
+	 * Tests redirect import sample.
+	 *
+	 * @dataProvider redirectImportSampleDataSources
+	 */
+	public function testRedirectImportSample( $nonce, $expects_call, $expect_die_exception ) {
+		$import_id = 99;
+
+		// Mock the redirect_edit_post_link method
+		$job_manager_mock = $this->getMockBuilder( Sensei_Data_Port_Manager::class )
+			->disableOriginalConstructor()
+			->setMethods( [ 'redirect_edit_post_link' ] )
+			->getMock();
+
+		$job_manager_mock->expects( $expects_call )
+			->method( 'redirect_edit_post_link' )
+			->with(
+				$this->equalTo( $import_id )
+			);
+
+		$instance_property = new ReflectionProperty( Sensei_Data_Port_Manager::class, 'instance' );
+		$instance_property->setAccessible( true );
+		$instance_property->setValue( $job_manager_mock );
+
+		$job = Sensei_Data_Port_Manager::instance()->create_import_job( get_current_user_id() );
+
+		$job->set_import_id( 'course', Sensei_Data_Port_Manager::SAMPLE_COURSE_ID, $import_id );
+		$job->persist();
+
+		$_GET['redirect_imported_sample'] = '1';
+		$_GET['job_id']                   = $job->get_job_id();
+		$_GET['nonce']                    = $nonce;
+
+		if ( $expect_die_exception ) {
+			$this->expectExceptionMessage( 'Invalid request' );
+		}
+
+		Sensei_Data_Port_Manager::instance()->redirect_imported_sample();
+	}
+
+	/**
+	 * Data source redirect import samples test.
+	 *
+	 * @return array[]
+	 */
+	public function redirectImportSampleDataSources() {
+		return [
+			'valid'         => [
+				wp_create_nonce( 'sensei-setup-wizard' ),
+				$this->once(),
+				false,
+			],
+			'invalid_nonce' => [
+				'invalid',
+				$this->never(),
+				true,
+			],
+		];
+	}
+
 	private function mock_job_method( $job_id, $method ) {
 		return $this->getMockBuilder( Sensei_Data_Port_Job_Mock::class )
 			->setConstructorArgs( [ $job_id ] )

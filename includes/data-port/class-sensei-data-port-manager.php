@@ -16,6 +16,7 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 	const OPTION_NAME           = 'sensei-data-port-jobs';
 	const JOB_STALE_AGE_SECONDS = DAY_IN_SECONDS;
 	const OPTION_RUNNING_JOB    = 'sensei-data-port-jobs-running';
+	const SAMPLE_COURSE_ID      = 2990;
 
 	/**
 	 * An array of all in progress data port jobs. It has the following format:
@@ -78,6 +79,7 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 	 */
 	public function init() {
 		add_action( 'init', [ $this, 'maybe_schedule_cron_jobs' ] );
+		add_action( 'admin_init', [ $this, 'redirect_imported_sample' ] );
 		add_action( 'sensei_data_port_complete', [ $this, 'log_complete_import_jobs' ] );
 		add_action( 'sensei_data_port_complete', [ $this, 'log_complete_export_jobs' ] );
 		add_action( 'sensei_data_port_garbage_collection', [ $this, 'clean_old_jobs' ] );
@@ -96,6 +98,43 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 		if ( ! wp_next_scheduled( 'sensei_data_port_garbage_collection' ) ) {
 			wp_schedule_event( time(), 'daily', 'sensei_data_port_garbage_collection' );
 		}
+	}
+
+	/**
+	 * Redirect to the last imported course.
+	 *
+	 * @access private
+	 */
+	public function redirect_imported_sample() {
+		if (
+			empty( $_GET['redirect_imported_sample'] )
+			|| empty( $_GET['job_id'] )
+			|| empty( $_GET['nonce'] )
+		) {
+			return;
+		}
+
+		if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['nonce'] ) ), 'sensei-setup-wizard' ) ) {
+			wp_die( esc_html__( 'Invalid request', 'sensei-lms' ) );
+		}
+
+		$job_id      = sanitize_text_field( wp_unslash( $_GET['job_id'] ) );
+		$job         = $this->get_job( $job_id );
+		$imported_id = $job->get_import_id( Sensei_Data_Port_Course_Schema::POST_TYPE, self::SAMPLE_COURSE_ID );
+
+		$this->redirect_edit_post_link( $imported_id );
+	}
+
+	/**
+	 * Redirect to edit post link.
+	 *
+	 * @access private
+	 *
+	 * @param int $post_id Post ID.
+	 */
+	protected function redirect_edit_post_link( $post_id ) {
+		wp_safe_redirect( get_edit_post_link( $post_id, null ) );
+		exit;
 	}
 
 	/**

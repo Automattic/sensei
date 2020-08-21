@@ -26,6 +26,28 @@ class Courses_Csv_Tests extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Ensure the data contains expected course ID.
+	 */
+	public function testCourseID() {
+		$expected_id = Sensei_Data_Port_Manager::SAMPLE_COURSE_ID;
+		$data        = $this->read_sample_file();
+
+		$this->assertNotEmpty( $data, 'The courses file must contain data' );
+
+		$found_id = array_filter(
+			$data,
+			function( $item ) use ( $expected_id ) {
+				return intval( $item['id'] ) === $expected_id;
+			}
+		);
+
+		$this->assertNotEmpty(
+			$found_id,
+			sprintf( 'It should contains the %s ID', Sensei_Data_Port_Manager::SAMPLE_COURSE_ID )
+		);
+	}
+
+	/**
 	 * Read the sample file data.
 	 *
 	 * @return array

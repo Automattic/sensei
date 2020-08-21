@@ -194,6 +194,7 @@ describe( '<Ready />', () => {
 
 	it( 'Should run sample installation', async () => {
 		window.location.assign = jest.fn();
+		window.sensei_setup_wizard = { nonce: '123' };
 
 		apiFetch.mockResolvedValueOnce( { id: 1 } );
 		apiFetch.mockResolvedValueOnce( {
@@ -211,7 +212,7 @@ describe( '<Ready />', () => {
 
 		await waitFor( () => {
 			expect( window.location.assign ).toBeCalledWith(
-				'edit.php?post_type=course'
+				'?redirect_imported_sample=1&job_id=1&nonce=123'
 			);
 		} );
 	} );
