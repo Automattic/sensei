@@ -206,6 +206,13 @@ const startJob = function* ( types ) {
 		data: { content_types: types },
 	} );
 
+	// Log when users start an export.
+	const type = types
+		.map( ( typeSingular ) => typeSingular + 's' )
+		.join( ',' );
+
+	window.sensei_log_event( 'export_continue_click', { type } );
+
 	yield updateJob( job );
 	return job;
 };

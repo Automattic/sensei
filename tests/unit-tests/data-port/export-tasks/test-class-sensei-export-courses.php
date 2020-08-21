@@ -31,6 +31,10 @@ class Sensei_Export_Courses_Tests extends WP_UnitTestCase {
 	public function setUp() {
 		parent::setUp();
 
+		if ( ! isset( Sensei()->admin ) ) {
+			Sensei()->admin = new Sensei_Admin();
+		}
+
 		$this->factory = new Sensei_Factory();
 	}
 
@@ -62,6 +66,62 @@ class Sensei_Export_Courses_Tests extends WP_UnitTestCase {
 			'Course Category \'Single\',Course Category "Double"',
 			$result[0]['categories']
 		);
+	}
+
+	/**
+	 * Tests lessons field is exported in the correct order.
+	 */
+	public function testLessonsSerializedInOrder() {
+		$course_id = $this->factory->course->create();
+
+		$course_lesson_args = [
+			'meta_input' => [
+				'_lesson_course' => $course_id,
+			],
+		];
+		$lessons            = $this->factory->lesson->create_many( 3, $course_lesson_args );
+		$lesson_unordered   = $this->factory->lesson->create( $course_lesson_args );
+
+		// Rogue lesson.
+		$this->factory->lesson->create();
+
+		$lesson_order = [ $lessons[1], $lessons[0], $lessons[2] ];
+
+		Sensei()->admin->save_lesson_order( implode( ',', $lesson_order ), $course_id );
+
+		$result = $this->export();
+
+		$lesson_order_str = "id:{$lesson_order[0]},id:{$lesson_order[1]},id:{$lesson_order[2]},id:{$lesson_unordered}";
+		$this->assertEquals( $lesson_order_str, $result[0]['lessons'] );
+	}
+
+	/**
+	 * Tests lessons field is exported in the correct order when the course has modules.
+	 */
+	public function testCourseWithModulesGeneratesCorrectOrder() {
+		$module  = $this->factory->module->create_and_get();
+		$lessons = $this->factory->lesson->create_many( 5 );
+		$course  = $this->factory->course->create_and_get();
+
+		wp_set_object_terms( $lessons[0], $module->term_id, 'module' );
+		wp_set_object_terms( $lessons[1], $module->term_id, 'module' );
+		wp_set_object_terms( $lessons[2], $module->term_id, 'module' );
+		wp_set_object_terms( $course->ID, $module->term_id, 'module' );
+
+		foreach ( $lessons as $lesson ) {
+			add_post_meta( $lesson, '_lesson_course', $course->ID );
+		}
+
+		add_post_meta( $lessons[4], '_order_' . $course->ID, 1 );
+		add_post_meta( $lessons[3], '_order_' . $course->ID, 2 );
+		add_post_meta( $lessons[2], '_order_module_' . $module->term_id, 1 );
+		add_post_meta( $lessons[0], '_order_module_' . $module->term_id, 2 );
+		add_post_meta( $lessons[1], '_order_module_' . $module->term_id, 3 );
+
+		$result = $this->export();
+
+		$lesson_order_str = "id:{$lessons[2]},id:{$lessons[0]},id:{$lessons[1]},id:{$lessons[4]},id:{$lessons[3]}";
+		$this->assertEquals( $lesson_order_str, $result[0]['lessons'] );
 	}
 
 	/**
@@ -144,7 +204,7 @@ class Sensei_Export_Courses_Tests extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test that course details are exported correctly.
+	 * Test that course image are exported correctly.
 	 */
 	public function testCourseImageExported() {
 		$course = $this->factory->course->create_and_get();
@@ -219,7 +279,7 @@ class Sensei_Export_Courses_Tests extends WP_UnitTestCase {
 		$result = $this->export();
 
 		$course_1 = self::get_by_id( $result, $course_ids[0] );
-		$this->assertEquals( $course_ids[1], $course_1['prerequisite'] );
+		$this->assertEquals( 'id:' . $course_ids[1], $course_1['prerequisite'] );
 	}
 
 	public function testAllPostStatusCoursesExporterd() {

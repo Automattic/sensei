@@ -150,7 +150,20 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 * @return Sensei_Data_Port_Job|null instance.
 	 */
 	public static function get( $job_id ) {
-		$json = get_option( self::get_option_name( $job_id ), '' );
+		$option_name = self::get_option_name( $job_id );
+
+		/**
+		 * It solves an issue when we are working with the `process` endpoint,
+		 * along the scheduled job. Sometimes in the requests racing, a request
+		 * starts, when the other is setting some option, like the job state.
+		 * So it would get the old (cached) option.
+		 *
+		 * It's noticed more frequently when WooCommerce is not installed, and
+		 * the Sensei_Scheduler is using WP Cron.
+		 */
+		wp_cache_delete( $option_name, 'options' );
+
+		$json = get_option( $option_name, '' );
 
 		if ( empty( $json ) ) {
 			return null;
@@ -263,10 +276,6 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 * Delete any stored state for this job.
 	 */
 	public function clean_up() {
-		foreach ( $this->get_tasks() as $task ) {
-			$task->clean_up();
-		}
-
 		foreach ( array_keys( $this->files ) as $file_key ) {
 			$this->delete_file( $file_key );
 		}
@@ -342,8 +351,6 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 * @return Sensei_Data_Port_Task_Interface
 	 */
 	protected function initialize_task( $task_class ) {
-		// @todo Implement restoring of task state.
-
 		return new $task_class( $this );
 	}
 
@@ -411,7 +418,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	 */
 	public function persist() {
 		if ( ! $this->is_deleted && $this->has_changed ) {
-			update_option( self::get_option_name( $this->job_id ), wp_json_encode( $this ) );
+			update_option( self::get_option_name( $this->job_id ), wp_json_encode( $this ), false );
 		}
 
 		$this->has_changed = false;
@@ -445,6 +452,8 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 
 			$completed_cycles += $ratio['completed'];
 			$total_cycles     += $ratio['total'];
+
+			$task->save_state();
 		}
 
 		if ( ! $has_incomplete_task || 0 === $total_cycles ) {

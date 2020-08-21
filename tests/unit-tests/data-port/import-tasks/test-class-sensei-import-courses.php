@@ -37,7 +37,7 @@ class Sensei_Import_Courses_Tests extends WP_UnitTestCase {
 		);
 
 		$job    = Sensei_Import_Job::create( 'test', 0 );
-		$task   = new Sensei_Import_courses( $job );
+		$task   = new Sensei_Import_Courses( $job );
 		$method = new ReflectionMethod( $task, 'handle_prerequisite' );
 		$method->setAccessible( true );
 
@@ -65,7 +65,7 @@ class Sensei_Import_Courses_Tests extends WP_UnitTestCase {
 		$course_id        = $course_prereq_id;
 
 		$job    = Sensei_Import_Job::create( 'test', 0 );
-		$task   = new Sensei_Import_courses( $job );
+		$task   = new Sensei_Import_Courses( $job );
 		$method = new ReflectionMethod( $task, 'handle_prerequisite' );
 		$method->setAccessible( true );
 
@@ -92,7 +92,7 @@ class Sensei_Import_Courses_Tests extends WP_UnitTestCase {
 		$course_id = $this->factory->course->create();
 
 		$job    = Sensei_Import_Job::create( 'test', 0 );
-		$task   = new Sensei_Import_courses( $job );
+		$task   = new Sensei_Import_Courses( $job );
 		$method = new ReflectionMethod( $task, 'handle_prerequisite' );
 		$method->setAccessible( true );
 

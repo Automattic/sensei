@@ -5,6 +5,11 @@ const adminTracking = [
 			'#toplevel_page_sensei a[href="admin.php?page=sensei_import"]',
 		eventName: 'import_click',
 	},
+	{
+		selector:
+			'#toplevel_page_sensei a[href="admin.php?page=sensei_export"]',
+		eventName: 'export_click',
+	},
 ];
 
 window.sensei_log_event = function( event_name, properties ) {

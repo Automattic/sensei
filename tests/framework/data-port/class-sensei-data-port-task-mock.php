@@ -33,6 +33,5 @@ class Sensei_Data_Port_Task_Mock implements Sensei_Data_Port_Task_Interface {
 		];
 	}
 
-	public function clean_up() {}
-
+	public function save_state() {}
 }

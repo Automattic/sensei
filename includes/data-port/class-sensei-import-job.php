@@ -46,13 +46,23 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 	 */
 	public function get_tasks() {
 		if ( ! isset( $this->tasks ) ) {
-			$this->tasks              = [];
-			$this->tasks['questions'] = $this->initialize_task( Sensei_Import_Questions::class );
-			$this->tasks['courses']   = $this->initialize_task( Sensei_Import_Courses::class );
-			$this->tasks['lessons']   = $this->initialize_task( Sensei_Import_Lessons::class );
+			$this->tasks                 = [];
+			$this->tasks['questions']    = $this->initialize_task( Sensei_Import_Questions::class );
+			$this->tasks['lessons']      = $this->initialize_task( Sensei_Import_Lessons::class );
+			$this->tasks['courses']      = $this->initialize_task( Sensei_Import_Courses::class );
+			$this->tasks['associations'] = $this->initialize_task( Sensei_Import_Associations::class );
 		}
 
 		return $this->tasks;
+	}
+
+	/**
+	 * Fetch the associations task object.
+	 *
+	 * @return Sensei_Import_Associations
+	 */
+	public function get_associations_task() {
+		return $this->get_tasks()['associations'];
 	}
 
 	/**
@@ -293,6 +303,23 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Check if a post has already been imported during this job.
+	 *
+	 * @param string $post_type Post type for the imported object.
+	 * @param string $post_id   ID of the post in the database.
+	 *
+	 * @return bool
+	 */
+	public function was_imported( $post_type, $post_id ) {
+		$map = $this->get_state( self::MAPPED_ID_STATE_KEY );
+		if ( ! isset( $map[ $post_type ] ) ) {
+			return false;
+		}
+
+		return in_array( intval( $post_id ), $map[ $post_type ], true );
 	}
 
 	/**

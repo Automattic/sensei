@@ -95,6 +95,7 @@ class Sensei_Import_Course_Model_Test extends WP_UnitTestCase {
 					Sensei_Data_Port_Course_Schema::COLUMN_EXCERPT          => '<randomtag>excerpt</randomtag>',
 					Sensei_Data_Port_Course_Schema::COLUMN_TEACHER_USERNAME => '<p>username@</p>',
 					Sensei_Data_Port_Course_Schema::COLUMN_TEACHER_EMAIL    => 'em\<ail#@host.com',
+					Sensei_Data_Port_Course_Schema::COLUMN_LESSONS          => '<randomtag>   id:4,id:5   </randomtag>',
 					Sensei_Data_Port_Course_Schema::COLUMN_MODULES          => '<randomtag>   First,Second   </randomtag>',
 					Sensei_Data_Port_Course_Schema::COLUMN_PREREQUISITE     => '<randomtag>prerequisite</randomtag>',
 					Sensei_Data_Port_Course_Schema::COLUMN_FEATURED         => 'true',
@@ -111,6 +112,7 @@ class Sensei_Import_Course_Model_Test extends WP_UnitTestCase {
 					Sensei_Data_Port_Course_Schema::COLUMN_EXCERPT          => 'excerpt',
 					Sensei_Data_Port_Course_Schema::COLUMN_TEACHER_USERNAME => 'username@',
 					Sensei_Data_Port_Course_Schema::COLUMN_TEACHER_EMAIL    => 'email#@host.com',
+					Sensei_Data_Port_Course_Schema::COLUMN_LESSONS          => 'id:4,id:5',
 					Sensei_Data_Port_Course_Schema::COLUMN_MODULES          => 'First,Second',
 					Sensei_Data_Port_Course_Schema::COLUMN_PREREQUISITE     => 'prerequisite',
 					Sensei_Data_Port_Course_Schema::COLUMN_FEATURED         => true,
@@ -129,6 +131,7 @@ class Sensei_Import_Course_Model_Test extends WP_UnitTestCase {
 					Sensei_Data_Port_Course_Schema::COLUMN_EXCERPT          => '<p>Updated excerpt</p>',
 					Sensei_Data_Port_Course_Schema::COLUMN_TEACHER_USERNAME => 'otheruser',
 					Sensei_Data_Port_Course_Schema::COLUMN_TEACHER_EMAIL    => 'otheremail@host.com',
+					Sensei_Data_Port_Course_Schema::COLUMN_LESSONS          => 'id:3,id:4',
 					Sensei_Data_Port_Course_Schema::COLUMN_MODULES          => 'Second,First',
 					Sensei_Data_Port_Course_Schema::COLUMN_PREREQUISITE     => 'Updated prerequisite',
 					Sensei_Data_Port_Course_Schema::COLUMN_FEATURED         => 'false',
@@ -145,6 +148,7 @@ class Sensei_Import_Course_Model_Test extends WP_UnitTestCase {
 					Sensei_Data_Port_Course_Schema::COLUMN_EXCERPT          => '<p>Updated excerpt</p>',
 					Sensei_Data_Port_Course_Schema::COLUMN_TEACHER_USERNAME => 'otheruser',
 					Sensei_Data_Port_Course_Schema::COLUMN_TEACHER_EMAIL    => 'otheremail@host.com',
+					Sensei_Data_Port_Course_Schema::COLUMN_LESSONS          => 'id:3,id:4',
 					Sensei_Data_Port_Course_Schema::COLUMN_MODULES          => 'Second,First',
 					Sensei_Data_Port_Course_Schema::COLUMN_PREREQUISITE     => 'Updated prerequisite',
 					Sensei_Data_Port_Course_Schema::COLUMN_FEATURED         => false,
@@ -191,6 +195,7 @@ class Sensei_Import_Course_Model_Test extends WP_UnitTestCase {
 			Sensei_Data_Port_Course_Schema::COLUMN_EXCERPT,
 			Sensei_Data_Port_Course_Schema::COLUMN_TEACHER_USERNAME,
 			Sensei_Data_Port_Course_Schema::COLUMN_TEACHER_EMAIL,
+			Sensei_Data_Port_Course_Schema::COLUMN_LESSONS,
 			Sensei_Data_Port_Course_Schema::COLUMN_MODULES,
 			Sensei_Data_Port_Course_Schema::COLUMN_PREREQUISITE,
 			Sensei_Data_Port_Course_Schema::COLUMN_FEATURED,
@@ -205,6 +210,38 @@ class Sensei_Import_Course_Model_Test extends WP_UnitTestCase {
 				$this->assertEquals( $expected_model_content[ $tested_field ], $model->get_value( $tested_field ), "Field {$tested_field} did not match the expected value" );
 			}
 		}
+	}
+
+	/**
+	 * Tests that the lessons are queued to be linked to their courses in the associations post-process task.
+	 */
+	public function testLessonModuleLinkingIsQueuedWhenValid() {
+		$job = $this->getMockBuilder( Sensei_Import_Job::class )
+					->setConstructorArgs( [ 'test-id', 0 ] )
+					->setMethods( [ 'get_associations_task' ] )
+					->getMock();
+
+		$associations_task = $this->getMockBuilder( Sensei_Import_Associations::class )
+								->setConstructorArgs( [ $job ] )
+								->setMethods( [ 'add_course_lessons' ] )
+								->getMock();
+
+		$associations_task->expects( $this->once() )->method( 'add_course_lessons' );
+
+		$job->expects( $this->once() )
+			->method( 'get_associations_task' )
+			->willReturn( $associations_task );
+
+		$course_data = [
+			Sensei_Data_Port_Course_Schema::COLUMN_ID      => '1234',
+			Sensei_Data_Port_Course_Schema::COLUMN_TITLE   => 'Course title a',
+			Sensei_Data_Port_Course_Schema::COLUMN_SLUG    => 'the-last-course',
+			Sensei_Data_Port_Course_Schema::COLUMN_LESSONS => 'id:33,id:44',
+		];
+
+		$task  = new Sensei_Import_Courses( $job );
+		$model = Sensei_Import_Course_Model::from_source_array( 1, $course_data, new Sensei_Data_Port_Course_Schema(), $task );
+		$model->sync_post();
 	}
 
 	/**

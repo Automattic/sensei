@@ -199,8 +199,8 @@ class Sensei_Core_Modules {
 	 * @param WP_Post $post The post.
 	 * @return int
 	 */
-	private function get_lesson_module_if_exists( $post ) {
-		// Get existing lesson module
+	public function get_lesson_module_if_exists( $post ) {
+		// Get existing lesson module.
 		$lesson_module      = 0;
 		$lesson_module_list = wp_get_post_terms( $post->ID, $this->taxonomy );
 		if ( is_array( $lesson_module_list ) && count( $lesson_module_list ) > 0 ) {
@@ -1727,11 +1727,12 @@ class Sensei_Core_Modules {
 	 * Find the lesson in the given course that doesn't belong
 	 * to any of the courses modules
 	 *
-	 * @param $course_id
+	 * @param int    $course_id    The course id.
+	 * @param string $post_status  The status of the lessons.
 	 *
 	 * @return array $non_module_lessons
 	 */
-	public function get_none_module_lessons( $course_id ) {
+	public function get_none_module_lessons( $course_id, $post_status = 'publish' ) {
 
 		$non_module_lessons = array();
 
@@ -1767,7 +1768,7 @@ class Sensei_Core_Modules {
 
 		$args = array(
 			'post_type'        => 'lesson',
-			'post_status'      => 'publish',
+			'post_status'      => $post_status,
 			'posts_per_page'   => -1,
 			'meta_query'       => array(
 				array(

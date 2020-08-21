@@ -1,6 +1,6 @@
 {
   "name": "sensei-lms",
-  "version": "3.4.0",
+  "version": "3.4.1",
   "description": "Sensei LMS",
   "author": "Automattic",
   "license": "GPL-2.0-or-later",
@@ -30,7 +30,7 @@
     "select2": "4.0.13"
   },
   "devDependencies": {
-    "@automattic/calypso-build": "6.1.0",
+    "@automattic/calypso-build": "6.2.0",
     "@automattic/puppeteer-utils": "github:Automattic/puppeteer-utils",
     "@babel/cli": "7.10.5",
     "@babel/core": "7.11.1",
@@ -46,21 +46,32 @@
     "@wordpress/jest-preset-default": "6.2.0",
     "@wordpress/postcss-themes": "2.6.0",
     "@wordpress/scripts": "12.1.1",
+    "buffer": "5.6.0",
+    "chownr": "2.0.0",
     "cross-env": "7.0.2",
     "del": "5.1.0",
     "eslint": "7.6.0",
     "eslint-config-prettier": "6.11.0",
+    "extract-zip": "2.0.1",
     "gettext-parser": "4.0.4",
     "gulp": "4.0.2",
     "gulp-zip": "5.0.2",
     "husky": "4.2.5",
-    "jsdoc": "3.6.4",
+    "jsdoc": "3.6.5",
     "lint-staged": "10.2.11",
-    "npm-force-resolutions": "0.0.3",
     "postcss-color-function": "4.1.0",
     "prettier": "npm:wp-prettier@2.0.5",
+    "pump": "3.0.0",
+    "puppeteer-core": "npm:puppeteer-core@3.0.0",
+    "tar-fs": "2.1.0",
+    "unbzip2-stream": "1.4.3",
     "react-test-renderer": "16.13.1",
     "wp-hookdoc": "0.2.0"
+  },
+  "resolutions": {
+    "extract-zip": "2.0.1",
+    "unbzip2-stream": "1.4.3",
+    "tar-fs": "2.1.0"
   },
   "scripts": {
     "build": "cross-env NODE_ENV=production npx calypso-build",
@@ -84,8 +95,7 @@
     "e2e-docker:up": "npm explore @woocommerce/e2e-environment -- npm run docker:up",
     "e2e-docker:down": "npm explore @woocommerce/e2e-environment -- npm run docker:down",
     "test:e2e": "npm explore @woocommerce/e2e-environment -- npm run test:e2e",
-    "test:e2e-dev": "npm explore @woocommerce/e2e-environment -- npm run test:e2e-dev",
-    "preinstall": "npx npm-force-resolutions"
+    "test:e2e-dev": "npm explore @woocommerce/e2e-environment -- npm run test:e2e-dev"
   },
   "husky": {
     "hooks": {
@@ -104,8 +114,5 @@
     "*.php": [
       "scripts/linter-new-php"
     ]
-  },
-  "resolutions": {
-    "@babel/preset-env": "7.11.0"
   }
 }

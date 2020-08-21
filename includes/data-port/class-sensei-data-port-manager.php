@@ -79,6 +79,7 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 	public function init() {
 		add_action( 'init', [ $this, 'maybe_schedule_cron_jobs' ] );
 		add_action( 'sensei_data_port_complete', [ $this, 'log_complete_import_jobs' ] );
+		add_action( 'sensei_data_port_complete', [ $this, 'log_complete_export_jobs' ] );
 		add_action( 'sensei_data_port_garbage_collection', [ $this, 'clean_old_jobs' ] );
 		add_action( Sensei_Data_Port_Job::SCHEDULED_ACTION_NAME, [ $this, 'run_scheduled_data_port_job' ] );
 		add_action( 'shutdown', [ $this, 'persist' ] );
@@ -276,6 +277,35 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 	}
 
 	/**
+	 * Log when an export job is complete.
+	 *
+	 * @access private
+	 *
+	 * @param Sensei_Data_Port_Job $job The job object.
+	 */
+	public function log_complete_export_jobs( Sensei_Data_Port_Job $job ) {
+		if ( ! $job instanceof Sensei_Export_Job ) {
+			return;
+		}
+
+		$plural_content_types = array_map(
+			function( $type ) {
+				return $type . 's';
+			},
+			$job->get_content_types()
+		);
+
+		sort( $plural_content_types );
+
+		sensei_log_event(
+			'export_complete',
+			[
+				'type' => implode( ',', $plural_content_types ),
+			]
+		);
+	}
+
+	/**
 	 * Serialize the port jobs to JSON.
 	 *
 	 * @return array
@@ -291,7 +321,7 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 	 */
 	public function persist() {
 		if ( $this->has_changed ) {
-			update_option( self::OPTION_NAME, wp_json_encode( $this ) );
+			update_option( self::OPTION_NAME, wp_json_encode( $this ), false );
 		}
 
 		$this->has_changed = false;

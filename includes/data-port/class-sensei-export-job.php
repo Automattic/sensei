@@ -46,13 +46,18 @@ class Sensei_Export_Job extends Sensei_Data_Port_Job {
 			$this->tasks = [];
 			$task_class  = [
 				'course'   => Sensei_Export_Courses::class,
+				'lesson'   => Sensei_Export_Lessons::class,
 				'question' => Sensei_Export_Questions::class,
 			];
 
-			foreach ( $this->get_state( self::CONTENT_TYPES_STATE_KEY ) as $type ) {
+			foreach ( $this->get_content_types() as $type ) {
 				if ( isset( $task_class[ $type ] ) ) {
 					$this->tasks[ $type ] = $this->initialize_task( $task_class[ $type ] );
 				}
+			}
+
+			if ( class_exists( 'ZipArchive' ) ) {
+				$this->tasks['package'] = $this->initialize_task( Sensei_Export_Package::class );
 			}
 		}
 
@@ -70,6 +75,7 @@ class Sensei_Export_Job extends Sensei_Data_Port_Job {
 			'course'   => [],
 			'lesson'   => [],
 			'question' => [],
+			'package'  => [],
 		];
 	}
 
@@ -105,6 +111,15 @@ class Sensei_Export_Job extends Sensei_Data_Port_Job {
 	 */
 	public function set_content_types( $content_types ) {
 		$this->set_state( self::CONTENT_TYPES_STATE_KEY, $content_types );
+	}
+
+	/**
+	 * Get the content types to be exported.
+	 *
+	 * @return array
+	 */
+	public function get_content_types() {
+		return $this->get_state( self::CONTENT_TYPES_STATE_KEY );
 	}
 
 	/**

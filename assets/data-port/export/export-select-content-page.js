@@ -29,12 +29,12 @@ export const ExportSelectContentPage = ( { onSubmit, job } ) => {
 				</p>
 
 				<div className="sensei-export__select-content__options">
-					{ Object.entries( values ).map( ( [ type, value ] ) => (
+					{ [ 'course', 'lesson', 'question' ].map( ( type ) => (
 						<CheckboxControl
 							className="sensei-export__select-content__option sensei-data-port-step__line"
 							key={ type }
 							name={ type }
-							checked={ value }
+							checked={ values[ type ] }
 							onChange={ ( v ) =>
 								updateValues( { [ type ]: v } )
 							}
@@ -49,7 +49,7 @@ export const ExportSelectContentPage = ( { onSubmit, job } ) => {
 						disabled={ ! hasSelected || isLoading }
 						isBusy={ isLoading }
 					>
-						{ __( 'Generate CSV', 'sensei-lms' ) }
+						{ __( 'Continue', 'sensei-lms' ) }
 					</Button>
 				</div>
 			</div>
