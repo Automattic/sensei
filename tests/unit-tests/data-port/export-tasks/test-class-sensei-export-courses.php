@@ -292,6 +292,26 @@ class Sensei_Export_Courses_Tests extends WP_UnitTestCase {
 
 	}
 
+	/**
+	 * Test export file error handler.
+	 */
+	public function testExportFileErrorHandler() {
+		$course = $this->factory->course->create_and_get();
+
+		$job               = Sensei_Export_Job::create( 'test', 0 );
+		$export_task_class = $this->get_task_class();
+		$task              = new $export_task_class( $job );
+
+		// Force error.
+		$property = new ReflectionProperty( 'Sensei_Export_Task', 'file' );
+		$property->setAccessible( true );
+		$property->setValue( $task, '' );
+
+		$task->run();
+
+		$this->assertEquals( 'Error exporting the course file.', $job->get_logs()[0]['message'] );
+	}
+
 	protected function get_task_class() {
 		return Sensei_Export_Courses::class;
 	}

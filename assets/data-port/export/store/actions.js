@@ -5,6 +5,18 @@ import { cancelTimeout, timeout } from '../../../shared/data/timeout-controls';
 const EXPORT_REST_API = '/sensei-internal/v1/export';
 
 /**
+ * @typedef LogItem
+ *
+ * @property {string} message Log message.
+ */
+
+/**
+ * @typedef LogsResponse
+ *
+ * @property {LogItem[]} items Log items.
+ */
+
+/**
  * @typedef JobResponse
  *
  * @property {Object}   status            Job status.
@@ -26,12 +38,13 @@ const setJob = ( job ) => ( { type: 'SET_JOB', job } );
 const updateJob = ( job ) => ( { type: 'UPDATE_JOB', job } );
 
 const getJobId = () => select( EXPORT_STORE, 'getJobId' );
+
 /**
- * Set request error.
+ * Set error.
  *
  * @param {string} error Error message.
  */
-const setRequestError = ( error ) => ( { type: 'SET_ERROR', error } );
+const setError = ( error ) => ( { type: 'SET_ERROR', error } );
 
 /**
  * Clear job state.
@@ -112,6 +125,19 @@ export const update = function* () {
 	}
 	yield updateJob( job );
 	yield pollIfPending( job );
+	yield getLogsIfCompleted( job );
+};
+
+const getLogsIfCompleted = function* ( job ) {
+	if ( job.status.status === 'completed' ) {
+		const logs = yield sendJobRequest( {
+			endpoint: 'logs',
+			skipJobCheck: true,
+		} );
+		if ( logs.items.length > 0 ) {
+			yield setError( logs.items.map( ( i ) => i.message ).join( ' ' ) );
+		}
+	}
 };
 
 /**
@@ -136,7 +162,7 @@ export const checkForActiveJob = function* () {
  * @param {Object} options            apiFetch request object.
  * @param {string?} options.endpoint  Request sub-path in exporter API.
  * @param {string?} options.jobId     Override job ID
- * @return {JobResponse} job
+ * @return {JobResponse|LogsResponse} Job or logs response.
  */
 const sendJobRequest = function* ( options = {} ) {
 	let { jobId, ...requestOptions } = options;
@@ -144,7 +170,7 @@ const sendJobRequest = function* ( options = {} ) {
 	if ( ! jobId ) {
 		jobId = yield getJobId();
 		if ( ! jobId ) {
-			yield setRequestError( 'No job ID' );
+			yield setError( 'No job ID' );
 			return undefined;
 		}
 	}
@@ -155,22 +181,29 @@ const sendJobRequest = function* ( options = {} ) {
 /**
  * Perform REST API request and apply returned job state.
  *
- * @param {Object} options           Request object.
- * @param {string?} options.endpoint Request endpoint path in exporter API.
- * @param {string?} options.jobId    Job ID
+ * @param {Object}   options              Request object.
+ * @param {string?}  options.endpoint     Request endpoint path in exporter API.
+ * @param {string?}  options.jobId        Job ID.
+ * @param {boolean?} options.skipJobCheck Flag if should skip job check (getting job logs).
  */
 const sendRequest = function* ( options = {} ) {
-	const { endpoint, jobId, ...requestOptions } = options;
+	const { skipJobCheck, endpoint, jobId, ...requestOptions } = options;
 
 	const path = [ EXPORT_REST_API, jobId, endpoint ]
 		.filter( ( i ) => !! i )
 		.join( '/' );
 
 	try {
-		const job = yield apiFetch( { path, ...requestOptions } );
+		const response = yield apiFetch( { path, ...requestOptions } );
 
-		if ( ! job || ! jobId || jobId === job.id || 'active' === jobId ) {
-			return job;
+		if (
+			skipJobCheck ||
+			! response ||
+			! jobId ||
+			jobId === response.id ||
+			'active' === jobId
+		) {
+			return response;
 		}
 	} catch ( error ) {
 		if (
@@ -179,7 +212,7 @@ const sendRequest = function* ( options = {} ) {
 		) {
 			return yield clearJob();
 		}
-		yield setRequestError( error.message );
+		yield setError( error.message );
 	}
 };
 
