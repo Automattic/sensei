@@ -28,8 +28,9 @@ const useSampleCourseInstaller = () => {
 		} )
 			.then( ( res ) => {
 				if ( 'completed' === res.status.status ) {
+					const { nonce } = window.sensei_setup_wizard;
 					window.location.assign(
-						`?redirect_imported_sample=1&job_id=${ jobId }`
+						`?redirect_imported_sample=1&job_id=${ jobId }&nonce=${ nonce }`
 					);
 
 					return;

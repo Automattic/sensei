@@ -106,8 +106,16 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 	 * @access private
 	 */
 	public function redirect_imported_sample() {
-		if ( empty( $_GET['redirect_imported_sample'] ) || empty( $_GET['job_id'] ) ) {
+		if (
+			empty( $_GET['redirect_imported_sample'] )
+			|| empty( $_GET['job_id'] )
+			|| empty( $_GET['nonce'] )
+		) {
 			return;
+		}
+
+		if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['nonce'] ) ), 'sensei-setup-wizard' ) ) {
+			wp_die( esc_html__( 'Invalid request', 'sensei-lms' ) );
 		}
 
 		$job_id      = sanitize_text_field( wp_unslash( $_GET['job_id'] ) );
