@@ -41,7 +41,11 @@ class Courses_Csv_Tests extends WP_UnitTestCase {
 		$headers = array_map( 'strtolower', fgetcsv( $file ) );
 
 		while ( ! feof( $file ) ) {
-			$row    = fgetcsv( $file );
+			$row = fgetcsv( $file );
+			if ( empty( $row ) ) {
+				continue;
+			}
+
 			$data[] = array_combine( $headers, $row );
 		}
 
