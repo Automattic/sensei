@@ -283,9 +283,8 @@ class Sensei_REST_API_Import_Controller extends Sensei_REST_API_Data_Port_Contro
 	 */
 	public function request_post_start_sample_job( $request ) {
 		$files = [
-			'courses'   => Sensei()->plugin_path() . 'sample-data/courses.csv',
-			'lessons'   => Sensei()->plugin_path() . 'sample-data/lessons.csv',
-			'questions' => Sensei()->plugin_path() . 'sample-data/questions.csv',
+			'courses' => Sensei()->plugin_path() . 'sample-data/courses.csv',
+			'lessons' => Sensei()->plugin_path() . 'sample-data/lessons.csv',
 		];
 
 		$job = Sensei_Data_Port_Manager::instance()->create_import_job( get_current_user_id() );
