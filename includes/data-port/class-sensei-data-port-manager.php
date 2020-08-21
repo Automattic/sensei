@@ -122,7 +122,18 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 		$job         = $this->get_job( $job_id );
 		$imported_id = $job->get_import_id( Sensei_Data_Port_Course_Schema::POST_TYPE, self::SAMPLE_COURSE_ID );
 
-		wp_safe_redirect( get_edit_post_link( $imported_id, null ) );
+		$this->redirect_edit_post_link( $imported_id );
+	}
+
+	/**
+	 * Redirect to edit post link.
+	 *
+	 * @access private
+	 *
+	 * @param int $post_id Post ID.
+	 */
+	protected function redirect_edit_post_link( $post_id ) {
+		wp_safe_redirect( get_edit_post_link( $post_id, null ) );
 		exit;
 	}
 
