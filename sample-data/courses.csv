@@ -1,2 +1,48 @@
-ID,Course,Slug,Description,Excerpt,Teacher Username,Teacher Email,Modules,Prerequisite,Featured,Categories,Image,Video,Notifications
-1,How to Play the Piano,,"This introductory course will teach you the basics of playing the piano, starting with chords and rhythm, before moving on to playing full songs.","This introductory course will teach you the basics of playing the piano, starting with chords and rhythm, before moving on to playing full songs.",teacher,teacher@example.com,"Chords 101 - The Building Blocks of Music,Rhythm 101 - The Heartbeat of Music,Your First Songs",,1,"Music, Piano",,,0
+Id,Course,Slug,Description,Excerpt,"Teacher Username","Teacher Email",Lessons,Modules,Prerequisite,Featured,Categories,Image,Video,Notifications
+2990,"Getting Started with Sensei LMS",getting-started-with-sensei-lms,"<!-- wp:paragraph -->
+<p>Ready to publish your first course with Sensei LMS? This document will help you get started.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul><li><a href=""#install"">How do I install Sensei LMS?</a></li><li><a href=""#completed-setup"">I completed the setup process, now what?</a></li><li><a href=""#more-help"">I need more help! What should I do?</a></li></ul>
+<!-- /wp:list -->
+
+<!-- wp:heading -->
+<h2 id=""install"">How do I install Sensei LMS?</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list {""ordered"":true} -->
+<ol><li>Log into your WordPress admin panel and go to&nbsp;<em>Plugins</em>&nbsp;&gt;&nbsp;<em>Add New</em>.</li><li>Enter <em>Sensei LMS</em> into the search field.</li><li>Once you’ve located the plugin, click&nbsp;<em>Install Now</em>.</li><li>Click&nbsp;<em>Activate</em>.</li><li>The setup wizard appears, which will walk you through some fundamental configuration tasks:</li></ol>
+<!-- /wp:list -->
+
+<!-- wp:image {""id"":3390} -->
+<figure class=""wp-block-image""><img src=""https://senseilms.com/wp-content/uploads/2020/06/welcome.png?w=980"" alt="""" class=""wp-image-3390""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>Congratulations on installing Sensei LMS! You will now see new <em>Sensei LMS</em>, <em>Courses</em>, <em>Lessons</em> and <em>Questions</em> menus in the sidebar.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading -->
+<h2 id=""completed-setup"">I completed the setup process, now what?</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>You may wish to explore the <a href=""https://senseilms.com/lesson/settings/"">settings pages</a> to see how Sensei LMS can be tweaked to meet your particular needs.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Otherwise, if you're ready to jump right in, you can go ahead and get started <a href=""https://senseilms.com/lesson/courses/"">creating your first course</a>!</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading -->
+<h2 id=""more-help"">I need more help! What should I do?</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>If you’re having trouble with Sensei LMS, here are a few resources that may help:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul><li><a href=""http://senseilms.com/documentation/sensei-in-your-language/"">Installing Sensei LMS in your language</a></li><li><a href=""https://wordpress.org/support/plugin/sensei-lms/"" target=""_blank"" rel=""noreferrer noopener"">Sensei LMS support forum</a></li><li>If you've purchased a Sensei LMS extension, you can <a href=""https://woocommerce.com/my-account/create-a-ticket/?primary=broken&amp;select=152116&amp;form=ticket"" target=""_blank"" rel=""noreferrer noopener"">open a support ticket</a></li></ul>
+<!-- /wp:list -->",,donnapep,donna.peplinskie@automattic.com,"id:2997,id:3043,id:3063,id:3106,id:3175,id:3210,id:3162,id:3324,id:3520,id:3473,id:3690,id:3566",,,0,,,,1
