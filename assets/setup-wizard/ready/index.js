@@ -7,6 +7,7 @@ import { MailingListSignupForm } from './mailinglist-signup-form';
 import { formatString } from '../../shared/helpers/format-string.js';
 import { logLink } from '../log-event';
 import { useSetupWizardStep } from '../data/use-setup-wizard-step';
+import useSampleCourseInstaller from './use-sample-course-installer';
 
 /**
  * Ready step for Setup Wizard.
@@ -19,6 +20,12 @@ export const Ready = () => {
 			submitStep();
 		}
 	}, [ isComplete, submitStep ] );
+
+	const [
+		installSampleCourse,
+		isSampleCourseInstalling,
+		sampleCourseError,
+	] = useSampleCourseInstaller();
 
 	return (
 		<>
@@ -87,6 +94,45 @@ export const Ready = () => {
 									>
 										{ __( 'Import content', 'sensei-lms' ) }
 									</Button>
+								),
+							},
+							{
+								title: __(
+									'Install a sample course',
+									'sensei-lms'
+								),
+								content: formatString(
+									__(
+										'Install the {{em}}Getting Started with Sensei LMS{{/em}} course.',
+										'sensei-lms'
+									)
+								),
+								after: (
+									<div>
+										<Button
+											className="sensei-setup-wizard__button"
+											isSecondary
+											onClick={ installSampleCourse }
+											isBusy={ isSampleCourseInstalling }
+											disabled={
+												isSampleCourseInstalling
+											}
+										>
+											{ __(
+												'Install a sample course',
+												'sensei-lms'
+											) }
+										</Button>
+
+										{ sampleCourseError && (
+											<div className="sensei-setup-wizard__error-message">
+												{ __(
+													'The sample course could not be imported. Please try again.',
+													'sensei-lms'
+												) }
+											</div>
+										) }
+									</div>
 								),
 							},
 							{

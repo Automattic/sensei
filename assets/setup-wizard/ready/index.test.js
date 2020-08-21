@@ -1,4 +1,5 @@
-import { fireEvent, render } from '@testing-library/react';
+import { fireEvent, render, act, waitFor } from '@testing-library/react';
+import apiFetch from '@wordpress/api-fetch';
 
 import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 import { Ready } from './index';
@@ -13,6 +14,9 @@ const stepData = {
 jest.mock( '../data/use-setup-wizard-step', () => ( {
 	useSetupWizardStep: jest.fn(),
 } ) );
+
+// Mock apiFetch.
+jest.mock( '@wordpress/api-fetch', () => jest.fn() );
 
 // Mock features data.
 const mockStepData = ( mockData = {} ) => {
@@ -59,12 +63,30 @@ describe( '<Ready />', () => {
 		).toEqual( 'post-new.php?post_type=course' );
 	} );
 
+	it( 'Should have an import content button', () => {
+		const { queryByText } = render( <Ready /> );
+
+		expect(
+			queryByText( 'Import content', {
+				selector: 'a',
+			} ).getAttribute( 'href' )
+		).toEqual( 'admin.php?page=sensei_import' );
+	} );
+
 	it( 'Should have a create your first course link.', () => {
 		const { queryByText } = render( <Ready /> );
 
 		expect(
 			queryByText( /create your first course/ ).getAttribute( 'href' )
 		).toEqual( 'https://senseilms.com/lesson/courses/' );
+	} );
+
+	it( 'Should have a install sample course button', () => {
+		const { queryByText } = render( <Ready /> );
+
+		expect(
+			queryByText( 'Install a sample course', { selector: 'button' } )
+		).toBeTruthy();
 	} );
 
 	it( 'Should log event when clicking to join mailing list', () => {
@@ -93,7 +115,36 @@ describe( '<Ready />', () => {
 		);
 	} );
 
-	it( 'Should log event when clicking to learn more', () => {
+	it( 'Should log event when clicking to import content button', () => {
+		const { queryByText } = render( <Ready /> );
+
+		fireEvent.click( queryByText( 'Import content', { selector: 'a' } ) );
+
+		expect( window.sensei_log_event ).toHaveBeenCalledWith(
+			'setup_wizard_ready_import',
+			undefined
+		);
+	} );
+
+	it( 'Should log event when clicking to install sample course', async () => {
+		const fetchPromise = Promise.resolve( { id: 1 } );
+		apiFetch.mockImplementation( () => fetchPromise );
+
+		const { queryByText } = render( <Ready /> );
+
+		fireEvent.click(
+			queryByText( 'Install a sample course', { selector: 'button' } )
+		);
+
+		expect( window.sensei_log_event ).toHaveBeenCalledWith(
+			'setup_wizard_ready_install_course',
+			undefined
+		);
+
+		await act( () => fetchPromise );
+	} );
+
+	it( 'Should log event when clicking to create the first course', () => {
 		const { queryByText } = render( <Ready /> );
 
 		fireEvent.click( queryByText( 'create your first course.' ) );
@@ -139,5 +190,29 @@ describe( '<Ready />', () => {
 		render( <Ready /> );
 
 		expect( submitMock ).not.toBeCalled();
+	} );
+
+	it( 'Should run sample installation', async () => {
+		window.location.assign = jest.fn();
+
+		apiFetch.mockResolvedValueOnce( { id: 1 } );
+		apiFetch.mockResolvedValueOnce( {
+			status: { status: 'pending' },
+		} );
+		apiFetch.mockResolvedValueOnce( {
+			status: { status: 'completed' },
+		} );
+
+		const { queryByText } = render( <Ready /> );
+
+		fireEvent.click(
+			queryByText( 'Install a sample course', { selector: 'button' } )
+		);
+
+		await waitFor( () => {
+			expect( window.location.assign ).toBeCalledWith(
+				'edit.php?post_type=course'
+			);
+		} );
 	} );
 } );
