@@ -1679,7 +1679,7 @@ class Sensei_Lesson {
 
 					$answers_sorted = $answers;
 					if ( $question_id && count( $answer_order ) > 0 ) {
-						$answers_sorted = $this->get_answers_sorted( $answers, $answer_order );
+						$answers_sorted = Sensei()->question->get_answers_sorted( $answers, $answer_order );
 					}
 
 					foreach ( $answers_sorted as $id => $answer ) {
@@ -1908,7 +1908,7 @@ class Sensei_Lesson {
 	/**
 	 * Get answers ID (text md5).
 	 *
-	 * @param string[] $answer Answer text.
+	 * @param string $answer Answer text.
 	 *
 	 * @return string Answer ID.
 	 */
@@ -1920,54 +1920,6 @@ class Sensei_Lesson {
 		}
 
 		return $answer_id;
-	}
-
-	/**
-	 * Get answers by ID keys.
-	 *
-	 * @param string[] $answers Answers string.
-	 *
-	 * @return string[] Answers with the correct ID keys.
-	 */
-	public function get_answers_by_id( $answers = [] ) {
-		$answers_by_id = [];
-
-		foreach( $answers as $answer ) {
-			$answers_by_id[ $this->get_answer_id( $answer ) ] = $answer;
-		}
-
-		return $answers_by_id;
-	}
-
-	/**
-	 * Get answers sorted.
-	 *
-	 * @param string[]        $answers      Answers string by ID.
-	 * @param string[]|string $answer_order Sorted answers IDs.
-	 *
-	 * @return string[] The sorted answers.
-	 */
-	public function get_answers_sorted( $answers, $answer_order ) {
-		$answers_sorted = [];
-
-		if ( is_string( $answer_order ) ) {
-			$answer_order =  explode( ',', $answer_order );
-		}
-
-		foreach ( $answer_order as $answer_id ) {
-			if ( isset( $answers[ $answer_id ] ) ) {
-				$answers_sorted[ $answer_id ] = $answers[ $answer_id ];
-				unset( $answers[ $answer_id ] );
-			}
-		}
-
-		if ( count( $answers ) > 0 ) {
-			foreach ( $answers as $id => $answer ) {
-				$answers_sorted[ $id ] = $answer;
-			}
-		}
-
-		return $answers_sorted;
 	}
 
 	/**
