@@ -6,6 +6,13 @@ import {
 } from '../../utils/helpers';
 import { AdminFlow } from '../../utils/flows';
 
+/**
+ * According to this github issue https://github.com/smooth-code/jest-puppeteer/issues/324, the default timeout isn't
+ * respected and actions timeout after 500ms which cause a lot of test failures. The below lines are a workaround.
+ */
+const setDefaultOptions = require( 'expect-puppeteer' ).setDefaultOptions;
+setDefaultOptions( { timeout: 30000 } );
+
 async function openSetupWizard() {
 	return AdminFlow.goTo( 'admin.php?page=sensei_setup_wizard' );
 }
@@ -15,7 +22,6 @@ async function stepIsComplete( label ) {
 		'.woocommerce-stepper__step.is-complete',
 		{
 			text: label,
-			timeout: 5000,
 		}
 	);
 }
@@ -73,20 +79,14 @@ describe( 'Setup Wizard', () => {
 			await expect( page ).toMatch( 'Build a Better Sensei LMS' );
 		} );
 
-		it( 'allows opting in', async () => {
-			await expect( page ).toClick( 'label', {
-				text: 'Yes, count me in!',
-			} );
-
+		it( 'marks welcome step done and goes to purpose step', async () => {
 			await expect( page ).toClick(
 				'.sensei-setup-wizard__usage-modal button',
 				{
 					text: 'Continue',
 				}
 			);
-		} );
 
-		it( 'marks welcome step done and goes to purpose step', async () => {
 			await stepIsComplete( 'Welcome' );
 			await stepIsActive( 'Purpose' );
 			await expect( page ).toMatch(
@@ -151,6 +151,10 @@ describe( 'Setup Wizard', () => {
 			await expect( page ).toClick( 'label', {
 				text: 'Sensei LMS Certificates',
 			} );
+
+			await expect( page ).toMatchElement(
+				'.components-checkbox-control__checked'
+			);
 		} );
 
 		it( 'confirms plugin installation', async () => {
@@ -174,7 +178,6 @@ describe( 'Setup Wizard', () => {
 				'.woocommerce-list__item-title',
 				{
 					text: 'Sensei LMS Certificates — Installed',
-					timeout: 5000,
 				}
 			);
 			await expect( page ).toClick( 'button', { text: 'Continue' } );
