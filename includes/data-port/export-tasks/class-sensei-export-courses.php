@@ -40,7 +40,7 @@ class Sensei_Export_Courses
 		$featured      = get_post_meta( $post->ID, '_course_featured', true );
 		$image         = get_the_post_thumbnail_url( $post, 'full' );
 		$video         = get_post_meta( $post->ID, '_course_video_embed', true );
-		$notifications = ! get_post_meta( $post->ID, 'disable_notification', true );
+		$notifications = get_post_meta( $post->ID, 'disable_notification', true );
 		$categories    = get_the_terms( $post->ID, 'course-category' );
 		$modules       = Sensei()->modules->get_course_modules( $post->ID );
 		$lessons       = $this->get_ordered_course_lessons( $post->ID );

@@ -27,7 +27,7 @@ class Sensei_Data_Port_Course_Schema extends Sensei_Data_Port_Schema {
 	const COLUMN_CATEGORIES       = 'categories';
 	const COLUMN_IMAGE            = 'image';
 	const COLUMN_VIDEO            = 'video';
-	const COLUMN_NOTIFICATIONS    = 'notifications';
+	const COLUMN_NOTIFICATIONS    = 'disable notifications';
 
 
 	/**

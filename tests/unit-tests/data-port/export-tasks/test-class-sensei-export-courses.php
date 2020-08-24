@@ -260,9 +260,9 @@ class Sensei_Export_Courses_Tests extends WP_UnitTestCase {
 
 		$this->assertArraySubset(
 			[
-				'featured'      => '1',
-				'video'         => '<iframe>',
-				'notifications' => '1',
+				'featured'              => '1',
+				'video'                 => '<iframe>',
+				'disable notifications' => '0',
 			],
 			$result[0]
 		);

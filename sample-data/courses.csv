@@ -1,4 +1,4 @@
-Id,Course,Slug,Description,Excerpt,"Teacher Username","Teacher Email",Lessons,Modules,Prerequisite,Featured,Categories,Image,Video,Notifications
+Id,Course,Slug,Description,Excerpt,"Teacher Username","Teacher Email",Lessons,Modules,Prerequisite,Featured,Categories,Image,Video,"Disable Notifications"
 2990,"Getting Started with Sensei LMS",getting-started-with-sensei-lms,"<!-- wp:paragraph -->
 <p>Ready to publish your first course with Sensei LMS? This document will help you get started.</p>
 <!-- /wp:paragraph -->
