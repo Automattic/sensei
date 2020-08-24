@@ -320,6 +320,7 @@ class Sensei_Course {
 			'order'            => 'DESC',
 			'exclude'          => $post->ID,
 			'suppress_filters' => 0,
+			'post_status'      => 'any',
 		);
 		$posts_array = get_posts( $post_args );
 
