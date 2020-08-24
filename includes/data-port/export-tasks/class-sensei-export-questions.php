@@ -62,7 +62,7 @@ class Sensei_Export_Questions
 				Schema::COLUMN_STATUS          => $post->post_status,
 				Schema::COLUMN_TYPE            => $question_type,
 				Schema::COLUMN_GRADE           => $grade,
-				Schema::COLUMN_RANDOM_ORDER    => 'multiple-choice' === $question_type && $meta['_random_order'] ? 1 : '',
+				Schema::COLUMN_RANDOM_ORDER    => 'multiple-choice' === $question_type && 'yes' === $meta['_random_order'] ? 1 : 0,
 				Schema::COLUMN_MEDIA           => $this->get_media( $meta['_question_media'] ),
 				Schema::COLUMN_CATEGORIES      => $categories ? Sensei_Data_Port_Utilities::serialize_term_list( $categories ) : '',
 				Schema::COLUMN_ANSWER          => '',

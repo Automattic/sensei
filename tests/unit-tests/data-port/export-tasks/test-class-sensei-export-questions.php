@@ -170,7 +170,7 @@ class Sensei_Export_Questions_Tests extends WP_UnitTestCase {
 				'question_type'          => 'multiple-choice',
 				'question_right_answers' => [ 'Right answer' ],
 				'question_wrong_answers' => [ 'Wrong 1', 'Wrong,comma', 'Wrong,comma,"quote"' ],
-				'random answer order'    => '1',
+				'random_order'           => 'no',
 			]
 		);
 
@@ -178,7 +178,27 @@ class Sensei_Export_Questions_Tests extends WP_UnitTestCase {
 
 		$this->assertArraySubset(
 			[
-				'answer' => 'Right:Right answer,Wrong:Wrong 1,"Wrong:Wrong,comma","Wrong:Wrong,comma,\"quote\""',
+				'answer'              => 'Right:Right answer,Wrong:Wrong 1,"Wrong:Wrong,comma","Wrong:Wrong,comma,\"quote\""',
+				'random answer order' => '0',
+			],
+			$result[0]
+		);
+	}
+
+	public function testMultipleChoiceRandomOrder() {
+		$this->factory->question->create(
+			[
+				'quiz_id'       => null,
+				'question_type' => 'multiple-choice',
+				'random_order'  => 'yes',
+			]
+		);
+
+		$result = $this->export();
+
+		$this->assertArraySubset(
+			[
+				'random answer order' => '1',
 			],
 			$result[0]
 		);
