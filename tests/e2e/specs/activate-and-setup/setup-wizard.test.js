@@ -6,6 +6,13 @@ import {
 } from '../../utils/helpers';
 import { AdminFlow } from '../../utils/flows';
 
+/**
+ * According to this github issue https://github.com/smooth-code/jest-puppeteer/issues/324, the default timeout isn't
+ * respected and actions timeout after 500ms which cause a lot of test failures. The below lines are a workaround.
+ */
+const setDefaultOptions = require( 'expect-puppeteer' ).setDefaultOptions;
+setDefaultOptions( { timeout: 30000 } );
+
 async function openSetupWizard() {
 	return AdminFlow.goTo( 'admin.php?page=sensei_setup_wizard' );
 }
@@ -144,6 +151,10 @@ describe( 'Setup Wizard', () => {
 			await expect( page ).toClick( 'label', {
 				text: 'Sensei LMS Certificates',
 			} );
+
+			await expect( page ).toMatchElement(
+				'.components-checkbox-control__checked'
+			);
 		} );
 
 		it( 'confirms plugin installation', async () => {
