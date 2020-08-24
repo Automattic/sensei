@@ -73,20 +73,14 @@ describe( 'Setup Wizard', () => {
 			await expect( page ).toMatch( 'Build a Better Sensei LMS' );
 		} );
 
-		it( 'allows opting in', async () => {
-			await expect( page ).toClick( 'label', {
-				text: 'Yes, count me in!',
-			} );
-
+		it( 'marks welcome step done and goes to purpose step', async () => {
 			await expect( page ).toClick(
 				'.sensei-setup-wizard__usage-modal button',
 				{
 					text: 'Continue',
 				}
 			);
-		} );
 
-		it( 'marks welcome step done and goes to purpose step', async () => {
 			await stepIsComplete( 'Welcome' );
 			await stepIsActive( 'Purpose' );
 			await expect( page ).toMatch(
