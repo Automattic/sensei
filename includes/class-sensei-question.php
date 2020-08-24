@@ -1269,7 +1269,7 @@ class Sensei_Question {
 	public function get_answers_by_id( $answers = [] ) {
 		$answers_by_id = [];
 
-		foreach( $answers as $answer ) {
+		foreach ( $answers as $answer ) {
 			$answers_by_id[ Sensei()->lesson->get_answer_id( $answer ) ] = $answer;
 		}
 
@@ -1288,7 +1288,7 @@ class Sensei_Question {
 		$answers_sorted = [];
 
 		if ( is_string( $answer_order ) ) {
-			$answer_order =  explode( ',', $answer_order );
+			$answer_order = explode( ',', $answer_order );
 		}
 
 		foreach ( $answer_order as $answer_id ) {
