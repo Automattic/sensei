@@ -169,8 +169,9 @@ class Sensei_Export_Questions_Tests extends WP_UnitTestCase {
 				'quiz_id'                => null,
 				'question_type'          => 'multiple-choice',
 				'question_right_answers' => [ 'Right answer' ],
-				'question_wrong_answers' => [ 'Wrong 1', 'Wrong,comma', 'Wrong,comma,"quote"' ],
+				'question_wrong_answers' => [ 'Wrong,comma', 'Wrong 1', 'Wrong,comma,"quote"' ],
 				'random_order'           => 'no',
+				'answer_order'           => 'ac70b9a3f24b5b657826b567057169a2,b13d55d1ff11d676253fa5e4b0517bd7,030fd8dc91a34a0248eef3a515560a00,89dc5589bfebac1468e8823afd5a4861'
 			]
 		);
 
@@ -178,7 +179,7 @@ class Sensei_Export_Questions_Tests extends WP_UnitTestCase {
 
 		$this->assertArraySubset(
 			[
-				'answer'              => 'Right:Right answer,Wrong:Wrong 1,"Wrong:Wrong,comma","Wrong:Wrong,comma,\"quote\""',
+				'answer'              => 'Wrong:Wrong 1,"Wrong:Wrong,comma","Wrong:Wrong,comma,\"quote\"",Right:Right answer',
 				'random answer order' => '0',
 			],
 			$result[0]
