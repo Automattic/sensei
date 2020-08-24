@@ -15,7 +15,6 @@ async function stepIsComplete( label ) {
 		'.woocommerce-stepper__step.is-complete',
 		{
 			text: label,
-			timeout: 5000,
 		}
 	);
 }
@@ -168,7 +167,6 @@ describe( 'Setup Wizard', () => {
 				'.woocommerce-list__item-title',
 				{
 					text: 'Sensei LMS Certificates — Installed',
-					timeout: 5000,
 				}
 			);
 			await expect( page ).toClick( 'button', { text: 'Continue' } );
