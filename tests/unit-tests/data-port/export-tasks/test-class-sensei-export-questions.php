@@ -111,7 +111,7 @@ class Sensei_Export_Questions_Tests extends WP_UnitTestCase {
 		);
 	}
 
-	public function testQuestionMediaExported() {
+	public function testQuestionImageMediaExported() {
 
 		$image_id = $this->factory->attachment->create(
 			[
@@ -132,6 +132,32 @@ class Sensei_Export_Questions_Tests extends WP_UnitTestCase {
 		$this->assertArraySubset(
 			[
 				'media' => 'http://example.org/wp-content/uploads/question-img.jpg',
+			],
+			$result[0]
+		);
+	}
+
+	public function testQuestionAudioMediaExported() {
+
+		$image_id = $this->factory->attachment->create(
+			[
+				'file'           => 'question-sound.mp3',
+				'post_mime_type' => 'audio/mp3',
+			]
+		);
+		$this->factory->question->create(
+			[
+				'quiz_id'        => null,
+				'question_type'  => 'single-line',
+				'question_media' => $image_id,
+			]
+		);
+
+		$result = $this->export();
+
+		$this->assertArraySubset(
+			[
+				'media' => 'http://example.org/wp-content/uploads/question-sound.mp3',
 			],
 			$result[0]
 		);

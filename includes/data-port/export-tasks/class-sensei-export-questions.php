@@ -63,7 +63,7 @@ class Sensei_Export_Questions
 				Schema::COLUMN_TYPE            => $question_type,
 				Schema::COLUMN_GRADE           => $grade,
 				Schema::COLUMN_RANDOM_ORDER    => 'multiple-choice' === $question_type && $meta['_random_order'] ? 1 : '',
-				Schema::COLUMN_MEDIA           => ! empty( $meta['_question_media'] ) ? wp_get_attachment_image_url( $meta['_question_media'], 'full' ) : '',
+				Schema::COLUMN_MEDIA           => $this->get_media( $meta['_question_media'] ),
 				Schema::COLUMN_CATEGORIES      => $categories ? Sensei_Data_Port_Utilities::serialize_term_list( $categories ) : '',
 				Schema::COLUMN_ANSWER          => '',
 				Schema::COLUMN_FEEDBACK        => $meta['_answer_feedback'],
@@ -75,6 +75,25 @@ class Sensei_Export_Questions
 			],
 			$this->get_answer_fields( $question_type, $meta )
 		);
+	}
+
+	/**
+	 * Get media.
+	 *
+	 * @param int $attachment Attachment ID.
+	 *
+	 * @return string Media path.
+	 */
+	private function get_media( $attachment ) {
+		if ( empty( $attachment ) ) {
+			return '';
+		}
+
+		if ( wp_attachment_is_image( $attachment ) ) {
+			return wp_get_attachment_image_url( $attachment, 'full' );
+		}
+
+		return wp_get_attachment_url( $attachment );
 	}
 
 	/**
