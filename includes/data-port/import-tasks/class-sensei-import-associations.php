@@ -390,8 +390,12 @@ class Sensei_Import_Associations
 		$completed            = 0;
 
 		if ( isset( $this->total_tasks ) ) {
-			$remaining = $this->get_remaining_tasks();
-			$completed = floor( ( ( $this->total_tasks - $remaining ) / $this->total_tasks ) * $artificial_task_size );
+			if ( 0 === $this->total_tasks ) {
+				$completed = $artificial_task_size;
+			} else {
+				$remaining = $this->get_remaining_tasks();
+				$completed = floor( ( ( $this->total_tasks - $remaining ) / $this->total_tasks ) * $artificial_task_size );
+			}
 		}
 
 		return [
