@@ -179,7 +179,7 @@ class Sensei_Export_Questions_Tests extends WP_UnitTestCase {
 		$this->assertArraySubset(
 			[
 				'answer'              => 'Right:Right answer,Wrong:Wrong 1,"Wrong:Wrong,comma","Wrong:Wrong,comma,\"quote\""',
-				'random answer order' => '',
+				'random answer order' => '0',
 			],
 			$result[0]
 		);
