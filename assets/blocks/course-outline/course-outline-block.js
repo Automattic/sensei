@@ -27,6 +27,6 @@ registerBlockType( 'sensei-lms/course-outline', {
 		);
 	},
 	save() {
-		return 'Outline Frontend!';
+		return <InnerBlocks.Content />;
 	},
 } );
