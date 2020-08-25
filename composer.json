@@ -11,5 +11,31 @@
 		"sirbrillig/phpcs-variable-analysis": "2.8.3",
 		"sirbrillig/phpcs-no-get-current-user": "1.0.1"
 	},
-	"prefer-stable": true
+	"prefer-stable": true,
+	"archive": {
+		"exclude": [
+			"/*",
+			"!/assets/*/*.js",
+			"!/assets/*/*/*.js",
+			"!/assets/*/*/*/*.js",
+			"!/assets/dist",
+			"!/assets/vendor",
+			"!/sample-data",
+			"!/changelog.txt",
+			"!/CONTRIBUTING.md",
+			"!/LICENSE",
+			"!/includes",
+			"!/lang",
+			"!/readme.txt",
+			"!/templates",
+			"!/uninstall.php",
+			"!/widgets",
+			"!/sensei-lms.php",
+			"!/wpml-config.xml",
+			".DS_Store",
+			".*",
+			"*.test.js",
+			"/assets/tests-helper/*.js"
+		]
+	}
 }

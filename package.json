@@ -15,7 +15,6 @@
   "bugs": {
     "url": "https://github.com/Automattic/sensei/issues"
   },
-  "main": "gulpfile.js",
   "dependencies": {
     "@woocommerce/components": "4.0.0",
     "@wordpress/api-fetch": "3.18.0",
@@ -49,13 +48,10 @@
     "buffer": "5.6.0",
     "chownr": "2.0.0",
     "cross-env": "7.0.2",
-    "del": "5.1.0",
     "eslint": "7.6.0",
     "eslint-config-prettier": "6.11.0",
     "extract-zip": "2.0.1",
     "gettext-parser": "4.0.4",
-    "gulp": "4.0.2",
-    "gulp-zip": "5.0.2",
     "husky": "4.2.5",
     "jsdoc": "3.6.5",
     "lint-staged": "10.2.11",
@@ -63,9 +59,9 @@
     "prettier": "npm:wp-prettier@2.0.5",
     "pump": "3.0.0",
     "puppeteer-core": "npm:puppeteer-core@3.0.0",
+    "react-test-renderer": "16.13.1",
     "tar-fs": "2.1.0",
     "unbzip2-stream": "1.4.3",
-    "react-test-renderer": "16.13.1",
     "wp-hookdoc": "0.2.0"
   },
   "resolutions": {
@@ -74,12 +70,16 @@
     "tar-fs": "2.1.0"
   },
   "scripts": {
-    "build": "cross-env NODE_ENV=production npx calypso-build",
+    "build": "npm run build:assets && npm run archive",
+    "build:assets": "cross-env NODE_ENV=production npx calypso-build",
     "build:docs": "rm -rf hookdocs/ && jsdoc -c hookdoc-conf.json",
+    "build:vendor": "cp ./node_modules/select2/dist/css/select2.min.css ./node_modules/select2/dist/js/select2.full.js ./node_modules/select2/dist/js/select2.full.min.js ./assets/vendor/select2",
+    "archive": "composer archive --file=$npm_package_name --format=zip",
+    "postarchive": "rm -rf $npm_package_name && unzip $npm_package_name.zip -d $npm_package_name && rm $npm_package_name.zip && zip -r $npm_package_name.zip $npm_package_name && rm -rf $npm_package_name",
     "i18n:clean": "rm -f ./lang/tmp-*",
     "i18n:js": "npx babel --config-file ./babel.makepot.js -o ./lang/tmp-babel.log assets --ignore \"**/*.test.js\",\"./assets/dist\",\"./assets/vendor\",\"./build\"",
     "i18n:php": "wp i18n make-pot --merge=lang/tmp-sensei-lms-js.pot --skip-js --exclude=build --headers='{\"Last-Translator\":null,\"Language-Team\":null,\"Report-Msgid-Bugs-To\":\"https://wordpress.org/support/plugin/sensei-lms\"}' . lang/sensei-lms.pot",
-    "i18n:build": "npm run build && npm run i18n:clean && npm run i18n:js && npm run i18n:php && node ./scripts/pot-dist-references.js && npm run i18n:clean",
+    "i18n:build": "npm run build:assets && npm run i18n:clean && npm run i18n:js && npm run i18n:php && node ./scripts/pot-dist-references.js && npm run i18n:clean",
     "format-js": "wp-scripts format-js",
     "lint-css": "wp-scripts lint-style **/*.scss",
     "lint-css:fix": "npm run lint-css -- --fix",
@@ -114,5 +114,8 @@
     "*.php": [
       "scripts/linter-new-php"
     ]
+  },
+  "config": {
+    "wp_org_slug": "sensei-lms"
   }
 }
