@@ -11,6 +11,7 @@ registerBlockType( 'sensei-lms/course-outline', {
 	supports: {
 		html: false,
 		customClassName: false,
+		multiple: false,
 	},
 	edit( { className } ) {
 		return (
