@@ -27,6 +27,10 @@ class Sensei_Course_Outline_Block {
 	 * @access private
 	 */
 	public function enqueue_assets() {
+		if ( 'course' !== get_post_type() ) {
+			return;
+		}
+
 		Sensei()->assets->enqueue( 'sensei-course-outline-script', 'blocks/course-outline/index.js' );
 		Sensei()->assets->enqueue( 'sensei-course-outline-style', 'blocks/course-outline/style.css' );
 	}
