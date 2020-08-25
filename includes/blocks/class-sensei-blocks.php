@@ -40,8 +40,10 @@ class Sensei_Blocks {
 
 	/**
 	 * Initialize the class.
+	 *
+	 * @param Sensei_Main $sensei_main_instance Sensei main class instance.
 	 */
-	public function init() {
+	public function init( $sensei_main_instance ) {
 		// Skip if Gutenberg is not available.
 		if ( ! function_exists( 'register_block_type' ) ) {
 			return;
@@ -50,7 +52,9 @@ class Sensei_Blocks {
 		add_filter( 'block_categories', [ $this, 'sensei_block_categories' ], 10, 2 );
 
 		// Init blocks.
-		new Sensei_Course_Outline_Block();
+		if ( $sensei_main_instance->feature_flags->is_enabled( 'course_outline' ) ) {
+			new Sensei_Course_Outline_Block();
+		}
 	}
 
 	/**
