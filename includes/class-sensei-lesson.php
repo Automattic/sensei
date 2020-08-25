@@ -1679,19 +1679,7 @@ class Sensei_Lesson {
 
 					$answers_sorted = $answers;
 					if ( $question_id && count( $answer_order ) > 0 ) {
-						$answers_sorted = array();
-						foreach ( $answer_order as $answer_id ) {
-							if ( isset( $answers[ $answer_id ] ) ) {
-								$answers_sorted[ $answer_id ] = $answers[ $answer_id ];
-								unset( $answers[ $answer_id ] );
-							}
-						}
-
-						if ( count( $answers ) > 0 ) {
-							foreach ( $answers as $id => $answer ) {
-								$answers_sorted[ $id ] = $answer;
-							}
-						}
+						$answers_sorted = Sensei()->question->get_answers_sorted( $answers, $answer_order );
 					}
 
 					foreach ( $answers_sorted as $id => $answer ) {
@@ -1917,8 +1905,14 @@ class Sensei_Lesson {
 		die();
 	}
 
+	/**
+	 * Get answers ID (text md5).
+	 *
+	 * @param string $answer Answer text.
+	 *
+	 * @return string Answer ID.
+	 */
 	public function get_answer_id( $answer = '' ) {
-
 		$answer_id = '';
 
 		if ( $answer ) {
@@ -1926,7 +1920,6 @@ class Sensei_Lesson {
 		}
 
 		return $answer_id;
-
 	}
 
 	/**

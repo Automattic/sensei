@@ -110,20 +110,26 @@ class Sensei_Export_Questions
 
 		switch ( $question_type ) {
 			case 'multiple-choice':
+				$answers_right = Sensei()->question->get_answers_by_id( (array) $meta['_question_right_answer'] );
+				$answers_wrong = Sensei()->question->get_answers_by_id( $meta['_question_wrong_answers'] );
+
 				$answers_right = array_map(
 					function( $value ) {
 						return 'Right:' . $value;
 					},
-					(array) $meta['_question_right_answer']
+					$answers_right
 				);
 				$answers_wrong = array_map(
 					function( $value ) {
 						return 'Wrong:' . $value;
 					},
-					$meta['_question_wrong_answers']
+					$answers_wrong
 				);
 
-				$columns[ Schema::COLUMN_ANSWER ] = Sensei_Data_Port_Utilities::serialize_list( array_merge( $answers_right, $answers_wrong ) );
+				$answers = array_merge( $answers_right, $answers_wrong );
+				$answers = Sensei()->question->get_answers_sorted( $answers, $meta['_answer_order'] );
+
+				$columns[ Schema::COLUMN_ANSWER ] = Sensei_Data_Port_Utilities::serialize_list( $answers );
 
 				break;
 			case 'boolean':
