@@ -150,7 +150,7 @@ class Sensei_Data_Port_Utilities {
 		if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
 			return new WP_Error(
 				'sensei_data_port_attachment_failure',
-				__( 'No attachment with the specified file name was found.', 'sensei-lms' )
+				__( 'Error encountered while retrieving the attachment from the provided URL.', 'sensei-lms' )
 			);
 		}
 
