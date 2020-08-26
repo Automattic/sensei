@@ -86,7 +86,6 @@
     "lint-js": "wp-scripts lint-js --ext js,jsx assets",
     "lint-js:fix": "npm run lint-js -- --fix",
     "lint-pkg-json": "wp-scripts lint-pkg-json",
-    "package": "gulp package",
     "run-phpcs": "./vendor/bin/phpcs --encoding=utf-8",
     "start": "calypso-build --watch",
     "test": "npm run test-php && npm run test-js",
