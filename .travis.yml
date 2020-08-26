@@ -7,7 +7,7 @@ e2e_defaults: &e2e_defaults
   language: node_js
   node_js: '10.17'
   script:
-    - npm run build
+    - npm run build:assets
     - npm run e2e-docker:up
     - npm run test:e2e
   after_script:
@@ -102,7 +102,7 @@ jobs:
       language: node_js
       node_js: '10.17'
       script:
-        - npm run build
+        - npm run build:assets
     - stage: test
       php: 7.2
       script:
