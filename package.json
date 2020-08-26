@@ -45,6 +45,7 @@
     "@wordpress/icons": "2.4.0",
     "@wordpress/jest-preset-default": "6.2.0",
     "@wordpress/postcss-themes": "2.6.0",
+    "@wordpress/prettier-config": "0.3.0",
     "@wordpress/scripts": "12.1.1",
     "buffer": "5.6.0",
     "chownr": "2.0.0",
@@ -63,9 +64,9 @@
     "prettier": "npm:wp-prettier@2.0.5",
     "pump": "3.0.0",
     "puppeteer-core": "npm:puppeteer-core@3.0.0",
+    "react-test-renderer": "16.13.1",
     "tar-fs": "2.1.0",
     "unbzip2-stream": "1.4.3",
-    "react-test-renderer": "16.13.1",
     "wp-hookdoc": "0.2.0"
   },
   "resolutions": {
