@@ -12,7 +12,7 @@ It's based on [Jest](https://jestjs.io/) + [Puppeteer](https://pptr.dev/). If it
 
 2) Run the `npm install` to install the project dependencies.
 
-3) Run `npm run build` to build the project.
+3) Run `npm run build:assets` to build the project.
 
 4) Run `npm run e2e-docker:up` to create a docker container with the env to run the tests.
 

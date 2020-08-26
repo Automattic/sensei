@@ -1,4 +1,4 @@
-Contributing to Sensei
+Contributing to Sensei LMS
 ===
 
 Firstly, thanks for even thinking about contributing. You're awesome!
@@ -21,7 +21,7 @@ Unit tests can be run locally. Please see our [test instructions](https://github
 
 ## Javascript and CSS
 - Javascript, JSX and SCSS files (using [SASS](https://sass-lang.com/documentation/file.SASS_REFERENCE.html)) need to be compiled before using the plugin.
-- The command `npm run build` generates production-ready versions of these files. 
+- The command `npm run build:assets` generates production-ready versions of these files. 
 - For development, the command `npm run start` will create files with source maps for debugging support, and keep watching the source files for changes.
 - Javascript linting and auto formatting is applied by pre-commit hooks. If absolutely necessary, you can skip these by using `git commit --no-verify`. 
 
@@ -30,4 +30,4 @@ Unit tests can be run locally. Please see our [test instructions](https://github
 Please follow further development updates at [https://senseilms.com/blog/](https://senseilms.com/blog/)
 
 
-*We appreciate all your efforts. Your contributions make Sensei even better!*
+*We appreciate all your efforts. Your contributions make Sensei LMS even better!*
