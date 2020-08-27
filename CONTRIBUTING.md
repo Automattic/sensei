@@ -3,7 +3,7 @@ Contributing to Sensei LMS
 
 Firstly, thanks for even thinking about contributing. You're awesome!
 
-To make things easier we've created these guidelines:
+We recommend checking out [Setting Up Your Development Environment](https://github.com/Automattic/sensei/wiki/Setting-Up-Your-Development-Environment) to get the necessary tools in place before proceeding. To make things easier we've created these guidelines:
 
 ## Issues:
 - When opening an issue please keep it to one bug / enhancement / question etc. this to simplify the discussion.
