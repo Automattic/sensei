@@ -1,5 +1,42 @@
 *** Changelog ***
 
+2020.08.27 - version 3.5.0
+* New: Exporter
+    * Add error handling to exporter [#3541](https://github.com/Automattic/sensei/pull/3541)
+    * Export multiple choice answers in correct order [#3558](https://github.com/Automattic/sensei/pull/3558)
+    * Fix "Randomise answer order" checkbox being exported incorrectly [#3550](https://github.com/Automattic/sensei/pull/3550)
+    * Fix incorrect handling of media when exporting questions [#3551](https://github.com/Automattic/sensei/pull/3551)
+    * Add content types to export page [#3412](https://github.com/Automattic/sensei/pull/3412)
+    * Add export page [#3409](https://github.com/Automattic/sensei/pull/3409)
+    * Add exporter REST API and job [#3442](https://github.com/Automattic/sensei/pull/3442)
+    * Add progress and results pages [#3413](https://github.com/Automattic/sensei/pull/3413)
+    * Change export progress Cancel link to button [#3516](https://github.com/Automattic/sensei/pull/3516)
+    * Export courses CSV [#3462](https://github.com/Automattic/sensei/pull/3462)
+    * Export lessons CSV [#3513](https://github.com/Automattic/sensei/pull/3513)
+    * Export list of lessons in courses CSV and remove Course column from lessons CSV [#3531](https://github.com/Automattic/sensei/pull/3531)
+    * Export questions CSV [#3506](https://github.com/Automattic/sensei/pull/3506)
+    * Export the correct order when lessons belong to modules [#3537](https://github.com/Automattic/sensei/pull/3537)
+    * Fix reordering of checkboxes in export page on Safari [#3518](https://github.com/Automattic/sensei/pull/3518)
+    * Log when an export job completes [#3526](https://github.com/Automattic/sensei/pull/3526)
+    * Log when the Export submenu is clicked [#3528](https://github.com/Automattic/sensei/pull/3528)
+    * Log when users click the Continue button in exporter [#3527](https://github.com/Automattic/sensei/pull/3527)
+    * Make the error more descriptive when the attachment fetch request fails [#3559](https://github.com/Automattic/sensei/pull/3559)
+    * Merge data port model with import model [#3521](https://github.com/Automattic/sensei/pull/3521)
+    * Package exported CSVs into a ZIP file when possible [#3519](https://github.com/Automattic/sensei/pull/3519)
+    * Remove data port task clean_up methods [#3525](https://github.com/Automattic/sensei/pull/3525)
+    * Reverse the exported value of course notifications [#3543](https://github.com/Automattic/sensei/pull/3543)
+    * Update copy used in exporter [#3529](https://github.com/Automattic/sensei/pull/3529)
+* Fixes: Importer
+    * Run import job batches in polling requests [#3455](https://github.com/Automattic/sensei/pull/3455)
+    * Use Lessons column in courses CSV to associate courses with lessons when importing [#3536](https://github.com/Automattic/sensei/pull/3536)
+    * Fix division by zero when there are no associated import tasks [#3557](https://github.com/Automattic/sensei/pull/3557)
+    * Fix duplicate content sometimes being imported [#3538](https://github.com/Automattic/sensei/pull/3538)
+* Fix: Error in setup wizard when navigating to a previous step [#3533](https://github.com/Automattic/sensei/pull/3533)
+* New: Add sample course installation to the Setup Wizard [#3507](https://github.com/Automattic/sensei/pull/3507)
+* Tweak: Redirect to sample course after importing it [#3545](https://github.com/Automattic/sensei/pull/3545)
+* New: Use preloading for initial requests in importer and setup wizard [#3446](https://github.com/Automattic/sensei/pull/3446)
+* Tweak: Show courses with any status in Course Prerequisite dropdown [#3555](https://github.com/Automattic/sensei/pull/3555)
+
 2020.08.11 - version 3.4.1
 * Fix: Question editor compatibility with WordPress 5.5 [#3510](https://github.com/Automattic/sensei/pull/3510)
 * Fix: Trigger setting updated events only when changed [#3503](https://github.com/Automattic/sensei/pull/3503)
