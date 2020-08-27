@@ -1,7 +1,7 @@
 import { loginUser } from '@wordpress/e2e-test-utils';
 import { adminUrl } from './helpers';
 
-const isSessionCookieSet = function( cookies ) {
+const isSessionCookieSet = function ( cookies ) {
 	let result = false;
 
 	if ( ! Array.isArray( cookies ) ) {
