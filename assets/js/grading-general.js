@@ -294,6 +294,13 @@ jQuery(document).ready( function( $ ) {
 			.addClass( 'auto-grade' )
 			.removeClass( 'manual-grade' );
 		jQuery.fn.autoGrade();
+
+		// Log event: when a quiz is auto-graded.
+    var event_properties = {
+      question_count : jQuery( '.question_box' ).length
+    };
+    sensei_log_event( 'grading_quiz_auto_grade', event_properties );
+
 	});
 
 	/***************************************************************************************************
