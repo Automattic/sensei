@@ -44,6 +44,7 @@
     "@wordpress/icons": "2.4.0",
     "@wordpress/jest-preset-default": "6.2.0",
     "@wordpress/postcss-themes": "2.6.0",
+    "@wordpress/prettier-config": "0.3.0",
     "@wordpress/scripts": "12.1.1",
     "buffer": "5.6.0",
     "chownr": "2.0.0",
