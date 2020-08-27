@@ -279,6 +279,13 @@ jQuery(document).ready( function( $ ) {
 	 */
 	jQuery( '.sensei-grading-main .buttons' ).on( 'click', '.reset-button', function() {
 		jQuery.fn.resetGrades();
+
+		// Log event: when quiz grades are reset.
+		var event_properties = {
+		  question_count : jQuery( '.question_box' ).length
+    };
+		sensei_log_event( 'grading_quiz_reset', event_properties );
+
 	});
 
 	/**
