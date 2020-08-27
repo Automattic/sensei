@@ -224,7 +224,7 @@ class Sensei_Course {
 		 * @param {int}    $course_id               Course post ID.
 		 * @param {int}    $user_id                 User ID if user is logged in.
 		 * @param {string} $context                 Context that we're checking for course content
-		 *                                        access (`lesson`, `quiz`, or `module`).
+		 *                                          access (`lesson`, `quiz`, or `module`).
 		 */
 		return apply_filters( 'sensei_can_access_course_content', $can_view_course_content, $course_id, $user_id, $context );
 	}
@@ -285,8 +285,9 @@ class Sensei_Course {
 		 * Sets up the meta fields saved on course save in WP admin.
 		 *
 		 * @since 2.0.0
+		 * @hook sensei_course_meta_fields
 		 *
-		 * @param string[] $course_meta_fields Array of meta field key names to save on course save.
+		 * @param {string[]} $course_meta_fields Array of meta field key names to save on course save.
 		 */
 		$this->meta_fields = apply_filters( 'sensei_course_meta_fields', array( 'course_prerequisite', 'course_featured', 'course_video_embed' ) );
 	}
@@ -539,10 +540,11 @@ class Sensei_Course {
 		 * Action before saving the meta value.
 		 *
 		 * @since 2.2.0
+		 * @hook sensei_course_meta_before_save
 		 *
-		 * @param int    $post_id        The course ID.
-		 * @param string $meta_key       The meta to be saved.
-		 * @param mixed  $new_meta_value The meta value to be saved.
+		 * @param {int}    $post_id        Course ID.
+		 * @param {string} $meta_key       The meta to be saved.
+		 * @param {mixed}  $new_meta_value The meta value to be saved.
 		 */
 		do_action( 'sensei_course_meta_before_save', $post_id, $meta_key, $new_meta_value );
 
@@ -553,11 +555,12 @@ class Sensei_Course {
 		 * save functionality for specific meta.
 		 *
 		 * @since 2.2.0
+		 * @hook sensei_course_meta_default_save
 		 *
-		 * @param bool   $do_save        Whether or not to do the default save.
-		 * @param int    $post_id        The course ID.
-		 * @param string $meta_key       The meta to be saved.
-		 * @param mixed  $new_meta_value The meta value to be saved.
+		 * @param {bool}   $do_save        Whether or not to do the default save.
+		 * @param {int}    $post_id        The course ID.
+		 * @param {string} $meta_key       The meta to be saved.
+		 * @param {mixed}  $new_meta_value The meta value to be saved.
 		 */
 		if ( apply_filters( 'sensei_course_meta_default_save', true, $post_id, $meta_key, $new_meta_value ) ) {
 			// Update meta field with the new value
@@ -1031,11 +1034,12 @@ class Sensei_Course {
 					 *
 					 * @since 1.1.0
 					 * @since 1.12.0 Added $course_id, $width, and $height.
+					 * @hook sensei_course_placeholder_image_url
 					 *
-					 * @param string $img_html  Course image HTML.
-					 * @param int    $course_id Course ID.
-					 * @param int    $width     Requested image width.
-					 * @param int    $height    Requested image height.
+					 * @param {string} $img_html  Course image HTML.
+					 * @param {int}    $course_id Course ID.
+					 * @param {int}    $width     Requested image width.
+					 * @param {int}    $height    Requested image height.
 					 */
 					$img_html         = apply_filters( 'sensei_course_placeholder_image_url', '<img src="http://placehold.it/' . $width . 'x' . $height . '" class="woo-image thumbnail alignleft" />', $course_id, $width, $height );
 					$used_placeholder = true;
@@ -1048,12 +1052,13 @@ class Sensei_Course {
 		 * Filter the HTML for the course image. If not blank, this will be surrounded with an anchor tag linking to the course.
 		 *
 		 * @since 1.12.0
+		 * @hook sensei_course_image_html
 		 *
-		 * @param string $img_html         Course image HTML.
-		 * @param int    $course_id        Course ID.
-		 * @param int    $width            Requested image width.
-		 * @param int    $height           Requested image height.
-		 * @param bool   $used_placeholder True if placeholder was used in the generation of the image HTML.
+		 * @param {string} $img_html         Course image HTML.
+		 * @param {int}    $course_id        Course ID.
+		 * @param {int}    $width            Requested image width.
+		 * @param {int}    $height           Requested image height.
+		 * @param {bool}   $used_placeholder True if placeholder was used in the generation of the image HTML.
 		 */
 		$img_html = apply_filters( 'sensei_course_image_html', $img_html, $course_id, $width, $height, $used_placeholder );
 
@@ -1094,7 +1099,20 @@ class Sensei_Course {
 			'fields'           => 'ids',
 		);
 
-		// Allow WP to generate the complex final query, just shortcut to only do an overall count
+		/**
+		 * Allow WP to generate the complex final query, just shortcut to only do an overall count.
+		 *
+		 * @hook sensei_course_count
+		 *
+		 * @param array {$post_args} {
+		 *     Arguments to retrieve posts.
+		 *
+		 *     @type {string} $post_type        Post type.
+		 *     @type {int}    $posts_per_page   Number of posts to show per page.
+		 *     @type {string} $post_status      Post status.
+		 *     @type {bool}   $suppress_filters Whether to suppress filters.
+		 *     @type {string} $fields           Which fields to return.
+		 */
 		$courses_query = new WP_Query( apply_filters( 'sensei_course_count', $post_args ) );
 
 		return count( $courses_query->posts );
@@ -1164,8 +1182,10 @@ class Sensei_Course {
 		 *
 		 * Returns all lessons for a given course
 		 *
-		 * @param array $lessons
-		 * @param int $course_id
+		 * @hook sensei_course_get_lessons
+		 *
+		 * @param {array} $lessons   Lessons.
+		 * @param {int}   $course_id Course ID.
 		 */
 		$lessons = apply_filters( 'sensei_course_get_lessons', $lessons, $course_id );
 
@@ -1412,14 +1432,26 @@ class Sensei_Course {
 
 		$manage = ( $user->ID == get_current_user_id() ) ? true : false;
 
+		/**
+		 * Fires before displaying a learner's courses.
+		 *
+		 * @hook sensei_before_learner_course_content
+		 *
+		 * @param {WP_User} $user User.
+		 */
 		do_action( 'sensei_before_learner_course_content', $user );
 
 		// Build Output HTML
 		$complete_html = $active_html = '';
 
 		if ( is_a( $user, 'WP_User' ) ) {
-
-			// Allow action to be run before My Courses content has loaded
+			/**
+			 * Fires before My Courses content has loaded.
+			 *
+			 * @hook sensei_before_my_courses
+			 *
+			 * @param {int} $user_id User ID.
+			 */
 			do_action( 'sensei_before_my_courses', $user->ID );
 
 			// Logic for Active and Completed Courses
@@ -1680,9 +1712,8 @@ class Sensei_Course {
 								. '">' . esc_html__( 'View results', 'sensei-lms' )
 								. '</a>';
 						}
-						/**
-						 * Filter documented in Sensei_Course::the_course_action_buttons
-						 */
+
+						/** This filter is documented in Sensei_Course::the_course_action_buttons */
 						$complete_html .= apply_filters( 'sensei_results_links', $results_link, $course_item->ID );
 						$complete_html .= '</p>';
 
@@ -1738,11 +1769,14 @@ class Sensei_Course {
 		}
 
 		ob_start();
-		?>
 
-		<?php do_action( 'sensei_before_user_courses' ); ?>
+		/**
+		 * Fires before displaying My Courses content.
+		 *
+		 * @hook sensei_before_user_courses
+		 */
+		do_action( 'sensei_before_user_courses' );
 
-		<?php
 		if ( $manage && ( ! isset( Sensei()->settings->settings['messages_disable'] ) || ! Sensei()->settings->settings['messages_disable'] ) ) {
 			?>
 			<p class="my-messages-link-container">
@@ -1761,9 +1795,14 @@ class Sensei_Course {
 				<li><a href="#completed-courses"><?php esc_html_e( 'Completed Courses', 'sensei-lms' ); ?></a></li>
 			</ul>
 
-			<?php do_action( 'sensei_before_active_user_courses' ); ?>
-
 			<?php
+			/**
+			 * Fires before displaying active courses.
+			 *
+			 * @hook sensei_before_active_user_courses
+			 */
+			do_action( 'sensei_before_active_user_courses' );
+
 			$course_page_url = self::get_courses_page_url();
 			?>
 
@@ -1815,9 +1854,21 @@ class Sensei_Course {
 
 			</div>
 
-			<?php do_action( 'sensei_after_active_user_courses' ); ?>
+			<?php
+			/**
+			 * Fires after displaying active courses.
+			 *
+			 * @hook sensei_after_active_user_courses
+			 */
+			do_action( 'sensei_after_active_user_courses' );
 
-			<?php do_action( 'sensei_before_completed_user_courses' ); ?>
+			/**
+			 * Fires before displaying completed courses.
+			 *
+			 * @hook sensei_before_completed_user_courses
+			 */
+			do_action( 'sensei_before_completed_user_courses' );
+			?>
 
 			<div id="completed-courses">
 
@@ -1848,16 +1899,35 @@ class Sensei_Course {
 
 			</div>
 
-			<?php do_action( 'sensei_after_completed_user_courses' ); ?>
+			<?php
+			/**
+			 * Fires after displaying completed courses.
+			 *
+			 * @hook sensei_after_completed_user_courses
+			 */
+			do_action( 'sensei_after_completed_user_courses' );
+			?>
 
 		</div>
 
-		<?php do_action( 'sensei_after_user_courses' ); ?>
-
 		<?php
+		/**
+		 * Fires after displaying My Courses content.
+		 *
+		 * @hook sensei_after_user_courses
+		 */
+		do_action( 'sensei_after_user_courses' );
+
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped above and should be escaped in hooked methods.
 		echo ob_get_clean();
 
+		/**
+		 * Fires after displaying a learner's courses.
+		 *
+		 * @hook sensei_after_learner_course_content
+		 *
+		 * @param {WP_User} $user User.
+		 */
 		do_action( 'sensei_after_learner_course_content', $user );
 
 	} // end load_user_courses_content
@@ -1884,14 +1954,11 @@ class Sensei_Course {
 		$wp_query_obj = new WP_Query( $args );
 
 		/**
-		 * sensei_get_all_courses filter
-		 *
 		 * This filter runs inside Sensei_Course::get_all_courses.
 		 *
-		 * @param array $courses{
-		 *  @type WP_Post
-		 * }
-		 * @param array $attributes
+		 * @hook sensei_get_all_courses
+		 *
+		 * @param {WP_Post[]} $courses Courses.
 		 */
 		return apply_filters( 'sensei_get_all_courses', $wp_query_obj->posts );
 
@@ -1949,7 +2016,9 @@ class Sensei_Course {
 		 * Filter the course completion statement.
 		 * Default Currently completed $var lesson($plural) of $var in total
 		 *
-		 * @param string $statement
+		 * @hook sensei_course_completion_statement
+		 *
+		 * @param {string} $statement Progress statement.
 		 */
 		return apply_filters( 'sensei_course_completion_statement', $statement );
 
@@ -2069,10 +2138,12 @@ class Sensei_Course {
 		 *
 		 * Filter the percentage returned for a users course.
 		 *
-		 * @param $percentage
-		 * @param $course_id
-		 * @param $user_id
 		 * @since 1.8.0
+		 * @hook sensei_course_completion_percentage
+		 *
+		 * @param {float|int} $percentage Course completion percentage.
+		 * @param {int}       $course_id  Course ID.
+		 * @param {int}       $user_id    User ID.
 		 */
 		return apply_filters( 'sensei_course_completion_percentage', $percentage, $course_id, $user_id );
 
@@ -2380,10 +2451,12 @@ class Sensei_Course {
 					<p class="sensei-results-links">
 				<?php
 				/**
-				 * Filter the results links
+				 * Filter the results link.
 				 *
-				 * @param string $results_links_html
-				 * @param integer $course_id
+				 * @hook sensei_results_links
+				 *
+				 * @param {string} $results_links HTML for the results link.
+				 * @param {int}    $course_id     Course ID.
 				 */
 				echo wp_kses_post( apply_filters( 'sensei_results_links', $results_link, $course->ID ) );
 				?>
@@ -2426,13 +2499,13 @@ class Sensei_Course {
 		// for the course archive page
 		if ( $query->is_main_query() && is_post_type_archive( 'course' ) ) {
 			/**
-			 * sensei_archive_courses_per_page
-			 *
 			 * Sensei courses per page on the course
 			 * archive
 			 *
 			 * @since 1.9.0
-			 * @param integer $posts_per_page defaults to the value of get_option( 'posts_per_page' )
+			 * @hook sensei_archive_courses_per_page
+			 *
+			 * @param {string} $posts_per_page Maximum number of posts to show on a page.
 			 */
 			$query->set( 'posts_per_page', apply_filters( 'sensei_archive_courses_per_page', get_option( 'posts_per_page' ) ) );
 			if ( isset( $query->query ) && isset( $query->query['paged'] ) && false === $query->get( 'paged', false ) ) {
@@ -2442,13 +2515,12 @@ class Sensei_Course {
 		// for the my courses page
 		elseif ( isset( $post ) && is_page() && Sensei()->settings->get( 'my_course_page' ) == $post->ID ) {
 			/**
-			 * sensei_my_courses_per_page
-			 *
-			 * Sensei courses per page on the my courses page
-			 * as set in the settings
+			 * Sensei courses per page on the my courses page as set in the settings.
 			 *
 			 * @since 1.9.0
-			 * @param integer $posts_per_page default 10
+			 * @hook sensei_my_courses_per_page
+			 *
+			 * @param {int|string} $posts_per_page Maximum number of posts to show on a page. Default 10.
 			 */
 			$query->set( 'posts_per_page', apply_filters( 'sensei_my_courses_per_page', $query->get( 'posts_per_page', 10 ) ) );
 
@@ -2507,8 +2579,8 @@ class Sensei_Course {
 		 * @since 1.9.0
 		 * @hook sensei_course_loop_content_class
 		 *
-		 * @param {array} $extra_classes
-		 * @param {WP_Post} $loop_current_course
+		 * @param {array}        $extra_classes CSS class names.
+		 * @param {WP_Post|null} $course        Course or null on failure.
 		 */
 		return apply_filters( 'sensei_course_loop_content_class', $extra_classes, get_post() );
 
@@ -2526,7 +2598,9 @@ class Sensei_Course {
 		 * Filter the number of columns on the course archive page.
 		 *
 		 * @since 1.9.0
-		 * @param int $number_of_columns default 1
+		 * @hook sensei_course_loop_number_of_columns
+		 *
+		 * @param {int} $number_of_columns Number of columns. Default 1.
 		 */
 		return apply_filters( 'sensei_course_loop_number_of_columns', 1 );
 
@@ -2548,12 +2622,14 @@ class Sensei_Course {
 		}
 
 		/**
-		 * Filter the sensei archive course order by values
+		 * Filter the sensei archive course order by values.
 		 *
 		 * @since 1.9.0
-		 * @param array $options {
-		 *  @type string $option_value
-		 *  @type string $option_string
+		 * @hook sensei_archive_course_order_by_options
+		 *
+		 * @param {array} $options {
+		 *     @type {string} $option_value Option value.
+		 *     @type {string} $option_text  Option text.
 		 * }
 		 */
 		$course_order_by_options = apply_filters(
@@ -2608,8 +2684,14 @@ class Sensei_Course {
 		 * filter the course archive filter buttons
 		 *
 		 * @since 1.9.0
-		 * @param array $filters{
-		 *   @type array ( $id, $url , $title )
+		 * @hook sensei_archive_course_filter_by_options
+		 *
+		 * @param {array} $filters {
+		 *    @type {array} $filter {
+		 *        @type {string} $id    Course archive filter ID.
+		 *        @type {string} $url   URL to navigate to when this filter is selected.
+		 *        @type {string} $title Course archive filter text.
+		 *    }
 		 * }
 		 */
 		$filters = apply_filters(
@@ -2708,8 +2790,9 @@ class Sensei_Course {
 		 * Filter the course archive page URL.
 		 *
 		 * @since 3.0.0
+		 * @hook sensei_course_archive_page_url
 		 *
-		 * @param string $course_page_url Course archive page URL.
+		 * @param {string} $course_page_url Course archive page URL.
 		 */
 		return apply_filters( 'sensei_course_archive_page_url', $course_page_url );
 	}
@@ -2752,7 +2835,16 @@ class Sensei_Course {
 			$taxonomy_raw_obj    = get_taxonomy( $taxonomy_short_name );
 			// translators: Placeholders are the taxonomy name and the term name, respectively.
 			$title = sprintf( __( '%1$s Archives: %2$s', 'sensei-lms' ), $taxonomy_raw_obj->labels->name, $taxonomy_obj->name );
+
+			/**
+			 * Filter the title on the course category archive page.
+			 *
+			 * @hook course_category_archive_title
+			 *
+			 * @param {string} $html HTML for the title on the course category archive page.
+			 */
 			echo wp_kses_post( apply_filters( 'course_category_archive_title', $before_html . $title . $after_html ) );
+
 			return;
 
 		} // End If Statement
@@ -2775,6 +2867,13 @@ class Sensei_Course {
 				break;
 		} // End Switch Statement
 
+		/**
+		 * Filter the title on the course archive page.
+		 *
+		 * @hook course_archive_title
+		 *
+		 * @param {string} $html HTML for the title on the course archive page.
+		 */
 		echo wp_kses_post( apply_filters( 'course_archive_title', $html ) );
 
 	}//end archive_header()
@@ -2798,9 +2897,10 @@ class Sensei_Course {
 		 * Access check for the course content.
 		 *
 		 * @since 2.0.0
+		 * @hook sensei_course_content_has_access
 		 *
-		 * @param bool $has_access_to_content Filtered variable for if the visitor has access to view the content.
-		 * @param int  $course_id             Post ID for the course.
+		 * @param {bool} $has_access_to_content Whether the visitor has access to view the content.
+		 * @param {int}  $course_id             Course ID.
 		 */
 		if ( apply_filters( 'sensei_course_content_has_access', true, get_the_ID() ) ) {
 			if ( empty( $content ) ) {
@@ -2817,7 +2917,7 @@ class Sensei_Course {
 	}//end single_course_content()
 
 	/**
-	 * Output the the single course lessons title with markup.
+	 * Output the single course lessons title with markup.
 	 *
 	 * @since 1.9.0
 	 */
@@ -2844,9 +2944,7 @@ class Sensei_Course {
 			$title = '';
 		}
 
-		/**
-		 * hook document in class-woothemes-sensei-message.php
-		 */
+		/** This filter is documented in includues/class-sensei-messages.php */
 		$title = apply_filters( 'sensei_single_title', $title, $post->post_type );
 
 		ob_start(); // start capturing the following output.
@@ -2866,7 +2964,9 @@ class Sensei_Course {
 		 * page.
 		 *
 		 * @since 1.9.0
-		 * @param string $lessons_title_html
+		 * @hook the_course_lessons_title
+		 *
+		 * @param {string} $html HTML for the lesson title on the single course page.
 		 */
 		echo wp_kses_post( apply_filters( 'the_course_lessons_title', ob_get_clean() ) ); // output and filter the captured output and stop capturing.
 
@@ -3005,9 +3105,8 @@ class Sensei_Course {
 						if ( $has_quizzes ) {
 							$results_link = '<a class="view-results" href="' . esc_url( Sensei()->course_results->get_permalink( $post->ID ) ) . '">' . esc_html__( 'View results', 'sensei-lms' ) . '</a>';
 						}
-						/**
-						 * Filter documented in Sensei_Course::the_course_action_buttons
-						 */
+
+						/** This filter is documented in Sensei_Course::the_course_action_buttons */
 						$results_link = apply_filters( 'sensei_results_links', $results_link, $post->ID );
 						echo wp_kses_post( $results_link );
 						?>
@@ -3026,6 +3125,7 @@ class Sensei_Course {
 			 * not know whether the user is logged in.
 			 *
 			 * @since 2.0.0
+			 * @hook sensei_output_course_enrolment_actions
 			 */
 			do_action( 'sensei_output_course_enrolment_actions' );
 		}
@@ -3063,9 +3163,10 @@ class Sensei_Course {
 		 * Check if currently logged in user can manually enrol themselves. Defaults to `true` when not already enrolled.
 		 *
 		 * @since 3.0.0
+		 * @hook sensei_can_user_manually_enrol
 		 *
-		 * @param bool $can_user_manually_enrol True if they can manually enrol themselves, false if not.
-		 * @param int  $course_id               Course post ID.
+		 * @param {bool} $can_user_manually_enrol True if they can manually enrol themselves, false if not.
+		 * @param {int}  $course_id               Course ID.
 		 */
 		return (bool) apply_filters( 'sensei_can_user_manually_enrol', $can_user_manually_enrol, $course_id );
 	}
@@ -3115,11 +3216,13 @@ class Sensei_Course {
 				$my_courses_page_id = '';
 
 				/**
-				 * Filter to force Sensei to output the default WordPress user
-				 * registration link.
+				 * Filter to force Sensei to output the default WordPress user registration link.
 				 *
 				 * @since 1.9.0
-				 * @param bool $wp_register_link default false
+				 * @hook sensei_use_wp_register_link
+				 *
+				 * @param {bool} $wp_register_link Whether to link to the default WordPress registration page.
+				 *                                 Default false.
 				 */
 				$wp_register_link = apply_filters( 'sensei_use_wp_register_link', false );
 
@@ -3210,9 +3313,7 @@ class Sensei_Course {
 			<h1>
 
 				<?php
-				/**
-				 * Filter documented in class-sensei-messages.php the_title
-				 */
+				/** This filter is documented in includes/class-sensei-messages.php */
 				echo wp_kses_post( apply_filters( 'sensei_single_title', get_the_title( $post ), $post->post_type ) );
 				?>
 
@@ -3251,6 +3352,14 @@ class Sensei_Course {
 		$html .= $title;
 		$html .= '</h2>';
 
+		/**
+		 * Filter the title on the course category page.
+		 *
+		 * @hook course_category_title
+		 *
+		 * @param {string} $html    HTML for the title on the course category page.
+		 * @param {int}    $term_id Course category term ID.
+		 */
 		echo wp_kses_post( apply_filters( 'course_category_title', $html, $term->term_id ) );
 
 	}//end course_category_title()
@@ -3329,8 +3438,10 @@ class Sensei_Course {
 		 * Filter course prerequisite complete
 		 *
 		 * @since 1.9.10
-		 * @param bool $prerequisite_complete
-		 * @param int $course_id
+		 * @hook sensei_course_is_prerequisite_complete
+		 *
+		 * @param {bool} $prerequisite_complete Whether the prerequisite course has been completed.
+		 * @param {int}  $course_id             Course ID.
 		 */
 		return apply_filters( 'sensei_course_is_prerequisite_complete', $prerequisite_complete, $course_id );
 
@@ -3445,7 +3556,10 @@ class Sensei_Course {
 			 * Filter sensei_course_complete_prerequisite_message.
 			 *
 			 * @since 1.9.10
-			 * @param string $complete_prerequisite_message the message to filter
+			 * @hook sensei_course_complete_prerequisite_message
+			 *
+			 * @param {string} $complete_prerequisite_message Message to display if a course prerequisite
+			 *                                                has not been met.
 			 */
 			$filtered_message = apply_filters( 'sensei_course_complete_prerequisite_message', $complete_prerequisite_message );
 
