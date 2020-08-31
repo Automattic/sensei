@@ -1104,14 +1104,7 @@ class Sensei_Course {
 		 *
 		 * @hook sensei_course_count
 		 *
-		 * @param array {$post_args} {
-		 *     Arguments to retrieve posts.
-		 *
-		 *     @type {string} $post_type        Post type.
-		 *     @type {int}    $posts_per_page   Number of posts to show per page.
-		 *     @type {string} $post_status      Post status.
-		 *     @type {bool}   $suppress_filters Whether to suppress filters.
-		 *     @type {string} $fields           Which fields to return.
+		 * @param {array} $post_args Associative array of arguments to use to retrieve posts.
 		 */
 		$courses_query = new WP_Query( apply_filters( 'sensei_course_count', $post_args ) );
 
@@ -1184,8 +1177,8 @@ class Sensei_Course {
 		 *
 		 * @hook sensei_course_get_lessons
 		 *
-		 * @param {array} $lessons   Lessons.
-		 * @param {int}   $course_id Course ID.
+		 * @param {WP_Post[]} $lessons   Lessons.
+		 * @param {int}       $course_id Course ID.
 		 */
 		$lessons = apply_filters( 'sensei_course_get_lessons', $lessons, $course_id );
 
@@ -2579,7 +2572,7 @@ class Sensei_Course {
 		 * @since 1.9.0
 		 * @hook sensei_course_loop_content_class
 		 *
-		 * @param {array}        $extra_classes CSS class names.
+		 * @param {string[]}     $extra_classes CSS class names.
 		 * @param {WP_Post|null} $course        Course or null on failure.
 		 */
 		return apply_filters( 'sensei_course_loop_content_class', $extra_classes, get_post() );
@@ -2627,10 +2620,7 @@ class Sensei_Course {
 		 * @since 1.9.0
 		 * @hook sensei_archive_course_order_by_options
 		 *
-		 * @param {array} $options {
-		 *     @type {string} $option_value Option value.
-		 *     @type {string} $option_text  Option text.
-		 * }
+		 * @param {array} $options Associative array of options to display for sorting courses.
 		 */
 		$course_order_by_options = apply_filters(
 			'sensei_archive_course_order_by_options',
@@ -2681,18 +2671,12 @@ class Sensei_Course {
 		}
 
 		/**
-		 * filter the course archive filter buttons
+		 * Filter the course archive filter buttons.
 		 *
 		 * @since 1.9.0
 		 * @hook sensei_archive_course_filter_by_options
 		 *
-		 * @param {array} $filters {
-		 *    @type {array} $filter {
-		 *        @type {string} $id    Course archive filter ID.
-		 *        @type {string} $url   URL to navigate to when this filter is selected.
-		 *        @type {string} $title Course archive filter text.
-		 *    }
-		 * }
+		 * @param {array} $filters Nested array containing associative arrays of course filter options.
 		 */
 		$filters = apply_filters(
 			'sensei_archive_course_filter_by_options',
