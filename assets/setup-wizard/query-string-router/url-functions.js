@@ -1,7 +1,7 @@
 /**
  * Get parameter from URL.
  *
- * @param {string} name  Name of the param to get.
+ * @param {string} name Name of the param to get.
  *
  * @return {string|null} The value in the param. If it's empty, return null.
  */

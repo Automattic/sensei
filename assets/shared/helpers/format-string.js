@@ -18,7 +18,7 @@ export const formattingComponents = {
  * @example formatString(' Welcome to {{strong}}Sensei{{/strong}}!')
  *
  * @param {string} mixedString Template string.
- * @param {Object} components Replacements.
+ * @param {Object} components  Replacements.
  */
 export const formatString = ( mixedString, components = {} ) =>
 	interpolateComponents( {

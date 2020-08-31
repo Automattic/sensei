@@ -81,8 +81,8 @@ export { default as Route } from './route';
  * @return {QueryStringRouterContext} Query string router context.
  *
  * @typedef  {Object}           QueryStringRouterContext
- * @property {string}           currentRoute             Current route.
- * @property {function(string)} goTo                     Function to navigate between routes.
+ * @property {string}           currentRoute Current route.
+ * @property {function(string)} goTo         Function to navigate between routes.
  */
 export const useQueryStringRouter = () =>
 	useContext( QueryStringRouterContext );

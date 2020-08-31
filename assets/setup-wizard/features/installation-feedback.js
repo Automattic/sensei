@@ -15,9 +15,9 @@ import useFeaturesPolling from './use-features-polling';
 /**
  * Installation feedback component.
  *
- * @param {Object}    props
- * @param {Function}  props.onContinue Callback to continue to the next step.
- * @param {Function}  props.onRetry    Callback to retry installations.
+ * @param {Object}   props
+ * @param {Function} props.onContinue Callback to continue to the next step.
+ * @param {Function} props.onRetry    Callback to retry installations.
  */
 const InstallationFeedback = ( { onContinue, onRetry } ) => {
 	const [ hasInstalling, setHasInstalling ] = useState( true );

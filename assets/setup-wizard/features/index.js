@@ -17,7 +17,7 @@ import FeaturesSelection from './features-selection';
 
 /**
  * @typedef  {Object} Feature
- * @property {string} slug    Feature slug.
+ * @property {string} slug Feature slug.
  */
 /**
  * Filter installed features to don't select them.

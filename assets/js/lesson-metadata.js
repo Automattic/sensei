@@ -330,7 +330,7 @@ jQuery( document ).ready( function () {
 	/**
 	 * Upload media file to questions
 	 *
-	 * @param  object  button        Button that was clicked
+	 * @param object button Button that was clicked
 	 * @return void
 	 *
 	 * @since  1.5.0
