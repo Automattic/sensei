@@ -64,9 +64,9 @@ const DEFAULT_STATE = {
 
 /**
  *
- * @param {Object}         state      Current state.
- * @param {{type: string}} levelKey   Level to update.
- * @param {Object}         attributes Attributes to set.
+ * @param {Object} state      Current state.
+ * @param {{type:  string}}   levelKey   Level to update.
+ * @param {Object} attributes Attributes to set.
  * @return {Object} State updated.
  */
 const updateLevelState = ( state, levelKey, attributes ) => ( {
@@ -80,8 +80,8 @@ const updateLevelState = ( state, levelKey, attributes ) => ( {
 /**
  * Data importer reducer.
  *
- * @param {Object}         state  Current state.
- * @param {{type: string}} action Action to update the state.
+ * @param {Object} state    Current state.
+ * @param {{type:  string}} action Action to update the state.
  *
  * @return {Object} State updated.
  */

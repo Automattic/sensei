@@ -7,9 +7,9 @@ import { ExportSelectContentPage } from './export-select-content-page';
 /**
  * Export page.
  *
- * @param {Object} props
- * @param {Object} props.job
- * @param {Object} props.error
+ * @param {Object}   props
+ * @param {Object}   props.job
+ * @param {Object}   props.error
  * @param {Function} props.start
  * @param {Function} props.reset
  * @param {Function} props.cancel

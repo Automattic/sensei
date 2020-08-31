@@ -51,6 +51,7 @@
     "cross-env": "7.0.2",
     "eslint": "7.6.0",
     "eslint-config-prettier": "6.11.0",
+    "eslint-plugin-jsdoc-alignment": "0.0.4",
     "extract-zip": "2.0.1",
     "gettext-parser": "4.0.4",
     "husky": "4.2.5",
