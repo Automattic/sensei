@@ -1104,7 +1104,7 @@ class Sensei_Course {
 		 *
 		 * @hook sensei_course_count
 		 *
-		 * @param {array} $post_args Associative array of arguments to use to retrieve posts.
+		 * @param {Array.<{argument:string,value:mixed}>} $post_args Associative array of arguments to use to retrieve posts.
 		 */
 		$courses_query = new WP_Query( apply_filters( 'sensei_course_count', $post_args ) );
 
@@ -2620,7 +2620,7 @@ class Sensei_Course {
 		 * @since 1.9.0
 		 * @hook sensei_archive_course_order_by_options
 		 *
-		 * @param {array} $options Associative array of options to display for sorting courses.
+		 * @param {Array.<{value:string,text:string}>} $options Associative array of options to display for sorting courses.
 		 */
 		$course_order_by_options = apply_filters(
 			'sensei_archive_course_order_by_options',
@@ -2676,7 +2676,7 @@ class Sensei_Course {
 		 * @since 1.9.0
 		 * @hook sensei_archive_course_filter_by_options
 		 *
-		 * @param {array} $filters Nested array containing associative arrays of course filter options.
+		 * @param {Array.<Array.<{value:string,text:string}>>} $filters Nested array containing associative arrays of course filter options.
 		 */
 		$filters = apply_filters(
 			'sensei_archive_course_filter_by_options',
