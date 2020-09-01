@@ -10,7 +10,6 @@ registerBlockType( 'sensei-lms/course-outline', {
 	keywords: [ __( 'Outline', 'sensei-lms' ), __( 'Course', 'sensei-lms' ) ],
 	supports: {
 		html: false,
-		customClassName: false,
 		multiple: false,
 	},
 	edit( { className } ) {
