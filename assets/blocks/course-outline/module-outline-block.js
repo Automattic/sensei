@@ -1,6 +1,6 @@
 import { registerBlockType } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
-import { InnerBlocks, RichText } from '@wordpress/block-editor';
+import { InnerBlocks, PlainText } from '@wordpress/block-editor';
 
 registerBlockType( 'sensei-lms/course-outline-module', {
 	title: __( 'Module', 'sensei-lms' ),
@@ -16,11 +16,11 @@ registerBlockType( 'sensei-lms/course-outline-module', {
 	edit( { className } ) {
 		return (
 			<div className={ className }>
-				<RichText
+				<PlainText
 					placeholder={ __( 'Module name', 'sensei-lms' ) }
 					onChange={ () => {} }
 				/>
-				<RichText
+				<PlainText
 					placeholder={ __(
 						'Description about the module',
 						'sensei-lms'
