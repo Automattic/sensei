@@ -2,12 +2,12 @@ import { registerBlockType } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 import { RichText } from '@wordpress/block-editor';
 
-registerBlockType( 'sensei-lms/lesson-outline', {
+registerBlockType( 'sensei-lms/course-outline-lesson', {
 	title: __( 'Lesson', 'sensei-lms' ),
 	description: __( 'Where your course content lives.', 'sensei-lms' ),
 	icon: 'list-view',
 	category: 'sensei-lms',
-	parent: [ 'sensei-lms/course-outline', 'sensei-lms/module-outline' ],
+	parent: [ 'sensei-lms/course-outline', 'sensei-lms/course-outline-module' ],
 	keywords: [ __( 'Outline', 'sensei-lms' ), __( 'Lesson', 'sensei-lms' ) ],
 	supports: {
 		html: false,

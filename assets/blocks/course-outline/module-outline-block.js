@@ -2,7 +2,7 @@ import { registerBlockType } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 import { InnerBlocks, RichText } from '@wordpress/block-editor';
 
-registerBlockType( 'sensei-lms/module-outline', {
+registerBlockType( 'sensei-lms/course-outline-module', {
 	title: __( 'Module', 'sensei-lms' ),
 	description: __( 'Used to group one or more lessons.', 'sensei-lms' ),
 	icon: 'list-view',
@@ -28,8 +28,8 @@ registerBlockType( 'sensei-lms/module-outline', {
 					onChange={ () => {} }
 				/>
 				<InnerBlocks
-					template={ [ [ 'sensei-lms/lesson-outline', {} ] ] }
-					allowedBlocks={ [ 'sensei-lms/lesson-outline' ] }
+					template={ [ [ 'sensei-lms/course-outline-lesson', {} ] ] }
+					allowedBlocks={ [ 'sensei-lms/course-outline-lesson' ] }
 				/>
 			</div>
 		);

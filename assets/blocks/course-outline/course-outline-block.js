@@ -17,10 +17,10 @@ registerBlockType( 'sensei-lms/course-outline', {
 		return (
 			<div className={ className }>
 				<InnerBlocks
-					template={ [ [ 'sensei-lms/module-outline', {} ] ] }
+					template={ [ [ 'sensei-lms/course-outline-module', {} ] ] }
 					allowedBlocks={ [
-						'sensei-lms/module-outline',
-						'sensei-lms/lesson-outline',
+						'sensei-lms/course-outline-module',
+						'sensei-lms/course-outline-lesson',
 					] }
 				/>
 			</div>
