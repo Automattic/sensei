@@ -19,7 +19,6 @@ class Sensei_Course_Outline_Block {
 	public function __construct() {
 		add_action( 'enqueue_block_assets', [ $this, 'enqueue_assets' ] );
 		add_action( 'init', [ $this, 'register_course_template' ], 101 );
-		add_action( 'save_post_course', [ $this, 'save_course' ], 10, 3 );
 	}
 
 	/**
@@ -47,19 +46,5 @@ class Sensei_Course_Outline_Block {
 		$post_type_object->template = [
 			[ 'sensei-lms/course-outline' ],
 		];
-	}
-
-	/**
-	 * Save course.
-	 *
-	 * @param int      $post_id Post ID.
-	 * @param \WP_Post $post    The post.
-	 * @param bool     $update  Whether this is an existing post being updated.
-	 */
-	public function save_course( $post_id, $post, $update ) {
-		$content = $post->post_content;
-		$blocks  = parse_blocks( $content );
-
-		// TODO: Get the attributes and save the data.
 	}
 }
