@@ -1,6 +1,5 @@
 import { registerBlockType } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
-import { PlainText } from '@wordpress/block-editor';
 
 registerBlockType( 'sensei-lms/course-outline-lesson', {
 	title: __( 'Lesson', 'sensei-lms' ),
@@ -16,9 +15,9 @@ registerBlockType( 'sensei-lms/course-outline-lesson', {
 	edit( { className } ) {
 		return (
 			<div className={ className }>
-				<PlainText
+				<input
+					className="wp-block-sensei-lms-course-outline-lesson__input"
 					placeholder={ __( 'Lesson name', 'sensei-lms' ) }
-					onChange={ () => {} }
 				/>
 			</div>
 		);

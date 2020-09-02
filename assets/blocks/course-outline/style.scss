@@ -1,13 +1,81 @@
+.course-outline__reset-input {
+	display: block;
+	width: 100%;
+	padding: 0;
+	margin: 0;
+	box-shadow: none;
+	font-family: inherit;
+	font-size: inherit;
+	color: inherit;
+	line-height: inherit;
+	border: none;
+	background-color: transparent;
+
+	&:focus {
+		border: none;
+		outline: none;
+	}
+}
+
 .wp-block-sensei-lms-course-outline {
-	border: solid 1px #000;
+	// border: solid 1px #000;
 }
 
 .wp-block-sensei-lms-course-outline-module {
-	background: #CCC;
-	border: solid 2px red;
+	border: solid 1px #1A1D20;
+
+	&__name {
+		padding: 25px;
+		background-color: #1A1D20;
+		color: #FFF;
+		font-weight: bold;
+	}
+
+	&__name-input {
+		@extend .course-outline__reset-input;
+	}
+
+	&__description {
+		padding: 25px;
+		color: #1A1D20;
+		font-size: 14px;
+	}
+
+	&__description-input {
+		@extend .course-outline__reset-input;
+	}
+
+	&__lessons-title {
+		padding: 5px 25px;
+		background-color: #EEE;
+		font-size: 11px;
+		font-weight: 600;
+		color: #1E1E1E;
+		text-transform: uppercase;
+	}
 }
 
 .wp-block-sensei-lms-course-outline-lesson {
-	border-bottom: solid 1px #000;
-	background: white;
+	display: flex;
+	align-items: center;
+	padding: 4px 25px;
+
+	&::before {
+		content: '';
+		display: inline-block;
+		width: 24px;
+		height: 24px;
+		flex: 0 0 24px;
+		margin-right: 24px;
+		border: solid 1px #A7AAAD;
+		background-color: #DCDCDE;
+		border-radius: 50%;
+	}
+
+	color: #1A1D20;
+	font-size: 16px;
+
+	&__input {
+		@extend .course-outline__reset-input;
+	}
 }

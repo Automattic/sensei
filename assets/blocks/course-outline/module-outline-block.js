@@ -15,23 +15,32 @@ registerBlockType( 'sensei-lms/course-outline-module', {
 	},
 	edit( { className } ) {
 		return (
-			<div className={ className }>
-				<PlainText
-					placeholder={ __( 'Module name', 'sensei-lms' ) }
-					onChange={ () => {} }
-				/>
-				<PlainText
-					placeholder={ __(
-						'Description about the module',
-						'sensei-lms'
-					) }
-					onChange={ () => {} }
-				/>
+			<section className={ className }>
+				<header className="wp-block-sensei-lms-course-outline-module__name">
+					<input
+						className="wp-block-sensei-lms-course-outline-module__name-input"
+						placeholder={ __( 'Module name', 'sensei-lms' ) }
+						onChange={ () => {} }
+					/>
+				</header>
+				<div className="wp-block-sensei-lms-course-outline-module__description">
+					<PlainText
+						className="wp-block-sensei-lms-course-outline-module__description-input"
+						placeholder={ __(
+							'Description about the module',
+							'sensei-lms'
+						) }
+						onChange={ () => {} }
+					/>
+				</div>
+				<div className="wp-block-sensei-lms-course-outline-module__lessons-title">
+					Lessons
+				</div>
 				<InnerBlocks
 					template={ [ [ 'sensei-lms/course-outline-lesson', {} ] ] }
 					allowedBlocks={ [ 'sensei-lms/course-outline-lesson' ] }
 				/>
-			</div>
+			</section>
 		);
 	},
 	save() {
