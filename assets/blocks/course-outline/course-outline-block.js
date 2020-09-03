@@ -1,6 +1,7 @@
 import { registerBlockType } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
-import { InnerBlocks } from '@wordpress/block-editor';
+
+import Edit from './edit';
 
 registerBlockType( 'sensei-lms/course-outline', {
 	title: __( 'Outline', 'sensei-lms' ),
@@ -12,20 +13,7 @@ registerBlockType( 'sensei-lms/course-outline', {
 		html: false,
 		multiple: false,
 	},
-	edit( { className } ) {
-		return (
-			<div className={ className }>
-				<InnerBlocks
-					template={ [ [ 'sensei-lms/course-outline-module', {} ] ] }
-					allowedBlocks={ [
-						'sensei-lms/course-outline-module',
-						'sensei-lms/course-outline-lesson',
-					] }
-				/>
-			</div>
-		);
-	},
-	save() {
-		return 'Outline Frontend!';
+	edit( props ) {
+		return <Edit { ...props } />;
 	},
 } );
