@@ -65,7 +65,6 @@ const Edit = ( { clientId, className } ) => {
 	return (
 		<section className={ className }>
 			<InnerBlocks
-				className="wp-block-sensei-lms-course-outline__inner-blocks"
 				template={ [ [ 'sensei-lms/course-outline-module', {} ] ] }
 				allowedBlocks={ [
 					'sensei-lms/course-outline-module',
