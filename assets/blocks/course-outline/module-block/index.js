@@ -20,12 +20,15 @@ registerBlockType( 'sensei-lms/course-outline-module', {
 		},
 		title: {
 			type: 'string',
+			default: '',
 		},
 		description: {
 			type: 'string',
+			default: '',
 		},
 		lessons: {
 			type: 'array',
+			default: [],
 		},
 	},
 	edit( props ) {

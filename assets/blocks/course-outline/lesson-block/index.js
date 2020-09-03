@@ -19,6 +19,7 @@ registerBlockType( 'sensei-lms/course-outline-lesson', {
 		},
 		title: {
 			type: 'string',
+			default: '',
 		},
 	},
 	edit( props ) {
