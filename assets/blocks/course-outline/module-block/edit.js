@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { InnerBlocks, PlainText } from '@wordpress/block-editor';
+import { InnerBlocks, RichText } from '@wordpress/block-editor';
 
 import useBlocksCreator from '../use-block-creator';
 
@@ -24,7 +24,7 @@ const Edit = ( {
 				/>
 			</header>
 			<div className="wp-block-sensei-lms-course-outline-module__description">
-				<PlainText
+				<RichText
 					className="wp-block-sensei-lms-course-outline-module__description-input wp-block-sensei-lms-course-outline__clean-input"
 					placeholder={ __(
 						'Description about the module',
