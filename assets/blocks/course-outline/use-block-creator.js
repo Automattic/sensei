@@ -11,6 +11,10 @@ const useBlocksCreator = ( data, clientId ) => {
 	const { replaceInnerBlocks } = useDispatch( 'core/block-editor' );
 
 	useEffect( () => {
+		if ( ! data || 0 === data.length ) {
+			return;
+		}
+
 		const blocks = data.map( ( { type, ...block } ) =>
 			createBlock( blockNames[ type ], block )
 		);
