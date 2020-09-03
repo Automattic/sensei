@@ -37,7 +37,7 @@ const Edit = ( {
 				/>
 			</div>
 			<div className="wp-block-sensei-lms-course-outline-module__lessons-title">
-				Lessons
+				{ __( 'Lessons', 'sensei-lms' ) }
 			</div>
 			<InnerBlocks
 				template={ [ [ 'sensei-lms/course-outline-lesson', {} ] ] }
