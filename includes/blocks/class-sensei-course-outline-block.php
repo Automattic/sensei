@@ -189,10 +189,14 @@ class Sensei_Course_Outline_Block {
 				<div class="wp-block-sensei-lms-course-outline-module__description">
 					' . $block['description'] . '
 				</div>
-				<div class="wp-block-sensei-lms-course-outline-module__lessons-title">
-					<h3 class="wp-block-sensei-lms-course-outline__clean-heading">' . __( 'Lessons', 'sensei-lms' ) . '</h3>
-				</div>
-				' .
+				' . (
+					// Hide title if there are no lessons.
+					empty( $block['lessons'] ) ? '' : '
+						<div class="wp-block-sensei-lms-course-outline-module__lessons-title">
+							<h3 class="wp-block-sensei-lms-course-outline__clean-heading">' . __( 'Lessons', 'sensei-lms' ) . '</h3>
+						</div>
+					'
+				) .
 				implode(
 					'',
 					array_map(
