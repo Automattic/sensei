@@ -1,12 +1,6 @@
-import { useEffect } from '@wordpress/element';
-import { useDispatch } from '@wordpress/data';
-import { createBlock } from '@wordpress/blocks';
 import { InnerBlocks } from '@wordpress/block-editor';
 
-const blockNames = {
-	module: 'sensei-lms/course-outline-module',
-	lesson: 'sensei-lms/course-outline-lesson',
-};
+import useBlocksCreator from './use-block-creator';
 
 // TODO: Fetch from API.
 const data = [
@@ -66,15 +60,7 @@ const data = [
 ];
 
 const Edit = ( { clientId, className } ) => {
-	const { replaceInnerBlocks } = useDispatch( 'core/block-editor' );
-
-	useEffect( () => {
-		const blocks = data.map( ( { type, ...block } ) =>
-			createBlock( blockNames[ type ], block )
-		);
-
-		replaceInnerBlocks( clientId, blocks, false );
-	}, [ clientId, replaceInnerBlocks ] );
+	useBlocksCreator( data, clientId );
 
 	return (
 		<section className={ className }>

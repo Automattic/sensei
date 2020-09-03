@@ -1,23 +1,14 @@
-import { useEffect } from '@wordpress/element';
-import { useDispatch } from '@wordpress/data';
-import { createBlock } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 import { InnerBlocks, PlainText } from '@wordpress/block-editor';
+
+import useBlocksCreator from '../use-block-creator';
 
 const Edit = ( {
 	className,
 	clientId,
 	attributes: { title, description, lessons },
 } ) => {
-	const { replaceInnerBlocks } = useDispatch( 'core/block-editor' );
-
-	useEffect( () => {
-		const blocks = lessons.map( ( block ) =>
-			createBlock( 'sensei-lms/course-outline-lesson', block )
-		);
-
-		replaceInnerBlocks( clientId, blocks, false );
-	}, [ lessons, clientId, replaceInnerBlocks ] );
+	useBlocksCreator( lessons, clientId );
 
 	return (
 		<section className={ className }>
