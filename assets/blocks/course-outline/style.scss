@@ -17,6 +17,11 @@
 			outline: none;
 		}
 	}
+
+	.block-editor-block-list__block {
+		margin-top: 0;
+		margin-bottom: 0;
+	}
 }
 
 .wp-block-sensei-lms-course-outline-module {
@@ -48,7 +53,7 @@
 .wp-block-sensei-lms-course-outline-lesson {
 	display: flex;
 	align-items: center;
-	padding: 4px 25px;
+	padding: 20px 25px;
 
 	&::before {
 		content: '';
