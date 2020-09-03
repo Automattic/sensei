@@ -167,9 +167,9 @@ class Sensei_Course_Outline_Block {
 	 */
 	private function get_lesson_block_html( $block ) {
 		return '
-			<div class="wp-block-sensei-lms-course-outline-lesson">
-			' . $block['title'] . '
-			</div>
+			<a class="wp-block-sensei-lms-course-outline-lesson" href="#">
+				' . $block['title'] . '
+			</a>
 		';
 	}
 

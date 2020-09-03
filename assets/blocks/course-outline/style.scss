@@ -54,6 +54,9 @@
 	display: flex;
 	align-items: center;
 	padding: 20px 25px;
+	color: #1A1D20;
+	font-size: 16px;
+	text-decoration: none;
 
 	&::before {
 		content: '';
@@ -66,7 +69,4 @@
 		background-color: #DCDCDE;
 		border-radius: 50%;
 	}
-
-	color: #1A1D20;
-	font-size: 16px;
 }
