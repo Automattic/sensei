@@ -34,7 +34,7 @@ const Edit = ( {
 						'sensei-lms'
 					) }
 					value={ description }
-					onChange={ ( { value } ) => {
+					onChange={ ( value ) => {
 						setAttributes( { description: value } );
 					} }
 				/>
