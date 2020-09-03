@@ -13,6 +13,14 @@ registerBlockType( 'sensei-lms/course-outline-lesson', {
 		html: false,
 		customClassName: false,
 	},
+	attributes: {
+		id: {
+			type: 'int',
+		},
+		title: {
+			type: 'string',
+		},
+	},
 	edit( props ) {
 		return <Edit { ...props } />;
 	},
