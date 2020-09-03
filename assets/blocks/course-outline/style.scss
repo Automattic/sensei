@@ -1,5 +1,5 @@
 .wp-block-sensei-lms-course-outline {
-	&__clean-input {
+	&__clean-input[type="text"] {
 		display: block;
 		width: 100%;
 		padding: 0;
@@ -15,7 +15,17 @@
 		&:focus {
 			border: none;
 			outline: none;
+			box-shadow: none;
 		}
+	}
+
+	&__clean-heading {
+		padding: 0;
+		margin: 0;
+		font-family: inherit;
+		font-size: inherit;
+		color: inherit;
+		line-height: inherit;
 	}
 
 	.block-editor-block-list__block {
@@ -30,8 +40,9 @@
 	&__name {
 		padding: 25px;
 		background-color: #1A1D20;
-		color: #FFF;
+		font-size: 24px;
 		font-weight: bold;
+		color: #FFF;
 	}
 
 	&__description {
@@ -68,5 +79,17 @@
 		border: solid 1px #A7AAAD;
 		background-color: #DCDCDE;
 		border-radius: 50%;
+	}
+}
+
+/**
+ * Overrides
+ */
+.entry-content .wp-block-sensei-lms-course-outline,
+.editor-styles-wrapper .wp-block-sensei-lms-course-outline .wp-block {
+	h1,
+	h2,
+	h3 {
+		@extend .wp-block-sensei-lms-course-outline__clean-heading
 	}
 }

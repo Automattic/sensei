@@ -184,13 +184,13 @@ class Sensei_Course_Outline_Block {
 		return '
 			<section class="wp-block-sensei-lms-course-outline-module">
 				<header class="wp-block-sensei-lms-course-outline-module__name">
-					' . $block['title'] . '
+					<h2 class="wp-block-sensei-lms-course-outline__clean-heading">' . $block['title'] . '</h2>
 				</header>
 				<div class="wp-block-sensei-lms-course-outline-module__description">
 					' . $block['description'] . '
 				</div>
 				<div class="wp-block-sensei-lms-course-outline-module__lessons-title">
-					' . __( 'Lessons', 'sensei-lms' ) . '
+					<h3 class="wp-block-sensei-lms-course-outline__clean-heading">' . __( 'Lessons', 'sensei-lms' ) . '</h3>
 				</div>
 				' .
 				implode(
