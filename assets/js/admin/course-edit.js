@@ -1,8 +1,8 @@
-jQuery( document ).ready( function( $ ) {
+jQuery( document ).ready( function ( $ ) {
 	$( '#course-prerequisite-options' ).select2( { width: '100%' } );
 
 	function trackLinkClickCallback( event_name ) {
-		return function() {
+		return function () {
 			var properties = {
 				course_status: $( this ).data( 'course-status' ),
 			};

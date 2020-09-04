@@ -12,7 +12,7 @@ const adminTracking = [
 	},
 ];
 
-window.sensei_log_event = function( event_name, properties ) {
+window.sensei_log_event = function ( event_name, properties ) {
 	const actionName = 'sensei_log_event';
 
 	if ( ! sensei_event_logging.enabled ) {
@@ -45,15 +45,15 @@ window.sensei_log_event = function( event_name, properties ) {
 	jQuery.get( ajaxurl, data );
 };
 
-jQuery( document ).ready( function( $ ) {
-	adminTracking.forEach( function( tracking ) {
+jQuery( document ).ready( function ( $ ) {
+	adminTracking.forEach( function ( tracking ) {
 		$( tracking.selector ).attr(
 			'data-sensei-log-event',
 			tracking.eventName
 		);
 	} );
 
-	$( 'body' ).on( 'click', 'a[data-sensei-log-event]', function( event ) {
+	$( 'body' ).on( 'click', 'a[data-sensei-log-event]', function ( event ) {
 		let sensei_event_name = $( event.target ).data( 'sensei-log-event' );
 		sensei_log_event( sensei_event_name );
 	} );
