@@ -1,6 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { InnerBlocks, RichText } from '@wordpress/block-editor';
 
+import SingleLineInput from '../single-line-input';
 import useBlocksCreator from '../use-block-creator';
 
 const Edit = ( {
@@ -15,12 +16,11 @@ const Edit = ( {
 		<section className={ className }>
 			<header className="wp-block-sensei-lms-course-outline-module__name">
 				<h2 className="wp-block-sensei-lms-course-outline__clean-heading">
-					<input
-						type="text"
-						className="wp-block-sensei-lms-course-outline-module__name-input wp-block-sensei-lms-course-outline__clean-input"
+					<SingleLineInput
+						className="wp-block-sensei-lms-course-outline-module__name-input"
 						placeholder={ __( 'Module name', 'sensei-lms' ) }
 						value={ title }
-						onChange={ ( { target: { value } } ) => {
+						onChange={ ( value ) => {
 							setAttributes( { title: value } );
 						} }
 					/>
@@ -28,7 +28,7 @@ const Edit = ( {
 			</header>
 			<div className="wp-block-sensei-lms-course-outline-module__description">
 				<RichText
-					className="wp-block-sensei-lms-course-outline-module__description-input wp-block-sensei-lms-course-outline__clean-input"
+					className="wp-block-sensei-lms-course-outline-module__description-input"
 					placeholder={ __(
 						'Description about the module',
 						'sensei-lms'
