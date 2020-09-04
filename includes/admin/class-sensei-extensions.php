@@ -52,6 +52,14 @@ final class Sensei_Extensions {
 		$screen = get_current_screen();
 		if ( in_array( $screen->id, array( 'sensei-lms_page_sensei-extensions' ), true ) ) {
 			Sensei()->assets->enqueue( 'sensei-admin-extensions', 'css/extensions.css', [], 'screen' );
+			Sensei()->assets->enqueue( 'sensei-admin-extensions', 'js/admin/extensions.js', [], true );
+			wp_localize_script(
+				'sensei-admin-extensions',
+				'sensei_extensions_data',
+				[
+					'wccom' => Sensei()->setup_wizard->get_woocommerce_connect_data(),
+				]
+			);
 		}
 	}
 

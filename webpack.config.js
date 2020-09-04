@@ -24,6 +24,7 @@ const files = [
 	'js/ranges.js',
 	'js/settings.js',
 	'js/user-dashboard.js',
+	'js/admin/extensions.js',
 	'setup-wizard/index.js',
 	'setup-wizard/style.scss',
 	'shared/styles/wp-components.scss',
