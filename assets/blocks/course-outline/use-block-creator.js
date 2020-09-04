@@ -7,20 +7,27 @@ const blockNames = {
 	lesson: 'sensei-lms/course-outline-lesson',
 };
 
-const useBlocksCreator = ( data, clientId ) => {
+/**
+ * Blocks creator hook.
+ * It adds blocks dynamically to the InnerBlock.
+ *
+ * @param {Object[]} blocksData Blocks data to insert.
+ * @param {string}   clientId   Block client ID.
+ */
+const useBlocksCreator = ( blocksData, clientId ) => {
 	const { replaceInnerBlocks } = useDispatch( 'core/block-editor' );
 
 	useEffect( () => {
-		if ( ! data || 0 === data.length ) {
+		if ( ! blocksData || 0 === blocksData.length ) {
 			return;
 		}
 
-		const blocks = data.map( ( { type, ...block } ) =>
+		const blocks = blocksData.map( ( { type, ...block } ) =>
 			createBlock( blockNames[ type ], block )
 		);
 
 		replaceInnerBlocks( clientId, blocks, false );
-	}, [ data, clientId, replaceInnerBlocks ] );
+	}, [ blocksData, clientId, replaceInnerBlocks ] );
 };
 
 export default useBlocksCreator;
