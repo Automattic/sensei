@@ -161,6 +161,36 @@ class Sensei_Plugins_Installation {
 	}
 
 	/**
+	 * Get installation status for an extension.
+	 *
+	 * @param string $slug Extension slug.
+	 *
+	 * @return array Status.
+	 */
+	public function get_plugin_install_status( string $slug ) {
+		$extension          = Sensei_Extensions::instance()->get_extension( $slug );
+		$installing_plugins = $this->get_installing_plugins();
+		$installing_key     = array_search( $slug, wp_list_pluck( $installing_plugins, 'product_slug' ), true );
+
+		if ( $this->is_plugin_active( $extension->plugin_file ) ) {
+			return [ 'status' => 'installed' ];
+		}
+
+		if ( false !== $installing_key ) {
+			if ( isset( $installing_plugins[ $installing_key ]->error ) ) {
+				return [
+					'status' => 'error',
+					'error'  => $installing_plugins[ $installing_key ]->error,
+				];
+			} else {
+				return [ 'status' => 'installing' ];
+			}
+		}
+
+		return [ 'status' => 'not-installed' ];
+	}
+
+	/**
 	 * Get file name from path.
 	 *
 	 * @param string $path Complete path.

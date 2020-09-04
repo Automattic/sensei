@@ -3,7 +3,7 @@
  * File containing Sensei_Extensions class.
  *
  * @package Sensei\Admin
- * @since 2.0.0
+ * @since   2.0.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -30,7 +30,8 @@ final class Sensei_Extensions {
 	/**
 	 * Courses constructor. Prevents other instances from being created outside of `Sensei_Extensions::instance()`.
 	 */
-	private function __construct() {}
+	private function __construct() {
+	}
 
 	/**
 	 * Initializes the class and adds all filters and actions related to the extension directory.
@@ -66,13 +67,13 @@ final class Sensei_Extensions {
 	/**
 	 * Call API to get Sensei extensions.
 	 *
+	 * @param string $type                  Product type ('plugin' or 'theme').
+	 * @param string $category              Category to fetch (null = all).
+	 * @param string $additional_query_args Additional query arguments.
+	 *
+	 * @return array
 	 * @since  2.0.0
 	 * @since  3.1.0 The method is public.
-	 *
-	 * @param  string $type                  Product type ('plugin' or 'theme').
-	 * @param  string $category              Category to fetch (null = all).
-	 * @param  string $additional_query_args Additional query arguments.
-	 * @return array
 	 */
 	public function get_extensions( $type = null, $category = null, $additional_query_args = [] ) {
 		$extension_request_key = md5( $type . '|' . $category . '|' . wp_json_encode( $additional_query_args ) );
@@ -105,11 +106,24 @@ final class Sensei_Extensions {
 	}
 
 	/**
+	 * Get extension details by slug.
+	 *
+	 * @param string $slug The extension slug.
+	 *
+	 * @return object Extension data.
+	 */
+	public function get_extension( $slug ) {
+		$extensions = $this->get_extensions();
+		$key        = array_search( $slug, wp_list_pluck( $extensions, 'product_slug' ), true );
+
+		return isset( $extensions[ $key ] ) ? $extensions[ $key ] : null;
+	}
+
+	/**
 	 * Get resources (such as categories and product types) for the extensions screen.
 	 *
-	 * @since  2.0.0
-	 *
 	 * @return array of objects.
+	 * @since  2.0.0
 	 */
 	private function get_resources() {
 		$extension_resources = get_transient( 'sensei_extensions_resources' );
@@ -137,9 +151,8 @@ final class Sensei_Extensions {
 	/**
 	 * Get messages for the extensions page.
 	 *
-	 * @since  2.0.0
-	 *
 	 * @return array
+	 * @since  2.0.0
 	 */
 	private function get_messages() {
 		$extension_messages = get_transient( 'sensei_extensions_messages' );
