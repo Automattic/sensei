@@ -14,6 +14,17 @@ const Edit = ( {
 } ) => {
 	const { selectNextBlock } = useDispatch( 'core/block-editor' );
 
+	const keyUpHandler = ( { keyCode } ) => {
+		// Checks if enter key was pressed.
+		if ( 13 === keyCode ) {
+			selectNextBlock( clientId ).then( ( blocks ) => {
+				if ( ! blocks && 0 < title.length ) {
+					insertBlocksAfter( [ createBlock( name ) ] );
+				}
+			} );
+		}
+	};
+
 	return (
 		<div className={ className }>
 			<SingleLineInput
@@ -23,15 +34,7 @@ const Edit = ( {
 				onChange={ ( value ) => {
 					setAttributes( { title: value } );
 				} }
-				onKeyUp={ ( e ) => {
-					if ( 13 === e.keyCode ) {
-						selectNextBlock( clientId ).then( ( blocks ) => {
-							if ( ! blocks && 0 < title.length ) {
-								insertBlocksAfter( [ createBlock( name ) ] );
-							}
-						} );
-					}
-				} }
+				onKeyUp={ keyUpHandler }
 			/>
 		</div>
 	);
