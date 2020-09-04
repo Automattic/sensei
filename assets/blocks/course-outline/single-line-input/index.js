@@ -7,18 +7,24 @@ import classnames from 'classnames';
  * @param {string}   props.className Additional classname for the input.
  * @param {Function} props.onChange  Change callback.
  */
-const SingleLineInput = ( { className, onChange, ...props } ) => (
-	<input
-		type="text"
-		className={ classnames(
-			className,
-			'wp-block-sensei-lms-course-outline__clean-input'
-		) }
-		onChange={ ( { target: { value } } ) => {
-			onChange( value );
-		} }
-		{ ...props }
-	/>
-);
+const SingleLineInput = ( { className, onChange, ...props } ) => {
+	const classes = classnames(
+		className,
+		'wp-block-sensei-lms-course-outline__clean-input'
+	);
+
+	const onChangeHandler = ( { target: { value } } ) => {
+		onChange( value );
+	};
+
+	return (
+		<input
+			type="text"
+			className={ classes }
+			onChange={ onChangeHandler }
+			{ ...props }
+		/>
+	);
+};
 
 export default SingleLineInput;

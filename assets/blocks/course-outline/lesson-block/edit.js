@@ -14,6 +14,10 @@ const Edit = ( {
 } ) => {
 	const { selectNextBlock } = useDispatch( 'core/block-editor' );
 
+	const changeHandler = ( value ) => {
+		setAttributes( { title: value } );
+	};
+
 	const keyUpHandler = ( { keyCode } ) => {
 		// Checks if enter key was pressed.
 		if ( 13 === keyCode ) {
@@ -31,9 +35,7 @@ const Edit = ( {
 				className="wp-block-sensei-lms-course-outline-lesson__input"
 				placeholder={ __( 'Lesson name', 'sensei-lms' ) }
 				value={ title }
-				onChange={ ( value ) => {
-					setAttributes( { title: value } );
-				} }
+				onChange={ changeHandler }
 				onKeyUp={ keyUpHandler }
 			/>
 		</div>
