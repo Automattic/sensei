@@ -167,7 +167,7 @@ class Sensei_Plugins_Installation {
 	 *
 	 * @return array Status.
 	 */
-	public function get_plugin_install_status( string $slug ) {
+	public function get_plugin_install_status( $slug ) {
 		$extension          = Sensei_Extensions::instance()->get_extension( $slug );
 		$installing_plugins = $this->get_installing_plugins();
 		$installing_key     = array_search( $slug, wp_list_pluck( $installing_plugins, 'product_slug' ), true );
