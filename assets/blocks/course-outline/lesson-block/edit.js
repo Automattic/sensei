@@ -30,14 +30,14 @@ const EditLessonBlock = ( {
 		setAttributes( { title: value } );
 	};
 
-	const keyUpHandler = ( { keyCode } ) => {
+	const keyUpHandler = async ( { keyCode } ) => {
 		// Checks if enter key was pressed.
 		if ( 13 === keyCode ) {
-			selectNextBlock( clientId ).then( ( blocks ) => {
-				if ( ! blocks && 0 < title.length ) {
-					insertBlocksAfter( [ createBlock( name ) ] );
-				}
-			} );
+			const blocks = await selectNextBlock( clientId );
+
+			if ( ! blocks && 0 < title.length ) {
+				insertBlocksAfter( [ createBlock( name ) ] );
+			}
 		}
 	};
 
