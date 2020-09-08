@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 import EditCourseOutlineBlock from './edit';
 
 registerBlockType( 'sensei-lms/course-outline', {
-	title: __( 'Outline', 'sensei-lms' ),
+	title: __( 'Course Outline', 'sensei-lms' ),
 	description: __( 'Manage your Sensei LMS course outline.', 'sensei-lms' ),
 	icon: 'list-view',
 	category: 'sensei-lms',
