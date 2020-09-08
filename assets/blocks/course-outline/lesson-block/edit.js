@@ -4,7 +4,7 @@ import { useDispatch } from '@wordpress/data';
 
 import SingleLineInput from '../single-line-input';
 
-const Edit = ( {
+const EditLessonBlock = ( {
 	clientId,
 	name,
 	className,
@@ -42,4 +42,4 @@ const Edit = ( {
 	);
 };
 
-export default Edit;
+export default EditLessonBlock;

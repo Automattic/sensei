@@ -59,7 +59,7 @@ const data = [
 	},
 ];
 
-const Edit = ( { clientId, className } ) => {
+const EditCourseOutlineBlock = ( { clientId, className } ) => {
 	useBlocksCreator( data, clientId );
 
 	return (
@@ -75,4 +75,4 @@ const Edit = ( { clientId, className } ) => {
 	);
 };
 
-export default Edit;
+export default EditCourseOutlineBlock;

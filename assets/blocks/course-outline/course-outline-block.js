@@ -1,7 +1,7 @@
 import { registerBlockType } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 
-import Edit from './edit';
+import EditCourseOutlineBlock from './edit';
 
 registerBlockType( 'sensei-lms/course-outline', {
 	title: __( 'Outline', 'sensei-lms' ),
@@ -14,6 +14,6 @@ registerBlockType( 'sensei-lms/course-outline', {
 		multiple: false,
 	},
 	edit( props ) {
-		return <Edit { ...props } />;
+		return <EditCourseOutlineBlock { ...props } />;
 	},
 } );

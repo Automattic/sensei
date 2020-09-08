@@ -4,7 +4,7 @@ import { InnerBlocks, RichText } from '@wordpress/block-editor';
 import SingleLineInput from '../single-line-input';
 import useBlocksCreator from '../use-block-creator';
 
-const Edit = ( {
+const EditModuleBlock = ( {
 	className,
 	clientId,
 	attributes: { title, description, lessons },
@@ -56,4 +56,4 @@ const Edit = ( {
 	);
 };
 
-export default Edit;
+export default EditModuleBlock;

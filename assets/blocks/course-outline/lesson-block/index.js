@@ -1,6 +1,6 @@
 import { registerBlockType } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
-import Edit from './edit';
+import EditLessonBlock from './edit';
 
 registerBlockType( 'sensei-lms/course-outline-lesson', {
 	title: __( 'Lesson', 'sensei-lms' ),
@@ -23,6 +23,6 @@ registerBlockType( 'sensei-lms/course-outline-lesson', {
 		},
 	},
 	edit( props ) {
-		return <Edit { ...props } />;
+		return <EditLessonBlock { ...props } />;
 	},
 } );
