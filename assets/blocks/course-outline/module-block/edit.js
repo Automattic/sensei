@@ -24,11 +24,11 @@ const EditModuleBlock = ( {
 } ) => {
 	useBlocksCreator( lessons, clientId );
 
-	const nameChangeHandler = ( value ) => {
+	const updateName = ( value ) => {
 		setAttributes( { title: value } );
 	};
 
-	const descriptionChangeHandler = ( value ) => {
+	const updateDescription = ( value ) => {
 		setAttributes( { description: value } );
 	};
 
@@ -40,7 +40,7 @@ const EditModuleBlock = ( {
 						className="wp-block-sensei-lms-course-outline-module__name-input"
 						placeholder={ __( 'Module name', 'sensei-lms' ) }
 						value={ title }
-						onChange={ nameChangeHandler }
+						onChange={ updateName }
 					/>
 				</h2>
 			</header>
@@ -52,7 +52,7 @@ const EditModuleBlock = ( {
 						'sensei-lms'
 					) }
 					value={ description }
-					onChange={ descriptionChangeHandler }
+					onChange={ updateDescription }
 				/>
 			</div>
 			<div className="wp-block-sensei-lms-course-outline-module__lessons-title">
