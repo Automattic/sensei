@@ -13,7 +13,7 @@ const SingleLineInput = ( { className, onChange, ...props } ) => {
 		'wp-block-sensei-lms-course-outline__clean-input'
 	);
 
-	const onChangeHandler = ( { target: { value } } ) => {
+	const handleChange = ( { target: { value } } ) => {
 		onChange( value );
 	};
 
@@ -21,7 +21,7 @@ const SingleLineInput = ( { className, onChange, ...props } ) => {
 		<input
 			type="text"
 			className={ classes }
-			onChange={ onChangeHandler }
+			onChange={ handleChange }
 			{ ...props }
 		/>
 	);

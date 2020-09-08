@@ -26,7 +26,7 @@ const EditLessonBlock = ( {
 } ) => {
 	const { selectNextBlock, removeBlock } = useDispatch( 'core/block-editor' );
 
-	const changeHandler = ( value ) => {
+	const handleChange = ( value ) => {
 		setAttributes( { title: value } );
 	};
 
@@ -45,7 +45,7 @@ const EditLessonBlock = ( {
 		}
 	};
 
-	const keyDownHandler = ( e ) => {
+	const handleKeyDown = ( e ) => {
 		// Enter pressed.
 		if ( 13 === e.keyCode ) {
 			goToNextLesson();
@@ -63,8 +63,8 @@ const EditLessonBlock = ( {
 				className="wp-block-sensei-lms-course-outline-lesson__input"
 				placeholder={ __( 'Lesson name', 'sensei-lms' ) }
 				value={ title }
-				onChange={ changeHandler }
-				onKeyDown={ keyDownHandler }
+				onChange={ handleChange }
+				onKeyDown={ handleKeyDown }
 			/>
 		</div>
 	);
