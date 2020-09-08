@@ -611,10 +611,8 @@ class Sensei_Lesson {
 		// Since we don't do any updates here, we can ignore nonce verification.
 		if ( 'quiz_grade_type' == $field['id'] ) {
 			// phpcs:ignore WordPress.Security.NonceVerification
-			if ( isset( $_POST[ $field['id'] ] ) && 'on' == $_POST[ $field['id'] ] ) {
-				$value = 'auto';
-			} else {
-				$value = 'manual';
+			if ( isset( $_POST[ $field['id'] ] ) ) {
+				$value = 'on' === $_POST[ $field['id'] ] ? 'auto' : 'manual';
 			}
 			return $value;
 		}
