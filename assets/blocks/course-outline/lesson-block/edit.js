@@ -26,10 +26,18 @@ const EditLessonBlock = ( {
 } ) => {
 	const { selectNextBlock, removeBlock } = useDispatch( 'core/block-editor' );
 
+	/**
+	 * Handle change.
+	 *
+	 * @param {string} value Lesson name.
+	 */
 	const handleChange = ( value ) => {
 		setAttributes( { title: value } );
 	};
 
+	/**
+	 * Go to next lesson. If there is not a next lesson, it creates one.
+	 */
 	const goToNextLesson = async () => {
 		const blocks = await selectNextBlock( clientId );
 
@@ -38,6 +46,12 @@ const EditLessonBlock = ( {
 		}
 	};
 
+	/**
+	 * Remove lesson.
+	 *
+	 * @param {Object}   e                Event object.
+	 * @param {Function} e.preventDefault Prevent default function.
+	 */
 	const removeLesson = ( e ) => {
 		if ( 0 === title.length ) {
 			e.preventDefault();
@@ -45,6 +59,12 @@ const EditLessonBlock = ( {
 		}
 	};
 
+	/**
+	 * Handle key down.
+	 *
+	 * @param {Object} e         Event object.
+	 * @param {number} e.keyCode Pressed key code.
+	 */
 	const handleKeyDown = ( e ) => {
 		// Enter pressed.
 		if ( 13 === e.keyCode ) {

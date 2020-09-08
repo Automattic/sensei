@@ -24,10 +24,20 @@ const EditModuleBlock = ( {
 } ) => {
 	useBlocksCreator( lessons, clientId );
 
+	/**
+	 * Handle update name.
+	 *
+	 * @param {string} value Name value.
+	 */
 	const updateName = ( value ) => {
 		setAttributes( { title: value } );
 	};
 
+	/**
+	 * Handle update description.
+	 *
+	 * @param {string} value Description value.
+	 */
 	const updateDescription = ( value ) => {
 		setAttributes( { description: value } );
 	};
