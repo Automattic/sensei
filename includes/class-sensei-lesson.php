@@ -567,7 +567,7 @@ class Sensei_Lesson {
 						continue;
 					}
 
-					$value = $this->get_submitted_setting_value( $field );
+					$value = $this->get_submitted_setting_value( $field ) ?? $field['default'];
 					if ( isset( $value ) ) {
 						add_post_meta( $quiz_id, '_' . $field['id'], $value );
 					}
@@ -606,7 +606,7 @@ class Sensei_Lesson {
 			return;
 		}
 
-		$value = false;
+		$value = null;
 
 		// Since we don't do any updates here, we can ignore nonce verification.
 		if ( 'quiz_grade_type' == $field['id'] ) {
@@ -621,8 +621,6 @@ class Sensei_Lesson {
 
 		if ( isset( $_POST[ $field['id'] ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
 			$value = $_POST[ $field['id'] ]; // phpcs:ignore WordPress.Security.NonceVerification
-		} else {
-			$value = $field['default'];
 		}
 
 		return $value;
