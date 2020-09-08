@@ -4,6 +4,18 @@ import { useDispatch } from '@wordpress/data';
 
 import SingleLineInput from '../single-line-input';
 
+/**
+ * Edit lesson block component.
+ *
+ * @param {Object}   props                   Component props.
+ * @param {string}   props.clientId          Block client ID.
+ * @param {string}   props.name              Block name.
+ * @param {string}   props.className         Custom class name.
+ * @param {Object}   props.attributes        Block attributes.
+ * @param {string}   props.attributes.title  Lesson title.
+ * @param {Function} props.setAttributes     Block set attributes function.
+ * @param {Function} props.insertBlocksAfter Insert blocks after function.
+ */
 const EditLessonBlock = ( {
 	clientId,
 	name,

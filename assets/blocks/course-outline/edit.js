@@ -59,6 +59,13 @@ const data = [
 	},
 ];
 
+/**
+ * Edit course outline block component.
+ *
+ * @param {Object} props           Component props.
+ * @param {string} props.clientId  Block client ID.
+ * @param {string} props.className Custom class name.
+ */
 const EditCourseOutlineBlock = ( { clientId, className } ) => {
 	useBlocksCreator( data, clientId );
 
