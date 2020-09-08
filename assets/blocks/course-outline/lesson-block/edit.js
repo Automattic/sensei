@@ -24,20 +24,36 @@ const EditLessonBlock = ( {
 	setAttributes,
 	insertBlocksAfter,
 } ) => {
-	const { selectNextBlock } = useDispatch( 'core/block-editor' );
+	const { selectNextBlock, removeBlock } = useDispatch( 'core/block-editor' );
 
 	const changeHandler = ( value ) => {
 		setAttributes( { title: value } );
 	};
 
-	const keyUpHandler = async ( { keyCode } ) => {
-		// Checks if enter key was pressed.
-		if ( 13 === keyCode ) {
-			const blocks = await selectNextBlock( clientId );
+	const goToNextLesson = async () => {
+		const blocks = await selectNextBlock( clientId );
 
-			if ( ! blocks && 0 < title.length ) {
-				insertBlocksAfter( [ createBlock( name ) ] );
-			}
+		if ( ! blocks && 0 < title.length ) {
+			insertBlocksAfter( [ createBlock( name ) ] );
+		}
+	};
+
+	const removeLesson = ( e ) => {
+		if ( 0 === title.length ) {
+			e.preventDefault();
+			removeBlock( clientId );
+		}
+	};
+
+	const keyDownHandler = ( e ) => {
+		// Enter pressed.
+		if ( 13 === e.keyCode ) {
+			goToNextLesson();
+		}
+
+		// Backspace pressed.
+		if ( 8 === e.keyCode ) {
+			removeLesson( e );
 		}
 	};
 
@@ -48,7 +64,7 @@ const EditLessonBlock = ( {
 				placeholder={ __( 'Lesson name', 'sensei-lms' ) }
 				value={ title }
 				onChange={ changeHandler }
-				onKeyUp={ keyUpHandler }
+				onKeyDown={ keyDownHandler }
 			/>
 		</div>
 	);
