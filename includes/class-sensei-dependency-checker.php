@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 2.0.0
  */
 class Sensei_Dependency_Checker {
-	const MINIMUM_PHP_VERSION = '5.6';
+	const MINIMUM_PHP_VERSION = '7.0';
 
 	/**
 	 * Checks for our PHP version requirement.
@@ -46,10 +46,12 @@ class Sensei_Dependency_Checker {
 
 		echo '<div class="error"><p>';
 		echo wp_kses( $message, array( 'strong' => array() ) );
+
 		$php_update_url = 'https://wordpress.org/support/update-php/';
 		if ( function_exists( 'wp_get_update_php_url' ) ) {
 			$php_update_url = wp_get_update_php_url();
 		}
+
 		printf(
 			'<p><a class="button button-primary" href="%1$s" target="_blank" rel="noopener noreferrer">%2$s <span class="screen-reader-text">%3$s</span><span aria-hidden="true" class="dashicons dashicons-external"></span></a></p>',
 			esc_url( $php_update_url ),
@@ -57,6 +59,7 @@ class Sensei_Dependency_Checker {
 			/* translators: accessibility text */
 			esc_html__( '(opens in a new tab)', 'sensei-lms' )
 		);
+
 		echo '</p></div>';
 	}
 }
