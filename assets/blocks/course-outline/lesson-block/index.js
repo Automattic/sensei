@@ -1,6 +1,6 @@
 import { registerBlockType } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
-import { PlainText } from '@wordpress/block-editor';
+import EditLessonBlock from './edit';
 
 registerBlockType( 'sensei-lms/course-outline-lesson', {
 	title: __( 'Lesson', 'sensei-lms' ),
@@ -13,17 +13,16 @@ registerBlockType( 'sensei-lms/course-outline-lesson', {
 		html: false,
 		customClassName: false,
 	},
-	edit( { className } ) {
-		return (
-			<div className={ className }>
-				<PlainText
-					placeholder={ __( 'Lesson name', 'sensei-lms' ) }
-					onChange={ () => {} }
-				/>
-			</div>
-		);
+	attributes: {
+		id: {
+			type: 'int',
+		},
+		title: {
+			type: 'string',
+			default: '',
+		},
 	},
-	save() {
-		return 'Lesson Frontend!';
+	edit( props ) {
+		return <EditLessonBlock { ...props } />;
 	},
 } );
