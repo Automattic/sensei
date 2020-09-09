@@ -617,9 +617,9 @@ class Sensei_Lesson {
 
 		$value = null;
 
-		// phpcs:ignore WordPress.Security.NonceVerification Nonce verified in caller
+		// phpcs:ignore WordPress.Security.NonceVerification -- Nonce verified in caller
 		if ( isset( $_POST[ $field['id'] ] ) ) {
-			// phpcs:ignore WordPress.Security.NonceVerification Nonce verified in caller
+			// phpcs:ignore WordPress.Security.NonceVerification -- Nonce verified in caller
 			$submitted = sanitize_text_field( wp_unslash( $_POST[ $field['id'] ] ) );
 			if ( 'quiz_grade_type' === $field['id'] ) {
 				$value = 'on' === $submitted ? 'auto' : 'manual';
