@@ -151,14 +151,108 @@ class Sensei_Course_Structure {
 	/**
 	 * Save a new course structure.
 	 *
-	 * @param array $structure Course structure to save.
+	 * @param array $raw_structure Course structure to save in its raw, unsanitized form.
 	 *
-	 * @return true|WP_Error
+	 * @return bool|WP_Error
 	 */
-	public function save( array $structure ) {
-		// TODO: Implement.
+	public function save( array $raw_structure ) {
+		$structure = $this->validate_and_sanitize_structure( $raw_structure );
+		if ( is_wp_error( $structure ) ) {
+			return $structure;
+		}
 
 		return false;
 	}
 
+	/**
+	 * Parse, validate, and sanitize the structure input.
+	 *
+	 * @param array $raw_structure Structure array.
+	 *
+	 * @return WP_Error|array False if the input is invalid.
+	 */
+	private function validate_and_sanitize_structure( array $raw_structure ) : bool {
+		$structure = [];
+		foreach ( $raw_structure as $raw_item ) {
+			if ( ! is_array( $raw_item ) ) {
+				return new WP_Error(
+					'sensei_course_structure_invalid_item',
+					__( 'Each item must be an array', 'sensei-lms' )
+				);
+			}
+
+			$item = $this->validate_and_sanitize_item( $raw_item );
+			if ( is_wp_error( $item ) ) {
+				return $item;
+			}
+
+			$structure[] = $item;
+		}
+
+		return $structure;
+	}
+
+	/**
+	 * Validate and sanitize input item of structure.
+	 *
+	 * @param array $raw_item Raw item to sanitize.
+	 *
+	 * @return array|WP_Error
+	 */
+	private function validate_and_sanitize_item( array $raw_item ) {
+		if ( ! isset( $raw_item['type'] ) || ! in_array( $raw_item['type'], [ 'module', 'lesson' ], true ) ) {
+			return new WP_Error(
+				'sensei_course_structure_invalid_item_type',
+				__( 'All items must have a `type` set.', 'sensei-lms' )
+			);
+		}
+
+		if ( ! isset( $raw_item['title'] ) || '' === trim( sanitize_text_field( $raw_item['title'] ) ) ) {
+			return new WP_Error(
+				'sensei_course_structure_missing_title',
+				__( 'All items must have a `title` set.', 'sensei-lms' )
+			);
+		}
+
+		if (
+			'module' === $raw_item['type']
+			&& (
+				! isset( $raw_item['lessons'] )
+				|| ! is_array( $raw_item['lessons'] )
+			)
+		) {
+			return new WP_Error(
+				'sensei_course_structure_missing_lessons',
+				__( 'Module items must include a `lessons` array.', 'sensei-lms' )
+			);
+		}
+
+		$item = [
+			'type'  => $raw_item['type'],
+			'id'    => ! empty( $raw_item['id'] ) ? intval( $raw_item['id'] ) : null,
+			'title' => trim( sanitize_text_field( $raw_item['title'] ) ),
+		];
+
+		if ( 'module' === $raw_item['type'] ) {
+			$item['description'] = isset( $raw_item['description'] ) ? trim( sanitize_text_field( $raw_item['description'] ) ) : null;
+			$item['lessons']     = [];
+			foreach ( $raw_item['lessons'] as $raw_lesson ) {
+				$lesson = $this->validate_and_sanitize_item( $raw_lesson );
+				if ( is_wp_error( $lesson ) ) {
+					return $lesson;
+				}
+
+				if ( 'lesson' !== $lesson['type'] ) {
+					return new WP_Error(
+						'sensei_course_structure_invalid_module_lesson',
+						__( 'Module lessons array can only contain lessons.', 'sensei-lms' )
+					);
+				}
+
+				$item['lessons'][] = $lesson;
+			}
+		}
+
+		return $item;
+	}
 }
