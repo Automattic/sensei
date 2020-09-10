@@ -1462,7 +1462,7 @@ class Sensei_Core_Modules {
 	 * @since 1.8.0
 	 *
 	 * @param  integer $course_id ID of course
-	 * @return array              Ordered array of module taxonomy term objects
+	 * @return WP_Term[]          Ordered array of module taxonomy term objects
 	 */
 	public function get_course_modules( $course_id = 0 ) {
 
@@ -1675,11 +1675,13 @@ class Sensei_Core_Modules {
 	 *
 	 * @since 1.8.0
 	 *
-	 * @param $course_id
-	 * @param $term_id
+	 * @param int    $course_id                  Course post ID.
+	 * @param int    $term_id                    Module term ID.
+	 * @param string $course_lessons_post_status Post status for lessons.
+	 *
 	 * @return WP_Query $lessons_query
 	 */
-	public function get_lessons_query( $course_id, $term_id ) {
+	public function get_lessons_query( $course_id, $term_id, $course_lessons_post_status = null ) {
 		global $wp_query;
 		if ( empty( $term_id ) || empty( $course_id ) ) {
 
@@ -1687,7 +1689,9 @@ class Sensei_Core_Modules {
 
 		}
 
-		$course_lessons_post_status = isset( $wp_query ) && $wp_query->is_preview() ? 'all' : 'publish';
+		if ( ! $course_lessons_post_status ) {
+			$course_lessons_post_status = isset( $wp_query ) && $wp_query->is_preview() ? 'all' : 'publish';
+		}
 
 		$args = array(
 			'post_type'        => 'lesson',
