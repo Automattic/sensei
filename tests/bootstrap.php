@@ -102,7 +102,8 @@ class Sensei_Unit_Tests_Bootstrap {
 	 * @since 1.9
 	 */
 	public function includes() {
-		// factories
+		require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-test-login-helpers.php';
+		require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-rest-api-test-helpers.php';
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-helpers.php';
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-manual-test-helpers.php';
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-scheduler-test-helpers.php';
