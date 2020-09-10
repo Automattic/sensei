@@ -153,9 +153,9 @@ class Sensei_Course_Structure {
 	 *
 	 * @param array $structure Course structure to save.
 	 *
-	 * @return bool
+	 * @return true|WP_Error
 	 */
-	public function save( array $structure ) : bool {
+	public function save( array $structure ) {
 		// TODO: Implement.
 
 		return false;
