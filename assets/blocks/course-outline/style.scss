@@ -83,6 +83,14 @@ $dark-gray: #1a1d20;
 		background-color: #DCDCDE;
 		border-radius: 50%;
 	}
+
+	&__unsaved {
+		font-size: 12px;
+		font-weight: bold;
+		background: #DCDCDE;
+		padding: 0 10px;
+		border-radius: 6px;
+	}
 }
 
 /**
