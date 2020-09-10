@@ -3445,6 +3445,7 @@ class Sensei_Course {
 			'module_count'  => count( wp_get_post_terms( $course->ID, 'module' ) ),
 			'lesson_count'  => $this->course_lesson_count( $course->ID ),
 			'product_count' => $product_count,
+			'sample_course' => 'getting-started-with-sensei-lms' === $course->post_name ? 1 : 0,
 		];
 		sensei_log_event( 'course_publish', $event_properties );
 	}
