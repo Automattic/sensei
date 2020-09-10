@@ -4,6 +4,9 @@ import { createReducerFromActionMap } from '../../shared/data/store-helpers';
 
 const DEFAULT_STATE = {
 	structure: [],
+	editor: [],
+	isSaving: false,
+	isDirty: false,
 };
 
 const actions = {
@@ -32,11 +35,10 @@ const actions = {
 				method: 'POST',
 				data: { structure: yield getEditorStructure() },
 			} );
-		} catch {
-			yield { type: 'SAVING', isSaving: false };
-		}
+		} catch {}
 
 		yield* actions.fetchCourseStructure();
+		yield { type: 'SAVING', isSaving: false };
 	},
 	setStructure: ( structure ) => ( { type: 'SET_SERVER', structure } ),
 	setEditorStructure: ( structure ) => ( { type: 'SET_EDITOR', structure } ),
@@ -51,15 +53,17 @@ const reducers = {
 		structure,
 		editor: structure,
 		isDirty: false,
-		isSaving: false,
 	} ),
 	SET_EDITOR: ( { structure }, state ) => ( {
 		...state,
 		editor: structure,
 		isDirty: true,
-		isSaving: false,
 	} ),
-	SAVING: ( { isSaving }, state ) => ( { ...state, isSaving } ),
+	SAVING: ( { isSaving }, state ) => ( {
+		...state,
+		isSaving,
+		isDirty: isSaving ? false : state.isDirty,
+	} ),
 	DEFAULT: ( action, state ) => state,
 };
 
