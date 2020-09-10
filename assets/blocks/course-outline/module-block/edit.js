@@ -2,28 +2,22 @@ import { __ } from '@wordpress/i18n';
 import { InnerBlocks, RichText } from '@wordpress/block-editor';
 
 import SingleLineInput from '../single-line-input';
-import useBlocksCreator from '../use-block-creator';
 
 /**
  * Edit module block component.
  *
  * @param {Object}   props                        Component props.
- * @param {string}   props.clientId               Block client ID.
  * @param {string}   props.className              Custom class name.
  * @param {Object}   props.attributes             Block attributes.
  * @param {string}   props.attributes.title       Module title.
  * @param {string}   props.attributes.description Module description.
- * @param {Object[]} props.attributes.lessons     Module lessons.
  * @param {Function} props.setAttributes          Block set attributes function.
  */
 const EditModuleBlock = ( {
-	clientId,
 	className,
-	attributes: { title, description, lessons },
+	attributes: { title, description },
 	setAttributes,
 } ) => {
-	useBlocksCreator( lessons, clientId );
-
 	/**
 	 * Handle update name.
 	 *
