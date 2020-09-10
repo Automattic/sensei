@@ -21,8 +21,8 @@ const actions = {
 	 * Persist editor's course structure to the REST API
 	 */
 	*save() {
-		const shouldSave = yield select( COURSE_STORE ).shouldSave();
-		if ( ! shouldSave ) return;
+		const { shouldSave, getEditorStructure } = select( COURSE_STORE );
+		if ( ! ( yield shouldSave() ) ) return;
 
 		yield { type: 'SAVING', isSaving: true };
 		const courseId = yield select( 'core/editor' ).getCurrentPostId();
@@ -30,7 +30,7 @@ const actions = {
 			yield apiFetch( {
 				path: `/sensei-internal/v1/course-structure/${ courseId }`,
 				method: 'POST',
-				data: yield select( COURSE_STORE ).getEditorStructure(),
+				data: { structure: yield getEditorStructure() },
 			} );
 		} catch {
 			yield { type: 'SAVING', isSaving: false };
