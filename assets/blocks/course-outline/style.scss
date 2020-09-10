@@ -1,7 +1,7 @@
-$dark-gray: #1A1D20;
+$dark-gray: #1a1d20;
 
 .wp-block-sensei-lms-course-outline {
-	&__clean-input[type="text"] {
+	&__clean-input[type='text'] {
 		display: block;
 		width: 100%;
 		padding: 0;
@@ -38,9 +38,10 @@ $dark-gray: #1A1D20;
 
 .wp-block-sensei-lms-course-outline-module {
 	border: solid 1px $dark-gray;
+	margin-bottom: 25px;
 
 	&__name {
-		padding: 25px;
+		padding: 15px 25px;
 		background-color: $dark-gray;
 		font-size: 24px;
 		font-weight: bold;
