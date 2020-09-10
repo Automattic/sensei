@@ -114,6 +114,13 @@ class Sensei_Unit_Tests_Bootstrap {
 
 		// Testing setup for event logging.
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/class-sensei-test-events.php';
+
+		// Used for some libraries. Tests that require these libraries should be skipped if they don't exist.
+		$autoload_file = __DIR__ . '/../vendor/autoload.php';
+		if ( file_exists( $autoload_file ) ) {
+			require_once $autoload_file;
+		}
+
 		Sensei_Test_Events::init();
 	}
 	/**
