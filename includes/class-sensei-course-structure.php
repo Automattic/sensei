@@ -449,11 +449,16 @@ class Sensei_Course_Structure {
 
 		foreach ( $structure as $item ) {
 			if ( 'module' === $item['type'] ) {
-				$module_ids[] = $item['id'];
-				foreach ( $item['lessons'] as $lesson_item ) {
-					$lesson_ids[] = $lesson_item['id'];
+				if ( ! empty( $item['id'] ) ) {
+					$module_ids[] = $item['id'];
 				}
-			} elseif ( 'lesson' === $item['type'] ) {
+
+				foreach ( $item['lessons'] as $lesson_item ) {
+					if ( ! empty( $lesson_item['id'] ) ) {
+						$lesson_ids[] = $lesson_item['id'];
+					}
+				}
+			} elseif ( 'lesson' === $item['type'] && ! empty( $item['id'] ) ) {
 				$lesson_ids[] = $item['id'];
 			}
 		}
@@ -472,6 +477,18 @@ class Sensei_Course_Structure {
 	 * @return WP_Error|array False if the input is invalid.
 	 */
 	private function sanitize_structure( array $raw_structure ) {
+		list( $module_ids, $lesson_ids ) = $this->flatten_structure( $raw_structure );
+
+		if (
+			array_unique( $module_ids ) !== $module_ids
+			|| array_unique( $lesson_ids ) !== $lesson_ids
+		) {
+			return new WP_Error(
+				'sensei_course_structure_duplicate_items',
+				__( 'Individual lesson or modules cannot appear multiple times in the same course', 'sensei-lms' )
+			);
+		}
+
 		$structure = [];
 		foreach ( $raw_structure as $raw_item ) {
 			if ( ! is_array( $raw_item ) ) {
