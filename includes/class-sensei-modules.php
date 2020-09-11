@@ -1759,7 +1759,7 @@ class Sensei_Core_Modules {
 		// exit if there are no module on this course
 		if ( empty( $course_modules ) || ! is_array( $course_modules ) ) {
 
-			return Sensei()->course->course_lessons( $course_id );
+			return Sensei()->course->course_lessons( $course_id, $post_status );
 
 		}
 
