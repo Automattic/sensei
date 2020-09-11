@@ -1227,7 +1227,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 		// Submit answers and remove the hooks within the submit function to avoid side effects.
 		remove_all_actions( 'sensei_user_quiz_submitted' );
-		remove_all_actions( 'sensei_user_lesson_end' );   
+		remove_all_actions( 'sensei_user_lesson_end' );
 		$result_for_valid_data = WooThemes_Sensei_Quiz::submit_answers_for_grading(
 			$test_user_quiz_answers,
 			$files,
