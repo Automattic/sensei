@@ -26,6 +26,9 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 
 		// Init event logging source filters.
 		add_action( 'init', [ $this, 'init_event_logging_sources' ] );
+
+		// Filters for for events to watch and report.
+		add_action( 'activated_plugin', [ $this, 'log_wccom_plugin_install' ] );
 	}
 
 	/*
@@ -65,7 +68,7 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 		return Sensei()->settings->get( self::SENSEI_SETTING_NAME ) || false;
 	}
 
-	protected function set_tracking_enabled( $enable ) {
+	public function set_tracking_enabled( $enable ) {
 		Sensei()->settings->set( self::SENSEI_SETTING_NAME, $enable );
 
 		// Refresh settings in-memory so we get the right value.
@@ -79,13 +82,11 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 	protected function opt_in_dialog_text() {
 		return sprintf(
 			/*
-			 * translators: the href tag contains the URL for the page telling
+			 * translators: The href tag contains the URL for the page telling
 			 * users what data Sensei tracks.
 			 */
 			__(
-				"We'd love if you helped us make Sensei LMS better by allowing us to collect
-				<a href=\"%s\" target=\"_blank\">usage tracking data</a>.
-				No sensitive information is collected, and you can opt out at any time.",
+				"We'd love if you helped us make Sensei LMS better by allowing us to collect <a href=\"%s\" target=\"_blank\">usage tracking data</a>. No sensitive information is collected, and you can opt out at any time.",
 				'sensei-lms'
 			),
 			self::SENSEI_TRACKING_INFO_URL
@@ -124,13 +125,11 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 			'name'        => __( 'Enable usage tracking', 'sensei-lms' ),
 			'description' => sprintf(
 				/*
-				 * translators: the href tag contains the URL for the page telling
+				 * translators: The href tag contains the URL for the page telling
 				 * users what data Sensei tracks.
 				 */
 				__(
-					'Help us make Sensei LMS better by allowing us to collect
-					<a href="%s" target="_blank">usage tracking data</a>.
-					No sensitive information is collected.',
+					'Help us make Sensei LMS better by allowing us to collect <a href="%s" target="_blank">usage tracking data</a>. No sensitive information is collected.',
 					'sensei-lms'
 				),
 				self::SENSEI_TRACKING_INFO_URL
@@ -196,5 +195,53 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 				return 'data-import';
 			}
 		);
+	}
+
+
+
+	/**
+	 * Log plugin installation success for WooCommerce.com plugin on activation.
+	 *
+	 * @param string $plugin_file The activated plugin.
+	 */
+	public function log_wccom_plugin_install( $plugin_file ) {
+		$plugin_name = dirname( $plugin_file );
+
+		if ( in_array( $plugin_file, $this->get_wccom_extensions(), true ) ) {
+			sensei_log_event(
+				'plugin_install',
+				[ 'slug' => $plugin_name ]
+			);
+		}
+	}
+
+	/**
+	 * Get the WooCommerce.com plugins files.
+	 *
+	 * @return string[]
+	 */
+	private function get_wccom_extensions() {
+		$wccom_extensions = [];
+
+		foreach ( Sensei()->setup_wizard->get_sensei_extensions() as $extension ) {
+			if ( isset( $extension->wccom_product_id ) ) {
+				$wccom_extensions[] = $extension->plugin_file;
+			}
+		}
+
+		return $wccom_extensions;
+	}
+
+	/**
+	 * Collect system data to track.
+	 *
+	 * @return array
+	 */
+	public function get_system_data() {
+		$system_data                 = [];
+		$system_data['version']      = Sensei()->version;
+		$system_data['wcpc_version'] = defined( 'SENSEI_WC_PAID_COURSES_VERSION' ) ? SENSEI_WC_PAID_COURSES_VERSION : null;
+
+		return array_merge( $system_data, parent::get_system_data() );
 	}
 }

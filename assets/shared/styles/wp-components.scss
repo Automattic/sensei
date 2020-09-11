@@ -1,0 +1,79 @@
+@import 'variables';
+
+@import '~@wordpress/base-styles/colors';
+@import '~@wordpress/base-styles/variables';
+@import '~@wordpress/base-styles/mixins';
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/animations';
+@import '~@wordpress/base-styles/z-index';
+@import '~@wordpress/components/src/style';
+
+body.sensei-color {
+
+	.components-button.is-primary.is-busy {
+		background-size: 100px 100%;
+	}
+
+	a, .button-link, .components-button.is-link {
+		&.link__color-secondary {
+			color: $link;
+
+			&:hover,
+			&:active {
+				color: lighten($link, 20%);
+			}
+
+			&:not(.components-button):focus {
+				color: darken($link, 20%);
+				box-shadow: 0 0 0 1px $link-primary, 0 0 2px 1px rgba($link-primary, 0.8);
+			}
+		}
+
+		&.link__color-primary {
+			color: $link-primary;
+
+			&:hover,
+			&:active {
+				color: lighten($link-primary, 20%);
+			}
+
+			&:focus {
+				color: darken($link-primary, 20%);
+			}
+		}
+
+	}
+
+	.components-checkbox-control__input[type='checkbox'] {
+
+		border: 2px solid $gray-50;
+
+		&:checked {
+			background-color: $primary;
+			border-color: $primary;
+		}
+
+		&:focus {
+			box-shadow: 0 0 2px rgba($primary, .5);
+			border-color: $primary;
+		}
+
+	}
+
+	.components-checkbox-control__checked {
+		transform: scale(0.75);
+	}
+
+	.components-text-control__input {
+		padding: 6px 8px;
+	}
+
+	input[type='text'], input[type='email'] {
+		&:focus {
+			border-color: $primary;
+			box-shadow: 0 0 0 1px $primary;
+		}
+	}
+
+
+}

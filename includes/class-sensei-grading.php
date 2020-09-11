@@ -76,10 +76,8 @@ class Sensei_Grading {
 	 */
 	public function enqueue_scripts() {
 
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-
 		// Load Grading JS
-		wp_enqueue_script( 'sensei-grading-general', Sensei()->plugin_url . 'assets/js/grading-general' . $suffix . '.js', array( 'jquery', 'sensei-core-select2' ), Sensei()->version );
+		Sensei()->assets->enqueue( 'sensei-grading-general', 'js/grading-general.js', [ 'jquery', 'sensei-core-select2' ] );
 
 	} // End enqueue_scripts()
 
@@ -95,7 +93,7 @@ class Sensei_Grading {
 
 		wp_enqueue_style( Sensei()->token . '-admin' );
 
-		wp_enqueue_style( 'sensei-settings-api', Sensei()->plugin_url . 'assets/css/settings.css', '', Sensei()->version );
+		Sensei()->assets->enqueue( 'sensei-settings-api', 'css/settings.css' );
 
 	} // End enqueue_styles()
 
@@ -122,12 +120,17 @@ class Sensei_Grading {
 	 * load_data_object creates new instance of class
 	 *
 	 * @since  1.3.0
+	 * @deprecated 3.3.0  Use constructors instead.
+	 *
 	 * @param  string    $name          Name of class
 	 * @param  integer   $data          constructor arguments
 	 * @param  undefined $optional_data optional constructor arguments
 	 * @return object                 class instance object
 	 */
 	public function load_data_object( $name = '', $data = 0, $optional_data = null ) {
+		// Use constructors directly.
+		_deprecated_function( __METHOD__, '3.3.0', 'new Sensei_Grading_{$name}' );
+
 		// Load Analysis data
 		$object_name = 'Sensei_Grading_' . $name;
 		if ( is_null( $optional_data ) ) {
@@ -183,7 +186,9 @@ class Sensei_Grading {
 		if ( ! empty( $_GET['view'] ) ) {
 			$view = esc_html( $_GET['view'] );
 		}
-		$sensei_grading_overview = $this->load_data_object( 'Main', compact( 'course_id', 'lesson_id', 'user_id', 'view' ) );
+
+		$sensei_grading_overview = new Sensei_Grading_Main( compact( 'course_id', 'lesson_id', 'user_id', 'view' ) );
+		$sensei_grading_overview->prepare_items();
 
 		// Wrappers
 		do_action( 'grading_before_container' );
@@ -220,7 +225,9 @@ class Sensei_Grading {
 		if ( isset( $_GET['quiz_id'] ) ) {
 			$quiz_id = intval( $_GET['quiz_id'] );
 		}
-		$sensei_grading_user_profile = $this->load_data_object( 'User_Quiz', $user_id, $quiz_id );
+
+		$sensei_grading_user_profile = new Sensei_Grading_User_Quiz( $user_id, $quiz_id );
+
 		// Wrappers
 		do_action( 'grading_before_container' );
 		do_action( 'grading_wrapper_container', 'top' );

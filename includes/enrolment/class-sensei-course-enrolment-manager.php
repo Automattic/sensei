@@ -65,6 +65,7 @@ class Sensei_Course_Enrolment_Manager {
 	 * Sets the actions.
 	 */
 	public function init() {
+		add_action( 'plugins_loaded', [ $this, 'detect_wcpc_1' ], 100 );
 		add_action( 'init', [ $this, 'collect_enrolment_providers' ], 100 );
 		add_action( 'shutdown', [ $this, 'run_deferred_course_enrolment_checks' ] );
 		add_action( 'sensei_enrolment_results_calculated', [ $this, 'remove_deferred_enrolment_check' ], 10, 3 );
@@ -384,7 +385,7 @@ class Sensei_Course_Enrolment_Manager {
 	 * @see Sensei_Course_Enrolment_Manager::trigger_course_enrolment_check
 	 */
 	public function recalculate_enrolments( $user_id ) {
-		$learner_calculated_version = get_user_meta( $user_id, self::LEARNER_CALCULATION_META_NAME, true );
+		$learner_calculated_version = get_user_meta( $user_id, self::get_learner_calculated_version_meta_key(), true );
 		if ( $this->get_enrolment_calculation_version() === $learner_calculated_version ) {
 			return;
 		}
@@ -408,7 +409,7 @@ class Sensei_Course_Enrolment_Manager {
 
 		update_user_meta(
 			$user_id,
-			self::LEARNER_CALCULATION_META_NAME,
+			self::get_learner_calculated_version_meta_key(),
 			$this->get_enrolment_calculation_version()
 		);
 	}
@@ -443,7 +444,7 @@ class Sensei_Course_Enrolment_Manager {
 	 * @param int $user_id User ID.
 	 */
 	public function mark_user_as_needing_recalculation( $user_id ) {
-		delete_user_meta( $user_id, self::LEARNER_CALCULATION_META_NAME );
+		delete_user_meta( $user_id, self::get_learner_calculated_version_meta_key() );
 	}
 
 	/**
@@ -459,5 +460,57 @@ class Sensei_Course_Enrolment_Manager {
 		$current_hash = md5( implode( '-', $hash_components ) );
 
 		return $current_hash . '-' . Sensei()->version;
+	}
+
+	/**
+	 * Get the learner calculated meta key.
+	 *
+	 * @return string
+	 */
+	public static function get_learner_calculated_version_meta_key() {
+		global $wpdb;
+
+		return $wpdb->get_blog_prefix() . self::LEARNER_CALCULATION_META_NAME;
+	}
+
+	/**
+	 * Detect WooCommerce Paid Courses v1 and disable the enrolment functionality while it is installed.
+	 *
+	 * @access private
+	 */
+	public function detect_wcpc_1() {
+		if (
+			! defined( 'SENSEI_WC_PAID_COURSES_VERSION' )
+			|| '1.' !== substr( SENSEI_WC_PAID_COURSES_VERSION, 0, 2 )
+		) {
+			return;
+		}
+
+		// Disable enrolment system until WCPC is deactivated or upgraded.
+		add_filter( 'sensei_is_enrolled', '__return_false' );
+		add_filter( 'sensei_course_enrolment_providers', '__return_empty_array', 100 );
+
+		// Show admin notice.
+		add_action( 'admin_notices', [ $this, 'add_wcpc_1_notice' ] );
+	}
+
+	/**
+	 * Adds notice in WP Admin when we detect WooCommerce Paid Courses v1 is installed.
+	 *
+	 * @access private
+	 */
+	public function add_wcpc_1_notice() {
+		$screen        = get_current_screen();
+		$valid_screens = [ 'dashboard', 'plugins', 'plugins-network', 'sensei-lms_page_sensei_learners' ];
+
+		if ( ! current_user_can( 'activate_plugins' ) || ! in_array( $screen->id, $valid_screens, true ) ) {
+			return;
+		}
+
+		$message = __( '<strong>Sensei LMS</strong> has detected an incompatible version of WooCommerce Paid Courses. Learners will not be able to access their courses until it is upgraded to version 2.0.0 or greater.', 'sensei-lms' );
+
+		echo '<div class="error"><p>';
+		echo wp_kses( $message, [ 'strong' => [] ] );
+		echo '</p></div>';
 	}
 }

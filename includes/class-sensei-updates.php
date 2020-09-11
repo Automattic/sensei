@@ -32,8 +32,9 @@ class Sensei_Updates {
 	public function __construct( $parent ) {
 
 		// Setup object data
-		$this->parent      = $parent;
-		$this->updates_run = self::get_ran_upgrades_raw();
+		$this->parent = $parent;
+
+		add_action( 'admin_init', array( $this, 'init_updates_run' ) );
 
 		// The list of upgrades to run
 		$this->updates = array(
@@ -197,6 +198,13 @@ class Sensei_Updates {
 		add_action( 'admin_menu', array( $this, 'add_update_admin_screen' ), 50 );
 
 	} // End __construct()
+
+	/**
+	 * Initializes the updates that have been executed.
+	 */
+	public function init_updates_run() {
+		$this->updates_run = self::get_ran_upgrades_raw();
+	}
 
 	/**
 	 * Get all the possible updates.
@@ -1605,19 +1613,19 @@ class Sensei_Updates {
 				);
 				// Check it doesn't already exist
 				$sql        = $wpdb->prepare( $check_existing_sql, $lesson_id, $user_id );
-				$comment_ID = $wpdb->get_var( $sql );
-				if ( ! $comment_ID ) {
+				$comment_id = $wpdb->get_var( $sql );
+				if ( ! $comment_id ) {
 					// Bypassing WP wp_insert_comment( $data ), so no actions/filters are run
 					$wpdb->insert( $wpdb->comments, $data );
-					$comment_ID = (int) $wpdb->insert_id;
+					$comment_id = (int) $wpdb->insert_id;
 
-					if ( $comment_ID && ! empty( $meta_data ) ) {
+					if ( $comment_id && ! empty( $meta_data ) ) {
 						foreach ( $meta_data as $key => $value ) {
 							// Bypassing WP add_comment_meta(() so no actions/filters are run
 							if ( $wpdb->get_var(
 								$wpdb->prepare(
 									"SELECT COUNT(*) FROM $wpdb->commentmeta WHERE comment_id = %d AND meta_key = %s ",
-									$comment_ID,
+									$comment_id,
 									$key
 								)
 							) ) {
@@ -1627,13 +1635,15 @@ class Sensei_Updates {
 							$wpdb->insert(
 								$wpdb->commentmeta,
 								array(
-									'comment_id' => $comment_ID,
+									'comment_id' => $comment_id,
 									'meta_key'   => $key,
 									'meta_value' => $value,
 								)
 							);
 						}
 					}
+					update_meta_cache( 'comment', array( $comment_id ) );
+					clean_comment_cache( $comment_id );
 				}
 			}
 		}
@@ -1751,19 +1761,19 @@ class Sensei_Updates {
 				);
 				// Check it doesn't already exist
 				$sql        = $wpdb->prepare( $check_existing_sql, $course_id, $user_id );
-				$comment_ID = $wpdb->get_var( $sql );
-				if ( ! $comment_ID ) {
+				$comment_id = $wpdb->get_var( $sql );
+				if ( ! $comment_id ) {
 					// Bypassing WP wp_insert_comment( $data ), so no actions/filters are run
 					$wpdb->insert( $wpdb->comments, $data );
-					$comment_ID = (int) $wpdb->insert_id;
+					$comment_id = (int) $wpdb->insert_id;
 
-					if ( $comment_ID && ! empty( $meta_data ) ) {
+					if ( $comment_id && ! empty( $meta_data ) ) {
 						foreach ( $meta_data as $key => $value ) {
 							// Bypassing WP wp_insert_comment( $data ), so no actions/filters are run
 							if ( $wpdb->get_var(
 								$wpdb->prepare(
 									"SELECT COUNT(*) FROM $wpdb->commentmeta WHERE comment_id = %d AND meta_key = %s ",
-									$comment_ID,
+									$comment_id,
 									$key
 								)
 							) ) {
@@ -1773,13 +1783,15 @@ class Sensei_Updates {
 							$wpdb->insert(
 								$wpdb->commentmeta,
 								array(
-									'comment_id' => $comment_ID,
+									'comment_id' => $comment_id,
 									'meta_key'   => $key,
 									'meta_value' => $value,
 								)
 							);
 						}
 					}
+					update_meta_cache( 'comment', array( $comment_id ) );
+					clean_comment_cache( $comment_id );
 				}
 			}
 		}
@@ -1967,7 +1979,7 @@ class Sensei_Updates {
 				// Excape data
 				$answer = wp_slash( $answer );
 
-				$comment_ID = $answer['comment_ID'];
+				$comment_id = $answer['comment_ID'];
 
 				$meta_data = array();
 
@@ -1990,7 +2002,7 @@ class Sensei_Updates {
 				);
 				$data = array_merge( $answer, $data );
 
-				$rval = $wpdb->update( $wpdb->comments, $data, compact( 'comment_ID' ) );
+				$rval = $wpdb->update( $wpdb->comments, $data, compact( 'comment_id' ) );
 				if ( $rval ) {
 					if ( ! empty( $meta_data ) ) {
 						foreach ( $meta_data as $key => $value ) {
@@ -1998,7 +2010,7 @@ class Sensei_Updates {
 							if ( $wpdb->get_var(
 								$wpdb->prepare(
 									"SELECT COUNT(*) FROM $wpdb->commentmeta WHERE comment_id = %d AND meta_key = %s ",
-									$comment_ID,
+									$comment_id,
 									$key
 								)
 							) ) {
@@ -2008,13 +2020,15 @@ class Sensei_Updates {
 							$wpdb->insert(
 								$wpdb->commentmeta,
 								array(
-									'comment_id' => $comment_ID,
+									'comment_id' => $comment_id,
 									'meta_key'   => $key,
 									'meta_value' => $value,
 								)
 							);
 						}
 					}
+					update_meta_cache( 'comment', array( $comment_id ) );
+					clean_comment_cache( $comment_id );
 				}
 			}
 		}
@@ -2037,10 +2051,14 @@ class Sensei_Updates {
 		global $wpdb;
 
 		// Update 'sensei_user_answer' entries to use comment_approved = 'log' so they don't appear in counts
-		$wpdb->query( "UPDATE $wpdb->comments SET comment_approved = 'log' WHERE comment_type = 'sensei_user_answer' " );
+		$comment_ids = $wpdb->get_col( "SELECT comment_ID FROM $wpdb->comments WHERE comment_type = 'sensei_user_answer'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- intentionally running a direct SQL query for not triggering all the filters and actions.
+		$wpdb->query( "UPDATE $wpdb->comments SET comment_approved = 'log' WHERE comment_type = 'sensei_user_answer' " ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- intentionally running a direct SQL query for not triggering all the filters and actions.
+		clean_comment_cache( $comment_ids );
 
 		// Mark all old Sensei comment types with comment_approved = 'legacy' so they no longer appear in counts, but can be restored if required
-		$wpdb->query( "UPDATE $wpdb->comments SET comment_approved = 'legacy' WHERE comment_type IN ('sensei_course_start', 'sensei_course_end', 'sensei_lesson_start', 'sensei_lesson_end', 'sensei_quiz_asked', 'sensei_user_grade', 'sensei_answer_notes', 'sensei_quiz_grade') " );
+		$comment_ids = $wpdb->get_col( "SELECT comment_ID FROM $wpdb->comments WHERE comment_type IN ('sensei_course_start', 'sensei_course_end', 'sensei_lesson_start', 'sensei_lesson_end', 'sensei_quiz_  asked', 'sensei_user_grade', 'sensei_answer_notes', 'sensei_quiz_grade')" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- intentionally running a direct SQL query for not triggering all the filters and actions.
+		$wpdb->query( "UPDATE $wpdb->comments SET comment_approved = 'legacy' WHERE comment_type IN ('sensei_course_start', 'sensei_course_end', 'sensei_lesson_start', 'sensei_lesson_end', 'sensei_quiz_asked', 'sensei_user_grade', 'sensei_answer_notes', 'sensei_quiz_grade') " ); // phpcs::ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- intentionally running a direct SQL query for not triggering all the filters and actions.
+		clean_comment_cache( $comment_ids );
 
 		return true;
 	}
@@ -2056,7 +2074,7 @@ class Sensei_Updates {
 	public function update_comment_course_lesson_comment_counts( $n = 50, $offset = 0 ) {
 		global $wpdb;
 
-		$item_count_result = $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->posts WHERE post_type IN ('course', 'lesson') " );
+		$item_count_result = $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->posts WHERE post_type IN ('course', 'lesson') " ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- intentionally running a direct SQL query for not triggering all the filters and actions.
 
 		if ( 0 == $item_count_result ) {
 			return true;
@@ -2091,7 +2109,9 @@ class Sensei_Updates {
 	public function remove_legacy_comments() {
 		global $wpdb;
 
-		$wpdb->delete( $wpdb->comments, array( 'comment_approved' => 'legacy' ) );
+		$comment_ids = $wpdb->get_col( "SELECT comment_ID FROM $wpdb->comments WHERE comment_approved = 'legacy'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- intentionally running a direct SQL query for not triggering all the filters and actions.
+		$wpdb->delete( $wpdb->comments, array( 'comment_approved' => 'legacy' ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- intentionally running a direct SQL query for not triggering all the filters and actions.
+		clean_comment_cache( $comment_ids );
 
 		return true;
 	}

@@ -68,7 +68,7 @@ class Sensei_Analysis {
 	 */
 	public function enqueue_styles() {
 
-		wp_enqueue_style( 'sensei-settings-api', Sensei()->plugin_url . 'assets/css/settings.css', '', Sensei()->version );
+		Sensei()->assets->enqueue( 'sensei-settings-api', 'css/settings.css' );
 
 	} // End enqueue_styles()
 

@@ -29,6 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Course_Enrolment {
 	const META_PREFIX_ENROLMENT_RESULTS = 'sensei_course_enrolment_';
 	const META_COURSE_ENROLMENT_VERSION = '_course_enrolment_version';
+	const META_REMOVED_LEARNERS         = 'sensei_removed_learners';
 
 	/**
 	 * Courses instances.
@@ -50,6 +51,15 @@ class Sensei_Course_Enrolment {
 	 * @var int
 	 */
 	private $course_id;
+
+	/**
+	 * An array of removed learners from the course.
+	 *
+	 * @var array {
+	 *     @type string $date  Timestamp of when the the learner was removed.
+	 * }
+	 */
+	private $removed_learners;
 
 	/**
 	 * Sensei_Course_Enrolment constructor.
@@ -93,6 +103,10 @@ class Sensei_Course_Enrolment {
 	 * @return bool
 	 */
 	public function is_enrolled( $user_id, $check_cache = true ) {
+		if ( ! $user_id ) {
+			return false;
+		}
+
 		/**
 		 * Allow complete side-stepping of enrolment handling in Sensei.
 		 *
@@ -113,8 +127,8 @@ class Sensei_Course_Enrolment {
 			return $is_enrolled;
 		}
 
-		// Users can only be enrolled in a published course.
-		if ( 'publish' !== get_post_status( $this->course_id ) ) {
+		// User is not enrolled if the course is not published or he is removed.
+		if ( 'publish' !== get_post_status( $this->course_id ) || $this->is_learner_removed( $user_id ) ) {
 			return false;
 		}
 
@@ -143,10 +157,13 @@ class Sensei_Course_Enrolment {
 	/**
 	 * Marks all enrolment results as invalid for a course and enqueues an async job to recalculate.
 	 *
-	 * @return Sensei_Enrolment_Course_Calculation_Job
+	 * This will still cause a delay when users visit My Courses or another page that relies on the term.
+	 * We aren't invalidating the entire user for this.
+	 *
+	 * @return Sensei_Enrolment_Course_Calculation_Job|null
 	 */
 	public function recalculate_enrolment() {
-		$this->invalidate_all_learner_results();
+		$this->reset_course_enrolment_salt();
 		$job_scheduler = Sensei_Enrolment_Job_Scheduler::instance();
 
 		return $job_scheduler->start_course_calculation_job( $this->course_id );
@@ -162,29 +179,6 @@ class Sensei_Course_Enrolment {
 	 */
 	public function invalidate_learner_result( $user_id ) {
 		update_user_meta( $user_id, $this->get_enrolment_results_meta_key(), '' );
-	}
-
-	/**
-	 * Bulk invalidate all learner results for all users.
-	 *
-	 * This could still cause a delay when users visit My Courses or another page that relies on the term.
-	 * We aren't invalidating the entire user for this.
-	 *
-	 * Since we're doing a direct database edit here, we combine this with a salt reset to invalidate cached results.
-	 */
-	private function invalidate_all_learner_results() {
-		global $wpdb;
-
-		// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- Infrequent query that is much faster than alternatives.
-		$invalidated_data = [ 'meta_value' => '' ];
-
-		// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Infrequent query that is much faster than alternatives.
-		$where = [ 'meta_key' => $this->get_enrolment_results_meta_key() ];
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Caching is invalidated by a reset of the course salt below.
-		$wpdb->update( $wpdb->usermeta, $invalidated_data, $where );
-
-		$this->reset_course_enrolment_salt();
 	}
 
 	/**
@@ -377,7 +371,9 @@ class Sensei_Course_Enrolment {
 	 * @return string
 	 */
 	public function get_enrolment_results_meta_key() {
-		return self::META_PREFIX_ENROLMENT_RESULTS . $this->course_id;
+		global $wpdb;
+
+		return $wpdb->get_blog_prefix() . self::META_PREFIX_ENROLMENT_RESULTS . $this->course_id;
 	}
 
 	/**
@@ -457,5 +453,154 @@ class Sensei_Course_Enrolment {
 		update_post_meta( $this->course_id, self::META_COURSE_ENROLMENT_VERSION, $new_salt );
 
 		return $new_salt;
+	}
+
+	/**
+	 * Remove learner from the course, overriding the providers rule.
+	 *
+	 * @param int $user_id User ID.
+	 *
+	 * @return boolean Success flag.
+	 */
+	public function remove_learner( $user_id ) {
+		$removed_learners = $this->get_removed_learners();
+
+		if ( isset( $removed_learners[ $user_id ] ) ) {
+			return false;
+		}
+
+		$removed_learners[ $user_id ] = [ 'date' => time() ];
+
+		$this->save_enrolment( $user_id, false );
+
+		return $this->update_removed_learners( $removed_learners );
+	}
+
+	/**
+	 * Restore removed learner enrolment, giving the control back to the providers.
+	 *
+	 * @param int $user_id User ID.
+	 *
+	 * @return boolean Success flag.
+	 */
+	public function restore_learner( $user_id ) {
+		$removed_learners = $this->get_removed_learners();
+
+		unset( $removed_learners[ $user_id ] );
+
+		return $this->update_removed_learners( $removed_learners );
+	}
+
+	/**
+	 * Check if the user is removed.
+	 *
+	 * @param int $user_id User ID.
+	 *
+	 * @return boolean Whether the learner is removed.
+	 */
+	public function is_learner_removed( $user_id ) {
+		$removed_learners = $this->get_removed_learners();
+
+		return array_key_exists( $user_id, $removed_learners );
+	}
+
+	/**
+	 * Get removed learners meta.
+	 *
+	 * @return array Removed learners array.
+	 */
+	private function get_removed_learners() {
+		if ( isset( $this->removed_learners ) ) {
+			return $this->removed_learners;
+		}
+
+		$removed_learners_json = get_post_meta( $this->course_id, self::META_REMOVED_LEARNERS, true );
+
+		if ( empty( $removed_learners_json ) ) {
+			$this->removed_learners = [];
+		} else {
+			$removed_learners = json_decode( $removed_learners_json, true );
+
+			if ( ! $removed_learners ) {
+				$this->removed_learners = [];
+			} else {
+				$this->removed_learners = $removed_learners;
+			}
+		}
+
+		return $this->removed_learners;
+	}
+
+	/**
+	 * Update removed learners meta.
+	 *
+	 * @param array $removed_learners Removed learners array.
+	 *
+	 * @return bool Whether it was updated.
+	 */
+	private function update_removed_learners( $removed_learners ) {
+		$result = update_post_meta( $this->course_id, self::META_REMOVED_LEARNERS, wp_json_encode( $removed_learners ) );
+
+		if ( $result ) {
+			$this->removed_learners = $removed_learners;
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Withdraw learner. It removes the manual enrolment and/or remove the learner,
+	 * depending on the user enrollment situation.
+	 *
+	 * @param int $user_id User ID.
+	 *
+	 * @return boolean If user is withdrawn.
+	 */
+	public function withdraw( $user_id ) {
+		$enrolment_manager         = Sensei_Course_Enrolment_Manager::instance();
+		$manual_enrolment_provider = $enrolment_manager->get_manual_enrolment_provider();
+
+		if ( $manual_enrolment_provider instanceof Sensei_Course_Manual_Enrolment_Provider ) {
+			$manual_enrolment_provider->withdraw_learner( $user_id, $this->course_id );
+		}
+
+		if ( ! $this->is_enrolled( $user_id, false ) ) {
+			return true;
+		}
+
+		// If user is still enrolled for some reason, remove them.
+		$this->remove_learner( $user_id );
+
+		return ! $this->is_enrolled( $user_id, false );
+	}
+
+	/**
+	 * Enroll learner. It restore a learner, if they are enrolled through a provider,
+	 * otherwise, give them a manually enrollment.
+	 *
+	 * @param int $user_id User ID.
+	 *
+	 * @return boolean If user is enrolled.
+	 */
+	public function enrol( $user_id ) {
+		// If user is removed, just restore.
+		if ( $this->is_learner_removed( $user_id ) ) {
+			$this->restore_learner( $user_id );
+		}
+
+		if ( $this->is_enrolled( $user_id, false ) ) {
+			return true;
+		}
+
+		// If user isn't still enrolled, enroll manually.
+		$enrolment_manager         = Sensei_Course_Enrolment_Manager::instance();
+		$manual_enrolment_provider = $enrolment_manager->get_manual_enrolment_provider();
+
+		if ( ! ( $manual_enrolment_provider instanceof Sensei_Course_Manual_Enrolment_Provider ) ) {
+			return false;
+		}
+
+		return $manual_enrolment_provider->enrol_learner( $user_id, $this->course_id );
 	}
 }

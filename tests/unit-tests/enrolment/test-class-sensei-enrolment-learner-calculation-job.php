@@ -26,6 +26,7 @@ class Sensei_Enrolment_Learner_Calculation_Job_Test extends WP_UnitTestCase {
 		parent::tearDown();
 
 		remove_all_filters( 'sensei_enrolment_learner_calculation_job_batch_size' );
+		( new Sensei_Enrolment_Learner_Calculation_Job() )->end();
 	}
 
 	/**
@@ -41,6 +42,7 @@ class Sensei_Enrolment_Learner_Calculation_Job_Test extends WP_UnitTestCase {
 		);
 
 		$job = new Sensei_Enrolment_Learner_Calculation_Job();
+		$job->setup( 'version' );
 
 		$mock = $this->getMockBuilder( Sensei_Course_Enrolment_Manager::class )
 			->disableOriginalConstructor()
@@ -56,7 +58,7 @@ class Sensei_Enrolment_Learner_Calculation_Job_Test extends WP_UnitTestCase {
 		$user1 = $this->factory->user->create( [ 'user_login' => 'user1' ] );
 		update_user_meta(
 			$user1,
-			Sensei_Course_Enrolment_Manager::LEARNER_CALCULATION_META_NAME,
+			Sensei_Course_Enrolment_Manager::get_learner_calculated_version_meta_key(),
 			'random-version-string'
 		);
 		$user2 = $this->factory->user->create( [ 'user_login' => 'user2' ] );
@@ -85,6 +87,7 @@ class Sensei_Enrolment_Learner_Calculation_Job_Test extends WP_UnitTestCase {
 
 		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
 		$job               = new Sensei_Enrolment_Learner_Calculation_Job();
+		$job->setup( 'version' );
 
 		$mock = $this->getMockBuilder( Sensei_Course_Enrolment_Manager::class )
 			->disableOriginalConstructor()
@@ -113,12 +116,12 @@ class Sensei_Enrolment_Learner_Calculation_Job_Test extends WP_UnitTestCase {
 		// Since we mock Sensei_Course_Enrolment_Manager::recalculate_enrolments we need to manually update users.
 		update_user_meta(
 			1,
-			Sensei_Course_Enrolment_Manager::LEARNER_CALCULATION_META_NAME,
+			Sensei_Course_Enrolment_Manager::get_learner_calculated_version_meta_key(),
 			$enrolment_manager->get_enrolment_calculation_version()
 		);
 		update_user_meta(
 			$user1,
-			Sensei_Course_Enrolment_Manager::LEARNER_CALCULATION_META_NAME,
+			Sensei_Course_Enrolment_Manager::get_learner_calculated_version_meta_key(),
 			$enrolment_manager->get_enrolment_calculation_version()
 		);
 

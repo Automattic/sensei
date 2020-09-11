@@ -17,6 +17,8 @@ function course_single_lessons() {
 		return;
 	}
 
+	add_filter( 'post_class', [ 'Sensei_Lesson', 'single_course_lessons_classes' ] );
+
 	// load backwards compatible template name if it exists in the users theme
 	$located_template = locate_template( Sensei()->template_url . 'single-course/course-lessons.php' );
 	if ( $located_template ) {
@@ -27,6 +29,8 @@ function course_single_lessons() {
 	}
 
 	Sensei_Templates::get_template( 'single-course/lessons.php' );
+
+	remove_filter( 'post_class', [ 'Sensei_Lesson', 'single_course_lessons_classes' ] );
 
 } // End course_single_lessons()
 
@@ -726,6 +730,26 @@ function sensei_the_module_id() {
 
 }
 
+/**
+ * Gets a count of the lessons in the current module in the modules loop.
+ *
+ * @since 3.1.0
+ *
+ * @return int Number of lessons in the current module.
+ */
+function sensei_module_lesson_count() {
+	global $sensei_modules_loop;
+
+	if ( ! isset( $sensei_modules_loop['course_id'] ) || ! isset( $sensei_modules_loop['current_module'] ) || ! isset( $sensei_modules_loop['current_module']->term_id ) ) {
+		return 0;
+	}
+
+	$course_id      = $sensei_modules_loop['course_id'];
+	$module_term_id = $sensei_modules_loop['current_module']->term_id;
+
+	return count( Sensei()->modules->get_lessons( $course_id, $module_term_id ) );
+}
+
 /************************
  *
  * Single Quiz Functions
@@ -1080,8 +1104,11 @@ function the_no_permissions_message( $post_id ) {
  * Output the sensei excerpt
  *
  * @since 1.9.0
+ * @deprecated 3.2.0
  */
 function sensei_the_excerpt( $post_id ) {
+
+	_deprecated_function( __FUNCTION__, '3.2.0' );
 
 	global $post;
 	the_excerpt( $post );

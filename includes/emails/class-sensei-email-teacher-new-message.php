@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-if ( ! class_exists( 'Sensei_Email_Teacher_New_Message' ) ) :
+if ( ! class_exists( 'Sensei_Email_Teacher_New_Message', false ) ) :
 
 	/**
 	 * Teacher New Message
@@ -99,5 +99,3 @@ if ( ! class_exists( 'Sensei_Email_Teacher_New_Message' ) ) :
 	}
 
 endif;
-
-return new Sensei_Email_Teacher_New_Message();

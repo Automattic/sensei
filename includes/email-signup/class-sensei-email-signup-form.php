@@ -4,11 +4,13 @@
  *
  * @package sensei
  * @since   2.0.0
+ * @deprecated 3.1.0 Email signup flow moved to Setup Wizard
  */
 
 /**
  * Class for displaying the modal email signup form.
  *
+ * @deprecated 3.1.0 Email signup flow moved to Setup Wizard
  * @class Sensei_Email_Signup_Form
  */
 class Sensei_Email_Signup_Form {
@@ -47,17 +49,8 @@ class Sensei_Email_Signup_Form {
 	 * @access private
 	 */
 	public function enqueue_scripts() {
-		wp_enqueue_script( 'jquery-modal' );
-
 		// Load JS for the form.
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-		wp_enqueue_script(
-			'sensei-email-signup-js',
-			Sensei()->plugin_url . 'assets/js/admin/email-signup' . $suffix . '.js',
-			[ 'jquery-modal' ],
-			Sensei()->version,
-			false
-		);
+		Sensei()->assets->enqueue( 'sensei-email-signup-js', 'js/admin/email-signup.js', [ 'jquery-modal' ] );
 	}
 
 	/**
@@ -66,15 +59,7 @@ class Sensei_Email_Signup_Form {
 	 * @access private
 	 */
 	public function enqueue_styles() {
-		wp_enqueue_style( 'jquery-modal' );
-
-		// Load CSS for the form.
-		wp_enqueue_style(
-			'sensei-email-signup-css',
-			Sensei()->plugin_url . 'assets/css/admin/email-signup.css',
-			[ 'jquery-modal' ],
-			Sensei()->version
-		);
+		Sensei()->assets->enqueue( 'sensei-email-signup-css', 'css/admin/email-signup.css', [ 'jquery-modal' ] );
 	}
 
 	/**
@@ -92,6 +77,7 @@ class Sensei_Email_Signup_Form {
 	 * @return self
 	 */
 	public static function instance() {
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Setup_Wizard::instance' );
 		if ( ! self::$instance ) {
 			self::$instance = new self();
 		}

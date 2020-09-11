@@ -26,6 +26,7 @@ class Sensei_Enrolment_Calculation_Scheduler_Test extends WP_UnitTestCase {
 		parent::tearDown();
 
 		Sensei_Scheduler_Shim::reset();
+		( new Sensei_Enrolment_Learner_Calculation_Job() )->end();
 	}
 
 	/**
@@ -36,6 +37,7 @@ class Sensei_Enrolment_Calculation_Scheduler_Test extends WP_UnitTestCase {
 		$scheduler = Sensei_Enrolment_Job_Scheduler::instance();
 
 		$scheduler->maybe_start_learner_calculation();
+		$job->end();
 
 		$this->assertEventScheduledCount( 1, Sensei_Enrolment_Learner_Calculation_Job::NAME, 'The job should have been scheduled once.' );
 	}
@@ -61,11 +63,14 @@ class Sensei_Enrolment_Calculation_Scheduler_Test extends WP_UnitTestCase {
 	 * Tests that once the scheduler has started, subsequent starts have no effect.
 	 */
 	public function testLearnerCalculationDoesntRescheduleWhenStartedManyTimes() {
+		$job       = new Sensei_Enrolment_Learner_Calculation_Job();
 		$scheduler = Sensei_Enrolment_Job_Scheduler::instance();
 
 		$scheduler->maybe_start_learner_calculation();
 		$scheduler->maybe_start_learner_calculation();
 		$scheduler->maybe_start_learner_calculation();
+
+		$job->end();
 
 		$this->assertEventScheduledCount( 1, Sensei_Enrolment_Learner_Calculation_Job::NAME, 'The job should have been scheduled once.' );
 	}
@@ -74,6 +79,7 @@ class Sensei_Enrolment_Calculation_Scheduler_Test extends WP_UnitTestCase {
 	 * Tests that once the scheduler run is completed, subsequent starts have no effect.
 	 */
 	public function testLearnerCalculationDoesntStartAfterCompletion() {
+		$job               = new Sensei_Enrolment_Learner_Calculation_Job();
 		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
 		$scheduler         = Sensei_Enrolment_Job_Scheduler::instance();
 
@@ -90,6 +96,7 @@ class Sensei_Enrolment_Calculation_Scheduler_Test extends WP_UnitTestCase {
 		);
 
 		$scheduler->maybe_start_learner_calculation();
+		$job->end();
 
 		$this->assertEventScheduledCount( 2, Sensei_Enrolment_Learner_Calculation_Job::NAME, 'The job should not have started again after it was completed' );
 	}
@@ -99,12 +106,13 @@ class Sensei_Enrolment_Calculation_Scheduler_Test extends WP_UnitTestCase {
 	 * Tests that when there are no users to calculate, the schedule run is completed.
 	 */
 	public function testLearnerCalculationCompletesWhenUsersAreCalculated() {
+		$job               = new Sensei_Enrolment_Learner_Calculation_Job();
 		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
 		$scheduler         = Sensei_Enrolment_Job_Scheduler::instance();
 
 		update_user_meta(
 			1,
-			Sensei_Course_Enrolment_Manager::LEARNER_CALCULATION_META_NAME,
+			Sensei_Course_Enrolment_Manager::get_learner_calculated_version_meta_key(),
 			$enrolment_manager->get_enrolment_calculation_version()
 		);
 
@@ -112,12 +120,13 @@ class Sensei_Enrolment_Calculation_Scheduler_Test extends WP_UnitTestCase {
 			$user = $this->factory->user->create();
 			update_user_meta(
 				$user,
-				Sensei_Course_Enrolment_Manager::LEARNER_CALCULATION_META_NAME,
+				Sensei_Course_Enrolment_Manager::get_learner_calculated_version_meta_key(),
 				$enrolment_manager->get_enrolment_calculation_version()
 			);
 		}
 
 		$scheduler->run_learner_calculation();
+		$job->end();
 
 		$option = get_option( Sensei_Enrolment_Job_Scheduler::CALCULATION_VERSION_OPTION_NAME );
 		$this->assertEquals( $enrolment_manager->get_enrolment_calculation_version(), $option );

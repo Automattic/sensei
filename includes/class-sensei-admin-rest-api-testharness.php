@@ -44,7 +44,7 @@ class Sensei_Admin_Rest_Api_Testharness {
 				'nonce' => $this->nonce,
 			)
 		);
-		$js        = Sensei()->plugin_url . 'assets/js/admin/testharness.js';
+		$js        = Sensei()->plugin_url . 'assets/dist/js/admin/testharness.js';
 		$react     = Sensei()->plugin_url . 'assets/vendor/react/react.min.js';
 		$react_dom = Sensei()->plugin_url . 'assets/vendor/react/react-dom.min.js';
 		wp_enqueue_script( 'sensei-admin-react', $react, array() );

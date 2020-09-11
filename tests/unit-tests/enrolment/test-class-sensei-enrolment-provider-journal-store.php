@@ -44,13 +44,13 @@ class Sensei_Enrolment_Provider_Journal_Store_Test extends WP_UnitTestCase {
 		Sensei_Enrolment_Provider_Journal_Store::add_provider_log_message( $provider, $user, $course, 'Test message' );
 		Sensei_Enrolment_Provider_Journal_Store::persist_all();
 
-		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::META_ENROLMENT_PROVIDERS_JOURNAL );
+		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::get_provider_journal_store_meta_key() );
 		$this->assertEmpty( $user_meta, 'Nothing should be stored with the filter returning false.' );
 
 		$this->enableJournal();
 		Sensei_Enrolment_Provider_Journal_Store::persist_all();
 
-		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::META_ENROLMENT_PROVIDERS_JOURNAL );
+		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::get_provider_journal_store_meta_key() );
 		$this->assertNotEmpty( $user_meta, 'Meta should be stored with the filter returning true.' );
 	}
 
@@ -67,7 +67,7 @@ class Sensei_Enrolment_Provider_Journal_Store_Test extends WP_UnitTestCase {
 		Sensei_Enrolment_Provider_Journal_Store::add_provider_log_message( $provider, $user, $course, 'Second message' );
 		Sensei_Enrolment_Provider_Journal_Store::persist_all();
 
-		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::META_ENROLMENT_PROVIDERS_JOURNAL, true );
+		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::get_provider_journal_store_meta_key(), true );
 		$this->assertRegExp( '/.*always-provides.*Second message.*First message/', $user_meta, 'A meta with the provider id and the two messages should be stored.' );
 
 		$logs = Sensei_Enrolment_Provider_Journal_Store::get_provider_logs( $provider, $user, $course );
@@ -96,7 +96,7 @@ class Sensei_Enrolment_Provider_Journal_Store_Test extends WP_UnitTestCase {
 		);
 		Sensei_Enrolment_Provider_Journal_Store::persist_all();
 
-		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::META_ENROLMENT_PROVIDERS_JOURNAL, true );
+		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::get_provider_journal_store_meta_key(), true );
 		$this->assertRegExp( '/.*manual.*s.*true/', $user_meta, 'Manual provider status should be true' );
 		$this->assertRegExp( '/.*simple.*s.*false/', $user_meta, 'Simple provider status should be true' );
 
@@ -112,7 +112,7 @@ class Sensei_Enrolment_Provider_Journal_Store_Test extends WP_UnitTestCase {
 		);
 		Sensei_Enrolment_Provider_Journal_Store::persist_all();
 
-		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::META_ENROLMENT_PROVIDERS_JOURNAL, true );
+		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::get_provider_journal_store_meta_key(), true );
 		$this->assertRegExp( '/.*manual.*s.*false.*s.*true/', $user_meta, 'Manual provider status should be initially true then false' );
 		$this->assertRegExp( '/.*simple.*s.*true.*s.*false/', $user_meta, 'Simple provider status should be initially false then true' );
 	}
@@ -138,7 +138,7 @@ class Sensei_Enrolment_Provider_Journal_Store_Test extends WP_UnitTestCase {
 		);
 		Sensei_Enrolment_Provider_Journal_Store::persist_all();
 
-		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::META_ENROLMENT_PROVIDERS_JOURNAL, true );
+		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::get_provider_journal_store_meta_key(), true );
 		$this->assertEmpty( $user_meta, 'Meta should not be stored if the user is not enrolled to any courses.' );
 
 		// Test that after the user gets enrolled, the meta is stored.
@@ -154,7 +154,7 @@ class Sensei_Enrolment_Provider_Journal_Store_Test extends WP_UnitTestCase {
 		);
 		Sensei_Enrolment_Provider_Journal_Store::persist_all();
 
-		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::META_ENROLMENT_PROVIDERS_JOURNAL, true );
+		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::get_provider_journal_store_meta_key(), true );
 		$this->assertNotEmpty( $user_meta, 'Meta should be stored after the user gets enrolled to the courses.' );
 
 		// Test that changes are stored after the user gets enrolled.
@@ -170,7 +170,7 @@ class Sensei_Enrolment_Provider_Journal_Store_Test extends WP_UnitTestCase {
 		);
 		Sensei_Enrolment_Provider_Journal_Store::persist_all();
 
-		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::META_ENROLMENT_PROVIDERS_JOURNAL, true );
+		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::get_provider_journal_store_meta_key(), true );
 		$this->assertRegExp( '/.*manual.*s.*false.*s.*false/', $user_meta, 'Manual provider status should be false in both entries.' );
 		$this->assertRegExp( '/.*simple.*s.*false.*s.*true/', $user_meta, 'Simple provider status should be initially true then false.' );
 
@@ -188,7 +188,7 @@ class Sensei_Enrolment_Provider_Journal_Store_Test extends WP_UnitTestCase {
 		);
 		Sensei_Enrolment_Provider_Journal_Store::persist_all();
 
-		$user_meta     = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::META_ENROLMENT_PROVIDERS_JOURNAL, true );
+		$user_meta     = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::get_provider_journal_store_meta_key(), true );
 		$journal_array = json_decode( $user_meta, true );
 		$this->assertArrayHasKey( $course, $journal_array );
 		$this->assertArrayNotHasKey( $second_course, $journal_array );
@@ -217,7 +217,7 @@ class Sensei_Enrolment_Provider_Journal_Store_Test extends WP_UnitTestCase {
 		);
 		Sensei_Enrolment_Provider_Journal_Store::persist_all();
 
-		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::META_ENROLMENT_PROVIDERS_JOURNAL, true );
+		$user_meta = get_user_meta( $user, Sensei_Enrolment_Provider_Journal_Store::get_provider_journal_store_meta_key(), true );
 		$this->assertRegExp( '/.*manual.*s.*false/', $user_meta, 'Manual provider status should be stored.' );
 		$this->assertRegExp( '/.*simple.*s.*false/', $user_meta, 'Simple provider status should be stored.' );
 	}

@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-if ( ! class_exists( 'Sensei_Email_Teacher_Completed_Course' ) ) :
+if ( ! class_exists( 'Sensei_Email_Teacher_Completed_Course', false ) ) :
 
 	/**
 	 * Teacher Completed Course
@@ -93,5 +93,3 @@ if ( ! class_exists( 'Sensei_Email_Teacher_Completed_Course' ) ) :
 	}
 
 endif;
-
-return new Sensei_Email_Teacher_Completed_Course();

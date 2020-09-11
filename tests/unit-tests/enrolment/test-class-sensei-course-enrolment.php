@@ -388,7 +388,7 @@ class Sensei_Course_Enrolment_Test extends WP_UnitTestCase {
 		$course_id     = $this->getSimpleCourse();
 		$student_id    = $this->createStandardStudent();
 		$persisted_set = '{"' . $course_id . '":{"always-provides":{"test":1234}}}';
-		update_user_meta( $student_id, Sensei_Enrolment_Provider_State_Store::META_ENROLMENT_PROVIDERS_STATE, $persisted_set );
+		update_user_meta( $student_id, Sensei_Enrolment_Provider_State_Store::get_provider_state_store_meta_key(), $persisted_set );
 
 		$provider_class = Sensei_Test_Enrolment_Provider_Always_Provides::class;
 		$this->addEnrolmentProvider( $provider_class );
@@ -430,9 +430,6 @@ class Sensei_Course_Enrolment_Test extends WP_UnitTestCase {
 		$job = $course_enrolment->recalculate_enrolment();
 		wp_cache_flush();
 
-		foreach ( $all_user_ids as $user_id ) {
-			$this->assertEquals( '', get_user_meta( $user_id, $course_enrolment->get_enrolment_results_meta_key(), true ), 'All users should have an enrolment result invalidated' );
-		}
 		$this->assertNotEquals( $course_enrolment->get_course_enrolment_salt(), $course_salt, 'The course salt should have been reset' );
 
 		$this->assertTrue( $job instanceof Sensei_Enrolment_Course_Calculation_Job, 'Returned job should be an instance of Sensei_Enrolment_Course_Calculation_Job' );
@@ -468,6 +465,133 @@ class Sensei_Course_Enrolment_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests remove and restore learner.
+	 */
+	public function testRemoveAndRestoreLearner() {
+		$course_id        = $this->getSimpleCourse();
+		$user_id          = 123;
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+
+		$this->assertNotFalse( $course_enrolment->remove_learner( $user_id ) );
+		$this->assertTrue( $course_enrolment->is_learner_removed( $user_id ) );
+
+		$this->assertTrue( $course_enrolment->restore_learner( $user_id ) );
+		$this->assertFalse( $course_enrolment->is_learner_removed( $user_id ) );
+	}
+
+	/**
+	 * Tests that it is not possible to remove again a learner already removed.
+	 */
+	public function testRemoveLearnerTwice() {
+		$course_id        = $this->getSimpleCourse();
+		$user_id          = 123;
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+
+		$this->assertNotFalse( $course_enrolment->remove_learner( $user_id ) );
+		$this->assertFalse( $course_enrolment->remove_learner( $user_id ) );
+	}
+
+	/**
+	 * Tests that withdraw manually enrolled user from course.
+	 */
+	public function testLearnerManagementWithdrawManuallyEnrolled() {
+		$user_id          = $this->createStandardStudent();
+		$course_id        = $this->getSimpleCourse();
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+
+		$this->prepareEnrolmentManager();
+
+		// Enrol user through manual provider.
+		$enrolment_manager         = Sensei_Course_Enrolment_Manager::instance();
+		$manual_enrolment_provider = $enrolment_manager->get_manual_enrolment_provider();
+		$manual_enrolment_provider->enrol_learner( $user_id, $course_id );
+
+		$this->assertTrue( $course_enrolment->withdraw( $user_id ) );
+	}
+
+	/**
+	 * Tests that withdraw provider enrolled user from course.
+	 */
+	public function testLearnerManagementWithdrawProviderEnrolled() {
+		$user_id          = $this->createStandardStudent();
+		$course_id        = $this->getSimpleCourse();
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+
+		// Add provider with access.
+		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Always_Provides::class );
+		$this->prepareEnrolmentManager();
+
+		$this->assertTrue( $course_enrolment->withdraw( $user_id ) );
+	}
+
+	/**
+	 * Tests that withdraw manually and provider enrolled user from course.
+	 */
+	public function testLearnerManagementWithdrawManuallyAndProviderEnrolled() {
+		$user_id          = $this->createStandardStudent();
+		$course_id        = $this->getSimpleCourse();
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+
+		// Add provider with access.
+		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Always_Provides::class );
+		$this->prepareEnrolmentManager();
+
+		// Enrol user through manual provider.
+		$enrolment_manager         = Sensei_Course_Enrolment_Manager::instance();
+		$manual_enrolment_provider = $enrolment_manager->get_manual_enrolment_provider();
+		$manual_enrolment_provider->enrol_learner( $user_id, $course_id );
+
+		$this->assertTrue( $course_enrolment->withdraw( $user_id ) );
+	}
+
+	/**
+	 * Tests that restore enrollment to current provider.
+	 */
+	public function testLearnerManagementRestoreEnrolment() {
+		$user_id          = $this->createStandardStudent();
+		$course_id        = $this->getSimpleCourse();
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+
+		// Add provider with access.
+		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Always_Provides::class );
+		$this->prepareEnrolmentManager();
+
+		// Remove learner.
+		$course_enrolment->remove_learner( $user_id );
+
+		$this->assertTrue( $course_enrolment->enrol( $user_id ) );
+	}
+
+	/**
+	 * Tests that enroll user through manual provider when they don't have access through any provider.
+	 */
+	public function testLearnerManagementEnrolManually() {
+		$user_id          = $this->createStandardStudent();
+		$course_id        = $this->getSimpleCourse();
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+
+		$this->prepareEnrolmentManager();
+
+		$this->assertTrue( $course_enrolment->enrol( $user_id ) );
+	}
+
+	/**
+	 * Tests that manually enroll removed user in case that the provider doesn't give access anymore.
+	 */
+	public function testLearnerManagementEnrolRemovedManually() {
+		$user_id          = $this->createStandardStudent();
+		$course_id        = $this->getSimpleCourse();
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+
+		$this->prepareEnrolmentManager();
+
+		// Remove learner even without a provider enrollment.
+		$course_enrolment->remove_learner( $user_id );
+
+		$this->assertTrue( $course_enrolment->enrol( $user_id ) );
+	}
+
+	/**
 	 * Helper for `\Sensei_Class_Course_Enrolment_Test::testEnrolmentCheckVersionCachingWorks`.
 	 */
 	private function resetAndSetUpVersionedProvider( $bump_version ) {
@@ -478,5 +602,25 @@ class Sensei_Course_Enrolment_Test extends WP_UnitTestCase {
 		if ( $bump_version ) {
 			Sensei_Test_Enrolment_Provider_Version_Morph::$version++;
 		}
+	}
+
+	/**
+	 * Check that is_enrolled returns false when a user has been removed.
+	 */
+	public function testEnrolmentCheckFalseWhenUserRemoved() {
+		$course_id  = $this->getSimpleCourse();
+		$student_id = $this->createStandardStudent();
+		$this->addEnrolmentProvider( Sensei_Test_Enrolment_Provider_Always_Provides::class );
+		$this->prepareEnrolmentManager();
+
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+
+		$course_enrolment->remove_learner( $student_id );
+
+		$this->assertFalse( $course_enrolment->is_enrolled( $student_id ) );
+
+		$course_enrolment->restore_learner( $student_id );
+
+		$this->assertTrue( $course_enrolment->is_enrolled( $student_id ) );
 	}
 }

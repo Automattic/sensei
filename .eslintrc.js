@@ -6,5 +6,15 @@ module.exports = {
 	globals: {
 		wp: true,
 	},
-	plugins: [ 'jest' ],
+	rules: {
+		'@wordpress/i18n-text-domain': [
+			'error',
+			{
+				allowedTextDomain: 'sensei-lms',
+			},
+		],
+		'react-hooks/exhaustive-deps': 'warn',
+		'jsdoc-alignment/lines-alignment': 'error',
+	},
+	plugins: [ 'jest', 'jsdoc-alignment' ],
 };

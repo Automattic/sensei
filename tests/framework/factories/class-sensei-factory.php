@@ -187,21 +187,21 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 			'lesson_count'            => 1,
 			'question_count'          => 5,
 			'multiple_question_count' => 0,
+			'module_count'            => 0,
 			'course_args'             => array(),
 			'quiz_args'               => array(),
 			'lesson_args'             => array(),
 			'question_args'           => array(),
 			'multiple_question_args'  => array(),
-			'use_module'              => false,
 		);
 		$args         = wp_parse_args( $args, $default_args );
-		$module       = false;
-		if ( $args['use_module'] ) {
-			$module = $this->module->create_and_get();
+		$module_ids   = [];
+		if ( $args['module_count'] ) {
+			$module_ids = $this->module->create_many( $args['module_count'] );
 		}
 		$course_id = $this->course->create( $args['course_args'] );
-		if ( $module ) {
-			wp_set_object_terms( $course_id, $module->term_id, 'module' );
+		if ( ! empty( $module_ids ) ) {
+			wp_set_object_terms( $course_id, $module_ids, 'module' );
 		}
 
 		if ( ! isset( $args['lesson_args']['meta_input'] ) ) {
@@ -211,9 +211,11 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 
 		$lesson_ids = $this->lesson->create_many( $args['lesson_count'], $args['lesson_args'] );
 		foreach ( $lesson_ids as $key => $lesson_id ) {
-			if ( $module ) {
-				wp_set_object_terms( $lesson_id, $module->term_id, 'module' );
-				add_post_meta( $lesson_id, '_order_module_' . $module->term_id, 0 );
+			if ( ! empty( $module_ids ) ) {
+				shuffle( $module_ids );
+
+				wp_set_object_terms( $lesson_id, $module_ids[0], 'module' );
+				add_post_meta( $lesson_id, '_order_module_' . $module_ids[0], 0 );
 			}
 			$question_count = $args['question_count'];
 			if ( is_array( $question_count ) ) {
@@ -223,6 +225,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 					$question_count = $default_args['question_count'];
 				}
 			}
+
 			$this->attach_lessons_questions( $question_count, $lesson_id, $args['question_args'], $args['quiz_args'], false );
 
 			$multiple_question_count = $args['multiple_question_count'];
@@ -239,6 +242,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 		return array(
 			'course_id'  => $course_id,
 			'lesson_ids' => $lesson_ids,
+			'modules'    => $module_ids,
 		);
 	}
 
@@ -571,7 +575,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 	 * @param array $quiz_args
 	 * @return int
 	 */
-	protected function maybe_create_quiz_for_lesson( $lesson_id, $quiz_args = array() ) {
+	public function maybe_create_quiz_for_lesson( $lesson_id, $quiz_args = array() ) {
 		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
 		if ( empty( $quiz_id ) ) {
 			$default_quiz_args  = array( 'post_parent' => $lesson_id );

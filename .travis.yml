@@ -1,6 +1,19 @@
 sudo: false
 dist: trusty
 language: php
+
+# Shared code for e2e jobs.
+e2e_defaults: &e2e_defaults
+  language: node_js
+  node_js: '10.17'
+  script:
+    - npm run build:assets
+    - npm run e2e-docker:up
+    - npm run test:e2e
+  after_script:
+    - npm run e2e-docker:down
+    - echo "In case of E2E test failures, screenshots can be found in the slack channel `#evergreen-github`"
+
 notifications:
   email:
     on_success: never
@@ -13,6 +26,8 @@ notifications:
 branches:
   only:
   - master
+  - /^release\//
+  - /^feature\//
 cache:
   directories:
   - vendor
@@ -26,9 +41,9 @@ before_script:
     echo "xdebug.ini does not exist"
   fi
 - |
-  if [[ ! -z "$WP_VERSION" ]] ; then
+  if [[ ! -z "$WP_VERSION" && -z "$RUN_E2E"  ]] ; then
     bash tests/bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
-    composer global require "phpunit/phpunit=4.8.*|5.7.*"
+    composer global require "phpunit/phpunit=6.5.*"
   fi
 jobs:
   include:
@@ -44,6 +59,11 @@ jobs:
       script:
         - ./tests/bin/run-wp-unit-tests.sh
     - stage: test
+      php: 7.4
+      env: WP_VERSION=trunk
+      script:
+        - ./tests/bin/run-wp-unit-tests.sh
+    - stage: test
       php: 7.1
       env: WP_VERSION=latest
       script:
@@ -54,25 +74,20 @@ jobs:
       script:
         - ./tests/bin/run-wp-unit-tests.sh
     - stage: test
-      php: 5.6
-      env: WP_VERSION=4.9
+      php: 7.0
+      env: WP_VERSION=5.4
       script:
         - ./tests/bin/run-wp-unit-tests.sh
     - stage: test
-      php: 5.6
-      env: WP_VERSION=latest
+      php: 7.0
+      env: WP_VERSION=5.3
       script:
         - ./tests/bin/run-wp-unit-tests.sh
     - stage: test
-      php: 5.6
-      env: WP_VERSION=trunk
-      script:
-        - ./tests/bin/run-wp-unit-tests.sh
-    - stage: test
-      php: 5.6
+      php: 7.0
       env: WP_VERSION=latest WP_MULTISITE=1
       script:
-      - ./tests/bin/run-wp-unit-tests.sh
+        - ./tests/bin/run-wp-unit-tests.sh
     - stage: test
       language: node_js
       node_js: '10.17'
@@ -87,7 +102,7 @@ jobs:
       language: node_js
       node_js: '10.17'
       script:
-        - npm run lint-js-wpcom
+        - npm run build:assets
     - stage: test
       php: 7.2
       script:
@@ -109,3 +124,12 @@ jobs:
       script:
         - composer install
         - ./scripts/linter-ci
+    - stage: test
+      <<: *e2e_defaults
+      env: WP_VERSION=5.3 RUN_E2E=1
+    - stage: test
+      <<: *e2e_defaults
+      env: WP_VERSION=5.4 RUN_E2E=1
+    - stage: test
+      <<: *e2e_defaults
+      env: WP_VERSION=5.5 RUN_E2E=1

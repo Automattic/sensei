@@ -13,17 +13,16 @@
 	<exclude-pattern type="relative">^vendor/*</exclude-pattern>
 	<exclude-pattern type="relative">^build/*</exclude-pattern>
 	<exclude-pattern type="relative">^tmp/*</exclude-pattern>
-	<exclude-pattern type="relative">^apigen/*</exclude-pattern>
 
 	<!-- Configs -->
 	<config name="minimum_supported_wp_version" value="4.9" />
-	<config name="testVersion" value="5.6-"/>
+	<config name="testVersion" value="7.0-"/>
 
 	<!-- Rules -->
 	<rule ref="PHPCompatibilityWP"/>
 	<rule ref="WordPress">
-        <exclude name="Generic.Arrays.DisallowShortArraySyntax"/>
-    </rule>
+		<exclude name="Generic.Arrays.DisallowShortArraySyntax"/>
+	</rule>
 	<rule ref="WordPress-Docs" />
 	<rule ref="WordPress-Extra" />
 

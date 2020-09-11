@@ -63,7 +63,7 @@ class Sensei_Enrolment_Provider_State_Store implements JsonSerializable {
 		if ( ! isset( self::$instances[ $user_id ] ) ) {
 			self::$instances[ $user_id ] = new self( $user_id );
 
-			$provider_state_stores = get_user_meta( $user_id, self::META_ENROLMENT_PROVIDERS_STATE, true );
+			$provider_state_stores = get_user_meta( $user_id, self::get_provider_state_store_meta_key(), true );
 			if ( ! empty( $provider_state_stores ) ) {
 				self::$instances[ $user_id ]->restore_from_json( $provider_state_stores );
 			}
@@ -196,7 +196,7 @@ class Sensei_Enrolment_Provider_State_Store implements JsonSerializable {
 			return true;
 		}
 
-		$result = update_user_meta( $this->get_user_id(), self::META_ENROLMENT_PROVIDERS_STATE, wp_slash( wp_json_encode( $this ) ) );
+		$result = update_user_meta( $this->get_user_id(), self::get_provider_state_store_meta_key(), wp_slash( wp_json_encode( $this ) ) );
 
 		if ( ! $result || is_wp_error( $result ) ) {
 			return false;
@@ -216,5 +216,17 @@ class Sensei_Enrolment_Provider_State_Store implements JsonSerializable {
 		foreach ( self::$instances as $user_id => $instance ) {
 			$instance->save();
 		}
+	}
+
+
+	/**
+	 * Get the provider state store meta key.
+	 *
+	 * @return string
+	 */
+	public static function get_provider_state_store_meta_key() {
+		global $wpdb;
+
+		return $wpdb->get_blog_prefix() . self::META_ENROLMENT_PROVIDERS_STATE;
 	}
 }

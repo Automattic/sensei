@@ -1679,19 +1679,7 @@ class Sensei_Lesson {
 
 					$answers_sorted = $answers;
 					if ( $question_id && count( $answer_order ) > 0 ) {
-						$answers_sorted = array();
-						foreach ( $answer_order as $answer_id ) {
-							if ( isset( $answers[ $answer_id ] ) ) {
-								$answers_sorted[ $answer_id ] = $answers[ $answer_id ];
-								unset( $answers[ $answer_id ] );
-							}
-						}
-
-						if ( count( $answers ) > 0 ) {
-							foreach ( $answers as $id => $answer ) {
-								$answers_sorted[ $id ] = $answer;
-							}
-						}
+						$answers_sorted = Sensei()->question->get_answers_sorted( $answers, $answer_order );
 					}
 
 					foreach ( $answers_sorted as $id => $answer ) {
@@ -1917,8 +1905,14 @@ class Sensei_Lesson {
 		die();
 	}
 
+	/**
+	 * Get answers ID (text md5).
+	 *
+	 * @param string $answer Answer text.
+	 *
+	 * @return string Answer ID.
+	 */
 	public function get_answer_id( $answer = '' ) {
-
 		$answer_id = '';
 
 		if ( $answer ) {
@@ -1926,7 +1920,6 @@ class Sensei_Lesson {
 		}
 
 		return $answer_id;
-
 	}
 
 	/**
@@ -2142,13 +2135,9 @@ class Sensei_Lesson {
 			return;
 		}
 
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-
 		// Load the lessons script.
 		wp_enqueue_media();
-		wp_enqueue_script( 'sensei-lesson-metadata', Sensei()->plugin_url . 'assets/js/lesson-metadata' . $suffix . '.js', array( 'jquery', 'sensei-core-select2', 'jquery-ui-sortable' ), Sensei()->version, true );
-		wp_enqueue_script( 'sensei-lesson-chosen', Sensei()->plugin_url . 'assets/chosen/chosen.jquery' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
-		wp_enqueue_script( 'sensei-chosen-ajax', Sensei()->plugin_url . 'assets/chosen/ajax-chosen.jquery' . $suffix . '.js', array( 'jquery', 'sensei-lesson-chosen' ), Sensei()->version, true );
+		Sensei()->assets->enqueue( 'sensei-lesson-metadata', 'js/lesson-metadata.js', [ 'jquery', 'sensei-core-select2', 'jquery-ui-sortable', 'sensei-chosen-ajax' ], true );
 
 		// Localise script.
 		$translation_strings = array(
@@ -2177,7 +2166,7 @@ class Sensei_Lesson {
 
 		// Chosen RTL
 		if ( is_rtl() ) {
-			wp_enqueue_script( 'sensei-chosen-rtl', Sensei()->plugin_url . 'assets/chosen/chosen-rtl' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
+			Sensei()->assets->enqueue( 'sensei-chosen-rtl', '../vendor/chosen/chosen-rtl.js', [ 'jquery' ], true );
 		}
 	}
 	/**
@@ -2189,11 +2178,9 @@ class Sensei_Lesson {
 	 */
 	private function enqueue_lesson_edit_scripts() {
 		// Load the quick edit screen script.
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-		wp_enqueue_script( 'sensei-lesson-quick-edit', Sensei()->plugin_url . 'assets/js/admin/lesson-quick-edit' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
+		Sensei()->assets->enqueue( 'sensei-lesson-quick-edit', 'js/admin/lesson-quick-edit.js', [ 'jquery' ], true );
+		Sensei()->assets->enqueue( 'sensei-lesson-bulk-edit', 'js/admin/lesson-bulk-edit.js', [ 'jquery' ], true );
 
-		// Load the bulk edit screen script.
-		wp_enqueue_script( 'sensei-lessons-bulk-edit', Sensei()->plugin_url . 'assets/js/admin/lesson-bulk-edit' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
 	}
 
 	/**
@@ -2212,7 +2199,7 @@ class Sensei_Lesson {
 
 		// Test for Write Panel Pages
 		if ( ( ( isset( $post_type ) && in_array( $post_type, $allowed_post_types ) ) && ( isset( $hook ) && in_array( $hook, $allowed_post_type_pages ) ) ) || ( isset( $_GET['page'] ) && in_array( $_GET['page'], $allowed_pages ) ) ) {
-			wp_enqueue_style( 'sensei-settings-api', esc_url( Sensei()->plugin_url . 'assets/css/settings.css' ), '', Sensei()->version );
+			Sensei()->assets->enqueue( 'sensei-settings-api', 'css/settings.css' );
 		}
 
 	} // End enqueue_styles()
@@ -3746,35 +3733,29 @@ class Sensei_Lesson {
 	 */
 	public static function single_course_lessons_classes( $classes ) {
 
-		if ( is_singular( 'course' ) ) {
+		global $post;
+		$course_id = $post->ID;
 
-			global $post;
-			$course_id = $post->ID;
+		$lesson_classes = array( 'course', 'post' );
+		if ( is_user_logged_in() ) {
 
-			$lesson_classes = array( 'course', 'post' );
-			if ( is_user_logged_in() ) {
+			// Check if Lesson is complete
+			$single_lesson_complete = Sensei_Utils::user_completed_lesson( get_the_ID(), get_current_user_id() );
+			if ( $single_lesson_complete ) {
 
-				// Check if Lesson is complete
-				$single_lesson_complete = Sensei_Utils::user_completed_lesson( get_the_ID(), get_current_user_id() );
-				if ( $single_lesson_complete ) {
+				$lesson_classes[] = 'completed';
 
-					$lesson_classes[] = 'lesson-completed';
-
-				} // End If Statement
 			} // End If Statement
+		} // End If Statement
 
-			$is_user_taking_course = Sensei_Course::is_user_enrolled( $course_id );
-			if ( Sensei_Utils::is_preview_lesson( get_the_ID() ) && ! $is_user_taking_course ) {
+		$is_user_taking_course = Sensei_Course::is_user_enrolled( $course_id );
+		if ( Sensei_Utils::is_preview_lesson( get_the_ID() ) && ! $is_user_taking_course ) {
 
-				$lesson_classes[] = 'lesson-preview';
-
-			}
-
-			$classes = array_merge( $classes, $lesson_classes );
+			$lesson_classes[] = 'preview';
 
 		}
 
-		return $classes;
+		return array_merge( $classes, $lesson_classes );
 
 	}//end single_course_lessons_classes()
 
@@ -4065,7 +4046,7 @@ class Sensei_Lesson {
 			$course_link .= esc_html__( 'course', 'sensei-lms' );
 			$course_link .= '</a>';
 
-			// translators: Placeholder is a link to the Course.
+			// translators: The placeholder %1$s is a link to the Course.
 			$message_default = sprintf( esc_html__( 'Please sign up for the %1$s before starting the lesson.', 'sensei-lms' ), $course_link );
 
 			/**
@@ -4213,7 +4194,7 @@ class Sensei_Lesson {
 	public static function footer_quiz_call_to_action( $lesson_id = 0, $user_id = 0 ) {
 
 		$lesson_id = empty( $lesson_id ) ? get_the_ID() : $lesson_id;
-		$user_id   = empty( $lesson_id ) ? get_current_user_id() : $user_id;
+		$user_id   = empty( $user_id ) ? get_current_user_id() : $user_id;
 
 		if ( ! sensei_can_user_view_lesson( $lesson_id, $user_id ) ) {
 			return;
@@ -4226,9 +4207,17 @@ class Sensei_Lesson {
 
 		if ( intval( $lesson_prerequisite ) > 0 ) {
 
-			// If the user hasn't completed the prereq then hide the current actions
-			$show_actions = Sensei_Utils::user_completed_lesson( $lesson_prerequisite, $user_id );
-
+			// If the user hasn't completed the prerequisites then hide the current actions.
+			// (If the user is either the lesson creator or admin, show actions).
+			if (
+					Sensei_Utils::user_completed_lesson( $lesson_prerequisite, $user_id )
+					|| Sensei()->lesson->is_lesson_author( $lesson_id, $user_id )
+					|| current_user_can( 'manage_options' )
+			) {
+				$show_actions = true;
+			} else {
+				$show_actions = false;
+			}
 		}
 
 		?>
@@ -4446,6 +4435,32 @@ class Sensei_Lesson {
 		}
 
 		sensei_log_event( 'lesson_publish', $event_properties );
+	}
+
+	/**
+	 * Check if a user is the lesson author.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @param int      $lesson_id ID of lesson being checked.
+	 * @param int|null $user_id ID of user being checked. Defaults to null.
+	 * @return boolean Returns TRUE if user is the lesson author, returns FALSE otherwise.
+	 */
+	private function is_lesson_author( $lesson_id, $user_id = null ) {
+
+		if ( is_null( $user_id ) ) {
+			$user_id = get_current_user_id();
+		}
+
+		if ( empty( $user_id ) ) {
+			return false;
+		}
+
+		if ( (int) get_post_field( 'post_author', $lesson_id ) === $user_id ) {
+			return true;
+		}
+
+		return false;
 	}
 
 } // End Class

@@ -1,9 +1,12 @@
-node_modules/*
 .DS_Store
+.env
 .idea
-vendor/*
-docs.woothemes.com/*
-tests/images/test-*
+assets/dist
 build
 diffs
-.env
+hookdocs
+node_modules/*
+tests/images/test-*
+vendor/*
+tests/e2e/screenshots
+/*.zip

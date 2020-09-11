@@ -1,0 +1,1677 @@
+Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image,Length,Complexity,Video,"Pass Required",Passmark,"Number Of Questions","Random Question Order",Auto-grade,"Quiz Reset","Allow Comments",Questions
+3690,Export,export,"<!-- wp:paragraph -->
+<p>Sensei LMS has native functionality that enables you to export courses, lessons and questions. This means you can export course data from a staging site, for example, and then <a href=""https://senseilms.com/lesson/import/"" data-type=""lesson"" data-id=""3473"">import</a> it into your live site.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {""ordered"":true} -->
+<ol><li>To export content, go to&nbsp;<em>Sensei LMS</em>&nbsp;&gt;&nbsp;<em>Export:<br><br></em><figure class=""wp-block-image size-large""><img src=""https://senseilms.com/wp-content/uploads/2020/08/exporter.jpg?w=980"" alt=""Exporter"" class=""wp-image-3694""></figure></li><li>Select one or more types of content to export, and then click the <em>Continue</em> button:<br><br><figure class=""wp-block-image size-large""><img src=""https://senseilms.com/wp-content/uploads/2020/08/exporter-progress.jpg?w=980"" alt=""Exporter - Export"" class=""wp-image-3696""></figure></li><li><strong>Wait until the exporter is finished</strong>. Do not refresh or otherwise interfere with the browser while the export is in progress.</li><li>Once the export process has completed, you will be taken to a confirmation page. You may also see a prompt which you will need to accept before the file will be downloaded:<br><br><figure class=""wp-block-image size-large""><img src=""https://senseilms.com/wp-content/uploads/2020/08/exporter-done.jpg?w=980"" alt=""Exporter - Done"" class=""wp-image-3704""></figure></li></ol>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>You can initiate a new download directly from the confirmation page by clicking the file name, or click <em>Export More Content</em> to export additional content.</p>
+<!-- /wp:paragraph -->","Learn how to export course content in Sensei LMS.",publish,,,0,,,,,,0,0,,0,0,0,0,
+3566,Settings,settings,"<!-- wp:paragraph -->
+<p>To enable site visitors to register for and log in to your courses, go to <em>Settings &gt; General</em> in your WordPress admin and ensure the <em>Membership</em> checkbox is selected:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":1296,""width"":300,""height"":64,""sizeSlug"":""medium""} -->
+<figure class=""wp-block-image size-medium is-resized""><img src=""https://senseilms.com/wp-content/uploads/2017/11/general-settings.jpg?w=300"" alt=""General Settings - Membership"" class=""wp-image-1296"" width=""300"" height=""64""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading -->
+<h2>Sensei LMS Settings</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Sensei LMS's settings can be accessed from the <em>Sensei LMS</em> &gt; <em>Settings</em> menu. They are grouped into several sections:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul><li><a href=""#general"">General</a></li><li><a href=""#courses"">Courses</a></li><li><a href=""#lessons"">Lessons</a></li><li><a href=""#email-notifications"">Email Notifications</a></li><li><a href=""#learner-profiles"">Learner Profiles</a></li><li><a href=""#woocommerce"">WooCommerce</a> (if both <a href=""https://wordpress.org/plugins/woocommerce/"">WooCommerce</a> and <a href=""https://senseilms.com/documentation/getting-started-with-woocommerce-paid-courses/"">WooCommerce Paid Courses</a> are activated)</li></ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {""level"":3} -->
+<h3 id=""general"">General</h3>
+<!-- /wp:heading -->
+
+<!-- wp:image {""id"":3569,""width"":735,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/08/sensei-lms-settings-general.jpg?w=980"" alt=""Sensei LMS Settings - General"" class=""wp-image-3569"" width=""735""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Access Permissions</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Enabling <em>Access Permissions</em>&nbsp;means that users will be required to log in to your site in order to view lessons and quizzes. In most cases you'll want to enable this setting, but if you aren't using quizzes and want your course content to be freely available to everyone without registering, you can leave it unchecked.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Disable Private Messages</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Allows registered users to send <a href=""https://senseilms.com/lesson/messages/"">private messages</a> to the teacher of any course. You can disable the messaging functionality by selecting this option.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Course Archive Page</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Sets the page used to display courses. This option is configured automatically by the setup wizard.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>My Courses&nbsp;Page</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Sets the page used to display the active and completed courses for a particular learner. This option is configured automatically by the setup wizard.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Use placeholder images</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Displays a placeholder image for any course or lesson that doesn't already have a featured image.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Disable Sensei LMS Styles</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Prevents Sensei LMS's CSS from loading, which effectively removes the default styling. This is useful if your theme already includes styling for Sensei LMS elements, or if you prefer to style them yourself.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Quiz question points format</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Formats the display of the number of points assigned to a question when a learner takes a quiz.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Disable Sensei LMS Javascript</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Prevents all front-end Sensei LMS-specific JavaScript from loading.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Disable HTML security</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Allows any HTML tags in the video embed fields. Enabling this setting can leave your site vulnerable to XSS attacks; it is therefore recommended to leave it unchecked.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Delete data on uninstall</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Deletes Sensei LMS data when the plugin is deleted. Be careful, as this data can only be restored from a backup.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Enable usage tracking</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Helps us make future improvements to Sensei LMS by collecting <a href=""https://senseilms.com/documentation/what-data-does-sensei-track/"">usage tracking data</a>. No sensitive information is collected.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":3} -->
+<h3 id=""courses"">Courses</h3>
+<!-- /wp:heading -->
+
+<!-- wp:image {""id"":1300,""width"":735,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2017/11/courses-settings.jpg?w=980"" alt=""Sensei LMS Settings - Courses"" class=""wp-image-1300"" width=""735""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Courses are complete</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Determines when a course is considered to be complete:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul><li><em>Once all the course lessons have been completed</em>&nbsp;- Course won't be completed until all of the lessons belonging to it have also been completed.</li><li><em>At any time</em>&nbsp;- Learners are able to mark courses complete by clicking the <em>Mark as Complete</em> button on the <em>My Courses</em> page:</li></ul>
+<!-- /wp:list -->
+
+<!-- wp:image {""id"":1303,""width"":735,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2017/11/mark-as-complete.jpg?w=980"" alt=""&quot;Mark as Complete&quot; button"" class=""wp-image-1303"" width=""735""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Display Course Author</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Displays the course author on the course archive and <em>My Courses</em> pages.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>My Courses Pagination</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Sets the number of courses to display per page on the&nbsp;<em>My Courses</em> page.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Course Archive Image</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Displays a course's featured image on the course archive page.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Image Width - Archive</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Specifies the width (in pixels) of the image to display on the course archive page.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Image Height - Archive</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Specifies the height (in pixels) of the image to display on the course archive page.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Image Hard Crop - Archive</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Crops the image to the specified dimensions. If not selected, <em>Image Height - Archive</em> can be left blank, and the height will be set proportionally to the specified width.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Single Course&nbsp;Image</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Displays the course's featured image on the single course&nbsp;page.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Image Width -&nbsp;Single</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Specifies the width (in pixels) of the image to display on the single course&nbsp;page.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Image Height -&nbsp;Single</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Specifies the height (in pixels) of the image to display on the single course&nbsp;page.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Image Hard Crop -&nbsp;Single</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Crops the image to the specified dimensions. If not selected, <em>Image Height - Single</em> can be left blank, and the height will be set proportionally to the specified width.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Featured Courses Panel</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Displays the featured courses panel on the course archive page.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>More link text</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Specifies the text to display for the link when there are more courses on the course archive page.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":3} -->
+<h3 id=""lessons"">Lessons</h3>
+<!-- /wp:heading -->
+
+<!-- wp:image {""id"":1308,""width"":735,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2017/11/lessons-settings.jpg?w=980"" alt=""Sensei LMS Settings - Lessons"" class=""wp-image-1308"" width=""735""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Allow Comments for Lessons</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Enables learners to comment on lessons for courses they are enrolled in. Only registered learners are able to view these comments.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Display Lesson Author</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Displays the lesson author on the single course and lesson archive pages.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Course Lesson Images</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Displays a lesson's featured image on the single course page.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Image Width -&nbsp;Course Lessons</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Specifies the width (in pixels) of the lesson image to display on the single course&nbsp;page.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Image Height -&nbsp;Course Lessons</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Specifies the height (in pixels) of the lesson image to display on the&nbsp;single course&nbsp;page.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Image Hard Crop -&nbsp;Course Lessons</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Crops the image to the specified dimensions. If not selected, <em>Image Height - Course Lessons</em> can be left blank, and the height will be set proportionally to the specified width.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Single&nbsp;Lesson Images</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Displays the lesson's featured image on the single lesson page.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Image Width -&nbsp;Single</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Specifies the width (in pixels) of the image to display on the single lesson page.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Image Height -&nbsp;Single</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Specifies the height (in pixels) of the image to display on the single lesson page.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Image Hard Crop -&nbsp;Single</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Crops the image to the specified dimensions. If not selected, <em>Image Height - Single</em> can be left blank, and the height will be set proportionally to the specified width.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":3} -->
+<h3 id=""email-notifications"">Email Notifications</h3>
+<!-- /wp:heading -->
+
+<!-- wp:image {""id"":3591,""width"":735,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/08/sensei-lms-settings-email-notifications.jpg?w=980"" alt=""Sensei LMS Settings - Email Notifications"" class=""wp-image-3591"" width=""735""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Emails Sent to Learners</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Specifies which events trigger an email notification to learners:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul><li>When their quiz is graded (either manually or automatically)</li><li>When they complete a course</li></ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Emails Sent to Teachers</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Specifies which events trigger an email notification to teachers:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul><li>When a learner starts a course</li><li>When a learner completes a course</li><li>When a learner completes a lesson</li><li>When a learner submits a quiz for grading</li><li>When a learner sends a private message to a teacher</li></ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Emails Sent to All Users</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Specifies which events trigger an email notification to all registered users:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul><li>When they receive a reply to their private message</li></ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>""From"" Name</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Specifies the name from which all Sensei LMS emails are sent (usually your name or the name of your site).</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>""From"" Address</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Specifies the email address&nbsp;from which all Sensei LMS emails are sent.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Header Image</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Specifies the URL of an image to display in the header of all Sensei LMS emails (e.g. your logo).</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Email Footer Text</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Specifies the text that is displayed at the bottom of all Sensei LMS emails.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Colours</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Specifies the colours to use in all email templates. The colours that can be configured are:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul><li><em>Base Colour</em> - Background colour of the header</li><li><em>Background Colour</em> - Background colour of the email</li><li><em>Body Background Colour</em> - Background colour of the email content area</li><li><em>Body Text Colour</em> - Colour of the text in the email content area</li></ul>
+<!-- /wp:list -->
+
+<!-- wp:image {""id"":153862,""width"":550,""height"":286} -->
+<figure class=""wp-block-image is-resized""><img src=""http://docs.woocommerce.com/wp-content/uploads/2014/06/email-colours-550x286.png"" alt=""Sensei LMS email template colours"" class=""wp-image-153862"" width=""550"" height=""286""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>Please see <a href=""https://senseilms.com/documentation/email-notifications/"">Email Notifications</a> for more information.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":3} -->
+<h3 id=""learner-profiles"">Learner Profiles</h3>
+<!-- /wp:heading -->
+
+<!-- wp:image {""id"":1004,""width"":735,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2017/11/Screen-Shot-2018-09-03-at-15.56.41.png?w=980"" alt=""Sensei LMS Settings - Learner Profiles"" class=""wp-image-1004"" width=""735""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Public learner profiles</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Creates a public profile page for each learner at http://<em>yoursite.com</em>/learner/<em>username</em>.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Show learner's courses</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Displays the learner's active and completed courses on their profile page.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":3} -->
+<h3 id=""woocommerce"">WooCommerce</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The WooCommerce section is only available if both <a href=""https://wordpress.org/plugins/woocommerce/"">WooCommerce</a> and <a href=""https://woocommerce.com/products/woocommerce-paid-courses/"">WooCommerce Paid Courses</a> are installed and activated:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":3593,""width"":735,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/08/sensei-lms-settings-woocommerce.jpg?w=980"" alt=""Sensei LMS Settings - WooCommerce"" class=""wp-image-3593"" width=""735""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Enable Sensei WooCommerce Integration Debugging</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Logs Sensei LMS and WooCommerce events to <em>WooCommerce</em> &gt; <em>Status</em> &gt; <em>Logs</em> for easier debugging of plugin issues.</p>
+<!-- /wp:paragraph -->",,publish,,,0,,,,,,0,0,,0,0,0,0,
+3520,Messages,messages,"<!-- wp:paragraph -->
+<p>Registered users have the ability to send a private message to teachers, regardless of whether or not they are enrolled in a particular course. This allows enrolled learners to ask questions about course materials, while also enabling those who are not enrolled to get answers to their general course questions.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>All messages are private and can only be viewed by the teacher, the sender, and site administrators.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Send a Message</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>To send a private message to the course teacher, click the <em>Contact Teacher</em> button on the course, lesson or quiz page. This button is only displayed when logged in:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":3526,""width"":735,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/07/messages-contact-teacher.jpg?w=980"" alt=""Messages - Contact Teacher"" class=""wp-image-3526"" width=""735""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>After clicking the button, a text field appears to enter the message:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":3528,""width"":735,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/07/messages-send-message.jpg?w=980"" alt=""Messages - Send Private Message"" class=""wp-image-3528"" width=""735""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>Once the message is sent, a confirmation notice is displayed:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":3531,""width"":735,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/07/messages-message-sent.jpg?w=980"" alt=""Messages - Confirmation"" class=""wp-image-3531"" width=""735""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>Depending on how notifications are configured in <em>Sensei LMS</em> &gt; <em>Settings</em> &gt; <em>Email Notifications</em>, an email may be sent to the teacher to let them know that they have received a new message.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>View a Message</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>As a teacher, you can view your messages by going to <em>Sensei LMS</em> &gt; <em>Messages</em>, hovering over the message, and clicking the <em>View</em> link.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>As an administrator, in <em>Sensei LMS</em> &gt; <em>Messages</em> you can click on a message to view additional details:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":3535,""width"":735,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/07/messages-message-information.jpg?w=980"" alt=""Messages - Message Information"" class=""wp-image-3535"" width=""735""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Reply to a Message</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The easiest way to reply to a message is by visiting the <em>My Courses</em> page and clicking on <em>My Messages</em>. A list of all the messages you've received are displayed:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":3537,""width"":735,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/07/my-messages.jpg?w=980"" alt=""Messages - My Messages"" class=""wp-image-3537"" width=""735""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>Click on the message you'd like to reply to, and type a response in the <em>Leave a Reply</em> box:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":3538,""width"":735,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/07/messages-reply.jpg?w=980"" alt=""Messages - Leave a Reply"" class=""wp-image-3538"" width=""735""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>Depending on how notifications are configured in <em>Sensei LMS</em> &gt; <em>Settings</em> &gt; <em>Email Notifications</em>, an email may be sent to the learner to let them know they have received a reply to their message.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>My Messages</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Teachers and learners can access their messages by going to <em>My Courses</em> and clicking the <em>My Messages</em> link. You can also add a direct link to the <em>My Messages</em> page in your main menu by going to <em>Appearance</em><strong> </strong>&gt;<strong> </strong><em>Menus</em>, and adding a custom link that goes to <code>https://yoursite.com/messages/</code> (be sure to change <code>yoursite.com</code> to your own domain).</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Disable Private Messages</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Private messages are enabled by default. To disable them, go to <em>Sensei LMS</em> &gt; <em>Settings</em> and check the <em>Disable Private Messages</em> box. This removes the <em>My Messages</em> page, the <em>Contact Teacher</em> buttons, and the <em>Sensei LMS</em> &gt; <em>Messages</em> menu in WordPress admin.</p>
+<!-- /wp:paragraph -->","Learn how to manage messages from learners in Sensei LMS.",publish,,,0,,,,,,0,0,,0,0,0,0,
+3473,Import,import,"<!-- wp:paragraph -->
+<p>Sensei LMS has native functionality that enables you to import courses, lessons and questions. For first-time course creators, this means you can get started more quickly by importing course content during setup, while existing sites can update their course content more easily.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading -->
+<h2>Create CSV File(s)</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>To import new content or update existing content, you need one or more CSV files containing the necessary information. There are a few options available to you:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul><li>Export the content using our native <a href=""https://senseilms.com/lesson/export/"">exporter</a>.</li><li>Download CSV files with sample data for <a href=""https://senseilms.com/wp-content/uploads/2020/07/courses.csv"">courses</a>, <a href=""https://senseilms.com/wp-content/uploads/2020/07/lessons.csv"">lessons</a> or <a href=""https://senseilms.com/wp-content/uploads/2020/07/questions.csv"">questions</a>, and update the data using spreadsheet software like Microsoft Excel or Apache OpenOffice.</li><li>Use your own CSV files. Any information you wish to include should follow the formatting and structure of the <a href=""https://github.com/Automattic/sensei/wiki/Course-Import-Schema"">course</a>, <a href=""https://github.com/Automattic/sensei/wiki/Lesson-Import-Schema"">lesson</a> or <a href=""https://github.com/Automattic/sensei/wiki/Question-Import-Schema"">question</a> import schema.</li></ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>General Guidelines</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul><li>CSVs should be in UTF-8 format.</li><li>Courses, lessons and questions can be uploaded individually or simultaneously, but need to be uploaded together if there are any dependencies between files.</li><li>To update existing content, specify a value in the <em>Slug</em> column. If content with this slug is found, it will be overwritten.</li><li>If a teacher is not specified or not found when importing courses, the currently logged in user will be set as the teacher.</li><li>Use <code>0</code> (false) or <code>1</code> (true) in your CSV files when importing a boolean (true or false) value.</li><li>Multiple values in a field are separated with commas.</li><li>Wrapping values in quotes enables you to insert a comma.</li><li>Prefix the ID with <code>id:</code> if referencing a new ID (e.g. <code>id:100</code>).</li><li>Category hierarchy is denoted with <code>&gt;</code>, and multiple categories are separated with commas.</li></ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Images</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul><li>Images need to be pre-uploaded to the Media Library or available online in order to import them.</li><li>External URLs are supported and are imported to the Media Library.</li><li>You can use the filename if the image already exists in the Media Library.</li></ul>
+<!-- /wp:list -->
+
+<!-- wp:heading -->
+<h2>Import Content</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list {""ordered"":true} -->
+<ol><li>Go to&nbsp;<em>Sensei LMS</em>&nbsp;&gt;&nbsp;<em>Import:</em><br><br><figure class=""wp-block-image size-large""><img src=""https://senseilms.com/wp-content/uploads/2020/07/importer-upload-csv-files.jpg?w=980"" alt="""" class=""wp-image-3486""></figure></li><li>To import courses, click the <em>Upload</em> button beside <em>Courses CSV File</em>, and select the import file from your computer. Repeat this step for lessons and questions, if applicable, and then click the <em>Continue</em> button:<br><br><figure class=""wp-block-image size-large""><img src=""https://senseilms.com/wp-content/uploads/2020/07/importer-progress.jpg?w=980"" alt="""" class=""wp-image-3488""></figure></li><li><strong>Wait until the importer is finished</strong>. Do not refresh or otherwise interfere with the browser while the import is in progress.</li><li>Once the import process has completed, you will be taken to a confirmation page. If any issues were encountered while importing, they will be displayed here:<br><br><figure class=""wp-block-image size-large""><img src=""https://senseilms.com/wp-content/uploads/2020/07/importer-done.jpg?w=980"" alt="""" class=""wp-image-3489""></figure></li></ol>
+<!-- /wp:list -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Failed Imports</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>If content failed to import, it means that an unrecoverable error was encountered. This can happen if a required field is missing, for example.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>To help you find the problem, the CSV filename, title of the course / lesson / question, line number and error are displayed. After fixing the CSV file and removing any rows that have already been imported, you can run the import process again.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Partial Imports</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>A partial import indicates that the content was created or updated, but some problem occurred that prevented it from being fully imported. Examples of partial imports include specifying a course or lesson prerequisite that wasn't found, or providing an invalid URL for a featured image.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>To help you fix partially imported content, a link to the content, as well as the line number in the CSV file and the warning are displayed. Clicking on any of the links will open the content in a new tab, where you can make the necessary updates.</p>
+<!-- /wp:paragraph -->","Learn how to import course content in Sensei LMS.",publish,,,0,,,,,,0,0,,0,0,0,0,
+3324,"Learner Management",learner-management,"<!-- wp:paragraph -->
+<p>Learner Management enables you to manage everything about your learners, from enrolling new learners to resetting their progress.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Go to <em>Sensei LMS</em> > <em>Learner Management</em> to see a list of courses. You can filter by course category or search for a particular course:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":3336,""width"":735,""height"":194,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/05/learner-management.jpg?w=980"" alt=""Learner Management"" class=""wp-image-3336"" width=""735"" height=""194""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>From here, learners can be managed by <a href=""#manage-learners-course"">course</a> or by <a href=""#manage-learners-lesson"">lesson</a>.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading -->
+<h2 id=""manage-learners-course"">Manage Learners By Course</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>To manage your learners, locate the relevant course and click the <em>Manage learners</em> button. By default, a list of all learners who were ever enrolled in the course are displayed. This view can be filtered to only show those learners who are currently enrolled (<em>Enrolled Learners</em>), or only those who are unenrolled (<em>Unenrolled Learners</em>):</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":3649,""width"":735,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/08/learner-management-all-learners.jpg?w=980"" alt=""Learner Management - Manage learners"" class=""wp-image-3649"" width=""735""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Remove a Learner from a Course</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>To remove a learner's enrollment in a course, find the appropriate learner and hover over their name. Click the <em>Remove Enrollment</em> link that appears. This will unenroll the learner and revoke their access to the course:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":3627,""width"":735,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/08/remove-enrollment.jpg?w=980"" alt=""Learner Management - Remove Enrollment"" class=""wp-image-3627"" width=""735""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>Please note that while the learner no longer has access to the course, their progress is preserved. This means that they will be able to pick up where they left off should they enroll in the course again later.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Add a Learner to a Course</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>If a learner already appears in Learner Management, but are not currently enrolled in the course, they can be re-enrolled by hovering over their name and clicking the <em>Enroll</em> link:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":3629,""width"":735,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/08/enroll.jpg?w=980"" alt=""Learner Management - Enroll"" class=""wp-image-3629"" width=""735""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>If a learner does not already appear in Learner Management, they can be added by scrolling to the bottom of the page, searching for and selecting them in the <em>Add Learner to Course</em> panel, and clicking the button. You can optionally choose to complete the course for the learner by checking the <em>Complete course for learner</em> box. Multiple learners can be added simultaneously:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":3375,""width"":735,""height"":320,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/05/learner-management-add-learner.jpg?w=980"" alt=""Learner Management - Add learner to course"" class=""wp-image-3375"" width=""735"" height=""320""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Reset Progress</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>To reset a learner's progress and have them start the course over from the beginning, find the learner, hover over their name, and click the <em>Reset Progress</em> link. This will reset the course start date and set its status to <em>In Progress</em>. All lessons in the course will have their start date cleared and status set to <em>Not started</em>.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Note that the <em>Reset Progress</em> link is only displayed if the learner is currently enrolled in the course.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Remove Progress</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>To remove a learner's progress, find the learner, hover over their name, and click the <em>Remove Progress</em> link. This will remove the learner from Learner Management, effectively deleting any progress they have already made in the course. This means the learner will need to start the course over from the beginning should they enroll again later.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Note that the <em>Remove Progress</em> link is only displayed if the learner is <strong>not</strong> currently enrolled in the course.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Edit the Course Start Date</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>You can edit the course start date by locating the learner, clicking in the text box that displays the current start date, selecting a new date from the calendar that appears, and clicking the <em>Edit Start Date</em> button.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Note that updating the course start date does not have any effect on the start dates of the course's lessons.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading -->
+<h2 id=""manage-learners-lesson"">Manage Learners by Lesson</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Clicking the <em>Lessons</em> link displays a list of all lessons in the course:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":3354,""width"":735,""height"":222,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/05/learner-management-lessons.jpg?w=980"" alt=""Learner Management - Lessons"" class=""wp-image-3354"" width=""735"" height=""222""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>As with courses, the learners for an individual lesson can be managed by clicking the <em>Manage learners</em> button. By default, a list of all learners who ever viewed the lesson are displayed:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":3656,""width"":735,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/08/learner-management-lessons-all-learners.jpg?w=980"" alt=""Learner Management - Manage learners by lesson"" class=""wp-image-3656"" width=""735""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Add a Learner to a Lesson</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>A learner can be added to the lesson by scrolling to the bottom of the page, searching for and selecting them in the <em>Add Learner to Lesson</em> panel, and clicking the button. This will also enroll the learner in the course if they are not already taking it. You can optionally choose to complete the lesson for the learner by checking the <em>Complete lesson for learner</em> box. If the lesson has a quiz, the learner will automatically pass it. Multiple learners can be added simultaneously:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":3373,""width"":735,""height"":306,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/05/learner-management-lesson-add-learner.jpg?w=980"" alt=""Learner Management - Add learner to lesson"" class=""wp-image-3373"" width=""735"" height=""306""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Reset Progress</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>To reset a learner's progress and have them start the lesson over from the beginning, find the learner, hover over their name, and click the <em>Reset Progress</em> link. This will reset the lesson status to <em>In Progress</em>. If the lesson has a quiz, this will also reset the learner's grade for that quiz and remove their answers.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Edit the Lesson Start Date</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>You can edit the lesson start date by locating the learner, clicking in the text box that displays the current start date, selecting a new date from the calendar that appears, and clicking the <em>Edit Start Date</em> button.</p>
+<!-- /wp:paragraph -->","Learn how to manage your learners in Sensei LMS.",publish,,,0,,,,,,0,0,,0,0,0,0,
+3162,Grading,grading,"<!-- wp:paragraph -->
+<p>Sensei LMS enables teachers to manually grade a lesson. To access this area, go to&nbsp;<em>Sensei LMS</em> &gt; <em>Grading</em>.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>By default, the <em>Grading</em> page lists all of the ungraded quizzes that have been submitted for manual grading. The following columns are displayed:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul><li><em>Learner</em> - Name of the learner</li><li><em>Course</em> - Name of the course</li><li><em>Lesson</em> - Name of the lesson</li><li><em>Updated</em> - Date and time the learner last viewed or interacted with the quiz</li><li><em>Status</em> - Grading status (<em>Ungraded</em>, <em>Graded</em>, <em>In Progress</em>)</li><li><em>Grade</em> - Learner's grade for the quiz or <em>N/A</em> if not yet graded</li><li>Button for grading the quiz or reviewing an existing grade</li></ul>
+<!-- /wp:list -->
+
+<!-- wp:image {""id"":3275,""width"":735,""height"":244,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/05/grading.jpg?w=980"" alt=""Grading"" class=""wp-image-3275"" width=""735"" height=""244""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Filter the Quizzes</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The table can be filtered to only show quizzes for a particular lesson by selecting a course and then a lesson from the drop-downs. To remove lesson filtering, click the <em>Reset filter</em> button.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>The view can also be changed such that all quizzes are displayed, or only those that are ungraded, graded, or in progress:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":3278,""width"":735,""height"":205,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/05/quiz-filter-by-lesson.jpg?w=980"" alt=""Grading - Filtered"" class=""wp-image-3278"" width=""735"" height=""205""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>To show quizzes for a specific learner, enter the learner into the search box and click the <em>Search Users</em> button. To display all learners again, clear the search box and submit an empty search:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":3280,""width"":735,""height"":221,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/05/quiz-search-by-learner.jpg?w=980"" alt=""Grading - Search by learner"" class=""wp-image-3280"" width=""735"" height=""221""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Grade a Quiz</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>To grade a quiz, locate the quiz in the table and click the <em>Grade quiz</em> button. If the quiz has already been graded, the button will be named <em>Review grade</em> instead:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":3292,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large""><img src=""https://senseilms.com/wp-content/uploads/2020/05/grade-quiz.jpg?w=980"" alt=""Grading - Grade quiz"" class=""wp-image-3292""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>Any questions that were auto-graded at the time the quiz was submitted will already be marked. The remaining questions can be manually graded by clicking the checkmark or X icons.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>For each question, you can also:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul><li>Add grading notes. Use these to provide feedback to learners about their answer.</li><li>Assign a specific grade to an answer. This value must not exceed the question's original grade.</li></ul>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>When a learner views their graded quiz, they will see which questions they got right, as well as their grade for each question and their total grade for the entire quiz. They will also be able to see any grading notes that were entered by the teacher:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":3294,""width"":735,""height"":576,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/05/learner-graded-quiz.jpg?w=980"" alt=""Graded quiz"" class=""wp-image-3294"" width=""735"" height=""576""/></figure>
+<!-- /wp:image -->","Learn how to grade quizzes in Sensei LMS.",publish,,,0,,,,,,0,0,,0,1,0,0,
+3210,Analysis,analysis,"<!-- wp:paragraph -->
+<p>Sensei LMS offers drill-down reporting for you to see how learners are progressing across all courses, lessons and quizzes. To access this area, go to&nbsp;<em>Sensei LMS</em> &gt; <em>Analysis</em>.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>There are three main areas in this section:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul><li><a href=""#learners"">Learners</a></li><li><a href=""#courses"">Courses</a></li><li><a href=""#lessons"">Lessons</a></li></ul>
+<!-- /wp:list -->
+
+<!-- wp:heading -->
+<h2 id=""learners"">Learners</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The default view of the <em>Analysis</em> page shows an overview of your learners and their stats, all of which can be exported:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul><li><em>Learner</em> - Learner's username</li><li><em>Email</em> - Learner's email address</li><li><em>Date Registered</em> - Date on which the learner registered on your site</li><li><em>Active Courses</em> - Number of courses the learner is currently enrolled in</li><li><em>Completed Courses</em> - Number of courses the learner has completed</li><li><em>Average Grade</em> - Learner's average grade across all courses</li></ul>
+<!-- /wp:list -->
+
+<!-- wp:image {""id"":3239,""width"":735,""height"":339,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/05/analysis-learners.jpg?w=980"" alt=""Analysis - Learners"" class=""wp-image-3239"" width=""735"" height=""339""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>Drilling down into a particular learner displays a page that lists the following information:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul><li><em>Course</em> - Name of the course</li><li><em>Date Started</em> - Date on which the learner started the course</li><li><em>Date Completed</em> - Date on which the learner completed the course</li><li><em>Status</em> - Course status</li><li><em>Percent Complete</em> - Percentage of the course the learner has completed so far</li></ul>
+<!-- /wp:list -->
+
+<!-- wp:image {""id"":3244,""width"":734,""height"":186,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/05/learner-courses.jpg?w=980"" alt=""Analysis - Learner courses"" class=""wp-image-3244"" width=""734"" height=""186""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>Drilling down even further into a specific course displays the learner's progress at the lesson level:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul><li><em>Lesson</em> - Name of the lesson</li><li><em>Date Started</em> - Date on which the learner started the lesson</li><li><em>Date Completed</em> - Date on which the learner completed the lesson</li><li><em>Status</em> - Lesson status</li><li><em>Grade</em> - Learner's grade for that lesson, if applicable</li></ul>
+<!-- /wp:list -->
+
+<!-- wp:image {""id"":3246,""width"":735,""height"":257,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/05/learner-course-lessons.jpg?w=980"" alt=""Analysis - Learner course lessons"" class=""wp-image-3246"" width=""735"" height=""257""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p><p id=""course-learners"">The <em>Other Learners taking this Course</em> view shows all other learners currently enrolled in the course:</p></p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":3249,""width"":735,""height"":240,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/05/course-learners.jpg?w=980"" alt=""Analysis - Course learners"" class=""wp-image-3249"" width=""735"" height=""240""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading -->
+<h2 id=""courses"">Courses</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Similar to&nbsp;the <em>Learners</em> view, the <em>Courses</em> view displays an overview of your courses with some stats, all of which can be exported:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul><li><em>Course</em> - Name of the course</li><li><em>Learners</em> - Number of learners currently enrolled in the course</li><li><em>Lessons</em> - Number of lessons in the course</li><li><em>Completed</em> - Number of learners who have completed the course</li><li><em>Average Percentage</em> - Average percentage of the course across all learners</li></ul>
+<!-- /wp:list -->
+
+<!-- wp:image {""id"":3224,""width"":735,""height"":290,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/05/analysis-courses.jpg?w=980"" alt=""Analysis - Courses"" class=""wp-image-3224"" width=""735"" height=""290""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>Drilling down into a particular course displays a page that lists all of the lessons in the course, as well as the following stats:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul><li><em>Learners</em> - Number of learners who are currently taking or have already completed the lesson</li><li><em>Completed</em> - Number of learners who have completed the lesson</li><li><em>Average Grade</em> - Average grade of the lesson, if applicable</li></ul>
+<!-- /wp:list -->
+
+<!-- wp:image {""id"":3228,""width"":735,""height"":246,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/05/course-lessons.jpg?w=980"" alt=""Analysis - Course lessons"" class=""wp-image-3228"" width=""735"" height=""246""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>The<em> Learners taking this Course</em> view shows all other learners currently enrolled in the course. The view is identical to <a href=""#course-learners"">this one</a>.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:html -->
+<p id=""course-lesson-learners"">Drilling down even further into a specific lesson displays all learners who are currently taking or have already completed the lesson:</p>
+<!-- /wp:html -->
+
+<!-- wp:image {""id"":3234,""width"":734,""height"":194,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/05/course-lesson-learners.jpg?w=980"" alt=""Analysis - Course lesson learners"" class=""wp-image-3234"" width=""734"" height=""194""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading -->
+<h2 id=""lessons"">Lessons</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Much like the <em>Learners</em> and <em>Courses</em> views, the <em>Lessons</em> view displays an overview of your lessons with some stats, all of which can be exported:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul><li><em>Lesson</em> - Name of the lesson</li><li><em>Module</em> - Name of the module the lesson is in</li><li><em>Course</em> - Name of the course the lesson is in</li><li><em>Learners</em> - Number of learners who are currently taking or have already completed the lesson</li><li><em>Completed</em> - Number of learners who have completed the lesson</li><li><em>Average Grade</em> - Average grade of the lesson, if applicable</li></ul>
+<!-- /wp:list -->
+
+<!-- wp:image {""id"":3252,""width"":735,""height"":198,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/05/analysis-lessons.jpg?w=980"" alt=""Analysis - Lessons"" class=""wp-image-3252"" width=""735"" height=""198""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>Drilling down into a particular lesson displays a page that lists all of the learners who are currently taking or have already completed the lesson. The view is the same as <a href=""#course-lesson-learners"">this one</a>.</p>
+<!-- /wp:paragraph -->","Learn how to track your learners' course progress in Sensei LMS.",publish,,,0,,,,,,0,0,,0,0,0,0,
+3175,Questions,questions,"<!-- wp:paragraph -->
+<p>Questions can be added independently of a quiz, making it possible to use them across multiple quizzes.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading -->
+<h2>Add New Question</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>To add a question:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul><li>Go to&nbsp;<em>Questions&nbsp;</em>&gt;&nbsp;<em>Add New</em>.</li><li>Enter the question in the <em>Question</em> field.</li><li>Enter an optional <em>Question Description</em>.</li><li>Select a type from the <em>Question Type</em> dropdown.</li><li>Update the <em>Question Grade</em>. This should be a number greater than or equal to 0.</li><li>Enter the answer to the question. The exact format will depend on the type of question that was selected.</li></ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Question Types</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>There are a number of different question types to choose from:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul><li>Multiple Choice</li><li>True/False</li><li>Gap Fill</li><li>Single Line</li><li>Multi Line</li><li>File Upload</li></ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Multiple Choice</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Multiple choice questions support multiple right and wrong answers. If a question has more than one correct answer, the learner must select all of them in order to pass (if a passmark is required).</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Selecting&nbsp;<em>Randomise answer order</em>&nbsp;will display the options in a different&nbsp;order every time the quiz is viewed:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":3183,""width"":735,""height"":397,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/05/multiple-choice.jpg?w=980"" alt=""Multiple choice"" class=""wp-image-3183"" width=""735"" height=""397""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>True/False</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>True/false questions are the simplest question type and take either a true or false answer:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":3181,""width"":735,""height"":371,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/05/true-false.jpg?w=980"" alt=""True/false"" class=""wp-image-3181"" width=""735"" height=""371""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Gap Fill</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Gap fill is a fill-in-the-blank question type, where the ""gap"" is the blank that needs to be filled in by the learner. If there is more than one possible answer, or you want to account for common spelling mistakes, you can add the answer as a <a href=""http://en.wikipedia.org/wiki/Regular_expression"">regular expression</a>. The most common use of this would be to list all possible correct answers, with each one separated by a | symbol:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":3184,""width"":735,""height"":371,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/05/gap-fill.jpg?w=980"" alt=""Gap fill"" class=""wp-image-3184"" width=""735"" height=""371""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>When a gap-fill question is auto-graded, the case and leading/trailing spaces are ignored. In the example above, both "" Counts"" and ""Beats "" are acceptable answers.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Single Line</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Single line&nbsp;questions&nbsp;allow learners to enter their answer into a text box that is restricted to a single&nbsp;line&nbsp;of text:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":3185,""width"":735,""height"":341,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/05/single-line.jpg?w=980"" alt=""Single line"" class=""wp-image-3185"" width=""735"" height=""341""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Multi Line</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Multi line&nbsp;questions are open-ended&nbsp;questions that allow learners to enter their answer into a multi-line text box:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":3187,""width"":735,""height"":344,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/05/multi-line.jpg?w=980"" alt=""Multi line"" class=""wp-image-3187"" width=""735"" height=""344""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>File Upload</h4>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The file upload question type allows you to have your learners upload a file or document as their answer. <a href=""https://codex.wordpress.org/Uploading_Files"">Supported file types are controlled by WordPress</a>, but examples include images, documents, audio and video files:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":3188,""width"":735,""height"":346,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/05/file-upload.jpg?w=980"" alt=""File upload"" class=""wp-image-3188"" width=""735"" height=""346""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Question Grade</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Question grade is the value you would like to assign to the question. For example, you could give a higher grade to more difficult questions, while easier ones would have a lower score.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Questions can also be assigned a grade of 0. Questions with a zero grade are skipped during auto-grading.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Question Media</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>A media file can be included as part of a question. Images, audio and video files are displayed inline within the question. All other types of media are displayed as links. Additionally, the title and description of the media item, if specified, are displayed below the media. By default, images use the <em>Medium size</em> width and height settings as defined in&nbsp;<em>Settings</em> &gt; <em>Media</em>.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Answer Feedback</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Answer feedback is applicable for multiple choice and true/false questions. This feedback is shown to learners after they submit a quiz that&nbsp;is set to grade automatically. For manual grading, the answer feedback can be customized when the quiz is graded.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Question Categories</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Question categories make it easier to find relevant questions to <a href=""https://senseilms.com/lesson/quizzes#category-questions"">add to a quiz</a>. A category can be added to a question by selecting one or more categories in the <em>Question Categories</em> panel. A new category can be added by clicking the <em>+ Add New Question Category</em> link.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Question categories can be managed by going to <em>Questions</em> &gt; <em>Categories</em>.</p>
+<!-- /wp:paragraph -->","Learn how to create and manage questions in Sensei LMS.",publish,,,0,,,,,,0,0,,0,1,0,0,
+3106,Quizzes,quizzes,"<!-- wp:paragraph -->
+<p>No matter what questions you have about quizzes, we've got the answers!</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul><li><a href=""#create-quiz"">How do I add a quiz?</a></li><li><a href=""#remove-question"">How do I remove a question from a quiz?</a></li><li><a href=""#quiz-settings"">How do I configure the quiz settings?</a></li></ul>
+<!-- /wp:list -->
+
+<!-- wp:heading -->
+<h2 id=""add-quiz"">Add a Quiz</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>When <a href=""https://senseilms.com/lesson/lessons/"">adding a new lesson</a>, you will find the <em>Quiz Settings</em> panel below the main content area, with a message indicating that there&nbsp;is no quiz for this lesson (yet!). You will need to save the lesson before you will be able to create the quiz:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":1368,""width"":735,""height"":155} -->
+<figure class=""wp-block-image is-resized""><img src=""https://senseilms.com/wp-content/uploads/2018/12/quiz-settings.jpg?w=980"" alt=""Empty quiz settings"" class=""wp-image-1368"" width=""735"" height=""155""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>There are three methods available for adding questions to a quiz on the <em>Edit Lesson</em> screen. You can add a new question, add an existing question, or add a category question(s). Please note that category questions will not appear unless you have created at least one category under <em>Questions</em><strong> &gt; </strong><em>Categories&nbsp;</em>in your dashboard.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Add a New Question</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Please see the&nbsp;<a href=""https://senseilms.com/documentation/question-bank/"">Question Bank</a>&nbsp;documentation for information on how to add new questions. It's worth noting that when a&nbsp;new question is added to a quiz, that question is also added to the question bank, so that it can be used again in other quizzes:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":1372,""width"":735,""height"":421} -->
+<figure class=""wp-block-image is-resized""><img src=""https://senseilms.com/wp-content/uploads/2017/11/new-lesson-question.jpg?w=980"" alt=""New question"" class=""wp-image-1372"" width=""735"" height=""421""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Add Existing Questions</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The <em>Existing Questions</em> tab enables you to select one or more existing questions from the question bank and add them to the quiz. You can search for a question by name, or filter by question type and question category. You can also search for questions that either have or haven't already been used in another quiz:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""align"":""center"",""id"":153960,""width"":687,""height"":450} -->
+<div class=""wp-block-image""><figure class=""aligncenter is-resized""><img src=""http://docs.woocommerce.com/wp-content/uploads/2014/06/existing-questions.png"" alt=""Existing questions"" class=""wp-image-153960"" width=""687"" height=""450""/></figure></div>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>The panel displays 10 questions per page. Remember that selections are not preserved between pages, so you must select and add questions from one page before moving to the next.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":3} -->
+<h3 id=""category-questions"">Add Category Questions</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The <em>Category Questions</em> tab enables you to insert a random selection of questions from a question category. After selecting a category from the dropdown and entering the number of questions to display, questions in that category are added to the quiz. They appear as a single entry in the table:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""align"":""center"",""id"":153961,""width"":687,""height"":132} -->
+<div class=""wp-block-image""><figure class=""aligncenter is-resized""><img src=""http://docs.woocommerce.com/wp-content/uploads/2014/06/category-questions.png"" alt=""category-questions"" class=""wp-image-153961"" width=""687"" height=""132""/></figure></div>
+<!-- /wp:image -->
+
+<!-- wp:image {""align"":""center"",""id"":153962,""width"":686,""height"":98} -->
+<div class=""wp-block-image""><figure class=""aligncenter is-resized""><img src=""http://docs.woocommerce.com/wp-content/uploads/2014/06/question-list.png"" alt=""Category questions"" class=""wp-image-153962"" width=""686"" height=""98""/></figure></div>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>You can add multiple groups of category questions to the quiz:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""align"":""center"",""id"":153963,""width"":691,""height"":132} -->
+<div class=""wp-block-image""><figure class=""aligncenter is-resized""><img src=""http://docs.woocommerce.com/wp-content/uploads/2014/06/multiple-groups.png"" alt=""Multiple category questions"" class=""wp-image-153963"" width=""691"" height=""132""/></figure></div>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>You can also combine existing questions with category questions. Sensei LMS ensures that a question is not displayed more than once in the same quiz:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""align"":""center"",""id"":153964,""width"":689,""height"":157} -->
+<div class=""wp-block-image""><figure class=""aligncenter is-resized""><img src=""http://docs.woocommerce.com/wp-content/uploads/2014/06/mixture.png"" alt=""Existing and category questions"" class=""wp-image-153964"" width=""689"" height=""157""/></figure></div>
+<!-- /wp:image -->
+
+<!-- wp:heading -->
+<h2 id=""remove-question"">Remove a Question from a Quiz</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>To remove a question or group of questions from a quiz, click the <em>Remove</em> link in the <em>Quiz Questions</em> table. This will <strong>not</strong> remove the question from the question bank. To do that, go to <em>Questions</em> &gt; <em>All Questions</em>, hover over the question, and click the <em>Trash</em> link.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading -->
+<h2 id=""quiz-settings"">Quiz Settings</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Once you've added questions to your quiz, you can customize the settings in the <em>Quiz Settings</em> panel:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""align"":""center"",""id"":153970,""width"":702,""height"":214} -->
+<div class=""wp-block-image""><figure class=""aligncenter is-resized""><img src=""http://docs.woocommerce.com/wp-content/uploads/2014/06/quiz-settings.png"" alt=""Quiz settings"" class=""wp-image-153970"" width=""702"" height=""214""/></figure></div>
+<!-- /wp:image -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Pass required to complete lesson</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Checking <em>Pass required to complete lesson</em> forces learners to achieve a particular grade before the lesson can be marked as completed. If left unchecked, the passmark defaults to 0, and the learner can complete the lesson without passing the quiz.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Quiz passmark percentage</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p><em>Quiz passmark percentage</em> is the grade that must be obtained by the learner in order to pass the quiz. This setting is only visible if <em>Pass required to complete lesson</em> is checked.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Number of questions to show</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>You can optionally choose to&nbsp;limit the number of questions that are displayed when the quiz is taken by entering a value for <em>Number of questions to show</em>.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Randomise question order</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Selecting <em>Randomise question order</em> will display the questions in a different&nbsp;order every time the quiz is viewed.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Grade quiz automatically</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>All multiple choice, true/false, and gap fill questions will be auto-graded if <em>Grade quiz automatically</em> is checked.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Allow user to retake the quiz</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>If <em>Allow user to retake the quiz</em> is selected, the learner is able to reset and take the quiz again if they like.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading -->
+<h2>Lesson with No Quiz</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>If there is no quiz associated with a lesson, the lesson will display a <em>Complete Lesson</em> button. This button enables learners to mark the lesson as complete and move to the next one.</p>
+<!-- /wp:paragraph -->","Learn how to create and manage quizzes in Sensei LMS.",publish,,,0,,,,,,0,0,,0,0,0,0,
+3043,Modules,modules,"<!-- wp:paragraph -->
+<p>A module is a container for a group of lessons in a course. Conceptually, they exist as an additional level between courses and lessons in the <a href=""https://senseilms.com/documentation/content-hierarchy/"">course hierarchy</a>. A course can contain any number of modules, and every lesson in the course can be assigned to a single module.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading -->
+<h2>Add a Module</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>To add a module:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {""ordered"":true} -->
+<ol><li>Go to <em>Courses</em>&nbsp;&gt; <em>Modules</em>.</li><li>Give the module a name.</li><li>Enter an optional description. (Leave this blank if you are only using modules conceptually and don't want them to appear as a separate page in your course.)</li><li>Under <em>Course(s)</em>, search for and select one or more courses that will use this module. (Alternatively, you can leave the <em>Course(s)</em> field blank and assign modules later when adding or editing a course.)</li></ol>
+<!-- /wp:list -->
+
+<!-- wp:image {""align"":""none"",""id"":3048,""width"":320,""height"":512,""sizeSlug"":""large"",""className"":""size-full wp-image-152519""} -->
+<figure class=""wp-block-image alignnone size-large is-resized size-full wp-image-152519""><img src=""https://senseilms.com/wp-content/uploads/2020/05/add-new-module.jpg?w=640"" alt=""Add new module"" class=""wp-image-3048"" width=""320"" height=""512""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading -->
+<h2>Add Modules to a Course</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>You can also add modules when creating or editing a course:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {""ordered"":true} -->
+<ol><li>Go to <em>Courses</em>&nbsp;&gt; <em>All Courses</em>.</li><li>Click <em>Add New</em> or select an existing course.</li><li>In the <em>Course Modules</em> panel in the sidebar, select the modules you would like to add to the course. You can also add a new module by clicking the <em>+ Add New Module</em> link.</li></ol>
+<!-- /wp:list -->
+
+<!-- wp:image {""align"":""none"",""id"":3055,""width"":274,""height"":218,""sizeSlug"":""large"",""className"":""size-full wp-image-152520""} -->
+<figure class=""wp-block-image alignnone size-large is-resized size-full wp-image-152520""><img src=""https://senseilms.com/wp-content/uploads/2020/05/course-modules-1.jpg?w=548"" alt=""Course modules"" class=""wp-image-3055"" width=""274"" height=""218""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading -->
+<h2>Add a Module to a Lesson</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>After you have added modules to a course, you can add a module to each of the lessons in that course.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>To assign a module to a lesson:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {""ordered"":true} -->
+<ol><li>Go to <em>Lessons</em> &gt; <em>All Lessons</em>.</li><li>Select an existing lesson.</li><li>In the<em> Modules</em> panel in the sidebar, select a module to associate with this lesson.</li></ol>
+<!-- /wp:list -->
+
+<!-- wp:image {""id"":3132,""width"":274,""height"":110,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/05/lesson-module.jpg"" alt=""Course"" class=""wp-image-3132"" width=""274"" height=""110""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading -->
+<h2>Order Modules</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>By default, any modules that are added to a course are displayed in alphabetical order. To use a custom order, go to <em>Courses</em>&nbsp;&gt; <em>Order Modules</em>. Select a course, drag and drop the modules into the desired order, and then click the <em>Save module order</em> button.</p>
+<!-- /wp:paragraph -->","Learn how to create and manage modules in Sensei LMS.",publish,,,0,,,,,,0,0,,0,0,0,0,
+3063,Lessons,lessons,"<!-- wp:heading -->
+<h2>Add a Lesson</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>To add a lesson, go to <em>Lessons&nbsp;</em>&gt;&nbsp;<em>Add New</em>.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Start by giving the lesson a title:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":1354,""width"":735,""height"":92} -->
+<figure class=""wp-block-image is-resized""><img src=""https://senseilms.com/wp-content/uploads/2017/11/lesson-title.jpg?w=980"" alt=""Lesson title"" class=""wp-image-1354"" width=""735"" height=""92""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>Next, enter the content for the lesson in the main content area. It can contain any type of content you like, including images, videos and HTML:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":1356,""width"":735,""height"":135} -->
+<figure class=""wp-block-image is-resized""><img src=""https://senseilms.com/wp-content/uploads/2017/11/lesson-content.jpg?w=980"" alt=""Lesson content"" class=""wp-image-1356"" width=""735"" height=""135""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>If you like, you can enter a brief description of the lesson in the <em>Excerpt</em> field.&nbsp;The excerpt is displayed below the lesson title on the course page. If the excerpt is empty, only the lesson title is shown:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":1432,""width"":225,""height"":180} -->
+<figure class=""wp-block-image is-resized""><img src=""https://senseilms.com/wp-content/uploads/2018/12/lesson-excerpt.jpg?w=300"" alt=""Lesson excerpt"" class=""wp-image-1432"" width=""225"" height=""180""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading {""level"":3} -->
+<h3 id=""course"">Course</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>In the <em>Course</em> panel, select&nbsp;the course that the lesson should be associated with. A lesson can only be associated with one course:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":3088,""width"":274,""height"":110,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/05/course-panel.jpg?w=548"" alt=""Lesson course"" class=""wp-image-3088"" width=""274"" height=""110""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p><em>Note: We don't recommend adding a lesson to a course that is already live and has active learners. <a href=""https://senseilms.com/lesson/courses#edit-course"">See this page&nbsp;for more information</a>.</em></p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":3} -->
+<h3 id=""prerequisite"">Prerequisite</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>If you would like learners to complete another lesson before taking this one, you can set a<em>&nbsp;Prerequisite</em>. Learners will not be able to start taking this lesson until they complete the prerequisite lesson first:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":1435,""width"":225,""height"":83} -->
+<figure class=""wp-block-image is-resized""><img src=""https://senseilms.com/wp-content/uploads/2017/11/lesson-prerequisite.jpg?w=300"" alt=""Lesson prerequisite"" class=""wp-image-1435"" width=""225"" height=""83""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>If a learner tries to view this lesson without having first completed the prerequisite lesson, they will see a notice similar to the following:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":1361,""width"":735,""height"":74,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2017/11/preqrequisite-notice.jpg?w=980"" alt=""Lesson prerequisite notice"" class=""wp-image-1361"" width=""735"" height=""74""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Preview</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>To offer a free sample of your course content, you can select&nbsp;<em>Allow this lesson to be viewed without login</em>. This will enable the lesson content to be viewable by anyone, including anonymous visitors to your site:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":3104,""width"":276,""height"":105,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/05/lesson-preview.jpg"" alt=""Lesson preview"" class=""wp-image-3104"" width=""276"" height=""105""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>Here's how the course archive page might look for a course containing a preview lesson:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":1437,""width"":735,""height"":232} -->
+<figure class=""wp-block-image is-resized""><img src=""https://senseilms.com/wp-content/uploads/2017/11/course-archive-preview.jpg?w=980"" alt=""Preview lessons on course archive page"" class=""wp-image-1437"" width=""735"" height=""232""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>The course page itself also indicates which lessons can be previewed:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":1439,""width"":735,""height"":140} -->
+<figure class=""wp-block-image is-resized""><img src=""https://senseilms.com/wp-content/uploads/2017/11/single-course-preview.jpg?w=980"" alt=""Preview lessons on course page"" class=""wp-image-1439"" width=""735"" height=""140""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Lesson Tags</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>You can add tags to lessons in the same way as you can with regular posts. Lesson tags can be managed by going to <em>Lessons</em> &gt; <em>Lesson Tags</em>.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>If you would like lessons to be searchable by tag, you will need to use a search plugin such as&nbsp;<a href=""https://searchwp.com/"">Search WP</a>.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Featured Image</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>A featured image can be added to a lesson by uploading an image from your computer or selecting an existing image from the&nbsp;Media Library. The image displays on the course and lesson page, depending on the settings configured in <em>Sensei</em> <em>LMS</em> &gt; <em>Settings</em> &gt; <em>Lessons</em>:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":1427,""width"":164,""height"":224,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2017/11/featured-image.jpg?w=538"" alt=""Lesson featured image"" class=""wp-image-1427"" width=""164"" height=""224""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Lesson Information</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>You can optionally provide additional information about a lesson, including the length (in minutes) and the complexity.&nbsp;To add a video, paste the video embed code (from YouTube, Vimeo etc.) into the&nbsp;<em>Video Embed Code</em>&nbsp;field:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":1433,""width"":735,""height"":222} -->
+<figure class=""wp-block-image is-resized""><img src=""https://senseilms.com/wp-content/uploads/2017/11/lesson-information.jpg?w=980"" alt=""Lesson information"" class=""wp-image-1433"" width=""735"" height=""222""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p><em>Note: Sensei LMS is unable to protect video content. If you need to ensure that only paying customers can watch videos, we recommend using a service such as <a href=""https://vimeo.com/professionals"">Vimeo PRO</a>.</em></p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Module</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>See <a href=""https://senseilms.com/lesson/modules"">Modules</a><a href=""https://senseilms.com/documentation/adding-modules/""> </a>to learn more about how to assign lessons to modules.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading -->
+<h2 id=""change-lesson-order"">Order Lessons</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>To change the order that your lessons are displayed in, go to <em>Lessons</em><strong> &gt; </strong><em>Order Lessons</em>. Select the course, and then drag and drop the lessons into the desired order. Click the <em>Save lesson order</em> button to save your changes.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Lessons that are inside a module can only be re-ordered within their respective module. In order to move a lesson to another module, you will need to edit the lesson and associate it with a different module.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading -->
+<h2 id=""duplicate-lesson"">Duplicate a Lesson</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list {""ordered"":true} -->
+<ol><li>Go to&nbsp;<em>Lessons</em>&nbsp;&gt; <em>All Lessons</em>.</li><li>Hover over a lesson.</li><li>Click the <em>Duplicate</em> link.</li><li>In the dialog box that appears, click <em>OK</em>.</li></ol>
+<!-- /wp:list -->","Learn how to create and manage lessons in Sensei LMS.",publish,,,0,,,,,,0,0,,0,1,0,0,
+2997,Courses,courses,"<!-- wp:heading -->
+<h2>Add a Course</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>To add a course, go to <em>Courses&nbsp;</em>&gt;&nbsp;<em>Add New</em>.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Start by giving the course a title:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":1339,""width"":735,""height"":122} -->
+<figure class=""wp-block-image is-resized""><img src=""https://senseilms.com/wp-content/uploads/2017/11/course-title.jpg?w=980"" alt=""Course title"" class=""wp-image-1339"" width=""735"" height=""122""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>Next, enter the content for the course page in the main content area. This content should describe the course and explain what learners can expect to learn. It can contain any type of content you like, including images, videos and HTML:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":1340,""width"":735,""height"":119} -->
+<figure class=""wp-block-image is-resized""><img src=""https://senseilms.com/wp-content/uploads/2017/11/course-content.jpg?w=980"" alt=""Course content"" class=""wp-image-1340"" width=""735"" height=""119""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>If you like, you can enter a brief description of the course in the <em>Excerpt</em> field:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":1422,""width"":225,""height"":192} -->
+<figure class=""wp-block-image is-resized""><img src=""https://senseilms.com/wp-content/uploads/2017/11/course-excerpt.jpg?w=300"" alt=""Course excerpt"" class=""wp-image-1422"" width=""225"" height=""192""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Teacher</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>To assign a teacher to the course, choose a user from the <em>Teacher</em> dropdown:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":3007,""width"":268,""height"":94,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/05/teacher.jpg"" alt=""Course teacher"" class=""wp-image-3007"" width=""268"" height=""94""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Course Categories</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>A course can be assigned to one or more categories. You can select an existing category or click the <em>Add New Course Category</em> link to create a new one:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":1423,""width"":182,""height"":225} -->
+<figure class=""wp-block-image is-resized""><img src=""https://senseilms.com/wp-content/uploads/2017/11/course-categories.jpg?w=244"" alt=""Course categories"" class=""wp-image-1423"" width=""182"" height=""225""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>Course categories can be managed by going to <em>Courses</em> > <em>Course Categories</em>.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Course Prerequisite</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>If you would like learners to complete another course before taking this one, you can set a <em>Course Prerequisite</em>. Learners will not be able to start taking this course until they complete the prerequisite course first:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":1424,""width"":225,""height"":78} -->
+<figure class=""wp-block-image is-resized""><img src=""https://senseilms.com/wp-content/uploads/2017/11/course-prerequisite.jpg?w=300"" alt=""Course prerequisite"" class=""wp-image-1424"" width=""225"" height=""78""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>If a learner tries to view this course without having first completed the prerequisite course, they will see a notice similar to the following:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":3093,""width"":735,""height"":72,""sizeSlug"":""large""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/05/course-prerequisite-notice.jpg?w=980"" alt=""Course prerequisite notice"" class=""wp-image-3093"" width=""735"" height=""72""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Featured Course</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>To feature a course, select the <em>Feature this course</em>&nbsp;box. The course will then be displayed under <em>Featured Courses</em> on the course archive page and in the course component widget:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":1425,""width"":225,""height"":70} -->
+<figure class=""wp-block-image is-resized""><img src=""https://senseilms.com/wp-content/uploads/2017/11/featured-course.jpg?w=300"" alt=""Featured course"" class=""wp-image-1425"" width=""225"" height=""70""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Featured Image</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>A featured image can be added to a course by uploading an image from your computer or selecting an existing image from the&nbsp;Media Library. The image displays on the course archive&nbsp;and course pages, depending on the settings configured in <em>Sensei</em> <em>LMS</em> &gt; <em>Settings</em> &gt; <em>Courses</em>:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":1427,""width"":164,""height"":224} -->
+<figure class=""wp-block-image is-resized""><img src=""https://senseilms.com/wp-content/uploads/2017/11/featured-image.jpg?w=218"" alt=""Course featured image"" class=""wp-image-1427"" width=""164"" height=""224""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Course Video</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>To add a video to the course page, paste the video embed code (from YouTube, Vimeo etc.) into the <em>Course Video</em> field:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":1428,""width"":735,""height"":125} -->
+<figure class=""wp-block-image is-resized""><img src=""https://senseilms.com/wp-content/uploads/2017/11/course-video.jpg?w=980"" alt=""Course video"" class=""wp-image-1428"" width=""735"" height=""125""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>The video displays for both users who are taking the course and those who are not.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Course Notifications</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>There is a <em>Course Notifications</em> panel on the course edit screen that gives you the option to disable all email notifications for just that course. This option overrides the global email options in <em>Sensei LMS</em> &gt; <em>Settings</em> &gt; <em>Email Notifications</em>:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":1429,""width"":735,""height"":67} -->
+<figure class=""wp-block-image is-resized""><img src=""https://senseilms.com/wp-content/uploads/2017/11/course-notifications.jpg?w=980"" alt=""Course notifications"" class=""wp-image-1429"" width=""735"" height=""67""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Course Modules</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>See <a href=""https://senseilms.com/lesson/modules"">Modules</a> to learn more about grouping lessons into modules.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Course Lessons</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>See <a href=""https://senseilms.com/lesson/lessons"">Lessons</a> to learn more about managing lessons.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading -->
+<h2>Order Courses</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>To change the order that your courses are displayed in, go to <em>Courses</em><strong> &gt; </strong><em>Order Courses</em>. Drag and drop them into the desired order, and then click the <em>Save course order</em> button.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading -->
+<h2 id=""duplicate"">Duplicate a Course</h2>
+<!-- /wp:heading -->
+
+<!-- wp:list {""ordered"":true} -->
+<ol><li>Go to&nbsp;<em>Courses</em>&nbsp;&gt; <em>All Courses</em>.</li><li>Hover over a course.</li><li>Click the <em>Duplicate</em> link to duplicate just the course, or <em>Duplicate (with lessons)</em> to duplicate the course and all its lessons.</li></ol>
+<!-- /wp:list -->
+
+<!-- wp:heading -->
+<h2 id=""edit-course"">Edit a Course</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Once your course is published and people have started taking it, we recommend against making major changes such as adding or removing lessons, editing quizzes, etc. Doing so will affect the grades and completion status of learners who are already taking (or have already completed) the course. Minor text edits are fine, but anything that will affect the overall completion status should be avoided.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>If you decide that your course needs a refresh with new lessons or more quizzes, the best solution would be to either create a new version of the course from scratch, or <a href=""http://senseilms.com/lesson/courses#duplicate"">duplicate&nbsp;the existing course</a> and make the required updates before publishing.</p>
+<!-- /wp:paragraph -->","Learn how to create and manage courses in Sensei LMS.",publish,,,0,,,,,,0,0,,0,0,0,0,

@@ -420,7 +420,8 @@ class Sensei_Utils {
 		 */
 		$file_upload_args = apply_filters( 'sensei_file_upload_args', array( 'test_form' => false ) );
 
-		$file_return = wp_handle_upload( $file, $file_upload_args );
+		$file['name'] = md5( uniqid() ) . '_' . $file['name'];
+		$file_return  = wp_handle_upload( $file, $file_upload_args );
 
 		if ( isset( $file_return['error'] ) || isset( $file_return['upload_error_handler'] ) ) {
 			return false;
@@ -982,14 +983,17 @@ class Sensei_Utils {
 	/**
 	 * This function returns an array of lesson quiz questions
 	 *
-	 * @since  1.3.2
+	 * @since 1.3.2
+	 * @since 3.5.0 Added $query_args.
+	 *
 	 * @param  integer $quiz_id
+	 * @param  array   $query_args Additional args for the query.
 	 * @return array of quiz questions
 	 */
-	public static function lesson_quiz_questions( $quiz_id = 0 ) {
+	public static function lesson_quiz_questions( $quiz_id = 0, $query_args = [] ) {
 		$questions_array = array();
 		if ( 0 < $quiz_id ) {
-			$question_args   = array(
+			$defaults      = array(
 				'post_type'        => 'question',
 				'posts_per_page'   => -1,
 				'orderby'          => 'ID',
@@ -1003,6 +1007,8 @@ class Sensei_Utils {
 				'post_status'      => 'any',
 				'suppress_filters' => 0,
 			);
+			$question_args = wp_parse_args( $query_args, $defaults );
+
 			$questions_array = get_posts( $question_args );
 		} // End If Statement
 		return $questions_array;
@@ -1399,17 +1405,17 @@ class Sensei_Utils {
 	 */
 	public static function user_start_course( $user_id = 0, $course_id = 0 ) {
 
-		$activity_logged = false;
+		$activity_comment_id = false;
 
 		if ( $user_id && $course_id ) {
-			// Check if user is already on the Course
-			$activity_logged = self::has_started_course( $course_id, $user_id );
-			if ( ! $activity_logged ) {
-				$activity_logged = self::start_user_on_course( $user_id, $course_id );
+			// Check if user is already on the Course.
+			$activity_comment_id = self::get_course_progress_comment_id( $course_id, $user_id );
+			if ( false === $activity_comment_id ) {
+				$activity_comment_id = self::start_user_on_course( $user_id, $course_id );
 			}
 		}
 
-		return $activity_logged;
+		return $activity_comment_id;
 	}
 
 	/**
@@ -2282,6 +2288,7 @@ class Sensei_Utils {
 					'class' => array(),
 					'id'    => array(),
 					'name'  => array(),
+					'style' => array(),
 				),
 			)
 		);
@@ -2462,6 +2469,29 @@ class Sensei_Utils {
 	}
 
 	/**
+	 * Checks if the given version pf WooCommerce plugin is installed and activated.
+	 *
+	 * @param string $minimum_version
+	 *
+	 * @return bool
+	 * @since Sensei 3.2.0
+	 */
+	public static function is_woocommerce_active( $minimum_version = null ) {
+		$is_active = self::is_plugin_present_and_activated( 'Woocommerce', 'woocommerce/woocommerce.php' );
+
+		if ( ! $is_active ) {
+			return false;
+		}
+
+		if ( null !== $minimum_version ) {
+			return version_compare( WC()->version, $minimum_version, '>=' );
+		}
+
+		return true;
+	}
+
+
+	/**
 	 * Hard - Resets a Learner's Course Progress
 	 *
 	 * @param $course_id int
@@ -2513,6 +2543,47 @@ class Sensei_Utils {
 		 */
 		return apply_filters( 'sensei_course_show_lessons', true, $course_id );
 	}
+
+	/**
+	 * Determine if the current page is a Sensei learner profile page.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @return bool True if the current page is a Sensei learner profile page.
+	 */
+	public static function is_learner_profile_page() {
+		global $wp_query;
+		return isset( $wp_query->query_vars['learner_profile'] );
+	}
+
+	/**
+	 * Determine if the current page is a Sensei course results page.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @return bool True if the current page is a Sensei course results page.
+	 */
+	public static function is_course_results_page() {
+		global $wp_query;
+		return isset( $wp_query->query_vars['course_results'] );
+	}
+
+	/**
+	 * Determine if the current page is a Sensei teacher archive page.
+	 *
+	 * @access  public
+	 * @since 3.2.0
+	 * @return bool True if the current page is a Sensei teacher archive page.
+	 */
+	public static function is_teacher_archive_page() {
+		if ( is_author()
+			&& Sensei()->teacher->is_a_teacher( get_query_var( 'author' ) )
+			&& ! user_can( get_query_var( 'author' ), 'manage_options' ) ) {
+			return true;
+		}
+		return false;
+	}
+
 } // End Class
 
 /**

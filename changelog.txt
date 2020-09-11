@@ -1,6 +1,192 @@
 *** Changelog ***
 
-2020.04.15 - version 3.0.0
+2020.09.10 - version 3.5.1
+
+* Tweak: Update usage tracking for sample courses
+    * Add sample_course property to publish event [#3596](https://github.com/Automattic/sensei/pull/3596)
+    * Include flag for sample data on import events [#3588](https://github.com/Automattic/sensei/pull/3588)
+* Tweak: Only add "first" and "last" CSS classes for grid layouts on course archive page [#3467](https://github.com/Automattic/sensei/pull/3467)
+
+2020.08.27 - version 3.5.0
+* New: Exporter
+    * Add error handling to exporter [#3541](https://github.com/Automattic/sensei/pull/3541)
+    * Export multiple choice answers in correct order [#3558](https://github.com/Automattic/sensei/pull/3558)
+    * Fix "Randomise answer order" checkbox being exported incorrectly [#3550](https://github.com/Automattic/sensei/pull/3550)
+    * Fix incorrect handling of media when exporting questions [#3551](https://github.com/Automattic/sensei/pull/3551)
+    * Add content types to export page [#3412](https://github.com/Automattic/sensei/pull/3412)
+    * Add export page [#3409](https://github.com/Automattic/sensei/pull/3409)
+    * Add exporter REST API and job [#3442](https://github.com/Automattic/sensei/pull/3442)
+    * Add progress and results pages [#3413](https://github.com/Automattic/sensei/pull/3413)
+    * Change export progress Cancel link to button [#3516](https://github.com/Automattic/sensei/pull/3516)
+    * Export courses CSV [#3462](https://github.com/Automattic/sensei/pull/3462)
+    * Export lessons CSV [#3513](https://github.com/Automattic/sensei/pull/3513)
+    * Export list of lessons in courses CSV and remove Course column from lessons CSV [#3531](https://github.com/Automattic/sensei/pull/3531)
+    * Export questions CSV [#3506](https://github.com/Automattic/sensei/pull/3506)
+    * Export the correct order when lessons belong to modules [#3537](https://github.com/Automattic/sensei/pull/3537)
+    * Fix reordering of checkboxes in export page on Safari [#3518](https://github.com/Automattic/sensei/pull/3518)
+    * Log when an export job completes [#3526](https://github.com/Automattic/sensei/pull/3526)
+    * Log when the Export submenu is clicked [#3528](https://github.com/Automattic/sensei/pull/3528)
+    * Log when users click the Continue button in exporter [#3527](https://github.com/Automattic/sensei/pull/3527)
+    * Make the error more descriptive when the attachment fetch request fails [#3559](https://github.com/Automattic/sensei/pull/3559)
+    * Merge data port model with import model [#3521](https://github.com/Automattic/sensei/pull/3521)
+    * Package exported CSVs into a ZIP file when possible [#3519](https://github.com/Automattic/sensei/pull/3519)
+    * Remove data port task clean_up methods [#3525](https://github.com/Automattic/sensei/pull/3525)
+    * Reverse the exported value of course notifications [#3543](https://github.com/Automattic/sensei/pull/3543)
+    * Update copy used in exporter [#3529](https://github.com/Automattic/sensei/pull/3529)
+* Fixes: Importer
+    * Run import job batches in polling requests [#3455](https://github.com/Automattic/sensei/pull/3455)
+    * Use Lessons column in courses CSV to associate courses with lessons when importing [#3536](https://github.com/Automattic/sensei/pull/3536)
+    * Fix division by zero when there are no associated import tasks [#3557](https://github.com/Automattic/sensei/pull/3557)
+    * Fix duplicate content sometimes being imported [#3538](https://github.com/Automattic/sensei/pull/3538)
+* Fix: Error in setup wizard when navigating to a previous step [#3533](https://github.com/Automattic/sensei/pull/3533)
+* New: Add sample course installation to the Setup Wizard [#3507](https://github.com/Automattic/sensei/pull/3507)
+* Tweak: Redirect to sample course after importing it [#3545](https://github.com/Automattic/sensei/pull/3545)
+* New: Use preloading for initial requests in importer and setup wizard [#3446](https://github.com/Automattic/sensei/pull/3446)
+* Tweak: Show courses with any status in Course Prerequisite dropdown [#3555](https://github.com/Automattic/sensei/pull/3555)
+
+2020.08.11 - version 3.4.1
+* Fix: Question editor compatibility with WordPress 5.5 [#3510](https://github.com/Automattic/sensei/pull/3510)
+* Fix: Trigger setting updated events only when changed [#3503](https://github.com/Automattic/sensei/pull/3503)
+
+2020.08.06 - version 3.4.0
+* New: Remove / Restore Enrollments
+	* Add meta handler for removing and restoring a learner's enrollment [#3402](https://github.com/Automattic/sensei/pull/3402)
+	* Change learner management actions from buttons to links [#3404](https://github.com/Automattic/sensei/pull/3404)
+	* Implement enrollment actions in Learner Management [#3410](https://github.com/Automattic/sensei/pull/3410)
+	* Update text in confirmation dialogs when removing or restoring enrollments [#3456](https://github.com/Automattic/sensei/pull/3456)
+	* Vertically align column data in Learner Management tables [#3476](https://github.com/Automattic/sensei/pull/3476)
+	* Add the ability to remove and restore enrollments in bulk learner management [#3473](https://github.com/Automattic/sensei/pull/3473)
+	* Update learner management enrollment notices to be more generic [#3466](https://github.com/Automattic/sensei/pull/3466)
+	* Log enrollment and progress actions in Learner Management [#3465](https://github.com/Automattic/sensei/pull/3465)
+
+2020.07.30 - version 3.3.1
+* Fix: Setup wizard and importer in WordPress 5.0 - 5.3 [#3482](https://github.com/Automattic/sensei/pull/3482)
+
+2020.07.23 - version 3.3.0
+* New: Importer
+	* Add byte order mark removal [#3365](https://github.com/Automattic/sensei/pull/3365)
+	* Add delimiter detection [#3364](https://github.com/Automattic/sensei/pull/3364)
+	* Add import attachments validation [#3358](https://github.com/Automattic/sensei/pull/3358)
+	* Add "Import content" option to the setup wizard [#3340](https://github.com/Automattic/sensei/pull/3340), [#3350](https://github.com/Automattic/sensei/pull/3350)
+	* Add passmark range validation [#3342](https://github.com/Automattic/sensei/pull/3342)
+	* Add title and link to the import logs [#3403](https://github.com/Automattic/sensei/pull/3403)
+	* Display importer failures and partial imports in their own sections on the Done page [#3379](https://github.com/Automattic/sensei/pull/3379)
+	* Hide import counters when nothing is imported [#3396](https://github.com/Automattic/sensei/pull/3396)
+	* Log when Sensei LMS > Import is clicked [#3348](https://github.com/Automattic/sensei/pull/3348)
+	* Log when the Continue button is clicked on the Import Content page [#3366](https://github.com/Automattic/sensei/pull/3366)
+	* Tweaks to importer Done step [#3407](https://github.com/Automattic/sensei/pull/3407)
+	* Add Import base UI [#3191](https://github.com/Automattic/sensei/pull/3191)
+	* Add a class to read a CSV file [#3256](https://github.com/Automattic/sensei/pull/3256)
+	* Add a class which manages data port jobs [#3107](https://github.com/Automattic/sensei/pull/3107)
+	* Add base data port model class and foundation for questions model [#3259](https://github.com/Automattic/sensei/pull/3259)
+	* Add create user utility [#3221](https://github.com/Automattic/sensei/pull/3221)
+	* Add data port base class [#3099](https://github.com/Automattic/sensei/pull/3099)
+	* Add data port logs REST API endpoint [#3325](https://github.com/Automattic/sensei/pull/3325)
+	* Add documentation link to first step of importer [#3452](https://github.com/Automattic/sensei/pull/3452)
+	* Add endpoint to start a data port job [#3213](https://github.com/Automattic/sensei/pull/3213)
+	* Add garbage collection to data port manager [#3242](https://github.com/Automattic/sensei/pull/3242)
+	* Add importer UI data manager [#3306](https://github.com/Automattic/sensei/pull/3306)
+	* Add importer done page [#3305](https://github.com/Automattic/sensei/pull/3305)
+	* Add importer progress step [#3315](https://github.com/Automattic/sensei/pull/3315)
+	* Add page for uploading CSV import files [#3211](https://github.com/Automattic/sensei/pull/3211)
+	* Add results to import job [#3328](https://github.com/Automattic/sensei/pull/3328)
+	* Add sample data for importer [#3450](https://github.com/Automattic/sensei/pull/3450)
+	* Add string utilities for data port [#3289](https://github.com/Automattic/sensei/pull/3289)
+	* Add support for translating strings in JavaScript files in Importer [#3319](https://github.com/Automattic/sensei/pull/3319)
+	* Add utilities to add an attachment to a post [#3286](https://github.com/Automattic/sensei/pull/3286)
+	* Add warnings in cases where the email will be ignored [#3451](https://github.com/Automattic/sensei/pull/3451)
+	* Adjust Import submenu position [#3408](https://github.com/Automattic/sensei/pull/3408)
+	* Check post type when translating import ID [#3444](https://github.com/Automattic/sensei/pull/3444)
+	* Fix CSS for upload button [#3243](https://github.com/Automattic/sensei/pull/3243)
+	* Fix more issues with question import and deal with empty categories [#3391](https://github.com/Automattic/sensei/pull/3391)
+	* Fix passmark issues [#3432](https://github.com/Automattic/sensei/pull/3432)
+	* Fix question import issues [#3387](https://github.com/Automattic/sensei/pull/3387)
+	* Implement course import task [#3247](https://github.com/Automattic/sensei/pull/3247)
+	* Implement question import task [#3281](https://github.com/Automattic/sensei/pull/3281)
+	* Add helper to allow for warnings during import [#3351](https://github.com/Automattic/sensei/pull/3351)
+	* Add taxonomy utility [#3225](https://github.com/Automattic/sensei/pull/3225)
+	* Attempt to convert encoding to UTF-8 [#3346](https://github.com/Automattic/sensei/pull/3346)
+	* Cast boolean-like strings to boolean [#3341](https://github.com/Automattic/sensei/pull/3341)
+	* Delete existing files immediately on upload attempt [#3222](https://github.com/Automattic/sensei/pull/3222)
+	* Delete uploaded files [#3336](https://github.com/Automattic/sensei/pull/3336)
+	* Fix delete icon shrinking with long filenames [#3374](https://github.com/Automattic/sensei/pull/3374)
+	* Fix reducer mutation [#3343](https://github.com/Automattic/sensei/pull/3343)
+	* Link prerequisites for courses and lessons [#3338](https://github.com/Automattic/sensei/pull/3338)
+	* Log file upload errors [#3367](https://github.com/Automattic/sensei/pull/3367)
+	* Log notices instead of failing imports entirely [#3360](https://github.com/Automattic/sensei/pull/3360)
+	* Log warnings and errors [#3381](https://github.com/Automattic/sensei/pull/3381)
+	* Add data validation and default handling in base model [#3284](https://github.com/Automattic/sensei/pull/3284)
+	* Include log information in Import command [#3317](https://github.com/Automattic/sensei/pull/3317)
+	* Log when an import job completes [#3377](https://github.com/Automattic/sensei/pull/3377)
+	* No longer match files with just the same parent post [#3393](https://github.com/Automattic/sensei/pull/3393)
+	* Order import logs by content type and then by line number [#3445](https://github.com/Automattic/sensei/pull/3445)
+	* REST API: Add Importer base endpoints [#3188](https://github.com/Automattic/sensei/pull/3188)
+	* REST API: Add file upload/delete for importer [#3199](https://github.com/Automattic/sensei/pull/3199)
+	* Refactor attachment utilities to support different types of attachments [#3290](https://github.com/Automattic/sensei/pull/3290)
+	* Remove file source URL from imported media description [#3384](https://github.com/Automattic/sensei/pull/3384)
+	* Remove unnecessary component button styles in Importer [#3316](https://github.com/Automattic/sensei/pull/3316)
+	* Update Importer REST API with `{job_id}` prefix to most endpoints [#3324](https://github.com/Automattic/sensei/pull/3324)
+	* Update importer visuals [#3406](https://github.com/Automattic/sensei/pull/3406)
+	* Consolidate process_line to parent file process class [#3291](https://github.com/Automattic/sensei/pull/3291)
+	* Add lesson length validation [#3438](https://github.com/Automattic/sensei/pull/3438)
+	* Add number of questions validation [#3449](https://github.com/Automattic/sensei/pull/3449)
+	* Add validation to multiple choice questions without a right answer [#3397](https://github.com/Automattic/sensei/pull/3397)
+	* Defer warnings until post is created and add warnings on sanitization [#3443](https://github.com/Automattic/sensei/pull/3443)
+	* Fix 404 error when importing more content [#3419](https://github.com/Automattic/sensei/pull/3419)
+	* Fix error message overflowing parent container on import upload screen [#3344](https://github.com/Automattic/sensei/pull/3344)
+	* Fix import CSV with HTML content [#3430](https://github.com/Automattic/sensei/pull/3430)
+	* Fix title in the import logs [#3423](https://github.com/Automattic/sensei/pull/3423)
+	* Fix validation for question type method [#3425](https://github.com/Automattic/sensei/pull/3425)
+	* Update default right answer to true [#3424](https://github.com/Automattic/sensei/pull/3424)
+* New: Add filter to customize the query arguments used to fetch the courses a learner is enrolled in [#3347](https://github.com/Automattic/sensei/pull/3347), [#3369](https://github.com/Automattic/sensei/pull/3369)
+* New: Log when paid extensions are selected to be installed in setup wizard [#3398](https://github.com/Automattic/sensei/pull/3398)
+* New: Log `sensei_plugin_install` on WCCOM plugin activation [#3373](https://github.com/Automattic/sensei/pull/3373)
+* Tweak: Make usage tracking pixel calls non-blocking [#3378](https://github.com/Automattic/sensei/pull/3378)
+* Tweak: Add random string to uploaded files for file upload questions [#3359](https://github.com/Automattic/sensei/pull/3359)
+* Fix: Add CSS classes for completed and preview lessons not in a module [#3333](https://github.com/Automattic/sensei/pull/3333)
+* Fix: Setup Wizard features step not being saved when nothing is selected [#3361](https://github.com/Automattic/sensei/pull/3361)
+* Fix linter issues with full-screen setup wizard code [#3418](https://github.com/Automattic/sensei/pull/3418)
+
+2020.06.30 - version 3.2.0
+* New: Add paid extensions to the setup wizard [#3297](https://github.com/Automattic/sensei/pull/3297), [#3309](https://github.com/Automattic/sensei/pull/3309), [#3323](https://github.com/Automattic/sensei/pull/3323), [#3322](https://github.com/Automattic/sensei/pull/3322), [#3326](https://github.com/Automattic/sensei/pull/3326), [#3329](https://github.com/Automattic/sensei/pull/3329), [#3332](https://github.com/Automattic/sensei/pull/3332), [#3331](https://github.com/Automattic/sensei/pull/3331), [#3330](https://github.com/Automattic/sensei/pull/3330)
+* New: Enable admins and lesson author to view quiz for lesson with an unmet prerequisite [#3080](https://github.com/Automattic/sensei/pull/3080) 👏 @JuanchoPestana
+* New: Deprecate sensei_the_excerpt function [#3248](https://github.com/Automattic/sensei/pull/3248) 👏 @truongwp
+* Tweak: Add "Educate students" option to Purpose step of setup wizard [#3311](https://github.com/Automattic/sensei/pull/3311)
+* Tweak: Setup Wizard: Allow purpose options to be translated [#3320](https://github.com/Automattic/sensei/pull/3320)
+* Tweak: Add "sensei" CSS class to all Sensei LMS pages [#3275](https://github.com/Automattic/sensei/pull/3275) 👏 @hansschuijff
+* Tweak: Use semantic heading structure on course results page [#3271](https://github.com/Automattic/sensei/pull/3271) 👏 @hansschuijff
+* Tweak: Add missing taxonomy labels [#3276](https://github.com/Automattic/sensei/pull/3276) 👏 @hansschuijff
+* Tweak: Fail gracefully if no extensions found in the setup wizard [#3283](https://github.com/Automattic/sensei/pull/3283)
+* Fix: Fix incorrect parameter being passed to has_term function [#3274](https://github.com/Automattic/sensei/pull/3274) 👏 @hansschuijff
+
+2020.06.05 - version 3.1.1
+* Fix: Clear setup wizard user data option on uninstall [#3263](https://github.com/Automattic/sensei/pull/3263)
+* Fix: Mark setup wizard as completed at the "Ready" step [#3265](https://github.com/Automattic/sensei/pull/3265)
+
+2020.06.04 - version 3.1.0
+* New: Setup wizard for new users - [#3066](https://github.com/Automattic/sensei/pull/3066), [#3085](https://github.com/Automattic/sensei/pull/3085), [#3093](https://github.com/Automattic/sensei/pull/3093), [#3082](https://github.com/Automattic/sensei/pull/3082), [#3101](https://github.com/Automattic/sensei/pull/3101), [#3103](https://github.com/Automattic/sensei/pull/3103), [#3096](https://github.com/Automattic/sensei/pull/3096), [#3117](https://github.com/Automattic/sensei/pull/3117), [#3118](https://github.com/Automattic/sensei/pull/3118), [#3119](https://github.com/Automattic/sensei/pull/3119), [#3102](https://github.com/Automattic/sensei/pull/3102), [#3157](https://github.com/Automattic/sensei/pull/3157), [#3106](https://github.com/Automattic/sensei/pull/3106), [#3121](https://github.com/Automattic/sensei/pull/3121), [#3172](https://github.com/Automattic/sensei/pull/3172), [#3175](https://github.com/Automattic/sensei/pull/3175), [#3174](https://github.com/Automattic/sensei/pull/3174), [#3176](https://github.com/Automattic/sensei/pull/3176), [#3189](https://github.com/Automattic/sensei/pull/3189), [#3184](https://github.com/Automattic/sensei/pull/3184), [#3156](https://github.com/Automattic/sensei/pull/3156), [#3181](https://github.com/Automattic/sensei/pull/3181), [#3190](https://github.com/Automattic/sensei/pull/3190), [#3239](https://github.com/Automattic/sensei/pull/3239), [#3227](https://github.com/Automattic/sensei/pull/3227), [#3198](https://github.com/Automattic/sensei/pull/3198), [#3241](https://github.com/Automattic/sensei/pull/3241), [#3194](https://github.com/Automattic/sensei/pull/3194), [#3250](https://github.com/Automattic/sensei/pull/3250), [#3246](https://github.com/Automattic/sensei/pull/3246), [#3258](https://github.com/Automattic/sensei/pull/3258)
+* New: Filter for enabling/disabling enrolment related background jobs [#3182](https://github.com/Automattic/sensei/pull/3182)
+* New: Add "Date Completed" field to the Learner Management page [#3064](https://github.com/Automattic/sensei/pull/3064) 👏 @timwiel
+* Tweak: Add Sensei and WCPC version directly in usage stats [#3094](https://github.com/Automattic/sensei/pull/3094)
+* Tweak: Remove old setup notices in favour of the new wizard [#3155](https://github.com/Automattic/sensei/pull/3155)
+* Tweak: Remove mailing list signup modal in favour of the setup wizard [#3167](https://github.com/Automattic/sensei/pull/3167)
+* Tweak: Include email classes in autoloader [#3098](https://github.com/Automattic/sensei/pull/3098)
+* Tweak: Remove mass database invalidation of enrolment results on course recalculation [#3183](https://github.com/Automattic/sensei/pull/3183)
+* Tweak: Send usage tracking data as soon as the user opts in [#3220](https://github.com/Automattic/sensei/pull/3220)
+* Tweak: Remove "Most Used" course modules [#3224](https://github.com/Automattic/sensei/pull/3224)
+* Tweak: Bump minimum WordPress version to 5.0 [#3244](https://github.com/Automattic/sensei/pull/3244)
+* Tweak: Change "Lessons" to "Lesson" if there is only a single lesson in a course [#3145](https://github.com/Automattic/sensei/pull/3145) 👏 @truongwp
+* Tweak: Fix translatable string [#3185](https://github.com/Automattic/sensei/pull/3185) 👏 @truongwp
+* Fix: Update meta box header when question type of new question is changed [#3008](https://github.com/Automattic/sensei/pull/3008)
+* Fix: PHP notice for logged out user when viewing quiz of free preview lesson [#2980](https://github.com/Automattic/sensei/pull/2980)
+* Fix: PHP warning on single course page [#3136](https://github.com/Automattic/sensei/pull/3136)
+* Fix: Course dropdown width on the lessons page [#3223](https://github.com/Automattic/sensei/pull/3136)
+
+2020.04.29 - version 3.0.1
+* Tweak: Prevent some queries from running unnecessarily [#3022](https://github.com/Automattic/sensei/pull/3022)
+* Fix: Skip enrollment checking completely for guests [#3086](https://github.com/Automattic/sensei/pull/3086)
+
+2020.04.27 - version 3.0.0
 * New: Add Recalculate Enrolment data update [#2998](https://github.com/Automattic/sensei/pull/2998)
 * New: Add a filter for the course archive page URL [#2899](https://github.com/Automattic/sensei/pull/2899)
 * New: Add course enrollment indicator to learner management [#2838](https://github.com/Automattic/sensei/pull/2838)
@@ -38,6 +224,11 @@
 * New: Use Action Scheduler for enrolment async jobs when available [#2930](https://github.com/Automattic/sensei/pull/2930)
 * New: Add filter to bypass enrolment functionality [#3011](https://github.com/Automattic/sensei/pull/3011)
 * New: Allow providers to provide debug information [#3020](https://github.com/Automattic/sensei/pull/3020)
+* New: Fire actions on enrolment status change and manual enrolment status change [#3035](https://github.com/Automattic/sensei/pull/3035)
+* New: Add a filter for the batch size of the learner calculation job [#3054](https://github.com/Automattic/sensei/pull/3054)
+* New: Introduce a provider journal store [#3027](https://github.com/Automattic/sensei/pull/3027)
+* New: Add multisite support for enrolment data [#3072](https://github.com/Automattic/sensei/pull/3072)
+* New: Delete provider journal data on uninstall [#3073](https://github.com/Automattic/sensei/pull/3073)
 * Tweak: Append post status to prerequisite lesson on Lessons page [#2853](https://github.com/Automattic/sensei/pull/2853) 👏 @JuanchoPestana
 * Tweak: Change user_started_course in quiz and email code [#2968](https://github.com/Automattic/sensei/pull/2968)
 * Tweak: Add support for enrolments in bulk learner management [#2965](https://github.com/Automattic/sensei/pull/2965)
@@ -50,6 +241,16 @@
 * Tweak: Remove logging functionality from provider state [#3021](https://github.com/Automattic/sensei/pull/3021)
 * Tweak: Refactor removal of Sensei comments from total counts [#3009](https://github.com/Automattic/sensei/pull/3009)
 * Tweak: Switch to using a handler when a learner starts taking a course [#3000](https://github.com/Automattic/sensei/pull/3000)
+* Tweak: Allow for not storing enrolment results when they don't provide enrolment [#3028](https://github.com/Automattic/sensei/pull/3028)
+* Tweak: Update course calculation job to paginate using last calculated user ID [#3029](https://github.com/Automattic/sensei/pull/3029)
+* Tweak: Don't manually enrol learners who don't have course progress [#3030](https://github.com/Automattic/sensei/pull/3030)
+* Tweak: Ensure courses share the same provider state meta per learner [#3033](https://github.com/Automattic/sensei/pull/3033)
+* Tweak: Replace "student" with "learner" in methods and frontend hook [#3038](https://github.com/Automattic/sensei/pull/3038)
+* Tweak: Use `time` instead of `microtime` function when logging enrolment results [#3034](https://github.com/Automattic/sensei/pull/3034)
+* Tweak: Switch to using a filter when storing enrolment results [#3031](https://github.com/Automattic/sensei/pull/3031)
+* Tweak: Use new strategy for looping through last user ID for learner calculation job [#3055](https://github.com/Automattic/sensei/pull/3055)
+* Tweak: Use a less filtered method for checking if user has started course [#3065](https://github.com/Automattic/sensei/pull/3065)
+* Tweak: Block enrolment checking and display notice with WCPC v1  [#3070](https://github.com/Automattic/sensei/pull/3070)
 * Fix: Add clear background to TinyMCE buttons [#2833](https://github.com/Automattic/sensei/pull/2833) 👏 @JuanchoPestana
 * Fix: Add missing question ID to hidden question field [#2871](https://github.com/Automattic/sensei/pull/2871) 👏 @traed
 * Fix: Add module admin scripts on course edit page [#2918](https://github.com/Automattic/sensei/pull/2918)

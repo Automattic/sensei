@@ -16,18 +16,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Core_Modules {
 
-	private $dir;
 	private $file;
-	private $assets_dir;
-	private $assets_url;
 	private $order_page_slug;
 	public $taxonomy;
 
 	public function __construct( $file ) {
 		$this->file            = $file;
-		$this->dir             = dirname( $this->file );
-		$this->assets_dir      = trailingslashit( $this->dir ) . 'assets';
-		$this->assets_url      = esc_url( trailingslashit( plugins_url( '/assets/', $this->file ) ) );
 		$this->taxonomy        = 'module';
 		$this->order_page_slug = 'module-order';
 
@@ -205,8 +199,8 @@ class Sensei_Core_Modules {
 	 * @param WP_Post $post The post.
 	 * @return int
 	 */
-	private function get_lesson_module_if_exists( $post ) {
-		// Get existing lesson module
+	public function get_lesson_module_if_exists( $post ) {
+		// Get existing lesson module.
 		$lesson_module      = 0;
 		$lesson_module_list = wp_get_post_terms( $post->ID, $this->taxonomy );
 		if ( is_array( $lesson_module_list ) && count( $lesson_module_list ) > 0 ) {
@@ -1452,7 +1446,7 @@ class Sensei_Core_Modules {
 		if ( isset( $course_id ) && 0 < $course_id ) {
 
 			// the course should contain the same module taxonomy term for this to be valid
-			if ( ! has_term( $module, $this->taxonomy, $course_id ) ) {
+			if ( ! has_term( $module->term_id, $this->taxonomy, $course_id ) ) {
 				return false;
 			}
 
@@ -1468,7 +1462,7 @@ class Sensei_Core_Modules {
 	 * @since 1.8.0
 	 *
 	 * @param  integer $course_id ID of course
-	 * @return array              Ordered array of module taxonomy term objects
+	 * @return WP_Term[]          Ordered array of module taxonomy term objects
 	 */
 	public function get_course_modules( $course_id = 0 ) {
 
@@ -1537,8 +1531,7 @@ class Sensei_Core_Modules {
 		$disable_styles = apply_filters( 'sensei_disable_styles', $disable_styles );
 
 		if ( ! $disable_styles ) {
-			wp_register_style( $this->taxonomy . '-frontend', esc_url( $this->assets_url ) . 'css/modules-frontend.css', array(), Sensei()->version );
-			wp_enqueue_style( $this->taxonomy . '-frontend' );
+			Sensei()->assets->enqueue( $this->taxonomy . '-frontend', 'css/modules-frontend.css' );
 		}
 
 	}
@@ -1569,12 +1562,14 @@ class Sensei_Core_Modules {
 		if ( ! ( in_array( $hook, $script_on_pages_white_list ) || $screen_related ) ) {
 			return;
 		}
+		wp_enqueue_script( 'sensei-chosen-ajax' );
 
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-
-		wp_enqueue_script( 'sensei-chosen', Sensei()->plugin_url . 'assets/chosen/chosen.jquery' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
-		wp_enqueue_script( 'sensei-chosen-ajax', Sensei()->plugin_url . 'assets/chosen/ajax-chosen.jquery' . $suffix . '.js', array( 'jquery', 'sensei-chosen' ), Sensei()->version, true );
-		wp_enqueue_script( $this->taxonomy . '-admin', esc_url( $this->assets_url ) . 'js/modules-admin' . $suffix . '.js', array( 'jquery', 'sensei-chosen', 'sensei-chosen-ajax', 'jquery-ui-sortable', 'sensei-core-select2' ), Sensei()->version, true );
+		Sensei()->assets->enqueue(
+			$this->taxonomy . '-admin',
+			'js/modules-admin.js',
+			[ 'jquery', 'sensei-chosen-ajax', 'jquery-ui-sortable', 'sensei-core-select2' ],
+			true
+		);
 
 		// localized module data
 		$localize_modulesAdmin = array(
@@ -1595,8 +1590,7 @@ class Sensei_Core_Modules {
 	 */
 	public function admin_enqueue_styles() {
 
-		wp_register_style( $this->taxonomy . '-sortable', esc_url( $this->assets_url ) . 'css/modules-admin.css', '', Sensei()->version );
-		wp_enqueue_style( $this->taxonomy . '-sortable' );
+		Sensei()->assets->enqueue( $this->taxonomy . '-sortable', 'css/modules-admin.css' );
 
 	}
 
@@ -1681,11 +1675,13 @@ class Sensei_Core_Modules {
 	 *
 	 * @since 1.8.0
 	 *
-	 * @param $course_id
-	 * @param $term_id
+	 * @param int    $course_id                  Course post ID.
+	 * @param int    $term_id                    Module term ID.
+	 * @param string $course_lessons_post_status Post status for lessons.
+	 *
 	 * @return WP_Query $lessons_query
 	 */
-	public function get_lessons_query( $course_id, $term_id ) {
+	public function get_lessons_query( $course_id, $term_id, $course_lessons_post_status = null ) {
 		global $wp_query;
 		if ( empty( $term_id ) || empty( $course_id ) ) {
 
@@ -1693,7 +1689,9 @@ class Sensei_Core_Modules {
 
 		}
 
-		$course_lessons_post_status = isset( $wp_query ) && $wp_query->is_preview() ? 'all' : 'publish';
+		if ( ! $course_lessons_post_status ) {
+			$course_lessons_post_status = isset( $wp_query ) && $wp_query->is_preview() ? 'all' : 'publish';
+		}
 
 		$args = array(
 			'post_type'        => 'lesson',
@@ -1733,11 +1731,12 @@ class Sensei_Core_Modules {
 	 * Find the lesson in the given course that doesn't belong
 	 * to any of the courses modules
 	 *
-	 * @param $course_id
+	 * @param int    $course_id    The course id.
+	 * @param string $post_status  The status of the lessons.
 	 *
 	 * @return array $non_module_lessons
 	 */
-	public function get_none_module_lessons( $course_id ) {
+	public function get_none_module_lessons( $course_id, $post_status = 'publish' ) {
 
 		$non_module_lessons = array();
 
@@ -1773,7 +1772,7 @@ class Sensei_Core_Modules {
 
 		$args = array(
 			'post_type'        => 'lesson',
-			'post_status'      => 'publish',
+			'post_status'      => $post_status,
 			'posts_per_page'   => -1,
 			'meta_query'       => array(
 				array(
@@ -1820,12 +1819,14 @@ class Sensei_Core_Modules {
 			'all_items'         => __( 'All Modules', 'sensei-lms' ),
 			'parent_item'       => __( 'Parent Module', 'sensei-lms' ),
 			'parent_item_colon' => __( 'Parent Module:', 'sensei-lms' ),
+			'view_item'         => __( 'View Module', 'sensei-lms' ),
 			'edit_item'         => __( 'Edit Module', 'sensei-lms' ),
 			'update_item'       => __( 'Update Module', 'sensei-lms' ),
 			'add_new_item'      => __( 'Add New Module', 'sensei-lms' ),
 			'new_item_name'     => __( 'New Module Name', 'sensei-lms' ),
 			'menu_name'         => __( 'Modules', 'sensei-lms' ),
 			'not_found'         => __( 'No modules found.', 'sensei-lms' ),
+			'back_to_items'     => __( '&larr; Back to Modules', 'sensei-lms' ),
 		);
 
 		/**
@@ -2025,20 +2026,9 @@ class Sensei_Core_Modules {
 
 		?>
 		<div id="taxonomy-<?php echo esc_attr( $tax_name ); ?>" class="categorydiv">
-			<ul id="<?php echo esc_attr( $tax_name ); ?>-tabs" class="category-tabs">
-				<li class="tabs"><a href="#<?php echo esc_url( $tax_name ); ?>-all"><?php echo esc_html( $taxonomy->labels->all_items ); ?></a></li>
-				<li class="hide-if-no-js"><a href="#<?php echo esc_url( $tax_name ); ?>-pop"><?php esc_html_e( 'Most Used', 'sensei-lms' ); ?></a></li>
-			</ul>
-
-			<div id="<?php echo esc_attr( $tax_name ); ?>-pop" class="tabs-panel" style="display: none;">
-				<ul id="<?php echo esc_attr( $tax_name ); ?>checklist-pop" class="categorychecklist form-no-clear" >
-					<?php $popular_ids = wp_popular_terms_checklist( $tax_name ); ?>
-				</ul>
-			</div>
-
 			<div id="<?php echo esc_attr( $tax_name ); ?>-all" class="tabs-panel">
 				<?php
-				$name = ( $tax_name == 'category' ) ? 'post_category' : 'tax_input[' . $tax_name . ']';
+				$name = ( $tax_name === 'category' ) ? 'post_category' : 'tax_input[' . $tax_name . ']';
 				echo "<input type='hidden' name='" . esc_attr( $name ) . "[]' value='0' />"; // Allows for an empty term set to be sent. 0 is an invalid Term ID and will be ignored by empty() checks.
 				?>
 				<ul id="<?php echo esc_attr( $tax_name ); ?>checklist" data-wp-lists="list:<?php echo esc_attr( $tax_name ); ?>" class="categorychecklist form-no-clear">
@@ -2046,8 +2036,7 @@ class Sensei_Core_Modules {
 					wp_terms_checklist(
 						$post->ID,
 						array(
-							'taxonomy'     => $tax_name,
-							'popular_cats' => $popular_ids,
+							'taxonomy' => $tax_name,
 						)
 					);
 					?>

@@ -689,6 +689,10 @@ class Sensei_Quiz {
 			$user_id = get_current_user_id();
 		}
 
+		if ( 0 === $user_id ) {
+			return null;
+		}
+
 		$users_answers = $this->get_user_answers( $lesson_id, $user_id );
 
 		if ( ! $users_answers || empty( $users_answers )
@@ -846,6 +850,11 @@ class Sensei_Quiz {
 		$all_user_grades = self::get_user_grades( $lesson_id, $user_id );
 
 		if ( ! $all_user_grades || ! isset( $all_user_grades[ $question_id ] ) ) {
+			$fall_back_grade = false;
+
+			if ( 0 === $user_id ) {
+				return $fall_back_grade;
+			}
 
 			// fallback to data pre 1.7.4
 			$args = array(
@@ -855,7 +864,6 @@ class Sensei_Quiz {
 			);
 
 			$question_activity = Sensei_Utils::sensei_check_for_activity( $args, true );
-			$fall_back_grade   = false;
 			if ( isset( $question_activity->comment_ID ) ) {
 				$fall_back_grade = get_comment_meta( $question_activity->comment_ID, 'user_grade', true );
 			}
