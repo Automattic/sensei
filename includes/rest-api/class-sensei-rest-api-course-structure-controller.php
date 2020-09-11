@@ -157,7 +157,7 @@ class Sensei_REST_API_Course_Structure_Controller extends \WP_REST_Controller {
 
 		if ( false === $result ) {
 			return new WP_Error(
-				'sensei_course_structure_missing_course',
+				'sensei_course_structure_unknown_error',
 				__( 'An error occurred while saving the course structure.', 'sensei-lms' ),
 				[ 'status' => 500 ]
 			);
