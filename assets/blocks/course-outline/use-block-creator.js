@@ -1,33 +1,21 @@
-import { useEffect } from '@wordpress/element';
 import { useDispatch } from '@wordpress/data';
-import { createBlock } from '@wordpress/blocks';
-
-const blockNames = {
-	module: 'sensei-lms/course-outline-module',
-	lesson: 'sensei-lms/course-outline-lesson',
-};
+import { useCallback } from '@wordpress/element';
+import { convertToBlocks } from './data';
 
 /**
  * Blocks creator hook.
  * It adds blocks dynamically to the InnerBlock.
  *
- * @param {Object[]} blocksData Blocks data to insert.
- * @param {string}   clientId   Block client ID.
+ * @param {string} clientId Block client ID.
  */
-const useBlocksCreator = ( blocksData, clientId ) => {
+export const useBlocksCreator = ( clientId ) => {
 	const { replaceInnerBlocks } = useDispatch( 'core/block-editor' );
 
-	useEffect( () => {
-		if ( ! blocksData || 0 === blocksData.length ) {
-			return;
-		}
+	const setBlocks = useCallback(
+		( blockData ) =>
+			replaceInnerBlocks( clientId, convertToBlocks( blockData ), false ),
+		[ clientId, replaceInnerBlocks ]
+	);
 
-		const blocks = blocksData.map( ( { type, ...block } ) =>
-			createBlock( blockNames[ type ], block )
-		);
-
-		replaceInnerBlocks( clientId, blocks, false );
-	}, [ blocksData, clientId, replaceInnerBlocks ] );
+	return { setBlocks };
 };
-
-export default useBlocksCreator;
