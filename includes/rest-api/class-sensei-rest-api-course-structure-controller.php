@@ -58,13 +58,6 @@ class Sensei_REST_API_Course_Structure_Controller extends \WP_REST_Controller {
 					'methods'             => WP_REST_Server::EDITABLE,
 					'callback'            => [ $this, 'save_course_structure' ],
 					'permission_callback' => [ $this, 'can_user_save_structure' ],
-					'args'                => [
-						'structure' => [
-							'description' => __( 'JSON string of the structure', 'sensei-lms' ),
-							'required'    => true,
-							'type'        => 'string',
-						],
-					],
 				],
 			]
 		);
@@ -142,19 +135,16 @@ class Sensei_REST_API_Course_Structure_Controller extends \WP_REST_Controller {
 		$course           = $this->get_course( intval( $request->get_param( 'course_id' ) ) );
 		$course_structure = Sensei_Course_Structure::instance( $course->ID );
 
-		$structure_input = $this->parse_input( $request->get_param( 'structure' ) );
-		if ( is_wp_error( $structure_input ) ) {
-			return $structure_input;
-		}
-
-		$raw_structure = json_decode( $structure_input, true );
-		if ( ! is_array( $raw_structure ) ) {
+		$input = json_decode( $request->get_body(), true );
+		if ( ! is_array( $input ) || ! isset( $input['structure'] ) || ! is_array( $input['structure'] ) ) {
 			return new WP_Error(
 				'sensei_course_structure_invalid_input',
 				__( 'Input for course structure was invalid.', 'sensei-lms' ),
 				[ 'status' => 400 ]
 			);
 		}
+
+		$raw_structure = $input['structure'];
 
 		$result = $course_structure->save( $raw_structure );
 		if ( is_wp_error( $result ) ) {
