@@ -437,10 +437,13 @@ class Sensei_Core_Modules {
 		 * verification.
 		 */
 
+		$is_rest_request = defined( 'REST_REQUEST' ) && REST_REQUEST;
+
 		// phpcs:ignore WordPress.Security.NonceVerification
-		if ( isset( $_POST['action'] ) && 'inline-save-tax' == $_POST['action'] ) {
+		if ( $is_rest_request || ( isset( $_POST['action'] ) && 'inline-save-tax' == $_POST['action'] ) ) {
 			return;
 		}
+
 		// Get module's existing courses
 		$args    = array(
 			'post_type'      => 'course',
