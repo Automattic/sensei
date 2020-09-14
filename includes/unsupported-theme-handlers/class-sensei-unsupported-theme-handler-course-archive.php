@@ -79,4 +79,19 @@ class Sensei_Unsupported_Theme_Handler_Course_Archive
 		return $content;
 	}
 
+	/**
+	 * Prepare the WP query object for the imitated request.
+	 *
+	 * @param WP_Query $wp_query
+	 * @param WP_Post  $post_to_copy
+	 * @param array    $post_params
+	 */
+	protected function prepare_wp_query( $wp_query, $post_to_copy, $post_params ) {
+		if ( empty( $post_to_copy ) ) {
+			return;
+		}
+		$wp_query->queried_object    = $post_to_copy;
+		$wp_query->queried_object_id = $post_to_copy->ID;
+	}
+
 }
