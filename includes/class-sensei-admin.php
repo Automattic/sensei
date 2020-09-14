@@ -786,7 +786,7 @@ class Sensei_Admin {
 				'post_status'      => array( 'publish', 'pending', 'draft', 'future', 'private' ),
 				'posts_per_page'   => -1,
 				'suppress_filters' => 0,
-				'orderby'          => 'menu_order date',
+				'orderby'          => 'title menu_order date',
 				'order'            => 'ASC',
 			);
 			$courses = get_posts( $args );
