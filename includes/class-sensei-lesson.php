@@ -621,7 +621,8 @@ class Sensei_Lesson {
 
 		$value = null;
 
-		if ( 'quiz_grade_type' === $field['id'] && 'list' !== $_POST['post_view'] ) {
+		// phpcs:ignore WordPress.Security.NonceVerification -- Only checking the origin page.
+		if ( 'quiz_grade_type' === $field['id'] && isset( $_POST['action'] ) && 'editpost' === $_POST['action'] ) {
 			// phpcs:ignore WordPress.Security.NonceVerification
 			$grade_type_checked = isset( $_POST[ $field['id'] ] ) && 'on' === $_POST[ $field['id'] ];
 			return $grade_type_checked ? 'auto' : 'manual';
