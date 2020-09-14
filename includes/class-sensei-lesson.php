@@ -567,7 +567,11 @@ class Sensei_Lesson {
 						continue;
 					}
 
-					$value = $this->get_submitted_setting_value( $field ) ?? $field['default'];
+					$value = $this->get_submitted_setting_value( $field );
+					if ( null === $value ) {
+						$value = $field['default'];
+					}
+
 					if ( isset( $value ) ) {
 						add_post_meta( $quiz_id, '_' . $field['id'], $value );
 					}
