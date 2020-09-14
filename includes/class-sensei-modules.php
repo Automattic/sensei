@@ -63,9 +63,8 @@ class Sensei_Core_Modules {
 		// Add course field to taxonomy
 		add_action( $this->taxonomy . '_add_form_fields', array( $this, 'add_module_fields' ), 50, 1 );
 		add_action( $this->taxonomy . '_edit_form_fields', array( $this, 'edit_module_fields' ), 1, 1 );
-		add_action( 'edited_' . $this->taxonomy, array( $this, 'save_module_course' ), 10, 2 );
-		add_action( 'created_' . $this->taxonomy, array( $this, 'save_module_course' ), 10, 2 );
 		add_action( 'created_' . $this->taxonomy, array( $this, 'track_module_creation' ), 10 );
+		add_action( 'admin_init', array( $this, 'add_module_admin_hooks' ) );
 		add_action( 'wp_ajax_sensei_json_search_courses', array( $this, 'search_courses_json' ) );
 
 		// Manage module taxonomy archive page
@@ -372,6 +371,17 @@ class Sensei_Core_Modules {
 			class="description"><?php echo esc_html__( 'Search for and select the courses that this module will belong to.', 'sensei-lms' ); ?>
 		</span>
 		<?php
+	}
+
+	/**
+	 * Adds hooks for use with editing a taxonomy in WP Admin.
+	 *
+	 * @since 3.6.0
+	 * @access private
+	 */
+	public function add_module_admin_hooks() {
+		add_action( 'edited_' . $this->taxonomy, array( $this, 'save_module_course' ), 10, 2 );
+		add_action( 'created_' . $this->taxonomy, array( $this, 'save_module_course' ), 10, 2 );
 	}
 
 	/**
