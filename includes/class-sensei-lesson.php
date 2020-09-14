@@ -617,15 +617,16 @@ class Sensei_Lesson {
 
 		$value = null;
 
+		if ( 'quiz_grade_type' === $field['id'] ) {
+			// phpcs:ignore WordPress.Security.NonceVerification
+			$grade_type_checked = isset( $_POST[ $field['id'] ] ) && 'on' === $_POST[ $field['id'] ];
+			return $grade_type_checked ? 'auto' : 'manual';
+		}
+
 		// phpcs:ignore WordPress.Security.NonceVerification -- Nonce verified in caller
 		if ( isset( $_POST[ $field['id'] ] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification -- Nonce verified in caller
-			$submitted = sanitize_text_field( wp_unslash( $_POST[ $field['id'] ] ) );
-			if ( 'quiz_grade_type' === $field['id'] ) {
-				$value = 'on' === $submitted ? 'auto' : 'manual';
-			} else {
-				$value = ( $submitted );
-			}
+			$value = sanitize_text_field( wp_unslash( $_POST[ $field['id'] ] ) );
 		}
 
 		return $value;
