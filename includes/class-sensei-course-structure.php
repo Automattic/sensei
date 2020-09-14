@@ -451,14 +451,20 @@ class Sensei_Course_Structure {
 		$lesson_ids = [];
 
 		foreach ( $structure as $item ) {
+			if ( ! isset( $item['type'] ) ) {
+				continue;
+			}
+
 			if ( 'module' === $item['type'] ) {
 				if ( ! empty( $item['id'] ) ) {
 					$module_ids[] = $item['id'];
 				}
 
-				foreach ( $item['lessons'] as $lesson_item ) {
-					if ( ! empty( $lesson_item['id'] ) ) {
-						$lesson_ids[] = $lesson_item['id'];
+				if ( ! empty( $item['lessons'] ) ) {
+					foreach ( $item['lessons'] as $lesson_item ) {
+						if ( ! empty( $lesson_item['id'] ) ) {
+							$lesson_ids[] = $lesson_item['id'];
+						}
 					}
 				}
 			} elseif ( 'lesson' === $item['type'] && ! empty( $item['id'] ) ) {

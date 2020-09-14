@@ -242,6 +242,59 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests to ensure invalid entries fail.
+	 */
+	public function testSaveInvalidItemFail() {
+		$this->login_as_teacher();
+
+		$course_id = $this->factory->course->create();
+
+		$new_structure = [
+			[
+				'type'    => 'course',
+				'title'   => 'Magical Course',
+				'lessons' => [],
+			],
+		];
+
+		$course_structure = Sensei_Course_Structure::instance( $course_id );
+
+		$save_result = $course_structure->save( $new_structure );
+		$this->assertWPError( $save_result );
+
+		$this->assertEquals( 'sensei_course_structure_invalid_item_type', $save_result->get_error_code() );
+
+		$structure = $course_structure->get();
+		$this->assertEquals( 0, count( $structure ) );
+	}
+
+	/**
+	 * Tests to ensure items without types fail save.
+	 */
+	public function testSaveMissingItemTypeFail() {
+		$this->login_as_teacher();
+
+		$course_id = $this->factory->course->create();
+
+		$new_structure = [
+			[
+				'title'   => 'Magical Course',
+				'lessons' => [],
+			],
+		];
+
+		$course_structure = Sensei_Course_Structure::instance( $course_id );
+
+		$save_result = $course_structure->save( $new_structure );
+		$this->assertWPError( $save_result );
+
+		$this->assertEquals( 'sensei_course_structure_invalid_item_type', $save_result->get_error_code() );
+
+		$structure = $course_structure->get();
+		$this->assertEquals( 0, count( $structure ) );
+	}
+
+	/**
 	 * Make sure new modules (login as teacher) are created and existing lessons are recycled.
 	 */
 	public function testSaveNewModulesExistingLessons() {
