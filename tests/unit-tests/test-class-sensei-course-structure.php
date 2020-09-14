@@ -329,7 +329,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 		$modified_structure[0]['title']       = 'Update Module Name';
 		$modified_structure[0]['description'] = 'Now improved!';
 
-		$this->assertTrue( $course_structure->save( $new_structure ) );
+		$this->assertTrue( $course_structure->save( $modified_structure ) );
 
 		$structure = $course_structure->get();
 		$this->assertExpectedStructure( $modified_structure, $structure );
