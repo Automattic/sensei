@@ -270,7 +270,7 @@ class Sensei_Course_Structure {
 
 		$teacher_user_id = get_post( $this->course_id )->post_author;
 		if ( ! user_can( $teacher_user_id, 'manage_options' ) ) {
-			$args['slug'] = intval( $teacher_user_id ) . '-' . sanitize_title( $item['name'] );
+			$args['slug'] = intval( $teacher_user_id ) . '-' . sanitize_title( $item['title'] );
 		}
 
 		$create_result = wp_insert_term( $item['title'], 'module', $args );
