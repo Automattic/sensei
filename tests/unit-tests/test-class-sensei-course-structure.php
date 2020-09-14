@@ -215,6 +215,33 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests to ensure modules with empty titles are not created.
+	 */
+	public function testSaveInvalidModuleFail() {
+		$this->login_as_teacher();
+
+		$course_id = $this->factory->course->create();
+
+		$new_structure = [
+			[
+				'type'    => 'module',
+				'title'   => '  ',
+				'lessons' => [],
+			],
+		];
+
+		$course_structure = Sensei_Course_Structure::instance( $course_id );
+
+		$save_result = $course_structure->save( $new_structure );
+		$this->assertWPError( $save_result );
+
+		$this->assertEquals( 'sensei_course_structure_missing_title', $save_result->get_error_code() );
+
+		$structure = $course_structure->get();
+		$this->assertEquals( 0, count( $structure ) );
+	}
+
+	/**
 	 * Make sure new modules (login as teacher) are created and existing lessons are recycled.
 	 */
 	public function testSaveNewModulesExistingLessons() {
