@@ -543,7 +543,7 @@ class Sensei_Course_Structure {
 				}
 			}
 
-			$item['description'] = isset( $raw_item['description'] ) ? trim( sanitize_text_field( $raw_item['description'] ) ) : null;
+			$item['description'] = isset( $raw_item['description'] ) ? trim( wp_kses_post( $raw_item['description'] ) ) : null;
 			$item['lessons']     = [];
 			foreach ( $raw_item['lessons'] as $raw_lesson ) {
 				$lesson = $this->sanitize_item( $raw_lesson );
