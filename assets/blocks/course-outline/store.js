@@ -30,14 +30,16 @@ const actions = {
 		yield { type: 'SAVING', isSaving: true };
 		const courseId = yield select( 'core/editor' ).getCurrentPostId();
 		try {
-			yield apiFetch( {
+			const result = yield apiFetch( {
 				path: `/sensei-internal/v1/course-structure/${ courseId }`,
 				method: 'POST',
 				data: { structure: yield getEditorStructure() },
 			} );
-		} catch {}
+			yield actions.setStructure( result );
+		} catch ( error ) {
+			yield dispatch( 'core/notices' ).createErrorNotice( error.message );
+		}
 
-		yield* actions.fetchCourseStructure();
 		yield { type: 'SAVING', isSaving: false };
 	},
 	setStructure: ( structure ) => ( { type: 'SET_SERVER', structure } ),
@@ -90,9 +92,11 @@ export const COURSE_STORE = 'sensei/course-structure';
  */
 const registerCourseStructureStore = () => {
 	subscribe( () => {
-		const { isSavingPost, isAutosavingPost } = select( 'core/editor' );
+		const editor = select( 'core/editor' );
 
-		if ( isSavingPost() && ! isAutosavingPost() ) {
+		if ( ! editor ) return;
+
+		if ( editor.isSavingPost() && ! editor.isAutosavingPost() ) {
 			dispatch( COURSE_STORE ).save();
 		}
 	} );
