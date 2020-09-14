@@ -210,6 +210,8 @@ class Sensei_Course_Structure {
 			$this->clear_lesson_associations( $lesson_id );
 		}
 
+		delete_transient( 'sensei_' . $this->course_id . '_none_module_lessons' );
+
 		return true;
 	}
 
@@ -246,6 +248,7 @@ class Sensei_Course_Structure {
 
 			wp_set_object_terms( $lesson_id, [ $module_id ], 'module' );
 			update_post_meta( $lesson_id, $lesson_order_key, count( $lesson_ids ) );
+			delete_post_meta( $lesson_id, '_order_' . $this->course_id );
 
 			$lesson_ids[] = $lesson_id;
 		}
