@@ -62,11 +62,13 @@ export const extractBlocksData = ( blocks ) => {
 		} ),
 	};
 
-	return blocks.map( ( block ) => {
-		const type = blockTypes[ block.name ];
-		return {
-			type,
-			...extractBlockData[ type ]( block ),
-		};
-	} );
+	return blocks
+		.map( ( block ) => {
+			const type = blockTypes[ block.name ];
+			return {
+				type,
+				...extractBlockData[ type ]( block ),
+			};
+		} )
+		.filter( ( block ) => !! block.title );
 };

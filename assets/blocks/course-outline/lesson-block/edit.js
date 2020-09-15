@@ -1,7 +1,6 @@
-import { __ } from '@wordpress/i18n';
 import { createBlock } from '@wordpress/blocks';
 import { useDispatch } from '@wordpress/data';
-
+import { __ } from '@wordpress/i18n';
 import SingleLineInput from '../single-line-input';
 
 /**
@@ -13,16 +12,19 @@ import SingleLineInput from '../single-line-input';
  * @param {string}   props.className         Custom class name.
  * @param {Object}   props.attributes        Block attributes.
  * @param {string}   props.attributes.title  Lesson title.
+ * @param {number}   props.attributes.id     Lesson Post ID
  * @param {Function} props.setAttributes     Block set attributes function.
  * @param {Function} props.insertBlocksAfter Insert blocks after function.
+ * @param {boolean}  props.isSelected        Is block selected.
  */
 const EditLessonBlock = ( {
 	clientId,
 	name,
 	className,
-	attributes: { title },
+	attributes: { title, id },
 	setAttributes,
 	insertBlocksAfter,
+	isSelected,
 } ) => {
 	const { selectNextBlock, removeBlock } = useDispatch( 'core/block-editor' );
 
@@ -77,6 +79,25 @@ const EditLessonBlock = ( {
 		}
 	};
 
+	let status = '';
+	if ( id ) {
+		status = (
+			<a
+				href={ `post.php?post=${ id }&action=edit` }
+				target="lesson"
+				className="wp-block-sensei-lms-course-outline-lesson__edit"
+			>
+				{ __( 'Edit Lesson', 'sensei-lms' ) }
+			</a>
+		);
+	} else if ( title.length ) {
+		status = (
+			<div className="wp-block-sensei-lms-course-outline-lesson__unsaved">
+				{ __( 'Unsaved', 'sensei-lms' ) }
+			</div>
+		);
+	}
+
 	return (
 		<div className={ className }>
 			<SingleLineInput
@@ -86,6 +107,7 @@ const EditLessonBlock = ( {
 				onChange={ handleChange }
 				onKeyDown={ handleKeyDown }
 			/>
+			{ isSelected && status }
 		</div>
 	);
 };

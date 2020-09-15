@@ -1,9 +1,8 @@
 import { InnerBlocks } from '@wordpress/block-editor';
-import { compose } from '@wordpress/compose';
 import { useSelect, withSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { CourseOutlinePlaceholder } from './placeholder';
-
+import { COURSE_STORE } from './store';
 import { useBlocksCreator } from './use-block-creator';
 
 /**
@@ -12,22 +11,22 @@ import { useBlocksCreator } from './use-block-creator';
  * @param {Object}   props           Component props.
  * @param {string}   props.clientId  Block client ID.
  * @param {string}   props.className Custom class name.
- * @param {Object[]} props.blocks    Course module and lesson blocks
+ * @param {Object[]} props.structure Course module and lesson blocks
  */
-const EditCourseOutlineBlock = ( { clientId, className, blocks } ) => {
+const EditCourseOutlineBlock = ( { clientId, className, structure } ) => {
 	const { setBlocks } = useBlocksCreator( clientId );
-
-	useEffect( () => {
-		if ( blocks && blocks.length ) {
-			setBlocks( blocks );
-		}
-	}, [ blocks, setBlocks ] );
 
 	const isEmpty = useSelect(
 		( select ) =>
 			! select( 'core/block-editor' ).getBlocks( clientId ).length,
-		[ clientId, blocks ]
+		[ clientId, structure ]
 	);
+
+	useEffect( () => {
+		if ( structure && structure.length ) {
+			setBlocks( structure );
+		}
+	}, [ structure, setBlocks ] );
 
 	if ( isEmpty ) {
 		return (
@@ -48,10 +47,8 @@ const EditCourseOutlineBlock = ( { clientId, className, blocks } ) => {
 	);
 };
 
-export default compose(
-	withSelect( () => {
-		return {
-			blocks: [],
-		};
-	} )
-)( EditCourseOutlineBlock );
+export default withSelect( ( select ) => {
+	return {
+		structure: select( COURSE_STORE ).getStructure(),
+	};
+} )( EditCourseOutlineBlock );
