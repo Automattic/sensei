@@ -2,7 +2,7 @@ import { registerBlockType } from '@wordpress/blocks';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { InnerBlocks } from '@wordpress/block-editor';
-import { extractBlocksData } from './data';
+import { extractStructure } from './data';
 
 import EditCourseOutlineBlock from './edit';
 import { COURSE_STORE } from './store';
@@ -22,7 +22,7 @@ registerBlockType( 'sensei-lms/course-outline', {
 	},
 	save( { innerBlocks } ) {
 		dispatch( COURSE_STORE ).setEditorStructure(
-			extractBlocksData( innerBlocks )
+			extractStructure( innerBlocks )
 		);
 		return <InnerBlocks.Content />;
 	},

@@ -51,15 +51,12 @@ export const convertToBlocks = ( blockData ) =>
  * @param {Object[]} blocks Blocks.
  * @return {CourseStructure} Course structure
  */
-export const extractBlocksData = ( blocks ) => {
+export const extractStructure = ( blocks ) => {
 	const extractBlockData = {
 		module: ( block ) => ( {
-			...block.attributes,
-			lessons: extractBlocksData( block.innerBlocks ),
+			lessons: extractStructure( block.innerBlocks ),
 		} ),
-		lesson: ( block ) => ( {
-			...block.attributes,
-		} ),
+		lesson: () => ( {} ),
 	};
 
 	return blocks
@@ -67,6 +64,8 @@ export const extractBlocksData = ( blocks ) => {
 			const type = blockTypes[ block.name ];
 			return {
 				type,
+				className: block.className,
+				...block.attributes,
 				...extractBlockData[ type ]( block ),
 			};
 		} )
