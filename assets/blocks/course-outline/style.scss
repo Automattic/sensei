@@ -48,9 +48,10 @@ $dark-gray: #1a1d20;
 	display: flex;
 	align-items: center;
 	padding: 20px 25px;
-	color: $dark-gray;
+	.entry-content & {
+		margin: 0;
+	}
 	font-size: 16px;
-	text-decoration: none;
 
 	&::before {
 		content: '';
@@ -70,7 +71,6 @@ $dark-gray: #1a1d20;
 /**
  * Overrides
  */
-.entry-content .wp-block-sensei-lms-course-outline,
 .editor-styles-wrapper .wp-block-sensei-lms-course-outline .wp-block {
 	h1,
 	h2,

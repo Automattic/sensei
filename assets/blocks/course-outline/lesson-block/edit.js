@@ -2,6 +2,7 @@ import { createBlock } from '@wordpress/blocks';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import SingleLineInput from '../single-line-input';
+import { LessonBlockSettings } from './settings';
 
 /**
  * Edit lesson block component.
@@ -13,6 +14,7 @@ import SingleLineInput from '../single-line-input';
  * @param {Object}   props.attributes        Block attributes.
  * @param {string}   props.attributes.title  Lesson title.
  * @param {number}   props.attributes.id     Lesson Post ID
+ * @param {Object}   props.attributes.style  Custom visual settings.
  * @param {Function} props.setAttributes     Block set attributes function.
  * @param {Function} props.insertBlocksAfter Insert blocks after function.
  * @param {boolean}  props.isSelected        Is block selected.
@@ -21,7 +23,7 @@ const EditLessonBlock = ( {
 	clientId,
 	name,
 	className,
-	attributes: { title, id },
+	attributes: { title, id, style = {} },
 	setAttributes,
 	insertBlocksAfter,
 	isSelected,
@@ -99,16 +101,25 @@ const EditLessonBlock = ( {
 	}
 
 	return (
-		<div className={ className }>
-			<SingleLineInput
-				className="wp-block-sensei-lms-course-outline-lesson__input"
-				placeholder={ __( 'Lesson name', 'sensei-lms' ) }
-				value={ title }
-				onChange={ handleChange }
-				onKeyDown={ handleKeyDown }
-			/>
-			{ isSelected && status }
-		</div>
+		<>
+			<LessonBlockSettings { ...{ style, setAttributes } } />
+			<div
+				className={ className }
+				style={ {
+					backgroundColor: style.backgroundColor,
+					color: style.textColor,
+				} }
+			>
+				<SingleLineInput
+					className="wp-block-sensei-lms-course-outline-lesson__input"
+					placeholder={ __( 'Lesson name', 'sensei-lms' ) }
+					value={ title }
+					onChange={ handleChange }
+					onKeyDown={ handleKeyDown }
+				/>
+				{ isSelected && status }
+			</div>
+		</>
 	);
 };
 

@@ -40,6 +40,10 @@ class Sensei_Course_Outline_Block {
 	 * @access private
 	 */
 	public function enqueue_block_assets() {
+		if ( 'course' !== get_post_type() ) {
+			return;
+		}
+
 		Sensei()->assets->enqueue( 'sensei-course-outline', 'blocks/course-outline/style.css' );
 	}
 
@@ -49,6 +53,10 @@ class Sensei_Course_Outline_Block {
 	 * @access private
 	 */
 	public function enqueue_block_editor_assets() {
+		if ( 'course' !== get_post_type() ) {
+			return;
+		}
+
 		Sensei()->assets->enqueue( 'sensei-course-outline', 'blocks/course-outline/index.js' );
 		Sensei()->assets->enqueue( 'sensei-course-outline-editor', 'blocks/course-outline/style.editor.css' );
 	}
@@ -206,10 +214,15 @@ class Sensei_Course_Outline_Block {
 	 * @return string Lesson HTML
 	 */
 	protected function render_lesson_block( $block ) {
+		$style = $block['attributes']['style'] ?? [];
 		return '
-			<a class="wp-block-sensei-lms-course-outline-lesson" href="#">
-				' . $block['title'] . '
-			</a>
+			<h3 style="background-color: ' . esc_attr( $style['backgroundColor'] ) . '" class="wp-block-sensei-lms-course-outline-lesson">
+				<a
+				style="color: ' . esc_attr( $style['textColor'] ) . '"
+				href="' . esc_url( get_permalink( $block['id'] ) ) . '">
+					' . $block['title'] . '
+				</a>
+			</h3>
 		';
 	}
 

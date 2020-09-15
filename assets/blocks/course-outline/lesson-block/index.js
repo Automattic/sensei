@@ -11,7 +11,12 @@ registerBlockType( 'sensei-lms/course-outline-lesson', {
 	keywords: [ __( 'Outline', 'sensei-lms' ), __( 'Lesson', 'sensei-lms' ) ],
 	supports: {
 		html: false,
-		customClassName: false,
+		customClassName: true,
+	},
+	example: {
+		attributes: {
+			title: 'Start learning',
+		},
 	},
 	attributes: {
 		id: {
@@ -20,6 +25,10 @@ registerBlockType( 'sensei-lms/course-outline-lesson', {
 		title: {
 			type: 'string',
 			default: '',
+		},
+		style: {
+			type: 'object',
+			default: {},
 		},
 	},
 	edit( props ) {
