@@ -59,6 +59,11 @@ class Sensei_Course_Outline_Block {
 			'sensei-lms/course-outline',
 			[
 				'render_callback' => [ $this, 'render_callback' ],
+				'attributes'      => [
+					'id' => [
+						'type' => 'int',
+					],
+				],
 			]
 		);
 	}
@@ -69,64 +74,17 @@ class Sensei_Course_Outline_Block {
 	 * @access private
 	 *
 	 * @param array $attributes Block attributes.
+	 * @return string Block HTML.
 	 */
 	public function render_callback( $attributes ) {
-		// TODO: Fetch from API or method used in API.
-		$data = [
-			[
-				'id'          => 1,
-				'type'        => 'module',
-				'title'       => 'Module 1',
-				'description' => 'Module description 1',
-				'lessons'     => [
-					[
-						'id'    => 2,
-						'type'  => 'lesson',
-						'title' => 'Lesson 2',
-					],
-					[
-						'id'    => 3,
-						'type'  => 'lesson',
-						'title' => 'Lesson 3',
-					],
-				],
-			],
-			[
-				'id'    => 9,
-				'type'  => 'lesson',
-				'title' => 'Lesson 9',
-			],
-			[
-				'id'    => 10,
-				'type'  => 'lesson',
-				'title' => 'Lesson 10',
-			],
-			[
-				'id'          => 4,
-				'type'        => 'module',
-				'title'       => 'Module 4',
-				'description' => 'Module description 4',
-				'lessons'     => [
-					[
-						'id'    => 5,
-						'type'  => 'lesson',
-						'title' => 'Lesson 5',
-					],
-				],
-			],
-			[
-				'id'          => 6,
-				'type'        => 'module',
-				'title'       => 'Module 6',
-				'description' => 'Module description 6',
-				'lessons'     => [],
-			],
-			[
-				'id'    => 7,
-				'type'  => 'lesson',
-				'title' => 'Lesson 7',
-			],
-		];
+
+		$course_id = intval( $attributes['id'] );
+
+		if ( empty( $course_id ) ) {
+			return '';
+		}
+
+		$data = Sensei_Course_Structure::instance( $course_id )->get();
 
 		$this->disable_course_legacy_content();
 
