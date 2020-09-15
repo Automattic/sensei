@@ -9,11 +9,28 @@ $dark-gray: #1a1d20;
 		font-size: inherit;
 		color: inherit;
 		line-height: inherit;
+		flex-basis: 86%;
 		&:before, &:after {
 			content: none;
 		}
 	}
 
+	&__progress-indicator {
+		border-radius: 10% 10% 10% 10% / 50% 50% 50% 50%;
+		background-color: green;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: 10%;
+		flex-basis: 14%;
+
+		&__text {
+			font-weight: normal;
+			margin: 0 20px;
+			font-size: 14px;
+			color: black;
+		}
+	}
 }
 
 .wp-block-sensei-lms-course-outline-module {
@@ -26,6 +43,8 @@ $dark-gray: #1a1d20;
 		font-size: 24px;
 		font-weight: bold;
 		color: #FFF;
+		display: flex;
+		align-items: center;
 	}
 
 	&__description {
@@ -65,6 +84,10 @@ $dark-gray: #1a1d20;
 	}
 
 
+}
+
+#inspector-radio-group-control {
+	margin-bottom: 15px;
 }
 
 /**
