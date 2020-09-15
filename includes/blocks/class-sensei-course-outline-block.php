@@ -158,6 +158,9 @@ class Sensei_Course_Outline_Block {
 	 * @return string Module HTML
 	 */
 	private function get_module_block_html( $block ) {
+		if ( empty( $block['lessons'] ) ) {
+			return '';
+		}
 		return '
 			<section class="wp-block-sensei-lms-course-outline-module">
 				<header class="wp-block-sensei-lms-course-outline-module__name">
@@ -166,22 +169,18 @@ class Sensei_Course_Outline_Block {
 				<div class="wp-block-sensei-lms-course-outline-module__description">
 					' . $block['description'] . '
 				</div>
-				' . (
-					// Hide title if there are no lessons.
-					empty( $block['lessons'] ) ? '' : '
 						<div class="wp-block-sensei-lms-course-outline-module__lessons-title">
 							<h3 class="wp-block-sensei-lms-course-outline__clean-heading">' . __( 'Lessons', 'sensei-lms' ) . '</h3>
 						</div>
-					'
-				) .
-				implode(
-					'',
-					array_map(
-						[ $this, 'get_lesson_block_html' ],
-						$block['lessons']
-					)
+					' .
+			implode(
+				'',
+				array_map(
+					[ $this, 'get_lesson_block_html' ],
+					$block['lessons']
 				)
-				. '
+			)
+			. '
 			</section>
 		';
 	}
