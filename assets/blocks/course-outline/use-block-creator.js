@@ -1,6 +1,6 @@
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
-import { convertToBlocks } from './data';
+import { syncStructureToBlocks } from './data';
 
 /**
  * Blocks creator hook.
@@ -11,10 +11,21 @@ import { convertToBlocks } from './data';
 export const useBlocksCreator = ( clientId ) => {
 	const { replaceInnerBlocks } = useDispatch( 'core/block-editor' );
 
+	const { getBlocks } = useSelect(
+		( select ) => select( 'core/block-editor' ),
+		[]
+	);
+
 	const setBlocks = useCallback(
-		( blockData ) =>
-			replaceInnerBlocks( clientId, convertToBlocks( blockData ), false ),
-		[ clientId, replaceInnerBlocks ]
+		( blockData ) => {
+			const blocks = getBlocks( clientId );
+			replaceInnerBlocks(
+				clientId,
+				syncStructureToBlocks( blockData, blocks || [] ),
+				false
+			);
+		},
+		[ clientId, replaceInnerBlocks, getBlocks ]
 	);
 
 	return { setBlocks };

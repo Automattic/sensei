@@ -30,21 +30,54 @@ export const blockNames = {
 export const blockTypes = invert( blockNames );
 
 /**
+ * Create blocks based on the structure, keeping existing block attributes.
  *
- * Convert course structure to blocks.
+ * Matches blocks based on lesson/module ID.
  *
- * @param {[CourseLessonData,CourseModuleData]} blockData
- * @return {Object[]} Blocks.
+ * @param {CourseStructure} structure
+ * @param {Object[]}        blocks    Existing blocks.
+ * @return   {Object[]} Updated blocks.
  */
-export const convertToBlocks = ( blockData ) =>
-	blockData.map( ( { type, lessons, ...block } ) =>
-		createBlock(
-			blockNames[ type ],
-			block,
-			lessons ? convertToBlocks( lessons ) : []
-		)
-	);
+export const syncStructureToBlocks = ( structure, blocks ) => {
+	return ( structure || [] ).map( ( item ) => {
+		const { type, lessons, ...attributes } = item;
+		let block = findBlock( blocks, item );
+		if ( ! block ) {
+			block = createBlock( blockNames[ type ], attributes );
+		} else {
+			block.attributes = { ...block.attributes, ...attributes };
+		}
 
+		if ( 'module' === type ) {
+			block.innerBlocks = syncStructureToBlocks(
+				lessons,
+				block.innerBlocks
+			);
+		}
+
+		return block;
+	} );
+};
+
+/**
+ * Find the block for a given lesson/module item.
+ *
+ * @param {Object[]}                            blocks Block.
+ * @param {[CourseLessonData,CourseModuleData]} item   Structure item.
+ * @return {Object} The block, if found.
+ */
+const findBlock = ( blocks, { id, type } ) => {
+	const compare = ( { name, attributes } ) =>
+		id === attributes.id && blockNames[ type ] === name;
+	return (
+		blocks.find( compare ) ||
+		( 'lesson' === type &&
+			blocks.reduce(
+				( found, block ) => found || block.innerBlocks.find( compare ),
+				false
+			) )
+	);
+};
 /**
  * Convert blocks to course structure.
  *
