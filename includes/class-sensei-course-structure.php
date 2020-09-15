@@ -64,11 +64,9 @@ class Sensei_Course_Structure {
 		$all_lessons       = Sensei()->course->course_lessons( $this->course_id, 'any', 'ids' );
 		$no_module_lessons = wp_list_pluck( Sensei()->modules->get_none_module_lessons( $this->course_id, 'any' ), 'ID' );
 
-		if ( empty( $all_lessons ) || count( $all_lessons ) !== count( $no_module_lessons ) ) {
-			$modules = $this->get_modules();
-			foreach ( $modules as $module_term ) {
-				$structure[] = $this->prepare_module( $module_term );
-			}
+		$modules = $this->get_modules();
+		foreach ( $modules as $module_term ) {
+			$structure[] = $this->prepare_module( $module_term );
 		}
 
 		foreach ( array_intersect( $all_lessons, $no_module_lessons ) as $lesson_id ) {
