@@ -1,5 +1,12 @@
 *** Changelog ***
 
+2020.09.10 - version 3.5.1
+
+* Tweak: Update usage tracking for sample courses
+    * Add sample_course property to publish event [#3596](https://github.com/Automattic/sensei/pull/3596)
+    * Include flag for sample data on import events [#3588](https://github.com/Automattic/sensei/pull/3588)
+* Tweak: Only add "first" and "last" CSS classes for grid layouts on course archive page [#3467](https://github.com/Automattic/sensei/pull/3467)
+
 2020.08.27 - version 3.5.0
 * New: Exporter
     * Add error handling to exporter [#3541](https://github.com/Automattic/sensei/pull/3541)

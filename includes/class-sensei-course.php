@@ -2460,12 +2460,16 @@ class Sensei_Course {
 		$sensei_course_loop['counter']++;
 
 		$extra_classes = array();
-		if ( 0 == ( $sensei_course_loop['counter'] - 1 ) % $sensei_course_loop['columns'] || 1 == $sensei_course_loop['columns'] ) {
-			$extra_classes[] = 'first';
-		}
 
-		if ( 0 == $sensei_course_loop['counter'] % $sensei_course_loop['columns'] ) {
-			$extra_classes[] = 'last';
+		// Apply "first" and "last" CSS classes for grid-based layouts.
+		if ( 1 !== $sensei_course_loop['columns'] ) {
+			if ( 0 === ( $sensei_course_loop['counter'] - 1 ) % $sensei_course_loop['columns'] ) {
+				$extra_classes[] = 'first';
+			}
+
+			if ( 0 === $sensei_course_loop['counter'] % $sensei_course_loop['columns'] ) {
+				$extra_classes[] = 'last';
+			}
 		}
 
 		// add the item number to the classes as well.
@@ -2476,13 +2480,14 @@ class Sensei_Course {
 		 * which is called from the course loop content-course.php
 		 *
 		 * @since 1.9.0
+		 * @hook sensei_course_loop_content_class
 		 *
-		 * @param array $extra_classes
-		 * @param WP_Post $loop_current_course
+		 * @param {array} $extra_classes
+		 * @param {WP_Post} $loop_current_course
 		 */
 		return apply_filters( 'sensei_course_loop_content_class', $extra_classes, get_post() );
 
-	}//end get_course_loop_content_class()
+	}
 
 	/**
 	 * Get the number of columns set for Sensei courses
@@ -3440,6 +3445,7 @@ class Sensei_Course {
 			'module_count'  => count( wp_get_post_terms( $course->ID, 'module' ) ),
 			'lesson_count'  => $this->course_lesson_count( $course->ID ),
 			'product_count' => $product_count,
+			'sample_course' => 'getting-started-with-sensei-lms' === $course->post_name ? 1 : 0,
 		];
 		sensei_log_event( 'course_publish', $event_properties );
 	}

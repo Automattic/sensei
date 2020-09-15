@@ -47,8 +47,10 @@ const EditCourseOutlineBlock = ( { clientId, className, structure } ) => {
 	);
 };
 
+
 export default withSelect( ( select ) => {
 	return {
 		structure: select( COURSE_STORE ).getStructure(),
 	};
 } )( EditCourseOutlineBlock );
+
