@@ -35,13 +35,20 @@ export const blockTypes = invert( blockNames );
  * Matches blocks based on lesson/module ID.
  *
  * @param {CourseStructure} structure
- * @param {Object[]}        blocks    Existing blocks.
- * @return   {Object[]} Updated blocks.
+ * @param {Object[]}        blocks       Existing blocks.
+ * @param {Object[]}        attributeMap Attributes for inner blocks.
+ * @return {Object[]} Updated blocks.
  */
-export const syncStructureToBlocks = ( structure, blocks ) => {
+export const syncStructureToBlocks = ( structure, blocks, attributeMap ) => {
 	return ( structure || [] ).map( ( item ) => {
-		const { type, lessons, ...attributes } = item;
+		let { type, lessons, ...attributes } = item;
 		let block = findBlock( blocks, item );
+		if ( item.id ) {
+			attributes = {
+				...attributes,
+				...attributeMap[ `${ type }-${ item.id }` ],
+			};
+		}
 		if ( ! block ) {
 			block = createBlock( blockNames[ type ], attributes );
 		} else {
@@ -51,7 +58,8 @@ export const syncStructureToBlocks = ( structure, blocks ) => {
 		if ( 'module' === type ) {
 			block.innerBlocks = syncStructureToBlocks(
 				lessons,
-				block.innerBlocks
+				block.innerBlocks,
+				attributeMap
 			);
 		}
 
@@ -126,4 +134,8 @@ export function getChildBlockAttributes( structure ) {
 			] );
 		return { ...result, ...getChildBlockAttributes( block.lessons ) };
 	}, {} );
+}
+
+export function applyBlockAttributes( { id, type }, blockAttributes ) {
+	return blockAttributes[ `${ type }-${ id }` ];
 }

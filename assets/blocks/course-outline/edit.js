@@ -29,9 +29,10 @@ const EditCourseOutlineBlock = ( {
 	);
 
 	useEffect( () => {
-		setAttributes( {
-			blocks: getChildBlockAttributes( extractStructure( blocks ) ),
-		} );
+		if ( blocks.length )
+			setAttributes( {
+				blocks: getChildBlockAttributes( extractStructure( blocks ) ),
+			} );
 	}, [ setAttributes, blocks ] );
 
 	const isEmpty = useSelect(
