@@ -20,6 +20,7 @@ class Sensei_Course_Outline_Block {
 		add_action( 'enqueue_block_assets', [ $this, 'enqueue_assets' ] );
 		add_action( 'init', [ $this, 'register_course_template' ], 101 );
 		add_action( 'init', [ $this, 'register_block' ] );
+		add_action( 'template_redirect', [ $this, 'skip_single_course_template' ], 5 );
 	}
 
 	/**
@@ -34,6 +35,31 @@ class Sensei_Course_Outline_Block {
 
 		Sensei()->assets->enqueue( 'sensei-course-outline-script', 'blocks/course-outline/index.js' );
 		Sensei()->assets->enqueue( 'sensei-course-outline-style', 'blocks/course-outline/style.css' );
+	}
+
+	/**
+	 * Disable single course template for courses with Outline block.
+	 */
+	public function skip_single_course_template() {
+		if ( is_single() && 'course' === get_post_type() && has_block( 'sensei-lms/course-outline' ) ) {
+			remove_action( 'template_include', array( 'Sensei_Templates', 'template_loader' ), 10 );
+			remove_action( 'template_redirect', array( 'Sensei_Unsupported_Themes', 'init' ) );
+
+			add_filter(
+				'the_content',
+				function( $content ) {
+					ob_start();
+					do_action( 'sensei_single_course_content_inside_before', get_the_ID() );
+					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Buffered.
+					echo $content;
+					do_action( 'sensei_single_course_content_inside_after', get_the_ID() );
+
+					return ob_get_clean();
+				}
+			);
+
+		}
+
 	}
 
 	/**
@@ -190,6 +216,7 @@ class Sensei_Course_Outline_Block {
 	 */
 	private function disable_course_legacy_content() {
 		// TODO: Check the best approach for backwards compatibility.
+		remove_action( 'sensei_single_course_content_inside_before', array( 'Sensei_Course', 'the_title' ), 10 );
 		remove_action( 'sensei_single_course_content_inside_after', 'course_single_lessons' );
 		remove_action( 'sensei_single_course_content_inside_after', [ 'Sensei_Course', 'the_course_lessons_title' ], 9 );
 		remove_action( 'sensei_single_course_content_inside_after', [ Sensei()->modules, 'load_course_module_content_template' ], 8 );
