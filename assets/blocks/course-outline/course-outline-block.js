@@ -20,10 +20,14 @@ registerBlockType( 'sensei-lms/course-outline', {
 	edit( props ) {
 		return <EditCourseOutlineBlock { ...props } />;
 	},
-	save( { innerBlocks } ) {
+	save( { innerBlocks, className } ) {
 		dispatch( COURSE_STORE ).setEditorStructure(
 			extractStructure( innerBlocks )
 		);
-		return <InnerBlocks.Content />;
+		return (
+			<div className={ className }>
+				<InnerBlocks.Content />
+			</div>
+		);
 	},
 } );
