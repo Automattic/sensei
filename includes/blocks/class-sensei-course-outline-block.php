@@ -99,13 +99,9 @@ class Sensei_Course_Outline_Block {
 	 */
 	public function render_callback( $attributes ) {
 
-		$course_id = intval( $attributes['id'] );
+		global $post;
 
-		if ( empty( $course_id ) ) {
-			return '';
-		}
-
-		$structure = Sensei_Course_Structure::instance( $course_id )->get();
+		$structure = Sensei_Course_Structure::instance( $post->ID )->get();
 
 		$this->disable_course_legacy_content();
 

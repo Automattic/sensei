@@ -34,15 +34,6 @@ const EditCourseOutlineBlock = ( {
 		} );
 	}, [ setAttributes, blocks ] );
 
-	const courseId = useSelect(
-		( select ) => select( 'core/editor' ).getCurrentPostId(),
-		[]
-	);
-	useEffect( () => setAttributes( { id: courseId } ), [
-		setAttributes,
-		courseId,
-	] );
-
 	const isEmpty = useSelect(
 		( select ) =>
 			! select( 'core/block-editor' ).getBlocks( clientId ).length,
