@@ -107,6 +107,41 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 		$this->assertExpectedStructure( $expected_structure, $structure );
 	}
 
+
+	/**
+	 * Test getting course structure when just modules with no lessons and one rogue lesson.
+	 */
+	public function testGetModulesWithEmptyLessons() {
+		$course_id = $this->factory->course->create();
+
+		$lessons = $this->factory->lesson->create_many( 1 );
+		$modules = $this->factory->module->create_many( 2 );
+
+		$expected_structure = [
+			[
+				'type'    => 'module',
+				'id'      => $modules[1],
+				'lessons' => [],
+			],
+			[
+				'type'    => 'module',
+				'id'      => $modules[0],
+				'lessons' => [],
+			],
+			[
+				'type' => 'lesson',
+				'id'   => $lessons[0],
+			],
+		];
+
+		$this->saveStructure( $course_id, $expected_structure );
+
+		$course_structure = Sensei_Course_Structure::instance( $course_id );
+		$structure        = $course_structure->get();
+
+		$this->assertExpectedStructure( $expected_structure, $structure );
+	}
+
 	/**
 	 * Test getting course structure when there is a mix of modules and lessons on the first level.
 	 */
