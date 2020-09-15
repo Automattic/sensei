@@ -1,5 +1,5 @@
 import { createBlock } from '@wordpress/blocks';
-import { invert } from 'lodash';
+import { invert, omit } from 'lodash';
 
 /**
  * Course structure data.
@@ -104,3 +104,26 @@ export const extractStructure = ( blocks ) => {
 		} )
 		.filter( ( block ) => !! block.title );
 };
+
+/**
+ * Get a map of non-structure attributes for the inner blocks,
+ * indexed by post type and ID.
+ *
+ * @param {CourseStructure} structure Structure extracted from blocks.
+ * @return {Object} Block attribute map.
+ */
+export function getChildBlockAttributes( structure ) {
+	if ( ! structure ) return {};
+
+	return structure.reduce( ( result, block ) => {
+		if ( block.id )
+			result[ `${ block.type }-${ block.id }` ] = omit( block, [
+				'title',
+				'description',
+				'lessons',
+				'id',
+				'type',
+			] );
+		return { ...result, ...getChildBlockAttributes( block.lessons ) };
+	}, {} );
+}

@@ -1,6 +1,7 @@
 import { InnerBlocks } from '@wordpress/block-editor';
 import { useSelect, withSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
+import { extractStructure, getChildBlockAttributes } from './data';
 import { CourseOutlinePlaceholder } from './placeholder';
 import { COURSE_STORE } from './store';
 import { useBlocksCreator } from './use-block-creator';
@@ -21,6 +22,17 @@ const EditCourseOutlineBlock = ( {
 	setAttributes,
 } ) => {
 	const { setBlocks } = useBlocksCreator( clientId );
+
+	const blocks = useSelect(
+		( select ) => select( 'core/block-editor' ).getBlocks( clientId ),
+		[ clientId ]
+	);
+
+	useEffect( () => {
+		setAttributes( {
+			blocks: getChildBlockAttributes( extractStructure( blocks ) ),
+		} );
+	}, [ setAttributes, blocks ] );
 
 	const courseId = useSelect(
 		( select ) => select( 'core/editor' ).getCurrentPostId(),

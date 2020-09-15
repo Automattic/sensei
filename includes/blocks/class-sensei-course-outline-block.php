@@ -60,12 +60,32 @@ class Sensei_Course_Outline_Block {
 			[
 				'render_callback' => [ $this, 'render_callback' ],
 				'attributes'      => [
-					'id' => [
+					'id'     => [
 						'type' => 'int',
+					],
+					'blocks' => [
+						'type' => 'object',
 					],
 				],
 			]
 		);
+	}
+
+	/**
+	 * Add attributes to inner blocks from the Outline block.
+	 *
+	 * @param array $structure  Course structure.
+	 * @param array $attributes Outline block attributes.
+	 */
+	private static function add_block_attributes( &$structure, $attributes ) {
+		if ( empty( $structure ) ) {
+			return;
+		}
+		$block_attributes = $attributes['blocks'] ?? [];
+		foreach ( $structure as &$block ) {
+			$block['attributes'] = $block_attributes[ $block['type'] . '-' . $block['id'] ] ?? [];
+			self::add_block_attributes( $block['lessons'], $attributes );
+		}
 	}
 
 	/**
@@ -74,6 +94,7 @@ class Sensei_Course_Outline_Block {
 	 * @access private
 	 *
 	 * @param array $attributes Block attributes.
+	 *
 	 * @return string Block HTML.
 	 */
 	public function render_callback( $attributes ) {
@@ -84,34 +105,36 @@ class Sensei_Course_Outline_Block {
 			return '';
 		}
 
-		$data = Sensei_Course_Structure::instance( $course_id )->get();
+		$structure = Sensei_Course_Structure::instance( $course_id )->get();
 
 		$this->disable_course_legacy_content();
+
+		self::add_block_attributes( $structure, $attributes );
 
 		$block_class = 'wp-block-sensei-lms-course-outline';
 		if ( isset( $attributes['className'] ) ) {
 			$block_class .= ' ' . $attributes['className'];
 		}
 
-		return '
+		return '		
 			<section class="' . $block_class . '">
 				' .
-				implode(
-					'',
-					array_map(
-						function( $block ) {
-							if ( 'module' === $block['type'] ) {
-								return $this->get_module_block_html( $block );
-							}
+			implode(
+				'',
+				array_map(
+					function( $block ) {
+						if ( 'module' === $block['type'] ) {
+							return $this->get_module_block_html( $block );
+						}
 
-							if ( 'lesson' === $block['type'] ) {
-								return $this->get_lesson_block_html( $block );
-							}
-						},
-						$data
-					)
+						if ( 'lesson' === $block['type'] ) {
+							return $this->get_lesson_block_html( $block );
+						}
+					},
+					$structure
 				)
-				. '
+			)
+			. '
 			</section>
 		';
 	}
