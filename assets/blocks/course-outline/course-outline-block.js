@@ -17,6 +17,11 @@ registerBlockType( 'sensei-lms/course-outline', {
 		html: false,
 		multiple: false,
 	},
+	attributes: {
+		id: {
+			type: 'int',
+		},
+	},
 	edit( props ) {
 		return <EditCourseOutlineBlock { ...props } />;
 	},

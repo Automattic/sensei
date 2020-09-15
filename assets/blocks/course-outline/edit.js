@@ -8,13 +8,28 @@ import { useBlocksCreator } from './use-block-creator';
 /**
  * Edit course outline block component.
  *
- * @param {Object}   props           Component props.
- * @param {string}   props.clientId  Block client ID.
- * @param {string}   props.className Custom class name.
- * @param {Object[]} props.structure Course module and lesson blocks
+ * @param {Object}   props               Component props.
+ * @param {string}   props.clientId      Block client ID.
+ * @param {string}   props.className     Custom class name.
+ * @param {Object[]} props.structure     Course module and lesson blocks
+ * @param {Function} props.setAttributes
  */
-const EditCourseOutlineBlock = ( { clientId, className, structure } ) => {
+const EditCourseOutlineBlock = ( {
+	clientId,
+	className,
+	structure,
+	setAttributes,
+} ) => {
 	const { setBlocks } = useBlocksCreator( clientId );
+
+	const courseId = useSelect(
+		( select ) => select( 'core/editor' ).getCurrentPostId(),
+		[]
+	);
+	useEffect( () => setAttributes( { id: courseId } ), [
+		setAttributes,
+		courseId,
+	] );
 
 	const isEmpty = useSelect(
 		( select ) =>
