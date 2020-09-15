@@ -5,6 +5,13 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
+/**
+ * A component which controls the module status preview. Is contains a group of radio buttons and a description.
+ *
+ * @param {Object}   props                  Component props.
+ * @param {string}   props.previewStatus    The radio button that is selected.
+ * @param {Function} props.setPreviewStatus A callback which is called when a new option is selected.
+ */
 export const RadioGroupControl = ( { previewStatus, setPreviewStatus } ) => {
 	const id = 'inspector-radio-group-control';
 
