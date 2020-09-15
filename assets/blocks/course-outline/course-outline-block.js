@@ -1,7 +1,6 @@
 import { registerBlockType } from '@wordpress/blocks';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { InnerBlocks } from '@wordpress/block-editor';
 import { extractStructure } from './data';
 
 import EditCourseOutlineBlock from './edit';
@@ -28,14 +27,10 @@ registerBlockType( 'sensei-lms/course-outline', {
 	edit( props ) {
 		return <EditCourseOutlineBlock { ...props } />;
 	},
-	save( { innerBlocks, className } ) {
+	save( { innerBlocks } ) {
 		dispatch( COURSE_STORE ).setEditorStructure(
 			extractStructure( innerBlocks )
 		);
-		return (
-			<div className={ className }>
-				<InnerBlocks.Content />
-			</div>
-		);
+		return null;
 	},
 } );

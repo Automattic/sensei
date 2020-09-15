@@ -1,4 +1,3 @@
-import { InnerBlocks } from '@wordpress/block-editor';
 import { registerBlockType } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 
@@ -29,8 +28,5 @@ registerBlockType( 'sensei-lms/course-outline-module', {
 	},
 	edit( props ) {
 		return <EditModuleBlock { ...props } />;
-	},
-	save() {
-		return <InnerBlocks.Content />;
 	},
 } );
