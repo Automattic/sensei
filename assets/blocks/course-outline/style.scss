@@ -84,6 +84,9 @@ $dark-gray: #1a1d20;
 		border-radius: 50%;
 	}
 
+	&__edit {
+		flex: 0 0 auto;
+	}
 	&__unsaved {
 		font-size: 12px;
 		font-weight: bold;

@@ -1,8 +1,6 @@
-import { Button } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
 import { createBlock } from '@wordpress/blocks';
 import { useDispatch } from '@wordpress/data';
-
+import { __ } from '@wordpress/i18n';
 import SingleLineInput from '../single-line-input';
 
 /**
@@ -84,14 +82,13 @@ const EditLessonBlock = ( {
 	let status = '';
 	if ( id ) {
 		status = (
-			<Button
+			<a
 				href={ `post.php?post=${ id }&action=edit` }
 				target="lesson"
-				isSecondary
-				isSmall
+				className="wp-block-sensei-lms-course-outline-lesson__edit"
 			>
 				{ __( 'Edit Lesson', 'sensei-lms' ) }
-			</Button>
+			</a>
 		);
 	} else if ( title.length ) {
 		status = (
