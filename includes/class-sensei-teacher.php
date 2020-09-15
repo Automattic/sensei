@@ -602,6 +602,9 @@ class Sensei_Teacher {
 	 * @return bool $is_admin_teacher
 	 */
 	public function is_admin_teacher() {
+		if ( ! function_exists( 'is_user_logged_in' ) ) {
+			return false;
+		}
 
 		if ( ! is_user_logged_in() ) {
 			return false;
