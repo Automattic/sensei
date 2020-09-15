@@ -229,6 +229,12 @@ class Sensei_Course_Outline_Block {
 			<section class="wp-block-sensei-lms-course-outline-module">
 				<header class="wp-block-sensei-lms-course-outline-module__name">
 					<h2 class="wp-block-sensei-lms-course-outline__clean-heading">' . $block['title'] . '</h2>
+					<div
+						class="wp-block-sensei-lms-course-outline__progress-indicator"
+						style="background-color: ' . $block['indicator-color'] . '"
+					>
+						<span class="wp-block-sensei-lms-course-outline__progress-indicator__text"> ' . $block['indicator-text'] . ' </span>
+					</div>
 				</header>
 				<div class="wp-block-sensei-lms-course-outline-module__description">
 					' . $block['description'] . '
