@@ -63,9 +63,8 @@ class Sensei_Core_Modules {
 		// Add course field to taxonomy
 		add_action( $this->taxonomy . '_add_form_fields', array( $this, 'add_module_fields' ), 50, 1 );
 		add_action( $this->taxonomy . '_edit_form_fields', array( $this, 'edit_module_fields' ), 1, 1 );
-		add_action( 'edited_' . $this->taxonomy, array( $this, 'save_module_course' ), 10, 2 );
-		add_action( 'created_' . $this->taxonomy, array( $this, 'save_module_course' ), 10, 2 );
 		add_action( 'created_' . $this->taxonomy, array( $this, 'track_module_creation' ), 10 );
+		add_action( 'admin_init', array( $this, 'add_module_admin_hooks' ) );
 		add_action( 'wp_ajax_sensei_json_search_courses', array( $this, 'search_courses_json' ) );
 
 		// Manage module taxonomy archive page
@@ -375,6 +374,17 @@ class Sensei_Core_Modules {
 	}
 
 	/**
+	 * Adds hooks for use with editing a taxonomy in WP Admin.
+	 *
+	 * @since 3.6.0
+	 * @access private
+	 */
+	public function add_module_admin_hooks() {
+		add_action( 'edited_' . $this->taxonomy, array( $this, 'save_module_course' ), 10, 2 );
+		add_action( 'created_' . $this->taxonomy, array( $this, 'save_module_course' ), 10, 2 );
+	}
+
+	/**
 	 * Display course field on module edit screen
 	 *
 	 * @since 1.8.0
@@ -437,10 +447,13 @@ class Sensei_Core_Modules {
 		 * verification.
 		 */
 
+		$is_rest_request = defined( 'REST_REQUEST' ) && REST_REQUEST;
+
 		// phpcs:ignore WordPress.Security.NonceVerification
-		if ( isset( $_POST['action'] ) && 'inline-save-tax' == $_POST['action'] ) {
+		if ( $is_rest_request || ( isset( $_POST['action'] ) && 'inline-save-tax' == $_POST['action'] ) ) {
 			return;
 		}
+
 		// Get module's existing courses
 		$args    = array(
 			'post_type'      => 'course',
@@ -1759,7 +1772,7 @@ class Sensei_Core_Modules {
 		// exit if there are no module on this course
 		if ( empty( $course_modules ) || ! is_array( $course_modules ) ) {
 
-			return Sensei()->course->course_lessons( $course_id );
+			return Sensei()->course->course_lessons( $course_id, $post_status );
 
 		}
 
