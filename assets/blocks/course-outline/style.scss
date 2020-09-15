@@ -17,18 +17,18 @@ $dark-gray: #1a1d20;
 
 	&__progress-indicator {
 		border-radius: 10% 10% 10% 10% / 50% 50% 50% 50%;
-		background-color: green;
 		display: flex;
 		justify-content: center;
 		align-items: center;
 		height: 10%;
-		flex-basis: 17%;
+		flex-basis: 14%;
 
 		&__text {
 			font-weight: normal;
 			margin: 0 20px;
 			font-size: 14px;
 			color: black;
+			white-space: nowrap;
 		}
 	}
 }
@@ -86,8 +86,8 @@ $dark-gray: #1a1d20;
 
 }
 
-#inspector-radio-group-control {
-	margin-bottom: 15px;
+#inspector-radio-group-control__help {
+	margin-top: 15px;
 }
 
 /**

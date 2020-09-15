@@ -16,19 +16,19 @@ export const RadioGroupControl = ( { previewStatus, setPreviewStatus } ) => {
 				'sensei-lms'
 			) }
 		>
-			<div id={ id } aria-describedby={ id + '__help' }>
-				<RadioGroup
-					checked={ previewStatus }
-					onChange={ ( status ) => setPreviewStatus( status ) }
-				>
-					<Radio value="in-progress">
-						{ __( 'In Progress', 'sensei-lms' ) }
-					</Radio>
-					<Radio value="completed">
-						{ __( 'Completed', 'sensei-lms' ) }
-					</Radio>
-				</RadioGroup>
-			</div>
+			<RadioGroup
+				aria-label={ __( 'Status preview', 'sensei-lms' ) }
+				aria-describedby={ id + '__help' }
+				checked={ previewStatus }
+				onChange={ ( status ) => setPreviewStatus( status ) }
+			>
+				<Radio value="in-progress">
+					{ __( 'In Progress', 'sensei-lms' ) }
+				</Radio>
+				<Radio value="completed">
+					{ __( 'Completed', 'sensei-lms' ) }
+				</Radio>
+			</RadioGroup>
 		</BaseControl>
 	);
 };
