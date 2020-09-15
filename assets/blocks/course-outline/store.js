@@ -64,7 +64,6 @@ const reducers = {
 	SAVING: ( { isSaving }, state ) => ( {
 		...state,
 		isSaving,
-		isDirty: isSaving ? false : state.isDirty,
 	} ),
 	DEFAULT: ( action, state ) => state,
 };
