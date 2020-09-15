@@ -161,8 +161,8 @@ class Sensei_Course_Structure {
 			return $structure;
 		}
 
-		$current_structure                               = $this->get();
-		list( $current_module_ids, $current_lesson_ids ) = $this->flatten_structure( $current_structure );
+		$current_structure                                 = $this->get();
+		list( $current_lesson_ids, $current_module_ids,  ) = $this->flatten_structure( $current_structure );
 
 		$lesson_ids   = [];
 		$module_order = [];
@@ -257,6 +257,30 @@ class Sensei_Course_Structure {
 			$module_id,
 			$lesson_ids,
 		];
+	}
+
+	/**
+	 * Attempt to find an existing module available to the user.
+	 *
+	 * @param string $module_name Module name.
+	 *
+	 * @return int|null Term ID if found.
+	 */
+	private function get_existing_module( string $module_name ) {
+		$slug = sanitize_title( $module_name );
+
+		$teacher_user_id = get_post( $this->course_id )->post_author;
+		if ( ! user_can( $teacher_user_id, 'manage_options' ) ) {
+			$slug = intval( $teacher_user_id ) . '-' . $slug;
+		}
+
+		$existing_module = get_term_by( 'slug', $slug, 'module' );
+
+		if ( $existing_module ) {
+			return (int) $existing_module->term_id;
+		}
+
+		return null;
 	}
 
 	/**
@@ -442,13 +466,15 @@ class Sensei_Course_Structure {
 	 * @param array $structure Structure to flatten.
 	 *
 	 * @return array[] {
-	 *     @type array $0 $module_ids All the module IDs.
-	 *     @type array $1 $lesson_ids All the lesson IDs.
+	 *     @type array $0 $lesson_ids    All the lesson IDs.
+	 *     @type array $1 $module_ids    All the module IDs.
+	 *     @type array $2 $module_titles All the module titles.
 	 * }
 	 */
 	private function flatten_structure( array $structure ) : array {
-		$module_ids = [];
-		$lesson_ids = [];
+		$lesson_ids    = [];
+		$module_ids    = [];
+		$module_titles = [];
 
 		foreach ( $structure as $item ) {
 			if ( ! isset( $item['type'] ) ) {
@@ -458,6 +484,10 @@ class Sensei_Course_Structure {
 			if ( 'module' === $item['type'] ) {
 				if ( ! empty( $item['id'] ) ) {
 					$module_ids[] = $item['id'];
+				}
+
+				if ( isset( $item['title'] ) ) {
+					$module_titles[] = $item['title'];
 				}
 
 				if ( ! empty( $item['lessons'] ) ) {
@@ -473,8 +503,9 @@ class Sensei_Course_Structure {
 		}
 
 		return [
-			$module_ids,
 			$lesson_ids,
+			$module_ids,
+			$module_titles,
 		];
 	}
 
@@ -486,11 +517,12 @@ class Sensei_Course_Structure {
 	 * @return WP_Error|array False if the input is invalid.
 	 */
 	private function sanitize_structure( array $raw_structure ) {
-		list( $module_ids, $lesson_ids ) = $this->flatten_structure( $raw_structure );
+		list( $lesson_ids, $module_ids, $module_titles ) = $this->flatten_structure( $raw_structure );
 
 		if (
 			array_unique( $module_ids ) !== $module_ids
 			|| array_unique( $lesson_ids ) !== $lesson_ids
+			|| array_unique( $module_titles ) !== $module_titles
 		) {
 			return new WP_Error(
 				'sensei_course_structure_duplicate_items',
@@ -499,6 +531,7 @@ class Sensei_Course_Structure {
 		}
 
 		$structure = [];
+
 		foreach ( $raw_structure as $raw_item ) {
 			if ( ! is_array( $raw_item ) ) {
 				return new WP_Error(
@@ -547,6 +580,9 @@ class Sensei_Course_Structure {
 						sprintf( __( 'Module with id "%d" was not found', 'sensei-lms' ), $item['id'] )
 					);
 				}
+			} else {
+				// Attempt to find an existing module available to the user.
+				$item['id'] = $this->get_existing_module( $item['title'] );
 			}
 
 			$item['description'] = isset( $raw_item['description'] ) ? trim( wp_kses_post( $raw_item['description'] ) ) : null;

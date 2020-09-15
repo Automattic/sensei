@@ -514,6 +514,120 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test to make sure saving a course with two identically named modules fails.
+	 */
+	public function testSaveIdenticalModules() {
+		$this->login_as_admin();
+
+		$course_id     = $this->factory->course->create();
+		$new_structure = [
+			[
+				'type'    => 'module',
+				'title'   => 'Introduction',
+				'lessons' => [],
+			],
+			[
+				'type'    => 'module',
+				'title'   => 'Introduction',
+				'lessons' => [],
+			],
+		];
+
+		$course_structure = Sensei_Course_Structure::instance( $course_id );
+		$save_result      = $course_structure->save( $new_structure );
+
+		$this->assertWPError( $save_result );
+		$this->assertEquals( 'sensei_course_structure_duplicate_items', $save_result->get_error_code() );
+	}
+
+
+	/**
+	 * Test to make sure saving a course with a module that already exists that we use the existing module.
+	 */
+	public function testSaveExistingModules() {
+		$this->factory->term->create(
+			[
+				'taxonomy' => Sensei()->modules->taxonomy,
+				'name'     => 'Introduction',
+				'slug'     => 'introduction',
+			]
+		);
+
+		$this->login_as_teacher();
+
+		$module_id = $this->factory->term->create(
+			[
+				'taxonomy' => Sensei()->modules->taxonomy,
+				'name'     => 'Introduction',
+				'slug'     => get_current_user_id() . '-introduction',
+			]
+		);
+
+		$course_id     = $this->factory->course->create();
+		$new_structure = [
+			[
+				'type'    => 'module',
+				'title'   => 'Introduction',
+				'lessons' => [],
+			],
+			[
+				'type'    => 'module',
+				'title'   => 'Mastery',
+				'lessons' => [],
+			],
+		];
+
+		$course_structure = Sensei_Course_Structure::instance( $course_id );
+
+		$this->assertTrue( $course_structure->save( $new_structure ) );
+
+		$structure = $course_structure->get();
+		$this->assertEquals( $module_id, $structure[0]['id'] );
+	}
+
+	/**
+	 * Test to make sure existing modules owned by a different teacher aren't used when saving without a module ID.
+	 */
+	public function testSaveNotExistingNonUserModules() {
+		$admin_module_id = $this->factory->term->create(
+			[
+				'taxonomy' => Sensei()->modules->taxonomy,
+				'name'     => 'Introduction',
+				'slug'     => 'introduction',
+			]
+		);
+
+		$this->login_as_teacher();
+
+		$module_id = $this->factory->term->create(
+			[
+				'taxonomy' => Sensei()->modules->taxonomy,
+				'name'     => 'Introduction',
+				'slug'     => get_current_user_id() . '-introduction',
+			]
+		);
+
+		$this->login_as_teacher_b();
+
+		$course_id     = $this->factory->course->create();
+		$new_structure = [
+			[
+				'type'    => 'module',
+				'title'   => 'Introduction',
+				'lessons' => [],
+			],
+		];
+
+		$course_structure = Sensei_Course_Structure::instance( $course_id );
+
+		$this->assertTrue( $course_structure->save( $new_structure ) );
+
+		$structure = $course_structure->get();
+		$this->assertNotEquals( $module_id, $structure[0]['id'] );
+		$this->assertNotEquals( $admin_module_id, $structure[0]['id'] );
+	}
+
+	/**
 	 * Make sure we can properly reorder modules.
 	 */
 	public function testSaveReorderModules() {
