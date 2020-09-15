@@ -607,7 +607,7 @@ class Sensei_Course_Structure {
 				$lesson = get_post( $item['id'] );
 				if ( ! $lesson || in_array( $lesson->post_status, [ 'trash', 'auto-draft' ], true ) || 'lesson' !== $lesson->post_type ) {
 					return new WP_Error(
-						'sensei_course_structure_missing_module',
+						'sensei_course_structure_missing_lesson',
 						// translators: Placeholder is ID for lesson.
 						sprintf( __( 'Lesson with id "%d" was not found', 'sensei-lms' ), $item['id'] )
 					);
