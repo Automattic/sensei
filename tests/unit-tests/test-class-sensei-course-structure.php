@@ -23,9 +23,9 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test getting course structure when just lessons.
+	 * Test getting course structure when just lessons when one lesson is unpublished in view context.
 	 */
-	public function testGetJustLessons() {
+	public function testGetJustLessonsView() {
 		$course_id          = $this->factory->course->create();
 		$course_lesson_args = [
 			'meta_input' => [
@@ -34,6 +34,10 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 		];
 		$lessons            = $this->factory->lesson->create_many( 3, $course_lesson_args );
 		$lesson_unordered   = $this->factory->lesson->create( $course_lesson_args );
+
+		$course_lesson_args_unpublished                = $course_lesson_args;
+		$course_lesson_args_unpublished['post_status'] = 'draft';
+		$this->factory->lesson->create( $course_lesson_args_unpublished );
 
 		// Rogue lesson.
 		$this->factory->lesson->create();
@@ -54,7 +58,48 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 		];
 
 		$course_structure = Sensei_Course_Structure::instance( $course_id );
-		$structure        = $course_structure->get();
+		$structure        = $course_structure->get( 'view' );
+
+		$this->assertExpectedStructure( $expected_structure, $structure );
+	}
+
+	/**
+	 * Test getting course structure when just lessons when one lesson is unpublished in edit context.
+	 */
+	public function testGetJustLessonsEdit() {
+		$course_id          = $this->factory->course->create();
+		$course_lesson_args = [
+			'meta_input' => [
+				'_lesson_course' => $course_id,
+			],
+		];
+		$lessons            = $this->factory->lesson->create_many( 3, $course_lesson_args );
+		$lesson_unordered   = $this->factory->lesson->create( $course_lesson_args );
+
+		$course_lesson_args_unpublished                = $course_lesson_args;
+		$course_lesson_args_unpublished['post_status'] = 'draft';
+		$unpublished_lesson_id                         = $this->factory->lesson->create( $course_lesson_args_unpublished );
+
+		// Rogue lesson.
+		$this->factory->lesson->create();
+
+		$expected_structure = [];
+		foreach ( [ $lessons[1], $lessons[0], $lessons[2], $unpublished_lesson_id ] as $lesson_id ) {
+			$expected_structure[] = [
+				'type' => 'lesson',
+				'id'   => $lesson_id,
+			];
+		}
+
+		$this->saveStructure( $course_id, $expected_structure );
+
+		$expected_structure[] = [
+			'type' => 'lesson',
+			'id'   => $lesson_unordered,
+		];
+
+		$course_structure = Sensei_Course_Structure::instance( $course_id );
+		$structure        = $course_structure->get( 'edit' );
 
 		$this->assertExpectedStructure( $expected_structure, $structure );
 	}
@@ -102,16 +147,16 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 		$this->saveStructure( $course_id, $expected_structure );
 
 		$course_structure = Sensei_Course_Structure::instance( $course_id );
-		$structure        = $course_structure->get();
+		$structure        = $course_structure->get( 'view' );
 
 		$this->assertExpectedStructure( $expected_structure, $structure );
 	}
 
 
 	/**
-	 * Test getting course structure when just modules with no lessons and one rogue lesson.
+	 * Test getting course structure when just modules with no lessons and one rogue lesson while in edit context.
 	 */
-	public function testGetModulesWithEmptyLessons() {
+	public function testGetModulesWithEmptyLessonsEdit() {
 		$course_id = $this->factory->course->create();
 
 		$lessons = $this->factory->lesson->create_many( 1 );
@@ -137,9 +182,56 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 		$this->saveStructure( $course_id, $expected_structure );
 
 		$course_structure = Sensei_Course_Structure::instance( $course_id );
-		$structure        = $course_structure->get();
+		$structure        = $course_structure->get( 'edit' );
 
 		$this->assertExpectedStructure( $expected_structure, $structure );
+	}
+
+	/**
+	 * Test getting course structure when a module has no published lessons while in view context.
+	 */
+	public function testGetModulesWithEmptyLessonsView() {
+		$course_id = $this->factory->course->create();
+
+		$lessons            = $this->factory->lesson->create_many( 2 );
+		$modules            = $this->factory->module->create_many( 2 );
+		$unpublished_lesson = $this->factory->lesson->create( [ 'post_status' => 'draft' ] );
+
+		$expected_structure = [
+			[
+				'type'    => 'module',
+				'id'      => $modules[1],
+				'lessons' => [
+					[
+						'type' => 'lesson',
+						'id'   => $unpublished_lesson,
+					],
+				],
+			],
+			[
+				'type'    => 'module',
+				'id'      => $modules[0],
+				'lessons' => [
+					[
+						'type' => 'lesson',
+						'id'   => $lessons[1],
+					],
+				],
+			],
+			[
+				'type' => 'lesson',
+				'id'   => $lessons[0],
+			],
+		];
+
+		$this->saveStructure( $course_id, $expected_structure );
+
+		unset( $expected_structure[0] );
+
+		$course_structure = Sensei_Course_Structure::instance( $course_id );
+		$structure        = $course_structure->get( 'view' );
+
+		$this->assertExpectedStructure( array_values( $expected_structure ), $structure );
 	}
 
 	/**
@@ -189,7 +281,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 		$this->saveStructure( $course_id, $expected_structure );
 
 		$course_structure = Sensei_Course_Structure::instance( $course_id );
-		$structure        = $course_structure->get();
+		$structure        = $course_structure->get( 'view' );
 
 		$this->assertExpectedStructure( $expected_structure, $structure );
 	}
@@ -213,7 +305,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 
 		$this->assertTrue( $course_structure->save( $new_structure ) );
 
-		$structure = $course_structure->get();
+		$structure = $course_structure->get( 'edit' );
 
 		$this->assertEquals( 1, count( $structure ) );
 
@@ -245,7 +337,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 
 		$this->assertEquals( 'sensei_course_structure_missing_title', $save_result->get_error_code() );
 
-		$structure = $course_structure->get();
+		$structure = $course_structure->get( 'edit' );
 		$this->assertEquals( 0, count( $structure ) );
 	}
 
@@ -272,7 +364,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 
 		$this->assertEquals( 'sensei_course_structure_missing_title', $save_result->get_error_code() );
 
-		$structure = $course_structure->get();
+		$structure = $course_structure->get( 'edit' );
 		$this->assertEquals( 0, count( $structure ) );
 	}
 
@@ -299,7 +391,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 
 		$this->assertEquals( 'sensei_course_structure_invalid_item_type', $save_result->get_error_code() );
 
-		$structure = $course_structure->get();
+		$structure = $course_structure->get( 'edit' );
 		$this->assertEquals( 0, count( $structure ) );
 	}
 
@@ -325,7 +417,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 
 		$this->assertEquals( 'sensei_course_structure_invalid_item_type', $save_result->get_error_code() );
 
-		$structure = $course_structure->get();
+		$structure = $course_structure->get( 'edit' );
 		$this->assertEquals( 0, count( $structure ) );
 	}
 
@@ -372,7 +464,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 
 		$this->assertTrue( $course_structure->save( $new_structure ) );
 
-		$structure = $course_structure->get();
+		$structure = $course_structure->get( 'edit' );
 
 		$this->assertEquals( 2, count( $structure ) );
 
@@ -409,7 +501,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 
 		$this->assertTrue( $course_structure->save( $new_structure ) );
 
-		$structure = $course_structure->get();
+		$structure = $course_structure->get( 'edit' );
 
 		$this->assertEquals( 1, count( $structure ) );
 
@@ -440,13 +532,13 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 
 		$this->assertTrue( $course_structure->save( $new_structure ) );
 
-		$modified_structure                   = $course_structure->get();
+		$modified_structure                   = $course_structure->get( 'edit' );
 		$modified_structure[0]['title']       = 'Update Module Name';
 		$modified_structure[0]['description'] = 'Now improved!';
 
 		$this->assertTrue( $course_structure->save( $modified_structure ) );
 
-		$structure = $course_structure->get();
+		$structure = $course_structure->get( 'edit' );
 		$this->assertExpectedStructure( $modified_structure, $structure );
 	}
 
@@ -468,12 +560,12 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 
 		$this->assertTrue( $course_structure->save( $new_structure ) );
 
-		$modified_structure             = $course_structure->get();
+		$modified_structure             = $course_structure->get( 'edit' );
 		$modified_structure[0]['title'] = 'Improved Lesson Title';
 
 		$this->assertTrue( $course_structure->save( $modified_structure ) );
 
-		$structure = $course_structure->get();
+		$structure = $course_structure->get( 'edit' );
 		$this->assertExpectedStructure( $modified_structure, $structure );
 	}
 
@@ -498,13 +590,13 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 		$save_result = $course_structure_a->save( $new_structure );
 		$this->assertTrue( $save_result );
 
-		$structure = $course_structure_a->get();
+		$structure = $course_structure_a->get( 'edit' );
 
 		// Give course A's structure to course B.
 		$this->assertTrue( $course_structure_b->save( $structure ) );
 
-		$this->assertExpectedStructure( $structure, $course_structure_b->get() );
-		$this->assertEquals( [], $course_structure_a->get() );
+		$this->assertExpectedStructure( $structure, $course_structure_b->get( 'edit' ) );
+		$this->assertEquals( [], $course_structure_a->get( 'edit' ) );
 	}
 
 	/**
@@ -533,7 +625,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 
 		$this->assertTrue( $course_structure->save( $new_structure ) );
 
-		$structure = $course_structure->get();
+		$structure = $course_structure->get( 'edit' );
 		$this->assertEquals( $new_structure[0]['title'], $structure[0]['title'] );
 		$this->assertEquals( $new_structure[1]['title'], $structure[1]['title'] );
 		$this->assertEquals( $new_structure[2]['title'], $structure[2]['title'] );
@@ -545,7 +637,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 		];
 
 		$this->assertTrue( $course_structure->save( $updated_structure ) );
-		$this->assertExpectedStructure( $updated_structure, $course_structure->get() );
+		$this->assertExpectedStructure( $updated_structure, $course_structure->get( 'edit' ) );
 	}
 
 	/**
@@ -616,7 +708,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 
 		$this->assertTrue( $course_structure->save( $new_structure ) );
 
-		$structure = $course_structure->get();
+		$structure = $course_structure->get( 'edit' );
 		$this->assertEquals( $module_id, $structure[0]['id'] );
 	}
 
@@ -657,7 +749,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 
 		$this->assertTrue( $course_structure->save( $new_structure ) );
 
-		$structure = $course_structure->get();
+		$structure = $course_structure->get( 'edit' );
 		$this->assertNotEquals( $module_id, $structure[0]['id'] );
 		$this->assertNotEquals( $admin_module_id, $structure[0]['id'] );
 	}
@@ -705,7 +797,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 
 		$this->assertTrue( $course_structure->save( $new_structure ) );
 
-		$structure = $course_structure->get();
+		$structure = $course_structure->get( 'edit' );
 		$this->assertEquals( $new_structure[0]['title'], $structure[0]['title'] );
 		$this->assertEquals( $new_structure[1]['title'], $structure[1]['title'] );
 		$this->assertEquals( $new_structure[2]['title'], $structure[2]['title'] );
@@ -717,7 +809,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 		];
 
 		$this->assertTrue( $course_structure->save( $updated_structure ) );
-		$this->assertExpectedStructure( $updated_structure, $course_structure->get() );
+		$this->assertExpectedStructure( $updated_structure, $course_structure->get( 'edit' ) );
 	}
 
 	/**
@@ -752,7 +844,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 
 		$this->assertTrue( $course_structure->save( $new_structure ) );
 
-		$modified_structure = $course_structure->get();
+		$modified_structure = $course_structure->get( 'edit' );
 
 		$this->assertEquals( 2, count( $modified_structure ) );
 
@@ -760,7 +852,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 		unset( $modified_structure[1] );
 
 		$this->assertTrue( $course_structure->save( $modified_structure ) );
-		$this->assertExpectedStructure( $modified_structure, $course_structure->get() );
+		$this->assertExpectedStructure( $modified_structure, $course_structure->get( 'edit' ) );
 
 		$this->assertEquals( null, get_post_meta( $lesson_ids[0], '_lesson_course', true ), 'Course lesson meta should have been cleared' );
 		$this->assertEquals( null, get_post_meta( $lesson_ids[1], '_lesson_course', true ), 'Course lesson meta should have been cleared' );
@@ -811,10 +903,10 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 
 		$this->assertTrue( $course_structure->save( $new_structure ) );
 
-		$structure = $course_structure->get();
+		$structure = $course_structure->get( 'edit' );
 
 		$this->assertTrue( $course_structure->save( $structure ) );
-		$this->assertExpectedStructure( $structure, $course_structure->get() );
+		$this->assertExpectedStructure( $structure, $course_structure->get( 'edit' ) );
 	}
 
 	/**
@@ -851,7 +943,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 		$this->assertTrue( $course_structure->save( $new_structure ) );
 
 		$this->assertTrue( $course_structure->save( [] ) );
-		$this->assertExpectedStructure( [], $course_structure->get() );
+		$this->assertExpectedStructure( [], $course_structure->get( 'edit' ) );
 	}
 
 	/**
@@ -887,13 +979,13 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 
 		$this->assertTrue( $course_structure->save( $new_structure ) );
 
-		$modified_structure = $course_structure->get();
+		$modified_structure = $course_structure->get( 'edit' );
 
 		$modified_structure[0]['lessons'][] = $modified_structure[2];
 		unset( $modified_structure[2] );
 
 		$this->assertTrue( $course_structure->save( $modified_structure ) );
-		$this->assertExpectedStructure( $modified_structure, $course_structure->get() );
+		$this->assertExpectedStructure( $modified_structure, $course_structure->get( 'edit' ) );
 	}
 
 	/**
@@ -930,13 +1022,13 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 
 		$this->assertTrue( $course_structure->save( $new_structure ) );
 
-		$modified_structure = $course_structure->get();
+		$modified_structure = $course_structure->get( 'edit' );
 
 		$modified_structure[]             = $modified_structure[0]['lessons'][0];
 		$modified_structure[0]['lessons'] = [];
 
 		$this->assertTrue( $course_structure->save( $modified_structure ) );
-		$this->assertExpectedStructure( $modified_structure, $course_structure->get() );
+		$this->assertExpectedStructure( $modified_structure, $course_structure->get( 'edit' ) );
 	}
 
 	/**

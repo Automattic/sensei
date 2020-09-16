@@ -15,6 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 3.6.0
  */
 class Sensei_Course_Structure {
+	const PUBLISHED_POST_STATUSES = [ 'publish', 'private' ];
+
 	/**
 	 * Course instances.
 	 *
@@ -56,20 +58,29 @@ class Sensei_Course_Structure {
 	/**
 	 * Get the course structure.
 	 *
+	 * @param string $context Context that structure is being retrieved for. Possible values: edit, view.
+	 *
 	 * @return array
 	 */
-	public function get() : array {
+	public function get( $context = 'view' ) : array {
+		$context = in_array( $context, [ 'view', 'edit' ], true ) ? $context : 'view';
+
 		$structure = [];
 
-		$all_lessons       = Sensei()->course->course_lessons( $this->course_id, 'any', 'ids' );
-		$no_module_lessons = wp_list_pluck( Sensei()->modules->get_none_module_lessons( $this->course_id, 'any' ), 'ID' );
+		$published_lessons_only = 'view' === $context;
+		$post_status            = $published_lessons_only ? self::PUBLISHED_POST_STATUSES : 'any';
+		$no_module_lessons      = wp_list_pluck( Sensei()->modules->get_none_module_lessons( $this->course_id, $post_status ), 'ID' );
 
 		$modules = $this->get_modules();
 		foreach ( $modules as $module_term ) {
-			$structure[] = $this->prepare_module( $module_term );
+			$module = $this->prepare_module( $module_term, $published_lessons_only );
+
+			if ( ! empty( $module['lessons'] ) || 'edit' === $context ) {
+				$structure[] = $module;
+			}
 		}
 
-		foreach ( array_intersect( $all_lessons, $no_module_lessons ) as $lesson_id ) {
+		foreach ( $no_module_lessons as $lesson_id ) {
 			$lesson = get_post( $lesson_id );
 			if ( ! $lesson ) {
 				continue;
@@ -84,10 +95,11 @@ class Sensei_Course_Structure {
 	/**
 	 * Prepare the result for a module.
 	 *
-	 * @param WP_Term $module_term Module term.
+	 * @param WP_Term $module_term            Module term.
+	 * @param bool    $published_lessons_only Only include published lessons.
 	 */
-	private function prepare_module( WP_Term $module_term ) {
-		$lessons = $this->get_module_lessons( $module_term->term_id );
+	private function prepare_module( WP_Term $module_term, bool $published_lessons_only ) {
+		$lessons = $this->get_module_lessons( $module_term->term_id, $published_lessons_only );
 		$module  = [
 			'type'        => 'module',
 			'id'          => $module_term->term_id,
@@ -121,12 +133,15 @@ class Sensei_Course_Structure {
 	/**
 	 * Get the lessons for a module.
 	 *
-	 * @param int $module_term_id Term ID for the module.
+	 * @param int  $module_term_id         Term ID for the module.
+	 * @param bool $published_lessons_only Only include published lessons.
 	 *
 	 * @return WP_Post[]
 	 */
-	private function get_module_lessons( int $module_term_id ) {
-		$lessons_query = Sensei()->modules->get_lessons_query( $this->course_id, $module_term_id, 'any' );
+	private function get_module_lessons( int $module_term_id, bool $published_lessons_only ) {
+		$post_status = $published_lessons_only ? self::PUBLISHED_POST_STATUSES : 'any';
+
+		$lessons_query = Sensei()->modules->get_lessons_query( $this->course_id, $module_term_id, $post_status );
 
 		return $lessons_query instanceof WP_Query ? $lessons_query->posts : [];
 	}
@@ -159,7 +174,7 @@ class Sensei_Course_Structure {
 			return $structure;
 		}
 
-		$current_structure                                 = $this->get();
+		$current_structure                                 = $this->get( 'edit' );
 		list( $current_lesson_ids, $current_module_ids,  ) = $this->flatten_structure( $current_structure );
 
 		$lesson_ids   = [];
