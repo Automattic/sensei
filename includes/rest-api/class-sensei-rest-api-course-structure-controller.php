@@ -230,6 +230,11 @@ class Sensei_REST_API_Course_Structure_Controller extends \WP_REST_Controller {
 							'description' => __( 'Lesson title', 'sensei-lms' ),
 							'type'        => 'string',
 						],
+						'draft' => [
+							'description' => __( 'Whether the lesson is currently a draft', 'sensei-lms' ),
+							'type'        => 'boolean',
+							'readOnly'    => true,
+						],
 					],
 				],
 				'module' => [

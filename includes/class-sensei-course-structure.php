@@ -127,6 +127,7 @@ class Sensei_Course_Structure {
 			'type'  => 'lesson',
 			'id'    => $lesson_post->ID,
 			'title' => $lesson_post->post_title,
+			'draft' => 'draft' === $lesson_post->post_status,
 		];
 	}
 
