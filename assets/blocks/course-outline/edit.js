@@ -22,8 +22,7 @@ const EditCourseOutlineBlock = ( {
 	structure,
 	setAttributes,
 } ) => {
-	const { setBlocks } = useBlocksCreator( clientId );
-
+	const { setBlockStructure } = useBlocksCreator( clientId );
 	const { getBlocks } = useSelect(
 		( select ) => select( 'core/block-editor' ),
 		[]
@@ -51,14 +50,14 @@ const EditCourseOutlineBlock = ( {
 
 	useEffect( () => {
 		if ( structure && structure.length ) {
-			setBlocks( structure );
+			setBlockStructure( structure );
 		}
-	}, [ structure, setBlocks ] );
+	}, [ structure, setBlockStructure ] );
 
 	if ( isEmpty ) {
 		return (
 			<CourseOutlinePlaceholder
-				addBlock={ ( type ) => setBlocks( [ { type } ] ) }
+				addBlock={ ( type ) => setBlockStructure( [ { type } ] ) }
 			/>
 		);
 	}

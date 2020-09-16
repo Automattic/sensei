@@ -16,7 +16,7 @@ export const useBlocksCreator = ( clientId ) => {
 		[]
 	);
 
-	const setBlocks = useCallback(
+	const setBlockStructure = useCallback(
 		( blockData ) => {
 			const block = getBlock( clientId );
 			replaceInnerBlocks(
@@ -32,5 +32,5 @@ export const useBlocksCreator = ( clientId ) => {
 		[ clientId, replaceInnerBlocks, getBlock ]
 	);
 
-	return { setBlocks };
+	return { setBlockStructure };
 };
