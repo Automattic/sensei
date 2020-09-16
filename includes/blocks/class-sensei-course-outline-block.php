@@ -59,8 +59,33 @@ class Sensei_Course_Outline_Block {
 			'sensei-lms/course-outline',
 			[
 				'render_callback' => [ $this, 'render_callback' ],
+				'attributes'      => [
+					'id'     => [
+						'type' => 'int',
+					],
+					'blocks' => [
+						'type' => 'object',
+					],
+				],
 			]
 		);
+	}
+
+	/**
+	 * Add attributes to inner blocks from the Outline block.
+	 *
+	 * @param array $structure  Course structure.
+	 * @param array $attributes Outline block attributes.
+	 */
+	private static function add_block_attributes( &$structure, $attributes ) {
+		if ( empty( $structure ) ) {
+			return;
+		}
+		$block_attributes = $attributes['blocks'] ?? [];
+		foreach ( $structure as &$block ) {
+			$block['attributes'] = $block_attributes[ $block['type'] . '-' . $block['id'] ] ?? [];
+			self::add_block_attributes( $block['lessons'], $attributes );
+		}
 	}
 
 	/**
@@ -69,91 +94,43 @@ class Sensei_Course_Outline_Block {
 	 * @access private
 	 *
 	 * @param array $attributes Block attributes.
+	 *
+	 * @return string Block HTML.
 	 */
 	public function render_callback( $attributes ) {
-		// TODO: Fetch from API or method used in API.
-		$data = [
-			[
-				'id'          => 1,
-				'type'        => 'module',
-				'title'       => 'Module 1',
-				'description' => 'Module description 1',
-				'lessons'     => [
-					[
-						'id'    => 2,
-						'type'  => 'lesson',
-						'title' => 'Lesson 2',
-					],
-					[
-						'id'    => 3,
-						'type'  => 'lesson',
-						'title' => 'Lesson 3',
-					],
-				],
-			],
-			[
-				'id'    => 9,
-				'type'  => 'lesson',
-				'title' => 'Lesson 9',
-			],
-			[
-				'id'    => 10,
-				'type'  => 'lesson',
-				'title' => 'Lesson 10',
-			],
-			[
-				'id'          => 4,
-				'type'        => 'module',
-				'title'       => 'Module 4',
-				'description' => 'Module description 4',
-				'lessons'     => [
-					[
-						'id'    => 5,
-						'type'  => 'lesson',
-						'title' => 'Lesson 5',
-					],
-				],
-			],
-			[
-				'id'          => 6,
-				'type'        => 'module',
-				'title'       => 'Module 6',
-				'description' => 'Module description 6',
-				'lessons'     => [],
-			],
-			[
-				'id'    => 7,
-				'type'  => 'lesson',
-				'title' => 'Lesson 7',
-			],
-		];
+
+		global $post;
+
+		$structure = Sensei_Course_Structure::instance( $post->ID )->get();
 
 		$this->disable_course_legacy_content();
+
+		self::add_block_attributes( $structure, $attributes );
 
 		$block_class = 'wp-block-sensei-lms-course-outline';
 		if ( isset( $attributes['className'] ) ) {
 			$block_class .= ' ' . $attributes['className'];
 		}
 
-		return '
+		return '		
 			<section class="' . $block_class . '">
 				' .
-				implode(
-					'',
-					array_map(
-						function( $block ) {
-							if ( 'module' === $block['type'] ) {
-								return $this->get_module_block_html( $block );
-							}
+			implode(
+				'',
+				array_map(
+					function( $block ) {
+						if ( 'module' === $block['type'] ) {
+							return $this->get_module_block_html( $block );
+						}
 
-							if ( 'lesson' === $block['type'] ) {
-								return $this->get_lesson_block_html( $block );
-							}
-						},
-						$data
-					)
+						if ( 'lesson' === $block['type'] ) {
+							return $this->get_lesson_block_html( $block );
+						}
+					},
+					$structure
 				)
-				. '
+			)
+			. '
 			</section>
 		';
 	}
@@ -181,6 +158,9 @@ class Sensei_Course_Outline_Block {
 	 * @return string Module HTML
 	 */
 	private function get_module_block_html( $block ) {
+		if ( empty( $block['lessons'] ) ) {
+			return '';
+		}
 		return '
 			<section class="wp-block-sensei-lms-course-outline-module">
 				<header class="wp-block-sensei-lms-course-outline-module__name">
@@ -189,22 +169,18 @@ class Sensei_Course_Outline_Block {
 				<div class="wp-block-sensei-lms-course-outline-module__description">
 					' . $block['description'] . '
 				</div>
-				' . (
-					// Hide title if there are no lessons.
-					empty( $block['lessons'] ) ? '' : '
 						<div class="wp-block-sensei-lms-course-outline-module__lessons-title">
 							<h3 class="wp-block-sensei-lms-course-outline__clean-heading">' . __( 'Lessons', 'sensei-lms' ) . '</h3>
 						</div>
-					'
-				) .
-				implode(
-					'',
-					array_map(
-						[ $this, 'get_lesson_block_html' ],
-						$block['lessons']
-					)
+					' .
+			implode(
+				'',
+				array_map(
+					[ $this, 'get_lesson_block_html' ],
+					$block['lessons']
 				)
-				. '
+			)
+			. '
 			</section>
 		';
 	}

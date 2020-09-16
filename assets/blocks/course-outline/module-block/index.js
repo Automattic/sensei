@@ -1,4 +1,3 @@
-import { InnerBlocks } from '@wordpress/block-editor';
 import { registerBlockType } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 
@@ -8,6 +7,7 @@ registerBlockType( 'sensei-lms/course-outline-module', {
 	title: __( 'Module', 'sensei-lms' ),
 	description: __( 'Used to group one or more lessons.', 'sensei-lms' ),
 	icon: 'list-view',
+	category: 'sensei-lms',
 	parent: [ 'sensei-lms/course-outline' ],
 	keywords: [ __( 'Outline', 'sensei-lms' ), __( 'Module', 'sensei-lms' ) ],
 	supports: {
@@ -29,8 +29,5 @@ registerBlockType( 'sensei-lms/course-outline-module', {
 	},
 	edit( props ) {
 		return <EditModuleBlock { ...props } />;
-	},
-	save() {
-		return <InnerBlocks.Content />;
 	},
 } );
