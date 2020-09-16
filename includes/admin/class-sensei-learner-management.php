@@ -500,6 +500,18 @@ class Sensei_Learner_Management {
 					break;
 			}
 
+			// Log event: when a learner's course or lesson progress is manually reset.
+			if ( $altered ) {
+
+				$event_properties = array(
+					'course_id' => 'course' === $action_data['post_type'] ? $action_data['post_id'] : '',
+					'lesson_id' => 'lesson' === $action_data['post_type'] ? $action_data['post_id'] : '',
+				);
+
+				sensei_log_event( 'learner_management_progress_reset', $event_properties );
+
+			} // End log event.
+
 			if ( $altered && ! Sensei_Utils::has_started_course( $post_id, $user_id ) ) {
 				exit( 'removed' );
 			}
