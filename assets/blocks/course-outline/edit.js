@@ -1,10 +1,11 @@
 import { InnerBlocks } from '@wordpress/block-editor';
-import { useSelect, withSelect } from '@wordpress/data';
-import { useEffect } from '@wordpress/element';
+import { useDispatch, useSelect, withSelect } from '@wordpress/data';
+import { useCallback, useEffect } from '@wordpress/element';
 import { extractStructure, getChildBlockAttributes } from './data';
 import { CourseOutlinePlaceholder } from './placeholder';
 import { COURSE_STORE } from './store';
 import { useBlocksCreator } from './use-block-creator';
+import { useSavePost } from './use-save-post';
 
 /**
  * Edit course outline block component.
@@ -23,17 +24,24 @@ const EditCourseOutlineBlock = ( {
 } ) => {
 	const { setBlocks } = useBlocksCreator( clientId );
 
-	const blocks = useSelect(
-		( select ) => select( 'core/block-editor' ).getBlocks( clientId ),
-		[ clientId ]
+	const { getBlocks } = useSelect(
+		( select ) => select( 'core/block-editor' ),
+		[]
 	);
 
-	useEffect( () => {
-		if ( blocks.length )
-			setAttributes( {
-				blocks: getChildBlockAttributes( extractStructure( blocks ) ),
-			} );
-	}, [ setAttributes, blocks ] );
+	const { save: saveStructure } = useDispatch( COURSE_STORE );
+
+	const saveChildAttributes = useCallback( () => {
+		const childBlockAttributes = getChildBlockAttributes(
+			extractStructure( getBlocks( clientId ) )
+		);
+		setAttributes( {
+			blocks: childBlockAttributes,
+		} );
+	}, [ setAttributes, clientId, getBlocks ] );
+
+	useSavePost( saveChildAttributes );
+	useSavePost( saveStructure );
 
 	const isEmpty = useSelect(
 		( select ) =>

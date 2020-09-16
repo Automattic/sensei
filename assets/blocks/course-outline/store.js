@@ -1,5 +1,5 @@
+import { dispatch, registerStore, select } from '@wordpress/data';
 import { apiFetch, controls as dataControls } from '@wordpress/data-controls';
-import { dispatch, registerStore, select, subscribe } from '@wordpress/data';
 import { createReducerFromActionMap } from '../../shared/data/store-helpers';
 
 const DEFAULT_STATE = {
@@ -90,16 +90,6 @@ export const COURSE_STORE = 'sensei/course-structure';
  * Register course structure store and subscribe to block editor save.
  */
 const registerCourseStructureStore = () => {
-	subscribe( () => {
-		const editor = select( 'core/editor' );
-
-		if ( ! editor ) return;
-
-		if ( editor.isSavingPost() && ! editor.isAutosavingPost() ) {
-			dispatch( COURSE_STORE ).save();
-		}
-	} );
-
 	registerStore( COURSE_STORE, {
 		reducer: createReducerFromActionMap( reducers, DEFAULT_STATE ),
 		actions,
