@@ -101,7 +101,7 @@ class Sensei_Course_Outline_Block {
 
 		global $post;
 
-		$structure = Sensei_Course_Structure::instance( $post->ID )->get();
+		$structure = Sensei_Course_Structure::instance( $post->ID )->get( 'view' );
 
 		$this->disable_course_legacy_content();
 
