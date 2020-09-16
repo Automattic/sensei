@@ -279,4 +279,98 @@ class Sensei_REST_API_Course_Structure_Controller_Tests extends WP_Test_REST_Tes
 		}
 	}
 
+	/**
+	 * Tests a simple `POST /sensei-internal/v1/course-structure/{course_id}` request response matches the schema.
+	 */
+	public function testPostSimple() {
+		$this->login_as_teacher();
+
+		$course_response = $this->factory->get_course_with_lessons(
+			[
+				'module_count'   => 1,
+				'lesson_count'   => 3,
+				'question_count' => 0,
+			]
+		);
+
+		$course_id        = $course_response['course_id'];
+		$course_structure = Sensei_Course_Structure::instance( $course_id );
+		$structure        = $course_structure->get( 'edit' );
+
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-structure/' . $course_id );
+		$request->set_body( wp_json_encode( [ 'structure' => $structure ] ) );
+		$response = $this->server->dispatch( $request );
+
+		$this->assertEquals( $response->get_status(), 200 );
+
+		$endpoint = new Sensei_REST_API_Course_Structure_Controller( '' );
+		$this->assertMeetsSchema( $endpoint->get_schema(), $response->get_data() );
+		$this->assertEquals( $structure, $response->get_data(), 'Unchanged structure should be returned' );
+	}
+
+	/**
+	 * Tests to make sure an admin can modify another teacher's course structure with `POST /sensei-internal/v1/course-structure/{course_id}`.
+	 */
+	public function testPostDifferentTeacher() {
+		$this->login_as_teacher();
+		$course_id = $this->factory->course->create();
+		$structure = [
+			[
+				'type'  => 'lesson',
+				'title' => 'Test',
+			],
+		];
+
+		$this->login_as_teacher_b();
+
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-structure/' . $course_id );
+		$request->set_body( wp_json_encode( [ 'structure' => $structure ] ) );
+
+		$response = $this->server->dispatch( $request );
+		$this->assertEquals( $response->get_status(), 403 );
+	}
+
+	/**
+	 * Tests to make sure an admin can modify another teacher's course structure with `POST /sensei-internal/v1/course-structure/{course_id}`.
+	 */
+	public function testPostDifferentTeacherAdmin() {
+		$this->login_as_teacher();
+		$course_id = $this->factory->course->create();
+		$structure = [
+			[
+				'type'  => 'lesson',
+				'title' => 'Test',
+			],
+		];
+
+		$this->login_as_admin();
+
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-structure/' . $course_id );
+		$request->set_body( wp_json_encode( [ 'structure' => $structure ] ) );
+
+		$response = $this->server->dispatch( $request );
+		$this->assertEquals( $response->get_status(), 200 );
+	}
+
+	/**
+	 * Tests to make sure an guest cannot edit course structure with `POST /sensei-internal/v1/course-structure/{course_id}`.
+	 */
+	public function testPostGuest() {
+		$this->login_as_teacher();
+		$course_id = $this->factory->course->create();
+		$structure = [
+			[
+				'type'  => 'lesson',
+				'title' => 'Test',
+			],
+		];
+
+		$this->logout();
+
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-structure/' . $course_id );
+		$request->set_body( wp_json_encode( [ 'structure' => $structure ] ) );
+
+		$response = $this->server->dispatch( $request );
+		$this->assertEquals( $response->get_status(), 401 );
+	}
 }
