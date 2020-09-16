@@ -1686,13 +1686,13 @@ class Sensei_Core_Modules {
 	/**
 	 * Returns all lessons for the given module ID
 	 *
-	 * @since 1.8.0
-	 *
-	 * @param int    $course_id                  Course post ID.
-	 * @param int    $term_id                    Module term ID.
-	 * @param string $course_lessons_post_status Post status for lessons.
+	 * @param int          $course_id                  Course post ID.
+	 * @param int          $term_id                    Module term ID.
+	 * @param array|string $course_lessons_post_status Post status for lessons. Can be an array of statuses.
 	 *
 	 * @return WP_Query $lessons_query
+	 *@since 1.8.0
+	 *
 	 */
 	public function get_lessons_query( $course_id, $term_id, $course_lessons_post_status = null ) {
 		global $wp_query;
@@ -1759,13 +1759,6 @@ class Sensei_Core_Modules {
 			return $non_module_lessons;
 		}
 
-		// save some time and check if we already have the saved
-		if ( get_transient( 'sensei_' . $course_id . '_none_module_lessons' ) ) {
-
-			return get_transient( 'sensei_' . $course_id . '_none_module_lessons' );
-
-		}
-
 		// create terms array which must be excluded from other arrays
 		$course_modules = $this->get_course_modules( $course_id );
 
@@ -1811,7 +1804,6 @@ class Sensei_Core_Modules {
 
 		if ( isset( $wp_lessons_query->posts ) && count( $wp_lessons_query->posts ) > 0 ) {
 			$non_module_lessons = $wp_lessons_query->get_posts();
-			set_transient( 'sensei_' . $course_id . '_none_module_lessons', $non_module_lessons, 10 * DAY_IN_SECONDS );
 		}
 
 		return $non_module_lessons;
@@ -2357,11 +2349,6 @@ class Sensei_Core_Modules {
 
 			}
 
-			if ( ! empty( $course_id ) ) {
-
-				delete_transient( 'sensei_' . $course_id . '_none_module_lessons' );
-
-			}
 		} // end if is a course or a lesson
 
 	} // end reset_none_modules_transient

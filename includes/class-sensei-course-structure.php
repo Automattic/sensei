@@ -208,8 +208,6 @@ class Sensei_Course_Structure {
 			$this->clear_lesson_associations( $lesson_id );
 		}
 
-		delete_transient( 'sensei_' . $this->course_id . '_none_module_lessons' );
-
 		return true;
 	}
 
