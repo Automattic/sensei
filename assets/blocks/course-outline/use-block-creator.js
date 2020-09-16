@@ -11,21 +11,25 @@ import { syncStructureToBlocks } from './data';
 export const useBlocksCreator = ( clientId ) => {
 	const { replaceInnerBlocks } = useDispatch( 'core/block-editor' );
 
-	const { getBlocks } = useSelect(
+	const { getBlock } = useSelect(
 		( select ) => select( 'core/block-editor' ),
 		[]
 	);
 
 	const setBlocks = useCallback(
 		( blockData ) => {
-			const blocks = getBlocks( clientId );
+			const block = getBlock( clientId );
 			replaceInnerBlocks(
 				clientId,
-				syncStructureToBlocks( blockData, blocks || [] ),
+				syncStructureToBlocks(
+					blockData,
+					block.innerBlocks || [],
+					block.attributes.blocks
+				),
 				false
 			);
 		},
-		[ clientId, replaceInnerBlocks, getBlocks ]
+		[ clientId, replaceInnerBlocks, getBlock ]
 	);
 
 	return { setBlocks };
