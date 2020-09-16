@@ -107,7 +107,7 @@ class Sensei_Shortcode_Course_Categories implements Sensei_Shortcode_Interface {
 			$terms_html   .= '<li class="sensei course-category" >' . $category_link . '</li>';
 
 		}
-		$terms_html .= '<ul>';
+		$terms_html .= '</ul>';
 
 		return $terms_html;
 
