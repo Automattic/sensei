@@ -216,9 +216,9 @@ class Sensei_Course_Outline_Block {
 	protected function render_lesson_block( $block ) {
 		$style = $block['attributes']['style'] ?? [];
 		return '
-			<h3 style="background-color: ' . esc_attr( $style['backgroundColor'] ) . '" class="wp-block-sensei-lms-course-outline-lesson">
+			<h3 style="' . self::style_attr( $style, [ 'background-color' => 'backgroundColor' ] ) . '" class="wp-block-sensei-lms-course-outline-lesson">
 				<a
-				style="color: ' . esc_attr( $style['textColor'] ) . '"
+				style="' . self::style_attr( $style, [ 'color' => 'textColor' ] ) . '"
 				href="' . esc_url( get_permalink( $block['id'] ) ) . '">
 					' . $block['title'] . '
 				</a>
@@ -260,6 +260,25 @@ class Sensei_Course_Outline_Block {
 			. '
 			</section>
 		';
+	}
+
+	/**
+	 * Create a HTML style attribute.
+	 *
+	 * @param array $block_style Block style attributes.
+	 * @param array $rules       CSS rules, with values being array keys in the block style array.
+	 *
+	 * @return string
+	 */
+	private static function style_attr( $block_style, $rules ) {
+		$result = '';
+		foreach ( $rules as $rule => $value ) {
+			if ( ! empty( $block_style[ $value ] ) ) {
+				$result .= $rule . ': ' . esc_attr( $block_style[ $value ] );
+			}
+		}
+
+		return esc_attr( $result );
 	}
 
 	/**
