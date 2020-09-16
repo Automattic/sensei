@@ -7,6 +7,7 @@ registerBlockType( 'sensei-lms/course-outline-module', {
 	title: __( 'Module', 'sensei-lms' ),
 	description: __( 'Used to group one or more lessons.', 'sensei-lms' ),
 	icon: 'list-view',
+	category: 'sensei-lms',
 	parent: [ 'sensei-lms/course-outline' ],
 	keywords: [ __( 'Outline', 'sensei-lms' ), __( 'Module', 'sensei-lms' ) ],
 	supports: {

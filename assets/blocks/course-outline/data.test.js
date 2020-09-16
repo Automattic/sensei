@@ -1,7 +1,12 @@
 import { createBlock } from '@wordpress/blocks';
 import { extractStructure, syncStructureToBlocks } from './data';
-import './lesson-block';
-import './module-block';
+import {
+	registerTestLessonBlock,
+	registerTestModuleBlock,
+} from './test-helpers';
+
+registerTestLessonBlock();
+registerTestModuleBlock();
 
 describe( 'extractStructure', () => {
 	it( 'creates structure from blocks', () => {
