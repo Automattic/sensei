@@ -46,7 +46,9 @@ export const syncStructureToBlocks = ( structure, blocks, attributeMap ) => {
 		if ( item.id ) {
 			attributes = {
 				...attributes,
-				...( attributeMap[ `${ type }-${ item.id }` ] || {} ),
+				...( ( attributeMap &&
+					attributeMap[ `${ type }-${ item.id }` ] ) ||
+					{} ),
 			};
 		}
 		if ( ! block ) {
