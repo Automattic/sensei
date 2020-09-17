@@ -202,7 +202,7 @@ class Sensei_Course_Structure {
 				$lesson_ids[]   = $lesson_id;
 				$lesson_order[] = $lesson_id;
 
-				update_post_meta( $item['id'], '_order_' . $this->course_id, count( $lesson_ids ) );
+				update_post_meta( $lesson_id, '_order_' . $this->course_id, count( $lesson_order ) );
 			}
 		}
 
