@@ -33,6 +33,7 @@ const files = [
 	'data-port/style.scss',
 	'blocks/course-outline/index.js',
 	'blocks/course-outline/style.scss',
+	'blocks/course-outline/style.editor.scss',
 
 	'css/frontend.scss',
 	'css/admin-custom.css',

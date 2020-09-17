@@ -17,7 +17,8 @@ class Sensei_Course_Outline_Block {
 	 * Sensei_Course_Outline_Block constructor.
 	 */
 	public function __construct() {
-		add_action( 'enqueue_block_assets', [ $this, 'enqueue_assets' ] );
+		add_action( 'enqueue_block_assets', [ $this, 'enqueue_block_assets' ] );
+		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_block_editor_assets' ] );
 		add_action( 'init', [ $this, 'register_course_template' ], 101 );
 		add_action( 'init', [ $this, 'register_block' ] );
 	}
@@ -27,13 +28,18 @@ class Sensei_Course_Outline_Block {
 	 *
 	 * @access private
 	 */
-	public function enqueue_assets() {
-		if ( 'course' !== get_post_type() ) {
-			return;
-		}
+	public function enqueue_block_assets() {
+		Sensei()->assets->enqueue( 'sensei-course-outline', 'blocks/course-outline/style.css' );
+	}
 
-		Sensei()->assets->enqueue( 'sensei-course-outline-script', 'blocks/course-outline/index.js' );
-		Sensei()->assets->enqueue( 'sensei-course-outline-style', 'blocks/course-outline/style.css' );
+	/**
+	 * Enqueue editor assets.
+	 *
+	 * @access private
+	 */
+	public function enqueue_block_editor_assets() {
+		Sensei()->assets->enqueue( 'sensei-course-outline', 'blocks/course-outline/index.js' );
+		Sensei()->assets->enqueue( 'sensei-course-outline-editor', 'blocks/course-outline/style.editor.css' );
 	}
 
 	/**
