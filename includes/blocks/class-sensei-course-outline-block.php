@@ -72,7 +72,7 @@ class Sensei_Course_Outline_Block {
 				'render_callback' => [ $this, 'render_course_outline' ],
 				'attributes'      => [
 					'id' => [
-						'type' => 'int',
+						'type' => 'number',
 					],
 				],
 			]
@@ -84,7 +84,7 @@ class Sensei_Course_Outline_Block {
 				'render_callback' => [ $this, 'process_lesson_block' ],
 				'attributes'      => [
 					'id' => [
-						'type' => 'int',
+						'type' => 'number',
 					],
 				],
 			]
@@ -96,7 +96,7 @@ class Sensei_Course_Outline_Block {
 				'render_callback' => [ $this, 'process_module_block' ],
 				'attributes'      => [
 					'id' => [
-						'type' => 'int',
+						'type' => 'number',
 					],
 				],
 			]
