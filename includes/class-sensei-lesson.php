@@ -568,6 +568,10 @@ class Sensei_Lesson {
 					}
 
 					$value = $this->get_submitted_setting_value( $field );
+					if ( null === $value ) {
+						$value = $field['default'];
+					}
+
 					if ( isset( $value ) ) {
 						add_post_meta( $quiz_id, '_' . $field['id'], $value );
 					}
@@ -600,29 +604,34 @@ class Sensei_Lesson {
 
 	} // End post_updated()
 
-	public function get_submitted_setting_value( $field = false ) {
+	/**
+	 * Get setting value from POST data.
+	 *
+	 * @access private
+	 *
+	 * @param  {string} $field Field name.
+	 *
+	 * @return string|null
+	 */
+	public function get_submitted_setting_value( $field ) {
 
 		if ( ! $field ) {
-			return;
+			return null;
 		}
 
-		$value = false;
+		$value = null;
 
-		// Since we don't do any updates here, we can ignore nonce verification.
-		if ( 'quiz_grade_type' == $field['id'] ) {
+		// phpcs:ignore WordPress.Security.NonceVerification -- Only checking the origin page.
+		if ( 'quiz_grade_type' === $field['id'] && isset( $_POST['action'] ) && 'editpost' === $_POST['action'] ) {
 			// phpcs:ignore WordPress.Security.NonceVerification
-			if ( isset( $_POST[ $field['id'] ] ) && 'on' == $_POST[ $field['id'] ] ) {
-				$value = 'auto';
-			} else {
-				$value = 'manual';
-			}
-			return $value;
+			$grade_type_checked = isset( $_POST[ $field['id'] ] ) && 'on' === $_POST[ $field['id'] ];
+			return $grade_type_checked ? 'auto' : 'manual';
 		}
 
-		if ( isset( $_POST[ $field['id'] ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
-			$value = $_POST[ $field['id'] ]; // phpcs:ignore WordPress.Security.NonceVerification
-		} else {
-			$value = $field['default'];
+		// phpcs:ignore WordPress.Security.NonceVerification -- Nonce verified in caller
+		if ( isset( $_POST[ $field['id'] ] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification -- Nonce verified in caller
+			$value = sanitize_text_field( wp_unslash( $_POST[ $field['id'] ] ) );
 		}
 
 		return $value;
