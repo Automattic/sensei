@@ -168,7 +168,7 @@ class Sensei_Course_Outline_Block {
 			$block_class .= ' ' . $attributes['className'];
 		}
 
-		return '		
+		return '
 			<section class="' . $block_class . '">
 				' .
 			implode(
@@ -196,6 +196,7 @@ class Sensei_Course_Outline_Block {
 	 *
 	 * @param array $block Block information.
 	 *
+	 * @access private
 	 * @return string Lesson HTML
 	 */
 	public function render_lesson_block( $block ) {
@@ -211,6 +212,7 @@ class Sensei_Course_Outline_Block {
 	 *
 	 * @param array $block Block information.
 	 *
+	 * @access private
 	 * @return string Module HTML
 	 */
 	public function render_module_block( $block ) {
