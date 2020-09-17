@@ -25,4 +25,7 @@ registerBlockType( 'sensei-lms/course-outline-lesson', {
 	edit( props ) {
 		return <EditLessonBlock { ...props } />;
 	},
+	save( { className } ) {
+		return <div className={ className } />;
+	},
 } );
