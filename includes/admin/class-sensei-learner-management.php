@@ -500,7 +500,7 @@ class Sensei_Learner_Management {
 					break;
 			}
 
-			if ( $altered && ! Sensei_Utils::has_started_course( $post_id, $user_id ) ) {
+			if ( $altered && 'course' === $post_type && ! Sensei_Utils::has_started_course( $post_id, $user_id ) ) {
 				exit( 'removed' );
 			}
 
