@@ -96,13 +96,13 @@ class Sensei_Course_Outline_Block_Test extends WP_UnitTestCase {
 		$mock->expects( $this->once() )->method( 'render_lesson_block' )->with(
 			$this->equalTo(
 				[
-					'id'    => 1,
-					'type'  => 'lesson',
-					'title' => 'Test Lesson',
+					'id'         => 1,
+					'type'       => 'lesson',
+					'title'      => 'Test Lesson',
 					'attributes' => [
 						'id'    => 1,
 						'style' => 'blue',
-					]
+					],
 				]
 			)
 		);
