@@ -18,7 +18,7 @@ $dark-gray: #1a1d20;
 
 .wp-block-sensei-lms-course-outline-module {
 	border: solid 1px $dark-gray;
-	margin-bottom: 25px;
+	margin: 1.5em 0;
 
 	&__name {
 		padding: 15px 25px;
@@ -48,6 +48,10 @@ $dark-gray: #1a1d20;
 	display: flex;
 	align-items: center;
 	padding: 20px 25px;
+	> a {
+		color: inherit;
+	}
+
 	.entry-content & {
 		margin: 0;
 	}
