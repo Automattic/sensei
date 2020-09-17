@@ -26,9 +26,17 @@ registerBlockType( 'sensei-lms/course-outline-lesson', {
 			type: 'string',
 			default: '',
 		},
-		style: {
-			type: 'object',
-			default: {},
+		backgroundColor: {
+			type: 'string',
+		},
+		customBackgroundColor: {
+			type: 'string',
+		},
+		textColor: {
+			type: 'string',
+		},
+		customTextColor: {
+			type: 'string',
 		},
 	},
 	edit( props ) {

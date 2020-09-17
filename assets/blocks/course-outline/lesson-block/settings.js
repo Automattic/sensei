@@ -4,38 +4,44 @@ import {
 	PanelColorSettings,
 } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
-import { colorSetting } from '../../../shared/blocks/settings';
 
 /**
  * Inspector controls for lesson block.
  *
  * @param {Object}   props
- * @param {Function} props.setAttributes
- * @param {Object}   props.style
+ * @param {Object}   props.backgroundColor
+ * @param {Object}   props.textColor
+ * @param {Function} props.setTextColor
+ * @param {Function} props.setBackgroundColor
  */
-export function LessonBlockSettings( { style, setAttributes } ) {
+export function LessonBlockSettings( {
+	backgroundColor,
+	textColor,
+	setTextColor,
+	setBackgroundColor,
+} ) {
 	return (
 		<InspectorControls>
 			<PanelColorSettings
 				title={ __( 'Color settings', 'sensei-lms' ) }
 				colorSettings={ [
-					colorSetting(
-						'backgroundColor',
-						__( 'Background color', 'sensei-lms' ),
-						{ style, setAttributes }
-					),
-					colorSetting(
-						'textColor',
-						__( 'Text color', 'sensei-lms' ),
-						{ style, setAttributes }
-					),
+					{
+						value: backgroundColor.color,
+						label: __( 'Background color', 'sensei-lms' ),
+						onChange: setBackgroundColor,
+					},
+					{
+						value: textColor.color,
+						label: __( 'Text color', 'sensei-lms' ),
+						onChange: setTextColor,
+					},
 				] }
 			>
 				{
 					<ContrastChecker
 						{ ...{
-							textColor: style.textColor,
-							backgroundColor: style.mainColor,
+							textColor: textColor.color,
+							backgroundColor: backgroundColor.color,
 						} }
 						isLargeText={ false }
 					/>
