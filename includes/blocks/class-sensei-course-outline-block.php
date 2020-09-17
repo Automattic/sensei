@@ -69,7 +69,7 @@ class Sensei_Course_Outline_Block {
 		register_block_type(
 			'sensei-lms/course-outline',
 			[
-				'render_callback' => [ $this, 'render_callback' ],
+				'render_callback' => [ $this, 'render_course_outline' ],
 				'attributes'      => [
 					'id' => [
 						'type' => 'int',
@@ -81,7 +81,7 @@ class Sensei_Course_Outline_Block {
 		register_block_type(
 			'sensei-lms/course-outline-lesson',
 			[
-				'render_callback' => [ $this, 'render_lesson' ],
+				'render_callback' => [ $this, 'process_lesson_block' ],
 				'attributes'      => [
 					'id' => [
 						'type' => 'int',
@@ -93,7 +93,7 @@ class Sensei_Course_Outline_Block {
 		register_block_type(
 			'sensei-lms/course-outline-module',
 			[
-				'render_callback' => [ $this, 'render_module' ],
+				'render_callback' => [ $this, 'process_module_block' ],
 				'attributes'      => [
 					'id' => [
 						'type' => 'int',
@@ -110,8 +110,8 @@ class Sensei_Course_Outline_Block {
 	 *
 	 * @return string
 	 */
-	public function render_lesson( $attributes ) {
-		$block_attributes['lesson'][ $attributes['id'] ] = $attributes;
+	public function process_lesson_block( $attributes ) {
+		$this->block_attributes['lesson'][ $attributes['id'] ] = $attributes;
 		return '';
 	}
 
@@ -122,8 +122,8 @@ class Sensei_Course_Outline_Block {
 	 *
 	 * @return string
 	 */
-	public function render_module( $attributes ) {
-		$block_attributes['module'][ $attributes['id'] ] = $attributes;
+	public function process_module_block( $attributes ) {
+		$this->block_attributes['module'][ $attributes['id'] ] = $attributes;
 		return '';
 	}
 
