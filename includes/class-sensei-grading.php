@@ -891,7 +891,7 @@ class Sensei_Grading {
 				$all_question_grades[ $question_id ] = $achievable_grade;
 			} elseif ( in_array( $question_type, $autogradable_question_types ) ) {
 				// Get user question grade
-				$question_grade                      = Sensei_Utils::sensei_grade_question_auto( $question_id, $question_type, $answer, $user_id );
+				$question_grade                      = self::grade_question_auto( $question_id, $question_type, $answer, $user_id );
 				$all_question_grades[ $question_id ] = $question_grade;
 				$grade_total                        += $question_grade;
 
