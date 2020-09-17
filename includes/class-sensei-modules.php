@@ -34,9 +34,6 @@ class Sensei_Core_Modules {
 		// Save lesson meta box
 		add_action( 'save_post', array( $this, 'save_lesson_module' ), 10, 1 );
 
-		// Reset the none modules lessons transient
-		add_action( 'save_post', array( 'Sensei_Core_Modules', 'reset_none_modules_transient' ) );
-
 		// Frontend styling
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ) );
 
@@ -1691,8 +1688,7 @@ class Sensei_Core_Modules {
 	 * @param array|string $course_lessons_post_status Post status for lessons. Can be an array of statuses.
 	 *
 	 * @return WP_Query $lessons_query
-	 *@since 1.8.0
-	 *
+	 * @since 1.8.0
 	 */
 	public function get_lessons_query( $course_id, $term_id, $course_lessons_post_status = null ) {
 		global $wp_query;
@@ -1760,7 +1756,7 @@ class Sensei_Core_Modules {
 		$base_args      = [];
 
 		if ( ! empty( $course_modules ) && is_array( $course_modules ) ) {
-			$term_ids = wp_list_pluck( $course_modules, 'term_id' );
+			$term_ids               = wp_list_pluck( $course_modules, 'term_id' );
 			$base_args['tax_query'] = [
 				[
 					'taxonomy' => 'module',
@@ -2298,25 +2294,14 @@ class Sensei_Core_Modules {
 	 * When a course is save make sure to reset the transient set
 	 * for it when determining the none module lessons.
 	 *
-	 * @sine 1.9.0
-	 * @param $post_id
+	 * @since 1.9.0
+	 * @deprecated 3.6.0
+	 *
+	 * @param int $post_id The post ID.
 	 */
 	public static function reset_none_modules_transient( $post_id ) {
-
-		// this should only apply to course and lesson post types
-		if ( in_array( get_post_type( $post_id ), array( 'course', 'lesson' ) ) ) {
-
-			$course_id = '';
-
-			if ( 'lesson' == get_post_type( $post_id ) ) {
-
-				$course_id = Sensei()->lesson->get_course_id( $post_id );
-
-			}
-
-		} // end if is a course or a lesson
-
-	} // end reset_none_modules_transient
+		_deprecated_function( __METHOD__, '3.6.0' );
+	}
 
 	/**
 	 * Setup the single course module loop.
