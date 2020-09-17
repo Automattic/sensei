@@ -121,6 +121,7 @@ class Sensei_Course_Outline_Block {
 	 * Extract attributes from module block.
 	 *
 	 * @param array $attributes
+	 *
 	 * @access private
 	 * @return string
 	 */
@@ -133,6 +134,7 @@ class Sensei_Course_Outline_Block {
 	 * Extract attributes from module block.
 	 *
 	 * @param array $attributes
+	 *
 	 * @access private
 	 * @return string
 	 */
@@ -214,11 +216,11 @@ class Sensei_Course_Outline_Block {
 	 * @return string Lesson HTML
 	 */
 	protected function render_lesson_block( $block ) {
-		$style = $block['attributes']['style'] ?? [];
+
+		$css = Sensei_Course_Block_Helpers::build_styles( $block );
 		return '
-			<h3 style="' . self::style_attr( $style, [ 'background-color' => 'backgroundColor' ] ) . '" class="wp-block-sensei-lms-course-outline-lesson">
+			<h3 ' . Sensei_Course_Block_Helpers::render_style_attributes( 'wp-block-sensei-lms-course-outline-lesson', $css ) . '>
 				<a
-				style="' . self::style_attr( $style, [ 'color' => 'textColor' ] ) . '"
 				href="' . esc_url( get_permalink( $block['id'] ) ) . '">
 					' . $block['title'] . '
 				</a>
@@ -247,7 +249,7 @@ class Sensei_Course_Outline_Block {
 					' . $block['description'] . '
 				</div>
 						<div class="wp-block-sensei-lms-course-outline-module__lessons-title">
-							<h3 class="wp-block-sensei-lms-course-outline__clean-heading">' . __( 'Lessons', 'sensei-lms' ) . '</h3>
+							<div class="wp-block-sensei-lms-course-outline__clean-heading">' . __( 'Lessons', 'sensei-lms' ) . '</div>
 						</div>
 					' .
 			implode(
@@ -260,25 +262,6 @@ class Sensei_Course_Outline_Block {
 			. '
 			</section>
 		';
-	}
-
-	/**
-	 * Create a HTML style attribute.
-	 *
-	 * @param array $block_style Block style attributes.
-	 * @param array $rules       CSS rules, with values being array keys in the block style array.
-	 *
-	 * @return string
-	 */
-	private static function style_attr( $block_style, $rules ) {
-		$result = '';
-		foreach ( $rules as $rule => $value ) {
-			if ( ! empty( $block_style[ $value ] ) ) {
-				$result .= $rule . ': ' . esc_attr( $block_style[ $value ] );
-			}
-		}
-
-		return esc_attr( $result );
 	}
 
 	/**
