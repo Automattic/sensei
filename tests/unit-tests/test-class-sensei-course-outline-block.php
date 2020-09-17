@@ -124,11 +124,12 @@ class Sensei_Course_Outline_Block_Test extends WP_UnitTestCase {
 				'innerContent' => [ [] ],
 				'innerBlocks'  => [
 					[
-						'blockName' => 'sensei-lms/course-outline-lesson',
-						'attrs'     => [
+						'blockName'    => 'sensei-lms/course-outline-lesson',
+						'attrs'        => [
 							'id'    => 1,
 							'style' => 'blue',
 						],
+						'innerContent' => [],
 					],
 				],
 			]
