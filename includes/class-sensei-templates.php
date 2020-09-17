@@ -220,7 +220,7 @@ class Sensei_Templates {
 			$find[] = $file;
 			$find[] = Sensei()->template_url . $file;
 
-		} elseif ( is_tax( 'lesson-tag' ) ) {
+		} elseif ( is_tax( 'lesson-tag' ) || is_post_type_archive( 'lesson' ) ) {
 
 			// possible backward compatible template include if theme overrides 'taxonomy-lesson-tag.php'
 			// this template was removed in 1.9.0 and replaced by archive-lesson.php
