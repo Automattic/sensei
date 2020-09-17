@@ -1750,64 +1750,29 @@ class Sensei_Core_Modules {
 	 * @return array $non_module_lessons
 	 */
 	public function get_none_module_lessons( $course_id, $post_status = 'publish' ) {
-
-		$non_module_lessons = array();
-
-		// exit if there is no course id passed in
-		if ( empty( $course_id ) || 'course' != get_post_type( $course_id ) ) {
-
-			return $non_module_lessons;
+		// Return early if no course was passed.
+		if ( empty( $course_id ) || 'course' !== get_post_type( $course_id ) ) {
+			return [];
 		}
 
-		// create terms array which must be excluded from other arrays
+		// Fetch terms array which must be excluded from the result.
 		$course_modules = $this->get_course_modules( $course_id );
+		$base_args      = [];
 
-		// exit if there are no module on this course
-		if ( empty( $course_modules ) || ! is_array( $course_modules ) ) {
-
-			return Sensei()->course->course_lessons( $course_id, $post_status );
-
-		}
-
-		$terms = array();
-		foreach ( $course_modules as $module ) {
-
-			array_push( $terms, $module->term_id );
-
-		}
-
-		$args = array(
-			'post_type'        => 'lesson',
-			'post_status'      => $post_status,
-			'posts_per_page'   => -1,
-			'meta_query'       => array(
-				array(
-					'key'     => '_lesson_course',
-					'value'   => intval( $course_id ),
-					'compare' => '=',
-				),
-			),
-			'tax_query'        => array(
-				array(
+		if ( ! empty( $course_modules ) && is_array( $course_modules ) ) {
+			$term_ids = wp_list_pluck( $course_modules, 'term_id' );
+			$base_args['tax_query'] = [
+				[
 					'taxonomy' => 'module',
 					'field'    => 'id',
-					'terms'    => $terms,
+					'terms'    => $term_ids,
 					'operator' => 'NOT IN',
-				),
-			),
-			'orderby'          => 'menu_order',
-			'order'            => 'ASC',
-			'suppress_filters' => 0,
-		);
-
-		$wp_lessons_query = new WP_Query( $args );
-
-		if ( isset( $wp_lessons_query->posts ) && count( $wp_lessons_query->posts ) > 0 ) {
-			$non_module_lessons = $wp_lessons_query->get_posts();
+				],
+			];
 		}
 
-		return $non_module_lessons;
-	} // end get_none_module_lessons
+		return Sensei()->course->course_lessons( $course_id, $post_status, 'all', $base_args );
+	}
 
 	/**
 	 * Register the modules taxonomy

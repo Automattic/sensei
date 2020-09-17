@@ -1090,31 +1090,40 @@ class Sensei_Course {
 	 * course_lessons function.
 	 *
 	 * @access public
-	 * @param int    $course_id (default: 0)
+	 * @param int    $course_id   (default: 0)
 	 * @param string $post_status (default: 'publish')
-	 * @param string $fields (default: 'all'). WP only allows 3 types, but we will limit it to only 'ids' or 'all'
+	 * @param string $fields      (default: 'all'). WP only allows 3 types, but we will limit it to only 'ids' or 'all'
+	 * @param array  $base_args   Base arguments for the WP query.
+	 *
 	 * @return array{ type WP_Post }  $posts_array
 	 */
-	public function course_lessons( $course_id = 0, $post_status = 'publish', $fields = 'all' ) {
+	public function course_lessons( $course_id = 0, $post_status = 'publish', $fields = 'all', $base_args = [] ) {
 
 		if ( is_a( $course_id, 'WP_Post' ) ) {
 			$course_id = $course_id->ID;
 		}
 
-		$post_args     = array(
-			'post_type'        => 'lesson',
-			'posts_per_page'   => -1,
-			'orderby'          => 'date',
-			'order'            => 'ASC',
-			'meta_query'       => array(
-				array(
-					'key'   => '_lesson_course',
-					'value' => intval( $course_id ),
-				),
-			),
-			'post_status'      => $post_status,
-			'suppress_filters' => 0,
+		$post_args = array_merge(
+			$base_args,
+			[
+				'post_type'        => 'lesson',
+				'posts_per_page'   => -1,
+				'orderby'          => 'date',
+				'order'            => 'ASC',
+				'post_status'      => $post_status,
+				'suppress_filters' => 0,
+			]
 		);
+
+		if ( ! isset( $post_args['meta_query'] ) ) {
+			$post_args['meta_query'] = [];
+		}
+
+		$post_args['meta_query'][] = [
+			'key'   => '_lesson_course',
+			'value' => intval( $course_id ),
+		];
+
 		$query_results = new WP_Query( $post_args );
 		$lessons       = $query_results->posts;
 
