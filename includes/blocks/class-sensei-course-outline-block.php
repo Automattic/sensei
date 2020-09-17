@@ -199,7 +199,7 @@ class Sensei_Course_Outline_Block {
 	 * @access private
 	 * @return string Lesson HTML
 	 */
-	public function render_lesson_block( $block ) {
+	protected function render_lesson_block( $block ) {
 		return '
 			<a class="wp-block-sensei-lms-course-outline-lesson" href="#">
 				' . $block['title'] . '
@@ -215,7 +215,7 @@ class Sensei_Course_Outline_Block {
 	 * @access private
 	 * @return string Module HTML
 	 */
-	public function render_module_block( $block ) {
+	protected function render_module_block( $block ) {
 		if ( empty( $block['lessons'] ) ) {
 			return '';
 		}
