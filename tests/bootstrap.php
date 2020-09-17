@@ -137,5 +137,8 @@ class Sensei_Unit_Tests_Bootstrap {
 		return self::$instance;
 	}
 }
+
+define( 'SENSEI_FEATURE_FLAG_COURSE_OUTLINE', true );
+
 Sensei_Unit_Tests_Bootstrap::instance();
 
