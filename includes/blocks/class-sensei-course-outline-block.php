@@ -180,9 +180,9 @@ class Sensei_Course_Outline_Block {
 			implode(
 				'',
 				array_map(
-					function( $block ) {
+					function( $block ) use ( $post ) {
 						if ( 'module' === $block['type'] ) {
-							return $this->render_module_block( $block );
+							return $this->render_module_block( $block, $post->ID );
 						}
 
 						if ( 'lesson' === $block['type'] ) {
@@ -216,25 +216,24 @@ class Sensei_Course_Outline_Block {
 	/**
 	 * Get module block HTML.
 	 *
-	 * @param array $block Block information.
+	 * @param array $block     Block information.
+	 * @param int   $course_id The course id.
 	 *
 	 * @access private
 	 * @return string Module HTML
 	 */
-	protected function render_module_block( $block ) {
+	protected function render_module_block( $block, $course_id ) {
 		if ( empty( $block['lessons'] ) ) {
 			return '';
 		}
+
+		$progress_indicator = $this->get_progress_indicator( $block['id'], $course_id );
+
 		return '
 			<section class="wp-block-sensei-lms-course-outline-module">
 				<header class="wp-block-sensei-lms-course-outline-module__name">
 					<h2 class="wp-block-sensei-lms-course-outline__clean-heading">' . $block['title'] . '</h2>
-					<div
-						class="wp-block-sensei-lms-course-outline__progress-indicator"
-						style="background-color: ' . $block['indicator-color'] . '"
-					>
-						<span class="wp-block-sensei-lms-course-outline__progress-indicator__text"> ' . $block['indicator-text'] . ' </span>
-					</div>
+					' . $progress_indicator . '
 				</header>
 				<div class="wp-block-sensei-lms-course-outline-module__description">
 					' . $block['description'] . '
@@ -252,6 +251,40 @@ class Sensei_Course_Outline_Block {
 			)
 			. '
 			</section>
+		';
+	}
+
+	/**
+	 * Get progress indicator HTML.
+	 *
+	 * @param array $module_id The module id.
+	 * @param int   $course_id The course id.
+	 *
+	 * @return string Module HTML
+	 */
+	private function get_progress_indicator( $module_id, $course_id ) {
+
+		$module_progress = Sensei()->modules->get_user_module_progress( $module_id, $course_id, get_current_user_id() );
+
+		if ( empty( $module_progress ) ) {
+			return '';
+		}
+
+		if ( $module_progress < 100 ) {
+			$module_status   = __( 'COMPLETED', 'sensei-lms' );
+			$indicator_color = '#63a95f';
+		} else {
+			$module_status   = __( 'IN PROGRESS', 'sensei-lms' );
+			$indicator_color = '#c6c6c6';
+		}
+
+		return '
+					<div
+						class="wp-block-sensei-lms-course-outline__progress-indicator"
+						style="background-color: ' . $indicator_color . '"
+					>
+						<span class="wp-block-sensei-lms-course-outline__progress-indicator__text"> ' . $module_status . ' </span>
+					</div>
 		';
 	}
 
