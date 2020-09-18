@@ -2,13 +2,16 @@ import { ButtonGroup, Button, BaseControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 /**
- * A component which controls the module status preview. Is contains a group of radio buttons and a description.
+ * A component which controls the module status preview. Is contains a group of buttons and a description.
  *
- * @param {Object}   props                  Component props.
- * @param {string}   props.previewStatus    The radio button that is selected.
- * @param {Function} props.setPreviewStatus A callback which is called when a new option is selected.
+ * @param {Object}   props                       Component props.
+ * @param {boolean}  props.isPreviewCompleted    True if the 'Completed' preview is enabled.
+ * @param {Function} props.setIsPreviewCompleted A callback which is called when a button is clicked.
  */
-export const RadioGroupControl = ( { previewStatus, setPreviewStatus } ) => {
+export const ModuleStatusControl = ( {
+	isPreviewCompleted,
+	setIsPreviewCompleted,
+} ) => {
 	const id = 'inspector-module-status-control';
 
 	return (
@@ -22,17 +25,16 @@ export const RadioGroupControl = ( { previewStatus, setPreviewStatus } ) => {
 			<ButtonGroup
 				aria-label={ __( 'Status preview', 'sensei-lms' ) }
 				aria-describedby={ id + '__help' }
-				checked={ previewStatus }
 			>
 				<Button
-					isPrimary={ 'in-progress' === previewStatus }
-					onClick={ () => setPreviewStatus( 'in-progress' ) }
+					isPrimary={ ! isPreviewCompleted }
+					onClick={ () => setIsPreviewCompleted( false ) }
 				>
 					{ __( 'In Progress', 'sensei-lms' ) }
 				</Button>
 				<Button
-					isPrimary={ 'completed' === previewStatus }
-					onClick={ () => setPreviewStatus( 'completed' ) }
+					isPrimary={ isPreviewCompleted }
+					onClick={ () => setIsPreviewCompleted( true ) }
 				>
 					{ __( 'Completed', 'sensei-lms' ) }
 				</Button>

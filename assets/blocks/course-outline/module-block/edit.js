@@ -9,7 +9,7 @@ import { useState } from '@wordpress/element';
 import classnames from 'classnames';
 
 import SingleLineInput from '../single-line-input';
-import { RadioGroupControl } from './radio-group-control';
+import { ModuleStatusControl } from './module-status-control';
 
 /**
  * Edit module block component.
@@ -44,12 +44,12 @@ const EditModuleBlock = ( {
 		setAttributes( { description: value } );
 	};
 
-	const [ previewStatus, setPreviewStatus ] = useState( 'in-progress' );
+	const [ isPreviewCompleted, setIsPreviewCompleted ] = useState( false );
 
 	let indicatorText = __( 'In Progress', 'sensei-lms' );
 	let indicatorClass = null;
 
-	if ( 'completed' === previewStatus ) {
+	if ( isPreviewCompleted ) {
 		indicatorText = __( 'Completed', 'sensei-lms' );
 		indicatorClass = 'completed';
 	}
@@ -61,9 +61,9 @@ const EditModuleBlock = ( {
 					title={ __( 'Status', 'sensei-lms' ) }
 					initialOpen={ true }
 				>
-					<RadioGroupControl
-						previewStatus={ previewStatus }
-						setPreviewStatus={ setPreviewStatus }
+					<ModuleStatusControl
+						isPreviewCompleted={ isPreviewCompleted }
+						setIsPreviewCompleted={ setIsPreviewCompleted }
 					/>
 				</PanelBody>
 			</InspectorControls>
