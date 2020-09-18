@@ -1,8 +1,4 @@
-import {
-	__experimentalRadio as Radio,
-	__experimentalRadioGroup as RadioGroup,
-	BaseControl,
-} from '@wordpress/components';
+import { ButtonGroup, Button, BaseControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -23,19 +19,24 @@ export const RadioGroupControl = ( { previewStatus, setPreviewStatus } ) => {
 				'sensei-lms'
 			) }
 		>
-			<RadioGroup
+			<ButtonGroup
 				aria-label={ __( 'Status preview', 'sensei-lms' ) }
 				aria-describedby={ id + '__help' }
 				checked={ previewStatus }
-				onChange={ ( status ) => setPreviewStatus( status ) }
 			>
-				<Radio value="in-progress">
+				<Button
+					isPrimary={ 'in-progress' === previewStatus }
+					onClick={ () => setPreviewStatus( 'in-progress' ) }
+				>
 					{ __( 'In Progress', 'sensei-lms' ) }
-				</Radio>
-				<Radio value="completed">
+				</Button>
+				<Button
+					isPrimary={ 'completed' === previewStatus }
+					onClick={ () => setPreviewStatus( 'completed' ) }
+				>
 					{ __( 'Completed', 'sensei-lms' ) }
-				</Radio>
-			</RadioGroup>
+				</Button>
+			</ButtonGroup>
 		</BaseControl>
 	);
 };
