@@ -542,7 +542,7 @@ class Sensei_Lesson {
 			foreach ( $settings as $field ) {
 				if ( 'random_question_order' != $field['id'] ) {
 					$value = $this->get_submitted_setting_value( $field );
-					if ( isset( $value ) ) {
+					if ( isset( $value ) && $value !== '-1' ) {
 						update_post_meta( $quiz_id, '_' . $field['id'], $value );
 					}
 				}
@@ -620,6 +620,10 @@ class Sensei_Lesson {
 		}
 
 		$value = null;
+
+		if ( isset( $_POST[ 'contains_' . $field['id'] ] ) ) {
+			$value = '';
+		}
 
 		// phpcs:ignore WordPress.Security.NonceVerification -- Only checking the origin page.
 		if ( 'quiz_grade_type' === $field['id'] && isset( $_POST['action'] ) && 'editpost' === $_POST['action'] ) {

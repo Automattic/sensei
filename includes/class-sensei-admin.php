@@ -1051,6 +1051,12 @@ class Sensei_Admin {
 					$html .= checked( $checked_value, $data, false );
 					$html .= disabled( $field['disabled'], true, false );
 					$html .= " /> \n";
+
+					// Input hidden to identify if checkbox is present.
+					$html .= '<input type="hidden" ';
+					$html .= 'name="contains_' . esc_attr( $field['id'] ) . '" ';
+					$html .= 'value="1" ';
+					$html .= " /> \n";
 					break;
 
 				case 'checkbox_multi':
