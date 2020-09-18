@@ -13,7 +13,7 @@ import { __ } from '@wordpress/i18n';
  * @param {Function} props.setPreviewStatus A callback which is called when a new option is selected.
  */
 export const RadioGroupControl = ( { previewStatus, setPreviewStatus } ) => {
-	const id = 'inspector-radio-group-control';
+	const id = 'inspector-module-status-control';
 
 	return (
 		<BaseControl
