@@ -184,6 +184,8 @@ class Sensei_Course_Outline_Block {
 			$block_class .= ' ' . $attributes['className'];
 		}
 
+		Sensei()->assets->enqueue( 'sensei-single-course', 'js/frontend/single-course.js', [ 'jquery' ], true );
+
 		return '
 			<section class="' . $block_class . '">
 				' .
@@ -249,22 +251,25 @@ class Sensei_Course_Outline_Block {
 				<header class="wp-block-sensei-lms-course-outline-module__name">
 					<h2 class="wp-block-sensei-lms-course-outline__clean-heading">' . $block['title'] . '</h2>
 					' . $progress_indicator . '
+					<div role="button" tabindex="0" class="wp-block-sensei-lms-course-outline__arrow dashicons dashicons-arrow-up-alt2"/>
 				</header>
-				<div class="wp-block-sensei-lms-course-outline-module__description">
-					' . $block['description'] . '
-				</div>
-						<div class="wp-block-sensei-lms-course-outline-module__lessons-title">
-							<div class="wp-block-sensei-lms-course-outline__clean-heading">' . __( 'Lessons', 'sensei-lms' ) . '</div>
-						</div>
-					' .
-			implode(
-				'',
-				array_map(
-					[ $this, 'render_lesson_block' ],
-					$block['lessons']
+				<div class="wp-block-sensei-lms-collapsible">
+					<div class="wp-block-sensei-lms-course-outline-module__description">
+						' . $block['description'] . '
+					</div>
+							<div class="wp-block-sensei-lms-course-outline-module__lessons-title">
+								<div class="wp-block-sensei-lms-course-outline__clean-heading">' . __( 'Lessons', 'sensei-lms' ) . '</div>
+							</div>
+						' .
+				implode(
+					'',
+					array_map(
+						[ $this, 'render_lesson_block' ],
+						$block['lessons']
+					)
 				)
-			)
-			. '
+				. '
+				</div>
 			</section>
 		';
 	}

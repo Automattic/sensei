@@ -15,6 +15,7 @@ const files = [
 	'js/admin/ordering.js',
 	'js/admin/testharness.js',
 	'js/frontend/course-archive.js',
+	'js/frontend/single-course.js',
 	'js/grading-general.js',
 	'js/image-selectors.js',
 	'js/learners-bulk-actions.js',

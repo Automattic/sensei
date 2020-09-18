@@ -54,6 +54,14 @@ const EditModuleBlock = ( {
 		indicatorClass = 'completed';
 	}
 
+	const [ isExpanded, setExpanded ] = useState( true );
+
+	function handleKeyDown( e ) {
+		if ( 13 === e.keyCode ) {
+			setExpanded( ! isExpanded );
+		}
+	}
+
 	return (
 		<>
 			<InspectorControls>
@@ -88,27 +96,48 @@ const EditModuleBlock = ( {
 							{ indicatorText }
 						</span>
 					</div>
-				</header>
-				<div className="wp-block-sensei-lms-course-outline-module__description">
-					<RichText
-						className="wp-block-sensei-lms-course-outline-module__description-input"
-						placeholder={ __(
-							'Description about the module',
-							'sensei-lms'
+					<div
+						className={ classnames(
+							'wp-block-sensei-lms-course-outline__arrow',
+							'dashicons',
+							isExpanded
+								? 'dashicons-arrow-up-alt2'
+								: 'dashicons-arrow-down-alt2'
 						) }
-						value={ description }
-						onChange={ updateDescription }
+						onClick={ () => setExpanded( ! isExpanded ) }
+						onKeyDown={ handleKeyDown }
+						role="button"
+						tabIndex={ 0 }
+					/>
+				</header>
+				<div
+					className={ classnames( 'wp-block-sensei-lms-collapsible', {
+						collapsed: ! isExpanded,
+					} ) }
+				>
+					<div className="wp-block-sensei-lms-course-outline-module__description">
+						<RichText
+							className="wp-block-sensei-lms-course-outline-module__description-input"
+							placeholder={ __(
+								'Description about the module',
+								'sensei-lms'
+							) }
+							value={ description }
+							onChange={ updateDescription }
+						/>
+					</div>
+					<div className="wp-block-sensei-lms-course-outline-module__lessons-title">
+						<h3 className="wp-block-sensei-lms-course-outline__clean-heading">
+							{ __( 'Lessons', 'sensei-lms' ) }
+						</h3>
+					</div>
+					<InnerBlocks
+						template={ [
+							[ 'sensei-lms/course-outline-lesson', {} ],
+						] }
+						allowedBlocks={ [ 'sensei-lms/course-outline-lesson' ] }
 					/>
 				</div>
-				<div className="wp-block-sensei-lms-course-outline-module__lessons-title">
-					<h3 className="wp-block-sensei-lms-course-outline__clean-heading">
-						{ __( 'Lessons', 'sensei-lms' ) }
-					</h3>
-				</div>
-				<InnerBlocks
-					template={ [ [ 'sensei-lms/course-outline-lesson', {} ] ] }
-					allowedBlocks={ [ 'sensei-lms/course-outline-lesson' ] }
-				/>
 			</section>
 		</>
 	);
