@@ -53,6 +53,15 @@ class Sensei_REST_API_Course_Structure_Controller extends \WP_REST_Controller {
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => [ $this, 'get_course_structure' ],
 					'permission_callback' => [ $this, 'can_user_get_structure' ],
+					'args'                => [
+						'context' => [
+							'type'              => 'string',
+							'default'           => 'view',
+							'enum'              => [ 'view', 'edit' ],
+							'sanitize_callback' => 'sanitize_key',
+							'validate_callback' => 'rest_validate_request_arg',
+						],
+					],
 				],
 				[
 					'methods'             => WP_REST_Server::EDITABLE,
@@ -104,7 +113,18 @@ class Sensei_REST_API_Course_Structure_Controller extends \WP_REST_Controller {
 			);
 		}
 
-		return is_user_logged_in() && current_user_can( get_post_type_object( 'course' )->cap->edit_post, $course->ID );
+		return $this->can_current_user_edit_course( $course->ID );
+	}
+
+	/**
+	 * Check user permission for editing a course.
+	 *
+	 * @param int $course_id Course post ID.
+	 *
+	 * @return bool Whether the user can edit the course.
+	 */
+	private function can_current_user_edit_course( $course_id ) {
+		return is_user_logged_in() && current_user_can( get_post_type_object( 'course' )->cap->edit_post, $course_id );
 	}
 
 	/**
@@ -118,8 +138,13 @@ class Sensei_REST_API_Course_Structure_Controller extends \WP_REST_Controller {
 		$course           = $this->get_course( intval( $request->get_param( 'course_id' ) ) );
 		$course_structure = Sensei_Course_Structure::instance( $course->ID );
 
+		$context = 'view';
+		if ( 'edit' === $request['context'] && $this->can_current_user_edit_course( $course->ID ) ) {
+			$context = 'edit';
+		}
+
 		$response = new WP_REST_Response();
-		$response->set_data( $course_structure->get() );
+		$response->set_data( $course_structure->get( $context ) );
 
 		return $response;
 	}
@@ -164,7 +189,7 @@ class Sensei_REST_API_Course_Structure_Controller extends \WP_REST_Controller {
 		}
 
 		$response = new WP_REST_Response();
-		$response->set_data( $course_structure->get() );
+		$response->set_data( $course_structure->get( 'edit' ) );
 
 		return $response;
 	}
@@ -204,6 +229,11 @@ class Sensei_REST_API_Course_Structure_Controller extends \WP_REST_Controller {
 						'title' => [
 							'description' => __( 'Lesson title', 'sensei-lms' ),
 							'type'        => 'string',
+						],
+						'draft' => [
+							'description' => __( 'Whether the lesson is currently a draft', 'sensei-lms' ),
+							'type'        => 'boolean',
+							'readOnly'    => true,
 						],
 					],
 				],

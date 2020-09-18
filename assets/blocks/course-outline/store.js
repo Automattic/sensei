@@ -16,7 +16,7 @@ const actions = {
 	*fetchCourseStructure() {
 		const courseId = yield select( 'core/editor' ).getCurrentPostId();
 		const result = yield apiFetch( {
-			path: `/sensei-internal/v1/course-structure/${ courseId }`,
+			path: `/sensei-internal/v1/course-structure/${ courseId }?context=edit`,
 		} );
 		yield actions.setStructure( result );
 	},

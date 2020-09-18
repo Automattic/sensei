@@ -15,6 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 3.6.0
  */
 class Sensei_Course_Structure {
+	const PUBLISHED_POST_STATUSES = [ 'publish', 'private' ];
+
 	/**
 	 * Course instances.
 	 *
@@ -56,22 +58,29 @@ class Sensei_Course_Structure {
 	/**
 	 * Get the course structure.
 	 *
+	 * @param string $context Context that structure is being retrieved for. Possible values: edit, view.
+	 *
 	 * @return array
 	 */
-	public function get() {
+	public function get( $context = 'view' ) {
+		$context = in_array( $context, [ 'view', 'edit' ], true ) ? $context : 'view';
+
 		$structure = [];
 
-		$all_lessons       = Sensei()->course->course_lessons( $this->course_id, 'any', 'ids' );
-		$no_module_lessons = wp_list_pluck( Sensei()->modules->get_none_module_lessons( $this->course_id, 'any' ), 'ID' );
+		$published_lessons_only = 'view' === $context;
+		$post_status            = $published_lessons_only ? self::PUBLISHED_POST_STATUSES : 'any';
+		$no_module_lessons      = wp_list_pluck( Sensei()->modules->get_none_module_lessons( $this->course_id, $post_status ), 'ID' );
 
-		if ( empty( $all_lessons ) || count( $all_lessons ) !== count( $no_module_lessons ) ) {
-			$modules = $this->get_modules();
-			foreach ( $modules as $module_term ) {
-				$structure[] = $this->prepare_module( $module_term );
+		$modules = $this->get_modules();
+		foreach ( $modules as $module_term ) {
+			$module = $this->prepare_module( $module_term, $post_status );
+
+			if ( ! empty( $module['lessons'] ) || 'edit' === $context ) {
+				$structure[] = $module;
 			}
 		}
 
-		foreach ( array_intersect( $all_lessons, $no_module_lessons ) as $lesson_id ) {
+		foreach ( $no_module_lessons as $lesson_id ) {
 			$lesson = get_post( $lesson_id );
 			if ( ! $lesson ) {
 				continue;
@@ -86,10 +95,11 @@ class Sensei_Course_Structure {
 	/**
 	 * Prepare the result for a module.
 	 *
-	 * @param WP_Term $module_term Module term.
+	 * @param WP_Term      $module_term        Module term.
+	 * @param array|string $lesson_post_status Lesson post status(es).
 	 */
-	private function prepare_module( WP_Term $module_term ) {
-		$lessons = $this->get_module_lessons( $module_term->term_id );
+	private function prepare_module( WP_Term $module_term, $lesson_post_status ) {
+		$lessons = $this->get_module_lessons( $module_term->term_id, $lesson_post_status );
 		$module  = [
 			'type'        => 'module',
 			'id'          => $module_term->term_id,
@@ -117,18 +127,20 @@ class Sensei_Course_Structure {
 			'type'  => 'lesson',
 			'id'    => $lesson_post->ID,
 			'title' => $lesson_post->post_title,
+			'draft' => 'draft' === $lesson_post->post_status,
 		];
 	}
 
 	/**
 	 * Get the lessons for a module.
 	 *
-	 * @param int $module_term_id Term ID for the module.
+	 * @param int          $module_term_id     Term ID for the module.
+	 * @param array|string $lesson_post_status Lesson post status(es).
 	 *
 	 * @return WP_Post[]
 	 */
-	private function get_module_lessons( int $module_term_id ) {
-		$lessons_query = Sensei()->modules->get_lessons_query( $this->course_id, $module_term_id, 'any' );
+	private function get_module_lessons( int $module_term_id, $lesson_post_status ) {
+		$lessons_query = Sensei()->modules->get_lessons_query( $this->course_id, $module_term_id, $lesson_post_status );
 
 		return $lessons_query instanceof WP_Query ? $lessons_query->posts : [];
 	}
@@ -161,7 +173,7 @@ class Sensei_Course_Structure {
 			return $structure;
 		}
 
-		$current_structure                                 = $this->get();
+		$current_structure                                 = $this->get( 'edit' );
 		list( $current_lesson_ids, $current_module_ids,  ) = $this->flatten_structure( $current_structure );
 
 		$lesson_ids   = [];
@@ -188,7 +200,7 @@ class Sensei_Course_Structure {
 				$lesson_ids[]   = $lesson_id;
 				$lesson_order[] = $lesson_id;
 
-				update_post_meta( $item['id'], '_order_' . $this->course_id, count( $lesson_ids ) );
+				update_post_meta( $lesson_id, '_order_' . $this->course_id, count( $lesson_order ) );
 			}
 		}
 
@@ -209,8 +221,6 @@ class Sensei_Course_Structure {
 		foreach ( $delete_lesson_ids as $lesson_id ) {
 			$this->clear_lesson_associations( $lesson_id );
 		}
-
-		delete_transient( 'sensei_' . $this->course_id . '_none_module_lessons' );
 
 		return true;
 	}

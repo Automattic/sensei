@@ -34,9 +34,6 @@ class Sensei_Core_Modules {
 		// Save lesson meta box
 		add_action( 'save_post', array( $this, 'save_lesson_module' ), 10, 1 );
 
-		// Reset the none modules lessons transient
-		add_action( 'save_post', array( 'Sensei_Core_Modules', 'reset_none_modules_transient' ) );
-
 		// Frontend styling
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ) );
 
@@ -1686,13 +1683,12 @@ class Sensei_Core_Modules {
 	/**
 	 * Returns all lessons for the given module ID
 	 *
-	 * @since 1.8.0
-	 *
-	 * @param int    $course_id                  Course post ID.
-	 * @param int    $term_id                    Module term ID.
-	 * @param string $course_lessons_post_status Post status for lessons.
+	 * @param int          $course_id                  Course post ID.
+	 * @param int          $term_id                    Module term ID.
+	 * @param array|string $course_lessons_post_status Post status for lessons. Can be an array of statuses.
 	 *
 	 * @return WP_Query $lessons_query
+	 * @since 1.8.0
 	 */
 	public function get_lessons_query( $course_id, $term_id, $course_lessons_post_status = null ) {
 		global $wp_query;
@@ -1750,72 +1746,29 @@ class Sensei_Core_Modules {
 	 * @return array $non_module_lessons
 	 */
 	public function get_none_module_lessons( $course_id, $post_status = 'publish' ) {
-
-		$non_module_lessons = array();
-
-		// exit if there is no course id passed in
-		if ( empty( $course_id ) || 'course' != get_post_type( $course_id ) ) {
-
-			return $non_module_lessons;
+		// Return early if no course was passed.
+		if ( empty( $course_id ) || 'course' !== get_post_type( $course_id ) ) {
+			return [];
 		}
 
-		// save some time and check if we already have the saved
-		if ( get_transient( 'sensei_' . $course_id . '_none_module_lessons' ) ) {
-
-			return get_transient( 'sensei_' . $course_id . '_none_module_lessons' );
-
-		}
-
-		// create terms array which must be excluded from other arrays
+		// Fetch terms array which must be excluded from the result.
 		$course_modules = $this->get_course_modules( $course_id );
+		$base_args      = [];
 
-		// exit if there are no module on this course
-		if ( empty( $course_modules ) || ! is_array( $course_modules ) ) {
-
-			return Sensei()->course->course_lessons( $course_id, $post_status );
-
-		}
-
-		$terms = array();
-		foreach ( $course_modules as $module ) {
-
-			array_push( $terms, $module->term_id );
-
-		}
-
-		$args = array(
-			'post_type'        => 'lesson',
-			'post_status'      => $post_status,
-			'posts_per_page'   => -1,
-			'meta_query'       => array(
-				array(
-					'key'     => '_lesson_course',
-					'value'   => intval( $course_id ),
-					'compare' => '=',
-				),
-			),
-			'tax_query'        => array(
-				array(
+		if ( ! empty( $course_modules ) && is_array( $course_modules ) ) {
+			$term_ids               = wp_list_pluck( $course_modules, 'term_id' );
+			$base_args['tax_query'] = [
+				[
 					'taxonomy' => 'module',
 					'field'    => 'id',
-					'terms'    => $terms,
+					'terms'    => $term_ids,
 					'operator' => 'NOT IN',
-				),
-			),
-			'orderby'          => 'menu_order',
-			'order'            => 'ASC',
-			'suppress_filters' => 0,
-		);
-
-		$wp_lessons_query = new WP_Query( $args );
-
-		if ( isset( $wp_lessons_query->posts ) && count( $wp_lessons_query->posts ) > 0 ) {
-			$non_module_lessons = $wp_lessons_query->get_posts();
-			set_transient( 'sensei_' . $course_id . '_none_module_lessons', $non_module_lessons, 10 * DAY_IN_SECONDS );
+				],
+			];
 		}
 
-		return $non_module_lessons;
-	} // end get_none_module_lessons
+		return Sensei()->course->course_lessons( $course_id, $post_status, 'all', $base_args );
+	}
 
 	/**
 	 * Register the modules taxonomy
@@ -2341,30 +2294,14 @@ class Sensei_Core_Modules {
 	 * When a course is save make sure to reset the transient set
 	 * for it when determining the none module lessons.
 	 *
-	 * @sine 1.9.0
-	 * @param $post_id
+	 * @since 1.9.0
+	 * @deprecated 3.6.0
+	 *
+	 * @param int $post_id The post ID.
 	 */
 	public static function reset_none_modules_transient( $post_id ) {
-
-		// this should only apply to course and lesson post types
-		if ( in_array( get_post_type( $post_id ), array( 'course', 'lesson' ) ) ) {
-
-			$course_id = '';
-
-			if ( 'lesson' == get_post_type( $post_id ) ) {
-
-				$course_id = Sensei()->lesson->get_course_id( $post_id );
-
-			}
-
-			if ( ! empty( $course_id ) ) {
-
-				delete_transient( 'sensei_' . $course_id . '_none_module_lessons' );
-
-			}
-		} // end if is a course or a lesson
-
-	} // end reset_none_modules_transient
+		_deprecated_function( __METHOD__, '3.6.0' );
+	}
 
 	/**
 	 * Setup the single course module loop.
