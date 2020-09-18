@@ -13,6 +13,17 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Class Sensei_Course_Outline_Block
  */
 class Sensei_Course_Outline_Block {
+
+	/**
+	 * Attributes for inner blocks.
+	 *
+	 * @var array[]
+	 */
+	private $block_attributes = [
+		'lesson' => [],
+		'module' => [],
+	];
+
 	/**
 	 * Sensei_Course_Outline_Block constructor.
 	 */
@@ -20,7 +31,7 @@ class Sensei_Course_Outline_Block {
 		add_action( 'enqueue_block_assets', [ $this, 'enqueue_block_assets' ] );
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_block_editor_assets' ] );
 		add_action( 'init', [ $this, 'register_course_template' ], 101 );
-		add_action( 'init', [ $this, 'register_block' ] );
+		add_action( 'init', [ $this, 'register_blocks' ] );
 	}
 
 	/**
@@ -60,17 +71,38 @@ class Sensei_Course_Outline_Block {
 	 *
 	 * @access private
 	 */
-	public function register_block() {
+	public function register_blocks() {
 		register_block_type(
 			'sensei-lms/course-outline',
 			[
-				'render_callback' => [ $this, 'render_callback' ],
+				'render_callback' => [ $this, 'render_course_outline_block' ],
 				'attributes'      => [
-					'id'     => [
-						'type' => 'int',
+					'id' => [
+						'type' => 'number',
 					],
-					'blocks' => [
-						'type' => 'object',
+				],
+			]
+		);
+
+		register_block_type(
+			'sensei-lms/course-outline-lesson',
+			[
+				'render_callback' => [ $this, 'process_lesson_block' ],
+				'attributes'      => [
+					'id' => [
+						'type' => 'number',
+					],
+				],
+			]
+		);
+
+		register_block_type(
+			'sensei-lms/course-outline-module',
+			[
+				'render_callback' => [ $this, 'process_module_block' ],
+				'attributes'      => [
+					'id' => [
+						'type' => 'number',
 					],
 				],
 			]
@@ -78,24 +110,48 @@ class Sensei_Course_Outline_Block {
 	}
 
 	/**
-	 * Add attributes to inner blocks from the Outline block.
+	 * Extract attributes from module block.
 	 *
-	 * @param array $structure  Course structure.
-	 * @param array $attributes Outline block attributes.
+	 * @param array $attributes
+	 * @access private
+	 * @return string
 	 */
-	private static function add_block_attributes( &$structure, $attributes ) {
+	public function process_lesson_block( $attributes ) {
+		$this->block_attributes['lesson'][ $attributes['id'] ] = $attributes;
+		return '';
+	}
+
+	/**
+	 * Extract attributes from module block.
+	 *
+	 * @param array $attributes
+	 * @access private
+	 * @return string
+	 */
+	public function process_module_block( $attributes ) {
+		$this->block_attributes['module'][ $attributes['id'] ] = $attributes;
+		return '';
+	}
+
+	/**
+	 * Add attributes from matching blocks to modules and lessons in course structure.
+	 *
+	 * @param array $structure Course structure.
+	 */
+	private function add_block_attributes( &$structure ) {
 		if ( empty( $structure ) ) {
 			return;
 		}
-		$block_attributes = $attributes['blocks'] ?? [];
 		foreach ( $structure as &$block ) {
-			$block['attributes'] = $block_attributes[ $block['type'] . '-' . $block['id'] ] ?? [];
-			self::add_block_attributes( $block['lessons'], $attributes );
+			$block['attributes'] = $this->block_attributes[ $block['type'] ][ $block['id'] ] ?? [];
+			if ( ! empty( $block['lessons'] ) ) {
+				self::add_block_attributes( $block['lessons'] );
+			}
 		}
 	}
 
 	/**
-	 * Render dynamic block.
+	 * Render Course Outline block.
 	 *
 	 * @access private
 	 *
@@ -103,7 +159,7 @@ class Sensei_Course_Outline_Block {
 	 *
 	 * @return string Block HTML.
 	 */
-	public function render_callback( $attributes ) {
+	public function render_course_outline_block( $attributes ) {
 
 		global $post;
 
@@ -111,14 +167,14 @@ class Sensei_Course_Outline_Block {
 
 		$this->disable_course_legacy_content();
 
-		self::add_block_attributes( $structure, $attributes );
+		$this->add_block_attributes( $structure );
 
 		$block_class = 'wp-block-sensei-lms-course-outline';
 		if ( isset( $attributes['className'] ) ) {
 			$block_class .= ' ' . $attributes['className'];
 		}
 
-		return '		
+		return '
 			<section class="' . $block_class . '">
 				' .
 			implode(
@@ -126,11 +182,11 @@ class Sensei_Course_Outline_Block {
 				array_map(
 					function( $block ) {
 						if ( 'module' === $block['type'] ) {
-							return $this->get_module_block_html( $block );
+							return $this->render_module_block( $block );
 						}
 
 						if ( 'lesson' === $block['type'] ) {
-							return $this->get_lesson_block_html( $block );
+							return $this->render_lesson_block( $block );
 						}
 					},
 					$structure
@@ -146,9 +202,10 @@ class Sensei_Course_Outline_Block {
 	 *
 	 * @param array $block Block information.
 	 *
+	 * @access private
 	 * @return string Lesson HTML
 	 */
-	private function get_lesson_block_html( $block ) {
+	protected function render_lesson_block( $block ) {
 		return '
 			<a class="wp-block-sensei-lms-course-outline-lesson" href="#">
 				' . $block['title'] . '
@@ -161,9 +218,10 @@ class Sensei_Course_Outline_Block {
 	 *
 	 * @param array $block Block information.
 	 *
+	 * @access private
 	 * @return string Module HTML
 	 */
-	private function get_module_block_html( $block ) {
+	protected function render_module_block( $block ) {
 		if ( empty( $block['lessons'] ) ) {
 			return '';
 		}
@@ -182,7 +240,7 @@ class Sensei_Course_Outline_Block {
 			implode(
 				'',
 				array_map(
-					[ $this, 'get_lesson_block_html' ],
+					[ $this, 'render_lesson_block' ],
 					$block['lessons']
 				)
 			)

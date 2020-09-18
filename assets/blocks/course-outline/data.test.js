@@ -101,7 +101,7 @@ describe( 'syncStructureToBlocks', () => {
 			},
 		];
 
-		const newBlocks = syncStructureToBlocks( changed, blocks, [] );
+		const newBlocks = syncStructureToBlocks( changed, blocks );
 
 		expect( newBlocks ).toEqual( [
 			{
