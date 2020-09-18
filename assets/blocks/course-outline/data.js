@@ -1,5 +1,5 @@
 import { createBlock } from '@wordpress/blocks';
-import { invert, omit } from 'lodash';
+import { invert } from 'lodash';
 
 /**
  * Course structure data.
@@ -35,18 +35,16 @@ export const blockTypes = invert( blockNames );
  * Matches blocks based on lesson/module ID.
  *
  * @param {CourseStructure} structure
- * @param {Object[]}        blocks       Existing blocks.
- * @param {Object[]}        attributeMap Attributes for inner blocks.
+ * @param {Object[]}        blocks    Existing blocks.
  * @return {Object[]} Updated blocks.
  */
-export const syncStructureToBlocks = ( structure, blocks, attributeMap ) => {
+export const syncStructureToBlocks = ( structure, blocks ) => {
 	return ( structure || [] ).map( ( item ) => {
 		let { type, lessons, ...attributes } = item;
 		let block = findBlock( blocks, item );
 		if ( item.id ) {
 			attributes = {
 				...attributes,
-				...( attributeMap[ `${ type }-${ item.id }` ] || {} ),
 			};
 		}
 		if ( ! block ) {
@@ -58,8 +56,7 @@ export const syncStructureToBlocks = ( structure, blocks, attributeMap ) => {
 		if ( 'module' === type ) {
 			block.innerBlocks = syncStructureToBlocks(
 				lessons,
-				block.innerBlocks,
-				attributeMap
+				block.innerBlocks
 			);
 		}
 
@@ -112,30 +109,3 @@ export const extractStructure = ( blocks ) => {
 		} )
 		.filter( ( block ) => !! block.title );
 };
-
-/**
- * Get a map of non-structure attributes for the inner blocks,
- * indexed by post type and ID.
- *
- * @param {CourseStructure} structure Structure extracted from blocks.
- * @return {Object} Block attribute map.
- */
-export function getChildBlockAttributes( structure ) {
-	if ( ! structure ) return {};
-
-	return structure.reduce( ( result, block ) => {
-		if ( block.id )
-			result[ `${ block.type }-${ block.id }` ] = omit( block, [
-				'title',
-				'description',
-				'lessons',
-				'id',
-				'type',
-			] );
-		return { ...result, ...getChildBlockAttributes( block.lessons ) };
-	}, {} );
-}
-
-export function applyBlockAttributes( { id, type }, blockAttributes ) {
-	return blockAttributes[ `${ type }-${ id }` ];
-}

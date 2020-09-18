@@ -62,7 +62,7 @@ class Sensei_Course_Structure {
 	 *
 	 * @return array
 	 */
-	public function get( $context = 'view' ) : array {
+	public function get( $context = 'view' ) {
 		$context = in_array( $context, [ 'view', 'edit' ], true ) ? $context : 'view';
 
 		$structure = [];
@@ -150,7 +150,7 @@ class Sensei_Course_Structure {
 	 *
 	 * @return WP_Term[]
 	 */
-	private function get_modules() : array {
+	private function get_modules() {
 		$modules = Sensei()->modules->get_course_modules( $this->course_id );
 
 		if ( is_wp_error( $modules ) ) {
@@ -481,7 +481,7 @@ class Sensei_Course_Structure {
 	 *     @type array $2 $module_titles All the module titles.
 	 * }
 	 */
-	private function flatten_structure( array $structure ) : array {
+	private function flatten_structure( array $structure ) {
 		$lesson_ids    = [];
 		$module_ids    = [];
 		$module_titles = [];

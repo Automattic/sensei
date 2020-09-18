@@ -3220,16 +3220,15 @@ class Sensei_Course {
 			return;
 		}
 
-		$category_slug = get_query_var( 'course-category' );
-		$term          = get_term_by( 'slug', $category_slug, 'course-category' );
+		$term = get_queried_object();
 
 		if ( ! empty( $term ) ) {
 
-			$title = __( 'Category', 'sensei-lms' ) . ' ' . $term->name;
+			$title = __( 'Course Category:', 'sensei-lms' ) . ' ' . $term->name;
 
 		} else {
 
-			$title = 'Course Category';
+			$title = __( 'Course Category', 'sensei-lms' );
 
 		}
 
