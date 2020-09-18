@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Sensei_Course_Block_Helpers
  */
-class Sensei_Course_Block_Helpers {
+class Sensei_Block_Helpers {
 
 
 	/**
