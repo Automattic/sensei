@@ -73,7 +73,7 @@ class Sensei_Course_Structure {
 
 		$modules = $this->get_modules();
 		foreach ( $modules as $module_term ) {
-			$module = $this->prepare_module( $module_term, $published_lessons_only );
+			$module = $this->prepare_module( $module_term, $post_status );
 
 			if ( ! empty( $module['lessons'] ) || 'edit' === $context ) {
 				$structure[] = $module;
@@ -95,11 +95,11 @@ class Sensei_Course_Structure {
 	/**
 	 * Prepare the result for a module.
 	 *
-	 * @param WP_Term $module_term            Module term.
-	 * @param bool    $published_lessons_only Only include published lessons.
+	 * @param WP_Term      $module_term        Module term.
+	 * @param array|string $lesson_post_status Lesson post status(es).
 	 */
-	private function prepare_module( WP_Term $module_term, bool $published_lessons_only ) {
-		$lessons = $this->get_module_lessons( $module_term->term_id, $published_lessons_only );
+	private function prepare_module( WP_Term $module_term, $lesson_post_status ) {
+		$lessons = $this->get_module_lessons( $module_term->term_id, $lesson_post_status );
 		$module  = [
 			'type'        => 'module',
 			'id'          => $module_term->term_id,
@@ -134,15 +134,13 @@ class Sensei_Course_Structure {
 	/**
 	 * Get the lessons for a module.
 	 *
-	 * @param int  $module_term_id         Term ID for the module.
-	 * @param bool $published_lessons_only Only include published lessons.
+	 * @param int          $module_term_id     Term ID for the module.
+	 * @param array|string $lesson_post_status Lesson post status(es).
 	 *
 	 * @return WP_Post[]
 	 */
-	private function get_module_lessons( int $module_term_id, bool $published_lessons_only ) {
-		$post_status = $published_lessons_only ? self::PUBLISHED_POST_STATUSES : 'any';
-
-		$lessons_query = Sensei()->modules->get_lessons_query( $this->course_id, $module_term_id, $post_status );
+	private function get_module_lessons( int $module_term_id, $lesson_post_status ) {
+		$lessons_query = Sensei()->modules->get_lessons_query( $this->course_id, $module_term_id, $lesson_post_status );
 
 		return $lessons_query instanceof WP_Query ? $lessons_query->posts : [];
 	}
