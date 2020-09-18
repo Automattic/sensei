@@ -272,16 +272,15 @@ class Sensei_Course_Outline_Block {
 
 		if ( $module_progress < 100 ) {
 			$module_status   = __( 'COMPLETED', 'sensei-lms' );
-			$indicator_color = '#63a95f';
+			$indicator_class = 'completed';
 		} else {
 			$module_status   = __( 'IN PROGRESS', 'sensei-lms' );
-			$indicator_color = '#c6c6c6';
+			$indicator_class = '';
 		}
 
 		return '
 					<div
-						class="wp-block-sensei-lms-course-outline__progress-indicator"
-						style="background-color: ' . $indicator_color . '"
+						class="wp-block-sensei-lms-course-outline__progress-indicator ' . $indicator_class . '"
 					>
 						<span class="wp-block-sensei-lms-course-outline__progress-indicator__text"> ' . $module_status . ' </span>
 					</div>

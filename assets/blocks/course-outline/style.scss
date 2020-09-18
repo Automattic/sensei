@@ -22,6 +22,7 @@ $dark-gray: #1a1d20;
 		align-items: center;
 		height: 10%;
 		flex-basis: 14%;
+		background-color: #FFF;
 
 		&__text {
 			font-weight: normal;
@@ -29,6 +30,10 @@ $dark-gray: #1a1d20;
 			font-size: 14px;
 			color: black;
 			white-space: nowrap;
+		}
+
+		&.completed {
+			background-color: #63A95F;
 		}
 	}
 }

@@ -6,6 +6,7 @@ import {
 } from '@wordpress/block-editor';
 import { PanelBody } from '@wordpress/components';
 import { useState } from '@wordpress/element';
+import classnames from 'classnames';
 
 import SingleLineInput from '../single-line-input';
 import { RadioGroupControl } from './radio-group-control';
@@ -43,14 +44,14 @@ const EditModuleBlock = ( {
 		setAttributes( { description: value } );
 	};
 
-	const [ previewStatus, setPreviewStatus ] = useState( 'completed' );
+	const [ previewStatus, setPreviewStatus ] = useState( 'in-progress' );
 
-	let indicatorText = __( 'COMPLETED', 'sensei-lms' );
-	let indicatorColor = '#63a95f';
+	let indicatorText = __( 'IN PROGRESS', 'sensei-lms' );
+	let indicatorClass = null;
 
-	if ( 'in-progress' === previewStatus ) {
-		indicatorText = __( 'IN PROGRESS', 'sensei-lms' );
-		indicatorColor = '#c6c6c6';
+	if ( 'completed' === previewStatus ) {
+		indicatorText = __( 'COMPLETED', 'sensei-lms' );
+		indicatorClass = 'completed';
 	}
 
 	return (
@@ -78,8 +79,10 @@ const EditModuleBlock = ( {
 						/>
 					</h2>
 					<div
-						className="wp-block-sensei-lms-course-outline__progress-indicator"
-						style={ { backgroundColor: indicatorColor } }
+						className={ classnames(
+							'wp-block-sensei-lms-course-outline__progress-indicator',
+							indicatorClass
+						) }
 					>
 						<span className="wp-block-sensei-lms-course-outline__progress-indicator__text">
 							{ indicatorText }
