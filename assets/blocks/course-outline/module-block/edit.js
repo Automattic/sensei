@@ -46,11 +46,11 @@ const EditModuleBlock = ( {
 
 	const [ previewStatus, setPreviewStatus ] = useState( 'in-progress' );
 
-	let indicatorText = __( 'IN PROGRESS', 'sensei-lms' );
+	let indicatorText = __( 'In Progress', 'sensei-lms' );
 	let indicatorClass = null;
 
 	if ( 'completed' === previewStatus ) {
-		indicatorText = __( 'COMPLETED', 'sensei-lms' );
+		indicatorText = __( 'Completed', 'sensei-lms' );
 		indicatorClass = 'completed';
 	}
 
