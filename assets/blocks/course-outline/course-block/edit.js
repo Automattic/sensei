@@ -2,8 +2,8 @@ import { InnerBlocks } from '@wordpress/block-editor';
 import { useSelect, withSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { CourseOutlinePlaceholder } from './placeholder';
-import { COURSE_STORE } from './store';
-import { useBlocksCreator } from './use-block-creator';
+import { COURSE_STORE } from '../store';
+import { useBlocksCreator } from '../use-block-creator';
 
 /**
  * Edit course outline block component.
