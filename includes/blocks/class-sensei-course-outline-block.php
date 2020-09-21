@@ -40,6 +40,10 @@ class Sensei_Course_Outline_Block {
 	 * @access private
 	 */
 	public function enqueue_block_assets() {
+		if ( 'course' !== get_post_type() ) {
+			return;
+		}
+
 		Sensei()->assets->enqueue( 'sensei-course-outline', 'blocks/course-outline/style.css' );
 	}
 
@@ -49,6 +53,10 @@ class Sensei_Course_Outline_Block {
 	 * @access private
 	 */
 	public function enqueue_block_editor_assets() {
+		if ( 'course' !== get_post_type() ) {
+			return;
+		}
+
 		Sensei()->assets->enqueue( 'sensei-course-outline', 'blocks/course-outline/index.js' );
 		Sensei()->assets->enqueue( 'sensei-course-outline-editor', 'blocks/course-outline/style.editor.css' );
 	}
@@ -113,6 +121,7 @@ class Sensei_Course_Outline_Block {
 	 * Extract attributes from module block.
 	 *
 	 * @param array $attributes
+	 *
 	 * @access private
 	 * @return string
 	 */
@@ -125,6 +134,7 @@ class Sensei_Course_Outline_Block {
 	 * Extract attributes from module block.
 	 *
 	 * @param array $attributes
+	 *
 	 * @access private
 	 * @return string
 	 */
@@ -206,10 +216,15 @@ class Sensei_Course_Outline_Block {
 	 * @return string Lesson HTML
 	 */
 	protected function render_lesson_block( $block ) {
+
+		$css = Sensei_Block_Helpers::build_styles( $block );
 		return '
-			<a class="wp-block-sensei-lms-course-outline-lesson" href="#">
-				' . $block['title'] . '
-			</a>
+			<h3 ' . Sensei_Block_Helpers::render_style_attributes( 'wp-block-sensei-lms-course-outline-lesson', $css ) . '>
+				<a
+				href="' . esc_url( get_permalink( $block['id'] ) ) . '">
+					' . $block['title'] . '
+				</a>
+			</h3>
 		';
 	}
 
@@ -239,7 +254,7 @@ class Sensei_Course_Outline_Block {
 					' . $block['description'] . '
 				</div>
 						<div class="wp-block-sensei-lms-course-outline-module__lessons-title">
-							<h3 class="wp-block-sensei-lms-course-outline__clean-heading">' . __( 'Lessons', 'sensei-lms' ) . '</h3>
+							<div class="wp-block-sensei-lms-course-outline__clean-heading">' . __( 'Lessons', 'sensei-lms' ) . '</div>
 						</div>
 					' .
 			implode(

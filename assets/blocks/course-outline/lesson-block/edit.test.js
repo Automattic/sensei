@@ -12,6 +12,18 @@ jest.mock( '@wordpress/blocks', () => ( {
 	createBlock: jest.fn(),
 } ) );
 
+jest.mock( '@wordpress/block-editor', () => ( {
+	withColors() {
+		return ( Component ) => ( props ) => (
+			<Component { ...props } backgroundColor={ {} } textColor={ {} } />
+		);
+	},
+} ) );
+
+jest.mock( './settings', () => ( {
+	LessonBlockSettings: () => '',
+} ) );
+
 describe( '<EditLessonBlock />', () => {
 	const selectNextBlockMock = jest.fn();
 	const removeBlockMock = jest.fn();
