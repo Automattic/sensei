@@ -290,16 +290,22 @@ function sensei_is_login_required() {
 	$post_type = get_post_type( $post );
 	$course_id = null;
 
-	if ( 'course' === $post_type ) {
-		$course_id = $post->ID;
-	} elseif ( 'lesson' === $post_type ) {
-		$course_id = Sensei()->lesson->get_course_id( $post->ID );
+	switch ( $post_type ) {
+		case 'course':
+			$course_id = $post->ID;
+			break;
+
+		case 'lesson':
+			$course_id = Sensei()->lesson->get_course_id( $post->ID );
+			break;
+
+		case 'quiz':
+			$lesson_id = intval( get_post_meta( $post->ID, '_quiz_lesson', true ) );
+			$course_id = $lesson_id ? Sensei()->lesson->get_course_id( $lesson_id ) : null;
+			break;
 	}
 
-	if (
-		! $course_id
-		|| 'course' !== get_post_type( $course_id )
-	) {
+	if ( ! $course_id ) {
 		$course_id = null;
 	}
 
