@@ -3,6 +3,7 @@ import { render, fireEvent } from '@testing-library/react';
 import EditModuleBlock from './edit';
 
 jest.mock( '@wordpress/block-editor', () => ( {
+	InspectorControls: () => null,
 	InnerBlocks: () => null,
 	RichText: ( { placeholder, onChange } ) => (
 		<input
