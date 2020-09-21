@@ -3,6 +3,7 @@ const process = require( 'process' );
 const { fromPairs } = require( 'lodash' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 const GenerateChunksMapPlugin = require( './scripts/webpack/generate-chunks-map-plugin' );
+const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
@@ -97,6 +98,14 @@ function getWebpackConfig( env, argv ) {
 				),
 				ignoreSrcPattern: /^node_modules/,
 				baseDist,
+			} ),
+			new CopyWebpackPlugin( {
+				patterns: [
+					{
+						from: 'blocks/**/block.json',
+						context: 'assets',
+					},
+				],
 			} ),
 		],
 	};
