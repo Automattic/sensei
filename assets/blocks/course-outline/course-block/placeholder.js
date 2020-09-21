@@ -1,6 +1,6 @@
 import { Button, Placeholder } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { CourseIcon } from '../../icons';
+import settings from './index';
 
 /**
  * Placeholder for empty Course Outline block.
@@ -10,7 +10,7 @@ import { CourseIcon } from '../../icons';
 export const CourseOutlinePlaceholder = ( { addBlock } ) => (
 	<Placeholder
 		label={ __( 'Course Outline', 'sensei-lms' ) }
-		icon={ CourseIcon }
+		icon={ settings.icon }
 		instructions={ __(
 			'Build and display a course outline. A course is made up of modules (optional) and lessons. You can use modules to group related lessons together.',
 			'sensei-lms'

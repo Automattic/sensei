@@ -1,0 +1,13 @@
+{
+  "name": "sensei-lms/course-outline",
+  "category": "sensei-lms",
+  "supports": {
+    "html": false,
+    "multiple": false
+  },
+  "attributes": {
+    "id": {
+      "type": "int"
+    }
+  }
+}
