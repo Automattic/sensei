@@ -44,12 +44,15 @@ const EditModuleBlock = ( {
 		setAttributes( { description: value } );
 	};
 
-	const [ isPreviewCompleted, setIsPreviewCompleted ] = useState( false );
+	const [ hasStatusPreview, toggleStatusPreview ] = useState( false );
+	const [ isStatusPreviewCompleted, setIsStatusPreviewCompleted ] = useState(
+		false
+	);
 
 	let indicatorText = __( 'In Progress', 'sensei-lms' );
 	let indicatorClass = null;
 
-	if ( isPreviewCompleted ) {
+	if ( isStatusPreviewCompleted ) {
 		indicatorText = __( 'Completed', 'sensei-lms' );
 		indicatorClass = 'completed';
 	}
@@ -58,12 +61,13 @@ const EditModuleBlock = ( {
 		<>
 			<InspectorControls>
 				<PanelBody
-					title={ __( 'Status', 'sensei-lms' ) }
-					initialOpen={ true }
+					title={ __( 'Preview Status', 'sensei-lms' ) }
+					opened={ hasStatusPreview }
+					onToggle={ () => toggleStatusPreview( ! hasStatusPreview ) }
 				>
 					<ModuleStatusControl
-						isPreviewCompleted={ isPreviewCompleted }
-						setIsPreviewCompleted={ setIsPreviewCompleted }
+						isPreviewCompleted={ isStatusPreviewCompleted }
+						setIsPreviewCompleted={ setIsStatusPreviewCompleted }
 					/>
 				</PanelBody>
 			</InspectorControls>
@@ -78,16 +82,18 @@ const EditModuleBlock = ( {
 							onChange={ updateName }
 						/>
 					</h2>
-					<div
-						className={ classnames(
-							'wp-block-sensei-lms-course-outline__progress-indicator',
-							indicatorClass
-						) }
-					>
-						<span className="wp-block-sensei-lms-course-outline__progress-indicator__text">
-							{ indicatorText }
-						</span>
-					</div>
+					{ hasStatusPreview && (
+						<div
+							className={ classnames(
+								'wp-block-sensei-lms-course-outline__progress-indicator',
+								indicatorClass
+							) }
+						>
+							<span className="wp-block-sensei-lms-course-outline__progress-indicator__text">
+								{ indicatorText }
+							</span>
+						</div>
+					) }
 				</header>
 				<div className="wp-block-sensei-lms-course-outline-module__description">
 					<RichText
