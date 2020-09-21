@@ -113,6 +113,7 @@ class Sensei_Course_Outline_Block {
 						'type' => 'number',
 					],
 				],
+				'script'          => 'sensei-course-outline-frontend',
 			]
 		);
 	}
@@ -184,9 +185,7 @@ class Sensei_Course_Outline_Block {
 			$block_class .= ' ' . $attributes['className'];
 		}
 
-		Sensei()->assets->enqueue( 'sensei-single-course', 'js/frontend/single-course.js', [ 'jquery' ], true );
-
-		return '
+		return '	
 			<section class="' . $block_class . '">
 				' .
 			implode(

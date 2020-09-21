@@ -1,3 +1,4 @@
+/* global jQuery */
 jQuery( document ).ready( () => {
 	function toggleModuleDetails() {
 		const moduleDetails = jQuery( this )
