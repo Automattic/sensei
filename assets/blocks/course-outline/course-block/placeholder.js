@@ -10,7 +10,7 @@ import settings from './index';
 export const CourseOutlinePlaceholder = ( { addBlock } ) => (
 	<Placeholder
 		label={ __( 'Course Outline', 'sensei-lms' ) }
-		icon={ settings.icon }
+		icon={ settings.icon() }
 		instructions={ __(
 			'Build and display a course outline. A course is made up of modules (optional) and lessons. You can use modules to group related lessons together.',
 			'sensei-lms'
