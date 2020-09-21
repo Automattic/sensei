@@ -129,7 +129,7 @@ class Sensei_Assets {
 		$basename          = preg_replace( '/\.\w+$/', '', $filename );
 		$url               = $this->asset_url( $filename );
 		$version           = $this->version;
-		$asset_config_path = path_join( $this->plugin_path, 'assets/dist/' . $basename . '.asset.php' );
+		$asset_config_path = $this->path( $basename . '.asset.php' );
 
 		if ( file_exists( $asset_config_path ) ) {
 			$asset_config = require $asset_config_path;
@@ -148,6 +148,17 @@ class Sensei_Assets {
 			'type'         => $is_js ? 'script' : 'style',
 			'args'         => null !== $args ? $args : ( $is_js ? false : 'all' ), // defaults for wp_enqueue_script or wp_enqueue_style.
 		];
+	}
+
+	/**
+	 * Get path for file in plugin assets directory.
+	 *
+	 * @param string $file Asset file.
+	 *
+	 * @return string
+	 */
+	public function path( $file ) {
+		return path_join( $this->plugin_path, 'assets/dist/' . $file );
 	}
 
 	/**
