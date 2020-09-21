@@ -23,7 +23,7 @@ class Sensei_Block_Helpers {
 	 *
 	 * @return array Colors CSS classes and inline styles.
 	 */
-	public static function build_styles( $block, $colors = [] ) {
+	public static function build_color_styles( $block, $colors = [] ) {
 		$block_attributes = $block['attributes'] ?? [];
 		$attributes       = [
 			'css_classes'   => [],
