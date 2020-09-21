@@ -110,13 +110,13 @@ $dark-gray: #1a1d20;
 }
 
 .wp-block-sensei-lms-collapsible {
-	max-height: 1000px;
+	max-height: 2000px;
 	transition: max-height 0.5s ease-in;
 	overflow: hidden;
 
 	&.collapsed {
 		max-height: 0;
-		transition: max-height 0.5s cubic-bezier(0, 1, 0.65, 1);
+		transition: max-height 0.5s cubic-bezier(0, 1, 0.35, 1);
 	}
 }
 
