@@ -313,6 +313,13 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 		$this->assertEquals( 'lesson', $first_item['type'], 'Course should have one lesson object' );
 		$this->assertEquals( 'lesson', get_post_type( $first_item['id'] ), 'Created post should be a lesson' );
 		$this->assertEquals( $new_structure[0]['title'], $first_item['title'], 'New title should match' );
+
+		$quiz_id = Sensei()->lesson->lesson_quizzes( $first_item['id'] );
+		$this->assertTrue( ! empty( $quiz_id ), 'A quiz should have been created for the lesson' );
+
+		$quiz = get_post( $quiz_id );
+		$this->assertEquals( $first_item['id'], $quiz->post_parent, 'Quiz post parent should be set to lesson' );
+		$this->assertEquals( $first_item['title'], $quiz->post_title, 'Quiz post title should be set to be the same as the lesson' );
 	}
 
 	/**

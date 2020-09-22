@@ -420,7 +420,31 @@ class Sensei_Course_Structure {
 			return false;
 		}
 
+		$this->create_quiz( $post_id );
+
 		return $post_id;
+	}
+
+	/**
+	 * Create an empty quiz for the lesson.
+	 *
+	 * @param int $lesson_id Lesson ID to create quiz for.
+	 */
+	private function create_quiz( int $lesson_id ) {
+		$lesson = get_post( $lesson_id );
+
+		$post_args = [
+			'post_content' => '',
+			'post_status'  => $lesson->post_status,
+			'post_title'   => $lesson->post_title,
+			'post_type'    => 'quiz',
+			'post_parent'  => $lesson_id,
+			'meta_input'   => [
+				'_quiz_lesson' => $lesson_id,
+			],
+		];
+
+		wp_insert_post( $post_args );
 	}
 
 	/**
