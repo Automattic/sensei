@@ -107,6 +107,11 @@ $dark-gray: #1a1d20;
 		background-color: #DCDCDE;
 		border-radius: 50%;
 	}
+
+	&.completed::before {
+		border: solid 1px #179942;
+		background-color: #1FD25A;
+	}
 }
 
 .wp-block-sensei-lms-collapsible {
