@@ -2,14 +2,12 @@ import { __ } from '@wordpress/i18n';
 import {
 	InnerBlocks,
 	RichText,
-	InspectorControls,
 } from '@wordpress/block-editor';
-import { PanelBody } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import classnames from 'classnames';
 
 import SingleLineInput from '../single-line-input';
-import { ModuleStatusControl } from './module-status-control';
+import { ModuleBlockSettings } from './settings';
 
 /**
  * Edit module block component.
@@ -23,7 +21,7 @@ import { ModuleStatusControl } from './module-status-control';
  */
 const EditModuleBlock = ( {
 	className,
-	attributes: { title, description },
+	attributes: { title, description, animationsEnabled },
 	setAttributes,
 } ) => {
 	/**
@@ -33,6 +31,15 @@ const EditModuleBlock = ( {
 	 */
 	const updateName = ( value ) => {
 		setAttributes( { title: value } );
+	};
+
+	/**
+	 * Handle update animationsEnabled setting.
+	 *
+	 * @param {boolean} value Value of the setting.
+	 */
+	const updateAnimationsEnabled = ( value ) => {
+		setAttributes( { animationsEnabled: value } );
 	};
 
 	/**
@@ -64,17 +71,12 @@ const EditModuleBlock = ( {
 
 	return (
 		<>
-			<InspectorControls>
-				<PanelBody
-					title={ __( 'Status', 'sensei-lms' ) }
-					initialOpen={ true }
-				>
-					<ModuleStatusControl
-						isPreviewCompleted={ isPreviewCompleted }
-						setIsPreviewCompleted={ setIsPreviewCompleted }
-					/>
-				</PanelBody>
-			</InspectorControls>
+			<ModuleBlockSettings
+				isPreviewCompleted={ isPreviewCompleted }
+				setIsPreviewCompleted={ setIsPreviewCompleted }
+				animationsEnabled={ animationsEnabled }
+				setAnimationsEnabled={ updateAnimationsEnabled }
+			/>
 
 			<section className={ className }>
 				<header className="wp-block-sensei-lms-course-outline-module__name">
@@ -111,9 +113,12 @@ const EditModuleBlock = ( {
 					/>
 				</header>
 				<div
-					className={ classnames( 'wp-block-sensei-lms-collapsible', {
-						collapsed: ! isExpanded,
-					} ) }
+					className={ classnames(
+						{
+							'wp-block-sensei-lms-collapsible': animationsEnabled,
+						},
+						{ collapsed: ! isExpanded }
+					) }
 				>
 					<div className="wp-block-sensei-lms-course-outline-module__description">
 						<RichText
