@@ -88,17 +88,7 @@ const EditLessonBlock = ( props ) => {
 	};
 
 	let status = '';
-	if ( id ) {
-		status = (
-			<a
-				href={ `post.php?post=${ id }&action=edit` }
-				target="lesson"
-				className="wp-block-sensei-lms-course-outline-lesson__edit"
-			>
-				{ __( 'Edit Lesson', 'sensei-lms' ) }
-			</a>
-		);
-	} else if ( title.length ) {
+	if ( ! id && title.length ) {
 		status = (
 			<div className="wp-block-sensei-lms-course-outline-lesson__unsaved">
 				{ __( 'Unsaved', 'sensei-lms' ) }
