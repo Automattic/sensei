@@ -34,6 +34,7 @@ class Sensei_Bootstrap {
 		}
 		$this->init_autoloader();
 		$this->init_must_have_includes();
+		$this->include_compat();
 
 		$this->is_bootstrapped = true;
 		return $this;
@@ -54,5 +55,9 @@ class Sensei_Bootstrap {
 	private function init_must_have_includes() {
 		require_once dirname( __FILE__ ) . '/sensei-functions.php';
 		require_once dirname( __FILE__ ) . '/3rd-party/3rd-party.php';
+	}
+
+	private function include_compat() {
+		require_once dirname( __FILE__ ) . '/blocks/compat.php';
 	}
 }
