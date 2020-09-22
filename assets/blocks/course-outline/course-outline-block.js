@@ -22,6 +22,10 @@ registerBlockType( 'sensei-lms/course-outline', {
 		id: {
 			type: 'int',
 		},
+		animationsEnabled: {
+			type: 'boolean',
+			default: true,
+		},
 	},
 	edit( props ) {
 		return <EditCourseOutlineBlock { ...props } />;
