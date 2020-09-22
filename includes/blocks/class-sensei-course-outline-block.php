@@ -286,11 +286,11 @@ class Sensei_Course_Outline_Block {
 		}
 
 		if ( $module_progress < 100 ) {
-			$module_status   = __( 'Completed', 'sensei-lms' );
-			$indicator_class = 'completed';
-		} else {
 			$module_status   = __( 'In Progress', 'sensei-lms' );
 			$indicator_class = '';
+		} else {
+			$module_status   = __( 'Completed', 'sensei-lms' );
+			$indicator_class = 'completed';
 		}
 
 		return '
