@@ -56,7 +56,7 @@ export function LessonBlockSettings( {
 			) }
 			<PanelBody
 				title={ __( 'Typography', 'sensei-lms' ) }
-				initialOpen={ true }
+				initialOpen={ false }
 			>
 				<FontSizePicker
 					fontSizes={ fontSizes }
