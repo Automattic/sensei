@@ -42,12 +42,9 @@ describe( '<EditLessonBlock />', () => {
 			/>
 		);
 
-		fireEvent.change(
-			getByPlaceholderText( 'Description about the module' ),
-			{
-				target: { value: 'Test' },
-			}
-		);
+		fireEvent.change( getByPlaceholderText( 'Module description' ), {
+			target: { value: 'Test' },
+		} );
 
 		expect( setAttributesMock ).toBeCalledWith( { description: 'Test' } );
 	} );
