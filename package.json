@@ -50,7 +50,6 @@
     "@wordpress/scripts": "12.1.1",
     "buffer": "5.6.0",
     "chownr": "2.0.0",
-    "copy-webpack-plugin": "6.1.1",
     "cross-env": "7.0.2",
     "eslint": "7.6.0",
     "eslint-config-prettier": "6.11.0",
