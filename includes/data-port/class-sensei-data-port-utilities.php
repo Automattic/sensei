@@ -460,11 +460,15 @@ class Sensei_Data_Port_Utilities {
 	 * Serialize a list into comma-separated list.
 	 * Wrap values in quotes if they contain a comma.
 	 *
+	 * @deprecated 3.5.2
+	 *
 	 * @param string[] $values
 	 *
 	 * @return string
 	 */
 	public static function serialize_list( $values = [] ) {
+		_deprecated_function( __METHOD__, '3.5.2' );
+
 		return ! empty( $values )
 			? implode( ',', array_map( 'Sensei_Data_Port_Utilities::escape_list_item', $values ) )
 			: '';
