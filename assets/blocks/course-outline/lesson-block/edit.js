@@ -111,7 +111,7 @@ const EditLessonBlock = ( props ) => {
 
 	return (
 		<>
-			<LessonBlockSettings { ...props } fontSize={ fontSize } />
+			<LessonBlockSettings { ...props } />
 			<div { ...colorStyles }>
 				<SingleLineInput
 					className="wp-block-sensei-lms-course-outline-lesson__input"

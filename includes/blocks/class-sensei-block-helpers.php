@@ -16,44 +16,51 @@ class Sensei_Block_Helpers {
 
 
 	/**
-	 * Build CSS classes (for named colors) and inline styles from block attributes.
+	 * Build CSS classes and inline styles from block attributes.
 	 *
-	 * @param array $block  Block.
-	 * @param array $colors Color attributes and their style property.
+	 * @param array $block_attributes  The block attributes array with the format$attribute_key => $attribute_value.
 	 *
-	 * @return array Colors CSS classes and inline styles.
+	 * @return array {
+	 *     An array of classes and styles.
+	 *
+	 *     @type string $css_classes   An array of classes.
+	 *     @type string $inline_styles An array of styles.
+	 * }
 	 */
-	public static function build_color_styles( $block, $colors = [] ) {
-		$block_attributes = $block['attributes'] ?? [];
-		$attributes       = [
-			'css_classes'   => [],
-			'inline_styles' => [],
-		];
+	public static function build_block_styles( $block_attributes ) {
+		$inline_styles = [];
+		$css_classes   = [];
 
-		$colors = array_merge(
-			[
-				'textColor'       => 'color',
-				'backgroundColor' => 'background-color',
-			],
-			$colors
-		);
-
-		foreach ( $colors as $color => $style ) {
-
-			$named_color  = $block_attributes[ $color ] ?? null;
-			$custom_color = $block_attributes[ 'custom' . ucfirst( $color ) ] ?? null;
-
-			if ( $custom_color || $named_color ) {
-				$attributes['css_classes'][] = sprintf( 'has-%s', $style );
-			}
-			if ( $named_color ) {
-				$attributes['css_classes'][] = sprintf( 'has-%s-%s', $named_color, $style );
-			} elseif ( $custom_color ) {
-				$attributes['inline_styles'][] = sprintf( '%s: %s;', $style, $custom_color );
+		foreach ( $block_attributes as $attribute => $value ) {
+			switch ( $attribute ) {
+				case 'backgroundColor':
+					$css_classes[] = 'has-background-color';
+					$css_classes[] = sprintf( 'has-%s-background-color', $value );
+					break;
+				case 'customBackgroundColor':
+					$css_classes[]   = 'has-background-color';
+					$inline_styles[] = sprintf( 'background-color: %s', $value );
+					break;
+				case 'textColor':
+					$css_classes[] = 'has-color';
+					$css_classes[] = sprintf( 'has-%s-color', $value );
+					break;
+				case 'customTextColor':
+					$css_classes[]   = 'has-color';
+					$inline_styles[] = sprintf( 'color: %s', $value );
+					break;
+				case 'fontSize':
+					$inline_styles[] = sprintf( 'font-size: %spx', $value );
+					break;
+				default:
+					break;
 			}
 		}
 
-		return $attributes;
+		return [
+			'css_classes'   => $css_classes,
+			'inline_styles' => $inline_styles,
+		];
 	}
 
 	/**

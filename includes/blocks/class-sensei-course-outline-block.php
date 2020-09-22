@@ -217,11 +217,7 @@ class Sensei_Course_Outline_Block {
 	 */
 	protected function render_lesson_block( $block ) {
 
-		$css = Sensei_Block_Helpers::build_color_styles( $block );
-
-		if ( ! empty( $block['attributes']['fontSize'] ) ) {
-			$css['inline_styles'][] = sprintf( 'font-size: %spx', $block['attributes']['fontSize'] );
-		}
+		$css = Sensei_Block_Helpers::build_block_styles( $block['attributes'] ?? [] );
 
 		return '
 			<h3 ' . Sensei_Block_Helpers::render_style_attributes( 'wp-block-sensei-lms-course-outline-lesson', $css ) . '>
