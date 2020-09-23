@@ -31,6 +31,7 @@ const files = [
 	'data-port/import.js',
 	'data-port/export.js',
 	'data-port/style.scss',
+	'blocks/course-outline/frontend.js',
 	'blocks/course-outline/index.js',
 	'blocks/course-outline/style.scss',
 	'blocks/course-outline/style.editor.scss',

@@ -144,6 +144,7 @@ class Sensei_Frontend {
 			}
 
 			Sensei()->assets->register( Sensei()->token . '-user-dashboard', 'js/user-dashboard.js', [ 'jquery-ui-tabs' ], true );
+			Sensei()->assets->register( 'sensei-course-outline-frontend', 'blocks/course-outline/frontend.js', [ 'jquery' ], true );
 
 			// Allow additional scripts to be loaded.
 			do_action( 'sensei_additional_scripts' );
@@ -164,7 +165,7 @@ class Sensei_Frontend {
 
 		if ( ! $disable_styles ) {
 
-			Sensei()->assets->enqueue( Sensei()->token . '-frontend', 'css/frontend.css', [], 'screen' );
+			Sensei()->assets->enqueue( Sensei()->token . '-frontend', 'css/frontend.css', [ 'dashicons' ], 'screen' );
 
 			// Allow additional stylesheets to be loaded.
 			do_action( 'sensei_additional_styles' );

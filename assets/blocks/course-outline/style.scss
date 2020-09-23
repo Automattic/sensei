@@ -9,7 +9,7 @@ $dark-gray: #1a1d20;
 		font-size: inherit;
 		color: inherit;
 		line-height: inherit;
-		flex-basis: 83%;
+		flex-basis: 82%;
 		&:before, &:after {
 			content: none;
 		}
@@ -23,6 +23,7 @@ $dark-gray: #1a1d20;
 		height: 10%;
 		flex-basis: 14%;
 		background-color: #FFF;
+		margin-right: 20px;
 
 		&__text {
 			font-weight: normal;
@@ -37,6 +38,19 @@ $dark-gray: #1a1d20;
 			background-color: #1FD25A;
 		}
 	}
+
+	&__arrow {
+		fill: #FFF;
+		flex-basis: 4%;
+		margin-left: auto;
+		cursor: pointer;
+		height: 24px;
+		font-size: 24px;
+
+		&.collapsed {
+			display: none;
+		}
+	}
 }
 
 .wp-block-sensei-lms-course-outline-module {
@@ -44,7 +58,7 @@ $dark-gray: #1a1d20;
 	margin: 1.5em 0;
 
 	&__name {
-		padding: 15px 25px;
+		padding: 15px 15px 15px 25px;
 		background-color: $dark-gray;
 		font-size: 24px;
 		font-weight: bold;
@@ -93,8 +107,17 @@ $dark-gray: #1a1d20;
 		background-color: #DCDCDE;
 		border-radius: 50%;
 	}
+}
 
+.wp-block-sensei-lms-collapsible {
+	max-height: 2000px;
+	transition: max-height 0.5s ease-in;
+	overflow: hidden;
 
+	&.collapsed {
+		max-height: 0;
+		transition: max-height 0.5s cubic-bezier(0, 1, 0.35, 1);
+	}
 }
 
 #inspector-module-status-control__help {
