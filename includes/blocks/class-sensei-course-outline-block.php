@@ -248,10 +248,20 @@ class Sensei_Course_Outline_Block {
 
 		$animated = empty( $outline_attributes['animationsEnabled'] ) ? '' : 'animated';
 
+		$class_name = $block['attributes']['className'] ?? '';
+		if ( empty( $class_name ) && false === strpos( $class_name, 'is-style-' ) ) {
+			$class_name .= ' is-style-default';
+		}
+
+		$is_default_style = false !== strpos( $class_name, 'is-style-default' );
+		$is_minimal_style = false !== strpos( $class_name, 'is-style-minimal' );
+
+		$header_css = Sensei_Block_Helpers::build_styles( $block );
+
 		return '
 			<section class="wp-block-sensei-lms-course-outline-module">
-				<header class="wp-block-sensei-lms-course-outline-module__name">
-					<h2 class="wp-block-sensei-lms-course-outline__clean-heading">' . $block['title'] . '</h2>
+				<header ' . Sensei_Block_Helpers::render_style_attributes( 'wp-block-sensei-lms-course-outline-module__name', $header_css ) . '>
+					<h2>' . $block['title'] . '</h2>
 					' . $progress_indicator . '
 					<div role="button" tabindex="0" class="wp-block-sensei-lms-course-outline__arrow dashicons dashicons-arrow-up-alt2"/>
 				</header>
@@ -260,17 +270,17 @@ class Sensei_Course_Outline_Block {
 						' . $block['description'] . '
 					</div>
 							<div class="wp-block-sensei-lms-course-outline-module__lessons-title">
-								<div class="wp-block-sensei-lms-course-outline__clean-heading">' . __( 'Lessons', 'sensei-lms' ) . '</div>
+								' . __( 'Lessons', 'sensei-lms' ) . '
 							</div>
 						' .
-				implode(
-					'',
-					array_map(
-						[ $this, 'render_lesson_block' ],
-						$block['lessons']
-					)
+			implode(
+				'',
+				array_map(
+					[ $this, 'render_lesson_block' ],
+					$block['lessons']
 				)
-				. '
+			)
+			. '
 				</div>
 			</section>
 		';

@@ -1,10 +1,18 @@
+import {
+	InnerBlocks,
+	RichText,
+	withColors,
+	InspectorControls,
+} from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
-import { InnerBlocks, RichText } from '@wordpress/block-editor';
+
+import { PanelBody } from '@wordpress/components';
 import { useState, useContext } from '@wordpress/element';
 import classnames from 'classnames';
 import { OutlineAttributesContext } from '../course-block/edit';
 
 import SingleLineInput from '../single-line-input';
+import { ModuleBlockSettings } from './settings';
 import { ModuleBlockSettings } from './settings';
 
 /**
@@ -15,17 +23,19 @@ import { ModuleBlockSettings } from './settings';
  * @param {Object}   props.attributes             Block attributes.
  * @param {string}   props.attributes.title       Module title.
  * @param {string}   props.attributes.description Module description.
+ * @param {Object}   props.attributes.style       Custom visual settings.
  * @param {Function} props.setAttributes          Block set attributes function.
  */
-const EditModuleBlock = ( {
-	className,
-	attributes: { title, description },
-	setAttributes,
-} ) => {
+const EditModuleBlock = ( props ) => {
 	const {
-		outlineAttributes: { animationsEnabled },
-	} = useContext( OutlineAttributesContext );
-
+		className,
+		attributes: { title, description },
+		mainColor,
+		setAttributes,
+	} = props;
+	const {
+		      outlineAttributes: { animationsEnabled },
+	      } = useContext( OutlineAttributesContext );
 	/**
 	 * Handle update name.
 	 *
@@ -62,15 +72,37 @@ const EditModuleBlock = ( {
 		}
 	}
 
+	const isDefaultStyle =
+		className.includes( 'is-style-default' ) ||
+		! className.includes( 'is-style-' );
+
 	return (
 		<>
 			<ModuleBlockSettings
 				isPreviewCompleted={ isPreviewCompleted }
 				setIsPreviewCompleted={ setIsPreviewCompleted }
 			/>
-
-			<section className={ className }>
-				<header className="wp-block-sensei-lms-course-outline-module__name">
+			<ModuleBlockSettings { ...props } />
+			<section
+				className={ classnames( className, {
+					'is-style-default': isDefaultStyle,
+				} ) }
+				style={
+					isDefaultStyle
+						? {
+								borderColor: mainColor.color,
+						  }
+						: {}
+				}
+			>
+				<header
+					className="wp-block-sensei-lms-course-outline-module__name"
+					style={
+						isDefaultStyle
+							? { background: mainColor.color }
+							: { borderColor: mainColor.color }
+					}
+				>
 					<h2 className="wp-block-sensei-lms-course-outline__clean-heading">
 						<SingleLineInput
 							className="wp-block-sensei-lms-course-outline-module__name-input"
@@ -138,4 +170,7 @@ const EditModuleBlock = ( {
 	);
 };
 
-export default EditModuleBlock;
+export default withColors( {
+	mainColor: 'background-color',
+	textColor: 'color',
+} )( EditModuleBlock );

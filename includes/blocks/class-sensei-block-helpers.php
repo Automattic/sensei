@@ -73,7 +73,7 @@ class Sensei_Block_Helpers {
 		$class_names = array_merge( is_array( $class_names ) ? $class_names : [ $class_names ], $css['css_classes'] );
 		return sprintf(
 			'class="%s" style="%s"',
-			esc_attr( implode( ' ', array_map( 'sanitize_html_class', $class_names ) ) ),
+			esc_attr( implode( ' ', $class_names ) ),
 			esc_attr( implode( '; ', $css['inline_styles'] ) )
 		);
 	}

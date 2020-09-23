@@ -14,7 +14,6 @@ registerBlockType( 'sensei-lms/course-outline-module', {
 	keywords: [ __( 'Outline', 'sensei-lms' ), __( 'Module', 'sensei-lms' ) ],
 	supports: {
 		html: false,
-		customClassName: false,
 	},
 	attributes: {
 		id: {
@@ -28,15 +27,54 @@ registerBlockType( 'sensei-lms/course-outline-module', {
 			type: 'string',
 			default: '',
 		},
+		style: {
+			type: 'object',
+			default: {},
+		},
+		mainColor: {
+			type: 'string',
+		},
+		customMainColor: {
+			type: 'string',
+		},
+		textColor: {
+			type: 'string',
+		},
+		customTextColor: {
+			type: 'string',
+		},
+		className: {
+			type: 'string',
+		},
+		customClassName: {
+			type: 'string',
+		},
 	},
+	example: {
+		attributes: {
+			title: 'Module',
+			description: 'About Module',
+		},
+	},
+	styles: [
+		{
+			name: 'minimal',
+			label: 'Minimal',
+		},
+		{
+			name: 'none',
+			label: 'None',
+		},
+		{
+			name: 'default',
+			label: 'Default',
+			isDefault: true,
+		},
+	],
 	edit( props ) {
 		return <EditModuleBlock { ...props } />;
 	},
-	save( { className } ) {
-		return (
-			<div className={ className }>
-				<InnerBlocks.Content />
-			</div>
-		);
+	save() {
+		return <InnerBlocks.Content />;
 	},
 } );

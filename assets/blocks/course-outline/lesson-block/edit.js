@@ -26,7 +26,7 @@ import { Statuses } from '../status-control';
  * @param {Function} props.insertBlocksAfter   Insert blocks after function.
  * @param {boolean}  props.isSelected          Is block selected.
  */
-const EditLessonBlock = ( props ) => {
+export const EditLessonBlock = ( props ) => {
 	const {
 		clientId,
 		name,
