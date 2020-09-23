@@ -838,9 +838,9 @@ class Sensei_PostTypes {
 	 */
 	public function enter_title_here( $title ) {
 		if ( get_post_type() == 'course' ) {
-			$title = __( 'Enter a title for this course here', 'sensei-lms' );
+			$title = __( 'Course name', 'sensei-lms' );
 		} elseif ( get_post_type() == 'lesson' ) {
-			$title = __( 'Enter a title for this lesson here', 'sensei-lms' );
+			$title = __( 'Lesson name', 'sensei-lms' );
 		}
 
 		return $title;

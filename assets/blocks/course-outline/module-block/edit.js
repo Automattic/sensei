@@ -119,7 +119,7 @@ const EditModuleBlock = ( {
 						<RichText
 							className="wp-block-sensei-lms-course-outline-module__description-input"
 							placeholder={ __(
-								'Description about the module',
+								'Module description',
 								'sensei-lms'
 							) }
 							value={ description }
