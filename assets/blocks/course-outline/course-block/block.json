@@ -7,7 +7,7 @@
   },
   "attributes": {
     "id": {
-      "type": "int"
+      "type": "integer"
     }
   }
 }

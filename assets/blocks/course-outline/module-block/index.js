@@ -18,7 +18,7 @@ registerBlockType( 'sensei-lms/course-outline-module', {
 	},
 	attributes: {
 		id: {
-			type: 'int',
+			type: 'integer',
 		},
 		title: {
 			type: 'string',
