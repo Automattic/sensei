@@ -185,7 +185,7 @@ class Sensei_Course_Outline_Block {
 			$block_class .= ' ' . $attributes['className'];
 		}
 
-		return '	
+		return '
 			<section class="' . $block_class . '">
 				' .
 			implode(
