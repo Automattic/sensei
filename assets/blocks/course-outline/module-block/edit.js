@@ -23,8 +23,7 @@ const EditModuleBlock = ( {
 	setAttributes,
 } ) => {
 	const {
-		parentAttributes: { animationsEnabled },
-		parentSetAttributes,
+		outlineAttributes: { animationsEnabled },
 	} = useContext( OutlineAttributesContext );
 
 	/**
@@ -34,15 +33,6 @@ const EditModuleBlock = ( {
 	 */
 	const updateName = ( value ) => {
 		setAttributes( { title: value } );
-	};
-
-	/**
-	 * Handle update animationsEnabled setting.
-	 *
-	 * @param {boolean} value Value of the setting.
-	 */
-	const updateAnimationsEnabled = ( value ) => {
-		parentSetAttributes( { animationsEnabled: value } );
 	};
 
 	/**
@@ -77,8 +67,6 @@ const EditModuleBlock = ( {
 			<ModuleBlockSettings
 				isPreviewCompleted={ isPreviewCompleted }
 				setIsPreviewCompleted={ setIsPreviewCompleted }
-				animationsEnabled={ animationsEnabled }
-				setAnimationsEnabled={ updateAnimationsEnabled }
 			/>
 
 			<section className={ className }>

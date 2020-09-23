@@ -1,11 +1,10 @@
-import { InnerBlocks, InspectorControls } from '@wordpress/block-editor';
+import { InnerBlocks } from '@wordpress/block-editor';
 import { useSelect, withSelect } from '@wordpress/data';
 import { createContext, useEffect } from '@wordpress/element';
 import { CourseOutlinePlaceholder } from './placeholder';
 import { COURSE_STORE } from './store';
 import { useBlocksCreator } from './use-block-creator';
-import { PanelBody, ToggleControl } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { OutlineBlockSettings } from './settings';
 
 /**
  * A React context which contains the attributes and the setAttributes callback of the Outline block.
@@ -62,27 +61,16 @@ const EditCourseOutlineBlock = ( {
 
 	return (
 		<>
-			<InspectorControls>
-				<PanelBody
-					title={ __( 'Enable Animations', 'sensei-lms' ) }
-					initialOpen={ true }
-				>
-					<ToggleControl
-						checked={ attributes.animationsEnabled }
-						onChange={ updateAnimationsEnabled }
-						label={ __(
-							'Enable animations on module collapse/expand.',
-							'sensei-lms'
-						) }
-					/>
-				</PanelBody>
-			</InspectorControls>
+			<OutlineBlockSettings
+				animationsEnabled={ attributes.animationsEnabled }
+				setAnimationsEnabled={ updateAnimationsEnabled }
+			/>
 
 			<section className={ className }>
 				<OutlineAttributesContext.Provider
 					value={ {
-						parentAttributes: attributes,
-						parentSetAttributes: setAttributes,
+						outlineAttributes: attributes,
+						outlineSetAttributes: setAttributes,
 					} }
 				>
 					<InnerBlocks

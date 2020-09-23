@@ -28,10 +28,6 @@ registerBlockType( 'sensei-lms/course-outline-module', {
 			type: 'string',
 			default: '',
 		},
-		animationsEnabled: {
-			type: 'boolean',
-			default: true,
-		},
 	},
 	edit( props ) {
 		return <EditModuleBlock { ...props } />;
