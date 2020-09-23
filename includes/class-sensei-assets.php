@@ -129,7 +129,7 @@ class Sensei_Assets {
 		$basename          = preg_replace( '/\.\w+$/', '', $filename );
 		$url               = $this->asset_url( $filename );
 		$version           = $this->version;
-		$asset_config_path = $this->path( $basename . '.asset.php' );
+		$asset_config_path = $this->dist_path( $basename . '.asset.php' );
 
 		if ( file_exists( $asset_config_path ) ) {
 			$asset_config = require $asset_config_path;
@@ -151,14 +151,25 @@ class Sensei_Assets {
 	}
 
 	/**
-	 * Get path for file in plugin assets directory.
+	 * Get path for file in plugin assets dist directory.
 	 *
 	 * @param string $file Asset file.
 	 *
 	 * @return string
 	 */
-	public function path( $file ) {
+	public function dist_path( $file ) {
 		return path_join( $this->plugin_path, 'assets/dist/' . $file );
+	}
+
+	/**
+	 * Get path for file in plugin assets source directory.
+	 *
+	 * @param string $file Asset file.
+	 *
+	 * @return string
+	 */
+	public function src_path( $file ) {
+		return path_join( $this->plugin_path, 'assets/' . $file );
 	}
 
 	/**

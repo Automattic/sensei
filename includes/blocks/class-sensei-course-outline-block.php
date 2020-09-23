@@ -81,7 +81,7 @@ class Sensei_Course_Outline_Block {
 	 */
 	public function register_blocks() {
 		register_block_type_from_metadata(
-			Sensei()->assets->path( 'blocks/course-outline/course-block' ),
+			Sensei()->assets->src_path( 'blocks/course-outline/course-block' ),
 			[
 				'render_callback' => [ $this, 'render_course_outline_block' ],
 			]
