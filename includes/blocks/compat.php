@@ -44,7 +44,7 @@ if ( ! function_exists( 'register_block_type_from_metadata' ) ) {
 			return false;
 		}
 
-		$metadata = wp_json_encode( file_get_contents( $metadata_file ), true );
+		$metadata = json_decode( file_get_contents( $metadata_file ), true );
 		if ( ! is_array( $metadata ) || empty( $metadata['name'] ) ) {
 			return false;
 		}
