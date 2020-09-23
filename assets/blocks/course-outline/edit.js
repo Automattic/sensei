@@ -1,12 +1,16 @@
 import { InnerBlocks, InspectorControls } from '@wordpress/block-editor';
 import { useSelect, withSelect } from '@wordpress/data';
-import { useEffect } from '@wordpress/element';
+import { createContext, useEffect } from '@wordpress/element';
 import { CourseOutlinePlaceholder } from './placeholder';
 import { COURSE_STORE } from './store';
 import { useBlocksCreator } from './use-block-creator';
-import { useDescendantAttributes } from './hooks';
 import { PanelBody, ToggleControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+
+/**
+ * A React context which contains the attributes and the setAttributes callback of the Outline block.
+ */
+export const OutlineAttributesContext = createContext();
 
 /**
  * Edit course outline block component.
@@ -48,8 +52,6 @@ const EditCourseOutlineBlock = ( {
 		}
 	}, [ structure, setBlocks ] );
 
-	useDescendantAttributes( clientId, attributes, setAttributes );
-
 	if ( isEmpty ) {
 		return (
 			<CourseOutlinePlaceholder
@@ -77,12 +79,19 @@ const EditCourseOutlineBlock = ( {
 			</InspectorControls>
 
 			<section className={ className }>
-				<InnerBlocks
-					allowedBlocks={ [
-						'sensei-lms/course-outline-module',
-						'sensei-lms/course-outline-lesson',
-					] }
-				/>
+				<OutlineAttributesContext.Provider
+					value={ {
+						parentAttributes: attributes,
+						parentSetAttributes: setAttributes,
+					} }
+				>
+					<InnerBlocks
+						allowedBlocks={ [
+							'sensei-lms/course-outline-module',
+							'sensei-lms/course-outline-lesson',
+						] }
+					/>
+				</OutlineAttributesContext.Provider>
 			</section>
 		</>
 	);

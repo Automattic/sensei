@@ -1,7 +1,8 @@
 import { __ } from '@wordpress/i18n';
 import { InnerBlocks, RichText } from '@wordpress/block-editor';
-import { useState } from '@wordpress/element';
+import { useState, useContext } from '@wordpress/element';
 import classnames from 'classnames';
+import { OutlineAttributesContext } from '../edit';
 
 import SingleLineInput from '../single-line-input';
 import { ModuleBlockSettings } from './settings';
@@ -9,26 +10,23 @@ import { ModuleBlockSettings } from './settings';
 /**
  * Edit module block component.
  *
- * @param {Object}   props                                               Component props.
- * @param {string}   props.className                                     Custom class name.
- * @param {Object}   props.attributes                                    Block attributes.
- * @param {string}   props.attributes.title                              Module title.
- * @param {string}   props.attributes.description                        Module description.
- * @param {Function} props.setAttributes                                 Block set attributes function.
- * @param {Object}   props.attributes.parentAttributes                   Attributes of the parent block.
- * @param {boolean}  props.attributes.parentAttributes.animationsEnabled Parents attribute of whether the animations are enabled.
- * @param {Function} props.attributes.parentSetAttributes                Callback to set the parents attributes.
+ * @param {Object}   props                        Component props.
+ * @param {string}   props.className              Custom class name.
+ * @param {Object}   props.attributes             Block attributes.
+ * @param {string}   props.attributes.title       Module title.
+ * @param {string}   props.attributes.description Module description.
+ * @param {Function} props.setAttributes          Block set attributes function.
  */
 const EditModuleBlock = ( {
 	className,
-	attributes: {
-		title,
-		description,
-		parentAttributes: { animationsEnabled },
-		parentSetAttributes,
-	},
+	attributes: { title, description },
 	setAttributes,
 } ) => {
+	const {
+		parentAttributes: { animationsEnabled },
+		parentSetAttributes,
+	} = useContext( OutlineAttributesContext );
+
 	/**
 	 * Handle update name.
 	 *
