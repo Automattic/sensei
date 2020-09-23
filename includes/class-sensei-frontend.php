@@ -165,7 +165,7 @@ class Sensei_Frontend {
 
 		if ( ! $disable_styles ) {
 
-			Sensei()->assets->enqueue( Sensei()->token . '-frontend', 'css/frontend.css', [], 'screen' );
+			Sensei()->assets->enqueue( Sensei()->token . '-frontend', 'css/frontend.css', [ 'dashicons' ], 'screen' );
 
 			// Allow additional stylesheets to be loaded.
 			do_action( 'sensei_additional_styles' );
