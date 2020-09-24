@@ -1,10 +1,16 @@
 import { InnerBlocks } from '@wordpress/block-editor';
+import { compose } from '@wordpress/compose';
 import { useSelect, withSelect } from '@wordpress/data';
 import { createContext, useEffect } from '@wordpress/element';
 import { CourseOutlinePlaceholder } from './placeholder';
 import { COURSE_STORE } from '../store';
 import { useBlocksCreator } from '../use-block-creator';
 import { OutlineBlockSettings } from './settings';
+import { __ } from '@wordpress/i18n';
+import {
+	withColorSettings,
+	withDefaultBlockStyle,
+} from '../../../shared/blocks/settings';
 
 /**
  * A React context which contains the attributes and the setAttributes callback of the Outline block.
@@ -20,6 +26,7 @@ export const OutlineAttributesContext = createContext();
  * @param {Object[]} props.structure     Course module and lesson blocks.
  * @param {Object}   props.attributes    Block attributes.
  * @param {Function} props.setAttributes Block setAttributes callback.
+ * @param {Object}   props.borderColor Border color.
  */
 const EditCourseOutlineBlock = ( {
 	clientId,
@@ -27,6 +34,7 @@ const EditCourseOutlineBlock = ( {
 	structure,
 	attributes,
 	setAttributes,
+	borderColor,
 } ) => {
 	const { setBlocks } = useBlocksCreator( clientId );
 
@@ -66,7 +74,7 @@ const EditCourseOutlineBlock = ( {
 				setAnimationsEnabled={ updateAnimationsEnabled }
 			/>
 
-			<section className={ className }>
+			<section className={ className } style={ { borderColor: borderColor.color } }>
 				<OutlineAttributesContext.Provider
 					value={ {
 						outlineAttributes: attributes,
@@ -85,8 +93,17 @@ const EditCourseOutlineBlock = ( {
 	);
 };
 
-export default withSelect( ( select ) => {
-	return {
-		structure: select( COURSE_STORE ).getStructure(),
-	};
-} )( EditCourseOutlineBlock );
+export default compose(
+	withSelect( ( select ) => {
+		return {
+			structure: select( COURSE_STORE ).getStructure(),
+		};
+	} ),
+	withColorSettings( {
+		borderColor: {
+			style: 'border-color',
+			label: __( 'Border color', 'sensei-lms' ),
+		},
+	} ),
+	withDefaultBlockStyle()
+)( EditCourseOutlineBlock );

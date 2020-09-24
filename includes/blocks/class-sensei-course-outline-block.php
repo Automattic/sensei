@@ -175,13 +175,16 @@ class Sensei_Course_Outline_Block {
 
 		$this->add_block_attributes( $structure );
 
-		$block_class = 'wp-block-sensei-lms-course-outline';
-		if ( isset( $attributes['className'] ) ) {
-			$block_class .= ' ' . $attributes['className'];
-		}
+		$class_name = Sensei_Block_Helpers::block_class_with_default_style( $attributes );
+		$css        = Sensei_Block_Helpers::build_styles(
+			[
+				'attributes' => $attributes,
+				[ 'borderColor' => 'border-color' ],
+			]
+		);
 
 		return '
-			<section class="' . $block_class . '">
+			<section ' . Sensei_Block_Helpers::render_style_attributes( [ 'wp-block-sensei-lms-course-outline', $class_name ], $css ) . '>
 				' .
 			implode(
 				'',

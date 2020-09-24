@@ -12,6 +12,39 @@
     "animationsEnabled": {
       "type": "boolean",
       "default": true
+    },
+    "borderColor": {
+      "type": "string"
     }
+  },
+  "styles": [
+    {
+      "name": "borderless",
+      "label": "Borderless"
+    },
+    {
+      "name": "default",
+      "label": "Bordered",
+      "isDefault": true
+    }
+  ],
+  "example": {
+    "innerBlocks": [
+      {
+        "name": "sensei-lms/course-outline-module",
+        "attributes": {
+          "title": "Module",
+          "description": "About Module"
+        },
+        "innerBlocks": [
+          {
+            "name": "sensei-lms/course-outline-lesson",
+            "attributes": {
+              "title": "Lesson"
+            }
+          }
+        ]
+      }
+    ]
   }
 }
