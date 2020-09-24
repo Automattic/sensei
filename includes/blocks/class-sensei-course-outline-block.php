@@ -220,13 +220,19 @@ class Sensei_Course_Outline_Block {
 	 * @return string Lesson HTML
 	 */
 	protected function render_lesson_block( $block ) {
+		$lesson_id = $block['id'];
+		$classes   = [ 'wp-block-sensei-lms-course-outline-lesson' ];
+
+		if ( Sensei_Utils::user_completed_lesson( $lesson_id, get_current_user_id() ) ) {
+			$classes[] = 'completed';
+		}
 
 		$css = Sensei_Block_Helpers::build_styles( $block );
 
 		return '
-			<h3 ' . Sensei_Block_Helpers::render_style_attributes( 'wp-block-sensei-lms-course-outline-lesson', $css ) . '>
+			<h3 ' . Sensei_Block_Helpers::render_style_attributes( $classes, $css ) . '>
 				<a
-				href="' . esc_url( get_permalink( $block['id'] ) ) . '">
+				href="' . esc_url( get_permalink( $lesson_id ) ) . '">
 					' . $block['title'] . '
 				</a>
 			</h3>
