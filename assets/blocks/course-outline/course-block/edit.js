@@ -99,27 +99,31 @@ const EditCourseOutlineBlock = ( {
 	);
 };
 
+const applyWithSelect = withSelect( ( select ) => ( {
+	structure: select( COURSE_STORE ).getStructure(),
+} ) );
+
+const applyWithDispatch = withDispatch( ( dispatch, ownProps, { select } ) => {
+	const editPost = select( 'core/edit-post' );
+	const { toggleEditorPanelEnabled } = dispatch( 'core/edit-post' );
+
+	const hasLegacyMetaBoxes =
+		editPost.isEditorPanelEnabled( 'meta-box-course-lessons' ) ||
+		editPost.isEditorPanelEnabled( 'meta-box-module_course_mb' );
+
+	const toggleLegacyMetaboxes = ( enable ) => {
+		// If the `enable` is already as requested, do nothing.
+		const toggleFn =
+			enable === hasLegacyMetaBoxes ? noop : toggleEditorPanelEnabled;
+
+		toggleFn( 'meta-box-course-lessons' );
+		toggleFn( 'meta-box-module_course_mb' );
+	};
+
+	return { toggleLegacyMetaboxes };
+} );
+
 export default compose(
-	withSelect( ( select ) => ( {
-		structure: select( COURSE_STORE ).getStructure(),
-	} ) ),
-	withDispatch( ( dispatch, ownProps, { select } ) => {
-		const editPost = select( 'core/edit-post' );
-		const { toggleEditorPanelEnabled } = dispatch( 'core/edit-post' );
-
-		const hasLegacyMetaBoxes =
-			editPost.isEditorPanelEnabled( 'meta-box-course-lessons' ) ||
-			editPost.isEditorPanelEnabled( 'meta-box-module_course_mb' );
-
-		const toggleLegacyMetaboxes = ( enable ) => {
-			// If the `enable` is already as requested, do nothing.
-			const toggleFn =
-				enable === hasLegacyMetaBoxes ? noop : toggleEditorPanelEnabled;
-
-			toggleFn( 'meta-box-course-lessons' );
-			toggleFn( 'meta-box-module_course_mb' );
-		};
-
-		return { toggleLegacyMetaboxes };
-	} )
+	applyWithSelect,
+	applyWithDispatch
 )( EditCourseOutlineBlock );
