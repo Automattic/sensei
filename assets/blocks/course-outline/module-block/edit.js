@@ -151,9 +151,6 @@ const EditModuleBlock = ( props ) => {
 						</h3>
 					</div>
 					<InnerBlocks
-						template={ [
-							[ 'sensei-lms/course-outline-lesson', {} ],
-						] }
 						allowedBlocks={ [ 'sensei-lms/course-outline-lesson' ] }
 					/>
 				</div>
