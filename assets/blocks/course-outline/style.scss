@@ -127,7 +127,7 @@ $dark-gray: #1a1d20;
 	&.animated {
 		max-height: 2000px;
 		transition: max-height 0.5s ease-in;
-		overflow: hidden;
+		overflow: auto;
 
 		&.collapsed {
 			display: block;
