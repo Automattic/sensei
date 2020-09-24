@@ -71,9 +71,11 @@ export const syncStructureToBlocks = ( structure, blocks ) => {
  * @param {[CourseLessonData,CourseModuleData]} item   Structure item.
  * @return {Object} The block, if found.
  */
-const findBlock = ( blocks, { id, type } ) => {
+const findBlock = ( blocks, { id, type, title } ) => {
 	const compare = ( { name, attributes } ) =>
-		id === attributes.id && blockNames[ type ] === name;
+		( id === attributes.id ||
+			( ! attributes.id && attributes.title === title ) ) &&
+		blockNames[ type ] === name;
 	return (
 		blocks.find( compare ) ||
 		( 'lesson' === type &&
