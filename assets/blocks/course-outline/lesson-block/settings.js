@@ -17,8 +17,8 @@ import { StatusControl } from '../status-control';
  * @param {Object}   props.textColor           The lesson title color.
  * @param {Function} props.setTextColor        Callback method to set the lesson title color.
  * @param {Function} props.setBackgroundColor  Callback method to set the background color.
- * @param {Object}   props.previewStatus
- * @param {Function} props.setPreviewStatus
+ * @param {Object}   props.previewStatus       Status to preview.
+ * @param {Function} props.setPreviewStatus    Set status to preview.
  * @param {Function} props.setAttributes       Callback method to set the lesson title font size.
  * @param {Function} props.attributes          The block attributes.
  * @param {number}   props.attributes.id       The lesson id.
