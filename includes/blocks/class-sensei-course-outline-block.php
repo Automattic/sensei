@@ -240,7 +240,7 @@ class Sensei_Course_Outline_Block {
 
 		$progress_indicator = $this->get_progress_indicator( $block['id'], $course_id );
 
-		$animated = false === $outline_attributes['animationsEnabled'] ? '' : 'animated';
+		$animated = empty( $outline_attributes['animationsEnabled'] ) ? '' : 'animated';
 
 		return '
 			<section class="wp-block-sensei-lms-course-outline-module">
