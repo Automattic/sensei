@@ -41,6 +41,13 @@ class Sensei_PostTypes {
 	public $quiz;
 
 	/**
+	 * Messages object.
+	 *
+	 * @var Sensei_Messages
+	 */
+	public $messages;
+
+	/**
 	 * Array of post ID's for which to fire an "initial publish" action.
 	 *
 	 * @var array
