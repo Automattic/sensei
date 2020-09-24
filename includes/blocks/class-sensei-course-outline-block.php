@@ -248,10 +248,7 @@ class Sensei_Course_Outline_Block {
 
 		$animated = empty( $outline_attributes['animationsEnabled'] ) ? '' : 'animated';
 
-		$class_name = $block['attributes']['className'] ?? '';
-		if ( empty( $class_name ) && false === strpos( $class_name, 'is-style-' ) ) {
-			$class_name .= ' is-style-default';
-		}
+		$class_name = Sensei_Block_Helpers::block_class_with_default_style( $block );
 
 		$is_default_style = false !== strpos( $class_name, 'is-style-default' );
 		$is_minimal_style = false !== strpos( $class_name, 'is-style-minimal' );
@@ -259,7 +256,7 @@ class Sensei_Course_Outline_Block {
 		$header_css = Sensei_Block_Helpers::build_styles( $block );
 
 		return '
-			<section class="wp-block-sensei-lms-course-outline-module">
+			<section class="wp-block-sensei-lms-course-outline-module ' . $class_name . '">
 				<header ' . Sensei_Block_Helpers::render_style_attributes( 'wp-block-sensei-lms-course-outline-module__name', $header_css ) . '>
 					<h2>' . $block['title'] . '</h2>
 					' . $progress_indicator . '

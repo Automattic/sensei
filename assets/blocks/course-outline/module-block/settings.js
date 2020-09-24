@@ -97,6 +97,11 @@ export function ModuleBlockSettings( {
 					{ __( 'Apply colors to all modules', 'sensei-lms' ) }
 				</Button>
 			</PanelColorSettings>
+			<div style={ { padding: '16px' } }>
+				<Button isLink onClick={ applyStyle }>
+					{ __( 'Apply style to all modules', 'sensei-lms' ) }
+				</Button>
+			</div>
 		</InspectorControls>
 	);
 }

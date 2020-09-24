@@ -40,6 +40,9 @@ class Sensei_Block_Helpers {
 
 		foreach ( $colors as $color => $style ) {
 
+			if ( ! $style ) {
+				continue;
+			}
 			$named_color  = $block_attributes[ $color ] ?? null;
 			$custom_color = $block_attributes[ 'custom' . ucfirst( $color ) ] ?? null;
 
@@ -76,6 +79,22 @@ class Sensei_Block_Helpers {
 			esc_attr( implode( ' ', $class_names ) ),
 			esc_attr( implode( '; ', $css['inline_styles'] ) )
 		);
+	}
+
+	/**
+	 * Add default style to list of classes if no style is selected.
+	 *
+	 * @param array $attributes Block attributes.
+	 *
+	 * @return string
+	 */
+	public static function block_class_with_default_style( $attributes ) {
+		$class_name = $attributes['className'] ?? '';
+		if ( empty( $class_name ) && false === strpos( $class_name, 'is-style-' ) ) {
+			$class_name .= ' is-style-default';
+		}
+
+		return $class_name;
 	}
 
 

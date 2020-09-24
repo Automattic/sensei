@@ -1,23 +1,89 @@
+import {
+	ContrastChecker,
+	InspectorControls,
+	PanelColorSettings,
+	withColors,
+} from '@wordpress/block-editor';
+import { __ } from '@wordpress/i18n';
+import { mapValues, upperFirst } from 'lodash';
+
 /**
- * Build PanelColorSettings configuration.
+ * Add color customization support and block settings controls for colors.
  *
- * @param {string}   name                Style attribute name.
- * @param {string}   label               Control label.
- * @param {Object}   props               Component props.
- * @param {Object}   props.style
- * @param {Function} props.setAttributes
- * @return {Object} Configuration.
+ * @param {Object} colorSettings
  */
-export const colorSetting = ( name, label, { style, setAttributes } ) => {
-	return {
-		value: style[ name ],
-		onChange: ( colorValue ) =>
-			setAttributes( {
-				style: {
-					...style,
-					[ name ]: colorValue,
-				},
-			} ),
-		label,
+export function withColorSettings( colorSettings ) {
+	return ( Component ) => {
+		const ComponentWithColorSettings = ( props ) => (
+			<>
+				<Component { ...props } />
+				<ColorSettings { ...{ colorSettings, props } } />
+			</>
+		);
+
+		const colors = mapValues(
+			colorSettings,
+			( settings ) => settings.style
+		);
+
+		return withColors( colors )( ComponentWithColorSettings );
 	};
+}
+
+/**
+ * Color setting inspector controls.
+ *
+ * @param {Object} params
+ * @param {Object} params.colorSettings Color definitions.
+ * @param {Object} params.props         Component props
+ * @class
+ */
+export const ColorSettings = ( { colorSettings, props } ) => {
+	const colors = Object.keys( colorSettings );
+	return (
+		<InspectorControls>
+			<PanelColorSettings
+				title={ __( 'Color settings', 'sensei-lms' ) }
+				colorSettings={ colors.map( ( color ) => ( {
+					value: props[ color ].color,
+					label: colorSettings[ color ].label,
+					onChange: props[ `set${ upperFirst( color ) }` ],
+				} ) ) }
+			>
+				{ props.backgroundColor && props.textColor && (
+					<ContrastChecker
+						{ ...{
+							textColor: props.textColor.color,
+							backgroundColor: props.backgroundColor.color,
+						} }
+						isLargeText={ false }
+					/>
+				) }
+			</PanelColorSettings>
+		</InspectorControls>
+	);
 };
+
+/**
+ * Apply is-style-default if no style is selected.
+ *
+ */
+export function withDefaultBlockStyle() {
+	return ( Component ) => ( props ) => {
+		let { className } = props;
+
+		const extraProps = {};
+
+		if ( ! className.includes( 'is-style-' ) ) {
+			className = extraProps.className = [
+				className,
+				'is-style-default',
+			].join( ' ' );
+		}
+
+		const style = className.match( /is-style-(\w+)/ );
+		if ( style ) extraProps.blockStyle = style[ 1 ];
+
+		return <Component { ...props } { ...extraProps } />;
+	};
+}
