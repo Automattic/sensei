@@ -130,7 +130,7 @@ class Sensei_Core_Modules {
 
 		}
 
-		if ( 'course' == $post_type && ! Sensei()->feature_flags->is_enabled( 'course_outline' ) ) {
+		if ( 'course' == $post_type ) {
 			// Course modules selection metabox
 			add_meta_box( $this->taxonomy . '_course_mb', __( 'Course Modules', 'sensei-lms' ), array( $this, 'course_module_metabox' ), 'course', 'side', 'core' );
 		}
