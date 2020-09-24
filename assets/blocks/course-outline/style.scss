@@ -109,8 +109,12 @@ $dark-gray: #1a1d20;
 	}
 
 	&.completed::before {
+		content: '✓';
 		border: solid 1px #179942;
 		background-color: #1FD25A;
+		color: white;
+		line-height: 24px;
+		text-align: center;
 	}
 }
 
