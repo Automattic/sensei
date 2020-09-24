@@ -54,6 +54,14 @@ registerBlockType( 'sensei-lms/course-outline-module', {
 		attributes: {
 			title: 'Module',
 			description: 'About Module',
+			innerBlocks: [
+				{
+					name: 'sensei-lms/course-outline-lesson',
+					attributes: {
+						title: 'Lesson',
+					},
+				},
+			],
 		},
 	},
 	styles: [

@@ -1,15 +1,19 @@
 import {
 	InnerBlocks,
 	RichText,
-	withColors,
 	InspectorControls,
 } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 
 import { PanelBody } from '@wordpress/components';
+import { compose } from '@wordpress/compose';
 import { useState, useContext } from '@wordpress/element';
 import classnames from 'classnames';
 import { OutlineAttributesContext } from '../course-block/edit';
+import {
+	withColorSettings,
+	withDefaultBlockStyle,
+} from '../../../shared/blocks/settings';
 
 import SingleLineInput from '../single-line-input';
 import { ModuleBlockSettings } from './settings';
@@ -31,7 +35,9 @@ const EditModuleBlock = ( props ) => {
 		className,
 		attributes: { title, description },
 		mainColor,
+		textColor,
 		setAttributes,
+		blockStyle,
 	} = props;
 	const {
 		      outlineAttributes: { animationsEnabled },
@@ -72,9 +78,10 @@ const EditModuleBlock = ( props ) => {
 		}
 	}
 
-	const isDefaultStyle =
-		className.includes( 'is-style-default' ) ||
-		! className.includes( 'is-style-' );
+	const blockStyleColors = {
+		default: { background: mainColor.color },
+		minimal: { borderColor: mainColor.color },
+	}[ blockStyle ];
 
 	return (
 		<>
@@ -83,25 +90,10 @@ const EditModuleBlock = ( props ) => {
 				setIsPreviewCompleted={ setIsPreviewCompleted }
 			/>
 			<ModuleBlockSettings { ...props } />
-			<section
-				className={ classnames( className, {
-					'is-style-default': isDefaultStyle,
-				} ) }
-				style={
-					isDefaultStyle
-						? {
-								borderColor: mainColor.color,
-						  }
-						: {}
-				}
-			>
+			<section className={ className }>
 				<header
 					className="wp-block-sensei-lms-course-outline-module__name"
-					style={
-						isDefaultStyle
-							? { background: mainColor.color }
-							: { borderColor: mainColor.color }
-					}
+					style={ { ...blockStyleColors, color: textColor.color } }
 				>
 					<h2 className="wp-block-sensei-lms-course-outline__clean-heading">
 						<SingleLineInput
@@ -113,11 +105,11 @@ const EditModuleBlock = ( props ) => {
 					</h2>
 					<div
 						className={ classnames(
-							'wp-block-sensei-lms-course-outline__progress-indicator',
+							'wp-block-sensei-lms-course-outline-module__progress-indicator',
 							indicatorClass
 						) }
 					>
-						<span className="wp-block-sensei-lms-course-outline__progress-indicator__text">
+						<span className="wp-block-sensei-lms-course-outline-module__progress-indicator__text">
 							{ indicatorText }
 						</span>
 					</div>
@@ -170,7 +162,13 @@ const EditModuleBlock = ( props ) => {
 	);
 };
 
-export default withColors( {
-	mainColor: 'background-color',
-	textColor: 'color',
-} )( EditModuleBlock );
+export default compose(
+	withColorSettings( {
+		mainColor: {
+			style: 'background-color',
+			label: __( 'Main color', 'sensei-lms' ),
+		},
+		textColor: { style: 'color', label: __( 'Text color', 'sensei-lms' ) },
+	} ),
+	withDefaultBlockStyle()
+)( EditModuleBlock );

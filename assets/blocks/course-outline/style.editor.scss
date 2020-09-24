@@ -1,4 +1,4 @@
-
+$dark-gray: #1a1d20;
 .edit-post-visual-editor {
 	.wp-block-sensei-lms-course-outline {
 		&__clean-input[type='text'] {
@@ -28,6 +28,13 @@
 		}
 	}
 
+	.wp-block-sensei-lms-course-outline-module {
+		&.is-style-minimal {
+			.wp-block-sensei-lms-course-outline-module__name {
+				border-bottom: 4px solid $dark-gray;
+			}
+		}
+	}
 	.wp-block-sensei-lms-course-outline-lesson {
 
 		&__unsaved {

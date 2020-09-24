@@ -248,12 +248,32 @@ class Sensei_Course_Outline_Block {
 
 		$animated = empty( $outline_attributes['animationsEnabled'] ) ? '' : 'animated';
 
-		$class_name = Sensei_Block_Helpers::block_class_with_default_style( $block );
+		$class_name = Sensei_Block_Helpers::block_class_with_default_style( $block['attributes'] );
 
 		$is_default_style = false !== strpos( $class_name, 'is-style-default' );
 		$is_minimal_style = false !== strpos( $class_name, 'is-style-minimal' );
 
-		$header_css = Sensei_Block_Helpers::build_styles( $block );
+		$header_css = Sensei_Block_Helpers::build_styles(
+			$block,
+			[
+				'mainColor' => $is_default_style ? 'background-color' : null,
+			]
+		);
+
+		$style_header = '';
+
+		if ( $is_minimal_style ) {
+
+			$header_border_css = Sensei_Block_Helpers::build_styles(
+				$block,
+				[
+					'mainColor' => 'background-color',
+				]
+			);
+
+			$style_header = '<div ' . Sensei_Block_Helpers::render_style_attributes( 'wp-block-sensei-lms-course-outline-module__name__minimal-border', $header_border_css ) . ' />';
+
+		}
 
 		return '
 			<section class="wp-block-sensei-lms-course-outline-module ' . $class_name . '">
@@ -262,6 +282,7 @@ class Sensei_Course_Outline_Block {
 					' . $progress_indicator . '
 					<div role="button" tabindex="0" class="wp-block-sensei-lms-course-outline__arrow dashicons dashicons-arrow-up-alt2"/>
 				</header>
+					' . $style_header . '
 				<div class="wp-block-sensei-lms-collapsible ' . $animated . '">
 					<div class="wp-block-sensei-lms-course-outline-module__description">
 						' . $block['description'] . '
@@ -309,9 +330,9 @@ class Sensei_Course_Outline_Block {
 
 		return '
 					<div
-						class="wp-block-sensei-lms-course-outline__progress-indicator ' . $indicator_class . '"
+						class="wp-block-sensei-lms-course-outline-module__progress-indicator ' . $indicator_class . '"
 					>
-						<span class="wp-block-sensei-lms-course-outline__progress-indicator__text"> ' . $module_status . ' </span>
+						<span class="wp-block-sensei-lms-course-outline-module__progress-indicator__text"> ' . $module_status . ' </span>
 					</div>
 		';
 	}
