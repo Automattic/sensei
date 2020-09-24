@@ -7,22 +7,22 @@ import { PanelBody, FontSizePicker, ExternalLink } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 
-import { LessonStatusControl } from './lesson-status-control';
+import { StatusControl } from '../status-control';
 
 /**
  * Inspector controls for lesson block.
  *
- * @param {Object}   props                       Component props.
- * @param {Object}   props.backgroundColor       The lesson title background color.
- * @param {Object}   props.textColor             The lesson title color.
- * @param {Function} props.setTextColor          Callback method to set the lesson title color.
- * @param {Function} props.setBackgroundColor    Callback method to set the background color.
- * @param {Function} props.isPreviewCompleted
- * @param {Function} props.setIsPreviewCompleted
- * @param {Function} props.setAttributes         Callback method to set the lesson title font size.
- * @param {Function} props.attributes            The block attributes.
- * @param {number}   props.attributes.id         The lesson id.
- * @param {Function} props.attributes.fontSize   The lesson block font size.
+ * @param {Object}   props                     Component props.
+ * @param {Object}   props.backgroundColor     The lesson title background color.
+ * @param {Object}   props.textColor           The lesson title color.
+ * @param {Function} props.setTextColor        Callback method to set the lesson title color.
+ * @param {Function} props.setBackgroundColor  Callback method to set the background color.
+ * @param {Object}   props.previewStatus
+ * @param {Function} props.setPreviewStatus
+ * @param {Function} props.setAttributes       Callback method to set the lesson title font size.
+ * @param {Function} props.attributes          The block attributes.
+ * @param {number}   props.attributes.id       The lesson id.
+ * @param {Function} props.attributes.fontSize The lesson block font size.
  */
 export function LessonBlockSettings( {
 	attributes: { id },
@@ -30,8 +30,8 @@ export function LessonBlockSettings( {
 	textColor,
 	setTextColor,
 	setBackgroundColor,
-	isPreviewCompleted,
-	setIsPreviewCompleted,
+	previewStatus,
+	setPreviewStatus,
 	setAttributes,
 	attributes: { fontSize },
 } ) {
@@ -61,12 +61,12 @@ export function LessonBlockSettings( {
 				</PanelBody>
 			) }
 			<PanelBody
-				title={ __( 'Status', 'sensei-lms' ) }
+				title={ __( 'Preview Lesson Status', 'sensei-lms' ) }
 				initialOpen={ true }
 			>
-				<LessonStatusControl
-					isPreviewCompleted={ isPreviewCompleted }
-					setIsPreviewCompleted={ setIsPreviewCompleted }
+				<StatusControl
+					status={ previewStatus }
+					setStatus={ setPreviewStatus }
 				/>
 			</PanelBody>
 			<PanelBody
