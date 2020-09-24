@@ -24,7 +24,7 @@ export const StatusLabels = {
  *
  * @param {Object}   props                 Component props. Extras will be handed through to the `SelectControl` component.
  * @param {Array}    props.includeStatuses The ordered Status constants to include.
- * @param {number}   props.status          The index of the current status.
+ * @param {string}   props.status          The index of the current status.
  * @param {Function} props.setStatus       A callback which is called with the index when a status is selected.
  */
 export const StatusControl = ( {
