@@ -104,7 +104,6 @@ add_action( 'sensei_single_course_modules_after', array( 'Sensei_Core_Modules', 
 
 // @since 1.9.0
 // Course meta
-add_action( 'sensei_single_course_content_inside_before', array( 'Sensei_Course', 'the_course_enrolment_actions' ), 30 );
 add_action( 'sensei_single_course_content_inside_before', array( 'Sensei_Course', 'the_course_video' ), 40 );
 
 /***************************

@@ -3472,7 +3472,7 @@ class Sensei_Course {
 			&& is_singular( 'course' )
 			&& ! $this->is_legacy_course( $post )
 		) {
-			$this->remove_legacy_course_actions();;
+			$this->remove_legacy_course_actions();
 		}
 	}
 
@@ -3490,6 +3490,9 @@ class Sensei_Course {
 		add_action( 'sensei_single_course_content_inside_after', array( __CLASS__, 'the_course_lessons_title' ), 9 );
 		add_action( 'sensei_single_course_content_inside_after', 'course_single_lessons', 10 );
 
+		// Take this course.
+		add_action( 'sensei_single_course_content_inside_before', array( __CLASS__, 'the_course_enrolment_actions' ), 30 );
+
 		// Module listing.
 		add_action( 'sensei_single_course_content_inside_after', array( $sensei->modules, 'load_course_module_content_template' ), 8 );
 
@@ -3501,10 +3504,6 @@ class Sensei_Course {
 	 * Remove legacy course actions.
 	 */
 	public function remove_legacy_course_actions() {
-		// Legacy progress bar on the single course page.
-		remove_action( 'sensei_single_course_content_inside_before', array( $this, 'the_progress_statement' ), 15 );
-		remove_action( 'sensei_single_course_content_inside_before', array( $this, 'the_progress_meter' ), 16 );
-
 		// Legacy lesson listing.
 		remove_action( 'sensei_single_course_content_inside_after', array( __CLASS__, 'the_course_lessons_title' ), 9 );
 		remove_action( 'sensei_single_course_content_inside_after', 'course_single_lessons', 10 );
@@ -3512,8 +3511,7 @@ class Sensei_Course {
 		// Module listing.
 		remove_action( 'sensei_single_course_content_inside_after', array( Sensei()->modules, 'load_course_module_content_template' ), 8 );
 
-		// Add message links to courses.
-		remove_action( 'sensei_single_course_content_inside_before', array( Sensei()->post_types->messages, 'send_message_link' ), 35 );
+		// @todo Remove additional actions from `\Sensei_Course::add_legacy_course_hooks` as implemented in blocks.
 	}
 
 	/**
@@ -3530,7 +3528,7 @@ class Sensei_Course {
 			'sensei-lms/course-outline',
 		];
 
-		foreach( $course_blocks as $block ) {
+		foreach ( $course_blocks as $block ) {
 			if ( has_block( $block, $course ) ) {
 				return false;
 			}
