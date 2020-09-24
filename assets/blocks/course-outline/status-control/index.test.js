@@ -3,11 +3,44 @@ import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 describe( '<StatusControl />', () => {
-	it.todo( 'Should display the options in a dropdown' );
+	it( 'Should display the default options', () => {
+		const { getByTestId } = render(
+			<StatusControl
+				data-testid={ 'select-test-id' }
+				status={ Statuses.IN_PROGRESS }
+				setStatus={ () => {} }
+			/>
+		);
+		const select = getByTestId( 'select-test-id' );
 
-	it.todo( 'Should display the default options' );
+		const optionValues = Array.from( select.childNodes ).map(
+			( option ) => option.value
+		);
+		expect( optionValues ).toEqual( [
+			Statuses.IN_PROGRESS,
+			Statuses.COMPLETED,
+		] );
+	} );
 
-	it.todo( 'Should display the specified options' );
+	it( 'Should display the specified options', () => {
+		const { getByTestId } = render(
+			<StatusControl
+				data-testid={ 'select-test-id' }
+				includeStatuses={ [ Statuses.COMPLETED, Statuses.NOT_STARTED ] }
+				status={ Statuses.IN_PROGRESS }
+				setStatus={ () => {} }
+			/>
+		);
+		const select = getByTestId( 'select-test-id' );
+
+		const optionValues = Array.from( select.childNodes ).map(
+			( option ) => option.value
+		);
+		expect( optionValues ).toEqual( [
+			Statuses.COMPLETED,
+			Statuses.NOT_STARTED,
+		] );
+	} );
 
 	it( 'Should call the callback with a correct value when a button is clicked.', () => {
 		const setStatusMock = jest.fn();
@@ -18,7 +51,6 @@ describe( '<StatusControl />', () => {
 				setStatus={ setStatusMock }
 			/>
 		);
-
 		const select = getByTestId( 'select-test-id' );
 
 		userEvent.selectOptions( select, [ Statuses.COMPLETED ] );
