@@ -39,6 +39,9 @@ registerBlockType( 'sensei-lms/course-outline-lesson', {
 		customTextColor: {
 			type: 'string',
 		},
+		fontSize: {
+			type: 'number',
+		},
 	},
 	edit( props ) {
 		return <EditLessonBlock { ...props } />;

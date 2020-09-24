@@ -9,25 +9,26 @@ import { LessonBlockSettings } from './settings';
 /**
  * Edit lesson block component.
  *
- * @param {Object}   props                   Component props.
- * @param {string}   props.clientId          Block client ID.
- * @param {string}   props.name              Block name.
- * @param {string}   props.className         Custom class name.
- * @param {Object}   props.attributes        Block attributes.
- * @param {string}   props.attributes.title  Lesson title.
- * @param {number}   props.attributes.id     Lesson Post ID
- * @param {Object}   props.backgroundColor   Background color object.
- * @param {Object}   props.textColor         Text color object.
- * @param {Function} props.setAttributes     Block set attributes function.
- * @param {Function} props.insertBlocksAfter Insert blocks after function.
- * @param {boolean}  props.isSelected        Is block selected.
+ * @param {Object}   props                     Component props.
+ * @param {string}   props.clientId            Block client ID.
+ * @param {string}   props.name                Block name.
+ * @param {string}   props.className           Custom class name.
+ * @param {Object}   props.attributes          Block attributes.
+ * @param {string}   props.attributes.title    Lesson title.
+ * @param {number}   props.attributes.id       Lesson Post ID
+ * @param {number}   props.attributes.fontSize Lesson title font size.
+ * @param {Object}   props.backgroundColor     Background color object.
+ * @param {Object}   props.textColor           Text color object.
+ * @param {Function} props.setAttributes       Block set attributes function.
+ * @param {Function} props.insertBlocksAfter   Insert blocks after function.
+ * @param {boolean}  props.isSelected          Is block selected.
  */
 const EditLessonBlock = ( props ) => {
 	const {
 		clientId,
 		name,
 		className,
-		attributes: { title, id },
+		attributes: { title, id, fontSize },
 		backgroundColor,
 		textColor,
 		setAttributes,
@@ -118,6 +119,7 @@ const EditLessonBlock = ( props ) => {
 					value={ title }
 					onChange={ handleChange }
 					onKeyDown={ handleKeyDown }
+					style={ { fontSize } }
 				/>
 				{ isSelected && status }
 			</div>

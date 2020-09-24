@@ -3,19 +3,22 @@ import {
 	InspectorControls,
 	PanelColorSettings,
 } from '@wordpress/block-editor';
+import { PanelBody, FontSizePicker, ExternalLink } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { PanelBody, ExternalLink } from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
 
 /**
  * Inspector controls for lesson block.
  *
- * @param {Object}   props
- * @param {Object}   props.attributes
- * @param {number}   props.attributes.id
- * @param {Object}   props.backgroundColor
- * @param {Object}   props.textColor
- * @param {Function} props.setTextColor
- * @param {Function} props.setBackgroundColor
+ * @param {Object}   props                     Component props.
+ * @param {Object}   props.backgroundColor     The lesson title background color.
+ * @param {Object}   props.textColor           The lesson title color.
+ * @param {Function} props.setTextColor        Callback method to set the lesson title color.
+ * @param {Function} props.setBackgroundColor  Callback method to set the background color.
+ * @param {Function} props.setAttributes       Callback method to set the lesson title font size.
+ * @param {Function} props.attributes          The block attributes.
+ * @param {number}   props.attributes.id       The lesson id.
+ * @param {Function} props.attributes.fontSize The lesson block font size.
  */
 export function LessonBlockSettings( {
 	attributes: { id },
@@ -23,7 +26,13 @@ export function LessonBlockSettings( {
 	textColor,
 	setTextColor,
 	setBackgroundColor,
+	setAttributes,
+	attributes: { fontSize },
 } ) {
+	const { fontSizes } = useSelect( ( select ) =>
+		select( 'core/block-editor' ).getSettings()
+	);
+
 	return (
 		<InspectorControls>
 			{ id && (
@@ -45,6 +54,18 @@ export function LessonBlockSettings( {
 					</p>
 				</PanelBody>
 			) }
+			<PanelBody
+				title={ __( 'Typography', 'sensei-lms' ) }
+				initialOpen={ false }
+			>
+				<FontSizePicker
+					fontSizes={ fontSizes }
+					value={ fontSize }
+					onChange={ ( value ) => {
+						setAttributes( { fontSize: value } );
+					} }
+				/>
+			</PanelBody>
 			<PanelColorSettings
 				title={ __( 'Color settings', 'sensei-lms' ) }
 				colorSettings={ [

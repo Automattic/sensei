@@ -53,6 +53,10 @@ class Sensei_Block_Helpers {
 			}
 		}
 
+		if ( ! empty( $block_attributes['fontSize'] ) ) {
+			$attributes['inline_styles'][] = sprintf( 'font-size: %spx', $block_attributes['fontSize'] );
+		}
+
 		return $attributes;
 	}
 
