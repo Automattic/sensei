@@ -1,6 +1,7 @@
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
-import { syncStructureToBlocks } from './data';
+import { extractStructure, syncStructureToBlocks } from './data';
+import { isEqual } from 'lodash';
 
 /**
  * Blocks creator hook.
@@ -17,13 +18,16 @@ export const useBlocksCreator = ( clientId ) => {
 	);
 
 	const setBlocks = useCallback(
-		( blockData ) => {
+		( structure ) => {
 			const blocks = getBlocks( clientId );
-			replaceInnerBlocks(
-				clientId,
-				syncStructureToBlocks( blockData, blocks ),
-				false
-			);
+			const currentStructure = extractStructure( blocks );
+			if ( ! isEqual( currentStructure, structure ) ) {
+				replaceInnerBlocks(
+					clientId,
+					syncStructureToBlocks( structure, blocks ),
+					false
+				);
+			}
 		},
 		[ clientId, replaceInnerBlocks, getBlocks ]
 	);

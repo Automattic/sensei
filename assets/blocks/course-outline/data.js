@@ -92,9 +92,12 @@ const findBlock = ( blocks, { id, type } ) => {
 export const extractStructure = ( blocks ) => {
 	const extractBlockData = {
 		module: ( block ) => ( {
+			description: block.attributes.description,
 			lessons: extractStructure( block.innerBlocks ),
 		} ),
-		lesson: () => ( {} ),
+		lesson: ( block ) => ( {
+			draft: block.attributes.draft,
+		} ),
 	};
 
 	return blocks
@@ -102,8 +105,8 @@ export const extractStructure = ( blocks ) => {
 			const type = blockTypes[ block.name ];
 			return {
 				type,
-				className: block.className,
-				...block.attributes,
+				id: block.attributes.id,
+				title: block.attributes.title,
 				...extractBlockData[ type ]( block ),
 			};
 		} )
