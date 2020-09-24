@@ -85,8 +85,12 @@ class Sensei_Course_Outline_Block {
 			[
 				'render_callback' => [ $this, 'render_course_outline_block' ],
 				'attributes'      => [
-					'id' => [
+					'id'                => [
 						'type' => 'number',
+					],
+					'animationsEnabled' => [
+						'type'    => 'boolean',
+						'default' => true,
 					],
 				],
 			]
@@ -191,9 +195,9 @@ class Sensei_Course_Outline_Block {
 			implode(
 				'',
 				array_map(
-					function( $block ) use ( $post ) {
+					function( $block ) use ( $post, $attributes ) {
 						if ( 'module' === $block['type'] ) {
-							return $this->render_module_block( $block, $post->ID );
+							return $this->render_module_block( $block, $post->ID, $attributes );
 						}
 
 						if ( 'lesson' === $block['type'] ) {
@@ -213,7 +217,6 @@ class Sensei_Course_Outline_Block {
 	 *
 	 * @param array $block Block information.
 	 *
-	 * @access private
 	 * @return string Lesson HTML
 	 */
 	protected function render_lesson_block( $block ) {
@@ -232,18 +235,20 @@ class Sensei_Course_Outline_Block {
 	/**
 	 * Get module block HTML.
 	 *
-	 * @param array $block     Block information.
-	 * @param int   $course_id The course id.
+	 * @param array $block              Module block attributes.
+	 * @param int   $course_id          The course id.
+	 * @param array $outline_attributes Outline block attributes.
 	 *
-	 * @access private
 	 * @return string Module HTML
 	 */
-	protected function render_module_block( $block, $course_id ) {
+	private function render_module_block( $block, $course_id, $outline_attributes ) {
 		if ( empty( $block['lessons'] ) ) {
 			return '';
 		}
 
 		$progress_indicator = $this->get_progress_indicator( $block['id'], $course_id );
+
+		$animated = false === $outline_attributes['animationsEnabled'] ? '' : 'animated';
 
 		return '
 			<section class="wp-block-sensei-lms-course-outline-module">
@@ -252,7 +257,7 @@ class Sensei_Course_Outline_Block {
 					' . $progress_indicator . '
 					<div role="button" tabindex="0" class="wp-block-sensei-lms-course-outline__arrow dashicons dashicons-arrow-up-alt2"/>
 				</header>
-				<div class="wp-block-sensei-lms-collapsible">
+				<div class="wp-block-sensei-lms-collapsible ' . $animated . '">
 					<div class="wp-block-sensei-lms-course-outline-module__description">
 						' . $block['description'] . '
 					</div>

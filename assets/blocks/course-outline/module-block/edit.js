@@ -1,15 +1,11 @@
 import { __ } from '@wordpress/i18n';
-import {
-	InnerBlocks,
-	RichText,
-	InspectorControls,
-} from '@wordpress/block-editor';
-import { PanelBody } from '@wordpress/components';
-import { useState } from '@wordpress/element';
+import { InnerBlocks, RichText } from '@wordpress/block-editor';
+import { useState, useContext } from '@wordpress/element';
 import classnames from 'classnames';
+import { OutlineAttributesContext } from '../edit';
 
 import SingleLineInput from '../single-line-input';
-import { ModuleStatusControl } from './module-status-control';
+import { ModuleBlockSettings } from './settings';
 
 /**
  * Edit module block component.
@@ -26,6 +22,10 @@ const EditModuleBlock = ( {
 	attributes: { title, description },
 	setAttributes,
 } ) => {
+	const {
+		outlineAttributes: { animationsEnabled },
+	} = useContext( OutlineAttributesContext );
+
 	/**
 	 * Handle update name.
 	 *
@@ -64,17 +64,10 @@ const EditModuleBlock = ( {
 
 	return (
 		<>
-			<InspectorControls>
-				<PanelBody
-					title={ __( 'Status', 'sensei-lms' ) }
-					initialOpen={ true }
-				>
-					<ModuleStatusControl
-						isPreviewCompleted={ isPreviewCompleted }
-						setIsPreviewCompleted={ setIsPreviewCompleted }
-					/>
-				</PanelBody>
-			</InspectorControls>
+			<ModuleBlockSettings
+				isPreviewCompleted={ isPreviewCompleted }
+				setIsPreviewCompleted={ setIsPreviewCompleted }
+			/>
 
 			<section className={ className }>
 				<header className="wp-block-sensei-lms-course-outline-module__name">
@@ -111,9 +104,11 @@ const EditModuleBlock = ( {
 					/>
 				</header>
 				<div
-					className={ classnames( 'wp-block-sensei-lms-collapsible', {
-						collapsed: ! isExpanded,
-					} ) }
+					className={ classnames(
+						'wp-block-sensei-lms-collapsible',
+						{ animated: animationsEnabled },
+						{ collapsed: ! isExpanded }
+					) }
 				>
 					<div className="wp-block-sensei-lms-course-outline-module__description">
 						<RichText
