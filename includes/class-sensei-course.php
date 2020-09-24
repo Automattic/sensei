@@ -86,6 +86,9 @@ class Sensei_Course {
 		add_filter( 'sensei_send_emails', array( $this, 'block_notification_emails' ) );
 		add_action( 'save_post', array( $this, 'save_course_notification_meta_box' ) );
 
+		// Get content counter to be logged.
+		add_action( 'save_post_course', [ $this, 'content_counter' ], 10, 2 );
+
 		// preview lessons on the course content
 		add_action( 'sensei_course_content_inside_after', array( $this, 'the_course_free_lesson_preview' ) );
 
@@ -126,6 +129,51 @@ class Sensei_Course {
 
 		add_action( 'template_redirect', [ $this, 'setup_single_course_page' ] );
 		add_action( 'sensei_loaded', [ $this, 'add_legacy_course_hooks' ] );
+	}
+
+	public function content_counter( $post_id, $post ) {
+		$content = $post->post_content;
+		$counter = [
+			'lessons' => 0,
+			'modules' => 0
+		];
+
+		if ( has_block( 'sensei-lms/course-outline', $content ) ) {
+			$blocks  = parse_blocks( $content );
+			$counter = $this->count_outline_blocks( $blocks, $counter );
+		} else {
+			$counter = [
+				'lessons' => $this->course_lesson_count( $post_id ),
+				'modules' => count( wp_get_post_terms( $post_id, 'module' ) )
+			];
+		}
+	}
+
+	private function count_outline_blocks( $blocks, $counter ) {
+		foreach ( $blocks as $block ) {
+			// Skip if it's empty.
+			if (
+				in_array( $block['blockName'], [ 'sensei-lms/course-outline-module', 'sensei-lms/course-outline-lesson' ] )
+				&& empty( $block['attrs']['title'] )
+			) {
+				continue;
+			}
+
+			switch ( $block['blockName'] ) {
+				case 'sensei-lms/course-outline-module':
+					$counter['modules']++;
+					break;
+				case 'sensei-lms/course-outline-lesson':
+					$counter['lessons']++;
+					break;
+			}
+
+			if ( ! empty( $block['innerBlocks'] ) ) {
+				$counter = $this->count_outline_blocks( $block['innerBlocks'], $counter );
+			}
+		}
+
+		return $counter;
 	}
 
 	/**
