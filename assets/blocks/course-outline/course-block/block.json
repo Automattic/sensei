@@ -8,6 +8,10 @@
   "attributes": {
     "id": {
       "type": "integer"
+    },
+    "animationsEnabled": {
+      "type": "boolean",
+      "default": true
     }
   }
 }
