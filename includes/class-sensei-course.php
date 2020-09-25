@@ -31,15 +31,15 @@ class Sensei_Course {
 	public $my_courses_page;
 
 	/**
-	 * Flag if course is saving and no resave is needed.
+	 * Course ID being saved, if no resave is needed.
 	 * The resave will be needed when saving a course with
-	 * outline block which needs sync IDs.
+	 * outline block which needs id sync.
 	 *
 	 * @since 3.6.0
 	 *
-	 * @var bool
+	 * @var int
 	 */
-	private $saving_without_resave;
+	private $course_id_saving;
 
 	/**
 	 * @var array The HTML allowed for message boxes.
@@ -98,7 +98,9 @@ class Sensei_Course {
 		add_action( 'save_post', array( $this, 'save_course_notification_meta_box' ) );
 
 		// Log course content counter.
-		add_action( 'save_post_course', [ $this, 'flag_saving_without_resave' ], 10, 2 );
+		add_action( 'save_post_course', [ $this, 'mark_saving_course_id' ], 10, 2 );
+		add_action( 'shutdown', [ $this, 'log_course_update' ] );
+		add_action( 'rest_api_init', [ $this, 'disable_log_course_update' ] );
 
 		// preview lessons on the course content
 		add_action( 'sensei_course_content_inside_after', array( $this, 'the_course_free_lesson_preview' ) );
@@ -3473,9 +3475,9 @@ class Sensei_Course {
 	}
 
 	/**
-	 * Flag when it's saving without resave needed.
+	 * Mark saving course id when no resave is needed for id sync.
 	 *
-	 * hooked into `save_post_course`.
+	 * Hooked into `save_post_course`.
 	 *
 	 * @since 3.6.0
 	 * @access private
@@ -3483,15 +3485,17 @@ class Sensei_Course {
 	 * @param int      $post_id Post ID.
 	 * @param \WP_Post $post    Post object.
 	 */
-	public function flag_saving_without_resave( $post_id, $post ) {
+	public function mark_saving_course_id( $post_id, $post ) {
 		$content = $post->post_content;
 
 		if ( has_block( 'sensei-lms/course-outline', $content ) ) {
 			$blocks = parse_blocks( $content );
 
-			$this->saving_without_resave = ! $this->has_pending_id_sync( $blocks );
+			if ( ! $this->has_pending_id_sync( $blocks ) ) {
+				$this->course_id_saving = $post_id;
+			}
 		} else {
-			$this->saving_without_resave = true;
+			$this->course_id_saving = $post_id;
 		}
 	}
 
@@ -3523,6 +3527,48 @@ class Sensei_Course {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Log the course update.
+	 *
+	 * Hooked into `shutdown`.
+	 *
+	 * @since 3.6.0
+	 * @access private
+	 */
+	public function log_course_update() {
+		if ( empty( $this->course_id_saving ) ) {
+			return;
+		}
+
+		$course_id     = $this->course_id_saving;
+		$post          = get_post( $course_id );
+		$content       = $post->post_content;
+		$product_ids   = get_post_meta( $course_id, '_course_woocommerce_product', false );
+		$product_count = empty( $product_ids ) ? 0 : count( array_filter( $product_ids, 'is_numeric' ) );
+
+		$event_properties = [
+			'course_id'         => $course_id,
+			'has_outline_block' => has_block( 'sensei-lms/course-outline', $content ) ? 1 : 0,
+			'module_count'      => count( wp_get_post_terms( $course_id, 'module' ) ),
+			'lesson_count'      => $this->course_lesson_count( $course_id ),
+			'product_count'     => $product_count,
+		];
+
+		sensei_log_event( 'course_publish', $event_properties );
+	}
+
+	/**
+	 * Disable log course update when it's a REST request.
+	 *
+	 * Hooked into `rest_api_init`.
+	 *
+	 * @since 3.6.0
+	 * @access private
+	 */
+	public function disable_log_course_update() {
+		remove_action( 'shutdown', [ $this, 'log_course_update' ] );
 	}
 
 	/**
