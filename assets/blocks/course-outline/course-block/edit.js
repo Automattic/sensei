@@ -2,7 +2,6 @@ import { InnerBlocks } from '@wordpress/block-editor';
 import { useSelect, withSelect, withDispatch } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
 import { createContext, useEffect } from '@wordpress/element';
-import { noop } from 'lodash';
 
 import { CourseOutlinePlaceholder } from './placeholder';
 import { COURSE_STORE } from '../store';
@@ -112,12 +111,20 @@ const applyWithDispatch = withDispatch( ( dispatch, ownProps, { select } ) => {
 		editPost.isEditorPanelEnabled( 'meta-box-module_course_mb' );
 
 	const toggleLegacyMetaboxes = ( enable ) => {
-		// If the `enable` is already as requested, do nothing.
-		const toggleFn =
-			enable === hasLegacyMetaBoxes ? noop : toggleEditorPanelEnabled;
+		// Side-effect - Prevent submit modules.
+		document
+			.querySelectorAll( '#module_course_mb input' )
+			.forEach( ( input ) => {
+				input.disabled = ! enable;
+			} );
 
-		toggleFn( 'meta-box-course-lessons' );
-		toggleFn( 'meta-box-module_course_mb' );
+		// If the `enable` is already as requested, do nothing.
+		if ( enable === hasLegacyMetaBoxes ) {
+			return;
+		}
+
+		toggleEditorPanelEnabled( 'meta-box-course-lessons' );
+		toggleEditorPanelEnabled( 'meta-box-module_course_mb' );
 	};
 
 	return { toggleLegacyMetaboxes };
