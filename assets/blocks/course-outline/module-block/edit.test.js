@@ -15,7 +15,7 @@ jest.mock( '@wordpress/block-editor', () => ( {
 	),
 } ) );
 jest.mock( '../use-block-creator', () => jest.fn() );
-jest.mock( '../edit', () => jest.fn() );
+jest.mock( '../course-block/edit', () => jest.fn() );
 jest.mock( '@wordpress/element', () => ( {
 	...jest.requireActual( '@wordpress/element' ),
 	useContext: () => ( { outlineAttributes: { animationsEnabled: true } } ),
