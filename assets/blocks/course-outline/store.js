@@ -7,7 +7,8 @@ const DEFAULT_STATE = {
 	structure: [],
 	editor: [],
 	isSaving: false,
-	isDirty: false,
+	isEditorDirty: false,
+	hasChanges: false,
 };
 
 const actions = {
@@ -46,8 +47,8 @@ const actions = {
 	setEditorStructure: ( structure ) => {
 		return { type: 'SET_EDITOR', structure };
 	},
-	setEditorDirty: ( isDirty ) => {
-		return { type: 'SET_DIRTY', isDirty };
+	setEditorDirty: ( isEditorDirty ) => {
+		return { type: 'SET_DIRTY', isEditorDirty };
 	},
 };
 
@@ -55,27 +56,33 @@ const actions = {
  * Course structure reducers.
  */
 const reducers = {
-	SET_SERVER: ( { structure }, state ) => ( {
-		...state,
-		structure,
-		editor: structure,
-		isDirty: false,
-	} ),
+	SET_SERVER: ( { structure }, state ) => {
+		const hasStructureUpdate =
+			state.structure.length && ! isEqual( structure, state.editor );
+		return {
+			...state,
+			structure,
+			editor: structure,
+			isEditorDirty: false,
+			hasStructureUpdate,
+		};
+	},
 	SET_EDITOR: ( { structure }, state ) => {
-		const isDirty = ! isEqual( structure, state.structure );
+		const isEditorDirty = ! isEqual( structure, state.structure );
 		return {
 			...state,
 			editor: structure,
-			isDirty,
+			isEditorDirty,
+			hasStructureUpdate: state.hasStructureUpdate && isEditorDirty,
 		};
 	},
 	SAVING: ( { isSaving }, state ) => ( {
 		...state,
 		isSaving,
 	} ),
-	SET_DIRTY: ( { isDirty }, state ) => ( {
+	SET_DIRTY: ( { isEditorDirty }, state ) => ( {
 		...state,
-		isDirty,
+		isEditorDirty,
 	} ),
 	DEFAULT: ( action, state ) => state,
 };
@@ -93,7 +100,9 @@ const resolvers = {
 const selectors = {
 	getStructure: ( { structure } ) => structure,
 	getEditorStructure: ( { editor } ) => editor,
-	shouldSave: ( { isDirty, isSaving } ) => isDirty && ! isSaving,
+	shouldSave: ( { isEditorDirty, isSaving } ) => ! isSaving && isEditorDirty,
+	shouldResavePost: ( { isEditorDirty, isSaving, hasStructureUpdate } ) =>
+		! isSaving && isEditorDirty && hasStructureUpdate,
 };
 
 export const COURSE_STORE = 'sensei/course-structure';
@@ -102,7 +111,6 @@ export const COURSE_STORE = 'sensei/course-structure';
  * Register course structure store and subscribe to block editor save.
  */
 const registerCourseStructureStore = () => {
-	let wasSaving;
 	subscribe( function saveStructureOnPostSave() {
 		const editor = select( 'core/editor' );
 
@@ -110,20 +118,16 @@ const registerCourseStructureStore = () => {
 
 		const isSaving = editor.isSavingPost() && ! editor.isAutosavingPost();
 		const shouldSave = select( COURSE_STORE ).shouldSave();
+		const shouldResavePost = select( COURSE_STORE ).shouldResavePost();
 
-		if ( shouldSave ) {
-			if ( isSaving && ! wasSaving ) {
-				dispatch( COURSE_STORE ).save();
-			}
-
-			// Save the post again if the blocks were updated.
-			if ( ! isSaving && wasSaving ) {
-				wasSaving = true;
-				dispatch( 'core/editor' ).savePost();
-			}
+		if ( isSaving && shouldSave && ! shouldResavePost ) {
+			dispatch( COURSE_STORE ).save();
 		}
 
-		wasSaving = isSaving;
+		// Save the post again if the blocks were updated.
+		if ( ! isSaving && shouldResavePost ) {
+			dispatch( 'core/editor' ).savePost();
+		}
 	} );
 
 	registerStore( COURSE_STORE, {
