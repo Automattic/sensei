@@ -80,19 +80,10 @@ class Sensei_Course_Outline_Block {
 	 * @access private
 	 */
 	public function register_blocks() {
-		register_block_type(
-			'sensei-lms/course-outline',
+		register_block_type_from_metadata(
+			Sensei()->assets->src_path( 'blocks/course-outline/course-block' ),
 			[
 				'render_callback' => [ $this, 'render_course_outline_block' ],
-				'attributes'      => [
-					'id'                => [
-						'type' => 'number',
-					],
-					'animationsEnabled' => [
-						'type'    => 'boolean',
-						'default' => true,
-					],
-				],
 			]
 		);
 
@@ -102,7 +93,7 @@ class Sensei_Course_Outline_Block {
 				'render_callback' => [ $this, 'process_lesson_block' ],
 				'attributes'      => [
 					'id' => [
-						'type' => 'number',
+						'type' => 'integer',
 					],
 				],
 			]
@@ -114,7 +105,7 @@ class Sensei_Course_Outline_Block {
 				'render_callback' => [ $this, 'process_module_block' ],
 				'attributes'      => [
 					'id' => [
-						'type' => 'number',
+						'type' => 'integer',
 					],
 				],
 				'script'          => 'sensei-course-outline-frontend',
@@ -255,7 +246,7 @@ class Sensei_Course_Outline_Block {
 
 		$progress_indicator = $this->get_progress_indicator( $block['id'], $course_id );
 
-		$animated = false === $outline_attributes['animationsEnabled'] ? '' : 'animated';
+		$animated = empty( $outline_attributes['animationsEnabled'] ) ? '' : 'animated';
 
 		return '
 			<section class="wp-block-sensei-lms-course-outline-module">

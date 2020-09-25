@@ -19,6 +19,8 @@
 			"!/assets/*/*.js",
 			"!/assets/*/*/*.js",
 			"!/assets/*/*/*/*.js",
+			"!/assets/blocks/*/*.json",
+			"!/assets/blocks/*/*/*.json",
 			"!/assets/dist",
 			"!/assets/vendor",
 			"!/sample-data",

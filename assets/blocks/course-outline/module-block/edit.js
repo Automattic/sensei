@@ -2,7 +2,7 @@ import { __ } from '@wordpress/i18n';
 import { InnerBlocks, RichText } from '@wordpress/block-editor';
 import { useState, useContext } from '@wordpress/element';
 import classnames from 'classnames';
-import { OutlineAttributesContext } from '../edit';
+import { OutlineAttributesContext } from '../course-block/edit';
 
 import SingleLineInput from '../single-line-input';
 import { ModuleBlockSettings } from './settings';
