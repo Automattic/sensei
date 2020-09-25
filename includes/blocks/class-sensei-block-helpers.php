@@ -33,6 +33,7 @@ class Sensei_Block_Helpers {
 		$colors = array_merge(
 			[
 				'textColor'       => 'color',
+				'borderColor'     => 'border-color',
 				'backgroundColor' => 'background-color',
 			],
 			$colors
@@ -50,7 +51,8 @@ class Sensei_Block_Helpers {
 				$attributes['css_classes'][] = sprintf( 'has-%s', $style );
 			}
 			if ( $named_color ) {
-				$attributes['css_classes'][] = sprintf( 'has-%s-%s', $named_color, $style );
+				$named_class                 = 'border-color' === $style ? 'border-color-%s' : 'has-%s-%s';
+				$attributes['css_classes'][] = sprintf( $named_class, $named_color, $style );
 			} elseif ( $custom_color ) {
 				$attributes['inline_styles'][] = sprintf( '%s: %s;', $style, $custom_color );
 			}

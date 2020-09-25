@@ -4,9 +4,11 @@ $outline: '.wp-block-sensei-lms-course-outline';
 .wp-block-sensei-lms-course-outline {
 
 	margin: 1em 0;
+	border-style: solid;
+	border-color: $dark-gray;
 
 	&.is-style-default {
-		border: solid 1px $dark-gray;
+		border-width: 1px;
 
 	}
 

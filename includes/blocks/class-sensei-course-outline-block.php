@@ -179,7 +179,6 @@ class Sensei_Course_Outline_Block {
 		$css        = Sensei_Block_Helpers::build_styles(
 			[
 				'attributes' => $attributes,
-				[ 'borderColor' => 'border-color' ],
 			]
 		);
 
