@@ -31,6 +31,17 @@ class Sensei_Course {
 	public $my_courses_page;
 
 	/**
+	 * Flag if course is saving and no resave is needed.
+	 * The resave will be needed when saving a course with
+	 * outline block which needs sync IDs.
+	 *
+	 * @since 3.6.0
+	 *
+	 * @var bool
+	 */
+	private $saving_without_resave;
+
+	/**
 	 * @var array The HTML allowed for message boxes.
 	 */
 	public static $allowed_html;
@@ -86,8 +97,8 @@ class Sensei_Course {
 		add_filter( 'sensei_send_emails', array( $this, 'block_notification_emails' ) );
 		add_action( 'save_post', array( $this, 'save_course_notification_meta_box' ) );
 
-		// Get content counter to be logged.
-		add_action( 'save_post_course', [ $this, 'content_counter' ], 10, 2 );
+		// Log course content counter.
+		add_action( 'save_post_course', [ $this, 'flag_saving_without_resave' ], 10, 2 );
 
 		// preview lessons on the course content
 		add_action( 'sensei_course_content_inside_after', array( $this, 'the_course_free_lesson_preview' ) );
@@ -129,51 +140,6 @@ class Sensei_Course {
 
 		add_action( 'template_redirect', [ $this, 'setup_single_course_page' ] );
 		add_action( 'sensei_loaded', [ $this, 'add_legacy_course_hooks' ] );
-	}
-
-	public function content_counter( $post_id, $post ) {
-		$content = $post->post_content;
-		$counter = [
-			'lessons' => 0,
-			'modules' => 0
-		];
-
-		if ( has_block( 'sensei-lms/course-outline', $content ) ) {
-			$blocks  = parse_blocks( $content );
-			$counter = $this->count_outline_blocks( $blocks, $counter );
-		} else {
-			$counter = [
-				'lessons' => $this->course_lesson_count( $post_id ),
-				'modules' => count( wp_get_post_terms( $post_id, 'module' ) )
-			];
-		}
-	}
-
-	private function count_outline_blocks( $blocks, $counter ) {
-		foreach ( $blocks as $block ) {
-			// Skip if it's empty.
-			if (
-				in_array( $block['blockName'], [ 'sensei-lms/course-outline-module', 'sensei-lms/course-outline-lesson' ] )
-				&& empty( $block['attrs']['title'] )
-			) {
-				continue;
-			}
-
-			switch ( $block['blockName'] ) {
-				case 'sensei-lms/course-outline-module':
-					$counter['modules']++;
-					break;
-				case 'sensei-lms/course-outline-lesson':
-					$counter['lessons']++;
-					break;
-			}
-
-			if ( ! empty( $block['innerBlocks'] ) ) {
-				$counter = $this->count_outline_blocks( $block['innerBlocks'], $counter );
-			}
-		}
-
-		return $counter;
 	}
 
 	/**
@@ -3504,6 +3470,59 @@ class Sensei_Course {
 			'sample_course' => 'getting-started-with-sensei-lms' === $course->post_name ? 1 : 0,
 		];
 		sensei_log_event( 'course_publish', $event_properties );
+	}
+
+	/**
+	 * Flag when it's saving without resave needed.
+	 *
+	 * hooked into `save_post_course`.
+	 *
+	 * @since 3.6.0
+	 * @access private
+	 *
+	 * @param int      $post_id Post ID.
+	 * @param \WP_Post $post    Post object.
+	 */
+	public function flag_saving_without_resave( $post_id, $post ) {
+		$content = $post->post_content;
+
+		if ( has_block( 'sensei-lms/course-outline', $content ) ) {
+			$blocks = parse_blocks( $content );
+
+			$this->saving_without_resave = ! $this->has_pending_id_sync( $blocks );
+		} else {
+			$this->saving_without_resave = true;
+		}
+	}
+
+	/**
+	 * Check if blocks has pending id sync.
+	 *
+	 * @since 3.6.0
+	 *
+	 * @param array[] $blocks Blocks array.
+	 *
+	 * @return boolean Whether has block with pending id sync.
+	 */
+	private function has_pending_id_sync( $blocks ) {
+		foreach ( $blocks as $block ) {
+			$is_checkable_block = 'sensei-lms/course-outline-module' === $block['blockName']
+				|| 'sensei-lms/course-outline-lesson' === $block['blockName'];
+
+			if (
+				// Check pending id sync.
+				( $is_checkable_block && empty( $block['attrs']['id'] ) )
+				// Check inner blocks pending id sync.
+				|| (
+					! empty( $block['innerBlocks'] )
+					&& $this->has_pending_id_sync( $block['innerBlocks'] )
+				)
+			) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
