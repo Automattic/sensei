@@ -112,5 +112,5 @@ export const extractStructure = ( blocks ) => {
 				...extractBlockData[ type ]( block ),
 			};
 		} )
-		.filter( ( block ) => !! block.title );
+		.filter( ( block ) => 'module' === block.type || !! block.title );
 };

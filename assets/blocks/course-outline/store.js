@@ -39,6 +39,7 @@ const actions = {
 			yield actions.setStructure( result );
 		} catch ( error ) {
 			yield dispatch( 'core/notices' ).createErrorNotice( error.message );
+			yield actions.setEditorDirty( false );
 		}
 
 		yield { type: 'SAVING', isSaving: false };
