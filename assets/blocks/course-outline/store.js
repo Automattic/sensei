@@ -4,7 +4,7 @@ import { createReducerFromActionMap } from '../../shared/data/store-helpers';
 import { isEqual } from 'lodash';
 
 const DEFAULT_STATE = {
-	structure: [],
+	structure: null,
 	editor: [],
 	isSaving: false,
 	isEditorDirty: false,
@@ -58,7 +58,7 @@ const actions = {
 const reducers = {
 	SET_SERVER: ( { structure }, state ) => {
 		const hasStructureUpdate =
-			state.structure.length && ! isEqual( structure, state.editor );
+			state.structure && ! isEqual( structure, state.editor );
 		return {
 			...state,
 			structure,
