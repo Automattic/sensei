@@ -3,8 +3,11 @@ $dark-gray: #1a1d20;
 $outline: '.wp-block-sensei-lms-course-outline';
 .wp-block-sensei-lms-course-outline {
 
+	margin: 1em 0;
+
 	&.is-style-default {
 		border: solid 1px $dark-gray;
+
 	}
 
 	&__clean-heading {
@@ -113,12 +116,14 @@ $outline: '.wp-block-sensei-lms-course-outline';
 
 	&.is-style-minimal {
 
-		#{$block}__name__minimal-border {
-			display: block;
-			border: none;
-			height: 4px;
-			background-color: $dark-gray;
-		}
+
+	}
+
+	&__name__minimal-border {
+		display: block;
+		border: none;
+		height: 4px;
+		background-color: $dark-gray;
 	}
 }
 
