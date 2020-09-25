@@ -184,6 +184,18 @@ class Sensei_Course_Outline_Block {
 			]
 		);
 
+		$items = [];
+		foreach ( $structure as $item ) {
+			$items[ $item['type'] ][] = $item;
+		}
+
+		$other_lessons_header = '';
+
+		if ( ! empty( $items['lesson'] ) && ! empty( $items['module'] ) ) {
+			$other_lessons_header = '<div class="wp-block-sensei-lms-course-outline-module__lessons-title wp-block-sensei-lms-course-outline-module__lessons-title--other">
+								' . __( 'Other Lessons', 'sensei-lms' ) . '
+							</div>';
+		}
 		return '
 			<section ' . Sensei_Block_Helpers::render_style_attributes( [ 'wp-block-sensei-lms-course-outline', $class_name ], $css ) . '>
 				' .
@@ -191,15 +203,19 @@ class Sensei_Course_Outline_Block {
 				'',
 				array_map(
 					function( $block ) use ( $post, $attributes ) {
-						if ( 'module' === $block['type'] ) {
-							return $this->render_module_block( $block, $post->ID, $attributes );
-						}
-
-						if ( 'lesson' === $block['type'] ) {
-							return $this->render_lesson_block( $block );
-						}
+						return $this->render_module_block( $block, $post->ID, $attributes );
 					},
-					$structure
+					$items['module']
+				)
+			)
+			. $other_lessons_header .
+			implode(
+				'',
+				array_map(
+					function( $block ) use ( $post, $attributes ) {
+						return $this->render_lesson_block( $block );
+					},
+					$items['lesson']
 				)
 			)
 			. '
