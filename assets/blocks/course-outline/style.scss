@@ -1,5 +1,10 @@
 $dark-gray: #1a1d20;
 
+@keyframes module-animation {
+	0% { opacity: 0; margin-top: -50px }
+	100% { opacity: 1; margin-top: 0px }
+}
+
 .wp-block-sensei-lms-course-outline {
 
 	&__clean-heading {
@@ -119,21 +124,12 @@ $dark-gray: #1a1d20;
 }
 
 .wp-block-sensei-lms-collapsible {
+	&.animated.expanded {
+		animation: module-animation 0.5s ease-in-out;
+	}
 
 	&.collapsed {
 		display: none;
-	}
-
-	&.animated {
-		max-height: 2000px;
-		transition: max-height 0.5s ease-in;
-		overflow: auto;
-
-		&.collapsed {
-			display: block;
-			max-height: 0;
-			transition: max-height 0.5s cubic-bezier(0, 1, 0.35, 1);
-		}
 	}
 }
 

@@ -253,7 +253,7 @@ class Sensei_Course_Outline_Block {
 					' . $progress_indicator . '
 					<div role="button" tabindex="0" class="wp-block-sensei-lms-course-outline__arrow dashicons dashicons-arrow-up-alt2"/>
 				</header>
-				<div class="wp-block-sensei-lms-collapsible ' . $animated . '">
+				<div class="wp-block-sensei-lms-collapsible expanded ' . $animated . '">
 					<div class="wp-block-sensei-lms-course-outline-module__description">
 						' . $block['description'] . '
 					</div>

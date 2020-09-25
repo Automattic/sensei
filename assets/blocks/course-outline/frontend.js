@@ -5,7 +5,7 @@ jQuery( document ).ready( () => {
 			.closest( '.wp-block-sensei-lms-course-outline-module' )
 			.children( '.wp-block-sensei-lms-collapsible' );
 
-		moduleDetails.toggleClass( 'collapsed' );
+		moduleDetails.toggleClass( 'collapsed expanded' );
 		jQuery( this ).toggleClass( 'dashicons-arrow-up-alt2' );
 		jQuery( this ).toggleClass( 'dashicons-arrow-down-alt2' );
 	}

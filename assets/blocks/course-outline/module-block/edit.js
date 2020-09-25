@@ -107,7 +107,8 @@ const EditModuleBlock = ( {
 					className={ classnames(
 						'wp-block-sensei-lms-collapsible',
 						{ animated: animationsEnabled },
-						{ collapsed: ! isExpanded }
+						{ collapsed: ! isExpanded },
+						{ expanded: isExpanded }
 					) }
 				>
 					<div className="wp-block-sensei-lms-course-outline-module__description">
