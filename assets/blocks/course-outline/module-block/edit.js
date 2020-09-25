@@ -34,7 +34,7 @@ const EditModuleBlock = ( props ) => {
 	} = props;
 	const {
 		outlineAttributes: { animationsEnabled },
-	} = useContext( OutlineAttributesContext );
+	} = useContext( OutlineAttributesContext ) || { outlineAttributes: {} };
 	/**
 	 * Handle update name.
 	 *
@@ -139,9 +139,9 @@ const EditModuleBlock = ( props ) => {
 						/>
 					</div>
 					<div className="wp-block-sensei-lms-course-outline-module__lessons-title">
-						<h3 className="wp-block-sensei-lms-course-outline__clean-heading">
+						<div className="wp-block-sensei-lms-course-outline__clean-heading">
 							{ __( 'Lessons', 'sensei-lms' ) }
-						</h3>
+						</div>
 					</div>
 					<InnerBlocks
 						allowedBlocks={ [ 'sensei-lms/course-outline-lesson' ] }
