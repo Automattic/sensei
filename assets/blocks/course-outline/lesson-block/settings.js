@@ -7,6 +7,8 @@ import { PanelBody, FontSizePicker, ExternalLink } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 
+import { StatusControl } from '../status-control';
+
 /**
  * Inspector controls for lesson block.
  *
@@ -15,6 +17,8 @@ import { useSelect } from '@wordpress/data';
  * @param {Object}   props.textColor           The lesson title color.
  * @param {Function} props.setTextColor        Callback method to set the lesson title color.
  * @param {Function} props.setBackgroundColor  Callback method to set the background color.
+ * @param {string}   props.previewStatus       Status to preview.
+ * @param {Function} props.setPreviewStatus    Set status to preview.
  * @param {Function} props.setAttributes       Callback method to set the lesson title font size.
  * @param {Function} props.attributes          The block attributes.
  * @param {number}   props.attributes.id       The lesson id.
@@ -26,6 +30,8 @@ export function LessonBlockSettings( {
 	textColor,
 	setTextColor,
 	setBackgroundColor,
+	previewStatus,
+	setPreviewStatus,
 	setAttributes,
 	attributes: { fontSize },
 } ) {
@@ -54,6 +60,15 @@ export function LessonBlockSettings( {
 					</p>
 				</PanelBody>
 			) }
+			<PanelBody
+				title={ __( 'Preview Lesson Status', 'sensei-lms' ) }
+				initialOpen={ true }
+			>
+				<StatusControl
+					status={ previewStatus }
+					setStatus={ setPreviewStatus }
+				/>
+			</PanelBody>
 			<PanelBody
 				title={ __( 'Typography', 'sensei-lms' ) }
 				initialOpen={ false }

@@ -1,10 +1,13 @@
 import { withColors } from '@wordpress/block-editor';
 import { createBlock } from '@wordpress/blocks';
 import { useDispatch } from '@wordpress/data';
+import { useState } from '@wordpress/element';
 import classnames from 'classnames';
 import { __ } from '@wordpress/i18n';
+
 import SingleLineInput from '../single-line-input';
 import { LessonBlockSettings } from './settings';
+import { Statuses } from '../status-control';
 
 /**
  * Edit lesson block component.
@@ -97,11 +100,18 @@ const EditLessonBlock = ( props ) => {
 		);
 	}
 
-	const colorStyles = {
+	const [ previewStatus, setPreviewStatus ] = useState(
+		Statuses.IN_PROGRESS
+	);
+
+	const wrapperStyles = {
 		className: classnames(
 			className,
 			backgroundColor?.class,
-			textColor?.class
+			textColor?.class,
+			{
+				completed: previewStatus === Statuses.COMPLETED,
+			}
 		),
 		style: {
 			backgroundColor: backgroundColor?.color,
@@ -111,8 +121,12 @@ const EditLessonBlock = ( props ) => {
 
 	return (
 		<>
-			<LessonBlockSettings { ...props } />
-			<div { ...colorStyles }>
+			<LessonBlockSettings
+				{ ...props }
+				previewStatus={ previewStatus }
+				setPreviewStatus={ setPreviewStatus }
+			/>
+			<div { ...wrapperStyles }>
 				<SingleLineInput
 					className="wp-block-sensei-lms-course-outline-lesson__input"
 					placeholder={ __( 'Lesson name', 'sensei-lms' ) }

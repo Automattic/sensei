@@ -24,6 +24,12 @@ jest.mock( './settings', () => ( {
 	LessonBlockSettings: () => '',
 } ) );
 
+jest.mock( '../status-control', () => ( {
+	Statuses: {
+		IN_PROGRESS: 'In Progress',
+	},
+} ) );
+
 describe( '<EditLessonBlock />', () => {
 	const selectNextBlockMock = jest.fn();
 	const removeBlockMock = jest.fn();
