@@ -27,6 +27,10 @@ registerBlockType( 'sensei-lms/course-outline-lesson', {
 			type: 'string',
 			default: '',
 		},
+		draft: {
+			type: 'boolean',
+			default: true,
+		},
 		backgroundColor: {
 			type: 'string',
 		},
