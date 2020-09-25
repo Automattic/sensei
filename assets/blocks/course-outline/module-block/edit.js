@@ -1,22 +1,15 @@
-import {
-	InnerBlocks,
-	RichText,
-	InspectorControls,
-} from '@wordpress/block-editor';
-import { __ } from '@wordpress/i18n';
-
-import { PanelBody } from '@wordpress/components';
+import { InnerBlocks, RichText } from '@wordpress/block-editor';
 import { compose } from '@wordpress/compose';
-import { useState, useContext } from '@wordpress/element';
+import { useContext, useState } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
-import { OutlineAttributesContext } from '../course-block/edit';
 import {
 	withColorSettings,
 	withDefaultBlockStyle,
 } from '../../../shared/blocks/settings';
+import { OutlineAttributesContext } from '../course-block/edit';
 
 import SingleLineInput from '../single-line-input';
-import { ModuleBlockSettings } from './settings';
 import { ModuleBlockSettings } from './settings';
 
 /**
@@ -40,8 +33,8 @@ const EditModuleBlock = ( props ) => {
 		blockStyle,
 	} = props;
 	const {
-		      outlineAttributes: { animationsEnabled },
-	      } = useContext( OutlineAttributesContext );
+		outlineAttributes: { animationsEnabled },
+	} = useContext( OutlineAttributesContext );
 	/**
 	 * Handle update name.
 	 *
@@ -86,10 +79,10 @@ const EditModuleBlock = ( props ) => {
 	return (
 		<>
 			<ModuleBlockSettings
+				{ ...props }
 				isPreviewCompleted={ isPreviewCompleted }
 				setIsPreviewCompleted={ setIsPreviewCompleted }
 			/>
-			<ModuleBlockSettings { ...props } />
 			<section className={ className }>
 				<header
 					className="wp-block-sensei-lms-course-outline-module__name"

@@ -26,7 +26,7 @@ export const OutlineAttributesContext = createContext();
  * @param {Object[]} props.structure     Course module and lesson blocks.
  * @param {Object}   props.attributes    Block attributes.
  * @param {Function} props.setAttributes Block setAttributes callback.
- * @param {Object}   props.borderColor Border color.
+ * @param {Object}   props.borderColor   Border color.
  */
 const EditCourseOutlineBlock = ( {
 	clientId,
@@ -69,17 +69,20 @@ const EditCourseOutlineBlock = ( {
 
 	return (
 		<>
-			<OutlineBlockSettings
-				animationsEnabled={ attributes.animationsEnabled }
-				setAnimationsEnabled={ updateAnimationsEnabled }
-			/>
+			<OutlineAttributesContext.Provider
+				value={ {
+					outlineAttributes: attributes,
+					outlineSetAttributes: setAttributes,
+				} }
+			>
+				<OutlineBlockSettings
+					animationsEnabled={ attributes.animationsEnabled }
+					setAnimationsEnabled={ updateAnimationsEnabled }
+				/>
 
-			<section className={ className } style={ { borderColor: borderColor.color } }>
-				<OutlineAttributesContext.Provider
-					value={ {
-						outlineAttributes: attributes,
-						outlineSetAttributes: setAttributes,
-					} }
+				<section
+					className={ className }
+					style={ { borderColor: borderColor.color } }
 				>
 					<InnerBlocks
 						allowedBlocks={ [
@@ -87,8 +90,8 @@ const EditCourseOutlineBlock = ( {
 							'sensei-lms/course-outline-lesson',
 						] }
 					/>
-				</OutlineAttributesContext.Provider>
-			</section>
+				</section>
+			</OutlineAttributesContext.Provider>
 		</>
 	);
 };

@@ -27,10 +27,6 @@ registerBlockType( 'sensei-lms/course-outline-module', {
 			type: 'string',
 			default: '',
 		},
-		style: {
-			type: 'object',
-			default: {},
-		},
 		mainColor: {
 			type: 'string',
 		},

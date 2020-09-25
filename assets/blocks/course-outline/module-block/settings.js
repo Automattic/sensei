@@ -1,15 +1,8 @@
-import { __ } from '@wordpress/i18n';
 import { InspectorControls } from '@wordpress/block-editor';
-import { PanelBody } from '@wordpress/components';
-import { ModuleStatusControl } from './module-status-control';
-import {
-	ContrastChecker,
-	InspectorControls,
-	PanelColorSettings,
-} from '@wordpress/block-editor';
-import { Button } from '@wordpress/components';
+import { Button, PanelBody } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { ModuleStatusControl } from './module-status-control';
 
 /**
  * Inspector controls for module block.
@@ -17,18 +10,15 @@ import { __ } from '@wordpress/i18n';
  * @param {Object}   props
  * @param {boolean}  props.isPreviewCompleted    Whether Completed preview is enabled.
  * @param {Function} props.setIsPreviewCompleted Callback to be called when preview is updated.
+ * @param {string}   props.clientId
+ * @param {string}   props.className
  */
 export function ModuleBlockSettings( {
-     isPreviewCompleted,
-     setIsPreviewCompleted,
-     mainColor,
-     setMainColor,
-     textColor,
-     setTextColor,
-     clientId,
-     className,
-   } ) {
-
+	isPreviewCompleted,
+	setIsPreviewCompleted,
+	clientId,
+	className,
+} ) {
 	const getModuleBlocks = useSelect(
 		( select ) => {
 			return () =>
@@ -44,7 +34,8 @@ export function ModuleBlockSettings( {
 
 	const { updateBlockAttributes } = useDispatch( 'core/block-editor' );
 
-	const blockStyle = className.match( /is-style-(\w+)/ ) || 'default';
+	const blockStyle =
+		( className && className.match( /is-style-(\w+)/ ) ) || 'default';
 
 	const applyStyle = () => {
 		getModuleBlocks().forEach( ( block ) => {
@@ -68,35 +59,6 @@ export function ModuleBlockSettings( {
 					setIsPreviewCompleted={ setIsPreviewCompleted }
 				/>
 			</PanelBody>
-
-			<PanelColorSettings
-				title={ __( 'Color settings', 'sensei-lms' ) }
-				colorSettings={ [
-					{
-						value: mainColor.color,
-						label: __( 'Main color', 'sensei-lms' ),
-						onChange: setMainColor,
-					},
-					{
-						value: textColor.color,
-						label: __( 'Text color', 'sensei-lms' ),
-						onChange: setTextColor,
-					},
-				] }
-			>
-				{ 'default' === blockStyle && (
-					<ContrastChecker
-						{ ...{
-							textColor: textColor.color,
-							backgroundColor: mainColor.color,
-						} }
-						isLargeText={ false }
-					/>
-				) }
-				<Button isLink>
-					{ __( 'Apply colors to all modules', 'sensei-lms' ) }
-				</Button>
-			</PanelColorSettings>
 			<div style={ { padding: '16px' } }>
 				<Button isLink onClick={ applyStyle }>
 					{ __( 'Apply style to all modules', 'sensei-lms' ) }

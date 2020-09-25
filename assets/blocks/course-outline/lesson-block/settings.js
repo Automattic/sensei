@@ -1,11 +1,7 @@
-import {
-	ContrastChecker,
-	InspectorControls,
-	PanelColorSettings,
-} from '@wordpress/block-editor';
-import { PanelBody, FontSizePicker, ExternalLink } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { InspectorControls } from '@wordpress/block-editor';
+import { ExternalLink, FontSizePicker, PanelBody } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
 
 import { StatusControl } from '../status-control';
 
@@ -13,10 +9,6 @@ import { StatusControl } from '../status-control';
  * Inspector controls for lesson block.
  *
  * @param {Object}   props                     Component props.
- * @param {Object}   props.backgroundColor     The lesson title background color.
- * @param {Object}   props.textColor           The lesson title color.
- * @param {Function} props.setTextColor        Callback method to set the lesson title color.
- * @param {Function} props.setBackgroundColor  Callback method to set the background color.
  * @param {string}   props.previewStatus       Status to preview.
  * @param {Function} props.setPreviewStatus    Set status to preview.
  * @param {Function} props.setAttributes       Callback method to set the lesson title font size.
@@ -25,15 +17,10 @@ import { StatusControl } from '../status-control';
  * @param {Function} props.attributes.fontSize The lesson block font size.
  */
 export function LessonBlockSettings( {
-	attributes: { id },
-	backgroundColor,
-	textColor,
-	setTextColor,
-	setBackgroundColor,
 	previewStatus,
 	setPreviewStatus,
 	setAttributes,
-	attributes: { fontSize },
+	attributes: { id, fontSize },
 } ) {
 	const { fontSizes } = useSelect( ( select ) =>
 		select( 'core/block-editor' ).getSettings()
@@ -81,31 +68,6 @@ export function LessonBlockSettings( {
 					} }
 				/>
 			</PanelBody>
-			<PanelColorSettings
-				title={ __( 'Color settings', 'sensei-lms' ) }
-				colorSettings={ [
-					{
-						value: backgroundColor.color,
-						label: __( 'Background color', 'sensei-lms' ),
-						onChange: setBackgroundColor,
-					},
-					{
-						value: textColor.color,
-						label: __( 'Text color', 'sensei-lms' ),
-						onChange: setTextColor,
-					},
-				] }
-			>
-				{
-					<ContrastChecker
-						{ ...{
-							textColor: textColor.color,
-							backgroundColor: backgroundColor.color,
-						} }
-						isLargeText={ false }
-					/>
-				}
-			</PanelColorSettings>
 		</InspectorControls>
 	);
 }
