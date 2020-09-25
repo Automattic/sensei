@@ -1,6 +1,8 @@
 import { InnerBlocks } from '@wordpress/block-editor';
-import { useSelect, withSelect } from '@wordpress/data';
+import { useSelect, withSelect, withDispatch } from '@wordpress/data';
+import { compose } from '@wordpress/compose';
 import { createContext, useEffect } from '@wordpress/element';
+
 import { CourseOutlinePlaceholder } from './placeholder';
 import { COURSE_STORE } from '../store';
 import { useBlocksCreator } from '../use-block-creator';
@@ -14,20 +16,31 @@ export const OutlineAttributesContext = createContext();
 /**
  * Edit course outline block component.
  *
- * @param {Object}   props               Component props.
- * @param {string}   props.clientId      Block client ID.
- * @param {string}   props.className     Custom class name.
- * @param {Object[]} props.structure     Course module and lesson blocks.
- * @param {Object}   props.attributes    Block attributes.
- * @param {Function} props.setAttributes Block setAttributes callback.
+ * @param {Object}   props                       Component props.
+ * @param {string}   props.clientId              Block client ID.
+ * @param {string}   props.className             Custom class name.
+ * @param {Object[]} props.structure             Course module and lesson blocks.
+ * @param {Function} props.toggleLegacyMetaboxes Function to toggle metaboxes.
+ * @param {Object}   props.attributes            Block attributes.
+ * @param {Function} props.setAttributes         Block setAttributes callback.
  */
 const EditCourseOutlineBlock = ( {
 	clientId,
 	className,
 	structure,
+	toggleLegacyMetaboxes,
 	attributes,
 	setAttributes,
 } ) => {
+	// Toggle legacy metaboxes.
+	useEffect( () => {
+		toggleLegacyMetaboxes( false );
+
+		return () => {
+			toggleLegacyMetaboxes( true );
+		};
+	}, [ toggleLegacyMetaboxes ] );
+
 	const { setBlocks } = useBlocksCreator( clientId );
 
 	/**
@@ -85,8 +98,39 @@ const EditCourseOutlineBlock = ( {
 	);
 };
 
-export default withSelect( ( select ) => {
-	return {
-		structure: select( COURSE_STORE ).getStructure(),
+const selectors = ( select ) => ( {
+	structure: select( COURSE_STORE ).getStructure(),
+} );
+
+const dispatches = ( dispatch, ownProps, { select } ) => {
+	const editPost = select( 'core/edit-post' );
+	const { toggleEditorPanelEnabled } = dispatch( 'core/edit-post' );
+
+	const hasLegacyMetaBoxes =
+		editPost.isEditorPanelEnabled( 'meta-box-course-lessons' ) ||
+		editPost.isEditorPanelEnabled( 'meta-box-module_course_mb' );
+
+	const toggleLegacyMetaboxes = ( enable ) => {
+		// Side-effect - Prevent submit modules.
+		document
+			.querySelectorAll( '#module_course_mb input' )
+			.forEach( ( input ) => {
+				input.disabled = ! enable;
+			} );
+
+		// If the `enable` is already as requested, do nothing.
+		if ( enable === hasLegacyMetaBoxes ) {
+			return;
+		}
+
+		toggleEditorPanelEnabled( 'meta-box-course-lessons' );
+		toggleEditorPanelEnabled( 'meta-box-module_course_mb' );
 	};
-} )( EditCourseOutlineBlock );
+
+	return { toggleLegacyMetaboxes };
+};
+
+export default compose(
+	withSelect( selectors ),
+	withDispatch( dispatches )
+)( EditCourseOutlineBlock );
