@@ -98,11 +98,11 @@ const EditCourseOutlineBlock = ( {
 	);
 };
 
-const applyWithSelect = withSelect( ( select ) => ( {
+const selectors = ( select ) => ( {
 	structure: select( COURSE_STORE ).getStructure(),
-} ) );
+} );
 
-const applyWithDispatch = withDispatch( ( dispatch, ownProps, { select } ) => {
+const dispatches = ( dispatch, ownProps, { select } ) => {
 	const editPost = select( 'core/edit-post' );
 	const { toggleEditorPanelEnabled } = dispatch( 'core/edit-post' );
 
@@ -128,9 +128,9 @@ const applyWithDispatch = withDispatch( ( dispatch, ownProps, { select } ) => {
 	};
 
 	return { toggleLegacyMetaboxes };
-} );
+};
 
 export default compose(
-	applyWithSelect,
-	applyWithDispatch
+	withSelect( selectors ),
+	withDispatch( dispatches )
 )( EditCourseOutlineBlock );
