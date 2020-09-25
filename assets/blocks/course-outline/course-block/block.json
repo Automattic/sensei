@@ -15,6 +15,9 @@
     },
     "borderColor": {
       "type": "string"
+    },
+    "customBorderColor": {
+      "type": "string"
     }
   },
   "styles": [

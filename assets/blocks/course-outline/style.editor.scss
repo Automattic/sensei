@@ -37,6 +37,9 @@ $dark-gray: #1a1d20;
 	}
 	.wp-block-sensei-lms-course-outline-lesson {
 
+		&__input[type="text"] {
+			margin: 20px 25px;
+		}
 		&__unsaved {
 			font-size: 12px;
 			font-weight: bold;
