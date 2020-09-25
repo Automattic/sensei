@@ -21,13 +21,13 @@ if ( ! function_exists( 'register_block_type_from_metadata' ) ) {
 	/**
 	 * Registers a block type from metadata stored in the `block.json` file.
 	 *
-	 * @param string $file_or_folder  Path to the JSON file with metadata definition for
-	 *                                the block or path to the folder where the `block.json` file is located.
-	 * @param array  $args            {
-	 *                                Optional. Array of block type arguments. Any arguments may be defined, however the
-	 *                                ones described below are supported by default. Default empty array.
+	 * @param string $file_or_folder Path to the JSON file with metadata definition for
+	 *     the block or path to the folder where the `block.json` file is located.
+	 * @param array  $args {
+	 *     Optional. Array of block type arguments. Any arguments may be defined, however the
+	 *     ones described below are supported by default. Default empty array.
 	 *
-	 * @type callable $render_callback Callback used to render blocks of this block type.
+	 *     @type callable $render_callback Callback used to render blocks of this block type.
 	 * }
 	 * @return WP_Block_Type|false The registered block type on success, or false on failure.
 	 * @since 7.9.0
@@ -52,21 +52,27 @@ if ( ! function_exists( 'register_block_type_from_metadata' ) ) {
 
 		$settings          = array();
 		$property_mappings = array(
-			'title'                   => 'title',
-			'category'                => 'category',
-			'parent'                  => 'parent',
-			'icon'                    => 'icon',
-			'description'             => 'description',
-			'keywords'                => 'keywords',
-			'attributes'              => 'attributes',
-			'providesContext'         => 'provides_context',
-			'usesContext'             => 'uses_context',
+			'title'           => 'title',
+			'category'        => 'category',
+			'parent'          => 'parent',
+			'icon'            => 'icon',
+			'description'     => 'description',
+			'keywords'        => 'keywords',
+			'attributes'      => 'attributes',
+			'providesContext' => 'provides_context',
+			'usesContext'     => 'uses_context',
 			// Deprecated: remove with Gutenberg 8.6 release.
-							'context' => 'context',
-			'supports'                => 'supports',
-			'styles'                  => 'styles',
-			'example'                 => 'example',
+			'context'         => 'context',
+			'supports'        => 'supports',
+			'styles'          => 'styles',
+			'example'         => 'example',
 		);
+
+		foreach ( $property_mappings as $key => $mapped_key ) {
+			if ( isset( $metadata[ $key ] ) ) {
+				$settings[ $mapped_key ] = $metadata[ $key ];
+			}
+		}
 
 		return register_block_type(
 			$metadata['name'],
