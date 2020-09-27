@@ -49,7 +49,7 @@ $outline: '.wp-block-sensei-lms-course-outline';
 	&.is-style-default, &.is-style-minimal {
 
 		#{$block}__progress-indicator {
-			border-radius: 10% 10% 10% 10% / 50% 50% 50% 50%;
+			border-radius: 999px;
 			display: flex;
 			justify-content: center;
 			align-items: center;
@@ -66,6 +66,7 @@ $outline: '.wp-block-sensei-lms-course-outline';
 
 			&.completed {
 				background-color: #1FD25A;
+				color: #fff;
 			}
 		}
 
