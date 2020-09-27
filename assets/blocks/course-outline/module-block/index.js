@@ -3,7 +3,7 @@ import { registerBlockType } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 import { ModuleIcon } from '../../../icons';
 
-import EditModuleBlock from './edit';
+import edit from './edit';
 
 registerBlockType( 'sensei-lms/course-outline-module', {
 	title: __( 'Module', 'sensei-lms' ),
@@ -75,9 +75,7 @@ registerBlockType( 'sensei-lms/course-outline-module', {
 			isDefault: true,
 		},
 	],
-	edit( props ) {
-		return <EditModuleBlock { ...props } />;
-	},
+	edit,
 	save() {
 		return <InnerBlocks.Content />;
 	},
