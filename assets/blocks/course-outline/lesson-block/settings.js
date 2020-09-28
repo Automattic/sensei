@@ -62,17 +62,14 @@ export function LessonBlockSettings( {
 			) }
 			<PanelBody
 				title={ __( 'Preview Lesson Status', 'sensei-lms' ) }
-				initialOpen={ true }
+				initialOpen={ false }
 			>
 				<StatusControl
 					status={ previewStatus }
 					setStatus={ setPreviewStatus }
 				/>
 			</PanelBody>
-			<PanelBody
-				title={ __( 'Typography', 'sensei-lms' ) }
-				initialOpen={ false }
-			>
+			<PanelBody title={ __( 'Typography', 'sensei-lms' ) }>
 				<FontSizePicker
 					fontSizes={ fontSizes }
 					value={ fontSize }
@@ -83,6 +80,7 @@ export function LessonBlockSettings( {
 			</PanelBody>
 			<PanelColorSettings
 				title={ __( 'Color settings', 'sensei-lms' ) }
+				initialOpen={ false }
 				colorSettings={ [
 					{
 						value: backgroundColor.color,
