@@ -20,6 +20,7 @@ import { Statuses } from '../status-control';
  * @param {string}   props.attributes.title    Lesson title.
  * @param {number}   props.attributes.id       Lesson Post ID
  * @param {number}   props.attributes.fontSize Lesson title font size.
+ * @param {boolean}  props.attributes.draft    Draft status of lesson.
  * @param {Object}   props.backgroundColor     Background color object.
  * @param {Object}   props.textColor           Text color object.
  * @param {Function} props.setAttributes       Block set attributes function.
