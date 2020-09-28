@@ -356,7 +356,7 @@ class Sensei_Course_Structure {
 	 *
 	 * @param array $module_order Module order to save.
 	 */
-	private function save_module_order( array $module_order ) {
+	public function save_module_order( array $module_order ) {
 		$current_module_order_raw = get_post_meta( $this->course_id, '_module_order', true );
 		$current_module_order     = $current_module_order_raw ? array_map( 'intval', $current_module_order_raw ) : [];
 
