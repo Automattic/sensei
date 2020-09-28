@@ -25,7 +25,7 @@ import { ModuleBlockSettings } from './settings';
  * @param {string}   props.attributes.blockStyle  Selected block style.
  * @param {Function} props.setAttributes          Block set attributes function.
  */
-const EditModuleBlock = ( props ) => {
+export const EditModuleBlock = ( props ) => {
 	const {
 		className,
 		attributes: { title, description },
@@ -74,8 +74,8 @@ const EditModuleBlock = ( props ) => {
 	}
 
 	const blockStyleColors = {
-		default: { background: mainColor.color },
-		minimal: { borderColor: mainColor.color },
+		default: { background: mainColor?.color },
+		minimal: { borderColor: mainColor?.color },
 	}[ blockStyle ];
 
 	return (
@@ -88,7 +88,7 @@ const EditModuleBlock = ( props ) => {
 			<section className={ className }>
 				<header
 					className="wp-block-sensei-lms-course-outline-module__name"
-					style={ { ...blockStyleColors, color: textColor.color } }
+					style={ { ...blockStyleColors, color: textColor?.color } }
 				>
 					<h2 className="wp-block-sensei-lms-course-outline__clean-heading">
 						<SingleLineInput

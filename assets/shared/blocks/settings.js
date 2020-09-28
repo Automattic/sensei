@@ -74,7 +74,7 @@ export function withDefaultBlockStyle() {
 
 		const extraProps = {};
 
-		if ( ! className.includes( 'is-style-' ) ) {
+		if ( ! className || ! className.includes( 'is-style-' ) ) {
 			className = extraProps.className = [
 				className,
 				'is-style-default',

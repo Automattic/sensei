@@ -1,8 +1,8 @@
 import { render, fireEvent } from '@testing-library/react';
-
-import EditModuleBlock from './edit';
+import { EditModuleBlock } from './edit';
 
 jest.mock( '@wordpress/block-editor', () => ( {
+	...jest.requireActual( '@wordpress/block-editor' ),
 	InspectorControls: () => null,
 	InnerBlocks: () => null,
 	RichText: ( { placeholder, onChange } ) => (
@@ -21,7 +21,7 @@ jest.mock( '@wordpress/element', () => ( {
 	useContext: () => ( { outlineAttributes: { animationsEnabled: true } } ),
 } ) );
 
-describe( '<EditLessonBlock />', () => {
+describe( '<EditModuleBlock />', () => {
 	it( 'Should set the title attribute on changing the name input value', () => {
 		const setAttributesMock = jest.fn();
 		const { getByPlaceholderText } = render(
