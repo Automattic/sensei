@@ -4,6 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { ModuleIcon } from '../../../icons';
 
 import EditModuleBlock from './edit';
+import transforms from './transforms';
 
 registerBlockType( 'sensei-lms/course-outline-module', {
 	title: __( 'Module', 'sensei-lms' ),
@@ -32,6 +33,7 @@ registerBlockType( 'sensei-lms/course-outline-module', {
 	edit( props ) {
 		return <EditModuleBlock { ...props } />;
 	},
+	transforms,
 	save( { className } ) {
 		return (
 			<div className={ className }>
