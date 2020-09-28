@@ -42,7 +42,7 @@ export function LessonBlockSettings( {
 	return (
 		<InspectorControls>
 			{ id && (
-				<PanelBody>
+				<PanelBody title={ __( 'Lesson', 'sensei-lms' ) }>
 					<h2>
 						<ExternalLink
 							href={ `post.php?post=${ id }&action=edit` }
@@ -60,15 +60,6 @@ export function LessonBlockSettings( {
 					</p>
 				</PanelBody>
 			) }
-			<PanelBody
-				title={ __( 'Preview Lesson Status', 'sensei-lms' ) }
-				initialOpen={ false }
-			>
-				<StatusControl
-					status={ previewStatus }
-					setStatus={ setPreviewStatus }
-				/>
-			</PanelBody>
 			<PanelBody title={ __( 'Typography', 'sensei-lms' ) }>
 				<FontSizePicker
 					fontSizes={ fontSizes }
@@ -83,14 +74,14 @@ export function LessonBlockSettings( {
 				initialOpen={ false }
 				colorSettings={ [
 					{
-						value: backgroundColor.color,
-						label: __( 'Background color', 'sensei-lms' ),
-						onChange: setBackgroundColor,
-					},
-					{
 						value: textColor.color,
 						label: __( 'Text color', 'sensei-lms' ),
 						onChange: setTextColor,
+					},
+					{
+						value: backgroundColor.color,
+						label: __( 'Background color', 'sensei-lms' ),
+						onChange: setBackgroundColor,
 					},
 				] }
 			>
@@ -104,6 +95,15 @@ export function LessonBlockSettings( {
 					/>
 				}
 			</PanelColorSettings>
+			<PanelBody
+				title={ __( 'Preview Lesson Status', 'sensei-lms' ) }
+				initialOpen={ false }
+			>
+				<StatusControl
+					status={ previewStatus }
+					setStatus={ setPreviewStatus }
+				/>
+			</PanelBody>
 		</InspectorControls>
 	);
 }
