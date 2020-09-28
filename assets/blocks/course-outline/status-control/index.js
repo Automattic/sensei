@@ -41,7 +41,7 @@ export const StatusControl = ( {
 	return (
 		<SelectControl
 			help={ __(
-				'Preview a status. The actual status that the learner sees is determined by their progress in the course.',
+				'Preview a lesson status. The actual status that the learner sees is determined by their progress in the course.',
 				'sensei-lms'
 			) }
 			{ ...props }
