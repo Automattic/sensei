@@ -3486,6 +3486,10 @@ class Sensei_Course {
 	 * @param \WP_Post $post    Post object.
 	 */
 	public function mark_saving_course_id( $post_id, $post ) {
+		if ( ! Sensei()->feature_flags->is_enabled( 'course_outline' ) ) {
+			return;
+		}
+
 		$content = $post->post_content;
 
 		if ( has_block( 'sensei-lms/course-outline', $content ) ) {
