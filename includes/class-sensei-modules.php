@@ -1047,8 +1047,15 @@ class Sensei_Core_Modules {
 	public function handle_order_modules() {
 		check_admin_referer( 'order_modules' );
 
-		if ( isset( $_POST['module-order'] ) && 0 < strlen( $_POST['module-order'] ) ) {
-			$ordered = $this->save_course_module_order( esc_attr( $_POST['module-order'] ), esc_attr( $_POST['course_id'] ) );
+		$ordered      = false;
+		$course_id    = isset( $_POST['course_id'] ) ? absint( wp_unslash( $_POST['course_id'] ) ) : null;
+		$module_order = isset( $_POST['module-order'] )
+			? array_map( 'absint', explode( ',', wp_unslash( $_POST['module-order'] ) ) )
+			: null;
+
+		if ( ! empty( $course_id ) && ! empty( $module_order ) ) {
+			Sensei_Course_Structure::instance( $course_id )->save_module_order( $module_order );
+			$ordered = true;
 		}
 
 		wp_redirect(
@@ -1058,7 +1065,7 @@ class Sensei_Core_Modules {
 						'post_type' => 'course',
 						'page'      => $this->order_page_slug,
 						'ordered'   => $ordered,
-						'course_id' => $_POST['course_id'],
+						'course_id' => $course_id,
 					),
 					admin_url( 'edit.php' )
 				)
@@ -1222,24 +1229,6 @@ class Sensei_Core_Modules {
 				echo '<a class="button-secondary" href="' . esc_url( admin_url( 'edit.php?post_type=course&page=module-order&course_id=' . urlencode( intval( $course_id ) ) ) ) . '">' . esc_html__( 'Order modules', 'sensei-lms' ) . '</a>';
 			}
 		}
-	}
-
-	/**
-	 * Save module order for course
-	 *
-	 * @since 1.8.0
-	 *
-	 * @param  string  $order_string Comma-separated string of module IDs
-	 * @param  integer $course_id ID of course
-	 * @return boolean                 True on success, false on failure
-	 */
-	private function save_course_module_order( $order_string = '', $course_id = 0 ) {
-		if ( $order_string && $course_id ) {
-			$order = explode( ',', $order_string );
-			update_post_meta( intval( $course_id ), '_module_order', $order );
-			return true;
-		}
-		return false;
 	}
 
 	/**
