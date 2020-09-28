@@ -3483,21 +3483,21 @@ class Sensei_Course {
 	 */
 	public function add_legacy_course_hooks( $sensei ) {
 		// Legacy progress bar on the single course page.
-		add_action( 'sensei_single_course_content_inside_before', array( $this, 'the_progress_statement' ), 15 );
-		add_action( 'sensei_single_course_content_inside_before', array( $this, 'the_progress_meter' ), 16 );
+		add_action( 'sensei_single_course_content_inside_before', [ $this, 'the_progress_statement' ], 15 );
+		add_action( 'sensei_single_course_content_inside_before', [ $this, 'the_progress_meter' ], 16 );
 
 		// Legacy lesson listing.
-		add_action( 'sensei_single_course_content_inside_after', array( __CLASS__, 'the_course_lessons_title' ), 9 );
+		add_action( 'sensei_single_course_content_inside_after', [ __CLASS__, 'the_course_lessons_title' ], 9 );
 		add_action( 'sensei_single_course_content_inside_after', 'course_single_lessons', 10 );
 
 		// Take this course.
-		add_action( 'sensei_single_course_content_inside_before', array( __CLASS__, 'the_course_enrolment_actions' ), 30 );
+		add_action( 'sensei_single_course_content_inside_before', [ __CLASS__, 'the_course_enrolment_actions' ], 30 );
 
 		// Module listing.
-		add_action( 'sensei_single_course_content_inside_after', array( $sensei->modules, 'load_course_module_content_template' ), 8 );
+		add_action( 'sensei_single_course_content_inside_after', [ $sensei->modules, 'load_course_module_content_template' ], 8 );
 
 		// Add message links to courses.
-		add_action( 'sensei_single_course_content_inside_before', array( $sensei->post_types->messages, 'send_message_link' ), 35 );
+		add_action( 'sensei_single_course_content_inside_before', [ $sensei->post_types->messages, 'send_message_link' ], 35 );
 	}
 
 	/**
@@ -3505,11 +3505,11 @@ class Sensei_Course {
 	 */
 	public function remove_legacy_course_actions() {
 		// Legacy lesson listing.
-		remove_action( 'sensei_single_course_content_inside_after', array( __CLASS__, 'the_course_lessons_title' ), 9 );
+		remove_action( 'sensei_single_course_content_inside_after', [ __CLASS__, 'the_course_lessons_title' ], 9 );
 		remove_action( 'sensei_single_course_content_inside_after', 'course_single_lessons', 10 );
 
 		// Module listing.
-		remove_action( 'sensei_single_course_content_inside_after', array( Sensei()->modules, 'load_course_module_content_template' ), 8 );
+		remove_action( 'sensei_single_course_content_inside_after', [ Sensei()->modules, 'load_course_module_content_template' ], 8 );
 
 		// @todo Remove additional actions from `\Sensei_Course::add_legacy_course_hooks` as implemented in blocks.
 	}
