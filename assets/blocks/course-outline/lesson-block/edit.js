@@ -20,6 +20,7 @@ import { Statuses } from '../status-control';
  * @param {string}   props.attributes.title    Lesson title.
  * @param {number}   props.attributes.id       Lesson Post ID
  * @param {number}   props.attributes.fontSize Lesson title font size.
+ * @param {boolean}  props.attributes.draft    Draft status of lesson.
  * @param {Object}   props.backgroundColor     Background color object.
  * @param {Object}   props.textColor           Text color object.
  * @param {Function} props.setAttributes       Block set attributes function.
@@ -31,7 +32,7 @@ const EditLessonBlock = ( props ) => {
 		clientId,
 		name,
 		className,
-		attributes: { title, id, fontSize },
+		attributes: { title, id, fontSize, draft },
 		backgroundColor,
 		textColor,
 		setAttributes,
@@ -96,6 +97,12 @@ const EditLessonBlock = ( props ) => {
 		status = (
 			<div className="wp-block-sensei-lms-course-outline-lesson__unsaved">
 				{ __( 'Unsaved', 'sensei-lms' ) }
+			</div>
+		);
+	} else if ( id && draft ) {
+		status = (
+			<div className="wp-block-sensei-lms-course-outline-lesson__draft">
+				{ __( 'Draft', 'sensei-lms' ) }
 			</div>
 		);
 	}
