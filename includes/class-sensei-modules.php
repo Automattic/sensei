@@ -1120,11 +1120,11 @@ class Sensei_Core_Modules {
 								if ( isset( $_GET['course_id'] ) ) {
 									$course_id = intval( $_GET['course_id'] );
 									if ( $course_id > 0 ) {
-										$modules = $this->get_course_modules( $course_id );
+										$modules = Sensei_Course_Structure::instance( $course_id )->get_modules();
 										$modules = $this->append_teacher_name_to_module( $modules, array( 'module' ), array() );
 										if ( $modules ) {
 
-											$order = $this->get_course_module_order( $course_id );
+											$order = wp_list_pluck( $modules, 'term_id' );
 
 											$order_string = '';
 											if ( $order ) {
