@@ -65,8 +65,8 @@ export const ColorSettings = ( { colorSettings, props } ) => {
 };
 
 /**
- * Apply is-style-default if no style is selected.
- *
+ * Apply default style class if no style is selected.
+ * Adds is-style-default to the className property.
  */
 export function withDefaultBlockStyle() {
 	return ( Component ) => ( props ) => {

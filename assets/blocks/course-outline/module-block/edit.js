@@ -20,7 +20,9 @@ import { ModuleBlockSettings } from './settings';
  * @param {Object}   props.attributes             Block attributes.
  * @param {string}   props.attributes.title       Module title.
  * @param {string}   props.attributes.description Module description.
- * @param {Object}   props.attributes.style       Custom visual settings.
+ * @param {Object}   props.mainColor              Header main color.
+ * @param {Object}   props.textColor              Header text color.
+ * @param {string}   props.attributes.blockStyle  Selected block style.
  * @param {Function} props.setAttributes          Block set attributes function.
  */
 const EditModuleBlock = ( props ) => {
