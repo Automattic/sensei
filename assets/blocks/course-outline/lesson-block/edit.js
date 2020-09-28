@@ -31,7 +31,7 @@ const EditLessonBlock = ( props ) => {
 		clientId,
 		name,
 		className,
-		attributes: { title, id, fontSize },
+		attributes: { title, id, fontSize, draft },
 		backgroundColor,
 		textColor,
 		setAttributes,
@@ -96,6 +96,12 @@ const EditLessonBlock = ( props ) => {
 		status = (
 			<div className="wp-block-sensei-lms-course-outline-lesson__unsaved">
 				{ __( 'Unsaved', 'sensei-lms' ) }
+			</div>
+		);
+	} else if ( id && draft ) {
+		status = (
+			<div className="wp-block-sensei-lms-course-outline-lesson__draft">
+				{ __( 'Draft', 'sensei-lms' ) }
 			</div>
 		);
 	}
