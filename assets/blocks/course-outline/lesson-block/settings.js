@@ -96,7 +96,7 @@ export function LessonBlockSettings( {
 				}
 			</PanelColorSettings>
 			<PanelBody
-				title={ __( 'Preview Lesson Status', 'sensei-lms' ) }
+				title={ __( 'Status', 'sensei-lms' ) }
 				initialOpen={ false }
 			>
 				<StatusControl
