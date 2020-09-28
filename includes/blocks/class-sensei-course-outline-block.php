@@ -171,8 +171,6 @@ class Sensei_Course_Outline_Block {
 
 		$structure = Sensei_Course_Structure::instance( $post->ID )->get( 'view' );
 
-		$this->disable_course_legacy_content();
-
 		$this->add_block_attributes( $structure );
 
 		$block_class = 'wp-block-sensei-lms-course-outline';
@@ -307,16 +305,6 @@ class Sensei_Course_Outline_Block {
 						<span class="wp-block-sensei-lms-course-outline__progress-indicator__text"> ' . $module_status . ' </span>
 					</div>
 		';
-	}
-
-	/**
-	 * Disable course legacy content.
-	 */
-	private function disable_course_legacy_content() {
-		// TODO: Check the best approach for backwards compatibility.
-		remove_action( 'sensei_single_course_content_inside_after', 'course_single_lessons' );
-		remove_action( 'sensei_single_course_content_inside_after', [ 'Sensei_Course', 'the_course_lessons_title' ], 9 );
-		remove_action( 'sensei_single_course_content_inside_after', [ Sensei()->modules, 'load_course_module_content_template' ], 8 );
 	}
 
 }

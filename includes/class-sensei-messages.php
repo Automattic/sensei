@@ -46,9 +46,6 @@ class Sensei_Messages {
 		// Block WordPress from sending comment moderator emails on the sensei messages post types
 		add_filter( 'comment_moderation_recipients', array( $this, 'stop_wp_comment_emails' ), 20, 2 );
 
-		// Add message links to courses & lessons
-		add_action( 'sensei_single_course_content_inside_before', array( $this, 'send_message_link' ), 35 );
-
 		// add message link to lesson
 		add_action( 'sensei_single_lesson_content_inside_before', array( $this, 'send_message_link' ), 30, 2 );
 
