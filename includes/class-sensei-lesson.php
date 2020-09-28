@@ -3047,13 +3047,15 @@ class Sensei_Lesson {
 
 
 	/**
-	 * lesson_quizzes function.
+	 * Get the quizzes of a lesson
 	 *
 	 * @access public
-	 * @param int    $lesson_id (default: 0)
-	 * @param string $post_status (default: 'publish')
-	 * @param string $fields (default: 'ids')
-	 * @return int $quiz_id
+	 *
+	 * @param int    $lesson_id   The lesson id (default: 0).
+	 * @param string $post_status The post status (default: 'any').
+	 * @param string $fields      The fields to return (default: 'ids').
+	 *
+	 * @return int|null $quiz_id
 	 */
 	public function lesson_quizzes( $lesson_id = 0, $post_status = 'any', $fields = 'ids' ) {
 
@@ -3073,7 +3075,7 @@ class Sensei_Lesson {
 		$quiz_id     = array_shift( $posts_array );
 
 		return $quiz_id;
-	} // End lesson_quizzes()
+	}
 
 
 	/**

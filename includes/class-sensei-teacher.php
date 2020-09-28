@@ -479,14 +479,15 @@ class Sensei_Teacher {
 	}
 
 	/**
-	 * Sensei_Teacher::update_course_lessons_author
-	 *
-	 * Update all course lessons and their quiz with a new author
+	 * Update all course lessons and their quiz with a new author.
 	 *
 	 * @since 1.8.0
 	 * @access public
-	 * @parameters
-	 * @return array $users user id array
+	 *
+	 * @param int $course_id  The course id.
+	 * @param int $new_author The new authors id.
+	 *
+	 * @return bool True when the author is updated.
 	 */
 	public function update_course_lessons_author( $course_id, $new_author ) {
 
@@ -494,25 +495,25 @@ class Sensei_Teacher {
 			return false;
 		}
 
-		// get a list of course lessons
+		// Get a list of course lessons.
 		$lessons = Sensei()->course->course_lessons( $course_id, null );
 
 		if ( empty( $lessons ) || ! is_array( $lessons ) ) {
 			return false;
 		}
 
-		// Temporarily remove the author match filter
+		// Temporarily remove the author match filter.
 		remove_filter( 'wp_insert_post_data', array( $this, 'update_lesson_teacher' ), 99 );
 
-		// update each lesson and quiz author
+		// Update each lesson and quiz author.
 		foreach ( $lessons as $lesson ) {
 
-			// don't update if the author is tha same as the new author
+			// Don't update if the author is tha same as the new author.
 			if ( $new_author == $lesson->post_author ) {
 				continue;
 			}
 
-			// update lesson author
+			// Update lesson author.
 			wp_update_post(
 				array(
 					'ID'          => $lesson->ID,
@@ -520,12 +521,10 @@ class Sensei_Teacher {
 				)
 			);
 
-			// update quiz author
-			// get the lessons quiz
+			// Update quiz author.
 			$lesson_quizzes = Sensei()->lesson->lesson_quizzes( $lesson->ID );
 			if ( is_array( $lesson_quizzes ) ) {
 				foreach ( $lesson_quizzes as $quiz_id ) {
-					// update quiz with new author
 					wp_update_post(
 						array(
 							'ID'          => $quiz_id,
@@ -533,7 +532,7 @@ class Sensei_Teacher {
 						)
 					);
 				}
-			} else {
+			} elseif ( ! empty( $lesson_quizzes ) ) {
 				wp_update_post(
 					array(
 						'ID'          => $lesson_quizzes,
@@ -541,14 +540,13 @@ class Sensei_Teacher {
 					)
 				);
 			}
-		} // End foreach().
+		}
 
-		// Reinstate the author match filter
+		// Reinstate the author match filter.
 		add_filter( 'wp_insert_post_data', array( $this, 'update_lesson_teacher' ), 99, 2 );
 
 		return true;
-
-	}//end update_course_lessons_author()
+	}
 
 
 
