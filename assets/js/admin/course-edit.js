@@ -1,4 +1,20 @@
 jQuery( document ).ready( function ( $ ) {
+	const editPostSelector = wp.data.select( 'core/edit-post' );
+	const editPostDispatcher = wp.data.dispatch( 'core/edit-post' );
+
+	const isLegacyMetaBoxesDisabled =
+		! editPostSelector.isEditorPanelEnabled( 'meta-box-course-lessons' ) ||
+		! editPostSelector.isEditorPanelEnabled( 'meta-box-course-lessons' );
+
+	if ( isLegacyMetaBoxesDisabled ) {
+		editPostDispatcher.toggleEditorPanelEnabled(
+			'meta-box-course-lessons'
+		);
+		editPostDispatcher.toggleEditorPanelEnabled(
+			'meta-box-module_course_mb'
+		);
+	}
+
 	$( '#course-prerequisite-options' ).select2( { width: '100%' } );
 
 	function trackLinkClickCallback( event_name ) {
