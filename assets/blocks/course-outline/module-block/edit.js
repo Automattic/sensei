@@ -94,7 +94,11 @@ const EditModuleBlock = ( {
 								: 'dashicons-arrow-down-alt2'
 						) }
 						onClick={ () => setExpanded( ! isExpanded ) }
-					/>
+					>
+						<span className="screen-reader-text">
+							{ __( 'Toggle module content', 'sensei-lms' ) }
+						</span>
+					</button>
 				</header>
 				<AnimateHeight
 					className="wp-block-sensei-lms-collapsible"
