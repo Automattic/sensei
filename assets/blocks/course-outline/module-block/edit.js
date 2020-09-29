@@ -2,8 +2,9 @@ import { __ } from '@wordpress/i18n';
 import { InnerBlocks, RichText } from '@wordpress/block-editor';
 import { useState, useContext } from '@wordpress/element';
 import classnames from 'classnames';
-import { OutlineAttributesContext } from '../course-block/edit';
+import AnimateHeight from 'react-animate-height';
 
+import { OutlineAttributesContext } from '../course-block/edit';
 import SingleLineInput from '../single-line-input';
 import { ModuleBlockSettings } from './settings';
 
@@ -103,13 +104,11 @@ const EditModuleBlock = ( {
 						tabIndex={ 0 }
 					/>
 				</header>
-				<div
-					className={ classnames(
-						'wp-block-sensei-lms-collapsible',
-						{ animated: animationsEnabled },
-						{ collapsed: ! isExpanded },
-						{ expanded: isExpanded }
-					) }
+				<AnimateHeight
+					className="wp-block-sensei-lms-collapsible"
+					duration={ animationsEnabled ? 500 : 0 }
+					animateOpacity
+					height={ isExpanded ? 'auto' : 0 }
 				>
 					<div className="wp-block-sensei-lms-course-outline-module__description">
 						<RichText
@@ -133,7 +132,7 @@ const EditModuleBlock = ( {
 						] }
 						allowedBlocks={ [ 'sensei-lms/course-outline-lesson' ] }
 					/>
-				</div>
+				</AnimateHeight>
 			</section>
 		</>
 	);
