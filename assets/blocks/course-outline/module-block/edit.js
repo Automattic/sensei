@@ -57,12 +57,6 @@ const EditModuleBlock = ( {
 
 	const [ isExpanded, setExpanded ] = useState( true );
 
-	function handleKeyDown( e ) {
-		if ( 13 === e.keyCode ) {
-			setExpanded( ! isExpanded );
-		}
-	}
-
 	return (
 		<>
 			<ModuleBlockSettings
@@ -90,7 +84,8 @@ const EditModuleBlock = ( {
 							{ indicatorText }
 						</span>
 					</div>
-					<div
+					<button
+						type="button"
 						className={ classnames(
 							'wp-block-sensei-lms-course-outline__arrow',
 							'dashicons',
@@ -99,9 +94,6 @@ const EditModuleBlock = ( {
 								: 'dashicons-arrow-down-alt2'
 						) }
 						onClick={ () => setExpanded( ! isExpanded ) }
-						onKeyDown={ handleKeyDown }
-						role="button"
-						tabIndex={ 0 }
 					/>
 				</header>
 				<AnimateHeight
