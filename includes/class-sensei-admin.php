@@ -786,7 +786,7 @@ class Sensei_Admin {
 				'post_status'      => array( 'publish', 'pending', 'draft', 'future', 'private' ),
 				'posts_per_page'   => -1,
 				'suppress_filters' => 0,
-				'orderby'          => 'menu_order date',
+				'orderby'          => 'title menu_order date',
 				'order'            => 'ASC',
 			);
 			$courses = get_posts( $args );
@@ -1050,6 +1050,12 @@ class Sensei_Admin {
 					$html .= 'name="' . esc_attr( $field['id'] ) . '" ';
 					$html .= checked( $checked_value, $data, false );
 					$html .= disabled( $field['disabled'], true, false );
+					$html .= " /> \n";
+
+					// Input hidden to identify if checkbox is present.
+					$html .= '<input type="hidden" ';
+					$html .= 'name="contains_' . esc_attr( $field['id'] ) . '" ';
+					$html .= 'value="1" ';
 					$html .= " /> \n";
 					break;
 

@@ -101,6 +101,10 @@ jQuery(document).ready( function( $ ) {
 								all_correct = false;
 							}
 						} );
+
+						if ( user_answers.length !== correct_answers.length ) {
+							all_correct = false;
+						}
 					}
 
 					if ( all_correct || ( user_answer === correct_answer ) ) { // Right answer
