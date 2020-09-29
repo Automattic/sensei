@@ -119,8 +119,14 @@ $dark-gray: #1a1d20;
 }
 
 .wp-block-sensei-lms-collapsible {
+	&.animated {
+		opacity: 1;
+		overflow: hidden;
+		transition: height 0.5s ease-in-out, opacity 0.5s ease-in-out;
+	}
+
 	&.collapsed {
-		display: none;
+		opacity: 0;
 	}
 }
 

@@ -1,21 +1,30 @@
-/* global jQuery */
-jQuery( document ).ready( () => {
-	function toggleModuleDetails() {
-		const moduleDetails = jQuery( this )
-			.closest( '.wp-block-sensei-lms-course-outline-module' )
-			.children( '.wp-block-sensei-lms-collapsible' );
+( () => {
+	const modules = document.querySelectorAll(
+		'.wp-block-sensei-lms-course-outline-module'
+	);
 
-		moduleDetails.toggleClass( 'collapsed expanded' );
-		jQuery( this ).toggleClass( 'dashicons-arrow-up-alt2' );
-		jQuery( this ).toggleClass( 'dashicons-arrow-down-alt2' );
-	}
+	modules.forEach( ( module ) => {
+		const moduleContent = module.querySelector(
+			'.wp-block-sensei-lms-collapsible.animated'
+		);
 
-	const arrowButton = jQuery( '.wp-block-sensei-lms-course-outline__arrow' );
+		const originalHeight = moduleContent.offsetHeight;
+		const toggleButton = module.querySelector(
+			'.wp-block-sensei-lms-course-outline__arrow'
+		);
 
-	arrowButton.click( toggleModuleDetails );
-	arrowButton.keydown( function ( e ) {
-		if ( 13 === e.which ) {
-			toggleModuleDetails.call( this );
-		}
+		moduleContent.style.height = originalHeight + 'px';
+
+		toggleButton.addEventListener( 'click', () => {
+			toggleButton.classList.toggle( 'dashicons-arrow-up-alt2' );
+			toggleButton.classList.toggle( 'dashicons-arrow-down-alt2' );
+			const collapsed = moduleContent.classList.toggle( 'collapsed' );
+
+			if ( ! collapsed ) {
+				moduleContent.style.height = originalHeight + 'px';
+			} else {
+				moduleContent.style.height = '0px';
+			}
+		} );
 	} );
-} );
+} )();
