@@ -1,4 +1,21 @@
 *** Changelog ***
+2020.09.10 - version 3.5.2
+* Fix: Fix course being duplicated when lesson has no quiz and teacher is updated  [#3654](https://github.com/Automattic/sensei/pull/3654)
+* Fix: Fix resetting a learner's lesson progress removes learner from list [#3626](https://github.com/Automattic/sensei/pull/3626)
+* Fix: Target the correct element when resetting input fields in quiz questions [#3604](https://github.com/Automattic/sensei/pull/3604)
+* Fix: Close unordered list element in sensei_course_categories shortcode [#3622](https://github.com/Automattic/sensei/pull/3622)
+* Fix: Fix PHP notice when viewing course category page on unsupported themes [#3608](https://github.com/Automattic/sensei/pull/3608)
+* Fix: Multiple choice question is correct only when all right answers are checked [#3617](https://github.com/Automattic/sensei/pull/3617)
+* Fix: Fix fatal error on activating Discount Rules for WooCommerce plugin [#3616](https://github.com/Automattic/sensei/pull/3616)  
+* Fix: Don't overwrite lesson meta with defaults on update [#3589](https://github.com/Automattic/sensei/pull/3589)
+* Fix: Fix deprecated function call [#3633](https://github.com/Automattic/sensei/pull/3633)
+* Fix: Exclude right/wrong prefix in exported answers' escaped values [#3640](https://github.com/Automattic/sensei/pull/3640)
+* Fix: Fix quiz settings [#3632](https://github.com/Automattic/sensei/pull/3632)
+* New: Include category in heading for sensei_courses shortcode when filtering by category [#3627](https://github.com/Automattic/sensei/pull/3627)
+* New: Use archive-lesson template on lesson archive page [#3614](https://github.com/Automattic/sensei/pull/3614)
+* New: Add filter login required [#3631](https://github.com/Automattic/sensei/pull/3631) 
+* New: Sort course filter on Lessons page in alphabetical order [#3605](https://github.com/Automattic/sensei/pull/3605)
+* New: Show scheduled lessons in Prerequisite dropdown [#3609](https://github.com/Automattic/sensei/pull/3609)
 
 2020.09.10 - version 3.5.1
 
