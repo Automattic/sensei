@@ -122,7 +122,10 @@ class Sensei_Course_Outline_Block {
 	 * @return string
 	 */
 	public function process_lesson_block( $attributes ) {
-		$this->block_attributes['lesson'][ $attributes['id'] ] = $attributes;
+		if ( array_key_exists( 'id', $attributes ) ) {
+			$this->block_attributes['lesson'][ $attributes['id'] ] = $attributes;
+		}
+
 		return '';
 	}
 
