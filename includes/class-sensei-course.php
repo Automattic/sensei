@@ -32,14 +32,14 @@ class Sensei_Course {
 
 	/**
 	 * Course ID being saved, if no resave is needed.
-	 * The resave will be needed when saving a course with
+	 * The resave will be needed when updating a course with
 	 * outline block which needs id sync.
 	 *
 	 * @since 3.6.0
 	 *
 	 * @var int
 	 */
-	private $course_id_saving;
+	private $course_id_updating;
 
 	/**
 	 * @var array The HTML allowed for message boxes.
@@ -98,7 +98,7 @@ class Sensei_Course {
 		add_action( 'save_post', array( $this, 'save_course_notification_meta_box' ) );
 
 		// Log course content counter.
-		add_action( 'save_post_course', [ $this, 'mark_saving_course_id' ], 10, 2 );
+		add_action( 'save_post_course', [ $this, 'mark_updating_course_id' ], 10, 2 );
 		add_action( 'shutdown', [ $this, 'log_course_update' ] );
 		add_action( 'rest_api_init', [ $this, 'disable_log_course_update' ] );
 
@@ -3475,7 +3475,7 @@ class Sensei_Course {
 	}
 
 	/**
-	 * Mark saving course id when no resave is needed for id sync.
+	 * Mark updating course id when no resave is needed for id sync.
 	 *
 	 * Hooked into `save_post_course`.
 	 *
@@ -3485,8 +3485,11 @@ class Sensei_Course {
 	 * @param int      $post_id Post ID.
 	 * @param \WP_Post $post    Post object.
 	 */
-	public function mark_saving_course_id( $post_id, $post ) {
-		if ( ! Sensei()->feature_flags->is_enabled( 'course_outline' ) ) {
+	public function mark_updating_course_id( $post_id, $post ) {
+		if (
+			! Sensei()->feature_flags->is_enabled( 'course_outline' )
+			|| 'publish' !== $post->post_status
+		) {
 			return;
 		}
 
@@ -3496,10 +3499,10 @@ class Sensei_Course {
 			$blocks = parse_blocks( $content );
 
 			if ( ! $this->has_pending_id_sync( $blocks ) ) {
-				$this->course_id_saving = $post_id;
+				$this->course_id_updating = $post_id;
 			}
 		} else {
-			$this->course_id_saving = $post_id;
+			$this->course_id_updating = $post_id;
 		}
 	}
 
@@ -3542,11 +3545,11 @@ class Sensei_Course {
 	 * @access private
 	 */
 	public function log_course_update() {
-		if ( empty( $this->course_id_saving ) ) {
+		if ( empty( $this->course_id_updating ) ) {
 			return;
 		}
 
-		$course_id     = $this->course_id_saving;
+		$course_id     = $this->course_id_updating;
 		$post          = get_post( $course_id );
 		$content       = $post->post_content;
 		$product_ids   = get_post_meta( $course_id, '_course_woocommerce_product', false );
