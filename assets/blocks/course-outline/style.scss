@@ -2,18 +2,6 @@ $dark-gray: #1a1d20;
 
 $outline: '.wp-block-sensei-lms-course-outline';
 
-
-/**
- * Reset heading styles.
- */
-.editor-styles-wrapper .wp-block-sensei-lms-course-outline .wp-block {
-	h1,
-	h2,
-	h3 {
-		@extend .wp-block-sensei-lms-course-outline__clean-heading
-	}
-}
-
 .wp-block-sensei-lms-course-outline {
 
 	margin: 1em 0;
@@ -30,7 +18,7 @@ $outline: '.wp-block-sensei-lms-course-outline';
 		font-size: inherit;
 		color: inherit;
 		line-height: inherit;
-		border: n one;
+		border: none;
 
 		&::before, &::after {
 			content: none;
@@ -98,6 +86,7 @@ $outline: '.wp-block-sensei-lms-course-outline';
 		#{$block}__lessons-title {
 			padding: 5px 1rem;
 			font-size: 11px;
+			margin: 0 0 1em;
 			font-weight: 600;
 			color: inherit;
 			text-transform: uppercase;
