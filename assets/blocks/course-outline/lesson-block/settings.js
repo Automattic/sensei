@@ -12,17 +12,18 @@ import { StatusControl } from '../status-control';
 /**
  * Inspector controls for lesson block.
  *
- * @param {Object}   props                     Component props.
- * @param {Object}   props.backgroundColor     The lesson title background color.
- * @param {Object}   props.textColor           The lesson title color.
- * @param {Function} props.setTextColor        Callback method to set the lesson title color.
- * @param {Function} props.setBackgroundColor  Callback method to set the background color.
- * @param {string}   props.previewStatus       Status to preview.
- * @param {Function} props.setPreviewStatus    Set status to preview.
- * @param {Function} props.setAttributes       Callback method to set the lesson title font size.
- * @param {Function} props.attributes          The block attributes.
- * @param {number}   props.attributes.id       The lesson id.
- * @param {Function} props.attributes.fontSize The lesson block font size.
+ * @param {Object}   props                        Component props.
+ * @param {Object}   props.backgroundColor        The lesson title background color.
+ * @param {Object}   props.textColor              The lesson title color.
+ * @param {Function} props.setTextColor           Callback method to set the lesson title color.
+ * @param {Function} props.setBackgroundColor     Callback method to set the background color.
+ * @param {Array}    props.includePreviewStatuses Statuses to include in the preview.
+ * @param {string}   props.previewStatus          Status to preview.
+ * @param {Function} props.setPreviewStatus       Set status to preview.
+ * @param {Function} props.setAttributes          Callback method to set the lesson title font size.
+ * @param {Function} props.attributes             The block attributes.
+ * @param {number}   props.attributes.id          The lesson id.
+ * @param {Function} props.attributes.fontSize    The lesson block font size.
  */
 export function LessonBlockSettings( {
 	attributes: { id },
@@ -30,6 +31,7 @@ export function LessonBlockSettings( {
 	textColor,
 	setTextColor,
 	setBackgroundColor,
+	includePreviewStatuses,
 	previewStatus,
 	setPreviewStatus,
 	setAttributes,
@@ -102,6 +104,7 @@ export function LessonBlockSettings( {
 				<StatusControl
 					status={ previewStatus }
 					setStatus={ setPreviewStatus }
+					includeStatuses={ includePreviewStatuses }
 					help={ __(
 						'Preview a lesson status. The actual status that the learner sees is determined by their progress in the course.',
 						'sensei-lms'

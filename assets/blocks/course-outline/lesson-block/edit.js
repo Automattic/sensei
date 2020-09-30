@@ -107,7 +107,7 @@ const EditLessonBlock = ( props ) => {
 		);
 	}
 
-	const [ previewStatus, setPreviewStatus ] = useState( Status.IN_PROGRESS );
+	const [ previewStatus, setPreviewStatus ] = useState( Status.NOT_STARTED );
 
 	const wrapperStyles = {
 		className: classnames(
@@ -128,6 +128,10 @@ const EditLessonBlock = ( props ) => {
 		<>
 			<LessonBlockSettings
 				{ ...props }
+				includePreviewStatuses={ [
+					Status.NOT_STARTED,
+					Status.COMPLETED,
+				] }
 				previewStatus={ previewStatus }
 				setPreviewStatus={ setPreviewStatus }
 			/>
