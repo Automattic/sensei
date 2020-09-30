@@ -1392,13 +1392,8 @@ class Sensei_Admin {
 			if ( isset( $_GET['course_id'] ) ) {
 				$course_id = intval( $_GET['course_id'] );
 				if ( $course_id > 0 ) {
-					$course_structure = Sensei_Course_Structure::instance( $course_id )->get( 'edit' );
-					$modules          = array_filter(
-						$course_structure,
-						function( $item ) {
-							return 'module' === $item['type'];
-						}
-					);
+					$course_structure = $this->get_course_structure( $course_id );
+					$modules          = $this->get_course_structure( $course_structure, 'module' );
 
 					$html .= '<form id="editgrouping" method="post" action="'
 						. esc_url( admin_url( 'admin-post.php' ) ) . '" class="validate">' . "\n";
@@ -1423,12 +1418,7 @@ class Sensei_Admin {
 					}
 
 					// Other Lessons
-					$other_lessons = array_filter(
-						$course_structure,
-						function( $item ) {
-							return 'lesson' === $item['type'];
-						}
-					);
+					$other_lessons = $this->get_course_structure( $course_structure, 'lesson' );
 					if ( 0 < count( $other_lessons ) ) {
 						$has_lessons = true;
 
@@ -1560,6 +1550,31 @@ class Sensei_Admin {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Get course structure.
+	 *
+	 * @param int|array   $course_structure Structure array or course ID to get the structure.
+	 * @param null|string $type             Optional type to filter the content.
+	 *
+	 * @return array Course structure.
+	 */
+	private function get_course_structure( $course_structure = null, $type = null ) {
+		$course_structure = is_array( $course_structure )
+			? $course_structure
+			: Sensei_Course_Structure::instance( $course_structure )->get( 'edit' );
+
+		if ( isset( $type ) ) {
+			$course_structure = array_filter(
+				$course_structure,
+				function( $item ) use ( $type ) {
+					return $type === $item['type'];
+				}
+			);
+		}
+
+		return $course_structure;
 	}
 
 	function sensei_add_custom_menu_items() {
