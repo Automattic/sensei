@@ -44,6 +44,7 @@ export const ColorSettings = ( { colorSettings, props } ) => {
 		<InspectorControls>
 			<PanelColorSettings
 				title={ __( 'Color settings', 'sensei-lms' ) }
+				initialOpen={ false }
 				colorSettings={ colors.map( ( color ) => ( {
 					value: props[ color ].color,
 					label: colorSettings[ color ].label,
