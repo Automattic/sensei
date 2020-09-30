@@ -2,8 +2,9 @@ import { __ } from '@wordpress/i18n';
 import { InnerBlocks, RichText } from '@wordpress/block-editor';
 import { useState, useContext } from '@wordpress/element';
 import classnames from 'classnames';
-import { OutlineAttributesContext } from '../course-block/edit';
+import AnimateHeight from 'react-animate-height';
 
+import { OutlineAttributesContext } from '../course-block/edit';
 import SingleLineInput from '../single-line-input';
 import { ModuleBlockSettings } from './settings';
 
@@ -56,12 +57,6 @@ const EditModuleBlock = ( {
 
 	const [ isExpanded, setExpanded ] = useState( true );
 
-	function handleKeyDown( e ) {
-		if ( 13 === e.keyCode ) {
-			setExpanded( ! isExpanded );
-		}
-	}
-
 	return (
 		<>
 			<ModuleBlockSettings
@@ -89,7 +84,8 @@ const EditModuleBlock = ( {
 							{ indicatorText }
 						</span>
 					</div>
-					<div
+					<button
+						type="button"
 						className={ classnames(
 							'wp-block-sensei-lms-course-outline__arrow',
 							'dashicons',
@@ -98,17 +94,17 @@ const EditModuleBlock = ( {
 								: 'dashicons-arrow-down-alt2'
 						) }
 						onClick={ () => setExpanded( ! isExpanded ) }
-						onKeyDown={ handleKeyDown }
-						role="button"
-						tabIndex={ 0 }
-					/>
+					>
+						<span className="screen-reader-text">
+							{ __( 'Toggle module content', 'sensei-lms' ) }
+						</span>
+					</button>
 				</header>
-				<div
-					className={ classnames(
-						'wp-block-sensei-lms-collapsible',
-						{ animated: animationsEnabled },
-						{ collapsed: ! isExpanded }
-					) }
+				<AnimateHeight
+					className="wp-block-sensei-lms-collapsible"
+					duration={ animationsEnabled ? 500 : 0 }
+					animateOpacity
+					height={ isExpanded ? 'auto' : 0 }
 				>
 					<div className="wp-block-sensei-lms-course-outline-module__description">
 						<RichText
@@ -132,7 +128,7 @@ const EditModuleBlock = ( {
 						] }
 						allowedBlocks={ [ 'sensei-lms/course-outline-lesson' ] }
 					/>
-				</div>
+				</AnimateHeight>
 			</section>
 		</>
 	);

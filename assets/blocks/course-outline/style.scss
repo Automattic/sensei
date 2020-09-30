@@ -39,13 +39,22 @@ $dark-gray: #1a1d20;
 		}
 	}
 
-	&__arrow {
-		fill: #FFF;
+	&__arrow[type="button"] {
+		display: block;
+		padding: 0;
+		margin: 0;
+		background: 0;
+		border: 0;
+		color: #FFF;
 		flex-basis: 4%;
 		margin-left: auto;
 		cursor: pointer;
 		height: 24px;
 		font-size: 24px;
+
+		&:hover, &:focus {
+			text-decoration: none;
+		}
 
 		&.collapsed {
 			display: none;
@@ -119,21 +128,14 @@ $dark-gray: #1a1d20;
 }
 
 .wp-block-sensei-lms-collapsible {
-
-	&.collapsed {
-		display: none;
+	&.animated {
+		opacity: 1;
+		overflow: hidden;
+		transition: height 0.5s ease-in-out, opacity 0.5s ease-in-out;
 	}
 
-	&.animated {
-		max-height: 2000px;
-		transition: max-height 0.5s ease-in;
-		overflow: hidden;
-
-		&.collapsed {
-			display: block;
-			max-height: 0;
-			transition: max-height 0.5s cubic-bezier(0, 1, 0.35, 1);
-		}
+	&.collapsed {
+		opacity: 0;
 	}
 }
 

@@ -45,6 +45,10 @@ class Sensei_Course_Outline_Block {
 		}
 
 		Sensei()->assets->enqueue( 'sensei-course-outline', 'blocks/course-outline/style.css' );
+
+		if ( ! is_admin() ) {
+			Sensei()->assets->enqueue( 'sensei-course-outline-frontend', 'blocks/course-outline/frontend.js' );
+		}
 	}
 
 	/**
@@ -254,7 +258,9 @@ class Sensei_Course_Outline_Block {
 				<header class="wp-block-sensei-lms-course-outline-module__name">
 					<h2 class="wp-block-sensei-lms-course-outline__clean-heading">' . $block['title'] . '</h2>
 					' . $progress_indicator . '
-					<div role="button" tabindex="0" class="wp-block-sensei-lms-course-outline__arrow dashicons dashicons-arrow-up-alt2"/>
+					<button type="button" class="wp-block-sensei-lms-course-outline__arrow dashicons dashicons-arrow-up-alt2">
+						<span class="screen-reader-text">' . __( 'Toggle module content', 'sensei-lms' ) . '</span>
+					</button>
 				</header>
 				<div class="wp-block-sensei-lms-collapsible ' . $animated . '">
 					<div class="wp-block-sensei-lms-course-outline-module__description">

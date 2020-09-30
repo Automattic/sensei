@@ -144,7 +144,6 @@ class Sensei_Frontend {
 			}
 
 			Sensei()->assets->register( Sensei()->token . '-user-dashboard', 'js/user-dashboard.js', [ 'jquery-ui-tabs' ], true );
-			Sensei()->assets->register( 'sensei-course-outline-frontend', 'blocks/course-outline/frontend.js', [ 'jquery' ], true );
 
 			// Allow additional scripts to be loaded.
 			do_action( 'sensei_additional_scripts' );
