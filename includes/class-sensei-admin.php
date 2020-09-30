@@ -1511,42 +1511,50 @@ class Sensei_Admin {
 		 */
 
 		if ( $course_id ) {
-
-			$modules = Sensei()->modules->get_course_modules( intval( $course_id ) );
+			$course_structure         = $this->get_course_structure( intval( $course_id ) );
+			$modules                  = $this->get_course_structure( $course_structure, 'module' );
+			$lessons                  = $this->get_course_structure( $course_structure, 'lesson' );
+			$lessons_by_id            = $this->get_lessons_by_id( $course_structure );
+			$ordered_course_structure = [];
 
 			foreach ( $modules as $module ) {
-
 				// phpcs:ignore WordPress.Security.NonceVerification
-				if ( isset( $_POST[ 'lesson-order-module-' . $module->term_id ] ) && $_POST[ 'lesson-order-module-' . $module->term_id ] ) {
-
+				if ( isset( $_POST[ 'lesson-order-module-' . $module['id'] ] ) && $_POST[ 'lesson-order-module-' . $module['id'] ] ) {
 					// phpcs:ignore WordPress.Security.NonceVerification
-					$order = explode( ',', $_POST[ 'lesson-order-module-' . $module->term_id ] );
-					$i     = 1;
-					foreach ( $order as $lesson_id ) {
+					$order           = explode( ',', $_POST[ 'lesson-order-module-' . $module['id'] ] );
+					$ordered_lessons = [];
 
-						if ( $lesson_id ) {
-							update_post_meta( $lesson_id, '_order_module_' . $module->term_id, $i );
-							++$i;
+					foreach ( $order as $lesson_id ) {
+						if ( $lesson_id && isset( $lessons_by_id[ $lesson_id ] ) ) {
+							$ordered_lessons[] = $lessons_by_id[ $lesson_id ];
 						}
-					}// end for each order
-				}// end if
-			} // end for each modules
+					}
+
+					$module['lessons'] = $ordered_lessons;
+				}
+
+				$ordered_course_structure[] = $module;
+			}
 
 			if ( $order_string ) {
-				update_post_meta( $course_id, '_lesson_order', $order_string );
+				$other_lessons = $this->get_course_structure( $course_structure, 'lesson' );
 
 				$order = explode( ',', $order_string );
 
-				$i = 1;
 				foreach ( $order as $lesson_id ) {
-					if ( $lesson_id ) {
-						update_post_meta( $lesson_id, '_order_' . $course_id, $i );
-						++$i;
+					if ( $lesson_id && isset( $lessons_by_id[ $lesson_id ] ) ) {
+						$ordered_course_structure[] = $lessons_by_id[ $lesson_id ];
 					}
 				}
+			} else {
+				$ordered_course_structure = array_merge( $ordered_course_structure, $lessons );
 			}
 
-			return true;
+			if ( true === Sensei_Course_Structure::instance( $course_id )->save( $ordered_course_structure ) ) {
+				return true;
+			}
+
+			return false;
 		}
 
 		return false;
@@ -1575,6 +1583,31 @@ class Sensei_Admin {
 		}
 
 		return $course_structure;
+	}
+
+	/**
+	 * Get lessons by ID.
+	 *
+	 * @param array $course_structure Course structure.
+	 *
+	 * @return array Lessons by ID.
+	 */
+	private function get_lessons_by_id( $course_structure ) {
+		$lessons_by_id = [];
+
+		foreach ( $course_structure as $item ) {
+			if ( 'lesson' === $item['type'] ) {
+				$lessons_by_id[ $item['id'] ] = $item;
+			}
+
+			if ( ! empty( $item['lessons'] ) ) {
+				foreach ( $item['lessons'] as $lesson ) {
+					$lessons_by_id[ $lesson['id'] ] = $lesson;
+				}
+			}
+		}
+
+		return $lessons_by_id;
 	}
 
 	function sensei_add_custom_menu_items() {
