@@ -102,6 +102,10 @@ export function LessonBlockSettings( {
 				<StatusControl
 					status={ previewStatus }
 					setStatus={ setPreviewStatus }
+					help={ __(
+						'Preview a lesson status. The actual status that the learner sees is determined by their progress in the course.',
+						'sensei-lms'
+					) }
 				/>
 			</PanelBody>
 		</InspectorControls>
