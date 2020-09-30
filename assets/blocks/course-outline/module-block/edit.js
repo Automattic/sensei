@@ -140,11 +140,9 @@ export const EditModuleBlock = ( props ) => {
 							onChange={ updateDescription }
 						/>
 					</div>
-					<div className="wp-block-sensei-lms-course-outline-module__lessons-title">
-						<h3 className="wp-block-sensei-lms-course-outline__clean-heading">
-							{ __( 'Lessons', 'sensei-lms' ) }
-						</h3>
-					</div>
+					<h3 className="wp-block-sensei-lms-course-outline-module__lessons-title">
+						{ __( 'Lessons', 'sensei-lms' ) }
+					</h3>
 					<InnerBlocks
 						template={ [
 							[ 'sensei-lms/course-outline-lesson', {} ],
