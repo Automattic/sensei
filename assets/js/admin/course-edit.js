@@ -2,14 +2,17 @@ jQuery( document ).ready( function ( $ ) {
 	const editPostSelector = wp.data.select( 'core/edit-post' );
 	const editPostDispatcher = wp.data.dispatch( 'core/edit-post' );
 
-	const isLegacyMetaBoxesDisabled =
-		! editPostSelector.isEditorPanelEnabled( 'meta-box-course-lessons' ) ||
-		! editPostSelector.isEditorPanelEnabled( 'meta-box-course-lessons' );
-
-	if ( isLegacyMetaBoxesDisabled ) {
+	if (
+		! editPostSelector.isEditorPanelEnabled( 'meta-box-course-lessons' )
+	) {
 		editPostDispatcher.toggleEditorPanelEnabled(
 			'meta-box-course-lessons'
 		);
+	}
+
+	if (
+		! editPostSelector.isEditorPanelEnabled( 'meta-box-module_course_mb' )
+	) {
 		editPostDispatcher.toggleEditorPanelEnabled(
 			'meta-box-module_course_mb'
 		);

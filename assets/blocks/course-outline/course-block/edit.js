@@ -106,10 +106,6 @@ const dispatches = ( dispatch, ownProps, { select } ) => {
 	const editPost = select( 'core/edit-post' );
 	const { toggleEditorPanelEnabled } = dispatch( 'core/edit-post' );
 
-	const hasLegacyMetaBoxes =
-		editPost.isEditorPanelEnabled( 'meta-box-course-lessons' ) ||
-		editPost.isEditorPanelEnabled( 'meta-box-module_course_mb' );
-
 	const toggleLegacyMetaboxes = ( enable ) => {
 		// Side-effect - Prevent submit modules.
 		document
@@ -118,13 +114,19 @@ const dispatches = ( dispatch, ownProps, { select } ) => {
 				input.disabled = ! enable;
 			} );
 
-		// If the `enable` is already as requested, do nothing.
-		if ( enable === hasLegacyMetaBoxes ) {
-			return;
+		if (
+			enable !==
+			editPost.isEditorPanelEnabled( 'meta-box-course-lessons' )
+		) {
+			toggleEditorPanelEnabled( 'meta-box-course-lessons' );
 		}
 
-		toggleEditorPanelEnabled( 'meta-box-course-lessons' );
-		toggleEditorPanelEnabled( 'meta-box-module_course_mb' );
+		if (
+			enable !==
+			editPost.isEditorPanelEnabled( 'meta-box-module_course_mb' )
+		) {
+			toggleEditorPanelEnabled( 'meta-box-module_course_mb' );
+		}
 	};
 
 	return { toggleLegacyMetaboxes };
