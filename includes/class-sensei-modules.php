@@ -74,9 +74,6 @@ class Sensei_Core_Modules {
 
 		add_filter( 'body_class', array( $this, 'module_archive_body_class' ) );
 
-		// add modules to the single course template
-		add_action( 'sensei_single_course_content_inside_after', array( $this, 'load_course_module_content_template' ), 8 );
-
 		// Single Course modules actions. Add to single-course/course-modules.php
 		add_action( 'sensei_single_course_modules_before', array( $this, 'course_modules_title' ), 20 );
 

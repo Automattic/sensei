@@ -82,10 +82,6 @@ class Sensei_Course {
 		// Update course completion upon grading of a quiz
 		add_action( 'sensei_user_quiz_grade', array( $this, 'update_status_after_quiz_submission' ), 10, 2 );
 
-		// show the progress bar ont he single course page
-		add_action( 'sensei_single_course_content_inside_before', array( $this, 'the_progress_statement' ), 15 );
-		add_action( 'sensei_single_course_content_inside_before', array( $this, 'the_progress_meter' ), 16 );
-
 		// provide an option to block all emails related to a selected course
 		add_filter( 'sensei_send_emails', array( $this, 'block_notification_emails' ) );
 		add_action( 'save_post', array( $this, 'save_course_notification_meta_box' ) );
@@ -127,6 +123,9 @@ class Sensei_Course {
 
 		// Log event on the initial publish for a course.
 		add_action( 'sensei_course_initial_publish', [ $this, 'log_initial_publish_event' ] );
+
+		add_action( 'template_redirect', [ $this, 'setup_single_course_page' ] );
+		add_action( 'sensei_loaded', [ $this, 'add_legacy_course_hooks' ] );
 	}
 
 	/**
@@ -3459,6 +3458,84 @@ class Sensei_Course {
 		sensei_log_event( 'course_publish', $event_properties );
 	}
 
+	/**
+	 * Setup the single course page.
+	 *
+	 * @access private
+	 */
+	public function setup_single_course_page() {
+		global $post;
+
+		// Remove legacy actions on courses with new blocks.
+		if (
+			$post
+			&& is_singular( 'course' )
+			&& ! $this->is_legacy_course( $post )
+		) {
+			$this->remove_legacy_course_actions();
+		}
+	}
+
+	/**
+	 * Adds legacy course actions.
+	 *
+	 * @param Sensei_Main $sensei Sensei object.
+	 */
+	public function add_legacy_course_hooks( $sensei ) {
+		// Legacy progress bar on the single course page.
+		add_action( 'sensei_single_course_content_inside_before', [ $this, 'the_progress_statement' ], 15 );
+		add_action( 'sensei_single_course_content_inside_before', [ $this, 'the_progress_meter' ], 16 );
+
+		// Legacy lesson listing.
+		add_action( 'sensei_single_course_content_inside_after', [ __CLASS__, 'the_course_lessons_title' ], 9 );
+		add_action( 'sensei_single_course_content_inside_after', 'course_single_lessons', 10 );
+
+		// Take this course.
+		add_action( 'sensei_single_course_content_inside_before', [ __CLASS__, 'the_course_enrolment_actions' ], 30 );
+
+		// Module listing.
+		add_action( 'sensei_single_course_content_inside_after', [ $sensei->modules, 'load_course_module_content_template' ], 8 );
+
+		// Add message links to courses.
+		add_action( 'sensei_single_course_content_inside_before', [ $sensei->post_types->messages, 'send_message_link' ], 35 );
+	}
+
+	/**
+	 * Remove legacy course actions.
+	 */
+	public function remove_legacy_course_actions() {
+		// Legacy lesson listing.
+		remove_action( 'sensei_single_course_content_inside_after', [ __CLASS__, 'the_course_lessons_title' ], 9 );
+		remove_action( 'sensei_single_course_content_inside_after', 'course_single_lessons', 10 );
+
+		// Module listing.
+		remove_action( 'sensei_single_course_content_inside_after', [ Sensei()->modules, 'load_course_module_content_template' ], 8 );
+
+		// @todo Remove additional actions from `\Sensei_Course::add_legacy_course_hooks` as implemented in blocks.
+	}
+
+	/**
+	 * Check if a course is a legacy course.
+	 *
+	 * @param int|WP_Post $course Course ID or course object.
+	 *
+	 * @return bool
+	 */
+	public function is_legacy_course( $course ) {
+		$course = get_post( $course );
+
+		$course_blocks = [
+			'sensei-lms/course-outline',
+		];
+
+		foreach ( $course_blocks as $block ) {
+			if ( has_block( $block, $course ) ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
 }//end class
 
 /**

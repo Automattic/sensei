@@ -240,6 +240,15 @@ class Sensei_Main {
 		// load all hooks
 		$this->load_hooks();
 
+		/**
+		 * Fires once all global objects have been set in Sensei.
+		 *
+		 * @hook sensei_loaded
+		 * @since 3.6.0
+		 *
+		 * @param {Sensei_Main} $sensei Sensei object.
+		 */
+		do_action( 'sensei_loaded', $this );
 	} // End __construct()
 
 	/**
@@ -254,7 +263,6 @@ class Sensei_Main {
 		add_action( 'init', array( $this, 'load_localisation' ), 0 );
 
 		$this->initialize_global_objects();
-
 	}
 
 	/**

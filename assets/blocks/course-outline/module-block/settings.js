@@ -18,7 +18,7 @@ export function ModuleBlockSettings( {
 		<InspectorControls>
 			<PanelBody
 				title={ __( 'Status', 'sensei-lms' ) }
-				initialOpen={ true }
+				initialOpen={ false }
 			>
 				<ModuleStatusControl
 					isPreviewCompleted={ isPreviewCompleted }

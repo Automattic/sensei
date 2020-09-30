@@ -29,7 +29,7 @@ export function LessonBlockSettings( {
 	return (
 		<InspectorControls>
 			{ id && (
-				<PanelBody>
+				<PanelBody title={ __( 'Lesson', 'sensei-lms' ) }>
 					<h2>
 						<ExternalLink
 							href={ `post.php?post=${ id }&action=edit` }
@@ -47,25 +47,22 @@ export function LessonBlockSettings( {
 					</p>
 				</PanelBody>
 			) }
-			<PanelBody
-				title={ __( 'Preview Lesson Status', 'sensei-lms' ) }
-				initialOpen={ true }
-			>
-				<StatusControl
-					status={ previewStatus }
-					setStatus={ setPreviewStatus }
-				/>
-			</PanelBody>
-			<PanelBody
-				title={ __( 'Typography', 'sensei-lms' ) }
-				initialOpen={ false }
-			>
+			<PanelBody title={ __( 'Typography', 'sensei-lms' ) }>
 				<FontSizePicker
 					fontSizes={ fontSizes }
 					value={ fontSize }
 					onChange={ ( value ) => {
 						setAttributes( { fontSize: value } );
 					} }
+				/>
+			</PanelBody>
+			<PanelBody
+				title={ __( 'Status', 'sensei-lms' ) }
+				initialOpen={ false }
+			>
+				<StatusControl
+					status={ previewStatus }
+					setStatus={ setPreviewStatus }
 				/>
 			</PanelBody>
 		</InspectorControls>

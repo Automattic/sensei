@@ -212,10 +212,10 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 		$lesson_ids = $this->lesson->create_many( $args['lesson_count'], $args['lesson_args'] );
 		foreach ( $lesson_ids as $key => $lesson_id ) {
 			if ( ! empty( $module_ids ) ) {
-				shuffle( $module_ids );
+				$module_id = $module_ids[ $key % count( $module_ids ) ];
 
-				wp_set_object_terms( $lesson_id, $module_ids[0], 'module' );
-				add_post_meta( $lesson_id, '_order_module_' . $module_ids[0], 0 );
+				wp_set_object_terms( $lesson_id, $module_id, 'module' );
+				add_post_meta( $lesson_id, '_order_module_' . $module_id, 0 );
 			}
 			$question_count = $args['question_count'];
 			if ( is_array( $question_count ) ) {
