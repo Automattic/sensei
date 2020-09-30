@@ -223,12 +223,12 @@ class Sensei_Course_Outline_Block {
 		$css = Sensei_Block_Helpers::build_styles( $block );
 
 		return '
-			<h3 ' . Sensei_Block_Helpers::render_style_attributes( $classes, $css ) . '>
+			<div ' . Sensei_Block_Helpers::render_style_attributes( $classes, $css ) . '>
 				<a
 				href="' . esc_url( get_permalink( $lesson_id ) ) . '">
 					' . $block['title'] . '
 				</a>
-			</h3>
+			</div>
 		';
 	}
 
@@ -289,9 +289,9 @@ class Sensei_Course_Outline_Block {
 					<div class="wp-block-sensei-lms-course-outline-module__description">
 						' . $block['description'] . '
 					</div>
-							<div class="wp-block-sensei-lms-course-outline-module__lessons-title">
+							<h3 class="wp-block-sensei-lms-course-outline-module__lessons-title">
 								' . __( 'Lessons', 'sensei-lms' ) . '
-							</div>
+							</h3>
 						' .
 			implode(
 				'',

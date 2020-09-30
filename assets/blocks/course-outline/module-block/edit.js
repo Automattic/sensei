@@ -141,9 +141,9 @@ export const EditModuleBlock = ( props ) => {
 						/>
 					</div>
 					<div className="wp-block-sensei-lms-course-outline-module__lessons-title">
-						<div className="wp-block-sensei-lms-course-outline__clean-heading">
+						<h3 className="wp-block-sensei-lms-course-outline__clean-heading">
 							{ __( 'Lessons', 'sensei-lms' ) }
-						</div>
+						</h3>
 					</div>
 					<InnerBlocks
 						template={ [

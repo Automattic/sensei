@@ -1,6 +1,19 @@
 $dark-gray: #1a1d20;
 
 $outline: '.wp-block-sensei-lms-course-outline';
+
+
+/**
+ * Reset heading styles.
+ */
+.editor-styles-wrapper .wp-block-sensei-lms-course-outline .wp-block {
+	h1,
+	h2,
+	h3 {
+		@extend .wp-block-sensei-lms-course-outline__clean-heading
+	}
+}
+
 .wp-block-sensei-lms-course-outline {
 
 	margin: 1em 0;
@@ -14,14 +27,12 @@ $outline: '.wp-block-sensei-lms-course-outline';
 	&__clean-heading {
 		padding: 0;
 		margin: 0;
-		font-family: inherit;
 		font-size: inherit;
 		color: inherit;
 		line-height: inherit;
-		flex-basis: 82%;
-		border: none;
+		border: n one;
 
-		&:before, &:after {
+		&::before, &::after {
 			content: none;
 		}
 	}
@@ -75,12 +86,9 @@ $outline: '.wp-block-sensei-lms-course-outline';
 		}
 
 		h2 {
-			font-family: inherit;
-			font-size: inherit;
-			color: inherit;
-			line-height: inherit;
-			margin: 0;
+			font-size: 1em;
 			flex: 1;
+			flex-basis: 82%;
 		}
 
 		#{$block}__description {
@@ -143,7 +151,7 @@ $outline: '.wp-block-sensei-lms-course-outline';
 	align-items: center;
 	margin: 1px 0;
 	position: relative;
-	font-size: 1rem;
+	font-size: 1em;
 
 	> a {
 		display: block;
@@ -165,7 +173,14 @@ $outline: '.wp-block-sensei-lms-course-outline';
 		margin: 0;
 	}
 
-	&:before {
+	.entry-content &,
+	.editor-styles-wrapper & {
+		&::before {
+			content: '';
+		}
+	}
+
+	&::before {
 		content: '';
 		display: inline-block;
 		width: 24px;
@@ -176,7 +191,7 @@ $outline: '.wp-block-sensei-lms-course-outline';
 		border-radius: 50%;
 	}
 
-	&.completed:before {
+	&.completed::before {
 		content: '✓';
 		border: solid 1px #179942;
 		background-color: #1FD25A;
@@ -185,7 +200,7 @@ $outline: '.wp-block-sensei-lms-course-outline';
 		text-align: center;
 	}
 
-	&:hover:after {
+	&:hover::after {
 		content: '';
 		position: absolute;
 		pointer-events: none;
@@ -219,15 +234,4 @@ $outline: '.wp-block-sensei-lms-course-outline';
 
 #inspector-module-status-control__help {
 	margin-top: 15px;
-}
-
-/**
- * Overrides
- */
-.editor-styles-wrapper .wp-block-sensei-lms-course-outline .wp-block {
-	h1,
-	h2,
-	h3 {
-		@extend .wp-block-sensei-lms-course-outline__clean-heading
-	}
 }
