@@ -1521,15 +1521,9 @@ class Sensei_Admin {
 				// phpcs:ignore WordPress.Security.NonceVerification
 				if ( isset( $_POST[ 'lesson-order-module-' . $module['id'] ] ) && $_POST[ 'lesson-order-module-' . $module['id'] ] ) {
 					// phpcs:ignore WordPress.Security.NonceVerification
-					$order           = explode( ',', $_POST[ 'lesson-order-module-' . $module['id'] ] );
-					$ordered_lessons = [];
-
-					foreach ( $order as $lesson_id ) {
-						if ( $lesson_id && isset( $lessons_by_id[ $lesson_id ] ) ) {
-							$ordered_lessons[] = $lessons_by_id[ $lesson_id ];
-						}
-					}
-
+					$order             = explode( ',', $_POST[ 'lesson-order-module-' . $module['id'] ] );
+					$ordered_lessons   = [];
+					$ordered_lessons   = $this->get_concatenated_lessons( $ordered_lessons, $order, $lessons_by_id );
 					$module['lessons'] = $ordered_lessons;
 				}
 
@@ -1537,15 +1531,12 @@ class Sensei_Admin {
 			}
 
 			if ( $order_string ) {
-				$other_lessons = $this->get_course_structure( $course_structure, 'lesson' );
+				$order                    = explode( ',', $order_string );
+				$ordered_course_structure = $this->get_concatenated_lessons( $ordered_course_structure, $order, $lessons_by_id );
 
-				$order = explode( ',', $order_string );
-
-				foreach ( $order as $lesson_id ) {
-					if ( $lesson_id && isset( $lessons_by_id[ $lesson_id ] ) ) {
-						$ordered_course_structure[] = $lessons_by_id[ $lesson_id ];
-					}
-				}
+				$other_lessons            = $this->get_course_structure( $course_structure, 'lesson' );
+				$not_ordered_ids          = array_diff( wp_list_pluck( $other_lessons, 'id' ), wp_list_pluck( $ordered_course_structure, 'id' ) );
+				$ordered_course_structure = $this->get_concatenated_lessons( $ordered_course_structure, $not_ordered_ids, $lessons_by_id );
 			} else {
 				$ordered_course_structure = array_merge( $ordered_course_structure, $lessons );
 			}
@@ -1608,6 +1599,25 @@ class Sensei_Admin {
 		}
 
 		return $lessons_by_id;
+	}
+
+	/**
+	 * Get concatenated lessons, based on current list and IDs.
+	 *
+	 * @param array $current_lessons Current lessons.
+	 * @param int[] $new_lesson_ids  Current lessons.
+	 * @param array $lessons_by_id   Lessons by ID.
+	 *
+	 * @return array New array with concatenated lessons.
+	 */
+	private function get_concatenated_lessons( $current_lessons, $new_lesson_ids, $lessons_by_id ) {
+		foreach ( $new_lesson_ids as $lesson_id ) {
+			if ( $lesson_id && isset( $lessons_by_id[ $lesson_id ] ) ) {
+				$current_lessons[] = $lessons_by_id[ $lesson_id ];
+			}
+		}
+
+		return $current_lessons;
 	}
 
 	function sensei_add_custom_menu_items() {
