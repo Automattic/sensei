@@ -1,30 +1,40 @@
 ( () => {
-	const modules = document.querySelectorAll(
-		'.wp-block-sensei-lms-course-outline-module'
-	);
+	const onReady = ( fn ) => {
+		if ( 'loading' !== document.readyState ) {
+			fn();
+		} else {
+			document.addEventListener( 'DOMContentLoaded', fn );
+		}
+	};
 
-	modules.forEach( ( module ) => {
-		const moduleContent = module.querySelector(
-			'.wp-block-sensei-lms-collapsible.animated'
+	onReady( () => {
+		const modules = document.querySelectorAll(
+			'.wp-block-sensei-lms-course-outline-module'
 		);
 
-		const originalHeight = moduleContent.offsetHeight;
-		const toggleButton = module.querySelector(
-			'.wp-block-sensei-lms-course-outline__arrow'
-		);
+		modules.forEach( ( module ) => {
+			const moduleContent = module.querySelector(
+				'.wp-block-sensei-lms-collapsible.animated'
+			);
 
-		moduleContent.style.height = originalHeight + 'px';
+			const originalHeight = moduleContent.offsetHeight;
+			const toggleButton = module.querySelector(
+				'.wp-block-sensei-lms-course-outline__arrow'
+			);
 
-		toggleButton.addEventListener( 'click', () => {
-			toggleButton.classList.toggle( 'dashicons-arrow-up-alt2' );
-			toggleButton.classList.toggle( 'dashicons-arrow-down-alt2' );
-			const collapsed = moduleContent.classList.toggle( 'collapsed' );
+			moduleContent.style.height = originalHeight + 'px';
 
-			if ( ! collapsed ) {
-				moduleContent.style.height = originalHeight + 'px';
-			} else {
-				moduleContent.style.height = '0px';
-			}
+			toggleButton.addEventListener( 'click', () => {
+				toggleButton.classList.toggle( 'dashicons-arrow-up-alt2' );
+				toggleButton.classList.toggle( 'dashicons-arrow-down-alt2' );
+				const collapsed = moduleContent.classList.toggle( 'collapsed' );
+
+				if ( ! collapsed ) {
+					moduleContent.style.height = originalHeight + 'px';
+				} else {
+					moduleContent.style.height = '0px';
+				}
+			} );
 		} );
 	} );
 } )();

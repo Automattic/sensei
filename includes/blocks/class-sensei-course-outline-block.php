@@ -45,6 +45,10 @@ class Sensei_Course_Outline_Block {
 		}
 
 		Sensei()->assets->enqueue( 'sensei-course-outline', 'blocks/course-outline/style.css' );
+
+		if ( ! is_admin() ) {
+			Sensei()->assets->enqueue( 'sensei-course-outline-frontend', 'blocks/course-outline/frontend.js' );
+		}
 	}
 
 	/**
