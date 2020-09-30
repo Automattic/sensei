@@ -1400,8 +1400,6 @@ class Sensei_Admin {
 						}
 					);
 
-					$order_string = $this->get_lesson_order( $course_id );
-
 					$html .= '<form id="editgrouping" method="post" action="'
 						. esc_url( admin_url( 'admin-post.php' ) ) . '" class="validate">' . "\n";
 
@@ -1448,7 +1446,7 @@ class Sensei_Admin {
 					if ( $has_lessons ) {
 						$html .= '<input type="hidden" name="action" value="order_lessons" />' . "\n";
 						$html .= wp_nonce_field( 'order_lessons', '_wpnonce', true, false ) . "\n";
-						$html .= '<input type="hidden" name="lesson-order" value="' . esc_attr( $order_string ) . '" />' . "\n";
+						$html .= '<input type="hidden" name="lesson-order" value="" />' . "\n";
 						$html .= '<input type="hidden" name="course_id" value="' . esc_attr( $course_id ) . '" />' . "\n";
 						$html .= '<input type="submit" class="button-primary" value="' . esc_attr__( 'Save lesson order', 'sensei-lms' ) . '" />' . "\n";
 						$html .= '</form>';
@@ -1499,7 +1497,18 @@ class Sensei_Admin {
 		<?php
 	}
 
+	/**
+	 * Get lesson order.
+	 *
+	 * @deprecated 3.6.0
+	 *
+	 * @param integer $course_id Course ID.
+	 *
+	 * @return string Order string.
+	 */
 	public function get_lesson_order( $course_id = 0 ) {
+		_deprecated_function( __METHOD__, '3.6.0' );
+
 		$order_string = get_post_meta( $course_id, '_lesson_order', true );
 		return $order_string;
 	}
