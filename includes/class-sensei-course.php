@@ -3560,7 +3560,7 @@ class Sensei_Course {
 			'product_count'     => $product_count,
 		];
 
-		sensei_log_event( 'course_publish', $event_properties );
+		sensei_log_event( 'course_update', $event_properties );
 	}
 
 	/**
