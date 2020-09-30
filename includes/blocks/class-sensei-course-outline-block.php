@@ -255,7 +255,7 @@ class Sensei_Course_Outline_Block {
 						<span class="screen-reader-text">' . __( 'Toggle module content', 'sensei-lms' ) . '</span>
 					</button>
 				</header>
-				<div class="wp-block-sensei-lms-collapsible expanded ' . $animated . '">
+				<div class="wp-block-sensei-lms-collapsible ' . $animated . '">
 					<div class="wp-block-sensei-lms-course-outline-module__description">
 						' . $block['description'] . '
 					</div>
