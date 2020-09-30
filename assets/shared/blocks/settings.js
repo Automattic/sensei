@@ -12,7 +12,7 @@ import { mapValues, upperFirst } from 'lodash';
  *
  * @param {Object} colorSettings
  */
-export function withColorSettings( colorSettings ) {
+export const withColorSettings = ( colorSettings ) => {
 	return ( Component ) => {
 		const ComponentWithColorSettings = ( props ) => (
 			<>
@@ -28,7 +28,7 @@ export function withColorSettings( colorSettings ) {
 
 		return withColors( colors )( ComponentWithColorSettings );
 	};
-}
+};
 
 /**
  * Color setting inspector controls.
@@ -69,22 +69,20 @@ export const ColorSettings = ( { colorSettings, props } ) => {
  * Apply default style class if no style is selected.
  * Adds is-style-default to the className property.
  */
-export function withDefaultBlockStyle() {
-	return ( Component ) => ( props ) => {
-		let { className } = props;
+export const withDefaultBlockStyle = () => ( Component ) => ( props ) => {
+	let { className } = props;
 
-		const extraProps = {};
+	const extraProps = {};
 
-		if ( ! className || ! className.includes( 'is-style-' ) ) {
-			className = extraProps.className = [
-				className,
-				'is-style-default',
-			].join( ' ' );
-		}
+	if ( ! className || ! className.includes( 'is-style-' ) ) {
+		className = extraProps.className = [
+			className,
+			'is-style-default',
+		].join( ' ' );
+	}
 
-		const style = className.match( /is-style-(\w+)/ );
-		if ( style ) extraProps.blockStyle = style[ 1 ];
+	const style = className.match( /is-style-(\w+)/ );
+	if ( style ) extraProps.blockStyle = style[ 1 ];
 
-		return <Component { ...props } { ...extraProps } />;
-	};
-}
+	return <Component { ...props } { ...extraProps } />;
+};

@@ -16,12 +16,12 @@ import { StatusControl } from '../status-control';
  * @param {number}   props.attributes.id       The lesson id.
  * @param {Function} props.attributes.fontSize The lesson block font size.
  */
-export function LessonBlockSettings( {
+export const LessonBlockSettings = ( {
 	previewStatus,
 	setPreviewStatus,
 	setAttributes,
 	attributes: { id, fontSize },
-} ) {
+} ) => {
 	const { fontSizes } = useSelect( ( select ) =>
 		select( 'core/block-editor' ).getSettings()
 	);
@@ -67,4 +67,4 @@ export function LessonBlockSettings( {
 			</PanelBody>
 		</InspectorControls>
 	);
-}
+};

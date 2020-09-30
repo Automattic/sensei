@@ -10,21 +10,16 @@ import { ModuleStatusControl } from './module-status-control';
  * @param {boolean}  props.isPreviewCompleted    Whether Completed preview is enabled.
  * @param {Function} props.setIsPreviewCompleted Callback to be called when preview is updated.
  */
-export function ModuleBlockSettings( {
+export const ModuleBlockSettings = ( {
 	isPreviewCompleted,
 	setIsPreviewCompleted,
-} ) {
-	return (
-		<InspectorControls>
-			<PanelBody
-				title={ __( 'Status', 'sensei-lms' ) }
-				initialOpen={ false }
-			>
-				<ModuleStatusControl
-					isPreviewCompleted={ isPreviewCompleted }
-					setIsPreviewCompleted={ setIsPreviewCompleted }
-				/>
-			</PanelBody>
-		</InspectorControls>
-	);
-}
+} ) => (
+	<InspectorControls>
+		<PanelBody title={ __( 'Status', 'sensei-lms' ) } initialOpen={ false }>
+			<ModuleStatusControl
+				isPreviewCompleted={ isPreviewCompleted }
+				setIsPreviewCompleted={ setIsPreviewCompleted }
+			/>
+		</PanelBody>
+	</InspectorControls>
+);

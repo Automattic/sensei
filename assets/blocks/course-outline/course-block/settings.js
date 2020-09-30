@@ -9,25 +9,23 @@ import { PanelBody, ToggleControl } from '@wordpress/components';
  * @param {boolean}  props.animationsEnabled    Whether animations are enabled.
  * @param {Function} props.setAnimationsEnabled Callback to be called when animations enabling is updated.
  */
-export function OutlineBlockSettings( {
+export const OutlineBlockSettings = ( {
 	animationsEnabled,
 	setAnimationsEnabled,
-} ) {
-	return (
-		<InspectorControls>
-			<PanelBody
-				title={ __( 'Animation', 'sensei-lms' ) }
-				initialOpen={ false }
-			>
-				<ToggleControl
-					checked={ animationsEnabled }
-					onChange={ setAnimationsEnabled }
-					label={ __(
-						'Animate the expanding and collapsing of modules',
-						'sensei-lms'
-					) }
-				/>
-			</PanelBody>
-		</InspectorControls>
-	);
-}
+} ) => (
+	<InspectorControls>
+		<PanelBody
+			title={ __( 'Animation', 'sensei-lms' ) }
+			initialOpen={ false }
+		>
+			<ToggleControl
+				checked={ animationsEnabled }
+				onChange={ setAnimationsEnabled }
+				label={ __(
+					'Animate the expanding and collapsing of modules',
+					'sensei-lms'
+				) }
+			/>
+		</PanelBody>
+	</InspectorControls>
+);
