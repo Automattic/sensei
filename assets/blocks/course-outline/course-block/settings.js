@@ -16,14 +16,14 @@ export function OutlineBlockSettings( {
 	return (
 		<InspectorControls>
 			<PanelBody
-				title={ __( 'Enable Animations', 'sensei-lms' ) }
-				initialOpen={ true }
+				title={ __( 'Animation', 'sensei-lms' ) }
+				initialOpen={ false }
 			>
 				<ToggleControl
 					checked={ animationsEnabled }
 					onChange={ setAnimationsEnabled }
 					label={ __(
-						'Enable animations on module collapse/expand.',
+						'Animate the expanding and collapsing of modules',
 						'sensei-lms'
 					) }
 				/>

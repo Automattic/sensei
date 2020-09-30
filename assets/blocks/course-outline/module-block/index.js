@@ -8,7 +8,7 @@ import transforms from './transforms';
 
 registerBlockType( 'sensei-lms/course-outline-module', {
 	title: __( 'Module', 'sensei-lms' ),
-	description: __( 'Used to group one or more lessons.', 'sensei-lms' ),
+	description: __( 'Group related lessons together.', 'sensei-lms' ),
 	icon: ModuleIcon,
 	category: 'sensei-lms',
 	parent: [ 'sensei-lms/course-outline' ],
