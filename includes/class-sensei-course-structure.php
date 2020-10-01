@@ -689,4 +689,34 @@ class Sensei_Course_Structure {
 
 		return true;
 	}
+
+	/**
+	 * Sort structure.
+	 *
+	 * @param array $structure     Structure to be sorted.
+	 * @param int[] $lessons_order Order to sort.
+	 *
+	 * @return array Sorted structure.
+	 */
+	public static function sort_structure( $structure, $lessons_order ) {
+		usort(
+			$structure,
+			function( $a, $b ) use ( $lessons_order ) {
+				if ( 'lesson' !== $a['type'] || 'lesson' !== $b['type'] ) {
+					return 0;
+				}
+
+				$a_position = array_search( $a['id'], $lessons_order, true );
+				$b_position = array_search( $b['id'], $lessons_order, true );
+
+				if ( false === $a_position && false === $b_position ) {
+					return 0;
+				}
+
+				return false === $b_position || $a_position < $b_position ? -1 : 1;
+			}
+		);
+
+		return $structure;
+	}
 }

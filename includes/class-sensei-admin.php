@@ -1511,41 +1511,31 @@ class Sensei_Admin {
 		 */
 
 		if ( $course_id ) {
-			$course_structure         = $this->get_course_structure( intval( $course_id ) );
-			$modules                  = $this->get_course_structure( $course_structure, 'module' );
-			$lessons                  = $this->get_course_structure( $course_structure, 'lesson' );
-			$lessons_by_id            = $this->get_lessons_by_id( $course_structure );
-			$ordered_course_structure = [];
+			$course_structure = $this->get_course_structure( intval( $course_id ) );
+			$order            = array_map( 'absint', explode( ',', $order_string ) );
 
-			// Ordered module lessons.
-			foreach ( $modules as $module ) {
-				// phpcs:ignore WordPress.Security.NonceVerification
-				if ( ! empty( $_POST[ 'lesson-order-module-' . $module['id'] ] ) ) {
-					// phpcs:ignore WordPress.Security.NonceVerification
-					$order             = sanitize_text_field( wp_unslash( $_POST[ 'lesson-order-module-' . $module['id'] ] ) );
-					$order             = array_map( 'absint', explode( ',', $order ) );
-					$ordered_lessons   = [];
-					$ordered_lessons   = $this->get_concatenated_lessons( $ordered_lessons, $order, $lessons_by_id );
-					$module['lessons'] = $ordered_lessons;
+			$course_structure = Sensei_Course_Structure::sort_structure( $course_structure, $order );
+
+			// Sort module lessons.
+			foreach ( $course_structure as $key => $module ) {
+				if ( 'module' !== $module['type'] ) {
+					continue;
 				}
 
-				$ordered_course_structure[] = $module;
+				if (
+					// phpcs:ignore WordPress.Security.NonceVerification
+					! empty( $_POST[ 'lesson-order-module-' . $module['id'] ] )
+					&& ! empty ( $course_structure[ $key ]['lessons'] )
+				) {
+					// phpcs:ignore WordPress.Security.NonceVerification
+					$order = sanitize_text_field( wp_unslash( $_POST[ 'lesson-order-module-' . $module['id'] ] ) );
+					$order = array_map( 'absint', explode( ',', $order ) );
+
+					$course_structure[ $key ]['lessons'] = Sensei_Course_Structure::sort_structure( $course_structure[ $key ]['lessons'], $order );
+				}
 			}
 
-			if ( $order_string ) {
-				// Add ordered lessons to the structure.
-				$order                    = explode( ',', $order_string );
-				$ordered_course_structure = $this->get_concatenated_lessons( $ordered_course_structure, $order, $lessons_by_id );
-
-				// Add to the structure lessons that weren't in the `$order_string`.
-				$other_lessons            = $this->get_course_structure( $course_structure, 'lesson' );
-				$not_ordered_ids          = array_diff( wp_list_pluck( $other_lessons, 'id' ), wp_list_pluck( $ordered_course_structure, 'id' ) );
-				$ordered_course_structure = $this->get_concatenated_lessons( $ordered_course_structure, $not_ordered_ids, $lessons_by_id );
-			} else {
-				$ordered_course_structure = array_merge( $ordered_course_structure, $lessons );
-			}
-
-			if ( true === Sensei_Course_Structure::instance( $course_id )->save( $ordered_course_structure ) ) {
+			if ( true === Sensei_Course_Structure::instance( $course_id )->save( $course_structure ) ) {
 				return true;
 			}
 		}
@@ -1576,50 +1566,6 @@ class Sensei_Admin {
 		}
 
 		return $course_structure;
-	}
-
-	/**
-	 * Get lessons by ID.
-	 *
-	 * @param array $course_structure Course structure.
-	 *
-	 * @return array Lessons by ID.
-	 */
-	private function get_lessons_by_id( $course_structure ) {
-		$lessons_by_id = [];
-
-		foreach ( $course_structure as $item ) {
-			if ( 'lesson' === $item['type'] ) {
-				$lessons_by_id[ $item['id'] ] = $item;
-			}
-
-			if ( ! empty( $item['lessons'] ) ) {
-				foreach ( $item['lessons'] as $lesson ) {
-					$lessons_by_id[ $lesson['id'] ] = $lesson;
-				}
-			}
-		}
-
-		return $lessons_by_id;
-	}
-
-	/**
-	 * Get concatenated lessons, based on current list and IDs.
-	 *
-	 * @param array $current_lessons Current lessons.
-	 * @param int[] $new_lesson_ids  Current lessons.
-	 * @param array $lessons_by_id   Lessons by ID.
-	 *
-	 * @return array New array with concatenated lessons.
-	 */
-	private function get_concatenated_lessons( $current_lessons, $new_lesson_ids, $lessons_by_id ) {
-		foreach ( $new_lesson_ids as $lesson_id ) {
-			if ( $lesson_id && isset( $lessons_by_id[ $lesson_id ] ) ) {
-				$current_lessons[] = $lessons_by_id[ $lesson_id ];
-			}
-		}
-
-		return $current_lessons;
 	}
 
 	function sensei_add_custom_menu_items() {
