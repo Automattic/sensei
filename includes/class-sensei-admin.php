@@ -1525,7 +1525,7 @@ class Sensei_Admin {
 				if (
 					// phpcs:ignore WordPress.Security.NonceVerification
 					! empty( $_POST[ 'lesson-order-module-' . $module['id'] ] )
-					&& ! empty ( $course_structure[ $key ]['lessons'] )
+					&& ! empty( $course_structure[ $key ]['lessons'] )
 				) {
 					// phpcs:ignore WordPress.Security.NonceVerification
 					$order = sanitize_text_field( wp_unslash( $_POST[ 'lesson-order-module-' . $module['id'] ] ) );
