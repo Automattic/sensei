@@ -746,8 +746,15 @@ class Sensei_Course_Structure {
 		usort(
 			$structure,
 			function( $a, $b ) use ( $order, $type ) {
+				// One of the types is not being sorted.
 				if ( $type !== $a['type'] || $type !== $b['type'] ) {
-					return 0;
+					// If types are equal, keep in the current order.
+					if ( $a['type'] === $b['type'] ) {
+						return 0;
+					}
+
+					// Always keep the modules before the lessons.
+					return 'module' === $a['type'] ? - 1 : 1;
 				}
 
 				$a_position = array_search( $a['id'], $order, true );
