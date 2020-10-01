@@ -31,6 +31,17 @@ class Sensei_Course {
 	public $my_courses_page;
 
 	/**
+	 * Course ID being saved, if no resave is needed.
+	 * The resave will be needed when updating a course with
+	 * outline block which needs id sync.
+	 *
+	 * @since 3.6.0
+	 *
+	 * @var int
+	 */
+	private $course_id_updating;
+
+	/**
 	 * @var array The HTML allowed for message boxes.
 	 */
 	public static $allowed_html;
@@ -85,6 +96,11 @@ class Sensei_Course {
 		// provide an option to block all emails related to a selected course
 		add_filter( 'sensei_send_emails', array( $this, 'block_notification_emails' ) );
 		add_action( 'save_post', array( $this, 'save_course_notification_meta_box' ) );
+
+		// Log course content counter.
+		add_action( 'save_post_course', [ $this, 'mark_updating_course_id' ], 10, 2 );
+		add_action( 'shutdown', [ $this, 'log_course_update' ] );
+		add_action( 'rest_api_init', [ $this, 'disable_log_course_update' ] );
 
 		// preview lessons on the course content
 		add_action( 'sensei_course_content_inside_after', array( $this, 'the_course_free_lesson_preview' ) );
@@ -3456,6 +3472,111 @@ class Sensei_Course {
 			'sample_course' => 'getting-started-with-sensei-lms' === $course->post_name ? 1 : 0,
 		];
 		sensei_log_event( 'course_publish', $event_properties );
+	}
+
+	/**
+	 * Mark updating course id when no resave is needed for id sync.
+	 *
+	 * Hooked into `save_post_course`.
+	 *
+	 * @since 3.6.0
+	 * @access private
+	 *
+	 * @param int      $post_id Post ID.
+	 * @param \WP_Post $post    Post object.
+	 */
+	public function mark_updating_course_id( $post_id, $post ) {
+		if (
+			! Sensei()->feature_flags->is_enabled( 'course_outline' )
+			|| 'publish' !== $post->post_status
+		) {
+			return;
+		}
+
+		$content = $post->post_content;
+
+		if ( has_block( 'sensei-lms/course-outline', $content ) ) {
+			$blocks = parse_blocks( $content );
+
+			if ( ! $this->has_pending_id_sync( $blocks ) ) {
+				$this->course_id_updating = $post_id;
+			}
+		} else {
+			$this->course_id_updating = $post_id;
+		}
+	}
+
+	/**
+	 * Check if blocks has pending id sync.
+	 *
+	 * @since 3.6.0
+	 *
+	 * @param array[] $blocks Blocks array.
+	 *
+	 * @return boolean Whether has block with pending id sync.
+	 */
+	private function has_pending_id_sync( $blocks ) {
+		foreach ( $blocks as $block ) {
+			$is_checkable_block = 'sensei-lms/course-outline-module' === $block['blockName']
+				|| 'sensei-lms/course-outline-lesson' === $block['blockName'];
+
+			if (
+				// Check pending id sync.
+				( $is_checkable_block && empty( $block['attrs']['id'] ) )
+				// Check inner blocks pending id sync.
+				|| (
+					! empty( $block['innerBlocks'] )
+					&& $this->has_pending_id_sync( $block['innerBlocks'] )
+				)
+			) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Log the course update.
+	 *
+	 * Hooked into `shutdown`.
+	 *
+	 * @since 3.6.0
+	 * @access private
+	 */
+	public function log_course_update() {
+		if ( empty( $this->course_id_updating ) ) {
+			return;
+		}
+
+		$course_id     = $this->course_id_updating;
+		$post          = get_post( $course_id );
+		$content       = $post->post_content;
+		$product_ids   = get_post_meta( $course_id, '_course_woocommerce_product', false );
+		$product_count = empty( $product_ids ) ? 0 : count( array_filter( $product_ids, 'is_numeric' ) );
+
+		$event_properties = [
+			'course_id'         => $course_id,
+			'has_outline_block' => has_block( 'sensei-lms/course-outline', $content ) ? 1 : 0,
+			'module_count'      => count( wp_get_post_terms( $course_id, 'module' ) ),
+			'lesson_count'      => $this->course_lesson_count( $course_id ),
+			'product_count'     => $product_count,
+			'sample_course'     => 'getting-started-with-sensei-lms' === $post->post_name ? 1 : 0,
+		];
+
+		sensei_log_event( 'course_update', $event_properties );
+	}
+
+	/**
+	 * Disable log course update when it's a REST request.
+	 *
+	 * Hooked into `rest_api_init`.
+	 *
+	 * @since 3.6.0
+	 * @access private
+	 */
+	public function disable_log_course_update() {
+		remove_action( 'shutdown', [ $this, 'log_course_update' ] );
 	}
 
 	/**
