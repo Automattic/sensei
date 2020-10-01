@@ -1475,7 +1475,7 @@ class Sensei_Admin {
 							'style' => array(),
 						),
 						'ul'     => array(
-							'class' => array(),
+							'class'          => array(),
 							'data-module-id' => array(),
 						),
 					)
@@ -1519,9 +1519,10 @@ class Sensei_Admin {
 
 			foreach ( $modules as $module ) {
 				// phpcs:ignore WordPress.Security.NonceVerification
-				if ( isset( $_POST[ 'lesson-order-module-' . $module['id'] ] ) && $_POST[ 'lesson-order-module-' . $module['id'] ] ) {
+				if ( ! empty( $_POST[ 'lesson-order-module-' . $module['id'] ] ) ) {
 					// phpcs:ignore WordPress.Security.NonceVerification
-					$order             = explode( ',', $_POST[ 'lesson-order-module-' . $module['id'] ] );
+					$order             = sanitize_text_field( wp_unslash( $_POST[ 'lesson-order-module-' . $module['id'] ] ) );
+					$order             = array_map( 'absint', explode( ',', $order ) );
 					$ordered_lessons   = [];
 					$ordered_lessons   = $this->get_concatenated_lessons( $ordered_lessons, $order, $lessons_by_id );
 					$module['lessons'] = $ordered_lessons;
