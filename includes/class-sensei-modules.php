@@ -1111,15 +1111,7 @@ class Sensei_Core_Modules {
 				$course_id = intval( $_GET['course_id'] );
 				if ( $course_id > 0 ) {
 					$modules = $this->get_course_modules_structure( $course_id );
-					if ( $modules ) {
-
-						$order = $this->get_course_module_order( $course_id );
-
-						$order_string = '';
-						if ( $order ) {
-							$order_string = implode( ',', $order );
-						}
-
+					if ( ! empty( $modules ) ) {
 						$html .= '<form id="editgrouping" method="post" action="'
 							. esc_url( admin_url( 'admin-post.php' ) )
 							. '" class="validate">' . "\n";
@@ -1130,7 +1122,7 @@ class Sensei_Core_Modules {
 						$html .= '</ul>' . "\n";
 						$html .= '<input type="hidden" name="action" value="order_modules" />' . "\n";
 						$html .= wp_nonce_field( 'order_modules', '_wpnonce', true, false ) . "\n";
-						$html .= '<input type="hidden" name="module-order" value="' . esc_attr( $order_string ) . '" />' . "\n";
+						$html .= '<input type="hidden" name="module-order" value="" />' . "\n";
 						$html .= '<input type="hidden" name="course_id" value="' . esc_attr( $course_id ) . '" />' . "\n";
 						$html .= '<input type="submit" class="button-primary" value="' . esc_attr__( 'Save module order', 'sensei-lms' ) . '" />' . "\n";
 						$html .= '<a href="' . esc_url( admin_url( 'post.php?post=' . $course_id . '&action=edit' ) ) . '" class="button-secondary">' . esc_html__( 'Edit course', 'sensei-lms' ) . '</a>' . "\n";
