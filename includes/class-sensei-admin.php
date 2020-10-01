@@ -1517,6 +1517,7 @@ class Sensei_Admin {
 			$lessons_by_id            = $this->get_lessons_by_id( $course_structure );
 			$ordered_course_structure = [];
 
+			// Ordered module lessons.
 			foreach ( $modules as $module ) {
 				// phpcs:ignore WordPress.Security.NonceVerification
 				if ( ! empty( $_POST[ 'lesson-order-module-' . $module['id'] ] ) ) {
@@ -1532,9 +1533,11 @@ class Sensei_Admin {
 			}
 
 			if ( $order_string ) {
+				// Add ordered lessons to the structure.
 				$order                    = explode( ',', $order_string );
 				$ordered_course_structure = $this->get_concatenated_lessons( $ordered_course_structure, $order, $lessons_by_id );
 
+				// Add to the structure lessons that weren't in the `$order_string`.
 				$other_lessons            = $this->get_course_structure( $course_structure, 'lesson' );
 				$not_ordered_ids          = array_diff( wp_list_pluck( $other_lessons, 'id' ), wp_list_pluck( $ordered_course_structure, 'id' ) );
 				$ordered_course_structure = $this->get_concatenated_lessons( $ordered_course_structure, $not_ordered_ids, $lessons_by_id );
