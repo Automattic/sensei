@@ -62,3 +62,11 @@ $dark-gray: #1a1d20;
 		}
 	}
 }
+
+
+.sensei-block-style-append {
+	padding: 16px;
+	.components-panel__body:not(.is-opened) + div & {
+		display: none;
+	}
+}
