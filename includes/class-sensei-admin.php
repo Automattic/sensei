@@ -1545,8 +1545,6 @@ class Sensei_Admin {
 			if ( true === Sensei_Course_Structure::instance( $course_id )->save( $ordered_course_structure ) ) {
 				return true;
 			}
-
-			return false;
 		}
 
 		return false;
