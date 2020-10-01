@@ -279,8 +279,8 @@ class Sensei_Course_Outline_Block {
 
 		return '
 			<section class="wp-block-sensei-lms-course-outline-module ' . $class_name . '">
-				<header ' . Sensei_Block_Helpers::render_style_attributes( 'wp-block-sensei-lms-course-outline-module__name', $header_css ) . '>
-					<h2>' . $block['title'] . '</h2>
+				<header ' . Sensei_Block_Helpers::render_style_attributes( 'wp-block-sensei-lms-course-outline-module__header', $header_css ) . '>
+					<h2 class="wp-block-sensei-lms-course-outline-module__title">' . $block['title'] . '</h2>
 					' . $progress_indicator . '
 					<div role="button" tabindex="0" class="wp-block-sensei-lms-course-outline__arrow dashicons dashicons-arrow-up-alt2"/>
 				</header>
