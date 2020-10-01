@@ -736,21 +736,22 @@ class Sensei_Course_Structure {
 	/**
 	 * Sort structure.
 	 *
-	 * @param array $structure     Structure to be sorted.
-	 * @param int[] $lessons_order Order to sort.
+	 * @param array  $structure Structure to be sorted.
+	 * @param int[]  $order     Order to sort the lessons.
+	 * @param string $type      Type to be sorted (lesson or module).
 	 *
 	 * @return array Sorted structure.
 	 */
-	public static function sort_structure( $structure, $lessons_order ) {
+	public static function sort_structure( $structure, $order, $type ) {
 		usort(
 			$structure,
-			function( $a, $b ) use ( $lessons_order ) {
-				if ( 'lesson' !== $a['type'] || 'lesson' !== $b['type'] ) {
+			function( $a, $b ) use ( $order, $type ) {
+				if ( $type !== $a['type'] || $type !== $b['type'] ) {
 					return 0;
 				}
 
-				$a_position = array_search( $a['id'], $lessons_order, true );
-				$b_position = array_search( $b['id'], $lessons_order, true );
+				$a_position = array_search( $a['id'], $order, true );
+				$b_position = array_search( $b['id'], $order, true );
 
 				if ( false === $a_position && false === $b_position ) {
 					return 0;

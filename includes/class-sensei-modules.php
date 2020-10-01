@@ -1110,13 +1110,17 @@ class Sensei_Core_Modules {
 			if ( isset( $_GET['course_id'] ) ) {
 				$course_id = intval( $_GET['course_id'] );
 				if ( $course_id > 0 ) {
-					$modules = $this->get_course_modules_structure( $course_id );
+					$modules = Sensei_Course_Structure::instance( $course_id )->get( 'edit' );
 					if ( ! empty( $modules ) ) {
 						$html .= '<form id="editgrouping" method="post" action="'
 							. esc_url( admin_url( 'admin-post.php' ) )
 							. '" class="validate">' . "\n";
 						$html .= '<ul class="sortable-module-list">' . "\n";
 						foreach ( $modules as $module ) {
+							if ( 'module' !== $module['type'] ) {
+								continue;
+							}
+
 							$html .= '<li class="' . $this->taxonomy . '"><span rel="' . esc_attr( $module['id'] ) . '" style="width: 100%;"> ' . esc_html( $module['title'] ) . '</span></li>' . "\n";
 						}
 						$html .= '</ul>' . "\n";
@@ -1171,24 +1175,6 @@ class Sensei_Core_Modules {
 	}
 
 	/**
-	 * Get course modules.
-	 *
-	 * @param int $course_id Course ID.
-	 *
-	 * @return array Modules.
-	 */
-	private function get_course_modules_structure( $course_id ) {
-		$course_structure = Sensei_Course_Structure::instance( $course_id )->get( 'edit' );
-
-		return array_filter(
-			$course_structure,
-			function( $item ) {
-				return 'module' === $item['type'];
-			}
-		);
-	}
-
-	/**
 	 * Add 'Module order' column to courses list table
 	 *
 	 * @since 1.8.0
@@ -1229,10 +1215,16 @@ class Sensei_Core_Modules {
 	 */
 	private function save_course_module_order( $order_string = '', $course_id = 0 ) {
 		if ( $order_string && $course_id ) {
-			$order = explode( ',', $order_string );
-			update_post_meta( intval( $course_id ), '_module_order', $order );
-			return true;
+			$course_structure = Sensei_Course_Structure::instance( $course_id )->get( 'edit' );
+			$order            = array_map( 'absint', explode( ',', $order_string ) );
+
+			$course_structure = Sensei_Course_Structure::sort_structure( $course_structure, $order, 'module' );
+
+			if ( true === Sensei_Course_Structure::instance( $course_id )->save( $course_structure ) ) {
+				return true;
+			}
 		}
+
 		return false;
 	}
 
