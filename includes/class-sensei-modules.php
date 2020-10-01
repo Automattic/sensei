@@ -1110,8 +1110,7 @@ class Sensei_Core_Modules {
 			if ( isset( $_GET['course_id'] ) ) {
 				$course_id = intval( $_GET['course_id'] );
 				if ( $course_id > 0 ) {
-					$modules = $this->get_course_modules( $course_id );
-					$modules = $this->append_teacher_name_to_module( $modules, array( 'module' ), array() );
+					$modules = $this->get_course_modules_structure( $course_id );
 					if ( $modules ) {
 
 						$order = $this->get_course_module_order( $course_id );
@@ -1126,7 +1125,7 @@ class Sensei_Core_Modules {
 							. '" class="validate">' . "\n";
 						$html .= '<ul class="sortable-module-list">' . "\n";
 						foreach ( $modules as $module ) {
-							$html .= '<li class="' . $this->taxonomy . '"><span rel="' . esc_attr( $module->term_id ) . '" style="width: 100%;"> ' . esc_html( $module->name ) . '</span></li>' . "\n";
+							$html .= '<li class="' . $this->taxonomy . '"><span rel="' . esc_attr( $module['id'] ) . '" style="width: 100%;"> ' . esc_html( $module['title'] ) . '</span></li>' . "\n";
 						}
 						$html .= '</ul>' . "\n";
 						$html .= '<input type="hidden" name="action" value="order_modules" />' . "\n";
@@ -1177,6 +1176,24 @@ class Sensei_Core_Modules {
 			?>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Get course modules.
+	 *
+	 * @param int $course_id Course ID.
+	 *
+	 * @return array Modules.
+	 */
+	private function get_course_modules_structure( $course_id ) {
+		$course_structure = Sensei_Course_Structure::instance( $course_id )->get( 'edit' );
+
+		return array_filter(
+			$course_structure,
+			function( $item ) {
+				return 'module' === $item['type'];
+			}
+		);
 	}
 
 	/**
