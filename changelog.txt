@@ -1,5 +1,5 @@
 *** Changelog ***
-2020.09.10 - version 3.5.2
+2020.09.30 - version 3.5.2
 * Fix: Fix course being duplicated when lesson has no quiz and teacher is updated  [#3654](https://github.com/Automattic/sensei/pull/3654)
 * Fix: Fix resetting a learner's lesson progress removes learner from list [#3626](https://github.com/Automattic/sensei/pull/3626)
 * Fix: Target the correct element when resetting input fields in quiz questions [#3604](https://github.com/Automattic/sensei/pull/3604)
