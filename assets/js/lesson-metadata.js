@@ -76,7 +76,7 @@ jQuery( document ).ready( function () {
 	 * @access public
 	 */
 	jQuery.fn.resetAddQuestionForm = function () {
-		jQuery( '#add-new-question' )
+		jQuery( '#tab-new-content' )
 			.find( 'div' )
 			.find( 'input' )
 			.each( function () {

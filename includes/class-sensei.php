@@ -978,7 +978,7 @@ class Sensei_Main {
 			return true;
 		}
 
-		if ( isset( $this->settings->settings['access_permission'] ) && ( true == $this->settings->settings['access_permission'] ) ) {
+		if ( sensei_is_login_required() ) {
 			if ( is_user_logged_in() ) {
 				return true;
 			} else {

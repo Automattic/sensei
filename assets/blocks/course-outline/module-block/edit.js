@@ -3,12 +3,13 @@ import { compose } from '@wordpress/compose';
 import { useContext, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
+import AnimateHeight from 'react-animate-height';
+
 import {
 	withColorSettings,
 	withDefaultBlockStyle,
 } from '../../../shared/blocks/settings';
 import { OutlineAttributesContext } from '../course-block/edit';
-
 import SingleLineInput from '../single-line-input';
 import { ModuleBlockSettings } from './settings';
 
@@ -67,12 +68,6 @@ export const EditModuleBlock = ( props ) => {
 
 	const [ isExpanded, setExpanded ] = useState( true );
 
-	function handleKeyDown( e ) {
-		if ( 13 === e.keyCode ) {
-			setExpanded( ! isExpanded );
-		}
-	}
-
 	const blockStyleColors = {
 		default: { background: mainColor?.color },
 		minimal: { borderColor: mainColor?.color },
@@ -108,7 +103,8 @@ export const EditModuleBlock = ( props ) => {
 							{ indicatorText }
 						</span>
 					</div>
-					<div
+					<button
+						type="button"
 						className={ classnames(
 							'wp-block-sensei-lms-course-outline__arrow',
 							'dashicons',
@@ -117,17 +113,17 @@ export const EditModuleBlock = ( props ) => {
 								: 'dashicons-arrow-down-alt2'
 						) }
 						onClick={ () => setExpanded( ! isExpanded ) }
-						onKeyDown={ handleKeyDown }
-						role="button"
-						tabIndex={ 0 }
-					/>
+					>
+						<span className="screen-reader-text">
+							{ __( 'Toggle module content', 'sensei-lms' ) }
+						</span>
+					</button>
 				</header>
-				<div
-					className={ classnames(
-						'wp-block-sensei-lms-collapsible',
-						{ animated: animationsEnabled },
-						{ collapsed: ! isExpanded }
-					) }
+				<AnimateHeight
+					className="wp-block-sensei-lms-collapsible"
+					duration={ animationsEnabled ? 500 : 0 }
+					animateOpacity
+					height={ isExpanded ? 'auto' : 0 }
 				>
 					<div className="wp-block-sensei-lms-course-outline-module__description">
 						<RichText
@@ -149,7 +145,7 @@ export const EditModuleBlock = ( props ) => {
 						] }
 						allowedBlocks={ [ 'sensei-lms/course-outline-lesson' ] }
 					/>
-				</div>
+				</AnimateHeight>
 			</section>
 		</>
 	);

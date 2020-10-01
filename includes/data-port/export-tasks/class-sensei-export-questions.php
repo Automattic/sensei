@@ -115,13 +115,13 @@ class Sensei_Export_Questions
 
 				$answers_right = array_map(
 					function( $value ) {
-						return 'Right:' . $value;
+						return 'Right:' . Sensei_Data_Port_Utilities::escape_list_item( $value );
 					},
 					$answers_right
 				);
 				$answers_wrong = array_map(
 					function( $value ) {
-						return 'Wrong:' . $value;
+						return 'Wrong:' . Sensei_Data_Port_Utilities::escape_list_item( $value );
 					},
 					$answers_wrong
 				);
@@ -129,7 +129,7 @@ class Sensei_Export_Questions
 				$answers = array_merge( $answers_right, $answers_wrong );
 				$answers = Sensei()->question->get_answers_sorted( $answers, $meta['_answer_order'] );
 
-				$columns[ Schema::COLUMN_ANSWER ] = Sensei_Data_Port_Utilities::serialize_list( $answers );
+				$columns[ Schema::COLUMN_ANSWER ] = implode( ',', $answers );
 
 				break;
 			case 'boolean':
