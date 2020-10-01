@@ -1125,20 +1125,8 @@ class Sensei_Core_Modules {
 							. esc_url( admin_url( 'admin-post.php' ) )
 							. '" class="validate">' . "\n";
 						$html .= '<ul class="sortable-module-list">' . "\n";
-						$count = 0;
 						foreach ( $modules as $module ) {
-							$count++;
-							$class = $this->taxonomy;
-							if ( $count == 1 ) {
-								$class .= ' first';
-							}
-							if ( $count == count( $modules ) ) {
-								$class .= ' last';
-							}
-							if ( $count % 2 != 0 ) {
-								$class .= ' alternate';
-							}
-							$html .= '<li class="' . esc_attr( $class ) . '"><span rel="' . esc_attr( $module->term_id ) . '" style="width: 100%;"> ' . esc_html( $module->name ) . '</span></li>' . "\n";
+							$html .= '<li class="' . $this->taxonomy . '"><span rel="' . esc_attr( $module->term_id ) . '" style="width: 100%;"> ' . esc_html( $module->name ) . '</span></li>' . "\n";
 						}
 						$html .= '</ul>' . "\n";
 						$html .= '<input type="hidden" name="action" value="order_modules" />' . "\n";
