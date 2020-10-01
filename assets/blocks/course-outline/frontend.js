@@ -14,7 +14,7 @@
 
 		modules.forEach( ( module ) => {
 			const moduleContent = module.querySelector(
-				'.wp-block-sensei-lms-collapsible.animated'
+				'.wp-block-sensei-lms-collapsible'
 			);
 
 			const originalHeight = moduleContent.offsetHeight;
