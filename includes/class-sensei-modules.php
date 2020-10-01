@@ -1044,6 +1044,7 @@ class Sensei_Core_Modules {
 	public function handle_order_modules() {
 		check_admin_referer( 'order_modules' );
 
+		$ordered = false;
 		if ( isset( $_POST['module-order'] ) && 0 < strlen( $_POST['module-order'] ) ) {
 			$ordered = $this->save_course_module_order( esc_attr( $_POST['module-order'] ), esc_attr( $_POST['course_id'] ) );
 		}
