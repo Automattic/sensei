@@ -102,25 +102,18 @@ $dark-gray: #1a1d20;
 	}
 	font-size: 16px;
 
-	&::before {
-		content: '';
+	.wp-block-sensei-lms-course-outline-lesson__status {
 		display: inline-block;
-		width: 24px;
+		width: 26px;
 		height: 24px;
-		flex: 0 0 24px;
 		margin-right: 24px;
-		border: solid 1px #A7AAAD;
-		background-color: #DCDCDE;
-		border-radius: 50%;
+		background: url( './lesson-block/lesson-not-started-icon.svg' );
 	}
 
-	&.completed::before {
-		content: '✓';
-		border: solid 1px #179942;
-		background-color: #1FD25A;
-		color: white;
-		line-height: 22px;
-		text-align: center;
+	&.completed {
+		.wp-block-sensei-lms-course-outline-lesson__status {
+			background: url( './lesson-block/lesson-completed-icon.svg' );
+		}
 	}
 }
 
