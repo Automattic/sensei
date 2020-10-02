@@ -1216,8 +1216,11 @@ class Sensei_Core_Modules {
 	 */
 	private function save_course_module_order( $order_string = '', $course_id = 0 ) {
 		if ( $order_string && $course_id ) {
+			remove_filter( 'get_terms', array( Sensei()->modules, 'append_teacher_name_to_module' ), 70 );
 			$course_structure = Sensei_Course_Structure::instance( $course_id )->get( 'edit' );
-			$order            = array_map( 'absint', explode( ',', $order_string ) );
+			add_filter( 'get_terms', array( Sensei()->modules, 'append_teacher_name_to_module' ), 70, 3 );
+
+			$order = array_map( 'absint', explode( ',', $order_string ) );
 
 			$course_structure = Sensei_Course_Structure::sort_structure( $course_structure, $order, 'module' );
 
