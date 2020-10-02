@@ -1511,8 +1511,11 @@ class Sensei_Admin {
 		 */
 
 		if ( $course_id ) {
+			remove_filter( 'get_terms', array( Sensei()->modules, 'append_teacher_name_to_module' ), 70 );
 			$course_structure = $this->get_course_structure( intval( $course_id ) );
-			$order            = array_map( 'absint', explode( ',', $order_string ) );
+			add_filter( 'get_terms', array( Sensei()->modules, 'append_teacher_name_to_module' ), 70, 3 );
+
+			$order = array_map( 'absint', explode( ',', $order_string ) );
 
 			$course_structure = Sensei_Course_Structure::sort_structure( $course_structure, $order );
 
