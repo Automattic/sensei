@@ -86,7 +86,7 @@ export const LessonBlockSettings = ( props ) => {
 					] }
 					label={ __( 'Apply style to all lessons', 'sensei-lms' ) }
 					help={ __(
-						'Use the selected color settings for all lessons.',
+						'Use the selected color and typography settings for all lessons.',
 						'sensei-lms'
 					) }
 				/>
