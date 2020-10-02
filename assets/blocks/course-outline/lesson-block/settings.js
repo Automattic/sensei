@@ -2,6 +2,7 @@ import { InspectorControls } from '@wordpress/block-editor';
 import { ExternalLink, FontSizePicker, PanelBody } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { ShareStyle } from '../../../shared/blocks/share-style';
 
 import { StatusControl } from '../status-control';
 
@@ -15,13 +16,17 @@ import { StatusControl } from '../status-control';
  * @param {Function} props.attributes          The block attributes.
  * @param {number}   props.attributes.id       The lesson id.
  * @param {Function} props.attributes.fontSize The lesson block font size.
+ 
  */
-export const LessonBlockSettings = ( {
-	previewStatus,
-	setPreviewStatus,
-	setAttributes,
-	attributes: { id, fontSize },
-} ) => {
+export const LessonBlockSettings = ( props ) => {
+	const {
+		previewStatus,
+		setPreviewStatus,
+		setAttributes,
+		attributes: { id, fontSize },
+		colorSettingsFill: ColorSettingsFill,
+	} = props;
+
 	const { fontSizes } = useSelect( ( select ) =>
 		select( 'core/block-editor' ).getSettings()
 	);
@@ -65,6 +70,22 @@ export const LessonBlockSettings = ( {
 					setStatus={ setPreviewStatus }
 				/>
 			</PanelBody>
+			<ColorSettingsFill>
+				<ShareStyle
+					{ ...props }
+					sharedAttributeNames={ [
+						'backgroundColor',
+						'customBackgroundColor',
+						'textColor',
+						'customTextColor',
+					] }
+					label={ __( 'Apply style to all lessons', 'sensei-lms' ) }
+					help={ __(
+						'Use the selected color settings for all lessons.',
+						'sensei-lms'
+					) }
+				/>
+			</ColorSettingsFill>
 		</InspectorControls>
 	);
 };
