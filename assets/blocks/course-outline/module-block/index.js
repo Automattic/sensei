@@ -72,7 +72,7 @@ registerBlockType( 'sensei-lms/course-outline-module', {
 		},
 		{
 			name: 'default',
-			label: 'Default',
+			label: 'Filled',
 			isDefault: true,
 		},
 	],
