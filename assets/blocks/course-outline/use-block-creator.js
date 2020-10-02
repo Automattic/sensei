@@ -19,14 +19,14 @@ export const useBlocksCreator = ( clientId ) => {
 	);
 
 	const setBlocks = useCallback(
-		( structure ) => {
+		( structure, updateSelection = false ) => {
 			const blocks = getBlocks( clientId );
 			const currentStructure = extractStructure( blocks );
 			if ( ! isEqual( currentStructure, structure ) ) {
 				replaceInnerBlocks(
 					clientId,
 					syncStructureToBlocks( structure, blocks ),
-					false
+					updateSelection
 				);
 
 				dispatch( COURSE_STORE ).setEditorDirty( true );
