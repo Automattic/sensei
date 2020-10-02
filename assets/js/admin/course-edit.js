@@ -1,4 +1,41 @@
+/**
+ * It enables or disables the legacy meta boxes.
+ *
+ * @param {boolean} enable Whether enable or disable.
+ */
+window.sensei_toggleLegacyMetaboxes = ( enable ) => {
+	// Side-effect - Prevent submit modules.
+	document
+		.querySelectorAll( '#module_course_mb input' )
+		.forEach( ( input ) => {
+			input.disabled = ! enable;
+		} );
+
+	const editPostSelector = wp.data.select( 'core/edit-post' );
+	const editPostDispatcher = wp.data.dispatch( 'core/edit-post' );
+
+	if (
+		enable !==
+		editPostSelector.isEditorPanelEnabled( 'meta-box-course-lessons' )
+	) {
+		editPostDispatcher.toggleEditorPanelEnabled(
+			'meta-box-course-lessons'
+		);
+	}
+
+	if (
+		enable !==
+		editPostSelector.isEditorPanelEnabled( 'meta-box-module_course_mb' )
+	) {
+		editPostDispatcher.toggleEditorPanelEnabled(
+			'meta-box-module_course_mb'
+		);
+	}
+};
+
 jQuery( document ).ready( function ( $ ) {
+	window.sensei_toggleLegacyMetaboxes( true );
+
 	$( '#course-prerequisite-options' ).select2( { width: '100%' } );
 
 	function trackLinkClickCallback( event_name ) {
