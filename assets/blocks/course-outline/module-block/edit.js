@@ -127,6 +127,7 @@ const EditModuleBlock = ( {
 							[ 'sensei-lms/course-outline-lesson', {} ],
 						] }
 						allowedBlocks={ [ 'sensei-lms/course-outline-lesson' ] }
+						templateInsertUpdatesSelection={ false }
 					/>
 				</AnimateHeight>
 			</section>
