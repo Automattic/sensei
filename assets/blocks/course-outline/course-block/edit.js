@@ -66,10 +66,10 @@ const EditCourseOutlineBlock = ( {
 	);
 
 	useEffect( () => {
-		if ( structure && structure.length ) {
+		if ( structure?.length && ! attributes.isPreview ) {
 			setBlocks( structure );
 		}
-	}, [ structure, setBlocks ] );
+	}, [ structure, setBlocks, attributes.isPreview ] );
 
 	if ( isEmpty ) {
 		return (

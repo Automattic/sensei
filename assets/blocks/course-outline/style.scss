@@ -9,7 +9,10 @@ $outline: '.wp-block-sensei-lms-course-outline';
 
 	&.is-style-default {
 		border-width: 1px;
-
+		.block-editor-block-styles__item & {
+			border-width: 4px;
+			margin: 1px;
+		}
 	}
 
 	&__arrow[type="button"] {

@@ -18,6 +18,9 @@
     },
     "customBorderColor": {
       "type": "string"
+    },
+    "isPreview": {
+      "type": "boolean"
     }
   },
   "styles": [
@@ -32,6 +35,9 @@
     }
   ],
   "example": {
+    "attributes": {
+      "isPreview": true
+    },
     "innerBlocks": [
       {
         "name": "sensei-lms/course-outline-module",
@@ -47,6 +53,18 @@
             }
           }
         ]
+      },
+      {
+        "name": "sensei-lms/course-outline-lesson",
+        "attributes": {
+          "title": "First Lesson"
+        }
+      },
+      {
+        "name": "sensei-lms/course-outline-lesson",
+        "attributes": {
+          "title": "Second Lesson"
+        }
       }
     ]
   }
