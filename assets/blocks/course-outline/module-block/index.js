@@ -63,17 +63,13 @@ registerBlockType( 'sensei-lms/course-outline-module', {
 	},
 	styles: [
 		{
-			name: 'minimal',
-			label: 'Minimal',
-		},
-		{
-			name: 'none',
-			label: 'None',
-		},
-		{
 			name: 'default',
 			label: 'Filled',
 			isDefault: true,
+		},
+		{
+			name: 'minimal',
+			label: 'Minimal',
 		},
 	],
 	transforms,
