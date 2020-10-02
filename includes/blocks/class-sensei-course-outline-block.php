@@ -255,11 +255,12 @@ class Sensei_Course_Outline_Block {
 			<section class="wp-block-sensei-lms-course-outline-module">
 				<header class="wp-block-sensei-lms-course-outline-module__name">
 					<h2 class="wp-block-sensei-lms-course-outline__clean-heading">' . $block['title'] . '</h2>
-					' . $progress_indicator . '
-					<button type="button" class="wp-block-sensei-lms-course-outline__arrow dashicons dashicons-arrow-up-alt2">
+					' . $progress_indicator .
+					( ! empty( $outline_attributes['collapsibleModules'] ) ?
+					'<button type="button" class="wp-block-sensei-lms-course-outline__arrow dashicons dashicons-arrow-up-alt2">
 						<span class="screen-reader-text">' . __( 'Toggle module content', 'sensei-lms' ) . '</span>
-					</button>
-				</header>
+					</button>' : '' ) .
+				'</header>
 				<div class="wp-block-sensei-lms-collapsible">
 					<div class="wp-block-sensei-lms-course-outline-module__description">
 						' . $block['description'] . '

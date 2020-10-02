@@ -8,6 +8,15 @@
 	};
 
 	onReady( () => {
+		if (
+			0 ===
+			document.querySelectorAll(
+				'.wp-block-sensei-lms-course-outline__arrow'
+			).length
+		) {
+			return;
+		}
+
 		const modules = document.querySelectorAll(
 			'.wp-block-sensei-lms-course-outline-module'
 		);
