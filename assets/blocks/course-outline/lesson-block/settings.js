@@ -1,4 +1,7 @@
-import { InspectorControls } from '@wordpress/block-editor';
+import {
+	InspectorAdvancedControls,
+	InspectorControls,
+} from '@wordpress/block-editor';
 import { ExternalLink, FontSizePicker, PanelBody } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
@@ -24,7 +27,6 @@ export const LessonBlockSettings = ( props ) => {
 		setPreviewStatus,
 		setAttributes,
 		attributes: { id, fontSize },
-		colorSettingsFill: ColorSettingsFill,
 	} = props;
 
 	const { fontSizes } = useSelect( ( select ) =>
@@ -32,45 +34,47 @@ export const LessonBlockSettings = ( props ) => {
 	);
 
 	return (
-		<InspectorControls>
-			{ id && (
-				<PanelBody title={ __( 'Lesson', 'sensei-lms' ) }>
-					<h2>
-						<ExternalLink
-							href={ `post.php?post=${ id }&action=edit` }
-							target="lesson"
-							className="wp-block-sensei-lms-course-outline-lesson__edit"
-						>
-							{ __( 'Edit lesson', 'sensei-lms' ) }
-						</ExternalLink>
-					</h2>
-					<p>
-						{ __(
-							'Edit details such as lesson content, prerequisite, quiz settings and more.',
-							'sensei-lms'
-						) }
-					</p>
+		<>
+			<InspectorControls>
+				{ id && (
+					<PanelBody title={ __( 'Lesson', 'sensei-lms' ) }>
+						<h2>
+							<ExternalLink
+								href={ `post.php?post=${ id }&action=edit` }
+								target="lesson"
+								className="wp-block-sensei-lms-course-outline-lesson__edit"
+							>
+								{ __( 'Edit lesson', 'sensei-lms' ) }
+							</ExternalLink>
+						</h2>
+						<p>
+							{ __(
+								'Edit details such as lesson content, prerequisite, quiz settings and more.',
+								'sensei-lms'
+							) }
+						</p>
+					</PanelBody>
+				) }
+				<PanelBody title={ __( 'Typography', 'sensei-lms' ) }>
+					<FontSizePicker
+						fontSizes={ fontSizes }
+						value={ fontSize }
+						onChange={ ( value ) => {
+							setAttributes( { fontSize: value } );
+						} }
+					/>
 				</PanelBody>
-			) }
-			<PanelBody title={ __( 'Typography', 'sensei-lms' ) }>
-				<FontSizePicker
-					fontSizes={ fontSizes }
-					value={ fontSize }
-					onChange={ ( value ) => {
-						setAttributes( { fontSize: value } );
-					} }
-				/>
-			</PanelBody>
-			<PanelBody
-				title={ __( 'Status', 'sensei-lms' ) }
-				initialOpen={ false }
-			>
-				<StatusControl
-					status={ previewStatus }
-					setStatus={ setPreviewStatus }
-				/>
-			</PanelBody>
-			<ColorSettingsFill>
+				<PanelBody
+					title={ __( 'Status', 'sensei-lms' ) }
+					initialOpen={ false }
+				>
+					<StatusControl
+						status={ previewStatus }
+						setStatus={ setPreviewStatus }
+					/>
+				</PanelBody>
+			</InspectorControls>
+			<InspectorAdvancedControls>
 				<ShareStyle
 					{ ...props }
 					sharedAttributeNames={ [
@@ -78,6 +82,7 @@ export const LessonBlockSettings = ( props ) => {
 						'customBackgroundColor',
 						'textColor',
 						'customTextColor',
+						'fontSize',
 					] }
 					label={ __( 'Apply style to all lessons', 'sensei-lms' ) }
 					help={ __(
@@ -85,7 +90,7 @@ export const LessonBlockSettings = ( props ) => {
 						'sensei-lms'
 					) }
 				/>
-			</ColorSettingsFill>
-		</InspectorControls>
+			</InspectorAdvancedControls>
+		</>
 	);
 };

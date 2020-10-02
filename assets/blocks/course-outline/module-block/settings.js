@@ -1,4 +1,7 @@
-import { InspectorControls } from '@wordpress/block-editor';
+import {
+	InspectorControls,
+	InspectorAdvancedControls,
+} from '@wordpress/block-editor';
 import { PanelBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { ShareStyle } from '../../../shared/blocks/share-style';
@@ -10,18 +13,13 @@ import { ModuleStatusControl } from './module-status-control';
  * @param {Object}   props
  * @param {boolean}  props.isPreviewCompleted    Whether Completed preview is enabled.
  * @param {Function} props.setIsPreviewCompleted Callback to be called when preview is updated.
- * @param {Object}   props.colorSettingsFill     Slot for color settings panel.
  */
 export const ModuleBlockSettings = ( props ) => {
-	const {
-		isPreviewCompleted,
-		setIsPreviewCompleted,
-		colorSettingsFill: ColorSettingsFill,
-	} = props;
+	const { isPreviewCompleted, setIsPreviewCompleted } = props;
 
 	return (
 		<>
-			<ColorSettingsFill>
+			<InspectorAdvancedControls>
 				<ShareStyle
 					{ ...props }
 					sharedAttributeNames={ [
@@ -37,7 +35,7 @@ export const ModuleBlockSettings = ( props ) => {
 						'sensei-lms'
 					) }
 				/>
-			</ColorSettingsFill>
+			</InspectorAdvancedControls>
 			<InspectorControls>
 				<PanelBody
 					title={ __( 'Status', 'sensei-lms' ) }

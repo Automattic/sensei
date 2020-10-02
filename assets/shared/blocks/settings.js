@@ -4,7 +4,6 @@ import {
 	PanelColorSettings,
 	withColors,
 } from '@wordpress/block-editor';
-import { createSlotFill } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { mapValues, upperFirst } from 'lodash';
 
@@ -13,33 +12,19 @@ import { mapValues, upperFirst } from 'lodash';
  *
  * @param {Object} colorSettings
  */
-export const withColorSettings = ( colorSettings ) => {
-	return ( Component ) => {
-		const ComponentWithColorSettings = ( props ) => {
-			const settingsSlot = createSlotFill(
-				`${ props.clientId }-color-settings`
-			);
-			return (
-				<>
-					<Component
-						{ ...props }
-						colorSettingsFill={ settingsSlot.Fill }
-					/>
-					<ColorSettings
-						slot={ settingsSlot.Slot }
-						{ ...{ colorSettings, props } }
-					/>
-				</>
-			);
-		};
-
-		const colors = mapValues(
-			colorSettings,
-			( settings ) => settings.style
+export const withColorSettings = ( colorSettings ) => ( Component ) => {
+	const ComponentWithColorSettings = ( props ) => {
+		return (
+			<>
+				<Component { ...props } />
+				<ColorSettings { ...{ colorSettings, props } } />
+			</>
 		);
-
-		return withColors( colors )( ComponentWithColorSettings );
 	};
+
+	const colors = mapValues( colorSettings, ( settings ) => settings.style );
+
+	return withColors( colors )( ComponentWithColorSettings );
 };
 
 /**
@@ -48,14 +33,9 @@ export const withColorSettings = ( colorSettings ) => {
  * @param {Object} params
  * @param {Object} params.colorSettings Color definitions.
  * @param {Object} params.props         Component props
- * @param {Object} params.slot          Reference for color settings slot.
  * @class
  */
-export const ColorSettings = ( {
-	colorSettings,
-	props,
-	slot: SettingsSlot,
-} ) => {
+export const ColorSettings = ( { colorSettings, props } ) => {
 	const colors = Object.keys( colorSettings );
 	return (
 		<InspectorControls>
@@ -77,7 +57,6 @@ export const ColorSettings = ( {
 						isLargeText={ false }
 					/>
 				) }
-				<SettingsSlot />
 			</PanelColorSettings>
 		</InspectorControls>
 	);
