@@ -26,8 +26,15 @@
 			margin-top: 0;
 			margin-bottom: 0;
 		}
-	}
 
+		&__placeholder {
+			.components-button {
+				margin-right: 12px;
+				margin-bottom: 12px;
+			}
+		}
+
+	}
 	.wp-block-sensei-lms-course-outline-lesson {
 
 		&__draft,

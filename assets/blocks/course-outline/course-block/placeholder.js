@@ -9,6 +9,7 @@ import settings from './index';
  */
 export const CourseOutlinePlaceholder = ( { addBlock } ) => (
 	<Placeholder
+		className="wp-block-sensei-lms-course-outline__placeholder"
 		label={ __( 'Course Outline', 'sensei-lms' ) }
 		icon={ <BlockIcon icon={ settings.icon } showColors /> }
 		instructions={ __(
@@ -16,10 +17,18 @@ export const CourseOutlinePlaceholder = ( { addBlock } ) => (
 			'sensei-lms'
 		) }
 	>
-		<Button isDefault onClick={ () => addBlock( 'module' ) }>
+		<Button
+			isDefault
+			onClick={ () => addBlock( 'module' ) }
+			className="is-large"
+		>
 			{ __( 'Create a module', 'sensei-lms' ) }
-		</Button>{ ' ' }
-		<Button isDefault onClick={ () => addBlock( 'lesson' ) }>
+		</Button>
+		<Button
+			isDefault
+			onClick={ () => addBlock( 'lesson' ) }
+			className="is-large"
+		>
 			{ __( 'Create a lesson', 'sensei-lms' ) }
 		</Button>
 	</Placeholder>
