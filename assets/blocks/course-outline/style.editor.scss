@@ -26,6 +26,13 @@ $dark-gray: #1a1d20;
 			margin-top: 0;
 			margin-bottom: 0;
 		}
+
+		&__placeholder {
+			.components-button {
+				margin-right: 12px;
+				margin-bottom: 12px;
+			}
+		}
 	}
 
 	.wp-block-sensei-lms-course-outline-module {
@@ -37,9 +44,10 @@ $dark-gray: #1a1d20;
 			}
 		}
 	}
+
 	.wp-block-sensei-lms-course-outline-lesson {
 
-		&__input[type="text"] {
+		&__input[type='text'] {
 			margin: 20px 16px;
 		}
 
