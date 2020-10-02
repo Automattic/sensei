@@ -251,8 +251,6 @@ class Sensei_Course_Outline_Block {
 
 		$progress_indicator = $this->get_progress_indicator( $block['id'], $course_id );
 
-		$animated = empty( $outline_attributes['animationsEnabled'] ) ? '' : 'animated';
-
 		return '
 			<section class="wp-block-sensei-lms-course-outline-module">
 				<header class="wp-block-sensei-lms-course-outline-module__name">
@@ -262,7 +260,7 @@ class Sensei_Course_Outline_Block {
 						<span class="screen-reader-text">' . __( 'Toggle module content', 'sensei-lms' ) . '</span>
 					</button>
 				</header>
-				<div class="wp-block-sensei-lms-collapsible ' . $animated . '">
+				<div class="wp-block-sensei-lms-collapsible">
 					<div class="wp-block-sensei-lms-course-outline-module__description">
 						' . $block['description'] . '
 					</div>
