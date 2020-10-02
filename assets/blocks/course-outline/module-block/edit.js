@@ -82,12 +82,12 @@ export const EditModuleBlock = ( props ) => {
 			/>
 			<section className={ className }>
 				<header
-					className="wp-block-sensei-lms-course-outline-module__name"
+					className="wp-block-sensei-lms-course-outline-module__header"
 					style={ { ...blockStyleColors, color: textColor?.color } }
 				>
-					<h2 className="wp-block-sensei-lms-course-outline__clean-heading">
+					<h2 className="wp-block-sensei-lms-course-outline-module__title">
 						<SingleLineInput
-							className="wp-block-sensei-lms-course-outline-module__name-input"
+							className="wp-block-sensei-lms-course-outline-module__title-input"
 							placeholder={ __( 'Module name', 'sensei-lms' ) }
 							value={ title }
 							onChange={ updateName }
