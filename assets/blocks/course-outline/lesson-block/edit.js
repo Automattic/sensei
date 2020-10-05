@@ -1,6 +1,7 @@
 import { createBlock } from '@wordpress/blocks';
 import { useDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
+import { chevronRight, Icon } from '@wordpress/icons';
 import classnames from 'classnames';
 import { __ } from '@wordpress/i18n';
 import { withColorSettings } from '../../../shared/blocks/settings';
@@ -140,6 +141,10 @@ export const EditLessonBlock = ( props ) => {
 					style={ { fontSize } }
 				/>
 				{ isSelected && status }
+				<Icon
+					icon={ chevronRight }
+					className="wp-block-sensei-lms-course-outline-lesson__chevron"
+				/>
 			</div>
 		</>
 	);

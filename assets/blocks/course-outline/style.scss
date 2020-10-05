@@ -147,21 +147,26 @@ $spacing: 16px;
 	margin: 1px 0;
 	position: relative;
 	font-size: 1em;
-
-	> a {
-		display: block;
-		flex: 1;
+	color: inherit;
+	font-family: inherit;
+	line-height: inherit;
+	text-decoration: inherit;
+	border: none;
+	font-weight: normal;
+	&:hover {
 		color: inherit;
-		font-family: inherit;
-		font-size: inherit;
-		line-height: inherit;
-		text-decoration: inherit;
-		border: none;
-		font-weight: normal;
+	}
+
+	> span {
+		flex: 1;
 		padding: 20px $spacing;
-		&:hover {
-			color: inherit;
-		}
+	}
+
+	&__chevron {
+		fill: currentColor;
+		width: 24px;
+		height: 24px;
+		margin: 0 16px;
 	}
 
 	.entry-content & {
