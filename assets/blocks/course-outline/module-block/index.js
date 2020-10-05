@@ -3,7 +3,7 @@ import { registerBlockType } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 import { ModuleIcon } from '../../../icons';
 
-import EditModuleBlock from './edit';
+import edit from './edit';
 import transforms from './transforms';
 
 registerBlockType( 'sensei-lms/course-outline-module', {
@@ -15,7 +15,6 @@ registerBlockType( 'sensei-lms/course-outline-module', {
 	keywords: [ __( 'Outline', 'sensei-lms' ), __( 'Module', 'sensei-lms' ) ],
 	supports: {
 		html: false,
-		customClassName: false,
 	},
 	attributes: {
 		id: {
@@ -29,16 +28,53 @@ registerBlockType( 'sensei-lms/course-outline-module', {
 			type: 'string',
 			default: '',
 		},
+		mainColor: {
+			type: 'string',
+		},
+		customMainColor: {
+			type: 'string',
+		},
+		textColor: {
+			type: 'string',
+		},
+		customTextColor: {
+			type: 'string',
+		},
+		className: {
+			type: 'string',
+		},
+		customClassName: {
+			type: 'string',
+		},
 	},
-	edit( props ) {
-		return <EditModuleBlock { ...props } />;
+	example: {
+		attributes: {
+			title: 'Module',
+			description: 'About Module',
+		},
+		innerBlocks: [
+			{
+				name: 'sensei-lms/course-outline-lesson',
+				attributes: {
+					title: 'Lesson',
+				},
+			},
+		],
 	},
+	styles: [
+		{
+			name: 'default',
+			label: 'Filled',
+			isDefault: true,
+		},
+		{
+			name: 'minimal',
+			label: 'Minimal',
+		},
+	],
 	transforms,
-	save( { className } ) {
-		return (
-			<div className={ className }>
-				<InnerBlocks.Content />
-			</div>
-		);
+	edit,
+	save() {
+		return <InnerBlocks.Content />;
 	},
 } );

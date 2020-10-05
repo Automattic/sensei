@@ -1,6 +1,6 @@
 import { registerBlockType } from '@wordpress/blocks';
 
-export function registerTestLessonBlock( settings = {} ) {
+export const registerTestLessonBlock = ( settings = {} ) => {
 	registerBlockType( 'sensei-lms/course-outline-lesson', {
 		title: 'Lesson Test',
 		parent: [
@@ -23,8 +23,9 @@ export function registerTestLessonBlock( settings = {} ) {
 		},
 		...settings,
 	} );
-}
-export function registerTestModuleBlock( settings = {} ) {
+};
+
+export const registerTestModuleBlock = ( settings = {} ) => {
 	registerBlockType( 'sensei-lms/course-outline-module', {
 		title: 'Module Test',
 		parent: [
@@ -51,4 +52,4 @@ export function registerTestModuleBlock( settings = {} ) {
 		},
 		...settings,
 	} );
-}
+};

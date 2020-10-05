@@ -33,6 +33,7 @@ class Sensei_Block_Helpers {
 		$colors = array_merge(
 			[
 				'textColor'       => 'color',
+				'borderColor'     => 'border-color',
 				'backgroundColor' => 'background-color',
 			],
 			$colors
@@ -40,6 +41,9 @@ class Sensei_Block_Helpers {
 
 		foreach ( $colors as $color => $style ) {
 
+			if ( ! $style ) {
+				continue;
+			}
 			$named_color  = $block_attributes[ $color ] ?? null;
 			$custom_color = $block_attributes[ 'custom' . ucfirst( $color ) ] ?? null;
 
@@ -47,7 +51,8 @@ class Sensei_Block_Helpers {
 				$attributes['css_classes'][] = sprintf( 'has-%s', $style );
 			}
 			if ( $named_color ) {
-				$attributes['css_classes'][] = sprintf( 'has-%s-%s', $named_color, $style );
+				$named_class                 = 'border-color' === $style ? 'border-color-%s' : 'has-%s-%s';
+				$attributes['css_classes'][] = sprintf( $named_class, $named_color, $style );
 			} elseif ( $custom_color ) {
 				$attributes['inline_styles'][] = sprintf( '%s: %s;', $style, $custom_color );
 			}
@@ -73,9 +78,25 @@ class Sensei_Block_Helpers {
 		$class_names = array_merge( is_array( $class_names ) ? $class_names : [ $class_names ], $css['css_classes'] );
 		return sprintf(
 			'class="%s" style="%s"',
-			esc_attr( implode( ' ', array_map( 'sanitize_html_class', $class_names ) ) ),
+			esc_attr( implode( ' ', $class_names ) ),
 			esc_attr( implode( '; ', $css['inline_styles'] ) )
 		);
+	}
+
+	/**
+	 * Add default style to list of classes if no style is selected.
+	 *
+	 * @param array $attributes Block attributes.
+	 *
+	 * @return string
+	 */
+	public static function block_class_with_default_style( $attributes ) {
+		$class_name = $attributes['className'] ?? '';
+		if ( empty( $class_name ) && false === strpos( $class_name, 'is-style-' ) ) {
+			$class_name .= ' is-style-default';
+		}
+
+		return $class_name;
 	}
 
 

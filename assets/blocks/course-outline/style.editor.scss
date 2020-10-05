@@ -1,5 +1,5 @@
-
-.edit-post-visual-editor {
+$dark-gray: #1a1d20;
+.block-editor {
 	.wp-block-sensei-lms-course-outline {
 		&__clean-input[type='text'] {
 			display: block;
@@ -33,17 +33,32 @@
 				margin-bottom: 12px;
 			}
 		}
-
 	}
+
+	.wp-block-sensei-lms-course-outline-module {
+		&.is-style-minimal {
+			.wp-block-sensei-lms-course-outline-module__header {
+				margin: 0 4px;
+				padding: 1rem calc(1rem - 4px);
+				border-bottom: 4px solid $dark-gray;
+			}
+		}
+	}
+
 	.wp-block-sensei-lms-course-outline-lesson {
+
+		&__input[type='text'] {
+			margin: 20px 16px;
+		}
 
 		&__draft,
 		&__unsaved {
 			font-size: 12px;
 			font-weight: bold;
-			background: #DCDCDE;
 			padding: 0 10px;
+			margin: 0 2px;
 			border-radius: 6px;
+			text-transform: uppercase;
 		}
 	}
 }
