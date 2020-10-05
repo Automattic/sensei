@@ -72,10 +72,13 @@ const EditModuleBlock = ( {
 					{ __( 'Lessons', 'sensei-lms' ) }
 				</h3>
 			</div>
-			<InnerBlocks
-				template={ [ [ 'sensei-lms/course-outline-lesson', {} ] ] }
-				allowedBlocks={ [ 'sensei-lms/course-outline-lesson' ] }
-			/>
+      <InnerBlocks
+        template={ [
+          [ 'sensei-lms/course-outline-lesson', {} ],
+        ] }
+        allowedBlocks={ [ 'sensei-lms/course-outline-lesson' ] }
+        templateInsertUpdatesSelection={ false }
+      />
 		</>
 	);
 
