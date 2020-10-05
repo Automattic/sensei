@@ -25,7 +25,7 @@ jest.mock( './settings', () => ( {
 } ) );
 
 jest.mock( '../status-control', () => ( {
-	Statuses: {
+	Status: {
 		IN_PROGRESS: 'In Progress',
 	},
 } ) );
