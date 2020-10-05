@@ -7,7 +7,7 @@ import { __ } from '@wordpress/i18n';
 
 import SingleLineInput from '../single-line-input';
 import { LessonBlockSettings } from './settings';
-import { Statuses } from '../status-control';
+import { Status } from '../status-control';
 
 /**
  * Edit lesson block component.
@@ -107,9 +107,7 @@ const EditLessonBlock = ( props ) => {
 		);
 	}
 
-	const [ previewStatus, setPreviewStatus ] = useState(
-		Statuses.IN_PROGRESS
-	);
+	const [ previewStatus, setPreviewStatus ] = useState( Status.IN_PROGRESS );
 
 	const wrapperStyles = {
 		className: classnames(
@@ -117,7 +115,7 @@ const EditLessonBlock = ( props ) => {
 			backgroundColor?.class,
 			textColor?.class,
 			{
-				completed: previewStatus === Statuses.COMPLETED,
+				completed: previewStatus === Status.COMPLETED,
 			}
 		),
 		style: {

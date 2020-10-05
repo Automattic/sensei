@@ -1,62 +1,64 @@
-import { StatusControl, Statuses } from './index';
+import { StatusControl, Status } from './index';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 describe( '<StatusControl />', () => {
 	it( 'Should display the default options', () => {
-		const { getByTestId } = render(
+		const { getByLabelText } = render(
 			<StatusControl
-				data-testid={ 'select-test-id' }
-				status={ Statuses.IN_PROGRESS }
+				status={ Status.IN_PROGRESS }
 				setStatus={ () => {} }
 			/>
 		);
-		const select = getByTestId( 'select-test-id' );
+		const options = [
+			getByLabelText( 'In Progress' ),
+			getByLabelText( 'Completed' ),
+		];
 
-		const optionValues = Array.from( select.childNodes ).map(
-			( option ) => option.value
-		);
+		const optionValues = options.map( ( option ) => option.value );
 		expect( optionValues ).toEqual( [
-			Statuses.IN_PROGRESS,
-			Statuses.COMPLETED,
+			Status.IN_PROGRESS,
+			Status.COMPLETED,
 		] );
 	} );
 
 	it( 'Should display the specified options', () => {
-		const { getByTestId } = render(
+		const { getByLabelText } = render(
 			<StatusControl
-				data-testid={ 'select-test-id' }
-				includeStatuses={ [ Statuses.COMPLETED, Statuses.NOT_STARTED ] }
-				status={ Statuses.IN_PROGRESS }
+				options={ [ Status.COMPLETED, Status.NOT_STARTED ] }
+				status={ Status.IN_PROGRESS }
 				setStatus={ () => {} }
 			/>
 		);
-		const select = getByTestId( 'select-test-id' );
+		const options = [
+			getByLabelText( 'Not Started' ),
+			getByLabelText( 'Completed' ),
+		];
 
-		const optionValues = Array.from( select.childNodes ).map(
-			( option ) => option.value
-		);
+		const optionValues = options.map( ( option ) => option.value );
 		expect( optionValues ).toEqual( [
-			Statuses.COMPLETED,
-			Statuses.NOT_STARTED,
+			Status.NOT_STARTED,
+			Status.COMPLETED,
 		] );
 	} );
 
-	it( 'Should call the callback with a correct value when a button is clicked.', () => {
+	it( 'Should call the callback with a correct value when an option is clicked.', async () => {
 		const setStatusMock = jest.fn();
-		const { getByTestId } = render(
+		const { getByLabelText } = render(
 			<StatusControl
-				data-testid={ 'select-test-id' }
-				status={ Statuses.IN_PROGRESS }
+				options={ [
+					Status.NOT_STARTED,
+					Status.IN_PROGRESS,
+					Status.COMPLETED,
+				] }
+				status={ Status.NOT_STARTED }
 				setStatus={ setStatusMock }
 			/>
 		);
-		const select = getByTestId( 'select-test-id' );
+		userEvent.click( getByLabelText( 'Completed' ) );
+		expect( setStatusMock ).toBeCalledWith( Status.COMPLETED );
 
-		userEvent.selectOptions( select, [ Statuses.COMPLETED ] );
-		expect( setStatusMock ).toBeCalledWith( Statuses.COMPLETED );
-
-		userEvent.selectOptions( select, [ Statuses.IN_PROGRESS ] );
-		expect( setStatusMock ).toBeCalledWith( Statuses.IN_PROGRESS );
+		userEvent.click( getByLabelText( 'In Progress' ) );
+		expect( setStatusMock ).toBeCalledWith( Status.IN_PROGRESS );
 	} );
 } );
