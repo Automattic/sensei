@@ -52,13 +52,14 @@ $dark-gray: #1a1d20;
 		}
 
 		&__draft,
-		&__unsaved {
+		&__post-status {
+			position: absolute;
+			bottom: 0;
+			left: 56px;
 			font-size: 12px;
-			font-weight: bold;
-			padding: 0 10px;
-			margin: 0 2px;
+			font-weight: 600;
+			color: #999;
 			border-radius: 6px;
-			text-transform: uppercase;
 		}
 	}
 }

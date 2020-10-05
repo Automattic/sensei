@@ -24,7 +24,6 @@ import { Statuses } from '../status-control';
  * @param {Object}   props.textColor           Text color object.
  * @param {Function} props.setAttributes       Block set attributes function.
  * @param {Function} props.insertBlocksAfter   Insert blocks after function.
- * @param {boolean}  props.isSelected          Is block selected.
  */
 export const EditLessonBlock = ( props ) => {
 	const {
@@ -36,7 +35,6 @@ export const EditLessonBlock = ( props ) => {
 		textColor,
 		setAttributes,
 		insertBlocksAfter,
-		isSelected,
 	} = props;
 	const { selectNextBlock, removeBlock } = useDispatch( 'core/block-editor' );
 
@@ -91,19 +89,11 @@ export const EditLessonBlock = ( props ) => {
 		}
 	};
 
-	let status = '';
+	let postStatus = '';
 	if ( ! id && title.length ) {
-		status = (
-			<div className="wp-block-sensei-lms-course-outline-lesson__unsaved">
-				{ __( 'Unsaved', 'sensei-lms' ) }
-			</div>
-		);
+		postStatus = __( 'Unsaved', 'sensei-lms' );
 	} else if ( id && draft ) {
-		status = (
-			<div className="wp-block-sensei-lms-course-outline-lesson__draft">
-				{ __( 'Draft', 'sensei-lms' ) }
-			</div>
-		);
+		postStatus = __( 'Draft', 'sensei-lms' );
 	}
 
 	const [ previewStatus, setPreviewStatus ] = useState(
@@ -141,7 +131,11 @@ export const EditLessonBlock = ( props ) => {
 					onKeyDown={ handleKeyDown }
 					style={ { fontSize } }
 				/>
-				{ isSelected && status }
+				{ postStatus && (
+					<div className="wp-block-sensei-lms-course-outline-lesson__post-status">
+						{ postStatus }
+					</div>
+				) }
 			</div>
 		</>
 	);
