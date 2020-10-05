@@ -211,11 +211,9 @@ $spacing: 16px;
 }
 
 .wp-block-sensei-lms-collapsible {
-	&.animated {
-		opacity: 1;
-		overflow: hidden;
-		transition: height 0.5s ease-in-out, opacity 0.5s ease-in-out;
-	}
+	opacity: 1;
+	overflow: hidden;
+	transition: height 0.5s ease-in-out, opacity 0.5s ease-in-out;
 
 	&.collapsed {
 		opacity: 0;

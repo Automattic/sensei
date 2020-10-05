@@ -129,6 +129,7 @@ class Sensei_Course_Outline_Block {
 		if ( ! empty( $attributes['id'] ) ) {
 			$this->block_attributes['lesson'][ $attributes['id'] ] = $attributes;
 		}
+
 		return '';
 	}
 
@@ -254,8 +255,6 @@ class Sensei_Course_Outline_Block {
 
 		$progress_indicator = $this->get_progress_indicator( $block['id'], $course_id );
 
-		$animated = empty( $outline_attributes['animationsEnabled'] ) ? '' : 'animated';
-
 		$class_name = Sensei_Block_Helpers::block_class_with_default_style( $block['attributes'] );
 
 		$is_default_style = false !== strpos( $class_name, 'is-style-default' );
@@ -287,13 +286,14 @@ class Sensei_Course_Outline_Block {
 			<section class="wp-block-sensei-lms-course-outline-module ' . $class_name . '">
 				<header ' . Sensei_Block_Helpers::render_style_attributes( 'wp-block-sensei-lms-course-outline-module__header', $header_css ) . '>
 					<h2 class="wp-block-sensei-lms-course-outline-module__title">' . $block['title'] . '</h2>
-					' . $progress_indicator . '
-					<button type="button" class="wp-block-sensei-lms-course-outline__arrow dashicons dashicons-arrow-up-alt2">
+					' . $progress_indicator .
+			( ! empty( $outline_attributes['collapsibleModules'] ) ?
+				'<button type="button" class="wp-block-sensei-lms-course-outline__arrow dashicons dashicons-arrow-up-alt2">
 						<span class="screen-reader-text">' . __( 'Toggle module content', 'sensei-lms' ) . '</span>
-					</button>
-				</header>
+					</button>' : '' ) .
+				'</header>
 					' . $style_header . '
-				<div class="wp-block-sensei-lms-collapsible ' . $animated . '">
+				<div class="wp-block-sensei-lms-collapsible">
 					<div class="wp-block-sensei-lms-course-outline-module__description">
 						' . $block['description'] . '
 					</div>

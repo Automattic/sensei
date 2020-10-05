@@ -9,7 +9,7 @@
     "id": {
       "type": "integer"
     },
-    "animationsEnabled": {
+    "collapsibleModules": {
       "type": "boolean",
       "default": true
     },
