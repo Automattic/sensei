@@ -141,7 +141,9 @@ class Sensei_Course_Outline_Block {
 	 * @return string
 	 */
 	public function process_module_block( $attributes ) {
-		$this->block_attributes['module'][ $attributes['id'] ] = $attributes;
+		if ( ! empty( $attributes['id'] ) ) {
+			$this->block_attributes['module'][ $attributes['id'] ] = $attributes;
+		}
 		return '';
 	}
 
