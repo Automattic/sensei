@@ -136,7 +136,7 @@ const EditLessonBlock = ( props ) => {
 				setPreviewStatus={ setPreviewStatus }
 			/>
 			<div { ...wrapperStyles }>
-				<span className="wp-block-sensei-lms-course-outline-lesson__status"></span>
+				<span className="wp-block-sensei-lms-course-outline-lesson__status" />
 				<SingleLineInput
 					className="wp-block-sensei-lms-course-outline-lesson__input"
 					placeholder={ __( 'Lesson name', 'sensei-lms' ) }
