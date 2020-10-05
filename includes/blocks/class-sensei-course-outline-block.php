@@ -227,6 +227,7 @@ class Sensei_Course_Outline_Block {
 
 		return '
 			<h3 ' . Sensei_Block_Helpers::render_style_attributes( $classes, $css ) . '>
+				<span class="wp-block-sensei-lms-course-outline-lesson__status"></span>
 				<a
 				href="' . esc_url( get_permalink( $lesson_id ) ) . '">
 					' . $block['title'] . '
