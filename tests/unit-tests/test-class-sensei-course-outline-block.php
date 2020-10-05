@@ -25,7 +25,7 @@ class Sensei_Course_Outline_Block_Test extends WP_UnitTestCase {
 		$this->mockPostCourseStructure( [] );
 		$result = do_blocks( $post_content );
 
-		$this->assertDiscardWhitespace( '<section class="wp-block-sensei-lms-course-outline"></section>', $result );
+		$this->assertDiscardWhitespace( '<section class="wp-block-sensei-lms-course-outline is-style-default" style=""></section>', $result );
 	}
 
 	/**

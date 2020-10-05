@@ -7,6 +7,11 @@ import { CourseOutlinePlaceholder } from './placeholder';
 import { COURSE_STORE } from '../store';
 import { useBlocksCreator } from '../use-block-creator';
 import { OutlineBlockSettings } from './settings';
+import { __ } from '@wordpress/i18n';
+import {
+	withColorSettings,
+	withDefaultBlockStyle,
+} from '../../../shared/blocks/settings';
 
 /**
  * A React context which contains the attributes and the setAttributes callback of the Outline block.
@@ -22,6 +27,7 @@ export const OutlineAttributesContext = createContext();
  * @param {Object[]} props.structure     Course module and lesson blocks.
  * @param {Object}   props.attributes    Block attributes.
  * @param {Function} props.setAttributes Block setAttributes callback.
+ * @param {Object}   props.borderColor   Border color.
  */
 const EditCourseOutlineBlock = ( {
 	clientId,
@@ -29,15 +35,17 @@ const EditCourseOutlineBlock = ( {
 	structure,
 	attributes,
 	setAttributes,
+	borderColor,
 } ) => {
 	// Toggle legacy metaboxes.
 	useEffect( () => {
+		if ( attributes.isPreview ) return;
 		window.sensei_toggleLegacyMetaboxes( false );
 
 		return () => {
 			window.sensei_toggleLegacyMetaboxes( true );
 		};
-	}, [] );
+	}, [ attributes.isPreview ] );
 
 	const { setBlocks } = useBlocksCreator( clientId );
 
@@ -48,10 +56,10 @@ const EditCourseOutlineBlock = ( {
 	);
 
 	useEffect( () => {
-		if ( structure && structure.length ) {
+		if ( structure?.length && ! attributes.isPreview ) {
 			setBlocks( structure );
 		}
-	}, [ structure, setBlocks ] );
+	}, [ structure, setBlocks, attributes.isPreview ] );
 
 	if ( isEmpty ) {
 		return (
@@ -63,19 +71,22 @@ const EditCourseOutlineBlock = ( {
 
 	return (
 		<>
-			<OutlineBlockSettings
-				collapsibleModules={ attributes.collapsibleModules }
-				setCollapsibleModules={ ( value ) =>
-					setAttributes( { collapsibleModules: value } )
-				}
-			/>
+			<OutlineAttributesContext.Provider
+				value={ {
+					outlineAttributes: attributes,
+					outlineSetAttributes: setAttributes,
+				} }
+			>
+				<OutlineBlockSettings
+					collapsibleModules={ attributes.collapsibleModules }
+					setCollapsibleModules={ ( value ) =>
+						setAttributes( { collapsibleModules: value } )
+					}
+				/>
 
-			<section className={ className }>
-				<OutlineAttributesContext.Provider
-					value={ {
-						outlineAttributes: attributes,
-						outlineSetAttributes: setAttributes,
-					} }
+				<section
+					className={ className }
+					style={ { borderColor: borderColor.color } }
 				>
 					<InnerBlocks
 						allowedBlocks={ [
@@ -83,8 +94,8 @@ const EditCourseOutlineBlock = ( {
 							'sensei-lms/course-outline-lesson',
 						] }
 					/>
-				</OutlineAttributesContext.Provider>
-			</section>
+				</section>
+			</OutlineAttributesContext.Provider>
 		</>
 	);
 };
@@ -93,4 +104,13 @@ const selectors = ( select ) => ( {
 	structure: select( COURSE_STORE ).getStructure(),
 } );
 
-export default compose( withSelect( selectors ) )( EditCourseOutlineBlock );
+export default compose(
+	withSelect( selectors ),
+	withColorSettings( {
+		borderColor: {
+			style: 'border-color',
+			label: __( 'Border color', 'sensei-lms' ),
+		},
+	} ),
+	withDefaultBlockStyle()
+)( EditCourseOutlineBlock );

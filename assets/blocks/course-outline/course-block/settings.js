@@ -9,26 +9,24 @@ import { PanelBody, ToggleControl } from '@wordpress/components';
  * @param {boolean}  props.collapsibleModules    Whether collapsible modules are enabled.
  * @param {Function} props.setCollapsibleModules Callback to be called when collapsible modules setting is updated.
  */
-export function OutlineBlockSettings( {
+export const OutlineBlockSettings = ( {
 	collapsibleModules,
 	setCollapsibleModules,
-} ) {
-	return (
-		<InspectorControls>
-			<PanelBody
-				title={ __( 'Modules', 'sensei-lms' ) }
-				initialOpen={ false }
-			>
-				<ToggleControl
-					checked={ collapsibleModules }
-					onChange={ setCollapsibleModules }
-					label={ __( 'Collapsible modules', 'sensei-lms' ) }
-					help={ __(
-						'Modules can be collapsed or expanded.',
-						'sensei-lms'
-					) }
-				/>
-			</PanelBody>
-		</InspectorControls>
-	);
-}
+} ) => (
+	<InspectorControls>
+		<PanelBody
+			title={ __( 'Modules', 'sensei-lms' ) }
+			initialOpen={ false }
+		>
+			<ToggleControl
+				checked={ collapsibleModules }
+				onChange={ setCollapsibleModules }
+				label={ __( 'Collapsible modules', 'sensei-lms' ) }
+				help={ __(
+					'Modules can be collapsed or expanded.',
+					'sensei-lms'
+				) }
+			/>
+		</PanelBody>
+	</InspectorControls>
+);
