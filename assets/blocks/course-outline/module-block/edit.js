@@ -79,14 +79,14 @@ const EditModuleBlock = ( {
 		</>
 	);
 
-	const animationWrapper = (
+	const animationWrapper = collapsibleModules && (
 		<AnimateHeight
 			className="wp-block-sensei-lms-collapsible"
 			duration={ 500 }
 			animateOpacity
 			height={ isExpanded ? 'auto' : 0 }
 		>
-			{ collapsibleModules && moduleContent }
+			{ moduleContent }
 		</AnimateHeight>
 	);
 
