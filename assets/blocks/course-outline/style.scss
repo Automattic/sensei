@@ -113,11 +113,9 @@ $dark-gray: #1a1d20;
 		fill: currentColor;
 	}
 
-	&.completed {
-		.wp-block-sensei-lms-course-outline-lesson__status {
-			background-image: url( 'data:image/svg+xml;utf8,<svg version="1.1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9 18.6L3.5 13l1-1L9 16.4l9.5-9.9 1 1z" fill="%23FFFFFF" /></svg>' );
-			border-color: #179942;
-			background-color: #1fd25a;
+	&:not(.completed) {
+		.wp-block-sensei-lms-course-outline-lesson__status * {
+			display: none;
 		}
 	}
 }

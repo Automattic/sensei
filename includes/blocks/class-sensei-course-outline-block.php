@@ -185,7 +185,14 @@ class Sensei_Course_Outline_Block {
 			$block_class .= ' ' . $attributes['className'];
 		}
 
+		$icons = '<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+			<symbol id="sensei-checked" viewBox="0 0 24 24">
+				<path d="M9 18.6L3.5 13l1-1L9 16.4l9.5-9.9 1 1z" fill="" />
+			</symbol>
+		</svg>';
+
 		return '
+			' . ( ! empty( $structure ) ? $icons : '' ) . '
 			<section class="' . $block_class . '">
 				' .
 			implode(
@@ -219,7 +226,9 @@ class Sensei_Course_Outline_Block {
 		$lesson_id = $block['id'];
 		$classes   = [ 'wp-block-sensei-lms-course-outline-lesson' ];
 
-		if ( Sensei_Utils::user_completed_lesson( $lesson_id, get_current_user_id() ) ) {
+		$completed = Sensei_Utils::user_completed_lesson( $lesson_id, get_current_user_id() );
+
+		if ( $completed ) {
 			$classes[] = 'completed';
 		}
 
@@ -227,7 +236,10 @@ class Sensei_Course_Outline_Block {
 
 		return '
 			<h3 ' . Sensei_Block_Helpers::render_style_attributes( $classes, $css ) . '>
-				<span class="wp-block-sensei-lms-course-outline-lesson__status"></span>
+				<svg class="wp-block-sensei-lms-course-outline-lesson__status">
+					' . ( $completed ? '<use xlink:href="#sensei-checked"></use>' : '' ) . '
+				</svg>			
+
 				<a
 				href="' . esc_url( get_permalink( $lesson_id ) ) . '">
 					' . $block['title'] . '
