@@ -11,6 +11,7 @@ import {
 } from '../../../shared/blocks/settings';
 import { OutlineAttributesContext } from '../course-block/edit';
 import SingleLineInput from '../single-line-input';
+import { ModuleStatus } from './module-status';
 import { ModuleBlockSettings } from './settings';
 
 /**
@@ -56,16 +57,6 @@ export const EditModuleBlock = ( props ) => {
 		setAttributes( { description: value } );
 	};
 
-	const [ isPreviewCompleted, setIsPreviewCompleted ] = useState( false );
-
-	let indicatorText = __( 'In Progress', 'sensei-lms' );
-	let indicatorClass = null;
-
-	if ( isPreviewCompleted ) {
-		indicatorText = __( 'Completed', 'sensei-lms' );
-		indicatorClass = 'completed';
-	}
-
 	const [ isExpanded, setExpanded ] = useState( true );
 
 	const blockStyleColors = {
@@ -107,11 +98,7 @@ export const EditModuleBlock = ( props ) => {
 
 	return (
 		<>
-			<ModuleBlockSettings
-				{ ...props }
-				isPreviewCompleted={ isPreviewCompleted }
-				setIsPreviewCompleted={ setIsPreviewCompleted }
-			/>
+			<ModuleBlockSettings { ...props } />
 			<section className={ className }>
 				<header
 					className="wp-block-sensei-lms-course-outline-module__header"
@@ -125,16 +112,7 @@ export const EditModuleBlock = ( props ) => {
 							onChange={ updateName }
 						/>
 					</h2>
-					<div
-						className={ classnames(
-							'wp-block-sensei-lms-course-outline-module__progress-indicator',
-							indicatorClass
-						) }
-					>
-						<span className="wp-block-sensei-lms-course-outline-module__progress-indicator__text">
-							{ indicatorText }
-						</span>
-					</div>
+					<ModuleStatus />
 					{ collapsibleModules && (
 						<button
 							type="button"

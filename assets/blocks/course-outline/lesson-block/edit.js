@@ -1,12 +1,13 @@
 import { createBlock } from '@wordpress/blocks';
 import { useDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
+import { chevronRight, Icon } from '@wordpress/icons';
 import classnames from 'classnames';
 import { __ } from '@wordpress/i18n';
 import { withColorSettings } from '../../../shared/blocks/settings';
 import SingleLineInput from '../single-line-input';
 import { LessonBlockSettings } from './settings';
-import { Statuses } from '../status-control';
+import { Status } from '../status-control';
 
 /**
  * Edit lesson block component.
@@ -96,9 +97,7 @@ export const EditLessonBlock = ( props ) => {
 		postStatus = __( 'Draft', 'sensei-lms' );
 	}
 
-	const [ previewStatus, setPreviewStatus ] = useState(
-		Statuses.IN_PROGRESS
-	);
+	const [ previewStatus, setPreviewStatus ] = useState( Status.IN_PROGRESS );
 
 	const wrapperStyles = {
 		className: classnames(
@@ -106,7 +105,7 @@ export const EditLessonBlock = ( props ) => {
 			backgroundColor?.class,
 			textColor?.class,
 			{
-				completed: previewStatus === Statuses.COMPLETED,
+				completed: previewStatus === Status.COMPLETED,
 			}
 		),
 		style: {
@@ -131,11 +130,16 @@ export const EditLessonBlock = ( props ) => {
 					onKeyDown={ handleKeyDown }
 					style={ { fontSize } }
 				/>
+
 				{ postStatus && (
 					<div className="wp-block-sensei-lms-course-outline-lesson__post-status">
 						{ postStatus }
 					</div>
 				) }
+				<Icon
+					icon={ chevronRight }
+					className="wp-block-sensei-lms-course-outline-lesson__chevron"
+				/>
 			</div>
 		</>
 	);
