@@ -90,7 +90,7 @@ $spacing: 16px;
 		#{$block}__lessons-title {
 			padding: 5px $spacing;
 			font-size: 11px;
-			margin: 0 0 1em;
+			margin: 0;
 			font-weight: 600;
 			color: inherit;
 			text-transform: uppercase;
@@ -100,7 +100,7 @@ $spacing: 16px;
 	&.is-style-default {
 
 		#{$block}__lessons-title {
-			background-color: #EEE;
+			background-color: rgba(#ccc, 0.3);
 		}
 		#{$block}__header {
 			&:not(.has-background-color) {
@@ -111,9 +111,6 @@ $spacing: 16px;
 			}
 		}
 
-		#{$block}__lessons-title {
-			background-color: #EEE;
-		}
 		#{$block}__progress-indicator {
 			background-color: #FFF;
 			color: $dark-gray;
