@@ -233,7 +233,7 @@ class Sensei_Course_Outline_Block {
 			<div ' . Sensei_Block_Helpers::render_style_attributes( $classes, $css ) . '>
 				<a
 				href="' . esc_url( get_permalink( $lesson_id ) ) . '">
-					' . $block['title'] . '
+					' . esc_html( $block['title'] ) . '
 				</a>
 			</div>
 		';
@@ -283,22 +283,22 @@ class Sensei_Course_Outline_Block {
 		}
 
 		return '
-			<section class="wp-block-sensei-lms-course-outline-module ' . $class_name . '">
+			<section class="wp-block-sensei-lms-course-outline-module ' . esc_attr( $class_name ) . '">
 				<header ' . Sensei_Block_Helpers::render_style_attributes( 'wp-block-sensei-lms-course-outline-module__header', $header_css ) . '>
-					<h2 class="wp-block-sensei-lms-course-outline-module__title">' . $block['title'] . '</h2>
+					<h2 class="wp-block-sensei-lms-course-outline-module__title">' . esc_html( $block['title'] ) . '</h2>
 					' . $progress_indicator .
 			( ! empty( $outline_attributes['collapsibleModules'] ) ?
 				'<button type="button" class="wp-block-sensei-lms-course-outline__arrow dashicons dashicons-arrow-up-alt2">
-						<span class="screen-reader-text">' . __( 'Toggle module content', 'sensei-lms' ) . '</span>
+						<span class="screen-reader-text">' . esc_html__( 'Toggle module content', 'sensei-lms' ) . '</span>
 					</button>' : '' ) .
-				'</header>
+			'</header>
 					' . $style_header . '
 				<div class="wp-block-sensei-lms-collapsible">
 					<div class="wp-block-sensei-lms-course-outline-module__description">
-						' . $block['description'] . '
+						' . wp_kses_post( $block['description'] ) . '
 					</div>
 							<h3 class="wp-block-sensei-lms-course-outline-module__lessons-title">
-								' . __( 'Lessons', 'sensei-lms' ) . '
+								' . esc_html__( 'Lessons', 'sensei-lms' ) . '
 							</h3>
 						' .
 			implode(
@@ -342,7 +342,7 @@ class Sensei_Course_Outline_Block {
 					<div
 						class="wp-block-sensei-lms-course-outline-module__progress-indicator ' . $indicator_class . '"
 					>
-						<span class="wp-block-sensei-lms-course-outline-module__progress-indicator__text"> ' . $module_status . ' </span>
+						<span class="wp-block-sensei-lms-course-outline-module__progress-indicator__text"> ' . esc_html( $module_status ) . ' </span>
 					</div>
 		';
 	}
