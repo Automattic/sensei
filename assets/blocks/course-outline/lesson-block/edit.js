@@ -128,10 +128,6 @@ const EditLessonBlock = ( props ) => {
 		<>
 			<LessonBlockSettings
 				{ ...props }
-				includePreviewStatuses={ [
-					Status.NOT_STARTED,
-					Status.COMPLETED,
-				] }
 				previewStatus={ previewStatus }
 				setPreviewStatus={ setPreviewStatus }
 			/>
