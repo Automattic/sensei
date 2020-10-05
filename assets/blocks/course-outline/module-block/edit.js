@@ -24,7 +24,7 @@ const EditModuleBlock = ( {
 	setAttributes,
 } ) => {
 	const {
-		outlineAttributes: { animationsEnabled },
+		outlineAttributes: { collapsibleModules },
 	} = useContext( OutlineAttributesContext );
 
 	/**
@@ -57,6 +57,40 @@ const EditModuleBlock = ( {
 
 	const [ isExpanded, setExpanded ] = useState( true );
 
+	const moduleContent = (
+		<>
+			<div className="wp-block-sensei-lms-course-outline-module__description">
+				<RichText
+					className="wp-block-sensei-lms-course-outline-module__description-input"
+					placeholder={ __( 'Module description', 'sensei-lms' ) }
+					value={ description }
+					onChange={ updateDescription }
+				/>
+			</div>
+			<div className="wp-block-sensei-lms-course-outline-module__lessons-title">
+				<h3 className="wp-block-sensei-lms-course-outline__clean-heading">
+					{ __( 'Lessons', 'sensei-lms' ) }
+				</h3>
+			</div>
+			<InnerBlocks
+				template={ [ [ 'sensei-lms/course-outline-lesson', {} ] ] }
+				allowedBlocks={ [ 'sensei-lms/course-outline-lesson' ] }
+				templateInsertUpdatesSelection={ false }
+			/>
+		</>
+	);
+
+	const animationWrapper = collapsibleModules && (
+		<AnimateHeight
+			className="wp-block-sensei-lms-collapsible"
+			duration={ 500 }
+			animateOpacity
+			height={ isExpanded ? 'auto' : 0 }
+		>
+			{ moduleContent }
+		</AnimateHeight>
+	);
+
 	return (
 		<>
 			<ModuleBlockSettings
@@ -84,52 +118,26 @@ const EditModuleBlock = ( {
 							{ indicatorText }
 						</span>
 					</div>
-					<button
-						type="button"
-						className={ classnames(
-							'wp-block-sensei-lms-course-outline__arrow',
-							'dashicons',
-							isExpanded
-								? 'dashicons-arrow-up-alt2'
-								: 'dashicons-arrow-down-alt2'
-						) }
-						onClick={ () => setExpanded( ! isExpanded ) }
-					>
-						<span className="screen-reader-text">
-							{ __( 'Toggle module content', 'sensei-lms' ) }
-						</span>
-					</button>
-				</header>
-				<AnimateHeight
-					className="wp-block-sensei-lms-collapsible"
-					duration={ animationsEnabled ? 500 : 0 }
-					animateOpacity
-					height={ isExpanded ? 'auto' : 0 }
-				>
-					<div className="wp-block-sensei-lms-course-outline-module__description">
-						<RichText
-							className="wp-block-sensei-lms-course-outline-module__description-input"
-							placeholder={ __(
-								'Module description',
-								'sensei-lms'
+					{ collapsibleModules && (
+						<button
+							type="button"
+							className={ classnames(
+								'wp-block-sensei-lms-course-outline__arrow',
+								'dashicons',
+								isExpanded
+									? 'dashicons-arrow-up-alt2'
+									: 'dashicons-arrow-down-alt2'
 							) }
-							value={ description }
-							onChange={ updateDescription }
-						/>
-					</div>
-					<div className="wp-block-sensei-lms-course-outline-module__lessons-title">
-						<h3 className="wp-block-sensei-lms-course-outline__clean-heading">
-							{ __( 'Lessons', 'sensei-lms' ) }
-						</h3>
-					</div>
-					<InnerBlocks
-						template={ [
-							[ 'sensei-lms/course-outline-lesson', {} ],
-						] }
-						allowedBlocks={ [ 'sensei-lms/course-outline-lesson' ] }
-						templateInsertUpdatesSelection={ false }
-					/>
-				</AnimateHeight>
+							onClick={ () => setExpanded( ! isExpanded ) }
+						>
+							<span className="screen-reader-text">
+								{ __( 'Toggle module content', 'sensei-lms' ) }
+							</span>
+						</button>
+					) }
+				</header>
+
+				{ collapsibleModules ? animationWrapper : moduleContent }
 			</section>
 		</>
 	);

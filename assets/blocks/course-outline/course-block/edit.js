@@ -41,15 +41,6 @@ const EditCourseOutlineBlock = ( {
 
 	const { setBlocks } = useBlocksCreator( clientId );
 
-	/**
-	 * Handle update animationsEnabled setting.
-	 *
-	 * @param {boolean} value Value of the setting.
-	 */
-	const updateAnimationsEnabled = ( value ) => {
-		setAttributes( { animationsEnabled: value } );
-	};
-
 	const isEmpty = useSelect(
 		( select ) =>
 			! select( 'core/block-editor' ).getBlocks( clientId ).length,
@@ -73,8 +64,10 @@ const EditCourseOutlineBlock = ( {
 	return (
 		<>
 			<OutlineBlockSettings
-				animationsEnabled={ attributes.animationsEnabled }
-				setAnimationsEnabled={ updateAnimationsEnabled }
+				collapsibleModules={ attributes.collapsibleModules }
+				setCollapsibleModules={ ( value ) =>
+					setAttributes( { collapsibleModules: value } )
+				}
 			/>
 
 			<section className={ className }>
