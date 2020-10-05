@@ -39,12 +39,13 @@ const EditCourseOutlineBlock = ( {
 } ) => {
 	// Toggle legacy metaboxes.
 	useEffect( () => {
+		if ( attributes.isPreview ) return;
 		window.sensei_toggleLegacyMetaboxes( false );
 
 		return () => {
 			window.sensei_toggleLegacyMetaboxes( true );
 		};
-	}, [] );
+	}, [ attributes.isPreview ] );
 
 	const { setBlocks } = useBlocksCreator( clientId );
 
