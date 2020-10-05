@@ -72,7 +72,7 @@ const EditCourseOutlineBlock = ( {
 	if ( isEmpty ) {
 		return (
 			<CourseOutlinePlaceholder
-				addBlock={ ( type ) => setBlocks( [ { type } ] ) }
+				addBlock={ ( type ) => setBlocks( [ { type } ], true ) }
 			/>
 		);
 	}
