@@ -19,12 +19,11 @@ $spacing: 16px;
 	&__arrow[type='button'] {
 		display: block;
 		padding: 0;
-		margin: 0;
 		background: none;
 		border: 0;
 		color: inherit;
 		flex-basis: 4%;
-		margin-left: auto;
+		margin: 0 0 0 10px;
 		cursor: pointer;
 		height: 24px;
 		font-size: 24px;
@@ -49,7 +48,6 @@ $spacing: 16px;
 			display: flex;
 			justify-content: center;
 			align-items: center;
-			margin-right: 20px;
 			margin-left: 20px;
 
 			&__text {
