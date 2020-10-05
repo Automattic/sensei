@@ -6,6 +6,7 @@ import AnimateHeight from 'react-animate-height';
 
 import { OutlineAttributesContext } from '../course-block/edit';
 import SingleLineInput from '../single-line-input';
+import { ModuleStatus } from './module-status';
 import { ModuleBlockSettings } from './settings';
 
 /**
@@ -45,25 +46,11 @@ const EditModuleBlock = ( {
 		setAttributes( { description: value } );
 	};
 
-	const [ isPreviewCompleted, setIsPreviewCompleted ] = useState( false );
-
-	let indicatorText = __( 'In Progress', 'sensei-lms' );
-	let indicatorClass = null;
-
-	if ( isPreviewCompleted ) {
-		indicatorText = __( 'Completed', 'sensei-lms' );
-		indicatorClass = 'completed';
-	}
-
 	const [ isExpanded, setExpanded ] = useState( true );
 
 	return (
 		<>
-			<ModuleBlockSettings
-				isPreviewCompleted={ isPreviewCompleted }
-				setIsPreviewCompleted={ setIsPreviewCompleted }
-			/>
-
+			<ModuleBlockSettings />
 			<section className={ className }>
 				<header className="wp-block-sensei-lms-course-outline-module__name">
 					<h2 className="wp-block-sensei-lms-course-outline__clean-heading">
@@ -74,16 +61,7 @@ const EditModuleBlock = ( {
 							onChange={ updateName }
 						/>
 					</h2>
-					<div
-						className={ classnames(
-							'wp-block-sensei-lms-course-outline__progress-indicator',
-							indicatorClass
-						) }
-					>
-						<span className="wp-block-sensei-lms-course-outline__progress-indicator__text">
-							{ indicatorText }
-						</span>
-					</div>
+					<ModuleStatus />
 					<button
 						type="button"
 						className={ classnames(
