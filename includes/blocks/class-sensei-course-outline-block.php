@@ -236,13 +236,12 @@ class Sensei_Course_Outline_Block {
 		$css = Sensei_Block_Helpers::build_styles( $block );
 
 		return '
-			<div ' . Sensei_Block_Helpers::render_style_attributes( $classes, $css ) . '>
-				<a
-				href="' . esc_url( get_permalink( $lesson_id ) ) . '">
+			<a href="' . esc_url( get_permalink( $lesson_id ) ) . '" ' . Sensei_Block_Helpers::render_style_attributes( $classes, $css ) . '>
+				<span>
 					' . $block['title'] . '
-				</a>
+				</span>
 				<svg class="wp-block-sensei-lms-course-outline-lesson__chevron"><use xlink:href="#sensei-chevron-right"></use></svg>
-			</div>
+			</a>
 		';
 	}
 

@@ -152,21 +152,19 @@ $spacing: 16px;
 	margin: 1px 0;
 	position: relative;
 	font-size: 1em;
-
-	> a {
-		flex: 1;
+	color: inherit;
+	font-family: inherit;
+	line-height: inherit;
+	text-decoration: inherit;
+	border: none;
+	font-weight: normal;
+	&:hover {
 		color: inherit;
-		font-family: inherit;
-		font-size: inherit;
-		line-height: inherit;
-		text-decoration: inherit;
-		border: none;
-		font-weight: normal;
-		padding: 20px $spacing;
-		&:hover {
-			color: inherit;
-		}
+	}
 
+	> span {
+		flex: 1;
+		padding: 20px $spacing;
 	}
 
 	&__chevron {
@@ -207,7 +205,7 @@ $spacing: 16px;
 		text-align: center;
 	}
 
-	&:hover a::after {
+	&:hover::after {
 		content: '';
 		position: absolute;
 		pointer-events: none;
