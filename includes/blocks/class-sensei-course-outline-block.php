@@ -195,7 +195,7 @@ class Sensei_Course_Outline_Block {
 		</svg>';
 
 		return '
-			' . $icons . '
+			' . ( ! empty( $structure ) ? $icons : '' ) . '
 			<section ' . Sensei_Block_Helpers::render_style_attributes( [ 'wp-block-sensei-lms-course-outline', $class_name ], $css ) . '>
 				' .
 			implode(
