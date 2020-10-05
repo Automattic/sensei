@@ -188,7 +188,14 @@ class Sensei_Course_Outline_Block {
 			]
 		);
 
+		$icons = '<svg xmlns="http://www.w3.org/2000/svg">
+			<symbol id="sensei-chevron-right" viewBox="0 0 24 24">
+				<path d="M10.6 6L9.4 7l4.6 5-4.6 5 1.2 1 5.4-6z" fill="" />
+			</symbol>
+		</svg>';
+
 		return '
+			' . $icons . '
 			<section ' . Sensei_Block_Helpers::render_style_attributes( [ 'wp-block-sensei-lms-course-outline', $class_name ], $css ) . '>
 				' .
 			implode(
@@ -234,6 +241,7 @@ class Sensei_Course_Outline_Block {
 				href="' . esc_url( get_permalink( $lesson_id ) ) . '">
 					' . $block['title'] . '
 				</a>
+				<svg class="wp-block-sensei-lms-course-outline-lesson__chevron"><use xlink:href="#sensei-chevron-right"></use></svg>
 			</div>
 		';
 	}

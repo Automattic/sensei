@@ -154,7 +154,6 @@ $spacing: 16px;
 	font-size: 1em;
 
 	> a {
-		display: block;
 		flex: 1;
 		color: inherit;
 		font-family: inherit;
@@ -167,6 +166,14 @@ $spacing: 16px;
 		&:hover {
 			color: inherit;
 		}
+
+	}
+
+	&__chevron {
+		fill: currentColor;
+		width: 24px;
+		height: 24px;
+		margin: 0 16px;
 	}
 
 	.entry-content & {
@@ -200,7 +207,7 @@ $spacing: 16px;
 		text-align: center;
 	}
 
-	&:hover::after {
+	&:hover a::after {
 		content: '';
 		position: absolute;
 		pointer-events: none;
