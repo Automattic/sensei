@@ -25,6 +25,9 @@ $spacing: 16px;
 		margin: 0 -5px 0 10px;
 		cursor: pointer;
 		svg {
+			transition: transform 250ms linear;
+		}
+		svg {
 			width: 32px;
 			height: 32px;
 			margin: -12px 0;
@@ -36,7 +39,9 @@ $spacing: 16px;
 		}
 
 		&.collapsed {
-			transform: scaleY(-1)
+			svg {
+				transform: rotate(180deg)
+			}
 		}
 	}
 }
@@ -219,7 +224,7 @@ $spacing: 16px;
 .wp-block-sensei-lms-collapsible {
 	opacity: 1;
 	overflow: hidden;
-	transition: height 0.5s ease-in-out, opacity 0.5s ease-in-out;
+	transition: height 350ms ease-in-out, opacity 350ms ease-in-out;
 
 	&.collapsed {
 		opacity: 0;
