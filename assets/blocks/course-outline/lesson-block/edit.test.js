@@ -4,20 +4,12 @@ import { createBlock } from '@wordpress/blocks';
 
 import { EditLessonBlock } from './edit';
 
-jest.mock( '@wordpress/data', () => ( {
-	useDispatch: jest.fn(),
-} ) );
+jest.mock( '@wordpress/block-editor' );
+jest.mock( '@wordpress/data' );
 
-jest.mock( '@wordpress/blocks', () => ( {
-	createBlock: jest.fn(),
-} ) );
-
-jest.mock( '@wordpress/block-editor', () => ( {
-	withColors() {
-		return ( Component ) => ( props ) => (
-			<Component { ...props } backgroundColor={ {} } textColor={ {} } />
-		);
-	},
+jest.mock( '@wordpress/blocks' );
+jest.mock( '../../../shared/blocks/settings', () => ( {
+	withColorSettings: () => ( Component ) => Component,
 } ) );
 
 jest.mock( './settings', () => ( {
