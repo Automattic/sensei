@@ -196,9 +196,6 @@ class Sensei_Course_Outline_Block {
 			<symbol id="sensei-chevron-up" viewBox="0 0 24 24">
 				<path d="M6.5 12.4L12 8l5.5 4.4-.9 1.2L12 10l-4.5 3.6-1-1.2z" fill="" />
 			</symbol>
-		</svg>';
-
-		$icons = '<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
 			<symbol id="sensei-checked" viewBox="0 0 24 24">
 				<path d="M9 18.6L3.5 13l1-1L9 16.4l9.5-9.9 1 1z" fill="" />
 			</symbol>
