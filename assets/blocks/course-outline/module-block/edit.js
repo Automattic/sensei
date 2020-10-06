@@ -82,7 +82,6 @@ export const EditModuleBlock = ( props ) => {
 				{ __( 'Lessons', 'sensei-lms' ) }
 			</h3>
 			<InnerBlocks
-				template={ [ [ 'sensei-lms/course-outline-lesson', {} ] ] }
 				allowedBlocks={ [ 'sensei-lms/course-outline-lesson' ] }
 				templateInsertUpdatesSelection={ false }
 				renderAppender={ () => null }
