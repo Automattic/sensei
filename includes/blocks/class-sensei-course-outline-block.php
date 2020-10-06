@@ -193,6 +193,9 @@ class Sensei_Course_Outline_Block {
 			<symbol id="sensei-chevron-right" viewBox="0 0 24 24">
 				<path d="M10.6 6L9.4 7l4.6 5-4.6 5 1.2 1 5.4-6z" fill="" />
 			</symbol>
+			<symbol id="sensei-chevron-up" viewBox="0 0 24 24">
+				<path d="M6.5 12.4L12 8l5.5 4.4-.9 1.2L12 10l-4.5 3.6-1-1.2z" fill="" />
+			</symbol>
 		</svg>';
 
 		$icons = '<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
@@ -306,7 +309,8 @@ class Sensei_Course_Outline_Block {
 					<h2 class="wp-block-sensei-lms-course-outline-module__title">' . esc_html( $block['title'] ) . '</h2>
 					' . $progress_indicator .
 			( ! empty( $outline_attributes['collapsibleModules'] ) ?
-				'<button type="button" class="wp-block-sensei-lms-course-outline__arrow dashicons dashicons-arrow-up-alt2">
+				'<button type="button" class="wp-block-sensei-lms-course-outline__arrow">
+						<svg><use xlink:href="#sensei-chevron-up"></use></svg>
 						<span class="screen-reader-text">' . esc_html__( 'Toggle module content', 'sensei-lms' ) . '</span>
 					</button>' : '' ) .
 			'</header>

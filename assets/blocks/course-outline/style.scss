@@ -22,18 +22,21 @@ $spacing: 16px;
 		background: none;
 		border: 0;
 		color: inherit;
-		flex-basis: 4%;
-		margin: 0 0 0 10px;
+		margin: 0 -5px 0 10px;
 		cursor: pointer;
-		height: 24px;
-		font-size: 24px;
+		svg {
+			width: 32px;
+			height: 32px;
+			margin: -12px 0;
+			fill: currentColor;
+		}
 
 		&:hover, &:focus {
 			text-decoration: none;
 		}
 
 		&.collapsed {
-			display: none;
+			transform: scaleY(-1)
 		}
 	}
 }

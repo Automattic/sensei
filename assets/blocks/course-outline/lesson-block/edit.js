@@ -1,9 +1,10 @@
 import { createBlock } from '@wordpress/blocks';
 import { useDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
-import { chevronRight, Icon } from '@wordpress/icons';
+import { Icon } from '@wordpress/components';
 import classnames from 'classnames';
 import { __ } from '@wordpress/i18n';
+import { chevronRight } from '../../../icons/wordpress-icons';
 import { withColorSettings } from '../../../shared/blocks/settings';
 import SingleLineInput from '../single-line-input';
 import { LessonBlockSettings } from './settings';
