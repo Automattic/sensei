@@ -126,7 +126,7 @@ class Sensei_Course_Outline_Block {
 	 * @return string
 	 */
 	public function process_lesson_block( $attributes ) {
-		if ( array_key_exists( 'id', $attributes ) ) {
+		if ( ! empty( $attributes['id'] ) ) {
 			$this->block_attributes['lesson'][ $attributes['id'] ] = $attributes;
 		}
 
@@ -142,7 +142,9 @@ class Sensei_Course_Outline_Block {
 	 * @return string
 	 */
 	public function process_module_block( $attributes ) {
-		$this->block_attributes['module'][ $attributes['id'] ] = $attributes;
+		if ( ! empty( $attributes['id'] ) ) {
+			$this->block_attributes['module'][ $attributes['id'] ] = $attributes;
+		}
 		return '';
 	}
 
@@ -180,10 +182,18 @@ class Sensei_Course_Outline_Block {
 
 		$this->add_block_attributes( $structure );
 
-		$block_class = 'wp-block-sensei-lms-course-outline';
-		if ( isset( $attributes['className'] ) ) {
-			$block_class .= ' ' . $attributes['className'];
-		}
+		$class_name = Sensei_Block_Helpers::block_class_with_default_style( $attributes );
+		$css        = Sensei_Block_Helpers::build_styles(
+			[
+				'attributes' => $attributes,
+			]
+		);
+
+		$icons = '<svg xmlns="http://www.w3.org/2000/svg" style="display: none">
+			<symbol id="sensei-chevron-right" viewBox="0 0 24 24">
+				<path d="M10.6 6L9.4 7l4.6 5-4.6 5 1.2 1 5.4-6z" fill="" />
+			</symbol>
+		</svg>';
 
 		$icons = '<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
 			<symbol id="sensei-checked" viewBox="0 0 24 24">
@@ -193,7 +203,7 @@ class Sensei_Course_Outline_Block {
 
 		return '
 			' . ( ! empty( $structure ) ? $icons : '' ) . '
-			<section class="' . $block_class . '">
+			<section ' . Sensei_Block_Helpers::render_style_attributes( [ 'wp-block-sensei-lms-course-outline', $class_name ], $css ) . '>
 				' .
 			implode(
 				'',
@@ -235,16 +245,15 @@ class Sensei_Course_Outline_Block {
 		$css = Sensei_Block_Helpers::build_styles( $block );
 
 		return '
-			<h3 ' . Sensei_Block_Helpers::render_style_attributes( $classes, $css ) . '>
+			<a href="' . esc_url( get_permalink( $lesson_id ) ) . '" ' . Sensei_Block_Helpers::render_style_attributes( $classes, $css ) . '>
 				<svg class="wp-block-sensei-lms-course-outline-lesson__status">
 					' . ( $completed ? '<use xlink:href="#sensei-checked"></use>' : '' ) . '
-				</svg>			
-
-				<a
-				href="' . esc_url( get_permalink( $lesson_id ) ) . '">
-					' . $block['title'] . '
-				</a>
-			</h3>
+				</svg>
+				<span>
+					' . esc_html( $block['title'] ) . '
+				</span>
+				<svg class="wp-block-sensei-lms-course-outline-lesson__chevron"><use xlink:href="#sensei-chevron-right"></use></svg>
+			</a>
 		';
 	}
 
@@ -264,33 +273,60 @@ class Sensei_Course_Outline_Block {
 
 		$progress_indicator = $this->get_progress_indicator( $block['id'], $course_id );
 
-		$animated = empty( $outline_attributes['animationsEnabled'] ) ? '' : 'animated';
+		$class_name = Sensei_Block_Helpers::block_class_with_default_style( $block['attributes'] );
+
+		$is_default_style = false !== strpos( $class_name, 'is-style-default' );
+		$is_minimal_style = false !== strpos( $class_name, 'is-style-minimal' );
+
+		$header_css = Sensei_Block_Helpers::build_styles(
+			$block,
+			[
+				'mainColor' => $is_default_style ? 'background-color' : null,
+			]
+		);
+
+		$style_header = '';
+
+		if ( $is_minimal_style ) {
+
+			$header_border_css = Sensei_Block_Helpers::build_styles(
+				$block,
+				[
+					'mainColor' => 'background-color',
+				]
+			);
+
+			$style_header = '<div ' . Sensei_Block_Helpers::render_style_attributes( 'wp-block-sensei-lms-course-outline-module__name__minimal-border', $header_border_css ) . '></div>';
+
+		}
 
 		return '
-			<section class="wp-block-sensei-lms-course-outline-module">
-				<header class="wp-block-sensei-lms-course-outline-module__name">
-					<h2 class="wp-block-sensei-lms-course-outline__clean-heading">' . $block['title'] . '</h2>
-					' . $progress_indicator . '
-					<button type="button" class="wp-block-sensei-lms-course-outline__arrow dashicons dashicons-arrow-up-alt2">
-						<span class="screen-reader-text">' . __( 'Toggle module content', 'sensei-lms' ) . '</span>
-					</button>
-				</header>
-				<div class="wp-block-sensei-lms-collapsible ' . $animated . '">
+			<section class="wp-block-sensei-lms-course-outline-module ' . esc_attr( $class_name ) . '">
+				<header ' . Sensei_Block_Helpers::render_style_attributes( 'wp-block-sensei-lms-course-outline-module__header', $header_css ) . '>
+					<h2 class="wp-block-sensei-lms-course-outline-module__title">' . esc_html( $block['title'] ) . '</h2>
+					' . $progress_indicator .
+			( ! empty( $outline_attributes['collapsibleModules'] ) ?
+				'<button type="button" class="wp-block-sensei-lms-course-outline__arrow dashicons dashicons-arrow-up-alt2">
+						<span class="screen-reader-text">' . esc_html__( 'Toggle module content', 'sensei-lms' ) . '</span>
+					</button>' : '' ) .
+			'</header>
+					' . $style_header . '
+				<div class="wp-block-sensei-lms-collapsible">
 					<div class="wp-block-sensei-lms-course-outline-module__description">
-						' . $block['description'] . '
+						' . wp_kses_post( $block['description'] ) . '
 					</div>
-							<div class="wp-block-sensei-lms-course-outline-module__lessons-title">
-								<div class="wp-block-sensei-lms-course-outline__clean-heading">' . __( 'Lessons', 'sensei-lms' ) . '</div>
-							</div>
+							<h3 class="wp-block-sensei-lms-course-outline-module__lessons-title">
+								' . esc_html__( 'Lessons', 'sensei-lms' ) . '
+							</h3>
 						' .
-				implode(
-					'',
-					array_map(
-						[ $this, 'render_lesson_block' ],
-						$block['lessons']
-					)
+			implode(
+				'',
+				array_map(
+					[ $this, 'render_lesson_block' ],
+					$block['lessons']
 				)
-				. '
+			)
+			. '
 				</div>
 			</section>
 		';
@@ -322,9 +358,9 @@ class Sensei_Course_Outline_Block {
 
 		return '
 					<div
-						class="wp-block-sensei-lms-course-outline__progress-indicator ' . $indicator_class . '"
+						class="wp-block-sensei-lms-course-outline-module__progress-indicator ' . $indicator_class . '"
 					>
-						<span class="wp-block-sensei-lms-course-outline__progress-indicator__text"> ' . $module_status . ' </span>
+						<span class="wp-block-sensei-lms-course-outline-module__progress-indicator__text"> ' . esc_html( $module_status ) . ' </span>
 					</div>
 		';
 	}

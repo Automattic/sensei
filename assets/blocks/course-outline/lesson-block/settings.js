@@ -1,11 +1,7 @@
-import {
-	ContrastChecker,
-	InspectorControls,
-	PanelColorSettings,
-} from '@wordpress/block-editor';
-import { PanelBody, FontSizePicker, ExternalLink } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { InspectorControls } from '@wordpress/block-editor';
+import { ExternalLink, FontSizePicker, PanelBody } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
 
 import { Status, StatusControl } from '../status-control';
 
@@ -13,10 +9,6 @@ import { Status, StatusControl } from '../status-control';
  * Inspector controls for lesson block.
  *
  * @param {Object}   props                     Component props.
- * @param {Object}   props.backgroundColor     The lesson title background color.
- * @param {Object}   props.textColor           The lesson title color.
- * @param {Function} props.setTextColor        Callback method to set the lesson title color.
- * @param {Function} props.setBackgroundColor  Callback method to set the background color.
  * @param {string}   props.previewStatus       Status to preview.
  * @param {Function} props.setPreviewStatus    Set status to preview.
  * @param {Function} props.setAttributes       Callback method to set the lesson title font size.
@@ -24,16 +16,12 @@ import { Status, StatusControl } from '../status-control';
  * @param {number}   props.attributes.id       The lesson id.
  * @param {string}   props.attributes.fontSize The lesson block font size.
  */
-export function LessonBlockSettings( {
-	backgroundColor,
-	textColor,
-	setTextColor,
-	setBackgroundColor,
+export const LessonBlockSettings = ( {
 	previewStatus,
 	setPreviewStatus,
 	setAttributes,
 	attributes: { id, fontSize },
-} ) {
+} ) => {
 	const { fontSizes } = useSelect( ( select ) =>
 		select( 'core/block-editor' ).getSettings()
 	);
@@ -68,32 +56,6 @@ export function LessonBlockSettings( {
 					} }
 				/>
 			</PanelBody>
-			<PanelColorSettings
-				title={ __( 'Color settings', 'sensei-lms' ) }
-				initialOpen={ false }
-				colorSettings={ [
-					{
-						value: textColor.color,
-						label: __( 'Text color', 'sensei-lms' ),
-						onChange: setTextColor,
-					},
-					{
-						value: backgroundColor.color,
-						label: __( 'Background color', 'sensei-lms' ),
-						onChange: setBackgroundColor,
-					},
-				] }
-			>
-				{
-					<ContrastChecker
-						{ ...{
-							textColor: textColor.color,
-							backgroundColor: backgroundColor.color,
-						} }
-						isLargeText={ false }
-					/>
-				}
-			</PanelColorSettings>
 			<PanelBody
 				title={ __( 'Status', 'sensei-lms' ) }
 				initialOpen={ false }
@@ -106,4 +68,4 @@ export function LessonBlockSettings( {
 			</PanelBody>
 		</InspectorControls>
 	);
-}
+};

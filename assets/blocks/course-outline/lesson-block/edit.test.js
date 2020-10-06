@@ -2,7 +2,7 @@ import { render, fireEvent, waitFor } from '@testing-library/react';
 import { useDispatch } from '@wordpress/data';
 import { createBlock } from '@wordpress/blocks';
 
-import EditLessonBlock from './edit';
+import { EditLessonBlock } from './edit';
 
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: jest.fn(),

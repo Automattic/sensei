@@ -17,11 +17,11 @@ export const ModuleStatus = () => {
 	const indicator = (
 		<div
 			className={ classnames(
-				'wp-block-sensei-lms-course-outline__progress-indicator',
+				'wp-block-sensei-lms-course-outline-module__progress-indicator',
 				status
 			) }
 		>
-			<span className="wp-block-sensei-lms-course-outline__progress-indicator__text">
+			<span className="wp-block-sensei-lms-course-outline-module__progress-indicator__text">
 				{ StatusLabels[ status ] }
 			</span>
 		</div>

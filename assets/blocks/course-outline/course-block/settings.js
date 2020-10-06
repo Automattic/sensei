@@ -6,28 +6,27 @@ import { PanelBody, ToggleControl } from '@wordpress/components';
  * Inspector controls for outline block.
  *
  * @param {Object}   props
- * @param {boolean}  props.animationsEnabled    Whether animations are enabled.
- * @param {Function} props.setAnimationsEnabled Callback to be called when animations enabling is updated.
+ * @param {boolean}  props.collapsibleModules    Whether collapsible modules are enabled.
+ * @param {Function} props.setCollapsibleModules Callback to be called when collapsible modules setting is updated.
  */
-export function OutlineBlockSettings( {
-	animationsEnabled,
-	setAnimationsEnabled,
-} ) {
-	return (
-		<InspectorControls>
-			<PanelBody
-				title={ __( 'Animation', 'sensei-lms' ) }
-				initialOpen={ false }
-			>
-				<ToggleControl
-					checked={ animationsEnabled }
-					onChange={ setAnimationsEnabled }
-					label={ __(
-						'Animate the expanding and collapsing of modules',
-						'sensei-lms'
-					) }
-				/>
-			</PanelBody>
-		</InspectorControls>
-	);
-}
+export const OutlineBlockSettings = ( {
+	collapsibleModules,
+	setCollapsibleModules,
+} ) => (
+	<InspectorControls>
+		<PanelBody
+			title={ __( 'Modules', 'sensei-lms' ) }
+			initialOpen={ false }
+		>
+			<ToggleControl
+				checked={ collapsibleModules }
+				onChange={ setCollapsibleModules }
+				label={ __( 'Collapsible modules', 'sensei-lms' ) }
+				help={ __(
+					'Modules can be collapsed or expanded.',
+					'sensei-lms'
+				) }
+			/>
+		</PanelBody>
+	</InspectorControls>
+);

@@ -1,10 +1,10 @@
-import { withColors } from '@wordpress/block-editor';
 import { createBlock } from '@wordpress/blocks';
 import { useDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
+import { chevronRight, Icon } from '@wordpress/icons';
 import classnames from 'classnames';
 import { __ } from '@wordpress/i18n';
-
+import { withColorSettings } from '../../../shared/blocks/settings';
 import SingleLineInput from '../single-line-input';
 import { LessonBlockSettings } from './settings';
 import { Status } from '../status-control';
@@ -27,7 +27,7 @@ import { Status } from '../status-control';
  * @param {Function} props.insertBlocksAfter   Insert blocks after function.
  * @param {boolean}  props.isSelected          Is block selected.
  */
-const EditLessonBlock = ( props ) => {
+export const EditLessonBlock = ( props ) => {
 	const {
 		clientId,
 		name,
@@ -142,12 +142,22 @@ const EditLessonBlock = ( props ) => {
 					style={ { fontSize } }
 				/>
 				{ isSelected && status }
+				<Icon
+					icon={ chevronRight }
+					className="wp-block-sensei-lms-course-outline-lesson__chevron"
+				/>
 			</div>
 		</>
 	);
 };
 
-export default withColors( {
-	backgroundColor: 'background-color',
-	textColor: 'color',
+export default withColorSettings( {
+	backgroundColor: {
+		style: 'background-color',
+		label: __( 'Background color', 'sensei-lms' ),
+	},
+	textColor: {
+		style: 'color',
+		label: __( 'Text color', 'sensei-lms' ),
+	},
 } )( EditLessonBlock );
