@@ -4,7 +4,7 @@ import { useState } from '@wordpress/element';
 import { Icon } from '@wordpress/components';
 import classnames from 'classnames';
 import { __ } from '@wordpress/i18n';
-import { chevronRight } from '../../../icons/wordpress-icons';
+import { checked, chevronRight } from '../../../icons/wordpress-icons';
 import { withColorSettings } from '../../../shared/blocks/settings';
 import SingleLineInput from '../single-line-input';
 import { LessonBlockSettings } from './settings';
@@ -133,7 +133,10 @@ export const EditLessonBlock = ( props ) => {
 				setPreviewStatus={ setPreviewStatus }
 			/>
 			<div { ...wrapperStyles }>
-				<span className="wp-block-sensei-lms-course-outline-lesson__status" />
+				<Icon
+					icon={ checked }
+					className="wp-block-sensei-lms-course-outline-lesson__status"
+				/>
 				<SingleLineInput
 					className="wp-block-sensei-lms-course-outline-lesson__input"
 					placeholder={ __( 'Lesson name', 'sensei-lms' ) }
