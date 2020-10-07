@@ -1,5 +1,23 @@
 import classnames from 'classnames';
 
+/**
+ * Class and style attributes for border radius.
+ *
+ * @param {Object} props
+ * @param {Object} props.attributes
+ * @param {number} props.attributes.borderRadius Border radius attribute.
+ * @return {{className, style}} Output HTML attributes.
+ */
+export function getBorderRadiusProps( { attributes: { borderRadius } } ) {
+	return {
+		className: {
+			'no-border-radius': borderRadius === 0,
+		},
+		style: {
+			borderRadius: borderRadius ? borderRadius + 'px' : undefined,
+		},
+	};
+}
 
 /**
  * Class and style attributes for the button.
@@ -8,7 +26,12 @@ import classnames from 'classnames';
  * @return {{className, style}} Output HTML attributes.
  */
 export function getButtonProps( props ) {
+	const borderProps = getBorderRadiusProps( props );
 	return {
+		className: classnames( 'wp-block-button__link', borderProps.className ),
+		style: {
+			...borderProps.style,
+		},
 	};
 }
 

@@ -45,6 +45,9 @@ export const buttonBlock = ( { settings, ...options } ) => {
 				align: {
 					type: 'string',
 				},
+				borderRadius: {
+					type: 'number',
+				},
 			},
 			styles: [ BlockStyles.Fill, BlockStyles.Outline ],
 			edit( props ) {
