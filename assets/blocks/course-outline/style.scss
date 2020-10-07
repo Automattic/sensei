@@ -154,15 +154,25 @@ $spacing: 16px;
 	align-items: center;
 	margin: 1px 0;
 	position: relative;
-	font-size: 1em;
-	color: inherit;
-	font-family: inherit;
-	line-height: inherit;
-	text-decoration: inherit;
-	border: none;
-	font-weight: normal;
-	&:hover {
-		color: inherit;
+
+
+	.entry-content & {
+		font-size: 1em;
+
+		font-family: inherit;
+		line-height: inherit;
+		text-decoration: inherit;
+		border: none;
+		font-weight: normal;
+		margin: 0;
+
+		&:not(.has-color) {
+			color: inherit;
+
+			&:hover {
+				color: inherit;
+			}
+		}
 	}
 
 	> span {
@@ -177,9 +187,6 @@ $spacing: 16px;
 		margin: 0 16px;
 	}
 
-	.entry-content & {
-		margin: 0;
-	}
 
 	.entry-content &,
 	.editor-styles-wrapper & {
