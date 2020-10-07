@@ -3,6 +3,9 @@ $dark-gray: #1a1d20;
 $outline: '.wp-block-sensei-lms-course-outline';
 $spacing: 16px;
 
+
+@import '../button.scss';
+
 .wp-block-sensei-lms-course-outline {
 
 	margin: 1em 0;

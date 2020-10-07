@@ -3,13 +3,10 @@ import { addFilter } from '@wordpress/hooks';
 
 addFilter( 'blocks.registerBlockType', 'sensei-lms/button', getButtonDef );
 
-// import {
-// 	settings,
-// 	metadata,
-// } from '../../../node_modules/@wordpress/block-library/src/button';
-
+let registered = false;
 function getButtonDef( settings ) {
-	if ( settings.name === 'core/button' ) {
+	if ( settings.name === 'core/button' && ! registered ) {
+		registered = true;
 		registerButton( settings );
 	}
 
@@ -23,14 +20,20 @@ function registerButton( settings ) {
 		name: 'sensei-lms/button',
 		title: 'Take Course',
 		parent: null,
+		attributes: {
+			...settings.attributes,
+			text: {
+				...settings.attributes.text,
+				default: 'Take Course',
+			},
+		},
 		edit( props ) {
 			const ButtonEdit = settings.edit;
-
-			const r = <ButtonEdit { ...props } />;
-			const children = r.props.children.filter(
-				( c ) => c.type.name !== 'URLPicker'
+			return (
+				<>
+					<ButtonEdit { ...props } />
+				</>
 			);
-			return <>{ children }</>;
 		},
 	} );
 }
