@@ -14,11 +14,11 @@ function getButtonDef( settings ) {
 }
 
 function registerButton( settings ) {
-	registerBlockType( 'sensei-lms/button', {
+	registerBlockType( 'sensei-lms/button-core', {
 		...settings,
 		//...metadata,
-		name: 'sensei-lms/button',
-		title: 'Take Course',
+		name: 'sensei-lms/button-core',
+		title: 'Take Course Core',
 		parent: null,
 		attributes: {
 			...settings.attributes,
