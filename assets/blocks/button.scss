@@ -8,3 +8,14 @@
 		display: none!important;
 	}
 }
+
+.wp-block-sensei-lms-button-own {
+	.wp-block-button__link {
+		display: block;
+	}
+	&.has-text-align-center, &.has-text-align-left, &.has-text-align-right {
+		.wp-block-button__link {
+			display: inline-block;
+		}
+	}
+}
