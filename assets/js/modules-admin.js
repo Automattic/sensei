@@ -41,18 +41,6 @@ jQuery( document ).ready( function () {
 					orderString += ',';
 				}
 				orderString += jQuery( this ).find( 'span' ).attr( 'rel' );
-
-				jQuery( this ).removeClass( 'alternate' );
-				jQuery( this ).removeClass( 'first' );
-				jQuery( this ).removeClass( 'last' );
-				if ( i == 0 ) {
-					jQuery( this ).addClass( 'first alternate' );
-				} else {
-					var r = i % 2;
-					if ( 0 == r ) {
-						jQuery( this ).addClass( 'alternate' );
-					}
-				}
 			} );
 
 		jQuery( 'input[name="module-order"]' ).val( orderString );

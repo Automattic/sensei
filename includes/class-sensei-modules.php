@@ -1044,6 +1044,7 @@ class Sensei_Core_Modules {
 	public function handle_order_modules() {
 		check_admin_referer( 'order_modules' );
 
+		$ordered = false;
 		if ( isset( $_POST['module-order'] ) && 0 < strlen( $_POST['module-order'] ) ) {
 			$ordered = $this->save_course_module_order( esc_attr( $_POST['module-order'] ), esc_attr( $_POST['course_id'] ) );
 		}
@@ -1074,119 +1075,102 @@ class Sensei_Core_Modules {
 		?>
 		<div id="<?php echo esc_attr( $this->order_page_slug ); ?>"
 			 class="wrap <?php echo esc_attr( $this->order_page_slug ); ?>">
-		<h1><?php esc_html_e( 'Order Modules', 'sensei-lms' ); ?></h1>
-							  <?php
+			<h1><?php esc_html_e( 'Order Modules', 'sensei-lms' ); ?></h1>
+			<?php
 
-								$html = '';
+			$html = '';
 
-								if ( isset( $_GET['ordered'] ) && $_GET['ordered'] ) {
-									$html .= '<div class="updated fade">' . "\n";
-									$html .= '<p>' . esc_html__( 'The module order has been saved for this course.', 'sensei-lms' ) . '</p>' . "\n";
-									$html .= '</div>' . "\n";
-								}
+			if ( isset( $_GET['ordered'] ) && $_GET['ordered'] ) {
+				$html .= '<div class="updated fade">' . "\n";
+				$html .= '<p>' . esc_html__( 'The module order has been saved for this course.', 'sensei-lms' ) . '</p>' . "\n";
+				$html .= '</div>' . "\n";
+			}
 
-								$courses = Sensei()->course->get_all_courses();
+			$courses = Sensei()->course->get_all_courses();
 
-								$html .= '<form action="' . esc_url( admin_url( 'edit.php' ) ) . '" method="get">' . "\n";
-								$html .= '<input type="hidden" name="post_type" value="course" />' . "\n";
-								$html .= '<input type="hidden" name="page" value="' . esc_attr( $this->order_page_slug ) . '" />' . "\n";
-								$html .= '<select id="module-order-course" name="course_id">' . "\n";
-								$html .= '<option value="">' . esc_html__( 'Select a course', 'sensei-lms' ) . '</option>' . "\n";
+			$html .= '<form action="' . esc_url( admin_url( 'edit.php' ) ) . '" method="get">' . "\n";
+			$html .= '<input type="hidden" name="post_type" value="course" />' . "\n";
+			$html .= '<input type="hidden" name="page" value="' . esc_attr( $this->order_page_slug ) . '" />' . "\n";
+			$html .= '<select id="module-order-course" name="course_id">' . "\n";
+			$html .= '<option value="">' . esc_html__( 'Select a course', 'sensei-lms' ) . '</option>' . "\n";
 
-								foreach ( $courses as $course ) {
-									if ( has_term( '', $this->taxonomy, $course->ID ) ) {
-										$course_id = '';
-										if ( isset( $_GET['course_id'] ) ) {
-											$course_id = intval( $_GET['course_id'] );
-										}
-										$html .= '<option value="' . esc_attr( intval( $course->ID ) ) . '" ' . selected( $course->ID, $course_id, false ) . '>' . esc_html( get_the_title( $course->ID ) ) . '</option>' . "\n";
-									}
-								}
+			foreach ( $courses as $course ) {
+				if ( has_term( '', $this->taxonomy, $course->ID ) ) {
+					$course_id = '';
+					if ( isset( $_GET['course_id'] ) ) {
+						$course_id = intval( $_GET['course_id'] );
+					}
+					$html .= '<option value="' . esc_attr( intval( $course->ID ) ) . '" ' . selected( $course->ID, $course_id, false ) . '>' . esc_html( get_the_title( $course->ID ) ) . '</option>' . "\n";
+				}
+			}
 
-								$html .= '</select>' . "\n";
-								$html .= '<input type="submit" class="button-primary module-order-select-course-submit" value="' . esc_attr__( 'Select', 'sensei-lms' ) . '" />' . "\n";
-								$html .= '</form>' . "\n";
+			$html .= '</select>' . "\n";
+			$html .= '<input type="submit" class="button-primary module-order-select-course-submit" value="' . esc_attr__( 'Select', 'sensei-lms' ) . '" />' . "\n";
+			$html .= '</form>' . "\n";
 
-								if ( isset( $_GET['course_id'] ) ) {
-									$course_id = intval( $_GET['course_id'] );
-									if ( $course_id > 0 ) {
-										$modules = $this->get_course_modules( $course_id );
-										$modules = $this->append_teacher_name_to_module( $modules, array( 'module' ), array() );
-										if ( $modules ) {
+			if ( isset( $_GET['course_id'] ) ) {
+				$course_id = intval( $_GET['course_id'] );
+				if ( $course_id > 0 ) {
+					$modules = Sensei_Course_Structure::instance( $course_id )->get( 'edit' );
+					if ( ! empty( $modules ) ) {
+						$html .= '<form id="editgrouping" method="post" action="'
+							. esc_url( admin_url( 'admin-post.php' ) )
+							. '" class="validate">' . "\n";
+						$html .= '<ul class="sortable-module-list">' . "\n";
+						foreach ( $modules as $module ) {
+							if ( 'module' !== $module['type'] ) {
+								continue;
+							}
 
-											$order = $this->get_course_module_order( $course_id );
+							$html .= '<li class="' . $this->taxonomy . '"><span rel="' . esc_attr( $module['id'] ) . '" style="width: 100%;"> ' . esc_html( $module['title'] ) . '</span></li>' . "\n";
+						}
+						$html .= '</ul>' . "\n";
+						$html .= '<input type="hidden" name="action" value="order_modules" />' . "\n";
+						$html .= wp_nonce_field( 'order_modules', '_wpnonce', true, false ) . "\n";
+						$html .= '<input type="hidden" name="module-order" value="" />' . "\n";
+						$html .= '<input type="hidden" name="course_id" value="' . esc_attr( $course_id ) . '" />' . "\n";
+						$html .= '<input type="submit" class="button-primary" value="' . esc_attr__( 'Save module order', 'sensei-lms' ) . '" />' . "\n";
+						$html .= '<a href="' . esc_url( admin_url( 'post.php?post=' . $course_id . '&action=edit' ) ) . '" class="button-secondary">' . esc_html__( 'Edit course', 'sensei-lms' ) . '</a>' . "\n";
+						$html .= '</form>';
+					}
+				}
+			}
 
-											$order_string = '';
-											if ( $order ) {
-												$order_string = implode( ',', $order );
-											}
+			echo wp_kses(
+				$html,
+				array_merge(
+					wp_kses_allowed_html( 'post' ),
+					array(
+						// Explicitly allow form tag for WP.com.
+						'form'   => array(
+							'action' => array(),
+							'class'  => array(),
+							'id'     => array(),
+							'method' => array(),
+						),
+						'input'  => array(
+							'class' => array(),
+							'name'  => array(),
+							'type'  => array(),
+							'value' => array(),
+						),
+						'option' => array(
+							'selected' => array(),
+							'value'    => array(),
+						),
+						'select' => array(
+							'id'   => array(),
+							'name' => array(),
+						),
+						'span'   => array(
+							'rel'   => array(),
+							'style' => array(),
+						),
+					)
+				)
+			);
 
-											$html .= '<form id="editgrouping" method="post" action="'
-												. esc_url( admin_url( 'admin-post.php' ) )
-												. '" class="validate">' . "\n";
-											$html .= '<ul class="sortable-module-list">' . "\n";
-											$count = 0;
-											foreach ( $modules as $module ) {
-												$count++;
-												$class = $this->taxonomy;
-												if ( $count == 1 ) {
-													$class .= ' first';
-												}
-												if ( $count == count( $modules ) ) {
-													$class .= ' last';
-												}
-												if ( $count % 2 != 0 ) {
-													$class .= ' alternate';
-												}
-												$html .= '<li class="' . esc_attr( $class ) . '"><span rel="' . esc_attr( $module->term_id ) . '" style="width: 100%;"> ' . esc_html( $module->name ) . '</span></li>' . "\n";
-											}
-											$html .= '</ul>' . "\n";
-											$html .= '<input type="hidden" name="action" value="order_modules" />' . "\n";
-											$html .= wp_nonce_field( 'order_modules', '_wpnonce', true, false ) . "\n";
-											$html .= '<input type="hidden" name="module-order" value="' . esc_attr( $order_string ) . '" />' . "\n";
-											$html .= '<input type="hidden" name="course_id" value="' . esc_attr( $course_id ) . '" />' . "\n";
-											$html .= '<input type="submit" class="button-primary" value="' . esc_attr__( 'Save module order', 'sensei-lms' ) . '" />' . "\n";
-											$html .= '<a href="' . esc_url( admin_url( 'post.php?post=' . $course_id . '&action=edit' ) ) . '" class="button-secondary">' . esc_html__( 'Edit course', 'sensei-lms' ) . '</a>' . "\n";
-											$html .= '</form>';
-										}
-									}
-								}
-
-								echo wp_kses(
-									$html,
-									array_merge(
-										wp_kses_allowed_html( 'post' ),
-										array(
-											// Explicitly allow form tag for WP.com.
-											'form'   => array(
-												'action' => array(),
-												'class'  => array(),
-												'id'     => array(),
-												'method' => array(),
-											),
-											'input'  => array(
-												'class' => array(),
-												'name'  => array(),
-												'type'  => array(),
-												'value' => array(),
-											),
-											'option' => array(
-												'selected' => array(),
-												'value'    => array(),
-											),
-											'select' => array(
-												'id'   => array(),
-												'name' => array(),
-											),
-											'span'   => array(
-												'rel'   => array(),
-												'style' => array(),
-											),
-										)
-									)
-								);
-
-								?>
+			?>
 		</div>
 		<?php
 	}
@@ -1232,10 +1216,19 @@ class Sensei_Core_Modules {
 	 */
 	private function save_course_module_order( $order_string = '', $course_id = 0 ) {
 		if ( $order_string && $course_id ) {
-			$order = explode( ',', $order_string );
-			update_post_meta( intval( $course_id ), '_module_order', $order );
-			return true;
+			remove_filter( 'get_terms', array( Sensei()->modules, 'append_teacher_name_to_module' ), 70 );
+			$course_structure = Sensei_Course_Structure::instance( $course_id )->get( 'edit' );
+			add_filter( 'get_terms', array( Sensei()->modules, 'append_teacher_name_to_module' ), 70, 3 );
+
+			$order = array_map( 'absint', explode( ',', $order_string ) );
+
+			$course_structure = Sensei_Course_Structure::sort_structure( $course_structure, $order, 'module' );
+
+			if ( true === Sensei_Course_Structure::instance( $course_id )->save( $course_structure ) ) {
+				return true;
+			}
 		}
+
 		return false;
 	}
 

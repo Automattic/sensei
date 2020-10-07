@@ -1523,7 +1523,7 @@ class Sensei_Admin {
 
 			$order = array_map( 'absint', explode( ',', $order_string ) );
 
-			$course_structure = Sensei_Course_Structure::sort_structure( $course_structure, $order );
+			$course_structure = Sensei_Course_Structure::sort_structure( $course_structure, $order, 'lesson' );
 
 			// Sort module lessons.
 			foreach ( $course_structure as $key => $module ) {
@@ -1540,7 +1540,7 @@ class Sensei_Admin {
 					$order = sanitize_text_field( wp_unslash( $_POST[ 'lesson-order-module-' . $module['id'] ] ) );
 					$order = array_map( 'absint', explode( ',', $order ) );
 
-					$course_structure[ $key ]['lessons'] = Sensei_Course_Structure::sort_structure( $course_structure[ $key ]['lessons'], $order );
+					$course_structure[ $key ]['lessons'] = Sensei_Course_Structure::sort_structure( $course_structure[ $key ]['lessons'], $order, 'lesson' );
 				}
 			}
 
