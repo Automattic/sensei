@@ -1,4 +1,5 @@
 import classnames from 'classnames';
+import { getColorAndStyleProps } from './color-props';
 
 /**
  * Class and style attributes for border radius.
@@ -26,11 +27,17 @@ export function getBorderRadiusProps( { attributes: { borderRadius } } ) {
  * @return {{className, style}} Output HTML attributes.
  */
 export function getButtonProps( props ) {
+	const colorProps = getColorAndStyleProps( props );
 	const borderProps = getBorderRadiusProps( props );
 	return {
-		className: classnames( 'wp-block-button__link', borderProps.className ),
+		className: classnames(
+			'wp-block-button__link',
+			borderProps.className,
+			colorProps.className
+		),
 		style: {
 			...borderProps.style,
+			...colorProps.style,
 		},
 	};
 }

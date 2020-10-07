@@ -48,6 +48,19 @@ export const buttonBlock = ( { settings, ...options } ) => {
 				borderRadius: {
 					type: 'number',
 				},
+				style: {
+					type: 'object',
+				},
+			},
+			supports: {
+				color: {
+					gradients: true,
+				},
+				__experimentalColor: {
+					gradients: true,
+				},
+				align: false,
+				html: false,
 			},
 			styles: [ BlockStyles.Fill, BlockStyles.Outline ],
 			edit( props ) {
