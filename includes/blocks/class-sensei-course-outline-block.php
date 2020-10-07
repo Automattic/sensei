@@ -196,6 +196,9 @@ class Sensei_Course_Outline_Block {
 			<symbol id="sensei-chevron-up" viewBox="0 0 24 24">
 				<path d="M6.5 12.4L12 8l5.5 4.4-.9 1.2L12 10l-4.5 3.6-1-1.2z" fill="" />
 			</symbol>
+			<symbol id="sensei-checked" viewBox="0 0 24 24">
+				<path d="M9 18.6L3.5 13l1-1L9 16.4l9.5-9.9 1 1z" fill="" />
+			</symbol>
 		</svg>';
 
 		return '
@@ -233,7 +236,9 @@ class Sensei_Course_Outline_Block {
 		$lesson_id = $block['id'];
 		$classes   = [ 'wp-block-sensei-lms-course-outline-lesson' ];
 
-		if ( Sensei_Utils::user_completed_lesson( $lesson_id, get_current_user_id() ) ) {
+		$completed = Sensei_Utils::user_completed_lesson( $lesson_id, get_current_user_id() );
+
+		if ( $completed ) {
 			$classes[] = 'completed';
 		}
 
@@ -241,6 +246,9 @@ class Sensei_Course_Outline_Block {
 
 		return '
 			<a href="' . esc_url( get_permalink( $lesson_id ) ) . '" ' . Sensei_Block_Helpers::render_style_attributes( $classes, $css ) . '>
+				<svg class="wp-block-sensei-lms-course-outline-lesson__status">
+					' . ( $completed ? '<use xlink:href="#sensei-checked"></use>' : '' ) . '
+				</svg>
 				<span>
 					' . esc_html( $block['title'] ) . '
 				</span>

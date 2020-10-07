@@ -188,8 +188,7 @@ $spacing: 16px;
 		}
 	}
 
-	&::before {
-		content: '';
+	&__status {
 		display: inline-block;
 		width: 24px;
 		height: 24px;
@@ -197,15 +196,14 @@ $spacing: 16px;
 		margin-left: $spacing;
 		border: solid 1px currentColor;
 		border-radius: 50%;
+		flex-shrink: 0;
+		fill: currentColor;
 	}
 
-	&.completed::before {
-		content: '✓';
-		border: solid 1px #179942;
-		background-color: #1FD25A;
-		color: white;
-		line-height: 22px;
-		text-align: center;
+	&:not(.completed) {
+		.wp-block-sensei-lms-course-outline-lesson__status * {
+			display: none;
+		}
 	}
 
 	&:hover::after {
