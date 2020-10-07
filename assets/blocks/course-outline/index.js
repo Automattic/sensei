@@ -4,6 +4,7 @@ import './module-block';
 import './lesson-block';
 import './store';
 import '../button.core';
+import '../button.own';
 
 [ CourseOutlineBlock ].forEach( ( block ) => {
 	const { name, ...settings } = block;
