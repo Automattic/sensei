@@ -22,18 +22,26 @@ $spacing: 16px;
 		background: none;
 		border: 0;
 		color: inherit;
-		flex-basis: 4%;
-		margin: 0 0 0 10px;
+		margin: 0 -5px 0 10px;
 		cursor: pointer;
-		height: 24px;
-		font-size: 24px;
+		svg {
+			transition: transform 250ms linear;
+		}
+		svg {
+			width: 32px;
+			height: 32px;
+			margin: -12px 0;
+			fill: currentColor;
+		}
 
 		&:hover, &:focus {
 			text-decoration: none;
 		}
 
 		&.collapsed {
-			display: none;
+			svg {
+				transform: rotate(180deg)
+			}
 		}
 	}
 }
@@ -216,7 +224,7 @@ $spacing: 16px;
 .wp-block-sensei-lms-collapsible {
 	opacity: 1;
 	overflow: hidden;
-	transition: height 0.5s ease-in-out, opacity 0.5s ease-in-out;
+	transition: height 350ms ease-in-out, opacity 350ms ease-in-out;
 
 	&.collapsed {
 		opacity: 0;
