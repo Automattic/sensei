@@ -4,7 +4,7 @@ language: php
 
 # Shared code for e2e jobs.
 e2e_defaults: &e2e_defaults
-  if: branch =~ /^release\//
+  if: branch =~ /^release\// OR head_branch =~ /^release\//
   language: node_js
   node_js: '10.17'
   script:
