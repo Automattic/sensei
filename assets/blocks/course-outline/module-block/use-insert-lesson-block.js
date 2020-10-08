@@ -1,6 +1,6 @@
 import { createBlock } from '@wordpress/blocks';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useCallback, useEffect } from '@wordpress/element';
+import { useCallback, useEffect, useState } from '@wordpress/element';
 
 /**
  * Insert an empty lesson block to the end of the module when it's selected.
@@ -8,12 +8,19 @@ import { useCallback, useEffect } from '@wordpress/element';
  * @param {Object} props Block properties.
  */
 export const useInsertLessonBlock = ( props ) => {
+	const [
+		implicitLessonBlockClientId,
+		setImplicitLessonBlockClientId,
+	] = useState( null );
 	const { clientId, isSelected } = props;
 	const { insertBlock, removeBlock } = useDispatch( 'core/block-editor' );
 
 	const addBlock = useCallback(
-		( name ) =>
-			insertBlock( createBlock( name ), undefined, clientId, false ),
+		( name ) => {
+			const block = createBlock( name );
+			insertBlock( block, undefined, clientId, false );
+			setImplicitLessonBlockClientId( block.clientId );
+		},
 		[ insertBlock, clientId ]
 	);
 
@@ -38,9 +45,17 @@ export const useInsertLessonBlock = ( props ) => {
 		if (
 			! hasSelected &&
 			hasEmptyLastLessonBlock &&
+			lastLessonBlock.clientId === implicitLessonBlockClientId &&
 			1 !== lessonBlocks.length
 		) {
 			removeBlock( lastLessonBlock.clientId, false );
+			setImplicitLessonBlockClientId( null );
 		}
-	}, [ lessonBlocks, hasSelected, addBlock, removeBlock ] );
+	}, [
+		lessonBlocks,
+		hasSelected,
+		addBlock,
+		removeBlock,
+		implicitLessonBlockClientId,
+	] );
 };
