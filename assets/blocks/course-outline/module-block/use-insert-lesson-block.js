@@ -34,12 +34,19 @@ export const useInsertLessonBlock = ( props ) => {
 		) || isSelected;
 
 	useEffect( () => {
+		if ( ! hasSelected ) setImplicitLessonBlockClientId( null );
+	}, [ hasSelected ] );
+	useEffect( () => {
 		const lastLessonBlock =
 			lessonBlocks.length && lessonBlocks[ lessonBlocks.length - 1 ];
 		const hasEmptyLastLessonBlock =
 			lastLessonBlock && ! lastLessonBlock.attributes.title;
 
-		if ( hasSelected && ! hasEmptyLastLessonBlock ) {
+		if (
+			hasSelected &&
+			! hasEmptyLastLessonBlock &&
+			! implicitLessonBlockClientId
+		) {
 			addBlock( 'sensei-lms/course-outline-lesson' );
 		}
 		if (
