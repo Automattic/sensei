@@ -4,6 +4,7 @@ language: php
 
 # Shared code for e2e jobs.
 e2e_defaults: &e2e_defaults
+  if: branch =~ /^release\//
   language: node_js
   node_js: '10.17'
   script:
@@ -47,12 +48,6 @@ before_script:
   fi
 jobs:
   include:
-    # There are no JS blocks to test yet. Uncomment below when we start adding
-    # blocks.
-    #- stage: test
-    #  script:
-    #    - npm install || exit 1
-    #    - npm run test-js || exit 1
     - stage: test
       php: 7.4
       env: WP_VERSION=latest
