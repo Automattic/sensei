@@ -53,11 +53,12 @@ $dark-gray: #1a1d20;
 
 		&__post-status {
 			position: absolute;
-			bottom: 0;
+			bottom: 4px;
 			left: 56px;
 			font-size: 12px;
 			font-weight: 600;
-			color: #999;
+			color: inherit;
+			opacity: 0.5;
 			border-radius: 6px;
 		}
 	}
