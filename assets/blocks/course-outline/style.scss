@@ -156,7 +156,7 @@ $spacing: 16px;
 	position: relative;
 
 
-	.entry-content & {
+	&, .entry-content &, .entry .entry-content & {
 		font-size: 1em;
 
 		font-family: inherit;
