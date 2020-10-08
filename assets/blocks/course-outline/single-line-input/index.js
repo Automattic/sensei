@@ -1,34 +1,34 @@
-import classnames from 'classnames';
+import { PlainText } from '@wordpress/block-editor';
+import { ENTER } from '@wordpress/keycodes';
 
 /**
  * Single line input component.
  *
  * @param {Object}   props           Component props.
- * @param {string}   props.className Additional classname for the input.
  * @param {Function} props.onChange  Change callback.
+ * @param {Function} props.onKeyDown Keydown callback.
  */
-const SingleLineInput = ( { className, onChange, ...props } ) => {
-	const classes = classnames(
-		className,
-		'wp-block-sensei-lms-course-outline__clean-input'
-	);
-
+const SingleLineInput = ( { onChange, onKeyDown, ...props } ) => {
 	/**
 	 * Handle change.
 	 *
-	 * @param {Object} event              Input change event object.
-	 * @param {Object} event.target       Change target object.
-	 * @param {string} event.target.value Change value.
+	 * @param {string} value Change value.
 	 */
-	const handleChange = ( { target: { value } } ) => {
-		onChange( value );
+	const handleChange = ( value ) => {
+		onChange( value.replace( /\n/g, '' ) );
+	};
+
+	const handleKeyDown = ( e ) => {
+		if ( onKeyDown ) onKeyDown( e );
+		if ( ENTER === e.keyCode ) {
+			e.preventDefault();
+		}
 	};
 
 	return (
-		<input
-			type="text"
-			className={ classes }
+		<PlainText
 			onChange={ handleChange }
+			onKeyDown={ handleKeyDown }
 			{ ...props }
 		/>
 	);
