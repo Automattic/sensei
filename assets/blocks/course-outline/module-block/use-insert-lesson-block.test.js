@@ -61,22 +61,18 @@ describe( 'useInsertLessonBlock', () => {
 	} );
 
 	it( 'removes inserted lesson block on blur', () => {
+		const blocks = [ { attributes: { title: 'Lesson 1' } } ];
+		insertBlock.mockImplementation( ( block ) => blocks.push( block ) );
 		mockSelect( {
 			hasSelectedInnerBlock: () => false,
-			getBlocks: () => [ { attributes: { title: 'Lesson 1' } } ],
+			getBlocks: () => blocks,
 		} );
 		const { rerender } = render( <ModuleBlock isSelected={ true } /> );
 
 		expect( insertBlock ).toHaveBeenCalledTimes( 1 );
-		mockSelect( {
-			hasSelectedInnerBlock: () => false,
-			getBlocks: () => [
-				{ attributes: { title: 'Lesson 1' } },
-				{ attributes: { title: '' }, clientId: 'new-lesson' },
-			],
-		} );
+
 		rerender( <ModuleBlock isSelected={ false } /> );
 
-		expect( removeBlock ).toHaveBeenCalledWith( 'new-lesson', false );
+		expect( removeBlock ).toHaveBeenCalledTimes( 1 );
 	} );
 } );
