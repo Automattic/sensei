@@ -3,10 +3,7 @@ import { EditLessonBlock } from './edit';
 import { useDispatch, select } from '@wordpress/data';
 import { createBlock } from '@wordpress/blocks';
 
-jest.mock( '@wordpress/block-editor' );
-jest.mock( '@wordpress/data', () => ( {
-	useDispatch: jest.fn(),
-} ) );
+jest.mock( '@wordpress/data' );
 
 jest.mock( '@wordpress/blocks' );
 jest.mock( '../../../shared/blocks/settings', () => ( {
