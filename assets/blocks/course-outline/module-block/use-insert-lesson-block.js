@@ -34,9 +34,6 @@ export const useInsertLessonBlock = ( props ) => {
 		) || isSelected;
 
 	useEffect( () => {
-		if ( ! hasSelected ) setImplicitLessonBlockClientId( null );
-	}, [ hasSelected ] );
-	useEffect( () => {
 		const lastLessonBlock =
 			lessonBlocks.length && lessonBlocks[ lessonBlocks.length - 1 ];
 		const hasEmptyLastLessonBlock =
@@ -49,20 +46,16 @@ export const useInsertLessonBlock = ( props ) => {
 		) {
 			addBlock( 'sensei-lms/course-outline-lesson' );
 		}
-		if (
-			! hasSelected &&
-			hasEmptyLastLessonBlock &&
-			lastLessonBlock.clientId === implicitLessonBlockClientId &&
-			1 !== lessonBlocks.length
-		) {
-			removeBlock( lastLessonBlock.clientId, false );
+		if ( ! hasSelected ) {
+			if (
+				hasEmptyLastLessonBlock &&
+				lastLessonBlock.clientId === implicitLessonBlockClientId &&
+				1 !== lessonBlocks.length
+			) {
+				removeBlock( lastLessonBlock.clientId, false );
+			}
 			setImplicitLessonBlockClientId( null );
 		}
-	}, [
-		lessonBlocks,
-		hasSelected,
-		addBlock,
-		removeBlock,
-		implicitLessonBlockClientId,
-	] );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ hasSelected ] );
 };
