@@ -42,7 +42,6 @@ class Sensei_Lesson {
 			add_action( 'save_post', array( $this, 'meta_box_save' ) );
 			add_action( 'save_post', array( $this, 'quiz_update' ) );
 			add_action( 'save_post', array( $this, 'add_lesson_to_course_order' ) );
-			add_action( 'transition_post_status', array( $this, 'on_lesson_published' ), 10, 3 );
 
 			// Custom Write Panel Columns
 			add_filter( 'manage_edit-lesson_columns', array( $this, 'add_column_headings' ), 10, 1 );
@@ -423,6 +422,8 @@ class Sensei_Lesson {
 	 *
 	 * Hooked into `post_save`
 	 *
+	 * @since 3.6.0 It order all lessons that is part of a course, regardless their status.
+	 *
 	 * @access public
 	 * @param int $lesson_id
 	 * @return void
@@ -438,34 +439,28 @@ class Sensei_Lesson {
 			return;
 		}
 
-		if ( ! in_array( get_post_status( $lesson_id ), array( 'publish', 'future', 'pending' ), true ) ) {
-			return;
-		}
-
 		$course_id = intval( get_post_meta( $lesson_id, '_lesson_course', true ) );
 
 		if ( empty( $course_id ) ) {
 			return;
 		}
 
-		$order_string_array = explode( ',', get_post_meta( intval( $course_id ), '_lesson_order', true ) );
-		$order_ids          = array_map( 'intval', $order_string_array );
-
-		if ( ! empty( $order_ids ) && ! in_array( $lesson_id, $order_ids ) ) {
-				$order_ids[] = $lesson_id;
-				// assumes Sensei admin is loaded
-				Sensei()->admin->save_lesson_order( implode( ',', $order_ids ), $course_id );
-		}
+		// Assumes Sensei admin is loaded.
+		Sensei()->admin->save_lesson_order( '', $course_id );
 	}
 
 	/**
 	 * to actions when the status of the lesson changes to publish
+	 *
+	 * @deprecated 3.6.0
 	 *
 	 * @param string  $new_status
 	 * @param string  $old_status
 	 * @param WP_Post $post
 	 */
 	public function on_lesson_published( $new_status, $old_status, $post ) {
+		_deprecated_function( __METHOD__, '3.6.0' );
+
 		if ( 'lesson' != get_post_type( $post ) ) {
 			return;
 		}

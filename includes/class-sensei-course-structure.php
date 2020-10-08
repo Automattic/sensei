@@ -58,9 +58,17 @@ class Sensei_Course_Structure {
 	/**
 	 * Get the course structure.
 	 *
+	 * @see Sensei_Course_Structure::prepare_lesson()
+	 * @see Sensei_Course_Structure::prepare_module()
+	 *
 	 * @param string $context Context that structure is being retrieved for. Possible values: edit, view.
 	 *
-	 * @return array
+	 * @return array {
+	 *     An array which has course structure information.
+	 *
+	 *     @type array Each element is an array with either module or lesson information as defined in prepare_lesson()
+	 *                 and prepare_module().
+	 * }
 	 */
 	public function get( $context = 'view' ) {
 		$context = in_array( $context, [ 'view', 'edit' ], true ) ? $context : 'view';
@@ -95,10 +103,22 @@ class Sensei_Course_Structure {
 	/**
 	 * Prepare the result for a module.
 	 *
+	 * @see Sensei_Course_Structure::prepare_lesson()
+	 *
 	 * @param WP_Term      $module_term        Module term.
 	 * @param array|string $lesson_post_status Lesson post status(es).
+	 *
+	 * @return array {
+	 *     An array which has module information.
+	 *
+	 *     @type string $type        The type of the array which is 'module'.
+	 *     @type int    $id          The module term id.
+	 *     @type string $title       The module name.
+	 *     @type string $description The module description.
+	 *     @type array  $lessons     An array of the module lessons. See Sensei_Course_Structure::prepare_lesson().
+	 * }
 	 */
-	private function prepare_module( WP_Term $module_term, $lesson_post_status ) {
+	private function prepare_module( WP_Term $module_term, $lesson_post_status ) : array {
 		$lessons = $this->get_module_lessons( $module_term->term_id, $lesson_post_status );
 		$module  = [
 			'type'        => 'module',
@@ -120,9 +140,16 @@ class Sensei_Course_Structure {
 	 *
 	 * @param WP_Post $lesson_post Lesson post object.
 	 *
-	 * @return array
+	 * @return array {
+	 *     An array which has lesson information.
+	 *
+	 *     @type string $type  The type of the array which is 'lesson'.
+	 *     @type int    $id    The lesson post id.
+	 *     @type string $title The lesson title.
+	 *     @type bool   $draft True if the lesson is a draft.
+	 * }
 	 */
-	private function prepare_lesson( WP_Post $lesson_post ) {
+	private function prepare_lesson( WP_Post $lesson_post ) : array {
 		return [
 			'type'  => 'lesson',
 			'id'    => $lesson_post->ID,
@@ -139,7 +166,7 @@ class Sensei_Course_Structure {
 	 *
 	 * @return WP_Post[]
 	 */
-	private function get_module_lessons( int $module_term_id, $lesson_post_status ) {
+	private function get_module_lessons( int $module_term_id, $lesson_post_status ) : array {
 		$lessons_query = Sensei()->modules->get_lessons_query( $this->course_id, $module_term_id, $lesson_post_status );
 
 		return $lessons_query instanceof WP_Query ? $lessons_query->posts : [];
@@ -150,7 +177,7 @@ class Sensei_Course_Structure {
 	 *
 	 * @return WP_Term[]
 	 */
-	private function get_modules() {
+	private function get_modules() : array {
 		$modules = Sensei()->modules->get_course_modules( $this->course_id );
 
 		if ( is_wp_error( $modules ) ) {
@@ -163,7 +190,9 @@ class Sensei_Course_Structure {
 	/**
 	 * Save a new course structure.
 	 *
-	 * @param array $raw_structure Course structure to save in its raw, un-sanitized form.
+	 * @see Sensei_Course_Structure::get()
+	 *
+	 * @param array $raw_structure Course structure to save in its raw, un-sanitized form as returned by get().
 	 *
 	 * @return bool|WP_Error
 	 */
@@ -228,7 +257,9 @@ class Sensei_Course_Structure {
 	/**
 	 * Save a module item.
 	 *
-	 * @param array $item Item to save.
+	 * @see Sensei_Course_Structure::prepare_module()
+	 *
+	 * @param array $item Item to save as returned from prepare_module().
 	 *
 	 * @return false|array[] {
 	 *     If successful, we return this:
@@ -375,6 +406,8 @@ class Sensei_Course_Structure {
 	/**
 	 * Save a lesson item.
 	 *
+	 * @see Sensei_Course_Structure::prepare_lesson()
+	 *
 	 * @param array $item      Item to save.
 	 * @param int   $module_id Module ID.
 	 *
@@ -497,7 +530,9 @@ class Sensei_Course_Structure {
 	/**
 	 * Parses the lesson IDs and module IDs from the structure.
 	 *
-	 * @param array $structure Structure to flatten.
+	 * @see Sensei_Course_Structure::get()
+	 *
+	 * @param array $structure Structure to flatten as returned by get().
 	 *
 	 * @return array[] {
 	 *     @type array $0 $lesson_ids    All the lesson IDs.
@@ -505,7 +540,7 @@ class Sensei_Course_Structure {
 	 *     @type array $2 $module_titles All the module titles.
 	 * }
 	 */
-	private function flatten_structure( array $structure ) {
+	private function flatten_structure( array $structure ) : array {
 		$lesson_ids    = [];
 		$module_ids    = [];
 		$module_titles = [];
@@ -546,7 +581,9 @@ class Sensei_Course_Structure {
 	/**
 	 * Parse, validate, and sanitize the structure input.
 	 *
-	 * @param array $raw_structure Structure array.
+	 * @see Sensei_Course_Structure::get()
+	 *
+	 * @param array $raw_structure Structure array as returned by get().
 	 *
 	 * @return WP_Error|array False if the input is invalid.
 	 */
@@ -588,7 +625,10 @@ class Sensei_Course_Structure {
 	/**
 	 * Validate and sanitize input item of structure.
 	 *
-	 * @param array $raw_item Raw item to sanitize.
+	 * @see Sensei_Course_Structure::prepare_lesson()
+	 * @see Sensei_Course_Structure::prepare_module()
+	 *
+	 * @param array $raw_item Module or lesson as returned by prepare_lesson or prepare_module.
 	 *
 	 * @return array|WP_Error
 	 */
@@ -655,6 +695,9 @@ class Sensei_Course_Structure {
 	/**
 	 * Validate item is build correctly.
 	 *
+	 * @see Sensei_Course_Structure::prepare_lesson()
+	 * @see Sensei_Course_Structure::prepare_module()
+	 *
 	 * @param array $raw_item Raw item to sanitize.
 	 *
 	 * @return true|WP_Error
@@ -688,5 +731,49 @@ class Sensei_Course_Structure {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Sort structure.
+	 *
+	 * @param array  $structure Structure to be sorted.
+	 * @param int[]  $order     Order to sort the lessons.
+	 * @param string $type      Type to be sorted (lesson or module).
+	 *
+	 * @return array Sorted structure.
+	 */
+	public static function sort_structure( $structure, $order, $type ) {
+		usort(
+			$structure,
+			function( $a, $b ) use ( $order, $type ) {
+				// One of the types is not being sorted.
+				if ( $type !== $a['type'] || $type !== $b['type'] ) {
+					// If types are equal, keep in the current positions.
+					if ( $a['type'] === $b['type'] ) {
+						return 0;
+					}
+
+					// Always keep the modules before the lessons.
+					return 'module' === $a['type'] ? - 1 : 1;
+				}
+
+				$a_position = array_search( $a['id'], $order, true );
+				$b_position = array_search( $b['id'], $order, true );
+
+				// If both weren't sorted, keep the current positions.
+				if ( false === $a_position && false === $b_position ) {
+					return 0;
+				}
+
+				// Keep not sorted items in the end.
+				if ( false === $a_position ) {
+					return 1;
+				}
+
+				return false === $b_position || $a_position < $b_position ? -1 : 1;
+			}
+		);
+
+		return $structure;
 	}
 }

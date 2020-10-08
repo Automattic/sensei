@@ -1234,7 +1234,6 @@ class Sensei_Admin {
 									$html .= '<form id="editgrouping" method="post" action="'
 										. esc_url( admin_url( 'admin-post.php' ) ) . '" class="validate">' . "\n";
 									$html .= '<ul class="sortable-course-list">' . "\n";
-									$count = 0;
 									foreach ( $all_course_ids as $course_id ) {
 										$course = get_post( $course_id );
 										if ( empty( $course ) || in_array( $course->post_status, array( 'trash', 'auto-draft' ), true ) ) {
@@ -1242,22 +1241,13 @@ class Sensei_Admin {
 											continue;
 										}
 										$new_course_order[] = $course_id;
-										$count++;
-										$class = 'course';
-										if ( $count == 1 ) {
-											$class .= ' first'; }
-										if ( $count == count( $all_course_ids ) ) {
-											$class .= ' last'; }
-										if ( $count % 2 != 0 ) {
-											$class .= ' alternate';
-										}
 
 										$title = $course->post_title;
 										if ( $course->post_status === 'draft' ) {
 											$title .= ' (Draft)';
 										}
 
-										$html .= '<li class="' . esc_attr( $class ) . '"><span rel="' . esc_attr( $course->ID ) . '" style="width: 100%;"> ' . esc_html( $title ) . '</span></li>' . "\n";
+										$html .= '<li class="course"><span rel="' . esc_attr( $course->ID ) . '" style="width: 100%;"> ' . esc_html( $title ) . '</span></li>' . "\n";
 									}
 									$html .= '</ul>' . "\n";
 
@@ -1366,221 +1356,155 @@ class Sensei_Admin {
 
 		?>
 		<div id="<?php echo esc_attr( $this->lesson_order_page_slug ); ?>" class="wrap <?php echo esc_attr( $this->lesson_order_page_slug ); ?>">
-		<h1><?php esc_html_e( 'Order Lessons', 'sensei-lms' ); ?></h1>
-							  <?php
+			<h1><?php esc_html_e( 'Order Lessons', 'sensei-lms' ); ?></h1>
+			<?php
 
-								$html = '';
+			$html = '';
 
-								if ( isset( $_GET['ordered'] ) && $_GET['ordered'] ) {
-									$html .= '<div class="updated fade">' . "\n";
-									$html .= '<p>' . esc_html__( 'The lesson order has been saved.', 'sensei-lms' ) . '</p>' . "\n";
-									$html .= '</div>' . "\n";
-								}
+			if ( isset( $_GET['ordered'] ) && $_GET['ordered'] ) {
+				$html .= '<div class="updated fade">' . "\n";
+				$html .= '<p>' . esc_html__( 'The lesson order has been saved.', 'sensei-lms' ) . '</p>' . "\n";
+				$html .= '</div>' . "\n";
+			}
 
-								$args = array(
-									'post_type'      => 'course',
-									'post_status'    => array( 'publish', 'draft', 'future', 'private' ),
-									'posts_per_page' => -1,
-									'orderby'        => 'name',
-									'order'          => 'ASC',
-								);
-																			$courses = get_posts( $args );
+			$args = array(
+				'post_type'      => 'course',
+				'post_status'    => array( 'publish', 'draft', 'future', 'private' ),
+				'posts_per_page' => -1,
+				'orderby'        => 'name',
+				'order'          => 'ASC',
+			);
 
-																			$html .= '<form action="' . esc_url( admin_url( 'edit.php' ) ) . '" method="get">' . "\n";
-																			$html .= '<input type="hidden" name="post_type" value="lesson" />' . "\n";
-																			$html .= '<input type="hidden" name="page" value="lesson-order" />' . "\n";
-																			$html .= '<select id="lesson-order-course" name="course_id">' . "\n";
-																			$html .= '<option value="">' . esc_html__( 'Select a course', 'sensei-lms' ) . '</option>' . "\n";
+			$courses = get_posts( $args );
 
-								foreach ( $courses as $course ) {
-									$course_id = '';
-									if ( isset( $_GET['course_id'] ) ) {
-										$course_id = intval( $_GET['course_id'] );
-									}
-									$html .= '<option value="' . esc_attr( intval( $course->ID ) ) . '" ' . selected( $course->ID, $course_id, false ) . '>' . esc_html( get_the_title( $course->ID ) ) . '</option>' . "\n";
-								}
+			$html .= '<form action="' . esc_url( admin_url( 'edit.php' ) ) . '" method="get">' . "\n";
+			$html .= '<input type="hidden" name="post_type" value="lesson" />' . "\n";
+			$html .= '<input type="hidden" name="page" value="lesson-order" />' . "\n";
+			$html .= '<select id="lesson-order-course" name="course_id">' . "\n";
+			$html .= '<option value="">' . esc_html__( 'Select a course', 'sensei-lms' ) . '</option>' . "\n";
 
-																			$html .= '</select>' . "\n";
-																			$html .= '<input type="submit" class="button-primary lesson-order-select-course-submit" value="' . esc_attr__( 'Select', 'sensei-lms' ) . '" />' . "\n";
-																			$html .= '</form>' . "\n";
+			foreach ( $courses as $course ) {
+				$course_id = '';
+				if ( isset( $_GET['course_id'] ) ) {
+					$course_id = intval( $_GET['course_id'] );
+				}
+				$html .= '<option value="' . esc_attr( intval( $course->ID ) ) . '" ' . selected( $course->ID, $course_id, false ) . '>' . esc_html( get_the_title( $course->ID ) ) . '</option>' . "\n";
+			}
 
-								if ( isset( $_GET['course_id'] ) ) {
-									$course_id = intval( $_GET['course_id'] );
-									if ( $course_id > 0 ) {
+			$html .= '</select>' . "\n";
+			$html .= '<input type="submit" class="button-primary lesson-order-select-course-submit" value="' . esc_attr__( 'Select', 'sensei-lms' ) . '" />' . "\n";
+			$html .= '</form>' . "\n";
 
-										$order_string = $this->get_lesson_order( $course_id );
+			if ( isset( $_GET['course_id'] ) ) {
+				$course_id = intval( $_GET['course_id'] );
+				if ( $course_id > 0 ) {
+					$course_structure = $this->get_course_structure( $course_id );
+					$modules          = $this->get_course_structure( $course_structure, 'module' );
 
-										$html .= '<form id="editgrouping" method="post" action="'
-											. esc_url( admin_url( 'admin-post.php' ) ) . '" class="validate">' . "\n";
+					$html .= '<form id="editgrouping" method="post" action="'
+						. esc_url( admin_url( 'admin-post.php' ) ) . '" class="validate">' . "\n";
 
-										$displayed_lessons = array();
+					$has_lessons = false;
 
-										$modules = Sensei()->modules->get_course_modules( intval( $course_id ) );
+					foreach ( $modules as $module ) {
+						if ( count( $module['lessons'] ) > 0 ) {
+							$has_lessons = true;
 
-										foreach ( $modules as $module ) {
+							$html .= '<h3>' . esc_html( $module['title'] ) . '</h3>' . "\n";
+							$html .= '<ul class="sortable-lesson-list" data-module-id="' . esc_attr( $module['id'] ) . '">' . "\n";
 
-											$args = array(
-												'post_type' => 'lesson',
-												'post_status' => array( 'publish', 'draft', 'future', 'private' ),
-												'posts_per_page' => -1,
-												'meta_query' => array(
-													array(
-														'key'     => '_lesson_course',
-														'value'   => intval( $course_id ),
-														'compare' => '=',
-													),
-												),
-												'tax_query' => array(
-													array(
-														'taxonomy' => Sensei()->modules->taxonomy,
-														'field'    => 'id',
-														'terms'    => intval( $module->term_id ),
-													),
-												),
-												'meta_key' => '_order_module_' . $module->term_id,
-												'orderby'  => 'meta_value_num date',
-												'order'    => 'ASC',
-												'suppress_filters' => 0,
-											);
+							foreach ( $module['lessons'] as $lesson ) {
+								$html .= '<li class="lesson"><span rel="' . esc_attr( $lesson['id'] ) . '" style="width: 100%;"> ' . esc_html( $lesson['title'] ) . '</span></li>' . "\n";
+							}
 
-											$lessons = get_posts( $args );
+							$html .= '</ul>' . "\n";
 
-											if ( count( $lessons ) > 0 ) {
-												$html .= '<h3>' . esc_html( $module->name ) . '</h3>' . "\n";
-												$html .= '<ul class="sortable-lesson-list" data-module-id="' . esc_attr( $module->term_id ) . '">' . "\n";
+							$html .= '<input type="hidden" name="lesson-order-module-' . esc_attr( $module['id'] ) . '" value="" />' . "\n";
+						}
+					}
 
-												$count = 0;
-												foreach ( $lessons as $lesson ) {
-													$count++;
-													$class = 'lesson';
-													if ( $count == 1 ) {
-														$class .= ' first'; }
-													if ( $count == count( $lessons ) ) {
-														$class .= ' last'; }
-													if ( $count % 2 != 0 ) {
-														$class .= ' alternate';
-													}
+					// Other Lessons
+					$other_lessons = $this->get_course_structure( $course_structure, 'lesson' );
+					if ( 0 < count( $other_lessons ) ) {
+						$has_lessons = true;
 
-													$html .= '<li class="' . esc_attr( $class ) . '"><span rel="' . esc_attr( $lesson->ID ) . '" style="width: 100%;"> ' . esc_html( $lesson->post_title ) . '</span></li>' . "\n";
+						$html .= '<h3>' . esc_html__( 'Other Lessons', 'sensei-lms' ) . '</h3>' . "\n";
+						$html .= '<ul class="sortable-lesson-list" data-module-id="0">' . "\n";
 
-													$displayed_lessons[] = $lesson->ID;
-												}
+						foreach ( $other_lessons as $other_lesson ) {
+							$html .= '<li class="lesson"><span rel="' . esc_attr( $other_lesson['id'] ) . '" style="width: 100%;"> ' . esc_html( $other_lesson['title'] ) . '</span></li>' . "\n";
+						}
+						$html .= '</ul>' . "\n";
+					} else {
+						$html .= '<p><em>' . esc_html__( 'There are no lessons in this course.', 'sensei-lms' ) . '</em></p>';
+					}
 
-												$html .= '</ul>' . "\n";
+					if ( $has_lessons ) {
+						$html .= '<input type="hidden" name="action" value="order_lessons" />' . "\n";
+						$html .= wp_nonce_field( 'order_lessons', '_wpnonce', true, false ) . "\n";
+						$html .= '<input type="hidden" name="lesson-order" value="" />' . "\n";
+						$html .= '<input type="hidden" name="course_id" value="' . esc_attr( $course_id ) . '" />' . "\n";
+						$html .= '<input type="submit" class="button-primary" value="' . esc_attr__( 'Save lesson order', 'sensei-lms' ) . '" />' . "\n";
+						$html .= '</form>';
+					}
+				}
+			}
 
-												$html .= '<input type="hidden" name="lesson-order-module-' . esc_attr( $module->term_id ) . '" value="" />' . "\n";
-											}
-										}
+			echo wp_kses(
+				$html,
+				array_merge(
+					wp_kses_allowed_html( 'post' ),
+					array(
+						// Explicitly allow form tag for WP.com.
+						'form'   => array(
+							'action' => array(),
+							'class'  => array(),
+							'id'     => array(),
+							'method' => array(),
+						),
+						'input'  => array(
+							'class' => array(),
+							'name'  => array(),
+							'type'  => array(),
+							'value' => array(),
+						),
+						'option' => array(
+							'selected' => array(),
+							'value'    => array(),
+						),
+						'select' => array(
+							'id'   => array(),
+							'name' => array(),
+						),
+						'span'   => array(
+							'rel'   => array(),
+							'style' => array(),
+						),
+						'ul'     => array(
+							'class'          => array(),
+							'data-module-id' => array(),
+						),
+					)
+				)
+			);
 
-										// Other Lessons
-										$lessons = Sensei()->course->course_lessons( $course_id, array( 'publish', 'draft', 'future', 'private' ) );
-
-										if ( 0 < count( $lessons ) ) {
-
-											// get module term ids, will be used to exclude lessons
-											$module_items_ids = array();
-											if ( ! empty( $modules ) ) {
-												foreach ( $modules as $module ) {
-													$module_items_ids[] = $module->term_id;
-												}
-											}
-
-											if ( 0 < count( $displayed_lessons ) ) {
-												$html .= '<h3>' . esc_html__( 'Other Lessons', 'sensei-lms' ) . '</h3>' . "\n";
-											}
-
-											$html         .= '<ul class="sortable-lesson-list" data-module-id="0">' . "\n";
-											$count         = 0;
-											$other_lessons = array();
-
-											foreach ( $lessons as $lesson ) {
-												// Exclude course modules.
-												if ( has_term( $module_items_ids, 'module', $lesson->ID ) ) {
-													continue;
-												}
-
-												$other_lessons[] = $lesson;
-											}
-
-											foreach ( $other_lessons as $other_lesson ) {
-												$count++;
-												$class = 'lesson';
-
-												if ( $count == 1 ) {
-													$class .= ' first'; }
-												if ( $count === count( $other_lessons ) ) {
-													$class .= ' last'; }
-												if ( $count % 2 != 0 ) {
-
-													$class .= ' alternate';
-
-												}
-												$html .= '<li class="' . esc_attr( $class ) . '"><span rel="' . esc_attr( $other_lesson->ID ) . '" style="width: 100%;"> ' . esc_html( $other_lesson->post_title ) . '</span></li>' . "\n";
-
-												$displayed_lessons[] = $other_lesson->ID;
-											}
-											$html .= '</ul>' . "\n";
-										} else {
-											if ( 0 == count( $displayed_lessons ) ) {
-												$html .= '<p><em>' . esc_html__( 'There are no lessons in this course.', 'sensei-lms' ) . '</em></p>';
-											}
-										}
-
-										if ( 0 < count( $displayed_lessons ) ) {
-											$html .= '<input type="hidden" name="action" value="order_lessons" />' . "\n";
-											$html .= wp_nonce_field( 'order_lessons', '_wpnonce', true, false ) . "\n";
-											$html .= '<input type="hidden" name="lesson-order" value="' . esc_attr( $order_string ) . '" />' . "\n";
-											$html .= '<input type="hidden" name="course_id" value="' . esc_attr( $course_id ) . '" />' . "\n";
-											$html .= '<input type="submit" class="button-primary" value="' . esc_attr__( 'Save lesson order', 'sensei-lms' ) . '" />' . "\n";
-											$html .= '</form>';
-										}
-									}
-								}
-
-								echo wp_kses(
-									$html,
-									array_merge(
-										wp_kses_allowed_html( 'post' ),
-										array(
-											// Explicitly allow form tag for WP.com.
-											'form'   => array(
-												'action' => array(),
-												'class'  => array(),
-												'id'     => array(),
-												'method' => array(),
-											),
-											'input'  => array(
-												'class' => array(),
-												'name'  => array(),
-												'type'  => array(),
-												'value' => array(),
-											),
-											'option' => array(
-												'selected' => array(),
-												'value'    => array(),
-											),
-											'select' => array(
-												'id'   => array(),
-												'name' => array(),
-											),
-											'span'   => array(
-												'rel'   => array(),
-												'style' => array(),
-											),
-											'ul'     => array(
-												'class' => array(),
-												'data-module-id' => array(),
-											),
-										)
-									)
-								);
-
-								?>
+			?>
 		</div>
 		<?php
 	}
 
+	/**
+	 * Get lesson order.
+	 *
+	 * @deprecated 3.6.0
+	 *
+	 * @param integer $course_id Course ID.
+	 *
+	 * @return string Order string.
+	 */
 	public function get_lesson_order( $course_id = 0 ) {
+		_deprecated_function( __METHOD__, '3.6.0' );
+
 		$order_string = get_post_meta( $course_id, '_lesson_order', true );
 		return $order_string;
 	}
@@ -1593,45 +1517,64 @@ class Sensei_Admin {
 		 */
 
 		if ( $course_id ) {
+			remove_filter( 'get_terms', array( Sensei()->modules, 'append_teacher_name_to_module' ), 70 );
+			$course_structure = $this->get_course_structure( intval( $course_id ) );
+			add_filter( 'get_terms', array( Sensei()->modules, 'append_teacher_name_to_module' ), 70, 3 );
 
-			$modules = Sensei()->modules->get_course_modules( intval( $course_id ) );
+			$order = array_map( 'absint', explode( ',', $order_string ) );
 
-			foreach ( $modules as $module ) {
+			$course_structure = Sensei_Course_Structure::sort_structure( $course_structure, $order, 'lesson' );
 
-				// phpcs:ignore WordPress.Security.NonceVerification
-				if ( isset( $_POST[ 'lesson-order-module-' . $module->term_id ] ) && $_POST[ 'lesson-order-module-' . $module->term_id ] ) {
+			// Sort module lessons.
+			foreach ( $course_structure as $key => $module ) {
+				if ( 'module' !== $module['type'] ) {
+					continue;
+				}
 
+				if (
 					// phpcs:ignore WordPress.Security.NonceVerification
-					$order = explode( ',', $_POST[ 'lesson-order-module-' . $module->term_id ] );
-					$i     = 1;
-					foreach ( $order as $lesson_id ) {
+					! empty( $_POST[ 'lesson-order-module-' . $module['id'] ] )
+					&& ! empty( $course_structure[ $key ]['lessons'] )
+				) {
+					// phpcs:ignore WordPress.Security.NonceVerification
+					$order = sanitize_text_field( wp_unslash( $_POST[ 'lesson-order-module-' . $module['id'] ] ) );
+					$order = array_map( 'absint', explode( ',', $order ) );
 
-						if ( $lesson_id ) {
-							update_post_meta( $lesson_id, '_order_module_' . $module->term_id, $i );
-							++$i;
-						}
-					}// end for each order
-				}// end if
-			} // end for each modules
-
-			if ( $order_string ) {
-				update_post_meta( $course_id, '_lesson_order', $order_string );
-
-				$order = explode( ',', $order_string );
-
-				$i = 1;
-				foreach ( $order as $lesson_id ) {
-					if ( $lesson_id ) {
-						update_post_meta( $lesson_id, '_order_' . $course_id, $i );
-						++$i;
-					}
+					$course_structure[ $key ]['lessons'] = Sensei_Course_Structure::sort_structure( $course_structure[ $key ]['lessons'], $order, 'lesson' );
 				}
 			}
 
-			return true;
+			if ( true === Sensei_Course_Structure::instance( $course_id )->save( $course_structure ) ) {
+				return true;
+			}
 		}
 
 		return false;
+	}
+
+	/**
+	 * Get course structure.
+	 *
+	 * @param int|array   $course_structure Structure array or course ID to get the structure.
+	 * @param null|string $type             Optional type to filter the content.
+	 *
+	 * @return array Course structure.
+	 */
+	private function get_course_structure( $course_structure = null, $type = null ) {
+		$course_structure = is_array( $course_structure )
+			? $course_structure
+			: Sensei_Course_Structure::instance( $course_structure )->get( 'edit' );
+
+		if ( isset( $type ) ) {
+			$course_structure = array_filter(
+				$course_structure,
+				function( $item ) use ( $type ) {
+					return $type === $item['type'];
+				}
+			);
+		}
+
+		return $course_structure;
 	}
 
 	function sensei_add_custom_menu_items() {

@@ -1,8 +1,10 @@
 import { createBlock } from '@wordpress/blocks';
 import { select, useDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
+import { Icon } from '@wordpress/components';
 import classnames from 'classnames';
 import { __ } from '@wordpress/i18n';
+import { checked, chevronRight } from '../../../icons/wordpress-icons';
 import { withColorSettings } from '../../../shared/blocks/settings';
 import SingleLineInput from '../single-line-input';
 import { LessonBlockSettings } from './settings';
@@ -25,7 +27,6 @@ import { ENTER, BACKSPACE } from '@wordpress/keycodes';
  * @param {Object}   props.textColor           Text color object.
  * @param {Function} props.setAttributes       Block set attributes function.
  * @param {Function} props.insertBlocksAfter   Insert blocks after function.
- * @param {boolean}  props.isSelected          Is block selected.
  */
 export const EditLessonBlock = ( props ) => {
 	const {
@@ -37,7 +38,6 @@ export const EditLessonBlock = ( props ) => {
 		textColor,
 		setAttributes,
 		insertBlocksAfter,
-		isSelected,
 	} = props;
 	const { selectNextBlock, removeBlock } = useDispatch( 'core/block-editor' );
 
@@ -94,22 +94,14 @@ export const EditLessonBlock = ( props ) => {
 		}
 	};
 
-	let status = '';
+	let postStatus = '';
 	if ( ! id && title.length ) {
-		status = (
-			<div className="wp-block-sensei-lms-course-outline-lesson__unsaved">
-				{ __( 'Unsaved', 'sensei-lms' ) }
-			</div>
-		);
+		postStatus = __( 'Unsaved', 'sensei-lms' );
 	} else if ( id && draft ) {
-		status = (
-			<div className="wp-block-sensei-lms-course-outline-lesson__draft">
-				{ __( 'Draft', 'sensei-lms' ) }
-			</div>
-		);
+		postStatus = __( 'Draft', 'sensei-lms' );
 	}
 
-	const [ previewStatus, setPreviewStatus ] = useState( Status.IN_PROGRESS );
+	const [ previewStatus, setPreviewStatus ] = useState( Status.NOT_STARTED );
 
 	const wrapperStyles = {
 		className: classnames(
@@ -134,6 +126,10 @@ export const EditLessonBlock = ( props ) => {
 				setPreviewStatus={ setPreviewStatus }
 			/>
 			<div { ...wrapperStyles }>
+				<Icon
+					icon={ checked }
+					className="wp-block-sensei-lms-course-outline-lesson__status"
+				/>
 				<SingleLineInput
 					className="wp-block-sensei-lms-course-outline-lesson__input"
 					placeholder={ __( 'Lesson name', 'sensei-lms' ) }
@@ -142,7 +138,16 @@ export const EditLessonBlock = ( props ) => {
 					onKeyDown={ handleKeyDown }
 					style={ { fontSize } }
 				/>
-				{ isSelected && status }
+
+				{ postStatus && (
+					<div className="wp-block-sensei-lms-course-outline-lesson__post-status">
+						{ postStatus }
+					</div>
+				) }
+				<Icon
+					icon={ chevronRight }
+					className="wp-block-sensei-lms-course-outline-lesson__chevron"
+				/>
 			</div>
 		</>
 	);

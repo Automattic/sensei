@@ -34,8 +34,7 @@
 			moduleContent.style.height = originalHeight + 'px';
 
 			toggleButton.addEventListener( 'click', () => {
-				toggleButton.classList.toggle( 'dashicons-arrow-up-alt2' );
-				toggleButton.classList.toggle( 'dashicons-arrow-down-alt2' );
+				toggleButton.classList.toggle( 'collapsed' );
 				const collapsed = moduleContent.classList.toggle( 'collapsed' );
 
 				if ( ! collapsed ) {

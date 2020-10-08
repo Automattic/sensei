@@ -193,6 +193,12 @@ class Sensei_Course_Outline_Block {
 			<symbol id="sensei-chevron-right" viewBox="0 0 24 24">
 				<path d="M10.6 6L9.4 7l4.6 5-4.6 5 1.2 1 5.4-6z" fill="" />
 			</symbol>
+			<symbol id="sensei-chevron-up" viewBox="0 0 24 24">
+				<path d="M6.5 12.4L12 8l5.5 4.4-.9 1.2L12 10l-4.5 3.6-1-1.2z" fill="" />
+			</symbol>
+			<symbol id="sensei-checked" viewBox="0 0 24 24">
+				<path d="M9 18.6L3.5 13l1-1L9 16.4l9.5-9.9 1 1z" fill="" />
+			</symbol>
 		</svg>';
 
 		return '
@@ -230,7 +236,9 @@ class Sensei_Course_Outline_Block {
 		$lesson_id = $block['id'];
 		$classes   = [ 'wp-block-sensei-lms-course-outline-lesson' ];
 
-		if ( Sensei_Utils::user_completed_lesson( $lesson_id, get_current_user_id() ) ) {
+		$completed = Sensei_Utils::user_completed_lesson( $lesson_id, get_current_user_id() );
+
+		if ( $completed ) {
 			$classes[] = 'completed';
 		}
 
@@ -238,6 +246,9 @@ class Sensei_Course_Outline_Block {
 
 		return '
 			<a href="' . esc_url( get_permalink( $lesson_id ) ) . '" ' . Sensei_Block_Helpers::render_style_attributes( $classes, $css ) . '>
+				<svg class="wp-block-sensei-lms-course-outline-lesson__status">
+					' . ( $completed ? '<use xlink:href="#sensei-checked"></use>' : '' ) . '
+				</svg>
 				<span>
 					' . esc_html( $block['title'] ) . '
 				</span>
@@ -295,7 +306,8 @@ class Sensei_Course_Outline_Block {
 					<h2 class="wp-block-sensei-lms-course-outline-module__title">' . esc_html( $block['title'] ) . '</h2>
 					' . $progress_indicator .
 			( ! empty( $outline_attributes['collapsibleModules'] ) ?
-				'<button type="button" class="wp-block-sensei-lms-course-outline__arrow dashicons dashicons-arrow-up-alt2">
+				'<button type="button" class="wp-block-sensei-lms-course-outline__arrow">
+						<svg><use xlink:href="#sensei-chevron-up"></use></svg>
 						<span class="screen-reader-text">' . esc_html__( 'Toggle module content', 'sensei-lms' ) . '</span>
 					</button>' : '' ) .
 			'</header>

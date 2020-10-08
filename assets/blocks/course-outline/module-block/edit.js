@@ -1,9 +1,11 @@
 import { InnerBlocks, RichText } from '@wordpress/block-editor';
+import { Icon } from '@wordpress/components';
 import { compose } from '@wordpress/compose';
 import { useContext, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
 import AnimateHeight from 'react-animate-height';
+import { chevronUp } from '../../../icons/wordpress-icons';
 
 import {
 	withColorSettings,
@@ -122,13 +124,11 @@ export const EditModuleBlock = ( props ) => {
 							type="button"
 							className={ classnames(
 								'wp-block-sensei-lms-course-outline__arrow',
-								'dashicons',
-								isExpanded
-									? 'dashicons-arrow-up-alt2'
-									: 'dashicons-arrow-down-alt2'
+								{ collapsed: ! isExpanded }
 							) }
 							onClick={ () => setExpanded( ! isExpanded ) }
 						>
+							<Icon icon={ chevronUp } />
 							<span className="screen-reader-text">
 								{ __( 'Toggle module content', 'sensei-lms' ) }
 							</span>
