@@ -62,13 +62,18 @@ class Sensei_Progress_Bar_Block {
 	 * @return string The HTML of the block.
 	 */
 	public function render_progress_bar( $attributes ) : string {
+		$bar_style            = '--bar-color: ' . $attributes['barColor'];
+		$bar_background_style = '--bar-background-color: ' . $attributes['barBackgroundColor'];
+		$text_style           = empty( $attributes['textColor'] ) ? '' : 'color: ' . $attributes['textColor'];
+
 		return '
 			<div>
-				<section class="wp-block-sensei-lms-progress-heading">
+				<section class="wp-block-sensei-lms-progress-heading" style="' . $text_style . '">
 					<div class="wp-block-sensei-lms-progress-heading__lessons">5 Lessons</div>
 					<div class="wp-block-sensei-lms-progress-heading__completed">3 completed (60%)</div>
 				</section>
 				<progress
+					style="' . implode( ';', [ $bar_style, $bar_background_style ] ) . '"
 					class="wp-block-sensei-lms-progress-bar"
 					max="100"
 					value="50"

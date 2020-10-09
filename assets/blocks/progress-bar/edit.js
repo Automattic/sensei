@@ -17,10 +17,8 @@ export const EditProgressBarBlock = ( {
 } ) => {
 	const { textColor, barColor, barBackgroundColor } = attributes;
 	const barStyle = {
-		'--bar-color': barColor ? barColor : '#0064B4',
-		'--bar-background-color': barBackgroundColor
-			? barBackgroundColor
-			: '#E6E6E6',
+		'--bar-color': barColor,
+		'--bar-background-color': barBackgroundColor,
 	};
 
 	const colorSettings = {
