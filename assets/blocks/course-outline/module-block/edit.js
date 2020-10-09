@@ -70,38 +70,6 @@ export const EditModuleBlock = ( props ) => {
 		minimal: { borderColor: mainColor?.color },
 	}[ blockStyle ];
 
-	const moduleContent = (
-		<>
-			<div className="wp-block-sensei-lms-course-outline-module__description">
-				<RichText
-					className="wp-block-sensei-lms-course-outline-module__description-input"
-					placeholder={ __( 'Module description', 'sensei-lms' ) }
-					value={ description }
-					onChange={ updateDescription }
-				/>
-			</div>
-			<h3 className="wp-block-sensei-lms-course-outline-module__lessons-title">
-				{ __( 'Lessons', 'sensei-lms' ) }
-			</h3>
-			<InnerBlocks
-				allowedBlocks={ [ 'sensei-lms/course-outline-lesson' ] }
-				templateInsertUpdatesSelection={ false }
-				renderAppender={ () => null }
-			/>
-		</>
-	);
-
-	const animationWrapper = collapsibleModules && (
-		<AnimateHeight
-			className="wp-block-sensei-lms-collapsible"
-			duration={ 500 }
-			animateOpacity
-			height={ isExpanded ? 'auto' : 0 }
-		>
-			{ moduleContent }
-		</AnimateHeight>
-	);
-
 	return (
 		<>
 			<ModuleBlockSettings { ...props } />
@@ -135,8 +103,32 @@ export const EditModuleBlock = ( props ) => {
 						</button>
 					) }
 				</header>
-
-				{ collapsibleModules ? animationWrapper : moduleContent }
+				<AnimateHeight
+					className="wp-block-sensei-lms-collapsible"
+					duration={ 500 }
+					animateOpacity
+					height={ ! collapsibleModules || isExpanded ? 'auto' : 0 }
+				>
+					<div className="wp-block-sensei-lms-course-outline-module__description">
+						<RichText
+							className="wp-block-sensei-lms-course-outline-module__description-input"
+							placeholder={ __(
+								'Module description',
+								'sensei-lms'
+							) }
+							value={ description }
+							onChange={ updateDescription }
+						/>
+					</div>
+					<h3 className="wp-block-sensei-lms-course-outline-module__lessons-title">
+						{ __( 'Lessons', 'sensei-lms' ) }
+					</h3>
+					<InnerBlocks
+						allowedBlocks={ [ 'sensei-lms/course-outline-lesson' ] }
+						templateInsertUpdatesSelection={ false }
+						renderAppender={ () => null }
+					/>
+				</AnimateHeight>
 			</section>
 		</>
 	);
