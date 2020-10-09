@@ -91,30 +91,21 @@ class Sensei_Course_Outline_Block {
 			]
 		);
 
-		register_block_type(
-			'sensei-lms/course-outline-lesson',
-			[
-				'render_callback' => [ $this, 'process_lesson_block' ],
-				'attributes'      => [
-					'id' => [
-						'type' => 'integer',
-					],
-				],
-			]
-		);
-
-		register_block_type(
-			'sensei-lms/course-outline-module',
+		register_block_type_from_metadata(
+			Sensei()->assets->src_path( 'blocks/course-outline/module-block' ),
 			[
 				'render_callback' => [ $this, 'process_module_block' ],
-				'attributes'      => [
-					'id' => [
-						'type' => 'integer',
-					],
-				],
 				'script'          => 'sensei-course-outline-frontend',
 			]
 		);
+
+		register_block_type_from_metadata(
+			Sensei()->assets->src_path( 'blocks/course-outline/lesson-block' ),
+			[
+				'render_callback' => [ $this, 'process_lesson_block' ],
+			]
+		);
+
 	}
 
 	/**
