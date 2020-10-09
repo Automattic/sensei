@@ -1,5 +1,5 @@
 import { createBlock } from '@wordpress/blocks';
-import { useDispatch } from '@wordpress/data';
+import { select, useDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
 import { Icon } from '@wordpress/components';
 import classnames from 'classnames';
@@ -9,6 +9,7 @@ import { withColorSettings } from '../../../shared/blocks/settings';
 import SingleLineInput from '../single-line-input';
 import { LessonBlockSettings } from './settings';
 import { Status } from '../status-control';
+import { ENTER, BACKSPACE } from '@wordpress/keycodes';
 
 /**
  * Edit lesson block component.
@@ -41,32 +42,35 @@ export const EditLessonBlock = ( props ) => {
 	const { selectNextBlock, removeBlock } = useDispatch( 'core/block-editor' );
 
 	/**
-	 * Handle change.
+	 * Update lesson title.
 	 *
-	 * @param {string} value Lesson name.
+	 * @param {string} value Lesson title.
 	 */
-	const handleChange = ( value ) => {
+	const updateTitle = ( value ) => {
 		setAttributes( { title: value } );
 	};
 
 	/**
-	 * Go to next lesson. If there is not a next lesson, it creates one.
+	 * Insert a new lesson on enter, unless there is already an empty new lesson after this one.
 	 */
-	const goToNextLesson = async () => {
-		const blocks = await selectNextBlock( clientId );
+	const onEnter = () => {
+		const editor = select( 'core/block-editor' );
+		const nextBlock = editor.getBlock( editor.getNextBlockClientId() );
 
-		if ( ! blocks && 0 < title.length ) {
+		if ( ! nextBlock || nextBlock.attributes.title ) {
 			insertBlocksAfter( [ createBlock( name ) ] );
+		} else {
+			selectNextBlock( clientId );
 		}
 	};
 
 	/**
-	 * Remove lesson.
+	 * Remove lesson on backspace.
 	 *
 	 * @param {Object}   e                Event object.
 	 * @param {Function} e.preventDefault Prevent default function.
 	 */
-	const removeLesson = ( e ) => {
+	const onBackspace = ( e ) => {
 		if ( 0 === title.length ) {
 			e.preventDefault();
 			removeBlock( clientId );
@@ -80,14 +84,13 @@ export const EditLessonBlock = ( props ) => {
 	 * @param {number} e.keyCode Pressed key code.
 	 */
 	const handleKeyDown = ( e ) => {
-		// Enter pressed.
-		if ( 13 === e.keyCode ) {
-			goToNextLesson();
-		}
-
-		// Backspace pressed.
-		if ( 8 === e.keyCode ) {
-			removeLesson( e );
+		switch ( e.keyCode ) {
+			case ENTER:
+				onEnter();
+				break;
+			case BACKSPACE:
+				onBackspace( e );
+				break;
 		}
 	};
 
@@ -131,7 +134,7 @@ export const EditLessonBlock = ( props ) => {
 					className="wp-block-sensei-lms-course-outline-lesson__input"
 					placeholder={ __( 'Lesson name', 'sensei-lms' ) }
 					value={ title }
-					onChange={ handleChange }
+					onChange={ updateTitle }
 					onKeyDown={ handleKeyDown }
 					style={ { fontSize } }
 				/>

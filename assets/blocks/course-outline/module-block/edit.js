@@ -15,6 +15,7 @@ import { OutlineAttributesContext } from '../course-block/edit';
 import SingleLineInput from '../single-line-input';
 import { ModuleStatus } from './module-status';
 import { ModuleBlockSettings } from './settings';
+import { useInsertLessonBlock } from './use-insert-lesson-block';
 
 /**
  * Edit module block component.
@@ -24,9 +25,9 @@ import { ModuleBlockSettings } from './settings';
  * @param {Object}   props.attributes             Block attributes.
  * @param {string}   props.attributes.title       Module title.
  * @param {string}   props.attributes.description Module description.
+ * @param {string}   props.attributes.blockStyle  Selected block style.
  * @param {Object}   props.mainColor              Header main color.
  * @param {Object}   props.textColor              Header text color.
- * @param {string}   props.attributes.blockStyle  Selected block style.
  * @param {Function} props.setAttributes          Block set attributes function.
  */
 export const EditModuleBlock = ( props ) => {
@@ -41,6 +42,9 @@ export const EditModuleBlock = ( props ) => {
 	const {
 		outlineAttributes: { collapsibleModules },
 	} = useContext( OutlineAttributesContext ) || { outlineAttributes: {} };
+
+	useInsertLessonBlock( props );
+
 	/**
 	 * Handle update name.
 	 *
@@ -80,9 +84,9 @@ export const EditModuleBlock = ( props ) => {
 				{ __( 'Lessons', 'sensei-lms' ) }
 			</h3>
 			<InnerBlocks
-				template={ [ [ 'sensei-lms/course-outline-lesson', {} ] ] }
 				allowedBlocks={ [ 'sensei-lms/course-outline-lesson' ] }
 				templateInsertUpdatesSelection={ false }
+				renderAppender={ () => null }
 			/>
 		</>
 	);
