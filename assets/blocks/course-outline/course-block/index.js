@@ -8,7 +8,13 @@ import save from './save';
 export default {
 	title: __( 'Course Outline', 'sensei-lms' ),
 	description: __( 'Manage your Sensei LMS course outline.', 'sensei-lms' ),
-	keywords: [ __( 'Outline', 'sensei-lms' ), __( 'Course', 'sensei-lms' ) ],
+	keywords: [
+		__( 'Course', 'sensei-lms' ),
+		__( 'Lessons', 'sensei-lms' ),
+		__( 'Modules', 'sensei-lms' ),
+		__( 'Outline', 'sensei-lms' ),
+		__( 'Structure', 'sensei-lms' ),
+	],
 	...metadata,
 	icon,
 	edit,
