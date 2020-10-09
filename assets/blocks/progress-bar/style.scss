@@ -16,20 +16,24 @@
 	height: 14px;
 	border: 0;
 	border-radius: 2px;
+	background-color: var(--bar-background-color);
 
 	&::-webkit-progress-bar {
 		border: 0;
 		border-radius: 2px;
+		background-color: var(--bar-background-color);
 	}
 
 	&::-webkit-progress-value {
 		border: 0;
 		border-radius: 2px;
+		background-color: var(--bar-color);
 	}
 
 	&::-moz-progress-bar {
 		border: 0;
 		border-radius: 2px;
+		background-color: var(--bar-color);
 	}
 
 }

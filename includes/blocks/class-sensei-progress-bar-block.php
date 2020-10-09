@@ -46,8 +46,8 @@ class Sensei_Progress_Bar_Block {
 	 * @access private
 	 */
 	public function register_block() {
-		register_block_type(
-			'sensei-lms/course-progress-bar',
+		register_block_type_from_metadata(
+			Sensei()->assets->src_path( 'blocks/progress-bar' ),
 			[
 				'render_callback' => [ $this, 'render_progress_bar' ],
 			]
@@ -57,9 +57,11 @@ class Sensei_Progress_Bar_Block {
 	/**
 	 * Renders the course progress bar block in the frontend.
 	 *
+	 * @param array $attributes The block attributes.
+	 *
 	 * @return string The HTML of the block.
 	 */
-	public function render_progress_bar() : string {
+	public function render_progress_bar( $attributes ) : string {
 		return '
 			<div>
 				<section class="wp-block-sensei-lms-progress-heading">
