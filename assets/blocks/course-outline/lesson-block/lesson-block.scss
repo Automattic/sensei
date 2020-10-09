@@ -1,0 +1,77 @@
+
+.wp-block-sensei-lms-course-outline-lesson {
+	display: flex;
+	align-items: center;
+	margin: 1px 0;
+	position: relative;
+
+
+	&, .entry-content &, .entry .entry-content & {
+		font-size: 1em;
+
+		font-family: inherit;
+		line-height: inherit;
+		text-decoration: inherit;
+		border: none;
+		font-weight: normal;
+		margin: 0;
+
+		&:not(.has-color) {
+			color: inherit;
+
+			&:hover {
+				color: inherit;
+			}
+		}
+	}
+
+	> span {
+		flex: 1;
+		padding: 20px $spacing;
+	}
+
+	&__chevron {
+		fill: currentColor;
+		width: 24px;
+		height: 24px;
+		margin: 0 16px;
+	}
+
+
+	.entry-content &,
+	.editor-styles-wrapper & {
+		&::before {
+			content: '';
+		}
+	}
+
+	&__status {
+		display: inline-block;
+		width: 24px;
+		height: 24px;
+		flex: 0 0 24px;
+		margin-left: $spacing;
+		border: solid 1px currentColor;
+		border-radius: 50%;
+		flex-shrink: 0;
+		fill: currentColor;
+	}
+
+	&:not(.completed) {
+		.wp-block-sensei-lms-course-outline-lesson__status * {
+			display: none;
+		}
+	}
+
+	&:hover::after {
+		content: '';
+		position: absolute;
+		pointer-events: none;
+		background-blend-mode: overlay;
+		background: rgba(#ccc, .15);
+		left: 0;
+		right: 0;
+		top: 0;
+		bottom: 0;
+	}
+}
