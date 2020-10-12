@@ -60,18 +60,16 @@ export const addColorSettings = ( settings ) => {
  * @param {Object} props Block wrapper extra props.
  * @return {Object} Block wrapper extra props.
  */
-function removeColorProps( props ) {
-	return {
-		...props,
-		className: props.className?.replace(
-			/\s*has-[\w-]*(color|background)/g,
-			''
-		),
-		style: omitBy( props.style, ( value, key ) =>
-			key.match( /(color|background|background-color)/ )
-		),
-	};
-}
+const removeColorProps = ( props ) => ( {
+	...props,
+	className: props.className?.replace(
+		/\s*has-[\w-]*(color|background)/g,
+		''
+	),
+	style: omitBy( props.style, ( value, key ) =>
+		key.match( /(color|background|background-color)/ )
+	),
+} );
 
 /**
  * Remove extra props from the save element wrapper added by the color support hook.
@@ -80,10 +78,10 @@ function removeColorProps( props ) {
  * @param {Object} blockType Block settings.
  * @return {Object} props Extra save props.
  */
-export function removeColorSaveProps( props, blockType ) {
+export const removeColorSaveProps = ( props, blockType ) => {
 	if ( ! isSenseiButton( blockType ) ) return props;
 	return removeColorProps( props );
-}
+};
 
 /**
  * Remove extra props from the edit element wrapper added by the color support hook.
@@ -91,7 +89,7 @@ export function removeColorSaveProps( props, blockType ) {
  * @param {Object} settings Block settings.
  * @return {Object} settings Block settings.
  */
-export function removeColorEditProps( settings ) {
+export const removeColorEditProps = ( settings ) => {
 	if ( ! isSenseiButton( settings ) ) return settings;
 
 	const baseGetEditWrapperProps = settings.getEditWrapperProps;
@@ -103,7 +101,7 @@ export function removeColorEditProps( settings ) {
 	}
 
 	return settings;
-}
+};
 
 /**
  * Remove extra props from the BlockList wrapperProps added by the color support hook.
