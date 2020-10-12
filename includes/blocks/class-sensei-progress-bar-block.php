@@ -32,7 +32,10 @@ class Sensei_Progress_Bar_Block {
 			return;
 		}
 
-		Sensei()->assets->enqueue( 'sensei-progress-bar', 'blocks/progress-bar/index.js' );
+		if ( is_admin() ) {
+			Sensei()->assets->enqueue( 'sensei-progress-bar', 'blocks/progress-bar/index.js' );
+		}
+
 		Sensei()->assets->enqueue( 'sensei-progress-bar', 'blocks/progress-bar/style.css' );
 	}
 
