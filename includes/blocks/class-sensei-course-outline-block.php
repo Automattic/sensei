@@ -163,16 +163,35 @@ class Sensei_Course_Outline_Block {
 	public function get_block_structure() {
 		global $post;
 
-		$structure = Sensei_Course_Structure::instance( $post->ID )->get( 'view' );
+		$context    = 'view';
+		$attributes = $this->block_attributes['course'];
+
+		if ( is_preview() && $this->can_current_user_edit_course( $post->ID ) ) {
+			$context               = 'edit';
+			$attributes['preview'] = true;
+		}
+
+		$structure = Sensei_Course_Structure::instance( $post->ID )->get( $context );
 
 		$this->add_block_attributes( $structure );
 
 		return [
 			'post_id'    => $post->ID,
-			'attributes' => $this->block_attributes['course'],
+			'attributes' => $attributes,
 			'blocks'     => $structure,
 		];
 
+	}
+
+	/**
+	 * Check user permission for editing a course.
+	 *
+	 * @param int $course_id Course post ID.
+	 *
+	 * @return bool Whether the user can edit the course.
+	 */
+	private function can_current_user_edit_course( $course_id ) {
+		return current_user_can( get_post_type_object( 'course' )->cap->edit_post, $course_id );
 	}
 
 	/**
