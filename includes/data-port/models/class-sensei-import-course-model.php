@@ -113,8 +113,6 @@ class Sensei_Import_Course_Model extends Sensei_Import_Model {
 		// We need to set the post content after modules have been created in order to map module ids properly.
 		$value = $this->get_value( Sensei_Data_Port_Course_Schema::COLUMN_DESCRIPTION );
 		if ( null !== $value ) {
-			$args['post_content'] =
-
 			wp_update_post(
 				[
 					'ID'           => $post_id,
