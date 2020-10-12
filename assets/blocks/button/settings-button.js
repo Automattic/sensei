@@ -8,7 +8,6 @@ import { __ } from '@wordpress/i18n';
 
 const MIN_BORDER_RADIUS_VALUE = 0;
 const MAX_BORDER_RADIUS_VALUE = 50;
-const INITIAL_BORDER_RADIUS_POSITION = 5;
 
 /**
  * Border radius control.
@@ -21,15 +20,14 @@ export const BorderPanel = ( { borderRadius, setAttributes } ) => {
 	return (
 		<PanelBody title={ __( 'Border settings', 'sensei-lms' ) }>
 			<RangeControl
-				value={ borderRadius }
 				label={ __( 'Border radius', 'sensei-lms' ) }
+				value={ borderRadius }
 				min={ MIN_BORDER_RADIUS_VALUE }
 				max={ MAX_BORDER_RADIUS_VALUE }
-				initialPosition={ INITIAL_BORDER_RADIUS_POSITION }
 				allowReset
 				onChange={ ( value ) =>
 					setAttributes( {
-						borderRadius: undefined === value ? '' : value,
+						borderRadius: value,
 					} )
 				}
 			/>
