@@ -105,6 +105,20 @@ export function removeColorEditProps( settings ) {
 	return settings;
 }
 
+/**
+ * Remove extra props from the BlockList wrapperProps added by the color support hook.
+ *
+ * @param {Function} BlockListBlock
+ */
+export const removeWrapperProps = ( BlockListBlock ) => ( props ) => {
+	let { name, wrapperProps } = props;
+	if ( isSenseiButton( name ) ) {
+		wrapperProps = removeColorProps( wrapperProps );
+	}
+
+	return <BlockListBlock { ...props } wrapperProps={ wrapperProps } />;
+};
+
 addFilter(
 	'blocks.getSaveContent.extraProps',
 	'sensei/button/removeColorSaveProps',
@@ -121,4 +135,11 @@ addFilter(
 	'blocks.registerBlockType',
 	'sensei/button/addColorSettings',
 	addColorSettings
+);
+
+addFilter(
+	'editor.BlockListBlock',
+	'core/color/with-color-palette-styles',
+	removeWrapperProps,
+	1
 );
