@@ -359,6 +359,8 @@ class Sensei_Import_Course_Model extends Sensei_Import_Model {
 			return false;
 		}
 
+		// We first check for the lesson id to be a lesson which was imported during the import process. If that fails
+		// we check if the lesson already exists in the database. This could happen in case of a course update.
 		$lesson_id = $this->task->get_job()->translate_import_id( Sensei_Data_Port_Lesson_Schema::POST_TYPE, 'id:' . $lesson_block['attrs']['id'] );
 		if ( null === $lesson_id && null === $this->task->get_job()->translate_import_id( Sensei_Data_Port_Lesson_Schema::POST_TYPE, $lesson_block['attrs']['id'] ) ) {
 			$this->add_line_warning(
