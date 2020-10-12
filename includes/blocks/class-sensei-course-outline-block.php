@@ -26,6 +26,13 @@ class Sensei_Course_Outline_Block {
 	];
 
 	/**
+	 * Rendered HTML output for the block.
+	 *
+	 * @var string
+	 */
+	private $block_content;
+
+	/**
 	 * Sensei_Course_Outline_Block constructor.
 	 */
 	public function __construct() {
@@ -204,12 +211,15 @@ class Sensei_Course_Outline_Block {
 	 * @return string Block HTML.
 	 */
 	public function render_course_outline_block( $attributes ) {
+		if ( $this->block_content ) {
+			return $this->block_content;
+		}
 		$this->block_attributes['course'] = $attributes;
 
 		$outline = $this->get_block_structure();
 
-		return Sensei_Course_Outline_Course_Block::render_course_outline_block( $outline );
-
+		$this->block_content = Sensei_Course_Outline_Course_Block::render_course_outline_block( $outline );
+		return $this->block_content;
 	}
 
 }
