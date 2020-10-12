@@ -21,7 +21,9 @@ const isSenseiButton = ( blockType ) => {
  * @return {Object} Block settings.
  */
 export const addColorSettings = ( settings ) => {
-	if ( ! isSenseiButton( settings ) ) return settings;
+	if ( ! isSenseiButton( settings ) ) {
+		return settings;
+	}
 
 	if ( settings.supports?.color && ! settings.attributes?.backgroundColor ) {
 		settings.edit = withColorSettings( {
@@ -79,7 +81,9 @@ const removeColorProps = ( props ) => ( {
  * @return {Object} props Extra save props.
  */
 export const removeColorSaveProps = ( props, blockType ) => {
-	if ( ! isSenseiButton( blockType ) ) return props;
+	if ( ! isSenseiButton( blockType ) ) {
+		return props;
+	}
 	return removeColorProps( props );
 };
 
@@ -90,7 +94,9 @@ export const removeColorSaveProps = ( props, blockType ) => {
  * @return {Object} settings Block settings.
  */
 export const removeColorEditProps = ( settings ) => {
-	if ( ! isSenseiButton( settings ) ) return settings;
+	if ( ! isSenseiButton( settings ) ) {
+		return settings;
+	}
 
 	const baseGetEditWrapperProps = settings.getEditWrapperProps;
 	if ( baseGetEditWrapperProps ) {
