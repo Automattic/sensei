@@ -172,13 +172,17 @@ class Sensei_Course_Outline_Block {
 
 		$context    = 'view';
 		$attributes = $this->block_attributes['course'];
+		$is_preview = is_preview() && $this->can_current_user_edit_course( $post->ID );
 
-		if ( is_preview() && $this->can_current_user_edit_course( $post->ID ) ) {
-			$context               = 'edit';
-			$attributes['preview'] = true;
+		if ( $is_preview ) {
+			$context = 'edit';
 		}
 
 		$structure = Sensei_Course_Structure::instance( $post->ID )->get( $context );
+
+		if ( $is_preview ) {
+			$attributes['preview_drafts'] = $this->has_draft( $structure );
+		}
 
 		$this->add_block_attributes( $structure );
 
@@ -188,6 +192,32 @@ class Sensei_Course_Outline_Block {
 			'blocks'     => $structure,
 		];
 
+	}
+
+	/**
+	 * Check if the course has draft lessons or empty modules.
+	 *
+	 * @param array $blocks The course structure.
+	 */
+	private function has_draft( $blocks ) {
+		foreach ( $blocks as $block ) {
+			switch ( $block['type'] ) {
+				case 'lesson':
+					if ( $block['draft'] ) {
+						return true;
+					}
+					break;
+				case 'module':
+					if ( empty( $block['lessons'] ) ) {
+						return true;
+					}
+					if ( $this->has_draft( $block['lessons'] ) ) {
+						return true;
+					}
+					break;
+			}
+		}
+		return false;
 	}
 
 	/**

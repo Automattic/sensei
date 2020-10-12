@@ -58,7 +58,7 @@ class Sensei_Course_Outline_Course_Block {
 
 		$notice = '';
 
-		if( ! empty( $attributes['preview'] ) ) {
+		if ( ! empty( $attributes['preview_drafts'] ) ) {
 			$notice = '<div class="sensei-message info">' . esc_html__( 'One or more lessons in this course are not published. Unpublished lessons are only displayed in preview mode and will not be displayed to learners.', 'sensei-lms' ) . '</div>';
 		}
 
