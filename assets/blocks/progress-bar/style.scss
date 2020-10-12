@@ -1,13 +1,11 @@
 .wp-block-sensei-lms-progress-heading {
-	display: flex;
+	div {
+		display: inline-block;
+		margin-right: 10px;
+	}
 
 	&__lessons {
 		font-weight: bold;
-		flex-basis: 10%;
-	}
-
-	&__completed {
-		flex-basis: 20%;
 	}
 }
 
