@@ -21,12 +21,14 @@ export const BlockStyles = {
 };
 
 /**
- * Button block base.
+ * Create a block type settings object for custom button-based blocks.
+ *
+ * Settings are merged into block settings, the rest of the options are passed on to the save and edit components.
  *
  * @param {Object} opts
  * @param {Object} opts.settings Block settings.
  */
-export const buttonBlock = ( { settings, ...options } ) => {
+export const createButtonBlockType = ( { settings, ...options } ) => {
 	options = {
 		tagName: 'a',
 		...options,

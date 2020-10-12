@@ -1,9 +1,9 @@
-import { buttonBlock } from './index';
+import { createButtonBlockType } from './index';
 
 /**
  * Take course button block.
  */
-export default buttonBlock( {
+export default createButtonBlockType( {
 	tagName: 'button',
 	settings: {
 		name: 'sensei-lms/button-take-course',
