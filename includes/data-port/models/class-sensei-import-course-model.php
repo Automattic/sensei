@@ -116,7 +116,7 @@ class Sensei_Import_Course_Model extends Sensei_Import_Model {
 			wp_update_post(
 				[
 					'ID'           => $post_id,
-					'post_content' => $this->migrate_post_contnet( $value ),
+					'post_content' => $this->migrate_post_content( $value ),
 				]
 			);
 		}
@@ -293,7 +293,7 @@ class Sensei_Import_Course_Model extends Sensei_Import_Model {
 	 *
 	 * @return string The migrated post content.
 	 */
-	private function migrate_post_contnet( $post_content ) {
+	private function migrate_post_content( $post_content ) {
 		if ( ! has_block( 'sensei-lms/course-outline', $post_content ) ) {
 			return $post_content;
 		}
