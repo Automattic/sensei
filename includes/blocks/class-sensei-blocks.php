@@ -54,6 +54,7 @@ class Sensei_Blocks {
 		// Init blocks.
 		if ( $sensei_main_instance->feature_flags->is_enabled( 'course_outline' ) ) {
 			new Sensei_Course_Outline_Block();
+			new Sensei_Progress_Bar_Block();
 		}
 	}
 
