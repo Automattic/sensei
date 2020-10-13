@@ -1,10 +1,4 @@
-import { registerBlockType } from '@wordpress/blocks';
-import CourseOutlineBlock from './course-block';
-import ModuleBlock from './module-block';
-import LessonBlock from './lesson-block';
+export { default as CourseOutlineBlock } from './course-block';
+export { default as CourseOutlineModuleBlock } from './module-block';
+export { default as CourseOutlineLessonBlock } from './lesson-block';
 import './store';
-
-[ CourseOutlineBlock, ModuleBlock, LessonBlock ].forEach( ( block ) => {
-	const { name, ...settings } = block;
-	registerBlockType( name, settings );
-} );
