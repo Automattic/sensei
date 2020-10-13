@@ -83,45 +83,18 @@ class Sensei_Import_Block_Migrator {
 	 * @return array The mapped block.
 	 */
 	private function map_outline_block_ids( array $outline_block ) : array {
-		if ( empty( $outline_block['innerBlocks'] ) ) {
-			return $outline_block;
-		}
+		return $this->map_inner_blocks(
+			$outline_block,
+			function( $inner_block ) {
+				if ( 'sensei-lms/course-outline-module' === $inner_block['blockName'] ) {
+					return $this->map_module_block_id( $inner_block );
+				} elseif ( 'sensei-lms/course-outline-lesson' === $inner_block['blockName'] ) {
+					return $this->map_lesson_block_id( $inner_block );
+				}
 
-		// Inner blocks are represented as an entry to the 'innerBlocks' array and a null value in the 'innerContent' array.
-		$inner_block_index   = 0;
-		$mapped_inner_blocks = [];
-		$inner_content       = [];
-
-		foreach ( $outline_block['innerContent'] as $chunk ) {
-			// If the content is not an inner block there is nothing to do.
-			if ( is_string( $chunk ) ) {
-				$inner_content[] = $chunk;
-				continue;
+				return $inner_block;
 			}
-
-			$inner_block = $outline_block['innerBlocks'][ $inner_block_index ];
-			// If the inner block is a Sensei one, map it.
-			if ( 'sensei-lms/course-outline-module' === $inner_block['blockName'] ) {
-				$mapped_block = $this->map_module_block_id( $inner_block );
-			} elseif ( 'sensei-lms/course-outline-lesson' === $inner_block['blockName'] ) {
-				$mapped_block = $this->map_lesson_block_id( $inner_block );
-			} else {
-				$mapped_block = $inner_block;
-			}
-
-			// Add the entries in 'innerBlocks' and 'innerContent' arrays only if it was successfully mapped.
-			if ( false !== $mapped_block ) {
-				$mapped_inner_blocks[] = $mapped_block;
-				$inner_content[]       = $chunk;
-			}
-
-			$inner_block_index++;
-		}
-
-		$outline_block['innerBlocks']  = $mapped_inner_blocks;
-		$outline_block['innerContent'] = $inner_content;
-
-		return $outline_block;
+		);
 	}
 
 	/**
@@ -199,23 +172,63 @@ class Sensei_Import_Block_Migrator {
 			return false;
 		}
 
-		$module_inner_blocks = [];
+		$module_block['attrs']['id'] = $term->term_id;
 
-		foreach ( $module_block['innerBlocks'] as $inner_block ) {
-			if ( 'sensei-lms/course-outline-lesson' === $inner_block['blockName'] ) {
-				$mapped_lesson_block = $this->map_lesson_block_id( $inner_block );
-
-				if ( false !== $mapped_lesson_block ) {
-					$module_inner_blocks[] = $mapped_lesson_block;
+		return $this->map_inner_blocks(
+			$module_block,
+			function( $inner_block ) {
+				if ( 'sensei-lms/course-outline-lesson' === $inner_block['blockName'] ) {
+					return $this->map_lesson_block_id( $inner_block );
 				}
-			} else {
-				$module_inner_blocks[] = $inner_block;
+
+				return $inner_block;
 			}
+		);
+	}
+
+	/**
+	 * Helper method which applies a mapping function to the inner blocks of a block.
+	 *
+	 * @param array    $block The block to map its inner blocks.
+	 * @param callable $map   The mapping function to apply to the inner blocks. It accepts a block as an argument and
+	 *                        should return the mapped block or false if the block shouldn't be mapped.
+	 *
+	 * @return array The mapped block.
+	 */
+	private function map_inner_blocks( array $block, callable $map ) : array {
+		if ( empty( $block['innerBlocks'] ) ) {
+			return $block;
 		}
 
-		$module_block['attrs']['id'] = $term->term_id;
-		$module_block['innerBlocks'] = $module_inner_blocks;
+		// Inner blocks are represented as an entry to the 'innerBlocks' array and a null value in the 'innerContent' array.
+		$inner_block_index   = 0;
+		$mapped_inner_blocks = [];
+		$inner_content       = [];
 
-		return $module_block;
+		foreach ( $block['innerContent'] as $chunk ) {
+			// If the content is not an inner block there is nothing to do.
+			if ( is_string( $chunk ) ) {
+				$inner_content[] = $chunk;
+				continue;
+			}
+
+			$inner_block = $block['innerBlocks'][ $inner_block_index ];
+
+			// Map the inner block.
+			$mapped_block = $map( $inner_block );
+
+			// Add the entries in 'innerBlocks' and 'innerContent' arrays only if it was successfully mapped.
+			if ( false !== $mapped_block ) {
+				$mapped_inner_blocks[] = $mapped_block;
+				$inner_content[]       = $chunk;
+			}
+
+			$inner_block_index++;
+		}
+
+		$block['innerBlocks']  = $mapped_inner_blocks;
+		$block['innerContent'] = $inner_content;
+
+		return $block;
 	}
 }
