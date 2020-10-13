@@ -113,10 +113,12 @@ class Sensei_Import_Course_Model extends Sensei_Import_Model {
 		// We need to set the post content after modules have been created in order to map module ids properly.
 		$value = $this->get_value( Sensei_Data_Port_Course_Schema::COLUMN_DESCRIPTION );
 		if ( null !== $value ) {
+			$migrator = new Sensei_Import_Block_Migrator( $this->get_post_id(), $this->task, $this );
+
 			wp_update_post(
 				[
 					'ID'           => $post_id,
-					'post_content' => $this->migrate_post_content( $value ),
+					'post_content' => $migrator->migrate( $value ),
 				]
 			);
 		}
@@ -284,143 +286,5 @@ class Sensei_Import_Course_Model extends Sensei_Import_Model {
 		if ( 'module' === $taxonomy ) {
 			delete_post_meta( $course_id, '_module_order' );
 		}
-	}
-
-	/**
-	 * Migrates the imported post content to use the ids of the newly created lessons and modules.
-	 *
-	 * @param string $post_content The post content.
-	 *
-	 * @return string The migrated post content.
-	 */
-	private function migrate_post_content( $post_content ) {
-		if ( ! has_block( 'sensei-lms/course-outline', $post_content ) ) {
-			return $post_content;
-		}
-
-		$blocks = parse_blocks( $post_content );
-
-		$i = 0;
-		foreach ( $blocks as $block ) {
-			if ( 'sensei-lms/course-outline' === $block['blockName'] ) {
-				$mapped_block = $this->map_outline_block_ids( $block );
-				break;
-			}
-			$i++;
-		}
-		$blocks[ $i ] = $mapped_block;
-
-		return serialize_blocks( $blocks );
-	}
-
-	/**
-	 * Maps the ids of an outlined block to use the newly created values.
-	 *
-	 * @param array $outline_block The outline block.
-	 *
-	 * @return array The mapped block.
-	 */
-	private function map_outline_block_ids( $outline_block ) {
-		if ( empty( $outline_block['innerBlocks'] ) ) {
-			return $outline_block;
-		}
-
-		$mapped_inner_blocks = [];
-		foreach ( $outline_block['innerBlocks'] as $inner_block ) {
-			if ( 'sensei-lms/course-outline-module' === $inner_block['blockName'] ) {
-				$mapped_block = $this->map_module_block_id( $inner_block );
-			} elseif ( 'sensei-lms/course-outline-lesson' === $inner_block['blockName'] ) {
-				$mapped_block = $this->map_lesson_block_id( $inner_block );
-			} else {
-				$mapped_block = $inner_block;
-			}
-
-			if ( false !== $mapped_block ) {
-				$mapped_inner_blocks[] = $mapped_block;
-			}
-		}
-
-		$outline_block['innerBlocks'] = $mapped_inner_blocks;
-
-		return $outline_block;
-	}
-
-	/**
-	 * Map the ids of a lesson block.
-	 *
-	 * @param array $lesson_block The lesson block.
-	 *
-	 * @return bool|array The lesson block or false if the id couldn't be mapped.
-	 */
-	private function map_lesson_block_id( $lesson_block ) {
-		if ( empty( $lesson_block['attrs']['id'] ) ) {
-			return false;
-		}
-
-		// We first check for the lesson id to be a lesson which was imported during the import process. If that fails
-		// we check if the lesson already exists in the database. This could happen in case of a course update.
-		$lesson_id = $this->task->get_job()->translate_import_id( Sensei_Data_Port_Lesson_Schema::POST_TYPE, 'id:' . $lesson_block['attrs']['id'] );
-		if ( null === $lesson_id && null === $this->task->get_job()->translate_import_id( Sensei_Data_Port_Lesson_Schema::POST_TYPE, $lesson_block['attrs']['id'] ) ) {
-			$this->add_line_warning(
-				// translators: The %s is the lesson id.
-				sprintf( __( 'Lesson with id %s which is referenced in course outline block not found.', 'sensei-lms' ), $lesson_block['attrs']['id'] ),
-				[
-					'code' => 'sensei_data_port_course_lesson_not_found',
-				]
-			);
-
-			return false;
-		}
-
-		$lesson_block['attrs']['id'] = $lesson_id;
-
-		return $lesson_block;
-	}
-
-	/**
-	 * Map the ids of a module block.
-	 *
-	 * @param array $module_block The module block.
-	 *
-	 * @return bool|array The mapped module block or false if the block couldn't be mapped.
-	 */
-	private function map_module_block_id( $module_block ) {
-		if ( empty( $module_block['attrs']['title'] ) ) {
-			$this->add_line_warning(
-				__( 'No title for module found.', 'sensei-lms' ),
-				[
-					'code' => 'sensei_data_port_module_title_not_found',
-				]
-			);
-
-			return false;
-		}
-
-		$term = Sensei_Data_Port_Utilities::get_module_for_course( $module_block['attrs']['title'], $this->get_post_id() );
-
-		if ( is_wp_error( $term ) ) {
-			$this->add_line_warning( $term->get_error_message(), [ 'code' => $term->get_error_code() ] );
-
-			return false;
-		}
-
-		$module_inner_blocks = [];
-
-		foreach ( $module_block['innerBlocks'] as $inner_block ) {
-			if ( 'sensei-lms/course-outline-lesson' === $inner_block['blockName'] ) {
-				$mapped_lesson_block = $this->map_lesson_block_id( $inner_block );
-
-				if ( false !== $mapped_lesson_block ) {
-					$module_inner_blocks[] = $mapped_lesson_block;
-				}
-			} else {
-				$module_inner_blocks[] = $inner_block;
-			}
-		}
-
-		$module_block['attrs']['id'] = $term->term_id;
-		$module_block['innerBlocks'] = $module_inner_blocks;
-
-		return $module_block;
 	}
 }
