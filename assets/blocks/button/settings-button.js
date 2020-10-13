@@ -18,7 +18,10 @@ const MAX_BORDER_RADIUS_VALUE = 50;
  */
 export const BorderPanel = ( { borderRadius, setAttributes } ) => {
 	return (
-		<PanelBody title={ __( 'Border settings', 'sensei-lms' ) }>
+		<PanelBody
+			title={ __( 'Border settings', 'sensei-lms' ) }
+			initialOpen={ false }
+		>
 			<RangeControl
 				label={ __( 'Border radius', 'sensei-lms' ) }
 				value={ borderRadius }
