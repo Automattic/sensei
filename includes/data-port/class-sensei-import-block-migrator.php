@@ -123,19 +123,34 @@ class Sensei_Import_Block_Migrator {
 		// we check if the lesson already exists in the database. This could happen in case of a course update.
 		$lesson_id = $this->task->get_job()->translate_import_id( Sensei_Data_Port_Lesson_Schema::POST_TYPE, 'id:' . $lesson_block['attrs']['id'] );
 
-		if ( null === $lesson_id && null === $this->task->get_job()->translate_import_id( Sensei_Data_Port_Lesson_Schema::POST_TYPE, $lesson_block['attrs']['id'] ) ) {
-			$this->import_model->add_line_warning(
-				// translators: The %s is the lesson id.
-				sprintf( __( 'Lesson with id %s which is referenced in course outline block not found.', 'sensei-lms' ), $lesson_block['attrs']['id'] ),
-				[
-					'code' => 'sensei_data_port_course_lesson_not_found',
-				]
-			);
+		if ( null === $lesson_id ) {
 
-			return false;
+			$args = [
+				'post_type'      => Sensei_Data_Port_Lesson_Schema::POST_TYPE,
+				'posts_per_page' => 1,
+				'post_status'    => 'any',
+				'fields'         => 'ids',
+				'p'              => $lesson_block['attrs']['id'],
+			];
+
+			if ( isset( $lesson_block['attrs']['title'] ) ) {
+				$args['title'] = $lesson_block['attrs']['title'];
+			}
+
+			if ( empty( get_posts( $args ) ) ) {
+				$this->import_model->add_line_warning(
+					// translators: The %1$d is the lesson id and the %2$s the lesson title.
+					sprintf( __( 'Lesson with id %1$d and title %2$s which is referenced in course outline block not found.', 'sensei-lms' ), $lesson_block['attrs']['id'], $lesson_block['attrs']['title'] ),
+					[
+						'code' => 'sensei_data_port_course_lesson_not_found',
+					]
+				);
+
+				return false;
+			}
+		} else {
+			$lesson_block['attrs']['id'] = $lesson_id;
 		}
-
-		$lesson_block['attrs']['id'] = $lesson_id;
 
 		return $lesson_block;
 	}
