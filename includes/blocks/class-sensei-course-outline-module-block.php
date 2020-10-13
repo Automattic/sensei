@@ -24,9 +24,6 @@ class Sensei_Course_Outline_Module_Block {
 	 * @return string Module HTML
 	 */
 	public static function render_module_block( $block, $course_id, $outline_attributes ) {
-		if ( empty( $block['lessons'] ) ) {
-			return '';
-		}
 
 		$progress_indicator = self::get_module_progress_indicator( $block['id'], $course_id );
 
