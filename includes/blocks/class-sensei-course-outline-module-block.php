@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Sensei_Course_Outline_Block
+ * Module block of the Course Outline block.
  */
 class Sensei_Course_Outline_Module_Block {
 
