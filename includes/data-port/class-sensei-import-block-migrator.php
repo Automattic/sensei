@@ -87,8 +87,20 @@ class Sensei_Import_Block_Migrator {
 			return $outline_block;
 		}
 
+		// Inner blocks are represented as an entry to the 'innerBlocks' array and a null value in the 'innerContent' array.
+		$inner_block_index   = 0;
 		$mapped_inner_blocks = [];
-		foreach ( $outline_block['innerBlocks'] as $inner_block ) {
+		$inner_content       = [];
+
+		foreach ( $outline_block['innerContent'] as $chunk ) {
+			// If the content is not an inner block there is nothing to do.
+			if ( is_string( $chunk ) ) {
+				$inner_content[] = $chunk;
+				continue;
+			}
+
+			$inner_block = $outline_block['innerBlocks'][ $inner_block_index ];
+			// If the inner block is a Sensei one, map it.
 			if ( 'sensei-lms/course-outline-module' === $inner_block['blockName'] ) {
 				$mapped_block = $this->map_module_block_id( $inner_block );
 			} elseif ( 'sensei-lms/course-outline-lesson' === $inner_block['blockName'] ) {
@@ -97,12 +109,17 @@ class Sensei_Import_Block_Migrator {
 				$mapped_block = $inner_block;
 			}
 
+			// Add the entries in 'innerBlocks' and 'innerContent' arrays only if it was successfully mapped.
 			if ( false !== $mapped_block ) {
 				$mapped_inner_blocks[] = $mapped_block;
+				$inner_content[]       = $chunk;
 			}
+
+			$inner_block_index++;
 		}
 
-		$outline_block['innerBlocks'] = $mapped_inner_blocks;
+		$outline_block['innerBlocks']  = $mapped_inner_blocks;
+		$outline_block['innerContent'] = $inner_content;
 
 		return $outline_block;
 	}
