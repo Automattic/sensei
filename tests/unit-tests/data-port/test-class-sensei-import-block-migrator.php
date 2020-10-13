@@ -29,6 +29,9 @@ class Sensei_Import_Block_Migrator_Test extends WP_UnitTestCase {
 		return parent::setUp();
 	}
 
+	/**
+	 * Tests that content is not modified when Sensei blocks do not exists.
+	 */
 	public function testContentWithNoBlockUnmodified() {
 		$job  = new Sensei_Data_Port_Job_Mock( 'test' );
 		$task = new Sensei_Import_Courses( $job );
@@ -43,6 +46,9 @@ class Sensei_Import_Block_Migrator_Test extends WP_UnitTestCase {
 		$this->assertEquals( $content, $migrator->migrate( $content ) );
 	}
 
+	/**
+	 * Tests that a lesson block has it's id mapped when translate_import_id returns a value.
+	 */
 	public function testLessonBlockIsMapped() {
 		$job = $this->getMockBuilder( Sensei_Import_Job::class )
 			->setConstructorArgs( [ 'test' ] )
@@ -72,6 +78,11 @@ class Sensei_Import_Block_Migrator_Test extends WP_UnitTestCase {
 		$this->assertEquals( $expected_content, $migrator->migrate( $content ) );
 	}
 
+	/**
+	 * Tests that lessons are not mapped when:
+	 * 1) translate_import_id doesn't return a translated id and the id doesn't exist in the database.
+	 * 2) The lesson id exists in the database but the Titles do not match.
+	 */
 	public function testLessonBlockIsNotIncludedWhenNotMapped() {
 		$job = $this->getMockBuilder( Sensei_Import_Job::class )
 			->setConstructorArgs( [ 'test' ] )
@@ -112,6 +123,9 @@ class Sensei_Import_Block_Migrator_Test extends WP_UnitTestCase {
 		$this->assertEquals( $expected_content, $migrator->migrate( $content ) );
 	}
 
+	/**
+	 * Tests that a module block is mapped when the module with the given name exists and it is linked with the course.
+	 */
 	public function testModuleBlockIsMapped() {
 		$job = $this->getMockBuilder( Sensei_Import_Job::class )
 			->setConstructorArgs( [ 'test' ] )
@@ -149,6 +163,9 @@ class Sensei_Import_Block_Migrator_Test extends WP_UnitTestCase {
 		$this->assertEquals( $expected_content, $migrator->migrate( $content ) );
 	}
 
+	/**
+	 * Tests that modules which do not exist in the databases are not mapped.
+	 */
 	public function testNotFoundModuleIsNotMapped() {
 		$job = $this->getMockBuilder( Sensei_Import_Job::class )
 			->setConstructorArgs( [ 'test' ] )

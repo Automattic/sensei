@@ -191,7 +191,7 @@ class Sensei_Import_Block_Migrator {
 	 *
 	 * @param array    $block The block to map its inner blocks.
 	 * @param callable $map   The mapping function to apply to the inner blocks. It accepts a block as an argument and
-	 *                        should return the mapped block or false if the block shouldn't be mapped.
+	 *                        should return the mapped block or false if the block shouldn't be included in the mapped block.
 	 *
 	 * @return array The mapped block.
 	 */
