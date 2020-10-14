@@ -11,7 +11,7 @@ import classnames from 'classnames';
  * @param {Object} props.barBackgroundColor Color object for the background of the progress bar.
  * @param {Object} props.textColor          Color object for the text.
  */
-export const EditProgressBarBlock = ( {
+export const EditCourseProgressBlock = ( {
 	className,
 	barColor,
 	barBackgroundColor,
@@ -74,4 +74,4 @@ export default withColorSettings( {
 		style: 'color',
 		label: __( 'Text color', 'sensei-lms' ),
 	},
-} )( EditProgressBarBlock );
+} )( EditCourseProgressBlock );

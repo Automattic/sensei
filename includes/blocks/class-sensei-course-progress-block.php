@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Sensei_Progress_Bar_Block class.
+ * File containing the Sensei_Course_Progress_Block class.
  *
  * @package sensei
  */
@@ -10,12 +10,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Sensei_Progress_Bar_Block
+ * Class Sensei_Course_Progress_Block
  */
-class Sensei_Progress_Bar_Block {
+class Sensei_Course_Progress_Block {
 
 	/**
-	 * Sensei_Progress_Bar_Block constructor.
+	 * Sensei_Course_Progress_Block constructor.
 	 */
 	public function __construct() {
 		add_action( 'enqueue_block_assets', [ $this, 'enqueue_block_assets' ] );
@@ -33,35 +33,35 @@ class Sensei_Progress_Bar_Block {
 		}
 
 		if ( is_admin() ) {
-			Sensei()->assets->enqueue( 'sensei-progress-bar', 'blocks/progress-bar/index.js' );
+			Sensei()->assets->enqueue( 'sensei-course-progress', 'blocks/course-progress/index.js' );
 		}
 
-		Sensei()->assets->enqueue( 'sensei-progress-bar', 'blocks/progress-bar/style.css' );
+		Sensei()->assets->enqueue( 'sensei-course-progress', 'blocks/course-progress/style.css' );
 	}
 
 
 	/**
-	 * Register progress bar block.
+	 * Register course progress block.
 	 *
 	 * @access private
 	 */
 	public function register_block() {
 		register_block_type_from_metadata(
-			Sensei()->assets->src_path( 'blocks/progress-bar' ),
+			Sensei()->assets->src_path( 'blocks/course-progress' ),
 			[
-				'render_callback' => [ $this, 'render_progress_bar' ],
+				'render_callback' => [ $this, 'render_course_progress' ],
 			]
 		);
 	}
 
 	/**
-	 * Renders the course progress bar block in the frontend.
+	 * Renders the course progress block in the frontend.
 	 *
 	 * @param array $attributes The block attributes.
 	 *
 	 * @return string The HTML of the block.
 	 */
-	public function render_progress_bar( $attributes ) : string {
+	public function render_course_progress( $attributes ) : string {
 
 		$text_css                   = Sensei_Block_Helpers::build_styles( $attributes );
 		$bar_background_css         = Sensei_Block_Helpers::build_styles(
