@@ -22,6 +22,7 @@ class Sensei_Feature_Flags {
 				'rest_api_v1_skip_permissions' => false,
 				'enrolment_provider_tooltip'   => false,
 				'course_outline'               => false,
+				'single_course_no_template'    => false,
 			)
 		);
 	}

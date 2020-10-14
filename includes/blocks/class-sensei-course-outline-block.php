@@ -28,10 +28,24 @@ class Sensei_Course_Outline_Block {
 	 * Sensei_Course_Outline_Block constructor.
 	 */
 	public function __construct() {
+		add_filter( 'sensei_single_course_legacy_template', [ 'Sensei_Course_Outline_Block', 'using_legacy_single_course_template' ] );
 		add_action( 'enqueue_block_assets', [ $this, 'enqueue_block_assets' ] );
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_block_editor_assets' ] );
 		add_action( 'init', [ $this, 'register_course_template' ], 101 );
 		add_action( 'init', [ $this, 'register_blocks' ] );
+	}
+
+	/**
+	 * Whether legacy single course template should be used.
+	 *
+	 * @param bool $enabled
+	 *
+	 * @return bool
+	 */
+	public static function using_legacy_single_course_template( $enabled ) {
+		return Sensei()->feature_flags->is_enabled( 'single_course_no_template' )
+			? ! has_block( 'sensei-lms/course-outline' )
+			: $enabled;
 	}
 
 	/**

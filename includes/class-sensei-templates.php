@@ -162,7 +162,7 @@ class Sensei_Templates {
 			*/
 			$file = null;
 
-		} elseif ( is_single() && get_post_type() == 'course' ) {
+		} elseif ( is_single() && get_post_type() == 'course' && apply_filters( 'sensei_single_course_legacy_template', true ) ) {
 
 			// possible backward compatible template include if theme overrides content-single-course.php
 			// this template was removed in 1.9.0 and code all moved into the main single-course.php file
