@@ -28,6 +28,13 @@ class Sensei_Blocks {
 	public $course_progress;
 
 	/**
+	 * Take course block.
+	 *
+	 * @var Sensei_Block_Take_Course
+	 */
+	public $take_course;
+
+	/**
 	 * Sensei_Blocks constructor .
 	 *
 	 * @param Sensei_Main $sensei
@@ -44,6 +51,7 @@ class Sensei_Blocks {
 		if ( $sensei->feature_flags->is_enabled( 'course_outline' ) ) {
 			$this->course_outline  = new Sensei_Course_Outline_Block();
 			$this->course_progress = new Sensei_Progress_Bar_Block();
+			$this->take_course     = new Sensei_Block_Take_Course();
 		}
 	}
 
