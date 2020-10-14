@@ -754,21 +754,16 @@ class Sensei_Messages {
 		 * @param string $post_type
 		 */
 		$title = wp_kses_post( apply_filters( 'sensei_single_title', $title, $post->post_type ) );
-		if ( $title ):
-		?>
-		<header>
-
-			<h1>
-
-				<?php
-				echo wp_kses_post( $title );
-				?>
-
-			</h1>
-
-		</header>
-
-		<?php
+		if ( $title ) :
+			?>
+			<header>
+				<h1>
+					<?php
+					echo wp_kses_post( $title );
+					?>
+				</h1>
+			</header>
+			<?php
 		endif;
 	} // End sensei_single_title()
 
