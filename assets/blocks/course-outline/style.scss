@@ -115,6 +115,10 @@ $spacing: 16px;
 			&:not(.has-color) {
 				color: #FFF;
 			}
+
+			h2 {
+				color: inherit;
+			}
 		}
 
 		#{$block}__progress-indicator {
