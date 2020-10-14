@@ -1,6 +1,6 @@
 import { registerBlockType } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
-import { EditProgressBarBlock as edit } from './edit';
+import edit from './edit';
 import metadata from './block';
 
 registerBlockType( 'sensei-lms/course-progress-bar', {

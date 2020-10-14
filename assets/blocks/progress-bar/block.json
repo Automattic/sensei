@@ -6,14 +6,23 @@
   },
   "attributes": {
     "textColor": {
+      "type": "string"
+    },
+    "customTextColor": {
       "type": "string",
       "default": ""
     },
     "barColor": {
+      "type": "string"
+    },
+    "customBarColor": {
       "type": "string",
       "default": "#0064B4"
     },
     "barBackgroundColor": {
+      "type": "string"
+    },
+    "customBarBackgroundColor": {
       "type": "string",
       "default": "#E6E6E6"
     }

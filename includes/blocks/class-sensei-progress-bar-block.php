@@ -62,22 +62,33 @@ class Sensei_Progress_Bar_Block {
 	 * @return string The HTML of the block.
 	 */
 	public function render_progress_bar( $attributes ) : string {
-		$bar_style            = '--bar-color: ' . $attributes['barColor'];
-		$bar_background_style = '--bar-background-color: ' . $attributes['barBackgroundColor'];
-		$text_style           = empty( $attributes['textColor'] ) ? '' : 'color: ' . $attributes['textColor'];
+
+		$text_css                   = Sensei_Block_Helpers::build_styles( $attributes );
+		$bar_background_css         = Sensei_Block_Helpers::build_styles(
+			$attributes,
+			[
+				'textColor'          => null,
+				'barBackgroundColor' => 'background-color',
+			]
+		);
+		$bar_css                    = Sensei_Block_Helpers::build_styles(
+			$attributes,
+			[
+				'textColor' => null,
+				'barColor'  => 'background-color',
+			]
+		);
+		$bar_css['inline_styles'][] = 'width: 60%';
 
 		return '
-			<div>
-				<section class="wp-block-sensei-lms-progress-heading" style="' . $text_style . '">
+			<div ' . Sensei_Block_Helpers::render_style_attributes( $attributes['className'] ?? [], $text_css ) . '>
+				<section class="wp-block-sensei-lms-progress-heading">
 					<div class="wp-block-sensei-lms-progress-heading__lessons">5 Lessons</div>
 					<div class="wp-block-sensei-lms-progress-heading__completed">3 completed (60%)</div>
 				</section>
-				<progress
-					style="' . implode( ';', [ $bar_style, $bar_background_style ] ) . '"
-					class="wp-block-sensei-lms-progress-bar"
-					max="100"
-					value="50"
-				/>
+				<div ' . Sensei_Block_Helpers::render_style_attributes( [ 'wp-block-sensei-lms-progress-bar' ], $bar_background_css ) . '>
+					<div ' . Sensei_Block_Helpers::render_style_attributes( [], $bar_css ) . '></div>
+				</div>
 			</div>
 		';
 	}
