@@ -49,9 +49,9 @@ class Sensei_Block_Take_Course {
 		$course_id = $post->ID;
 
 		$nonce = wp_nonce_field( 'woothemes_sensei_start_course_noonce', 'woothemes_sensei_start_course_noonce', false, false );
-
 		return ( '
 			<form method="POST" action="' . esc_url( get_permalink( $course_id ) ) . '">
+			<input type="hidden" name="course_start" value="1" />
 			' . $nonce . '
 			' . $content . '
 			</form>
