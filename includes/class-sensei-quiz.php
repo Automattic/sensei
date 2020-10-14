@@ -1199,7 +1199,7 @@ class Sensei_Quiz {
 			</header>
 			<?php
 		endif;
-	} //end the_title()
+	}//end the_title()
 
 	/**
 	 * Output the sensei quiz status message.

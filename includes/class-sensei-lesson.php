@@ -4193,14 +4193,11 @@ class Sensei_Lesson {
 			<header class="lesson-title">
 				<?php if ( $title ) : ?>
 					<h1>
-
 						<?php
 						echo wp_kses_post( $title );
 						?>
-
 					</h1>
-
-					<?php 
+					<?php
 				endif;
 				if ( $is_preview ) {
 					echo wp_kses_post( Sensei()->frontend->sensei_lesson_preview_title_tag( $course_id ) );

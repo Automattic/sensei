@@ -765,7 +765,7 @@ class Sensei_Messages {
 			</header>
 			<?php
 		endif;
-	} // End sensei_single_title()
+	}//end the_title()
 
 	/**
 	 * Generates the my messages
