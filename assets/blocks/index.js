@@ -1,5 +1,5 @@
 import { registerBlockType } from '@wordpress/blocks';
-import TakeCourseButtonBlock from './button/take-course';
+import TakeCourseButtonBlock from './take-course';
 import {
 	CourseOutlineBlock,
 	CourseOutlineLessonBlock,

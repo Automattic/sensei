@@ -1,4 +1,4 @@
-import { createButtonBlockType } from './index';
+import { createButtonBlockType } from '../button';
 
 /**
  * Take course button block.
