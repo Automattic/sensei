@@ -761,7 +761,7 @@ class Sensei_Messages {
 			<h1>
 
 				<?php
-				echo $title;
+				echo wp_kses_post( $title );
 				?>
 
 			</h1>
