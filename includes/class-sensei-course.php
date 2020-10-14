@@ -3161,7 +3161,7 @@ class Sensei_Course {
 	}
 
 	/**
-	 * Output the title for the single lesson page
+	 * Output the title for the single course page
 	 *
 	 * @global $post
 	 * @since 1.9.0
@@ -3173,16 +3173,18 @@ class Sensei_Course {
 		}
 		global $post;
 
+		/**
+		 * Filter documented in class-sensei-messages.php the_title
+		 */
+		$title = wp_kses_post( apply_filters( 'sensei_single_title', get_the_title( $post ), $post->post_type ) );
+		if ( $title ):
 		?>
 		<header>
 
 			<h1>
 
 				<?php
-				/**
-				 * Filter documented in class-sensei-messages.php the_title
-				 */
-				echo wp_kses_post( apply_filters( 'sensei_single_title', get_the_title( $post ), $post->post_type ) );
+				echo $title;
 				?>
 
 			</h1>
@@ -3190,6 +3192,7 @@ class Sensei_Course {
 		</header>
 
 		<?php
+		endif;
 
 	}//end the_title()
 

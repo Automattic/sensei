@@ -745,22 +745,23 @@ class Sensei_Messages {
 		} else {
 			$title = esc_html( get_the_title( $post->ID ) );
 		}
-
+		/**
+		 * Filter Sensei single title
+		 *
+		 * @since 1.8.0
+		 * @param string $title
+		 * @param string $template
+		 * @param string $post_type
+		 */
+		$title = wp_kses_post( apply_filters( 'sensei_single_title', $title, $post->post_type ) );
+		if ( $title ):
 		?>
 		<header>
 
 			<h1>
 
 				<?php
-				/**
-				 * Filter Sensei single title
-				 *
-				 * @since 1.8.0
-				 * @param string $title
-				 * @param string $template
-				 * @param string $post_type
-				 */
-				echo wp_kses_post( apply_filters( 'sensei_single_title', $title, $post->post_type ) );
+				echo $title;
 				?>
 
 			</h1>
@@ -768,7 +769,7 @@ class Sensei_Messages {
 		</header>
 
 		<?php
-
+		endif;
 	} // End sensei_single_title()
 
 	/**

@@ -1184,16 +1184,18 @@ class Sensei_Quiz {
 	 * @since 1.9.0
 	 */
 	public static function the_title() {
+		/**
+		 * Filter documented in class-sensei-messages.php the_title
+		 */
+		$title = wp_kses_post( apply_filters( 'sensei_single_title', get_the_title( get_post() ), get_post_type( get_the_ID() ) ) );
+		if ( $title ):
 		?>
 		 <header>
 
 			 <h1>
 
 				<?php
-				/**
-				 * Filter documented in class-sensei-messages.php the_title
-				 */
-				echo wp_kses_post( apply_filters( 'sensei_single_title', get_the_title( get_post() ), get_post_type( get_the_ID() ) ) );
+				echo $title;
 				?>
 
 			 </h1>
@@ -1201,7 +1203,8 @@ class Sensei_Quiz {
 		 </header>
 
 		 <?php
-	}//end the_title()
+		endif;
+	} //end the_title()
 
 	/**
 	 * Output the sensei quiz status message.
