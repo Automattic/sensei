@@ -18,27 +18,8 @@ class Sensei_Course_Progress_Block {
 	 * Sensei_Course_Progress_Block constructor.
 	 */
 	public function __construct() {
-		add_action( 'enqueue_block_assets', [ $this, 'enqueue_block_assets' ] );
 		add_action( 'init', [ $this, 'register_block' ] );
 	}
-
-	/**
-	 * Enqueue frontend and admin assets.
-	 *
-	 * @access private
-	 */
-	public function enqueue_block_assets() {
-		if ( 'course' !== get_post_type() ) {
-			return;
-		}
-
-		if ( is_admin() ) {
-			Sensei()->assets->enqueue( 'sensei-course-progress', 'blocks/course-progress/index.js' );
-		}
-
-		Sensei()->assets->enqueue( 'sensei-course-progress', 'blocks/course-progress/style.css' );
-	}
-
 
 	/**
 	 * Register course progress block.
