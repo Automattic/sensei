@@ -1,4 +1,4 @@
-import { createButtonBlockType } from '../button';
+import { BlockStyles, createButtonBlockType } from '../button';
 
 /**
  * Take course button block.
@@ -13,5 +13,6 @@ export default createButtonBlockType( {
 				default: 'Contact teacher',
 			},
 		},
+		styles: [ BlockStyles.Fill, BlockStyles.Outline, BlockStyles.Link ],
 	},
 } );
