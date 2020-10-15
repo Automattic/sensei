@@ -589,6 +589,7 @@ class Sensei_Course_Structure {
 	 */
 	private function sanitize_structure( array $raw_structure ) {
 		list( $lesson_ids, $module_ids, $module_titles ) = $this->flatten_structure( $raw_structure );
+		$module_titles                                   = array_filter( $module_titles );
 
 		if (
 			array_unique( $module_ids ) !== $module_ids
