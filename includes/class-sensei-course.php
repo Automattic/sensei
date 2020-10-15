@@ -3549,8 +3549,13 @@ class Sensei_Course {
 			return;
 		}
 
-		$course_id     = $this->course_id_updating;
-		$post          = get_post( $course_id );
+		$course_id = $this->course_id_updating;
+		$post      = get_post( $course_id );
+
+		if ( empty( $post ) ) {
+			return;
+		}
+
 		$content       = $post->post_content;
 		$product_ids   = get_post_meta( $course_id, '_course_woocommerce_product', false );
 		$product_count = empty( $product_ids ) ? 0 : count( array_filter( $product_ids, 'is_numeric' ) );
