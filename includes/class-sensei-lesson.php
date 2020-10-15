@@ -4057,7 +4057,7 @@ class Sensei_Lesson {
 	} // end user_not_taking_course_message
 
 	/**
-	 * Outputs the lessons course signup lingk
+	 * Outputs the lessons course signup link
 	 *
 	 * This hook runs inside the single lesson page.
 	 *
@@ -4067,12 +4067,12 @@ class Sensei_Lesson {
 
 		$course_id = Sensei()->lesson->get_course_id( get_the_ID() );
 
-		if ( empty( $course_id ) || 'course' !== get_post_type( $course_id ) || sensei_all_access() || Sensei_Utils::is_preview_lesson( get_the_ID() ) ) {
+		if ( empty( $course_id ) || Sensei_Utils::is_preview_lesson( get_the_ID() ) ) {
 			return;
 		}
 
-		$show_course_signup_notice = sensei_is_login_required() && ! Sensei_Course::is_user_enrolled( $course_id );
-
+		$show_course_signup_notice = is_user_logged_in() && ! Sensei()->course->can_access_course_content( $course_id );
+		
 		/**
 		 * Filter for if we should show the course sign up notice on the lesson page.
 		 *
