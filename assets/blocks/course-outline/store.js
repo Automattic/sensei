@@ -1,6 +1,6 @@
 import { apiFetch, controls as dataControls } from '@wordpress/data-controls';
 import { dispatch, registerStore, select, subscribe } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { createReducerFromActionMap } from '../../shared/data/store-helpers';
 import { isEqual } from 'lodash';
 
@@ -40,16 +40,17 @@ const actions = {
 			yield actions.setStructure( result );
 
 			yield dispatch( 'core/notices' ).removeNotice(
-				'course-outline-update-error'
+				'course-outline-save-error'
 			);
 		} catch ( error ) {
-			yield dispatch( 'core/notices' ).createErrorNotice(
-				[
-					__( 'Course Outline update failed:', 'sensei-lms' ),
-					error.message,
-				].join( ' ' ),
-				{ id: 'course-outline-update-error' }
+			const errorMessage = sprintf(
+				/* translators: Error message. */
+				__( 'The course could not be saved. %s', 'sensei-lms' ),
+				error.message
 			);
+			yield dispatch( 'core/notices' ).createErrorNotice( errorMessage, {
+				id: 'course-outline-save-error',
+			} );
 			yield actions.setEditorDirty( false );
 		}
 
