@@ -720,7 +720,7 @@ class Sensei_Course_Structure {
 		if ( ! isset( $raw_item['title'] ) || '' === trim( sanitize_text_field( $raw_item['title'] ) ) ) {
 			return new WP_Error(
 				'sensei_course_structure_missing_title',
-				__( 'All items must have a `title` set.', 'sensei-lms' )
+				__( 'Please ensure all items have a name before saving.', 'sensei-lms' )
 			);
 		}
 
