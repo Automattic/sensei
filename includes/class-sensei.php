@@ -909,7 +909,7 @@ class Sensei_Main {
 					$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __( 'Restricted Access', 'sensei-lms' );
 					$course_link                        = '<a href="' . esc_url( get_permalink( get_post_meta( get_post_meta( $post->ID, '_quiz_lesson', true ), '_lesson_course', true ) ) ) . '">' . __( 'course', 'sensei-lms' ) . '</a>';
 					// translators: The placeholder %1$s is a link to the Course.
-					$this->permissions_message['message'] = sprintf( __( 'Please sign up for the %1$s before taking this Quiz.', 'sensei-lms' ), $course_link );
+					$this->permissions_message['message'] = sprintf( __( 'Please sign up for the %1$s before taking this quiz.', 'sensei-lms' ), $course_link );
 				} // End if().
 				break;
 			default:
