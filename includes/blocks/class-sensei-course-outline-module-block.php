@@ -23,12 +23,12 @@ class Sensei_Course_Outline_Module_Block {
 	 *
 	 * @return string Module HTML
 	 */
-	public static function render_module_block( $block, $course_id, $outline_attributes ) {
+	public function render_module_block( $block, $course_id, $outline_attributes ) {
 		if ( empty( $block['lessons'] ) ) {
 			return '';
 		}
 
-		$progress_indicator = self::get_module_progress_indicator( $block['id'], $course_id );
+		$progress_indicator = $this->get_module_progress_indicator( $block['id'], $course_id );
 
 		$class_name = Sensei_Block_Helpers::block_class_with_default_style( $block['attributes'] );
 
@@ -80,7 +80,7 @@ class Sensei_Course_Outline_Module_Block {
 			implode(
 				'',
 				array_map(
-					[ 'Sensei_Course_Outline_Lesson_Block', 'render_lesson_block' ],
+					[ Sensei()->blocks->course_outline->lesson, 'render_lesson_block' ],
 					$block['lessons']
 				)
 			)
@@ -98,7 +98,7 @@ class Sensei_Course_Outline_Module_Block {
 	 *
 	 * @return string Module HTML
 	 */
-	private static function get_module_progress_indicator( $module_id, $course_id ) {
+	private function get_module_progress_indicator( $module_id, $course_id ) {
 
 		$module_progress = Sensei()->modules->get_user_module_progress( $module_id, $course_id, get_current_user_id() );
 

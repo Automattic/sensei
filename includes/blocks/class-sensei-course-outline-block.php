@@ -26,6 +26,27 @@ class Sensei_Course_Outline_Block {
 	];
 
 	/**
+	 * Course outline parent block.
+	 *
+	 * @var Sensei_Course_Outline_Course_Block
+	 */
+	public $course;
+
+	/**
+	 * Course outline module block.
+	 *
+	 * @var Sensei_Course_Outline_Module_Block
+	 */
+	public $module;
+
+	/**
+	 * Course outline module block
+	 *
+	 * @var Sensei_Course_Outline_Lesson_Block
+	 */
+	public $lesson;
+
+	/**
 	 * Sensei_Course_Outline_Block constructor.
 	 */
 	public function __construct() {
@@ -33,6 +54,10 @@ class Sensei_Course_Outline_Block {
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_block_editor_assets' ] );
 		add_action( 'init', [ $this, 'register_course_template' ], 101 );
 		add_action( 'init', [ $this, 'register_blocks' ] );
+
+		$this->course = new Sensei_Course_Outline_Course_Block();
+		$this->lesson = new Sensei_Course_Outline_Lesson_Block();
+		$this->module = new Sensei_Course_Outline_Module_Block();
 	}
 
 	/**
@@ -189,7 +214,7 @@ class Sensei_Course_Outline_Block {
 
 		$outline = $this->get_block_structure();
 
-		return Sensei_Course_Outline_Course_Block::render_course_outline_block( $outline );
+		return $this->course->render_course_outline_block( $outline );
 
 	}
 

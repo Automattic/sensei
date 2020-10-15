@@ -21,7 +21,7 @@ class Sensei_Course_Outline_Lesson_Block {
 	 *
 	 * @return string Lesson HTML
 	 */
-	public static function render_lesson_block( $block ) {
+	public function render_lesson_block( $block ) {
 		$lesson_id = $block['id'];
 		$classes   = [ 'wp-block-sensei-lms-course-outline-lesson' ];
 

@@ -20,7 +20,7 @@ class Sensei_Course_Outline_Course_Block {
 	 *
 	 * @return string
 	 */
-	public static function render_svg_icon_library() {
+	public function render_svg_icon_library() {
 		return '<svg xmlns="http://www.w3.org/2000/svg" style="display: none">
 			<symbol id="sensei-chevron-right" viewBox="0 0 24 24">
 				<path d="M10.6 6L9.4 7l4.6 5-4.6 5 1.2 1 5.4-6z" fill="" />
@@ -37,13 +37,11 @@ class Sensei_Course_Outline_Course_Block {
 	/**
 	 * Render Course Outline block.
 	 *
-	 * @access private
-	 *
 	 * @param array $outline Outline block attributes and inner blocks.
 	 *
 	 * @return string Block HTML.
 	 */
-	public static function render_course_outline_block( $outline ) {
+	public function render_course_outline_block( $outline ) {
 
 		$attributes = $outline['attributes'];
 		$blocks     = $outline['blocks'];
@@ -56,7 +54,7 @@ class Sensei_Course_Outline_Course_Block {
 			]
 		);
 
-		$icons = self::render_svg_icon_library();
+		$icons = $this->render_svg_icon_library();
 
 		return '
 			' . ( ! empty( $blocks ) ? $icons : '' ) . '
@@ -67,11 +65,11 @@ class Sensei_Course_Outline_Course_Block {
 				array_map(
 					function( $block ) use ( $post_id, $attributes ) {
 						if ( 'module' === $block['type'] ) {
-							return Sensei_Course_Outline_Module_Block::render_module_block( $block, $post_id, $attributes );
+							return Sensei()->blocks->course_outline->module->render_module_block( $block, $post_id, $attributes );
 						}
 
 						if ( 'lesson' === $block['type'] ) {
-							return Sensei_Course_Outline_Lesson_Block::render_lesson_block( $block );
+							return Sensei()->blocks->course_outline->lesson->render_lesson_block( $block );
 						}
 					},
 					$blocks
