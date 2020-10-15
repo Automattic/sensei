@@ -38,12 +38,17 @@ const actions = {
 				data: { structure: yield getEditorStructure() },
 			} );
 			yield actions.setStructure( result );
+
+			yield dispatch( 'core/notices' ).removeNotice(
+				'course-outline-update-error'
+			);
 		} catch ( error ) {
 			yield dispatch( 'core/notices' ).createErrorNotice(
 				[
 					__( 'Course Outline update failed:', 'sensei-lms' ),
 					error.message,
-				].join( ' ' )
+				].join( ' ' ),
+				{ id: 'course-outline-update-error' }
 			);
 			yield actions.setEditorDirty( false );
 		}
