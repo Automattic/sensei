@@ -594,11 +594,17 @@ class Sensei_Course_Structure {
 		if (
 			array_unique( $module_ids ) !== $module_ids
 			|| array_unique( $lesson_ids ) !== $lesson_ids
-			|| array_unique( $module_titles ) !== $module_titles
 		) {
 			return new WP_Error(
 				'sensei_course_structure_duplicate_items',
 				__( 'Individual lesson or modules cannot appear multiple times in the same course', 'sensei-lms' )
+			);
+		}
+
+		if ( array_unique( $module_titles ) !== $module_titles ) {
+			return new WP_Error(
+				'sensei_course_structure_duplicate_module_title',
+				__( 'Different modules cannot have the same name', 'sensei-lms' )
 			);
 		}
 

@@ -648,6 +648,35 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test to make sure saving a duplicated module fails.
+	 */
+	public function testSaveDuplicatedModule() {
+		$this->login_as_admin();
+
+		$course_id     = $this->factory->course->create();
+		$new_structure = [
+			[
+				'id'      => 10,
+				'type'    => 'module',
+				'title'   => 'A',
+				'lessons' => [],
+			],
+			[
+				'id'      => 10,
+				'type'    => 'module',
+				'title'   => 'B',
+				'lessons' => [],
+			],
+		];
+
+		$course_structure = Sensei_Course_Structure::instance( $course_id );
+		$save_result      = $course_structure->save( $new_structure );
+
+		$this->assertWPError( $save_result );
+		$this->assertEquals( 'sensei_course_structure_duplicate_items', $save_result->get_error_code() );
+	}
+
+	/**
 	 * Test to make sure saving a course with two identically named modules fails.
 	 */
 	public function testSaveIdenticalModules() {
@@ -671,7 +700,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 		$save_result      = $course_structure->save( $new_structure );
 
 		$this->assertWPError( $save_result );
-		$this->assertEquals( 'sensei_course_structure_duplicate_items', $save_result->get_error_code() );
+		$this->assertEquals( 'sensei_course_structure_duplicate_module_title', $save_result->get_error_code() );
 	}
 
 
