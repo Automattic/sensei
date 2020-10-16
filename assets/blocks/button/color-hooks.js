@@ -64,11 +64,11 @@ export const addColorSettings = ( settings ) => {
  */
 const removeColorProps = ( props ) => ( {
 	...props,
-	className: props.className?.replace(
+	className: props?.className?.replace(
 		/\s*has-[\w-]*(color|background)/g,
 		''
 	),
-	style: omitBy( props.style, ( value, key ) =>
+	style: omitBy( props?.style, ( value, key ) =>
 		key.match( /(color|background|background-color)/ )
 	),
 } );
@@ -116,7 +116,7 @@ export const removeColorEditProps = ( settings ) => {
  */
 export const removeWrapperProps = ( BlockListBlock ) => ( props ) => {
 	let { name, wrapperProps } = props;
-	if ( isSenseiButton( name ) ) {
+	if ( isSenseiButton( name ) && wrapperProps ) {
 		wrapperProps = removeColorProps( wrapperProps );
 	}
 
@@ -143,7 +143,7 @@ addFilter(
 
 addFilter(
 	'editor.BlockListBlock',
-	'core/color/with-color-palette-styles',
+	'sensei/button/removeWrapperProps',
 	removeWrapperProps,
-	1
+	99
 );
