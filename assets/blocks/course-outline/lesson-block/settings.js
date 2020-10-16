@@ -32,20 +32,22 @@ export const LessonBlockSettings = ( {
 		select( 'core/block-editor' ).getSettings()
 	);
 
+	const editLessonLink = (
+		<ExternalLink
+			href={ `post.php?post=${ id }&action=edit` }
+			target="lesson"
+			className="wp-block-sensei-lms-course-outline-lesson__edit"
+		>
+			{ __( 'Edit lesson', 'sensei-lms' ) }
+		</ExternalLink>
+	);
+
 	return (
 		<>
 			<InspectorControls>
 				{ id && (
 					<PanelBody title={ __( 'Lesson', 'sensei-lms' ) }>
-						<h2>
-							<ExternalLink
-								href={ `post.php?post=${ id }&action=edit` }
-								target="lesson"
-								className="wp-block-sensei-lms-course-outline-lesson__edit"
-							>
-								{ __( 'Edit lesson', 'sensei-lms' ) }
-							</ExternalLink>
-						</h2>
+						<h2>{ editLessonLink }</h2>
 						<p>
 							{ __(
 								'Edit details such as lesson content, prerequisite, quiz settings and more.',
@@ -76,15 +78,7 @@ export const LessonBlockSettings = ( {
 			</InspectorControls>
 			<BlockControls>
 				<ToolbarGroup>
-					<ToolbarButton>
-						<ExternalLink
-							href={ `post.php?post=${ id }&action=edit` }
-							target="lesson"
-							className="wp-block-sensei-lms-course-outline-lesson__edit"
-						>
-							{ __( 'Edit lesson', 'sensei-lms' ) }
-						</ExternalLink>
-					</ToolbarButton>
+					<ToolbarButton>{ editLessonLink }</ToolbarButton>
 				</ToolbarGroup>
 			</BlockControls>
 		</>
