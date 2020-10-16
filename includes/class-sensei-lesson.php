@@ -2233,7 +2233,7 @@ class Sensei_Lesson {
 
 		// Make sure other sensei columns stay directly behind the new columns.
 		$other_sensei_culumns = [
-			'taxonomy-module'
+			'taxonomy-module',
 		];
 		foreach ( $other_sensei_culumns as $column_key ) {
 			if ( isset( $defaults[ $column_key ] ) ) {
@@ -2241,7 +2241,7 @@ class Sensei_Lesson {
 			}
 		}
 
-		// Add all remaining columns at the end. 
+		// Add all remaining columns at the end.
 		foreach ( $defaults as $column_key => $column_value ) {
 			if ( ! isset( $new_columns[ $column_key ] ) ) {
 				$new_columns[ $column_key ] = $column_value;

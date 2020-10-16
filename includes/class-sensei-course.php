@@ -687,7 +687,7 @@ class Sensei_Course {
 		$other_sensei_culumns = [
 			'taxonomy-module',
 			'teacher',
-			'module_order'
+			'module_order',
 		];
 		foreach ( $other_sensei_culumns as $column_key ) {
 			if ( isset( $defaults[ $column_key ] ) ) {
@@ -695,7 +695,7 @@ class Sensei_Course {
 			}
 		}
 
-		// Add all remaining columns at the end. 
+		// Add all remaining columns at the end.
 		foreach ( $defaults as $column_key => $column_value ) {
 			if ( ! isset( $new_columns[ $column_key ] ) ) {
 				$new_columns[ $column_key ] = $column_value;

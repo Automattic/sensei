@@ -79,7 +79,7 @@ class Sensei_Question {
 		unset( $defaults['taxonomy-question-type'] );
 		unset( $defaults['taxonomy-question-category'] );
 
-		// Add all remaining columns at the end. 
+		// Add all remaining columns at the end.
 		foreach ( $defaults as $column_key => $column_value ) {
 			if ( ! isset( $new_columns[ $column_key ] ) ) {
 				$new_columns[ $column_key ] = $column_value;
