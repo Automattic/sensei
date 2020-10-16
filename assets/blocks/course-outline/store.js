@@ -51,7 +51,6 @@ const actions = {
 			yield dispatch( 'core/notices' ).createErrorNotice( errorMessage, {
 				id: 'course-outline-save-error',
 			} );
-			yield actions.setEditorDirty( false );
 		}
 
 		yield { type: 'SAVING', isSaving: false };
