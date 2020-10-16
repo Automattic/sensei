@@ -39,10 +39,6 @@ const actions = {
 				data: { structure: yield getEditorStructure() },
 			} );
 			yield actions.setStructure( result );
-
-			yield dispatch( 'core/notices' ).removeNotice(
-				'course-outline-save-error'
-			);
 		} catch ( error ) {
 			const errorMessage = sprintf(
 				/* translators: Error message. */
@@ -160,6 +156,9 @@ const registerCourseStructureStore = () => {
 		}
 
 		const shouldSave = select( COURSE_STORE ).shouldSave();
+
+		// Clear error notices.
+		dispatch( 'core/notices' ).removeNotice( 'course-outline-save-error' );
 
 		if ( shouldSave && ! shouldResavePost ) {
 			dispatch( COURSE_STORE ).save();
