@@ -42,7 +42,10 @@ const actions = {
 		} catch ( error ) {
 			const errorMessage = sprintf(
 				/* translators: Error message. */
-				__( 'The course could not be saved. %s', 'sensei-lms' ),
+				__(
+					'Course modules and lessons could not be updated. %s',
+					'sensei-lms'
+				),
 				error.message
 			);
 			yield dispatch( 'core/notices' ).createErrorNotice( errorMessage, {
