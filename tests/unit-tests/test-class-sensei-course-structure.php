@@ -342,7 +342,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 		$save_result = $course_structure->save( $new_structure );
 		$this->assertWPError( $save_result );
 
-		$this->assertEquals( 'sensei_course_structure_missing_title', $save_result->get_error_code() );
+		$this->assertEquals( 'sensei_course_structure_lessons_missing_title', $save_result->get_error_code() );
 
 		$structure = $course_structure->get( 'edit' );
 		$this->assertEquals( 0, count( $structure ) );
@@ -369,7 +369,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 		$save_result = $course_structure->save( $new_structure );
 		$this->assertWPError( $save_result );
 
-		$this->assertEquals( 'sensei_course_structure_missing_title', $save_result->get_error_code() );
+		$this->assertEquals( 'sensei_course_structure_modules_missing_title', $save_result->get_error_code() );
 
 		$structure = $course_structure->get( 'edit' );
 		$this->assertEquals( 0, count( $structure ) );
