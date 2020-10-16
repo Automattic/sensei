@@ -53,7 +53,7 @@ class Sensei_Course {
 			add_action( 'save_post', array( $this, 'meta_box_save' ) );
 
 			// Custom Write Panel Columns
-			add_filter( 'manage_course_posts_columns', array( $this, 'add_column_headings' ), 10, 1 );
+			add_filter( 'manage_course_posts_columns', array( $this, 'add_column_headings' ), 20, 1 );
 			add_action( 'manage_course_posts_custom_column', array( $this, 'add_column_data' ), 10, 2 );
 			add_filter( 'default_hidden_columns', array( $this, 'set_default_visible_columns' ), 10, 2 );
 
@@ -683,6 +683,19 @@ class Sensei_Course {
 			$new_columns['date'] = $defaults['date'];
 		}
 
+		// Make sure other sensei columns stay directly behind the new columns.
+		$other_sensei_culumns = [
+			'taxonomy-module',
+			'teacher',
+			'module_order'
+		];
+		foreach ( $other_sensei_culumns as $column_key ) {
+			if ( isset( $defaults[ $column_key ] ) ) {
+				$new_columns[ $column_key ] = $defaults[ $column_key ];
+			}
+		}
+
+		// Add all remaining columns at the end. 
 		foreach ( $defaults as $column_key => $column_value ) {
 			if ( ! isset( $new_columns[ $column_key ] ) ) {
 				$new_columns[ $column_key ] = $column_value;

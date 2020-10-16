@@ -28,7 +28,7 @@ class Sensei_Question {
 		$this->meta_fields    = array( 'question_right_answer', 'question_wrong_answers' );
 		if ( is_admin() ) {
 			// Custom Write Panel Columns
-			add_filter( 'manage_edit-question_columns', array( $this, 'add_column_headings' ), 10, 1 );
+			add_filter( 'manage_edit-question_columns', array( $this, 'add_column_headings' ), 20, 1 );
 			add_action( 'manage_posts_custom_column', array( $this, 'add_column_data' ), 10, 2 );
 			add_filter( 'default_hidden_columns', array( $this, 'set_default_visible_columns' ), 10, 2 );
 			add_action( 'add_meta_boxes', array( $this, 'question_edit_panel_metabox' ), 10, 2 );
@@ -79,6 +79,7 @@ class Sensei_Question {
 		unset( $defaults['taxonomy-question-type'] );
 		unset( $defaults['taxonomy-question-category'] );
 
+		// Add all remaining columns at the end. 
 		foreach ( $defaults as $column_key => $column_value ) {
 			if ( ! isset( $new_columns[ $column_key ] ) ) {
 				$new_columns[ $column_key ] = $column_value;
