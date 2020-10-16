@@ -30,7 +30,7 @@ class Sensei_Blocks {
 	/**
 	 * Course progress block.
 	 *
-	 * @var Sensei_Contact_Teacher_Block
+	 * @var Sensei_Block_Contact_Teacher
 	 */
 	public $contact_teacher;
 
@@ -51,7 +51,7 @@ class Sensei_Blocks {
 		if ( $sensei->feature_flags->is_enabled( 'course_outline' ) ) {
 			$this->course_outline  = new Sensei_Course_Outline_Block();
 			$this->course_progress = new Sensei_Progress_Bar_Block();
-			$this->contact_teacher = new Sensei_Contact_Teacher_Block();
+			$this->contact_teacher = new Sensei_Block_Contact_Teacher();
 		}
 	}
 

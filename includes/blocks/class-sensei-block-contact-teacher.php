@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Sensei_Contact_Teacher_Block class.
+ * File containing the Sensei_Block_Contact_Teacher class.
  *
  * @package sensei
  */
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Block for Contact teacher button.
  */
-class Sensei_Contact_Teacher_Block {
+class Sensei_Block_Contact_Teacher {
 
 	/**
 	 * Sensei_Contact_Teacher_Block constructor.
