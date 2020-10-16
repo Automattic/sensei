@@ -18,6 +18,19 @@ export const ModuleStatus = ( { clientId } ) => {
 		[]
 	);
 
+	const lessonIds = useSelect(
+		( select ) =>
+			select( 'core/block-editor' ).getClientIdsOfDescendants( [
+				clientId,
+			] ),
+		[]
+	);
+
+	const options =
+		lessonIds.length > 1
+			? [ Status.NOT_STARTED, Status.IN_PROGRESS, Status.COMPLETED ]
+			: [ Status.NOT_STARTED, Status.COMPLETED ];
+
 	const showIndicator = Status.NOT_STARTED !== status;
 
 	const indicator = (
@@ -42,11 +55,7 @@ export const ModuleStatus = ( { clientId } ) => {
 					initialOpen={ false }
 				>
 					<StatusControl
-						options={ [
-							Status.NOT_STARTED,
-							Status.IN_PROGRESS,
-							Status.COMPLETED,
-						] }
+						options={ options }
 						status={ status }
 						setStatus={ ( newStatus ) => {
 							dispatch( COURSE_STATUS_STORE ).setModuleStatus(
