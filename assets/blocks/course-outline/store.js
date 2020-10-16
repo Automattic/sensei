@@ -10,7 +10,7 @@ const DEFAULT_STATE = {
 	isSaving: false,
 	isEditorDirty: false,
 	hasChanges: false,
-	saveCalled: false,
+	isSaveCalled: false,
 };
 
 const actions = {
@@ -59,8 +59,8 @@ const actions = {
 	setEditorDirty: ( isEditorDirty ) => {
 		return { type: 'SET_DIRTY', isEditorDirty };
 	},
-	setSaveCalled: ( saveCalled ) => {
-		return { type: 'SET_SAVE_CALLED', saveCalled };
+	setSaveCalled: ( isSaveCalled ) => {
+		return { type: 'SET_SAVE_CALLED', isSaveCalled };
 	},
 };
 
@@ -96,9 +96,9 @@ const reducers = {
 		...state,
 		isEditorDirty,
 	} ),
-	SET_SAVE_CALLED: ( { saveCalled }, state ) => ( {
+	SET_SAVE_CALLED: ( { isSaveCalled }, state ) => ( {
 		...state,
-		saveCalled,
+		isSaveCalled,
 	} ),
 	DEFAULT: ( action, state ) => state,
 };
@@ -119,7 +119,7 @@ const selectors = {
 	shouldSave: ( { isEditorDirty, isSaving } ) => ! isSaving && isEditorDirty,
 	shouldResavePost: ( { isEditorDirty, isSaving, hasStructureUpdate } ) =>
 		! isSaving && isEditorDirty && hasStructureUpdate,
-	getSaveCalled: ( { saveCalled } ) => saveCalled,
+	isSaveCalled: ( { isSaveCalled } ) => isSaveCalled,
 };
 
 export const COURSE_STORE = 'sensei/course-structure';
@@ -135,16 +135,16 @@ const registerCourseStructureStore = () => {
 	 * @param {boolean} shouldResavePost Whether the post should resave.
 	 */
 	const saveCourseStructure = ( isSavingPost, shouldResavePost ) => {
-		const saveCalled = select( COURSE_STORE ).getSaveCalled();
+		const isSaveCalled = select( COURSE_STORE ).isSaveCalled();
 
 		// Make sure to run the save once after every post saving.
 		if ( isSavingPost ) {
-			if ( saveCalled ) {
+			if ( isSaveCalled ) {
 				return;
 			}
 			dispatch( COURSE_STORE ).setSaveCalled( true );
 		} else {
-			if ( saveCalled ) {
+			if ( isSaveCalled ) {
 				dispatch( COURSE_STORE ).setSaveCalled( false );
 			}
 			return;
