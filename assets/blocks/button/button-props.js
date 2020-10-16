@@ -72,4 +72,4 @@ export function getButtonWrapperProps( { className, attributes: { align } } ) {
  * @return {boolean} Is it a link block style.
  */
 export const isLinkStyle = ( props ) =>
-	props?.attributes?.className?.test( /\bis-style-link\b/ );
+	/\bis-style-link\b/.test( props?.attributes?.className );
