@@ -10,37 +10,42 @@
 	onReady( () => {
 		if (
 			0 ===
-			document.querySelectorAll(
-				'.wp-block-sensei-lms-course-outline__arrow'
-			).length
+			document.querySelectorAll( '.sensei-collapsible__toggle' ).length
 		) {
 			return;
 		}
 
-		const modules = document.querySelectorAll(
-			'.wp-block-sensei-lms-course-outline-module'
-		);
+		const blocks = document.querySelectorAll( '.sensei-collapsible' );
 
-		modules.forEach( ( module ) => {
-			const moduleContent = module.querySelector(
-				'.wp-block-sensei-lms-collapsible'
+		blocks.forEach( ( block ) => {
+			const content = block.querySelector(
+				'.sensei-collapsible__content'
+			);
+			const toggleButton = block.querySelector(
+				'.sensei-collapsible__toggle'
 			);
 
-			const originalHeight = moduleContent.offsetHeight;
-			const toggleButton = module.querySelector(
-				'.wp-block-sensei-lms-course-outline__arrow'
-			);
+			if ( ! content || ! toggleButton ) {
+				return;
+			}
 
-			moduleContent.style.height = originalHeight + 'px';
+			let originalHeight = content.offsetHeight + 'px';
 
-			toggleButton.addEventListener( 'click', () => {
+			if ( content.classList.contains( 'collapsed' ) ) {
+				originalHeight = '100vh';
+			} else {
+				content.style.maxHeight = originalHeight;
+			}
+
+			toggleButton.addEventListener( 'click', ( e ) => {
+				e.preventDefault();
 				toggleButton.classList.toggle( 'collapsed' );
-				const collapsed = moduleContent.classList.toggle( 'collapsed' );
+				const collapsed = content.classList.toggle( 'collapsed' );
 
 				if ( ! collapsed ) {
-					moduleContent.style.height = originalHeight + 'px';
+					content.style.maxHeight = originalHeight;
 				} else {
-					moduleContent.style.height = '0px';
+					content.style.maxHeight = '0px';
 				}
 			} );
 		} );

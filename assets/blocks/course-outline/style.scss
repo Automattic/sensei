@@ -7,12 +7,14 @@ $spacing: 16px;
 @import 'module-block/module-block';
 @import 'lesson-block/lesson-block';
 
-.wp-block-sensei-lms-collapsible {
+.sensei-collapsible__content {
 	opacity: 1;
 	overflow: hidden;
-	transition: height 350ms ease-in-out, opacity 350ms ease-in-out;
+
+	transition: max-height 350ms ease-in-out, opacity 350ms ease-in-out;
 
 	&.collapsed {
 		opacity: 0;
+		max-height: 0;
 	}
 }
