@@ -119,6 +119,11 @@ class Sensei_Unsupported_Themes {
 			return;
 		}
 
+		// Skip if custom template is disabled.
+		if ( Sensei()->feature_flags->is_enabled( 'optional_templates' ) && ! apply_filters( 'sensei_use_sensei_template', true ) ) {
+			return;
+		}
+
 		// Use the first handler that can handle this request.
 		foreach ( $this->_handlers as $handler ) {
 			if ( $handler->can_handle_request() ) {

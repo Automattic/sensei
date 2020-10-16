@@ -61,7 +61,7 @@ class Sensei_Unsupported_Theme_Handler_CPT implements Sensei_Unsupported_Theme_H
 	 * @return bool
 	 */
 	public function can_handle_request() {
-		return is_single() && get_post_type() === $this->post_type && apply_filters( 'sensei_single_' . $this->post_type . '_legacy_template', true );
+		return is_single() && get_post_type() === $this->post_type;
 	}
 
 	/**

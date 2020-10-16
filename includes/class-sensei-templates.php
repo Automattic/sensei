@@ -148,6 +148,10 @@ class Sensei_Templates {
 		$find = array( 'sensei.php' );
 		$file = '';
 
+		if ( Sensei()->feature_flags->is_enabled( 'optional_templates' ) && ! apply_filters( 'sensei_use_sensei_template', true ) ) {
+			return $template;
+		}
+
 		if ( isset( $email_template ) && $email_template ) {
 
 			$file   = 'emails/' . $email_template;
@@ -162,7 +166,7 @@ class Sensei_Templates {
 			*/
 			$file = null;
 
-		} elseif ( is_single() && get_post_type() == 'course' && apply_filters( 'sensei_single_course_legacy_template', true ) ) {
+		} elseif ( is_single() && get_post_type() == 'course' ) {
 
 			// possible backward compatible template include if theme overrides content-single-course.php
 			// this template was removed in 1.9.0 and code all moved into the main single-course.php file
