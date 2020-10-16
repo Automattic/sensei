@@ -1696,8 +1696,7 @@ jQuery( document ).ready( function () {
 	} );
 
 	jQuery( '#quiz-settings' ).on( 'change', '#pass_required', function () {
-		var checked = jQuery( this ).attr( 'checked' );
-		if ( 'checked' == checked ) {
+		if ( jQuery( this ).is( ':checked' ) ) {
 			jQuery( '.form-field.quiz_passmark' ).removeClass( 'hidden' );
 		} else {
 			jQuery( '.form-field.quiz_passmark' ).addClass( 'hidden' );
