@@ -1,0 +1,43 @@
+
+.wp-block-sensei-lms-course-outline {
+
+	margin: 1em 0;
+	border: 0 solid $dark-gray;
+
+	&.is-style-default {
+		border-width: 1px;
+		.block-editor-block-styles__item & {
+			border-width: 4px;
+			margin: 1px;
+		}
+	}
+
+	&__arrow[type='button'] {
+		display: block;
+		padding: 0;
+		background: none;
+		border: 0;
+		color: inherit;
+		margin: 0 -5px 0 10px;
+		cursor: pointer;
+		svg {
+			transition: transform 250ms linear;
+		}
+		svg {
+			width: 32px;
+			height: 32px;
+			margin: -12px 0;
+			fill: currentColor;
+		}
+
+		&:hover, &:focus {
+			text-decoration: none;
+		}
+
+		&.collapsed {
+			svg {
+				transform: rotate(180deg)
+			}
+		}
+	}
+}

@@ -88,25 +88,8 @@ class Sensei_Course_Outline_Block_Test extends WP_UnitTestCase {
 		unregister_block_type( 'sensei-lms/course-outline-lesson' );
 		unregister_block_type( 'sensei-lms/course-outline-module' );
 
-		$mock = $this->getMockBuilder( Sensei_Course_Outline_Block::class )
-			->setMethods( [ 'render_lesson_block' ] )
-			->getMock();
-
-		$mock->expects( $this->once() )->method( 'render_lesson_block' )->with(
-			$this->equalTo(
-				[
-					'id'         => 1,
-					'type'       => 'lesson',
-					'title'      => 'Test Lesson',
-					'attributes' => [
-						'id'    => 1,
-						'style' => 'blue',
-					],
-				]
-			)
-		);
-
-		$mock->register_blocks();
+		$outline_block = new Sensei_Course_Outline_Block();
+		$outline_block->register_blocks();
 
 		$this->mockPostCourseStructure(
 			[
@@ -133,6 +116,20 @@ class Sensei_Course_Outline_Block_Test extends WP_UnitTestCase {
 					],
 				],
 			]
+		);
+
+		$lesson_block = $outline_block->get_block_structure()['blocks'][0];
+		$this->assertArraySubset(
+			[
+				'id'         => 1,
+				'type'       => 'lesson',
+				'title'      => 'Test Lesson',
+				'attributes' => [
+					'id'    => 1,
+					'style' => 'blue',
+				],
+			],
+			$lesson_block
 		);
 	}
 
