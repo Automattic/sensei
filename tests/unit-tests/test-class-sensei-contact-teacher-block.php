@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Tests for Sensei_Contact_Teacher_Block class.
+ * Tests for Sensei_Block_Contact_Teacher class.
  *
  * @group course-structure
  */
-class Sensei_Contact_Teacher_Block_Test extends WP_UnitTestCase {
+class Sensei_Block_Contact_Teacher_Test extends WP_UnitTestCase {
 
 
 	/**
@@ -17,7 +17,7 @@ class Sensei_Contact_Teacher_Block_Test extends WP_UnitTestCase {
 			'post_type' => 'course',
 		];
 		$_SERVER['REQUEST_URI'] = '/course/test/';
-		$block                  = new Sensei_Contact_Teacher_Block();
+		$block                  = new Sensei_Block_Contact_Teacher();
 
 		$output = $block->render_contact_teacher_block( [], '<div><a class="wp-block-button__link">Contact teacher</a></div>' );
 

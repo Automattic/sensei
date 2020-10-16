@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Block_Contact_Teacher {
 
 	/**
-	 * Sensei_Contact_Teacher_Block constructor.
+	 * Sensei_Block_Contact_Teacher constructor.
 	 */
 	public function __construct() {
 		add_action( 'init', [ $this, 'register_block' ] );
