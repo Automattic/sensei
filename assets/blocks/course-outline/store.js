@@ -128,22 +128,17 @@ export const COURSE_STORE = 'sensei/course-structure';
  * Register course structure store and subscribe to block editor save.
  */
 const registerCourseStructureStore = () => {
-	subscribe( function saveStructureOnPostSave() {
-		const editor = select( 'core/editor' );
-
-		if ( ! editor ) return;
-
-		const isSaving = editor.isSavingPost() && ! editor.isAutosavingPost();
+	/**
+	 * Save course structure.
+	 *
+	 * @param {boolean} isSavingPost     Whether the post is saving.
+	 * @param {boolean} shouldResavePost Whether the post should resave.
+	 */
+	const saveCourseStructure = ( isSavingPost, shouldResavePost ) => {
 		const saveCalled = select( COURSE_STORE ).getSaveCalled();
-		const shouldResavePost = select( COURSE_STORE ).shouldResavePost();
-
-		// Save the post again if the blocks were updated.
-		if ( ! isSaving && shouldResavePost ) {
-			dispatch( 'core/editor' ).savePost();
-		}
 
 		// Make sure to run the save once after every post saving.
-		if ( isSaving ) {
+		if ( isSavingPost ) {
 			if ( saveCalled ) {
 				return;
 			}
@@ -163,6 +158,23 @@ const registerCourseStructureStore = () => {
 		if ( shouldSave && ! shouldResavePost ) {
 			dispatch( COURSE_STORE ).save();
 		}
+	};
+
+	subscribe( function saveStructureOnPostSave() {
+		const editor = select( 'core/editor' );
+
+		if ( ! editor ) return;
+
+		const isSavingPost =
+			editor.isSavingPost() && ! editor.isAutosavingPost();
+		const shouldResavePost = select( COURSE_STORE ).shouldResavePost();
+
+		// Save the post again if the blocks were updated.
+		if ( ! isSavingPost && shouldResavePost ) {
+			dispatch( 'core/editor' ).savePost();
+		}
+
+		saveCourseStructure( isSavingPost, shouldResavePost );
 	} );
 
 	registerStore( COURSE_STORE, {
