@@ -1,16 +1,22 @@
 import { InspectorControls } from '@wordpress/block-editor';
 import { PanelBody } from '@wordpress/components';
-import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
 import { StatusControl, Status, StatusLabels } from '../status-control';
+import { COURSE_STATUS_STORE } from '../status-store';
+import { dispatch, useSelect } from '@wordpress/data';
 
 /**
  * Module status preview with setting control.
  *
+ * @param {Object} props          Component props
+ * @param {string} props.clientId The module block id.
  */
-export const ModuleStatus = () => {
-	const [ status, setStatus ] = useState( Status.NOT_STARTED );
+export const ModuleStatus = ( { clientId } ) => {
+	const status = useSelect(
+		( select ) => select( COURSE_STATUS_STORE ).getModuleStatus( clientId ),
+		[]
+	);
 
 	const showIndicator = Status.NOT_STARTED !== status;
 
@@ -42,7 +48,12 @@ export const ModuleStatus = () => {
 							Status.COMPLETED,
 						] }
 						status={ status }
-						setStatus={ setStatus }
+						setStatus={ ( newStatus ) => {
+							dispatch( COURSE_STATUS_STORE ).setModuleStatus(
+								clientId,
+								newStatus
+							);
+						} }
 					/>
 				</PanelBody>
 			</InspectorControls>

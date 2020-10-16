@@ -1,6 +1,5 @@
 import { createBlock } from '@wordpress/blocks';
-import { select, useDispatch } from '@wordpress/data';
-import { useState } from '@wordpress/element';
+import { select, useDispatch, dispatch, useSelect } from '@wordpress/data';
 import { Icon } from '@wordpress/components';
 import classnames from 'classnames';
 import { __ } from '@wordpress/i18n';
@@ -10,6 +9,7 @@ import SingleLineInput from '../single-line-input';
 import { LessonBlockSettings } from './settings';
 import { Status } from '../status-control';
 import { ENTER, BACKSPACE } from '@wordpress/keycodes';
+import { COURSE_STATUS_STORE } from '../status-store';
 
 /**
  * Edit lesson block component.
@@ -101,7 +101,11 @@ export const EditLessonBlock = ( props ) => {
 		postStatus = __( 'Draft', 'sensei-lms' );
 	}
 
-	const [ previewStatus, setPreviewStatus ] = useState( Status.NOT_STARTED );
+	const previewStatus = useSelect(
+		( selectStatus ) =>
+			selectStatus( COURSE_STATUS_STORE ).getLessonStatus( clientId ),
+		[]
+	);
 
 	const wrapperStyles = {
 		className: classnames(
@@ -123,7 +127,12 @@ export const EditLessonBlock = ( props ) => {
 			<LessonBlockSettings
 				{ ...props }
 				previewStatus={ previewStatus }
-				setPreviewStatus={ setPreviewStatus }
+				setPreviewStatus={ ( status ) => {
+					dispatch( COURSE_STATUS_STORE ).setLessonStatus(
+						clientId,
+						status
+					);
+				} }
 			/>
 			<div { ...wrapperStyles }>
 				<Icon
