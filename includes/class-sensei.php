@@ -92,6 +92,11 @@ class Sensei_Main {
 	public $question;
 
 	/**
+	 * @var Sensei_Messages
+	 */
+	public $messages;
+
+	/**
 	 * @var Sensei_Admin
 	 */
 	public $admin;
@@ -382,6 +387,9 @@ class Sensei_Main {
 
 		// Add the question class
 		$this->question = $this->post_types->question;
+
+		// Add the question class
+		$this->messages = $this->post_types->messages;
 
 		// Add the quiz class
 		$this->quiz = $this->post_types->quiz;
