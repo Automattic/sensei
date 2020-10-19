@@ -48,11 +48,7 @@ class Sensei_Course_Outline_Course_Block {
 		$post_id    = $outline['post_id'];
 
 		$class_name = Sensei_Block_Helpers::block_class_with_default_style( $attributes );
-		$css        = Sensei_Block_Helpers::build_styles(
-			[
-				'attributes' => $attributes,
-			]
-		);
+		$css        = Sensei_Block_Helpers::build_styles( $attributes );
 
 		$icons = $this->render_svg_icon_library();
 
