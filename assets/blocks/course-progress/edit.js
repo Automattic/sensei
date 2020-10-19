@@ -23,14 +23,18 @@ export const EditCourseProgressBlock = ( {
 		( select ) => select( COURSE_STATUS_STORE ).getLessonCounts(),
 		[]
 	);
-	const progress =
-		Math.round(
-			( ( 100 * completedLessonsCount ) / totalLessonsCount +
-				Number.EPSILON ) *
-				100
-		) /
-			100 +
-		'%';
+
+	let progress = '0%';
+	if ( 0 !== totalLessonsCount ) {
+		progress =
+			Math.round(
+				( ( 100 * completedLessonsCount ) / totalLessonsCount +
+					Number.EPSILON ) *
+					100
+			) /
+				100 +
+			'%';
+	}
 
 	const wrapperAttributes = {
 		className: classnames( className, textColor?.class ),
