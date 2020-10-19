@@ -77,9 +77,11 @@ export const LessonBlockSettings = ( {
 				</PanelBody>
 			</InspectorControls>
 			<BlockControls>
-				<ToolbarGroup>
-					<ToolbarButton>{ editLessonLink }</ToolbarButton>
-				</ToolbarGroup>
+				{ id && (
+					<ToolbarGroup>
+						<ToolbarButton>{ editLessonLink }</ToolbarButton>
+					</ToolbarGroup>
+				) }
 			</BlockControls>
 		</>
 	);
