@@ -27,6 +27,7 @@ const actions = {
 			status,
 		};
 	},
+
 	/**
 	 * Sets the status of a module by updating the status of its lessons.
 	 *
@@ -76,6 +77,7 @@ const actions = {
 			};
 		}
 	},
+
 	/**
 	 * Creates the action to update state after a an update of the outline's structure.
 	 *
@@ -116,6 +118,7 @@ const selectors = {
 		totalLessonsCount,
 		completedLessonsCount: completedLessons.size,
 	} ),
+
 	/**
 	 * Gets the lesson status.
 	 *
@@ -129,6 +132,7 @@ const selectors = {
 		completedLessons.has( lessonId )
 			? Status.COMPLETED
 			: Status.NOT_STARTED,
+
 	/**
 	 * Calculates and gets the module status.
 	 *
@@ -186,6 +190,7 @@ const reducers = {
 			completedLessons: new Set( state.completedLessons ),
 		};
 	},
+
 	/**
 	 * Checks if a lesson has been removed and updates the lessons.
 	 *
