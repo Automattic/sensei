@@ -36,7 +36,7 @@ class Sensei_Course_Outline_Module_Block {
 		$is_minimal_style = false !== strpos( $class_name, 'is-style-minimal' );
 
 		$header_css = Sensei_Block_Helpers::build_styles(
-			$block,
+			$block['attributes'],
 			[
 				'mainColor' => $is_default_style ? 'background-color' : null,
 			]
@@ -47,7 +47,7 @@ class Sensei_Course_Outline_Module_Block {
 		if ( $is_minimal_style ) {
 
 			$header_border_css = Sensei_Block_Helpers::build_styles(
-				$block,
+				$block['attributes'],
 				[
 					'mainColor' => 'background-color',
 				]
