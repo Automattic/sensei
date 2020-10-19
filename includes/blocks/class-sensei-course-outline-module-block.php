@@ -62,10 +62,12 @@ class Sensei_Course_Outline_Module_Block {
 
 		if ( ! empty( $block['description'] ) ) {
 			$description = '<div class="wp-block-sensei-lms-course-outline-module__description">' . wp_kses_post( $block['description'] ) . '</div>';
-
 			$module_link = get_term_link( $block['id'], Sensei()->modules->taxonomy );
-			$module_link = add_query_arg( 'course_id', $course_id, $module_link );
-			$title       = '<a href=" ' . $module_link . ' ">' . $title . '</a>';
+
+			if ( ! is_wp_error( $module_link ) ) {
+				$module_link = add_query_arg( 'course_id', $course_id, $module_link );
+				$title       = '<a href="' . $module_link . '">' . $title . '</a>';
+			}
 		}
 
 		return '
