@@ -127,7 +127,7 @@ class Sensei_Block_Take_Course {
 	 */
 	private function render_disabled_with_prerequisite( $course_id, $content ) {
 		$notice  = '<figcaption>' . $this->get_course_prerequisite_message( $course_id ) . '</figcaption>';
-		$content = preg_replace( '/(\<button)/i', '<button disabled="disabled" ', $content );
+		$content = preg_replace( '/(\<button)/i', '<button disabled="disabled"', $content );
 		$content = preg_replace( '/(<\/button>)/', '$1 ' . $notice, $content );
 		return $content;
 	}
