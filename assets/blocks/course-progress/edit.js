@@ -2,7 +2,10 @@ import { withColorSettings } from '../../shared/blocks/settings';
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
 import { useSelect } from '@wordpress/data';
+import { useState } from '@wordpress/element';
 import { COURSE_STATUS_STORE } from '../course-outline/status-store';
+import { InspectorControls } from '@wordpress/block-editor';
+import { PanelBody, RangeControl } from '@wordpress/components';
 
 /**
  * Edit course progress bar component.
@@ -24,8 +27,13 @@ export const EditCourseProgressBlock = ( {
 		[]
 	);
 
+	const [ manualPercentage, setManualPercentage ] = useState( null );
+
 	let progress = '0%';
-	if ( 0 !== totalLessonsCount ) {
+
+	if ( null !== manualPercentage ) {
+		progress = manualPercentage + '%';
+	} else if ( 0 !== totalLessonsCount ) {
 		progress =
 			Math.round(
 				( ( 100 * completedLessonsCount ) / totalLessonsCount +
@@ -74,6 +82,24 @@ export const EditCourseProgressBlock = ( {
 					<div { ...barAttributes } />
 				</div>
 			</div>
+
+			<InspectorControls>
+				<PanelBody
+					title={ __( 'Progress percentage', 'sensei-lms' ) }
+					initialOpen={ false }
+				>
+					<RangeControl
+						help={ __(
+							'Preview the progress bar for different percentage values.',
+							'sensei-lms'
+						) }
+						value={ manualPercentage ?? 0 }
+						onChange={ setManualPercentage }
+						min={ 0 }
+						max={ 100 }
+					/>
+				</PanelBody>
+			</InspectorControls>
 		</>
 	);
 };
