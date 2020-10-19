@@ -81,21 +81,16 @@ const actions = {
 	/**
 	 * Creates the action to update state after a an update of the outline's structure.
 	 *
-	 * @param {string} outlineId         The outline block id.
-	 * @param {number} totalLessonsCount The count of the lessons.
+	 * @param {string}   outlineId          The outline block id.
+	 * @param {number}   totalLessonsCount  The count of the lessons.
+	 * @param {string[]} outlineDescendants The descendants of the outline block.
 	 *
 	 * @return {Object} The action.
 	 */
-	*refreshStructure( outlineId, totalLessonsCount ) {
-		const descendants = yield select(
-			'core/block-editor',
-			'getClientIdsOfDescendants',
-			[ outlineId ]
-		);
-
+	refreshStructure( outlineId, totalLessonsCount, outlineDescendants ) {
 		return {
 			type: 'REFRESH_BLOCK_IDS',
-			newDescendantIds: new Set( descendants ),
+			newDescendantIds: new Set( outlineDescendants ),
 			totalLessonsCount,
 		};
 	},

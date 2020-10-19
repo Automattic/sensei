@@ -25,15 +25,22 @@ export const OutlineAttributesContext = createContext();
  * @param {string} clientId The outline block id.
  */
 const useUpdateLessonCount = function ( clientId ) {
-	const lessonCount = useSelect( ( selectCount ) => {
-		return selectCount( 'core/block-editor' ).getGlobalBlockCount(
+	const outlineDescendants = useSelect( ( select ) => {
+		return select( 'core/block-editor' ).getClientIdsOfDescendants( [
+			clientId,
+		] );
+	} );
+
+	const lessonCount = useSelect( ( select ) => {
+		return select( 'core/block-editor' ).getGlobalBlockCount(
 			'sensei-lms/course-outline-lesson'
 		);
 	} );
 
 	useDispatch( COURSE_STATUS_STORE ).refreshStructure(
 		clientId,
-		lessonCount
+		lessonCount,
+		outlineDescendants
 	);
 };
 
