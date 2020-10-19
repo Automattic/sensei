@@ -67,7 +67,7 @@ class Sensei_Course_Progress_Block {
 					<div class="wp-block-sensei-lms-progress-heading__lessons">5 Lessons</div>
 					<div class="wp-block-sensei-lms-progress-heading__completed">3 completed (60%)</div>
 				</section>
-				<div ' . Sensei_Block_Helpers::render_style_attributes( [ 'wp-block-sensei-lms-progress-bar' ], $bar_background_css ) . '>
+				<div role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" ' . Sensei_Block_Helpers::render_style_attributes( [ 'wp-block-sensei-lms-progress-bar' ], $bar_background_css ) . '>
 					<div ' . Sensei_Block_Helpers::render_style_attributes( [], $bar_css ) . '></div>
 				</div>
 			</div>

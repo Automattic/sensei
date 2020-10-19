@@ -29,19 +29,17 @@ export const EditCourseProgressBlock = ( {
 
 	const [ manualPercentage, setManualPercentage ] = useState( null );
 
-	let progress = '0%';
+	let progress = 0;
 
 	if ( null !== manualPercentage ) {
-		progress = manualPercentage + '%';
+		progress = manualPercentage;
 	} else if ( 0 !== totalLessonsCount ) {
 		progress =
 			Math.round(
 				( ( 100 * completedLessonsCount ) / totalLessonsCount +
 					Number.EPSILON ) *
 					100
-			) /
-				100 +
-			'%';
+			) / 100;
 	}
 
 	const wrapperAttributes = {
@@ -54,7 +52,7 @@ export const EditCourseProgressBlock = ( {
 		className: barColor?.class,
 		style: {
 			backgroundColor: barColor?.color,
-			width: progress,
+			width: progress + '%',
 		},
 	};
 	const barBackgroundAttributes = {
@@ -75,10 +73,16 @@ export const EditCourseProgressBlock = ( {
 						{ totalLessonsCount } Lessons
 					</div>
 					<div className="wp-block-sensei-lms-progress-heading__completed">
-						{ completedLessonsCount } completed ({ progress })
+						{ completedLessonsCount } completed ({ progress }%)
 					</div>
 				</section>
-				<div { ...barBackgroundAttributes }>
+				<div
+					role="progressbar"
+					aria-valuenow={ progress }
+					aria-valuemin="0"
+					aria-valuemax="100"
+					{ ...barBackgroundAttributes }
+				>
 					<div { ...barAttributes } />
 				</div>
 			</div>
