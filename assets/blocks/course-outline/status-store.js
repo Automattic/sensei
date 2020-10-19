@@ -179,15 +179,17 @@ const reducers = {
 	 * @return {Object} The new state.
 	 */
 	SET_LESSON_STATUS: ( { lessonId, status }, state ) => {
+		const completedLessons = new Set( state.completedLessons );
+
 		if ( Status.COMPLETED === status ) {
-			state.completedLessons.add( lessonId );
+			completedLessons.add( lessonId );
 		} else {
-			state.completedLessons.delete( lessonId );
+			completedLessons.delete( lessonId );
 		}
 
 		return {
 			...state,
-			completedLessons: new Set( state.completedLessons ),
+			completedLessons,
 		};
 	},
 
@@ -202,7 +204,9 @@ const reducers = {
 	 * @return {Object} The new state.
 	 */
 	REFRESH_BLOCK_IDS: ( { newDescendantIds, totalLessonsCount }, state ) => {
-		state.completedLessons.forEach( ( lesson, index, completedLessons ) => {
+		const completedLessons = new Set( state.completedLessons );
+
+		completedLessons.forEach( ( lesson ) => {
 			if ( ! newDescendantIds.has( lesson ) ) {
 				completedLessons.delete( lesson );
 			}
@@ -211,7 +215,7 @@ const reducers = {
 		return {
 			...state,
 			totalLessonsCount,
-			completedLessons: new Set( state.completedLessons ),
+			completedLessons,
 		};
 	},
 	DEFAULT: ( action, state ) => state,
