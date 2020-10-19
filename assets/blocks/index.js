@@ -1,6 +1,7 @@
 import { registerBlockType } from '@wordpress/blocks';
 import TakeCourseButtonBlock from './button/take-course';
 import ContactTeacherButton from './contact-teacher';
+import CourseProgressBlock from './course-progress';
 import {
 	CourseOutlineBlock,
 	CourseOutlineLessonBlock,
@@ -13,6 +14,7 @@ import {
 	CourseOutlineLessonBlock,
 	TakeCourseButtonBlock,
 	ContactTeacherButton,
+	CourseProgressBlock,
 ].forEach( ( block ) => {
 	const { name, ...settings } = block;
 	registerBlockType( name, settings );

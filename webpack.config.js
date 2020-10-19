@@ -35,8 +35,8 @@ const files = [
 	'blocks/index.js',
 	'blocks/single-course.scss',
 	'blocks/single-course.editor.scss',
-	'blocks/progress-bar/index.js',
-	'blocks/progress-bar/style.scss',
+	'blocks/course-progress/index.js',
+	'blocks/course-progress/style.scss',
 
 	'css/frontend.scss',
 	'css/admin-custom.css',
