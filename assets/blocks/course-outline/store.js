@@ -10,7 +10,6 @@ const DEFAULT_STATE = {
 	isSaving: false,
 	isEditorDirty: false,
 	hasChanges: false,
-	isSaveCalled: false,
 };
 
 const actions = {
@@ -62,9 +61,6 @@ const actions = {
 	setEditorDirty: ( isEditorDirty ) => {
 		return { type: 'SET_DIRTY', isEditorDirty };
 	},
-	setSaveCalled: ( isSaveCalled ) => {
-		return { type: 'SET_SAVE_CALLED', isSaveCalled };
-	},
 };
 
 /**
@@ -99,10 +95,6 @@ const reducers = {
 		...state,
 		isEditorDirty,
 	} ),
-	SET_SAVE_CALLED: ( { isSaveCalled }, state ) => ( {
-		...state,
-		isSaveCalled,
-	} ),
 	DEFAULT: ( action, state ) => state,
 };
 
@@ -122,7 +114,6 @@ const selectors = {
 	shouldSave: ( { isEditorDirty, isSaving } ) => ! isSaving && isEditorDirty,
 	shouldResavePost: ( { isEditorDirty, isSaving, hasStructureUpdate } ) =>
 		! isSaving && isEditorDirty && hasStructureUpdate,
-	isSaveCalled: ( { isSaveCalled } ) => isSaveCalled,
 };
 
 export const COURSE_STORE = 'sensei/course-structure';
@@ -131,35 +122,25 @@ export const COURSE_STORE = 'sensei/course-structure';
  * Register course structure store and subscribe to block editor save.
  */
 const registerCourseStructureStore = () => {
-	/**
-	 * Save course structure.
-	 *
-	 * @param {boolean} isSavingPost     Whether the post is saving.
-	 * @param {boolean} shouldResavePost Whether the post should resave.
-	 */
-	const saveCourseStructure = ( isSavingPost, shouldResavePost ) => {
-		const isSaveCalled = select( COURSE_STORE ).isSaveCalled();
+	// Set to true when savings starts, and false when it ends.
+	let postSaving = false;
 
-		// Make sure to run the save once after every post saving.
-		if ( isSavingPost ) {
-			if ( isSaveCalled ) {
-				return;
-			}
-			dispatch( COURSE_STORE ).setSaveCalled( true );
-		} else {
-			if ( isSaveCalled ) {
-				dispatch( COURSE_STORE ).setSaveCalled( false );
-			}
-			return;
-		}
-
+	const startSave = () => {
 		const shouldSave = select( COURSE_STORE ).shouldSave();
 
 		// Clear error notices.
 		dispatch( 'core/notices' ).removeNotice( 'course-outline-save-error' );
 
-		if ( shouldSave && ! shouldResavePost ) {
+		if ( shouldSave ) {
 			dispatch( COURSE_STORE ).save();
+		}
+	};
+
+	const finishSave = () => {
+		// Save the post again if the blocks were updated.
+		const shouldResavePost = select( COURSE_STORE ).shouldResavePost();
+		if ( shouldResavePost ) {
+			dispatch( 'core/editor' ).savePost();
 		}
 	};
 
@@ -170,14 +151,17 @@ const registerCourseStructureStore = () => {
 
 		const isSavingPost =
 			editor.isSavingPost() && ! editor.isAutosavingPost();
-		const shouldResavePost = select( COURSE_STORE ).shouldResavePost();
 
-		// Save the post again if the blocks were updated.
-		if ( ! isSavingPost && shouldResavePost ) {
-			dispatch( 'core/editor' ).savePost();
+		// First update where post is saving.
+		if ( ! postSaving && isSavingPost ) {
+			postSaving = true;
+			startSave();
+
+			// First update where post is no longer saving.
+		} else if ( postSaving && ! isSavingPost ) {
+			postSaving = false;
+			finishSave();
 		}
-
-		saveCourseStructure( isSavingPost, shouldResavePost );
 	} );
 
 	registerStore( COURSE_STORE, {
