@@ -153,7 +153,7 @@ class Sensei_Block_Take_Course {
 
 		$complete_prerequisite_message = sprintf(
 		// translators: Placeholder $1$s is the course title.
-			esc_html__( 'You must first complete %1$s before viewing this course', 'sensei-lms' ),
+			esc_html__( 'You must first complete %1$s before taking this course', 'sensei-lms' ),
 			$prerequisite_course_link
 		);
 
