@@ -61,18 +61,34 @@ class Sensei_Import_Block_Migrator {
 		}
 
 		$blocks = parse_blocks( $post_content );
+		$blocks = $this->map_blocks( $blocks );
 
+		return serialize_blocks( $blocks );
+	}
+
+	/**
+	 * Goes through each block and its inner blocks, searches for the outline block and maps it.
+	 *
+	 * @param array $blocks The blocks.
+	 *
+	 * @return array The mapped blocks.
+	 */
+	private function map_blocks( $blocks ) {
 		$i = 0;
 		foreach ( $blocks as $block ) {
 			if ( 'sensei-lms/course-outline' === $block['blockName'] ) {
-				$mapped_block = $this->map_outline_block_ids( $block );
+				$blocks[ $i ] = $this->map_outline_block_ids( $block );
 				break;
 			}
+
+			if ( ! empty( $block['innerBlocks'] ) ) {
+				$blocks[ $i ]['innerBlocks'] = $this->map_blocks( $block['innerBlocks'] );
+			}
+
 			$i++;
 		}
-		$blocks[ $i ] = $mapped_block;
 
-		return serialize_blocks( $blocks );
+		return $blocks;
 	}
 
 	/**

@@ -191,4 +191,67 @@ class Sensei_Import_Block_Migrator_Test extends WP_UnitTestCase {
 
 		$this->assertEquals( $expected_content, $migrator->migrate( $content ) );
 	}
+
+	/**
+	 * Tests that an outline block is handled correctly when it is an inner block.
+	 */
+	public function testOutlineBlockIsMappedWhenItsInnerBlock() {
+		$job = $this->getMockBuilder( Sensei_Import_Job::class )
+			->setConstructorArgs( [ 'test' ] )
+			->getMock();
+
+		$job->method( 'translate_import_id' )
+			->willReturn( 20 );
+
+		$task = new Sensei_Import_Courses( $job );
+
+		$migrator = new Sensei_Import_Block_Migrator( 1, $task, Sensei_Import_Model_Mock::from_source_array( 1, [], new Sensei_Data_Port_Schema_Mock() ) );
+
+		$content = '
+			<!-- wp:group -->
+				<div class="wp-block-group"><div class="wp-block-group__inner-container">
+				<!-- wp:group -->
+					<div class="wp-block-group"><div class="wp-block-group__inner-container">
+						<!-- wp:sensei-lms/course-outline -->
+							<!-- wp:sensei-lms/course-outline-lesson {"id":10,"title":"Without module","draft":false} -->
+								<div class="wp-block-sensei-lms-course-outline-lesson"></div>
+							<!-- /wp:sensei-lms/course-outline-lesson -->
+						<!-- /wp:sensei-lms/course-outline -->
+			
+						<!-- wp:paragraph -->
+							<p>A paragraph</p>
+						<!-- /wp:paragraph -->
+						</div></div>
+				<!-- /wp:group -->
+			
+				<!-- wp:paragraph -->
+					<p>Another paragraph</p>
+				<!-- /wp:paragraph --></div></div>
+			<!-- /wp:group -->';
+
+		$expected_content = '
+			<!-- wp:group -->
+				<div class="wp-block-group"><div class="wp-block-group__inner-container">
+				<!-- wp:group -->
+					<div class="wp-block-group"><div class="wp-block-group__inner-container">
+						<!-- wp:sensei-lms/course-outline -->
+							<!-- wp:sensei-lms/course-outline-lesson {"id":20,"title":"Without module","draft":false} -->
+								<div class="wp-block-sensei-lms-course-outline-lesson"></div>
+							<!-- /wp:sensei-lms/course-outline-lesson -->
+						<!-- /wp:sensei-lms/course-outline -->
+			
+						<!-- wp:paragraph -->
+							<p>A paragraph</p>
+						<!-- /wp:paragraph -->
+						</div></div>
+				<!-- /wp:group -->
+			
+				<!-- wp:paragraph -->
+					<p>Another paragraph</p>
+				<!-- /wp:paragraph --></div></div>
+			<!-- /wp:group -->';
+
+		$this->assertEquals( $expected_content, $migrator->migrate( $content ) );
+	}
+
 }
