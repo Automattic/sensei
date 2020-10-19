@@ -1,6 +1,6 @@
 import { render, fireEvent, waitFor } from '@testing-library/react';
 import { EditLessonBlock } from './edit';
-import { useDispatch, select } from '@wordpress/data';
+import { useDispatch, select, useSelect } from '@wordpress/data';
 import { createBlock } from '@wordpress/blocks';
 
 jest.mock( '@wordpress/data' );
@@ -35,6 +35,8 @@ describe( '<EditLessonBlock />', () => {
 			getBlock: () => null,
 			getNextBlockClientId: () => null,
 		} );
+
+		useSelect.mockReturnValue( [ 'first-lesson', 'second-lesson' ] );
 	} );
 
 	createBlock.mockImplementation( createBlockMock );
