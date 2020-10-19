@@ -2,7 +2,7 @@
   "name": "sensei-lms/course-outline-lesson",
   "category": "sensei-lms",
   "parent": [
-    "sensei-lms/course-outline",
+    "sensei-lms/course-outline-lessons",
     "sensei-lms/course-outline-module"
   ],
   "attributes": {

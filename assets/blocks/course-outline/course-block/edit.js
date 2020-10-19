@@ -90,9 +90,14 @@ const EditCourseOutlineBlock = ( {
 				>
 					<InnerBlocks
 						allowedBlocks={ [
-							'sensei-lms/course-outline-module',
-							'sensei-lms/course-outline-lesson',
+							'sensei-lms/course-outline-modules',
+							'sensei-lms/course-outline-lessons',
 						] }
+						template={ [
+							[ 'sensei-lms/course-outline-modules' ],
+							[ 'sensei-lms/course-outline-lessons' ],
+						] }
+						templateLock="all"
 					/>
 				</section>
 			</OutlineAttributesContext.Provider>

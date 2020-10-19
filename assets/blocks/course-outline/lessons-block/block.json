@@ -1,0 +1,12 @@
+{
+  "name": "sensei-lms/course-outline-lessons",
+  "category": "sensei-lms",
+  "parent": [
+    "sensei-lms/course-outline"
+	],
+  "supports": {
+    "html": false,
+    "customClassName": false,
+    "multiple": false
+  }
+}

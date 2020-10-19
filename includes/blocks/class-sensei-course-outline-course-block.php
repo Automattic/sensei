@@ -34,6 +34,35 @@ class Sensei_Course_Outline_Course_Block {
 		</svg>';
 	}
 
+	private function get_modules_html( $modules_blocks, $post_id, $attributes ) {
+		return implode(
+			'',
+			array_map(
+				function( $block ) use ( $post_id, $attributes ) {
+					return Sensei()->blocks->course_outline->module->render_module_block( $block, $post_id, $attributes );
+				},
+				$modules_blocks
+			)
+		);
+	}
+
+	private function get_lessons_html( $lessons_blocks ) {
+		$title = '';
+		if ( ! empty ( $lessons_blocks ) ) {
+			$title = '<h2 class="wp-block-sensei-lms-course-outline__lessons-title">' . esc_html__( 'Other lessons', 'sensei-lms' ) . '</h2>';
+		}
+
+		return $title . implode(
+			'',
+			array_map(
+				function( $block ) {
+					return Sensei()->blocks->course_outline->lesson->render_lesson_block( $block );
+				},
+				$lessons_blocks
+			)
+		);
+	}
+
 	/**
 	 * Render Course Outline block.
 	 *
@@ -56,28 +85,26 @@ class Sensei_Course_Outline_Course_Block {
 
 		$icons = $this->render_svg_icon_library();
 
+		$modules_blocks = array_filter(
+			$blocks,
+			function( $block ) {
+				return 'module' === $block['type'];
+			}
+		);
+		$lessons_blocks = array_filter(
+			$blocks,
+			function( $block ) {
+				return 'lesson' === $block['type'];
+			}
+		);
+
 		return '
 			' . ( ! empty( $blocks ) ? $icons : '' ) . '
 			<section ' . Sensei_Block_Helpers::render_style_attributes( [ 'wp-block-sensei-lms-course-outline', $class_name ], $css ) . '>
 				' .
-			implode(
-				'',
-				array_map(
-					function( $block ) use ( $post_id, $attributes ) {
-						if ( 'module' === $block['type'] ) {
-							return Sensei()->blocks->course_outline->module->render_module_block( $block, $post_id, $attributes );
-						}
-
-						if ( 'lesson' === $block['type'] ) {
-							return Sensei()->blocks->course_outline->lesson->render_lesson_block( $block );
-						}
-					},
-					$blocks
-				)
-			)
-			. '
+				$this->get_modules_html( $modules_blocks, $post_id, $attributes ) .
+				$this->get_lessons_html( $lessons_blocks ) . '
 			</section>
 		';
 	}
-
 }
