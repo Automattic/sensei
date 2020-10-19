@@ -65,7 +65,7 @@ class Sensei_Course_Outline_Module_Block {
 			$module_link = get_term_link( $block['id'], Sensei()->modules->taxonomy );
 
 			if ( ! is_wp_error( $module_link ) ) {
-				$module_link = add_query_arg( 'course_id', $course_id, $module_link );
+				$module_link = esc_url( add_query_arg( 'course_id', $course_id, $module_link ) );
 				$title       = '<a href="' . $module_link . '">' . $title . '</a>';
 			}
 		}
