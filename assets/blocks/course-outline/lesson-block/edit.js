@@ -1,5 +1,5 @@
 import { createBlock } from '@wordpress/blocks';
-import { select, useDispatch, dispatch, useSelect } from '@wordpress/data';
+import { select, useDispatch, useSelect } from '@wordpress/data';
 import { Icon } from '@wordpress/components';
 import classnames from 'classnames';
 import { __ } from '@wordpress/i18n';
@@ -40,6 +40,7 @@ export const EditLessonBlock = ( props ) => {
 		insertBlocksAfter,
 	} = props;
 	const { selectNextBlock, removeBlock } = useDispatch( 'core/block-editor' );
+	const { setLessonStatus } = useDispatch( COURSE_STATUS_STORE );
 
 	/**
 	 * Update lesson title.
@@ -127,12 +128,9 @@ export const EditLessonBlock = ( props ) => {
 			<LessonBlockSettings
 				{ ...props }
 				previewStatus={ previewStatus }
-				setPreviewStatus={ ( status ) => {
-					dispatch( COURSE_STATUS_STORE ).setLessonStatus(
-						clientId,
-						status
-					);
-				} }
+				setPreviewStatus={ ( status ) =>
+					setLessonStatus( clientId, status )
+				}
 			/>
 			<div { ...wrapperStyles }>
 				<Icon
