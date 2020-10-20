@@ -145,5 +145,5 @@ addFilter(
 	'editor.BlockListBlock',
 	'sensei/button/removeWrapperProps',
 	removeWrapperProps,
-	99
+	1
 );
