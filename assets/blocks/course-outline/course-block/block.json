@@ -49,7 +49,9 @@
           {
             "name": "sensei-lms/course-outline-lesson",
             "attributes": {
-              "title": "Lesson"
+              "title": "Lesson",
+              "id": 1,
+              "draft": false
             }
           }
         ]
@@ -57,13 +59,17 @@
       {
         "name": "sensei-lms/course-outline-lesson",
         "attributes": {
-          "title": "First Lesson"
+          "title": "First Lesson",
+          "id": 2,
+          "draft": false
         }
       },
       {
         "name": "sensei-lms/course-outline-lesson",
         "attributes": {
-          "title": "Second Lesson"
+          "title": "Second Lesson",
+          "id": 3,
+          "draft": false
         }
       }
     ]
