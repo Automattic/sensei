@@ -73,14 +73,25 @@ class Sensei_Block_Take_Course_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * When the user is not logged in, the button links to the login page.
+	 * When the user is not logged in, the button links to the My Courses page to log in.
 	 */
 	public function testLoginPageLinkWhenNotLoggedIn() {
+
+		// Create the My Courses page.
+		$my_courses_page_id = $this->factory->post->create(
+			[
+				'post_type'  => 'page',
+				'post_title' => 'My Courses',
+				'post_name'  => 'my-courses',
+			]
+		);
+		Sensei()->settings->set( 'my_course_page', $my_courses_page_id );
+
 		$this->logout();
 
 		$result = $this->block->render_take_course_block( [], '<button>Take Course</button>' );
 
-		$form = '/^\s*<form method="GET" action=".*\wp-login.php\?action=register">.+<\/form>\s*$/ms';
+		$form = '/^\s*<form method="GET" action=".*page_id=' . $my_courses_page_id . '">.+<\/form>\s*$/ms';
 
 		$this->assertRegExp( $form, $result, 'Should be wrapped in a form tag' );
 		$this->assertContains( '<button>Take Course</button>', $result, 'Should contain block content' );
