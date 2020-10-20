@@ -15,7 +15,7 @@ import { dispatch, useSelect } from '@wordpress/data';
 export const ModuleStatus = ( { clientId } ) => {
 	const status = useSelect(
 		( select ) => select( COURSE_STATUS_STORE ).getModuleStatus( clientId ),
-		[]
+		[ clientId ]
 	);
 
 	const lessonIds = useSelect(
@@ -23,7 +23,7 @@ export const ModuleStatus = ( { clientId } ) => {
 			select( 'core/block-editor' ).getClientIdsOfDescendants( [
 				clientId,
 			] ),
-		[]
+		[ clientId ]
 	);
 
 	const options =

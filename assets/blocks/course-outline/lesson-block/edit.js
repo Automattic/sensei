@@ -104,7 +104,7 @@ export const EditLessonBlock = ( props ) => {
 	const previewStatus = useSelect(
 		( selectStatus ) =>
 			selectStatus( COURSE_STATUS_STORE ).getLessonStatus( clientId ),
-		[]
+		[ clientId ]
 	);
 
 	const wrapperStyles = {

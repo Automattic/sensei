@@ -25,11 +25,14 @@ export const OutlineAttributesContext = createContext();
  * @param {string} clientId The outline block id.
  */
 const useUpdateLessonCount = function ( clientId ) {
-	const outlineDescendants = useSelect( ( select ) => {
-		return select( 'core/block-editor' ).getClientIdsOfDescendants( [
-			clientId,
-		] );
-	} );
+	const outlineDescendants = useSelect(
+		( select ) => {
+			return select( 'core/block-editor' ).getClientIdsOfDescendants( [
+				clientId,
+			] );
+		},
+		[ clientId ]
+	);
 
 	const lessonCount = useSelect( ( select ) => {
 		return select( 'core/block-editor' ).getGlobalBlockCount(
