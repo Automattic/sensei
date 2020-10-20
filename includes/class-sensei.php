@@ -209,6 +209,13 @@ class Sensei_Main {
 	public $setup_wizard;
 
 	/**
+	 * Blocks.
+	 *
+	 * @var Sensei_Blocks
+	 */
+	public $blocks;
+
+	/**
 	 * Constructor method.
 	 *
 	 * @param  string $file The base file of the plugin.
@@ -396,7 +403,8 @@ class Sensei_Main {
 		// data will be sent.
 		$this->usage_tracking->schedule_tracking_task();
 
-		Sensei_Blocks::instance()->init( $this );
+		$this->blocks = new Sensei_Blocks( $this );
+
 		Sensei_Learner::instance()->init();
 		Sensei_Course_Enrolment_Manager::instance()->init();
 		$this->enrolment_scheduler = Sensei_Enrolment_Job_Scheduler::instance();

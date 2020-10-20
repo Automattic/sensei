@@ -14,36 +14,25 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Blocks {
 	/**
-	 * Instance of singleton.
+	 * Course outline block.
 	 *
-	 * @var self
+	 * @var Sensei_Course_Outline_Block
 	 */
-	private static $instance;
+	public $course_outline;
 
 	/**
-	 * Fetches an instance of the class.
+	 * Course progress block.
 	 *
-	 * @return self
+	 * @var Sensei_Progress_Bar_Block
 	 */
-	public static function instance() {
-		if ( ! self::$instance ) {
-			self::$instance = new self();
-		}
-
-		return self::$instance;
-	}
+	public $course_progress;
 
 	/**
-	 * Sensei_Blocks constructor. Private so it can only be initialized internally.
-	 */
-	private function __construct() {}
-
-	/**
-	 * Initialize the class.
+	 * Sensei_Blocks constructor .
 	 *
-	 * @param Sensei_Main $sensei_main_instance Sensei main class instance.
+	 * @param Sensei_Main $sensei
 	 */
-	public function init( $sensei_main_instance ) {
+	public function __construct( $sensei ) {
 		// Skip if Gutenberg is not available.
 		if ( ! function_exists( 'register_block_type' ) ) {
 			return;
@@ -52,9 +41,9 @@ class Sensei_Blocks {
 		add_filter( 'block_categories', [ $this, 'sensei_block_categories' ], 10, 2 );
 
 		// Init blocks.
-		if ( $sensei_main_instance->feature_flags->is_enabled( 'course_outline' ) ) {
-			new Sensei_Course_Outline_Block();
-			new Sensei_Progress_Bar_Block();
+		if ( $sensei->feature_flags->is_enabled( 'course_outline' ) ) {
+			$this->course_outline  = new Sensei_Course_Outline_Block();
+			$this->course_progress = new Sensei_Course_Progress_Block();
 		}
 	}
 

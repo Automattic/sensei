@@ -18,14 +18,13 @@ class Sensei_Block_Helpers {
 	/**
 	 * Build CSS classes (for named colors) and inline styles from block attributes.
 	 *
-	 * @param array $block  Block.
-	 * @param array $colors Color attributes and their style property.
+	 * @param array $block_attributes  The block attributes.
+	 * @param array $colors Color      attributes and their style property.
 	 *
 	 * @return array Colors CSS classes and inline styles.
 	 */
-	public static function build_styles( $block, $colors = [] ) {
-		$block_attributes = $block['attributes'] ?? [];
-		$attributes       = [
+	public static function build_styles( array $block_attributes, array $colors = [] ) : array {
+		$attributes = [
 			'css_classes'   => [],
 			'inline_styles' => [],
 		];
@@ -68,8 +67,13 @@ class Sensei_Block_Helpers {
 	/**
 	 * Render class and style HTML attributes.
 	 *
-	 * @param string|string[] $class_names
-	 * @param array           $css
+	 * @param string|string[] $class_names An array of classes or a single class.
+	 * @param array           $css         {
+	 *     An array of classes and inline styles.
+	 *
+	 *     @type string[] $css_classes   An array of classes.
+	 *     @type string[] $inline_styles An array of inline css.
+	 * }
 	 *
 	 * @return string
 	 */

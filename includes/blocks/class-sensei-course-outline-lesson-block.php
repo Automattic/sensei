@@ -21,7 +21,7 @@ class Sensei_Course_Outline_Lesson_Block {
 	 *
 	 * @return string Lesson HTML
 	 */
-	public static function render_lesson_block( $block ) {
+	public function render_lesson_block( $block ) {
 		$lesson_id = $block['id'];
 		$classes   = [ 'wp-block-sensei-lms-course-outline-lesson' ];
 
@@ -31,7 +31,7 @@ class Sensei_Course_Outline_Lesson_Block {
 			$classes[] = 'completed';
 		}
 
-		$css = Sensei_Block_Helpers::build_styles( $block );
+		$css = Sensei_Block_Helpers::build_styles( $block['attributes'] ?? [] );
 
 		$draft = ( $block['draft'] ? '<em>' . esc_html__( '(Draft)', 'sensei-lms' ) . '</em>' : '' );
 
