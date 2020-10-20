@@ -4,7 +4,7 @@ import { Status } from './status-control';
 import { select, controls } from '@wordpress/data-controls';
 
 const DEFAULT_STATE = {
-	completedLessons: new Set(),
+	completedLessons: [],
 	totalLessonsCount: 0,
 };
 
@@ -90,7 +90,7 @@ const actions = {
 	refreshStructure( outlineId, totalLessonsCount, outlineDescendants ) {
 		return {
 			type: 'REFRESH_BLOCK_IDS',
-			newDescendantIds: new Set( outlineDescendants ),
+			newDescendantIds: outlineDescendants,
 			totalLessonsCount,
 		};
 	},
@@ -105,26 +105,28 @@ const selectors = {
 	 *
 	 * @param {Object} state                   The state.
 	 * @param {number} state.totalLessonsCount The number of lessons.
-	 * @param {Set}    state.completedLessons  The ids of the completed lessons.
+	 * @param {Array}  state.completedLessons  The ids of the completed lessons.
 	 *
 	 * @return {Object} An object with the total and completed lesson counts.
 	 */
 	getLessonCounts: ( { totalLessonsCount, completedLessons } ) => ( {
 		totalLessonsCount,
-		completedLessonsCount: completedLessons.size,
+		completedLessonsCount: completedLessons.length,
 	} ),
 
 	/**
 	 * Gets the lesson status.
 	 *
 	 * @param {Object} state                  The state.
-	 * @param {Set}    state.completedLessons The ids of the completed lessons.
+	 * @param {Array}  state.completedLessons The ids of the completed lessons.
 	 * @param {string} lessonId               The lesson id.
 	 *
 	 * @return {string} The lesson status.
 	 */
 	getLessonStatus: ( { completedLessons }, lessonId ) =>
-		completedLessons.has( lessonId )
+		completedLessons.some(
+			( completedLessonId ) => lessonId === completedLessonId
+		)
 			? Status.COMPLETED
 			: Status.NOT_STARTED,
 
@@ -132,7 +134,7 @@ const selectors = {
 	 * Calculates and gets the module status.
 	 *
 	 * @param {Object} state                  The state.
-	 * @param {Set}    state.completedLessons The ids of the completed lessons.
+	 * @param {Array}  state.completedLessons The ids of the completed lessons.
 	 * @param {string} moduleId               The module id.
 	 *
 	 * @return {string} The lesson status.
@@ -143,7 +145,9 @@ const selectors = {
 		).getClientIdsOfDescendants( [ moduleId ] );
 
 		const completedLessonsCount = lessonIds.filter( ( lessonId ) =>
-			completedLessons.has( lessonId )
+			completedLessons.some(
+				( completedLessonId ) => lessonId === completedLessonId
+			)
 		).length;
 
 		if ( 0 === completedLessonsCount ) {
@@ -174,12 +178,16 @@ const reducers = {
 	 * @return {Object} The new state.
 	 */
 	SET_LESSON_STATUS: ( { lessonId, status }, state ) => {
-		const completedLessons = new Set( state.completedLessons );
+		let completedLessons = [ ...state.completedLessons ];
 
 		if ( Status.COMPLETED === status ) {
-			completedLessons.add( lessonId );
+			if ( ! completedLessons.includes( lessonId ) ) {
+				completedLessons.push( lessonId );
+			}
 		} else {
-			completedLessons.delete( lessonId );
+			completedLessons = completedLessons.filter(
+				( completedLessonId ) => completedLessonId !== lessonId
+			);
 		}
 
 		return {
@@ -192,18 +200,20 @@ const reducers = {
 	 * Checks if a lesson has been removed and updates the lessons.
 	 *
 	 * @param {Object} action                   The action.
-	 * @param {Set}    action.newDescendantIds  The ids of all descendants of the outline block.
+	 * @param {Array}  action.newDescendantIds  The ids of all descendants of the outline block.
 	 * @param {number} action.totalLessonsCount The number of total lessons.
 	 * @param {Object} state                    The state.
 	 *
 	 * @return {Object} The new state.
 	 */
 	REFRESH_BLOCK_IDS: ( { newDescendantIds, totalLessonsCount }, state ) => {
-		const completedLessons = new Set( state.completedLessons );
+		let completedLessons = [ ...state.completedLessons ];
 
 		completedLessons.forEach( ( lesson ) => {
-			if ( ! newDescendantIds.has( lesson ) ) {
-				completedLessons.delete( lesson );
+			if ( ! newDescendantIds.includes( lesson ) ) {
+				completedLessons = completedLessons.filter(
+					( completedLessonId ) => completedLessonId !== lesson
+				);
 			}
 		} );
 
