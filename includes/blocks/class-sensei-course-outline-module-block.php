@@ -57,14 +57,23 @@ class Sensei_Course_Outline_Module_Block {
 
 		}
 
-		$description = ! empty( $block['description'] )
-			? '<div class="wp-block-sensei-lms-course-outline-module__description">' . wp_kses_post( $block['description'] ) . '</div>'
-			: '';
+		$title       = esc_html( $block['title'] );
+		$description = '';
+
+		if ( ! empty( $block['description'] ) ) {
+			$description = '<div class="wp-block-sensei-lms-course-outline-module__description">' . wp_kses_post( $block['description'] ) . '</div>';
+			$module_link = get_term_link( $block['id'], Sensei()->modules->taxonomy );
+
+			if ( ! is_wp_error( $module_link ) ) {
+				$module_link = esc_url( add_query_arg( 'course_id', $course_id, $module_link ) );
+				$title       = '<a href="' . $module_link . '">' . $title . '</a>';
+			}
+		}
 
 		return '
 			<section class="wp-block-sensei-lms-course-outline-module ' . esc_attr( $class_name ) . '">
 				<header ' . Sensei_Block_Helpers::render_style_attributes( 'wp-block-sensei-lms-course-outline-module__header', $header_css ) . '>
-					<h2 class="wp-block-sensei-lms-course-outline-module__title">' . esc_html( $block['title'] ) . '</h2>
+					<h2 class="wp-block-sensei-lms-course-outline-module__title">' . $title . '</h2>
 					' . $progress_indicator .
 			( ! empty( $outline_attributes['collapsibleModules'] ) ?
 				'<button type="button" class="wp-block-sensei-lms-course-outline__arrow">

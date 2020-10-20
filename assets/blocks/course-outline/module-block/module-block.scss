@@ -40,6 +40,10 @@
 			&::before, &::after {
 				content: none;
 			}
+
+			a {
+				color: inherit;
+			}
 		}
 
 		#{$block}__description {
