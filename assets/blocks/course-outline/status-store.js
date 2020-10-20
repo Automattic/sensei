@@ -37,16 +37,6 @@ const actions = {
 	 * @return {Object} Yields the lesson update actions.
 	 */
 	*setModuleStatus( moduleId, status ) {
-		const currentStatus = yield select(
-			COURSE_STATUS_STORE,
-			'getModuleStatus',
-			moduleId
-		);
-
-		if ( currentStatus === status ) {
-			return;
-		}
-
 		const lessonIds = yield select(
 			'core/block-editor',
 			'getClientIdsOfDescendants',
