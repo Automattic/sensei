@@ -1,5 +1,6 @@
 import { render, fireEvent } from '@testing-library/react';
 import { EditModuleBlock } from './edit';
+import { useSelect } from '@wordpress/data';
 
 jest.mock( '@wordpress/block-editor', () => ( {
 	...jest.requireActual( '@wordpress/block-editor' ),
@@ -14,6 +15,7 @@ jest.mock( '@wordpress/block-editor', () => ( {
 		/>
 	),
 } ) );
+jest.mock( '@wordpress/data' );
 jest.mock( '../use-block-creator', () => jest.fn() );
 jest.mock( './use-insert-lesson-block' );
 jest.mock( '../course-block/edit', () => jest.fn() );
@@ -23,6 +25,10 @@ jest.mock( '@wordpress/element', () => ( {
 } ) );
 
 describe( '<EditModuleBlock />', () => {
+	beforeAll( () =>
+		useSelect.mockReturnValue( [ 'first-lesson', 'second-lesson' ] )
+	);
+
 	it( 'Should set the title attribute on changing the name input value', () => {
 		const setAttributesMock = jest.fn();
 		const { getByPlaceholderText } = render(
