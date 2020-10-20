@@ -58,23 +58,17 @@ const actions = {
 		}
 
 		if ( Status.COMPLETED === status || Status.NOT_STARTED === status ) {
-			yield* lessonIds.map( ( lessonId ) => ( {
-				type: 'SET_LESSON_STATUS',
-				lessonId,
-				status,
-			} ) );
+			yield* lessonIds.map( ( lessonId ) =>
+				actions.setLessonStatus( lessonId, status )
+			);
 		} else {
-			yield* lessonIds.slice( 1 ).map( ( lessonId ) => ( {
-				type: 'SET_LESSON_STATUS',
-				lessonId,
-				status: Status.NOT_STARTED,
-			} ) );
+			yield* lessonIds
+				.slice( 1 )
+				.map( ( lessonId ) =>
+					actions.setLessonStatus( lessonId, Status.NOT_STARTED )
+				);
 
-			return {
-				type: 'SET_LESSON_STATUS',
-				lessonId: lessonIds[ 0 ],
-				status: Status.COMPLETED,
-			};
+			return actions.setLessonStatus( lessonIds[ 0 ], Status.COMPLETED );
 		}
 	},
 
