@@ -1,11 +1,14 @@
 
 .wp-block-sensei-lms-course-outline {
 
-	margin: 1em 0;
-	border: 0 solid $dark-gray;
+	.wp-block-sensei-lms-course-outline-module {
+		margin: 1em 0;
+		border: 0 solid $dark-gray;
+	}
 
-	&.is-style-default {
+	&.is-style-default .wp-block-sensei-lms-course-outline-module {
 		border-width: 1px;
+
 		.block-editor-block-styles__item & {
 			border-width: 4px;
 			margin: 1px;
