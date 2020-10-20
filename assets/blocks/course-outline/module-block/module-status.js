@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
 import { StatusControl, Status, StatusLabels } from '../status-control';
 import { COURSE_STATUS_STORE } from '../status-store';
-import { dispatch, useSelect } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 
 /**
  * Module status preview with setting control.
@@ -13,6 +13,7 @@ import { dispatch, useSelect } from '@wordpress/data';
  * @param {string} props.clientId The module block id.
  */
 export const ModuleStatus = ( { clientId } ) => {
+	const { setModuleStatus } = useDispatch( COURSE_STATUS_STORE );
 	const status = useSelect(
 		( select ) => select( COURSE_STATUS_STORE ).getModuleStatus( clientId ),
 		[ clientId ]
@@ -58,10 +59,7 @@ export const ModuleStatus = ( { clientId } ) => {
 						options={ options }
 						status={ status }
 						setStatus={ ( newStatus ) => {
-							dispatch( COURSE_STATUS_STORE ).setModuleStatus(
-								clientId,
-								newStatus
-							);
+							setModuleStatus( clientId, newStatus );
 						} }
 					/>
 				</PanelBody>
