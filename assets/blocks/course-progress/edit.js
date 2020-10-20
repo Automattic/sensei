@@ -27,11 +27,11 @@ export const EditCourseProgressBlock = ( {
 		[]
 	);
 
-	const [ manualPercentage, setManualPercentage ] = useState( null );
+	const [ manualPercentage, setManualPercentage ] = useState( undefined );
 
 	let progress = 0;
 
-	if ( null !== manualPercentage ) {
+	if ( undefined !== manualPercentage ) {
 		progress = manualPercentage;
 	} else if ( 0 !== totalLessonsCount ) {
 		progress =
@@ -97,10 +97,11 @@ export const EditCourseProgressBlock = ( {
 							'Preview the progress bar for different percentage values.',
 							'sensei-lms'
 						) }
-						value={ manualPercentage ?? 0 }
+						value={ manualPercentage }
 						onChange={ setManualPercentage }
 						min={ 0 }
 						max={ 100 }
+						allowReset={ true }
 					/>
 				</PanelBody>
 			</InspectorControls>
