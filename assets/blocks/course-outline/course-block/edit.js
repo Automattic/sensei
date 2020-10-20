@@ -1,5 +1,5 @@
 import { InnerBlocks } from '@wordpress/block-editor';
-import { useSelect, withSelect, useDispatch } from '@wordpress/data';
+import { useSelect, withSelect, dispatch } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
 import { createContext, useEffect } from '@wordpress/element';
 
@@ -40,11 +40,13 @@ const useUpdateLessonCount = function ( clientId ) {
 		);
 	} );
 
-	useDispatch( COURSE_STATUS_STORE ).refreshStructure(
-		clientId,
-		lessonCount,
-		outlineDescendants
-	);
+	useEffect( () => {
+		dispatch( COURSE_STATUS_STORE ).refreshStructure(
+			clientId,
+			lessonCount,
+			outlineDescendants
+		);
+	}, [ clientId, lessonCount, outlineDescendants ] );
 };
 
 /**
