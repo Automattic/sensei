@@ -17,15 +17,15 @@ class Sensei_Course_Outline_Block_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test the course structure is used for rendering.
+	 * Test that a message is shown when there is no content.
 	 */
-	public function testBlockRendered() {
+	public function testEmptyBlock() {
 		$post_content = file_get_contents( 'sample-data/outline-block-post-content.html', true );
 
 		$this->mockPostCourseStructure( [] );
 		$result = do_blocks( $post_content );
 
-		$this->assertDiscardWhitespace( '<section class="wp-block-sensei-lms-course-outline is-style-default" style=""></section>', $result );
+		$this->assertContains( 'There is no published content in this course yet.', $result );
 	}
 
 	/**
