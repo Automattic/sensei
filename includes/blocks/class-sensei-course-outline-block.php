@@ -198,6 +198,8 @@ class Sensei_Course_Outline_Block {
 	 * Check if the course has draft lessons or empty modules.
 	 *
 	 * @param array $blocks The course structure.
+	 *
+	 * @return bool Has draft lessons/modules.
 	 */
 	private function has_draft( $blocks ) {
 		foreach ( $blocks as $block ) {
