@@ -90,7 +90,9 @@ class Sensei_Course_Outline_Module_Block {
 			implode(
 				'',
 				array_map(
-					[ Sensei()->blocks->course_outline->lesson, 'render_lesson_block' ],
+					function( $block ) use ( $course_id ) {
+						return Sensei()->blocks->course_outline->lesson->render_lesson_block( $block, $course_id );
+					},
 					$block['lessons']
 				)
 			)

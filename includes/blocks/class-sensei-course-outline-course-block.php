@@ -73,7 +73,7 @@ class Sensei_Course_Outline_Course_Block {
 						}
 
 						if ( 'lesson' === $block['type'] ) {
-							return Sensei()->blocks->course_outline->lesson->render_lesson_block( $block );
+							return Sensei()->blocks->course_outline->lesson->render_lesson_block( $block, $post_id );
 						}
 					},
 					$blocks
