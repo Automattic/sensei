@@ -5,7 +5,7 @@ import metadata from './block';
 export default {
 	title: __( 'Course Progress', 'sensei-lms' ),
 	description: __(
-		"Add a progress bar which displays the learner's course progress. The block is displayed only when the user is enrolled to the course.",
+		"Display the learner's progress in the course. This block is only visible if the learner is enrolled.",
 		'sensei-lms'
 	),
 	keywords: [

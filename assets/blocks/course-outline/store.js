@@ -1,6 +1,6 @@
 import { apiFetch, controls as dataControls } from '@wordpress/data-controls';
 import { dispatch, registerStore, select, subscribe } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { createReducerFromActionMap } from '../../shared/data/store-helpers';
 import { isEqual } from 'lodash';
 
@@ -39,13 +39,17 @@ const actions = {
 			} );
 			yield actions.setStructure( result );
 		} catch ( error ) {
-			yield dispatch( 'core/notices' ).createErrorNotice(
-				[
-					__( 'Course Outline update failed:', 'sensei-lms' ),
-					error.message,
-				].join( ' ' )
+			const errorMessage = sprintf(
+				/* translators: Error message. */
+				__(
+					'Course modules and lessons could not be updated. %s',
+					'sensei-lms'
+				),
+				error.message
 			);
-			yield actions.setEditorDirty( false );
+			yield dispatch( 'core/notices' ).createErrorNotice( errorMessage, {
+				id: 'course-outline-save-error',
+			} );
 		}
 
 		yield { type: 'SAVING', isSaving: false };
@@ -118,22 +122,45 @@ export const COURSE_STORE = 'sensei/course-structure';
  * Register course structure store and subscribe to block editor save.
  */
 const registerCourseStructureStore = () => {
+	// Set to true when savings starts, and false when it ends.
+	let postSaving = false;
+
+	const startSave = () => {
+		const shouldSave = select( COURSE_STORE ).shouldSave();
+
+		// Clear error notices.
+		dispatch( 'core/notices' ).removeNotice( 'course-outline-save-error' );
+
+		if ( shouldSave ) {
+			dispatch( COURSE_STORE ).save();
+		}
+	};
+
+	const finishSave = () => {
+		// Save the post again if the blocks were updated.
+		const shouldResavePost = select( COURSE_STORE ).shouldResavePost();
+		if ( shouldResavePost ) {
+			dispatch( 'core/editor' ).savePost();
+		}
+	};
+
 	subscribe( function saveStructureOnPostSave() {
 		const editor = select( 'core/editor' );
 
 		if ( ! editor ) return;
 
-		const isSaving = editor.isSavingPost() && ! editor.isAutosavingPost();
-		const shouldSave = select( COURSE_STORE ).shouldSave();
-		const shouldResavePost = select( COURSE_STORE ).shouldResavePost();
+		const isSavingPost =
+			editor.isSavingPost() && ! editor.isAutosavingPost();
 
-		if ( isSaving && shouldSave && ! shouldResavePost ) {
-			dispatch( COURSE_STORE ).save();
-		}
+		// First update where post is saving.
+		if ( ! postSaving && isSavingPost ) {
+			postSaving = true;
+			startSave();
 
-		// Save the post again if the blocks were updated.
-		if ( ! isSaving && shouldResavePost ) {
-			dispatch( 'core/editor' ).savePost();
+			// First update where post is no longer saving.
+		} else if ( postSaving && ! isSavingPost ) {
+			postSaving = false;
+			finishSave();
 		}
 	} );
 

@@ -433,7 +433,7 @@ abstract class Sensei_Import_Model {
 	 * @param string $message  Warning message.
 	 * @param array  $log_data Log data.
 	 */
-	protected function add_line_warning( $message, $log_data = [] ) {
+	public function add_line_warning( $message, $log_data = [] ) {
 		$this->deferred_warnings[] = [
 			'message'  => $message,
 			'log_data' => $log_data,
