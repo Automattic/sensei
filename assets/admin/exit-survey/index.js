@@ -27,6 +27,9 @@ import { render } from '@wordpress/element';
 		} );
 	};
 
+	/**
+	 * Exit survey modal.
+	 */
 	class ExitSurveyModal {
 		href;
 		container;
@@ -40,7 +43,7 @@ import { render } from '@wordpress/element';
 			this.href = href;
 		}
 		/**
-		 * Open exit survey modal.
+		 * Create and open a modal with an exit survey form.
 		 *
 		 */
 		open = () => {
