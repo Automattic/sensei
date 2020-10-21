@@ -22,8 +22,32 @@ class Sensei_Exit_Survey {
 	 * Sensei_Exit_Survey constructor.
 	 */
 	public function __construct() {
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
 		add_action( 'wp_ajax_exit_survey', array( $this, 'save_exit_survey' ) );
 
+	}
+
+	/**
+	 * Enqueues admin scripts when needed on different screens.
+	 *
+	 * @since  2.0.0
+	 * @access private
+	 */
+	public function enqueue_admin_assets() {
+		$screen = get_current_screen();
+		if ( in_array( $screen->id, [ 'plugins', 'plugins-network' ], true ) ) {
+			Sensei()->assets->enqueue( 'sensei-admin-exit-survey', 'admin/exit-survey/index.js', [], true );
+			Sensei()->assets->enqueue( 'sensei-admin-exit-survey', 'admin/exit-survey/exit-survey.css', [], 'screen' );
+			wp_set_script_translations( 'sensei-admin-exit-survey', 'sensei-lms' );
+
+			wp_localize_script(
+				'sensei-admin-exit-survey',
+				'sensei_exit_survey',
+				[
+					'nonce' => wp_create_nonce( 'sensei_exit_survey' ),
+				]
+			);
+		}
 	}
 
 	/**
