@@ -112,9 +112,10 @@ export const AdminFlow = {
 
 		if ( deactivateLink ) {
 			await deactivateLink.click();
-			await page.click(
+			const exitSurvey = page.$(
 				`#sensei-exit-survey-modal button:not(:disabled)`
 			);
+			if ( exitSurvey ) await exitSurvey.click();
 		}
 	},
 	activatePlugin: async ( slug, forceReactivate = false ) => {
