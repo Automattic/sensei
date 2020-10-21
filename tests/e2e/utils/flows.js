@@ -1,7 +1,7 @@
 import { loginUser } from '@wordpress/e2e-test-utils';
 import { adminUrl } from './helpers';
 
-const isSessionCookieSet = function( cookies ) {
+const isSessionCookieSet = function ( cookies ) {
 	let result = false;
 
 	if ( ! Array.isArray( cookies ) ) {
@@ -112,9 +112,10 @@ export const AdminFlow = {
 
 		if ( deactivateLink ) {
 			await deactivateLink.click();
-			await page.click(
+			const exitSurvey = page.$(
 				`#sensei-exit-survey-modal button:not(:disabled)`
 			);
+			if ( exitSurvey ) await exitSurvey.click();
 		}
 	},
 	activatePlugin: async ( slug, forceReactivate = false ) => {
