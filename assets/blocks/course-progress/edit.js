@@ -1,6 +1,11 @@
 import { withColorSettings } from '../../shared/blocks/settings';
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
+import { useSelect } from '@wordpress/data';
+import { useState } from '@wordpress/element';
+import { COURSE_STATUS_STORE } from '../course-outline/status-store';
+import { InspectorControls } from '@wordpress/block-editor';
+import { PanelBody, RangeControl } from '@wordpress/components';
 
 /**
  * Edit course progress bar component.
@@ -17,7 +22,25 @@ export const EditCourseProgressBlock = ( {
 	barBackgroundColor,
 	textColor,
 } ) => {
-	const progress = '60%';
+	const { totalLessonsCount, completedLessonsCount } = useSelect(
+		( select ) => select( COURSE_STATUS_STORE ).getLessonCounts(),
+		[]
+	);
+
+	const [ manualPercentage, setManualPercentage ] = useState( undefined );
+
+	let progress = 0;
+
+	if ( undefined !== manualPercentage ) {
+		progress = manualPercentage;
+	} else if ( 0 !== totalLessonsCount ) {
+		progress =
+			Math.round(
+				( ( 100 * completedLessonsCount ) / totalLessonsCount +
+					Number.EPSILON ) *
+					100
+			) / 100;
+	}
 
 	const wrapperAttributes = {
 		className: classnames( className, textColor?.class ),
@@ -29,7 +52,7 @@ export const EditCourseProgressBlock = ( {
 		className: barColor?.class,
 		style: {
 			backgroundColor: barColor?.color,
-			width: progress,
+			width: progress + '%',
 		},
 	};
 	const barBackgroundAttributes = {
@@ -47,16 +70,41 @@ export const EditCourseProgressBlock = ( {
 			<div { ...wrapperAttributes }>
 				<section className="wp-block-sensei-lms-progress-heading">
 					<div className="wp-block-sensei-lms-progress-heading__lessons">
-						5 Lessons
+						{ totalLessonsCount } Lessons
 					</div>
 					<div className="wp-block-sensei-lms-progress-heading__completed">
-						3 completed ({ progress })
+						{ completedLessonsCount } completed ({ progress }%)
 					</div>
 				</section>
-				<div { ...barBackgroundAttributes }>
+				<div
+					role="progressbar"
+					aria-valuenow={ progress }
+					aria-valuemin="0"
+					aria-valuemax="100"
+					{ ...barBackgroundAttributes }
+				>
 					<div { ...barAttributes } />
 				</div>
 			</div>
+
+			<InspectorControls>
+				<PanelBody
+					title={ __( 'Progress percentage', 'sensei-lms' ) }
+					initialOpen={ false }
+				>
+					<RangeControl
+						help={ __(
+							'Preview the progress bar for different percentage values.',
+							'sensei-lms'
+						) }
+						value={ manualPercentage }
+						onChange={ setManualPercentage }
+						min={ 0 }
+						max={ 100 }
+						allowReset={ true }
+					/>
+				</PanelBody>
+			</InspectorControls>
 		</>
 	);
 };
