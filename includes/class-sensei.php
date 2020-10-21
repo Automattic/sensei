@@ -409,6 +409,8 @@ class Sensei_Main {
 			new Sensei_Import();
 			new Sensei_Export();
 
+			new Sensei_Exit_Survey();
+
 			if ( $this->feature_flags->is_enabled( 'rest_api_testharness' ) ) {
 				$this->test_harness = new Sensei_Admin_Rest_Api_Testharness( $this->main_plugin_file_name );
 			}
