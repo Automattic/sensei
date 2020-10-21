@@ -6,7 +6,6 @@
  * @param {string} props.label        Option text label.
  * @param {string} props.detailsLabel Label for details field.
  */
-
 export const ExitSurveyFormItem = ( { id, label, detailsLabel } ) => {
 	const idAttr = `sensei-exit-reason__${ id }`;
 	const detailsIdAttr = `${ idAttr }-details`;
