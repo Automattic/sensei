@@ -112,21 +112,16 @@ export const AdminFlow = {
 
 		if ( deactivateLink ) {
 			await deactivateLink.click();
+			await page.click(
+				`#sensei-exit-survey-modal button:not(:disabled)`
+			);
 		}
 	},
 	activatePlugin: async ( slug, forceReactivate = false ) => {
 		await AdminFlow.goToPlugins();
 
-		const deactivateLink = await AdminFlow.findPluginAction(
-			slug,
-			'deactivate'
-		);
-
-		if ( deactivateLink ) {
-			if ( forceReactivate ) {
-				await deactivateLink.click();
-				await page.waitForNavigation();
-			} else return;
+		if ( forceReactivate ) {
+			await AdminFlow.deactivatePlugin();
 		}
 
 		const activate = await AdminFlow.findPluginAction( slug, 'activate' );
