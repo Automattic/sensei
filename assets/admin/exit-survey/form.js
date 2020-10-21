@@ -44,7 +44,9 @@ export const ExitSurveyForm = ( { submit, skip } ) => {
 						'sensei-lms'
 					) }
 				</p>
-				{ reasons.map( ExitSurveyFormItem ) }
+				{ reasons.map( ( reason ) => (
+					<ExitSurveyFormItem key={ reason.id } { ...reason } />
+				) ) }
 			</div>
 			<div className="sensei-exit-survey__buttons">
 				<button
