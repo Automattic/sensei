@@ -52,7 +52,7 @@ export const EditCourseProgressBlock = ( {
 		className: barColor?.class,
 		style: {
 			backgroundColor: barColor?.color,
-			width: progress + '%',
+			width: Math.max( 2, progress ) + '%',
 		},
 	};
 	const barBackgroundAttributes = {
