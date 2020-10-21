@@ -181,12 +181,12 @@ abstract class Sensei_Usage_Tracking_Base {
 	}
 
 	/**
-	 * Send an event to Tracks if tracking is enabled.
+	 * Send an event to Tracks if tracking is enabled, including site information.
 	 *
-	 * @param string   $event The event name. The prefix string will be
-	 *   automatically prepended to this, so please supply this string without a
-	 *   prefix.
-	 * @param array    $properties Event Properties.
+	 * @param string   $event           The event name. The prefix string will be
+	 *                                  automatically prepended to this, so please supply this string without a
+	 *                                  prefix.
+	 * @param array    $properties      Event Properties.
 	 * @param null|int $event_timestamp When the event occurred.
 	 *
 	 * @return bool
@@ -198,13 +198,7 @@ abstract class Sensei_Usage_Tracking_Base {
 			return false;
 		}
 
-		$pixel      = 'https://pixel.wp.com/t.gif';
-		$event_name = $this->get_event_prefix() . '_' . $event;
-		$user       = wp_get_current_user();
-
-		if ( null === $event_timestamp ) {
-			$event_timestamp = time();
-		}
+		$user = wp_get_current_user();
 
 		$properties['admin_email'] = get_option( 'admin_email' );
 		$properties['_ut']         = $this->get_event_prefix() . ':site_url';
@@ -213,6 +207,32 @@ abstract class Sensei_Usage_Tracking_Base {
 		// to ever add event tracking at the user level.
 		$properties['_ui'] = str_replace( 'www.', '', wp_parse_url( site_url(), PHP_URL_HOST ) );
 		$properties['_ul'] = $user->user_login;
+
+		return $this->send_anonymous_event( $event, $properties, $event_timestamp );
+
+	}
+
+
+	/**
+	 * Send an event to Tracks.
+	 *
+	 * @param string   $event           The event name. The prefix string will be
+	 *                                  automatically prepended to this, so please supply this string without a
+	 *                                  prefix.
+	 * @param array    $properties      Event Properties.
+	 * @param null|int $event_timestamp When the event occurred.
+	 *
+	 * @return bool
+	 **/
+	public function send_anonymous_event( $event, $properties = array(), $event_timestamp = null ) {
+
+		$pixel      = 'https://pixel.wp.com/t.gif';
+		$event_name = $this->get_event_prefix() . '_' . $event;
+
+		if ( null === $event_timestamp ) {
+			$event_timestamp = time();
+		}
+
 		$properties['_en'] = $event_name;
 		$properties['_ts'] = $event_timestamp . '000';
 		$properties['_rt'] = round( microtime( true ) * 1000 );  // log time.
