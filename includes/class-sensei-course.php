@@ -3561,12 +3561,15 @@ class Sensei_Course {
 		$product_count = empty( $product_ids ) ? 0 : count( array_filter( $product_ids, 'is_numeric' ) );
 
 		$event_properties = [
-			'course_id'         => $course_id,
-			'has_outline_block' => has_block( 'sensei-lms/course-outline', $content ) ? 1 : 0,
-			'module_count'      => count( wp_get_post_terms( $course_id, 'module' ) ),
-			'lesson_count'      => $this->course_lesson_count( $course_id ),
-			'product_count'     => $product_count,
-			'sample_course'     => 'getting-started-with-sensei-lms' === $post->post_name ? 1 : 0,
+			'course_id'                 => $course_id,
+			'has_outline_block'         => has_block( 'sensei-lms/course-outline', $content ) ? 1 : 0,
+			'has_progress_block'        => has_block( 'sensei-lms/course-progress', $content ) ? 1 : 0,
+			'has_take_course_block'     => has_block( 'sensei-lms/button-take-course', $content ) ? 1 : 0,
+			'has_contact_teacher_block' => has_block( 'sensei-lms/button-contact-teacher', $content ) ? 1 : 0,
+			'module_count'              => count( wp_get_post_terms( $course_id, 'module' ) ),
+			'lesson_count'              => $this->course_lesson_count( $course_id ),
+			'product_count'             => $product_count,
+			'sample_course'             => 'getting-started-with-sensei-lms' === $post->post_name ? 1 : 0,
 		];
 
 		sensei_log_event( 'course_update', $event_properties );
