@@ -3614,7 +3614,6 @@ class Sensei_Course {
 		// Legacy progress bar on the single course page.
 		add_action( 'sensei_single_course_content_inside_before', [ $this, 'the_progress_statement' ], 15 );
 		add_action( 'sensei_single_course_content_inside_before', [ $this, 'the_progress_meter' ], 16 );
-
 		// Legacy lesson listing.
 		add_action( 'sensei_single_course_content_inside_after', [ __CLASS__, 'the_course_lessons_title' ], 9 );
 		add_action( 'sensei_single_course_content_inside_after', 'course_single_lessons', 10 );
@@ -3640,6 +3639,13 @@ class Sensei_Course {
 		// Module listing.
 		remove_action( 'sensei_single_course_content_inside_after', [ Sensei()->modules, 'load_course_module_content_template' ], 8 );
 
+		// Legacy progress bar on the single course page.
+		remove_action( 'sensei_single_course_content_inside_before', [ $this, 'the_progress_statement' ], 15 );
+		remove_action( 'sensei_single_course_content_inside_before', [ $this, 'the_progress_meter' ], 16 );
+
+		// Take this course.
+		remove_action( 'sensei_single_course_content_inside_before', [ __CLASS__, 'the_course_enrolment_actions' ], 30 );
+
 		// @todo Remove additional actions from `\Sensei_Course::add_legacy_course_hooks` as implemented in blocks.
 	}
 
@@ -3655,6 +3661,8 @@ class Sensei_Course {
 
 		$course_blocks = [
 			'sensei-lms/course-outline',
+			'sensei-lms/course-progress',
+			'sensei-lms/button-take-course',
 		];
 
 		foreach ( $course_blocks as $block ) {
