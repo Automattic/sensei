@@ -23,6 +23,7 @@ import { COURSE_STATUS_STORE } from '../status-store';
  * @param {number}   props.attributes.id       Lesson Post ID
  * @param {number}   props.attributes.fontSize Lesson title font size.
  * @param {boolean}  props.attributes.draft    Draft status of lesson.
+ * @param {boolean}  props.attributes.preview  Whether lesson has preview enabled.
  * @param {Object}   props.backgroundColor     Background color object.
  * @param {Object}   props.textColor           Text color object.
  * @param {Function} props.setAttributes       Block set attributes function.
@@ -33,7 +34,7 @@ export const EditLessonBlock = ( props ) => {
 		clientId,
 		name,
 		className,
-		attributes: { title, id, fontSize, draft },
+		attributes: { title, id, fontSize, draft, preview },
 		backgroundColor,
 		textColor,
 		setAttributes,
@@ -145,6 +146,8 @@ export const EditLessonBlock = ( props ) => {
 					onKeyDown={ handleKeyDown }
 					style={ { fontSize } }
 				/>
+
+				{ preview && <span>Preview</span> }
 
 				{ postStatus && (
 					<div className="wp-block-sensei-lms-course-outline-lesson__post-status">

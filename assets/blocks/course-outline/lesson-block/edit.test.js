@@ -57,6 +57,17 @@ describe( '<EditLessonBlock />', () => {
 		expect( container.querySelector( '.custom-class' ) ).toBeTruthy();
 	} );
 
+	it( 'Should render the edit lesson block with preview correctly', () => {
+		const { getByText } = render(
+			<EditLessonBlock
+				className="custom-class"
+				attributes={ { title: 'Test', preview: true } }
+			/>
+		);
+
+		expect( getByText( 'Preview' ) ).toBeTruthy();
+	} );
+
 	it( 'Should set the title attribute on changing the input value', () => {
 		const setAttributesMock = jest.fn();
 		const { getByPlaceholderText } = render(
