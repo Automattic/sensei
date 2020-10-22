@@ -75,7 +75,7 @@ export function CourseProgressSettings( {
 						) }
 						value={ height }
 						onChange={ setHeight }
-						min={ 0 }
+						min={ 1 }
 						max={ 40 }
 						allowReset={ true }
 						initialPosition={ initialHeight }
