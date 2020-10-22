@@ -51,22 +51,28 @@ class Sensei_Course_Progress_Block {
 		$total_lessons = count( Sensei()->course->course_lessons( get_the_ID() ) );
 		$percentage    = Sensei_Utils::quotient_as_absolute_rounded_percentage( $completed, $total_lessons, 2 );
 
-		$text_css                   = Sensei_Block_Helpers::build_styles( $attributes );
-		$bar_background_css         = Sensei_Block_Helpers::build_styles(
+		$text_css           = Sensei_Block_Helpers::build_styles( $attributes );
+		$bar_background_css = Sensei_Block_Helpers::build_styles(
 			$attributes,
 			[
 				'textColor'          => null,
 				'barBackgroundColor' => 'background-color',
+			],
+			[
+				'height'       => 'height',
+				'borderRadius' => 'border-radius',
 			]
 		);
+
 		$bar_css                    = Sensei_Block_Helpers::build_styles(
 			$attributes,
 			[
 				'textColor' => null,
 				'barColor'  => 'background-color',
-			]
+			],
+			[ 'borderRadius' => 'border-radius' ]
 		);
-		$bar_css['inline_styles'][] = 'width: ' . ( 2 > $percentage ? 2 : $percentage ) . '%';
+		$bar_css['inline_styles'][] = 'width: ' . ( 4 > $percentage ? 4 : $percentage ) . '%';
 
 		// translators: Placeholder %d is the lesson count.
 		$lessons_text = sprintf( _n( '%d Lesson', '%d Lessons', $total_lessons, 'sensei-lms' ), $total_lessons );

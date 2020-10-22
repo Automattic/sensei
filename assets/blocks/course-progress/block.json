@@ -25,6 +25,17 @@
     "customBarBackgroundColor": {
       "type": "string",
       "default": "#E6E6E6"
+    },
+    "height": {
+      "type": "integer"
+    },
+    "borderRadius": {
+      "type": "integer"
+    }
+  },
+  "example": {
+    "attributes": {
+      "customBarBackgroundColor": "#999999"
     }
   }
 }

@@ -31,7 +31,7 @@ class Sensei_Course_Outline_Lesson_Block {
 			$classes[] = 'completed';
 		}
 
-		$css = Sensei_Block_Helpers::build_styles( $block['attributes'] ?? [] );
+		$css = Sensei_Block_Helpers::build_styles( $block['attributes'] ?? [], [], [ 'fontSize' => 'font-size' ] );
 
 		return '
 			<a href="' . esc_url( get_permalink( $lesson_id ) ) . '" ' . Sensei_Block_Helpers::render_style_attributes( $classes, $css ) . '>

@@ -19,11 +19,12 @@ class Sensei_Block_Helpers {
 	 * Build CSS classes (for named colors) and inline styles from block attributes.
 	 *
 	 * @param array $block_attributes  The block attributes.
-	 * @param array $colors Color      attributes and their style property.
+	 * @param array $colors            An array with the color attribute as keys and the style property as values.
+	 * @param array $size_styles       An array with the sizing attribute as keys and the style property as values.
 	 *
 	 * @return array Colors CSS classes and inline styles.
 	 */
-	public static function build_styles( array $block_attributes, array $colors = [] ) : array {
+	public static function build_styles( array $block_attributes, array $colors = [], array $size_styles = [] ) : array {
 		$attributes = [
 			'css_classes'   => [],
 			'inline_styles' => [],
@@ -57,8 +58,10 @@ class Sensei_Block_Helpers {
 			}
 		}
 
-		if ( ! empty( $block_attributes['fontSize'] ) ) {
-			$attributes['inline_styles'][] = sprintf( 'font-size: %spx', $block_attributes['fontSize'] );
+		foreach ( $size_styles as $attribute_name => $css_class ) {
+			if ( isset( $block_attributes[ $attribute_name ] ) && is_int( $block_attributes[ $attribute_name ] ) ) {
+				$attributes['inline_styles'][] = sprintf( '%s: %spx', $css_class, $block_attributes[ $attribute_name ] );
+			}
 		}
 
 		return $attributes;
