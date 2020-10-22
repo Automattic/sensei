@@ -147,7 +147,11 @@ export const EditLessonBlock = ( props ) => {
 					style={ { fontSize } }
 				/>
 
-				{ preview && <span>Preview</span> }
+				{ preview && (
+					<span className="wp-block-sensei-lms-course-outline-lesson__badge">
+						Preview
+					</span>
+				) }
 
 				{ postStatus && (
 					<div className="wp-block-sensei-lms-course-outline-lesson__post-status">
