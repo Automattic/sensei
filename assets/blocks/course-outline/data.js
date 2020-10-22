@@ -99,6 +99,7 @@ export const extractStructure = ( blocks ) => {
 		} ),
 		lesson: ( block ) => ( {
 			draft: block.attributes.draft,
+			preview: block.attributes.preview,
 		} ),
 	};
 
