@@ -36,7 +36,11 @@ class Sensei_Course_Outline_Lesson_Block {
 		$preview_badge = '';
 
 		if ( isset( $block['preview'] ) && true === $block['preview'] && ! Sensei_Course::is_user_enrolled( $course_id ) ) {
-			$preview_badge = '<span class="wp-block-sensei-lms-course-outline-lesson__badge">Preview</span>';
+			$preview_badge = '
+				<span class="wp-block-sensei-lms-course-outline-lesson__badge">
+					' . esc_html__( 'Preview', 'sensei-lms' ) . '
+				</span>
+			';
 		}
 
 		return '

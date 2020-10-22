@@ -149,7 +149,7 @@ export const EditLessonBlock = ( props ) => {
 
 				{ preview && (
 					<span className="wp-block-sensei-lms-course-outline-lesson__badge">
-						Preview
+						{ __( 'Preview', 'sensei-lms' ) }
 					</span>
 				) }
 
