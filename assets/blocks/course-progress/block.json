@@ -26,5 +26,10 @@
       "type": "string",
       "default": "#E6E6E6"
     }
+  },
+  "example": {
+    "attributes": {
+      "customBarBackgroundColor": "#999999"
+    }
   }
 }
