@@ -4,23 +4,28 @@ import classnames from 'classnames';
 import { useSelect } from '@wordpress/data';
 import { useState } from '@wordpress/element';
 import { COURSE_STATUS_STORE } from '../course-outline/status-store';
-import { InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, RangeControl } from '@wordpress/components';
+import { CourseProgressSettings } from './settings';
 
 /**
  * Edit course progress bar component.
  *
- * @param {Object} props                    Component properties.
- * @param {string} props.className          Custom class name.
- * @param {Object} props.barColor           Color object for the progress bar.
- * @param {Object} props.barBackgroundColor Color object for the background of the progress bar.
- * @param {Object} props.textColor          Color object for the text.
+ * @param {Object}   props                         Component properties.
+ * @param {string}   props.className               Custom class name.
+ * @param {Object}   props.barColor                Color object for the progress bar.
+ * @param {Object}   props.barBackgroundColor      Color object for the background of the progress bar.
+ * @param {Object}   props.textColor               Color object for the text.
+ * @param {Object}   props.attributes              Component attributes.
+ * @param {number}   props.attributes.height       The height of the progress bar.
+ * @param {number}   props.attributes.borderRadius The border radius of the progress bar.
+ * @param {Function} props.setAttributes           Callback to set the component attributes.
  */
 export const EditCourseProgressBlock = ( {
 	className,
 	barColor,
 	barBackgroundColor,
 	textColor,
+	attributes: { height, borderRadius },
+	setAttributes,
 } ) => {
 	const { totalLessonsCount, completedLessonsCount } = useSelect(
 		( select ) => select( COURSE_STATUS_STORE ).getLessonCounts(),
@@ -52,7 +57,8 @@ export const EditCourseProgressBlock = ( {
 		className: barColor?.class,
 		style: {
 			backgroundColor: barColor?.color,
-			width: Math.max( 2, progress ) + '%',
+			width: Math.max( 4, progress ) + '%',
+			borderRadius,
 		},
 	};
 	const barBackgroundAttributes = {
@@ -62,6 +68,8 @@ export const EditCourseProgressBlock = ( {
 		),
 		style: {
 			backgroundColor: barBackgroundColor?.color,
+			height,
+			borderRadius,
 		},
 	};
 
@@ -86,25 +94,18 @@ export const EditCourseProgressBlock = ( {
 					<div { ...barAttributes } />
 				</div>
 			</div>
-
-			<InspectorControls>
-				<PanelBody
-					title={ __( 'Progress percentage', 'sensei-lms' ) }
-					initialOpen={ false }
-				>
-					<RangeControl
-						help={ __(
-							'Preview the progress bar for different percentage values.',
-							'sensei-lms'
-						) }
-						value={ manualPercentage }
-						onChange={ setManualPercentage }
-						min={ 0 }
-						max={ 100 }
-						allowReset={ true }
-					/>
-				</PanelBody>
-			</InspectorControls>
+			<CourseProgressSettings
+				setManualPercentage={ setManualPercentage }
+				manualPercentage={ manualPercentage }
+				borderRadius={ borderRadius }
+				setBorderRadius={ ( newRadius ) =>
+					setAttributes( { borderRadius: newRadius } )
+				}
+				height={ height }
+				setHeight={ ( newHeight ) =>
+					setAttributes( { height: newHeight } )
+				}
+			/>
 		</>
 	);
 };
