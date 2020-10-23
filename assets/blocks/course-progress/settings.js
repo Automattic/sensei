@@ -47,7 +47,7 @@ export function CourseProgressSettings( {
 				/>
 			</PanelBody>
 			<PanelBody
-				title={ __( 'Styling', 'sensei-lms' ) }
+				title={ __( 'Progress bar settings', 'sensei-lms' ) }
 				initialOpen={ false }
 				className="wp-block-sensei-lms-progress-styling-controls"
 			>
@@ -61,7 +61,7 @@ export function CourseProgressSettings( {
 						value={ borderRadius }
 						onChange={ setBorderRadius }
 						min={ 0 }
-						max={ 50 }
+						max={ 15 }
 						allowReset={ true }
 						initialPosition={ initialBorderRadius }
 					/>
@@ -76,7 +76,7 @@ export function CourseProgressSettings( {
 						value={ height }
 						onChange={ setHeight }
 						min={ 1 }
-						max={ 40 }
+						max={ 25 }
 						allowReset={ true }
 						initialPosition={ initialHeight }
 					/>

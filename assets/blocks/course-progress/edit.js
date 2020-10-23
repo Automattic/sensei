@@ -57,7 +57,7 @@ export const EditCourseProgressBlock = ( {
 		className: barColor?.class,
 		style: {
 			backgroundColor: barColor?.color,
-			width: Math.max( 4, progress ) + '%',
+			width: Math.max( 3, progress ) + '%',
 			borderRadius,
 		},
 	};
