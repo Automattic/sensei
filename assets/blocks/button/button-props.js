@@ -45,18 +45,43 @@ export function getButtonProps( props ) {
 /**
  * Class and style attributes for the wrapper element.
  *
- * @param {Object} props                  Block properties.
- * @param {string} props.className        Block classname.
- * @param {Object} props.attributes       Block attributes.
- * @param {string} props.attributes.align Alignment attribute.
+ * @param {Object} props                       Block properties.
+ * @param {string} props.className             Block classname.
+ * @param {Object} props.attributes            Block attributes.
+ * @param {string} props.attributes.blockAlign Block alignment attribute.
+ * @param {string} props.attributes.textAlign  Text alignment attribute.
+ *
  * @return {{className}} Output HTML attributes.
  */
-export function getButtonWrapperProps( { className, attributes: { align } } ) {
-	return {
-		className: classnames(
-			className,
-			'wp-block-sensei-button',
-			`has-text-align-${ align || 'full' }`
-		),
+export function getButtonWrapperProps( {
+	className,
+	attributes: { blockAlign, textAlign },
+} ) {
+	const wrapperProps = {
+		className: classnames( className, 'wp-block-sensei-button', {
+			[ `wp-block-sensei-button__block-align-${ blockAlign }` ]: blockAlign,
+			alignfull: 'full' === blockAlign,
+			[ `wp-block-sensei-button__text-align-${ textAlign }` ]: textAlign,
+		} ),
 	};
+
+	return wrapperProps;
+}
+
+/**
+ * Block additional wrapper props.
+ *
+ * @param {Object} attributes            Block attributes.
+ * @param {string} attributes.blockAlign Block align.
+ *
+ * @return {Object} Additional wrapper props.
+ */
+export function getEditWrapperProps( { blockAlign } ) {
+	const props = {};
+
+	if ( 'full' === blockAlign ) {
+		props[ 'data-align' ] = blockAlign;
+	}
+
+	return props;
 }

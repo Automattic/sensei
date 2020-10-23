@@ -1,15 +1,30 @@
-
 .wp-block-sensei-button {
-
-}
-.wp-block-sensei-lms-button-take-course {
-
-	.block-editor-rich-text {
-		display: block;
+	&__block-align-wide,
+	&__block-align-full {
+		.wp-block-button__link {
+			display: block;
+			width: 100%;
+			flex: 1;
+		}
 	}
-	&.has-text-align-full .wp-block-button__link {
-		display: block;
-		width: 100%;
-		flex: 1;
+
+	&__block-align-center {
+		text-align: center;
+	}
+	&__block-align-left {
+		text-align: left;
+	}
+	&__block-align-right {
+		text-align: right;
+	}
+
+	&__text-align-center .wp-block-button__link {
+		text-align: center;
+	}
+	&__text-align-left .wp-block-button__link {
+		text-align: left;
+	}
+	&__text-align-right .wp-block-button__link {
+		text-align: right;
 	}
 }

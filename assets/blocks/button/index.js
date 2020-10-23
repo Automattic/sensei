@@ -4,6 +4,7 @@ import { merge } from 'lodash';
 import './color-hooks';
 import { EditButtonBlock } from './edit-button';
 import { saveButtonBlock } from './save-button';
+import { getEditWrapperProps } from './button-props';
 
 /**
  * Button block styles.
@@ -44,7 +45,10 @@ export const createButtonBlockType = ( { settings, ...options } ) => {
 					source: 'html',
 					selector: options.tagName,
 				},
-				align: {
+				textAlign: {
+					type: 'string',
+				},
+				blockAlign: {
 					type: 'string',
 				},
 				borderRadius: {
@@ -65,6 +69,7 @@ export const createButtonBlockType = ( { settings, ...options } ) => {
 				html: false,
 			},
 			styles: [ BlockStyles.Fill, BlockStyles.Outline ],
+			getEditWrapperProps,
 			edit( props ) {
 				return <EditButtonBlock { ...props } { ...options } />;
 			},

@@ -1,5 +1,6 @@
 import {
 	AlignmentToolbar,
+	BlockAlignmentToolbar,
 	BlockControls,
 	InspectorControls,
 } from '@wordpress/block-editor';
@@ -45,14 +46,20 @@ export const BorderPanel = ( { borderRadius, setAttributes } ) => {
  */
 export const ButtonBlockSettings = ( props ) => {
 	const { attributes, setAttributes } = props;
-	const { borderRadius, align } = attributes;
+	const { borderRadius, textAlign, blockAlign } = attributes;
 	return (
 		<>
 			<BlockControls>
 				<AlignmentToolbar
-					value={ align }
-					onChange={ ( nextAlign ) => {
-						setAttributes( { align: nextAlign } );
+					value={ textAlign }
+					onChange={ ( value ) => {
+						setAttributes( { textAlign: value } );
+					} }
+				/>
+				<BlockAlignmentToolbar
+					value={ blockAlign }
+					onChange={ ( value ) => {
+						setAttributes( { blockAlign: value } );
 					} }
 				/>
 			</BlockControls>

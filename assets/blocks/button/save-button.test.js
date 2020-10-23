@@ -10,19 +10,19 @@ describe( 'saveButtonBlock', () => {
 		);
 
 		const { classList } = container.firstChild;
-		expect( classList ).toContain( 'has-text-align-full' );
+		expect( classList ).toContain( 'has-block-align-full' );
 		expect( classList ).toContain( 'wp-block-sensei-button' );
 	} );
 
 	it( 'sets wrapper alignment from attribute', () => {
 		const { container } = render(
 			saveButtonBlock( {
-				attributes: { text: 'Button', align: 'center' },
+				attributes: { text: 'Button', blockAlign: 'center' },
 			} )
 		);
 
 		const { classList } = container.firstChild;
-		expect( classList ).toContain( 'has-text-align-center' );
+		expect( classList ).toContain( 'has-block-align-center' );
 	} );
 
 	it( 'renders content as tagName', () => {
