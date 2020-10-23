@@ -2,7 +2,6 @@ import { withColorSettings } from '../../shared/blocks/settings';
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
 import { useSelect } from '@wordpress/data';
-import { useState } from '@wordpress/element';
 import { COURSE_STATUS_STORE } from '../course-outline/status-store';
 import { CourseProgressSettings } from './settings';
 
@@ -32,13 +31,8 @@ export const EditCourseProgressBlock = ( {
 		[]
 	);
 
-	const [ manualPercentage, setManualPercentage ] = useState( undefined );
-
 	let progress = 0;
-
-	if ( undefined !== manualPercentage ) {
-		progress = manualPercentage;
-	} else if ( 0 !== totalLessonsCount ) {
+	if ( 0 !== totalLessonsCount ) {
 		progress =
 			Math.round(
 				( ( 100 * completedLessonsCount ) / totalLessonsCount +
@@ -95,8 +89,6 @@ export const EditCourseProgressBlock = ( {
 				</div>
 			</div>
 			<CourseProgressSettings
-				setManualPercentage={ setManualPercentage }
-				manualPercentage={ manualPercentage }
 				borderRadius={ borderRadius }
 				setBorderRadius={ ( newRadius ) =>
 					setAttributes( { borderRadius: newRadius } )
