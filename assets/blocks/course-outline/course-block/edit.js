@@ -20,33 +20,46 @@ import { COURSE_STATUS_STORE } from '../status-store';
 export const OutlineAttributesContext = createContext();
 
 /**
- * A hook to update the status store when a lesson is added or removed.
+ * A hook to update the status store when a lesson with a title is removed or created.
  *
  * @param {string} clientId The outline block id.
  */
 const useUpdateLessonCount = function ( clientId ) {
-	const outlineDescendants = useSelect(
+	const getFilledLessons = ( filledLessons, block ) => {
+		if (
+			'sensei-lms/course-outline-module' === block.name &&
+			block.innerBlocks.length > 0
+		) {
+			return block.innerBlocks.reduce( getFilledLessons, filledLessons );
+		} else if (
+			'sensei-lms/course-outline-lesson' === block.name &&
+			block.attributes?.title
+		) {
+			filledLessons.push( block.clientId );
+		}
+
+		return filledLessons;
+	};
+
+	const blocks = useSelect(
 		( select ) => {
-			return select( 'core/block-editor' ).getClientIdsOfDescendants( [
-				clientId,
-			] );
+			return select( 'core/block-editor' ).getBlocks( clientId );
 		},
 		[ clientId ]
 	);
 
-	const lessonCount = useSelect( ( select ) => {
-		return select( 'core/block-editor' ).getGlobalBlockCount(
-			'sensei-lms/course-outline-lesson'
-		);
-	} );
+	const filledLessons = blocks.reduce( getFilledLessons, [] );
 
+	// We want to update the status store when the array of lessons with a title is updated. Currently there is no
+	// single operation which updates the array while keeping the number of its elements the same, so we add the array
+	// length as a dependency to useEffect.
 	useEffect( () => {
 		dispatch( COURSE_STATUS_STORE ).refreshStructure(
 			clientId,
-			lessonCount,
-			outlineDescendants
+			filledLessons
 		);
-	}, [ clientId, lessonCount, outlineDescendants ] );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ clientId, filledLessons.length ] );
 };
 
 /**
