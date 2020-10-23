@@ -36,7 +36,11 @@ export function getButtonProps( props ) {
 		className: classnames(
 			{ 'wp-block-button__link': ! isLink },
 			borderProps.className,
-			colorProps.className
+			colorProps.className,
+			{
+				[ `has-text-align-${ props.attributes.textAlign }` ]: props
+					?.attributes?.textAlign,
+			}
 		),
 		style: {
 			...borderProps.style,
@@ -52,16 +56,15 @@ export function getButtonProps( props ) {
  * @param {Object} props                  Block properties.
  * @param {string} props.className        Block classname.
  * @param {Object} props.attributes       Block attributes.
- * @param {string} props.attributes.align Alignment attribute.
+ * @param {string} props.attributes.align Block alignment attribute.
+ *
  * @return {{className}} Output HTML attributes.
  */
 export function getButtonWrapperProps( { className, attributes: { align } } ) {
 	return {
-		className: classnames(
-			className,
-			'wp-block-sensei-button',
-			`has-text-align-${ align || 'full' }`
-		),
+		className: classnames( className, 'wp-block-sensei-button', {
+			[ `wp-block-sensei-button__align-${ align }` ]: align,
+		} ),
 	};
 }
 

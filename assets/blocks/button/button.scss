@@ -1,0 +1,14 @@
+.wp-block-sensei-button {
+	&__align-wide,
+	&__align-full {
+		.wp-block-button__link {
+			display: block;
+			width: 100%;
+			flex: 1;
+		}
+	}
+
+	&__align-center {
+		text-align: center;
+	}
+}

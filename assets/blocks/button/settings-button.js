@@ -45,14 +45,14 @@ export const BorderPanel = ( { borderRadius, setAttributes } ) => {
  */
 export const ButtonBlockSettings = ( props ) => {
 	const { attributes, setAttributes } = props;
-	const { borderRadius, align } = attributes;
+	const { borderRadius, textAlign } = attributes;
 	return (
 		<>
 			<BlockControls>
 				<AlignmentToolbar
-					value={ align || props.alignmentOptions?.default }
-					onChange={ ( nextAlign ) => {
-						setAttributes( { align: nextAlign } );
+					value={ textAlign }
+					onChange={ ( value ) => {
+						setAttributes( { textAlign: value } );
 					} }
 					{ ...props.alignmentOptions }
 				/>

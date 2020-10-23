@@ -48,7 +48,7 @@ export const createButtonBlockType = ( { settings, ...options } ) => {
 					source: 'html',
 					selector: options.tagName,
 				},
-				align: {
+				textAlign: {
 					type: 'string',
 				},
 				borderRadius: {
@@ -65,7 +65,7 @@ export const createButtonBlockType = ( { settings, ...options } ) => {
 				__experimentalColor: {
 					gradients: true,
 				},
-				align: false,
+				align: true,
 				html: false,
 			},
 			styles: [ BlockStyles.Fill, BlockStyles.Outline ],
