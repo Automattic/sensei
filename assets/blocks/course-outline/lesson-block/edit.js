@@ -40,7 +40,16 @@ export const EditLessonBlock = ( props ) => {
 		insertBlocksAfter,
 	} = props;
 	const { selectNextBlock, removeBlock } = useDispatch( 'core/block-editor' );
-	const { setLessonStatus } = useDispatch( COURSE_STATUS_STORE );
+	const { setLessonStatus, trackLesson, ignoreLesson } = useDispatch(
+		COURSE_STATUS_STORE
+	);
+
+	// If the lesson has a title, add it to the tracked lessons in the status store.
+	if ( title.length > 0 ) {
+		trackLesson( clientId );
+	} else {
+		ignoreLesson( clientId );
+	}
 
 	/**
 	 * Update lesson title.

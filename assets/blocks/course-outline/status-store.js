@@ -75,17 +75,44 @@ const actions = {
 	},
 
 	/**
-	 * Creates the action to update state after a an update of the outline's structure.
+	 * Creates the action to update state after a possible removal of a lesson.
 	 *
-	 * @param {string}   outlineId      The outline block id.
-	 * @param {string[]} trackedLessons The ids of all tracked lessons.
+	 * @param {string[]} descendantIds The ids of all outline block descendants.
 	 *
 	 * @return {Object} The action.
 	 */
-	refreshStructure( outlineId, trackedLessons ) {
+	stopTrackingRemovedLessons( descendantIds ) {
 		return {
-			type: 'REFRESH_STRUCTURE',
-			trackedLessons,
+			type: 'REMOVE_LESSONS',
+			descendantIds,
+		};
+	},
+
+	/**
+	 * Creates the action which marks a lesson as tracked by the store.
+	 *
+	 * @param {string} lessonId The lesson id.
+	 *
+	 * @return {Object} The action.
+	 */
+	trackLesson( lessonId ) {
+		return {
+			type: 'TRACK_LESSON',
+			lessonId,
+		};
+	},
+
+	/**
+	 * Creates the action which marks a lesson as not tracked by the store.
+	 *
+	 * @param {string} lessonId The lesson id.
+	 *
+	 * @return {Object} The action.
+	 */
+	ignoreLesson( lessonId ) {
+		return {
+			type: 'IGNORE_LESSON',
+			lessonId,
 		};
 	},
 };
@@ -194,24 +221,75 @@ const reducers = {
 	},
 
 	/**
-	 * Updates internal state according to a new array of lessons.
+	 * Removes any lessons that don't exist in list of descendantIds.
 	 *
-	 * @param {Object} action                The action.
-	 * @param {Array}  action.trackedLessons The ids of all lessons of the outline block.
-	 * @param {Object} state                 The state.
+	 * @param {Object} action               The action.
+	 * @param {Array}  action.descendantIds The ids of all descendants of the outline block.
+	 * @param {Object} state                The state.
 	 *
 	 * @return {Object} The new state.
 	 */
-	REFRESH_STRUCTURE: ( { trackedLessons }, state ) => {
-		let completedLessons = [ ...state.completedLessons ];
+	REMOVE_LESSONS: ( { descendantIds }, state ) => {
+		const completedLessons = state.completedLessons.filter(
+			( completedLesson ) => descendantIds.includes( completedLesson )
+		);
 
-		completedLessons = completedLessons.filter( ( completedLessonId ) =>
-			trackedLessons.includes( completedLessonId )
+		const trackedLessons = state.trackedLessons.filter( ( trackedLesson ) =>
+			descendantIds.includes( trackedLesson )
 		);
 
 		return {
 			...state,
 			completedLessons,
+			trackedLessons,
+		};
+	},
+
+	/**
+	 * Removes a lesson from the arrays of tracked lessons.
+	 *
+	 * @param {Object} action          The action.
+	 * @param {Array}  action.lessonId The ids of the lesson to ignore.
+	 * @param {Object} state           The state.
+	 *
+	 * @return {Object} The new state.
+	 */
+	IGNORE_LESSON: ( { lessonId }, state ) => {
+		const completedLessons = state.completedLessons.filter(
+			( completedLesson ) => completedLesson !== lessonId
+		);
+
+		const trackedLessons = state.trackedLessons.filter(
+			( trackedLesson ) => trackedLesson !== lessonId
+		);
+
+		return {
+			...state,
+			completedLessons,
+			trackedLessons,
+		};
+	},
+
+	/**
+	 * Adds a lesson from the arrays of tracked lessons.
+	 *
+	 * @param {Object} action          The action.
+	 * @param {Array}  action.lessonId The ids of the lesson to track.
+	 * @param {Object} state           The state.
+	 *
+	 * @return {Object} The new state.
+	 */
+	TRACK_LESSON: ( { lessonId }, state ) => {
+		const trackedLessons = [ ...state.trackedLessons ];
+
+		if ( trackedLessons.includes( lessonId ) ) {
+			return state;
+		}
+
+		trackedLessons.push( lessonId );
+
+		return {
+			...state,
 			trackedLessons,
 		};
 	},
