@@ -61,6 +61,7 @@ class Sensei_Question {
 		 *  @type {string} $id   Question type ID.
 		 *  @type {string} $text Question type text.
 		 * }
+		 * @return {array} Associative array of question types.
 		 */
 		return apply_filters( 'sensei_question_types', $types );
 	}
@@ -482,6 +483,7 @@ class Sensei_Question {
 		 *
 		 * @param {int} $question_grade Question grade.
 		 * @param {int} $question_id    Question ID.
+		 * @return {int} Question grade.
 		 */
 		return apply_filters( 'sensei_get_question_grade', $question_grade, $question_id );
 	}
@@ -536,6 +538,7 @@ class Sensei_Question {
 		 * @hook sensei_question_title
 		 *
 		 * @param {string} $title Question title.
+		 * @return {string} Question title.
 		 */
 		$title = apply_filters( 'sensei_question_title', get_the_title( $question_id ) );
 
@@ -609,6 +612,7 @@ class Sensei_Question {
 							 *
 							 * @param {string} $size        Image size.
 							 * @param {int}    $question_id Question ID.
+							 * @return {string} Image size.
 							 */
 							$image_size          = apply_filters( 'sensei_question_image_size', 'medium', $question_id );
 							$attachment_src      = wp_get_attachment_image_src( $question_media, $image_size );
@@ -748,6 +752,7 @@ class Sensei_Question {
 		 * @param {int}      $quiz_id      Quiz ID.
 		 * @param {bool|int} $lesson_id    Lesson ID.
 		 * @param {int}      $user_id      User ID.
+		 * @return {bool} Whether to show the answer to the question.
 		 */
 		$show_answers = apply_filters( 'sensei_question_show_answers', $show_answers, $question_id, $quiz_id, $lesson_id, get_current_user_id() );
 
@@ -770,6 +775,7 @@ class Sensei_Question {
 						 * @param {bool|string} $answer_notes Answer notes.
 						 * @param {int}         $question_id  Question ID.
 						 * @param {bool|int}    $lesson_id    Lesson ID.
+						 * @return {bool|string} Answer notes.
 						 */
 						echo wp_kses_post( apply_filters( 'sensei_question_answer_notes', $answer_notes, $question_id, $lesson_id ) );
 
@@ -873,6 +879,7 @@ class Sensei_Question {
 		 * @param {int}    $question_id          Question ID.
 		 * @param {int}    $user_id              User ID.
 		 * @param {bool}   $user_correct         Whether this is the correct answer.
+		 * @return {string} Space-separated CSS classes to apply to answer message.
 		 */
 		$final_css_classes = apply_filters( 'sensei_question_answer_message_css_class', $answer_message_class, $lesson_id, $question_id, get_current_user_id(), $user_correct );
 
@@ -886,6 +893,7 @@ class Sensei_Question {
 		 * @param {int}    $question_id    Question ID.
 		 * @param {int}    $user_id        User ID.
 		 * @param {bool}   $user_correct   Whether this is the correct answer.
+		 * @return {string} Answer message.
 		 */
 		$final_message = apply_filters( 'sensei_question_answer_message_text', $answer_message, $lesson_id, $question_id, get_current_user_id(), $user_correct );
 		?>
@@ -951,6 +959,7 @@ class Sensei_Question {
 		 * @param {array} $data        Question data.
 		 * @param {int}   $question_id Question ID.
 		 * @param {int}   $quiz_id     Quiz ID.
+		 * @return {array} Question data.
 		 */
 		return apply_filters( 'sensei_get_question_template_data', $data, $question_id, $quiz_id );
 
@@ -1263,6 +1272,7 @@ class Sensei_Question {
 		 *
 		 * @param {string} $right_answer Correct answer.
 		 * @param {int}    $question_id  Question ID.
+		 * @return {string} Correct answer.
 		 */
 		return apply_filters( 'sensei_questions_get_correct_answer', $right_answer, $question_id );
 	}
