@@ -133,36 +133,30 @@ const selectors = {
 			: Status.NOT_STARTED,
 
 	/**
-	 * Calculates and gets the module status.
+	 * Returns the number of total and completed lessons of a module.
 	 *
 	 * @param {Object} state                  The state.
 	 * @param {Array}  state.completedLessons The ids of the completed lessons.
 	 * @param {Array}  state.trackedLessons   The ids of  all the lessons.
 	 * @param {string} moduleId               The module id.
 	 *
-	 * @return {string} The lesson status.
+	 * @return {Object} The module lesson counts.
 	 */
-	getModuleStatus( { completedLessons, trackedLessons }, moduleId ) {
+	getModuleLessonCounts( { completedLessons, trackedLessons }, moduleId ) {
 		const moduleLessons = selectData( 'core/block-editor' )
 			.getClientIdsOfDescendants( [ moduleId ] )
 			.filter( ( descendantId ) =>
 				trackedLessons.includes( descendantId )
 			);
 
-		const completedLessonsCount = moduleLessons.filter( ( lessonId ) =>
+		const completedModuleLessons = moduleLessons.filter( ( lessonId ) =>
 			completedLessons.includes( lessonId )
-		).length;
+		);
 
-		if ( 0 === completedLessonsCount ) {
-			return Status.NOT_STARTED;
-		} else if (
-			moduleLessons.length === completedLessonsCount &&
-			moduleLessons.length > 0
-		) {
-			return Status.COMPLETED;
-		}
-
-		return Status.IN_PROGRESS;
+		return {
+			completedLessonsCount: completedModuleLessons.length,
+			totalLessonsCount: moduleLessons.length,
+		};
 	},
 };
 
