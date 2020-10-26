@@ -1405,6 +1405,7 @@ class Sensei_Lesson {
 		 * @param {string} $html    HTML for adding a question.
 		 * @param {string} $context 'quiz' if the question is being added on the lesson screen.
 		 *                          Any other value if it's being added on the question screen.
+		 * @return {string} HTML for adding a question.
 		 */
 		$html = apply_filters( 'sensei_quiz_panel_add', $html, $context );
 
@@ -1488,6 +1489,7 @@ class Sensei_Lesson {
 		 * @hook sensei_existing_questions_query_results
 		 *
 		 * @param {object} $qry Query object containing an array of existing questions.
+		 * @return {object} Query object containing an array of existing questions.
 		 */
 		$qry = apply_filters( 'sensei_existing_questions_query_results', $qry );
 
@@ -2125,6 +2127,7 @@ class Sensei_Lesson {
 		 * @hook sensei_quiz_settings
 		 *
 		 * @param {array} $settings Nested array containing the quiz setting fields.
+		 * @return {array} Nested array containing the quiz setting fields.
 		 */
 		return apply_filters( 'sensei_quiz_settings', $settings );
 	}
@@ -2144,6 +2147,7 @@ class Sensei_Lesson {
 		 * @hook sensei_scripts_allowed_post_types
 		 *
 		 * @param {array} $allowed_post_types Allowed post types.
+		 * @return {array} Allowed post types.
 		 */
 		$allowed_post_types = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'question' ) );
 
@@ -2153,6 +2157,7 @@ class Sensei_Lesson {
 		 * @hook sensei_scripts_allowed_post_type_pages
 		 *
 		 * @param {array} $allowed_post_type_pages Allowed post type pages.
+		 * @return {array} Allowed post type pages.
 		 */
 		$allowed_post_type_pages = apply_filters( 'sensei_scripts_allowed_post_type_pages', array( 'post-new.php', 'post.php' ) );
 
@@ -2232,6 +2237,7 @@ class Sensei_Lesson {
 		 * @hook sensei_scripts_allowed_post_types
 		 *
 		 * @param {array} $allowed_post_types Allowed post types.
+		 * @return {array} Allowed post types.
 		 */
 		$allowed_post_types = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'course', 'question', 'sensei_message' ) );
 
@@ -2241,6 +2247,7 @@ class Sensei_Lesson {
 		 * @hook sensei_scripts_allowed_post_type_pages
 		 *
 		 * @param {array} $allowed_post_type_pages Allowed post type pages.
+		 * @return {array} Allowed post type pages.
 		 */
 		$allowed_post_type_pages = apply_filters( 'sensei_scripts_allowed_post_type_pages', array( 'edit.php', 'post-new.php', 'post.php', 'edit-tags.php' ) );
 
@@ -2250,6 +2257,7 @@ class Sensei_Lesson {
 		 * @hook sensei_scripts_allowed_pages
 		 *
 		 * @param {array} $allowed_pages Allowed pages.
+		 * @return {array} Allowed pages.
 		 */
 		$allowed_pages = apply_filters( 'sensei_scripts_allowed_pages', array( 'sensei_grading', 'sensei_analysis', 'sensei_learners', 'sensei_updates', 'sensei-settings' ) );
 
@@ -3090,6 +3098,7 @@ class Sensei_Lesson {
 		 * @hook sensei_lesson_count
 		 *
 		 * @param {array} $post_args Post arguments.
+		 * @return {array} Post arguments.
 		 */
 		$lessons_query = new WP_Query( apply_filters( 'sensei_lesson_count', $post_args ) );
 
@@ -3320,6 +3329,7 @@ class Sensei_Lesson {
 		 *
 		 * @param {array}  $questions Questions.
 		 * @param {string} $quiz_id   Quiz ID.
+		 * @return {array} Questions.
 		 */
 		return apply_filters( 'sensei_lesson_quiz_questions', $questions, $quiz_id );
 	}
@@ -3424,6 +3434,7 @@ class Sensei_Lesson {
 				 * @hook sensei_lesson_placeholder_image_url
 				 *
 				 * @param {string} $html HTML for the lesson placeholder image.
+				 * @return {string} HTML for the lesson placeholder image.
 				 */
 				$img_element = apply_filters( 'sensei_lesson_placeholder_image_url', '<img src="http://placehold.it/' . esc_url( $width ) . 'x' . esc_url( $height ) . '" class="woo-image thumbnail alignleft" />' );
 
@@ -3479,6 +3490,7 @@ class Sensei_Lesson {
 		 * @hook sensei_lesson_excerpt
 		 *
 		 * @param {string} $html HTML for the lesson excerpt.
+		 * @return {string} HTML for the lesson excerpt.
 		 */
 		return apply_filters( 'sensei_lesson_excerpt', $html );
 	}
@@ -3880,6 +3892,7 @@ class Sensei_Lesson {
 		 * @hook sensei_show_lesson_numbers
 		 *
 		 * @param {bool} $show_lesson_numbers Whether to show lesson numbers. Default false.
+		 * @return {bool} Whether to show lesson numbers.
 		 */
 		if ( apply_filters( 'sensei_show_lesson_numbers', false ) ) {
 			$count_markup = '<span class="lesson-number">' . esc_html( $loop_lesson_number ) . '</span>';
@@ -4019,6 +4032,7 @@ class Sensei_Lesson {
 		 *
 		 * @param {string|bool} $prerequisite_lesson_id Prerequisite lesson ID.
 		 * @param {int}         $current_lesson_id      Lesson ID.
+		 * @return {string|bool} Prerequisite lesson ID.
 		 */
 		return apply_filters( 'sensei_lesson_prerequisite', $prerequisite_lesson_id, $current_lesson_id );
 	}
@@ -4131,6 +4145,7 @@ class Sensei_Lesson {
 		 *
 		 * @param {bool}         $show_course_signup_notice True if we should show the signup notice to the user.
 		 * @param {bool|string}  $course_id                 Course ID.
+		 * @return {bool} Whether to show the course sign up notice.
 		 */
 		if ( apply_filters( 'sensei_lesson_show_course_signup_notice', $show_course_signup_notice, $course_id ) ) {
 			$course_link  = '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr__( 'Sign Up', 'sensei-lms' ) . '">';
@@ -4149,6 +4164,7 @@ class Sensei_Lesson {
 			 * @param {string}      $message_default Message to show user.
 			 * @param {bool|string} $course_id       Course ID.
 			 * @param {string}      $course_link     HTML for the link to the course.
+			 * @return {string} Message to show user.
 			 */
 			$message = apply_filters( 'sensei_lesson_course_signup_notice_message', $message_default, $course_id, $course_link );
 
@@ -4160,6 +4176,7 @@ class Sensei_Lesson {
 			 *
 			 * @param {string}      $notice_level Level to use for the sign up notice (alert, tick, download, info).
 			 * @param {bool|string} $course_id    Course ID.
+			 * @return {string} Level to use for the sign up notice.
 			 */
 			$notice_level = apply_filters( 'sensei_lesson_course_signup_notice_level', 'info', $course_id );
 			Sensei()->notices->add_notice( $message, $notice_level );
@@ -4225,6 +4242,7 @@ class Sensei_Lesson {
 		 * @hook sensei_lesson_archive_title
 		 *
 		 * @param {string} $html HTML for the lesson archive header.
+		 * @return {string} HTML for the lesson archive header.
 		 */
 		echo wp_kses_post( apply_filters( 'sensei_lesson_archive_title', $html ) );
 
