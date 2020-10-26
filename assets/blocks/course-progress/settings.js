@@ -34,10 +34,6 @@ export function CourseProgressSettings( {
 				<PanelRow>
 					<RangeControl
 						label={ 'Border radius' }
-						help={ __(
-							'Set the border radius of the progress bar.',
-							'sensei-lms'
-						) }
 						value={ borderRadius }
 						onChange={ setBorderRadius }
 						min={ 0 }
@@ -49,10 +45,6 @@ export function CourseProgressSettings( {
 				<PanelRow>
 					<RangeControl
 						label={ __( 'Height', 'sensei-lms' ) }
-						help={ __(
-							'Set the progress bar height.',
-							'sensei-lms'
-						) }
 						value={ height }
 						onChange={ setHeight }
 						min={ 1 }
