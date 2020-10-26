@@ -1,4 +1,5 @@
 import { createBlock } from '@wordpress/blocks';
+import { useEffect } from '@wordpress/element';
 import { select, useDispatch, useSelect } from '@wordpress/data';
 import { Icon } from '@wordpress/components';
 import classnames from 'classnames';
@@ -43,13 +44,6 @@ export const EditLessonBlock = ( props ) => {
 	const { setLessonStatus, trackLesson, ignoreLesson } = useDispatch(
 		COURSE_STATUS_STORE
 	);
-
-	// If the lesson has a title, add it to the tracked lessons in the status store.
-	if ( title.length > 0 ) {
-		trackLesson( clientId );
-	} else {
-		ignoreLesson( clientId );
-	}
 
 	/**
 	 * Update lesson title.
@@ -103,6 +97,15 @@ export const EditLessonBlock = ( props ) => {
 				break;
 		}
 	};
+
+	// If the lesson has a title, add it to the tracked lessons in the status store.
+	useEffect( () => {
+		if ( title.length > 0 ) {
+			trackLesson( clientId );
+		} else {
+			ignoreLesson( clientId );
+		}
+	}, [ clientId, trackLesson, ignoreLesson, title ] );
 
 	let postStatus = '';
 	if ( ! id && title.length ) {
