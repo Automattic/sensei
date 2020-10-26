@@ -3,6 +3,7 @@ import {
 	BlockControls,
 	InspectorControls,
 } from '@wordpress/block-editor';
+import { useSelect } from '@wordpress/data';
 import { PanelBody, RangeControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
@@ -46,17 +47,23 @@ export const BorderPanel = ( { borderRadius, setAttributes } ) => {
 export const ButtonBlockSettings = ( props ) => {
 	const { attributes, setAttributes } = props;
 	const { borderRadius, textAlign } = attributes;
+
+	const themeSupports = useSelect( ( select ) =>
+		select( 'core' ).getThemeSupports()
+	);
+
 	return (
 		<>
-			<BlockControls>
-				<AlignmentToolbar
-					value={ textAlign }
-					onChange={ ( value ) => {
-						setAttributes( { textAlign: value } );
-					} }
-					{ ...props.alignmentOptions }
-				/>
-			</BlockControls>
+			{ themeSupports[ 'align-wide' ] && (
+				<BlockControls>
+					<AlignmentToolbar
+						value={ textAlign }
+						onChange={ ( value ) => {
+							setAttributes( { textAlign: value } );
+						} }
+					/>
+				</BlockControls>
+			) }
 
 			<InspectorControls>
 				<BorderPanel
