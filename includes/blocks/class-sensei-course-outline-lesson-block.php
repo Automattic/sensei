@@ -33,7 +33,7 @@ class Sensei_Course_Outline_Lesson_Block {
 
 		$css = Sensei_Block_Helpers::build_styles( $block['attributes'] ?? [] );
 
-		$draft = ( $block['draft'] ? '<em>' . esc_html__( '(Draft)', 'sensei-lms' ) . '</em>' : '' );
+		$draft = ( ! empty( $block['draft'] ) ? '<em>' . esc_html__( '(Draft)', 'sensei-lms' ) . '</em>' : '' );
 
 		return '
 			<a href="' . esc_url( get_permalink( $lesson_id ) ) . '" ' . Sensei_Block_Helpers::render_style_attributes( $classes, $css ) . '>
