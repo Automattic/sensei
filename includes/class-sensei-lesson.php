@@ -3502,7 +3502,7 @@ class Sensei_Lesson {
 	 * @access public
 	 *
 	 * @param int $lesson_id
-	 * @return int|bool $course_id or bool when nothing is found.
+	 * @return string|bool $course_id Course ID or false if nothing is found.
 	 */
 	public function get_course_id( $lesson_id ) {
 
@@ -4145,8 +4145,8 @@ class Sensei_Lesson {
 		 * @since 2.0.0
 		 * @hook sensei_lesson_show_course_signup_notice
 		 *
-		 * @param {bool}         $show_course_signup_notice True if we should show the signup notice to the user.
-		 * @param {bool|string}  $course_id                 Course ID.
+		 * @param {bool}   $show_course_signup_notice True if we should show the signup notice to the user.
+		 * @param {string} $course_id                 Course ID.
 		 * @return {bool} Whether to show the course sign up notice.
 		 */
 		if ( apply_filters( 'sensei_lesson_show_course_signup_notice', $show_course_signup_notice, $course_id ) ) {
@@ -4163,9 +4163,9 @@ class Sensei_Lesson {
 			 * @since 2.0.0
 			 * @hook sensei_lesson_course_signup_notice_message
 			 *
-			 * @param {string}      $message_default Message to show user.
-			 * @param {bool|string} $course_id       Course ID.
-			 * @param {string}      $course_link     HTML for the link to the course.
+			 * @param {string} $message_default Message to show user.
+			 * @param {string} $course_id       Course ID.
+			 * @param {string} $course_link     HTML for the link to the course.
 			 * @return {string} Message to show user.
 			 */
 			$message = apply_filters( 'sensei_lesson_course_signup_notice_message', $message_default, $course_id, $course_link );
@@ -4176,8 +4176,8 @@ class Sensei_Lesson {
 			 * @since 2.0.0
 			 * @hook sensei_lesson_course_signup_notice_level
 			 *
-			 * @param {string}      $notice_level Level to use for the sign up notice (alert, tick, download, info).
-			 * @param {bool|string} $course_id    Course ID.
+			 * @param {string} $notice_level Level to use for the sign up notice (alert, tick, download, info).
+			 * @param {string} $course_id    Course ID.
 			 * @return {string} Level to use for the sign up notice.
 			 */
 			$notice_level = apply_filters( 'sensei_lesson_course_signup_notice_level', 'info', $course_id );
