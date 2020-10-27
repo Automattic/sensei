@@ -63,7 +63,11 @@ class Sensei_Exit_Survey {
 
 		update_option( 'sensei_exit_survey_data', $feedback );
 
-		Sensei()->usage_tracking->send_anonymous_event( 'plugin_deactivate', $feedback );
+		if ( Sensei()->usage_tracking->is_tracking_enabled() ) {
+			Sensei()->usage_tracking->send_event( 'plugin_deactivate', $feedback );
+		} else {
+			Sensei()->usage_tracking->send_anonymous_event( 'plugin_deactivate', $feedback );
+		}
 	}
 
 }
