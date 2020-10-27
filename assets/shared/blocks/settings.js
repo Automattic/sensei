@@ -6,6 +6,37 @@ import {
 } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import { mapValues, upperFirst } from 'lodash';
+import useThemeColors from '../../react-hooks/use-theme-colors';
+
+/**
+ * Default theme colors hook.
+ *
+ * @param {Object} colorSettings Color settings.
+ * @param {Object} props         Current props.
+ *
+ * @return {Object} Color props override.
+ */
+const useDefaultThemeColors = ( colorSettings, props ) => {
+	const themeColors = useThemeColors();
+	const colorProps = {};
+
+	Object.keys( colorSettings ).forEach( ( colorKey ) => {
+		if ( props[ colorKey ]?.color ) {
+			return;
+		}
+
+		const themeColor =
+			themeColors[ colorSettings[ colorKey ].defaultThemeColorKey ];
+
+		if ( themeColor ) {
+			colorProps[ colorKey ] = {
+				color: themeColor,
+			};
+		}
+	} );
+
+	return colorProps;
+};
 
 /**
  * Add color customization support and block settings controls for colors.
@@ -14,17 +45,21 @@ import { mapValues, upperFirst } from 'lodash';
  */
 export const withColorSettings = ( colorSettings ) => {
 	return ( Component ) => {
-		const ComponentWithColorSettings = ( props ) => (
-			<>
-				<Component { ...props } />
-				<ColorSettings { ...{ colorSettings, props } } />
-			</>
-		);
-
 		const colors = mapValues(
 			colorSettings,
 			( settings ) => settings.style
 		);
+
+		const ComponentWithColorSettings = ( props ) => {
+			const colorProps = useDefaultThemeColors( colorSettings, props );
+
+			return (
+				<>
+					<Component { ...props } { ...colorProps } />
+					<ColorSettings { ...{ colorSettings, props } } />
+				</>
+			);
+		};
 
 		return withColors( colors )( ComponentWithColorSettings );
 	};
