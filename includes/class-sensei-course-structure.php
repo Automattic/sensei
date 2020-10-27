@@ -589,15 +589,22 @@ class Sensei_Course_Structure {
 	 */
 	private function sanitize_structure( array $raw_structure ) {
 		list( $lesson_ids, $module_ids, $module_titles ) = $this->flatten_structure( $raw_structure );
+		$module_titles                                   = array_filter( $module_titles );
 
 		if (
 			array_unique( $module_ids ) !== $module_ids
 			|| array_unique( $lesson_ids ) !== $lesson_ids
-			|| array_unique( $module_titles ) !== $module_titles
 		) {
 			return new WP_Error(
 				'sensei_course_structure_duplicate_items',
-				__( 'Individual lesson or modules cannot appear multiple times in the same course', 'sensei-lms' )
+				__( 'Individual lesson or modules cannot appear multiple times in the same course.', 'sensei-lms' )
+			);
+		}
+
+		if ( array_unique( $module_titles ) !== $module_titles ) {
+			return new WP_Error(
+				'sensei_course_structure_duplicate_module_title',
+				__( 'Different modules cannot have the same name.', 'sensei-lms' )
 			);
 		}
 
@@ -607,7 +614,7 @@ class Sensei_Course_Structure {
 			if ( ! is_array( $raw_item ) ) {
 				return new WP_Error(
 					'sensei_course_structure_invalid_item',
-					__( 'Each item must be an array', 'sensei-lms' )
+					__( 'Each item must be an array.', 'sensei-lms' )
 				);
 			}
 
@@ -711,9 +718,16 @@ class Sensei_Course_Structure {
 		}
 
 		if ( ! isset( $raw_item['title'] ) || '' === trim( sanitize_text_field( $raw_item['title'] ) ) ) {
+			if ( 'module' === $raw_item['type'] ) {
+				return new WP_Error(
+					'sensei_course_structure_modules_missing_title',
+					__( 'Please ensure all modules have a name before saving.', 'sensei-lms' )
+				);
+			}
+
 			return new WP_Error(
-				'sensei_course_structure_missing_title',
-				__( 'All items must have a `title` set.', 'sensei-lms' )
+				'sensei_course_structure_lessons_missing_title',
+				__( 'Please ensure all lessons have a name before saving.', 'sensei-lms' )
 			);
 		}
 

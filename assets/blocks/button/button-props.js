@@ -23,15 +23,18 @@ export function getBorderRadiusProps( { attributes: { borderRadius } } ) {
 /**
  * Class and style attributes for the button.
  *
- * @param {Object} props Block properties.
+ * @param {{attributes, tagName}} props Block properties.
  * @return {{className, style}} Output HTML attributes.
  */
 export function getButtonProps( props ) {
+	const isLink = isLinkStyle( props );
+
 	const colorProps = getColorAndStyleProps( props );
 	const borderProps = getBorderRadiusProps( props );
+
 	return {
 		className: classnames(
-			'wp-block-button__link',
+			{ 'wp-block-button__link': ! isLink },
 			borderProps.className,
 			colorProps.className
 		),
@@ -39,6 +42,7 @@ export function getButtonProps( props ) {
 			...borderProps.style,
 			...colorProps.style,
 		},
+		tagName: props.tagName,
 	};
 }
 
@@ -60,3 +64,12 @@ export function getButtonWrapperProps( { className, attributes: { align } } ) {
 		),
 	};
 }
+
+/**
+ * Check if block has the 'Link' block style.
+ *
+ * @param {Object} props Block props.
+ * @return {boolean} Is it a link block style.
+ */
+export const isLinkStyle = ( props ) =>
+	/\bis-style-link\b/.test( props?.attributes?.className );

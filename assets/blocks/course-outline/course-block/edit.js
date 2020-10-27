@@ -1,5 +1,5 @@
 import { InnerBlocks } from '@wordpress/block-editor';
-import { useSelect, withSelect } from '@wordpress/data';
+import { useSelect, withSelect, dispatch } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
 import { createContext, useEffect } from '@wordpress/element';
 
@@ -12,11 +12,34 @@ import {
 	withColorSettings,
 	withDefaultBlockStyle,
 } from '../../../shared/blocks/settings';
+import { COURSE_STATUS_STORE } from '../status-store';
 
 /**
  * A React context which contains the attributes and the setAttributes callback of the Outline block.
  */
 export const OutlineAttributesContext = createContext();
+
+/**
+ * A hook to update the status store when a lesson is removed.
+ *
+ * @param {string} clientId The outline block id.
+ */
+const useSynchronizeLessonsOnUpdate = function ( clientId ) {
+	const outlineDescendants = useSelect(
+		( select ) => {
+			return select( 'core/block-editor' ).getClientIdsOfDescendants( [
+				clientId,
+			] );
+		},
+		[ clientId ]
+	);
+
+	useEffect( () => {
+		dispatch( COURSE_STATUS_STORE ).stopTrackingRemovedLessons(
+			outlineDescendants
+		);
+	}, [ clientId, outlineDescendants ] );
+};
 
 /**
  * Edit course outline block component.
@@ -60,6 +83,8 @@ const EditCourseOutlineBlock = ( {
 			setBlocks( structure );
 		}
 	}, [ structure, setBlocks, attributes.isPreview ] );
+
+	useSynchronizeLessonsOnUpdate( clientId );
 
 	if ( isEmpty ) {
 		return (

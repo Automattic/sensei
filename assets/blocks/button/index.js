@@ -18,6 +18,10 @@ export const BlockStyles = {
 		name: 'outline',
 		label: __( 'Outline', 'sensei-lms' ),
 	},
+	Link: {
+		name: 'link',
+		label: __( 'Link', 'sensei-lms' ),
+	},
 };
 
 /**

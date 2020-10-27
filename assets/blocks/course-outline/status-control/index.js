@@ -1,4 +1,4 @@
-import { RadioControl } from '@wordpress/components';
+import { RadioControl, Disabled } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -26,11 +26,13 @@ export const StatusLabels = {
  * @param {Array}    props.options   The ordered Status constants to include.
  * @param {string}   props.status    The index of the current status.
  * @param {Function} props.setStatus A callback which is called with the index when a status is selected.
+ * @param {boolean}  props.disabled  Flag which disables the controls.
  */
 export const StatusControl = ( {
 	options = [ Status.IN_PROGRESS, Status.COMPLETED ],
 	status,
 	setStatus,
+	disabled,
 	...props
 } ) => {
 	const statusOptions = options.map( ( statusOption ) => ( {
@@ -38,7 +40,7 @@ export const StatusControl = ( {
 		value: statusOption,
 	} ) );
 
-	return (
+	let radioControl = (
 		<RadioControl
 			className="wp-block-sensei-lms-course-outline-status-control"
 			help={ __(
@@ -51,4 +53,10 @@ export const StatusControl = ( {
 			onChange={ ( value ) => setStatus( value ) }
 		/>
 	);
+
+	if ( disabled ) {
+		radioControl = <Disabled>{ radioControl }</Disabled>;
+	}
+
+	return radioControl;
 };

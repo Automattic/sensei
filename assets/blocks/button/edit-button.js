@@ -15,6 +15,7 @@ export const EditButtonBlock = ( props ) => {
 	const { colors } = useSelect( ( select ) => {
 		return select( 'core/block-editor' ).getSettings();
 	}, [] );
+
 	return (
 		<div { ...getButtonWrapperProps( props ) }>
 			<RichText
@@ -22,7 +23,7 @@ export const EditButtonBlock = ( props ) => {
 				value={ text }
 				onChange={ ( value ) => setAttributes( { text: value } ) }
 				withoutInteractiveFormatting
-				{ ...getButtonProps( { attributes, colors } ) }
+				{ ...getButtonProps( { ...props, colors } ) }
 				identifier="text"
 			/>
 			<ButtonBlockSettings { ...props } />

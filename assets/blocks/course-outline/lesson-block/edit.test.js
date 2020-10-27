@@ -28,6 +28,8 @@ describe( '<EditLessonBlock />', () => {
 	useDispatch.mockImplementation( () => ( {
 		selectNextBlock: selectNextBlockMock,
 		removeBlock: removeBlockMock,
+		ignoreLesson: jest.fn(),
+		trackLesson: jest.fn(),
 	} ) );
 
 	beforeEach( () => {
