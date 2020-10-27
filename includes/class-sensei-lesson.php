@@ -4030,7 +4030,9 @@ class Sensei_Lesson {
 		 * @since 1.0
 		 * @hook sensei_lesson_prerequisite
 		 *
-		 * @param {string|bool} $prerequisite_lesson_id Prerequisite lesson ID.
+		 * @param {string|bool} $prerequisite_lesson_id Prerequisite lesson ID. False if prerequisite lesson ID is
+		 *                                                                      empty, is not a lesson, or
+		 *                                                                      equals the current lesson ID.
 		 * @param {int}         $current_lesson_id      Lesson ID.
 		 * @return {string|bool} Prerequisite lesson ID.
 		 */
