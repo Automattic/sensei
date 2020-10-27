@@ -4,7 +4,7 @@
  * Tracks.
  *
  * @package Sensei
- **/
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -27,14 +27,14 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * The name of the cron job action for regularly logging usage data.
 	 *
 	 * @var string
-	 **/
+	 */
 	private $job_name;
 
 	/**
 	 * Callback function for the usage tracking job.
 	 *
 	 * @var array
-	 **/
+	 */
 	private $callback;
 
 
@@ -46,7 +46,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * Subclass instances.
 	 *
 	 * @var array
-	 **/
+	 */
 	private static $instances = array();
 
 	/**
@@ -61,6 +61,8 @@ abstract class Sensei_Usage_Tracking_Base {
 	 *
 	 * This function cannot be abstract (because it is static) but it *must* be
 	 * implemented by subclasses.
+	 *
+	 * @throws Exception Method is not implemented in subclass.
 	 */
 	public static function get_instance() {
 		throw new Exception( 'Usage Tracking subclasses must implement get_instance. See class-usage-tracking-base.php' );
@@ -76,7 +78,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * Get prefix for actions and strings. Should be unique to this plugin.
 	 *
 	 * @return string The prefix string
-	 **/
+	 */
 	abstract protected function get_prefix();
 
 	/**
@@ -84,14 +86,14 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * strings to be translated.
 	 *
 	 * @return string The text domain string
-	 **/
+	 */
 	abstract protected function get_text_domain();
 
 	/**
 	 * Determine whether usage tracking is enabled.
 	 *
 	 * @return bool true if usage tracking is enabled, false otherwise.
-	 **/
+	 */
 	abstract protected function get_tracking_enabled();
 
 	/**
@@ -99,7 +101,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 *
 	 * @param bool $enable true if usage tracking should be enabled, false if
 	 *                     it should be disabled.
-	 **/
+	 */
 	abstract protected function set_tracking_enabled( $enable );
 
 	/**
@@ -107,7 +109,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 *
 	 * @return bool true if the current user is allowed to manage the tracking
 	 * options, false otherwise.
-	 **/
+	 */
 	abstract protected function current_user_can_manage_tracking();
 
 	/**
@@ -116,7 +118,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * is being tracked.
 	 *
 	 * @return string the text to display in the opt-in dialog.
-	 **/
+	 */
 	abstract protected function opt_in_dialog_text();
 
 	/**
@@ -141,7 +143,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * This class is meant to be a singleton, and assumes that the subclass is
 	 * implemented as such. If multiple instances are instantiated, the results
 	 * are undefined.
-	 **/
+	 */
 	protected function __construct() {
 		// Init instance vars.
 		$this->job_name = $this->get_prefix() . '_usage_tracking_send_usage_data';
@@ -176,7 +178,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * data to be logged periodically to Tracks.
 	 *
 	 * @param callable $callback the callback returning the usage data to be logged.
-	 **/
+	 */
 	public function set_callback( $callback ) {
 		$this->callback = $callback;
 	}
@@ -282,7 +284,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * Set up a regular cron job to send usage data. The job will only send
 	 * the data if tracking is enabled, so it is safe to call this function,
 	 * and schedule the job, before the user opts into tracking.
-	 **/
+	 */
 	public function schedule_tracking_task() {
 		if ( ! wp_next_scheduled( $this->job_name ) ) {
 			wp_schedule_event( time(), $this->get_prefix() . '_usage_tracking_two_weeks', $this->job_name );
@@ -292,7 +294,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	/**
 	 * Unschedule the job scheduled by schedule_tracking_task if any is
 	 * scheduled. This should be called on plugin deactivation.
-	 **/
+	 */
 	public function unschedule_tracking_task() {
 		if ( wp_next_scheduled( $this->job_name ) ) {
 			wp_clear_scheduled_hook( $this->job_name );
@@ -303,7 +305,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * Check if tracking is enabled.
 	 *
 	 * @return bool true if tracking is enabled, false otherwise
-	 **/
+	 */
 	public function is_tracking_enabled() {
 		// Defer to the plugin-specific function.
 		return $this->get_tracking_enabled();
@@ -312,7 +314,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	/**
 	 * Call the usage data callback and send the usage data to Tracks. Only
 	 * sends data if tracking is enabled.
-	 **/
+	 */
 	public function send_usage_data() {
 		if ( ! self::is_tracking_enabled() || ! is_callable( $this->callback ) ) {
 			return;
@@ -347,7 +349,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * externally.
 	 *
 	 * @param array $schedules the existing cron schedules.
-	 **/
+	 */
 	public function add_usage_tracking_two_week_schedule( $schedules ) {
 		$day_in_seconds = 86400;
 		$schedules[ $this->get_prefix() . '_usage_tracking_two_weeks' ] = array(
@@ -453,7 +455,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * Hide the opt-in for enabling usage tracking.
 	 *
 	 * @deprecated 3.1.0 - Opt-in moved to Setup Wizard
-	 **/
+	 */
 	protected function hide_tracking_opt_in() {
 		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Setup_Wizard::skip_setup_wizard' );
 	}
@@ -462,7 +464,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * Determine whether the opt-in for enabling usage tracking is hidden.
 	 *
 	 * @deprecated 3.1.0 - Opt-in moved to Setup Wizard
-	 **/
+	 */
 	protected function is_opt_in_hidden() {
 		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Setup_Wizard::setup_wizard_notice' );
 	}
@@ -472,7 +474,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * text.
 	 *
 	 * @deprecated 3.1.0 - Opt-in moved to Setup Wizard
-	 **/
+	 */
 	protected function opt_in_dialog_text_allowed_html() {
 		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Setup_Wizard::setup_wizard_notice' );
 	}
@@ -482,7 +484,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * called externally.
 	 *
 	 * @deprecated 3.1.0 - Opt-in moved to Setup Wizard
-	 **/
+	 */
 	public function maybe_display_tracking_opt_in() {
 		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Setup_Wizard::setup_wizard_notice' );
 	}
@@ -492,7 +494,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * externally.
 	 *
 	 * @deprecated 3.1.0 - Opt-in moved to Setup Wizard
-	 **/
+	 */
 	public function handle_tracking_opt_in() {
 		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Setup_Wizard::setup_wizard_notice' );
 	}
@@ -502,7 +504,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * on it. Should not be called externally.
 	 *
 	 * @deprecated 3.1.0
-	 **/
+	 */
 	public function enqueue_script_deps() {
 		_deprecated_function( __METHOD__, '3.1.0' );
 	}
@@ -512,7 +514,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * externally.
 	 *
 	 * @deprecated 3.1.0
-	 **/
+	 */
 	public function output_opt_in_js() {
 		_deprecated_function( __METHOD__, '3.1.0' );
 	}
