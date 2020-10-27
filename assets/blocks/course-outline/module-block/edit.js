@@ -26,7 +26,6 @@ import { useInsertLessonBlock } from './use-insert-lesson-block';
  * @param {Object}   props.attributes             Block attributes.
  * @param {string}   props.attributes.title       Module title.
  * @param {string}   props.attributes.description Module description.
- * @param {string}   props.attributes.blockStyle  Selected block style.
  * @param {Object}   props.mainColor              Header main color.
  * @param {Object}   props.textColor              Header text color.
  * @param {Function} props.setAttributes          Block set attributes function.
@@ -39,7 +38,6 @@ export const EditModuleBlock = ( props ) => {
 		mainColor,
 		textColor,
 		setAttributes,
-		blockStyle,
 	} = props;
 	const {
 		outlineAttributes: { collapsibleModules },
@@ -67,19 +65,17 @@ export const EditModuleBlock = ( props ) => {
 
 	const [ isExpanded, setExpanded ] = useState( true );
 
-	const blockStyleColors = {
-		default: { background: mainColor?.color },
-		minimal: { borderColor: mainColor?.color },
-	}[ blockStyle ];
-
 	return (
 		<>
 			<ModuleBlockSettings { ...props } />
-			<section className={ className }>
-				<header
-					className="wp-block-sensei-lms-course-outline-module__header"
-					style={ { ...blockStyleColors, color: textColor?.color } }
-				>
+			<section
+				className={ className }
+				style={ {
+					'--sensei-outline-main-color': mainColor?.color,
+					'--sensei-outline-text-color': textColor?.color,
+				} }
+			>
+				<header className="wp-block-sensei-lms-course-outline-module__header">
 					<h2 className="wp-block-sensei-lms-course-outline-module__title">
 						<SingleLineInput
 							className="wp-block-sensei-lms-course-outline-module__title-input"

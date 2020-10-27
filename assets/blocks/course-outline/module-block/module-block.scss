@@ -30,6 +30,10 @@
 			font-weight: bold;
 			display: flex;
 			align-items: center;
+
+			&:not(.has-color) {
+				color: var(--sensei-outline-text-color);
+			}
 		}
 
 		#{$block}__title {
@@ -67,10 +71,7 @@
 		}
 		#{$block}__header {
 			&:not(.has-background-color) {
-				background-color: $dark-gray;
-			}
-			&:not(.has-color) {
-				color: #FFF;
+				background-color: var(--sensei-outline-main-color);
 			}
 		}
 
@@ -81,6 +82,10 @@
 	}
 
 	&.is-style-minimal {
+		#{$block}__header {
+			border-color: var(--sensei-outline-main-color);
+		}
+
 		#{$block}__progress-indicator:not(.completed) {
 			border: 1px solid currentColor;
 		}
@@ -95,7 +100,7 @@
 			margin-left: 4px;
 			margin-right: 4px;
 		}
-		background-color: $dark-gray;
+		background-color: var(--sensei-outline-main-color);
 	}
 
 	.block-editor-block-styles__item & {

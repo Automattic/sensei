@@ -20,7 +20,8 @@ $dark-gray: #1a1d20;
 			.wp-block-sensei-lms-course-outline-module__header {
 				margin: 0 4px;
 				padding: 1rem calc(1rem - 4px);
-				border-bottom: 4px solid $dark-gray;
+				border-bottom-width: 4px;
+				border-bottom-style: solid;
 			}
 		}
 
