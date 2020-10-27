@@ -61,10 +61,20 @@ class Sensei_Course_Outline_Block {
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_block_editor_assets' ] );
 		add_action( 'init', [ $this, 'register_course_template' ], 101 );
 		add_action( 'init', [ $this, 'register_blocks' ] );
+		add_action( 'init', [ $this, 'init' ] );
 
 		$this->course = new Sensei_Course_Outline_Course_Block();
 		$this->lesson = new Sensei_Course_Outline_Lesson_Block();
 		$this->module = new Sensei_Course_Outline_Module_Block();
+	}
+
+	/**
+	 * Initialize block instance.
+	 *
+	 * @access private
+	 */
+	public function init() {
+		$this->block_content = null;
 	}
 
 	/**
