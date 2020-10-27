@@ -775,7 +775,7 @@ class Sensei_Question {
 						 * @param {bool|string} $answer_notes Answer notes.
 						 * @param {int}         $question_id  Question ID.
 						 * @param {int}         $lesson_id    Lesson ID.
-						 * @return {bool|string} Answer notes.
+						 * @return {string} Answer notes.
 						 */
 						echo wp_kses_post( apply_filters( 'sensei_question_answer_notes', $answer_notes, $question_id, $lesson_id ) );
 
