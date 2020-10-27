@@ -98,7 +98,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * Set whether usage tracking is enabled.
 	 *
 	 * @param bool $enable true if usage tracking should be enabled, false if
-	 * it should be disabled.
+	 *                     it should be disabled.
 	 **/
 	abstract protected function set_tracking_enabled( $enable );
 
@@ -156,6 +156,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * subclass.
 	 *
 	 * @param string $subclass the name of the subclass.
+	 *
 	 * @return static Instance of subclass.
 	 */
 	protected static function get_instance_for_subclass( $subclass ) {
@@ -190,7 +191,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * @param null|int $event_timestamp When the event occurred.
 	 *
 	 * @return bool
-	 **/
+	 */
 	public function send_event( $event, $properties = array(), $event_timestamp = null ) {
 
 		// Only continue if tracking is enabled.
@@ -205,16 +206,16 @@ abstract class Sensei_Usage_Tracking_Base {
 		// Use site domain as the userid to enable usage tracking at the site level.
 		// Note that we would likely want to use site domain + user ID for userid if we were
 		// to ever add event tracking at the user level.
-		$properties['_ui'] = str_replace( 'www.', '', wp_parse_url( site_url(), PHP_URL_HOST ) );
+		$properties['_ui'] = $this->get_site_id();
 		$properties['_ul'] = $user->user_login;
 
-		return $this->send_anonymous_event( $event, $properties, $event_timestamp );
+		return $this->send_tracks_request( $event, $properties, $event_timestamp );
 
 	}
 
 
 	/**
-	 * Send an event to Tracks.
+	 * Send an anonymous event to Tracks.
 	 *
 	 * @param string   $event           The event name. The prefix string will be
 	 *                                  automatically prepended to this, so please supply this string without a
@@ -223,8 +224,27 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * @param null|int $event_timestamp When the event occurred.
 	 *
 	 * @return bool
-	 **/
+	 */
 	public function send_anonymous_event( $event, $properties = array(), $event_timestamp = null ) {
+
+		$properties['_ut'] = $this->get_event_prefix() . ':site_url';
+		$properties['_ui'] = sha1( $this->get_site_id() );
+
+		return $this->send_tracks_request( $event, $properties, $event_timestamp );
+	}
+
+	/**
+	 * Submit request to Tracks pixel.
+	 *
+	 * @param string   $event           The event name. The prefix string will be
+	 *                                  automatically prepended to this, so please supply this string without a
+	 *                                  prefix.
+	 * @param array    $properties      Event Properties.
+	 * @param null|int $event_timestamp When the event occurred.
+	 *
+	 * @return bool
+	 */
+	private function send_tracks_request( $event, $properties = array(), $event_timestamp = null ) {
 
 		$pixel      = 'https://pixel.wp.com/t.gif';
 		$event_name = $this->get_event_prefix() . '_' . $event;
@@ -418,6 +438,15 @@ abstract class Sensei_Usage_Tracking_Base {
 			return basename( $basename, '.php' );
 		}
 		return dirname( $basename );
+	}
+
+	/**
+	 * Get user ID for the site.
+	 *
+	 * @return string
+	 */
+	private function get_site_id() {
+		return str_replace( 'www.', '', wp_parse_url( site_url(), PHP_URL_HOST ) );
 	}
 
 	/**
