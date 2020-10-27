@@ -10,7 +10,7 @@ export const ExitSurveyFormItem = ( { id, label, detailsLabel } ) => {
 	const idAttr = `sensei-exit-reason__${ id }`;
 	const detailsIdAttr = `${ idAttr }-details`;
 	return (
-		<div key={ label } className="sensei-exit-survey__item">
+		<div className="sensei-exit-survey__item">
 			<input
 				id={ idAttr }
 				type="radio"
