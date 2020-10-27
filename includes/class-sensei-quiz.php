@@ -93,11 +93,11 @@ class Sensei_Quiz {
 
 
 	/**
-	 * Get the lesson this quiz belongs to
+	 * Get the lesson this quiz belongs to.
 	 *
 	 * @since 1.7.2
-	 * @param int $quiz_id
-	 * @return int @lesson_id
+	 * @param int $quiz_id Quiz ID.
+	 * @return int|bool Lesson ID or false if not found.
 	 */
 	public function get_lesson_id( $quiz_id ) {
 

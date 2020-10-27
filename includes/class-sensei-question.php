@@ -747,11 +747,11 @@ class Sensei_Question {
 		 * @since 1.9.7
 		 * @hook sensei_question_show_answers
 		 *
-		 * @param {bool}     $show_answers Whether to show the answer to the question.
-		 * @param {int}      $question_id  Question ID.
-		 * @param {int}      $quiz_id      Quiz ID.
-		 * @param {bool|int} $lesson_id    Lesson ID.
-		 * @param {int}      $user_id      User ID.
+		 * @param {bool} $show_answers Whether to show the answer to the question.
+		 * @param {int}  $question_id  Question ID.
+		 * @param {int}  $quiz_id      Quiz ID.
+		 * @param {int}  $lesson_id    Lesson ID.
+		 * @param {int}  $user_id      User ID.
 		 * @return {bool} Whether to show the answer to the question.
 		 */
 		$show_answers = apply_filters( 'sensei_question_show_answers', $show_answers, $question_id, $quiz_id, $lesson_id, get_current_user_id() );
@@ -774,7 +774,7 @@ class Sensei_Question {
 						 *
 						 * @param {bool|string} $answer_notes Answer notes.
 						 * @param {int}         $question_id  Question ID.
-						 * @param {bool|int}    $lesson_id    Lesson ID.
+						 * @param {int}         $lesson_id    Lesson ID.
 						 * @return {bool|string} Answer notes.
 						 */
 						echo wp_kses_post( apply_filters( 'sensei_question_answer_notes', $answer_notes, $question_id, $lesson_id ) );
