@@ -32,7 +32,7 @@
 			align-items: center;
 
 			&:not(.has-color) {
-				color: var(--sensei-outline-text-color);
+				color: var(--sensei-text-color);
 			}
 		}
 
@@ -71,7 +71,7 @@
 		}
 		#{$block}__header {
 			&:not(.has-background-color) {
-				background-color: var(--sensei-outline-main-color);
+				background-color: var(--sensei-main-color);
 			}
 		}
 
@@ -83,7 +83,7 @@
 
 	&.is-style-minimal {
 		#{$block}__header {
-			border-color: var(--sensei-outline-main-color);
+			border-color: var(--sensei-main-color);
 		}
 
 		#{$block}__progress-indicator:not(.completed) {
@@ -100,7 +100,7 @@
 			margin-left: 4px;
 			margin-right: 4px;
 		}
-		background-color: var(--sensei-outline-main-color);
+		background-color: var(--sensei-main-color);
 	}
 
 	.block-editor-block-styles__item & {

@@ -26,8 +26,7 @@ import { useInsertLessonBlock } from './use-insert-lesson-block';
  * @param {Object}   props.attributes             Block attributes.
  * @param {string}   props.attributes.title       Module title.
  * @param {string}   props.attributes.description Module description.
- * @param {Object}   props.mainColor              Header main color.
- * @param {Object}   props.textColor              Header text color.
+ * @param {Object}   props.colorVariablesStyle    Color variables style.
  * @param {Function} props.setAttributes          Block set attributes function.
  */
 export const EditModuleBlock = ( props ) => {
@@ -35,8 +34,7 @@ export const EditModuleBlock = ( props ) => {
 		clientId,
 		className,
 		attributes: { title, description },
-		mainColor,
-		textColor,
+		colorVariablesStyle,
 		setAttributes,
 	} = props;
 	const {
@@ -68,13 +66,7 @@ export const EditModuleBlock = ( props ) => {
 	return (
 		<>
 			<ModuleBlockSettings { ...props } />
-			<section
-				className={ className }
-				style={ {
-					'--sensei-outline-main-color': mainColor?.color,
-					'--sensei-outline-text-color': textColor?.color,
-				} }
-			>
+			<section className={ className } style={ colorVariablesStyle }>
 				<header className="wp-block-sensei-lms-course-outline-module__header">
 					<h2 className="wp-block-sensei-lms-course-outline-module__title">
 						<SingleLineInput

@@ -5,8 +5,29 @@ import {
 	withColors,
 } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
-import { mapValues, upperFirst } from 'lodash';
+import { mapValues, upperFirst, kebabCase } from 'lodash';
 import useThemeColors from '../../react-hooks/use-theme-colors';
+
+/**
+ * Get color variables style.
+ *
+ * @param {Object} colorSettings Color settings.
+ * @param {Object} props         Current props.
+ *
+ * @return {Object} Color variables style.
+ */
+const getColorVariablesStyle = ( colorSettings, props ) => {
+	const style = {};
+
+	Object.keys( colorSettings ).forEach( ( colorKey ) => {
+		if ( props[ colorKey ].color ) {
+			style[ `--sensei-${ kebabCase( colorKey ) }` ] =
+				props[ colorKey ].color;
+		}
+	} );
+
+	return style;
+};
 
 /**
  * Default theme colors hook.
@@ -52,11 +73,20 @@ export const withColorSettings = ( colorSettings ) => {
 
 		const ComponentWithColorSettings = ( props ) => {
 			const colorProps = useDefaultThemeColors( colorSettings, props );
+			const propsWithDefaultColors = { ...props, ...colorProps };
 
 			return (
 				<>
-					<Component { ...props } { ...colorProps } />
-					<ColorSettings { ...{ colorSettings, props } } />
+					<Component
+						{ ...propsWithDefaultColors }
+						colorVariablesStyle={ getColorVariablesStyle(
+							colorSettings,
+							propsWithDefaultColors
+						) }
+					/>
+					<ColorSettings
+						{ ...{ colorSettings, props: propsWithDefaultColors } }
+					/>
 				</>
 			);
 		};
