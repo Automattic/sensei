@@ -141,8 +141,13 @@ export default compose(
 		mainColor: {
 			style: 'background-color',
 			label: __( 'Main color', 'sensei-lms' ),
+			defaultThemeColorKey: 'primaryColor',
 		},
-		textColor: { style: 'color', label: __( 'Text color', 'sensei-lms' ) },
+		textColor: {
+			style: 'color',
+			label: __( 'Text color', 'sensei-lms' ),
+			defaultThemeColorKey: 'primaryContrastColor',
+		},
 	} ),
 	withDefaultBlockStyle()
 )( EditModuleBlock );
