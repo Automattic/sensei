@@ -21,12 +21,13 @@ import { Status, StatusControl } from '../status-control';
  * @param {Function} props.attributes          The block attributes.
  * @param {number}   props.attributes.id       The lesson id.
  * @param {string}   props.attributes.fontSize The lesson block font size.
+ * @param {string}   props.attributes.title    The lesson title.
  */
 export const LessonBlockSettings = ( {
 	previewStatus,
 	setPreviewStatus,
 	setAttributes,
-	attributes: { id, fontSize },
+	attributes: { id, fontSize, title },
 } ) => {
 	const { fontSizes } = useSelect( ( select ) =>
 		select( 'core/block-editor' ).getSettings()
@@ -73,6 +74,7 @@ export const LessonBlockSettings = ( {
 						status={ previewStatus }
 						setStatus={ setPreviewStatus }
 						options={ [ Status.NOT_STARTED, Status.COMPLETED ] }
+						disabled={ ! title }
 					/>
 				</PanelBody>
 			</InspectorControls>

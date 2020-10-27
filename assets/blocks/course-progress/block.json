@@ -16,15 +16,13 @@
       "type": "string"
     },
     "customBarColor": {
-      "type": "string",
-      "default": "#0064B4"
+      "type": "string"
     },
     "barBackgroundColor": {
       "type": "string"
     },
     "customBarBackgroundColor": {
-      "type": "string",
-      "default": "#E6E6E6"
+      "type": "string"
     },
     "height": {
       "type": "integer"

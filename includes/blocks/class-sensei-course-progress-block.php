@@ -72,7 +72,7 @@ class Sensei_Course_Progress_Block {
 			],
 			[ 'borderRadius' => 'border-radius' ]
 		);
-		$bar_css['inline_styles'][] = 'width: ' . ( 4 > $percentage ? 4 : $percentage ) . '%';
+		$bar_css['inline_styles'][] = 'width: ' . ( 3 > $percentage ? 3 : $percentage ) . '%';
 
 		// translators: Placeholder %d is the lesson count.
 		$lessons_text = sprintf( _n( '%d Lesson', '%d Lessons', $total_lessons, 'sensei-lms' ), $total_lessons );

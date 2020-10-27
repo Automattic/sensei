@@ -20,11 +20,11 @@ import { COURSE_STATUS_STORE } from '../status-store';
 export const OutlineAttributesContext = createContext();
 
 /**
- * A hook to update the status store when a lesson is added or removed.
+ * A hook to update the status store when a lesson is removed.
  *
  * @param {string} clientId The outline block id.
  */
-const useUpdateLessonCount = function ( clientId ) {
+const useSynchronizeLessonsOnUpdate = function ( clientId ) {
 	const outlineDescendants = useSelect(
 		( select ) => {
 			return select( 'core/block-editor' ).getClientIdsOfDescendants( [
@@ -34,19 +34,11 @@ const useUpdateLessonCount = function ( clientId ) {
 		[ clientId ]
 	);
 
-	const lessonCount = useSelect( ( select ) => {
-		return select( 'core/block-editor' ).getGlobalBlockCount(
-			'sensei-lms/course-outline-lesson'
-		);
-	} );
-
 	useEffect( () => {
-		dispatch( COURSE_STATUS_STORE ).refreshStructure(
-			clientId,
-			lessonCount,
+		dispatch( COURSE_STATUS_STORE ).stopTrackingRemovedLessons(
 			outlineDescendants
 		);
-	}, [ clientId, lessonCount, outlineDescendants ] );
+	}, [ clientId, outlineDescendants ] );
 };
 
 /**
@@ -92,7 +84,7 @@ const EditCourseOutlineBlock = ( {
 		}
 	}, [ structure, setBlocks, attributes.isPreview ] );
 
-	useUpdateLessonCount( clientId );
+	useSynchronizeLessonsOnUpdate( clientId );
 
 	if ( isEmpty ) {
 		return (

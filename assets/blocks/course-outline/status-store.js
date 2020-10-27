@@ -5,7 +5,7 @@ import { select, controls } from '@wordpress/data-controls';
 
 const DEFAULT_STATE = {
 	completedLessons: [],
-	totalLessonsCount: 0,
+	trackedLessons: [],
 };
 
 /**
@@ -37,45 +37,82 @@ const actions = {
 	 * @return {Object} Yields the lesson update actions.
 	 */
 	*setModuleStatus( moduleId, status ) {
-		const lessonIds = yield select(
+		const trackedLessonIds = yield select(
+			COURSE_STATUS_STORE,
+			'getTrackedLessons'
+		);
+
+		const moduleDescendants = yield select(
 			'core/block-editor',
 			'getClientIdsOfDescendants',
 			[ moduleId ]
 		);
 
-		if ( 0 === lessonIds.length ) {
+		const moduleLessons = moduleDescendants.filter( ( descendantId ) =>
+			trackedLessonIds.includes( descendantId )
+		);
+
+		if ( 0 === moduleLessons.length ) {
 			return;
 		}
 
 		if ( Status.COMPLETED === status || Status.NOT_STARTED === status ) {
-			yield* lessonIds.map( ( lessonId ) =>
+			yield* moduleLessons.map( ( lessonId ) =>
 				actions.setLessonStatus( lessonId, status )
 			);
 		} else {
-			yield* lessonIds
+			yield* moduleLessons
 				.slice( 1 )
 				.map( ( lessonId ) =>
 					actions.setLessonStatus( lessonId, Status.NOT_STARTED )
 				);
 
-			return actions.setLessonStatus( lessonIds[ 0 ], Status.COMPLETED );
+			return actions.setLessonStatus(
+				moduleLessons[ 0 ],
+				Status.COMPLETED
+			);
 		}
 	},
 
 	/**
-	 * Creates the action to update state after a an update of the outline's structure.
+	 * Creates the action to update state after a possible removal of a lesson.
 	 *
-	 * @param {string}   outlineId          The outline block id.
-	 * @param {number}   totalLessonsCount  The count of the lessons.
-	 * @param {string[]} outlineDescendants The descendants of the outline block.
+	 * @param {string[]} descendantIds The ids of all outline block descendants.
 	 *
 	 * @return {Object} The action.
 	 */
-	refreshStructure( outlineId, totalLessonsCount, outlineDescendants ) {
+	stopTrackingRemovedLessons( descendantIds ) {
 		return {
-			type: 'REFRESH_BLOCK_IDS',
-			newDescendantIds: outlineDescendants,
-			totalLessonsCount,
+			type: 'REMOVE_LESSONS',
+			descendantIds,
+		};
+	},
+
+	/**
+	 * Creates the action which marks a lesson as tracked by the store.
+	 *
+	 * @param {string} lessonId The lesson id.
+	 *
+	 * @return {Object} The action.
+	 */
+	trackLesson( lessonId ) {
+		return {
+			type: 'TRACK_LESSON',
+			lessonId,
+		};
+	},
+
+	/**
+	 * Creates the action which marks a lesson as not tracked by the store.
+	 *
+	 * @param {string} lessonId The lesson id.
+	 *
+	 * @return {Object} The action.
+	 */
+	ignoreLesson( lessonId ) {
+		return {
+			type: 'IGNORE_LESSON',
+			lessonId,
 		};
 	},
 };
@@ -85,16 +122,26 @@ const actions = {
  */
 const selectors = {
 	/**
-	 * Get the lesson counts.
+	 * Get all the lessons that are tracked by the store.
 	 *
-	 * @param {Object} state                   The state.
-	 * @param {number} state.totalLessonsCount The number of lessons.
-	 * @param {Array}  state.completedLessons  The ids of the completed lessons.
+	 * @param {Object} state                The state.
+	 * @param {Array}  state.trackedLessons The tracked lessons.
 	 *
 	 * @return {Object} An object with the total and completed lesson counts.
 	 */
-	getLessonCounts: ( { totalLessonsCount, completedLessons } ) => ( {
-		totalLessonsCount,
+	getTrackedLessons: ( { trackedLessons } ) => trackedLessons,
+
+	/**
+	 * Get the lesson counts.
+	 *
+	 * @param {Object} state                  The state.
+	 * @param {Array}  state.trackedLessons   The ids of all the lessons.
+	 * @param {Array}  state.completedLessons The ids of the completed lessons.
+	 *
+	 * @return {Object} An object with the total and completed lesson counts.
+	 */
+	getLessonCounts: ( { trackedLessons, completedLessons } ) => ( {
+		totalLessonsCount: trackedLessons.length,
 		completedLessonsCount: completedLessons.length,
 	} ),
 
@@ -108,42 +155,35 @@ const selectors = {
 	 * @return {string} The lesson status.
 	 */
 	getLessonStatus: ( { completedLessons }, lessonId ) =>
-		completedLessons.some(
-			( completedLessonId ) => lessonId === completedLessonId
-		)
+		completedLessons.includes( lessonId )
 			? Status.COMPLETED
 			: Status.NOT_STARTED,
 
 	/**
-	 * Calculates and gets the module status.
+	 * Returns the number of total and completed lessons of a module.
 	 *
 	 * @param {Object} state                  The state.
 	 * @param {Array}  state.completedLessons The ids of the completed lessons.
+	 * @param {Array}  state.trackedLessons   The ids of  all the lessons.
 	 * @param {string} moduleId               The module id.
 	 *
-	 * @return {string} The lesson status.
+	 * @return {Object} The module lesson counts.
 	 */
-	getModuleStatus( { completedLessons }, moduleId ) {
-		const lessonIds = selectData(
-			'core/block-editor'
-		).getClientIdsOfDescendants( [ moduleId ] );
+	getModuleLessonCounts( { completedLessons, trackedLessons }, moduleId ) {
+		const moduleLessons = selectData( 'core/block-editor' )
+			.getClientIdsOfDescendants( [ moduleId ] )
+			.filter( ( descendantId ) =>
+				trackedLessons.includes( descendantId )
+			);
 
-		const completedLessonsCount = lessonIds.filter( ( lessonId ) =>
-			completedLessons.some(
-				( completedLessonId ) => lessonId === completedLessonId
-			)
-		).length;
+		const completedModuleLessons = moduleLessons.filter( ( lessonId ) =>
+			completedLessons.includes( lessonId )
+		);
 
-		if ( 0 === completedLessonsCount ) {
-			return Status.NOT_STARTED;
-		} else if (
-			lessonIds.length === completedLessonsCount &&
-			lessonIds.length > 0
-		) {
-			return Status.COMPLETED;
-		}
-
-		return Status.IN_PROGRESS;
+		return {
+			completedLessonsCount: completedModuleLessons.length,
+			totalLessonsCount: moduleLessons.length,
+		};
 	},
 };
 
@@ -181,30 +221,76 @@ const reducers = {
 	},
 
 	/**
-	 * Checks if a lesson has been removed and updates the lessons.
+	 * Removes any lessons that don't exist in list of descendantIds.
 	 *
-	 * @param {Object} action                   The action.
-	 * @param {Array}  action.newDescendantIds  The ids of all descendants of the outline block.
-	 * @param {number} action.totalLessonsCount The number of total lessons.
-	 * @param {Object} state                    The state.
+	 * @param {Object} action               The action.
+	 * @param {Array}  action.descendantIds The ids of all descendants of the outline block.
+	 * @param {Object} state                The state.
 	 *
 	 * @return {Object} The new state.
 	 */
-	REFRESH_BLOCK_IDS: ( { newDescendantIds, totalLessonsCount }, state ) => {
-		let completedLessons = [ ...state.completedLessons ];
+	REMOVE_LESSONS: ( { descendantIds }, state ) => {
+		const completedLessons = state.completedLessons.filter(
+			( completedLesson ) => descendantIds.includes( completedLesson )
+		);
 
-		completedLessons.forEach( ( lesson ) => {
-			if ( ! newDescendantIds.includes( lesson ) ) {
-				completedLessons = completedLessons.filter(
-					( completedLessonId ) => completedLessonId !== lesson
-				);
-			}
-		} );
+		const trackedLessons = state.trackedLessons.filter( ( trackedLesson ) =>
+			descendantIds.includes( trackedLesson )
+		);
 
 		return {
 			...state,
-			totalLessonsCount,
 			completedLessons,
+			trackedLessons,
+		};
+	},
+
+	/**
+	 * Removes a lesson from the arrays of tracked lessons.
+	 *
+	 * @param {Object} action          The action.
+	 * @param {Array}  action.lessonId The ids of the lesson to ignore.
+	 * @param {Object} state           The state.
+	 *
+	 * @return {Object} The new state.
+	 */
+	IGNORE_LESSON: ( { lessonId }, state ) => {
+		const completedLessons = state.completedLessons.filter(
+			( completedLesson ) => completedLesson !== lessonId
+		);
+
+		const trackedLessons = state.trackedLessons.filter(
+			( trackedLesson ) => trackedLesson !== lessonId
+		);
+
+		return {
+			...state,
+			completedLessons,
+			trackedLessons,
+		};
+	},
+
+	/**
+	 * Adds a lesson from the arrays of tracked lessons.
+	 *
+	 * @param {Object} action          The action.
+	 * @param {Array}  action.lessonId The ids of the lesson to track.
+	 * @param {Object} state           The state.
+	 *
+	 * @return {Object} The new state.
+	 */
+	TRACK_LESSON: ( { lessonId }, state ) => {
+		const trackedLessons = [ ...state.trackedLessons ];
+
+		if ( trackedLessons.includes( lessonId ) ) {
+			return state;
+		}
+
+		trackedLessons.push( lessonId );
+
+		return {
+			...state,
+			trackedLessons,
 		};
 	},
 	DEFAULT: ( action, state ) => state,
