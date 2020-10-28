@@ -45,6 +45,18 @@
 		}
 	}
 
+	&__badge {
+		.wp-block-sensei-lms-course-outline-lesson & {
+			flex: 0 0 auto;
+			font-size: 0.6em;
+			color: inherit;
+			text-transform: uppercase;
+			padding: 5px 10px;
+			border: solid 1px currentColor;
+			border-radius: 3px;
+		}
+	}
+
 	&__status {
 		display: inline-block;
 		width: 24px;

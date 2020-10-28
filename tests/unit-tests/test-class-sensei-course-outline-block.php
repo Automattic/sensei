@@ -49,6 +49,52 @@ class Sensei_Course_Outline_Block_Test extends WP_UnitTestCase {
 		$this->assertContains( 'Test Lesson', $result );
 	}
 
+	/**
+	 * Test lesson preview badge is rendered.
+	 */
+	public function testLessonPreviewRendered() {
+		$post_content = file_get_contents( 'sample-data/outline-block-post-content.html', true );
+
+		$this->mockPostCourseStructure(
+			[
+				[
+					'id'      => 1,
+					'type'    => 'lesson',
+					'title'   => 'Test Lesson',
+					'preview' => true,
+				],
+			]
+		);
+		$result = do_blocks( $post_content );
+
+		$this->assertContains( 'Preview', $result );
+	}
+
+	/**
+	 * Test lesson preview badge is not rendered.
+	 */
+	public function testLessonNoPreviewRendered() {
+		$post_content = file_get_contents( 'sample-data/outline-block-post-content.html', true );
+
+		$this->mockPostCourseStructure(
+			[
+				[
+					'id'      => 1,
+					'type'    => 'lesson',
+					'title'   => 'Test Lesson',
+					'preview' => false,
+				],
+				[
+					'id'    => 2,
+					'type'  => 'lesson',
+					'title' => 'Test Lesson 2',
+				],
+			]
+		);
+		$result = do_blocks( $post_content );
+
+		$this->assertNotContains( 'Preview', $result );
+	}
 
 	/**
 	 * Test module with a lesson in the structure is rendered.

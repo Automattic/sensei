@@ -36,6 +36,12 @@ describe( 'extractStructure', () => {
 				innerBlocks: [],
 				isValid: true,
 			},
+			{
+				name: 'sensei-lms/course-outline-lesson',
+				attributes: { title: 'L3', draft: true, preview: true },
+				innerBlocks: [],
+				isValid: true,
+			},
 		] );
 
 		expect( data ).toEqual( [
@@ -49,6 +55,7 @@ describe( 'extractStructure', () => {
 				],
 			},
 			{ type: 'lesson', title: 'L2' },
+			{ type: 'lesson', title: 'L3', draft: true, preview: true },
 		] );
 	} );
 } );

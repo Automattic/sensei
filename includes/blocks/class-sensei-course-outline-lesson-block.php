@@ -17,11 +17,12 @@ class Sensei_Course_Outline_Lesson_Block {
 	/**
 	 * Get lesson block HTML.
 	 *
-	 * @param array $block Block information.
+	 * @param array $block     Block information.
+	 * @param int   $course_id The course id.
 	 *
 	 * @return string Lesson HTML
 	 */
-	public function render_lesson_block( $block ) {
+	public function render_lesson_block( $block, $course_id ) {
 		$lesson_id = $block['id'];
 		$classes   = [ 'wp-block-sensei-lms-course-outline-lesson' ];
 
@@ -31,7 +32,16 @@ class Sensei_Course_Outline_Lesson_Block {
 			$classes[] = 'completed';
 		}
 
-		$css = Sensei_Block_Helpers::build_styles( $block['attributes'] ?? [], [], [ 'fontSize' => 'font-size' ] );
+		$css           = Sensei_Block_Helpers::build_styles( $block['attributes'] ?? [], [], [ 'fontSize' => 'font-size' ] );
+		$preview_badge = '';
+
+		if ( isset( $block['preview'] ) && true === $block['preview'] && ! Sensei_Course::is_user_enrolled( $course_id ) ) {
+			$preview_badge = '
+				<span class="wp-block-sensei-lms-course-outline-lesson__badge">
+					' . esc_html__( 'Preview', 'sensei-lms' ) . '
+				</span>
+			';
+		}
 
 		$draft = ( ! empty( $block['draft'] ) ? '<em>' . esc_html__( '(Draft)', 'sensei-lms' ) . '</em>' : '' );
 
@@ -44,6 +54,7 @@ class Sensei_Course_Outline_Lesson_Block {
 					' . esc_html( $block['title'] ) . '
 					' . $draft . '
 				</span>
+				' . $preview_badge . '
 				<svg class="wp-block-sensei-lms-course-outline-lesson__chevron"><use xlink:href="#sensei-chevron-right"></use></svg>
 			</a>
 		';
