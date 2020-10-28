@@ -33,6 +33,8 @@ class Sensei_Course_Outline_Lesson_Block {
 
 		$css = Sensei_Block_Helpers::build_styles( $block['attributes'] ?? [], [], [ 'fontSize' => 'font-size' ] );
 
+		$draft = ( ! empty( $block['draft'] ) ? '<em>' . esc_html__( '(Draft)', 'sensei-lms' ) . '</em>' : '' );
+
 		return '
 			<a href="' . esc_url( get_permalink( $lesson_id ) ) . '" ' . Sensei_Block_Helpers::render_style_attributes( $classes, $css ) . '>
 				<svg class="wp-block-sensei-lms-course-outline-lesson__status">
@@ -40,6 +42,7 @@ class Sensei_Course_Outline_Lesson_Block {
 				</svg>
 				<span>
 					' . esc_html( $block['title'] ) . '
+					' . $draft . '
 				</span>
 				<svg class="wp-block-sensei-lms-course-outline-lesson__chevron"><use xlink:href="#sensei-chevron-right"></use></svg>
 			</a>
