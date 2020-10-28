@@ -1,7 +1,7 @@
 import { loginUser } from '@wordpress/e2e-test-utils';
 import { adminUrl } from './helpers';
 
-const isSessionCookieSet = function( cookies ) {
+const isSessionCookieSet = function ( cookies ) {
 	let result = false;
 
 	if ( ! Array.isArray( cookies ) ) {
@@ -112,21 +112,17 @@ export const AdminFlow = {
 
 		if ( deactivateLink ) {
 			await deactivateLink.click();
+			const exitSurvey = page.$(
+				`#sensei-exit-survey-modal button:not(:disabled)`
+			);
+			if ( exitSurvey ) await exitSurvey.click();
 		}
 	},
 	activatePlugin: async ( slug, forceReactivate = false ) => {
 		await AdminFlow.goToPlugins();
 
-		const deactivateLink = await AdminFlow.findPluginAction(
-			slug,
-			'deactivate'
-		);
-
-		if ( deactivateLink ) {
-			if ( forceReactivate ) {
-				await deactivateLink.click();
-				await page.waitForNavigation();
-			} else return;
+		if ( forceReactivate ) {
+			await AdminFlow.deactivatePlugin();
 		}
 
 		const activate = await AdminFlow.findPluginAction( slug, 'activate' );

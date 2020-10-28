@@ -31,7 +31,8 @@ const files = [
 	'data-port/import.js',
 	'data-port/export.js',
 	'data-port/style.scss',
-
+	'admin/exit-survey/index.js',
+	'admin/exit-survey/exit-survey.scss',
 	'css/frontend.scss',
 	'css/admin-custom.css',
 	'css/extensions.scss',
