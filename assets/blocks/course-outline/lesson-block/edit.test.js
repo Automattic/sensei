@@ -1,23 +1,13 @@
 import { render, fireEvent, waitFor } from '@testing-library/react';
-import { useDispatch } from '@wordpress/data';
+import { EditLessonBlock } from './edit';
+import { useDispatch, select } from '@wordpress/data';
 import { createBlock } from '@wordpress/blocks';
 
-import { EditLessonBlock } from './edit';
+jest.mock( '@wordpress/data' );
 
-jest.mock( '@wordpress/data', () => ( {
-	useDispatch: jest.fn(),
-} ) );
-
-jest.mock( '@wordpress/blocks', () => ( {
-	createBlock: jest.fn(),
-} ) );
-
-jest.mock( '@wordpress/block-editor', () => ( {
-	withColors() {
-		return ( Component ) => ( props ) => (
-			<Component { ...props } backgroundColor={ {} } textColor={ {} } />
-		);
-	},
+jest.mock( '@wordpress/blocks' );
+jest.mock( '../../../shared/blocks/settings', () => ( {
+	withColorSettings: () => ( Component ) => Component,
 } ) );
 
 jest.mock( './settings', () => ( {
@@ -25,8 +15,8 @@ jest.mock( './settings', () => ( {
 } ) );
 
 jest.mock( '../status-control', () => ( {
-	Statuses: {
-		IN_PROGRESS: 'In Progress',
+	Status: {
+		IN_PROGRESS: 'in-progress',
 	},
 } ) );
 
@@ -38,7 +28,16 @@ describe( '<EditLessonBlock />', () => {
 	useDispatch.mockImplementation( () => ( {
 		selectNextBlock: selectNextBlockMock,
 		removeBlock: removeBlockMock,
+		ignoreLesson: jest.fn(),
+		trackLesson: jest.fn(),
 	} ) );
+
+	beforeEach( () => {
+		select.mockReturnValue( {
+			getBlock: () => null,
+			getNextBlockClientId: () => null,
+		} );
+	} );
 
 	createBlock.mockImplementation( createBlockMock );
 
@@ -75,7 +74,7 @@ describe( '<EditLessonBlock />', () => {
 		expect( setAttributesMock ).toBeCalledWith( { title: 'Test' } );
 	} );
 
-	it( 'Should create new block when pressing enter with title filled', async () => {
+	it( 'Should create new block when pressing enter', async () => {
 		const insertBlocksAfterMock = jest.fn();
 
 		const { getByPlaceholderText } = render(
@@ -96,7 +95,11 @@ describe( '<EditLessonBlock />', () => {
 		await waitFor( () => expect( insertBlocksAfterMock ).toBeCalled() );
 	} );
 
-	it( 'Should not create new block when pressing enter with title empty', async () => {
+	it( 'Should not create new block when there is already one after it', async () => {
+		select.mockReturnValue( {
+			getBlock: () => ( { clientId: '1', attributes: { title: '' } } ),
+			getNextBlockClientId: () => null,
+		} );
 		const insertBlocksAfterMock = jest.fn();
 
 		const { getByPlaceholderText } = render(
@@ -114,8 +117,14 @@ describe( '<EditLessonBlock />', () => {
 		await waitFor( () => expect( insertBlocksAfterMock ).not.toBeCalled() );
 	} );
 
-	it( 'Should focus on the next block when pressing enter and there is a next block', async () => {
-		selectNextBlockMock.mockReturnValue( [ '123' ] );
+	it( 'Should focus on the next block when pressing enter and there is a next empty block', async () => {
+		select.mockReturnValue( {
+			getBlock: () => ( {
+				clientId: '1',
+				attributes: { title: '' },
+			} ),
+			getNextBlockClientId: () => null,
+		} );
 		const insertBlocksAfterMock = jest.fn();
 
 		const { getByPlaceholderText } = render(

@@ -504,4 +504,35 @@ class Sensei_Data_Port_Utilities {
 		return 'id:' . implode( ',id:', (array) $ids );
 	}
 
+	/**
+	 * Helper method which gets a module by name and checks if the module can be applied to a course's lesson.
+	 *
+	 * @param string $module_name  The module name.
+	 * @param int    $course_id    Course ID.
+	 *
+	 * @return WP_Error|WP_Term  WP_Error when the module can't be applied to the lesson, WP_Term otherwise.
+	 */
+	public static function get_module_for_course( $module_name, $course_id ) {
+		$module = get_term_by( 'name', $module_name, 'module' );
+
+		if ( ! $module ) {
+			return new WP_Error(
+				'sensei_data_port_module_not_found',
+				// translators: Placeholder is the term which errored.
+				sprintf( __( 'Module does not exist: %s.', 'sensei-lms' ), $module_name )
+			);
+		}
+
+		$course_modules = wp_list_pluck( wp_get_post_terms( $course_id, 'module' ), 'term_id' );
+
+		if ( ! in_array( $module->term_id, $course_modules, true ) ) {
+			return new WP_Error(
+				'sensei_data_port_module_not_part_of_course',
+				// translators: First placeholder is the term which errored, second is the course id.
+				sprintf( __( 'Module %1$s is not part of course %2$s.', 'sensei-lms' ), $module_name, $course_id )
+			);
+		}
+
+		return $module;
+	}
 }

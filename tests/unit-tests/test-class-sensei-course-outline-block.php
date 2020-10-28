@@ -14,18 +14,19 @@ class Sensei_Course_Outline_Block_Test extends WP_UnitTestCase {
 		parent::setUp();
 		$this->factory = new Sensei_Factory();
 
+		Sensei()->blocks->course_outline->init();
 	}
 
 	/**
-	 * Test the course structure is used for rendering.
+	 * Test that a message is shown when there is no content.
 	 */
-	public function testBlockRendered() {
+	public function testEmptyBlock() {
 		$post_content = file_get_contents( 'sample-data/outline-block-post-content.html', true );
 
 		$this->mockPostCourseStructure( [] );
 		$result = do_blocks( $post_content );
 
-		$this->assertDiscardWhitespace( '<section class="wp-block-sensei-lms-course-outline is-style-default" style=""></section>', $result );
+		$this->assertContains( 'There is no published content in this course yet.', $result );
 	}
 
 	/**
@@ -54,14 +55,15 @@ class Sensei_Course_Outline_Block_Test extends WP_UnitTestCase {
 	 */
 	public function testModulesRendered() {
 		$post_content = file_get_contents( 'sample-data/outline-block-post-content.html', true );
+		$module       = $this->factory->module->create_and_get();
 
 		$this->mockPostCourseStructure(
 			[
 				[
-					'id'          => 1,
+					'id'          => $module->term_id,
 					'type'        => 'module',
-					'title'       => 'Test Module',
-					'description' => 'Module description',
+					'title'       => $module->name,
+					'description' => $module->description,
 					'lessons'     => [
 						[
 							'id'    => 1,
@@ -72,11 +74,46 @@ class Sensei_Course_Outline_Block_Test extends WP_UnitTestCase {
 				],
 			]
 		);
-		$result = do_blocks( $post_content );
 
-		$this->assertContains( 'Test Module', $result );
-		$this->assertContains( 'Module description', $result );
+		$result      = do_blocks( $post_content );
+		$module_link = get_term_link( $module->term_id, Sensei()->modules->taxonomy );
+
+		$this->assertContains( $module->name, $result );
+		$this->assertContains( $module->description, $result );
+		$this->assertContains( $module_link, $result );
 		$this->assertContains( 'Test Lesson', $result );
+	}
+
+	/**
+	 * Test module without description in the structure is rendered.
+	 */
+	public function testModuleWithoutDescriptionRendered() {
+		$post_content = file_get_contents( 'sample-data/outline-block-post-content.html', true );
+		$module       = $this->factory->module->create_and_get();
+
+		$this->mockPostCourseStructure(
+			[
+				[
+					'id'          => $module->term_id,
+					'type'        => 'module',
+					'title'       => $module->name,
+					'description' => '',
+					'lessons'     => [
+						[
+							'id'    => 1,
+							'type'  => 'lesson',
+							'title' => 'Test Lesson',
+						],
+					],
+				],
+			]
+		);
+
+		$result      = do_blocks( $post_content );
+		$module_link = get_term_link( $module->term_id, Sensei()->modules->taxonomy );
+
+		$this->assertContains( $module->name, $result );
+		$this->assertNotContains( $module_link, $result );
 	}
 
 	/**
@@ -88,25 +125,8 @@ class Sensei_Course_Outline_Block_Test extends WP_UnitTestCase {
 		unregister_block_type( 'sensei-lms/course-outline-lesson' );
 		unregister_block_type( 'sensei-lms/course-outline-module' );
 
-		$mock = $this->getMockBuilder( Sensei_Course_Outline_Block::class )
-			->setMethods( [ 'render_lesson_block' ] )
-			->getMock();
-
-		$mock->expects( $this->once() )->method( 'render_lesson_block' )->with(
-			$this->equalTo(
-				[
-					'id'         => 1,
-					'type'       => 'lesson',
-					'title'      => 'Test Lesson',
-					'attributes' => [
-						'id'    => 1,
-						'style' => 'blue',
-					],
-				]
-			)
-		);
-
-		$mock->register_blocks();
+		$outline_block = new Sensei_Course_Outline_Block();
+		$outline_block->register_blocks();
 
 		$this->mockPostCourseStructure(
 			[
@@ -133,6 +153,20 @@ class Sensei_Course_Outline_Block_Test extends WP_UnitTestCase {
 					],
 				],
 			]
+		);
+
+		$lesson_block = $outline_block->get_block_structure()['blocks'][0];
+		$this->assertArraySubset(
+			[
+				'id'         => 1,
+				'type'       => 'lesson',
+				'title'      => 'Test Lesson',
+				'attributes' => [
+					'id'    => 1,
+					'style' => 'blue',
+				],
+			],
+			$lesson_block
 		);
 	}
 

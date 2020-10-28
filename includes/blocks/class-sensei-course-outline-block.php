@@ -22,7 +22,36 @@ class Sensei_Course_Outline_Block {
 	private $block_attributes = [
 		'lesson' => [],
 		'module' => [],
+		'course' => [],
 	];
+
+	/**
+	 * Course outline parent block.
+	 *
+	 * @var Sensei_Course_Outline_Course_Block
+	 */
+	public $course;
+
+	/**
+	 * Course outline module block.
+	 *
+	 * @var Sensei_Course_Outline_Module_Block
+	 */
+	public $module;
+
+	/**
+	 * Course outline module block
+	 *
+	 * @var Sensei_Course_Outline_Lesson_Block
+	 */
+	public $lesson;
+
+	/**
+	 * Rendered HTML output for the block.
+	 *
+	 * @var string
+	 */
+	private $block_content;
 
 	/**
 	 * Sensei_Course_Outline_Block constructor.
@@ -32,6 +61,20 @@ class Sensei_Course_Outline_Block {
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_block_editor_assets' ] );
 		add_action( 'init', [ $this, 'register_course_template' ], 101 );
 		add_action( 'init', [ $this, 'register_blocks' ] );
+		add_action( 'init', [ $this, 'init' ] );
+
+		$this->course = new Sensei_Course_Outline_Course_Block();
+		$this->lesson = new Sensei_Course_Outline_Lesson_Block();
+		$this->module = new Sensei_Course_Outline_Module_Block();
+	}
+
+	/**
+	 * Initialize block instance.
+	 *
+	 * @access private
+	 */
+	public function init() {
+		$this->block_content = null;
 	}
 
 	/**
@@ -44,10 +87,10 @@ class Sensei_Course_Outline_Block {
 			return;
 		}
 
-		Sensei()->assets->enqueue( 'sensei-course-outline', 'blocks/course-outline/style.css' );
+		Sensei()->assets->enqueue( 'sensei-single-course', 'blocks/single-course.css' );
 
 		if ( ! is_admin() ) {
-			Sensei()->assets->enqueue( 'sensei-course-outline-frontend', 'blocks/course-outline/frontend.js' );
+			Sensei()->assets->enqueue( 'sensei-single-course-frontend', 'blocks/course-outline/frontend.js' );
 		}
 	}
 
@@ -61,8 +104,8 @@ class Sensei_Course_Outline_Block {
 			return;
 		}
 
-		Sensei()->assets->enqueue( 'sensei-course-outline', 'blocks/course-outline/index.js' );
-		Sensei()->assets->enqueue( 'sensei-course-outline-editor', 'blocks/course-outline/style.editor.css' );
+		Sensei()->assets->enqueue( 'sensei-blocks', 'blocks/index.js' );
+		Sensei()->assets->enqueue( 'sensei-single-course-editor', 'blocks/single-course.editor.css' );
 	}
 
 	/**
@@ -74,6 +117,9 @@ class Sensei_Course_Outline_Block {
 		$post_type_object = get_post_type_object( 'course' );
 
 		$post_type_object->template = [
+			[ 'sensei-lms/button-take-course' ],
+			[ 'sensei-lms/course-progress' ],
+			[ 'sensei-lms/button-contact-teacher' ],
 			[ 'sensei-lms/course-outline' ],
 		];
 	}
@@ -91,30 +137,21 @@ class Sensei_Course_Outline_Block {
 			]
 		);
 
-		register_block_type(
-			'sensei-lms/course-outline-lesson',
-			[
-				'render_callback' => [ $this, 'process_lesson_block' ],
-				'attributes'      => [
-					'id' => [
-						'type' => 'integer',
-					],
-				],
-			]
-		);
-
-		register_block_type(
-			'sensei-lms/course-outline-module',
+		register_block_type_from_metadata(
+			Sensei()->assets->src_path( 'blocks/course-outline/module-block' ),
 			[
 				'render_callback' => [ $this, 'process_module_block' ],
-				'attributes'      => [
-					'id' => [
-						'type' => 'integer',
-					],
-				],
 				'script'          => 'sensei-course-outline-frontend',
 			]
 		);
+
+		register_block_type_from_metadata(
+			Sensei()->assets->src_path( 'blocks/course-outline/lesson-block' ),
+			[
+				'render_callback' => [ $this, 'process_lesson_block' ],
+			]
+		);
+
 	}
 
 	/**
@@ -129,6 +166,7 @@ class Sensei_Course_Outline_Block {
 		if ( ! empty( $attributes['id'] ) ) {
 			$this->block_attributes['lesson'][ $attributes['id'] ] = $attributes;
 		}
+
 		return '';
 	}
 
@@ -141,7 +179,9 @@ class Sensei_Course_Outline_Block {
 	 * @return string
 	 */
 	public function process_module_block( $attributes ) {
-		$this->block_attributes['module'][ $attributes['id'] ] = $attributes;
+		if ( ! empty( $attributes['id'] ) ) {
+			$this->block_attributes['module'][ $attributes['id'] ] = $attributes;
+		}
 		return '';
 	}
 
@@ -163,6 +203,75 @@ class Sensei_Course_Outline_Block {
 	}
 
 	/**
+	 * Get blocks to render, based on course structure.
+	 */
+	public function get_block_structure() {
+		global $post;
+
+		$context    = 'view';
+		$attributes = $this->block_attributes['course'];
+		$is_preview = is_preview() && $this->can_current_user_edit_course( $post->ID );
+
+		if ( $is_preview ) {
+			$context = 'edit';
+		}
+
+		$structure = Sensei_Course_Structure::instance( $post->ID )->get( $context );
+
+		if ( $is_preview ) {
+			$attributes['preview_drafts'] = $this->has_draft( $structure );
+		}
+
+		$this->add_block_attributes( $structure );
+
+		return [
+			'post_id'    => $post->ID,
+			'attributes' => $attributes,
+			'blocks'     => $structure,
+		];
+
+	}
+
+	/**
+	 * Check if the course has draft lessons or empty modules.
+	 *
+	 * @param array $blocks The course structure.
+	 *
+	 * @return bool Has draft lessons/modules.
+	 */
+	private function has_draft( $blocks ) {
+		foreach ( $blocks as $block ) {
+			switch ( $block['type'] ) {
+				case 'lesson':
+					if ( $block['draft'] ) {
+						return true;
+					}
+					break;
+				case 'module':
+					if ( empty( $block['lessons'] ) ) {
+						return true;
+					}
+					if ( $this->has_draft( $block['lessons'] ) ) {
+						return true;
+					}
+					break;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Check user permission for editing a course.
+	 *
+	 * @param int $course_id Course post ID.
+	 *
+	 * @return bool Whether the user can edit the course.
+	 */
+	private function can_current_user_edit_course( $course_id ) {
+		return current_user_can( get_post_type_object( 'course' )->cap->edit_post, $course_id );
+	}
+
+	/**
 	 * Render Course Outline block.
 	 *
 	 * @access private
@@ -172,177 +281,16 @@ class Sensei_Course_Outline_Block {
 	 * @return string Block HTML.
 	 */
 	public function render_course_outline_block( $attributes ) {
-
-		global $post;
-
-		$structure = Sensei_Course_Structure::instance( $post->ID )->get( 'view' );
-
-		$this->add_block_attributes( $structure );
-
-		$class_name = Sensei_Block_Helpers::block_class_with_default_style( $attributes );
-		$css        = Sensei_Block_Helpers::build_styles(
-			[
-				'attributes' => $attributes,
-			]
-		);
-
-		return '
-			<section ' . Sensei_Block_Helpers::render_style_attributes( [ 'wp-block-sensei-lms-course-outline', $class_name ], $css ) . '>
-				' .
-			implode(
-				'',
-				array_map(
-					function( $block ) use ( $post, $attributes ) {
-						if ( 'module' === $block['type'] ) {
-							return $this->render_module_block( $block, $post->ID, $attributes );
-						}
-
-						if ( 'lesson' === $block['type'] ) {
-							return $this->render_lesson_block( $block );
-						}
-					},
-					$structure
-				)
-			)
-			. '
-			</section>
-		';
-	}
-
-	/**
-	 * Get lesson block HTML.
-	 *
-	 * @param array $block Block information.
-	 *
-	 * @return string Lesson HTML
-	 */
-	protected function render_lesson_block( $block ) {
-		$lesson_id = $block['id'];
-		$classes   = [ 'wp-block-sensei-lms-course-outline-lesson' ];
-
-		if ( Sensei_Utils::user_completed_lesson( $lesson_id, get_current_user_id() ) ) {
-			$classes[] = 'completed';
+		if ( $this->block_content ) {
+			return $this->block_content;
 		}
+		$this->block_attributes['course'] = $attributes;
 
-		$css = Sensei_Block_Helpers::build_styles( $block );
+		$outline = $this->get_block_structure();
 
-		return '
-			<div ' . Sensei_Block_Helpers::render_style_attributes( $classes, $css ) . '>
-				<a
-				href="' . esc_url( get_permalink( $lesson_id ) ) . '">
-					' . $block['title'] . '
-				</a>
-			</div>
-		';
-	}
+		$this->block_content = $this->course->render_course_outline_block( $outline );
+		return $this->block_content;
 
-	/**
-	 * Get module block HTML.
-	 *
-	 * @param array $block              Module block attributes.
-	 * @param int   $course_id          The course id.
-	 * @param array $outline_attributes Outline block attributes.
-	 *
-	 * @return string Module HTML
-	 */
-	private function render_module_block( $block, $course_id, $outline_attributes ) {
-		if ( empty( $block['lessons'] ) ) {
-			return '';
-		}
-
-		$progress_indicator = $this->get_progress_indicator( $block['id'], $course_id );
-
-		$animated = empty( $outline_attributes['animationsEnabled'] ) ? '' : 'animated';
-
-		$class_name = Sensei_Block_Helpers::block_class_with_default_style( $block['attributes'] );
-
-		$is_default_style = false !== strpos( $class_name, 'is-style-default' );
-		$is_minimal_style = false !== strpos( $class_name, 'is-style-minimal' );
-
-		$header_css = Sensei_Block_Helpers::build_styles(
-			$block,
-			[
-				'mainColor' => $is_default_style ? 'background-color' : null,
-			]
-		);
-
-		$style_header = '';
-
-		if ( $is_minimal_style ) {
-
-			$header_border_css = Sensei_Block_Helpers::build_styles(
-				$block,
-				[
-					'mainColor' => 'background-color',
-				]
-			);
-
-			$style_header = '<div ' . Sensei_Block_Helpers::render_style_attributes( 'wp-block-sensei-lms-course-outline-module__name__minimal-border', $header_border_css ) . '></div>';
-
-		}
-
-		return '
-			<section class="wp-block-sensei-lms-course-outline-module ' . $class_name . '">
-				<header ' . Sensei_Block_Helpers::render_style_attributes( 'wp-block-sensei-lms-course-outline-module__header', $header_css ) . '>
-					<h2 class="wp-block-sensei-lms-course-outline-module__title">' . $block['title'] . '</h2>
-					' . $progress_indicator . '
-					<button type="button" class="wp-block-sensei-lms-course-outline__arrow dashicons dashicons-arrow-up-alt2">
-						<span class="screen-reader-text">' . __( 'Toggle module content', 'sensei-lms' ) . '</span>
-					</button>
-				</header>
-					' . $style_header . '
-				<div class="wp-block-sensei-lms-collapsible ' . $animated . '">
-					<div class="wp-block-sensei-lms-course-outline-module__description">
-						' . $block['description'] . '
-					</div>
-							<h3 class="wp-block-sensei-lms-course-outline-module__lessons-title">
-								' . __( 'Lessons', 'sensei-lms' ) . '
-							</h3>
-						' .
-			implode(
-				'',
-				array_map(
-					[ $this, 'render_lesson_block' ],
-					$block['lessons']
-				)
-			)
-			. '
-				</div>
-			</section>
-		';
-	}
-
-	/**
-	 * Get progress indicator HTML.
-	 *
-	 * @param array $module_id The module id.
-	 * @param int   $course_id The course id.
-	 *
-	 * @return string Module HTML
-	 */
-	private function get_progress_indicator( $module_id, $course_id ) {
-
-		$module_progress = Sensei()->modules->get_user_module_progress( $module_id, $course_id, get_current_user_id() );
-
-		if ( empty( $module_progress ) ) {
-			return '';
-		}
-
-		if ( $module_progress < 100 ) {
-			$module_status   = __( 'In Progress', 'sensei-lms' );
-			$indicator_class = '';
-		} else {
-			$module_status   = __( 'Completed', 'sensei-lms' );
-			$indicator_class = 'completed';
-		}
-
-		return '
-					<div
-						class="wp-block-sensei-lms-course-outline-module__progress-indicator ' . $indicator_class . '"
-					>
-						<span class="wp-block-sensei-lms-course-outline-module__progress-indicator__text"> ' . $module_status . ' </span>
-					</div>
-		';
 	}
 
 }

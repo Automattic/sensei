@@ -1,12 +1,16 @@
 import { createBlock } from '@wordpress/blocks';
-import { useDispatch } from '@wordpress/data';
-import { useState } from '@wordpress/element';
+import { useEffect } from '@wordpress/element';
+import { select, useDispatch, useSelect } from '@wordpress/data';
+import { Icon } from '@wordpress/components';
 import classnames from 'classnames';
 import { __ } from '@wordpress/i18n';
+import { checked, chevronRight } from '../../../icons/wordpress-icons';
 import { withColorSettings } from '../../../shared/blocks/settings';
 import SingleLineInput from '../single-line-input';
 import { LessonBlockSettings } from './settings';
-import { Statuses } from '../status-control';
+import { Status } from '../status-control';
+import { ENTER, BACKSPACE } from '@wordpress/keycodes';
+import { COURSE_STATUS_STORE } from '../status-store';
 
 /**
  * Edit lesson block component.
@@ -24,7 +28,6 @@ import { Statuses } from '../status-control';
  * @param {Object}   props.textColor           Text color object.
  * @param {Function} props.setAttributes       Block set attributes function.
  * @param {Function} props.insertBlocksAfter   Insert blocks after function.
- * @param {boolean}  props.isSelected          Is block selected.
  */
 export const EditLessonBlock = ( props ) => {
 	const {
@@ -36,37 +39,42 @@ export const EditLessonBlock = ( props ) => {
 		textColor,
 		setAttributes,
 		insertBlocksAfter,
-		isSelected,
 	} = props;
 	const { selectNextBlock, removeBlock } = useDispatch( 'core/block-editor' );
+	const { setLessonStatus, trackLesson, ignoreLesson } = useDispatch(
+		COURSE_STATUS_STORE
+	);
 
 	/**
-	 * Handle change.
+	 * Update lesson title.
 	 *
-	 * @param {string} value Lesson name.
+	 * @param {string} value Lesson title.
 	 */
-	const handleChange = ( value ) => {
+	const updateTitle = ( value ) => {
 		setAttributes( { title: value } );
 	};
 
 	/**
-	 * Go to next lesson. If there is not a next lesson, it creates one.
+	 * Insert a new lesson on enter, unless there is already an empty new lesson after this one.
 	 */
-	const goToNextLesson = async () => {
-		const blocks = await selectNextBlock( clientId );
+	const onEnter = () => {
+		const editor = select( 'core/block-editor' );
+		const nextBlock = editor.getBlock( editor.getNextBlockClientId() );
 
-		if ( ! blocks && 0 < title.length ) {
+		if ( ! nextBlock || nextBlock.attributes.title ) {
 			insertBlocksAfter( [ createBlock( name ) ] );
+		} else {
+			selectNextBlock( clientId );
 		}
 	};
 
 	/**
-	 * Remove lesson.
+	 * Remove lesson on backspace.
 	 *
 	 * @param {Object}   e                Event object.
 	 * @param {Function} e.preventDefault Prevent default function.
 	 */
-	const removeLesson = ( e ) => {
+	const onBackspace = ( e ) => {
 		if ( 0 === title.length ) {
 			e.preventDefault();
 			removeBlock( clientId );
@@ -80,34 +88,36 @@ export const EditLessonBlock = ( props ) => {
 	 * @param {number} e.keyCode Pressed key code.
 	 */
 	const handleKeyDown = ( e ) => {
-		// Enter pressed.
-		if ( 13 === e.keyCode ) {
-			goToNextLesson();
-		}
-
-		// Backspace pressed.
-		if ( 8 === e.keyCode ) {
-			removeLesson( e );
+		switch ( e.keyCode ) {
+			case ENTER:
+				onEnter();
+				break;
+			case BACKSPACE:
+				onBackspace( e );
+				break;
 		}
 	};
 
-	let status = '';
+	// If the lesson has a title, add it to the tracked lessons in the status store.
+	useEffect( () => {
+		if ( title.length > 0 ) {
+			trackLesson( clientId );
+		} else {
+			ignoreLesson( clientId );
+		}
+	}, [ clientId, trackLesson, ignoreLesson, title ] );
+
+	let postStatus = '';
 	if ( ! id && title.length ) {
-		status = (
-			<div className="wp-block-sensei-lms-course-outline-lesson__unsaved">
-				{ __( 'Unsaved', 'sensei-lms' ) }
-			</div>
-		);
+		postStatus = __( 'Unsaved', 'sensei-lms' );
 	} else if ( id && draft ) {
-		status = (
-			<div className="wp-block-sensei-lms-course-outline-lesson__draft">
-				{ __( 'Draft', 'sensei-lms' ) }
-			</div>
-		);
+		postStatus = __( 'Draft', 'sensei-lms' );
 	}
 
-	const [ previewStatus, setPreviewStatus ] = useState(
-		Statuses.IN_PROGRESS
+	const previewStatus = useSelect(
+		( selectStatus ) =>
+			selectStatus( COURSE_STATUS_STORE ).getLessonStatus( clientId ),
+		[ clientId ]
 	);
 
 	const wrapperStyles = {
@@ -116,7 +126,7 @@ export const EditLessonBlock = ( props ) => {
 			backgroundColor?.class,
 			textColor?.class,
 			{
-				completed: previewStatus === Statuses.COMPLETED,
+				completed: previewStatus === Status.COMPLETED,
 			}
 		),
 		style: {
@@ -130,18 +140,33 @@ export const EditLessonBlock = ( props ) => {
 			<LessonBlockSettings
 				{ ...props }
 				previewStatus={ previewStatus }
-				setPreviewStatus={ setPreviewStatus }
+				setPreviewStatus={ ( status ) =>
+					setLessonStatus( clientId, status )
+				}
 			/>
 			<div { ...wrapperStyles }>
+				<Icon
+					icon={ checked }
+					className="wp-block-sensei-lms-course-outline-lesson__status"
+				/>
 				<SingleLineInput
 					className="wp-block-sensei-lms-course-outline-lesson__input"
 					placeholder={ __( 'Lesson name', 'sensei-lms' ) }
 					value={ title }
-					onChange={ handleChange }
+					onChange={ updateTitle }
 					onKeyDown={ handleKeyDown }
 					style={ { fontSize } }
 				/>
-				{ isSelected && status }
+
+				{ postStatus && (
+					<div className="wp-block-sensei-lms-course-outline-lesson__post-status">
+						{ postStatus }
+					</div>
+				) }
+				<Icon
+					icon={ chevronRight }
+					className="wp-block-sensei-lms-course-outline-lesson__chevron"
+				/>
 			</div>
 		</>
 	);

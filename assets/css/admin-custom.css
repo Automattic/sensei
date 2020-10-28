@@ -49,7 +49,7 @@ div.question_boolean_fields { margin-bottom: 10px; }
 .sortable-course-list .course.ui-sortable-helper span:before {
     color: #444;
 }
-.sortable-course-list .course.alternate {
+.sortable-course-list .course:nth-child(odd) {
     background: #F9F9F9;
 }
 .sortable-course-list .ui-sortable-placeholder {
@@ -90,7 +90,7 @@ div.question_boolean_fields { margin-bottom: 10px; }
 .sortable-lesson-list .lesson.ui-sortable-helper span:before {
     color: #444;
 }
-.sortable-lesson-list .lesson.alternate {
+.sortable-lesson-list .lesson:nth-child(odd) {
     background: #F9F9F9;
 }
 .sortable-lesson-list .ui-sortable-placeholder {

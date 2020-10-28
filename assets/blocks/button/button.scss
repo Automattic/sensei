@@ -1,0 +1,15 @@
+
+.wp-block-sensei-button {
+
+}
+.wp-block-sensei-lms-button-take-course {
+
+	.block-editor-rich-text {
+		display: block;
+	}
+	&.has-text-align-full .wp-block-button__link {
+		display: block;
+		width: 100%;
+		flex: 1;
+	}
+}

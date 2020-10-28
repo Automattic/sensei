@@ -1,9 +1,11 @@
 import { InnerBlocks, RichText } from '@wordpress/block-editor';
+import { Icon } from '@wordpress/components';
 import { compose } from '@wordpress/compose';
 import { useContext, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
 import AnimateHeight from 'react-animate-height';
+import { chevronUp } from '../../../icons/wordpress-icons';
 
 import {
 	withColorSettings,
@@ -11,23 +13,27 @@ import {
 } from '../../../shared/blocks/settings';
 import { OutlineAttributesContext } from '../course-block/edit';
 import SingleLineInput from '../single-line-input';
+import { ModuleStatus } from './module-status';
 import { ModuleBlockSettings } from './settings';
+import { useInsertLessonBlock } from './use-insert-lesson-block';
 
 /**
  * Edit module block component.
  *
  * @param {Object}   props                        Component props.
+ * @param {string}   props.clientId               The module block id.
  * @param {string}   props.className              Custom class name.
  * @param {Object}   props.attributes             Block attributes.
  * @param {string}   props.attributes.title       Module title.
  * @param {string}   props.attributes.description Module description.
+ * @param {string}   props.attributes.blockStyle  Selected block style.
  * @param {Object}   props.mainColor              Header main color.
  * @param {Object}   props.textColor              Header text color.
- * @param {string}   props.attributes.blockStyle  Selected block style.
  * @param {Function} props.setAttributes          Block set attributes function.
  */
 export const EditModuleBlock = ( props ) => {
 	const {
+		clientId,
 		className,
 		attributes: { title, description },
 		mainColor,
@@ -36,8 +42,11 @@ export const EditModuleBlock = ( props ) => {
 		blockStyle,
 	} = props;
 	const {
-		outlineAttributes: { animationsEnabled },
+		outlineAttributes: { collapsibleModules },
 	} = useContext( OutlineAttributesContext ) || { outlineAttributes: {} };
+
+	useInsertLessonBlock( props );
+
 	/**
 	 * Handle update name.
 	 *
@@ -56,16 +65,6 @@ export const EditModuleBlock = ( props ) => {
 		setAttributes( { description: value } );
 	};
 
-	const [ isPreviewCompleted, setIsPreviewCompleted ] = useState( false );
-
-	let indicatorText = __( 'In Progress', 'sensei-lms' );
-	let indicatorClass = null;
-
-	if ( isPreviewCompleted ) {
-		indicatorText = __( 'Completed', 'sensei-lms' );
-		indicatorClass = 'completed';
-	}
-
 	const [ isExpanded, setExpanded ] = useState( true );
 
 	const blockStyleColors = {
@@ -75,11 +74,7 @@ export const EditModuleBlock = ( props ) => {
 
 	return (
 		<>
-			<ModuleBlockSettings
-				{ ...props }
-				isPreviewCompleted={ isPreviewCompleted }
-				setIsPreviewCompleted={ setIsPreviewCompleted }
-			/>
+			<ModuleBlockSettings { ...props } />
 			<section className={ className }>
 				<header
 					className="wp-block-sensei-lms-course-outline-module__header"
@@ -93,37 +88,28 @@ export const EditModuleBlock = ( props ) => {
 							onChange={ updateName }
 						/>
 					</h2>
-					<div
-						className={ classnames(
-							'wp-block-sensei-lms-course-outline-module__progress-indicator',
-							indicatorClass
-						) }
-					>
-						<span className="wp-block-sensei-lms-course-outline-module__progress-indicator__text">
-							{ indicatorText }
-						</span>
-					</div>
-					<button
-						type="button"
-						className={ classnames(
-							'wp-block-sensei-lms-course-outline__arrow',
-							'dashicons',
-							isExpanded
-								? 'dashicons-arrow-up-alt2'
-								: 'dashicons-arrow-down-alt2'
-						) }
-						onClick={ () => setExpanded( ! isExpanded ) }
-					>
-						<span className="screen-reader-text">
-							{ __( 'Toggle module content', 'sensei-lms' ) }
-						</span>
-					</button>
+					<ModuleStatus clientId={ clientId } />
+					{ collapsibleModules && (
+						<button
+							type="button"
+							className={ classnames(
+								'wp-block-sensei-lms-course-outline__arrow',
+								{ collapsed: ! isExpanded }
+							) }
+							onClick={ () => setExpanded( ! isExpanded ) }
+						>
+							<Icon icon={ chevronUp } />
+							<span className="screen-reader-text">
+								{ __( 'Toggle module content', 'sensei-lms' ) }
+							</span>
+						</button>
+					) }
 				</header>
 				<AnimateHeight
 					className="wp-block-sensei-lms-collapsible"
-					duration={ animationsEnabled ? 500 : 0 }
+					duration={ 500 }
 					animateOpacity
-					height={ isExpanded ? 'auto' : 0 }
+					height={ ! collapsibleModules || isExpanded ? 'auto' : 0 }
 				>
 					<div className="wp-block-sensei-lms-course-outline-module__description">
 						<RichText
@@ -140,11 +126,9 @@ export const EditModuleBlock = ( props ) => {
 						{ __( 'Lessons', 'sensei-lms' ) }
 					</h3>
 					<InnerBlocks
-						template={ [
-							[ 'sensei-lms/course-outline-lesson', {} ],
-						] }
 						allowedBlocks={ [ 'sensei-lms/course-outline-lesson' ] }
 						templateInsertUpdatesSelection={ false }
+						renderAppender={ () => null }
 					/>
 				</AnimateHeight>
 			</section>

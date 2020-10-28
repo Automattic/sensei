@@ -1,62 +1,31 @@
 import { InnerBlocks } from '@wordpress/block-editor';
-import { registerBlockType } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
-import { ModuleIcon } from '../../../icons';
-
+import { ModuleIcon as icon } from '../../../icons';
 import edit from './edit';
 import transforms from './transforms';
+import metadata from './block.json';
 
-registerBlockType( 'sensei-lms/course-outline-module', {
+export default {
 	title: __( 'Module', 'sensei-lms' ),
 	description: __( 'Group related lessons together.', 'sensei-lms' ),
-	icon: ModuleIcon,
-	category: 'sensei-lms',
-	parent: [ 'sensei-lms/course-outline' ],
-	keywords: [ __( 'Outline', 'sensei-lms' ), __( 'Module', 'sensei-lms' ) ],
-	supports: {
-		html: false,
-	},
-	attributes: {
-		id: {
-			type: 'integer',
-		},
-		title: {
-			type: 'string',
-			default: '',
-		},
-		description: {
-			type: 'string',
-			default: '',
-		},
-		mainColor: {
-			type: 'string',
-		},
-		customMainColor: {
-			type: 'string',
-		},
-		textColor: {
-			type: 'string',
-		},
-		customTextColor: {
-			type: 'string',
-		},
-		className: {
-			type: 'string',
-		},
-		customClassName: {
-			type: 'string',
-		},
-	},
+	keywords: [
+		__( 'Module', 'sensei-lms' ),
+		__( 'Course Module', 'sensei-lms' ),
+		__( 'Group', 'sensei-lms' ),
+		__( 'Lessons', 'sensei-lms' ),
+	],
+	...metadata,
+	icon,
 	example: {
 		attributes: {
-			title: 'Module',
-			description: 'About Module',
+			title: __( 'Module', 'sensei-lms' ),
+			description: __( 'About Module', 'sensei-lms' ),
 		},
 		innerBlocks: [
 			{
 				name: 'sensei-lms/course-outline-lesson',
 				attributes: {
-					title: 'Lesson',
+					title: __( 'Lesson', 'sensei-lms' ),
 				},
 			},
 		],
@@ -64,12 +33,12 @@ registerBlockType( 'sensei-lms/course-outline-module', {
 	styles: [
 		{
 			name: 'default',
-			label: 'Filled',
+			label: __( 'Filled', 'sensei-lms' ),
 			isDefault: true,
 		},
 		{
 			name: 'minimal',
-			label: 'Minimal',
+			label: __( 'Minimal', 'sensei-lms' ),
 		},
 	],
 	transforms,
@@ -77,4 +46,4 @@ registerBlockType( 'sensei-lms/course-outline-module', {
 	save() {
 		return <InnerBlocks.Content />;
 	},
-} );
+};

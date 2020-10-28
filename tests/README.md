@@ -68,6 +68,6 @@ You can run specific tests by providing the path and filename to the test class.
 * Each test file should roughly correspond to an associated source file, e.g. the `test-class-woothemes-sensei.php` test file covers code in `class-woothemes-sensei.php`.
 * Each test method should cover a single method or function with one or more assertions.
 * A single method or function can have multiple associated test methods if it's a large or complex method.
-* Prefer `assertsEquals()` where possible as it tests both type & equality.
+* Prefer `assertSame()` where possible as it tests both type & equality.
 * Remember that only methods prefixed with `test` will be run.
 * Filters persist between test cases so be sure to remove them in your test method or in the `tearDown()` method.

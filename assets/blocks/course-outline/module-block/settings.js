@@ -1,11 +1,6 @@
-import {
-	InspectorControls,
-	InspectorAdvancedControls,
-} from '@wordpress/block-editor';
-import { PanelBody } from '@wordpress/components';
+import { InspectorAdvancedControls } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import { ShareStyle } from '../../../shared/blocks/share-style';
-import { ModuleStatusControl } from './module-status-control';
 
 /**
  * Inspector controls for module block.
@@ -15,8 +10,6 @@ import { ModuleStatusControl } from './module-status-control';
  * @param {Function} props.setIsPreviewCompleted Callback to be called when preview is updated.
  */
 export const ModuleBlockSettings = ( props ) => {
-	const { isPreviewCompleted, setIsPreviewCompleted } = props;
-
 	return (
 		<>
 			<InspectorAdvancedControls>
@@ -36,17 +29,6 @@ export const ModuleBlockSettings = ( props ) => {
 					) }
 				/>
 			</InspectorAdvancedControls>
-			<InspectorControls>
-				<PanelBody
-					title={ __( 'Status', 'sensei-lms' ) }
-					initialOpen={ false }
-				>
-					<ModuleStatusControl
-						isPreviewCompleted={ isPreviewCompleted }
-						setIsPreviewCompleted={ setIsPreviewCompleted }
-					/>
-				</PanelBody>
-			</InspectorControls>
 		</>
 	);
 };

@@ -342,7 +342,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 		$save_result = $course_structure->save( $new_structure );
 		$this->assertWPError( $save_result );
 
-		$this->assertEquals( 'sensei_course_structure_missing_title', $save_result->get_error_code() );
+		$this->assertEquals( 'sensei_course_structure_lessons_missing_title', $save_result->get_error_code() );
 
 		$structure = $course_structure->get( 'edit' );
 		$this->assertEquals( 0, count( $structure ) );
@@ -369,7 +369,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 		$save_result = $course_structure->save( $new_structure );
 		$this->assertWPError( $save_result );
 
-		$this->assertEquals( 'sensei_course_structure_missing_title', $save_result->get_error_code() );
+		$this->assertEquals( 'sensei_course_structure_modules_missing_title', $save_result->get_error_code() );
 
 		$structure = $course_structure->get( 'edit' );
 		$this->assertEquals( 0, count( $structure ) );
@@ -648,6 +648,35 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test to make sure saving a duplicated module fails.
+	 */
+	public function testSaveDuplicatedModule() {
+		$this->login_as_admin();
+
+		$course_id     = $this->factory->course->create();
+		$new_structure = [
+			[
+				'id'      => 10,
+				'type'    => 'module',
+				'title'   => 'A',
+				'lessons' => [],
+			],
+			[
+				'id'      => 10,
+				'type'    => 'module',
+				'title'   => 'B',
+				'lessons' => [],
+			],
+		];
+
+		$course_structure = Sensei_Course_Structure::instance( $course_id );
+		$save_result      = $course_structure->save( $new_structure );
+
+		$this->assertWPError( $save_result );
+		$this->assertEquals( 'sensei_course_structure_duplicate_items', $save_result->get_error_code() );
+	}
+
+	/**
 	 * Test to make sure saving a course with two identically named modules fails.
 	 */
 	public function testSaveIdenticalModules() {
@@ -671,7 +700,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 		$save_result      = $course_structure->save( $new_structure );
 
 		$this->assertWPError( $save_result );
-		$this->assertEquals( 'sensei_course_structure_duplicate_items', $save_result->get_error_code() );
+		$this->assertEquals( 'sensei_course_structure_duplicate_module_title', $save_result->get_error_code() );
 	}
 
 
@@ -1036,6 +1065,312 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 
 		$this->assertTrue( $course_structure->save( $modified_structure ) );
 		$this->assertExpectedStructure( $modified_structure, $course_structure->get( 'edit' ) );
+	}
+
+	/**
+	 * Make sure structure is properly sorted.
+	 *
+	 * @dataProvider sortStructureData
+	 */
+	public function testSortStructure( $expected, $structure, $order, $type ) {
+		$this->assertEquals(
+			$expected,
+			Sensei_Course_Structure::sort_structure( $structure, $order, $type )
+		);
+	}
+
+	/**
+	 * Data source for sort structure tests.
+	 *
+	 * @return array[]
+	 */
+	public function sortStructureData() {
+		return [
+			// Sort lessons.
+			[
+				// Expected.
+				[
+					[
+						'type' => 'module',
+						'id'   => 11,
+					],
+					[
+						'type' => 'lesson',
+						'id'   => 1,
+					],
+					[
+						'type' => 'lesson',
+						'id'   => 2,
+					],
+				],
+				// Structure.
+				[
+					[
+						'type' => 'module',
+						'id'   => 11,
+					],
+					[
+						'type' => 'lesson',
+						'id'   => 2,
+					],
+					[
+						'type' => 'lesson',
+						'id'   => 1,
+					],
+				],
+				[ 1, 2 ],
+				'lesson',
+			],
+			// Sort modules.
+			[
+				// Expected.
+				[
+					[
+						'type' => 'module',
+						'id'   => 11,
+					],
+					[
+						'type' => 'module',
+						'id'   => 12,
+					],
+					[
+						'type' => 'lesson',
+						'id'   => 1,
+					],
+				],
+				// Structure.
+				[
+					[
+						'type' => 'module',
+						'id'   => 12,
+					],
+					[
+						'type' => 'module',
+						'id'   => 11,
+					],
+					[
+						'type' => 'lesson',
+						'id'   => 1,
+					],
+				],
+				// Order.
+				[ 11, 12 ],
+				// Type.
+				'module',
+			],
+			// Sort lessons with unordered lessons.
+			[
+				// Expected.
+				[
+					[
+						'type' => 'module',
+						'id'   => 11,
+					],
+					[
+						'type' => 'lesson',
+						'id'   => 1,
+					],
+					[
+						'type' => 'lesson',
+						'id'   => 2,
+					],
+					[
+						'type' => 'lesson',
+						'id'   => 3,
+					],
+					[
+						'type' => 'lesson',
+						'id'   => 4,
+					],
+				],
+				// Structure.
+				[
+					[
+						'type' => 'module',
+						'id'   => 11,
+					],
+					[
+						'type' => 'lesson',
+						'id'   => 3,
+					],
+					[
+						'type' => 'lesson',
+						'id'   => 4,
+					],
+					[
+						'type' => 'lesson',
+						'id'   => 2,
+					],
+					[
+						'type' => 'lesson',
+						'id'   => 1,
+					],
+				],
+				// Order.
+				[ 1, 2 ],
+				// Type.
+				'lesson',
+			],
+			// Sort lessons with unexising IDs.
+			[
+				// Expected.
+				[
+					[
+						'type' => 'module',
+						'id'   => 11,
+					],
+					[
+						'type' => 'lesson',
+						'id'   => 1,
+					],
+					[
+						'type' => 'lesson',
+						'id'   => 2,
+					],
+				],
+				// Structure.
+				[
+					[
+						'type' => 'module',
+						'id'   => 11,
+					],
+					[
+						'type' => 'lesson',
+						'id'   => 2,
+					],
+					[
+						'type' => 'lesson',
+						'id'   => 1,
+					],
+				],
+				// Order.
+				[ 1, 2, 3, 4 ],
+				// Type.
+				'lesson',
+			],
+			// Sort lessons with mixed lessons and modules.
+			[
+				// Expected.
+				[
+					[
+						'type' => 'module',
+						'id'   => 12,
+					],
+					[
+						'type' => 'module',
+						'id'   => 11,
+					],
+					[
+						'type' => 'module',
+						'id'   => 13,
+					],
+					[
+						'type' => 'lesson',
+						'id'   => 1,
+					],
+					[
+						'type' => 'lesson',
+						'id'   => 2,
+					],
+					[
+						'type' => 'lesson',
+						'id'   => 3,
+					],
+				],
+				// Structure.
+				[
+					[
+						'type' => 'module',
+						'id'   => 12,
+					],
+					[
+						'type' => 'lesson',
+						'id'   => 3,
+					],
+					[
+						'type' => 'lesson',
+						'id'   => 2,
+					],
+					[
+						'type' => 'module',
+						'id'   => 11,
+					],
+					[
+						'type' => 'lesson',
+						'id'   => 1,
+					],
+					[
+						'type' => 'module',
+						'id'   => 13,
+					],
+				],
+				// Order.
+				[ 1, 2, 3 ],
+				// Type.
+				'lesson',
+			],
+			// Sort modules with mixed lessons and modules.
+			[
+				// Expected.
+				[
+					[
+						'type' => 'module',
+						'id'   => 11,
+					],
+					[
+						'type' => 'module',
+						'id'   => 12,
+					],
+					[
+						'type' => 'module',
+						'id'   => 13,
+					],
+					[
+						'type' => 'lesson',
+						'id'   => 3,
+					],
+					[
+						'type' => 'lesson',
+						'id'   => 1,
+					],
+					[
+						'type' => 'lesson',
+						'id'   => 2,
+					],
+				],
+				// Structure.
+				[
+					[
+						'type' => 'module',
+						'id'   => 12,
+					],
+					[
+						'type' => 'lesson',
+						'id'   => 3,
+					],
+					[
+						'type' => 'lesson',
+						'id'   => 1,
+					],
+					[
+						'type' => 'module',
+						'id'   => 11,
+					],
+					[
+						'type' => 'lesson',
+						'id'   => 2,
+					],
+					[
+						'type' => 'module',
+						'id'   => 13,
+					],
+				],
+				// Order.
+				[ 11, 12, 13 ],
+				// Type.
+				'module',
+			],
+		];
 	}
 
 	/**

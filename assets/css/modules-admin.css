@@ -29,7 +29,7 @@
 .sortable-module-list .module.ui-sortable-helper span:before {
 	color: #444;
 }
-.sortable-module-list .module.alternate {
+.sortable-module-list .module:nth-child(odd) {
 	background: #F9F9F9;
 }
 .sortable-module-list .ui-sortable-placeholder {
