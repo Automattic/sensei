@@ -36,7 +36,7 @@ class Sensei_Course_Outline_Module_Block {
 		$is_minimal_style = false !== strpos( $class_name, 'is-style-minimal' );
 
 		$header_css = Sensei_Block_Helpers::build_styles(
-			$block,
+			$block['attributes'],
 			[
 				'mainColor' => $is_default_style ? 'background-color' : null,
 			]
@@ -47,7 +47,7 @@ class Sensei_Course_Outline_Module_Block {
 		if ( $is_minimal_style ) {
 
 			$header_border_css = Sensei_Block_Helpers::build_styles(
-				$block,
+				$block['attributes'],
 				[
 					'mainColor' => 'background-color',
 				]
@@ -57,10 +57,23 @@ class Sensei_Course_Outline_Module_Block {
 
 		}
 
+		$title       = esc_html( $block['title'] );
+		$description = '';
+
+		if ( ! empty( $block['description'] ) ) {
+			$description = '<div class="wp-block-sensei-lms-course-outline-module__description">' . wp_kses_post( $block['description'] ) . '</div>';
+			$module_link = get_term_link( $block['id'], Sensei()->modules->taxonomy );
+
+			if ( ! is_wp_error( $module_link ) ) {
+				$module_link = esc_url( add_query_arg( 'course_id', $course_id, $module_link ) );
+				$title       = '<a href="' . $module_link . '">' . $title . '</a>';
+			}
+		}
+
 		return '
 			<section class="wp-block-sensei-lms-course-outline-module sensei-collapsible ' . esc_attr( $class_name ) . '">
 				<header ' . Sensei_Block_Helpers::render_style_attributes( 'wp-block-sensei-lms-course-outline-module__header', $header_css ) . '>
-					<h2 class="wp-block-sensei-lms-course-outline-module__title">' . esc_html( $block['title'] ) . '</h2>
+					<h2 class="wp-block-sensei-lms-course-outline-module__title">' . $title . '</h2>
 					' . $progress_indicator .
 			( ! empty( $outline_attributes['collapsibleModules'] ) ?
 				'<button type="button" class="wp-block-sensei-lms-course-outline__arrow sensei-collapsible__toggle">
@@ -70,13 +83,10 @@ class Sensei_Course_Outline_Module_Block {
 			'</header>
 					' . $style_header . '
 				<div class="wp-block-sensei-lms-collapsible sensei-collapsible__content">
-					<div class="wp-block-sensei-lms-course-outline-module__description">
-						' . wp_kses_post( $block['description'] ) . '
-					</div>
-							<h3 class="wp-block-sensei-lms-course-outline-module__lessons-title">
-								' . esc_html__( 'Lessons', 'sensei-lms' ) . '
-							</h3>
-						' .
+					' . $description . '
+					<h3 class="wp-block-sensei-lms-course-outline-module__lessons-title">
+						' . esc_html__( 'Lessons', 'sensei-lms' ) . '
+					</h3>' .
 			implode(
 				'',
 				array_map(

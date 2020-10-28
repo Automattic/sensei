@@ -50,7 +50,7 @@ class Sensei_Blocks {
 		// Init blocks.
 		if ( $sensei->feature_flags->is_enabled( 'course_outline' ) ) {
 			$this->course_outline  = new Sensei_Course_Outline_Block();
-			$this->course_progress = new Sensei_Progress_Bar_Block();
+			$this->course_progress = new Sensei_Course_Progress_Block();
 			$this->contact_teacher = new Sensei_Block_Contact_Teacher();
 		}
 	}

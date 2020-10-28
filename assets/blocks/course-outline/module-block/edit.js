@@ -21,6 +21,7 @@ import { useInsertLessonBlock } from './use-insert-lesson-block';
  * Edit module block component.
  *
  * @param {Object}   props                        Component props.
+ * @param {string}   props.clientId               The module block id.
  * @param {string}   props.className              Custom class name.
  * @param {Object}   props.attributes             Block attributes.
  * @param {string}   props.attributes.title       Module title.
@@ -32,6 +33,7 @@ import { useInsertLessonBlock } from './use-insert-lesson-block';
  */
 export const EditModuleBlock = ( props ) => {
 	const {
+		clientId,
 		className,
 		attributes: { title, description },
 		mainColor,
@@ -86,7 +88,7 @@ export const EditModuleBlock = ( props ) => {
 							onChange={ updateName }
 						/>
 					</h2>
-					<ModuleStatus />
+					<ModuleStatus clientId={ clientId } />
 					{ collapsibleModules && (
 						<button
 							type="button"
