@@ -50,10 +50,11 @@ export const ButtonBlockSettings = ( props ) => {
 		<>
 			<BlockControls>
 				<AlignmentToolbar
-					value={ align }
+					value={ align || props.alignmentOptions?.default }
 					onChange={ ( nextAlign ) => {
 						setAttributes( { align: nextAlign } );
 					} }
+					{ ...props.alignmentOptions }
 				/>
 			</BlockControls>
 
