@@ -11,4 +11,10 @@
 	&__align-center {
 		text-align: center;
 	}
+
+	.wp-block-button__link:disabled {
+		pointer-events: none;
+		opacity: 0.5;
+		filter: grayscale(100%);
+	}
 }
