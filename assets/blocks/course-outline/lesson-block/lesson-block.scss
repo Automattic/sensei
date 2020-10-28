@@ -49,10 +49,10 @@
 		.wp-block-sensei-lms-course-outline-lesson & {
 			flex: 0 0 auto;
 			font-size: 0.6em;
-			color: $dark-gray;
+			color: inherit;
 			text-transform: uppercase;
 			padding: 5px 10px;
-			border: solid 1px $dark-gray;
+			border: solid 1px currentColor;
 			border-radius: 3px;
 		}
 	}
