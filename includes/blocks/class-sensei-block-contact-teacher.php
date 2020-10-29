@@ -88,12 +88,12 @@ class Sensei_Block_Contact_Teacher {
 			' . $confirmation . '
 			<form name="contact-teacher" action="" method="post" class="sensei-contact-teacher-form">
 				<label>' . esc_html__( 'Send Private Message', 'sensei-lms' ) . '</label>
-				<textarea name="contact_message" placeholder="' . esc_attr__( 'Enter your private message.', 'sensei-lms' ) . '"></textarea>
+				<textarea name="contact_message" required placeholder="' . esc_attr__( 'Enter your private message.', 'sensei-lms' ) . '"></textarea>
 				
 				<input type="hidden" name="post_id" value="' . esc_attr( absint( $post->ID ) ) . '" />
 				' . $nonce . '
 				<p class="sensei-contact-teacher-form__actions">
-				<button class="sensei-contact-teacher-form__submit">' . esc_attr__( 'Send Message', 'sensei-lms' ) . '</button>
+				<button class="sensei-contact-teacher-form__submit">' . esc_html__( 'Send Message', 'sensei-lms' ) . '</button>
 				</p>
 			</form>';
 	}
