@@ -54,38 +54,41 @@ class Sensei_Block_Contact_Teacher {
 		$contact_form_link = add_query_arg( array( 'contact' => $post->post_type ) );
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
-		$message_sent = ( isset( $_GET['send'] ) && 'complete' === $_GET['send'] );
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
-		$contact_form_open = isset( $_GET['contact'] ) || $message_sent;
+		$contact_form_open = isset( $_GET['contact'] );
 
-		$contact_form = $this->teacher_contact_form( $post, $message_sent );
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
+		$message_sent = ( isset( $_GET['send'] ) && 'complete' === $_GET['send'] );
+		$notice       = $message_sent ? $this->confirmation_notice() : '';
+
+		$contact_form = $this->teacher_contact_form( $post );
 
 		return '<div id="private_message" class="sensei-collapsible">
 				' . ( $this->add_button_attributes( $content, $contact_form_link ) ) . '
+				' . $notice . '
 				<div class="sensei-collapsible__content ' . ( $contact_form_open ? '' : 'collapsed' ) . '">' . $contact_form . '</div>
 			</div>';
 	}
 
 	/**
+	 * Render a notice confirming the message was sent.
+	 */
+	private function confirmation_notice() {
+		$confirmation_message = __( 'Your private message has been sent.', 'sensei-lms' );
+		return '<div class="sensei-message tick">' . esc_html( $confirmation_message ) . '</div>';
+	}
+
+	/**
 	 * Render contact teacher form.
 	 *
-	 * @param WP_Post $post         The current post.
-	 * @param bool    $message_sent Display message sent feedback.
+	 * @param WP_Post $post The current post.
 	 *
 	 * @return string
 	 */
-	private function teacher_contact_form( $post, $message_sent ) {
+	private function teacher_contact_form( $post ) {
 
-		$confirmation = '';
-		if ( $message_sent ) {
-
-			$confirmation_message = __( 'Your private message has been sent.', 'sensei-lms' );
-			$confirmation         = '<div class="sensei-message tick">' . esc_html( $confirmation_message ) . '</div>';
-		}
 		$nonce = wp_nonce_field( 'message_teacher', 'sensei_message_teacher_nonce', true, false );
 
 		return '
-			' . $confirmation . '
 			<form name="contact-teacher" action="" method="post" class="sensei-contact-teacher-form">
 				<label>' . esc_html__( 'Send Private Message', 'sensei-lms' ) . '</label>
 				<textarea name="contact_message" required placeholder="' . esc_attr__( 'Enter your private message.', 'sensei-lms' ) . '"></textarea>
