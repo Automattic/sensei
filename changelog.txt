@@ -1,4 +1,9 @@
 *** Changelog ***
+2020.10.29 - version 3.5.3
+* Fix: Visibility of quiz passmark percentage field [#3715](https://github.com/Automattic/sensei/pull/3715)
+* Fix: PHP notices on taxonomy pages for unsupported themes [#3704](https://github.com/Automattic/sensei/pull/3704)
+* New: Exit survey when the plugin is deactivated [#3729](https://github.com/Automattic/sensei/pull/3729)
+
 2020.09.10 - version 3.5.2
 * Fix: Fix course being duplicated when lesson has no quiz and teacher is updated  [#3654](https://github.com/Automattic/sensei/pull/3654)
 * Fix: Fix resetting a learner's lesson progress removes learner from list [#3626](https://github.com/Automattic/sensei/pull/3626)
