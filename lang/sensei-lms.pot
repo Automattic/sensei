@@ -2,17 +2,84 @@
 # This file is distributed under the same license as the Sensei LMS plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Sensei LMS 3.5.2\n"
+"Project-Id-Version: Sensei LMS 3.5.3\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sensei-lms\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2020-09-30T07:43:02+00:00\n"
+"POT-Creation-Date: 2020-10-29T14:28:18+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.4.0\n"
 "X-Domain: sensei-lms\n"
+
+#: assets/admin/exit-survey/form.js:40
+#: assets/dist/admin/exit-survey/index.js:1
+msgid "Quick Feedback"
+msgstr ""
+
+#: assets/admin/exit-survey/form.js:42
+#: assets/dist/admin/exit-survey/index.js:1
+msgid ""
+"If you have a moment, please let us know why you are deactivating so that "
+"we can work to improve our product."
+msgstr ""
+
+#: assets/admin/exit-survey/form.js:57
+#: assets/dist/admin/exit-survey/index.js:1
+msgid "Submit Feedback"
+msgstr ""
+
+#: assets/admin/exit-survey/form.js:64
+#: assets/dist/admin/exit-survey/index.js:1
+msgid "Skip Feedback"
+msgstr ""
+
+#: assets/admin/exit-survey/reasons.js:13
+#: assets/dist/admin/exit-survey/index.js:1
+msgid "The plugin isn't working"
+msgstr ""
+
+#: assets/admin/exit-survey/reasons.js:14
+#: assets/dist/admin/exit-survey/index.js:1
+msgid "What isn't working properly?"
+msgstr ""
+
+#: assets/admin/exit-survey/reasons.js:18
+#: assets/dist/admin/exit-survey/index.js:1
+msgid "I'm looking for different functionality"
+msgstr ""
+
+#: assets/admin/exit-survey/reasons.js:19
+#: assets/dist/admin/exit-survey/index.js:1
+msgid "What functionality is missing?"
+msgstr ""
+
+#: assets/admin/exit-survey/reasons.js:23
+#: assets/dist/admin/exit-survey/index.js:1
+msgid "I found a better plugin"
+msgstr ""
+
+#: assets/admin/exit-survey/reasons.js:24
+#: assets/dist/admin/exit-survey/index.js:1
+msgid "What's the name of the plugin?"
+msgstr ""
+
+#: assets/admin/exit-survey/reasons.js:28
+#: assets/dist/admin/exit-survey/index.js:1
+msgid "It's a temporary deactivation"
+msgstr ""
+
+#: assets/admin/exit-survey/reasons.js:33
+#: assets/dist/admin/exit-survey/index.js:1
+msgid "Why are you deactivating?"
+msgstr ""
+
+#: assets/admin/exit-survey/reasons.js:9
+#: assets/dist/admin/exit-survey/index.js:1
+msgid "I no longer need the plugin"
+msgstr ""
 
 #: assets/data-port/export/export-page.js:25
 #: assets/dist/data-port/export.js:1
@@ -175,10 +242,10 @@ msgstr ""
 #: includes/class-sensei-lesson.php:4089
 #: includes/class-sensei-modules.php:846
 #: includes/class-sensei-utils.php:1357
-#: includes/class-sensei.php:802
-#: includes/class-sensei.php:841
-#: includes/class-sensei.php:901
-#: includes/class-sensei.php:915
+#: includes/class-sensei.php:804
+#: includes/class-sensei.php:843
+#: includes/class-sensei.php:903
+#: includes/class-sensei.php:917
 #: assets/dist/data-port/import.js:1
 msgid "course"
 msgid_plural "courses"
@@ -187,7 +254,7 @@ msgstr[1] ""
 
 #: assets/data-port/import/done/import-success-results.js:13
 #: includes/admin/class-sensei-learners-main.php:341
-#: includes/class-sensei.php:885
+#: includes/class-sensei.php:887
 #: assets/dist/data-port/import.js:1
 msgid "lesson"
 msgid_plural "lessons"
@@ -2552,7 +2619,7 @@ msgid "Sign Up"
 msgstr ""
 
 #: includes/class-sensei-lesson.php:4093
-#: includes/class-sensei.php:857
+#: includes/class-sensei.php:859
 #. translators: The placeholder %1$s is a link to the Course.
 msgid "Please sign up for the %1$s before starting the lesson."
 msgstr ""
@@ -4226,59 +4293,59 @@ msgstr ""
 msgid "Cheatin&#8217; huh?"
 msgstr ""
 
-#: includes/class-sensei.php:805
+#: includes/class-sensei.php:807
 #. translators: The placeholder %s is a link to the course.
 msgid "Please complete the previous %1$s before taking this course."
 msgstr ""
 
-#: includes/class-sensei.php:810
+#: includes/class-sensei.php:812
 #. translators: The placeholders are the opening and closing tags for a link to log in.
 msgid "Or %1$s login %2$s to access your purchased courses"
 msgstr ""
 
-#: includes/class-sensei.php:840
-#: includes/class-sensei.php:884
-#: includes/class-sensei.php:900
-#: includes/class-sensei.php:914
+#: includes/class-sensei.php:842
+#: includes/class-sensei.php:886
+#: includes/class-sensei.php:902
+#: includes/class-sensei.php:916
 msgid "Restricted Access"
 msgstr ""
 
-#: includes/class-sensei.php:846
+#: includes/class-sensei.php:848
 #. translators: The placeholder %1$s is a link to the Course.
 msgid "This is a preview lesson. Please purchase the %1$s to access all lessons."
 msgstr ""
 
-#: includes/class-sensei.php:849
+#: includes/class-sensei.php:851
 #. translators: The placeholder %1$s is a link to the Course.
 msgid "Please purchase the %1$s before starting this Lesson."
 msgstr ""
 
-#: includes/class-sensei.php:854
+#: includes/class-sensei.php:856
 #. translators: The placeholder %1$s is a link to the Course.
 msgid "This is a preview lesson. Please sign up for the %1$s to access all lessons."
 msgstr ""
 
-#: includes/class-sensei.php:887
+#: includes/class-sensei.php:889
 #. translators: The placeholder %1$s is a link to the Lesson.
 msgid "Please complete the previous %1$s before taking this Quiz."
 msgstr ""
 
-#: includes/class-sensei.php:905
+#: includes/class-sensei.php:907
 #. translators: The placeholder %1$s is a link to the Course.
 msgid "Please purchase the %1$s before starting this Quiz."
 msgstr ""
 
-#: includes/class-sensei.php:908
+#: includes/class-sensei.php:910
 #. translators: The placeholder %1$s is a link to the Course.
 msgid "Please sign up for the %1$s before starting this Quiz."
 msgstr ""
 
-#: includes/class-sensei.php:917
+#: includes/class-sensei.php:919
 #. translators: The placeholder %1$s is a link to the Course.
 msgid "Please sign up for the %1$s before taking this Quiz."
 msgstr ""
 
-#: includes/class-sensei.php:1385
+#: includes/class-sensei.php:1387
 #. translators: Docs as in Documentation
 msgid "Docs"
 msgstr ""
@@ -5444,7 +5511,7 @@ msgctxt "taxonomy archive slug"
 msgid "lesson-tag"
 msgstr ""
 
-#: includes/class-sensei.php:1403
+#: includes/class-sensei.php:1405
 msgctxt "plugin action link"
 msgid "Configure"
 msgstr ""

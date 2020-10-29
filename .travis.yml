@@ -41,9 +41,9 @@ before_script:
     echo "xdebug.ini does not exist"
   fi
 - |
-  if [[ ! -z "$WP_VERSION" ]] ; then
+  if [[ ! -z "$WP_VERSION" && -z "$RUN_E2E"  ]] ; then
     bash tests/bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
-    composer global require "phpunit/phpunit=4.8.*|5.7.*"
+    composer global require "phpunit/phpunit=6.5.*"
   fi
 jobs:
   include:
@@ -59,6 +59,11 @@ jobs:
       script:
         - ./tests/bin/run-wp-unit-tests.sh
     - stage: test
+      php: 7.4
+      env: WP_VERSION=trunk
+      script:
+        - ./tests/bin/run-wp-unit-tests.sh
+    - stage: test
       php: 7.1
       env: WP_VERSION=latest
       script:
@@ -69,25 +74,20 @@ jobs:
       script:
         - ./tests/bin/run-wp-unit-tests.sh
     - stage: test
-      php: 5.6
+      php: 7.0
+      env: WP_VERSION=5.4
+      script:
+        - ./tests/bin/run-wp-unit-tests.sh
+    - stage: test
+      php: 7.0
       env: WP_VERSION=5.3
       script:
         - ./tests/bin/run-wp-unit-tests.sh
     - stage: test
-      php: 5.6
-      env: WP_VERSION=latest
-      script:
-        - ./tests/bin/run-wp-unit-tests.sh
-    - stage: test
-      php: 5.6
-      env: WP_VERSION=trunk
-      script:
-        - ./tests/bin/run-wp-unit-tests.sh
-    - stage: test
-      php: 5.6
+      php: 7.0
       env: WP_VERSION=latest WP_MULTISITE=1
       script:
-      - ./tests/bin/run-wp-unit-tests.sh
+        - ./tests/bin/run-wp-unit-tests.sh
     - stage: test
       language: node_js
       node_js: '10.17'
