@@ -3646,6 +3646,9 @@ class Sensei_Course {
 		// Take this course.
 		remove_action( 'sensei_single_course_content_inside_before', [ __CLASS__, 'the_course_enrolment_actions' ], 30 );
 
+		// Add message links to courses.
+		remove_action( 'sensei_single_course_content_inside_before', [ Sensei()->post_types->messages, 'send_message_link' ], 35 );
+
 		// @todo Remove additional actions from `\Sensei_Course::add_legacy_course_hooks` as implemented in blocks.
 	}
 
