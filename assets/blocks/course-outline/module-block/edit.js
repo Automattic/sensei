@@ -7,15 +7,44 @@ import classnames from 'classnames';
 import AnimateHeight from 'react-animate-height';
 import { chevronUp } from '../../../icons/wordpress-icons';
 
-import {
-	withColorSettings,
-	withDefaultBlockStyle,
-} from '../../../shared/blocks/settings';
+import { withColorSettings } from '../../../shared/blocks/settings';
 import { OutlineAttributesContext } from '../course-block/edit';
 import SingleLineInput from '../single-line-input';
 import { ModuleStatus } from './module-status';
 import { ModuleBlockSettings } from './settings';
 import { useInsertLessonBlock } from './use-insert-lesson-block';
+import { useSelect } from '@wordpress/data';
+
+const useBlockStyle = ( clientId, className ) => {
+	const parentClassName = useSelect( ( select ) => {
+		const outlineId = select(
+			'core/block-editor'
+		).getBlockParentsByBlockName(
+			clientId,
+			'sensei-lms/course-outline'
+		)[ 0 ];
+
+		return outlineId
+			? select( 'core/block-editor' ).getBlockAttributes( outlineId )
+					.className
+			: '';
+	} );
+
+	const style = className.match( /is-style-(\w+)/ );
+	let blockStyle = {};
+
+	if ( style ) {
+		blockStyle = style[ 1 ];
+	} else if ( parentClassName ) {
+		const parentStyle = parentClassName.match( /is-style-(\w+)/ );
+
+		if ( parentStyle ) {
+			blockStyle = parentStyle[ 1 ];
+		}
+	}
+
+	return blockStyle;
+};
 
 /**
  * Edit module block component.
@@ -39,7 +68,6 @@ export const EditModuleBlock = ( props ) => {
 		mainColor,
 		textColor,
 		setAttributes,
-		blockStyle,
 	} = props;
 	const {
 		outlineAttributes: { collapsibleModules },
@@ -66,6 +94,8 @@ export const EditModuleBlock = ( props ) => {
 	};
 
 	const [ isExpanded, setExpanded ] = useState( true );
+
+	const blockStyle = useBlockStyle( clientId, className );
 
 	const blockStyleColors = {
 		default: { background: mainColor?.color },
@@ -143,6 +173,5 @@ export default compose(
 			label: __( 'Main color', 'sensei-lms' ),
 		},
 		textColor: { style: 'color', label: __( 'Text color', 'sensei-lms' ) },
-	} ),
-	withDefaultBlockStyle()
+	} )
 )( EditModuleBlock );

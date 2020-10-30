@@ -3,7 +3,8 @@
   "category": "sensei-lms",
   "supports": {
     "html": false,
-    "multiple": false
+    "multiple": false,
+    "defaultStylePicker": false
   },
   "attributes": {
     "id": {
@@ -23,17 +24,6 @@
       "type": "boolean"
     }
   },
-  "styles": [
-    {
-      "name": "borderless",
-      "label": "Borderless"
-    },
-    {
-      "name": "default",
-      "label": "Bordered",
-      "isDefault": true
-    }
-  ],
   "example": {
     "attributes": {
       "isPreview": true

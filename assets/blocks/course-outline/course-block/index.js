@@ -15,6 +15,17 @@ export default {
 		__( 'Outline', 'sensei-lms' ),
 		__( 'Structure', 'sensei-lms' ),
 	],
+	styles: [
+		{
+			name: 'default',
+			label: __( 'Filled', 'sensei-lms' ),
+			isDefault: true,
+		},
+		{
+			name: 'minimal',
+			label: __( 'Minimal', 'sensei-lms' ),
+		},
+	],
 	...metadata,
 	icon,
 	edit,
