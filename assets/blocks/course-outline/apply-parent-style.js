@@ -2,6 +2,14 @@ import { select, dispatch } from '@wordpress/data';
 import TokenList from '@wordpress/token-list';
 import { find } from 'lodash';
 
+/**
+ * Checks if a block has a registered style which matches with the supplied class.
+ *
+ * @param {Array}  blockStyles The block's registered styles.
+ * @param {string} className   The class to check.
+ *
+ * @return {boolean} True if there is a match.
+ */
 const blockHasStyle = function ( blockStyles, className ) {
 	return (
 		blockStyles &&
@@ -10,12 +18,12 @@ const blockHasStyle = function ( blockStyles, className ) {
 };
 
 /**
- * Returns the active style from the given className.
+ * Returns the active style class from the given className.
  *
  * @param {Array}  styles    Block style variations.
  * @param {string} className Class name
  *
- * @return {Object?} The active style.
+ * @return {string} The active style class.
  */
 export function getActiveStyleClass( styles, className ) {
 	let activeClass = null;
@@ -40,6 +48,15 @@ export function getActiveStyleClass( styles, className ) {
 	return activeClass;
 }
 
+/**
+ * Applies the style class of a parent block when the style is updated.
+ *
+ * @param {string} parentBlockName The name of the parent block.
+ * @param {string} childBlockName  The name of the child block.
+ * @param {string} childBlockId    The clientId of the block to apply the style to.
+ * @param {string} oldParentClass  The previous style class of the parent block.
+ * @param {string} onUpdate        A callback to be called when the the style of the parent block is updated.
+ */
 export const applyParentStyle = function (
 	parentBlockName,
 	childBlockName,
@@ -71,6 +88,7 @@ export const applyParentStyle = function (
 	if ( newParentClass && oldParentClass !== newParentClass ) {
 		onUpdate( newParentClass );
 
+		// If oldParentClass is not initialized yet, we don't want to update the class of the child block.
 		if ( ! oldParentClass ) {
 			return;
 		}
