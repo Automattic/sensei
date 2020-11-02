@@ -76,11 +76,11 @@ class Sensei_Course_Outline_Course_Block {
 				array_map(
 					function( $block ) use ( $post_id, $attributes ) {
 						if ( 'module' === $block['type'] ) {
-							return Sensei()->blocks->course_outline->module->render_module_block( $block, $post_id, $attributes );
+							return Sensei()->blocks->course->outline->module->render_module_block( $block, $post_id, $attributes );
 						}
 
 						if ( 'lesson' === $block['type'] ) {
-							return Sensei()->blocks->course_outline->lesson->render_lesson_block( $block, $post_id );
+							return Sensei()->blocks->course->outline->lesson->render_lesson_block( $block, $post_id );
 						}
 					},
 					$blocks
