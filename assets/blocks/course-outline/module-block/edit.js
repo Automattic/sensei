@@ -59,6 +59,7 @@ const useBlockStyle = ( clientId, className ) => {
  * @param {string}   props.attributes.blockStyle  Selected block style.
  * @param {Object}   props.mainColor              Header main color.
  * @param {Object}   props.textColor              Header text color.
+ * @param {Object}   props.borderColor            Border color.
  * @param {Function} props.setAttributes          Block set attributes function.
  */
 export const EditModuleBlock = ( props ) => {
@@ -68,6 +69,7 @@ export const EditModuleBlock = ( props ) => {
 		attributes: { title, description, bordered },
 		mainColor,
 		textColor,
+		borderColor,
 		setAttributes,
 		name,
 	} = props;
@@ -119,7 +121,10 @@ export const EditModuleBlock = ( props ) => {
 	return (
 		<>
 			<ModuleBlockSettings { ...props } />
-			<section className={ classnames( className, { bordered } ) }>
+			<section
+				className={ classnames( className, { bordered } ) }
+				style={ { borderColor: borderColor.color } }
+			>
 				<header
 					className="wp-block-sensei-lms-course-outline-module__header"
 					style={ { ...blockStyleColors, color: textColor?.color } }
@@ -187,5 +192,9 @@ export default compose(
 			label: __( 'Main color', 'sensei-lms' ),
 		},
 		textColor: { style: 'color', label: __( 'Text color', 'sensei-lms' ) },
+		borderColor: {
+			style: 'border-color',
+			label: __( 'Border color', 'sensei-lms' ),
+		},
 	} )
 )( EditModuleBlock );

@@ -17,12 +17,6 @@
     "moduleBorder": {
       "type": "boolean"
     },
-    "borderColor": {
-      "type": "string"
-    },
-    "customBorderColor": {
-      "type": "string"
-    },
     "isPreview": {
       "type": "boolean"
     }

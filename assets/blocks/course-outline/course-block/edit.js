@@ -7,11 +7,7 @@ import { CourseOutlinePlaceholder } from './placeholder';
 import { COURSE_STORE } from '../store';
 import { useBlocksCreator } from '../use-block-creator';
 import { OutlineBlockSettings } from './settings';
-import { __ } from '@wordpress/i18n';
-import {
-	withColorSettings,
-	withDefaultBlockStyle,
-} from '../../../shared/blocks/settings';
+import { withDefaultBlockStyle } from '../../../shared/blocks/settings';
 import { COURSE_STATUS_STORE } from '../status-store';
 
 /**
@@ -50,7 +46,6 @@ const useSynchronizeLessonsOnUpdate = function ( clientId ) {
  * @param {Object[]} props.structure     Course module and lesson blocks.
  * @param {Object}   props.attributes    Block attributes.
  * @param {Function} props.setAttributes Block setAttributes callback.
- * @param {Object}   props.borderColor   Border color.
  */
 const EditCourseOutlineBlock = ( {
 	clientId,
@@ -58,7 +53,6 @@ const EditCourseOutlineBlock = ( {
 	structure,
 	attributes,
 	setAttributes,
-	borderColor,
 } ) => {
 	// Toggle legacy metaboxes.
 	useEffect( () => {
@@ -146,10 +140,7 @@ const EditCourseOutlineBlock = ( {
 					setModuleBorder={ applyBorder }
 				/>
 
-				<section
-					className={ className }
-					style={ { borderColor: borderColor.color } }
-				>
+				<section className={ className }>
 					<InnerBlocks
 						allowedBlocks={ [
 							'sensei-lms/course-outline-module',
@@ -168,11 +159,5 @@ const selectors = ( select ) => ( {
 
 export default compose(
 	withSelect( selectors ),
-	withColorSettings( {
-		borderColor: {
-			style: 'border-color',
-			label: __( 'Border color', 'sensei-lms' ),
-		},
-	} ),
 	withDefaultBlockStyle()
 )( EditCourseOutlineBlock );
