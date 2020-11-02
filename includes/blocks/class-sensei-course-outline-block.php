@@ -120,7 +120,7 @@ class Sensei_Course_Outline_Block {
 			return;
 		}
 
-		Sensei()->assets->enqueue( 'sensei-blocks', 'blocks/index.js' );
+		Sensei()->assets->enqueue( 'sensei-blocks', 'blocks/index.js', [], true );
 		Sensei()->assets->enqueue( 'sensei-single-course-editor', 'blocks/single-course.editor.css' );
 	}
 
