@@ -13,40 +13,8 @@ import SingleLineInput from '../single-line-input';
 import { ModuleStatus } from './module-status';
 import { ModuleBlockSettings } from './settings';
 import { useInsertLessonBlock } from './use-insert-lesson-block';
-import { useSelect, dispatch } from '@wordpress/data';
+import { dispatch } from '@wordpress/data';
 import { applyParentStyle } from '../apply-parent-style';
-
-// TODO: code below does no work with no style.
-const useBlockStyle = ( clientId, className ) => {
-	const parentClassName = useSelect( ( select ) => {
-		const outlineId = select(
-			'core/block-editor'
-		).getBlockParentsByBlockName(
-			clientId,
-			'sensei-lms/course-outline'
-		)[ 0 ];
-
-		return outlineId
-			? select( 'core/block-editor' ).getBlockAttributes( outlineId )
-					.className
-			: '';
-	} );
-
-	const style = className.match( /is-style-(\w+)/ );
-	let blockStyle = {};
-
-	if ( style ) {
-		blockStyle = style[ 1 ];
-	} else if ( parentClassName ) {
-		const parentStyle = parentClassName.match( /is-style-(\w+)/ );
-
-		if ( parentStyle ) {
-			blockStyle = parentStyle[ 1 ];
-		}
-	}
-
-	return blockStyle;
-};
 
 /**
  * Edit module block component.
@@ -111,12 +79,15 @@ export const EditModuleBlock = ( props ) => {
 
 	const [ isExpanded, setExpanded ] = useState( true );
 
-	const blockStyle = useBlockStyle( clientId, className );
+	let blockStyleColors = {};
+	const style = className.match( /is-style-(\w+)/ );
 
-	const blockStyleColors = {
-		default: { background: mainColor?.color },
-		minimal: { borderColor: mainColor?.color },
-	}[ blockStyle ];
+	if ( style ) {
+		blockStyleColors = {
+			default: { background: mainColor?.color },
+			minimal: { borderColor: mainColor?.color },
+		}[ style[ 1 ] ];
+	}
 
 	return (
 		<>
@@ -203,7 +174,7 @@ export default compose(
 			onChange: ( { clientId, colorValue } ) =>
 				dispatch( 'core/block-editor' ).updateBlockAttributes(
 					clientId,
-					{ borderColorValue: colorValue }
+					{ borderColorValue: colorValue, bordered: !! colorValue }
 				),
 		},
 	} )
