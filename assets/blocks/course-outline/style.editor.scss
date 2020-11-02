@@ -1,11 +1,7 @@
 $dark-gray: #1a1d20;
 .block-editor {
 	.wp-block-sensei-lms-course-outline {
-
-		.block-editor-block-list__block {
-			margin-top: 0;
-			margin-bottom: 0;
-		}
+		padding: 1px 1em 0;
 
 		&__placeholder {
 			.components-button {
@@ -52,6 +48,11 @@ $dark-gray: #1a1d20;
 		.components-base-control__help {
 			margin-top: 10px;
 		}
+	}
+
+	.block-editor-block-list__block[data-type="sensei-lms/course-outline-lesson"] {
+		margin-top: 0;
+		margin-bottom: 0;
 	}
 }
 

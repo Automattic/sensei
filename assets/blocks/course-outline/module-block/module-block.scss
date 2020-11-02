@@ -100,7 +100,7 @@
 
 	.block-editor-block-styles__item & {
 		font-size: 150%;
-		.block-editor-inner-blocks, #{$block}__progress-indicator, .wp-block-sensei-lms-course-outline__arrow {
+		#{$block}__progress-indicator, .wp-block-sensei-lms-course-outline__arrow {
 			display: none;
 		}
 	}
