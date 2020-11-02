@@ -65,7 +65,7 @@ export const EditModuleBlock = ( props ) => {
 	const {
 		clientId,
 		className,
-		attributes: { title, description },
+		attributes: { title, description, bordered },
 		mainColor,
 		textColor,
 		setAttributes,
@@ -119,7 +119,7 @@ export const EditModuleBlock = ( props ) => {
 	return (
 		<>
 			<ModuleBlockSettings { ...props } />
-			<section className={ className }>
+			<section className={ classnames( className, { bordered } ) }>
 				<header
 					className="wp-block-sensei-lms-course-outline-module__header"
 					style={ { ...blockStyleColors, color: textColor?.color } }

@@ -86,6 +86,41 @@ const EditCourseOutlineBlock = ( {
 
 	useSynchronizeLessonsOnUpdate( clientId );
 
+	const getModules = useSelect(
+		( select ) => {
+			return () => {
+				let allChildren = select( 'core/block-editor' ).getBlocks(
+					clientId
+				);
+
+				allChildren = allChildren.reduce(
+					( m, block ) => [ ...m, ...block.innerBlocks ],
+					allChildren
+				);
+
+				return allChildren.filter(
+					( { name } ) => 'sensei-lms/course-outline-module' === name
+				);
+			};
+		},
+		[ clientId ]
+	);
+
+	const applyBorder = ( newValue ) => {
+		const modules = getModules();
+
+		modules.forEach( ( module ) => {
+			dispatch( 'core/block-editor' ).updateBlockAttributes(
+				module.clientId,
+				{
+					bordered: newValue,
+				}
+			);
+		} );
+
+		setAttributes( { moduleBorder: newValue } );
+	};
+
 	if ( isEmpty ) {
 		return (
 			<CourseOutlinePlaceholder
@@ -107,6 +142,8 @@ const EditCourseOutlineBlock = ( {
 					setCollapsibleModules={ ( value ) =>
 						setAttributes( { collapsibleModules: value } )
 					}
+					moduleBorder={ attributes.moduleBorder }
+					setModuleBorder={ applyBorder }
 				/>
 
 				<section

@@ -14,6 +14,9 @@
       "type": "boolean",
       "default": true
     },
+    "moduleBorder": {
+      "type": "boolean"
+    },
     "borderColor": {
       "type": "string"
     },

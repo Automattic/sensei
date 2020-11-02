@@ -36,6 +36,9 @@
     },
     "customClassName": {
       "type": "string"
+    },
+    "bordered": {
+      "type": "boolean"
     }
   }
 }
