@@ -35,7 +35,10 @@ export const OutlineBlockSettings = ( {
 				checked={ moduleBorder }
 				onChange={ setModuleBorder }
 				label={ __( 'Border', 'sensei-lms' ) }
-				help={ __( 'Enable the modules border.', 'sensei-lms' ) }
+				help={ __(
+					'Toggle the border for all modules.',
+					'sensei-lms'
+				) }
 			/>
 		</PanelBody>
 	</InspectorControls>

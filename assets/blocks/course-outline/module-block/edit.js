@@ -120,7 +120,12 @@ export const EditModuleBlock = ( props ) => {
 
 	return (
 		<>
-			<ModuleBlockSettings { ...props } />
+			<ModuleBlockSettings
+				bordered={ bordered }
+				setBordered={ ( newValue ) =>
+					setAttributes( { bordered: newValue } )
+				}
+			/>
 			<section
 				className={ classnames( className, { bordered } ) }
 				style={ { borderColor: borderColor.color } }
