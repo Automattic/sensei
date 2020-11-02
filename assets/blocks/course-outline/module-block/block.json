@@ -37,6 +37,9 @@
     "customBorderColor": {
       "type": "string"
     },
+    "borderColorValue": {
+      "type": "string"
+    },
     "className": {
       "type": "string"
     },

@@ -13,9 +13,10 @@ import SingleLineInput from '../single-line-input';
 import { ModuleStatus } from './module-status';
 import { ModuleBlockSettings } from './settings';
 import { useInsertLessonBlock } from './use-insert-lesson-block';
-import { useSelect } from '@wordpress/data';
+import { useSelect, dispatch } from '@wordpress/data';
 import { applyParentStyle } from '../apply-parent-style';
 
+// TODO: code below does no work with no style.
 const useBlockStyle = ( clientId, className ) => {
 	const parentClassName = useSelect( ( select ) => {
 		const outlineId = select(
@@ -66,10 +67,9 @@ export const EditModuleBlock = ( props ) => {
 	const {
 		clientId,
 		className,
-		attributes: { title, description, bordered },
+		attributes: { title, description, bordered, borderColorValue },
 		mainColor,
 		textColor,
-		borderColor,
 		setAttributes,
 		name,
 	} = props;
@@ -128,7 +128,7 @@ export const EditModuleBlock = ( props ) => {
 			/>
 			<section
 				className={ classnames( className, { bordered } ) }
-				style={ { borderColor: borderColor.color } }
+				style={ { borderColor: borderColorValue } }
 			>
 				<header
 					className="wp-block-sensei-lms-course-outline-module__header"
@@ -200,6 +200,11 @@ export default compose(
 		borderColor: {
 			style: 'border-color',
 			label: __( 'Border color', 'sensei-lms' ),
+			onChange: ( { clientId, colorValue } ) =>
+				dispatch( 'core/block-editor' ).updateBlockAttributes(
+					clientId,
+					{ borderColorValue: colorValue }
+				),
 		},
 	} )
 )( EditModuleBlock );

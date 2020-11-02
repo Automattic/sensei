@@ -35,7 +35,8 @@ class Sensei_Course_Outline_Module_Block {
 		$header_css = Sensei_Block_Helpers::build_styles(
 			$block['attributes'],
 			[
-				'mainColor' => $is_default_style ? 'background-color' : null,
+				'mainColor'   => $is_default_style ? 'background-color' : null,
+				'borderColor' => null,
 			]
 		);
 
@@ -46,7 +47,8 @@ class Sensei_Course_Outline_Module_Block {
 			$header_border_css = Sensei_Block_Helpers::build_styles(
 				$block['attributes'],
 				[
-					'mainColor' => 'background-color',
+					'mainColor'   => 'background-color',
+					'borderColor' => null,
 				]
 			);
 
@@ -68,7 +70,7 @@ class Sensei_Course_Outline_Module_Block {
 		}
 
 		return '
-			<section class="wp-block-sensei-lms-course-outline-module sensei-collapsible ' . esc_attr( $class_name ) . '">
+			<section ' . $this->get_block_html_attributes( $class_name, $block['attributes'] ) . '>
 				<header ' . Sensei_Block_Helpers::render_style_attributes( 'wp-block-sensei-lms-course-outline-module__header', $header_css ) . '>
 					<h2 class="wp-block-sensei-lms-course-outline-module__title">' . $title . '</h2>
 					' . $progress_indicator .
@@ -130,6 +132,35 @@ class Sensei_Course_Outline_Module_Block {
 						<span class="wp-block-sensei-lms-course-outline-module__progress-indicator__text"> ' . esc_html( $module_status ) . ' </span>
 					</div>
 		';
+	}
+
+	/**
+	 * Calculates the block html attributes.
+	 *
+	 * @param string $class_name       The block class name.
+	 * @param array  $block_attributes The block attributes.
+	 *
+	 * @return string The html attributes.
+	 */
+	private function get_block_html_attributes( $class_name, $block_attributes ) : string {
+		$class_names   = [ 'wp-block-sensei-lms-course-outline-module', 'sensei-collapsible', $class_name ];
+		$inline_styles = [];
+
+		if ( ! empty( $block_attributes['bordered'] ) ) {
+			$class_names[] = 'bordered';
+
+			if ( ! empty( $block_attributes['borderColorValue'] ) ) {
+				$inline_styles[] = sprintf( 'border-color: %s;', $block_attributes['borderColorValue'] );
+			}
+		}
+
+		return Sensei_Block_Helpers::render_style_attributes(
+			$class_names,
+			[
+				'css_classes'   => [],
+				'inline_styles' => $inline_styles,
+			]
+		);
 	}
 
 }
