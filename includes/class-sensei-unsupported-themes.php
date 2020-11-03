@@ -119,7 +119,16 @@ class Sensei_Unsupported_Themes {
 			return;
 		}
 
-		// Skip if custom template is disabled.
+		/**
+		 * Filters if Sensei templates and content wrappers should be used. For development purposes.
+		 *
+		 * @hook   sensei_use_sensei_template
+		 *
+		 * @param  {bool} $use_templates Whether to use Sensei templates for the request.
+		 *
+		 * @since  3.6.0
+		 * @access private
+		 */
 		if ( Sensei()->feature_flags->is_enabled( 'optional_templates' ) && ! apply_filters( 'sensei_use_sensei_template', true ) ) {
 			return;
 		}

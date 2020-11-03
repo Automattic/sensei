@@ -38,6 +38,8 @@ class Sensei_Course_Outline_Block {
 	/**
 	 * Disable single course template if there is an outline block present.
 	 *
+	 * @access private
+	 *
 	 * @param bool $enabled
 	 *
 	 * @return bool
