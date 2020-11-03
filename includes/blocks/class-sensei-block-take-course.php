@@ -126,7 +126,7 @@ class Sensei_Block_Take_Course {
 	 * @return string
 	 */
 	private function render_disabled_with_prerequisite( $course_id, $content ) {
-		$notice  = '<figcaption>' . $this->get_course_prerequisite_message( $course_id ) . '</figcaption>';
+		$notice  = '<div class="wp-block-sensei-button__notice">' . $this->get_course_prerequisite_message( $course_id ) . '</div>';
 		$content = preg_replace( '/(\<button)/i', '<button disabled="disabled"', $content );
 		$content = preg_replace( '/(<\/button>)/', '$1 ' . $notice, $content );
 		return $content;
