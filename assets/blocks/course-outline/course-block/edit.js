@@ -18,9 +18,10 @@ export const OutlineAttributesContext = createContext();
 /**
  * A hook to update the status store when a lesson is removed.
  *
- * @param {string} clientId The outline block id.
+ * @param {string}  clientId  The outline block id.
+ * @param {boolean} isPreview The outline block id.
  */
-const useSynchronizeLessonsOnUpdate = function ( clientId ) {
+const useSynchronizeLessonsOnUpdate = function ( clientId, isPreview ) {
 	const outlineDescendants = useSelect(
 		( select ) => {
 			return select( 'core/block-editor' ).getClientIdsOfDescendants( [
@@ -31,10 +32,12 @@ const useSynchronizeLessonsOnUpdate = function ( clientId ) {
 	);
 
 	useEffect( () => {
-		dispatch( COURSE_STATUS_STORE ).stopTrackingRemovedLessons(
-			outlineDescendants
-		);
-	}, [ clientId, outlineDescendants ] );
+		if ( ! isPreview ) {
+			dispatch( COURSE_STATUS_STORE ).stopTrackingRemovedLessons(
+				outlineDescendants
+			);
+		}
+	}, [ clientId, outlineDescendants, isPreview ] );
 };
 
 /**
@@ -78,7 +81,7 @@ const EditCourseOutlineBlock = ( {
 		}
 	}, [ structure, setBlocks, attributes.isPreview ] );
 
-	useSynchronizeLessonsOnUpdate( clientId );
+	useSynchronizeLessonsOnUpdate( clientId, attributes.isPreview );
 
 	// A function which returns all the modules of the course.
 	const getModules = useSelect(

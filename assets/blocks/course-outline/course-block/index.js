@@ -44,6 +44,7 @@ export default {
 							title: __( 'Lesson', 'sensei-lms' ),
 							id: 1,
 							draft: false,
+							isExample: true,
 						},
 					},
 				],
@@ -54,6 +55,7 @@ export default {
 					title: __( 'First Lesson', 'sensei-lms' ),
 					id: 2,
 					draft: false,
+					isExample: true,
 				},
 			},
 			{
@@ -62,6 +64,7 @@ export default {
 					title: __( 'Second Lesson', 'sensei-lms' ),
 					id: 3,
 					draft: false,
+					isExample: true,
 				},
 			},
 		],
