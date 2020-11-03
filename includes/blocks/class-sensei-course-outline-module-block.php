@@ -27,7 +27,7 @@ class Sensei_Course_Outline_Module_Block {
 
 		$progress_indicator = $this->get_module_progress_indicator( $block['id'], $course_id );
 
-		$class_name = Sensei_Block_Helpers::block_class_with_default_style( $block['attributes'] );
+		$class_name = Sensei_Block_Helpers::block_class_with_default_style( $block['attributes'], $outline_attributes );
 
 		$is_default_style = false !== strpos( $class_name, 'is-style-default' );
 		$is_minimal_style = false !== strpos( $class_name, 'is-style-minimal' );

@@ -93,14 +93,22 @@ class Sensei_Block_Helpers {
 	/**
 	 * Add default style to list of classes if no style is selected.
 	 *
-	 * @param array $attributes Block attributes.
+	 * @param array $attributes        Block attributes.
+	 * @param array $parent_attributes Parent block attributes.
 	 *
 	 * @return string
 	 */
-	public static function block_class_with_default_style( $attributes ) {
+	public static function block_class_with_default_style( $attributes, $parent_attributes = [] ) {
 		$class_name = $attributes['className'] ?? '';
-		if ( empty( $class_name ) && false === strpos( $class_name, 'is-style-' ) ) {
-			$class_name .= ' is-style-default';
+		if ( false === strpos( $class_name, 'is-style-' ) ) {
+			$parent_class_name = $parent_attributes['className'] ?? '';
+
+			if ( false === strpos( $parent_class_name, 'is-style-' ) ) {
+				$class_name .= ' is-style-default';
+			} else {
+				preg_match( '/is-style-\w+/', $parent_class_name, $matches );
+				$class_name .= ' ' . $matches[0];
+			}
 		}
 
 		return $class_name;
