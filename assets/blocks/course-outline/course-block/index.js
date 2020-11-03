@@ -26,6 +26,46 @@ export default {
 			label: __( 'Minimal', 'sensei-lms' ),
 		},
 	],
+	example: {
+		attributes: {
+			isPreview: true,
+		},
+		innerBlocks: [
+			{
+				name: 'sensei-lms/course-outline-module',
+				attributes: {
+					title: __( 'Module', 'sensei-lms' ),
+					description: __( 'About Module', 'sensei-lms' ),
+				},
+				innerBlocks: [
+					{
+						name: 'sensei-lms/course-outline-lesson',
+						attributes: {
+							title: __( 'Lesson', 'sensei-lms' ),
+							id: 1,
+							draft: false,
+						},
+					},
+				],
+			},
+			{
+				name: 'sensei-lms/course-outline-lesson',
+				attributes: {
+					title: __( 'First Lesson', 'sensei-lms' ),
+					id: 2,
+					draft: false,
+				},
+			},
+			{
+				name: 'sensei-lms/course-outline-lesson',
+				attributes: {
+					title: __( 'Second Lesson', 'sensei-lms' ),
+					id: 3,
+					draft: false,
+				},
+			},
+		],
+	},
 	...metadata,
 	icon,
 	edit,

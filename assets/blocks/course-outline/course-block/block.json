@@ -21,45 +21,5 @@
     "isPreview": {
       "type": "boolean"
     }
-  },
-  "example": {
-    "attributes": {
-      "isPreview": true
-    },
-    "innerBlocks": [
-      {
-        "name": "sensei-lms/course-outline-module",
-        "attributes": {
-          "title": "Module",
-          "description": "About Module"
-        },
-        "innerBlocks": [
-          {
-            "name": "sensei-lms/course-outline-lesson",
-            "attributes": {
-              "title": "Lesson",
-              "id": 1,
-              "draft": false
-            }
-          }
-        ]
-      },
-      {
-        "name": "sensei-lms/course-outline-lesson",
-        "attributes": {
-          "title": "First Lesson",
-          "id": 2,
-          "draft": false
-        }
-      },
-      {
-        "name": "sensei-lms/course-outline-lesson",
-        "attributes": {
-          "title": "Second Lesson",
-          "id": 3,
-          "draft": false
-        }
-      }
-    ]
   }
 }
