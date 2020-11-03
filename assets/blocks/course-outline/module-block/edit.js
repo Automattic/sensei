@@ -42,13 +42,15 @@ export const EditModuleBlock = ( props ) => {
 		name,
 	} = props;
 	const {
-		outlineAttributes: { collapsibleModules },
+		outlineAttributes: { collapsibleModules, moduleBorder },
 	} = useContext( OutlineAttributesContext ) || { outlineAttributes: {} };
 
 	useInsertLessonBlock( props );
 
 	const [ outlineClass, setOutlineClass ] = useState( null );
 
+	// setOutlineClass is called when there is an update in course style class only.
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect( () => {
 		applyParentStyle(
 			'sensei-lms/course-outline',
@@ -58,6 +60,11 @@ export const EditModuleBlock = ( props ) => {
 			setOutlineClass
 		);
 	} );
+
+	// Get the border setting from the parent if none is set.
+	if ( undefined === bordered ) {
+		setAttributes( { bordered: moduleBorder } );
+	}
 
 	/**
 	 * Handle update name.

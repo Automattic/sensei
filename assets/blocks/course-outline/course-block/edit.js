@@ -80,6 +80,7 @@ const EditCourseOutlineBlock = ( {
 
 	useSynchronizeLessonsOnUpdate( clientId );
 
+	// A function which returns all the modules of the course.
 	const getModules = useSelect(
 		( select ) => {
 			return () => {

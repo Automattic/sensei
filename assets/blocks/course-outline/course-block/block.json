@@ -15,7 +15,8 @@
       "default": true
     },
     "moduleBorder": {
-      "type": "boolean"
+      "type": "boolean",
+      "default": true
     },
     "isPreview": {
       "type": "boolean"
