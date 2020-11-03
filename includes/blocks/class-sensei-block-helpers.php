@@ -91,7 +91,8 @@ class Sensei_Block_Helpers {
 	}
 
 	/**
-	 * Add default style to list of classes if no style is selected.
+	 * Add default style to list of classes if no style is selected. If a parent classname is supplied, it will override
+	 * the default style.
 	 *
 	 * @param array $attributes        Block attributes.
 	 * @param array $parent_attributes Parent block attributes.

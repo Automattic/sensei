@@ -27,6 +27,7 @@ class Sensei_Course_Outline_Module_Block {
 
 		$progress_indicator = $this->get_module_progress_indicator( $block['id'], $course_id );
 
+		// If no style is set, get the style of the outline or the default one.
 		$class_name = Sensei_Block_Helpers::block_class_with_default_style( $block['attributes'], $outline_attributes );
 
 		$is_default_style = false !== strpos( $class_name, 'is-style-default' );

@@ -49,7 +49,8 @@ export function getActiveStyleClass( styles, className ) {
 }
 
 /**
- * Applies the style class of a parent block when the style is updated.
+ * Applies the style class of a parent block when the style is updated. The value of the style needs to be tracked by
+ * callers.
  *
  * @param {string} parentBlockName The name of the parent block.
  * @param {string} childBlockName  The name of the child block.
