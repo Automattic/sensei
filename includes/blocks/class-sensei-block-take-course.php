@@ -139,7 +139,7 @@ class Sensei_Block_Take_Course {
 	 *
 	 * @return string
 	 */
-	private function get_course_prerequisite_message( $course_id ) {
+	public function get_course_prerequisite_message( $course_id ) {
 		$course_prerequisite_id   = absint( get_post_meta( $course_id, '_course_prerequisite', true ) );
 		$course_title             = get_the_title( $course_prerequisite_id );
 		$prerequisite_course_link = '<a href="' . esc_url( get_permalink( $course_prerequisite_id ) )
@@ -153,7 +153,7 @@ class Sensei_Block_Take_Course {
 
 		$complete_prerequisite_message = sprintf(
 		// translators: Placeholder $1$s is the course title.
-			esc_html__( 'You must first complete %1$s before taking this course', 'sensei-lms' ),
+			esc_html__( 'You must first complete %1$s before taking this course.', 'sensei-lms' ),
 			$prerequisite_course_link
 		);
 
