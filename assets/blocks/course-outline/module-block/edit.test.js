@@ -19,6 +19,7 @@ jest.mock( '@wordpress/data' );
 jest.mock( '../use-block-creator', () => jest.fn() );
 jest.mock( './use-insert-lesson-block' );
 jest.mock( '../course-block/edit', () => jest.fn() );
+jest.mock( '../apply-parent-style' );
 jest.mock( '@wordpress/element', () => ( {
 	...jest.requireActual( '@wordpress/element' ),
 	useContext: () => ( { outlineAttributes: { collapsibleModules: true } } ),
@@ -34,6 +35,7 @@ describe( '<EditModuleBlock />', () => {
 		const setAttributesMock = jest.fn();
 		const { getByPlaceholderText } = render(
 			<EditModuleBlock
+				className={ '' }
 				attributes={ { title: '', description: '', lessons: [] } }
 				setAttributes={ setAttributesMock }
 			/>
@@ -50,6 +52,7 @@ describe( '<EditModuleBlock />', () => {
 		const setAttributesMock = jest.fn();
 		const { getByPlaceholderText } = render(
 			<EditModuleBlock
+				className={ '' }
 				attributes={ { title: '', description: '', lessons: [] } }
 				setAttributes={ setAttributesMock }
 			/>
