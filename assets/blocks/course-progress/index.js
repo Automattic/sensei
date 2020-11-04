@@ -1,4 +1,5 @@
 import { __ } from '@wordpress/i18n';
+import { ProgressIcon as icon } from '../../icons';
 import edit from './edit';
 import metadata from './block';
 
@@ -13,6 +14,7 @@ export default {
 		__( 'Bar', 'sensei-lms' ),
 		__( 'Course', 'sensei-lms' ),
 	],
+	icon,
 	...metadata,
 	edit,
 };
