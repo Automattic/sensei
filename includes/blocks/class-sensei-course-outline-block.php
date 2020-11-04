@@ -57,7 +57,6 @@ class Sensei_Course_Outline_Block {
 	 * Sensei_Course_Outline_Block constructor.
 	 */
 	public function __construct() {
-		add_filter( 'sensei_use_sensei_template', [ 'Sensei_Course_Outline_Block', 'skip_single_course_template' ] );
 
 		add_action( 'init', [ $this, 'register_course_template' ], 101 );
 		add_action( 'init', [ $this, 'register_blocks' ] );
@@ -75,21 +74,6 @@ class Sensei_Course_Outline_Block {
 	 */
 	public function init() {
 		$this->block_content = null;
-	}
-
-	/**
-	 * Disable single course template if there is an outline block present.
-	 *
-	 * @access private
-	 *
-	 * @param bool $enabled
-	 *
-	 * @return bool
-	 */
-	public static function skip_single_course_template( $enabled ) {
-		return is_single() && 'course' === get_post_type() && has_block( 'sensei-lms/course-outline' )
-			? false
-			: $enabled;
 	}
 
 	/**
