@@ -573,7 +573,7 @@ class Sensei_Analysis {
 			$report = sanitize_text_field( $_GET['sensei_report_download'] );
 
 			// Simple verification to ensure intent, Note that a Nonce is per user, so the URL can't be shared
-			if ( ! wp_verify_nonce( $_REQUEST['_sdl_nonce'], 'sensei_csv_download-' . $report ) ) {
+			if ( ! wp_verify_nonce( $_REQUEST['_sdl_nonce'], 'sensei_csv_download' ) ) {
 				wp_die( esc_html__( 'Invalid request', 'sensei-lms' ) );
 			}
 
