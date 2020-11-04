@@ -93,7 +93,7 @@ if ( ! class_exists( 'Sensei_Email_Teacher_New_Message', false ) ) :
 
 			do_action( 'sensei_after_sending_email' );
 
-			wp_safe_redirect( esc_url_raw( add_query_arg( array( 'send' => 'complete' ) ) ) );
+			wp_safe_redirect( esc_url_raw( add_query_arg( array( 'send' => 'complete' ) ) . '#private_message' ) );
 			exit;
 		}
 	}

@@ -68,18 +68,18 @@ class Sensei_Course_Outline_Module_Block {
 		}
 
 		return '
-			<section class="wp-block-sensei-lms-course-outline-module ' . esc_attr( $class_name ) . '">
+			<section class="wp-block-sensei-lms-course-outline-module sensei-collapsible ' . esc_attr( $class_name ) . '">
 				<header ' . Sensei_Block_Helpers::render_style_attributes( 'wp-block-sensei-lms-course-outline-module__header', $header_css ) . '>
 					<h2 class="wp-block-sensei-lms-course-outline-module__title">' . $title . '</h2>
 					' . $progress_indicator .
 			( ! empty( $outline_attributes['collapsibleModules'] ) ?
-				'<button type="button" class="wp-block-sensei-lms-course-outline__arrow">
+				'<button type="button" class="wp-block-sensei-lms-course-outline__arrow sensei-collapsible__toggle">
 						<svg><use xlink:href="#sensei-chevron-up"></use></svg>
 						<span class="screen-reader-text">' . esc_html__( 'Toggle module content', 'sensei-lms' ) . '</span>
 					</button>' : '' ) .
 			'</header>
 					' . $style_header . '
-				<div class="wp-block-sensei-lms-collapsible">
+				<div class="wp-block-sensei-lms-collapsible sensei-collapsible__content">
 					' . $description . '
 					<h3 class="wp-block-sensei-lms-course-outline-module__lessons-title">
 						' . esc_html__( 'Lessons', 'sensei-lms' ) . '
