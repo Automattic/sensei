@@ -62,7 +62,7 @@ class Sensei_Block_Contact_Teacher {
 
 		$contact_form = $this->teacher_contact_form( $post );
 
-		return '<div id="private_message" class="sensei-collapsible">
+		return '<div id="private_message" class="wp-block-sensei-lms-button-contact-teacher-wrapper sensei-collapsible">
 				' . ( $this->add_button_attributes( $content, $contact_form_link ) ) . '
 				' . $notice . '
 				<div class="sensei-collapsible__content ' . ( $contact_form_open ? '' : 'collapsed' ) . '">' . $contact_form . '</div>
@@ -92,7 +92,7 @@ class Sensei_Block_Contact_Teacher {
 			<form name="contact-teacher" action="" method="post" class="sensei-contact-teacher-form">
 				<label>' . esc_html__( 'Send Private Message', 'sensei-lms' ) . '</label>
 				<textarea name="contact_message" required placeholder="' . esc_attr__( 'Enter your private message.', 'sensei-lms' ) . '"></textarea>
-				
+
 				<input type="hidden" name="post_id" value="' . esc_attr( absint( $post->ID ) ) . '" />
 				' . $nonce . '
 				<p class="sensei-contact-teacher-form__actions">
