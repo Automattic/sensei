@@ -1,7 +1,8 @@
 $dark-gray: #1a1d20;
 .block-editor {
 	.wp-block-sensei-lms-course-outline {
-		padding: 1px 1em 0;
+		padding: 0 1em;
+		margin: 0 -1em;
 
 		&__placeholder {
 			.components-button {
