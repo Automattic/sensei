@@ -80,8 +80,14 @@ class Sensei_Course_Progress_Block {
 		// translators: Placeholders are the number and percentage of completed lessons.
 		$completed_text = sprintf( __( '%1$d completed (%2$s)', 'sensei-lms' ), $completed, $percentage . '%' );
 
+		$class_names = [ 'wp-block-sensei-lms-progress' ];
+
+		if ( $attributes['className'] ) {
+			$class_names[] = $attributes['className'];
+		}
+
 		return '
-			<div ' . Sensei_Block_Helpers::render_style_attributes( $attributes['className'] ?? [], $text_css ) . '>
+			<div ' . Sensei_Block_Helpers::render_style_attributes( $class_names, $text_css ) . '>
 				<section class="wp-block-sensei-lms-progress-heading">
 					<div class="wp-block-sensei-lms-progress-heading__lessons">' . $lessons_text . '</div>
 					<div class="wp-block-sensei-lms-progress-heading__completed">' . $completed_text . '</div>
