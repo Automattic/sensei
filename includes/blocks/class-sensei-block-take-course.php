@@ -48,20 +48,19 @@ class Sensei_Block_Take_Course {
 	public function render_take_course_block( $attributes, $content ): string {
 		global $post;
 		$course_id = $post->ID;
+		$html      = '';
 
 		if ( Sensei_Course::can_current_user_manually_enrol( $course_id ) ) {
 			if ( ! Sensei_Course::is_prerequisite_complete( $course_id ) ) {
-				return $this->render_disabled_with_prerequisite( $course_id, $content );
+				$html = $this->render_disabled_with_prerequisite( $course_id, $content );
+			} else {
+				$html = $this->render_with_start_course_form( $course_id, $content );
 			}
-			return $this->render_with_start_course_form( $course_id, $content );
+		} elseif ( ! is_user_logged_in() ) {
+			$html = $this->render_with_login( $content );
 		}
 
-		if ( ! is_user_logged_in() ) {
-			return $this->render_with_login( $content );
-		}
-
-		return '';
-
+		return ! empty( $html ) ? '<div class="wp-block-sensei-lms-button-take-course-wrapper">' . $html . '</div>' : '';
 	}
 
 	/**
