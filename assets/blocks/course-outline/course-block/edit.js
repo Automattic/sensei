@@ -9,6 +9,7 @@ import { useBlocksCreator } from '../use-block-creator';
 import { OutlineBlockSettings } from './settings';
 import { withDefaultBlockStyle } from '../../../shared/blocks/settings';
 import { COURSE_STATUS_STORE } from '../status-store';
+import { getCourseInnerBlocks } from '../get-course-inner-blocks';
 
 /**
  * A React context which contains the attributes and the setAttributes callback of the Outline block.
@@ -83,29 +84,11 @@ const EditCourseOutlineBlock = ( {
 
 	useSynchronizeLessonsOnUpdate( clientId, attributes.isPreview );
 
-	// A function which returns all the modules of the course.
-	const getModules = useSelect(
-		( select ) => {
-			return () => {
-				let allChildren = select( 'core/block-editor' ).getBlocks(
-					clientId
-				);
-
-				allChildren = allChildren.reduce(
-					( m, block ) => [ ...m, ...block.innerBlocks ],
-					allChildren
-				);
-
-				return allChildren.filter(
-					( { name } ) => 'sensei-lms/course-outline-module' === name
-				);
-			};
-		},
-		[ clientId ]
-	);
-
 	const applyBorder = ( newValue ) => {
-		const modules = getModules();
+		const modules = getCourseInnerBlocks(
+			clientId,
+			'sensei-lms/course-outline-module'
+		);
 
 		modules.forEach( ( module ) => {
 			dispatch( 'core/block-editor' ).updateBlockAttributes(
