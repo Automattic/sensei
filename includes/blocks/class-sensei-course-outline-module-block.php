@@ -148,7 +148,7 @@ class Sensei_Course_Outline_Module_Block {
 		$inline_styles = [];
 
 		if ( ! empty( $block_attributes['bordered'] ) ) {
-			$class_names[] = 'bordered';
+			$class_names[] = 'sensei-module-bordered';
 
 			if ( ! empty( $block_attributes['borderColorValue'] ) ) {
 				$inline_styles[] = sprintf( 'border-color: %s;', $block_attributes['borderColorValue'] );

@@ -105,7 +105,9 @@ export const EditModuleBlock = ( props ) => {
 				}
 			/>
 			<section
-				className={ classnames( className, { bordered } ) }
+				className={ classnames( className, {
+					'sensei-module-bordered': bordered,
+				} ) }
 				style={ { borderColor: borderColorValue } }
 			>
 				<header
