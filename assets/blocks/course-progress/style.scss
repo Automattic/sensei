@@ -1,32 +1,28 @@
-.wp-block-sensei-lms-progress {
-	@include block-spacing;
-
-	&-heading {
-		div {
-			display: inline-block;
-			margin-right: 10px;
-		}
-
-		&__lessons {
-			font-weight: bold;
-		}
+.wp-block-sensei-lms-progress-heading {
+	div {
+		display: inline-block;
+		margin-right: 10px;
 	}
 
-	&-bar {
-		height: 14px;
+	&__lessons {
+		font-weight: bold;
+	}
+}
+
+.wp-block-sensei-lms-progress-bar {
+	height: 14px;
+	border-radius: 2px;
+	background-color: #E6E6E6;
+
+	div {
+		height: 100%;
 		border-radius: 2px;
-		background-color: #E6E6E6;
-
-		div {
-			height: 100%;
-			border-radius: 2px;
-			background-color: #0064B4;
-		}
+		background-color: #0064B4;
 	}
+}
 
-	&-styling-controls {
-		.components-range-control {
-			width: 100%;
-		}
+.wp-block-sensei-lms-progress-styling-controls {
+	.components-range-control {
+		width: 100%;
 	}
 }

@@ -69,7 +69,7 @@ class Sensei_Course_Outline_Course_Block {
 		return '
 			' . ( ! empty( $blocks ) ? $icons : '' ) . '
 			' . $notice . '
-			<section ' . Sensei_Block_Helpers::render_style_attributes( [ 'wp-block-sensei-lms-course-outline', $class_name ], $css ) . '>
+			<section ' . Sensei_Block_Helpers::render_style_attributes( [ 'wp-block-sensei-lms-course-outline', 'sensei-block-wrapper', $class_name ], $css ) . '>
 				' .
 			implode(
 				'',

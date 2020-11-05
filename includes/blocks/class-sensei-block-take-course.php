@@ -60,7 +60,7 @@ class Sensei_Block_Take_Course {
 			$html = $this->render_with_login( $content );
 		}
 
-		return ! empty( $html ) ? '<div class="wp-block-sensei-lms-button-take-course-wrapper">' . $html . '</div>' : '';
+		return ! empty( $html ) ? '<div class="sensei-block-wrapper">' . $html . '</div>' : '';
 	}
 
 	/**
