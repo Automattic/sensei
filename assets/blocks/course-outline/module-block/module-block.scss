@@ -1,6 +1,6 @@
 $block: '.wp-block-sensei-lms-course-outline-module';
 
-#{$block} {
+.wp-block-sensei-lms-course-outline #{$block}, .wp-block #{$block} {
 	margin: 1em 0;
 
 	#{$block}__progress-indicator {
