@@ -10,7 +10,7 @@ import { find } from 'lodash';
  *
  * @return {boolean} True if there is a match.
  */
-const blockHasStyle = function ( blockStyles, className ) {
+const blockHasStyle = ( blockStyles, className ) => {
 	return (
 		blockStyles &&
 		blockStyles.some( ( style ) => 'is-style-' + style.name === className )
@@ -21,11 +21,11 @@ const blockHasStyle = function ( blockStyles, className ) {
  * Returns the active style class from the given className.
  *
  * @param {Array}  styles    Block style variations.
- * @param {string} className Class name
+ * @param {string} className Class name.
  *
  * @return {string} The active style class.
  */
-export function getActiveStyleClass( styles, className ) {
+const getActiveStyleClass = ( styles, className ) => {
 	if ( className ) {
 		const classMatches = className.match( /is-style-\w+/ );
 
@@ -37,7 +37,7 @@ export function getActiveStyleClass( styles, className ) {
 	const defaultStyle = find( styles, 'isDefault' );
 
 	return defaultStyle ? 'is-style-' + defaultStyle.name : null;
-}
+};
 
 /**
  * Applies the style class of a parent block when the style is updated. The value of the style needs to be tracked by
@@ -49,13 +49,13 @@ export function getActiveStyleClass( styles, className ) {
  * @param {string} oldParentClass  The previous style class of the parent block.
  * @param {string} onUpdate        A callback to be called when the the style of the parent block is updated.
  */
-export const applyParentStyle = function (
+export const applyParentStyle = (
 	parentBlockName,
 	childBlockName,
 	childBlockId,
 	oldParentClass,
 	onUpdate
-) {
+) => {
 	const outlineBlockId = select(
 		'core/block-editor'
 	).getBlockParentsByBlockName( childBlockId, parentBlockName )[ 0 ];
