@@ -225,6 +225,9 @@ class Sensei_Plugins_Installation {
 	 * @param string $message Error message.
 	 */
 	private function save_error( $slug, $message ) {
+
+		$message = wp_kses( $message, [] );
+
 		$installing_plugins = $this->get_installing_plugins();
 		$key                = array_search( $slug, wp_list_pluck( $installing_plugins, 'product_slug' ), true );
 
