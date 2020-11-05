@@ -82,7 +82,7 @@ class Sensei_Course_Progress_Block {
 
 		$class_names = [ 'wp-block-sensei-lms-progress' ];
 
-		if ( $attributes['className'] ) {
+		if ( ! empty( $attributes['className'] ) ) {
 			$class_names[] = $attributes['className'];
 		}
 
