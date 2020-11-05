@@ -26,26 +26,17 @@ const blockHasStyle = function ( blockStyles, className ) {
  * @return {string} The active style class.
  */
 export function getActiveStyleClass( styles, className ) {
-	let activeClass = null;
+	if ( className ) {
+		const classMatches = className.match( /is-style-\w+/ );
 
-	new TokenList( className ).forEach( ( potentialClass ) => {
-		if ( potentialClass.indexOf( 'is-style-' ) !== -1 ) {
-			const potentialStyleName = potentialClass.substring( 9 );
-			const activeStyle = find( styles, { name: potentialStyleName } );
-
-			if ( activeStyle ) {
-				activeClass = potentialClass;
-			}
+		if ( classMatches ) {
+			return classMatches[ 0 ];
 		}
-	} );
-
-	if ( ! activeClass ) {
-		const defaultStyle = find( styles, 'isDefault' );
-
-		activeClass = defaultStyle ? 'is-style-' + defaultStyle.name : null;
 	}
 
-	return activeClass;
+	const defaultStyle = find( styles, 'isDefault' );
+
+	return defaultStyle ? 'is-style-' + defaultStyle.name : null;
 }
 
 /**
