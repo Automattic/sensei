@@ -176,10 +176,6 @@ add_action( 'sensei_single_lesson_content_inside_after', 'sensei_the_single_less
 // hook in the lesson prerequisite completion message
 add_action( 'sensei_single_lesson_content_inside_before', array( 'Sensei_Lesson', 'prerequisite_complete_message' ), 20 );
 
-// @since 1.9.10
-// hook in the course prerequisite completion message
-add_action( 'sensei_single_course_content_inside_before', array( 'Sensei_Course', 'prerequisite_complete_message' ), 20 );
-
 // @since 1.9.0
 // hook the single lesson course_signup_link
 add_action( 'sensei_single_lesson_content_inside_before', array( 'Sensei_Lesson', 'course_signup_link' ), 30 );

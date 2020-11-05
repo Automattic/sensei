@@ -3626,6 +3626,10 @@ class Sensei_Course {
 
 		// Add message links to courses.
 		add_action( 'sensei_single_course_content_inside_before', [ $sensei->post_types->messages, 'send_message_link' ], 35 );
+
+		// Course prerequisite completion message.
+		add_action( 'sensei_single_course_content_inside_before', array( 'Sensei_Course', 'prerequisite_complete_message' ), 20 );
+
 	}
 
 	/**
@@ -3645,6 +3649,9 @@ class Sensei_Course {
 
 		// Take this course.
 		remove_action( 'sensei_single_course_content_inside_before', [ __CLASS__, 'the_course_enrolment_actions' ], 30 );
+
+		// Course prerequisite completion message.
+		remove_action( 'sensei_single_course_content_inside_before', array( 'Sensei_Course', 'prerequisite_complete_message' ), 20 );
 
 		// Add message links to courses.
 		remove_action( 'sensei_single_course_content_inside_before', [ Sensei()->post_types->messages, 'send_message_link' ], 35 );

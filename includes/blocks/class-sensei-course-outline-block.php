@@ -57,9 +57,7 @@ class Sensei_Course_Outline_Block {
 	 * Sensei_Course_Outline_Block constructor.
 	 */
 	public function __construct() {
-		add_filter( 'sensei_use_sensei_template', [ 'Sensei_Course_Outline_Block', 'skip_single_course_template' ] );
-		add_action( 'enqueue_block_assets', [ $this, 'enqueue_block_assets' ] );
-		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_block_editor_assets' ] );
+
 		add_action( 'init', [ $this, 'register_course_template' ], 101 );
 		add_action( 'init', [ $this, 'register_blocks' ] );
 		add_action( 'init', [ $this, 'init' ] );
@@ -76,52 +74,6 @@ class Sensei_Course_Outline_Block {
 	 */
 	public function init() {
 		$this->block_content = null;
-	}
-
-	/**
-	 * Disable single course template if there is an outline block present.
-	 *
-	 * @access private
-	 *
-	 * @param bool $enabled
-	 *
-	 * @return bool
-	 */
-	public static function skip_single_course_template( $enabled ) {
-		return is_single() && 'course' === get_post_type() && has_block( 'sensei-lms/course-outline' )
-			? false
-			: $enabled;
-	}
-
-	/**
-	 * Enqueue frontend and editor assets.
-	 *
-	 * @access private
-	 */
-	public function enqueue_block_assets() {
-		if ( 'course' !== get_post_type() ) {
-			return;
-		}
-
-		Sensei()->assets->enqueue( 'sensei-single-course', 'blocks/single-course.css' );
-
-		if ( ! is_admin() ) {
-			Sensei()->assets->enqueue( 'sensei-single-course-frontend', 'blocks/course-outline/frontend.js' );
-		}
-	}
-
-	/**
-	 * Enqueue editor assets.
-	 *
-	 * @access private
-	 */
-	public function enqueue_block_editor_assets() {
-		if ( 'course' !== get_post_type() ) {
-			return;
-		}
-
-		Sensei()->assets->enqueue( 'sensei-blocks', 'blocks/index.js' );
-		Sensei()->assets->enqueue( 'sensei-single-course-editor', 'blocks/single-course.editor.css' );
 	}
 
 	/**

@@ -835,6 +835,11 @@ section.entry span.course-lesson-progress { margin-left: 10px; }
         content: '\f00c';
       }
     }
+    &.clean {
+      background: rgba(#ccc, 0.3);
+      color: inherit;
+      padding: 1em;
+    }
     &.info {
       background:#eee;
       &:before  {

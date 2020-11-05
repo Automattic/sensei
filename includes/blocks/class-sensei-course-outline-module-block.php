@@ -88,7 +88,7 @@ class Sensei_Course_Outline_Module_Block {
 				'',
 				array_map(
 					function( $block ) use ( $course_id ) {
-						return Sensei()->blocks->course_outline->lesson->render_lesson_block( $block, $course_id );
+						return Sensei()->blocks->course->outline->lesson->render_lesson_block( $block, $course_id );
 					},
 					$block['lessons']
 				)
