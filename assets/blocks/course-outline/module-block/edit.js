@@ -19,17 +19,19 @@ import { applyParentStyle } from '../apply-parent-style';
 /**
  * Edit module block component.
  *
- * @param {Object}   props                        Component props.
- * @param {string}   props.clientId               The module block id.
- * @param {string}   props.className              Custom class name.
- * @param {Object}   props.attributes             Block attributes.
- * @param {string}   props.attributes.title       Module title.
- * @param {string}   props.attributes.description Module description.
- * @param {string}   props.attributes.blockStyle  Selected block style.
- * @param {Object}   props.mainColor              Header main color.
- * @param {Object}   props.textColor              Header text color.
- * @param {Object}   props.borderColor            Border color.
- * @param {Function} props.setAttributes          Block set attributes function.
+ * @param {Object}   props                             Component props.
+ * @param {string}   props.clientId                    The module block id.
+ * @param {string}   props.className                   Custom class name.
+ * @param {Object}   props.attributes                  Block attributes.
+ * @param {string}   props.attributes.title            Module title.
+ * @param {string}   props.attributes.description      Module description.
+ * @param {boolean}  props.attributes.bordered         Whether the module has a border.
+ * @param {string}   props.attributes.borderColorValue The border color.
+ * @param {Object}   props.mainColor                   Header main color.
+ * @param {Object}   props.textColor                   Header text color.
+ * @param {Object}   props.borderColor                 Border color.
+ * @param {Function} props.setAttributes               Block set attributes function.
+ * @param {string}   props.name                        Name of the block.
  */
 export const EditModuleBlock = ( props ) => {
 	const {
