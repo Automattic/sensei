@@ -19,7 +19,7 @@ export const OutlineAttributesContext = createContext();
  * A hook to update the status store when a lesson is removed.
  *
  * @param {string}  clientId  The outline block id.
- * @param {boolean} isPreview The outline block id.
+ * @param {boolean} isPreview Whether the block is currently in preview mode.
  */
 const useSynchronizeLessonsOnUpdate = function ( clientId, isPreview ) {
 	const outlineDescendants = useSelect(
