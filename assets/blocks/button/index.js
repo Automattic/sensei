@@ -4,6 +4,7 @@ import { merge } from 'lodash';
 import './color-hooks';
 import { EditButtonBlock } from './edit-button';
 import { saveButtonBlock } from './save-button';
+import { button as icon } from '../../icons/wordpress-icons';
 
 /**
  * Button block styles.
@@ -68,6 +69,7 @@ export const createButtonBlockType = ( { settings, ...options } ) => {
 				align: false,
 				html: false,
 			},
+			icon,
 			styles: [ BlockStyles.Fill, BlockStyles.Outline ],
 			edit( props ) {
 				return <EditButtonBlock { ...props } { ...options } />;
