@@ -3486,10 +3486,7 @@ class Sensei_Course {
 	 * @param \WP_Post $post    Post object.
 	 */
 	public function mark_updating_course_id( $post_id, $post ) {
-		if (
-			! Sensei()->feature_flags->is_enabled( 'course_outline' )
-			|| 'publish' !== $post->post_status
-		) {
+		if ( 'publish' !== $post->post_status ) {
 			return;
 		}
 

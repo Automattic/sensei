@@ -34,9 +34,7 @@ class Sensei_Blocks {
 		add_filter( 'block_categories', [ $this, 'sensei_block_categories' ], 10, 2 );
 
 		// Init blocks.
-		if ( $sensei->feature_flags->is_enabled( 'course_outline' ) ) {
-			$this->course = new Sensei_Course_Blocks( $sensei );
-		}
+		$this->course = new Sensei_Course_Blocks( $sensei );
 	}
 
 	/**
