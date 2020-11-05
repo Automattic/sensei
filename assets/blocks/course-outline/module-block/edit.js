@@ -1,7 +1,7 @@
 import { InnerBlocks, RichText } from '@wordpress/block-editor';
 import { Icon } from '@wordpress/components';
 import { compose } from '@wordpress/compose';
-import { useContext, useState, useEffect } from '@wordpress/element';
+import { useContext, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
 import AnimateHeight from 'react-animate-height';
@@ -14,7 +14,6 @@ import { ModuleStatus } from './module-status';
 import { ModuleBlockSettings } from './settings';
 import { useInsertLessonBlock } from './use-insert-lesson-block';
 import { dispatch } from '@wordpress/data';
-import { applyParentStyle } from '../apply-parent-style';
 
 /**
  * Edit module block component.
@@ -41,27 +40,12 @@ export const EditModuleBlock = ( props ) => {
 		mainColor,
 		textColor,
 		setAttributes,
-		name,
 	} = props;
 	const {
 		outlineAttributes: { collapsibleModules, moduleBorder },
 	} = useContext( OutlineAttributesContext ) || { outlineAttributes: {} };
 
 	useInsertLessonBlock( props );
-
-	const [ outlineClass, setOutlineClass ] = useState( null );
-
-	// setOutlineClass is called when there is an update in course style class only.
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	useEffect( () => {
-		applyParentStyle(
-			'sensei-lms/course-outline',
-			name,
-			clientId,
-			outlineClass,
-			setOutlineClass
-		);
-	} );
 
 	// Get the border setting from the parent if none is set.
 	if ( undefined === bordered ) {
