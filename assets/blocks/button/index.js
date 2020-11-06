@@ -77,6 +77,11 @@ export const createButtonBlockType = ( { settings, ...options } ) => {
 			save( props ) {
 				return saveButtonBlock( { ...props, ...options } );
 			},
+			example: {
+				attributes: {
+					align: 'center',
+				},
+			},
 		},
 		settings
 	);
