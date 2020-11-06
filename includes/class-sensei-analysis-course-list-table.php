@@ -692,7 +692,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 			$url_args['user_id'] = $this->user_id;
 		}
 		$url = add_query_arg( $url_args, admin_url( 'admin.php' ) );
-		echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( $url, 'sensei_csv_download-' . $report, '_sdl_nonce' ) ) . '">' . esc_html__( 'Export all rows (CSV)', 'sensei-lms' ) . '</a>';
+		echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( $url, 'sensei_csv_download', '_sdl_nonce' ) ) . '">' . esc_html__( 'Export all rows (CSV)', 'sensei-lms' ) . '</a>';
 	} // End data_table_footer()
 
 	/**
