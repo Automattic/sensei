@@ -53,12 +53,10 @@ class Sensei_Course_Blocks {
 		add_filter( 'sensei_use_sensei_template', [ 'Sensei_Course_Blocks', 'skip_single_course_template' ] );
 
 		// Init blocks.
-		if ( $sensei->feature_flags->is_enabled( 'course_outline' ) ) {
-			$this->outline         = new Sensei_Course_Outline_Block();
-			$this->progress        = new Sensei_Course_Progress_Block();
-			$this->contact_teacher = new Sensei_Block_Contact_Teacher();
-			$this->take_course     = new Sensei_Block_Take_Course();
-		}
+		$this->outline         = new Sensei_Course_Outline_Block();
+		$this->progress        = new Sensei_Course_Progress_Block();
+		$this->contact_teacher = new Sensei_Block_Contact_Teacher();
+		$this->take_course     = new Sensei_Block_Take_Course();
 	}
 
 	/**
