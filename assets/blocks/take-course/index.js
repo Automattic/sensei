@@ -29,7 +29,7 @@ export default createButtonBlockType( {
 				align: 'full',
 			},
 		],
-		default: 'full',
+		default: 'left',
 	},
 	settings: {
 		name: 'sensei-lms/button-take-course',
@@ -50,7 +50,7 @@ export default createButtonBlockType( {
 				default: 'Take Course',
 			},
 			align: {
-				default: 'full',
+				default: 'left',
 			},
 		},
 	},

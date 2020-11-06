@@ -50,6 +50,7 @@ export const ButtonBlockSettings = ( props ) => {
 		<>
 			<BlockControls>
 				<AlignmentToolbar
+					label={ __( 'Change button alignment', 'sensei-lms' ) }
 					value={ align || props.alignmentOptions?.default }
 					onChange={ ( nextAlign ) => {
 						setAttributes( { align: nextAlign } );
