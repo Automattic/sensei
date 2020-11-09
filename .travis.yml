@@ -1,6 +1,7 @@
 sudo: false
 dist: xenial
 language: php
+services: mysql
 
 # Shared code for e2e jobs.
 e2e_defaults: &e2e_defaults
