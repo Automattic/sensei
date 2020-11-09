@@ -40,7 +40,7 @@ class Sensei_Block_Take_Course {
 		 * @hook sensei_take_course_block_type_args
 		 * @see register_block_type
 		 *
-		 * @param array $args The block arguments as defined by register_block_type.
+		 * @param {array} $args The block arguments as defined by register_block_type.
 		 */
 		$block_args = apply_filters( 'sensei_take_course_block_type_args', [ 'render_callback' => [ $this, 'render_take_course_block' ] ] );
 
