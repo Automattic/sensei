@@ -1,6 +1,7 @@
 sudo: false
-dist: trusty
+dist: xenial
 language: php
+services: mysql
 
 # Shared code for e2e jobs.
 e2e_defaults: &e2e_defaults
@@ -33,6 +34,7 @@ cache:
   - vendor
   - "$HOME/.composer/cache"
 before_script:
+- wget -O phpunit https://phar.phpunit.de/phpunit-6.phar; chmod +x phpunit 
 - export PATH="$HOME/.composer/vendor/bin:$PATH"
 - |
   if [ -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini ]; then
