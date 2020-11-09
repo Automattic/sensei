@@ -1,7 +1,7 @@
 import { InnerBlocks } from '@wordpress/block-editor';
 import { useSelect, withSelect, dispatch } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
-import { createContext, useEffect, useState } from '@wordpress/element';
+import { createContext, useEffect, useRef } from '@wordpress/element';
 
 import { CourseOutlinePlaceholder } from './placeholder';
 import { COURSE_STORE } from '../store';
@@ -43,7 +43,7 @@ const useSynchronizeLessonsOnUpdate = function ( clientId, isPreview ) {
 };
 
 const useApplyStyleToModules = ( clientId, className, isPreview ) => {
-	const [ oldOutlineClass, setOutlineClass ] = useState( null );
+	const oldOutlineClass = useRef( null );
 	const outlineStyles = useSelect(
 		( select ) =>
 			select( 'core/blocks' ).getBlockStyles(
@@ -54,20 +54,18 @@ const useApplyStyleToModules = ( clientId, className, isPreview ) => {
 
 	const newOutlineClass = getActiveStyleClass( outlineStyles, className );
 
-	// setOutlineClass is called when there is an update in course style class only.
-	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect( () => {
 		if ( isPreview ) {
 			return;
 		}
 
-		if ( newOutlineClass && oldOutlineClass !== newOutlineClass ) {
-			setOutlineClass( newOutlineClass );
-
-			if ( ! oldOutlineClass ) {
+		if ( newOutlineClass && oldOutlineClass.current !== newOutlineClass ) {
+			if ( ! oldOutlineClass.current ) {
+				oldOutlineClass.current = newOutlineClass;
 				return;
 			}
 
+			oldOutlineClass.current = newOutlineClass;
 			getCourseInnerBlocks(
 				clientId,
 				'sensei-lms/course-outline-module'
@@ -75,7 +73,7 @@ const useApplyStyleToModules = ( clientId, className, isPreview ) => {
 				applyStyleClass( module.clientId, newOutlineClass )
 			);
 		}
-	} );
+	}, [ clientId, isPreview, newOutlineClass, oldOutlineClass ] );
 };
 
 /**
