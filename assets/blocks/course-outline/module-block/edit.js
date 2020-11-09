@@ -1,7 +1,7 @@
 import { InnerBlocks, RichText } from '@wordpress/block-editor';
 import { Icon } from '@wordpress/components';
 import { compose } from '@wordpress/compose';
-import { useContext, useState } from '@wordpress/element';
+import { useContext, useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
 import AnimateHeight from 'react-animate-height';
@@ -48,9 +48,11 @@ export const EditModuleBlock = ( props ) => {
 	useInsertLessonBlock( props );
 
 	// Get the border setting from the parent if none is set.
-	if ( undefined === bordered ) {
-		setAttributes( { bordered: moduleBorder } );
-	}
+	useEffect( () => {
+		if ( undefined === bordered ) {
+			setAttributes( { bordered: moduleBorder } );
+		}
+	}, [ bordered, moduleBorder, setAttributes ] );
 
 	/**
 	 * Handle update name.
