@@ -23,8 +23,6 @@ if ( have_posts() ) {
 }
 ?>
 
-<article <?php post_class( array( 'lesson', 'post' ) ); ?>>
-
 	<?php
 
 		/**
@@ -41,8 +39,6 @@ if ( have_posts() ) {
 		do_action( 'sensei_single_lesson_content_inside_before', get_the_ID() );
 
 	?>
-
-	<section class="entry fix">
 
 		<?php
 
@@ -70,8 +66,6 @@ if ( have_posts() ) {
 
 		?>
 
-	</section>
-
 	<?php
 
 		/**
@@ -86,7 +80,5 @@ if ( have_posts() ) {
 		do_action( 'sensei_single_lesson_content_inside_after', get_the_ID() );
 
 	?>
-
-</article><!-- .post -->
 
 <?php get_sensei_footer(); ?>

@@ -17,8 +17,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 get_sensei_header();
 ?>
 
-<article <?php post_class( array( 'course', 'post' ) ); ?>>
-
 	<?php
 
 	/**
@@ -39,16 +37,12 @@ get_sensei_header();
 
 	?>
 
-	<section class="entry fix">
-
 		<?php
 		while ( have_posts() ) {
 			the_post();
 			the_content();
 		}
 		?>
-
-	</section>
 
 	<?php
 
@@ -62,6 +56,5 @@ get_sensei_header();
 	do_action( 'sensei_single_course_content_inside_after', get_the_ID() );
 
 	?>
-</article><!-- .post .single-course -->
 
 <?php get_sensei_footer(); ?>

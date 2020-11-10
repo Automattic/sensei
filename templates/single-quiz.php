@@ -17,8 +17,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 get_sensei_header();
 ?>
 
-<article <?php post_class(); ?>>
-
 	<?php
 
 		/**
@@ -35,8 +33,6 @@ get_sensei_header();
 	?>
 
 	<?php if ( sensei_can_user_view_lesson() ) : ?>
-
-		<section class="entry quiz-questions">
 
 			<?php if ( sensei_quiz_has_questions() ) : ?>
 
@@ -128,8 +124,6 @@ get_sensei_header();
 				do_action( 'sensei_quiz_back_link', $quiz_lesson );
 			?>
 
-		</section>
-
 	<?php endif; // user can view lesson ?>
 
 	<?php
@@ -145,6 +139,5 @@ get_sensei_header();
 
 	?>
 
-</article><!-- .quiz -->
 
 <?php get_sensei_footer(); ?>

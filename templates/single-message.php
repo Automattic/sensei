@@ -18,8 +18,6 @@ get_sensei_header();
 the_post();
 ?>
 
-<article <?php post_class(); ?> >
-
 	<?php
 	/**
 	 * Action inside the single message template before the content
@@ -34,11 +32,7 @@ the_post();
 	do_action( 'sensei_single_message_content_inside_before', get_the_ID() );
 	?>
 
-	<section class="entry">
-
 		<?php the_content(); ?>
-
-	</section>
 
 	<?php
 
@@ -52,6 +46,5 @@ the_post();
 	do_action( 'sensei_single_message_content_inside_after', get_the_ID() );
 
 	?>
-</article><!-- .post -->
 
 <?php get_sensei_footer(); ?>
