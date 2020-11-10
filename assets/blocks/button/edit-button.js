@@ -10,20 +10,19 @@ import { ButtonBlockSettings } from './settings-button';
  * @param {Object} props
  */
 export const EditButtonBlock = ( props ) => {
-	const { placeholder, attributes, setAttributes } = props;
+	const { placeholder, attributes, setAttributes, tagName } = props;
 	const { text } = attributes;
 	const { colors } = useSelect( ( select ) => {
 		return select( 'core/block-editor' ).getSettings();
 	}, [] );
 
 	const isReadonly = undefined !== props.text;
+	const buttonProps = getButtonProps( { ...props, colors } );
 
 	return (
 		<div { ...getButtonWrapperProps( props ) }>
 			{ isReadonly ? (
-				<div { ...getButtonProps( { ...props, colors } ) }>
-					{ props.text }
-				</div>
+				<div { ...buttonProps }>{ props.text }</div>
 			) : (
 				<RichText
 					placeholder={
@@ -32,7 +31,8 @@ export const EditButtonBlock = ( props ) => {
 					value={ text }
 					onChange={ ( value ) => setAttributes( { text: value } ) }
 					withoutInteractiveFormatting
-					{ ...getButtonProps( { ...props, colors } ) }
+					{ ...buttonProps }
+					tagName={ tagName }
 					identifier="text"
 				/>
 			) }

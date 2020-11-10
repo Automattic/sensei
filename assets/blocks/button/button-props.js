@@ -23,7 +23,7 @@ export function getBorderRadiusProps( { attributes: { borderRadius } } ) {
 /**
  * Class and style attributes for the button.
  *
- * @param {{attributes, tagName}} props Block properties.
+ * @param {{attributes}} props Block properties.
  * @return {{className, style}} Output HTML attributes.
  */
 export function getButtonProps( props ) {
@@ -42,7 +42,6 @@ export function getButtonProps( props ) {
 			...borderProps.style,
 			...colorProps.style,
 		},
-		tagName: props.tagName,
 	};
 }
 

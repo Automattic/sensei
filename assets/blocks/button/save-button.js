@@ -15,7 +15,8 @@ export const saveButtonBlock = ( { attributes, className, tagName } ) => {
 	return (
 		<div { ...getButtonWrapperProps( { className, attributes } ) }>
 			<RichText.Content
-				{ ...getButtonProps( { attributes, tagName } ) }
+				{ ...getButtonProps( { attributes } ) }
+				tagName={ tagName }
 				value={ text }
 			/>
 		</div>
