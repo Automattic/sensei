@@ -12,22 +12,19 @@ import { mapValues, upperFirst } from 'lodash';
  *
  * @param {Object} colorSettings
  */
-export const withColorSettings = ( colorSettings ) => {
-	return ( Component ) => {
-		const ComponentWithColorSettings = ( props ) => (
+export const withColorSettings = ( colorSettings ) => ( Component ) => {
+	const ComponentWithColorSettings = ( props ) => {
+		return (
 			<>
 				<Component { ...props } />
 				<ColorSettings { ...{ colorSettings, props } } />
 			</>
 		);
-
-		const colors = mapValues(
-			colorSettings,
-			( settings ) => settings.style
-		);
-
-		return withColors( colors )( ComponentWithColorSettings );
 	};
+
+	const colors = mapValues( colorSettings, ( settings ) => settings.style );
+
+	return withColors( colors )( ComponentWithColorSettings );
 };
 
 /**
