@@ -48,7 +48,15 @@ export const ColorSettings = ( { colorSettings, props } ) => {
 				colorSettings={ colors.map( ( color ) => ( {
 					value: props[ color ].color,
 					label: colorSettings[ color ].label,
-					onChange: props[ `set${ upperFirst( color ) }` ],
+					onChange: ( newColor ) => {
+						props[ `set${ upperFirst( color ) }` ]( newColor );
+
+						if ( colorSettings[ color ].onChange )
+							colorSettings[ color ].onChange( {
+								...props,
+								colorValue: newColor,
+							} );
+					},
 				} ) ) }
 			>
 				{ props.backgroundColor && props.textColor && (

@@ -35,7 +35,7 @@ export const EditLessonBlock = ( props ) => {
 		clientId,
 		name,
 		className,
-		attributes: { title, id, fontSize, draft, preview },
+		attributes: { title, id, fontSize, draft, preview, isExample },
 		backgroundColor,
 		textColor,
 		setAttributes,
@@ -99,14 +99,16 @@ export const EditLessonBlock = ( props ) => {
 		}
 	};
 
-	// If the lesson has a title, add it to the tracked lessons in the status store.
+	// If the lesson has a title and it isn't an example, add it to the tracked lessons in the status store.
 	useEffect( () => {
-		if ( title.length > 0 ) {
-			trackLesson( clientId );
-		} else {
-			ignoreLesson( clientId );
+		if ( ! isExample ) {
+			if ( title.length > 0 ) {
+				trackLesson( clientId );
+			} else {
+				ignoreLesson( clientId );
+			}
 		}
-	}, [ clientId, trackLesson, ignoreLesson, title ] );
+	}, [ clientId, trackLesson, ignoreLesson, title, isExample ] );
 
 	let postStatus = '';
 	if ( ! id && title.length ) {

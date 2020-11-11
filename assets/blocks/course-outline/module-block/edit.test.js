@@ -34,6 +34,7 @@ describe( '<EditModuleBlock />', () => {
 		const setAttributesMock = jest.fn();
 		const { getByPlaceholderText } = render(
 			<EditModuleBlock
+				className={ '' }
 				attributes={ { title: '', description: '', lessons: [] } }
 				setAttributes={ setAttributesMock }
 			/>
@@ -50,6 +51,7 @@ describe( '<EditModuleBlock />', () => {
 		const setAttributesMock = jest.fn();
 		const { getByPlaceholderText } = render(
 			<EditModuleBlock
+				className={ '' }
 				attributes={ { title: '', description: '', lessons: [] } }
 				setAttributes={ setAttributesMock }
 			/>

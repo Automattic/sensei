@@ -31,11 +31,23 @@
     "customTextColor": {
       "type": "string"
     },
+    "borderColor": {
+      "type": "string"
+    },
+    "customBorderColor": {
+      "type": "string"
+    },
+    "borderColorValue": {
+      "type": "string"
+    },
     "className": {
       "type": "string"
     },
     "customClassName": {
       "type": "string"
+    },
+    "bordered": {
+      "type": "boolean"
     }
   }
 }

@@ -1,51 +1,58 @@
 import { InnerBlocks, RichText } from '@wordpress/block-editor';
 import { Icon } from '@wordpress/components';
 import { compose } from '@wordpress/compose';
-import { useContext, useState } from '@wordpress/element';
+import { useContext, useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
 import AnimateHeight from 'react-animate-height';
 import { chevronUp } from '../../../icons/wordpress-icons';
 
-import {
-	withColorSettings,
-	withDefaultBlockStyle,
-} from '../../../shared/blocks/settings';
+import { withColorSettings } from '../../../shared/blocks/settings';
 import { OutlineAttributesContext } from '../course-block/edit';
 import SingleLineInput from '../single-line-input';
 import { ModuleStatus } from './module-status';
 import { ModuleBlockSettings } from './settings';
 import { useInsertLessonBlock } from './use-insert-lesson-block';
+import { dispatch } from '@wordpress/data';
 
 /**
  * Edit module block component.
  *
- * @param {Object}   props                        Component props.
- * @param {string}   props.clientId               The module block id.
- * @param {string}   props.className              Custom class name.
- * @param {Object}   props.attributes             Block attributes.
- * @param {string}   props.attributes.title       Module title.
- * @param {string}   props.attributes.description Module description.
- * @param {string}   props.attributes.blockStyle  Selected block style.
- * @param {Object}   props.mainColor              Header main color.
- * @param {Object}   props.textColor              Header text color.
- * @param {Function} props.setAttributes          Block set attributes function.
+ * @param {Object}   props                             Component props.
+ * @param {string}   props.clientId                    The module block id.
+ * @param {string}   props.className                   Custom class name.
+ * @param {Object}   props.attributes                  Block attributes.
+ * @param {string}   props.attributes.title            Module title.
+ * @param {string}   props.attributes.description      Module description.
+ * @param {boolean}  props.attributes.bordered         Whether the module has a border.
+ * @param {string}   props.attributes.borderColorValue The border color.
+ * @param {Object}   props.mainColor                   Header main color.
+ * @param {Object}   props.textColor                   Header text color.
+ * @param {Object}   props.borderColor                 Border color.
+ * @param {Function} props.setAttributes               Block set attributes function.
+ * @param {string}   props.name                        Name of the block.
  */
 export const EditModuleBlock = ( props ) => {
 	const {
 		clientId,
 		className,
-		attributes: { title, description },
+		attributes: { title, description, bordered, borderColorValue },
 		mainColor,
 		textColor,
 		setAttributes,
-		blockStyle,
 	} = props;
 	const {
-		outlineAttributes: { collapsibleModules },
+		outlineAttributes: { collapsibleModules, moduleBorder },
 	} = useContext( OutlineAttributesContext ) || { outlineAttributes: {} };
 
 	useInsertLessonBlock( props );
+
+	// Get the border setting from the parent if none is set.
+	useEffect( () => {
+		if ( undefined === bordered ) {
+			setAttributes( { bordered: moduleBorder } );
+		}
+	}, [ bordered, moduleBorder, setAttributes ] );
 
 	/**
 	 * Handle update name.
@@ -67,15 +74,30 @@ export const EditModuleBlock = ( props ) => {
 
 	const [ isExpanded, setExpanded ] = useState( true );
 
-	const blockStyleColors = {
-		default: { background: mainColor?.color },
-		minimal: { borderColor: mainColor?.color },
-	}[ blockStyle ];
+	let blockStyleColors = {};
+	const style = className.match( /is-style-(\w+)/ );
+
+	if ( style ) {
+		blockStyleColors = {
+			default: { background: mainColor?.color },
+			minimal: { borderColor: mainColor?.color },
+		}[ style[ 1 ] ];
+	}
 
 	return (
 		<>
-			<ModuleBlockSettings { ...props } />
-			<section className={ className }>
+			<ModuleBlockSettings
+				bordered={ bordered }
+				setBordered={ ( newValue ) =>
+					setAttributes( { bordered: newValue } )
+				}
+			/>
+			<section
+				className={ classnames( className, {
+					'sensei-module-bordered': bordered,
+				} ) }
+				style={ { borderColor: borderColorValue } }
+			>
 				<header
 					className="wp-block-sensei-lms-course-outline-module__header"
 					style={ { ...blockStyleColors, color: textColor?.color } }
@@ -143,6 +165,14 @@ export default compose(
 			label: __( 'Main color', 'sensei-lms' ),
 		},
 		textColor: { style: 'color', label: __( 'Text color', 'sensei-lms' ) },
-	} ),
-	withDefaultBlockStyle()
+		borderColor: {
+			style: 'border-color',
+			label: __( 'Border color', 'sensei-lms' ),
+			onChange: ( { clientId, colorValue } ) =>
+				dispatch( 'core/block-editor' ).updateBlockAttributes(
+					clientId,
+					{ borderColorValue: colorValue, bordered: !! colorValue }
+				),
+		},
+	} )
 )( EditModuleBlock );

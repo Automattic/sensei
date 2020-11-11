@@ -3,7 +3,8 @@
   "category": "sensei-lms",
   "supports": {
     "html": false,
-    "multiple": false
+    "multiple": false,
+    "defaultStylePicker": false
   },
   "attributes": {
     "id": {
@@ -13,65 +14,12 @@
       "type": "boolean",
       "default": true
     },
-    "borderColor": {
-      "type": "string"
-    },
-    "customBorderColor": {
-      "type": "string"
+    "moduleBorder": {
+      "type": "boolean",
+      "default": true
     },
     "isPreview": {
       "type": "boolean"
     }
-  },
-  "styles": [
-    {
-      "name": "borderless",
-      "label": "Borderless"
-    },
-    {
-      "name": "default",
-      "label": "Bordered",
-      "isDefault": true
-    }
-  ],
-  "example": {
-    "attributes": {
-      "isPreview": true
-    },
-    "innerBlocks": [
-      {
-        "name": "sensei-lms/course-outline-module",
-        "attributes": {
-          "title": "Module",
-          "description": "About Module"
-        },
-        "innerBlocks": [
-          {
-            "name": "sensei-lms/course-outline-lesson",
-            "attributes": {
-              "title": "Lesson",
-              "id": 1,
-              "draft": false
-            }
-          }
-        ]
-      },
-      {
-        "name": "sensei-lms/course-outline-lesson",
-        "attributes": {
-          "title": "First Lesson",
-          "id": 2,
-          "draft": false
-        }
-      },
-      {
-        "name": "sensei-lms/course-outline-lesson",
-        "attributes": {
-          "title": "Second Lesson",
-          "id": 3,
-          "draft": false
-        }
-      }
-    ]
   }
 }
