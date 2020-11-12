@@ -63,15 +63,13 @@ class Sensei_Dependency_Checker {
 		echo '</p></div>';
 	}
 
-	public static function check_assets()
-	{
-		$assets_dir = dirname(__DIR__ ) . '/assets/dist';
+	public static function check_assets() {
+		$assets_dir = dirname( __DIR__ ) . '/assets/dist';
 
-		return file_exists($assets_dir);
+		return file_exists( $assets_dir );
 	}
 
-	public static function add_assets_notice()
-	{
+	public static function add_assets_notice() {
 		?>
 		<div class="notice notice-error">
 			<p>
