@@ -63,12 +63,22 @@ class Sensei_Dependency_Checker {
 		echo '</p></div>';
 	}
 
+	/**
+	 * Checks if assets/dist exists
+	 *
+	 * @return bool
+	 */
 	public static function check_assets() {
 		$assets_dir = dirname( __DIR__ ) . '/assets/dist';
 
 		return file_exists( $assets_dir );
 	}
 
+	/**
+	 * Adds notice in WP Admin that assets/dist directory not exists
+	 *
+	 * @access private
+	 */
 	public static function add_assets_notice() {
 		?>
 		<div class="notice notice-error">
