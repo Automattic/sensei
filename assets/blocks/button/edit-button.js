@@ -3,6 +3,7 @@ import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { getButtonProps, getButtonWrapperProps } from './button-props';
 import { ButtonBlockSettings } from './settings-button';
+import { RawHTML } from '@wordpress/element';
 
 /**
  * Edit component for a Button block.
@@ -22,7 +23,7 @@ export const EditButtonBlock = ( props ) => {
 		<div { ...getButtonWrapperProps( props ) }>
 			{ isReadonly ? (
 				<div { ...getButtonProps( { ...props, colors } ) }>
-					{ props.text }
+					<RawHTML>{ props.text }</RawHTML>
 				</div>
 			) : (
 				<RichText
