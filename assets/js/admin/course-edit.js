@@ -17,6 +17,7 @@ window.sensei_toggleLegacyMetaboxes = ( enable ) => {
 	const legacyMetaboxes = [
 		'meta-box-course-lessons',
 		'meta-box-module_course_mb',
+		'meta-box-course-video',
 	];
 
 	legacyMetaboxes.forEach( ( legacyMetabox ) => {
