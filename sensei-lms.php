@@ -89,15 +89,17 @@ Sensei_Bootstrap::get_instance()->bootstrap();
 if ( ! function_exists( 'Sensei' ) ) {
 	/**
 	 * Returns the global Sensei Instance.
+	 * phpcs:disable WordPress.NamingConventions.ValidFunctionName.FunctionNameInvalid
 	 *
 	 * @since 1.8.0
 	 */
 	function Sensei() {
+		// phpcs:enable
 		return Sensei_Main::instance( array( 'version' => '3.5.3' ) );
 	}
 }
 
-// backwards compatibility
+// For backwards compatibility, put plugin into the global variable.
 global $woothemes_sensei;
 $woothemes_sensei = Sensei();
 
@@ -111,12 +113,14 @@ register_activation_hook( __FILE__, 'activate_sensei' );
 if ( ! function_exists( 'activate_sensei' ) ) {
 	/**
 	 * Activate_sensei
+	 * phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 	 *
 	 * All the activation checks needed to ensure Sensei is ready for use
 	 *
 	 * @since 1.8.0
 	 */
 	function activate_sensei() {
+		// phpcs:enable
 		Sensei()->activate();
 	}
 }
