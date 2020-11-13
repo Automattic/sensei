@@ -17,12 +17,12 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 
 		$this->factory = new Sensei_Factory();
 		self::resetCourseEnrolmentManager();
-	}//end setUp()
+	}
 
 	public function tearDown() {
 		parent::tearDown();
 		$this->factory->tearDown();
-	} // end tearDown
+	}
 
 	private function setupCoursesAndModules() {
 		$this->course_ids = $this->factory->post->create_many(
@@ -963,6 +963,50 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 
 		$this->assertArrayHasKey( 'course_completed', $usage_data, 'Key' );
 		$this->assertEquals( 5, $usage_data['course_completed'], 'Count' );
+	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_course_completion_rate
+	 * @covers Sensei_Usage_Tracking_Data::get_enrolled_learner_terms
+	 * @covers Sensei_Usage_Tracking_Data::get_completed_course_count
+	 */
+	public function testGetCourseCompletionRate() {
+		$this->setupCoursesAndModules();
+
+		// Create some admins and subscribers.
+		$subscribers = $this->factory->user->create_many( 5, array( 'role' => 'subscriber' ) );
+		$admins      = $this->factory->user->create_many( 2, array( 'role' => 'administrator' ) );
+		$users       = array_merge( $subscribers, $admins );
+
+		// Enroll some learners in some courses.
+		foreach ( $users as $user ) {
+			$this->factory->comment->create(
+				array(
+					'user_id'          => $user,
+					'comment_post_ID'  => $this->course_ids[0],
+					'comment_type'     => 'sensei_course_status',
+					'comment_approved' => 'in-progress',
+				)
+			);
+
+			$this->factory->comment->create(
+				array(
+					'user_id'          => $user,
+					'comment_post_ID'  => $this->course_ids[1],
+					'comment_type'     => 'sensei_course_status',
+					'comment_approved' => 'complete',
+				)
+			);
+		}
+
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'course_completion_rate', $usage_data, 'Key' );
+		// Course 1 - 5 non-admin learners enrolled, 0 completed; Completion rate = 0
+		// Course 2 - 5 non-admin learners enrolled, 5 non-admin learners completed, Completion rate = 1
+		// Course 3 - 0 enrolled
+		$this->assertEquals( 50, $usage_data['course_completion_rate'], 'Course completion rate' );
 	}
 
 	/**
