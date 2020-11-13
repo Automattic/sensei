@@ -301,11 +301,11 @@ class Sensei_Usage_Tracking_Data {
 			$completed_course_count = self::get_completed_course_count( $course->ID, $learner_terms );
 
 			// Calculate the completion rate.
-			$course_completion_rate[] = $completed_course_count / $enrolled_learner_count;
+			$course_completion_rates[] = $completed_course_count / $enrolled_learner_count;
 		}
 
 		// Average course completion rate = Sum of course completion rates / # of courses
-		return round( array_sum( $course_completion_rate ) / $course_count * 100, 2 );
+		return round( array_sum( $course_completion_rates ) / $course_count * 100, 2 );
 	}
 
 	/**
