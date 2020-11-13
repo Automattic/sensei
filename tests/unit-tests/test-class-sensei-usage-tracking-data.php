@@ -977,12 +977,11 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		$this->setupCoursesAndModules();
 
 		// Create some admins and subscribers.
-		$subscribers = $this->factory->user->create_many( 5, array( 'role' => 'subscriber' ) );
 		$admins      = $this->factory->user->create_many( 2, array( 'role' => 'administrator' ) );
-		$users       = array_merge( $subscribers, $admins );
+		$subscribers = $this->factory->user->create_many( 5, array( 'role' => 'subscriber' ) );
 
 		// Enroll some learners in some courses.
-		foreach ( $users as $user ) {
+		foreach ( array_merge( $admins, $subscribers ) as $user ) {
 			$this->factory->comment->create(
 				array(
 					'user_id'          => $user,
@@ -999,6 +998,19 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 					'comment_type'     => 'sensei_course_status',
 					'comment_approved' => 'complete',
 				)
+			);
+
+			// Set term data.
+			wp_set_object_terms(
+				$this->course_ids[0],
+				'user-' . $user,
+				Sensei_PostTypes::LEARNER_TAXONOMY_NAME
+			);
+
+			wp_set_object_terms(
+				$this->course_ids[1],
+				'user-' . $user,
+				Sensei_PostTypes::LEARNER_TAXONOMY_NAME
 			);
 		}
 
