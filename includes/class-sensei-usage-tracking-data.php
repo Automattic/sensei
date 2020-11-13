@@ -304,6 +304,10 @@ class Sensei_Usage_Tracking_Data {
 			$course_completion_rates[] = $completed_course_count / $enrolled_learner_count;
 		}
 
+		if ( 0 === $course_count ) {
+			return '';
+		}
+
 		// Average course completion rate = Sum of course completion rates / # of courses.
 		return round( array_sum( $course_completion_rates ) / $course_count * 100, 2 );
 	}
