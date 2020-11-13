@@ -79,7 +79,6 @@ if ( ! Sensei_Dependency_Checker::check_php() ) {
 
 if ( ! Sensei_Dependency_Checker::check_assets() ) {
 	add_action( 'admin_notices', array( 'Sensei_Dependency_Checker', 'add_assets_notice' ) );
-	return;
 }
 
 require_once dirname( __FILE__ ) . '/includes/class-sensei-bootstrap.php';
