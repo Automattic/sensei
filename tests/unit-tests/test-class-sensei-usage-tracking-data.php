@@ -966,6 +966,8 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Course completion rate.
+	 *
 	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
 	 * @covers Sensei_Usage_Tracking_Data::get_course_completion_rate
 	 * @covers Sensei_Usage_Tracking_Data::get_enrolled_learner_terms

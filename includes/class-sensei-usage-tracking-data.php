@@ -284,7 +284,7 @@ class Sensei_Usage_Tracking_Data {
 
 		foreach ( $courses as $course ) {
 			// Calculate number of learners who are enrolled in the course.
-			$learner_terms = self::get_enrolled_learner_terms( $course->ID );
+			$learner_terms          = self::get_enrolled_learner_terms( $course->ID );
 			$enrolled_learner_count = 0;
 
 			if ( ! empty( $learner_terms ) && ! is_wp_error( $learner_terms ) ) {
@@ -304,7 +304,7 @@ class Sensei_Usage_Tracking_Data {
 			$course_completion_rates[] = $completed_course_count / $enrolled_learner_count;
 		}
 
-		// Average course completion rate = Sum of course completion rates / # of courses
+		// Average course completion rate = Sum of course completion rates / # of courses.
 		return round( array_sum( $course_completion_rates ) / $course_count * 100, 2 );
 	}
 
