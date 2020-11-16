@@ -36,8 +36,34 @@ export const BlockStyles = {
 export const createButtonBlockType = ( { settings, ...options } ) => {
 	options = {
 		tagName: 'a',
+		alignmentOptions: {
+			alignmentControls: [
+				{
+					icon: 'align-left',
+					title: __( 'Align left', 'sensei-lms' ),
+					align: 'left',
+				},
+				{
+					icon: 'align-center',
+					title: __( 'Align center', 'sensei-lms' ),
+					align: 'center',
+				},
+				{
+					icon: 'align-right',
+					title: __( 'Align right', 'sensei-lms' ),
+					align: 'right',
+				},
+				{
+					icon: 'align-full-width',
+					title: __( 'Full content width', 'sensei-lms' ),
+					align: 'full',
+				},
+			],
+			default: 'left',
+		},
 		...options,
 	};
+
 	return merge(
 		{
 			name: 'sensei-lms/button',
