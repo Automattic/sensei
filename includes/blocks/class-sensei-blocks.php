@@ -91,8 +91,8 @@ class Sensei_Blocks {
 		 * @see register_block_type_from_metadata
 		 * @see includes/blocks/compat.php
 		 *
-		 * @param {array}  $args The block arguments as defined by register_block_type.
-		 * @param {string} $args Block name.
+		 * @param {array}  $block_args The block arguments as defined by register_block_type.
+		 * @param {string} $block_name Block name.
 		 */
 		$block_args = apply_filters( 'sensei_block_type_args', $block_args, $block_name );
 
