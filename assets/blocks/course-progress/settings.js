@@ -18,7 +18,7 @@ export function CourseProgressSettings( {
 	setHeight,
 } ) {
 	const initialHeight = 14;
-	const initialBorderRadius = 2;
+	const initialBorderRadius = 10;
 
 	borderRadius =
 		undefined === borderRadius ? initialBorderRadius : borderRadius;
