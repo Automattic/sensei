@@ -28,10 +28,11 @@ class Sensei_Course_Progress_Block {
 	 */
 	public function register_block() {
 		Sensei_Blocks::register_sensei_block(
-			Sensei()->assets->src_path( 'blocks/course-progress' ),
+			'sensei-lms/course-progress',
 			[
 				'render_callback' => [ $this, 'render_course_progress' ],
-			]
+			],
+			Sensei()->assets->src_path( 'blocks/course-progress' )
 		);
 	}
 
