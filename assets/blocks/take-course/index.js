@@ -24,9 +24,6 @@ export default createButtonBlockType( {
 			text: {
 				default: 'Take Course',
 			},
-			align: {
-				default: 'left',
-			},
 		},
 	},
 } );
