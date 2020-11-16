@@ -29,22 +29,7 @@ class Sensei_Block_Take_Course {
 	 * @access private
 	 */
 	public function register_block() {
-
-		/**
-		 * Filter the render callback of the Take Course block.
-		 *
-		 * In WordPress versions 5.5 and later, block type arguments can be filtered by using register_block_type_args
-		 * instead. This filter exists to support earlier versions only.
-		 *
-		 * @since 3.6.0
-		 * @hook sensei_take_course_block_type_args
-		 * @see register_block_type
-		 *
-		 * @param {array} $args The block arguments as defined by register_block_type.
-		 */
-		$block_args = apply_filters( 'sensei_take_course_block_type_args', [ 'render_callback' => [ $this, 'render_take_course_block' ] ] );
-
-		register_block_type( 'sensei-lms/button-take-course', $block_args );
+		Sensei_Blocks::register_sensei_block( 'sensei-lms/button-take-course', [ 'render_callback' => [ $this, 'render_take_course_block' ] ] );
 	}
 
 	/**
