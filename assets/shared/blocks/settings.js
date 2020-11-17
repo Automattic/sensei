@@ -1,3 +1,5 @@
+import { useEffect } from '@wordpress/element';
+import { useSelect, useDispatch } from '@wordpress/data';
 import {
 	ContrastChecker,
 	InspectorControls,
@@ -97,4 +99,26 @@ export const withDefaultBlockStyle = ( defaultStyleName = 'default' ) => (
 	if ( style ) extraProps.blockStyle = style[ 1 ];
 
 	return <Component { ...props } { ...extraProps } />;
+};
+
+/**
+ * Hook to set the default style if no style is defined.
+ *
+ * @param {string} clientId     Block client ID.
+ * @param {string} defaultStyle Default block style.
+ */
+export const useSetDefaultStyle = ( clientId, defaultStyle ) => {
+	const attributesSelector = ( select ) =>
+		select( 'core/block-editor' ).getBlock( clientId ).attributes;
+
+	const { className = '' } = useSelect( attributesSelector, [ clientId ] );
+	const { updateBlockAttributes } = useDispatch( 'core/block-editor' );
+
+	useEffect( () => {
+		if ( ! className.match( /is-style-\w+/ ) && defaultStyle ) {
+			updateBlockAttributes( clientId, {
+				className: `${ className } is-style-${ defaultStyle }`,
+			} );
+		}
+	}, [ clientId, className, defaultStyle, updateBlockAttributes ] );
 };
