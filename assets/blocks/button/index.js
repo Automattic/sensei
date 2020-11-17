@@ -5,6 +5,7 @@ import './color-hooks';
 import { EditButtonBlock } from './edit-button';
 import { saveButtonBlock } from './save-button';
 import { button as icon } from '../../icons/wordpress-icons';
+import { withDefaultBlockStyle } from '../../shared/blocks/settings';
 
 /**
  * Button block styles.
@@ -48,6 +49,11 @@ export const createButtonBlockType = ( { settings, ...options } ) => {
 
 	const defaultStyle = find( styles, 'isDefault' )?.name;
 
+	// eslint-disable-next-line @wordpress/no-unused-vars-before-return -- We don't wanna recreate the component every edit render.
+	const EditButtonBlockWithBlockStyle = withDefaultBlockStyle( defaultStyle )(
+		EditButtonBlock
+	);
+
 	return merge(
 		{
 			name: 'sensei-lms/button',
@@ -83,7 +89,7 @@ export const createButtonBlockType = ( { settings, ...options } ) => {
 			styles,
 			edit( props ) {
 				return (
-					<EditButtonBlock
+					<EditButtonBlockWithBlockStyle
 						{ ...props }
 						{ ...options }
 						defaultStyle={ defaultStyle }
