@@ -27,11 +27,12 @@ class Sensei_Course_Progress_Block {
 	 * @access private
 	 */
 	public function register_block() {
-		register_block_type_from_metadata(
-			Sensei()->assets->src_path( 'blocks/course-progress' ),
+		Sensei_Blocks::register_sensei_block(
+			'sensei-lms/course-progress',
 			[
 				'render_callback' => [ $this, 'render_course_progress' ],
-			]
+			],
+			Sensei()->assets->src_path( 'blocks/course-progress' )
 		);
 	}
 
