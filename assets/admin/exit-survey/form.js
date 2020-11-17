@@ -27,11 +27,26 @@ export const ExitSurveyForm = ( { submit, skip } ) => {
 		[ submit ]
 	);
 
-	const hasInput = !! form.current?.elements?.reason?.value;
+	const onChange = () => {
+		const formData = new window.FormData( form.current );
+		updateInput( formData.values() );
+	};
+
+	let hasInput = false;
+	if ( form.current ) {
+		const formData = new window.FormData( form.current );
+		const detailsFieldName = `details-${ formData.get( 'reason' ) }`;
+		const detailsField =
+			form.current?.elements[ detailsFieldName ] || false;
+
+		hasInput =
+			!! formData.get( 'reason' ) &&
+			( ! detailsField || formData.get( detailsFieldName ) !== '' );
+	}
 
 	return (
 		<form
-			onChange={ updateInput }
+			onChange={ onChange }
 			className="sensei-modal sensei-exit-survey"
 			ref={ form }
 			onSubmit={ submitForm }
