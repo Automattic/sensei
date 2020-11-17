@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { merge } from 'lodash';
+import { merge, find } from 'lodash';
 
 import './color-hooks';
 import { EditButtonBlock } from './edit-button';
@@ -46,6 +46,8 @@ export const createButtonBlockType = ( { settings, ...options } ) => {
 		? settings.styles
 		: [ { ...BlockStyles.Fill, isDefault: true }, BlockStyles.Outline ];
 
+	const defaultStyle = find( styles, 'isDefault' )?.name;
+
 	return merge(
 		{
 			name: 'sensei-lms/button',
@@ -80,7 +82,13 @@ export const createButtonBlockType = ( { settings, ...options } ) => {
 			icon,
 			styles,
 			edit( props ) {
-				return <EditButtonBlock { ...props } { ...options } />;
+				return (
+					<EditButtonBlock
+						{ ...props }
+						{ ...options }
+						defaultStyle={ defaultStyle }
+					/>
+				);
 			},
 			save( props ) {
 				return saveButtonBlock( { ...props, ...options } );
