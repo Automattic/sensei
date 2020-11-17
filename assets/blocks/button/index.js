@@ -13,7 +13,6 @@ export const BlockStyles = {
 	Fill: {
 		name: 'default',
 		label: __( 'Fill', 'sensei-lms' ),
-		isDefault: true,
 	},
 	Outline: {
 		name: 'outline',
@@ -42,6 +41,10 @@ export const createButtonBlockType = ( { settings, ...options } ) => {
 		},
 		...options,
 	};
+
+	const styles = settings.styles
+		? settings.styles
+		: [ { ...BlockStyles.Fill, isDefault: true }, BlockStyles.Outline ];
 
 	return merge(
 		{
@@ -75,7 +78,7 @@ export const createButtonBlockType = ( { settings, ...options } ) => {
 				html: false,
 			},
 			icon,
-			styles: [ BlockStyles.Fill, BlockStyles.Outline ],
+			styles,
 			edit( props ) {
 				return <EditButtonBlock { ...props } { ...options } />;
 			},
