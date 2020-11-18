@@ -10,7 +10,7 @@ export default createButtonBlockType( {
 		name: 'sensei-lms/button-take-course',
 		title: __( 'Take Course', 'sensei-lms' ),
 		description: __(
-			'Allows the learner to start the course. Only displayed to users not already enrolled.',
+			'Enable a registered user to start the course. This block is only displayed if the user is not already enrolled.',
 			'sensei-lms'
 		),
 		keywords: [
