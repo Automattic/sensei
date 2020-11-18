@@ -1273,7 +1273,6 @@ class Sensei_Main {
 			if ( ! empty( $post_type ) ) {
 				$classes[] = $post_type;
 			}
-
 		}
 		return $classes;
 	}

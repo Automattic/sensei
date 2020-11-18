@@ -31,7 +31,6 @@ get_sensei_header();
  * @hooked Sensei()->message->send_message_link        -  35
  * @hooked Sensei_Course::the_course_video             -  40
  * @since  1.9.0
- *
  */
 do_action( 'sensei_single_course_content_inside_before', get_the_ID() );
 
@@ -52,7 +51,6 @@ while ( have_posts() ) {
  * @param integer $course_id
  *
  * @since 1.9.0
- *
  */
 do_action( 'sensei_single_course_content_inside_after', get_the_ID() );
 
