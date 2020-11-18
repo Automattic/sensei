@@ -36,8 +36,13 @@ export const BlockStyles = {
 export const createButtonBlockType = ( { settings, ...options } ) => {
 	options = {
 		tagName: 'a',
+		alignmentOptions: {
+			controls: [ 'left', 'center', 'right', 'full' ],
+			default: 'left',
+		},
 		...options,
 	};
+
 	return merge(
 		{
 			name: 'sensei-lms/button',

@@ -60,7 +60,7 @@ export function getButtonWrapperProps( { className, attributes: { align } } ) {
 		className: classnames(
 			className,
 			'wp-block-sensei-button',
-			`has-text-align-${ align || 'full' }`
+			`has-text-align-${ align || 'left' }`
 		),
 	};
 }

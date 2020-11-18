@@ -10,7 +10,7 @@ describe( 'saveButtonBlock', () => {
 		);
 
 		const { classList } = container.firstChild;
-		expect( classList ).toContain( 'has-text-align-full' );
+		expect( classList ).toContain( 'has-text-align-left' );
 		expect( classList ).toContain( 'wp-block-sensei-button' );
 	} );
 
