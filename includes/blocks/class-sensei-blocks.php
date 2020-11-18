@@ -93,6 +93,8 @@ class Sensei_Blocks {
 		 *
 		 * @param {array}  $block_args The block arguments as defined by register_block_type.
 		 * @param {string} $block_name Block name.
+		 *
+		 * @return {array} Block args.
 		 */
 		$block_args = apply_filters( 'sensei_block_type_args', $block_args, $block_name );
 
