@@ -158,7 +158,7 @@ class Sensei_Templates {
 		 * @since  3.6.0
 		 * @access private
 		 */
-		if ( Sensei()->feature_flags->is_enabled( 'optional_templates' ) && ! apply_filters( 'sensei_use_sensei_template', true ) ) {
+		if ( ! apply_filters( 'sensei_use_sensei_template', true ) ) {
 			return $template;
 		}
 
