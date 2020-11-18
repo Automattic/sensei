@@ -14,23 +14,19 @@ window.sensei_toggleLegacyMetaboxes = ( enable ) => {
 	const editPostSelector = wp.data.select( 'core/edit-post' );
 	const editPostDispatcher = wp.data.dispatch( 'core/edit-post' );
 
-	if (
-		enable !==
-		editPostSelector.isEditorPanelEnabled( 'meta-box-course-lessons' )
-	) {
-		editPostDispatcher.toggleEditorPanelEnabled(
-			'meta-box-course-lessons'
-		);
-	}
+	const legacyMetaboxes = [
+		'meta-box-course-lessons',
+		'meta-box-module_course_mb',
+		'meta-box-course-video',
+	];
 
-	if (
-		enable !==
-		editPostSelector.isEditorPanelEnabled( 'meta-box-module_course_mb' )
-	) {
-		editPostDispatcher.toggleEditorPanelEnabled(
-			'meta-box-module_course_mb'
-		);
-	}
+	legacyMetaboxes.forEach( ( legacyMetabox ) => {
+		if (
+			enable !== editPostSelector.isEditorPanelEnabled( legacyMetabox )
+		) {
+			editPostDispatcher.toggleEditorPanelEnabled( legacyMetabox );
+		}
+	} );
 };
 
 jQuery( document ).ready( function ( $ ) {
