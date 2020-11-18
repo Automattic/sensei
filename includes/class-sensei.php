@@ -1268,6 +1268,12 @@ class Sensei_Main {
 	public function body_class( $classes ) {
 		if ( is_sensei() ) {
 			$classes[] = 'sensei';
+
+			$post_type = get_post_type();
+			if ( ! empty( $post_type ) ) {
+				$classes[] = $post_type;
+			}
+
 		}
 		return $classes;
 	}
