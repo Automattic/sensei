@@ -42,6 +42,10 @@ $block: '.wp-block-sensei-lms-course-outline-module';
 
 		a {
 			color: inherit;
+			text-decoration: inherit;
+			&:hover {
+				text-decoration: underline;
+			}
 		}
 	}
 
