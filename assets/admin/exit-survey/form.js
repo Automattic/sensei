@@ -41,7 +41,8 @@ export const ExitSurveyForm = ( { submit, skip } ) => {
 
 		hasInput =
 			!! formData.get( 'reason' ) &&
-			( ! detailsField || formData.get( detailsFieldName ) !== '' );
+			( ! detailsField ||
+				formData.get( detailsFieldName ).trim() !== '' );
 	}
 
 	return (
