@@ -59,6 +59,7 @@ export function getButtonWrapperProps( { className, attributes: { align } } ) {
 		className: classnames(
 			className,
 			'wp-block-sensei-button',
+			'wp-block-button',
 			`has-text-align-${ align || 'left' }`
 		),
 	};
