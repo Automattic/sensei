@@ -47,7 +47,8 @@
       "type": "string"
     },
     "bordered": {
-      "type": "boolean"
+      "type": "boolean",
+      "default": true
     }
   }
 }
