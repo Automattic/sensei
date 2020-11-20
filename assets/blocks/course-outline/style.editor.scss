@@ -12,10 +12,9 @@ $dark-gray: #1a1d20;
 		}
 	}
 
-	.wp-block-sensei-lms-course-outline-module {
-		&__title-input {
-			background: none;
-		}
+	textarea.wp-block-sensei-lms-course-outline-module__title-input {
+		color: inherit;
+		background: none;
 	}
 
 	.wp-block-sensei-lms-course-outline-lesson {
@@ -35,6 +34,10 @@ $dark-gray: #1a1d20;
 			opacity: 0.5;
 			border-radius: 6px;
 		}
+	}
+
+	textarea.wp-block-sensei-lms-course-outline-lesson__input {
+		color: inherit;
 	}
 
 	.wp-block-sensei-lms-course-outline-status-control {
