@@ -10,7 +10,7 @@ import {
 import { CourseIcon } from '../icons';
 
 updateCategory( 'sensei-lms', {
-	icon: CourseIcon( { width: '24', height: '24' } ),
+	icon: CourseIcon( { width: '20', height: '20' } ),
 } );
 
 [
