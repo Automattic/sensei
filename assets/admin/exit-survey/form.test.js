@@ -11,12 +11,24 @@ describe( '<ExitSurveyForm />', () => {
 		skip: () => screen.getByRole( 'button', { name: 'Skip Feedback' } ),
 	};
 
-	it( 'Submit is disabled until an item is selected', () => {
-		const { getByLabelText } = render( <ExitSurveyForm /> );
+	it( 'Submit is disabled until an item is selected and details filled out (if provided)', () => {
+		const { getByLabelText, getByPlaceholderText } = render(
+			<ExitSurveyForm />
+		);
 
 		expect( buttons.submit() ).toBeDisabled();
 
+		// This reason does not require details.
+		userEvent.click( getByLabelText( 'I no longer need the plugin' ) );
+		expect( buttons.submit() ).not.toBeDisabled();
+
+		// This reason does expect details.
 		userEvent.click( getByLabelText( 'I found a better plugin' ) );
+		expect( buttons.submit() ).toBeDisabled();
+		userEvent.type(
+			getByPlaceholderText( "What's the name of the plugin?" ),
+			'Test detail'
+		);
 
 		expect( buttons.submit() ).not.toBeDisabled();
 	} );
