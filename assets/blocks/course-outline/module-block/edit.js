@@ -49,7 +49,7 @@ export const EditModuleBlock = ( props ) => {
 
 	// Get the border setting from the parent if none is set.
 	useEffect( () => {
-		if ( undefined === bordered ) {
+		if ( undefined === bordered && undefined !== moduleBorder ) {
 			setAttributes( { bordered: moduleBorder } );
 		}
 	}, [ bordered, moduleBorder, setAttributes ] );
