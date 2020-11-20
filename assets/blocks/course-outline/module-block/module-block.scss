@@ -32,7 +32,8 @@ $block: '.wp-block-sensei-lms-course-outline-module';
 	}
 
 	#{$block}__title {
-		font-size: 1em;
+		font-size: 1.1em;
+		font-weight: inherit;
 		flex: 1;
 		margin: 0;
 		color: inherit;
@@ -40,8 +41,13 @@ $block: '.wp-block-sensei-lms-course-outline-module';
 			content: none;
 		}
 
-		a {
+		a:not(.button) {
+			font-weight: inherit;
 			color: inherit;
+			text-decoration: inherit;
+			&:hover {
+				text-decoration: underline;
+			}
 		}
 	}
 
