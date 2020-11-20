@@ -147,7 +147,7 @@ class Sensei_Course_Outline_Module_Block {
 		$class_names   = [ 'wp-block-sensei-lms-course-outline-module', 'sensei-collapsible', $class_name ];
 		$inline_styles = [];
 
-		if ( ! empty( $block_attributes['bordered'] ) ) {
+		if ( ! isset( $block_attributes['bordered'] ) || true === $block_attributes['bordered'] ) {
 			$class_names[] = 'sensei-module-bordered';
 
 			if ( ! empty( $block_attributes['borderColorValue'] ) ) {
