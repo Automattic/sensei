@@ -55,12 +55,11 @@ const actions = {
 		yield { type: 'SAVING', isSavingStructure: false };
 	},
 	setStructure: ( structure ) => ( { type: 'SET_SERVER', structure } ),
-	setEditorStructure: ( structure ) => {
-		return { type: 'SET_EDITOR', structure };
-	},
-	setEditorDirty: ( isEditorDirty ) => {
-		return { type: 'SET_DIRTY', isEditorDirty };
-	},
+	setEditorStructure: ( structure ) => ( { type: 'SET_EDITOR', structure } ),
+	setEditorDirty: ( isEditorDirty ) => ( {
+		type: 'SET_DIRTY',
+		isEditorDirty,
+	} ),
 };
 
 /**
