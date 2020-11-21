@@ -117,11 +117,9 @@ const selectors = {
 	getEditorStructure: ( { editor } ) => editor,
 	shouldSave: ( { isEditorDirty, isSavingStructure } ) =>
 		! isSavingStructure && isEditorDirty,
-	shouldResavePost: ( {
-		isEditorDirty,
-		isSavingStructure,
-		hasStructureUpdate,
-	} ) => ! isSavingStructure && isEditorDirty && hasStructureUpdate,
+	getIsSavingStructure: ( { isSavingStructure } ) => isSavingStructure,
+	shouldResavePost: ( { isSavingStructure, hasStructureUpdate } ) =>
+		! isSavingStructure && hasStructureUpdate,
 };
 
 export const COURSE_STORE = 'sensei/course-structure';
@@ -160,6 +158,7 @@ const registerCourseStructureStore = () => {
 
 		const isSavingPost =
 			editor.isSavingPost() && ! editor.isAutosavingPost();
+		const isSavingStructure = select( COURSE_STORE ).getIsSavingStructure();
 
 		// First update where post is saving.
 		if ( ! postSaving && isSavingPost ) {
@@ -167,7 +166,7 @@ const registerCourseStructureStore = () => {
 			startSave();
 
 			// First update where post is no longer saving.
-		} else if ( postSaving && ! isSavingPost ) {
+		} else if ( postSaving && ! isSavingPost && ! isSavingStructure ) {
 			postSaving = false;
 			finishSave();
 		}
