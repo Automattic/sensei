@@ -7,7 +7,7 @@ import { isEqual } from 'lodash';
 const DEFAULT_STATE = {
 	structure: null,
 	editor: [],
-	isSaving: false,
+	isSavingStructure: false,
 	isEditorDirty: false,
 	hasChanges: false,
 };
@@ -29,7 +29,7 @@ const actions = {
 	*save() {
 		const { getEditorStructure } = select( COURSE_STORE );
 
-		yield { type: 'SAVING', isSaving: true };
+		yield { type: 'SAVING', isSavingStructure: true };
 		const courseId = yield select( 'core/editor' ).getCurrentPostId();
 		try {
 			const result = yield apiFetch( {
@@ -52,7 +52,7 @@ const actions = {
 			} );
 		}
 
-		yield { type: 'SAVING', isSaving: false };
+		yield { type: 'SAVING', isSavingStructure: false };
 	},
 	setStructure: ( structure ) => ( { type: 'SET_SERVER', structure } ),
 	setEditorStructure: ( structure ) => {
@@ -87,9 +87,9 @@ const reducers = {
 			hasStructureUpdate: state.hasStructureUpdate && isEditorDirty,
 		};
 	},
-	SAVING: ( { isSaving }, state ) => ( {
+	SAVING: ( { isSavingStructure }, state ) => ( {
 		...state,
-		isSaving,
+		isSavingStructure,
 	} ),
 	SET_DIRTY: ( { isEditorDirty }, state ) => ( {
 		...state,
@@ -111,9 +111,13 @@ const resolvers = {
 const selectors = {
 	getStructure: ( { structure } ) => structure,
 	getEditorStructure: ( { editor } ) => editor,
-	shouldSave: ( { isEditorDirty, isSaving } ) => ! isSaving && isEditorDirty,
-	shouldResavePost: ( { isEditorDirty, isSaving, hasStructureUpdate } ) =>
-		! isSaving && isEditorDirty && hasStructureUpdate,
+	shouldSave: ( { isEditorDirty, isSavingStructure } ) =>
+		! isSavingStructure && isEditorDirty,
+	shouldResavePost: ( {
+		isEditorDirty,
+		isSavingStructure,
+		hasStructureUpdate,
+	} ) => ! isSavingStructure && isEditorDirty && hasStructureUpdate,
 };
 
 export const COURSE_STORE = 'sensei/course-structure';
