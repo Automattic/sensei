@@ -9,7 +9,7 @@ const DEFAULT_STATE = {
 	editor: [],
 	isSavingStructure: false,
 	isEditorDirty: false,
-	hasChanges: false,
+	hasStructureUpdate: false,
 };
 
 const actions = {
@@ -60,6 +60,7 @@ const actions = {
 		type: 'SET_DIRTY',
 		isEditorDirty,
 	} ),
+	clearStructureUpdate: () => ( { type: 'CLEAR_STRUCTURE_UPDATE' } ),
 };
 
 /**
@@ -93,6 +94,10 @@ const reducers = {
 	SET_DIRTY: ( { isEditorDirty }, state ) => ( {
 		...state,
 		isEditorDirty,
+	} ),
+	CLEAR_STRUCTURE_UPDATE: ( state ) => ( {
+		...state,
+		hasStructureUpdate: false,
 	} ),
 	DEFAULT: ( action, state ) => state,
 };
@@ -144,6 +149,7 @@ const registerCourseStructureStore = () => {
 		const shouldResavePost = select( COURSE_STORE ).shouldResavePost();
 		if ( shouldResavePost ) {
 			dispatch( 'core/editor' ).savePost();
+			dispatch( COURSE_STORE ).clearStructureUpdate();
 		}
 	};
 
