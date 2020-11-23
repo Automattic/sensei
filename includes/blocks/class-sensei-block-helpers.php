@@ -85,12 +85,14 @@ class Sensei_Block_Helpers {
 	 * @return string
 	 */
 	public static function render_style_attributes( $class_names, $css ) {
+		$css_classes   = isset( $css['css_classes'] ) && is_array( $css['css_classes'] ) ? $css['css_classes'] : [];
+		$inline_styles = isset( $css['inline_styles'] ) && is_array( $css['inline_styles'] ) ? $css['inline_styles'] : [];
 
-		$class_names = array_merge( is_array( $class_names ) ? $class_names : [ $class_names ], $css['css_classes'] );
+		$class_names = array_merge( is_array( $class_names ) ? $class_names : [ $class_names ], $css_classes );
 		return sprintf(
 			'class="%s" style="%s"',
 			esc_attr( implode( ' ', $class_names ) ),
-			esc_attr( implode( '; ', $css['inline_styles'] ) )
+			esc_attr( implode( '; ', $inline_styles ) )
 		);
 	}
 
