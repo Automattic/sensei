@@ -44,17 +44,21 @@ class Sensei_Block_Helpers {
 			if ( ! $style ) {
 				continue;
 			}
-			$named_color  = $block_attributes[ $color ] ?? null;
-			$custom_color = $block_attributes[ 'custom' . ucfirst( $color ) ] ?? null;
+			$named_color   = $block_attributes[ $color ] ?? null;
+			$custom_color  = $block_attributes[ 'custom' . ucfirst( $color ) ] ?? null;
+			$default_color = $block_attributes[ 'default' . ucfirst( $color ) ] ?? null;
 
 			if ( $custom_color || $named_color ) {
 				$attributes['css_classes'][] = sprintf( 'has-%s', $style );
 			}
+
+			$named_class = 'border-color' === $style ? 'border-color-%s' : 'has-%s-%s';
 			if ( $named_color ) {
-				$named_class                 = 'border-color' === $style ? 'border-color-%s' : 'has-%s-%s';
 				$attributes['css_classes'][] = sprintf( $named_class, $named_color, $style );
 			} elseif ( $custom_color ) {
 				$attributes['inline_styles'][] = sprintf( '%s: %s;', $style, $custom_color );
+			} elseif ( $default_color ) {
+				$attributes['css_classes'][] = sprintf( $named_class, $default_color, $style );
 			}
 		}
 
