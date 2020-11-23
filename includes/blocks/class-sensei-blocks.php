@@ -58,7 +58,6 @@ class Sensei_Blocks {
 				[
 					'slug'  => 'sensei-lms',
 					'title' => __( 'Sensei LMS', 'sensei-lms' ),
-					'icon'  => 'wordpress',
 				],
 			]
 		);
