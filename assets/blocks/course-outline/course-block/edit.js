@@ -152,6 +152,7 @@ const EditCourseOutlineBlock = ( {
 				value={ {
 					outlineAttributes: attributes,
 					outlineSetAttributes: setAttributes,
+					outlineClassName: className,
 				} }
 			>
 				<OutlineBlockSettings
