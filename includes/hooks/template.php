@@ -73,6 +73,10 @@ add_action( 'sensei_single_course_content_inside_before', array( 'Sensei_Course'
 // hook the single course title on the single course page
 add_action( 'sensei_single_course_content_inside_before', array( $sensei->course, 'course_image' ), 20 );
 
+// @since 1.9.10
+// hook in the course prerequisite completion message
+add_action( 'sensei_single_course_content_inside_before', array( 'Sensei_Course', 'prerequisite_complete_message' ), 20 );
+
 // @1.9.0
 // Filter the content and replace it with the excerpt if the user doesn't have full access
 add_filter( 'the_content', array( 'Sensei_Course', 'single_course_content' ) );
@@ -124,6 +128,10 @@ add_action( 'sensei_single_quiz_content_inside_before', array( 'Sensei_Quiz', 's
 // since 1.9.0
 // Hook in the quiz user message.
 add_action( 'sensei_single_quiz_content_inside_before', array( 'Sensei_Quiz', 'the_user_status_message' ), 40 );
+
+// since 3.2.0
+// hook in the login notice.
+add_action( 'sensei_single_quiz_content_inside_before', array( 'Sensei_Quiz', 'login_notice' ), 40 );
 
 // @since 1.9.0
 // hook in the question title, description and quesiton media
@@ -179,6 +187,10 @@ add_action( 'sensei_single_lesson_content_inside_before', array( 'Sensei_Lesson'
 // @since 1.9.0
 // hook the single lesson course_signup_link
 add_action( 'sensei_single_lesson_content_inside_before', array( 'Sensei_Lesson', 'course_signup_link' ), 30 );
+
+// @since 3.2.0
+// hook the single lesson login_notice
+add_action( 'sensei_single_lesson_content_inside_before', array( 'Sensei_Lesson', 'login_notice' ), 30 );
 
 // @since 1.9.0
 // Add the quiz specific buttons and notices to the lesson
@@ -314,4 +326,5 @@ add_action( 'sensei_teacher_archive_course_loop_before', array( 'Sensei_Teacher'
 add_action( 'sensei_course_results_content_inside_before', array( $sensei->notices, 'maybe_print_notices' ) );
 add_action( 'sensei_single_course_content_inside_before', array( $sensei->notices, 'maybe_print_notices' ), 40 );
 add_action( 'sensei_single_lesson_content_inside_before', array( $sensei->notices, 'maybe_print_notices' ), 40 );
+add_action( 'sensei_single_quiz_content_inside_before', array( $sensei->notices, 'maybe_print_notices' ), 40 );
 add_action( 'sensei_taxonomy_module_content_inside_before', array( $sensei->notices, 'maybe_print_notices' ), 40 );

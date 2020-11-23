@@ -1396,11 +1396,47 @@ class Sensei_Utils {
 	}
 
 	/**
+	 * Determines if a user still has to log in to see a given content (lesson or quiz).
+	 * Returns false, when no login action is needed,
+	 * or a message containing a invitation to login and a link to do so.
+	 *
+	 * @since 3.2.0
+	 * @param string $context Either 'lesson' or 'quiz'.
+	 * @return bool|string False When user doesn't need to login, or a string message containing a login link.
+	 */
+	public static function login_notice( $context = 'lesson' ) {
+		$lesson_id = get_the_ID();
+
+		if ( ! in_array( $context, [ 'lesson', 'quiz' ], true )
+			|| get_post_type( $lesson_id ) !== $context ) {
+			return false;
+		}
+		if ( 'quiz' === $context ) {
+			$lesson_id = Sensei()->quiz->get_lesson_id( $lesson_id );
+		}
+		if ( ! Sensei()->lesson->user_should_login( $lesson_id ) ) {
+			return false;
+		}
+
+		$anchor_before = '<a href="' . esc_url( sensei_user_login_url() ) . '" >';
+		$anchor_after  = '</a>';
+		$message       = sprintf(
+			// translators: Placeholders %1$s and %2$s are an opening and closing <a> tag linking to the login URL, %3$s is the context ("lesson" or "quiz").
+			__( 'or %1$slog in%2$s to access the %3$s content, when you are already enrolled in this course.', 'sensei-lms' ),
+			$anchor_before,
+			$anchor_after,
+			$context
+		);
+
+		return $message;
+	}
+
+	/**
 	 * Start course for user
 	 *
 	 * @since  1.4.8
-	 * @param  integer $user_id   User ID
-	 * @param  integer $course_id Course ID
+	 * @param  integer $user_id   User ID.
+	 * @param  integer $course_id Course ID.
 	 * @return bool|int False if they haven't started; Comment ID of course progress if they have.
 	 */
 	public static function user_start_course( $user_id = 0, $course_id = 0 ) {

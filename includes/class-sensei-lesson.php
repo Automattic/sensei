@@ -4112,6 +4112,51 @@ class Sensei_Lesson {
 	}
 
 	/**
+	 * Determine if user should login in to get acces to a lesson and quiz.
+	 *
+	 * @since 3.2.0
+	 * @param int $lesson_id
+	 * @return bool True if login for the lesson is required.
+	 */
+	public static function user_should_login( $lesson_id ) {
+		if ( 'integer' !== gettype( $lesson_id ) || $lesson_id <= 0 ) {
+			return false;
+		}
+		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
+		if ( is_user_logged_in()
+			|| empty( $course_id )
+			|| 'course' !== get_post_type( $course_id )
+			|| sensei_all_access()
+			|| Sensei_Utils::is_preview_lesson( $lesson_id )
+			|| ! sensei_is_login_required()
+		) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Creates a login notice when appropriate.
+	 *
+	 * @version 3.2.0
+	 *
+	 * @return;
+	 */
+	public static function login_notice() {
+
+		$login_notice = Sensei_Utils::login_notice( 'lesson' );
+		if ( false === $login_notice ) {
+			return;
+		}
+		$message      = wp_kses_post( $login_notice );
+		$notice_level = 'info';
+
+		Sensei()->notices->add_notice( $message, $notice_level );
+
+	}
+
+	/**
 	 * Outputs the the lesson archive header.
 	 *
 	 * @since  1.9.0

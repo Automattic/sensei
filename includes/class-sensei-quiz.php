@@ -1213,7 +1213,6 @@ class Sensei_Quiz {
 
 		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
 		$status    = Sensei_Utils::sensei_user_quiz_status_message( $lesson_id, get_current_user_id() );
-		$messages  = Sensei()->frontend->messages;
 		$message   = '<div class="sensei-message ' . esc_attr( $status['box_class'] ) . '">' . wp_kses_post( $status['message'] ) . '</div>';
 		$messages  = Sensei()->frontend->messages;
 
@@ -1223,6 +1222,24 @@ class Sensei_Quiz {
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped above.
 		echo $message;
+	}
+
+	/**
+	 * Creates a login notice when appropriate.
+	 *
+	 * @version 3.2.0
+	 * @return  void
+	 */
+	public static function login_notice() {
+
+		$login_notice = Sensei_Utils::login_notice( 'quiz' );
+		if ( false === $login_notice ) {
+			return;
+		}
+		$message      = wp_kses_post( $login_notice );
+		$notice_level = 'info';
+
+		Sensei()->notices->add_notice( $message, $notice_level );
 	}
 
 	/**
