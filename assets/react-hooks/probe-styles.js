@@ -1,6 +1,44 @@
-import { memoize } from 'lodash';
+import { useState, useEffect } from '@wordpress/element';
+import { useSelect } from '@wordpress/data';
+import { mapValues, keyBy, memoize } from 'lodash';
+
+import { hexToRGB } from '../shared/helpers/colors';
 
 const { getComputedStyle } = window;
+
+/**
+ * Get color object by probe.
+ *
+ * @return {Object} Object containing the color objects, where the key is the probe key.
+ */
+export const useColorsByProbe = () => {
+	const themeColorPalette = useSelect(
+		( select ) => select( 'core/editor' ).getEditorSettings().colors,
+		[]
+	);
+	const [ colorSlugsByProbe, setColorSlugsByProbe ] = useState( {} );
+
+	useEffect( () => {
+		const probeStyles = getProbeStyles();
+		const newState = {};
+		const slugsByColor = mapValues(
+			keyBy( themeColorPalette, ( item ) => hexToRGB( item.color ) ),
+			'slug'
+		);
+
+		Object.entries( probeStyles ).forEach( ( [ key, color ] ) => {
+			const slug = slugsByColor[ hexToRGB( color ) ];
+
+			if ( slug ) {
+				newState[ key ] = { slug, color };
+			}
+		} );
+
+		setColorSlugsByProbe( newState );
+	}, [ themeColorPalette ] );
+
+	return colorSlugsByProbe;
+};
 
 /**
  * Get probe styles (memoized).
