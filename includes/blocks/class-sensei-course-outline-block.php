@@ -86,8 +86,8 @@ class Sensei_Course_Outline_Block {
 
 		$post_type_object->template = [
 			[ 'sensei-lms/button-take-course' ],
-			[ 'sensei-lms/course-progress' ],
 			[ 'sensei-lms/button-contact-teacher' ],
+			[ 'sensei-lms/course-progress' ],
 			[ 'sensei-lms/course-outline' ],
 		];
 	}
