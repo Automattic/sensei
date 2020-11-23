@@ -15,7 +15,7 @@ $dark-gray: #1a1d20;
 	textarea.wp-block-sensei-lms-course-outline-module__title-input {
 		color: inherit;
 		background: none;
-		
+
 		&::placeholder {
 			color: inherit;
 			opacity: 0.5;
@@ -48,14 +48,6 @@ $dark-gray: #1a1d20;
 	.wp-block-sensei-lms-course-outline-status-control {
 		.components-base-control__help {
 			margin-top: 10px;
-		}
-	}
-
-	.wp-block-sensei-lms-course-outline.is-style-minimal .wp-block-sensei-lms-course-outline-module:not(.is-style-default), .wp-block-sensei-lms-course-outline-module.is-style-minimal {
-		.wp-block-sensei-lms-course-outline-module__header {
-			margin: 0 4px;
-			padding: 1rem calc(1rem - 4px);
-			border-bottom: 4px solid $dark-gray;
 		}
 	}
 

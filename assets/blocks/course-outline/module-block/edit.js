@@ -80,12 +80,29 @@ export const EditModuleBlock = ( props ) => {
 		className.match( styleRegex )?.[ 1 ] ||
 		outlineClassName.match( styleRegex )?.[ 1 ];
 
-	const blockStyleColors = ! style
-		? {}
-		: {
-				default: { background: mainColor?.color },
-				minimal: { borderColor: mainColor?.color },
-		  }[ style ];
+	// Header styles.
+	const headerStyles = {
+		default: {
+			background: mainColor?.color,
+			color: textColor?.color,
+		},
+		minimal: {
+			color: textColor?.color,
+		},
+	}[ style ];
+
+	// Minimal border element.
+	let minimalBorder;
+	if ( 'minimal' === style ) {
+		minimalBorder = (
+			<div
+				className="wp-block-sensei-lms-course-outline-module__name__minimal-border"
+				style={ {
+					background: mainColor?.color,
+				} }
+			/>
+		);
+	}
 
 	return (
 		<>
@@ -103,7 +120,7 @@ export const EditModuleBlock = ( props ) => {
 			>
 				<header
 					className="wp-block-sensei-lms-course-outline-module__header"
-					style={ { ...blockStyleColors, color: textColor?.color } }
+					style={ headerStyles }
 				>
 					<h2 className="wp-block-sensei-lms-course-outline-module__title">
 						<SingleLineInput
@@ -130,6 +147,7 @@ export const EditModuleBlock = ( props ) => {
 						</button>
 					) }
 				</header>
+				{ minimalBorder }
 				<AnimateHeight
 					className="wp-block-sensei-lms-collapsible"
 					duration={ 500 }
