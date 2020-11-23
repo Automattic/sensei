@@ -75,24 +75,17 @@ export const EditModuleBlock = ( props ) => {
 
 	const [ isExpanded, setExpanded ] = useState( true );
 
-	let blockStyleColors = {};
-	const style = className.match( /is-style-(\w+)/ );
+	const styleRegex = /is-style-(\w+)/;
+	const style =
+		className.match( styleRegex )?.[ 1 ] ||
+		outlineClassName.match( styleRegex )?.[ 1 ];
 
-	if ( style ) {
-		blockStyleColors = {
-			default: { background: mainColor?.color },
-			minimal: { borderColor: mainColor?.color },
-		}[ style[ 1 ] ];
-	} else {
-		const outlineStyle = outlineClassName.match( /is-style-(\w+)/ );
-
-		if ( outlineStyle ) {
-			blockStyleColors = {
+	const blockStyleColors = ! style
+		? {}
+		: {
 				default: { background: mainColor?.color },
 				minimal: { borderColor: mainColor?.color },
-			}[ outlineStyle[ 1 ] ];
-		}
-	}
+		  }[ style ];
 
 	return (
 		<>
