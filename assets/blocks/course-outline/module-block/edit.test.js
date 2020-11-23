@@ -21,7 +21,10 @@ jest.mock( './use-insert-lesson-block' );
 jest.mock( '../course-block/edit', () => jest.fn() );
 jest.mock( '@wordpress/element', () => ( {
 	...jest.requireActual( '@wordpress/element' ),
-	useContext: () => ( { outlineAttributes: { collapsibleModules: true } } ),
+	useContext: () => ( {
+		outlineAttributes: { collapsibleModules: true },
+		outlineClassName: '',
+	} ),
 } ) );
 
 describe( '<EditModuleBlock />', () => {

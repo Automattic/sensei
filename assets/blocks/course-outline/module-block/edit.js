@@ -43,6 +43,7 @@ export const EditModuleBlock = ( props ) => {
 	} = props;
 	const {
 		outlineAttributes: { collapsibleModules, moduleBorder },
+		outlineClassName,
 	} = useContext( OutlineAttributesContext ) || { outlineAttributes: {} };
 
 	useInsertLessonBlock( props );
@@ -82,6 +83,15 @@ export const EditModuleBlock = ( props ) => {
 			default: { background: mainColor?.color },
 			minimal: { borderColor: mainColor?.color },
 		}[ style[ 1 ] ];
+	} else {
+		const outlineStyle = outlineClassName.match( /is-style-(\w+)/ );
+
+		if ( outlineStyle ) {
+			blockStyleColors = {
+				default: { background: mainColor?.color },
+				minimal: { borderColor: mainColor?.color },
+			}[ outlineStyle[ 1 ] ];
+		}
 	}
 
 	return (
