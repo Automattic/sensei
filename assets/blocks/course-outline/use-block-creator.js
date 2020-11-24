@@ -31,6 +31,9 @@ export const useBlocksCreator = ( clientId ) => {
 
 				dispatch( COURSE_STORE ).setEditorDirty( true );
 			}
+
+			// Flag that the editor is sync.
+			dispatch( COURSE_STORE ).setEditorSyncing( false );
 		},
 		[ clientId, replaceInnerBlocks, getBlocks ]
 	);

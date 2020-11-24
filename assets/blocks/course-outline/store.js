@@ -9,6 +9,7 @@ const DEFAULT_STATE = {
 	editor: [],
 	isSavingStructure: false,
 	isEditorDirty: false,
+	isEditorSyncing: false,
 	hasStructureUpdate: false,
 };
 
@@ -29,6 +30,7 @@ const actions = {
 	*saveStruture() {
 		const { getEditorStructure } = select( COURSE_STORE );
 
+		yield actions.setEditorSyncing( true );
 		yield { type: 'SAVING', isSavingStructure: true };
 		const courseId = yield select( 'core/editor' ).getCurrentPostId();
 		try {
@@ -59,6 +61,10 @@ const actions = {
 	setEditorDirty: ( isEditorDirty ) => ( {
 		type: 'SET_DIRTY',
 		isEditorDirty,
+	} ),
+	setEditorSyncing: ( isEditorSyncing ) => ( {
+		type: 'SET_EDITOR_SYNCING',
+		isEditorSyncing,
 	} ),
 	clearStructureUpdate: () => ( { type: 'CLEAR_STRUCTURE_UPDATE' } ),
 };
@@ -91,6 +97,10 @@ const reducers = {
 		...state,
 		isSavingStructure,
 	} ),
+	SET_EDITOR_SYNCING: ( { isEditorSyncing }, state ) => ( {
+		...state,
+		isEditorSyncing,
+	} ),
 	SET_DIRTY: ( { isEditorDirty }, state ) => ( {
 		...state,
 		isEditorDirty,
@@ -117,7 +127,7 @@ const selectors = {
 	getEditorStructure: ( { editor } ) => editor,
 	shouldSaveStructure: ( { isEditorDirty, isSavingStructure } ) =>
 		! isSavingStructure && isEditorDirty,
-	getIsSavingStructure: ( { isSavingStructure } ) => isSavingStructure,
+	getIsEditorSyncing: ( { isEditorSyncing } ) => isEditorSyncing,
 	shouldResavePost: ( { isSavingStructure, hasStructureUpdate } ) =>
 		! isSavingStructure && hasStructureUpdate,
 };
@@ -160,15 +170,14 @@ const registerCourseStructureStore = () => {
 
 		const isSavingPost =
 			editor.isSavingPost() && ! editor.isAutosavingPost();
-		const isSavingStructure = select( COURSE_STORE ).getIsSavingStructure();
+		const isEditorSyncing = select( COURSE_STORE ).getIsEditorSyncing();
 
-		// First update where post is saving.
 		if ( ! postSaving && isSavingPost ) {
+			// First update where post is saving.
 			postSaving = true;
 			startSave();
-
-			// First update where post is no longer saving.
-		} else if ( postSaving && ! isSavingPost && ! isSavingStructure ) {
+		} else if ( postSaving && ! isSavingPost && ! isEditorSyncing ) {
+			// First update where post is no longer saving and editor is sync.
 			postSaving = false;
 			finishSave();
 		}
