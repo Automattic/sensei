@@ -95,7 +95,7 @@ const reducers = {
 		...state,
 		isEditorDirty,
 	} ),
-	CLEAR_STRUCTURE_UPDATE: ( state ) => ( {
+	CLEAR_STRUCTURE_UPDATE: ( action, state ) => ( {
 		...state,
 		hasStructureUpdate: false,
 	} ),
