@@ -26,7 +26,7 @@ const actions = {
 	/**
 	 * Persist editor's course structure to the REST API
 	 */
-	*save() {
+	*saveStruture() {
 		const { getEditorStructure } = select( COURSE_STORE );
 
 		yield { type: 'SAVING', isSavingStructure: true };
@@ -115,7 +115,7 @@ const resolvers = {
 const selectors = {
 	getStructure: ( { structure } ) => structure,
 	getEditorStructure: ( { editor } ) => editor,
-	shouldSave: ( { isEditorDirty, isSavingStructure } ) =>
+	shouldSaveStructure: ( { isEditorDirty, isSavingStructure } ) =>
 		! isSavingStructure && isEditorDirty,
 	getIsSavingStructure: ( { isSavingStructure } ) => isSavingStructure,
 	shouldResavePost: ( { isSavingStructure, hasStructureUpdate } ) =>
@@ -132,13 +132,15 @@ const registerCourseStructureStore = () => {
 	let postSaving = false;
 
 	const startSave = () => {
-		const shouldSave = select( COURSE_STORE ).shouldSave();
+		const shouldSaveStructure = select(
+			COURSE_STORE
+		).shouldSaveStructure();
 
 		// Clear error notices.
 		dispatch( 'core/notices' ).removeNotice( 'course-outline-save-error' );
 
-		if ( shouldSave ) {
-			dispatch( COURSE_STORE ).save();
+		if ( shouldSaveStructure ) {
+			dispatch( COURSE_STORE ).saveStruture();
 		}
 	};
 
