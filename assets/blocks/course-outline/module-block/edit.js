@@ -44,7 +44,10 @@ export const EditModuleBlock = ( props ) => {
 	const {
 		outlineAttributes: { collapsibleModules, moduleBorder },
 		outlineClassName,
-	} = useContext( OutlineAttributesContext ) || { outlineAttributes: {} };
+	} = useContext( OutlineAttributesContext ) || {
+		outlineAttributes: {},
+		outlineClassName: '',
+	};
 
 	useInsertLessonBlock( props );
 
