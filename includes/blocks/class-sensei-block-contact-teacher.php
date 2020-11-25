@@ -51,8 +51,6 @@ class Sensei_Block_Contact_Teacher {
 			return '';
 		}
 
-		$contact_form_link = add_query_arg( array( 'contact' => $post->post_type ) );
-
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
 		$contact_form_open = isset( $_GET['contact'] );
 
@@ -63,8 +61,11 @@ class Sensei_Block_Contact_Teacher {
 		$contact_form = $this->teacher_contact_form( $post );
 
 		return '<div id="private_message" class="sensei-block-wrapper sensei-collapsible">
-				' . ( $this->add_button_attributes( $content, $contact_form_link ) ) . '
-				' . $notice . '
+					<form action="' . esc_url( get_permalink() ) . '#private_message" method="get">
+						<input type="hidden" name="contact" value="' . $post->post_type . '" /> 
+						' . $content . '
+					</form>
+					' . $notice . '
 				<div class="sensei-collapsible__content ' . ( $contact_form_open ? '' : 'collapsed' ) . '">' . $contact_form . '</div>
 			</div>';
 	}
@@ -99,22 +100,5 @@ class Sensei_Block_Contact_Teacher {
 				<button class="sensei-contact-teacher-form__submit">' . esc_html__( 'Send Message', 'sensei-lms' ) . '</button>
 				</p>
 			</form>';
-	}
-
-	/**
-	 * Add attributes to the block's <a> tag.
-	 *
-	 * @param string $content Block HTML.
-	 * @param string $href    Link URL.
-	 *
-	 * @return string Block HTML with additional href attribute.
-	 */
-	private function add_button_attributes( $content, $href ) {
-		return preg_replace(
-			'/<a(.*)class="(.*)"(.*)>(.+)<\/a>/',
-			'<a href="' . esc_url( $href ) . '#private_message" class="sensei-collapsible__toggle $2" $1 $3>$4</a>',
-			$content,
-			1
-		);
 	}
 }

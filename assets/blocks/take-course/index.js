@@ -5,7 +5,6 @@ import { createButtonBlockType } from '../button';
  * Take course button block.
  */
 export default createButtonBlockType( {
-	tagName: 'button',
 	settings: {
 		name: 'sensei-lms/button-take-course',
 		title: __( 'Take Course', 'sensei-lms' ),

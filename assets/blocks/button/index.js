@@ -35,7 +35,6 @@ export const BlockStyles = {
  */
 export const createButtonBlockType = ( { settings, ...options } ) => {
 	options = {
-		tagName: 'a',
 		alignmentOptions: {
 			controls: [ 'left', 'center', 'right', 'full' ],
 			default: 'left',
@@ -52,7 +51,7 @@ export const createButtonBlockType = ( { settings, ...options } ) => {
 				text: {
 					type: 'string',
 					source: 'html',
-					selector: options.tagName,
+					selector: 'button',
 				},
 				align: {
 					type: 'string',
@@ -61,6 +60,12 @@ export const createButtonBlockType = ( { settings, ...options } ) => {
 					type: 'number',
 				},
 				style: {
+					type: 'object',
+				},
+				buttonClassName: {
+					type: 'string',
+				},
+				buttonAttributes: {
 					type: 'object',
 				},
 			},

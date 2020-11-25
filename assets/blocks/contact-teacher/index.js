@@ -5,7 +5,6 @@ import { __ } from '@wordpress/i18n';
  * Take course button block.
  */
 export default createButtonBlockType( {
-	tagName: 'a',
 	settings: {
 		name: 'sensei-lms/button-contact-teacher',
 		description: __(
@@ -16,6 +15,14 @@ export default createButtonBlockType( {
 		attributes: {
 			text: {
 				default: 'Contact Teacher',
+			},
+			buttonClassName: {
+				default: 'sensei-collapsible__toggle',
+			},
+			buttonAttributes: {
+				default: {
+					type: 'submit',
+				},
 			},
 		},
 		styles: [ BlockStyles.Fill, BlockStyles.Outline, BlockStyles.Link ],

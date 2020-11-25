@@ -7,16 +7,15 @@ import { getButtonProps, getButtonWrapperProps } from './button-props';
  * @param {Object} props
  * @param {Object} props.attributes Block attributes.
  * @param {string} props.className  Classname.
- * @param {string} props.tagName    Output HTML tag name.
  */
-export const saveButtonBlock = ( { attributes, className, tagName } ) => {
+export const saveButtonBlock = ( { attributes, className } ) => {
 	const { text } = attributes;
 
 	return (
 		<div { ...getButtonWrapperProps( { className, attributes } ) }>
 			<RichText.Content
 				{ ...getButtonProps( { attributes } ) }
-				tagName={ tagName }
+				tagName="button"
 				value={ text }
 			/>
 		</div>

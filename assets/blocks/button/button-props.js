@@ -36,12 +36,14 @@ export function getButtonProps( props ) {
 		className: classnames(
 			{ 'wp-block-button__link': ! isLink },
 			borderProps.className,
-			colorProps.className
+			colorProps.className,
+			props.attributes.buttonClassName
 		),
 		style: {
 			...borderProps.style,
 			...colorProps.style,
 		},
+		...props.attributes.buttonAttributes,
 	};
 }
 
