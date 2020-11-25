@@ -1,8 +1,7 @@
-import { dispatch, useDispatch, useSelect } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
 import { extractStructure, syncStructureToBlocks } from './data';
 import { isEqual } from 'lodash';
-import { COURSE_STORE } from './store';
 
 /**
  * Blocks creator hook.
@@ -28,12 +27,7 @@ export const useBlocksCreator = ( clientId ) => {
 					syncStructureToBlocks( structure, blocks ),
 					updateSelection
 				);
-
-				dispatch( COURSE_STORE ).setEditorDirty( true );
 			}
-
-			// Flag that the editor is sync.
-			dispatch( COURSE_STORE ).setEditorSyncing( false );
 		},
 		[ clientId, replaceInnerBlocks, getBlocks ]
 	);
