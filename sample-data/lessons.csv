@@ -107,6 +107,10 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <p>You can add additional content and blocks such as images and videos to the editor, just as you would for any other type of post.</p>
 <!-- /wp:paragraph -->
 
+<!-- wp:paragraph -->
+<p><em>Note: If no Sensei blocks exist on the course page, the course will use a legacy PHP template to provide the same functionality to your learners. Since PHP templates can be difficult to customize, we recommend that you use blocks instead.</em></p>
+<!-- /wp:paragraph -->
+
 <!-- wp:heading -->
 <h2>Document Settings</h2>
 <!-- /wp:heading -->
