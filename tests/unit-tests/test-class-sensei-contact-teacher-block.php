@@ -31,13 +31,15 @@ class Sensei_Block_Contact_Teacher_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test the saved block content is used for the button, with link added to open the form.
+	 * Test the saved block content is used for the button, and it is wrapped in a form
 	 */
-	public function testHrefAttributeAdded() {
+	public function testFormWithContactIsAdded() {
 
-		$output = $this->block->render_contact_teacher_block( [], '<div><a class="wp-block-button__link">Contact teacher</a></div>' );
+		$content = '<div><a class="wp-block-button__link">Contact teacher</a></div>';
+		$output  = $this->block->render_contact_teacher_block( [], $content );
 
-		$this->assertRegExp( '|<a href="/course/test/\?contact=course#private_message".*>Contact teacher</a>|', $output );
+		$this->assertContains( '<form action="#private_message" method="get">', $output );
+		$this->assertContains( $content, $output );
 	}
 
 	/**
