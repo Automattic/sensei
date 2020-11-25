@@ -92,7 +92,6 @@ export const createButtonBlockType = ( { settings, ...options } ) => {
 					<EditButtonBlockWithBlockStyle
 						{ ...props }
 						{ ...options }
-						defaultStyle={ defaultStyle }
 					/>
 				);
 			},

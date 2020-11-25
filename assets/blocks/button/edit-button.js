@@ -4,7 +4,6 @@ import { __ } from '@wordpress/i18n';
 
 import { getButtonProps, getButtonWrapperProps } from './button-props';
 import { ButtonBlockSettings } from './settings-button';
-import { useSetDefaultStyle } from '../../shared/blocks/settings';
 
 /**
  * Edit component for a Button block.
@@ -12,20 +11,11 @@ import { useSetDefaultStyle } from '../../shared/blocks/settings';
  * @param {Object} props
  */
 export const EditButtonBlock = ( props ) => {
-	const {
-		placeholder,
-		attributes,
-		setAttributes,
-		clientId,
-		defaultStyle,
-		tagName,
-	} = props;
+	const { placeholder, attributes, setAttributes, tagName } = props;
 	const { text } = attributes;
 	const { colors } = useSelect( ( select ) => {
 		return select( 'core/block-editor' ).getSettings();
 	}, [] );
-
-	useSetDefaultStyle( clientId, defaultStyle );
 
 	const isReadonly = undefined !== props.text;
 	const buttonProps = getButtonProps( { ...props, colors } );
