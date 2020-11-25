@@ -21,7 +21,6 @@ class Sensei_Block_Contact_Teacher {
 		add_action( 'init', [ $this, 'register_block' ] );
 	}
 
-
 	/**
 	 * Register progress bar block.
 	 *
@@ -63,7 +62,7 @@ class Sensei_Block_Contact_Teacher {
 		$contact_form = $this->teacher_contact_form( $post );
 
 		return '<div id="private_message" class="sensei-block-wrapper sensei-collapsible">
-				' . ( $this->add_button_attributes( $content, $contact_form_link ) ) . '
+				' . ( $this->add_button_attributes( $content, $contact_form_link, $attributes ) ) . '
 				' . $notice . '
 				<div class="sensei-collapsible__content ' . ( $contact_form_open ? '' : 'collapsed' ) . '">' . $contact_form . '</div>
 			</div>';
@@ -104,15 +103,24 @@ class Sensei_Block_Contact_Teacher {
 	/**
 	 * Add attributes to the block's <a> tag.
 	 *
-	 * @param string $content Block HTML.
-	 * @param string $href    Link URL.
+	 * @param string $content    Block HTML.
+	 * @param string $href       Link URL.
+	 * @param array  $attributes Block attributes.
 	 *
 	 * @return string Block HTML with additional href attribute.
 	 */
-	private function add_button_attributes( $content, $href ) {
+	private function add_button_attributes( $content, $href, $attributes = [] ) {
+		$class_name = Sensei_Block_Helpers::block_class_with_default_style( $attributes, [], 'outline' );
+
 		return preg_replace(
-			'/<a(.*)class="(.*)"(.*)>(.+)<\/a>/',
-			'<a href="' . esc_url( $href ) . '#private_message" class="sensei-collapsible__toggle $2" $1 $3>$4</a>',
+			'/<div(.*)class="(.*)"(.*)>(.*)<a(.*)class="(.*)"(.*)>(.+)<\/a>(.*)<\/div>/',
+			'
+				<div class="$2 ' . esc_attr( $class_name ) . '" $1 $3>
+					$4
+					<a href="' . esc_url( $href ) . '#private_message" class="sensei-collapsible__toggle $6" $5 $7>$8</a>
+					$9
+				</div>
+			',
 			$content,
 			1
 		);
