@@ -2,36 +2,36 @@
 # This file is distributed under the same license as the Sensei LMS plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Sensei LMS 3.5.3\n"
+"Project-Id-Version: Sensei LMS 3.6.0-beta.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sensei-lms\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2020-10-29T14:28:18+00:00\n"
+"POT-Creation-Date: 2020-11-26T12:46:34+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.4.0\n"
 "X-Domain: sensei-lms\n"
 
-#: assets/admin/exit-survey/form.js:40
+#: assets/admin/exit-survey/form.js:56
 #: assets/dist/admin/exit-survey/index.js:1
 msgid "Quick Feedback"
 msgstr ""
 
-#: assets/admin/exit-survey/form.js:42
+#: assets/admin/exit-survey/form.js:58
 #: assets/dist/admin/exit-survey/index.js:1
 msgid ""
 "If you have a moment, please let us know why you are deactivating so that "
 "we can work to improve our product."
 msgstr ""
 
-#: assets/admin/exit-survey/form.js:57
+#: assets/admin/exit-survey/form.js:73
 #: assets/dist/admin/exit-survey/index.js:1
 msgid "Submit Feedback"
 msgstr ""
 
-#: assets/admin/exit-survey/form.js:64
+#: assets/admin/exit-survey/form.js:80
 #: assets/dist/admin/exit-survey/index.js:1
 msgid "Skip Feedback"
 msgstr ""
@@ -81,6 +81,464 @@ msgstr ""
 msgid "I no longer need the plugin"
 msgstr ""
 
+#: assets/blocks/button/color-hooks.js:32
+#: assets/blocks/course-outline/lesson-block/edit.js:187
+#: assets/dist/blocks/index.js:1
+msgid "Background color"
+msgstr ""
+
+#: assets/blocks/button/color-hooks.js:36
+#: assets/blocks/course-outline/lesson-block/edit.js:191
+#: assets/blocks/course-outline/module-block/edit.js:180
+#: assets/blocks/course-progress/edit.js:116
+#: assets/dist/blocks/index.js:1
+msgid "Text color"
+msgstr ""
+
+#: assets/blocks/button/edit-button.js:29
+#: assets/dist/blocks/index.js:1
+msgid "Add text…"
+msgstr ""
+
+#: assets/blocks/button/index.js:15
+#: assets/dist/blocks/index.js:1
+msgid "Fill"
+msgstr ""
+
+#: assets/blocks/button/index.js:20
+#: assets/blocks/course-outline/course-block/index.js:15
+#: assets/dist/blocks/index.js:1
+msgid "Outline"
+msgstr ""
+
+#: assets/blocks/button/index.js:24
+#: assets/dist/blocks/index.js:1
+msgid "Link"
+msgstr ""
+
+#: assets/blocks/button/settings-button.js:22
+#: assets/blocks/course-outline/module-block/settings.js:16
+#: assets/dist/blocks/index.js:1
+msgid "Border settings"
+msgstr ""
+
+#: assets/blocks/button/settings-button.js:26
+#: assets/dist/blocks/index.js:1
+msgid "Border radius"
+msgstr ""
+
+#: assets/blocks/button/settings-button.js:53
+#: assets/dist/blocks/index.js:1
+msgid "Change button alignment"
+msgstr ""
+
+#: assets/blocks/contact-teacher/index.js:11
+#: assets/dist/blocks/index.js:1
+msgid ""
+"Enable a registered user to contact the teacher. This block is only "
+"displayed if the user is logged in and private messaging is enabled."
+msgstr ""
+
+#: assets/blocks/course-outline/course-block/index.js:10
+#: assets/dist/blocks/index.js:1
+msgid "Manage your Sensei LMS course outline."
+msgstr ""
+
+#: assets/blocks/course-outline/course-block/index.js:12
+#: assets/blocks/course-outline/lesson-block/index.js:10
+#: assets/blocks/course-progress/index.js:15
+#: assets/blocks/take-course/index.js:21
+#: includes/admin/class-sensei-learners-main.php:166
+#: includes/admin/class-sensei-learners-main.php:1132
+#: includes/class-sensei-analysis-overview-list-table.php:48
+#: includes/class-sensei-analysis-overview-list-table.php:59
+#: includes/class-sensei-analysis-user-profile-list-table.php:45
+#: includes/class-sensei-grading-main.php:64
+#: includes/class-sensei-lesson.php:167
+#: includes/class-sensei-posttypes.php:704
+#: assets/dist/blocks/index.js:1
+msgid "Course"
+msgstr ""
+
+#: assets/blocks/course-outline/course-block/index.js:13
+#: assets/blocks/course-outline/module-block/edit.js:161
+#: assets/blocks/course-outline/module-block/index.js:15
+#: assets/shared/helpers/labels.js:5
+#: includes/admin/class-sensei-learners-main.php:1100
+#: includes/blocks/class-sensei-course-outline-module-block.php:88
+#: includes/class-sensei-admin.php:1593
+#: includes/class-sensei-analysis-overview-list-table.php:50
+#: includes/class-sensei-analysis-overview-list-table.php:690
+#: includes/class-sensei-course.php:2840
+#: includes/class-sensei-modules.php:1263
+#: includes/class-sensei-posttypes.php:710
+#: includes/class-sensei-posttypes.php:711
+#: includes/class-sensei-settings.php:147
+#: templates/course-results/lessons.php:39
+#: templates/single-course/modules.php:102
+#: assets/dist/blocks/index.js:1
+#: assets/dist/data-port/export.js:1
+#: assets/dist/data-port/import.js:1
+msgid "Lessons"
+msgstr ""
+
+#: assets/blocks/course-outline/course-block/index.js:14
+#: assets/blocks/course-outline/course-block/settings.js:22
+#: includes/class-sensei-modules.php:1033
+#: includes/class-sensei-modules.php:1620
+#: includes/class-sensei-modules.php:1772
+#: includes/class-sensei-modules.php:1783
+#: assets/dist/blocks/index.js:1
+msgid "Modules"
+msgstr ""
+
+#: assets/blocks/course-outline/course-block/index.js:16
+#: assets/dist/blocks/index.js:1
+msgid "Structure"
+msgstr ""
+
+#: assets/blocks/course-outline/course-block/index.js:21
+#: assets/blocks/course-outline/module-block/index.js:39
+#: assets/dist/blocks/index.js:1
+msgid "Filled"
+msgstr ""
+
+#: assets/blocks/course-outline/course-block/index.js:26
+#: assets/blocks/course-outline/module-block/index.js:44
+#: assets/dist/blocks/index.js:1
+msgid "Minimal"
+msgstr ""
+
+#: assets/blocks/course-outline/course-block/index.js:37
+#: assets/blocks/course-outline/module-block/index.js:21
+#: includes/class-sensei-modules.php:126
+#: includes/class-sensei-modules.php:1323
+#: includes/class-sensei-modules.php:1372
+#: includes/class-sensei-modules.php:1773
+#: assets/dist/blocks/index.js:1
+msgid "Module"
+msgstr ""
+
+#: assets/blocks/course-outline/course-block/index.js:38
+#: assets/blocks/course-outline/module-block/index.js:22
+#: assets/dist/blocks/index.js:1
+msgid "About Module"
+msgstr ""
+
+#: assets/blocks/course-outline/course-block/index.js:44
+#: assets/blocks/course-outline/lesson-block/index.js:10
+#: assets/blocks/course-outline/lesson-block/settings.js:50
+#: assets/blocks/course-outline/module-block/index.js:28
+#: includes/admin/class-sensei-learners-main.php:157
+#: includes/admin/class-sensei-learners-main.php:1137
+#: includes/class-sensei-analysis-course-list-table.php:74
+#: includes/class-sensei-analysis-course-list-table.php:84
+#: includes/class-sensei-analysis-overview-list-table.php:58
+#: includes/class-sensei-course.php:2840
+#: includes/class-sensei-grading-main.php:65
+#: includes/class-sensei-posttypes.php:709
+#: templates/course-results/lessons.php:37
+#: templates/single-course/modules.php:100
+#: assets/dist/blocks/index.js:1
+msgid "Lesson"
+msgstr ""
+
+#: assets/blocks/course-outline/course-block/index.js:55
+#: assets/dist/blocks/index.js:1
+msgid "First Lesson"
+msgstr ""
+
+#: assets/blocks/course-outline/course-block/index.js:64
+#: assets/dist/blocks/index.js:1
+msgid "Second Lesson"
+msgstr ""
+
+#: assets/blocks/course-outline/course-block/index.js:9
+#: assets/blocks/course-outline/course-block/placeholder.js:13
+#: assets/dist/blocks/index.js:1
+msgid "Course Outline"
+msgstr ""
+
+#: assets/blocks/course-outline/course-block/placeholder.js:15
+#: assets/dist/blocks/index.js:1
+msgid ""
+"Build and display a course outline. A course is made up of modules "
+"(optional) and lessons. You can use modules to group related lessons "
+"together."
+msgstr ""
+
+#: assets/blocks/course-outline/course-block/placeholder.js:25
+#: assets/dist/blocks/index.js:1
+msgid "Create a module"
+msgstr ""
+
+#: assets/blocks/course-outline/course-block/placeholder.js:32
+#: assets/dist/blocks/index.js:1
+msgid "Create a lesson"
+msgstr ""
+
+#: assets/blocks/course-outline/course-block/settings.js:28
+#: assets/dist/blocks/index.js:1
+msgid "Collapsible modules"
+msgstr ""
+
+#: assets/blocks/course-outline/course-block/settings.js:29
+#: assets/dist/blocks/index.js:1
+msgid "Modules can be collapsed or expanded."
+msgstr ""
+
+#: assets/blocks/course-outline/course-block/settings.js:37
+#: assets/blocks/course-outline/module-block/settings.js:22
+#: assets/dist/blocks/index.js:1
+msgid "Border"
+msgstr ""
+
+#: assets/blocks/course-outline/course-block/settings.js:38
+#: assets/dist/blocks/index.js:1
+msgid "Toggle the border for all modules."
+msgstr ""
+
+#: assets/blocks/course-outline/lesson-block/edit.js:115
+#: assets/dist/blocks/index.js:1
+msgid "Unsaved"
+msgstr ""
+
+#: assets/blocks/course-outline/lesson-block/edit.js:117
+#: assets/dist/blocks/index.js:1
+msgid "Draft"
+msgstr ""
+
+#: assets/blocks/course-outline/lesson-block/edit.js:157
+#: includes/class-sensei-posttypes.php:850
+#: assets/dist/blocks/index.js:1
+msgid "Lesson name"
+msgstr ""
+
+#: assets/blocks/course-outline/lesson-block/edit.js:166
+#: includes/blocks/class-sensei-course-outline-lesson-block.php:41
+#: includes/class-sensei-frontend.php:1206
+#: includes/class-sensei-lesson.php:173
+#: assets/dist/blocks/index.js:1
+msgid "Preview"
+msgstr ""
+
+#: assets/blocks/course-outline/lesson-block/index.js:14
+#: assets/dist/blocks/index.js:1
+msgid "Start learning"
+msgstr ""
+
+#: assets/blocks/course-outline/lesson-block/index.js:8
+#: assets/dist/blocks/index.js:1
+msgid "Where your course content lives."
+msgstr ""
+
+#: assets/blocks/course-outline/lesson-block/settings.js:42
+#: assets/dist/blocks/index.js:1
+msgid "Edit lesson"
+msgstr ""
+
+#: assets/blocks/course-outline/lesson-block/settings.js:53
+#: assets/dist/blocks/index.js:1
+msgid "Edit details such as lesson content, prerequisite, quiz settings and more."
+msgstr ""
+
+#: assets/blocks/course-outline/lesson-block/settings.js:60
+#: assets/dist/blocks/index.js:1
+msgid "Typography"
+msgstr ""
+
+#: assets/blocks/course-outline/lesson-block/settings.js:70
+#: assets/blocks/course-outline/module-block/module-status.js:60
+#: includes/admin/class-sensei-learners-main.php:150
+#: includes/class-sensei-analysis-course-list-table.php:64
+#: includes/class-sensei-analysis-course-list-table.php:77
+#: includes/class-sensei-analysis-lesson-list-table.php:49
+#: includes/class-sensei-analysis-user-profile-list-table.php:48
+#: includes/class-sensei-grading-main.php:67
+#: assets/dist/blocks/index.js:1
+msgid "Status"
+msgstr ""
+
+#: assets/blocks/course-outline/module-block/edit.js:121
+#: assets/dist/blocks/index.js:1
+msgid "Module name"
+msgstr ""
+
+#: assets/blocks/course-outline/module-block/edit.js:138
+#: includes/blocks/class-sensei-course-outline-module-block.php:81
+#: assets/dist/blocks/index.js:1
+msgid "Toggle module content"
+msgstr ""
+
+#: assets/blocks/course-outline/module-block/edit.js:152
+#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:256
+#: assets/dist/blocks/index.js:1
+msgid "Module description"
+msgstr ""
+
+#: assets/blocks/course-outline/module-block/edit.js:178
+#: assets/dist/blocks/index.js:1
+msgid "Main color"
+msgstr ""
+
+#: assets/blocks/course-outline/module-block/edit.js:183
+#: assets/dist/blocks/index.js:1
+msgid "Border color"
+msgstr ""
+
+#: assets/blocks/course-outline/module-block/index.js:10
+#: assets/dist/blocks/index.js:1
+msgid "Group related lessons together."
+msgstr ""
+
+#: assets/blocks/course-outline/module-block/index.js:13
+#: assets/dist/blocks/index.js:1
+msgid "Course Module"
+msgstr ""
+
+#: assets/blocks/course-outline/module-block/index.js:14
+#: assets/dist/blocks/index.js:1
+msgid "Group"
+msgstr ""
+
+#: assets/blocks/course-outline/module-block/settings.js:23
+#: assets/dist/blocks/index.js:1
+msgid "Toggle to enable the border."
+msgstr ""
+
+#: assets/blocks/course-outline/status-control/index.js:17
+#: assets/dist/blocks/index.js:1
+msgid "Not Started"
+msgstr ""
+
+#: assets/blocks/course-outline/status-control/index.js:18
+#: includes/admin/class-sensei-learner-management.php:163
+#: includes/admin/class-sensei-learners-admin-bulk-actions-view.php:387
+#: includes/admin/class-sensei-learners-admin-bulk-actions-view.php:407
+#: includes/admin/class-sensei-learners-main.php:363
+#: includes/blocks/class-sensei-course-outline-module-block.php:122
+#: includes/class-sensei-analysis-course-list-table.php:307
+#: includes/class-sensei-analysis-course-list-table.php:394
+#: includes/class-sensei-analysis-lesson-list-table.php:218
+#: includes/class-sensei-analysis-user-profile-list-table.php:213
+#: includes/class-sensei-course.php:3019
+#: includes/class-sensei-grading-main.php:259
+#: includes/class-sensei-grading-main.php:490
+#: includes/class-sensei-lesson.php:3862
+#: assets/dist/blocks/index.js:1
+msgid "In Progress"
+msgstr ""
+
+#: assets/blocks/course-outline/status-control/index.js:19
+#: assets/data-port/import/done/done-page.js:84
+#: includes/admin/class-sensei-learners-admin-bulk-actions-view.php:409
+#: includes/admin/class-sensei-learners-main.php:356
+#: includes/blocks/class-sensei-course-outline-module-block.php:125
+#: includes/class-sensei-analysis-course-list-table.php:86
+#: includes/class-sensei-analysis-course-list-table.php:302
+#: includes/class-sensei-analysis-course-list-table.php:370
+#: includes/class-sensei-analysis-lesson-list-table.php:204
+#: includes/class-sensei-analysis-overview-list-table.php:51
+#: includes/class-sensei-analysis-overview-list-table.php:61
+#: includes/class-sensei-analysis-user-profile-list-table.php:206
+#: includes/class-sensei-course.php:2997
+#: includes/class-sensei-grading-main.php:244
+#: includes/class-sensei-modules.php:766
+#: includes/template-functions.php:652
+#: assets/dist/blocks/index.js:1
+#: assets/dist/data-port/import.js:1
+msgid "Completed"
+msgstr ""
+
+#: assets/blocks/course-outline/status-control/index.js:46
+#: assets/dist/blocks/index.js:1
+msgid ""
+"Preview a status. The actual status that the learner sees is determined by "
+"their progress in the course."
+msgstr ""
+
+#: assets/blocks/course-outline/store.js:44
+#: assets/dist/blocks/index.js:1
+#. Error message.
+msgid "Course modules and lessons could not be updated. %s"
+msgstr ""
+
+#: assets/blocks/course-progress/edit.js:108
+#: assets/dist/blocks/index.js:1
+msgid "Progress bar color"
+msgstr ""
+
+#: assets/blocks/course-progress/edit.js:112
+#: assets/dist/blocks/index.js:1
+msgid "Progress bar background color"
+msgstr ""
+
+#: assets/blocks/course-progress/index.js:13
+#: assets/dist/blocks/index.js:1
+msgid "Progress"
+msgstr ""
+
+#: assets/blocks/course-progress/index.js:14
+#: assets/dist/blocks/index.js:1
+msgid "Bar"
+msgstr ""
+
+#: assets/blocks/course-progress/index.js:7
+#: includes/admin/class-sensei-learners-admin-bulk-actions-view.php:97
+#: assets/dist/blocks/index.js:1
+msgid "Course Progress"
+msgstr ""
+
+#: assets/blocks/course-progress/index.js:8
+#: assets/dist/blocks/index.js:1
+msgid ""
+"Display the user's progress in the course. This block is only displayed if "
+"the user is enrolled."
+msgstr ""
+
+#: assets/blocks/course-progress/settings.js:30
+#: assets/dist/blocks/index.js:1
+msgid "Progress bar settings"
+msgstr ""
+
+#: assets/blocks/course-progress/settings.js:47
+#: assets/dist/blocks/index.js:1
+msgid "Height"
+msgstr ""
+
+#: assets/blocks/take-course/index.js:11
+#: assets/dist/blocks/index.js:1
+msgid "Take Course"
+msgstr ""
+
+#: assets/blocks/take-course/index.js:12
+#: assets/dist/blocks/index.js:1
+msgid ""
+"Enable a registered user to start the course. This block is only displayed "
+"if the user is not already enrolled."
+msgstr ""
+
+#: assets/blocks/take-course/index.js:17
+#: assets/dist/blocks/index.js:1
+msgid "Start"
+msgstr ""
+
+#: assets/blocks/take-course/index.js:18
+#: assets/dist/blocks/index.js:1
+msgid "Sign up"
+msgstr ""
+
+#: assets/blocks/take-course/index.js:19
+#: assets/dist/blocks/index.js:1
+msgid "Enrol"
+msgstr ""
+
+#: assets/blocks/take-course/index.js:20
+#: includes/admin/class-sensei-learners-main.php:458
+#: assets/dist/blocks/index.js:1
+msgid "Enroll"
+msgstr ""
+
 #: assets/data-port/export/export-page.js:25
 #: assets/dist/data-port/export.js:1
 msgid "Export content to a CSV file"
@@ -95,7 +553,7 @@ msgid ""
 msgstr ""
 
 #: assets/data-port/export/export-progress-page.js:50
-#: includes/class-sensei-lesson.php:1159
+#: includes/class-sensei-lesson.php:1154
 #: assets/dist/data-port/export.js:1
 msgid "Cancel"
 msgstr ""
@@ -199,24 +657,6 @@ msgstr ""
 msgid "Retry"
 msgstr ""
 
-#: assets/data-port/import/done/done-page.js:84
-#: includes/admin/class-sensei-learners-admin-bulk-actions-view.php:409
-#: includes/admin/class-sensei-learners-main.php:356
-#: includes/class-sensei-analysis-course-list-table.php:86
-#: includes/class-sensei-analysis-course-list-table.php:302
-#: includes/class-sensei-analysis-course-list-table.php:370
-#: includes/class-sensei-analysis-lesson-list-table.php:204
-#: includes/class-sensei-analysis-overview-list-table.php:51
-#: includes/class-sensei-analysis-overview-list-table.php:61
-#: includes/class-sensei-analysis-user-profile-list-table.php:206
-#: includes/class-sensei-course.php:2972
-#: includes/class-sensei-grading-main.php:244
-#: includes/class-sensei-modules.php:759
-#: includes/template-functions.php:652
-#: assets/dist/data-port/import.js:1
-msgid "Completed"
-msgstr ""
-
 #: assets/data-port/import/done/done-page.js:88
 #: assets/dist/data-port/import.js:1
 msgid "The following content was imported:"
@@ -239,13 +679,13 @@ msgstr ""
 
 #: assets/data-port/import/done/import-success-results.js:12
 #: includes/admin/class-sensei-learners-main.php:347
-#: includes/class-sensei-lesson.php:4089
-#: includes/class-sensei-modules.php:846
+#: includes/class-sensei-lesson.php:4057
+#: includes/class-sensei-modules.php:853
 #: includes/class-sensei-utils.php:1357
-#: includes/class-sensei.php:804
-#: includes/class-sensei.php:843
-#: includes/class-sensei.php:903
-#: includes/class-sensei.php:917
+#: includes/class-sensei.php:832
+#: includes/class-sensei.php:871
+#: includes/class-sensei.php:931
+#: includes/class-sensei.php:945
 #: assets/dist/data-port/import.js:1
 msgid "course"
 msgid_plural "courses"
@@ -254,7 +694,7 @@ msgstr[1] ""
 
 #: assets/data-port/import/done/import-success-results.js:13
 #: includes/admin/class-sensei-learners-main.php:341
-#: includes/class-sensei.php:887
+#: includes/class-sensei.php:915
 #: assets/dist/data-port/import.js:1
 msgid "lesson"
 msgid_plural "lessons"
@@ -669,6 +1109,11 @@ msgstr ""
 msgid "Yes, count me in!"
 msgstr ""
 
+#: assets/shared/blocks/settings.js:46
+#: assets/dist/blocks/index.js:1
+msgid "Color settings"
+msgstr ""
+
 #: assets/shared/helpers/labels.js:10
 #: assets/dist/data-port/export.js:1
 #: assets/dist/data-port/import.js:1
@@ -685,12 +1130,12 @@ msgstr ""
 #: includes/admin/class-sensei-learners-admin-bulk-actions-view.php:387
 #: includes/admin/class-sensei-learners-admin-bulk-actions-view.php:407
 #: includes/admin/class-sensei-setup-wizard-pages.php:63
-#: includes/class-sensei-admin.php:1649
+#: includes/class-sensei-admin.php:1592
 #: includes/class-sensei-analysis-overview-list-table.php:689
 #: includes/class-sensei-analysis-user-profile-list-table.php:323
-#: includes/class-sensei-course.php:2749
-#: includes/class-sensei-posttypes.php:698
-#: includes/class-sensei-posttypes.php:699
+#: includes/class-sensei-course.php:2774
+#: includes/class-sensei-posttypes.php:705
+#: includes/class-sensei-posttypes.php:706
 #: includes/class-sensei-settings.php:142
 #: includes/unsupported-theme-handlers/class-sensei-unsupported-theme-handler-course-archive.php:55
 #: assets/dist/data-port/export.js:1
@@ -698,31 +1143,15 @@ msgstr ""
 msgid "Courses"
 msgstr ""
 
-#: assets/shared/helpers/labels.js:5
-#: includes/admin/class-sensei-learners-main.php:1100
-#: includes/class-sensei-admin.php:1650
-#: includes/class-sensei-analysis-overview-list-table.php:50
-#: includes/class-sensei-analysis-overview-list-table.php:690
-#: includes/class-sensei-course.php:2815
-#: includes/class-sensei-modules.php:1263
-#: includes/class-sensei-posttypes.php:703
-#: includes/class-sensei-posttypes.php:704
-#: includes/class-sensei-settings.php:147
-#: templates/course-results/lessons.php:39
-#: templates/single-course/modules.php:102
-#: assets/dist/data-port/export.js:1
-#: assets/dist/data-port/import.js:1
-msgid "Lessons"
-msgstr ""
-
 #: assets/shared/helpers/labels.js:6
-#: includes/class-sensei-posttypes.php:713
-#: includes/class-sensei-posttypes.php:714
+#: includes/class-sensei-posttypes.php:720
+#: includes/class-sensei-posttypes.php:721
 #: assets/dist/data-port/export.js:1
 #: assets/dist/data-port/import.js:1
 msgid "Questions"
 msgstr ""
 
+#: includes/blocks/class-sensei-blocks.php:60
 #. Plugin Name of the plugin
 msgid "Sensei LMS"
 msgstr ""
@@ -760,21 +1189,6 @@ msgstr ""
 
 #: includes/admin/class-sensei-learner-management.php:133
 msgid "Learners per page"
-msgstr ""
-
-#: includes/admin/class-sensei-learner-management.php:163
-#: includes/admin/class-sensei-learners-admin-bulk-actions-view.php:387
-#: includes/admin/class-sensei-learners-admin-bulk-actions-view.php:407
-#: includes/admin/class-sensei-learners-main.php:363
-#: includes/class-sensei-analysis-course-list-table.php:307
-#: includes/class-sensei-analysis-course-list-table.php:394
-#: includes/class-sensei-analysis-lesson-list-table.php:218
-#: includes/class-sensei-analysis-user-profile-list-table.php:213
-#: includes/class-sensei-course.php:2994
-#: includes/class-sensei-grading-main.php:259
-#: includes/class-sensei-grading-main.php:490
-#: includes/class-sensei-lesson.php:3894
-msgid "In Progress"
 msgstr ""
 
 #: includes/admin/class-sensei-learner-management.php:168
@@ -816,12 +1230,12 @@ msgid "Select learners to manually enroll..."
 msgstr ""
 
 #: includes/admin/class-sensei-learner-management.php:601
-#: includes/class-sensei-course.php:333
-#: includes/class-sensei-course.php:722
-#: includes/class-sensei-lesson.php:219
-#: includes/class-sensei-lesson.php:296
-#: includes/class-sensei-lesson.php:1262
-#: includes/class-sensei-modules.php:225
+#: includes/class-sensei-course.php:348
+#: includes/class-sensei-course.php:737
+#: includes/class-sensei-lesson.php:218
+#: includes/class-sensei-lesson.php:295
+#: includes/class-sensei-lesson.php:1257
+#: includes/class-sensei-modules.php:218
 #: includes/class-sensei-utils.php:2261
 msgid "None"
 msgstr ""
@@ -926,10 +1340,6 @@ msgstr ""
 msgid "Learner"
 msgstr ""
 
-#: includes/admin/class-sensei-learners-admin-bulk-actions-view.php:97
-msgid "Course Progress"
-msgstr ""
-
 #: includes/admin/class-sensei-learners-admin-bulk-actions-view.php:98
 msgid "Enrollments"
 msgstr ""
@@ -972,7 +1382,7 @@ msgid "Filter By Course"
 msgstr ""
 
 #: includes/admin/class-sensei-learners-admin-bulk-actions-view.php:363
-#: includes/class-sensei-lesson.php:1330
+#: includes/class-sensei-lesson.php:1325
 msgid "Filter"
 msgstr ""
 
@@ -1004,30 +1414,8 @@ msgstr ""
 msgid "Date Completed"
 msgstr ""
 
-#: includes/admin/class-sensei-learners-main.php:150
-#: includes/class-sensei-analysis-course-list-table.php:64
-#: includes/class-sensei-analysis-course-list-table.php:77
-#: includes/class-sensei-analysis-lesson-list-table.php:49
-#: includes/class-sensei-analysis-user-profile-list-table.php:48
-#: includes/class-sensei-grading-main.php:67
-msgid "Status"
-msgstr ""
-
 #: includes/admin/class-sensei-learners-main.php:151
 msgid "Enrollment"
-msgstr ""
-
-#: includes/admin/class-sensei-learners-main.php:157
-#: includes/admin/class-sensei-learners-main.php:1137
-#: includes/class-sensei-analysis-course-list-table.php:74
-#: includes/class-sensei-analysis-course-list-table.php:84
-#: includes/class-sensei-analysis-overview-list-table.php:58
-#: includes/class-sensei-course.php:2815
-#: includes/class-sensei-grading-main.php:65
-#: includes/class-sensei-posttypes.php:702
-#: templates/course-results/lessons.php:37
-#: templates/single-course/modules.php:100
-msgid "Lesson"
 msgstr ""
 
 #: includes/admin/class-sensei-learners-main.php:158
@@ -1040,17 +1428,6 @@ msgstr ""
 msgid "Last Updated"
 msgstr ""
 
-#: includes/admin/class-sensei-learners-main.php:166
-#: includes/admin/class-sensei-learners-main.php:1132
-#: includes/class-sensei-analysis-overview-list-table.php:48
-#: includes/class-sensei-analysis-overview-list-table.php:59
-#: includes/class-sensei-analysis-user-profile-list-table.php:45
-#: includes/class-sensei-grading-main.php:64
-#: includes/class-sensei-lesson.php:168
-#: includes/class-sensei-posttypes.php:697
-msgid "Course"
-msgstr ""
-
 #: includes/admin/class-sensei-learners-main.php:404
 msgid "No enrollment data was found."
 msgstr ""
@@ -1061,10 +1438,6 @@ msgstr ""
 
 #: includes/admin/class-sensei-learners-main.php:412
 msgid "Not Enrolled"
-msgstr ""
-
-#: includes/admin/class-sensei-learners-main.php:458
-msgid "Enroll"
 msgstr ""
 
 #: includes/admin/class-sensei-learners-main.php:464
@@ -1106,12 +1479,12 @@ msgid "No courses found."
 msgstr ""
 
 #: includes/admin/class-sensei-learners-main.php:992
-#: includes/class-sensei-course.php:3221
+#: includes/class-sensei-course.php:3246
 msgid "Course Category"
 msgstr ""
 
 #: includes/admin/class-sensei-learners-main.php:994
-#: includes/class-sensei-posttypes.php:487
+#: includes/class-sensei-posttypes.php:494
 msgid "All Course Categories"
 msgstr ""
 
@@ -1177,18 +1550,18 @@ msgstr ""
 msgid "Search Courses"
 msgstr ""
 
-#: includes/admin/class-sensei-plugins-installation.php:392
+#: includes/admin/class-sensei-plugins-installation.php:395
 #. translators: Placeholder %1$s is the plugin title, %2$s is the error message.
 msgid "%1$s could not be installed (%2$s)."
 msgstr ""
 
-#: includes/admin/class-sensei-plugins-installation.php:422
+#: includes/admin/class-sensei-plugins-installation.php:425
 #. translators: Placeholder %1$s is the plugin title, %2$s is the error message.
 msgid "%1$s is installed but could not be activated (%2$s)."
 msgstr ""
 
 #: includes/admin/class-sensei-setup-wizard-pages.php:67
-#: includes/class-sensei-admin.php:1651
+#: includes/class-sensei-admin.php:1594
 #: widgets/class-sensei-course-component-widget.php:336
 msgid "My Courses"
 msgstr ""
@@ -1236,10 +1609,10 @@ msgid ""
 msgstr ""
 
 #: includes/admin/views/html-admin-page-extensions-categories.php:33
-#: includes/class-sensei-course.php:2596
+#: includes/class-sensei-course.php:2621
 #: includes/class-sensei-grading-main.php:487
-#: includes/class-sensei-lesson.php:1313
-#: includes/class-sensei-lesson.php:2094
+#: includes/class-sensei-lesson.php:1308
+#: includes/class-sensei-lesson.php:2089
 msgid "All"
 msgstr ""
 
@@ -1255,6 +1628,73 @@ msgstr ""
 msgid "More Details"
 msgstr ""
 
+#: includes/blocks/class-sensei-block-contact-teacher.php:76
+#: includes/class-sensei-messages.php:318
+msgid "Your private message has been sent."
+msgstr ""
+
+#: includes/blocks/class-sensei-block-contact-teacher.php:93
+#: includes/class-sensei-messages.php:323
+msgid "Send Private Message"
+msgstr ""
+
+#: includes/blocks/class-sensei-block-contact-teacher.php:94
+#: includes/class-sensei-messages.php:329
+msgid "Enter your private message."
+msgstr ""
+
+#: includes/blocks/class-sensei-block-contact-teacher.php:99
+#: includes/class-sensei-messages.php:334
+msgid "Send Message"
+msgstr ""
+
+#: includes/blocks/class-sensei-block-take-course.php:143
+#: includes/class-sensei-course.php:3433
+#: includes/class-sensei-lesson.php:4103
+#. translators: Placeholder $1$s is the course title.
+#. translators: Placeholder is the lesson prerequisite title.
+msgid "You must first complete: %1$s"
+msgstr ""
+
+#: includes/blocks/class-sensei-block-take-course.php:150
+#. translators: Placeholder $1$s is the course title.
+msgid "You must first complete %1$s before taking this course."
+msgstr ""
+
+#: includes/blocks/class-sensei-course-outline-course-block.php:53
+msgid "There is no published content in this course yet."
+msgstr ""
+
+#: includes/blocks/class-sensei-course-outline-course-block.php:64
+msgid ""
+"One or more lessons in this course are not published. Unpublished lessons "
+"and empty modules are only displayed in preview mode and will not be "
+"displayed to learners."
+msgstr ""
+
+#: includes/blocks/class-sensei-course-outline-lesson-block.php:46
+msgid "(Draft)"
+msgstr ""
+
+#: includes/blocks/class-sensei-course-progress-block.php:79
+#: includes/class-sensei-course.php:1503
+#: includes/class-sensei-course.php:1652
+#: includes/class-sensei-course.php:2237
+#: includes/class-sensei-frontend.php:1028
+#: includes/shortcodes/class-sensei-legacy-shortcodes.php:422
+#: widgets/class-sensei-category-courses-widget.php:231
+#: widgets/class-sensei-course-component-widget.php:317
+#. translators: Placeholder %d is the lesson count.
+msgid "%d Lesson"
+msgid_plural "%d Lessons"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/blocks/class-sensei-course-progress-block.php:82
+#. translators: Placeholders are the number and percentage of completed lessons.
+msgid "%1$d completed (%2$s)"
+msgstr ""
+
 #: includes/class-sensei-admin-rest-api-testharness.php:29
 msgid "REST Api TestHarness"
 msgstr ""
@@ -1265,7 +1705,7 @@ msgid "Order Courses"
 msgstr ""
 
 #: includes/class-sensei-admin.php:110
-#: includes/class-sensei-admin.php:1369
+#: includes/class-sensei-admin.php:1359
 msgid "Order Lessons"
 msgstr ""
 
@@ -1327,80 +1767,80 @@ msgstr ""
 msgid "The course order has been saved."
 msgstr ""
 
-#: includes/class-sensei-admin.php:1267
+#: includes/class-sensei-admin.php:1257
 msgid "Save course order"
 msgstr ""
 
-#: includes/class-sensei-admin.php:1376
+#: includes/class-sensei-admin.php:1366
 msgid "The lesson order has been saved."
 msgstr ""
 
-#: includes/class-sensei-admin.php:1393
+#: includes/class-sensei-admin.php:1384
 #: includes/class-sensei-grading-main.php:391
 #: includes/class-sensei-grading.php:497
-#: includes/class-sensei-modules.php:1087
+#: includes/class-sensei-modules.php:1095
 msgid "Select a course"
 msgstr ""
 
-#: includes/class-sensei-admin.php:1404
-#: includes/class-sensei-modules.php:1100
+#: includes/class-sensei-admin.php:1395
+#: includes/class-sensei-modules.php:1108
 msgid "Select"
 msgstr ""
 
-#: includes/class-sensei-admin.php:1489
-#: includes/class-sensei-course.php:2810
+#: includes/class-sensei-admin.php:1431
+#: includes/class-sensei-course.php:2835
 #: templates/course-results/lessons.php:122
 msgid "Other Lessons"
 msgstr ""
 
-#: includes/class-sensei-admin.php:1525
+#: includes/class-sensei-admin.php:1439
 msgid "There are no lessons in this course."
 msgstr ""
 
-#: includes/class-sensei-admin.php:1534
+#: includes/class-sensei-admin.php:1447
 msgid "Save lesson order"
 msgstr ""
 
-#: includes/class-sensei-admin.php:1652
+#: includes/class-sensei-admin.php:1595
 msgid "My Profile"
 msgstr ""
 
-#: includes/class-sensei-admin.php:1653
-#: includes/class-sensei-course.php:1726
-#: includes/class-sensei-messages.php:786
-#: includes/class-sensei-messages.php:877
+#: includes/class-sensei-admin.php:1596
+#: includes/class-sensei-course.php:1751
+#: includes/class-sensei-messages.php:783
+#: includes/class-sensei-messages.php:874
 msgid "My Messages"
 msgstr ""
 
-#: includes/class-sensei-admin.php:1654
+#: includes/class-sensei-admin.php:1597
 #: includes/class-sensei-frontend.php:381
 #: templates/user/login-form.php:25
 #: templates/user/login-form.php:67
 msgid "Login"
 msgstr ""
 
-#: includes/class-sensei-admin.php:1654
+#: includes/class-sensei-admin.php:1597
 #: includes/class-sensei-frontend.php:379
 msgid "Logout"
 msgstr ""
 
-#: includes/class-sensei-admin.php:1687
+#: includes/class-sensei-admin.php:1630
 msgid "Add to Menu"
 msgstr ""
 
-#: includes/class-sensei-admin.php:1760
+#: includes/class-sensei-admin.php:1703
 msgid "Settings > General"
 msgstr ""
 
-#: includes/class-sensei-admin.php:1761
+#: includes/class-sensei-admin.php:1704
 msgid "add a new Administrator"
 msgstr ""
 
-#: includes/class-sensei-admin.php:1762
+#: includes/class-sensei-admin.php:1705
 msgid "existing Administrator"
 msgstr ""
 
-#: includes/class-sensei-admin.php:1773
+#: includes/class-sensei-admin.php:1716
 #. translators: The %s placeholders are as follows: - A link to the General Settings page with the translated text "Settings > General". - A link to add an admin user with the translated text "add a new Administrator". - The current admin email address from the Settings. - A link to view the existing admin users, with the translated text "existing Administrator".
 msgid ""
 "To prevent issues with Sensei LMS module names, your Email Address in %1$s "
@@ -1417,8 +1857,8 @@ msgstr ""
 #: includes/class-sensei-analysis-course-list-table.php:78
 #: includes/class-sensei-analysis-lesson-list-table.php:50
 #: includes/class-sensei-grading-main.php:68
-#: includes/class-sensei-lesson.php:856
-#: includes/class-sensei-lesson.php:865
+#: includes/class-sensei-lesson.php:851
+#: includes/class-sensei-lesson.php:860
 msgid "Grade"
 msgstr ""
 
@@ -1508,13 +1948,13 @@ msgid "Date Registered"
 msgstr ""
 
 #: includes/class-sensei-analysis-overview-list-table.php:72
-#: includes/class-sensei-course.php:1735
+#: includes/class-sensei-course.php:1760
 #: includes/shortcodes/class-sensei-shortcode-user-courses.php:428
 msgid "Active Courses"
 msgstr ""
 
 #: includes/class-sensei-analysis-overview-list-table.php:73
-#: includes/class-sensei-course.php:1736
+#: includes/class-sensei-course.php:1761
 #: includes/shortcodes/class-sensei-shortcode-user-courses.php:429
 msgid "Completed Courses"
 msgstr ""
@@ -1558,55 +1998,99 @@ msgstr ""
 msgid "Course Results: "
 msgstr ""
 
-#: includes/class-sensei-course.php:288
+#: includes/class-sensei-course-structure.php:601
+msgid ""
+"Individual lesson or modules cannot appear multiple times in the same "
+"course."
+msgstr ""
+
+#: includes/class-sensei-course-structure.php:608
+msgid "Different modules cannot have the same name."
+msgstr ""
+
+#: includes/class-sensei-course-structure.php:618
+msgid "Each item must be an array."
+msgstr ""
+
+#: includes/class-sensei-course-structure.php:662
+#. translators: Placeholder is ID for module.
+msgid "Module with id \"%d\" was not found"
+msgstr ""
+
+#: includes/class-sensei-course-structure.php:681
+msgid "Module lessons array can only contain lessons."
+msgstr ""
+
+#: includes/class-sensei-course-structure.php:694
+#. translators: Placeholder is ID for lesson.
+msgid "Lesson with id \"%d\" was not found"
+msgstr ""
+
+#: includes/class-sensei-course-structure.php:717
+msgid "All items must have a `type` set."
+msgstr ""
+
+#: includes/class-sensei-course-structure.php:725
+msgid "Please ensure all modules have a name before saving."
+msgstr ""
+
+#: includes/class-sensei-course-structure.php:731
+msgid "Please ensure all lessons have a name before saving."
+msgstr ""
+
+#: includes/class-sensei-course-structure.php:744
+msgid "Module items must include a `lessons` array."
+msgstr ""
+
+#: includes/class-sensei-course.php:303
 msgid "Course Prerequisite"
 msgstr ""
 
-#: includes/class-sensei-course.php:290
+#: includes/class-sensei-course.php:305
 msgid "Featured Course"
 msgstr ""
 
-#: includes/class-sensei-course.php:292
+#: includes/class-sensei-course.php:307
 msgid "Course Video"
 msgstr ""
 
-#: includes/class-sensei-course.php:294
+#: includes/class-sensei-course.php:309
 msgid "Course Lessons"
 msgstr ""
 
-#: includes/class-sensei-course.php:296
+#: includes/class-sensei-course.php:311
 msgid "Course Management"
 msgstr ""
 
-#: includes/class-sensei-course.php:301
+#: includes/class-sensei-course.php:316
 msgid "Course Notifications"
 msgstr ""
 
-#: includes/class-sensei-course.php:339
+#: includes/class-sensei-course.php:354
 msgid "No courses exist yet. Please add some first."
 msgstr ""
 
-#: includes/class-sensei-course.php:387
+#: includes/class-sensei-course.php:402
 msgid "Feature this course"
 msgstr ""
 
-#: includes/class-sensei-course.php:420
-#: includes/class-sensei-lesson.php:225
+#: includes/class-sensei-course.php:435
+#: includes/class-sensei-lesson.php:224
 msgid "Video Embed Code"
 msgstr ""
 
-#: includes/class-sensei-course.php:425
-#: includes/class-sensei-lesson.php:230
+#: includes/class-sensei-course.php:440
+#: includes/class-sensei-lesson.php:229
 msgid ""
 "Paste the embed code for your video (e.g. YouTube, Vimeo etc.) in the box "
 "above."
 msgstr ""
 
-#: includes/class-sensei-course.php:591
-#: includes/class-sensei-course.php:710
-#: includes/class-sensei-lesson.php:2259
-#: includes/class-sensei-lesson.php:2267
-#: includes/class-sensei-posttypes.php:749
+#: includes/class-sensei-course.php:606
+#: includes/class-sensei-course.php:725
+#: includes/class-sensei-lesson.php:2254
+#: includes/class-sensei-lesson.php:2262
+#: includes/class-sensei-posttypes.php:756
 #. translators: Placeholder is the Lesson title.
 #. translators: Placeholder is the title of the course prerequisite.
 #. translators: Placeholder is the course title.
@@ -1615,232 +2099,212 @@ msgstr ""
 msgid "Edit %s"
 msgstr ""
 
-#: includes/class-sensei-course.php:594
+#: includes/class-sensei-course.php:609
 msgid "Edit this lesson"
 msgstr ""
 
-#: includes/class-sensei-course.php:603
+#: includes/class-sensei-course.php:618
 msgid "No lessons exist yet for this course."
 msgstr ""
 
-#: includes/class-sensei-course.php:609
+#: includes/class-sensei-course.php:624
 msgid "Add a Lesson"
 msgstr ""
 
-#: includes/class-sensei-course.php:611
+#: includes/class-sensei-course.php:626
 msgid "Please add some."
 msgstr ""
 
-#: includes/class-sensei-course.php:614
+#: includes/class-sensei-course.php:629
 msgid "+ Add Another Lesson"
 msgstr ""
 
-#: includes/class-sensei-course.php:663
+#: includes/class-sensei-course.php:678
 msgid "Manage Learners"
 msgstr ""
 
-#: includes/class-sensei-course.php:664
+#: includes/class-sensei-course.php:679
 msgid "Manage Grading"
 msgstr ""
 
-#: includes/class-sensei-course.php:844
+#: includes/class-sensei-course.php:859
 msgid ""
 "Querying with argument `$type` having a value of `freecourses` is "
 "deprecated."
 msgstr ""
 
-#: includes/class-sensei-course.php:868
+#: includes/class-sensei-course.php:883
 msgid ""
 "Querying with argument `$type` having a value of `paidcourses` is "
 "deprecated."
 msgstr ""
 
-#: includes/class-sensei-course.php:1457
-#: includes/class-sensei-course.php:1615
+#: includes/class-sensei-course.php:1482
+#: includes/class-sensei-course.php:1640
 msgid "by "
 msgstr ""
 
-#: includes/class-sensei-course.php:1478
-#: includes/class-sensei-course.php:1627
-#: includes/class-sensei-course.php:2212
-#: includes/class-sensei-frontend.php:1028
-#: includes/shortcodes/class-sensei-legacy-shortcodes.php:422
-#: widgets/class-sensei-category-courses-widget.php:231
-#: widgets/class-sensei-course-component-widget.php:317
-#. translators: Placeholder %d is the lesson count.
-msgid "%d Lesson"
-msgid_plural "%d Lessons"
-msgstr[0] ""
-msgstr[1] ""
-
-#: includes/class-sensei-course.php:1485
-#: includes/class-sensei-course.php:1634
-#: includes/class-sensei-course.php:2218
+#: includes/class-sensei-course.php:1510
+#: includes/class-sensei-course.php:1659
+#: includes/class-sensei-course.php:2243
 #: includes/class-sensei-frontend.php:1037
 #: includes/shortcodes/class-sensei-legacy-shortcodes.php:430
 #. translators: Placeholder is a comma-separated list of the Course categories.
 msgid "in %s"
 msgstr ""
 
-#: includes/class-sensei-course.php:1491
-#: includes/class-sensei-course.php:2229
+#: includes/class-sensei-course.php:1516
+#: includes/class-sensei-course.php:2254
 #. translators: Placeholders are the counts for lessons completed and total lessons, respectively.
 msgid "%1$d of %2$d lessons completed"
 msgstr ""
 
-#: includes/class-sensei-course.php:1517
-#: includes/class-sensei-course.php:2297
+#: includes/class-sensei-course.php:1542
+#: includes/class-sensei-course.php:2322
 #: includes/class-sensei-frontend.php:787
 msgid "Mark as Complete"
 msgstr ""
 
-#: includes/class-sensei-course.php:1549
-#: includes/class-sensei-course.php:2339
+#: includes/class-sensei-course.php:1574
+#: includes/class-sensei-course.php:2364
 #: includes/class-sensei-frontend.php:829
 msgid "Delete Course"
 msgstr ""
 
-#: includes/class-sensei-course.php:1574
-#: includes/class-sensei-course.php:1685
-#: includes/class-sensei-lesson.php:1372
+#: includes/class-sensei-course.php:1599
+#: includes/class-sensei-course.php:1710
+#: includes/class-sensei-lesson.php:1367
 msgid "Previous"
 msgstr ""
 
-#: includes/class-sensei-course.php:1589
-#: includes/class-sensei-course.php:1700
-#: includes/class-sensei-lesson.php:1372
+#: includes/class-sensei-course.php:1614
+#: includes/class-sensei-course.php:1725
+#: includes/class-sensei-lesson.php:1367
 #: includes/class-sensei-updates.php:402
 msgid "Next"
 msgstr ""
 
-#: includes/class-sensei-course.php:1655
-#: includes/class-sensei-course.php:2348
-#: includes/class-sensei-course.php:2981
+#: includes/class-sensei-course.php:1680
+#: includes/class-sensei-course.php:2373
+#: includes/class-sensei-course.php:3006
 msgid "View results"
 msgstr ""
 
-#: includes/class-sensei-course.php:1708
+#: includes/class-sensei-course.php:1733
 #: includes/shortcodes/class-sensei-shortcode-user-courses.php:255
 #: widgets/class-sensei-course-component-widget.php:251
 msgid "You have no active courses."
 msgstr ""
 
-#: includes/class-sensei-course.php:1709
+#: includes/class-sensei-course.php:1734
 #: includes/shortcodes/class-sensei-shortcode-user-courses.php:236
 msgid "You have not completed any courses yet."
 msgstr ""
 
-#: includes/class-sensei-course.php:1711
+#: includes/class-sensei-course.php:1736
 msgid "This learner has no active courses."
 msgstr ""
 
-#: includes/class-sensei-course.php:1712
+#: includes/class-sensei-course.php:1737
 msgid "This learner has not completed any courses yet."
 msgstr ""
 
-#: includes/class-sensei-course.php:1725
-#: includes/class-sensei-messages.php:876
+#: includes/class-sensei-course.php:1750
+#: includes/class-sensei-messages.php:873
 msgid "View & reply to private messages sent to your course & lesson teachers."
 msgstr ""
 
-#: includes/class-sensei-course.php:1783
+#: includes/class-sensei-course.php:1808
 #: includes/shortcodes/class-sensei-shortcode-user-courses.php:216
 #: includes/shortcodes/class-sensei-shortcode-user-courses.php:259
 msgid "Start a Course!"
 msgstr ""
 
-#: includes/class-sensei-course.php:1921
+#: includes/class-sensei-course.php:1946
 #. translators: Placeholders are the counts for lessons completed and total lessons, respectively.
 msgid "Currently completed %1$s lesson of %2$s in total"
 msgid_plural "Currently completed %1$s lessons of %2$s in total"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-sensei-course.php:2112
+#: includes/class-sensei-course.php:2137
 msgid "Disable notifications on this course?"
 msgstr ""
 
-#: includes/class-sensei-course.php:2160
+#: includes/class-sensei-course.php:2185
 #: includes/class-sensei-frontend.php:1059
 #: includes/shortcodes/class-sensei-legacy-shortcodes.php:452
 msgid "Preview this course"
 msgstr ""
 
-#: includes/class-sensei-course.php:2165
+#: includes/class-sensei-course.php:2190
 #: includes/shortcodes/class-sensei-legacy-shortcodes.php:449
 #. translators: Placeholder is the number of preview lessons.
 msgid "(%d preview lessons)"
 msgstr ""
 
-#: includes/class-sensei-course.php:2190
+#: includes/class-sensei-course.php:2215
 #. translators: %1$s is the author posts URL, %2$s and %3$s are the author name.
 msgid "by <a href=\"%1$s\" title=\"%2$s\">%3$s</a>"
 msgstr ""
 
-#: includes/class-sensei-course.php:2537
+#: includes/class-sensei-course.php:2562
 msgid "Sort by newest first"
 msgstr ""
 
-#: includes/class-sensei-course.php:2538
+#: includes/class-sensei-course.php:2563
 msgid "Sort by title A-Z"
 msgstr ""
 
-#: includes/class-sensei-course.php:2601
+#: includes/class-sensei-course.php:2626
 msgid "Featured"
 msgstr ""
 
-#: includes/class-sensei-course.php:2729
+#: includes/class-sensei-course.php:2754
 #. translators: Placeholders are the taxonomy name and the term name, respectively.
 msgid "%1$s Archives: %2$s"
 msgstr ""
 
-#: includes/class-sensei-course.php:2737
+#: includes/class-sensei-course.php:2762
 #: includes/shortcodes/class-sensei-legacy-shortcodes.php:160
 #: widgets/class-sensei-course-component-widget.php:48
 msgid "New Courses"
 msgstr ""
 
-#: includes/class-sensei-course.php:2740
+#: includes/class-sensei-course.php:2765
 #: includes/shortcodes/class-sensei-legacy-shortcodes.php:132
 #: widgets/class-sensei-course-component-widget.php:49
 msgid "Featured Courses"
 msgstr ""
 
-#: includes/class-sensei-course.php:2743
+#: includes/class-sensei-course.php:2768
 #: includes/shortcodes/class-sensei-legacy-shortcodes.php:146
 msgid "Free Courses"
 msgstr ""
 
-#: includes/class-sensei-course.php:2746
+#: includes/class-sensei-course.php:2771
 #: includes/shortcodes/class-sensei-legacy-shortcodes.php:117
 msgid "Paid Courses"
 msgstr ""
 
-#: includes/class-sensei-course.php:3083
+#: includes/class-sensei-course.php:3108
 #. translators: Placeholders are an opening and closing <a> tag linking to the login URL.
 msgid "or %1$slog in%2$s to view this course."
 msgstr ""
 
-#: includes/class-sensei-course.php:3124
+#: includes/class-sensei-course.php:3149
 #: includes/class-sensei-frontend.php:1130
 #: includes/class-sensei-frontend.php:1160
-#: includes/class-sensei-templates.php:443
+#: includes/class-sensei-templates.php:457
 msgid "Register"
 msgstr ""
 
-#: includes/class-sensei-course.php:3217
+#: includes/class-sensei-course.php:3242
 #: widgets/class-sensei-category-courses-widget.php:145
 msgid "Course Category:"
 msgstr ""
 
-#: includes/class-sensei-course.php:3408
-#: includes/class-sensei-lesson.php:4135
-#. translators: Placeholder $1$s is the course title.
-#. translators: Placeholder is the lesson prerequisite title.
-msgid "You must first complete: %1$s"
-msgstr ""
-
-#: includes/class-sensei-course.php:3415
+#: includes/class-sensei-course.php:3440
 #. translators: Placeholder $1$s is the course title.
 msgid "You must first complete %1$s before viewing this course"
 msgstr ""
@@ -1852,11 +2316,11 @@ msgid ""
 "are running %2$s."
 msgstr ""
 
-#: includes/class-sensei-dependency-checker.php:56
+#: includes/class-sensei-dependency-checker.php:58
 msgid "Learn more about updating PHP"
 msgstr ""
 
-#: includes/class-sensei-dependency-checker.php:58
+#: includes/class-sensei-dependency-checker.php:60
 #. translators: accessibility text
 msgid "(opens in a new tab)"
 msgstr ""
@@ -1866,7 +2330,7 @@ msgid "Back to: "
 msgstr ""
 
 #: includes/class-sensei-frontend.php:604
-#: includes/class-sensei-modules.php:601
+#: includes/class-sensei-modules.php:608
 msgid "Back to the course"
 msgstr ""
 
@@ -1954,57 +2418,52 @@ msgstr ""
 msgid "View course"
 msgstr ""
 
-#: includes/class-sensei-frontend.php:1206
-#: includes/class-sensei-lesson.php:174
-msgid "Preview"
-msgstr ""
-
-#: includes/class-sensei-frontend.php:1599
+#: includes/class-sensei-frontend.php:1600
 msgid "<strong>ERROR</strong>: Please enter a username."
 msgstr ""
 
-#: includes/class-sensei-frontend.php:1601
+#: includes/class-sensei-frontend.php:1602
 msgid ""
 "<strong>ERROR</strong>: This username is invalid because it uses illegal "
 "characters. Please enter a valid username."
 msgstr ""
 
-#: includes/class-sensei-frontend.php:1603
+#: includes/class-sensei-frontend.php:1604
 msgid ""
 "<strong>ERROR</strong>: This username is already registered. Please choose "
 "another one."
 msgstr ""
 
-#: includes/class-sensei-frontend.php:1615
+#: includes/class-sensei-frontend.php:1616
 msgid "<strong>ERROR</strong>: Please enter an email address."
 msgstr ""
 
-#: includes/class-sensei-frontend.php:1617
+#: includes/class-sensei-frontend.php:1618
 msgid "<strong>ERROR</strong>: The email address isn&#8217;t correct."
 msgstr ""
 
-#: includes/class-sensei-frontend.php:1619
+#: includes/class-sensei-frontend.php:1620
 msgid ""
 "<strong>ERROR</strong>: This email is already registered, please choose "
 "another one."
 msgstr ""
 
-#: includes/class-sensei-frontend.php:1631
+#: includes/class-sensei-frontend.php:1632
 msgid "<strong>ERROR</strong>: The password field is empty."
 msgstr ""
 
-#: includes/class-sensei-frontend.php:1639
+#: includes/class-sensei-frontend.php:1640
 #. translators: Placeholder is the admin email address.
 msgid ""
 "<strong>ERROR</strong>: Couldn&#8217;t register you&hellip; please contact "
 "the <a href=\"mailto:%s\">webmaster</a> !"
 msgstr ""
 
-#: includes/class-sensei-frontend.php:1681
+#: includes/class-sensei-frontend.php:1682
 msgid "Incorrect login details"
 msgstr ""
 
-#: includes/class-sensei-frontend.php:1685
+#: includes/class-sensei-frontend.php:1686
 msgid "Please enter your username and password"
 msgstr ""
 
@@ -2055,37 +2514,37 @@ msgstr ""
 
 #: includes/class-sensei-grading-user-quiz.php:144
 #: includes/class-sensei-grading-user-quiz.php:154
-#: includes/class-sensei-lesson.php:1077
+#: includes/class-sensei-lesson.php:1072
 #: includes/class-sensei-question.php:47
 msgid "Multiple Choice"
 msgstr ""
 
 #: includes/class-sensei-grading-user-quiz.php:148
-#: includes/class-sensei-lesson.php:1077
+#: includes/class-sensei-lesson.php:1072
 #: includes/class-sensei-question.php:48
 msgid "True/False"
 msgstr ""
 
 #: includes/class-sensei-grading-user-quiz.php:158
-#: includes/class-sensei-lesson.php:1077
+#: includes/class-sensei-lesson.php:1072
 #: includes/class-sensei-question.php:49
 msgid "Gap Fill"
 msgstr ""
 
 #: includes/class-sensei-grading-user-quiz.php:184
-#: includes/class-sensei-lesson.php:1077
+#: includes/class-sensei-lesson.php:1072
 #: includes/class-sensei-question.php:51
 msgid "Multi Line"
 msgstr ""
 
 #: includes/class-sensei-grading-user-quiz.php:188
-#: includes/class-sensei-lesson.php:1077
+#: includes/class-sensei-lesson.php:1072
 #: includes/class-sensei-question.php:50
 msgid "Single Line"
 msgstr ""
 
 #: includes/class-sensei-grading-user-quiz.php:192
-#: includes/class-sensei-lesson.php:1077
+#: includes/class-sensei-lesson.php:1072
 #: includes/class-sensei-question.php:52
 msgid "File Upload"
 msgstr ""
@@ -2142,371 +2601,371 @@ msgstr ""
 msgid "Learner term could not be created for user."
 msgstr ""
 
-#: includes/class-sensei-lesson.php:153
+#: includes/class-sensei-lesson.php:152
 msgid "Edit Course"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:171
+#: includes/class-sensei-lesson.php:170
 msgid "Prerequisite"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:177
-#: includes/class-sensei-lesson.php:3508
+#: includes/class-sensei-lesson.php:176
+#: includes/class-sensei-lesson.php:3476
 msgid "Lesson Information"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:180
-#: includes/class-sensei-lesson.php:3558
+#: includes/class-sensei-lesson.php:179
+#: includes/class-sensei-lesson.php:3526
 msgid "Quiz Settings"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:183
+#: includes/class-sensei-lesson.php:182
 msgid "Quiz Questions"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:214
+#: includes/class-sensei-lesson.php:213
 msgid "Lesson Length in minutes"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:217
-#: includes/class-sensei-lesson.php:3554
+#: includes/class-sensei-lesson.php:216
+#: includes/class-sensei-lesson.php:3522
 msgid "Lesson Complexity"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:302
+#: includes/class-sensei-lesson.php:301
 msgid "No lessons exist yet. Please add some first."
 msgstr ""
 
-#: includes/class-sensei-lesson.php:350
+#: includes/class-sensei-lesson.php:349
 msgid "Allow this lesson to be viewed without login"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:799
+#: includes/class-sensei-lesson.php:794
 msgid "Once you have saved your lesson you will be able to add questions."
 msgstr ""
 
-#: includes/class-sensei-lesson.php:837
+#: includes/class-sensei-lesson.php:832
 msgid "Please save your lesson in order to add questions to your quiz."
 msgstr ""
 
-#: includes/class-sensei-lesson.php:855
-#: includes/class-sensei-lesson.php:864
-#: includes/class-sensei-lesson.php:1338
-#: includes/class-sensei-lesson.php:1346
-#: includes/class-sensei-posttypes.php:712
+#: includes/class-sensei-lesson.php:850
+#: includes/class-sensei-lesson.php:859
+#: includes/class-sensei-lesson.php:1333
+#: includes/class-sensei-lesson.php:1341
+#: includes/class-sensei-posttypes.php:719
 #: includes/class-sensei-question.php:122
 msgid "Question"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:857
-#: includes/class-sensei-lesson.php:866
-#: includes/class-sensei-lesson.php:1339
-#: includes/class-sensei-lesson.php:1347
+#: includes/class-sensei-lesson.php:852
+#: includes/class-sensei-lesson.php:861
+#: includes/class-sensei-lesson.php:1334
+#: includes/class-sensei-lesson.php:1342
 #: includes/class-sensei-updates.php:447
 #: includes/class-sensei-updates.php:455
 msgid "Type"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:858
-#: includes/class-sensei-lesson.php:867
+#: includes/class-sensei-lesson.php:853
+#: includes/class-sensei-lesson.php:862
 #: includes/class-sensei-updates.php:448
 #: includes/class-sensei-updates.php:456
 msgid "Action"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:877
+#: includes/class-sensei-lesson.php:872
 msgid "There are no Questions for this Quiz yet. Please add some below."
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1027
-#: includes/class-sensei-lesson.php:1282
-#: includes/class-sensei-lesson.php:2160
+#: includes/class-sensei-lesson.php:1022
+#: includes/class-sensei-lesson.php:1277
+#: includes/class-sensei-lesson.php:2155
 msgid "Add file"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1054
-#: includes/class-sensei-lesson.php:2161
+#: includes/class-sensei-lesson.php:1049
+#: includes/class-sensei-lesson.php:2156
 msgid "Change file"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1079
-#: includes/class-sensei-lesson.php:1096
+#: includes/class-sensei-lesson.php:1074
+#: includes/class-sensei-lesson.php:1091
 msgid "Edit Question"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1079
-#: includes/class-sensei-lesson.php:1096
+#: includes/class-sensei-lesson.php:1074
+#: includes/class-sensei-lesson.php:1091
 msgid "Edit"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1079
+#: includes/class-sensei-lesson.php:1074
 msgid "Remove Question"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1079
-#: includes/class-sensei-lesson.php:1096
+#: includes/class-sensei-lesson.php:1074
+#: includes/class-sensei-lesson.php:1091
 msgid "Remove"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1090
+#: includes/class-sensei-lesson.php:1085
 #. translators: Placeholder is the question category name.
 msgid "Selected from '%1$s' "
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1096
+#: includes/class-sensei-lesson.php:1091
 msgid "Remove Question(s)"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1117
-#: includes/class-sensei-lesson.php:1240
+#: includes/class-sensei-lesson.php:1112
+#: includes/class-sensei-lesson.php:1235
 msgid "Question:"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1123
-#: includes/class-sensei-lesson.php:1245
+#: includes/class-sensei-lesson.php:1118
+#: includes/class-sensei-lesson.php:1240
 msgid "Question Description (optional):"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1129
+#: includes/class-sensei-lesson.php:1124
 msgid "Question grade:"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1136
-#: includes/class-sensei-lesson.php:1276
+#: includes/class-sensei-lesson.php:1131
+#: includes/class-sensei-lesson.php:1271
 msgid "Randomise answer order"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1142
-#: includes/class-sensei-lesson.php:1281
+#: includes/class-sensei-lesson.php:1137
+#: includes/class-sensei-lesson.php:1276
 msgid "Question media:"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1143
-#: includes/class-sensei-lesson.php:1282
+#: includes/class-sensei-lesson.php:1138
+#: includes/class-sensei-lesson.php:1277
 msgid "Add file to question"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1143
-#: includes/class-sensei-lesson.php:1282
+#: includes/class-sensei-lesson.php:1138
+#: includes/class-sensei-lesson.php:1277
 msgid "Add to question"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1144
-#: includes/class-sensei-lesson.php:1283
+#: includes/class-sensei-lesson.php:1139
+#: includes/class-sensei-lesson.php:1278
 msgid "Delete file"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1160
+#: includes/class-sensei-lesson.php:1155
 msgid "Update Question"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1160
+#: includes/class-sensei-lesson.php:1155
 #: includes/class-sensei-updates.php:446
 #: includes/class-sensei-updates.php:454
 msgid "Update"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1221
+#: includes/class-sensei-lesson.php:1216
 msgid "New Question"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1222
+#: includes/class-sensei-lesson.php:1217
 msgid "Existing Questions"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1224
+#: includes/class-sensei-lesson.php:1219
 msgid "Category Questions"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1233
+#: includes/class-sensei-lesson.php:1228
 #. translators: Placeholders are an opening and closing <a> tag linking to the question bank.
 msgid ""
 "Add a new question to this quiz - your question will also be added to the "
 "%1$squestion bank%2$s."
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1250
+#: includes/class-sensei-lesson.php:1245
 msgid "Question Type:"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1260
+#: includes/class-sensei-lesson.php:1255
 msgid "Question Category:"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1271
+#: includes/class-sensei-lesson.php:1266
 msgid "Question Grade:"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1298
+#: includes/class-sensei-lesson.php:1293
 msgid "Add Question"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1309
+#: includes/class-sensei-lesson.php:1304
 #. translators: Placeholders are an opening and closing <a> tag linking to the question bank.
 msgid "Add an existing question to this quiz from the %1$squestion bank%2$s."
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1314
+#: includes/class-sensei-lesson.php:1309
 msgid "Unused"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1315
+#: includes/class-sensei-lesson.php:1310
 msgid "Used"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1318
+#: includes/class-sensei-lesson.php:1313
 msgid "All Types"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1324
+#: includes/class-sensei-lesson.php:1319
 msgid "All Categories"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1329
+#: includes/class-sensei-lesson.php:1324
 msgid "Search"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1340
-#: includes/class-sensei-lesson.php:1348
+#: includes/class-sensei-lesson.php:1335
+#: includes/class-sensei-lesson.php:1343
 msgid "Category"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1376
+#: includes/class-sensei-lesson.php:1371
 msgid "Add Selected Question(s)"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1385
+#: includes/class-sensei-lesson.php:1380
 #. translators: Placeholders are an opening and closing <a> tag linking to the question categories page.
 msgid ""
 "Add any number of questions from a specified category. Edit your question "
 "categories %1$shere%2$s."
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1388
+#: includes/class-sensei-lesson.php:1383
 msgid "Select a Question Category"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1394
+#: includes/class-sensei-lesson.php:1389
 msgid "Number of questions:"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1396
+#: includes/class-sensei-lesson.php:1391
 msgid "Add Question(s)"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1603
+#: includes/class-sensei-lesson.php:1598
 msgid "There are no questions matching your search."
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1658
-#: includes/class-sensei-lesson.php:2158
+#: includes/class-sensei-lesson.php:1653
+#: includes/class-sensei-lesson.php:2153
 msgid "Right:"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1680
-#: includes/class-sensei-lesson.php:2159
+#: includes/class-sensei-lesson.php:1675
+#: includes/class-sensei-lesson.php:2154
 msgid "Wrong:"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1708
+#: includes/class-sensei-lesson.php:1703
 msgid "Add right answer"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1709
+#: includes/class-sensei-lesson.php:1704
 msgid "Add wrong answer"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1724
-#: includes/class-sensei-question.php:1214
+#: includes/class-sensei-lesson.php:1719
+#: includes/class-sensei-question.php:1202
 #: templates/single-quiz/question-type-boolean.php:85
 msgid "True"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1725
-#: includes/class-sensei-question.php:1216
+#: includes/class-sensei-lesson.php:1720
+#: includes/class-sensei-question.php:1204
 #: templates/single-quiz/question-type-boolean.php:89
 msgid "False"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1747
+#: includes/class-sensei-lesson.php:1742
 msgid "Text before the Gap:"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1749
+#: includes/class-sensei-lesson.php:1744
 msgid "The Gap:"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1751
+#: includes/class-sensei-lesson.php:1746
 msgid "Text after the Gap:"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1753
+#: includes/class-sensei-lesson.php:1748
 msgid "Preview:"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1765
+#: includes/class-sensei-lesson.php:1760
 msgid "Guide/Teacher Notes for grading the answer"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1777
+#: includes/class-sensei-lesson.php:1772
 msgid "Recommended Answer"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1795
+#: includes/class-sensei-lesson.php:1790
 msgid "Description for student explaining what needs to be uploaded"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1799
+#: includes/class-sensei-lesson.php:1794
 msgid "Guide/Teacher Notes for grading the upload"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1862
+#: includes/class-sensei-lesson.php:1857
 msgid ""
 "This feedback will be automatically displayed to the student once they have "
 "completed the quiz."
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1863
+#: includes/class-sensei-lesson.php:1858
 msgid "Answer Feedback"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:1980
+#: includes/class-sensei-lesson.php:1975
 msgid ""
 "There is no quiz for this lesson yet - please add one in the 'Quiz "
 "Questions' box."
 msgstr ""
 
-#: includes/class-sensei-lesson.php:2071
+#: includes/class-sensei-lesson.php:2066
 msgid "Pass required to complete lesson"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:2072
+#: includes/class-sensei-lesson.php:2067
 msgid "The passmark must be achieved before the lesson is complete."
 msgstr ""
 
-#: includes/class-sensei-lesson.php:2079
+#: includes/class-sensei-lesson.php:2074
 msgid "Quiz passmark percentage"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:2090
+#: includes/class-sensei-lesson.php:2085
 msgid "Number of questions to show"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:2091
+#: includes/class-sensei-lesson.php:2086
 msgid ""
 "Show a random selection of questions from this quiz each time a student "
 "views it."
 msgstr ""
 
-#: includes/class-sensei-lesson.php:2100
+#: includes/class-sensei-lesson.php:2095
 msgid "Randomise question order"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:2108
+#: includes/class-sensei-lesson.php:2103
 msgid "Grade quiz automatically"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:2109
+#: includes/class-sensei-lesson.php:2104
 msgid ""
 "Grades quiz and displays answer explanation immediately after completion. "
 "Only applicable if quiz is limited to Multiple Choice, True/False and Gap "
@@ -2514,127 +2973,127 @@ msgid ""
 "autograding."
 msgstr ""
 
-#: includes/class-sensei-lesson.php:2116
+#: includes/class-sensei-lesson.php:2111
 msgid "Allow user to retake the quiz"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:2117
+#: includes/class-sensei-lesson.php:2112
 msgid "Enables the quiz reset button."
 msgstr ""
 
-#: includes/class-sensei-lesson.php:2162
+#: includes/class-sensei-lesson.php:2157
 msgid "Are you sure you want to remove this question?"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:2163
+#: includes/class-sensei-lesson.php:2158
 msgid "Are you sure you want to remove these questions?"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:2164
+#: includes/class-sensei-lesson.php:2159
 msgid ""
 "You have selected more questions than this category contains - please "
 "reduce the number of questions that you are adding."
 msgstr ""
 
-#: includes/class-sensei-lesson.php:2424
+#: includes/class-sensei-lesson.php:2419
 #. translators: Placeholders are the question number and the question category name.
 msgid "%1$s Question(s) from %2$s"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:3002
+#: includes/class-sensei-lesson.php:2997
 msgid "Easy"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:3003
+#: includes/class-sensei-lesson.php:2998
 msgid "Standard"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:3004
+#: includes/class-sensei-lesson.php:2999
 msgid "Hard"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:3516
+#: includes/class-sensei-lesson.php:3484
 msgid "No Change"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:3538
+#: includes/class-sensei-lesson.php:3506
 msgid "Lesson Course"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:3567
-#: includes/class-sensei-lesson.php:3594
+#: includes/class-sensei-lesson.php:3535
+#: includes/class-sensei-lesson.php:3562
 msgid "No"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:3568
-#: includes/class-sensei-lesson.php:3595
+#: includes/class-sensei-lesson.php:3536
+#: includes/class-sensei-lesson.php:3563
 msgid "Yes"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:3579
+#: includes/class-sensei-lesson.php:3547
 msgid "Pass required"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:3587
+#: includes/class-sensei-lesson.php:3555
 msgid "Pass Percentage"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:3606
+#: includes/class-sensei-lesson.php:3574
 msgid "Enable quiz reset button"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:3850
+#: includes/class-sensei-lesson.php:3818
 #: templates/course-results/lessons.php:91
 #: templates/course-results/lessons.php:148
 #. translators: Placeholder is the lesson title.
 msgid "Start %s"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:3873
+#: includes/class-sensei-lesson.php:3841
 msgid "Length:"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:3873
+#: includes/class-sensei-lesson.php:3841
 msgid "minutes"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:3879
+#: includes/class-sensei-lesson.php:3847
 msgid "Author:"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:3884
+#: includes/class-sensei-lesson.php:3852
 msgid "Complexity:"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:3890
+#: includes/class-sensei-lesson.php:3858
 msgid "Complete"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:4088
-#: includes/class-sensei-modules.php:845
+#: includes/class-sensei-lesson.php:4056
+#: includes/class-sensei-modules.php:852
 #: includes/class-sensei-utils.php:1268
 #: includes/class-sensei-utils.php:1356
 #. translators: Placeholders are an opening and closing <a> tag linking to the course permalink.
 msgid "Sign Up"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:4093
-#: includes/class-sensei.php:859
+#: includes/class-sensei-lesson.php:4061
+#: includes/class-sensei.php:887
 #. translators: The placeholder %1$s is a link to the Course.
 msgid "Please sign up for the %1$s before starting the lesson."
 msgstr ""
 
-#: includes/class-sensei-lesson.php:4140
+#: includes/class-sensei-lesson.php:4108
 #. translators: Placeholder is the link to the prerequisite lesson.
 msgid "You must first complete %1$s before viewing this Lesson"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:4160
+#: includes/class-sensei-lesson.php:4128
 msgid "Lessons Archive"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:4280
-#: includes/class-sensei-lesson.php:4282
+#: includes/class-sensei-lesson.php:4248
+#: includes/class-sensei-lesson.php:4250
 msgid "View the Lesson Quiz"
 msgstr ""
 
@@ -2646,190 +3105,160 @@ msgstr ""
 msgid "No items found."
 msgstr ""
 
-#: includes/class-sensei-messages.php:116
-#: includes/class-sensei-posttypes.php:723
-#: includes/class-sensei-posttypes.php:724
+#: includes/class-sensei-messages.php:113
+#: includes/class-sensei-posttypes.php:730
+#: includes/class-sensei-posttypes.php:731
 msgid "Messages"
 msgstr ""
 
-#: includes/class-sensei-messages.php:126
+#: includes/class-sensei-messages.php:123
 msgid "Message Information"
 msgstr ""
 
-#: includes/class-sensei-messages.php:136
+#: includes/class-sensei-messages.php:133
 msgid "Message sent by:"
 msgstr ""
 
-#: includes/class-sensei-messages.php:137
+#: includes/class-sensei-messages.php:134
 msgid "The username of the learner who sent this message."
 msgstr ""
 
-#: includes/class-sensei-messages.php:143
+#: includes/class-sensei-messages.php:140
 msgid "Message received by:"
 msgstr ""
 
-#: includes/class-sensei-messages.php:144
+#: includes/class-sensei-messages.php:141
 msgid "The username of the teacher who received this message."
 msgstr ""
 
-#: includes/class-sensei-messages.php:159
+#: includes/class-sensei-messages.php:156
 msgid "Message from course:"
 msgstr ""
 
-#: includes/class-sensei-messages.php:160
+#: includes/class-sensei-messages.php:157
 msgid "The course to which this message relates."
 msgstr ""
 
-#: includes/class-sensei-messages.php:163
+#: includes/class-sensei-messages.php:160
 msgid "Message from lesson:"
 msgstr ""
 
-#: includes/class-sensei-messages.php:164
+#: includes/class-sensei-messages.php:161
 msgid "The lesson to which this message relates."
 msgstr ""
 
-#: includes/class-sensei-messages.php:167
+#: includes/class-sensei-messages.php:164
 msgid "Message from quiz:"
 msgstr ""
 
-#: includes/class-sensei-messages.php:168
+#: includes/class-sensei-messages.php:165
 msgid "The quiz to which this message relates."
 msgstr ""
 
-#: includes/class-sensei-messages.php:250
+#: includes/class-sensei-messages.php:247
 msgid "Contact Lesson Teacher"
 msgstr ""
 
-#: includes/class-sensei-messages.php:252
+#: includes/class-sensei-messages.php:249
 msgid "Contact Course Teacher"
 msgstr ""
 
-#: includes/class-sensei-messages.php:254
+#: includes/class-sensei-messages.php:251
 msgid "Contact Teacher"
 msgstr ""
 
-#: includes/class-sensei-messages.php:321
-msgid "Your private message has been sent."
-msgstr ""
-
-#: includes/class-sensei-messages.php:326
-msgid "Send Private Message"
-msgstr ""
-
-#: includes/class-sensei-messages.php:332
-msgid "Enter your private message."
-msgstr ""
-
-#: includes/class-sensei-messages.php:337
-msgid "Send Message"
-msgstr ""
-
-#: includes/class-sensei-messages.php:621
+#: includes/class-sensei-messages.php:618
 msgid "You are not allowed to view this message."
 msgstr ""
 
-#: includes/class-sensei-messages.php:639
+#: includes/class-sensei-messages.php:636
 msgid "Please log in to view your messages."
 msgstr ""
 
-#: includes/class-sensei-messages.php:719
-#: includes/class-sensei-messages.php:853
+#: includes/class-sensei-messages.php:716
+#: includes/class-sensei-messages.php:850
 #. translators: Placeholders are the sender's display name and the date, respectively.
 msgid "Sent by %1$s on %2$s."
 msgstr ""
 
-#: includes/class-sensei-messages.php:744
-#: includes/class-sensei-messages.php:830
+#: includes/class-sensei-messages.php:741
+#: includes/class-sensei-messages.php:827
 #. translators: Placeholder is a link to post, with the post's title as the link text.
 #. translators: Placeholder is the post title.
 msgid "Re: %1$s"
 msgstr ""
 
-#: includes/class-sensei-modules.php:133
-#: includes/class-sensei-modules.php:1323
-#: includes/class-sensei-modules.php:1372
-#: includes/class-sensei-modules.php:1813
-msgid "Module"
-msgstr ""
-
-#: includes/class-sensei-modules.php:139
+#: includes/class-sensei-modules.php:132
 msgid "Course Modules"
 msgstr ""
 
-#: includes/class-sensei-modules.php:166
+#: includes/class-sensei-modules.php:159
 #. translators: The placeholders are opening and closing <em> tags.
 msgid ""
 "No modules are available for this lesson yet. %1$sPlease select a course "
 "first.%2$s"
 msgstr ""
 
-#: includes/class-sensei-modules.php:241
+#: includes/class-sensei-modules.php:234
 #. translators: The placeholders are as follows: %1$s - <em> %2$s - </em> %3$s - Opening <a> tag to link to the Course URL. %4$s - </a>
 msgid ""
 "No modules are available for this lesson yet. %1$sPlease add some to "
 "%3$sthe course%4$s.%2$s"
 msgstr ""
 
-#: includes/class-sensei-modules.php:358
-#: includes/class-sensei-modules.php:417
+#: includes/class-sensei-modules.php:351
+#: includes/class-sensei-modules.php:421
 msgid "Course(s)"
 msgstr ""
 
-#: includes/class-sensei-modules.php:363
+#: includes/class-sensei-modules.php:356
 msgid "Search for courses..."
 msgstr ""
 
-#: includes/class-sensei-modules.php:372
+#: includes/class-sensei-modules.php:365
 msgid "Search for and select the courses that this module will belong to."
 msgstr ""
 
-#: includes/class-sensei-modules.php:526
+#: includes/class-sensei-modules.php:533
 msgid "No course"
 msgstr ""
 
-#: includes/class-sensei-modules.php:590
+#: includes/class-sensei-modules.php:597
 msgid "Back to the module"
 msgstr ""
 
-#: includes/class-sensei-modules.php:762
+#: includes/class-sensei-modules.php:769
 #: includes/template-functions.php:657
 msgid "In progress"
 msgstr ""
 
-#: includes/class-sensei-modules.php:850
+#: includes/class-sensei-modules.php:857
 #. translators: Placeholder is a link to the Course.
 msgid "Please sign up for the %1$s before starting the module."
 msgstr ""
 
-#: includes/class-sensei-modules.php:1026
-#: includes/class-sensei-modules.php:1620
-#: includes/class-sensei-modules.php:1812
-#: includes/class-sensei-modules.php:1823
-msgid "Modules"
-msgstr ""
-
-#: includes/class-sensei-modules.php:1029
-#: includes/class-sensei-modules.php:1070
+#: includes/class-sensei-modules.php:1036
+#: includes/class-sensei-modules.php:1078
 msgid "Order Modules"
 msgstr ""
 
-#: includes/class-sensei-modules.php:1077
+#: includes/class-sensei-modules.php:1085
 msgid "The module order has been saved for this course."
 msgstr ""
 
-#: includes/class-sensei-modules.php:1141
+#: includes/class-sensei-modules.php:1132
 msgid "Save module order"
 msgstr ""
 
-#: includes/class-sensei-modules.php:1142
+#: includes/class-sensei-modules.php:1133
 msgid "Edit course"
 msgstr ""
 
-#: includes/class-sensei-modules.php:1196
+#: includes/class-sensei-modules.php:1187
 msgid "Module order"
 msgstr ""
 
-#: includes/class-sensei-modules.php:1212
+#: includes/class-sensei-modules.php:1203
 msgid "Order modules"
 msgstr ""
 
@@ -2837,378 +3266,374 @@ msgstr ""
 msgid "Search for courses"
 msgstr ""
 
-#: includes/class-sensei-modules.php:1814
+#: includes/class-sensei-modules.php:1774
 msgid "Search Modules"
 msgstr ""
 
-#: includes/class-sensei-modules.php:1815
+#: includes/class-sensei-modules.php:1775
 msgid "All Modules"
 msgstr ""
 
-#: includes/class-sensei-modules.php:1816
+#: includes/class-sensei-modules.php:1776
 msgid "Parent Module"
 msgstr ""
 
-#: includes/class-sensei-modules.php:1817
+#: includes/class-sensei-modules.php:1777
 msgid "Parent Module:"
 msgstr ""
 
-#: includes/class-sensei-modules.php:1818
+#: includes/class-sensei-modules.php:1778
 msgid "View Module"
 msgstr ""
 
-#: includes/class-sensei-modules.php:1819
+#: includes/class-sensei-modules.php:1779
 msgid "Edit Module"
 msgstr ""
 
-#: includes/class-sensei-modules.php:1820
+#: includes/class-sensei-modules.php:1780
 msgid "Update Module"
 msgstr ""
 
-#: includes/class-sensei-modules.php:1821
+#: includes/class-sensei-modules.php:1781
 msgid "Add New Module"
 msgstr ""
 
-#: includes/class-sensei-modules.php:1822
+#: includes/class-sensei-modules.php:1782
 msgid "New Module Name"
 msgstr ""
 
-#: includes/class-sensei-modules.php:1824
+#: includes/class-sensei-modules.php:1784
 msgid "No modules found."
 msgstr ""
 
-#: includes/class-sensei-modules.php:1825
+#: includes/class-sensei-modules.php:1785
 msgid "&larr; Back to Modules"
 msgstr ""
 
-#: includes/class-sensei-modules.php:2047
+#: includes/class-sensei-modules.php:2007
 #. translators: %s: add new taxonomy label
 msgid "+ %s"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:486
+#: includes/class-sensei-posttypes.php:493
 msgid "Search Course Categories"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:488
+#: includes/class-sensei-posttypes.php:495
 msgid "Parent Course Category"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:489
+#: includes/class-sensei-posttypes.php:496
 msgid "Parent Course Category:"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:490
+#: includes/class-sensei-posttypes.php:497
 msgid "View Course Category"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:491
+#: includes/class-sensei-posttypes.php:498
 msgid "Edit Course Category"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:492
+#: includes/class-sensei-posttypes.php:499
 msgid "Update Course Category"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:493
+#: includes/class-sensei-posttypes.php:500
 msgid "Add New Course Category"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:494
+#: includes/class-sensei-posttypes.php:501
 msgid "New Course Category Name"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:495
+#: includes/class-sensei-posttypes.php:502
 msgid "Course Categories"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:497
+#: includes/class-sensei-posttypes.php:504
 msgid "&larr; Back to Course Categories"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:532
+#: includes/class-sensei-posttypes.php:539
 msgid "Search Quiz Types"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:533
+#: includes/class-sensei-posttypes.php:540
 msgid "All Quiz Types"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:534
+#: includes/class-sensei-posttypes.php:541
 msgid "Parent Quiz Type"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:535
+#: includes/class-sensei-posttypes.php:542
 msgid "Parent Quiz Type:"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:536
+#: includes/class-sensei-posttypes.php:543
 msgid "Edit Quiz Type"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:537
+#: includes/class-sensei-posttypes.php:544
 msgid "Update Quiz Type"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:538
+#: includes/class-sensei-posttypes.php:545
 msgid "Add New Quiz Type"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:539
+#: includes/class-sensei-posttypes.php:546
 msgid "New Quiz Type Name"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:540
+#: includes/class-sensei-posttypes.php:547
 msgid "Quiz Types"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:569
+#: includes/class-sensei-posttypes.php:576
 msgid "Search Question Types"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:570
+#: includes/class-sensei-posttypes.php:577
 msgid "All Question Types"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:571
+#: includes/class-sensei-posttypes.php:578
 msgid "Parent Question Type"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:572
+#: includes/class-sensei-posttypes.php:579
 msgid "Parent Question Type:"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:573
+#: includes/class-sensei-posttypes.php:580
 msgid "Edit Question Type"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:574
+#: includes/class-sensei-posttypes.php:581
 msgid "Update Question Type"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:575
+#: includes/class-sensei-posttypes.php:582
 msgid "Add New Question Type"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:576
+#: includes/class-sensei-posttypes.php:583
 msgid "New Question Type Name"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:577
+#: includes/class-sensei-posttypes.php:584
 msgid "Question Types"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:606
+#: includes/class-sensei-posttypes.php:613
 msgid "Search Question Categories"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:607
+#: includes/class-sensei-posttypes.php:614
 msgid "All Question Categories"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:608
+#: includes/class-sensei-posttypes.php:615
 msgid "Parent Question Category"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:609
+#: includes/class-sensei-posttypes.php:616
 msgid "Parent Question Category:"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:610
+#: includes/class-sensei-posttypes.php:617
 msgid "View Question Category"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:611
+#: includes/class-sensei-posttypes.php:618
 msgid "Edit Question Category"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:612
+#: includes/class-sensei-posttypes.php:619
 msgid "Update Question Category"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:613
+#: includes/class-sensei-posttypes.php:620
 msgid "Add New Question Category"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:614
+#: includes/class-sensei-posttypes.php:621
 msgid "New Question Category Name"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:615
+#: includes/class-sensei-posttypes.php:622
 msgid "Categories"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:616
+#: includes/class-sensei-posttypes.php:623
 msgid "&larr; Back to Question Categories"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:650
+#: includes/class-sensei-posttypes.php:657
 msgid "Search Lesson Tags"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:651
+#: includes/class-sensei-posttypes.php:658
 msgid "All Lesson Tags"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:652
+#: includes/class-sensei-posttypes.php:659
 msgid "Parent Tag"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:653
+#: includes/class-sensei-posttypes.php:660
 msgid "Parent Tag:"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:654
+#: includes/class-sensei-posttypes.php:661
 msgid "View Lesson Tag"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:655
+#: includes/class-sensei-posttypes.php:662
 msgid "Edit Lesson Tag"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:656
+#: includes/class-sensei-posttypes.php:663
 msgid "Update Lesson Tag"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:657
+#: includes/class-sensei-posttypes.php:664
 msgid "Add New Lesson Tag"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:658
+#: includes/class-sensei-posttypes.php:665
 msgid "New Tag Name"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:659
+#: includes/class-sensei-posttypes.php:666
 msgid "Lesson Tags"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:660
+#: includes/class-sensei-posttypes.php:667
 msgid "&larr; Back to Lesson Tags"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:707
+#: includes/class-sensei-posttypes.php:714
 msgid "Quiz"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:708
-#: includes/class-sensei-posttypes.php:709
+#: includes/class-sensei-posttypes.php:715
+#: includes/class-sensei-posttypes.php:716
 #: includes/class-sensei-question.php:136
 #: includes/class-sensei-question.php:137
 msgid "Quizzes"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:717
+#: includes/class-sensei-posttypes.php:724
 msgid "Multiple Question"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:718
-#: includes/class-sensei-posttypes.php:719
+#: includes/class-sensei-posttypes.php:725
+#: includes/class-sensei-posttypes.php:726
 msgid "Multiple Questions"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:722
+#: includes/class-sensei-posttypes.php:729
 msgid "Message"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:745
+#: includes/class-sensei-posttypes.php:752
 msgid "Add New"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:747
+#: includes/class-sensei-posttypes.php:754
 #. translators: Placeholder is the singular post type label.
 msgid "Add New %s"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:751
+#: includes/class-sensei-posttypes.php:758
 #. translators: Placeholder is the singular post type label.
 msgid "New %s"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:753
+#: includes/class-sensei-posttypes.php:760
 #. translators: Placeholder is the plural post type label.
 msgid "All %s"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:755
+#: includes/class-sensei-posttypes.php:762
 #. translators: Placeholder is the singular post type label.
 msgid "View %s"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:757
+#: includes/class-sensei-posttypes.php:764
 #. translators: Placeholder is the plural post type label.
 msgid "Search %s"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:759
+#: includes/class-sensei-posttypes.php:766
 #. translators: Placeholder is the lower-case plural post type label.
 msgid "No %s found"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:761
+#: includes/class-sensei-posttypes.php:768
 #. translators: Placeholder is the lower-case plural post type label.
 msgid "No %s found in Trash"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:802
+#: includes/class-sensei-posttypes.php:809
 #. translators: Placeholders are the singular label for the post type and the post's permalink, respectively.
 msgid "%1$s updated. %2$sView %1$s%3$s."
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:803
+#: includes/class-sensei-posttypes.php:810
 #. translators: Placeholders are the singular label for the post type and the post's permalink, respectively.
 msgid "Custom field updated."
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:804
+#: includes/class-sensei-posttypes.php:811
 msgid "Custom field deleted."
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:806
+#: includes/class-sensei-posttypes.php:813
 #. translators: Placeholder is the singular label for the post type.
 msgid "%1$s updated."
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:808
+#: includes/class-sensei-posttypes.php:815
 #. translators: Placeholders are the singular label for the post type and the post's revision, respectively.
 msgid "%1$s restored to revision from %2$s."
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:810
+#: includes/class-sensei-posttypes.php:817
 #. translators: Placeholders are the singular label for the post type and the post's permalink, respectively.
 msgid "%1$s published. %2$sView %1$s%3$s."
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:812
+#: includes/class-sensei-posttypes.php:819
 #. translators: Placeholder is the singular label for the post type.
 msgid "%1$s saved."
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:814
+#: includes/class-sensei-posttypes.php:821
 #. translators: Placeholders are the singular label for the post type and the post's preview link, respectively.
 msgid "%1$s submitted. %2$sPreview %1$s%3$s."
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:823
+#: includes/class-sensei-posttypes.php:830
 #. translators: Placeholders are as follows (in order): - The singular label for the post type. - The formatted post date. - The opening tag for the post's permalink. - The closing tag for the post's permalink.
 msgid "%1$s scheduled for: %2$s. %3$sPreview %4$s%5$s."
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:823
+#: includes/class-sensei-posttypes.php:830
 #. translators: Placeholders are as follows (in order): - The singular label for the post type. - The formatted post date. - The opening tag for the post's permalink. - The closing tag for the post's permalink.
 msgid "M j, Y @ G:i"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:825
+#: includes/class-sensei-posttypes.php:832
 #. translators: Placeholders are the singular label for the post type and the post's preview link, respectively.
 msgid "%1$s draft updated. %2$sPreview %3$s%4$s."
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:841
-msgid "Enter a title for this course here"
-msgstr ""
-
-#: includes/class-sensei-posttypes.php:843
-msgid "Enter a title for this lesson here"
+#: includes/class-sensei-posttypes.php:848
+msgid "Course name"
 msgstr ""
 
 #: includes/class-sensei-question.php:220
@@ -3233,33 +3658,33 @@ msgstr ""
 msgid "Grade: %d"
 msgstr ""
 
-#: includes/class-sensei-question.php:992
-#. translators: Placeholders are the upload size and the measurement (e.g. 5 MB)
-msgid "Maximum upload file size: %1$d%2$s"
+#: includes/class-sensei-question.php:980
+#. translators: Placeholder are the upload size and the measurement (e.g. 5 MB).
+msgid "Maximum upload file size: %s"
 msgstr ""
 
 #: includes/class-sensei-quiz.php:147
 msgid "Quiz Saved Successfully."
 msgstr ""
 
-#: includes/class-sensei-quiz.php:510
+#: includes/class-sensei-quiz.php:511
 msgid "Quiz Reset Successfully."
 msgstr ""
 
-#: includes/class-sensei-quiz.php:1125
+#: includes/class-sensei-quiz.php:1126
 #. translators: Placeholder is the quiz name with any instance of the word "quiz" removed.
 msgid "%s Quiz"
 msgstr ""
 
-#: includes/class-sensei-quiz.php:1281
+#: includes/class-sensei-quiz.php:1282
 msgid "Complete Quiz"
 msgstr ""
 
-#: includes/class-sensei-quiz.php:1283
+#: includes/class-sensei-quiz.php:1284
 msgid "Save Quiz"
 msgstr ""
 
-#: includes/class-sensei-quiz.php:1289
+#: includes/class-sensei-quiz.php:1290
 msgid "Reset Quiz"
 msgstr ""
 
@@ -4288,64 +4713,64 @@ msgstr ""
 msgid "Points: %s"
 msgstr ""
 
-#: includes/class-sensei.php:319
-#: includes/class-sensei.php:328
+#: includes/class-sensei.php:343
+#: includes/class-sensei.php:352
 msgid "Cheatin&#8217; huh?"
 msgstr ""
 
-#: includes/class-sensei.php:807
+#: includes/class-sensei.php:835
 #. translators: The placeholder %s is a link to the course.
 msgid "Please complete the previous %1$s before taking this course."
 msgstr ""
 
-#: includes/class-sensei.php:812
+#: includes/class-sensei.php:840
 #. translators: The placeholders are the opening and closing tags for a link to log in.
 msgid "Or %1$s login %2$s to access your purchased courses"
 msgstr ""
 
-#: includes/class-sensei.php:842
-#: includes/class-sensei.php:886
-#: includes/class-sensei.php:902
-#: includes/class-sensei.php:916
+#: includes/class-sensei.php:870
+#: includes/class-sensei.php:914
+#: includes/class-sensei.php:930
+#: includes/class-sensei.php:944
 msgid "Restricted Access"
 msgstr ""
 
-#: includes/class-sensei.php:848
+#: includes/class-sensei.php:876
 #. translators: The placeholder %1$s is a link to the Course.
 msgid "This is a preview lesson. Please purchase the %1$s to access all lessons."
 msgstr ""
 
-#: includes/class-sensei.php:851
+#: includes/class-sensei.php:879
 #. translators: The placeholder %1$s is a link to the Course.
 msgid "Please purchase the %1$s before starting this Lesson."
 msgstr ""
 
-#: includes/class-sensei.php:856
+#: includes/class-sensei.php:884
 #. translators: The placeholder %1$s is a link to the Course.
 msgid "This is a preview lesson. Please sign up for the %1$s to access all lessons."
 msgstr ""
 
-#: includes/class-sensei.php:889
+#: includes/class-sensei.php:917
 #. translators: The placeholder %1$s is a link to the Lesson.
 msgid "Please complete the previous %1$s before taking this Quiz."
 msgstr ""
 
-#: includes/class-sensei.php:907
+#: includes/class-sensei.php:935
 #. translators: The placeholder %1$s is a link to the Course.
 msgid "Please purchase the %1$s before starting this Quiz."
 msgstr ""
 
-#: includes/class-sensei.php:910
+#: includes/class-sensei.php:938
 #. translators: The placeholder %1$s is a link to the Course.
 msgid "Please sign up for the %1$s before starting this Quiz."
 msgstr ""
 
-#: includes/class-sensei.php:919
+#: includes/class-sensei.php:947
 #. translators: The placeholder %1$s is a link to the Course.
 msgid "Please sign up for the %1$s before taking this Quiz."
 msgstr ""
 
-#: includes/class-sensei.php:1387
+#: includes/class-sensei.php:1420
 #. translators: Docs as in Documentation
 msgid "Docs"
 msgstr ""
@@ -4382,12 +4807,33 @@ msgstr ""
 msgid "File type is not supported. Must be one of the following: %s."
 msgstr ""
 
+#: includes/data-port/class-sensei-data-port-utilities.php:522
+#. translators: Placeholder is the term which errored.
+msgid "Module does not exist: %s."
+msgstr ""
+
+#: includes/data-port/class-sensei-data-port-utilities.php:532
+#. translators: First placeholder is the term which errored, second is the course id.
+msgid "Module %1$s is not part of course %2$s."
+msgstr ""
+
 #: includes/data-port/class-sensei-export.php:61
 msgid "Export Content"
 msgstr ""
 
 #: includes/data-port/class-sensei-export.php:62
 msgid "Export"
+msgstr ""
+
+#: includes/data-port/class-sensei-import-block-migrator.php:149
+#. translators: The %1$d is the lesson id and the %2$s the lesson title.
+msgid ""
+"Lesson with id %1$d and title %2$s which is referenced in course outline "
+"block not found."
+msgstr ""
+
+#: includes/data-port/class-sensei-import-block-migrator.php:174
+msgid "No title for module found."
 msgstr ""
 
 #: includes/data-port/class-sensei-import-csv-reader.php:193
@@ -4465,16 +4911,6 @@ msgid ""
 "associated with it."
 msgstr ""
 
-#: includes/data-port/import-tasks/class-sensei-import-associations.php:319
-#. translators: Placeholder is the term which errored.
-msgid "Module does not exist: %s."
-msgstr ""
-
-#: includes/data-port/import-tasks/class-sensei-import-associations.php:329
-#. translators: First placeholder is the term which errored, second is the course id.
-msgid "Module %1$s is not part of course %2$s."
-msgstr ""
-
 #: includes/data-port/import-tasks/class-sensei-import-file-process-task.php:262
 msgid "A required field is missing or one of the fields is malformed. Line skipped."
 msgstr ""
@@ -4504,7 +4940,7 @@ msgstr ""
 msgid "Course creation failed."
 msgstr ""
 
-#: includes/data-port/models/class-sensei-import-course-model.php:244
+#: includes/data-port/models/class-sensei-import-course-model.php:252
 #: includes/data-port/models/class-sensei-import-lesson-model.php:466
 #. translators: Placeholder is comma separated list of terms that failed to save.
 msgid "The following terms failed to save: %s"
@@ -4820,6 +5256,43 @@ msgstr ""
 msgid ""
 "Manual enrollment <strong>was provided</strong> to the learner on legacy "
 "migration."
+msgstr ""
+
+#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:87
+#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:111
+msgid "Course not found."
+msgstr ""
+
+#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:167
+msgid "Input for course structure was invalid."
+msgstr ""
+
+#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:186
+msgid "An error occurred while saving the course structure."
+msgstr ""
+
+#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:226
+msgid "Lesson post ID"
+msgstr ""
+
+#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:230
+msgid "Lesson title"
+msgstr ""
+
+#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:234
+msgid "Whether the lesson is currently a draft"
+msgstr ""
+
+#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:248
+msgid "Module term ID"
+msgstr ""
+
+#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:252
+msgid "Module title"
+msgstr ""
+
+#: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:260
+msgid "Lessons in module"
 msgstr ""
 
 #: includes/rest-api/class-sensei-rest-api-data-port-controller.php:164
@@ -5219,7 +5692,7 @@ msgstr ""
 msgid "The user requested does not exist."
 msgstr ""
 
-#: templates/single-quiz.php:121
+#: templates/single-quiz.php:116
 msgid "There are no questions for this Quiz yet. Check back soon."
 msgstr ""
 
@@ -5361,32 +5834,32 @@ msgctxt "post type single url slug"
 msgid "course"
 msgstr ""
 
-#: includes/class-sensei-course.php:678
+#: includes/class-sensei-course.php:693
 msgctxt "column name"
 msgid "Course Title"
 msgstr ""
 
-#: includes/class-sensei-course.php:679
+#: includes/class-sensei-course.php:694
 msgctxt "column name"
 msgid "Pre-requisite Course"
 msgstr ""
 
-#: includes/class-sensei-course.php:680
+#: includes/class-sensei-course.php:695
 msgctxt "column name"
 msgid "Category"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:2232
+#: includes/class-sensei-lesson.php:2227
 msgctxt "column name"
 msgid "Lesson Title"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:2233
+#: includes/class-sensei-lesson.php:2228
 msgctxt "column name"
 msgid "Course"
 msgstr ""
 
-#: includes/class-sensei-lesson.php:2234
+#: includes/class-sensei-lesson.php:2229
 msgctxt "column name"
 msgid "Pre-requisite Lesson"
 msgstr ""
@@ -5406,112 +5879,112 @@ msgctxt "column name"
 msgid "Categories"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:158
+#: includes/class-sensei-posttypes.php:165
 msgctxt "post type single url base"
 msgid "course"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:261
+#: includes/class-sensei-posttypes.php:268
 msgctxt "post type single slug"
 msgid "lesson"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:310
+#: includes/class-sensei-posttypes.php:317
 msgctxt "post type single slug"
 msgid "quiz"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:355
+#: includes/class-sensei-posttypes.php:362
 msgctxt "post type single slug"
 msgid "question"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:396
+#: includes/class-sensei-posttypes.php:403
 msgctxt "post type single slug"
 msgid "multiple_question"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:432
+#: includes/class-sensei-posttypes.php:439
 msgctxt "post type single slug"
 msgid "messages"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:484
+#: includes/class-sensei-posttypes.php:491
 msgctxt "taxonomy general name"
 msgid "Course Categories"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:530
+#: includes/class-sensei-posttypes.php:537
 msgctxt "taxonomy general name"
 msgid "Quiz Types"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:567
+#: includes/class-sensei-posttypes.php:574
 msgctxt "taxonomy general name"
 msgid "Question Types"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:604
+#: includes/class-sensei-posttypes.php:611
 msgctxt "taxonomy general name"
 msgid "Question Categories"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:648
+#: includes/class-sensei-posttypes.php:655
 msgctxt "taxonomy general name"
 msgid "Lesson Tags"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:485
+#: includes/class-sensei-posttypes.php:492
 msgctxt "taxonomy singular name"
 msgid "Course Category"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:531
+#: includes/class-sensei-posttypes.php:538
 msgctxt "taxonomy singular name"
 msgid "Quiz Type"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:568
+#: includes/class-sensei-posttypes.php:575
 msgctxt "taxonomy singular name"
 msgid "Question Type"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:605
+#: includes/class-sensei-posttypes.php:612
 msgctxt "taxonomy singular name"
 msgid "Question Category"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:649
+#: includes/class-sensei-posttypes.php:656
 msgctxt "taxonomy singular name"
 msgid "Lesson Tag"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:513
+#: includes/class-sensei-posttypes.php:520
 msgctxt "taxonomy archive slug"
 msgid "course-category"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:551
+#: includes/class-sensei-posttypes.php:558
 msgctxt "taxonomy archive slug"
 msgid "quiz-type"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:589
+#: includes/class-sensei-posttypes.php:596
 msgctxt "taxonomy archive slug"
 msgid "question-type"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:633
+#: includes/class-sensei-posttypes.php:640
 msgctxt "taxonomy archive slug"
 msgid "question-category"
 msgstr ""
 
-#: includes/class-sensei-posttypes.php:676
+#: includes/class-sensei-posttypes.php:683
 msgctxt "taxonomy archive slug"
 msgid "lesson-tag"
 msgstr ""
 
-#: includes/class-sensei.php:1405
+#: includes/class-sensei.php:1438
 msgctxt "plugin action link"
 msgid "Configure"
 msgstr ""
