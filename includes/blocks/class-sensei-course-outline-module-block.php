@@ -33,13 +33,22 @@ class Sensei_Course_Outline_Module_Block {
 		$is_default_style = false !== strpos( $class_name, 'is-style-default' );
 		$is_minimal_style = false !== strpos( $class_name, 'is-style-minimal' );
 
-		$header_css = Sensei_Block_Helpers::build_styles(
-			$block['attributes'],
-			[
-				'mainColor'   => $is_default_style ? 'background-color' : null,
-				'borderColor' => null,
-			]
-		);
+		$header_css = [];
+
+		// Only set header CSS whether it's the default style or the text color is set.
+		if (
+			$is_default_style
+			|| ! empty( $block['attributes']['textColor'] )
+			|| ! empty( $block['attributes']['customTextColor'] )
+		) {
+			$header_css = Sensei_Block_Helpers::build_styles(
+				$block['attributes'],
+				[
+					'mainColor'   => $is_default_style ? 'background-color' : null,
+					'borderColor' => null,
+				]
+			);
+		}
 
 		$style_header = '';
 
