@@ -3,8 +3,7 @@ import {
 	ExternalLink,
 	FontSizePicker,
 	PanelBody,
-	ToolbarButton,
-	ToolbarGroup,
+	Toolbar,
 } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
@@ -79,11 +78,7 @@ export const LessonBlockSettings = ( {
 				</PanelBody>
 			</InspectorControls>
 			<BlockControls>
-				{ id && (
-					<ToolbarGroup>
-						<ToolbarButton>{ editLessonLink }</ToolbarButton>
-					</ToolbarGroup>
-				) }
+				{ id && <Toolbar>{ editLessonLink }</Toolbar> }
 			</BlockControls>
 		</>
 	);
