@@ -63,6 +63,10 @@ export const createButtonBlockType = ( { settings, ...options } ) => {
 				style: {
 					type: 'object',
 				},
+				isPreview: {
+					type: 'boolean',
+					default: false,
+				},
 			},
 			supports: {
 				color: {
@@ -85,6 +89,7 @@ export const createButtonBlockType = ( { settings, ...options } ) => {
 			example: {
 				attributes: {
 					align: 'center',
+					isPreview: true,
 				},
 			},
 		},
