@@ -11,6 +11,7 @@ import { withDefaultBlockStyle } from '../../../shared/blocks/settings';
 import { COURSE_STATUS_STORE } from '../status-store';
 import { getCourseInnerBlocks } from '../get-course-inner-blocks';
 import { getActiveStyleClass, applyStyleClass } from '../apply-style-class';
+import useToggleLegacyMetaboxes from '../../use-toggle-legacy-metaboxes';
 
 /**
  * A React context which contains the attributes and the setAttributes callback of the Outline block.
@@ -93,15 +94,7 @@ const EditCourseOutlineBlock = ( {
 	attributes,
 	setAttributes,
 } ) => {
-	// Toggle legacy metaboxes.
-	useEffect( () => {
-		if ( attributes.isPreview ) return;
-		window.sensei_toggleLegacyMetaboxes( false );
-
-		return () => {
-			window.sensei_toggleLegacyMetaboxes( true );
-		};
-	}, [ attributes.isPreview ] );
+	useToggleLegacyMetaboxes();
 
 	const { setBlocks } = useBlocksCreator( clientId );
 

@@ -4,6 +4,7 @@ import classnames from 'classnames';
 import { useSelect } from '@wordpress/data';
 import { COURSE_STATUS_STORE } from '../course-outline/status-store';
 import { CourseProgressSettings } from './settings';
+import useToggleLegacyMetaboxes from '../use-toggle-legacy-metaboxes';
 
 /**
  * Edit course progress bar component.
@@ -26,6 +27,8 @@ export const EditCourseProgressBlock = ( {
 	attributes: { height, borderRadius },
 	setAttributes,
 } ) => {
+	useToggleLegacyMetaboxes();
+
 	const { totalLessonsCount, completedLessonsCount } = useSelect(
 		( select ) => select( COURSE_STATUS_STORE ).getLessonCounts(),
 		[]

@@ -1,8 +1,10 @@
 import { RichText } from '@wordpress/block-editor';
 import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+
 import { getButtonProps, getButtonWrapperProps } from './button-props';
 import { ButtonBlockSettings } from './settings-button';
+import useToggleLegacyMetaboxes from '../use-toggle-legacy-metaboxes';
 
 /**
  * Edit component for a Button block.
@@ -15,6 +17,8 @@ export const EditButtonBlock = ( props ) => {
 	const { colors } = useSelect( ( select ) => {
 		return select( 'core/block-editor' ).getSettings();
 	}, [] );
+
+	useToggleLegacyMetaboxes();
 
 	const isReadonly = undefined !== props.text;
 	const buttonProps = getButtonProps( { ...props, colors } );
