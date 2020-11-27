@@ -15,8 +15,10 @@ import { select, dispatch } from '@wordpress/data';
 	/**
 	 * Toggle meta boxes depending on the blocks.
 	 */
-	window.sensei_toggleLegacyMetaboxes = () => {
-		if ( ! blockEditorSelector ) return;
+	window.sensei_toggle_legacy_metaboxes = () => {
+		if ( ! blockEditorSelector ) {
+			return;
+		}
 
 		const outlineBlockCount = blockEditorSelector.getGlobalBlockCount(
 			COURSE_OUTLINE_NAME
@@ -53,7 +55,7 @@ import { select, dispatch } from '@wordpress/data';
 } )();
 
 jQuery( document ).ready( function ( $ ) {
-	window.sensei_toggleLegacyMetaboxes();
+	window.sensei_toggle_legacy_metaboxes();
 
 	$( '#course-prerequisite-options' ).select2( { width: '100%' } );
 
