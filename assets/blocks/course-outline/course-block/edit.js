@@ -94,7 +94,7 @@ const EditCourseOutlineBlock = ( {
 	attributes,
 	setAttributes,
 } ) => {
-	useToggleLegacyMetaboxes();
+	useToggleLegacyMetaboxes( { ignoreToggle: attributes.isPreview } );
 
 	const { setBlocks } = useBlocksCreator( clientId );
 

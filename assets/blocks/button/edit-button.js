@@ -13,12 +13,12 @@ import useToggleLegacyMetaboxes from '../use-toggle-legacy-metaboxes';
  */
 export const EditButtonBlock = ( props ) => {
 	const { placeholder, attributes, setAttributes, tagName } = props;
-	const { text } = attributes;
+	const { text, isPreview } = attributes;
 	const { colors } = useSelect( ( select ) => {
 		return select( 'core/block-editor' ).getSettings();
 	}, [] );
 
-	useToggleLegacyMetaboxes();
+	useToggleLegacyMetaboxes( { ignoreToggle: isPreview } );
 
 	const isReadonly = undefined !== props.text;
 	const buttonProps = getButtonProps( { ...props, colors } );

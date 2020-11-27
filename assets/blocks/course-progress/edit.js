@@ -17,6 +17,7 @@ import useToggleLegacyMetaboxes from '../use-toggle-legacy-metaboxes';
  * @param {Object}   props.attributes              Component attributes.
  * @param {number}   props.attributes.height       The height of the progress bar.
  * @param {number}   props.attributes.borderRadius The border radius of the progress bar.
+ * @param {boolean}  props.attributes.isPreview    Is preview flag.
  * @param {Function} props.setAttributes           Callback to set the component attributes.
  */
 export const EditCourseProgressBlock = ( {
@@ -24,10 +25,10 @@ export const EditCourseProgressBlock = ( {
 	barColor,
 	barBackgroundColor,
 	textColor,
-	attributes: { height, borderRadius },
+	attributes: { height, borderRadius, isPreview },
 	setAttributes,
 } ) => {
-	useToggleLegacyMetaboxes();
+	useToggleLegacyMetaboxes( { ignoreToggle: isPreview } );
 
 	const { totalLessonsCount, completedLessonsCount } = useSelect(
 		( select ) => select( COURSE_STATUS_STORE ).getLessonCounts(),
