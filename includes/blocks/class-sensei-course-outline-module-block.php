@@ -163,7 +163,7 @@ class Sensei_Course_Outline_Module_Block {
 		);
 
 		if ( ! empty( $block_attributes['bordered'] ) ) {
-			$class_names[] = 'sensei-module-bordered';
+			$class_names[] = 'wp-block-sensei-lms-course-outline-module-bordered';
 
 			if ( ! empty( $block_attributes['borderColorValue'] ) ) {
 				$inline_styles[] = sprintf( 'border-color: %s;', $block_attributes['borderColorValue'] );
