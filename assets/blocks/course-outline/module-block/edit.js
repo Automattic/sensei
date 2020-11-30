@@ -33,7 +33,7 @@ import { useInsertLessonBlock } from './use-insert-lesson-block';
  * @param {Object}   props.defaultMainColor            Default main color.
  * @param {Object}   props.textColor                   Header text color.
  * @param {Object}   props.defaultTextColor            Default text color.
- * @param {Object}   props.borderColor                 Border color.
+ * @param {Object}   props.defaultBorderColor          Default border color.
  * @param {Function} props.setAttributes               Block set attributes function.
  * @param {string}   props.name                        Name of the block.
  */
@@ -46,6 +46,7 @@ export const EditModuleBlock = ( props ) => {
 		defaultMainColor,
 		textColor,
 		defaultTextColor,
+		defaultBorderColor,
 		setAttributes,
 	} = props;
 	const {
@@ -124,9 +125,11 @@ export const EditModuleBlock = ( props ) => {
 			/>
 			<section
 				className={ classnames( className, {
-					'sensei-module-bordered': bordered,
+					'wp-block-sensei-lms-course-outline-module-bordered': bordered,
 				} ) }
-				style={ { borderColor: borderColorValue } }
+				style={ {
+					borderColor: borderColorValue || defaultBorderColor?.color,
+				} }
 			>
 				<header
 					className="wp-block-sensei-lms-course-outline-module__header"
@@ -214,6 +217,10 @@ export default compose(
 		defaultTextColor: {
 			style: 'color',
 			probeKey: 'primaryContrastColor',
+		},
+		defaultBorderColor: {
+			style: 'border-color',
+			probeKey: 'primaryColor',
 		},
 	} )
 )( EditModuleBlock );

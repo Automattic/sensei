@@ -79,10 +79,10 @@ $block: '.wp-block-sensei-lms-course-outline-module';
 			display: none;
 		}
 	}
+}
 
-	&.sensei-module-bordered {
-		border: 1px solid $dark-gray;
-	}
+#{$block}-bordered {
+	border: 1px solid $dark-gray;
 }
 
 .wp-block-sensei-lms-course-outline.is-style-default #{$block}:not(.is-style-minimal), #{$block}.is-style-default {

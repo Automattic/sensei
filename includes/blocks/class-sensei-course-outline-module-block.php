@@ -155,9 +155,15 @@ class Sensei_Course_Outline_Module_Block {
 	private function get_block_html_attributes( $class_name, $block_attributes ) : string {
 		$class_names   = [ 'wp-block-sensei-lms-course-outline-module', 'sensei-collapsible', $class_name ];
 		$inline_styles = [];
+		$css           = Sensei_Block_Helpers::build_styles(
+			$block_attributes,
+			[
+				'textColor' => null,
+			]
+		);
 
 		if ( ! empty( $block_attributes['bordered'] ) ) {
-			$class_names[] = 'sensei-module-bordered';
+			$class_names[] = 'wp-block-sensei-lms-course-outline-module-bordered';
 
 			if ( ! empty( $block_attributes['borderColorValue'] ) ) {
 				$inline_styles[] = sprintf( 'border-color: %s;', $block_attributes['borderColorValue'] );
@@ -167,8 +173,8 @@ class Sensei_Course_Outline_Module_Block {
 		return Sensei_Block_Helpers::render_style_attributes(
 			$class_names,
 			[
-				'css_classes'   => [],
-				'inline_styles' => $inline_styles,
+				'css_classes'   => $css['css_classes'],
+				'inline_styles' => array_merge( $css['inline_styles'], $inline_styles ),
 			]
 		);
 	}
