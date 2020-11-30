@@ -87,3 +87,8 @@
 		bottom: 0;
 	}
 }
+
+.block-editor-block-toolbar__slot {
+	// Prevents text toolbar items shrinking to avoid other buttons overlapping.
+	flex-shrink: 0;
+}
