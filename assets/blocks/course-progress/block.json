@@ -18,6 +18,9 @@
     "customBarColor": {
       "type": "string"
     },
+    "defaultBarColor": {
+      "type": "string"
+    },
     "barBackgroundColor": {
       "type": "string"
     },

@@ -2,18 +2,21 @@ import { InnerBlocks, RichText } from '@wordpress/block-editor';
 import { Icon } from '@wordpress/components';
 import { compose } from '@wordpress/compose';
 import { useContext, useEffect, useState } from '@wordpress/element';
+import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
 import AnimateHeight from 'react-animate-height';
-import { chevronUp } from '../../../icons/wordpress-icons';
 
-import { withColorSettings } from '../../../shared/blocks/settings';
+import { chevronUp } from '../../../icons/wordpress-icons';
+import {
+	withColorSettings,
+	withDefaultColor,
+} from '../../../shared/blocks/settings';
 import { OutlineAttributesContext } from '../course-block/edit';
 import SingleLineInput from '../single-line-input';
 import { ModuleStatus } from './module-status';
 import { ModuleBlockSettings } from './settings';
 import { useInsertLessonBlock } from './use-insert-lesson-block';
-import { dispatch } from '@wordpress/data';
 
 /**
  * Edit module block component.
@@ -27,7 +30,9 @@ import { dispatch } from '@wordpress/data';
  * @param {boolean}  props.attributes.bordered         Whether the module has a border.
  * @param {string}   props.attributes.borderColorValue The border color.
  * @param {Object}   props.mainColor                   Header main color.
+ * @param {Object}   props.defaultMainColor            Default main color.
  * @param {Object}   props.textColor                   Header text color.
+ * @param {Object}   props.defaultTextColor            Default text color.
  * @param {Object}   props.borderColor                 Border color.
  * @param {Function} props.setAttributes               Block set attributes function.
  * @param {string}   props.name                        Name of the block.
@@ -38,7 +43,9 @@ export const EditModuleBlock = ( props ) => {
 		className,
 		attributes: { title, description, bordered, borderColorValue },
 		mainColor,
+		defaultMainColor,
 		textColor,
+		defaultTextColor,
 		setAttributes,
 	} = props;
 	const {
@@ -78,23 +85,33 @@ export const EditModuleBlock = ( props ) => {
 
 	const [ isExpanded, setExpanded ] = useState( true );
 
-	let blockStyleColors = {};
-	const style = className.match( /is-style-(\w+)/ );
+	const styleRegex = /is-style-(\w+)/;
+	const style =
+		className.match( styleRegex )?.[ 1 ] ||
+		outlineClassName.match( styleRegex )?.[ 1 ];
 
-	if ( style ) {
-		blockStyleColors = {
-			default: { background: mainColor?.color },
-			minimal: { borderColor: mainColor?.color },
-		}[ style[ 1 ] ];
-	} else {
-		const outlineStyle = outlineClassName.match( /is-style-(\w+)/ );
+	// Header styles.
+	const headerStyles = {
+		default: {
+			background: mainColor?.color || defaultMainColor?.color,
+			color: textColor?.color || defaultTextColor?.color,
+		},
+		minimal: {
+			color: textColor?.color,
+		},
+	}[ style ];
 
-		if ( outlineStyle ) {
-			blockStyleColors = {
-				default: { background: mainColor?.color },
-				minimal: { borderColor: mainColor?.color },
-			}[ outlineStyle[ 1 ] ];
-		}
+	// Minimal border element.
+	let minimalBorder;
+	if ( 'minimal' === style ) {
+		minimalBorder = (
+			<div
+				className="wp-block-sensei-lms-course-outline-module__name__minimal-border"
+				style={ {
+					background: mainColor?.color || defaultMainColor?.color,
+				} }
+			/>
+		);
 	}
 
 	return (
@@ -113,7 +130,7 @@ export const EditModuleBlock = ( props ) => {
 			>
 				<header
 					className="wp-block-sensei-lms-course-outline-module__header"
-					style={ { ...blockStyleColors, color: textColor?.color } }
+					style={ headerStyles }
 				>
 					<h2 className="wp-block-sensei-lms-course-outline-module__title">
 						<SingleLineInput
@@ -140,6 +157,7 @@ export const EditModuleBlock = ( props ) => {
 						</button>
 					) }
 				</header>
+				{ minimalBorder }
 				<AnimateHeight
 					className="wp-block-sensei-lms-collapsible"
 					duration={ 500 }
@@ -186,6 +204,16 @@ export default compose(
 					clientId,
 					{ borderColorValue: colorValue, bordered: !! colorValue }
 				),
+		},
+	} ),
+	withDefaultColor( {
+		defaultMainColor: {
+			style: 'background-color',
+			probeKey: 'primaryColor',
+		},
+		defaultTextColor: {
+			style: 'color',
+			probeKey: 'primaryContrastColor',
 		},
 	} )
 )( EditModuleBlock );

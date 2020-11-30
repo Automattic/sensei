@@ -44,17 +44,21 @@ class Sensei_Block_Helpers {
 			if ( ! $style ) {
 				continue;
 			}
-			$named_color  = $block_attributes[ $color ] ?? null;
-			$custom_color = $block_attributes[ 'custom' . ucfirst( $color ) ] ?? null;
+			$named_color   = $block_attributes[ $color ] ?? null;
+			$custom_color  = $block_attributes[ 'custom' . ucfirst( $color ) ] ?? null;
+			$default_color = $block_attributes[ 'default' . ucfirst( $color ) ] ?? null;
 
 			if ( $custom_color || $named_color ) {
 				$attributes['css_classes'][] = sprintf( 'has-%s', $style );
 			}
+
+			$named_class = 'border-color' === $style ? 'border-color-%s' : 'has-%s-%s';
 			if ( $named_color ) {
-				$named_class                 = 'border-color' === $style ? 'border-color-%s' : 'has-%s-%s';
 				$attributes['css_classes'][] = sprintf( $named_class, $named_color, $style );
 			} elseif ( $custom_color ) {
 				$attributes['inline_styles'][] = sprintf( '%s: %s;', $style, $custom_color );
+			} elseif ( $default_color ) {
+				$attributes['css_classes'][] = sprintf( $named_class, $default_color, $style );
 			}
 		}
 
@@ -81,12 +85,14 @@ class Sensei_Block_Helpers {
 	 * @return string
 	 */
 	public static function render_style_attributes( $class_names, $css ) {
+		$css_classes   = isset( $css['css_classes'] ) && is_array( $css['css_classes'] ) ? $css['css_classes'] : [];
+		$inline_styles = isset( $css['inline_styles'] ) && is_array( $css['inline_styles'] ) ? $css['inline_styles'] : [];
 
-		$class_names = array_merge( is_array( $class_names ) ? $class_names : [ $class_names ], $css['css_classes'] );
+		$class_names = array_merge( is_array( $class_names ) ? $class_names : [ $class_names ], $css_classes );
 		return sprintf(
 			'class="%s" style="%s"',
 			esc_attr( implode( ' ', $class_names ) ),
-			esc_attr( implode( '; ', $css['inline_styles'] ) )
+			esc_attr( implode( '; ', $inline_styles ) )
 		);
 	}
 

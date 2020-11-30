@@ -25,10 +25,16 @@
     "customMainColor": {
       "type": "string"
     },
+    "defaultMainColor": {
+      "type": "string"
+    },
     "textColor": {
       "type": "string"
     },
     "customTextColor": {
+      "type": "string"
+    },
+    "defaultTextColor": {
       "type": "string"
     },
     "borderColor": {
