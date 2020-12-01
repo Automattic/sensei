@@ -78,7 +78,11 @@ export const LessonBlockSettings = ( {
 				</PanelBody>
 			</InspectorControls>
 			<BlockControls>
-				{ id && <Toolbar>{ editLessonLink }</Toolbar> }
+				{ id && (
+					<Toolbar className="components-button">
+						{ editLessonLink }
+					</Toolbar>
+				) }
 			</BlockControls>
 		</>
 	);
