@@ -22,8 +22,15 @@ const getEditorOutlineBlock = () =>
 		select( 'core/block-editor' ).getBlocks()
 	);
 
-const getEditorOutlineStructure = () =>
-	extractStructure( getEditorOutlineBlock().innerBlocks );
+const getEditorOutlineStructure = () => {
+	const outlineBlock = getEditorOutlineBlock();
+
+	if ( ! outlineBlock ) {
+		return null;
+	}
+
+	return extractStructure( outlineBlock.innerBlocks );
+};
 
 const actions = {
 	/**
@@ -153,7 +160,10 @@ const registerCourseStructureStore = () => {
 		const serverStructure = select( COURSE_STORE ).getServerStructure();
 		const editorStructure = getEditorOutlineStructure();
 
-		if ( isEqual( serverStructure, editorStructure ) ) {
+		if (
+			! editorStructure ||
+			isEqual( serverStructure, editorStructure )
+		) {
 			return;
 		}
 
