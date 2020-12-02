@@ -57,13 +57,13 @@ class Sensei_Question {
 	}
 
 	/**
-	 * Add column headings to the "lesson" post list screen,
+	 * Add column headings to the "question" post list screen,
 	 * while moving the existing ones to the end.
 	 *
-	 * @access public
+	 * @access private
 	 * @since  1.3.0
-	 * @param  array $defaults
-	 * @return array $new_columns
+	 * @param  array $defaults  Array of column header labels keyed by column ID.
+	 * @return array            Updated array of column header labels keyed by column ID.
 	 */
 	public function add_column_headings( $defaults ) {
 		$new_columns                      = [];
@@ -87,16 +87,16 @@ class Sensei_Question {
 		}
 
 		return $new_columns;
-	} // End add_column_headings()
+	}
 
 	/**
 	 * Hide all columns by default, leaving only a default set.
 	 *
-	 * @access public
-	 * @since  3.1.0-dev
-	 * @param  array     $hidden_columns
-	 * @param  WP_Screen $screen
-	 * @return array     $hidden_columns
+	 * @access private
+	 * @since  3.5.4
+	 * @param  string[]  $hidden_columns Array of IDs of columns hidden by default.
+	 * @param  WP_Screen $screen         WP_Screen object of the current screen.
+	 * @return string[]                  Updated array of IDs of columns hidden by default.
 	 */
 	public function set_default_visible_columns( $hidden_columns, $screen ) {
 		$default_question_columns = [
@@ -107,7 +107,7 @@ class Sensei_Question {
 			'date',
 		];
 
-		if ( ! $screen instanceof WP_Screen || 'edit-question' !== $screen->id ) {
+		if ( ! isset( $screen->id ) || 'edit-course' !== $screen->id ) {
 			return $hidden_columns;
 		}
 
@@ -119,7 +119,7 @@ class Sensei_Question {
 		}
 
 		return $hidden_columns;
-	} // End set_default_visible_columns()
+	}
 
 	/**
 	 * Add data for our newly-added custom columns.
