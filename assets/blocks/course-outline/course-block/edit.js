@@ -103,8 +103,10 @@ const EditCourseOutlineBlock = ( {
 	const { updateBlockAttributes } = useDispatch( 'core/block-editor' );
 
 	useEffect( () => {
-		fetchCourseStructure();
-	}, [ fetchCourseStructure ] );
+		if ( ! attributes.isPreview ) {
+			fetchCourseStructure();
+		}
+	}, [ attributes.isPreview, fetchCourseStructure ] );
 
 	const { setBlocks } = useBlocksCreator( clientId );
 
