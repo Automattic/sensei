@@ -48,7 +48,7 @@ const actions = {
 	 *
 	 * @param {Array} editorStructure
 	 */
-	*saveStruture( editorStructure ) {
+	*saveStructure( editorStructure ) {
 		yield { type: 'SAVING', isSavingStructure: true };
 		const courseId = yield select( 'core/editor' ).getCurrentPostId();
 
@@ -169,7 +169,7 @@ const registerCourseStructureStore = () => {
 
 		// Clear error notices.
 		dispatch( 'core/notices' ).removeNotice( 'course-outline-save-error' );
-		dispatch( COURSE_STORE ).saveStruture( editorStructure );
+		dispatch( COURSE_STORE ).saveStructure( editorStructure );
 	};
 
 	const finishSave = () => {
