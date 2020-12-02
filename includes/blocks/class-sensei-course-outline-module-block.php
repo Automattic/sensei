@@ -80,7 +80,7 @@ class Sensei_Course_Outline_Module_Block {
 		}
 
 		return '
-			<section ' . $this->get_block_html_attributes( $class_name, $block['attributes'] ) . '>
+			<section ' . $this->get_block_html_attributes( $class_name, $block['attributes'], $outline_attributes ) . '>
 				<header ' . Sensei_Block_Helpers::render_style_attributes( 'wp-block-sensei-lms-course-outline-module__header', $header_css ) . '>
 					<h2 class="wp-block-sensei-lms-course-outline-module__title">' . $title . '</h2>
 					' . $progress_indicator .
@@ -147,12 +147,13 @@ class Sensei_Course_Outline_Module_Block {
 	/**
 	 * Calculates the block html attributes.
 	 *
-	 * @param string $class_name       The block class name.
-	 * @param array  $block_attributes The block attributes.
+	 * @param string $class_name         The block class name.
+	 * @param array  $block_attributes   The block attributes.
+	 * @param array  $outline_attributes The outline attributes.
 	 *
 	 * @return string The html attributes.
 	 */
-	private function get_block_html_attributes( $class_name, $block_attributes ) : string {
+	private function get_block_html_attributes( $class_name, $block_attributes, $outline_attributes ) : string {
 		$class_names   = [ 'wp-block-sensei-lms-course-outline-module', 'sensei-collapsible', $class_name ];
 		$inline_styles = [];
 		$css           = Sensei_Block_Helpers::build_styles(
@@ -162,7 +163,9 @@ class Sensei_Course_Outline_Module_Block {
 			]
 		);
 
-		if ( ! empty( $block_attributes['bordered'] ) ) {
+		$should_have_border = 'on' === $block_attributes['borderedSelected'] || ( 'parent' === $block_attributes['borderedSelected'] && ! empty( $outline_attributes['moduleBorder'] ) );
+
+		if ( $should_have_border ) {
 			$class_names[] = 'wp-block-sensei-lms-course-outline-module-bordered';
 
 			if ( ! empty( $block_attributes['borderColorValue'] ) ) {

@@ -100,7 +100,6 @@ const EditCourseOutlineBlock = ( {
 	useToggleLegacyMetaboxes( { ignoreToggle: attributes.isPreview } );
 
 	const { fetchCourseStructure } = useDispatch( COURSE_STORE );
-	const { updateBlockAttributes } = useDispatch( 'core/block-editor' );
 
 	useEffect( () => {
 		if ( ! attributes.isPreview ) {
@@ -118,21 +117,6 @@ const EditCourseOutlineBlock = ( {
 
 	useSynchronizeLessonsOnUpdate( clientId, attributes.isPreview );
 	useApplyStyleToModules( clientId, className, attributes.isPreview );
-
-	const applyBorder = ( newValue ) => {
-		const modules = getCourseInnerBlocks(
-			clientId,
-			'sensei-lms/course-outline-module'
-		);
-
-		modules.forEach( ( module ) => {
-			updateBlockAttributes( module.clientId, {
-				bordered: newValue,
-			} );
-		} );
-
-		setAttributes( { moduleBorder: newValue } );
-	};
 
 	if ( isEmpty ) {
 		return (
@@ -157,7 +141,9 @@ const EditCourseOutlineBlock = ( {
 						setAttributes( { collapsibleModules: value } )
 					}
 					moduleBorder={ attributes.moduleBorder }
-					setModuleBorder={ applyBorder }
+					setModuleBorder={ ( newValue ) =>
+						setAttributes( { moduleBorder: newValue } )
+					}
 				/>
 
 				<section className={ className }>

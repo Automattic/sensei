@@ -1,7 +1,7 @@
 import { InnerBlocks, RichText } from '@wordpress/block-editor';
 import { Icon } from '@wordpress/components';
 import { compose } from '@wordpress/compose';
-import { useContext, useEffect, useState } from '@wordpress/element';
+import { useContext, useState } from '@wordpress/element';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
@@ -27,7 +27,7 @@ import { useInsertLessonBlock } from './use-insert-lesson-block';
  * @param {Object}   props.attributes                  Block attributes.
  * @param {string}   props.attributes.title            Module title.
  * @param {string}   props.attributes.description      Module description.
- * @param {boolean}  props.attributes.bordered         Whether the module has a border.
+ * @param {boolean}  props.attributes.borderedSelected The border setting selected by the user.
  * @param {string}   props.attributes.borderColorValue The border color.
  * @param {Object}   props.mainColor                   Header main color.
  * @param {Object}   props.defaultMainColor            Default main color.
@@ -41,7 +41,7 @@ export const EditModuleBlock = ( props ) => {
 	const {
 		clientId,
 		className,
-		attributes: { title, description, bordered, borderColorValue },
+		attributes: { title, description, borderedSelected, borderColorValue },
 		mainColor,
 		defaultMainColor,
 		textColor,
@@ -58,13 +58,6 @@ export const EditModuleBlock = ( props ) => {
 	};
 
 	useInsertLessonBlock( props );
-
-	// Get the border setting from the parent if none is set.
-	useEffect( () => {
-		if ( undefined === bordered ) {
-			setAttributes( { bordered: moduleBorder } );
-		}
-	}, [ bordered, moduleBorder, setAttributes ] );
 
 	/**
 	 * Handle update name.
@@ -115,12 +108,20 @@ export const EditModuleBlock = ( props ) => {
 		);
 	}
 
+	let bordered = false;
+
+	if ( 'parent' === borderedSelected ) {
+		bordered = moduleBorder;
+	} else {
+		bordered = 'on' === borderedSelected;
+	}
+
 	return (
 		<>
 			<ModuleBlockSettings
-				bordered={ bordered }
+				bordered={ borderedSelected }
 				setBordered={ ( newValue ) =>
-					setAttributes( { bordered: newValue } )
+					setAttributes( { borderedSelected: newValue } )
 				}
 			/>
 			<section
@@ -205,7 +206,7 @@ export default compose(
 			onChange: ( { clientId, colorValue } ) =>
 				dispatch( 'core/block-editor' ).updateBlockAttributes(
 					clientId,
-					{ borderColorValue: colorValue, bordered: !! colorValue }
+					{ borderColorValue: colorValue }
 				),
 		},
 	} ),
