@@ -1,5 +1,5 @@
 import { InnerBlocks } from '@wordpress/block-editor';
-import { useSelect, withSelect, dispatch } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
 import { createContext, useEffect, useRef } from '@wordpress/element';
 
@@ -34,13 +34,18 @@ const useSynchronizeLessonsOnUpdate = function ( clientId, isPreview ) {
 		[ clientId ]
 	);
 
+	const { stopTrackingRemovedLessons } = useDispatch( COURSE_STATUS_STORE );
+
 	useEffect( () => {
 		if ( ! isPreview ) {
-			dispatch( COURSE_STATUS_STORE ).stopTrackingRemovedLessons(
-				outlineDescendants
-			);
+			stopTrackingRemovedLessons( outlineDescendants );
 		}
-	}, [ clientId, outlineDescendants, isPreview ] );
+	}, [
+		clientId,
+		outlineDescendants,
+		isPreview,
+		stopTrackingRemovedLessons,
+	] );
 };
 
 const useApplyStyleToModules = ( clientId, className, isPreview ) => {
@@ -83,32 +88,33 @@ const useApplyStyleToModules = ( clientId, className, isPreview ) => {
  * @param {Object}   props               Component props.
  * @param {string}   props.clientId      Block client ID.
  * @param {string}   props.className     Custom class name.
- * @param {Object[]} props.structure     Course module and lesson blocks.
  * @param {Object}   props.attributes    Block attributes.
  * @param {Function} props.setAttributes Block setAttributes callback.
  */
 const EditCourseOutlineBlock = ( {
 	clientId,
 	className,
-	structure,
 	attributes,
 	setAttributes,
 } ) => {
 	useToggleLegacyMetaboxes( { ignoreToggle: attributes.isPreview } );
+
+	const { fetchCourseStructure } = useDispatch( COURSE_STORE );
+	const { updateBlockAttributes } = useDispatch( 'core/block-editor' );
+
+	useEffect( () => {
+		if ( ! attributes.isPreview ) {
+			fetchCourseStructure();
+		}
+	}, [ attributes.isPreview, fetchCourseStructure ] );
 
 	const { setBlocks } = useBlocksCreator( clientId );
 
 	const isEmpty = useSelect(
 		( select ) =>
 			! select( 'core/block-editor' ).getBlocks( clientId ).length,
-		[ clientId, structure ]
+		[ clientId ]
 	);
-
-	useEffect( () => {
-		if ( structure?.length && ! attributes.isPreview ) {
-			setBlocks( structure );
-		}
-	}, [ structure, setBlocks, attributes.isPreview ] );
 
 	useSynchronizeLessonsOnUpdate( clientId, attributes.isPreview );
 	useApplyStyleToModules( clientId, className, attributes.isPreview );
@@ -120,12 +126,9 @@ const EditCourseOutlineBlock = ( {
 		);
 
 		modules.forEach( ( module ) => {
-			dispatch( 'core/block-editor' ).updateBlockAttributes(
-				module.clientId,
-				{
-					bordered: newValue,
-				}
-			);
+			updateBlockAttributes( module.clientId, {
+				bordered: newValue,
+			} );
 		} );
 
 		setAttributes( { moduleBorder: newValue } );
@@ -170,11 +173,4 @@ const EditCourseOutlineBlock = ( {
 	);
 };
 
-const selectors = ( select ) => ( {
-	structure: select( COURSE_STORE ).getStructure(),
-} );
-
-export default compose(
-	withSelect( selectors ),
-	withDefaultBlockStyle()
-)( EditCourseOutlineBlock );
+export default compose( withDefaultBlockStyle() )( EditCourseOutlineBlock );
