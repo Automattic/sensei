@@ -43,6 +43,7 @@ const actions = {
 		} );
 		yield actions.setStructure( result );
 	},
+
 	/**
 	 * Persist editor's course structure to the REST API.
 	 *
@@ -75,17 +76,40 @@ const actions = {
 
 		yield { type: 'SAVING', isSavingStructure: false };
 	},
+
 	/**
-	 * Set server structure to the editor.
+	 * Set fetched structure.
 	 *
 	 * @param {Array} serverStructure
 	 * @param {Array} editorStructure
 	 */
 	*setStructure( serverStructure, editorStructure = null ) {
 		yield actions.setServerStructure( serverStructure, editorStructure );
+		yield actions.updateOutlineBlock( serverStructure );
+	},
+
+	/**
+	 * Keep last fetched server state for comparison.
+	 *
+	 * @param {Array} serverStructure
+	 * @param {Array} editorStructure
+	 */
+	setServerStructure: ( serverStructure, editorStructure = null ) => ( {
+		type: 'SET_SERVER_STRUCTURE',
+		serverStructure,
+		hasStructureUpdate:
+			editorStructure && ! isEqual( serverStructure, editorStructure ),
+	} ),
+
+	/**
+	 * Update outline block.
+	 *
+	 * @param {Array} structure
+	 */
+	*updateOutlineBlock( structure ) {
 		const { clientId = null } = getEditorOutlineBlock();
 
-		if ( ! clientId || ! serverStructure || 0 === serverStructure.length ) {
+		if ( ! clientId || ! structure || 0 === structure.length ) {
 			return;
 		}
 
@@ -94,22 +118,11 @@ const actions = {
 		);
 		yield dispatch( 'core/block-editor' ).replaceInnerBlocks(
 			clientId,
-			syncStructureToBlocks( serverStructure, blocks ),
+			syncStructureToBlocks( structure, blocks ),
 			false
 		);
 	},
-	/**
-	 * Keep last fetched server state for comparison.
-	 *
-	 * @param {Array} serverStructure
-	 * @param {Array} editorStructure
-	 */
-	setServerStructure: ( serverStructure, editorStructure = null ) => ( {
-		type: 'SET_SERVER',
-		serverStructure,
-		hasStructureUpdate:
-			editorStructure && ! isEqual( serverStructure, editorStructure ),
-	} ),
+
 	/**
 	 * Clear structure update.
 	 */
@@ -120,7 +133,10 @@ const actions = {
  * Course structure reducers.
  */
 const reducers = {
-	SET_SERVER: ( { serverStructure, hasStructureUpdate }, state ) => {
+	SET_SERVER_STRUCTURE: (
+		{ serverStructure, hasStructureUpdate },
+		state
+	) => {
 		return {
 			...state,
 			serverStructure,
@@ -139,7 +155,7 @@ const reducers = {
 };
 
 /**
- * Course structure  selectors
+ * Course structure selectors.
  */
 const selectors = {
 	shouldResavePost: ( { hasStructureUpdate } ) => hasStructureUpdate,
