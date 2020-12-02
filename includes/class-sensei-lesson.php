@@ -2269,7 +2269,7 @@ class Sensei_Lesson {
 			'date',
 		];
 
-		if ( ! isset( $screen->id ) || 'edit-course' !== $screen->id ) {
+		if ( ! isset( $screen->id ) || 'edit-lesson' !== $screen->id ) {
 			return $hidden_columns;
 		}
 

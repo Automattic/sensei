@@ -107,7 +107,7 @@ class Sensei_Question {
 			'date',
 		];
 
-		if ( ! isset( $screen->id ) || 'edit-course' !== $screen->id ) {
+		if ( ! isset( $screen->id ) || 'edit-question' !== $screen->id ) {
 			return $hidden_columns;
 		}
 
