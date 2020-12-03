@@ -100,18 +100,19 @@ class Sensei_Block_Helpers {
 	 * Add default style to list of classes if no style is selected. If a parent classname is supplied, it will override
 	 * the default style.
 	 *
-	 * @param array $attributes        Block attributes.
-	 * @param array $parent_attributes Parent block attributes.
+	 * @param array  $attributes         Block attributes.
+	 * @param array  $parent_attributes  Parent block attributes.
+	 * @param string $default_style_name Default style name.
 	 *
 	 * @return string
 	 */
-	public static function block_class_with_default_style( $attributes, $parent_attributes = [] ) {
+	public static function block_class_with_default_style( $attributes, $parent_attributes = [], $default_style_name = 'default' ) {
 		$class_name = $attributes['className'] ?? '';
 		if ( false === strpos( $class_name, 'is-style-' ) ) {
 			$parent_class_name = $parent_attributes['className'] ?? '';
 
 			if ( false === strpos( $parent_class_name, 'is-style-' ) ) {
-				$class_name .= ' is-style-default';
+				$class_name .= ' is-style-' . $default_style_name;
 			} else {
 				preg_match( '/is-style-\w+/', $parent_class_name, $matches );
 				$class_name .= ' ' . $matches[0];

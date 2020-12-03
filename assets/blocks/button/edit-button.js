@@ -1,5 +1,5 @@
-import { RichText } from '@wordpress/block-editor';
 import { useSelect } from '@wordpress/data';
+import { RichText } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 
 import { getButtonProps, getButtonWrapperProps } from './button-props';
