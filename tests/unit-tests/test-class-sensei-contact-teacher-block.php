@@ -35,7 +35,7 @@ class Sensei_Block_Contact_Teacher_Test extends WP_UnitTestCase {
 	 */
 	public function testHrefAttributeAdded() {
 
-		$output = $this->block->render_contact_teacher_block( [], '<div class=""><a class="wp-block-button__link">Contact teacher</a></div>' );
+		$output = $this->block->render_contact_teacher_block( [], '<div><a class="wp-block-button__link">Contact teacher</a></div>' );
 
 		$this->assertRegExp( '|<a href="/course/test/\?contact=course#private_message".*>Contact teacher</a>|', $output );
 	}
@@ -46,7 +46,7 @@ class Sensei_Block_Contact_Teacher_Test extends WP_UnitTestCase {
 	public function testSuccessMessageDisplayed() {
 		$_GET['send'] = 'complete';
 
-		$output = $this->block->render_contact_teacher_block( [], '<div class=""><a class="wp-block-button__link">Contact teacher</a></div>' );
+		$output = $this->block->render_contact_teacher_block( [], '<div><a class="wp-block-button__link">Contact teacher</a></div>' );
 
 		$this->assertContains( 'Your private message has been sent.', $output );
 	}
@@ -56,30 +56,10 @@ class Sensei_Block_Contact_Teacher_Test extends WP_UnitTestCase {
 	 */
 	public function testMessageForm() {
 
-		$output = $this->block->render_contact_teacher_block( [], '<div class=""><a class="wp-block-button__link">Contact teacher</a></div>' );
+		$output = $this->block->render_contact_teacher_block( [], '<div><a class="wp-block-button__link">Contact teacher</a></div>' );
 
 		$this->assertRegExp( '|<form.*<input.* name="sensei_message_teacher_nonce" .*</form>|ms', $output );
 		$this->assertRegExp( '|<form.*<textarea.* name="contact_message" .*</form>|ms', $output );
-	}
-
-	/**
-	 * Test default style.
-	 */
-	public function testDefaultStyle() {
-		$output = $this->block->render_contact_teacher_block( [], '<div class=""><a class="wp-block-button__link">Contact teacher</a></div>' );
-
-		$this->assertContains( 'is-style-outline', $output );
-		$this->assertNotContains( 'is-style-default', $output );
-	}
-
-	/**
-	 * Test custom style.
-	 */
-	public function testCustomStyle() {
-		$output = $this->block->render_contact_teacher_block( [ 'className' => 'is-style-default' ], '<div class=""><a class="wp-block-button__link">Contact teacher</a></div>' );
-
-		$this->assertContains( 'is-style-default', $output );
-		$this->assertNotContains( 'is-style-outline', $output );
 	}
 
 }

@@ -54,6 +54,11 @@ export const createButtonBlockType = ( { settings, ...options } ) => {
 		EditButtonBlock
 	);
 
+	// eslint-disable-next-line @wordpress/no-unused-vars-before-return -- We don't wanna recreate the component every edit render.
+	const SaveButtonBlockWithBlockStyle = withDefaultBlockStyle( defaultStyle )(
+		SaveButtonBlock
+	);
+
 	return merge(
 		{
 			name: 'sensei-lms/button',
@@ -96,7 +101,12 @@ export const createButtonBlockType = ( { settings, ...options } ) => {
 				);
 			},
 			save( props ) {
-				return SaveButtonBlock( { ...props, ...options } );
+				return (
+					<SaveButtonBlockWithBlockStyle
+						{ ...props }
+						{ ...options }
+					/>
+				);
 			},
 			example: {
 				attributes: {

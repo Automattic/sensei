@@ -62,7 +62,7 @@ class Sensei_Block_Contact_Teacher {
 		$contact_form = $this->teacher_contact_form( $post );
 
 		return '<div id="private_message" class="sensei-block-wrapper sensei-collapsible">
-				' . ( $this->add_button_attributes( $content, $contact_form_link, $attributes ) ) . '
+				' . ( $this->add_button_attributes( $content, $contact_form_link ) ) . '
 				' . $notice . '
 				<div class="sensei-collapsible__content ' . ( $contact_form_open ? '' : 'collapsed' ) . '">' . $contact_form . '</div>
 			</div>';
@@ -101,25 +101,14 @@ class Sensei_Block_Contact_Teacher {
 	}
 
 	/**
-	 * Add attributes to the block's <div> and <a> tags.
+	 * Add attributes to the block's <a> tag.
 	 *
-	 * @param string $content    Block HTML.
-	 * @param string $href       Link URL.
-	 * @param array  $attributes Block attributes.
+	 * @param string $content Block HTML.
+	 * @param string $href    Link URL.
 	 *
 	 * @return string Block HTML with additional href attribute.
 	 */
-	private function add_button_attributes( $content, $href, $attributes = [] ) {
-		// Add <div> class names.
-		$class_name = Sensei_Block_Helpers::block_class_with_default_style( $attributes, [], 'outline' );
-		$content    = preg_replace(
-			'/<div(.*?)class="(.*?)"(.*?)>/',
-			'<div class="$2 ' . esc_attr( $class_name ) . '" $1 $3>',
-			$content,
-			1
-		);
-
-		// Add <a> attributes.
+	private function add_button_attributes( $content, $href ) {
 		return preg_replace(
 			'/<a(.*)class="(.*)"(.*)>(.+)<\/a>/',
 			'<a href="' . esc_url( $href ) . '#private_message" class="sensei-collapsible__toggle $2" $1 $3>$4</a>',
