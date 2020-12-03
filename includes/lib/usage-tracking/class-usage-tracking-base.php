@@ -30,14 +30,6 @@ abstract class Sensei_Usage_Tracking_Base {
 	 */
 	private $job_name;
 
-	/**
-	 * Callback function for the usage tracking job.
-	 *
-	 * @var array
-	 */
-	private $callback;
-
-
 	/*
 	 * Class variables.
 	 */
@@ -131,6 +123,11 @@ abstract class Sensei_Usage_Tracking_Base {
 	 */
 	abstract protected function do_track_plugin( $plugin_slug );
 
+	/**
+	 * Schedules the calculation and submission of the stats log.
+	 */
+	abstract protected function schedule_stats_log();
+
 	/*
 	 * Initialization.
 	 */
@@ -172,16 +169,6 @@ abstract class Sensei_Usage_Tracking_Base {
 	/*
 	 * Public methods.
 	 */
-
-	/**
-	 * Set the Usage Data Callback. This callback should return an array of
-	 * data to be logged periodically to Tracks.
-	 *
-	 * @param callable $callback the callback returning the usage data to be logged.
-	 */
-	public function set_callback( $callback ) {
-		$this->callback = $callback;
-	}
 
 	/**
 	 * Send an event to Tracks if tracking is enabled, including site information.
@@ -316,19 +303,13 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * sends data if tracking is enabled.
 	 */
 	public function send_usage_data() {
-		if ( ! $this->is_tracking_enabled() || ! is_callable( $this->callback ) ) {
+		if ( ! $this->is_tracking_enabled() ) {
 			return;
 		}
 
 		$this->send_event( 'send_usage_data' );
 		$this->send_event( 'system_log', $this->get_system_data() );
-
-		$usage_data = call_user_func( $this->callback );
-		if ( ! is_array( $usage_data ) ) {
-			return;
-		}
-
-		$this->send_event( 'stats_log', $usage_data );
+		$this->schedule_stats_log();
 	}
 
 

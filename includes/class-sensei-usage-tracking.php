@@ -29,6 +29,8 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 
 		// Filters for for events to watch and report.
 		add_action( 'activated_plugin', [ $this, 'log_wccom_plugin_install' ] );
+
+		add_action( Sensei_Usage_Tracking_Data::JOB_NAME, [ $this, 'run_stats_log_job' ] );
 	}
 
 	/*
@@ -54,6 +56,20 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 
 	public static function get_instance() {
 		return self::get_instance_for_subclass( get_class() );
+	}
+
+	/**
+	 * Schedules the calculation and submission of the stats log.
+	 */
+	protected function schedule_stats_log() {
+		Sensei_Scheduler::instance()->schedule_job( new Sensei_Usage_Tracking_Data() );
+	}
+
+	/**
+	 * Runs the stats log job.
+	 */
+	public function run_stats_log_job() {
+		( new Sensei_Usage_Tracking_Data() )->run();
 	}
 
 	protected function get_prefix() {

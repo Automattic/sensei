@@ -10,12 +10,48 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Supplies the usage tracking data for logging.
+ * Supplies the usage tracking data for logging and sends the event.
  *
  * @package Usage Tracking
  * @since 1.9.20
  */
-class Sensei_Usage_Tracking_Data {
+class Sensei_Usage_Tracking_Data implements Sensei_Background_Job_Interface {
+	const JOB_NAME = 'sensei_usage_tracking_send_stats_log';
+
+	/**
+	 * Get the action name for the scheduled job.
+	 *
+	 * @return string
+	 */
+	public function get_name() {
+		return self::JOB_NAME;
+	}
+
+	/**
+	 * Run the job.
+	 */
+	public function run() {
+		Sensei_Usage_Tracking::get_instance()->send_event( 'stats_log', $this->get_usage_data() );
+	}
+
+	/**
+	 * After the job runs, check to see if it needs to be re-queued for the next batch.
+	 *
+	 * @return bool
+	 */
+	public function is_complete() {
+		return true;
+	}
+
+	/**
+	 * Get the arguments to run with the job.
+	 *
+	 * @return array
+	 */
+	public function get_args() {
+		return [];
+	}
+
 	/**
 	 * Get the usage tracking data to send.
 	 *
@@ -23,7 +59,7 @@ class Sensei_Usage_Tracking_Data {
 	 *
 	 * @return array Usage data.
 	 **/
-	public static function get_usage_data() {
+	public function get_usage_data() {
 		$question_type_count = self::get_question_type_count();
 		$quiz_stats          = self::get_quiz_stats();
 		$usage_data          = array(
