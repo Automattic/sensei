@@ -143,8 +143,8 @@ class Sensei_Quiz {
 		$answers_saved = self::save_user_answers( $quiz_answers, $_FILES, $lesson_id, get_current_user_id() );
 
 		if ( intval( $answers_saved ) > 0 ) {
-			// update the message showed to user
-			Sensei()->frontend->messages = '<div class="sensei-message note">' . __( 'Quiz Saved Successfully.', 'sensei-lms' ) . '</div>';
+			// Show Quiz saved message to user
+			Sensei()->notices->add_notice( __( 'Quiz Saved Successfully.', 'sensei-lms' ), 'note' );
 		}
 
 		// remove the hook as it should only fire once per click
@@ -1209,35 +1209,42 @@ class Sensei_Quiz {
 	 * @param $quiz_id
 	 */
 	public static function the_user_status_message( $quiz_id ) {
-
 		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
-		$status    = Sensei_Utils::sensei_user_quiz_status_message( $lesson_id, get_current_user_id() );
-		$message   = '<div class="sensei-message ' . esc_attr( $status['box_class'] ) . '">' . wp_kses_post( $status['message'] ) . '</div>';
-		$messages  = Sensei()->frontend->messages;
-
-		if ( ! empty( $messages ) ) {
-			$message .= wp_kses_post( $messages );
+		if ( $lesson_id > 0 
+		&& Sensei()->lesson->user_should_login( $lesson_id ) ) {
+			/*
+			 * bail out when user should still login, 
+			 * because login_notice() takes preference.
+			 */ 
+			return;
 		}
 
-		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped above.
-		echo $message;
+		$status       = Sensei_Utils::sensei_user_quiz_status_message( $lesson_id, get_current_user_id() );
+		$notice_level = esc_attr( $status['box_class'] );
+		$message      = wp_kses_post( $status['message'] );
+		Sensei()->notices->add_notice( $message, $notice_level );
+
+		// should not occur anymore
+		if ( ! empty( Sensei()->frontend->messages ) ) {
+			$messages .= wp_kses_post( Sensei()->frontend->messages );
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped above.
+			echo $messages;
+		}
 	}
 
 	/**
 	 * Creates a login notice when appropriate.
 	 *
-	 * @version 3.2.0
+	 * @since 3.2.0
 	 * @return  void
 	 */
 	public static function login_notice() {
-
 		$login_notice = Sensei_Utils::login_notice( 'quiz' );
 		if ( false === $login_notice ) {
 			return;
 		}
 		$message      = wp_kses_post( $login_notice );
 		$notice_level = 'info';
-
 		Sensei()->notices->add_notice( $message, $notice_level );
 	}
 

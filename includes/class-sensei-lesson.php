@@ -4141,10 +4141,10 @@ class Sensei_Lesson {
 	}
 
 	/**
-	 * Determine if user should login in to get acces to a lesson and quiz.
+	 * Determines if user should login in to get acces to a lesson or quiz.
 	 *
 	 * @since 3.2.0
-	 * @param int $lesson_id
+	 * @param int $lesson_id Lesson ID.
 	 * @return bool True if login for the lesson is required.
 	 */
 	public static function user_should_login( $lesson_id ) {
@@ -4166,23 +4166,19 @@ class Sensei_Lesson {
 	}
 
 	/**
-	 * Creates a login notice when appropriate.
+	 * Adds a login notice when appropriate.
 	 *
-	 * @version 3.2.0
-	 *
-	 * @return;
+	 * @since 3.2.0
+	 * @return void
 	 */
 	public static function login_notice() {
-
 		$login_notice = Sensei_Utils::login_notice( 'lesson' );
 		if ( false === $login_notice ) {
 			return;
 		}
 		$message      = wp_kses_post( $login_notice );
 		$notice_level = 'info';
-
 		Sensei()->notices->add_notice( $message, $notice_level );
-
 	}
 
 	/**

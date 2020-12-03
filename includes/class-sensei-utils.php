@@ -1217,7 +1217,6 @@ class Sensei_Utils {
 		$box_class = 'info';
 		$message   = __( "You have not taken this lesson's quiz yet", 'sensei-lms' );
 		$extra     = '';
-
 		if ( $lesson_id > 0 && $user_id > 0 ) {
 			// Course ID
 			$course_id = absint( get_post_meta( $lesson_id, '_lesson_course', true ) );
@@ -1255,19 +1254,17 @@ class Sensei_Utils {
 			// Quiz questions
 			$has_quiz_questions = Sensei_Lesson::lesson_quiz_has_questions( $lesson_id );
 
-			if ( ! $started_course ) {
+			if ( ! is_user_logged_in() ) { // should never occur, since user_id > 0 is true
+				$status    = 'login_required';
+				$box_class = 'info';
+				$message   = __( 'You must be logged in to take this quiz', 'sensei-lms' );
+			} elseif ( ! $started_course ) {
 				$status    = 'not_started_course';
 				$box_class = 'info';
 				// translators: Placeholders are an opening and closing <a> tag linking to the course permalink.
 				$message = sprintf( __( 'Please sign up for %1$sthe course%2$s before taking this quiz', 'sensei-lms' ), '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr( __( 'Sign Up', 'sensei-lms' ) ) . '">', '</a>' );
-
-			} elseif ( ! is_user_logged_in() ) {
-
-				$status    = 'login_required';
-				$box_class = 'info';
-				$message   = __( 'You must be logged in to take this quiz', 'sensei-lms' );
-
 			}
+
 			// Lesson/Quiz is marked as complete thus passing any quiz restrictions
 			elseif ( $lesson_complete ) {
 
@@ -1390,17 +1387,14 @@ class Sensei_Utils {
 	}
 
 	/**
-	 * Determines if a user still has to log in to see a given content (lesson or quiz).
-	 * Returns false, when no login action is needed,
-	 * or a message containing a invitation to login and a link to do so.
+	 * Returns a login notice, or false when login is not required.
 	 *
 	 * @since 3.2.0
-	 * @param string $context Either 'lesson' or 'quiz'.
-	 * @return bool|string False When user doesn't need to login, or a string message containing a login link.
+	 * @param  string      $context Either 'lesson' or 'quiz'.
+	 * @return string|bool          Login notice, or false.
 	 */
 	public static function login_notice( $context = 'lesson' ) {
 		$lesson_id = get_the_ID();
-
 		if ( ! in_array( $context, [ 'lesson', 'quiz' ], true )
 			|| get_post_type( $lesson_id ) !== $context ) {
 			return false;
@@ -1411,17 +1405,16 @@ class Sensei_Utils {
 		if ( ! Sensei()->lesson->user_should_login( $lesson_id ) ) {
 			return false;
 		}
-
 		$anchor_before = '<a href="' . esc_url( sensei_user_login_url() ) . '" >';
 		$anchor_after  = '</a>';
+		$context_label = 'lesson' === $context ? __( 'lesson', 'sensei-lms' ) : __( 'quiz', 'sensei-lms' );
 		$message       = sprintf(
 			// translators: Placeholders %1$s and %2$s are an opening and closing <a> tag linking to the login URL, %3$s is the context ("lesson" or "quiz").
-			__( 'or %1$slog in%2$s to access the %3$s content, when you are already enrolled in this course.', 'sensei-lms' ),
+			__( 'Please %1$slog in%2$s to access the %3$s.', 'sensei-lms' ),
 			$anchor_before,
 			$anchor_after,
-			$context
+			$context_label
 		);
-
 		return $message;
 	}
 
