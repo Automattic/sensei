@@ -133,7 +133,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		$this->factory->get_course_with_lessons( array( 'question_count' => 0 ) );
 		$this->factory->get_course_with_lessons( array( 'question_count' => 2 ) );
 		$this->factory->get_course_with_lessons( array( 'question_count' => 7 ) );
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertEquals( 2, $usage_data['questions_min'] );
 		$this->assertEquals( 7, $usage_data['questions_max'] );
@@ -144,7 +144,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Usage_Tracking_Data::get_quiz_stats
 	 */
 	public function testGetMinMaxQuestionsNoQuestions() {
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertEquals( 0, $usage_data['quiz_total'] );
 		$this->assertEquals( null, $usage_data['questions_min'] );
@@ -162,7 +162,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 				'question_count' => 2,
 			)
 		);
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertEquals( 1, $usage_data['quiz_total'] );
 		$this->assertEquals( 2, $usage_data['questions_min'] );
@@ -195,7 +195,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 				'lesson_count'   => 4, // Missing one should be 5 questions.
 			)
 		);
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertEquals( 5, $usage_data['quiz_total'] );
 		$this->assertEquals( 1, $usage_data['questions_min'] );
@@ -231,7 +231,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 				'lesson_count'   => 2,
 			)
 		);
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertEquals( 2, $usage_data['quiz_total'] );
 		$this->assertEquals( 2, $usage_data['questions_min'] );
@@ -251,7 +251,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 				'multiple_question_count' => 0,
 			)
 		);
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertEquals( 0, $usage_data['category_questions'] );
 	}
@@ -269,7 +269,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 				'multiple_question_count' => 1,
 			)
 		);
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertEquals( 1, $usage_data['category_questions'] );
 	}
@@ -298,7 +298,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 				),
 			)
 		);
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertEquals( 3, $usage_data['category_questions'] );
 	}
@@ -422,7 +422,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 			);
 		}
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 		$this->assertEquals( count( $valid_values ), $usage_data[ $stat_key ] );
 	}
 
@@ -463,7 +463,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		// Fake out! Replicate a data integrity issue that exists in Sensei.
 		update_post_meta( $course_lessons_b['lesson_ids'][0], '_quiz_has_questions', '1' );
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 		$this->assertEquals( 1, $usage_data['quiz_allow_retake'] );
 	}
 
@@ -489,7 +489,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 			)
 		);
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertArrayHasKey( 'courses', $usage_data, 'Key' );
 		$this->assertEquals( $published, $usage_data['courses'], 'Count' );
@@ -527,7 +527,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 			);
 		}
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		// Despite being enrolled in multiple courses, a learner is only counted once.
 		$this->assertArrayHasKey( 'learners', $usage_data, 'Key' );
@@ -540,7 +540,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	public function testGetUsageDataLessons() {
 		$this->createLessons();
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertArrayHasKey( 'lessons', $usage_data, 'Key' );
 		$this->assertEquals( 3, $usage_data['lessons'], 'Count' );
@@ -558,7 +558,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		add_post_meta( $lessons[2], '_lesson_prerequisite', $lessons[1] );  // Published
 		add_post_meta( $lessons[3], '_lesson_prerequisite', $lessons[2] );  // Published
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertArrayHasKey( 'lesson_prereqs', $usage_data, 'Key' );
 		$this->assertEquals( 2, $usage_data['lesson_prereqs'], 'Count' );
@@ -571,7 +571,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	public function testGetLessonPrerequisiteCountNoPrerequisites() {
 		$lessons = $this->createLessons();
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertArrayHasKey( 'lesson_prereqs', $usage_data, 'Key' );
 		$this->assertEquals( 0, $usage_data['lesson_prereqs'], 'Count' );
@@ -589,7 +589,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		add_post_meta( $lessons[2], '_lesson_preview', 'preview' ); // Published
 		add_post_meta( $lessons[3], '_lesson_preview', 'preview' ); // Published
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertArrayHasKey( 'lesson_previews', $usage_data, 'Key' );
 		$this->assertEquals( 2, $usage_data['lesson_previews'], 'Count' );
@@ -602,7 +602,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	public function testGetLessonPreviewCountNoPreviews() {
 		$lessons = $this->createLessons();
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertArrayHasKey( 'lesson_previews', $usage_data, 'Key' );
 		$this->assertEquals( 0, $usage_data['lesson_previews'], 'Count' );
@@ -621,7 +621,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		wp_set_object_terms( $lessons[2], $terms[1], 'module', false ); // Published
 		wp_set_object_terms( $lessons[4], $terms[2], 'module', false ); // Published
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertArrayHasKey( 'lesson_modules', $usage_data, 'Key' );
 		$this->assertEquals( 2, $usage_data['lesson_modules'], 'Count' );
@@ -634,7 +634,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	public function testGetLessonModuleCountNoModules() {
 		$lessons = $this->createLessons();
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertArrayHasKey( 'lesson_modules', $usage_data, 'Key' );
 		$this->assertEquals( 0, $usage_data['lesson_modules'], 'Count' );
@@ -662,7 +662,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 			)
 		);
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertArrayHasKey( 'messages', $usage_data, 'Key' );
 		$this->assertEquals( $published, $usage_data['messages'], 'Count' );
@@ -672,7 +672,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
 	 */
 	public function testGetUsageDataModules() {
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertArrayHasKey( 'modules', $usage_data, 'Key' );
 		$this->assertEquals( 0, $usage_data['modules'], 'Count' );
@@ -685,7 +685,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	public function testGetUsageDataMaxModules() {
 		$this->setupCoursesAndModules();
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertArrayHasKey( 'modules_max', $usage_data, 'Key' );
 		$this->assertEquals( 3, $usage_data['modules_max'], 'Count' ); // Course 2 has 3 modules.
@@ -698,7 +698,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	public function testGetUsageDataMinModules() {
 		$this->setupCoursesAndModules();
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertArrayHasKey( 'modules_min', $usage_data, 'Key' );
 		$this->assertEquals( 2, $usage_data['modules_min'], 'Count' ); // Courses 1 and 2 have 2 modules.
@@ -726,7 +726,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 			)
 		);
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertArrayHasKey( 'questions', $usage_data, 'Key' );
 		$this->assertEquals( $published, $usage_data['questions'], 'Count' );
@@ -759,7 +759,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		wp_set_post_terms( $questions[8], array( 'multi-line' ), 'question-type' );
 		wp_set_post_terms( $questions[9], array( 'boolean' ), 'question-type' );
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertArrayHasKey( 'question_multiple_choice', $usage_data, 'Multiple choice key' );
 		$this->assertArrayHasKey( 'question_gap_fill', $usage_data, 'Gap fill key' );
@@ -792,7 +792,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		// Set the question to use an invalid type.
 		wp_set_post_terms( $question, array( 'automattic' ), 'question-type' );
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertArrayNotHasKey( 'question_automattic', $usage_data, 'Multiple choice key' );
 	}
@@ -824,7 +824,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		add_post_meta( $questions[1], '_question_media', $media[1] );
 		add_post_meta( $questions[2], '_question_media', $media[2] );
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertArrayHasKey( 'question_media', $usage_data, 'Key' );
 		$this->assertEquals( 3, $usage_data['question_media'], 'Count' );
@@ -844,7 +844,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 			)
 		);
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertArrayHasKey( 'question_media', $usage_data, 'Key' );
 		$this->assertEquals( 0, $usage_data['question_media'], 'Count' );
@@ -874,7 +874,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		add_post_meta( $questions[1], '_random_order', 'no' );
 		add_post_meta( $questions[2], '_random_order', 'yes' );
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertArrayHasKey( 'question_random_order', $usage_data, 'Key' );
 		$this->assertEquals( 2, $usage_data['question_random_order'], 'Count' );
@@ -910,7 +910,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		add_post_meta( $questions[4], '_random_order', 'yes' );
 		add_post_meta( $questions[5], '_random_order', 'yes' );
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertArrayHasKey( 'question_random_order', $usage_data, 'Key' );
 		$this->assertEquals( 0, $usage_data['question_random_order'], 'Count' );
@@ -927,7 +927,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		$this->factory->user->create_many( 10, array( 'role' => 'subscriber' ) );
 		$this->factory->user->create_many( $teachers, array( 'role' => 'teacher' ) );
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertArrayHasKey( 'teachers', $usage_data, 'Key' );
 		$this->assertEquals( $teachers, $usage_data['teachers'], 'Count' );
@@ -943,7 +943,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		$this->setupCoursesAndModules();
 		$this->enrollUsers();
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertArrayHasKey( 'course_active', $usage_data, 'Key' );
 		$this->assertEquals( 10, $usage_data['course_active'], 'Count' );
@@ -959,7 +959,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		$this->setupCoursesAndModules();
 		$this->enrollUsers();
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertArrayHasKey( 'course_completed', $usage_data, 'Key' );
 		$this->assertEquals( 5, $usage_data['course_completed'], 'Count' );
@@ -1014,7 +1014,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 			);
 		}
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertArrayHasKey( 'course_completion_rate', $usage_data, 'Key' );
 		// Course 1 - 5 non-admin learners enrolled, 0 completed; Completion rate = 0
@@ -1054,7 +1054,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		update_post_meta( $course_ids_without_video[1], '_course_video_embed', '   ' );
 		update_post_meta( $course_ids_without_video[2], '_course_video_embed', "\t\n" );
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertArrayHasKey( 'course_videos', $usage_data, 'Key' );
 		$this->assertEquals( $with_video, $usage_data['course_videos'], 'Count' );
@@ -1085,7 +1085,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 			update_post_meta( $course_id, 'disable_notification', true );
 		}
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertArrayHasKey( 'course_no_notifications', $usage_data, 'Key' );
 		$this->assertEquals( $with_disabled_notification, $usage_data['course_no_notifications'], 'Count' );
@@ -1119,7 +1119,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		// Another value for no prereq
 		update_post_meta( $course_ids_without_prereq[1], '_course_prerequisite', '0' );
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertArrayHasKey( 'course_prereqs', $usage_data, 'Key' );
 		$this->assertEquals( $with_prereq, $usage_data['course_prereqs'], 'Count' );
@@ -1150,7 +1150,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 			update_post_meta( $course_id, '_course_featured', 'featured' );
 		}
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertArrayHasKey( 'course_featured', $usage_data, 'Key' );
 		$this->assertEquals( $featured, $usage_data['course_featured'], 'Count' );
@@ -1177,7 +1177,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 			$this->manuallyEnrolStudentInCourse( $subscriber, $course_id );
 		}
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertArrayHasKey( 'enrolments', $usage_data, 'Key' );
 		$this->assertEquals( $enrolments, $usage_data['enrolments'], 'Count' );
@@ -1191,7 +1191,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
 		update_option( Sensei_Enrolment_Job_Scheduler::CALCULATION_VERSION_OPTION_NAME, $enrolment_manager->get_enrolment_calculation_version() );
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertArrayHasKey( 'enrolments', $usage_data, 'Key' );
 		$this->assertEquals( 1, $usage_data['enrolment_calculated'], 'Boolean int' );
@@ -1204,7 +1204,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	public function testGetIsEnrolmentCalculatedFalse() {
 		delete_option( Sensei_Enrolment_Job_Scheduler::CALCULATION_VERSION_OPTION_NAME );
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertArrayHasKey( 'enrolments', $usage_data, 'Key' );
 		$this->assertEquals( 0, $usage_data['enrolment_calculated'], 'Boolean int' );
@@ -1232,7 +1232,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 			$this->manuallyEnrolStudentInCourse( $user, $course_id );
 		}
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertEquals( $enrolments, $usage_data['enrolments'] );
 	}
@@ -1256,7 +1256,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 			$this->manuallyEnrolStudentInCourse( $subscriber, $course_id );
 		}
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertEquals( 0, $usage_data['enrolments'] );
 	}
@@ -1293,7 +1293,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		update_comment_meta( $comment_ids[1], 'start', $last_enrolment_date );
 		update_comment_meta( $comment_ids[2], 'start', '2018-10-01 13:25:25' );
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertArrayHasKey( 'enrolment_last', $usage_data, 'Key' );
 		$this->assertEquals( $last_enrolment_date, $usage_data['enrolment_last'], 'Count' );
@@ -1332,7 +1332,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		update_comment_meta( $comment_ids[1], 'start', '2018-11-09 09:48:05' ); // Admin.
 		update_comment_meta( $comment_ids[2], 'start', '2018-10-01 13:25:25' ); // Admin.
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertEquals( $last_enrolment_date, $usage_data['enrolment_last'] );
 	}
@@ -1367,7 +1367,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		update_comment_meta( $comment_ids[1], 'start', '2018-11-09 09:48:05' );
 		update_comment_meta( $comment_ids[2], 'start', '2018-10-01 13:25:25' );
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertEquals( 'N/A', $usage_data['enrolment_last'] );
 	}
@@ -1404,7 +1404,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		update_comment_meta( $comment_ids[1], 'start', $first_enrolment_date );
 		update_comment_meta( $comment_ids[2], 'start', '2018-10-01 13:25:25' );
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertArrayHasKey( 'enrolment_first', $usage_data, 'Key' );
 		$this->assertEquals( $first_enrolment_date, $usage_data['enrolment_first'], 'Count' );
@@ -1443,7 +1443,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		update_comment_meta( $comment_ids[1], 'start', '2018-10-01 13:25:25' ); // Admin.
 		update_comment_meta( $comment_ids[2], 'start', $first_enrolment_date ); // Subscriber.
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertEquals( $first_enrolment_date, $usage_data['enrolment_first'] );
 	}
@@ -1478,7 +1478,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		update_comment_meta( $comment_ids[1], 'start', '2018-11-09 09:48:05' );
 		update_comment_meta( $comment_ids[2], 'start', '2018-10-01 13:25:25' );
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertEquals( 'N/A', $usage_data['enrolment_first'] );
 	}
@@ -1512,7 +1512,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		}
 		update_post_meta( $lesson_without_length_ids[0], '_lesson_length', '' );
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertArrayHasKey( 'lesson_length', $usage_data, 'Key' );
 		$this->assertEquals( $lessons_with_length, $usage_data['lesson_length'], 'Count' );
@@ -1547,7 +1547,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		}
 		update_post_meta( $lesson_without_complexity_ids[0], '_lesson_complexity', '' );
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertArrayHasKey( 'lesson_complexity', $usage_data, 'Key' );
 		$this->assertEquals( $lessons_with_complexity, $usage_data['lesson_complexity'], 'Count' );
@@ -1585,7 +1585,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		update_post_meta( $lesson_without_video_ids[1], '_lesson_video_embed', '    ' );
 		update_post_meta( $lesson_without_video_ids[2], '_lesson_video_embed', "\t\n" );
 
-		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+		$usage_data = ( new Sensei_Usage_Tracking_Data() )->get_usage_data();
 
 		$this->assertArrayHasKey( 'lesson_videos', $usage_data, 'Key' );
 		$this->assertEquals( $lessons_with_video, $usage_data['lesson_videos'], 'Count' );
