@@ -20,7 +20,7 @@ class Sensei_Base_Usage_Tracking_Test extends WP_UnitTestCase {
 		parent::setUp();
 		// Update the class name here to match the Usage Tracking class.
 		$this->usage_tracking = Usage_Tracking_Test_Subclass::get_instance();
-		$this->usage_tracking->set_callback( array( $this, 'basicDataCallback' ) );
+		$this->usage_tracking->scheduled_stats_log = false;
 	}
 
 	/**
@@ -145,12 +145,15 @@ class Sensei_Base_Usage_Tracking_Test extends WP_UnitTestCase {
 		// Setting is not set, ensure the request is not sent.
 		$this->usage_tracking->send_usage_data();
 		$this->assertEquals( 0, $this->event_counts['http_request'], 'Request not sent when Usage Tracking disabled' );
+		$this->assertFalse( $this->usage_tracking->scheduled_stats_log, 'No usage tracking data should be calculated when Usage Tracking is disabled' );
 
 		// Set the setting and ensure request is sent.
 		$this->usage_tracking->set_tracking_enabled( true );
 
 		$this->usage_tracking->send_usage_data();
-		$this->assertEquals( 3, $this->event_counts['http_request'], 'Requests sent when Usage Tracking enabled' );
+		$this->assertEquals( 2, $this->event_counts['http_request'], 'Requests sent when Usage Tracking enabled' );
+		$this->assertTrue( $this->usage_tracking->scheduled_stats_log, 'Usage tracking data should be calculated when Usage Tracking is enabled' );
+
 	}
 
 	/* Tests for system data */

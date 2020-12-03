@@ -131,15 +131,4 @@ class Sensei_Enrolment_Calculation_Scheduler_Test extends WP_UnitTestCase {
 		$option = get_option( Sensei_Enrolment_Job_Scheduler::CALCULATION_VERSION_OPTION_NAME );
 		$this->assertEquals( $enrolment_manager->get_enrolment_calculation_version(), $option );
 	}
-
-	/**
-	 * Assert that an event was scheduled a certain number of times.
-	 *
-	 * @param int    $expected Number of times an event should have been scheduled.
-	 * @param string $action   Action name.
-	 * @param string $message  Message to show for failure.
-	 */
-	public function assertEventScheduledCount( $expected, $action, $message = '' ) {
-		$this->assertEquals( $expected, Sensei_Scheduler_Shim::get_scheduled_action_count( $action ), $message );
-	}
 }

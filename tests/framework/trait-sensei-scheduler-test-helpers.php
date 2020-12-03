@@ -54,4 +54,15 @@ trait Sensei_Scheduler_Test_Helpers {
 	public static function scheduler_use_action_scheduler() {
 		return Sensei_Scheduler_Action_Scheduler::class;
 	}
+
+	/**
+	 * Assert that an event was scheduled a certain number of times.
+	 *
+	 * @param int    $expected Number of times an event should have been scheduled.
+	 * @param string $action   Action name.
+	 * @param string $message  Message to show for failure.
+	 */
+	public function assertEventScheduledCount( $expected, $action, $message = '' ) {
+		$this->assertEquals( $expected, Sensei_Scheduler_Shim::get_scheduled_action_count( $action ), $message );
+	}
 }
