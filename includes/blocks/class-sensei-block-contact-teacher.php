@@ -101,7 +101,7 @@ class Sensei_Block_Contact_Teacher {
 	}
 
 	/**
-	 * Add attributes to the block's <a> tag.
+	 * Add attributes to the block's <div> and <a> tags.
 	 *
 	 * @param string $content    Block HTML.
 	 * @param string $href       Link URL.
@@ -110,17 +110,19 @@ class Sensei_Block_Contact_Teacher {
 	 * @return string Block HTML with additional href attribute.
 	 */
 	private function add_button_attributes( $content, $href, $attributes = [] ) {
+		// Add <div> class names.
 		$class_name = Sensei_Block_Helpers::block_class_with_default_style( $attributes, [], 'outline' );
+		$content    = preg_replace(
+			'/<div(.*?)class="(.*?)"(.*?)>/',
+			'<div class="$2 ' . esc_attr( $class_name ) . '" $1 $3>',
+			$content,
+			1
+		);
 
+		// Add <a> attributes.
 		return preg_replace(
-			'/<div(.*)class="(.*)"(.*)>(.*)<a(.*)class="(.*)"(.*)>(.+)<\/a>(.*)<\/div>/',
-			'
-				<div class="$2 ' . esc_attr( $class_name ) . '" $1 $3>
-					$4
-					<a href="' . esc_url( $href ) . '#private_message" class="sensei-collapsible__toggle $6" $5 $7>$8</a>
-					$9
-				</div>
-			',
+			'/<a(.*)class="(.*)"(.*)>(.+)<\/a>/',
+			'<a href="' . esc_url( $href ) . '#private_message" class="sensei-collapsible__toggle $2" $1 $3>$4</a>',
 			$content,
 			1
 		);
