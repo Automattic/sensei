@@ -73,6 +73,7 @@ class Sensei_Core_Modules {
 		add_action( 'pre_get_posts', array( $this, 'module_archive_filter' ), 10, 1 );
 		add_filter( 'sensei_lessons_archive_text', array( $this, 'module_archive_title' ) );
 		add_action( 'sensei_loop_lesson_inside_before', array( $this, 'module_archive_description' ), 30 );
+		add_action( 'sensei_taxonomy_module_content_inside_before', array( $this, 'login_notice' ), 30 );
 		add_action( 'sensei_taxonomy_module_content_inside_before', array( $this, 'course_signup_link' ), 30 );
 		add_action( 'sensei_taxonomy_module_content_inside_before', array( $this, 'module_archive_description' ), 30 );
 
@@ -830,6 +831,11 @@ class Sensei_Core_Modules {
 
 		$show_course_signup_notice = ! $this->can_view_module_content( null, $course_id );
 
+		if ( $show_course_signup_notice && $this->user_should_login( $course_id ) ) {
+			// User first needs to login and login_notice() takes preference to this one.
+			$show_course_signup_notice = false;
+		}
+
 		/**
 		 * Filter for if we should show the course sign up notice on the module page.
 		 *
@@ -870,6 +876,38 @@ class Sensei_Core_Modules {
 		 */
 		$notice_level = apply_filters( 'sensei_module_course_signup_notice_level', 'info', $course_id );
 		Sensei()->notices->add_notice( $message, $notice_level );
+	}
+
+		/**
+	 * Adds a login notice when appropriate.
+	 *
+	 * @since 3.2.0
+	 * @return void
+	 */
+	public static function login_notice() {
+		$login_notice = Sensei_Utils::login_notice( 'module' );
+		if ( false === $login_notice ) {
+			return;
+		}
+		$message      = wp_kses_post( $login_notice );
+		$notice_level = 'info';
+		Sensei()->notices->add_notice( $message, $notice_level );
+	}
+
+	/**
+	 * Determines if user should login in to get acces to the course module.
+	 *
+	 * @since 3.2.0
+	 * @param int $lesson_id Lesson ID.
+	 * @return bool True if login for the module is required.
+	 */
+	public static function user_should_login( $course_id ) {
+		if ( ! $course_id
+		|| is_user_logged_in() 
+		|| Sensei()->course->can_access_course_content( $course_id, null, 'module' ) ) {
+			return false;
+		}
+		return true;
 	}
 
 	public function module_archive_body_class( $classes ) {

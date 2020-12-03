@@ -1394,20 +1394,43 @@ class Sensei_Utils {
 	 * @return string|bool          Login notice, or false.
 	 */
 	public static function login_notice( $context = 'lesson' ) {
-		$lesson_id = get_the_ID();
-		if ( ! in_array( $context, [ 'lesson', 'quiz' ], true )
-			|| get_post_type( $lesson_id ) !== $context ) {
-			return false;
+		switch ($context) {
+			case 'lesson':
+				$lesson_id = get_the_ID();
+				if ( 'lesson' !== get_post_type( $lesson_id )
+				&& ! Sensei()->lesson->user_should_login( $lesson_id ) ) {
+					return false;
+				}
+				$context_label = __( 'lesson', 'sensei-lms' );
+				break;
+			case 'quiz':
+				$lesson_id = Sensei()->quiz->get_lesson_id( get_the_ID() );
+				if ( 'lesson' !== get_post_type( $lesson_id )
+				&& ! Sensei()->lesson->user_should_login( $lesson_id ) ) {
+					return false;
+				}
+				$context_label = __( 'quiz', 'sensei-lms' );
+				break;
+			case 'module':
+				if ( ! is_tax('module') ) {
+					return false;
+				};
+				$course_id = isset( $_GET['course_id'] ) ? intval( $_GET['course_id'] ) : null;
+				if ( empty( $course_id ) || 'course' !== get_post_type( $course_id ) ) {
+					return false;
+				}
+				if ( ! Sensei()->modules->user_should_login( $course_id ) ) {
+					return false;
+				}
+				$context_label = __( 'module', 'sensei-lms' );
+				break;
+			default:
+				return false;
+				break;
 		}
-		if ( 'quiz' === $context ) {
-			$lesson_id = Sensei()->quiz->get_lesson_id( $lesson_id );
-		}
-		if ( ! Sensei()->lesson->user_should_login( $lesson_id ) ) {
-			return false;
-		}
+
 		$anchor_before = '<a href="' . esc_url( sensei_user_login_url() ) . '" >';
 		$anchor_after  = '</a>';
-		$context_label = 'lesson' === $context ? __( 'lesson', 'sensei-lms' ) : __( 'quiz', 'sensei-lms' );
 		$message       = sprintf(
 			// translators: Placeholders %1$s and %2$s are an opening and closing <a> tag linking to the login URL, %3$s is the context ("lesson" or "quiz").
 			__( 'Please %1$slog in%2$s to access the %3$s.', 'sensei-lms' ),
