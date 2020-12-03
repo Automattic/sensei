@@ -3,7 +3,7 @@ import { merge, find } from 'lodash';
 
 import './color-hooks';
 import { EditButtonBlock } from './edit-button';
-import { saveButtonBlock } from './save-button';
+import { SaveButtonBlock } from './save-button';
 import { button as icon } from '../../icons/wordpress-icons';
 import { withDefaultBlockStyle } from '../../shared/blocks/settings';
 
@@ -96,7 +96,7 @@ export const createButtonBlockType = ( { settings, ...options } ) => {
 				);
 			},
 			save( props ) {
-				return saveButtonBlock( { ...props, ...options } );
+				return SaveButtonBlock( { ...props, ...options } );
 			},
 			example: {
 				attributes: {

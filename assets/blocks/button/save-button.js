@@ -9,7 +9,7 @@ import { getButtonProps, getButtonWrapperProps } from './button-props';
  * @param {string} props.className  Classname.
  * @param {string} props.tagName    Output HTML tag name.
  */
-export const saveButtonBlock = ( { attributes, className, tagName } ) => {
+export const SaveButtonBlock = ( { attributes, className, tagName } ) => {
 	const { text } = attributes;
 
 	return (
