@@ -56,8 +56,7 @@
       "type": "string"
     },
     "borderedSelected": {
-      "type": "string",
-      "default": "parent"
+      "type": "boolean"
     }
   }
 }

@@ -108,18 +108,13 @@ export const EditModuleBlock = ( props ) => {
 		);
 	}
 
-	let bordered = false;
-
-	if ( 'parent' === borderedSelected ) {
-		bordered = moduleBorder;
-	} else {
-		bordered = 'on' === borderedSelected;
-	}
+	const bordered =
+		undefined !== borderedSelected ? borderedSelected : moduleBorder;
 
 	return (
 		<>
 			<ModuleBlockSettings
-				bordered={ borderedSelected }
+				bordered={ bordered }
 				setBordered={ ( newValue ) =>
 					setAttributes( { borderedSelected: newValue } )
 				}

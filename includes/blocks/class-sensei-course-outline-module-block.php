@@ -163,15 +163,17 @@ class Sensei_Course_Outline_Module_Block {
 			]
 		);
 
-		if ( ! empty( $block_attributes['borderedSelected'] ) ) {
-			$should_have_border = 'on' === $block_attributes['borderedSelected'] || ( 'parent' === $block_attributes['borderedSelected'] && ! empty( $outline_attributes['moduleBorder'] ) );
+		if ( array_key_exists( 'borderedSelected', $block_attributes ) ) {
+			$should_have_border = ! empty( $block_attributes['borderedSelected'] );
+		} else {
+			$should_have_border = ! empty( $outline_attributes['moduleBorder'] );
+		}
 
-			if ( $should_have_border ) {
-				$class_names[] = 'wp-block-sensei-lms-course-outline-module-bordered';
+		if ( $should_have_border ) {
+			$class_names[] = 'wp-block-sensei-lms-course-outline-module-bordered';
 
-				if ( ! empty( $block_attributes['borderColorValue'] ) ) {
-					$inline_styles[] = sprintf( 'border-color: %s;', $block_attributes['borderColorValue'] );
-				}
+			if ( ! empty( $block_attributes['borderColorValue'] ) ) {
+				$inline_styles[] = sprintf( 'border-color: %s;', $block_attributes['borderColorValue'] );
 			}
 		}
 

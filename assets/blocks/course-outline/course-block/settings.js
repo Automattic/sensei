@@ -36,7 +36,7 @@ export const OutlineBlockSettings = ( {
 				onChange={ setModuleBorder }
 				label={ __( 'Border', 'sensei-lms' ) }
 				help={ __(
-					'Toggle the border for all modules. This setting can be overridden by individual modules.',
+					'Toggle the border for all modules.',
 					'sensei-lms'
 				) }
 			/>
