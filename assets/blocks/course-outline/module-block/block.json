@@ -55,7 +55,7 @@
     "customClassName": {
       "type": "string"
     },
-    "bordered": {
+    "borderedSelected": {
       "type": "boolean"
     }
   }

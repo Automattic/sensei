@@ -127,7 +127,7 @@ const EditCourseOutlineBlock = ( {
 
 		modules.forEach( ( module ) => {
 			updateBlockAttributes( module.clientId, {
-				bordered: newValue,
+				borderedSelected: newValue,
 			} );
 		} );
 
