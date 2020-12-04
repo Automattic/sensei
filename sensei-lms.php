@@ -88,7 +88,7 @@ if ( ! function_exists( 'Sensei' ) ) {
 	 * @since 1.8.0
 	 */
 	function Sensei() {
-		return Sensei_Main::instance( array( 'version' => '3.6.0-beta.1' ) );
+		return Sensei_Main::instance( array( 'version' => '3.7.0-dev' ) );
 	}
 }
 
