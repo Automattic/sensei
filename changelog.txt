@@ -62,6 +62,12 @@
 	* Add module link to the course outline block when the module has a description [#3723](https://github.com/Automattic/sensei/pull/3723)
 	* Fix collapsible modules not working when animation is disabled [#3665](https://github.com/Automattic/sensei/pull/3665)
 	* Improve animation for expanding and collapsing modules [#3646](https://github.com/Automattic/sensei/pull/3646)
+	* Add support for default theme colors to Course Outline block [#3741](https://github.com/Automattic/sensei/pull/3741)
+	* Add support for default theme colors to the module border color setting [#3805](https://github.com/Automattic/sensei/pull/3805)
+	* Make border rules for "Minimal" module style less specific to allow overrides [#3802](https://github.com/Automattic/sensei/pull/3802)
+	* Fix race condition when saving [#3800](https://github.com/Automattic/sensei/pull/3800)
+	* Fix how "Edit Lesson" link displays in WordPress 5.4 [#3816](https://github.com/Automattic/sensei/pull/3816)
+	* Fix undo in module block [#3820](https://github.com/Automattic/sensei/pull/3820)
 * New: Take Course block
 	* Add Take Course block [#3703](https://github.com/Automattic/sensei/pull/3703)
 	* Add `wp-block-button` class to button block [#3795](https://github.com/Automattic/sensei/pull/3795)
@@ -72,6 +78,7 @@
 * New: Contact Teacher block
 	* Add Contact Teacher block [#3702](https://github.com/Automattic/sensei/pull/3702)
 	* Move private message form to Contact Teacher block [#3717](https://github.com/Automattic/sensei/pull/3717)
+	* Change Contact Teacher button default style [#3787](https://github.com/Automattic/sensei/pull/3787)
 * New: Course Progress block
 	* Introduce course progress block [#3689](https://github.com/Automattic/sensei/pull/3689)
 	* Add course progress block color settings [#3695](https://github.com/Automattic/sensei/pull/3695)
@@ -107,6 +114,8 @@
 * New: Add validation to post object before logging course update event [#3709](https://github.com/Automattic/sensei/pull/3709)
 * New: Ensure Lessons and Modules meta boxes are displayed for legacy courses [#3661](https://github.com/Automattic/sensei/pull/3661)
 * New: Add isPreview flag to button blocks [#3811](https://github.com/Automattic/sensei/pull/3811)
+* New: Don't show "Course Video" metabox when any Sensei block is added to the course page [#3818](https://github.com/Automattic/sensei/pull/3818)
+* New: Use Sensei logo in block inserter [#3823](https://github.com/Automattic/sensei/pull/3823)
 * Tweak: Center text within Setup Wizard buttons [#3575](https://github.com/Automattic/sensei/pull/3575)
 * Tweak: Make detail fields required on exit survey [#3786](https://github.com/Automattic/sensei/pull/3786)
 * Tweak: Update sample course to include blocks [#3808](https://github.com/Automattic/sensei/pull/3808)
