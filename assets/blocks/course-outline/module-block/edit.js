@@ -50,7 +50,10 @@ export const EditModuleBlock = ( props ) => {
 		setAttributes,
 	} = props;
 	const {
-		outlineAttributes: { collapsibleModules, moduleBorder },
+		outlineAttributes: {
+			collapsibleModules,
+			moduleBorder: outlineBordered,
+		},
 		outlineClassName,
 	} = useContext( OutlineAttributesContext ) || {
 		outlineAttributes: {},
@@ -109,7 +112,7 @@ export const EditModuleBlock = ( props ) => {
 	}
 
 	const bordered =
-		undefined !== borderedSelected ? borderedSelected : moduleBorder;
+		undefined !== borderedSelected ? borderedSelected : outlineBordered;
 
 	return (
 		<>
