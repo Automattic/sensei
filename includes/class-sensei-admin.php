@@ -734,7 +734,19 @@ class Sensei_Admin {
 			$post_meta = get_post_custom( $post->ID );
 			if ( $post_meta && count( $post_meta ) > 0 ) {
 
-				$ignore_meta = array( '_quiz_lesson', '_quiz_id', '_lesson_quiz', '_lesson_prerequisite' );
+				/**
+				 * Ignored meta fields when duplicating a post.
+				 *
+				 * @hook  sensei_duplicate_content_ignore_meta
+				 * @since 3.7.0
+				 *
+				 * @param {array}   $meta_keys The meta keys to be ignored.
+				 * @param {WP_Post} $new_post  The new duplicate post.
+				 * @param {WP_Post} $post      The original post that's being duplicated.
+				 *
+				 * @return {array} $meta_keys The meta keys to be ignored.
+				 */
+				$ignore_meta = apply_filters( 'sensei_duplicate_post_ignore_meta', [ '_quiz_lesson', '_quiz_id', '_lesson_quiz', '_lesson_prerequisite' ], $new_post, $post );
 
 				if ( $ignore_course ) {
 					$ignore_meta[] = '_lesson_course';
