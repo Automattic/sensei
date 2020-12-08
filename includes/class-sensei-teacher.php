@@ -257,6 +257,7 @@ class Sensei_Teacher {
 		$users = $this->get_teachers_and_authors();
 
 		?>
+		<input type="hidden" name="post_author_override" value="<?php echo intval( $current_author ); ?>" />
 		<select name="sensei-course-teacher-author" class="sensei course teacher">
 
 			<?php foreach ( $users as $user_id ) { ?>
