@@ -14,7 +14,6 @@ module.exports = {
 			},
 		],
 		'react-hooks/exhaustive-deps': 'warn',
-		'jsdoc-alignment/lines-alignment': 'error',
 	},
-	plugins: [ 'jest', 'jsdoc-alignment' ],
+	plugins: [ 'jest' ],
 };
