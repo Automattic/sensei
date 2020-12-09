@@ -105,7 +105,7 @@ class Sensei_Templates {
 			$template_path = Sensei()->template_url;
 		}
 		if ( ! $default_path ) {
-			$default_path = Sensei()->plugin_path() . '/templates/';
+			$default_path = Sensei()->plugin_path() . 'templates/';
 		}
 
 		// Look within passed path within the theme - this is priority
