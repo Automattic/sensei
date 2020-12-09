@@ -8,17 +8,14 @@ const DEFAULT_STATE = {
 	trackedLessons: [],
 };
 
-/**
- * Status store actions.
- */
+/** Status store actions. */
 const actions = {
 	/**
 	 * Sets the status of a lesson.
 	 *
-	 * @param {string} lessonId The lesson id.
-	 * @param {string} status   The lesson status.
-	 *
-	 * @return {Object} The setLessonStatus action.
+	 * @param   {string} lessonId The lesson id.
+	 * @param   {string} status   The lesson status.
+	 * @returns {Object}          The setLessonStatus action.
 	 */
 	setLessonStatus( lessonId, status ) {
 		return {
@@ -31,10 +28,9 @@ const actions = {
 	/**
 	 * Sets the status of a module by updating the status of its lessons.
 	 *
-	 * @param {string} moduleId The module block id.
-	 * @param {string} status   The module status.
-	 *
-	 * @return {Object} Yields the lesson update actions.
+	 * @param   {string} moduleId The module block id.
+	 * @param   {string} status   The module status.
+	 * @returns {Object}          Yields the lesson update actions.
 	 */
 	*setModuleStatus( moduleId, status ) {
 		const trackedLessonIds = yield select(
@@ -77,9 +73,8 @@ const actions = {
 	/**
 	 * Creates the action to update state after a possible removal of a lesson.
 	 *
-	 * @param {string[]} descendantIds The ids of all outline block descendants.
-	 *
-	 * @return {Object} The action.
+	 * @param   {string[]} descendantIds The ids of all outline block descendants.
+	 * @returns {Object}                 The action.
 	 */
 	stopTrackingRemovedLessons( descendantIds ) {
 		return {
@@ -91,9 +86,8 @@ const actions = {
 	/**
 	 * Creates the action which marks a lesson as tracked by the store.
 	 *
-	 * @param {string} lessonId The lesson id.
-	 *
-	 * @return {Object} The action.
+	 * @param   {string} lessonId The lesson id.
+	 * @returns {Object}          The action.
 	 */
 	trackLesson( lessonId ) {
 		return {
@@ -105,9 +99,8 @@ const actions = {
 	/**
 	 * Creates the action which marks a lesson as not tracked by the store.
 	 *
-	 * @param {string} lessonId The lesson id.
-	 *
-	 * @return {Object} The action.
+	 * @param   {string} lessonId The lesson id.
+	 * @returns {Object}          The action.
 	 */
 	ignoreLesson( lessonId ) {
 		return {
@@ -117,28 +110,26 @@ const actions = {
 	},
 };
 
-/**
- * Status store selectors.
- */
+/** Status store selectors. */
 const selectors = {
 	/**
 	 * Get all the lessons that are tracked by the store.
 	 *
-	 * @param {Object} state                The state.
-	 * @param {Array}  state.trackedLessons The tracked lessons.
-	 *
-	 * @return {Object} An object with the total and completed lesson counts.
+	 * @param   {Object} state                The state.
+	 * @param   {Array}  state.trackedLessons The tracked lessons.
+	 * @returns {Object}                      An object with the total and
+	 *     completed lesson counts.
 	 */
 	getTrackedLessons: ( { trackedLessons } ) => trackedLessons,
 
 	/**
 	 * Get the lesson counts.
 	 *
-	 * @param {Object} state                  The state.
-	 * @param {Array}  state.trackedLessons   The ids of all the lessons.
-	 * @param {Array}  state.completedLessons The ids of the completed lessons.
-	 *
-	 * @return {Object} An object with the total and completed lesson counts.
+	 * @param   {Object} state                  The state.
+	 * @param   {Array}  state.trackedLessons   The ids of all the lessons.
+	 * @param   {Array}  state.completedLessons The ids of the completed lessons.
+	 * @returns {Object}                        An object with the total and
+	 *     completed lesson counts.
 	 */
 	getLessonCounts: ( { trackedLessons, completedLessons } ) => ( {
 		totalLessonsCount: trackedLessons.length,
@@ -148,11 +139,10 @@ const selectors = {
 	/**
 	 * Gets the lesson status.
 	 *
-	 * @param {Object} state                  The state.
-	 * @param {Array}  state.completedLessons The ids of the completed lessons.
-	 * @param {string} lessonId               The lesson id.
-	 *
-	 * @return {string} The lesson status.
+	 * @param   {Object} state                  The state.
+	 * @param   {Array}  state.completedLessons The ids of the completed lessons.
+	 * @param   {string} lessonId               The lesson id.
+	 * @returns {string}                        The lesson status.
 	 */
 	getLessonStatus: ( { completedLessons }, lessonId ) =>
 		completedLessons.includes( lessonId )
@@ -162,12 +152,11 @@ const selectors = {
 	/**
 	 * Returns the number of total and completed lessons of a module.
 	 *
-	 * @param {Object} state                  The state.
-	 * @param {Array}  state.completedLessons The ids of the completed lessons.
-	 * @param {Array}  state.trackedLessons   The ids of  all the lessons.
-	 * @param {string} moduleId               The module id.
-	 *
-	 * @return {Object} The module lesson counts.
+	 * @param   {Object} state                  The state.
+	 * @param   {Array}  state.completedLessons The ids of the completed lessons.
+	 * @param   {Array}  state.trackedLessons   The ids of all the lessons.
+	 * @param   {string} moduleId               The module id.
+	 * @returns {Object}                        The module lesson counts.
 	 */
 	getModuleLessonCounts( { completedLessons, trackedLessons }, moduleId ) {
 		const moduleLessons = selectData( 'core/block-editor' )
@@ -187,19 +176,16 @@ const selectors = {
 	},
 };
 
-/**
- * Status store reducer.
- */
+/** Status store reducer. */
 const reducers = {
 	/**
 	 * Updates the lesson status.
 	 *
-	 * @param {Object} action          The action.
-	 * @param {string} action.status   The lesson status.
-	 * @param {string} action.lessonId The lesson id.
-	 * @param {Object} state           The state.
-	 *
-	 * @return {Object} The new state.
+	 * @param   {Object} action          The action.
+	 * @param   {string} action.status   The lesson status.
+	 * @param   {string} action.lessonId The lesson id.
+	 * @param   {Object} state           The state.
+	 * @returns {Object}                 The new state.
 	 */
 	SET_LESSON_STATUS: ( { lessonId, status }, state ) => {
 		let completedLessons = [ ...state.completedLessons ];
@@ -223,11 +209,11 @@ const reducers = {
 	/**
 	 * Removes any lessons that don't exist in list of descendantIds.
 	 *
-	 * @param {Object} action               The action.
-	 * @param {Array}  action.descendantIds The ids of all descendants of the outline block.
-	 * @param {Object} state                The state.
-	 *
-	 * @return {Object} The new state.
+	 * @param   {Object} action               The action.
+	 * @param   {Array}  action.descendantIds The ids of all descendants of the
+	 *     outline block.
+	 * @param   {Object} state                The state.
+	 * @returns {Object}                      The new state.
 	 */
 	REMOVE_LESSONS: ( { descendantIds }, state ) => {
 		const completedLessons = state.completedLessons.filter(
@@ -256,11 +242,10 @@ const reducers = {
 	/**
 	 * Removes a lesson from the arrays of tracked lessons.
 	 *
-	 * @param {Object} action          The action.
-	 * @param {Array}  action.lessonId The ids of the lesson to ignore.
-	 * @param {Object} state           The state.
-	 *
-	 * @return {Object} The new state.
+	 * @param   {Object} action          The action.
+	 * @param   {Array}  action.lessonId The ids of the lesson to ignore.
+	 * @param   {Object} state           The state.
+	 * @returns {Object}                 The new state.
 	 */
 	IGNORE_LESSON: ( { lessonId }, state ) => {
 		const completedLessons = state.completedLessons.filter(
@@ -281,11 +266,10 @@ const reducers = {
 	/**
 	 * Adds a lesson from the arrays of tracked lessons.
 	 *
-	 * @param {Object} action          The action.
-	 * @param {Array}  action.lessonId The ids of the lesson to track.
-	 * @param {Object} state           The state.
-	 *
-	 * @return {Object} The new state.
+	 * @param   {Object} action          The action.
+	 * @param   {Array}  action.lessonId The ids of the lesson to track.
+	 * @param   {Object} state           The state.
+	 * @returns {Object}                 The new state.
 	 */
 	TRACK_LESSON: ( { lessonId }, state ) => {
 		const trackedLessons = [ ...state.trackedLessons ];

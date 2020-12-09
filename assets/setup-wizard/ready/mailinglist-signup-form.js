@@ -7,8 +7,8 @@ import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 /**
  * Sign up to Sensei Mailing list.
  *
- * Submits form to mailing list provider signup page in new tab.
- * Fills in site administrator e-mail address.
+ * Submits form to mailing list provider signup page in new tab. Fills in site
+ * administrator e-mail address.
  */
 export const MailingListSignupForm = () => {
 	const { stepData } = useSetupWizardStep( 'ready' );

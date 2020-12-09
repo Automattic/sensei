@@ -18,13 +18,15 @@ import useToggleLegacyMetaboxes from '../use-toggle-legacy-metaboxes';
  * @param {string}   props.className               Custom class name.
  * @param {Object}   props.barColor                Color object for the progress bar.
  * @param {Object}   props.defaultBarColor         Default bar color.
- * @param {Object}   props.barBackgroundColor      Color object for the background of the progress bar.
+ * @param {Object}   props.barBackgroundColor      Color object for the
+ *     background of the progress bar.
  * @param {Object}   props.textColor               Color object for the text.
  * @param {Object}   props.attributes              Component attributes.
  * @param {number}   props.attributes.height       The height of the progress bar.
  * @param {number}   props.attributes.borderRadius The border radius of the progress bar.
  * @param {boolean}  props.attributes.isPreview    Is preview flag.
- * @param {Function} props.setAttributes           Callback to set the component attributes.
+ * @param {Function} props.setAttributes           Callback to set the component
+ *     attributes.
  */
 export const EditCourseProgressBlock = ( {
 	className,

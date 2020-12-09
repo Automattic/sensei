@@ -37,10 +37,11 @@ export const withColorSettings = ( colorSettings ) => {
 /**
  * Color setting inspector controls.
  *
+ * @class
+ *
  * @param {Object} params
  * @param {Object} params.colorSettings Color definitions.
  * @param {Object} params.props         Component props
- * @class
  */
 export const ColorSettings = ( { colorSettings, props } ) => {
 	const colors = Object.keys( colorSettings );
@@ -78,8 +79,8 @@ export const ColorSettings = ( { colorSettings, props } ) => {
 };
 
 /**
- * Apply default style class if no style is selected.
- * Adds is-style-default to the className property.
+ * Apply default style class if no style is selected. Adds is-style-default to
+ * the className property.
  *
  * @param {string} defaultStyleName Default style name.
  */
@@ -107,20 +108,19 @@ export const withDefaultBlockStyle = ( defaultStyleName = 'default' ) => (
  * This HOC sets the default color attribute based in a probe.
  *
  * @example
- * withDefaultColor( {
- *   defaultMainColor: {
- *     style: 'background-color',
- *     probeKey: 'primaryColor',
- *   },
- * } )
+ *   withDefaultColor( {
+ *   	defaultMainColor: {
+ *   		style: 'background-color',
+ *   		probeKey: 'primaryColor',
+ *   	},
+ *   } );
  *
- * @param {Object} colorConfigs Colors config object, where the key is the
- *                              default color attribute name, and the value is
- *                              an object containing style type and probeKey.
- *                              The block attributes must register an attribute
- *                              for every key.
- *
- * @return {Function} Extended component.
+ * @param   {Object}   colorConfigs Colors config object, where the key is the
+ *     default color attribute name, and the value is
+ *     an object containing style type and probeKey.
+ *     The block attributes must register an attribute
+ *     for every key.
+ * @returns {Function}              Extended component.
  */
 export const withDefaultColor = ( colorConfigs ) => ( Component ) => (
 	props

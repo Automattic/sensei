@@ -1,9 +1,8 @@
 /**
  * Converts css color hex to rgb.
  *
- * @param {string} h The hex color string.
- *
- * @return {string} The rgb value.
+ * @param   {string} h The hex color string.
+ * @returns {string}   The rgb value.
  */
 export const hexToRGB = ( h ) => {
 	// Returns if it's not an hexadecimal.

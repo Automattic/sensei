@@ -14,7 +14,8 @@ import { getActiveStyleClass, applyStyleClass } from '../apply-style-class';
 import useToggleLegacyMetaboxes from '../../use-toggle-legacy-metaboxes';
 
 /**
- * A React context which contains the attributes and the setAttributes callback of the Outline block.
+ * A React context which contains the attributes and the setAttributes callback
+ * of the Outline block.
  */
 export const OutlineAttributesContext = createContext();
 

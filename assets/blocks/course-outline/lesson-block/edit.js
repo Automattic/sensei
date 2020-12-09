@@ -56,7 +56,8 @@ export const EditLessonBlock = ( props ) => {
 	};
 
 	/**
-	 * Insert a new lesson on enter, unless there is already an empty new lesson after this one.
+	 * Insert a new lesson on enter, unless there is already an empty new lesson
+	 * after this one.
 	 */
 	const onEnter = () => {
 		const editor = select( 'core/block-editor' );

@@ -1,11 +1,7 @@
-/**
- * External dependencies
- */
+/** External dependencies */
 import classnames from 'classnames';
 
-/**
- * WordPress dependencies
- */
+/** WordPress dependencies */
 import {
 	getColorClassName,
 	getColorObjectByAttributeValues,
@@ -14,8 +10,8 @@ import {
 /**
  * Get className for gradient.
  *
- * @param {string} gradientSlug
- * @return {string|undefined} Class.
+ * @param   {string}             gradientSlug
+ * @returns {string | undefined}              Class.
  */
 export const getGradientClass = ( gradientSlug ) => {
 	if ( ! gradientSlug ) {

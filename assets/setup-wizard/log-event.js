@@ -20,9 +20,9 @@ logEvent.enable = ( enabled ) => {
 /**
  * Send log event when link is opened.
  *
- * @param {string} eventName  Event name.
- * @param {Array}  properties Event properties.
- * @return {Object} Element attributes.
+ * @param   {string} eventName  Event name.
+ * @param   {Array}  properties Event properties.
+ * @returns {Object}            Element attributes.
  */
 export const logLink = ( eventName, properties ) => {
 	const isMiddleButtonEvent = ( e ) => 1 === e.button;

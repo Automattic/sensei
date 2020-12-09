@@ -1,8 +1,8 @@
 import { Path, SVG } from '@wordpress/components';
 
 /**
- * The following components are copied from @wordpress/icons since the package is not available on WP 5.3. We should
- * remove them once we stop supporting 5.3.
+ * The following components are copied from @wordpress/icons since the package
+ * is not available on WP 5.3. We should remove them once we stop supporting 5.3.
  */
 export const chevronRight = (
 	<SVG xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">

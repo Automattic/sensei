@@ -22,9 +22,10 @@ export const CommonFlow = {
 		let retries = 0;
 
 		/**
-		 * loginUser uses internally page.waitForNavigation() to wait for the login flow to be completed. This is not
-		 * enough which leads to the session cookie not being set in some of the cases, especially on travis. To
-		 * overcome this problem, we retry 3 times to login correctly.
+		 * LoginUser uses internally page.waitForNavigation() to wait for the login
+		 * flow to be completed. This is not enough which leads to the session cookie
+		 * not being set in some of the cases, especially on travis. To overcome this
+		 * problem, we retry 3 times to login correctly.
 		 */
 		do {
 			retries++;

@@ -13,8 +13,8 @@ const toggleGlobalStyles = ( enabled, classes ) => {
 /**
  * Apply fullscreen view by hiding wp-admin elements via CSS.
  *
- * Allows setting additional classes on the body element.
- * Fullscreen and classes are added when the component is mounted, and removed when unmounted.
+ * Allows setting additional classes on the body element. Fullscreen and classes
+ * are added when the component is mounted, and removed when unmounted.
  *
  * @param {string[]} bodyClasses Additional classes to be set.
  */

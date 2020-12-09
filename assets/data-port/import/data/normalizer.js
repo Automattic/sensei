@@ -1,9 +1,8 @@
 /**
  * Normalize uploads state.
  *
- * @param {Object} files Files raw data.
- *
- * @return {Object} Normalized levels data.
+ * @param   {Object} files Files raw data.
+ * @returns {Object}       Normalized levels data.
  */
 export const normalizeUploadsState = ( files ) => {
 	const levels = {};
@@ -23,9 +22,8 @@ export const normalizeUploadsState = ( files ) => {
 /**
  * Parses completed steps data.
  *
- * @param {Object} data Status data.
- *
- * @return {Array} Parsed completed steps data.
+ * @param   {Object} data Status data.
+ * @returns {Array}       Parsed completed steps data.
  */
 export const parseCompletedSteps = ( data ) => {
 	if ( data.status === 'pending' ) {
@@ -39,16 +37,15 @@ export const parseCompletedSteps = ( data ) => {
 };
 
 /**
- *  * Normalize importer data.
+ * * Normalize importer data.
  *
- * @param {Object} input         Importer data.
- * @param {number} input.id      The job id.
- * @param {Object} input.files   Files raw data.
- * @param {string} input.status  Job status.
- * @param {Object} input.results Results of the job.
- * @param {Object} input.data    Job data.
- *
- * @return {Object} Normalized importer data.
+ * @param   {Object} input         Importer data.
+ * @param   {number} input.id      The job id.
+ * @param   {Object} input.files   Files raw data.
+ * @param   {string} input.status  Job status.
+ * @param   {Object} input.results Results of the job.
+ * @param   {Object} input.data    Job data.
+ * @returns {Object}               Normalized importer data.
  */
 export const normalizeImportData = ( {
 	id,

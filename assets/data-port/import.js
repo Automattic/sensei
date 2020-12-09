@@ -9,9 +9,7 @@ import '../shared/data/api-fetch-preloaded-once';
 
 registerImportStore();
 
-/**
- * Sensei import page.
- */
+/** Sensei import page. */
 const SenseiImportPage = () => {
 	const { error, navigationSteps } = useSelect( ( select ) => {
 		const store = select( 'sensei/import' );

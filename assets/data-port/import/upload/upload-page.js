@@ -12,7 +12,8 @@ import { formatString } from '../../../shared/helpers/format-string.js';
  * @param {Object}   input                   UploadPage input.
  * @param {Object}   input.state             The import state.
  * @param {boolean}  input.isReady           Whether the upload is finished.
- * @param {Function} input.submitStartImport Callback which is called when start button is clicked.
+ * @param {Function} input.submitStartImport Callback which is called when start
+ *     button is clicked.
  */
 export const UploadPage = ( { state, isReady, submitStartImport } ) => {
 	const { isSubmitting, errorMsg } = state;

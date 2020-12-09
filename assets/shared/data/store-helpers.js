@@ -1,11 +1,12 @@
 /**
  * Compose an action creator with the given start, success and error actions.
  *
- * @param {string}   startAction   Start action type.
- * @param {Function} fetchFn       The action creator to be wrapped. Should return the resolved data.
- * @param {string}   successAction Success action type.
- * @param {string}   errorAction   Error action type.
- * @return {Function} The wrapped action creator.
+ * @param   {string}   startAction   Start action type.
+ * @param   {Function} fetchFn       The action creator to be wrapped. Should
+ *     return the resolved data.
+ * @param   {string}   successAction Success action type.
+ * @param   {string}   errorAction   Error action type.
+ * @returns {Function}               The wrapped action creator.
  */
 export const composeFetchAction = (
 	startAction,
@@ -30,12 +31,11 @@ export const composeFetchAction = (
  * Create reducer from a map of action type keys and reducer function.
  *
  * @example
- *  createSimpleReducer({ SAMPLE_ACTION: ( { actionProperty }, state ) => ({ ...state, actionProperty }) )
+ *   createSimpleReducer({ SAMPLE_ACTION: ( { actionProperty }, state ) => ({ ...state, actionProperty }) )
  *
- * @param {Object} reducers     Map of action type - reducer functions.
- * @param {Object} defaultState Default state.
- *
- * @return {Function} Store reducer.
+ * @param   {Object}   reducers     Map of action type - reducer functions.
+ * @param   {Object}   defaultState Default state.
+ * @returns {Function}              Store reducer.
  */
 export const createReducerFromActionMap = ( reducers, defaultState ) => {
 	return ( state = defaultState, action ) => {

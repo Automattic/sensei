@@ -1,10 +1,10 @@
 /**
- * The purpose of this script is to add the dist references to the
- * pot file based on the chunks map (generated through Webpack).
+ * The purpose of this script is to add the dist references to the pot file
+ * based on the chunks map (generated through Webpack).
  *
- * If a message in the pot file contains `src/file.js` as references
- * and this file was bundled as part of the `dist/dist.js`, the
- * `dist/dist.js` will be added as a new reference to the message.
+ * If a message in the pot file contains `src/file.js` as references and this
+ * file was bundled as part of the `dist/dist.js`, the `dist/dist.js` will be
+ * added as a new reference to the message.
  */
 
 const fs = require( 'fs' );
@@ -13,9 +13,7 @@ const chunksMap = require( '../node_modules/.cache/sensei-lms/chunks-map.json' )
 
 const POT_PATH = './lang/sensei-lms.pot';
 
-/**
- * Run script to add new references.
- */
+/** Run script to add new references. */
 const run = () => {
 	const data = fs.readFileSync( POT_PATH, 'utf8' );
 	fs.writeFileSync( POT_PATH, addDistReferences( data ) );
@@ -24,9 +22,8 @@ const run = () => {
 /**
  * Add dist references to the pot string.
  *
- * @param {string} potString Current pot string to be replaced.
- *
- * @return {string} Pot string after adding new references.
+ * @param   {string} potString Current pot string to be replaced.
+ * @returns {string}           Pot string after adding new references.
  */
 const addDistReferences = ( potString ) => {
 	const chunksMapBySource = getChunksMapBySource( chunksMap );
@@ -58,10 +55,10 @@ const addDistReferences = ( potString ) => {
 /**
  * Add the dist to the reference.
  *
- * @param {string} referenceString   Current reference string to add the dist references.
- * @param {Object} chunksMapBySource Chunks map by source.
- *
- * @return {string} References with the respective dist files.
+ * @param   {string} referenceString   Current reference string to add the dist
+ *     references.
+ * @param   {Object} chunksMapBySource Chunks map by source.
+ * @returns {string}                   References with the respective dist files.
  */
 const getReferenceWithDist = ( referenceString, chunksMapBySource ) => {
 	const references = referenceString.split( '\n' );
@@ -87,10 +84,9 @@ const getReferenceWithDist = ( referenceString, chunksMapBySource ) => {
 /**
  * Add respective line to the references.
  *
- * @param {string[]} references References to add the line.
- * @param {number}   line       Line to be added to the references.
- *
- * @return {string[]} References with the respective lines.
+ * @param   {string[]} references References to add the line.
+ * @param   {number}   line       Line to be added to the references.
+ * @returns {string[]}            References with the respective lines.
  */
 const addLineToReferences = ( references, line ) =>
 	references.map( ( reference ) => reference + ':' + line );
@@ -98,9 +94,8 @@ const addLineToReferences = ( references, line ) =>
 /**
  * Invert the chunks map, getting by source.
  *
- * @param {Object} chunksMapByDist Chunks map by dist.
- *
- * @return {Object} Chunks map by source.
+ * @param   {Object} chunksMapByDist Chunks map by dist.
+ * @returns {Object}                 Chunks map by source.
  */
 const getChunksMapBySource = ( chunksMapByDist ) =>
 	Object.entries( chunksMapByDist ).reduce( ( acc, [ dist, sources ] ) => {

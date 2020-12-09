@@ -4,10 +4,10 @@ import { getColorAndStyleProps } from './color-props';
 /**
  * Class and style attributes for border radius.
  *
- * @param {Object} props
- * @param {Object} props.attributes
- * @param {number} props.attributes.borderRadius Border radius attribute.
- * @return {{className, style}} Output HTML attributes.
+ * @param   {Object}               props
+ * @param   {Object}               props.attributes
+ * @param   {number}               props.attributes.borderRadius Border radius attribute.
+ * @returns {{ className; style }}                               Output HTML attributes.
  */
 export function getBorderRadiusProps( { attributes: { borderRadius } } ) {
 	return {
@@ -23,8 +23,8 @@ export function getBorderRadiusProps( { attributes: { borderRadius } } ) {
 /**
  * Class and style attributes for the button.
  *
- * @param {{attributes}} props Block properties.
- * @return {{className, style}} Output HTML attributes.
+ * @param   {{ attributes }}       props Block properties.
+ * @returns {{ className; style }}       Output HTML attributes.
  */
 export function getButtonProps( props ) {
 	const isLink = isLinkStyle( props );
@@ -48,11 +48,11 @@ export function getButtonProps( props ) {
 /**
  * Class and style attributes for the wrapper element.
  *
- * @param {Object} props                  Block properties.
- * @param {string} props.className        Block classname.
- * @param {Object} props.attributes       Block attributes.
- * @param {string} props.attributes.align Alignment attribute.
- * @return {{className}} Output HTML attributes.
+ * @param   {Object}        props                  Block properties.
+ * @param   {string}        props.className        Block classname.
+ * @param   {Object}        props.attributes       Block attributes.
+ * @param   {string}        props.attributes.align Alignment attribute.
+ * @returns {{ className }}                        Output HTML attributes.
  */
 export function getButtonWrapperProps( { className, attributes: { align } } ) {
 	return {
@@ -68,8 +68,8 @@ export function getButtonWrapperProps( { className, attributes: { align } } ) {
 /**
  * Check if block has the 'Link' block style.
  *
- * @param {Object} props Block props.
- * @return {boolean} Is it a link block style.
+ * @param   {Object}  props Block props.
+ * @returns {boolean}       Is it a link block style.
  */
 export const isLinkStyle = ( props ) =>
 	/\bis-style-link\b/.test( props?.attributes?.className );

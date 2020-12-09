@@ -18,9 +18,7 @@ const mapJobState = ( job ) => {
 		  }
 		: EMPTY_STATE;
 };
-/**
- * Export store reducers.
- */
+/** Export store reducers. */
 const reducers = {
 	UPDATE_JOB: ( { job }, state ) =>
 		state.job ? mapJobState( job ) : state,
@@ -30,19 +28,13 @@ const reducers = {
 	DEFAULT: ( action, state ) => state,
 };
 
-/**
- * Export store resolvers.
- */
+/** Export store resolvers. */
 const resolvers = {
-	/**
-	 * Check for active job on first access.
-	 */
+	/** Check for active job on first access. */
 	getJob: () => actions.checkForActiveJob(),
 };
 
-/**
- * Export store selectors
- */
+/** Export store selectors */
 const selectors = {
 	getJobId: ( { job } ) => ( job && job.id ) || null,
 	getJob: ( { job } ) => job,

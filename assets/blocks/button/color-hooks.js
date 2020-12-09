@@ -6,8 +6,8 @@ import { withColorSettings } from '../../shared/blocks/settings';
 /**
  * Check if block is a Sensei button.
  *
- * @param {Object|string} blockType Block settings or name.
- * @return {boolean} Is Sensei button.
+ * @param   {Object | string} blockType Block settings or name.
+ * @returns {boolean}                   Is Sensei button.
  */
 const isSenseiButton = ( blockType ) => {
 	blockType = 'string' === typeof blockType ? blockType : blockType.name;
@@ -17,8 +17,8 @@ const isSenseiButton = ( blockType ) => {
 /**
  * Add fallback Color settings and attributes if the color support key is not available.
  *
- * @param {Object} settings Block settings.
- * @return {Object} Block settings.
+ * @param   {Object} settings Block settings.
+ * @returns {Object}          Block settings.
  */
 export const addColorSettings = ( settings ) => {
 	if ( ! isSenseiButton( settings ) ) {
@@ -59,8 +59,8 @@ export const addColorSettings = ( settings ) => {
 /**
  * Remove colors from className and style props.
  *
- * @param {Object} props Block wrapper extra props.
- * @return {Object} Block wrapper extra props.
+ * @param   {Object} props Block wrapper extra props.
+ * @returns {Object}       Block wrapper extra props.
  */
 const removeColorProps = ( props ) => ( {
 	...props,
@@ -76,9 +76,9 @@ const removeColorProps = ( props ) => ( {
 /**
  * Remove extra props from the save element wrapper added by the color support hook.
  *
- * @param {Object} props     Extra save props.
- * @param {Object} blockType Block settings.
- * @return {Object} props Extra save props.
+ * @param   {Object} props     Extra save props.
+ * @param   {Object} blockType Block settings.
+ * @returns {Object}           Props Extra save props.
  */
 export const removeColorSaveProps = ( props, blockType ) => {
 	if ( ! isSenseiButton( blockType ) ) {
@@ -90,8 +90,8 @@ export const removeColorSaveProps = ( props, blockType ) => {
 /**
  * Remove extra props from the edit element wrapper added by the color support hook.
  *
- * @param {Object} settings Block settings.
- * @return {Object} settings Block settings.
+ * @param   {Object} settings Block settings.
+ * @returns {Object}          Settings Block settings.
  */
 export const removeColorEditProps = ( settings ) => {
 	if ( ! isSenseiButton( settings ) ) {

@@ -16,7 +16,8 @@ import { Status, StatusControl } from '../status-control';
  * @param {Object}   props                     Component props.
  * @param {string}   props.previewStatus       Status to preview.
  * @param {Function} props.setPreviewStatus    Set status to preview.
- * @param {Function} props.setAttributes       Callback method to set the lesson title font size.
+ * @param {Function} props.setAttributes       Callback method to set the lesson
+ *     title font size.
  * @param {Function} props.attributes          The block attributes.
  * @param {number}   props.attributes.id       The lesson id.
  * @param {string}   props.attributes.fontSize The lesson block font size.

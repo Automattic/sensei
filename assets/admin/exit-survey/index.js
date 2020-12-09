@@ -2,9 +2,7 @@ import { ExitSurveyForm } from './form';
 import { render } from '@wordpress/element';
 
 ( function senseiExitSurvey() {
-	/**
-	 * Add exit survey modal when clicking the Deactivate link for Sensei LMS plugin.
-	 */
+	/** Add exit survey modal when clicking the Deactivate link for Sensei LMS plugin. */
 	const addExitSurveyOnDeactivate = () => {
 		const getDeactivateLinkElement = ( slug ) =>
 			document.querySelector(
@@ -27,9 +25,7 @@ import { render } from '@wordpress/element';
 		} );
 	};
 
-	/**
-	 * Exit survey modal.
-	 */
+	/** Exit survey modal. */
 	class ExitSurveyModal {
 		href;
 		container;
@@ -42,10 +38,7 @@ import { render } from '@wordpress/element';
 		constructor( { href } ) {
 			this.href = href;
 		}
-		/**
-		 * Create and open a modal with an exit survey form.
-		 *
-		 */
+		/** Create and open a modal with an exit survey form. */
 		open = () => {
 			let container = document.querySelector( '#sensei-exit-survey' );
 			if ( ! container ) {
@@ -85,9 +78,7 @@ import { render } from '@wordpress/element';
 			this.closeAndDeactivate();
 		};
 
-		/**
-		 * Close survey modal and continue plugin deactivation.
-		 */
+		/** Close survey modal and continue plugin deactivation. */
 		closeAndDeactivate = () => {
 			this.container.remove();
 			window.location = this.href;

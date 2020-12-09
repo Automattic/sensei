@@ -1,6 +1,4 @@
-/**
- * Lesson bulk edit screen save functionality
- */
+/** Lesson bulk edit screen save functionality */
 
 jQuery( function ( $ ) {
 	$( '#the-list' ).on( 'click', '#bulk-edit #bulk_edit ', function () {

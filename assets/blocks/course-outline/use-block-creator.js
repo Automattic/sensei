@@ -4,8 +4,7 @@ import { extractStructure, syncStructureToBlocks } from './data';
 import { isEqual } from 'lodash';
 
 /**
- * Blocks creator hook.
- * It adds blocks dynamically to the InnerBlock.
+ * Blocks creator hook. It adds blocks dynamically to the InnerBlock.
  *
  * @param {string} clientId Block client ID.
  */

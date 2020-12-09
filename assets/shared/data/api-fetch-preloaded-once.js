@@ -1,9 +1,7 @@
 import { addQueryArgs } from '@wordpress/url';
 import apiFetch from '@wordpress/api-fetch';
 
-/**
- * Use data preloaded with createPreloadingMiddleware only once.
- */
+/** Use data preloaded with createPreloadingMiddleware only once. */
 export function preloadedDataUsedOnceMiddleware() {
 	const usedPreload = {};
 

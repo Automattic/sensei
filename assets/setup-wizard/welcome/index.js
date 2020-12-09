@@ -6,9 +6,7 @@ import { UsageModal } from './usage-modal';
 import { useQueryStringRouter } from '../query-string-router';
 import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 
-/**
- * Welcome step for Setup Wizard.
- */
+/** Welcome step for Setup Wizard. */
 export const Welcome = () => {
 	const [ usageModalActive, toggleUsageModal ] = useState( false );
 

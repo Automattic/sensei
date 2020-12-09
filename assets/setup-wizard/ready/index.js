@@ -9,9 +9,7 @@ import { logLink } from '../log-event';
 import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 import useSampleCourseInstaller from './use-sample-course-installer';
 
-/**
- * Ready step for Setup Wizard.
- */
+/** Ready step for Setup Wizard. */
 export const Ready = () => {
 	const { submitStep, isComplete } = useSetupWizardStep( 'ready' );
 

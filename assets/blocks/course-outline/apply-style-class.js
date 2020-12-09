@@ -5,10 +5,9 @@ import { find } from 'lodash';
 /**
  * Checks if a block has a registered style which matches with the supplied class.
  *
- * @param {Array}  blockStyles The block's registered styles.
- * @param {string} className   The class to check.
- *
- * @return {boolean} True if there is a match.
+ * @param   {Array}   blockStyles The block's registered styles.
+ * @param   {string}  className   The class to check.
+ * @returns {boolean}             True if there is a match.
  */
 const blockHasStyle = ( blockStyles, className ) => {
 	return (
@@ -20,10 +19,9 @@ const blockHasStyle = ( blockStyles, className ) => {
 /**
  * Returns the active style class from the given className.
  *
- * @param {Array}  styles    Block style variations.
- * @param {string} className Class name.
- *
- * @return {string} The active style class.
+ * @param   {Array}  styles    Block style variations.
+ * @param   {string} className Class name.
+ * @returns {string}           The active style class.
  */
 export const getActiveStyleClass = ( styles, className ) => {
 	if ( className ) {

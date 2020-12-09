@@ -3,9 +3,7 @@ import { __ } from '@wordpress/i18n';
 
 import CheckIcon from './check-icon';
 
-/**
- * Status constants.
- */
+/** Status constants. */
 export const INSTALLING_STATUS = 'installing';
 export const ERROR_STATUS = 'error';
 export const INSTALLED_STATUS = 'installed';
@@ -47,8 +45,8 @@ const statusComponents = {
 /**
  * Feature status component.
  *
- * @param {Object}                        props
- * @param {('loading'|'error'|'success')} props.status Feature status.
+ * @param {Object}                          props
+ * @param {'loading' | 'error' | 'success'} props.status Feature status.
  */
 const FeatureStatus = ( { status } ) => (
 	<div className="sensei-setup-wizard__icon-status">

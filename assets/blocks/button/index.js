@@ -7,9 +7,7 @@ import { SaveButtonBlock } from './save-button';
 import { button as icon } from '../../icons/wordpress-icons';
 import { withDefaultBlockStyle } from '../../shared/blocks/settings';
 
-/**
- * Button block styles.
- */
+/** Button block styles. */
 export const BlockStyles = {
 	Fill: {
 		name: 'default',
@@ -28,7 +26,8 @@ export const BlockStyles = {
 /**
  * Create a block type settings object for custom button-based blocks.
  *
- * Settings are merged into block settings, the rest of the options are passed on to the save and edit components.
+ * Settings are merged into block settings, the rest of the options are passed
+ * on to the save and edit components.
  *
  * @param {Object} opts
  * @param {Object} opts.settings Block settings.

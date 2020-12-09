@@ -9,7 +9,7 @@ const { getComputedStyle } = window;
 /**
  * Get color object by probe.
  *
- * @return {Object} Object containing the color objects, where the key is the probe key.
+ * @returns {Object} Object containing the color objects, where the key is the probe key.
  */
 export const useColorsByProbe = () => {
 	const themeColorPalette = useSelect(
@@ -43,10 +43,10 @@ export const useColorsByProbe = () => {
 /**
  * Get probe styles (memoized).
  *
- * It adds elements to the DOM as a probe, and get the computed styles
- * the default expected properties.
+ * It adds elements to the DOM as a probe, and get the computed styles the
+ * default expected properties.
  *
- * @return {Object} Probe default styles.
+ * @returns {Object} Probe default styles.
  */
 export const getProbeStyles = memoize( () => {
 	// Create temporary probe elements.

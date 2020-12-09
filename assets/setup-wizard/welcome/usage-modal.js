@@ -7,13 +7,14 @@ import { useState, useEffect } from '@wordpress/element';
 /**
  * Modal for usage tracking opt-in.
  *
+ * @class
+ *
  * @param {Object}   props
  * @param {boolean}  props.tracking     Initial tracking state.
  * @param {Function} props.onContinue   Callback for user pressing the continue button.
  * @param {Function} props.onClose      Callback for closing the modal.
  * @param {boolean}  props.isSubmitting Indicate loading state.
  * @param {string}   props.children     Children elements of the modal.
- * @class
  */
 export const UsageModal = ( {
 	tracking,

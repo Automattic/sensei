@@ -3,9 +3,8 @@ import { _n } from '@wordpress/i18n';
 /**
  * Get post type label.
  *
- * @param {{key: string, count: number}} typeData Type data.
- *
- * @return {string} Translated label.
+ * @param   {{ key: string; count: number }} typeData Type data.
+ * @returns {string}                                  Translated label.
  */
 const getPostTypeLabel = ( { key, count } ) => {
 	return {

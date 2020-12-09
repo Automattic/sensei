@@ -24,15 +24,14 @@ import { buildJobEndpointUrl } from '../helpers/url';
 
 /**
  * @typedef  {Object} FetchFromAPIAction
- * @property {string} type    Action type.
- * @property {Object} request Object that is used to fetch.
+ * @property {string} type               Action type.
+ * @property {Object} request            Object that is used to fetch.
  */
 /**
  * Fetch action creator.
  *
- * @param {Object} request Object that is used to fetch.
- *
- * @return {FetchFromAPIAction} Fetch action.
+ * @param   {Object}             request Object that is used to fetch.
+ * @returns {FetchFromAPIAction}         Fetch action.
  */
 export const fetchFromAPI = ( request ) => ( {
 	type: FETCH_FROM_API,
@@ -44,9 +43,7 @@ export const wait = ( timeout ) => ( {
 	timeout,
 } );
 
-/**
- * Fetch importer data for current job.
- */
+/** Fetch importer data for current job. */
 export const loadCurrentJobState = composeFetchAction(
 	START_LOAD_CURRENT_JOB_STATE,
 	function* () {
@@ -103,14 +100,14 @@ export const pollJobProgress = function* ( jobId ) {
 
 /**
  * @typedef  {Object} SetJobStateAction
- * @property {string} type Action type.
- * @property {Object} data Job state.
+ * @property {string} type              Action type.
+ * @property {Object} data              Job state.
  */
 /**
  * Set job state action creator.
  *
- * @param {Object} data Job state.
- * @return {SetJobStateAction} Set job state action.
+ * @param   {Object}            data Job state.
+ * @returns {SetJobStateAction}      Set job state action.
  */
 export const setJobState = ( data ) => ( {
 	type: SET_JOB_STATE,
@@ -158,12 +155,12 @@ export function* submitStartImport( jobId, { onSuccess, onError } = {} ) {
 
 /**
  * @typedef  {Object} StartImportAction
- * @property {string} type Action type.
+ * @property {string} type              Action type.
  */
 /**
  * Start action to start import.
  *
- * @return {StartImportAction} Start import action.
+ * @returns {StartImportAction} Start import action.
  */
 export const startImport = () => ( {
 	type: START_IMPORT,
@@ -171,14 +168,14 @@ export const startImport = () => ( {
 
 /**
  * @typedef  {Object} SuccessStartImportAction
- * @property {string} type Action type.
- * @property {Object} data Data object.
+ * @property {string} type                     Action type.
+ * @property {Object} data                     Data object.
  */
 /**
  * Success submit action creator.
  *
- * @param {Object} data Importer data.
- * @return {SuccessStartImportAction} Success submit action.
+ * @param   {Object}                   data Importer data.
+ * @returns {SuccessStartImportAction}      Success submit action.
  */
 export const successStartImport = ( data ) => ( {
 	type: SUCCESS_START_IMPORT,
@@ -186,16 +183,15 @@ export const successStartImport = ( data ) => ( {
 } );
 
 /**
- * @typedef  {Object}         ErrorStartImportAction
- * @property {string}         type  Action type.
- * @property {Object|boolean} error Error object or false.
+ * @typedef  {Object}           ErrorStartImportAction
+ * @property {string}           type                   Action type.
+ * @property {Object | boolean} error                  Error object or false.
  */
 /**
  * Error start import job creator.
  *
- * @param {Object} error Error object or false.
- *
- * @return {ErrorStartImportAction} Error action.
+ * @param   {Object}                 error Error object or false.
+ * @returns {ErrorStartImportAction}       Error action.
  */
 export const errorStartImport = ( error ) => ( {
 	type: ERROR_START_IMPORT,
@@ -259,17 +255,16 @@ export const throwEarlyUploadError = ( level, errorMsg ) =>
 
 /**
  * @typedef  {Object} StartFileUploadAction
- * @property {string} type       Action type.
- * @property {string} level      Level identifier.
- * @property {Object} uploadData Error object or false.
+ * @property {string} type                  Action type.
+ * @property {string} level                 Level identifier.
+ * @property {Object} uploadData            Error object or false.
  */
 /**
  * Start file upload action creator.
  *
- * @param {string} level      Level identifier.
- * @param {Object} uploadData Data to submit.
- *
- * @return {StartFileUploadAction} Start file upload action.
+ * @param   {string}                level      Level identifier.
+ * @param   {Object}                uploadData Data to submit.
+ * @returns {StartFileUploadAction}            Start file upload action.
  */
 export const startFileUploadAction = ( level, uploadData ) => ( {
 	type: START_UPLOAD_IMPORT_DATA_FILE,
@@ -279,16 +274,16 @@ export const startFileUploadAction = ( level, uploadData ) => ( {
 
 /**
  * @typedef  {Object} SuccessFileUploadAction
- * @property {string} type  Action type.
- * @property {string} level Level identifier.
- * @property {Object} data  Data object.
+ * @property {string} type                    Action type.
+ * @property {string} level                   Level identifier.
+ * @property {Object} data                    Data object.
  */
 /**
  * Success upload file action.
  *
- * @param {string} level Level identifier.
- * @param {Object} data  Importer data.
- * @return {SuccessFileUploadAction} Success file upload action.
+ * @param   {string}                  level Level identifier.
+ * @param   {Object}                  data  Importer data.
+ * @returns {SuccessFileUploadAction}       Success file upload action.
  */
 export const successFileUpload = ( level, data ) => ( {
 	type: SUCCESS_UPLOAD_IMPORT_DATA_FILE,
@@ -297,18 +292,17 @@ export const successFileUpload = ( level, data ) => ( {
 } );
 
 /**
- * @typedef  {Object}         ErrorFileUploadAction
- * @property {string}         type  Action type.
- * @property {string}         level Level identifier.
- * @property {Object|boolean} error Error object or false.
+ * @typedef  {Object}           ErrorFileUploadAction
+ * @property {string}           type                  Action type.
+ * @property {string}           level                 Level identifier.
+ * @property {Object | boolean} error                 Error object or false.
  */
 /**
  * Error submit action creator.
  *
- * @param {string}         level Level identifier.
- * @param {Object|boolean} error Error object or false.
- *
- * @return {ErrorFileUploadAction} Error action.
+ * @param   {string}                level Level identifier.
+ * @param   {Object | boolean}      error Error object or false.
+ * @returns {ErrorFileUploadAction}       Error action.
  */
 export const errorFileUpload = ( level, error ) => ( {
 	type: ERROR_UPLOAD_IMPORT_DATA_FILE,
@@ -350,15 +344,14 @@ export function* deleteLevelFile( jobId, level ) {
 
 /**
  * @typedef  {Object} StartDeleteLevelFileAction
- * @property {string} type  Action type.
- * @property {string} level Level identifier.
+ * @property {string} type                       Action type.
+ * @property {string} level                      Level identifier.
  */
 /**
  * Start file upload action creator.
  *
- * @param {string} level Level identifier.
- *
- * @return {StartDeleteLevelFileAction} Start delete file action.
+ * @param   {string}                     level Level identifier.
+ * @returns {StartDeleteLevelFileAction}       Start delete file action.
  */
 export const startDeleteLevelFileAction = ( level ) => ( {
 	type: START_DELETE_IMPORT_DATA_FILE,
@@ -367,16 +360,16 @@ export const startDeleteLevelFileAction = ( level ) => ( {
 
 /**
  * @typedef  {Object} SuccessDeleteLevelFileAction
- * @property {string} type  Action type.
- * @property {string} level Level identifier.
- * @property {Object} data  Data object.
+ * @property {string} type                         Action type.
+ * @property {string} level                        Level identifier.
+ * @property {Object} data                         Data object.
  */
 /**
  * Success delete level file action.
  *
- * @param {string} level Level identifier.
- * @param {Object} data  Importer data.
- * @return {SuccessDeleteLevelFileAction} Success delete level file action.
+ * @param   {string}                       level Level identifier.
+ * @param   {Object}                       data  Importer data.
+ * @returns {SuccessDeleteLevelFileAction}       Success delete level file action.
  */
 export const successDeleteLevelFileAction = ( level, data ) => ( {
 	type: SUCCESS_DELETE_IMPORT_DATA_FILE,
@@ -385,18 +378,17 @@ export const successDeleteLevelFileAction = ( level, data ) => ( {
 } );
 
 /**
- * @typedef  {Object}  ErrorSuccessDeleteLevelFileAction
- * @property {string} type  Action type.
- * @property {string} level Level identifier.
- * @property {Object} error Error object or false.
+ * @typedef  {Object} ErrorSuccessDeleteLevelFileAction
+ * @property {string} type                              Action type.
+ * @property {string} level                             Level identifier.
+ * @property {Object} error                             Error object or false.
  */
 /**
  * Error delete level file action creator.
  *
- * @param {string} level Level identifier.
- * @param {Object} error Error object or false.
- *
- * @return {ErrorSuccessDeleteLevelFileAction} Error delete level file action.
+ * @param   {string}                            level Level identifier.
+ * @param   {Object}                            error Error object or false.
+ * @returns {ErrorSuccessDeleteLevelFileAction}       Error delete level file action.
  */
 export const errorDeleteLevelFileAction = ( level, error ) => ( {
 	type: ERROR_DELETE_IMPORT_DATA_FILE,
@@ -404,16 +396,12 @@ export const errorDeleteLevelFileAction = ( level, error ) => ( {
 	error,
 } );
 
-/**
- * Reset importer state.
- */
+/** Reset importer state. */
 export const resetState = () => ( {
 	type: RESET_STATE,
 } );
 
-/**
- * Restart importer.
- */
+/** Restart importer. */
 export function* restartImporter() {
 	yield resetState();
 	yield loadCurrentJobState();

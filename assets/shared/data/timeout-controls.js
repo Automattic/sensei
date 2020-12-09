@@ -9,23 +9,19 @@ export function* timeout( action, wait ) {
 	yield action();
 }
 
-/**
- * Clear current timeout.
- */
+/** Clear current timeout. */
 export function cancelTimeout() {
 	return { type: 'CLEAR_TIMEOUT' };
 }
 
-/**
- * Manage timeout reference.
- */
+/** Manage timeout reference. */
 const scheduledTimeout = {
 	current: null,
 	/**
 	 * Create a new timeout promise.
 	 *
-	 * @param {number} wait Timeout in ms.
-	 * @return {Promise} Promise resolved after the timeout.
+	 * @param   {number}  wait Timeout in ms.
+	 * @returns {Promise}      Promise resolved after the timeout.
 	 */
 	create( wait ) {
 		return new Promise( ( resolve ) => {
@@ -35,9 +31,7 @@ const scheduledTimeout = {
 			}, wait );
 		} );
 	},
-	/**
-	 * Clear current scheduled timeout.
-	 */
+	/** Clear current scheduled timeout. */
 	clear() {
 		if ( scheduledTimeout.current ) {
 			clearTimeout( scheduledTimeout.current );

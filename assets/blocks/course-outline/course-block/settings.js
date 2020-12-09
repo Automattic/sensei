@@ -7,7 +7,8 @@ import { PanelBody, ToggleControl } from '@wordpress/components';
  *
  * @param {Object}   props
  * @param {boolean}  props.collapsibleModules    Whether collapsible modules are enabled.
- * @param {Function} props.setCollapsibleModules Callback to be called when collapsible modules setting is updated.
+ * @param {Function} props.setCollapsibleModules Callback to be called when
+ *     collapsible modules setting is updated.
  * @param {boolean}  props.moduleBorder          Whether modules borders are enabled.
  * @param {Function} props.setModuleBorder       Callback to set module borders.
  */

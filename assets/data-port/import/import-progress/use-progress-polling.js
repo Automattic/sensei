@@ -1,9 +1,7 @@
 import { useEffect } from '@wordpress/element';
 import { useSelect, useDispatch } from '@wordpress/data';
 
-/**
- * Progress polling hook.
- */
+/** Progress polling hook. */
 const useProgressPolling = () => {
 	const { pollJobProgress } = useDispatch( 'sensei/import' );
 

@@ -13,8 +13,8 @@ const MAX_BORDER_RADIUS_VALUE = 50;
  * Border radius control.
  *
  * @param {Object}   props
- * @param {number?}  props.borderRadius  Border radius attribute.
- * @param {Function} props.setAttributes Set block attributes.
+ * @param {number}   [props.borderRadius] Border radius attribute.
+ * @param {Function} props.setAttributes  Set block attributes.
  */
 export const BorderPanel = ( { borderRadius, setAttributes } ) => {
 	return (

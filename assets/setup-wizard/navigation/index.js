@@ -4,11 +4,10 @@ import { useQueryStringRouter } from '../query-string-router';
 /**
  * Go to route when clicking steps that can be active (completed or next).
  *
- * @param {Array}    steps
- * @param {Object}   deps
- * @param {Function} deps.goTo
- *
- * @return {Array} Steps with click handlers.
+ * @param   {Array}    steps
+ * @param   {Object}   deps
+ * @param   {Function} deps.goTo
+ * @returns {Array}              Steps with click handlers.
  */
 const addClickHandlers = ( steps, { goTo } ) =>
 	steps.map( ( step ) => ( {

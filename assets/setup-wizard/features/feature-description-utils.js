@@ -8,10 +8,9 @@ import { getWccomProductId } from '../helpers/woocommerce-com';
 /**
  * Get a custom observation for a feature.
  *
- * @param {string}    slug             Feature slug.
- * @param {Feature[]} selectedFeatures Features list.
- *
- * @return {string|null} Feature observation.
+ * @param   {string}        slug             Feature slug.
+ * @param   {Feature[]}     selectedFeatures Features list.
+ * @returns {string | null}                  Feature observation.
  */
 export const getFeatureObservation = ( slug, selectedFeatures ) => {
 	if ( 'woocommerce' !== slug || ! selectedFeatures ) {

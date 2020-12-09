@@ -35,17 +35,16 @@ const DEFAULT_STATE = {
 
 /**
  * @typedef  {Object} Feature
- * @property {string} slug   Feature slug.
- * @property {string} status Feature status.
- * @property {Object} error  Feature error.
+ * @property {string} slug    Feature slug.
+ * @property {string} status  Feature status.
+ * @property {Object} error   Feature error.
  */
 /**
  * Update status pre-installation.
  *
- * @param {string[]}  selected Feature slugs.
- * @param {Feature[]} options  Options.
- *
- * @return {Feature[]} Updated options.
+ * @param   {string[]}  selected Feature slugs.
+ * @param   {Feature[]} options  Options.
+ * @returns {Feature[]}          Updated options.
  */
 const updatePreInstallation = ( selected, options ) =>
 	options.map( ( feature ) => {
@@ -64,10 +63,9 @@ const updatePreInstallation = ( selected, options ) =>
 /**
  * Setup wizard reducer.
  *
- * @param {Object} state    Current state.
- * @param {{type:  string}} action Action to update the state.
- *
- * @return {Object} State updated.
+ * @param   {Object}           state  Current state.
+ * @param   {{ type: string }} action Action to update the state.
+ * @returns {Object}                  State updated.
  */
 export default ( state = DEFAULT_STATE, action ) => {
 	switch ( action.type ) {

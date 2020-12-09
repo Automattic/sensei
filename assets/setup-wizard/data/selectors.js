@@ -3,36 +3,32 @@ import { steps } from '../steps';
 /**
  * Is fetching setup wizard data selector.
  *
- * @param {Object} state Current state.
- *
- * @return {boolean} Is fetching.
+ * @param   {Object}  state Current state.
+ * @returns {boolean}       Is fetching.
  */
 export const isFetching = ( state ) => state.isFetching;
 
 /**
  * Fetch setup wizard error selector.
  *
- * @param {Object} state Current state.
- *
- * @return {Object|boolean} Error object or false.
+ * @param   {Object}           state Current state.
+ * @returns {Object | boolean}       Error object or false.
  */
 export const getFetchError = ( state ) => state.fetchError;
 
 /**
  * Is submitting setup wizard data selector.
  *
- * @param {Object} state Current state.
- *
- * @return {boolean} Is submitting.
+ * @param   {Object}  state Current state.
+ * @returns {boolean}       Is submitting.
  */
 export const isSubmitting = ( state ) => state.isSubmitting;
 
 /**
  * Submit error selector.
  *
- * @param {Object} state Current state.
- *
- * @return {Object|boolean} Error object or false.
+ * @param   {Object}           state Current state.
+ * @returns {Object | boolean}       Error object or false.
  */
 export const getSubmitError = ( state ) => state.submitError;
 
@@ -40,11 +36,10 @@ export const getSubmitError = ( state ) => state.submitError;
 /**
  * Step state selector.
  *
- * @param {Object}  state         Current state.
- * @param {string}  step          Step name.
- * @param {boolean} shouldResolve Flag whether should invoke the resolver.
- *
- * @return {Object} Step data.
+ * @param   {Object}  state         Current state.
+ * @param   {string}  step          Step name.
+ * @param   {boolean} shouldResolve Flag whether should invoke the resolver.
+ * @returns {Object}                Step data.
  */
 /* eslint-enable */
 export const getStepData = ( state, step ) => state.data[ step ];
@@ -52,11 +47,10 @@ export const getStepData = ( state, step ) => state.data[ step ];
 /**
  * Get navigation steps with their state.
  *
- * @param {Object} input                     getNavigationSteps input.
- * @param {Object} input.data                The current state.
- * @param {Array}  input.data.completedSteps The completed steps.
- *
- * @return {Array} Navigation steps.
+ * @param   {Object} input                     GetNavigationSteps input.
+ * @param   {Object} input.data                The current state.
+ * @param   {Array}  input.data.completedSteps The completed steps.
+ * @returns {Array}                            Navigation steps.
  */
 export const getNavigationSteps = ( { data: { completedSteps } } ) => {
 	const navSteps = steps.map( ( step ) => ( {
@@ -75,12 +69,11 @@ export const getNavigationSteps = ( { data: { completedSteps } } ) => {
 /**
  * Get whether step is complete or not.
  *
- * @param {Object} input                     getNavigationSteps input.
- * @param {Object} input.data                The current state.
- * @param {Array}  input.data.completedSteps The completed steps.
- * @param {Array}  step                      The step to check if it is completed.
- *
- * @return {boolean} Step complete.
+ * @param   {Object}  input                     GetNavigationSteps input.
+ * @param   {Object}  input.data                The current state.
+ * @param   {Array}   input.data.completedSteps The completed steps.
+ * @param   {Array}   step                      The step to check if it is completed.
+ * @returns {boolean}                           Step complete.
  */
 export const isCompleteStep = ( { data: { completedSteps } }, step ) =>
 	completedSteps.includes( step );

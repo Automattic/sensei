@@ -1,9 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { createButtonBlockType } from '../button';
 
-/**
- * Take course button block.
- */
+/** Take course button block. */
 export default createButtonBlockType( {
 	tagName: 'button',
 	settings: {

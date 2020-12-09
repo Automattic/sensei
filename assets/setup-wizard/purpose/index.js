@@ -60,9 +60,7 @@ const purposes = [
 	},
 ];
 
-/**
- * Purpose step for Setup Wizard.
- */
+/** Purpose step for Setup Wizard. */
 export const Purpose = () => {
 	const { goTo } = useQueryStringRouter();
 

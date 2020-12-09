@@ -12,9 +12,7 @@ import { select, dispatch } from '@wordpress/data';
 	const editPostSelector = select( 'core/edit-post' );
 	const editPostDispatcher = dispatch( 'core/edit-post' );
 
-	/**
-	 * Toggle meta boxes depending on the blocks.
-	 */
+	/** Toggle meta boxes depending on the blocks. */
 	window.sensei_toggle_legacy_metaboxes = () => {
 		if ( ! blockEditorSelector ) {
 			return;

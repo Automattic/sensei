@@ -17,7 +17,7 @@ import FeaturesSelection from './features-selection';
 
 /**
  * @typedef  {Object} Feature
- * @property {string} slug Feature slug.
+ * @property {string} slug    Feature slug.
  */
 /**
  * Filter installed features to don't select them.
@@ -38,9 +38,7 @@ const filterInstalledFeatures = ( submittedSlugs, features ) =>
 
 const wcSlug = 'woocommerce';
 
-/**
- * Features step for setup wizard.
- */
+/** Features step for setup wizard. */
 const Features = () => {
 	const [ confirmationActive, toggleConfirmation ] = useState( false );
 	const [ feedbackActive, toggleFeedback ] = useState( false );

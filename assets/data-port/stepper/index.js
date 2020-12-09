@@ -1,9 +1,10 @@
 import classnames from 'classnames';
 
 /**
- * @typedef  {Object}   Step
+ * @typedef  {Object}  Step
  * @property {string}  key         Unique key for the step.
- * @property {string}  description A description of the step that is going to be displayed.
+ * @property {string}  description A description of the step that is going to be
+ *     displayed.
  * @property {boolean} isActive    True if the step is the currently active one.
  * @property {boolean} isComplete  True if the step is completed.
  */

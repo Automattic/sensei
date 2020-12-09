@@ -1,8 +1,6 @@
 import { createBlock } from '@wordpress/blocks';
 
-/**
- * Module block transform.
- */
+/** Module block transform. */
 export default {
 	from: [
 		{

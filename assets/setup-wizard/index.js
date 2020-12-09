@@ -11,19 +11,13 @@ import { useWpAdminFullscreen } from '../react-hooks';
 import QueryStringRouter, { Route } from './query-string-router';
 import Navigation from './navigation';
 
-/**
- * Register setup wizard store.
- */
+/** Register setup wizard store. */
 registerSetupWizardStore();
 
-/**
- * Param name used to route the setup wizard.
- */
+/** Param name used to route the setup wizard. */
 const PARAM_NAME = 'step';
 
-/**
- * Sensei setup wizard page.
- */
+/** Sensei setup wizard page. */
 const SenseiSetupWizardPage = () => {
 	useWpAdminFullscreen( [ 'sensei-setup-wizard__page' ] );
 	useSenseiColorTheme();

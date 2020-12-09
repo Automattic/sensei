@@ -27,7 +27,8 @@ import { useInsertLessonBlock } from './use-insert-lesson-block';
  * @param {Object}   props.attributes                  Block attributes.
  * @param {string}   props.attributes.title            Module title.
  * @param {string}   props.attributes.description      Module description.
- * @param {boolean}  props.attributes.borderedSelected The border setting selected by the user.
+ * @param {boolean}  props.attributes.borderedSelected The border setting
+ *     selected by the user.
  * @param {string}   props.attributes.borderColorValue The border color.
  * @param {Object}   props.mainColor                   Header main color.
  * @param {Object}   props.defaultMainColor            Default main color.

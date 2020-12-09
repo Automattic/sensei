@@ -15,24 +15,21 @@ import { normalizeSetupWizardData } from './normalizer';
 
 /**
  * @typedef  {Object} FetchFromAPIAction
- * @property {string} type    Action type.
- * @property {Object} request Object that is used to fetch.
+ * @property {string} type               Action type.
+ * @property {Object} request            Object that is used to fetch.
  */
 /**
  * Fetch action creator.
  *
- * @param {Object} request Object that is used to fetch.
- *
- * @return {FetchFromAPIAction} Fetch action.
+ * @param   {Object}             request Object that is used to fetch.
+ * @returns {FetchFromAPIAction}         Fetch action.
  */
 export const fetchFromAPI = ( request ) => ( {
 	type: FETCH_FROM_API,
 	request,
 } );
 
-/**
- * Fetch setup wizard data action creator.
- */
+/** Fetch setup wizard data action creator. */
 export function* fetchSetupWizardData() {
 	yield startFetch();
 
@@ -48,15 +45,14 @@ export function* fetchSetupWizardData() {
 
 /**
  * @typedef  {Object} SuccessSetupWizardDataAction
- * @property {string} type Action type.
- * @property {Object} data Setup wizard data.
+ * @property {string} type                         Action type.
+ * @property {Object} data                         Setup wizard data.
  */
 /**
  * Success fetch action creator.
  *
- * @param {Object} data Setup wizard data.
- *
- * @return {SuccessSetupWizardDataAction} Success fetch action.
+ * @param   {Object}                       data Setup wizard data.
+ * @returns {SuccessSetupWizardDataAction}      Success fetch action.
  */
 export const successFetch = ( data ) => ( {
 	type: SUCCESS_FETCH_SETUP_WIZARD_DATA,
@@ -64,16 +60,15 @@ export const successFetch = ( data ) => ( {
 } );
 
 /**
- * @typedef  {Object}         ErrorFetchAction
- * @property {string}         type  Action type.
- * @property {Object|boolean} error Error object or false.
+ * @typedef  {Object}           ErrorFetchAction
+ * @property {string}           type             Action type.
+ * @property {Object | boolean} error            Error object or false.
  */
 /**
  * Error fetch action creator.
  *
- * @param {Object|boolean} error Error object or false.
- *
- * @return {ErrorFetchAction} Error action.
+ * @param   {Object | boolean} error Error object or false.
+ * @returns {ErrorFetchAction}       Error action.
  */
 export const errorFetch = ( error ) => ( {
 	type: ERROR_FETCH_SETUP_WIZARD_DATA,
@@ -83,7 +78,7 @@ export const errorFetch = ( error ) => ( {
 /**
  * Start fetch setup wizard data action creator.
  *
- * @return {{type: string}} Start fetch action.
+ * @returns {{ type: string }} Start fetch action.
  */
 export const startFetch = () => ( {
 	type: START_FETCH_SETUP_WIZARD_DATA,
@@ -92,10 +87,9 @@ export const startFetch = () => ( {
 /**
  * Start submit action creator.
  *
- * @param {string} step     Step name.
- * @param {Object} stepData Data to submit.
- *
- * @return {{type: string}} Start submit action.
+ * @param   {string}           step     Step name.
+ * @param   {Object}           stepData Data to submit.
+ * @returns {{ type: string }}          Start submit action.
  */
 export const startSubmit = ( step, stepData ) => ( {
 	type: START_SUBMIT_SETUP_WIZARD_DATA,
@@ -106,8 +100,8 @@ export const startSubmit = ( step, stepData ) => ( {
 /**
  * Success submit action creator.
  *
- * @param {string} step Completed step.
- * @return {{type: string, step: string}} Success submit action.
+ * @param   {string}                         step Completed step.
+ * @returns {{ type: string; step: string }}      Success submit action.
  */
 export const successSubmit = ( step ) => ( {
 	type: SUCCESS_SUBMIT_SETUP_WIZARD_DATA,
@@ -115,16 +109,15 @@ export const successSubmit = ( step ) => ( {
 } );
 
 /**
- * @typedef  {Object}         ErrorSubmitAction
- * @property {string}         type  Action type.
- * @property {Object|boolean} error Error object or false.
+ * @typedef  {Object}           ErrorSubmitAction
+ * @property {string}           type              Action type.
+ * @property {Object | boolean} error             Error object or false.
  */
 /**
  * Error submit action creator.
  *
- * @param {Object|boolean} error Error object or false.
- *
- * @return {ErrorSubmitAction} Error action.
+ * @param   {Object | boolean}  error Error object or false.
+ * @returns {ErrorSubmitAction}       Error action.
  */
 export const errorSubmit = ( error ) => ( {
 	type: ERROR_SUBMIT_SETUP_WIZARD_DATA,
@@ -167,17 +160,16 @@ export function* submitStep( step, stepData, { onSuccess, onError } = {} ) {
 
 /**
  * @typedef  {Object} SetStepDataAction
- * @property {string} type Action type.
- * @property {string} step Step name.
- * @property {Object} data Step data.
+ * @property {string} type              Action type.
+ * @property {string} step              Step name.
+ * @property {Object} data              Step data.
  */
 /**
  * Set welcome step data action creator.
  *
- * @param {string} step Step name.
- * @param {Object} data Step data object.
- *
- * @return {SetStepDataAction} Set welcome step data action.
+ * @param   {string}            step Step name.
+ * @param   {Object}            data Step data object.
+ * @returns {SetStepDataAction}      Set welcome step data action.
  */
 export const setStepData = ( step, data ) => ( {
 	type: SET_STEP_DATA,

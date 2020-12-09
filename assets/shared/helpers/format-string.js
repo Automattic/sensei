@@ -15,7 +15,8 @@ export const formattingComponents = {
 /**
  * Interpolate components and create a node from the given template string.
  *
- * @example formatString(' Welcome to {{strong}}Sensei{{/strong}}!')
+ * @example
+ *   formatString( ' Welcome to {{strong}}Sensei{{/strong}}!' );
  *
  * @param {string} mixedString Template string.
  * @param {Object} components  Replacements.

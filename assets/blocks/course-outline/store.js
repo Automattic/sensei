@@ -33,9 +33,7 @@ const getEditorOutlineStructure = () => {
 };
 
 const actions = {
-	/**
-	 * Fetch course structure data from REST API.
-	 */
+	/** Fetch course structure data from REST API. */
 	*fetchCourseStructure() {
 		const courseId = yield select( 'core/editor' ).getCurrentPostId();
 		const result = yield apiFetch( {
@@ -123,15 +121,11 @@ const actions = {
 		);
 	},
 
-	/**
-	 * Clear structure update.
-	 */
+	/** Clear structure update. */
 	clearStructureUpdate: () => ( { type: 'CLEAR_STRUCTURE_UPDATE' } ),
 };
 
-/**
- * Course structure reducers.
- */
+/** Course structure reducers. */
 const reducers = {
 	SET_SERVER_STRUCTURE: (
 		{ serverStructure, hasStructureUpdate },
@@ -154,9 +148,7 @@ const reducers = {
 	DEFAULT: ( action, state ) => state,
 };
 
-/**
- * Course structure selectors.
- */
+/** Course structure selectors. */
 const selectors = {
 	shouldResavePost: ( { hasStructureUpdate } ) => hasStructureUpdate,
 	getIsSavingStructure: ( { isSavingStructure } ) => isSavingStructure,
@@ -165,9 +157,7 @@ const selectors = {
 
 export const COURSE_STORE = 'sensei/course-structure';
 
-/**
- * Register course structure store and subscribe to block editor save.
- */
+/** Register course structure store and subscribe to block editor save. */
 const registerCourseStructureStore = () => {
 	// Set to true when savings starts, and false when it ends.
 	let postSaving = false;

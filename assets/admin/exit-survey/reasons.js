@@ -1,8 +1,6 @@
 import { __ } from '@wordpress/i18n';
 
-/**
- * Exit survey reasons
- */
+/** Exit survey reasons */
 export const reasons = [
 	{
 		id: 'no-longer-need',

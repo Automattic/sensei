@@ -7,9 +7,9 @@ export default {
 	/**
 	 * Fetch control.
 	 *
-	 * @param {{request: Object}} action Action with the request object that is used to fetch.
-	 *
-	 * @return {Promise} API fetch promise.
+	 * @param   {{ request: Object }} action Action with the request object that is
+	 *     used to fetch.
+	 * @returns {Promise}                    API fetch promise.
 	 */
 	[ FETCH_FROM_API ]: ( { request } ) => apiFetch( request ),
 	[ APPLY_STEP_DATA ]: ( { step, data } ) => {

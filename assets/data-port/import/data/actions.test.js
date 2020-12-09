@@ -85,9 +85,7 @@ const RESPONSE_COMPLETED = {
 };
 
 describe( 'Importer actions', () => {
-	/**
-	 * API Fetch.
-	 */
+	/** API Fetch. */
 	it( 'Should return the fetch from API action', () => {
 		const requestObject = { path: '/test' };
 		const expectedAction = {
@@ -98,9 +96,7 @@ describe( 'Importer actions', () => {
 		expect( fetchFromAPI( requestObject ) ).toEqual( expectedAction );
 	} );
 
-	/**
-	 * Fetch importer data action.
-	 */
+	/** Fetch importer data action. */
 	it( 'Should generate the get current job state importer data action', () => {
 		const gen = loadCurrentJobState();
 
@@ -168,9 +164,7 @@ describe( 'Importer actions', () => {
 		expect( gen.throw( error ).value ).toEqual( expectedErrorAction );
 	} );
 
-	/**
-	 * Poll job progress.
-	 */
+	/** Poll job progress. */
 	it( 'Should generate job poll actions', () => {
 		const gen = pollJobProgress( 'test-id' );
 
@@ -206,9 +200,7 @@ describe( 'Importer actions', () => {
 		expect( gen.next().done ).toBeTruthy();
 	} );
 
-	/**
-	 * Fetch importer data action.
-	 */
+	/** Fetch importer data action. */
 	it( 'Should generate the update job state action', () => {
 		const gen = updateJobState( 'test-id' );
 
@@ -251,9 +243,7 @@ describe( 'Importer actions', () => {
 		);
 	} );
 
-	/**
-	 * Start import actions.
-	 */
+	/** Start import actions. */
 	it( 'Should generate the start import action', () => {
 		const gen = submitStartImport( 'test-id' );
 
@@ -339,9 +329,7 @@ describe( 'Importer actions', () => {
 		expect( errorStartImport( error ) ).toEqual( expectedAction );
 	} );
 
-	/**
-	 * Upload file actions.
-	 */
+	/** Upload file actions. */
 	it( 'Should generate the upload file action', () => {
 		const level = 'test';
 		const uploadData = {};
@@ -462,9 +450,7 @@ describe( 'Importer actions', () => {
 		);
 	} );
 
-	/**
-	 * Delete level file actions.
-	 */
+	/** Delete level file actions. */
 	it( 'Should generate the delete level file action', () => {
 		const level = 'test';
 
