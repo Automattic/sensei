@@ -110,10 +110,10 @@ class Sensei_Status {
 			foreach ( $template_overrides as $template => $versions ) {
 				if ( $versions['sensei_version'] !== $versions['theme_version'] ) {
 					// translators:: First placeholder is Sensei LMS' template version and the second placeholder is the theme's version.
-					$description = sprintf( __( 'Mismatch (Sensei LMS %1$s; Theme %2$s)', 'sensei-lms' ), $versions['sensei_version'], $versions['theme_version'] );
+					$description = sprintf( __( 'Mismatch (plugin v%1$s; theme v%2$s)', 'sensei-lms' ), $versions['sensei_version'], $versions['theme_version'] );
 				} else {
 					// translators: Placeholder is the version of the template.
-					$description = sprintf( __( 'Match (%s)', 'sensei-lms' ), $versions['sensei_version'] );
+					$description = sprintf( __( 'Match (v%s)', 'sensei-lms' ), $versions['sensei_version'] );
 				}
 
 				$template_overrides_value[ $template ] = $description;
