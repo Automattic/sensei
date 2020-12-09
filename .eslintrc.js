@@ -16,4 +16,13 @@ module.exports = {
 		'react-hooks/exhaustive-deps': 'warn',
 	},
 	plugins: [ 'jest' ],
+	settings: {
+		jsdoc: {
+			// Override Gutenberg rules in favor of Prettier plugin.
+			tagNamePreference: {
+				returns: 'returns',
+				yields: 'yields',
+			},
+		},
+	},
 };
