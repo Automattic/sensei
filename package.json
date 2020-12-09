@@ -65,6 +65,7 @@
     "lint-staged": "10.2.11",
     "postcss-color-function": "4.1.0",
     "prettier": "npm:wp-prettier@2.0.5",
+    "prettier-plugin-jsdoc": "0.2.6",
     "pump": "3.0.0",
     "puppeteer-core": "npm:puppeteer-core@3.0.0",
     "react-test-renderer": "16.13.1",
