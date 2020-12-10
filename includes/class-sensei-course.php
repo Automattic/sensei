@@ -1537,8 +1537,9 @@ class Sensei_Course {
 
 					if ( 0 < absint( count( $course_lessons ) )
 						&& Sensei()->settings->settings['course_completion'] == 'complete' ) {
+						wp_enqueue_script( 'sensei-stop-double-submission' );
 
-						$active_html .= '<span><input name="course_complete" type="submit" class="course-complete" value="'
+						$active_html .= '<span><input name="course_complete" type="submit" class="course-complete sensei-stop-double-submission" value="'
 							. esc_attr__( 'Mark as Complete', 'sensei-lms' ) . '"/> </span>';
 
 					} // End If Statement
@@ -2317,9 +2318,11 @@ class Sensei_Course {
 			if ( 0 < absint( count( Sensei()->course->course_lessons( $course->ID ) ) )
 				&& Sensei()->settings->settings['course_completion'] == 'complete'
 				&& ! Sensei_Utils::user_completed_course( $course, get_current_user_id() ) ) {
-				?>
 
-					<span><input name="course_complete" type="submit" class="course-complete" value="<?php esc_attr_e( 'Mark as Complete', 'sensei-lms' ); ?>" /></span>
+				wp_enqueue_script( 'sensei-stop-double-submission' );
+
+				?>
+					<span><input name="course_complete" type="submit" class="course-complete sensei-stop-double-submission" value="<?php esc_attr_e( 'Mark as Complete', 'sensei-lms' ); ?>" /></span>
 
 				<?php
 			} // End If Statement

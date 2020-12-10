@@ -156,6 +156,8 @@ class Sensei_Learner_Management {
 			true
 		);
 
+		Sensei()->assets->enqueue( 'sensei-stop-double-submission', 'js/stop-double-submission.js', [], true );
+
 		wp_localize_script(
 			'sensei-learners-general',
 			'slgL10n',
