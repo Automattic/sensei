@@ -58,13 +58,46 @@ class Sensei_Tools {
 	 */
 	public function init() {
 		add_action( 'admin_menu', [ $this, 'add_menu_pages' ], 90 );
-		add_filter( 'sensei_learners_main_column_data', [ $this, 'add_debug_action' ], 10, 3 );
+	}
+
+	/**
+	 * Get the tools.
+	 *
+	 * @return Sensei_Tool_Interface[]
+	 */
+	public function get_tools() {
+		if ( ! $this->tools ) {
+			$tools   = [];
+			$tools[] = new Sensei_Tool_Recalculate_Enrolment();
+			$tools[] = new Sensei_Tool_Recalculate_Course_Enrolment();
+
+			/**
+			 * Array of the tools available to Sensei LMS.
+			 *
+			 * @since 3.7.0
+			 *
+			 * @param Sensei_Tool_Interface[] $tools Tool objects for Sensei LMS.
+			 */
+			$tools = apply_filters( 'sensei_tools', $tools );
+
+			$this->tools = [];
+			foreach ( $tools as $tool ) {
+				$this->tools[ $tool->get_id() ] = $tool;
+			}
+		}
+
+		return $this->tools;
 	}
 
 	/**
 	 * Adds admin menu pages.
 	 */
 	public function add_menu_pages() {
+		// Only administrators can use Sensei LMS' tools.
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
 		$title = esc_html__( 'Tools', 'sensei-lms' );
 		add_submenu_page( 'sensei', $title, $title, 'manage_sensei', 'sensei-tools', [ $this, 'output' ] );
 	}
@@ -73,8 +106,6 @@ class Sensei_Tools {
 	 * Output the tools page.
 	 */
 	public function output() {
-		wp_enqueue_style( 'sensei-lms-tools' );
-
 		$tools = $this->get_tools();
 
 		if ( ! empty( $_GET['tool'] ) ) {
@@ -196,35 +227,6 @@ class Sensei_Tools {
 	}
 
 	/**
-	 * Get the tools.
-	 *
-	 * @return Sensei_Tool_Interface[]
-	 */
-	public function get_tools() {
-		if ( ! $this->tools ) {
-			$tools   = [];
-			$tools[] = new Sensei_Tool_Recalculate_Enrolment();
-			$tools[] = new Sensei_Tool_Recalculate_Course_Enrolment();
-
-			/**
-			 * Array of the tools available to Sensei LMS.
-			 *
-			 * @since 3.7.0
-			 *
-			 * @param Sensei_Tool_Interface[] $tools Tool objects for Sensei LMS.
-			 */
-			$tools = apply_filters( 'sensei_tools', $tools );
-
-			$this->tools = [];
-			foreach ( $tools as $tool ) {
-				$this->tools[ $tool->get_id() ] = $tool;
-			}
-		}
-
-		return $this->tools;
-	}
-
-	/**
 	 * Trigger invalid request and redirect.
 	 *
 	 * @param Sensei_Tool_Interface $tool Tool object to possibly redirect to.
@@ -240,41 +242,6 @@ class Sensei_Tools {
 
 		wp_safe_redirect( $redirect );
 		wp_die();
-	}
-
-	/**
-	 * Add debug button to row.
-	 *
-	 * @param array $row_data  Row data for learner management.
-	 * @param array $item      Activity information for row.
-	 * @param int   $course_id Course post ID.
-	 *
-	 * @return array
-	 */
-	public function add_debug_action( $row_data, $item, $course_id = null ) {
-		/**
-		 * Show the enrolment debug button on learner management.
-		 *
-		 * @since 3.7.0
-		 *
-		 * @param bool $show_button Whether to show the button.
-		 * @param int  $user_id     User ID.
-		 * @param int  $course_id   Course ID.
-		 */
-		$show_button = apply_filters( 'sensei_show_enrolment_debug_button', false, $item->user_id, $course_id );
-		if (
-			! $course_id
-			|| ! current_user_can( 'manage_sensei' )
-			|| ! $show_button
-			|| 'course' !== get_post_type( $course_id )
-		) {
-			return $row_data;
-		}
-
-		$button_url           = Sensei_Tool_Enrolment_Debug::get_enrolment_debug_url( $item->user_id, $course_id );
-		$row_data['actions'] .= ' <a class="button" href="' . esc_url( $button_url ) . '">' . esc_html__( 'Debug Enrollment', 'sensei-lms' ) . '</a>';
-
-		return $row_data;
 	}
 
 }
