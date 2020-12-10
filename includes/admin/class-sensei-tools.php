@@ -70,6 +70,7 @@ class Sensei_Tools {
 			$tools   = [];
 			$tools[] = new Sensei_Tool_Recalculate_Enrolment();
 			$tools[] = new Sensei_Tool_Recalculate_Course_Enrolment();
+			$tools[] = new Sensei_Tool_Legacy_Data_Updates();
 
 			/**
 			 * Array of the tools available to Sensei LMS.

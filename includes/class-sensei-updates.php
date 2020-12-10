@@ -487,7 +487,6 @@ class Sensei_Updates {
 											?>
 											<input
 												onclick="javascript:return confirm('<?php echo esc_html( addslashes( $confirm_message ) ); ?>');"
-												id="update-sensei"
 												class="<?php echo esc_attr( $classes ); ?>"
 												type="submit"
 												value="<?php echo esc_attr( $button_label ); ?>"
@@ -618,21 +617,8 @@ class Sensei_Updates {
 	 * @return void
 	 */
 	public function assign_role_caps() {
-		foreach ( $this->parent->post_types->role_caps as $role_cap_set ) {
-			foreach ( $role_cap_set as $role_key => $capabilities_array ) {
-				/* Get the role. */
-				$role = get_role( $role_key );
-				foreach ( $capabilities_array as $cap_name ) {
-					/* If the role exists, add required capabilities for the plugin. */
-					if ( ! empty( $role ) ) {
-						if ( ! $role->has_cap( $cap_name ) ) {
-							$role->add_cap( $cap_name );
-						} // End If Statement
-					} // End If Statement
-				} // End For Loop
-			} // End For Loop
-		} // End For Loop
-	} // End assign_role_caps
+		Sensei()->assign_role_caps();
+	}
 
 	/**
 	 * Set default quiz grade type
@@ -1013,14 +999,7 @@ class Sensei_Updates {
 	}
 
 	public function add_sensei_caps() {
-		$role = get_role( 'administrator' );
-
-		if ( ! is_null( $role ) ) {
-			$role->add_cap( 'manage_sensei' );
-			$role->add_cap( 'manage_sensei_grades' );
-		}
-
-		return true;
+		return Sensei()->add_sensei_admin_caps();
 	}
 
 	public function restructure_question_meta() {
@@ -1125,13 +1104,7 @@ class Sensei_Updates {
 	}
 
 	public function add_editor_caps() {
-		$role = get_role( 'editor' );
-
-		if ( ! is_null( $role ) ) {
-			$role->add_cap( 'manage_sensei_grades' );
-		}
-
-		return true;
+		return Sensei()->add_editor_caps();
 	}
 
 	/**
