@@ -118,7 +118,7 @@
 * New: Use Sensei logo in block inserter [#3823](https://github.com/Automattic/sensei/pull/3823)
 * Tweak: Center text within Setup Wizard buttons [#3575](https://github.com/Automattic/sensei/pull/3575)
 * Tweak: Make detail fields required on exit survey [#3786](https://github.com/Automattic/sensei/pull/3786)
-* Tweak: Update sample course to include blocks [#3808](https://github.com/Automattic/sensei/pull/3808)
+* Tweak: Update sample course to include blocks [#3808](https://github.com/Automattic/sensei/pull/3808), [#3831](https://github.com/Automattic/sensei/pull/3831)
 * Tweak: Refactor "Order Lessons" page to use the Sensei_Course_Structure class [#3664](https://github.com/Automattic/sensei/pull/3664)
 * Tweak: Refactor "Order Modules" page to use the Sensei_Course_Structure class [#3672](https://github.com/Automattic/sensei/pull/3672)
 * Fix: Ensure analysis export works with RTL languages [#3751](https://github.com/Automattic/sensei/pull/3751)
