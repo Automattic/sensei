@@ -1,12 +1,12 @@
 <wpml-config>
-    <custom-fields>
-        <custom-field action="copy">_lesson_complexity</custom-field>
-        <custom-field action="copy">_lesson_length</custom-field>
-        <custom-field action="translate">_lesson_prerequisite</custom-field>
-        <custom-field action="translate">_lesson_course</custom-field>
-        <custom-field action="translate">_course_prerequisite</custom-field>
-        <custom-field action="translate">_course_woocommerce_product</custom-field>
-    </custom-fields>
+	<custom-fields>
+		<custom-field action="copy">_lesson_complexity</custom-field>
+		<custom-field action="copy">_lesson_length</custom-field>
+		<custom-field action="translate">_lesson_prerequisite</custom-field>
+		<custom-field action="translate">_lesson_course</custom-field>
+		<custom-field action="translate">_course_prerequisite</custom-field>
+		<custom-field action="translate">_course_woocommerce_product</custom-field>
+	</custom-fields>
 	<custom-types>
 		<custom-type translate="1">course</custom-type>
 		<custom-type translate="1">lesson</custom-type>
@@ -19,10 +19,10 @@
 		<taxonomy translate="1">lesson-tag</taxonomy>
 		<taxonomy translate="1">course-category</taxonomy>
 	</taxonomies>
-    <admin-texts>
-        <key name="woothemes-sensei-settings">
-            <key name="course_archive_more_link_text" />
-            <key name="heading" />
-        </key>
-    </admin-texts>
+	<admin-texts>
+		<key name="woothemes-sensei-settings">
+			<key name="course_archive_more_link_text" />
+			<key name="heading" />
+		</key>
+	</admin-texts>
 </wpml-config>
