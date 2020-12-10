@@ -128,6 +128,7 @@ class Sensei_Autoloader {
 			'Sensei_Tool_Interface'                      => 'admin/tools/class-sensei-tool-interface.php',
 			'Sensei_Tool_Recalculate_Course_Enrolment'   => 'admin/tools/class-sensei-tool-recalculate-course-enrolment.php',
 			'Sensei_Tool_Recalculate_Enrolment'          => 'admin/tools/class-sensei-tool-recalculate-enrolment.php',
+			'Sensei_Tool_Legacy_Data_Updates'            => 'admin/tools/class-sensei-tool-legacy-data-updates.php',
 
 			/**
 			 * Shortcodes

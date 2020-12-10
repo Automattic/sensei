@@ -34,8 +34,6 @@ class Sensei_Updates {
 		// Setup object data
 		$this->parent = $parent;
 
-		add_action( 'admin_init', array( $this, 'init_updates_run' ) );
-
 		// The list of upgrades to run
 		$this->updates = array(
 			'1.1.0' => array(
@@ -181,22 +179,9 @@ class Sensei_Updates {
 				),
 				'manual' => array(),
 			),
-			'3.0.0' => array(
-				'manual' => array(
-					'recalculate_enrolment' => array(
-						'title'    => __( 'Recalculate enrollment', 'sensei-lms' ),
-						'desc'     => __( 'Invalidate the cached enrollment and trigger recalculation for all users and courses.', 'sensei-lms' ),
-						'multiple' => true,
-					),
-				),
-			),
 		);
 
 		$this->version = get_option( 'sensei-version' );
-
-		// Manual Update Screen
-		add_action( 'admin_menu', array( $this, 'add_update_admin_screen' ), 50 );
-
 	} // End __construct()
 
 	/**
@@ -242,13 +227,13 @@ class Sensei_Updates {
 	 *
 	 * @access public
 	 * @since  1.3.7
+	 * @deprecated 3.7.0
+	 *
 	 * @return void
 	 */
 	public function add_update_admin_screen() {
-		if ( current_user_can( 'manage_options' ) ) {
-			add_submenu_page( 'sensei', __( 'Sensei LMS Updates', 'sensei-lms' ), __( 'Data Updates', 'sensei-lms' ), 'manage_options', 'sensei_updates', array( $this, 'sensei_updates_page' ) );
-		}
-	} // End add_update_admin_screen()
+		_deprecated_function( __METHOD__, '3.7.0' );
+	}
 
 	/**
 	 * sensei_updates_page HTML output for manual update screen
@@ -258,19 +243,17 @@ class Sensei_Updates {
 	 * @return void
 	 */
 	public function sensei_updates_page() {
-
 		// Only allow admins to load this page and run the update functions
 		if ( ! current_user_can( 'manage_options' ) ) {
 
 			return;
 
 		}
+
+		$this->init_updates_run();
 		?>
 
 		<div class="wrap">
-
-		<div id="icon-woothemes-sensei" class="icon32"><br></div>
-		<h1><?php esc_html_e( 'Sensei LMS Updates', 'sensei-lms' ); ?></h1>
 
 		<?php
 		$function_name = '';
@@ -387,7 +370,8 @@ class Sensei_Updates {
 					<?php
 					$next_action_url = add_query_arg(
 						array(
-							'page'                    => 'sensei_updates',
+							'page'                    => 'sensei-tools',
+							'tool'                    => 'legacy-data-updates',
 							'action'                  => 'update',
 							'n'                       => $n + 50,
 							'functions'               => array( $functions_list ),
@@ -419,7 +403,7 @@ class Sensei_Updates {
 			<p>
 				<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=lesson' ) ); ?>"><?php esc_html_e( 'Create a new lesson', 'sensei-lms' ); ?></a>
 				or <a
-					href="<?php echo esc_url( admin_url( 'admin.php?page=sensei_updates' ) ); ?>"><?php esc_html_e( 'run some more updates', 'sensei-lms' ); ?></a>.
+					href="<?php echo esc_url( admin_url( 'admin.php?page=sensei-tools&tool=legacy-data-updates' ) ); ?>"><?php esc_html_e( 'run some more updates', 'sensei-lms' ); ?></a>.
 			</p>
 
 				<?php
@@ -427,11 +411,10 @@ class Sensei_Updates {
 		} else {
 			?>
 
-			<h2><?php esc_html_e( 'Updates', 'sensei-lms' ); ?></h2>
 			<p>
 				<?php
 				// translators: Placeholders are opening and closing <code> tags.
-				echo wp_kses_post( sprintf( __( 'These are updates that have been made available as new Sensei LMS versions have been released. Updates of type %1$sAuto%2$s will run as you update Sensei LMS to the relevant version - other updates need to be run manually and you can do that here.', 'sensei-lms' ), '<code>', '</code>' ) );
+				echo wp_kses_post( __( 'These are updates that have been made available as new Sensei LMS versions have been released. Please use with caution.', 'sensei-lms' ) );
 				?>
 			</p>
 
@@ -444,7 +427,6 @@ class Sensei_Updates {
 				<thead>
 				<tr>
 					<th scope="col" class="manage-column"><?php esc_html_e( 'Update', 'sensei-lms' ); ?></th>
-					<th scope="col" class="manage-column"><?php esc_html_e( 'Type', 'sensei-lms' ); ?></th>
 					<th scope="col" class="manage-column"><?php esc_html_e( 'Action', 'sensei-lms' ); ?></th>
 				</tr>
 				</thead>
@@ -452,7 +434,6 @@ class Sensei_Updates {
 				<tfoot>
 				<tr>
 					<th scope="col" class="manage-column"><?php esc_html_e( 'Update', 'sensei-lms' ); ?></th>
-					<th scope="col" class="manage-column"><?php esc_html_e( 'Type', 'sensei-lms' ); ?></th>
 					<th scope="col" class="manage-column"><?php esc_html_e( 'Action', 'sensei-lms' ); ?></th>
 				</tr>
 				</tfoot>
@@ -473,7 +454,7 @@ class Sensei_Updates {
 								$product = $data['product'];
 							} // End If Statement
 							?>
-							<form method="post" action="admin.php?page=sensei_updates&action=update&n=0"
+							<form method="post" action="admin.php?page=sensei-tools&tool=legacy-data-updates&action=update&n=0"
 								  name="update-sensei" class="upgrade">
 								<tr class="<?php echo esc_attr( $class ); ?>">
 									<td>
@@ -489,38 +470,29 @@ class Sensei_Updates {
 											</em>
 										</p>
 									</td>
-									<?php
-									$type_label = __( 'Auto', 'sensei-lms' );
-									if ( $type != 'auto' ) {
-										$type_label = __( 'Manual', 'sensei-lms' );
-									}
-									?>
-									<td><p><?php echo esc_html( $type_label ); ?></p></td>
 									<td>
 										<p>
-											<input onclick="javascript:return confirm('
 											<?php
-												// translators: Placeholder is the title of the update.
-												echo esc_html( addslashes( sprintf( __( 'Are you sure you want to run the \'%s\' update?', 'sensei-lms' ), $data['title'] ) ) );
+											// translators: Placeholder is the title of the update.
+											$confirm_message = sprintf( __( 'Are you sure you want to run the \'%s\' update?', 'sensei-lms' ), $data['title'] );
+											$classes         = 'button';
+											if ( ! $update_run || ! empty( $data['multiple'] ) ) {
+												$classes .= ' button-primary';
+											}
+											if ( $update_run && empty( $data['multiple'] ) ) {
+												$button_label = __( 'Re-run Update', 'sensei-lms' );
+											} else {
+												$button_label = __( 'Run Update', 'sensei-lms' );
+											}
 											?>
-												');"
-												   id="update-sensei"
-												   class="button
-												   <?php
-													if ( ! $update_run || ! empty( $data['multiple'] ) ) {
-														echo ' button-primary'; }
-													?>
-													"
-												   type="submit"
-												   value="
-												   <?php
-													if ( $update_run && empty( $data['multiple'] ) ) {
-														esc_html_e( 'Re-run Update', 'sensei-lms' );
-													} else {
-														esc_html_e( 'Run Update', 'sensei-lms' ); }
-													?>
-													"
-												   name="update">
+											<input
+												onclick="javascript:return confirm('<?php echo esc_html( addslashes( $confirm_message ) ); ?>');"
+												id="update-sensei"
+												class="<?php echo esc_attr( $classes ); ?>"
+												type="submit"
+												value="<?php echo esc_attr( $button_label ); ?>"
+												name="update"
+											>
 
 											<?php
 											$nonce_action     = 'run_' . $update;
@@ -602,137 +574,14 @@ class Sensei_Updates {
 	 *
 	 * @param  string $type specifies if the update is 'auto' or 'manual'
 	 * @since  1.1.0
+	 * @deprecated 3.7.0 Unused since 1.x.
 	 * @access public
 	 * @return boolean
 	 */
 	public function update( $type = 'auto' ) {
+		_deprecated_method( __METHOD__, '3.7.0' );
 
-		// Only allow admins to run update functions
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return false;
-		}
-
-		$this->force_updates();
-
-		$updates = $this->get_updates();
-		// Run through all functions
-		foreach ( $updates as $version => $value ) {
-			foreach ( $updates[ $version ] as $upgrade_type => $function_to_run ) {
-				if ( $upgrade_type == $type ) {
-					$updated = false;
-					// Run the update function
-					foreach ( $function_to_run as $function_name => $update_data ) {
-						if ( isset( $function_name ) && '' != $function_name ) {
-							if ( ! in_array( $function_name, $this->updates_run ) ) {
-								$updated = false;
-								if ( method_exists( $this, $function_name ) ) {
-
-									$this->updates_run = array_unique( $this->updates_run ); // we only need one reference per update
-									update_option( $this->token . '-upgrades', $this->updates_run );
-									return true;
-
-								} elseif ( $this->function_in_whitelist( $function_name ) ) {
-
-									$updated = call_user_func( $function_name );
-
-								}  // End If Statement
-
-								if ( $updated ) {
-									array_push( $this->updates_run, $function_name );
-								} // End If Statement
-							}
-						} // End If Statement
-					} // End For Loop
-				} // End If Statement
-			} // End For Loop
-		} // End For Loop
-
-		$this->updates_run = array_unique( $this->updates_run ); // we only need one reference per update
-		update_option( $this->token . '-upgrades', $this->updates_run );
-
-		return true;
-
-	} // End update()
-
-	private function force_updates() {
-
-		if ( ! isset( $_GET['page'] ) || 'sensei_updates' != $_GET['page'] ) {
-
-			// Force critical updates if only if lessons already exist
-			$skip_forced_updates = false;
-			$lesson_posts        = wp_count_posts( 'lesson' );
-			if ( ! isset( $lesson_posts->publish ) || ! $lesson_posts->publish ) {
-				$skip_forced_updates = true;
-			}
-
-			$use_the_force = false;
-
-			$updates_to_run = array();
-
-			$updates = $this->get_updates();
-			foreach ( $updates as $version => $value ) {
-				foreach ( $updates[ $version ] as $upgrade_type => $function_to_run ) {
-					if ( $upgrade_type == 'forced' ) {
-						foreach ( $function_to_run as $function_name => $update_data ) {
-
-							if ( $skip_forced_updates ) {
-								$this->set_update_run( $function_name );
-								continue;
-							}
-
-							$update_run = $this->has_update_run( $function_name );
-
-							if ( ! $update_run ) {
-								$use_the_force                    = true;
-								$updates_to_run[ $function_name ] = $update_data;
-							}
-						}
-					}
-				}
-			}
-
-			if ( $skip_forced_updates ) {
-				return;
-			}
-
-			if ( $use_the_force && 0 < count( $updates_to_run ) ) {
-
-				$update_title = __( 'Important Sensei LMS updates required', 'sensei-lms' );
-
-				$update_message  = '<h1>' . esc_html__( 'Important Sensei LMS upgrades required!', 'sensei-lms' ) . '</h1>' . "\n";
-				$update_message .= '<p>' . esc_html__( 'The latest version of Sensei LMS requires some important database upgrades. In order to run these upgrades you will need to follow the step by step guide below. Your site will not function correctly unless you run these critical updates.', 'sensei-lms' ) . '</p>' . "\n";
-
-				$update_message .= '<p><b>' . esc_html__( 'To run the upgrades click on each of the links below in the order that they appear.', 'sensei-lms' ) . '</b></p>' . "\n";
-
-				$update_message .= '<p>' . esc_html__( 'Clicking each link will open up a new window/tab - do not close that window/tab until you see the message \'Update completed successfully\'. Once you see that message you can close the window/tab and start the next upgrade by clicking on the next link in the list.', 'sensei-lms' ) . '</p>' . "\n";
-
-				$update_message .= '<p><b>' . esc_html__( 'Once all the upgrades have been completed you will be able to use your WordPress site again.', 'sensei-lms' ) . '</b></p>' . "\n";
-
-				$update_message .= '<ol>' . "\n";
-
-				foreach ( $updates_to_run as $function => $data ) {
-
-					if ( ! isset( $data['title'] ) ) {
-						break;
-					}
-
-					$update_message .= '<li style="margin:5px 0;"><a href="' . esc_url( admin_url( 'admin.php?page=sensei_updates&action=update&n=0&functions[]=' . $function ) ) . '" target="_blank">' . esc_html( $data['title'] ) . '</a></li>';
-				}
-
-				$update_message .= '</ol>' . "\n";
-
-				switch ( $version ) {
-
-					case '1.7.0':
-						// translators: Placeholders are an opening and closing <a> tag linking to an informational post.
-						$update_message .= '<p><em>' . wp_kses_post( sprintf( __( 'Want to know what these upgrades are all about? %1$sFind out more here%2$s.', 'sensei-lms' ), '<a href="http://develop.woothemes.com/sensei/2014/12/03/important-information-about-sensei-1-7" target="_blank">', '</a>' ) ) . '</em></p>' . "\n";
-						break;
-
-				}
-
-				wp_die( wp_kses_post( $update_message ), esc_html( $update_title ) );
-			}
-		}
+		return false;
 	}
 
 	/**
@@ -934,7 +783,7 @@ class Sensei_Updates {
 			}
 		}
 
-		if ( $current_page == $total_pages ) {
+		if ( $current_page >= $total_pages ) {
 			return true;
 		} else {
 			return false;
@@ -2150,12 +1999,10 @@ class Sensei_Updates {
 	 *
 	 * @access private
 	 * @since 3.0.0
+	 * @deprecated 3.7.0
 	 */
 	public function recalculate_enrolment() {
-		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
-		$enrolment_manager->reset_site_salt();
-
-		return true;
+		_deprecated_function( __METHOD__, '3.7.0', 'Moved to a official tool' );
 	}
 } // End Class
 
