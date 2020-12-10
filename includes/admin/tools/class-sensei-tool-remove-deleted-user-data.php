@@ -58,14 +58,16 @@ class Sensei_Tool_Remove_Deleted_User_Data implements Sensei_Tool_Interface {
 	public function run() {
 		global $wpdb;
 
-		$comment_ids = $wpdb->get_col( "SELECT c.`comment_ID` FROM {$wpdb->comments} c LEFT JOIN {$wpdb->users} u ON u.`ID` = c.`user_id` WHERE c.`user_id` > 0 AND u.`ID` IS NULL AND c.`comment_type` LIKE \"sensei_%\"");
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- Shortcut for large pagination.
+		$comment_ids = $wpdb->get_col( "SELECT c.`comment_ID` FROM {$wpdb->comments} c LEFT JOIN {$wpdb->users} u ON u.`ID` = c.`user_id` WHERE c.`user_id` > 0 AND u.`ID` IS NULL AND c.`comment_type` LIKE \"sensei_%\"" );
 
 		if ( ! empty( $comment_ids ) ) {
-			$wpdb->query( "DELETE FROM {$wpdb->comments} WHERE `comment_ID` IN (" . implode( ',', $comment_ids ) . ")" );
-			$wpdb->query( "DELETE FROM {$wpdb->commentmeta} WHERE `comment_id` IN (" . implode( ',', $comment_ids ) . ")" );
+			$wpdb->query( "DELETE FROM {$wpdb->comments} WHERE `comment_ID` IN (" . implode( ',', $comment_ids ) . ')' );
+			$wpdb->query( "DELETE FROM {$wpdb->commentmeta} WHERE `comment_id` IN (" . implode( ',', $comment_ids ) . ')' );
 			Sensei_Tools::instance()->add_user_message( __( 'Progress data from deleted users was deleted.', 'sensei-lms' ) );
 		} else {
 			Sensei_Tools::instance()->add_user_message( __( 'No progress data was found from deleted users.', 'sensei-lms' ) );
 		}
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
 	}
 }

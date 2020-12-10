@@ -8,6 +8,8 @@
  * @var Sensei_Tool_Interface[] $tools Array of the tools.
  */
 
+// phpcs:disable VariableAnalysis.CodeAnalysis.VariableAnalysis.UndefinedVariable
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
