@@ -1,17 +1,17 @@
 # Copyright (C) 2020 Automattic
-# This file is distributed under the same license as the Sensei LMS plugin.
+# This file is distributed under the GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html.
 msgid ""
 msgstr ""
-"Project-Id-Version: Sensei LMS 3.6.0-beta.2\n"
+"Project-Id-Version: Sensei LMS 3.6.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sensei-lms\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2020-11-26T12:46:34+00:00\n"
+"POT-Creation-Date: 2020-12-10T13:17:17+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.4.0\n"
+"X-Generator: WP-CLI 2.5.0-alpha-75cb7e3\n"
 "X-Domain: sensei-lms\n"
 
 #: assets/admin/exit-survey/form.js:56
@@ -89,18 +89,18 @@ msgstr ""
 
 #: assets/blocks/button/color-hooks.js:36
 #: assets/blocks/course-outline/lesson-block/edit.js:191
-#: assets/blocks/course-outline/module-block/edit.js:180
-#: assets/blocks/course-progress/edit.js:116
+#: assets/blocks/course-outline/module-block/edit.js:200
+#: assets/blocks/course-progress/edit.js:128
 #: assets/dist/blocks/index.js:1
 msgid "Text color"
 msgstr ""
 
-#: assets/blocks/button/edit-button.js:29
+#: assets/blocks/button/edit-button.js:33
 #: assets/dist/blocks/index.js:1
 msgid "Add text…"
 msgstr ""
 
-#: assets/blocks/button/index.js:15
+#: assets/blocks/button/index.js:16
 #: assets/dist/blocks/index.js:1
 msgid "Fill"
 msgstr ""
@@ -161,11 +161,11 @@ msgid "Course"
 msgstr ""
 
 #: assets/blocks/course-outline/course-block/index.js:13
-#: assets/blocks/course-outline/module-block/edit.js:161
+#: assets/blocks/course-outline/module-block/edit.js:181
 #: assets/blocks/course-outline/module-block/index.js:15
 #: assets/shared/helpers/labels.js:5
 #: includes/admin/class-sensei-learners-main.php:1100
-#: includes/blocks/class-sensei-course-outline-module-block.php:88
+#: includes/blocks/class-sensei-course-outline-module-block.php:97
 #: includes/class-sensei-admin.php:1593
 #: includes/class-sensei-analysis-overview-list-table.php:50
 #: includes/class-sensei-analysis-overview-list-table.php:690
@@ -227,7 +227,7 @@ msgstr ""
 
 #: assets/blocks/course-outline/course-block/index.js:44
 #: assets/blocks/course-outline/lesson-block/index.js:10
-#: assets/blocks/course-outline/lesson-block/settings.js:50
+#: assets/blocks/course-outline/lesson-block/settings.js:49
 #: assets/blocks/course-outline/module-block/index.js:28
 #: includes/admin/class-sensei-learners-main.php:157
 #: includes/admin/class-sensei-learners-main.php:1137
@@ -332,22 +332,22 @@ msgstr ""
 msgid "Where your course content lives."
 msgstr ""
 
-#: assets/blocks/course-outline/lesson-block/settings.js:42
+#: assets/blocks/course-outline/lesson-block/settings.js:41
 #: assets/dist/blocks/index.js:1
 msgid "Edit lesson"
 msgstr ""
 
-#: assets/blocks/course-outline/lesson-block/settings.js:53
+#: assets/blocks/course-outline/lesson-block/settings.js:52
 #: assets/dist/blocks/index.js:1
 msgid "Edit details such as lesson content, prerequisite, quiz settings and more."
 msgstr ""
 
-#: assets/blocks/course-outline/lesson-block/settings.js:60
+#: assets/blocks/course-outline/lesson-block/settings.js:59
 #: assets/dist/blocks/index.js:1
 msgid "Typography"
 msgstr ""
 
-#: assets/blocks/course-outline/lesson-block/settings.js:70
+#: assets/blocks/course-outline/lesson-block/settings.js:69
 #: assets/blocks/course-outline/module-block/module-status.js:60
 #: includes/admin/class-sensei-learners-main.php:150
 #: includes/class-sensei-analysis-course-list-table.php:64
@@ -359,29 +359,29 @@ msgstr ""
 msgid "Status"
 msgstr ""
 
-#: assets/blocks/course-outline/module-block/edit.js:121
+#: assets/blocks/course-outline/module-block/edit.js:140
 #: assets/dist/blocks/index.js:1
 msgid "Module name"
 msgstr ""
 
-#: assets/blocks/course-outline/module-block/edit.js:138
-#: includes/blocks/class-sensei-course-outline-module-block.php:81
+#: assets/blocks/course-outline/module-block/edit.js:157
+#: includes/blocks/class-sensei-course-outline-module-block.php:90
 #: assets/dist/blocks/index.js:1
 msgid "Toggle module content"
 msgstr ""
 
-#: assets/blocks/course-outline/module-block/edit.js:152
+#: assets/blocks/course-outline/module-block/edit.js:172
 #: includes/rest-api/class-sensei-rest-api-course-structure-controller.php:256
 #: assets/dist/blocks/index.js:1
 msgid "Module description"
 msgstr ""
 
-#: assets/blocks/course-outline/module-block/edit.js:178
+#: assets/blocks/course-outline/module-block/edit.js:198
 #: assets/dist/blocks/index.js:1
 msgid "Main color"
 msgstr ""
 
-#: assets/blocks/course-outline/module-block/edit.js:183
+#: assets/blocks/course-outline/module-block/edit.js:203
 #: assets/dist/blocks/index.js:1
 msgid "Border color"
 msgstr ""
@@ -416,7 +416,7 @@ msgstr ""
 #: includes/admin/class-sensei-learners-admin-bulk-actions-view.php:387
 #: includes/admin/class-sensei-learners-admin-bulk-actions-view.php:407
 #: includes/admin/class-sensei-learners-main.php:363
-#: includes/blocks/class-sensei-course-outline-module-block.php:122
+#: includes/blocks/class-sensei-course-outline-module-block.php:131
 #: includes/class-sensei-analysis-course-list-table.php:307
 #: includes/class-sensei-analysis-course-list-table.php:394
 #: includes/class-sensei-analysis-lesson-list-table.php:218
@@ -433,7 +433,7 @@ msgstr ""
 #: assets/data-port/import/done/done-page.js:84
 #: includes/admin/class-sensei-learners-admin-bulk-actions-view.php:409
 #: includes/admin/class-sensei-learners-main.php:356
-#: includes/blocks/class-sensei-course-outline-module-block.php:125
+#: includes/blocks/class-sensei-course-outline-module-block.php:134
 #: includes/class-sensei-analysis-course-list-table.php:86
 #: includes/class-sensei-analysis-course-list-table.php:302
 #: includes/class-sensei-analysis-course-list-table.php:370
@@ -457,18 +457,18 @@ msgid ""
 "their progress in the course."
 msgstr ""
 
-#: assets/blocks/course-outline/store.js:44
+#: assets/blocks/course-outline/store.js:66
 #: assets/dist/blocks/index.js:1
 #. Error message.
 msgid "Course modules and lessons could not be updated. %s"
 msgstr ""
 
-#: assets/blocks/course-progress/edit.js:108
+#: assets/blocks/course-progress/edit.js:120
 #: assets/dist/blocks/index.js:1
 msgid "Progress bar color"
 msgstr ""
 
-#: assets/blocks/course-progress/edit.js:112
+#: assets/blocks/course-progress/edit.js:124
 #: assets/dist/blocks/index.js:1
 msgid "Progress bar background color"
 msgstr ""
@@ -1109,7 +1109,7 @@ msgstr ""
 msgid "Yes, count me in!"
 msgstr ""
 
-#: assets/shared/blocks/settings.js:46
+#: assets/shared/blocks/settings.js:50
 #: assets/dist/blocks/index.js:1
 msgid "Color settings"
 msgstr ""
@@ -1628,22 +1628,22 @@ msgstr ""
 msgid "More Details"
 msgstr ""
 
-#: includes/blocks/class-sensei-block-contact-teacher.php:76
+#: includes/blocks/class-sensei-block-contact-teacher.php:75
 #: includes/class-sensei-messages.php:318
 msgid "Your private message has been sent."
 msgstr ""
 
-#: includes/blocks/class-sensei-block-contact-teacher.php:93
+#: includes/blocks/class-sensei-block-contact-teacher.php:92
 #: includes/class-sensei-messages.php:323
 msgid "Send Private Message"
 msgstr ""
 
-#: includes/blocks/class-sensei-block-contact-teacher.php:94
+#: includes/blocks/class-sensei-block-contact-teacher.php:93
 #: includes/class-sensei-messages.php:329
 msgid "Enter your private message."
 msgstr ""
 
-#: includes/blocks/class-sensei-block-contact-teacher.php:99
+#: includes/blocks/class-sensei-block-contact-teacher.php:98
 #: includes/class-sensei-messages.php:334
 msgid "Send Message"
 msgstr ""
