@@ -152,6 +152,8 @@ class Sensei_PostTypes {
 	 * @return void
 	 */
 	public function setup_course_post_type() {
+		// If Sensei LMS was first activated pre-3.7.0 and permalinks had a front value, `with_front` will be enabled.
+		$with_front = Sensei()->get_legacy_flag( Sensei_Main::LEGACY_FLAG_WITH_FRONT ) ? true : false;
 
 		$args = array(
 			'labels'                => $this->create_post_type_labels( $this->labels['course']['singular'], $this->labels['course']['plural'], $this->labels['course']['menu'] ),
@@ -163,7 +165,7 @@ class Sensei_PostTypes {
 			'query_var'             => true,
 			'rewrite'               => array(
 				'slug'       => esc_attr( apply_filters( 'sensei_course_slug', _x( 'course', 'post type single url base', 'sensei-lms' ) ) ),
-				'with_front' => true,
+				'with_front' => $with_front,
 				'feeds'      => true,
 				'pages'      => true,
 			),
@@ -257,6 +259,9 @@ class Sensei_PostTypes {
 			array_push( $supports_array, 'comments' );
 		} // End If Statement
 
+		// If Sensei LMS was first activated pre-3.7.0 and permalinks had a front value, `with_front` will be enabled.
+		$with_front = Sensei()->get_legacy_flag( Sensei_Main::LEGACY_FLAG_WITH_FRONT ) ? true : false;
+
 		$args = array(
 			'labels'                => $this->create_post_type_labels( $this->labels['lesson']['singular'], $this->labels['lesson']['plural'], $this->labels['lesson']['menu'] ),
 			'public'                => true,
@@ -266,7 +271,7 @@ class Sensei_PostTypes {
 			'query_var'             => true,
 			'rewrite'               => array(
 				'slug'       => esc_attr( apply_filters( 'sensei_lesson_slug', _x( 'lesson', 'post type single slug', 'sensei-lms' ) ) ),
-				'with_front' => true,
+				'with_front' => $with_front,
 				'feeds'      => true,
 				'pages'      => true,
 			),
@@ -299,6 +304,8 @@ class Sensei_PostTypes {
 	 * @return void
 	 */
 	public function setup_quiz_post_type() {
+		// If Sensei LMS was first activated pre-3.7.0 and permalinks had a front value, `with_front` will be enabled.
+		$with_front = Sensei()->get_legacy_flag( Sensei_Main::LEGACY_FLAG_WITH_FRONT ) ? true : false;
 
 		$args = array(
 			'labels'              => $this->create_post_type_labels(
@@ -315,7 +322,7 @@ class Sensei_PostTypes {
 			'exclude_from_search' => true,
 			'rewrite'             => array(
 				'slug'       => esc_attr( apply_filters( 'sensei_quiz_slug', _x( 'quiz', 'post type single slug', 'sensei-lms' ) ) ),
-				'with_front' => true,
+				'with_front' => $with_front,
 				'feeds'      => true,
 				'pages'      => true,
 			),
@@ -348,6 +355,8 @@ class Sensei_PostTypes {
 	 * @return void
 	 */
 	public function setup_question_post_type() {
+		// If Sensei LMS was first activated pre-3.7.0 and permalinks had a front value, `with_front` will be enabled.
+		$with_front = Sensei()->get_legacy_flag( Sensei_Main::LEGACY_FLAG_WITH_FRONT ) ? true : false;
 
 		$args = array(
 			'labels'              => $this->create_post_type_labels( $this->labels['question']['singular'], $this->labels['question']['plural'], $this->labels['question']['menu'] ),
@@ -360,7 +369,7 @@ class Sensei_PostTypes {
 			'exclude_from_search' => true,
 			'rewrite'             => array(
 				'slug'       => esc_attr( apply_filters( 'sensei_question_slug', _x( 'question', 'post type single slug', 'sensei-lms' ) ) ),
-				'with_front' => true,
+				'with_front' => $with_front,
 				'feeds'      => true,
 				'pages'      => true,
 			),
