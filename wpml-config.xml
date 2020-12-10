@@ -22,9 +22,9 @@
 		<taxonomy translate="1">question-category</taxonomy>
 	</taxonomies>
 	<admin-texts>
-		<key name="woothemes-sensei-settings">
+		<key name="sensei-settings">
 			<key name="course_archive_more_link_text" />
-			<key name="heading" />
+			<key name="email_footer_text" />
 		</key>
 	</admin-texts>
 </wpml-config>
