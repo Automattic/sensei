@@ -2,7 +2,7 @@
 /**
  * File containing Sensei_Status class.
  *
- * @package sensei-lms-status
+ * @package sensei-lms
  * @since 3.7.0
  */
 
