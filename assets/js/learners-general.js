@@ -195,7 +195,7 @@ jQuery( document ).ready( function ( $ ) {
 							return;
 						}
 						switch ( current_action ) {
-							case 'reset':
+							case 'reset_progress':
 								table_row
 									.find( '.graded' )
 									.html( window.slgL10n.inprogress )

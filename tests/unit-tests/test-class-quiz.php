@@ -1225,10 +1225,6 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		// Questions asked as it was saved initial.
 		$questions_asked_count = count( $test_user_quiz_answers );
 
-		// Remove some 2 questions to illustrate mistake.
-		array_pop( $test_user_quiz_answers );
-		array_pop( $test_user_quiz_answers );
-
 		// Submit answers and remove the hooks within the submit function to avoid side effects.
 		remove_all_actions( 'sensei_user_quiz_submitted' );
 		remove_all_actions( 'sensei_user_lesson_end' );

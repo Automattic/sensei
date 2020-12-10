@@ -1,8 +1,8 @@
 /**
  * Send log event.
  *
- * @param {string} eventName Event name.
- * @param {Array} properties Event properties.
+ * @param {string} eventName  Event name.
+ * @param {Array}  properties Event properties.
  */
 export const logEvent = ( eventName, properties ) => {
 	window.sensei_log_event( eventName, properties );
@@ -20,8 +20,8 @@ logEvent.enable = ( enabled ) => {
 /**
  * Send log event when link is opened.
  *
- * @param {string} eventName Event name.
- * @param {Array} properties Event properties.
+ * @param {string} eventName  Event name.
+ * @param {Array}  properties Event properties.
  * @return {Object} Element attributes.
  */
 export const logLink = ( eventName, properties ) => {

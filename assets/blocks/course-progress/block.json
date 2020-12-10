@@ -1,0 +1,47 @@
+{
+  "name": "sensei-lms/course-progress",
+  "category": "sensei-lms",
+  "supports": {
+    "html": false
+  },
+  "attributes": {
+    "textColor": {
+      "type": "string"
+    },
+    "customTextColor": {
+      "type": "string",
+      "default": ""
+    },
+    "barColor": {
+      "type": "string"
+    },
+    "customBarColor": {
+      "type": "string"
+    },
+    "defaultBarColor": {
+      "type": "string"
+    },
+    "barBackgroundColor": {
+      "type": "string"
+    },
+    "customBarBackgroundColor": {
+      "type": "string"
+    },
+    "height": {
+      "type": "integer"
+    },
+    "borderRadius": {
+      "type": "integer"
+    },
+    "isPreview": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "example": {
+    "attributes": {
+      "customBarBackgroundColor": "#999999",
+      "isPreview": true
+    }
+  }
+}

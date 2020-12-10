@@ -13,7 +13,8 @@ module.exports = {
 				allowedTextDomain: 'sensei-lms',
 			},
 		],
-		'react-hooks/exhaustive-deps': 'warn'
+		'react-hooks/exhaustive-deps': 'warn',
+		'jsdoc-alignment/lines-alignment': 'error',
 	},
-	plugins: [ 'jest' ],
+	plugins: [ 'jest', 'jsdoc-alignment' ],
 };

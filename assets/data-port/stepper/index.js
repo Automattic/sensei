@@ -2,10 +2,10 @@ import classnames from 'classnames';
 
 /**
  * @typedef  {Object}   Step
- * @property {string}   key          Unique key for the step.
- * @property {string}   description  A description of the step that is going to be displayed.
- * @property {boolean}  isActive     True if the step is the currently active one.
- * @property {boolean}  isComplete   True if the step is completed.
+ * @property {string}  key         Unique key for the step.
+ * @property {string}  description A description of the step that is going to be displayed.
+ * @property {boolean} isActive    True if the step is the currently active one.
+ * @property {boolean} isComplete  True if the step is completed.
  */
 /**
  * A simple component to display a stepper on data port pages.

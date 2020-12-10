@@ -18,8 +18,8 @@ const getPostTypeLabel = ( { key, count } ) => {
 /**
  * ImportSuccessResults component.
  *
- * @param {Object} input                 ImportSuccessResults input.
- * @param {Array}  input.successResults  An array of counts of successfully imported items.
+ * @param {Object} input                ImportSuccessResults input.
+ * @param {Array}  input.successResults An array of counts of successfully imported items.
  */
 const ImportSuccessResults = ( { successResults } ) => (
 	<ul className="sensei-import-bullet-list">

@@ -925,7 +925,7 @@ class Sensei_Updates {
 					foreach ( $answers as $answer_id => $user_answer ) {
 						$question_id                      = $answers_linkup[ $quiz_id ][ $answer_id ];
 						$new_user_answers[ $question_id ] = $user_answer;
-						Sensei_Utils::sensei_grade_question_auto( $question_id, '', $user_answer, $user_id );
+						Sensei_Grading::grade_question_auto( $question_id, '', $user_answer, $user_id );
 					}
 					$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
 					Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );

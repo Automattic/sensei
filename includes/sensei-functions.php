@@ -281,14 +281,48 @@ function sensei_user_login_url() {
  * duplicate of Sensei()->access_settings().
  *
  * @since 1.9.0
+ * @since 3.5.2 Added hook to filter the return.
  * @return bool
  */
 function sensei_is_login_required() {
+	global $post;
+
+	$post_type = get_post_type( $post );
+	$course_id = null;
+
+	switch ( $post_type ) {
+		case 'course':
+			$course_id = $post->ID;
+			break;
+
+		case 'lesson':
+			$course_id = Sensei()->lesson->get_course_id( $post->ID );
+			break;
+
+		case 'quiz':
+			$lesson_id = intval( get_post_meta( $post->ID, '_quiz_lesson', true ) );
+			$course_id = $lesson_id ? Sensei()->lesson->get_course_id( $lesson_id ) : null;
+			break;
+	}
+
+	if ( ! $course_id ) {
+		$course_id = null;
+	}
 
 	$login_required = isset( Sensei()->settings->settings['access_permission'] ) && ( true == Sensei()->settings->settings['access_permission'] );
 
-	return $login_required;
-
+	/**
+	 * Filters the access_permission that says if the user must be logged
+	 * to view the lesson content.
+	 *
+	 * @since 3.5.2
+	 *
+	 * @hook sensei_is_login_required
+	 *
+	 * @param {bool}     $must_be_logged_to_view_lesson True if user need to be logged to see the lesson.
+	 * @param {int|null} $course_id                     Course post ID.
+	 */
+	return apply_filters( 'sensei_is_login_required', $login_required, $course_id );
 }
 
 /**

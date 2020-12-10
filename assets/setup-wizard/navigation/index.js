@@ -20,8 +20,8 @@ const addClickHandlers = ( steps, { goTo } ) =>
 /**
  * Navigation component.
  *
- * @param {Object} input        Navigation input.
- * @param {Array}  input.steps  The available steps.
+ * @param {Object} input       Navigation input.
+ * @param {Array}  input.steps The available steps.
  */
 const Navigation = ( { steps } ) => {
 	const { currentRoute, goTo } = useQueryStringRouter();

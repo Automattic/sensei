@@ -1,7 +1,7 @@
 import { loginUser } from '@wordpress/e2e-test-utils';
 import { adminUrl } from './helpers';
 
-const isSessionCookieSet = function( cookies ) {
+const isSessionCookieSet = function ( cookies ) {
 	let result = false;
 
 	if ( ! Array.isArray( cookies ) ) {
@@ -102,31 +102,39 @@ export const AdminFlow = {
 		return page.$( `tr[data-slug="${ slug }"] .${ action } a` );
 	},
 
-	deactivatePlugin: async ( slug ) => {
+	goToPluginsAndGetDeactivationLink: async ( slug ) => {
 		await AdminFlow.goToPlugins();
 
-		const deactivateLink = await AdminFlow.findPluginAction(
-			slug,
-			'deactivate'
-		);
-
+		return await AdminFlow.findPluginAction( slug, 'deactivate' );
+	},
+	deactivatePluginByLink: async ( deactivateLink ) => {
 		if ( deactivateLink ) {
 			await deactivateLink.click();
+			const exitSurvey = await page.$(
+				`#sensei-exit-survey-modal button:not(:disabled)`
+			);
+			if ( exitSurvey ) await exitSurvey.click();
+			await page.waitForNavigation();
 		}
 	},
-	activatePlugin: async ( slug, forceReactivate = false ) => {
-		await AdminFlow.goToPlugins();
+	deactivatePlugin: async ( slug ) => {
+		const deactivateLink = await AdminFlow.goToPluginsAndGetDeactivationLink(
+			slug
+		);
 
-		const deactivateLink = await AdminFlow.findPluginAction(
-			slug,
-			'deactivate'
+		await AdminFlow.deactivatePluginByLink( deactivateLink );
+	},
+	activatePlugin: async ( slug, forceReactivate = false ) => {
+		const deactivateLink = await AdminFlow.goToPluginsAndGetDeactivationLink(
+			slug
 		);
 
 		if ( deactivateLink ) {
 			if ( forceReactivate ) {
-				await deactivateLink.click();
-				await page.waitForNavigation();
-			} else return;
+				await AdminFlow.deactivatePluginByLink( deactivateLink );
+			} else {
+				return;
+			}
 		}
 
 		const activate = await AdminFlow.findPluginAction( slug, 'activate' );

@@ -345,7 +345,7 @@ class Sensei_Import_Question_Model_Test extends WP_UnitTestCase {
 		$this->assertTrue( $result );
 
 		$post = get_post( $model->get_post_id() );
-		$this->commit_transaction();
+
 		$this->assertEquals( $expected_data[ Sensei_Data_Port_Question_Schema::COLUMN_TITLE ], $post->post_title, 'Post title should match the title column' );
 		$this->assertEquals( '', $post->post_content, 'Post content should match the description column' );
 		$this->assertEquals( 'publish', $post->post_status, 'Post status should match the status column' );
@@ -376,7 +376,7 @@ class Sensei_Import_Question_Model_Test extends WP_UnitTestCase {
 		$this->assertTrue( $result );
 
 		$post = get_post( $model->get_post_id() );
-		$this->commit_transaction();
+
 		$this->assertEquals( $expected_data[ Sensei_Data_Port_Question_Schema::COLUMN_TITLE ], $post->post_title, 'Post title should match the title column' );
 		$this->assertEquals( '', $post->post_content, 'Post content should match the description column' );
 		$this->assertEquals( 'draft', $post->post_status, 'Post status should be draft by default' );
@@ -407,7 +407,7 @@ class Sensei_Import_Question_Model_Test extends WP_UnitTestCase {
 		$this->assertTrue( $result );
 
 		$post = get_post( $model->get_post_id() );
-		$this->commit_transaction();
+
 		$this->assertEquals( $expected_data[ Sensei_Data_Port_Question_Schema::COLUMN_TITLE ], $post->post_title, 'Post title should match the title column' );
 		$this->assertEquals( '', $post->post_content, 'Post content should match the description column' );
 		$this->assertEquals( 'draft', $post->post_status, 'Post status should be draft by default' );
@@ -438,7 +438,7 @@ class Sensei_Import_Question_Model_Test extends WP_UnitTestCase {
 		$this->assertTrue( $result );
 
 		$post = get_post( $model->get_post_id() );
-		$this->commit_transaction();
+
 		$this->assertEquals( $expected_data[ Sensei_Data_Port_Question_Schema::COLUMN_TITLE ], $post->post_title, 'Post title should match the title column' );
 		$this->assertEquals( '', $post->post_content, 'Post content should match the description column' );
 		$this->assertEquals( 'draft', $post->post_status, 'Post status should be draft by default' );

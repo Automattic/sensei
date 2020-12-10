@@ -15,8 +15,8 @@ import { normalizeSetupWizardData } from './normalizer';
 
 /**
  * @typedef  {Object} FetchFromAPIAction
- * @property {string} type               Action type.
- * @property {Object} request            Object that is used to fetch.
+ * @property {string} type    Action type.
+ * @property {Object} request Object that is used to fetch.
  */
 /**
  * Fetch action creator.
@@ -48,8 +48,8 @@ export function* fetchSetupWizardData() {
 
 /**
  * @typedef  {Object} SuccessSetupWizardDataAction
- * @property {string} type                         Action type.
- * @property {Object} data                         Setup wizard data.
+ * @property {string} type Action type.
+ * @property {Object} data Setup wizard data.
  */
 /**
  * Success fetch action creator.
@@ -65,8 +65,8 @@ export const successFetch = ( data ) => ( {
 
 /**
  * @typedef  {Object}         ErrorFetchAction
- * @property {string}         type             Action type.
- * @property {Object|boolean} error            Error object or false.
+ * @property {string}         type  Action type.
+ * @property {Object|boolean} error Error object or false.
  */
 /**
  * Error fetch action creator.
@@ -116,8 +116,8 @@ export const successSubmit = ( step ) => ( {
 
 /**
  * @typedef  {Object}         ErrorSubmitAction
- * @property {string}         type              Action type.
- * @property {Object|boolean} error             Error object or false.
+ * @property {string}         type  Action type.
+ * @property {Object|boolean} error Error object or false.
  */
 /**
  * Error submit action creator.

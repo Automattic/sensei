@@ -110,6 +110,19 @@ class Sensei_Import_Course_Model extends Sensei_Import_Model {
 		$this->set_course_terms( Sensei_Data_Port_Course_Schema::COLUMN_MODULES, 'module', $teacher );
 		$this->set_course_terms( Sensei_Data_Port_Course_Schema::COLUMN_CATEGORIES, 'course-category' );
 
+		// We need to set the post content after modules have been created in order to map module ids properly.
+		$value = $this->get_value( Sensei_Data_Port_Course_Schema::COLUMN_DESCRIPTION );
+		if ( null !== $value ) {
+			$migrator = new Sensei_Import_Block_Migrator( $this->get_post_id(), $this->task, $this );
+
+			wp_update_post(
+				[
+					'ID'           => $post_id,
+					'post_content' => $migrator->migrate( $value ),
+				]
+			);
+		}
+
 		$course_lessons = $this->get_value( Sensei_Data_Port_Course_Schema::COLUMN_LESSONS );
 		if ( null !== $course_lessons ) {
 			/**
@@ -146,11 +159,6 @@ class Sensei_Import_Course_Model extends Sensei_Import_Model {
 
 		if ( $this->is_new() ) {
 			$args['post_status'] = 'draft';
-		}
-
-		$value = $this->get_value( Sensei_Data_Port_Course_Schema::COLUMN_DESCRIPTION );
-		if ( null !== $value ) {
-			$args['post_content'] = $value;
 		}
 
 		$value = $this->get_value( Sensei_Data_Port_Course_Schema::COLUMN_TITLE );

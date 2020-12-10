@@ -1,0 +1,44 @@
+{
+  "name": "sensei-lms/course-outline-lesson",
+  "category": "sensei-lms",
+  "parent": [
+    "sensei-lms/course-outline",
+    "sensei-lms/course-outline-module"
+  ],
+  "attributes": {
+    "id": {
+      "type": "integer"
+    },
+    "title": {
+      "type": "string",
+      "default": ""
+    },
+    "draft": {
+      "type": "boolean",
+      "default": true
+    },
+    "backgroundColor": {
+      "type": "string"
+    },
+    "customBackgroundColor": {
+      "type": "string"
+    },
+    "textColor": {
+      "type": "string"
+    },
+    "customTextColor": {
+      "type": "string"
+    },
+    "fontSize": {
+      "type": "number"
+    },
+    "isExample": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "supports": {
+    "html": false,
+    "customClassName": true
+  }
+}

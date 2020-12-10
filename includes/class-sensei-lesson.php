@@ -42,7 +42,6 @@ class Sensei_Lesson {
 			add_action( 'save_post', array( $this, 'meta_box_save' ) );
 			add_action( 'save_post', array( $this, 'quiz_update' ) );
 			add_action( 'save_post', array( $this, 'add_lesson_to_course_order' ) );
-			add_action( 'transition_post_status', array( $this, 'on_lesson_published' ), 10, 3 );
 
 			// Custom Write Panel Columns
 			add_filter( 'manage_edit-lesson_columns', array( $this, 'add_column_headings' ), 10, 1 );
@@ -285,7 +284,7 @@ class Sensei_Lesson {
 			'order'            => 'ASC',
 			'exclude'          => $post->ID,
 			'suppress_filters' => 0,
-			'post_status'      => [ 'publish', 'draft' ],
+			'post_status'      => [ 'publish', 'draft', 'future' ],
 		);
 		$posts_array = get_posts( $post_args );
 		// Build the HTML to Output
@@ -423,6 +422,8 @@ class Sensei_Lesson {
 	 *
 	 * Hooked into `post_save`
 	 *
+	 * @since 3.6.0 It order all lessons that is part of a course, regardless their status.
+	 *
 	 * @access public
 	 * @param int $lesson_id
 	 * @return void
@@ -438,34 +439,28 @@ class Sensei_Lesson {
 			return;
 		}
 
-		if ( ! in_array( get_post_status( $lesson_id ), array( 'publish', 'future', 'pending' ), true ) ) {
-			return;
-		}
-
 		$course_id = intval( get_post_meta( $lesson_id, '_lesson_course', true ) );
 
 		if ( empty( $course_id ) ) {
 			return;
 		}
 
-		$order_string_array = explode( ',', get_post_meta( intval( $course_id ), '_lesson_order', true ) );
-		$order_ids          = array_map( 'intval', $order_string_array );
-
-		if ( ! empty( $order_ids ) && ! in_array( $lesson_id, $order_ids ) ) {
-				$order_ids[] = $lesson_id;
-				// assumes Sensei admin is loaded
-				Sensei()->admin->save_lesson_order( implode( ',', $order_ids ), $course_id );
-		}
+		// Assumes Sensei admin is loaded.
+		Sensei()->admin->save_lesson_order( '', $course_id );
 	}
 
 	/**
 	 * to actions when the status of the lesson changes to publish
+	 *
+	 * @deprecated 3.6.0
 	 *
 	 * @param string  $new_status
 	 * @param string  $old_status
 	 * @param WP_Post $post
 	 */
 	public function on_lesson_published( $new_status, $old_status, $post ) {
+		_deprecated_function( __METHOD__, '3.6.0' );
+
 		if ( 'lesson' != get_post_type( $post ) ) {
 			return;
 		}
@@ -542,7 +537,7 @@ class Sensei_Lesson {
 			foreach ( $settings as $field ) {
 				if ( 'random_question_order' != $field['id'] ) {
 					$value = $this->get_submitted_setting_value( $field );
-					if ( isset( $value ) ) {
+					if ( isset( $value ) && '-1' !== $value ) {
 						update_post_meta( $quiz_id, '_' . $field['id'], $value );
 					}
 				}
@@ -568,6 +563,10 @@ class Sensei_Lesson {
 					}
 
 					$value = $this->get_submitted_setting_value( $field );
+					if ( null === $value ) {
+						$value = $field['default'];
+					}
+
 					if ( isset( $value ) ) {
 						add_post_meta( $quiz_id, '_' . $field['id'], $value );
 					}
@@ -600,29 +599,39 @@ class Sensei_Lesson {
 
 	} // End post_updated()
 
-	public function get_submitted_setting_value( $field = false ) {
+	/**
+	 * Get setting value from POST data.
+	 *
+	 * @access private
+	 *
+	 * @param  {string} $field Field name.
+	 *
+	 * @return string|null
+	 */
+	public function get_submitted_setting_value( $field ) {
 
 		if ( ! $field ) {
-			return;
+			return null;
 		}
 
-		$value = false;
+		$value = null;
 
-		// Since we don't do any updates here, we can ignore nonce verification.
-		if ( 'quiz_grade_type' == $field['id'] ) {
+		// phpcs:ignore WordPress.Security.NonceVerification -- Only checking the field existence.
+		if ( isset( $_POST[ 'contains_' . $field['id'] ] ) ) {
+			$value = '';
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification -- Only checking the origin page.
+		if ( 'quiz_grade_type' === $field['id'] && isset( $_POST['action'] ) && 'editpost' === $_POST['action'] ) {
 			// phpcs:ignore WordPress.Security.NonceVerification
-			if ( isset( $_POST[ $field['id'] ] ) && 'on' == $_POST[ $field['id'] ] ) {
-				$value = 'auto';
-			} else {
-				$value = 'manual';
-			}
-			return $value;
+			$grade_type_checked = isset( $_POST[ $field['id'] ] ) && 'on' === $_POST[ $field['id'] ];
+			return $grade_type_checked ? 'auto' : 'manual';
 		}
 
-		if ( isset( $_POST[ $field['id'] ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
-			$value = $_POST[ $field['id'] ]; // phpcs:ignore WordPress.Security.NonceVerification
-		} else {
-			$value = $field['default'];
+		// phpcs:ignore WordPress.Security.NonceVerification -- Nonce verified in caller
+		if ( isset( $_POST[ $field['id'] ] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification -- Nonce verified in caller
+			$value = sanitize_text_field( wp_unslash( $_POST[ $field['id'] ] ) );
 		}
 
 		return $value;
@@ -3033,13 +3042,15 @@ class Sensei_Lesson {
 
 
 	/**
-	 * lesson_quizzes function.
+	 * Get the quizzes of a lesson
 	 *
 	 * @access public
-	 * @param int    $lesson_id (default: 0)
-	 * @param string $post_status (default: 'publish')
-	 * @param string $fields (default: 'ids')
-	 * @return int $quiz_id
+	 *
+	 * @param int    $lesson_id   The lesson id (default: 0).
+	 * @param string $post_status The post status (default: 'any').
+	 * @param string $fields      The fields to return (default: 'ids').
+	 *
+	 * @return int|null $quiz_id
 	 */
 	public function lesson_quizzes( $lesson_id = 0, $post_status = 'any', $fields = 'ids' ) {
 
@@ -3059,7 +3070,7 @@ class Sensei_Lesson {
 		$quiz_id     = array_shift( $posts_array );
 
 		return $quiz_id;
-	} // End lesson_quizzes()
+	}
 
 
 	/**
@@ -3242,33 +3253,6 @@ class Sensei_Lesson {
 						}
 					}
 				}
-			}
-		}
-
-		// Save the questions that will be asked for the current user
-		// this happens only once per user/quiz, unless the user resets the quiz
-		if ( ! is_admin() && $user_lesson_status ) {
-
-			// user lesson status can return as an array.
-			if ( is_array( $user_lesson_status ) ) {
-				$comment_ID = $user_lesson_status[0]->comment_ID;
-
-			} else {
-				$comment_ID = $user_lesson_status->comment_ID;
-			}
-
-			$questions_asked = get_comment_meta( $comment_ID, 'questions_asked', true );
-			if ( empty( $questions_asked ) && $user_lesson_status ) {
-
-				$questions_asked = array();
-
-				foreach ( $questions as $question ) {
-					$questions_asked[] = $question->ID;
-				}
-
-				// save the questions asked id
-				$questions_asked_csv = implode( ',', $questions_asked );
-				update_comment_meta( $comment_ID, 'questions_asked', $questions_asked_csv );
 			}
 		}
 

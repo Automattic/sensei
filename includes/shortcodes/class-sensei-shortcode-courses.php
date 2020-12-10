@@ -42,7 +42,7 @@ class Sensei_Shortcode_Courses implements Sensei_Shortcode_Interface {
 	protected $order;
 
 	/**
-	 * @var category can be completed or active or all
+	 * @var int|string course category id, slug or name
 	 */
 	protected $category;
 
@@ -57,7 +57,7 @@ class Sensei_Shortcode_Courses implements Sensei_Shortcode_Interface {
 	protected $ids;
 
 	/**
-	 * @var exclude courses by id
+	 * @var string csv of course ids
 	 */
 	protected $exclude;
 

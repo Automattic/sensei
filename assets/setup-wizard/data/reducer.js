@@ -35,9 +35,9 @@ const DEFAULT_STATE = {
 
 /**
  * @typedef  {Object} Feature
- * @property {string} slug    Feature slug.
- * @property {string} status  Feature status.
- * @property {Object} error   Feature error.
+ * @property {string} slug   Feature slug.
+ * @property {string} status Feature status.
+ * @property {Object} error  Feature error.
  */
 /**
  * Update status pre-installation.
@@ -64,8 +64,8 @@ const updatePreInstallation = ( selected, options ) =>
 /**
  * Setup wizard reducer.
  *
- * @param {Object}         state  Current state.
- * @param {{type: string}} action Action to update the state.
+ * @param {Object} state    Current state.
+ * @param {{type:  string}} action Action to update the state.
  *
  * @return {Object} State updated.
  */

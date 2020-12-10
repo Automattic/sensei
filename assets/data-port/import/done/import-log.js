@@ -23,9 +23,9 @@ const createTitleWithLink = ( title, editLink ) => {
 /**
  * ImportLog component.
  *
- * @param {Object} input        ImportLog input.
- * @param {Array}  input.items  An array of log items.
- * @param {string} input.type   Log type.
+ * @param {Object} input       ImportLog input.
+ * @param {Array}  input.items An array of log items.
+ * @param {string} input.type  Log type.
  */
 export const ImportLog = ( { items, type } ) => (
 	<div className="sensei-import-done__log-data">

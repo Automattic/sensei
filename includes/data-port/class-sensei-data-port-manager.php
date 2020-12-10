@@ -311,6 +311,7 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 				'failed_courses'     => $results[ Sensei_Import_Course_Model::MODEL_KEY ]['error'],
 				'failed_lessons'     => $results[ Sensei_Import_Lesson_Model::MODEL_KEY ]['error'],
 				'failed_questions'   => $results[ Sensei_Import_Question_Model::MODEL_KEY ]['error'],
+				'sample_course'      => $job->is_sample_data() ? 1 : 0,
 			]
 		);
 	}

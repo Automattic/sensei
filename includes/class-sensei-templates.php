@@ -148,6 +148,20 @@ class Sensei_Templates {
 		$find = array( 'sensei.php' );
 		$file = '';
 
+		/**
+		 * Filters if Sensei templates and content wrappers should be used. For development purposes.
+		 *
+		 * @hook   sensei_use_sensei_template
+		 *
+		 * @param  {bool} $use_templates Whether to use Sensei templates for the request.
+		 *
+		 * @since  3.6.0
+		 * @access private
+		 */
+		if ( ! apply_filters( 'sensei_use_sensei_template', true ) ) {
+			return $template;
+		}
+
 		if ( isset( $email_template ) && $email_template ) {
 
 			$file   = 'emails/' . $email_template;
@@ -220,7 +234,7 @@ class Sensei_Templates {
 			$find[] = $file;
 			$find[] = Sensei()->template_url . $file;
 
-		} elseif ( is_tax( 'lesson-tag' ) ) {
+		} elseif ( is_tax( 'lesson-tag' ) || is_post_type_archive( 'lesson' ) ) {
 
 			// possible backward compatible template include if theme overrides 'taxonomy-lesson-tag.php'
 			// this template was removed in 1.9.0 and replaced by archive-lesson.php

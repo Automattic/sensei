@@ -937,24 +937,24 @@ class Sensei_Question {
 	}
 
 	/**
-	 * Load multiple choice question data on the sensei_get_question_template_data
-	 * filter.
+	 * Load multiple choice question data on the sensei_get_question_template_data filter.
 	 *
 	 * @since 1.9.0
 	 *
-	 * @param $question_data
-	 * @param $question_id
-	 * @param $quiz_id
+	 * @param array  $question_data
+	 * @param string $question_id
+	 * @param string $quiz_id
 	 *
 	 * @return array()
 	 */
 	public static function file_upload_load_question_data( $question_data, $question_id, $quiz_id ) {
 
-		if ( 'file-upload' == Sensei()->question->get_question_type( $question_id ) ) {
+		if ( 'file-upload' === Sensei()->question->get_question_type( $question_id ) ) {
 
-			// Get uploaded file
-			$attachment_id    = $question_data['user_answer_entry'];
-			$answer_media_url = $answer_media_filename = '';
+			// Get uploaded file.
+			$attachment_id         = $question_data['user_answer_entry'];
+			$answer_media_url      = '';
+			$answer_media_filename = '';
 
 			$question_helptext = '';
 			if ( isset( $question_data['question_wrong_answers'][0] ) ) {
@@ -971,38 +971,26 @@ class Sensei_Question {
 
 			}
 
-			// Get max upload file size, formatted for display
-			// Code copied from wp-admin/includes/media.php:1515
-			$upload_size_unit = $max_upload_size = wp_max_upload_size();
-			$sizes            = array( 'KB', 'MB', 'GB' );
-			for ( $u = -1; $upload_size_unit > 1024 && $u < count( $sizes ) - 1; $u++ ) {
-				$upload_size_unit /= 1024;
+			$upload_size = wp_max_upload_size();
+			if ( ! $upload_size ) {
+				$upload_size = 0;
 			}
-			if ( $u < 0 ) {
 
-				$upload_size_unit = 0;
-				$u                = 0;
+			// translators: Placeholder are the upload size and the measurement (e.g. 5 MB).
+			$max_upload_size = sprintf( __( 'Maximum upload file size: %s', 'sensei-lms' ), esc_html( size_format( $upload_size ) ) );
 
-			} else {
-
-				$upload_size_unit = (int) $upload_size_unit;
-
-			}
-			// translators: Placeholders are the upload size and the measurement (e.g. 5 MB)
-			$max_upload_size = sprintf( __( 'Maximum upload file size: %1$d%2$s', 'sensei-lms' ), esc_html( $upload_size_unit ), esc_html( $sizes[ $u ] ) );
-
-			// Assemble all the data needed by the file upload template
+			// Assemble all the data needed by the file upload template.
 			$question_data['answer_media_url']      = $answer_media_url;
 			$question_data['answer_media_filename'] = $answer_media_filename;
 			$question_data['max_upload_size']       = $max_upload_size;
 
 			$question_data['question_helptext'] = $question_helptext;
 
-		}// end if is file upload type
+		}
 
 		return $question_data;
 
-	}//end file_upload_load_question_data()
+	}
 
 	/**
 	 * Load multiple choice question data on the sensei_get_question_template_data

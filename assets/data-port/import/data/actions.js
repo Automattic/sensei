@@ -24,8 +24,8 @@ import { buildJobEndpointUrl } from '../helpers/url';
 
 /**
  * @typedef  {Object} FetchFromAPIAction
- * @property {string} type               Action type.
- * @property {Object} request            Object that is used to fetch.
+ * @property {string} type    Action type.
+ * @property {Object} request Object that is used to fetch.
  */
 /**
  * Fetch action creator.
@@ -187,8 +187,8 @@ export const successStartImport = ( data ) => ( {
 
 /**
  * @typedef  {Object}         ErrorStartImportAction
- * @property {string}         type   Action type.
- * @property {Object|boolean} error  Error object or false.
+ * @property {string}         type  Action type.
+ * @property {Object|boolean} error Error object or false.
  */
 /**
  * Error start import job creator.
@@ -205,12 +205,12 @@ export const errorStartImport = ( error ) => ( {
 /**
  * Upload a file for a level.
  *
- * @param {string}   jobId                 The job identifier.
- * @param {string}   level                 Level identifier.
- * @param {Object}   uploadData            Data to submit.
+ * @param {string}   jobId               The job identifier.
+ * @param {string}   level               Level identifier.
+ * @param {Object}   uploadData          Data to submit.
  * @param {Object}   [options]
- * @param {Function} [options.onSuccess]   Callback on success.
- * @param {Function} [options.onError]     Callback on error.
+ * @param {Function} [options.onSuccess] Callback on success.
+ * @param {Function} [options.onError]   Callback on error.
  */
 export function* uploadFileForLevel(
 	jobId,
@@ -259,9 +259,9 @@ export const throwEarlyUploadError = ( level, errorMsg ) =>
 
 /**
  * @typedef  {Object} StartFileUploadAction
- * @property {string} type        Action type.
- * @property {string} level       Level identifier.
- * @property {Object} uploadData  Error object or false.
+ * @property {string} type       Action type.
+ * @property {string} level      Level identifier.
+ * @property {Object} uploadData Error object or false.
  */
 /**
  * Start file upload action creator.
@@ -279,9 +279,9 @@ export const startFileUploadAction = ( level, uploadData ) => ( {
 
 /**
  * @typedef  {Object} SuccessFileUploadAction
- * @property {string} type    Action type.
- * @property {string} level   Level identifier.
- * @property {Object} data    Data object.
+ * @property {string} type  Action type.
+ * @property {string} level Level identifier.
+ * @property {Object} data  Data object.
  */
 /**
  * Success upload file action.
@@ -298,9 +298,9 @@ export const successFileUpload = ( level, data ) => ( {
 
 /**
  * @typedef  {Object}         ErrorFileUploadAction
- * @property {string}         type              Action type.
- * @property {string}         level             Level identifier.
- * @property {Object|boolean} error             Error object or false.
+ * @property {string}         type  Action type.
+ * @property {string}         level Level identifier.
+ * @property {Object|boolean} error Error object or false.
  */
 /**
  * Error submit action creator.
@@ -350,8 +350,8 @@ export function* deleteLevelFile( jobId, level ) {
 
 /**
  * @typedef  {Object} StartDeleteLevelFileAction
- * @property {string} type        Action type.
- * @property {string} level       Level identifier.
+ * @property {string} type  Action type.
+ * @property {string} level Level identifier.
  */
 /**
  * Start file upload action creator.
@@ -367,9 +367,9 @@ export const startDeleteLevelFileAction = ( level ) => ( {
 
 /**
  * @typedef  {Object} SuccessDeleteLevelFileAction
- * @property {string} type    Action type.
- * @property {string} level   Level identifier.
- * @property {Object} data    Data object.
+ * @property {string} type  Action type.
+ * @property {string} level Level identifier.
+ * @property {Object} data  Data object.
  */
 /**
  * Success delete level file action.
@@ -386,15 +386,15 @@ export const successDeleteLevelFileAction = ( level, data ) => ( {
 
 /**
  * @typedef  {Object}  ErrorSuccessDeleteLevelFileAction
- * @property {string}  type              Action type.
- * @property {string}  level             Level identifier.
- * @property {Object}  error             Error object or false.
+ * @property {string} type  Action type.
+ * @property {string} level Level identifier.
+ * @property {Object} error Error object or false.
  */
 /**
  * Error delete level file action creator.
  *
- * @param {string}  level Level identifier.
- * @param {Object}  error Error object or false.
+ * @param {string} level Level identifier.
+ * @param {Object} error Error object or false.
  *
  * @return {ErrorSuccessDeleteLevelFileAction} Error delete level file action.
  */

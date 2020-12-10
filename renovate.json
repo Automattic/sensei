@@ -2,6 +2,7 @@
   "extends": [
     "config:base"
   ],
+  "labels": ["[Type] Maintenance"],
   "packageRules": [
     {
       "depTypeList": ["devDependencies"],

@@ -6,10 +6,10 @@ import { Notice } from '../notice';
 
 /**
  * @typedef Job
- * @property {string}       status      Export status.
- * @property {number}       percentage  Export progress percentage.
- * @property {ExportFile[]} files       Exported files.
- * @property {string}       error       Error message.
+ * @property {string}       status     Export status.
+ * @property {number}       percentage Export progress percentage.
+ * @property {ExportFile[]} files      Exported files.
+ * @property {string}       error      Error message.
  */
 /**
  * @typedef ExportFile

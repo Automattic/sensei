@@ -7,7 +7,7 @@ export default {
 	/**
 	 * Fetch control.
 	 *
-	 * @param  {{request: Object}} action Action with the request object that is used to fetch.
+	 * @param {{request: Object}} action Action with the request object that is used to fetch.
 	 *
 	 * @return {Promise} API fetch promise.
 	 */

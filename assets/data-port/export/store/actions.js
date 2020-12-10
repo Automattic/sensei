@@ -159,9 +159,9 @@ export const checkForActiveJob = function* () {
 /**
  * Perform REST API request for a job and apply returned job state.
  *
- * @param {Object} options            apiFetch request object.
- * @param {string?} options.endpoint  Request sub-path in exporter API.
- * @param {string?} options.jobId     Override job ID
+ * @param {Object}  options          apiFetch request object.
+ * @param {string?} options.endpoint Request sub-path in exporter API.
+ * @param {string?} options.jobId    Override job ID
  * @return {JobResponse|LogsResponse} Job or logs response.
  */
 const sendJobRequest = function* ( options = {} ) {

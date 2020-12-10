@@ -3,24 +3,6 @@ jQuery( document ).ready( function ( $ ) {
 	$( '.sortable-course-list, .sortable-lesson-list' ).sortable();
 	$( '.sortable-tab-list' ).disableSelection();
 
-	$.fn.fixOrderingList = function ( container, type ) {
-		container.find( '.' + type ).each( function ( i ) {
-			$( this ).removeClass( 'alternate' );
-			$( this ).removeClass( 'first' );
-			$( this ).removeClass( 'last' );
-
-			if ( 0 === i ) {
-				$( this ).addClass( 'first alternate' );
-			} else {
-				var r = i % 2;
-
-				if ( 0 === r ) {
-					$( this ).addClass( 'alternate' );
-				}
-			}
-		} );
-	};
-
 	/* Order Courses */
 	$( '.sortable-course-list' ).bind( 'sortstop', function () {
 		var orderString = '';
@@ -36,8 +18,6 @@ jQuery( document ).ready( function ( $ ) {
 			} );
 
 		$( 'input[name="course-order"]' ).val( orderString );
-
-		$.fn.fixOrderingList( $( this ), 'course' );
 	} );
 
 	/* Order Lessons */
@@ -61,7 +41,5 @@ jQuery( document ).ready( function ( $ ) {
 			} );
 
 		$( 'input[name="' + order_input + '"]' ).val( orderString );
-
-		$.fn.fixOrderingList( $( this ), 'lesson' );
 	} );
 } );

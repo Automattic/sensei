@@ -78,14 +78,8 @@ add_action( 'sensei_single_course_content_inside_before', array( $sensei->course
 add_filter( 'the_content', array( 'Sensei_Course', 'single_course_content' ) );
 
 // @since 1.9.0
-// add the single course lessons title
-add_action( 'sensei_single_course_content_inside_after', array( 'Sensei_Course', 'the_course_lessons_title' ), 9 );
-
-// @since 1.9.0
 // hooks in the course lessons query and remove it at the end
-// also loading the course lessons template in the middle
 add_action( 'sensei_single_course_lessons_before', array( 'Sensei_Course', 'load_single_course_lessons_query' ) );
-add_action( 'sensei_single_course_content_inside_after', 'course_single_lessons', 10 );
 add_action( 'sensei_single_course_lessons_after', array( 'Sensei_Utils', 'restore_wp_query' ) );
 
 // @since 1.9.0
@@ -110,7 +104,6 @@ add_action( 'sensei_single_course_modules_after', array( 'Sensei_Core_Modules', 
 
 // @since 1.9.0
 // Course meta
-add_action( 'sensei_single_course_content_inside_before', array( 'Sensei_Course', 'the_course_enrolment_actions' ), 30 );
 add_action( 'sensei_single_course_content_inside_before', array( 'Sensei_Course', 'the_course_video' ), 40 );
 
 /***************************
@@ -121,15 +114,15 @@ add_action( 'sensei_single_course_content_inside_before', array( 'Sensei_Course'
 
 // @since 1.9.0
 // Single quiz title
-add_filter( 'the_title', array( 'Sensei_Quiz', 'single_quiz_title' ), 20, 2 ); // append Quiz
-add_action( 'sensei_single_quiz_content_inside_before', array( 'Sensei_Quiz', 'the_title' ), 20 ); // output single quiz
+add_filter( 'the_title', array( 'Sensei_Quiz', 'single_quiz_title' ), 20, 2 ); // Append Quiz.
+add_action( 'sensei_single_quiz_content_inside_before', array( 'Sensei_Quiz', 'the_title' ), 20 ); // Output single quiz.
 
 // since 1.9.0
-// initialize the quiz questions loop
+// Initialize the quiz questions loop.
 add_action( 'sensei_single_quiz_content_inside_before', array( 'Sensei_Quiz', 'start_quiz_questions_loop' ) );
 
 // since 1.9.0
-// hook in the quiz user message
+// Hook in the quiz user message.
 add_action( 'sensei_single_quiz_content_inside_before', array( 'Sensei_Quiz', 'the_user_status_message' ), 40 );
 
 // @since 1.9.0
@@ -182,10 +175,6 @@ add_action( 'sensei_single_lesson_content_inside_after', 'sensei_the_single_less
 // @since 1.9.0
 // hook in the lesson prerequisite completion message
 add_action( 'sensei_single_lesson_content_inside_before', array( 'Sensei_Lesson', 'prerequisite_complete_message' ), 20 );
-
-// @since 1.9.10
-// hook in the course prerequisite completion message
-add_action( 'sensei_single_course_content_inside_before', array( 'Sensei_Course', 'prerequisite_complete_message' ), 20 );
 
 // @since 1.9.0
 // hook the single lesson course_signup_link
@@ -326,4 +315,3 @@ add_action( 'sensei_course_results_content_inside_before', array( $sensei->notic
 add_action( 'sensei_single_course_content_inside_before', array( $sensei->notices, 'maybe_print_notices' ), 40 );
 add_action( 'sensei_single_lesson_content_inside_before', array( $sensei->notices, 'maybe_print_notices' ), 40 );
 add_action( 'sensei_taxonomy_module_content_inside_before', array( $sensei->notices, 'maybe_print_notices' ), 40 );
-

@@ -288,6 +288,7 @@ class Sensei_REST_API_Import_Controller extends Sensei_REST_API_Data_Port_Contro
 		];
 
 		$job = Sensei_Data_Port_Manager::instance()->create_import_job( get_current_user_id() );
+		$job->set_is_sample_data( true );
 
 		foreach ( $files as $file_key => $file_path ) {
 			$result = $job->save_file( $file_key, $file_path, basename( $file_path ) );

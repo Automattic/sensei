@@ -76,7 +76,7 @@ jQuery( document ).ready( function () {
 	 * @access public
 	 */
 	jQuery.fn.resetAddQuestionForm = function () {
-		jQuery( '#add-new-question' )
+		jQuery( '#tab-new-content' )
 			.find( 'div' )
 			.find( 'input' )
 			.each( function () {
@@ -330,7 +330,7 @@ jQuery( document ).ready( function () {
 	/**
 	 * Upload media file to questions
 	 *
-	 * @param  object  button        Button that was clicked
+	 * @param object button Button that was clicked
 	 * @return void
 	 *
 	 * @since  1.5.0
@@ -1696,8 +1696,7 @@ jQuery( document ).ready( function () {
 	} );
 
 	jQuery( '#quiz-settings' ).on( 'change', '#pass_required', function () {
-		var checked = jQuery( this ).attr( 'checked' );
-		if ( 'checked' == checked ) {
+		if ( jQuery( this ).is( ':checked' ) ) {
 			jQuery( '.form-field.quiz_passmark' ).removeClass( 'hidden' );
 		} else {
 			jQuery( '.form-field.quiz_passmark' ).addClass( 'hidden' );

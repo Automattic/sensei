@@ -1,0 +1,25 @@
+{
+  "name": "sensei-lms/course-outline",
+  "category": "sensei-lms",
+  "supports": {
+    "html": false,
+    "multiple": false,
+    "defaultStylePicker": false
+  },
+  "attributes": {
+    "id": {
+      "type": "integer"
+    },
+    "collapsibleModules": {
+      "type": "boolean",
+      "default": true
+    },
+    "moduleBorder": {
+      "type": "boolean",
+      "default": true
+    },
+    "isPreview": {
+      "type": "boolean"
+    }
+  }
+}
