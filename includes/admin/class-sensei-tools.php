@@ -34,7 +34,7 @@ class Sensei_Tools {
 	private $tools;
 
 	/**
-	 * Courses constructor. Prevents other instances from being created outside of `self::instance()`.
+	 * Sensei_Tools constructor. Prevents other instances from being created outside of `self::instance()`.
 	 */
 	private function __construct() {}
 
@@ -95,11 +95,6 @@ class Sensei_Tools {
 	 * Adds admin menu pages.
 	 */
 	public function add_menu_pages() {
-		// Only administrators can use Sensei LMS' tools.
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return;
-		}
-
 		$title = esc_html__( 'Tools', 'sensei-lms' );
 		add_submenu_page( 'sensei', $title, $title, 'manage_sensei', 'sensei-tools', [ $this, 'output' ] );
 	}
