@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Sensei_Tool_Recalculate_Enrolment interface.
+ * Sensei_Tool_Recalculate_Enrolment class.
  *
  * @since 3.7.0
  */
