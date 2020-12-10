@@ -16,8 +16,10 @@
 		<custom-type translate="0">sensei_message</custom-type>
 	</custom-types>
 	<taxonomies>
-		<taxonomy translate="1">lesson-tag</taxonomy>
 		<taxonomy translate="1">course-category</taxonomy>
+		<taxonomy translate="1">lesson-tag</taxonomy>
+		<taxonomy translate="1">module</taxonomy>
+		<taxonomy translate="1">question-category</taxonomy>
 	</taxonomies>
 	<admin-texts>
 		<key name="woothemes-sensei-settings">
