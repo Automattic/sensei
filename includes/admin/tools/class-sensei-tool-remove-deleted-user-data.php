@@ -59,7 +59,9 @@ class Sensei_Tool_Remove_Deleted_User_Data implements Sensei_Tool_Interface {
 		global $wpdb;
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- Shortcut for large pagination.
-		$comment_ids = $wpdb->get_col( "SELECT c.`comment_ID` FROM {$wpdb->comments} c LEFT JOIN {$wpdb->users} u ON u.`ID` = c.`user_id` WHERE c.`user_id` > 0 AND u.`ID` IS NULL AND c.`comment_type` LIKE \"sensei_%\"" );
+		$wpdb->query( "SELECT c.`comment_ID`, c.`comment_post_ID` FROM {$wpdb->comments} c LEFT JOIN {$wpdb->users} u ON u.`ID` = c.`user_id` WHERE c.`user_id` > 0 AND u.`ID` IS NULL AND c.`comment_type` LIKE \"sensei_%\"" );
+		$comment_ids = $wpdb->get_col( null, 0 );
+		$post_ids    = array_unique( $wpdb->get_col( null, 1 ) );
 
 		if ( ! empty( $comment_ids ) ) {
 			$wpdb->query( "DELETE FROM {$wpdb->comments} WHERE `comment_ID` IN (" . implode( ',', $comment_ids ) . ')' );
@@ -69,5 +71,10 @@ class Sensei_Tool_Remove_Deleted_User_Data implements Sensei_Tool_Interface {
 			Sensei_Tools::instance()->add_user_message( __( 'No progress data was found from deleted users.', 'sensei-lms' ) );
 		}
 		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
+
+		clean_comment_cache( $comment_ids );
+		foreach ( $post_ids as $post_id ) {
+			Sensei()->flush_comment_counts_cache( $post_id );
+		}
 	}
 }
