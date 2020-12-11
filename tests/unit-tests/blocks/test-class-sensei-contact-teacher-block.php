@@ -30,6 +30,11 @@ class Sensei_Block_Contact_Teacher_Test extends WP_UnitTestCase {
 		$this->login_as_student();
 	}
 
+	public function tearDown() {
+		parent::tearDown();
+		WP_Block_Type_Registry::get_instance()->unregister( 'sensei-lms/button-contact-teacher' );
+	}
+
 	/**
 	 * Test the saved block content is used for the button, with link added to open the form.
 	 */

@@ -38,6 +38,11 @@ class Sensei_Block_Take_Course_Test extends WP_UnitTestCase {
 
 	}
 
+	public function tearDown() {
+		parent::tearDown();
+		WP_Block_Type_Registry::get_instance()->unregister( 'sensei-lms/button-take-course' );
+	}
+
 	/**
 	 * The take course block is registered and renders content.
 	 */

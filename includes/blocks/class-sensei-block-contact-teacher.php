@@ -18,7 +18,7 @@ class Sensei_Block_Contact_Teacher {
 	 * Sensei_Block_Contact_Teacher constructor.
 	 */
 	public function __construct() {
-		add_action( 'init', [ $this, 'register_block' ] );
+		$this->register_block();
 	}
 
 	/**
