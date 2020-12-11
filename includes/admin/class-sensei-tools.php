@@ -58,6 +58,7 @@ class Sensei_Tools {
 	 */
 	public function init() {
 		add_action( 'admin_menu', [ $this, 'add_menu_pages' ], 90 );
+		add_filter( 'sensei_learners_main_column_data', [ Sensei_Tool_Enrolment_Debug::class, 'add_debug_action' ], 10, 3 );
 	}
 
 	/**
@@ -72,6 +73,7 @@ class Sensei_Tools {
 			$tools[] = new Sensei_Tool_Recalculate_Course_Enrolment();
 			$tools[] = new Sensei_Tool_Ensure_Roles();
 			$tools[] = new Sensei_Tool_Remove_Deleted_User_Data();
+			$tools[] = new Sensei_Tool_Enrolment_Debug();
 
 			/**
 			 * Array of the tools available to Sensei LMS.

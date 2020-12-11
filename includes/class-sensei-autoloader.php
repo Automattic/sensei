@@ -132,6 +132,7 @@ class Sensei_Autoloader {
 			'Sensei_Tool_Recalculate_Enrolment'          => 'admin/tools/class-sensei-tool-recalculate-enrolment.php',
 			'Sensei_Tool_Ensure_Roles'                   => 'admin/tools/class-sensei-tool-ensure-roles.php',
 			'Sensei_Tool_Remove_Deleted_User_Data'       => 'admin/tools/class-sensei-tool-remove-deleted-user-data.php',
+			'Sensei_Tool_Enrolment_Debug'                => 'admin/tools/class-sensei-tool-enrolment-debug.php',
 
 			/**
 			 * Shortcodes
