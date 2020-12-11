@@ -39,6 +39,11 @@ class Sensei_Block_Helpers {
 			$colors
 		);
 
+		$has_style_classes = [
+			'color'            => 'has-text-color',
+			'background-color' => 'has-background',
+		];
+
 		foreach ( $colors as $color => $style ) {
 
 			if ( ! $style ) {
@@ -48,8 +53,8 @@ class Sensei_Block_Helpers {
 			$custom_color  = $block_attributes[ 'custom' . ucfirst( $color ) ] ?? null;
 			$default_color = $block_attributes[ 'default' . ucfirst( $color ) ] ?? null;
 
-			if ( $custom_color || $named_color ) {
-				$attributes['css_classes'][] = sprintf( 'has-%s', $style );
+			if ( isset( $has_style_classes[ $style ] ) && ( $custom_color || $named_color || $default_color ) ) {
+				$attributes['css_classes'][] = $has_style_classes[ $style ];
 			}
 
 			$named_class = 'border-color' === $style ? 'border-color-%s' : 'has-%s-%s';
