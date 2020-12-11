@@ -438,6 +438,8 @@ class Sensei_Course_Enrolment_Test extends WP_UnitTestCase {
 
 	/**
 	 * Tests retrieval of enrolled users IDs.
+	 *
+	 * @group wip
 	 */
 	public function testGetEnrolledUserIds() {
 		$course_id         = $this->getSimpleCourse();
