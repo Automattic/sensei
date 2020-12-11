@@ -1185,23 +1185,21 @@ class Sensei_Quiz {
 	 * @since 1.9.0
 	 */
 	public static function the_title() {
-		?>
-		 <header>
-
-			 <h1>
-
-				<?php
-				/**
-				 * Filter documented in class-sensei-messages.php the_title
-				 */
-				echo wp_kses_post( apply_filters( 'sensei_single_title', get_the_title( get_post() ), get_post_type( get_the_ID() ) ) );
-				?>
-
-			 </h1>
-
-		 </header>
-
-		 <?php
+		/**
+		 * Filter documented in class-sensei-messages.php the_title
+		 */
+		$title = wp_kses_post( apply_filters( 'sensei_single_title', get_the_title( get_post() ), get_post_type( get_the_ID() ) ) );
+		if ( $title ) :
+			?>
+			<header>
+				<h1>
+					<?php
+					echo wp_kses_post( $title );
+					?>
+				</h1>
+			</header>
+			<?php
+		endif;
 	}//end the_title()
 
 	/**

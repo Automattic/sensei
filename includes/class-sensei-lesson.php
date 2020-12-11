@@ -4155,30 +4155,30 @@ class Sensei_Lesson {
 		$is_preview = isset( $post->ID )
 			&& Sensei_Utils::is_preview_lesson( $post->ID )
 			&& ! Sensei_Course::is_user_enrolled( $course_id, $current_user->ID );
-
-		?>
-		<header class="lesson-title">
-
-			<h1>
-
-				<?php
-				/**
-				 * Filter documented in class-sensei-messages.php the_title
-				 */
-				echo wp_kses_post( apply_filters( 'sensei_single_title', get_the_title( $post ), $post->post_type ) );
+		/**
+		 * Filter documented in class-sensei-messages.php the_title
+		 */
+		$title = wp_kses_post( apply_filters( 'sensei_single_title', get_the_title( $post ), $post->post_type ) );
+		if ( $title || $is_preview ) :
+			?>
+			<header class="lesson-title">
+				<?php if ( $title ) : ?>
+					<h1>
+						<?php
+						echo wp_kses_post( $title );
+						?>
+					</h1>
+					<?php
+				endif;
+				if ( $is_preview ) {
+					echo wp_kses_post( Sensei()->frontend->sensei_lesson_preview_title_tag( $course_id ) );
+				}
 				?>
 
-			</h1>
+			</header>
 
 			<?php
-			if ( $is_preview ) {
-				echo wp_kses_post( Sensei()->frontend->sensei_lesson_preview_title_tag( $course_id ) );
-			}
-			?>
-
-		</header>
-
-		<?php
+		endif;
 
 	}//end the_title()
 

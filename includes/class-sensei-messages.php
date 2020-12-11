@@ -742,31 +742,27 @@ class Sensei_Messages {
 		} else {
 			$title = esc_html( get_the_title( $post->ID ) );
 		}
-
-		?>
-		<header>
-
-			<h1>
-
-				<?php
-				/**
-				 * Filter Sensei single title
-				 *
-				 * @since 1.8.0
-				 * @param string $title
-				 * @param string $template
-				 * @param string $post_type
-				 */
-				echo wp_kses_post( apply_filters( 'sensei_single_title', $title, $post->post_type ) );
-				?>
-
-			</h1>
-
-		</header>
-
-		<?php
-
-	} // End sensei_single_title()
+		/**
+		 * Filter Sensei single title
+		 *
+		 * @since 1.8.0
+		 * @param string $title
+		 * @param string $template
+		 * @param string $post_type
+		 */
+		$title = wp_kses_post( apply_filters( 'sensei_single_title', $title, $post->post_type ) );
+		if ( $title ) :
+			?>
+			<header>
+				<h1>
+					<?php
+					echo wp_kses_post( $title );
+					?>
+				</h1>
+			</header>
+			<?php
+		endif;
+	}//end the_title()
 
 	/**
 	 * Generates the my messages
