@@ -44,8 +44,9 @@ class Sensei_Course_Outline_Module_Block {
 			$header_css = Sensei_Block_Helpers::build_styles(
 				$block['attributes'],
 				[
-					'mainColor'   => $is_default_style ? 'background-color' : null,
-					'borderColor' => null,
+					'mainColor'       => $is_default_style ? 'background-color' : null,
+					'backgroundColor' => null,
+					'borderColor'     => null,
 				]
 			);
 		}
