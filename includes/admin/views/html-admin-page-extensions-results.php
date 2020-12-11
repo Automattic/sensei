@@ -27,7 +27,9 @@ if ( empty( $extensions ) ) {
 			$extension->link
 		);
 		$installed   = Sensei_Plugins_Installation::instance()->is_plugin_active( $extension->plugin_file );
-		$installable = ! empty( $extension->wccom_product_id ) || 'dotorg' === $extension->hosted_location;
+		$is_wccom    = ! empty( $extension->wccom_product_id );
+		$installable = $is_wccom || 'dotorg' === $extension->hosted_location;
+
 		?>
 		<li class="product">
 			<div class="product-header">
@@ -56,8 +58,8 @@ if ( empty( $extensions ) ) {
 					</button>
 				<?php elseif ( $installable ) : ?>
 					<div class="sensei-extension-installer"
-						data-slug="<?php echo esc_attr( $extension->wccom_product_id ? $extension->wccom_product_id : $extension->product_slug ); ?>"
-						data-source="<?php echo $extension->wccom_product_id ? 'wccom' : 'wporg'; ?>">
+						data-slug="<?php echo esc_attr( $is_wccom ? $extension->wccom_product_id : $extension->product_slug ); ?>"
+						data-source="<?php echo $is_wccom ? 'wccom' : 'wporg'; ?>">
 						<button class="button-primary"><?php esc_html_e( 'Install', 'sensei-lms' ); ?></button>
 					</div>
 				<?php endif; ?>
