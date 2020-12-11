@@ -173,8 +173,11 @@ class Sensei_Course_Outline_Module_Block {
 		if ( $should_have_border ) {
 			$class_names[] = 'wp-block-sensei-lms-course-outline-module-bordered';
 
-			if ( ! empty( $block_attributes['borderColorValue'] ) ) {
-				$inline_styles[] = sprintf( 'border-color: %s;', $block_attributes['borderColorValue'] );
+			$border_color_value = ! empty( $block_attributes['defaultBorderColorValue'] ) ? $block_attributes['defaultBorderColorValue'] : '';
+			$border_color_value = ! empty( $block_attributes['borderColorValue'] ) ? $block_attributes['borderColorValue'] : $border_color_value;
+
+			if ( ! empty( $border_color_value ) ) {
+				$inline_styles[] = sprintf( 'border-color: %s;', $border_color_value );
 			}
 		}
 
