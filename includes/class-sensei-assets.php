@@ -129,7 +129,7 @@ class Sensei_Assets {
 		$basename          = preg_replace( '/\.\w+$/', '', $filename );
 		$url               = $this->asset_url( $filename );
 		$version           = $this->version;
-		$asset_config_path = path_join( $this->plugin_path, 'assets/dist/' . $basename . '.asset.php' );
+		$asset_config_path = $this->dist_path( $basename . '.asset.php' );
 
 		if ( file_exists( $asset_config_path ) ) {
 			$asset_config = require $asset_config_path;
@@ -148,6 +148,28 @@ class Sensei_Assets {
 			'type'         => $is_js ? 'script' : 'style',
 			'args'         => null !== $args ? $args : ( $is_js ? false : 'all' ), // defaults for wp_enqueue_script or wp_enqueue_style.
 		];
+	}
+
+	/**
+	 * Get path for file in plugin assets dist directory.
+	 *
+	 * @param string $file Asset file.
+	 *
+	 * @return string
+	 */
+	public function dist_path( $file ) {
+		return path_join( $this->plugin_path, 'assets/dist/' . $file );
+	}
+
+	/**
+	 * Get path for file in plugin assets source directory.
+	 *
+	 * @param string $file Asset file.
+	 *
+	 * @return string
+	 */
+	public function src_path( $file ) {
+		return path_join( $this->plugin_path, 'assets/' . $file );
 	}
 
 	/**
@@ -179,4 +201,64 @@ class Sensei_Assets {
 		);
 
 	}
+
+	/**
+	 * Change implementation for an already registered script.
+	 *
+	 * @param string $handle Name of the script to override.
+	 * @param string $src    New filename.
+	 * @param array  $deps   Specify to change script dependencies.
+	 *
+	 * @since 3.3.1
+	 */
+	public function override_script( $handle, $src, $deps = null ) {
+		$scripts = wp_scripts();
+		$script  = $scripts->query( $handle, 'registered' );
+
+		if ( $script ) {
+			$script->src = $this->asset_url( $src );
+			$script->ver = $this->version;
+
+			if ( null !== $deps ) {
+				$script->deps = $deps;
+			}
+		} else {
+			$this->register( $handle, $src, $deps );
+		}
+	}
+
+	/**
+	 * Use bundled WordPress client libraries for older versions.
+	 *
+	 * @since 3.3.1
+	 */
+	public function wp_compat() {
+
+		if ( version_compare( $GLOBALS['wp_version'], '5.4', '<' ) ) {
+
+			$this->override_script( 'react', '../vendor/gutenberg/react.min.js' );
+			$this->override_script( 'react-dom', '../vendor/gutenberg/react-dom.min.js' );
+			$this->override_script( 'wp-redux-routine', '../vendor/gutenberg/redux-routine.min.js' );
+			$this->override_script( 'wp-priority-queue', '../vendor/gutenberg/priority-queue.min.js' );
+			$this->override_script( 'wp-primitives', '../vendor/gutenberg/primitives.min.js', [ 'wp-element' ] );
+			$this->override_script( 'wp-warning', '../vendor/gutenberg/warning.min.js', [] );
+			$this->override_script( 'wp-polyfill', '../vendor/gutenberg/wp-polyfill.min.js', [] );
+			$this->override_script( 'wp-compose', '../vendor/gutenberg/compose.min.js' );
+			$this->override_script( 'wp-element', '../vendor/gutenberg/element.min.js' );
+			$this->override_script( 'wp-api-fetch', '../vendor/gutenberg/api-fetch.min.js' );
+
+			$this->override_script(
+				'wp-components',
+				'../vendor/gutenberg/components.min.js',
+				[ 'lodash', 'moment', 'react', 'react-dom', 'wp-a11y', 'wp-compose', 'wp-deprecated', 'wp-dom', 'wp-element', 'wp-hooks', 'wp-i18n', 'wp-is-shallow-equal', 'wp-keycodes', 'wp-polyfill', 'wp-primitives', 'wp-rich-text', 'wp-warning' ]
+			);
+
+			$this->override_script(
+				'wp-data',
+				'../vendor/gutenberg/data.min.js',
+				[ 'lodash', 'react', 'wp-compose', 'wp-deprecated', 'wp-element', 'wp-is-shallow-equal', 'wp-polyfill', 'wp-priority-queue', 'wp-redux-routine' ]
+			);
+		}
+	}
+
 }

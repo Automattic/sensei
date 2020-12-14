@@ -15,16 +15,18 @@ body.sensei-color {
 	}
 
 	a, .button-link, .components-button.is-link {
-		color: $link;
+		&.link__color-secondary {
+			color: $link;
 
-		&:hover,
-		&:active {
-			color: lighten($link, 20%);
-		}
+			&:hover,
+			&:active {
+				color: lighten($link, 20%);
+			}
 
-		&:not(.components-button):focus {
-			color: darken($link, 20%);
-			box-shadow: 0 0 0 1px $link-primary, 0 0 2px 1px rgba($link-primary, 0.8);
+			&:not(.components-button):focus {
+				color: darken($link, 20%);
+				box-shadow: 0 0 0 1px $link-primary, 0 0 2px 1px rgba($link-primary, 0.8);
+			}
 		}
 
 		&.link__color-primary {

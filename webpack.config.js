@@ -2,6 +2,8 @@ const path = require( 'path' );
 const process = require( 'process' );
 const { fromPairs } = require( 'lodash' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
+const GenerateChunksMapPlugin = require( './scripts/webpack/generate-chunks-map-plugin' );
+
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
 const files = [
@@ -22,11 +24,19 @@ const files = [
 	'js/ranges.js',
 	'js/settings.js',
 	'js/user-dashboard.js',
-	'setup-wizard/index.jsx',
+	'setup-wizard/index.js',
 	'setup-wizard/style.scss',
 	'shared/styles/wp-components.scss',
 	'shared/styles/wc-components.scss',
-
+	'data-port/import.js',
+	'data-port/export.js',
+	'data-port/style.scss',
+	'blocks/course-outline/frontend.js',
+	'blocks/index.js',
+	'blocks/single-course.scss',
+	'blocks/single-course.editor.scss',
+	'admin/exit-survey/index.js',
+	'admin/exit-survey/exit-survey.scss',
 	'css/frontend.scss',
 	'css/admin-custom.css',
 	'css/extensions.scss',
@@ -61,13 +71,15 @@ function mapFilesToEntries( filenames ) {
 	);
 }
 
+const baseDist = 'assets/dist/';
+
 function getWebpackConfig( env, argv ) {
 	const webpackConfig = getBaseWebpackConfig( { ...env, WP: true }, argv );
 	return {
 		...webpackConfig,
 		entry: mapFilesToEntries( files ),
 		output: {
-			path: path.resolve( './assets/dist' ),
+			path: path.resolve( '.', baseDist ),
 		},
 		devtool:
 			process.env.SOURCEMAP ||
@@ -78,6 +90,16 @@ function getWebpackConfig( env, argv ) {
 		node: {
 			crypto: 'empty',
 		},
+		plugins: [
+			...webpackConfig.plugins,
+			new GenerateChunksMapPlugin( {
+				output: path.resolve(
+					'./node_modules/.cache/sensei-lms/chunks-map.json'
+				),
+				ignoreSrcPattern: /^node_modules/,
+				baseDist,
+			} ),
+		],
 	};
 }
 

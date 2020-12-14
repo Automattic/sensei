@@ -225,6 +225,9 @@ class Sensei_Plugins_Installation {
 	 * @param string $message Error message.
 	 */
 	private function save_error( $slug, $message ) {
+
+		$message = wp_kses( $message, [] );
+
 		$installing_plugins = $this->get_installing_plugins();
 		$key                = array_search( $slug, wp_list_pluck( $installing_plugins, 'product_slug' ), true );
 
@@ -406,6 +409,10 @@ class Sensei_Plugins_Installation {
 			// Activate this thing.
 			if ( $activate ) {
 				try {
+					// Prevent WC wizard open after programmatically installation.
+					if ( 'woocommerce' === $plugin_slug ) {
+						add_filter( 'pre_set_transient__wc_activation_redirect', '__return_false' );
+					}
 					$result = activate_plugin( $installed ? $installed_plugins[ $plugin_file ] : $plugin_slug . '/' . $plugin_file );
 
 					if ( is_wp_error( $result ) ) {

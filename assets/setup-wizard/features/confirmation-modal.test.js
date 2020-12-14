@@ -7,12 +7,12 @@ const features = [
 	{
 		slug: 'first',
 		title: 'First',
-		excerpt: 'Dolor',
+		excerpt: 'Lorem',
 	},
 	{
-		slug: 'sensei-wc-paid-courses',
+		slug: 'second',
 		title: 'Second',
-		excerpt: 'Lorem',
+		excerpt: 'Ipsum',
 	},
 ];
 
@@ -29,12 +29,8 @@ describe( '<ConfirmationModal />', () => {
 		expect( document.querySelectorAll( 'li' ).length ).toEqual(
 			features.length
 		);
-		expect( screen.queryByText( 'Dolor' ) ).toBeTruthy();
-		expect(
-			screen.queryByText(
-				'Lorem (The WooCommerce plugin may also be installed and activated for free.)'
-			)
-		).toBeTruthy();
+		expect( screen.queryByText( 'Lorem' ) ).toBeTruthy();
+		expect( screen.queryByText( 'Ipsum' ) ).toBeTruthy();
 	} );
 
 	it( 'Should call the callbacks', () => {

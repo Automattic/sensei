@@ -73,7 +73,7 @@ class Sensei_Frontend {
 		add_action( 'sensei_reset_lesson_button', array( $this, 'sensei_reset_lesson_button' ) );
 		add_action( 'sensei_course_archive_meta', array( $this, 'sensei_course_archive_meta' ) );
 		add_action( 'sensei_lesson_meta', array( $this, 'sensei_lesson_meta' ), 10 );
-		add_action( 'sensei_single_course_content_inside_before', array( $this, 'sensei_course_start' ), 10 );
+		add_action( 'wp', array( $this, 'sensei_course_start' ), 10 );
 		add_filter( 'wp_login_failed', array( $this, 'sensei_login_fail_redirect' ), 10 );
 		add_filter( 'init', array( $this, 'sensei_handle_login_request' ), 10 );
 		add_action( 'init', array( $this, 'sensei_process_registration' ), 2 );
@@ -1033,7 +1033,7 @@ class Sensei_Frontend {
 				?>
 				<span class="course-category">
 					<?php
-					// translators: Placeholder is a comma-separated list of course categories.
+					// translators: Placeholder is a comma-separated list of the Course categories.
 					echo sprintf( esc_html__( 'in %s', 'sensei-lms' ), wp_kses_post( $category_output ) );
 					?>
 				</span>
@@ -1187,7 +1187,7 @@ class Sensei_Frontend {
 					<?php
 					echo '&nbsp;' . wp_kses_post(
 						sprintf(
-							// translators: Placeholder is a link to view the course.
+							// translators: Placeholder is a link to the Course permalink.
 							__( 'Part of: %s', 'sensei-lms' ),
 							'<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '" title="' . esc_attr__( 'View course', 'sensei-lms' ) . '"><em>' . esc_html( get_the_title( $lesson_course_id ) ) . '</em></a>'
 						)
@@ -1249,7 +1249,8 @@ class Sensei_Frontend {
 
 		// Handle user starting the course.
 		if (
-			isset( $_POST['course_start'] )
+			is_singular( 'course' )
+			&& isset( $_POST['course_start'] )
 			&& wp_verify_nonce( $_POST['woothemes_sensei_start_course_noonce'], 'woothemes_sensei_start_course_noonce' )
 			&& Sensei_Course::can_current_user_manually_enrol( $post->ID )
 		) {

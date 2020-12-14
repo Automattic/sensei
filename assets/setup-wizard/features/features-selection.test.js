@@ -42,6 +42,20 @@ describe( '<FeaturesSelection />', () => {
 		);
 	} );
 
+	it( 'Should render with no features', () => {
+		const { queryAllByText } = render(
+			<FeaturesSelection
+				features={ [] }
+				selectedSlugs={ [] }
+				onChange={ () => {} }
+				onContinue={ () => {} }
+			/>
+		);
+
+		// The notice renders more than one div for accessibility.
+		expect( queryAllByText( 'No features found.' ) ).not.toHaveLength( 0 );
+	} );
+
 	it( 'Should render features selection with submitting status', () => {
 		const { container } = render(
 			<FeaturesSelection
@@ -68,6 +82,30 @@ describe( '<FeaturesSelection />', () => {
 		);
 
 		expect( queryByText( 'Error' ) ).toBeTruthy();
+	} );
+
+	it( 'Should not show unselectable features', () => {
+		const featuresWithUnselectable = [
+			...features,
+			{
+				slug: 'unselectable',
+				title: 'Unselectable',
+				excerpt: 'Test',
+				unselectable: true,
+			},
+		];
+		const { container } = render(
+			<FeaturesSelection
+				features={ featuresWithUnselectable }
+				selectedSlugs={ [] }
+				onChange={ () => {} }
+				onContinue={ () => {} }
+			/>
+		);
+
+		expect( container.querySelectorAll( 'input' ).length ).toEqual(
+			features.length
+		);
 	} );
 
 	it( 'Should call the callbacks correctly', () => {
@@ -100,7 +138,7 @@ describe( '<FeaturesSelection />', () => {
 		expect( onContinueMock ).toBeCalled();
 	} );
 
-	it( 'Should render the features with installation status as disabled and the installed with specific class', () => {
+	it( 'Should render the features with installed status as disabled and the installed with specific class', () => {
 		const selectedSlugs = [ 'empty-status', 'installing', 'installed' ];
 		const { container } = render(
 			<FeaturesSelection

@@ -12,6 +12,25 @@
  */
 class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 	/**
+	 * Set up before the class.
+	 */
+	public static function setUpBeforeClass() {
+		// Mock WooCommerce plugin information.
+		set_transient(
+			Sensei_Setup_Wizard::WC_INFORMATION_TRANSIENT,
+			(object) [
+				'product_slug' => 'woocommerce',
+				'title'        => 'WooCommerce',
+				'excerpt'      => 'Lorem ipsum',
+				'plugin_file'  => 'woocommerce/woocommerce.php',
+				'link'         => 'https://wordpress.org/plugins/woocommerce',
+				'unselectable' => true,
+			],
+			DAY_IN_SECONDS
+		);
+	}
+
+	/**
 	 * Set up before each test.
 	 */
 	public function setup() {
@@ -20,6 +39,8 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 		// Save original current screen.
 		global $current_screen;
 		$this->original_screen = $current_screen;
+
+		Sensei_Test_Events::reset();
 	}
 
 	/**
@@ -59,6 +80,31 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 		$html = ob_get_clean();
 
 		$pos_setup_button = strpos( $html, 'Run the Setup Wizard' );
+
+		$this->assertNotFalse( $pos_setup_button, 'Should return the notice HTML' );
+	}
+
+	/**
+	 * Test setup wizard notice says continue when user completed a step.
+	 *
+	 * @covers Sensei_Setup_Wizard::setup_wizard_notice
+	 * @covers Sensei_Setup_Wizard::should_current_page_display_setup_wizard
+	 */
+	public function testSetupWizardNoticeContinue() {
+		// Create and login as admin.
+		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $admin_id );
+
+		set_current_screen( 'dashboard' );
+		update_option( \Sensei_Setup_Wizard::SUGGEST_SETUP_WIZARD_OPTION, 1 );
+
+		Sensei()->setup_wizard->update_wizard_user_data( [ 'steps' => [ 'welcome' ] ] );
+
+		ob_start();
+		Sensei()->setup_wizard->setup_wizard_notice();
+		$html = ob_get_clean();
+
+		$pos_setup_button = strpos( $html, 'Complete Setup' );
 
 		$this->assertNotFalse( $pos_setup_button, 'Should return the notice HTML' );
 	}
@@ -358,6 +404,31 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests that get sensei extensions fetch from the correct URL
+	 * with all extensions type.
+	 *
+	 * @covers Sensei_Setup_Wizard::get_sensei_extensions
+	 */
+	public function testGetSenseiExtensionsAllExtensions() {
+
+		// Mock fetch from senseilms.com.
+		$request_url = null;
+		add_filter(
+			'pre_http_request',
+			function( $preempt, $parsed_args, $url ) use ( &$request_url ) {
+				$request_url = $url;
+				return [ 'body' => '{}' ];
+			},
+			10,
+			3
+		);
+
+		$extensions = Sensei()->setup_wizard->get_sensei_extensions();
+
+		$this->assertEquals( 'https://senseilms.com/wp-json/senseilms-products/1.0/search?category=setup-wizard-extensions&type=plugin', $request_url );
+	}
+
+	/**
 	 * Tests that get sensei extensions and returns with decoded prices.
 	 *
 	 * @covers Sensei_Setup_Wizard::get_sensei_extensions
@@ -384,13 +455,14 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that get sensei extensions and returns with decoded prices.
+	 * Tests that get sensei extensions with statuses.
 	 *
+	 * @covers Sensei_Setup_Wizard::get_woocommerce_information
 	 * @covers Sensei_Setup_Wizard::get_feature_with_status
 	 * @covers Sensei_Setup_Wizard::get_sensei_extensions
 	 */
 	public function testGetSenseiExtensionsWithStatuses() {
-		// Set installing plugins
+		// Set installing plugins.
 		$installing_plugins = [
 			(object) [
 				'product_slug' => 'slug-1',
@@ -426,7 +498,7 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 			->getMock();
 
 		$mock->method( 'is_plugin_active' )
-			->will( $this->onConsecutiveCalls( false, false, true, false ) );
+			->will( $this->onConsecutiveCalls( false, false, true, false, false ) );
 
 		$property = new ReflectionProperty( 'Sensei_Plugins_Installation', 'instance' );
 		$property->setAccessible( true );
@@ -454,10 +526,11 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 				'product_slug' => 'slug-4',
 				'plugin_file'  => 'test/test.php',
 			],
+			get_transient( Sensei_Setup_Wizard::WC_INFORMATION_TRANSIENT ),
 		];
 		$extensions          = Sensei()->setup_wizard->get_sensei_extensions();
 
-		// Revert mocked instance
+		// Revert mocked instance.
 		$property->setValue( $real_instance );
 
 		$this->assertEquals( $expected_extensions, $extensions );
@@ -490,7 +563,7 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 			],
 		];
 
-		// Mock install plugins method
+		// Mock install plugins method.
 		$mock = $this->getMockBuilder( Sensei_Plugins_Installation::class )
 			->disableOriginalConstructor()
 			->setMethods( [ 'install_plugins' ] )
@@ -505,7 +578,7 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 
 		Sensei()->setup_wizard->install_extensions( [ 'allowed', 'not-allowed' ] );
 
-		// Revert mocked instance
+		// Revert mocked instance.
 		$property->setValue( $real_instance );
 	}
 }

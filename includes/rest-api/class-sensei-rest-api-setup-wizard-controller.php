@@ -44,7 +44,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Available 'purpose' options.
 	 */
-	const PURPOSES = [ 'share_knowledge', 'generate_income', 'promote_business', 'provide_certification', 'train_employees', 'other' ];
+	const PURPOSES = [ 'share_knowledge', 'generate_income', 'promote_business', 'provide_certification', 'train_employees', 'educate_students', 'other' ];
 
 	/**
 	 * Sensei_REST_API_Setup_Wizard_Controller constructor.
@@ -293,6 +293,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 		return [
 			'selected' => $user_data['features']['selected'],
 			'options'  => $this->setup_wizard->get_sensei_extensions( $clear_active_plugins_cache ),
+			'wccom'    => $this->setup_wizard->get_woocommerce_connect_data(),
 		];
 	}
 
@@ -461,10 +462,10 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 * Complete setup wizard
 	 */
 	public function complete_setup_wizard() {
-
 		$this->mark_step_complete( 'ready' );
 		$this->setup_wizard->finish_setup_wizard();
 
+		return true;
 	}
 
 }

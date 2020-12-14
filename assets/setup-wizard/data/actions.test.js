@@ -46,7 +46,7 @@ describe( 'Setup wizard actions', () => {
 		const expectedFetchAction = {
 			type: FETCH_FROM_API,
 			request: {
-				path: API_BASE_PATH,
+				path: '/sensei-internal/v1/setup-wizard',
 			},
 		};
 		expect( gen.next().value ).toEqual( expectedFetchAction );
@@ -71,6 +71,7 @@ describe( 'Setup wizard actions', () => {
 							product_slug: 'test',
 							slug: 'test',
 							title: 'Test — Free',
+							rawTitle: 'Test',
 						},
 					],
 				},

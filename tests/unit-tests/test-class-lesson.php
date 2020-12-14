@@ -110,8 +110,8 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 			'The lesson class function `add_lesson_to_course_order` does not exist '
 		);
 
-		$course_id = $this->factory->get_random_course_id();
-		$lessons   = $this->factory->get_lessons();
+		$course_id = $this->factory->course->create();
+		$lessons   = $this->factory->lesson->create_many( 7 );
 
 		$not_a_lesson_post_type              = get_post( $lessons[0], ARRAY_A );
 		$not_a_lesson_post_type['post_type'] = 'post';
@@ -126,9 +126,8 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		$lesson_three_id    = $lessons[4];
 		$ordered_lesson_ids = array( $lesson_one_id, $lesson_two_id, $lesson_three_id );
 
-		$another_lesson_id                         = $lessons[5];
-		$yet_another_lesson_id                     = $lessons[6];
-		$a_lesson_assigned_to_an_invalid_course_id = $lessons[7];
+		$last_lesson_id                            = $lessons[5];
+		$a_lesson_assigned_to_an_invalid_course_id = $lessons[6];
 
 		foreach ( $ordered_lesson_ids as $lesson_id ) {
 			update_post_meta( $lesson_id, '_lesson_course', $course_id );
@@ -148,8 +147,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 
 		update_post_meta( $not_a_lesson_post_type['ID'], '_lesson_course', $course_id );
 		update_post_meta( $unpublished_lesson['ID'], '_lesson_course', $course_id );
-		update_post_meta( $another_lesson_id, '_lesson_course', $course_id );
-		update_post_meta( $yet_another_lesson_id, '_lesson_course', $course_id );
+		update_post_meta( $last_lesson_id, '_lesson_course', $course_id );
 		update_post_meta( $a_lesson_assigned_to_an_invalid_course_id, '_lesson_course', -123 );
 
 		Sensei()->lesson->add_lesson_to_course_order( null );
@@ -187,31 +185,21 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 			'Only lesson post types are added course order meta'
 		);
 
-		Sensei()->lesson->add_lesson_to_course_order( $unpublished_lesson['ID'] );
-		$this->assertFalse(
-			in_array( $unpublished_lesson, self::get_course_lesson_order( $course_id ) ),
-			'Only published lessons are added to course order meta'
-		);
-
-		Sensei()->lesson->add_lesson_to_course_order( $another_lesson_id );
-		$this->assertTrue(
-			in_array( $another_lesson_id, self::get_course_lesson_order( $course_id ) ),
-			'A new lesson should be added to the course order meta'
-		);
-		$this->assertEquals( 4, count( self::get_course_lesson_order( $course_id ) ) );
-
-		Sensei()->lesson->add_lesson_to_course_order( $another_lesson_id );
-		$this->assertTrue(
-			in_array( $another_lesson_id, self::get_course_lesson_order( $course_id ) ),
-			'A lesson should not be added to the course order meta twice'
-		);
-		$this->assertEquals( 4, count( self::get_course_lesson_order( $course_id ) ) );
-
-		Sensei()->lesson->add_lesson_to_course_order( $yet_another_lesson_id );
-		$this->assertEquals( 5, count( self::get_course_lesson_order( $course_id ) ) );
+		Sensei()->lesson->add_lesson_to_course_order( $last_lesson_id );
 		$last_order = self::get_course_lesson_order( $course_id );
-		$last_id    = array_pop( $last_order );
-		$this->assertEquals( $yet_another_lesson_id, $last_id, 'by default new lessons are added last' );
+		$this->assertTrue(
+			in_array( $last_lesson_id, self::get_course_lesson_order( $course_id ) ),
+			'All course lessons should be added to the course order meta'
+		);
+		$this->assertEquals( 5, count( $last_order ) );
+
+		$this->assertTrue(
+			in_array( $unpublished_lesson['ID'], self::get_course_lesson_order( $course_id ) ),
+			'Unpublished lessons are also added to course order meta'
+		);
+
+		$last_id = array_pop( $last_order );
+		$this->assertEquals( $last_lesson_id, $last_id, 'by default new lessons are added last' );
 
 		Sensei()->lesson->add_lesson_to_course_order( $a_lesson_assigned_to_an_invalid_course_id );
 		$this->assertEquals( 5, count( self::get_course_lesson_order( $course_id ) ), 'do nothing on lessons where no order meta is found' );

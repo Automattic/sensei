@@ -1,4 +1,5 @@
-import { render, fireEvent } from '@testing-library/react';
+import { render, fireEvent, act, screen } from '@testing-library/react';
+import { useState, useEffect } from '@wordpress/element';
 
 import InstallationFeedback from './installation-feedback';
 import useFeaturesPolling from './use-features-polling';
@@ -6,6 +7,7 @@ import {
 	INSTALLING_STATUS,
 	ERROR_STATUS,
 	INSTALLED_STATUS,
+	EXTERNAL_STATUS,
 } from './feature-status';
 
 // Mock features data.
@@ -37,6 +39,12 @@ const featuresOptions = [
 		title: 'Test installed',
 		excerpt: 'Test installed',
 		status: INSTALLED_STATUS,
+	},
+	{
+		slug: 'test-external',
+		title: 'Test External',
+		excerpt: 'Test External',
+		status: EXTERNAL_STATUS,
 	},
 	{
 		slug: 'test-empty',
@@ -107,6 +115,72 @@ describe( '<InstallationFeedback />', () => {
 		expect( queryByText( 'Retry' ) ).toBeTruthy();
 
 		fireEvent.click( queryByText( 'Continue' ) );
+		expect( onContinueMock ).toBeCalled();
+	} );
+
+	it( 'Should update external plugin status until installed', async () => {
+		const onContinueMock = jest.fn();
+
+		jest.useFakeTimers();
+
+		useFeaturesPolling.mockImplementation( ( active ) => {
+			const [ pollingCount, setPollingCount ] = useState( 0 );
+			useEffect( () => {
+				if ( ! active ) {
+					return;
+				}
+				const timer = setTimeout(
+					() => setPollingCount( ( n ) => n + 1 ),
+					2000
+				);
+				return () => {
+					clearTimeout( timer );
+				};
+			}, [ active, pollingCount ] );
+
+			return 0 === pollingCount
+				? {
+						selected: [ 'test-external' ],
+						options: [
+							{
+								slug: 'test-external',
+								title: 'Test External',
+								excerpt: 'Test External',
+								status: EXTERNAL_STATUS,
+							},
+						],
+				  }
+				: {
+						selected: [ 'test-external' ],
+						options: [
+							{
+								slug: 'test-external',
+								title: 'Test External',
+								excerpt: 'Test External',
+								status: INSTALLED_STATUS,
+							},
+						],
+				  };
+		} );
+
+		render(
+			<InstallationFeedback
+				onContinue={ onContinueMock }
+				onRetry={ () => {} }
+			/>
+		);
+
+		expect( screen.queryByText( 'Continue' ) ).toBeTruthy();
+
+		expect( screen.queryByText( 'Plugin installed' ) ).toBeFalsy();
+
+		act( jest.runAllTimers );
+
+		expect( screen.queryByText( 'Continue' ) ).toBeTruthy();
+
+		expect( screen.queryByText( 'Plugin installed' ) ).toBeTruthy();
+
+		fireEvent.click( screen.queryByText( 'Continue' ) );
 		expect( onContinueMock ).toBeCalled();
 	} );
 

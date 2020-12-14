@@ -59,7 +59,9 @@ class Sensei_Data_Cleaner {
 		'sensei_course_order',
 		'skip_install_sensei_pages', // @deprecated since 3.1.0.
 		'sensei_suggest_setup_wizard',
+		'sensei-data-port-jobs',
 		'sensei_setup_wizard_data',
+		'sensei_exit_survey_data',
 		'sensei_flush_rewrite_rules',
 		'sensei_needs_language_pack_install',
 		'woothemes_sensei_language_pack_version',
@@ -234,6 +236,7 @@ class Sensei_Data_Cleaner {
 	private static $post_meta = array(
 		'sensei_payment_complete',
 		'sensei_products_processed',
+		'_sensei_attachment_source_key',
 	);
 
 	/**

@@ -3,17 +3,15 @@ module.exports = {
 		browser: true,
 		jquery: true,
 		node: true,
-		es6: true
+		es6: true,
 	},
 	parser: 'babel-eslint',
-	plugins: [
-		'react'
-	],
+	plugins: [ 'react' ],
 	rules: {
 		'@wordpress/i18n-text-domain': 'off',
 		'@wordpress/no-unused-vars-before-return': 'off',
-		'camelcase': 'off',
-		'eqeqeq': 'off',
+		camelcase: 'off',
+		eqeqeq: 'off',
 		'jsdoc/check-alignment': 'off',
 		'jsdoc/check-param-names': 'off',
 		'jsdoc/check-tag-names': 'off',
@@ -34,6 +32,6 @@ module.exports = {
 		'object-shorthand': 'off',
 		'prettier/prettier': 'off',
 		'react/no-deprecated': 'off',
-		'prefer-const': 'off'
-	}
+		'prefer-const': 'off',
+	},
 };

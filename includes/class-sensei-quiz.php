@@ -31,21 +31,21 @@ class Sensei_Quiz {
 		$this->meta_fields = array( 'quiz_passmark', 'quiz_lesson', 'quiz_type', 'quiz_grade_type', 'pass_required', 'enable_quiz_reset' );
 		add_action( 'save_post', array( $this, 'update_after_lesson_change' ) );
 
-		// listen to the reset button click
+		// Listen to the reset button click.
 		add_action( 'template_redirect', array( $this, 'reset_button_click_listener' ) );
 
-		// fire the complete quiz button submit for grading action
+		// Fire the complete quiz button submit for grading action.
 		add_action( 'sensei_single_quiz_content_inside_before', array( $this, 'user_quiz_submit_listener' ) );
 
-		// fire the save user answers quiz button click responder
+		// Fire the save user answers quiz button click responder.
 		add_action( 'sensei_single_quiz_content_inside_before', array( $this, 'user_save_quiz_answers_listener' ) );
 
-		// fire the load global data function
+		// Fire the load global data function.
 		add_action( 'sensei_single_quiz_content_inside_before', array( $this, 'load_global_quiz_data' ), 80 );
 
 		add_action( 'template_redirect', array( $this, 'quiz_has_no_questions' ) );
 
-		// remove post when lesson is permanently deleted
+		// Remove post when lesson is permanently deleted.
 		add_action( 'delete_post', array( $this, 'maybe_delete_quiz' ) );
 
 	} // End __construct()
@@ -342,18 +342,19 @@ class Sensei_Quiz {
 		global  $post, $current_user;
 		$this->data = new stdClass();
 
-		// Get Quiz Questions
+		// Get Quiz Questions.
 		$lesson_quiz_questions = Sensei()->lesson->lesson_quiz_questions( $post->ID );
 
+		// Get Quiz Lesson ID.
 		$quiz_lesson_id = absint( get_post_meta( $post->ID, '_quiz_lesson', true ) );
 
-		// Get quiz grade type
+		// Get quiz grade type.
 		$quiz_grade_type = get_post_meta( $post->ID, '_quiz_grade_type', true );
 
-		// Get quiz pass mark
+		// Get quiz pass mark.
 		$quiz_passmark = Sensei_Utils::as_absolute_rounded_number( get_post_meta( $post->ID, '_quiz_passmark', true ), 2 );
 
-		// Get latest quiz answers and grades
+		// Get latest quiz answers and grades.
 		$lesson_id          = Sensei()->quiz->get_lesson_id( $post->ID );
 		$user_quizzes       = Sensei()->quiz->get_user_answers( $lesson_id, get_current_user_id() );
 		$user_lesson_status = Sensei_Utils::user_lesson_status( $quiz_lesson_id, $current_user->ID );
@@ -365,7 +366,7 @@ class Sensei_Quiz {
 		if ( ! is_array( $user_quizzes ) ) {
 			$user_quizzes = array(); }
 
-		// Check again that the lesson is complete
+		// Check again that the lesson is complete.
 		$user_lesson_end      = Sensei_Utils::user_completed_lesson( $user_lesson_status );
 		$user_lesson_complete = false;
 		if ( $user_lesson_end ) {
@@ -373,13 +374,13 @@ class Sensei_Quiz {
 		} // End If Statement
 
 		$reset_allowed = get_post_meta( $post->ID, '_enable_quiz_reset', true );
-		// backwards compatibility
+		// Backwards compatibility.
 		if ( 'on' == $reset_allowed ) {
 			$reset_allowed = 1;
 		}
 
 		// Build frontend data object for backwards compatibility
-		// using this is no longer recommended
+		// using this is no longer recommended.
 		$this->data->user_quiz_grade       = $user_quiz_grade;
 		$this->data->quiz_passmark         = $quiz_passmark;
 		$this->data->quiz_lesson           = $quiz_lesson_id;

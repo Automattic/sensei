@@ -17,6 +17,8 @@ function course_single_lessons() {
 		return;
 	}
 
+	add_filter( 'post_class', [ 'Sensei_Lesson', 'single_course_lessons_classes' ] );
+
 	// load backwards compatible template name if it exists in the users theme
 	$located_template = locate_template( Sensei()->template_url . 'single-course/course-lessons.php' );
 	if ( $located_template ) {
@@ -27,6 +29,8 @@ function course_single_lessons() {
 	}
 
 	Sensei_Templates::get_template( 'single-course/lessons.php' );
+
+	remove_filter( 'post_class', [ 'Sensei_Lesson', 'single_course_lessons_classes' ] );
 
 } // End course_single_lessons()
 
@@ -1100,8 +1104,11 @@ function the_no_permissions_message( $post_id ) {
  * Output the sensei excerpt
  *
  * @since 1.9.0
+ * @deprecated 3.2.0
  */
 function sensei_the_excerpt( $post_id ) {
+
+	_deprecated_function( __FUNCTION__, '3.2.0' );
 
 	global $post;
 	the_excerpt( $post );

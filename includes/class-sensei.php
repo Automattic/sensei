@@ -92,6 +92,11 @@ class Sensei_Main {
 	public $question;
 
 	/**
+	 * @var Sensei_Messages
+	 */
+	public $messages;
+
+	/**
 	 * @var Sensei_Admin
 	 */
 	public $admin;
@@ -178,11 +183,15 @@ class Sensei_Main {
 	private $id;
 
 	/**
+	 * Shortcode loader.
+	 *
 	 * @var Sensei_Shortcode_Loader
 	 */
 	private $shortcode_loader;
 
 	/**
+	 * View Helper.
+	 *
 	 * @var Sensei_View_Helper
 	 */
 	public $view_helper;
@@ -204,9 +213,16 @@ class Sensei_Main {
 	/**
 	 * Setup wizard.
 	 *
-	 * @var Sensei_Wizard
+	 * @var Sensei_Setup_Wizard
 	 */
 	public $setup_wizard;
+
+	/**
+	 * Blocks.
+	 *
+	 * @var Sensei_Blocks
+	 */
+	public $blocks;
 
 	/**
 	 * Constructor method.
@@ -240,6 +256,15 @@ class Sensei_Main {
 		// load all hooks
 		$this->load_hooks();
 
+		/**
+		 * Fires once all global objects have been set in Sensei.
+		 *
+		 * @hook sensei_loaded
+		 * @since 3.6.0
+		 *
+		 * @param {Sensei_Main} $sensei Sensei object.
+		 */
+		do_action( 'sensei_loaded', $this );
 	} // End __construct()
 
 	/**
@@ -254,7 +279,6 @@ class Sensei_Main {
 		add_action( 'init', array( $this, 'load_localisation' ), 0 );
 
 		$this->initialize_global_objects();
-
 	}
 
 	/**
@@ -340,41 +364,44 @@ class Sensei_Main {
 		// Asset loading.
 		$this->assets = new Sensei_Assets( $this->plugin_url, $this->plugin_path, $this->version );
 
-		// feature flags
+		// Feature flags.
 		$this->feature_flags = new Sensei_Feature_Flags();
 
-		// load the shortcode loader into memory, so as to listen to all for
-		// all shortcodes on the front end
+		// Load the shortcode loader into memory, so as to listen to all for
+		// all shortcodes on the front end.
 		$this->shortcode_loader = new Sensei_Shortcode_Loader();
 
 		// Setup post types.
 		$this->post_types = new Sensei_PostTypes();
 
-		// Lad the updates class
+		// Load the updates class.
 		$this->updates = new Sensei_Updates( $this );
 
-		// Load Course Results Class
+		// Load Course Results Class.
 		$this->course_results = new Sensei_Course_Results();
 
-		// Load the teacher role
+		// Load the teacher role.
 		$this->teacher = new Sensei_Teacher();
 
-		// Add the Course class
+		// Add the Course class.
 		$this->course = $this->post_types->course;
 
-		// Add the lesson class
+		// Add the lesson class.
 		$this->lesson = $this->post_types->lesson;
 
-		// Add the question class
+		// Add the question class.
 		$this->question = $this->post_types->question;
 
-		// Add the quiz class
+		// Add the question class.
+		$this->messages = $this->post_types->messages;
+
+		// Add the quiz class.
 		$this->quiz = $this->post_types->quiz;
 
-		// load the modules class after all plugsin are loaded
+		// Load the modules class after all plugins are loaded.
 		$this->load_modules_class();
 
-		// Load Learner Management Functionality
+		// Load Learner Management Functionality.
 		$this->learners = new Sensei_Learner_Management( $this->main_plugin_file_name );
 
 		$this->view_helper = new Sensei_View_Helper();
@@ -388,11 +415,13 @@ class Sensei_Main {
 		// data will be sent.
 		$this->usage_tracking->schedule_tracking_task();
 
-		Sensei_Blocks::instance()->init();
+		$this->blocks = new Sensei_Blocks( $this );
+
 		Sensei_Learner::instance()->init();
 		Sensei_Course_Enrolment_Manager::instance()->init();
 		$this->enrolment_scheduler = Sensei_Enrolment_Job_Scheduler::instance();
 		$this->enrolment_scheduler->init();
+		Sensei_Data_Port_Manager::instance()->init();
 
 		// Setup Wizard.
 		$this->setup_wizard = Sensei_Setup_Wizard::instance();
@@ -404,6 +433,11 @@ class Sensei_Main {
 
 			// Load Analysis Reports
 			$this->analysis = new Sensei_Analysis( $this->main_plugin_file_name );
+
+			new Sensei_Import();
+			new Sensei_Export();
+
+			new Sensei_Exit_Survey();
 
 			if ( $this->feature_flags->is_enabled( 'rest_api_testharness' ) ) {
 				$this->test_harness = new Sensei_Admin_Rest_Api_Testharness( $this->main_plugin_file_name );
@@ -580,6 +614,7 @@ class Sensei_Main {
 	public function deactivation() {
 		$this->usage_tracking->unschedule_tracking_task();
 		Sensei_Scheduler::instance()->cancel_all_jobs();
+		Sensei_Data_Port_Manager::instance()->cancel_all_jobs();
 	}
 
 	/**
@@ -965,7 +1000,7 @@ class Sensei_Main {
 			return true;
 		}
 
-		if ( isset( $this->settings->settings['access_permission'] ) && ( true == $this->settings->settings['access_permission'] ) ) {
+		if ( sensei_is_login_required() ) {
 			if ( is_user_logged_in() ) {
 				return true;
 			} else {
@@ -1235,6 +1270,11 @@ class Sensei_Main {
 	public function body_class( $classes ) {
 		if ( is_sensei() ) {
 			$classes[] = 'sensei';
+
+			$post_type = get_post_type();
+			if ( ! empty( $post_type ) ) {
+				$classes[] = $post_type;
+			}
 		}
 		return $classes;
 	}

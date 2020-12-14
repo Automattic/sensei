@@ -20,6 +20,14 @@ describe( '<FeatureDescription />', () => {
 		expect( href ).toEqual( link );
 	} );
 
+	it( 'Should render with observation', () => {
+		const { queryByText } = render(
+			<FeatureDescription excerpt="test" observation="Lorem ipsum" />
+		);
+
+		expect( queryByText( /Lorem ipsum/ ) ).toBeTruthy();
+	} );
+
 	it( 'Should log event when clicking learn more link', () => {
 		window.sensei_log_event = jest.fn();
 		const { queryByText } = render(

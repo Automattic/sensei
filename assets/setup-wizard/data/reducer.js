@@ -8,7 +8,8 @@ import {
 	SET_STEP_DATA,
 } from './constants';
 
-import { INSTALLING_STATUS } from '../features/feature-status';
+import { EXTERNAL_STATUS, INSTALLING_STATUS } from '../features/feature-status';
+import { getWccomProductId } from '../helpers/woocommerce-com';
 
 const DEFAULT_STATE = {
 	isFetching: true,
@@ -34,9 +35,9 @@ const DEFAULT_STATE = {
 
 /**
  * @typedef  {Object} Feature
- * @property {string} slug    Feature slug.
- * @property {string} status  Feature status.
- * @property {Object} error   Feature error.
+ * @property {string} slug   Feature slug.
+ * @property {string} status Feature status.
+ * @property {Object} error  Feature error.
  */
 /**
  * Update status pre-installation.
@@ -51,7 +52,9 @@ const updatePreInstallation = ( selected, options ) =>
 		if ( selected.includes( feature.slug ) ) {
 			return {
 				...feature,
-				status: INSTALLING_STATUS,
+				status: getWccomProductId( feature )
+					? EXTERNAL_STATUS
+					: INSTALLING_STATUS,
 				error: null,
 			};
 		}
@@ -61,8 +64,8 @@ const updatePreInstallation = ( selected, options ) =>
 /**
  * Setup wizard reducer.
  *
- * @param {Object}         state  Current state.
- * @param {{type: string}} action Action to update the state.
+ * @param {Object} state    Current state.
+ * @param {{type:  string}} action Action to update the state.
  *
  * @return {Object} State updated.
  */

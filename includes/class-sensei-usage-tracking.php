@@ -26,6 +26,9 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 
 		// Init event logging source filters.
 		add_action( 'init', [ $this, 'init_event_logging_sources' ] );
+
+		// Filters for for events to watch and report.
+		add_action( 'activated_plugin', [ $this, 'log_wccom_plugin_install' ] );
 	}
 
 	/*
@@ -192,6 +195,41 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 				return 'data-import';
 			}
 		);
+	}
+
+
+
+	/**
+	 * Log plugin installation success for WooCommerce.com plugin on activation.
+	 *
+	 * @param string $plugin_file The activated plugin.
+	 */
+	public function log_wccom_plugin_install( $plugin_file ) {
+		$plugin_name = dirname( $plugin_file );
+
+		if ( in_array( $plugin_file, $this->get_wccom_extensions(), true ) ) {
+			sensei_log_event(
+				'plugin_install',
+				[ 'slug' => $plugin_name ]
+			);
+		}
+	}
+
+	/**
+	 * Get the WooCommerce.com plugins files.
+	 *
+	 * @return string[]
+	 */
+	private function get_wccom_extensions() {
+		$wccom_extensions = [];
+
+		foreach ( Sensei()->setup_wizard->get_sensei_extensions() as $extension ) {
+			if ( isset( $extension->wccom_product_id ) ) {
+				$wccom_extensions[] = $extension->plugin_file;
+			}
+		}
+
+		return $wccom_extensions;
 	}
 
 	/**

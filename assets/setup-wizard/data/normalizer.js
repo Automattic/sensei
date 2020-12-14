@@ -6,11 +6,13 @@ import { INSTALLED_STATUS } from '../features/feature-status';
  * Add details to title.
  *
  * @param {Object}        feature
- * @param {string}        feature.title    Feature title.
- * @param {string|number} feature.price    Feature price.
- * @param {string}        [feature.status] Feature status.
+ * @param {string}        feature.product_slug Feature slug.
+ * @param {string}        feature.title        Feature title.
+ * @param {string|number} feature.price        Feature price.
+ * @param {string}        [feature.status]     Feature status.
  */
-const getTitleWithDetails = ( { title, price, status } ) => {
+// eslint-disable-next-line camelcase
+const getTitleWithDetails = ( { product_slug, title, price, status } ) => {
 	let titleComplement;
 
 	if ( status === INSTALLED_STATUS ) {
@@ -21,7 +23,9 @@ const getTitleWithDetails = ( { title, price, status } ) => {
 			: __( 'Free', 'sensei-lms' );
 	}
 
-	return `${ title } — ${ titleComplement }`;
+	return `${ title }${
+		'woocommerce' === product_slug ? '*' : '' // eslint-disable-line camelcase
+	} — ${ titleComplement }`;
 };
 
 /**
@@ -37,6 +41,7 @@ export const normalizeFeaturesData = ( data ) => ( {
 		...feature,
 		slug: feature.product_slug,
 		title: getTitleWithDetails( feature ),
+		rawTitle: feature.title,
 	} ) ),
 } );
 

@@ -8,6 +8,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Global Sensei functions
  */
 
+/**
+ * Determine if the current page is a Sensei LMS page.
+ *
+ * @since 1.5.0
+ *
+ * @return bool True if current page is a Sensei LMS page.
+ */
 function is_sensei() {
 	global $post;
 
@@ -16,21 +23,20 @@ function is_sensei() {
 	$post_types = array( 'lesson', 'course', 'quiz', 'question', 'sensei_message' );
 	$taxonomies = array( 'course-category', 'quiz-type', 'question-type', 'lesson-tag', 'module' );
 
-	if ( is_post_type_archive( $post_types ) || is_singular( $post_types ) || is_tax( $taxonomies ) ) {
-
+	if ( is_post_type_archive( $post_types )
+		|| is_singular( $post_types )
+		|| is_tax( $taxonomies )
+	) {
 		$is_sensei = true;
-
-	}
-
-	if ( is_object( $post ) && ! is_wp_error( $post ) ) {
-
+	} elseif ( is_object( $post ) && ! is_wp_error( $post ) ) {
 		$course_page_id     = intval( Sensei()->settings->settings['course_page'] );
 		$my_courses_page_id = intval( Sensei()->settings->settings['my_course_page'] );
-
-		if ( in_array( $post->ID, array( $course_page_id, $my_courses_page_id ) ) ) {
-
+		if ( in_array( $post->ID, array( $course_page_id, $my_courses_page_id ) )
+			|| Sensei_Utils::is_learner_profile_page()
+			|| Sensei_Utils::is_course_results_page()
+			|| Sensei_Utils::is_teacher_archive_page()
+		) {
 			$is_sensei = true;
-
 		}
 	}
 
@@ -210,6 +216,7 @@ function sensei_do_deprecated_action( $hook_tag, $version, $alternative = '', $a
 
 	if ( has_action( $hook_tag ) ) {
 
+		// translators: Placeholders are the hook tag and the version which it was deprecated, respectively.
 		$error_message = sprintf( __( "SENSEI: The hook '%1\$s', has been deprecated since '%2\$s'.", 'sensei-lms' ), $hook_tag, $version );
 
 		if ( ! empty( $alternative ) ) {
@@ -274,14 +281,48 @@ function sensei_user_login_url() {
  * duplicate of Sensei()->access_settings().
  *
  * @since 1.9.0
+ * @since 3.5.2 Added hook to filter the return.
  * @return bool
  */
 function sensei_is_login_required() {
+	global $post;
+
+	$post_type = get_post_type( $post );
+	$course_id = null;
+
+	switch ( $post_type ) {
+		case 'course':
+			$course_id = $post->ID;
+			break;
+
+		case 'lesson':
+			$course_id = Sensei()->lesson->get_course_id( $post->ID );
+			break;
+
+		case 'quiz':
+			$lesson_id = intval( get_post_meta( $post->ID, '_quiz_lesson', true ) );
+			$course_id = $lesson_id ? Sensei()->lesson->get_course_id( $lesson_id ) : null;
+			break;
+	}
+
+	if ( ! $course_id ) {
+		$course_id = null;
+	}
 
 	$login_required = isset( Sensei()->settings->settings['access_permission'] ) && ( true == Sensei()->settings->settings['access_permission'] );
 
-	return $login_required;
-
+	/**
+	 * Filters the access_permission that says if the user must be logged
+	 * to view the lesson content.
+	 *
+	 * @since 3.5.2
+	 *
+	 * @hook sensei_is_login_required
+	 *
+	 * @param {bool}     $must_be_logged_to_view_lesson True if user need to be logged to see the lesson.
+	 * @param {int|null} $course_id                     Course post ID.
+	 */
+	return apply_filters( 'sensei_is_login_required', $login_required, $course_id );
 }
 
 /**

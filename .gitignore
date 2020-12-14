@@ -8,3 +8,5 @@ hookdocs
 node_modules/*
 tests/images/test-*
 vendor/*
+tests/e2e/screenshots
+/*.zip

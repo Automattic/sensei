@@ -1,8 +1,8 @@
 import { render, fireEvent } from '@testing-library/react';
-import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 
+import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 import QueryStringRouter, { Route } from '../query-string-router';
-import { updateRouteURL } from '../query-string-router/url-functions';
+import { updateQueryString } from '../query-string-router/url-functions';
 import Features from './index';
 import useFeaturesPolling from './use-features-polling';
 
@@ -39,7 +39,7 @@ describe( '<Features />', () => {
 
 	afterEach( () => {
 		// Clear URL param.
-		updateRouteURL( 'step', '' );
+		updateQueryString( 'step', '' );
 
 		delete window.sensei_log_event;
 	} );
@@ -256,6 +256,98 @@ describe( '<Features />', () => {
 			{
 				slug: 'test-1,test-2',
 			}
+		);
+	} );
+
+	it( 'Should auto-select WooCommerce when some feature with `wccom_product_id` is selected', () => {
+		mockStepData( {
+			selected: [],
+			options: [
+				{ slug: 'woocommerce', title: 'WooCommerce' },
+				{ slug: 'need-wc', title: 'Need', wccom_product_id: '123' },
+				{ slug: 'no-need-wc', title: 'No need' },
+			],
+		} );
+
+		const { getByLabelText } = render(
+			<QueryStringRouter paramName="step">
+				<Features />
+			</QueryStringRouter>
+		);
+
+		fireEvent.click( getByLabelText( /No need/ ) );
+		expect( getByLabelText( /WooCommerce/ ).checked ).toBeFalsy();
+
+		fireEvent.click( getByLabelText( /Need/ ) );
+		expect( getByLabelText( /WooCommerce/ ).checked ).toBeTruthy();
+	} );
+
+	it( 'Should not auto-select WooCommerce when it is already installed', () => {
+		mockStepData( {
+			selected: [],
+			options: [
+				{
+					slug: 'woocommerce',
+					title: 'WooCommerce',
+					status: 'installed',
+				},
+				{ slug: 'need-wc', title: 'Need', wccom_product_id: '123' },
+			],
+		} );
+
+		const { getByLabelText } = render(
+			<QueryStringRouter paramName="step">
+				<Features />
+			</QueryStringRouter>
+		);
+
+		fireEvent.click( getByLabelText( /Need/ ) );
+		expect( getByLabelText( /WooCommerce/ ).checked ).toBeFalsy();
+	} );
+
+	it( 'Should open WooCommerce.com cart when selecting paid features', () => {
+		window.open = jest.fn();
+
+		mockStepData( {
+			selected: [],
+			options: [
+				{
+					slug: 'woocommerce',
+					title: 'WooCommerce',
+					status: 'installed',
+				},
+				{ slug: 'wc-1', title: 'WC1', wccom_product_id: '123' },
+				{ slug: 'wc-2', title: 'WC2', wccom_product_id: '456' },
+			],
+			wccom: {
+				'wccom-site': 'http://localhost',
+				'wccom-woo-version': '4.0.0',
+				'wccom-connect-nonce': '0000',
+			},
+		} );
+
+		useFeaturesPolling.mockReturnValue( {
+			selected: [ 'wc-1', 'wc-2' ],
+			options: [
+				{ slug: 'wc-1', title: 'WC1', status: 'external' },
+				{ slug: 'wc-2', title: 'WC2', status: 'external' },
+			],
+		} );
+
+		const { queryByText, getByLabelText } = render(
+			<QueryStringRouter paramName="step">
+				<Features />
+			</QueryStringRouter>
+		);
+
+		fireEvent.click( getByLabelText( 'WC1' ) );
+		fireEvent.click( getByLabelText( 'WC2' ) );
+
+		fireEvent.click( queryByText( 'Continue' ) );
+		fireEvent.click( queryByText( 'Install now' ) );
+
+		expect( window.open ).toHaveBeenCalledWith(
+			'https://woocommerce.com/cart?wccom-replace-with=123%2C456&wccom-site=http%3A%2F%2Flocalhost&wccom-woo-version=4.0.0&wccom-connect-nonce=0000'
 		);
 	} );
 } );

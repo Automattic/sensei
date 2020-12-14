@@ -31,6 +31,17 @@ class Sensei_Course {
 	public $my_courses_page;
 
 	/**
+	 * Course ID being saved, if no resave is needed.
+	 * The resave will be needed when updating a course with
+	 * outline block which needs id sync.
+	 *
+	 * @since 3.6.0
+	 *
+	 * @var int
+	 */
+	private $course_id_updating;
+
+	/**
 	 * @var array The HTML allowed for message boxes.
 	 */
 	public static $allowed_html;
@@ -83,13 +94,14 @@ class Sensei_Course {
 		// Update course completion upon grading of a quiz
 		add_action( 'sensei_user_quiz_grade', array( $this, 'update_status_after_quiz_submission' ), 10, 2 );
 
-		// show the progress bar ont he single course page
-		add_action( 'sensei_single_course_content_inside_before', array( $this, 'the_progress_statement' ), 15 );
-		add_action( 'sensei_single_course_content_inside_before', array( $this, 'the_progress_meter' ), 16 );
-
 		// provide an option to block all emails related to a selected course
 		add_filter( 'sensei_send_emails', array( $this, 'block_notification_emails' ) );
 		add_action( 'save_post', array( $this, 'save_course_notification_meta_box' ) );
+
+		// Log course content counter.
+		add_action( 'save_post_course', [ $this, 'mark_updating_course_id' ], 10, 2 );
+		add_action( 'shutdown', [ $this, 'log_course_update' ] );
+		add_action( 'rest_api_init', [ $this, 'disable_log_course_update' ] );
 
 		// preview lessons on the course content
 		add_action( 'sensei_course_content_inside_after', array( $this, 'the_course_free_lesson_preview' ) );
@@ -128,6 +140,9 @@ class Sensei_Course {
 
 		// Log event on the initial publish for a course.
 		add_action( 'sensei_course_initial_publish', [ $this, 'log_initial_publish_event' ] );
+
+		add_action( 'template_redirect', [ $this, 'setup_single_course_page' ] );
+		add_action( 'sensei_loaded', [ $this, 'add_legacy_course_hooks' ] );
 	}
 
 	/**
@@ -321,6 +336,7 @@ class Sensei_Course {
 			'order'            => 'DESC',
 			'exclude'          => $post->ID,
 			'suppress_filters' => 0,
+			'post_status'      => 'any',
 		);
 		$posts_array = get_posts( $post_args );
 
@@ -1142,32 +1158,42 @@ class Sensei_Course {
 	 * course_lessons function.
 	 *
 	 * @access public
-	 * @param int    $course_id (default: 0)
+	 *
+	 * @param int    $course_id   (default: 0)
 	 * @param string $post_status (default: 'publish')
-	 * @param string $fields (default: 'all'). WP only allows 3 types, but we will limit it to only 'ids' or 'all'
+	 * @param string $fields      (default: 'all'). WP only allows 3 types, but we will limit it to only 'ids' or 'all'
+	 * @param array  $query_args  Base arguments for the WP query.
+	 *
 	 * @return array{ type WP_Post }  $posts_array
 	 */
-	public function course_lessons( $course_id = 0, $post_status = 'publish', $fields = 'all' ) {
+	public function course_lessons( $course_id = 0, $post_status = 'publish', $fields = 'all', $query_args = [] ) {
 
 		if ( is_a( $course_id, 'WP_Post' ) ) {
 			$course_id = $course_id->ID;
 		}
 
-		$post_args     = array(
-			'post_type'        => 'lesson',
-			'posts_per_page'   => -1,
-			'orderby'          => 'date',
-			'order'            => 'ASC',
-			'meta_query'       => array(
-				array(
-					'key'   => '_lesson_course',
-					'value' => intval( $course_id ),
-				),
-			),
-			'post_status'      => $post_status,
-			'suppress_filters' => 0,
+		$query_args = array_merge(
+			$query_args,
+			[
+				'post_type'        => 'lesson',
+				'posts_per_page'   => -1,
+				'orderby'          => 'date',
+				'order'            => 'ASC',
+				'post_status'      => $post_status,
+				'suppress_filters' => 0,
+			]
 		);
-		$query_results = new WP_Query( $post_args );
+
+		if ( ! isset( $query_args['meta_query'] ) ) {
+			$query_args['meta_query'] = [];
+		}
+
+		$query_args['meta_query'][] = [
+			'key'   => '_lesson_course',
+			'value' => intval( $course_id ),
+		];
+
+		$query_results = new WP_Query( $query_args );
 		$lessons       = $query_results->posts;
 
 		// re order the lessons. This could not be done via the OR meta query as there may be lessons
@@ -1199,7 +1225,7 @@ class Sensei_Course {
 		// return the requested fields
 		// runs after the sensei_course_get_lessons filter so the filter always give an array of lesson
 		// objects
-		if ( 'ids' == $fields ) {
+		if ( 'ids' === $fields ) {
 			$lesson_objects = $lessons;
 			$lessons        = array();
 
@@ -1682,7 +1708,7 @@ class Sensei_Course {
 							// Course Categories
 				if ( '' != $category_output ) {
 
-					// translators: Placeholder is comma-separated list of course categories.
+					// translators: Placeholder is a comma-separated list of the Course categories.
 					$complete_html .= '<span class="course-category">' . sprintf( __( 'in %s', 'sensei-lms' ), $category_output ) . '</span>';
 
 				} // End If Statement
@@ -2001,7 +2027,7 @@ class Sensei_Course {
 		$progress_statement = $this->get_progress_statement( $course_id, $user_id );
 		if ( ! empty( $progress_statement ) ) {
 
-			echo '<span class="progress statement course-completion-rate">' . esc_html( $progress_statement ) . '</span>';
+			echo '<div class="progress statement course-completion-rate">' . esc_html( $progress_statement ) . '</div>';
 
 		}
 
@@ -2266,7 +2292,7 @@ class Sensei_Course {
 
 		if ( ! empty( $category_output ) ) {
 			echo '<span class="course-category">' .
-				// translators: Placeholder is a comma-separated list of the course categories.
+				// translators: Placeholder is a comma-separated list of the Course categories.
 				wp_kses_post( sprintf( __( 'in %s', 'sensei-lms' ), $category_output ) ) .
 			'</span>';
 		} // End If Statement
@@ -2277,7 +2303,7 @@ class Sensei_Course {
 
 			$completed    = count( $this->get_completed_lesson_ids( $course->ID, get_current_user_id() ) );
 			$lesson_count = count( $this->course_lessons( $course->ID ) );
-			// translators: Placeholders are the number of lessons completed and the total number of lessons, respectively.
+			// translators: Placeholders are the counts for lessons completed and total lessons, respectively.
 			echo '<span class="course-lesson-progress">' . esc_html( sprintf( __( '%1$d of %2$d lessons completed', 'sensei-lms' ), $completed, $lesson_count ) ) . '</span>';
 		}
 
@@ -2512,12 +2538,16 @@ class Sensei_Course {
 		$sensei_course_loop['counter']++;
 
 		$extra_classes = array();
-		if ( 0 == ( $sensei_course_loop['counter'] - 1 ) % $sensei_course_loop['columns'] || 1 == $sensei_course_loop['columns'] ) {
-			$extra_classes[] = 'first';
-		}
 
-		if ( 0 == $sensei_course_loop['counter'] % $sensei_course_loop['columns'] ) {
-			$extra_classes[] = 'last';
+		// Apply "first" and "last" CSS classes for grid-based layouts.
+		if ( 1 !== $sensei_course_loop['columns'] ) {
+			if ( 0 === ( $sensei_course_loop['counter'] - 1 ) % $sensei_course_loop['columns'] ) {
+				$extra_classes[] = 'first';
+			}
+
+			if ( 0 === $sensei_course_loop['counter'] % $sensei_course_loop['columns'] ) {
+				$extra_classes[] = 'last';
+			}
 		}
 
 		// add the item number to the classes as well.
@@ -2528,13 +2558,14 @@ class Sensei_Course {
 		 * which is called from the course loop content-course.php
 		 *
 		 * @since 1.9.0
+		 * @hook sensei_course_loop_content_class
 		 *
-		 * @param array $extra_classes
-		 * @param WP_Post $loop_current_course
+		 * @param {array} $extra_classes
+		 * @param {WP_Post} $loop_current_course
 		 */
 		return apply_filters( 'sensei_course_loop_content_class', $extra_classes, get_post() );
 
-	}//end get_course_loop_content_class()
+	}
 
 	/**
 	 * Get the number of columns set for Sensei courses
@@ -3257,16 +3288,15 @@ class Sensei_Course {
 			return;
 		}
 
-		$category_slug = get_query_var( 'course-category' );
-		$term          = get_term_by( 'slug', $category_slug, 'course-category' );
+		$term = get_queried_object();
 
 		if ( ! empty( $term ) ) {
 
-			$title = __( 'Category', 'sensei-lms' ) . ' ' . $term->name;
+			$title = __( 'Course Category:', 'sensei-lms' ) . ' ' . $term->name;
 
 		} else {
 
-			$title = 'Course Category';
+			$title = __( 'Course Category', 'sensei-lms' );
 
 		}
 
@@ -3492,10 +3522,217 @@ class Sensei_Course {
 			'module_count'  => count( wp_get_post_terms( $course->ID, 'module' ) ),
 			'lesson_count'  => $this->course_lesson_count( $course->ID ),
 			'product_count' => $product_count,
+			'sample_course' => 'getting-started-with-sensei-lms' === $course->post_name ? 1 : 0,
 		];
 		sensei_log_event( 'course_publish', $event_properties );
 	}
 
+	/**
+	 * Mark updating course id when no resave is needed for id sync.
+	 *
+	 * Hooked into `save_post_course`.
+	 *
+	 * @since 3.6.0
+	 * @access private
+	 *
+	 * @param int      $post_id Post ID.
+	 * @param \WP_Post $post    Post object.
+	 */
+	public function mark_updating_course_id( $post_id, $post ) {
+		if ( 'publish' !== $post->post_status ) {
+			return;
+		}
+
+		$content = $post->post_content;
+
+		if ( has_block( 'sensei-lms/course-outline', $content ) ) {
+			$blocks = parse_blocks( $content );
+
+			if ( ! $this->has_pending_id_sync( $blocks ) ) {
+				$this->course_id_updating = $post_id;
+			}
+		} else {
+			$this->course_id_updating = $post_id;
+		}
+	}
+
+	/**
+	 * Check if blocks has pending id sync.
+	 *
+	 * @since 3.6.0
+	 *
+	 * @param array[] $blocks Blocks array.
+	 *
+	 * @return boolean Whether has block with pending id sync.
+	 */
+	private function has_pending_id_sync( $blocks ) {
+		foreach ( $blocks as $block ) {
+			$is_checkable_block = 'sensei-lms/course-outline-module' === $block['blockName']
+				|| 'sensei-lms/course-outline-lesson' === $block['blockName'];
+
+			if (
+				// Check pending id sync.
+				( $is_checkable_block && empty( $block['attrs']['id'] ) )
+				// Check inner blocks pending id sync.
+				|| (
+					! empty( $block['innerBlocks'] )
+					&& $this->has_pending_id_sync( $block['innerBlocks'] )
+				)
+			) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Log the course update.
+	 *
+	 * Hooked into `shutdown`.
+	 *
+	 * @since 3.6.0
+	 * @access private
+	 */
+	public function log_course_update() {
+		if ( empty( $this->course_id_updating ) ) {
+			return;
+		}
+
+		$course_id = $this->course_id_updating;
+		$post      = get_post( $course_id );
+
+		if ( empty( $post ) ) {
+			return;
+		}
+
+		$content       = $post->post_content;
+		$product_ids   = get_post_meta( $course_id, '_course_woocommerce_product', false );
+		$product_count = empty( $product_ids ) ? 0 : count( array_filter( $product_ids, 'is_numeric' ) );
+
+		$event_properties = [
+			'course_id'                 => $course_id,
+			'has_outline_block'         => has_block( 'sensei-lms/course-outline', $content ) ? 1 : 0,
+			'has_progress_block'        => has_block( 'sensei-lms/course-progress', $content ) ? 1 : 0,
+			'has_take_course_block'     => has_block( 'sensei-lms/button-take-course', $content ) ? 1 : 0,
+			'has_contact_teacher_block' => has_block( 'sensei-lms/button-contact-teacher', $content ) ? 1 : 0,
+			'module_count'              => count( wp_get_post_terms( $course_id, 'module' ) ),
+			'lesson_count'              => $this->course_lesson_count( $course_id ),
+			'product_count'             => $product_count,
+			'sample_course'             => 'getting-started-with-sensei-lms' === $post->post_name ? 1 : 0,
+		];
+
+		sensei_log_event( 'course_update', $event_properties );
+	}
+
+	/**
+	 * Disable log course update when it's a REST request.
+	 *
+	 * Hooked into `rest_api_init`.
+	 *
+	 * @since 3.6.0
+	 * @access private
+	 */
+	public function disable_log_course_update() {
+		remove_action( 'shutdown', [ $this, 'log_course_update' ] );
+	}
+
+	/**
+	 * Setup the single course page.
+	 *
+	 * @access private
+	 */
+	public function setup_single_course_page() {
+		global $post;
+
+		// Remove legacy actions on courses with new blocks.
+		if (
+			$post
+			&& is_singular( 'course' )
+			&& ! $this->is_legacy_course( $post )
+		) {
+			$this->remove_legacy_course_actions();
+		}
+	}
+
+	/**
+	 * Adds legacy course actions.
+	 *
+	 * @param Sensei_Main $sensei Sensei object.
+	 */
+	public function add_legacy_course_hooks( $sensei ) {
+		// Legacy progress bar on the single course page.
+		add_action( 'sensei_single_course_content_inside_before', [ $this, 'the_progress_statement' ], 15 );
+		add_action( 'sensei_single_course_content_inside_before', [ $this, 'the_progress_meter' ], 16 );
+		// Legacy lesson listing.
+		add_action( 'sensei_single_course_content_inside_after', [ __CLASS__, 'the_course_lessons_title' ], 9 );
+		add_action( 'sensei_single_course_content_inside_after', 'course_single_lessons', 10 );
+
+		// Take this course.
+		add_action( 'sensei_single_course_content_inside_before', [ __CLASS__, 'the_course_enrolment_actions' ], 30 );
+
+		// Module listing.
+		add_action( 'sensei_single_course_content_inside_after', [ $sensei->modules, 'load_course_module_content_template' ], 8 );
+
+		// Add message links to courses.
+		add_action( 'sensei_single_course_content_inside_before', [ $sensei->post_types->messages, 'send_message_link' ], 35 );
+
+		// Course prerequisite completion message.
+		add_action( 'sensei_single_course_content_inside_before', array( 'Sensei_Course', 'prerequisite_complete_message' ), 20 );
+
+	}
+
+	/**
+	 * Remove legacy course actions.
+	 */
+	public function remove_legacy_course_actions() {
+		// Legacy lesson listing.
+		remove_action( 'sensei_single_course_content_inside_after', [ __CLASS__, 'the_course_lessons_title' ], 9 );
+		remove_action( 'sensei_single_course_content_inside_after', 'course_single_lessons', 10 );
+
+		// Module listing.
+		remove_action( 'sensei_single_course_content_inside_after', [ Sensei()->modules, 'load_course_module_content_template' ], 8 );
+
+		// Legacy progress bar on the single course page.
+		remove_action( 'sensei_single_course_content_inside_before', [ $this, 'the_progress_statement' ], 15 );
+		remove_action( 'sensei_single_course_content_inside_before', [ $this, 'the_progress_meter' ], 16 );
+
+		// Take this course.
+		remove_action( 'sensei_single_course_content_inside_before', [ __CLASS__, 'the_course_enrolment_actions' ], 30 );
+
+		// Course prerequisite completion message.
+		remove_action( 'sensei_single_course_content_inside_before', array( 'Sensei_Course', 'prerequisite_complete_message' ), 20 );
+
+		// Add message links to courses.
+		remove_action( 'sensei_single_course_content_inside_before', [ Sensei()->post_types->messages, 'send_message_link' ], 35 );
+
+	}
+
+	/**
+	 * Check if a course is a legacy course.
+	 *
+	 * @param int|WP_Post $course Course ID or course object.
+	 *
+	 * @return bool
+	 */
+	public function is_legacy_course( $course ) {
+		$course = get_post( $course );
+
+		$course_blocks = [
+			'sensei-lms/course-outline',
+			'sensei-lms/course-progress',
+			'sensei-lms/button-take-course',
+			'sensei-lms/button-contact-teacher',
+		];
+
+		foreach ( $course_blocks as $block ) {
+			if ( has_block( $block, $course ) ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
 }//end class
 
 /**

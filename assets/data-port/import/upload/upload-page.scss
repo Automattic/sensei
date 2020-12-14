@@ -1,0 +1,49 @@
+.sensei-upload-page {
+	.sensei-upload-file-line {
+		display: flex;
+		list-style-type: none;
+		padding-top: 0;
+		padding-bottom: 0;
+		align-items: baseline;
+		flex-wrap: wrap;
+
+		&__description {
+			flex-basis: 10rem;
+		}
+
+		&__info {
+			display: inline-flex;
+			align-self: center;
+		}
+
+		&__delete-button-wrapper {
+			flex-shrink: 0;
+			display: inline-flex;
+			align-items: center;
+			overflow: hidden;
+			width: 30px;
+
+			.components-button,
+			.components-button:disabled:hover {
+				color: $gray-30;
+				width: 24px;
+			}
+
+			.woocommerce-spinner {
+				width: 20px;
+				height: 20px;
+				overflow: hidden;
+			}
+		}
+
+		.components-form-file-upload {
+			flex: 0 0 120px;
+
+			.components-button {
+				padding: 6px 14px;
+				margin: 10px 0;
+				border-radius: 3px;
+			}
+		}
+	}
+}

@@ -21,6 +21,11 @@
 		.sensei-setup-wizard__learn-more {
 			white-space: nowrap;
 		}
+
+		.sensei-setup-wizard__feature-observation {
+			display: block;
+			font-style: italic;
+		}
 	}
 
 	&__header {
@@ -58,7 +63,6 @@
 		padding-right: 25px;
 		text-align: center;
 		font-size: 14px;
-		line-height: 36px;
 		font-weight: 500;
 		align-items: center;
 	}
@@ -205,9 +209,27 @@
 		}
 	}
 
+	&__modal-footer {
+		position: sticky;
+		bottom: 0;
+		padding: 16px 0;
+		margin-bottom: -24px;
+		background: #fff;
+		border-top: 1px solid #e2e4e7;
+	}
+
 	&__features-confirmation-modal {
 		width: 520px;
 		max-width: 100%;
+
+		@media (max-height: 500px) {
+			.components-modal__header, .sensei-setup-wizard__modal-footer {
+				position: static;
+			}
+		}
+		.woocommerce-list__item:last-child {
+			border-bottom: 0;
+		}
 
 		.components-modal__header {
 			padding: 25px 0;
@@ -217,6 +239,8 @@
 			.components-modal__header-heading {
 				font-size: 20px;
 			}
+
+
 		}
 
 		.woocommerce-list {
@@ -303,9 +327,17 @@
 		.woocommerce-list__item-after {
 
 			.components-button {
-				width: 160px;
+				width: 205px;
 				margin-left: 10px;
 				justify-content: center;
+			}
+
+			.sensei-setup-wizard__error-message {
+				width: 205px;
+				margin-left: 10px;
+				padding: 6px;
+				color: red;
+				font-size: 12px;
 			}
 		}
 	}

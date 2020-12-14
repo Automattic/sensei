@@ -1,0 +1,20 @@
+$dark-gray: #1a1d20;
+
+$outline: '.wp-block-sensei-lms-course-outline';
+$spacing: 16px;
+
+@import 'course-block/course-block';
+@import 'module-block/module-block';
+@import 'lesson-block/lesson-block';
+
+.sensei-collapsible__content {
+	opacity: 1;
+	overflow: hidden;
+
+	transition: max-height 350ms ease-in-out, opacity 350ms ease-in-out;
+
+	&.collapsed {
+		opacity: 0;
+		max-height: 0;
+	}
+}
