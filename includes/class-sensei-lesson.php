@@ -2234,10 +2234,10 @@ class Sensei_Lesson {
 		}
 
 		// Make sure other sensei columns stay directly behind the new columns.
-		$other_sensei_culumns = [
+		$other_sensei_columns = [
 			'taxonomy-module',
 		];
-		foreach ( $other_sensei_culumns as $column_key ) {
+		foreach ( $other_sensei_columns as $column_key ) {
 			if ( isset( $defaults[ $column_key ] ) ) {
 				$new_columns[ $column_key ] = $defaults[ $column_key ];
 			}
@@ -2269,6 +2269,7 @@ class Sensei_Lesson {
 			'lesson-course',
 			'lesson-prerequisite',
 			'date',
+			'taxonomy-module',
 		];
 
 		if ( ! isset( $screen->id ) || 'edit-lesson' !== $screen->id ) {
