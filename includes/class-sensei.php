@@ -358,6 +358,8 @@ class Sensei_Main {
 	 * @since 1.9.0
 	 */
 	public function initialize_global_objects() {
+		$this->define_tables();
+
 		// Setup settings.
 		$this->settings = new Sensei_Settings();
 
@@ -510,6 +512,95 @@ class Sensei_Main {
 	}
 
 	/**
+	 * Register custom tables within $wpdb object.
+	 */
+	private function define_tables() {
+		global $wpdb;
+
+		// List of tables without prefixes.
+		$tables = array(
+			'sensei_lms_progress' => 'sensei_lms_progress',
+		);
+
+		foreach ( $tables as $name => $table ) {
+			$wpdb->$name    = $wpdb->prefix . $table;
+			$wpdb->tables[] = $table;
+		}
+	}
+
+	/**
+	 * Make updates to Sensei tables.
+	 */
+	private function update_database_tables() {
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+
+		dbDelta( self::get_schema() );
+	}
+
+	/**
+	 * Get Table schema.
+	 *
+	 * Changing indexes may cause duplicate index notices in logs due to https://core.trac.wordpress.org/ticket/34870 but dropping
+	 * indexes first causes too much load on some servers/larger DB.
+	 *
+	 * @return string
+	 */
+	private static function get_schema() {
+		global $wpdb;
+
+		$collate = '';
+
+		if ( $wpdb->has_cap( 'collation' ) ) {
+			$collate = $wpdb->get_charset_collate();
+		}
+
+		return "
+CREATE TABLE `{$wpdb->prefix}sensei_lms_progress` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `parent_post_id` bigint(20) unsigned DEFAULT NULL,
+  `post_id` bigint(20) unsigned NOT NULL,
+  `user_id` bigint(20) unsigned NOT NULL,
+  `type` varchar(20) NOT NULL DEFAULT '',
+  `status` varchar(50) NOT NULL DEFAULT '',
+  `data` longtext,
+  `date_created` datetime NOT NULL,
+  `date_modified` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `status` (`status`)
+) $collate;
+		";
+	}
+
+	/**
+	 * Return a list of Sensei LMS tables. Used to make sure all Sensei tables are dropped when uninstalling the plugin
+	 * in a single site or multi site environment.
+	 *
+	 * @return array WC tables.
+	 */
+	public static function get_tables() {
+		global $wpdb;
+
+		$tables = array(
+			"{$wpdb->prefix}sensei_lms_progress",
+		);
+
+		return $tables;
+	}
+
+	/**
+	 * Drop Sensei LMS tables.
+	 */
+	public static function drop_tables() {
+		global $wpdb;
+
+		$tables = self::get_tables();
+
+		foreach ( $tables as $table ) {
+			$wpdb->query( "DROP TABLE IF EXISTS {$table}" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		}
+	}
+
+	/**
 	 * Run Sensei automatic data updates. This has been unused for many versions and should be considered destructive.
 	 *
 	 * @deprecated 3.0.0
@@ -653,6 +744,9 @@ class Sensei_Main {
 		if ( $current_version && ! $is_new_install && ! $is_upgrade ) {
 			return;
 		}
+
+		// Ensure database tables are up-to-date.
+		$this->update_database_tables();
 
 		// Mark site as having enrolment data from legacy instances.
 		if (
