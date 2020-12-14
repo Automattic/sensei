@@ -26,6 +26,7 @@ class Sensei_Course_Block_Patterns {
 	 */
 	public function register_patterns() {
 
+		$this->register_sensei_pattern_category();
 		$this->register_course_media_pattern();
 		$this->register_course_cover_pattern();
 
@@ -38,9 +39,11 @@ class Sensei_Course_Block_Patterns {
 		register_block_pattern(
 			'sensei-lms/course-media',
 			array(
-				'title'       => __( 'Course media', 'sensei-lms' ),
-				'description' => _x( 'Course layout with an image and text header.', 'Block pattern description', 'sensei-lms' ),
-				'content'     => '<!-- wp:media-text -->
+				'title'         => __( 'Course layout with media', 'sensei-lms' ),
+				'description'   => __( 'Course layout with an image and text header.', 'sensei-lms' ),
+				'categories'    => [ 'sensei-lms' ],
+				'viewportWidth' => 800,
+				'content'       => '<!-- wp:media-text -->
 <div class="wp-block-media-text alignwide is-stacked-on-mobile"><figure class="wp-block-media-text__media"></figure><div class="wp-block-media-text__content"><!-- wp:paragraph -->
 <p>Course introduction.</p>
 <!-- /wp:paragraph -->
@@ -75,9 +78,11 @@ class Sensei_Course_Block_Patterns {
 		register_block_pattern(
 			'sensei-lms/course-cover',
 			array(
-				'title'       => __( 'Course with Cover', 'sensei-lms' ),
-				'description' => _x( 'Course layout with a cover for introduction.', 'Block pattern description', 'sensei-lms' ),
-				'content'     => '<!-- wp:cover {"url":"' . $cover_image_url . '","contentPosition":"center center","align":"full"} -->
+				'title'         => __( 'Course layout with cover', 'sensei-lms' ),
+				'description'   => __( 'Course layout with a cover for introduction.', 'sensei-lms' ),
+				'categories'    => [ 'sensei-lms' ],
+				'viewportWidth' => 800,
+				'content'       => '<!-- wp:cover {"url":"' . $cover_image_url . '","contentPosition":"center center","align":"full"} -->
 <div class="wp-block-cover alignfull has-background-dim is-position-center-center" style="background-image:url(' . $cover_image_url . ')"><div class="wp-block-cover__inner-container"><!-- wp:paragraph -->
 <p>Course Introduction</p>
 <!-- /wp:paragraph -->
@@ -100,6 +105,13 @@ class Sensei_Course_Block_Patterns {
 <!-- /wp:sensei-lms/button-contact-teacher -->',
 			)
 		);
+	}
+
+	/**
+	 * Register Sensei LMS block pattern category.
+	 */
+	public function register_sensei_pattern_category() {
+		register_block_pattern_category( 'sensei-lms', [ 'label' => __( 'Sensei LMS', 'sensei-lms' ) ] );
 	}
 
 }
