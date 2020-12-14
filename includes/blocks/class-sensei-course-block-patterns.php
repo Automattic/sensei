@@ -18,13 +18,19 @@ class Sensei_Course_Block_Patterns {
 	 * Sensei_Course_Block_Patterns constructor.
 	 */
 	public function __construct() {
-		add_action( 'init', [ $this, 'register_patterns' ] );
+		add_action( 'current_screen', [ $this, 'register_patterns' ] );
 	}
 
 	/**
 	 * Register course block patterns.
 	 */
 	public function register_patterns() {
+
+		$current_screen = get_current_screen();
+
+		if ( 'course' !== $current_screen->post_type ) {
+			return;
+		}
 
 		$this->register_sensei_pattern_category();
 		$this->register_course_media_pattern();
