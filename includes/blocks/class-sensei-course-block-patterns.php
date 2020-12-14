@@ -42,6 +42,9 @@ class Sensei_Course_Block_Patterns {
 	 * Register block pattern for course layout with media.
 	 */
 	public function register_course_media_pattern() {
+
+		$sample_img = 'https://images.unsplash.com/photo-1443948308135-d57fc66de368?&auto=format&fit=crop&w=1275&q=80';
+
 		register_block_pattern(
 			'sensei-lms/course-media',
 			array(
@@ -49,8 +52,8 @@ class Sensei_Course_Block_Patterns {
 				'description'   => __( 'Course layout with an image and text header.', 'sensei-lms' ),
 				'categories'    => [ 'sensei-lms' ],
 				'viewportWidth' => 800,
-				'content'       => '<!-- wp:media-text -->
-<div class="wp-block-media-text alignwide is-stacked-on-mobile"><figure class="wp-block-media-text__media"></figure><div class="wp-block-media-text__content"><!-- wp:paragraph -->
+				'content'       => '<!-- wp:media-text { "mediaLink": "' . $sample_img . '", "mediaType":"image"} -->
+<div class="wp-block-media-text alignwide is-stacked-on-mobile"><figure class="wp-block-media-text__media"><img src="' . $sample_img . '"  alt="" /></figure><div class="wp-block-media-text__content"><!-- wp:paragraph -->
 <p>Course introduction.</p>
 <!-- /wp:paragraph -->
 
@@ -79,7 +82,7 @@ class Sensei_Course_Block_Patterns {
 	 */
 	public function register_course_cover_pattern() {
 
-		$cover_image_url = 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?&auto=format&fit=crop&w=2978&q=80';
+		$sample_img = 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?&auto=format&fit=crop&w=2978&q=80';
 
 		register_block_pattern(
 			'sensei-lms/course-cover',
@@ -88,8 +91,8 @@ class Sensei_Course_Block_Patterns {
 				'description'   => __( 'Course layout with a cover for introduction.', 'sensei-lms' ),
 				'categories'    => [ 'sensei-lms' ],
 				'viewportWidth' => 800,
-				'content'       => '<!-- wp:cover {"url":"' . $cover_image_url . '","contentPosition":"center center","align":"full"} -->
-<div class="wp-block-cover alignfull has-background-dim is-position-center-center" style="background-image:url(' . $cover_image_url . ')"><div class="wp-block-cover__inner-container"><!-- wp:paragraph -->
+				'content'       => '<!-- wp:cover {"url":"' . $sample_img . '","contentPosition":"center center","align":"full"} -->
+<div class="wp-block-cover alignfull has-background-dim is-position-center-center" style="background-image:url(' . $sample_img . ')"><div class="wp-block-cover__inner-container"><!-- wp:paragraph -->
 <p>Course Introduction</p>
 <!-- /wp:paragraph -->
 
