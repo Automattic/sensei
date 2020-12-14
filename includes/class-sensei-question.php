@@ -113,7 +113,8 @@ class Sensei_Question {
 
 		$columns = get_column_headers( $screen );
 		foreach ( $columns as $column => $column_value ) {
-			if ( ! in_array( $column, $default_question_columns, true ) ) {
+			if ( ! in_array( $column, $default_question_columns, true )
+			&& 'language_' !== substr( $column, 0, 9 ) ) {
 				$hidden_columns[] = $column;
 			}
 		}

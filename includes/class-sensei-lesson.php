@@ -2278,7 +2278,8 @@ class Sensei_Lesson {
 
 		$columns = get_column_headers( $screen );
 		foreach ( $columns as $column => $column_value ) {
-			if ( ! in_array( $column, $default_lesson_columns, true ) ) {
+			if ( ! in_array( $column, $default_lesson_columns, true )
+			&& 'language_' !== substr( $column, 0, 9 ) ) {
 				$hidden_columns[] = $column;
 			}
 		}
