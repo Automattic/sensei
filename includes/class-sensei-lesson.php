@@ -46,7 +46,6 @@ class Sensei_Lesson {
 			// Custom Write Panel Columns
 			add_filter( 'manage_edit-lesson_columns', array( $this, 'add_column_headings' ), 20, 1 );
 			add_action( 'manage_posts_custom_column', array( $this, 'add_column_data' ), 10, 2 );
-			add_filter( 'default_hidden_columns', array( $this, 'set_default_visible_columns' ), 10, 2 );
 
 			// Add/Update question
 			add_action( 'wp_ajax_lesson_update_question', array( $this, 'lesson_update_question' ) );
@@ -2251,40 +2250,6 @@ class Sensei_Lesson {
 		}
 
 		return $new_columns;
-	}
-
-	/**
-	 * Hide all columns by default, leaving only a default set.
-	 *
-	 * @access private
-	 * @since  3.5.4
-	 * @param  string[]  $hidden_columns Array of IDs of columns hidden by default.
-	 * @param  WP_Screen $screen         WP_Screen object of the current screen.
-	 * @return string[]                  Updated array of IDs of columns hidden by default.
-	 */
-	public function set_default_visible_columns( $hidden_columns, $screen ) {
-		$default_lesson_columns = [
-			'cb',
-			'title',
-			'lesson-course',
-			'lesson-prerequisite',
-			'date',
-			'taxonomy-module',
-		];
-
-		if ( ! isset( $screen->id ) || 'edit-lesson' !== $screen->id ) {
-			return $hidden_columns;
-		}
-
-		$columns = get_column_headers( $screen );
-		foreach ( $columns as $column => $column_value ) {
-			if ( ! in_array( $column, $default_lesson_columns, true )
-			&& 'language_' !== substr( $column, 0, 9 ) ) {
-				$hidden_columns[] = $column;
-			}
-		}
-
-		return $hidden_columns;
 	}
 
 	/**

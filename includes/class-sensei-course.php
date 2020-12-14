@@ -66,7 +66,6 @@ class Sensei_Course {
 			// Custom Write Panel Columns
 			add_filter( 'manage_course_posts_columns', array( $this, 'add_column_headings' ), 20, 1 );
 			add_action( 'manage_course_posts_custom_column', array( $this, 'add_column_data' ), 10, 2 );
-			add_filter( 'default_hidden_columns', array( $this, 'set_default_visible_columns' ), 10, 2 );
 
 			// Enqueue scripts.
 			add_action( 'admin_enqueue_scripts', array( $this, 'register_admin_scripts' ) );
@@ -719,42 +718,6 @@ class Sensei_Course {
 		}
 
 		return $new_columns;
-	}
-
-	/**
-	 * Hide all columns by default, leaving only a default list.
-	 *
-	 * @access private
-	 * @since  3.5.4
-	 * @param  string[]  $hidden_columns Array of IDs of columns hidden by default.
-	 * @param  WP_Screen $screen         WP_Screen object of the current screen.
-	 * @return string[]                  Updated array of IDs of columns hidden by default.
-	 */
-	public function set_default_visible_columns( $hidden_columns, $screen ) {
-		$default_course_columns = [
-			'cb',
-			'title',
-			'course-prerequisite',
-			'course-category',
-			'date',
-			'taxonomy-module',
-			'teacher',
-			'module_order',
-		];
-
-		if ( ! isset( $screen->id ) || 'edit-course' !== $screen->id ) {
-			return $hidden_columns;
-		}
-
-		$columns = get_column_headers( $screen );
-		foreach ( $columns as $column => $column_value ) {
-			if ( ! in_array( $column, $default_course_columns, true )
-			&& 'language_' !== substr( $column, 0, 9 ) ) {
-				$hidden_columns[] = $column;
-			}
-		}
-
-		return $hidden_columns;
 	}
 
 	/**
