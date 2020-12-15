@@ -107,8 +107,8 @@ abstract class Sensei_Progress {
 		$this->parent_post_id = $parent_post_id;
 		$this->status         = $status;
 		$this->data           = $data;
-		$this->date_created   = isset( $date_created ) ? $date_created : current_datetime();
-		$this->date_modified  = isset( $date_modified ) ? $date_modified : current_datetime();
+		$this->date_created   = isset( $date_created ) ? $date_created : new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
+		$this->date_modified  = isset( $date_modified ) ? $date_modified : new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$this->data_store     = $data_store;
 		$this->data_store_id  = $data_store_id;
 	}
@@ -172,8 +172,8 @@ abstract class Sensei_Progress {
 	/**
 	 * Set the data store record storage reference.
 	 *
-	 * @param Sensei_Progress_Data_Store_Interface $data_store Data store object.
-	 * @param int                                  $id         Unique identifier in data store.
+	 * @param Sensei_Progress_Data_Store_Interface|null $data_store Data store object.
+	 * @param int|null                                  $id         Unique identifier in data store.
 	 */
 	public function set_storage_ref( Sensei_Progress_Data_Store_Interface $data_store, $id ) {
 		$this->data_store = $data_store;
