@@ -31,72 +31,89 @@ class Sensei_Utils {
 	 *
 	 * @access public
 	 * @since  1.0.0
+	 * @deprecated [STORAGE_MILESTONE]
+	 *
 	 * @param  array $args (default: array())
 	 * @return bool | int
 	 */
 	public static function sensei_log_activity( $args = array() ) {
-		global $wpdb;
+		_deprecated_function( __METHOD__, '[STORAGE_MILESTONE]', '@todo' );
 
-		// Args, minimum data required for WP
-		$data = array(
-			'comment_post_ID'      => intval( $args['post_id'] ),
-			'comment_author'       => '', // Not needed
-			'comment_author_email' => '', // Not needed
-			'comment_author_url'   => '', // Not needed
-			'comment_content'      => ! empty( $args['data'] ) ? esc_html( $args['data'] ) : '',
-			'comment_type'         => esc_attr( $args['type'] ),
-			'user_id'              => intval( $args['user_id'] ),
-			'comment_approved'     => ! empty( $args['status'] ) ? esc_html( $args['status'] ) : 'log',
-		);
-		// Allow extra data
-		if ( ! empty( $args['username'] ) ) {
-			$data['comment_author'] = sanitize_user( $args['username'] );
+		$legacy_type_map = [
+			'sensei_lesson_status' => 'lesson',
+			'sensei_course_status' => 'course',
+		];
+
+		if ( isset( $legacy_type_map[ $args['type'] ] ) ) {
+			$args['type'] = $legacy_type_map[ $args['type'] ];
 		}
-		if ( ! empty( $args['user_email'] ) ) {
-			$data['comment_author_email'] = sanitize_email( $args['user_email'] );
+
+		if (
+			! in_array( $args['type'], [ 'lesson', 'course' ], true )
+			|| ! isset( $args['post_id'] )
+			|| ! isset( $args['user_id'] )
+		) {
+			return false;
 		}
-		if ( ! empty( $args['user_url'] ) ) {
-			$data['comment_author_url'] = esc_url( $args['user_url'] );
-		}
-		if ( ! empty( $args['parent'] ) ) {
-			$data['comment_parent'] = $args['parent'];
-		}
-		// Sanity check
+
 		if ( empty( $args['user_id'] ) ) {
 			_deprecated_argument( __FUNCTION__, '1.0', esc_html__( 'At no point should user_id be equal to 0.', 'sensei-lms' ) );
 			return false;
 		}
 
-		do_action( 'sensei_log_activity_before', $args, $data );
+		if (
+			! empty( $args['username'] )
+			|| ! empty( $args['user_email'] )
+			|| ! empty( $args['user_url'] )
+			|| ! empty( $args['parent'] )
+		) {
+			_deprecated_argument( __FUNCTION__, '[STORAGE_MILESTONE]', esc_html__( 'Attributes username, user_email, user_url, and parent are not supported by Sensei_Utils::sensei_log_activity', 'sensei-lms' ) );
+		}
 
-		// Custom Logic
-		// Check if comment exists first
-		$comment_id = $wpdb->get_var( $wpdb->prepare( "SELECT comment_ID FROM $wpdb->comments WHERE comment_post_ID = %d AND user_id = %d AND comment_type = %s ", $args['post_id'], $args['user_id'], $args['type'] ) );
-		if ( ! $comment_id ) {
-			// Add the comment
-			$comment_id = wp_insert_comment( $data );
+		$progress_manager = Sensei_Progress_Manager::instance();
+		$parent_post_id   = null;
+		$course_id        = $progress_manager->get_course_id( (int) $args['post_id'] );
+		if ( (int) $args['post_id'] !== $course_id ) {
+			$parent_post_id = $course_id;
+		}
 
-		} elseif ( isset( $args['action'] ) && 'update' == $args['action'] ) {
-			// Update the comment if an update was requested
-			$data['comment_ID'] = $comment_id;
-			// By default update the timestamp of the comment
-			if ( empty( $args['keep_time'] ) ) {
-				$data['comment_date'] = current_time( 'mysql' );
-			}
-			wp_update_comment( $data );
-		} // End If Statement
+		$progress = $progress_manager->get_progress( $args['type'], (int) $args['user_id'], (int) $args['post_id'], $parent_post_id );
+		$progress->set_status( esc_html( $args['status'] ) );
 
-		do_action( 'sensei_log_activity_after', $args, $data, $comment_id );
+		$legacy_data = [
+			'comment_post_ID'      => intval( $args['post_id'] ),
+			'comment_author'       => '', // Not needed.
+			'comment_author_email' => '', // Not needed.
+			'comment_author_url'   => '', // Not needed.
+			'comment_content'      => ! empty( $args['data'] ) ? esc_html( $args['data'] ) : '',
+			'comment_type'         => esc_attr( $args['type'] ),
+			'user_id'              => intval( $args['user_id'] ),
+			'comment_approved'     => ! empty( $args['status'] ) ? esc_html( $args['status'] ) : 'log',
+		];
 
-		Sensei()->flush_comment_counts_cache( $args['post_id'] );
+		do_action_deprecated( 'sensei_log_activity_before', [ $args, $legacy_data ], '[STORAGE_MILESTONE]' );
+
+		$comment_id  = null;
+		$save_result = $progress_manager->save( $progress );
+		if ( ! $save_result ) {
+			return false;
+		}
+
+		if ( $progress_manager->is_data_store( 'comment', $progress->get_data_store() ) ) {
+			$comment_id = $progress->get_data_store_id();
+		} else {
+			$comment_id = 0;
+			_doing_it_wrong( __METHOD__, '[STORAGE_MILESTONE]', esc_html__( 'New progress storage used in deprecated method. This could cause problems if setting comment meta afterwards.', 'sensei-lms' ) );
+		}
+
+		do_action_deprecated( 'sensei_log_activity_after', [ $args, $legacy_data, $comment_id ], '[STORAGE_MILESTONE]' );
 
 		if ( 0 < $comment_id ) {
-			// Return the ID so that it can be used for meta data storage
 			return $comment_id;
-		} else {
-			return false;
-		} // End If Statement
-	} // End sensei_log_activity()
+		}
+
+		return false;
+	}
 
 
 	/**
@@ -143,12 +160,6 @@ class Sensei_Utils {
 			$args['status'] = 'any';
 		}
 
-		// Take into account WP < 4.1 will automatically add ' comment_approved = 1 OR comment_approved = 0 '
-		if ( ( is_array( $args['status'] ) || 'any' == $args['status'] ) && version_compare( $wp_version, '4.1', '<' ) ) {
-			add_filter( 'comments_clauses', array( __CLASS__, 'comment_any_status_filter' ) );
-		}
-
-		// Get the comments
 		/**
 		 * This filter runs inside Sensei_Utils::sensei_check_for_activity
 		 *
@@ -171,7 +182,7 @@ class Sensei_Utils {
 		} // End If Statement
 		// Count comments
 		return intval( $comments ); // This is the count, check the return from WP_Comment_Query
-	} // End sensei_check_for_activity()
+	}
 
 
 	/**
