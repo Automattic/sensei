@@ -14,21 +14,26 @@ import { useDispatch, useSelect } from '@wordpress/data';
  */
 export const ModuleStatus = ( { clientId } ) => {
 	const { setModuleStatus } = useDispatch( COURSE_STATUS_STORE );
-	const status = useSelect(
-		( select ) => select( COURSE_STATUS_STORE ).getModuleStatus( clientId ),
+
+	const counts = useSelect(
+		( select ) =>
+			select( COURSE_STATUS_STORE ).getModuleLessonCounts( clientId ),
 		[ clientId ]
 	);
 
-	const lessonIds = useSelect(
-		( select ) =>
-			select( 'core/block-editor' ).getClientIdsOfDescendants( [
-				clientId,
-			] ),
-		[ clientId ]
-	);
+	let status = Status.IN_PROGRESS;
+
+	if ( 0 === counts.completedLessonsCount ) {
+		status = Status.NOT_STARTED;
+	} else if (
+		counts.totalLessonsCount === counts.completedLessonsCount &&
+		counts.totalLessonsCount > 0
+	) {
+		status = Status.COMPLETED;
+	}
 
 	const options =
-		lessonIds.length > 1
+		counts.totalLessonsCount > 1
 			? [ Status.NOT_STARTED, Status.IN_PROGRESS, Status.COMPLETED ]
 			: [ Status.NOT_STARTED, Status.COMPLETED ];
 
@@ -58,6 +63,7 @@ export const ModuleStatus = ( { clientId } ) => {
 					<StatusControl
 						options={ options }
 						status={ status }
+						disabled={ 0 === counts.totalLessonsCount }
 						setStatus={ ( newStatus ) => {
 							setModuleStatus( clientId, newStatus );
 						} }

@@ -6,7 +6,7 @@
 	position: relative;
 
 
-	&, .entry-content &, .entry .entry-content & {
+	&, .entry-content &, .sensei .entry-content &:not(.button) {
 		font-size: 1em;
 
 		font-family: inherit;
@@ -45,6 +45,18 @@
 		}
 	}
 
+	&__badge {
+		.wp-block-sensei-lms-course-outline-lesson & {
+			flex: 0 0 auto;
+			font-size: 0.6em;
+			color: inherit;
+			text-transform: uppercase;
+			padding: 5px 10px;
+			border: solid 1px currentColor;
+			border-radius: 3px;
+		}
+	}
+
 	&__status {
 		display: inline-block;
 		width: 24px;
@@ -74,4 +86,9 @@
 		top: 0;
 		bottom: 0;
 	}
+}
+
+.block-editor-block-toolbar__slot {
+	// Prevents text toolbar items shrinking to avoid other buttons overlapping.
+	flex-shrink: 0;
 }

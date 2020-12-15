@@ -1,15 +1,35 @@
 import { apiFetch, controls as dataControls } from '@wordpress/data-controls';
 import { dispatch, registerStore, select, subscribe } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
-import { createReducerFromActionMap } from '../../shared/data/store-helpers';
 import { isEqual } from 'lodash';
 
+import { createReducerFromActionMap } from '../../shared/data/store-helpers';
+import {
+	syncStructureToBlocks,
+	extractStructure,
+	getFirstBlockByName,
+} from './data';
+
 const DEFAULT_STATE = {
-	structure: null,
-	editor: [],
-	isSaving: false,
-	isEditorDirty: false,
-	hasChanges: false,
+	serverStructure: null,
+	isSavingStructure: false,
+	hasStructureUpdate: false,
+};
+
+const getEditorOutlineBlock = () =>
+	getFirstBlockByName(
+		'sensei-lms/course-outline',
+		select( 'core/block-editor' ).getBlocks()
+	);
+
+const getEditorOutlineStructure = () => {
+	const outlineBlock = getEditorOutlineBlock();
+
+	if ( ! outlineBlock ) {
+		return null;
+	}
+
+	return extractStructure( outlineBlock.innerBlocks );
 };
 
 const actions = {
@@ -23,21 +43,23 @@ const actions = {
 		} );
 		yield actions.setStructure( result );
 	},
-	/**
-	 * Persist editor's course structure to the REST API
-	 */
-	*save() {
-		const { getEditorStructure } = select( COURSE_STORE );
 
-		yield { type: 'SAVING', isSaving: true };
+	/**
+	 * Persist editor's course structure to the REST API.
+	 *
+	 * @param {Array} editorStructure
+	 */
+	*saveStructure( editorStructure ) {
+		yield { type: 'SAVING', isSavingStructure: true };
 		const courseId = yield select( 'core/editor' ).getCurrentPostId();
+
 		try {
 			const result = yield apiFetch( {
 				path: `/sensei-internal/v1/course-structure/${ courseId }`,
 				method: 'POST',
-				data: { structure: yield getEditorStructure() },
+				data: { structure: editorStructure },
 			} );
-			yield actions.setStructure( result );
+			yield actions.setStructure( result, editorStructure );
 		} catch ( error ) {
 			const errorMessage = sprintf(
 				/* translators: Error message. */
@@ -52,68 +74,93 @@ const actions = {
 			} );
 		}
 
-		yield { type: 'SAVING', isSaving: false };
+		yield { type: 'SAVING', isSavingStructure: false };
 	},
-	setStructure: ( structure ) => ( { type: 'SET_SERVER', structure } ),
-	setEditorStructure: ( structure ) => {
-		return { type: 'SET_EDITOR', structure };
+
+	/**
+	 * Set fetched structure.
+	 *
+	 * @param {Array} serverStructure
+	 * @param {Array} editorStructure
+	 */
+	*setStructure( serverStructure, editorStructure = null ) {
+		yield actions.setServerStructure( serverStructure, editorStructure );
+		yield actions.updateOutlineBlock( serverStructure );
 	},
-	setEditorDirty: ( isEditorDirty ) => {
-		return { type: 'SET_DIRTY', isEditorDirty };
+
+	/**
+	 * Keep last fetched server state for comparison.
+	 *
+	 * @param {Array} serverStructure
+	 * @param {Array} editorStructure
+	 */
+	setServerStructure: ( serverStructure, editorStructure = null ) => ( {
+		type: 'SET_SERVER_STRUCTURE',
+		serverStructure,
+		hasStructureUpdate:
+			editorStructure && ! isEqual( serverStructure, editorStructure ),
+	} ),
+
+	/**
+	 * Update outline block.
+	 *
+	 * @param {Array} structure
+	 */
+	*updateOutlineBlock( structure ) {
+		const { clientId = null } = getEditorOutlineBlock();
+
+		if ( ! clientId || ! structure || 0 === structure.length ) {
+			return;
+		}
+
+		const blocks = yield select( 'core/block-editor' ).getBlocks(
+			clientId
+		);
+		yield dispatch( 'core/block-editor' ).replaceInnerBlocks(
+			clientId,
+			syncStructureToBlocks( structure, blocks ),
+			false
+		);
 	},
+
+	/**
+	 * Clear structure update.
+	 */
+	clearStructureUpdate: () => ( { type: 'CLEAR_STRUCTURE_UPDATE' } ),
 };
 
 /**
  * Course structure reducers.
  */
 const reducers = {
-	SET_SERVER: ( { structure }, state ) => {
-		const hasStructureUpdate =
-			state.structure && ! isEqual( structure, state.editor );
+	SET_SERVER_STRUCTURE: (
+		{ serverStructure, hasStructureUpdate },
+		state
+	) => {
 		return {
 			...state,
-			structure,
-			editor: structure,
-			isEditorDirty: false,
+			serverStructure,
 			hasStructureUpdate,
 		};
 	},
-	SET_EDITOR: ( { structure }, state ) => {
-		const isEditorDirty = ! isEqual( structure, state.structure );
-		return {
-			...state,
-			editor: structure,
-			isEditorDirty,
-			hasStructureUpdate: state.hasStructureUpdate && isEditorDirty,
-		};
-	},
-	SAVING: ( { isSaving }, state ) => ( {
+	SAVING: ( { isSavingStructure }, state ) => ( {
 		...state,
-		isSaving,
+		isSavingStructure,
 	} ),
-	SET_DIRTY: ( { isEditorDirty }, state ) => ( {
+	CLEAR_STRUCTURE_UPDATE: ( action, state ) => ( {
 		...state,
-		isEditorDirty,
+		hasStructureUpdate: false,
 	} ),
 	DEFAULT: ( action, state ) => state,
 };
 
 /**
- * Course structure resolvers.
- */
-const resolvers = {
-	getStructure: () => actions.fetchCourseStructure(),
-};
-
-/**
- * Course structure  selectors
+ * Course structure selectors.
  */
 const selectors = {
-	getStructure: ( { structure } ) => structure,
-	getEditorStructure: ( { editor } ) => editor,
-	shouldSave: ( { isEditorDirty, isSaving } ) => ! isSaving && isEditorDirty,
-	shouldResavePost: ( { isEditorDirty, isSaving, hasStructureUpdate } ) =>
-		! isSaving && isEditorDirty && hasStructureUpdate,
+	shouldResavePost: ( { hasStructureUpdate } ) => hasStructureUpdate,
+	getIsSavingStructure: ( { isSavingStructure } ) => isSavingStructure,
+	getServerStructure: ( { serverStructure } ) => serverStructure,
 };
 
 export const COURSE_STORE = 'sensei/course-structure';
@@ -126,22 +173,30 @@ const registerCourseStructureStore = () => {
 	let postSaving = false;
 
 	const startSave = () => {
-		const shouldSave = select( COURSE_STORE ).shouldSave();
+		const serverStructure = select( COURSE_STORE ).getServerStructure();
+		const editorStructure = getEditorOutlineStructure();
+
+		if (
+			! editorStructure ||
+			isEqual( serverStructure, editorStructure )
+		) {
+			return;
+		}
 
 		// Clear error notices.
 		dispatch( 'core/notices' ).removeNotice( 'course-outline-save-error' );
-
-		if ( shouldSave ) {
-			dispatch( COURSE_STORE ).save();
-		}
+		dispatch( COURSE_STORE ).saveStructure( editorStructure );
 	};
 
 	const finishSave = () => {
-		// Save the post again if the blocks were updated.
 		const shouldResavePost = select( COURSE_STORE ).shouldResavePost();
-		if ( shouldResavePost ) {
-			dispatch( 'core/editor' ).savePost();
+
+		if ( ! shouldResavePost ) {
+			return;
 		}
+
+		dispatch( 'core/editor' ).savePost();
+		dispatch( COURSE_STORE ).clearStructureUpdate();
 	};
 
 	subscribe( function saveStructureOnPostSave() {
@@ -151,14 +206,14 @@ const registerCourseStructureStore = () => {
 
 		const isSavingPost =
 			editor.isSavingPost() && ! editor.isAutosavingPost();
+		const isSavingStructure = select( COURSE_STORE ).getIsSavingStructure();
 
-		// First update where post is saving.
 		if ( ! postSaving && isSavingPost ) {
+			// First update where post is saving.
 			postSaving = true;
 			startSave();
-
-			// First update where post is no longer saving.
-		} else if ( postSaving && ! isSavingPost ) {
+		} else if ( postSaving && ! isSavingPost && ! isSavingStructure ) {
+			// First update where post is no longer saving and editor is sync.
 			postSaving = false;
 			finishSave();
 		}
@@ -168,7 +223,6 @@ const registerCourseStructureStore = () => {
 		reducer: createReducerFromActionMap( reducers, DEFAULT_STATE ),
 		actions,
 		selectors,
-		resolvers,
 		controls: { ...dataControls },
 	} );
 };

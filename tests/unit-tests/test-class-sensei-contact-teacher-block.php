@@ -7,21 +7,59 @@
  */
 class Sensei_Block_Contact_Teacher_Test extends WP_UnitTestCase {
 
+	use Sensei_Course_Enrolment_Manual_Test_Helpers;
+	use Sensei_Test_Login_Helpers;
 
 	/**
-	 * Test the course structure is used for rendering.
+	 * Contact Teacher Block.
+	 *
+	 * @var Sensei_Block_Contact_Teacher
 	 */
-	public function testHrefAttributeAdded() {
+	private $block;
+
+	public function setUp() {
+		parent::setUp();
+
 		$GLOBALS['post']        = (object) [
 			'ID'        => 0,
 			'post_type' => 'course',
 		];
 		$_SERVER['REQUEST_URI'] = '/course/test/';
-		$block                  = new Sensei_Block_Contact_Teacher();
+		$this->block            = new Sensei_Block_Contact_Teacher();
 
-		$output = $block->render_contact_teacher_block( [], '<div><a class="wp-block-button__link">Contact teacher</a></div>' );
+		$this->login_as_student();
+	}
 
-		$this->assertDiscardWhitespace( '<div><a href="/course/test/?contact=course" class="wp-block-button__link">Contact teacher</a></div>', $output );
+	/**
+	 * Test the saved block content is used for the button, with link added to open the form.
+	 */
+	public function testHrefAttributeAdded() {
+
+		$output = $this->block->render_contact_teacher_block( [], '<div><a class="wp-block-button__link">Contact teacher</a></div>' );
+
+		$this->assertRegExp( '|<a href="/course/test/\?contact=course#private_message".*>Contact teacher</a>|', $output );
+	}
+
+	/**
+	 * Test success message is displayed after submitting.
+	 */
+	public function testSuccessMessageDisplayed() {
+		$_GET['send'] = 'complete';
+
+		$output = $this->block->render_contact_teacher_block( [], '<div><a class="wp-block-button__link">Contact teacher</a></div>' );
+
+		$this->assertContains( 'Your private message has been sent.', $output );
+	}
+
+	/**
+	 * Test a private message form is present.
+	 */
+	public function testMessageForm() {
+
+		$output = $this->block->render_contact_teacher_block( [], '<div><a class="wp-block-button__link">Contact teacher</a></div>' );
+
+		$this->assertRegExp( '|<form.*<input.* name="sensei_message_teacher_nonce" .*</form>|ms', $output );
+		$this->assertRegExp( '|<form.*<textarea.* name="contact_message" .*</form>|ms', $output );
 	}
 
 }

@@ -25,10 +25,28 @@
     "customMainColor": {
       "type": "string"
     },
+    "defaultMainColor": {
+      "type": "string"
+    },
     "textColor": {
       "type": "string"
     },
     "customTextColor": {
+      "type": "string"
+    },
+    "defaultTextColor": {
+      "type": "string"
+    },
+    "borderColor": {
+      "type": "string"
+    },
+    "customBorderColor": {
+      "type": "string"
+    },
+    "borderColorValue": {
+      "type": "string"
+    },
+    "defaultBorderColor": {
       "type": "string"
     },
     "className": {
@@ -36,6 +54,9 @@
     },
     "customClassName": {
       "type": "string"
+    },
+    "borderedSelected": {
+      "type": "boolean"
     }
   }
 }

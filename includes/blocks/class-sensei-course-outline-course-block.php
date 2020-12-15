@@ -58,22 +58,29 @@ class Sensei_Course_Outline_Course_Block {
 		$class_name = Sensei_Block_Helpers::block_class_with_default_style( $attributes );
 		$css        = Sensei_Block_Helpers::build_styles( $attributes );
 
+		$notice = '';
+
+		if ( ! empty( $attributes['preview_drafts'] ) ) {
+			$notice = '<div class="sensei-message info">' . esc_html__( 'One or more lessons in this course are not published. Unpublished lessons and empty modules are only displayed in preview mode and will not be displayed to learners.', 'sensei-lms' ) . '</div>';
+		}
+
 		$icons = $this->render_svg_icon_library();
 
 		return '
 			' . ( ! empty( $blocks ) ? $icons : '' ) . '
-			<section ' . Sensei_Block_Helpers::render_style_attributes( [ 'wp-block-sensei-lms-course-outline', $class_name ], $css ) . '>
+			' . $notice . '
+			<section ' . Sensei_Block_Helpers::render_style_attributes( [ 'wp-block-sensei-lms-course-outline', 'sensei-block-wrapper', $class_name ], $css ) . '>
 				' .
 			implode(
 				'',
 				array_map(
 					function( $block ) use ( $post_id, $attributes ) {
 						if ( 'module' === $block['type'] ) {
-							return Sensei()->blocks->course_outline->module->render_module_block( $block, $post_id, $attributes );
+							return Sensei()->blocks->course->outline->module->render_module_block( $block, $post_id, $attributes );
 						}
 
 						if ( 'lesson' === $block['type'] ) {
-							return Sensei()->blocks->course_outline->lesson->render_lesson_block( $block );
+							return Sensei()->blocks->course->outline->lesson->render_lesson_block( $block, $post_id );
 						}
 					},
 					$blocks

@@ -1,18 +1,17 @@
 import { InnerBlocks } from '@wordpress/block-editor';
-import { useSelect, withSelect, dispatch } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
-import { createContext, useEffect } from '@wordpress/element';
+import { createContext, useEffect, useRef } from '@wordpress/element';
 
 import { CourseOutlinePlaceholder } from './placeholder';
 import { COURSE_STORE } from '../store';
 import { useBlocksCreator } from '../use-block-creator';
 import { OutlineBlockSettings } from './settings';
-import { __ } from '@wordpress/i18n';
-import {
-	withColorSettings,
-	withDefaultBlockStyle,
-} from '../../../shared/blocks/settings';
+import { withDefaultBlockStyle } from '../../../shared/blocks/settings';
 import { COURSE_STATUS_STORE } from '../status-store';
+import { getCourseInnerBlocks } from '../get-course-inner-blocks';
+import { getActiveStyleClass, applyStyleClass } from '../apply-style-class';
+import useToggleLegacyMetaboxes from '../../use-toggle-legacy-metaboxes';
 
 /**
  * A React context which contains the attributes and the setAttributes callback of the Outline block.
@@ -20,11 +19,12 @@ import { COURSE_STATUS_STORE } from '../status-store';
 export const OutlineAttributesContext = createContext();
 
 /**
- * A hook to update the status store when a lesson is added or removed.
+ * A hook to update the status store when a lesson is removed.
  *
- * @param {string} clientId The outline block id.
+ * @param {string}  clientId  The outline block id.
+ * @param {boolean} isPreview Whether the block is currently in preview mode.
  */
-const useUpdateLessonCount = function ( clientId ) {
+const useSynchronizeLessonsOnUpdate = function ( clientId, isPreview ) {
 	const outlineDescendants = useSelect(
 		( select ) => {
 			return select( 'core/block-editor' ).getClientIdsOfDescendants( [
@@ -34,19 +34,52 @@ const useUpdateLessonCount = function ( clientId ) {
 		[ clientId ]
 	);
 
-	const lessonCount = useSelect( ( select ) => {
-		return select( 'core/block-editor' ).getGlobalBlockCount(
-			'sensei-lms/course-outline-lesson'
-		);
-	} );
+	const { stopTrackingRemovedLessons } = useDispatch( COURSE_STATUS_STORE );
 
 	useEffect( () => {
-		dispatch( COURSE_STATUS_STORE ).refreshStructure(
-			clientId,
-			lessonCount,
-			outlineDescendants
-		);
-	}, [ clientId, lessonCount, outlineDescendants ] );
+		if ( ! isPreview ) {
+			stopTrackingRemovedLessons( outlineDescendants );
+		}
+	}, [
+		clientId,
+		outlineDescendants,
+		isPreview,
+		stopTrackingRemovedLessons,
+	] );
+};
+
+const useApplyStyleToModules = ( clientId, className, isPreview ) => {
+	const oldOutlineClass = useRef( null );
+	const outlineStyles = useSelect(
+		( select ) =>
+			select( 'core/blocks' ).getBlockStyles(
+				'sensei-lms/course-outline'
+			),
+		[]
+	);
+
+	const newOutlineClass = getActiveStyleClass( outlineStyles, className );
+
+	useEffect( () => {
+		if ( isPreview ) {
+			return;
+		}
+
+		if ( newOutlineClass && oldOutlineClass.current !== newOutlineClass ) {
+			if ( ! oldOutlineClass.current ) {
+				oldOutlineClass.current = newOutlineClass;
+				return;
+			}
+
+			oldOutlineClass.current = newOutlineClass;
+			getCourseInnerBlocks(
+				clientId,
+				'sensei-lms/course-outline-module'
+			).forEach( ( module ) =>
+				applyStyleClass( module.clientId, newOutlineClass )
+			);
+		}
+	}, [ clientId, isPreview, newOutlineClass, oldOutlineClass ] );
 };
 
 /**
@@ -55,44 +88,51 @@ const useUpdateLessonCount = function ( clientId ) {
  * @param {Object}   props               Component props.
  * @param {string}   props.clientId      Block client ID.
  * @param {string}   props.className     Custom class name.
- * @param {Object[]} props.structure     Course module and lesson blocks.
  * @param {Object}   props.attributes    Block attributes.
  * @param {Function} props.setAttributes Block setAttributes callback.
- * @param {Object}   props.borderColor   Border color.
  */
 const EditCourseOutlineBlock = ( {
 	clientId,
 	className,
-	structure,
 	attributes,
 	setAttributes,
-	borderColor,
 } ) => {
-	// Toggle legacy metaboxes.
-	useEffect( () => {
-		if ( attributes.isPreview ) return;
-		window.sensei_toggleLegacyMetaboxes( false );
+	useToggleLegacyMetaboxes( { ignoreToggle: attributes.isPreview } );
 
-		return () => {
-			window.sensei_toggleLegacyMetaboxes( true );
-		};
-	}, [ attributes.isPreview ] );
+	const { fetchCourseStructure } = useDispatch( COURSE_STORE );
+	const { updateBlockAttributes } = useDispatch( 'core/block-editor' );
+
+	useEffect( () => {
+		if ( ! attributes.isPreview ) {
+			fetchCourseStructure();
+		}
+	}, [ attributes.isPreview, fetchCourseStructure ] );
 
 	const { setBlocks } = useBlocksCreator( clientId );
 
 	const isEmpty = useSelect(
 		( select ) =>
 			! select( 'core/block-editor' ).getBlocks( clientId ).length,
-		[ clientId, structure ]
+		[ clientId ]
 	);
 
-	useEffect( () => {
-		if ( structure?.length && ! attributes.isPreview ) {
-			setBlocks( structure );
-		}
-	}, [ structure, setBlocks, attributes.isPreview ] );
+	useSynchronizeLessonsOnUpdate( clientId, attributes.isPreview );
+	useApplyStyleToModules( clientId, className, attributes.isPreview );
 
-	useUpdateLessonCount( clientId );
+	const applyBorder = ( newValue ) => {
+		const modules = getCourseInnerBlocks(
+			clientId,
+			'sensei-lms/course-outline-module'
+		);
+
+		modules.forEach( ( module ) => {
+			updateBlockAttributes( module.clientId, {
+				borderedSelected: newValue,
+			} );
+		} );
+
+		setAttributes( { moduleBorder: newValue } );
+	};
 
 	if ( isEmpty ) {
 		return (
@@ -108,6 +148,7 @@ const EditCourseOutlineBlock = ( {
 				value={ {
 					outlineAttributes: attributes,
 					outlineSetAttributes: setAttributes,
+					outlineClassName: className,
 				} }
 			>
 				<OutlineBlockSettings
@@ -115,12 +156,11 @@ const EditCourseOutlineBlock = ( {
 					setCollapsibleModules={ ( value ) =>
 						setAttributes( { collapsibleModules: value } )
 					}
+					moduleBorder={ attributes.moduleBorder }
+					setModuleBorder={ applyBorder }
 				/>
 
-				<section
-					className={ className }
-					style={ { borderColor: borderColor.color } }
-				>
+				<section className={ className }>
 					<InnerBlocks
 						allowedBlocks={ [
 							'sensei-lms/course-outline-module',
@@ -133,17 +173,4 @@ const EditCourseOutlineBlock = ( {
 	);
 };
 
-const selectors = ( select ) => ( {
-	structure: select( COURSE_STORE ).getStructure(),
-} );
-
-export default compose(
-	withSelect( selectors ),
-	withColorSettings( {
-		borderColor: {
-			style: 'border-color',
-			label: __( 'Border color', 'sensei-lms' ),
-		},
-	} ),
-	withDefaultBlockStyle()
-)( EditCourseOutlineBlock );
+export default compose( withDefaultBlockStyle() )( EditCourseOutlineBlock );

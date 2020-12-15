@@ -3,8 +3,7 @@ import {
 	ExternalLink,
 	FontSizePicker,
 	PanelBody,
-	ToolbarButton,
-	ToolbarGroup,
+	Toolbar,
 } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
@@ -21,12 +20,13 @@ import { Status, StatusControl } from '../status-control';
  * @param {Function} props.attributes          The block attributes.
  * @param {number}   props.attributes.id       The lesson id.
  * @param {string}   props.attributes.fontSize The lesson block font size.
+ * @param {string}   props.attributes.title    The lesson title.
  */
 export const LessonBlockSettings = ( {
 	previewStatus,
 	setPreviewStatus,
 	setAttributes,
-	attributes: { id, fontSize },
+	attributes: { id, fontSize, title },
 } ) => {
 	const { fontSizes } = useSelect( ( select ) =>
 		select( 'core/block-editor' ).getSettings()
@@ -73,14 +73,15 @@ export const LessonBlockSettings = ( {
 						status={ previewStatus }
 						setStatus={ setPreviewStatus }
 						options={ [ Status.NOT_STARTED, Status.COMPLETED ] }
+						disabled={ ! title }
 					/>
 				</PanelBody>
 			</InspectorControls>
 			<BlockControls>
 				{ id && (
-					<ToolbarGroup>
-						<ToolbarButton>{ editLessonLink }</ToolbarButton>
-					</ToolbarGroup>
+					<Toolbar className="components-button">
+						{ editLessonLink }
+					</Toolbar>
 				) }
 			</BlockControls>
 		</>

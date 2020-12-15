@@ -287,6 +287,34 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test getting course structure with preview lesson.
+	 */
+	public function testGetPreviewLesson() {
+		$course_id = $this->factory->course->create();
+		$lessons   = $this->factory->lesson->create_many( 2 );
+
+		$expected_structure = [
+			[
+				'type'    => 'lesson',
+				'id'      => $lessons[0],
+				'preview' => false,
+			],
+			[
+				'type'    => 'lesson',
+				'id'      => $lessons[1],
+				'preview' => true,
+			],
+		];
+
+		$this->saveStructure( $course_id, $expected_structure );
+
+		$course_structure = Sensei_Course_Structure::instance( $course_id );
+		$structure        = $course_structure->get( 'view' );
+
+		$this->assertExpectedStructure( $expected_structure, $structure );
+	}
+
+	/**
 	 * Make sure new lessons are created when no ID is passed.
 	 */
 	public function testSaveNewLessons() {
@@ -1432,6 +1460,10 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 				add_post_meta( $item['id'], $order_meta_key, count( $lesson_order ) + $order_lesson_adjust );
 				add_post_meta( $item['id'], '_lesson_course', $course_id );
 				$lesson_order[] = $item['id'];
+
+				if ( isset( $item['preview'] ) && true === $item['preview'] ) {
+					add_post_meta( $item['id'], '_lesson_preview', 'preview' );
+				}
 
 				if ( $module_parent ) {
 					wp_set_object_terms( $item['id'], $module_parent, 'module' );

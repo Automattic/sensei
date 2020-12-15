@@ -1080,6 +1080,7 @@ class Sensei_Core_Modules {
 
 			$html = '';
 
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- No need to unslash or sanitize in this case.
 			if ( isset( $_GET['ordered'] ) && $_GET['ordered'] ) {
 				$html .= '<div class="updated fade">' . "\n";
 				$html .= '<p>' . esc_html__( 'The module order has been saved for this course.', 'sensei-lms' ) . '</p>' . "\n";

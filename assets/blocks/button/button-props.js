@@ -23,7 +23,7 @@ export function getBorderRadiusProps( { attributes: { borderRadius } } ) {
 /**
  * Class and style attributes for the button.
  *
- * @param {{attributes, tagName}} props Block properties.
+ * @param {{attributes}} props Block properties.
  * @return {{className, style}} Output HTML attributes.
  */
 export function getButtonProps( props ) {
@@ -42,7 +42,6 @@ export function getButtonProps( props ) {
 			...borderProps.style,
 			...colorProps.style,
 		},
-		tagName: props.tagName,
 	};
 }
 
@@ -60,7 +59,8 @@ export function getButtonWrapperProps( { className, attributes: { align } } ) {
 		className: classnames(
 			className,
 			'wp-block-sensei-button',
-			`has-text-align-${ align || 'full' }`
+			'wp-block-button',
+			`has-text-align-${ align || 'left' }`
 		),
 	};
 }

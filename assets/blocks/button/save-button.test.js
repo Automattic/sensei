@@ -1,22 +1,22 @@
 import { render } from '@testing-library/react';
-import { saveButtonBlock } from './save-button';
+import { SaveButtonBlock } from './save-button';
 
-describe( 'saveButtonBlock', () => {
+describe( 'SaveButtonBlock', () => {
 	it( 'sets wrapper class and default alignment', () => {
 		const { container } = render(
-			saveButtonBlock( {
+			SaveButtonBlock( {
 				attributes: { text: 'Button' },
 			} )
 		);
 
 		const { classList } = container.firstChild;
-		expect( classList ).toContain( 'has-text-align-full' );
+		expect( classList ).toContain( 'has-text-align-left' );
 		expect( classList ).toContain( 'wp-block-sensei-button' );
 	} );
 
 	it( 'sets wrapper alignment from attribute', () => {
 		const { container } = render(
-			saveButtonBlock( {
+			SaveButtonBlock( {
 				attributes: { text: 'Button', align: 'center' },
 			} )
 		);
@@ -27,7 +27,7 @@ describe( 'saveButtonBlock', () => {
 
 	it( 'renders content as tagName', () => {
 		const { container } = render(
-			saveButtonBlock( {
+			SaveButtonBlock( {
 				tagName: 'button',
 				attributes: { text: 'Button' },
 			} )

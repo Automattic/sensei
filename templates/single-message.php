@@ -7,7 +7,7 @@
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     1.12.0
+ * @version     3.6.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,42 +16,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 get_sensei_header();
 the_post();
-?>
 
-<article <?php post_class(); ?> >
+/**
+ * Action inside the single message template before the content
+ *
+ * @param integer $message_id
+ *
+ * @hooked Sensei_Messages::the_title                 - 20
+ * @hooked Sensei_Messages::the_message_sent_by_title - 40
+ * @since  1.9.0
+ */
+do_action( 'sensei_single_message_content_inside_before', get_the_ID() );
 
-	<?php
-	/**
-	 * Action inside the single message template before the content
-	 *
-	 * @since 1.9.0
-	 *
-	 * @param integer $message_id
-	 *
-	 * @hooked Sensei_Messages::the_title                 - 20
-	 * @hooked Sensei_Messages::the_message_sent_by_title - 40
-	 */
-	do_action( 'sensei_single_message_content_inside_before', get_the_ID() );
-	?>
+the_content();
 
-	<section class="entry">
+/**
+ * Action inside the single message template after the content
+ *
+ * @param integer $message_id
+ *
+ * @since 1.9.0
+ */
+do_action( 'sensei_single_message_content_inside_after', get_the_ID() );
 
-		<?php the_content(); ?>
-
-	</section>
-
-	<?php
-
-	/**
-	 * action inside the single message template after the content
-	 *
-	 * @since 1.9.0
-	 *
-	 * @param integer $message_id
-	 */
-	do_action( 'sensei_single_message_content_inside_after', get_the_ID() );
-
-	?>
-</article><!-- .post -->
-
-<?php get_sensei_footer(); ?>
+get_sensei_footer();
