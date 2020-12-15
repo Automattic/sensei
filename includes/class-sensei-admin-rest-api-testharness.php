@@ -3,7 +3,7 @@
 /**
  * REST API Test Harness
  *
- * @deprecated 3.6.0
+ * @deprecated 3.7.0
  */
 class Sensei_Admin_Rest_Api_Testharness {
 
