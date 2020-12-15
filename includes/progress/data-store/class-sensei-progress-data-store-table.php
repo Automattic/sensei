@@ -18,7 +18,7 @@ class Sensei_Progress_Data_Store_Table implements Sensei_Progress_Data_Store_Int
 	 *
 	 * @param array $args Arguments used in query.
 	 *
-	 * @return Sensei_Progress_Data_Results|false
+	 * @return Sensei_Progress_Data_Results
 	 */
 	public function query( $args = [] ) {
 		global $wpdb;
@@ -54,7 +54,20 @@ class Sensei_Progress_Data_Store_Table implements Sensei_Progress_Data_Store_Int
 			$where[] = $this->where_helper( 'status', $args['status'] );
 		}
 
-		$query = "SELECT * FROM {$wpdb->sensei_lms_progress} WHERE " . implode( ' AND ', $where );
+		$fields = '*';
+		if ( ! empty( $args['count'] ) ) {
+			$fields = 'COUNT(*)';
+		}
+
+		$query = "SELECT {$fields} FROM {$wpdb->sensei_lms_progress} WHERE " . implode( ' AND ', $where );
+
+		if ( ! empty( $args['count'] ) ) {
+			return new Sensei_Progress_Data_Results(
+				$args,
+				[],
+				(int) $wpdb->get_var( $query )
+			);
+		}
 
 		if ( ! empty( $args['number'] ) ) {
 			if ( ! isset( $args['offset'] ) ) {
@@ -76,7 +89,6 @@ class Sensei_Progress_Data_Store_Table implements Sensei_Progress_Data_Store_Int
 		}
 
 		return new Sensei_Progress_Data_Results(
-			$this,
 			$args,
 			$results,
 			$total_number

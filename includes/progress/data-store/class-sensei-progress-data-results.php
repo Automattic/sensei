@@ -13,12 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Data store results.
  */
 class Sensei_Progress_Data_Results {
-	/**
-	 * Data store that queried results.
-	 *
-	 * @var Sensei_Progress_Data_Store_Interface
-	 */
-	private $data_store;
 
 	/**
 	 * Arguments used for query.
@@ -44,30 +38,18 @@ class Sensei_Progress_Data_Results {
 	/**
 	 * Sensei_Progress_Data_Results constructor.
 	 *
-	 * @param Sensei_Progress_Data_Store_Interface $data_store
-	 * @param array                                $args
-	 * @param Sensei_Progress[]                    $results
-	 * @param int                                  $total_found
+	 * @param array             $args
+	 * @param Sensei_Progress[] $results
+	 * @param int               $total_found
 	 */
 	public function __construct(
-		Sensei_Progress_Data_Store_Interface $data_store,
 		$args,
 		$results,
 		$total_found
 	) {
-		$this->data_store  = $data_store;
 		$this->args        = $args;
 		$this->results     = $results;
 		$this->total_found = $total_found;
-	}
-
-	/**
-	 * Get the data store object that produced these results.
-	 *
-	 * @return Sensei_Progress_Data_Store_Interface
-	 */
-	public function get_data_store() {
-		return $this->data_store;
 	}
 
 	/**
@@ -80,7 +62,7 @@ class Sensei_Progress_Data_Results {
 	}
 
 	/**
-	 * Get the results.
+	 * Get the results. Note: If this was just a `count` query, only the `total_found` will be populated.
 	 *
 	 * @return Sensei_Progress[]
 	 */
@@ -95,5 +77,19 @@ class Sensei_Progress_Data_Results {
 	 */
 	public function get_total_found() {
 		return $this->total_found;
+	}
+
+	/**
+	 * Merge another data store's results.
+	 *
+	 * @param Sensei_Progress_Data_Results $results
+	 *
+	 * @return $this
+	 */
+	public function merge( Sensei_Progress_Data_Results $results ) {
+		$this->results     = array_merge( $this->results, $results->get_results() );
+		$this->total_found = $this->total_found + $results->get_total_found();
+
+		return $this;
 	}
 }

@@ -38,14 +38,12 @@ class Sensei_Progress_Data_Store_Hybrid implements Sensei_Progress_Data_Store_In
 	 * @return Sensei_Progress_Data_Results
 	 */
 	public function query( $args = [] ) {
-		if ( isset( $args['number'] ) && 1 === $args['number'] ) {
+		if ( isset( $args['number'] ) && 1 === (int) $args['number'] ) {
 			// If we're fetching just a single record, try the table first.
 			$db_table_query = $this->data_stores['table']->query( $args );
 			if ( $db_table_query->get_total_found() > 0 ) {
 				return $db_table_query;
 			}
-
-			return $this->data_stores['comments']->query( $args );
 		}
 
 		// While the course is migrating, return other queries from the comments table.

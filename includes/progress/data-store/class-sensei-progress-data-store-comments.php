@@ -32,6 +32,14 @@ class Sensei_Progress_Data_Store_Comments implements Sensei_Progress_Data_Store_
 		$query        = new WP_Comment_Query();
 		$comments_raw = $query->query( $args );
 
+		if ( ! empty( $args['count'] ) ) {
+			return new Sensei_Progress_Data_Results(
+				$args,
+				[],
+				(int) $comments_raw
+			);
+		}
+
 		/**
 		 * It runs while getting the comments for the given request.
 		 *
@@ -46,7 +54,6 @@ class Sensei_Progress_Data_Store_Comments implements Sensei_Progress_Data_Store_
 		}
 
 		return new Sensei_Progress_Data_Results(
-			$this,
 			$args,
 			$records,
 			$comments_raw->found_comments
@@ -66,6 +73,11 @@ class Sensei_Progress_Data_Store_Comments implements Sensei_Progress_Data_Store_
 		$lazy_data = function() use ( $comment ) {
 			$data = [];
 			foreach ( get_comment_meta( $comment->comment_ID ) as $meta_key => $values ) {
+				if ( 'start' === $meta_key ) {
+					$start_date = DateTimeImmutable::createFromFormat( 'Y-m-d H:i:s', $values[0], wp_timezone() );
+					$values[0]  = $start_date->setTimezone( new DateTimeZone( 'UTC' ) )->format( 'Y-m-d H:i:s' );
+				}
+
 				$data[ $meta_key ] = $values[0];
 			}
 
@@ -119,7 +131,12 @@ class Sensei_Progress_Data_Store_Comments implements Sensei_Progress_Data_Store_
 			return false;
 		}
 
-		return wp_delete_comment( $comment_id, true );
+		$result = wp_delete_comment( $comment_id, true );
+
+		$progress->set_storage_ref( null, null );
+		Sensei()->flush_comment_counts_cache( $progress->get_post_id() );
+
+		return $result;
 	}
 
 	/**
@@ -157,9 +174,16 @@ class Sensei_Progress_Data_Store_Comments implements Sensei_Progress_Data_Store_
 			}
 
 			$progress->set_storage_ref( $this, (int) $comment_id );
+			Sensei()->flush_comment_counts_cache( $progress->get_post_id() );
 		}
 
 		foreach ( $progress->get_data() as $key => $value ) {
+			// In comment meta, this has been stored using the WordPress timezone. Going forward, we'll standardize this to the UTC timezone.
+			if ( 'start' === $key ) {
+				$start_date = DateTimeImmutable::createFromFormat( 'Y-m-d H:i:s', $value, new DateTimeZone( 'UTC' ) );
+				$value      = $start_date->setTimezone( wp_timezone() )->format( 'Y-m-d H:i:s' );
+			}
+
 			update_comment_meta( $progress->get_data_store_id(), $key, $value );
 		}
 
