@@ -13,7 +13,6 @@ const files = [
 	'js/admin/lesson-quick-edit.js',
 	'js/admin/message-menu-fix.js',
 	'js/admin/ordering.js',
-	'js/admin/testharness.js',
 	'js/frontend/course-archive.js',
 	'js/grading-general.js',
 	'js/image-selectors.js',
