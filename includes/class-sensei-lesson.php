@@ -44,7 +44,7 @@ class Sensei_Lesson {
 			add_action( 'save_post', array( $this, 'add_lesson_to_course_order' ) );
 
 			// Custom Write Panel Columns
-			add_filter( 'manage_edit-lesson_columns', array( $this, 'add_column_headings' ), 10, 1 );
+			add_filter( 'manage_edit-lesson_columns', array( $this, 'add_column_headings' ), 20, 1 );
 			add_action( 'manage_posts_custom_column', array( $this, 'add_column_data' ), 10, 2 );
 
 			// Add/Update question
@@ -2214,15 +2214,16 @@ class Sensei_Lesson {
 	} // End enqueue_styles()
 
 	/**
-	 * Add column headings to the "lesson" post list screen.
+	 * Add column headings to the "lesson" post list screen,
+	 * while moving the existing ones to the end.
 	 *
-	 * @access public
+	 * @access private
 	 * @since  1.0.0
-	 * @param  array $defaults
-	 * @return array $new_columns
+	 * @param  array $defaults  Array of column header labels keyed by column ID.
+	 * @return array            Updated array of column header labels keyed by column ID.
 	 */
 	public function add_column_headings( $defaults ) {
-		$new_columns                        = array();
+		$new_columns                        = [];
 		$new_columns['cb']                  = '<input type="checkbox" />';
 		$new_columns['title']               = _x( 'Lesson Title', 'column name', 'sensei-lms' );
 		$new_columns['lesson-course']       = _x( 'Course', 'column name', 'sensei-lms' );
@@ -2230,8 +2231,26 @@ class Sensei_Lesson {
 		if ( isset( $defaults['date'] ) ) {
 			$new_columns['date'] = $defaults['date'];
 		}
+
+		// Make sure other sensei columns stay directly behind the new columns.
+		$other_sensei_columns = [
+			'taxonomy-module',
+		];
+		foreach ( $other_sensei_columns as $column_key ) {
+			if ( isset( $defaults[ $column_key ] ) ) {
+				$new_columns[ $column_key ] = $defaults[ $column_key ];
+			}
+		}
+
+		// Add all remaining columns at the end.
+		foreach ( $defaults as $column_key => $column_value ) {
+			if ( ! isset( $new_columns[ $column_key ] ) ) {
+				$new_columns[ $column_key ] = $column_value;
+			}
+		}
+
 		return $new_columns;
-	} // End add_column_headings()
+	}
 
 	/**
 	 * Add data for our newly-added custom columns.
