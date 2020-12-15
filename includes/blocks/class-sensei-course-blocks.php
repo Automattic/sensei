@@ -83,7 +83,7 @@ class Sensei_Course_Blocks {
 			return;
 		}
 
-		Sensei()->assets->enqueue( 'sensei-blocks', 'blocks/index.js', [], true );
+		Sensei()->assets->enqueue( 'sensei-blocks', 'blocks/sensei-single-course-blocks.js', [], true );
 		Sensei()->assets->enqueue( 'sensei-single-course-editor', 'blocks/single-course.editor.css' );
 	}
 
