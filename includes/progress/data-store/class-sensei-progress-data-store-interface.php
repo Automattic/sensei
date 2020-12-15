@@ -19,6 +19,7 @@ interface Sensei_Progress_Data_Store_Interface {
 	 * @param array $args Arguments used in query.
 	 *
 	 * @return Sensei_Progress_Data_Results
+	 * @todo Write documentation for `$args`.
 	 */
 	public function query( $args = [] );
 
