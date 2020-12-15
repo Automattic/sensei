@@ -7,7 +7,7 @@
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     3.1.0
+ * @version     3.6.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,51 +17,41 @@ if ( ! defined( 'ABSPATH' ) ) {
 get_sensei_header();
 ?>
 
-<article <?php post_class( array( 'course', 'post' ) ); ?>>
+<?php
 
-	<?php
+/**
+ * Hook inside the single course post above the content
+ *
+ * @param integer $course_id
+ *
+ * @hooked Sensei()->frontend->sensei_course_start     -  10
+ * @hooked Sensei_Course::the_title                    -  10
+ * @hooked Sensei()->course->course_image              -  20
+ * @hooked Sensei_Course::the_course_enrolment_actions -  30
+ * @hooked Sensei()->message->send_message_link        -  35
+ * @hooked Sensei_Course::the_course_video             -  40
+ * @since  1.9.0
+ */
+do_action( 'sensei_single_course_content_inside_before', get_the_ID() );
 
-	/**
-	 * Hook inside the single course post above the content
-	 *
-	 * @since 1.9.0
-	 *
-	 * @param integer $course_id
-	 *
-	 * @hooked Sensei()->frontend->sensei_course_start     -  10
-	 * @hooked Sensei_Course::the_title                    -  10
-	 * @hooked Sensei()->course->course_image              -  20
-	 * @hooked Sensei_Course::the_course_enrolment_actions -  30
-	 * @hooked Sensei()->message->send_message_link        -  35
-	 * @hooked Sensei_Course::the_course_video             -  40
-	 */
-	do_action( 'sensei_single_course_content_inside_before', get_the_ID() );
+?>
 
-	?>
+<?php
+while ( have_posts() ) {
+	the_post();
+	the_content();
+}
+?>
 
-	<section class="entry fix">
+<?php
 
-		<?php
-		while ( have_posts() ) {
-			the_post();
-			the_content();
-		}
-		?>
+/**
+ * Hook inside the single course post above the content
+ *
+ * @param integer $course_id
+ *
+ * @since 1.9.0
+ */
+do_action( 'sensei_single_course_content_inside_after', get_the_ID() );
 
-	</section>
-
-	<?php
-
-	/**
-	 * Hook inside the single course post above the content
-	 *
-	 * @since 1.9.0
-	 *
-	 * @param integer $course_id
-	 */
-	do_action( 'sensei_single_course_content_inside_after', get_the_ID() );
-
-	?>
-</article><!-- .post .single-course -->
-
-<?php get_sensei_footer(); ?>
+get_sensei_footer();

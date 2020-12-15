@@ -1,5 +1,9 @@
 import { createBlock } from '@wordpress/blocks';
-import { extractStructure, syncStructureToBlocks } from './data';
+import {
+	extractStructure,
+	syncStructureToBlocks,
+	getFirstBlockByName,
+} from './data';
 import {
 	registerTestLessonBlock,
 	registerTestModuleBlock,
@@ -36,6 +40,12 @@ describe( 'extractStructure', () => {
 				innerBlocks: [],
 				isValid: true,
 			},
+			{
+				name: 'sensei-lms/course-outline-lesson',
+				attributes: { title: 'L3', draft: true, preview: true },
+				innerBlocks: [],
+				isValid: true,
+			},
 		] );
 
 		expect( data ).toEqual( [
@@ -49,6 +59,7 @@ describe( 'extractStructure', () => {
 				],
 			},
 			{ type: 'lesson', title: 'L2' },
+			{ type: 'lesson', title: 'L3', draft: true, preview: true },
 		] );
 	} );
 } );
@@ -147,5 +158,36 @@ describe( 'syncStructureToBlocks', () => {
 				],
 			},
 		] );
+	} );
+} );
+
+describe( 'getFirstBlockByName', () => {
+	it( 'should get the first block with correct name', () => {
+		const blocks = [
+			{ name: 'a', innerBlocks: [] },
+			{
+				name: 'b',
+				innerBlocks: [ { name: 'f' }, { name: 'g' } ],
+			},
+			{
+				name: 'c',
+				innerBlocks: [
+					{ name: 'h' },
+					{
+						name: 'i',
+						innerBlocks: [
+							{ name: 'j' },
+							{ name: 'wally' },
+							{ name: 'k' },
+						],
+					},
+				],
+			},
+			{ name: 'd' },
+			{ name: 'e', innerBlocks: [] },
+		];
+		expect( getFirstBlockByName( 'wally', blocks ).name ).toEqual(
+			'wally'
+		);
 	} );
 } );

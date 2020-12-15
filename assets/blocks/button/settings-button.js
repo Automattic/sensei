@@ -1,5 +1,5 @@
 import {
-	AlignmentToolbar,
+	BlockAlignmentToolbar,
 	BlockControls,
 	InspectorControls,
 } from '@wordpress/block-editor';
@@ -49,11 +49,15 @@ export const ButtonBlockSettings = ( props ) => {
 	return (
 		<>
 			<BlockControls>
-				<AlignmentToolbar
-					value={ align }
+				<BlockAlignmentToolbar
+					label={ __( 'Change button alignment', 'sensei-lms' ) }
+					value={ align || props.alignmentOptions?.default }
 					onChange={ ( nextAlign ) => {
-						setAttributes( { align: nextAlign } );
+						if ( nextAlign ) {
+							setAttributes( { align: nextAlign } );
+						}
 					} }
+					{ ...props.alignmentOptions }
 				/>
 			</BlockControls>
 

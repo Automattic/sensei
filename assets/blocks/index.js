@@ -1,5 +1,5 @@
-import { registerBlockType } from '@wordpress/blocks';
-import TakeCourseButtonBlock from './button/take-course';
+import { registerBlockType, updateCategory } from '@wordpress/blocks';
+import TakeCourseButtonBlock from './take-course';
 import ContactTeacherButton from './contact-teacher';
 import CourseProgressBlock from './course-progress';
 import {
@@ -7,6 +7,11 @@ import {
 	CourseOutlineLessonBlock,
 	CourseOutlineModuleBlock,
 } from './course-outline';
+import { SenseiIcon } from '../icons';
+
+updateCategory( 'sensei-lms', {
+	icon: SenseiIcon( { width: '20', height: '20' } ),
+} );
 
 [
 	CourseOutlineBlock,

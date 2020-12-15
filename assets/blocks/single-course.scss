@@ -1,4 +1,5 @@
-
-@import 'button/button.scss';
-@import 'course-outline/style.scss';
-@import 'course-progress/style.scss';
+@import '../shared/styles/blocks';
+@import 'contact-teacher/contact-teacher';
+@import 'course-outline/style';
+@import 'course-progress/style';
+@import 'button/button';

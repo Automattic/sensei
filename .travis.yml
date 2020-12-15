@@ -1,6 +1,7 @@
 sudo: false
-dist: trusty
+dist: xenial
 language: php
+services: mysql
 
 # Shared code for e2e jobs.
 e2e_defaults: &e2e_defaults
@@ -33,6 +34,7 @@ cache:
   - vendor
   - "$HOME/.composer/cache"
 before_script:
+- wget -O phpunit https://phar.phpunit.de/phpunit-6.phar; chmod +x phpunit 
 - export PATH="$HOME/.composer/vendor/bin:$PATH"
 - |
   if [ -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini ]; then
@@ -80,7 +82,7 @@ jobs:
         - ./tests/bin/run-wp-unit-tests.sh
     - stage: test
       php: 7.0
-      env: WP_VERSION=5.3
+      env: WP_VERSION=5.5
       script:
         - ./tests/bin/run-wp-unit-tests.sh
     - stage: test
@@ -124,9 +126,6 @@ jobs:
       script:
         - composer install
         - ./scripts/linter-ci
-    - stage: test
-      <<: *e2e_defaults
-      env: WP_VERSION=5.3 RUN_E2E=1
     - stage: test
       <<: *e2e_defaults
       env: WP_VERSION=5.4 RUN_E2E=1

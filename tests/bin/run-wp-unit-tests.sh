@@ -8,6 +8,6 @@ if [[ ! -z "$WP_VERSION" ]]; then
 	if [[ ${TRAVIS_PHP_VERSION} > 7.1 ]]; then
 		./vendor/bin/phpunit
 	else
-		phpunit
+		./phpunit
 	fi
 fi

@@ -26,6 +26,9 @@ export default {
 				name: 'sensei-lms/course-outline-lesson',
 				attributes: {
 					title: __( 'Lesson', 'sensei-lms' ),
+					id: 1,
+					draft: false,
+					isExample: true,
 				},
 			},
 		],

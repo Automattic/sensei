@@ -7,7 +7,7 @@
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     3.2.0
+ * @version     3.6.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -43,7 +43,7 @@ global $course;
 
 	</header>
 
-	<article class="<?php echo esc_attr( join( ' ', get_post_class( array( 'course', 'post' ), $course->ID ) ) ); ?> ">
+	<div class="lesson-result">
 
 		<?php
 
@@ -178,7 +178,7 @@ global $course;
 
 		</h2>
 
-	</article>
+	</div>
 
 	<?php
 	/**

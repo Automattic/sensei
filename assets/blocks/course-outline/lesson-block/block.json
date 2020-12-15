@@ -31,6 +31,10 @@
     },
     "fontSize": {
       "type": "number"
+    },
+    "isExample": {
+      "type": "boolean",
+      "default": false
     }
   },
   "supports": {

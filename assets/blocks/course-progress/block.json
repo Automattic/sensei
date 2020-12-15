@@ -18,6 +18,9 @@
     "customBarColor": {
       "type": "string"
     },
+    "defaultBarColor": {
+      "type": "string"
+    },
     "barBackgroundColor": {
       "type": "string"
     },
@@ -29,11 +32,16 @@
     },
     "borderRadius": {
       "type": "integer"
+    },
+    "isPreview": {
+      "type": "boolean",
+      "default": false
     }
   },
   "example": {
     "attributes": {
-      "customBarBackgroundColor": "#999999"
+      "customBarBackgroundColor": "#999999",
+      "isPreview": true
     }
   }
 }

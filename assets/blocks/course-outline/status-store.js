@@ -238,6 +238,14 @@ const reducers = {
 			descendantIds.includes( trackedLesson )
 		);
 
+		// Do not update the state if no lessons were removed.
+		if (
+			trackedLessons.length === state.trackedLessons.length &&
+			completedLessons.length === state.completedLessons.length
+		) {
+			return state;
+		}
+
 		return {
 			...state,
 			completedLessons,
