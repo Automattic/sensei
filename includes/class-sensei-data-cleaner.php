@@ -240,6 +240,15 @@ class Sensei_Data_Cleaner {
 	);
 
 	/**
+	 * Tables to drop.
+	 *
+	 * @var string[]
+	 */
+	private static $tables = array(
+		'sensei_lms_progress',
+	);
+
+	/**
 	 * Cleanup all data.
 	 *
 	 * @access public
@@ -253,6 +262,7 @@ class Sensei_Data_Cleaner {
 		self::cleanup_transients();
 		self::cleanup_options();
 		self::cleanup_user_meta();
+		self::cleanup_tables();
 	}
 
 	/**
@@ -422,6 +432,20 @@ class Sensei_Data_Cleaner {
 
 		foreach ( self::$post_meta as $post_meta ) {
 			$wpdb->delete( $wpdb->postmeta, array( 'meta_key' => $post_meta ) );
+		}
+	}
+
+	/**
+	 * Drop Sensei LMS tables.
+	 *
+	 * @access private
+	 */
+	private static function cleanup_tables() {
+		global $wpdb;
+
+		foreach ( self::$tables as $table ) {
+			$table = $wpdb->prefix . $table;
+			$wpdb->query( "DROP TABLE IF EXISTS {$table}" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		}
 	}
 }

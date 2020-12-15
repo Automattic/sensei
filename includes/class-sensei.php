@@ -534,7 +534,7 @@ class Sensei_Main {
 	private function update_database_tables() {
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
-		dbDelta( self::get_schema() );
+		dbDelta( $this->get_schema() );
 	}
 
 	/**
@@ -545,7 +545,7 @@ class Sensei_Main {
 	 *
 	 * @return string
 	 */
-	private static function get_schema() {
+	private function get_schema() {
 		global $wpdb;
 
 		$collate = '';
@@ -554,50 +554,23 @@ class Sensei_Main {
 			$collate = $wpdb->get_charset_collate();
 		}
 
+		// @todo Optimize indexes for progress table.
 		return "
 CREATE TABLE `{$wpdb->prefix}sensei_lms_progress` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `parent_post_id` bigint(20) unsigned DEFAULT NULL,
   `post_id` bigint(20) unsigned NOT NULL,
   `user_id` bigint(20) unsigned NOT NULL,
-  `type` varchar(20) NOT NULL DEFAULT '',
-  `status` varchar(50) NOT NULL DEFAULT '',
-  `data` longtext,
+  `type` varchar(20) COLLATE utf8mb4_unicode_520_ci NOT NULL DEFAULT '',
+  `status` varchar(50) COLLATE utf8mb4_unicode_520_ci NOT NULL DEFAULT '',
+  `data` longtext COLLATE utf8mb4_unicode_520_ci,
   `date_created` datetime NOT NULL,
   `date_modified` datetime NOT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `key_fields` (`parent_post_id`,`post_id`,`user_id`,`type`),
   KEY `status` (`status`)
-) $collate;
+) {$collate};
 		";
-	}
-
-	/**
-	 * Return a list of Sensei LMS tables. Used to make sure all Sensei tables are dropped when uninstalling the plugin
-	 * in a single site or multi site environment.
-	 *
-	 * @return array WC tables.
-	 */
-	public static function get_tables() {
-		global $wpdb;
-
-		$tables = array(
-			"{$wpdb->prefix}sensei_lms_progress",
-		);
-
-		return $tables;
-	}
-
-	/**
-	 * Drop Sensei LMS tables.
-	 */
-	public static function drop_tables() {
-		global $wpdb;
-
-		$tables = self::get_tables();
-
-		foreach ( $tables as $table ) {
-			$wpdb->query( "DROP TABLE IF EXISTS {$table}" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		}
 	}
 
 	/**
