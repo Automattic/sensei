@@ -93,11 +93,11 @@ class Sensei_Quiz {
 
 
 	/**
-	 * Get the lesson this quiz belongs to
+	 * Get the lesson this quiz belongs to.
 	 *
 	 * @since 1.7.2
-	 * @param int $quiz_id
-	 * @return int @lesson_id
+	 * @param int $quiz_id Quiz ID.
+	 * @return int|bool Lesson ID or false if not found.
 	 */
 	public function get_lesson_id( $quiz_id ) {
 
@@ -1002,11 +1002,11 @@ class Sensei_Quiz {
 	 * @since 1.7.5
 	 * @access public
 	 *
-	 * @param int $lesson_id
-	 * @param int $question_id
-	 * @param int $user_id
+	 * @param int $lesson_id   Lesson ID.
+	 * @param int $question_id Question ID.
+	 * @param int $user_id     User ID.
 	 *
-	 * @return string $feedback or bool if false
+	 * @return string|bool Feedback or false if not found.
 	 */
 	public function get_user_question_feedback( $lesson_id, $question_id, $user_id = 0 ) {
 
