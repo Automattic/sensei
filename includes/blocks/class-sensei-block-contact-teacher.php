@@ -21,7 +21,6 @@ class Sensei_Block_Contact_Teacher {
 		add_action( 'init', [ $this, 'register_block' ] );
 	}
 
-
 	/**
 	 * Register progress bar block.
 	 *

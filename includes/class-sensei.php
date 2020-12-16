@@ -12,6 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Main {
 	const COMMENT_COUNT_TRANSIENT_PREFIX = 'sensei_comment_counts_';
+	const LEGACY_FLAG_OPTION             = 'sensei-legacy-flags';
+	const LEGACY_FLAG_WITH_FRONT         = 'with_front';
 
 	/**
 	 * @var string
@@ -436,12 +438,7 @@ class Sensei_Main {
 
 			new Sensei_Import();
 			new Sensei_Export();
-
 			new Sensei_Exit_Survey();
-
-			if ( $this->feature_flags->is_enabled( 'rest_api_testharness' ) ) {
-				$this->test_harness = new Sensei_Admin_Rest_Api_Testharness( $this->main_plugin_file_name );
-			}
 		} else {
 
 			// Load Frontend Class
@@ -637,6 +634,8 @@ class Sensei_Main {
 	 * @since 2.0.0
 	 */
 	public function update() {
+		global $wp_rewrite;
+
 		$current_version = get_option( 'sensei-version' );
 		$is_new_install  = ! $current_version && ! $this->course_exists();
 		$is_upgrade      = $current_version && version_compare( $this->version, $current_version, '>' );
@@ -672,8 +671,50 @@ class Sensei_Main {
 			update_option( 'sensei_enrolment_legacy', time() );
 		}
 
+		// Set up legacy `with_front` on CPT rewrite options.
+		if (
+				$is_upgrade
+				&& version_compare( '3.7.0-dev', $current_version, '>' )
+				&& '' !== trim( $wp_rewrite->front, '/' )
+			) {
+			$this->set_legacy_flag( self::LEGACY_FLAG_WITH_FRONT, true );
+		}
+
 		// Flush rewrite cache.
 		$this->initiate_rewrite_rules_flush();
+	}
+
+	/**
+	 * Sets a legacy flag to a boolean value.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @param string $flag  Short name for the flag to set.
+	 * @param bool   $value Boolean value to set.
+	 */
+	public function set_legacy_flag( $flag, $value ) {
+		$legacy_flags          = json_decode( get_option( self::LEGACY_FLAG_OPTION, '{}' ), true );
+		$legacy_flags[ $flag ] = (bool) $value;
+
+		update_option( self::LEGACY_FLAG_OPTION, wp_json_encode( $legacy_flags ) );
+	}
+
+	/**
+	 * Get a legacy flag value.
+	 *
+	 * @param string $flag    Short name for the flag to set.
+	 * @param bool   $default Boolean value to set. Defaults to false.
+	 *
+	 * @return bool
+	 */
+	public function get_legacy_flag( $flag, $default = false ) {
+		$legacy_flags = json_decode( get_option( self::LEGACY_FLAG_OPTION, '{}' ), true );
+
+		if ( isset( $legacy_flags[ $flag ] ) ) {
+			return (bool) $legacy_flags[ $flag ];
+		}
+
+		return (bool) $default;
 	}
 
 	/**

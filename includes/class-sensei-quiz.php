@@ -93,11 +93,11 @@ class Sensei_Quiz {
 
 
 	/**
-	 * Get the lesson this quiz belongs to
+	 * Get the lesson this quiz belongs to.
 	 *
 	 * @since 1.7.2
-	 * @param int $quiz_id
-	 * @return int @lesson_id
+	 * @param int $quiz_id Quiz ID.
+	 * @return int|bool Lesson ID or false if not found.
 	 */
 	public function get_lesson_id( $quiz_id ) {
 
@@ -424,12 +424,15 @@ class Sensei_Quiz {
 			$answer = wp_unslash( $answer );
 
 			// compress the answer for saving
-			if ( 'multi-line' == $question_type ) {
+			if ( 'multi-line' === $question_type ) {
 				$answer = wp_kses( $answer, wp_kses_allowed_html( 'post' ) );
-			} elseif ( 'file-upload' == $question_type ) {
+			} elseif ( 'file-upload' === $question_type ) {
 				$file_key = 'file_upload_' . $question_id;
-				if ( isset( $files[ $file_key ] ) ) {
-						$attachment_id = Sensei_Utils::upload_file( $files[ $file_key ] );
+				if (
+					isset( $files[ $file_key ] )
+					&& self::is_uploaded_file_valid( $files[ $file_key ]['tmp_name'], $files[ $file_key ]['name'], $question_id )
+				) {
+					$attachment_id = Sensei_Utils::upload_file( $files[ $file_key ] );
 					if ( $attachment_id ) {
 						$answer = $attachment_id;
 					}
@@ -442,6 +445,37 @@ class Sensei_Quiz {
 
 		return $prepared_answers;
 	} // prepare_form_submitted_answers
+
+	/**
+	 * Validate the mime type of an uploaded file to a quiz question.
+	 *
+	 * @param string $file_path   Path to the uploaded file.
+	 * @param string $file_name   File name.
+	 * @param int    $question_id Question post ID.
+	 *
+	 * @return bool
+	 */
+	private static function is_uploaded_file_valid( $file_path, $file_name, $question_id ) {
+		/**
+		 * Filters allowed which mimetypes are allowed.
+		 *
+		 * @since 3.7.0
+		 * @hook sensei_quiz_answer_file_upload_types
+		 *
+		 * @param {false|array} $allowed_mime_types Array of allowed mimetypes. Returns `false` to allow all file types.
+		 * @param {int}         $question_id        Question post ID.
+		 */
+		$allowed_mime_types = apply_filters( 'sensei_quiz_answer_file_upload_types', false, $question_id );
+
+		// If `$allowed_mime_types` is false, don't filter by mime type.
+		if ( false === $allowed_mime_types ) {
+			return true;
+		}
+
+		$file_type = wp_check_filetype_and_ext( $file_path, $file_name );
+
+		return $file_type['type'] && in_array( $file_type['type'], $allowed_mime_types, true );
+	}
 
 	/**
 	 * Reset user submitted questions
@@ -1002,11 +1036,11 @@ class Sensei_Quiz {
 	 * @since 1.7.5
 	 * @access public
 	 *
-	 * @param int $lesson_id
-	 * @param int $question_id
-	 * @param int $user_id
+	 * @param int $lesson_id   Lesson ID.
+	 * @param int $question_id Question ID.
+	 * @param int $user_id     User ID.
 	 *
-	 * @return string $feedback or bool if false
+	 * @return string|bool Feedback or false if not found.
 	 */
 	public function get_user_question_feedback( $lesson_id, $question_id, $user_id = 0 ) {
 
