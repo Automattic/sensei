@@ -10,10 +10,9 @@
 	<custom-types>
 		<custom-type translate="1">course</custom-type>
 		<custom-type translate="1">lesson</custom-type>
-		<custom-type translate="0">multiple_question</custom-type>
+		<custom-type translate="1" display-as-translated="1">multiple_question</custom-type>
 		<custom-type translate="1">question</custom-type>
-		<custom-type translate="0">quiz</custom-type>
-		<custom-type translate="0">sensei_message</custom-type>
+		<custom-type translate="1" display-as-translated="1">quiz</custom-type>
 	</custom-types>
 	<taxonomies>
 		<taxonomy translate="1">course-category</taxonomy>
