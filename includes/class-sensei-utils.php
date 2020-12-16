@@ -73,6 +73,9 @@ class Sensei_Utils {
 		// Check if comment exists first
 		$comment_id = $wpdb->get_var( $wpdb->prepare( "SELECT comment_ID FROM $wpdb->comments WHERE comment_post_ID = %d AND user_id = %d AND comment_type = %s ", $args['post_id'], $args['user_id'], $args['type'] ) );
 		if ( ! $comment_id ) {
+			// Try to remove the comment before inserting to mitigate duplicate inserts issue.
+			$wpdb->query( $wpdb->prepare( "DELETE FROM $wpdb->comments WHERE comment_post_ID = %d AND user_id = %d AND comment_type = %s ", $args['post_id'], $args['user_id'], $args['type'] ) );
+
 			// Add the comment
 			$comment_id = wp_insert_comment( $data );
 
