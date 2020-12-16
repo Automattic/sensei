@@ -9,6 +9,7 @@ import {
 } from '../../shared/blocks/settings';
 import { COURSE_STATUS_STORE } from '../course-outline/status-store';
 import { CourseProgressSettings } from './settings';
+import useToggleLegacyMetaboxes from '../use-toggle-legacy-metaboxes';
 
 /**
  * Edit course progress bar component.
@@ -22,6 +23,7 @@ import { CourseProgressSettings } from './settings';
  * @param {Object}   props.attributes              Component attributes.
  * @param {number}   props.attributes.height       The height of the progress bar.
  * @param {number}   props.attributes.borderRadius The border radius of the progress bar.
+ * @param {boolean}  props.attributes.isPreview    Is preview flag.
  * @param {Function} props.setAttributes           Callback to set the component attributes.
  */
 export const EditCourseProgressBlock = ( {
@@ -30,9 +32,11 @@ export const EditCourseProgressBlock = ( {
 	defaultBarColor,
 	barBackgroundColor,
 	textColor,
-	attributes: { height, borderRadius },
+	attributes: { height, borderRadius, isPreview },
 	setAttributes,
 } ) => {
+	useToggleLegacyMetaboxes( { ignoreToggle: isPreview } );
+
 	const { totalLessonsCount, completedLessonsCount } = useSelect(
 		( select ) => select( COURSE_STATUS_STORE ).getLessonCounts(),
 		[]

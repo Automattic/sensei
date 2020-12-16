@@ -7,10 +7,10 @@ import {
 	CourseOutlineLessonBlock,
 	CourseOutlineModuleBlock,
 } from './course-outline';
-import { CourseIcon } from '../icons';
+import { SenseiIcon } from '../icons';
 
 updateCategory( 'sensei-lms', {
-	icon: CourseIcon( { width: '20', height: '20' } ),
+	icon: SenseiIcon( { width: '20', height: '20' } ),
 } );
 
 [

@@ -82,7 +82,7 @@ jobs:
         - ./tests/bin/run-wp-unit-tests.sh
     - stage: test
       php: 7.0
-      env: WP_VERSION=5.3
+      env: WP_VERSION=5.5
       script:
         - ./tests/bin/run-wp-unit-tests.sh
     - stage: test
@@ -126,9 +126,6 @@ jobs:
       script:
         - composer install
         - ./scripts/linter-ci
-    - stage: test
-      <<: *e2e_defaults
-      env: WP_VERSION=5.3 RUN_E2E=1
     - stage: test
       <<: *e2e_defaults
       env: WP_VERSION=5.4 RUN_E2E=1

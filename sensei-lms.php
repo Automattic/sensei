@@ -7,8 +7,8 @@
  * Author: Automattic
  * Author URI: https://automattic.com
  * License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * Requires at least: 5.3
- * Tested up to: 5.5
+ * Requires at least: 5.4
+ * Tested up to: 5.6
  * Requires PHP: 7.0
  * Text Domain: sensei-lms
  * Domain path: /lang/

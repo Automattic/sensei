@@ -1,10 +1,10 @@
 import { render } from '@testing-library/react';
-import { saveButtonBlock } from './save-button';
+import { SaveButtonBlock } from './save-button';
 
-describe( 'saveButtonBlock', () => {
+describe( 'SaveButtonBlock', () => {
 	it( 'sets wrapper class and default alignment', () => {
 		const { container } = render(
-			saveButtonBlock( {
+			SaveButtonBlock( {
 				attributes: { text: 'Button' },
 			} )
 		);
@@ -16,7 +16,7 @@ describe( 'saveButtonBlock', () => {
 
 	it( 'sets wrapper alignment from attribute', () => {
 		const { container } = render(
-			saveButtonBlock( {
+			SaveButtonBlock( {
 				attributes: { text: 'Button', align: 'center' },
 			} )
 		);
@@ -27,7 +27,7 @@ describe( 'saveButtonBlock', () => {
 
 	it( 'renders content as tagName', () => {
 		const { container } = render(
-			saveButtonBlock( {
+			SaveButtonBlock( {
 				tagName: 'button',
 				attributes: { text: 'Button' },
 			} )
