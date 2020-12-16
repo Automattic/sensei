@@ -1,10 +1,11 @@
 import { __ } from '@wordpress/i18n';
-import { merge } from 'lodash';
+import { merge, find } from 'lodash';
 
 import './color-hooks';
 import { EditButtonBlock } from './edit-button';
-import { saveButtonBlock } from './save-button';
+import { SaveButtonBlock } from './save-button';
 import { button as icon } from '../../icons/wordpress-icons';
+import { withDefaultBlockStyle } from '../../shared/blocks/settings';
 
 /**
  * Button block styles.
@@ -13,7 +14,6 @@ export const BlockStyles = {
 	Fill: {
 		name: 'default',
 		label: __( 'Fill', 'sensei-lms' ),
-		isDefault: true,
 	},
 	Outline: {
 		name: 'outline',
@@ -42,6 +42,22 @@ export const createButtonBlockType = ( { settings, ...options } ) => {
 		},
 		...options,
 	};
+
+	const styles = settings.styles
+		? settings.styles
+		: [ { ...BlockStyles.Fill, isDefault: true }, BlockStyles.Outline ];
+
+	const defaultStyle = find( styles, 'isDefault' )?.name;
+
+	// eslint-disable-next-line @wordpress/no-unused-vars-before-return -- We don't wanna recreate the component every edit render.
+	const EditButtonBlockWithBlockStyle = withDefaultBlockStyle( defaultStyle )(
+		EditButtonBlock
+	);
+
+	// eslint-disable-next-line @wordpress/no-unused-vars-before-return -- We don't wanna recreate the component every edit render.
+	const SaveButtonBlockWithBlockStyle = withDefaultBlockStyle( defaultStyle )(
+		SaveButtonBlock
+	);
 
 	return merge(
 		{
@@ -79,12 +95,22 @@ export const createButtonBlockType = ( { settings, ...options } ) => {
 				html: false,
 			},
 			icon,
-			styles: [ BlockStyles.Fill, BlockStyles.Outline ],
+			styles,
 			edit( props ) {
-				return <EditButtonBlock { ...props } { ...options } />;
+				return (
+					<EditButtonBlockWithBlockStyle
+						{ ...props }
+						{ ...options }
+					/>
+				);
 			},
 			save( props ) {
-				return saveButtonBlock( { ...props, ...options } );
+				return (
+					<SaveButtonBlockWithBlockStyle
+						{ ...props }
+						{ ...options }
+					/>
+				);
 			},
 			example: {
 				attributes: {

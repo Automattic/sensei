@@ -4,11 +4,11 @@ Id,Course,Slug,Description,Excerpt,"Teacher Username","Teacher Email",Lessons,Mo
 <!-- /wp:paragraph -->
 
 <!-- wp:sensei-lms/button-take-course -->
-<div class=""wp-block-sensei-lms-button-take-course wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">Take Course</button></div>
+<div class=""wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">Take Course</button></div>
 <!-- /wp:sensei-lms/button-take-course -->
 
 <!-- wp:sensei-lms/button-contact-teacher -->
-<div class=""wp-block-sensei-lms-button-contact-teacher wp-block-sensei-button wp-block-button has-text-align-left""><a class=""wp-block-button__link"">Contact Teacher</a></div>
+<div class=""wp-block-sensei-lms-button-contact-teacher is-style-outline wp-block-sensei-button wp-block-button has-text-align-left""><a class=""wp-block-button__link"">Contact Teacher</a></div>
 <!-- /wp:sensei-lms/button-contact-teacher -->
 
 <!-- wp:sensei-lms/course-progress /-->

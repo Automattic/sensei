@@ -18,6 +18,10 @@ export default createButtonBlockType( {
 				default: 'Contact Teacher',
 			},
 		},
-		styles: [ BlockStyles.Fill, BlockStyles.Outline, BlockStyles.Link ],
+		styles: [
+			BlockStyles.Fill,
+			{ ...BlockStyles.Outline, isDefault: true },
+			BlockStyles.Link,
+		],
 	},
 } );
