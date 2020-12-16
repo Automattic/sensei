@@ -64,7 +64,7 @@ class Sensei_Course {
 			add_action( 'save_post', array( $this, 'meta_box_save' ) );
 
 			// Custom Write Panel Columns
-			add_filter( 'manage_course_posts_columns', array( $this, 'add_column_headings' ), 10, 1 );
+			add_filter( 'manage_course_posts_columns', array( $this, 'add_column_headings' ), 20, 1 );
 			add_action( 'manage_course_posts_custom_column', array( $this, 'add_column_data' ), 10, 2 );
 
 			// Enqueue scripts.
@@ -680,15 +680,16 @@ class Sensei_Course {
 	} // End course_manage_meta_box_content()
 
 	/**
-	 * Add column headings to the "lesson" post list screen.
+	 * Add column headings to the "course" post list screen,
+	 * while moving the existing ones to the end.
 	 *
-	 * @access public
+	 * @access private
 	 * @since  1.0.0
-	 * @param  array $defaults
-	 * @return array $new_columns
+	 * @param  array $defaults  Array of column header labels keyed by column ID.
+	 * @return array            Updated array of column header labels keyed by column ID.
 	 */
 	public function add_column_headings( $defaults ) {
-		$new_columns                        = array();
+		$new_columns                        = [];
 		$new_columns['cb']                  = '<input type="checkbox" />';
 		$new_columns['title']               = _x( 'Course Title', 'column name', 'sensei-lms' );
 		$new_columns['course-prerequisite'] = _x( 'Pre-requisite Course', 'column name', 'sensei-lms' );
@@ -697,8 +698,27 @@ class Sensei_Course {
 			$new_columns['date'] = $defaults['date'];
 		}
 
+		// Make sure other sensei columns stay directly behind the new columns.
+		$other_sensei_columns = [
+			'taxonomy-module',
+			'teacher',
+			'module_order',
+		];
+		foreach ( $other_sensei_columns as $column_key ) {
+			if ( isset( $defaults[ $column_key ] ) ) {
+				$new_columns[ $column_key ] = $defaults[ $column_key ];
+			}
+		}
+
+		// Add all remaining columns at the end.
+		foreach ( $defaults as $column_key => $column_value ) {
+			if ( ! isset( $new_columns[ $column_key ] ) ) {
+				$new_columns[ $column_key ] = $column_value;
+			}
+		}
+
 		return $new_columns;
-	} // End add_column_headings()
+	}
 
 	/**
 	 * Add data for our newly-added custom columns.
@@ -1974,7 +1994,7 @@ class Sensei_Course {
 		$progress_statement = $this->get_progress_statement( $course_id, $user_id );
 		if ( ! empty( $progress_statement ) ) {
 
-			echo '<span class="progress statement course-completion-rate">' . esc_html( $progress_statement ) . '</span>';
+			echo '<div class="progress statement course-completion-rate">' . esc_html( $progress_statement ) . '</div>';
 
 		}
 

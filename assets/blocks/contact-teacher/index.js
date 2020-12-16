@@ -9,15 +9,19 @@ export default createButtonBlockType( {
 	settings: {
 		name: 'sensei-lms/button-contact-teacher',
 		description: __(
-			'Allows the learner to contact the teacher. Only displayed to logged in users when private messaging is enabled.',
+			'Enable a registered user to contact the teacher. This block is only displayed if the user is logged in and private messaging is enabled.',
 			'sensei-lms'
 		),
-		title: 'Contact teacher',
+		title: 'Contact Teacher',
 		attributes: {
 			text: {
-				default: 'Contact teacher',
+				default: 'Contact Teacher',
 			},
 		},
-		styles: [ BlockStyles.Fill, BlockStyles.Outline, BlockStyles.Link ],
+		styles: [
+			BlockStyles.Fill,
+			{ ...BlockStyles.Outline, isDefault: true },
+			BlockStyles.Link,
+		],
 	},
 } );

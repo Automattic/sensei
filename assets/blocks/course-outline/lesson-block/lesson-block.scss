@@ -6,7 +6,7 @@
 	position: relative;
 
 
-	&, .entry-content &, .entry .entry-content & {
+	&, .entry-content &, .sensei .entry-content &:not(.button) {
 		font-size: 1em;
 
 		font-family: inherit;
@@ -86,4 +86,9 @@
 		top: 0;
 		bottom: 0;
 	}
+}
+
+.block-editor-block-toolbar__slot {
+	// Prevents text toolbar items shrinking to avoid other buttons overlapping.
+	flex-shrink: 0;
 }

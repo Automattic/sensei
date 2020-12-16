@@ -1,19 +1,22 @@
 import { InnerBlocks, RichText } from '@wordpress/block-editor';
 import { Icon } from '@wordpress/components';
 import { compose } from '@wordpress/compose';
-import { useContext, useEffect, useState } from '@wordpress/element';
+import { useContext, useState } from '@wordpress/element';
+import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
 import AnimateHeight from 'react-animate-height';
-import { chevronUp } from '../../../icons/wordpress-icons';
 
-import { withColorSettings } from '../../../shared/blocks/settings';
+import { chevronUp } from '../../../icons/wordpress-icons';
+import {
+	withColorSettings,
+	withDefaultColor,
+} from '../../../shared/blocks/settings';
 import { OutlineAttributesContext } from '../course-block/edit';
 import SingleLineInput from '../single-line-input';
 import { ModuleStatus } from './module-status';
 import { ModuleBlockSettings } from './settings';
 import { useInsertLessonBlock } from './use-insert-lesson-block';
-import { dispatch } from '@wordpress/data';
 
 /**
  * Edit module block component.
@@ -24,11 +27,13 @@ import { dispatch } from '@wordpress/data';
  * @param {Object}   props.attributes                  Block attributes.
  * @param {string}   props.attributes.title            Module title.
  * @param {string}   props.attributes.description      Module description.
- * @param {boolean}  props.attributes.bordered         Whether the module has a border.
+ * @param {boolean}  props.attributes.borderedSelected The border setting selected by the user.
  * @param {string}   props.attributes.borderColorValue The border color.
  * @param {Object}   props.mainColor                   Header main color.
+ * @param {Object}   props.defaultMainColor            Default main color.
  * @param {Object}   props.textColor                   Header text color.
- * @param {Object}   props.borderColor                 Border color.
+ * @param {Object}   props.defaultTextColor            Default text color.
+ * @param {Object}   props.defaultBorderColor          Default border color.
  * @param {Function} props.setAttributes               Block set attributes function.
  * @param {string}   props.name                        Name of the block.
  */
@@ -36,23 +41,26 @@ export const EditModuleBlock = ( props ) => {
 	const {
 		clientId,
 		className,
-		attributes: { title, description, bordered, borderColorValue },
+		attributes: { title, description, borderedSelected, borderColorValue },
 		mainColor,
+		defaultMainColor,
 		textColor,
+		defaultTextColor,
+		defaultBorderColor,
 		setAttributes,
 	} = props;
 	const {
-		outlineAttributes: { collapsibleModules, moduleBorder },
-	} = useContext( OutlineAttributesContext ) || { outlineAttributes: {} };
+		outlineAttributes: {
+			collapsibleModules,
+			moduleBorder: outlineBordered,
+		},
+		outlineClassName,
+	} = useContext( OutlineAttributesContext ) || {
+		outlineAttributes: {},
+		outlineClassName: '',
+	};
 
 	useInsertLessonBlock( props );
-
-	// Get the border setting from the parent if none is set.
-	useEffect( () => {
-		if ( undefined === bordered ) {
-			setAttributes( { bordered: moduleBorder } );
-		}
-	}, [ bordered, moduleBorder, setAttributes ] );
 
 	/**
 	 * Handle update name.
@@ -74,33 +82,57 @@ export const EditModuleBlock = ( props ) => {
 
 	const [ isExpanded, setExpanded ] = useState( true );
 
-	let blockStyleColors = {};
-	const style = className.match( /is-style-(\w+)/ );
+	const styleRegex = /is-style-(\w+)/;
+	const style =
+		className.match( styleRegex )?.[ 1 ] ||
+		outlineClassName.match( styleRegex )?.[ 1 ];
 
-	if ( style ) {
-		blockStyleColors = {
-			default: { background: mainColor?.color },
-			minimal: { borderColor: mainColor?.color },
-		}[ style[ 1 ] ];
+	// Header styles.
+	const headerStyles = {
+		default: {
+			background: mainColor?.color || defaultMainColor?.color,
+			color: textColor?.color || defaultTextColor?.color,
+		},
+		minimal: {
+			color: textColor?.color,
+		},
+	}[ style ];
+
+	// Minimal border element.
+	let minimalBorder;
+	if ( 'minimal' === style ) {
+		minimalBorder = (
+			<div
+				className="wp-block-sensei-lms-course-outline-module__name__minimal-border"
+				style={ {
+					background: mainColor?.color || defaultMainColor?.color,
+				} }
+			/>
+		);
 	}
+
+	const bordered =
+		undefined !== borderedSelected ? borderedSelected : outlineBordered;
 
 	return (
 		<>
 			<ModuleBlockSettings
 				bordered={ bordered }
 				setBordered={ ( newValue ) =>
-					setAttributes( { bordered: newValue } )
+					setAttributes( { borderedSelected: newValue } )
 				}
 			/>
 			<section
 				className={ classnames( className, {
-					'sensei-module-bordered': bordered,
+					'wp-block-sensei-lms-course-outline-module-bordered': bordered,
 				} ) }
-				style={ { borderColor: borderColorValue } }
+				style={ {
+					borderColor: borderColorValue || defaultBorderColor?.color,
+				} }
 			>
 				<header
 					className="wp-block-sensei-lms-course-outline-module__header"
-					style={ { ...blockStyleColors, color: textColor?.color } }
+					style={ headerStyles }
 				>
 					<h2 className="wp-block-sensei-lms-course-outline-module__title">
 						<SingleLineInput
@@ -127,6 +159,7 @@ export const EditModuleBlock = ( props ) => {
 						</button>
 					) }
 				</header>
+				{ minimalBorder }
 				<AnimateHeight
 					className="wp-block-sensei-lms-collapsible"
 					duration={ 500 }
@@ -171,8 +204,22 @@ export default compose(
 			onChange: ( { clientId, colorValue } ) =>
 				dispatch( 'core/block-editor' ).updateBlockAttributes(
 					clientId,
-					{ borderColorValue: colorValue, bordered: !! colorValue }
+					{ borderColorValue: colorValue }
 				),
+		},
+	} ),
+	withDefaultColor( {
+		defaultMainColor: {
+			style: 'background-color',
+			probeKey: 'primaryColor',
+		},
+		defaultTextColor: {
+			style: 'color',
+			probeKey: 'primaryContrastColor',
+		},
+		defaultBorderColor: {
+			style: 'border-color',
+			probeKey: 'primaryColor',
 		},
 	} )
 )( EditModuleBlock );

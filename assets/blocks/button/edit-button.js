@@ -1,8 +1,10 @@
-import { RichText } from '@wordpress/block-editor';
 import { useSelect } from '@wordpress/data';
+import { RichText } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
+
 import { getButtonProps, getButtonWrapperProps } from './button-props';
 import { ButtonBlockSettings } from './settings-button';
+import useToggleLegacyMetaboxes from '../use-toggle-legacy-metaboxes';
 
 /**
  * Edit component for a Button block.
@@ -10,20 +12,21 @@ import { ButtonBlockSettings } from './settings-button';
  * @param {Object} props
  */
 export const EditButtonBlock = ( props ) => {
-	const { placeholder, attributes, setAttributes } = props;
-	const { text } = attributes;
+	const { placeholder, attributes, setAttributes, tagName } = props;
+	const { text, isPreview } = attributes;
 	const { colors } = useSelect( ( select ) => {
 		return select( 'core/block-editor' ).getSettings();
 	}, [] );
 
+	useToggleLegacyMetaboxes( { ignoreToggle: isPreview } );
+
 	const isReadonly = undefined !== props.text;
+	const buttonProps = getButtonProps( { ...props, colors } );
 
 	return (
 		<div { ...getButtonWrapperProps( props ) }>
 			{ isReadonly ? (
-				<div { ...getButtonProps( { ...props, colors } ) }>
-					{ props.text }
-				</div>
+				<div { ...buttonProps }>{ props.text }</div>
 			) : (
 				<RichText
 					placeholder={
@@ -32,7 +35,8 @@ export const EditButtonBlock = ( props ) => {
 					value={ text }
 					onChange={ ( value ) => setAttributes( { text: value } ) }
 					withoutInteractiveFormatting
-					{ ...getButtonProps( { ...props, colors } ) }
+					{ ...buttonProps }
+					tagName={ tagName }
 					identifier="text"
 				/>
 			) }

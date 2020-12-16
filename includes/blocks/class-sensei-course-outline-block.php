@@ -86,8 +86,8 @@ class Sensei_Course_Outline_Block {
 
 		$post_type_object->template = [
 			[ 'sensei-lms/button-take-course' ],
-			[ 'sensei-lms/course-progress' ],
 			[ 'sensei-lms/button-contact-teacher' ],
+			[ 'sensei-lms/course-progress' ],
 			[ 'sensei-lms/course-outline' ],
 		];
 	}
@@ -98,26 +98,29 @@ class Sensei_Course_Outline_Block {
 	 * @access private
 	 */
 	public function register_blocks() {
-		register_block_type_from_metadata(
-			Sensei()->assets->src_path( 'blocks/course-outline/course-block' ),
+		Sensei_Blocks::register_sensei_block(
+			'sensei-lms/course-outline',
 			[
 				'render_callback' => [ $this, 'render_course_outline_block' ],
-			]
+			],
+			Sensei()->assets->src_path( 'blocks/course-outline/course-block' )
 		);
 
-		register_block_type_from_metadata(
-			Sensei()->assets->src_path( 'blocks/course-outline/module-block' ),
+		Sensei_Blocks::register_sensei_block(
+			'sensei-lms/course-outline-module',
 			[
 				'render_callback' => [ $this, 'process_module_block' ],
 				'script'          => 'sensei-course-outline-frontend',
-			]
+			],
+			Sensei()->assets->src_path( 'blocks/course-outline/module-block' )
 		);
 
-		register_block_type_from_metadata(
-			Sensei()->assets->src_path( 'blocks/course-outline/lesson-block' ),
+		Sensei_Blocks::register_sensei_block(
+			'sensei-lms/course-outline-lesson',
 			[
 				'render_callback' => [ $this, 'process_lesson_block' ],
-			]
+			],
+			Sensei()->assets->src_path( 'blocks/course-outline/lesson-block' )
 		);
 
 	}

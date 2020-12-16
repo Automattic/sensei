@@ -6,36 +6,11 @@ import { createButtonBlockType } from '../button';
  */
 export default createButtonBlockType( {
 	tagName: 'button',
-	alignmentOptions: {
-		alignmentControls: [
-			{
-				icon: 'align-left',
-				title: __( 'Align left', 'sensei-lms' ),
-				align: 'left',
-			},
-			{
-				icon: 'align-center',
-				title: __( 'Align center', 'sensei-lms' ),
-				align: 'center',
-			},
-			{
-				icon: 'align-right',
-				title: __( 'Align right', 'sensei-lms' ),
-				align: 'right',
-			},
-			{
-				icon: 'align-full-width',
-				title: __( 'Full content width', 'sensei-lms' ),
-				align: 'full',
-			},
-		],
-		default: 'left',
-	},
 	settings: {
 		name: 'sensei-lms/button-take-course',
 		title: __( 'Take Course', 'sensei-lms' ),
 		description: __(
-			'Allows the learner to start the course. Only displayed to users not already enrolled.',
+			'Enable a registered user to start the course. This block is only displayed if the user is not already enrolled.',
 			'sensei-lms'
 		),
 		keywords: [
@@ -48,9 +23,6 @@ export default createButtonBlockType( {
 		attributes: {
 			text: {
 				default: 'Take Course',
-			},
-			align: {
-				default: 'left',
 			},
 		},
 	},

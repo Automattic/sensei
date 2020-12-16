@@ -781,9 +781,10 @@ section.entry span.course-lesson-progress { margin-left: 10px; }
 /* 1. Info Boxes */
 /*-------------------------------------------------------------------------------------------*/
 .sensei, .course-container, .course, .lesson, .quiz, .learner-info  {
-  p.sensei-message, div.sensei-message {
+    p.sensei-message, div.sensei-message {
     clear: both;
-    margin: 1.387em 0 1.618em 0;
+    margin-top: 1.387em;
+    margin-bottom: 1.618em;
     padding: 1em 1.618em;
     border:none!important;
     @include border_radius(5px);

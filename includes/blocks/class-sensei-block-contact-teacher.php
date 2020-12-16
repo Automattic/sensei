@@ -21,14 +21,13 @@ class Sensei_Block_Contact_Teacher {
 		add_action( 'init', [ $this, 'register_block' ] );
 	}
 
-
 	/**
 	 * Register progress bar block.
 	 *
 	 * @access private
 	 */
 	public function register_block() {
-		register_block_type(
+		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/button-contact-teacher',
 			[
 				'render_callback' => [ $this, 'render_contact_teacher_block' ],
