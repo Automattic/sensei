@@ -30,6 +30,7 @@ class Sensei_Usage_Tracking_Data {
 			'courses'                 => wp_count_posts( 'course' )->publish,
 			'course_active'           => self::get_course_active_count(),
 			'course_completed'        => self::get_course_completed_count(),
+			'course_completion_rate'  => self::get_course_completion_rate(),
 			'course_videos'           => self::get_course_videos_count(),
 			'course_no_notifications' => self::get_course_no_notifications_count(),
 			'course_prereqs'          => self::get_course_prereqs_count(),
@@ -262,6 +263,93 @@ class Sensei_Usage_Tracking_Data {
 		);
 
 		return Sensei_Utils::sensei_check_for_activity( $course_args );
+	}
+
+	/**
+	 * Calculate the average course completion rate.
+	 *
+	 * @since 3.6.0
+	 *
+	 * @return double Average course completion rate.
+	 */
+	private static function get_course_completion_rate() {
+		$course_args             = array(
+			'post_type'      => 'course',
+			'post_status'    => 'publish',
+			'posts_per_page' => -1,
+		);
+		$courses                 = get_posts( $course_args );
+		$course_count            = count( $courses );
+		$course_completion_rates = [];
+
+		foreach ( $courses as $course ) {
+			// Calculate number of learners who are enrolled in the course.
+			$learner_terms          = self::get_enrolled_learner_terms( $course->ID );
+			$enrolled_learner_count = 0;
+
+			if ( ! empty( $learner_terms ) && ! is_wp_error( $learner_terms ) ) {
+				$enrolled_learner_count = count( $learner_terms );
+			}
+
+			// Don't include this course in the calculation if no learners are enrolled.
+			if ( 0 === $enrolled_learner_count ) {
+				$course_count--;
+				continue;
+			}
+
+			// Get number of learners who are enrolled in and have completed the course.
+			$completed_course_count = self::get_completed_course_count( $course->ID, $learner_terms );
+
+			// Calculate the completion rate.
+			$course_completion_rates[] = $completed_course_count / $enrolled_learner_count;
+		}
+
+		if ( 0 === $course_count ) {
+			return '';
+		}
+
+		// Average course completion rate = Sum of course completion rates / # of courses.
+		return round( array_sum( $course_completion_rates ) / $course_count * 100, 2 );
+	}
+
+	/**
+	 * Get learner term data for non-admin learners who are enrolled in a course.
+	 *
+	 * @since 3.6.0
+	 *
+	 * @param int $course_id Course ID.
+	 *
+	 * @return array|WP_Error Learner term data or empty array if no terms found.
+	 */
+	private static function get_enrolled_learner_terms( $course_id ) {
+		$term_args = array(
+			'fields'  => 'names',
+			'exclude' => self::get_admin_learner_term_ids(),
+		);
+
+		return wp_get_object_terms( $course_id, Sensei_PostTypes::LEARNER_TAXONOMY_NAME, $term_args );
+	}
+
+	/**
+	 * Get number of non-admin learners who are enrolled in and have completed the course.
+	 *
+	 * @since 3.6.0
+	 *
+	 * @param int   $course_id Course ID.
+	 * @param array $learner_terms Learner term data.
+	 *
+	 * @return int Number of learners.
+	 */
+	private static function get_completed_course_count( $course_id, $learner_terms ) {
+		$enrolled_learner_ids = array_map( [ 'Sensei_learner', 'get_learner_id' ], $learner_terms );
+		$comment_args         = array(
+			'type'       => 'sensei_course_status',
+			'status'     => 'complete',
+			'post_id'    => $course_id,
+			'author__in' => $enrolled_learner_ids,
+		);
+
+		return Sensei_Utils::sensei_check_for_activity( $comment_args );
 	}
 
 	/**
