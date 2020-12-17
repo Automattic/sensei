@@ -369,10 +369,13 @@ class Sensei_Tool_Enrolment_Debug implements Sensei_Tool_Interface {
 		 * Show the enrolment debug button on learner management.
 		 *
 		 * @since 3.7.0
+		 * @hook sensei_show_enrolment_debug_button
 		 *
-		 * @param bool $show_button Whether to show the button.
-		 * @param int  $user_id     User ID.
-		 * @param int  $course_id   Course ID.
+		 * @param {bool} $show_button Whether to show the button.
+		 * @param {int}  $user_id     User ID.
+		 * @param {int}  $course_id   Course ID.
+		 *
+		 * @return {bool}
 		 */
 		$show_button = apply_filters( 'sensei_show_enrolment_debug_button', false, $item->user_id, $course_id );
 		if (
