@@ -149,9 +149,11 @@ jQuery( document ).ready( function ( $ ) {
 
 		var actions = {
 			remove_progress: {
+				lesson:
+					window.woo_learners_general_data.remove_from_lesson_confirm,
 				course:
 					window.woo_learners_general_data.remove_progress_confirm,
-				action: 'reset_user_post',
+				action: 'remove_user_from_post',
 			},
 			reset_progress: {
 				lesson: window.woo_learners_general_data.reset_lesson_confirm,

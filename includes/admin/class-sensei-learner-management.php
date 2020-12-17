@@ -89,6 +89,7 @@ class Sensei_Learner_Management {
 		if ( is_admin() ) {
 			add_action( 'wp_ajax_get_redirect_url_learners', array( $this, 'get_redirect_url' ) );
 			add_action( 'wp_ajax_edit_date_started', array( $this, 'edit_date_started' ) );
+			add_action( 'wp_ajax_remove_user_from_post', array( $this, 'remove_user_from_post' ) );
 			add_action( 'wp_ajax_reset_user_post', array( $this, 'reset_user_post' ) );
 			add_action( 'wp_ajax_sensei_json_search_users', array( $this, 'json_search_users' ) );
 		}
@@ -500,13 +501,28 @@ class Sensei_Learner_Management {
 							break;
 					}
 					break;
-			}
 
-			if ( $altered && 'course' === $post_type && ! Sensei_Utils::has_started_course( $post_id, $user_id ) ) {
-				exit( 'removed' );
+				case 'remove':
+					switch ( $post_type ) {
+						case 'course':
+							$altered = Sensei_Utils::reset_course_for_user( $post_id, $user_id );
+							break;
+
+						case 'lesson':
+							$altered = Sensei_Utils::sensei_remove_user_from_lesson( $post_id, $user_id );
+							break;
+					}
 			}
 
 			if ( $altered ) {
+				if ( 'course' === $post_type && ! Sensei_Utils::has_started_course( $post_id, $user_id ) ) {
+					exit( 'removed' );
+				}
+
+				if ( 'lesson' === $post_type && 'remove' === $action ) {
+					exit( 'removed' );
+				}
+
 				exit( 'altered' );
 			}
 		}
@@ -585,6 +601,13 @@ class Sensei_Learner_Management {
 	 */
 	public function reset_user_post() {
 		$this->handle_user_async_action( 'reset' );
+	}
+
+	/**
+	 * Removes a Learner from a course/lesson.
+	 */
+	public function remove_user_from_post() {
+		$this->handle_user_async_action( 'remove' );
 	}
 
 	/**
