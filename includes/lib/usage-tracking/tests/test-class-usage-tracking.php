@@ -150,7 +150,7 @@ class Sensei_Base_Usage_Tracking_Test extends WP_UnitTestCase {
 		$this->usage_tracking->set_tracking_enabled( true );
 
 		$this->usage_tracking->send_usage_data();
-		$this->assertEquals( 2, $this->event_counts['http_request'], 'Request sent when Usage Tracking enabled' );
+		$this->assertEquals( 3, $this->event_counts['http_request'], 'Requests sent when Usage Tracking enabled' );
 	}
 
 	/* Tests for system data */
