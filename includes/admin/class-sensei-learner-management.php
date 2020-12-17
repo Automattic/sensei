@@ -489,29 +489,20 @@ class Sensei_Learner_Management {
 
 			$altered = true;
 
-			switch ( $action ) {
-				case 'reset':
-					switch ( $post_type ) {
-						case 'course':
-							$altered = Sensei_Utils::reset_course_for_user( $post_id, $user_id );
-							break;
-
-						case 'lesson':
+			switch ( $post_type ) {
+				case 'course':
+					$altered = Sensei_Utils::reset_course_for_user( $post_id, $user_id );
+					break;
+				case 'lesson':
+					switch ( $action ) {
+						case 'reset':
 							$altered = Sensei()->quiz->reset_user_lesson_data( $post_id, $user_id );
 							break;
-					}
-					break;
-
-				case 'remove':
-					switch ( $post_type ) {
-						case 'course':
-							$altered = Sensei_Utils::reset_course_for_user( $post_id, $user_id );
-							break;
-
-						case 'lesson':
+						case 'remove':
 							$altered = Sensei_Utils::sensei_remove_user_from_lesson( $post_id, $user_id );
 							break;
 					}
+					break;
 			}
 
 			if ( $altered ) {
