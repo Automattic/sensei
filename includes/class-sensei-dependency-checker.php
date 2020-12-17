@@ -62,4 +62,37 @@ class Sensei_Dependency_Checker {
 
 		echo '</p></div>';
 	}
+
+	/**
+	 * Checks if assets/dist exists
+	 *
+	 * @return bool
+	 */
+	public static function check_assets() {
+		$assets_dir = dirname( __DIR__ ) . '/assets/dist';
+
+		return file_exists( $assets_dir );
+	}
+
+	/**
+	 * Adds notice in WP Admin that assets/dist directory not exists
+	 *
+	 * @access private
+	 */
+	public static function add_assets_notice() {
+		?>
+		<div class="notice notice-error">
+			<p>
+				<?php
+				printf(
+					/* translators: 1: is a link to a support document. 2: closing link */
+					esc_html__( 'Your installation of Sensei LMS is incomplete. If you installed Sensei LMS from GitHub, %1$splease refer to this document%2$s to set up your development environment.', 'sensei-lms' ),
+					'<a href="' . esc_url( 'https://github.com/Automattic/sensei/wiki/Setting-Up-Your-Development-Environment' ) . '" target="_blank" rel="noopener noreferrer">',
+					'</a>'
+				);
+				?>
+			</p>
+		</div>
+		<?php
+	}
 }
