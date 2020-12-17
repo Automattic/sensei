@@ -1,3 +1,5 @@
+@import '../shared/styles/variables';
+
 /* Extensions */
 .sensei_extensions_wrap {
 	.products {
@@ -10,7 +12,8 @@
 			width: 400px;
 			color: inherit;
 			border: 1px solid #ddd;
-			display: block;
+			display: flex;
+			flex-direction: column;
 			min-height: 280px;
 			overflow: hidden;
 			background: #f6f6f6;
@@ -56,14 +59,32 @@
 					float: right;
 				}
 			}
+			div.product-body {
+				flex: 1;
+			}
+			div.product-buttons {
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: flex-end;
+				align-items: center;
+				margin: 1em;
+				> * + * {
+					margin-left: 1em;
+				}
+				.spinner:not(.is-active) {
+					display: none;
+				}
+				.error {
+					flex: 1 0 100%;
+					text-align: right;
+					margin-top: .5em;
+					color: $alert-red;
+				}
+			}
 			p.excerpt {
 				margin: 0;
 				padding: 1em;
 				border-top: 1px solid #f1f1f1;
-			}
-			p.buttons {
-				margin: 0;
-				padding: 1em 1em 0;
 			}
 		}
 	}

@@ -18,7 +18,7 @@ if ( empty( $extensions ) ) {
 } else {
 	echo '<ul class="products">';
 	foreach ( $extensions as $extension ) {
-		$url = add_query_arg(
+		$url         = add_query_arg(
 			array(
 				'utm_source'   => str_replace( [ 'http://', 'https://' ], '', get_site_url() ),
 				'utm_medium'   => 'extensions',
@@ -26,6 +26,10 @@ if ( empty( $extensions ) ) {
 			),
 			$extension->link
 		);
+		$installed   = Sensei_Plugins_Installation::instance()->is_plugin_active( $extension->plugin_file );
+		$is_wccom    = ! empty( $extension->wccom_product_id );
+		$installable = $is_wccom || 'dotorg' === $extension->hosted_location;
+
 		?>
 		<li class="product">
 			<div class="product-header">
@@ -41,12 +45,26 @@ if ( empty( $extensions ) ) {
 				}
 				?>
 			</div>
-			<p class="buttons">
-				<a href="<?php echo esc_url( $url, array( 'http', 'https' ) ); ?>" class="button-primary"><?php esc_html_e( 'More Details', 'sensei-lms' ); ?></a>
-			</p>
-			<p class="excerpt">
-				<?php echo esc_html( $extension->excerpt ); ?>
-			</p>
+			<div class="product-body"><p class="excerpt">
+					<?php echo esc_html( $extension->excerpt ); ?>
+				</p>
+			</div>
+			<div class="product-buttons">
+				<a href="<?php echo esc_url( $url, array( 'http', 'https' ) ); ?>" target="_blank"
+					class=""><?php esc_html_e( 'More Details', 'sensei-lms' ); ?></a>
+				<?php if ( $installed ) : ?>
+					<button class="button-primary" disabled>
+						<?php esc_html_e( 'Installed', 'sensei-lms' ); ?>
+					</button>
+				<?php elseif ( $installable ) : ?>
+					<div class="sensei-extension-installer"
+						data-slug="<?php echo esc_attr( $is_wccom ? $extension->wccom_product_id : $extension->product_slug ); ?>"
+						data-source="<?php echo $is_wccom ? 'wccom' : 'wporg'; ?>">
+						<button class="button-primary"><?php esc_html_e( 'Install', 'sensei-lms' ); ?></button>
+					</div>
+				<?php endif; ?>
+			</div>
+
 		</li>
 		<?php
 	}

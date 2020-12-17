@@ -25,4 +25,5 @@ export const getWoocommerceComPurchaseUrl = ( features, wccomData ) => {
  *
  * @return {string} The product ID.
  */
-export const getWccomProductId = ( feature ) => feature.wccom_product_id;
+export const getWccomProductId = ( feature ) =>
+	'string' === typeof feature ? feature : feature.wccom_product_id;
