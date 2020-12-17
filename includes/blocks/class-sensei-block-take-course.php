@@ -72,9 +72,36 @@ class Sensei_Block_Take_Course {
 			<form method="POST" action="' . esc_url( get_permalink( $course_id ) ) . '">
 			<input type="hidden" name="course_start" value="1" />
 			' . $nonce . '
-			' . $button . '
+			' . $this->add_button_classes( $button ) . '
 			</form>
 			' );
+	}
+
+	/**
+	 * Add additional classes to the button.
+	 *
+	 * @param string $button The button html.
+	 *
+	 * @return string The html with the added classes.
+	 */
+	private function add_button_classes( $button ) : string {
+		wp_enqueue_script( 'sensei-stop-double-submission' );
+
+		if ( preg_match( '/<button(.*)class="(.*)"/', $button ) ) {
+			return preg_replace(
+				'/<button(.*)class="(.*)"/',
+				'<button $1 class="sensei-stop-double-submission $2"',
+				$button,
+				1
+			);
+		}
+
+		return preg_replace(
+			'/<button(.*)/',
+			'<button class="sensei-stop-double-submission" $1',
+			$button,
+			1
+		);
 	}
 
 	/**
