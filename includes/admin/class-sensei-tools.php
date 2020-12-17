@@ -77,8 +77,11 @@ class Sensei_Tools {
 			 * Array of the tools available to Sensei LMS.
 			 *
 			 * @since 3.7.0
+			 * @hook sensei_tools
 			 *
-			 * @param Sensei_Tool_Interface[] $tools Tool objects for Sensei LMS.
+			 * @param {Sensei_Tool_Interface[]} $tools Tool objects for Sensei LMS.
+			 *
+			 * @return {array}
 			 */
 			$tools = apply_filters( 'sensei_tools', $tools );
 
