@@ -161,18 +161,8 @@ class Sensei_Learner {
 						]
 					);
 
-					$wpdb->query(
-						$wpdb->prepare(
-							"DELETE FROM $wpdb->comments WHERE comment_ID IN ( " . $serialized_comment_ids . " )",
-							implode( ',', $comment_ids )
-						)
-					);
-					$wpdb->query(
-						$wpdb->prepare(
-							"DELETE FROM $wpdb->commentmeta WHERE comment_id IN ( " . $serialized_comment_ids . " )",
-							implode( ',', $comment_ids )
-						)
-					);
+					$wpdb->query( "DELETE FROM $wpdb->comments WHERE comment_ID IN ( " . $serialized_comment_ids . ' )' );
+					$wpdb->query( "DELETE FROM $wpdb->commentmeta WHERE comment_id IN ( " . $serialized_comment_ids . ' )' );
 				}
 				// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
 			}
