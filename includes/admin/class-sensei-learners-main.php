@@ -432,7 +432,9 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 					: '';
 
 				if ( 'course' === $post_type ) {
+					// Courses.
 					if ( $is_user_enrolled ) {
+						// Enrolled.
 						$withdraw_action_url = wp_nonce_url(
 							add_query_arg(
 								array(
@@ -454,15 +456,23 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 									esc_html__( 'Remove Enrollment', 'sensei-lms' ) .
 								'</a>' .
 							'</span>';
+
+						$row_actions[] =
+							'<span class="delete">' .
+								'<a class="learner-async-action delete" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="reset_progress" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '">' .
+									esc_html__( 'Reset Progress', 'sensei-lms' ) .
+								'</a>' .
+							'</span>';
 					} else {
+						// Not enrolled.
 						$enrol_label            = esc_html__( 'Enroll', 'sensei-lms' );
-						$data_action            = 'enrol';
+						$enrol_data_action      = 'enrol';
 						$restore_providers_attr = '';
 
 						// Check if it's enrolled by some provider.
 						if ( ! empty( $provider_ids_with_enrollment ) ) {
 							$enrol_label            = esc_html__( 'Restore Enrollment', 'sensei-lms' );
-							$data_action            = 'restore_enrollment';
+							$enrol_data_action      = 'restore_enrollment';
 							$restore_providers_attr = $providers_attr;
 						}
 
@@ -471,38 +481,46 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 								array(
 									'page'             => 'sensei_learners',
 									'view'             => 'learners',
-									'learner_action'   => $data_action,
+									'learner_action'   => $enrol_data_action,
 									'course_id'        => $this->course_id,
 									'user_id'          => $user_activity->user_id,
 									'enrolment_status' => $this->enrolment_status,
 								),
 								admin_url( 'admin.php' )
 							),
-							'sensei-learner-action-' . $data_action
+							'sensei-learner-action-' . $enrol_data_action
 						);
 
 						$row_actions[] =
 							'<span>' .
-								'<a class="learner-action" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="' . $data_action . '" ' . $restore_providers_attr . ' href="' . esc_url( $enrol_action_url ) . '">' .
+								'<a class="learner-action" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="' . $enrol_data_action . '" ' . $restore_providers_attr . ' href="' . esc_url( $enrol_action_url ) . '">' .
 									$enrol_label .
 								'</a>' .
 							'</span>';
+
+						$row_actions[] =
+							'<span class="delete">' .
+								'<a class="learner-async-action delete" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="remove_progress" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '">' .
+									esc_html__( 'Remove Progress', 'sensei-lms' ) .
+								'</a>' .
+							'</span>';
 					}
-				}
+				} else {
+					// Lessons.
+					$row_actions[] =
+						'<span class="delete">' .
+							'<a class="learner-async-action delete" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="reset_progress" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '">' .
+								esc_html__( 'Reset Progress', 'sensei-lms' ) .
+							'</a>' .
+						'</span>';
 
-				$reset_action = 'reset_progress';
-				$reset_label  = esc_html__( 'Reset Progress', 'sensei-lms' );
-				if ( 'course' === $post_type && ! $is_user_enrolled ) {
-					$reset_action = 'remove_progress';
-					$reset_label  = esc_html__( 'Remove Progress', 'sensei-lms' );
+					$row_actions[] =
+						'<span class="delete">' .
+							'<a class="learner-async-action delete" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="remove_progress" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '">' .
+								esc_html__( 'Remove Progress', 'sensei-lms' ) .
+							'</a>' .
+						'</span>';
 				}
-
-				$row_actions[] =
-					'<span class="delete">' .
-						'<a class="learner-async-action delete" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="' . esc_attr( $reset_action ) . '" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '">' .
-							$reset_label .
-						'</a>' .
-					'</span>';
 
 				if ( $edit_start_date_form ) {
 					$actions[] = $edit_start_date_form;
