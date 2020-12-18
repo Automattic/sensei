@@ -130,20 +130,41 @@ class Sensei_Learner {
 			function() use ( $args ) {
 				global $wpdb;
 
-				// This query remove all comments, but the first one, which match the context conditions.
-				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-				$wpdb->query(
+				// Get progress comments, but the first one, which match the context conditions (they should not exist).
+				// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
+				$comment_ids = $wpdb->get_col(
 					$wpdb->prepare(
-						"DELETE c1.*
-							FROM $wpdb->comments as c1
-							INNER JOIN
-								( SELECT comment_ID FROM $wpdb->comments WHERE comment_post_ID = %d AND user_id = %d AND comment_type = %s ORDER BY comment_ID LIMIT 1, 99 ) c2
-								ON c1.comment_ID = c2.comment_ID",
+						"SELECT comment_ID
+							FROM $wpdb->comments
+							WHERE comment_post_ID = %d
+								AND user_id = %d
+								AND comment_type = %s
+							ORDER BY comment_ID
+							LIMIT 1, 99",
 						$args['post_id'],
 						$args['user_id'],
 						$args['type']
-					)
+					),
+					0
 				);
+
+				$serialized_comment_ids = implode( ',', $comment_ids );
+
+				if ( ! empty( $comment_ids ) ) {
+					$wpdb->query(
+						$wpdb->prepare(
+							"DELETE FROM $wpdb->comments WHERE comment_ID IN ( " . $serialized_comment_ids . " )",
+							implode( ',', $comment_ids )
+						)
+					);
+					$wpdb->query(
+						$wpdb->prepare(
+							"DELETE FROM $wpdb->commentmeta WHERE comment_id IN ( " . $serialized_comment_ids . " )",
+							implode( ',', $comment_ids )
+						)
+					);
+				}
+				// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
 			}
 		);
 	}
