@@ -163,6 +163,8 @@ class Sensei_Learner {
 
 					$wpdb->query( "DELETE FROM $wpdb->comments WHERE comment_ID IN ( " . $serialized_comment_ids . ' )' );
 					$wpdb->query( "DELETE FROM $wpdb->commentmeta WHERE comment_id IN ( " . $serialized_comment_ids . ' )' );
+
+					clean_comment_cache( $comment_ids );
 				}
 				// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
 			}
