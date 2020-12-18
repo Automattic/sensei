@@ -151,6 +151,16 @@ class Sensei_Learner {
 				$serialized_comment_ids = implode( ',', $comment_ids );
 
 				if ( ! empty( $comment_ids ) ) {
+					sensei_log_event(
+						'remove_duplicate_progress_comments',
+						[
+							'post_id'     => $args['post_id'],
+							'user_id'     => $args['user_id'],
+							'type'        => $args['type'],
+							'comment_ids' => $serialized_comment_ids,
+						]
+					);
+
 					$wpdb->query(
 						$wpdb->prepare(
 							"DELETE FROM $wpdb->comments WHERE comment_ID IN ( " . $serialized_comment_ids . " )",
