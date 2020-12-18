@@ -149,9 +149,16 @@ export const withDefaultColor = ( colorConfigs ) => ( Component ) => (
 				}
 
 				if ( attributes[ colorKey ] !== slug ) {
-					setAttributes( {
-						[ colorKey ]: slug,
-					} );
+					const colorAttributes = {};
+					colorAttributes[ colorKey ] = slug;
+
+					// Border color is not compatible with all themes as className, so the color value is needed.
+					if ( 'border-color' === style ) {
+						colorAttributes[ `${ colorKey }Value` ] =
+							probeColor.color;
+					}
+
+					setAttributes( colorAttributes );
 				}
 			}
 		);
