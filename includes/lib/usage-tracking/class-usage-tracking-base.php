@@ -316,18 +316,19 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * sends data if tracking is enabled.
 	 */
 	public function send_usage_data() {
-		if ( ! self::is_tracking_enabled() || ! is_callable( $this->callback ) ) {
+		if ( ! $this->is_tracking_enabled() || ! is_callable( $this->callback ) ) {
 			return;
 		}
 
-		$usage_data = call_user_func( $this->callback );
+		$this->send_event( 'send_usage_data' );
+		$this->send_event( 'system_log', $this->get_system_data() );
 
+		$usage_data = call_user_func( $this->callback );
 		if ( ! is_array( $usage_data ) ) {
 			return;
 		}
 
-		self::send_event( 'system_log', $this->get_system_data() );
-		self::send_event( 'stats_log', $usage_data );
+		$this->send_event( 'stats_log', $usage_data );
 	}
 
 

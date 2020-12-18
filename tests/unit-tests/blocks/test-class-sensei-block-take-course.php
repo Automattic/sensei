@@ -68,7 +68,7 @@ class Sensei_Block_Take_Course_Test extends WP_UnitTestCase {
 		$this->assertRegExp( $form, $result, 'Should be wrapped in a form tag' );
 		$this->assertContains( $action, $result, 'Should have course_start action input field' );
 		$this->assertRegExp( $nonce, $result, 'Should have nonce input field' );
-		$this->assertContains( '<button>Take Course</button>', $result, 'Should contain block content' );
+		$this->assertContains( '<button class="sensei-stop-double-submission" >Take Course</button>', $result, 'Should contain block content' );
 
 	}
 

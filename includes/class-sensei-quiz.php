@@ -1297,7 +1297,7 @@ class Sensei_Quiz {
 
 		}
 		if ( $show_actions && is_user_logged_in() && Sensei_Course::is_user_enrolled( $lesson_course_id, $current_user->ID ) ) {
-
+			wp_enqueue_script( 'sensei-stop-double-submission' );
 			// Get Reset Settings
 			$reset_quiz_allowed = get_post_meta( $post->ID, '_enable_quiz_reset', true );
 			?>
@@ -1313,15 +1313,15 @@ class Sensei_Quiz {
 
 			 <?php if ( '' == $user_quiz_grade && ( ! $user_lesson_status || 'ungraded' !== $user_lesson_status->comment_approved ) ) { ?>
 
-				 <span><input type="submit" name="quiz_complete" class="quiz-submit complete" value="<?php esc_attr_e( 'Complete Quiz', 'sensei-lms' ); ?>"/></span>
+				 <span><input type="submit" name="quiz_complete" class="quiz-submit complete sensei-stop-double-submission" value="<?php esc_attr_e( 'Complete Quiz', 'sensei-lms' ); ?>"/></span>
 
-				 <span><input type="submit" name="quiz_save" class="quiz-submit save" value="<?php esc_attr_e( 'Save Quiz', 'sensei-lms' ); ?>"/></span>
+				 <span><input type="submit" name="quiz_save" class="quiz-submit save sensei-stop-double-submission" value="<?php esc_attr_e( 'Save Quiz', 'sensei-lms' ); ?>"/></span>
 
 				<?php } // End If Statement ?>
 
 			 <?php if ( isset( $reset_quiz_allowed ) && $reset_quiz_allowed ) { ?>
 
-				 <span><input type="submit" name="quiz_reset" class="quiz-submit reset" value="<?php esc_attr_e( 'Reset Quiz', 'sensei-lms' ); ?>"/></span>
+				 <span><input type="submit" name="quiz_reset" class="quiz-submit reset sensei-stop-double-submission" value="<?php esc_attr_e( 'Reset Quiz', 'sensei-lms' ); ?>"/></span>
 
 				<?php } ?>
 
