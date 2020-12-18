@@ -148,9 +148,9 @@ class Sensei_Learner {
 					0
 				);
 
-				$serialized_comment_ids = implode( ',', $comment_ids );
-
 				if ( ! empty( $comment_ids ) ) {
+					$serialized_comment_ids = implode( ',', $comment_ids );
+
 					sensei_log_event(
 						'remove_duplicate_progress_comments',
 						[
