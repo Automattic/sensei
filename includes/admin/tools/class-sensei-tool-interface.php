@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Sensei_Tool_Interface interface.
+ * Sensei_Tool_Interface interface for all tools.
  *
  * @since 3.7.0
  */
@@ -38,14 +38,7 @@ interface Sensei_Tool_Interface {
 	public function get_description();
 
 	/**
-	 * Is the tool a single action?
-	 *
-	 * @return bool
+	 * Process the tool action. Nonce will be checked for non-interactive tools.
 	 */
-	public function is_single_action();
-
-	/**
-	 * Run the tool.
-	 */
-	public function run();
+	public function process();
 }

@@ -100,6 +100,43 @@ class Sensei_Tools {
 	public function add_menu_pages() {
 		$title = esc_html__( 'Tools', 'sensei-lms' );
 		add_submenu_page( 'sensei', $title, $title, 'manage_sensei', 'sensei-tools', [ $this, 'output' ] );
+		add_action( 'load-sensei-lms_page_sensei-tools', [ $this, 'process' ] );
+	}
+
+	/**
+	 * Handle processing actions on the tools page.
+	 */
+	public function process() {
+		$tools = $this->get_tools();
+
+		if ( ! empty( $_GET['tool'] ) ) {
+			$tool_id = sanitize_text_field( wp_unslash( $_GET['tool'] ) );
+			if ( ! isset( $tools[ $tool_id ] ) ) {
+				$this->trigger_invalid_request();
+
+				return;
+			}
+
+			$tool = $tools[ $tool_id ];
+
+			if ( $this->is_interactive_tool( $tool ) ) {
+				// Let the tool do its own nonce check and processing.
+				$tool->process();
+			} else {
+				// Check the nonce for non-interactive tools.
+				// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Do not change nonce.
+				if ( empty( $_GET['_wpnonce'] ) || ! wp_verify_nonce( wp_unslash( $_GET['_wpnonce'] ), 'sensei-tool-' . $tool_id ) ) {
+					$this->trigger_invalid_request();
+
+					return;
+				}
+
+				$tool->process();
+
+				wp_safe_redirect( $this->get_tools_url() );
+				exit;
+			}
+		}
 	}
 
 	/**
@@ -108,28 +145,18 @@ class Sensei_Tools {
 	public function output() {
 		$tools = $this->get_tools();
 
-		if ( ! empty( $_GET['tool'] ) ) {
-			$tool_id = sanitize_text_field( wp_unslash( $_GET['tool'] ) );
-			if ( ! isset( $tools[ $tool_id ] ) ) {
-				return $this->trigger_invalid_request();
-			}
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$tool_id = ! empty( $_GET['tool'] ) ? sanitize_text_field( wp_unslash( $_GET['tool'] ) ) : false;
 
+		if (
+			$tool_id
+			&& isset( $tools[ $tool_id ] )
+			&& $this->is_interactive_tool( $tools[ $tool_id ] )
+		) {
 			$tool = $tools[ $tool_id ];
 
-			if ( $tool->is_single_action() ) {
-				// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Don't modify the nonce.
-				if ( empty( $_GET['_wpnonce'] ) || ! wp_verify_nonce( wp_unslash( $_GET['_wpnonce'] ), 'sensei-tool-' . $tool_id ) ) {
-					return $this->trigger_invalid_request();
-				}
-
-				$tool->run();
-
-				wp_safe_redirect( $this->get_tools_url() );
-				wp_die();
-			}
-
 			ob_start();
-			$tool->run();
+			$tool->output();
 			$output = ob_get_clean();
 
 			// phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable -- Variable used in view.
@@ -155,11 +182,22 @@ class Sensei_Tools {
 	public function get_tool_url( Sensei_Tool_Interface $tool ) {
 		$tool_id = $tool->get_id();
 		$url     = add_query_arg( 'tool', $tool_id, $this->get_tools_url() );
-		if ( $tool->is_single_action() ) {
+		if ( ! $this->is_interactive_tool( $tool ) ) {
 			$url = wp_nonce_url( $url, 'sensei-tool-' . $tool_id );
 		}
 
 		return $url;
+	}
+
+	/**
+	 * Check if a tool is interactive.
+	 *
+	 * @param Sensei_Tool_Interface $tool Tool object.
+	 *
+	 * @return bool True if it is an interactive tool.
+	 */
+	public function is_interactive_tool( Sensei_Tool_Interface $tool ) {
+		return $tool instanceof Sensei_Tool_Interactive_Interface;
 	}
 
 	/**
@@ -241,7 +279,7 @@ class Sensei_Tools {
 		$this->add_user_message( __( 'There was a problem validating your request. Please try again.', 'sensei-lms' ), true );
 
 		wp_safe_redirect( $redirect );
-		wp_die();
+		exit;
 	}
 
 }

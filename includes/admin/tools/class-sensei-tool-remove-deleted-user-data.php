@@ -44,18 +44,9 @@ class Sensei_Tool_Remove_Deleted_User_Data implements Sensei_Tool_Interface {
 	}
 
 	/**
-	 * Is the tool a single action?
-	 *
-	 * @return bool
-	 */
-	public function is_single_action() {
-		return true;
-	}
-
-	/**
 	 * Run the tool.
 	 */
-	public function run() {
+	public function process() {
 		global $wpdb;
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- Shortcut for large pagination.

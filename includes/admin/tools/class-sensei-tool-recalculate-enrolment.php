@@ -44,18 +44,9 @@ class Sensei_Tool_Recalculate_Enrolment implements Sensei_Tool_Interface {
 	}
 
 	/**
-	 * Is the tool a single action?
-	 *
-	 * @return bool
-	 */
-	public function is_single_action() {
-		return true;
-	}
-
-	/**
 	 * Run the tool.
 	 */
-	public function run() {
+	public function process() {
 		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
 		$enrolment_manager->reset_site_salt();
 

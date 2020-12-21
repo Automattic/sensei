@@ -33,7 +33,7 @@ require __DIR__ . '/html-admin-page-tools-header.php';
 						<?php
 						$label = __( 'Visit Tool', 'sensei-lms' );
 						$url   = Sensei_Tools::instance()->get_tool_url( $tool );
-						if ( $tool->is_single_action() ) {
+						if ( ! Sensei_Tools::instance()->is_interactive_tool( $tool ) ) {
 							$label = __( 'Run Action', 'sensei-lms' );
 						}
 						?>

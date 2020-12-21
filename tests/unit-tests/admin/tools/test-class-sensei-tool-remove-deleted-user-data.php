@@ -41,7 +41,7 @@ class Sensei_Tool_Remove_Deleted_User_Data_Tests extends WP_UnitTestCase {
 		$wpdb->delete( $wpdb->users, [ 'ID' => $user_id_a ] );
 
 		$tool = new Sensei_Tool_Remove_Deleted_User_Data();
-		$tool->run();
+		$tool->process();
 
 		$this->assertNull( get_comment( $user_a_status_comment_id ) );
 		$this->assertTrue( get_comment( $user_b_status_comment_id ) instanceof WP_Comment );

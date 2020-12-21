@@ -44,18 +44,9 @@ class Sensei_Tool_Ensure_Roles implements Sensei_Tool_Interface {
 	}
 
 	/**
-	 * Is the tool a single action?
-	 *
-	 * @return bool
-	 */
-	public function is_single_action() {
-		return true;
-	}
-
-	/**
 	 * Run the tool.
 	 */
-	public function run() {
+	public function process() {
 		Sensei()->assign_role_caps();
 		Sensei()->add_editor_caps();
 		Sensei()->add_sensei_admin_caps();

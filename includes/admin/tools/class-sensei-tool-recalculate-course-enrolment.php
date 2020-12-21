@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 3.7.0
  */
-class Sensei_Tool_Recalculate_Course_Enrolment implements Sensei_Tool_Interface {
+class Sensei_Tool_Recalculate_Course_Enrolment implements Sensei_Tool_Interface, Sensei_Tool_Interactive_Interface {
 	const NONCE_ACTION = 'recalculate-course-enrolment';
 
 	/**
@@ -46,28 +46,9 @@ class Sensei_Tool_Recalculate_Course_Enrolment implements Sensei_Tool_Interface 
 	}
 
 	/**
-	 * Is the tool a single action?
-	 *
-	 * @return bool
+	 * Output tool view for interactive action methods.
 	 */
-	public function is_single_action() {
-		return false;
-	}
-
-	/**
-	 * Run the tool.
-	 */
-	public function run() {
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce checked in `process_input`.
-		if ( ! empty( $_POST['course_id'] ) ) {
-			$results = $this->process_input();
-
-			if ( $results ) {
-				wp_safe_redirect( Sensei_Tools::instance()->get_tools_url() );
-				wp_die();
-			}
-		}
-
+	public function output() {
 		$course_query_args = [
 			'posts_per_page' => 100,
 			'orderby'        => 'title',
@@ -91,30 +72,25 @@ class Sensei_Tool_Recalculate_Course_Enrolment implements Sensei_Tool_Interface 
 
 	/**
 	 * Process form input.
-	 *
-	 * @return false|array
 	 */
-	private function process_input() {
+	public function process() {
+		if ( empty( $_POST['course_id'] ) ) {
+			return;
+		}
+
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Don't modify the nonce.
 		if ( empty( $_POST['_wpnonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['_wpnonce'] ), self::NONCE_ACTION ) ) {
 			Sensei_Tools::instance()->trigger_invalid_request( $this );
-
-			return false;
-		}
-
-		if ( empty( $_POST['course_id'] ) ) {
-			Sensei_Tools::instance()->add_user_message( __( 'Please select a course.', 'sensei-lms' ), true );
-
-			return false;
 		}
 
 		$course_id = intval( $_POST['course_id'] );
+		$course    = get_post( $course_id );
 
-		$course = get_post( $course_id );
 		if ( ! $course || 'course' !== get_post_type( $course ) ) {
 			Sensei_Tools::instance()->add_user_message( __( 'Invalid course ID selected.', 'sensei-lms' ), true );
 
-			return false;
+			wp_safe_redirect( Sensei_Tools::instance()->get_tools_url() );
+			wp_die();
 		}
 
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
@@ -122,6 +98,7 @@ class Sensei_Tool_Recalculate_Course_Enrolment implements Sensei_Tool_Interface 
 
 		Sensei_Tools::instance()->add_user_message( __( 'Course enrollment has been queued for recalculation.', 'sensei-lms' ) );
 
-		return true;
+		wp_safe_redirect( Sensei_Tools::instance()->get_tools_url() );
+		exit;
 	}
 }
