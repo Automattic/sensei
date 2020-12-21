@@ -123,6 +123,17 @@ class Sensei_Autoloader {
 			'Sensei_Status'                              => 'admin/class-sensei-status.php',
 
 			/**
+			 * Admin Tools
+			 */
+			'Sensei_Tools'                               => 'admin/class-sensei-tools.php',
+			'Sensei_Tool_Interface'                      => 'admin/tools/class-sensei-tool-interface.php',
+			'Sensei_Tool_Interactive_Interface'          => 'admin/tools/class-sensei-tool-interactive-interface.php',
+			'Sensei_Tool_Recalculate_Course_Enrolment'   => 'admin/tools/class-sensei-tool-recalculate-course-enrolment.php',
+			'Sensei_Tool_Recalculate_Enrolment'          => 'admin/tools/class-sensei-tool-recalculate-enrolment.php',
+			'Sensei_Tool_Ensure_Roles'                   => 'admin/tools/class-sensei-tool-ensure-roles.php',
+			'Sensei_Tool_Remove_Deleted_User_Data'       => 'admin/tools/class-sensei-tool-remove-deleted-user-data.php',
+
+			/**
 			 * Shortcodes
 			 */
 			'Sensei_Shortcode_Loader'                    => 'shortcodes/class-sensei-shortcode-loader.php',

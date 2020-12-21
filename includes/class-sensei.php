@@ -1554,12 +1554,63 @@ class Sensei_Main {
 		$this->teacher->create_role();
 
 		// Setup all the role capabilities needed.
-		$this->updates->add_sensei_caps();
-		$this->updates->add_editor_caps();
-		$this->updates->assign_role_caps();
+		$this->add_sensei_admin_caps();
+		$this->add_editor_caps();
+		$this->assign_role_caps();
 
 		// Flush rules.
 		add_action( 'activated_plugin', array( __CLASS__, 'activation_flush_rules' ), 10 );
+	}
+
+	/**
+	 * Assign role caps for the various post types.
+	 */
+	public function assign_role_caps() {
+		foreach ( $this->post_types->role_caps as $role_cap_set ) {
+			foreach ( $role_cap_set as $role_key => $capabilities_array ) {
+				// Get the role.
+				$role = get_role( $role_key );
+				foreach ( $capabilities_array as $cap_name ) {
+					// If the role exists, add required capabilities for the plugin.
+					if ( ! empty( $role ) ) {
+						if ( ! $role->has_cap( $cap_name ) ) {
+							$role->add_cap( $cap_name );
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Adds Sensei capabilities to the editor role.
+	 *
+	 * @return bool
+	 */
+	public function add_editor_caps() {
+		$role = get_role( 'editor' );
+
+		if ( ! is_null( $role ) ) {
+			$role->add_cap( 'manage_sensei_grades' );
+		}
+
+		return true;
+	}
+
+	/**
+	 * Adds Sensei capabilities to admin.
+	 *
+	 * @return bool
+	 */
+	public function add_sensei_admin_caps() {
+		$role = get_role( 'administrator' );
+
+		if ( ! is_null( $role ) ) {
+			$role->add_cap( 'manage_sensei' );
+			$role->add_cap( 'manage_sensei_grades' );
+		}
+
+		return true;
 	}
 
 	/**

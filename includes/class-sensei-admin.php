@@ -80,6 +80,7 @@ class Sensei_Admin {
 		add_action( 'wp_ajax_sensei_log_event', array( $this, 'ajax_log_event' ) );
 
 		Sensei_Extensions::instance()->init();
+		Sensei_Tools::instance()->init();
 		Sensei_Status::instance()->init();
 
 	} // End __construct()

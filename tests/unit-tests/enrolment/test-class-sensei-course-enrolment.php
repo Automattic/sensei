@@ -461,7 +461,11 @@ class Sensei_Course_Enrolment_Test extends WP_UnitTestCase {
 			$course_enrolment->is_enrolled( $user_id );
 		}
 
-		$this->assertEquals( $enrolled_user_ids, $course_enrolment->get_enrolled_user_ids(), 'We should only get the IDs of students who should be enrolled' );
+		$returned_enrolled_student_ids = $course_enrolment->get_enrolled_user_ids();
+		sort( $enrolled_user_ids );
+		sort( $returned_enrolled_student_ids );
+
+		$this->assertEquals( $enrolled_user_ids, $returned_enrolled_student_ids, 'We should only get the IDs of students who should be enrolled' );
 	}
 
 	/**
