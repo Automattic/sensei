@@ -15,8 +15,15 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 3.7.0
  */
-class Sensei_Tool_Enrolment_Debug implements Sensei_Tool_Interface {
+class Sensei_Tool_Enrolment_Debug implements Sensei_Tool_Interface, Sensei_Tool_Interactive_Interface {
 	const NONCE_ACTION = 'enrolment-debug';
+
+	/**
+	 * Debug results.
+	 *
+	 * @var array
+	 */
+	private $results;
 
 	/**
 	 * Get the ID of the tool.
@@ -55,21 +62,12 @@ class Sensei_Tool_Enrolment_Debug implements Sensei_Tool_Interface {
 	}
 
 	/**
-	 * Run the tool.
+	 * Output tool view for interactive action methods.
 	 */
-	public function run() {
-		Sensei()->assets->enqueue( 'sensei-enrolment-debug', 'css/enrolment-debug.css' );
-
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce checked in `process_input`.
-		if ( ! empty( $_GET['course_id'] ) || ! empty( $_GET['user_id'] ) ) {
-			$results = $this->process_input();
-
-			// If there was an error, go back to the tool page.
-			if ( ! $results ) {
-				wp_safe_redirect( Sensei_Tools::instance()->get_tool_url( $this ) );
-				wp_die();
-			}
-
+	public function output() {
+		// If the results were processed by `process()`, show them here.
+		if ( $this->results ) {
+			$results = $this->results;
 			include __DIR__ . '/views/html-enrolment-debug.php';
 		}
 
@@ -108,28 +106,45 @@ class Sensei_Tool_Enrolment_Debug implements Sensei_Tool_Interface {
 	}
 
 	/**
-	 * Process form input.
+	 * Return to tool with a message.
 	 *
-	 * @return false|array
+	 * @param string $message  Message to show.
+	 * @param bool   $is_error True if this is an error message.
 	 */
-	private function process_input() {
+	private function return_with_message( $message, $is_error ) {
+		Sensei_Tools::instance()->add_user_message( $message, $is_error );
+
+		wp_safe_redirect( Sensei_Tools::instance()->get_tool_url( $this ) );
+		exit;
+	}
+
+	/**
+	 * Process the tool action.
+	 */
+	public function process() {
+		Sensei()->assets->enqueue( 'sensei-enrolment-debug', 'css/enrolment-debug.css' );
+
+		if ( empty( $_GET['course_id'] ) && empty( $_GET['user_id'] ) ) {
+			return;
+		}
+
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Don't modify the nonce.
 		if ( empty( $_GET['_wpnonce'] ) || ! wp_verify_nonce( wp_unslash( $_GET['_wpnonce'] ), self::NONCE_ACTION ) ) {
 			Sensei_Tools::instance()->trigger_invalid_request( $this );
 
-			return false;
+			return;
 		}
 
 		if ( empty( $_GET['user_id'] ) ) {
-			Sensei_Tools::instance()->add_user_message( __( 'Please select a user.', 'sensei-lms' ), true );
+			$this->return_with_message( __( 'Please select a user.', 'sensei-lms' ), true );
 
-			return false;
+			return;
 		}
 
 		if ( empty( $_GET['course_id'] ) ) {
-			Sensei_Tools::instance()->add_user_message( __( 'Please select a course ID.', 'sensei-lms' ), true );
+			$this->return_with_message( __( 'Please select a course ID.', 'sensei-lms' ), true );
 
-			return false;
+			return;
 		}
 
 		$user_id   = intval( $_GET['user_id'] );
@@ -137,19 +152,19 @@ class Sensei_Tool_Enrolment_Debug implements Sensei_Tool_Interface {
 
 		$user = get_user_by( 'ID', $user_id );
 		if ( ! $user ) {
-			Sensei_Tools::instance()->add_user_message( __( 'Invalid user ID selected.', 'sensei-lms' ), true );
+			$this->return_with_message( __( 'Invalid user ID selected.', 'sensei-lms' ), true );
 
-			return false;
+			return;
 		}
 
 		$course = get_post( $course_id );
 		if ( ! $course || 'course' !== get_post_type( $course ) ) {
-			Sensei_Tools::instance()->add_user_message( __( 'Invalid course ID selected.', 'sensei-lms' ), true );
+			$this->return_with_message( __( 'Invalid course ID selected.', 'sensei-lms' ), true );
 
-			return false;
+			return;
 		}
 
-		return $this->get_debug_results( $user, $course );
+		$this->results = $this->get_debug_results( $user, $course );
 	}
 
 	/**
