@@ -120,6 +120,7 @@ class Sensei_Autoloader {
 			'Sensei_Setup_Wizard'                        => 'admin/class-sensei-setup-wizard.php',
 			'Sensei_Setup_Wizard_Pages'                  => 'admin/class-sensei-setup-wizard-pages.php',
 			'Sensei_Plugins_Installation'                => 'admin/class-sensei-plugins-installation.php',
+			'Sensei_Status'                              => 'admin/class-sensei-status.php',
 
 			/**
 			 * Shortcodes
