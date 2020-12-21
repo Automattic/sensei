@@ -92,11 +92,11 @@ $block: '.wp-block-sensei-lms-course-outline-module';
 	}
 
 	#{$block}__header {
-		&:not(.has-background-color) {
+		&:not(.has-background) {
 			background-color: $dark-gray;
 		}
 
-		&:not(.has-color) {
+		&:not(.has-text-color) {
 			color: #FFF;
 		}
 	}

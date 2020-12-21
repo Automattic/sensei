@@ -81,6 +81,7 @@ class Sensei_Admin {
 
 		Sensei_Extensions::instance()->init();
 		Sensei_Tools::instance()->init();
+		Sensei_Status::instance()->init();
 
 	} // End __construct()
 

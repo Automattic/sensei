@@ -49,6 +49,9 @@
     "defaultBorderColor": {
       "type": "string"
     },
+    "defaultBorderColorValue": {
+      "type": "string"
+    },
     "className": {
       "type": "string"
     },

@@ -44,8 +44,9 @@ class Sensei_Course_Outline_Module_Block {
 			$header_css = Sensei_Block_Helpers::build_styles(
 				$block['attributes'],
 				[
-					'mainColor'   => $is_default_style ? 'background-color' : null,
-					'borderColor' => null,
+					'mainColor'       => $is_default_style ? 'background-color' : null,
+					'backgroundColor' => null,
+					'borderColor'     => null,
 				]
 			);
 		}
@@ -172,8 +173,11 @@ class Sensei_Course_Outline_Module_Block {
 		if ( $should_have_border ) {
 			$class_names[] = 'wp-block-sensei-lms-course-outline-module-bordered';
 
-			if ( ! empty( $block_attributes['borderColorValue'] ) ) {
-				$inline_styles[] = sprintf( 'border-color: %s;', $block_attributes['borderColorValue'] );
+			$border_color_value = ! empty( $block_attributes['defaultBorderColorValue'] ) ? $block_attributes['defaultBorderColorValue'] : '';
+			$border_color_value = ! empty( $block_attributes['borderColorValue'] ) ? $block_attributes['borderColorValue'] : $border_color_value;
+
+			if ( ! empty( $border_color_value ) ) {
+				$inline_styles[] = sprintf( 'border-color: %s;', $border_color_value );
 			}
 		}
 

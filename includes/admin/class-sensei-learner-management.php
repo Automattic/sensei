@@ -89,6 +89,7 @@ class Sensei_Learner_Management {
 		if ( is_admin() ) {
 			add_action( 'wp_ajax_get_redirect_url_learners', array( $this, 'get_redirect_url' ) );
 			add_action( 'wp_ajax_edit_date_started', array( $this, 'edit_date_started' ) );
+			add_action( 'wp_ajax_remove_user_from_post', array( $this, 'remove_user_from_post' ) );
 			add_action( 'wp_ajax_reset_user_post', array( $this, 'reset_user_post' ) );
 			add_action( 'wp_ajax_sensei_json_search_users', array( $this, 'json_search_users' ) );
 		}
@@ -155,6 +156,8 @@ class Sensei_Learner_Management {
 			[ 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'jquery-ui-tooltip', 'sensei-core-select2' ],
 			true
 		);
+
+		Sensei()->assets->enqueue( 'sensei-stop-double-submission', 'js/stop-double-submission.js', [], true );
 
 		wp_localize_script(
 			'sensei-learners-general',
@@ -486,25 +489,31 @@ class Sensei_Learner_Management {
 
 			$altered = true;
 
-			switch ( $action ) {
-				case 'reset':
-					switch ( $post_type ) {
-						case 'course':
-							$altered = Sensei_Utils::reset_course_for_user( $post_id, $user_id );
-							break;
-
-						case 'lesson':
+			switch ( $post_type ) {
+				case 'course':
+					$altered = Sensei_Utils::reset_course_for_user( $post_id, $user_id );
+					break;
+				case 'lesson':
+					switch ( $action ) {
+						case 'reset':
 							$altered = Sensei()->quiz->reset_user_lesson_data( $post_id, $user_id );
+							break;
+						case 'remove':
+							$altered = Sensei_Utils::sensei_remove_user_from_lesson( $post_id, $user_id );
 							break;
 					}
 					break;
 			}
 
-			if ( $altered && 'course' === $post_type && ! Sensei_Utils::has_started_course( $post_id, $user_id ) ) {
-				exit( 'removed' );
-			}
-
 			if ( $altered ) {
+				if ( 'course' === $post_type && ! Sensei_Utils::has_started_course( $post_id, $user_id ) ) {
+					exit( 'removed' );
+				}
+
+				if ( 'lesson' === $post_type && 'remove' === $action ) {
+					exit( 'removed' );
+				}
+
 				exit( 'altered' );
 			}
 		}
@@ -583,6 +592,13 @@ class Sensei_Learner_Management {
 	 */
 	public function reset_user_post() {
 		$this->handle_user_async_action( 'reset' );
+	}
+
+	/**
+	 * Removes a Learner from a course/lesson.
+	 */
+	public function remove_user_from_post() {
+		$this->handle_user_async_action( 'remove' );
 	}
 
 	/**
