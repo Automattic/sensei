@@ -73,9 +73,93 @@ class Sensei_Updates {
 
 		$this->v3_0_check_legacy_enrolment();
 		$this->v3_7_check_rewrite_front();
+		$this->v3_7_add_comment_indexes();
 
 		// Flush rewrite cache.
 		Sensei()->initiate_rewrite_rules_flush();
+	}
+
+	/**
+	 * Add comment table indexes.
+	 *
+	 * @since 3.7.0
+	 */
+	private function v3_7_add_comment_indexes() {
+		global $wpdb;
+
+		/**
+		 * Filter to disable attempts at adding the comment indexes.
+		 *
+		 * @hook sensei_add_comment_indexes
+		 * @since 3.7.0
+		 *
+		 * @param {bool} $do_add_indexes True if indexes should be added to comment table.
+		 *
+		 * @return {bool}
+		 */
+		if ( ! apply_filters( 'sensei_add_comment_indexes', true ) ) {
+			return;
+		}
+
+		$indexes = [
+			'woo_idx_comment_type'        => [ 'comment_type' ],
+			'sensei_comment_type_user_id' => [ 'comment_type', 'user_id' ],
+		];
+
+		$current_indexes = array_map(
+			function( $arr ) {
+				return implode( ',', $arr['columns'] );
+			},
+			$this->get_table_indexes( $wpdb->comments )
+		);
+
+		foreach ( $indexes as $name => $columns ) {
+			if ( isset( $current_indexes[ $name ] ) ) {
+				continue;
+			}
+
+			sort( $columns );
+			if ( in_array( implode( ',', $columns ), $current_indexes, true ) ) {
+				continue;
+			}
+
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared -- Safe schema change.
+			$wpdb->query( "ALTER TABLE {$wpdb->comments} ADD INDEX {$name} (`" . implode( '`,`', $columns ) . '`)' );
+		}
+	}
+
+	/**
+	 * Get indexes for a table.
+	 *
+	 * @param string $table Table to get indexes for.
+	 *
+	 * @return array
+	 */
+	private function get_table_indexes( $table ) {
+		global $wpdb;
+
+		$indexes = [];
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Safe direct sql.
+		$results = $wpdb->get_results( "SHOW INDEX FROM `{$table}`", ARRAY_A );
+		if ( ! $results ) {
+			return [];
+		}
+
+		foreach ( $results as $row ) {
+			if ( ! isset( $indexes[ $row['Key_name'] ] ) ) {
+				$indexes[ $row['Key_name'] ] = [
+					'unique'  => 0 === (int) $row['Non_unique'],
+					'columns' => [],
+				];
+			}
+			$indexes[ $row['Key_name'] ]['columns'][] = $row['Column_name'];
+		}
+
+		foreach ( $indexes as $index => $config ) {
+			sort( $indexes[ $index ]['columns'] );
+		}
+
+		return $indexes;
 	}
 
 	/**
