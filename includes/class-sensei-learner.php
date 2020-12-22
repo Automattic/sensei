@@ -125,6 +125,10 @@ class Sensei_Learner {
 	 * @param array $args
 	 */
 	public function remove_duplicate_progress( $args ) {
+		if ( empty( $args['post_id'] ) || empty( $args['user_id'] ) || empty( $args['type'] ) ) {
+			return;
+		}
+
 		add_action(
 			'shutdown',
 			function() use ( $args ) {
