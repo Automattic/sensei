@@ -75,7 +75,6 @@ class Sensei_Utils {
 		if ( ! $comment_id ) {
 			// Add the comment
 			$comment_id = wp_insert_comment( $data );
-
 		} elseif ( isset( $args['action'] ) && 'update' == $args['action'] ) {
 			// Update the comment if an update was requested
 			$data['comment_ID'] = $comment_id;

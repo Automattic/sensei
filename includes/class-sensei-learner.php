@@ -59,6 +59,9 @@ class Sensei_Learner {
 	public function init() {
 		// Delete user activity and enrolment terms when user is deleted.
 		add_action( 'deleted_user', array( $this, 'delete_all_user_activity' ) );
+
+		// Try to remove duplicate progress comments to mitigate duplicate enrollment issue.
+		add_action( 'sensei_log_activity_after', [ $this, 'remove_duplicate_progress' ] );
 	}
 
 	/**
@@ -109,6 +112,72 @@ class Sensei_Learner {
 		}
 
 		return $dataset_changes;
+	}
+
+	/**
+	 * Remove duplicate progress comments to mitigate duplicate enrollment issue.
+	 *
+	 * Hooked into sensei_log_activity_after
+	 *
+	 * @since 3.7.0
+	 * @access private
+	 *
+	 * @param array $args
+	 */
+	public function remove_duplicate_progress( $args ) {
+		if ( empty( $args['post_id'] ) || empty( $args['user_id'] ) || empty( $args['type'] ) ) {
+			return;
+		}
+
+		add_action(
+			'shutdown',
+			function() use ( $args ) {
+				global $wpdb;
+
+				// Get progress comments, but the first one, which match the context conditions (they should not exist).
+				// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
+				$comment_ids = $wpdb->get_col(
+					$wpdb->prepare(
+						"SELECT comment_ID
+							FROM $wpdb->comments
+							WHERE comment_post_ID = %d
+								AND user_id = %d
+								AND comment_type = %s
+							ORDER BY comment_ID
+							LIMIT 1, 99",
+						$args['post_id'],
+						$args['user_id'],
+						$args['type']
+					),
+					0
+				);
+
+				if ( ! empty( $comment_ids ) ) {
+					$serialized_comment_ids = implode( ',', $comment_ids );
+
+					sensei_log_event(
+						'remove_duplicate_progress_comments',
+						[
+							'post_id'     => $args['post_id'],
+							'user_id'     => $args['user_id'],
+							'type'        => $args['type'],
+							'comment_ids' => $serialized_comment_ids,
+						]
+					);
+
+					$format_comment_ids = implode( ', ', array_fill( 0, count( $comment_ids ), '%s' ) );
+
+					$sql = "DELETE FROM $wpdb->comments WHERE comment_ID IN ( $format_comment_ids )";
+					$wpdb->query( call_user_func_array( [ $wpdb, 'prepare' ], array_merge( [ $sql ], $comment_ids ) ) );
+
+					$sql = "DELETE FROM $wpdb->commentmeta WHERE comment_id IN ( $format_comment_ids )";
+					$wpdb->query( call_user_func_array( [ $wpdb, 'prepare' ], array_merge( [ $sql ], $comment_ids ) ) );
+
+					clean_comment_cache( $comment_ids );
+				}
+				// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
+			}
+		);
 	}
 
 	/**
