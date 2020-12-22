@@ -17,8 +17,127 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @author Automattic
  * @since 1.1.0
+ * @since 3.7.0 New constructor signature and single purpose for performing update tasks.
  */
 class Sensei_Updates {
+	/**
+	 * Version that is currently being updated from.
+	 *
+	 * @var string|null
+	 */
+	private $current_version;
+
+	/**
+	 * Flag if this is a new install.
+	 *
+	 * @var bool
+	 */
+	private $is_new_install;
+
+	/**
+	 * Flag if this is an upgrade.
+	 *
+	 * @var bool
+	 */
+	private $is_upgrade;
+
+	/**
+	 * Sensei_Updates constructor.
+	 *
+	 * Default values for backwards compatibility pre-v3.7.
+	 *
+	 * @param string $current_version Version that is currently being updated from.
+	 * @param bool   $is_new_install  Flag if this is a new install.
+	 * @param bool   $is_upgrade      Flag if this is an upgrade.
+	 */
+	public function __construct( $current_version = null, $is_new_install = false, $is_upgrade = false ) {
+		if ( is_object( $current_version ) ) {
+			$current_version = null;
+		}
+
+		$this->current_version = $current_version;
+		$this->is_new_install  = $is_new_install;
+		$this->is_upgrade      = $is_upgrade;
+	}
+
+	/**
+	 * Run the updates (if necessary).
+	 *
+	 * @since 3.7.0
+	 */
+	public function run_updates() {
+		// Only proceed if we knew the previous version and this was a new install or an upgrade.
+		if ( $this->current_version && ! $this->is_new_install && ! $this->is_upgrade ) {
+			return;
+		}
+
+		$this->v3_0_check_legacy_enrolment();
+		$this->v3_7_check_rewrite_front();
+
+		// Flush rewrite cache.
+		Sensei()->initiate_rewrite_rules_flush();
+	}
+
+	/**
+	 * Check for rewrite front and set legacy flag if needed.
+	 *
+	 * @since 3.7.0
+	 */
+	private function v3_7_check_rewrite_front() {
+		global $wp_rewrite;
+
+		// Set up legacy `with_front` on CPT rewrite options.
+		if (
+			$this->is_upgrade
+			&& version_compare( '3.7.0-dev', $this->current_version, '>' )
+			&& '' !== trim( $wp_rewrite->front, '/' )
+		) {
+			Sensei()->set_legacy_flag( Sensei_Main::LEGACY_FLAG_WITH_FRONT, true );
+		}
+	}
+
+	/**
+	 * Check for legacy enrolment data and set flag if needed.
+	 *
+	 * @since 3.0.0
+	 */
+	private function v3_0_check_legacy_enrolment() {
+		// Mark site as having enrolment data from legacy instances.
+		if (
+			// If the version is known and the previous version was pre-3.0.0.
+			(
+				$this->is_upgrade
+				&& version_compare( '3.0.0', $this->current_version, '>' )
+			)
+
+			// If there wasn't a current version set and this isn't a new install, double check to make sure there wasn't any enrolment.
+			|| (
+				! $this->current_version
+				&& ! $this->is_new_install
+				&& $this->course_progress_exists()
+			)
+		) {
+			update_option( 'sensei_enrolment_legacy', time() );
+		}
+	}
+
+	/**
+	 * Helper function to check to see if any course progress exists in the database.
+	 *
+	 * @return bool
+	 */
+	private function course_progress_exists() {
+		$activity_args = [
+			'type'   => 'sensei_course_status',
+			'number' => 1,
+			'status' => 'any',
+		];
+
+		$activity_sample = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
+
+		return ! empty( $activity_sample );
+	}
+
 	/**
 	 * Handles deprecation notices for old methods.
 	 *
