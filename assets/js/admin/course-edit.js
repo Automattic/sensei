@@ -1,4 +1,4 @@
-import { select, dispatch } from '@wordpress/data';
+import { select, dispatch, subscribe } from '@wordpress/data';
 
 ( () => {
 	const COURSE_OUTLINE_NAME = 'sensei-lms/course-outline';
@@ -11,6 +11,29 @@ import { select, dispatch } from '@wordpress/data';
 	const blockEditorSelector = select( 'core/block-editor' );
 	const editPostSelector = select( 'core/edit-post' );
 	const editPostDispatcher = dispatch( 'core/edit-post' );
+
+	const teacherIdSelect = document.getElementsByName(
+		'sensei-course-teacher-author'
+	);
+
+	if ( editPostSelector && teacherIdSelect.length ) {
+		let isSavingMetaboxes = false;
+
+		subscribe( () => {
+			if ( editPostSelector.isSavingMetaBoxes() !== isSavingMetaboxes ) {
+				isSavingMetaboxes = editPostSelector.isSavingMetaBoxes();
+
+				if ( ! isSavingMetaboxes ) {
+					const currentTeacherId = teacherIdSelect[ 0 ].value;
+					if ( currentTeacherId ) {
+						document.getElementsByName(
+							'post_author_override'
+						)[ 0 ].value = currentTeacherId;
+					}
+				}
+			}
+		} );
+	}
 
 	/**
 	 * Toggle meta boxes depending on the blocks.
