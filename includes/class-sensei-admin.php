@@ -737,7 +737,7 @@ class Sensei_Admin {
 				/**
 				 * Ignored meta fields when duplicating a post.
 				 *
-				 * @hook  sensei_duplicate_content_ignore_meta
+				 * @hook  sensei_duplicate_post_ignore_meta
 				 * @since 3.7.0
 				 *
 				 * @param {array}   $meta_keys The meta keys to be ignored.
