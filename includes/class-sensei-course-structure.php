@@ -274,9 +274,13 @@ class Sensei_Course_Structure {
 			$term = get_term( $item['id'], 'module' );
 			$slug = $this->get_module_slug( $item['title'] );
 
-			$module_id = $term->slug === $slug
-				? $this->update_module( $item )
-				: $this->create_module( $item );
+			// Slug has changed.
+			if ( $term->slug !== $slug ) {
+				$existing_module_id = $this->get_existing_module( $item['title'] );
+				$module_id          = $existing_module_id ? $existing_module_id : $this->create_module( $item );
+			} else {
+				$module_id = $this->update_module( $item );
+			}
 		} else {
 			$module_id = $this->create_module( $item );
 		}
