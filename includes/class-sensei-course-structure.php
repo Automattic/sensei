@@ -271,7 +271,12 @@ class Sensei_Course_Structure {
 	 */
 	private function save_module( array $item ) {
 		if ( $item['id'] ) {
-			$module_id = $this->update_module( $item );
+			$term = get_term( $item['id'], 'module' );
+			$slug = $this->get_module_slug( $item['title'] );
+
+			$module_id = $term->slug === $slug
+				? $this->update_module( $item )
+				: $this->create_module( $item );
 		} else {
 			$module_id = $this->create_module( $item );
 		}
