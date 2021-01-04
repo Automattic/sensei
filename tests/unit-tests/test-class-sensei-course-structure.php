@@ -157,6 +157,8 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 	 * Test getting course structure when just modules with no lessons and one rogue lesson while in edit context.
 	 */
 	public function testGetModulesWithEmptyLessonsEdit() {
+		$this->login_as_admin();
+
 		$course_id = $this->factory->course->create();
 
 		$lessons = $this->factory->lesson->create_many( 1 );
@@ -191,6 +193,8 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 	 * Test getting course structure when a module has no published lessons while in view context.
 	 */
 	public function testGetModulesWithEmptyLessonsView() {
+		$this->login_as_admin();
+
 		$course_id = $this->factory->course->create();
 
 		$lessons            = $this->factory->lesson->create_many( 2 );
@@ -238,6 +242,8 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 	 * Test getting course structure when there is a mix of modules and lessons on the first level.
 	 */
 	public function testGetModulesLessonsMix() {
+		$this->login_as_admin();
+
 		$course_id = $this->factory->course->create();
 
 		$lessons = $this->factory->lesson->create_many( 5 );
