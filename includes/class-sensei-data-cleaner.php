@@ -22,7 +22,7 @@ class Sensei_Data_Cleaner {
 	/**
 	 * Custom post types to be deleted.
 	 *
-	 * @var $custom_post_types
+	 * @var string[]
 	 */
 	private static $custom_post_types = array(
 		'course',
@@ -36,7 +36,7 @@ class Sensei_Data_Cleaner {
 	/**
 	 * Taxonomies to be deleted.
 	 *
-	 * @var $taxonomies
+	 * @var string[]
 	 */
 	private static $taxonomies = array(
 		'module',
@@ -51,7 +51,7 @@ class Sensei_Data_Cleaner {
 	/**
 	 * Options to be deleted.
 	 *
-	 * @var $options
+	 * @var string[]
 	 */
 	private static $options = array(
 		'sensei_installed',
@@ -78,12 +78,17 @@ class Sensei_Data_Cleaner {
 		'woothemes-sensei_courses_page_id',
 		'woothemes-sensei_user_dashboard_page_id',
 		'sensei-legacy-flags',
+		'sensei-scheduler-calculation-version',
+		'widget_sensei_course_component',
+		'widget_sensei_lesson_component',
+		'widget_sensei_course_categories',
+		'widget_sensei_category_courses',
 	);
 
 	/**
 	 * Role to be removed.
 	 *
-	 * @var $role
+	 * @var string
 	 */
 	private static $role = 'teacher';
 
@@ -91,14 +96,14 @@ class Sensei_Data_Cleaner {
 	 * Name of the role to be removed. This is used temporarily, and will never
 	 * be displayed, and so it doesn't need to be translated.
 	 *
-	 * @var $role_name
+	 * @var string
 	 */
 	private static $role_name = 'Teacher';
 
 	/**
-	 * Capbilities to be deleted.
+	 * Capabilities to be deleted.
 	 *
-	 * @var $caps
+	 * @var string[]
 	 */
 	private static $caps = array(
 		// General.
@@ -204,7 +209,7 @@ class Sensei_Data_Cleaner {
 	 * Transient names (as MySQL regexes) to be deleted. The prefixes
 	 * "_transient_" and "_transient_timeout_" will be prepended.
 	 *
-	 * @var $transients
+	 * @var string[]
 	 */
 	private static $transients = array(
 		'sensei_[0-9]+_none_module_lessons',
@@ -213,12 +218,14 @@ class Sensei_Data_Cleaner {
 		'quiz_grades_[0-9]+_[0-9]+',
 		'sensei_comment_counts_[0-9]+',
 		'sensei_activation_redirect',
+		'sensei_woocommerce_plugin_information',
+		'sensei_extensions_.*',
 	);
 
 	/**
 	 * User meta key names (as MySQL regexes) to be deleted.
 	 *
-	 * @var array $user_meta_keys
+	 * @var string[]
 	 */
 	private static $user_meta_keys = array(
 		'^sensei_hide_menu_settings_notice$',
@@ -232,7 +239,7 @@ class Sensei_Data_Cleaner {
 	/**
 	 * Post meta to be deleted.
 	 *
-	 * @var $post_meta
+	 * @var string[]
 	 */
 	private static $post_meta = array(
 		'sensei_payment_complete',
