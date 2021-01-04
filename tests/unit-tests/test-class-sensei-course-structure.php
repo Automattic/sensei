@@ -574,13 +574,41 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 		$this->assertTrue( $course_structure->save( $new_structure ) );
 
 		$modified_structure                   = $course_structure->get( 'edit' );
-		$modified_structure[0]['title']       = 'Update Module Name';
 		$modified_structure[0]['description'] = 'Now improved!';
 
 		$this->assertTrue( $course_structure->save( $modified_structure ) );
 
 		$structure = $course_structure->get( 'edit' );
 		$this->assertExpectedStructure( $modified_structure, $structure );
+	}
+
+	/**
+	 * Make sure new term is created when changing the module title.
+	 */
+	public function testSaveUpdateModuleName() {
+		$this->login_as_admin();
+
+		$course_id     = $this->factory->course->create();
+		$new_structure = [
+			[
+				'type'        => 'module',
+				'title'       => 'New Module A',
+				'description' => 'Very nice module',
+				'lessons'     => [],
+			],
+		];
+
+		$course_structure = Sensei_Course_Structure::instance( $course_id );
+
+		$this->assertTrue( $course_structure->save( $new_structure ) );
+
+		$modified_structure             = $course_structure->get( 'edit' );
+		$modified_structure[0]['title'] = 'Update Module Name';
+
+		$this->assertTrue( $course_structure->save( $modified_structure ) );
+
+		$structure = $course_structure->get( 'edit' );
+		$this->assertNotEquals( $modified_structure[0]['id'], $structure[0]['id'] );
 	}
 
 	/**
