@@ -283,7 +283,7 @@ class Sensei_REST_API_Course_Structure_Controller_Tests extends WP_Test_REST_Tes
 	 * Tests a simple `POST /sensei-internal/v1/course-structure/{course_id}` request response matches the schema.
 	 */
 	public function testPostSimple() {
-		$this->login_as_teacher();
+		$this->login_as_admin();
 
 		$course_response = $this->factory->get_course_with_lessons(
 			[
