@@ -179,6 +179,10 @@ class Sensei_Course_Outline_Block {
 	public function get_block_structure() {
 		global $post;
 
+		if ( ! $post ) {
+			return [];
+		}
+
 		$context    = 'view';
 		$attributes = $this->block_attributes['course'];
 		$is_preview = is_preview() && $this->can_current_user_edit_course( $post->ID );
