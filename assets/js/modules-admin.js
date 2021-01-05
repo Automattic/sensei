@@ -1,3 +1,5 @@
+import { __ } from '@wordpress/i18n';
+
 /**
  * Get the url qiuery paramater by name
  *
@@ -181,6 +183,38 @@ jQuery( document ).ready( function () {
 			}
 		} );
 	} );
+
+	/**
+	 * After changing the course teacher, it prevents updating the modules
+	 * until the next page refresh. Otherwise, some issues can happen because
+	 * the modules list in the frontend can be out of date with the server.
+	 */
+	const courseTeacherInput = document.querySelector(
+		'select[name="sensei-course-teacher-author"]'
+	);
+	if ( courseTeacherInput ) {
+		courseTeacherInput.addEventListener( 'change', () => {
+			document.querySelector( '#taxonomy-module' ).innerHTML = `
+				<p>
+					${ __(
+						'You must refresh the page to modify the modules after updating the course teacher.',
+						'sensei-lms'
+					) }
+				</p>
+				<button class="button" id="modules-refresh-button">
+					${ __( 'Refresh now', 'sensei-lms' ) }
+				</button>
+			`;
+
+			// Add event to refresh button.
+			const refreshButton = document.querySelector(
+				'#modules-refresh-button'
+			);
+			refreshButton.addEventListener( 'click', () => {
+				window.location.reload();
+			} );
+		} );
+	}
 
 	// Get Course modules (if any) on course select change
 	var $courseSelect = jQuery( '#lesson-course-options' ),
