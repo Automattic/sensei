@@ -1,17 +1,17 @@
-# Copyright (C) 2020 Automattic
+# Copyright (C) 2021 Automattic
 # This file is distributed under the GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html.
 msgid ""
 msgstr ""
-"Project-Id-Version: Sensei LMS 3.6.0\n"
+"Project-Id-Version: Sensei LMS 3.6.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sensei-lms\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2020-12-10T13:17:17+00:00\n"
+"POT-Creation-Date: 2021-01-06T14:13:38+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.5.0-alpha-75cb7e3\n"
+"X-Generator: WP-CLI 2.5.0-alpha\n"
 "X-Domain: sensei-lms\n"
 
 #: assets/admin/exit-survey/form.js:56
@@ -1628,27 +1628,27 @@ msgstr ""
 msgid "More Details"
 msgstr ""
 
-#: includes/blocks/class-sensei-block-contact-teacher.php:75
+#: includes/blocks/class-sensei-block-contact-teacher.php:78
 #: includes/class-sensei-messages.php:318
 msgid "Your private message has been sent."
 msgstr ""
 
-#: includes/blocks/class-sensei-block-contact-teacher.php:92
+#: includes/blocks/class-sensei-block-contact-teacher.php:95
 #: includes/class-sensei-messages.php:323
 msgid "Send Private Message"
 msgstr ""
 
-#: includes/blocks/class-sensei-block-contact-teacher.php:93
+#: includes/blocks/class-sensei-block-contact-teacher.php:96
 #: includes/class-sensei-messages.php:329
 msgid "Enter your private message."
 msgstr ""
 
-#: includes/blocks/class-sensei-block-contact-teacher.php:98
+#: includes/blocks/class-sensei-block-contact-teacher.php:101
 #: includes/class-sensei-messages.php:334
 msgid "Send Message"
 msgstr ""
 
-#: includes/blocks/class-sensei-block-take-course.php:143
+#: includes/blocks/class-sensei-block-take-course.php:148
 #: includes/class-sensei-course.php:3433
 #: includes/class-sensei-lesson.php:4103
 #. translators: Placeholder $1$s is the course title.
@@ -1656,16 +1656,16 @@ msgstr ""
 msgid "You must first complete: %1$s"
 msgstr ""
 
-#: includes/blocks/class-sensei-block-take-course.php:150
+#: includes/blocks/class-sensei-block-take-course.php:155
 #. translators: Placeholder $1$s is the course title.
 msgid "You must first complete %1$s before taking this course."
 msgstr ""
 
-#: includes/blocks/class-sensei-course-outline-course-block.php:53
+#: includes/blocks/class-sensei-course-outline-course-block.php:56
 msgid "There is no published content in this course yet."
 msgstr ""
 
-#: includes/blocks/class-sensei-course-outline-course-block.php:64
+#: includes/blocks/class-sensei-course-outline-course-block.php:67
 msgid ""
 "One or more lessons in this course are not published. Unpublished lessons "
 "and empty modules are only displayed in preview mode and will not be "
