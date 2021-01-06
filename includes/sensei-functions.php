@@ -44,7 +44,8 @@ function is_sensei() {
 }
 
 /**
- * Determine if a user is an admin that can access all of Sensei without restrictions.
+ * Determine if a user is an admin that can access all of Sensei without restrictions or if he is a teacher accessing
+ * his own course.
  *
  * @since 1.4.0
  * @since 3.0.0 Added `$user_id` argument. Preserves backward compatibility.
