@@ -32,11 +32,7 @@ class Sensei_WCPC_Prompt {
 	 * @access private
 	 */
 	public function wcpc_prompt() {
-		if (
-			get_option( self::DISMISS_PROMPT_OPTION, 0 )
-			|| ! Sensei_Utils::is_woocommerce_active()
-			|| ! current_user_can( 'manage_sensei' )
-		) {
+		if ( ! $this->should_show_prompt() ) {
 			return;
 		}
 
@@ -52,6 +48,30 @@ class Sensei_WCPC_Prompt {
 			</a>
 		</div>
 		<?php
+	}
+
+	/**
+	 * If should show prompt in the context contitions.
+	 *
+	 * @return boolean
+	 */
+	private function should_show_prompt() {
+		if (
+			// Not edit course page.
+			'edit-course' !== get_current_screen()->id
+			// No published course.
+			|| 0 === wp_count_posts( 'course' )->publish
+			// Sensei_WC_Paid_Courses class exists.
+			|| class_exists( 'Sensei_WC_Paid_Courses\Sensei_WC_Paid_Courses' )
+			// WooCommerce is not active.
+			|| ! Sensei_Utils::is_woocommerce_active()
+			// User is not admin.
+			|| ! current_user_can( 'manage_sensei' )
+		) {
+			return false;
+		}
+
+		return 0 === get_option( self::DISMISS_PROMPT_OPTION, 0 );
 	}
 
 	/**
