@@ -39,15 +39,7 @@ class Sensei_WCPC_Prompt {
 		$dismiss_url = add_query_arg( 'sensei_dismiss_wcpc_prompt', '1' );
 		$dismiss_url = wp_nonce_url( $dismiss_url, 'sensei_dismiss_wcpc_prompt' );
 
-		$install_url = 'https://woocommerce.com/cart';
-		$install_url = add_query_arg( Sensei_Utils::get_woocommerce_connect_data(), $install_url );
-		$install_url = add_query_arg(
-			[
-				'wccom-replace-with' => $this->get_wcpc_wccom_product_id(),
-				'wccom-back'         => rawurlencode( 'plugins.php' ),
-			],
-			$install_url
-		);
+		$install_url = $this->get_wcpc_install_url();
 
 		?>
 		<div class="notice notice-info is-dismissible">
@@ -61,22 +53,43 @@ class Sensei_WCPC_Prompt {
 	}
 
 	/**
+	 * Get WCPC install URL.
+	 *
+	 * @access private
+	 *
+	 * @return string WCPC install URL.
+	 */
+	protected function get_wcpc_install_url() {
+		$install_url = 'https://woocommerce.com/cart';
+		$install_url = add_query_arg( Sensei_Utils::get_woocommerce_connect_data(), $install_url );
+		$install_url = add_query_arg(
+			[
+				'wccom-replace-with' => $this->get_wcpc_wccom_product_id(),
+				'wccom-back'         => rawurlencode( 'plugins.php' ),
+			],
+			$install_url
+		);
+
+		return $install_url;
+	}
+
+	/**
 	 * If should show prompt in the context contitions.
 	 *
 	 * @return boolean
 	 */
 	private function should_show_prompt() {
 		if (
+			// User is not admin.
+			! current_user_can( 'manage_sensei' )
 			// Not edit course page.
-			'edit-course' !== get_current_screen()->id
+			|| 'edit-course' !== get_current_screen()->id
 			// No published course.
 			|| 0 === wp_count_posts( 'course' )->publish
 			// Sensei_WC_Paid_Courses class exists.
 			|| class_exists( 'Sensei_WC_Paid_Courses\Sensei_WC_Paid_Courses' )
 			// WooCommerce is not active.
 			|| ! Sensei_Utils::is_woocommerce_active()
-			// User is not admin.
-			|| ! current_user_can( 'manage_sensei' )
 		) {
 			return false;
 		}
