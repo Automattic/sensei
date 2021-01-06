@@ -1,4 +1,9 @@
 *** Changelog ***
+
+2021.01.06 - version 3.6.1
+* Fix: Fix not being able to save course when Yoast SEO is activated
+* Fix: Ensure exit survey is displayed after deactivating Sensei with WooCommerce Paid Courses
+
 2020.12.10 - version 3.6.0
 * New: Course Outline block
 	* Add "Edit lesson" link to lesson block settings [#3637](https://github.com/Automattic/sensei/pull/3637)
