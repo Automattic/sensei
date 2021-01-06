@@ -39,10 +39,20 @@ class Sensei_WCPC_Prompt {
 		$dismiss_url = add_query_arg( 'sensei_dismiss_wcpc_prompt', '1' );
 		$dismiss_url = wp_nonce_url( $dismiss_url, 'sensei_dismiss_wcpc_prompt' );
 
+		$install_url = 'https://woocommerce.com/cart';
+		$install_url = add_query_arg( Sensei_Setup_Wizard::instance()->get_woocommerce_connect_data(), $install_url );
+		$install_url = add_query_arg(
+			[
+				'wccom-replace-with' => $this->get_wcpc_wccom_product_id(),
+				'wccom-back'         => rawurlencode( 'plugins.php' ),
+			],
+			$install_url
+		);
+
 		?>
 		<div class="notice notice-info is-dismissible">
 			<p><?php esc_html_e( 'Sell and monetize your courses by installing a WooCommerce extension.', 'sensei-lms' ); ?> <a href="https://woocommerce.com/products/woocommerce-paid-courses/" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Learn more', 'sensei-lms' ); ?></a></p>
-			<p><a href="#" class="button-primary"><?php esc_html_e( 'Install now', 'sensei-lms' ); ?></a></p>
+			<p><a href="<?php echo esc_url( $install_url ); ?>" class="button-primary"><?php esc_html_e( 'Install now', 'sensei-lms' ); ?></a></p>
 			<a href="<?php echo esc_url( $dismiss_url ); ?>" class="notice-dismiss sensei-dismissible-link">
 				<span class="screen-reader-text"><?php esc_html_e( 'Dismiss this notice.', 'sensei-lms' ); ?></span>
 			</a>
@@ -72,6 +82,25 @@ class Sensei_WCPC_Prompt {
 		}
 
 		return 0 === get_option( self::DISMISS_PROMPT_OPTION, 0 );
+	}
+
+	/**
+	 * Get WCPC WCCom product ID.
+	 *
+	 * @return string
+	 */
+	private function get_wcpc_wccom_product_id() {
+		$extensions = Sensei_Extensions::instance()->get_extensions( 'plugin' );
+
+		$wcpc_wccom_product_id = '';
+		foreach ( $extensions as $extension ) {
+			if ( 'sensei-wc-paid-courses' === $extension->product_slug ) {
+				$wcpc_wccom_product_id = $extension->wccom_product_id;
+				break;
+			}
+		}
+
+		return $wcpc_wccom_product_id;
 	}
 
 	/**
