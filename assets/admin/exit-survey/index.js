@@ -13,7 +13,10 @@ import { render } from '@wordpress/element';
 
 		const deactivateLinks = [
 			getDeactivateLinkElement( 'sensei-lms' ),
-			getDeactivateLinkElement( 'woothemes-sensei' ),
+			getDeactivateLinkElement( 'sensei-with-woocommerce-paid-courses' ),
+			getDeactivateLinkElement(
+				'woocommerce-com-woocommerce-paid-courses'
+			),
 		].filter( ( e ) => !! e );
 
 		deactivateLinks.forEach( ( link ) => {
