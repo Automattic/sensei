@@ -2362,6 +2362,35 @@ class Sensei_Utils {
 	}
 
 	/**
+	 * Get the course id of the current post.
+	 *
+	 * @return int|null The course id or null if it was not found.
+	 */
+	public static function get_current_course() {
+		global $post;
+
+		$post_type = get_post_type( $post );
+		$course_id = null;
+
+		switch ( $post_type ) {
+			case 'course':
+				$course_id = $post->ID;
+				break;
+
+			case 'lesson':
+				$course_id = Sensei()->lesson->get_course_id( $post->ID );
+				break;
+
+			case 'quiz':
+				$lesson_id = (int) get_post_meta( $post->ID, '_quiz_lesson', true );
+				$course_id = $lesson_id ? Sensei()->lesson->get_course_id( $lesson_id ) : null;
+				break;
+		}
+
+		return $course_id ? $course_id : null;
+	}
+
+	/**
 	 * Restore the global WP_Query
 	 *
 	 * @since 1.9.0

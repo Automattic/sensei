@@ -62,7 +62,18 @@ function sensei_all_access( $user_id = null ) {
 		return false;
 	}
 
-	$access = user_can( $user_id, 'manage_sensei' ) || user_can( $user_id, 'manage_sensei_grades' );
+	$access = false;
+
+	if ( user_can( $user_id, 'manage_sensei' ) ) {
+		$access = true;
+	} else {
+		$course_id = Sensei_Utils::get_current_course();
+
+		if ( $course_id ) {
+			$teacher = (int) get_post( $course_id )->post_author;
+			$access  = $user_id === $teacher;
+		}
+	}
 
 	if ( has_filter( 'sensei_all_access' ) ) {
 		// For backwards compatibility with filter, we temporarily need to change the current user.
@@ -285,29 +296,7 @@ function sensei_user_login_url() {
  * @return bool
  */
 function sensei_is_login_required() {
-	global $post;
-
-	$post_type = get_post_type( $post );
-	$course_id = null;
-
-	switch ( $post_type ) {
-		case 'course':
-			$course_id = $post->ID;
-			break;
-
-		case 'lesson':
-			$course_id = Sensei()->lesson->get_course_id( $post->ID );
-			break;
-
-		case 'quiz':
-			$lesson_id = intval( get_post_meta( $post->ID, '_quiz_lesson', true ) );
-			$course_id = $lesson_id ? Sensei()->lesson->get_course_id( $lesson_id ) : null;
-			break;
-	}
-
-	if ( ! $course_id ) {
-		$course_id = null;
-	}
+	$course_id = Sensei_Utils::get_current_course();
 
 	$login_required = isset( Sensei()->settings->settings['access_permission'] ) && ( true == Sensei()->settings->settings['access_permission'] );
 
