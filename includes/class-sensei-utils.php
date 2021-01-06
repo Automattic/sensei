@@ -2556,6 +2556,33 @@ class Sensei_Utils {
 	}
 
 	/**
+	 * Get data used for WooCommerce.com purchase redirect.
+	 *
+	 * @return array The data.
+	 */
+	public static function get_woocommerce_connect_data() {
+		$wc_params                = [];
+		$is_woocommerce_installed = self::is_woocommerce_active( '3.7.0' ) && class_exists( 'WC_Admin_Addons' );
+
+		if ( $is_woocommerce_installed ) {
+			$wc_params = WC_Admin_Addons::get_in_app_purchase_url_params();
+
+		} else {
+			$wc_info = self::get_woocommerce_plugin_information();
+
+			$wc_params = [
+				'wccom-site'          => site_url(),
+				'wccom-woo-version'   => $wc_info->version,
+				'wccom-connect-nonce' => wp_create_nonce( 'connect' ),
+			];
+		}
+
+		$wc_params['wccom-back'] = rawurlencode( 'admin.php' );
+
+		return $wc_params;
+	}
+
+	/**
 	 * Hard - Resets a Learner's Course Progress
 	 *
 	 * @param $course_id int

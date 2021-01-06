@@ -40,7 +40,7 @@ class Sensei_WCPC_Prompt {
 		$dismiss_url = wp_nonce_url( $dismiss_url, 'sensei_dismiss_wcpc_prompt' );
 
 		$install_url = 'https://woocommerce.com/cart';
-		$install_url = add_query_arg( Sensei_Setup_Wizard::instance()->get_woocommerce_connect_data(), $install_url );
+		$install_url = add_query_arg( Sensei_Utils::get_woocommerce_connect_data(), $install_url );
 		$install_url = add_query_arg(
 			[
 				'wccom-replace-with' => $this->get_wcpc_wccom_product_id(),

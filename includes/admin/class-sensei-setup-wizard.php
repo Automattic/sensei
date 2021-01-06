@@ -439,30 +439,13 @@ class Sensei_Setup_Wizard {
 	/**
 	 * Get data used for WooCommerce.com purchase redirect for feature installation.
 	 *
+	 * @deprecated 3.7.0
 	 * @return array The data.
 	 */
 	public function get_woocommerce_connect_data() {
+		_deprecated_function( __METHOD__, '3.7.0', 'Sensei_Utils::get_woocommerce_connect_data' );
 
-		$wc_params                = [];
-		$is_woocommerce_installed = Sensei_Utils::is_woocommerce_active( '3.7.0' ) && class_exists( 'WC_Admin_Addons' );
-
-		if ( $is_woocommerce_installed ) {
-			$wc_params = WC_Admin_Addons::get_in_app_purchase_url_params();
-
-		} else {
-			$wc_info = Sensei_Utils::get_woocommerce_plugin_information();
-
-			$wc_params = [
-				'wccom-site'          => site_url(),
-				'wccom-woo-version'   => $wc_info->version,
-				'wccom-connect-nonce' => wp_create_nonce( 'connect' ),
-			];
-		}
-
-		$wc_params['wccom-back'] = rawurlencode( 'admin.php' );
-
-		return $wc_params;
-
+		return Sensei_Utils::get_woocommerce_connect_data();
 	}
 
 	/**
