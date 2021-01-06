@@ -20,7 +20,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Setup_Wizard {
 	const SUGGEST_SETUP_WIZARD_OPTION = 'sensei_suggest_setup_wizard';
-	const WC_INFORMATION_TRANSIENT    = 'sensei_woocommerce_plugin_information';
 	const WCCOM_INSTALLING_TRANSIENT  = 'sensei_setup_wizard_wccom_installing';
 	const USER_DATA_OPTION            = 'sensei_setup_wizard_data';
 	const MC_LIST_ID                  = '4fa225a515';
@@ -451,7 +450,7 @@ class Sensei_Setup_Wizard {
 			$wc_params = WC_Admin_Addons::get_in_app_purchase_url_params();
 
 		} else {
-			$wc_info = $this->get_woocommerce_information();
+			$wc_info = Sensei_Utils::get_woocommerce_plugin_information();
 
 			$wc_params = [
 				'wccom-site'          => site_url(),
@@ -498,70 +497,6 @@ class Sensei_Setup_Wizard {
 	}
 
 	/**
-	 * Get WooCommerce data.
-	 *
-	 * @return array WooCommerce information.
-	 */
-	private function get_woocommerce_information() {
-		$wc_information = get_transient( self::WC_INFORMATION_TRANSIENT );
-
-		if ( false !== $wc_information ) {
-			return $wc_information;
-		}
-
-		if ( ! function_exists( 'plugins_api' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
-		}
-
-		$wc_slug            = 'woocommerce';
-		$plugin_information = plugins_api(
-			'plugin_information',
-			[
-				'slug'   => $wc_slug,
-				'fields' => [
-					'short_description' => true,
-					'description'       => false,
-					'sections'          => false,
-					'tested'            => false,
-					'requires'          => false,
-					'requires_php'      => false,
-					'rating'            => false,
-					'ratings'           => false,
-					'downloaded'        => false,
-					'downloadlink'      => false,
-					'last_updated'      => false,
-					'added'             => false,
-					'tags'              => false,
-					'compatibility'     => false,
-					'homepage'          => false,
-					'versions'          => false,
-					'donate_link'       => false,
-					'reviews'           => false,
-					'banners'           => false,
-					'icons'             => false,
-					'active_installs'   => false,
-					'group'             => false,
-					'contributors'      => false,
-				],
-			]
-		);
-
-		$wc_information = (object) [
-			'product_slug' => $wc_slug,
-			'title'        => $plugin_information->name,
-			'excerpt'      => $plugin_information->short_description,
-			'plugin_file'  => 'woocommerce/woocommerce.php',
-			'link'         => 'https://wordpress.org/plugins/' . $wc_slug,
-			'unselectable' => true,
-			'version'      => $plugin_information->version,
-		];
-
-		set_transient( self::WC_INFORMATION_TRANSIENT, $wc_information, DAY_IN_SECONDS );
-
-		return $wc_information;
-	}
-
-	/**
 	 * Get Sensei extensions for setup wizard.
 	 *
 	 * @param boolean $clear_active_plugins_cache Clear cache for `is_plugin_active`.
@@ -576,7 +511,7 @@ class Sensei_Setup_Wizard {
 		$extensions = Sensei_Extensions::instance()->get_extensions( 'plugin', 'setup-wizard-extensions' );
 
 		// Add WooCommerce.
-		array_push( $extensions, $this->get_woocommerce_information() );
+		array_push( $extensions, Sensei_Utils::get_woocommerce_plugin_information() );
 
 		$installing_plugins = Sensei_Plugins_Installation::instance()->get_installing_plugins();
 		$selected_plugins   = $this->get_wizard_user_data( 'features' )['selected'];

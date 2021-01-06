@@ -29,7 +29,7 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	public function testWccomInstallSuccessLogged() {
 		// Mock WooCommerce plugin information.
 		set_transient(
-			Sensei_Setup_Wizard::WC_INFORMATION_TRANSIENT,
+			Sensei_Utils::WC_INFORMATION_TRANSIENT,
 			(object) [
 				'product_slug' => 'woocommerce',
 				'title'        => 'WooCommerce',

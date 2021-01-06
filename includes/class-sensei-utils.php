@@ -14,6 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.0.0
  */
 class Sensei_Utils {
+	const WC_INFORMATION_TRANSIENT = 'sensei_woocommerce_plugin_information';
+
 	/**
 	 * Get the placeholder thumbnail image.
 	 *
@@ -2489,6 +2491,69 @@ class Sensei_Utils {
 		return true;
 	}
 
+	/**
+	 * Get WooCommerce plugin information.
+	 *
+	 * @return array WooCommerce information.
+	 */
+	public static function get_woocommerce_plugin_information() {
+		$wc_information = get_transient( self::WC_INFORMATION_TRANSIENT );
+
+		if ( false !== $wc_information ) {
+			return $wc_information;
+		}
+
+		if ( ! function_exists( 'plugins_api' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
+		}
+
+		$wc_slug            = 'woocommerce';
+		$plugin_information = plugins_api(
+			'plugin_information',
+			[
+				'slug'   => $wc_slug,
+				'fields' => [
+					'short_description' => true,
+					'description'       => false,
+					'sections'          => false,
+					'tested'            => false,
+					'requires'          => false,
+					'requires_php'      => false,
+					'rating'            => false,
+					'ratings'           => false,
+					'downloaded'        => false,
+					'downloadlink'      => false,
+					'last_updated'      => false,
+					'added'             => false,
+					'tags'              => false,
+					'compatibility'     => false,
+					'homepage'          => false,
+					'versions'          => false,
+					'donate_link'       => false,
+					'reviews'           => false,
+					'banners'           => false,
+					'icons'             => false,
+					'active_installs'   => false,
+					'group'             => false,
+					'contributors'      => false,
+				],
+			]
+		);
+
+		$wc_information = (object) [
+			'product_slug' => $wc_slug,
+			'title'        => $plugin_information->name,
+			'excerpt'      => $plugin_information->short_description,
+			'plugin_file'  => 'woocommerce/woocommerce.php',
+			'link'         => 'https://wordpress.org/plugins/' . $wc_slug,
+			'unselectable' => true,
+			'version'      => $plugin_information->version,
+		];
+
+		set_transient( self::WC_INFORMATION_TRANSIENT, $wc_information, DAY_IN_SECONDS );
+
+		return $wc_information;
+	}
 
 	/**
 	 * Hard - Resets a Learner's Course Progress
