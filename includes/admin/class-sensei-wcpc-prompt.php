@@ -24,6 +24,7 @@ class Sensei_WCPC_Prompt {
 	public function __construct() {
 		add_action( 'admin_notices', [ $this, 'wcpc_prompt' ] );
 		add_action( 'admin_init', [ $this, 'dismiss_prompt' ] );
+		add_action( 'admin_init', [ $this, 'redirect_to_install' ] );
 	}
 
 	/**
@@ -39,7 +40,8 @@ class Sensei_WCPC_Prompt {
 		$dismiss_url = add_query_arg( 'sensei_dismiss_wcpc_prompt', '1' );
 		$dismiss_url = wp_nonce_url( $dismiss_url, 'sensei_dismiss_wcpc_prompt' );
 
-		$install_url = $this->get_wcpc_install_url();
+		$install_url = add_query_arg( 'sensei_wcpc_prompt_install', '1' );
+		$install_url = wp_nonce_url( $install_url, 'sensei_wcpc_prompt_install' );
 
 		?>
 		<div class="notice notice-info is-dismissible">
@@ -57,24 +59,21 @@ class Sensei_WCPC_Prompt {
 	}
 
 	/**
-	 * Get WCPC install URL.
+	 * Dismiss WCPC prompt.
 	 *
 	 * @access private
-	 *
-	 * @return string WCPC install URL.
 	 */
-	protected function get_wcpc_install_url() {
-		$install_url = 'https://woocommerce.com/cart';
-		$install_url = add_query_arg( Sensei_Utils::get_woocommerce_connect_data(), $install_url );
-		$install_url = add_query_arg(
-			[
-				'wccom-replace-with' => $this->get_wcpc_wccom_product_id(),
-				'wccom-back'         => rawurlencode( 'plugins.php' ),
-			],
-			$install_url
-		);
-
-		return $install_url;
+	public function dismiss_prompt() {
+		if (
+			isset( $_GET['sensei_dismiss_wcpc_prompt'] )
+			&& '1' === $_GET['sensei_dismiss_wcpc_prompt']
+			&& isset( $_GET['_wpnonce'] )
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Don't touch the nonce.
+			&& wp_verify_nonce( wp_unslash( $_GET['_wpnonce'] ), 'sensei_dismiss_wcpc_prompt' )
+			&& current_user_can( 'manage_sensei' )
+		) {
+			update_option( self::DISMISS_PROMPT_OPTION, 1 );
+		}
 	}
 
 	/**
@@ -102,6 +101,46 @@ class Sensei_WCPC_Prompt {
 	}
 
 	/**
+	 * Redirect to WCPC installation URL.
+	 *
+	 * @access private
+	 */
+	public function redirect_to_install() {
+		if (
+			isset( $_GET['sensei_wcpc_prompt_install'] )
+			&& '1' === $_GET['sensei_wcpc_prompt_install']
+			&& isset( $_GET['_wpnonce'] )
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Don't touch the nonce.
+			&& wp_verify_nonce( wp_unslash( $_GET['_wpnonce'] ), 'sensei_wcpc_prompt_install' )
+		) {
+			$install_url = 'https://woocommerce.com/cart';
+			$install_url = add_query_arg( Sensei_Utils::get_woocommerce_connect_data(), $install_url );
+			$install_url = add_query_arg(
+				[
+					'wccom-replace-with' => $this->get_wcpc_wccom_product_id(),
+					'wccom-back'         => rawurlencode( 'plugins.php' ),
+				],
+				$install_url
+			);
+
+			// Log Jetpack event.
+			sensei_log_jetpack_event( 'wcpc_upgrade_wccom_install' );
+
+			// Allow safe redirect to woocommerce.com.
+			add_filter(
+				'allowed_redirect_hosts',
+				function( $hosts ) {
+					$hosts[] = 'woocommerce.com';
+					return $hosts;
+				}
+			);
+
+			wp_safe_redirect( $install_url );
+			exit;
+		}
+	}
+
+	/**
 	 * Get WCPC WCCom product ID.
 	 *
 	 * @return string
@@ -118,23 +157,5 @@ class Sensei_WCPC_Prompt {
 		}
 
 		return $wcpc_wccom_product_id;
-	}
-
-	/**
-	 * Dismiss WCPC prompt.
-	 *
-	 * @access private
-	 */
-	public function dismiss_prompt() {
-		if (
-			isset( $_GET['sensei_dismiss_wcpc_prompt'] )
-			&& '1' === $_GET['sensei_dismiss_wcpc_prompt']
-			&& isset( $_GET['_wpnonce'] )
-			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Don't touch the nonce.
-			&& wp_verify_nonce( wp_unslash( $_GET['_wpnonce'] ), 'sensei_dismiss_wcpc_prompt' )
-			&& current_user_can( 'manage_sensei' )
-		) {
-			update_option( self::DISMISS_PROMPT_OPTION, 1 );
-		}
 	}
 }

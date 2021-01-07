@@ -54,14 +54,7 @@ class Sensei_WCPC_Prompt_Test extends WP_UnitTestCase {
 	 * @return void
 	 */
 	public function testWCPCNoticeIsDisplayed() {
-		$instance = $this->getMockBuilder( Sensei_WCPC_Prompt::class )
-			->disableOriginalConstructor()
-			->setMethods( [ 'get_wcpc_install_url' ] )
-			->getMock();
-
-		$instance->expects( $this->any() )
-			->method( 'get_wcpc_install_url' )
-			->will( $this->returnValue( 'https://install_url' ) );
+		$instance = new Sensei_WCPC_Prompt();
 
 		set_current_screen( 'edit-course' );
 		$this->factory->course->create();
