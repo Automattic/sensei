@@ -97,7 +97,7 @@ class Sensei_WCPC_Prompt {
 			return false;
 		}
 
-		return 0 === get_option( self::DISMISS_PROMPT_OPTION, 0 );
+		return '0' === get_option( self::DISMISS_PROMPT_OPTION, '0' );
 	}
 
 	/**
