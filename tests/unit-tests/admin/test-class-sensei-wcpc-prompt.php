@@ -63,7 +63,7 @@ class Sensei_WCPC_Prompt_Test extends WP_UnitTestCase {
 		$instance->wcpc_prompt();
 		$output = ob_get_clean();
 
-		$this->assertContains( 'Install now', $output );
+		$this->assertContains( 'Install extension', $output );
 	}
 
 	/**

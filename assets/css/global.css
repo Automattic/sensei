@@ -33,5 +33,3 @@ body #menu-posts-question div.wp-menu-image:before {
 li.menu-icon-lesson .wp-menu-image img, li.menu-icon-course .wp-menu-image img { display: none; }
 
 .edit-php.post-type-quiz .add-new-h2 { display: none; }
-
-.sensei-dismissible-link { text-decoration: none; }

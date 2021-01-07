@@ -43,15 +43,25 @@ class Sensei_WCPC_Prompt {
 		$install_url = add_query_arg( 'sensei_wcpc_prompt_install', '1' );
 		$install_url = wp_nonce_url( $install_url, 'sensei_wcpc_prompt_install' );
 
+		$link = '<a href="https://woocommerce.com/products/woocommerce-paid-courses/" target="_blank" rel="noopener noreferrer" data-sensei-log-event="wcpc_upgrade_learn_more">' . __( 'WooCommerce Paid Courses extension', 'sensei-lms' ) . '</a>';
+
 		?>
-		<div class="notice notice-info is-dismissible">
-			<p>
-				<?php esc_html_e( 'Monetize and sell your courses by installing the WooCommerce Paid Courses extension.', 'sensei-lms' ); ?>
-				<a href="https://woocommerce.com/products/woocommerce-paid-courses/" target="_blank" rel="noopener noreferrer" data-sensei-log-event="wcpc_upgrade_learn_more"><?php esc_html_e( 'Learn more', 'sensei-lms' ); ?></a>
-				<?php esc_html_e( 'or', 'sensei-lms' ); ?>
-				<a href="<?php echo esc_url( $install_url ); ?>" class="button-primary" data-sensei-log-event="wcpc_upgrade_install"><?php esc_html_e( 'Install now', 'sensei-lms' ); ?></a>
+		<div class="sensei-wcpc-notice notice notice-info">
+			<p class="sensei-wcpc-notice__text">
+				<?php
+					echo sprintf(
+						// translators: Placeholder is the learn more link.
+						esc_html__( 'Monetize and sell your courses by installing the %s.', 'sensei-lms' ),
+						wp_kses_post( $link )
+					);
+				?>
 			</p>
-			<a href="<?php echo esc_url( $dismiss_url ); ?>" class="notice-dismiss sensei-dismissible-link">
+			<p>
+				<a href="<?php echo esc_url( $install_url ); ?>" class="button-primary" data-sensei-log-event="wcpc_upgrade_install">
+					<?php esc_html_e( 'Install extension', 'sensei-lms' ); ?>
+				</a>
+			</p>
+			<a href="<?php echo esc_url( $dismiss_url ); ?>" class="sensei-wcpc-notice__dismissible-link">
 				<span class="screen-reader-text"><?php esc_html_e( 'Dismiss this notice.', 'sensei-lms' ); ?></span>
 			</a>
 		</div>
