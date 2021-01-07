@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Exit survey upon plugin deactivation.
+ * WCPC prompt to install the Paid Courses plugin.
  *
  * @since 3.7.0
  */
