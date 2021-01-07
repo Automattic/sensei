@@ -74,6 +74,7 @@ class Sensei_Tools {
 			$tools[] = new Sensei_Tool_Ensure_Roles();
 			$tools[] = new Sensei_Tool_Remove_Deleted_User_Data();
 			$tools[] = new Sensei_Tool_Enrolment_Debug();
+			$tools[] = new Sensei_Tool_Module_Slugs_Mismatch();
 
 			/**
 			 * Array of the tools available to Sensei LMS.

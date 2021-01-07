@@ -271,7 +271,16 @@ class Sensei_Course_Structure {
 	 */
 	private function save_module( array $item ) {
 		if ( $item['id'] ) {
-			$module_id = $this->update_module( $item );
+			$term = get_term( $item['id'], 'module' );
+			$slug = $this->get_module_slug( $item['title'] );
+
+			// Slug has changed.
+			if ( $term->slug !== $slug ) {
+				$existing_module_id = $this->get_existing_module( $item['title'] );
+				$module_id          = $existing_module_id ? $existing_module_id : $this->create_module( $item );
+			} else {
+				$module_id = $this->update_module( $item );
+			}
 		} else {
 			$module_id = $this->create_module( $item );
 		}
@@ -309,13 +318,7 @@ class Sensei_Course_Structure {
 	 * @return int|null Term ID if found.
 	 */
 	private function get_existing_module( string $module_name ) {
-		$slug = sanitize_title( $module_name );
-
-		$teacher_user_id = get_post( $this->course_id )->post_author;
-		if ( ! user_can( $teacher_user_id, 'manage_options' ) ) {
-			$slug = intval( $teacher_user_id ) . '-' . $slug;
-		}
-
+		$slug            = $this->get_module_slug( $module_name );
 		$existing_module = get_term_by( 'slug', $slug, 'module' );
 
 		if ( $existing_module ) {
@@ -335,14 +338,8 @@ class Sensei_Course_Structure {
 	private function create_module( array $item ) {
 		$args = [
 			'description' => $item['description'],
+			'slug'        => $this->get_module_slug( $item['title'] ),
 		];
-
-		$teacher_user_id = get_post( $this->course_id )->post_author;
-		if ( ! user_can( $teacher_user_id, 'manage_options' ) ) {
-			$args['slug'] = intval( $teacher_user_id ) . '-' . sanitize_title( $item['title'] );
-		} else {
-			$args['slug'] = sanitize_title( $item['title'] );
-		}
 
 		$create_result = wp_insert_term( $item['title'], 'module', $args );
 		if ( is_wp_error( $create_result ) ) {
@@ -383,6 +380,21 @@ class Sensei_Course_Structure {
 		}
 
 		return $term->term_id;
+	}
+
+	/**
+	 * Get module slug.
+	 *
+	 * @param string $title Module title.
+	 *
+	 * @return string Slug.
+	 */
+	private function get_module_slug( $title ) {
+		$teacher_user_id = get_post( $this->course_id )->post_author;
+
+		return user_can( $teacher_user_id, 'manage_options' )
+			? sanitize_title( $title )
+			: intval( $teacher_user_id ) . '-' . sanitize_title( $title );
 	}
 
 	/**

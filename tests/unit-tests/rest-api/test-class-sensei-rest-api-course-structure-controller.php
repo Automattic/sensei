@@ -283,7 +283,7 @@ class Sensei_REST_API_Course_Structure_Controller_Tests extends WP_Test_REST_Tes
 	 * Tests a simple `POST /sensei-internal/v1/course-structure/{course_id}` request response matches the schema.
 	 */
 	public function testPostSimple() {
-		$this->login_as_teacher();
+		$this->login_as_admin();
 
 		$course_response = $this->factory->get_course_with_lessons(
 			[
@@ -309,7 +309,7 @@ class Sensei_REST_API_Course_Structure_Controller_Tests extends WP_Test_REST_Tes
 	}
 
 	/**
-	 * Tests to make sure an admin can modify another teacher's course structure with `POST /sensei-internal/v1/course-structure/{course_id}`.
+	 * Tests to make sure a teacher cannot modify another teacher's course structure with `POST /sensei-internal/v1/course-structure/{course_id}`.
 	 */
 	public function testPostDifferentTeacher() {
 		$this->login_as_teacher();
