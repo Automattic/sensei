@@ -75,7 +75,7 @@ class Sensei_Frontend {
 		add_action( 'sensei_lesson_meta', array( $this, 'sensei_lesson_meta' ), 10 );
 		add_action( 'wp', array( $this, 'sensei_course_start' ), 10 );
 		add_filter( 'wp_login_failed', array( $this, 'sensei_login_fail_redirect' ), 10 );
-		add_filter( 'init', array( $this, 'sensei_handle_login_request' ), 10 );
+		add_filter( 'login_form_middle', array( $this, 'sensei_login_form_flag_field' ), 10, 2 );
 		add_action( 'init', array( $this, 'sensei_process_registration' ), 2 );
 
 		add_action( 'sensei_pagination', array( $this, 'sensei_breadcrumb' ), 80, 1 );
@@ -1450,10 +1450,8 @@ class Sensei_Frontend {
 
 		// if not posted from the sensei login form let
 		// WordPress or any other party handle the failed request.
-		if ( ! isset( $_REQUEST['form'] ) || 'sensei-login' != $_REQUEST['form'] ) {
-
+		if ( ! isset( $_REQUEST['sensei-login'] ) ) {
 			return;
-
 		}
 
 		// Get the reffering page, where did the post submission come from?
@@ -1465,7 +1463,27 @@ class Sensei_Frontend {
 			wp_redirect( esc_url_raw( add_query_arg( 'login', 'failed', $referrer ) ) );
 			exit;
 		}
-	}//end sensei_login_fail_redirect()
+	}
+
+	/**
+	 * Add a 'sensei-login' hidden field to the Sensei login form so the request can be identified and redirected properly.
+	 *
+	 * @access private
+	 * @hooked login_form_middle
+	 * @since 3.7.0
+	 *
+	 * @param string $content Form middle HTML.
+	 * @param array  $args    wp_login_form arguments.
+	 *
+	 * @return string
+	 */
+	public function sensei_login_form_flag_field( $content, $args ) {
+		if ( ! empty( $args ) && isset( $args['sensei-login'] ) ) {
+			$content .= '<input type="hidden" name="sensei-login" value="1" />';
+		}
+
+		return $content;
+	}
 
 	/**
 	 * Handle the login reques from all sensei intiated login forms.

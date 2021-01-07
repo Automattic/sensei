@@ -25,7 +25,7 @@ do_action( 'sensei_login_form_before' );
 
 <h2><?php esc_html_e( 'Login', 'sensei-lms' ); ?></h2>
 
-<?php wp_login_form(); ?>
+<?php wp_login_form( [ 'sensei-login' => true ] ); ?>
 
 <a href="<?php echo esc_url( wp_lostpassword_url() ); ?>"><?php esc_html_e( 'Lost your password?', 'sensei-lms' ); ?></a>
 
