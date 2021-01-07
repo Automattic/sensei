@@ -42,6 +42,9 @@ class Sensei_Course_Outline_Course_Block {
 	 * @return string Block HTML.
 	 */
 	public function render_course_outline_block( $outline ) {
+		if ( empty( $outline ) ) {
+			return '';
+		}
 
 		$attributes = $outline['attributes'];
 		$blocks     = $outline['blocks'];

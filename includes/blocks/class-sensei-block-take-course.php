@@ -42,6 +42,11 @@ class Sensei_Block_Take_Course {
 	 */
 	public function render_take_course_block( $attributes, $content ): string {
 		global $post;
+
+		if ( ! $post ) {
+			return '';
+		}
+
 		$course_id = $post->ID;
 		$html      = '';
 

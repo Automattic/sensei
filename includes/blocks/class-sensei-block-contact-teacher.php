@@ -46,7 +46,10 @@ class Sensei_Block_Contact_Teacher {
 	public function render_contact_teacher_block( $attributes, $content ): string {
 		global $post;
 
-		if ( ! empty( Sensei()->settings->settings['messages_disable'] ) || ! is_user_logged_in() ) {
+		if ( ! $post
+			|| ! empty( Sensei()->settings->settings['messages_disable'] )
+			|| ! is_user_logged_in()
+		) {
 			return '';
 		}
 
