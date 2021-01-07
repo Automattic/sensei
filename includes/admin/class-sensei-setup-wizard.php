@@ -540,17 +540,11 @@ class Sensei_Setup_Wizard {
 			}
 		}
 
-		if ( Sensei()->usage_tracking->is_tracking_enabled() && ! empty( $wccom_extensions ) ) {
+		if ( ! empty( $wccom_extensions ) ) {
 			$event_name       = 'setup_wizard_features_install_paid';
 			$event_properties = [ 'slug' => join( ',', $wccom_extensions ) ];
 
-			if ( class_exists( 'Automattic\Jetpack\Tracking' ) ) {
-				$jetpack_connection = Jetpack::connection();
-				if ( $jetpack_connection->is_user_connected() ) {
-					$tracking = new Automattic\Jetpack\Tracking( 'sensei', $jetpack_connection );
-					$tracking->record_user_event( $event_name, $event_properties );
-				}
-			}
+			sensei_log_jetpack_event( $event_name, $event_properties );
 		}
 
 		set_transient( self::WCCOM_INSTALLING_TRANSIENT, $wccom_extensions, 10 * 60 );

@@ -389,3 +389,23 @@ function sensei_log_event( $event_name, $properties = [] ) {
 
 	Sensei_Usage_Tracking::get_instance()->send_event( $event_name, $properties );
 }
+
+/**
+ * Track a Sensei event with Jetpack, when Jetpack is available.
+ *
+ * @since 3.7.0
+ *
+ * @param string $event_name The name of the event, without the `sensei_` prefix.
+ * @param array  $properties The event properties to be sent.
+ */
+function sensei_log_jetpack_event( $event_name, $properties = [] ) {
+	if ( ! class_exists( 'Automattic\Jetpack\Tracking' ) || ! Sensei()->usage_tracking->is_tracking_enabled() ) {
+		return;
+	}
+
+	$jetpack_connection = Jetpack::connection();
+	if ( $jetpack_connection->is_user_connected() ) {
+		$tracking = new Automattic\Jetpack\Tracking( 'sensei', $jetpack_connection );
+		$tracking->record_user_event( $event_name, $properties );
+	}
+}
