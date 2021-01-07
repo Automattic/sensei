@@ -197,13 +197,14 @@ jQuery( document ).ready( function () {
 			document.querySelector( '#taxonomy-module' ).innerHTML = `
 				<p>
 					${ __(
-						'You must refresh the page to modify the modules after updating the course teacher.',
+						'Since the Teacher field was changed, you must refresh the page to modify the modules.',
 						'sensei-lms'
 					) }
 				</p>
 				<button class="button" id="modules-refresh-button">
 					${ __( 'Refresh now', 'sensei-lms' ) }
 				</button>
+				<div><small>Remember to save your changes before refreshing the page.</small></div>
 			`;
 
 			// Add event to refresh button.
