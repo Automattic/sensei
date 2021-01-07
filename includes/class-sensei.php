@@ -376,9 +376,6 @@ class Sensei_Main {
 		// Setup post types.
 		$this->post_types = new Sensei_PostTypes();
 
-		// Load the updates class.
-		$this->updates = new Sensei_Updates( $this );
-
 		// Load Course Results Class.
 		$this->course_results = new Sensei_Course_Results();
 
@@ -634,54 +631,17 @@ class Sensei_Main {
 	 * @since 2.0.0
 	 */
 	public function update() {
-		global $wp_rewrite;
-
 		$current_version = get_option( 'sensei-version' );
 		$is_new_install  = ! $current_version && ! $this->course_exists();
 		$is_upgrade      = $current_version && version_compare( $this->version, $current_version, '>' );
 
 		// Make sure the current version is up-to-date.
-		if (
-			! $current_version
-			|| $is_upgrade
-		) {
+		if ( ! $current_version || $is_upgrade ) {
 			$this->register_plugin_version();
 		}
 
-		// Only proceed if we knew the previous version and this was a new install or an upgrade.
-		if ( $current_version && ! $is_new_install && ! $is_upgrade ) {
-			return;
-		}
-
-		// Mark site as having enrolment data from legacy instances.
-		if (
-			// If the version is known and the previous version was pre-3.0.0.
-			(
-				$is_upgrade
-				&& version_compare( '3.0.0', $current_version, '>' )
-			)
-
-			// If there wasn't a current version set and this isn't a new install, double check to make sure there wasn't any enrolment.
-			|| (
-				! $current_version
-				&& ! $is_new_install
-				&& $this->course_progress_exists()
-			)
-		) {
-			update_option( 'sensei_enrolment_legacy', time() );
-		}
-
-		// Set up legacy `with_front` on CPT rewrite options.
-		if (
-				$is_upgrade
-				&& version_compare( '3.7.0-dev', $current_version, '>' )
-				&& '' !== trim( $wp_rewrite->front, '/' )
-			) {
-			$this->set_legacy_flag( self::LEGACY_FLAG_WITH_FRONT, true );
-		}
-
-		// Flush rewrite cache.
-		$this->initiate_rewrite_rules_flush();
+		$this->updates = new Sensei_Updates( $current_version, $is_new_install, $is_upgrade );
+		$this->updates->run_updates();
 	}
 
 	/**
@@ -729,23 +689,6 @@ class Sensei_Main {
 		$course_sample_id = (int) $wpdb->get_var( "SELECT `ID` FROM {$wpdb->posts} WHERE `post_type`='course' LIMIT 1" );
 
 		return ! empty( $course_sample_id );
-	}
-
-	/**
-	 * Helper function to check to see if any course progress exists in the database.
-	 *
-	 * @return bool
-	 */
-	private function course_progress_exists() {
-		$activity_args = [
-			'type'   => 'sensei_course_status',
-			'number' => 1,
-			'status' => 'any',
-		];
-
-		$activity_sample = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
-
-		return ! empty( $activity_sample );
 	}
 
 	/**

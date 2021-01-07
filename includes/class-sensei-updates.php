@@ -17,8 +17,211 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @author Automattic
  * @since 1.1.0
+ * @since 3.7.0 New constructor signature and single purpose for performing update tasks.
  */
 class Sensei_Updates {
+	/**
+	 * Version that is currently being updated from.
+	 *
+	 * @var string|null
+	 */
+	private $current_version;
+
+	/**
+	 * Flag if this is a new install.
+	 *
+	 * @var bool
+	 */
+	private $is_new_install;
+
+	/**
+	 * Flag if this is an upgrade.
+	 *
+	 * @var bool
+	 */
+	private $is_upgrade;
+
+	/**
+	 * Sensei_Updates constructor.
+	 *
+	 * Default values for backwards compatibility pre-v3.7.
+	 *
+	 * @param string $current_version Version that is currently being updated from.
+	 * @param bool   $is_new_install  Flag if this is a new install.
+	 * @param bool   $is_upgrade      Flag if this is an upgrade.
+	 */
+	public function __construct( $current_version = null, $is_new_install = false, $is_upgrade = false ) {
+		if ( is_object( $current_version ) ) {
+			$current_version = null;
+		}
+
+		$this->current_version = $current_version;
+		$this->is_new_install  = $is_new_install;
+		$this->is_upgrade      = $is_upgrade;
+	}
+
+	/**
+	 * Run the updates (if necessary).
+	 *
+	 * @since 3.7.0
+	 */
+	public function run_updates() {
+		// Only proceed if we knew the previous version and this was a new install or an upgrade.
+		if ( $this->current_version && ! $this->is_new_install && ! $this->is_upgrade ) {
+			return;
+		}
+
+		$this->v3_0_check_legacy_enrolment();
+		$this->v3_7_check_rewrite_front();
+		$this->v3_7_add_comment_indexes();
+
+		// Flush rewrite cache.
+		Sensei()->initiate_rewrite_rules_flush();
+	}
+
+	/**
+	 * Add comment table indexes.
+	 *
+	 * @since 3.7.0
+	 */
+	private function v3_7_add_comment_indexes() {
+		global $wpdb;
+
+		/**
+		 * Filter to disable attempts at adding the comment indexes.
+		 *
+		 * @hook sensei_add_comment_indexes
+		 * @since 3.7.0
+		 *
+		 * @param {bool} $do_add_indexes True if indexes should be added to comment table.
+		 *
+		 * @return {bool}
+		 */
+		if ( ! apply_filters( 'sensei_add_comment_indexes', true ) ) {
+			return;
+		}
+
+		$indexes = [
+			'woo_idx_comment_type'        => [ 'comment_type' ],
+			'sensei_comment_type_user_id' => [ 'comment_type', 'user_id' ],
+		];
+
+		$current_indexes = array_map(
+			function( $arr ) {
+				return implode( ',', $arr['columns'] );
+			},
+			$this->get_table_indexes( $wpdb->comments )
+		);
+
+		foreach ( $indexes as $name => $columns ) {
+			if ( isset( $current_indexes[ $name ] ) ) {
+				continue;
+			}
+
+			sort( $columns );
+			if ( in_array( implode( ',', $columns ), $current_indexes, true ) ) {
+				continue;
+			}
+
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared -- Safe schema change.
+			$wpdb->query( "ALTER TABLE {$wpdb->comments} ADD INDEX {$name} (`" . implode( '`,`', $columns ) . '`)' );
+		}
+	}
+
+	/**
+	 * Get indexes for a table.
+	 *
+	 * @param string $table Table to get indexes for.
+	 *
+	 * @return array
+	 */
+	private function get_table_indexes( $table ) {
+		global $wpdb;
+
+		$indexes = [];
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Safe direct sql.
+		$results = $wpdb->get_results( "SHOW INDEX FROM `{$table}`", ARRAY_A );
+		if ( ! $results ) {
+			return [];
+		}
+
+		foreach ( $results as $row ) {
+			if ( ! isset( $indexes[ $row['Key_name'] ] ) ) {
+				$indexes[ $row['Key_name'] ] = [
+					'unique'  => 0 === (int) $row['Non_unique'],
+					'columns' => [],
+				];
+			}
+			$indexes[ $row['Key_name'] ]['columns'][] = $row['Column_name'];
+		}
+
+		foreach ( $indexes as $index => $config ) {
+			sort( $indexes[ $index ]['columns'] );
+		}
+
+		return $indexes;
+	}
+
+	/**
+	 * Check for rewrite front and set legacy flag if needed.
+	 *
+	 * @since 3.7.0
+	 */
+	private function v3_7_check_rewrite_front() {
+		global $wp_rewrite;
+
+		// Set up legacy `with_front` on CPT rewrite options.
+		if (
+			$this->is_upgrade
+			&& version_compare( '3.7.0-dev', $this->current_version, '>' )
+			&& '' !== trim( $wp_rewrite->front, '/' )
+		) {
+			Sensei()->set_legacy_flag( Sensei_Main::LEGACY_FLAG_WITH_FRONT, true );
+		}
+	}
+
+	/**
+	 * Check for legacy enrolment data and set flag if needed.
+	 *
+	 * @since 3.0.0
+	 */
+	private function v3_0_check_legacy_enrolment() {
+		// Mark site as having enrolment data from legacy instances.
+		if (
+			// If the version is known and the previous version was pre-3.0.0.
+			(
+				$this->is_upgrade
+				&& version_compare( '3.0.0', $this->current_version, '>' )
+			)
+
+			// If there wasn't a current version set and this isn't a new install, double check to make sure there wasn't any enrolment.
+			|| (
+				! $this->current_version
+				&& ! $this->is_new_install
+				&& $this->course_progress_exists()
+			)
+		) {
+			update_option( 'sensei_enrolment_legacy', time() );
+		}
+	}
+
+	/**
+	 * Helper function to check to see if any course progress exists in the database.
+	 *
+	 * @return bool
+	 */
+	private function course_progress_exists() {
+		$activity_args = [
+			'type'   => 'sensei_course_status',
+			'number' => 1,
+			'status' => 'any',
+		];
+
+		$activity_sample = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
+
+		return ! empty( $activity_sample );
+	}
+
 	/**
 	 * Handles deprecation notices for old methods.
 	 *
