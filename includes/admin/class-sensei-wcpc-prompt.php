@@ -44,15 +44,10 @@ class Sensei_WCPC_Prompt {
 		?>
 		<div class="notice notice-info is-dismissible">
 			<p>
-				<?php esc_html_e( 'Sell and monetize your courses by installing a WooCommerce extension.', 'sensei-lms' ); ?>
-				<a href="https://woocommerce.com/products/woocommerce-paid-courses/" target="_blank" rel="noopener noreferrer" data-sensei-log-event="wcpc_upgrade_learn_more">
-					<?php esc_html_e( 'Learn more', 'sensei-lms' ); ?>
-				</a>
-			</p>
-			<p>
-				<a href="<?php echo esc_url( $install_url ); ?>" class="button-primary">
-					<?php esc_html_e( 'Install now', 'sensei-lms' ); ?>
-				</a>
+				<?php esc_html_e( 'Monetize and sell your courses by installing the WooCommerce Paid Courses extension.', 'sensei-lms' ); ?>
+				<a href="https://woocommerce.com/products/woocommerce-paid-courses/" target="_blank" rel="noopener noreferrer" data-sensei-log-event="wcpc_upgrade_learn_more"><?php esc_html_e( 'Learn more', 'sensei-lms' ); ?></a>
+				<?php esc_html_e( 'or', 'sensei-lms' ); ?>
+				<a href="<?php echo esc_url( $install_url ); ?>" class="button-primary" data-sensei-log-event="wcpc_upgrade_install"><?php esc_html_e( 'Install now', 'sensei-lms' ); ?></a>
 			</p>
 			<a href="<?php echo esc_url( $dismiss_url ); ?>" class="notice-dismiss sensei-dismissible-link">
 				<span class="screen-reader-text"><?php esc_html_e( 'Dismiss this notice.', 'sensei-lms' ); ?></span>
