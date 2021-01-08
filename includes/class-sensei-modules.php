@@ -1718,7 +1718,7 @@ class Sensei_Core_Modules {
 
 		if ( version_compare( Sensei()->version, '1.6.0', '>=' ) ) {
 			$args['meta_key'] = '_order_module_' . intval( $term_id );
-			$args['orderby']  = 'meta_value_num date';
+			$args['orderby']  = 'meta_value_num date ID';
 		}
 
 		$lessons_query = new WP_Query( $args );
