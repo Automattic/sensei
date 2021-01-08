@@ -25,6 +25,8 @@ class Sensei_WCPC_Prompt {
 		add_action( 'admin_notices', [ $this, 'wcpc_prompt' ] );
 		add_action( 'admin_init', [ $this, 'dismiss_prompt' ] );
 		add_action( 'admin_init', [ $this, 'redirect_to_install' ] );
+
+		$this->wcpc_extension = $this->get_wcpc_extension();
 	}
 
 	/**
@@ -99,8 +101,8 @@ class Sensei_WCPC_Prompt {
 			|| 'edit-course' !== get_current_screen()->id
 			// No published course.
 			|| 0 === wp_count_posts( 'course' )->publish
-			// Sensei_WC_Paid_Courses class exists.
-			|| class_exists( 'Sensei_WC_Paid_Courses\Sensei_WC_Paid_Courses' )
+			// WCPC is installed.
+			|| $this->is_wcpc_installed()
 			// WooCommerce is not active.
 			|| ! Sensei_Utils::is_woocommerce_active()
 		) {
@@ -116,6 +118,10 @@ class Sensei_WCPC_Prompt {
 	 * @access private
 	 */
 	public function redirect_to_install() {
+		if ( ! isset( $this->wcpc_extension->wccom_product_id ) ) {
+			return;
+		}
+
 		if (
 			isset( $_GET['sensei_wcpc_prompt_install'] )
 			&& '1' === $_GET['sensei_wcpc_prompt_install']
@@ -127,7 +133,7 @@ class Sensei_WCPC_Prompt {
 			$install_url = add_query_arg( Sensei_Utils::get_woocommerce_connect_data(), $install_url );
 			$install_url = add_query_arg(
 				[
-					'wccom-replace-with' => $this->get_wcpc_wccom_product_id(),
+					'wccom-replace-with' => $this->wcpc_extension->wccom_product_id,
 					'wccom-back'         => rawurlencode( 'plugins.php' ),
 				],
 				$install_url
@@ -151,21 +157,40 @@ class Sensei_WCPC_Prompt {
 	}
 
 	/**
-	 * Get WCPC WCCom product ID.
+	 * Get WCPC extension.
 	 *
-	 * @return string
+	 * @return object WCPC extension object.
 	 */
-	private function get_wcpc_wccom_product_id() {
+	private function get_wcpc_extension() {
 		$extensions = Sensei_Extensions::instance()->get_extensions( 'plugin' );
 
-		$wcpc_wccom_product_id = '';
+		if ( ! $extensions ) {
+			return null;
+		}
+
+		$wcpc_extension = null;
 		foreach ( $extensions as $extension ) {
 			if ( 'sensei-wc-paid-courses' === $extension->product_slug ) {
-				$wcpc_wccom_product_id = $extension->wccom_product_id;
+				$wcpc_extension = $extension;
 				break;
 			}
 		}
 
-		return $wcpc_wccom_product_id;
+		return $wcpc_extension;
+	}
+
+	/**
+	 * Whether WCPC is installed.
+	 *
+	 * @access private
+	 *
+	 * @return boolean
+	 */
+	protected function is_wcpc_installed() {
+		if ( ! isset( $this->wcpc_extension->plugin_file ) ) {
+			return false;
+		}
+
+		return null !== Sensei_Plugins_Installation::instance()->get_installed_plugin_path( $this->wcpc_extension->plugin_file );
 	}
 }

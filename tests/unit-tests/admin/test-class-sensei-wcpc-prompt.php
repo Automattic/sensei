@@ -25,6 +25,19 @@ class Sensei_WCPC_Prompt_Test extends WP_UnitTestCase {
 		// Mock that WooCommerce is active.
 		update_option( 'active_plugins', [ 'woocommerce/woocommerce.php' => 'woocommerce/woocommerce.php' ] );
 
+		// Mock extensions.
+		set_transient(
+			'sensei_extensions_' . md5( 'plugin||[]' ),
+			[
+				(object) [
+					'product_slug'     => 'sensei-wc-paid-courses',
+					'plugin_file'      => 'woothemes-sensei/woothemes-sensei.php',
+					'wccom_product_id' => '152116',
+				],
+			],
+			DAY_IN_SECONDS
+		);
+
 		// Save original current screen.
 		global $current_screen;
 		$this->original_screen = $current_screen;
@@ -54,7 +67,15 @@ class Sensei_WCPC_Prompt_Test extends WP_UnitTestCase {
 	 * @return void
 	 */
 	public function testWCPCNoticeIsDisplayed() {
-		$instance = new Sensei_WCPC_Prompt();
+		// Mock as WCPC not installed.
+		$instance = $this->getMockBuilder( Sensei_WCPC_Prompt::class )
+			->disableOriginalConstructor()
+			->setMethods( [ 'is_wcpc_installed' ] )
+			->getMock();
+
+		$instance->expects( $this->any() )
+			->method( 'is_wcpc_installed' )
+			->will( $this->returnValue( false ) );
 
 		set_current_screen( 'edit-course' );
 		$this->factory->course->create();
