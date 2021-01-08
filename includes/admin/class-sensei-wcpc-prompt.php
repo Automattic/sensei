@@ -46,8 +46,8 @@ class Sensei_WCPC_Prompt {
 		$link = '<a href="https://woocommerce.com/products/woocommerce-paid-courses/" target="_blank" rel="noopener noreferrer" data-sensei-log-event="wcpc_upgrade_learn_more">' . __( 'WooCommerce Paid Courses extension', 'sensei-lms' ) . '</a>';
 
 		?>
-		<div class="sensei-wcpc-notice notice notice-info">
-			<p class="sensei-wcpc-notice__text">
+		<div class="notice notice-info is-dismissible">
+			<p>
 				<?php
 					echo sprintf(
 						// translators: Placeholder is the learn more link.
@@ -61,7 +61,7 @@ class Sensei_WCPC_Prompt {
 					<?php esc_html_e( 'Install extension', 'sensei-lms' ); ?>
 				</a>
 			</p>
-			<a href="<?php echo esc_url( $dismiss_url ); ?>" class="sensei-wcpc-notice__dismissible-link">
+			<a href="<?php echo esc_url( $dismiss_url ); ?>" class="notice-dismiss sensei-dismissible-link">
 				<span class="screen-reader-text"><?php esc_html_e( 'Dismiss this notice.', 'sensei-lms' ); ?></span>
 			</a>
 		</div>

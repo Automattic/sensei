@@ -114,28 +114,6 @@ div.question_boolean_fields { margin-bottom: 10px; }
     padding-left: 0.5em;
 }
 
-.sensei-wcpc-notice {
-	display: flex;
-	align-items: center;
-}
-.sensei-wcpc-notice .sensei-wcpc-notice__text {
-	flex: 1;
-	padding-right: 20px;
-}
-.sensei-wcpc-notice .sensei-wcpc-notice__dismissible-link {
-	margin-left: 10px;
-	text-decoration: none;
-	color: #72777c;
-}
-.sensei-wcpc-notice .sensei-wcpc-notice__dismissible-link:hover {
-	color: #c00;
-}
-.sensei-wcpc-notice .sensei-wcpc-notice__dismissible-link::before {
-	content: "\f335";
-	display: block;
-	width: 20px;
-	height: 20px;
-	font: normal 20px/20px dashicons;
-	text-align: center;
-	color: inherit;
+.sensei-dismissible-link {
+    text-decoration: none;
 }
