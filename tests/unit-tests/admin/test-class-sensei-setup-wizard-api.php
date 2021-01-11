@@ -24,7 +24,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	public static function setUpBeforeClass() {
 		// Mock WooCommerce plugin information.
 		set_transient(
-			Sensei_Setup_Wizard::WC_INFORMATION_TRANSIENT,
+			Sensei_Utils::WC_INFORMATION_TRANSIENT,
 			(object) [
 				'product_slug' => 'woocommerce',
 				'title'        => 'WooCommerce',

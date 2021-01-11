@@ -17,7 +17,7 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 	public static function setUpBeforeClass() {
 		// Mock WooCommerce plugin information.
 		set_transient(
-			Sensei_Setup_Wizard::WC_INFORMATION_TRANSIENT,
+			Sensei_Utils::WC_INFORMATION_TRANSIENT,
 			(object) [
 				'product_slug' => 'woocommerce',
 				'title'        => 'WooCommerce',
@@ -457,7 +457,7 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 	/**
 	 * Tests that get sensei extensions with statuses.
 	 *
-	 * @covers Sensei_Setup_Wizard::get_woocommerce_information
+	 * @covers Sensei_Utils::get_woocommerce_plugin_information
 	 * @covers Sensei_Setup_Wizard::get_feature_with_status
 	 * @covers Sensei_Setup_Wizard::get_sensei_extensions
 	 */
@@ -526,7 +526,7 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 				'product_slug' => 'slug-4',
 				'plugin_file'  => 'test/test.php',
 			],
-			get_transient( Sensei_Setup_Wizard::WC_INFORMATION_TRANSIENT ),
+			get_transient( Sensei_Utils::WC_INFORMATION_TRANSIENT ),
 		];
 		$extensions          = Sensei()->setup_wizard->get_sensei_extensions();
 

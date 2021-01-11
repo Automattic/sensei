@@ -83,6 +83,7 @@ class Sensei_Data_Cleaner {
 		'widget_sensei_lesson_component',
 		'widget_sensei_course_categories',
 		'widget_sensei_category_courses',
+		'sensei_dismiss_wcpc_prompt',
 	);
 
 	/**

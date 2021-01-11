@@ -196,6 +196,31 @@ class Sensei_Plugins_Installation {
 	}
 
 	/**
+	 * Get plugin path if it's installed, otherwise returns null.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @param string $plugin_file       Plugin filename or path.
+	 * @param array  $installed_plugins Installed plugins. If it's not passed, it will get the installed plugins.
+	 *
+	 * @return string|null Plugin path or null if plugin is not installed.
+	 */
+	public function get_installed_plugin_path( $plugin_file, $installed_plugins = null ) {
+		if ( ! $installed_plugins ) {
+			$installed_plugins = $this->get_installed_plugins();
+		}
+
+		// Get filename if it is the complete path.
+		$plugin_file = $this->get_file_name_from_path( $plugin_file );
+
+		if ( ! isset( $installed_plugins[ $plugin_file ] ) ) {
+			return null;
+		}
+
+		return $installed_plugins[ $plugin_file ];
+	}
+
+	/**
 	 * Check whether plugin is active.
 	 *
 	 * @param string $plugin_file       Plugin filename or path.
@@ -208,14 +233,13 @@ class Sensei_Plugins_Installation {
 			$installed_plugins = $this->get_installed_plugins();
 		}
 
-		// Get filename if it is the complete path.
-		$plugin_file = $this->get_file_name_from_path( $plugin_file );
+		$plugin_path = $this->get_installed_plugin_path( $plugin_file );
 
-		if ( ! isset( $installed_plugins[ $plugin_file ] ) ) {
+		if ( null === $plugin_path ) {
 			return false;
 		}
 
-		return is_plugin_active( $installed_plugins[ $plugin_file ] );
+		return is_plugin_active( $plugin_path );
 	}
 
 	/**
