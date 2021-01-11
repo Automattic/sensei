@@ -19,19 +19,11 @@ class Sensei_Restricted_Content_Block {
 	 */
 	public function __construct() {
 		Sensei_Blocks::register_sensei_block(
-			'sensei-lms/unenrolled-content',
+			'sensei-lms/restricted-content',
 			[
 				'render_callback' => [ $this, 'render' ],
 			],
-			Sensei()->assets->src_path( 'blocks/restricted-content/unenrolled' )
-		);
-
-		Sensei_Blocks::register_sensei_block(
-			'sensei-lms/enrolled-content',
-			[
-				'render_callback' => [ $this, 'render' ],
-			],
-			Sensei()->assets->src_path( 'blocks/restricted-content/enrolled' )
+			Sensei()->assets->src_path( 'blocks/restricted-content' )
 		);
 	}
 
@@ -53,8 +45,21 @@ class Sensei_Restricted_Content_Block {
 			$course_id = Sensei()->lesson->get_course_id( get_the_ID() );
 		}
 
-		$should_hide = ( 'sensei-lms/enrolled-content' === $block->name && ! Sensei()->course::is_user_enrolled( $course_id ) ) ||
-						( 'sensei-lms/unenrolled-content' === $block->name && Sensei()->course::is_user_enrolled( $course_id ) );
+		$should_hide = false;
+
+		switch ( $attributes['optionSelected'] ) {
+			case 'enrolled':
+				$should_hide = ! Sensei()->course::is_user_enrolled( $course_id );
+				break;
+			case 'unenrolled':
+				$should_hide = Sensei()->course::is_user_enrolled( $course_id );
+				break;
+			case 'course-completed':
+				$should_hide = ! Sensei_Utils::user_completed_course( $course_id );
+				break;
+			default:
+				break;
+		}
 
 		if ( $should_hide ) {
 			return '';

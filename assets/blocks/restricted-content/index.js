@@ -8,7 +8,7 @@ import { createBlock } from '@wordpress/blocks';
 export default {
 	title: __( 'Restricted Content', 'sensei-lms' ),
 	description: __(
-		'Content inside this container block will be restricted to specific cases only.',
+		'Content inside this container block will be restricted to specific users, according to the block settings.',
 		'sensei-lms'
 	),
 	keywords: [
