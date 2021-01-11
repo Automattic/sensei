@@ -22,6 +22,7 @@ export const RestrictOptionLabels = {
 const EditRestrictedContent = ( {
 	className,
 	hasInnerBlocks,
+	clientId,
 	attributes: { optionSelected },
 	setAttributes,
 } ) => {
@@ -41,6 +42,8 @@ const EditRestrictedContent = ( {
 						optionSelected: option,
 					} )
 				}
+				clientId={ clientId }
+				hasInnerBlocks={ hasInnerBlocks }
 			/>
 		</>
 	);
