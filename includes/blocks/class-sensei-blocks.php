@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Blocks {
 	/**
-	 * Course outline block.
+	 * Course blocks.
 	 *
 	 * @var Sensei_Course_Blocks
 	 */
