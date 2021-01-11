@@ -27,8 +27,7 @@ notifications:
 branches:
   only:
   - master
-  - /^release\//
-  - /^feature\//
+  - /.*/
 cache:
   directories:
   - vendor
