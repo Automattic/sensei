@@ -30,13 +30,12 @@ class Sensei_Restricted_Content_Block {
 	/**
 	 * Renders restricted content blocks in the frontend.
 	 *
-	 * @param array    $attributes The block attributes.
-	 * @param string   $content    The inner block content.
-	 * @param WP_Block $block      The block object.
+	 * @param array  $attributes The block attributes.
+	 * @param string $content    The inner block content.
 	 *
 	 * @return string The HTML of the block.
 	 */
-	public function render( $attributes, $content, $block ) : string {
+	public function render( $attributes, $content ) : string {
 		$course_id = null;
 
 		if ( 'course' === get_post_type() ) {

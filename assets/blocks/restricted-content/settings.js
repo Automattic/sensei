@@ -119,20 +119,22 @@ export function RestrictedContentSettings( {
 					/>
 				</Toolbar>
 			</BlockControls>
-			{ isSingleRestrictSelected && hasInnerBlocks && (
-				<BlockSettingsMenuControls>
-					{ ( { onClose } ) => (
-						<MenuItem
-							onClick={ () => {
-								onRestrictRemoval();
-								onClose();
-							} }
-						>
-							{ __( 'Remove restriction', 'sensei-lms' ) }
-						</MenuItem>
-					) }
-				</BlockSettingsMenuControls>
-			) }
+			{ isSingleRestrictSelected &&
+				hasInnerBlocks &&
+				BlockSettingsMenuControls && (
+					<BlockSettingsMenuControls>
+						{ ( { onClose } ) => (
+							<MenuItem
+								onClick={ () => {
+									onRestrictRemoval();
+									onClose();
+								} }
+							>
+								{ __( 'Remove restriction', 'sensei-lms' ) }
+							</MenuItem>
+						) }
+					</BlockSettingsMenuControls>
+				) }
 		</>
 	);
 }
