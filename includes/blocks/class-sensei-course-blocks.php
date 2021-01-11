@@ -42,12 +42,9 @@ class Sensei_Course_Blocks {
 	public $take_course;
 
 	/**
-	 * Sensei_Blocks constructor .
-	 *
-	 * @param Sensei_Main $sensei
+	 * Sensei_Blocks constructor.
 	 */
-	public function __construct( $sensei ) {
-
+	public function __construct() {
 		add_action( 'enqueue_block_assets', [ $this, 'enqueue_block_assets' ] );
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_block_editor_assets' ] );
 		add_filter( 'sensei_use_sensei_template', [ 'Sensei_Course_Blocks', 'skip_single_course_template' ] );

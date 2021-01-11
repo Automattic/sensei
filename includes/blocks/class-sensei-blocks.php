@@ -21,11 +21,9 @@ class Sensei_Blocks {
 	public $course;
 
 	/**
-	 * Sensei_Blocks constructor .
-	 *
-	 * @param Sensei_Main $sensei
+	 * Sensei_Blocks constructor.
 	 */
-	public function __construct( $sensei ) {
+	public function __construct() {
 		// Skip if Gutenberg is not available.
 		if ( ! function_exists( 'register_block_type' ) ) {
 			return;
@@ -34,7 +32,7 @@ class Sensei_Blocks {
 		add_filter( 'block_categories', [ $this, 'sensei_block_categories' ], 10, 2 );
 
 		// Init blocks.
-		$this->course = new Sensei_Course_Blocks( $sensei );
+		$this->course = new Sensei_Course_Blocks();
 	}
 
 	/**
