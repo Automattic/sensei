@@ -1,0 +1,122 @@
+.sensei-lms-question-block {
+
+	.editor-styles-wrapper .wp-block &__title, .editor-styles-wrapper .wp-block &__index {
+		font-size: 24px;
+		margin-top: 0;
+		margin-bottom: 0;
+		line-height: 1.25;
+	}
+	&__index {
+		position: absolute;
+		right: 100%;
+		text-align: right;
+		top: 0;
+		font-weight: bold;
+		.sensei-lms-question-block.is-draft & {
+			opacity: .62;
+		}
+		.editor-styles-wrapper .wp-block & {
+			margin-right: 10px;
+		}
+	}
+
+	&__text-input-placeholder {
+		border: 2px solid #333;
+		border-radius: 2px;
+		padding: 5px;
+		min-height: 52px;
+	}
+
+	&__gapfill {
+		.components-form-token-field {
+			&__input-container {
+				margin: 5px 0;
+				font-size: 1em;
+			}
+			&__input {
+				font-size: 1em;
+			}
+			&__token {
+				font-size: 1em;
+			}
+			&__token-text {
+				padding: 4px 4px 4px 8px;
+			}
+
+			&__label {
+				display: none;
+			}
+
+			&__help {
+				display: none;
+			}
+		}
+	}
+
+	&__open-ended {
+		.sensei-lms-question-block__text-input-placeholder.long-answer {
+			min-height: 200px;
+		}
+	}
+
+	&__multiple-choice {
+		&__option {
+			display: flex;
+			align-items: center;
+			padding: 5px 0;
+			.rich-text {
+				flex: 1;
+			}
+			&__solution {
+				font-size: 12px;
+				opacity: .7;
+			}
+		}
+	}
+
+	&__answer-type-selector {
+
+		font-size: 14px;
+		&--inline {
+			border: 1px solid #111;
+			border-radius: 2px;
+			padding: 2px;
+			display: flex;
+			flex-wrap: wrap;
+		}
+		&__option {
+			flex: 0 0 50%;
+			display: flex;
+			padding: 12px;
+			cursor: pointer;
+			border: 1px solid transparent;
+			border-radius: 2px;
+			&:hover {
+				border-color: var(--wp-admin-theme-color);
+				color: var(--wp-admin-theme-color);
+			}
+			&.is-selected {
+				color: var(--wp-admin-theme-color);
+			}
+			.components-popover & {
+				width: 300px;
+			}
+		}
+		&__option__description {
+			font-style: italic;
+			font-size: 90%;
+		}
+		&__preview {
+			flex: 0 0 40%;
+			border: 1px solid #ccc;
+			border-radius: 2px;
+			padding: 12px;
+			margin-right: 12px;
+		}
+
+		&--toolbar {
+			order: -1;
+		}
+	}
+
+}

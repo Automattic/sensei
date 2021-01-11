@@ -21,6 +21,13 @@ class Sensei_Blocks {
 	public $course;
 
 	/**
+	 * Quiz blocks.
+	 *
+	 * @var Sensei_Quiz_Blocks
+	 */
+	private $quiz;
+
+	/**
 	 * Sensei_Blocks constructor.
 	 */
 	public function __construct() {
@@ -34,6 +41,7 @@ class Sensei_Blocks {
 		// Init blocks.
 		$this->course = new Sensei_Course_Blocks();
 		new Sensei_Lesson_Blocks();
+		$this->quiz   = new Sensei_Quiz_Blocks();
 	}
 
 	/**
