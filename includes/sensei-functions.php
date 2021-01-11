@@ -321,6 +321,8 @@ function sensei_is_login_required() {
 	 *
 	 * @param {bool}     $must_be_logged_to_view_lesson True if user need to be logged to see the lesson.
 	 * @param {int|null} $course_id                     Course post ID.
+	 *
+	 * @return {bool} Whether the user needs to be logged in to view content.
 	 */
 	return apply_filters( 'sensei_is_login_required', $login_required, $course_id );
 }
