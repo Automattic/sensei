@@ -208,8 +208,8 @@ class Sensei_WCPC_Prompt {
 			'fields'           => 'ids',
 		];
 
+		// Ignores the sample course in the query.
 		$sample_course = get_page_by_path( Sensei_Data_Port_Manager::SAMPLE_COURSE_SLUG, OBJECT, 'course' );
-
 		if ( $sample_course ) {
 			$course_args['post__not_in'] = [ $sample_course->ID ];
 		}
