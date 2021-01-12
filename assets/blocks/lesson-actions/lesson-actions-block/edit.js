@@ -1,5 +1,7 @@
 import { InnerBlocks } from '@wordpress/block-editor';
 
+import { LessonActionsBlockSettings } from './settings';
+
 const innerBlocksTemplate = [
 	[
 		'sensei-lms/button-complete-lesson',
@@ -12,12 +14,25 @@ const innerBlocksTemplate = [
 /**
  * Edit lesson actions block component.
  *
- * @param {Object} props
- * @param {string} props.className Custom class name.
+ * @param {Object}   props
+ * @param {string}   props.className              Custom class name.
+ * @param {Function} props.setAttributes          Block set attributes function.
+ * @param {Object}   props.attributes             Block attributes.
+ * @param {boolean}  props.attributes.resetLesson Whether reset lesson is enabled.
  */
-const EditLessonActionsBlock = ( { className } ) => (
+const EditLessonActionsBlock = ( {
+	className,
+	setAttributes,
+	attributes: { resetLesson },
+} ) => (
 	<div className={ className }>
 		<div className="sensei-buttons-container">
+			<LessonActionsBlockSettings
+				resetLesson={ resetLesson }
+				setResetLesson={ ( newValue ) =>
+					setAttributes( { resetLesson: newValue } )
+				}
+			/>
 			<InnerBlocks
 				allowedBlocks={ [
 					'sensei-lms/button-complete-lesson',
