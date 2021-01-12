@@ -17,6 +17,7 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 	const JOB_STALE_AGE_SECONDS = DAY_IN_SECONDS;
 	const OPTION_RUNNING_JOB    = 'sensei-data-port-jobs-running';
 	const SAMPLE_COURSE_ID      = 2990;
+	const SAMPLE_COURSE_SLUG    = 'getting-started-with-sensei-lms';
 
 	/**
 	 * An array of all in progress data port jobs. It has the following format:
