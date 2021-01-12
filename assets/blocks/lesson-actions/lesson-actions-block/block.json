@@ -3,5 +3,11 @@
   "category": "sensei-lms",
   "supports": {
     "html": false
+  },
+  "attributes": {
+    "resetLesson": {
+      "type": "boolean",
+      "default": true
+    }
   }
 }
