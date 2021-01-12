@@ -21,6 +21,13 @@ class Sensei_Blocks {
 	public $course;
 
 	/**
+	 * Lesson blocks.
+	 *
+	 * @var Sensei_Lesson_Blocks
+	 */
+	public $lesson;
+
+	/**
 	 * Sensei_Blocks constructor.
 	 */
 	public function __construct() {
@@ -33,6 +40,7 @@ class Sensei_Blocks {
 
 		// Init blocks.
 		$this->course = new Sensei_Course_Blocks();
+		$this->lesson = new Sensei_Lesson_Blocks();
 	}
 
 	/**
