@@ -30,10 +30,15 @@ export const BlockStyles = {
  *
  * Settings are merged into block settings, the rest of the options are passed on to the save and edit components.
  *
- * @param {Object} opts
- * @param {Object} opts.settings Block settings.
+ * @param {Object}   opts
+ * @param {Object}   opts.settings    Block settings.
+ * @param {Function} opts.EditWrapper Custom edit wrapper component.
  */
-export const createButtonBlockType = ( { settings, ...options } ) => {
+export const createButtonBlockType = ( {
+	settings,
+	EditWrapper,
+	...options
+} ) => {
 	options = {
 		tagName: 'a',
 		alignmentOptions: {
@@ -97,12 +102,18 @@ export const createButtonBlockType = ( { settings, ...options } ) => {
 			icon,
 			styles,
 			edit( props ) {
-				return (
+				const content = (
 					<EditButtonBlockWithBlockStyle
 						{ ...props }
 						{ ...options }
 					/>
 				);
+
+				if ( EditWrapper ) {
+					return <EditWrapper { ...props }>{ content }</EditWrapper>;
+				}
+
+				return content;
 			},
 			save( props ) {
 				return (
