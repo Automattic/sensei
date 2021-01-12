@@ -2,7 +2,12 @@ import { registerBlockType, updateCategory } from '@wordpress/blocks';
 
 import { SenseiIcon } from '../icons';
 
-const blocksSetup = ( blocks ) => {
+/**
+ * Register Sensei blocks.
+ *
+ * @param {Array} blocks Blocks to be registered.
+ */
+const registerSenseiBlocks = ( blocks ) => {
 	updateCategory( 'sensei-lms', {
 		icon: SenseiIcon( { width: '20', height: '20' } ),
 	} );
@@ -13,4 +18,4 @@ const blocksSetup = ( blocks ) => {
 	} );
 };
 
-export default blocksSetup;
+export default registerSenseiBlocks;

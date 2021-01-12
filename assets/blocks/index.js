@@ -1,4 +1,4 @@
-import blocksSetup from './blocks-setup';
+import registerSenseiBlocks from './register-sensei-blocks';
 import TakeCourseButtonBlock from './take-course';
 import ContactTeacherButton from './contact-teacher';
 import CourseProgressBlock from './course-progress';
@@ -8,7 +8,7 @@ import {
 	CourseOutlineModuleBlock,
 } from './course-outline';
 
-blocksSetup( [
+registerSenseiBlocks( [
 	CourseOutlineBlock,
 	CourseOutlineModuleBlock,
 	CourseOutlineLessonBlock,
