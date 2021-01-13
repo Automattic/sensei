@@ -1,0 +1,241 @@
+{
+	"definitions": {
+		"question_category": {
+			"type": "object",
+			"properties": {
+				"type": {
+					"const": "question-category"
+				},
+				"term_id": {
+					"type": "integer",
+					"description": "Term ID"
+				},
+				"name": {
+					"type": "string",
+					"description": "Category name",
+					"readOnly": true
+				},
+				"questions": {
+					"type": "integer",
+					"description": "Number of questions",
+					"readOnly": true
+				}
+			},
+			"required": [ "term_id" ]
+		},
+		"question": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "integer",
+					"description": "Question post ID"
+				},
+				"title": {
+					"type": "string",
+					"description": "Question text"
+				},
+				"description": {
+					"type": "string",
+					"description": "Question description"
+				},
+				"grade": {
+					"type": "integer",
+					"description": "Points this question is worth",
+					"default": 1
+				}
+			},
+			"required": [ "title" ]
+		},
+		"question_multiple_choice": {
+			"allOf": [
+				{ "$ref": "#/definitions/question" },
+				{
+					"properties": {
+						"type": {
+							"const": "multiple_choice"
+						},
+						"options": {
+							"type": "array",
+							"description": "Options for the multiple choice",
+							"items": {
+								"type": "object",
+								"properties": {
+									"label": {
+										"type": "string",
+										"description": "Label for answer option"
+									},
+									"correct": {
+										"type": "boolean",
+										"description": "Whether this answer is correct"
+									}
+								}
+							}
+						},
+						"random_order": {
+							"type": "boolean",
+							"description": "Should options be randomized when displayed to quiz takers",
+							"default": false
+						},
+						"answer_feedback": {
+							"type": "string",
+							"description": "Feedback to show quiz takers once quiz is submitted"
+						}
+					},
+					"required": [ "options" ]
+				}
+			]
+		},
+		"question_boolean": {
+			"allOf": [
+				{ "$ref": "#/definitions/question" },
+				{
+					"properties": {
+						"type": {
+							"const": "boolean"
+						},
+						"answer": {
+							"type": "boolean",
+							"description": "Correct answer for question"
+						},
+						"answer_feedback": {
+							"type": "string",
+							"description": "Feedback to show quiz takers once quiz is submitted"
+						}
+					},
+					"required": [ "answer" ]
+				}
+			]
+		},
+		"question_gap_fill": {
+			"allOf": [
+				{ "$ref": "#/definitions/question" },
+				{
+					"properties": {
+						"type": {
+							"const": "gap-fill"
+						},
+						"before": {
+							"type": "string",
+							"description": "Text before the gap"
+						},
+						"gap": {
+							"type": "string",
+							"description": "Gap text"
+						},
+						"after": {
+							"type": "string",
+							"description": "Text after the gap"
+						}
+					},
+					"required": [ "before", "gap", "after" ]
+				}
+			]
+		},
+		"question_single_line": {
+			"allOf": [
+				{ "$ref": "#/definitions/question" },
+				{
+					"properties": {
+						"type": {
+							"const": "single-line"
+						},
+						"answer": {
+							"type": "string",
+							"description": "Teacher notes for grading"
+						}
+					}
+				}
+			]
+		},
+		"question_multi_line": {
+			"allOf": [
+				{ "$ref": "#/definitions/question" },
+				{
+					"properties": {
+						"type": {
+							"const": "multi-line"
+						},
+						"teacher_notes": {
+							"type": "string",
+							"description": "Teacher notes for grading"
+						}
+					}
+				}
+			]
+		},
+		"question_file_upload": {
+			"allOf": [
+				{ "$ref": "#/definitions/question" },
+				{
+					"properties": {
+						"type": {
+							"const": "file-upload"
+						},
+						"student_help": {
+							"type": "string",
+							"description": "Description for student explaining what needs to be uploaded"
+						},
+						"answer": {
+							"type": "string",
+							"description": "Teacher notes for grading"
+						}
+					}
+				}
+			]
+		}
+	},
+	"type": "object",
+	"properties": {
+		"options": {
+			"type": "object",
+			"properties": {
+				"pass_required": {
+					"type": "boolean",
+					"description": "Pass required to complete lesson",
+					"default": false
+				},
+				"quiz_passmark": {
+					"type": "integer",
+					"description": "Score grade between 0 and 100 required to pass the quiz",
+					"default": 100
+				},
+				"auto_grade": {
+					"type": "boolean",
+					"description": "Whether auto-grading should take place",
+					"default": true
+				},
+				"allow_retakes": {
+					"type": "boolean",
+					"description": "Allow quizzes to be taken again",
+					"default": true
+				},
+				"show_questions": {
+					"type": "boolean",
+					"description": "Number of questions to show randomly",
+					"default": null
+				},
+				"random_question_order": {
+					"type": "boolean",
+					"description": "Show questions in a random order",
+					"default": false
+				}
+			}
+		},
+		"questions": {
+			"type": "array",
+			"description": "Questions in quiz",
+			"items": {
+				"oneOf": [
+					{ "$ref": "#/definitions/question_category" },
+					{ "$ref": "#/definitions/question_multiple_choice" },
+					{ "$ref": "#/definitions/question_boolean" },
+					{ "$ref": "#/definitions/question_gap_fill" },
+					{ "$ref": "#/definitions/question_single_line" },
+					{ "$ref": "#/definitions/question_multi_line" },
+					{ "$ref": "#/definitions/question_file_upload" }
+				]
+			}
+		}
+	},
+	"required": [ "options", "questions" ]
+}
