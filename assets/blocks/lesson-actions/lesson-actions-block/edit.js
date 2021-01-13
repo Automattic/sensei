@@ -1,4 +1,6 @@
 import { InnerBlocks } from '@wordpress/block-editor';
+import { createBlock } from '@wordpress/blocks';
+import { useSelect, useDispatch } from '@wordpress/data';
 
 import { LessonActionsBlockSettings } from './settings';
 
@@ -16,34 +18,69 @@ const innerBlocksTemplate = [
  *
  * @param {Object}   props
  * @param {string}   props.className              Custom class name.
+ * @param {string}   props.clientId               Block ID.
  * @param {Function} props.setAttributes          Block set attributes function.
  * @param {Object}   props.attributes             Block attributes.
  * @param {boolean}  props.attributes.resetLesson Whether reset lesson is enabled.
  */
 const EditLessonActionsBlock = ( {
 	className,
+	clientId,
 	setAttributes,
 	attributes: { resetLesson },
-} ) => (
-	<div className={ className }>
-		<div className="sensei-buttons-container">
-			<LessonActionsBlockSettings
-				resetLesson={ resetLesson }
-				setResetLesson={ ( newValue ) =>
-					setAttributes( { resetLesson: newValue } )
-				}
-			/>
-			<InnerBlocks
-				allowedBlocks={ [
-					'sensei-lms/button-complete-lesson',
-					'sensei-lms/button-next-lesson',
-					'sensei-lms/button-reset-lesson',
-				] }
-				template={ innerBlocksTemplate }
-				templateLock="all"
-			/>
+} ) => {
+	const block = useSelect(
+		( select ) => select( 'core/block-editor' ).getBlock( clientId ),
+		[]
+	);
+	const { replaceInnerBlocks } = useDispatch( 'core/block-editor' );
+
+	const setResetLesson = ( on ) => {
+		const resetLessonBlock = block.innerBlocks.find(
+			( i ) => i.name === 'sensei-lms/button-reset-lesson'
+		);
+
+		let newBlocks = null;
+
+		if ( on && ! resetLessonBlock ) {
+			// Add block.
+			newBlocks = [
+				...block.innerBlocks,
+				createBlock( 'sensei-lms/button-reset-lesson' ),
+			];
+		} else if ( ! on && resetLessonBlock ) {
+			// Remove block.
+			newBlocks = block.innerBlocks.filter(
+				( i ) => i.name !== 'sensei-lms/button-reset-lesson'
+			);
+		}
+
+		if ( newBlocks ) {
+			replaceInnerBlocks( clientId, newBlocks, false );
+		}
+
+		setAttributes( { resetLesson: on } );
+	};
+
+	return (
+		<div className={ className }>
+			<div className="sensei-buttons-container">
+				<LessonActionsBlockSettings
+					resetLesson={ resetLesson }
+					setResetLesson={ setResetLesson }
+				/>
+				<InnerBlocks
+					allowedBlocks={ [
+						'sensei-lms/button-complete-lesson',
+						'sensei-lms/button-next-lesson',
+						'sensei-lms/button-reset-lesson',
+					] }
+					template={ innerBlocksTemplate }
+					templateLock="all"
+				/>
+			</div>
 		</div>
-	</div>
-);
+	);
+};
 
 export default EditLessonActionsBlock;
