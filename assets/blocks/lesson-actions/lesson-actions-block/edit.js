@@ -69,6 +69,12 @@ const EditLessonActionsBlock = ( {
 		setAttributes( { resetLessonOn: on } );
 	};
 
+	const filteredInnerBlocksTemplate = resetLessonOn
+		? innerBlocksTemplate
+		: innerBlocksTemplate.filter(
+				( i ) => 'sensei-lms/button-reset-lesson' !== i[ 0 ]
+		  );
+
 	return (
 		<div className={ className }>
 			<div className="sensei-buttons-container">
@@ -82,7 +88,7 @@ const EditLessonActionsBlock = ( {
 						'sensei-lms/button-next-lesson',
 						'sensei-lms/button-reset-lesson',
 					] }
-					template={ innerBlocksTemplate }
+					template={ filteredInnerBlocksTemplate }
 					templateLock="all"
 				/>
 			</div>
