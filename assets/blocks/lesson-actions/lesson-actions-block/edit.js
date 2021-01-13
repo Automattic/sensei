@@ -5,89 +5,99 @@ import { useSelect, useDispatch } from '@wordpress/data';
 
 import { LessonActionsBlockSettings } from './settings';
 
-const innerBlocksTemplate = [
-	[
-		'sensei-lms/button-complete-lesson',
-		{ inContainer: true, align: 'full' },
-	],
-	[ 'sensei-lms/button-next-lesson', { inContainer: true } ],
-	[ 'sensei-lms/button-reset-lesson', { inContainer: true } ],
+const allowedBlocks = [
+	'sensei-lms/button-complete-lesson',
+	'sensei-lms/button-next-lesson',
+	'sensei-lms/button-reset-lesson',
 ];
+const innerBlocksTemplate = allowedBlocks.map( ( blockName ) => [
+	blockName,
+	{
+		inContainer: true,
+		...( 'sensei-lms/button-complete-lesson' === blockName && {
+			align: 'full',
+		} ),
+	},
+] );
 
 /**
  * Edit lesson actions block component.
  *
  * @param {Object}   props
- * @param {string}   props.className                Custom class name.
- * @param {string}   props.clientId                 Block ID.
- * @param {Function} props.setAttributes            Block set attributes function.
- * @param {Object}   props.attributes               Block attributes.
- * @param {boolean}  props.attributes.resetLessonOn Whether reset lesson is enabled.
+ * @param {string}   props.className               Custom class name.
+ * @param {string}   props.clientId                Block ID.
+ * @param {Function} props.setAttributes           Block set attributes function.
+ * @param {Object}   props.attributes              Block attributes.
+ * @param {Object}   props.attributes.activeBlocks Active blocks, where the key is the block name.
  */
 const EditLessonActionsBlock = ( {
 	className,
 	clientId,
 	setAttributes,
-	attributes: { resetLessonOn },
+	attributes: { activeBlocks },
 } ) => {
 	const block = useSelect(
 		( select ) => select( 'core/block-editor' ).getBlock( clientId ),
 		[]
 	);
 	const { replaceInnerBlocks } = useDispatch( 'core/block-editor' );
-	const [ resetLessonAttributes, setResetLessonAttributes ] = useState( {} );
+	const [ blocksAttributes, setBlocksAttributes ] = useState( {} );
 
-	const toggleResetLesson = ( on ) => {
-		const resetLessonBlock = block.innerBlocks.find(
-			( i ) => i.name === 'sensei-lms/button-reset-lesson'
+	/**
+	 * Toggle block.
+	 *
+	 * @param {string} blockName Block name.
+	 *
+	 * @return {Function} Function to toggle the block.
+	 */
+	const toggleBlock = ( blockName ) => ( on ) => {
+		const toggledBlock = block.innerBlocks.find(
+			( i ) => i.name === blockName
 		);
 		let newBlocks = null;
 
-		if ( on && ! resetLessonBlock ) {
+		if ( on && ! toggledBlock ) {
 			// Add block.
 			newBlocks = [
 				...block.innerBlocks,
-				createBlock(
-					'sensei-lms/button-reset-lesson',
-					resetLessonAttributes
-				),
+				createBlock( blockName, blocksAttributes[ blockName ] || {} ),
 			];
-		} else if ( ! on && resetLessonBlock ) {
+		} else if ( ! on && toggledBlock ) {
 			// Remove block.
 			newBlocks = block.innerBlocks.filter(
-				( i ) => i.name !== 'sensei-lms/button-reset-lesson'
+				( i ) => i.name !== blockName
 			);
 
 			// Save block attributes to restore, if needed.
-			setResetLessonAttributes( resetLessonBlock.attributes );
+			setBlocksAttributes( ( attrs ) => ( {
+				...attrs,
+				[ blockName ]: toggledBlock.attributes,
+			} ) );
 		}
 
 		if ( newBlocks ) {
 			replaceInnerBlocks( clientId, newBlocks, false );
 		}
 
-		setAttributes( { resetLessonOn: on } );
+		setAttributes( {
+			activeBlocks: { ...activeBlocks, [ blockName ]: on },
+		} );
 	};
 
-	const filteredInnerBlocksTemplate = resetLessonOn
-		? innerBlocksTemplate
-		: innerBlocksTemplate.filter(
-				( i ) => 'sensei-lms/button-reset-lesson' !== i[ 0 ]
-		  );
+	// Filter inner blocks based on the settings.
+	const filteredInnerBlocksTemplate = innerBlocksTemplate.filter(
+		( i ) => false !== activeBlocks[ i[ 0 ] ]
+	);
 
 	return (
 		<div className={ className }>
 			<div className="sensei-buttons-container">
 				<LessonActionsBlockSettings
-					resetLessonOn={ resetLessonOn }
-					toggleResetLesson={ toggleResetLesson }
+					activeBlocks={ activeBlocks }
+					toggleBlock={ toggleBlock }
 				/>
 				<InnerBlocks
-					allowedBlocks={ [
-						'sensei-lms/button-complete-lesson',
-						'sensei-lms/button-next-lesson',
-						'sensei-lms/button-reset-lesson',
-					] }
+					allowedBlocks={ allowedBlocks }
 					template={ filteredInnerBlocksTemplate }
 					templateLock="all"
 				/>

@@ -6,18 +6,17 @@ import { __ } from '@wordpress/i18n';
  * Inspector controls for lesson actions block.
  *
  * @param {Object}   props
- * @param {boolean}  props.resetLessonOn     Whether reset lesson is enabled.
- * @param {Function} props.toggleResetLesson Toggle reset lesson.
+ * @param {Object}   props.activeBlocks Active blocks, where the key is the block name.
+ * @param {Function} props.toggleBlock  Toggle block.
  */
-export const LessonActionsBlockSettings = ( {
-	resetLessonOn,
-	toggleResetLesson,
-} ) => (
+export const LessonActionsBlockSettings = ( { activeBlocks, toggleBlock } ) => (
 	<InspectorControls>
 		<PanelBody title={ __( 'Additional Actions', 'sensei-lms' ) }>
 			<ToggleControl
-				checked={ resetLessonOn }
-				onChange={ toggleResetLesson }
+				checked={
+					false !== activeBlocks[ 'sensei-lms/button-reset-lesson' ]
+				}
+				onChange={ toggleBlock( 'sensei-lms/button-reset-lesson' ) }
 				label={ __( 'Reset lesson', 'sensei-lms' ) }
 			/>
 		</PanelBody>

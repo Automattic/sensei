@@ -5,9 +5,11 @@
     "html": false
   },
   "attributes": {
-    "resetLessonOn": {
-      "type": "boolean",
-      "default": true
+    "activeBlocks": {
+      "type": "object",
+      "default": {
+        "sensei-lms/button-reset-lesson": true
+      }
     }
   }
 }
