@@ -18,17 +18,17 @@ const innerBlocksTemplate = [
  * Edit lesson actions block component.
  *
  * @param {Object}   props
- * @param {string}   props.className              Custom class name.
- * @param {string}   props.clientId               Block ID.
- * @param {Function} props.setAttributes          Block set attributes function.
- * @param {Object}   props.attributes             Block attributes.
- * @param {boolean}  props.attributes.resetLesson Whether reset lesson is enabled.
+ * @param {string}   props.className                Custom class name.
+ * @param {string}   props.clientId                 Block ID.
+ * @param {Function} props.setAttributes            Block set attributes function.
+ * @param {Object}   props.attributes               Block attributes.
+ * @param {boolean}  props.attributes.resetLessonOn Whether reset lesson is enabled.
  */
 const EditLessonActionsBlock = ( {
 	className,
 	clientId,
 	setAttributes,
-	attributes: { resetLesson },
+	attributes: { resetLessonOn },
 } ) => {
 	const block = useSelect(
 		( select ) => select( 'core/block-editor' ).getBlock( clientId ),
@@ -37,7 +37,7 @@ const EditLessonActionsBlock = ( {
 	const { replaceInnerBlocks } = useDispatch( 'core/block-editor' );
 	const [ resetLessonAttributes, setResetLessonAttributes ] = useState( {} );
 
-	const setResetLesson = ( on ) => {
+	const toggleResetLesson = ( on ) => {
 		const resetLessonBlock = block.innerBlocks.find(
 			( i ) => i.name === 'sensei-lms/button-reset-lesson'
 		);
@@ -66,15 +66,15 @@ const EditLessonActionsBlock = ( {
 			replaceInnerBlocks( clientId, newBlocks, false );
 		}
 
-		setAttributes( { resetLesson: on } );
+		setAttributes( { resetLessonOn: on } );
 	};
 
 	return (
 		<div className={ className }>
 			<div className="sensei-buttons-container">
 				<LessonActionsBlockSettings
-					resetLesson={ resetLesson }
-					setResetLesson={ setResetLesson }
+					resetLessonOn={ resetLessonOn }
+					toggleResetLesson={ toggleResetLesson }
 				/>
 				<InnerBlocks
 					allowedBlocks={ [

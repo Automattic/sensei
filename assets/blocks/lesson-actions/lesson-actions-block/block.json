@@ -5,7 +5,7 @@
     "html": false
   },
   "attributes": {
-    "resetLesson": {
+    "resetLessonOn": {
       "type": "boolean",
       "default": true
     }
