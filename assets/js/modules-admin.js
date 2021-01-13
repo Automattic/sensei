@@ -1,5 +1,3 @@
-import { __ } from '@wordpress/i18n';
-
 /**
  * Get the url qiuery paramater by name
  *
@@ -194,26 +192,13 @@ jQuery( document ).ready( function () {
 	);
 	if ( courseTeacherInput ) {
 		courseTeacherInput.addEventListener( 'change', () => {
-			document.querySelector( '#taxonomy-module' ).innerHTML = `
-				<p>
-					${ __(
-						'Since the Teacher field was changed, you must refresh the page to modify the modules.',
-						'sensei-lms'
-					) }
-				</p>
-				<button class="button" id="modules-refresh-button">
-					${ __( 'Refresh now', 'sensei-lms' ) }
-				</button>
-				<div><small>Remember to save your changes before refreshing the page.</small></div>
-			`;
-
-			// Add event to refresh button.
-			const refreshButton = document.querySelector(
-				'#modules-refresh-button'
+			const modulesMetabox = document.querySelector(
+				'#module_course_mb'
 			);
-			refreshButton.addEventListener( 'click', () => {
-				window.location.reload();
-			} );
+
+			if ( modulesMetabox ) {
+				modulesMetabox.parentNode.removeChild( modulesMetabox );
+			}
 		} );
 	}
 
