@@ -1,3 +1,4 @@
+import { useState } from '@wordpress/element';
 import { InnerBlocks } from '@wordpress/block-editor';
 import { createBlock } from '@wordpress/blocks';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -34,25 +35,31 @@ const EditLessonActionsBlock = ( {
 		[]
 	);
 	const { replaceInnerBlocks } = useDispatch( 'core/block-editor' );
+	const [ resetLessonAttributes, setResetLessonAttributes ] = useState( {} );
 
 	const setResetLesson = ( on ) => {
 		const resetLessonBlock = block.innerBlocks.find(
 			( i ) => i.name === 'sensei-lms/button-reset-lesson'
 		);
-
 		let newBlocks = null;
 
 		if ( on && ! resetLessonBlock ) {
 			// Add block.
 			newBlocks = [
 				...block.innerBlocks,
-				createBlock( 'sensei-lms/button-reset-lesson' ),
+				createBlock(
+					'sensei-lms/button-reset-lesson',
+					resetLessonAttributes
+				),
 			];
 		} else if ( ! on && resetLessonBlock ) {
 			// Remove block.
 			newBlocks = block.innerBlocks.filter(
 				( i ) => i.name !== 'sensei-lms/button-reset-lesson'
 			);
+
+			// Save block attributes to restore, if needed.
+			setResetLessonAttributes( resetLessonBlock.attributes );
 		}
 
 		if ( newBlocks ) {
