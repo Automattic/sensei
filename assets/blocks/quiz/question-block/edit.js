@@ -68,7 +68,7 @@ export const EditQuestionBlock = ( props ) => {
 					] }
 				/>
 			) }
-			{ AnswerBlock ? (
+			{ AnswerBlock && (
 				<AnswerBlock.edit
 					attributes={ answer }
 					setAttributes={ ( next ) =>
@@ -76,46 +76,35 @@ export const EditQuestionBlock = ( props ) => {
 					}
 					{ ...{ hasSelected } }
 				/>
-			) : (
-				hasSelected && (
-					<AnswerTypeSelector
-						className="sensei-lms-question-block__answer-type-selector--inline"
-						onSelect={ ( nextValue ) =>
-							setAttributes( { type: nextValue } )
-						}
-					/>
-				)
 			) }
 			<BlockControls>
-				{ AnswerBlock ? (
-					<>
-						<ToolbarGroup
-							className="sensei-lms-question-block__answer-type-selector--toolbar"
-							isCollapsed={ true }
-							icon={ null }
-							label={ 'Answer Type' }
-							popoverProps={ {
-								isAlternate: true,
-								headerTitle: 'Answer Type',
-							} }
-							toggleProps={ {
-								children: <b> { AnswerBlock.title } </b>,
-							} }
-						>
-							{ ( { onClose } ) => (
-								<AnswerTypeSelector
-									value={ type }
-									onSelect={ ( nextValue ) => {
-										setAttributes( { type: nextValue } );
-										onClose();
-									} }
-								/>
-							) }
-						</ToolbarGroup>
-					</>
-				) : (
-					''
-				) }
+				<>
+					<ToolbarGroup
+						className="sensei-lms-question-block__answer-type-selector--toolbar"
+						isCollapsed={ true }
+						icon={ null }
+						label={ 'Answer Type' }
+						popoverProps={ {
+							isAlternate: true,
+							headerTitle: 'Answer Type',
+							className:
+								'sensei-lms-question-block__answer-type-selector--popover',
+						} }
+						toggleProps={ {
+							children: <b> { AnswerBlock.title } </b>,
+						} }
+					>
+						{ ( { onClose } ) => (
+							<AnswerTypeSelector
+								value={ type }
+								onSelect={ ( nextValue ) => {
+									setAttributes( { type: nextValue } );
+									onClose();
+								} }
+							/>
+						) }
+					</ToolbarGroup>
+				</>
 			</BlockControls>
 		</div>
 	);

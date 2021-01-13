@@ -84,6 +84,11 @@
 			display: flex;
 			flex-wrap: wrap;
 		}
+		&--popover {
+			.components-popover__content {
+				min-width: 300px;
+			}
+		}
 		&__option {
 			flex: 0 0 50%;
 			display: flex;
@@ -98,9 +103,7 @@
 			&.is-selected {
 				color: var(--wp-admin-theme-color);
 			}
-			.components-popover & {
-				width: 300px;
-			}
+
 		}
 		&__option__description {
 			font-style: italic;

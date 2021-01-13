@@ -3,6 +3,7 @@ import { EditQuestionBlock } from './edit';
 
 export default {
 	name: 'sensei-lms/quiz-question',
+	parent: [ 'sensei-lms/quiz' ],
 	//category: 'sensei-lms',
 	title: 'Question',
 	supports: {
@@ -17,6 +18,7 @@ export default {
 		},
 		type: {
 			type: 'string',
+			default: 'multichoice',
 		},
 		answer: {
 			type: 'object',
