@@ -8,7 +8,7 @@ import save from './save';
 export default {
 	title: __( 'Lesson actions', 'sensei-lms' ),
 	description: __(
-		'Enable an enrolled user to complete the lesson, or reset their progress.',
+		'Enable an enrolled user to perform specific actions for a lesson.',
 		'sensei-lms'
 	),
 	keywords: [

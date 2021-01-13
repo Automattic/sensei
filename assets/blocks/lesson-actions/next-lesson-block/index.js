@@ -12,7 +12,7 @@ export default createButtonBlockType( {
 		title: __( 'Next lesson', 'sensei-lms' ),
 		parent: [ 'sensei-lms/lesson-actions' ],
 		description: __(
-			'Enable an enrolled user to navigate to the next lesson.',
+			'Enable a user to move to the next lesson.',
 			'sensei-lms'
 		),
 		keywords: [

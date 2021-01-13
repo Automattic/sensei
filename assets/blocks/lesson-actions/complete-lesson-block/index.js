@@ -12,7 +12,7 @@ export default createButtonBlockType( {
 		parent: [ 'sensei-lms/lesson-actions' ],
 		title: __( 'Complete lesson', 'sensei-lms' ),
 		description: __(
-			'Enable an enrolled user to complete the lesson.',
+			'Enable an enrolled user to mark the lesson as complete.',
 			'sensei-lms'
 		),
 		keywords: [

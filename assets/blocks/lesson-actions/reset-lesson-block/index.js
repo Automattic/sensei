@@ -12,7 +12,7 @@ export default createButtonBlockType( {
 		title: __( 'Reset lesson', 'sensei-lms' ),
 		parent: [ 'sensei-lms/lesson-actions' ],
 		description: __(
-			'Enable an enrolled user to reset their progress.',
+			'Enable an enrolled user to reset their progress in the lesson.',
 			'sensei-lms'
 		),
 		keywords: [
