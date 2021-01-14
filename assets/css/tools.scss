@@ -1,11 +1,18 @@
 table#sensei-tools {
 	th, td {
-		padding: 2em;
+		padding: 1.5em;
 		> div {
-			margin-bottom: .5em;
-
 			&.name {
 				font-weight: bold;
+				margin-bottom: .5em;
+			}
+
+			&.description {
+				margin-bottom: .5em;
+			}
+
+			&.notice {
+				margin-bottom: 0;
 			}
 		}
 	}

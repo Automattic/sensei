@@ -25,6 +25,17 @@ require __DIR__ . '/html-admin-page-tools-header.php';
 				<th>
 					<div class="name"><?php echo esc_html( $tool->get_name() ); ?></div>
 					<div class="description"><?php echo esc_html( $tool->get_description() ); ?></div>
+					<?php
+					/**
+					 * Display additional information to a tools listing, such as status.
+					 *
+					 * @hook sensei_tools_listing_after_{$tool_id}
+					 * @since 3.7.0
+					 *
+					 * @param Sensei_Tool_Interface $tool Tool object.
+					 */
+					do_action( "sensei_tools_listing_after_{$tool->get_id()}", $tool );
+					?>
 				</th>
 				<td>
 					<p>
