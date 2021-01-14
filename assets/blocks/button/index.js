@@ -88,6 +88,10 @@ export const createButtonBlockType = ( {
 					type: 'boolean',
 					default: false,
 				},
+				inContainer: {
+					type: 'boolean',
+					default: false,
+				},
 			},
 			supports: {
 				color: {
