@@ -37,6 +37,7 @@ const files = [
 	'blocks/single-course.editor.scss',
 	'admin/exit-survey/index.js',
 	'admin/exit-survey/exit-survey.scss',
+	'css/tools.scss',
 	'css/enrolment-debug.scss',
 	'css/frontend.scss',
 	'css/admin-custom.css',

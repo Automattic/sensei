@@ -1,0 +1,12 @@
+table#sensei-tools {
+	th, td {
+		padding: 2em;
+		> div {
+			margin-bottom: .5em;
+
+			&.name {
+				font-weight: bold;
+			}
+		}
+	}
+}

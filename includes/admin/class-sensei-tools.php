@@ -154,6 +154,8 @@ class Sensei_Tools {
 	 * Output the tools page.
 	 */
 	public function output() {
+		Sensei()->assets->enqueue( 'sensei-tools', 'css/tools.css' );
+
 		$tools = $this->get_tools();
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended

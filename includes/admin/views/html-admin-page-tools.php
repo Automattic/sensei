@@ -23,10 +23,8 @@ require __DIR__ . '/html-admin-page-tools-header.php';
 		?>
 			<tr>
 				<th>
-					<p>
-						<div class="name"><strong><?php echo esc_html( $tool->get_name() ); ?></strong></div>
-						<div class="description"><?php echo esc_html( $tool->get_description() ); ?></div>
-					</p>
+					<div class="name"><?php echo esc_html( $tool->get_name() ); ?></div>
+					<div class="description"><?php echo esc_html( $tool->get_description() ); ?></div>
 				</th>
 				<td>
 					<p>
@@ -38,10 +36,10 @@ require __DIR__ . '/html-admin-page-tools-header.php';
 						}
 
 						if ( $tool->is_available() ) {
-							echo '<a href="' . esc_url( $url ) .'" class="button button-large">' .  esc_html( $label ) . '</a>';
+							echo '<a href="' . esc_url( $url ) . '" class="button button-large">' . esc_html( $label ) . '</a>';
 						} else {
 							$helper = __( 'This tool is not currently available', 'sensei-lms' );
-							echo '<button class="button button-large" disabled="disabled">' .  esc_html( $label ) . '</button>';
+							echo '<button class="button button-large" disabled="disabled">' . esc_html( $label ) . '</button>';
 						}
 						?>
 					</p>
