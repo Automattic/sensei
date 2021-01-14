@@ -17,7 +17,21 @@ class Sensei_Lesson_Blocks {
 	 * Sensei_Blocks constructor.
 	 */
 	public function __construct() {
+		add_action( 'enqueue_block_assets', [ $this, 'enqueue_block_assets' ] );
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_block_editor_assets' ] );
+	}
+
+	/**
+	 * Enqueue frontend and editor assets.
+	 *
+	 * @access private
+	 */
+	public function enqueue_block_assets() {
+		if ( 'lesson' !== get_post_type() ) {
+			return;
+		}
+
+		Sensei()->assets->enqueue( 'sensei-single-lesson', 'blocks/single-lesson.css' );
 	}
 
 	/**
@@ -31,5 +45,6 @@ class Sensei_Lesson_Blocks {
 		}
 
 		Sensei()->assets->enqueue( 'sensei-single-lesson-blocks', 'blocks/sensei-single-lesson-blocks.js', [], true );
+		Sensei()->assets->enqueue( 'sensei-single-lesson-editor', 'blocks/single-lesson.editor.css' );
 	}
 }
