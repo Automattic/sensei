@@ -140,4 +140,13 @@ class Sensei_Tool_Module_Slugs_Mismatch implements Sensei_Tool_Interface {
 
 		return $message;
 	}
+
+	/**
+	 * Is the tool currently available?
+	 *
+	 * @return bool True if tool is available.
+	 */
+	public function is_available() {
+		return true;
+	}
 }

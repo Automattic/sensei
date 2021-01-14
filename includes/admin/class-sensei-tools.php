@@ -122,6 +122,14 @@ class Sensei_Tools {
 
 			$tool = $tools[ $tool_id ];
 
+			if ( ! $tool->is_available() ) {
+				$this->add_user_message( __( 'This tool is not currently available. Please try again later.', 'sensei-lms' ), true );
+
+				wp_safe_redirect( $this->get_tools_url() );
+
+				exit;
+			}
+
 			if ( $this->is_interactive_tool( $tool ) ) {
 				// Let the tool do its own nonce check and processing.
 				$tool->process();

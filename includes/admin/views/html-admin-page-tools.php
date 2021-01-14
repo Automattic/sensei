@@ -36,8 +36,14 @@ require __DIR__ . '/html-admin-page-tools-header.php';
 						if ( ! Sensei_Tools::instance()->is_interactive_tool( $tool ) ) {
 							$label = __( 'Run Action', 'sensei-lms' );
 						}
+
+						if ( $tool->is_available() ) {
+							echo '<a href="' . esc_url( $url ) .'" class="button button-large">' .  esc_html( $label ) . '</a>';
+						} else {
+							$helper = __( 'This tool is not currently available', 'sensei-lms' );
+							echo '<button class="button button-large" disabled="disabled">' .  esc_html( $label ) . '</button>';
+						}
 						?>
-						<a href="<?php echo esc_url( $url ); ?>" class="button button-large"><?php echo esc_html( $label ); ?></a>
 					</p>
 				</td>
 			</tr>

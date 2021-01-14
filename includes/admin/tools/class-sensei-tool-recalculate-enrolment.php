@@ -52,4 +52,13 @@ class Sensei_Tool_Recalculate_Enrolment implements Sensei_Tool_Interface {
 
 		Sensei_Tools::instance()->add_user_message( __( 'Course enrollment cache has been invalidated and is being recalculated.', 'sensei-lms' ) );
 	}
+
+	/**
+	 * Is the tool currently available?
+	 *
+	 * @return bool True if tool is available.
+	 */
+	public function is_available() {
+		return true;
+	}
 }
