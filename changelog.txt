@@ -1,5 +1,33 @@
 *** Changelog ***
 
+2021.01.21 - version 3.7.0
+* New: Add filter to only allow some mime types to quiz file upload answers [#3828](https://github.com/Automattic/sensei/pull/3828)
+* New: Remove REST API Test Harness code [#3475](https://github.com/Automattic/sensei/pull/3475)
+* New: Show admin notice if Sensei hasn't been built correctly [#3775](https://github.com/Automattic/sensei/pull/3775) 👏 @merkushin
+* New: Log course completion rate [#3777](https://github.com/Automattic/sensei/pull/3777)
+* New: Add Remove Progress button in Learner Management for lessons [#3857](https://github.com/Automattic/sensei/pull/3857)
+* New: Add basic integrations with Site Health [#3834](https://github.com/Automattic/sensei/pull/3834)
+* New: Add Tools page and deprecate Data Updates page [#3842](https://github.com/Automattic/sensei/pull/3842)
+* New: Add course enrollment debugger to Tools menu [#3843](https://github.com/Automattic/sensei/pull/3843)
+* New: Add hook to filter meta keys when duplicating courses [#3830](https://github.com/Automattic/sensei/pull/3830)
+* New: Add comment table indexes on upgrade [#3861](https://github.com/Automattic/sensei/pull/3861)
+* New: Add notice to install WooCommerce Paid Courses [#3876](https://github.com/Automattic/sensei/pull/3876), [#3884](https://github.com/Automattic/sensei/pull/3884)
+* Tweak: Enable translating more Sensei content using Polylang and WPML [#3840](https://github.com/Automattic/sensei/pull/3840)
+* Tweak: Ensure all data is removed when uninstalling the plugin [#3864](https://github.com/Automattic/sensei/pull/3864)
+* Fix: Fix empty Courses page on multi-site install [#3827](https://github.com/Automattic/sensei/pull/3827)
+* Fix: Fix linter issues [#3833](https://github.com/Automattic/sensei/pull/3833)
+* Fix: Fix some columns not showing in courses, lessons and questions lists [#3273](https://github.com/Automattic/sensei/pull/3273) 👏 @hansschuijff
+* Fix: Prevent double form submission [#3838](https://github.com/Automattic/sensei/pull/3838)
+* Fix: Fix teacher/admin module slug conflicts in course outline block [#3846](https://github.com/Automattic/sensei/pull/3846)
+* Fix: Fix some colors not being applied on front end for course blocks [#3844](https://github.com/Automattic/sensei/pull/3844)
+* Fix: Fix teacher change issue on saving block editor meta boxes [#3829](https://github.com/Automattic/sensei/pull/3829)
+* Fix: Remove duplicate progress entries after inserting a new one [#3855](https://github.com/Automattic/sensei/pull/3855)
+* Fix: Fix module renaming in course outline block [#3862](https://github.com/Automattic/sensei/pull/3862)
+* Fix: Teachers should only be able to access their own courses [#3873](https://github.com/Automattic/sensei/pull/3873)
+* Fix: Fix order that lessons in a module are retrieved in [#3879](https://github.com/Automattic/sensei/pull/3879)
+* Fix: Always use numeric grade when grading manually [#3755](https://github.com/Automattic/sensei/pull/3755)
+* Fix: Hide Modules metabox after changing course teacher to prevent module conflicts [#3869](https://github.com/Automattic/sensei/pull/3869)
+
 2021.01.06 - version 3.6.1
 * Fix: Fix not being able to save course when Yoast SEO is activated [#3866](https://github.com/Automattic/sensei/pull/3866)
 * Fix: Ensure exit survey is displayed after deactivating Sensei with WooCommerce Paid Courses [#3871](https://github.com/Automattic/sensei/pull/3871)
