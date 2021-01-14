@@ -27,3 +27,31 @@
 		text-decoration: none;
 	}
 }
+
+/**
+  * Buttons in container.
+  */
+.sensei-buttons-container {
+	margin: -12px;
+	overflow: hidden; /* Clearfix solution */
+}
+
+.sensei-buttons-container__button-block,
+body .editor-styles-wrapper .block-editor-inner-blocks .sensei-buttons-container__button-block {
+	float: left;
+	margin: 12px;
+
+	&.sensei-buttons-container__button-align-full,
+	&.sensei-buttons-container__button-align-center {
+		float: none;
+		clear: both;
+	}
+
+	&.sensei-buttons-container__button-align-right {
+		float: right;
+	}
+
+	.wp-block-sensei-button {
+		margin: 0;
+	}
+}
