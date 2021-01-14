@@ -27,12 +27,12 @@ require __DIR__ . '/html-admin-page-tools-header.php';
 					<div class="description"><?php echo esc_html( $tool->get_description() ); ?></div>
 					<?php
 					/**
-					 * Display additional information to a tools listing, such as status.
+					 * Display additional information for a specific tool, such as status.
 					 *
 					 * @hook sensei_tools_listing_after_{$tool_id}
 					 * @since 3.7.0
 					 *
-					 * @param Sensei_Tool_Interface $tool Tool object.
+					 * @param {Sensei_Tool_Interface} $tool Tool object.
 					 */
 					do_action( "sensei_tools_listing_after_{$tool->get_id()}", $tool );
 					?>
@@ -50,7 +50,7 @@ require __DIR__ . '/html-admin-page-tools-header.php';
 							echo '<a href="' . esc_url( $url ) . '" class="button button-large">' . esc_html( $label ) . '</a>';
 						} else {
 							$helper = __( 'This tool is not currently available', 'sensei-lms' );
-							echo '<button class="button button-large" disabled="disabled">' . esc_html( $label ) . '</button>';
+							echo '<button class="button button-large" disabled="disabled" title="' . esc_attr( $helper ) . '">' . esc_html( $label ) . '</button>';
 						}
 						?>
 					</p>
