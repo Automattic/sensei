@@ -23,10 +23,19 @@ require __DIR__ . '/html-admin-page-tools-header.php';
 		?>
 			<tr>
 				<th>
-					<p>
-						<div class="name"><strong><?php echo esc_html( $tool->get_name() ); ?></strong></div>
-						<div class="description"><?php echo esc_html( $tool->get_description() ); ?></div>
-					</p>
+					<div class="name"><?php echo esc_html( $tool->get_name() ); ?></div>
+					<div class="description"><?php echo esc_html( $tool->get_description() ); ?></div>
+					<?php
+					/**
+					 * Display additional information for a specific tool, such as status.
+					 *
+					 * @hook sensei_tools_listing_after_{$tool_id}
+					 * @since 3.7.0
+					 *
+					 * @param {Sensei_Tool_Interface} $tool Tool object.
+					 */
+					do_action( "sensei_tools_listing_after_{$tool->get_id()}", $tool );
+					?>
 				</th>
 				<td>
 					<p>
@@ -36,8 +45,14 @@ require __DIR__ . '/html-admin-page-tools-header.php';
 						if ( ! Sensei_Tools::instance()->is_interactive_tool( $tool ) ) {
 							$label = __( 'Run Action', 'sensei-lms' );
 						}
+
+						if ( $tool->is_available() ) {
+							echo '<a href="' . esc_url( $url ) . '" class="button button-large">' . esc_html( $label ) . '</a>';
+						} else {
+							$helper = __( 'This tool is not currently available', 'sensei-lms' );
+							echo '<button class="button button-large" disabled="disabled" title="' . esc_attr( $helper ) . '">' . esc_html( $label ) . '</button>';
+						}
 						?>
-						<a href="<?php echo esc_url( $url ); ?>" class="button button-large"><?php echo esc_html( $label ); ?></a>
 					</p>
 				</td>
 			</tr>

@@ -407,4 +407,13 @@ class Sensei_Tool_Enrolment_Debug implements Sensei_Tool_Interface, Sensei_Tool_
 
 		return $row_data;
 	}
+
+	/**
+	 * Is the tool currently available?
+	 *
+	 * @return bool True if tool is available.
+	 */
+	public function is_available() {
+		return true;
+	}
 }
