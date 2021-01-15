@@ -33,6 +33,7 @@ class Sensei_Blocks {
 
 		// Init blocks.
 		$this->course = new Sensei_Course_Blocks();
+		new Sensei_Lesson_Blocks();
 	}
 
 	/**
