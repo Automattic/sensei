@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { merge, find } from 'lodash';
+import classnames from 'classnames';
 
 import './color-hooks';
 import { EditButtonBlock } from './edit-button';
@@ -88,6 +89,10 @@ export const createButtonBlockType = ( {
 					type: 'boolean',
 					default: false,
 				},
+				inContainer: {
+					type: 'boolean',
+					default: false,
+				},
 			},
 			supports: {
 				color: {
@@ -122,6 +127,20 @@ export const createButtonBlockType = ( {
 						{ ...options }
 					/>
 				);
+			},
+			getEditWrapperProps( { inContainer, align } ) {
+				if ( inContainer ) {
+					return {
+						className: classnames(
+							'sensei-buttons-container__button-block',
+							{
+								[ `sensei-buttons-container__button-align-${ align }` ]: align,
+							}
+						),
+					};
+				}
+
+				return {};
 			},
 			example: {
 				attributes: {
