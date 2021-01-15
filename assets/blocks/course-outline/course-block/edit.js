@@ -11,7 +11,7 @@ import { withDefaultBlockStyle } from '../../../shared/blocks/settings';
 import { COURSE_STATUS_STORE } from '../status-store';
 import { getCourseInnerBlocks } from '../get-course-inner-blocks';
 import { getActiveStyleClass, applyStyleClass } from '../apply-style-class';
-import useToggleLegacyMetaboxes from '../../use-toggle-legacy-metaboxes';
+import ToggleLegacyCourseMetaboxesWrapper from '../../toggle-legacy-course-metaboxes-wrapper';
 
 /**
  * A React context which contains the attributes and the setAttributes callback of the Outline block.
@@ -91,13 +91,8 @@ const useApplyStyleToModules = ( clientId, className, isPreview ) => {
  * @param {Object}   props.attributes    Block attributes.
  * @param {Function} props.setAttributes Block setAttributes callback.
  */
-const EditCourseOutlineBlock = ( {
-	clientId,
-	className,
-	attributes,
-	setAttributes,
-} ) => {
-	useToggleLegacyMetaboxes( { ignoreToggle: attributes.isPreview } );
+const EditCourseOutlineBlock = ( props ) => {
+	const { clientId, className, attributes, setAttributes } = props;
 
 	const { fetchCourseStructure } = useDispatch( COURSE_STORE );
 	const { updateBlockAttributes } = useDispatch( 'core/block-editor' );
@@ -134,42 +129,42 @@ const EditCourseOutlineBlock = ( {
 		setAttributes( { moduleBorder: newValue } );
 	};
 
-	if ( isEmpty ) {
-		return (
-			<CourseOutlinePlaceholder
-				addBlock={ ( type ) => setBlocks( [ { type } ], true ) }
+	const content = isEmpty ? (
+		<CourseOutlinePlaceholder
+			addBlock={ ( type ) => setBlocks( [ { type } ], true ) }
+		/>
+	) : (
+		<OutlineAttributesContext.Provider
+			value={ {
+				outlineAttributes: attributes,
+				outlineSetAttributes: setAttributes,
+				outlineClassName: className,
+			} }
+		>
+			<OutlineBlockSettings
+				collapsibleModules={ attributes.collapsibleModules }
+				setCollapsibleModules={ ( value ) =>
+					setAttributes( { collapsibleModules: value } )
+				}
+				moduleBorder={ attributes.moduleBorder }
+				setModuleBorder={ applyBorder }
 			/>
-		);
-	}
+
+			<section className={ className }>
+				<InnerBlocks
+					allowedBlocks={ [
+						'sensei-lms/course-outline-module',
+						'sensei-lms/course-outline-lesson',
+					] }
+				/>
+			</section>
+		</OutlineAttributesContext.Provider>
+	);
 
 	return (
-		<>
-			<OutlineAttributesContext.Provider
-				value={ {
-					outlineAttributes: attributes,
-					outlineSetAttributes: setAttributes,
-					outlineClassName: className,
-				} }
-			>
-				<OutlineBlockSettings
-					collapsibleModules={ attributes.collapsibleModules }
-					setCollapsibleModules={ ( value ) =>
-						setAttributes( { collapsibleModules: value } )
-					}
-					moduleBorder={ attributes.moduleBorder }
-					setModuleBorder={ applyBorder }
-				/>
-
-				<section className={ className }>
-					<InnerBlocks
-						allowedBlocks={ [
-							'sensei-lms/course-outline-module',
-							'sensei-lms/course-outline-lesson',
-						] }
-					/>
-				</section>
-			</OutlineAttributesContext.Provider>
-		</>
+		<ToggleLegacyCourseMetaboxesWrapper { ...props }>
+			{ content }
+		</ToggleLegacyCourseMetaboxesWrapper>
 	);
 };
 

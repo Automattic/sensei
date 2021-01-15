@@ -1,11 +1,14 @@
 import { __ } from '@wordpress/i18n';
+
 import { createButtonBlockType } from '../button';
+import ToggleLegacyCourseMetaboxesWrapper from '../toggle-legacy-course-metaboxes-wrapper';
 
 /**
  * Take course button block.
  */
 export default createButtonBlockType( {
 	tagName: 'button',
+	EditWrapper: ToggleLegacyCourseMetaboxesWrapper,
 	settings: {
 		name: 'sensei-lms/button-take-course',
 		title: __( 'Take Course', 'sensei-lms' ),

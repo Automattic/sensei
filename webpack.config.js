@@ -32,7 +32,7 @@ const files = [
 	'data-port/export.js',
 	'data-port/style.scss',
 	'blocks/course-outline/frontend.js',
-	'blocks/index.js',
+	'blocks/sensei-single-course-blocks.js',
 	'blocks/single-course.scss',
 	'blocks/single-course.editor.scss',
 	'admin/exit-survey/index.js',
