@@ -5,7 +5,7 @@
     "html": false
   },
   "attributes": {
-    "activeBlocks": {
+    "toggledBlocks": {
       "type": "object",
       "default": {
         "sensei-lms/button-reset-lesson": true

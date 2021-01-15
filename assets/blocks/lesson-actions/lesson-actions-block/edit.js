@@ -24,17 +24,17 @@ const INNER_BLOCKS_TEMPLATE = ALLOWED_BLOCKS.map( ( blockName ) => [
  * Edit lesson actions block component.
  *
  * @param {Object}   props
- * @param {string}   props.className               Custom class name.
- * @param {string}   props.clientId                Block ID.
- * @param {Function} props.setAttributes           Block set attributes function.
- * @param {Object}   props.attributes              Block attributes.
- * @param {Object}   props.attributes.activeBlocks Active blocks, where the key is the block name.
+ * @param {string}   props.className                Custom class name.
+ * @param {string}   props.clientId                 Block ID.
+ * @param {Function} props.setAttributes            Block set attributes function.
+ * @param {Object}   props.attributes               Block attributes.
+ * @param {Object}   props.attributes.toggledBlocks Toggled blocks, where the key is the block name.
  */
 const EditLessonActionsBlock = ( {
 	className,
 	clientId,
 	setAttributes,
-	attributes: { activeBlocks },
+	attributes: { toggledBlocks },
 } ) => {
 	const block = useSelect(
 		( select ) => select( 'core/block-editor' ).getBlock( clientId ),
@@ -80,20 +80,20 @@ const EditLessonActionsBlock = ( {
 		}
 
 		setAttributes( {
-			activeBlocks: { ...activeBlocks, [ blockName ]: on },
+			toggledBlocks: { ...toggledBlocks, [ blockName ]: on },
 		} );
 	};
 
 	// Filter inner blocks based on the settings.
 	const filteredInnerBlocksTemplate = INNER_BLOCKS_TEMPLATE.filter(
-		( i ) => false !== activeBlocks[ i[ 0 ] ]
+		( i ) => false !== toggledBlocks[ i[ 0 ] ]
 	);
 
 	return (
 		<div className={ className }>
 			<div className="sensei-buttons-container">
 				<LessonActionsBlockSettings
-					activeBlocks={ activeBlocks }
+					toggledBlocks={ toggledBlocks }
 					toggleBlock={ toggleBlock }
 				/>
 				<InnerBlocks
