@@ -5,12 +5,12 @@ import { useSelect, useDispatch } from '@wordpress/data';
 
 import { LessonActionsBlockSettings } from './settings';
 
-const allowedBlocks = [
+const ALLOWED_BLOCKS = [
 	'sensei-lms/button-complete-lesson',
 	'sensei-lms/button-next-lesson',
 	'sensei-lms/button-reset-lesson',
 ];
-const innerBlocksTemplate = allowedBlocks.map( ( blockName ) => [
+const INNER_BLOCKS_TEMPLATE = ALLOWED_BLOCKS.map( ( blockName ) => [
 	blockName,
 	{
 		inContainer: true,
@@ -85,7 +85,7 @@ const EditLessonActionsBlock = ( {
 	};
 
 	// Filter inner blocks based on the settings.
-	const filteredInnerBlocksTemplate = innerBlocksTemplate.filter(
+	const filteredInnerBlocksTemplate = INNER_BLOCKS_TEMPLATE.filter(
 		( i ) => false !== activeBlocks[ i[ 0 ] ]
 	);
 
@@ -97,7 +97,7 @@ const EditLessonActionsBlock = ( {
 					toggleBlock={ toggleBlock }
 				/>
 				<InnerBlocks
-					allowedBlocks={ allowedBlocks }
+					allowedBlocks={ ALLOWED_BLOCKS }
 					template={ filteredInnerBlocksTemplate }
 					templateLock="all"
 				/>
