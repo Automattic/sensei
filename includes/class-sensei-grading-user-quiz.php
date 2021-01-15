@@ -311,8 +311,8 @@ class Sensei_Grading_User_Quiz {
 							</span>
 						</div>
 						<div class="answer-notes">
-							<h5><?php esc_html_e( 'Grading Notes', 'sensei-lms' ); ?></h5>
-							<textarea class="correct-answer" name="questions_feedback[<?php echo esc_attr( $question_id ); ?>]" placeholder="<?php esc_attr_e( 'Add notes here...', 'sensei-lms' ); ?>"><?php echo esc_html( $question_answer_notes ); ?></textarea>
+							<h5><?php esc_html_e( 'Answer Feedback', 'sensei-lms' ); ?></h5>
+							<textarea class="correct-answer" name="questions_feedback[<?php echo esc_attr( $question_id ); ?>]" placeholder="<?php esc_attr_e( 'Add feedback here...', 'sensei-lms' ); ?>"><?php echo esc_html( $question_answer_notes ); ?></textarea>
 						</div>
 					</div>
 				</div>
