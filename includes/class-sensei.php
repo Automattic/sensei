@@ -442,13 +442,13 @@ class Sensei_Main {
 			// Load Frontend Class
 			$this->frontend = new Sensei_Frontend();
 
-			// Load notice Class
-			$this->notices = new Sensei_Notices();
-
 			// Load built in themes support integration
 			$this->theme_integration_loader = new Sensei_Theme_Integration_Loader();
 
 		}
+
+		// Load notice Class
+		$this->notices = new Sensei_Notices();
 
 		// Load Grading Functionality
 		$this->grading = new Sensei_Grading( $this->main_plugin_file_name );

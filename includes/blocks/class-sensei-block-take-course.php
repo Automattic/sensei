@@ -52,7 +52,7 @@ class Sensei_Block_Take_Course {
 
 		if ( Sensei_Course::can_current_user_manually_enrol( $course_id ) ) {
 			if ( ! Sensei_Course::is_prerequisite_complete( $course_id ) ) {
-				$this->add_notice( Sensei()->course::get_course_prerequisite_message( $course_id ), 'info' );
+				Sensei()->notices->add_notice( Sensei()->course::get_course_prerequisite_message( $course_id ), 'info' );
 				$html = $this->render_disabled( $content );
 			} else {
 				$html = $this->render_with_start_course_form( $course_id, $content );
@@ -170,17 +170,5 @@ class Sensei_Block_Take_Course {
 		_deprecated_function( __METHOD__, '3.8.0', 'Sensei_Course::get_course_prerequisite_message' );
 
 		return Sensei()->course::get_course_prerequisite_message( $course_id );
-	}
-
-	/**
-	 * Helper method to avoid adding notices in the editor.
-	 *
-	 * @param string $content The notice content.
-	 * @param string $type    The notice type.
-	 */
-	private function add_notice( string $content, string $type ) {
-		if ( ! is_admin() ) {
-			Sensei()->notices->add_notice( $content, $type );
-		}
 	}
 }
