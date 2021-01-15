@@ -3,25 +3,29 @@ import { PanelBody, ToggleControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 /**
+ * @typedef {Object} ToggleBlock
+ *
+ * @property {string}   label    Toggle label.
+ * @property {boolean}  active   Whether block is active.
+ * @property {Function} onToggle Toggle function.
+ */
+/**
  * Inspector controls for lesson actions block.
  *
- * @param {Object}   props
- * @param {Object}   props.toggledBlocks Toggled blocks, where the key is the block name.
- * @param {Function} props.toggleBlock   Toggle block.
+ * @param {Object}        props
+ * @param {ToggleBlock[]} props.toggleBlocks Blocks to toggle.
  */
-export const LessonActionsBlockSettings = ( {
-	toggledBlocks,
-	toggleBlock,
-} ) => (
+export const LessonActionsBlockSettings = ( { toggleBlocks } ) => (
 	<InspectorControls>
 		<PanelBody title={ __( 'Additional Actions', 'sensei-lms' ) }>
-			<ToggleControl
-				checked={
-					false !== toggledBlocks[ 'sensei-lms/button-reset-lesson' ]
-				}
-				onChange={ toggleBlock( 'sensei-lms/button-reset-lesson' ) }
-				label={ __( 'Reset lesson', 'sensei-lms' ) }
-			/>
+			{ toggleBlocks.map( ( block ) => (
+				<ToggleControl
+					key={ block.label }
+					checked={ block.active }
+					onChange={ block.onToggle }
+					label={ block.label }
+				/>
+			) ) }
 		</PanelBody>
 	</InspectorControls>
 );
