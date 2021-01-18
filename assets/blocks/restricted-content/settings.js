@@ -18,7 +18,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
  *
  * @param {string} clientId The block client id.
  */
-const useIsSingleRestrictSelected = function ( clientId ) {
+const useIsSingleRestrictSelected = ( clientId ) => {
 	return useSelect(
 		( select ) => {
 			const selectedClientIds = select(
@@ -39,7 +39,7 @@ const useIsSingleRestrictSelected = function ( clientId ) {
  *
  * @param {string} clientId The block client id.
  */
-const useOnRestrictionRemoval = function ( clientId ) {
+const useOnRestrictionRemoval = ( clientId ) => {
 	const block = useSelect(
 		( select ) => select( 'core/block-editor' ).getBlock( clientId ),
 		[ clientId ]
