@@ -1115,26 +1115,26 @@ class Sensei_Lesson {
 
 							// Question description
 							$html     .= '<div>';
-								$html .= '<label for="question_' . esc_attr( $question_counter ) . '_desc">' . esc_html__( 'Question Description (optional):', 'sensei-lms' ) . '</label> ';
+								$html .= '<label for="question_' . esc_attr( $question_counter ) . '_desc">' . esc_html__( 'Description:', 'sensei-lms' ) . '</label> ';
 							$html     .= '</div>';
 								$html .= '<textarea id="question_' . esc_attr( $question_counter ) . '_desc" name="question_description" class="widefat" rows="4">' . esc_textarea( $question->post_content ) . '</textarea>';
 
 							// Question grade
 							$html     .= '<div>';
-								$html .= '<label for="question_' . esc_attr( $question_counter ) . '_grade">' . esc_html__( 'Question grade:', 'sensei-lms' ) . '</label> ';
+								$html .= '<label for="question_' . esc_attr( $question_counter ) . '_grade">' . esc_html__( 'Grade:', 'sensei-lms' ) . '</label> ';
 								$html .= '<input type="number" id="question_' . esc_attr( $question_counter ) . '_grade" class="question_grade small-text" name="question_grade" min="0" value="' . esc_attr( $question_grade ) . '" />';
 							$html     .= '</div>';
 
 							// Random order
 				if ( $question_type == 'multiple-choice' ) {
 					$html     .= '<div>';
-						$html .= '<label for="' . esc_attr( $question_counter ) . '_random_order"><input type="checkbox" name="random_order" class="random_order" id="' . esc_attr( $question_counter ) . '_random_order" value="yes" ' . checked( $random_order, 'yes', false ) . ' /> ' . esc_html__( 'Randomise answer order', 'sensei-lms' ) . '</label>';
+						$html .= '<label for="' . esc_attr( $question_counter ) . '_random_order"><input type="checkbox" name="random_order" class="random_order" id="' . esc_attr( $question_counter ) . '_random_order" value="yes" ' . checked( $random_order, 'yes', false ) . ' /> ' . esc_html__( 'Random Order', 'sensei-lms' ) . '</label>';
 					$html     .= '</div>';
 				}
 
 							// Question media
 							$html     .= '<div>';
-								$html .= '<label for="question_' . esc_attr( $question_counter ) . '_media_button">' . esc_html__( 'Question media:', 'sensei-lms' ) . '</label><br/>';
+								$html .= '<label for="question_' . esc_attr( $question_counter ) . '_media_button">' . esc_html__( 'Media:', 'sensei-lms' ) . '</label><br/>';
 								$html .= '<button id="question_' . esc_attr( $question_counter ) . '_media_button" class="upload_media_file_button button-secondary" data-uploader-title="' . esc_attr__( 'Add file to question', 'sensei-lms' ) . '" data-uploader-button-text="' . esc_attr__( 'Add to question', 'sensei-lms' ) . '">' . esc_html( $question_media_add_button ) . '</button>';
 								$html .= '<button id="question_' . esc_attr( $question_counter ) . '_media_button_delete" class="delete_media_file_button button-secondary ' . esc_attr( $question_media_delete_class ) . '">' . esc_html__( 'Delete file', 'sensei-lms' ) . '</button><br/>';
 								$html .= '<span id="question_' . esc_attr( $question_counter ) . '_media_link" class="question_media_link ' . esc_attr( $question_media_link_class ) . '">' . wp_kses_post( $question_media_link ) . '</span>';
@@ -1237,7 +1237,7 @@ class Sensei_Lesson {
 
 						// Question description
 						$html     .= '<p>';
-							$html .= '<label for="question_desc">' . esc_html__( 'Question Description (optional):', 'sensei-lms' ) . '</label> ';
+							$html .= '<label for="question_desc">' . esc_html__( 'Description:', 'sensei-lms' ) . '</label> ';
 						$html     .= '</p>';
 						$html     .= '<textarea id="question_desc" name="question_description" class="widefat" rows="4"></textarea>';
 
@@ -1263,17 +1263,17 @@ class Sensei_Lesson {
 		}
 
 						// Question grade
-						$html .= '<p><label>' . esc_html__( 'Question Grade:', 'sensei-lms' ) . '</label> ';
+						$html .= '<p><label>' . esc_html__( 'Grade:', 'sensei-lms' ) . '</label> ';
 						$html .= '<input type="number" id="add-question-grade" name="question_grade" class="small-text" min="0" value="1" /></p>' . "\n";
 
 						// Random order
 						$html     .= '<p class="add_question_random_order">';
-							$html .= '<label for="add_random_order"><input type="checkbox" name="random_order" class="random_order" id="add_random_order" value="yes" checked="checked" /> ' . esc_html__( 'Randomise answer order', 'sensei-lms' ) . '</label>';
+							$html .= '<label for="add_random_order"><input type="checkbox" name="random_order" class="random_order" id="add_random_order" value="yes" checked="checked" /> ' . esc_html__( 'Random Order', 'sensei-lms' ) . '</label>';
 						$html     .= '</p>';
 
 						// Question media
 						$html     .= '<p>';
-							$html .= '<label for="question_add_new_media_button">' . esc_html__( 'Question media:', 'sensei-lms' ) . '</label><br/>';
+							$html .= '<label for="question_add_new_media_button">' . esc_html__( 'Media:', 'sensei-lms' ) . '</label><br/>';
 							$html .= '<button id="question_add_new_media_button" class="upload_media_file_button button-secondary" data-uploader-title="' . esc_attr__( 'Add file to question', 'sensei-lms' ) . '" data-uploader-button-text="' . esc_attr__( 'Add to question', 'sensei-lms' ) . '">' . esc_html__( 'Add file', 'sensei-lms' ) . '</button>';
 							$html .= '<button id="question_add_new_media_button_delete" class="delete_media_file_button button-secondary hidden">' . esc_html__( 'Delete file', 'sensei-lms' ) . '</button><br/>';
 							$html .= '<span id="question_add_new_media_link" class="question_media_link hidden"></span>';
@@ -1744,11 +1744,11 @@ class Sensei_Lesson {
 						$gapfill_post = ''; }
 					$html .= '<div class="question_gapfill_fields ' . esc_attr( $question_class ) . '">';
 						// Fill in the Gaps
-						$html .= '<label>' . esc_html__( 'Text before the Gap:', 'sensei-lms' ) . '</label> ';
+						$html .= '<label>' . esc_html__( 'Text before the gap:', 'sensei-lms' ) . '</label> ';
 						$html .= '<input type="text" id="question_' . esc_attr( $question_counter ) . '_add_question_right_answer_gapfill_pre" name="add_question_right_answer_gapfill_pre" value="' . esc_attr( $gapfill_pre ) . '" size="25" class="widefat gapfill-field" />';
-						$html .= '<label>' . esc_html__( 'The Gap:', 'sensei-lms' ) . '</label> ';
+						$html .= '<label>' . esc_html__( 'Gap:', 'sensei-lms' ) . '</label> ';
 						$html .= '<input type="text" id="question_' . esc_attr( $question_counter ) . '_add_question_right_answer_gapfill_gap" name="add_question_right_answer_gapfill_gap" value="' . esc_attr( $gapfill_gap ) . '" size="25" class="widefat gapfill-field" />';
-						$html .= '<label>' . esc_html__( 'Text after the Gap:', 'sensei-lms' ) . '</label> ';
+						$html .= '<label>' . esc_html__( 'Text after the gap:', 'sensei-lms' ) . '</label> ';
 						$html .= '<input type="text" id="question_' . esc_attr( $question_counter ) . '_add_question_right_answer_gapfill_post" name="add_question_right_answer_gapfill_post" value="' . esc_attr( $gapfill_post ) . '" size="25" class="widefat gapfill-field" />';
 						$html .= '<label>' . esc_html__( 'Preview:', 'sensei-lms' ) . '</label> ';
 						$html .= '<p class="gapfill-preview">' . esc_html( $gapfill_pre ) . '&nbsp;<u>' . esc_html( $gapfill_gap ) . '</u>&nbsp;' . esc_html( $gapfill_post ) . '</p>';
@@ -1762,19 +1762,19 @@ class Sensei_Lesson {
 					} else {
 						$field_id = 'add_question_right_answer_multiline';
 					}
-						$html .= '<label>' . esc_html__( 'Guide/Teacher Notes for grading the answer', 'sensei-lms' ) . '</label> ';
+						$html .= '<label>' . esc_html__( 'Grading Notes:', 'sensei-lms' ) . '</label> ';
 						$html .= '<textarea id="' . esc_attr( $field_id ) . '" name="add_question_right_answer_multiline" rows="4" cols="40" class="widefat">' . esc_textarea( $right_answer ) . '</textarea>';
 					$html     .= '</div>';
 					break;
 				case 'single-line':
 					$html .= '<div class="question_singleline_fields ' . esc_attr( $question_class ) . '">';
-						// Recommended Answer
+						// Grading Notes
 					if ( $question_counter ) {
 						$field_id = 'question_' . esc_attr( $question_counter ) . '_add_question_right_answer_singleline';
 					} else {
 						$field_id = 'add_question_right_answer_singleline';
 					}
-						$html .= '<label>' . esc_html__( 'Recommended Answer', 'sensei-lms' ) . '</label> ';
+						$html .= '<label>' . esc_html__( 'Grading Notes:', 'sensei-lms' ) . '</label> ';
 						$html .= '<input type="text" id="' . esc_attr( $field_id ) . '" name="add_question_right_answer_singleline" value="' . esc_attr( $right_answer ) . '" size="25" class="widefat" />';
 					$html     .= '</div>';
 					break;
@@ -1792,11 +1792,11 @@ class Sensei_Lesson {
 					if ( isset( $wrong_answers[0] ) ) {
 						$wrong_answer = $wrong_answers[0];
 					}
-						$html .= '<label>' . esc_html__( 'Description for student explaining what needs to be uploaded', 'sensei-lms' ) . '</label> ';
+						$html .= '<label>' . esc_html__( 'Upload notes:', 'sensei-lms' ) . '</label> ';
 						$html .= '<textarea id="' . esc_attr( $wrong_field_id ) . '" name="add_question_wrong_answer_fileupload" rows="4" cols="40" class="widefat">' . esc_textarea( $wrong_answer ) . '</textarea>';
 
 						// Guides for grading
-						$html .= '<label>' . esc_html__( 'Guide/Teacher Notes for grading the upload', 'sensei-lms' ) . '</label> ';
+						$html .= '<label>' . esc_html__( 'Grading Notes:', 'sensei-lms' ) . '</label> ';
 						$html .= '<textarea id="' . esc_attr( $right_field_id ) . '" name="add_question_right_answer_fileupload" rows="4" cols="40" class="widefat">' . esc_textarea( $right_answer ) . '</textarea>';
 					$html     .= '</div>';
 					break;
