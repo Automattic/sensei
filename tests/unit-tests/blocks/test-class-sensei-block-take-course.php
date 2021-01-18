@@ -108,14 +108,10 @@ class Sensei_Block_Take_Course_Test extends WP_UnitTestCase {
 
 		$result = $this->block->render_take_course_block( [], '<button>Take Course</button>' );
 
+		$notice = '/You must first complete <a .*>' . preg_quote( $course_pre->post_title, '/' ) . '<\/a> before taking this course/';
+
 		$this->assertContains( '<button disabled="disabled">Take Course</button>', $result, 'Button should be disabled' );
-
-		ob_start();
-		Sensei()->notices->maybe_print_notices();
-		$actual_notices = ob_get_clean();
-		$notice         = '/You must first complete <a .*>' . preg_quote( $course_pre->post_title, '/' ) . '<\/a> before taking this course/';
-
-		$this->assertRegExp( $notice, $actual_notices, 'Should contain notice of the prerequisite course' );
+		$this->assertRegExp( $notice, $result, 'Should contain notice of the prerequisite course' );
 
 	}
 

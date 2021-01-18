@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Block_Take_Course {
 
 	/**
-	 * Sensei_Block_Take_Course constructor.
+	 * Sensei_Contact_Teacher_Block constructor.
 	 */
 	public function __construct() {
 		add_action( 'init', [ $this, 'register_block' ] );
@@ -52,8 +52,7 @@ class Sensei_Block_Take_Course {
 
 		if ( Sensei_Course::can_current_user_manually_enrol( $course_id ) ) {
 			if ( ! Sensei_Course::is_prerequisite_complete( $course_id ) ) {
-				Sensei()->notices->add_notice( Sensei()->course::get_course_prerequisite_message( $course_id ), 'info' );
-				$html = $this->render_disabled( $content );
+				$html = $this->render_disabled_with_prerequisite( $course_id, $content );
 			} else {
 				$html = $this->render_with_start_course_form( $course_id, $content );
 			}
@@ -145,15 +144,17 @@ class Sensei_Block_Take_Course {
 	}
 
 	/**
-	 * Render with a disabled state.
+	 * Render disabled state when a prerequisite course is required.
 	 *
+	 * @param int    $course_id
 	 * @param string $content Block HTML.
 	 *
 	 * @return string
 	 */
-	private function render_disabled( $content ) {
+	private function render_disabled_with_prerequisite( $course_id, $content ) {
+		$notice  = '<div class="wp-block-sensei-button__notice">' . $this->get_course_prerequisite_message( $course_id ) . '</div>';
 		$content = preg_replace( '/(\<button)/i', '<button disabled="disabled"', $content );
-
+		$content = preg_replace( '/(<\/button>)/', '$1 ' . $notice, $content );
 		return $content;
 	}
 
@@ -162,13 +163,34 @@ class Sensei_Block_Take_Course {
 	 *
 	 * @param int $course_id
 	 *
-	 * @deprecated 3.8.0 use Sensei_Course::get_course_prerequisite_message.
-	 *
 	 * @return string
 	 */
 	public function get_course_prerequisite_message( $course_id ) {
-		_deprecated_function( __METHOD__, '3.8.0', 'Sensei_Course::get_course_prerequisite_message' );
+		$course_prerequisite_id   = absint( get_post_meta( $course_id, '_course_prerequisite', true ) );
+		$course_title             = get_the_title( $course_prerequisite_id );
+		$prerequisite_course_link = '<a href="' . esc_url( get_permalink( $course_prerequisite_id ) )
+			. '" title="'
+			. sprintf(
+			// translators: Placeholder $1$s is the course title.
+				esc_attr__( 'You must first complete: %1$s', 'sensei-lms' ),
+				$course_title
+			)
+			. '">' . $course_title . '</a>';
 
-		return Sensei()->course::get_course_prerequisite_message( $course_id );
+		$complete_prerequisite_message = sprintf(
+		// translators: Placeholder $1$s is the course title.
+			esc_html__( 'You must first complete %1$s before taking this course.', 'sensei-lms' ),
+			$prerequisite_course_link
+		);
+
+		/**
+		 * Filter sensei_course_complete_prerequisite_message.
+		 *
+		 * @param string $complete_prerequisite_message the message to filter
+		 *
+		 * @since 1.9.10
+		 */
+		return apply_filters( 'sensei_course_complete_prerequisite_message', $complete_prerequisite_message );
+
 	}
 }
