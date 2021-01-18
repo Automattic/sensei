@@ -144,16 +144,18 @@ const EditLessonActionsBlock = ( {
 	);
 
 	return (
-		<div className={ className }>
-			<div className="sensei-buttons-container">
-				<LessonActionsBlockSettings toggleBlocks={ toggleBlocks } />
-				<InnerBlocks
-					allowedBlocks={ ACTION_BLOCKS }
-					template={ filteredInnerBlocksTemplate }
-					templateLock="all"
-				/>
+		<>
+			<LessonActionsBlockSettings toggleBlocks={ toggleBlocks } />
+			<div className={ className }>
+				<div className="sensei-buttons-container">
+					<InnerBlocks
+						allowedBlocks={ ACTION_BLOCKS }
+						template={ filteredInnerBlocksTemplate }
+						templateLock="all"
+					/>
+				</div>
 			</div>
-		</div>
+		</>
 	);
 };
 
