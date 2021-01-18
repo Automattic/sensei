@@ -3,5 +3,13 @@
   "category": "sensei-lms",
   "supports": {
     "html": false
+  },
+  "attributes": {
+    "toggledBlocks": {
+      "type": "object",
+      "default": {
+        "sensei-lms/button-reset-lesson": true
+      }
+    }
   }
 }
