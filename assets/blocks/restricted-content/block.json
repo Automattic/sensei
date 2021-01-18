@@ -6,7 +6,7 @@
     "align": [ "wide", "full" ]
   },
   "attributes": {
-    "optionSelected": {
+    "restrictionType": {
       "type": "string",
       "default": "enrolled"
     }

@@ -46,7 +46,7 @@ class Sensei_Restricted_Content_Block {
 
 		$should_hide = false;
 
-		switch ( $attributes['optionSelected'] ) {
+		switch ( $attributes['restrictionType'] ) {
 			case 'enrolled':
 				$should_hide = ! Sensei()->course::is_user_enrolled( $course_id );
 				break;

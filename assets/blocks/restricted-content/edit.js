@@ -23,7 +23,7 @@ const EditRestrictedContent = ( {
 	className,
 	hasInnerBlocks,
 	clientId,
-	attributes: { optionSelected },
+	attributes: { restrictionType },
 	setAttributes,
 } ) => {
 	return (
@@ -36,10 +36,10 @@ const EditRestrictedContent = ( {
 				/>
 			</section>
 			<RestrictedContentSettings
-				selectedRestriction={ optionSelected }
+				selectedRestriction={ restrictionType }
 				onRestrictionChange={ ( option ) =>
 					setAttributes( {
-						optionSelected: option,
+						restrictionType: option,
 					} )
 				}
 				clientId={ clientId }
