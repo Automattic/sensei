@@ -63,7 +63,11 @@ const useToggleBlocks = ( {
 			newBlocks = [
 				...parentBlock.innerBlocks,
 				createBlock( blockName, blocksAttributes[ blockName ] || {} ),
-			];
+			].sort(
+				( a, b ) =>
+					ALLOWED_BLOCKS.indexOf( a.name ) -
+					ALLOWED_BLOCKS.indexOf( b.name )
+			);
 		} else if ( ! on && toggledBlock ) {
 			// Remove block.
 			newBlocks = parentBlock.innerBlocks.filter(
