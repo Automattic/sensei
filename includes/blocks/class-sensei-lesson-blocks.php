@@ -46,5 +46,6 @@ class Sensei_Lesson_Blocks {
 
 		Sensei()->assets->enqueue( 'sensei-single-lesson-blocks', 'blocks/sensei-single-lesson-blocks.js', [], true );
 		Sensei()->assets->enqueue( 'sensei-single-lesson-editor', 'blocks/single-lesson.editor.css' );
+		Sensei()->assets->enqueue( 'sensei-editor-components', 'blocks/editor-components/styles.css' );
 	}
 }

@@ -1,6 +1,9 @@
-import { InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, ToggleControl } from '@wordpress/components';
+import { useState } from '@wordpress/element';
+import { BlockControls, InspectorControls } from '@wordpress/block-editor';
+import { PanelBody, ToggleControl, Toolbar } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+
+import ToolbarDropdown from '../../editor-components/toolbar-dropdown';
 
 /**
  * @typedef {Object} ToggleBlock
@@ -15,17 +18,45 @@ import { __ } from '@wordpress/i18n';
  * @param {Object}        props
  * @param {ToggleBlock[]} props.toggleBlocks Blocks to toggle.
  */
-export const LessonActionsBlockSettings = ( { toggleBlocks } ) => (
-	<InspectorControls>
-		<PanelBody title={ __( 'Additional Actions', 'sensei-lms' ) }>
-			{ toggleBlocks.map( ( block ) => (
-				<ToggleControl
-					key={ block.label }
-					checked={ block.active }
-					onChange={ block.onToggle }
-					label={ block.label }
-				/>
-			) ) }
-		</PanelBody>
-	</InspectorControls>
-);
+export const LessonActionsBlockSettings = ( { toggleBlocks } ) => {
+	const [ previewState, setPreviewState ] = useState( 'completed' );
+
+	return (
+		<>
+			<BlockControls>
+				<Toolbar>
+					<ToolbarDropdown
+						options={ [
+							{
+								label: __( 'In progress', 'sensei-lms' ),
+								value: 'in-progress',
+							},
+							{
+								label: __( 'Completed', 'sensei-lms' ),
+								value: 'completed',
+							},
+						] }
+						optionsLabel={ __(
+							'Preview lesson state',
+							'sensei-lms'
+						) }
+						value={ previewState }
+						onChange={ setPreviewState }
+					/>
+				</Toolbar>
+			</BlockControls>
+			<InspectorControls>
+				<PanelBody title={ __( 'Additional Actions', 'sensei-lms' ) }>
+					{ toggleBlocks.map( ( block ) => (
+						<ToggleControl
+							key={ block.label }
+							checked={ block.active }
+							onChange={ block.onToggle }
+							label={ block.label }
+						/>
+					) ) }
+				</PanelBody>
+			</InspectorControls>
+		</>
+	);
+};
