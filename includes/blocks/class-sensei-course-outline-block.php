@@ -69,7 +69,7 @@ class Sensei_Course_Outline_Block {
 	 *
 	 * @access private
 	 */
-	public function init() {
+	public function clear_block_content() {
 		$this->block_content = null;
 	}
 
