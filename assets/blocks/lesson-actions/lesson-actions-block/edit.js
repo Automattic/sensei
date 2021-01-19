@@ -11,14 +11,23 @@ const ALLOWED_BLOCKS = [
 	'sensei-lms/button-next-lesson',
 	'sensei-lms/button-reset-lesson',
 ];
+
+const BLOCKS_DEFAULT_ATTRIBUTES = {
+	'sensei-lms/button-complete-lesson': {
+		inContainer: true,
+		align: 'full',
+	},
+	'sensei-lms/button-next-lesson': {
+		inContainer: true,
+	},
+	'sensei-lms/button-reset-lesson': {
+		inContainer: true,
+	},
+};
+
 const INNER_BLOCKS_TEMPLATE = ALLOWED_BLOCKS.map( ( blockName ) => [
 	blockName,
-	{
-		inContainer: true,
-		...( 'sensei-lms/button-complete-lesson' === blockName && {
-			align: 'full',
-		} ),
-	},
+	{ ...BLOCKS_DEFAULT_ATTRIBUTES[ blockName ] },
 ] );
 
 /**
@@ -59,10 +68,13 @@ const useToggleBlocks = ( {
 		let newBlocks = null;
 
 		if ( on && ! toggledBlock ) {
-			// Add block using the previous attributes if it exists.
+			// Add block using the default attributes, and the previous attributes if it exists.
 			newBlocks = [
 				...parentBlock.innerBlocks,
-				createBlock( blockName, blocksAttributes[ blockName ] || {} ),
+				createBlock( blockName, {
+					...BLOCKS_DEFAULT_ATTRIBUTES[ blockName ],
+					...blocksAttributes[ blockName ],
+				} ),
 			].sort(
 				( a, b ) =>
 					ALLOWED_BLOCKS.indexOf( a.name ) -
