@@ -1,57 +1,17 @@
-import { useState, useEffect } from '@wordpress/element';
 import { InnerBlocks } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
 
 import usePreviewState from './use-preview-state';
 import useToggleBlocks from './use-toggle-blocks';
+import useHasQuiz from './use-has-quiz';
+
 import { LessonActionsBlockSettings } from './settings';
 import {
 	ACTION_BLOCKS,
 	INNER_BLOCKS_TEMPLATE,
 	IN_PROGRESS_PREVIEW,
 } from './constants';
-
-/**
- * Has quiz hook.
- *
- * @param {Object}   options            Hook options.
- * @param {Function} options.quizToggle Toggle the quiz block.
- *
- * @return {boolean} If a quiz exists with questions.
- */
-const useHasQuiz = ( { quizToggle } ) => {
-	const [ quizEventListener ] = useState( null );
-	const [ hasQuiz, setHasQuiz ] = useState( () => {
-		const questionCount = document.getElementById( 'question_counter' );
-
-		return questionCount && parseInt( questionCount.value, 10 ) > 0;
-	} );
-
-	useEffect( () => {
-		quizToggle( hasQuiz );
-	}, [ hasQuiz, quizToggle ] );
-
-	useEffect( () => {
-		const quizToggleEventHandler = ( event ) => {
-			setHasQuiz( event.detail.questions > 0 );
-		};
-
-		window.addEventListener(
-			'sensei-quiz-editor-question-count-updated',
-			quizToggleEventHandler
-		);
-
-		return () => {
-			window.removeEventListener(
-				'sensei-quiz-editor-question-count-updated',
-				quizToggleEventHandler
-			);
-		};
-	}, [ quizEventListener ] );
-
-	return hasQuiz;
-};
 
 /**
  * Edit lesson actions block component.
