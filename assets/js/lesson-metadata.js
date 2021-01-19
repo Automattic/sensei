@@ -177,6 +177,12 @@ jQuery( document ).ready( function () {
 			jQuery( '#no-questions-message' ).removeClass( 'hidden' );
 		}
 
+		const questionCountUpdated = new CustomEvent(
+			'sensei-quiz-editor-question-count-updated',
+			{ detail: { questions: newValue } }
+		);
+		window.dispatchEvent( questionCountUpdated );
+
 		jQuery.fn.updateQuestionRows();
 	};
 
