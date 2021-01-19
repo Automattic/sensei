@@ -1,6 +1,6 @@
 import { useState } from '@wordpress/element';
 import { BlockControls, InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, ToggleControl, Toolbar } from '@wordpress/components';
+import { PanelBody, ToggleControl, ToolbarGroup } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 import ToolbarDropdown from '../../editor-components/toolbar-dropdown';
@@ -24,7 +24,7 @@ export const LessonActionsBlockSettings = ( { toggleBlocks } ) => {
 	return (
 		<>
 			<BlockControls>
-				<Toolbar>
+				<ToolbarGroup>
 					<ToolbarDropdown
 						options={ [
 							{
@@ -43,7 +43,7 @@ export const LessonActionsBlockSettings = ( { toggleBlocks } ) => {
 						value={ previewState }
 						onChange={ setPreviewState }
 					/>
-				</Toolbar>
+				</ToolbarGroup>
 			</BlockControls>
 			<InspectorControls>
 				<PanelBody title={ __( 'Additional Actions', 'sensei-lms' ) }>
