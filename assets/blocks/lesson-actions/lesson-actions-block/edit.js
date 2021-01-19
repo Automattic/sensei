@@ -6,19 +6,29 @@ import { __ } from '@wordpress/i18n';
 
 import { LessonActionsBlockSettings } from './settings';
 
-const ALLOWED_BLOCKS = [
+// The action blocks, ordered.
+const ACTION_BLOCKS = [
 	'sensei-lms/button-complete-lesson',
 	'sensei-lms/button-next-lesson',
 	'sensei-lms/button-reset-lesson',
 ];
-const INNER_BLOCKS_TEMPLATE = ALLOWED_BLOCKS.map( ( blockName ) => [
-	blockName,
-	{
+
+const BLOCKS_DEFAULT_ATTRIBUTES = {
+	'sensei-lms/button-complete-lesson': {
 		inContainer: true,
-		...( 'sensei-lms/button-complete-lesson' === blockName && {
-			align: 'full',
-		} ),
+		align: 'full',
 	},
+	'sensei-lms/button-next-lesson': {
+		inContainer: true,
+	},
+	'sensei-lms/button-reset-lesson': {
+		inContainer: true,
+	},
+};
+
+const INNER_BLOCKS_TEMPLATE = ACTION_BLOCKS.map( ( blockName ) => [
+	blockName,
+	{ ...BLOCKS_DEFAULT_ATTRIBUTES[ blockName ] },
 ] );
 
 /**
@@ -59,11 +69,18 @@ const useToggleBlocks = ( {
 		let newBlocks = null;
 
 		if ( on && ! toggledBlock ) {
-			// Add block using the previous attributes if it exists.
+			// Add block using the default attributes, and the previous attributes if it exists.
 			newBlocks = [
 				...parentBlock.innerBlocks,
-				createBlock( blockName, blocksAttributes[ blockName ] || {} ),
-			];
+				createBlock( blockName, {
+					...BLOCKS_DEFAULT_ATTRIBUTES[ blockName ],
+					...blocksAttributes[ blockName ],
+				} ),
+			].sort(
+				( a, b ) =>
+					ACTION_BLOCKS.indexOf( a.name ) -
+					ACTION_BLOCKS.indexOf( b.name )
+			);
 		} else if ( ! on && toggledBlock ) {
 			// Remove block.
 			newBlocks = parentBlock.innerBlocks.filter(
@@ -131,7 +148,7 @@ const EditLessonActionsBlock = ( {
 			<div className="sensei-buttons-container">
 				<LessonActionsBlockSettings toggleBlocks={ toggleBlocks } />
 				<InnerBlocks
-					allowedBlocks={ ALLOWED_BLOCKS }
+					allowedBlocks={ ACTION_BLOCKS }
 					template={ filteredInnerBlocksTemplate }
 					templateLock="all"
 				/>
