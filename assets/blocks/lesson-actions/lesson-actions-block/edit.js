@@ -6,6 +6,14 @@ import { __ } from '@wordpress/i18n';
 
 import { LessonActionsBlockSettings } from './settings';
 
+const PREVIEW_STATE = {
+	completed: [ 'sensei-lms/button-complete-lesson' ],
+	'in-progress': [
+		'sensei-lms/button-next-lesson',
+		'sensei-lms/button-reset-lesson',
+	],
+};
+
 // The action blocks, ordered.
 const ACTION_BLOCKS = [
 	'sensei-lms/button-complete-lesson',
@@ -30,6 +38,47 @@ const INNER_BLOCKS_TEMPLATE = ACTION_BLOCKS.map( ( blockName ) => [
 	blockName,
 	{ ...BLOCKS_DEFAULT_ATTRIBUTES[ blockName ] },
 ] );
+
+/**
+ * Preview state hook.
+ *
+ * @param {Object} options                     Hook options.
+ * @param {string} options.parentClientId      Parent client ID.
+ * @param {string} options.defaultPreviewState Default preview state.
+ *
+ * @return {Array} Array containing preview state and change handler, respectively.
+ */
+const usePreviewState = ( { parentClientId, defaultPreviewState } ) => {
+	const [ previewState, setPreviewState ] = useState( defaultPreviewState );
+	const lessonActionsBlock = useSelect(
+		( select ) => select( 'core/block-editor' ).getBlock( parentClientId ),
+		[]
+	);
+	const { replaceInnerBlocks } = useDispatch( 'core/block-editor' );
+
+	/**
+	 * Preview change handler.
+	 *
+	 * @param {string} newPreviewState New preview state.
+	 */
+	const onPreviewChange = ( newPreviewState ) => {
+		const newBlocks = lessonActionsBlock.innerBlocks.map( ( block ) => ( {
+			...block,
+			attributes: {
+				...block.attributes,
+				disabled: ! PREVIEW_STATE[ newPreviewState ].includes(
+					block.name
+				),
+			},
+		} ) );
+
+		replaceInnerBlocks( parentClientId, newBlocks, false );
+
+		setPreviewState( newPreviewState );
+	};
+
+	return [ previewState, onPreviewChange ];
+};
 
 /**
  * Toggle blocks hook.
@@ -126,6 +175,11 @@ const EditLessonActionsBlock = ( {
 	setAttributes,
 	attributes: { toggledBlocks },
 } ) => {
+	const [ previewState, onPreviewChange ] = usePreviewState( {
+		parentClientId: clientId,
+		defaultPreviewState: 'completed',
+	} );
+
 	const toggleBlocks = useToggleBlocks( {
 		parentClientId: clientId,
 		setAttributes,
@@ -145,7 +199,11 @@ const EditLessonActionsBlock = ( {
 
 	return (
 		<>
-			<LessonActionsBlockSettings toggleBlocks={ toggleBlocks } />
+			<LessonActionsBlockSettings
+				previewState={ previewState }
+				onPreviewChange={ onPreviewChange }
+				toggleBlocks={ toggleBlocks }
+			/>
 			<div className={ className }>
 				<div className="sensei-buttons-container">
 					<InnerBlocks
