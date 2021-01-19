@@ -13,7 +13,7 @@ import { ACTION_BLOCKS, PREVIEW_STATE } from './constants';
  * @return {Array} Array containing preview state and change handler, respectively.
  */
 const usePreviewState = ( { parentClientId, defaultPreviewState } ) => {
-	const [ previewState, setPreviewState ] = useState( defaultPreviewState );
+	const [ previewState, setPreviewState ] = useState();
 	const lessonActionsBlock = useSelect(
 		( select ) => select( 'core/block-editor' ).getBlock( parentClientId ),
 		[]
@@ -64,6 +64,13 @@ const usePreviewState = ( { parentClientId, defaultPreviewState } ) => {
 			onPreviewChange( newPreviewState );
 		}
 	}, [ selectedBlock, previewState, onPreviewChange ] );
+
+	// Set default preview state.
+	useEffect( () => {
+		if ( ! previewState && defaultPreviewState ) {
+			onPreviewChange( defaultPreviewState );
+		}
+	}, [ previewState, defaultPreviewState, onPreviewChange ] );
 
 	return [ previewState, onPreviewChange ];
 };
