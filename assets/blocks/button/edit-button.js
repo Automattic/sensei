@@ -12,7 +12,7 @@ import { ButtonBlockSettings } from './settings-button';
  */
 export const EditButtonBlock = ( props ) => {
 	const { placeholder, attributes, setAttributes, tagName } = props;
-	const { text } = attributes;
+	const { text, disabled } = attributes;
 	const { colors } = useSelect( ( select ) => {
 		return select( 'core/block-editor' ).getSettings();
 	}, [] );
@@ -35,6 +35,7 @@ export const EditButtonBlock = ( props ) => {
 					{ ...buttonProps }
 					tagName={ tagName }
 					identifier="text"
+					disabled={ disabled }
 				/>
 			) }
 			<ButtonBlockSettings { ...props } />
