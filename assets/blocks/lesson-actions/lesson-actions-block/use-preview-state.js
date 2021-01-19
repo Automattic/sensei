@@ -1,7 +1,7 @@
-import { useState } from '@wordpress/element';
+import { useState, useEffect, useCallback } from '@wordpress/element';
 import { useSelect, useDispatch } from '@wordpress/data';
 
-import { PREVIEW_STATE } from './constants';
+import { ACTION_BLOCKS, PREVIEW_STATE } from './constants';
 
 /**
  * Preview state hook.
@@ -20,26 +20,50 @@ const usePreviewState = ( { parentClientId, defaultPreviewState } ) => {
 	);
 	const { replaceInnerBlocks } = useDispatch( 'core/block-editor' );
 
+	const selectedBlock = useSelect( ( select ) =>
+		select( 'core/block-editor' ).getSelectedBlock()
+	);
+
 	/**
 	 * Preview change handler.
 	 *
 	 * @param {string} newPreviewState New preview state.
 	 */
-	const onPreviewChange = ( newPreviewState ) => {
-		const newBlocks = lessonActionsBlock.innerBlocks.map( ( block ) => ( {
-			...block,
-			attributes: {
-				...block.attributes,
-				disabled: ! PREVIEW_STATE[ newPreviewState ].includes(
-					block.name
-				),
-			},
-		} ) );
+	const onPreviewChange = useCallback(
+		( newPreviewState ) => {
+			const newBlocks = lessonActionsBlock.innerBlocks.map(
+				( block ) => ( {
+					...block,
+					attributes: {
+						...block.attributes,
+						disabled: ! PREVIEW_STATE[ newPreviewState ].includes(
+							block.name
+						),
+					},
+				} )
+			);
 
-		replaceInnerBlocks( parentClientId, newBlocks, false );
+			replaceInnerBlocks( parentClientId, newBlocks, false );
 
-		setPreviewState( newPreviewState );
-	};
+			setPreviewState( newPreviewState );
+		},
+		[ parentClientId, lessonActionsBlock, replaceInnerBlocks ]
+	);
+
+	// Update the preview state based on the block selection.
+	useEffect( () => {
+		if ( ! ACTION_BLOCKS.includes( selectedBlock?.name ) ) {
+			return;
+		}
+
+		const newPreviewState = Object.keys( PREVIEW_STATE ).find( ( key ) =>
+			PREVIEW_STATE[ key ].includes( selectedBlock.name )
+		);
+
+		if ( newPreviewState !== previewState ) {
+			onPreviewChange( newPreviewState );
+		}
+	}, [ selectedBlock, previewState, onPreviewChange ] );
 
 	return [ previewState, onPreviewChange ];
 };
