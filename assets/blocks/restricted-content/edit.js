@@ -3,6 +3,7 @@ import { compose } from '@wordpress/compose';
 import { withSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { RestrictedContentSettings } from './settings';
+import classnames from 'classnames';
 
 export const RestrictOptions = {
 	ENROLLED: 'enrolled',
@@ -28,13 +29,15 @@ const EditRestrictedContent = ( {
 } ) => {
 	return (
 		<>
-			<section className={ className }>
-				<InnerBlocks
-					renderAppender={
-						! hasInnerBlocks && InnerBlocks.ButtonBlockAppender
-					}
-				/>
-			</section>
+			<div className={ classnames( 'wp-block-group', className ) }>
+				<div className="wp-block-group__inner-container">
+					<InnerBlocks
+						renderAppender={
+							! hasInnerBlocks && InnerBlocks.ButtonBlockAppender
+						}
+					/>
+				</div>
+			</div>
 			<RestrictedContentSettings
 				selectedRestriction={ restrictionType }
 				onRestrictionChange={ ( option ) =>
