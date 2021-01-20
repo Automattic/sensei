@@ -8,7 +8,7 @@ import { createBlock } from '@wordpress/blocks';
 export default {
 	title: __( 'Restricted Course Content', 'sensei-lms' ),
 	description: __(
-		'Content inside this container block can be restricted to a specified group of users. Possible options are enrolled users, not enrolled users and users which completed the course.',
+		'Content inside this container block can be restricted to a specified group of users. Possible options are enrolled users, not enrolled users and users who have completed the course',
 		'sensei-lms'
 	),
 	keywords: [
