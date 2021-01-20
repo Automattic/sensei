@@ -20,8 +20,9 @@ import classnames from 'classnames';
  * @param {DropdownOption[]} props.options        Dropdown options.
  * @param {string}           [props.optionsLabel] Options label.
  * @param {Object}           props.icon           Icon for the toolbar.
- * @param {string}           props.value          Current value.
- * @param {Function}         props.onChange       Change function.
+ * @param {string}           props.value          Current dropdown value.
+ * @param {Function}         props.onChange       Dropdown change callback, which receive
+ *                                                the new value as argument.
  */
 const ToolbarDropdown = ( {
 	options,
