@@ -2,16 +2,11 @@ import {
 	BlockControls,
 	BlockSettingsMenuControls,
 } from '@wordpress/block-editor';
-import {
-	Button,
-	Dropdown,
-	NavigableMenu,
-	Toolbar,
-	MenuItem,
-} from '@wordpress/components';
+import { ToolbarGroup, MenuItem } from '@wordpress/components';
 import { RestrictOptions, RestrictOptionLabels } from './edit';
 import { __ } from '@wordpress/i18n';
 import { useSelect, useDispatch } from '@wordpress/data';
+import ToolbarDropdown from '../editor-components/toolbar-dropdown';
 
 /**
  * Check if the current block is the only one that is selected.
@@ -71,53 +66,24 @@ export function RestrictedContentSettings( {
 	const isSingleRestrictSelected = useIsSingleRestrictSelected( clientId );
 	const onRestrictRemoval = useOnRestrictionRemoval( clientId );
 
+	const toolbarOptions = Object.keys( RestrictOptions ).map(
+		( optionKey ) => ( {
+			value: RestrictOptions[ optionKey ],
+			label: RestrictOptionLabels[ RestrictOptions[ optionKey ] ],
+		} )
+	);
+
 	return (
 		<>
 			<BlockControls>
-				<Toolbar>
-					<Dropdown
-						className="wp-block-sensei-lms-restricted-toggle"
-						contentClassName="wp-block-sensei-lms-restricted-content"
-						position="bottom center"
-						renderToggle={ ( { isOpen, onToggle } ) => (
-							<Button
-								className="wp-block-sensei-lms-restricted-toggle-button"
-								onClick={ onToggle }
-								aria-expanded={ isOpen }
-								aria-haspopup="true"
-							>
-								{ RestrictOptionLabels[ selectedRestriction ] }
-							</Button>
-						) }
-						renderContent={ ( { onClose } ) => {
-							return (
-								<NavigableMenu role="menu" stopNavigationEvents>
-									{ Object.values( RestrictOptions ).map(
-										( option ) => (
-											<Button
-												key={ option }
-												className="wp-block-sensei-lms-restricted-content-button"
-												onClick={ () => {
-													onRestrictionChange(
-														option
-													);
-													onClose();
-												} }
-												role="menuitem"
-											>
-												{
-													RestrictOptionLabels[
-														option
-													]
-												}
-											</Button>
-										)
-									) }
-								</NavigableMenu>
-							);
-						} }
+				<ToolbarGroup>
+					<ToolbarDropdown
+						options={ toolbarOptions }
+						optionsLabel={ __( 'Visibility', 'sensei-lms' ) }
+						value={ selectedRestriction }
+						onChange={ onRestrictionChange }
 					/>
-				</Toolbar>
+				</ToolbarGroup>
 			</BlockControls>
 			{ isSingleRestrictSelected &&
 				hasInnerBlocks &&
