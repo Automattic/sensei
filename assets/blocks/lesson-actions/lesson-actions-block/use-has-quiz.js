@@ -9,7 +9,6 @@ import { useEffect, useState } from '@wordpress/element';
  * @return {boolean} If a quiz exists with questions.
  */
 export const useHasQuiz = ( { quizToggle } ) => {
-	const [ quizEventListener ] = useState( null );
 	const [ hasQuiz, setHasQuiz ] = useState( () => {
 		const questionCount = document.getElementById( 'question_counter' );
 
@@ -36,7 +35,7 @@ export const useHasQuiz = ( { quizToggle } ) => {
 				quizToggleEventHandler
 			);
 		};
-	}, [ quizEventListener ] );
+	}, [] );
 
 	return hasQuiz;
 };
