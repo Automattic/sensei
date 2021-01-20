@@ -1,5 +1,6 @@
 import { InnerBlocks } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
+import classnames from 'classnames';
 
 import usePreviewState from './use-preview-state';
 import useToggleBlocks from './use-toggle-blocks';
@@ -22,10 +23,7 @@ const EditLessonActionsBlock = ( {
 	setAttributes,
 	attributes: { toggledBlocks },
 } ) => {
-	const [ previewState, onPreviewChange ] = usePreviewState( {
-		parentClientId: clientId,
-		defaultPreviewState: 'completed',
-	} );
+	const [ previewState, onPreviewChange ] = usePreviewState( 'in-progress' );
 
 	const toggleBlocks = useToggleBlocks( {
 		parentClientId: clientId,
@@ -51,7 +49,12 @@ const EditLessonActionsBlock = ( {
 				onPreviewChange={ onPreviewChange }
 				toggleBlocks={ toggleBlocks }
 			/>
-			<div className={ className }>
+			<div
+				className={ classnames(
+					className,
+					`wp-block-sensei-lms-lesson-actions__preview-${ previewState }`
+				) }
+			>
 				<div className="sensei-buttons-container">
 					<InnerBlocks
 						allowedBlocks={ ACTION_BLOCKS }

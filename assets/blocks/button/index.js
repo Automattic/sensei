@@ -93,10 +93,6 @@ export const createButtonBlockType = ( {
 					type: 'boolean',
 					default: false,
 				},
-				disabled: {
-					type: 'boolean',
-					default: false,
-				},
 			},
 			supports: {
 				color: {
