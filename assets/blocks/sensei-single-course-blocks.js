@@ -9,7 +9,6 @@ import {
 	CourseOutlineModuleBlock,
 } from './course-outline';
 
-
 registerSenseiBlocks( [
 	CourseOutlineBlock,
 	CourseOutlineModuleBlock,
