@@ -31,6 +31,10 @@ const usePreviewState = ( { parentClientId, defaultPreviewState } ) => {
 	 */
 	const onPreviewChange = useCallback(
 		( newPreviewState ) => {
+			if ( 0 === lessonActionsBlock.innerBlocks.length ) {
+				return;
+			}
+
 			const newBlocks = lessonActionsBlock.innerBlocks.map(
 				( block ) => ( {
 					...block,
