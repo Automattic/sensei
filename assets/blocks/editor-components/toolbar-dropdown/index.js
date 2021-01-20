@@ -35,6 +35,7 @@ const ToolbarDropdown = ( {
 
 	return (
 		<Dropdown
+			popoverProps={ { isAlternate: true } }
 			renderToggle={ ( { isOpen, onToggle } ) => (
 				<Button
 					onClick={ onToggle }
