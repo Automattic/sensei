@@ -9,7 +9,6 @@ export const ACTION_BLOCKS = [
 export const BLOCKS_DEFAULT_ATTRIBUTES = {
 	'sensei-lms/button-complete-lesson': {
 		inContainer: true,
-		align: 'full',
 	},
 	'sensei-lms/button-next-lesson': {
 		inContainer: true,
