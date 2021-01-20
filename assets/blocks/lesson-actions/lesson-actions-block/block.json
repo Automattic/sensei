@@ -8,8 +8,7 @@
     "toggledBlocks": {
       "type": "object",
       "default": {
-				"sensei-lms/button-reset-lesson": true,
-				"sensei-lms/button-view-quiz": false
+				"sensei-lms/button-reset-lesson": true
       }
     }
   }

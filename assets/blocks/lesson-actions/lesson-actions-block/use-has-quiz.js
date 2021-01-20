@@ -3,21 +3,14 @@ import { useEffect, useState } from '@wordpress/element';
 /**
  * Has quiz hook.
  *
- * @param {Object}   options            Hook options.
- * @param {Function} options.quizToggle Toggle the quiz block.
- *
  * @return {boolean} If a quiz exists with questions.
  */
-export const useHasQuiz = ( { quizToggle } ) => {
+const useHasQuiz = () => {
 	const [ hasQuiz, setHasQuiz ] = useState( () => {
 		const questionCount = document.getElementById( 'question_counter' );
 
 		return questionCount && parseInt( questionCount.value, 10 ) > 0;
 	} );
-
-	useEffect( () => {
-		quizToggle( hasQuiz );
-	}, [ hasQuiz ] );
 
 	useEffect( () => {
 		const quizToggleEventHandler = ( event ) => {
@@ -39,3 +32,5 @@ export const useHasQuiz = ( { quizToggle } ) => {
 
 	return hasQuiz;
 };
+
+export default useHasQuiz;

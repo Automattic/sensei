@@ -36,36 +36,29 @@ const EditLessonActionsBlock = ( {
 				blockName: 'sensei-lms/button-reset-lesson',
 				label: __( 'Reset lesson', 'sensei-lms' ),
 			},
-			{
-				blockName: 'sensei-lms/button-view-quiz',
-			},
 		],
 	} );
 
-	useHasQuiz( {
-		quizToggle: toggleBlocks.find(
-			( i ) => i.blockName === 'sensei-lms/button-view-quiz'
-		).onToggle,
-	} );
+	const hasQuiz = useHasQuiz();
+	const quizStateClass = hasQuiz ? 'has-quiz' : 'no-quiz';
 
 	// Filter inner blocks based on the settings.
 	const filteredInnerBlocksTemplate = INNER_BLOCKS_TEMPLATE.filter(
 		( i ) => false !== toggledBlocks[ i[ 0 ] ]
 	);
 
-	const userToggleBlocks = toggleBlocks.filter( ( i ) => false !== i.label );
-
 	return (
 		<>
 			<LessonActionsBlockSettings
 				previewState={ previewState }
 				onPreviewChange={ onPreviewChange }
-				toggleBlocks={ userToggleBlocks }
+				toggleBlocks={ toggleBlocks }
 			/>
 			<div
 				className={ classnames(
 					className,
-					`wp-block-sensei-lms-lesson-actions__preview-${ previewState }`
+					`wp-block-sensei-lms-lesson-actions__preview-${ previewState }`,
+					`wp-block-sensei-lms-lesson-actions__${ quizStateClass }`
 				) }
 			>
 				<div className="sensei-buttons-container">
