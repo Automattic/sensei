@@ -1764,6 +1764,7 @@ class Sensei_Lesson {
 					}
 						$html .= '<label>' . esc_html__( 'Grading Notes:', 'sensei-lms' ) . '</label> ';
 						$html .= '<textarea id="' . esc_attr( $field_id ) . '" name="add_question_right_answer_multiline" rows="4" cols="40" class="widefat">' . esc_textarea( $right_answer ) . '</textarea>';
+						$html .= '<p class="question-field-helper-text">Displayed to the teacher when grading the question.</p>';
 					$html     .= '</div>';
 					break;
 				case 'single-line':
@@ -1776,6 +1777,7 @@ class Sensei_Lesson {
 					}
 						$html .= '<label>' . esc_html__( 'Grading Notes:', 'sensei-lms' ) . '</label> ';
 						$html .= '<input type="text" id="' . esc_attr( $field_id ) . '" name="add_question_right_answer_singleline" value="' . esc_attr( $right_answer ) . '" size="25" class="widefat" />';
+						$html .= '<p class="question-field-helper-text">Displayed to the teacher when grading the question.</p>';
 					$html     .= '</div>';
 					break;
 				case 'file-upload':
@@ -1794,10 +1796,12 @@ class Sensei_Lesson {
 					}
 						$html .= '<label>' . esc_html__( 'Upload notes:', 'sensei-lms' ) . '</label> ';
 						$html .= '<textarea id="' . esc_attr( $wrong_field_id ) . '" name="add_question_wrong_answer_fileupload" rows="4" cols="40" class="widefat">' . esc_textarea( $wrong_answer ) . '</textarea>';
+						$html .= '<p class="question-field-helper-text">Displayed to the learner to describe what to upload.</p>';
 
 						// Guides for grading
 						$html .= '<label>' . esc_html__( 'Grading Notes:', 'sensei-lms' ) . '</label> ';
 						$html .= '<textarea id="' . esc_attr( $right_field_id ) . '" name="add_question_right_answer_fileupload" rows="4" cols="40" class="widefat">' . esc_textarea( $right_answer ) . '</textarea>';
+						$html .= '<p class="question-field-helper-text">Displayed to the teacher when grading the question.</p>';
 					$html     .= '</div>';
 					break;
 			}
