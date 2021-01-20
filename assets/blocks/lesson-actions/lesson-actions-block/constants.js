@@ -24,9 +24,9 @@ export const INNER_BLOCKS_TEMPLATE = ACTION_BLOCKS.map( ( blockName ) => [
 ] );
 
 export const PREVIEW_STATE = {
-	completed: [ 'sensei-lms/button-complete-lesson' ],
-	'in-progress': [
+	completed: [
 		'sensei-lms/button-next-lesson',
 		'sensei-lms/button-reset-lesson',
 	],
+	'in-progress': [ 'sensei-lms/button-complete-lesson' ],
 };
