@@ -1,57 +1,20 @@
-import { useState, useEffect, useCallback } from '@wordpress/element';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { useState, useEffect } from '@wordpress/element';
+import { useSelect } from '@wordpress/data';
 
 import { ACTION_BLOCKS, PREVIEW_STATE } from './constants';
 
 /**
  * Preview state hook.
  *
- * @param {Object} options                     Hook options.
- * @param {string} options.parentClientId      Parent client ID.
- * @param {string} options.defaultPreviewState Default preview state.
+ * @param {string} defaultPreviewState Default preview state.
  *
  * @return {Array} Array containing preview state and change handler, respectively.
  */
-const usePreviewState = ( { parentClientId, defaultPreviewState } ) => {
-	const [ previewState, setPreviewState ] = useState();
-	const lessonActionsBlock = useSelect(
-		( select ) => select( 'core/block-editor' ).getBlock( parentClientId ),
-		[]
-	);
-	const { replaceInnerBlocks } = useDispatch( 'core/block-editor' );
+const usePreviewState = ( defaultPreviewState ) => {
+	const [ previewState, setPreviewState ] = useState( defaultPreviewState );
 
 	const selectedBlock = useSelect( ( select ) =>
 		select( 'core/block-editor' ).getSelectedBlock()
-	);
-
-	/**
-	 * Preview change handler.
-	 *
-	 * @param {string} newPreviewState New preview state.
-	 */
-	const onPreviewChange = useCallback(
-		( newPreviewState ) => {
-			if ( 0 === lessonActionsBlock.innerBlocks.length ) {
-				return;
-			}
-
-			const newBlocks = lessonActionsBlock.innerBlocks.map(
-				( block ) => ( {
-					...block,
-					attributes: {
-						...block.attributes,
-						disabled: ! PREVIEW_STATE[ newPreviewState ].includes(
-							block.name
-						),
-					},
-				} )
-			);
-
-			replaceInnerBlocks( parentClientId, newBlocks, false );
-
-			setPreviewState( newPreviewState );
-		},
-		[ parentClientId, lessonActionsBlock, replaceInnerBlocks ]
 	);
 
 	// Update the preview state based on the block selection.
@@ -65,18 +28,11 @@ const usePreviewState = ( { parentClientId, defaultPreviewState } ) => {
 		);
 
 		if ( newPreviewState !== previewState ) {
-			onPreviewChange( newPreviewState );
+			setPreviewState( newPreviewState );
 		}
-	}, [ selectedBlock, previewState, onPreviewChange ] );
+	}, [ selectedBlock, previewState ] );
 
-	// Set default preview state.
-	useEffect( () => {
-		if ( ! previewState && defaultPreviewState ) {
-			onPreviewChange( defaultPreviewState );
-		}
-	}, [ previewState, defaultPreviewState, onPreviewChange ] );
-
-	return [ previewState, onPreviewChange ];
+	return [ previewState, setPreviewState ];
 };
 
 export default usePreviewState;
