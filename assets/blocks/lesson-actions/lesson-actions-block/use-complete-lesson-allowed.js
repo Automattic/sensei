@@ -6,32 +6,36 @@ import { useEffect, useState } from '@wordpress/element';
  * @return {boolean} If a lesson can be marked as completed by student.
  */
 const useCompleteLessonAllowed = () => {
-	const passRequired = document.getElementById( 'pass_required' );
+	const passRequiredCheckbox = document.getElementById( 'pass_required' );
 
 	const [ completeLessonAllowed, setCompleteLessonAllowed ] = useState(
 		() => {
-			return ! passRequired || ! passRequired.checked;
+			return ! passRequiredCheckbox || ! passRequiredCheckbox.checked;
 		}
 	);
 
 	useEffect( () => {
-		if ( ! passRequired ) {
+		// Ignore if the checkbox isn't present.
+		if ( ! passRequiredCheckbox ) {
 			return;
 		}
 
 		const passRequiredEventHandler = () => {
-			setCompleteLessonAllowed( ! passRequired.checked );
+			setCompleteLessonAllowed( ! passRequiredCheckbox.checked );
 		};
 
-		passRequired.addEventListener( 'change', passRequiredEventHandler );
+		passRequiredCheckbox.addEventListener(
+			'change',
+			passRequiredEventHandler
+		);
 
 		return () => {
-			passRequired.removeEventListener(
+			passRequiredCheckbox.removeEventListener(
 				'change',
 				passRequiredEventHandler
 			);
 		};
-	}, [ passRequired ] );
+	}, [ passRequiredCheckbox ] );
 
 	return completeLessonAllowed;
 };
