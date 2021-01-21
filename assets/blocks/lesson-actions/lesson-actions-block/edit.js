@@ -1,114 +1,15 @@
-import { useState } from '@wordpress/element';
 import { InnerBlocks } from '@wordpress/block-editor';
-import { createBlock } from '@wordpress/blocks';
-import { useSelect, useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import classnames from 'classnames';
 
+import usePreviewState from './use-preview-state';
+import useToggleBlocks from './use-toggle-blocks';
 import { LessonActionsBlockSettings } from './settings';
-
-// The action blocks, ordered.
-const ACTION_BLOCKS = [
-	'sensei-lms/button-complete-lesson',
-	'sensei-lms/button-next-lesson',
-	'sensei-lms/button-reset-lesson',
-];
-
-const BLOCKS_DEFAULT_ATTRIBUTES = {
-	'sensei-lms/button-complete-lesson': {
-		inContainer: true,
-		align: 'full',
-	},
-	'sensei-lms/button-next-lesson': {
-		inContainer: true,
-	},
-	'sensei-lms/button-reset-lesson': {
-		inContainer: true,
-	},
-};
-
-const INNER_BLOCKS_TEMPLATE = ACTION_BLOCKS.map( ( blockName ) => [
-	blockName,
-	{ ...BLOCKS_DEFAULT_ATTRIBUTES[ blockName ] },
-] );
-
-/**
- * Toggle blocks hook.
- *
- * @param {Object}   options                Hook options.
- * @param {string}   options.parentClientId Parent client ID.
- * @param {Function} options.setAttributes  Set attributes function.
- * @param {Object}   options.toggledBlocks  Toggled blocks, where the key is the block name.
- * @param {Object[]} options.blocks         Blocks to prepare to toggle.
- *
- * @return {Object[]} Blocks prepared to toggle.
- */
-const useToggleBlocks = ( {
-	parentClientId,
-	setAttributes,
-	toggledBlocks,
-	blocks,
-} ) => {
-	const parentBlock = useSelect(
-		( select ) => select( 'core/block-editor' ).getBlock( parentClientId ),
-		[]
-	);
-	const { replaceInnerBlocks } = useDispatch( 'core/block-editor' );
-	const [ blocksAttributes, setBlocksAttributes ] = useState( {} );
-
-	/**
-	 * Toggle block.
-	 *
-	 * @param {string} blockName Block name.
-	 *
-	 * @return {Function} Function to toggle the block.
-	 */
-	const toggleBlock = ( blockName ) => ( on ) => {
-		const toggledBlock = parentBlock.innerBlocks.find(
-			( i ) => i.name === blockName
-		);
-		let newBlocks = null;
-
-		if ( on && ! toggledBlock ) {
-			// Add block using the default attributes, and the previous attributes if it exists.
-			newBlocks = [
-				...parentBlock.innerBlocks,
-				createBlock( blockName, {
-					...BLOCKS_DEFAULT_ATTRIBUTES[ blockName ],
-					...blocksAttributes[ blockName ],
-				} ),
-			].sort(
-				( a, b ) =>
-					ACTION_BLOCKS.indexOf( a.name ) -
-					ACTION_BLOCKS.indexOf( b.name )
-			);
-		} else if ( ! on && toggledBlock ) {
-			// Remove block.
-			newBlocks = parentBlock.innerBlocks.filter(
-				( i ) => i.name !== blockName
-			);
-
-			// Save block attributes to restore, if needed.
-			setBlocksAttributes( ( attrs ) => ( {
-				...attrs,
-				[ blockName ]: toggledBlock.attributes,
-			} ) );
-		}
-
-		if ( newBlocks ) {
-			replaceInnerBlocks( parentClientId, newBlocks, false );
-		}
-
-		setAttributes( {
-			toggledBlocks: { ...toggledBlocks, [ blockName ]: on },
-		} );
-	};
-
-	return blocks.map( ( block ) => ( {
-		active: false !== toggledBlocks[ block.blockName ],
-		onToggle: toggleBlock( block.blockName ),
-		label: block.label,
-	} ) );
-};
+import {
+	ACTION_BLOCKS,
+	INNER_BLOCKS_TEMPLATE,
+	IN_PROGRESS_PREVIEW,
+} from './constants';
 
 /**
  * Edit lesson actions block component.
@@ -126,6 +27,10 @@ const EditLessonActionsBlock = ( {
 	setAttributes,
 	attributes: { toggledBlocks },
 } ) => {
+	const [ previewState, onPreviewChange ] = usePreviewState(
+		IN_PROGRESS_PREVIEW
+	);
+
 	const toggleBlocks = useToggleBlocks( {
 		parentClientId: clientId,
 		setAttributes,
@@ -144,16 +49,27 @@ const EditLessonActionsBlock = ( {
 	);
 
 	return (
-		<div className={ className }>
-			<div className="sensei-buttons-container">
-				<LessonActionsBlockSettings toggleBlocks={ toggleBlocks } />
-				<InnerBlocks
-					allowedBlocks={ ACTION_BLOCKS }
-					template={ filteredInnerBlocksTemplate }
-					templateLock="all"
-				/>
+		<>
+			<LessonActionsBlockSettings
+				previewState={ previewState }
+				onPreviewChange={ onPreviewChange }
+				toggleBlocks={ toggleBlocks }
+			/>
+			<div
+				className={ classnames(
+					className,
+					`wp-block-sensei-lms-lesson-actions__preview-${ previewState }`
+				) }
+			>
+				<div className="sensei-buttons-container">
+					<InnerBlocks
+						allowedBlocks={ ACTION_BLOCKS }
+						template={ filteredInnerBlocksTemplate }
+						templateLock="all"
+					/>
+				</div>
 			</div>
-		</div>
+		</>
 	);
 };
 
