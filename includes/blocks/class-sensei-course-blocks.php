@@ -42,18 +42,53 @@ class Sensei_Course_Blocks {
 	public $take_course;
 
 	/**
-	 * Sensei_Blocks constructor.
+	 * Sensei_Course_Blocks constructor.
 	 */
 	public function __construct() {
 		add_action( 'enqueue_block_assets', [ $this, 'enqueue_block_assets' ] );
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_block_editor_assets' ] );
 		add_filter( 'sensei_use_sensei_template', [ 'Sensei_Course_Blocks', 'skip_single_course_template' ] );
+		add_action( 'template_redirect', [ $this, 'maybe_initialize_blocks' ] );
+		add_action( 'current_screen', [ $this, 'maybe_initialize_blocks' ] );
+	}
 
-		// Init blocks.
+	/**
+	 * Check if course blocks should be initialized and do initialization.
+	 *
+	 * @access private
+	 */
+	public function maybe_initialize_blocks() {
+		if ( is_admin() ) {
+			$screen = get_current_screen();
+
+			if ( ! $screen->is_block_editor || 'course' !== $screen->post_type ) {
+				return;
+			}
+		} elseif ( 'course' !== get_post_type() ) {
+			return;
+		}
+
+		$this->initialize_blocks();
+	}
+
+	/**
+	 * Initialize blocks that are used in course pages.
+	 */
+	public function initialize_blocks() {
 		$this->outline         = new Sensei_Course_Outline_Block();
 		$this->progress        = new Sensei_Course_Progress_Block();
 		$this->contact_teacher = new Sensei_Block_Contact_Teacher();
 		$this->take_course     = new Sensei_Block_Take_Course();
+		new Sensei_Restricted_Content_Block();
+
+		$post_type_object = get_post_type_object( 'course' );
+
+		$post_type_object->template = [
+			[ 'sensei-lms/button-take-course' ],
+			[ 'sensei-lms/button-contact-teacher' ],
+			[ 'sensei-lms/course-progress' ],
+			[ 'sensei-lms/course-outline' ],
+		];
 	}
 
 	/**

@@ -19,7 +19,7 @@ class Sensei_Block_Take_Course {
 	 * Sensei_Block_Take_Course constructor.
 	 */
 	public function __construct() {
-		add_action( 'init', [ $this, 'register_block' ] );
+		$this->register_block();
 	}
 
 
