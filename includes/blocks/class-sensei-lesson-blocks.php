@@ -32,7 +32,7 @@ class Sensei_Lesson_Blocks {
 		}
 
 		Sensei()->assets->enqueue( 'sensei-single-lesson', 'blocks/single-lesson.css' );
-		Sensei()->assets->enqueue( 'sensei-shared-blocks', 'blocks/shared-blocks.css' );
+		Sensei()->assets->enqueue( 'sensei-shared-blocks-style', 'blocks/shared-blocks-style.css' );
 	}
 
 	/**
@@ -47,7 +47,10 @@ class Sensei_Lesson_Blocks {
 
 		Sensei()->assets->enqueue( 'sensei-single-lesson-blocks', 'blocks/sensei-single-lesson-blocks.js', [], true );
 		Sensei()->assets->enqueue( 'sensei-single-lesson-editor', 'blocks/single-lesson.editor.css' );
-		Sensei()->assets->enqueue( 'sensei-shared-blocks-editor', 'blocks/shared-blocks.editor.css' );
+
+		Sensei()->assets->enqueue( 'sensei-shared-blocks', 'blocks/shared-blocks.js', [], true );
+		Sensei()->assets->enqueue( 'sensei-shared-blocks-editor-style', 'blocks/shared-blocks-style.editor.css' );
+
 		Sensei()->assets->enqueue( 'sensei-editor-components', 'blocks/editor-components/style.css' );
 	}
 }
