@@ -4,6 +4,8 @@ import classnames from 'classnames';
 
 import usePreviewState from './use-preview-state';
 import useToggleBlocks from './use-toggle-blocks';
+import useHasQuiz from './use-has-quiz';
+
 import { LessonActionsBlockSettings } from './settings';
 import {
 	ACTION_BLOCKS,
@@ -43,6 +45,9 @@ const EditLessonActionsBlock = ( {
 		],
 	} );
 
+	const hasQuiz = useHasQuiz();
+	const quizStateClass = hasQuiz ? 'has-quiz' : 'no-quiz';
+
 	// Filter inner blocks based on the settings.
 	const filteredInnerBlocksTemplate = INNER_BLOCKS_TEMPLATE.filter(
 		( i ) => false !== toggledBlocks[ i[ 0 ] ]
@@ -58,7 +63,8 @@ const EditLessonActionsBlock = ( {
 			<div
 				className={ classnames(
 					className,
-					`wp-block-sensei-lms-lesson-actions__preview-${ previewState }`
+					`wp-block-sensei-lms-lesson-actions__preview-${ previewState }`,
+					`wp-block-sensei-lms-lesson-actions__${ quizStateClass }`
 				) }
 			>
 				<div className="sensei-buttons-container">

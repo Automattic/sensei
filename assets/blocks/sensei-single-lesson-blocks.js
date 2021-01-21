@@ -4,6 +4,7 @@ import {
 	CompleteLessonBlock,
 	NextLessonBlock,
 	ResetLessonBlock,
+	ViewQuizBlock,
 } from './lesson-actions';
 
 registerSenseiBlocks( [
@@ -11,4 +12,5 @@ registerSenseiBlocks( [
 	CompleteLessonBlock,
 	NextLessonBlock,
 	ResetLessonBlock,
+	ViewQuizBlock,
 ] );

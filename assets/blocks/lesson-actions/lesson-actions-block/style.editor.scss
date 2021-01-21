@@ -1,12 +1,18 @@
 .wp-block-sensei-lms-lesson-actions {
 	&__preview-completed {
-		.wp-block-sensei-lms-button-complete-lesson {
+		.wp-block-sensei-lms-button-complete-lesson,
+		.wp-block-sensei-lms-button-view-quiz {
 			opacity: 10%;
 		}
 	}
 	&__preview-in-progress {
 		.wp-block-sensei-lms-button-reset-lesson,
 		.wp-block-sensei-lms-button-next-lesson {
+			opacity: 10%;
+		}
+	}
+	&__no-quiz {
+		.wp-block-sensei-lms-button-view-quiz {
 			opacity: 10%;
 		}
 	}
