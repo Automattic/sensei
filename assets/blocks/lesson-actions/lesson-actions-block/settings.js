@@ -3,6 +3,7 @@ import { PanelBody, ToggleControl, ToolbarGroup } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 import ToolbarDropdown from '../../editor-components/toolbar-dropdown';
+import { COMPLETED_PREVIEW, IN_PROGRESS_PREVIEW } from './constants';
 
 /**
  * @typedef {Object} ToggleBlock
@@ -31,11 +32,11 @@ export const LessonActionsBlockSettings = ( {
 					options={ [
 						{
 							label: __( 'In progress', 'sensei-lms' ),
-							value: 'in-progress',
+							value: IN_PROGRESS_PREVIEW,
 						},
 						{
 							label: __( 'Completed', 'sensei-lms' ),
-							value: 'completed',
+							value: COMPLETED_PREVIEW,
 						},
 					] }
 					optionsLabel={ __( 'Preview lesson state', 'sensei-lms' ) }

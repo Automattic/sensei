@@ -23,10 +23,13 @@ export const INNER_BLOCKS_TEMPLATE = ACTION_BLOCKS.map( ( blockName ) => [
 	{ ...BLOCKS_DEFAULT_ATTRIBUTES[ blockName ] },
 ] );
 
+export const COMPLETED_PREVIEW = 'completed';
+export const IN_PROGRESS_PREVIEW = 'in-progress';
+
 export const PREVIEW_STATE = {
-	completed: [
+	[ COMPLETED_PREVIEW ]: [
 		'sensei-lms/button-next-lesson',
 		'sensei-lms/button-reset-lesson',
 	],
-	'in-progress': [ 'sensei-lms/button-complete-lesson' ],
+	[ IN_PROGRESS_PREVIEW ]: [ 'sensei-lms/button-complete-lesson' ],
 };

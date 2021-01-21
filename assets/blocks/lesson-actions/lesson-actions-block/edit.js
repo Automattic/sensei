@@ -5,7 +5,11 @@ import classnames from 'classnames';
 import usePreviewState from './use-preview-state';
 import useToggleBlocks from './use-toggle-blocks';
 import { LessonActionsBlockSettings } from './settings';
-import { ACTION_BLOCKS, INNER_BLOCKS_TEMPLATE } from './constants';
+import {
+	ACTION_BLOCKS,
+	INNER_BLOCKS_TEMPLATE,
+	IN_PROGRESS_PREVIEW,
+} from './constants';
 
 /**
  * Edit lesson actions block component.
@@ -23,7 +27,9 @@ const EditLessonActionsBlock = ( {
 	setAttributes,
 	attributes: { toggledBlocks },
 } ) => {
-	const [ previewState, onPreviewChange ] = usePreviewState( 'in-progress' );
+	const [ previewState, onPreviewChange ] = usePreviewState(
+		IN_PROGRESS_PREVIEW
+	);
 
 	const toggleBlocks = useToggleBlocks( {
 		parentClientId: clientId,
