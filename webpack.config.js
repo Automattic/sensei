@@ -31,6 +31,7 @@ const files = [
 	'data-port/import.js',
 	'data-port/export.js',
 	'data-port/style.scss',
+	'blocks/editor-components/style.scss',
 	'blocks/course-outline/frontend.js',
 	'blocks/sensei-single-course-blocks.js',
 	'blocks/single-course.scss',
