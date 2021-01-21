@@ -51,11 +51,8 @@ class Sensei_Course_Outline_Course_Block {
 		$post_id    = $outline['post_id'];
 
 		if ( empty( $blocks ) ) {
-			return '
-				<div class="sensei-message info">
-					' . __( 'There is no published content in this course yet.', 'sensei-lms' ) . '
-				</div>
-			';
+			Sensei()->notices->add_notice( __( 'There is no published content in this course yet.', 'sensei-lms' ), 'info', 'sensei-course-outline-no-content' );
+			return '';
 		}
 
 		$class_name = Sensei_Block_Helpers::block_class_with_default_style( $attributes );
