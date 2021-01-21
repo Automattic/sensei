@@ -19,6 +19,34 @@ class Sensei_Lesson_Blocks {
 	public function __construct() {
 		add_action( 'enqueue_block_assets', [ $this, 'enqueue_block_assets' ] );
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_block_editor_assets' ] );
+		add_action( 'template_redirect', [ $this, 'maybe_initialize_blocks' ] );
+		add_action( 'current_screen', [ $this, 'maybe_initialize_blocks' ] );
+	}
+
+	/**
+	 * Check if course blocks should be initialized and do initialization.
+	 *
+	 * @access private
+	 */
+	public function maybe_initialize_blocks() {
+		if ( is_admin() ) {
+			$screen = get_current_screen();
+
+			if ( ! $screen->is_block_editor || 'lesson' !== $screen->post_type ) {
+				return;
+			}
+		} elseif ( 'lesson' !== get_post_type() ) {
+			return;
+		}
+
+		$this->initialize_blocks();
+	}
+
+	/**
+	 * Initialize blocks that are used in course pages.
+	 */
+	public function initialize_blocks() {
+		$this->contact_teacher = new Sensei_Block_Contact_Teacher();
 	}
 
 	/**
