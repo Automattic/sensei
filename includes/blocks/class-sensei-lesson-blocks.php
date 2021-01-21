@@ -33,6 +33,10 @@ class Sensei_Lesson_Blocks {
 
 		Sensei()->assets->enqueue( 'sensei-single-lesson', 'blocks/single-lesson.css' );
 		Sensei()->assets->enqueue( 'sensei-shared-blocks-style', 'blocks/shared-blocks-style.css' );
+
+		if ( ! is_admin() ) {
+			Sensei()->assets->enqueue( 'sensei-shared-blocks-frontend', 'blocks/shared-blocks-frontend.js' );
+		}
 	}
 
 	/**
