@@ -1,17 +1,17 @@
 # Copyright (C) 2021 Automattic
-# This file is distributed under the GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html.
+# This file is distributed under the same license as the Sensei LMS plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Sensei LMS 3.7.0-beta.1\n"
+"Project-Id-Version: Sensei LMS 3.7.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sensei-lms\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2021-01-14T13:28:31+00:00\n"
+"POT-Creation-Date: 2021-01-21T13:09:34+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.5.0-alpha\n"
+"X-Generator: WP-CLI 2.4.0\n"
 "X-Domain: sensei-lms\n"
 
 #: assets/admin/exit-survey/form.js:56
@@ -1696,7 +1696,11 @@ msgstr ""
 msgid "Tools"
 msgstr ""
 
-#: includes/admin/class-sensei-tools.php:282
+#: includes/admin/class-sensei-tools.php:126
+msgid "This tool is not currently available. Please try again later."
+msgstr ""
+
+#: includes/admin/class-sensei-tools.php:292
 msgid "There was a problem validating your request. Please try again."
 msgstr ""
 
@@ -1983,12 +1987,16 @@ msgstr ""
 msgid "All Tools"
 msgstr ""
 
-#: includes/admin/views/html-admin-page-tools.php:34
+#: includes/admin/views/html-admin-page-tools.php:43
 msgid "Visit Tool"
 msgstr ""
 
-#: includes/admin/views/html-admin-page-tools.php:37
+#: includes/admin/views/html-admin-page-tools.php:46
 msgid "Run Action"
+msgstr ""
+
+#: includes/admin/views/html-admin-page-tools.php:52
+msgid "This tool is not currently available"
 msgstr ""
 
 #: includes/blocks/class-sensei-block-contact-teacher.php:78
@@ -2931,11 +2939,12 @@ msgid "Correct answer"
 msgstr ""
 
 #: includes/class-sensei-grading-user-quiz.php:314
-msgid "Grading Notes"
+#: includes/class-sensei-lesson.php:1863
+msgid "Answer Feedback"
 msgstr ""
 
 #: includes/class-sensei-grading-user-quiz.php:315
-msgid "Add notes here..."
+msgid "Add feedback here..."
 msgstr ""
 
 #: includes/class-sensei-grading.php:588
@@ -3279,10 +3288,6 @@ msgstr ""
 msgid ""
 "This feedback will be automatically displayed to the student once they have "
 "completed the quiz."
-msgstr ""
-
-#: includes/class-sensei-lesson.php:1863
-msgid "Answer Feedback"
 msgstr ""
 
 #: includes/class-sensei-lesson.php:1980
