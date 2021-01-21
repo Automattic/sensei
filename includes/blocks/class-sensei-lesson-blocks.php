@@ -55,7 +55,10 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 	/**
 	 * Initializes the blocks.
 	 */
-	public function initialize_blocks() {}
+	public function initialize_blocks() {
+		new Sensei_Lesson_Actions_Block();
+		new Sensei_Next_Lesson_Block();
+	}
 
 	/**
 	 * Disable single lesson template if lesson is block based.
