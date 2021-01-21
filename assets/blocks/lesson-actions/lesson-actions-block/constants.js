@@ -36,6 +36,6 @@ export const PREVIEW_STATE = {
 	],
 	[ IN_PROGRESS_PREVIEW ]: [
 		'sensei-lms/button-view-quiz',
-		'sensei-lms/button-complete-lesson'
+		'sensei-lms/button-complete-lesson',
 	],
 };
