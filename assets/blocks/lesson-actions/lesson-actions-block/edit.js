@@ -5,6 +5,7 @@ import classnames from 'classnames';
 import usePreviewState from './use-preview-state';
 import useToggleBlocks from './use-toggle-blocks';
 import useHasQuiz from './use-has-quiz';
+import useCompleteLessonAllowed from './use-complete-lesson-allowed';
 
 import { LessonActionsBlockSettings } from './settings';
 import {
@@ -48,6 +49,11 @@ const EditLessonActionsBlock = ( {
 	const hasQuiz = useHasQuiz();
 	const quizStateClass = hasQuiz ? 'has-quiz' : 'no-quiz';
 
+	const completeLessonAllowed = useCompleteLessonAllowed();
+	const completeLessonAllowedClass = completeLessonAllowed
+		? 'allowed'
+		: 'not-allowed';
+
 	// Filter inner blocks based on the settings.
 	const filteredInnerBlocksTemplate = INNER_BLOCKS_TEMPLATE.filter(
 		( i ) => false !== toggledBlocks[ i[ 0 ] ]
@@ -64,7 +70,8 @@ const EditLessonActionsBlock = ( {
 				className={ classnames(
 					className,
 					`wp-block-sensei-lms-lesson-actions__preview-${ previewState }`,
-					`wp-block-sensei-lms-lesson-actions__${ quizStateClass }`
+					`wp-block-sensei-lms-lesson-actions__${ quizStateClass }`,
+					`wp-block-sensei-lms-lesson-actions__complete_lessons-${ completeLessonAllowedClass }`
 				) }
 			>
 				<div className="sensei-buttons-container">
