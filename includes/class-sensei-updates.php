@@ -173,7 +173,7 @@ class Sensei_Updates {
 		// Set up legacy `with_front` on CPT rewrite options.
 		if (
 			$this->is_upgrade
-			&& version_compare( '3.7.0-beta.1', $this->current_version, '>' )
+			&& version_compare( '3.7.0', $this->current_version, '>' )
 			&& '' !== trim( $wp_rewrite->front, '/' )
 		) {
 			Sensei()->set_legacy_flag( Sensei_Main::LEGACY_FLAG_WITH_FRONT, true );

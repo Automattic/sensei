@@ -14,6 +14,8 @@
 * New: Add notice to install WooCommerce Paid Courses [#3876](https://github.com/Automattic/sensei/pull/3876), [#3884](https://github.com/Automattic/sensei/pull/3884)
 * Tweak: Enable translating more Sensei content using Polylang and WPML [#3840](https://github.com/Automattic/sensei/pull/3840)
 * Tweak: Ensure all data is removed when uninstalling the plugin [#3864](https://github.com/Automattic/sensei/pull/3864)
+* Tweak: Minor tool fixes and additions [#3896](https://github.com/Automattic/sensei/pull/3896)
+* Tweak: Rename `Grading Notes` to `Answer Feedback` in grading tool [#3897](https://github.com/Automattic/sensei/pull/3897)
 * Fix: Fix empty Courses page on multi-site install [#3827](https://github.com/Automattic/sensei/pull/3827)
 * Fix: Fix linter issues [#3833](https://github.com/Automattic/sensei/pull/3833)
 * Fix: Fix some columns not showing in courses, lessons and questions lists [#3273](https://github.com/Automattic/sensei/pull/3273) 👏 @hansschuijff
