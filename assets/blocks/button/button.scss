@@ -32,14 +32,15 @@
   * Buttons in container.
   */
 .sensei-buttons-container {
-	margin: -12px;
+	margin: -9px;
 	overflow: hidden; /* Clearfix solution */
 }
 
 .sensei-buttons-container__button-block,
 body .editor-styles-wrapper .sensei-buttons-container .block-editor-inner-blocks .sensei-buttons-container__button-block {
 	float: left;
-	margin: 12px;
+	margin: 0;
+	padding: 9px;
 
 	&.sensei-buttons-container__button-align-full,
 	&.sensei-buttons-container__button-align-center {
@@ -52,6 +53,6 @@ body .editor-styles-wrapper .sensei-buttons-container .block-editor-inner-blocks
 	}
 
 	.wp-block-sensei-button {
-		margin: 0;
+		margin: 0; /* Remove extra margin from some themes */
 	}
 }
