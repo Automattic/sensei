@@ -42,6 +42,19 @@
 					"type": "integer",
 					"description": "Points this question is worth",
 					"default": 1
+				},
+				"shared": {
+					"type": "boolean",
+					"description": "Whether the question has been added on other quizzes",
+					"readOnly": false
+				},
+				"categories": {
+					"type": "array",
+					"description": "Category term IDs attached to the question",
+					"items": {
+						"type": "integer",
+						"description": "Term IDs"
+					}
 				}
 			},
 			"required": [ "title" ]
@@ -119,8 +132,12 @@
 							"description": "Text before the gap"
 						},
 						"gap": {
-							"type": "string",
-							"description": "Gap text"
+							"type": "array",
+							"description": "Gap text answers",
+							"items": {
+								"type": "string",
+								"description": "Gap answers"
+							}
 						},
 						"after": {
 							"type": "string",
