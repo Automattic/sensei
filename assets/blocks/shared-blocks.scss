@@ -1,0 +1,11 @@
+/**
+ * File containing styles shared by multiple CPT.
+ */
+
+@import 'button/button';
+@import 'contact-teacher/contact-teacher';
+
+.sensei-block-wrapper {
+	margin-top: 28px;
+	margin-bottom: 28px;
+}

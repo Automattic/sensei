@@ -102,6 +102,7 @@ class Sensei_Course_Blocks {
 		}
 
 		Sensei()->assets->enqueue( 'sensei-single-course', 'blocks/single-course.css' );
+		Sensei()->assets->enqueue( 'sensei-shared-blocks', 'blocks/shared-blocks.css' );
 
 		if ( ! is_admin() ) {
 			Sensei()->assets->enqueue( 'sensei-single-course-frontend', 'blocks/course-outline/frontend.js' );
@@ -120,6 +121,7 @@ class Sensei_Course_Blocks {
 
 		Sensei()->assets->enqueue( 'sensei-single-course-blocks', 'blocks/sensei-single-course-blocks.js', [], true );
 		Sensei()->assets->enqueue( 'sensei-single-course-editor', 'blocks/single-course.editor.css' );
+		Sensei()->assets->enqueue( 'sensei-shared-blocks-editor', 'blocks/shared-blocks.editor.css' );
 	}
 
 	/**
