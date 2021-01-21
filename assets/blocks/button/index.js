@@ -1,6 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { merge, find } from 'lodash';
 import classnames from 'classnames';
+import { getBlockDefaultClassName } from '@wordpress/blocks';
 
 import './color-hooks';
 import { EditButtonBlock } from './edit-button';
@@ -125,6 +126,7 @@ export const createButtonBlockType = ( {
 					<SaveButtonBlockWithBlockStyle
 						{ ...props }
 						{ ...options }
+						blockName={ settings.name }
 					/>
 				);
 			},
@@ -133,6 +135,8 @@ export const createButtonBlockType = ( {
 					return {
 						className: classnames(
 							'sensei-buttons-container__button-block',
+							getBlockDefaultClassName( settings.name ) +
+								'__wrapper',
 							{
 								[ `sensei-buttons-container__button-align-${ align }` ]: align,
 							}
