@@ -4685,7 +4685,29 @@ class Sensei_Lesson {
 		return false;
 	}
 
-} // End Class
+	/**
+	 * Check if a lesson is legacy.
+	 *
+	 * @param int|WP_Post $lesson Lesson ID or lesson object.
+	 *
+	 * @return bool
+	 */
+	public function is_legacy_lesson( $lesson ) {
+		$lesson = get_post( $lesson );
+
+		$lesson_blocks = [
+			'sensei-lms/lesson-actions',
+		];
+
+		foreach ( $lesson_blocks as $block ) {
+			if ( has_block( $block, $lesson ) ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+}
 
 /**
  * Class WooThemes_Sensei_Lesson

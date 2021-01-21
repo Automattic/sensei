@@ -123,7 +123,7 @@ class Sensei_Course_Blocks {
 	}
 
 	/**
-	 * Disable single course template if there is an outline block present.
+	 * Disable single course template if the course is block based.
 	 *
 	 * @access private
 	 *
