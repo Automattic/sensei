@@ -1,6 +1,8 @@
 import { RichText } from '@wordpress/block-editor';
-import { getButtonProps, getButtonWrapperProps } from './button-props';
+import { getBlockDefaultClassName } from '@wordpress/blocks';
 import classnames from 'classnames';
+
+import { getButtonProps, getButtonWrapperProps } from './button-props';
 
 /**
  * Save function for a Button block.
@@ -9,8 +11,14 @@ import classnames from 'classnames';
  * @param {Object} props.attributes Block attributes.
  * @param {string} props.className  Classname.
  * @param {string} props.tagName    Output HTML tag name.
+ * @param {string} props.blockName  Block name.
  */
-export const SaveButtonBlock = ( { attributes, className, tagName } ) => {
+export const SaveButtonBlock = ( {
+	attributes,
+	className,
+	tagName,
+	blockName,
+} ) => {
 	const { text, inContainer, align } = attributes;
 
 	const content = (
@@ -28,6 +36,7 @@ export const SaveButtonBlock = ( { attributes, className, tagName } ) => {
 			<div
 				className={ classnames(
 					'sensei-buttons-container__button-block',
+					getBlockDefaultClassName( blockName ) + '__wrapper',
 					{
 						[ `sensei-buttons-container__button-align-${ align }` ]: align,
 					}
