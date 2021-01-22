@@ -19,6 +19,15 @@ class Sensei_Lesson {
 	public $allowed_html;
 
 	/**
+	 * Lesson ID being saved.
+	 *
+	 * @since 3.8.0
+	 *
+	 * @var int
+	 */
+	private $lesson_id_updating;
+
+	/**
 	 * Constructor.
 	 *
 	 * @since  1.0.0
@@ -99,6 +108,10 @@ class Sensei_Lesson {
 
 			add_action( 'admin_head', array( $this, 'add_custom_link_to_course' ) );
 
+			// Log lesson update.
+			add_action( 'save_post_lesson', [ $this, 'mark_updating_lesson_id' ], 10, 2 );
+			add_action( 'shutdown', [ $this, 'log_lesson_update' ] );
+			add_action( 'rest_api_init', [ $this, 'disable_log_lesson_update' ] );
 		} else {
 			// Frontend actions
 			// Starts lesson when the student visits for the first time and prerequisite courses have been met.
@@ -4572,6 +4585,78 @@ class Sensei_Lesson {
 		}
 
 		sensei_log_event( 'lesson_publish', $event_properties );
+	}
+
+	/**
+	 * Mark updating lesson id.
+	 *
+	 * Hooked into `save_post_lesson`.
+	 *
+	 * @since 3.8.0
+	 * @access private
+	 *
+	 * @param int      $post_id Post ID.
+	 * @param \WP_Post $post    Post object.
+	 */
+	public function mark_updating_lesson_id( $post_id, $post ) {
+		if ( 'publish' !== $post->post_status ) {
+			return;
+		}
+
+		$this->lesson_id_updating = $post_id;
+	}
+
+	/**
+	 * Log the lesson update.
+	 *
+	 * Hooked into `shutdown`.
+	 *
+	 * @since 3.8.0
+	 * @access private
+	 */
+	public function log_lesson_update() {
+		if ( empty( $this->lesson_id_updating ) ) {
+			return;
+		}
+
+		$lesson_id = $this->lesson_id_updating;
+		$post      = get_post( $lesson_id );
+
+		if ( empty( $post ) ) {
+			return;
+		}
+
+		$course_id = $this->get_course_id( $lesson_id );
+
+		// Don't log if it's part of a sample course.
+		if ( $course_id && 'getting-started-with-sensei-lms' === get_post_field( 'post_name', $course_id ) ) {
+			return;
+		}
+
+		$content     = $post->post_content;
+		$module_term = Sensei()->modules->get_lesson_module( $lesson_id );
+
+		$event_properties = [
+			'course_id'                 => $course_id ? $course_id : -1,
+			'module_id'                 => $module_term ? $module_term->term_id : -1,
+			'lesson_id'                 => $lesson_id,
+			'has_contact_teacher_block' => has_block( 'sensei-lms/button-contact-teacher', $content ) ? 1 : 0,
+			'has_lesson_actions_block'  => has_block( 'sensei-lms/lesson-actions', $content ) ? 1 : 0,
+		];
+
+		sensei_log_event( 'lesson_update', $event_properties );
+	}
+
+	/**
+	 * Disable log lesson update when it's a REST request.
+	 *
+	 * Hooked into `rest_api_init`.
+	 *
+	 * @since 3.8.0
+	 * @access private
+	 */
+	public function disable_log_lesson_update() {
+		remove_action( 'shutdown', [ $this, 'log_lesson_update' ] );
 	}
 
 	/**
