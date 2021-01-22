@@ -25,7 +25,7 @@ export default createButtonBlockType( {
 		],
 		attributes: {
 			text: {
-				default: 'Take Course',
+				default: __( 'Take Course', 'sensei-lms' ),
 			},
 		},
 	},

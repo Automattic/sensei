@@ -23,7 +23,7 @@ export default createButtonBlockType( {
 		],
 		attributes: {
 			text: {
-				default: 'Complete lesson',
+				default: __( 'Complete lesson', 'sensei-lms' ),
 			},
 		},
 	},

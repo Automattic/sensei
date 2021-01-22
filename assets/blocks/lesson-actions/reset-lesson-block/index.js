@@ -25,7 +25,7 @@ export default createButtonBlockType( {
 		],
 		attributes: {
 			text: {
-				default: 'Reset lesson',
+				default: __( 'Reset lesson', 'sensei-lms' ),
 			},
 		},
 		styles: [
