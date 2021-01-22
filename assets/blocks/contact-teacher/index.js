@@ -15,10 +15,10 @@ export default createButtonBlockType( {
 			'Enable a registered user to contact the teacher. This block is only displayed if the user is logged in and private messaging is enabled.',
 			'sensei-lms'
 		),
-		title: 'Contact Teacher',
+		title: __( 'Contact Teacher', 'sensei-lms' ),
 		attributes: {
 			text: {
-				default: 'Contact Teacher',
+				default: __( 'Contact Teacher', 'sensei-lms' ),
 			},
 		},
 		styles: [

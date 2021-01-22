@@ -22,7 +22,7 @@ export default createButtonBlockType( {
 		],
 		attributes: {
 			text: {
-				default: 'View quiz',
+				default: __( 'View quiz', 'sensei-lms' ),
 			},
 		},
 	},
