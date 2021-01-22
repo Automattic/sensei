@@ -34,4 +34,8 @@ export default createButtonBlockType( {
 			BlockStyles.Link,
 		],
 	},
+	alignmentOptions: {
+		controls: [ 'left', 'full' ],
+		default: 'left',
+	},
 } );

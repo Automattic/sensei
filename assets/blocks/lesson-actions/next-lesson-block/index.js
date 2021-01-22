@@ -27,4 +27,8 @@ export default createButtonBlockType( {
 			},
 		},
 	},
+	alignmentOptions: {
+		controls: [ 'left', 'full' ],
+		default: 'left',
+	},
 } );
