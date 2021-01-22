@@ -195,6 +195,15 @@
 		}
 	}
 
+	p.question-field-helper-text {
+		font-style: italic;
+		margin-bottom: 1.5em;
+	}
+
+	input[name="add_question_right_answer_singleline"] {
+		margin-bottom: inherit;
+	}
+
 	#add-quiz-metadata  {
 		label  {
 			float: left;
