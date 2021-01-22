@@ -959,8 +959,6 @@ class Sensei_Frontend {
 	public function sensei_reset_lesson_button() {
 		global  $post;
 
-		$quiz_id = 0;
-
 		// Lesson quizzes.
 		$quiz_id       = Sensei()->lesson->lesson_quizzes( $post->ID );
 		$reset_allowed = true;
@@ -986,8 +984,8 @@ class Sensei_Frontend {
 
 		</form>
 			<?php
-		} // End If Statement
-	} // End sensei_reset_lesson_button()
+		}
+	}
 
 	/**
 	 * Outputs the quiz buttons and messages.
