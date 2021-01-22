@@ -4354,26 +4354,9 @@ class Sensei_Lesson {
 			return;
 		}
 
-		$lesson_prerequisite       = (int) get_post_meta( $lesson_id, '_lesson_prerequisite', true );
 		$quiz_id                   = Sensei()->lesson->lesson_quizzes( $lesson_id );
 		$has_user_completed_lesson = Sensei_Utils::user_completed_lesson( intval( $lesson_id ), $user_id );
-		$show_actions              = is_user_logged_in() ? true : false;
-
-		if ( intval( $lesson_prerequisite ) > 0 ) {
-
-			// If the user hasn't completed the prerequisites then hide the current actions.
-			// (If the user is either the lesson creator or admin, show actions).
-			if (
-					Sensei_Utils::user_completed_lesson( $lesson_prerequisite, $user_id )
-					|| Sensei()->lesson->is_lesson_author( $lesson_id, $user_id )
-					|| current_user_can( 'manage_options' )
-			) {
-				$show_actions = true;
-			} else {
-				$show_actions = false;
-			}
-		}
-
+		$show_actions              = self::should_show_lesson_actions( $lesson_id, $user_id );
 		?>
 
 		<footer>
@@ -4398,7 +4381,7 @@ class Sensei_Lesson {
 
 					<?php
 				}
-			} // End If Statement
+			}
 
 			if ( $show_actions && ! $has_user_completed_lesson ) {
 
@@ -4408,13 +4391,42 @@ class Sensei_Lesson {
 
 				sensei_reset_lesson_button();
 
-			} // End If Statement
+			}
 			?>
 
 		</footer>
 
 		<?php
-	} // End sensei_lesson_quiz_meta()
+	}
+
+	/**
+	 * Helper method which checks if the lesson actions should be shown.
+	 *
+	 * @param int $lesson_id The lesson id.
+	 * @param int $user_id   The user id. Defaults to current user.
+	 *
+	 * @return bool
+	 */
+	public static function should_show_lesson_actions( int $lesson_id, int $user_id = 0 ) : bool {
+		$user_id = empty( $user_id ) ? get_current_user_id() : $user_id;
+
+		if ( 0 === $user_id ) {
+			return false;
+		}
+
+		$lesson_prerequisite = (int) get_post_meta( $lesson_id, '_lesson_prerequisite', true );
+
+		if ( $lesson_prerequisite > 0 ) {
+
+			// If the user hasn't completed the prerequisites then hide the current actions.
+			// (If the user is either the lesson creator or admin, show actions).
+			return Sensei_Utils::user_completed_lesson( $lesson_prerequisite, $user_id )
+				|| Sensei()->lesson->is_lesson_author( $lesson_id, $user_id )
+				|| current_user_can( 'manage_options' );
+		}
+
+		return true;
+	}
 
 	/**
 	 * Shows the lesson comments. This should be used in the loop.

@@ -48,6 +48,6 @@ class Sensei_Next_Lesson_Block {
 			return '';
 		}
 
-		return '<a href="' . esc_url( $urls['next']['url'] ) . '" > ' . $content . '</a>';
+		return '<a href="' . esc_url( $urls['next']['url'] ) . '" >' . $content . '</a>';
 	}
 }

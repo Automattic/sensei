@@ -94,6 +94,10 @@ export const createButtonBlockType = ( {
 					type: 'boolean',
 					default: false,
 				},
+				buttonClassName: {
+					type: 'array',
+					default: [],
+				},
 			},
 			supports: {
 				color: {
