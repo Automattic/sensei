@@ -633,14 +633,9 @@ class Sensei_Grading {
 			++$count;
 			$question_id = $question->ID;
 
-			if ( isset( $_POST[ 'question_' . $question_id ] ) ) {
+			if ( isset( $_POST[ 'question_' . $question_id . '_grade' ] ) ) {
 
-				$question_grade = 0;
-				if ( $_POST[ 'question_' . $question_id ] == 'right' ) {
-
-					$question_grade = $_POST[ 'question_' . $question_id . '_grade' ];
-
-				}
+				$question_grade = absint( wp_unslash( $_POST[ 'question_' . $question_id . '_grade' ] ) ) ?? 0;
 
 				// add data to the array that will, after the loop, be stored on the lesson status
 				$all_question_grades[ $question_id ] = $question_grade;

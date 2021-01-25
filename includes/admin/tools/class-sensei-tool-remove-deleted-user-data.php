@@ -68,4 +68,13 @@ class Sensei_Tool_Remove_Deleted_User_Data implements Sensei_Tool_Interface {
 			Sensei()->flush_comment_counts_cache( $post_id );
 		}
 	}
+
+	/**
+	 * Is the tool currently available?
+	 *
+	 * @return bool True if tool is available.
+	 */
+	public function is_available() {
+		return true;
+	}
 }

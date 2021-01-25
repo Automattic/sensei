@@ -1,0 +1,19 @@
+table#sensei-tools {
+	th, td {
+		padding: 1.5em;
+		> div {
+			&.name {
+				font-weight: bold;
+				margin-bottom: .5em;
+			}
+
+			&.description {
+				margin-bottom: .5em;
+			}
+
+			&.notice {
+				margin-bottom: 0;
+			}
+		}
+	}
+}
