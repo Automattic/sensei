@@ -1,4 +1,4 @@
-name: JS linting and tests
+name: JS Linting and Tests
 
 on:
   pull_request
