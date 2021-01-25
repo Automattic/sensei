@@ -1,5 +1,11 @@
+/**
+ * WordPress dependencies
+ */
 import { registerBlockType, updateCategory } from '@wordpress/blocks';
 
+/**
+ * Internal dependencies
+ */
 import { SenseiIcon } from '../icons';
 
 /**

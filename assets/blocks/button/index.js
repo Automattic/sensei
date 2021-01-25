@@ -1,11 +1,21 @@
-import { __ } from '@wordpress/i18n';
+/**
+ * External dependencies
+ */
 import { merge, find } from 'lodash';
 import classnames from 'classnames';
+
+/**
+ * WordPress dependencies
+ */
+import { __ } from '@wordpress/i18n';
 import { getBlockDefaultClassName } from '@wordpress/blocks';
 
+/**
+ * Internal dependencies
+ */
 import './color-hooks';
-import { EditButtonBlock } from './edit-button';
-import { SaveButtonBlock } from './save-button';
+import Edit from './edit';
+import Save from './save';
 import { button as icon } from '../../icons/wordpress-icons';
 import { withDefaultBlockStyle } from '../../shared/blocks/settings';
 
@@ -57,14 +67,10 @@ export const createButtonBlockType = ( {
 	const defaultStyle = find( styles, 'isDefault' )?.name;
 
 	// eslint-disable-next-line @wordpress/no-unused-vars-before-return -- We don't wanna recreate the component every edit render.
-	const EditButtonBlockWithBlockStyle = withDefaultBlockStyle( defaultStyle )(
-		EditButtonBlock
-	);
+	const EditWithBlockStyle = withDefaultBlockStyle( defaultStyle )( Edit );
 
 	// eslint-disable-next-line @wordpress/no-unused-vars-before-return -- We don't wanna recreate the component every edit render.
-	const SaveButtonBlockWithBlockStyle = withDefaultBlockStyle( defaultStyle )(
-		SaveButtonBlock
-	);
+	const SaveWithBlockStyle = withDefaultBlockStyle( defaultStyle )( Save );
 
 	return merge(
 		{
@@ -109,10 +115,7 @@ export const createButtonBlockType = ( {
 			styles,
 			edit( props ) {
 				const content = (
-					<EditButtonBlockWithBlockStyle
-						{ ...props }
-						{ ...options }
-					/>
+					<EditWithBlockStyle { ...props } { ...options } />
 				);
 
 				if ( EditWrapper ) {
@@ -123,7 +126,7 @@ export const createButtonBlockType = ( {
 			},
 			save( props ) {
 				return (
-					<SaveButtonBlockWithBlockStyle
+					<SaveWithBlockStyle
 						{ ...props }
 						{ ...options }
 						blockName={ settings.name }

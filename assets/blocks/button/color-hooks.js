@@ -1,6 +1,17 @@
+/**
+ * External dependencies
+ */
+import { omitBy } from 'lodash';
+
+/**
+ * WordPress dependencies
+ */
 import { addFilter } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
-import { omitBy } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
 import { withColorSettings } from '../../shared/blocks/settings';
 
 /**
