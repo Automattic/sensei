@@ -47,5 +47,6 @@ jobs:
       - name: Run tests
         run: npm run test:e2e
       - name: Clean up
+        if: ${{ always() }}
         run: npm run e2e-docker:down && echo "In case of E2E test failures, screenshots can be found in the slack channel `#evergreen-github`"
         
