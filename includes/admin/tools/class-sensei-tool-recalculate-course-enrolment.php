@@ -101,4 +101,13 @@ class Sensei_Tool_Recalculate_Course_Enrolment implements Sensei_Tool_Interface,
 		wp_safe_redirect( Sensei_Tools::instance()->get_tools_url() );
 		exit;
 	}
+
+	/**
+	 * Is the tool currently available?
+	 *
+	 * @return bool True if tool is available.
+	 */
+	public function is_available() {
+		return true;
+	}
 }

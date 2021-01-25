@@ -182,6 +182,26 @@ jQuery( document ).ready( function () {
 		} );
 	} );
 
+	/**
+	 * After changing the course teacher, it prevents updating the modules
+	 * until the next page refresh. Otherwise, some issues can happen because
+	 * the modules list in the frontend can be out of date with the server.
+	 */
+	const courseTeacherInput = document.querySelector(
+		'select[name="sensei-course-teacher-author"]'
+	);
+	if ( courseTeacherInput ) {
+		courseTeacherInput.addEventListener( 'change', () => {
+			const modulesMetabox = document.querySelector(
+				'#module_course_mb'
+			);
+
+			if ( modulesMetabox ) {
+				modulesMetabox.parentNode.removeChild( modulesMetabox );
+			}
+		} );
+	}
+
 	// Get Course modules (if any) on course select change
 	var $courseSelect = jQuery( '#lesson-course-options' ),
 		$lessonModuleMetaboxSelectContainer = jQuery(
