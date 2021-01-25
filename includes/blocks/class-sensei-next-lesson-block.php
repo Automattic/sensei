@@ -38,7 +38,7 @@ class Sensei_Next_Lesson_Block {
 	public function render( array $attributes, string $content ) : string {
 		$lesson = get_post();
 
-		if ( empty( $lesson ) ) {
+		if ( empty( $lesson ) || ! Sensei_Utils::user_completed_lesson( $lesson->ID ) ) {
 			return '';
 		}
 

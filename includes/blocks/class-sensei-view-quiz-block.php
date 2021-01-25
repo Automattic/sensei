@@ -38,11 +38,7 @@ class Sensei_View_Quiz_Block {
 	public function render( array $attributes, string $content ) : string {
 		$lesson = get_post();
 
-		if ( empty( $lesson ) ) {
-			return '';
-		}
-
-		if ( ! Sensei_Lesson::should_show_lesson_actions( $lesson->ID ) ) {
+		if ( empty( $lesson ) || Sensei_Utils::user_completed_lesson( $lesson->ID ) ) {
 			return '';
 		}
 

@@ -42,13 +42,9 @@ class Sensei_Reset_Lesson_Block {
 			return '';
 		}
 
-		if ( ! Sensei_Lesson::should_show_lesson_actions( $lesson->ID ) ) {
-			return '';
-		}
-
 		$course_id = Sensei()->lesson->get_course_id( $lesson->ID );
 
-		if ( ! Sensei_Course::is_user_enrolled( $course_id ) ) {
+		if ( ! Sensei_Course::is_user_enrolled( $course_id ) || ! Sensei_Utils::user_completed_lesson( $lesson->ID ) ) {
 			return '';
 		}
 
