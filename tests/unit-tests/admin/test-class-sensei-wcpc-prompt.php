@@ -105,6 +105,24 @@ class Sensei_WCPC_Prompt_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests that WCPC installation notice is not displayed with the sample course only.
+	 *
+	 * @return void
+	 */
+	public function testWCPCNoticeIsNotDisplayedWithSampleCourseOnly() {
+		$instance = new Sensei_WCPC_Prompt();
+
+		set_current_screen( 'edit-course' );
+		$this->factory->course->create( [ 'post_name' => Sensei_Data_Port_Manager::SAMPLE_COURSE_SLUG ] );
+
+		ob_start();
+		$instance->wcpc_prompt();
+		$output = ob_get_clean();
+
+		$this->assertEmpty( $output );
+	}
+
+	/**
 	 * Tests that WCPC installation notice is not displayed in no course pages.
 	 *
 	 * @return void

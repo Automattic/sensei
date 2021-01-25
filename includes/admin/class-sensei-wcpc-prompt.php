@@ -100,7 +100,7 @@ class Sensei_WCPC_Prompt {
 			// Not edit course page.
 			|| 'edit-course' !== get_current_screen()->id
 			// No published course.
-			|| 0 === wp_count_posts( 'course' )->publish
+			|| ! $this->has_published_courses()
 			// WCPC is installed.
 			|| $this->is_wcpc_installed()
 			// WooCommerce is not active.
@@ -192,5 +192,30 @@ class Sensei_WCPC_Prompt {
 		}
 
 		return null !== Sensei_Plugins_Installation::instance()->get_installed_plugin_path( $this->wcpc_extension->plugin_file );
+	}
+
+	/**
+	 * Check if there are published courses.
+	 *
+	 * @return boolean
+	 */
+	private function has_published_courses() {
+		$course_args = [
+			'post_type'        => 'course',
+			'posts_per_page'   => 1,
+			'post_status'      => 'publish',
+			'suppress_filters' => 0,
+			'fields'           => 'ids',
+		];
+
+		// Ignores the sample course in the query.
+		$sample_course = get_page_by_path( Sensei_Data_Port_Manager::SAMPLE_COURSE_SLUG, OBJECT, 'course' );
+		if ( $sample_course ) {
+			$course_args['post__not_in'] = [ $sample_course->ID ];
+		}
+
+		$courses_query = new WP_Query( $course_args );
+
+		return 0 !== $courses_query->found_posts;
 	}
 }

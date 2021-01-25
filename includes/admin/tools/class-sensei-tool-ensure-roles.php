@@ -54,4 +54,13 @@ class Sensei_Tool_Ensure_Roles implements Sensei_Tool_Interface {
 
 		Sensei_Tools::instance()->add_user_message( __( 'Sensei LMS specific roles and capabilities have been set up again.', 'sensei-lms' ) );
 	}
+
+	/**
+	 * Is the tool currently available?
+	 *
+	 * @return bool True if tool is available.
+	 */
+	public function is_available() {
+		return true;
+	}
 }
