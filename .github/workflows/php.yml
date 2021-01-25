@@ -1,4 +1,4 @@
-name: PHP linting
+name: PHP Linting and Unit Tests
 
 on:
   pull_request:

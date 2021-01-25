@@ -1,0 +1,51 @@
+name: E2E
+
+on:
+  pull_request:
+    branches:
+      - master
+      - 'feature/**'
+      - 'release/**'
+
+jobs:
+  test:
+    name: E2E Tests
+    runs-on: ubuntu-16.04
+    strategy:
+      fail-fast: false
+      max-parallel: 10
+      matrix:
+        wp: [ 'latest' ]
+        php: [ '7.4' ]
+    env:
+      WP_VERSION: ${{ matrix.wp }}
+      PHP_VERSION: ${{ matrix.php }}
+    steps:
+      # clone the repository
+      - uses: actions/checkout@v2
+      # enable dependencies caching
+      - uses: actions/cache@v2
+        with:
+          path: ~/.npm/
+          key:  ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
+      - uses: actions/cache@v2
+        with:
+          path: node_modules/
+          key:  ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mysql
+          coverage: none
+      # run CI checks
+      - name: Install JS dependencies
+        run: npm ci
+      - name: Build assets
+        run: npm run build:assets
+      - name: Set up Docker
+        run: npm run e2e-docker:up
+      - name: Run tests
+        run: npm run test:e2e
+      - name: Clean up
+        run: npm run e2e-docker:down && echo "In case of E2E test failures, screenshots can be found in the slack channel `#evergreen-github`"
+        
