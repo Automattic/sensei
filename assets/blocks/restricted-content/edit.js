@@ -12,8 +12,8 @@ export const RestrictOptions = {
 };
 
 export const RestrictOptionLabels = {
-	[ RestrictOptions.ENROLLED ]: __( 'Enrolled Users', 'sensei-lms' ),
-	[ RestrictOptions.UNENROLLED ]: __( 'Unenrolled Users', 'sensei-lms' ),
+	[ RestrictOptions.ENROLLED ]: __( 'Enrolled', 'sensei-lms' ),
+	[ RestrictOptions.UNENROLLED ]: __( 'Not Enrolled', 'sensei-lms' ),
 	[ RestrictOptions.COURSE_COMPLETED ]: __(
 		'Course Completed',
 		'sensei-lms'
