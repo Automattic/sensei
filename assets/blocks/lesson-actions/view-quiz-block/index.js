@@ -9,10 +9,10 @@ export default createButtonBlockType( {
 	tagName: 'button',
 	settings: {
 		name: 'sensei-lms/button-view-quiz',
-		title: __( 'View quiz', 'sensei-lms' ),
+		title: __( 'View Quiz', 'sensei-lms' ),
 		parent: [ 'sensei-lms/lesson-actions' ],
 		description: __(
-			"Enable an enrolled user to take a lesson's quiz.",
+			'Enable an enrolled user to view the quiz.',
 			'sensei-lms'
 		),
 		keywords: [
@@ -22,7 +22,7 @@ export default createButtonBlockType( {
 		],
 		attributes: {
 			text: {
-				default: __( 'View quiz', 'sensei-lms' ),
+				default: __( 'View Quiz', 'sensei-lms' ),
 			},
 		},
 	},

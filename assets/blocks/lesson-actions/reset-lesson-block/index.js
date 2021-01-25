@@ -9,10 +9,10 @@ export default createButtonBlockType( {
 	tagName: 'button',
 	settings: {
 		name: 'sensei-lms/button-reset-lesson',
-		title: __( 'Reset lesson', 'sensei-lms' ),
+		title: __( 'Reset Lesson', 'sensei-lms' ),
 		parent: [ 'sensei-lms/lesson-actions' ],
 		description: __(
-			'Enable an enrolled user to reset their progress in the lesson.',
+			'Enable an enrolled user to reset their lesson progress.',
 			'sensei-lms'
 		),
 		keywords: [
@@ -25,7 +25,7 @@ export default createButtonBlockType( {
 		],
 		attributes: {
 			text: {
-				default: __( 'Reset lesson', 'sensei-lms' ),
+				default: __( 'Reset Lesson', 'sensei-lms' ),
 			},
 		},
 		styles: [

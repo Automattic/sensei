@@ -6,7 +6,7 @@ import edit from './edit';
 import save from './save';
 
 export default {
-	title: __( 'Lesson actions', 'sensei-lms' ),
+	title: __( 'Lesson Actions', 'sensei-lms' ),
 	description: __(
 		'Enable an enrolled user to perform specific actions for a lesson.',
 		'sensei-lms'

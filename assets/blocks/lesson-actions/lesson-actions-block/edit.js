@@ -41,7 +41,7 @@ const EditLessonActionsBlock = ( {
 		blocks: [
 			{
 				blockName: 'sensei-lms/button-reset-lesson',
-				label: __( 'Reset lesson', 'sensei-lms' ),
+				label: __( 'Reset Lesson', 'sensei-lms' ),
 			},
 		],
 	} );
