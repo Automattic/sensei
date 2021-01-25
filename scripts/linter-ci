@@ -46,7 +46,7 @@ rm -rf diffs/
 mkdir -p diffs/branch
 mkdir -p diffs/master
 
-base_branch=${TRAVIS_BRANCH:-master}
+base_branch=${GITHUB_BASE_REF:-master}
 
 echo "Getting merge base for ${base_branch}"
 
