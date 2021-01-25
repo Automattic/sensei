@@ -1,4 +1,4 @@
-name: PHP Linting and Unit Tests
+name: PHP Linting and Tests
 
 on:
   pull_request:
@@ -18,7 +18,11 @@ jobs:
       - uses: actions/cache@v2
         with:
           path: ~/.cache/composer/
-          key:  ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
+      - uses: actions/cache@v2
+        with:
+          path: vendor/
+          key: ${{ runner.os }}-vendor-${{ hashFiles('composer.lock') }}
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '7.3'
@@ -55,20 +59,14 @@ jobs:
     steps:
       # clone the repository
       - uses: actions/checkout@v2
-      # enable dependencies caching
-      - name: Cache composer deps
-        uses: actions/cache@v2
-        env:
-          cache-name: cache-composer-deps
+      - uses: actions/cache@v2
         with:
-          # composer cache files are stored in `~/.composer/cache/files/vendor/packagename` on Linux/macOS
-          path: ~/.composer/cache
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
-      # setup PHP, but without debug extensions for reasonable performance
+          path: ~/.cache/composer/
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
+      - uses: actions/cache@v2
+        with:
+          path: vendor/
+          key: ${{ runner.os }}-vendor-${{ hashFiles('composer.lock') }}
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
