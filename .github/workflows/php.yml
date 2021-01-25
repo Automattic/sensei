@@ -32,8 +32,12 @@ jobs:
         run: git checkout -b master refs/remotes/origin/master && git checkout -
       - name: Install PHP dependencies
         run: composer self-update --1 && composer install --no-ansi --no-interaction --prefer-dist --no-progress
-      - name: Run linter
+      - name: Check for new issues
         run: ./scripts/linter-ci
+      - name: Check for escaping and nonces
+        run: ./vendor/bin/phpcs -s --sniffs=WordPress.WP.I18n,Generic.PHP.Syntax,WordPress.Security.EscapeOutput,WordPress.Security.NonceVerification .
+      - name: Check WPCOM rules
+        run: ./vendor/bin/phpcs -sn --standard=./wpcom-phpcs.xml .
   test:
     name: PHP Unit Tests
     runs-on: ubuntu-16.04
