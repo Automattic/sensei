@@ -26,12 +26,10 @@ jobs:
       # enable dependencies caching
       - uses: actions/cache@v2
         with:
-          path: ~/.npm/
-          key:  ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
-      - uses: actions/cache@v2
-        with:
-          path: node_modules/
-          key:  ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
