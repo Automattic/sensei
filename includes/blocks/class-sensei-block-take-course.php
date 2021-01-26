@@ -52,7 +52,7 @@ class Sensei_Block_Take_Course {
 
 		if ( Sensei_Course::can_current_user_manually_enrol( $course_id ) ) {
 			if ( ! Sensei_Course::is_prerequisite_complete( $course_id ) ) {
-				Sensei()->notices->add_notice( Sensei()->course::get_course_prerequisite_message( $course_id ), 'info' );
+				Sensei()->notices->add_notice( Sensei()->course::get_course_prerequisite_message( $course_id ), 'info', 'sensei-take-course-prerequisite' );
 				$html = $this->render_disabled( $content );
 			} else {
 				$html = $this->render_with_start_course_form( $course_id, $content );
