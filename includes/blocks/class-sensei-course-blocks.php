@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Sensei_Course_Blocks
  */
-class Sensei_Course_Blocks {
+class Sensei_Course_Blocks extends Sensei_Blocks_Initializer {
 	/**
 	 * Course outline block.
 	 *
@@ -45,30 +45,11 @@ class Sensei_Course_Blocks {
 	 * Sensei_Course_Blocks constructor.
 	 */
 	public function __construct() {
+		parent::__construct( 'course' );
 		add_action( 'enqueue_block_assets', [ $this, 'enqueue_block_assets' ] );
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_block_editor_assets' ] );
 		add_filter( 'sensei_use_sensei_template', [ 'Sensei_Course_Blocks', 'skip_single_course_template' ] );
-		add_action( 'template_redirect', [ $this, 'maybe_initialize_blocks' ] );
-		add_action( 'current_screen', [ $this, 'maybe_initialize_blocks' ] );
-	}
 
-	/**
-	 * Check if course blocks should be initialized and do initialization.
-	 *
-	 * @access private
-	 */
-	public function maybe_initialize_blocks() {
-		if ( is_admin() ) {
-			$screen = get_current_screen();
-
-			if ( ! $screen->is_block_editor || 'course' !== $screen->post_type ) {
-				return;
-			}
-		} elseif ( 'course' !== get_post_type() ) {
-			return;
-		}
-
-		$this->initialize_blocks();
 	}
 
 	/**
@@ -123,7 +104,7 @@ class Sensei_Course_Blocks {
 	}
 
 	/**
-	 * Disable single course template if there is an outline block present.
+	 * Disable single course template if the course is block based.
 	 *
 	 * @access private
 	 *

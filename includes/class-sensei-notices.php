@@ -124,6 +124,8 @@ class Sensei_Notices {
 	 *
 	 * @param string $content The post content.
 	 *
+	 * @access private
+	 *
 	 * @return string The modified content.
 	 */
 	public function prepend_notices_to_content( string $content ) : string {
