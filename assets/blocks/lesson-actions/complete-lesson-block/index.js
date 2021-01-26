@@ -12,7 +12,7 @@ export default createButtonBlockType( {
 		parent: [ 'sensei-lms/lesson-actions' ],
 		title: __( 'Complete Lesson', 'sensei-lms' ),
 		description: __(
-			'Enable an enrolled user to mark the lesson as complete. The button is displayed when the user is enrolled and has completed any required quiz.',
+			'Enable an enrolled user to mark the lesson as complete. The button is displayed when the user is enrolled and there is no required quiz linked to the lesson.',
 			'sensei-lms'
 		),
 		keywords: [
