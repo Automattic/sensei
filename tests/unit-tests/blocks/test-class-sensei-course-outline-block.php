@@ -35,7 +35,11 @@ class Sensei_Course_Outline_Block_Test extends WP_UnitTestCase {
 		$post_content = file_get_contents( 'sample-data/outline-block-post-content.html', true );
 
 		$this->mockPostCourseStructure( [] );
-		$result = do_blocks( $post_content );
+
+		ob_start();
+		do_blocks( $post_content );
+		Sensei()->notices->maybe_print_notices();
+		$result = ob_get_clean();
 
 		$this->assertContains( 'There is no published content in this course yet.', $result );
 	}
