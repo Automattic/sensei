@@ -1,0 +1,14 @@
+{
+  "name": "sensei-lms/restricted-content",
+  "category": "sensei-lms",
+  "supports": {
+    "html": false,
+    "align": [ "wide", "full" ]
+  },
+  "attributes": {
+    "restrictionType": {
+      "type": "string",
+      "default": "enrolled"
+    }
+  }
+}

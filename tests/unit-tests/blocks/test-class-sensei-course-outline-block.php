@@ -8,19 +8,30 @@
 class Sensei_Course_Outline_Block_Test extends WP_UnitTestCase {
 
 	/**
+	 * Initialize the blocks once.
+	 */
+	public static function setUpBeforeClass() {
+		Sensei()->blocks->course->initialize_blocks();
+	}
+
+	/**
 	 * Set up the test.
 	 */
 	public function setUp() {
 		parent::setUp();
 		$this->factory = new Sensei_Factory();
 
-		Sensei()->blocks->course->outline->init();
+		Sensei()->blocks->course->outline->clear_block_content();
 	}
 
 	/**
 	 * Test that a message is shown when there is no content.
 	 */
 	public function testEmptyBlock() {
+		$property = new ReflectionProperty( 'Sensei_Notices', 'has_printed' );
+		$property->setAccessible( true );
+		$property->setValue( Sensei()->notices, false );
+
 		$post_content = file_get_contents( 'sample-data/outline-block-post-content.html', true );
 
 		$this->mockPostCourseStructure( [] );
@@ -172,7 +183,6 @@ class Sensei_Course_Outline_Block_Test extends WP_UnitTestCase {
 		unregister_block_type( 'sensei-lms/course-outline-module' );
 
 		$outline_block = new Sensei_Course_Outline_Block();
-		$outline_block->register_blocks();
 
 		$this->mockPostCourseStructure(
 			[

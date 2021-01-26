@@ -30,6 +30,11 @@ class Sensei_Block_Contact_Teacher_Test extends WP_UnitTestCase {
 		$this->login_as_student();
 	}
 
+	public function tearDown() {
+		parent::tearDown();
+		WP_Block_Type_Registry::get_instance()->unregister( 'sensei-lms/button-contact-teacher' );
+	}
+
 	/**
 	 * Test the saved block content is used for the button, with link added to open the form.
 	 */
@@ -44,11 +49,19 @@ class Sensei_Block_Contact_Teacher_Test extends WP_UnitTestCase {
 	 * Test success message is displayed after submitting.
 	 */
 	public function testSuccessMessageDisplayed() {
+		$property = new ReflectionProperty( 'Sensei_Notices', 'has_printed' );
+		$property->setAccessible( true );
+		$property->setValue( Sensei()->notices, false );
+
 		$_GET['send'] = 'complete';
 
-		$output = $this->block->render_contact_teacher_block( [], '<div><a class="wp-block-button__link">Contact teacher</a></div>' );
+		$this->block->render_contact_teacher_block( [], '<div><a class="wp-block-button__link">Contact teacher</a></div>' );
 
-		$this->assertContains( 'Your private message has been sent.', $output );
+		ob_start();
+		Sensei()->notices->maybe_print_notices();
+		$notices = ob_get_clean();
+
+		$this->assertContains( 'Your private message has been sent.', $notices );
 	}
 
 	/**

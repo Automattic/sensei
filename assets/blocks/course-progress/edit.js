@@ -9,7 +9,7 @@ import {
 } from '../../shared/blocks/settings';
 import { COURSE_STATUS_STORE } from '../course-outline/status-store';
 import { CourseProgressSettings } from './settings';
-import useToggleLegacyMetaboxes from '../use-toggle-legacy-metaboxes';
+import ToggleLegacyCourseMetaboxesWrapper from '../toggle-legacy-course-metaboxes-wrapper';
 
 /**
  * Edit course progress bar component.
@@ -23,19 +23,18 @@ import useToggleLegacyMetaboxes from '../use-toggle-legacy-metaboxes';
  * @param {Object}   props.attributes              Component attributes.
  * @param {number}   props.attributes.height       The height of the progress bar.
  * @param {number}   props.attributes.borderRadius The border radius of the progress bar.
- * @param {boolean}  props.attributes.isPreview    Is preview flag.
  * @param {Function} props.setAttributes           Callback to set the component attributes.
  */
-export const EditCourseProgressBlock = ( {
-	className,
-	barColor,
-	defaultBarColor,
-	barBackgroundColor,
-	textColor,
-	attributes: { height, borderRadius, isPreview },
-	setAttributes,
-} ) => {
-	useToggleLegacyMetaboxes( { ignoreToggle: isPreview } );
+export const EditCourseProgressBlock = ( props ) => {
+	const {
+		className,
+		barColor,
+		defaultBarColor,
+		barBackgroundColor,
+		textColor,
+		attributes: { height, borderRadius },
+		setAttributes,
+	} = props;
 
 	const { totalLessonsCount, completedLessonsCount } = useSelect(
 		( select ) => select( COURSE_STATUS_STORE ).getLessonCounts(),
@@ -79,7 +78,7 @@ export const EditCourseProgressBlock = ( {
 	};
 
 	return (
-		<>
+		<ToggleLegacyCourseMetaboxesWrapper { ...props }>
 			<div { ...wrapperAttributes }>
 				<section className="wp-block-sensei-lms-progress-heading">
 					<div className="wp-block-sensei-lms-progress-heading__lessons">
@@ -109,7 +108,7 @@ export const EditCourseProgressBlock = ( {
 					setAttributes( { height: newHeight } )
 				}
 			/>
-		</>
+		</ToggleLegacyCourseMetaboxesWrapper>
 	);
 };
 

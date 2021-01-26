@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Sensei_Course_Blocks
  */
-class Sensei_Course_Blocks {
+class Sensei_Course_Blocks extends Sensei_Blocks_Initializer {
 	/**
 	 * Course outline block.
 	 *
@@ -42,21 +42,34 @@ class Sensei_Course_Blocks {
 	public $take_course;
 
 	/**
-	 * Sensei_Blocks constructor .
-	 *
-	 * @param Sensei_Main $sensei
+	 * Sensei_Course_Blocks constructor.
 	 */
-	public function __construct( $sensei ) {
-
+	public function __construct() {
+		parent::__construct( 'course' );
 		add_action( 'enqueue_block_assets', [ $this, 'enqueue_block_assets' ] );
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_block_editor_assets' ] );
 		add_filter( 'sensei_use_sensei_template', [ 'Sensei_Course_Blocks', 'skip_single_course_template' ] );
 
-		// Init blocks.
+	}
+
+	/**
+	 * Initialize blocks that are used in course pages.
+	 */
+	public function initialize_blocks() {
 		$this->outline         = new Sensei_Course_Outline_Block();
 		$this->progress        = new Sensei_Course_Progress_Block();
 		$this->contact_teacher = new Sensei_Block_Contact_Teacher();
 		$this->take_course     = new Sensei_Block_Take_Course();
+		new Sensei_Restricted_Content_Block();
+
+		$post_type_object = get_post_type_object( 'course' );
+
+		$post_type_object->template = [
+			[ 'sensei-lms/button-take-course' ],
+			[ 'sensei-lms/button-contact-teacher' ],
+			[ 'sensei-lms/course-progress' ],
+			[ 'sensei-lms/course-outline' ],
+		];
 	}
 
 	/**
@@ -86,12 +99,12 @@ class Sensei_Course_Blocks {
 			return;
 		}
 
-		Sensei()->assets->enqueue( 'sensei-blocks', 'blocks/index.js', [], true );
+		Sensei()->assets->enqueue( 'sensei-single-course-blocks', 'blocks/sensei-single-course-blocks.js', [], true );
 		Sensei()->assets->enqueue( 'sensei-single-course-editor', 'blocks/single-course.editor.css' );
 	}
 
 	/**
-	 * Disable single course template if there is an outline block present.
+	 * Disable single course template if the course is block based.
 	 *
 	 * @access private
 	 *

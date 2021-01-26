@@ -3446,34 +3446,45 @@ class Sensei_Course {
 	 * @since 1.9.10
 	 */
 	public static function prerequisite_complete_message() {
-		if ( ! self::is_prerequisite_complete( get_the_ID(), get_current_user_id() ) ) {
-			$course_prerequisite_id   = absint( get_post_meta( get_the_ID(), '_course_prerequisite', true ) );
-			$course_title             = get_the_title( $course_prerequisite_id );
-			$prerequisite_course_link = '<a href="' . esc_url( get_permalink( $course_prerequisite_id ) )
-				. '" title="'
-				. sprintf(
-					// translators: Placeholder $1$s is the course title.
-					esc_attr__( 'You must first complete: %1$s', 'sensei-lms' ),
-					$course_title
-				)
-				. '">' . $course_title . '</a>';
-
-			$complete_prerequisite_message = sprintf(
-				// translators: Placeholder $1$s is the course title.
-				esc_html__( 'You must first complete %1$s before viewing this course', 'sensei-lms' ),
-				$prerequisite_course_link
-			);
-
-			/**
-			 * Filter sensei_course_complete_prerequisite_message.
-			 *
-			 * @since 1.9.10
-			 * @param string $complete_prerequisite_message the message to filter
-			 */
-			$filtered_message = apply_filters( 'sensei_course_complete_prerequisite_message', $complete_prerequisite_message );
-
-			Sensei()->notices->add_notice( $filtered_message, 'info' );
+		if ( ! self::is_prerequisite_complete( get_the_ID() ) ) {
+			$message = self::get_course_prerequisite_message( get_the_ID() );
+			Sensei()->notices->add_notice( $message, 'info' );
 		}
+	}
+
+	/**
+	 * Generate the HTML of the course prerequisite notice.
+	 *
+	 * @param int $course_id The course id.
+	 *
+	 * @return string The HTML.
+	 */
+	public static function get_course_prerequisite_message( int $course_id ) : string {
+		$course_prerequisite_id   = absint( get_post_meta( $course_id, '_course_prerequisite', true ) );
+		$course_title             = get_the_title( $course_prerequisite_id );
+		$prerequisite_course_link = '<a href="' . esc_url( get_permalink( $course_prerequisite_id ) )
+			. '" title="'
+			. sprintf(
+				// translators: Placeholder $1$s is the course title.
+				esc_attr__( 'You must first complete: %1$s', 'sensei-lms' ),
+				$course_title
+			)
+			. '">' . $course_title . '</a>';
+
+		$complete_prerequisite_message = sprintf(
+			// translators: Placeholder $1$s is the course title.
+			esc_html__( 'You must first complete %1$s before taking this course.', 'sensei-lms' ),
+			$prerequisite_course_link
+		);
+
+		/**
+		 * Filter sensei_course_complete_prerequisite_message.
+		 *
+		 * @param string $complete_prerequisite_message the message to filter
+		 *
+		 * @since 1.9.10
+		 */
+		return apply_filters( 'sensei_course_complete_prerequisite_message', $complete_prerequisite_message );
 	}
 
 	/**
@@ -3581,15 +3592,16 @@ class Sensei_Course {
 		$product_count = empty( $product_ids ) ? 0 : count( array_filter( $product_ids, 'is_numeric' ) );
 
 		$event_properties = [
-			'course_id'                 => $course_id,
-			'has_outline_block'         => has_block( 'sensei-lms/course-outline', $content ) ? 1 : 0,
-			'has_progress_block'        => has_block( 'sensei-lms/course-progress', $content ) ? 1 : 0,
-			'has_take_course_block'     => has_block( 'sensei-lms/button-take-course', $content ) ? 1 : 0,
-			'has_contact_teacher_block' => has_block( 'sensei-lms/button-contact-teacher', $content ) ? 1 : 0,
-			'module_count'              => count( wp_get_post_terms( $course_id, 'module' ) ),
-			'lesson_count'              => $this->course_lesson_count( $course_id ),
-			'product_count'             => $product_count,
-			'sample_course'             => Sensei_Data_Port_Manager::SAMPLE_COURSE_SLUG === $post->post_name ? 1 : 0,
+			'course_id'                    => $course_id,
+			'has_outline_block'            => has_block( 'sensei-lms/course-outline', $content ) ? 1 : 0,
+			'has_progress_block'           => has_block( 'sensei-lms/course-progress', $content ) ? 1 : 0,
+			'has_take_course_block'        => has_block( 'sensei-lms/button-take-course', $content ) ? 1 : 0,
+			'has_contact_teacher_block'    => has_block( 'sensei-lms/button-contact-teacher', $content ) ? 1 : 0,
+			'has_restricted_content_block' => has_block( 'sensei-lms/restricted-content', $content ) ? 1 : 0,
+			'module_count'                 => count( wp_get_post_terms( $course_id, 'module' ) ),
+			'lesson_count'                 => $this->course_lesson_count( $course_id ),
+			'product_count'                => $product_count,
+			'sample_course'                => Sensei_Data_Port_Manager::SAMPLE_COURSE_SLUG === $post->post_name ? 1 : 0,
 		];
 
 		sensei_log_event( 'course_update', $event_properties );

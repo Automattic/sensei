@@ -1,4 +1,7 @@
 import { RichText } from '@wordpress/block-editor';
+import { getBlockDefaultClassName } from '@wordpress/blocks';
+import classnames from 'classnames';
+
 import { getButtonProps, getButtonWrapperProps } from './button-props';
 
 /**
@@ -8,11 +11,17 @@ import { getButtonProps, getButtonWrapperProps } from './button-props';
  * @param {Object} props.attributes Block attributes.
  * @param {string} props.className  Classname.
  * @param {string} props.tagName    Output HTML tag name.
+ * @param {string} props.blockName  Block name.
  */
-export const SaveButtonBlock = ( { attributes, className, tagName } ) => {
-	const { text } = attributes;
+export const SaveButtonBlock = ( {
+	attributes,
+	className,
+	tagName,
+	blockName,
+} ) => {
+	const { text, inContainer, align } = attributes;
 
-	return (
+	const content = (
 		<div { ...getButtonWrapperProps( { className, attributes } ) }>
 			<RichText.Content
 				{ ...getButtonProps( { attributes } ) }
@@ -21,4 +30,22 @@ export const SaveButtonBlock = ( { attributes, className, tagName } ) => {
 			/>
 		</div>
 	);
+
+	if ( inContainer ) {
+		return (
+			<div
+				className={ classnames(
+					'sensei-buttons-container__button-block',
+					getBlockDefaultClassName( blockName ) + '__wrapper',
+					{
+						[ `sensei-buttons-container__button-align-${ align }` ]: align,
+					}
+				) }
+			>
+				{ content }
+			</div>
+		);
+	}
+
+	return content;
 };

@@ -1,5 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { merge, find } from 'lodash';
+import classnames from 'classnames';
+import { getBlockDefaultClassName } from '@wordpress/blocks';
 
 import './color-hooks';
 import { EditButtonBlock } from './edit-button';
@@ -30,10 +32,15 @@ export const BlockStyles = {
  *
  * Settings are merged into block settings, the rest of the options are passed on to the save and edit components.
  *
- * @param {Object} opts
- * @param {Object} opts.settings Block settings.
+ * @param {Object}   opts
+ * @param {Object}   opts.settings    Block settings.
+ * @param {Function} opts.EditWrapper Custom edit wrapper component.
  */
-export const createButtonBlockType = ( { settings, ...options } ) => {
+export const createButtonBlockType = ( {
+	settings,
+	EditWrapper,
+	...options
+} ) => {
 	options = {
 		tagName: 'a',
 		alignmentOptions: {
@@ -83,6 +90,10 @@ export const createButtonBlockType = ( { settings, ...options } ) => {
 					type: 'boolean',
 					default: false,
 				},
+				inContainer: {
+					type: 'boolean',
+					default: false,
+				},
 			},
 			supports: {
 				color: {
@@ -97,20 +108,43 @@ export const createButtonBlockType = ( { settings, ...options } ) => {
 			icon,
 			styles,
 			edit( props ) {
-				return (
+				const content = (
 					<EditButtonBlockWithBlockStyle
 						{ ...props }
 						{ ...options }
 					/>
 				);
+
+				if ( EditWrapper ) {
+					return <EditWrapper { ...props }>{ content }</EditWrapper>;
+				}
+
+				return content;
 			},
 			save( props ) {
 				return (
 					<SaveButtonBlockWithBlockStyle
 						{ ...props }
 						{ ...options }
+						blockName={ settings.name }
 					/>
 				);
+			},
+			getEditWrapperProps( { inContainer, align } ) {
+				if ( inContainer ) {
+					return {
+						className: classnames(
+							'sensei-buttons-container__button-block',
+							getBlockDefaultClassName( settings.name ) +
+								'__wrapper',
+							{
+								[ `sensei-buttons-container__button-align-${ align }` ]: align,
+							}
+						),
+					};
+				}
+
+				return {};
 			},
 			example: {
 				attributes: {

@@ -38,6 +38,11 @@ class Sensei_Block_Take_Course_Test extends WP_UnitTestCase {
 
 	}
 
+	public function tearDown() {
+		parent::tearDown();
+		WP_Block_Type_Registry::get_instance()->unregister( 'sensei-lms/button-take-course' );
+	}
+
 	/**
 	 * The take course block is registered and renders content.
 	 */
@@ -101,6 +106,10 @@ class Sensei_Block_Take_Course_Test extends WP_UnitTestCase {
 	 * When the course has an unmet prerequisite, button is disabled with a message.
 	 */
 	public function testDisabledWhenPrerequisiteUnmet() {
+		$property = new ReflectionProperty( 'Sensei_Notices', 'has_printed' );
+		$property->setAccessible( true );
+		$property->setValue( Sensei()->notices, false );
+
 		$course_pre = $this->factory->course->create_and_get();
 		add_post_meta( $this->course->ID, '_course_prerequisite', $course_pre->ID );
 
@@ -108,10 +117,14 @@ class Sensei_Block_Take_Course_Test extends WP_UnitTestCase {
 
 		$result = $this->block->render_take_course_block( [], '<button>Take Course</button>' );
 
-		$notice = '/You must first complete <a .*>' . preg_quote( $course_pre->post_title, '/' ) . '<\/a> before taking this course/';
-
 		$this->assertContains( '<button disabled="disabled">Take Course</button>', $result, 'Button should be disabled' );
-		$this->assertRegExp( $notice, $result, 'Should contain notice of the prerequisite course' );
+
+		ob_start();
+		Sensei()->notices->maybe_print_notices();
+		$actual_notices = ob_get_clean();
+		$notice         = '/You must first complete <a .*>' . preg_quote( $course_pre->post_title, '/' ) . '<\/a> before taking this course/';
+
+		$this->assertRegExp( $notice, $actual_notices, 'Should contain notice of the prerequisite course' );
 
 	}
 

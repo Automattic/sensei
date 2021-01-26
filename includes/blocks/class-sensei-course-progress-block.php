@@ -18,7 +18,7 @@ class Sensei_Course_Progress_Block {
 	 * Sensei_Course_Progress_Block constructor.
 	 */
 	public function __construct() {
-		add_action( 'init', [ $this, 'register_block' ] );
+		$this->register_block();
 	}
 
 	/**

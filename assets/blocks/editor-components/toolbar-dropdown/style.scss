@@ -1,0 +1,11 @@
+.sensei-toolbar-dropdown-item-checked {
+	position: relative;
+	padding-right: 30px;
+	&::after {
+		font-family: dashicons;
+		content: "\f147";
+		font-size: 20px;
+		position: absolute;
+		right: 0;
+	}
+}

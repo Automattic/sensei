@@ -57,39 +57,20 @@ class Sensei_Course_Outline_Block {
 	 * Sensei_Course_Outline_Block constructor.
 	 */
 	public function __construct() {
-
-		add_action( 'init', [ $this, 'register_course_template' ], 101 );
-		add_action( 'init', [ $this, 'register_blocks' ] );
-		add_action( 'init', [ $this, 'init' ] );
-
 		$this->course = new Sensei_Course_Outline_Course_Block();
 		$this->lesson = new Sensei_Course_Outline_Lesson_Block();
 		$this->module = new Sensei_Course_Outline_Module_Block();
+
+		$this->register_blocks();
 	}
 
 	/**
-	 * Initialize block instance.
+	 * Resets block content.
 	 *
 	 * @access private
 	 */
-	public function init() {
+	public function clear_block_content() {
 		$this->block_content = null;
-	}
-
-	/**
-	 * Register course template.
-	 *
-	 * @access private
-	 */
-	public function register_course_template() {
-		$post_type_object = get_post_type_object( 'course' );
-
-		$post_type_object->template = [
-			[ 'sensei-lms/button-take-course' ],
-			[ 'sensei-lms/button-contact-teacher' ],
-			[ 'sensei-lms/course-progress' ],
-			[ 'sensei-lms/course-outline' ],
-		];
 	}
 
 	/**

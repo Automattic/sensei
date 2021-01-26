@@ -51,27 +51,21 @@ class Sensei_Course_Outline_Course_Block {
 		$post_id    = $outline['post_id'];
 
 		if ( empty( $blocks ) ) {
-			return '
-				<div class="sensei-message info">
-					' . __( 'There is no published content in this course yet.', 'sensei-lms' ) . '
-				</div>
-			';
+			Sensei()->notices->add_notice( __( 'There is no published content in this course yet.', 'sensei-lms' ), 'info', 'sensei-course-outline-no-content' );
+			return '';
 		}
 
 		$class_name = Sensei_Block_Helpers::block_class_with_default_style( $attributes );
 		$css        = Sensei_Block_Helpers::build_styles( $attributes );
 
-		$notice = '';
-
 		if ( ! empty( $attributes['preview_drafts'] ) ) {
-			$notice = '<div class="sensei-message info">' . esc_html__( 'One or more lessons in this course are not published. Unpublished lessons and empty modules are only displayed in preview mode and will not be displayed to learners.', 'sensei-lms' ) . '</div>';
+			Sensei()->notices->add_notice( __( 'One or more lessons in this course are not published. Unpublished lessons and empty modules are only displayed in preview mode and will not be displayed to learners.', 'sensei-lms' ), 'info', 'sensei-course-outline-drafts' );
 		}
 
 		$icons = $this->render_svg_icon_library();
 
 		return '
 			' . ( ! empty( $blocks ) ? $icons : '' ) . '
-			' . $notice . '
 			<section ' . Sensei_Block_Helpers::render_style_attributes( [ 'wp-block-sensei-lms-course-outline', 'sensei-block-wrapper', $class_name ], $css ) . '>
 				' .
 			implode(
