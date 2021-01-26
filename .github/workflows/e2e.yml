@@ -20,6 +20,9 @@ jobs:
     env:
       WP_VERSION: ${{ matrix.wp }}
       PHP_VERSION: ${{ matrix.php }}
+      E2E_SLACKBOT_USER: 'Sensei e2e Reporter'
+      E2E_CHANNEL_NAME: '${{ secrets.E2E_CHANNEL_NAME }}'
+      E2E_SLACK_TOKEN: '${{ secrets.E2E_SLACK_TOKEN }}'
     steps:
       # clone the repository
       - uses: actions/checkout@v2
