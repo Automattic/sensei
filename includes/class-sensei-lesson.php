@@ -4471,11 +4471,7 @@ class Sensei_Lesson {
 					echo '<div class="sensei-message ' . esc_attr( $status['box_class'] ) . '">' .
 						wp_kses_post( $status['message'] ) . '</div>';
 				}
-
-				if ( $has_quiz_questions ) {
-					// echo $status['extra'];
-				} // End If Statement
-			} // End If Statement
+			}
 		}
 
 	}
