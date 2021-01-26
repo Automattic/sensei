@@ -33,6 +33,8 @@ class Sensei_Next_Lesson_Block {
 	 * @param array  $attributes The block attributes.
 	 * @param string $content    The block content.
 	 *
+	 * @access private
+	 *
 	 * @return string The block HTML.
 	 */
 	public function render( array $attributes, string $content ) : string {
