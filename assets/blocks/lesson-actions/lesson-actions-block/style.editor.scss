@@ -2,23 +2,23 @@
 	&__preview-completed {
 		.wp-block-sensei-lms-button-complete-lesson,
 		.wp-block-sensei-lms-button-view-quiz {
-			opacity: 10%;
+			opacity: 0.1;
 		}
 	}
 	&__preview-in-progress {
 		.wp-block-sensei-lms-button-reset-lesson,
 		.wp-block-sensei-lms-button-next-lesson {
-			opacity: 10%;
+			opacity: 0.1;
 		}
 	}
 	&__no-quiz {
 		.wp-block-sensei-lms-button-view-quiz {
-			opacity: 10%;
+			opacity: 0.1;
 		}
 	}
 	&__complete_lessons-not-allowed {
 		.wp-block-sensei-lms-button-complete-lesson {
-			opacity: 10%;
+			opacity: 0.1;
 		}
 	}
 }
