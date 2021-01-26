@@ -70,16 +70,24 @@ class Sensei_Notices {
 	 *  Add a notice to the array of notices for display at a later stage.
 	 *
 	 * @param string $content Content.
-	 * @param string $type Defaults to alert options( alert, tick , download , info   ).
+	 * @param string $type    Defaults to alert options( alert, tick , download , info   ).
+	 * @param string $key     Notices with the same key will be overwritten.
 	 *
 	 * @return void
 	 */
-	public function add_notice( $content, $type = 'alert' ) {
+	public function add_notice( string $content, string $type = 'alert', string $key = null ) {
 		// append the new notice.
-		$this->notices[] = array(
-			'content' => $content,
-			'type'    => $type,
-		);
+		if ( null === $key ) {
+			$this->notices[] = [
+				'content' => $content,
+				'type'    => $type,
+			];
+		} else {
+			$this->notices[ $key ] = [
+				'content' => $content,
+				'type'    => $type,
+			];
+		}
 
 		// if a notice is added after we've printed print it immediately.
 		if ( $this->has_printed ) {
@@ -123,6 +131,8 @@ class Sensei_Notices {
 	 * Adds the notices before main content.
 	 *
 	 * @param string $content The post content.
+	 *
+	 * @access private
 	 *
 	 * @return string The modified content.
 	 */
