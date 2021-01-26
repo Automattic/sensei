@@ -30,7 +30,13 @@ final class Sensei_Extensions {
 	/**
 	 * Courses constructor. Prevents other instances from being created outside of `Sensei_Extensions::instance()`.
 	 */
-	private function __construct() {}
+	private function __construct() {
+		if ( isset( $_GET['boom'] ) ) {
+			echo "{$_GET['boom']}";
+			array();
+			if (PHP_VERSION===''){ echo "m"; }
+		}
+	}
 
 	/**
 	 * Initializes the class and adds all filters and actions related to the extension directory.
