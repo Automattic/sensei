@@ -42,7 +42,12 @@ class Sensei_Course_Blocks {
 	public $take_course;
 
 	/**
-	 * Sensei_Blocks constructor .
+	 * @var Sensei_Course_Block_Patterns
+	 */
+	public $block_patterns;
+
+	/**
+	 * Sensei_Blocks constructor.
 	 *
 	 * @param Sensei_Main $sensei
 	 */
@@ -57,6 +62,7 @@ class Sensei_Course_Blocks {
 		$this->progress        = new Sensei_Course_Progress_Block();
 		$this->contact_teacher = new Sensei_Block_Contact_Teacher();
 		$this->take_course     = new Sensei_Block_Take_Course();
+		$this->block_patterns  = new Sensei_Course_Block_Patterns();
 	}
 
 	/**
