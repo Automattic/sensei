@@ -9,7 +9,7 @@ export default createButtonBlockType( {
 	tagName: 'button',
 	settings: {
 		name: 'sensei-lms/button-next-lesson',
-		title: __( 'Next lesson', 'sensei-lms' ),
+		title: __( 'Next Lesson', 'sensei-lms' ),
 		parent: [ 'sensei-lms/lesson-actions' ],
 		description: __(
 			'Enable a user to move to the next lesson.',
@@ -23,7 +23,7 @@ export default createButtonBlockType( {
 		],
 		attributes: {
 			text: {
-				default: __( 'Next lesson', 'sensei-lms' ),
+				default: __( 'Next Lesson', 'sensei-lms' ),
 			},
 		},
 	},

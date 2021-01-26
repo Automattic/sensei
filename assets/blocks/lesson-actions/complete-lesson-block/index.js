@@ -10,7 +10,7 @@ export default createButtonBlockType( {
 	settings: {
 		name: 'sensei-lms/button-complete-lesson',
 		parent: [ 'sensei-lms/lesson-actions' ],
-		title: __( 'Complete lesson', 'sensei-lms' ),
+		title: __( 'Complete Lesson', 'sensei-lms' ),
 		description: __(
 			'Enable an enrolled user to mark the lesson as complete.',
 			'sensei-lms'
@@ -23,7 +23,7 @@ export default createButtonBlockType( {
 		],
 		attributes: {
 			text: {
-				default: __( 'Complete lesson', 'sensei-lms' ),
+				default: __( 'Complete Lesson', 'sensei-lms' ),
 			},
 		},
 	},
