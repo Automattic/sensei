@@ -14,8 +14,8 @@ import { getBlockDefaultClassName } from '@wordpress/blocks';
  * Internal dependencies
  */
 import './color-hooks';
-import Edit from './edit';
-import Save from './save';
+import ButtonEdit from './button-edit';
+import ButtonSave from './button-save';
 import { button as icon } from '../../icons/wordpress-icons';
 import { withDefaultBlockStyle } from '../../shared/blocks/settings';
 
@@ -67,10 +67,14 @@ export const createButtonBlockType = ( {
 	const defaultStyle = find( styles, 'isDefault' )?.name;
 
 	// eslint-disable-next-line @wordpress/no-unused-vars-before-return -- We don't wanna recreate the component every edit render.
-	const EditWithBlockStyle = withDefaultBlockStyle( defaultStyle )( Edit );
+	const ButtonEditWithBlockStyle = withDefaultBlockStyle( defaultStyle )(
+		ButtonEdit
+	);
 
 	// eslint-disable-next-line @wordpress/no-unused-vars-before-return -- We don't wanna recreate the component every edit render.
-	const SaveWithBlockStyle = withDefaultBlockStyle( defaultStyle )( Save );
+	const ButtonSaveWithBlockStyle = withDefaultBlockStyle( defaultStyle )(
+		ButtonSave
+	);
 
 	return merge(
 		{
@@ -115,7 +119,7 @@ export const createButtonBlockType = ( {
 			styles,
 			edit( props ) {
 				const content = (
-					<EditWithBlockStyle { ...props } { ...options } />
+					<ButtonEditWithBlockStyle { ...props } { ...options } />
 				);
 
 				if ( EditWrapper ) {
@@ -126,7 +130,7 @@ export const createButtonBlockType = ( {
 			},
 			save( props ) {
 				return (
-					<SaveWithBlockStyle
+					<ButtonSaveWithBlockStyle
 						{ ...props }
 						{ ...options }
 						blockName={ settings.name }
