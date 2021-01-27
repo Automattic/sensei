@@ -51,10 +51,27 @@ abstract class Sensei_Blocks_Initializer {
 		}
 
 		$this->initialize_blocks();
+
+		add_action( 'enqueue_block_assets', [ $this, 'enqueue_block_assets' ] );
+		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_block_editor_assets' ] );
 	}
 
 	/**
 	 * Initializes the blocks.
 	 */
 	abstract public function initialize_blocks();
+
+	/**
+	 * Enqueue frontend and editor assets.
+	 *
+	 * @access private
+	 */
+	abstract public function enqueue_block_assets();
+
+	/**
+	 * Enqueue editor assets.
+	 *
+	 * @access private
+	 */
+	abstract public function enqueue_block_editor_assets();
 }

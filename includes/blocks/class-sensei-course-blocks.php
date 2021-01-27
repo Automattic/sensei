@@ -45,8 +45,6 @@ class Sensei_Course_Blocks extends Sensei_Blocks_Initializer {
 	 * Sensei_Course_Blocks constructor.
 	 */
 	public function __construct() {
-		add_action( 'enqueue_block_assets', [ $this, 'enqueue_block_assets' ] );
-		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_block_editor_assets' ] );
 		parent::__construct( [ 'course' ] );
 		add_filter( 'sensei_use_sensei_template', [ 'Sensei_Course_Blocks', 'skip_single_course_template' ] );
 
@@ -78,9 +76,6 @@ class Sensei_Course_Blocks extends Sensei_Blocks_Initializer {
 	 * @access private
 	 */
 	public function enqueue_block_assets() {
-		if ( 'course' !== get_post_type() ) {
-			return;
-		}
 
 		Sensei()->assets->enqueue( 'sensei-single-course', 'blocks/single-course.css' );
 
@@ -95,9 +90,6 @@ class Sensei_Course_Blocks extends Sensei_Blocks_Initializer {
 	 * @access private
 	 */
 	public function enqueue_block_editor_assets() {
-		if ( 'course' !== get_post_type() ) {
-			return;
-		}
 
 		Sensei()->assets->enqueue( 'sensei-single-course-blocks', 'blocks/sensei-single-course-blocks.js', [], true );
 		Sensei()->assets->enqueue( 'sensei-single-course-editor', 'blocks/single-course.editor.css' );
