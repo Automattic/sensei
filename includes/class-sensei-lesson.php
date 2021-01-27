@@ -4704,20 +4704,21 @@ class Sensei_Lesson {
 	 *
 	 * @return bool
 	 */
-	public function has_sensei_blocks( $lesson ) {
+	public function has_sensei_blocks( $lesson = null ) {
 		$lesson = get_post( $lesson );
 
 		$lesson_blocks = [
 			'sensei-lms/lesson-actions',
+			'sensei-lms/button-contact-teacher',
 		];
 
 		foreach ( $lesson_blocks as $block ) {
 			if ( has_block( $block, $lesson ) ) {
-				return false;
+				return true;
 			}
 		}
 
-		return true;
+		return false;
 	}
 }
 
