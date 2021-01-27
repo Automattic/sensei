@@ -17,19 +17,20 @@ abstract class Sensei_Blocks_Initializer {
 	/**
 	 * The post type to initialize blocks for.
 	 *
-	 * @var $post_type
+	 * @var array
 	 */
-	private $post_type;
+	private $post_types;
 
 	/**
 	 * Sensei_Blocks_Initializer constructor.
 	 *
-	 * @param string $post_type The post type to initialize blocks for.
+	 * @param array $post_types The post type to initialize blocks for.
 	 */
-	public function __construct( $post_type ) {
+	public function __construct( array $post_types ) {
 		add_action( 'template_redirect', [ $this, 'maybe_initialize_blocks' ] );
 		add_action( 'current_screen', [ $this, 'maybe_initialize_blocks' ] );
-		$this->post_type = $post_type;
+
+		$this->post_types = $post_types;
 	}
 
 	/**
@@ -42,10 +43,10 @@ abstract class Sensei_Blocks_Initializer {
 			$screen = get_current_screen();
 
 			// Init blocks.
-			if ( null === $screen || ! $screen->is_block_editor || $this->post_type !== $screen->post_type ) {
+			if ( null === $screen || ! $screen->is_block_editor || ! in_array( $screen->post_type, $this->post_types, true ) ) {
 				return;
 			}
-		} elseif ( get_post_type() !== $this->post_type ) {
+		} elseif ( ! in_array( get_post_type(), $this->post_types, true ) ) {
 			return;
 		}
 

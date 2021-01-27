@@ -45,9 +45,9 @@ class Sensei_Course_Blocks extends Sensei_Blocks_Initializer {
 	 * Sensei_Course_Blocks constructor.
 	 */
 	public function __construct() {
-		parent::__construct( 'course' );
 		add_action( 'enqueue_block_assets', [ $this, 'enqueue_block_assets' ] );
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_block_editor_assets' ] );
+		parent::__construct( [ 'course' ] );
 		add_filter( 'sensei_use_sensei_template', [ 'Sensei_Course_Blocks', 'skip_single_course_template' ] );
 
 	}

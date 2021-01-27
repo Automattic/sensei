@@ -17,10 +17,10 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 	 * Sensei_Blocks constructor.
 	 */
 	public function __construct() {
-		parent::__construct( 'lesson' );
 
 		add_action( 'enqueue_block_assets', [ $this, 'enqueue_block_assets' ] );
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_block_editor_assets' ] );
+		parent::__construct( [ 'lesson' ] );
 	}
 
 	/**
