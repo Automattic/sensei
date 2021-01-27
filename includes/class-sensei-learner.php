@@ -300,6 +300,8 @@ class Sensei_Learner {
 		 *
 		 * @param {array} $query_args  The query args.
 		 * @param {int}   $user_id     The user id.
+		 *
+		 * @return {array} Query arguments.
 		 */
 		return apply_filters( 'sensei_learner_enrolled_courses_args', $query_args, $user_id );
 	}
