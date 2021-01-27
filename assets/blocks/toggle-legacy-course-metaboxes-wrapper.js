@@ -16,7 +16,7 @@ const ToggleLegacyCourseMetaboxesWrapper = ( {
 	children,
 } ) => {
 	useEffect( () => {
-		if ( isPreview ) {
+		if ( isPreview || ! window.sensei_toggle_legacy_metaboxes ) {
 			return;
 		}
 
