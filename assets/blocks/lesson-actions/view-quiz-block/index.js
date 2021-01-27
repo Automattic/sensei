@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { createButtonBlockType } from '../../../button';
+import { createButtonBlockType } from '../../button';
 
 /**
  * View quiz button block.

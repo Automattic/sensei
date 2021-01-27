@@ -16,7 +16,7 @@ import {
 	RestrictOptions,
 	RestrictOptionLabels,
 } from './restricted-content-edit';
-import ToolbarDropdown from '../../editor-components/toolbar-dropdown';
+import ToolbarDropdown from '../editor-components/toolbar-dropdown';
 
 /**
  * Check if the current block is the only one that is selected.

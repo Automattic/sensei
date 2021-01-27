@@ -6,8 +6,8 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { ProgressIcon as icon } from '../../../icons';
-import edit from './edit';
+import { ProgressIcon as icon } from '../../icons';
+import edit from './course-progress-edit';
 import metadata from './block';
 
 export default {

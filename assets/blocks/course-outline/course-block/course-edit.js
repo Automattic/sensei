@@ -13,7 +13,7 @@ import Placeholder from './placeholder';
 import { COURSE_STORE } from '../store';
 import { useBlocksCreator } from '../use-block-creator';
 import CourseSettings from './course-settings';
-import { withDefaultBlockStyle } from '../../../../shared/blocks/settings';
+import { withDefaultBlockStyle } from '../../../shared/blocks/settings';
 import { COURSE_STATUS_STORE } from '../status-store';
 import { getCourseInnerBlocks } from '../get-course-inner-blocks';
 import { getActiveStyleClass, applyStyleClass } from '../apply-style-class';

@@ -8,7 +8,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import ToolbarDropdown from '../../../editor-components/toolbar-dropdown';
+import ToolbarDropdown from '../../editor-components/toolbar-dropdown';
 import { COMPLETED_PREVIEW, IN_PROGRESS_PREVIEW } from './constants';
 
 /**

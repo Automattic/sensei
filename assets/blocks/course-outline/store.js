@@ -13,7 +13,7 @@ import { __, sprintf } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { createReducerFromActionMap } from '../../../shared/data/store-helpers';
+import { createReducerFromActionMap } from '../../shared/data/store-helpers';
 import {
 	syncStructureToBlocks,
 	extractStructure,

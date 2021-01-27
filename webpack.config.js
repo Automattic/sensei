@@ -41,6 +41,7 @@ const files = [
 	'blocks/shared.js',
 	'blocks/shared.scss',
 	'blocks/shared.editor.scss',
+	'blocks/frontend.js',
 	'admin/exit-survey/index.js',
 	'admin/exit-survey/exit-survey.scss',
 	'css/tools.scss',

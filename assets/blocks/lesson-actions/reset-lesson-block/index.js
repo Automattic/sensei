@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { BlockStyles, createButtonBlockType } from '../../../button';
+import { BlockStyles, createButtonBlockType } from '../../button';
 
 /**
  * Reset lesson button block.
