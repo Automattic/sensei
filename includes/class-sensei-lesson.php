@@ -4698,13 +4698,13 @@ class Sensei_Lesson {
 	}
 
 	/**
-	 * Check if a lesson is legacy.
+	 * Check if a lesson has Sensei blocks.
 	 *
 	 * @param int|WP_Post $lesson Lesson ID or lesson object.
 	 *
 	 * @return bool
 	 */
-	public function is_legacy_lesson( $lesson ) {
+	public function has_sensei_blocks( $lesson ) {
 		$lesson = get_post( $lesson );
 
 		$lesson_blocks = [
