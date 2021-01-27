@@ -1,0 +1,12 @@
+{
+  "name": "sensei-lms/quiz",
+  "category": "sensei-lms",
+  "supports": {
+    "html": false
+  },
+  "attributes": {
+    "id": {
+      "type": "integer"
+    }
+  }
+}
