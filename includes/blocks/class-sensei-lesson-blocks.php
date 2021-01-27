@@ -46,9 +46,9 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 			return;
 		}
 
-		Sensei()->assets->enqueue( 'sensei-single-lesson-blocks', 'blocks/sensei-single-lesson-blocks.js', [], true );
+		Sensei()->assets->enqueue( 'sensei-single-lesson-blocks', 'blocks/single-lesson.js', [], true );
 		Sensei()->assets->enqueue( 'sensei-single-lesson-editor', 'blocks/single-lesson.editor.css' );
-		Sensei()->assets->enqueue( 'sensei-editor-components', 'blocks/editor-components/style.css' );
+		Sensei()->assets->enqueue( 'sensei-editor-components', 'blocks/editor-components/editor-components.css' );
 	}
 
 	/**
