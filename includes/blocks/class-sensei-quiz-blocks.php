@@ -41,8 +41,8 @@ class Sensei_Quiz_Blocks extends Sensei_Blocks_Initializer {
 	 * @access private
 	 */
 	public function enqueue_block_editor_assets() {
-		// Share editor assets with lesson.
-		Sensei()->blocks->lesson->enqueue_block_editor_assets();
+		Sensei()->assets->enqueue( 'sensei-quiz-blocks', 'blocks/quiz/index.js', [], true );
+		Sensei()->assets->enqueue( 'sensei-quiz-blocks-editor', 'blocks/quiz/quiz.editor.css' );
 	}
 
 	/**

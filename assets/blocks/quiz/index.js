@@ -1,5 +1,6 @@
 import { InnerBlocks } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
+import registerSenseiBlocks from '../register-sensei-blocks';
 import { EditQuizBlock as edit } from './edit';
 import questionBlock from './question-block';
 import metadata from './block.json';
@@ -41,4 +42,4 @@ const quizBlock = {
 	save: () => <InnerBlocks.Content />,
 };
 
-export default [ quizBlock, questionBlock ];
+registerSenseiBlocks( [ quizBlock, questionBlock ] );

@@ -39,6 +39,8 @@ const files = [
 	'blocks/sensei-single-lesson-blocks.js',
 	'blocks/single-lesson.scss',
 	'blocks/single-lesson.editor.scss',
+	'blocks/quiz/index.js',
+	'blocks/quiz/quiz.editor.scss',
 	'admin/exit-survey/index.js',
 	'admin/exit-survey/exit-survey.scss',
 	'css/tools.scss',
