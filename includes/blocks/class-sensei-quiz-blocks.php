@@ -1,0 +1,64 @@
+<?php
+/**
+ * File containing the class Sensei_Quiz_Blocks.
+ *
+ * @package sensei
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * Class Sensei_Quiz_Blocks
+ */
+class Sensei_Quiz_Blocks extends Sensei_Blocks_Initializer {
+
+	/**
+	 * Course progress block.
+	 *
+	 * @var Sensei_Block_Quiz
+	 */
+	public $quiz;
+
+	/**
+	 * Take course block.
+	 *
+	 * @var Sensei_Block_Quiz_Question
+	 */
+	public $question;
+
+	/**
+	 * Sensei_Quiz_Blocks constructor.
+	 */
+	public function __construct() {
+		parent::__construct( [ 'lesson', 'quiz' ] );
+	}
+
+	/**
+	 * Enqueue editor assets.
+	 *
+	 * @access private
+	 */
+	public function enqueue_block_editor_assets() {
+		// Share editor assets with lesson.
+		Sensei()->blocks->lesson->enqueue_block_editor_assets();
+	}
+
+	/**
+	 * Enqueue frontend and editor assets.
+	 *
+	 * @access private
+	 */
+	public function enqueue_block_assets() {
+	}
+
+	/**
+	 * Initializes quiz blocks.
+	 */
+	public function initialize_blocks() {
+		$this->quiz     = new Sensei_Block_Quiz();
+		$this->question = new Sensei_Block_Quiz_Question();
+	}
+
+}

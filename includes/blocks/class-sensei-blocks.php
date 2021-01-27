@@ -21,9 +21,25 @@ class Sensei_Blocks {
 	public $course;
 
 	/**
-	 * Sensei_Blocks constructor.
+	 * Course blocks.
+	 *
+	 * @var Sensei_Lesson_Blocks
 	 */
-	public function __construct() {
+	public $lesson;
+
+	/**
+	 * Quiz blocks.
+	 *
+	 * @var Sensei_Quiz_Blocks
+	 */
+	private $quiz;
+
+	/**
+	 * Sensei_Blocks constructor.
+	 *
+	 * @param Sensei_Main $sensei Sensei instance.
+	 */
+	public function __construct( Sensei_Main $sensei ) {
 		// Skip if Gutenberg is not available.
 		if ( ! function_exists( 'register_block_type' ) ) {
 			return;
@@ -33,7 +49,11 @@ class Sensei_Blocks {
 
 		// Init blocks.
 		$this->course = new Sensei_Course_Blocks();
-		new Sensei_Lesson_Blocks();
+		$this->lesson = new Sensei_Lesson_Blocks();
+
+		if ( $sensei->feature_flags->is_enabled( 'quiz_blocks' ) ) {
+			$this->quiz = new Sensei_Quiz_Blocks( $sensei );
+		}
 	}
 
 	/**
