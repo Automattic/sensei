@@ -12,7 +12,7 @@ export default createButtonBlockType( {
 		title: __( 'View Quiz', 'sensei-lms' ),
 		parent: [ 'sensei-lms/lesson-actions' ],
 		description: __(
-			'Enable an enrolled user to view the quiz. The button is displayed when the lesson is not completed and there is a quiz linked to it.",
+			'Enable an enrolled user to view the quiz. The button is displayed when the lesson is not completed and there is a quiz linked to it.',
 			'sensei-lms'
 		),
 		keywords: [
