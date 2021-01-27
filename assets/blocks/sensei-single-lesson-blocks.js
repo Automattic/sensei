@@ -7,10 +7,13 @@ import {
 	ViewQuizBlock,
 } from './lesson-actions';
 
+import quizBlocks from './quiz';
+
 registerSenseiBlocks( [
 	LessonActionsBlock,
 	CompleteLessonBlock,
 	NextLessonBlock,
 	ResetLessonBlock,
 	ViewQuizBlock,
+	...quizBlocks,
 ] );
