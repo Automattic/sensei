@@ -1,6 +1,12 @@
+/**
+ * WordPress dependencies
+ */
 import { useState, useEffect } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
 
+/**
+ * Internal dependencies
+ */
 import { ACTION_BLOCKS, PREVIEW_STATE } from './constants';
 
 /**

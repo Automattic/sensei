@@ -1,4 +1,11 @@
+/**
+ * WordPress dependencies
+ */
 import { select as selectData, registerStore } from '@wordpress/data';
+
+/**
+ * Internal dependencies
+ */
 import { createReducerFromActionMap } from '../../shared/data/store-helpers';
 import { Status } from './status-control';
 import { select, controls } from '@wordpress/data-controls';

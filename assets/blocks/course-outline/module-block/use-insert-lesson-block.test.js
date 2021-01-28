@@ -1,5 +1,16 @@
+/**
+ * External dependencies
+ */
 import { render } from '@testing-library/react';
+
+/**
+ * WordPress dependencies
+ */
 import { useDispatch, useSelect } from '@wordpress/data';
+
+/**
+ * Internal dependencies
+ */
 import { registerTestLessonBlock } from '../test-helpers';
 import { useInsertLessonBlock } from './use-insert-lesson-block';
 

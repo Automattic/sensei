@@ -45,6 +45,9 @@ class Sensei_Blocks {
 			return;
 		}
 
+		// Register generic blocks assets.
+		add_action( 'init', [ $this, 'register_generic_assets' ] );
+
 		add_filter( 'block_categories', [ $this, 'sensei_block_categories' ], 10, 2 );
 
 		// Init blocks.
@@ -55,6 +58,21 @@ class Sensei_Blocks {
 			$this->quiz = new Sensei_Quiz_Blocks();
 		}
 
+	}
+
+	/**
+	 * Register generic assets.
+	 *
+	 * @access private
+	 */
+	public function register_generic_assets() {
+		Sensei()->assets->register( 'sensei-shared-blocks', 'blocks/shared.js', [], true );
+		Sensei()->assets->register( 'sensei-shared-blocks-style', 'blocks/shared-style.css' );
+		Sensei()->assets->register( 'sensei-shared-blocks-editor-style', 'blocks/shared-style-editor.css' );
+
+		Sensei()->assets->register( 'sensei-editor-components-style', 'blocks/editor-components/editor-components-style.css' );
+
+		Sensei()->assets->register( 'sensei-blocks-frontend', 'blocks/frontend.js', [], true );
 	}
 
 	/**

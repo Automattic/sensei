@@ -1,5 +1,12 @@
-import { createBlock } from '@wordpress/blocks';
+/**
+ * External dependencies
+ */
 import { invert } from 'lodash';
+
+/**
+ * WordPress dependencies
+ */
+import { createBlock } from '@wordpress/blocks';
 
 /**
  * Course structure data.

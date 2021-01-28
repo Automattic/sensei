@@ -1,7 +1,13 @@
+/**
+ * WordPress dependencies
+ */
 import { useState } from '@wordpress/element';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createBlock } from '@wordpress/blocks';
 
+/**
+ * Internal dependencies
+ */
 import { ACTION_BLOCKS, BLOCKS_DEFAULT_ATTRIBUTES } from './constants';
 
 /**

@@ -1,4 +1,11 @@
+/**
+ * External dependencies
+ */
 import classnames from 'classnames';
+
+/**
+ * Internal dependencies
+ */
 import { getColorAndStyleProps } from './color-props';
 
 /**

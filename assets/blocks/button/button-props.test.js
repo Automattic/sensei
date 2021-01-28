@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import { getButtonProps } from './button-props';
 
 describe( 'getButtonProps', () => {

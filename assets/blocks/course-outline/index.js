@@ -1,5 +1,8 @@
-export { default as CourseOutlineBlock } from './course-block';
-export { default as CourseOutlineModuleBlock } from './module-block';
-export { default as CourseOutlineLessonBlock } from './lesson-block';
+/**
+ * Internal dependencies
+ */
+export { default as OutlineBlock } from './outline-block';
+export { default as ModuleBlock } from './module-block';
+export { default as LessonBlock } from './lesson-block';
 import './store';
 import './status-store';

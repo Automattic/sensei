@@ -1,3 +1,11 @@
+/**
+ * External dependencies
+ */
+import classnames from 'classnames';
+
+/**
+ * WordPress dependencies
+ */
 import {
 	Button,
 	Dropdown,
@@ -5,7 +13,6 @@ import {
 	MenuItem,
 	NavigableMenu,
 } from '@wordpress/components';
-import classnames from 'classnames';
 
 /**
  * @typedef {Object} DropdownOption

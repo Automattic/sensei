@@ -23,7 +23,7 @@ class Sensei_Restricted_Content_Block {
 			[
 				'render_callback' => [ $this, 'render' ],
 			],
-			Sensei()->assets->src_path( 'blocks/restricted-content' )
+			Sensei()->assets->src_path( 'blocks/restricted-content-block' )
 		);
 	}
 

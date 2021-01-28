@@ -1,3 +1,6 @@
+/**
+ * WordPress dependencies
+ */
 import { createBlock } from '@wordpress/blocks';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useState } from '@wordpress/element';
