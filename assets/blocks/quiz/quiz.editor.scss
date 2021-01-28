@@ -7,4 +7,19 @@
 		line-height: 1.25;
 	}
 
+	&__type-selector {
+		&__toolbar {
+			order: -1;
+		}
+
+		&__popover .sensei-toolbar-dropdown__option {
+			padding: 12px;
+		}
+
+		&__option__description {
+			color: #757575;
+			font-size: 90%;
+		}
+	}
+
 }

@@ -1,9 +1,14 @@
 /**
  * WordPress dependencies
  */
-import { RichText, InnerBlocks } from '@wordpress/block-editor';
+import { RichText, InnerBlocks, BlockControls } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
+
+/**
+ * Internal dependencies
+ */
 import types from '../answer-blocks';
+import { QuestionTypeToolbar } from './question-type-toolbar';
 
 /**
  * Quiz question block editor.
@@ -53,6 +58,16 @@ const QuestionEdit = ( props ) => {
 					}
 				/>
 			) }
+			<BlockControls>
+				<>
+					<QuestionTypeToolbar
+						value={ type }
+						onSelect={ ( nextValue ) =>
+							setAttributes( { type: nextValue } )
+						}
+					/>
+				</>
+			</BlockControls>
 		</div>
 	);
 };
