@@ -1,3 +1,6 @@
+/**
+ * WordPress dependencies
+ */
 import { PlainText } from '@wordpress/block-editor';
 import { ENTER } from '@wordpress/keycodes';
 

@@ -1,6 +1,13 @@
+/**
+ * External dependencies
+ */
+import { find } from 'lodash';
+
+/**
+ * WordPress dependencies
+ */
 import { select, dispatch } from '@wordpress/data';
 import TokenList from '@wordpress/token-list';
-import { find } from 'lodash';
 
 /**
  * Checks if a block has a registered style which matches with the supplied class.

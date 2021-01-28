@@ -1,8 +1,18 @@
+/**
+ * External dependencies
+ */
+import { isEqual } from 'lodash';
+
+/**
+ * WordPress dependencies
+ */
 import { apiFetch, controls as dataControls } from '@wordpress/data-controls';
 import { dispatch, registerStore, select, subscribe } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
-import { isEqual } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
 import { createReducerFromActionMap } from '../../shared/data/store-helpers';
 import {
 	syncStructureToBlocks,

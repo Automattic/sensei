@@ -1,7 +1,18 @@
+/**
+ * External dependencies
+ */
+import { isEqual } from 'lodash';
+
+/**
+ * WordPress dependencies
+ */
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
+
+/**
+ * Internal dependencies
+ */
 import { extractStructure, syncStructureToBlocks } from './data';
-import { isEqual } from 'lodash';
 
 /**
  * Blocks creator hook.

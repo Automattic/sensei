@@ -1,3 +1,6 @@
+/**
+ * WordPress dependencies
+ */
 import { registerBlockType } from '@wordpress/blocks';
 
 export const registerTestLessonBlock = ( settings = {} ) => {

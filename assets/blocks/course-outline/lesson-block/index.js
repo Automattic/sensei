@@ -1,6 +1,13 @@
+/**
+ * WordPress dependencies
+ */
 import { __ } from '@wordpress/i18n';
+
+/**
+ * Internal dependencies
+ */
 import { LessonIcon as icon } from '../../../icons';
-import edit from './edit';
+import edit from './lesson-edit';
 import metadata from './block.json';
 
 export default {

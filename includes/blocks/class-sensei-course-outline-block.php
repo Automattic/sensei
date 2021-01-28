@@ -84,7 +84,7 @@ class Sensei_Course_Outline_Block {
 			[
 				'render_callback' => [ $this, 'render_course_outline_block' ],
 			],
-			Sensei()->assets->src_path( 'blocks/course-outline/course-block' )
+			Sensei()->assets->src_path( 'blocks/course-outline/outline-block' )
 		);
 
 		Sensei_Blocks::register_sensei_block(
