@@ -5,7 +5,7 @@ import registerSenseiBlocks from './register-sensei-blocks';
 import TakeCourseBlock from './take-course-block';
 import CourseProgressBlock from './course-progress-block';
 import { OutlineBlock, LessonBlock, ModuleBlock } from './course-outline';
-import RestrictedContentBlock from './restricted-content-block';
+import ConditionalContentBlock from './conditional-content';
 
 registerSenseiBlocks( [
 	OutlineBlock,
@@ -13,5 +13,5 @@ registerSenseiBlocks( [
 	LessonBlock,
 	TakeCourseBlock,
 	CourseProgressBlock,
-	RestrictedContentBlock,
+	ConditionalContentBlock,
 ] );

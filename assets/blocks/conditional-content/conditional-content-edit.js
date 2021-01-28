@@ -14,28 +14,25 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import RestrictedContentSettings from './restricted-content-settings';
+import ConditionalContentSettings from './conditional-content-settings';
 
-export const RestrictOptions = {
+export const Conditions = {
 	ENROLLED: 'enrolled',
 	UNENROLLED: 'unenrolled',
 	COURSE_COMPLETED: 'course-completed',
 };
 
-export const RestrictOptionLabels = {
-	[ RestrictOptions.ENROLLED ]: __( 'Enrolled', 'sensei-lms' ),
-	[ RestrictOptions.UNENROLLED ]: __( 'Not Enrolled', 'sensei-lms' ),
-	[ RestrictOptions.COURSE_COMPLETED ]: __(
-		'Course Completed',
-		'sensei-lms'
-	),
+export const ConditionLabels = {
+	[ Conditions.ENROLLED ]: __( 'Enrolled', 'sensei-lms' ),
+	[ Conditions.UNENROLLED ]: __( 'Not Enrolled', 'sensei-lms' ),
+	[ Conditions.COURSE_COMPLETED ]: __( 'Course Completed', 'sensei-lms' ),
 };
 
-const RestrictedContentEdit = ( {
+const ConditionalContentEdit = ( {
 	className,
 	hasInnerBlocks,
 	clientId,
-	attributes: { restrictionType },
+	attributes: { condition },
 	setAttributes,
 } ) => {
 	return (
@@ -49,11 +46,11 @@ const RestrictedContentEdit = ( {
 					/>
 				</div>
 			</div>
-			<RestrictedContentSettings
-				selectedRestriction={ restrictionType }
-				onRestrictionChange={ ( option ) =>
+			<ConditionalContentSettings
+				selectedCondition={ condition }
+				onConditionChange={ ( option ) =>
 					setAttributes( {
-						restrictionType: option,
+						condition: option,
 					} )
 				}
 				clientId={ clientId }
@@ -73,4 +70,4 @@ export default compose( [
 			hasInnerBlocks: !! ( block && block.innerBlocks.length ),
 		};
 	} ),
-] )( RestrictedContentEdit );
+] )( ConditionalContentEdit );
