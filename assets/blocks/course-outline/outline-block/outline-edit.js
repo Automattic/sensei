@@ -9,10 +9,10 @@ import { createContext, useEffect, useRef } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import Placeholder from './placeholder';
+import OutlinePlaceholder from './outline-placeholder';
 import { COURSE_STORE } from '../store';
 import { useBlocksCreator } from '../use-block-creator';
-import CourseSettings from './course-settings';
+import OutlineSettings from './outline-settings';
 import { withDefaultBlockStyle } from '../../../shared/blocks/settings';
 import { COURSE_STATUS_STORE } from '../status-store';
 import { getCourseInnerBlocks } from '../get-course-inner-blocks';
@@ -97,7 +97,7 @@ const useApplyStyleToModules = ( clientId, className, isPreview ) => {
  * @param {Object}   props.attributes    Block attributes.
  * @param {Function} props.setAttributes Block setAttributes callback.
  */
-const CourseEdit = ( props ) => {
+const OutlineEdit = ( props ) => {
 	const { clientId, className, attributes, setAttributes } = props;
 
 	const { fetchCourseStructure } = useDispatch( COURSE_STORE );
@@ -136,7 +136,9 @@ const CourseEdit = ( props ) => {
 	};
 
 	const content = isEmpty ? (
-		<Placeholder addBlock={ ( type ) => setBlocks( [ { type } ], true ) } />
+		<OutlinePlaceholder
+			addBlock={ ( type ) => setBlocks( [ { type } ], true ) }
+		/>
 	) : (
 		<OutlineAttributesContext.Provider
 			value={ {
@@ -145,7 +147,7 @@ const CourseEdit = ( props ) => {
 				outlineClassName: className,
 			} }
 		>
-			<CourseSettings
+			<OutlineSettings
 				collapsibleModules={ attributes.collapsibleModules }
 				setCollapsibleModules={ ( value ) =>
 					setAttributes( { collapsibleModules: value } )
@@ -172,4 +174,4 @@ const CourseEdit = ( props ) => {
 	);
 };
 
-export default compose( withDefaultBlockStyle() )( CourseEdit );
+export default compose( withDefaultBlockStyle() )( OutlineEdit );

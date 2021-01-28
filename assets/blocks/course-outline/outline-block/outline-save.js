@@ -3,6 +3,6 @@
  */
 import { InnerBlocks } from '@wordpress/block-editor';
 
-const CourseSave = () => <InnerBlocks.Content />;
+const OutlineSave = () => <InnerBlocks.Content />;
 
-export default CourseSave;
+export default OutlineSave;

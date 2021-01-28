@@ -8,8 +8,8 @@ import { __ } from '@wordpress/i18n';
  */
 import { CourseIcon as icon } from '../../../icons';
 import metadata from './block.json';
-import edit from './course-edit';
-import save from './course-save';
+import edit from './outline-edit';
+import save from './outline-save';
 
 export default {
 	title: __( 'Course Outline', 'sensei-lms' ),

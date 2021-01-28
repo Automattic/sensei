@@ -2,10 +2,7 @@
  * WordPress dependencies
  */
 import { BlockIcon } from '@wordpress/block-editor';
-import {
-	Button,
-	Placeholder as PlaceholderComponent,
-} from '@wordpress/components';
+import { Button, Placeholder } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -18,8 +15,8 @@ import settings from './index';
  *
  * @param {Function} addBlock Add block
  */
-const Placeholder = ( { addBlock } ) => (
-	<PlaceholderComponent
+const OutlinePlaceholder = ( { addBlock } ) => (
+	<Placeholder
 		className="wp-block-sensei-lms-course-outline__placeholder"
 		label={ __( 'Course Outline', 'sensei-lms' ) }
 		icon={ <BlockIcon icon={ settings.icon } showColors /> }
@@ -42,7 +39,7 @@ const Placeholder = ( { addBlock } ) => (
 		>
 			{ __( 'Create a lesson', 'sensei-lms' ) }
 		</Button>
-	</PlaceholderComponent>
+	</Placeholder>
 );
 
-export default Placeholder;
+export default OutlinePlaceholder;

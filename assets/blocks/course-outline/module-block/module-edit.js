@@ -22,7 +22,7 @@ import {
 	withColorSettings,
 	withDefaultColor,
 } from '../../../shared/blocks/settings';
-import { OutlineAttributesContext } from '../course-block/course-edit';
+import { OutlineAttributesContext } from '../outline-block/outline-edit';
 import SingleLineInput from '../single-line-input';
 import { ModuleStatus } from './module-status';
 import ModuleSettings from './module-settings';

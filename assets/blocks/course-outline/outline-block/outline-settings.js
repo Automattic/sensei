@@ -14,7 +14,7 @@ import { PanelBody, ToggleControl } from '@wordpress/components';
  * @param {boolean}  props.moduleBorder          Whether modules borders are enabled.
  * @param {Function} props.setModuleBorder       Callback to set module borders.
  */
-const CourseSettings = ( {
+const OutlineSettings = ( {
 	collapsibleModules,
 	setCollapsibleModules,
 	moduleBorder,
@@ -47,4 +47,4 @@ const CourseSettings = ( {
 	</InspectorControls>
 );
 
-export default CourseSettings;
+export default OutlineSettings;
