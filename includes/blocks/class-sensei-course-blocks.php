@@ -101,7 +101,7 @@ class Sensei_Course_Blocks extends Sensei_Blocks_Initializer {
 		}
 
 		Sensei()->assets->enqueue( 'sensei-single-course-blocks', 'blocks/single-course.js', [], true );
-		Sensei()->assets->enqueue( 'sensei-single-course-blocks-editor-style', 'blocks/single-course-style.editor.css' );
+		Sensei()->assets->enqueue( 'sensei-single-course-blocks-editor-style', 'blocks/single-course-style-editor.css' );
 		Sensei()->assets->enqueue_script( 'sensei-shared-blocks' );
 		Sensei()->assets->enqueue_style( 'sensei-shared-blocks-editor-style' );
 		Sensei()->assets->enqueue_style( 'sensei-editor-components-style' );

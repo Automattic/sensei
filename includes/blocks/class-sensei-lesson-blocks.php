@@ -52,7 +52,7 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 		}
 
 		Sensei()->assets->enqueue( 'sensei-single-lesson-blocks', 'blocks/single-lesson.js', [], true );
-		Sensei()->assets->enqueue( 'sensei-single-lesson-blocks-editor-style', 'blocks/single-lesson-style.editor.css' );
+		Sensei()->assets->enqueue( 'sensei-single-lesson-blocks-editor-style', 'blocks/single-lesson-style-editor.css' );
 
 		Sensei()->assets->enqueue_script( 'sensei-shared-blocks' );
 		Sensei()->assets->enqueue_style( 'sensei-shared-blocks-editor-style' );
