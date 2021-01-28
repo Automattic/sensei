@@ -52,7 +52,7 @@ class Sensei_Reset_Lesson_Block {
 
 		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson->ID );
 
-		if ( ! $quiz_id || empty( get_post_meta( $quiz_id, '_enable_quiz_reset', true ) ) ) {
+		if ( $quiz_id && Sensei()->lesson::lesson_quiz_has_questions( $lesson->ID ) && empty( get_post_meta( $quiz_id, '_enable_quiz_reset', true ) ) ) {
 			return '';
 		}
 

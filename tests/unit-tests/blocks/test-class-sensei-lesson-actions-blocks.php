@@ -35,18 +35,15 @@ class Sensei_Lesson_Actions_Blocks extends WP_UnitTestCase {
 		Sensei_Utils::update_lesson_status( $user_id, $lessons[0], 'passed' );
 		Sensei_Utils::update_lesson_status( $user_id, $lessons[1], 'passed' );
 
-		// Assert that the button is displayed in the first lesson.
 		$this->set_current_lesson( $lessons[0] );
-		$this->assertNotEmpty( $next_lesson->render( [], '' ) );
+		$this->assertNotEmpty( $next_lesson->render( [], '' ), 'Next lesson button is not displayed on the first lesson.' );
 
-		// Assert that the button is not displayed in the last lesson.
 		$this->set_current_lesson( $lessons[1] );
-		$this->assertEmpty( $next_lesson->render( [], '' ) );
+		$this->assertEmpty( $next_lesson->render( [], '' ), 'Next lesson button is displayed on the last lesson.' );
 
-		// Assert that the button is not displayed when the user did not complete the lesson.
 		Sensei_Utils::update_lesson_status( $user_id, $lessons[0], 'failed' );
 		$this->set_current_lesson( $lessons[0] );
-		$this->assertEmpty( $next_lesson->render( [], '' ) );
+		$this->assertEmpty( $next_lesson->render( [], '' ), 'Next lesson button is displayed when the learner did not complete the lesson.' );
 	}
 
 	/**
@@ -66,16 +63,13 @@ class Sensei_Lesson_Actions_Blocks extends WP_UnitTestCase {
 		$lesson_id          = $this->factory->lesson->create( $course_lesson_args );
 		$this->set_current_lesson( $lesson_id );
 
-		// Assert that the button is not displayed when the user is not enrolled to the course.
-		$this->assertEmpty( $complete_lesson->render( [], '' ) );
+		$this->assertEmpty( $complete_lesson->render( [], '' ), 'Complete lesson button is displayed when the user is not enrolled to the course.' );
 
-		// Assert that the button is displayed when the user is enrolled to the course.
 		$this->manuallyEnrolStudentInCourse( $user_id, $course_id );
-		$this->assertNotEmpty( $complete_lesson->render( [], '' ) );
+		$this->assertNotEmpty( $complete_lesson->render( [], '' ), 'Complete lesson button is not displayed when the user is enrolled to the course.' );
 
-		// Assert that the button is not displayed when the user has completed the course.
 		Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'passed' );
-		$this->assertEmpty( $complete_lesson->render( [], '' ) );
+		$this->assertEmpty( $complete_lesson->render( [], '' ), 'Complete lesson button is displayed when the user has completed the course.' );
 	}
 
 	/**
@@ -96,22 +90,19 @@ class Sensei_Lesson_Actions_Blocks extends WP_UnitTestCase {
 		$lesson_id          = $this->factory->lesson->create( $course_lesson_args );
 		$this->set_current_lesson( $lesson_id );
 
-		// Assert that the button is not displayed when there is no quiz to the lesson.
-		$this->assertEmpty( $view_quiz->render( [], '' ) );
+		$this->assertEmpty( $view_quiz->render( [], '' ), 'View quiz button is displayed when there is no quiz to the lesson.' );
 
-		// Assert that the button is displayed when there is a quiz to the lesson.
 		$quiz_args = [
 			'post_parent' => $lesson_id,
 			'meta_input'  => [
 				'_enable_quiz_reset' => 1,
 			],
 		];
-		$quiz_id   = $this->factory->quiz->create( $quiz_args );
-		$this->assertNotEmpty( $view_quiz->render( [], '' ) );
+		$this->factory->quiz->create( $quiz_args );
+		$this->assertNotEmpty( $view_quiz->render( [], '' ), 'View quiz button is not displayed when there is a quiz to the lesson.' );
 
-		//  Assert that the button is not displayed when the user has completed the course.
 		Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'passed' );
-		$this->assertEmpty( $view_quiz->render( [], '' ) );
+		$this->assertEmpty( $view_quiz->render( [], '' ), 'View quiz button is displayed when the user has completed the lesson.' );
 	}
 
 	/**
@@ -126,6 +117,7 @@ class Sensei_Lesson_Actions_Blocks extends WP_UnitTestCase {
 			'meta_input' => [
 				'_lesson_course'       => $course_id,
 				'_order_' . $course_id => 1,
+				'_quiz_has_questions'  => 1,
 			],
 		];
 		$lesson_id          = $this->factory->lesson->create( $course_lesson_args );
@@ -138,17 +130,14 @@ class Sensei_Lesson_Actions_Blocks extends WP_UnitTestCase {
 		$quiz_id            = $this->factory->quiz->create( $quiz_args );
 		$this->set_current_lesson( $lesson_id );
 
-		// Assert that the button is not displayed when the user has not completed to the course.
 		$this->manuallyEnrolStudentInCourse( $user_id, $course_id );
-		$this->assertEmpty( $reset_lesson->render( [], '' ) );
+		$this->assertEmpty( $reset_lesson->render( [], '' ), 'Reset lesson button is displayed when the user has not completed the lesson.' );
 
-		// Assert that the button is displayed when the user has completed the course.
 		Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'passed' );
-		$this->assertNotEmpty( $reset_lesson->render( [], '' ) );
+		$this->assertNotEmpty( $reset_lesson->render( [], '' ), 'Reset lesson button is not displayed when the user has completed the lesson.' );
 
-		// Assert that the button is not displayed when reset is disabled.
 		update_post_meta( $quiz_id, '_enable_quiz_reset', 0 );
-		$this->assertEmpty( $reset_lesson->render( [], '' ) );
+		$this->assertEmpty( $reset_lesson->render( [], '' ), 'Reset lesson button is displayed when reset is disabled.' );
 	}
 
 	/**
