@@ -1,11 +1,23 @@
-.sensei-toolbar-dropdown-item-checked {
-	position: relative;
-	padding-right: 30px;
-	&::after {
-		font-family: dashicons;
-		content: "\f147";
-		font-size: 20px;
-		position: absolute;
-		right: 0;
+.sensei-toolbar-dropdown {
+	&__popover.components-popover[data-x-axis='right'] {
+		.components-popover__content {
+			margin-left: 0;
+			min-width: 300px;
+		}
+	}
+
+	&__option {
+		text-align: left;
+		height: auto;
+		min-height: 32px;
+		border-radius: 2px;
+
+		.components-menu-item__item {
+			white-space: normal;
+		}
+
+		&.is-selected {
+			background-color: #f0f0f0;
+		}
 	}
 }

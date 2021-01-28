@@ -15,6 +15,11 @@ import {
 } from '@wordpress/components';
 
 /**
+ * Internal dependencies
+ */
+import { checked } from '../../../icons/wordpress-icons';
+
+/**
  * @typedef {Object} DropdownOption
  *
  * @property {string} label Option label.
@@ -42,7 +47,13 @@ const ToolbarDropdown = ( {
 
 	return (
 		<Dropdown
-			popoverProps={ { isAlternate: true } }
+			className="sensei-toolbar-dropdown"
+			popoverProps={ {
+				isAlternate: true,
+				position: 'bottom right left',
+				focusOnMount: true,
+				className: classnames( 'sensei-toolbar-dropdown__popover' ),
+			} }
 			renderToggle={ ( { isOpen, onToggle } ) => (
 				<Button
 					onClick={ onToggle }
@@ -65,9 +76,7 @@ const ToolbarDropdown = ( {
 									key={ option.value }
 									role="menuitemradio"
 									isSelected={ isSelected }
-									className={ classnames( {
-										'sensei-toolbar-dropdown-item-checked': isSelected,
-									} ) }
+									icon={ isSelected ? checked : null }
 									onClick={ () => {
 										onChange( option.value );
 										onClose();
