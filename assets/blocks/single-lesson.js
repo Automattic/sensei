@@ -1,4 +1,10 @@
 /**
+ * WordPress dependencies
+ */
+import { subscribe, select, dispatch } from '@wordpress/data';
+import { createBlock } from '@wordpress/blocks';
+
+/**
  * Internal dependencies
  */
 import registerSenseiBlocks from './register-sensei-blocks';
@@ -17,3 +23,32 @@ registerSenseiBlocks( [
 	ResetLessonBlock,
 	ViewQuizBlock,
 ] );
+
+let needsTemplate;
+
+subscribe( () => {
+	if ( undefined !== needsTemplate ) {
+		return;
+	}
+
+	needsTemplate = select( 'core/editor' ).getEditedPostAttribute( 'meta' )
+		?._needs_template; // eslint-disable-line camelcase
+
+	if ( true !== needsTemplate ) {
+		return;
+	}
+
+	// Add default lesson template to the editor.
+	setTimeout( () => {
+		dispatch( 'core/block-editor' ).resetBlocks(
+			select( 'core/block-editor' )
+				.getTemplate()
+				.map( ( block ) => createBlock( ...block ) )
+		);
+	}, 1 );
+
+	// TODO: Not working yet!
+	dispatch( 'core/editor' ).editPost( {
+		meta: { _needs_template: false },
+	} );
+} );

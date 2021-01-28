@@ -85,5 +85,18 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 			],
 			[ 'sensei-lms/lesson-actions' ],
 		];
+
+		register_post_meta(
+			'lesson',
+			'_needs_template',
+			[
+				'show_in_rest'  => true,
+				'single'        => true,
+				'type'          => 'boolean',
+				'auth_callback' => function() {
+					return current_user_can( 'manage_sensei' );
+				},
+			]
+		);
 	}
 }
