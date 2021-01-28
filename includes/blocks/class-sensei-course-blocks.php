@@ -82,8 +82,11 @@ class Sensei_Course_Blocks extends Sensei_Blocks_Initializer {
 			return;
 		}
 
-		Sensei()->assets->enqueue( 'sensei-single-course-blocks-style', 'blocks/single-course-style.css' );
-		Sensei()->assets->enqueue_style( 'sensei-shared-blocks-style' );
+		Sensei()->assets->enqueue(
+			'sensei-single-course-blocks-style',
+			'blocks/single-course-style.css',
+			[ 'sensei-shared-blocks-style' ]
+		);
 
 		if ( ! is_admin() ) {
 			Sensei()->assets->enqueue_script( 'sensei-blocks-frontend' );
@@ -100,11 +103,17 @@ class Sensei_Course_Blocks extends Sensei_Blocks_Initializer {
 			return;
 		}
 
-		Sensei()->assets->enqueue( 'sensei-single-course-blocks', 'blocks/single-course.js', [], true );
-		Sensei()->assets->enqueue( 'sensei-single-course-blocks-editor-style', 'blocks/single-course-style-editor.css' );
-		Sensei()->assets->enqueue_script( 'sensei-shared-blocks' );
-		Sensei()->assets->enqueue_style( 'sensei-shared-blocks-editor-style' );
-		Sensei()->assets->enqueue_style( 'sensei-editor-components-style' );
+		Sensei()->assets->enqueue(
+			'sensei-single-course-blocks',
+			'blocks/single-course.js',
+			[ 'sensei-shared-blocks' ],
+			true
+		);
+		Sensei()->assets->enqueue(
+			'sensei-single-course-blocks-editor-style',
+			'blocks/single-course-style-editor.css',
+			[ 'sensei-shared-blocks-editor-style', 'sensei-editor-components-style' ]
+		);
 	}
 
 	/**
