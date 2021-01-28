@@ -74,5 +74,13 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 		new Sensei_Lesson_Actions_Block();
 		new Sensei_Next_Lesson_Block();
 		new Sensei_Block_Contact_Teacher();
+
+		$post_type_object = get_post_type_object( 'lesson' );
+
+		$post_type_object->template = [
+			[ 'sensei-lms/button-contact-teacher' ],
+			[ 'core/paragraph' ],
+			[ 'sensei-lms/lesson-actions' ],
+		];
 	}
 }
