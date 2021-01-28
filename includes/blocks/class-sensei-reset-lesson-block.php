@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Sensei_Complete_Lesson_Block is responsible for rendering the 'Complete Lesson' block.
+ * Class Sensei_Reset_Lesson_Block is responsible for rendering the 'Reset Lesson' block.
  */
 class Sensei_Reset_Lesson_Block {
 
