@@ -81,7 +81,7 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 			[ 'sensei-lms/button-contact-teacher' ],
 			[
 				'core/paragraph',
-				[ 'placeholder' => __( 'Lesson content', 'sensei-lms' ) ],
+				[ 'placeholder' => __( 'Write lesson content...', 'sensei-lms' ) ],
 			],
 			[ 'sensei-lms/lesson-actions' ],
 		];
