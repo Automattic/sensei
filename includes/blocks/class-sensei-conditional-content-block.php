@@ -23,7 +23,7 @@ class Sensei_Conditional_Content_Block {
 			[
 				'render_callback' => [ $this, 'render' ],
 			],
-			Sensei()->assets->src_path( 'blocks/conditional-content' )
+			Sensei()->assets->src_path( 'blocks/conditional-content-block' )
 		);
 	}
 
