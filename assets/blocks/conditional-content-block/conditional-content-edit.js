@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import classnames from 'classnames';
-
-/**
  * WordPress dependencies
  */
 import { InnerBlocks } from '@wordpress/block-editor';
@@ -37,14 +32,12 @@ const ConditionalContentEdit = ( {
 } ) => {
 	return (
 		<>
-			<div className={ classnames( 'wp-block-group', className ) }>
-				<div className="wp-block-group__inner-container">
-					<InnerBlocks
-						renderAppender={
-							! hasInnerBlocks && InnerBlocks.ButtonBlockAppender
-						}
-					/>
-				</div>
+			<div className={ className }>
+				<InnerBlocks
+					renderAppender={
+						! hasInnerBlocks && InnerBlocks.ButtonBlockAppender
+					}
+				/>
 			</div>
 			<ConditionalContentSettings
 				selectedCondition={ condition }
