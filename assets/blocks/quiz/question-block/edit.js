@@ -5,8 +5,9 @@ import { __ } from '@wordpress/i18n';
  * Quiz question block editor.
  *
  * @param {Object}   props
- * @param {Object}   props.attributes
- * @param {Function} props.setAttributes
+ * @param {Object}   props.attributes       Block attributes.
+ * @param {Object}   props.attributes.title Question title.
+ * @param {Function} props.setAttributes    Set block attributes.
  */
 export const EditQuestionBlock = ( props ) => {
 	const {
