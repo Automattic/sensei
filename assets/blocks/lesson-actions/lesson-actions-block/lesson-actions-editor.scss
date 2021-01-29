@@ -1,4 +1,6 @@
 .wp-block-sensei-lms-lesson-actions {
+	position: relative;
+
 	&__preview-completed {
 		.wp-block-sensei-lms-button-complete-lesson,
 		.wp-block-sensei-lms-button-view-quiz {
@@ -22,3 +24,20 @@
 		}
 	}
 }
+
+.wp-block[data-type="sensei-lms/lesson-actions"] {
+
+	&.is-selected .wp-block-sensei-lms-button-next-lesson__wrapper {
+		position: static;
+		&:before {
+			position: absolute;
+			content: '';
+			left: 12px;
+			right: 12px;
+			border-top: var(--wp-admin-border-width-focus) solid var(--wp-admin-theme-color);
+			margin-top: -9px;
+			pointer-events: none;
+		}
+	}
+}
+
