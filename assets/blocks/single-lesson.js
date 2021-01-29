@@ -47,7 +47,6 @@ subscribe( () => {
 		);
 	}, 1 );
 
-	// TODO: Not working yet!
 	dispatch( 'core/editor' ).editPost( {
 		meta: { _needs_template: false },
 	} );

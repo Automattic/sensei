@@ -21,6 +21,7 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 
 		add_action( 'enqueue_block_assets', [ $this, 'enqueue_block_assets' ] );
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_block_editor_assets' ] );
+		add_action( 'init', [ $this, 'register_lesson_post_metas' ] );
 	}
 
 	/**
@@ -85,7 +86,14 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 			],
 			[ 'sensei-lms/lesson-actions' ],
 		];
+	}
 
+	/**
+	 * Register lesson post metas.
+	 *
+	 * @access private
+	 */
+	public function register_lesson_post_metas() {
 		register_post_meta(
 			'lesson',
 			'_needs_template',
