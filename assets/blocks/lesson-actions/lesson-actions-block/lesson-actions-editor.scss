@@ -12,13 +12,13 @@
 		}
 	}
 	&__no-quiz {
-		.wp-block-sensei-lms-button-view-quiz {
-			opacity: 0.1;
+		.wp-block-sensei-lms-button-view-quiz__wrapper {
+			display: none;
 		}
 	}
 	&__complete_lessons-not-allowed {
-		.wp-block-sensei-lms-button-complete-lesson {
-			opacity: 0.1;
+		.wp-block-sensei-lms-button-complete-lesson__wrapper {
+			display: none;
 		}
 	}
 }
