@@ -1,3 +1,6 @@
+/**
+ * WordPress dependencies
+ */
 import { RichText, InnerBlocks } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 
@@ -9,7 +12,7 @@ import { __ } from '@wordpress/i18n';
  * @param {Object}   props.attributes.title Question title.
  * @param {Function} props.setAttributes    Set block attributes.
  */
-export const EditQuestionBlock = ( props ) => {
+const QuestionEdit = ( props ) => {
 	const {
 		attributes: { title },
 		setAttributes,
@@ -42,3 +45,5 @@ export const EditQuestionBlock = ( props ) => {
 		</div>
 	);
 };
+
+export default QuestionEdit;

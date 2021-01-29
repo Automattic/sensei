@@ -1,6 +1,13 @@
+/**
+ * WordPress dependencies
+ */
 import { InnerBlocks } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
-import { EditQuestionBlock as edit } from './edit';
+
+/**
+ * Internal dependencies
+ */
+import edit from './question-edit';
 import metadata from './block.json';
 
 /**

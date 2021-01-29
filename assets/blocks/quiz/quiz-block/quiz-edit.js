@@ -1,9 +1,12 @@
+/**
+ * WordPress dependencies
+ */
 import { InnerBlocks } from '@wordpress/block-editor';
 
 /**
  * Quiz block editor.
  */
-export const EditQuizBlock = () => {
+const QuizEdit = () => {
 	return (
 		<>
 			<InnerBlocks
@@ -13,3 +16,5 @@ export const EditQuizBlock = () => {
 		</>
 	);
 };
+
+export default QuizEdit;
