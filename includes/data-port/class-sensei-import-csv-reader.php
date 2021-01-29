@@ -83,6 +83,8 @@ class Sensei_Import_CSV_Reader {
 		 * @hook sensei_import_csv_delimiter
 		 *
 		 * @param {string} $delimiter The CSV file delimiter.
+		 *
+		 * @return {false|string} CSV file delimiter or false to skip.
 		 */
 		$forced_delimiter = apply_filters( 'sensei_import_csv_delimiter', false );
 
@@ -98,6 +100,8 @@ class Sensei_Import_CSV_Reader {
 		 * @hook sensei_import_csv_delimiter_options
 		 *
 		 * @param {string[]} $delimiters The CSV file delimiter options.
+		 *
+		 * @return {array} CSV delimiter options.
 		 */
 		$delimiters         = apply_filters( 'sensei_import_csv_delimiter_options', [ ',', ';', "\t", '|' ] );
 		$max_columns        = 0;

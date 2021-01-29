@@ -1,4 +1,11 @@
+/**
+ * WordPress dependencies
+ */
 import { createBlock } from '@wordpress/blocks';
+
+/**
+ * Internal dependencies
+ */
 import {
 	extractStructure,
 	syncStructureToBlocks,

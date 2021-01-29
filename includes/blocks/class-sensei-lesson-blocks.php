@@ -33,7 +33,15 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 			return;
 		}
 
-		Sensei()->assets->enqueue( 'sensei-single-lesson', 'blocks/single-lesson.css' );
+		Sensei()->assets->enqueue(
+			'sensei-single-lesson-blocks-style',
+			'blocks/single-lesson-style.css',
+			[ 'sensei-shared-blocks-style' ]
+		);
+
+		if ( ! is_admin() ) {
+			Sensei()->assets->enqueue_script( 'sensei-blocks-frontend' );
+		}
 	}
 
 	/**
@@ -46,9 +54,17 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 			return;
 		}
 
-		Sensei()->assets->enqueue( 'sensei-single-lesson-blocks', 'blocks/sensei-single-lesson-blocks.js', [], true );
-		Sensei()->assets->enqueue( 'sensei-single-lesson-editor', 'blocks/single-lesson.editor.css' );
-		Sensei()->assets->enqueue( 'sensei-editor-components', 'blocks/editor-components/style.css' );
+		Sensei()->assets->enqueue(
+			'sensei-single-lesson-blocks',
+			'blocks/single-lesson.js',
+			[ 'sensei-shared-blocks' ],
+			true
+		);
+		Sensei()->assets->enqueue(
+			'sensei-single-lesson-blocks-editor-style',
+			'blocks/single-lesson-style-editor.css',
+			[ 'sensei-shared-blocks-editor-style', 'sensei-editor-components-style' ]
+		);
 	}
 
 	/**
@@ -60,5 +76,6 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 		new Sensei_Complete_Lesson_Block();
 		new Sensei_Reset_Lesson_Block();
 		new Sensei_View_Quiz_Block();
+		new Sensei_Block_Contact_Teacher();
 	}
 }

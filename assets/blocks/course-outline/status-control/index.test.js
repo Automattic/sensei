@@ -1,6 +1,13 @@
-import { StatusControl, Status } from './index';
+/**
+ * External dependencies
+ */
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+
+/**
+ * Internal dependencies
+ */
+import { StatusControl, Status } from './index';
 
 describe( '<StatusControl />', () => {
 	it( 'Should display the default options', () => {

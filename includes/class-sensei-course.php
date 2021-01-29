@@ -225,6 +225,7 @@ class Sensei_Course {
 		 * @param {int}    $user_id                 User ID if user is logged in.
 		 * @param {string} $context                 Context that we're checking for course content
 		 *                                        access (`lesson`, `quiz`, or `module`).
+		 * @return {bool} Whether the visitor can view course content.
 		 */
 		return apply_filters( 'sensei_can_access_course_content', $can_view_course_content, $course_id, $user_id, $context );
 	}
@@ -2524,14 +2525,16 @@ class Sensei_Course {
 		$extra_classes[] = 'loop-item-number-' . $sensei_course_loop['counter'];
 
 		/**
-		 * Filter the course loop class the fires in the  in get_course_loop_content_class function
-		 * which is called from the course loop content-course.php
+		 * Filter the course loop class the fires in the in get_course_loop_content_class function
+		 * which is called from the course loop content-course.php.
 		 *
 		 * @since 1.9.0
 		 * @hook sensei_course_loop_content_class
 		 *
 		 * @param {array} $extra_classes
 		 * @param {WP_Post} $loop_current_course
+		 *
+		 * @return {array} Additional CSS classes.
 		 */
 		return apply_filters( 'sensei_course_loop_content_class', $extra_classes, get_post() );
 
@@ -3592,16 +3595,16 @@ class Sensei_Course {
 		$product_count = empty( $product_ids ) ? 0 : count( array_filter( $product_ids, 'is_numeric' ) );
 
 		$event_properties = [
-			'course_id'                    => $course_id,
-			'has_outline_block'            => has_block( 'sensei-lms/course-outline', $content ) ? 1 : 0,
-			'has_progress_block'           => has_block( 'sensei-lms/course-progress', $content ) ? 1 : 0,
-			'has_take_course_block'        => has_block( 'sensei-lms/button-take-course', $content ) ? 1 : 0,
-			'has_contact_teacher_block'    => has_block( 'sensei-lms/button-contact-teacher', $content ) ? 1 : 0,
-			'has_restricted_content_block' => has_block( 'sensei-lms/restricted-content', $content ) ? 1 : 0,
-			'module_count'                 => count( wp_get_post_terms( $course_id, 'module' ) ),
-			'lesson_count'                 => $this->course_lesson_count( $course_id ),
-			'product_count'                => $product_count,
-			'sample_course'                => Sensei_Data_Port_Manager::SAMPLE_COURSE_SLUG === $post->post_name ? 1 : 0,
+			'course_id'                     => $course_id,
+			'has_outline_block'             => has_block( 'sensei-lms/course-outline', $content ) ? 1 : 0,
+			'has_progress_block'            => has_block( 'sensei-lms/course-progress', $content ) ? 1 : 0,
+			'has_take_course_block'         => has_block( 'sensei-lms/button-take-course', $content ) ? 1 : 0,
+			'has_contact_teacher_block'     => has_block( 'sensei-lms/button-contact-teacher', $content ) ? 1 : 0,
+			'has_conditional_content_block' => has_block( 'sensei-lms/conditional-content', $content ) ? 1 : 0,
+			'module_count'                  => count( wp_get_post_terms( $course_id, 'module' ) ),
+			'lesson_count'                  => $this->course_lesson_count( $course_id ),
+			'product_count'                 => $product_count,
+			'sample_course'                 => Sensei_Data_Port_Manager::SAMPLE_COURSE_SLUG === $post->post_name ? 1 : 0,
 		];
 
 		sensei_log_event( 'course_update', $event_properties );

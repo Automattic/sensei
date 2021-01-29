@@ -464,6 +464,8 @@ class Sensei_Quiz {
 		 *
 		 * @param {false|array} $allowed_mime_types Array of allowed mimetypes. Returns `false` to allow all file types.
 		 * @param {int}         $question_id        Question post ID.
+		 *
+		 * @return {false|array} Allowed mime types or false to allow all types.
 		 */
 		$allowed_mime_types = apply_filters( 'sensei_quiz_answer_file_upload_types', false, $question_id );
 

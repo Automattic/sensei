@@ -32,7 +32,7 @@ class Sensei_Course_Progress_Block {
 			[
 				'render_callback' => [ $this, 'render_course_progress' ],
 			],
-			Sensei()->assets->src_path( 'blocks/course-progress' )
+			Sensei()->assets->src_path( 'blocks/course-progress-block' )
 		);
 	}
 

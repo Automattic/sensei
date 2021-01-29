@@ -60,7 +60,7 @@ class Sensei_Course_Blocks extends Sensei_Blocks_Initializer {
 		$this->progress        = new Sensei_Course_Progress_Block();
 		$this->contact_teacher = new Sensei_Block_Contact_Teacher();
 		$this->take_course     = new Sensei_Block_Take_Course();
-		new Sensei_Restricted_Content_Block();
+		new Sensei_Conditional_Content_Block();
 
 		$post_type_object = get_post_type_object( 'course' );
 
@@ -82,10 +82,14 @@ class Sensei_Course_Blocks extends Sensei_Blocks_Initializer {
 			return;
 		}
 
-		Sensei()->assets->enqueue( 'sensei-single-course', 'blocks/single-course.css' );
+		Sensei()->assets->enqueue(
+			'sensei-single-course-blocks-style',
+			'blocks/single-course-style.css',
+			[ 'sensei-shared-blocks-style' ]
+		);
 
 		if ( ! is_admin() ) {
-			Sensei()->assets->enqueue( 'sensei-single-course-frontend', 'blocks/course-outline/frontend.js' );
+			Sensei()->assets->enqueue_script( 'sensei-blocks-frontend' );
 		}
 	}
 
@@ -99,8 +103,17 @@ class Sensei_Course_Blocks extends Sensei_Blocks_Initializer {
 			return;
 		}
 
-		Sensei()->assets->enqueue( 'sensei-single-course-blocks', 'blocks/sensei-single-course-blocks.js', [], true );
-		Sensei()->assets->enqueue( 'sensei-single-course-editor', 'blocks/single-course.editor.css' );
+		Sensei()->assets->enqueue(
+			'sensei-single-course-blocks',
+			'blocks/single-course.js',
+			[ 'sensei-shared-blocks' ],
+			true
+		);
+		Sensei()->assets->enqueue(
+			'sensei-single-course-blocks-editor-style',
+			'blocks/single-course-style-editor.css',
+			[ 'sensei-shared-blocks-editor-style', 'sensei-editor-components-style' ]
+		);
 	}
 
 	/**
