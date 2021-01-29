@@ -34,7 +34,7 @@
 			content: '';
 			left: 12px;
 			right: 12px;
-			border-top: var(--wp-admin-border-width-focus) solid var(--wp-admin-theme-color);
+			border-top: var(--wp-admin-border-width-focus, 1.5px) solid var(--wp-admin-theme-color, rgba(66,88,99,.4));
 			margin-top: -9px;
 			pointer-events: none;
 		}
