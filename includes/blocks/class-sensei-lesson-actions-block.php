@@ -37,6 +37,16 @@ class Sensei_Lesson_Actions_Block {
 	 * @return string The block HTML.
 	 */
 	public function render( array $attributes, string $content ) : string {
+		$lesson = get_post();
+
+		if ( empty( $lesson ) ) {
+			return '';
+		}
+
+		if ( ! Sensei_Lesson::should_show_lesson_actions( $lesson->ID ) ) {
+			return '';
+		}
+
 		return ! empty( $content ) ? '<div class="sensei-block-wrapper">' . $content . '</div>' : '';
 	}
 }

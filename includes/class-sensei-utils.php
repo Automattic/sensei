@@ -1304,10 +1304,11 @@ class Sensei_Utils {
 
 				// Output HTML
 				if ( isset( $nav_links['next'] ) ) {
-					$message .= ' ' . '<a class="next-lesson" href="' . esc_url( $nav_links['next']['url'] )
-								. '" rel="next"><span class="meta-nav"></span>' . __( 'Next Lesson', 'sensei-lms' )
-								. '</a>';
-
+					if ( ! $is_lesson || ! has_block( 'sensei-lms/lesson-actions', $lesson_id ) ) {
+						$message .= ' <a class="next-lesson" href="' . esc_url( $nav_links['next']['url'] )
+									. '" rel="next"><span class="meta-nav"></span>' . __( 'Next Lesson', 'sensei-lms' )
+									. '</a>';
+					}
 				}
 			} else {  // Lesson/Quiz not complete
 

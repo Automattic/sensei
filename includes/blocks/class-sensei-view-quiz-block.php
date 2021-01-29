@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Sensei_Lesson_Actions_Block class.
+ * File containing the Sensei_View_Quiz_Block class.
  *
  * @package sensei
  * @since 3.8.0
@@ -11,16 +11,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Sensei_Next_Lesson_Block is responsible for rendering the 'Next Lesson' block.
+ * Class Sensei_View_Quiz_Block is responsible for rendering the 'View Quiz' block.
  */
-class Sensei_Next_Lesson_Block {
+class Sensei_View_Quiz_Block {
 
 	/**
-	 * Sensei_Next_Lesson_Block constructor.
+	 * Sensei_View_Quiz_Block constructor.
 	 */
 	public function __construct() {
 		Sensei_Blocks::register_sensei_block(
-			'sensei-lms/button-next-lesson',
+			'sensei-lms/button-view-quiz',
 			[
 				'render_callback' => [ $this, 'render' ],
 			]
@@ -40,16 +40,16 @@ class Sensei_Next_Lesson_Block {
 	public function render( array $attributes, string $content ) : string {
 		$lesson = get_post();
 
-		if ( empty( $lesson ) || ! Sensei_Utils::user_completed_lesson( $lesson->ID ) ) {
+		if ( empty( $lesson ) || Sensei_Utils::user_completed_lesson( $lesson->ID ) ) {
 			return '';
 		}
 
-		$urls = sensei_get_prev_next_lessons( $lesson->ID );
+		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson->ID );
 
-		if ( empty( $urls['next']['url'] ) ) {
+		if ( ! $quiz_id || ! Sensei()->lesson::lesson_quiz_has_questions( $lesson->ID ) || ! Sensei()->access_settings() ) {
 			return '';
 		}
 
-		return '<a href="' . esc_url( $urls['next']['url'] ) . '" >' . $content . '</a>';
+		return '<a href="' . esc_url( get_permalink( $quiz_id ) ) . '" >' . $content . '</a>';
 	}
 }
