@@ -21,7 +21,7 @@ const quizBlock = {
 		'sensei-lms'
 	),
 	keywords: [
-		__( 'Quiz', 'sensei-lms' ),
+		__( 'Exam', 'sensei-lms' ),
 		__( 'Questions', 'sensei-lms' ),
 		__( 'Test', 'sensei-lms' ),
 		__( 'Assessment', 'sensei-lms' ),
