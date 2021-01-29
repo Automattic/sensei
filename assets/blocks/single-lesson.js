@@ -25,11 +25,7 @@ registerSenseiBlocks( [
 
 let needsTemplate;
 
-subscribe( () => {
-	if ( undefined !== needsTemplate ) {
-		return;
-	}
-
+const unsubscribe = subscribe( () => {
 	needsTemplate = select( 'core/editor' ).getEditedPostAttribute( 'meta' )
 		?._needs_template; // eslint-disable-line camelcase
 
@@ -43,4 +39,6 @@ subscribe( () => {
 	dispatch( 'core/editor' ).editPost( {
 		meta: { _needs_template: false },
 	} );
+
+	unsubscribe();
 } );

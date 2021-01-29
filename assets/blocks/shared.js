@@ -18,11 +18,7 @@ registerSenseiBlocks( [ ContactTeacherBlock ] );
 
 let postType = null;
 
-subscribe( () => {
-	if ( postType ) {
-		return;
-	}
-
+const unsubscribe = subscribe( () => {
 	postType = select( 'core/editor' ).getCurrentPostType();
 
 	if ( ! postType ) {
@@ -37,4 +33,6 @@ subscribe( () => {
 			}
 		}
 	);
+
+	unsubscribe();
 } );
