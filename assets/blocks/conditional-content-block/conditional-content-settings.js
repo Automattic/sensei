@@ -12,10 +12,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import {
-	RestrictOptions,
-	RestrictOptionLabels,
-} from './restricted-content-edit';
+import { Conditions, ConditionLabels } from './conditional-content-edit';
 import ToolbarDropdown from '../editor-components/toolbar-dropdown';
 
 /**
@@ -23,7 +20,7 @@ import ToolbarDropdown from '../editor-components/toolbar-dropdown';
  *
  * @param {string} clientId The block client id.
  */
-const useIsSingleRestrictSelected = ( clientId ) => {
+const useIsConditionalBlockSelected = ( clientId ) => {
 	return useSelect(
 		( select ) => {
 			const selectedClientIds = select(
@@ -40,11 +37,11 @@ const useIsSingleRestrictSelected = ( clientId ) => {
 };
 
 /**
- * A hook that returns a function which unwraps the inner blocks from the restricted content block.
+ * A hook that returns a function which unwraps the inner blocks from the conditional content block.
  *
  * @param {string} clientId The block client id.
  */
-const useOnRestrictionRemoval = ( clientId ) => {
+const useOnConditionRemoval = ( clientId ) => {
 	const block = useSelect(
 		( select ) => select( 'core/block-editor' ).getBlock( clientId ),
 		[ clientId ]
@@ -59,29 +56,29 @@ const useOnRestrictionRemoval = ( clientId ) => {
 };
 
 /**
- * The restricted content block settings.
+ * The conditional content block settings.
  *
- * @param {Object}   props                     Component properties.
- * @param {string}   props.selectedRestriction The restriction that is currently selected.
- * @param {Function} props.onRestrictionChange Callback which is called when a new option is selected.
- * @param {string}   props.clientId            The block client id.
- * @param {boolean}  props.hasInnerBlocks      True if there are inner blocks.
+ * @param {Object}   props                   Component properties.
+ * @param {string}   props.selectedCondition The condition that is currently selected.
+ * @param {Function} props.onConditionChange Callback which is called when a new option is selected.
+ * @param {string}   props.clientId          The block client id.
+ * @param {boolean}  props.hasInnerBlocks    True if there are inner blocks.
  */
-const RestrictedContentSettings = ( {
-	selectedRestriction,
-	onRestrictionChange,
+const ConditionalContentSettings = ( {
+	selectedCondition,
+	onConditionChange,
 	clientId,
 	hasInnerBlocks,
 } ) => {
-	const isSingleRestrictSelected = useIsSingleRestrictSelected( clientId );
-	const onRestrictRemoval = useOnRestrictionRemoval( clientId );
-
-	const toolbarOptions = Object.keys( RestrictOptions ).map(
-		( optionKey ) => ( {
-			value: RestrictOptions[ optionKey ],
-			label: RestrictOptionLabels[ RestrictOptions[ optionKey ] ],
-		} )
+	const isConditionalBlockSelected = useIsConditionalBlockSelected(
+		clientId
 	);
+	const onConditionRemoval = useOnConditionRemoval( clientId );
+
+	const toolbarOptions = Object.keys( Conditions ).map( ( optionKey ) => ( {
+		value: Conditions[ optionKey ],
+		label: ConditionLabels[ Conditions[ optionKey ] ],
+	} ) );
 
 	return (
 		<>
@@ -89,24 +86,24 @@ const RestrictedContentSettings = ( {
 				<ToolbarGroup>
 					<ToolbarDropdown
 						options={ toolbarOptions }
-						optionsLabel={ __( 'Visibility', 'sensei-lms' ) }
-						value={ selectedRestriction }
-						onChange={ onRestrictionChange }
+						optionsLabel={ __( 'Visible when', 'sensei-lms' ) }
+						value={ selectedCondition }
+						onChange={ onConditionChange }
 					/>
 				</ToolbarGroup>
 			</BlockControls>
-			{ isSingleRestrictSelected &&
+			{ isConditionalBlockSelected &&
 				hasInnerBlocks &&
 				BlockSettingsMenuControls && (
 					<BlockSettingsMenuControls>
 						{ ( { onClose } ) => (
 							<MenuItem
 								onClick={ () => {
-									onRestrictRemoval();
+									onConditionRemoval();
 									onClose();
 								} }
 							>
-								{ __( 'Remove restriction', 'sensei-lms' ) }
+								{ __( 'Remove condition', 'sensei-lms' ) }
 							</MenuItem>
 						) }
 					</BlockSettingsMenuControls>
@@ -115,4 +112,4 @@ const RestrictedContentSettings = ( {
 	);
 };
 
-export default RestrictedContentSettings;
+export default ConditionalContentSettings;
