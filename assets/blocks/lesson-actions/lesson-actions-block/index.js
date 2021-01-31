@@ -14,7 +14,7 @@ import save from './lesson-actions-save';
 export default {
 	title: __( 'Lesson Actions', 'sensei-lms' ),
 	description: __(
-		'Enable an enrolled user to perform specific actions for a lesson.',
+		'Enable a learner to perform specific actions for a lesson.',
 		'sensei-lms'
 	),
 	keywords: [
