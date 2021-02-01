@@ -79,6 +79,10 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 		new Sensei_View_Quiz_Block();
 		new Sensei_Block_Contact_Teacher();
 
+		if ( Sensei()->lesson->has_sensei_blocks() ) {
+			$this->remove_block_related_content();
+		}
+
 		$post_type_object = get_post_type_object( 'lesson' );
 
 		$post_type_object->template = [
@@ -90,6 +94,18 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 			[ 'sensei-lms/lesson-actions' ],
 		];
 	}
+
+	/**
+	 * Helper method to remove functionality which is provided by blocks.
+	 */
+	private function remove_block_related_content() {
+		// Remove contact teacher button.
+		remove_action( 'sensei_single_lesson_content_inside_before', [ Sensei()->post_types->messages, 'send_message_link' ], 30 );
+
+		// Remove footer buttons.
+		remove_action( 'sensei_single_lesson_content_inside_after', [ 'Sensei_Lesson', 'footer_quiz_call_to_action' ] );
+	}
+
 
 	/**
 	 * Register lesson post metas.

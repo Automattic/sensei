@@ -4471,11 +4471,7 @@ class Sensei_Lesson {
 					echo '<div class="sensei-message ' . esc_attr( $status['box_class'] ) . '">' .
 						wp_kses_post( $status['message'] ) . '</div>';
 				}
-
-				if ( $has_quiz_questions ) {
-					// echo $status['extra'];
-				} // End If Statement
-			} // End If Statement
+			}
 		}
 
 	}
@@ -4702,26 +4698,27 @@ class Sensei_Lesson {
 	}
 
 	/**
-	 * Check if a lesson is legacy.
+	 * Check if a lesson has Sensei blocks.
 	 *
 	 * @param int|WP_Post $lesson Lesson ID or lesson object.
 	 *
 	 * @return bool
 	 */
-	public function is_legacy_lesson( $lesson ) {
+	public function has_sensei_blocks( $lesson = null ) {
 		$lesson = get_post( $lesson );
 
 		$lesson_blocks = [
 			'sensei-lms/lesson-actions',
+			'sensei-lms/button-contact-teacher',
 		];
 
 		foreach ( $lesson_blocks as $block ) {
 			if ( has_block( $block, $lesson ) ) {
-				return false;
+				return true;
 			}
 		}
 
-		return true;
+		return false;
 	}
 }
 
