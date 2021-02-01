@@ -772,8 +772,8 @@ class Sensei_Course_Structure {
 	 * @return array Sorted structure.
 	 */
 	public static function sort_structure( $structure, $order, $type ) {
-		if ( ! empty( $order ) 
-		&&  [0] !== $order ) {
+		if ( ! empty( $order )
+		&& [ 0 ] !== $order ) {
 			usort(
 				$structure,
 				function( $a, $b ) use ( $order, $type ) {
