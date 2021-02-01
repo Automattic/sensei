@@ -15,20 +15,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Quiz_Blocks extends Sensei_Blocks_Initializer {
 
 	/**
-	 * Course progress block.
-	 *
-	 * @var Sensei_Block_Quiz
-	 */
-	public $quiz;
-
-	/**
-	 * Take course block.
-	 *
-	 * @var Sensei_Block_Quiz_Question
-	 */
-	public $question;
-
-	/**
 	 * Sensei_Quiz_Blocks constructor.
 	 */
 	public function __construct() {
@@ -57,8 +43,8 @@ class Sensei_Quiz_Blocks extends Sensei_Blocks_Initializer {
 	 * Initializes quiz blocks.
 	 */
 	public function initialize_blocks() {
-		$this->quiz     = new Sensei_Block_Quiz();
-		$this->question = new Sensei_Block_Quiz_Question();
+		new Sensei_Block_Quiz();
+		new Sensei_Block_Quiz_Question();
 	}
 
 }

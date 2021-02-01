@@ -25,7 +25,7 @@ class Sensei_Blocks {
 	 *
 	 * @var Sensei_Lesson_Blocks
 	 */
-	public $lesson;
+	private $lesson;
 
 	/**
 	 * Quiz blocks.
