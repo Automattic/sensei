@@ -11,7 +11,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { registerTestLessonBlock } from '../test-helpers';
+import { registerTestLessonBlock } from '../../blocks/course-outline/test-helpers';
 import { useAutoInserter } from './use-auto-inserter';
 
 registerTestLessonBlock();
