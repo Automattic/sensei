@@ -4,6 +4,7 @@
 import { __ } from '@wordpress/i18n';
 import { InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, ToggleControl } from '@wordpress/components';
+import { useSharedModuleStyles } from './use-shared-module-styles';
 
 /**
  * Inspector controls for outline block.
@@ -14,37 +15,40 @@ import { PanelBody, ToggleControl } from '@wordpress/components';
  * @param {boolean}  props.moduleBorder          Whether modules borders are enabled.
  * @param {Function} props.setModuleBorder       Callback to set module borders.
  */
-const OutlineSettings = ( {
-	collapsibleModules,
-	setCollapsibleModules,
-	moduleBorder,
-	setModuleBorder,
-} ) => (
-	<InspectorControls>
-		<PanelBody
-			title={ __( 'Modules', 'sensei-lms' ) }
-			initialOpen={ false }
-		>
-			<ToggleControl
-				checked={ collapsibleModules }
-				onChange={ setCollapsibleModules }
-				label={ __( 'Collapsible modules', 'sensei-lms' ) }
-				help={ __(
-					'Modules can be collapsed or expanded.',
-					'sensei-lms'
-				) }
-			/>
-			<ToggleControl
-				checked={ moduleBorder }
-				onChange={ setModuleBorder }
-				label={ __( 'Border', 'sensei-lms' ) }
-				help={ __(
-					'Toggle the border for all modules.',
-					'sensei-lms'
-				) }
-			/>
-		</PanelBody>
-	</InspectorControls>
-);
+const OutlineSettings = ( props ) => {
+	const { attributes, setAttributes } = props;
+
+	const { moduleBorder, setModuleBorder } = useSharedModuleStyles( props );
+
+	return (
+		<InspectorControls>
+			<PanelBody
+				title={ __( 'Modules', 'sensei-lms' ) }
+				initialOpen={ false }
+			>
+				<ToggleControl
+					checked={ attributes.collapsibleModules }
+					onChange={ ( value ) =>
+						setAttributes( { collapsibleModules: value } )
+					}
+					label={ __( 'Collapsible modules', 'sensei-lms' ) }
+					help={ __(
+						'Modules can be collapsed or expanded.',
+						'sensei-lms'
+					) }
+				/>
+				<ToggleControl
+					checked={ moduleBorder }
+					onChange={ setModuleBorder }
+					label={ __( 'Border', 'sensei-lms' ) }
+					help={ __(
+						'Toggle the border for all modules.',
+						'sensei-lms'
+					) }
+				/>
+			</PanelBody>
+		</InspectorControls>
+	);
+};
 
 export default OutlineSettings;

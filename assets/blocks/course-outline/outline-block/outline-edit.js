@@ -4,7 +4,7 @@
 import { InnerBlocks } from '@wordpress/block-editor';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
-import { createContext, useEffect, useRef } from '@wordpress/element';
+import { createContext, useEffect } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -15,8 +15,6 @@ import { useBlocksCreator } from '../use-block-creator';
 import OutlineSettings from './outline-settings';
 import { withDefaultBlockStyle } from '../../../shared/blocks/settings';
 import { COURSE_STATUS_STORE } from '../status-store';
-import { getCourseInnerBlocks } from '../get-course-inner-blocks';
-import { getActiveStyleClass, applyStyleClass } from '../apply-style-class';
 import ToggleLegacyCourseMetaboxesWrapper from '../../toggle-legacy-course-metaboxes-wrapper';
 
 /**
@@ -54,40 +52,6 @@ const useSynchronizeLessonsOnUpdate = function ( clientId, isPreview ) {
 	] );
 };
 
-const useApplyStyleToModules = ( clientId, className, isPreview ) => {
-	const oldOutlineClass = useRef( null );
-	const outlineStyles = useSelect(
-		( select ) =>
-			select( 'core/blocks' ).getBlockStyles(
-				'sensei-lms/course-outline'
-			),
-		[]
-	);
-
-	const newOutlineClass = getActiveStyleClass( outlineStyles, className );
-
-	useEffect( () => {
-		if ( isPreview ) {
-			return;
-		}
-
-		if ( newOutlineClass && oldOutlineClass.current !== newOutlineClass ) {
-			if ( ! oldOutlineClass.current ) {
-				oldOutlineClass.current = newOutlineClass;
-				return;
-			}
-
-			oldOutlineClass.current = newOutlineClass;
-			getCourseInnerBlocks(
-				clientId,
-				'sensei-lms/course-outline-module'
-			).forEach( ( module ) =>
-				applyStyleClass( module.clientId, newOutlineClass )
-			);
-		}
-	}, [ clientId, isPreview, newOutlineClass, oldOutlineClass ] );
-};
-
 /**
  * Edit course outline block component.
  *
@@ -101,7 +65,6 @@ const OutlineEdit = ( props ) => {
 	const { clientId, className, attributes, setAttributes } = props;
 
 	const { fetchCourseStructure } = useDispatch( COURSE_STORE );
-	const { updateBlockAttributes } = useDispatch( 'core/block-editor' );
 
 	useEffect( () => {
 		if ( ! attributes.isPreview ) {
@@ -118,22 +81,6 @@ const OutlineEdit = ( props ) => {
 	);
 
 	useSynchronizeLessonsOnUpdate( clientId, attributes.isPreview );
-	useApplyStyleToModules( clientId, className, attributes.isPreview );
-
-	const applyBorder = ( newValue ) => {
-		const modules = getCourseInnerBlocks(
-			clientId,
-			'sensei-lms/course-outline-module'
-		);
-
-		modules.forEach( ( module ) => {
-			updateBlockAttributes( module.clientId, {
-				borderedSelected: newValue,
-			} );
-		} );
-
-		setAttributes( { moduleBorder: newValue } );
-	};
 
 	const content = isEmpty ? (
 		<OutlinePlaceholder
@@ -147,14 +94,7 @@ const OutlineEdit = ( props ) => {
 				outlineClassName: className,
 			} }
 		>
-			<OutlineSettings
-				collapsibleModules={ attributes.collapsibleModules }
-				setCollapsibleModules={ ( value ) =>
-					setAttributes( { collapsibleModules: value } )
-				}
-				moduleBorder={ attributes.moduleBorder }
-				setModuleBorder={ applyBorder }
-			/>
+			<OutlineSettings { ...props } />
 
 			<section className={ className }>
 				<InnerBlocks
