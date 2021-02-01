@@ -6,8 +6,6 @@ import classnames from 'classnames';
 /**
  * WordPress dependencies
  */
-import { useEffect } from '@wordpress/element';
-import { useDispatch, useSelect } from '@wordpress/data';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
@@ -18,15 +16,14 @@ import { checked, chevronRight } from '../../../icons/wordpress-icons';
 import { withColorSettings } from '../../../shared/blocks/settings';
 import { useKeydownInserter } from '../../../shared/blocks/use-keydown-inserter';
 import SingleLineInput from '../single-line-input';
+import { Status } from '../status-preview';
 import LessonSettings from './lesson-settings';
-import { Status } from '../status-control';
-import { COURSE_STATUS_STORE } from '../status-store';
+import { useLessonPreviewStatus } from './use-lesson-preview-status';
 
 /**
  * Edit lesson block component.
  *
  * @param {Object}   props                     Component props.
- * @param {string}   props.clientId            Block client ID.
  * @param {string}   props.className           Custom class name.
  * @param {Object}   props.attributes          Block attributes.
  * @param {string}   props.attributes.title    Lesson title.
@@ -40,16 +37,12 @@ import { COURSE_STATUS_STORE } from '../status-store';
  */
 export const LessonEdit = ( props ) => {
 	const {
-		clientId,
 		className,
-		attributes: { title, id, fontSize, draft, preview, isExample },
+		attributes: { title, id, fontSize, draft, preview },
 		backgroundColor,
 		textColor,
 		setAttributes,
 	} = props;
-	const { setLessonStatus, trackLesson, ignoreLesson } = useDispatch(
-		COURSE_STATUS_STORE
-	);
 
 	/**
 	 * Update lesson title.
@@ -61,17 +54,7 @@ export const LessonEdit = ( props ) => {
 	};
 
 	const { onKeyDown } = useKeydownInserter( props );
-
-	// If the lesson has a title and it isn't an example, add it to the tracked lessons in the status store.
-	useEffect( () => {
-		if ( ! isExample ) {
-			if ( title.length > 0 ) {
-				trackLesson( clientId );
-			} else {
-				ignoreLesson( clientId );
-			}
-		}
-	}, [ clientId, trackLesson, ignoreLesson, title, isExample ] );
+	const lessonStatus = useLessonPreviewStatus( props );
 
 	let postStatus = '';
 	if ( ! id && title.length ) {
@@ -80,19 +63,13 @@ export const LessonEdit = ( props ) => {
 		postStatus = __( 'Draft', 'sensei-lms' );
 	}
 
-	const previewStatus = useSelect(
-		( selectStatus ) =>
-			selectStatus( COURSE_STATUS_STORE ).getLessonStatus( clientId ),
-		[ clientId ]
-	);
-
 	const wrapperStyles = {
 		className: classnames(
 			className,
 			backgroundColor?.class,
 			textColor?.class,
 			{
-				completed: previewStatus === Status.COMPLETED,
+				completed: lessonStatus.previewStatus === Status.COMPLETED,
 			}
 		),
 		style: {
@@ -103,13 +80,7 @@ export const LessonEdit = ( props ) => {
 
 	return (
 		<>
-			<LessonSettings
-				{ ...props }
-				previewStatus={ previewStatus }
-				setPreviewStatus={ ( status ) =>
-					setLessonStatus( clientId, status )
-				}
-			/>
+			<LessonSettings { ...props } { ...lessonStatus } />
 			<div { ...wrapperStyles }>
 				<Icon
 					icon={ checked }

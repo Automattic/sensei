@@ -10,11 +10,12 @@ import {
 } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { Status } from '../status-preview';
 
 /**
  * Internal dependencies
  */
-import { Status, StatusControl } from '../status-control';
+import { StatusControl } from '../status-preview/status-control';
 
 /**
  * Inspector controls for lesson block.
