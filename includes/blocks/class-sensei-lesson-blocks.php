@@ -34,11 +34,7 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 			return;
 		}
 
-		Sensei()->assets->enqueue(
-			'sensei-single-lesson-blocks-style',
-			'blocks/single-lesson-style.css',
-			[ 'sensei-shared-blocks-style' ]
-		);
+		Sensei()->assets->enqueue( 'sensei-shared-blocks-style', 'blocks/shared-style.css' );
 
 		if ( ! is_admin() ) {
 			Sensei()->assets->enqueue_script( 'sensei-blocks-frontend' );
