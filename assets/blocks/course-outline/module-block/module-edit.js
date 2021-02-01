@@ -22,11 +22,11 @@ import {
 	withColorSettings,
 	withDefaultColor,
 } from '../../../shared/blocks/settings';
+import { useAutoInserter } from '../../../shared/blocks/use-auto-inserter';
 import { OutlineAttributesContext } from '../outline-block/outline-edit';
 import SingleLineInput from '../single-line-input';
 import { ModuleStatus } from './module-status';
 import ModuleSettings from './module-settings';
-import { useInsertLessonBlock } from './use-insert-lesson-block';
 
 /**
  * Edit module block component.
@@ -70,7 +70,7 @@ export const ModuleEdit = ( props ) => {
 		outlineClassName: '',
 	};
 
-	useInsertLessonBlock( props );
+	useAutoInserter( { name: 'sensei-lms/course-outline-lesson' }, props );
 
 	/**
 	 * Handle update name.
