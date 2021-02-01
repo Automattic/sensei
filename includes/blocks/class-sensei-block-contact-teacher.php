@@ -19,6 +19,7 @@ class Sensei_Block_Contact_Teacher {
 	 */
 	public function __construct() {
 		$this->register_block();
+		$this->add_notices();
 	}
 
 	/**
@@ -33,7 +34,14 @@ class Sensei_Block_Contact_Teacher {
 				'render_callback' => [ $this, 'render_contact_teacher_block' ],
 			]
 		);
+	}
 
+	/**
+	 * Check if a notice should be displayed.
+	 *
+	 * @access private
+	 */
+	public function add_notices() {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
 		if ( isset( $_GET['send'] ) && 'complete' === $_GET['send'] ) {
 			Sensei()->notices->add_notice( __( 'Your private message has been sent.', 'sensei-lms' ), 'tick', 'sensei-contact-teacher-confirm' );
