@@ -21,6 +21,7 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 
 		add_action( 'enqueue_block_assets', [ $this, 'enqueue_block_assets' ] );
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_block_editor_assets' ] );
+		add_action( 'init', [ $this, 'register_lesson_post_metas' ] );
 	}
 
 	/**
@@ -77,5 +78,36 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 		new Sensei_Reset_Lesson_Block();
 		new Sensei_View_Quiz_Block();
 		new Sensei_Block_Contact_Teacher();
+
+		$post_type_object = get_post_type_object( 'lesson' );
+
+		$post_type_object->template = [
+			[ 'sensei-lms/button-contact-teacher' ],
+			[
+				'core/paragraph',
+				[ 'placeholder' => __( 'Write lesson content...', 'sensei-lms' ) ],
+			],
+			[ 'sensei-lms/lesson-actions' ],
+		];
+	}
+
+	/**
+	 * Register lesson post metas.
+	 *
+	 * @access private
+	 */
+	public function register_lesson_post_metas() {
+		register_post_meta(
+			'lesson',
+			'_needs_template',
+			[
+				'show_in_rest'  => true,
+				'single'        => true,
+				'type'          => 'boolean',
+				'auth_callback' => function() {
+					return current_user_can( 'manage_sensei' );
+				},
+			]
+		);
 	}
 }
