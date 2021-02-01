@@ -40,7 +40,7 @@ class Sensei_View_Quiz_Block {
 	public function render( array $attributes, string $content ) : string {
 		$lesson = get_post();
 
-		if ( empty( $lesson ) || Sensei_Utils::user_completed_lesson( $lesson->ID ) ) {
+		if ( empty( $lesson ) ) {
 			return '';
 		}
 
