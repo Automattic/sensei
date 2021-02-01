@@ -37,7 +37,7 @@ const LessonActionsSettings = ( {
 				<ToolbarDropdown
 					options={ [
 						{
-							label: __( 'In progress', 'sensei-lms' ),
+							label: __( 'In Progress', 'sensei-lms' ),
 							value: IN_PROGRESS_PREVIEW,
 						},
 						{
