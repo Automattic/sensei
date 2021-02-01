@@ -414,7 +414,7 @@ class Sensei_Main {
 		// data will be sent.
 		$this->usage_tracking->schedule_tracking_task();
 
-		$this->blocks = new Sensei_Blocks();
+		$this->blocks = new Sensei_Blocks( $this );
 
 		Sensei_Learner::instance()->init();
 		Sensei_Course_Enrolment_Manager::instance()->init();

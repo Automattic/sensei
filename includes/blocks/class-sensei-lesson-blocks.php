@@ -17,10 +17,7 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 	 * Sensei_Blocks constructor.
 	 */
 	public function __construct() {
-		parent::__construct( 'lesson' );
-
-		add_action( 'enqueue_block_assets', [ $this, 'enqueue_block_assets' ] );
-		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_block_editor_assets' ] );
+		parent::__construct( [ 'lesson' ] );
 		add_action( 'init', [ $this, 'register_lesson_post_metas' ] );
 	}
 
@@ -30,9 +27,6 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 	 * @access private
 	 */
 	public function enqueue_block_assets() {
-		if ( 'lesson' !== get_post_type() ) {
-			return;
-		}
 
 		Sensei()->assets->enqueue(
 			'sensei-single-lesson-blocks-style',
@@ -51,9 +45,6 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 	 * @access private
 	 */
 	public function enqueue_block_editor_assets() {
-		if ( 'lesson' !== get_post_type() ) {
-			return;
-		}
 
 		Sensei()->assets->enqueue(
 			'sensei-single-lesson-blocks',
