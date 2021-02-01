@@ -58,7 +58,7 @@ const LessonActionsEdit = ( {
 	const hasQuiz = useHasQuiz();
 	const quizStateClass = hasQuiz ? 'has-quiz' : 'no-quiz';
 
-	const completeLessonAllowed = useCompleteLessonAllowed();
+	const completeLessonAllowed = useCompleteLessonAllowed( hasQuiz );
 	const completeLessonAllowedClass = completeLessonAllowed
 		? 'allowed'
 		: 'not-allowed';

@@ -6,16 +6,16 @@ import { useEffect, useState } from '@wordpress/element';
 /**
  * Hook to check if a lesson can be completed manually.
  *
+ * @param {boolean} hasQuiz If a lesson has a quiz.
+ *
  * @return {boolean} If a lesson can be marked as completed by student.
  */
-const useCompleteLessonAllowed = () => {
+const useCompleteLessonAllowed = ( hasQuiz ) => {
 	const passRequiredCheckbox = document.getElementById( 'pass_required' );
 
-	const [ completeLessonAllowed, setCompleteLessonAllowed ] = useState(
-		() => {
-			return ! passRequiredCheckbox || ! passRequiredCheckbox.checked;
-		}
-	);
+	const [ passRequired, setPassRequired ] = useState( () => {
+		return ! passRequiredCheckbox || ! passRequiredCheckbox.checked;
+	} );
 
 	useEffect( () => {
 		// Ignore if the checkbox isn't present.
@@ -24,7 +24,7 @@ const useCompleteLessonAllowed = () => {
 		}
 
 		const passRequiredEventHandler = () => {
-			setCompleteLessonAllowed( ! passRequiredCheckbox.checked );
+			setPassRequired( ! passRequiredCheckbox.checked );
 		};
 
 		passRequiredCheckbox.addEventListener(
@@ -40,7 +40,7 @@ const useCompleteLessonAllowed = () => {
 		};
 	}, [ passRequiredCheckbox ] );
 
-	return completeLessonAllowed;
+	return ! hasQuiz || passRequired;
 };
 
 export default useCompleteLessonAllowed;
