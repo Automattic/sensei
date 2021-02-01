@@ -772,37 +772,39 @@ class Sensei_Course_Structure {
 	 * @return array Sorted structure.
 	 */
 	public static function sort_structure( $structure, $order, $type ) {
-		usort(
-			$structure,
-			function( $a, $b ) use ( $order, $type ) {
-				// One of the types is not being sorted.
-				if ( $type !== $a['type'] || $type !== $b['type'] ) {
-					// If types are equal, keep in the current positions.
-					if ( $a['type'] === $b['type'] ) {
+		if ( ! empty( $order ) 
+		&&  [0] !== $order ) {
+			usort(
+				$structure,
+				function( $a, $b ) use ( $order, $type ) {
+					// One of the types is not being sorted.
+					if ( $type !== $a['type'] || $type !== $b['type'] ) {
+						// If types are equal, keep in the current positions.
+						if ( $a['type'] === $b['type'] ) {
+							return 0;
+						}
+
+						// Always keep the modules before the lessons.
+						return 'module' === $a['type'] ? - 1 : 1;
+					}
+
+					$a_position = array_search( $a['id'], $order, true );
+					$b_position = array_search( $b['id'], $order, true );
+
+					// If both weren't sorted, keep the current positions.
+					if ( false === $a_position && false === $b_position ) {
 						return 0;
 					}
 
-					// Always keep the modules before the lessons.
-					return 'module' === $a['type'] ? - 1 : 1;
+					// Keep not sorted items in the end.
+					if ( false === $a_position ) {
+						return 1;
+					}
+
+					return false === $b_position || $a_position < $b_position ? -1 : 1;
 				}
-
-				$a_position = array_search( $a['id'], $order, true );
-				$b_position = array_search( $b['id'], $order, true );
-
-				// If both weren't sorted, keep the current positions.
-				if ( false === $a_position && false === $b_position ) {
-					return 0;
-				}
-
-				// Keep not sorted items in the end.
-				if ( false === $a_position ) {
-					return 1;
-				}
-
-				return false === $b_position || $a_position < $b_position ? -1 : 1;
-			}
-		);
-
+			);
+		}
 		return $structure;
 	}
 }
