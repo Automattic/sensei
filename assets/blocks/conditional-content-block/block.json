@@ -1,12 +1,12 @@
 {
-  "name": "sensei-lms/restricted-content",
+  "name": "sensei-lms/conditional-content",
   "category": "sensei-lms",
   "supports": {
     "html": false,
     "align": [ "wide", "full" ]
   },
   "attributes": {
-    "restrictionType": {
+    "condition": {
       "type": "string",
       "default": "enrolled"
     }

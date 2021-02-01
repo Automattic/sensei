@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Sensei_Restricted_Content_Block class.
+ * File containing the Sensei_Conditional_Content_Block class.
  *
  * @package sensei
  */
@@ -10,25 +10,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Sensei_Restricted_Content_Block
+ * Class Sensei_Conditional_Content_Block
  */
-class Sensei_Restricted_Content_Block {
+class Sensei_Conditional_Content_Block {
 
 	/**
-	 * Sensei_Restricted_Content_Block constructor.
+	 * Sensei_Conditional_Content_Block constructor.
 	 */
 	public function __construct() {
 		Sensei_Blocks::register_sensei_block(
-			'sensei-lms/restricted-content',
+			'sensei-lms/conditional-content',
 			[
 				'render_callback' => [ $this, 'render' ],
 			],
-			Sensei()->assets->src_path( 'blocks/restricted-content-block' )
+			Sensei()->assets->src_path( 'blocks/conditional-content-block' )
 		);
 	}
 
 	/**
-	 * Renders restricted content blocks in the frontend.
+	 * Renders conditional content blocks in the frontend.
 	 *
 	 * @param array  $attributes The block attributes.
 	 * @param string $content    The inner block content.
@@ -46,7 +46,7 @@ class Sensei_Restricted_Content_Block {
 
 		$should_hide = false;
 
-		switch ( $attributes['restrictionType'] ) {
+		switch ( $attributes['condition'] ) {
 			case 'enrolled':
 				$should_hide = ! Sensei()->course::is_user_enrolled( $course_id );
 				break;

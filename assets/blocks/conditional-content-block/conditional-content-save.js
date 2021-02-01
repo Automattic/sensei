@@ -8,7 +8,7 @@ import classnames from 'classnames';
  */
 import { InnerBlocks } from '@wordpress/block-editor';
 
-const RestrictedContentSave = ( { className } ) => (
+const ConditionalContentSave = ( { className } ) => (
 	<div className={ classnames( 'wp-block-group', className ) }>
 		<div className="wp-block-group__inner-container">
 			<InnerBlocks.Content />
@@ -16,4 +16,4 @@ const RestrictedContentSave = ( { className } ) => (
 	</div>
 );
 
-export default RestrictedContentSave;
+export default ConditionalContentSave;

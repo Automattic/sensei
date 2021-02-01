@@ -18,7 +18,7 @@ export default createButtonBlockType( {
 		parent: [ 'sensei-lms/lesson-actions' ],
 		title: __( 'Complete Lesson', 'sensei-lms' ),
 		description: __(
-			'Enable an enrolled user to mark the lesson as complete.',
+			'Enable a learner to mark the lesson as complete. This block is only displayed if the lesson has no quiz or the quiz is optional.',
 			'sensei-lms'
 		),
 		keywords: [
@@ -30,6 +30,9 @@ export default createButtonBlockType( {
 		attributes: {
 			text: {
 				default: __( 'Complete Lesson', 'sensei-lms' ),
+			},
+			buttonClassName: {
+				default: [ 'sensei-stop-double-submission' ],
 			},
 		},
 	},

@@ -487,7 +487,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 		$this->assertTrue( $lesson_data_reset, 'The lesson data was not reset for a valid use case' );
 		$valid_notices = [
-			'<div class="sensei-message info">Quiz Reset Successfully.</div>',
+			'<div class="sensei-message info">Lesson Reset Successfully.</div>',
 			'', // No notice is immediately displayed if notices haven't been printed elsewhere in another test.
 		];
 		$this->assertContains( $lesson_data_reset_notice, $valid_notices, 'Invalid notice displayed after quiz reset' );

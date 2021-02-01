@@ -88,6 +88,7 @@ const LessonActionsEdit = ( {
 						allowedBlocks={ ACTION_BLOCKS }
 						template={ filteredInnerBlocksTemplate }
 						templateLock="all"
+						templateInsertUpdatesSelection={ false }
 					/>
 				</div>
 			</div>

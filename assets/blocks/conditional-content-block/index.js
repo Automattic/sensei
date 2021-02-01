@@ -8,16 +8,13 @@ import { createBlock } from '@wordpress/blocks';
 /**
  * Internal dependencies
  */
-import edit from './restricted-content-edit';
-import save from './restricted-content-save';
+import edit from './conditional-content-edit';
+import save from './conditional-content-save';
 import metadata from './block';
 
 export default {
-	title: __( 'Restricted Course Content', 'sensei-lms' ),
-	description: __(
-		'Display conditional course content to users.',
-		'sensei-lms'
-	),
+	title: __( 'Conditional Content', 'sensei-lms' ),
+	description: __( 'Display conditional content to users.', 'sensei-lms' ),
 	keywords: [
 		__( 'Enrolled', 'sensei-lms' ),
 		__( 'Content', 'sensei-lms' ),
@@ -25,7 +22,8 @@ export default {
 		__( 'Private', 'sensei-lms' ),
 		__( 'Completed', 'sensei-lms' ),
 		__( 'Not Enrolled', 'sensei-lms' ),
-		__( 'Restricted', 'sensei-lms' ),
+		__( 'Restrict', 'sensei-lms' ),
+		__( 'Access', 'sensei-lms' ),
 	],
 	icon: () => <Icon icon="lock" />,
 	edit,
@@ -40,7 +38,7 @@ export default {
 				__experimentalConvert: ( blocks ) => {
 					if (
 						blocks.length === 1 &&
-						blocks[ 0 ].name === 'sensei-lms/restricted-content'
+						blocks[ 0 ].name === 'sensei-lms/conditional-content'
 					) {
 						return;
 					}
@@ -69,7 +67,7 @@ export default {
 					);
 
 					return createBlock(
-						'sensei-lms/restricted-content',
+						'sensei-lms/conditional-content',
 						{
 							align: widestAlignment,
 						},

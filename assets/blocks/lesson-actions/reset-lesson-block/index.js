@@ -18,7 +18,7 @@ export default createButtonBlockType( {
 		title: __( 'Reset Lesson', 'sensei-lms' ),
 		parent: [ 'sensei-lms/lesson-actions' ],
 		description: __(
-			'Enable an enrolled user to reset their lesson progress.',
+			'Enable a learner to reset their progress. This block is only displayed if the quiz has been completed and retakes are enabled.',
 			'sensei-lms'
 		),
 		keywords: [
@@ -32,6 +32,9 @@ export default createButtonBlockType( {
 		attributes: {
 			text: {
 				default: __( 'Reset Lesson', 'sensei-lms' ),
+			},
+			buttonClassName: {
+				default: [ 'sensei-stop-double-submission' ],
 			},
 		},
 		styles: [

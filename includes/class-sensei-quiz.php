@@ -544,7 +544,7 @@ class Sensei_Quiz {
 		// Run any action on quiz/lesson reset (previously this didn't occur on resetting a quiz, see resetting a lesson in sensei_complete_lesson()
 		do_action( 'sensei_user_lesson_reset', $user_id, $lesson_id );
 		if ( ! is_admin() ) {
-			Sensei()->notices->add_notice( __( 'Quiz Reset Successfully.', 'sensei-lms' ), 'info' );
+			Sensei()->notices->add_notice( __( 'Lesson Reset Successfully.', 'sensei-lms' ), 'info' );
 		}
 
 		return true;
