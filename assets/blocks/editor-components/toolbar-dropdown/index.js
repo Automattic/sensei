@@ -29,14 +29,14 @@ import { checked } from '../../../icons/wordpress-icons';
  * Dropdown for the editor toolbar.
  *
  * @param {Object}           props
- * @param {DropdownOption[]} props.options             Dropdown options.
- * @param {string}           [props.optionsLabel]      Options label.
- * @param {Object}           props.icon                Icon for the toolbar.
- * @param {string}           props.value               Current dropdown value.
- * @param {Function}         props.onChange            Dropdown change callback, which receive the new value as argument.
- * @param {Object}           props.toggleProps         Props passed to the toggle element.
- * @param {Object}           props.popoverProps        Props passed to the popover component.
- * @param {Function}         props.renderMenuItemProps Render function for a menu item. Should return a props object.
+ * @param {DropdownOption[]} props.options          Dropdown options.
+ * @param {string}           [props.optionsLabel]   Options label.
+ * @param {Object}           props.icon             Icon for the toolbar.
+ * @param {string}           props.value            Current dropdown value.
+ * @param {Function}         props.onChange         Dropdown change callback, which receive the new value as argument.
+ * @param {Object}           props.toggleProps      Props passed to the toggle element.
+ * @param {Object}           props.popoverProps     Props passed to the popover component.
+ * @param {Function}         props.getMenuItemProps Render function for a menu item. Should return a props object.
  */
 const ToolbarDropdown = ( {
 	options,
@@ -45,7 +45,7 @@ const ToolbarDropdown = ( {
 	value,
 	onChange,
 	toggleProps,
-	renderMenuItemProps,
+	getMenuItemProps,
 	popoverProps,
 	...props
 } ) => {
@@ -73,7 +73,7 @@ const ToolbarDropdown = ( {
 					{ ...toggleProps }
 					children={
 						toggleProps?.children
-							? toggleProps?.children( selectedOption )
+							? toggleProps.children( selectedOption )
 							: selectedOption?.label
 					}
 				/>
@@ -84,9 +84,7 @@ const ToolbarDropdown = ( {
 						{ options.map( ( option ) => {
 							const isSelected =
 								option.value === selectedOption?.value;
-							const menuItemProps = renderMenuItemProps?.(
-								option
-							);
+							const menuItemProps = getMenuItemProps?.( option );
 							return (
 								<MenuItem
 									key={ option.value }
