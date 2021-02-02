@@ -111,7 +111,7 @@
 	* Refine display of post status in the lesson block [#3680](https://github.com/Automattic/sensei/pull/3680)
 	* Remove inserter from module block and adjust how empty lesson block is added [#3684](https://github.com/Automattic/sensei/pull/3684)
 	* Remove module animation setting and replace with collapsible modules setting [#3675](https://github.com/Automattic/sensei/pull/3675)
-	* Set a default value for `outlineClassName` in the module block [#3806](https://github.com/Automattic/sensei/pull/3806
+	* Set a default value for `outlineClassName` in the module block [#3806](https://github.com/Automattic/sensei/pull/3806)
 	* Show draft status in lesson block [#3653](https://github.com/Automattic/sensei/pull/3653)
 	* Standardize module style and border settings in course outline and module blocks [#3749](https://github.com/Automattic/sensei/pull/3749)
 	* Update lesson block status setting [#3663](https://github.com/Automattic/sensei/pull/3663)
@@ -210,14 +210,14 @@
 * Fix: Close unordered list element in sensei_course_categories shortcode [#3622](https://github.com/Automattic/sensei/pull/3622)
 * Fix: Fix PHP notice when viewing course category page on unsupported themes [#3608](https://github.com/Automattic/sensei/pull/3608)
 * Fix: Multiple choice question is correct only when all right answers are checked [#3617](https://github.com/Automattic/sensei/pull/3617)
-* Fix: Fix fatal error on activating Discount Rules for WooCommerce plugin [#3616](https://github.com/Automattic/sensei/pull/3616 
+* Fix: Fix fatal error on activating Discount Rules for WooCommerce plugin [#3616](https://github.com/Automattic/sensei/pull/3616)
 * Fix: Don't overwrite lesson meta with defaults on update [#3589](https://github.com/Automattic/sensei/pull/3589)
 * Fix: Fix deprecated function call [#3633](https://github.com/Automattic/sensei/pull/3633)
 * Fix: Exclude right/wrong prefix in exported answers' escaped values [#3640](https://github.com/Automattic/sensei/pull/3640)
 * Fix: Fix quiz settings [#3632](https://github.com/Automattic/sensei/pull/3632)
 * New: Include category in heading for sensei_courses shortcode when filtering by category [#3627](https://github.com/Automattic/sensei/pull/3627)
 * New: Use archive-lesson template on lesson archive page [#3614](https://github.com/Automattic/sensei/pull/3614)
-* New: Add filter login required [#3631](https://github.com/Automattic/sensei/pull/3631
+* New: Add filter login required [#3631](https://github.com/Automattic/sensei/pull/3631)
 * New: Sort course filter on Lessons page in alphabetical order [#3605](https://github.com/Automattic/sensei/pull/3605)
 * New: Show scheduled lessons in Prerequisite dropdown [#3609](https://github.com/Automattic/sensei/pull/3609)
 
