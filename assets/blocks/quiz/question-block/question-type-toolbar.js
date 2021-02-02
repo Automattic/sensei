@@ -35,7 +35,7 @@ export const QuestionTypeToolbar = ( { value, onSelect } ) => {
 						<b>{ selectedOption?.title }</b>
 					),
 				} }
-				renderMenuItemProps={ ( option ) => ( {
+				getMenuItemProps={ ( option ) => ( {
 					children: (
 						<div>
 							<strong> { option.title }</strong>
