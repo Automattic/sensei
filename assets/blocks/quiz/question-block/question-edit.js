@@ -7,6 +7,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
+import { useBlockIndex } from '../../../shared/blocks/block-index';
 import types from '../answer-blocks';
 import { QuestionTypeToolbar } from './question-type-toolbar';
 
@@ -22,12 +23,19 @@ const QuestionEdit = ( props ) => {
 	const {
 		attributes: { title, type, answer = {} },
 		setAttributes,
+		clientId,
 	} = props;
 
+	const index = useBlockIndex( clientId );
 	const AnswerBlock = type && types[ type ];
 
 	return (
-		<div className="sensei-lms-question-block">
+		<div
+			className={ `sensei-lms-question-block ${
+				! title ? 'is-draft' : ''
+			}` }
+		>
+			<h2 className="sensei-lms-question-block__index">{ index + 1 }.</h2>
 			<RichText
 				className="sensei-lms-question-block__title"
 				tagName="h2"
