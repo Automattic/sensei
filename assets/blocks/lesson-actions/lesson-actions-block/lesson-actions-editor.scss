@@ -21,17 +21,3 @@
 		}
 	}
 }
-
-.wp-block[data-type="sensei-lms/lesson-actions"] {
-	&.is-selected .wp-block-sensei-lms-button-next-lesson__wrapper,
-	&.is-selected .wp-block-sensei-lms-button-complete-lesson__wrapper {
-		&:before {
-			position: absolute;
-			content: '';
-			top: 6px;
-			bottom: 6px;
-			margin-left: -9px;
-			pointer-events: none;
-		}
-	}
-}
