@@ -2,7 +2,6 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { Icon } from '@wordpress/components';
 import { createBlock } from '@wordpress/blocks';
 
 /**
@@ -11,6 +10,7 @@ import { createBlock } from '@wordpress/blocks';
 import edit from './conditional-content-edit';
 import save from './conditional-content-save';
 import metadata from './block';
+import icon from '../../icons/conditional-content-icon';
 
 export default {
 	title: __( 'Conditional Content', 'sensei-lms' ),
@@ -25,7 +25,7 @@ export default {
 		__( 'Restrict', 'sensei-lms' ),
 		__( 'Access', 'sensei-lms' ),
 	],
-	icon: () => <Icon icon="lock" />,
+	icon,
 	edit,
 	save,
 	...metadata,

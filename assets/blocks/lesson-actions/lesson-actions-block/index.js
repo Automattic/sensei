@@ -6,10 +6,10 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { button as icon } from '../../../icons/wordpress-icons';
 import metadata from './block.json';
 import edit from './lesson-actions-edit';
 import save from './lesson-actions-save';
+import icon from '../../../icons/buttons-icon';
 
 export default {
 	title: __( 'Lesson Actions', 'sensei-lms' ),
