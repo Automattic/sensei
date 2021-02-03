@@ -810,7 +810,7 @@ class Sensei_Course_Structure {
 			);
 			// Forget previous positions in structure.
 			foreach ( $structure as $key => $value ) {
-				unset $structure[ $key ]['position'];
+				unset( $structure[ $key ]['position'] );
 			}
 		}
 		return $structure;
