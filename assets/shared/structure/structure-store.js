@@ -36,6 +36,7 @@ export function registerStructureStore( {
 		serverStructure: null,
 		isSavingStructure: false,
 		hasStructureUpdate: false,
+		clientId: null,
 	};
 
 	const actions = {
@@ -104,6 +105,15 @@ export function registerStructureStore( {
 		 * Clear structure update.
 		 */
 		clearStructureUpdate: () => ( { type: 'CLEAR_STRUCTURE_UPDATE' } ),
+
+		/**
+		 * Set linked block.
+		 *
+		 * @param {string} clientId Block ID.
+		 */
+		*setBlock( clientId ) {
+			yield { type: 'SET_BLOCK', clientId };
+		},
 	};
 
 	/**
@@ -128,6 +138,7 @@ export function registerStructureStore( {
 			...state,
 			hasStructureUpdate: false,
 		} ),
+		SET_BLOCK: ( { clientId }, state ) => ( { ...state, clientId } ),
 		DEFAULT: ( action, state ) => state,
 	};
 
@@ -138,6 +149,7 @@ export function registerStructureStore( {
 		shouldResavePost: ( { hasStructureUpdate } ) => hasStructureUpdate,
 		getIsSavingStructure: ( { isSavingStructure } ) => isSavingStructure,
 		getServerStructure: ( { serverStructure } ) => serverStructure,
+		getBlock: ( { clientId } ) => clientId,
 	};
 
 	const subscribeToPostSave = () => {
