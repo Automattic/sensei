@@ -2,7 +2,7 @@ import { dispatch, select, useDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { registerStructureStore } from '../../shared/structure/structure-store';
-import { parseQuestionBlocks } from './data';
+import { parseQuestionBlocks, syncQuestionBlocks } from './data';
 
 export const QUIZ_STORE = 'sensei/quiz-structure';
 
@@ -28,8 +28,35 @@ registerStructureStore( {
 	},
 	/**
 	 * Update Quiz block with settings and questions.
+	 *
+	 * @param {Object} structure Quiz structure.
 	 */
-	*updateBlock() {},
+	*updateBlock( structure ) {
+		const clientId = yield select( QUIZ_STORE ).getBlock();
+
+		if ( ! clientId || ! structure ) {
+			return;
+		}
+
+		const block = yield select( 'core/block-editor' ).getBlock( clientId );
+
+		if ( ! block ) {
+			return;
+		}
+
+		yield dispatch( 'core/block-editor' ).updateBlockAttributes( clientId, {
+			settings: structure.settings,
+		} );
+
+		const questionBlocks = yield select( 'core/block-editor' ).getBlocks(
+			clientId
+		);
+		yield dispatch( 'core/block-editor' ).replaceInnerBlocks(
+			clientId,
+			syncQuestionBlocks( structure.questions, questionBlocks ),
+			false
+		);
+	},
 
 	/**
 	 * Parse question blocks and quiz settings from Quiz block.
