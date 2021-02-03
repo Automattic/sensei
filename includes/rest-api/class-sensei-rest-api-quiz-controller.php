@@ -195,10 +195,51 @@ class Sensei_REST_API_Quiz_Controller extends \WP_REST_Controller {
 				$type_specific_properties = $this->get_multiple_choice_properties( $question );
 				break;
 			case 'boolean':
+				$type_specific_properties['answer'] = 'true' === get_post_meta( $question->ID, '_question_right_answer', true );
+
+				$answer_feedback = get_post_meta( $question->ID, '_answer_feedback', true );
+				if ( ! empty( $answer_feedback ) ) {
+					$type_specific_properties['answer_feedback'] = $answer_feedback;
+				}
+				break;
+			case 'gap-fill':
+				$type_specific_properties = $this->get_gap_fill_properties( $question );
 				break;
 		}
 
 		return $type_specific_properties;
+	}
+
+	/**
+	 * Helper method which generates the properties for gap fill questions.
+	 *
+	 * @param WP_Post $question The question post.
+	 *
+	 * @return array The gap fill question properties.
+	 */
+	private function get_gap_fill_properties( WP_Post $question ) : array {
+		$right_answer_meta = get_post_meta( $question->ID, '_question_right_answer', true );
+
+		if ( empty( $right_answer_meta ) ) {
+			return [];
+		}
+
+		$result      = [];
+		$text_values = explode( '||', $right_answer_meta );
+
+		if ( isset( $text_values[0] ) ) {
+			$result['before'] = $text_values[0];
+		}
+
+		if ( isset( $text_values[1] ) ) {
+			$result['gap'] = explode( '|', $text_values[1] );
+		}
+
+		if ( isset( $text_values[2] ) ) {
+			$result['after'] = $text_values[2];
+		}
+
+		return $result;
 	}
 
 	/**
@@ -209,13 +250,17 @@ class Sensei_REST_API_Quiz_Controller extends \WP_REST_Controller {
 	 * @return array The multiple choice question properties.
 	 */
 	private function get_multiple_choice_properties( WP_Post $question ) : array {
-		$type_specific_properties['random_order']    = ! empty( get_post_meta( $question->ID, '_random_order', true ) ) && 'yes' === get_post_meta( $question->ID, '_random_order', true );
-		$type_specific_properties['answer_feedback'] = empty( get_post_meta( $question->ID, '_answer_feedback', true ) ) ? null : get_post_meta( $question->ID, '_answer_feedback', true );
+		$type_specific_properties['random_order'] = 'yes' === get_post_meta( $question->ID, '_random_order', true );
+
+		$answer_feedback = get_post_meta( $question->ID, '_answer_feedback', true );
+		if ( ! empty( $answer_feedback ) ) {
+			$type_specific_properties['answer_feedback'] = $answer_feedback;
+		}
 
 		$correct_answers = $this->get_answers_array( $question, '_question_right_answer', true );
 		$wrong_answers   = $this->get_answers_array( $question, '_question_wrong_answers', false );
 
-		$answer_order       = empty( get_post_meta( $question->ID, '_answer_order', true ) ) ? '' : get_post_meta( $question->ID, '_answer_order', true );
+		$answer_order       = get_post_meta( $question->ID, '_answer_order', true );
 		$all_answers_sorted = Sensei()->question->get_answers_sorted( array_merge( $correct_answers, $wrong_answers ), $answer_order );
 
 		$type_specific_properties['options'] = array_values( $all_answers_sorted );
@@ -236,7 +281,12 @@ class Sensei_REST_API_Quiz_Controller extends \WP_REST_Controller {
 	 * @return array The answers array.
 	 */
 	private function get_answers_array( WP_Post $question, string $meta_key, bool $is_correct ) : array {
-		$answers = empty( get_post_meta( $question->ID, $meta_key, true ) ) ? [] : get_post_meta( $question->ID, $meta_key, true );
+		$answers = get_post_meta( $question->ID, $meta_key, true );
+
+		if ( empty( $answers ) ) {
+			return [];
+		}
+
 		if ( ! is_array( $answers ) ) {
 			$answers = [ $answers ];
 		}
