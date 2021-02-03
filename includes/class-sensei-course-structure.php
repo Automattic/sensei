@@ -774,9 +774,9 @@ class Sensei_Course_Structure {
 	public static function sort_structure( $structure, $order, $type ) {
 		if ( ! empty( $order )
 		&& [ 0 ] !== $order ) {
-			// remember current position in structure
-			foreach ($structure as $key => $value) {
-				$structure[$key]['position'] = intval( $key );
+			// Remember current position in structure.
+			foreach ( $structure as $key => $value ) {
+				$structure[ $key ]['position'] = intval( $key );
 			}
 			usort(
 				$structure,
