@@ -774,6 +774,10 @@ class Sensei_Course_Structure {
 	public static function sort_structure( $structure, $order, $type ) {
 		if ( ! empty( $order )
 		&& [ 0 ] !== $order ) {
+			// remember current position in structure
+			foreach ($structure as $key => $value) {
+				$structure[$key]['position'] = intval( $key );
+			}
 			usort(
 				$structure,
 				function( $a, $b ) use ( $order, $type ) {
@@ -781,7 +785,7 @@ class Sensei_Course_Structure {
 					if ( $type !== $a['type'] || $type !== $b['type'] ) {
 						// If types are equal, keep in the current positions.
 						if ( $a['type'] === $b['type'] ) {
-							return 0;
+							return $a['position'] === $b['position'] ? 0 : ( $a['position'] > $b['position'] ? 1 : -1 );
 						}
 
 						// Always keep the modules before the lessons.
@@ -793,7 +797,7 @@ class Sensei_Course_Structure {
 
 					// If both weren't sorted, keep the current positions.
 					if ( false === $a_position && false === $b_position ) {
-						return 0;
+						return $a['position'] === $b['position'] ? 0 : ( $a['position'] > $b['current-pos'] ? 1 : -1 );
 					}
 
 					// Keep not sorted items in the end.
