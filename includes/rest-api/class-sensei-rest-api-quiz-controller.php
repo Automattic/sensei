@@ -42,7 +42,7 @@ class Sensei_REST_API_Quiz_Controller extends \WP_REST_Controller {
 	}
 
 	/**
-	 * Register the REST API endpoints for Course Structure.
+	 * Register the REST API endpoints for quiz.
 	 */
 	public function register_routes() {
 		register_rest_route(
@@ -79,8 +79,8 @@ class Sensei_REST_API_Quiz_Controller extends \WP_REST_Controller {
 		$quiz = get_post( (int) $request->get_param( 'quiz_id' ) );
 		if ( ! $quiz || 'quiz' !== $quiz->post_type ) {
 			return new WP_Error(
-				'sensei_course_structure_missing_course',
-				__( 'Course not found.', 'sensei-lms' ),
+				'sensei_quiz_missing_quiz',
+				__( 'Quiz not found.', 'sensei-lms' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -153,10 +153,31 @@ class Sensei_REST_API_Quiz_Controller extends \WP_REST_Controller {
 	 * @return array The question array.
 	 */
 	private function get_question( WP_Post $question ) : array {
-		$common_properties        = $this->get_question_common_properties( $question );
-		$type_specific_properties = $this->get_question_type_specific_properties( $question, $common_properties['type'] );
+		if ( 'question' === $question->post_type ) {
+			$common_properties        = $this->get_question_common_properties( $question );
+			$type_specific_properties = $this->get_question_type_specific_properties( $question, $common_properties['type'] );
 
-		return array_merge( $common_properties, $type_specific_properties );
+			return array_merge( $common_properties, $type_specific_properties );
+		}
+
+		if ( 'multiple_question' === $question->post_type ) {
+			$term_id = get_post_meta( $question->ID, 'category', true );
+			$term    = get_term( $term_id, 'question-category' );
+
+			if ( ! $term || is_wp_error( $term_id ) ) {
+				return [];
+			}
+
+			return [
+				'type'      => 'question-category',
+				'title'     => $question->post_title,
+				'term_id'   => (int) $term_id,
+				'name'      => $term->name,
+				'questions' => (int) get_post_meta( $question->ID, 'number', true ),
+			];
+		}
+
+		return [];
 	}
 
 	/**
@@ -423,6 +444,10 @@ class Sensei_REST_API_Quiz_Controller extends \WP_REST_Controller {
 					'term_id'   => [
 						'type'        => 'integer',
 						'description' => 'Term ID',
+					],
+					'title'     => [
+						'type'        => 'string',
+						'description' => 'Question title',
 					],
 					'name'      => [
 						'type'        => 'string',
