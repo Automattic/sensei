@@ -2,11 +2,15 @@
  * WordPress dependencies
  */
 import { InnerBlocks } from '@wordpress/block-editor';
+import { useQuizStructure } from '../quiz-store';
 
 /**
  * Quiz block editor.
+ *
+ * @param {Object} props
  */
-const QuizEdit = () => {
+const QuizEdit = ( props ) => {
+	useQuizStructure( props );
 	return (
 		<>
 			<InnerBlocks
