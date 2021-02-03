@@ -797,7 +797,7 @@ class Sensei_Course_Structure {
 
 					// If both weren't sorted, keep the current positions.
 					if ( false === $a_position && false === $b_position ) {
-						return $a['position'] === $b['position'] ? 0 : ( $a['position'] > $b['current-pos'] ? 1 : -1 );
+						return $a['position'] === $b['position'] ? 0 : ( $a['position'] > $b['position'] ? 1 : -1 );
 					}
 
 					// Keep not sorted items in the end.
