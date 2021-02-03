@@ -808,6 +808,10 @@ class Sensei_Course_Structure {
 					return false === $b_position || $a_position < $b_position ? -1 : 1;
 				}
 			);
+			// Forget previous positions in structure.
+			foreach ( $structure as $key => $value ) {
+				unset $structure[ $key ]['position'];
+			}
 		}
 		return $structure;
 	}
