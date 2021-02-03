@@ -205,6 +205,29 @@ class Sensei_REST_API_Quiz_Controller extends \WP_REST_Controller {
 			case 'gap-fill':
 				$type_specific_properties = $this->get_gap_fill_properties( $question );
 				break;
+			case 'single-line':
+				$answer = get_post_meta( $question->ID, '_question_right_answer', true );
+				if ( ! empty( $answer ) ) {
+					$type_specific_properties['teacher_notes'] = $answer;
+				}
+				break;
+			case 'multi-line':
+				$teacher_notes = get_post_meta( $question->ID, '_question_right_answer', true );
+				if ( ! empty( $teacher_notes ) ) {
+					$type_specific_properties['teacher_notes'] = $teacher_notes;
+				}
+				break;
+			case 'file-upload':
+				$teacher_notes = get_post_meta( $question->ID, '_question_right_answer', true );
+				if ( ! empty( $teacher_notes ) ) {
+					$type_specific_properties['teacher_notes'] = $teacher_notes;
+				}
+
+				$student_help = get_post_meta( $question->ID, '_question_wrong_answers', true );
+				if ( ! empty( $student_help[0] ) ) {
+					$type_specific_properties['student_help'][0] = $student_help;
+				}
+				break;
 		}
 
 		return $type_specific_properties;
@@ -564,10 +587,10 @@ class Sensei_REST_API_Quiz_Controller extends \WP_REST_Controller {
 					],
 					[
 						'properties' => [
-							'type'   => [
+							'type'          => [
 								'const' => 'single-line',
 							],
-							'answer' => [
+							'teacher_notes' => [
 								'type'        => 'string',
 								'description' => 'Teacher notes for grading',
 							],
@@ -600,14 +623,14 @@ class Sensei_REST_API_Quiz_Controller extends \WP_REST_Controller {
 					],
 					[
 						'properties' => [
-							'type'         => [
+							'type'          => [
 								'const' => 'file-upload',
 							],
-							'student_help' => [
+							'student_help'  => [
 								'type'        => 'string',
 								'description' => 'Description for student explaining what needs to be uploaded',
 							],
-							'answer'       => [
+							'teacher_notes' => [
 								'type'        => 'string',
 								'description' => 'Teacher notes for grading',
 							],
