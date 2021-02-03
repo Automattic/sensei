@@ -2,6 +2,7 @@ import { dispatch, select, useDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { registerStructureStore } from '../../shared/structure/structure-store';
+import { parseQuestionBlocks } from './data';
 
 export const QUIZ_STORE = 'sensei/quiz-structure';
 
@@ -32,8 +33,22 @@ registerStructureStore( {
 
 	/**
 	 * Parse question blocks and quiz settings from Quiz block.
+	 *
+	 * @return {Object} Quiz structure.
 	 */
-	readBlock() {},
+	readBlock() {
+		const clientId = select( QUIZ_STORE ).getBlock();
+		if ( ! clientId ) return;
+		const quizBlock = select( 'core/block-editor' ).getBlock( clientId );
+		if ( ! quizBlock ) return;
+		const questionBlocks = select( 'core/block-editor' ).getBlocks(
+			clientId
+		);
+		return {
+			settings: quizBlock.attributes.settings,
+			questions: parseQuestionBlocks( questionBlocks ),
+		};
+	},
 
 	/**
 	 * Display save error notice.
