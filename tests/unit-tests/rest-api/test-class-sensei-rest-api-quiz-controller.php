@@ -270,7 +270,7 @@ class Sensei_REST_API_Quiz_Controller_Tests extends WP_Test_REST_TestCase {
 	/**
 	 * Tests multiple line question properties.
 	 */
-	public function testMultilineAnswers() {
+	public function testMultilineQuestion() {
 		$this->login_as_teacher();
 
 		$quiz_id = $this->factory->quiz->create();
@@ -291,7 +291,7 @@ class Sensei_REST_API_Quiz_Controller_Tests extends WP_Test_REST_TestCase {
 	/**
 	 * Tests file upload question properties.
 	 */
-	public function testFileUploadAnswers() {
+	public function testFileUploadQuestion() {
 		$this->login_as_teacher();
 
 		$quiz_id = $this->factory->quiz->create();
@@ -309,6 +309,54 @@ class Sensei_REST_API_Quiz_Controller_Tests extends WP_Test_REST_TestCase {
 		$this->assertEquals( 'file-upload', $response_data['questions'][0]['type'] );
 		$this->assertEquals( 'Teacher note', $response_data['questions'][0]['teacher_notes'] );
 		$this->assertEquals( 'User note', $response_data['questions'][0]['student_help'] );
+	}
+
+	/**
+	 * Tests question category properties.
+	 */
+	public function testQuestionCategory() {
+		$this->login_as_teacher();
+
+		$quiz_id = $this->factory->quiz->create();
+		$this->factory->multiple_question->create(
+			[
+				'quiz_id'    => $quiz_id,
+				'meta_input' => [
+					'number' => 3,
+				],
+			]
+		);
+		$response_data = $this->send_and_validate( $quiz_id );
+
+		$this->assertEquals( 'question-category', $response_data['questions'][0]['type'] );
+		$this->assertEquals( 3, $response_data['questions'][0]['questions'] );
+	}
+
+	/**
+	 * Tests single line question properties.
+	 */
+	public function testQuestionCommonProperties() {
+		$this->login_as_teacher();
+
+		$quiz_id     = $this->factory->quiz->create();
+		$question_id = $this->factory->question->create(
+			[
+				'quiz_id'              => $quiz_id,
+				'question_type'        => 'single-line',
+				'question'             => 'Will it blend?',
+				'question_description' => 'That is the question.',
+				'question_grade'       => 10,
+			]
+		);
+
+		add_post_meta( $question_id, '_quiz_id', $quiz_id, false );
+
+		$response_data = $this->send_and_validate( $quiz_id );
+
+		$this->assertTrue( $response_data['questions'][0]['shared'] );
+		$this->assertEquals( 'Will it blend?', $response_data['questions'][0]['title'] );
+		$this->assertEquals( 'That is the question.', $response_data['questions'][0]['description'] );
+		$this->assertEquals( 10, $response_data['questions'][0]['grade'] );
 	}
 
 	/**
