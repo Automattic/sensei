@@ -3218,10 +3218,6 @@ class Sensei_Lesson {
 		// Set the questions array that will be manipulated within this function.
 		$questions_array = $questions;
 
-		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
-			return $questions;
-		}
-
 		// If viewing quiz on frontend or in grading then only single questions must be shown
 		$selected_questions = false;
 		if ( ! is_admin() || ( is_admin() && isset( $_GET['page'] ) && 'sensei_grading' == $_GET['page'] && isset( $_GET['user'] ) && isset( $_GET['quiz_id'] ) ) ) {

@@ -1447,7 +1447,7 @@ class Sensei_Quiz {
 	 *
 	 * @return array
 	 */
-	public function get_questions( $quiz_id, $post_status, $orderby, $order ) : array {
+	public function get_questions( $quiz_id, $post_status = 'any', $orderby = 'meta_value_num title', $order = 'ASC' ) : array {
 
 		// Set the default question order if it has not already been set for this quiz.
 		Sensei()->lesson->set_default_question_order( $quiz_id );

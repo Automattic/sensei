@@ -140,7 +140,7 @@ class Sensei_REST_API_Quiz_Controller extends \WP_REST_Controller {
 	 * @return array The array of the questions as defined by the schema.
 	 */
 	private function get_quiz_questions( WP_Post $quiz ) : array {
-		$questions = Sensei()->lesson->lesson_quiz_questions( $quiz->ID );
+		$questions = Sensei()->quiz->get_questions( $quiz->ID );
 
 		if ( empty( $questions ) ) {
 			return [];

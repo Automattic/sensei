@@ -44,7 +44,6 @@ class Sensei_REST_API_Quiz_Controller_Tests extends WP_Test_REST_TestCase {
 		$this->server   = $wp_rest_server;
 
 		do_action( 'rest_api_init' );
-		define( 'REST_REQUEST', true );
 
 		$this->factory = new Sensei_Factory();
 	}
