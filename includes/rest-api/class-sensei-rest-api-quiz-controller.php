@@ -384,7 +384,7 @@ class Sensei_REST_API_Quiz_Controller extends \WP_REST_Controller {
 							'default'     => true,
 						],
 						'show_questions'        => [
-							'type'        => 'boolean',
+							'type'        => [ 'integer', 'null' ],
 							'description' => 'Number of questions to show randomly',
 							'default'     => null,
 						],
@@ -399,7 +399,7 @@ class Sensei_REST_API_Quiz_Controller extends \WP_REST_Controller {
 					'type'        => 'array',
 					'description' => 'Questions in quiz',
 					'items'       => [
-						'oneOf' => [
+						'anyOf' => [
 							[
 								'$ref' => '#/definitions/question_category',
 							],
@@ -600,11 +600,6 @@ class Sensei_REST_API_Quiz_Controller extends \WP_REST_Controller {
 								'type'        => 'string',
 								'description' => 'Text after the gap',
 							],
-						],
-						'required'   => [
-							'before',
-							'gap',
-							'after',
 						],
 					],
 				],
