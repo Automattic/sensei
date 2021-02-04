@@ -3205,9 +3205,6 @@ class Sensei_Lesson {
 		// get the users current status on the lesson
 		$user_lesson_status = Sensei_Utils::user_lesson_status( $quiz_lesson_id, $user_id );
 
-		// Set the default question order if it has not already been set for this quiz
-		$this->set_default_question_order( $quiz_id );
-
 		// If viewing quiz on the frontend then show questions in random order if set
 		if ( ! is_admin() ) {
 			$random_order = get_post_meta( $quiz_id, '_random_question_order', true );
@@ -3216,31 +3213,10 @@ class Sensei_Lesson {
 			}
 		}
 
-		// Get all questions and multiple questions
-		$question_query_args = array(
-			'post_type'        => array( 'question', 'multiple_question' ),
-			'posts_per_page'   => -1,
-			'meta_key'         => '_quiz_question_order' . $quiz_id,
-			'orderby'          => $orderby,
-			'order'            => $order,
-			'meta_query'       => array(
-				array(
-					'key'   => '_quiz_id',
-					'value' => $quiz_id,
-				),
-			),
-			'post_status'      => $post_status,
-			'suppress_filters' => 0,
-		);
+		$questions = Sensei()->quiz->get_questions( $quiz_id, $post_status, $orderby, $order );
 
-		// query the questions
-		$questions_query = new WP_Query( $question_query_args );
-
-		// Set return array to initially include all items
-		$questions = $questions_query->posts;
-
-		// set the questions array that will be manipulated within this function
-		$questions_array = $questions_query->posts;
+		// Set the questions array that will be manipulated within this function.
+		$questions_array = $questions;
 
 		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
 			return $questions;
