@@ -85,7 +85,11 @@ class Sensei_REST_API_Quiz_Controller extends \WP_REST_Controller {
 			);
 		}
 
-		return current_user_can( get_post_type_object( 'quiz' )->cap->read_post, $quiz->ID );
+		if ( ! is_user_logged_in() ) {
+			return false;
+		}
+
+		return wp_get_current_user()->ID === (int) $quiz->post_author || current_user_can( 'manage_options' );
 	}
 
 	/**
