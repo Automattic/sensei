@@ -298,7 +298,9 @@ class Sensei_REST_API_Quiz_Controller extends \WP_REST_Controller {
 	 * @return array The multiple choice question properties.
 	 */
 	private function get_multiple_choice_properties( WP_Post $question ) : array {
-		$type_specific_properties['random_order'] = 'yes' === get_post_meta( $question->ID, '_random_order', true );
+		$type_specific_properties = [
+			'random_order' => 'yes' === get_post_meta( $question->ID, '_random_order', true ),
+		];
 
 		$answer_feedback = get_post_meta( $question->ID, '_answer_feedback', true );
 		if ( ! empty( $answer_feedback ) ) {
