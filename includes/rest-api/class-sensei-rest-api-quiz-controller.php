@@ -121,12 +121,12 @@ class Sensei_REST_API_Quiz_Controller extends \WP_REST_Controller {
 		$post_meta = get_post_meta( $quiz->ID );
 		return [
 			'options'   => [
-				'pass_required'         => ! empty( $post_meta['_pass_required'] ) && 'on' === $post_meta['_pass_required'][0],
-				'quiz_passmark'         => empty( $post_meta['_quiz_passmark'] ) ? 0 : (int) $post_meta['_quiz_passmark'][0],
-				'auto_grade'            => ! empty( $post_meta['_quiz_grade_type'] ) && 'auto' === $post_meta['_quiz_grade_type'][0],
-				'allow_retakes'         => ! empty( $post_meta['_enable_quiz_reset'] ) && 'on' === $post_meta['_enable_quiz_reset'][0],
-				'show_questions'        => empty( $post_meta['_show_questions'] ) ? null : (int) $post_meta['_show_questions'][0],
-				'random_question_order' => ! empty( $post_meta['_random_question_order'] ) && 'yes' === $post_meta['_random_question_order'][0],
+				'pass_required'         => ! empty( $post_meta['_pass_required'][0] ) && 'on' === $post_meta['_pass_required'][0],
+				'quiz_passmark'         => empty( $post_meta['_quiz_passmark'][0] ) ? 0 : (int) $post_meta['_quiz_passmark'][0],
+				'auto_grade'            => ! empty( $post_meta['_quiz_grade_type'][0] ) && 'auto' === $post_meta['_quiz_grade_type'][0],
+				'allow_retakes'         => ! empty( $post_meta['_enable_quiz_reset'][0] ) && 'on' === $post_meta['_enable_quiz_reset'][0],
+				'show_questions'        => empty( $post_meta['_show_questions'][0] ) ? null : (int) $post_meta['_show_questions'][0],
+				'random_question_order' => ! empty( $post_meta['_random_question_order'][0] ) && 'yes' === $post_meta['_random_question_order'][0],
 			],
 			'questions' => $this->get_quiz_questions( $quiz ),
 		];
