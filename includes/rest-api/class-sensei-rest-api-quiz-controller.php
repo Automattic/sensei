@@ -250,7 +250,7 @@ class Sensei_REST_API_Quiz_Controller extends \WP_REST_Controller {
 
 				$student_help = get_post_meta( $question->ID, '_question_wrong_answers', true );
 				if ( ! empty( $student_help[0] ) ) {
-					$type_specific_properties['student_help'][0] = $student_help;
+					$type_specific_properties['student_help'] = $student_help[0];
 				}
 				break;
 		}
