@@ -15,7 +15,7 @@ import { applyFilters } from '@wordpress/hooks';
  * @type {Object.<string, QuestionType>}
  */
 const questionTypes = {
-	multichoice: {
+	'multiple-choice': {
 		title: __( 'Multiple Choice', 'sensei-lms' ),
 		description: __(
 			'Select one or more answers from a list of choices.',
@@ -23,12 +23,12 @@ const questionTypes = {
 		),
 		edit: () => <div> [Multiple Choice] </div>,
 	},
-	truefalse: {
+	boolean: {
 		title: __( 'True / False', 'sensei-lms' ),
 		description: __( 'True or false question.', 'sensei-lms' ),
 		edit: () => <div> [True/False] </div>,
 	},
-	gap: {
+	'gap-fill': {
 		title: __( 'Gap Fill', 'sensei-lms' ),
 		description: __(
 			'Fill in the missing part of a sentence.',
@@ -36,12 +36,17 @@ const questionTypes = {
 		),
 		edit: () => <div> [Gap Fill] </div>,
 	},
-	open: {
-		title: __( 'Open-Ended', 'sensei-lms' ),
+	'single-line': {
+		title: __( 'Multi-line', 'sensei-lms' ),
 		description: __( 'Require a written answer.', 'sensei-lms' ),
-		edit: () => <div> [Open-Ended] </div>,
+		edit: () => <div> [Single Line] </div>,
 	},
-	file: {
+	'multi-line': {
+		title: __( 'Single-line', 'sensei-lms' ),
+		description: __( 'Require a written answer.', 'sensei-lms' ),
+		edit: () => <div> [Multi Line] </div>,
+	},
+	'file-upload': {
 		title: __( 'File Upload', 'sensei-lms' ),
 		description: __( 'Require a file to be uploaded.', 'sensei-lms' ),
 		edit: () => <div> [File Upload] </div>,
