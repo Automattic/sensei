@@ -6,13 +6,12 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { createButtonBlockType } from '../../button';
+import { BlockStyles, createButtonBlockType } from '../../button';
 
 /**
  * Next lesson button block.
  */
 export default createButtonBlockType( {
-	tagName: 'button',
 	settings: {
 		name: 'sensei-lms/button-next-lesson',
 		title: __( 'Next Lesson', 'sensei-lms' ),
@@ -32,5 +31,10 @@ export default createButtonBlockType( {
 				default: __( 'Next Lesson', 'sensei-lms' ),
 			},
 		},
+		styles: [
+			{ ...BlockStyles.Fill, isDefault: true },
+			BlockStyles.Outline,
+			BlockStyles.Link,
+		],
 	},
 } );
