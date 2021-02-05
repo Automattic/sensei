@@ -20,11 +20,28 @@ export function useQuizStructure( { clientId } ) {
 	}, [ setBlock, loadStructure, clientId ] );
 }
 
+/**
+ * Get the related Quiz post ID for the lesson.
+ */
+function* getQuizId() {
+	const quizId = yield select( 'core/editor' ).getCurrentPostAttribute(
+		'meta'
+	)?.[ '_lesson_quiz' ];
+	if ( ! quizId ) {
+		throw {
+			message: __( 'No Lesson Quiz', 'sensei-lms' ),
+			code: 'no-lesson-quiz',
+		};
+	}
+
+	return quizId;
+}
+
 registerStructureStore( {
 	storeName: QUIZ_STORE,
 	*getEndpoint() {
-		const lessonId = yield select( 'core/editor' ).getCurrentPostId();
-		return `quiz-structure/${ lessonId }`;
+		const quizId = yield* getQuizId();
+		return `quiz/${ quizId }`;
 	},
 	/**
 	 * Update Quiz block with settings and questions.
@@ -45,7 +62,7 @@ registerStructureStore( {
 		}
 
 		yield dispatch( 'core/block-editor' ).updateBlockAttributes( clientId, {
-			settings: structure.settings,
+			options: structure.options,
 		} );
 
 		const questionBlocks = yield select( 'core/block-editor' ).getBlocks(
@@ -57,7 +74,6 @@ registerStructureStore( {
 			false
 		);
 	},
-
 	/**
 	 * Parse question blocks and quiz settings from Quiz block.
 	 *
@@ -72,9 +88,26 @@ registerStructureStore( {
 			clientId
 		);
 		return {
-			settings: quizBlock.attributes.settings,
+			options: quizBlock.attributes.options,
 			questions: parseQuestionBlocks( questionBlocks ),
 		};
+	},
+
+	*fetchError( error ) {
+		if ( 'no-lesson-quiz' === error?.code ) {
+			return;
+		}
+		const errorMessage = sprintf(
+			/* translators: Error message. */
+			__(
+				'Quiz settings and questions could not be loaded. %s',
+				'sensei-lms'
+			),
+			error.message
+		);
+		yield dispatch( 'core/notices' ).createErrorNotice( errorMessage, {
+			id: 'quiz-structure-save-error',
+		} );
 	},
 
 	/**
@@ -83,6 +116,9 @@ registerStructureStore( {
 	 * @param {Object} error
 	 */
 	*saveError( error ) {
+		if ( 'no-lesson-quiz' === error?.code ) {
+			return;
+		}
 		const errorMessage = sprintf(
 			/* translators: Error message. */
 			__(

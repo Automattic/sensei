@@ -8,6 +8,9 @@
   "attributes": {
     "id": {
       "type": "integer"
+    },
+    "options": {
+      "type": "object"
     }
   }
 }

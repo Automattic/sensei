@@ -116,5 +116,15 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 				},
 			]
 		);
+
+		register_post_meta(
+			'lesson',
+			'_lesson_quiz',
+			[
+				'show_in_rest' => true,
+				'single'       => true,
+				'type'         => 'integer',
+			]
+		);
 	}
 }

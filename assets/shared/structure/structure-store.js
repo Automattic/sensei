@@ -6,13 +6,12 @@ import { isEqual } from 'lodash';
 /**
  * WordPress dependencies
  */
-import { controls as dataControls } from '@wordpress/data-controls';
+import { apiFetch, controls as dataControls } from '@wordpress/data-controls';
 import { dispatch, registerStore, select, subscribe } from '@wordpress/data';
 /**
  * Internal dependencies
  */
 import { createReducerFromActionMap } from '../data/store-helpers';
-import { mockLoadQuizStructure, mockSaveQuizStructure } from './mock-storage';
 
 /**
  * Register structure store and subscribe to block editor save.
@@ -51,7 +50,10 @@ export function registerStructureStore( {
 		*loadStructure() {
 			try {
 				const endpoint = yield* getEndpoint();
-				const result = mockLoadQuizStructure( endpoint );
+				const result = yield apiFetch( {
+					path: `/sensei-internal/v1/${ endpoint }`,
+					method: 'GET',
+				} );
 				yield actions.setResult( result );
 			} catch ( error ) {
 				yield fetchError?.( error );
@@ -69,15 +71,11 @@ export function registerStructureStore( {
 			).getEditorStructure();
 			try {
 				const endpoint = yield* getEndpoint();
-				const result = mockSaveQuizStructure(
-					endpoint,
-					editorStructure
-				);
-				// const result = yield apiFetch( {
-				// 	path: `/sensei-internal/v1/${ endpoint }`,
-				// 	method: 'POST',
-				// 	data: { structure: editorStructure },
-				// } );
+				const result = yield apiFetch( {
+					path: `/sensei-internal/v1/${ endpoint }`,
+					method: 'POST',
+					data: { structure: editorStructure },
+				} );
 				yield actions.setResult( result );
 			} catch ( error ) {
 				yield saveError?.( error );
