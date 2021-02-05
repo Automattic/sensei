@@ -14,7 +14,7 @@
     },
     "type": {
       "type": "string",
-      "default": "multichoice"
+      "default": "multiple-choice"
     }
   }
 }
