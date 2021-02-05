@@ -40,6 +40,7 @@ const ButtonSave = ( { attributes, className, tagName, blockName } ) => {
 		return (
 			<div
 				className={ classnames(
+					className,
 					'sensei-buttons-container__button-block',
 					getBlockDefaultClassName( blockName ) + '__wrapper',
 					{
