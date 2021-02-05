@@ -227,7 +227,7 @@ export function registerStructureStore( {
 	const subscribeToPostSave = () => {
 		let postSaving = false;
 
-		subscribe( function saveStructureOnPostSave() {
+		return subscribe( function saveStructureOnPostSave() {
 			const editor = select( 'core/editor' );
 
 			if ( ! editor ) {
@@ -252,11 +252,13 @@ export function registerStructureStore( {
 		} );
 	};
 
-	subscribeToPostSave();
-	registerStore( storeName, {
-		reducer: createReducerFromActionMap( reducers, DEFAULT_STATE ),
-		actions,
-		selectors,
-		controls: { ...dataControls },
-	} );
+	return {
+		unsubscribe: subscribeToPostSave(),
+		store: registerStore( storeName, {
+			reducer: createReducerFromActionMap( reducers, DEFAULT_STATE ),
+			actions,
+			selectors,
+			controls: { ...dataControls },
+		} ),
+	};
 }
