@@ -1,5 +1,5 @@
 import { createBlock, getBlockContent, rawHandler } from '@wordpress/blocks';
-import { name as questionBlockName } from './question-block';
+import questionBlock from './question-block';
 
 /**
  * Quiz settings and questions data.
@@ -34,14 +34,14 @@ export function syncQuestionBlocks( structure, blocks ) {
 	return ( structure || [] ).map( ( item ) => {
 		const { description, ...attributes } = item;
 
-		let block = findQuestionBlock( blocks, item );
+		let block = blocks ? findQuestionBlock( blocks, item ) : null;
 
 		const innerBlocks =
 			( description && rawHandler( { HTML: description } ) ) ||
-			block.innerBlocks;
+			block?.innerBlocks;
 
 		if ( ! block ) {
-			block = createBlock( questionBlockName, attributes, innerBlocks );
+			block = createBlock( questionBlock.name, attributes, innerBlocks );
 		} else {
 			block.attributes = { ...block.attributes, ...attributes };
 			block.innerBlocks = innerBlocks;
