@@ -33,6 +33,7 @@ export function registerStructureStore( {
 	clearError,
 	updateBlock,
 	readBlock,
+	...store
 } ) {
 	const DEFAULT_STATE = {
 		serverStructure: null,
@@ -134,6 +135,7 @@ export function registerStructureStore( {
 			yield actions.setEditorStructure( editorStructure );
 
 			yield clearError?.();
+			if ( ! editorStructure ) return;
 
 			if ( select( storeName ).hasUnsavedEditorChanges() ) {
 				yield* actions.saveStructure();
@@ -255,10 +257,13 @@ export function registerStructureStore( {
 	return {
 		unsubscribe: subscribeToPostSave(),
 		store: registerStore( storeName, {
-			reducer: createReducerFromActionMap( reducers, DEFAULT_STATE ),
-			actions,
-			selectors,
-			controls: { ...dataControls },
+			reducer: createReducerFromActionMap(
+				{ ...reducers, ...store?.reducers },
+				DEFAULT_STATE
+			),
+			actions: { ...actions, ...store?.actions },
+			selectors: { ...selectors, ...store?.selectors },
+			controls: { ...dataControls, ...store?.controls },
 		} ),
 	};
 }
