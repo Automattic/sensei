@@ -493,7 +493,9 @@ class Sensei_Course_Structure {
 			],
 		];
 
-		wp_insert_post( $post_args );
+		$quiz_id = wp_insert_post( $post_args );
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
+
 	}
 
 	/**
