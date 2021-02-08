@@ -8,10 +8,7 @@ import { COURSE_STATUS_STORE } from './status-store';
  * @param {string}  clientId  The outline block id.
  * @param {boolean} isPreview Whether the block is currently in preview mode.
  */
-export const useCourseLessonsForPreviewStatus = function (
-	clientId,
-	isPreview
-) {
+export const useCourseLessonsStatusSync = function ( clientId, isPreview ) {
 	const outlineDescendants = useSelect(
 		( select ) => {
 			return select( 'core/block-editor' ).getClientIdsOfDescendants( [

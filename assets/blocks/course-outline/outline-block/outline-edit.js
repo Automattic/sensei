@@ -13,7 +13,7 @@ import OutlinePlaceholder from './outline-placeholder';
 import OutlineSettings from './outline-settings';
 import { withDefaultBlockStyle } from '../../../shared/blocks/settings';
 import ToggleLegacyCourseMetaboxesWrapper from '../../toggle-legacy-course-metaboxes-wrapper';
-import { useCourseLessonsForPreviewStatus } from '../status-preview/use-course-lessons-for-preview-status';
+import { useCourseLessonsStatusSync } from '../status-preview/use-course-lessons-status-sync';
 import { COURSE_STORE } from '../store';
 import { useBlocksCreator } from '../use-block-creator';
 
@@ -50,7 +50,8 @@ const OutlineEdit = ( props ) => {
 		[ clientId ]
 	);
 
-	useCourseLessonsForPreviewStatus( clientId, attributes.isPreview );
+	useCourseLessonsStatusSync( clientId, attributes.isPreview );
+
 	const content = isEmpty ? (
 		<OutlinePlaceholder
 			addBlock={ ( type ) => setBlocks( [ { type } ], true ) }
