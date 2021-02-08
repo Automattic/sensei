@@ -6,7 +6,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useState } from '@wordpress/element';
 
 /**
- * Insert an empty lesson block to the end of the module when it's selected.
+ * Insert an empty inner block to the end of the block when it's selected.
  *
  * @param {Object} opts
  * @param {string} opts.name       Block to be inserted.
