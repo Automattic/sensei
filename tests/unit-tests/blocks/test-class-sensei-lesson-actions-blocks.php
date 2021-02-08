@@ -102,7 +102,7 @@ class Sensei_Lesson_Actions_Blocks extends WP_UnitTestCase {
 		$this->assertNotEmpty( $view_quiz->render( [], '' ), 'View quiz button is not displayed when there is a quiz to the lesson.' );
 
 		Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'passed' );
-		$this->assertEmpty( $view_quiz->render( [], '' ), 'View quiz button is displayed when the user has completed the lesson.' );
+		$this->assertNotEmpty( $view_quiz->render( [], '' ), 'View quiz button is not displayed when the user has completed the lesson.' );
 	}
 
 	/**

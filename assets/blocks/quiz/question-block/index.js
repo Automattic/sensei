@@ -9,6 +9,7 @@ import { __ } from '@wordpress/i18n';
  */
 import edit from './question-edit';
 import metadata from './block.json';
+import icon from '../../../icons/question-icon';
 
 /**
  * Quiz question block definition.
@@ -16,6 +17,7 @@ import metadata from './block.json';
 export default {
 	...metadata,
 	title: __( 'Question', 'sensei-lms' ),
+	icon,
 	description: __(
 		'Question for the student with various answer options.',
 		'sensei-lms'

@@ -36,7 +36,6 @@ const files = [
 	'blocks/single-course-style.scss',
 	'blocks/single-course-style-editor.scss',
 	'blocks/single-lesson.js',
-	'blocks/single-lesson-style.scss',
 	'blocks/single-lesson-style-editor.scss',
 	'blocks/quiz/index.js',
 	'blocks/quiz/quiz.editor.scss',

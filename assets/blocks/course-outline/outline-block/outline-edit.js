@@ -34,13 +34,13 @@ export const OutlineAttributesContext = createContext();
 const OutlineEdit = ( props ) => {
 	const { clientId, className, attributes, setAttributes } = props;
 
-	const { fetchCourseStructure } = useDispatch( COURSE_STORE );
+	const { loadStructure } = useDispatch( COURSE_STORE );
 
 	useEffect( () => {
 		if ( ! attributes.isPreview ) {
-			fetchCourseStructure();
+			loadStructure();
 		}
-	}, [ attributes.isPreview, fetchCourseStructure ] );
+	}, [ attributes.isPreview, loadStructure ] );
 
 	const { setBlocks } = useBlocksCreator( clientId );
 
