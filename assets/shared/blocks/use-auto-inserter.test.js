@@ -11,8 +11,8 @@ import { useDispatch, useSelect } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { registerTestLessonBlock } from '../test-helpers';
-import { useInsertLessonBlock } from './use-insert-lesson-block';
+import { registerTestLessonBlock } from '../../blocks/course-outline/test-helpers';
+import { useAutoInserter } from './use-auto-inserter';
 
 registerTestLessonBlock();
 
@@ -23,7 +23,7 @@ jest.mock( '@wordpress/data', () => ( {
 
 describe( 'useInsertLessonBlock', () => {
 	const ModuleBlock = ( props ) => {
-		useInsertLessonBlock( props );
+		useAutoInserter( { name: 'sensei-lms/course-outline-lesson' }, props );
 
 		return <div>Module</div>;
 	};

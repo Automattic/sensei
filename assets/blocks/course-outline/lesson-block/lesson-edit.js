@@ -6,9 +6,8 @@ import classnames from 'classnames';
 /**
  * WordPress dependencies
  */
-import { createBlock } from '@wordpress/blocks';
 import { useEffect } from '@wordpress/element';
-import { select, useDispatch, useSelect } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
@@ -17,10 +16,10 @@ import { __ } from '@wordpress/i18n';
  */
 import { checked, chevronRight } from '../../../icons/wordpress-icons';
 import { withColorSettings } from '../../../shared/blocks/settings';
+import { useKeydownInserter } from '../../../shared/blocks/use-keydown-inserter';
 import SingleLineInput from '../single-line-input';
 import LessonSettings from './lesson-settings';
 import { Status } from '../status-control';
-import { ENTER, BACKSPACE } from '@wordpress/keycodes';
 import { COURSE_STATUS_STORE } from '../status-store';
 
 /**
@@ -28,7 +27,6 @@ import { COURSE_STATUS_STORE } from '../status-store';
  *
  * @param {Object}   props                     Component props.
  * @param {string}   props.clientId            Block client ID.
- * @param {string}   props.name                Block name.
  * @param {string}   props.className           Custom class name.
  * @param {Object}   props.attributes          Block attributes.
  * @param {string}   props.attributes.title    Lesson title.
@@ -39,20 +37,16 @@ import { COURSE_STATUS_STORE } from '../status-store';
  * @param {Object}   props.backgroundColor     Background color object.
  * @param {Object}   props.textColor           Text color object.
  * @param {Function} props.setAttributes       Block set attributes function.
- * @param {Function} props.insertBlocksAfter   Insert blocks after function.
  */
 export const LessonEdit = ( props ) => {
 	const {
 		clientId,
-		name,
 		className,
 		attributes: { title, id, fontSize, draft, preview, isExample },
 		backgroundColor,
 		textColor,
 		setAttributes,
-		insertBlocksAfter,
 	} = props;
-	const { selectNextBlock, removeBlock } = useDispatch( 'core/block-editor' );
 	const { setLessonStatus, trackLesson, ignoreLesson } = useDispatch(
 		COURSE_STATUS_STORE
 	);
@@ -66,49 +60,7 @@ export const LessonEdit = ( props ) => {
 		setAttributes( { title: value } );
 	};
 
-	/**
-	 * Insert a new lesson on enter, unless there is already an empty new lesson after this one.
-	 */
-	const onEnter = () => {
-		const editor = select( 'core/block-editor' );
-		const nextBlock = editor.getBlock( editor.getNextBlockClientId() );
-
-		if ( ! nextBlock || nextBlock.attributes.title ) {
-			insertBlocksAfter( [ createBlock( name ) ] );
-		} else {
-			selectNextBlock( clientId );
-		}
-	};
-
-	/**
-	 * Remove lesson on backspace.
-	 *
-	 * @param {Object}   e                Event object.
-	 * @param {Function} e.preventDefault Prevent default function.
-	 */
-	const onBackspace = ( e ) => {
-		if ( 0 === title.length ) {
-			e.preventDefault();
-			removeBlock( clientId );
-		}
-	};
-
-	/**
-	 * Handle key down.
-	 *
-	 * @param {Object} e         Event object.
-	 * @param {number} e.keyCode Pressed key code.
-	 */
-	const handleKeyDown = ( e ) => {
-		switch ( e.keyCode ) {
-			case ENTER:
-				onEnter();
-				break;
-			case BACKSPACE:
-				onBackspace( e );
-				break;
-		}
-	};
+	const { onKeyDown } = useKeydownInserter( props );
 
 	// If the lesson has a title and it isn't an example, add it to the tracked lessons in the status store.
 	useEffect( () => {
@@ -168,7 +120,7 @@ export const LessonEdit = ( props ) => {
 					placeholder={ __( 'Lesson name', 'sensei-lms' ) }
 					value={ title }
 					onChange={ updateTitle }
-					onKeyDown={ handleKeyDown }
+					onKeyDown={ onKeyDown }
 					style={ { fontSize } }
 				/>
 

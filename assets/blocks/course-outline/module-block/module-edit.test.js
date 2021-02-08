@@ -28,7 +28,7 @@ jest.mock( '@wordpress/block-editor', () => ( {
 } ) );
 jest.mock( '@wordpress/data' );
 jest.mock( '../use-block-creator', () => jest.fn() );
-jest.mock( './use-insert-lesson-block' );
+jest.mock( '../../../shared/blocks/use-auto-inserter' );
 jest.mock( '../outline-block/outline-edit', () => jest.fn() );
 jest.mock( '@wordpress/element', () => ( {
 	...jest.requireActual( '@wordpress/element' ),
