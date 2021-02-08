@@ -1,38 +1,7 @@
-.sensei-lms-question-block {
-
-	.editor-styles-wrapper .wp-block &__title, .editor-styles-wrapper .wp-block &__index {
-		font-size: 24px;
-		margin-top: 0;
-		margin-bottom: 0;
-		line-height: 1.25;
 	}
 
-	&__index {
-		position: absolute;
-		right: 100%;
-		text-align: right;
-		top: 0;
-		font-weight: bold;
 
-		.sensei-lms-question-block.is-draft & {
-			opacity: .62;
 		}
 
-		.editor-styles-wrapper .wp-block & {
-			margin-right: 10px;
 		}
 	}
-
-	&__type-selector {
-
-		&__popover .sensei-toolbar-dropdown__option {
-			padding: 12px;
-		}
-
-		&__option__description {
-			color: #757575;
-			font-size: 90%;
-		}
-	}
-
-}

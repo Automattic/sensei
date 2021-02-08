@@ -5,6 +5,40 @@ $block: '.sensei-lms-question-block';
 	$answer-box-color: #333;
 	$answer-box-color: #333;
 
+	.editor-styles-wrapper .wp-block &__title, .editor-styles-wrapper .wp-block &__index {
+		font-size: 24px;
+		margin-top: 0;
+		margin-bottom: 0;
+		line-height: 1.25;
+	}
+
+	&__index {
+		position: absolute;
+		right: 100%;
+		text-align: right;
+		top: 0;
+		font-weight: bold;
+
+		#{$block}.is-draft & {
+			opacity: .62;
+		}
+
+		.editor-styles-wrapper .wp-block & {
+			margin-right: 10px;
+		}
+	}
+
+	&__type-selector {
+
+		&__popover .sensei-toolbar-dropdown__option {
+			padding: 12px;
+		}
+
+		&__option__description {
+			color: #757575;
+			font-size: 90%;
+		}
+	}
 
 	&__text-input-placeholder {
 		border: 2px solid $answer-box-color;
