@@ -36,7 +36,7 @@ class Sensei_Exit_Survey {
 	public function enqueue_admin_assets() {
 		$screen = get_current_screen();
 		if ( in_array( $screen->id, [ 'plugins', 'plugins-network' ], true ) ) {
-			Sensei()->assets->enqueue( 'sensei-admin-exit-survey', 'admin/exit-survey/index.js', [ 'wp-i18n' ], true );
+			Sensei()->assets->enqueue( 'sensei-admin-exit-survey', 'admin/exit-survey/index.js', [], true );
 			Sensei()->assets->enqueue( 'sensei-admin-exit-survey', 'admin/exit-survey/exit-survey.css', [], 'screen' );
 
 			wp_localize_script(

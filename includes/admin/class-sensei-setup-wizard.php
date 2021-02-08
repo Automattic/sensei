@@ -131,7 +131,7 @@ class Sensei_Setup_Wizard {
 	public function enqueue_scripts() {
 		$handle = 'sensei-setup-wizard';
 		Sensei()->assets->wp_compat();
-		Sensei()->assets->enqueue( $handle, 'setup-wizard/index.js', [ 'sensei-event-logging', 'wp-i18n' ], true );
+		Sensei()->assets->enqueue( $handle, 'setup-wizard/index.js', [ 'sensei-event-logging' ], true );
 		Sensei()->assets->preload_data( [ '/sensei-internal/v1/setup-wizard' ] );
 
 		wp_localize_script(
