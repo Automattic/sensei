@@ -1437,7 +1437,43 @@ class Sensei_Quiz {
 		return $merged;
 	}
 
-} // End Class Sensei_Quiz
+	/**
+	 * Get all the questions of a quiz.
+	 *
+	 * @param int    $quiz_id     The quiz id.
+	 * @param string $post_status Question post status.
+	 * @param string $orderby     Question order by.
+	 * @param string $order       Question order.
+	 *
+	 * @return array
+	 */
+	public function get_questions( $quiz_id, $post_status = 'any', $orderby = 'meta_value_num title', $order = 'ASC' ) : array {
+
+		// Set the default question order if it has not already been set for this quiz.
+		Sensei()->lesson->set_default_question_order( $quiz_id );
+
+		// Get all questions and multiple questions.
+		$question_query_args = array(
+			'post_type'        => array( 'question', 'multiple_question' ),
+			'posts_per_page'   => - 1,
+			'meta_key'         => '_quiz_question_order' . $quiz_id, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Query limited by the number of questions.
+			'orderby'          => $orderby,
+			'order'            => $order,
+			'meta_query'       => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Query limited by the number of questions.
+				array(
+					'key'   => '_quiz_id',
+					'value' => $quiz_id,
+				),
+			),
+			'post_status'      => $post_status,
+			'suppress_filters' => 0,
+		);
+
+		$questions_query = new WP_Query( $question_query_args );
+
+		return $questions_query->posts;
+	}
+}
 
 
 
