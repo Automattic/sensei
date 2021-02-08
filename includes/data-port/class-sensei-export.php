@@ -36,7 +36,7 @@ class Sensei_Export {
 			add_action(
 				'admin_print_scripts',
 				function() {
-					Sensei()->assets->enqueue( 'sensei-export', 'data-port/export.js', [ 'wp-i18n' ], true );
+					Sensei()->assets->enqueue( 'sensei-export', 'data-port/export.js', [], true );
 					Sensei()->assets->preload_data( [ '/sensei-internal/v1/export/active' ] );
 				}
 			);
