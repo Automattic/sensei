@@ -111,6 +111,10 @@ class Sensei_Assets {
 	 */
 	private function call_wp( $action, $handle, $config ) {
 		call_user_func( $action . '_' . $config['type'], $handle, $config['url'], $config['dependencies'], $config['version'], $config['args'] );
+
+		if ( 'script' === $config['type'] && in_array( 'wp-i18n', $config['dependencies'], true ) ) {
+			wp_set_script_translations( $handle, 'sensei-lms' );
+		}
 	}
 
 	/**
