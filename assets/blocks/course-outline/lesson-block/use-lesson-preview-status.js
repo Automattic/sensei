@@ -3,6 +3,8 @@ import { useEffect } from '@wordpress/element';
 import { COURSE_STATUS_STORE } from '../status-preview/status-store';
 
 /**
+ * Get or set the lesson's preview status.
+ *
  * @param {Object}  props
  * @param {Object}  props.attributes           Block attributes
  * @param {boolean} props.attributes.isExample Ignore for example blocks

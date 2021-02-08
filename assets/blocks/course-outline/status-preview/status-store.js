@@ -2,14 +2,13 @@
  * WordPress dependencies
  */
 import { select as selectData, registerStore } from '@wordpress/data';
-import { createReducerFromActionMap } from '../../../shared/data/store-helpers';
 
 /**
  * Internal dependencies
  */
-
 import { Status } from './index';
 import { select, controls } from '@wordpress/data-controls';
+import { createReducerFromActionMap } from '../../../shared/data/store-helpers';
 
 const DEFAULT_STATE = {
 	completedLessons: [],
