@@ -1,5 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { applyFilters } from '@wordpress/hooks';
+import MultiLineAnswer from './multi-line';
+import SingleLineAnswer from './single-line';
 
 /**
  * @typedef QuestionType
@@ -36,12 +38,17 @@ const questionTypes = {
 		),
 		edit: () => <div> [Gap Fill] </div>,
 	},
-	open: {
-		title: __( 'Open-Ended', 'sensei-lms' ),
+	'single-line': {
+		title: __( 'Single-line', 'sensei-lms' ),
 		description: __( 'Require a written answer.', 'sensei-lms' ),
-		edit: () => <div> [Open-Ended] </div>,
+		edit: SingleLineAnswer,
 	},
-	file: {
+	'multi-line': {
+		title: __( 'Multi-line', 'sensei-lms' ),
+		description: __( 'Require a written answer.', 'sensei-lms' ),
+		edit: MultiLineAnswer,
+	},
+	'file-upload': {
 		title: __( 'File Upload', 'sensei-lms' ),
 		description: __( 'Require a file to be uploaded.', 'sensei-lms' ),
 		edit: () => <div> [File Upload] </div>,

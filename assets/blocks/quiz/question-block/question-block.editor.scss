@@ -1,0 +1,39 @@
+
+$block: '.sensei-lms-question-block';
+.sensei-lms-question-block {
+
+	$answer-box-color: #333;
+	$answer-box-color: #333;
+
+
+	&__text-input-placeholder {
+		border: 2px solid $answer-box-color;
+		border-radius: 2px;
+		padding: 5px;
+		min-height: 52px;
+
+		&.multi-line {
+			min-height: 250px;
+		}
+		&.rich-text {
+			position: relative;
+			&:before {
+				content: '';
+				position: absolute;
+				left: 0;
+
+				right: 0;
+				top: 40px;
+				margin: 2px;
+				height: 2px;
+				border-radius: 1px;
+				background: $answer-box-color;
+			}
+		}
+	}
+
+	&__input-label {
+		color: #444;
+	}
+
+}
