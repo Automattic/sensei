@@ -37,8 +37,7 @@ class Sensei_Import {
 				'admin_print_scripts',
 				function() {
 					Sensei()->assets->wp_compat();
-					Sensei()->assets->enqueue( 'sensei-import', 'data-port/import.js', [], true );
-					wp_set_script_translations( 'sensei-import', 'sensei-lms' );
+					Sensei()->assets->enqueue( 'sensei-import', 'data-port/import.js', [ 'wp-i18n' ], true );
 					Sensei()->assets->preload_data( [ '/sensei-internal/v1/import/active' ] );
 				}
 			);
