@@ -40,7 +40,7 @@ export function registerStructureStore( {
 
 	const actions = {
 		/**
-		 * Fetch course structure data from REST API.
+		 * Fetch structure data from REST API.
 		 */
 		*loadStructure() {
 			const endpoint = yield* getEndpoint();
@@ -51,7 +51,7 @@ export function registerStructureStore( {
 		},
 
 		/**
-		 * Persist editor's course structure to the REST API.
+		 * Persist editor's structure to the REST API.
 		 *
 		 * @param {Array} editorStructure
 		 */
@@ -107,7 +107,7 @@ export function registerStructureStore( {
 	};
 
 	/**
-	 * Course structure reducers.
+	 * Structure store reducers.
 	 */
 	const reducers = {
 		SET_SERVER_STRUCTURE: (
@@ -132,7 +132,7 @@ export function registerStructureStore( {
 	};
 
 	/**
-	 * Course structure selectors.
+	 * Store state selectors.
 	 */
 	const selectors = {
 		shouldResavePost: ( { hasStructureUpdate } ) => hasStructureUpdate,
@@ -173,7 +173,9 @@ export function registerStructureStore( {
 		subscribe( function saveStructureOnPostSave() {
 			const editor = select( 'core/editor' );
 
-			if ( ! editor ) return;
+			if ( ! editor ) {
+				return;
+			}
 
 			const isSavingPost =
 				editor.isSavingPost() && ! editor.isAutosavingPost();
