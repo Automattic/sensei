@@ -9,7 +9,7 @@ const MultiLineAnswer = () => {
 			<small className="sensei-lms-question-block__input-label">
 				{ __( 'Answer:', 'sensei-lms' ) }
 			</small>
-			<div className="sensei-lms-question-block__text-input-placeholder multi-line rich-text" />
+			<div className="sensei-lms-question-block__text-input-placeholder multi-line" />
 		</div>
 	);
 };
