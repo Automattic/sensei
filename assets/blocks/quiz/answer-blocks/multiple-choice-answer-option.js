@@ -50,7 +50,8 @@ const MultipleChoiceAnswerOption = ( props ) => {
 
 	useEffect( () => {
 		if ( hasFocus ) {
-			ref.current?.focus();
+			const el = ref.current?.textarea || ref.current;
+			el?.focus();
 		}
 	}, [ hasFocus, ref ] );
 
