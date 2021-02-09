@@ -14,8 +14,9 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { StatusControl, Status, StatusLabels } from '../status-control';
-import { COURSE_STATUS_STORE } from '../status-store';
+import { Status } from '../status-preview';
+import { StatusControl, StatusLabels } from '../status-preview/status-control';
+import { COURSE_STATUS_STORE } from '../status-preview/status-store';
 
 /**
  * Module status preview with setting control.
