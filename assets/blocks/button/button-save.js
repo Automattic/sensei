@@ -12,7 +12,11 @@ import { getBlockDefaultClassName } from '@wordpress/blocks';
 /**
  * Internal dependencies
  */
-import { getButtonProps, getButtonWrapperProps } from './button-props';
+import {
+	getButtonProps,
+	getButtonWrapperProps,
+	isLinkStyle,
+} from './button-props';
 
 /**
  * Save function for a Button block.
@@ -26,11 +30,17 @@ import { getButtonProps, getButtonWrapperProps } from './button-props';
 const ButtonSave = ( { attributes, className, tagName, blockName } ) => {
 	const { text, inContainer, align } = attributes;
 
+	let buttonTagName = tagName;
+
+	if ( ! tagName ) {
+		buttonTagName = isLinkStyle( { attributes } ) ? 'a' : 'button';
+	}
+
 	const content = (
 		<div { ...getButtonWrapperProps( { className, attributes } ) }>
 			<RichText.Content
 				{ ...getButtonProps( { attributes } ) }
-				tagName={ tagName }
+				tagName={ buttonTagName }
 				value={ text }
 			/>
 		</div>
@@ -40,6 +50,7 @@ const ButtonSave = ( { attributes, className, tagName, blockName } ) => {
 		return (
 			<div
 				className={ classnames(
+					className,
 					'sensei-buttons-container__button-block',
 					getBlockDefaultClassName( blockName ) + '__wrapper',
 					{

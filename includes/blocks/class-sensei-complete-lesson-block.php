@@ -52,7 +52,7 @@ class Sensei_Complete_Lesson_Block {
 
 		if ( false === Sensei()->lesson->lesson_has_quiz_with_questions_and_pass_required( $lesson->ID ) ) {
 
-			return $this->render_with_form( $content );
+			return $this->render_with_form( $attributes, $content );
 		}
 
 		return '';
@@ -61,14 +61,26 @@ class Sensei_Complete_Lesson_Block {
 	/**
 	 * Helper method to wrap the button content into a form.
 	 *
+	 * @param array  $attributes The block attributes.
 	 * @param string $content The block content.
 	 *
 	 * @return string The HTML to render.
 	 */
-	private function render_with_form( string $content ) : string {
+	private function render_with_form( array $attributes, string $content ) : string {
 		wp_enqueue_script( 'sensei-stop-double-submission' );
 		$nonce     = wp_nonce_field( 'woothemes_sensei_complete_lesson_noonce', 'woothemes_sensei_complete_lesson_noonce', false, false );
 		$permalink = esc_url( get_permalink() );
+
+		if ( ! empty( $attributes['className'] ) && false !== strpos( $attributes['className'], 'is-style-link' ) ) {
+			wp_enqueue_script( 'sensei-link-form-submit' );
+
+			$content = preg_replace(
+				'/<a /',
+				'<a href="javascript:void(0)" onclick="this.closest(\'form\').submit()"',
+				$content,
+				1
+			);
+		}
 
 		return '
 		<form class="lesson_button_form" method="POST" action="' . $permalink . '">
