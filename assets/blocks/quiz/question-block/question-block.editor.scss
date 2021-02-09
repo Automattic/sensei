@@ -47,22 +47,7 @@ $block: '.sensei-lms-question-block';
 		min-height: 52px;
 
 		&.multi-line {
-			min-height: 250px;
-		}
-		&.rich-text {
-			position: relative;
-			&:before {
-				content: '';
-				position: absolute;
-				left: 0;
-
-				right: 0;
-				top: 40px;
-				margin: 2px;
-				height: 2px;
-				border-radius: 1px;
-				background: $answer-box-color;
-			}
+			min-height: 200px;
 		}
 	}
 
