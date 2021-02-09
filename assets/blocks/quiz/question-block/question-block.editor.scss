@@ -69,19 +69,17 @@ $block: '.sensei-lms-question-block';
 	}
 
 	&__answer--true-false {
-		display: flex;
-
 		#{$block}__option-toggle {
-			margin-right: 24px;
-
+			min-height: 34px;
 			&__control {
 				margin-right: 12px;
 			}
 		}
 	}
 
-	&__multiple-choice-answer-opion {
+	&__multiple-choice-answer-option {
 		display: flex;
+		align-items: baseline;
 		margin: 12px 0;
 
 		&__input {
@@ -104,7 +102,9 @@ $block: '.sensei-lms-question-block';
 			font-family: sans-serif;
 			margin-right: 2px;
 			margin-left: 12px;
-			margin-top: -2px;
+			padding: 4px;
+			height: auto;
+			line-height: inherit;
 		}
 	}
 

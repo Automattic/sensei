@@ -57,7 +57,7 @@ const MultipleChoiceAnswerOption = ( props ) => {
 	const toggleRight = () => setAttributes( { isRight: ! isRight } );
 
 	return (
-		<div className="sensei-lms-question-block__multiple-choice-answer-opion">
+		<div className="sensei-lms-question-block__multiple-choice-answer-option">
 			<OptionToggle
 				onClick={ toggleRight }
 				isChecked={ isRight }
@@ -66,7 +66,7 @@ const MultipleChoiceAnswerOption = ( props ) => {
 			<SingleLineInput
 				ref={ ref }
 				placeholder={ __( 'Add Answer', 'sensei-lms' ) }
-				className="sensei-lms-question-block__multiple-choice-answer-opion__input"
+				className="sensei-lms-question-block__multiple-choice-answer-option__input"
 				onChange={ ( nextValue ) =>
 					setAttributes( { title: nextValue } )
 				}
@@ -75,7 +75,7 @@ const MultipleChoiceAnswerOption = ( props ) => {
 			/>
 			{ hasSelected && (
 				<Button
-					className="sensei-lms-question-block__multiple-choice-answer-opion__hint"
+					className="sensei-lms-question-block__multiple-choice-answer-option__hint"
 					onClick={ toggleRight }
 				>
 					{ isRight
