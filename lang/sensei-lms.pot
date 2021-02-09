@@ -2,14 +2,14 @@
 # This file is distributed under the GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html.
 msgid ""
 msgstr ""
-"Project-Id-Version: Sensei LMS 3.8.0-beta.1\n"
+"Project-Id-Version: Sensei LMS 3.8.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sensei-lms\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2021-02-02T13:32:54+00:00\n"
+"POT-Creation-Date: 2021-02-09T19:06:47+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.5.0-alpha\n"
 "X-Domain: sensei-lms\n"
@@ -81,7 +81,7 @@ msgstr ""
 msgid "I no longer need the plugin"
 msgstr ""
 
-#: assets/blocks/button/button-edit.js:36
+#: assets/blocks/button/button-edit.js:46
 #: assets/dist/blocks/shared.js:1
 #: assets/dist/blocks/single-course.js:1
 #: assets/dist/blocks/single-lesson.js:1
@@ -263,11 +263,11 @@ msgstr ""
 #: assets/blocks/course-outline/lesson-block/lesson-settings.js:55
 #: assets/blocks/course-outline/module-block/index.js:35
 #: assets/blocks/course-outline/outline-block/index.js:50
-#: assets/blocks/lesson-actions/complete-lesson-block/index.js:27
+#: assets/blocks/lesson-actions/complete-lesson-block/index.js:26
 #: assets/blocks/lesson-actions/lesson-actions-block/index.js:21
-#: assets/blocks/lesson-actions/next-lesson-block/index.js:27
-#: assets/blocks/lesson-actions/reset-lesson-block/index.js:29
-#: assets/blocks/lesson-actions/view-quiz-block/index.js:23
+#: assets/blocks/lesson-actions/next-lesson-block/index.js:26
+#: assets/blocks/lesson-actions/reset-lesson-block/index.js:28
+#: assets/blocks/lesson-actions/view-quiz-block/index.js:22
 #: includes/admin/class-sensei-learners-main.php:157
 #: includes/admin/class-sensei-learners-main.php:1155
 #: includes/class-sensei-analysis-course-list-table.php:74
@@ -603,7 +603,7 @@ msgid ""
 msgstr ""
 
 #: assets/blocks/course-progress-block/index.js:20
-#: assets/blocks/lesson-actions/reset-lesson-block/index.js:28
+#: assets/blocks/lesson-actions/reset-lesson-block/index.js:27
 #: assets/dist/blocks/single-course.js:1
 #: assets/dist/blocks/single-lesson.js:1
 msgid "Progress"
@@ -614,14 +614,14 @@ msgstr ""
 msgid "Bar"
 msgstr ""
 
-#: assets/blocks/lesson-actions/complete-lesson-block/index.js:20
+#: assets/blocks/lesson-actions/complete-lesson-block/index.js:19
 #: assets/dist/blocks/single-lesson.js:1
 msgid ""
 "Enable a learner to mark the lesson as complete. This block is only "
 "displayed if the lesson has no quiz or the quiz is optional."
 msgstr ""
 
-#: assets/blocks/lesson-actions/complete-lesson-block/index.js:25
+#: assets/blocks/lesson-actions/complete-lesson-block/index.js:24
 #: assets/blocks/lesson-actions/lesson-actions-block/index.js:24
 #: includes/admin/class-sensei-status.php:144
 #: includes/class-sensei-lesson.php:3978
@@ -629,20 +629,20 @@ msgstr ""
 msgid "Complete"
 msgstr ""
 
-#: assets/blocks/lesson-actions/complete-lesson-block/index.js:26
+#: assets/blocks/lesson-actions/complete-lesson-block/index.js:25
 #: assets/dist/blocks/single-lesson.js:1
 msgid "Finish"
 msgstr ""
 
-#: assets/blocks/lesson-actions/complete-lesson-block/index.js:28
-#: assets/blocks/lesson-actions/next-lesson-block/index.js:28
-#: assets/blocks/lesson-actions/reset-lesson-block/index.js:30
-#: assets/blocks/lesson-actions/view-quiz-block/index.js:24
+#: assets/blocks/lesson-actions/complete-lesson-block/index.js:27
+#: assets/blocks/lesson-actions/next-lesson-block/index.js:27
+#: assets/blocks/lesson-actions/reset-lesson-block/index.js:29
+#: assets/blocks/lesson-actions/view-quiz-block/index.js:23
 #: assets/dist/blocks/single-lesson.js:1
 msgid "Button"
 msgstr ""
 
-#: assets/blocks/lesson-actions/complete-lesson-block/index.js:32
+#: assets/blocks/lesson-actions/complete-lesson-block/index.js:31
 #: includes/class-sensei-frontend.php:949
 #: assets/dist/blocks/single-lesson.js:1
 msgid "Complete Lesson"
@@ -669,7 +669,7 @@ msgid "Buttons"
 msgstr ""
 
 #: assets/blocks/lesson-actions/lesson-actions-block/index.js:25
-#: assets/blocks/lesson-actions/next-lesson-block/index.js:25
+#: assets/blocks/lesson-actions/next-lesson-block/index.js:24
 #: includes/class-sensei-course.php:1636
 #: includes/class-sensei-course.php:1747
 #: includes/class-sensei-lesson.php:1380
@@ -678,7 +678,7 @@ msgid "Next"
 msgstr ""
 
 #: assets/blocks/lesson-actions/lesson-actions-block/index.js:26
-#: assets/blocks/lesson-actions/reset-lesson-block/index.js:25
+#: assets/blocks/lesson-actions/reset-lesson-block/index.js:24
 #: includes/class-sensei-grading-user-quiz.php:113
 #: includes/class-sensei-grading-user-quiz.php:342
 #: assets/dist/blocks/single-lesson.js:1
@@ -686,7 +686,7 @@ msgid "Reset"
 msgstr ""
 
 #: assets/blocks/lesson-actions/lesson-actions-block/lesson-actions-edit.js:53
-#: assets/blocks/lesson-actions/reset-lesson-block/index.js:34
+#: assets/blocks/lesson-actions/reset-lesson-block/index.js:33
 #: includes/class-sensei-frontend.php:983
 #: assets/dist/blocks/single-lesson.js:1
 msgid "Reset Lesson"
@@ -702,14 +702,14 @@ msgstr ""
 msgid "Additional Actions"
 msgstr ""
 
-#: assets/blocks/lesson-actions/next-lesson-block/index.js:20
+#: assets/blocks/lesson-actions/next-lesson-block/index.js:19
 #: assets/dist/blocks/single-lesson.js:1
 msgid ""
 "Enable a learner to move to the next lesson. This block is only displayed "
 "if the current lesson has been completed."
 msgstr ""
 
-#: assets/blocks/lesson-actions/next-lesson-block/index.js:26
+#: assets/blocks/lesson-actions/next-lesson-block/index.js:25
 #: assets/data-port/export/export-select-content-page.js:52
 #: assets/data-port/import/upload/upload-page.js:66
 #: assets/setup-wizard/features/features-selection.js:90
@@ -724,13 +724,13 @@ msgstr ""
 msgid "Continue"
 msgstr ""
 
-#: assets/blocks/lesson-actions/next-lesson-block/index.js:32
+#: assets/blocks/lesson-actions/next-lesson-block/index.js:31
 #: includes/class-sensei-utils.php:1309
 #: assets/dist/blocks/single-lesson.js:1
 msgid "Next Lesson"
 msgstr ""
 
-#: assets/blocks/lesson-actions/reset-lesson-block/index.js:20
+#: assets/blocks/lesson-actions/reset-lesson-block/index.js:19
 #: assets/dist/blocks/single-lesson.js:1
 msgid ""
 "Enable a learner to reset their progress. This block is only displayed if "
@@ -738,22 +738,22 @@ msgid ""
 "retakes are enabled."
 msgstr ""
 
-#: assets/blocks/lesson-actions/reset-lesson-block/index.js:26
+#: assets/blocks/lesson-actions/reset-lesson-block/index.js:25
 #: assets/dist/blocks/single-lesson.js:1
 msgid "Restart"
 msgstr ""
 
-#: assets/blocks/lesson-actions/reset-lesson-block/index.js:27
+#: assets/blocks/lesson-actions/reset-lesson-block/index.js:26
 #: assets/dist/blocks/single-lesson.js:1
 msgid "Revert"
 msgstr ""
 
-#: assets/blocks/lesson-actions/view-quiz-block/index.js:20
+#: assets/blocks/lesson-actions/view-quiz-block/index.js:19
 #: assets/dist/blocks/single-lesson.js:1
 msgid "Enable a learner to view the quiz."
 msgstr ""
 
-#: assets/blocks/lesson-actions/view-quiz-block/index.js:22
+#: assets/blocks/lesson-actions/view-quiz-block/index.js:21
 #: assets/blocks/quiz/quiz-block/index.js:18
 #: includes/class-sensei-posttypes.php:723
 #: assets/dist/blocks/single-lesson.js:1
@@ -761,7 +761,7 @@ msgstr ""
 msgid "Quiz"
 msgstr ""
 
-#: assets/blocks/lesson-actions/view-quiz-block/index.js:28
+#: assets/blocks/lesson-actions/view-quiz-block/index.js:27
 #: assets/dist/blocks/single-lesson.js:1
 msgid "View Quiz"
 msgstr ""
@@ -1128,7 +1128,7 @@ msgid "Upload CSV Files"
 msgstr ""
 
 #: assets/data-port/import/steps.js:15
-#: includes/data-port/class-sensei-import.php:63
+#: includes/data-port/class-sensei-import.php:62
 #: assets/dist/data-port/import.js:1
 msgid "Import"
 msgstr ""
@@ -2416,7 +2416,7 @@ msgstr[1] ""
 msgid "%1$d completed (%2$s)"
 msgstr ""
 
-#: includes/blocks/class-sensei-lesson-blocks.php:79
+#: includes/blocks/class-sensei-lesson-blocks.php:81
 msgid "Write lesson content..."
 msgstr ""
 
@@ -5110,11 +5110,11 @@ msgstr ""
 msgid "Module %1$s is not part of course %2$s."
 msgstr ""
 
-#: includes/data-port/class-sensei-export.php:61
+#: includes/data-port/class-sensei-export.php:60
 msgid "Export Content"
 msgstr ""
 
-#: includes/data-port/class-sensei-export.php:62
+#: includes/data-port/class-sensei-export.php:61
 msgid "Export"
 msgstr ""
 
@@ -5178,7 +5178,7 @@ msgstr ""
 msgid "File provided for \"%1$s\" (%2$s) was not not valid. Error: %3$s"
 msgstr ""
 
-#: includes/data-port/class-sensei-import.php:62
+#: includes/data-port/class-sensei-import.php:61
 msgid "Import Content"
 msgstr ""
 
