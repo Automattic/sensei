@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the class Sensei_REST_API_Quiz_Controller.
+ * File containing the class Sensei_REST_API_Lesson_Quiz_Controller.
  *
  * @package sensei
  */
@@ -10,13 +10,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Sensei Course Structure REST API endpoints.
+ * Sensei Lesson Quiz REST API endpoints.
  *
  * @package Sensei
  * @author  Automattic
  * @since   3.9.0
  */
-class Sensei_REST_API_Quiz_Controller extends \WP_REST_Controller {
+class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 
 	/**
 	 * Routes namespace.
@@ -30,7 +30,7 @@ class Sensei_REST_API_Quiz_Controller extends \WP_REST_Controller {
 	 *
 	 * @var string
 	 */
-	protected $rest_base = 'quiz';
+	protected $rest_base = 'lesson-quiz';
 
 	/**
 	 * Sensei_REST_API_Quiz_Controller constructor.
@@ -47,7 +47,7 @@ class Sensei_REST_API_Quiz_Controller extends \WP_REST_Controller {
 	public function register_routes() {
 		register_rest_route(
 			$this->namespace,
-			$this->rest_base . '/(?P<quiz_id>[0-9]+)',
+			$this->rest_base . '/(?P<lesson_id>[0-9]+)',
 			[
 				[
 					'methods'             => WP_REST_Server::READABLE,
@@ -76,11 +76,11 @@ class Sensei_REST_API_Quiz_Controller extends \WP_REST_Controller {
 	 * @return bool|WP_Error Whether the user can read a quiz. Error if not found.
 	 */
 	public function can_user_get_quiz( WP_REST_Request $request ) {
-		$quiz = get_post( (int) $request->get_param( 'quiz_id' ) );
-		if ( ! $quiz || 'quiz' !== $quiz->post_type ) {
+		$lesson = get_post( (int) $request->get_param( 'lesson_id' ) );
+		if ( ! $lesson || 'lesson' !== $lesson->post_type ) {
 			return new WP_Error(
-				'sensei_quiz_missing_quiz',
-				__( 'Quiz not found.', 'sensei-lms' ),
+				'sensei_lesson_quiz_missing_lesson',
+				__( 'Lesson not found.', 'sensei-lms' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -89,7 +89,7 @@ class Sensei_REST_API_Quiz_Controller extends \WP_REST_Controller {
 			return false;
 		}
 
-		return wp_get_current_user()->ID === (int) $quiz->post_author || current_user_can( 'manage_options' );
+		return wp_get_current_user()->ID === (int) $lesson->post_author || current_user_can( 'manage_options' );
 	}
 
 	/**
@@ -100,12 +100,15 @@ class Sensei_REST_API_Quiz_Controller extends \WP_REST_Controller {
 	 * @return WP_REST_Response
 	 */
 	public function get_quiz( WP_REST_Request $request ) : WP_REST_Response {
-		$quiz = get_post( (int) $request->get_param( 'quiz_id' ) );
+		$lesson = get_post( (int) $request->get_param( 'lesson_id' ) );
+		$quiz   = Sensei()->lesson->lesson_quizzes( $lesson->ID );
 
-		$this->get_quiz_questions( $quiz );
+		if ( ! $quiz ) {
+			return new WP_REST_Response();
+		}
 
 		$response = new WP_REST_Response();
-		$response->set_data( $this->get_quiz_data( $quiz ) );
+		$response->set_data( $this->get_quiz_data( get_post( $quiz ) ) );
 
 		return $response;
 	}
