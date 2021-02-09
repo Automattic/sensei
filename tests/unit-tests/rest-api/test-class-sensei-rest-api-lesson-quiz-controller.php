@@ -311,24 +311,65 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 	}
 
 	/**
-	 * Tests question category properties.
+	 * Tests question category expansion.
 	 */
 	public function testQuestionCategory() {
 		$this->login_as_teacher();
 
 		list( $lesson_id, $quiz_id ) = $this->create_lesson_with_quiz();
+		$this->factory->question->create(
+			[
+				'quiz_id'                             => $quiz_id,
+				'question_type'                       => 'multi-line',
+				'add_question_right_answer_multiline' => 'NOTES',
+			]
+		);
+
+		$another_quiz      = $this->factory->quiz->create();
+		$first_category_id = $this->factory->question_category->create_and_get()->term_id;
+		$this->factory->question->create_many(
+			5,
+			[
+				'quiz_id'           => $another_quiz,
+				'question_category' => $first_category_id,
+			]
+		);
+
+		$second_category_id = $this->factory->question_category->create_and_get()->term_id;
+		$this->factory->question->create_many(
+			2,
+			[
+				'quiz_id'           => $another_quiz,
+				'question_category' => $second_category_id,
+			]
+		);
+
 		$this->factory->multiple_question->create(
 			[
-				'quiz_id'    => $quiz_id,
-				'meta_input' => [
-					'number' => 3,
-				],
+				'quiz_id'              => $quiz_id,
+				'question_number'      => 3,
+				'question_category_id' => $first_category_id,
+			]
+		);
+
+		$this->factory->multiple_question->create(
+			[
+				'quiz_id'              => $quiz_id,
+				'question_number'      => 6,
+				'question_category_id' => $second_category_id,
 			]
 		);
 		$response_data = $this->send_and_validate( $lesson_id );
 
-		$this->assertEquals( 'question-category', $response_data['questions'][0]['type'] );
-		$this->assertEquals( 3, $response_data['questions'][0]['questions'] );
+		// Quiz should have one multiline question, 3 questions from the first category and 2 from the second.
+		$this->assertCount( 6, $response_data['questions'] );
+		$this->assertEquals( 'multi-line', $response_data['questions'][0]['type'] );
+		$this->assertEquals( 'NOTES', $response_data['questions'][0]['teacher_notes'] );
+
+		for ( $i = 1; $i < 6; $i++ ) {
+			$expected_category = $i < 4 ? $first_category_id : $second_category_id;
+			$this->assertEquals( [ $expected_category ], $response_data['questions'][ $i ]['categories'] );
+		}
 	}
 
 	/**

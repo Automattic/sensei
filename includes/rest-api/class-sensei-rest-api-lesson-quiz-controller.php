@@ -149,6 +149,53 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 			return [];
 		}
 
+		$quiz_questions     = [];
+		$multiple_questions = [];
+		foreach ( $questions as $question ) {
+			if ( 'multiple_question' === $question->post_type ) {
+				$multiple_questions[] = $question;
+			} else {
+				$quiz_questions[] = $this->get_question( $question );
+			}
+		}
+
+		foreach ( $multiple_questions as $multiple_question ) {
+			$quiz_questions = array_merge( $quiz_questions, $this->get_questions_from_category( $multiple_question, wp_list_pluck( $quiz_questions, 'id' ) ) );
+		}
+
+		return $quiz_questions;
+	}
+
+	/**
+	 * This method retrieves questions as they are defined by a 'multiple_question' post type.
+	 *
+	 * @param WP_Post $multiple_question  The multiple question.
+	 * @param array   $excluded_questions An array of question ids to exclude.
+	 *
+	 * @return array
+	 */
+	private function get_questions_from_category( WP_Post $multiple_question, array $excluded_questions ) : array {
+		$category = (int) get_post_meta( $multiple_question->ID, 'category', true );
+		$number   = (int) get_post_meta( $multiple_question->ID, 'number', true );
+
+		$args = [
+			'post_type'        => 'question',
+			'posts_per_page'   => $number,
+			'orderby'          => 'rand',
+			'tax_query'        => [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- Query limited by the number of questions.
+				[
+					'taxonomy' => 'question-category',
+					'field'    => 'term_id',
+					'terms'    => $category,
+				],
+			],
+			'post_status'      => 'any',
+			'suppress_filters' => 0,
+			'post__not_in'     => $excluded_questions,
+		];
+
+		$questions = get_posts( $args );
+
 		return array_map( [ $this, 'get_question' ], $questions );
 	}
 
@@ -415,9 +462,6 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 					'items'       => [
 						'anyOf' => [
 							[
-								'$ref' => '#/definitions/question_category',
-							],
-							[
 								'$ref' => '#/definitions/question_multiple_choice',
 							],
 							[
@@ -453,35 +497,6 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 	 */
 	private function get_question_definitions() : array {
 		return [
-			'question_category'        => [
-				'type'       => 'object',
-				'properties' => [
-					'type'      => [
-						'const' => 'question-category',
-					],
-					'term_id'   => [
-						'type'        => 'integer',
-						'description' => 'Term ID',
-					],
-					'title'     => [
-						'type'        => 'string',
-						'description' => 'Question title',
-					],
-					'name'      => [
-						'type'        => 'string',
-						'description' => 'Category name',
-						'readOnly'    => true,
-					],
-					'questions' => [
-						'type'        => 'integer',
-						'description' => 'Number of questions',
-						'readOnly'    => true,
-					],
-				],
-				'required'   => [
-					'term_id',
-				],
-			],
 			'question'                 => [
 				'type'       => 'object',
 				'properties' => [
