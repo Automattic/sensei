@@ -1,13 +1,14 @@
 /**
  * WordPress dependencies
  */
-import { RichText, InnerBlocks, BlockControls } from '@wordpress/block-editor';
+import { BlockControls, InnerBlocks, RichText } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
 import { useBlockIndex } from '../../../shared/blocks/block-index';
+import { useHasSelected } from '../../../shared/helpers/blocks';
 import types from '../answer-blocks';
 import { QuestionTypeToolbar } from './question-type-toolbar';
 
@@ -28,6 +29,8 @@ const QuestionEdit = ( props ) => {
 
 	const index = useBlockIndex( clientId );
 	const AnswerBlock = type && types[ type ];
+
+	const hasSelected = useHasSelected( props );
 
 	return (
 		<div
@@ -64,6 +67,7 @@ const QuestionEdit = ( props ) => {
 					setAttributes={ ( next ) =>
 						setAttributes( { answer: { ...answer, ...next } } )
 					}
+					{ ...{ hasSelected } }
 				/>
 			) }
 			<BlockControls>

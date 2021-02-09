@@ -15,6 +15,9 @@
     "type": {
       "type": "string",
       "default": "multichoice"
+    },
+    "answer": {
+      "type": "object"
     }
   }
 }

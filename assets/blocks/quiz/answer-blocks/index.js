@@ -1,6 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { applyFilters } from '@wordpress/hooks';
 import MultiLineAnswer from './multi-line';
+import MultipleChoiceAnswer from './multiple-choice';
 import SingleLineAnswer from './single-line';
 
 /**
@@ -20,7 +21,7 @@ const questionTypes = {
 	multichoice: {
 		title: __( 'Multiple Choice', 'sensei-lms' ),
 		description: __( 'Select from a list of options.', 'sensei-lms' ),
-		edit: () => <div> [Multiple Choice] </div>,
+		edit: MultipleChoiceAnswer,
 	},
 	truefalse: {
 		title: __( 'True / False', 'sensei-lms' ),
