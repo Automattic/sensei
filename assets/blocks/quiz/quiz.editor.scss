@@ -4,16 +4,21 @@ $gray-400: #ccc;
 
 @import 'question-block/question-block.editor';
 
-.wp-block[data-type="sensei-lms/quiz"] {
-	margin-left: -10px;
-	margin-right: -10px;
-	max-width: none;
-	position: relative;
+.wp-block[data-type='sensei-lms/quiz'] {
+	.editor-styles-wrapper & {
+		margin-left: 0;
+		margin-right: 0;
+		max-width: none;
+		position: relative;
+	}
 
 	& > .block-editor-inner-blocks > .block-editor-block-list__layout > .block-list-appender {
 		margin: auto;
 		position: relative;
 		left: -40px;
+	}
+	& > .block-editor-inner-blocks > .block-editor-block-list__layout {
+		margin-left: 0px;
 	}
 }
 .sensei-lms-quiz-block {
