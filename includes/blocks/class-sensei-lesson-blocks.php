@@ -59,6 +59,18 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 	 * Initializes the blocks.
 	 */
 	public function initialize_blocks() {
+
+		$post_type_object = get_post_type_object( 'lesson' );
+
+		$post_type_object->template = [
+			[ 'sensei-lms/button-contact-teacher' ],
+			[
+				'core/paragraph',
+				[ 'placeholder' => __( 'Write lesson content...', 'sensei-lms' ) ],
+			],
+			[ 'sensei-lms/lesson-actions' ],
+		];
+
 		if ( ! Sensei()->lesson->has_sensei_blocks() ) {
 			return;
 		}
@@ -72,16 +84,6 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 
 		$this->remove_block_related_content();
 
-		$post_type_object = get_post_type_object( 'lesson' );
-
-		$post_type_object->template = [
-			[ 'sensei-lms/button-contact-teacher' ],
-			[
-				'core/paragraph',
-				[ 'placeholder' => __( 'Write lesson content...', 'sensei-lms' ) ],
-			],
-			[ 'sensei-lms/lesson-actions' ],
-		];
 	}
 
 	/**
