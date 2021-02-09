@@ -258,7 +258,16 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 				break;
 		}
 
-		return $type_specific_properties;
+		/**
+		 * Allows modification of type specific question properties.
+		 *
+		 * @since 3.9.0
+		 *
+		 * @param array   $type_specific_properties The properties of the question.
+		 * @param string  $question_type            The question type.
+		 * @param WP_Post $question                 The question post.
+		 */
+		return apply_filters( 'sensei_question_type_specific_properties', $type_specific_properties, $question_type, $question );
 	}
 
 	/**
