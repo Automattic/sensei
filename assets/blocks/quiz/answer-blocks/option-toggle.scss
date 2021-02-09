@@ -1,0 +1,53 @@
+
+.sensei-lms-question-block__option-toggle {
+	.edit-post-visual-editor & {
+		font-family: inherit;
+		font-size: inherit;
+		padding: 12px 2px;
+		margin-right: 10px;
+		margin-left: -2px;
+		margin-top: -2px;
+	}
+
+	&__control {
+		width: 26px;
+		height: 26px;
+		border-radius: 50%;
+		box-shadow: inset 0 0 0 1.5px currentColor;
+		margin: 2px;
+		position: relative;
+
+		&:after {
+			position: absolute;
+			content: '';
+			left: 0;
+			top: 0;
+			bottom: 0;
+			right: 0;
+			margin: auto;
+			width: 12px;
+			height: 12px;
+			border-radius: 50%;
+		}
+
+		&.is-checked:after {
+			background: currentColor;
+		}
+
+		&.is-checkbox {
+			border-radius: 4px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+
+			svg {
+				width: 20px;
+				height: 20px;
+			}
+
+			&:after {
+				content: none;
+			}
+		}
+	}
+}

@@ -1,5 +1,7 @@
-
 $block: '.sensei-lms-question-block';
+
+@import '../answer-blocks/option-toggle';
+
 .sensei-lms-question-block {
 
 	$answer-box-color: #333;
@@ -82,57 +84,19 @@ $block: '.sensei-lms-question-block';
 			}
 		}
 	}
-	&__option-toggle {
-		.edit-post-visual-editor & {
-			font-family: inherit;
-			font-size: inherit;
-			padding: 12px 2px;
-			margin-right: 10px;
-			margin-left: -2px;
-			margin-top: -2px;
-		}
 
-		&__control {
-			width: 26px;
-			height: 26px;
-			border-radius: 50%;
-			box-shadow: inset 0 0 0 1.5px currentColor;
-			margin: 2px;
-			position: relative;
+	&__answer--true-false {
+		display: flex;
 
-			&:after {
-				position: absolute;
-				content: '';
-				left: 0;
-				top: 0;
-				bottom: 0;
-				right: 0;
-				margin: auto;
-				width: 12px;
-				height: 12px;
-				border-radius: 50%;
-			}
+		#{$block}__option-toggle {
+			margin-right: 24px;
 
-			&.is-checked:after {
-				background: currentColor;
-			}
-
-			&.is-checkbox {
-				border-radius: 4px;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-
-				svg {
-					width: 20px;
-					height: 20px;
-				}
-				&:after {
-					content: none;
-				}
+			&__control {
+				margin-right: 12px;
 			}
 		}
 	}
+
 	&__multiple-choice-answer-opion {
 		display: flex;
 		margin: 12px 0;
