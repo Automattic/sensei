@@ -3,6 +3,7 @@ import { applyFilters } from '@wordpress/hooks';
 import MultiLineAnswer from './multi-line';
 import MultipleChoiceAnswer from './multiple-choice';
 import SingleLineAnswer from './single-line';
+import TrueFalseAnswer from './true-false';
 
 /**
  * @typedef QuestionType
@@ -29,7 +30,7 @@ const questionTypes = {
 			'Select whether a statement is true or false.',
 			'sensei-lms'
 		),
-		edit: () => <div> [True/False] </div>,
+		edit: TrueFalseAnswer,
 	},
 	gap: {
 		title: __( 'Gap Fill', 'sensei-lms' ),

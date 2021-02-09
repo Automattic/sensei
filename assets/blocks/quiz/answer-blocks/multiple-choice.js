@@ -10,7 +10,7 @@ const DEFAULT_ANSWERS = [
 ];
 
 /**
- * Question block multiple choice answer component.
+ * Answer component for question blocks with multiple choice type.
  *
  * @param {Object} props
  */
