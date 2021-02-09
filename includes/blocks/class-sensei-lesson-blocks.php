@@ -73,7 +73,7 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 
 		if ( ! Sensei()->lesson->has_sensei_blocks() ) {
 			return;
-		}{}
+		}
 
 		new Sensei_Lesson_Actions_Block();
 		new Sensei_Next_Lesson_Block();
