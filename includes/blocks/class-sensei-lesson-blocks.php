@@ -59,18 +59,6 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 	 * Initializes the blocks.
 	 */
 	public function initialize_blocks() {
-		if ( ! Sensei()->lesson->has_sensei_blocks() ) {
-			return;
-		}
-
-		new Sensei_Lesson_Actions_Block();
-		new Sensei_Next_Lesson_Block();
-		new Sensei_Complete_Lesson_Block();
-		new Sensei_Reset_Lesson_Block();
-		new Sensei_View_Quiz_Block();
-		new Sensei_Block_Contact_Teacher();
-
-		$this->remove_block_related_content();
 
 		$post_type_object = get_post_type_object( 'lesson' );
 
@@ -82,6 +70,20 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 			],
 			[ 'sensei-lms/lesson-actions' ],
 		];
+
+		if ( ! Sensei()->lesson->has_sensei_blocks() ) {
+			return;
+		}{}
+
+		new Sensei_Lesson_Actions_Block();
+		new Sensei_Next_Lesson_Block();
+		new Sensei_Complete_Lesson_Block();
+		new Sensei_Reset_Lesson_Block();
+		new Sensei_View_Quiz_Block();
+		new Sensei_Block_Contact_Teacher();
+
+		$this->remove_block_related_content();
+
 	}
 
 	/**
