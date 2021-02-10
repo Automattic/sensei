@@ -89,11 +89,11 @@ $block: '.sensei-lms-question-block';
 			.editor-styles-wrapper & {
 				margin: 0;
 				background-color: transparent;
-			}
 
-			&:focus {
-				box-shadow: none;
-				border-color: transparent;
+				&:focus {
+					box-shadow: none;
+					border-color: transparent;
+				}
 			}
 		}
 
