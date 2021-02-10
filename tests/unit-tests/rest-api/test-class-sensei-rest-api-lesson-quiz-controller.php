@@ -12,7 +12,6 @@
  */
 class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase {
 	use Sensei_Test_Login_Helpers;
-	use Sensei_REST_API_Test_Helpers;
 
 	/**
 	 * A server instance that we use in tests to dispatch requests.
@@ -66,9 +65,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 		$response = $this->server->dispatch( $request );
 
 		$this->assertEquals( $response->get_status(), 200 );
-
-		$endpoint = new Sensei_REST_API_Lesson_Quiz_Controller( '' );
-		$this->assertMeetsSchema( $endpoint->get_schema(), $response->get_data() );
+		$this->assertCount( 5, $response->get_data()['questions'] );
 	}
 
 	/**
@@ -136,7 +133,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 		];
 		list( $lesson_id ) = $this->create_lesson_with_quiz( $quiz_args );
 
-		$response_data = $this->send_and_validate( $lesson_id );
+		$response_data = $this->send_request( $lesson_id );
 
 		$this->assertTrue( $response_data['options']['pass_required'] );
 		$this->assertTrue( $response_data['options']['auto_grade'] );
@@ -157,7 +154,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 		];
 		list( $lesson_id ) = $this->create_lesson_with_quiz( $another_quiz_args );
 
-		$response_data = $this->send_and_validate( $lesson_id );
+		$response_data = $this->send_request( $lesson_id );
 
 		$this->assertFalse( $response_data['options']['pass_required'] );
 		$this->assertFalse( $response_data['options']['auto_grade'] );
@@ -185,7 +182,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 				'answer_feedback'        => 'Some feedback',
 			]
 		);
-		$response_data = $this->send_and_validate( $lesson_id );
+		$response_data = $this->send_request( $lesson_id );
 
 		$this->assertFalse( $response_data['questions'][0]['random_order'] );
 		$this->assertEquals( 'Some feedback', $response_data['questions'][0]['answer_feedback'] );
@@ -212,7 +209,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 			]
 		);
 
-		$response_data = $this->send_and_validate( $lesson_id );
+		$response_data = $this->send_request( $lesson_id );
 
 		$this->assertFalse( $response_data['questions'][0]['answer'] );
 		$this->assertEquals( 'Some feedback', $response_data['questions'][0]['answer_feedback'] );
@@ -236,7 +233,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 			]
 		);
 
-		$response_data = $this->send_and_validate( $lesson_id );
+		$response_data = $this->send_request( $lesson_id );
 
 		$this->assertEquals( 'gap-fill', $response_data['questions'][0]['type'] );
 		$this->assertEquals( 'BEFORE', $response_data['questions'][0]['before'] );
@@ -260,7 +257,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 			]
 		);
 
-		$response_data = $this->send_and_validate( $lesson_id );
+		$response_data = $this->send_request( $lesson_id );
 
 		$this->assertEquals( 'single-line', $response_data['questions'][0]['type'] );
 		$this->assertEquals( 'NOTES', $response_data['questions'][0]['teacher_notes'] );
@@ -281,7 +278,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 			]
 		);
 
-		$response_data = $this->send_and_validate( $lesson_id );
+		$response_data = $this->send_request( $lesson_id );
 
 		$this->assertEquals( 'multi-line', $response_data['questions'][0]['type'] );
 		$this->assertEquals( 'NOTES', $response_data['questions'][0]['teacher_notes'] );
@@ -303,7 +300,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 			]
 		);
 
-		$response_data = $this->send_and_validate( $lesson_id );
+		$response_data = $this->send_request( $lesson_id );
 
 		$this->assertEquals( 'file-upload', $response_data['questions'][0]['type'] );
 		$this->assertEquals( 'Teacher note', $response_data['questions'][0]['teacher_notes'] );
@@ -359,7 +356,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 				'question_category_id' => $second_category_id,
 			]
 		);
-		$response_data = $this->send_and_validate( $lesson_id );
+		$response_data = $this->send_request( $lesson_id );
 
 		// Quiz should have one multiline question, 3 questions from the first category and 2 from the second.
 		$this->assertCount( 6, $response_data['questions'] );
@@ -391,7 +388,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 
 		add_post_meta( $question_id, '_quiz_id', $quiz_id, false );
 
-		$response_data = $this->send_and_validate( $lesson_id );
+		$response_data = $this->send_request( $lesson_id );
 
 		$this->assertTrue( $response_data['questions'][0]['shared'] );
 		$this->assertEquals( 'Will it blend?', $response_data['questions'][0]['title'] );
@@ -406,12 +403,9 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 	 *
 	 * @return array Response data.
 	 */
-	private function send_and_validate( int $lesson_id ) : array {
+	private function send_request( int $lesson_id ) : array {
 		$request  = new WP_REST_Request( 'GET', self::REST_ROUTE . $lesson_id );
 		$response = $this->server->dispatch( $request );
-
-		$endpoint = new Sensei_REST_API_Lesson_Quiz_Controller( '' );
-		$this->assertMeetsSchema( $endpoint->get_schema(), $response->get_data() );
 
 		return $response->get_data();
 	}

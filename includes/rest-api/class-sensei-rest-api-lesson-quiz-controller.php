@@ -64,10 +64,10 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 					],
 				],
 				[
-					'methods'             => WP_REST_Server::EDITABLE,
+					'methods'             => WP_REST_Server::CREATABLE,
 					'callback'            => [ $this, 'save_quiz' ],
 					'permission_callback' => [ $this, 'can_user_save_quiz' ],
-					'args'                => $this->get_endpoint_args_for_item_schema( WP_REST_Server::EDITABLE ),
+					'args'                => $this->get_endpoint_args_for_item_schema( WP_REST_Server::CREATABLE ),
 				],
 				'schema' => [ $this, 'get_item_schema' ],
 			]
@@ -498,12 +498,12 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 	 * @return array Schema object.
 	 */
 	public function get_item_schema() : array {
-		return [
-			'definitions' => $this->get_question_definitions(),
-			'type'        => 'object',
-			'properties'  => [
+		$schema = [
+			'type'       => 'object',
+			'properties' => [
 				'options'   => [
 					'type'       => 'object',
+					'required'   => true,
 					'properties' => [
 						'pass_required'         => [
 							'type'        => 'boolean',
@@ -539,241 +539,260 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 				],
 				'questions' => [
 					'type'        => 'array',
+					'required'    => true,
 					'description' => 'Questions in quiz',
 					'items'       => [
 						'anyOf' => [
-							[
-								'$ref' => '#/definitions/question_multiple_choice',
-							],
-							[
-								'$ref' => '#/definitions/question_boolean',
-							],
-							[
-								'$ref' => '#/definitions/question_gap_fill',
-							],
-							[
-								'$ref' => '#/definitions/question_single_line',
-							],
-							[
-								'$ref' => '#/definitions/question_multi_line',
-							],
-							[
-								'$ref' => '#/definitions/question_file_upload',
-							],
+							$this->get_multiple_choice_schema(),
+							$this->get_boolean_schema(),
+							$this->get_gap_fill_schema(),
+							$this->get_single_line_schema(),
+							$this->get_multi_line_schema(),
+							$this->get_file_upload_schema(),
 						],
 					],
 				],
 			],
-			'required'    => [
-				'options',
-				'questions',
+		];
+
+		return $schema;
+	}
+
+	/**
+	 * Helper method which returns the schema for common question properties.
+	 *
+	 * @return array The properties
+	 */
+	private function get_common_question_properties_schema() : array {
+		return [
+			'id'          => [
+				'type'        => 'integer',
+				'description' => 'Question post ID',
+			],
+			'title'       => [
+				'type'        => 'string',
+				'description' => 'Question text',
+				'required'    => true,
+			],
+			'description' => [
+				'type'        => 'string',
+				'description' => 'Question description',
+			],
+			'grade'       => [
+				'type'        => 'integer',
+				'description' => 'Points this question is worth',
+				'minimum'     => 0,
+				'maximum'     => 100,
+				'default'     => 1,
+			],
+			'shared'      => [
+				'type'        => 'boolean',
+				'description' => 'Whether the question has been added on other quizzes',
+				'readonly'    => true,
+			],
+			'categories'  => [
+				'type'        => 'array',
+				'readonly'    => true,
+				'description' => 'Category term IDs attached to the question',
+				'items'       => [
+					'type'        => 'integer',
+					'description' => 'Term IDs',
+				],
 			],
 		];
 	}
 
 	/**
-	 * Helper method which returns the question schema definitions.
+	 * Helper method which returns the schema for multiple choice question properties.
 	 *
-	 * @return array The definitions
+	 * @return array The properties
 	 */
-	private function get_question_definitions() : array {
+	private function get_multiple_choice_schema() : array {
+		$multiple_choice_properties = [
+			'type'            => [
+				'type'     => 'string',
+				'pattern'  => 'multiple-choice',
+				'required' => true,
+			],
+			'options'         => [
+				'type'        => 'array',
+				'required'    => true,
+				'description' => 'Options for the multiple choice',
+				'items'       => [
+					'type'       => 'object',
+					'properties' => [
+						'label'   => [
+							'type'        => 'string',
+							'description' => 'Label for answer option',
+						],
+						'correct' => [
+							'type'        => 'boolean',
+							'description' => 'Whether this answer is correct',
+						],
+					],
+				],
+			],
+			'random_order'    => [
+				'type'        => 'boolean',
+				'description' => 'Should options be randomized when displayed to quiz takers',
+				'default'     => false,
+			],
+			'answer_feedback' => [
+				'type'        => 'string',
+				'description' => 'Feedback to show quiz takers once quiz is submitted',
+			],
+		];
+
 		return [
-			'question'                 => [
-				'type'       => 'object',
-				'properties' => [
-					'id'          => [
-						'type'        => 'integer',
-						'description' => 'Question post ID',
-					],
-					'title'       => [
-						'type'        => 'string',
-						'description' => 'Question text',
-					],
-					'description' => [
-						'type'        => 'string',
-						'description' => 'Question description',
-					],
-					'grade'       => [
-						'type'        => 'integer',
-						'description' => 'Points this question is worth',
-						'minimum'     => 0,
-						'maximum'     => 100,
-						'default'     => 1,
-					],
-					'shared'      => [
-						'type'        => 'boolean',
-						'description' => 'Whether the question has been added on other quizzes',
-						'readOnly'    => false,
-					],
-					'categories'  => [
-						'type'        => 'array',
-						'description' => 'Category term IDs attached to the question',
-						'items'       => [
-							'type'        => 'integer',
-							'description' => 'Term IDs',
-						],
-					],
-				],
-				'required'   => [
-					'title',
+			'title'      => 'Question',
+			'type'       => 'object',
+			'properties' => array_merge( $this->get_common_question_properties_schema(), $multiple_choice_properties ),
+		];
+	}
+
+	/**
+	 * Helper method which returns the schema for true/false question properties.
+	 *
+	 * @return array The properties
+	 */
+	private function get_boolean_schema() : array {
+		$boolean_properties = [
+			'type'            => [
+				'type'     => 'string',
+				'pattern'  => 'boolean',
+				'required' => true,
+			],
+			'answer'          => [
+				'type'        => 'boolean',
+				'required'    => true,
+				'description' => 'Correct answer for question',
+			],
+			'answer_feedback' => [
+				'type'        => 'string',
+				'description' => 'Feedback to show quiz takers once quiz is submitted',
+			],
+		];
+
+		return [
+			'title'      => 'Question',
+			'type'       => 'object',
+			'properties' => array_merge( $this->get_common_question_properties_schema(), $boolean_properties ),
+		];
+	}
+
+	/**
+	 * Helper method which returns the schema for gap fill question properties.
+	 *
+	 * @return array The properties
+	 */
+	private function get_gap_fill_schema() : array {
+		$gap_fill_properties = [
+			'type'   => [
+				'type'     => 'string',
+				'pattern'  => 'gap-fill',
+				'required' => true,
+			],
+			'before' => [
+				'type'        => 'string',
+				'description' => 'Text before the gap',
+			],
+			'gap'    => [
+				'type'        => 'array',
+				'description' => 'Gap text answers',
+				'items'       => [
+					'type'        => 'string',
+					'description' => 'Gap answers',
 				],
 			],
-			'question_multiple_choice' => [
-				'allOf' => [
-					[
-						'$ref' => '#/definitions/question',
-					],
-					[
-						'properties' => [
-							'type'            => [
-								'const' => 'multiple-choice',
-							],
-							'options'         => [
-								'type'        => 'array',
-								'description' => 'Options for the multiple choice',
-								'items'       => [
-									'type'       => 'object',
-									'properties' => [
-										'label'   => [
-											'type'        => 'string',
-											'description' => 'Label for answer option',
-										],
-										'correct' => [
-											'type'        => 'boolean',
-											'description' => 'Whether this answer is correct',
-										],
-									],
-								],
-							],
-							'random_order'    => [
-								'type'        => 'boolean',
-								'description' => 'Should options be randomized when displayed to quiz takers',
-								'default'     => false,
-							],
-							'answer_feedback' => [
-								'type'        => 'string',
-								'description' => 'Feedback to show quiz takers once quiz is submitted',
-							],
-						],
-						'required'   => [
-							'options',
-						],
-					],
-				],
+			'after'  => [
+				'type'        => 'string',
+				'description' => 'Text after the gap',
 			],
-			'question_boolean'         => [
-				'allOf' => [
-					[
-						'$ref' => '#/definitions/question',
-					],
-					[
-						'properties' => [
-							'type'            => [
-								'const' => 'boolean',
-							],
-							'answer'          => [
-								'type'        => 'boolean',
-								'description' => 'Correct answer for question',
-							],
-							'answer_feedback' => [
-								'type'        => 'string',
-								'description' => 'Feedback to show quiz takers once quiz is submitted',
-							],
-						],
-						'required'   => [
-							'answer',
-						],
-					],
-				],
+		];
+
+		return [
+			'title'      => 'Question',
+			'type'       => 'object',
+			'properties' => array_merge( $this->get_common_question_properties_schema(), $gap_fill_properties ),
+		];
+	}
+
+	/**
+	 * Helper method which returns the schema for single line question properties.
+	 *
+	 * @return array The properties
+	 */
+	private function get_single_line_schema() : array {
+		$single_line_properties = [
+			'type'          => [
+				'type'     => 'string',
+				'pattern'  => 'single-line',
+				'required' => true,
 			],
-			'question_gap_fill'        => [
-				'allOf' => [
-					[
-						'$ref' => '#/definitions/question',
-					],
-					[
-						'properties' => [
-							'type'   => [
-								'const' => 'gap-fill',
-							],
-							'before' => [
-								'type'        => 'string',
-								'description' => 'Text before the gap',
-							],
-							'gap'    => [
-								'type'        => 'array',
-								'description' => 'Gap text answers',
-								'items'       => [
-									'type'        => 'string',
-									'description' => 'Gap answers',
-								],
-							],
-							'after'  => [
-								'type'        => 'string',
-								'description' => 'Text after the gap',
-							],
-						],
-					],
-				],
+			'teacher_notes' => [
+				'type'        => 'string',
+				'description' => 'Teacher notes for grading',
 			],
-			'question_single_line'     => [
-				'allOf' => [
-					[
-						'$ref' => '#/definitions/question',
-					],
-					[
-						'properties' => [
-							'type'          => [
-								'const' => 'single-line',
-							],
-							'teacher_notes' => [
-								'type'        => 'string',
-								'description' => 'Teacher notes for grading',
-							],
-						],
-					],
-				],
+		];
+
+		return [
+			'title'      => 'Question',
+			'type'       => 'object',
+			'properties' => array_merge( $this->get_common_question_properties_schema(), $single_line_properties ),
+		];
+	}
+
+	/**
+	 * Helper method which returns the schema for multi line question properties.
+	 *
+	 * @return array The properties
+	 */
+	private function get_multi_line_schema() : array {
+		$multiline_properties = [
+			'type'          => [
+				'type'     => 'string',
+				'pattern'  => 'multi-line',
+				'required' => true,
 			],
-			'question_multi_line'      => [
-				'allOf' => [
-					[
-						'$ref' => '#/definitions/question',
-					],
-					[
-						'properties' => [
-							'type'          => [
-								'const' => 'multi-line',
-							],
-							'teacher_notes' => [
-								'type'        => 'string',
-								'description' => 'Teacher notes for grading',
-							],
-						],
-					],
-				],
+			'teacher_notes' => [
+				'type'        => 'string',
+				'description' => 'Teacher notes for grading',
 			],
-			'question_file_upload'     => [
-				'allOf' => [
-					[
-						'$ref' => '#/definitions/question',
-					],
-					[
-						'properties' => [
-							'type'          => [
-								'const' => 'file-upload',
-							],
-							'student_help'  => [
-								'type'        => 'string',
-								'description' => 'Description for student explaining what needs to be uploaded',
-							],
-							'teacher_notes' => [
-								'type'        => 'string',
-								'description' => 'Teacher notes for grading',
-							],
-						],
-					],
-				],
+		];
+
+		return [
+			'title'      => 'Question',
+			'type'       => 'object',
+			'properties' => array_merge( $this->get_common_question_properties_schema(), $multiline_properties ),
+		];
+	}
+
+	/**
+	 * Helper method which returns the schema for file upload question properties.
+	 *
+	 * @return array The properties
+	 */
+	private function get_file_upload_schema() : array {
+		$file_upload_properties = [
+			'type'          => [
+				'type'     => 'string',
+				'pattern'  => 'file-upload',
+				'required' => true,
 			],
+			'student_help'  => [
+				'type'        => 'string',
+				'description' => 'Description for student explaining what needs to be uploaded',
+			],
+			'teacher_notes' => [
+				'type'        => 'string',
+				'description' => 'Teacher notes for grading',
+			],
+		];
+
+		return [
+			'title'      => 'Question',
+			'type'       => 'object',
+			'properties' => array_merge( $this->get_common_question_properties_schema(), $file_upload_properties ),
 		];
 	}
 }
