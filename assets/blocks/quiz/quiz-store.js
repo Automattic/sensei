@@ -62,7 +62,7 @@ registerStructureStore( {
 	/**
 	 * Parse question blocks and quiz settings from Quiz block.
 	 *
-	 * @return {Object} Quiz structure.
+	 * @throws {Object} Quiz structure.
 	 */
 	readBlock() {
 		const clientId = select( QUIZ_STORE ).getBlock();
@@ -72,7 +72,8 @@ registerStructureStore( {
 		const questionBlocks = select( 'core/block-editor' ).getBlocks(
 			clientId
 		);
-		return {
+		throw {
+			code: 'not-implemented',
 			options: quizBlock.attributes.options,
 			questions: parseQuestionBlocks( questionBlocks ),
 		};
