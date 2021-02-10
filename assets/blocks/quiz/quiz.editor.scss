@@ -26,17 +26,17 @@ $gray-400: #ccc;
 	&__separator {
 		position: relative;
 		text-align: center;
+		display: flex;
+		align-items: center;
 		margin-top: $default-block-margin;
 		margin-bottom: $default-block-margin;
-		height: 24px;
 
-		&:before {
+		&::before, &::after {
 			content: '';
-			position: absolute;
-			top: 20px;
-			left: -100%;
-			right: -100%;
-			border-top: 1px solid $gray-400;
+			flex: 1;
+			background-color: currentColor;
+			opacity: 0.5;
+			height: 1px;
 		}
 
 		& > span {
@@ -45,11 +45,9 @@ $gray-400: #ccc;
 			text-transform: uppercase;
 			font-weight: 600;
 			font-family: $default-font;
-			color: $gray-700;
+			opacity: 0.7;
 			border-radius: 4px;
-			background: $white;
 			padding: 6px 24px;
-			height: 24px;
 		}
 	}
 }
