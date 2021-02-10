@@ -63,9 +63,111 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 						],
 					],
 				],
-				'schema' => [ $this, 'get_schema' ],
+				[
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => [ $this, 'save_quiz' ],
+					'permission_callback' => [ $this, 'can_user_save_quiz' ],
+					'args'                => $this->get_endpoint_args_for_item_schema( WP_REST_Server::EDITABLE ),
+				],
+				'schema' => [ $this, 'get_item_schema' ],
 			]
 		);
+	}
+
+	/**
+	 * Check user permission for saving course structure.
+	 *
+	 * @param WP_REST_Request $request WordPress request object.
+	 *
+	 * @return bool|WP_Error Whether the user can save course structure data. Error if not found.
+	 */
+	public function can_user_save_quiz( WP_REST_Request $request ) {
+		$lesson = get_post( (int) $request->get_param( 'lesson_id' ) );
+
+		if ( ! $lesson || 'lesson' !== $lesson->post_type ) {
+			return new WP_Error(
+				'sensei_lesson_quiz_missing_lesson',
+				__( 'Lesson not found.', 'sensei-lms' ),
+				[ 'status' => 404 ]
+			);
+		}
+
+		if ( ! is_user_logged_in() ) {
+			return false;
+		}
+
+		return current_user_can( get_post_type_object( 'lesson' )->cap->edit_post, $lesson->ID );
+	}
+
+	/**
+	 * Save the quiz.
+	 *
+	 * @param WP_REST_Request $request WordPress request object.
+	 *
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function save_quiz( WP_REST_Request $request ) {
+		$lesson  = get_post( (int) $request->get_param( 'lesson_id' ) );
+		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson->ID );
+
+		$json_params  = $request->get_json_params();
+		$quiz_options = $json_params['options'];
+
+		wp_insert_post(
+			[
+				'ID'           => $quiz_id,
+				'post_content' => '',
+				'post_status'  => $lesson->post_status,
+				'post_title'   => $lesson->post_title,
+				'post_type'    => 'quiz',
+				'post_parent'  => $lesson->ID,
+				'meta_input'   => $this->get_quiz_meta( $quiz_options ),
+			]
+		);
+
+		if ( null === $quiz_id ) {
+			update_post_meta( $lesson->ID, '_lesson_quiz', $quiz_id );
+			wp_set_post_terms( $quiz_id, [ 'multiple-choice' ], 'quiz-type' );
+		}
+
+		return new WP_REST_Response();
+	}
+
+	/**
+	 * Helper method to translate input to quiz meta.
+	 *
+	 * @param array $quiz_options The input coming from JSON data.
+	 *
+	 * @return array The meta.
+	 */
+	private function get_quiz_meta( array $quiz_options ) : array {
+		$meta_input = [];
+
+		if ( isset( $quiz_options['pass_required'] ) ) {
+			$meta_input['_pass_required'] = true === $quiz_options['pass_required'] ? 'on' : '';
+		}
+
+		if ( isset( $quiz_options['quiz_passmark'] ) ) {
+			$meta_input['_quiz_passmark'] = empty( $quiz_options['quiz_passmark'] ) ? 0 : $quiz_options['quiz_passmark'];
+		}
+
+		if ( isset( $quiz_options['auto_grade'] ) ) {
+			$meta_input['_quiz_grade_type'] = true === $quiz_options['auto_grade'] ? 'auto' : 'manual';
+		}
+
+		if ( isset( $quiz_options['allow_retakes'] ) ) {
+			$meta_input['_enable_quiz_reset'] = true === $quiz_options['allow_retakes'] ? 'on' : '';
+		}
+
+		if ( isset( $quiz_options['show_questions'] ) ) {
+			$meta_input['_show_questions'] = $quiz_options['show_questions'];
+		}
+
+		if ( isset( $quiz_options['random_question_order'] ) ) {
+			$meta_input['_random_question_order'] = true === $quiz_options['random_question_order'] ? 'yes' : 'no';
+		}
+
+		return $meta_input;
 	}
 
 	/**
@@ -395,7 +497,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 	 *
 	 * @return array Schema object.
 	 */
-	public function get_schema() : array {
+	public function get_item_schema() : array {
 		return [
 			'definitions' => $this->get_question_definitions(),
 			'type'        => 'object',
@@ -494,6 +596,8 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 					'grade'       => [
 						'type'        => 'integer',
 						'description' => 'Points this question is worth',
+						'minimum'     => 0,
+						'maximum'     => 100,
 						'default'     => 1,
 					],
 					'shared'      => [
