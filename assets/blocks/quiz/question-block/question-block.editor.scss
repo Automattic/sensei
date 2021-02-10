@@ -4,8 +4,7 @@ $block: '.sensei-lms-question-block';
 
 .sensei-lms-question-block {
 
-	$answer-box-color: #333;
-	$answer-box-color: #333;
+	$answer-box-color: currentColor;
 
 	.editor-styles-wrapper .wp-block &__title, .editor-styles-wrapper .wp-block &__index {
 		font-size: 24px;
@@ -55,7 +54,8 @@ $block: '.sensei-lms-question-block';
 	}
 
 	&__input-label {
-		color: #444;
+		opacity: 0.7;
+		font-size: 90%;
 	}
 
 	&__answer--multiple-choice, &__answer--true-false {
@@ -88,6 +88,7 @@ $block: '.sensei-lms-question-block';
 
 			.editor-styles-wrapper & {
 				margin: 0;
+				background-color: transparent;
 			}
 
 			&:focus {
@@ -98,7 +99,8 @@ $block: '.sensei-lms-question-block';
 
 		&__hint {
 			text-transform: uppercase;
-			color: #757575;
+			color: inherit;
+			opacity: 0.6;
 			font-size: 14px;
 			font-family: sans-serif;
 			margin-right: 2px;
