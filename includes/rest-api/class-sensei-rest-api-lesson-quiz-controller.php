@@ -109,11 +109,12 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 	public function save_quiz( WP_REST_Request $request ) {
 		$lesson  = get_post( (int) $request->get_param( 'lesson_id' ) );
 		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson->ID );
+		$is_new  = null === $quiz_id;
 
 		$json_params  = $request->get_json_params();
 		$quiz_options = $json_params['options'];
 
-		wp_insert_post(
+		$quiz_id = wp_insert_post(
 			[
 				'ID'           => $quiz_id,
 				'post_content' => '',
@@ -121,27 +122,199 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 				'post_title'   => $lesson->post_title,
 				'post_type'    => 'quiz',
 				'post_parent'  => $lesson->ID,
-				'meta_input'   => $this->get_quiz_meta( $quiz_options ),
+				'meta_input'   => $this->get_quiz_meta( $quiz_options, $lesson ),
 			]
 		);
 
-		if ( null === $quiz_id ) {
+		if ( is_wp_error( $quiz_id ) ) {
+			return new WP_REST_Response( $quiz_id );
+		}
+
+		if ( $is_new ) {
 			update_post_meta( $lesson->ID, '_lesson_quiz', $quiz_id );
 			wp_set_post_terms( $quiz_id, [ 'multiple-choice' ], 'quiz-type' );
 		}
 
-		return new WP_REST_Response();
+		$question_ids = [];
+		foreach ( $json_params['questions'] as $question ) {
+			$question_id = $this->save_question( $question );
+
+			if ( is_wp_error( $question_id ) ) {
+				return new WP_REST_Response( $question_id );
+			}
+
+			$question_ids[] = $question_id;
+		}
+
+		Sensei()->quiz->set_questions( $quiz_id, $question_ids );
+
+		$response = new WP_REST_Response();
+		$response->set_data( $this->get_quiz_data( get_post( $quiz_id ) ) );
+
+		return $response;
+	}
+
+	/**
+	 * Helper method to save or update a question.
+	 *
+	 * @param array $question The question JSON array.
+	 *
+	 * @return int|WP_Error Question id on success.
+	 */
+	private function save_question( $question ) {
+		return wp_insert_post(
+			[
+				'ID'           => isset( $question['id'] ) ? $question['id'] : null,
+				'post_content' => isset( $question['description'] ) ? $question['description'] : '',
+				'post_status'  => 'publish',
+				'post_title'   => $question['title'],
+				'post_type'    => 'question',
+				'meta_input'   => $this->get_question_meta( $question ),
+				'tax_input'    => [
+					'question-type' => $question['type'],
+				],
+			]
+		);
+	}
+
+	/**
+	 * Calculates the meta values for a question according to the input array.
+	 *
+	 * @param array $question The input array.
+	 *
+	 * @return array The calculated meta array.
+	 */
+	private function get_question_meta( array $question ) : array {
+		$meta = [];
+
+		if ( isset( $question['grade'] ) ) {
+			$meta['_question_grade'] = $question['grade'];
+		}
+
+		switch ( $question['type'] ) {
+			case 'multiple-choice':
+				$meta = array_merge( $meta, $this->get_multiple_choice_meta( $question ) );
+				break;
+			case 'boolean':
+				$meta['_question_right_answer'] = $question['answer'] ? 'true' : 'false';
+
+				if ( isset( $question['answer_feedback'] ) ) {
+					$meta['_answer_feedback'] = $question['answer_feedback'];
+				}
+				break;
+			case 'gap-fill':
+				$meta = array_merge( $meta, $this->get_gap_fill_meta( $question ) );
+				break;
+			case 'single-line':
+			case 'multi-line':
+				if ( isset( $question['teacher_notes'] ) ) {
+					$meta['_question_right_answer'] = $question['teacher_notes'];
+				}
+				break;
+			case 'file-upload':
+				if ( isset( $question['teacher_notes'] ) ) {
+					$meta['_question_right_answer'] = $question['teacher_notes'];
+				}
+
+				if ( isset( $question['student_help'] ) ) {
+					$meta['_question_wrong_answers'] = $question['student_help'];
+				}
+				break;
+		}
+
+		return $meta;
+	}
+
+	/**
+	 * Calculates the meta values for a multiple choice question.
+	 *
+	 * @param array $question The multiple choice JSON array.
+	 *
+	 * @return array The calculated meta.
+	 */
+	private function get_multiple_choice_meta( array $question ) : array {
+		$meta = [];
+
+		if ( isset( $question['random_order'] ) ) {
+			$meta['_random_order'] = $question['random_order'];
+		}
+
+		if ( isset( $question['answer_feedback'] ) ) {
+			$meta['_answer_feedback'] = $question['answer_feedback'];
+		}
+
+		foreach ( $question['options'] as $option ) {
+			if ( empty( $option['label'] ) ) {
+				continue;
+			}
+
+			if ( empty( $option['correct'] ) ) {
+				$meta['_question_wrong_answers'][] = $option['label'];
+			} else {
+				$meta['_question_right_answer'][] = $option['label'];
+			}
+
+			$meta['_answer_order'][] = Sensei()->lesson->get_answer_id( $option['label'] );
+		}
+
+		$meta['_answer_order']       = implode( ',', $meta['_answer_order'] );
+		$meta['_right_answer_count'] = count( $meta['_question_right_answer'] );
+		$meta['_wrong_answer_count'] = count( $meta['_question_wrong_answers'] );
+
+		return $meta;
+	}
+
+	/**
+	 * Calculates the meta values for a gap fill question.
+	 *
+	 * @param array $question The gap fill JSON array.
+	 *
+	 * @return array The calculated meta.
+	 */
+	private function get_gap_fill_meta( $question ) : array {
+		if ( ! isset( $question['before'], $question['gap'], $question['after'] ) ) {
+			return [];
+		}
+
+		$old_text_values = [];
+		if ( isset( $question['id'] ) ) {
+			$old_meta        = get_post_meta( $question['id'], '_question_right_answer', true );
+			$old_text_values = explode( '||', $old_meta );
+		}
+
+		$text_values = [];
+
+		if ( isset( $question['before'] ) ) {
+			$text_values[0] = $question['before'];
+		} else {
+			$text_values[0] = isset( $old_text_values[0] ) ? $old_text_values[0] : '';
+		}
+
+		if ( isset( $question['gap'] ) ) {
+			$text_values[1] = implode( '|', $question['gap'] );
+		} else {
+			$text_values[1] = isset( $old_text_values[1] ) ? $old_text_values[1] : '';
+		}
+
+		if ( isset( $question['after'] ) ) {
+			$text_values[2] = $question['after'];
+		} else {
+			$text_values[2] = isset( $old_text_values[2] ) ? $old_text_values[2] : '';
+		}
+
+		return [ '_question_right_answer' => implode( '||', $text_values ) ];
 	}
 
 	/**
 	 * Helper method to translate input to quiz meta.
 	 *
-	 * @param array $quiz_options The input coming from JSON data.
+	 * @param array   $quiz_options The input coming from JSON data.
+	 * @param WP_Post $lesson       The parent lesson.
 	 *
 	 * @return array The meta.
 	 */
-	private function get_quiz_meta( array $quiz_options ) : array {
-		$meta_input = [];
+	private function get_quiz_meta( array $quiz_options, WP_Post $lesson ) : array {
+		$meta_input = [ '_quiz_lesson' => $lesson->ID ];
 
 		if ( isset( $quiz_options['pass_required'] ) ) {
 			$meta_input['_pass_required'] = true === $quiz_options['pass_required'] ? 'on' : '';
@@ -362,11 +535,6 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 				$type_specific_properties = $this->get_gap_fill_properties( $question );
 				break;
 			case 'single-line':
-				$answer = get_post_meta( $question->ID, '_question_right_answer', true );
-				if ( ! empty( $answer ) ) {
-					$type_specific_properties['teacher_notes'] = $answer;
-				}
-				break;
 			case 'multi-line':
 				$teacher_notes = get_post_meta( $question->ID, '_question_right_answer', true );
 				if ( ! empty( $teacher_notes ) ) {
