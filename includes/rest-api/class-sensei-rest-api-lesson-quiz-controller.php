@@ -207,31 +207,10 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 	 * @return array The question array.
 	 */
 	private function get_question( WP_Post $question ) : array {
-		if ( 'question' === $question->post_type ) {
-			$common_properties        = $this->get_question_common_properties( $question );
-			$type_specific_properties = $this->get_question_type_specific_properties( $question, $common_properties['type'] );
+		$common_properties        = $this->get_question_common_properties( $question );
+		$type_specific_properties = $this->get_question_type_specific_properties( $question, $common_properties['type'] );
 
-			return array_merge( $common_properties, $type_specific_properties );
-		}
-
-		if ( 'multiple_question' === $question->post_type ) {
-			$term_id = get_post_meta( $question->ID, 'category', true );
-			$term    = get_term( $term_id, 'question-category' );
-
-			if ( ! $term || is_wp_error( $term_id ) ) {
-				return [];
-			}
-
-			return [
-				'type'      => 'question-category',
-				'title'     => $question->post_title,
-				'term_id'   => (int) $term_id,
-				'name'      => $term->name,
-				'questions' => (int) get_post_meta( $question->ID, 'number', true ),
-			];
-		}
-
-		return [];
+		return array_merge( $common_properties, $type_specific_properties );
 	}
 
 	/**
