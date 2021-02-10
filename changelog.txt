@@ -25,6 +25,8 @@
 	* Show View Quiz button in Lesson Actions block even after quiz is completed [#3946](https://github.com/Automattic/sensei/pull/3946)
 	* Update Reset Lesson block description [#3948](https://github.com/Automattic/sensei/pull/3948)
 	* Use quiz state to determine if complete lesson is allowed [#3949](https://github.com/Automattic/sensei/pull/3949)
+	* Fix: Don't initialize lesson blocks if they don't exist on the page [#3960](https://github.com/Automattic/sensei/pull/3960)
+	* Fix Lesson Actions styles [#3961](https://github.com/Automattic/sensei/pull/3961)
 * New: Add toolbar dropdown component for use with blocks [#3904](https://github.com/Automattic/sensei/pull/3904)
 * New: Log when lessons are updated [#3920](https://github.com/Automattic/sensei/pull/3920)
 * Tweak: Use Sensei_Notices in Take Course block [#3901](https://github.com/Automattic/sensei/pull/3901)
@@ -35,6 +37,7 @@
 * Fix: Enable translating blocks [#3919](https://github.com/Automattic/sensei/pull/3919)
 * Fix: Do not allow duplicate notices to be displayed [#3923](https://github.com/Automattic/sensei/pull/3923)
 * Fix: Fix lesson order being changed when saving lesson [#3951](https://github.com/Automattic/sensei/pull/3951) 👏 @hansschuijff
+* Fix: Fix block translations [#3962](https://github.com/Automattic/sensei/pull/3962)
 
 2021.01.21 - version 3.7.0
 * New: Add filter to only allow some mime types to quiz file upload answers [#3828](https://github.com/Automattic/sensei/pull/3828)
