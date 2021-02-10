@@ -181,7 +181,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 		$args = [
 			'post_type'        => 'question',
 			'posts_per_page'   => $number,
-			'orderby'          => 'rand',
+			'orderby'          => 'title',
 			'tax_query'        => [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- Query limited by the number of questions.
 				[
 					'taxonomy' => 'question-category',
