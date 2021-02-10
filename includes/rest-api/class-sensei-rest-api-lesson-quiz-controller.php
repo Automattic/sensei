@@ -104,7 +104,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 		$quiz   = Sensei()->lesson->lesson_quizzes( $lesson->ID );
 
 		if ( ! $quiz ) {
-			return new WP_REST_Response();
+			return new WP_REST_Response( null, 204 );
 		}
 
 		$response = new WP_REST_Response();
