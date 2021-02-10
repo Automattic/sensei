@@ -20,29 +20,13 @@ export function useQuizStructure( { clientId } ) {
 	}, [ setBlock, loadStructure, clientId ] );
 }
 
-/**
- * Get the related Quiz post ID for the lesson.
- */
-function* getQuizId() {
-	const quizId = yield select( 'core/editor' ).getCurrentPostAttribute(
-		'meta'
-	)?.[ '_lesson_quiz' ];
-	if ( ! quizId ) {
-		throw {
-			message: __( 'No Lesson Quiz', 'sensei-lms' ),
-			code: 'no-lesson-quiz',
-		};
-	}
-
-	return quizId;
-}
-
 registerStructureStore( {
 	storeName: QUIZ_STORE,
 	*getEndpoint() {
-		const quizId = yield* getQuizId();
-		return `quiz/${ quizId }`;
+		const lessonId = yield select( 'core/editor' ).getCurrentPostId();
+		return `lesson-quiz/${ lessonId }`;
 	},
+
 	/**
 	 * Update Quiz block with settings and questions.
 	 *
@@ -74,6 +58,7 @@ registerStructureStore( {
 			false
 		);
 	},
+
 	/**
 	 * Parse question blocks and quiz settings from Quiz block.
 	 *
@@ -94,9 +79,6 @@ registerStructureStore( {
 	},
 
 	*fetchError( error ) {
-		if ( 'no-lesson-quiz' === error?.code ) {
-			return;
-		}
 		const errorMessage = sprintf(
 			/* translators: Error message. */
 			__(
@@ -116,9 +98,6 @@ registerStructureStore( {
 	 * @param {Object} error
 	 */
 	*saveError( error ) {
-		if ( 'no-lesson-quiz' === error?.code ) {
-			return;
-		}
 		const errorMessage = sprintf(
 			/* translators: Error message. */
 			__(
