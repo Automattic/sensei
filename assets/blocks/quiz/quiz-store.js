@@ -24,7 +24,7 @@ registerStructureStore( {
 	storeName: QUIZ_STORE,
 	*getEndpoint() {
 		const lessonId = yield select( 'core/editor' ).getCurrentPostId();
-		return `lesson-quiz/${ lessonId }`;
+		return `lesson-quiz/${ lessonId }?context=edit`;
 	},
 
 	/**
