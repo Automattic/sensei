@@ -37,12 +37,12 @@ const questionTypes = {
 		edit: () => <div> [Gap Fill] </div>,
 	},
 	'single-line': {
-		title: __( 'Multi-line', 'sensei-lms' ),
+		title: __( 'Single-line', 'sensei-lms' ),
 		description: __( 'Require a written answer.', 'sensei-lms' ),
 		edit: () => <div> [Single Line] </div>,
 	},
 	'multi-line': {
-		title: __( 'Single-line', 'sensei-lms' ),
+		title: __( 'Multi-line', 'sensei-lms' ),
 		description: __( 'Require a written answer.', 'sensei-lms' ),
 		edit: () => <div> [Multi Line] </div>,
 	},
