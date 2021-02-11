@@ -157,7 +157,7 @@ class Sensei_PostTypes {
 	 */
 	public function protect_feeds() {
 		if ( is_feed() && is_post_type_archive( [ 'lesson', 'question' ] ) ) {
-			wp_die( esc_html__( 'Error: Feed does not exist', 'sensei-lms' ), '', array( 'response' => 404 ) );
+			wp_die( esc_html__( 'Error: Feed does not exist', 'sensei-lms' ), '', [ 'response' => 404 ] );
 		}
 	}
 
