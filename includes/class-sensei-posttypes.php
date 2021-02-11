@@ -104,6 +104,9 @@ class Sensei_PostTypes {
 		// REST API functionality.
 		add_action( 'rest_api_init', [ $this, 'setup_rest_api' ] );
 
+		// Add protections on feeds for certain CPTs.
+		add_action( 'wp', [ $this, 'protect_feeds' ] );
+
 		// Add 'Edit Quiz' link to admin bar
 		add_action( 'admin_bar_menu', array( $this, 'quiz_admin_bar_menu' ), 81 );
 
@@ -145,6 +148,17 @@ class Sensei_PostTypes {
 
 		// Hide post content for students who aren't enrolled.
 		add_filter( 'post_password_required', [ $this, 'lesson_is_protected' ], 10, 2 );
+	}
+
+	/**
+	 * Add protection to Sensei post type feeds.
+	 *
+	 * @access private
+	 */
+	public function protect_feeds() {
+		if ( is_feed() && is_post_type_archive( [ 'lesson', 'question' ] ) ) {
+			wp_die( __( 'Error: Feed does not exist', 'sensei-lms' ), '', array( 'response' => 404 ) );
+		}
 	}
 
 	/**
