@@ -193,7 +193,7 @@ export function registerStructureStore( {
 			return {
 				...state,
 				editorStructure,
-				hasUnsavedEditorChanges: hasDiff,
+				hasUnsavedEditorChanges: hasDiff && null !== editorStructure,
 			};
 		},
 		START_SAVE: ( action, state ) => ( {
