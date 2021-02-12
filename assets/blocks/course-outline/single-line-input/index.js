@@ -4,6 +4,7 @@
 import { PlainText } from '@wordpress/block-editor';
 import { forwardRef } from '@wordpress/element';
 import { ENTER } from '@wordpress/keycodes';
+import classnames from 'classnames';
 
 /**
  * Single line input component.
@@ -36,6 +37,10 @@ const SingleLineInput = forwardRef(
 				onChange={ handleChange }
 				onKeyDown={ handleKeyDown }
 				{ ...props }
+				className={ classnames(
+					'sensei-lms-single-line-input',
+					props.className
+				) }
 			/>
 		);
 	}

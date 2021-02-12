@@ -90,7 +90,7 @@ $block: '.sensei-lms-question-block';
 				margin-right: 12px;
 			}
 		}
-		&__option {
+		.editor-styles-wrapper & li {
 			min-height: 42px;
 			display: flex;
 			align-items: baseline;
@@ -104,16 +104,6 @@ $block: '.sensei-lms-question-block';
 
 		&__input {
 			flex: 1;
-
-			.editor-styles-wrapper & {
-				margin: 0;
-				background-color: transparent;
-
-				&:focus {
-					box-shadow: none;
-					border-color: transparent;
-				}
-			}
 		}
 
 	}
