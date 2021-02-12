@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { applyFilters } from '@wordpress/hooks';
+import FileUploadAnswer from './file-upload';
 import GapFillAnswer from './gap-fill';
 import MultiLineAnswer from './multi-line';
 import MultipleChoiceAnswer from './multiple-choice';
@@ -57,7 +58,7 @@ const questionTypes = {
 	'file-upload': {
 		title: __( 'File Upload', 'sensei-lms' ),
 		description: __( 'Upload a file or document.', 'sensei-lms' ),
-		edit: () => <div> [File Upload] </div>,
+		edit: FileUploadAnswer,
 	},
 };
 
