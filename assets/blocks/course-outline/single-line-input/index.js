@@ -3,7 +3,7 @@
  */
 import { PlainText } from '@wordpress/block-editor';
 import { forwardRef } from '@wordpress/element';
-import { ENTER } from '@wordpress/keycodes';
+import { ENTER, BACKSPACE } from '@wordpress/keycodes';
 import classnames from 'classnames';
 
 /**
@@ -12,28 +12,45 @@ import classnames from 'classnames';
  * @param {Object}   props           Component props.
  * @param {Function} props.onChange  Change callback.
  * @param {Function} props.onKeyDown Keydown callback.
+ * @param {Function} props.onEnter   Called on Enter.
+ * @param {Function} props.onRemove  Called on Backspace when value is empty.
  */
 const SingleLineInput = forwardRef(
-	( { onChange, onKeyDown, ...props }, ref ) => {
+	( { onChange, onKeyDown, value, onEnter, onRemove, ...props }, ref ) => {
 		/**
 		 * Handle change.
 		 *
-		 * @param {string} value Change value.
+		 * @param {string} nextValue Change value.
 		 */
-		const handleChange = ( value ) => {
-			onChange( value.replace( /\n/g, '' ) );
+		const handleChange = ( nextValue ) => {
+			onChange( nextValue.replace( /\n/g, '' ) );
 		};
 
 		const handleKeyDown = ( e ) => {
-			if ( onKeyDown ) onKeyDown( e );
-			if ( ENTER === e.keyCode ) {
-				e.preventDefault();
+			if ( onKeyDown ) {
+				onKeyDown( e );
+			}
+			switch ( e.keyCode ) {
+				case ENTER:
+					e.preventDefault();
+					if ( onEnter ) {
+						onEnter( e );
+					}
+
+					break;
+				case BACKSPACE:
+					if ( onRemove && ! value?.length ) {
+						e.preventDefault();
+						onRemove();
+					}
+					break;
 			}
 		};
 
 		return (
 			<PlainText
 				ref={ ref }
+				value={ value }
 				onChange={ handleChange }
 				onKeyDown={ handleKeyDown }
 				{ ...props }
