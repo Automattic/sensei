@@ -43,6 +43,7 @@ const QuestionEdit = ( props ) => {
 	const AnswerBlock = type && types[ type ];
 
 	const hasSelected = useHasSelected( props );
+	const showContent = title || hasSelected;
 
 	return (
 		<div
@@ -62,27 +63,33 @@ const QuestionEdit = ( props ) => {
 					onRemove={ () => removeBlock( clientId ) }
 				/>
 			</h2>
-			<InnerBlocks
-				template={ [
-					[
-						'core/paragraph',
-						{
-							placeholder: __(
-								'Question Description',
-								'sensei-lms'
-							),
-						},
-					],
-				] }
-			/>
-			{ AnswerBlock?.edit && (
-				<AnswerBlock.edit
-					attributes={ answer }
-					setAttributes={ ( next ) =>
-						setAttributes( { answer: { ...answer, ...next } } )
-					}
-					{ ...{ hasSelected } }
-				/>
+			{ showContent && (
+				<>
+					<InnerBlocks
+						template={ [
+							[
+								'core/paragraph',
+								{
+									placeholder: __(
+										'Question Description',
+										'sensei-lms'
+									),
+								},
+							],
+						] }
+					/>
+					{ AnswerBlock?.edit && (
+						<AnswerBlock.edit
+							attributes={ answer }
+							setAttributes={ ( next ) =>
+								setAttributes( {
+									answer: { ...answer, ...next },
+								} )
+							}
+							hasSelected={ hasSelected }
+						/>
+					) }
+				</>
 			) }
 			<BlockControls>
 				<>
