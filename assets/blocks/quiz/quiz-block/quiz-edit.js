@@ -13,6 +13,7 @@ import questionBlock from '../question-block';
  */
 const QuizEdit = ( props ) => {
 	useAutoInserter( { name: questionBlock.name }, props );
+
 	return (
 		<>
 			<div className="sensei-lms-quiz-block__separator">
@@ -21,6 +22,7 @@ const QuizEdit = ( props ) => {
 			<InnerBlocks
 				allowedBlocks={ [ 'sensei-lms/quiz-question' ] }
 				template={ [ [ 'sensei-lms/quiz-question' ] ] }
+				templateInsertUpdatesSelection
 			/>
 			<div className="sensei-lms-quiz-block__separator" />
 		</>
