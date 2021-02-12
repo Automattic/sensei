@@ -1,38 +1,53 @@
-.sensei-lms-question-block {
+@import '~@wordpress/base-styles/variables';
+$gray-700: #757575;
+$gray-400: #ccc;
 
-	.editor-styles-wrapper .wp-block &__title, .editor-styles-wrapper .wp-block &__index {
-		font-size: 24px;
-		margin-top: 0;
-		margin-bottom: 0;
-		line-height: 1.25;
+@import 'question-block/question-block.editor';
+
+.wp-block[data-type='sensei-lms/quiz'] {
+	.editor-styles-wrapper & {
+		margin-left: 0;
+		margin-right: 0;
+		max-width: none;
+		position: relative;
 	}
 
-	&__index {
-		position: absolute;
-		right: 100%;
-		text-align: right;
-		top: 0;
-		font-weight: bold;
+	& > .block-editor-inner-blocks > .block-editor-block-list__layout > .block-list-appender {
+		margin: auto;
+		position: relative;
+		left: -40px;
+	}
+	& > .block-editor-inner-blocks > .block-editor-block-list__layout {
+		margin-left: 0px;
+	}
+}
+.sensei-lms-quiz-block {
 
-		.sensei-lms-question-block.is-draft & {
-			opacity: .62;
+	&__separator {
+		position: relative;
+		text-align: center;
+		display: flex;
+		align-items: center;
+		margin-top: $default-block-margin;
+		margin-bottom: $default-block-margin;
+
+		&::before, &::after {
+			content: '';
+			flex: 1;
+			background-color: currentColor;
+			opacity: 0.5;
+			height: 1px;
 		}
 
-		.editor-styles-wrapper .wp-block & {
-			margin-right: 10px;
+		& > span {
+			font-size: $default-font-size;
+			position: relative;
+			text-transform: uppercase;
+			font-weight: 600;
+			font-family: $default-font;
+			opacity: 0.7;
+			border-radius: 4px;
+			padding: 6px 24px;
 		}
 	}
-
-	&__type-selector {
-
-		&__popover .sensei-toolbar-dropdown__option {
-			padding: 12px;
-		}
-
-		&__option__description {
-			color: #757575;
-			font-size: 90%;
-		}
-	}
-
 }
