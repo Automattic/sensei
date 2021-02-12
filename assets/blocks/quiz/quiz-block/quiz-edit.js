@@ -3,11 +3,16 @@
  */
 import { InnerBlocks } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
+import { useAutoInserter } from '../../../shared/blocks/use-auto-inserter';
+import questionBlock from '../question-block';
 
 /**
  * Quiz block editor.
+ *
+ * @param {Object} props
  */
-const QuizEdit = () => {
+const QuizEdit = ( props ) => {
+	useAutoInserter( { name: questionBlock.name }, props );
 	return (
 		<>
 			<div className="sensei-lms-quiz-block__separator">

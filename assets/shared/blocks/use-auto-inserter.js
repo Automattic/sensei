@@ -30,14 +30,22 @@ export const useAutoInserter = ( { name, attributes = {} }, parentProps ) => {
 
 	const hasSelected =
 		useSelect( ( select ) =>
-			select( 'core/block-editor' ).hasSelectedInnerBlock( clientId )
+			select( 'core/block-editor' ).hasSelectedInnerBlock(
+				clientId,
+				true
+			)
 		) || isSelected;
 
-	useEffect( () => {
-		const lastBlock = blocks.length && blocks[ blocks.length - 1 ];
-		const hasEmptyLastBlock = lastBlock && ! lastBlock.attributes.title;
+	const lastBlock = blocks.length && blocks[ blocks.length - 1 ];
+	const hasEmptyLastBlock =
+		! blocks.length || ( lastBlock && ! lastBlock.attributes.title );
 
-		if ( hasSelected && ! hasEmptyLastBlock && ! autoBlockClientId ) {
+	useEffect( () => {
+		if (
+			hasSelected &&
+			! hasEmptyLastBlock &&
+			( ! autoBlockClientId || lastBlock.clientId === autoBlockClientId )
+		) {
 			createAndInsertBlock();
 		}
 		if ( ! hasSelected ) {
@@ -51,5 +59,5 @@ export const useAutoInserter = ( { name, attributes = {} }, parentProps ) => {
 			setAutoBlockClientId( null );
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ hasSelected ] );
+	}, [ hasSelected, hasEmptyLastBlock ] );
 };
