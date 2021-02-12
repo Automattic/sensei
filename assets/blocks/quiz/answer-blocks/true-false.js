@@ -1,3 +1,4 @@
+import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { OptionToggle } from './option-toggle';
 
@@ -8,10 +9,12 @@ import { OptionToggle } from './option-toggle';
  * @param {Object}   props.attributes
  * @param {boolean}  props.attributes.rightAnswer The correct answer.
  * @param {Function} props.setAttributes
+ * @param {boolean}  props.hasSelected            Is question block selected.
  */
 const TrueFalseAnswer = ( {
 	attributes: { rightAnswer = true },
 	setAttributes,
+	hasSelected,
 } ) => {
 	const options = [
 		{ label: __( 'True', 'sensei-lms' ), value: true },
@@ -20,7 +23,10 @@ const TrueFalseAnswer = ( {
 	return (
 		<ul className="sensei-lms-question-block__answer sensei-lms-question-block__answer--true-false">
 			{ options.map( ( { label, value } ) => (
-				<li key={ value }>
+				<li
+					key={ value }
+					className="sensei-lms-question-block__answer--true-false__option"
+				>
 					<OptionToggle
 						onClick={ () =>
 							setAttributes( { rightAnswer: value } )
@@ -29,6 +35,21 @@ const TrueFalseAnswer = ( {
 					>
 						<span>{ label }</span>
 					</OptionToggle>
+					{ hasSelected && (
+						<Button
+							className="sensei-lms-question-block__answer--true-false__hint"
+							onClick={ () =>
+								setAttributes( {
+									rightAnswer:
+										value === rightAnswer ? ! value : value,
+								} )
+							}
+						>
+							{ rightAnswer === value
+								? __( 'Right', 'sensei-lms' )
+								: __( 'Wrong', 'sensei-lms' ) }
+						</Button>
+					) }
 				</li>
 			) ) }
 		</ul>

@@ -76,7 +76,7 @@ const MultipleChoiceAnswerOption = ( props ) => {
 			/>
 			{ hasSelected && (
 				<Button
-					className="sensei-lms-question-block__multiple-choice-answer-option__hint"
+					className="sensei-lms-question-block__answer--multiple-choice__hint"
 					onClick={ toggleRight }
 				>
 					{ isRight

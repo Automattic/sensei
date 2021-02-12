@@ -67,14 +67,33 @@ $block: '.sensei-lms-question-block';
 				list-style: none;
 			}
 		}
+
+		&__hint {
+			text-transform: uppercase;
+			color: inherit;
+			opacity: 0.6;
+			font-size: 14px;
+			font-family: sans-serif;
+			margin-right: 2px;
+			margin-left: 12px;
+			padding: 4px;
+			height: auto;
+			line-height: inherit;
+		}
 	}
 
 	&__answer--true-false {
 		#{$block}__option-toggle {
-			min-height: 34px;
+			flex: 1;
+
 			&__control {
 				margin-right: 12px;
 			}
+		}
+		&__option {
+			min-height: 42px;
+			display: flex;
+			align-items: baseline;
 		}
 	}
 
@@ -97,18 +116,6 @@ $block: '.sensei-lms-question-block';
 			}
 		}
 
-		&__hint {
-			text-transform: uppercase;
-			color: inherit;
-			opacity: 0.6;
-			font-size: 14px;
-			font-family: sans-serif;
-			margin-right: 2px;
-			margin-left: 12px;
-			padding: 4px;
-			height: auto;
-			line-height: inherit;
-		}
 	}
 
 
