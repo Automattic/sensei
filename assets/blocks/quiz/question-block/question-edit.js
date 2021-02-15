@@ -11,7 +11,7 @@ import { __ } from '@wordpress/i18n';
  */
 import { useBlockIndex } from '../../../shared/blocks/block-index';
 import { useHasSelected } from '../../../shared/helpers/blocks';
-import SingleLineInput from '../../course-outline/single-line-input';
+import SingleLineInput from '../../../shared/blocks/single-line-input';
 import types from '../answer-blocks';
 import { QuestionTypeToolbar } from './question-type-toolbar';
 

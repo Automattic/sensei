@@ -24,7 +24,7 @@ import {
 } from '../../../shared/blocks/settings';
 import { useAutoInserter } from '../../../shared/blocks/use-auto-inserter';
 import { OutlineAttributesContext } from '../outline-block/outline-edit';
-import SingleLineInput from '../single-line-input';
+import SingleLineInput from '../../../shared/blocks/single-line-input';
 import { ModuleStatus } from './module-status';
 import ModuleSettings from './module-settings';
 
