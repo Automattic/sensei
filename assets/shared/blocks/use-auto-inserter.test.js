@@ -29,6 +29,11 @@ describe( 'useAutoInserter', () => {
 
 	const removeBlock = jest.fn();
 	const insertBlock = jest.fn();
+	const select = {
+		hasSelectedInnerBlock: () => false,
+		isBlockSelected: () => false,
+		getBlocks: () => [],
+	};
 
 	const mockSelect = ( value ) =>
 		useSelect.mockImplementation( ( fn ) => fn( () => value ) );
@@ -41,10 +46,8 @@ describe( 'useAutoInserter', () => {
 	beforeEach( () => {
 		removeBlock.mockClear();
 		insertBlock.mockClear();
-		mockSelect( {
-			hasSelectedInnerBlock: () => false,
-			getBlocks: () => [],
-		} );
+
+		mockSelect( select );
 	} );
 
 	it( 'does not insert block when not selected', () => {
@@ -61,6 +64,7 @@ describe( 'useAutoInserter', () => {
 
 	it( 'inserts a block when inner block selected', () => {
 		mockSelect( {
+			...select,
 			hasSelectedInnerBlock: () => true,
 			getBlocks: () => [ { attributes: { title: 'Lesson 1' } } ],
 		} );
@@ -74,6 +78,7 @@ describe( 'useAutoInserter', () => {
 		const blocks = [ { attributes: { title: 'Lesson 1' } } ];
 		insertBlock.mockImplementation( ( block ) => blocks.push( block ) );
 		mockSelect( {
+			...select,
 			hasSelectedInnerBlock: () => false,
 			getBlocks: () => blocks,
 		} );
