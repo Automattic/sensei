@@ -58,7 +58,7 @@ $block: '.sensei-lms-question-block';
 		font-size: 90%;
 	}
 
-	&__answer--multiple-choice, &__answer--true-false {
+	&__answer--multiple-choice, &__answer--true-false, &__answer--gap-fill {
 		.editor-styles-wrapper & {
 			margin: 28px 0;
 			padding: 0;
@@ -117,6 +117,61 @@ $block: '.sensei-lms-question-block';
 			}
 		}
 
+	}
+
+	&__answer--gap-fill {
+
+		.components-form-token-field {
+			&__input-container {
+				margin: 0;
+				font-size: inherit;
+				font-family: inherit;
+				align-items: center;
+
+				& input[type='text'].components-form-token-field__input {
+					font-size: inherit;
+					color: inherit;
+				}
+			}
+
+			&__token {
+				font-size: inherit;
+				background: var(--wp-admin-theme-color, #333);
+				color: #fff;
+				align-items: center;
+				* {
+					background: none;
+					color: inherit;
+				}
+			}
+
+			&__token-text {
+				padding: 4px 4px 4px 8px;
+			}
+
+			&__label {
+				display: none;
+			}
+
+			&__help {
+				display: none;
+			}
+		}
+
+		.editor-styles-wrapper &__right-answers {
+			margin: 12px 0;
+		}
+
+		&__hint {
+			color: inherit;
+			opacity: 0.6;
+			font-size: 12px;
+			font-family: sans-serif;
+			padding: 4px;
+			height: auto;
+			line-height: inherit;
+			text-align: right;
+		}
 	}
 
 
