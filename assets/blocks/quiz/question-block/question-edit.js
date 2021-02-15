@@ -77,6 +77,7 @@ const QuestionEdit = ( props ) => {
 								},
 							],
 						] }
+						templateInsertUpdatesSelection={ false }
 					/>
 					{ AnswerBlock?.edit && (
 						<AnswerBlock.edit
