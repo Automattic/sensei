@@ -18,6 +18,9 @@
     },
     "answer": {
       "type": "object"
+    },
+    "options": {
+      "type": "object"
     }
   }
 }
