@@ -103,7 +103,7 @@ const QuestionEdit = ( props ) => {
 					/>
 				</>
 			</BlockControls>
-			<QuestionSettings { ...props } />
+			<QuestionSettings controls={ AnswerBlock?.settings } { ...props } />
 		</div>
 	);
 };
