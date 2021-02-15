@@ -1,7 +1,10 @@
 import { __ } from '@wordpress/i18n';
 import { applyFilters } from '@wordpress/hooks';
+import GapFillAnswer from './gap-fill';
 import MultiLineAnswer from './multi-line';
+import MultipleChoiceAnswer from './multiple-choice';
 import SingleLineAnswer from './single-line';
+import TrueFalseAnswer from './true-false';
 
 /**
  * @typedef QuestionType
@@ -20,7 +23,7 @@ const questionTypes = {
 	multichoice: {
 		title: __( 'Multiple Choice', 'sensei-lms' ),
 		description: __( 'Select from a list of options.', 'sensei-lms' ),
-		edit: () => <div> [Multiple Choice] </div>,
+		edit: MultipleChoiceAnswer,
 	},
 	truefalse: {
 		title: __( 'True / False', 'sensei-lms' ),
@@ -28,12 +31,12 @@ const questionTypes = {
 			'Select whether a statement is true or false.',
 			'sensei-lms'
 		),
-		edit: () => <div> [True/False] </div>,
+		edit: TrueFalseAnswer,
 	},
 	gap: {
 		title: __( 'Gap Fill', 'sensei-lms' ),
 		description: __( 'Fill in the blank.', 'sensei-lms' ),
-		edit: () => <div> [Gap Fill] </div>,
+		edit: GapFillAnswer,
 	},
 	'single-line': {
 		title: __( 'Single-line', 'sensei-lms' ),
