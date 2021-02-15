@@ -8,25 +8,39 @@ import { useCallback, useEffect, useState } from '@wordpress/element';
 /**
  * Insert an empty inner block to the end of the block when it's selected.
  *
- * @param {Object} opts
- * @param {string} opts.name       Block to be inserted.
- * @param {Object} opts.attributes Attributes of a new block.
- * @param {Object} parentProps     Block properties.
+ * @param {Object}  opts
+ * @param {string}  opts.name             Block to be inserted.
+ * @param {boolean} opts.selectFirstBlock Select inserted block if it's the first one.
+ * @param {Object}  opts.attributes       Attributes of a new block.
+ * @param {Object}  parentProps           Block properties.
  */
-export const useAutoInserter = ( { name, attributes = {} }, parentProps ) => {
+export const useAutoInserter = (
+	{ name, attributes = {}, selectFirstBlock = false },
+	parentProps
+) => {
 	const [ autoBlockClientId, setAutoBlockClientId ] = useState( null );
 	const { clientId, isSelected } = parentProps;
 	const { insertBlock, removeBlock } = useDispatch( 'core/block-editor' );
 
-	const createAndInsertBlock = useCallback( () => {
-		const block = createBlock( name, attributes );
-		insertBlock( block, undefined, clientId, false );
-		setAutoBlockClientId( block.clientId );
-	}, [ insertBlock, clientId, name, attributes ] );
-
 	const blocks = useSelect( ( select ) =>
 		select( 'core/block-editor' ).getBlocks( clientId )
 	);
+
+	const isFirstBlock = 0 === blocks.length;
+
+	const createAndInsertBlock = useCallback( () => {
+		const block = createBlock( name, attributes );
+		const updateSelection = isFirstBlock && selectFirstBlock;
+		insertBlock( block, undefined, clientId, updateSelection );
+		setAutoBlockClientId( block.clientId );
+	}, [
+		insertBlock,
+		clientId,
+		name,
+		attributes,
+		isFirstBlock,
+		selectFirstBlock,
+	] );
 
 	const hasSelected =
 		useSelect( ( select ) =>
@@ -37,8 +51,7 @@ export const useAutoInserter = ( { name, attributes = {} }, parentProps ) => {
 		) || isSelected;
 
 	const lastBlock = blocks.length && blocks[ blocks.length - 1 ];
-	const hasEmptyLastBlock =
-		! blocks.length || ( lastBlock && ! lastBlock.attributes.title );
+	const hasEmptyLastBlock = lastBlock && ! lastBlock.attributes.title;
 
 	useEffect( () => {
 		if (
