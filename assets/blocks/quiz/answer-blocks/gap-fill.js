@@ -25,7 +25,7 @@ const GapFillAnswer = ( {
 					placeholder={ __( 'Text before the gap', 'sensei-lms' ) }
 					value={ textBefore }
 					onChange={ ( nextValue ) =>
-						setAttributes( { before: nextValue } )
+						setAttributes( { textBefore: nextValue } )
 					}
 				/>
 			</li>
