@@ -73,4 +73,17 @@ export const useAutoInserter = (
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ hasSelected, hasEmptyLastBlock ] );
+
+	const isAutoBlockSelected = useSelect(
+		( select ) =>
+			autoBlockClientId &&
+			select( 'core/block-editor' ).isBlockSelected( autoBlockClientId ),
+		[ autoBlockClientId ]
+	);
+
+	useEffect( () => {
+		if ( isAutoBlockSelected ) {
+			setAutoBlockClientId( null );
+		}
+	}, [ isAutoBlockSelected ] );
 };
