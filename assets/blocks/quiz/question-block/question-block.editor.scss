@@ -92,7 +92,7 @@ $block: '.sensei-lms-question-block';
 		}
 
 		&__option {
-			min-height: 42px;
+			min-height: 45px;
 			display: flex;
 			align-items: baseline;
 		}
@@ -100,7 +100,7 @@ $block: '.sensei-lms-question-block';
 
 	&__multiple-choice-answer-option {
 		display: flex;
-		align-items: baseline;
+		align-items: flex-start;
 		margin: 12px 0;
 
 		&__input {
