@@ -6,9 +6,9 @@ import { select as selectData, registerStore } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { createReducerFromActionMap } from '../../shared/data/store-helpers';
-import { Status } from './status-control';
+import { Status } from './index';
 import { select, controls } from '@wordpress/data-controls';
+import { createReducerFromActionMap } from '../../../shared/data/store-helpers';
 
 const DEFAULT_STATE = {
 	completedLessons: [],
@@ -20,7 +20,7 @@ const DEFAULT_STATE = {
  */
 const actions = {
 	/**
-	 * Sets the status of a lesson.
+	 * Sets thecreateReducerFromActionMap status of a lesson.
 	 *
 	 * @param {string} lessonId The lesson id.
 	 * @param {string} status   The lesson status.

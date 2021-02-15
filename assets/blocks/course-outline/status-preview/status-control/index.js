@@ -1,17 +1,13 @@
 /**
  * WordPress dependencies
  */
-import { RadioControl, Disabled } from '@wordpress/components';
+import { Disabled, RadioControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 /**
- * An enum of Status constants.
+ * Internal dependencies
  */
-export const Status = {
-	NOT_STARTED: 'not-started',
-	IN_PROGRESS: 'in-progress',
-	COMPLETED: 'completed',
-};
+import { Status } from '../index';
 
 /**
  * Labels for each of the statuses.

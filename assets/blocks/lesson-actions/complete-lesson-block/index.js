@@ -6,13 +6,12 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { createButtonBlockType } from '../../button';
+import { BlockStyles, createButtonBlockType } from '../../button';
 
 /**
  * Complete lesson button block.
  */
 export default createButtonBlockType( {
-	tagName: 'button',
 	settings: {
 		name: 'sensei-lms/button-complete-lesson',
 		parent: [ 'sensei-lms/lesson-actions' ],
@@ -35,5 +34,10 @@ export default createButtonBlockType( {
 				default: [ 'sensei-stop-double-submission' ],
 			},
 		},
+		styles: [
+			{ ...BlockStyles.Fill, isDefault: true },
+			BlockStyles.Outline,
+			BlockStyles.Link,
+		],
 	},
 } );

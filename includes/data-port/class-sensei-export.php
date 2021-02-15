@@ -37,7 +37,6 @@ class Sensei_Export {
 				'admin_print_scripts',
 				function() {
 					Sensei()->assets->enqueue( 'sensei-export', 'data-port/export.js', [], true );
-					wp_set_script_translations( 'sensei-export', 'sensei-lms' );
 					Sensei()->assets->preload_data( [ '/sensei-internal/v1/export/active' ] );
 				}
 			);

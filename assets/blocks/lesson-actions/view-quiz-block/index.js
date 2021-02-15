@@ -6,13 +6,12 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { createButtonBlockType } from '../../button';
+import { BlockStyles, createButtonBlockType } from '../../button';
 
 /**
  * View quiz button block.
  */
 export default createButtonBlockType( {
-	tagName: 'button',
 	settings: {
 		name: 'sensei-lms/button-view-quiz',
 		title: __( 'View Quiz', 'sensei-lms' ),
@@ -28,5 +27,10 @@ export default createButtonBlockType( {
 				default: __( 'View Quiz', 'sensei-lms' ),
 			},
 		},
+		styles: [
+			{ ...BlockStyles.Fill, isDefault: true },
+			BlockStyles.Outline,
+			BlockStyles.Link,
+		],
 	},
 } );

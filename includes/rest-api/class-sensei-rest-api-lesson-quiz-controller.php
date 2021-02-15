@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the class Sensei_REST_API_Quiz_Controller.
+ * File containing the class Sensei_REST_API_Lesson_Quiz_Controller.
  *
  * @package sensei
  */
@@ -10,13 +10,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Sensei Course Structure REST API endpoints.
+ * Sensei Lesson Quiz REST API endpoints.
  *
  * @package Sensei
  * @author  Automattic
  * @since   3.9.0
  */
-class Sensei_REST_API_Quiz_Controller extends \WP_REST_Controller {
+class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 
 	/**
 	 * Routes namespace.
@@ -30,7 +30,7 @@ class Sensei_REST_API_Quiz_Controller extends \WP_REST_Controller {
 	 *
 	 * @var string
 	 */
-	protected $rest_base = 'quiz';
+	protected $rest_base = 'lesson-quiz';
 
 	/**
 	 * Sensei_REST_API_Quiz_Controller constructor.
@@ -47,7 +47,7 @@ class Sensei_REST_API_Quiz_Controller extends \WP_REST_Controller {
 	public function register_routes() {
 		register_rest_route(
 			$this->namespace,
-			$this->rest_base . '/(?P<quiz_id>[0-9]+)',
+			$this->rest_base . '/(?P<lesson_id>[0-9]+)',
 			[
 				[
 					'methods'             => WP_REST_Server::READABLE,
@@ -76,11 +76,11 @@ class Sensei_REST_API_Quiz_Controller extends \WP_REST_Controller {
 	 * @return bool|WP_Error Whether the user can read a quiz. Error if not found.
 	 */
 	public function can_user_get_quiz( WP_REST_Request $request ) {
-		$quiz = get_post( (int) $request->get_param( 'quiz_id' ) );
-		if ( ! $quiz || 'quiz' !== $quiz->post_type ) {
+		$lesson = get_post( (int) $request->get_param( 'lesson_id' ) );
+		if ( ! $lesson || 'lesson' !== $lesson->post_type ) {
 			return new WP_Error(
-				'sensei_quiz_missing_quiz',
-				__( 'Quiz not found.', 'sensei-lms' ),
+				'sensei_lesson_quiz_missing_lesson',
+				__( 'Lesson not found.', 'sensei-lms' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -89,7 +89,7 @@ class Sensei_REST_API_Quiz_Controller extends \WP_REST_Controller {
 			return false;
 		}
 
-		return wp_get_current_user()->ID === (int) $quiz->post_author || current_user_can( 'manage_options' );
+		return wp_get_current_user()->ID === (int) $lesson->post_author || current_user_can( 'manage_options' );
 	}
 
 	/**
@@ -100,12 +100,15 @@ class Sensei_REST_API_Quiz_Controller extends \WP_REST_Controller {
 	 * @return WP_REST_Response
 	 */
 	public function get_quiz( WP_REST_Request $request ) : WP_REST_Response {
-		$quiz = get_post( (int) $request->get_param( 'quiz_id' ) );
+		$lesson = get_post( (int) $request->get_param( 'lesson_id' ) );
+		$quiz   = Sensei()->lesson->lesson_quizzes( $lesson->ID );
 
-		$this->get_quiz_questions( $quiz );
+		if ( ! $quiz ) {
+			return new WP_REST_Response( null, 204 );
+		}
 
 		$response = new WP_REST_Response();
-		$response->set_data( $this->get_quiz_data( $quiz ) );
+		$response->set_data( $this->get_quiz_data( get_post( $quiz ) ) );
 
 		return $response;
 	}
@@ -146,6 +149,53 @@ class Sensei_REST_API_Quiz_Controller extends \WP_REST_Controller {
 			return [];
 		}
 
+		$quiz_questions     = [];
+		$multiple_questions = [];
+		foreach ( $questions as $question ) {
+			if ( 'multiple_question' === $question->post_type ) {
+				$multiple_questions[] = $question;
+			} else {
+				$quiz_questions[] = $this->get_question( $question );
+			}
+		}
+
+		foreach ( $multiple_questions as $multiple_question ) {
+			$quiz_questions = array_merge( $quiz_questions, $this->get_questions_from_category( $multiple_question, wp_list_pluck( $quiz_questions, 'id' ) ) );
+		}
+
+		return $quiz_questions;
+	}
+
+	/**
+	 * This method retrieves questions as they are defined by a 'multiple_question' post type.
+	 *
+	 * @param WP_Post $multiple_question  The multiple question.
+	 * @param array   $excluded_questions An array of question ids to exclude.
+	 *
+	 * @return array
+	 */
+	private function get_questions_from_category( WP_Post $multiple_question, array $excluded_questions ) : array {
+		$category = (int) get_post_meta( $multiple_question->ID, 'category', true );
+		$number   = (int) get_post_meta( $multiple_question->ID, 'number', true );
+
+		$args = [
+			'post_type'        => 'question',
+			'posts_per_page'   => $number,
+			'orderby'          => 'title',
+			'tax_query'        => [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- Query limited by the number of questions.
+				[
+					'taxonomy' => 'question-category',
+					'field'    => 'term_id',
+					'terms'    => $category,
+				],
+			],
+			'post_status'      => 'any',
+			'suppress_filters' => 0,
+			'post__not_in'     => $excluded_questions,
+		];
+
+		$questions = get_posts( $args );
+
 		return array_map( [ $this, 'get_question' ], $questions );
 	}
 
@@ -157,31 +207,10 @@ class Sensei_REST_API_Quiz_Controller extends \WP_REST_Controller {
 	 * @return array The question array.
 	 */
 	private function get_question( WP_Post $question ) : array {
-		if ( 'question' === $question->post_type ) {
-			$common_properties        = $this->get_question_common_properties( $question );
-			$type_specific_properties = $this->get_question_type_specific_properties( $question, $common_properties['type'] );
+		$common_properties        = $this->get_question_common_properties( $question );
+		$type_specific_properties = $this->get_question_type_specific_properties( $question, $common_properties['type'] );
 
-			return array_merge( $common_properties, $type_specific_properties );
-		}
-
-		if ( 'multiple_question' === $question->post_type ) {
-			$term_id = get_post_meta( $question->ID, 'category', true );
-			$term    = get_term( $term_id, 'question-category' );
-
-			if ( ! $term || is_wp_error( $term_id ) ) {
-				return [];
-			}
-
-			return [
-				'type'      => 'question-category',
-				'title'     => $question->post_title,
-				'term_id'   => (int) $term_id,
-				'name'      => $term->name,
-				'questions' => (int) get_post_meta( $question->ID, 'number', true ),
-			];
-		}
-
-		return [];
+		return array_merge( $common_properties, $type_specific_properties );
 	}
 
 	/**
@@ -255,7 +284,16 @@ class Sensei_REST_API_Quiz_Controller extends \WP_REST_Controller {
 				break;
 		}
 
-		return $type_specific_properties;
+		/**
+		 * Allows modification of type specific question properties.
+		 *
+		 * @since 3.9.0
+		 *
+		 * @param array   $type_specific_properties The properties of the question.
+		 * @param string  $question_type            The question type.
+		 * @param WP_Post $question                 The question post.
+		 */
+		return apply_filters( 'sensei_question_type_specific_properties', $type_specific_properties, $question_type, $question );
 	}
 
 	/**
@@ -403,9 +441,6 @@ class Sensei_REST_API_Quiz_Controller extends \WP_REST_Controller {
 					'items'       => [
 						'anyOf' => [
 							[
-								'$ref' => '#/definitions/question_category',
-							],
-							[
 								'$ref' => '#/definitions/question_multiple_choice',
 							],
 							[
@@ -441,35 +476,6 @@ class Sensei_REST_API_Quiz_Controller extends \WP_REST_Controller {
 	 */
 	private function get_question_definitions() : array {
 		return [
-			'question_category'        => [
-				'type'       => 'object',
-				'properties' => [
-					'type'      => [
-						'const' => 'question-category',
-					],
-					'term_id'   => [
-						'type'        => 'integer',
-						'description' => 'Term ID',
-					],
-					'title'     => [
-						'type'        => 'string',
-						'description' => 'Question title',
-					],
-					'name'      => [
-						'type'        => 'string',
-						'description' => 'Category name',
-						'readOnly'    => true,
-					],
-					'questions' => [
-						'type'        => 'integer',
-						'description' => 'Number of questions',
-						'readOnly'    => true,
-					],
-				],
-				'required'   => [
-					'term_id',
-				],
-			],
 			'question'                 => [
 				'type'       => 'object',
 				'properties' => [

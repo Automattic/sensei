@@ -23,7 +23,7 @@ jest.mock( '../../../shared/blocks/settings', () => ( {
 
 jest.mock( './lesson-settings', () => () => '' );
 
-jest.mock( '../status-control', () => ( {
+jest.mock( '../status-preview', () => ( {
 	Status: {
 		IN_PROGRESS: 'in-progress',
 	},

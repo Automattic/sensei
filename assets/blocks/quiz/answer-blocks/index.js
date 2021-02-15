@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { applyFilters } from '@wordpress/hooks';
+import GapFillAnswer from './gap-fill';
 import MultiLineAnswer from './multi-line';
 import MultipleChoiceAnswer from './multiple-choice';
 import SingleLineAnswer from './single-line';
@@ -35,7 +36,7 @@ const questionTypes = {
 	gap: {
 		title: __( 'Gap Fill', 'sensei-lms' ),
 		description: __( 'Fill in the blank.', 'sensei-lms' ),
-		edit: () => <div> [Gap Fill] </div>,
+		edit: GapFillAnswer,
 	},
 	'single-line': {
 		title: __( 'Single-line', 'sensei-lms' ),

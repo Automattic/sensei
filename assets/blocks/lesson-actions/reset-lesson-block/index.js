@@ -12,7 +12,6 @@ import { BlockStyles, createButtonBlockType } from '../../button';
  * Reset lesson button block.
  */
 export default createButtonBlockType( {
-	tagName: 'button',
 	settings: {
 		name: 'sensei-lms/button-reset-lesson',
 		title: __( 'Reset Lesson', 'sensei-lms' ),

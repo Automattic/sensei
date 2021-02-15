@@ -8,7 +8,11 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { getButtonProps, getButtonWrapperProps } from './button-props';
+import {
+	getButtonProps,
+	getButtonWrapperProps,
+	isLinkStyle,
+} from './button-props';
 import ButtonSettings from './button-settings';
 
 /**
@@ -26,6 +30,12 @@ const ButtonEdit = ( props ) => {
 	const isReadonly = undefined !== props.text;
 	const buttonProps = getButtonProps( { ...props, colors } );
 
+	let buttonTagName = tagName;
+
+	if ( ! tagName ) {
+		buttonTagName = isLinkStyle( props ) ? 'a' : 'button';
+	}
+
 	return (
 		<div { ...getButtonWrapperProps( props ) }>
 			{ isReadonly ? (
@@ -39,7 +49,7 @@ const ButtonEdit = ( props ) => {
 					onChange={ ( value ) => setAttributes( { text: value } ) }
 					withoutInteractiveFormatting
 					{ ...buttonProps }
-					tagName={ tagName }
+					tagName={ buttonTagName }
 					identifier="text"
 				/>
 			) }

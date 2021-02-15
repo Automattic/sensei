@@ -131,8 +131,7 @@ class Sensei_Setup_Wizard {
 	public function enqueue_scripts() {
 		$handle = 'sensei-setup-wizard';
 		Sensei()->assets->wp_compat();
-		Sensei()->assets->enqueue( $handle, 'setup-wizard/index.js', [ 'sensei-event-logging', 'wp-i18n' ], true );
-		$this->setup_wizard_set_script_translations();
+		Sensei()->assets->enqueue( $handle, 'setup-wizard/index.js', [ 'sensei-event-logging' ], true );
 		Sensei()->assets->preload_data( [ '/sensei-internal/v1/setup-wizard' ] );
 
 		wp_localize_script(
@@ -155,9 +154,10 @@ class Sensei_Setup_Wizard {
 	 * Set script translations.
 	 *
 	 * @access private
+	 * @deprecated 3.8.0
 	 */
 	public function setup_wizard_set_script_translations() {
-		wp_set_script_translations( 'sensei-setup-wizard', 'sensei-lms' );
+		_deprecated_function( __METHOD__, '3.8.0' );
 	}
 
 	/**

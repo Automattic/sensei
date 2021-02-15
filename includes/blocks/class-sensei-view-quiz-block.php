@@ -50,6 +50,15 @@ class Sensei_View_Quiz_Block {
 			return '';
 		}
 
+		if ( ! empty( $attributes['className'] ) && false !== strpos( $attributes['className'], 'is-style-link' ) ) {
+			return preg_replace(
+				'/<a /',
+				'<a href="' . esc_url( get_permalink( $quiz_id ) ) . '" ',
+				$content,
+				1
+			);
+		}
+
 		return '<a href="' . esc_url( get_permalink( $quiz_id ) ) . '" >' . $content . '</a>';
 	}
 }

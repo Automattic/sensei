@@ -53,7 +53,7 @@ const MultipleChoiceAnswer = ( props ) => {
 	};
 
 	/**
-	 * Updat answer attributes.
+	 * Update answer attributes.
 	 *
 	 * @param {number} index Answer position
 	 * @param {Object} next  Updated answer
