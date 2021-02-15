@@ -42,7 +42,7 @@ $block: '.sensei-lms-question-block';
 		}
 	}
 
-	&__text-input-placeholder {
+	&__text-input-placeholder, &__file-input-placeholder {
 		border: 2px solid $answer-box-color;
 		border-radius: 2px;
 		padding: 5px;
@@ -51,6 +51,16 @@ $block: '.sensei-lms-question-block';
 		&.multi-line {
 			min-height: 200px;
 		}
+	}
+
+	&__file-input-placeholder {
+		text-transform: uppercase;
+		display: inline-flex;
+		padding: 5px 15px;
+		align-items: center;
+		justify-content: center;
+		font-size: 16px;
+		user-select: none;
 	}
 
 	&__input-label {
