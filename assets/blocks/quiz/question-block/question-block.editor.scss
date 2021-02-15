@@ -139,6 +139,7 @@ $block: '.sensei-lms-question-block';
 				background: var(--wp-admin-theme-color, #333);
 				color: #fff;
 				align-items: center;
+
 				* {
 					background: none;
 					color: inherit;
@@ -172,6 +173,31 @@ $block: '.sensei-lms-question-block';
 			line-height: inherit;
 			text-align: right;
 		}
+	}
+
+	&__grade-control {
+
+		.components-base-control__label {
+			margin-bottom: 8px;
+			display: block;
+		}
+
+		&__controls {
+			display: flex;
+
+			input {
+				min-width: 0;
+			}
+
+			.components-button.is-small {
+				height: auto;
+			}
+
+			> * + * {
+				margin-left: 8px;
+			}
+		}
+
 	}
 
 

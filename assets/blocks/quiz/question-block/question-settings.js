@@ -1,6 +1,7 @@
 import { InspectorControls } from '@wordpress/block-editor';
 import { PanelBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { QuestionGradeSettings } from './settings';
 
 /**
  * Question block settings controls.
@@ -18,6 +19,8 @@ const QuestionSettings = ( {
 } ) => {
 	const setOptions = ( next ) =>
 		setAttributes( { options: { ...options, ...next } } );
+
+	controls = [ QuestionGradeSettings, ...controls ];
 
 	return (
 		<InspectorControls>
