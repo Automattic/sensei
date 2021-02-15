@@ -3,6 +3,7 @@ import { applyFilters } from '@wordpress/hooks';
 import {
 	QuestionAnswerFeedbackSettings,
 	QuestionGradingNotesSettings,
+	QuestionMultipleChoiceSettings,
 } from '../question-block/settings';
 import FileUploadAnswer from './file-upload';
 import GapFillAnswer from './gap-fill';
@@ -29,7 +30,10 @@ const questionTypes = {
 		title: __( 'Multiple Choice', 'sensei-lms' ),
 		description: __( 'Select from a list of options.', 'sensei-lms' ),
 		edit: MultipleChoiceAnswer,
-		settings: [ QuestionAnswerFeedbackSettings ],
+		settings: [
+			QuestionMultipleChoiceSettings,
+			QuestionAnswerFeedbackSettings,
+		],
 	},
 	truefalse: {
 		title: __( 'True / False', 'sensei-lms' ),
