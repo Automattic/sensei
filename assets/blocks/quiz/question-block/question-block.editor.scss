@@ -49,7 +49,7 @@ $block: '.sensei-lms-question-block';
 		min-height: 52px;
 
 		&.multi-line {
-      min-height: 200px;
+			min-height: 200px;
 		}
 	}
 
@@ -90,6 +90,7 @@ $block: '.sensei-lms-question-block';
 				margin-right: 12px;
 			}
 		}
+
 		&__option {
 			min-height: 42px;
 			display: flex;
