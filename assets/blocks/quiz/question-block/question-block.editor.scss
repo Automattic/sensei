@@ -77,7 +77,9 @@ $block: '.sensei-lms-question-block';
 				list-style: none;
 			}
 		}
+	}
 
+	&__answer--multiple-choice, &__answer--true-false {
 		&__hint {
 			text-transform: uppercase;
 			color: inherit;
