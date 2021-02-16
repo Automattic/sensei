@@ -56,6 +56,28 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller_Test extends WP_UnitTestCase
 	}
 
 	/**
+	 * Tests that the user gets redirected when they don't have access to the course.
+	 */
+	public function testUserIsRedirectedWhenNotTheirCourse() {
+		$this->login_as_teacher();
+
+		$users   = $this->factory->user->create_many( 2 );
+		$courses = $this->factory->course->create_many( 2 );
+
+		$this->login_as_teacher_b();
+
+		$_POST['sensei_bulk_action']     = Sensei_Learners_Admin_Bulk_Actions_Controller::ENROL_RESTORE_ENROLMENT;
+		$_POST['bulk_action_course_ids'] = implode( ',', $courses );
+		$_POST['bulk_action_user_ids']   = implode( ',', $users );
+
+		$this->controller->expects( $this->once() )
+							->method( 'redirect_to_learner_admin_index' )
+							->with( $this->equalTo( 'error-invalid-course' ) );
+
+		$this->controller->handle_http_post();
+	}
+
+	/**
 	 * Tests that the user gets redirected when the course does not exist.
 	 */
 	public function testUserIsRedirectedWhenCourseIsWrong() {
