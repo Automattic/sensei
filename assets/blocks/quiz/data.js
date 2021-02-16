@@ -1,4 +1,5 @@
 import { createBlock, getBlockContent, rawHandler } from '@wordpress/blocks';
+import { createQuestionBlockAttributes } from './question-block/question-block-attributes';
 import questionBlock from './question-block';
 
 /**
@@ -32,7 +33,7 @@ import questionBlock from './question-block';
  */
 export function syncQuestionBlocks( structure, blocks ) {
 	return ( structure || [] ).map( ( item ) => {
-		const { description, ...attributes } = item;
+		const { description, ...question } = item;
 
 		let block = blocks ? findQuestionBlock( blocks, item ) : null;
 
@@ -40,10 +41,15 @@ export function syncQuestionBlocks( structure, blocks ) {
 			( description && rawHandler( { HTML: description } ) ) ||
 			block?.innerBlocks;
 
+		const attributes = createQuestionBlockAttributes( question );
+
 		if ( ! block ) {
 			block = createBlock( questionBlock.name, attributes, innerBlocks );
 		} else {
-			block.attributes = { ...block.attributes, ...attributes };
+			block.attributes = {
+				...block.attributes,
+				...attributes,
+			};
 			block.innerBlocks = innerBlocks;
 		}
 
