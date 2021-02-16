@@ -9,6 +9,7 @@ require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-he
  */
 class Sensei_Learners_Admin_Bulk_Actions_Controller_Test extends WP_UnitTestCase {
 	use Sensei_Course_Enrolment_Test_Helpers;
+	use Sensei_Test_Login_Helpers;
 
 	private $controller;
 
@@ -38,6 +39,8 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller_Test extends WP_UnitTestCase
 	 * Tests that the user gets redirected when the action is invalid.
 	 */
 	public function testUserIsRedirectedWhenActionIsWrong() {
+		$this->login_as_teacher();
+
 		$users   = $this->factory->user->create_many( 2 );
 		$courses = $this->factory->course->create_many( 2 );
 
@@ -56,6 +59,8 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller_Test extends WP_UnitTestCase
 	 * Tests that the user gets redirected when the course does not exist.
 	 */
 	public function testUserIsRedirectedWhenCourseIsWrong() {
+		$this->login_as_teacher();
+
 		$user   = $this->factory->user->create();
 		$course = $this->factory->course->create();
 
@@ -74,6 +79,8 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller_Test extends WP_UnitTestCase
 	 * Tests that the user gets enrolled when the action is ENROL_RESTORE_ENROLMENT and the user is not already manually enroled.
 	 */
 	public function testUsersAreEnroledWhenActionIsManualEnrol() {
+		$this->login_as_teacher();
+
 		$users   = $this->factory->user->create_many( 2 );
 		$courses = $this->factory->course->create_many( 2 );
 
@@ -104,6 +111,8 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller_Test extends WP_UnitTestCase
 	 * enroled by any provider.
 	 */
 	public function testRestoreProviderEnrolments() {
+		$this->login_as_teacher();
+
 		$users   = $this->factory->user->create_many( 2 );
 		$courses = $this->factory->course->create_many( 2 );
 
@@ -137,6 +146,8 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller_Test extends WP_UnitTestCase
 	 * Tests that the manual enrolment is called to be removed when the action is REMOVE_ENROLMENT].
 	 */
 	public function testUsersAreUnEnroledWhenActionIsRemoveManualEnrolment() {
+		$this->login_as_teacher();
+
 		$users   = $this->factory->user->create_many( 2 );
 		$courses = $this->factory->course->create_many( 2 );
 
@@ -171,6 +182,8 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller_Test extends WP_UnitTestCase
 	 * enroled by any provider.
 	 */
 	public function testRemoveProviderEnrolments() {
+		$this->login_as_teacher();
+
 		$users   = $this->factory->user->create_many( 2 );
 		$courses = $this->factory->course->create_many( 2 );
 
@@ -202,6 +215,8 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller_Test extends WP_UnitTestCase
 	 * Tests that the progress is removed from the course when the action is REMOVE_PROGRESS and the user has progress.
 	 */
 	public function testUsersAreRemovedFromCourse() {
+		$this->login_as_teacher();
+
 		$users  = $this->factory->user->create_many( 2 );
 		$course = $this->factory->course->create();
 
