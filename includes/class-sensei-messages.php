@@ -63,6 +63,7 @@ class Sensei_Messages {
 		add_action( 'pre_get_posts', array( $this, 'only_show_messages_to_owner' ) );
 		add_filter( 'comment_feed_where', array( $this, 'exclude_message_comments_from_feed_where' ) );
 		add_filter( 'user_has_cap', [ $this, 'user_messages_cap_check' ], 10, 3 );
+		add_action( 'load-edit-comments.php', [ $this, 'check_permissions_edit_comments' ] );
 	} // End __construct()
 
 	public function only_show_messages_to_owner( $query ) {
@@ -493,6 +494,25 @@ class Sensei_Messages {
 		}
 
 		return $allcaps;
+	}
+
+	/**
+	 * Make sure user has permission to see the post content of a private message.
+	 */
+	public function check_permissions_edit_comments() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No action based on input.
+		$post_id = isset( $_REQUEST['p'] ) ? (int) $_REQUEST['p'] : false;
+		if ( ! $post_id || 'sensei_message' !== get_post_type( $post_id ) ) {
+			return;
+		}
+
+		if ( ! current_user_can( 'read_post', $post_id ) ) {
+			wp_die(
+				'<h1>' . esc_html__( 'You need a higher level of permission.', 'sensei-lms' ) . '</h1>' .
+				'<p>' . esc_html__( 'Sorry, you are not allowed to edit this post\'s comments.', 'sensei-lms' ) . '</p>',
+				403
+			);
+		}
 	}
 
 	/**
