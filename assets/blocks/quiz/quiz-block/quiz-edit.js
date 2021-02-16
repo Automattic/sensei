@@ -2,6 +2,9 @@
  * WordPress dependencies
  */
 import { InnerBlocks } from '@wordpress/block-editor';
+import { __ } from '@wordpress/i18n';
+import { useAutoInserter } from '../../../shared/blocks/use-auto-inserter';
+import questionBlock from '../question-block';
 import { useQuizStructure } from '../quiz-store';
 
 /**
@@ -11,12 +14,19 @@ import { useQuizStructure } from '../quiz-store';
  */
 const QuizEdit = ( props ) => {
 	useQuizStructure( props );
+
+	useAutoInserter(
+		{ name: questionBlock.name, selectFirstBlock: true },
+		props
+	);
+
 	return (
 		<>
-			<InnerBlocks
-				allowedBlocks={ [ 'sensei-lms/quiz-question' ] }
-				template={ [ [ 'sensei-lms/quiz-question' ] ] }
-			/>
+			<div className="sensei-lms-quiz-block__separator">
+				<span>{ __( 'Lesson Quiz', 'sensei-lms' ) }</span>
+			</div>
+			<InnerBlocks allowedBlocks={ [ 'sensei-lms/quiz-question' ] } />
+			<div className="sensei-lms-quiz-block__separator" />
 		</>
 	);
 };

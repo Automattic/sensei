@@ -21,15 +21,19 @@ jest.mock( '@wordpress/data', () => ( {
 	useSelect: jest.fn(),
 } ) );
 
-describe( 'useInsertLessonBlock', () => {
+describe( 'useAutoInserter', () => {
 	const ModuleBlock = ( props ) => {
 		useAutoInserter( { name: 'sensei-lms/course-outline-lesson' }, props );
-
 		return <div>Module</div>;
 	};
 
 	const removeBlock = jest.fn();
 	const insertBlock = jest.fn();
+	const select = {
+		hasSelectedInnerBlock: () => false,
+		isBlockSelected: () => false,
+		getBlocks: () => [],
+	};
 
 	const mockSelect = ( value ) =>
 		useSelect.mockImplementation( ( fn ) => fn( () => value ) );
@@ -42,26 +46,25 @@ describe( 'useInsertLessonBlock', () => {
 	beforeEach( () => {
 		removeBlock.mockClear();
 		insertBlock.mockClear();
-		mockSelect( {
-			hasSelectedInnerBlock: () => false,
-			getBlocks: () => [],
-		} );
+
+		mockSelect( select );
 	} );
 
-	it( 'does not insert lesson block when not selected', () => {
+	it( 'does not insert block when not selected', () => {
 		render( <ModuleBlock isSelected={ false } /> );
 
 		expect( insertBlock ).not.toHaveBeenCalled();
 	} );
 
-	it( 'inserts a lesson block when selected', () => {
+	it( 'inserts a block when selected', () => {
 		render( <ModuleBlock isSelected={ true } /> );
 
 		expect( insertBlock ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'inserts a lesson block when inner block selected', () => {
+	it( 'inserts a block when inner block selected', () => {
 		mockSelect( {
+			...select,
 			hasSelectedInnerBlock: () => true,
 			getBlocks: () => [ { attributes: { title: 'Lesson 1' } } ],
 		} );
@@ -71,10 +74,11 @@ describe( 'useInsertLessonBlock', () => {
 		expect( insertBlock ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'removes inserted lesson block on blur', () => {
+	it( 'removes inserted block on focus loss', () => {
 		const blocks = [ { attributes: { title: 'Lesson 1' } } ];
 		insertBlock.mockImplementation( ( block ) => blocks.push( block ) );
 		mockSelect( {
+			...select,
 			hasSelectedInnerBlock: () => false,
 			getBlocks: () => blocks,
 		} );

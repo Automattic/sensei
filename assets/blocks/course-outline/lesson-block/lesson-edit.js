@@ -15,7 +15,7 @@ import { __ } from '@wordpress/i18n';
 import { checked, chevronRight } from '../../../icons/wordpress-icons';
 import { withColorSettings } from '../../../shared/blocks/settings';
 import { useKeydownInserter } from '../../../shared/blocks/use-keydown-inserter';
-import SingleLineInput from '../single-line-input';
+import SingleLineInput from '../../../shared/blocks/single-line-input';
 import { Status } from '../status-preview';
 import LessonSettings from './lesson-settings';
 import { useLessonPreviewStatus } from './use-lesson-preview-status';

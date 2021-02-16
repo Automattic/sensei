@@ -1,5 +1,11 @@
 import { __ } from '@wordpress/i18n';
 import { applyFilters } from '@wordpress/hooks';
+import FileUploadAnswer from './file-upload';
+import GapFillAnswer from './gap-fill';
+import MultiLineAnswer from './multi-line';
+import MultipleChoiceAnswer from './multiple-choice';
+import SingleLineAnswer from './single-line';
+import TrueFalseAnswer from './true-false';
 
 /**
  * @typedef QuestionType
@@ -17,39 +23,42 @@ import { applyFilters } from '@wordpress/hooks';
 const questionTypes = {
 	'multiple-choice': {
 		title: __( 'Multiple Choice', 'sensei-lms' ),
-		description: __(
-			'Select one or more answers from a list of choices.',
-			'sensei-lms'
-		),
-		edit: () => <div> [Multiple Choice] </div>,
+		description: __( 'Select from a list of options.', 'sensei-lms' ),
+		edit: MultipleChoiceAnswer,
 	},
 	boolean: {
 		title: __( 'True / False', 'sensei-lms' ),
-		description: __( 'True or false question.', 'sensei-lms' ),
-		edit: () => <div> [True/False] </div>,
+		description: __(
+			'Select whether a statement is true or false.',
+			'sensei-lms'
+		),
+		edit: TrueFalseAnswer,
 	},
 	'gap-fill': {
 		title: __( 'Gap Fill', 'sensei-lms' ),
-		description: __(
-			'Fill in the missing part of a sentence.',
-			'sensei-lms'
-		),
-		edit: () => <div> [Gap Fill] </div>,
+		description: __( 'Fill in the blank.', 'sensei-lms' ),
+		edit: GapFillAnswer,
 	},
 	'single-line': {
 		title: __( 'Single-line', 'sensei-lms' ),
-		description: __( 'Require a written answer.', 'sensei-lms' ),
-		edit: () => <div> [Single Line] </div>,
+		description: __(
+			'Short answer to an open-ended question.',
+			'sensei-lms'
+		),
+		edit: SingleLineAnswer,
 	},
 	'multi-line': {
 		title: __( 'Multi-line', 'sensei-lms' ),
-		description: __( 'Require a written answer.', 'sensei-lms' ),
-		edit: () => <div> [Multi Line] </div>,
+		description: __(
+			'Long answer to an open-ended question.',
+			'sensei-lms'
+		),
+		edit: MultiLineAnswer,
 	},
 	'file-upload': {
 		title: __( 'File Upload', 'sensei-lms' ),
-		description: __( 'Require a file to be uploaded.', 'sensei-lms' ),
-		edit: () => <div> [File Upload] </div>,
+		description: __( 'Upload a file or document.', 'sensei-lms' ),
+		edit: FileUploadAnswer,
 	},
 };
 

@@ -1,0 +1,62 @@
+
+.sensei-lms-question-block__option-toggle {
+	color: inherit;
+	.edit-post-visual-editor & {
+		font-family: inherit;
+		font-size: inherit;
+		padding: 0;
+		margin-right: 10px;
+		line-height: inherit;
+		height: auto;
+	}
+
+	&:before {
+		// Text baseline alignment helper.
+		content: 'A';
+		visibility: hidden;
+		width: 0;
+	}
+
+	&__control {
+		width: 26px;
+		height: 26px;
+		border-radius: 50%;
+		box-shadow: inset 0 0 0 1.5px currentColor;
+		position: relative;
+		align-items: center;
+
+
+		&:after {
+			position: absolute;
+			content: '';
+			left: 0;
+			top: 0;
+			bottom: 0;
+			right: 0;
+			margin: auto;
+			width: 12px;
+			height: 12px;
+			border-radius: 50%;
+		}
+
+		&.is-checked:after {
+			background: currentColor;
+		}
+
+		&.is-checkbox {
+			border-radius: 4px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+
+			svg {
+				width: 20px;
+				height: 20px;
+			}
+
+			&:after {
+				content: none;
+			}
+		}
+	}
+}

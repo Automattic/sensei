@@ -3,6 +3,7 @@
  */
 import { InnerBlocks } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
+import icon from '../../../icons/question-icon';
 
 /**
  * Internal dependencies
@@ -16,6 +17,7 @@ import metadata from './block.json';
 const quizBlock = {
 	...metadata,
 	title: __( 'Quiz', 'sensei-lms' ),
+	icon,
 	description: __(
 		'A collection of questions students need to answer.',
 		'sensei-lms'
