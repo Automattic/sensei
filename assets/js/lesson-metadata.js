@@ -1,3 +1,5 @@
+import { escapeHTML } from '@wordpress/escape-html';
+
 jQuery( document ).ready( function () {
 	var file_frame;
 
@@ -588,7 +590,13 @@ jQuery( document ).ready( function () {
 			jQuery( this )
 				.parent( 'div' )
 				.find( 'p.gapfill-preview' )
-				.html( gapPre + ' <u>' + gapGap + '</u> ' + gapPost );
+				.html(
+					escapeHTML( gapPre ) +
+						' <u>' +
+						escapeHTML( gapGap ) +
+						'</u> ' +
+						escapeHTML( gapPost )
+				);
 		} );
 		// Handles the pressing up of the key, general typing
 		jQuery( this ).keyup( function () {
@@ -607,7 +615,13 @@ jQuery( document ).ready( function () {
 			jQuery( this )
 				.parent( 'div' )
 				.find( 'p.gapfill-preview' )
-				.html( gapPre + ' <u>' + gapGap + '</u> ' + gapPost );
+				.html(
+					escapeHTML( gapPre ) +
+						' <u>' +
+						escapeHTML( gapGap ) +
+						'</u> ' +
+						escapeHTML( gapPost )
+				);
 		} );
 	} );
 
