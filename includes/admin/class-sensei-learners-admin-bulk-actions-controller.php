@@ -221,10 +221,11 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 			return;
 		}
 
+		$edit_course_cap = get_post_type_object( 'course' )->cap->edit_post;
 		foreach ( $course_ids as $course_id ) {
 			// Validate courses before continuing.
 			$course = get_post( absint( $course_id ) );
-			if ( empty( $course ) ) {
+			if ( empty( $course ) || ! current_user_can( $edit_course_cap, $course_id ) ) {
 				$this->redirect_to_learner_admin_index( 'error-invalid-course' );
 				return;
 			}
