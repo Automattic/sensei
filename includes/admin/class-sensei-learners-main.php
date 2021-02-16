@@ -86,7 +86,13 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 			$this->lesson_id = 0;
 		}
 
-		if ( $this->lesson_id && 'lesson' !== get_post_type( $this->lesson_id ) ) {
+		if (
+			$this->lesson_id
+			&& (
+				'lesson' !== get_post_type( $this->lesson_id )
+				|| ! current_user_can( get_post_type_object( 'lesson' )->cap->edit_post, $this->lesson_id )
+			)
+		) {
 			wp_die( esc_html__( 'Invalid lesson', 'sensei-lms' ), 404 );
 		}
 
