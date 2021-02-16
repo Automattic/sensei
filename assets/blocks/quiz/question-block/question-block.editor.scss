@@ -101,7 +101,7 @@ $block: '.sensei-lms-question-block';
 			}
 		}
 
-		&__option {
+		.editor-styles-wrapper & li {
 			min-height: 45px;
 			display: flex;
 			align-items: baseline;
@@ -115,16 +115,6 @@ $block: '.sensei-lms-question-block';
 
 		&__input {
 			flex: 1;
-
-			.editor-styles-wrapper & {
-				margin: 0;
-				background-color: transparent;
-
-				&:focus {
-					box-shadow: none;
-					border-color: transparent;
-				}
-			}
 		}
 
 	}

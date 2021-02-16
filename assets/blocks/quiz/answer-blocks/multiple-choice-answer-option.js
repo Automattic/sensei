@@ -1,8 +1,7 @@
 import { Button } from '@wordpress/components';
 import { useEffect, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { ENTER, BACKSPACE } from '@wordpress/keycodes';
-import SingleLineInput from '../../course-outline/single-line-input';
+import SingleLineInput from '../../../shared/blocks/single-line-input';
 import { OptionToggle } from './option-toggle';
 
 /**
@@ -13,8 +12,8 @@ import { OptionToggle } from './option-toggle';
  * @param {string}   props.attributes.title   Answer title.
  * @param {boolean}  props.attributes.isRight Is this a right answer.
  * @param {Function} props.setAttributes      Update answer attributes.
- * @param {Function} props.add                Add a new answer after this.
- * @param {Function} props.remove             Remove this answer.
+ * @param {Function} props.onEnter            Add a new answer after this.
+ * @param {Function} props.onRemove           Remove this answer.
  * @param {boolean}  props.hasFocus           Should this answer receive focus.
  * @param {boolean}  props.hasSelected        Is the question block selected.
  * @param {boolean}  props.isCheckbox         Should display as a checkbox
@@ -23,28 +22,11 @@ const MultipleChoiceAnswerOption = ( props ) => {
 	const {
 		attributes: { title, isRight },
 		setAttributes,
-		insertAnswerAfter,
-		removeAnswer,
 		hasFocus,
 		hasSelected,
 		isCheckbox,
+		...inputProps
 	} = props;
-
-	const onKeyDown = ( e ) => {
-		switch ( e.keyCode ) {
-			case ENTER:
-				e.preventDefault();
-				insertAnswerAfter();
-
-				break;
-			case BACKSPACE:
-				if ( ! title?.length ) {
-					e.preventDefault();
-					removeAnswer();
-				}
-				break;
-		}
-	};
 
 	const ref = useRef( null );
 
@@ -72,7 +54,7 @@ const MultipleChoiceAnswerOption = ( props ) => {
 					setAttributes( { title: nextValue } )
 				}
 				value={ title }
-				onKeyDown={ onKeyDown }
+				{ ...inputProps }
 			/>
 			{ hasSelected && (
 				<Button

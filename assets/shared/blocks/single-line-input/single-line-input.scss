@@ -1,0 +1,10 @@
+
+.editor-styles-wrapper .sensei-lms-single-line-input {
+	margin: 0;
+	background-color: transparent;
+
+	&:focus {
+		box-shadow: none;
+		border-color: transparent;
+	}
+}

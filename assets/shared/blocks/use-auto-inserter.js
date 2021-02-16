@@ -8,36 +8,57 @@ import { useCallback, useEffect, useState } from '@wordpress/element';
 /**
  * Insert an empty inner block to the end of the block when it's selected.
  *
- * @param {Object} opts
- * @param {string} opts.name       Block to be inserted.
- * @param {Object} opts.attributes Attributes of a new block.
- * @param {Object} parentProps     Block properties.
+ * @param {Object}  opts
+ * @param {string}  opts.name             Block to be inserted.
+ * @param {boolean} opts.selectFirstBlock Select inserted block if it's the first one.
+ * @param {Object}  opts.attributes       Attributes of a new block.
+ * @param {Object}  parentProps           Block properties.
  */
-export const useAutoInserter = ( { name, attributes = {} }, parentProps ) => {
+export const useAutoInserter = (
+	{ name, attributes = {}, selectFirstBlock = false },
+	parentProps
+) => {
 	const [ autoBlockClientId, setAutoBlockClientId ] = useState( null );
 	const { clientId, isSelected } = parentProps;
 	const { insertBlock, removeBlock } = useDispatch( 'core/block-editor' );
-
-	const createAndInsertBlock = useCallback( () => {
-		const block = createBlock( name, attributes );
-		insertBlock( block, undefined, clientId, false );
-		setAutoBlockClientId( block.clientId );
-	}, [ insertBlock, clientId, name, attributes ] );
 
 	const blocks = useSelect( ( select ) =>
 		select( 'core/block-editor' ).getBlocks( clientId )
 	);
 
+	const isFirstBlock = 0 === blocks.length;
+
+	const createAndInsertBlock = useCallback( () => {
+		const block = createBlock( name, attributes );
+		const updateSelection = isFirstBlock && selectFirstBlock;
+		insertBlock( block, undefined, clientId, updateSelection );
+		setAutoBlockClientId( block.clientId );
+	}, [
+		insertBlock,
+		clientId,
+		name,
+		attributes,
+		isFirstBlock,
+		selectFirstBlock,
+	] );
+
 	const hasSelected =
 		useSelect( ( select ) =>
-			select( 'core/block-editor' ).hasSelectedInnerBlock( clientId )
+			select( 'core/block-editor' ).hasSelectedInnerBlock(
+				clientId,
+				true
+			)
 		) || isSelected;
 
-	useEffect( () => {
-		const lastBlock = blocks.length && blocks[ blocks.length - 1 ];
-		const hasEmptyLastBlock = lastBlock && ! lastBlock.attributes.title;
+	const lastBlock = blocks.length && blocks[ blocks.length - 1 ];
+	const hasEmptyLastBlock = lastBlock && ! lastBlock.attributes.title;
 
-		if ( hasSelected && ! hasEmptyLastBlock && ! autoBlockClientId ) {
+	useEffect( () => {
+		if (
+			hasSelected &&
+			! hasEmptyLastBlock &&
+			( ! autoBlockClientId || lastBlock.clientId === autoBlockClientId )
+		) {
 			createAndInsertBlock();
 		}
 		if ( ! hasSelected ) {
@@ -51,5 +72,18 @@ export const useAutoInserter = ( { name, attributes = {} }, parentProps ) => {
 			setAutoBlockClientId( null );
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ hasSelected ] );
+	}, [ hasSelected, hasEmptyLastBlock ] );
+
+	const isAutoBlockSelected = useSelect(
+		( select ) =>
+			autoBlockClientId &&
+			select( 'core/block-editor' ).isBlockSelected( autoBlockClientId ),
+		[ autoBlockClientId ]
+	);
+
+	useEffect( () => {
+		if ( isAutoBlockSelected ) {
+			setAutoBlockClientId( null );
+		}
+	}, [ isAutoBlockSelected ] );
 };

@@ -48,4 +48,30 @@ describe( '<SingleLineInput />', () => {
 
 		expect( onChangeMock ).toHaveBeenLastCalledWith( 'input line ' );
 	} );
+
+	it( 'Calls onRemove on backspace with an empty title', () => {
+		const onRemoveMock = jest.fn();
+		const { getByRole } = render(
+			<SingleLineInput
+				onRemove={ onRemoveMock }
+				value=""
+				onChange={ () => {} }
+			/>
+		);
+
+		userEvent.type( getByRole( 'textbox' ), '{backspace}' );
+
+		expect( onRemoveMock ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'Calls onEnter on enter', () => {
+		const onEnterMock = jest.fn();
+		const { getByRole } = render(
+			<SingleLineInput onEnter={ onEnterMock } onChange={ jest.fn() } />
+		);
+
+		userEvent.type( getByRole( 'textbox' ), 'Title{enter}' );
+
+		expect( onEnterMock ).toHaveBeenCalledTimes( 1 );
+	} );
 } );

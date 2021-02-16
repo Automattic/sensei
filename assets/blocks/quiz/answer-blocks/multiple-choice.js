@@ -79,8 +79,8 @@ const MultipleChoiceAnswer = ( props ) => {
 						setAttributes={ ( next ) =>
 							updateAnswer( index, next )
 						}
-						insertAnswerAfter={ () => insertAnswer( index ) }
-						removeAnswer={ () => removeAnswer( index ) }
+						onEnter={ () => insertAnswer( index ) }
+						onRemove={ () => removeAnswer( index ) }
 						{ ...{
 							hasSelected,
 						} }
