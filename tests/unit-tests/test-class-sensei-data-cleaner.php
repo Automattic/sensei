@@ -1,7 +1,10 @@
 <?php
 
-require 'includes/class-sensei-data-cleaner.php';
+require dirname( dirname( __DIR__ ) ) . '/includes/class-sensei-data-cleaner.php';
 
+/**
+ * Class Sensei_Data_Cleaner_Test.
+ */
 class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 	// Posts.
 	private $post_ids;
@@ -22,6 +25,13 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 	// Users.
 	private $regular_user_id;
 	private $teacher_user_id;
+
+	public function tearDown() {
+		parent::tearDown();
+
+		$GLOBALS['wp_roles']->for_site();
+		Sensei()->activate();
+	}
 
 	/**
 	 * Add some posts to run tests against. Any that are associated with Sensei
