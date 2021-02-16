@@ -104,6 +104,9 @@ class Sensei_PostTypes {
 		// REST API functionality.
 		add_action( 'rest_api_init', [ $this, 'setup_rest_api' ] );
 
+		// Add protections on feeds for certain CPTs.
+		add_action( 'wp', [ $this, 'protect_feeds' ] );
+
 		// Add 'Edit Quiz' link to admin bar
 		add_action( 'admin_bar_menu', array( $this, 'quiz_admin_bar_menu' ), 81 );
 
@@ -142,6 +145,38 @@ class Sensei_PostTypes {
 		// Ensure registered meta will show up in the REST API for courses and lessons.
 		add_post_type_support( 'course', 'custom-fields' );
 		add_post_type_support( 'lesson', 'custom-fields' );
+
+		// Hide post content for students who aren't enrolled.
+		add_filter( 'post_password_required', [ $this, 'lesson_is_protected' ], 10, 2 );
+	}
+
+	/**
+	 * Add protection to Sensei post type feeds.
+	 *
+	 * @access private
+	 */
+	public function protect_feeds() {
+		if ( is_feed() && is_post_type_archive( [ 'lesson', 'question', 'quiz', 'sensei_message' ] ) ) {
+			wp_die( esc_html__( 'Error: Feed does not exist', 'sensei-lms' ), '', [ 'response' => 404 ] );
+		}
+	}
+
+	/**
+	 * Helper function to hide lesson post content by artificially making this a password protected post in certain contexts.
+	 *
+	 * @access private
+	 *
+	 * @param bool    $is_password_protected Filtered value for if this is a password protected post.
+	 * @param WP_Post $post                  Post object.
+	 *
+	 * @return bool
+	 */
+	public function lesson_is_protected( $is_password_protected, WP_Post $post ) {
+		if ( 'lesson' === $post->post_type && ! sensei_can_user_view_lesson( $post->ID, get_current_user_id() ) ) {
+			return true;
+		}
+
+		return $is_password_protected;
 	}
 
 	/**
