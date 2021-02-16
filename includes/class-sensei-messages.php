@@ -62,6 +62,7 @@ class Sensei_Messages {
 		add_filter( 'comments_open', array( $this, 'message_replies_open' ), 100, 2 );
 		add_action( 'pre_get_posts', array( $this, 'only_show_messages_to_owner' ) );
 		add_filter( 'comment_feed_where', array( $this, 'exclude_message_comments_from_feed_where' ) );
+		add_filter( 'user_has_cap', [ $this, 'user_messages_cap_check' ], 10, 3 );
 	} // End __construct()
 
 	public function only_show_messages_to_owner( $query ) {
@@ -462,6 +463,36 @@ class Sensei_Messages {
 		}
 
 		return $message_id;
+	}
+
+	/**
+	 * Checks if a user is capable of seeing a particular message.
+	 *
+	 * @param array $allcaps All capabilities.
+	 * @param array $caps    Capabilities.
+	 * @param array $args    Arguments.
+	 *
+	 * @return array The filtered array of all capabilities.
+	 */
+	public function user_messages_cap_check( $allcaps, $caps, $args ) {
+		if ( isset( $caps[0] ) && 'read' === $caps[0] ) {
+			$user_id      = isset( $args[1] ) ? intval( $args[1] ) : false;
+			$user         = $user_id ? get_user_by( 'ID', $user_id ) : false;
+			$message_post = isset( $args[2] ) ? get_post( $args[2] ) : false;
+
+			if ( $message_post && 'sensei_message' === $message_post->post_type ) {
+				$receiver_username   = get_post_meta( $message_post->ID, '_receiver', true );
+				$sender_username     = get_post_meta( $message_post->ID, '_sender', true );
+				$is_user_participant = $user
+										&& $receiver_username
+										&& $sender_username
+										&& in_array( $user->user_login, [ $receiver_username, $sender_username ], true );
+
+				$allcaps['read'] = current_user_can( 'manage_sensei' ) || $is_user_participant;
+			}
+		}
+
+		return $allcaps;
 	}
 
 	/**
