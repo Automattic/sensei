@@ -41,7 +41,7 @@ class Sensei_Blocks {
 	 */
 	public function __construct( Sensei_Main $sensei ) {
 		// Skip if Gutenberg is not available.
-		if ( ! function_exists( 'register_block_type' ) ) {
+		if ( apply_filters('sensei_use_sensei_blocks', ! function_exists( 'register_block_type' ) ) ) {
 			return;
 		}
 
