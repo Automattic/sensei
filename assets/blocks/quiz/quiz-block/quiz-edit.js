@@ -30,7 +30,11 @@ const QuizEdit = ( props ) => {
 			<div className="sensei-lms-quiz-block__separator">
 				<span>{ __( 'Lesson Quiz', 'sensei-lms' ) }</span>
 			</div>
-			<InnerBlocks allowedBlocks={ [ 'sensei-lms/quiz-question' ] } />
+			<InnerBlocks
+				allowedBlocks={ [ 'sensei-lms/quiz-question' ] }
+				template={ [ [ 'sensei-lms/quiz-question', {} ] ] }
+				templateInsertUpdatesSelection={ false }
+			/>
 			<div className="sensei-lms-quiz-block__separator" />
 			<QuizSettings { ...props } />
 		</>
