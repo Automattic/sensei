@@ -17,7 +17,7 @@ import { __ } from '@wordpress/i18n';
  * @param {string}   [props.help]             Help text.
  * @param {boolean}  [props.allowReset=false] Whether reset is allowed.
  * @param {string}   [props.resetLabel]       Reset button custom label.
- * @param {Function} props.onChange           Change function, which receives value as argument.
+ * @param {Function} props.onChange           Change function, which receives number as argument.
  */
 const NumberControl = ( {
 	id,
@@ -33,7 +33,7 @@ const NumberControl = ( {
 		<input
 			type="number"
 			id={ id }
-			onChange={ ( e ) => onChange( e.target.value ) }
+			onChange={ ( e ) => onChange( parseInt( e.target.value, 10 ) ) }
 			value={ null === value ? '' : value }
 			{ ...props }
 		/>
