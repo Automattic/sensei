@@ -30,18 +30,26 @@ const NumberControl = ( {
 	...props
 } ) => (
 	<BaseControl id={ id } label={ label } help={ help }>
-		<input
-			type="number"
-			id={ id }
-			onChange={ ( e ) => onChange( parseInt( e.target.value, 10 ) ) }
-			value={ null === value ? '' : value }
-			{ ...props }
-		/>
-		{ allowReset && (
-			<Button isSmall isSecondary onClick={ () => onChange( null ) }>
-				{ resetLabel || __( 'Reset', 'sensei-lms' ) }
-			</Button>
-		) }
+		<div className="sensei-number-control">
+			<input
+				className="sensei-number-control__input"
+				type="number"
+				id={ id }
+				onChange={ ( e ) => onChange( parseInt( e.target.value, 10 ) ) }
+				value={ null === value ? '' : value }
+				{ ...props }
+			/>
+			{ allowReset && (
+				<Button
+					className="sensei-number-control__button"
+					isSmall
+					isSecondary
+					onClick={ () => onChange( null ) }
+				>
+					{ resetLabel || __( 'Reset', 'sensei-lms' ) }
+				</Button>
+			) }
+		</div>
 	</BaseControl>
 );
 
