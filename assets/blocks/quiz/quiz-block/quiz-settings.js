@@ -3,14 +3,17 @@
  */
 import { InspectorControls } from '@wordpress/block-editor';
 import {
-	BaseControl,
-	Button,
 	PanelBody,
 	PanelRow,
 	RangeControl,
 	ToggleControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+
+/**
+ * Internal dependencies
+ */
+import NumberControl from '../../editor-components/number-control';
 
 /**
  * Quiz settings.
@@ -86,31 +89,21 @@ const QuizSettings = ( { attributes: { options = {} }, setAttributes } ) => {
 					/>
 				</PanelRow>
 				<PanelRow>
-					<BaseControl
+					<NumberControl
 						id="sensei-quiz-settings-show-questions"
 						label={ __( 'Number of Questions', 'sensei-lms' ) }
 						help={ __(
 							'Display a random selection of questions.',
 							'sensei-lms'
 						) }
-					>
-						<input
-							type="number"
-							id="sensei-quiz-settings-show-questions"
-							min={ 0 }
-							step={ 1 }
-							value={ showQuestions }
-							placeholder={ __( 'All', 'sensei-lms' ) }
-							onChange={ ( e ) =>
-								createChangeHandler( 'showQuestions' )(
-									e.value
-								)
-							}
-						/>
-						<Button isSmall isSecondary onClick={ () => {} }>
-							{ __( 'All', 'sensei-lms' ) }
-						</Button>
-					</BaseControl>
+						allowReset
+						resetLabel={ __( 'All', 'sensei-lms' ) }
+						min={ 0 }
+						step={ 1 }
+						value={ showQuestions }
+						placeholder={ __( 'All', 'sensei-lms' ) }
+						onChange={ createChangeHandler( 'showQuestions' ) }
+					/>
 				</PanelRow>
 			</PanelBody>
 		</InspectorControls>
