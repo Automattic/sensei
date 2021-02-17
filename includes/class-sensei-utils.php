@@ -421,7 +421,20 @@ class Sensei_Utils {
 		 */
 		$file_upload_args = apply_filters( 'sensei_file_upload_args', array( 'test_form' => false ) );
 
-		$file['name'] = md5( uniqid() ) . '_' . $file['name'];
+		/**
+		 * Customize the prefix prepended onto files uploaded in Sensei.
+		 *
+		 * @since 3.9.0
+		 * @hook sensei_file_upload_file_prefix
+		 *
+		 * @param {string} $prefix Prefix to prepend to uploaded files.
+		 * @param {array}  $file   Arguments with uploaded file information.
+		 *
+		 * @return {string}
+		 */
+		$file_prefix = apply_filters( 'sensei_file_upload_file_prefix', substr( md5( uniqid() ), 0, 7 ) . '_', $file );
+
+		$file['name'] = $file_prefix . $file['name'];
 		$file_return  = wp_handle_upload( $file, $file_upload_args );
 
 		if ( isset( $file_return['error'] ) || isset( $file_return['upload_error_handler'] ) ) {
