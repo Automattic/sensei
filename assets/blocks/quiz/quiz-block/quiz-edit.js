@@ -10,6 +10,7 @@ import { __ } from '@wordpress/i18n';
 import { useAutoInserter } from '../../../shared/blocks/use-auto-inserter';
 import questionBlock from '../question-block';
 import { useQuizStructure } from '../quiz-store';
+import QuizSettings from './quiz-settings';
 
 /**
  * Quiz block editor.
@@ -31,6 +32,7 @@ const QuizEdit = ( props ) => {
 			</div>
 			<InnerBlocks allowedBlocks={ [ 'sensei-lms/quiz-question' ] } />
 			<div className="sensei-lms-quiz-block__separator" />
+			<QuizSettings { ...props } />
 		</>
 	);
 };
