@@ -25,12 +25,12 @@ import NumberControl from '../../editor-components/number-control';
  */
 const QuizSettings = ( { attributes: { options = {} }, setAttributes } ) => {
 	const {
-		passRequired,
-		quizPassmark,
-		autoGrade,
-		allowRetakes,
-		randomQuestionOrder,
-		showQuestions,
+		passRequired = false,
+		quizPassmark = 100,
+		autoGrade = true,
+		allowRetakes = true,
+		randomQuestionOrder = false,
+		showQuestions = null,
 	} = options;
 
 	const createChangeHandler = ( optionKey ) => ( value ) =>
