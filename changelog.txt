@@ -1,5 +1,10 @@
 *** Changelog ***
 
+2021.02.17 - version 3.8.1
+* Fix: Fix lesson module metabox saving with Yoast installed [#3982](https://api.github.com/repos/Automattic/sensei/issues/3982)
+* Fix: Fix course lessons in modules not appearing on analysis screen [#3971](https://api.github.com/repos/Automattic/sensei/issues/3971)
+* Fix: Security issues
+
 2021.02.09 - version 3.8.0
 * New: Conditional Content block
 	* Add Restricted Course Content block [#3849](https://github.com/Automattic/sensei/pull/3849)
