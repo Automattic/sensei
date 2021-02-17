@@ -46,7 +46,7 @@ const QuizSettings = ( { attributes: { options = {} }, setAttributes } ) => {
 					<ToggleControl
 						checked={ passRequired }
 						onChange={ createChangeHandler( 'passRequired' ) }
-						label={ __( 'Pass required', 'sensei-lms' ) }
+						label={ __( 'Pass Required', 'sensei-lms' ) }
 					/>
 				</PanelRow>
 				{ passRequired && (
