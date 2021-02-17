@@ -291,10 +291,10 @@ class Sensei_Core_Modules {
 	 * @return mixed            Post ID on permissions failure, boolean true on success
 	 */
 	public function save_lesson_module( $post_id ) {
-		global $post;
+		$post = get_post( $post_id );
 
 		// Verify post type and nonce
-		if ( ( get_post_type() != 'lesson' ) || ! isset( $_POST[ 'woo_lesson_' . $this->taxonomy . '_nonce' ] )
+		if ( ( get_post_type( $post ) != 'lesson' ) || ! isset( $_POST[ 'woo_lesson_' . $this->taxonomy . '_nonce' ] )
 			|| ! wp_verify_nonce( $_POST[ 'woo_lesson_' . $this->taxonomy . '_nonce' ], plugin_basename( $this->file ) ) ) {
 			return $post_id;
 		}
