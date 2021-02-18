@@ -1,3 +1,6 @@
+/**
+ * WordPress dependencies
+ */
 import { addQueryArgs } from '@wordpress/url';
 import apiFetch from '@wordpress/api-fetch';
 

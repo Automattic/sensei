@@ -1,3 +1,6 @@
+/**
+ * WordPress dependencies
+ */
 import {
 	useState,
 	useMemo,
@@ -5,6 +8,9 @@ import {
 	createContext,
 } from '@wordpress/element';
 
+/**
+ * Internal dependencies
+ */
 import { useEventListener } from '../../react-hooks';
 import { updateQueryString, getParam } from './url-functions';
 

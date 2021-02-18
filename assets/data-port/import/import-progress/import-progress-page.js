@@ -1,6 +1,17 @@
+/**
+ * External dependencies
+ */
 import { H, Section } from '@woocommerce/components';
-import useProgressPolling from './use-progress-polling';
+
+/**
+ * WordPress dependencies
+ */
 import { __ } from '@wordpress/i18n';
+
+/**
+ * Internal dependencies
+ */
+import useProgressPolling from './use-progress-polling';
 
 /**
  * This component displays the import progress page of the importer.

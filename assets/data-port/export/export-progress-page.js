@@ -1,6 +1,13 @@
+/**
+ * WordPress dependencies
+ */
 import { Button } from '@wordpress/components';
 import { useEffect } from '@wordpress/element';
 import { __, _n } from '@wordpress/i18n';
+
+/**
+ * Internal dependencies
+ */
 import { downloadFile } from '../../shared/helpers/download-file';
 import { Notice } from '../notice';
 

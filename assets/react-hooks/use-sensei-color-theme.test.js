@@ -1,4 +1,11 @@
+/**
+ * External dependencies
+ */
 import { render } from '@testing-library/react';
+
+/**
+ * Internal dependencies
+ */
 import { useSenseiColorTheme } from './use-sensei-color-theme';
 
 describe( 'useSenseiColorTheme', () => {

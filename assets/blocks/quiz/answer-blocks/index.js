@@ -1,5 +1,12 @@
+/**
+ * WordPress dependencies
+ */
 import { __ } from '@wordpress/i18n';
 import { applyFilters } from '@wordpress/hooks';
+
+/**
+ * Internal dependencies
+ */
 import FileUploadAnswer from './file-upload';
 import GapFillAnswer from './gap-fill';
 import MultiLineAnswer from './multi-line';

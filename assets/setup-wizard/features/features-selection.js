@@ -1,7 +1,17 @@
-import { Button, CheckboxControl, Notice } from '@wordpress/components';
+/**
+ * External dependencies
+ */
 import classnames from 'classnames';
+
+/**
+ * WordPress dependencies
+ */
+import { Button, CheckboxControl, Notice } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
+/**
+ * Internal dependencies
+ */
 import FeatureDescription from './feature-description';
 
 /**

@@ -1,4 +1,11 @@
+/**
+ * WordPress dependencies
+ */
 import { useState } from '@wordpress/element';
+
+/**
+ * Internal dependencies
+ */
 import MultipleChoiceAnswerOption from './multiple-choice-answer-option';
 
 /**

@@ -1,5 +1,12 @@
-import { useMergeReducer } from './use-merge-reducer';
+/**
+ * External dependencies
+ */
 import { act, renderHook } from '@testing-library/react-hooks';
+
+/**
+ * Internal dependencies
+ */
+import { useMergeReducer } from './use-merge-reducer';
 
 describe( 'useMergeReducer', () => {
 	it( 'partially updates the state', () => {

@@ -1,4 +1,11 @@
+/**
+ * WordPress dependencies
+ */
 import { registerStore } from '@wordpress/data';
+
+/**
+ * Internal dependencies
+ */
 import controls, { timeout } from './timeout-controls';
 
 const delayedAction = () => ( { type: 'TEST_TIMEOUT_ACTION' } );

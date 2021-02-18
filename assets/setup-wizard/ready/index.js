@@ -1,8 +1,18 @@
-import { useEffect } from '@wordpress/element';
+/**
+ * External dependencies
+ */
 import { Card, H, List, Section } from '@woocommerce/components';
+
+/**
+ * WordPress dependencies
+ */
+import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
 
+/**
+ * Internal dependencies
+ */
 import { MailingListSignupForm } from './mailinglist-signup-form';
 import { formatString } from '../../shared/helpers/format-string.js';
 import { logLink } from '../log-event';

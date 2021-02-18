@@ -1,5 +1,12 @@
+/**
+ * WordPress dependencies
+ */
 import { select } from '@wordpress/data';
 import { apiFetch } from '@wordpress/data-controls';
+
+/**
+ * Internal dependencies
+ */
 import registerExportStore, { EXPORT_STORE } from './index';
 import * as actions from './actions';
 

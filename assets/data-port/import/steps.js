@@ -1,4 +1,11 @@
+/**
+ * WordPress dependencies
+ */
 import { __ } from '@wordpress/i18n';
+
+/**
+ * Internal dependencies
+ */
 import UploadPage from './upload';
 import ImportProgressPage from './import-progress';
 import DonePage from './done';

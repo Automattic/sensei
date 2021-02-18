@@ -1,6 +1,17 @@
+/**
+ * External dependencies
+ */
 import { List } from '@woocommerce/components';
+
+/**
+ * WordPress dependencies
+ */
 import { Button, TextControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+
+/**
+ * Internal dependencies
+ */
 import { logLink } from '../log-event';
 import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 

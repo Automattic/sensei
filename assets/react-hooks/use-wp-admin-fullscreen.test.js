@@ -1,5 +1,11 @@
+/**
+ * External dependencies
+ */
 import { render } from '@testing-library/react';
 
+/**
+ * Internal dependencies
+ */
 import useWpAdminFullscreen from './use-wp-admin-fullscreen';
 
 describe( 'useWpAdminFullscreen', () => {

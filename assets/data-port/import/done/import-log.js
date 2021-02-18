@@ -1,5 +1,16 @@
-import { __ } from '@wordpress/i18n';
+/**
+ * External dependencies
+ */
 import { kebabCase } from 'lodash';
+
+/**
+ * WordPress dependencies
+ */
+import { __ } from '@wordpress/i18n';
+
+/**
+ * Internal dependencies
+ */
 import { logTypeLabels } from '../../../shared/helpers/labels';
 
 /**

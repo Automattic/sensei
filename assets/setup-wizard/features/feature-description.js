@@ -1,4 +1,11 @@
+/**
+ * WordPress dependencies
+ */
 import { __ } from '@wordpress/i18n';
+
+/**
+ * Internal dependencies
+ */
 import { logLink } from '../log-event';
 
 /**

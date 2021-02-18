@@ -1,10 +1,14 @@
 /**
+ * External dependencies
+ */
+import classnames from 'classnames';
+
+/**
  * WordPress dependencies
  */
 import { PlainText } from '@wordpress/block-editor';
 import { forwardRef } from '@wordpress/element';
 import { ENTER, BACKSPACE } from '@wordpress/keycodes';
-import classnames from 'classnames';
 
 /**
  * Single line input component.

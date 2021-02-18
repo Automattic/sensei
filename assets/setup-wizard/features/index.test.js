@@ -1,5 +1,11 @@
+/**
+ * External dependencies
+ */
 import { render, fireEvent } from '@testing-library/react';
 
+/**
+ * Internal dependencies
+ */
 import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 import QueryStringRouter, { Route } from '../query-string-router';
 import { updateQueryString } from '../query-string-router/url-functions';

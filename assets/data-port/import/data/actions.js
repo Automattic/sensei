@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import {
 	API_SPECIAL_ACTIVE_JOB_ID,
 	FETCH_FROM_API,
@@ -17,7 +20,6 @@ import {
 	SET_JOB_STATE,
 	WAIT,
 } from './constants';
-
 import { composeFetchAction } from '../../../shared/data/store-helpers';
 import { normalizeImportData } from './normalizer';
 import { buildJobEndpointUrl } from '../helpers/url';

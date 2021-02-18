@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import { SET_IMPORT_LOG, ERROR_FETCH_IMPORT_LOG } from './constants';
 import { composeFetchAction } from '../../../shared/data/store-helpers';
 import { fetchFromAPI } from './actions';

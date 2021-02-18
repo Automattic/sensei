@@ -3,6 +3,10 @@
  */
 import { InnerBlocks } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
+
+/**
+ * Internal dependencies
+ */
 import { useAutoInserter } from '../../../shared/blocks/use-auto-inserter';
 import questionBlock from '../question-block';
 

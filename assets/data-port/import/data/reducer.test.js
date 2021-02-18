@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import reducer from './reducer';
 import {
 	START_LOAD_CURRENT_JOB_STATE,

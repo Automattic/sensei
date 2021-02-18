@@ -1,3 +1,6 @@
+/**
+ * WordPress dependencies
+ */
 import { select, dispatch, subscribe } from '@wordpress/data';
 
 ( () => {

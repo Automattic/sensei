@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import { API_BASE_PATH } from './constants';
 import { fetchFromAPI, setStepData } from './actions';
 import { normalizeFeaturesData } from './normalizer';

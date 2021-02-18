@@ -1,5 +1,12 @@
+/**
+ * WordPress dependencies
+ */
 import { Toolbar } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+
+/**
+ * Internal dependencies
+ */
 import ToolbarDropdown from '../../editor-components/toolbar-dropdown';
 import types from '../answer-blocks';
 

@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import { FETCH_FROM_API } from './constants';
 import controls from './controls';
 

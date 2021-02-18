@@ -1,4 +1,11 @@
+/**
+ * WordPress dependencies
+ */
 import { sprintf, __ } from '@wordpress/i18n';
+
+/**
+ * Internal dependencies
+ */
 import { getWccomProductId } from '../helpers/woocommerce-com';
 
 /**

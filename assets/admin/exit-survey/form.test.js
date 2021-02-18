@@ -1,7 +1,14 @@
+/**
+ * External dependencies
+ */
 import { screen, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { ExitSurveyForm } from './form';
 import '@testing-library/jest-dom';
+
+/**
+ * Internal dependencies
+ */
+import { ExitSurveyForm } from './form';
 
 describe( '<ExitSurveyForm />', () => {
 	beforeEach( () => {} );

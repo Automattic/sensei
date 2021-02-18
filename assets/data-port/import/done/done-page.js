@@ -1,6 +1,17 @@
-import { __ } from '@wordpress/i18n';
+/**
+ * External dependencies
+ */
 import { Section } from '@woocommerce/components';
+
+/**
+ * WordPress dependencies
+ */
+import { __ } from '@wordpress/i18n';
 import { Button, Spinner, Notice } from '@wordpress/components';
+
+/**
+ * Internal dependencies
+ */
 import { ImportLog } from './import-log';
 import ImportSuccessResults from './import-success-results';
 

@@ -1,4 +1,11 @@
+/**
+ * External dependencies
+ */
 import { render, fireEvent } from '@testing-library/react';
+
+/**
+ * Internal dependencies
+ */
 import { ExportProgressPage } from './export-progress-page';
 
 describe( '<ExportProgressPage />', () => {

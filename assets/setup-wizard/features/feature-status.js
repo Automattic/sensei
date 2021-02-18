@@ -1,6 +1,12 @@
+/**
+ * WordPress dependencies
+ */
 import { Dashicon, Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
+/**
+ * Internal dependencies
+ */
 import CheckIcon from './check-icon';
 
 /**
