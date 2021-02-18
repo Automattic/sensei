@@ -1,7 +1,13 @@
+/**
+ * WordPress dependencies
+ */
 import { dispatch, registerStore } from '@wordpress/data';
 import { apiFetch } from '@wordpress/data-controls';
-import mockEditorStore from '../../tests-helper/mock-editor-post-save-store';
 
+/**
+ * Internal dependencies
+ */
+import mockEditorStore from '../../tests-helper/mock-editor-post-save-store';
 import { registerStructureStore } from './structure-store';
 
 jest.mock( '@wordpress/data-controls' );

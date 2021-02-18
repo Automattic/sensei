@@ -1,3 +1,6 @@
+/**
+ * WordPress dependencies
+ */
 import { escapeHTML } from '@wordpress/escape-html';
 
 jQuery( document ).ready( function () {

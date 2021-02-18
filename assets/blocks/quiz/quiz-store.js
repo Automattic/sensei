@@ -1,6 +1,13 @@
+/**
+ * WordPress dependencies
+ */
 import { dispatch, select, useDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+
+/**
+ * Internal dependencies
+ */
 import { registerStructureStore } from '../../shared/structure/structure-store';
 import { parseQuestionBlocks, syncQuestionBlocks } from './data';
 
