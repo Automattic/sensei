@@ -71,7 +71,7 @@ const QuizSettings = ( { attributes: { options = {} }, setAttributes } ) => {
 						onChange={ createChangeHandler( 'autoGrade' ) }
 						label={ __( 'Auto Grade', 'sensei-lms' ) }
 						help={ __(
-							'Only applicable for multiple choice, true/false and gap fill questions.',
+							'Grades quiz and displays answer explanation immediately after completion. Only applicable if quiz is limited to Multiple Choice, True/False and Gap Fill questions. Questions that have a grade of zero are skipped during autograding.',
 							'sensei-lms'
 						) }
 					/>
