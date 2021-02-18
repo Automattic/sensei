@@ -640,6 +640,7 @@ class Sensei_PostTypes {
 			'query_var'         => false,
 			'show_in_nav_menus' => false,
 			'show_admin_column' => true,
+			'show_in_rest'      => true,
 			'rewrite'           => array( 'slug' => esc_attr( apply_filters( 'sensei_question_type_slug', _x( 'question-type', 'taxonomy archive slug', 'sensei-lms' ) ) ) ),
 		);
 
@@ -678,6 +679,7 @@ class Sensei_PostTypes {
 			'query_var'         => false,
 			'show_in_nav_menus' => false,
 			'show_admin_column' => true,
+			'show_in_rest'      => true,
 			'capabilities'      => array(
 				'manage_terms' => 'manage_categories',
 				'edit_terms'   => 'edit_questions',
