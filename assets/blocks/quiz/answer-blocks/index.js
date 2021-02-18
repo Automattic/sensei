@@ -15,6 +15,7 @@ import SingleLineAnswer from './single-line';
 import TrueFalseAnswer from './true-false';
 import {
 	QuestionAnswerFeedbackSettings,
+	QuestionGradeSettings,
 	QuestionGradingNotesSettings,
 	QuestionMultipleChoiceSettings,
 } from '../question-block/settings';
@@ -38,6 +39,7 @@ const questionTypes = {
 		description: __( 'Select from a list of options.', 'sensei-lms' ),
 		edit: MultipleChoiceAnswer,
 		settings: [
+			QuestionGradeSettings,
 			QuestionMultipleChoiceSettings,
 			QuestionAnswerFeedbackSettings,
 		],
@@ -49,13 +51,13 @@ const questionTypes = {
 			'sensei-lms'
 		),
 		edit: TrueFalseAnswer,
-		settings: [ QuestionAnswerFeedbackSettings ],
+		settings: [ QuestionGradeSettings, QuestionAnswerFeedbackSettings ],
 	},
 	'gap-fill': {
 		title: __( 'Gap Fill', 'sensei-lms' ),
 		description: __( 'Fill in the blank.', 'sensei-lms' ),
 		edit: GapFillAnswer,
-		settings: [ QuestionAnswerFeedbackSettings ],
+		settings: [ QuestionGradeSettings, QuestionAnswerFeedbackSettings ],
 	},
 	'single-line': {
 		title: __( 'Single-line', 'sensei-lms' ),
@@ -64,7 +66,7 @@ const questionTypes = {
 			'sensei-lms'
 		),
 		edit: SingleLineAnswer,
-		settings: [ QuestionGradingNotesSettings ],
+		settings: [ QuestionGradeSettings, QuestionGradingNotesSettings ],
 	},
 	'multi-line': {
 		title: __( 'Multi-line', 'sensei-lms' ),
@@ -73,13 +75,13 @@ const questionTypes = {
 			'sensei-lms'
 		),
 		edit: MultiLineAnswer,
-		settings: [ QuestionGradingNotesSettings ],
+		settings: [ QuestionGradeSettings, QuestionGradingNotesSettings ],
 	},
 	'file-upload': {
 		title: __( 'File Upload', 'sensei-lms' ),
 		description: __( 'Upload a file or document.', 'sensei-lms' ),
 		edit: FileUploadAnswer,
-		settings: [ QuestionGradingNotesSettings ],
+		settings: [ QuestionGradeSettings, QuestionGradingNotesSettings ],
 	},
 };
 
