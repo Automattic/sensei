@@ -2,7 +2,11 @@ import { dispatch, select, useDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { registerStructureStore } from '../../shared/structure/structure-store';
-import { parseQuestionBlocks, syncQuestionBlocks } from './data';
+import {
+	parseQuestionBlocks,
+	syncQuestionBlocks,
+	normalizeQuizOptionsAttribute,
+} from './data';
 
 export const QUIZ_STORE = 'sensei/quiz-structure';
 
@@ -46,7 +50,7 @@ registerStructureStore( {
 		}
 
 		yield dispatch( 'core/block-editor' ).updateBlockAttributes( clientId, {
-			options: structure.options,
+			options: normalizeQuizOptionsAttribute( structure.options ),
 		} );
 
 		const questionBlocks = yield select( 'core/block-editor' ).getBlocks(
