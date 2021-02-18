@@ -394,26 +394,29 @@ class Sensei_PostTypes {
 		$with_front = Sensei()->get_legacy_flag( Sensei_Main::LEGACY_FLAG_WITH_FRONT ) ? true : false;
 
 		$args = array(
-			'labels'              => $this->create_post_type_labels( $this->labels['question']['singular'], $this->labels['question']['plural'], $this->labels['question']['menu'] ),
-			'public'              => false,
-			'publicly_queryable'  => true,
-			'show_ui'             => true,
-			'show_in_menu'        => true,
-			'show_in_nav_menus'   => false,
-			'query_var'           => true,
-			'exclude_from_search' => true,
-			'rewrite'             => array(
+			'labels'                => $this->create_post_type_labels( $this->labels['question']['singular'], $this->labels['question']['plural'], $this->labels['question']['menu'] ),
+			'public'                => false,
+			'publicly_queryable'    => true,
+			'show_ui'               => true,
+			'show_in_menu'          => true,
+			'show_in_nav_menus'     => false,
+			'query_var'             => true,
+			'exclude_from_search'   => true,
+			'rewrite'               => array(
 				'slug'       => esc_attr( apply_filters( 'sensei_question_slug', _x( 'question', 'post type single slug', 'sensei-lms' ) ) ),
 				'with_front' => $with_front,
 				'feeds'      => true,
 				'pages'      => true,
 			),
-			'map_meta_cap'        => true,
-			'capability_type'     => 'question',
-			'has_archive'         => true,
-			'hierarchical'        => false,
-			'menu_position'       => 51,
-			'supports'            => array( 'title', 'revisions' ),
+			'map_meta_cap'          => true,
+			'capability_type'       => 'question',
+			'has_archive'           => true,
+			'hierarchical'          => false,
+			'menu_position'         => 51,
+			'supports'              => array( 'title', 'revisions' ),
+			'show_in_rest'          => true,
+			'rest_base'             => 'questions',
+			'rest_controller_class' => 'Sensei_REST_API_Questions_Controller',
 		);
 
 		/**
