@@ -25,6 +25,8 @@ const QuizEdit = ( props ) => {
 		props
 	);
 
+	const { isPostTemplate } = props.attributes;
+
 	return (
 		<>
 			<div className="sensei-lms-quiz-block__separator">
@@ -32,7 +34,9 @@ const QuizEdit = ( props ) => {
 			</div>
 			<InnerBlocks
 				allowedBlocks={ [ 'sensei-lms/quiz-question' ] }
-				template={ [ [ 'sensei-lms/quiz-question', {} ] ] }
+				template={
+					isPostTemplate ? [ [ 'sensei-lms/quiz-question', {} ] ] : []
+				}
 				templateInsertUpdatesSelection={ false }
 			/>
 			<div className="sensei-lms-quiz-block__separator" />

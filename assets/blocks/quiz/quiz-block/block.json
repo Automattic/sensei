@@ -11,6 +11,10 @@
     },
     "options": {
       "type": "object"
+		},
+    "isPostTemplate": {
+      "type": "boolean",
+      "default": false
     }
   }
 }
