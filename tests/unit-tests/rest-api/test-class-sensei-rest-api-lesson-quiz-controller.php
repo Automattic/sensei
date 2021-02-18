@@ -678,6 +678,31 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 	}
 
 	/**
+	 * Tests that invalid question data are validated.
+	 */
+	public function testQuestionValidationFails() {
+		$this->login_as_teacher();
+
+		$lesson_id = $this->factory->lesson->create();
+
+		$body = [
+			'options'   => [],
+			'questions' => [
+				[
+					'title'           => 'Will it blend?',
+					'type'            => 'boolean',
+					'answer'          => 'A string',
+					'answer_feedback' => 'Don\'t breathe this!',
+				],
+			],
+		];
+
+		$response = $this->send_post_request( $lesson_id, $body );
+
+		$this->assertEquals( $response->get_status(), 400 );
+	}
+
+	/**
 	 * Helper method to send and validate a GET request.
 	 *
 	 * @param int $lesson_id The lesson id.

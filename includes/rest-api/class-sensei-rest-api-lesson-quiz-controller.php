@@ -54,10 +54,8 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 					'callback'            => [ $this, 'get_quiz' ],
 					'permission_callback' => [ $this, 'can_user_get_quiz' ],
 					'args'                => [
-						'context' => [
-							'type'              => 'string',
-							'default'           => 'view',
-							'enum'              => [ 'view', 'edit' ],
+						'lesson_id' => [
+							'type'              => 'integer',
 							'sanitize_callback' => 'sanitize_key',
 							'validate_callback' => 'rest_validate_request_arg',
 						],
@@ -67,11 +65,91 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 					'methods'             => WP_REST_Server::CREATABLE,
 					'callback'            => [ $this, 'save_quiz' ],
 					'permission_callback' => [ $this, 'can_user_save_quiz' ],
-					'args'                => $this->get_endpoint_args_for_item_schema( WP_REST_Server::CREATABLE ),
+					'args'                => [
+						'options'   => [
+							'type'              => 'object',
+							'required'          => true,
+							'sanitize_callback' => 'rest_sanitize_request_arg',
+							'validate_callback' => 'rest_validate_request_arg',
+						],
+						'questions' => [
+							'type'              => 'array',
+							'required'          => true,
+							'sanitize_callback' => [ $this, 'sanitize_questions' ],
+							'validate_callback' => [ $this, 'validate_questions' ],
+						],
+					],
 				],
 				'schema' => [ $this, 'get_item_schema' ],
 			]
 		);
+	}
+
+	/**
+	 * Sanitization method for questions.
+	 *
+	 * @param array $questions The questions.
+	 *
+	 * @return array|WP_Error The sanitized questions.
+	 */
+	public function sanitize_questions( array $questions ) {
+		$sanitized_questions = [];
+		foreach ( $questions as $question ) {
+			$result = rest_sanitize_value_from_schema( $question, $this->get_question_schema( $question['type'] ) );
+
+			if ( is_wp_error( $result ) ) {
+				return $result;
+			}
+
+			$sanitized_questions[] = $result;
+		}
+
+		return $sanitized_questions;
+	}
+
+	/**
+	 * Validation method for questions.
+	 *
+	 * @param array $questions The questions.
+	 *
+	 * @return true|WP_Error True on success, error otherwise.
+	 */
+	public function validate_questions( array $questions ) {
+		foreach ( $questions as $question ) {
+			$result = rest_validate_value_from_schema( $question, $this->get_question_schema( $question['type'] ) );
+
+			if ( is_wp_error( $result ) ) {
+				return $result;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Returns the schema array for a question type.
+	 *
+	 * @param string $type The question type.
+	 *
+	 * @return array The question schema.
+	 */
+	private function get_question_schema( string $type ) : array {
+		switch ( $type ) {
+			case 'multiple-choice':
+				return $this->get_multiple_choice_schema();
+			case 'boolean':
+				return $this->get_boolean_schema();
+			case 'gap-fill':
+				return $this->get_gap_fill_schema();
+			case 'single-line':
+				return $this->get_single_line_schema();
+			case 'multi-line':
+				return $this->get_multi_line_schema();
+			case 'file-upload':
+				return $this->get_file_upload_schema();
+		}
+
+		return [];
 	}
 
 	/**
@@ -716,19 +794,8 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 					],
 				],
 				'questions' => [
-					'type'        => 'array',
-					'required'    => true,
-					'description' => 'Questions in quiz',
-					'items'       => [
-						'anyOf' => [
-							$this->get_multiple_choice_schema(),
-							$this->get_boolean_schema(),
-							$this->get_gap_fill_schema(),
-							$this->get_single_line_schema(),
-							$this->get_multi_line_schema(),
-							$this->get_file_upload_schema(),
-						],
-					],
+					'type'     => 'array',
+					'required' => true,
 				],
 			],
 		];
