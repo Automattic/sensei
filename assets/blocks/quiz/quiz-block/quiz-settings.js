@@ -56,7 +56,7 @@ const QuizSettings = ( { attributes: { options = {} }, setAttributes } ) => {
 				{ passRequired && (
 					<PanelRow>
 						<RangeControl
-							label={ 'Passing Grade' }
+							label={ 'Passing Grade (%)' }
 							value={ quizPassmark }
 							onChange={ createChangeHandler( 'quizPassmark' ) }
 							min={ 0 }

@@ -31,7 +31,7 @@ describe( '<QuizSettings />', () => {
 		);
 
 		expect( queryByLabelText( 'Pass Required' ).checked ).toEqual( true );
-		expect( queryAllByLabelText( 'Passing Grade' )[ 0 ].value ).toEqual(
+		expect( queryAllByLabelText( 'Passing Grade (%)' )[ 0 ].value ).toEqual(
 			'50'
 		);
 		expect( queryByLabelText( 'Auto Grade' ).checked ).toEqual( false );
@@ -55,7 +55,7 @@ describe( '<QuizSettings />', () => {
 			/>
 		);
 
-		expect( queryByLabelText( 'Passing Grade' ) ).toBeFalsy();
+		expect( queryByLabelText( 'Passing Grade (%)' ) ).toBeFalsy();
 	} );
 
 	it( 'Should call the setAttributes correctly when changing the fields', () => {
@@ -84,7 +84,7 @@ describe( '<QuizSettings />', () => {
 			},
 		} );
 
-		fireEvent.change( queryAllByLabelText( 'Passing Grade' )[ 0 ], {
+		fireEvent.change( queryAllByLabelText( 'Passing Grade (%)' )[ 0 ], {
 			target: { value: '50' },
 		} );
 		expect( setAttributesMock ).toBeCalledWith( {
