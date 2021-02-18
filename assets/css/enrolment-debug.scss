@@ -99,8 +99,14 @@ $neutral_bg: rgba( 0, 0, 0, 0.1 );
 			}
 
 			.content {
-				flex: 3;
+				flex: 5;
 				display: inline;
+
+				details {
+					max-width: 500px;
+					max-height: 200px;
+					overflow: scroll;
+				}
 			}
 
 			.history-item {
