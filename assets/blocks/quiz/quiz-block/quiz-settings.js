@@ -47,6 +47,10 @@ const QuizSettings = ( { attributes: { options = {} }, setAttributes } ) => {
 						checked={ passRequired }
 						onChange={ createChangeHandler( 'passRequired' ) }
 						label={ __( 'Pass Required', 'sensei-lms' ) }
+						help={ __(
+							'Require passing the quiz to complete lesson.',
+							'sensei-lms'
+						) }
 					/>
 				</PanelRow>
 				{ passRequired && (
