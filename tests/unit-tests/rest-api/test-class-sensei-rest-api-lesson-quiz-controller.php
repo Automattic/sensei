@@ -611,6 +611,73 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 	}
 
 	/**
+	 * Tests editing single line and multiline question properties.
+	 */
+	public function testPostLineQuestion() {
+		$this->login_as_teacher();
+
+		$lesson_id = $this->factory->lesson->create();
+
+		$body = [
+			'options'   => [],
+			'questions' => [
+				[
+					'title'         => 'Will it blend?',
+					'type'          => 'single-line',
+					'teacher_notes' => 'Don\'t breathe this!',
+				],
+				[
+					'title'         => 'Please explain.',
+					'type'          => 'multi-line',
+					'teacher_notes' => 'Teacher notes',
+				],
+			],
+		];
+
+		$this->send_post_request( $lesson_id, $body );
+
+		$questions = Sensei()->quiz->get_questions( Sensei()->lesson->lesson_quizzes( $lesson_id ) );
+
+		$this->assertCount( 2, $questions );
+
+		$this->assertEquals( 'Will it blend?', $questions[0]->post_title );
+		$this->assertEquals( 'Don\'t breathe this!', get_post_meta( $questions[0]->ID, '_question_right_answer', true ) );
+		$this->assertEquals( 'Please explain.', $questions[1]->post_title );
+		$this->assertEquals( 'Teacher notes', get_post_meta( $questions[1]->ID, '_question_right_answer', true ) );
+	}
+
+	/**
+	 * Tests editing file upload question properties.
+	 */
+	public function testPostFileUploadQuestion() {
+		$this->login_as_teacher();
+
+		$lesson_id = $this->factory->lesson->create();
+
+		$body = [
+			'options'   => [],
+			'questions' => [
+				[
+					'title'         => 'Will it blend?',
+					'type'          => 'file-upload',
+					'teacher_notes' => 'Teacher notes',
+					'student_help'  => 'Upload instructions',
+				],
+			],
+		];
+
+		$this->send_post_request( $lesson_id, $body );
+
+		$questions = Sensei()->quiz->get_questions( Sensei()->lesson->lesson_quizzes( $lesson_id ) );
+
+		$this->assertCount( 1, $questions );
+
+		$this->assertEquals( 'Will it blend?', $questions[0]->post_title );
+		$this->assertEquals( 'Teacher notes', get_post_meta( $questions[0]->ID, '_question_right_answer', true ) );
+		$this->assertEquals( 'Upload instructions', get_post_meta( $questions[0]->ID, '_question_wrong_answers', true ) );
+	}
+
+	/**
 	 * Helper method to send and validate a GET request.
 	 *
 	 * @param int $lesson_id The lesson id.
