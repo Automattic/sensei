@@ -62,6 +62,8 @@ class Sensei_Messages {
 		add_filter( 'comments_open', array( $this, 'message_replies_open' ), 100, 2 );
 		add_action( 'pre_get_posts', array( $this, 'only_show_messages_to_owner' ) );
 		add_filter( 'comment_feed_where', array( $this, 'exclude_message_comments_from_feed_where' ) );
+		add_filter( 'user_has_cap', [ $this, 'user_messages_cap_check' ], 10, 3 );
+		add_action( 'load-edit-comments.php', [ $this, 'check_permissions_edit_comments' ] );
 	} // End __construct()
 
 	public function only_show_messages_to_owner( $query ) {
@@ -462,6 +464,55 @@ class Sensei_Messages {
 		}
 
 		return $message_id;
+	}
+
+	/**
+	 * Checks if a user is capable of seeing a particular message.
+	 *
+	 * @param array $allcaps All capabilities.
+	 * @param array $caps    Capabilities.
+	 * @param array $args    Arguments.
+	 *
+	 * @return array The filtered array of all capabilities.
+	 */
+	public function user_messages_cap_check( $allcaps, $caps, $args ) {
+		if ( isset( $caps[0] ) && 'read' === $caps[0] ) {
+			$user_id      = isset( $args[1] ) ? intval( $args[1] ) : false;
+			$user         = $user_id ? get_user_by( 'ID', $user_id ) : false;
+			$message_post = isset( $args[2] ) ? get_post( $args[2] ) : false;
+
+			if ( $message_post && 'sensei_message' === $message_post->post_type ) {
+				$receiver_username   = get_post_meta( $message_post->ID, '_receiver', true );
+				$sender_username     = get_post_meta( $message_post->ID, '_sender', true );
+				$is_user_participant = $user
+										&& $receiver_username
+										&& $sender_username
+										&& in_array( $user->user_login, [ $receiver_username, $sender_username ], true );
+
+				$allcaps['read'] = current_user_can( 'manage_sensei' ) || $is_user_participant;
+			}
+		}
+
+		return $allcaps;
+	}
+
+	/**
+	 * Make sure user has permission to see the post content of a private message.
+	 */
+	public function check_permissions_edit_comments() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No action based on input.
+		$post_id = isset( $_REQUEST['p'] ) ? (int) $_REQUEST['p'] : false;
+		if ( ! $post_id || 'sensei_message' !== get_post_type( $post_id ) ) {
+			return;
+		}
+
+		if ( ! current_user_can( 'read_post', $post_id ) ) {
+			wp_die(
+				'<h1>' . esc_html__( 'You need a higher level of permission.', 'sensei-lms' ) . '</h1>' .
+				'<p>' . esc_html__( 'Sorry, you are not allowed to edit this post\'s comments.', 'sensei-lms' ) . '</p>',
+				403
+			);
+		}
 	}
 
 	/**

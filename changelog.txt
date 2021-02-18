@@ -1,5 +1,15 @@
 *** Changelog ***
 
+2021.02.17 - version 3.8.1
+* Fix: Fix lesson module metabox saving with Yoast installed [#3982](https://github.com/Automattic/sensei/pull/3982)
+* Fix: Fix course lessons in modules not appearing on analysis screen [#3971](https://github.com/Automattic/sensei/pull/3971)
+* Fix: Allow template field to be edited by teachers [#3985](https://github.com/Automattic/sensei/pull/3985)
+* Fix: Add post type and access checks to main view on learner management [#3984](https://github.com/Automattic/sensei/pull/3984) 👏 foobar7
+* Fix: Check for edit access for course in bulk learner management [#3984](https://github.com/Automattic/sensei/pull/3984) 👏 foobar7
+* Fix: Make sure users who aren't participants can't see private messages [#3984](https://github.com/Automattic/sensei/pull/3984) 👏 foobar7
+* Fix: Escape HTML in gap fill editor preview [#3984](https://github.com/Automattic/sensei/pull/3984) 👏 foobar7
+* Fix: Hide REST API lesson content and remove lesson and question feeds [#3984](https://github.com/Automattic/sensei/pull/3984)
+
 2021.02.09 - version 3.8.0
 * New: Conditional Content block
 	* Add Restricted Course Content block [#3849](https://github.com/Automattic/sensei/pull/3849)

@@ -12,6 +12,7 @@ global $hook_suffix;
 class Sensei_Learners_Main_Test extends WP_UnitTestCase {
 	use Sensei_Course_Enrolment_Test_Helpers;
 	use Sensei_Course_Enrolment_Manual_Test_Helpers;
+	use Sensei_Test_Login_Helpers;
 
 	private $factory;
 
@@ -20,7 +21,7 @@ class Sensei_Learners_Main_Test extends WP_UnitTestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->factory = new Sensei_Factory();
-
+		$this->login_as_teacher();
 		$this->course_id = $this->createCourseEnrolments();
 	}
 

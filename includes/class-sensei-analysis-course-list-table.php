@@ -573,7 +573,6 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 			'post_type'        => 'lesson',
 			'posts_per_page'   => $args['number'],
 			'offset'           => $args['offset'],
-			'meta_key'         => '_order_' . $this->course_id,
 			'order'            => $args['order'],
 			'meta_query'       => array(
 				array(
