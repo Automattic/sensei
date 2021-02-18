@@ -176,10 +176,11 @@ class Sensei_Tool_Enrolment_Debug implements Sensei_Tool_Interface, Sensei_Tool_
 	 * @return array
 	 */
 	private function get_debug_results( WP_User $user, WP_Post $course ) {
-		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
-		$course_enrolment  = Sensei_Course_Enrolment::get_course_instance( $course->ID );
-		$provider_results  = $course_enrolment->get_enrolment_check_results( $user->ID );
-		$is_enrolled       = $course_enrolment->is_enrolled( $user->ID );
+		$enrolment_manager    = Sensei_Course_Enrolment_Manager::instance();
+		$course_enrolment     = Sensei_Course_Enrolment::get_course_instance( $course->ID );
+		$provider_results     = $course_enrolment->get_enrolment_check_results( $user->ID );
+		$is_enrolled          = $course_enrolment->is_enrolled( $user->ID );
+		$provider_results_arr = [];
 
 		$results_stale = false;
 		if ( ! $provider_results || $provider_results->get_version_hash() !== $course_enrolment->get_current_enrolment_result_version() ) {
@@ -187,19 +188,23 @@ class Sensei_Tool_Enrolment_Debug implements Sensei_Tool_Interface, Sensei_Tool_
 			$provider_results = $course_enrolment->get_enrolment_check_results( $user->ID );
 		}
 
-		$provider_results_arr = $provider_results->get_provider_results();
-		$debug_results        = [
-			'course'        => $course->post_title,
-			'course_id'     => $course->ID,
-			'user'          => $user->display_name . ' (' . $user->ID . ')',
-			'user_id'       => $user->ID,
-			'is_enrolled'   => $is_enrolled,
-			'is_removed'    => $course_enrolment->is_learner_removed( $user->ID ),
-			'results_stale' => $results_stale,
-			'results_match' => true,
-			'results_time'  => self::format_date( $provider_results->get_time() ),
-			'providers'     => [],
-			'progress'      => false,
+		if ( $provider_results ) {
+			$provider_results_arr = $provider_results->get_provider_results();
+		}
+
+		$debug_results = [
+			'course'           => $course->post_title,
+			'course_id'        => $course->ID,
+			'course_published' => 'publish' === $course->post_status,
+			'user'             => $user->display_name . ' (' . $user->ID . ')',
+			'user_id'          => $user->ID,
+			'is_enrolled'      => $is_enrolled,
+			'is_removed'       => $course_enrolment->is_learner_removed( $user->ID ),
+			'results_stale'    => $results_stale,
+			'results_match'    => true,
+			'results_time'     => $provider_results ? self::format_date( $provider_results->get_time() ) : null,
+			'providers'        => [],
+			'progress'         => false,
 		];
 
 		$course_progress_id = Sensei_Utils::has_started_course( $course->ID, $user->ID );
@@ -233,12 +238,24 @@ class Sensei_Tool_Enrolment_Debug implements Sensei_Tool_Interface, Sensei_Tool_
 				'handles_course' => $provider->handles_enrolment( $course->ID ),
 				'is_enrolled'    => null,
 				'debug'          => false,
-				'logs'           => false,
+				'logs'           => [],
 				'history'        => false,
 			];
 
 			if ( $provider_info['handles_course'] ) {
-				$provider_info['is_enrolled'] = $provider->is_enrolled( $user->ID, $course->ID );
+				$provider_info['is_enrolled'] = false;
+				try {
+					$provider_info['is_enrolled'] = $provider->is_enrolled( $user->ID, $course->ID );
+				} catch ( Exception $e ) {
+					$provider_info['logs'][] = [
+						'timestamp' => time(),
+						'message'   => $e->getMessage(),
+						'data'      => [
+							'source' => $e->getFile() . ':' . $e->getLine(),
+							'trace'  => $e->getTraceAsString(),
+						],
+					];
+				}
 				if (
 					! isset( $provider_results_arr[ $provider->get_id() ] )
 					|| $provider_results_arr[ $provider->get_id() ] !== $provider_info['is_enrolled']
@@ -259,7 +276,7 @@ class Sensei_Tool_Enrolment_Debug implements Sensei_Tool_Interface, Sensei_Tool_
 			}
 
 			if ( class_exists( 'Sensei_Enrolment_Provider_Journal_Store' ) ) {
-				$provider_info['logs']    = Sensei_Enrolment_Provider_Journal_Store::get_provider_logs( $provider, $user->ID, $course->ID );
+				$provider_info['logs']    = array_merge( $provider_info['logs'], Sensei_Enrolment_Provider_Journal_Store::get_provider_logs( $provider, $user->ID, $course->ID ) );
 				$provider_info['history'] = Sensei_Enrolment_Provider_Journal_Store::get_provider_history( $provider, $user->ID, $course->ID );
 			}
 

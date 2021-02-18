@@ -134,10 +134,12 @@ $allowed_debug_html = [
 				echo '</div>';
 			}
 
-			echo '<div class="info info-neutral">';
-			// translators: %s placeholder is datetime results were last calculated.
-			echo esc_html( sprintf( __( 'Last calculated on %s', 'sensei-lms' ), $results['results_time'] ) );
-			echo '</div>';
+			if ( $results['results_time'] ) {
+				echo '<div class="info info-neutral">';
+				// translators: %s placeholder is datetime results were last calculated.
+				echo esc_html( sprintf( __( 'Last calculated on %s', 'sensei-lms' ), $results['results_time'] ) );
+				echo '</div>';
+			}
 			?>
 		</td>
 	</tr>
@@ -204,7 +206,21 @@ $allowed_debug_html = [
 						foreach ( $provider['logs'] as $message ) {
 							$column[] = '<div class="message">';
 							$column[] = '<span class="time">' . Sensei_Tool_Enrolment_Debug::format_date( $message['timestamp'] ) . '</span>';
-							$column[] = '<span class="content">' . esc_html( $message['message'] ) . '</span>';
+
+							$column[] = '<span class="content">';
+							$column[] = esc_html( $message['message'] );
+
+							if ( ! empty( $message['data'] ) ) {
+								$column[] = '<details>';
+								$column[] = '<summary>' . esc_html__( 'More information...', 'sensei-lms' ) . '</summary>';
+								$column[] = '<pre>';
+								// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r -- Special debug case.
+								$column[] = esc_html( print_r( $message['data'], true ) );
+								$column[] = '</pre>';
+								$column[] = '</details>';
+							}
+							$column[] = '</span>';
+
 							$column[] = '</div>';
 						}
 						$column[] = '</div>';
