@@ -119,6 +119,12 @@ class Sensei_Course_Blocks extends Sensei_Blocks_Initializer {
 			'blocks/single-course-style-editor.css',
 			[ 'sensei-shared-blocks-editor-style', 'sensei-editor-components-style' ]
 		);
+
+		global $post;
+		if ( null !== $post ) {
+			Sensei()->assets->preload_data( [ sprintf( '/sensei-internal/v1/course-structure/%d?context=edit', $post->ID ) ] );
+		}
+
 	}
 
 	/**

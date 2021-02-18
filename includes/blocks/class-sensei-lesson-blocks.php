@@ -53,6 +53,12 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 			'blocks/single-lesson-style-editor.css',
 			[ 'sensei-shared-blocks-editor-style', 'sensei-editor-components-style' ]
 		);
+
+		global $post;
+		if ( null !== $post ) {
+			Sensei()->assets->preload_data( [ sprintf( '/sensei-internal/v1/lesson-quiz/%d?context=edit', $post->ID ) ] );
+		}
+
 	}
 
 	/**
