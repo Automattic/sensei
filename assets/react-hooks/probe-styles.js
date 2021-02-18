@@ -1,7 +1,17 @@
-import { useState, useEffect } from '@wordpress/element';
-import { useSelect } from '@wordpress/data';
+/**
+ * External dependencies
+ */
 import { mapValues, keyBy, memoize } from 'lodash';
 
+/**
+ * WordPress dependencies
+ */
+import { useState, useEffect } from '@wordpress/element';
+import { useSelect } from '@wordpress/data';
+
+/**
+ * Internal dependencies
+ */
 import { hexToRGB } from '../shared/helpers/colors';
 
 const { getComputedStyle } = window;

@@ -1,10 +1,21 @@
 /* global FormData */
 
-import { Button, FormFileUpload } from '@wordpress/components';
+/**
+ * External dependencies
+ */
 import { Spinner } from '@woocommerce/components';
-import { Notice } from '../../notice';
+
+/**
+ * WordPress dependencies
+ */
+import { Button, FormFileUpload } from '@wordpress/components';
 import { closeSmall } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
+
+/**
+ * Internal dependencies
+ */
+import { Notice } from '../../notice';
 import { levels } from '../levels';
 
 /**

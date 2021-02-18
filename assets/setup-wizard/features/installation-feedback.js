@@ -1,8 +1,18 @@
-import { useState, useEffect } from '@wordpress/element';
+/**
+ * External dependencies
+ */
 import { List } from '@woocommerce/components';
+
+/**
+ * WordPress dependencies
+ */
+import { useState, useEffect } from '@wordpress/element';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
+/**
+ * Internal dependencies
+ */
 import { getFeatureObservation } from './feature-description-utils';
 import FeatureDescription from './feature-description';
 import FeatureStatus, {

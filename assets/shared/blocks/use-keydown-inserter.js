@@ -1,3 +1,6 @@
+/**
+ * WordPress dependencies
+ */
 import { createBlock } from '@wordpress/blocks';
 import { select, useDispatch } from '@wordpress/data';
 import { ENTER, BACKSPACE } from '@wordpress/keycodes';

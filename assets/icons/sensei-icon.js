@@ -1,3 +1,6 @@
+/**
+ * WordPress dependencies
+ */
 import { G, Path, SVG } from '@wordpress/components';
 
 export const SenseiIcon = ( props ) => (

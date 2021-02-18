@@ -1,5 +1,12 @@
+/**
+ * WordPress dependencies
+ */
 import { useCallback, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+
+/**
+ * Internal dependencies
+ */
 import { ExitSurveyFormItem } from './form-item';
 import { reasons } from './reasons';
 

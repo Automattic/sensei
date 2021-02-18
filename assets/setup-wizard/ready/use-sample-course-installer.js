@@ -1,6 +1,12 @@
+/**
+ * WordPress dependencies
+ */
 import { useEffect, useState } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 
+/**
+ * Internal dependencies
+ */
 import { buildJobEndpointUrl } from '../../data-port/import/helpers/url';
 import { logEvent } from '../log-event';
 

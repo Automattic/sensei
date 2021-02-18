@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import { getFeatureObservation } from './feature-description-utils';
 
 describe( '<FeatureDescription />', () => {

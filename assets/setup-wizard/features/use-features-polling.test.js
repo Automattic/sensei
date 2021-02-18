@@ -1,6 +1,16 @@
+/**
+ * External dependencies
+ */
 import { render, act } from '@testing-library/react';
+
+/**
+ * WordPress dependencies
+ */
 import { useDispatch } from '@wordpress/data';
 
+/**
+ * Internal dependencies
+ */
 import useFeaturesPolling from './use-features-polling';
 
 jest.mock( '@wordpress/data', () => ( {

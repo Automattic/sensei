@@ -2,11 +2,15 @@
   "name": "sensei-lms/quiz",
   "category": "sensei-lms",
   "supports": {
-    "html": false
+    "html": false,
+    "multiple": false
   },
   "attributes": {
     "id": {
       "type": "integer"
+    },
+    "options": {
+      "type": "object"
     }
   }
 }

@@ -70,10 +70,30 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 			$this->course_id = 0;
 		}
 
+		if (
+			$this->course_id
+			&& (
+				'course' !== get_post_type( $this->course_id )
+				|| ! current_user_can( get_post_type_object( 'course' )->cap->edit_post, $this->course_id )
+			)
+		) {
+			wp_die( esc_html__( 'Invalid course', 'sensei-lms' ), 404 );
+		}
+
 		if ( isset( $_GET['lesson_id'] ) ) {
 			$this->lesson_id = (int) $_GET['lesson_id'];
 		} else {
 			$this->lesson_id = 0;
+		}
+
+		if (
+			$this->lesson_id
+			&& (
+				'lesson' !== get_post_type( $this->lesson_id )
+				|| ! current_user_can( get_post_type_object( 'lesson' )->cap->edit_post, $this->lesson_id )
+			)
+		) {
+			wp_die( esc_html__( 'Invalid lesson', 'sensei-lms' ), 404 );
 		}
 
 		if ( isset( $_GET['view'] ) && in_array( $_GET['view'], array( 'courses', 'lessons', 'learners' ), true ) ) {

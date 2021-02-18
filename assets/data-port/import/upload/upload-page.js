@@ -1,7 +1,17 @@
+/**
+ * External dependencies
+ */
 import { H, Section } from '@woocommerce/components';
+
+/**
+ * WordPress dependencies
+ */
 import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
 
+/**
+ * Internal dependencies
+ */
 import UploadLevels from '../upload-level';
 import { Notice } from '../../notice';
 import { formatString } from '../../../shared/helpers/format-string.js';

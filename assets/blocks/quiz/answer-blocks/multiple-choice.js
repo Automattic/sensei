@@ -1,12 +1,19 @@
+/**
+ * WordPress dependencies
+ */
 import { useState } from '@wordpress/element';
+
+/**
+ * Internal dependencies
+ */
 import MultipleChoiceAnswerOption from './multiple-choice-answer-option';
 
 /**
  * Default answer options for new blocks.
  */
 const DEFAULT_ANSWERS = [
-	{ title: null, isRight: true },
-	{ title: null, isRight: false },
+	{ title: '', isRight: true },
+	{ title: '', isRight: false },
 ];
 
 /**

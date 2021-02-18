@@ -134,6 +134,9 @@ class Sensei_Analysis {
 		if ( isset( $_GET['user_id'] ) ) {
 			$user_id = intval( $_GET['user_id'] );
 		}
+
+		$this->check_course_lesson( $course_id, $lesson_id );
+
 		$type = isset( $_GET['view'] ) ? esc_html( $_GET['view'] ) : false;
 
 		if ( 0 < $lesson_id ) {
@@ -594,6 +597,8 @@ class Sensei_Analysis {
 			}
 			$type = isset( $_GET['view'] ) ? esc_html( $_GET['view'] ) : false;
 
+			$this->check_course_lesson( $course_id, $lesson_id );
+
 			// Set up default properties for logging an event.
 			$event_properties = [ 'view' => '' ];
 
@@ -643,6 +648,34 @@ class Sensei_Analysis {
 			exit;
 		} // End wp_query check
 	} // End report_download_page()
+
+	/**
+	 * Check course and lesson objects are valid posts that the user has access to.
+	 *
+	 * @param int $course_id Course post ID.
+	 * @param int $lesson_id Lesson post ID.
+	 */
+	private function check_course_lesson( $course_id, $lesson_id ) {
+		if (
+			$course_id
+			&& (
+				'course' !== get_post_type( $course_id )
+				|| ! current_user_can( get_post_type_object( 'course' )->cap->edit_post, $course_id )
+			)
+		) {
+			wp_die( esc_html__( 'Invalid course', 'sensei-lms' ), 404 );
+		}
+
+		if (
+			$lesson_id
+			&& (
+				'lesson' !== get_post_type( $lesson_id )
+				|| ! current_user_can( get_post_type_object( 'lesson' )->cap->edit_post, $lesson_id )
+			)
+		) {
+			wp_die( esc_html__( 'Invalid lesson', 'sensei-lms' ), 404 );
+		}
+	}
 
 	/**
 	 * Sets headers for CSV reporting export

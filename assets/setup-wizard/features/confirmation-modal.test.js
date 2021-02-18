@@ -1,6 +1,12 @@
+/**
+ * External dependencies
+ */
 import { render, fireEvent } from '@testing-library/react';
 import { screen } from '@testing-library/dom';
 
+/**
+ * Internal dependencies
+ */
 import ConfirmationModal from './confirmation-modal';
 
 const features = [

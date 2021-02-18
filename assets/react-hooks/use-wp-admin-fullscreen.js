@@ -1,3 +1,6 @@
+/**
+ * WordPress dependencies
+ */
 import { useLayoutEffect } from '@wordpress/element';
 
 const toggleGlobalStyles = ( enabled, classes ) => {

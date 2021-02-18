@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import { steps } from '../steps';
 
 /**

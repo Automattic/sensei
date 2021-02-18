@@ -1,6 +1,16 @@
+/**
+ * External dependencies
+ */
 import { render, fireEvent, act, screen } from '@testing-library/react';
+
+/**
+ * WordPress dependencies
+ */
 import { useState, useEffect } from '@wordpress/element';
 
+/**
+ * Internal dependencies
+ */
 import InstallationFeedback from './installation-feedback';
 import useFeaturesPolling from './use-features-polling';
 import {

@@ -1,4 +1,11 @@
+/**
+ * External dependencies
+ */
 import { fireEvent, render } from '@testing-library/react';
+
+/**
+ * Internal dependencies
+ */
 import { UploadLevels } from './upload-level';
 
 describe( '<UploadLevels />', () => {

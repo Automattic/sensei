@@ -1,3 +1,6 @@
+/**
+ * WordPress dependencies
+ */
 import { _n } from '@wordpress/i18n';
 
 /**

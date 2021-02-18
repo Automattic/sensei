@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import { normalizeImportData } from './normalizer';
 
 describe( 'Importer data normalizer', () => {

@@ -1,6 +1,13 @@
+/**
+ * WordPress dependencies
+ */
 import { __ } from '@wordpress/i18n';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { render, useLayoutEffect } from '@wordpress/element';
+
+/**
+ * Internal dependencies
+ */
 import { useSenseiColorTheme } from '../react-hooks/use-sensei-color-theme';
 import { DataPortStepper } from './stepper';
 import registerImportStore from './import/data';

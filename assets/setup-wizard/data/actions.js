@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import {
 	API_BASE_PATH,
 	FETCH_FROM_API,
@@ -10,7 +13,6 @@ import {
 	SET_STEP_DATA,
 	APPLY_STEP_DATA,
 } from './constants';
-
 import { normalizeSetupWizardData } from './normalizer';
 
 /**

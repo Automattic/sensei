@@ -14,7 +14,7 @@ import OutlineSettings from './outline-settings';
 import { withDefaultBlockStyle } from '../../../shared/blocks/settings';
 import ToggleLegacyCourseMetaboxesWrapper from '../../toggle-legacy-course-metaboxes-wrapper';
 import { useCourseLessonsStatusSync } from '../status-preview/use-course-lessons-status-sync';
-import { COURSE_STORE } from '../store';
+import { COURSE_STORE } from '../course-outline-store';
 import { useBlocksCreator } from '../use-block-creator';
 
 /**

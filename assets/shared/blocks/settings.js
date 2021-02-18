@@ -1,3 +1,11 @@
+/**
+ * External dependencies
+ */
+import { mapValues, upperFirst } from 'lodash';
+
+/**
+ * WordPress dependencies
+ */
 import { useState, useEffect } from '@wordpress/element';
 import {
 	ContrastChecker,
@@ -7,8 +15,10 @@ import {
 	getColorClassName,
 } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
-import { mapValues, upperFirst } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
 import { useColorsByProbe } from '../../react-hooks/probe-styles';
 
 /**

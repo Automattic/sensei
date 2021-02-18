@@ -1,3 +1,6 @@
+/**
+ * External dependencies
+ */
 import interpolateComponents from 'interpolate-components';
 
 export const formattingComponents = {

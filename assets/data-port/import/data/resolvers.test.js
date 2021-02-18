@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import {
 	API_BASE_PATH,
 	FETCH_FROM_API,

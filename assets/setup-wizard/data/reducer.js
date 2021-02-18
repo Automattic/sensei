@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import {
 	START_FETCH_SETUP_WIZARD_DATA,
 	SUCCESS_FETCH_SETUP_WIZARD_DATA,

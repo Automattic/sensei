@@ -1,5 +1,16 @@
-import { Button } from '@wordpress/components';
+/**
+ * External dependencies
+ */
 import classnames from 'classnames';
+
+/**
+ * WordPress dependencies
+ */
+import { Button } from '@wordpress/components';
+
+/**
+ * Internal dependencies
+ */
 import { checked } from '../../../icons/wordpress-icons';
 
 export const OptionToggle = ( {

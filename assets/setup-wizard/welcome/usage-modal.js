@@ -1,6 +1,13 @@
-import { Button, Modal, CheckboxControl } from '@wordpress/components';
+/**
+ * External dependencies
+ */
 import { Link } from '@woocommerce/components';
 import interpolateComponents from 'interpolate-components';
+
+/**
+ * WordPress dependencies
+ */
+import { Button, Modal, CheckboxControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect } from '@wordpress/element';
 

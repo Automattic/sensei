@@ -1,4 +1,11 @@
+/**
+ * WordPress dependencies
+ */
 import { __ } from '@wordpress/i18n';
+
+/**
+ * Internal dependencies
+ */
 import { Welcome } from './welcome';
 import { Purpose } from './purpose';
 import Features from './features';

@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import { API_BASE_PATH } from '../data/constants';
 
 /**

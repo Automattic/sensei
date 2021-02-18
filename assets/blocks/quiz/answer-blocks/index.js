@@ -1,16 +1,23 @@
+/**
+ * WordPress dependencies
+ */
 import { __ } from '@wordpress/i18n';
 import { applyFilters } from '@wordpress/hooks';
-import {
-	QuestionAnswerFeedbackSettings,
-	QuestionGradingNotesSettings,
-	QuestionMultipleChoiceSettings,
-} from '../question-block/settings';
+
+/**
+ * Internal dependencies
+ */
 import FileUploadAnswer from './file-upload';
 import GapFillAnswer from './gap-fill';
 import MultiLineAnswer from './multi-line';
 import MultipleChoiceAnswer from './multiple-choice';
 import SingleLineAnswer from './single-line';
 import TrueFalseAnswer from './true-false';
+import {
+	QuestionAnswerFeedbackSettings,
+	QuestionGradingNotesSettings,
+	QuestionMultipleChoiceSettings,
+} from '../question-block/settings';
 
 /**
  * @typedef QuestionType
@@ -26,7 +33,7 @@ import TrueFalseAnswer from './true-false';
  * @type {Object.<string, QuestionType>}
  */
 const questionTypes = {
-	multichoice: {
+	'multiple-choice': {
 		title: __( 'Multiple Choice', 'sensei-lms' ),
 		description: __( 'Select from a list of options.', 'sensei-lms' ),
 		edit: MultipleChoiceAnswer,
@@ -35,7 +42,7 @@ const questionTypes = {
 			QuestionAnswerFeedbackSettings,
 		],
 	},
-	truefalse: {
+	boolean: {
 		title: __( 'True / False', 'sensei-lms' ),
 		description: __(
 			'Select whether a statement is true or false.',
@@ -44,7 +51,7 @@ const questionTypes = {
 		edit: TrueFalseAnswer,
 		settings: [ QuestionAnswerFeedbackSettings ],
 	},
-	gap: {
+	'gap-fill': {
 		title: __( 'Gap Fill', 'sensei-lms' ),
 		description: __( 'Fill in the blank.', 'sensei-lms' ),
 		edit: GapFillAnswer,

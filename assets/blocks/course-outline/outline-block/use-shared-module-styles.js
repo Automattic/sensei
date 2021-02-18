@@ -1,5 +1,12 @@
+/**
+ * WordPress dependencies
+ */
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
+
+/**
+ * Internal dependencies
+ */
 import { applyStyleClass, getActiveStyleClass } from '../apply-style-class';
 import { getCourseInnerBlocks } from '../data';
 

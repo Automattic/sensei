@@ -3,8 +3,13 @@
  */
 import { InnerBlocks } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
+
+/**
+ * Internal dependencies
+ */
 import { useAutoInserter } from '../../../shared/blocks/use-auto-inserter';
 import questionBlock from '../question-block';
+import { useQuizStructure } from '../quiz-store';
 
 /**
  * Quiz block editor.
@@ -12,6 +17,8 @@ import questionBlock from '../question-block';
  * @param {Object} props
  */
 const QuizEdit = ( props ) => {
+	useQuizStructure( props );
+
 	useAutoInserter(
 		{ name: questionBlock.name, selectFirstBlock: true },
 		props

@@ -3,11 +3,11 @@
  */
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Status } from '../index';
 
 /**
  * Internal dependencies
  */
+import { Status } from '../index';
 import { StatusControl } from './index';
 
 describe( '<StatusControl />', () => {
