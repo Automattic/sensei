@@ -28,12 +28,12 @@ import TrueFalseAnswer from './true-false';
  * @type {Object.<string, QuestionType>}
  */
 const questionTypes = {
-	multichoice: {
+	'multiple-choice': {
 		title: __( 'Multiple Choice', 'sensei-lms' ),
 		description: __( 'Select from a list of options.', 'sensei-lms' ),
 		edit: MultipleChoiceAnswer,
 	},
-	truefalse: {
+	boolean: {
 		title: __( 'True / False', 'sensei-lms' ),
 		description: __(
 			'Select whether a statement is true or false.',
@@ -41,7 +41,7 @@ const questionTypes = {
 		),
 		edit: TrueFalseAnswer,
 	},
-	gap: {
+	'gap-fill': {
 		title: __( 'Gap Fill', 'sensei-lms' ),
 		description: __( 'Fill in the blank.', 'sensei-lms' ),
 		edit: GapFillAnswer,

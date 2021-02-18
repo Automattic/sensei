@@ -19,7 +19,8 @@ import { createReducerFromActionMap } from '../data/store-helpers';
  * @param {Object}   opts
  * @param {string}   opts.storeName   Name of store.
  * @param {Function} opts.getEndpoint REST API endpoint.
- * @param {Function} opts.saveError   Handler for displaying errors.
+ * @param {Function} opts.saveError   Handler for displaying save errors.
+ * @param {Function} opts.fetchError  Handler for displaying fetch errors.
  * @param {Function} opts.clearError  Handler for clearing errors.
  * @param {Function} opts.updateBlock Update block with given structure.
  * @param {Function} opts.readBlock   Extract structure from block.
@@ -28,14 +29,19 @@ export function registerStructureStore( {
 	storeName,
 	getEndpoint,
 	saveError,
+	fetchError,
 	clearError,
 	updateBlock,
 	readBlock,
+	...store
 } ) {
 	const DEFAULT_STATE = {
 		serverStructure: null,
+		editorStructure: null,
 		isSavingStructure: false,
-		hasStructureUpdate: false,
+		hasUnsavedServerUpdates: false,
+		hasUnsavedEditorChanges: false,
+		clientId: null,
 	};
 
 	const actions = {
@@ -43,21 +49,26 @@ export function registerStructureStore( {
 		 * Fetch structure data from REST API.
 		 */
 		*loadStructure() {
-			const endpoint = yield* getEndpoint();
-			const result = yield apiFetch( {
-				path: `/sensei-internal/v1/${ endpoint }?context=edit`,
-			} );
-			yield actions.setStructure( result );
+			try {
+				const endpoint = yield* getEndpoint();
+				const result = yield apiFetch( {
+					path: `/sensei-internal/v1/${ endpoint }`,
+					method: 'GET',
+				} );
+				yield actions.setResult( result );
+			} catch ( error ) {
+				yield fetchError?.( error );
+			}
 		},
 
 		/**
 		 * Persist editor's structure to the REST API.
-		 *
-		 * @param {Array} editorStructure
 		 */
-		*saveStructure( editorStructure ) {
-			yield { type: 'SAVING', isSavingStructure: true };
-
+		*saveStructure() {
+			yield { type: 'START_SAVE' };
+			const editorStructure = yield select(
+				storeName
+			).getEditorStructure();
 			try {
 				const endpoint = yield* getEndpoint();
 				const result = yield apiFetch( {
@@ -65,24 +76,21 @@ export function registerStructureStore( {
 					method: 'POST',
 					data: { structure: editorStructure },
 				} );
-				yield actions.setStructure( result, editorStructure );
+				yield actions.setResult( result );
 			} catch ( error ) {
-				yield saveError( error );
+				yield saveError?.( error );
 			}
 
-			yield { type: 'SAVING', isSavingStructure: false };
+			yield { type: 'FINISH_SAVE' };
 		},
 
 		/**
 		 * Set fetched structure.
 		 *
 		 * @param {Array} serverStructure
-		 * @param {Array} editorStructure
-		 */ *setStructure( serverStructure, editorStructure = null ) {
-			yield actions.setServerStructure(
-				serverStructure,
-				editorStructure
-			);
+		 */
+		*setResult( serverStructure ) {
+			yield actions.setServerStructure( serverStructure );
 			yield updateBlock( serverStructure );
 		},
 
@@ -90,44 +98,117 @@ export function registerStructureStore( {
 		 * Keep last fetched server state for comparison.
 		 *
 		 * @param {Array} serverStructure
-		 * @param {Array} editorStructure
 		 */
-		setServerStructure: ( serverStructure, editorStructure = null ) => ( {
-			type: 'SET_SERVER_STRUCTURE',
-			serverStructure,
-			hasStructureUpdate:
-				editorStructure &&
-				! isEqual( serverStructure, editorStructure ),
-		} ),
+		setServerStructure: ( serverStructure ) => {
+			return {
+				type: 'SET_SERVER_STRUCTURE',
+				serverStructure,
+			};
+		},
 
 		/**
-		 * Clear structure update.
+		 * Keep last editor state.
+		 *
+		 * @param {Array} editorStructure
 		 */
-		clearStructureUpdate: () => ( { type: 'CLEAR_STRUCTURE_UPDATE' } ),
+		setEditorStructure: ( editorStructure ) => {
+			return {
+				type: 'SET_EDITOR_STRUCTURE',
+				editorStructure,
+			};
+		},
+
+		/**
+		 * Initiate saving the post.
+		 */
+		*savePost() {
+			yield { type: 'SAVE_POST' };
+			yield dispatch( 'core/editor' ).savePost();
+		},
+
+		/**
+		 * Post is saving. Save the structure too if it has changed.
+		 */
+		*startPostSave() {
+			yield { type: 'START_POST_SAVE' };
+			const editorStructure = readBlock();
+			yield actions.setEditorStructure( editorStructure );
+
+			yield clearError?.();
+			if ( ! editorStructure ) return;
+
+			if ( select( storeName ).hasUnsavedEditorChanges() ) {
+				yield* actions.saveStructure();
+			}
+		},
+
+		/**
+		 * Finished saving post and structure.
+		 * Check if either needs to be saved again due to new changes.
+		 */
+		*finishPostSave() {
+			yield { type: 'FINISH_POST_SAVE' };
+			const { hasUnsavedServerUpdates, hasUnsavedEditorChanges } = select(
+				storeName
+			);
+
+			if ( hasUnsavedServerUpdates() ) {
+				yield* actions.savePost();
+			}
+
+			if ( hasUnsavedEditorChanges() ) {
+				yield* actions.saveStructure();
+			}
+		},
+
+		/**
+		 * Set linked block.
+		 *
+		 * @param {string} clientId Block ID.
+		 */
+		*setBlock( clientId ) {
+			yield { type: 'SET_BLOCK', clientId };
+		},
 	};
 
 	/**
 	 * Structure store reducers.
 	 */
 	const reducers = {
-		SET_SERVER_STRUCTURE: (
-			{ serverStructure, hasStructureUpdate },
-			state
-		) => {
+		SET_SERVER_STRUCTURE: ( { serverStructure }, state ) => {
+			const initialChange = ! state.editorStructure;
+			const hasDiff =
+				! initialChange &&
+				! isEqual( serverStructure, state.editorStructure );
+
 			return {
 				...state,
 				serverStructure,
-				hasStructureUpdate,
+				hasUnsavedServerUpdates: hasDiff,
+				hasUnsavedEditorChanges: false,
 			};
 		},
-		SAVING: ( { isSavingStructure }, state ) => ( {
+		SET_EDITOR_STRUCTURE: ( { editorStructure }, state ) => {
+			const hasDiff = ! isEqual( state.serverStructure, editorStructure );
+			return {
+				...state,
+				editorStructure,
+				hasUnsavedEditorChanges: hasDiff && !! editorStructure,
+			};
+		},
+		START_SAVE: ( action, state ) => ( {
 			...state,
-			isSavingStructure,
+			isSavingStructure: true,
 		} ),
-		CLEAR_STRUCTURE_UPDATE: ( action, state ) => ( {
+		FINISH_SAVE: ( action, state ) => ( {
 			...state,
-			hasStructureUpdate: false,
+			isSavingStructure: false,
 		} ),
+		SAVE_POST: ( action, state ) => ( {
+			...state,
+			hasUnsavedServerUpdates: false,
+		} ),
+		SET_BLOCK: ( { clientId }, state ) => ( { ...state, clientId } ),
 		DEFAULT: ( action, state ) => state,
 	};
 
@@ -135,42 +216,20 @@ export function registerStructureStore( {
 	 * Store state selectors.
 	 */
 	const selectors = {
-		shouldResavePost: ( { hasStructureUpdate } ) => hasStructureUpdate,
+		hasUnsavedServerUpdates: ( { hasUnsavedServerUpdates } ) =>
+			hasUnsavedServerUpdates,
+		hasUnsavedEditorChanges: ( { hasUnsavedEditorChanges } ) =>
+			hasUnsavedEditorChanges,
 		getIsSavingStructure: ( { isSavingStructure } ) => isSavingStructure,
 		getServerStructure: ( { serverStructure } ) => serverStructure,
+		getEditorStructure: ( { editorStructure } ) => editorStructure,
+		getBlock: ( { clientId } ) => clientId,
 	};
 
 	const subscribeToPostSave = () => {
-		// Set to true when savings starts, and false when it ends.
 		let postSaving = false;
 
-		const startSave = () => {
-			const serverStructure = select( storeName ).getServerStructure();
-			const editorStructure = readBlock();
-
-			if (
-				! editorStructure ||
-				isEqual( serverStructure, editorStructure )
-			) {
-				return;
-			}
-
-			clearError();
-			dispatch( storeName ).saveStructure( editorStructure );
-		};
-
-		const finishSave = () => {
-			const shouldResavePost = select( storeName ).shouldResavePost();
-
-			if ( ! shouldResavePost ) {
-				return;
-			}
-
-			dispatch( 'core/editor' ).savePost();
-			dispatch( storeName ).clearStructureUpdate();
-		};
-
-		subscribe( function saveStructureOnPostSave() {
+		return subscribe( function saveStructureOnPostSave() {
 			const editor = select( 'core/editor' );
 
 			if ( ! editor ) {
@@ -186,20 +245,25 @@ export function registerStructureStore( {
 			if ( ! postSaving && isSavingPost ) {
 				// First update where post is saving.
 				postSaving = true;
-				startSave();
+				dispatch( storeName ).startPostSave();
 			} else if ( postSaving && ! isSavingPost && ! isSavingStructure ) {
-				// First update where post is no longer saving and editor is sync.
+				// First update where both post and structure have finished saving.
 				postSaving = false;
-				finishSave();
+				dispatch( storeName ).finishPostSave();
 			}
 		} );
 	};
 
-	subscribeToPostSave();
-	registerStore( storeName, {
-		reducer: createReducerFromActionMap( reducers, DEFAULT_STATE ),
-		actions,
-		selectors,
-		controls: { ...dataControls },
-	} );
+	return {
+		unsubscribe: subscribeToPostSave(),
+		store: registerStore( storeName, {
+			reducer: createReducerFromActionMap(
+				{ ...reducers, ...store?.reducers },
+				DEFAULT_STATE
+			),
+			actions: { ...actions, ...store?.actions },
+			selectors: { ...selectors, ...store?.selectors },
+			controls: { ...dataControls, ...store?.controls },
+		} ),
+	};
 }

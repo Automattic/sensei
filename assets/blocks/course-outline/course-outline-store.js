@@ -41,7 +41,7 @@ registerStructureStore( {
 	storeName: COURSE_STORE,
 	*getEndpoint() {
 		const courseId = yield select( 'core/editor' ).getCurrentPostId();
-		return `course-structure/${ courseId }`;
+		return `course-structure/${ courseId }?context=edit`;
 	},
 	*updateBlock( structure ) {
 		const { clientId = null } = getEditorOutlineBlock();
