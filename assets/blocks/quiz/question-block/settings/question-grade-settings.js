@@ -27,6 +27,8 @@ const QuestionGradeSettings = ( {
 		<NumberControl
 			id={ id }
 			label={ __( 'Grade', 'sensei-lms' ) }
+			min={ 0 }
+			step={ 1 }
 			value={ grade }
 			onChange={ ( nextGrade ) =>
 				setOptions( { grade: nextGrade ?? 1 } )
