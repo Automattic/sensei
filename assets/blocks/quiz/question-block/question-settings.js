@@ -16,6 +16,7 @@ const QuestionSettings = ( {
 	controls = [],
 	attributes: { options = {} },
 	setAttributes,
+	...props
 } ) => {
 	const setOptions = ( next ) =>
 		setAttributes( { options: { ...options, ...next } } );
@@ -31,6 +32,7 @@ const QuestionSettings = ( {
 				{ controls.map( ( SettingControl ) => (
 					<SettingControl
 						key={ SettingControl }
+						{ ...props }
 						{ ...{ options, setOptions } }
 					/>
 				) ) }

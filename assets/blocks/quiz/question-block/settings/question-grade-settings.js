@@ -1,5 +1,12 @@
-import { BaseControl, Button } from '@wordpress/components';
+/**
+ * WordPress dependencies
+ */
 import { __ } from '@wordpress/i18n';
+
+/**
+ * Internal dependencies
+ */
+import NumberControl from '../../../editor-components/number-control';
 
 /**
  * Question block grade settings.
@@ -17,32 +24,15 @@ const QuestionGradeSettings = ( {
 } ) => {
 	const id = `sensei-lms-question-block__grade-control-${ clientId }`;
 	return (
-		<BaseControl
+		<NumberControl
 			id={ id }
 			label={ __( 'Grade', 'sensei-lms' ) }
-			className="sensei-lms-question-block__grade-control"
-		>
-			<div className="sensei-lms-question-block__grade-control__controls">
-				<input
-					id={ id }
-					className=""
-					type="number"
-					min={ 1 }
-					step={ 1 }
-					value={ grade }
-					onChange={ ( event ) =>
-						setOptions( { grade: event.target.value } )
-					}
-				/>
-				<Button
-					isSmall
-					isSecondary
-					onClick={ () => setOptions( { grade: 1 } ) }
-				>
-					{ __( 'Reset', 'sensei-lms' ) }
-				</Button>
-			</div>
-		</BaseControl>
+			value={ grade }
+			onChange={ ( nextGrade ) =>
+				setOptions( { grade: nextGrade ?? 1 } )
+			}
+			allowReset={ true }
+		/>
 	);
 };
 
