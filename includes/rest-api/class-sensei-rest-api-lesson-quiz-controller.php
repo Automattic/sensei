@@ -162,19 +162,25 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 	 * @return int|WP_Error Question id on success.
 	 */
 	private function save_question( $question ) {
-		return wp_insert_post(
-			[
-				'ID'           => isset( $question['id'] ) ? $question['id'] : null,
-				'post_content' => isset( $question['description'] ) ? $question['description'] : '',
-				'post_status'  => 'publish',
-				'post_title'   => $question['title'],
-				'post_type'    => 'question',
-				'meta_input'   => $this->get_question_meta( $question ),
-				'tax_input'    => [
-					'question-type' => $question['type'],
-				],
-			]
-		);
+		$post_args = [
+			'ID'          => isset( $question['id'] ) ? $question['id'] : null,
+			'post_status' => 'publish',
+			'post_type'   => 'question',
+			'meta_input'  => $this->get_question_meta( $question ),
+			'tax_input'   => [
+				'question-type' => $question['type'],
+			],
+		];
+
+		if ( isset( $question['description'] ) ) {
+			$post_args['post_content'] = $question['description'];
+		}
+
+		if ( isset( $question['title'] ) ) {
+			$post_args['post_title'] = $question['title'];
+		}
+
+		return wp_insert_post( $post_args );
 	}
 
 	/**
@@ -196,7 +202,9 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 				$meta = array_merge( $meta, $this->get_multiple_choice_meta( $question ) );
 				break;
 			case 'boolean':
-				$meta['_question_right_answer'] = $question['answer'] ? 'true' : 'false';
+				if ( isset( $question['answer'] ) ) {
+					$meta['_question_right_answer'] = $question['answer'] ? 'true' : 'false';
+				}
 
 				if ( isset( $question['answer_feedback'] ) ) {
 					$meta['_answer_feedback'] = $question['answer_feedback'];
@@ -243,23 +251,25 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 			$meta['_answer_feedback'] = $question['answer_feedback'];
 		}
 
-		foreach ( $question['options'] as $option ) {
-			if ( empty( $option['label'] ) ) {
-				continue;
+		if ( isset( $question['options'] ) ) {
+			foreach ( $question['options'] as $option ) {
+				if ( empty( $option['label'] ) ) {
+					continue;
+				}
+
+				if ( empty( $option['correct'] ) ) {
+					$meta['_question_wrong_answers'][] = $option['label'];
+				} else {
+					$meta['_question_right_answer'][] = $option['label'];
+				}
+
+				$meta['_answer_order'][] = Sensei()->lesson->get_answer_id( $option['label'] );
 			}
 
-			if ( empty( $option['correct'] ) ) {
-				$meta['_question_wrong_answers'][] = $option['label'];
-			} else {
-				$meta['_question_right_answer'][] = $option['label'];
-			}
-
-			$meta['_answer_order'][] = Sensei()->lesson->get_answer_id( $option['label'] );
+			$meta['_answer_order']       = implode( ',', $meta['_answer_order'] );
+			$meta['_right_answer_count'] = count( $meta['_question_right_answer'] );
+			$meta['_wrong_answer_count'] = count( $meta['_question_wrong_answers'] );
 		}
-
-		$meta['_answer_order']       = implode( ',', $meta['_answer_order'] );
-		$meta['_right_answer_count'] = count( $meta['_question_right_answer'] );
-		$meta['_wrong_answer_count'] = count( $meta['_question_wrong_answers'] );
 
 		return $meta;
 	}
@@ -740,7 +750,6 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 			'title'       => [
 				'type'        => 'string',
 				'description' => 'Question text',
-				'required'    => true,
 			],
 			'description' => [
 				'type'        => 'string',
@@ -784,7 +793,6 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 			],
 			'options'         => [
 				'type'        => 'array',
-				'required'    => true,
 				'description' => 'Options for the multiple choice',
 				'items'       => [
 					'type'       => 'object',
@@ -832,7 +840,6 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 			],
 			'answer'          => [
 				'type'        => 'boolean',
-				'required'    => true,
 				'description' => 'Correct answer for question',
 			],
 			'answer_feedback' => [
