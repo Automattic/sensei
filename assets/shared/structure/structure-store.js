@@ -63,7 +63,6 @@ export function registerStructureStore( {
 
 		/**
 		 * Persist editor's structure to the REST API.
-		 *
 		 */
 		*saveStructure() {
 			yield { type: 'START_SAVE' };
@@ -106,6 +105,7 @@ export function registerStructureStore( {
 				serverStructure,
 			};
 		},
+
 		/**
 		 * Keep last editor state.
 		 *
