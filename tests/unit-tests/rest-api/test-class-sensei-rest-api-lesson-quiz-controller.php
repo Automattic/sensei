@@ -428,6 +428,123 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 	}
 
 	/**
+	 * Tests that a quiz is only edited by admins and the teacher that created it.
+	 */
+	public function testPostAnotherTeachersCourse() {
+		$this->login_as_teacher();
+
+		list( $lesson_id ) = $this->create_lesson_with_quiz();
+
+		$response = $this->send_post_request(
+			$lesson_id,
+			[
+				'options'   => [],
+				'questions' => [],
+			]
+		);
+
+		$this->assertEquals( 200, $response->get_status(), 'Teacher which created the quiz cannot edit it.' );
+
+		$this->login_as_teacher_b();
+
+		$response = $this->send_post_request(
+			$lesson_id,
+			[
+				'options'   => [],
+				'questions' => [],
+			]
+		);
+
+		$this->assertEquals( 403, $response->get_status(), 'Teacher which did not create the quiz can edit it.' );
+
+		$this->login_as_admin();
+
+		$response = $this->send_post_request(
+			$lesson_id,
+			[
+				'options'   => [],
+				'questions' => [],
+			]
+		);
+
+		$this->assertEquals( 200, $response->get_status(), 'Admin user cannot edit the quiz.' );
+
+		$this->logout();
+
+		$response = $this->send_post_request(
+			$lesson_id,
+			[
+				'options'   => [],
+				'questions' => [],
+			]
+		);
+
+		$this->assertEquals( 401, $response->get_status(), 'Logged out user can edit the quiz.' );
+	}
+
+	/**
+	 * Tests editing multiple choice question properties.
+	 */
+	public function testPostMultipleChoiceQuestion() {
+		$this->login_as_teacher();
+
+		list( $lesson_id, $quiz_id ) = $this->create_lesson_with_quiz();
+		$question_id                 = $this->factory->question->create(
+			[
+				'question_type' => 'multiple-choice',
+				'quiz_id'       => $quiz_id,
+			]
+		);
+
+		$body = [
+			'options'   => [],
+			'questions' => [
+				[
+					'title'           => 'Will it blend?',
+					'description'     => 'That is the question.',
+					'grade'           => 30,
+					'type'            => 'multiple-choice',
+					'options'         => [
+						[
+							'label'   => 'Yes.',
+							'correct' => false,
+						],
+						[
+							'label'   => 'Definitely.',
+							'correct' => true,
+						],
+					],
+					'random_order'    => true,
+					'answer_feedback' => 'Don\'t breathe this!',
+				],
+				[
+					'id'    => $question_id,
+					'title' => 'Updated title',
+					'type'  => 'multiple-choice',
+				],
+			],
+		];
+
+		$this->send_post_request( $lesson_id, $body );
+
+		$questions = Sensei()->quiz->get_questions( Sensei()->lesson->lesson_quizzes( $lesson_id ) );
+
+		$this->assertCount( 2, $questions );
+
+		$this->assertEquals( 'Will it blend?', $questions[0]->post_title );
+		$this->assertEquals( 'That is the question.', $questions[0]->post_content );
+
+		$this->assertEquals( '30', get_post_meta( $questions[0]->ID, '_question_grade', true ) );
+		$this->assertEquals( '1', get_post_meta( $questions[0]->ID, '_random_order', true ) );
+		$this->assertEquals( 'Don\'t breathe this!', get_post_meta( $questions[0]->ID, '_answer_feedback', true ) );
+		$this->assertEquals( 'Yes.', get_post_meta( $questions[0]->ID, '_question_wrong_answers', true )[0] );
+		$this->assertEquals( 'Definitely.', get_post_meta( $questions[0]->ID, '_question_right_answer', true )[0] );
+
+		$this->assertEquals( 'Updated title', $questions[1]->post_title );
+		$this->assertEquals( '', $questions[1]->post_content );
+	}
+
+	/**
 	 * Helper method to send and validate a GET request.
 	 *
 	 * @param int $lesson_id The lesson id.
@@ -447,15 +564,14 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 	 * @param int   $lesson_id The lesson id.
 	 * @param array $body      JSON body arguments.
 	 *
-	 * @return array Response data.
+	 * @return WP_REST_Response Response.
 	 */
-	private function send_post_request( int $lesson_id, array $body ) : array {
+	private function send_post_request( int $lesson_id, array $body ) : WP_REST_Response {
 		$request = new WP_REST_Request( 'POST', self::REST_ROUTE . $lesson_id );
 		$request->set_header( 'content-type', 'application/json' );
 		$request->set_body( wp_json_encode( $body ) );
-		$response = $this->server->dispatch( $request );
 
-		return $response->get_data();
+		return $this->server->dispatch( $request );
 	}
 
 	/**
