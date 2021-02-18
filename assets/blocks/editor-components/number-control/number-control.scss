@@ -1,0 +1,13 @@
+.sensei-number-control {
+	display: flex;
+	justify-content: space-between;
+
+	&__input {
+		flex: 1;
+	}
+
+	&__button.components-button.is-small {
+		height: auto;
+		margin-left: 8px;
+	}
+}

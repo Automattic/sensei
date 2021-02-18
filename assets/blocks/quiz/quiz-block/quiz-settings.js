@@ -1,0 +1,117 @@
+/**
+ * WordPress dependencies
+ */
+import { InspectorControls } from '@wordpress/block-editor';
+import {
+	PanelBody,
+	PanelRow,
+	RangeControl,
+	ToggleControl,
+} from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
+
+/**
+ * Internal dependencies
+ */
+import NumberControl from '../../editor-components/number-control';
+
+/**
+ * Quiz settings.
+ *
+ * @param {Object}   props                    Block props.
+ * @param {Object}   props.attributes         Block attributes
+ * @param {Object}   props.attributes.options Current setting options.
+ * @param {Function} props.setAttributes      Set attributes function.
+ */
+const QuizSettings = ( { attributes: { options = {} }, setAttributes } ) => {
+	const {
+		passRequired = false,
+		quizPassmark = 100,
+		autoGrade = true,
+		allowRetakes = true,
+		randomQuestionOrder = false,
+		showQuestions = null,
+	} = options;
+
+	const createChangeHandler = ( optionKey ) => ( value ) =>
+		setAttributes( { options: { ...options, [ optionKey ]: value } } );
+
+	return (
+		<InspectorControls>
+			<PanelBody
+				title={ __( 'Quiz Settings', 'sensei-lms' ) }
+				initialOpen={ true }
+			>
+				<PanelRow>
+					<ToggleControl
+						checked={ passRequired }
+						onChange={ createChangeHandler( 'passRequired' ) }
+						label={ __( 'Pass Required', 'sensei-lms' ) }
+						help={ __(
+							'Require passing the quiz to complete lesson.',
+							'sensei-lms'
+						) }
+					/>
+				</PanelRow>
+				{ passRequired && (
+					<PanelRow>
+						<RangeControl
+							label={ 'Passing Grade (%)' }
+							value={ quizPassmark }
+							onChange={ createChangeHandler( 'quizPassmark' ) }
+							min={ 0 }
+							max={ 100 }
+							initialPosition={ 100 }
+						/>
+					</PanelRow>
+				) }
+				<PanelRow>
+					<ToggleControl
+						checked={ autoGrade }
+						onChange={ createChangeHandler( 'autoGrade' ) }
+						label={ __( 'Auto Grade', 'sensei-lms' ) }
+						help={ __(
+							'Grades quiz and displays answer explanation immediately after completion. Only applicable if quiz is limited to Multiple Choice, True/False and Gap Fill questions. Questions that have a grade of zero are skipped during autograding.',
+							'sensei-lms'
+						) }
+					/>
+				</PanelRow>
+				<PanelRow>
+					<ToggleControl
+						checked={ allowRetakes }
+						onChange={ createChangeHandler( 'allowRetakes' ) }
+						label={ __( 'Allow Retakes', 'sensei-lms' ) }
+					/>
+				</PanelRow>
+				<PanelRow>
+					<ToggleControl
+						checked={ randomQuestionOrder }
+						onChange={ createChangeHandler(
+							'randomQuestionOrder'
+						) }
+						label={ __( 'Random Question Order', 'sensei-lms' ) }
+					/>
+				</PanelRow>
+				<PanelRow>
+					<NumberControl
+						id="sensei-quiz-settings-show-questions"
+						label={ __( 'Number of Questions', 'sensei-lms' ) }
+						help={ __(
+							'Display a random selection of questions.',
+							'sensei-lms'
+						) }
+						allowReset
+						resetLabel={ __( 'All', 'sensei-lms' ) }
+						min={ 0 }
+						step={ 1 }
+						value={ showQuestions }
+						placeholder={ __( 'All', 'sensei-lms' ) }
+						onChange={ createChangeHandler( 'showQuestions' ) }
+					/>
+				</PanelRow>
+			</PanelBody>
+		</InspectorControls>
+	);
+};
+
+export default QuizSettings;
