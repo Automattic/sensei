@@ -1,5 +1,11 @@
+/**
+ * External dependencies
+ */
 import { render, fireEvent } from '@testing-library/react';
 
+/**
+ * Internal dependencies
+ */
 import QueryStringRouter, { Route, useQueryStringRouter } from './index';
 import { mockSearch } from '../../tests-helper/functions';
 

@@ -1,5 +1,12 @@
+/**
+ * WordPress dependencies
+ */
 import { Button, CheckboxControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+
+/**
+ * Internal dependencies
+ */
 import { useMergeReducer } from '../../react-hooks/use-merge-reducer';
 import { getSelectedKeys } from '../../shared/helpers/data';
 import { postTypeLabels } from '../../shared/helpers/labels';

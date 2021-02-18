@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import { getProbeStyles } from './probe-styles';
 
 describe( 'getProbeStyles', () => {

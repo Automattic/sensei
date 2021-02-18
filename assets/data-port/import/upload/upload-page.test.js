@@ -1,4 +1,11 @@
+/**
+ * External dependencies
+ */
 import { render, fireEvent } from '@testing-library/react';
+
+/**
+ * Internal dependencies
+ */
 import { UploadPage } from './upload-page';
 
 jest.mock( '@wordpress/api-fetch', () => () => Promise.resolve() );

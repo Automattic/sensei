@@ -1,4 +1,11 @@
+/**
+ * External dependencies
+ */
 import { render } from '@testing-library/react';
+
+/**
+ * Internal dependencies
+ */
 import { ImportProgressPage } from './import-progress-page';
 
 jest.mock( '@wordpress/api-fetch', () => () => Promise.resolve() );

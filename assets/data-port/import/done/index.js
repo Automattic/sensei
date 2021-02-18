@@ -1,5 +1,12 @@
+/**
+ * WordPress dependencies
+ */
 import { withSelect, withDispatch } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
+
+/**
+ * Internal dependencies
+ */
 import { DonePage } from './done-page';
 
 export default compose(

@@ -1,5 +1,12 @@
-import { ExitSurveyForm } from './form';
+/**
+ * WordPress dependencies
+ */
 import { render } from '@wordpress/element';
+
+/**
+ * Internal dependencies
+ */
+import { ExitSurveyForm } from './form';
 
 ( function senseiExitSurvey() {
 	/**

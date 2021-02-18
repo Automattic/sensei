@@ -1,7 +1,14 @@
-import { ExportPage } from './export-page';
-import registerExportStore, { EXPORT_STORE } from './store';
+/**
+ * WordPress dependencies
+ */
 import { withSelect, withDispatch } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
+
+/**
+ * Internal dependencies
+ */
+import { ExportPage } from './export-page';
+import registerExportStore, { EXPORT_STORE } from './store';
 
 registerExportStore();
 

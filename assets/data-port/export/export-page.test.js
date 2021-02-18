@@ -1,4 +1,11 @@
+/**
+ * External dependencies
+ */
 import { render } from '@testing-library/react';
+
+/**
+ * Internal dependencies
+ */
 import { ExportPage } from './export-page';
 
 describe( '<ExportPage />', () => {

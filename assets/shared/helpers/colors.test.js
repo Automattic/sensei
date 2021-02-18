@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import { hexToRGB } from './colors';
 
 describe( 'hexToRGB', () => {

@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import { useQueryStringRouter } from './index';
 
 /**

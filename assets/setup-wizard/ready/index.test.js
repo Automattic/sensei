@@ -1,6 +1,16 @@
+/**
+ * External dependencies
+ */
 import { fireEvent, render, act, waitFor } from '@testing-library/react';
+
+/**
+ * WordPress dependencies
+ */
 import apiFetch from '@wordpress/api-fetch';
 
+/**
+ * Internal dependencies
+ */
 import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 import { Ready } from './index';
 

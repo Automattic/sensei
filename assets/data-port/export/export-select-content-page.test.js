@@ -1,4 +1,11 @@
+/**
+ * External dependencies
+ */
 import { render, fireEvent } from '@testing-library/react';
+
+/**
+ * Internal dependencies
+ */
 import { ExportSelectContentPage } from './export-select-content-page';
 
 describe( '<SelectExportContentPage />', () => {

@@ -1,5 +1,12 @@
-import { Dashicon } from '@wordpress/components';
+/**
+ * External dependencies
+ */
 import classnames from 'classnames';
+
+/**
+ * WordPress dependencies
+ */
+import { Dashicon } from '@wordpress/components';
 
 /**
  * Sensei data port error notice.

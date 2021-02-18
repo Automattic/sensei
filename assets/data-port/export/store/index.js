@@ -1,5 +1,12 @@
+/**
+ * WordPress dependencies
+ */
 import { registerStore } from '@wordpress/data';
 import { controls as dataControls } from '@wordpress/data-controls';
+
+/**
+ * Internal dependencies
+ */
 import scheduleControls from '../../../shared/data/timeout-controls';
 import { createReducerFromActionMap } from '../../../shared/data/store-helpers';
 

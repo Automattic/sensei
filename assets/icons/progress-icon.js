@@ -1,3 +1,6 @@
+/**
+ * WordPress dependencies
+ */
 import { Rect, Path, SVG } from '@wordpress/components';
 
 export const ProgressIcon = () => (

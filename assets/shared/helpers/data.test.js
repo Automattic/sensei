@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import { getSelectedKeys } from './data';
 
 describe( 'getSelectedKeys', () => {

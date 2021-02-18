@@ -1,6 +1,16 @@
-import { useEffect } from '@wordpress/element';
+/**
+ * External dependencies
+ */
 import { render } from '@testing-library/react';
 
+/**
+ * WordPress dependencies
+ */
+import { useEffect } from '@wordpress/element';
+
+/**
+ * Internal dependencies
+ */
 import QueryStringRouter, { Route, useQueryStringRouter } from './index';
 
 const GoToSecondRoute = () => {

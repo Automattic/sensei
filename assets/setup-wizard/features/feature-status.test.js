@@ -1,5 +1,11 @@
+/**
+ * External dependencies
+ */
 import { render } from '@testing-library/react';
 
+/**
+ * Internal dependencies
+ */
 import FeatureStatus, {
 	INSTALLING_STATUS,
 	ERROR_STATUS,

@@ -1,3 +1,11 @@
+/**
+ * External dependencies
+ */
+import { merge } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
 import {
 	START_LOAD_CURRENT_JOB_STATE,
 	SUCCESS_LOAD_CURRENT_JOB_STATE,
@@ -16,8 +24,6 @@ import {
 	SET_IMPORT_LOG,
 	ERROR_FETCH_IMPORT_LOG,
 } from './constants';
-
-import { merge } from 'lodash';
 
 const DEFAULT_STATE = {
 	jobId: null,

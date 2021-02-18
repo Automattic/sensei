@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import { getParam, updateQueryString } from './url-functions';
 import { mockSearch } from '../../tests-helper/functions';
 

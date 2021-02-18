@@ -1,4 +1,11 @@
+/**
+ * WordPress dependencies
+ */
 import { apiFetch, select } from '@wordpress/data-controls';
+
+/**
+ * Internal dependencies
+ */
 import { EXPORT_STORE } from './index';
 import { cancelTimeout, timeout } from '../../../shared/data/timeout-controls';
 

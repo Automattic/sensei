@@ -1,6 +1,13 @@
+/**
+ * External dependencies
+ */
+import { get, groupBy } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
 import { steps } from '../steps';
 import { levels } from '../levels';
-import { get, groupBy } from 'lodash';
 
 const DONE_KEYS = [ 'course', 'lesson', 'question' ];
 

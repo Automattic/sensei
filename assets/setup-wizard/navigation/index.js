@@ -1,4 +1,11 @@
+/**
+ * External dependencies
+ */
 import { Stepper } from '@woocommerce/components';
+
+/**
+ * Internal dependencies
+ */
 import { useQueryStringRouter } from '../query-string-router';
 
 /**

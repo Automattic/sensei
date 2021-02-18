@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import {
 	API_BASE_PATH,
 	FETCH_FROM_API,
@@ -14,7 +17,6 @@ import {
 	ERROR_DELETE_IMPORT_DATA_FILE,
 	SUCCESS_DELETE_IMPORT_DATA_FILE,
 } from './constants';
-
 import {
 	fetchFromAPI,
 	loadCurrentJobState,

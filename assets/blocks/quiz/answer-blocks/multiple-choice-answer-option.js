@@ -1,6 +1,13 @@
+/**
+ * WordPress dependencies
+ */
 import { Button } from '@wordpress/components';
 import { useEffect, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+
+/**
+ * Internal dependencies
+ */
 import SingleLineInput from '../../../shared/blocks/single-line-input';
 import { OptionToggle } from './option-toggle';
 

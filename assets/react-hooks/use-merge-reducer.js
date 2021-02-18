@@ -1,3 +1,6 @@
+/**
+ * WordPress dependencies
+ */
 import { useReducer } from '@wordpress/element';
 
 /**

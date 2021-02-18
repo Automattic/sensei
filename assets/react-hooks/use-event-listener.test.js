@@ -1,5 +1,11 @@
+/**
+ * External dependencies
+ */
 import { render, fireEvent } from '@testing-library/react';
 
+/**
+ * Internal dependencies
+ */
 import useEventListener from './use-event-listener';
 
 describe( 'useEventListener', () => {

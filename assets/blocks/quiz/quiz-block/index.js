@@ -3,11 +3,11 @@
  */
 import { InnerBlocks } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
-import icon from '../../../icons/question-icon';
 
 /**
  * Internal dependencies
  */
+import icon from '../../../icons/question-icon';
 import edit from './quiz-edit';
 import metadata from './block.json';
 

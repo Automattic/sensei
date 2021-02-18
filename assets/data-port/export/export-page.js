@@ -1,4 +1,11 @@
+/**
+ * WordPress dependencies
+ */
 import { __ } from '@wordpress/i18n';
+
+/**
+ * Internal dependencies
+ */
 import { useSenseiColorTheme } from '../../react-hooks/use-sensei-color-theme';
 import { Notice } from '@wordpress/components';
 import { ExportProgressPage } from './export-progress-page';

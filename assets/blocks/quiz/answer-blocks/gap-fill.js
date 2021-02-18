@@ -1,3 +1,6 @@
+/**
+ * WordPress dependencies
+ */
 import { RichText } from '@wordpress/block-editor';
 import { FormTokenField } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
