@@ -60,9 +60,8 @@ class Sensei_REST_API_Questions_Controller extends WP_REST_Posts_Controller {
 			return $args;
 		}
 
-		$current_user = wp_get_current_user();
-
-		$args['author'] = $current_user->ID;
+		$current_user   = wp_get_current_user();
+		$args['author'] = $current_user ? $current_user->ID : -1;
 
 		return $args;
 	}
