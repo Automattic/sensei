@@ -7,6 +7,7 @@ module.exports = {
 		wp: true,
 	},
 	rules: {
+		'@wordpress/dependency-group': 'warn',
 		'@wordpress/i18n-text-domain': [
 			'error',
 			{
