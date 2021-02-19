@@ -29,7 +29,10 @@ class WP_UnitTest_Factory_For_Question extends WP_UnitTest_Factory_For_Post_Sens
 		$this->question_count++;
 		if ( isset( $args['quiz_id'] ) && ! isset( $args['post_author'] ) ) {
 			$args['post_author'] = get_post( $args['quiz_id'] )->post_author;
+		} elseif ( ! isset( $args['quiz_id'] ) ) {
+			$args['quiz_id'] = null;
 		}
+
 		$args = array_merge( $this->get_sample_question_data( $type ), $args );
 		return Sensei()->lesson->lesson_save_question( $args );
 	}
