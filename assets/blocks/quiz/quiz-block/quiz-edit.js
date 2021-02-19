@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { InnerBlocks } from '@wordpress/block-editor';
-import { Button } from '@wordpress/components';
+import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -12,6 +12,7 @@ import { useAutoInserter } from '../../../shared/blocks/use-auto-inserter';
 import questionBlock from '../question-block';
 import { useQuizStructure } from '../quiz-store';
 import QuizSettings from './quiz-settings';
+import QuestionBankModal from './question-bank-modal';
 
 /**
  * Quiz block editor.
@@ -25,6 +26,8 @@ const QuizEdit = ( props ) => {
 		{ name: questionBlock.name, selectFirstBlock: true },
 		props
 	);
+
+	const [ isQuestionBankOpen, setQuestionBankOpen ] = useState( false );
 
 	const { isPostTemplate } = props.attributes;
 
@@ -40,17 +43,17 @@ const QuizEdit = ( props ) => {
 				}
 				templateInsertUpdatesSelection={ false }
 				renderAppender={ () => (
-					<div className="sensei-lms-quiz-block__appender">
-						<Button type="button" isPrimary isSmall>
-							{ __(
-								'Add questions from the bank',
-								'sensei-lms'
-							) }
-						</Button>
-					</div>
+					<QuestionBankModal.Appender
+						setOpen={ setQuestionBankOpen }
+					/>
 				) }
 			/>
 			<div className="sensei-lms-quiz-block__separator" />
+
+			<QuestionBankModal
+				isOpen={ isQuestionBankOpen }
+				setOpen={ setQuestionBankOpen }
+			/>
 
 			<QuizSettings { ...props } />
 		</>
