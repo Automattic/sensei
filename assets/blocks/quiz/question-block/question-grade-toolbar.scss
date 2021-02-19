@@ -1,0 +1,65 @@
+.sensei-lms-question-block__grade-toolbar {
+	&__wrapper {
+		border-radius: 2px;
+		align-self: center;
+		align-items: center;
+
+		* {
+			padding: 0;
+		}
+
+		span {
+			display: inline-block;
+			margin: 0 4px;
+		}
+	}
+
+	input {
+		width: 28px;
+		height: 28px;
+		min-height: 0;
+		padding: 2px;
+		margin-left: 12px;
+		border-radius: 2px;
+		background: none;
+		border: 1px solid currentColor;
+		outline: none;
+		text-align: center;
+		font-weight: bold;
+	}
+
+	input::-webkit-outer-spin-button,
+	input::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+
+	input[type=number] {
+		-moz-appearance: textfield;
+	}
+
+	&__steppers {
+		display: flex;
+		flex-direction: column;
+	}
+
+	&__stepper {
+		.components-toolbar & {
+			height: 24px;
+			min-width: 0 !important;
+
+			svg {
+				position: relative;
+				height: 20px;
+			}
+
+			&.is-up-button svg {
+				top: 5px;
+			}
+
+			&.is-down-button svg {
+				bottom: 5px;
+			}
+		}
+	}
+}

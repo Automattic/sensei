@@ -13,6 +13,7 @@ import { useBlockIndex } from '../../../shared/blocks/block-index';
 import SingleLineInput from '../../../shared/blocks/single-line-input';
 import { useHasSelected } from '../../../shared/helpers/blocks';
 import types from '../answer-blocks';
+import { QuestionGradeToolbar } from './question-grade-toolbar';
 import QuestionSettings from './question-settings';
 import { QuestionTypeToolbar } from './question-type-toolbar';
 
@@ -106,6 +107,14 @@ const QuestionEdit = ( props ) => {
 						value={ type }
 						onSelect={ ( nextValue ) =>
 							setAttributes( { type: nextValue } )
+						}
+					/>
+					<QuestionGradeToolbar
+						value={ options.grade }
+						onChange={ ( nextGrade ) =>
+							setAttributes( {
+								options: { ...options, grade: nextGrade },
+							} )
 						}
 					/>
 				</>
