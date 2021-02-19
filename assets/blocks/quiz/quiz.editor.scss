@@ -21,8 +21,8 @@ $gray-400: #ccc;
 		margin-left: 0px;
 	}
 }
-.sensei-lms-quiz-block {
 
+.sensei-lms-quiz-block {
 	&__separator {
 		position: relative;
 		text-align: center;
@@ -49,5 +49,9 @@ $gray-400: #ccc;
 			border-radius: 4px;
 			padding: 6px 24px;
 		}
+	}
+
+	&__appender {
+		text-align: center;
 	}
 }
