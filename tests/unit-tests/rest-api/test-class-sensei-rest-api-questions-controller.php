@@ -111,7 +111,7 @@ class Sensei_REST_API_Questions_Controller_Tests extends WP_Test_REST_TestCase {
 	}
 
 	/**
-	 * Tests to make sure teachers can access their own questions.
+	 * Tests to make sure admins can access all questions.
 	 */
 	public function testAdminCanAccessAllQuestions() {
 		$question_ids = [];
