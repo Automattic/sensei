@@ -13,7 +13,7 @@ export const SharedQuestionNotice = () => (
 		<Icon icon={ info } />
 		<Tooltip
 			text={ __(
-				'Changes to this question will affect other quizzes.',
+				'Any updates made to this question will also update it in any other quiz that includes it.',
 				'sensei-lms'
 			) }
 		>
