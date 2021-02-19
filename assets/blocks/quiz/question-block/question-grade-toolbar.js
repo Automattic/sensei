@@ -33,7 +33,7 @@ export const QuestionGradeToolbar = ( { value, onChange } ) => {
 							onClick={ () => onChange( value + 1 ) }
 							className="sensei-lms-question-block__grade-toolbar__stepper is-up-button"
 							icon={ chevronUp }
-							help={ __(
+							label={ __(
 								'Increase question grade',
 								'sensei-lms'
 							) }
@@ -44,7 +44,7 @@ export const QuestionGradeToolbar = ( { value, onChange } ) => {
 							}
 							className="sensei-lms-question-block__grade-toolbar__stepper is-down-button"
 							icon={ chevronDown }
-							help={ __(
+							label={ __(
 								'Decrease question grade',
 								'sensei-lms'
 							) }
