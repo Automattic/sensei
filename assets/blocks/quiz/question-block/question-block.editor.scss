@@ -77,7 +77,9 @@ $block: '.sensei-lms-question-block';
 				list-style: none;
 			}
 		}
+	}
 
+	&__answer--multiple-choice, &__answer--true-false {
 		&__hint {
 			text-transform: uppercase;
 			color: inherit;
@@ -139,6 +141,7 @@ $block: '.sensei-lms-question-block';
 				background: var(--wp-admin-theme-color, #333);
 				color: #fff;
 				align-items: center;
+
 				* {
 					background: none;
 					color: inherit;
@@ -173,6 +176,4 @@ $block: '.sensei-lms-question-block';
 			text-align: right;
 		}
 	}
-
-
 }
