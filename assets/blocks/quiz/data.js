@@ -86,3 +86,23 @@ const findQuestionBlock = ( blocks, { id, title } ) => {
 		( ! attributes.id && attributes.title === title );
 	return blocks.find( compare );
 };
+
+/**
+ * Normalize quiz options attribute coming from REST API.
+ *
+ * @param {Object}  options                       Quiz options.
+ * @param {boolean} options.pass_required         Whether is pass required.
+ * @param {number}  options.quiz_passmark         Percentage quiz passmark.
+ * @param {boolean} options.auto_grade            Whether auto grade.
+ * @param {boolean} options.allow_retakes         Whether allow retakes.
+ * @param {boolean} options.ramdom_question_order Whether random question order.
+ * @param {number}  options.show_questions        Number of questions to show.
+ */
+export const normalizeQuizOptionsAttribute = ( options ) => ( {
+	passRequired: options.pass_required,
+	quizPassmark: options.quiz_passmark,
+	autoGrade: options.auto_grade,
+	allowRetakes: options.allow_retakes,
+	randomQuestionOrder: options.ramdom_question_order,
+	showQuestions: options.show_questions,
+} );
