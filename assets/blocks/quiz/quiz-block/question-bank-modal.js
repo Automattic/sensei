@@ -88,8 +88,8 @@ const QuestionBankModal = ( { isOpen, setOpen } ) => {
 	);
 };
 
-QuestionBankModal.Appender = ( { setOpen } ) => (
-	<div className="sensei-lms-quiz-block__appender">
+QuestionBankModal.Opener = ( { setOpen } ) => (
+	<div className="sensei-lms-quiz-block__opener">
 		<Button
 			type="button"
 			isPrimary

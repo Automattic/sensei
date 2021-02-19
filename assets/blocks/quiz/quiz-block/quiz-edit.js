@@ -43,9 +43,7 @@ const QuizEdit = ( props ) => {
 				}
 				templateInsertUpdatesSelection={ false }
 				renderAppender={ () => (
-					<QuestionBankModal.Appender
-						setOpen={ setQuestionBankOpen }
-					/>
+					<QuestionBankModal.Opener setOpen={ setQuestionBankOpen } />
 				) }
 			/>
 			<div className="sensei-lms-quiz-block__separator" />
