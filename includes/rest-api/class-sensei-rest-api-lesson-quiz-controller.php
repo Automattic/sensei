@@ -215,6 +215,14 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 
 		$question_ids = [];
 		foreach ( $json_params['questions'] as $question ) {
+			if ( isset( $question['id'] ) ) {
+				$question_post = get_post( $question['id'] );
+
+				if ( wp_get_current_user()->ID !== (int) $question_post->post_author ) {
+					continue;
+				}
+			}
+
 			$question_id = $this->save_question( $question );
 
 			if ( is_wp_error( $question_id ) ) {

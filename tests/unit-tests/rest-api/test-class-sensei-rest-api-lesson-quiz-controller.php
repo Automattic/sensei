@@ -703,6 +703,62 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 	}
 
 	/**
+	 * Tests editing multiple choice question properties.
+	 */
+	public function testTeacherCanPostMultipleChoiceQuestion() {
+		$this->login_as_teacher();
+
+		list( $quiz_id )           = $this->create_lesson_with_quiz();
+		$first_teacher_question_id = $this->factory->question->create(
+			[
+				'question_type' => 'multiple-choice',
+				'quiz_id'       => $quiz_id,
+			]
+		);
+
+		$this->login_as_teacher_b();
+		list( $lesson_id ) = $this->create_lesson_with_quiz();
+
+		$body = [
+			'options'   => [],
+			'questions' => [
+				[
+					'title'           => 'Will it blend?',
+					'description'     => 'That is the question.',
+					'grade'           => 30,
+					'type'            => 'multiple-choice',
+					'options'         => [
+						[
+							'label'   => 'Yes.',
+							'correct' => false,
+						],
+						[
+							'label'   => 'Definitely.',
+							'correct' => true,
+						],
+					],
+					'random_order'    => true,
+					'answer_feedback' => 'Don\'t breathe this!',
+				],
+				[
+					'id'    => $first_teacher_question_id,
+					'title' => 'Updated title',
+					'type'  => 'multiple-choice',
+				],
+			],
+		];
+
+		$this->send_post_request( $lesson_id, $body );
+
+		$questions = Sensei()->quiz->get_questions( Sensei()->lesson->lesson_quizzes( $lesson_id ) );
+
+		$this->assertCount( 1, $questions );
+
+		$this->assertEquals( 'Will it blend?', $questions[0]->post_title );
+		$this->assertEquals( 'That is the question.', $questions[0]->post_content );
+	}
+
+	/**
 	 * Helper method to send and validate a GET request.
 	 *
 	 * @param int $lesson_id The lesson id.
