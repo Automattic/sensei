@@ -47,10 +47,6 @@ const QuizSettings = ( { attributes: { options = {} }, setAttributes } ) => {
 						checked={ passRequired }
 						onChange={ createChangeHandler( 'passRequired' ) }
 						label={ __( 'Pass Required', 'sensei-lms' ) }
-						help={ __(
-							'Require passing the quiz to complete lesson.',
-							'sensei-lms'
-						) }
 					/>
 				</PanelRow>
 				{ passRequired && (
@@ -71,7 +67,7 @@ const QuizSettings = ( { attributes: { options = {} }, setAttributes } ) => {
 						onChange={ createChangeHandler( 'autoGrade' ) }
 						label={ __( 'Auto Grade', 'sensei-lms' ) }
 						help={ __(
-							'Grades quiz and displays answer explanation immediately after completion. Only applicable if quiz is limited to Multiple Choice, True/False and Gap Fill questions. Questions that have a grade of zero are skipped during autograding.',
+							'Automatically grade Multiple Choice, True/False and Gap Fill questions that have a non-zero point value.',
 							'sensei-lms'
 						) }
 					/>
