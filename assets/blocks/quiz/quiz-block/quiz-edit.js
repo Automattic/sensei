@@ -11,6 +11,7 @@ import { useAutoInserter } from '../../../shared/blocks/use-auto-inserter';
 import questionBlock from '../question-block';
 import { useQuizStructure } from '../quiz-store';
 import QuizSettings from './quiz-settings';
+import ToggleLegacyQuizMetaboxesWrapper from '../../toggle-legacy-quiz-metaboxes-wrapper';
 
 /**
  * Quiz block editor.
@@ -27,7 +28,7 @@ const QuizEdit = ( props ) => {
 
 	const { isPostTemplate } = props.attributes;
 
-	return (
+	const content = (
 		<>
 			<div className="sensei-lms-quiz-block__separator">
 				<span>{ __( 'Lesson Quiz', 'sensei-lms' ) }</span>
@@ -42,6 +43,12 @@ const QuizEdit = ( props ) => {
 			<div className="sensei-lms-quiz-block__separator" />
 			<QuizSettings { ...props } />
 		</>
+	);
+
+	return (
+		<ToggleLegacyQuizMetaboxesWrapper { ...props }>
+			{ content }
+		</ToggleLegacyQuizMetaboxesWrapper>
 	);
 };
 

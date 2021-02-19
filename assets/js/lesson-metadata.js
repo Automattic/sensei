@@ -2,6 +2,7 @@
  * WordPress dependencies
  */
 import { escapeHTML } from '@wordpress/escape-html';
+import { dispatch, select } from '@wordpress/data';
 
 jQuery( document ).ready( function () {
 	var file_frame;
@@ -9,6 +10,36 @@ jQuery( document ).ready( function () {
 	/***************************************************************************************************
 	 * 	1 - Helper Functions.
 	 ***************************************************************************************************/
+
+	const blockEditorSelector = select( 'core/block-editor' );
+	const editPostSelector = select( 'core/edit-post' );
+	const editPostDispatcher = dispatch( 'core/edit-post' );
+	const LESSON_QUIZ_NAME = 'sensei-lms/quiz';
+
+	/**
+	 * Toggle meta boxes depending on the blocks.
+	 */
+	window.sensei_toggle_legacy_quiz_metaboxes = () => {
+		if ( ! blockEditorSelector ) {
+			return;
+		}
+
+		const quizBlockCount = blockEditorSelector.getGlobalBlockCount(
+			LESSON_QUIZ_NAME
+		);
+
+		const legacyMetaboxes = [
+			{ name: 'meta-box-lesson-quiz', deps: quizBlockCount },
+			{ name: 'meta-box-lesson-quiz-settings', deps: quizBlockCount },
+		];
+
+		legacyMetaboxes.forEach( ( { name, deps } ) => {
+			const enable = deps === 0;
+			if ( enable !== editPostSelector.isEditorPanelEnabled( name ) ) {
+				editPostDispatcher.toggleEditorPanelEnabled( name );
+			}
+		} );
+	};
 
 	/**
 	 * exists checks if selector exists
