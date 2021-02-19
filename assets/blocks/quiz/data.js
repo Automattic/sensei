@@ -1,4 +1,11 @@
+/**
+ * WordPress dependencies
+ */
 import { createBlock, getBlockContent, rawHandler } from '@wordpress/blocks';
+
+/**
+ * Internal dependencies
+ */
 import { createQuestionBlockAttributes } from './question-block/question-block-attributes';
 import questionBlock from './question-block';
 
