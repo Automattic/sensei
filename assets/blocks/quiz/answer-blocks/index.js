@@ -34,7 +34,7 @@ const questionTypes = {
 		edit: MultipleChoiceAnswer,
 	},
 	boolean: {
-		title: __( 'True / False', 'sensei-lms' ),
+		title: __( 'True/False', 'sensei-lms' ),
 		description: __(
 			'Select whether a statement is true or false.',
 			'sensei-lms'
@@ -47,7 +47,7 @@ const questionTypes = {
 		edit: GapFillAnswer,
 	},
 	'single-line': {
-		title: __( 'Single-line', 'sensei-lms' ),
+		title: __( 'Single Line', 'sensei-lms' ),
 		description: __(
 			'Short answer to an open-ended question.',
 			'sensei-lms'
@@ -55,7 +55,7 @@ const questionTypes = {
 		edit: SingleLineAnswer,
 	},
 	'multi-line': {
-		title: __( 'Multi-line', 'sensei-lms' ),
+		title: __( 'Multi Line', 'sensei-lms' ),
 		description: __(
 			'Long answer to an open-ended question.',
 			'sensei-lms'
