@@ -17,6 +17,12 @@ import { QuestionGradeToolbar } from './question-grade-toolbar';
 import QuestionSettings from './question-settings';
 import { QuestionTypeToolbar } from './question-type-toolbar';
 
+/**
+ * Format the question grade as `X points`.
+ *
+ * @param {number} grade Question grade.
+ * @return {string} Grade text.
+ */
 const formatGradeLabel = ( grade ) =>
 	// Translators: placeholder is the grade for the questions.
 	sprintf( _n( '%d point', '%d points', grade, 'sensei-lms' ), grade );
