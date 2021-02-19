@@ -11,6 +11,9 @@ $block: '.sensei-lms-question-block';
 		margin-bottom: 0;
 		line-height: 1.25;
 	}
+	.editor-styles-wrapper .wp-block &__title {
+		margin-right: 56px;
+	}
 
 	&__index {
 		position: absolute;
@@ -32,6 +35,7 @@ $block: '.sensei-lms-question-block';
 		position: absolute;
 		right: 0;
 		top: 0;
+		line-height: 32px;
 		font-size: 12px;
 		opacity: .9;
 	}
