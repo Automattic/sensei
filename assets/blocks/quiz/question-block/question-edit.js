@@ -13,6 +13,7 @@ import { useBlockIndex } from '../../../shared/blocks/block-index';
 import SingleLineInput from '../../../shared/blocks/single-line-input';
 import { useHasSelected } from '../../../shared/helpers/blocks';
 import types from '../answer-blocks';
+import { SharedQuestionNotice } from './question-block-helpers';
 import { QuestionGradeToolbar } from './question-grade-toolbar';
 import QuestionSettings from './question-settings';
 import { QuestionTypeToolbar } from './question-type-toolbar';
@@ -37,7 +38,7 @@ const formatGradeLabel = ( grade ) =>
  */
 const QuestionEdit = ( props ) => {
 	const {
-		attributes: { title, type, answer = {}, options },
+		attributes: { title, type, answer = {}, options, shared },
 		setAttributes,
 		clientId,
 	} = props;
@@ -78,6 +79,7 @@ const QuestionEdit = ( props ) => {
 			<div className="sensei-lms-question-block__grade">
 				{ formatGradeLabel( options.grade ) }
 			</div>
+			{ hasSelected && shared && <SharedQuestionNotice /> }
 			{ showContent && (
 				<>
 					<InnerBlocks
