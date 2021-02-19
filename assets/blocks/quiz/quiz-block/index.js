@@ -19,7 +19,7 @@ const quizBlock = {
 	title: __( 'Quiz', 'sensei-lms' ),
 	icon,
 	description: __(
-		'A collection of questions students need to answer.',
+		'Evaluate progress and strengthen understanding of course concepts.',
 		'sensei-lms'
 	),
 	keywords: [

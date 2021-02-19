@@ -18,10 +18,7 @@ export default {
 	...metadata,
 	title: __( 'Question', 'sensei-lms' ),
 	icon,
-	description: __(
-		'Question for the student with various answer options.',
-		'sensei-lms'
-	),
+	description: __( 'The building block of all quizzes.', 'sensei-lms' ),
 	example: {
 		attributes: { title: __( 'Example Quiz Question', 'sensei-lms' ) },
 	},
