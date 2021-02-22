@@ -16,7 +16,7 @@ import { __ } from '@wordpress/i18n';
  */
 import InputControl from '../../editor-components/input-control';
 
-const QuestionBankModal = ( { setOpen } ) => {
+const QuestionsModal = ( { setOpen } ) => {
 	const questions = useSelect( ( select ) =>
 		select( 'core' ).getEntityRecords( 'postType', 'question', {
 			per_page: 100,
@@ -131,7 +131,7 @@ const QuestionBankModal = ( { setOpen } ) => {
 	);
 };
 
-QuestionBankModal.Opener = ( { setOpen } ) => (
+QuestionsModal.Opener = ( { setOpen } ) => (
 	<div className="sensei-lms-quiz-block__questions-modal-opener">
 		<Button
 			isPrimary
@@ -140,9 +140,9 @@ QuestionBankModal.Opener = ( { setOpen } ) => (
 				setOpen( ( open ) => ! open );
 			} }
 		>
-			{ __( 'Add questions from the bank', 'sensei-lms' ) }
+			{ __( 'Add existing questions', 'sensei-lms' ) }
 		</Button>
 	</div>
 );
 
-export default QuestionBankModal;
+export default QuestionsModal;

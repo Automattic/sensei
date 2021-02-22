@@ -12,7 +12,7 @@ import { useAutoInserter } from '../../../shared/blocks/use-auto-inserter';
 import questionBlock from '../question-block';
 import { useQuizStructure } from '../quiz-store';
 import QuizSettings from './quiz-settings';
-import QuestionBankModal from './question-bank-modal';
+import QuestionsModal from './questions-modal';
 
 /**
  * Quiz block editor.
@@ -27,7 +27,7 @@ const QuizEdit = ( props ) => {
 		props
 	);
 
-	const [ isQuestionBankOpen, setQuestionBankOpen ] = useState( false );
+	const [ isQuestionsModalOpen, setQuestionsModalOpen ] = useState( false );
 
 	const { isPostTemplate } = props.attributes;
 
@@ -43,13 +43,13 @@ const QuizEdit = ( props ) => {
 				}
 				templateInsertUpdatesSelection={ false }
 				renderAppender={ () => (
-					<QuestionBankModal.Opener setOpen={ setQuestionBankOpen } />
+					<QuestionsModal.Opener setOpen={ setQuestionsModalOpen } />
 				) }
 			/>
 			<div className="sensei-lms-quiz-block__separator" />
 
-			{ isQuestionBankOpen && (
-				<QuestionBankModal setOpen={ setQuestionBankOpen } />
+			{ isQuestionsModalOpen && (
+				<QuestionsModal setOpen={ setQuestionsModalOpen } />
 			) }
 
 			<QuizSettings { ...props } />
