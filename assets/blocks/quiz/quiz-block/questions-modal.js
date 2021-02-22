@@ -22,9 +22,6 @@ import { __ } from '@wordpress/i18n';
 import InputControl from '../../editor-components/input-control';
 import questionTypesConfig from '../answer-blocks';
 
-const getQuestionTypeLabelById = ( id, questionTypesById ) =>
-	questionTypesConfig[ questionTypesById[ id ]?.slug ]?.title;
-
 const getQuestionTypeLabelBySlug = ( slug ) =>
 	questionTypesConfig[ slug ]?.title;
 
@@ -51,7 +48,6 @@ const QuestionsModal = ( { setOpen } ) => {
 		}
 	);
 
-	const questionTypesById = keyBy( questionTypes, 'id' );
 	const questionCategoriesById = keyBy( questionCategories, 'id' );
 
 	return (
@@ -153,11 +149,8 @@ const QuestionsModal = ( { setOpen } ) => {
 											</label>
 										</td>
 										<td>
-											{ getQuestionTypeLabelById(
-												question[
-													'question-type'
-												][ 0 ],
-												questionTypesById
+											{ getQuestionTypeLabelBySlug(
+												question[ 'question-type-slug' ]
 											) }
 										</td>
 										<td>
