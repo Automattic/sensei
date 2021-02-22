@@ -37,10 +37,6 @@ const QuestionSettings = ( {
 					/>
 				) ) }
 			</PanelBody>
-			<PanelBody
-				title={ __( 'Question Categories', 'sensei-lms' ) }
-				initialOpen={ false }
-			></PanelBody>
 		</InspectorControls>
 	);
 };
