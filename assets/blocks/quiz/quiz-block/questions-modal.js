@@ -15,12 +15,28 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import InputControl from '../../editor-components/input-control';
+import questionTypesConfig from '../answer-blocks';
 
 const QuestionsModal = ( { setOpen } ) => {
-	const questions = useSelect( ( select ) =>
-		select( 'core' ).getEntityRecords( 'postType', 'question', {
-			per_page: 100,
-		} )
+	const { questions, questionTypes, questionCategories } = useSelect(
+		( select ) => {
+			const { getEntityRecords } = select( 'core' );
+			return {
+				questions: getEntityRecords( 'postType', 'question', {
+					per_page: 100,
+				} ),
+				questionTypes: getEntityRecords( 'taxonomy', 'question-type', {
+					per_page: 100,
+				} ),
+				questionCategories: getEntityRecords(
+					'taxonomy',
+					'question-category',
+					{
+						per_page: 100,
+					}
+				),
+			};
+		}
 	);
 
 	return (
@@ -31,39 +47,53 @@ const QuestionsModal = ( { setOpen } ) => {
 				setOpen( false );
 			} }
 		>
-			<ul className="sensei-lms-quiz-block__questions-modal__filters">
-				<li>
-					<SelectControl
-						options={ [
-							{ value: '', label: 'Type', disabled: true },
-							{ value: 'T1', label: 'Type 1' },
-							{ value: 'T2', label: 'Type 2' },
-						] }
-						value=""
-						onChange={ () => {} }
-					/>
-				</li>
-				<li>
-					<SelectControl
-						options={ [
-							{ value: '', label: 'Category', disabled: true },
-							{ value: 'C1', label: 'Category 1' },
-							{ value: 'C2', label: 'Category 2' },
-						] }
-						value=""
-						onChange={ () => {} }
-					/>
-				</li>
-				<li>
-					<InputControl
-						className="sensei-lms-quiz-block__questions-modal__search-input"
-						placeholder="Search questions"
-						value=""
-						iconRight={ search }
-						onChange={ () => {} }
-					/>
-				</li>
-			</ul>
+			{ questionTypes && questionCategories && (
+				<ul className="sensei-lms-quiz-block__questions-modal__filters">
+					<li>
+						<SelectControl
+							options={ [
+								{ value: '', label: 'Type', disabled: true },
+								...questionTypes.map( ( questionType ) => ( {
+									value: questionType.id,
+									label:
+										questionTypesConfig[ questionType.slug ]
+											.title,
+								} ) ),
+							] }
+							value=""
+							onChange={ () => {} }
+						/>
+					</li>
+					<li>
+						<SelectControl
+							options={ [
+								{
+									value: '',
+									label: 'Category',
+									disabled: true,
+								},
+								...questionCategories.map(
+									( questionCategory ) => ( {
+										value: questionCategory.id,
+										label: questionCategory.name,
+									} )
+								),
+							] }
+							value=""
+							onChange={ () => {} }
+						/>
+					</li>
+					<li>
+						<InputControl
+							className="sensei-lms-quiz-block__questions-modal__search-input"
+							placeholder="Search questions"
+							value=""
+							iconRight={ search }
+							onChange={ () => {} }
+						/>
+					</li>
+				</ul>
+			) }
 
 			<div className="sensei-lms-quiz-block__questions-modal__questions">
 				{ questions && (
