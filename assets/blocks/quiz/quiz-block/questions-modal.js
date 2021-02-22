@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { keyBy } from 'lodash';
+
+/**
  * WordPress dependencies
  */
 import { useSelect } from '@wordpress/data';
@@ -17,27 +22,37 @@ import { __ } from '@wordpress/i18n';
 import InputControl from '../../editor-components/input-control';
 import questionTypesConfig from '../answer-blocks';
 
+const getQuestionTypeLabelById = ( id, questionTypesById ) =>
+	questionTypesConfig[ questionTypesById[ id ]?.slug ]?.title;
+
+const getQuestionTypeLabelBySlug = ( slug ) =>
+	questionTypesConfig[ slug ]?.title;
+
 const QuestionsModal = ( { setOpen } ) => {
 	const { questions, questionTypes, questionCategories } = useSelect(
 		( select ) => {
 			const { getEntityRecords } = select( 'core' );
+
 			return {
 				questions: getEntityRecords( 'postType', 'question', {
 					per_page: 100,
 				} ),
 				questionTypes: getEntityRecords( 'taxonomy', 'question-type', {
-					per_page: 100,
+					per_page: -1,
 				} ),
 				questionCategories: getEntityRecords(
 					'taxonomy',
 					'question-category',
 					{
-						per_page: 100,
+						per_page: -1,
 					}
 				),
 			};
 		}
 	);
+
+	const questionTypesById = keyBy( questionTypes, 'id' );
+	const questionCategoriesById = keyBy( questionCategories, 'id' );
 
 	return (
 		<Modal
@@ -47,116 +62,132 @@ const QuestionsModal = ( { setOpen } ) => {
 				setOpen( false );
 			} }
 		>
-			{ questionTypes && questionCategories && (
-				<ul className="sensei-lms-quiz-block__questions-modal__filters">
-					<li>
-						<SelectControl
-							options={ [
-								{ value: '', label: 'Type', disabled: true },
-								...questionTypes.map( ( questionType ) => ( {
-									value: questionType.id,
-									label:
-										questionTypesConfig[ questionType.slug ]
-											.title,
-								} ) ),
-							] }
-							value=""
-							onChange={ () => {} }
-						/>
-					</li>
-					<li>
-						<SelectControl
-							options={ [
-								{
-									value: '',
-									label: 'Category',
-									disabled: true,
-								},
-								...questionCategories.map(
-									( questionCategory ) => ( {
-										value: questionCategory.id,
-										label: questionCategory.name,
-									} )
-								),
-							] }
-							value=""
-							onChange={ () => {} }
-						/>
-					</li>
-					<li>
-						<InputControl
-							className="sensei-lms-quiz-block__questions-modal__search-input"
-							placeholder="Search questions"
-							value=""
-							iconRight={ search }
-							onChange={ () => {} }
-						/>
-					</li>
-				</ul>
-			) }
+			{ questions && questionTypes && questionCategories && (
+				<>
+					<ul className="sensei-lms-quiz-block__questions-modal__filters">
+						<li>
+							<SelectControl
+								options={ [
+									{
+										value: '',
+										label: 'Type',
+										disabled: true,
+									},
+									...questionTypes.map(
+										( questionType ) => ( {
+											value: questionType.id,
+											label: getQuestionTypeLabelBySlug(
+												questionType.slug
+											),
+										} )
+									),
+								] }
+								value=""
+								onChange={ () => {} }
+							/>
+						</li>
+						<li>
+							<SelectControl
+								options={ [
+									{
+										value: '',
+										label: 'Category',
+										disabled: true,
+									},
+									...questionCategories.map(
+										( questionCategory ) => ( {
+											value: questionCategory.id,
+											label: questionCategory.name,
+										} )
+									),
+								] }
+								value=""
+								onChange={ () => {} }
+							/>
+						</li>
+						<li>
+							<InputControl
+								className="sensei-lms-quiz-block__questions-modal__search-input"
+								placeholder="Search questions"
+								value=""
+								iconRight={ search }
+								onChange={ () => {} }
+							/>
+						</li>
+					</ul>
 
-			<div className="sensei-lms-quiz-block__questions-modal__questions">
-				{ questions && (
-					<table className="sensei-lms-quiz-block__questions-modal__table">
-						<thead>
-							<tr>
-								<th>
-									<CheckboxControl
-										title={ __(
-											'Toggle all visible questions selection.',
-											'sensei-lms'
-										) }
-										checked={ false }
-										onChange={ () => {} }
-									/>
-								</th>
-								<th>{ __( 'Question', 'sensei-lms' ) }</th>
-								<th>{ __( 'Type', 'sensei-lms' ) }</th>
-								<th>{ __( 'Category', 'sensei-lms' ) }</th>
-							</tr>
-						</thead>
-						<tbody>
-							{ questions.map( ( question ) => (
-								<tr key={ question.id }>
-									<td className="sensei-lms-quiz-block__questions-modal__question-checkbox">
+					<div className="sensei-lms-quiz-block__questions-modal__questions">
+						<table className="sensei-lms-quiz-block__questions-modal__table">
+							<thead>
+								<tr>
+									<th>
 										<CheckboxControl
-											id={ `question-${ question.id }` }
+											title={ __(
+												'Toggle all visible questions selection.',
+												'sensei-lms'
+											) }
 											checked={ false }
 											onChange={ () => {} }
 										/>
-									</td>
-									<td className="sensei-lms-quiz-block__questions-modal__question-title">
-										<label
-											htmlFor={ `question-${ question.id }` }
-										>
-											{ question.title.rendered }
-										</label>
-									</td>
-									<td>
-										{ question[ 'question-type' ][ 0 ] }
-									</td>
-									<td>
-										{ question[ 'question-category' ].join(
-											', '
-										) }
-									</td>
+									</th>
+									<th>{ __( 'Question', 'sensei-lms' ) }</th>
+									<th>{ __( 'Type', 'sensei-lms' ) }</th>
+									<th>{ __( 'Category', 'sensei-lms' ) }</th>
 								</tr>
-							) ) }
-						</tbody>
-					</table>
-				) }
-			</div>
+							</thead>
+							<tbody>
+								{ questions.map( ( question ) => (
+									<tr key={ question.id }>
+										<td className="sensei-lms-quiz-block__questions-modal__question-checkbox">
+											<CheckboxControl
+												id={ `question-${ question.id }` }
+												checked={ false }
+												onChange={ () => {} }
+											/>
+										</td>
+										<td className="sensei-lms-quiz-block__questions-modal__question-title">
+											<label
+												htmlFor={ `question-${ question.id }` }
+											>
+												{ question.title.rendered }
+											</label>
+										</td>
+										<td>
+											{ getQuestionTypeLabelById(
+												question[
+													'question-type'
+												][ 0 ],
+												questionTypesById
+											) }
+										</td>
+										<td>
+											{ question[ 'question-category' ]
+												.map(
+													( questionCategoryId ) =>
+														questionCategoriesById[
+															questionCategoryId
+														]?.name
+												)
+												.join( ', ' ) }
+										</td>
+									</tr>
+								) ) }
+							</tbody>
+						</table>
+					</div>
 
-			<ul className="sensei-lms-quiz-block__questions-modal__actions">
-				<li>
-					<Button isTertiary>
-						{ __( 'Clear Selected', 'sensei-lms' ) }
-					</Button>
-				</li>
-				<li>
-					<Button isPrimary>Add Selected</Button>
-				</li>
-			</ul>
+					<ul className="sensei-lms-quiz-block__questions-modal__actions">
+						<li>
+							<Button isTertiary>
+								{ __( 'Clear Selected', 'sensei-lms' ) }
+							</Button>
+						</li>
+						<li>
+							<Button isPrimary>Add Selected</Button>
+						</li>
+					</ul>
+				</>
+			) }
 		</Modal>
 	);
 };
