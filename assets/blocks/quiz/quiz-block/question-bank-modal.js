@@ -83,6 +83,9 @@ const QuestionBankModal = ( { isOpen, setOpen } ) => {
 				</tbody>
 			</table>
 
+			<Button isTertiary>
+				{ __( 'Clear selection', 'sensei-lms' ) }
+			</Button>
 			<Button isPrimary>Add Selected</Button>
 		</Modal>
 	);
@@ -91,7 +94,6 @@ const QuestionBankModal = ( { isOpen, setOpen } ) => {
 QuestionBankModal.Opener = ( { setOpen } ) => (
 	<div className="sensei-lms-quiz-block__opener">
 		<Button
-			type="button"
 			isPrimary
 			isSmall
 			onClick={ () => {
