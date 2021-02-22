@@ -171,8 +171,12 @@ class Sensei_PostTypes {
 	 *
 	 * @return bool
 	 */
-	public function lesson_is_protected( $is_password_protected, WP_Post $post ) {
-		if ( 'lesson' === $post->post_type && ! sensei_can_user_view_lesson( $post->ID, get_current_user_id() ) ) {
+	public function lesson_is_protected( $is_password_protected, $post ) {
+		if (
+			$post instanceof WP_Post
+			&& 'lesson' === $post->post_type
+			&& ! sensei_can_user_view_lesson( $post->ID, get_current_user_id() )
+		) {
 			return true;
 		}
 
