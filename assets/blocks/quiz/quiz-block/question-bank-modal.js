@@ -1,6 +1,7 @@
 /**
  * WordPress dependencies
  */
+import { useSelect } from '@wordpress/data';
 import {
 	Button,
 	CheckboxControl,
@@ -15,10 +16,12 @@ import { __ } from '@wordpress/i18n';
  */
 import InputControl from '../../editor-components/input-control';
 
-const QuestionBankModal = ( { isOpen, setOpen } ) => {
-	if ( ! isOpen ) {
-		return null;
-	}
+const QuestionBankModal = ( { setOpen } ) => {
+	const questions = useSelect( ( select ) =>
+		select( 'core' ).getEntityRecords( 'postType', 'question', {
+			per_page: 100,
+		} )
+	);
 
 	return (
 		<Modal
@@ -62,46 +65,53 @@ const QuestionBankModal = ( { isOpen, setOpen } ) => {
 				</li>
 			</ul>
 
-			<table className="sensei-lms-quiz-block__questions-modal__table">
-				<thead>
-					<tr>
-						<th>
-							<CheckboxControl
-								title={ __(
-									'Toggle all visible questions selection.',
-									'sensei-lms'
-								) }
-								checked={ false }
-								onChange={ () => {} }
-							/>
-						</th>
-						<th>{ __( 'Question', 'sensei-lms' ) }</th>
-						<th>{ __( 'Type', 'sensei-lms' ) }</th>
-						<th>{ __( 'Category', 'sensei-lms' ) }</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td className="sensei-lms-quiz-block__questions-modal__question-checkbox">
-							<CheckboxControl
-								id="question-1"
-								checked={ false }
-								onChange={ () => {} }
-							/>
-						</td>
-						<td className="sensei-lms-quiz-block__questions-modal__question-title">
-							<label htmlFor="question-1">
-								{ __(
-									'How do you add a course?',
-									'sensei-lms'
-								) }
-							</label>
-						</td>
-						<td>{ __( 'Multiple choice', 'sensei-lms' ) }</td>
-						<td>{ __( 'Sensei LMS', 'sensei-lms' ) }</td>
-					</tr>
-				</tbody>
-			</table>
+			{ questions && (
+				<table className="sensei-lms-quiz-block__questions-modal__table">
+					<thead>
+						<tr>
+							<th>
+								<CheckboxControl
+									title={ __(
+										'Toggle all visible questions selection.',
+										'sensei-lms'
+									) }
+									checked={ false }
+									onChange={ () => {} }
+								/>
+							</th>
+							<th>{ __( 'Question', 'sensei-lms' ) }</th>
+							<th>{ __( 'Type', 'sensei-lms' ) }</th>
+							<th>{ __( 'Category', 'sensei-lms' ) }</th>
+						</tr>
+					</thead>
+					<tbody>
+						{ questions.map( ( question ) => (
+							<tr key={ question.id }>
+								<td className="sensei-lms-quiz-block__questions-modal__question-checkbox">
+									<CheckboxControl
+										id={ `question-${ question.id }` }
+										checked={ false }
+										onChange={ () => {} }
+									/>
+								</td>
+								<td className="sensei-lms-quiz-block__questions-modal__question-title">
+									<label
+										htmlFor={ `question-${ question.id }` }
+									>
+										{ question.title.rendered }
+									</label>
+								</td>
+								<td>{ question[ 'question-type' ][ 0 ] }</td>
+								<td>
+									{ question[ 'question-category' ].join(
+										', '
+									) }
+								</td>
+							</tr>
+						) ) }
+					</tbody>
+				</table>
+			) }
 
 			<ul className="sensei-lms-quiz-block__questions-modal__actions">
 				<li>

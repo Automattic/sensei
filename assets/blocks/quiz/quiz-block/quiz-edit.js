@@ -48,10 +48,9 @@ const QuizEdit = ( props ) => {
 			/>
 			<div className="sensei-lms-quiz-block__separator" />
 
-			<QuestionBankModal
-				isOpen={ isQuestionBankOpen }
-				setOpen={ setQuestionBankOpen }
-			/>
+			{ isQuestionBankOpen && (
+				<QuestionBankModal setOpen={ setQuestionBankOpen } />
+			) }
 
 			<QuizSettings { ...props } />
 		</>
