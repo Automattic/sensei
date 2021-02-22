@@ -65,53 +65,57 @@ const QuestionBankModal = ( { setOpen } ) => {
 				</li>
 			</ul>
 
-			{ questions && (
-				<table className="sensei-lms-quiz-block__questions-modal__table">
-					<thead>
-						<tr>
-							<th>
-								<CheckboxControl
-									title={ __(
-										'Toggle all visible questions selection.',
-										'sensei-lms'
-									) }
-									checked={ false }
-									onChange={ () => {} }
-								/>
-							</th>
-							<th>{ __( 'Question', 'sensei-lms' ) }</th>
-							<th>{ __( 'Type', 'sensei-lms' ) }</th>
-							<th>{ __( 'Category', 'sensei-lms' ) }</th>
-						</tr>
-					</thead>
-					<tbody>
-						{ questions.map( ( question ) => (
-							<tr key={ question.id }>
-								<td className="sensei-lms-quiz-block__questions-modal__question-checkbox">
+			<div className="sensei-lms-quiz-block__questions-modal__questions">
+				{ questions && (
+					<table className="sensei-lms-quiz-block__questions-modal__table">
+						<thead>
+							<tr>
+								<th>
 									<CheckboxControl
-										id={ `question-${ question.id }` }
+										title={ __(
+											'Toggle all visible questions selection.',
+											'sensei-lms'
+										) }
 										checked={ false }
 										onChange={ () => {} }
 									/>
-								</td>
-								<td className="sensei-lms-quiz-block__questions-modal__question-title">
-									<label
-										htmlFor={ `question-${ question.id }` }
-									>
-										{ question.title.rendered }
-									</label>
-								</td>
-								<td>{ question[ 'question-type' ][ 0 ] }</td>
-								<td>
-									{ question[ 'question-category' ].join(
-										', '
-									) }
-								</td>
+								</th>
+								<th>{ __( 'Question', 'sensei-lms' ) }</th>
+								<th>{ __( 'Type', 'sensei-lms' ) }</th>
+								<th>{ __( 'Category', 'sensei-lms' ) }</th>
 							</tr>
-						) ) }
-					</tbody>
-				</table>
-			) }
+						</thead>
+						<tbody>
+							{ questions.map( ( question ) => (
+								<tr key={ question.id }>
+									<td className="sensei-lms-quiz-block__questions-modal__question-checkbox">
+										<CheckboxControl
+											id={ `question-${ question.id }` }
+											checked={ false }
+											onChange={ () => {} }
+										/>
+									</td>
+									<td className="sensei-lms-quiz-block__questions-modal__question-title">
+										<label
+											htmlFor={ `question-${ question.id }` }
+										>
+											{ question.title.rendered }
+										</label>
+									</td>
+									<td>
+										{ question[ 'question-type' ][ 0 ] }
+									</td>
+									<td>
+										{ question[ 'question-category' ].join(
+											', '
+										) }
+									</td>
+								</tr>
+							) ) }
+						</tbody>
+					</table>
+				) }
+			</div>
 
 			<ul className="sensei-lms-quiz-block__questions-modal__actions">
 				<li>
