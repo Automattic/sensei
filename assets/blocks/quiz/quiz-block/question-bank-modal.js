@@ -22,7 +22,7 @@ const QuestionBankModal = ( { isOpen, setOpen } ) => {
 
 	return (
 		<Modal
-			title={ __( 'Questions bank', 'sensei-lms' ) }
+			title={ __( 'Questions Bank', 'sensei-lms' ) }
 			onRequestClose={ () => {
 				setOpen( false );
 			} }
