@@ -21,11 +21,4 @@ jQuery( document ).ready( function () {
 	if ( moduleOptionElements.length > 0 ) {
 		moduleOptionElements.select2( { width: 'resolve' } );
 	}
-
-	// Sensei Settings Panel.
-	jQuery( 'div.woothemes-sensei-settings form select' ).each( function () {
-		if ( ! jQuery( this ).hasClass( 'range-input' ) ) {
-			jQuery( this ).select2( { width: 'resolve' } );
-		}
-	} );
 } );
