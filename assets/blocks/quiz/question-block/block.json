@@ -20,7 +20,10 @@
       "type": "object"
     },
     "options": {
-      "type": "object"
+      "type": "object",
+      "default": {
+        "grade": 1
+      }
     }
   }
 }

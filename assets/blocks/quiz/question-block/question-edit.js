@@ -2,19 +2,30 @@
  * WordPress dependencies
  */
 import { BlockControls, InnerBlocks } from '@wordpress/block-editor';
-import { useDispatch, select } from '@wordpress/data';
+import { select, useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
 import { useBlockIndex } from '../../../shared/blocks/block-index';
-import { useHasSelected } from '../../../shared/helpers/blocks';
 import SingleLineInput from '../../../shared/blocks/single-line-input';
+import { useHasSelected } from '../../../shared/helpers/blocks';
 import types from '../answer-blocks';
+import { QuestionGradeToolbar } from './question-grade-toolbar';
 import QuestionSettings from './question-settings';
 import { QuestionTypeToolbar } from './question-type-toolbar';
+
+/**
+ * Format the question grade as `X points`.
+ *
+ * @param {number} grade Question grade.
+ * @return {string} Grade text.
+ */
+const formatGradeLabel = ( grade ) =>
+	// Translators: placeholder is the grade for the questions.
+	sprintf( _n( '%d point', '%d points', grade, 'sensei-lms' ), grade );
 
 /**
  * Quiz question block editor.
@@ -26,7 +37,7 @@ import { QuestionTypeToolbar } from './question-type-toolbar';
  */
 const QuestionEdit = ( props ) => {
 	const {
-		attributes: { title, type, answer = {} },
+		attributes: { title, type, answer = {}, options },
 		setAttributes,
 		clientId,
 	} = props;
@@ -64,6 +75,9 @@ const QuestionEdit = ( props ) => {
 					onRemove={ () => removeBlock( clientId ) }
 				/>
 			</h2>
+			<div className="sensei-lms-question-block__grade">
+				{ formatGradeLabel( options.grade ) }
+			</div>
 			{ showContent && (
 				<>
 					<InnerBlocks
@@ -99,6 +113,14 @@ const QuestionEdit = ( props ) => {
 						value={ type }
 						onSelect={ ( nextValue ) =>
 							setAttributes( { type: nextValue } )
+						}
+					/>
+					<QuestionGradeToolbar
+						value={ options.grade }
+						onChange={ ( nextGrade ) =>
+							setAttributes( {
+								options: { ...options, grade: nextGrade },
+							} )
 						}
 					/>
 				</>

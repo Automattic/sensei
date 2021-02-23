@@ -1,16 +1,18 @@
 $block: '.sensei-lms-question-block';
 
 @import '../answer-blocks/option-toggle';
+@import './question-grade-toolbar';
 
 .sensei-lms-question-block {
-
-	$answer-box-color: currentColor;
-
+	
 	.editor-styles-wrapper .wp-block &__title, .editor-styles-wrapper .wp-block &__index {
 		font-size: 24px;
 		margin-top: 0;
 		margin-bottom: 0;
 		line-height: 1.25;
+	}
+	.editor-styles-wrapper .wp-block &__title {
+		margin-right: 56px;
 	}
 
 	&__index {
@@ -29,6 +31,15 @@ $block: '.sensei-lms-question-block';
 		}
 	}
 
+	&__grade {
+		position: absolute;
+		right: 0;
+		top: 0;
+		line-height: 32px;
+		font-size: 12px;
+		opacity: .9;
+	}
+
 	&__type-selector {
 
 		&__popover .sensei-toolbar-dropdown__option {
@@ -43,7 +54,7 @@ $block: '.sensei-lms-question-block';
 	}
 
 	&__text-input-placeholder, &__file-input-placeholder {
-		border: 2px solid $answer-box-color;
+		border: 2px solid currentColor;
 		border-radius: 2px;
 		padding: 5px;
 		min-height: 52px;
@@ -86,11 +97,15 @@ $block: '.sensei-lms-question-block';
 			opacity: 0.6;
 			font-size: 14px;
 			font-family: sans-serif;
-			margin-right: 2px;
-			margin-left: 12px;
-			padding: 4px;
 			height: auto;
 			line-height: inherit;
+
+			.edit-post-visual-editor & {
+				margin-right: 0;
+				margin-left: 12px;
+				padding: 4px;
+				padding-right: 0;
+			}
 		}
 	}
 
