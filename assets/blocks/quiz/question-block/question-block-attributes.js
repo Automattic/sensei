@@ -60,3 +60,64 @@ const getTypeAttributes = {
 		},
 	} ),
 };
+
+/**
+ * Generate the REST API arguments from block attributes.
+ *
+ * @param {Object} attributes Block attributes.
+ *
+ * @return {Object} REST API parameters.
+ */
+export const getApiArgsFromAttributes = ( attributes ) => {
+	const commonArgs = {
+		id: attributes?.id,
+		title: attributes?.title,
+		type: attributes.type,
+		grade: attributes.options?.grade,
+	};
+
+	return {
+		...commonArgs,
+		...getTypeArgs( attributes ),
+	};
+};
+
+/**
+ * Helper method to get type specific REST arguments.
+ *
+ * @param {Object} attributes Block attributes.
+ *
+ * @return {Object} Type specific arguments.
+ */
+const getTypeArgs = ( attributes ) => {
+	switch ( attributes.type ) {
+		case 'multiple-choice':
+			return {
+				answer_feedback: attributes.options?.answerFeedback || null,
+				random_order: attributes.options?.randomOrder,
+				options: attributes.answer?.answers.map(
+					( { title, isRight } ) => ( {
+						label: title,
+						correct: isRight,
+					} )
+				),
+			};
+		case 'boolean':
+			return {
+				answer: attributes.answer?.rightAnswer,
+				answer_feedback: attributes.options?.answerFeedback || null,
+			};
+		case 'gap-fill':
+			return {
+				before: attributes.answer?.textBefore,
+				gap: attributes.answer?.rightAnswers,
+				after: attributes.answer?.textAfter,
+			};
+		case 'single-line':
+			return {};
+		case 'multi-line':
+			return {};
+		case 'file-upload':
+			return {};
+	}
+};

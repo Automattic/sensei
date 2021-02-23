@@ -1,3 +1,6 @@
+/**
+ * WordPress dependencies
+ */
 import { CheckboxControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 

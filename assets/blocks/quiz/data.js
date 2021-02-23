@@ -6,8 +6,15 @@ import { createBlock, getBlockContent, rawHandler } from '@wordpress/blocks';
 /**
  * Internal dependencies
  */
-import { createQuestionBlockAttributes } from './question-block/question-block-attributes';
+import {
+	createQuestionBlockAttributes,
+	getApiArgsFromAttributes,
+} from './question-block/question-block-attributes';
 import questionBlock from './question-block';
+/**
+ * External dependencies
+ */
+import { mapKeys, mapValues, isObject } from 'lodash';
 
 /**
  * Quiz settings and questions data.
@@ -74,7 +81,7 @@ export function parseQuestionBlocks( blocks ) {
 	return blocks
 		?.map( ( block ) => {
 			return {
-				...block.attributes,
+				...getApiArgsFromAttributes( block.attributes ),
 				description: getBlockContent( block ),
 			};
 		} )
@@ -113,21 +120,21 @@ export const findQuestionBlock = ( blocks, { id, title } ) => {
 };
 
 /**
- * Normalize quiz options attribute coming from REST API.
+ * Normalize an object by applying a mapping function to it's keys, including nested ones.
  *
- * @param {Object}  options                       Quiz options.
- * @param {boolean} options.pass_required         Whether is pass required.
- * @param {number}  options.quiz_passmark         Percentage quiz passmark.
- * @param {boolean} options.auto_grade            Whether auto grade.
- * @param {boolean} options.allow_retakes         Whether allow retakes.
- * @param {boolean} options.ramdom_question_order Whether random question order.
- * @param {number}  options.show_questions        Number of questions to show.
+ * @param {Object}   options     Options object to normalize.
+ * @param {Function} mapFunction Function to apply.
  */
-export const normalizeQuizOptionsAttribute = ( options ) => ( {
-	passRequired: options.pass_required,
-	quizPassmark: options.quiz_passmark,
-	autoGrade: options.auto_grade,
-	allowRetakes: options.allow_retakes,
-	randomQuestionOrder: options.ramdom_question_order,
-	showQuestions: options.show_questions,
-} );
+export const normalizeAttributes = ( options, mapFunction ) => {
+	const normalizedOptions = mapKeys( options, ( value, key ) =>
+		mapFunction( key )
+	);
+
+	return mapValues( normalizedOptions, ( value ) => {
+		if ( isObject( value ) ) {
+			return normalizeAttributes( value, mapFunction );
+		}
+
+		return value;
+	} );
+};

@@ -17,13 +17,14 @@ import { createReducerFromActionMap } from '../data/store-helpers';
  * Register structure store and subscribe to block editor save.
  *
  * @param {Object}   opts
- * @param {string}   opts.storeName   Name of store.
- * @param {Function} opts.getEndpoint REST API endpoint.
- * @param {Function} opts.saveError   Handler for displaying save errors.
- * @param {Function} opts.fetchError  Handler for displaying fetch errors.
- * @param {Function} opts.clearError  Handler for clearing errors.
- * @param {Function} opts.updateBlock Update block with given structure.
- * @param {Function} opts.readBlock   Extract structure from block.
+ * @param {string}   opts.storeName          Name of store.
+ * @param {Function} opts.getEndpoint        REST API endpoint.
+ * @param {Function} opts.saveError          Handler for displaying save errors.
+ * @param {Function} opts.fetchError         Handler for displaying fetch errors.
+ * @param {Function} opts.clearError         Handler for clearing errors.
+ * @param {Function} opts.updateBlock        Update block with given structure.
+ * @param {Function} opts.readBlock          Extract structure from block.
+ * @param {Function} opts.setServerStructure Set the server structure which is used to track differences.
  */
 export function registerStructureStore( {
 	storeName,
@@ -33,6 +34,7 @@ export function registerStructureStore( {
 	clearError,
 	updateBlock,
 	readBlock,
+	setServerStructure,
 	...store
 } ) {
 	const DEFAULT_STATE = {
@@ -74,7 +76,7 @@ export function registerStructureStore( {
 				const result = yield apiFetch( {
 					path: `/sensei-internal/v1/${ endpoint }`,
 					method: 'POST',
-					data: { structure: editorStructure },
+					data: editorStructure,
 				} );
 				yield actions.setResult( result );
 			} catch ( error ) {
@@ -177,13 +179,16 @@ export function registerStructureStore( {
 	const reducers = {
 		SET_SERVER_STRUCTURE: ( { serverStructure }, state ) => {
 			const initialChange = ! state.editorStructure;
+			const newStructure = setServerStructure
+				? setServerStructure( serverStructure )
+				: serverStructure;
 			const hasDiff =
 				! initialChange &&
-				! isEqual( serverStructure, state.editorStructure );
+				! isEqual( newStructure, state.editorStructure );
 
 			return {
 				...state,
-				serverStructure,
+				serverStructure: newStructure,
 				hasUnsavedServerUpdates: hasDiff,
 				hasUnsavedEditorChanges: false,
 			};
