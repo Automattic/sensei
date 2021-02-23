@@ -2302,6 +2302,10 @@ class Sensei_Lesson {
 		// Test for Write Panel Pages
 		if ( ( ( isset( $post_type ) && in_array( $post_type, $allowed_post_types ) ) && ( isset( $hook ) && in_array( $hook, $allowed_post_type_pages ) ) ) || ( isset( $_GET['page'] ) && in_array( $_GET['page'], $allowed_pages ) ) ) {
 			Sensei()->assets->enqueue( 'sensei-settings-api', 'css/settings.css' );
+
+			if ( ! Sensei()->quiz->is_block_based_editor_enabled() && in_array( $post_type, [ 'question', 'lesson' ], true ) ) {
+				Sensei()->assets->enqueue( 'sensei-meta-box-quiz-editor-css', 'css/meta-box-quiz-editor.css', [ 'sensei-settings-api' ] );
+			}
 		}
 
 	} // End enqueue_styles()

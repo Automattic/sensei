@@ -57,6 +57,7 @@ const files = [
 	'css/modules-frontend.scss',
 	'css/ranges.css',
 	'css/settings.scss',
+	'css/meta-box-quiz-editor.scss',
 ];
 
 function getName( filename ) {
