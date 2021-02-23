@@ -67,6 +67,13 @@
 
 		&__question-title {
 			font-weight: 700;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+			max-width: 250px;
+			@media (max-width: 500px) {
+				max-width: 100px;
+			}
 		}
 
 		&__actions {

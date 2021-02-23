@@ -88,18 +88,25 @@ const Questions = ( {
 			)
 			.join( ', ' );
 
+		const questionId = question.id;
+		const title = question.title.rendered;
+
 		return (
 			<tr key={ question.id }>
 				<td>
 					<CheckboxControl
-						id={ `question-${ question.id }` }
-						checked={ selectedQuestionIds.includes( question.id ) }
-						onChange={ toggleQuestion( question.id ) }
+						id={ `question-${ questionId }` }
+						title={ title }
+						checked={ selectedQuestionIds.includes( questionId ) }
+						onChange={ toggleQuestion( questionId ) }
 					/>
 				</td>
 				<td className="sensei-lms-quiz-block__questions-modal__question-title">
-					<label htmlFor={ `question-${ question.id }` }>
-						{ question.title.rendered }
+					<label
+						htmlFor={ `question-${ questionId }` }
+						title={ title }
+					>
+						{ title }
 					</label>
 				</td>
 				<td>{ type }</td>
