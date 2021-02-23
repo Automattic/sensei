@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { keyBy } from 'lodash';
+import { keyBy, uniq } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -15,7 +15,7 @@ import {
 	Modal,
 } from '@wordpress/components';
 import { search } from '@wordpress/icons';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -32,12 +32,36 @@ const QuestionsModalContent = ( { setOpen } ) => {
 		'question-type': '',
 		'question-category': '',
 	} );
-
-	const createChangeHandler = ( filterKey ) => ( value ) => {
+	const createFilterChangeHandler = ( filterKey ) => ( value ) => {
 		setFilters( ( prevFilters ) => ( {
 			...prevFilters,
 			[ filterKey ]: value,
 		} ) );
+	};
+	const toggleAllHandler = ( checked ) => {
+		const questionIds = questions.map( ( question ) => question.id );
+		if ( checked ) {
+			setSelectedQuestionIds( ( prev ) =>
+				uniq( [ ...prev, ...questionIds ] )
+			);
+		} else {
+			setSelectedQuestionIds( ( prev ) =>
+				prev.filter(
+					( question ) => ! questionIds.includes( question )
+				)
+			);
+		}
+	};
+
+	const [ selectedQuestionIds, setSelectedQuestionIds ] = useState( [] );
+	const toggleQuestion = ( questionId ) => ( checked ) => {
+		if ( checked ) {
+			setSelectedQuestionIds( ( prev ) => [ ...prev, questionId ] );
+		} else {
+			setSelectedQuestionIds( ( prev ) =>
+				prev.filter( ( id ) => id !== questionId )
+			);
+		}
 	};
 
 	const questions = useSelect(
@@ -95,7 +119,7 @@ const QuestionsModalContent = ( { setOpen } ) => {
 									),
 								] }
 								value={ filters[ 'question-type' ] }
-								onChange={ createChangeHandler(
+								onChange={ createFilterChangeHandler(
 									'question-type'
 								) }
 							/>
@@ -115,7 +139,7 @@ const QuestionsModalContent = ( { setOpen } ) => {
 									),
 								] }
 								value={ filters[ 'question-category' ] }
-								onChange={ createChangeHandler(
+								onChange={ createFilterChangeHandler(
 									'question-category'
 								) }
 							/>
@@ -126,7 +150,9 @@ const QuestionsModalContent = ( { setOpen } ) => {
 								placeholder="Search questions"
 								iconRight={ search }
 								value={ filters.search }
-								onChange={ createChangeHandler( 'search' ) }
+								onChange={ createFilterChangeHandler(
+									'search'
+								) }
 							/>
 						</li>
 					</ul>
@@ -145,8 +171,13 @@ const QuestionsModalContent = ( { setOpen } ) => {
 													'Toggle all visible questions selection.',
 													'sensei-lms'
 												) }
-												checked={ false }
-												onChange={ () => {} }
+												checked={ questions.every(
+													( question ) =>
+														selectedQuestionIds.includes(
+															question.id
+														)
+												) }
+												onChange={ toggleAllHandler }
 											/>
 										</th>
 										<th>
@@ -164,8 +195,12 @@ const QuestionsModalContent = ( { setOpen } ) => {
 											<td className="sensei-lms-quiz-block__questions-modal__question-checkbox">
 												<CheckboxControl
 													id={ `question-${ question.id }` }
-													checked={ false }
-													onChange={ () => {} }
+													checked={ selectedQuestionIds.includes(
+														question.id
+													) }
+													onChange={ toggleQuestion(
+														question.id
+													) }
 												/>
 											</td>
 											<td className="sensei-lms-quiz-block__questions-modal__question-title">
@@ -204,13 +239,31 @@ const QuestionsModalContent = ( { setOpen } ) => {
 					</div>
 
 					<ul className="sensei-lms-quiz-block__questions-modal__actions">
+						{ selectedQuestionIds.length > 0 && (
+							<li>
+								<Button
+									isTertiary
+									onClick={ () => {
+										setSelectedQuestionIds( [] );
+									} }
+								>
+									{ __( 'Clear Selected', 'sensei-lms' ) }
+								</Button>
+							</li>
+						) }
 						<li>
-							<Button isTertiary>
-								{ __( 'Clear Selected', 'sensei-lms' ) }
+							<Button isPrimary>
+								{ selectedQuestionIds.length === 0
+									? __( 'Add Selected', 'sensei-lms' )
+									: sprintf(
+											/* translators: Number of selected questions. */
+											__(
+												'Add Selected (%s)',
+												'sensei-lms'
+											),
+											selectedQuestionIds.length
+									  ) }
 							</Button>
-						</li>
-						<li>
-							<Button isPrimary>Add Selected</Button>
 						</li>
 					</ul>
 				</>
