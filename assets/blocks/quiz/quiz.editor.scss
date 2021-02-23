@@ -3,7 +3,7 @@ $gray-700: #757575;
 $gray-400: #ccc;
 
 @import 'question-block/question-block.editor';
-@import 'quiz-block/questions-modal-style';
+@import 'quiz-block/questions-modal/questions-modal-style';
 
 .wp-block[data-type='sensei-lms/quiz'] {
 	.editor-styles-wrapper & {
