@@ -188,11 +188,13 @@ class Sensei_Lesson {
 		// Add Meta Box for Lesson Information
 		add_meta_box( 'lesson-info', esc_html__( 'Lesson Information', 'sensei-lms' ), array( $this, 'lesson_info_meta_box_content' ), $this->token, 'normal', 'default' );
 
-		// Add Meta Box for Quiz Settings
-		add_meta_box( 'lesson-quiz-settings', esc_html__( 'Quiz Settings', 'sensei-lms' ), array( $this, 'lesson_quiz_settings_meta_box_content' ), $this->token, 'normal', 'default' );
+		if ( ! Sensei()->quiz->is_block_based_editor_enabled() ) {
+			// Add Meta Box for Quiz Settings
+			add_meta_box( 'lesson-quiz-settings', esc_html__( 'Quiz Settings', 'sensei-lms' ), array( $this, 'lesson_quiz_settings_meta_box_content' ), $this->token, 'normal', 'default' );
 
-		// Add Meta Box for Lesson Quiz Questions
-		add_meta_box( 'lesson-quiz', esc_html__( 'Quiz Questions', 'sensei-lms' ), array( $this, 'lesson_quiz_meta_box_content' ), $this->token, 'normal', 'default' );
+			// Add Meta Box for Lesson Quiz Questions
+			add_meta_box( 'lesson-quiz', esc_html__( 'Quiz Questions', 'sensei-lms' ), array( $this, 'lesson_quiz_meta_box_content' ), $this->token, 'normal', 'default' );
+		}
 
 		// Remove "Custom Settings" meta box.
 		remove_meta_box( 'woothemes-settings', $this->token, 'normal' );
@@ -496,6 +498,11 @@ class Sensei_Lesson {
 	 */
 	public function quiz_update( $post_id ) {
 		global $post;
+
+		if ( Sensei()->quiz->is_block_based_editor_enabled() ) {
+			return false;
+		}
+
 		// Verify the nonce before proceeding.
 		if ( ( 'lesson' != get_post_type( $post_id ) ) || ! isset( $_POST[ 'woo_' . $this->token . '_nonce' ] ) || ! wp_verify_nonce( $_POST[ 'woo_' . $this->token . '_nonce' ], 'sensei-save-post-meta' ) ) {
 			if ( isset( $post->ID ) ) {
