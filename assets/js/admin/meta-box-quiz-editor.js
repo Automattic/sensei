@@ -3,6 +3,7 @@
  */
 import { escapeHTML } from '@wordpress/escape-html';
 
+/* eslint-disable */
 jQuery( document ).ready( function () {
 	var file_frame;
 
@@ -646,22 +647,6 @@ jQuery( document ).ready( function () {
 	 * 	3 - Load Chosen Dropdowns.
 	 ***************************************************************************************************/
 
-	// Lessons Write Panel
-	if ( jQuery( '#lesson-complexity-options' ).exists() ) {
-		jQuery( '#lesson-complexity-options' ).select2( { width: 'resolve' } );
-	}
-	if ( jQuery( '#lesson-prerequisite-options' ).exists() ) {
-		jQuery( '#lesson-prerequisite-options' ).select2( {
-			width: 'resolve',
-		} );
-	}
-	if ( jQuery( '#lesson-course-options' ).exists() ) {
-		jQuery( '#lesson-course-options' ).select2( { width: 'resolve' } );
-	}
-	if ( jQuery( '#lesson-module-options' ).exists() ) {
-		jQuery( '#lesson-module-options' ).select2( { width: 'resolve' } );
-	}
-
 	// Quiz edit panel
 	if ( jQuery( '#add-question-type-options' ).exists() ) {
 		jQuery( '#add-question-type-options' ).select2( { width: 'resolve' } );
@@ -683,13 +668,6 @@ jQuery( document ).ready( function () {
 			width: 'resolve',
 		} );
 	}
-
-	// Sensei Settings Panel
-	jQuery( 'div.woothemes-sensei-settings form select' ).each( function () {
-		if ( ! jQuery( this ).hasClass( 'range-input' ) ) {
-			jQuery( this ).select2( { width: 'resolve' } );
-		} // End If Statement
-	} );
 
 	/***************************************************************************************************
 	 * 	4 - Quiz Question Functions.
@@ -1922,50 +1900,4 @@ jQuery( document ).ready( function () {
 				} );
 		}
 	);
-
-	/***************************************************************************************************
-	 * 	5 - Load Chosen Dropdowns.
-	 ***************************************************************************************************/
-
-	// Lessons Write Panel
-	if ( jQuery( '#lesson-complexity-options' ).exists() ) {
-		jQuery( '#lesson-complexity-options' ).select2( { width: 'resolve' } );
-	}
-	if ( jQuery( '#lesson-prerequisite-options' ).exists() ) {
-		jQuery( '#lesson-prerequisite-options' ).select2( {
-			width: 'resolve',
-		} );
-	}
-	if ( jQuery( '#lesson-course-options' ).exists() ) {
-		jQuery( '#lesson-course-options' ).select2( { width: 'resolve' } );
-	}
-
-	// Quiz edit panel
-	if ( jQuery( '#add-question-type-options' ).exists() ) {
-		jQuery( '#add-question-type-options' ).select2( { width: 'resolve' } );
-	}
-	if ( jQuery( '#add-question-category-options' ).exists() ) {
-		jQuery( '#add-question-category-options' ).select2( {
-			width: 'resolve',
-		} );
-	}
-	if ( jQuery( '#add-multiple-question-options' ).exists() ) {
-		jQuery( '#add-multiple-question-options' ).select2( {
-			width: 'resolve',
-		} );
-	}
-
-	// Courses Write Panel
-	if ( jQuery( '#add-multiple-question-category-options' ).exists() ) {
-		jQuery( '#add-multiple-question-category-options' ).select2( {
-			width: 'resolve',
-		} );
-	}
-
-	// Sensei Settings Panel
-	jQuery( 'div.woothemes-sensei-settings form select' ).each( function () {
-		if ( ! jQuery( this ).hasClass( 'range-input' ) ) {
-			jQuery( this ).select2( { width: 'resolve' } );
-		} // End If Statement
-	} );
 } );

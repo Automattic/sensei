@@ -2198,8 +2198,21 @@ class Sensei_Lesson {
 		}
 
 		// Load the lessons script.
+		Sensei()->assets->enqueue( 'sensei-lesson-metadata', 'js/admin/lesson-edit.js', [ 'jquery', 'sensei-core-select2' ], true );
+
+		if ( ! Sensei()->quiz->is_block_based_editor_enabled() ) {
+			$this->enqueue_scripts_meta_box_quiz_editor();
+		}
+	}
+
+	/**
+	 * Enqueue legacy meta box quiz editor assets.
+	 */
+	private function enqueue_scripts_meta_box_quiz_editor() {
 		wp_enqueue_media();
-		Sensei()->assets->enqueue( 'sensei-lesson-metadata', 'js/lesson-metadata.js', [ 'jquery', 'sensei-core-select2', 'jquery-ui-sortable', 'sensei-chosen-ajax' ], true );
+
+		// Load the lessons script.
+		Sensei()->assets->enqueue( 'sensei-meta-box-quiz-editor', 'js/admin/meta-box-quiz-editor.js', [ 'jquery', 'sensei-core-select2', 'jquery-ui-sortable', 'sensei-chosen-ajax' ], true );
 
 		// Localise script.
 		$translation_strings = array(
@@ -2224,13 +2237,14 @@ class Sensei_Lesson {
 		);
 
 		$data = array_merge( $translation_strings, $ajax_vars );
-		wp_localize_script( 'sensei-lesson-metadata', 'woo_localized_data', $data );
+		wp_localize_script( 'sensei-meta-box-quiz-editor', 'woo_localized_data', $data );
 
 		// Chosen RTL
 		if ( is_rtl() ) {
 			Sensei()->assets->enqueue( 'sensei-chosen-rtl', '../vendor/chosen/chosen-rtl.js', [ 'jquery' ], true );
 		}
 	}
+
 	/**
 	 * Load scripts for the Lessons admin page.
 	 *
