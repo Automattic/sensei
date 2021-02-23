@@ -26,10 +26,6 @@ const Filter = ( { questionCategories, filters, setFilters } ) => {
 		} )
 	);
 
-	if ( ! questionTypes || ! questionCategories ) {
-		return null;
-	}
-
 	const createFilterChangeHandler = ( filterKey ) => ( value ) => {
 		setFilters( ( prevFilters ) => ( {
 			...prevFilters,
@@ -42,7 +38,7 @@ const Filter = ( { questionCategories, filters, setFilters } ) => {
 			value: '',
 			label: 'Type',
 		},
-		...questionTypes.map( ( questionType ) => ( {
+		...( questionTypes || [] ).map( ( questionType ) => ( {
 			value: questionType.id,
 			label: questionTypesConfig[ questionType.slug ]?.title,
 		} ) ),
@@ -53,7 +49,7 @@ const Filter = ( { questionCategories, filters, setFilters } ) => {
 			value: '',
 			label: 'Category',
 		},
-		...questionCategories.map( ( questionCategory ) => ( {
+		...( questionCategories || [] ).map( ( questionCategory ) => ( {
 			value: questionCategory.id,
 			label: questionCategory.name,
 		} ) ),

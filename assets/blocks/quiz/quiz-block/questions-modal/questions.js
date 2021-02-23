@@ -7,7 +7,7 @@ import { keyBy, uniq } from 'lodash';
  * WordPress dependencies
  */
 import { useSelect } from '@wordpress/data';
-import { CheckboxControl } from '@wordpress/components';
+import { CheckboxControl, Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -39,7 +39,21 @@ const Questions = ( {
 		[ filters ]
 	);
 
+	if ( ! questions || ! questionCategories ) {
+		return (
+			<div className="sensei-lms-quiz-block__questions-modal__loader">
+				<Spinner />
+			</div>
+		);
+	}
+
 	const questionCategoriesById = keyBy( questionCategories, 'id' );
+
+	const allChecked =
+		questions.length > 0 &&
+		questions.every( ( question ) =>
+			selectedQuestionIds.includes( question.id )
+		);
 
 	const toggleAllHandler = ( checked ) => {
 		const questionIds = questions.map( ( question ) => question.id );
@@ -76,7 +90,7 @@ const Questions = ( {
 
 		return (
 			<tr key={ question.id }>
-				<td className="sensei-lms-quiz-block__questions-modal__question-checkbox">
+				<td>
 					<CheckboxControl
 						id={ `question-${ question.id }` }
 						checked={ selectedQuestionIds.includes( question.id ) }
@@ -96,35 +110,41 @@ const Questions = ( {
 
 	return (
 		<div className="sensei-lms-quiz-block__questions-modal__questions">
-			{ questions && questions.length === 0 && (
-				<p>{ __( 'No questions found.', 'sensei-lms' ) }</p>
-			) }
-			{ questions && questions.length > 0 && (
-				<table className="sensei-lms-quiz-block__questions-modal__table">
-					<thead>
+			<table className="sensei-lms-quiz-block__questions-modal__table">
+				<thead>
+					<tr>
+						<th className="sensei-lms-quiz-block__questions-modal__question-checkbox">
+							<CheckboxControl
+								title={ __(
+									'Toggle all visible questions selection.',
+									'sensei-lms'
+								) }
+								checked={ allChecked }
+								onChange={ toggleAllHandler }
+							/>
+						</th>
+						<th>{ __( 'Question', 'sensei-lms' ) }</th>
+						<th>{ __( 'Type', 'sensei-lms' ) }</th>
+						<th>{ __( 'Category', 'sensei-lms' ) }</th>
+					</tr>
+				</thead>
+				<tbody>
+					{ questions.length === 0 ? (
 						<tr>
-							<th>
-								<CheckboxControl
-									title={ __(
-										'Toggle all visible questions selection.',
+							<td colSpan="4">
+								<p>
+									{ __(
+										'No questions found.',
 										'sensei-lms'
 									) }
-									checked={ questions.every( ( question ) =>
-										selectedQuestionIds.includes(
-											question.id
-										)
-									) }
-									onChange={ toggleAllHandler }
-								/>
-							</th>
-							<th>{ __( 'Question', 'sensei-lms' ) }</th>
-							<th>{ __( 'Type', 'sensei-lms' ) }</th>
-							<th>{ __( 'Category', 'sensei-lms' ) }</th>
+								</p>
+							</td>
 						</tr>
-					</thead>
-					<tbody>{ questions.map( questionsMap ) }</tbody>
-				</table>
-			) }
+					) : (
+						questions.map( questionsMap )
+					) }
+				</tbody>
+			</table>
 		</div>
 	);
 };
