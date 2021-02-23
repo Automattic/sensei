@@ -2,7 +2,6 @@
  * WordPress dependencies
  */
 import { InnerBlocks } from '@wordpress/block-editor';
-import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -27,8 +26,6 @@ const QuizEdit = ( props ) => {
 		props
 	);
 
-	const [ isQuestionsModalOpen, setQuestionsModalOpen ] = useState( false );
-
 	const { isPostTemplate } = props.attributes;
 
 	return (
@@ -43,14 +40,12 @@ const QuizEdit = ( props ) => {
 				}
 				templateInsertUpdatesSelection={ false }
 				renderAppender={ () => (
-					<QuestionsModal.Opener setOpen={ setQuestionsModalOpen } />
+					<QuestionsModal>
+						{ __( 'Add existing questions', 'sensei-lms' ) }
+					</QuestionsModal>
 				) }
 			/>
 			<div className="sensei-lms-quiz-block__separator" />
-
-			{ isQuestionsModalOpen && (
-				<QuestionsModal setOpen={ setQuestionsModalOpen } />
-			) }
 
 			<QuizSettings { ...props } />
 		</>

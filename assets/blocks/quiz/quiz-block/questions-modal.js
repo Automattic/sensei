@@ -26,7 +26,7 @@ import questionTypesConfig from '../answer-blocks';
 const getQuestionTypeLabelBySlug = ( slug ) =>
 	questionTypesConfig[ slug ]?.title;
 
-const QuestionsModal = ( { setOpen } ) => {
+const QuestionsModalContent = ( { setOpen } ) => {
 	const [ filters, setFilters ] = useState( {
 		search: '',
 		'question-type': '',
@@ -219,18 +219,26 @@ const QuestionsModal = ( { setOpen } ) => {
 	);
 };
 
-QuestionsModal.Opener = ( { setOpen } ) => (
-	<div className="sensei-lms-quiz-block__questions-modal-opener">
-		<Button
-			isPrimary
-			isSmall
-			onClick={ () => {
-				setOpen( ( open ) => ! open );
-			} }
-		>
-			{ __( 'Add existing questions', 'sensei-lms' ) }
-		</Button>
-	</div>
-);
+const QuestionsModal = ( { children } ) => {
+	const [ isOpen, setOpen ] = useState( false );
+
+	return (
+		<>
+			<div className="sensei-lms-quiz-block__questions-modal-opener">
+				<Button
+					isPrimary
+					isSmall
+					onClick={ () => {
+						setOpen( ( open ) => ! open );
+					} }
+				>
+					{ children }
+				</Button>
+			</div>
+
+			{ isOpen && <QuestionsModalContent setOpen={ setOpen } /> }
+		</>
+	);
+};
 
 export default QuestionsModal;
