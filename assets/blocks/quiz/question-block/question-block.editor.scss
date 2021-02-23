@@ -191,4 +191,30 @@ $block: '.sensei-lms-question-block';
 			text-align: right;
 		}
 	}
+
+	&__notice {
+		display: inline-flex;
+		align-items: center;
+		border-radius: 2px;
+		border-width: 0;
+		right: 0;
+		font-size: 12px;
+		padding: 1px 4px;
+		padding-left: 0;
+		margin-top: 2px;
+		background: rgba(#ccc, 0.2);
+		position: absolute;
+		cursor: default;
+		user-select: none;
+
+		svg {
+			height: 18px;
+			fill: currentColor;
+		}
+	}
+
+	.block-editor-inner-blocks {
+		margin-top: 28px;
+		margin-bottom: 28px;
+	}
 }
