@@ -82,12 +82,30 @@ export function parseQuestionBlocks( blocks ) {
 }
 
 /**
+ * Create a new question block.
+ *
+ * @param {Object} item Question item.
+ *
+ * @return {QuizQuestion} Block.
+ */
+export function createQuestionBlock( item ) {
+	const { description, ...question } = item;
+
+	const innerBlocks =
+		( description && rawHandler( { HTML: description } ) ) || [];
+
+	const attributes = createQuestionBlockAttributes( question );
+
+	return createBlock( questionBlock.name, attributes, innerBlocks );
+}
+
+/**
  * Find a question block based on question ID, or title if ID is missing.
  *
  * @param {Array}        blocks
  * @param {QuizQuestion} item
  */
-const findQuestionBlock = ( blocks, { id, title } ) => {
+export const findQuestionBlock = ( blocks, { id, title } ) => {
 	const compare = ( { attributes } ) =>
 		id === attributes.id ||
 		( ! attributes.id && attributes.title === title );
