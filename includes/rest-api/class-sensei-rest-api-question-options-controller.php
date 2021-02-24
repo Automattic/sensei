@@ -128,9 +128,17 @@ class Sensei_REST_API_Question_Options_Controller extends \WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function get_multiple_questions( WP_REST_Request $request ) {
+		$response     = new WP_REST_Response();
+		$question_ids = $request->get_param( 'question_ids' );
+		if ( empty( $question_ids ) ) {
+			$response->set_data( [] );
+
+			return $response;
+		}
+
 		$question_posts = get_posts(
 			[
-				'post__in'       => $request->get_param( 'question_ids' ),
+				'post__in'       => $question_ids,
 				'post_type'      => 'question',
 				'posts_per_page' => -1,
 			]
@@ -145,7 +153,6 @@ class Sensei_REST_API_Question_Options_Controller extends \WP_REST_Controller {
 			$questions[] = $this->get_question( $question_post );
 		}
 
-		$response = new WP_REST_Response();
 		$response->set_data( $questions );
 
 		return $response;
