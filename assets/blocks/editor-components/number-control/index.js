@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import classnames from 'classnames';
+
+/**
  * WordPress dependencies
  */
 import { BaseControl, Button } from '@wordpress/components';
@@ -11,6 +16,7 @@ import { __ } from '@wordpress/i18n';
  * WordPress [NumberControl]{@link https://github.com/WordPress/gutenberg/tree/master/packages/components/src/number-control} when it's stable.
  *
  * @param {Object}   props                    Component props.
+ * @param {string}   [props.className]        Additional classnames for the input.
  * @param {string}   [props.id]               Component id used to connect label and input - required if label is set.
  * @param {string}   [props.label]            Input label.
  * @param {number}   [props.value]            Input value.
@@ -20,6 +26,7 @@ import { __ } from '@wordpress/i18n';
  * @param {Function} props.onChange           Change function, which receives number as argument.
  */
 const NumberControl = ( {
+	className,
 	id,
 	label,
 	value,
@@ -32,7 +39,10 @@ const NumberControl = ( {
 	<BaseControl id={ id } label={ label } help={ help }>
 		<div className="sensei-number-control">
 			<input
-				className="sensei-number-control__input"
+				className={ classnames(
+					'sensei-number-control__input',
+					className
+				) }
 				type="number"
 				id={ id }
 				onChange={ ( e ) => onChange( parseInt( e.target.value, 10 ) ) }

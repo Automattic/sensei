@@ -11,6 +11,7 @@ import { useAutoInserter } from '../../../shared/blocks/use-auto-inserter';
 import questionBlock from '../question-block';
 import { useQuizStructure } from '../quiz-store';
 import QuizSettings from './quiz-settings';
+import QuestionsModal from './questions-modal';
 
 /**
  * Quiz block editor.
@@ -38,8 +39,14 @@ const QuizEdit = ( props ) => {
 					isPostTemplate ? [ [ 'sensei-lms/quiz-question', {} ] ] : []
 				}
 				templateInsertUpdatesSelection={ false }
+				renderAppender={ () => (
+					<QuestionsModal>
+						{ __( 'Add Existing Questions', 'sensei-lms' ) }
+					</QuestionsModal>
+				) }
 			/>
 			<div className="sensei-lms-quiz-block__separator" />
+
 			<QuizSettings { ...props } />
 		</>
 	);
