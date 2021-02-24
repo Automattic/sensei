@@ -41,7 +41,7 @@ const QuizEdit = ( props ) => {
 				templateInsertUpdatesSelection={ false }
 				renderAppender={ () => (
 					<QuestionsModal>
-						{ __( 'Add existing questions', 'sensei-lms' ) }
+						{ __( 'Add Existing Questions', 'sensei-lms' ) }
 					</QuestionsModal>
 				) }
 			/>
