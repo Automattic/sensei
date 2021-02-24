@@ -108,6 +108,11 @@ $block: '.sensei-lms-question-block';
 			}
 		}
 	}
+
+	&__answer--multiple-choice {
+		&__option.is-draft {
+			.sensei-lms-question-block__option-toggle, .sensei-lms-question-block__answer--multiple-choice__toggle {
+				opacity: 0.5;
 			}
 		}
 	}
