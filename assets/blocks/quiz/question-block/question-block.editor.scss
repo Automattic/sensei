@@ -4,13 +4,14 @@ $block: '.sensei-lms-question-block';
 @import './question-grade-toolbar';
 
 .sensei-lms-question-block {
-	
+
 	.editor-styles-wrapper .wp-block &__title, .editor-styles-wrapper .wp-block &__index {
 		font-size: 24px;
 		margin-top: 0;
 		margin-bottom: 0;
 		line-height: 1.25;
 	}
+
 	.editor-styles-wrapper .wp-block &__title {
 		margin-right: 56px;
 	}
@@ -36,8 +37,7 @@ $block: '.sensei-lms-question-block';
 		right: 0;
 		top: 0;
 		line-height: 32px;
-		font-size: 12px;
-		opacity: .9;
+		font-size: 14px;
 	}
 
 	&__type-selector {
@@ -75,8 +75,6 @@ $block: '.sensei-lms-question-block';
 	}
 
 	&__input-label {
-		opacity: 0.7;
-		font-size: 90%;
 	}
 
 	&__answer--multiple-choice, &__answer--true-false, &__answer--gap-fill {
@@ -182,6 +180,13 @@ $block: '.sensei-lms-question-block';
 			&__help {
 				display: none;
 			}
+		}
+
+		&__text {
+			border: 1px solid rgba(#ccc, 0.75);
+			padding: 12px;
+			border-radius: 2px;
+
 		}
 
 		.editor-styles-wrapper &__right-answers {

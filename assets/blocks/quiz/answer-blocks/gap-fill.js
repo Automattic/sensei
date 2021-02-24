@@ -25,6 +25,7 @@ const GapFillAnswer = ( {
 		<ul className="sensei-lms-question-block__answer sensei-lms-question-block__answer--gap-fill">
 			<li>
 				<RichText
+					className="sensei-lms-question-block__answer--gap-fill__text"
 					placeholder={ __( 'Text before the gap', 'sensei-lms' ) }
 					value={ textBefore }
 					onChange={ ( nextValue ) =>
@@ -54,6 +55,7 @@ const GapFillAnswer = ( {
 			</li>
 			<li>
 				<RichText
+					className="sensei-lms-question-block__answer--gap-fill__text"
 					placeholder={ __( 'Text after the gap', 'sensei-lms' ) }
 					value={ textAfter }
 					onChange={ ( nextValue ) =>
