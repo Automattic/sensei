@@ -109,9 +109,9 @@ const getTypeArgs = ( attributes ) => {
 			};
 		case 'gap-fill':
 			return {
-				before: attributes.answer?.textBefore,
-				gap: attributes.answer?.rightAnswers,
-				after: attributes.answer?.textAfter,
+				before: attributes.answer?.textBefore || '',
+				gap: attributes.answer?.rightAnswers || [],
+				after: attributes.answer?.textAfter || '',
 			};
 		case 'single-line':
 			return {};
