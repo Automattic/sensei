@@ -410,6 +410,85 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	}
 
 	/**
+	 * Get the schema for a single question.
+	 *
+	 * @return array
+	 */
+	public function get_single_question_schema() {
+		$single_question_schema = [
+			'anyOf' => [
+				[
+					'$ref' => '#/definitions/question_multiple_choice',
+				],
+				[
+					'$ref' => '#/definitions/question_boolean',
+				],
+				[
+					'$ref' => '#/definitions/question_gap_fill',
+				],
+				[
+					'$ref' => '#/definitions/question_single_line',
+				],
+				[
+					'$ref' => '#/definitions/question_multi_line',
+				],
+				[
+					'$ref' => '#/definitions/question_file_upload',
+				],
+			]
+		];
+
+		if ( ! is_wp_version_compatible( '5.6.0' ) ) {
+			$single_question_schema = [];
+		}
+
+		/*
+		 * Add additional question types to the REST API schema.
+		 *
+		 * @since 3.9.0
+		 * @hook sensei_rest_api_schema_single_question
+		 *
+		 * @param {Array} $schema Schema for a single question.
+		 *
+		 * @return {array}
+		 */
+		return apply_filters( 'sensei_rest_api_schema_single_question', $single_question_schema );
+	}
+
+	/**
+	 * Helper method which returns the question schema definitions.
+	 *
+	 * @return array The definitions
+	 */
+	private function get_question_definitions() : array {
+		$question_definitions = [
+			'question_multiple_choice' => $this->get_multiple_choice_schema(),
+			'question_boolean'         => $this->get_boolean_schema(),
+			'question_gap_fill'        => $this->get_gap_fill_schema(),
+			'question_single_line'     => $this->get_single_question_schema(),
+			'question_multi_line'      => $this->get_multi_line_schema(),
+			'question_file_upload'     => $this->get_file_upload_schema(),
+		];
+
+		if ( ! is_wp_version_compatible( '5.6.0' ) ) {
+			// These aren't used in versions before 5.6.0 so we can just clear them out.
+			$question_definitions = [];
+		}
+
+		/*
+		 * Add additional definitions to the question types.
+		 *
+		 * @since 3.9.0
+		 * @hook sensei_rest_api_schema_question_type_definitions
+		 *
+		 * @param {Array} $schema Schema definitions for questions.
+		 *
+		 * @return {array}
+		 */
+		return apply_filters( 'sensei_rest_api_schema_question_type_definitions', $question_definitions );
+	}
+
+	/**
 	 * Helper method which returns the schema for common question properties.
 	 *
 	 * @return array The properties
