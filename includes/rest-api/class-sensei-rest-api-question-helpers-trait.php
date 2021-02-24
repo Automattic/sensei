@@ -416,7 +416,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 */
 	public function get_single_question_schema() {
 		$single_question_schema = [
-			'anyOf' => [
+			'oneOf' => [
 				[
 					'$ref' => '#/definitions/question_multiple_choice',
 				],
@@ -435,7 +435,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 				[
 					'$ref' => '#/definitions/question_file_upload',
 				],
-			]
+			],
 		];
 
 		if ( ! is_wp_version_compatible( '5.6.0' ) ) {
