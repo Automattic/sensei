@@ -41,7 +41,7 @@ const Questions = ( {
 
 	if ( ! questions || ! questionCategories ) {
 		return (
-			<div className="sensei-lms-quiz-block__questions-modal__loader">
+			<div className="sensei-lms-quiz-block__questions-modal__questions sensei-lms-quiz-block__questions-modal__questions--loading">
 				<Spinner />
 			</div>
 		);

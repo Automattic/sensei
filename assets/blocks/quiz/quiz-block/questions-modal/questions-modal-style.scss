@@ -11,14 +11,19 @@
 			margin: 0;
 		}
 
-		&__loader {
-			text-align: center;
-			padding: 20px;
-		}
-
 		&__questions {
-			max-height: calc(100vh - 335px);
 			overflow: auto;
+			height: calc(100vh - 225px);
+
+			@media (min-width: 599px) {
+				max-height: calc(100vh - 335px);
+				height: 350px;
+			}
+
+			&--loading {
+				text-align: center;
+				padding: 20px;
+			}
 		}
 
 		&__filters {
