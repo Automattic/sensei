@@ -2480,10 +2480,6 @@ class Sensei_Lesson {
 		// Finally re-slash all elements to ensure consistancy for lesson_save_question().
 		$question_data = wp_slash( $question_data );
 
-		if ( ! current_user_can( 'edit_post', $question_data['question_id'] ) ) {
-			die( '' );
-		}
-
 		// Save the question
 		$return = false;
 		// Question Save and Delete logic
@@ -2491,6 +2487,10 @@ class Sensei_Lesson {
 			// Delete the Question
 			$return = $this->lesson_remove_question( $question_data );
 		} else {
+			if ( ! current_user_can( 'edit_post', $question_data['question_id'] ) ) {
+				die( '' );
+			}
+
 			// Save the Question
 			if ( isset( $question_data['quiz_id'] ) && ( 0 < absint( $question_data['quiz_id'] ) ) ) {
 				$current_user                 = wp_get_current_user();
