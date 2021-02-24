@@ -2451,6 +2451,18 @@ class Sensei_Lesson {
 	} // End lesson_add_course()
 
 	/**
+	 * Whether user can edit quiz.
+	 *
+	 * @param int $quiz_id
+	 *
+	 * @return boolean
+	 */
+	private function user_can_edit_quiz( $quiz_id ) {
+		$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
+		return current_user_can( 'edit_post', $lesson_id );
+	}
+
+	/**
 	 * Updates a question.
 	 *
 	 * @access public
@@ -2480,6 +2492,10 @@ class Sensei_Lesson {
 		// Finally re-slash all elements to ensure consistancy for lesson_save_question().
 		$question_data = wp_slash( $question_data );
 
+		if ( ! $this->user_can_edit_quiz( $question_data['quiz_id'] ) ) {
+			die( '' );
+		}
+
 		// Save the question
 		$return = false;
 		// Question Save and Delete logic
@@ -2487,7 +2503,7 @@ class Sensei_Lesson {
 			// Delete the Question
 			$return = $this->lesson_remove_question( $question_data );
 		} else {
-			if ( ! current_user_can( 'edit_post', $question_data['question_id'] ) ) {
+			if ( ! empty( $question_data['question_id'] ) && ! current_user_can( 'edit_post', $question_data['question_id'] ) ) {
 				die( '' );
 			}
 
@@ -2765,6 +2781,11 @@ class Sensei_Lesson {
 		$data      = $_POST['data'];
 		$quiz_data = array();
 		parse_str( $data, $quiz_data );
+
+		if ( ! $this->user_can_edit_quiz( $quiz_data['quiz_id'] ) ) {
+			die( '' );
+		}
+
 		if ( strlen( $quiz_data['question_order'] ) > 0 ) {
 			$questions = explode( ',', $quiz_data['question_order'] );
 			$o         = 1;
