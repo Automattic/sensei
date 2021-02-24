@@ -4,6 +4,7 @@
 import { useSelect } from '@wordpress/data';
 import { SelectControl } from '@wordpress/components';
 import { search } from '@wordpress/icons';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -36,7 +37,7 @@ const Filter = ( { questionCategories, filters, setFilters } ) => {
 	const typeOptions = [
 		{
 			value: '',
-			label: 'Type',
+			label: __( 'Type', 'sensei-lms' ),
 		},
 		...( questionTypes || [] ).map( ( questionType ) => ( {
 			value: questionType.id,
@@ -47,7 +48,7 @@ const Filter = ( { questionCategories, filters, setFilters } ) => {
 	const categoryOptions = [
 		{
 			value: '',
-			label: 'Category',
+			label: __( 'Category', 'sensei-lms' ),
 		},
 		...( questionCategories || [] ).map( ( questionCategory ) => ( {
 			value: questionCategory.id,
@@ -76,7 +77,7 @@ const Filter = ( { questionCategories, filters, setFilters } ) => {
 			<li>
 				<InputControl
 					className="sensei-lms-quiz-block__questions-modal__search-input"
-					placeholder="Search questions"
+					placeholder={ __( 'Search questions', 'sensei-lms' ) }
 					iconRight={ search }
 					value={ filters.search }
 					onChange={ createFilterChangeHandler( 'search' ) }
