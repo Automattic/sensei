@@ -2479,6 +2479,11 @@ class Sensei_Lesson {
 		parse_str( $data, $question_data );
 		// Finally re-slash all elements to ensure consistancy for lesson_save_question().
 		$question_data = wp_slash( $question_data );
+
+		if ( ! current_user_can( 'edit_post', $question_data['question_id'] ) ) {
+			die( '' );
+		}
+
 		// Save the question
 		$return = false;
 		// Question Save and Delete logic
