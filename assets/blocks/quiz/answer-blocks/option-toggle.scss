@@ -1,6 +1,8 @@
 
 .sensei-lms-question-block__option-toggle {
 	color: inherit;
+	display: inline-flex;
+	align-items: center;
 	.edit-post-visual-editor & {
 		font-family: inherit;
 		font-size: inherit;

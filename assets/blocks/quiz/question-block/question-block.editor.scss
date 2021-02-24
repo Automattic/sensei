@@ -91,20 +91,23 @@ $block: '.sensei-lms-question-block';
 	}
 
 	&__answer--multiple-choice, &__answer--true-false {
-		&__hint {
-			text-transform: uppercase;
-			color: inherit;
-			opacity: 0.6;
-			font-size: 14px;
-			font-family: sans-serif;
-			height: auto;
-			line-height: inherit;
+		&__toggle {
+
+			&__wrapper {
+				flex-basis: 65px;
+				margin-left: 12px;
+			}
 
 			.edit-post-visual-editor & {
-				margin-right: 0;
-				margin-left: 12px;
+				margin: 0;
 				padding: 4px;
-				padding-right: 0;
+				font-size: 12px;
+				height: auto;
+				text-transform: uppercase;
+				background: #111;
+			}
+		}
+	}
 			}
 		}
 	}
