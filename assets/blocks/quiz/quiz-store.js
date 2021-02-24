@@ -158,7 +158,7 @@ registerStructureStore( {
 		return {
 			...structure,
 			questions: structure.questions.map( ( question ) =>
-				omit( question, [ 'categories', 'shared' ] )
+				omit( question, [ 'categories', 'shared', 'student_help' ] )
 			),
 		};
 	},

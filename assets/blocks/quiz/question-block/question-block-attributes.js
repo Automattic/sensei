@@ -114,10 +114,12 @@ const getTypeArgs = ( attributes ) => {
 				after: attributes.answer?.textAfter || '',
 			};
 		case 'single-line':
-			return {};
 		case 'multi-line':
-			return {};
 		case 'file-upload':
+			return {
+				teacher_notes: attributes.options?.gradingNotes || null,
+			};
+		default:
 			return {};
 	}
 };
