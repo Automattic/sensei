@@ -2664,13 +2664,24 @@ class Sensei_Lesson {
 		$question_data = array();
 		parse_str( $data, $question_data );
 
+		if ( ! $this->user_can_edit_quiz( $question_data['quiz_id'] ) ) {
+			die( '' );
+		}
+
 		$return = '';
 
 		if ( is_array( $question_data ) ) {
 
 			if ( isset( $question_data['questions'] ) && '' != $question_data['questions'] ) {
 
-				$questions      = explode( ',', trim( $question_data['questions'], ',' ) );
+				$questions = explode( ',', trim( $question_data['questions'], ',' ) );
+				$questions = array_filter(
+					$questions,
+					function( $question_id ) {
+						return current_user_can( 'edit_post', $question_id );
+					}
+				);
+
 				$quiz_id        = $question_data['quiz_id'];
 				$question_count = intval( $question_data['question_count'] );
 
