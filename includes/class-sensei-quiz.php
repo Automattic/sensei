@@ -51,6 +51,32 @@ class Sensei_Quiz {
 	} // End __construct()
 
 	/**
+	 * Check if the block based quiz editor is enabled. If not, fall back to the legacy metabox editor.
+	 *
+	 * @since 3.9.0
+	 *
+	 * @return bool
+	 */
+	public function is_block_based_editor_enabled() {
+		// If custom question types have been registered, disable the block based quiz editor for now.
+		$is_block_based_editor_enabled = ! has_filter( 'sensei_question_types' );
+
+		/**
+		 * Filter to change whether the block based editor should be used instead of the legacy
+		 * metabox based editor. This is to allow sites to migrate over to the block based
+		 * editor if necessary.
+		 *
+		 * @since 3.9.0
+		 * @hook sensei_quiz_enable_block_based_editor
+		 *
+		 * @param {bool} $is_block_based_editor_enabled True if block based editor is enabled.
+		 *
+		 * @return {bool}
+		 */
+		return apply_filters( 'sensei_quiz_enable_block_based_editor', $is_block_based_editor_enabled );
+	}
+
+	/**
 	 * Update the quiz data when the lesson is changed
 	 *
 	 * @param int $post_id

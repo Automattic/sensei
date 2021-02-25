@@ -71,7 +71,7 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 			[ 'sensei-lms/lesson-actions' ],
 		];
 
-		if ( Sensei()->feature_flags->is_enabled( 'quiz_blocks' ) ) {
+		if ( Sensei()->quiz->is_block_based_editor_enabled() ) {
 			$post_type_object->template[] = [ 'sensei-lms/quiz', [ 'isPostTemplate' => true ] ];
 		}
 

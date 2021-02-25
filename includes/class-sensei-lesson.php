@@ -188,11 +188,13 @@ class Sensei_Lesson {
 		// Add Meta Box for Lesson Information
 		add_meta_box( 'lesson-info', esc_html__( 'Lesson Information', 'sensei-lms' ), array( $this, 'lesson_info_meta_box_content' ), $this->token, 'normal', 'default' );
 
-		// Add Meta Box for Quiz Settings
-		add_meta_box( 'lesson-quiz-settings', esc_html__( 'Quiz Settings', 'sensei-lms' ), array( $this, 'lesson_quiz_settings_meta_box_content' ), $this->token, 'normal', 'default' );
+		if ( ! Sensei()->quiz->is_block_based_editor_enabled() ) {
+			// Add Meta Box for Quiz Settings
+			add_meta_box( 'lesson-quiz-settings', esc_html__( 'Quiz Settings', 'sensei-lms' ), array( $this, 'lesson_quiz_settings_meta_box_content' ), $this->token, 'normal', 'default' );
 
-		// Add Meta Box for Lesson Quiz Questions
-		add_meta_box( 'lesson-quiz', esc_html__( 'Quiz Questions', 'sensei-lms' ), array( $this, 'lesson_quiz_meta_box_content' ), $this->token, 'normal', 'default' );
+			// Add Meta Box for Lesson Quiz Questions
+			add_meta_box( 'lesson-quiz', esc_html__( 'Quiz Questions', 'sensei-lms' ), array( $this, 'lesson_quiz_meta_box_content' ), $this->token, 'normal', 'default' );
+		}
 
 		// Remove "Custom Settings" meta box.
 		remove_meta_box( 'woothemes-settings', $this->token, 'normal' );
@@ -496,6 +498,11 @@ class Sensei_Lesson {
 	 */
 	public function quiz_update( $post_id ) {
 		global $post;
+
+		if ( Sensei()->quiz->is_block_based_editor_enabled() ) {
+			return false;
+		}
+
 		// Verify the nonce before proceeding.
 		if ( ( 'lesson' != get_post_type( $post_id ) ) || ! isset( $_POST[ 'woo_' . $this->token . '_nonce' ] ) || ! wp_verify_nonce( $_POST[ 'woo_' . $this->token . '_nonce' ], 'sensei-save-post-meta' ) ) {
 			if ( isset( $post->ID ) ) {
@@ -2191,8 +2198,21 @@ class Sensei_Lesson {
 		}
 
 		// Load the lessons script.
+		Sensei()->assets->enqueue( 'sensei-lesson-metadata', 'js/admin/lesson-edit.js', [ 'jquery', 'sensei-core-select2' ], true );
+
+		if ( ! Sensei()->quiz->is_block_based_editor_enabled() ) {
+			$this->enqueue_scripts_meta_box_quiz_editor();
+		}
+	}
+
+	/**
+	 * Enqueue legacy meta box quiz editor assets.
+	 */
+	private function enqueue_scripts_meta_box_quiz_editor() {
 		wp_enqueue_media();
-		Sensei()->assets->enqueue( 'sensei-lesson-metadata', 'js/lesson-metadata.js', [ 'jquery', 'sensei-core-select2', 'jquery-ui-sortable', 'sensei-chosen-ajax' ], true );
+
+		// Load the lessons script.
+		Sensei()->assets->enqueue( 'sensei-meta-box-quiz-editor', 'js/admin/meta-box-quiz-editor.js', [ 'jquery', 'sensei-core-select2', 'jquery-ui-sortable', 'sensei-chosen-ajax' ], true );
 
 		// Localise script.
 		$translation_strings = array(
@@ -2217,13 +2237,14 @@ class Sensei_Lesson {
 		);
 
 		$data = array_merge( $translation_strings, $ajax_vars );
-		wp_localize_script( 'sensei-lesson-metadata', 'woo_localized_data', $data );
+		wp_localize_script( 'sensei-meta-box-quiz-editor', 'woo_localized_data', $data );
 
 		// Chosen RTL
 		if ( is_rtl() ) {
 			Sensei()->assets->enqueue( 'sensei-chosen-rtl', '../vendor/chosen/chosen-rtl.js', [ 'jquery' ], true );
 		}
 	}
+
 	/**
 	 * Load scripts for the Lessons admin page.
 	 *
@@ -2281,6 +2302,10 @@ class Sensei_Lesson {
 		// Test for Write Panel Pages
 		if ( ( ( isset( $post_type ) && in_array( $post_type, $allowed_post_types ) ) && ( isset( $hook ) && in_array( $hook, $allowed_post_type_pages ) ) ) || ( isset( $_GET['page'] ) && in_array( $_GET['page'], $allowed_pages ) ) ) {
 			Sensei()->assets->enqueue( 'sensei-settings-api', 'css/settings.css' );
+
+			if ( ! Sensei()->quiz->is_block_based_editor_enabled() && in_array( $post_type, [ 'question', 'lesson' ], true ) ) {
+				Sensei()->assets->enqueue( 'sensei-meta-box-quiz-editor-css', 'css/meta-box-quiz-editor.css', [ 'sensei-settings-api' ] );
+			}
 		}
 
 	} // End enqueue_styles()

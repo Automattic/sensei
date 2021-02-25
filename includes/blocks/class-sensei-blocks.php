@@ -53,10 +53,7 @@ class Sensei_Blocks {
 		// Init blocks.
 		$this->course = new Sensei_Course_Blocks();
 		$this->lesson = new Sensei_Lesson_Blocks();
-
-		if ( $sensei->feature_flags->is_enabled( 'quiz_blocks' ) ) {
-			$this->quiz = new Sensei_Quiz_Blocks();
-		}
+		$this->quiz   = new Sensei_Quiz_Blocks();
 
 	}
 

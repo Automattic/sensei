@@ -156,14 +156,22 @@ class Sensei_Question {
 					}
 				}
 			}
-			add_meta_box( 'question-edit-panel', $metabox_title, array( $this, 'question_edit_panel' ), 'question', 'normal', 'high' );
+
 			add_meta_box( 'question-lessons-panel', __( 'Quizzes', 'sensei-lms' ), array( $this, 'question_lessons_panel' ), 'question', 'side', 'default' );
-			add_meta_box( 'multiple-question-lessons-panel', __( 'Quizzes', 'sensei-lms' ), array( $this, 'question_lessons_panel' ), 'multiple_question', 'side', 'default' );
+
+			if ( ! Sensei()->quiz->is_block_based_editor_enabled() ) {
+				add_meta_box( 'multiple-question-lessons-panel', __( 'Quizzes', 'sensei-lms' ), array( $this, 'question_lessons_panel' ), 'multiple_question', 'side', 'default' );
+				add_meta_box( 'question-edit-panel', $metabox_title, array( $this, 'question_edit_panel' ), 'question', 'normal', 'high' );
+			}
 		}
 	}
 
 	public function question_edit_panel() {
 		global  $post, $pagenow;
+
+		if ( Sensei()->quiz->is_block_based_editor_enabled() ) {
+			return;
+		}
 
 		add_action( 'admin_enqueue_scripts', array( Sensei()->lesson, 'enqueue_scripts' ) );
 		add_action( 'admin_enqueue_scripts', array( Sensei()->lesson, 'enqueue_styles' ) );
