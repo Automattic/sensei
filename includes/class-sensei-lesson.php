@@ -1098,7 +1098,7 @@ class Sensei_Lesson {
 					$question_types_filtered = ucwords( str_replace( array( 'boolean', 'multiple-choice', 'gap-fill', 'single-line', 'multi-line', 'file-upload' ), array( __( 'True/False', 'sensei-lms' ), __( 'Multiple Choice', 'sensei-lms' ), __( 'Gap Fill', 'sensei-lms' ), __( 'Single Line', 'sensei-lms' ), __( 'Multi Line', 'sensei-lms' ), __( 'File Upload', 'sensei-lms' ) ), $question_type ) );
 					$html                   .= '<td>' . esc_html( $question_types_filtered ) . '</td>';
 
-					if ( current_user_can( 'edit_post', $question_id ) ) {
+					if ( current_user_can( get_post_type_object( 'question' )->cap->edit_post, $question_id ) ) {
 						$html .= '<td><a title="' . esc_attr__( 'Edit Question', 'sensei-lms' ) . '" href="#question_' . esc_attr( $question_counter ) . '" class="question_table_edit">' . esc_html__( 'Edit', 'sensei-lms' ) . '</a> <a title="' . esc_attr__( 'Remove Question', 'sensei-lms' ) . '" href="#add-question-metadata" class="question_table_delete">' . esc_html__( 'Remove', 'sensei-lms' ) . '</a></td>';
 					} else {
 						$html .= '<td><a title="' . esc_attr__( 'Remove Question', 'sensei-lms' ) . '" href="#add-question-metadata" class="question_table_delete question_delete--without-edit">' . esc_html__( 'Remove', 'sensei-lms' ) . '</a><br />' . esc_html__( 'You are not the question owner, so you cannot edit it.', 'sensei-lms' ) . '</td>';
@@ -2459,7 +2459,7 @@ class Sensei_Lesson {
 	 */
 	private function user_can_edit_quiz( $quiz_id ) {
 		$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
-		return current_user_can( 'edit_post', $lesson_id );
+		return current_user_can( get_post_type_object( 'lesson' )->cap->edit_post, $lesson_id );
 	}
 
 	/**
@@ -2503,7 +2503,7 @@ class Sensei_Lesson {
 			// Delete the Question
 			$return = $this->lesson_remove_question( $question_data );
 		} else {
-			if ( ! empty( $question_data['question_id'] ) && ! current_user_can( 'edit_post', $question_data['question_id'] ) ) {
+			if ( ! empty( $question_data['question_id'] ) && ! current_user_can( get_post_type_object( 'question' )->cap->edit_post, $question_data['question_id'] ) ) {
 				die( '' );
 			}
 
