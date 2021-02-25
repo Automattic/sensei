@@ -17,6 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since   3.9.0
  */
 class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
+	use Sensei_REST_API_Question_Helpers_Trait;
 
 	/**
 	 * Routes namespace.
@@ -54,18 +55,194 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 					'callback'            => [ $this, 'get_quiz' ],
 					'permission_callback' => [ $this, 'can_user_get_quiz' ],
 					'args'                => [
-						'context' => [
-							'type'              => 'string',
-							'default'           => 'view',
-							'enum'              => [ 'view', 'edit' ],
+						'lesson_id' => [
+							'type'              => 'integer',
 							'sanitize_callback' => 'sanitize_key',
 							'validate_callback' => 'rest_validate_request_arg',
 						],
 					],
 				],
-				'schema' => [ $this, 'get_schema' ],
+				[
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => [ $this, 'save_quiz' ],
+					'permission_callback' => [ $this, 'can_user_save_quiz' ],
+					'args'                => [
+						'options'   => [
+							'type'              => 'object',
+							'required'          => true,
+							'sanitize_callback' => 'rest_sanitize_request_arg',
+							'validate_callback' => 'rest_validate_request_arg',
+						],
+						'questions' => [
+							'type'              => 'array',
+							'required'          => true,
+							'sanitize_callback' => [ $this, 'sanitize_questions' ],
+							'validate_callback' => [ $this, 'validate_questions' ],
+						],
+					],
+				],
+				'schema' => [ $this, 'get_item_schema' ],
 			]
 		);
+	}
+
+	/**
+	 * Sanitization method for questions.
+	 *
+	 * @param array $questions The questions.
+	 *
+	 * @return array|WP_Error The sanitized questions.
+	 */
+	public function sanitize_questions( array $questions ) {
+		$sanitized_questions = [];
+		foreach ( $questions as $question ) {
+			$result = rest_sanitize_value_from_schema( $question, $this->get_question_schema( $question['type'] ) );
+
+			if ( is_wp_error( $result ) ) {
+				return $result;
+			}
+
+			$sanitized_questions[] = $result;
+		}
+
+		return $sanitized_questions;
+	}
+
+	/**
+	 * Validation method for questions.
+	 *
+	 * @param array $questions The questions.
+	 *
+	 * @return true|WP_Error True on success, error otherwise.
+	 */
+	public function validate_questions( array $questions ) {
+		foreach ( $questions as $question ) {
+			$result = rest_validate_value_from_schema( $question, $this->get_question_schema( $question['type'] ) );
+
+			if ( is_wp_error( $result ) ) {
+				return $result;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Check user permission for saving course structure.
+	 *
+	 * @param WP_REST_Request $request WordPress request object.
+	 *
+	 * @return bool|WP_Error Whether the user can save course structure data. Error if not found.
+	 */
+	public function can_user_save_quiz( WP_REST_Request $request ) {
+		$lesson = get_post( (int) $request->get_param( 'lesson_id' ) );
+
+		if ( ! $lesson || 'lesson' !== $lesson->post_type ) {
+			return new WP_Error(
+				'sensei_lesson_quiz_missing_lesson',
+				__( 'Lesson not found.', 'sensei-lms' ),
+				[ 'status' => 404 ]
+			);
+		}
+
+		if ( ! is_user_logged_in() ) {
+			return false;
+		}
+
+		return current_user_can( get_post_type_object( 'lesson' )->cap->edit_post, $lesson->ID );
+	}
+
+	/**
+	 * Save the quiz.
+	 *
+	 * @param WP_REST_Request $request WordPress request object.
+	 *
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function save_quiz( WP_REST_Request $request ) {
+		$lesson  = get_post( (int) $request->get_param( 'lesson_id' ) );
+		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson->ID );
+		$is_new  = null === $quiz_id;
+
+		$json_params  = $request->get_json_params();
+		$quiz_options = $json_params['options'];
+
+		$quiz_id = wp_insert_post(
+			[
+				'ID'           => $quiz_id,
+				'post_content' => '',
+				'post_status'  => $lesson->post_status,
+				'post_title'   => $lesson->post_title,
+				'post_type'    => 'quiz',
+				'post_parent'  => $lesson->ID,
+				'meta_input'   => $this->get_quiz_meta( $quiz_options, $lesson ),
+			]
+		);
+
+		if ( is_wp_error( $quiz_id ) ) {
+			return new WP_REST_Response( $quiz_id );
+		}
+
+		if ( $is_new ) {
+			update_post_meta( $lesson->ID, '_lesson_quiz', $quiz_id );
+			wp_set_post_terms( $quiz_id, [ 'multiple-choice' ], 'quiz-type' );
+		}
+
+		$question_ids = [];
+		foreach ( $json_params['questions'] as $question ) {
+			$question_id = $this->save_question( $question );
+
+			if ( is_wp_error( $question_id ) ) {
+				return new WP_REST_Response( $question_id );
+			}
+
+			$question_ids[] = $question_id;
+		}
+
+		Sensei()->quiz->set_questions( $quiz_id, $question_ids );
+
+		$response = new WP_REST_Response();
+		$response->set_data( $this->get_quiz_data( get_post( $quiz_id ) ) );
+
+		return $response;
+	}
+
+	/**
+	 * Helper method to translate input to quiz meta.
+	 *
+	 * @param array   $quiz_options The input coming from JSON data.
+	 * @param WP_Post $lesson       The parent lesson.
+	 *
+	 * @return array The meta.
+	 */
+	private function get_quiz_meta( array $quiz_options, WP_Post $lesson ) : array {
+		$meta_input = [ '_quiz_lesson' => $lesson->ID ];
+
+		if ( isset( $quiz_options['pass_required'] ) ) {
+			$meta_input['_pass_required'] = true === $quiz_options['pass_required'] ? 'on' : '';
+		}
+
+		if ( isset( $quiz_options['quiz_passmark'] ) ) {
+			$meta_input['_quiz_passmark'] = empty( $quiz_options['quiz_passmark'] ) ? 0 : $quiz_options['quiz_passmark'];
+		}
+
+		if ( isset( $quiz_options['auto_grade'] ) ) {
+			$meta_input['_quiz_grade_type'] = true === $quiz_options['auto_grade'] ? 'auto' : 'manual';
+		}
+
+		if ( isset( $quiz_options['allow_retakes'] ) ) {
+			$meta_input['_enable_quiz_reset'] = true === $quiz_options['allow_retakes'] ? 'on' : '';
+		}
+
+		if ( isset( $quiz_options['show_questions'] ) ) {
+			$meta_input['_show_questions'] = $quiz_options['show_questions'];
+		}
+
+		if ( isset( $quiz_options['random_question_order'] ) ) {
+			$meta_input['_random_question_order'] = true === $quiz_options['random_question_order'] ? 'yes' : 'no';
+		}
+
+		return $meta_input;
 	}
 
 	/**
@@ -167,241 +344,17 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 	}
 
 	/**
-	 * This method retrieves questions as they are defined by a 'multiple_question' post type.
-	 *
-	 * @param WP_Post $multiple_question  The multiple question.
-	 * @param array   $excluded_questions An array of question ids to exclude.
-	 *
-	 * @return array
-	 */
-	private function get_questions_from_category( WP_Post $multiple_question, array $excluded_questions ) : array {
-		$category = (int) get_post_meta( $multiple_question->ID, 'category', true );
-		$number   = (int) get_post_meta( $multiple_question->ID, 'number', true );
-
-		$args = [
-			'post_type'        => 'question',
-			'posts_per_page'   => $number,
-			'orderby'          => 'title',
-			'tax_query'        => [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- Query limited by the number of questions.
-				[
-					'taxonomy' => 'question-category',
-					'field'    => 'term_id',
-					'terms'    => $category,
-				],
-			],
-			'post_status'      => 'any',
-			'suppress_filters' => 0,
-			'post__not_in'     => $excluded_questions,
-		];
-
-		$questions = get_posts( $args );
-
-		return array_map( [ $this, 'get_question' ], $questions );
-	}
-
-	/**
-	 * Returns a question as defined by the schema.
-	 *
-	 * @param WP_Post $question The question post.
-	 *
-	 * @return array The question array.
-	 */
-	private function get_question( WP_Post $question ) : array {
-		$common_properties        = $this->get_question_common_properties( $question );
-		$type_specific_properties = $this->get_question_type_specific_properties( $question, $common_properties['type'] );
-
-		return array_merge( $common_properties, $type_specific_properties );
-	}
-
-	/**
-	 * Generates the common question properties.
-	 *
-	 * @param WP_Post $question The question post.
-	 *
-	 * @return array The question properties.
-	 */
-	private function get_question_common_properties( WP_Post $question ) : array {
-		$question_meta = get_post_meta( $question->ID );
-		return [
-			'id'          => $question->ID,
-			'title'       => $question->post_title,
-			'description' => $question->post_content,
-			'grade'       => Sensei()->question->get_question_grade( $question->ID ),
-			'type'        => Sensei()->question->get_question_type( $question->ID ),
-			'shared'      => ! empty( $question_meta['_quiz_id'] ) && count( $question_meta['_quiz_id'] ) > 1,
-			'categories'  => wp_get_post_terms( $question->ID, 'question-category', [ 'fields' => 'ids' ] ),
-		];
-	}
-
-	/**
-	 * Generates the type specific question properties.
-	 *
-	 * @param WP_Post $question      The question post.
-	 * @param string  $question_type The question type.
-	 *
-	 * @return array The question properties.
-	 */
-	private function get_question_type_specific_properties( WP_Post $question, string $question_type ) : array {
-		$type_specific_properties = [];
-
-		switch ( $question_type ) {
-			case 'multiple-choice':
-				$type_specific_properties = $this->get_multiple_choice_properties( $question );
-				break;
-			case 'boolean':
-				$type_specific_properties['answer'] = 'true' === get_post_meta( $question->ID, '_question_right_answer', true );
-
-				$answer_feedback = get_post_meta( $question->ID, '_answer_feedback', true );
-				if ( ! empty( $answer_feedback ) ) {
-					$type_specific_properties['answer_feedback'] = $answer_feedback;
-				}
-				break;
-			case 'gap-fill':
-				$type_specific_properties = $this->get_gap_fill_properties( $question );
-				break;
-			case 'single-line':
-				$answer = get_post_meta( $question->ID, '_question_right_answer', true );
-				if ( ! empty( $answer ) ) {
-					$type_specific_properties['teacher_notes'] = $answer;
-				}
-				break;
-			case 'multi-line':
-				$teacher_notes = get_post_meta( $question->ID, '_question_right_answer', true );
-				if ( ! empty( $teacher_notes ) ) {
-					$type_specific_properties['teacher_notes'] = $teacher_notes;
-				}
-				break;
-			case 'file-upload':
-				$teacher_notes = get_post_meta( $question->ID, '_question_right_answer', true );
-				if ( ! empty( $teacher_notes ) ) {
-					$type_specific_properties['teacher_notes'] = $teacher_notes;
-				}
-
-				$student_help = get_post_meta( $question->ID, '_question_wrong_answers', true );
-				if ( ! empty( $student_help[0] ) ) {
-					$type_specific_properties['student_help'] = $student_help[0];
-				}
-				break;
-		}
-
-		/**
-		 * Allows modification of type specific question properties.
-		 *
-		 * @since 3.9.0
-		 *
-		 * @param array   $type_specific_properties The properties of the question.
-		 * @param string  $question_type            The question type.
-		 * @param WP_Post $question                 The question post.
-		 */
-		return apply_filters( 'sensei_question_type_specific_properties', $type_specific_properties, $question_type, $question );
-	}
-
-	/**
-	 * Helper method which generates the properties for gap fill questions.
-	 *
-	 * @param WP_Post $question The question post.
-	 *
-	 * @return array The gap fill question properties.
-	 */
-	private function get_gap_fill_properties( WP_Post $question ) : array {
-		$right_answer_meta = get_post_meta( $question->ID, '_question_right_answer', true );
-
-		if ( empty( $right_answer_meta ) ) {
-			return [];
-		}
-
-		$result      = [];
-		$text_values = explode( '||', $right_answer_meta );
-
-		if ( isset( $text_values[0] ) ) {
-			$result['before'] = $text_values[0];
-		}
-
-		if ( isset( $text_values[1] ) ) {
-			$result['gap'] = explode( '|', $text_values[1] );
-		}
-
-		if ( isset( $text_values[2] ) ) {
-			$result['after'] = $text_values[2];
-		}
-
-		return $result;
-	}
-
-	/**
-	 * Helper method which generates the properties for multiple choice questions.
-	 *
-	 * @param WP_Post $question The question post.
-	 *
-	 * @return array The multiple choice question properties.
-	 */
-	private function get_multiple_choice_properties( WP_Post $question ) : array {
-		$type_specific_properties = [
-			'random_order' => 'yes' === get_post_meta( $question->ID, '_random_order', true ),
-		];
-
-		$answer_feedback = get_post_meta( $question->ID, '_answer_feedback', true );
-		if ( ! empty( $answer_feedback ) ) {
-			$type_specific_properties['answer_feedback'] = $answer_feedback;
-		}
-
-		$correct_answers = $this->get_answers_array( $question, '_question_right_answer', true );
-		$wrong_answers   = $this->get_answers_array( $question, '_question_wrong_answers', false );
-
-		$answer_order       = get_post_meta( $question->ID, '_answer_order', true );
-		$all_answers_sorted = Sensei()->question->get_answers_sorted( array_merge( $correct_answers, $wrong_answers ), $answer_order );
-
-		$type_specific_properties['options'] = array_values( $all_answers_sorted );
-
-		return $type_specific_properties;
-	}
-
-	/**
-	 * Helper method which transforms the answers question meta to an associative array. This is the format that is expected by
-	 * Sensei_Question::get_answers_sorted.
-	 *
-	 * @param WP_Post $question   The question post.
-	 * @param string  $meta_key   The answers meta key.
-	 * @param bool    $is_correct Whether the questions are correct.
-	 *
-	 * @see Sensei_Question::get_answers_sorted
-	 *
-	 * @return array The answers array.
-	 */
-	private function get_answers_array( WP_Post $question, string $meta_key, bool $is_correct ) : array {
-		$answers = get_post_meta( $question->ID, $meta_key, true );
-
-		if ( empty( $answers ) ) {
-			return [];
-		}
-
-		if ( ! is_array( $answers ) ) {
-			$answers = [ $answers ];
-		}
-
-		$result = [];
-		foreach ( $answers as $correct_answer ) {
-			$result[ Sensei()->lesson->get_answer_id( $correct_answer ) ] = [
-				'label'   => $correct_answer,
-				'correct' => $is_correct,
-			];
-		}
-
-		return $result;
-	}
-
-	/**
 	 * Schema for the endpoint.
 	 *
 	 * @return array Schema object.
 	 */
-	public function get_schema() : array {
-		return [
-			'definitions' => $this->get_question_definitions(),
-			'type'        => 'object',
-			'properties'  => [
+	public function get_item_schema() : array {
+		$schema = [
+			'type'       => 'object',
+			'properties' => [
 				'options'   => [
 					'type'       => 'object',
+					'required'   => true,
 					'properties' => [
 						'pass_required'         => [
 							'type'        => 'boolean',
@@ -436,240 +389,12 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 					],
 				],
 				'questions' => [
-					'type'        => 'array',
-					'description' => 'Questions in quiz',
-					'items'       => [
-						'anyOf' => [
-							[
-								'$ref' => '#/definitions/question_multiple_choice',
-							],
-							[
-								'$ref' => '#/definitions/question_boolean',
-							],
-							[
-								'$ref' => '#/definitions/question_gap_fill',
-							],
-							[
-								'$ref' => '#/definitions/question_single_line',
-							],
-							[
-								'$ref' => '#/definitions/question_multi_line',
-							],
-							[
-								'$ref' => '#/definitions/question_file_upload',
-							],
-						],
-					],
+					'type'     => 'array',
+					'required' => true,
 				],
 			],
-			'required'    => [
-				'options',
-				'questions',
-			],
 		];
-	}
 
-	/**
-	 * Helper method which returns the question schema definitions.
-	 *
-	 * @return array The definitions
-	 */
-	private function get_question_definitions() : array {
-		return [
-			'question'                 => [
-				'type'       => 'object',
-				'properties' => [
-					'id'          => [
-						'type'        => 'integer',
-						'description' => 'Question post ID',
-					],
-					'title'       => [
-						'type'        => 'string',
-						'description' => 'Question text',
-					],
-					'description' => [
-						'type'        => 'string',
-						'description' => 'Question description',
-					],
-					'grade'       => [
-						'type'        => 'integer',
-						'description' => 'Points this question is worth',
-						'default'     => 1,
-					],
-					'shared'      => [
-						'type'        => 'boolean',
-						'description' => 'Whether the question has been added on other quizzes',
-						'readOnly'    => false,
-					],
-					'categories'  => [
-						'type'        => 'array',
-						'description' => 'Category term IDs attached to the question',
-						'items'       => [
-							'type'        => 'integer',
-							'description' => 'Term IDs',
-						],
-					],
-				],
-				'required'   => [
-					'title',
-				],
-			],
-			'question_multiple_choice' => [
-				'allOf' => [
-					[
-						'$ref' => '#/definitions/question',
-					],
-					[
-						'properties' => [
-							'type'            => [
-								'const' => 'multiple-choice',
-							],
-							'options'         => [
-								'type'        => 'array',
-								'description' => 'Options for the multiple choice',
-								'items'       => [
-									'type'       => 'object',
-									'properties' => [
-										'label'   => [
-											'type'        => 'string',
-											'description' => 'Label for answer option',
-										],
-										'correct' => [
-											'type'        => 'boolean',
-											'description' => 'Whether this answer is correct',
-										],
-									],
-								],
-							],
-							'random_order'    => [
-								'type'        => 'boolean',
-								'description' => 'Should options be randomized when displayed to quiz takers',
-								'default'     => false,
-							],
-							'answer_feedback' => [
-								'type'        => 'string',
-								'description' => 'Feedback to show quiz takers once quiz is submitted',
-							],
-						],
-						'required'   => [
-							'options',
-						],
-					],
-				],
-			],
-			'question_boolean'         => [
-				'allOf' => [
-					[
-						'$ref' => '#/definitions/question',
-					],
-					[
-						'properties' => [
-							'type'            => [
-								'const' => 'boolean',
-							],
-							'answer'          => [
-								'type'        => 'boolean',
-								'description' => 'Correct answer for question',
-							],
-							'answer_feedback' => [
-								'type'        => 'string',
-								'description' => 'Feedback to show quiz takers once quiz is submitted',
-							],
-						],
-						'required'   => [
-							'answer',
-						],
-					],
-				],
-			],
-			'question_gap_fill'        => [
-				'allOf' => [
-					[
-						'$ref' => '#/definitions/question',
-					],
-					[
-						'properties' => [
-							'type'   => [
-								'const' => 'gap-fill',
-							],
-							'before' => [
-								'type'        => 'string',
-								'description' => 'Text before the gap',
-							],
-							'gap'    => [
-								'type'        => 'array',
-								'description' => 'Gap text answers',
-								'items'       => [
-									'type'        => 'string',
-									'description' => 'Gap answers',
-								],
-							],
-							'after'  => [
-								'type'        => 'string',
-								'description' => 'Text after the gap',
-							],
-						],
-					],
-				],
-			],
-			'question_single_line'     => [
-				'allOf' => [
-					[
-						'$ref' => '#/definitions/question',
-					],
-					[
-						'properties' => [
-							'type'          => [
-								'const' => 'single-line',
-							],
-							'teacher_notes' => [
-								'type'        => 'string',
-								'description' => 'Teacher notes for grading',
-							],
-						],
-					],
-				],
-			],
-			'question_multi_line'      => [
-				'allOf' => [
-					[
-						'$ref' => '#/definitions/question',
-					],
-					[
-						'properties' => [
-							'type'          => [
-								'const' => 'multi-line',
-							],
-							'teacher_notes' => [
-								'type'        => 'string',
-								'description' => 'Teacher notes for grading',
-							],
-						],
-					],
-				],
-			],
-			'question_file_upload'     => [
-				'allOf' => [
-					[
-						'$ref' => '#/definitions/question',
-					],
-					[
-						'properties' => [
-							'type'          => [
-								'const' => 'file-upload',
-							],
-							'student_help'  => [
-								'type'        => 'string',
-								'description' => 'Description for student explaining what needs to be uploaded',
-							],
-							'teacher_notes' => [
-								'type'        => 'string',
-								'description' => 'Teacher notes for grading',
-							],
-						],
-					],
-				],
-			],
-		];
+		return $schema;
 	}
 }

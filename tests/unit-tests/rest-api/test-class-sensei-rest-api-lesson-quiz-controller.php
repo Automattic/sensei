@@ -12,7 +12,6 @@
  */
 class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase {
 	use Sensei_Test_Login_Helpers;
-	use Sensei_REST_API_Test_Helpers;
 
 	/**
 	 * A server instance that we use in tests to dispatch requests.
@@ -66,9 +65,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 		$response = $this->server->dispatch( $request );
 
 		$this->assertEquals( $response->get_status(), 200 );
-
-		$endpoint = new Sensei_REST_API_Lesson_Quiz_Controller( '' );
-		$this->assertMeetsSchema( $endpoint->get_schema(), $response->get_data() );
+		$this->assertCount( 5, $response->get_data()['questions'] );
 	}
 
 	/**
@@ -121,7 +118,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 	/**
 	 * Tests that quiz options are returned correctly.
 	 */
-	public function testQuizProperties() {
+	public function testGetQuizProperties() {
 		$this->login_as_teacher();
 
 		$quiz_args         = [
@@ -136,7 +133,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 		];
 		list( $lesson_id ) = $this->create_lesson_with_quiz( $quiz_args );
 
-		$response_data = $this->send_and_validate( $lesson_id );
+		$response_data = $this->send_get_request( $lesson_id );
 
 		$this->assertTrue( $response_data['options']['pass_required'] );
 		$this->assertTrue( $response_data['options']['auto_grade'] );
@@ -157,7 +154,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 		];
 		list( $lesson_id ) = $this->create_lesson_with_quiz( $another_quiz_args );
 
-		$response_data = $this->send_and_validate( $lesson_id );
+		$response_data = $this->send_get_request( $lesson_id );
 
 		$this->assertFalse( $response_data['options']['pass_required'] );
 		$this->assertFalse( $response_data['options']['auto_grade'] );
@@ -170,7 +167,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 	/**
 	 * Tests multiple choice question properties.
 	 */
-	public function testMultipleChoiceQuestion() {
+	public function testGetMultipleChoiceQuestion() {
 		$this->login_as_teacher();
 
 		list( $lesson_id, $quiz_id ) = $this->create_lesson_with_quiz();
@@ -185,7 +182,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 				'answer_feedback'        => 'Some feedback',
 			]
 		);
-		$response_data = $this->send_and_validate( $lesson_id );
+		$response_data = $this->send_get_request( $lesson_id );
 
 		$this->assertFalse( $response_data['questions'][0]['random_order'] );
 		$this->assertEquals( 'Some feedback', $response_data['questions'][0]['answer_feedback'] );
@@ -199,7 +196,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 	/**
 	 * Tests true/false question properties.
 	 */
-	public function testBooleanQuestion() {
+	public function testGetBooleanQuestion() {
 		$this->login_as_teacher();
 
 		list( $lesson_id, $quiz_id ) = $this->create_lesson_with_quiz();
@@ -212,7 +209,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 			]
 		);
 
-		$response_data = $this->send_and_validate( $lesson_id );
+		$response_data = $this->send_get_request( $lesson_id );
 
 		$this->assertFalse( $response_data['questions'][0]['answer'] );
 		$this->assertEquals( 'Some feedback', $response_data['questions'][0]['answer_feedback'] );
@@ -222,7 +219,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 	/**
 	 * Tests gap fill question properties.
 	 */
-	public function testGapFillQuestion() {
+	public function testGetGapFillQuestion() {
 		$this->login_as_teacher();
 
 		list( $lesson_id, $quiz_id ) = $this->create_lesson_with_quiz();
@@ -236,7 +233,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 			]
 		);
 
-		$response_data = $this->send_and_validate( $lesson_id );
+		$response_data = $this->send_get_request( $lesson_id );
 
 		$this->assertEquals( 'gap-fill', $response_data['questions'][0]['type'] );
 		$this->assertEquals( 'BEFORE', $response_data['questions'][0]['before'] );
@@ -248,7 +245,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 	/**
 	 * Tests single line question properties.
 	 */
-	public function testSingleLineQuestion() {
+	public function testGetSingleLineQuestion() {
 		$this->login_as_teacher();
 
 		list( $lesson_id, $quiz_id ) = $this->create_lesson_with_quiz();
@@ -260,7 +257,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 			]
 		);
 
-		$response_data = $this->send_and_validate( $lesson_id );
+		$response_data = $this->send_get_request( $lesson_id );
 
 		$this->assertEquals( 'single-line', $response_data['questions'][0]['type'] );
 		$this->assertEquals( 'NOTES', $response_data['questions'][0]['teacher_notes'] );
@@ -269,7 +266,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 	/**
 	 * Tests multiple line question properties.
 	 */
-	public function testMultilineQuestion() {
+	public function testGetMultilineQuestion() {
 		$this->login_as_teacher();
 
 		list( $lesson_id, $quiz_id ) = $this->create_lesson_with_quiz();
@@ -281,7 +278,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 			]
 		);
 
-		$response_data = $this->send_and_validate( $lesson_id );
+		$response_data = $this->send_get_request( $lesson_id );
 
 		$this->assertEquals( 'multi-line', $response_data['questions'][0]['type'] );
 		$this->assertEquals( 'NOTES', $response_data['questions'][0]['teacher_notes'] );
@@ -290,7 +287,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 	/**
 	 * Tests file upload question properties.
 	 */
-	public function testFileUploadQuestion() {
+	public function testGetFileUploadQuestion() {
 		$this->login_as_teacher();
 
 		list( $lesson_id, $quiz_id ) = $this->create_lesson_with_quiz();
@@ -303,7 +300,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 			]
 		);
 
-		$response_data = $this->send_and_validate( $lesson_id );
+		$response_data = $this->send_get_request( $lesson_id );
 
 		$this->assertEquals( 'file-upload', $response_data['questions'][0]['type'] );
 		$this->assertEquals( 'Teacher note', $response_data['questions'][0]['teacher_notes'] );
@@ -359,7 +356,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 				'question_category_id' => $second_category_id,
 			]
 		);
-		$response_data = $this->send_and_validate( $lesson_id );
+		$response_data = $this->send_get_request( $lesson_id );
 
 		// Quiz should have one multiline question, 3 questions from the first category and 2 from the second.
 		$this->assertCount( 6, $response_data['questions'] );
@@ -375,7 +372,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 	/**
 	 * Tests single line question properties.
 	 */
-	public function testQuestionCommonProperties() {
+	public function testGetQuestionCommonProperties() {
 		$this->login_as_teacher();
 
 		list( $lesson_id, $quiz_id ) = $this->create_lesson_with_quiz();
@@ -391,12 +388,318 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 
 		add_post_meta( $question_id, '_quiz_id', $quiz_id, false );
 
-		$response_data = $this->send_and_validate( $lesson_id );
+		$response_data = $this->send_get_request( $lesson_id );
 
 		$this->assertTrue( $response_data['questions'][0]['shared'] );
 		$this->assertEquals( 'Will it blend?', $response_data['questions'][0]['title'] );
 		$this->assertEquals( 'That is the question.', $response_data['questions'][0]['description'] );
 		$this->assertEquals( 10, $response_data['questions'][0]['grade'] );
+	}
+
+	/**
+	 * Tests that a simple post request works.
+	 */
+	public function testPostSimple() {
+		$this->login_as_teacher();
+
+		$lesson_id = $this->factory->lesson->create();
+
+		$body = [
+			'options'   => [
+				'pass_required'         => true,
+				'quiz_passmark'         => 10,
+				'auto_grade'            => false,
+				'allow_retakes'         => false,
+				'show_questions'        => 3,
+				'random_question_order' => true,
+			],
+			'questions' => [],
+		];
+
+		$this->send_post_request( $lesson_id, $body );
+		$quiz_meta = get_post_meta( Sensei()->lesson->lesson_quizzes( $lesson_id ) );
+
+		$this->assertEquals( 'on', $quiz_meta['_pass_required'][0] );
+		$this->assertEquals( '10', $quiz_meta['_quiz_passmark'][0] );
+		$this->assertEquals( 'manual', $quiz_meta['_quiz_grade_type'][0] );
+		$this->assertEquals( '', $quiz_meta['_enable_quiz_reset'][0] );
+		$this->assertEquals( '3', $quiz_meta['_show_questions'][0] );
+		$this->assertEquals( 'yes', $quiz_meta['_random_question_order'][0] );
+	}
+
+	/**
+	 * Tests that a quiz is only edited by admins and the teacher that created it.
+	 */
+	public function testPostAnotherTeachersCourse() {
+		$this->login_as_teacher();
+
+		list( $lesson_id ) = $this->create_lesson_with_quiz();
+
+		$response = $this->send_post_request(
+			$lesson_id,
+			[
+				'options'   => [],
+				'questions' => [],
+			]
+		);
+
+		$this->assertEquals( 200, $response->get_status(), 'Teacher which created the quiz cannot edit it.' );
+
+		$this->login_as_teacher_b();
+
+		$response = $this->send_post_request(
+			$lesson_id,
+			[
+				'options'   => [],
+				'questions' => [],
+			]
+		);
+
+		$this->assertEquals( 403, $response->get_status(), 'Teacher which did not create the quiz can edit it.' );
+
+		$this->login_as_admin();
+
+		$response = $this->send_post_request(
+			$lesson_id,
+			[
+				'options'   => [],
+				'questions' => [],
+			]
+		);
+
+		$this->assertEquals( 200, $response->get_status(), 'Admin user cannot edit the quiz.' );
+
+		$this->logout();
+
+		$response = $this->send_post_request(
+			$lesson_id,
+			[
+				'options'   => [],
+				'questions' => [],
+			]
+		);
+
+		$this->assertEquals( 401, $response->get_status(), 'Logged out user can edit the quiz.' );
+	}
+
+	/**
+	 * Tests editing multiple choice question properties.
+	 */
+	public function testPostMultipleChoiceQuestion() {
+		$this->login_as_teacher();
+
+		list( $lesson_id, $quiz_id ) = $this->create_lesson_with_quiz();
+		$question_id                 = $this->factory->question->create(
+			[
+				'question_type' => 'multiple-choice',
+				'quiz_id'       => $quiz_id,
+			]
+		);
+
+		$body = [
+			'options'   => [],
+			'questions' => [
+				[
+					'title'           => 'Will it blend?',
+					'description'     => 'That is the question.',
+					'grade'           => 30,
+					'type'            => 'multiple-choice',
+					'options'         => [
+						[
+							'label'   => 'Yes.',
+							'correct' => false,
+						],
+						[
+							'label'   => 'Definitely.',
+							'correct' => true,
+						],
+					],
+					'random_order'    => true,
+					'answer_feedback' => 'Don\'t breathe this!',
+				],
+				[
+					'id'    => $question_id,
+					'title' => 'Updated title',
+					'type'  => 'multiple-choice',
+				],
+			],
+		];
+
+		$this->send_post_request( $lesson_id, $body );
+
+		$questions = Sensei()->quiz->get_questions( Sensei()->lesson->lesson_quizzes( $lesson_id ) );
+
+		$this->assertCount( 2, $questions );
+
+		$this->assertEquals( 'Will it blend?', $questions[0]->post_title );
+		$this->assertEquals( 'That is the question.', $questions[0]->post_content );
+
+		$this->assertEquals( '30', get_post_meta( $questions[0]->ID, '_question_grade', true ) );
+		$this->assertEquals( 'yes', get_post_meta( $questions[0]->ID, '_random_order', true ) );
+		$this->assertEquals( 'Don\'t breathe this!', get_post_meta( $questions[0]->ID, '_answer_feedback', true ) );
+		$this->assertEquals( 'Yes.', get_post_meta( $questions[0]->ID, '_question_wrong_answers', true )[0] );
+		$this->assertEquals( 'Definitely.', get_post_meta( $questions[0]->ID, '_question_right_answer', true )[0] );
+
+		$this->assertEquals( 'Updated title', $questions[1]->post_title );
+		$this->assertEquals( '', $questions[1]->post_content );
+	}
+
+	/**
+	 * Tests editing true/false question properties.
+	 */
+	public function testPostBooleanQuestion() {
+		$this->login_as_teacher();
+
+		$lesson_id = $this->factory->lesson->create();
+
+		$body = [
+			'options'   => [],
+			'questions' => [
+				[
+					'title'           => 'Will it blend?',
+					'type'            => 'boolean',
+					'answer'          => true,
+					'answer_feedback' => 'Don\'t breathe this!',
+				],
+			],
+		];
+
+		$this->send_post_request( $lesson_id, $body );
+
+		$questions = Sensei()->quiz->get_questions( Sensei()->lesson->lesson_quizzes( $lesson_id ) );
+
+		$this->assertCount( 1, $questions );
+
+		$this->assertEquals( 'Will it blend?', $questions[0]->post_title );
+		$this->assertEquals( 'true', get_post_meta( $questions[0]->ID, '_question_right_answer', true ) );
+		$this->assertEquals( 'Don\'t breathe this!', get_post_meta( $questions[0]->ID, '_answer_feedback', true ) );
+	}
+
+	/**
+	 * Tests editing gap fill question properties.
+	 */
+	public function testPostGapFillQuestion() {
+		$this->login_as_teacher();
+
+		$lesson_id = $this->factory->lesson->create();
+
+		$body = [
+			'options'   => [],
+			'questions' => [
+				[
+					'title'  => 'Will it blend?',
+					'type'   => 'gap-fill',
+					'before' => 'Yes ',
+					'gap'    => [
+						'it',
+						'he',
+						'she',
+					],
+					'after'  => ' blends.',
+				],
+			],
+		];
+
+		$this->send_post_request( $lesson_id, $body );
+
+		$questions = Sensei()->quiz->get_questions( Sensei()->lesson->lesson_quizzes( $lesson_id ) );
+
+		$this->assertCount( 1, $questions );
+
+		$this->assertEquals( 'Will it blend?', $questions[0]->post_title );
+		$this->assertEquals( 'Yes ||it|he|she|| blends.', get_post_meta( $questions[0]->ID, '_question_right_answer', true ) );
+	}
+
+	/**
+	 * Tests editing single line and multiline question properties.
+	 */
+	public function testPostLineQuestion() {
+		$this->login_as_teacher();
+
+		$lesson_id = $this->factory->lesson->create();
+
+		$body = [
+			'options'   => [],
+			'questions' => [
+				[
+					'title'         => 'Will it blend?',
+					'type'          => 'single-line',
+					'teacher_notes' => 'Don\'t breathe this!',
+				],
+				[
+					'title'         => 'Please explain.',
+					'type'          => 'multi-line',
+					'teacher_notes' => 'Teacher notes',
+				],
+			],
+		];
+
+		$this->send_post_request( $lesson_id, $body );
+
+		$questions = Sensei()->quiz->get_questions( Sensei()->lesson->lesson_quizzes( $lesson_id ) );
+
+		$this->assertCount( 2, $questions );
+
+		$this->assertEquals( 'Will it blend?', $questions[0]->post_title );
+		$this->assertEquals( 'Don\'t breathe this!', get_post_meta( $questions[0]->ID, '_question_right_answer', true ) );
+		$this->assertEquals( 'Please explain.', $questions[1]->post_title );
+		$this->assertEquals( 'Teacher notes', get_post_meta( $questions[1]->ID, '_question_right_answer', true ) );
+	}
+
+	/**
+	 * Tests editing file upload question properties.
+	 */
+	public function testPostFileUploadQuestion() {
+		$this->login_as_teacher();
+
+		$lesson_id = $this->factory->lesson->create();
+
+		$body = [
+			'options'   => [],
+			'questions' => [
+				[
+					'title'         => 'Will it blend?',
+					'type'          => 'file-upload',
+					'teacher_notes' => 'Teacher notes',
+					'student_help'  => 'Upload instructions',
+				],
+			],
+		];
+
+		$this->send_post_request( $lesson_id, $body );
+
+		$questions = Sensei()->quiz->get_questions( Sensei()->lesson->lesson_quizzes( $lesson_id ) );
+
+		$this->assertCount( 1, $questions );
+
+		$this->assertEquals( 'Will it blend?', $questions[0]->post_title );
+		$this->assertEquals( 'Teacher notes', get_post_meta( $questions[0]->ID, '_question_right_answer', true ) );
+		$this->assertEquals( 'Upload instructions', get_post_meta( $questions[0]->ID, '_question_wrong_answers', true ) );
+	}
+
+	/**
+	 * Tests that invalid question data are validated.
+	 */
+	public function testQuestionValidationFails() {
+		$this->login_as_teacher();
+
+		$lesson_id = $this->factory->lesson->create();
+
+		$body = [
+			'options'   => [],
+			'questions' => [
+				[
+					'title'           => 'Will it blend?',
+					'type'            => 'boolean',
+					'answer'          => 'A string',
+					'answer_feedback' => 'Don\'t breathe this!',
+				],
+			],
+		];
+
+		$response = $this->send_post_request( $lesson_id, $body );
+
+		$this->assertEquals( $response->get_status(), 400 );
 	}
 
 	/**
@@ -406,14 +709,27 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 	 *
 	 * @return array Response data.
 	 */
-	private function send_and_validate( int $lesson_id ) : array {
+	private function send_get_request( int $lesson_id ) : array {
 		$request  = new WP_REST_Request( 'GET', self::REST_ROUTE . $lesson_id );
 		$response = $this->server->dispatch( $request );
 
-		$endpoint = new Sensei_REST_API_Lesson_Quiz_Controller( '' );
-		$this->assertMeetsSchema( $endpoint->get_schema(), $response->get_data() );
-
 		return $response->get_data();
+	}
+
+	/**
+	 * Helper method to send and validate a POST request.
+	 *
+	 * @param int   $lesson_id The lesson id.
+	 * @param array $body      JSON body arguments.
+	 *
+	 * @return WP_REST_Response Response.
+	 */
+	private function send_post_request( int $lesson_id, array $body ) : WP_REST_Response {
+		$request = new WP_REST_Request( 'POST', self::REST_ROUTE . $lesson_id );
+		$request->set_header( 'content-type', 'application/json' );
+		$request->set_body( wp_json_encode( $body ) );
+
+		return $this->server->dispatch( $request );
 	}
 
 	/**
