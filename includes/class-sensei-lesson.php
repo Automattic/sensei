@@ -706,6 +706,12 @@ class Sensei_Lesson {
 		if ( 'lesson_preview' == $post_key && isset( $_POST['action'] ) && $_POST['action'] == 'inline-save' ) {
 			$new_meta_value = '-1';
 		}
+
+		// Check if the user has permission to edit the target course.
+		if ( 'lesson_course' === $post_key && ! current_user_can( 'edit_post', $new_meta_value ) ) {
+			return;
+		}
+
 		// update field with the new value
 		if ( -1 != $new_meta_value ) {
 			return update_post_meta( $post_id, $meta_key, $new_meta_value );
