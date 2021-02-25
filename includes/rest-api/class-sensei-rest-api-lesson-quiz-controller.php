@@ -284,7 +284,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 					$meta['_question_right_answer'] = $question['answer'] ? 'true' : 'false';
 				}
 
-				if ( isset( $question['answer_feedback'] ) ) {
+				if ( isset( $question['answer_feedback'] ) || array_key_exists( 'answer_feedback', $question ) ) {
 					$meta['_answer_feedback'] = $question['answer_feedback'];
 				}
 				break;
@@ -322,7 +322,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 		$meta = [];
 
 		if ( isset( $question['random_order'] ) ) {
-			$meta['_random_order'] = $question['random_order'];
+			$meta['_random_order'] = $question['random_order'] ? 'yes' : 'no';
 		}
 
 		if ( isset( $question['answer_feedback'] ) || array_key_exists( 'answer_feedback', $question ) ) {
