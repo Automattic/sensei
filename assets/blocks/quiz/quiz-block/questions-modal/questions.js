@@ -89,7 +89,7 @@ const Questions = ( {
 			.join( ', ' );
 
 		const questionId = question.id;
-		const title = question.title.rendered;
+		const title = question.title.raw;
 
 		return (
 			<tr key={ question.id }>
