@@ -54,13 +54,6 @@ class Sensei_REST_API_Question_Options_Controller extends \WP_REST_Controller {
 					'callback'            => [ $this, 'get_multiple_questions' ],
 					'permission_callback' => [ $this, 'can_user_get_multiple_questions' ],
 					'args'                => [
-						'context'      => [
-							'type'              => 'string',
-							'default'           => 'view',
-							'enum'              => [ 'view', 'edit' ],
-							'sanitize_callback' => 'sanitize_key',
-							'validate_callback' => 'rest_validate_request_arg',
-						],
 						'question_ids' => [
 							'type'              => 'string',
 							'required'          => true,
