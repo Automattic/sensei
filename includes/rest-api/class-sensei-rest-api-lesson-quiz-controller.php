@@ -391,6 +391,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 				'questions' => [
 					'type'     => 'array',
 					'required' => true,
+					'items'    => $this->get_single_question_schema(),
 				],
 			],
 		];
