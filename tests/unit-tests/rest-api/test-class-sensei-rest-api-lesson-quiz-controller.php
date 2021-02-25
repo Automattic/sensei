@@ -535,7 +535,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 		$this->assertEquals( 'That is the question.', $questions[0]->post_content );
 
 		$this->assertEquals( '30', get_post_meta( $questions[0]->ID, '_question_grade', true ) );
-		$this->assertEquals( '1', get_post_meta( $questions[0]->ID, '_random_order', true ) );
+		$this->assertEquals( 'yes', get_post_meta( $questions[0]->ID, '_random_order', true ) );
 		$this->assertEquals( 'Don\'t breathe this!', get_post_meta( $questions[0]->ID, '_answer_feedback', true ) );
 		$this->assertEquals( 'Yes.', get_post_meta( $questions[0]->ID, '_question_wrong_answers', true )[0] );
 		$this->assertEquals( 'Definitely.', get_post_meta( $questions[0]->ID, '_question_right_answer', true )[0] );
