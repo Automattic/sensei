@@ -213,60 +213,84 @@ class Sensei_REST_API_Course_Structure_Controller extends \WP_REST_Controller {
 	 * @return array Schema object.
 	 */
 	public function get_schema() {
-		return [
-			'definitions' => [
-				'lesson' => [
-					'type'       => 'object',
-					'required'   => [ 'type', 'title' ],
-					'properties' => [
-						'type'  => [
-							'const' => 'lesson',
-						],
-						'id'    => [
-							'description' => __( 'Lesson post ID', 'sensei-lms' ),
-							'type'        => 'integer',
-						],
-						'title' => [
-							'description' => __( 'Lesson title', 'sensei-lms' ),
-							'type'        => 'string',
-						],
-						'draft' => [
-							'description' => __( 'Whether the lesson is currently a draft', 'sensei-lms' ),
-							'type'        => 'boolean',
-							'readOnly'    => true,
-						],
-					],
+		if ( ! is_wp_version_compatible( '5.6.0' ) ) {
+			// This is only used for tests right now so this is safe.
+			return [
+				'type'  => 'array',
+				'items' => [
+					'type' => 'object',
 				],
-				'module' => [
-					'type'       => 'object',
-					'required'   => [ 'type', 'title', 'lessons' ],
-					'properties' => [
-						'type'        => [
-							'const' => 'module',
-						],
-						'id'          => [
-							'description' => __( 'Module term ID', 'sensei-lms' ),
-							'type'        => 'integer',
-						],
-						'title'       => [
-							'description' => __( 'Module title', 'sensei-lms' ),
-							'type'        => 'string',
-						],
-						'description' => [
-							'description' => __( 'Module description', 'sensei-lms' ),
-							'type'        => 'string',
-						],
-						'lessons'     => [
-							'description' => __( 'Lessons in module', 'sensei-lms' ),
-							'type'        => 'array',
-							'items'       => [ '$ref' => '#/definitions/lesson' ],
-						],
-					],
+			];
+		}
+
+		return [
+			'type'  => 'array',
+			'items' => [
+				'oneOf' => [ $this->get_schema_lessons(), $this->get_schema_modules() ],
+			],
+		];
+	}
+
+	/**
+	 * Get schema for lessons.
+	 */
+	private function get_schema_lessons() {
+		return [
+			'type'       => 'object',
+			'required'   => [ 'type', 'title' ],
+			'properties' => [
+				'type'  => [
+					'type'     => 'string',
+					'pattern'  => 'lesson',
+					'required' => true,
+				],
+				'id'    => [
+					'description' => __( 'Lesson post ID', 'sensei-lms' ),
+					'type'        => 'integer',
+				],
+				'title' => [
+					'description' => __( 'Lesson title', 'sensei-lms' ),
+					'type'        => 'string',
+				],
+				'draft' => [
+					'description' => __( 'Whether the lesson is currently a draft', 'sensei-lms' ),
+					'type'        => 'boolean',
+					'readOnly'    => true,
 				],
 			],
-			'type'        => 'array',
-			'items'       => [
-				'oneOf' => [ [ '$ref' => '#/definitions/lesson' ], [ '$ref' => '#/definitions/module' ] ],
+		];
+	}
+
+	/**
+	 * Get schema for modules.
+	 */
+	private function get_schema_modules() {
+		return [
+			'type'       => 'object',
+			'required'   => [ 'type', 'title', 'lessons' ],
+			'properties' => [
+				'type'        => [
+					'type'     => 'string',
+					'pattern'  => 'module',
+					'required' => true,
+				],
+				'id'          => [
+					'description' => __( 'Module term ID', 'sensei-lms' ),
+					'type'        => 'integer',
+				],
+				'title'       => [
+					'description' => __( 'Module title', 'sensei-lms' ),
+					'type'        => 'string',
+				],
+				'description' => [
+					'description' => __( 'Module description', 'sensei-lms' ),
+					'type'        => 'string',
+				],
+				'lessons'     => [
+					'description' => __( 'Lessons in module', 'sensei-lms' ),
+					'type'        => 'array',
+					'items'       => $this->get_schema_lessons(),
+				],
 			],
 		];
 	}
