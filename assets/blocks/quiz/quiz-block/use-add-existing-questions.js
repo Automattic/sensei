@@ -2,12 +2,12 @@
  * WordPress dependencies
  */
 import { select, useDispatch } from '@wordpress/data';
+import apiFetch from '@wordpress/api-fetch';
 
 /**
  * Internal dependencies
  */
 import { createQuestionBlock, findQuestionBlock } from '../data';
-import apiFetch from '@wordpress/api-fetch';
 
 const API_PATH = '/sensei-internal/v1/question-options';
 
