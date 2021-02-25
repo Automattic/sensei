@@ -5,12 +5,18 @@ import { useSelect } from '@wordpress/data';
 import { SelectControl } from '@wordpress/components';
 import { search } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
+import { useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
 import InputControl from '../../../editor-components/input-control';
 import questionTypesConfig from '../../answer-blocks';
+
+/**
+ * External dependencies
+ */
+import { debounce } from 'lodash';
 
 /**
  * Questions filter.
@@ -21,18 +27,21 @@ import questionTypesConfig from '../../answer-blocks';
  * @param {Function} props.setFilters         Filters state setter.
  */
 const Filter = ( { questionCategories, filters, setFilters } ) => {
+	const { searchValue } = useState( filters.search );
+
 	const questionTypes = useSelect( ( select ) =>
 		select( 'core' ).getEntityRecords( 'taxonomy', 'question-type', {
 			per_page: -1,
 		} )
 	);
 
-	const createFilterChangeHandler = ( filterKey ) => ( value ) => {
-		setFilters( ( prevFilters ) => ( {
-			...prevFilters,
-			[ filterKey ]: value,
-		} ) );
-	};
+	const createFilterChangeHandler = ( filterKey, wait ) =>
+		debounce( ( value ) => {
+			setFilters( ( prevFilters ) => ( {
+				...prevFilters,
+				[ filterKey ]: value,
+			} ) );
+		}, wait );
 
 	const typeOptions = [
 		{
@@ -62,7 +71,7 @@ const Filter = ( { questionCategories, filters, setFilters } ) => {
 				<SelectControl
 					options={ typeOptions }
 					value={ filters[ 'question-type' ] }
-					onChange={ createFilterChangeHandler( 'question-type' ) }
+					onChange={ createFilterChangeHandler( 'question-type', 0 ) }
 				/>
 			</li>
 			<li>
@@ -70,7 +79,8 @@ const Filter = ( { questionCategories, filters, setFilters } ) => {
 					options={ categoryOptions }
 					value={ filters[ 'question-category' ] }
 					onChange={ createFilterChangeHandler(
-						'question-category'
+						'question-category',
+						0
 					) }
 				/>
 			</li>
@@ -79,8 +89,8 @@ const Filter = ( { questionCategories, filters, setFilters } ) => {
 					className="sensei-lms-quiz-block__questions-modal__search-input"
 					placeholder={ __( 'Search questions', 'sensei-lms' ) }
 					iconRight={ search }
-					value={ filters.search }
-					onChange={ createFilterChangeHandler( 'search' ) }
+					value={ searchValue }
+					onChange={ createFilterChangeHandler( 'search', 400 ) }
 				/>
 			</li>
 		</ul>
