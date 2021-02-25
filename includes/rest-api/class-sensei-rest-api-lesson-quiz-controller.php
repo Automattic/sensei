@@ -89,6 +89,9 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 	/**
 	 * Sanitization method for questions.
 	 *
+	 * This can be replaced by `rest_sanitize_request_arg` in the callback once we no longer support WordPress
+	 * versions before 5.6 (when `oneOf` support was added).
+	 *
 	 * @param array $questions The questions.
 	 *
 	 * @return array|WP_Error The sanitized questions.
@@ -110,6 +113,9 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 
 	/**
 	 * Validation method for questions.
+	 *
+	 * This can be replaced by `rest_validate_request_arg` in the callback once we no longer support WordPress
+	 * versions before 5.6 (when `oneOf` support was added).
 	 *
 	 * @param array $questions The questions.
 	 *
