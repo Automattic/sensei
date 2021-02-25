@@ -108,7 +108,7 @@ export function createQuestionBlock( item ) {
 export const findQuestionBlock = ( blocks, { id, title } ) => {
 	const compare = ( { attributes } ) =>
 		id === attributes.id ||
-		( ! attributes.id && attributes.title === title );
+		( ! attributes.id && attributes.title && attributes.title === title );
 	return blocks.find( compare );
 };
 
