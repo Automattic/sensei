@@ -56,7 +56,7 @@ describe( 'Structure store', () => {
 	} );
 
 	it( 'Saves structure when post is being saved', function () {
-		store.readBlock.mockReturnValue( 'block' );
+		store.readBlock.mockReturnValue( { structure: 'block' } );
 
 		dispatch( 'core/editor' ).savePost();
 

@@ -86,7 +86,7 @@ const questionTypes = {
 };
 
 /**
- * Filters the quiz editor question types in order to support custom question types.
+ * Filters the quiz editor question types in order to support custom ones.
  *
  * @see sensei_quiz_mapped_api_attributes
  * @see sensei_quiz_mapped_block_attributes

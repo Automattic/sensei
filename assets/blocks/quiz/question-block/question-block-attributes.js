@@ -106,8 +106,8 @@ const getTypeAttributes = ( apiAttributes ) => {
 	 */
 	return applyFilters(
 		'sensei_quiz_mapped_api_attributes',
-		apiAttributes.type,
-		blockAttributes
+		blockAttributes,
+		apiAttributes.type
 	);
 };
 
