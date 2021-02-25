@@ -74,15 +74,6 @@ class Sensei_REST_API_Question_Options_Controller extends \WP_REST_Controller {
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => [ $this, 'get_single_question' ],
 					'permission_callback' => [ $this, 'can_user_get_question' ],
-					'args'                => [
-						'context' => [
-							'type'              => 'string',
-							'default'           => 'view',
-							'enum'              => [ 'view', 'edit' ],
-							'sanitize_callback' => 'sanitize_key',
-							'validate_callback' => 'rest_validate_request_arg',
-						],
-					],
 				],
 				'schema' => [ $this, 'get_single_question_schema' ],
 			]
