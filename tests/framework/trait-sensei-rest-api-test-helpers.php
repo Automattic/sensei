@@ -24,7 +24,6 @@ trait Sensei_REST_API_Test_Helpers {
 	 * @param array $result Request response body.
 	 */
 	public function assertMeetsSchema( $schema, $result ) {
-		// If we made it this far, faux-assert always true.
-		$this->assertTrue( rest_validate_value_from_schema( $result, $schema ), 'Result does not match schema' );
+		$this->assertTrue( true === rest_validate_value_from_schema( $result, $schema ), 'Result does not match schema' );
 	}
 }
