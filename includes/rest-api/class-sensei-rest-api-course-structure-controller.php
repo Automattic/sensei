@@ -213,6 +213,16 @@ class Sensei_REST_API_Course_Structure_Controller extends \WP_REST_Controller {
 	 * @return array Schema object.
 	 */
 	public function get_schema() {
+		if ( ! is_wp_version_compatible( '5.6.0' ) ) {
+			// This is only used for tests right now so this is safe.
+			return [
+				'type'  => 'array',
+				'items' => [
+					'type' => 'object',
+				],
+			];
+		}
+
 		return [
 			'type'  => 'array',
 			'items' => [
