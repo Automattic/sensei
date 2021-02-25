@@ -313,10 +313,13 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		 * Allows modification of type specific question properties.
 		 *
 		 * @since 3.9.0
+		 * @hook sensei_question_type_specific_properties
 		 *
-		 * @param array   $type_specific_properties The properties of the question.
-		 * @param string  $question_type            The question type.
-		 * @param WP_Post $question                 The question post.
+		 * @param {array}   $type_specific_properties The properties of the question.
+		 * @param {string}  $question_type            The question type.
+		 * @param {WP_Post} $question                 The question post.
+		 *
+		 * @return {array}
 		 */
 		return apply_filters( 'sensei_question_type_specific_properties', $type_specific_properties, $question_type, $question );
 	}
@@ -410,11 +413,47 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	}
 
 	/**
+	 * Get the schema for a single question.
+	 *
+	 * @return array
+	 */
+	public function get_single_question_schema() {
+		$single_question_schema = [
+			'oneOf' => [
+				$this->get_multiple_choice_schema(),
+				$this->get_boolean_schema(),
+				$this->get_gap_fill_schema(),
+				$this->get_single_line_schema(),
+				$this->get_multi_line_schema(),
+				$this->get_file_upload_schema(),
+			],
+		];
+
+		if ( ! is_wp_version_compatible( '5.6.0' ) ) {
+			$single_question_schema = [
+				'type' => 'object',
+			];
+		}
+
+		/*
+		 * Add additional question types to the REST API schema.
+		 *
+		 * @since 3.9.0
+		 * @hook sensei_rest_api_schema_single_question
+		 *
+		 * @param {Array} $schema Schema for a single question.
+		 *
+		 * @return {array}
+		 */
+		return apply_filters( 'sensei_rest_api_schema_single_question', $single_question_schema );
+	}
+
+	/**
 	 * Helper method which returns the schema for common question properties.
 	 *
 	 * @return array The properties
 	 */
-	private function get_common_question_properties_schema() : array {
+	public function get_common_question_properties_schema() : array {
 		return [
 			'id'          => [
 				'type'        => 'integer',
