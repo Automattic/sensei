@@ -439,7 +439,9 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		];
 
 		if ( ! is_wp_version_compatible( '5.6.0' ) ) {
-			$single_question_schema = [];
+			$single_question_schema = [
+				'type' => 'object',
+			];
 		}
 
 		/*
