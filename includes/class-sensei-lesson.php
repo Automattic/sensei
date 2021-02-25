@@ -2678,7 +2678,7 @@ class Sensei_Lesson {
 				$questions = array_filter(
 					$questions,
 					function( $question_id ) {
-						return current_user_can( 'edit_post', $question_id );
+						return current_user_can( get_post_type_object( 'question' )->cap->edit_post, $question_id );
 					}
 				);
 
