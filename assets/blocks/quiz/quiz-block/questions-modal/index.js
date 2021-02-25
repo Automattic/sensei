@@ -3,7 +3,7 @@
  */
 import { useState } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
-import { Button, Modal } from '@wordpress/components';
+import { Notice, Button, Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -27,6 +27,7 @@ const QuestionsModalContent = ( { setOpen, addExistingQuestions } ) => {
 		'question-category': '',
 	} );
 
+	const [ errorAddingSelected, setErrorAddingSelected ] = useState( false );
 	const [ selectedQuestionIds, setSelectedQuestionIds ] = useState( [] );
 
 	const questionCategories = useSelect( ( select ) =>
@@ -43,6 +44,18 @@ const QuestionsModalContent = ( { setOpen, addExistingQuestions } ) => {
 				setOpen( false );
 			} }
 		>
+			{ errorAddingSelected && (
+				<Notice
+					status="error"
+					isDismissible={ false }
+					className="sensei-lms-quiz-block__questions-modal__notice"
+				>
+					{ __(
+						'Unable to add the selected question(s). Please make sure you are still logged in and try again.',
+						'sensei-lms'
+					) }
+				</Notice>
+			) }
 			<Filter
 				questionCategories={ questionCategories }
 				filters={ filters }
@@ -59,6 +72,7 @@ const QuestionsModalContent = ( { setOpen, addExistingQuestions } ) => {
 				setSelectedQuestionIds={ setSelectedQuestionIds }
 				addExistingQuestions={ addExistingQuestions }
 				setOpen={ setOpen }
+				setErrorAddingSelected={ setErrorAddingSelected }
 			/>
 		</Modal>
 	);

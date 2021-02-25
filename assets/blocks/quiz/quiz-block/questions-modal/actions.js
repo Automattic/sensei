@@ -13,12 +13,14 @@ import { useState } from '@wordpress/element';
  * @param {Object}   props.setSelectedQuestionIds Selected question IDs state setter.
  * @param {Function} props.addExistingQuestions   Callback to add existing questions.
  * @param {Function} props.setOpen                Set the modal's open status.
+ * @param {Function} props.setErrorAddingSelected Set when there has been an error adding selection.
  */
 const Actions = ( {
 	selectedQuestionIds,
 	setSelectedQuestionIds,
 	addExistingQuestions,
 	setOpen,
+	setErrorAddingSelected,
 } ) => {
 	const [ isAddingSelected, setIsAddingSelected ] = useState( false );
 
@@ -28,10 +30,16 @@ const Actions = ( {
 
 	const addSelected = () => {
 		setIsAddingSelected( true );
-		addExistingQuestions( selectedQuestionIds ).finally( () => {
-			setIsAddingSelected( false );
-			setOpen( false );
-		} );
+		addExistingQuestions( selectedQuestionIds )
+			.then( () => {
+				setOpen( false );
+			} )
+			.catch( () => {
+				setErrorAddingSelected( true );
+			} )
+			.finally( () => {
+				setIsAddingSelected( false );
+			} );
 	};
 
 	const addSelectedLabel =

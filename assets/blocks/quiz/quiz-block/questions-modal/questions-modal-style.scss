@@ -11,6 +11,10 @@
 			margin: 0;
 		}
 
+		&__notice {
+			margin: 0 0 15px;
+		}
+
 		&__questions {
 			overflow: auto;
 			height: calc(100vh - 225px);
