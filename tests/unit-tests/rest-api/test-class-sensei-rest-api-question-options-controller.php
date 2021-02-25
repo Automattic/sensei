@@ -4,11 +4,12 @@
  *
  * @package sensei-lms
  * @since 3.9.0
- * @group rest-api
  */
 
 /**
  * Class Sensei_REST_API_Question_Options_Controller tests.
+ *
+ * @group rest-api
  */
 class Sensei_REST_API_Question_Options_Controller_Tests extends WP_Test_REST_TestCase {
 	use Sensei_Test_Login_Helpers;
