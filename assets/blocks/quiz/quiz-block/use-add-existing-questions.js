@@ -34,6 +34,18 @@ export const useAddExistingQuestions = ( clientId ) => {
 			return;
 		}
 
+		// Put this before the auto-block.
+		const lastBlock =
+			questionBlocks.length &&
+			questionBlocks[ questionBlocks.length - 1 ];
+		const hasEmptyLastBlock = lastBlock && ! lastBlock.attributes.title;
+
+		let insertIndex = questionBlocks.length;
+
+		if ( hasEmptyLastBlock ) {
+			insertIndex -= 1;
+		}
+
 		apiFetch( {
 			path: API_PATH + '?question_ids=' + newQuestionIds.join( ',' ),
 			method: 'GET',
@@ -42,10 +54,12 @@ export const useAddExistingQuestions = ( clientId ) => {
 				res.forEach( ( item ) => {
 					insertBlock(
 						createQuestionBlock( item ),
-						undefined,
+						insertIndex,
 						clientId,
 						false
 					);
+
+					insertIndex++;
 				} );
 
 				completeCallback();
