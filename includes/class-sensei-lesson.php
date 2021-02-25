@@ -1439,6 +1439,7 @@ class Sensei_Lesson {
 			'posts_per_page'   => 10,
 			'post_status'      => 'publish',
 			'suppress_filters' => 0,
+			'perm'             => 'editable',
 		);
 
 		switch ( $question_status ) {
