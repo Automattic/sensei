@@ -20,7 +20,7 @@ export const useAddExistingQuestions = ( clientId ) => {
 	const questionBlocks = select( 'core/block-editor' ).getBlocks( clientId );
 	const { insertBlock } = useDispatch( 'core/block-editor' );
 
-	return ( questionIds, completeCallback ) => {
+	return ( questionIds ) => {
 		const newQuestionIds = questionIds.filter( ( questionId ) => {
 			return (
 				questionBlocks.length === 0 ||
@@ -29,9 +29,7 @@ export const useAddExistingQuestions = ( clientId ) => {
 		} );
 
 		if ( newQuestionIds.length === 0 ) {
-			completeCallback();
-
-			return;
+			return Promise.resolve( {} );
 		}
 
 		// Put this before the auto-block.
@@ -46,7 +44,7 @@ export const useAddExistingQuestions = ( clientId ) => {
 			insertIndex -= 1;
 		}
 
-		apiFetch( {
+		return apiFetch( {
 			path: API_PATH + '?question_ids=' + newQuestionIds.join( ',' ),
 			method: 'GET',
 		} ).then( ( res ) => {
@@ -61,8 +59,6 @@ export const useAddExistingQuestions = ( clientId ) => {
 
 					insertIndex++;
 				} );
-
-				completeCallback();
 			}
 		} );
 	};

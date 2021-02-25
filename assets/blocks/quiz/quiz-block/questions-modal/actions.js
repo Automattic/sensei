@@ -28,9 +28,9 @@ const Actions = ( {
 
 	const addSelected = () => {
 		setIsAddingSelected( true );
-		addExistingQuestions( selectedQuestionIds, () => {
-			setOpen( false );
+		addExistingQuestions( selectedQuestionIds ).finally( () => {
 			setIsAddingSelected( false );
+			setOpen( false );
 		} );
 	};
 
