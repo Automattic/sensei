@@ -453,7 +453,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 *
 	 * @return array The properties
 	 */
-	private function get_common_question_properties_schema() : array {
+	public function get_common_question_properties_schema() : array {
 		return [
 			'id'          => [
 				'type'        => 'integer',
