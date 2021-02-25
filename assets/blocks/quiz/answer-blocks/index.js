@@ -86,8 +86,19 @@ const questionTypes = {
 };
 
 /**
- * Quiz editor question types.
+ * Filters the quiz editor question types in order to support custom question types.
  *
- * @param {Object.<string, QuestionType>}
+ * @see sensei_quiz_mapped_api_attributes
+ * @see sensei_quiz_mapped_block_attributes
+ *
+ * @param {Object}   questionTypes             The question types.
+ * @param {string}   questionTypes.title       The title of the question.
+ * @param {string}   questionTypes.description The description of the question.
+ * @param {Function} questionTypes.edit        The block edit function for the question. Attributes under 'answer', as
+ *                                             returned from the 'sensei_quiz_mapped_api_attributes' filter, will be
+ *                                             passed to this component.
+ * @param {Array}    questionTypes.settings    An array of settings components to use in the sidebar. Attributes under 'options', as
+ *                                             returned from the 'sensei_quiz_mapped_api_attributes' filter, will be
+ *                                             passed to all settings components.
  */
 export default applyFilters( 'sensei_quiz_question_types', questionTypes );

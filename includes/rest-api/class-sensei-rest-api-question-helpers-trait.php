@@ -69,6 +69,20 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			$post_args['post_title'] = $question['title'];
 		}
 
+		$result = wp_insert_post( $post_args );
+
+		/**
+		 * This action is triggered when a question is created or updated by the lesson quiz REST endpoint.
+		 *
+		 * @since 3.9.0
+		 * @hook sensei_rest_api_question_saved
+		 *
+		 * @param {int|WP_Error} $result        Result of wp_insert_post. Post ID on success or WP_Error on failure.
+		 * @param {string}       $question_type The question type.
+		 * @param {array}        $question      The question JSON arguments.
+		 */
+		do_action( 'sensei_rest_api_question_saved', $result, $question['type'], $question );
+
 		return wp_insert_post( $post_args );
 	}
 

@@ -92,11 +92,23 @@ const getTypeAttributes = ( apiAttributes ) => {
 			blockAttributes = {};
 			break;
 		default:
-			blockAttributes = normalizeAttributes( apiAttributes, camelCase );
+			blockAttributes = {
+				answer: normalizeAttributes( apiAttributes, camelCase ),
+			};
 			break;
 	}
 
-	return applyFilters( 'sensei_quiz_mapped_api_attributes', blockAttributes );
+	/**
+	 * Filters the attributes that will be supplied to the question block after they are received by REST API.
+	 *
+	 * @param {string} type            The question type.
+	 * @param {Object} blockAttributes The block attributes.
+	 */
+	return applyFilters(
+		'sensei_quiz_mapped_api_attributes',
+		apiAttributes.type,
+		blockAttributes
+	);
 };
 
 /**
@@ -164,9 +176,21 @@ const getTypeArgs = ( attributes ) => {
 			};
 			break;
 		default:
-			apiAttributes = normalizeAttributes( attributes, snakeCase );
+			const normalizedAttributes = normalizeAttributes(
+				attributes,
+				snakeCase
+			);
+			apiAttributes = {
+				...normalizedAttributes?.answer,
+				...normalizedAttributes?.options,
+			};
 			break;
 	}
 
+	/**
+	 * Filters the attributes that will be sent to the REST API when updating a block.
+	 *
+	 * @param {Object} apiAttributes The REST API attributes.
+	 */
 	return applyFilters( 'sensei_quiz_mapped_block_attributes', apiAttributes );
 };
