@@ -293,16 +293,16 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 				break;
 			case 'single-line':
 			case 'multi-line':
-				if ( isset( $question['teacher_notes'] ) ) {
+				if ( isset( $question['teacher_notes'] ) || array_key_exists( 'teacher_notes', $question ) ) {
 					$meta['_question_right_answer'] = $question['teacher_notes'];
 				}
 				break;
 			case 'file-upload':
-				if ( isset( $question['teacher_notes'] ) ) {
+				if ( isset( $question['teacher_notes'] ) || array_key_exists( 'teacher_notes', $question ) ) {
 					$meta['_question_right_answer'] = $question['teacher_notes'];
 				}
 
-				if ( isset( $question['student_help'] ) ) {
+				if ( isset( $question['student_help'] ) || array_key_exists( 'student_help', $question ) ) {
 					$meta['_question_wrong_answers'] = $question['student_help'];
 				}
 				break;
@@ -325,7 +325,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 			$meta['_random_order'] = $question['random_order'];
 		}
 
-		if ( isset( $question['answer_feedback'] ) ) {
+		if ( isset( $question['answer_feedback'] ) || array_key_exists( 'answer_feedback', $question ) ) {
 			$meta['_answer_feedback'] = $question['answer_feedback'];
 		}
 
@@ -372,19 +372,21 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 
 		$text_values = [];
 
-		if ( isset( $question['before'] ) ) {
+		if ( isset( $question['before'] ) || array_key_exists( 'before', $question ) ) {
 			$text_values[0] = $question['before'];
 		} else {
 			$text_values[0] = isset( $old_text_values[0] ) ? $old_text_values[0] : '';
 		}
 
-		if ( isset( $question['gap'] ) ) {
+		if ( ! array_key_exists( 'gap', $question ) ) {
+			$text_values[1] = isset( $old_text_values[1] ) ? $old_text_values[1] : '';
+		} elseif ( isset( $question['gap'] ) ) {
 			$text_values[1] = implode( '|', $question['gap'] );
 		} else {
-			$text_values[1] = isset( $old_text_values[1] ) ? $old_text_values[1] : '';
+			$text_values[1] = null;
 		}
 
-		if ( isset( $question['after'] ) ) {
+		if ( isset( $question['after'] ) || array_key_exists( 'after', $question ) ) {
 			$text_values[2] = $question['after'];
 		} else {
 			$text_values[2] = isset( $old_text_values[2] ) ? $old_text_values[2] : '';
@@ -614,31 +616,23 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 			case 'boolean':
 				$type_specific_properties['answer'] = 'true' === get_post_meta( $question->ID, '_question_right_answer', true );
 
-				$answer_feedback = get_post_meta( $question->ID, '_answer_feedback', true );
-				if ( ! empty( $answer_feedback ) ) {
-					$type_specific_properties['answer_feedback'] = $answer_feedback;
-				}
+				$answer_feedback                             = get_post_meta( $question->ID, '_answer_feedback', true );
+				$type_specific_properties['answer_feedback'] = empty( $answer_feedback ) ? null : $answer_feedback;
 				break;
 			case 'gap-fill':
 				$type_specific_properties = $this->get_gap_fill_properties( $question );
 				break;
 			case 'single-line':
 			case 'multi-line':
-				$teacher_notes = get_post_meta( $question->ID, '_question_right_answer', true );
-				if ( ! empty( $teacher_notes ) ) {
-					$type_specific_properties['teacher_notes'] = $teacher_notes;
-				}
+				$teacher_notes                             = get_post_meta( $question->ID, '_question_right_answer', true );
+				$type_specific_properties['teacher_notes'] = empty( $teacher_notes ) ? null : $teacher_notes;
 				break;
 			case 'file-upload':
-				$teacher_notes = get_post_meta( $question->ID, '_question_right_answer', true );
-				if ( ! empty( $teacher_notes ) ) {
-					$type_specific_properties['teacher_notes'] = $teacher_notes;
-				}
+				$teacher_notes                             = get_post_meta( $question->ID, '_question_right_answer', true );
+				$type_specific_properties['teacher_notes'] = empty( $teacher_notes ) ? null : $teacher_notes;
 
-				$student_help = get_post_meta( $question->ID, '_question_wrong_answers', true );
-				if ( ! empty( $student_help[0] ) ) {
-					$type_specific_properties['student_help'] = $student_help[0];
-				}
+				$student_help                             = get_post_meta( $question->ID, '_question_wrong_answers', true );
+				$type_specific_properties['student_help'] = empty( $student_help[0] ) ? null : $student_help[0];
 				break;
 		}
 
@@ -671,17 +665,9 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 		$result      = [];
 		$text_values = explode( '||', $right_answer_meta );
 
-		if ( isset( $text_values[0] ) ) {
-			$result['before'] = $text_values[0];
-		}
-
-		if ( isset( $text_values[1] ) ) {
-			$result['gap'] = explode( '|', $text_values[1] );
-		}
-
-		if ( isset( $text_values[2] ) ) {
-			$result['after'] = $text_values[2];
-		}
+		$result['before'] = isset( $text_values[0] ) ? $text_values[0] : null;
+		$result['gap']    = isset( $text_values[1] ) ? explode( '|', $text_values[1] ) : null;
+		$result['after']  = isset( $text_values[2] ) ? $text_values[2] : null;
 
 		return $result;
 	}
@@ -698,10 +684,8 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 			'random_order' => 'yes' === get_post_meta( $question->ID, '_random_order', true ),
 		];
 
-		$answer_feedback = get_post_meta( $question->ID, '_answer_feedback', true );
-		if ( ! empty( $answer_feedback ) ) {
-			$type_specific_properties['answer_feedback'] = $answer_feedback;
-		}
+		$answer_feedback                             = get_post_meta( $question->ID, '_answer_feedback', true );
+		$type_specific_properties['answer_feedback'] = empty( $answer_feedback ) ? null : $answer_feedback;
 
 		$correct_answers = $this->get_answers_array( $question, '_question_right_answer', true );
 		$wrong_answers   = $this->get_answers_array( $question, '_question_wrong_answers', false );
@@ -881,7 +865,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 				'default'     => false,
 			],
 			'answer_feedback' => [
-				'type'        => 'string',
+				'type'        => [ 'string', 'null' ],
 				'description' => 'Feedback to show quiz takers once quiz is submitted',
 			],
 		];
@@ -910,7 +894,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 				'description' => 'Correct answer for question',
 			],
 			'answer_feedback' => [
-				'type'        => 'string',
+				'type'        => [ 'string', 'null' ],
 				'description' => 'Feedback to show quiz takers once quiz is submitted',
 			],
 		];
@@ -935,11 +919,11 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 				'required' => true,
 			],
 			'before' => [
-				'type'        => 'string',
+				'type'        => [ 'string', 'null' ],
 				'description' => 'Text before the gap',
 			],
 			'gap'    => [
-				'type'        => 'array',
+				'type'        => [ 'array', 'null' ],
 				'description' => 'Gap text answers',
 				'items'       => [
 					'type'        => 'string',
@@ -947,7 +931,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 				],
 			],
 			'after'  => [
-				'type'        => 'string',
+				'type'        => [ 'string', 'null' ],
 				'description' => 'Text after the gap',
 			],
 		];
@@ -972,7 +956,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 				'required' => true,
 			],
 			'teacher_notes' => [
-				'type'        => 'string',
+				'type'        => [ 'string', 'null' ],
 				'description' => 'Teacher notes for grading',
 			],
 		];
@@ -997,7 +981,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 				'required' => true,
 			],
 			'teacher_notes' => [
-				'type'        => 'string',
+				'type'        => [ 'string', 'null' ],
 				'description' => 'Teacher notes for grading',
 			],
 		];
@@ -1022,11 +1006,11 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 				'required' => true,
 			],
 			'student_help'  => [
-				'type'        => 'string',
+				'type'        => [ 'string', 'null' ],
 				'description' => 'Description for student explaining what needs to be uploaded',
 			],
 			'teacher_notes' => [
-				'type'        => 'string',
+				'type'        => [ 'string', 'null' ],
 				'description' => 'Teacher notes for grading',
 			],
 		];
