@@ -1,60 +1,19 @@
 .sensei-lms-question-block__grade-toolbar {
-	&__wrapper {
-		border-radius: 2px;
-		align-self: center;
-		align-items: center;
-
-		* {
-			padding: 0;
-		}
-	}
-
 	input[type=number] {
-		width: 28px;
-		height: 28px;
+		align-self: center;
+		width: 42px;
+		height: 32px;
 		min-height: 0;
 		padding: 2px;
-		margin-left: 12px;
-		border-radius: 2px;
+		margin: 0 12px;
 		background: none;
-		border: 1px solid currentColor;
+		border-width: 1px;
+		&:not(:focus) {
+			border-color: currentColor;
+		}
+		border-radius: 2px;
 		outline: none;
 		text-align: center;
 		font-weight: bold;
-	}
-
-	input::-webkit-outer-spin-button,
-	input::-webkit-inner-spin-button {
-		-webkit-appearance: none;
-		margin: 0;
-	}
-
-	input[type=number] {
-		-moz-appearance: textfield;
-	}
-
-	&__steppers {
-		display: flex;
-		flex-direction: column;
-	}
-
-	&__stepper {
-		.components-toolbar & {
-			height: 24px;
-			min-width: 0 !important;
-
-			svg {
-				position: relative;
-				height: 20px;
-			}
-
-			&.is-up-button svg {
-				top: 5px;
-			}
-
-			&.is-down-button svg {
-				bottom: 5px;
-			}
-		}
 	}
 }

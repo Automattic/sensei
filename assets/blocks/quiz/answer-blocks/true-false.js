@@ -43,19 +43,24 @@ const TrueFalseAnswer = ( {
 						<span>{ label }</span>
 					</OptionToggle>
 					{ hasSelected && (
-						<Button
-							className="sensei-lms-question-block__answer--true-false__hint"
-							onClick={ () =>
-								setAttributes( {
-									rightAnswer:
-										value === rightAnswer ? ! value : value,
-								} )
-							}
-						>
-							{ rightAnswer === value
-								? __( 'Right', 'sensei-lms' )
-								: __( 'Wrong', 'sensei-lms' ) }
-						</Button>
+						<div className="sensei-lms-question-block__answer--multiple-choice__toggle__wrapper">
+							<Button
+								isPrimary
+								className="sensei-lms-question-block__answer--true-false__toggle"
+								onClick={ () =>
+									setAttributes( {
+										rightAnswer:
+											value === rightAnswer
+												? ! value
+												: value,
+									} )
+								}
+							>
+								{ rightAnswer === value
+									? __( 'Right', 'sensei-lms' )
+									: __( 'Wrong', 'sensei-lms' ) }
+							</Button>
+						</div>
 					) }
 				</li>
 			) ) }

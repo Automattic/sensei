@@ -4,6 +4,11 @@
 import { useState } from '@wordpress/element';
 
 /**
+ * External dependencies
+ */
+import classnames from 'classnames';
+
+/**
  * Internal dependencies
  */
 import MultipleChoiceAnswerOption from './multiple-choice-answer-option';
@@ -29,6 +34,13 @@ const MultipleChoiceAnswer = ( props ) => {
 	} = props;
 
 	const hasMultipleRight = answers.filter( ( a ) => a.isRight ).length > 1;
+
+	const hasDraft = ! answers[ answers.length - 1 ]?.title;
+
+	const answerItems = [ ...answers ];
+	if ( hasSelected && ! hasDraft ) {
+		answerItems.push( { title: '', isRight: false } );
+	}
 
 	/**
 	 * Add a new answer option.
@@ -77,8 +89,14 @@ const MultipleChoiceAnswer = ( props ) => {
 
 	return (
 		<ol className="sensei-lms-question-block__answer sensei-lms-question-block__answer--multiple-choice">
-			{ answers.map( ( answer, index ) => (
-				<li key={ index }>
+			{ answerItems.map( ( answer, index ) => (
+				<li
+					key={ index }
+					className={ classnames(
+						'sensei-lms-question-block__answer--multiple-choice__option',
+						{ 'is-draft': ! answer.title }
+					) }
+				>
 					<MultipleChoiceAnswerOption
 						hasFocus={ index === nextFocus }
 						isCheckbox={ hasMultipleRight }

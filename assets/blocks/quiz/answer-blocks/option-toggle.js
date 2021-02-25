@@ -4,11 +4,6 @@
 import classnames from 'classnames';
 
 /**
- * WordPress dependencies
- */
-import { Button } from '@wordpress/components';
-
-/**
  * Internal dependencies
  */
 import { checked } from '../../../icons/wordpress-icons';
@@ -20,7 +15,7 @@ export const OptionToggle = ( {
 	children,
 	...props
 } ) => (
-	<Button
+	<div
 		className={ classnames(
 			'sensei-lms-question-block__option-toggle',
 			className
@@ -36,5 +31,5 @@ export const OptionToggle = ( {
 			{ isChecked && isCheckbox && checked }
 		</div>
 		{ children }
-	</Button>
+	</div>
 );

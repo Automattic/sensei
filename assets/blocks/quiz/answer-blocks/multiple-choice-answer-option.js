@@ -48,11 +48,7 @@ const MultipleChoiceAnswerOption = ( props ) => {
 
 	return (
 		<div className="sensei-lms-question-block__multiple-choice-answer-option">
-			<OptionToggle
-				onClick={ toggleRight }
-				isChecked={ isRight }
-				isCheckbox={ isCheckbox }
-			/>
+			<OptionToggle isChecked={ isRight } isCheckbox={ isCheckbox } />
 			<SingleLineInput
 				ref={ ref }
 				placeholder={ __( 'Add Answer', 'sensei-lms' ) }
@@ -64,14 +60,17 @@ const MultipleChoiceAnswerOption = ( props ) => {
 				{ ...inputProps }
 			/>
 			{ hasSelected && (
-				<Button
-					className="sensei-lms-question-block__answer--multiple-choice__hint"
-					onClick={ toggleRight }
-				>
-					{ isRight
-						? __( 'Right', 'sensei-lms' )
-						: __( 'Wrong', 'sensei-lms' ) }
-				</Button>
+				<div className="sensei-lms-question-block__answer--multiple-choice__toggle__wrapper">
+					<Button
+						isPrimary
+						className="sensei-lms-question-block__answer--multiple-choice__toggle"
+						onClick={ toggleRight }
+					>
+						{ isRight
+							? __( 'Right', 'sensei-lms' )
+							: __( 'Wrong', 'sensei-lms' ) }
+					</Button>
+				</div>
 			) }
 		</div>
 	);
