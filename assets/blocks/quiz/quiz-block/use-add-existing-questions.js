@@ -15,6 +15,7 @@ const API_PATH = '/sensei-internal/v1/question-options';
  * Add existing questions to the quiz block.
  *
  * @param {string} clientId The quiz block client id.
+ * @return {Function} Function that takes an array of question IDs and returns a Promise.
  */
 export const useAddExistingQuestions = ( clientId ) => {
 	const questionBlocks = select( 'core/block-editor' ).getBlocks( clientId );
