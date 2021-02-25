@@ -360,7 +360,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 	 * @return array The calculated meta.
 	 */
 	private function get_gap_fill_meta( $question ) : array {
-		if ( ! isset( $question['before'], $question['gap'], $question['after'] ) ) {
+		if ( ! ( isset( $question['before'] ) || isset( $question['gap'] ) || isset( $question['after'] ) ) ) {
 			return [];
 		}
 
@@ -380,10 +380,8 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 
 		if ( ! array_key_exists( 'gap', $question ) ) {
 			$text_values[1] = isset( $old_text_values[1] ) ? $old_text_values[1] : '';
-		} elseif ( isset( $question['gap'] ) ) {
-			$text_values[1] = implode( '|', $question['gap'] );
 		} else {
-			$text_values[1] = null;
+			$text_values[1] = implode( '|', $question['gap'] );
 		}
 
 		if ( isset( $question['after'] ) || array_key_exists( 'after', $question ) ) {
@@ -659,15 +657,19 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 		$right_answer_meta = get_post_meta( $question->ID, '_question_right_answer', true );
 
 		if ( empty( $right_answer_meta ) ) {
-			return [];
+			return [
+				'before' => '',
+				'gap'    => [],
+				'after'  => '',
+			];
 		}
 
 		$result      = [];
 		$text_values = explode( '||', $right_answer_meta );
 
-		$result['before'] = isset( $text_values[0] ) ? $text_values[0] : null;
-		$result['gap']    = isset( $text_values[1] ) ? explode( '|', $text_values[1] ) : null;
-		$result['after']  = isset( $text_values[2] ) ? $text_values[2] : null;
+		$result['before'] = isset( $text_values[0] ) ? $text_values[0] : '';
+		$result['gap']    = empty( $text_values[1] ) ? [] : explode( '|', $text_values[1] );
+		$result['after']  = isset( $text_values[2] ) ? $text_values[2] : '';
 
 		return $result;
 	}
@@ -919,11 +921,11 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 				'required' => true,
 			],
 			'before' => [
-				'type'        => [ 'string', 'null' ],
+				'type'        => 'string',
 				'description' => 'Text before the gap',
 			],
 			'gap'    => [
-				'type'        => [ 'array', 'null' ],
+				'type'        => 'array',
 				'description' => 'Gap text answers',
 				'items'       => [
 					'type'        => 'string',
@@ -931,7 +933,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 				],
 			],
 			'after'  => [
-				'type'        => [ 'string', 'null' ],
+				'type'        => 'string',
 				'description' => 'Text after the gap',
 			],
 		];
