@@ -313,10 +313,13 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		 * Allows modification of type specific question properties.
 		 *
 		 * @since 3.9.0
+		 * @hook sensei_question_type_specific_properties
 		 *
-		 * @param array   $type_specific_properties The properties of the question.
-		 * @param string  $question_type            The question type.
-		 * @param WP_Post $question                 The question post.
+		 * @param {array}   $type_specific_properties The properties of the question.
+		 * @param {string}  $question_type            The question type.
+		 * @param {WP_Post} $question                 The question post.
+		 *
+		 * @return {array}
 		 */
 		return apply_filters( 'sensei_question_type_specific_properties', $type_specific_properties, $question_type, $question );
 	}
