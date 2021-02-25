@@ -63,7 +63,7 @@ class Sensei_REST_API_Question_Options_Controller_Tests extends WP_Test_REST_Tes
 
 		$data     = $response->get_data();
 		$endpoint = new Sensei_REST_API_Question_Options_Controller( '' );
-		$this->assertMeetsSchema( $endpoint->get_single_schema(), $data );
+		$this->assertMeetsSchema( $endpoint->get_single_question_schema(), $data );
 
 		$this->assertEquals( $question_id, $data['id'] );
 	}
@@ -96,7 +96,7 @@ class Sensei_REST_API_Question_Options_Controller_Tests extends WP_Test_REST_Tes
 		$this->assertEquals( 200, $response->get_status() );
 
 		$endpoint = new Sensei_REST_API_Question_Options_Controller( '' );
-		$this->assertMeetsSchema( $endpoint->get_single_schema(), $response->get_data() );
+		$this->assertMeetsSchema( $endpoint->get_single_question_schema(), $response->get_data() );
 	}
 
 	/**
@@ -116,7 +116,7 @@ class Sensei_REST_API_Question_Options_Controller_Tests extends WP_Test_REST_Tes
 		$data = $response->get_data();
 
 		$endpoint = new Sensei_REST_API_Question_Options_Controller( '' );
-		$this->assertMeetsSchema( $endpoint->get_multiple_schema(), $data );
+		$this->assertMeetsSchema( $endpoint->get_multiple_question_schema(), $data );
 
 		$this->assertEquals( count( $question_ids ), count( $data ) );
 
@@ -148,7 +148,7 @@ class Sensei_REST_API_Question_Options_Controller_Tests extends WP_Test_REST_Tes
 		$data = $response->get_data();
 
 		$endpoint = new Sensei_REST_API_Question_Options_Controller( '' );
-		$this->assertMeetsSchema( $endpoint->get_multiple_schema(), $data );
+		$this->assertMeetsSchema( $endpoint->get_multiple_question_schema(), $data );
 
 		$this->assertEquals( count( $teacher_b_question_ids ), count( $data ) );
 

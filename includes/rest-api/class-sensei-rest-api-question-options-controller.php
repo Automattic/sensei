@@ -62,7 +62,7 @@ class Sensei_REST_API_Question_Options_Controller extends \WP_REST_Controller {
 						],
 					],
 				],
-				'schema' => [ $this, 'get_multiple_schema' ],
+				'schema' => [ $this, 'get_multiple_question_schema' ],
 			]
 		);
 
@@ -84,7 +84,7 @@ class Sensei_REST_API_Question_Options_Controller extends \WP_REST_Controller {
 						],
 					],
 				],
-				'schema' => [ $this, 'get_single_schema' ],
+				'schema' => [ $this, 'get_single_question_schema' ],
 			]
 		);
 	}
@@ -217,24 +217,11 @@ class Sensei_REST_API_Question_Options_Controller extends \WP_REST_Controller {
 	 *
 	 * @return array Schema object.
 	 */
-	public function get_multiple_schema() : array {
+	public function get_multiple_question_schema() : array {
 		return [
-			'definitions' => $this->get_question_definitions(),
 			'type'        => 'array',
 			'description' => 'Questions in batch',
 			'items'       => $this->get_single_question_schema(),
 		];
-	}
-
-	/**
-	 * Schema for the endpoint when a single question is returned.
-	 *
-	 * @return array Schema object.
-	 */
-	public function get_single_schema() : array {
-		return array_merge(
-			[ 'definitions' => $this->get_question_definitions() ],
-			$this->get_single_question_schema()
-		);
 	}
 }
