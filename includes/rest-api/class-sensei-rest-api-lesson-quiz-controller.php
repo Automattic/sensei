@@ -284,7 +284,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 					$meta['_question_right_answer'] = $question['answer'] ? 'true' : 'false';
 				}
 
-				if ( isset( $question['answer_feedback'] ) || array_key_exists( 'answer_feedback', $question ) ) {
+				if ( array_key_exists( 'answer_feedback', $question ) ) {
 					$meta['_answer_feedback'] = $question['answer_feedback'];
 				}
 				break;
@@ -293,16 +293,16 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 				break;
 			case 'single-line':
 			case 'multi-line':
-				if ( isset( $question['teacher_notes'] ) || array_key_exists( 'teacher_notes', $question ) ) {
+				if ( array_key_exists( 'teacher_notes', $question ) ) {
 					$meta['_question_right_answer'] = $question['teacher_notes'];
 				}
 				break;
 			case 'file-upload':
-				if ( isset( $question['teacher_notes'] ) || array_key_exists( 'teacher_notes', $question ) ) {
+				if ( array_key_exists( 'teacher_notes', $question ) ) {
 					$meta['_question_right_answer'] = $question['teacher_notes'];
 				}
 
-				if ( isset( $question['student_help'] ) || array_key_exists( 'student_help', $question ) ) {
+				if ( array_key_exists( 'student_help', $question ) ) {
 					$meta['_question_wrong_answers'] = $question['student_help'];
 				}
 				break;
@@ -325,7 +325,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 			$meta['_random_order'] = $question['random_order'] ? 'yes' : 'no';
 		}
 
-		if ( isset( $question['answer_feedback'] ) || array_key_exists( 'answer_feedback', $question ) ) {
+		if ( array_key_exists( 'answer_feedback', $question ) ) {
 			$meta['_answer_feedback'] = $question['answer_feedback'];
 		}
 
@@ -372,7 +372,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 
 		$text_values = [];
 
-		if ( isset( $question['before'] ) || array_key_exists( 'before', $question ) ) {
+		if ( array_key_exists( 'before', $question ) ) {
 			$text_values[0] = $question['before'];
 		} else {
 			$text_values[0] = isset( $old_text_values[0] ) ? $old_text_values[0] : '';
@@ -384,7 +384,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 			$text_values[1] = implode( '|', $question['gap'] );
 		}
 
-		if ( isset( $question['after'] ) || array_key_exists( 'after', $question ) ) {
+		if ( array_key_exists( 'after', $question ) ) {
 			$text_values[2] = $question['after'];
 		} else {
 			$text_values[2] = isset( $old_text_values[2] ) ? $old_text_values[2] : '';
