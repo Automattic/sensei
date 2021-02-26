@@ -21,6 +21,8 @@ import { camelCase, snakeCase, omit } from 'lodash';
 
 export const QUIZ_STORE = 'sensei/quiz-structure';
 
+const READ_ONLY_ATTRIBUTES = [ 'categories', 'shared', 'student_help' ];
+
 /**
  * Syncronize this block with quiz data.
  *
@@ -158,7 +160,7 @@ registerStructureStore( {
 		return {
 			...structure,
 			questions: structure.questions.map( ( question ) =>
-				omit( question, [ 'categories', 'shared', 'student_help' ] )
+				omit( question, READ_ONLY_ATTRIBUTES )
 			),
 		};
 	},
