@@ -101,8 +101,8 @@ const getTypeAttributes = ( apiAttributes ) => {
 	/**
 	 * Filters the attributes that will be supplied to the question block after they are received by REST API.
 	 *
-	 * @param {string} type            The question type.
 	 * @param {Object} blockAttributes The block attributes.
+	 * @param {string} type            The question type.
 	 */
 	return applyFilters(
 		'sensei_quiz_mapped_api_attributes',
