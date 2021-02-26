@@ -155,6 +155,10 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		}
 
 		if ( isset( $question['options'] ) ) {
+			$meta['_question_right_answer']  = [];
+			$meta['_question_wrong_answers'] = [];
+			$meta['_answer_order']           = [];
+
 			foreach ( $question['options'] as $option ) {
 				if ( empty( $option['label'] ) ) {
 					continue;
