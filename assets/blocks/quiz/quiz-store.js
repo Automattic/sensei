@@ -157,6 +157,10 @@ registerStructureStore( {
 	 * @return {Object} The modified response.
 	 */
 	setServerStructure( structure ) {
+		if ( ! structure ) {
+			return {};
+		}
+
 		return {
 			...structure,
 			questions: structure.questions.map( ( question ) =>
