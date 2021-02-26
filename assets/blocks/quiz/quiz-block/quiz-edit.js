@@ -12,6 +12,7 @@ import questionBlock from '../question-block';
 import { useQuizStructure } from '../quiz-store';
 import QuizSettings from './quiz-settings';
 import QuestionsModal from './questions-modal';
+import { useAddExistingQuestions } from './use-add-existing-questions';
 
 /**
  * Quiz block editor.
@@ -25,6 +26,8 @@ const QuizEdit = ( props ) => {
 		{ name: questionBlock.name, selectFirstBlock: true },
 		props
 	);
+
+	const addExistingQuestions = useAddExistingQuestions( props.clientId );
 
 	const { isPostTemplate } = props.attributes;
 
@@ -40,7 +43,9 @@ const QuizEdit = ( props ) => {
 				}
 				templateInsertUpdatesSelection={ false }
 				renderAppender={ () => (
-					<QuestionsModal>
+					<QuestionsModal
+						addExistingQuestions={ addExistingQuestions }
+					>
 						{ __( 'Add Existing Questions', 'sensei-lms' ) }
 					</QuestionsModal>
 				) }

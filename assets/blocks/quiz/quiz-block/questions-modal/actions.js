@@ -3,17 +3,43 @@
  */
 import { Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { useState } from '@wordpress/element';
 
 /**
  * Questions actions.
  *
  * @param {Object}   props
- * @param {number[]} props.selectedQuestionIds    Seleted question IDs.
- * @param {Object}   props.setSelectedQuestionIds Seleted question IDs state setter.
+ * @param {number[]} props.selectedQuestionIds    Selected question IDs.
+ * @param {Object}   props.setSelectedQuestionIds Selected question IDs state setter.
+ * @param {Function} props.addExistingQuestions   Callback to add existing questions.
+ * @param {Function} props.setOpen                Set the modal's open status.
+ * @param {Function} props.setErrorAddingSelected Set when there has been an error adding selection.
  */
-const Actions = ( { selectedQuestionIds, setSelectedQuestionIds } ) => {
+const Actions = ( {
+	selectedQuestionIds,
+	setSelectedQuestionIds,
+	addExistingQuestions,
+	setOpen,
+	setErrorAddingSelected,
+} ) => {
+	const [ isAddingSelected, setIsAddingSelected ] = useState( false );
+
 	const clearSelected = () => {
 		setSelectedQuestionIds( [] );
+	};
+
+	const addSelected = () => {
+		setIsAddingSelected( true );
+		addExistingQuestions( selectedQuestionIds )
+			.then( () => {
+				setOpen( false );
+			} )
+			.catch( () => {
+				setErrorAddingSelected( true );
+			} )
+			.finally( () => {
+				setIsAddingSelected( false );
+			} );
 	};
 
 	const addSelectedLabel =
@@ -35,7 +61,13 @@ const Actions = ( { selectedQuestionIds, setSelectedQuestionIds } ) => {
 				</li>
 			) }
 			<li>
-				<Button isPrimary>{ addSelectedLabel }</Button>
+				<Button
+					disabled={ isAddingSelected }
+					onClick={ addSelected }
+					isPrimary
+				>
+					{ addSelectedLabel }
+				</Button>
 			</li>
 		</ul>
 	);

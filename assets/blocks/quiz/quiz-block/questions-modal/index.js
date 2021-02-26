@@ -3,7 +3,7 @@
  */
 import { useState } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
-import { Button, Modal } from '@wordpress/components';
+import { Notice, Button, Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -17,15 +17,17 @@ import Actions from './actions';
  * Questions modal content.
  *
  * @param {Object}   props
- * @param {Function} props.setOpen Modal open state setter.
+ * @param {Function} props.setOpen              Modal open state setter.
+ * @param {Function} props.addExistingQuestions Callback to add existing questions.
  */
-const QuestionsModalContent = ( { setOpen } ) => {
+const QuestionsModalContent = ( { setOpen, addExistingQuestions } ) => {
 	const [ filters, setFilters ] = useState( {
 		search: '',
 		'question-type': '',
 		'question-category': '',
 	} );
 
+	const [ errorAddingSelected, setErrorAddingSelected ] = useState( false );
 	const [ selectedQuestionIds, setSelectedQuestionIds ] = useState( [] );
 
 	const questionCategories = useSelect( ( select ) =>
@@ -42,6 +44,18 @@ const QuestionsModalContent = ( { setOpen } ) => {
 				setOpen( false );
 			} }
 		>
+			{ errorAddingSelected && (
+				<Notice
+					status="error"
+					isDismissible={ false }
+					className="sensei-lms-quiz-block__questions-modal__notice"
+				>
+					{ __(
+						'Unable to add the selected question(s). Please make sure you are still logged in and try again.',
+						'sensei-lms'
+					) }
+				</Notice>
+			) }
 			<Filter
 				questionCategories={ questionCategories }
 				filters={ filters }
@@ -56,6 +70,9 @@ const QuestionsModalContent = ( { setOpen } ) => {
 			<Actions
 				selectedQuestionIds={ selectedQuestionIds }
 				setSelectedQuestionIds={ setSelectedQuestionIds }
+				addExistingQuestions={ addExistingQuestions }
+				setOpen={ setOpen }
+				setErrorAddingSelected={ setErrorAddingSelected }
 			/>
 		</Modal>
 	);
@@ -64,10 +81,11 @@ const QuestionsModalContent = ( { setOpen } ) => {
 /**
  * Questions modal with opener.
  *
- * @param {Object} props
- * @param {Object} props.children Modal opener label.
+ * @param {Object}   props
+ * @param {Object}   props.children             Modal opener label.
+ * @param {Function} props.addExistingQuestions Callback to add existing questions.
  */
-const QuestionsModal = ( { children } ) => {
+const QuestionsModal = ( { children, addExistingQuestions } ) => {
 	const [ isOpen, setOpen ] = useState( false );
 
 	return (
@@ -84,7 +102,12 @@ const QuestionsModal = ( { children } ) => {
 				</Button>
 			</div>
 
-			{ isOpen && <QuestionsModalContent setOpen={ setOpen } /> }
+			{ isOpen && (
+				<QuestionsModalContent
+					setOpen={ setOpen }
+					addExistingQuestions={ addExistingQuestions }
+				/>
+			) }
 		</>
 	);
 };
