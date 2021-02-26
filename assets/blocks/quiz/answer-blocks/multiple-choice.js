@@ -27,11 +27,15 @@ const DEFAULT_ANSWERS = [
  * @param {Object} props
  */
 const MultipleChoiceAnswer = ( props ) => {
-	const {
-		attributes: { answers = DEFAULT_ANSWERS },
-		setAttributes,
-		hasSelected,
+	const { setAttributes, hasSelected } = props;
+
+	let {
+		attributes: { answers = [] },
 	} = props;
+
+	if ( answers.length === 0 ) {
+		answers = DEFAULT_ANSWERS;
+	}
 
 	const hasMultipleRight = answers.filter( ( a ) => a.isRight ).length > 1;
 
@@ -63,6 +67,11 @@ const MultipleChoiceAnswer = ( props ) => {
 	 * @param {number} index Answer position
 	 */
 	const removeAnswer = ( index ) => {
+		// Do not allow the user to remove all the answers.
+		if ( answers.length === 1 ) {
+			return;
+		}
+
 		setFocus( index - 1 );
 		const nextAnswers = [ ...answers ];
 		nextAnswers.splice( index, 1 );
