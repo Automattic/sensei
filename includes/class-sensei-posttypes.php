@@ -318,7 +318,7 @@ class Sensei_PostTypes {
 			'supports'              => $supports_array,
 			'show_in_rest'          => true,
 			'rest_base'             => 'lessons',
-			'rest_controller_class' => 'WP_REST_Posts_Controller',
+			'rest_controller_class' => 'Sensei_REST_API_Lessons_Controller',
 		);
 
 		/**
