@@ -83,7 +83,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		 */
 		do_action( 'sensei_rest_api_question_saved', $result, $question['type'], $question );
 
-		return wp_insert_post( $post_args );
+		return $result;
 	}
 
 	/**
