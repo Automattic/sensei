@@ -4,6 +4,7 @@ $gray-400: #ccc;
 
 @import 'question-block/question-block.editor';
 @import 'quiz-block/questions-modal/questions-modal-style';
+@import 'single-question.editor';
 
 .wp-block[data-type='sensei-lms/quiz'] {
 	.editor-styles-wrapper & {
