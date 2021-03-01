@@ -1395,7 +1395,7 @@ class Sensei_Question {
 		}
 
 		$can_question_change_author = true;
-		$quiz_ids = array_filter( get_post_meta( $question->ID, '_quiz_id' ) );
+		$quiz_ids                   = array_filter( get_post_meta( $question->ID, '_quiz_id' ) );
 		foreach ( $quiz_ids as $quiz_id ) {
 			$quiz = get_post( $quiz_id );
 			if (
