@@ -3700,6 +3700,17 @@ class Sensei_Course {
 	 *
 	 * @return bool
 	 */
+	public function is_legacy_course( $course = null ) {
+		return ! $this->has_sensei_blocks( $course );
+	}
+
+	/**
+	 * Check if a course contains Sensei blocks.
+	 *
+	 * @param int|WP_Post $course Course ID or course object.
+	 *
+	 * @return bool
+	 */
 	public function has_sensei_blocks( $course = null ) {
 		$course = get_post( $course );
 
