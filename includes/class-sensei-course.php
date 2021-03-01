@@ -3723,11 +3723,11 @@ class Sensei_Course {
 
 		foreach ( $course_blocks as $block ) {
 			if ( has_block( $block, $course ) ) {
-				return false;
+				return true;
 			}
 		}
 
-		return true;
+		return false;
 	}
 }
 
