@@ -18,6 +18,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @see WP_REST_Posts_Controller
  */
 class Sensei_REST_API_Questions_Controller extends WP_REST_Posts_Controller {
+
+	use Sensei_REST_API_Question_Helpers_Trait;
+
 	/**
 	 * Constructor.
 	 *
@@ -44,6 +47,43 @@ class Sensei_REST_API_Questions_Controller extends WP_REST_Posts_Controller {
 				],
 			]
 		);
+	}
+
+	/**
+	 * Return post content as a question block.
+	 *
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_Post|WP_REST_Response
+	 */
+	public function get_item( $request ) {
+		$response = parent::get_item( $request );
+
+		if ( 'edit' !== $request['context'] ) {
+			return $response;
+		}
+
+		$post        = $this->get_post( $request['id'] );
+		$attrs       = $this->get_question( $post );
+		$description = $response->data['content']['raw'];
+
+		if ( ! has_blocks( $description ) ) {
+			$description = serialize_block(
+				[
+					'blockName'    => 'core/paragraph',
+					'innerContent' => [ $description ],
+				]
+			);
+		}
+
+		$block = [
+			'blockName'    => 'sensei-lms/quiz-question',
+			'innerContent' => [ $description ],
+			'attrs'        => $attrs,
+		];
+
+		$response->data['content']['raw'] = serialize_block( $block );
+		return $response;
 	}
 
 	/**
