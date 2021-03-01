@@ -29,6 +29,9 @@ const quizBlock = {
 		__( 'Assessment', 'sensei-lms' ),
 		__( 'Evaluation', 'sensei-lms' ),
 	],
+	providesContext: {
+		'sensei-lms/quizId': 'id',
+	},
 	example: {
 		innerBlocks: [
 			{
