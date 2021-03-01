@@ -3634,7 +3634,7 @@ class Sensei_Course {
 		if (
 			$post
 			&& is_singular( 'course' )
-			&& ! $this->is_legacy_course( $post )
+			&& $this->has_sensei_blocks( $post )
 		) {
 			$this->remove_legacy_course_actions();
 		}
@@ -3700,7 +3700,7 @@ class Sensei_Course {
 	 *
 	 * @return bool
 	 */
-	public function is_legacy_course( $course ) {
+	public function has_sensei_blocks( $course = null ) {
 		$course = get_post( $course );
 
 		$course_blocks = [
@@ -3718,7 +3718,7 @@ class Sensei_Course {
 
 		return true;
 	}
-}//end class
+}
 
 /**
  * Class WooThemes_Sensei_Course

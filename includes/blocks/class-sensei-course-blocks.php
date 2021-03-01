@@ -118,7 +118,7 @@ class Sensei_Course_Blocks extends Sensei_Blocks_Initializer {
 	 * @return bool
 	 */
 	public static function skip_single_course_template( $enabled ) {
-		return is_single() && 'course' === get_post_type() && ! Sensei()->course->is_legacy_course( get_post() )
+		return is_single() && 'course' === get_post_type() && Sensei()->course->has_sensei_blocks( get_post() )
 			? false
 			: $enabled;
 	}
