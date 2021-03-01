@@ -1395,10 +1395,14 @@ class Sensei_Question {
 		}
 
 		$can_question_change_author = true;
-		$quiz_ids = get_post_meta( $question->ID, '_quiz_id' );
+		$quiz_ids = array_filter( get_post_meta( $question->ID, '_quiz_id' ) );
 		foreach ( $quiz_ids as $quiz_id ) {
 			$quiz = get_post( $quiz_id );
-			if ( $new_author_id !== (int) $quiz->post_author ) {
+			if (
+				$quiz
+				&& 'quiz' === $quiz->post_type
+				&& $new_author_id !== (int) $quiz->post_author
+			) {
 				$can_question_change_author = false;
 				break;
 			}
