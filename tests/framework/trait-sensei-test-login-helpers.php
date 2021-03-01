@@ -44,6 +44,10 @@ trait Sensei_Test_Login_Helpers {
 		return $this->login_as( $this->get_user_by_role( 'teacher', '_b' ) );
 	}
 
+	protected function login_as_teacher_c() {
+		return $this->login_as( $this->get_user_by_role( 'teacher', '_c' ) );
+	}
+
 	protected function login_as_student() {
 		return $this->login_as( $this->get_user_by_role( 'subscriber' ) );
 	}
@@ -54,6 +58,7 @@ trait Sensei_Test_Login_Helpers {
 
 	protected function login_as( $user_id ) {
 		wp_set_current_user( $user_id );
+
 		return $this;
 	}
 
