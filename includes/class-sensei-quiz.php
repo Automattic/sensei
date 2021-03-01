@@ -1568,8 +1568,15 @@ class Sensei_Quiz {
 		return Sensei()->lesson->has_sensei_blocks( $lesson_id );
 	}
 
+	/**
+	 * Add quiz-blocks class for quiz page with block-based lesson.
+	 *
+	 * @param array $classes Existing classes.
+	 *
+	 * @return array Modified classes.
+	 */
 	public function add_quiz_blocks_class( $classes ) {
-		if( 'quiz' === get_post_type() && $this->has_sensei_blocks() ) {
+		if ( 'quiz' === get_post_type() && $this->has_sensei_blocks() ) {
 			return array_merge( $classes, [ 'quiz-blocks' ] );
 		}
 
