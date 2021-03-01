@@ -67,7 +67,6 @@ export function registerStructureStore( {
 		 * Persist editor's structure to the REST API.
 		 */
 		*saveStructure() {
-			yield { type: 'START_SAVE' };
 			const editorStructure = yield select(
 				storeName
 			).getEditorStructure();
@@ -82,8 +81,6 @@ export function registerStructureStore( {
 			} catch ( error ) {
 				yield saveError?.( error );
 			}
-
-			yield { type: 'FINISH_SAVE' };
 		},
 
 		/**
@@ -132,7 +129,7 @@ export function registerStructureStore( {
 		 * Post is saving. Save the structure too if it has changed.
 		 */
 		*startPostSave() {
-			yield { type: 'START_POST_SAVE' };
+			yield { type: 'START_SAVE' };
 			const editorStructure = readBlock();
 			yield actions.setEditorStructure( editorStructure );
 
@@ -142,6 +139,8 @@ export function registerStructureStore( {
 			if ( select( storeName ).hasUnsavedEditorChanges() ) {
 				yield* actions.saveStructure();
 			}
+
+			yield { type: 'FINISH_SAVE' };
 		},
 
 		/**
@@ -232,7 +231,7 @@ export function registerStructureStore( {
 	};
 
 	const subscribeToPostSave = () => {
-		let structureIsSaving = false;
+		let structureStartedSaving = false;
 		let editorStartedSaving = false;
 
 		return subscribe( function saveStructureOnPostSave() {
@@ -253,17 +252,17 @@ export function registerStructureStore( {
 			}
 
 			if (
-				! structureIsSaving &&
+				! structureStartedSaving &&
 				! isSavingPost &&
 				editorStartedSaving
 			) {
 				// Start saving structure when post has finished saving.
-				structureIsSaving = true;
+				structureStartedSaving = true;
 				editorStartedSaving = false;
 				dispatch( storeName ).startPostSave();
-			} else if ( structureIsSaving && ! isSavingStructure ) {
+			} else if ( structureStartedSaving && ! isSavingStructure ) {
 				// Call finishPostSave when structure has finished saving.
-				structureIsSaving = false;
+				structureStartedSaving = false;
 				dispatch( storeName ).finishPostSave();
 			}
 		} );
