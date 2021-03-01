@@ -79,17 +79,24 @@ export function syncQuestionBlocks( structure, blocks ) {
  * Convert blocks to question structure.
  *
  * @param {Object[]} blocks Blocks.
+ *
  * @return {QuizQuestion[]} Question structure
  */
 export function parseQuestionBlocks( blocks ) {
-	return blocks
-		?.map( ( block ) => {
-			return {
-				...getApiArgsFromAttributes( block.attributes ),
-				description: getBlockContent( block ),
-			};
-		} )
-		.filter( ( block ) => !! block.title );
+	const questions = blocks?.map( ( block ) => {
+		return {
+			...getApiArgsFromAttributes( block.attributes ),
+			description: getBlockContent( block ),
+		};
+	} );
+
+	const lastQuestion = questions.pop();
+
+	if ( lastQuestion.title ) {
+		questions.push( lastQuestion );
+	}
+
+	return questions;
 }
 
 /**

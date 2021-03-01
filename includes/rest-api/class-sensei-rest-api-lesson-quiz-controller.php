@@ -208,7 +208,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 			$question_id = $this->save_question( $question );
 
 			if ( is_wp_error( $question_id ) ) {
-				return new WP_REST_Response( $question_id );
+				return $question_id;
 			}
 
 			$question_ids[] = $question_id;
