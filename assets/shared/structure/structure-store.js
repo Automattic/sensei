@@ -232,7 +232,8 @@ export function registerStructureStore( {
 	};
 
 	const subscribeToPostSave = () => {
-		let postSaving = false;
+		let structureIsSaving = false;
+		let editorStartedSaving = false;
 
 		return subscribe( function saveStructureOnPostSave() {
 			const editor = select( 'core/editor' );
@@ -247,13 +248,22 @@ export function registerStructureStore( {
 				storeName
 			).getIsSavingStructure();
 
-			if ( ! postSaving && isSavingPost ) {
-				// First update where post is saving.
-				postSaving = true;
+			if ( isSavingPost ) {
+				editorStartedSaving = true;
+			}
+
+			if (
+				! structureIsSaving &&
+				! isSavingPost &&
+				editorStartedSaving
+			) {
+				// Start saving structure when post has finished saving.
+				structureIsSaving = true;
+				editorStartedSaving = false;
 				dispatch( storeName ).startPostSave();
-			} else if ( postSaving && ! isSavingPost && ! isSavingStructure ) {
-				// First update where both post and structure have finished saving.
-				postSaving = false;
+			} else if ( structureIsSaving && ! isSavingStructure ) {
+				// Call finishPostSave when structure has finished saving.
+				structureIsSaving = false;
 				dispatch( storeName ).finishPostSave();
 			}
 		} );
