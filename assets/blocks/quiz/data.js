@@ -46,6 +46,10 @@ import { mapKeys, mapValues, isObject } from 'lodash';
  * @return {Object[]} Updated blocks.
  */
 export function syncQuestionBlocks( structure, blocks ) {
+	if ( ! structure || structure.length === 0 ) {
+		return [ createBlock( 'sensei-lms/quiz-question', {} ) ];
+	}
+
 	return ( structure || [] ).map( ( item ) => {
 		const { description, ...question } = item;
 
