@@ -65,7 +65,8 @@ class Sensei_REST_API_Questions_Controller extends WP_REST_Posts_Controller {
 
 		$post        = $this->get_post( $request['id'] );
 		$attrs       = $this->get_question( $post );
-		$description = $response->data['content']['raw'];
+		$description = $attrs['description'];
+		unset( $attrs['description'] );
 
 		if ( ! has_blocks( $description ) ) {
 			$description = serialize_block(
