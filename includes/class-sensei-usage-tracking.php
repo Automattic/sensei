@@ -241,6 +241,7 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 		$system_data                 = [];
 		$system_data['version']      = Sensei()->version;
 		$system_data['wcpc_version'] = defined( 'SENSEI_WC_PAID_COURSES_VERSION' ) ? SENSEI_WC_PAID_COURSES_VERSION : null;
+		$system_data['quiz_editor']  = Sensei()->quiz->is_block_based_editor_enabled() ? 'block' : 'metabox';
 
 		return array_merge( $system_data, parent::get_system_data() );
 	}
