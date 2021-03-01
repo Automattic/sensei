@@ -1373,6 +1373,63 @@ class Sensei_Question {
 		sensei_log_event( 'question_add', $event_properties );
 	}
 
+	/**
+	 * Check if a question can change to a new author. For normal questions, this is only possible if it
+	 * doesn't belong to any other quiz that has a different author.
+	 *
+	 * @param int $question_id   The question post ID.
+	 * @param int $new_author_id The new author ID.
+	 *
+	 * @return bool
+	 */
+	private function can_question_change_author( int $question_id, int $new_author_id ) {
+		$question = get_post( $question_id );
+
+		if ( ! $question || ! in_array( $question->post_type, [ 'question', 'multiple_question' ], true ) ) {
+			return false;
+		}
+
+		if ( 'multiple_question' === $question->post_type ) {
+			// These stick to the quiz. However, we don't attempt to change the questions in the category.
+			return true;
+		}
+
+		$can_question_change_author = true;
+		$quiz_ids = get_post_meta( $question->ID, '_quiz_id' );
+		foreach ( $quiz_ids as $quiz_id ) {
+			$quiz = get_post( $quiz_id );
+			if ( $new_author_id !== (int) $quiz->post_author ) {
+				$can_question_change_author = false;
+				break;
+			}
+		}
+
+		return $can_question_change_author;
+	}
+
+	/**
+	 * Update the question author if possible.
+	 *
+	 * @param int $question_id   Question post ID.
+	 * @param int $new_author_id New author.
+	 *
+	 * @return bool Whether the question author could be changed.
+	 */
+	public function maybe_update_question_author( int $question_id, int $new_author_id ) {
+		if ( ! $question_id || ! $this->can_question_change_author( $question_id, $new_author_id ) ) {
+			return false;
+		}
+
+		wp_update_post(
+			[
+				'ID'          => $question_id,
+				'post_author' => $new_author_id,
+			]
+		);
+
+		return true;
+	}
+
 } // End Class
 
 /**
