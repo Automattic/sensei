@@ -306,7 +306,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		$question_meta = get_post_meta( $question->ID );
 		return [
 			'id'          => $question->ID,
-			'title'       => $question->post_title,
+			'title'       => 'auto-draft' !== $question->post_status ? $question->post_title : '',
 			'description' => $question->post_content,
 			'options'     => [
 				'grade' => Sensei()->question->get_question_grade( $question->ID ),
