@@ -77,4 +77,19 @@ registerStructureStore( {
 		// Clear error notices.
 		dispatch( 'core/notices' ).removeNotice( 'course-outline-save-error' );
 	},
+
+	/**
+	 * Prepend structure in server's response.
+	 *
+	 * @param {Object} structure The structure response.
+	 *
+	 * @return {Object} The modified response.
+	 */
+	setServerStructure( structure ) {
+		if ( ! structure ) {
+			return {};
+		}
+
+		return { structure };
+	},
 } );
