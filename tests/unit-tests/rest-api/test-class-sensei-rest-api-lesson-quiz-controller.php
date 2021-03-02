@@ -212,7 +212,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 
 		$response_data = $this->send_get_request( $lesson_id );
 
-		$this->assertFalse( $response_data['questions'][0]['answer'] );
+		$this->assertFalse( $response_data['questions'][0]['answer']['correct'] );
 		$this->assertEquals( 'Some feedback', $response_data['questions'][0]['options']['answerFeedback'] );
 		$this->assertEquals( 'boolean', $response_data['questions'][0]['type'] );
 	}
