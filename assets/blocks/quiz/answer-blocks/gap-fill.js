@@ -38,7 +38,7 @@ const GapFillAnswer = ( {
 					className={
 						'sensei-lms-question-block__text-input-placeholder'
 					}
-					value={ rightAnswers }
+					value={ rightAnswers || [] }
 					label={ false }
 					onChange={ ( nextValue ) =>
 						setAttributes( { rightAnswers: nextValue } )

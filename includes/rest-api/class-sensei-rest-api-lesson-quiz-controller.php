@@ -166,7 +166,16 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function save_quiz( WP_REST_Request $request ) {
-		$lesson  = get_post( (int) $request->get_param( 'lesson_id' ) );
+		$lesson = get_post( (int) $request->get_param( 'lesson_id' ) );
+
+		if ( 'auto-draft' === $lesson->post_status ) {
+			return new WP_Error(
+				'sensei_lesson_quiz_lesson_auto_draft',
+				__( 'Cannot update the quiz of an Auto Draft lesson.', 'sensei-lms' ),
+				[ 'status' => 400 ]
+			);
+		}
+
 		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson->ID );
 		$is_new  = null === $quiz_id;
 
@@ -186,7 +195,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 		);
 
 		if ( is_wp_error( $quiz_id ) ) {
-			return new WP_REST_Response( $quiz_id );
+			return $quiz_id;
 		}
 
 		if ( $is_new ) {
@@ -199,7 +208,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 			$question_id = $this->save_question( $question );
 
 			if ( is_wp_error( $question_id ) ) {
-				return new WP_REST_Response( $question_id );
+				return $question_id;
 			}
 
 			$question_ids[] = $question_id;

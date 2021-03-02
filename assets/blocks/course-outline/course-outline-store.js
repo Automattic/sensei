@@ -32,7 +32,7 @@ const getEditorOutlineStructure = () => {
 		return null;
 	}
 
-	return extractStructure( outlineBlock.innerBlocks );
+	return { structure: extractStructure( outlineBlock.innerBlocks ) };
 };
 
 export const COURSE_STORE = 'sensei/course-structure';

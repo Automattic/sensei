@@ -52,12 +52,20 @@ export const useAutoInserter = (
 
 	const lastBlock = blocks.length && blocks[ blocks.length - 1 ];
 	const hasEmptyLastBlock = lastBlock && ! lastBlock.attributes.title;
+	const hasAutoBlock =
+		null !==
+		useSelect(
+			( select ) =>
+				autoBlockClientId &&
+				select( 'core/block-editor' ).getBlock( autoBlockClientId ),
+			[ autoBlockClientId ]
+		);
 
 	useEffect( () => {
 		if (
 			hasSelected &&
 			! hasEmptyLastBlock &&
-			( ! autoBlockClientId || lastBlock.clientId === autoBlockClientId )
+			( ! hasAutoBlock || lastBlock.clientId === autoBlockClientId )
 		) {
 			createAndInsertBlock();
 		}
@@ -72,7 +80,7 @@ export const useAutoInserter = (
 			setAutoBlockClientId( null );
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ hasSelected, hasEmptyLastBlock ] );
+	}, [ hasSelected, hasEmptyLastBlock, hasAutoBlock ] );
 
 	const isAutoBlockSelected = useSelect(
 		( select ) =>

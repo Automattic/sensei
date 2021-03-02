@@ -51,8 +51,16 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 * @return int|WP_Error Question id on success.
 	 */
 	private function save_question( $question ) {
+		if ( empty( $question['title'] ) ) {
+			return new WP_Error(
+				'sensei_lesson_quiz_question_missing_title',
+				__( 'Please ensure all questions have a title before saving.', 'sensei-lms' )
+			);
+		}
+
 		$post_args = [
 			'ID'          => isset( $question['id'] ) ? $question['id'] : null,
+			'post_title'  => $question['title'],
 			'post_status' => 'publish',
 			'post_type'   => 'question',
 			'meta_input'  => $this->get_question_meta( $question ),
@@ -65,11 +73,21 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			$post_args['post_content'] = $question['description'];
 		}
 
-		if ( isset( $question['title'] ) ) {
-			$post_args['post_title'] = $question['title'];
-		}
+		$result = wp_insert_post( $post_args );
 
-		return wp_insert_post( $post_args );
+		/**
+		 * This action is triggered when a question is created or updated by the lesson quiz REST endpoint.
+		 *
+		 * @since 3.9.0
+		 * @hook sensei_rest_api_question_saved
+		 *
+		 * @param {int|WP_Error} $result        Result of wp_insert_post. Post ID on success or WP_Error on failure.
+		 * @param {string}       $question_type The question type.
+		 * @param {array}        $question      The question JSON arguments.
+		 */
+		do_action( 'sensei_rest_api_question_saved', $result, $question['type'], $question );
+
+		return $result;
 	}
 
 	/**
@@ -141,6 +159,10 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		}
 
 		if ( isset( $question['options'] ) ) {
+			$meta['_question_right_answer']  = [];
+			$meta['_question_wrong_answers'] = [];
+			$meta['_answer_order']           = [];
+
 			foreach ( $question['options'] as $option ) {
 				if ( empty( $option['label'] ) ) {
 					continue;

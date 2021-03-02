@@ -33,6 +33,7 @@ describe( 'useAutoInserter', () => {
 		hasSelectedInnerBlock: () => false,
 		isBlockSelected: () => false,
 		getBlocks: () => [],
+		getBlock: () => null,
 	};
 
 	const mockSelect = ( value ) =>
