@@ -121,7 +121,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 	public function testGetQuizProperties() {
 		$this->login_as_teacher();
 
-		$quiz_args = [
+		$quiz_args         = [
 			'meta_input' => [
 				'_enable_quiz_reset'     => 'on',
 				'_random_question_order' => 'yes',
@@ -182,7 +182,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 				'answer_feedback'        => 'Some feedback',
 			]
 		);
-		$response_data = $this->send_get_request( $lesson_id );
+		$response_data    = $this->send_get_request( $lesson_id );
 		$response_answers = $response_data['questions'][0]['answer']['answers'];
 
 		$this->assertFalse( $response_data['questions'][0]['options']['randomOrder'] );
@@ -377,7 +377,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 		$this->login_as_teacher();
 
 		list( $lesson_id, $quiz_id ) = $this->create_lesson_with_quiz();
-		$question_id = $this->factory->question->create(
+		$question_id                 = $this->factory->question->create(
 			[
 				'quiz_id'              => $lesson_id,
 				'question_type'        => 'single-line',
@@ -490,7 +490,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 		$this->login_as_teacher();
 
 		list( $lesson_id, $quiz_id ) = $this->create_lesson_with_quiz();
-		$question_id = $this->factory->question->create(
+		$question_id                 = $this->factory->question->create(
 			[
 				'question_type' => 'multiple-choice',
 				'quiz_id'       => $quiz_id,
