@@ -149,16 +149,10 @@ export function registerStructureStore( {
 		 */
 		*finishPostSave() {
 			yield { type: 'FINISH_POST_SAVE' };
-			const { hasUnsavedServerUpdates, hasUnsavedEditorChanges } = select(
-				storeName
-			);
+			const { hasUnsavedServerUpdates } = select( storeName );
 
 			if ( hasUnsavedServerUpdates() ) {
 				yield* actions.savePost();
-			}
-
-			if ( hasUnsavedEditorChanges() ) {
-				yield* actions.saveStructure();
 			}
 		},
 
