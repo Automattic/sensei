@@ -25,22 +25,40 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 * @return array The question schema.
 	 */
 	private function get_question_schema( string $type ): array {
+		$schema = [];
 		switch ( $type ) {
 			case 'multiple-choice':
-				return $this->get_multiple_choice_schema();
+				$schema = $this->get_multiple_choice_schema();
+				break;
 			case 'boolean':
-				return $this->get_boolean_schema();
+				$schema = $this->get_boolean_schema();
+				break;
 			case 'gap-fill':
-				return $this->get_gap_fill_schema();
+				$schema = $this->get_gap_fill_schema();
+				break;
 			case 'single-line':
-				return $this->get_single_line_schema();
+				$schema = $this->get_single_line_schema();
+				break;
 			case 'multi-line':
-				return $this->get_multi_line_schema();
+				$schema = $this->get_multi_line_schema();
+				break;
 			case 'file-upload':
-				return $this->get_file_upload_schema();
+				$schema = $this->get_file_upload_schema();
+				break;
 		}
 
-		return [];
+		/**
+		 * Modify or add REST API schema for a question type.
+		 *
+		 * @since  3.9.0
+		 * @hook   sensei_rest_api_schema_question_type
+		 *
+		 * @param  {Array} $schema Schema for a single question.
+		 * @param  {string} $type Question type.
+		 *
+		 * @return {array}
+		 */
+		return apply_filters( 'sensei_rest_api_schema_question_type', $schema, $type );
 	}
 
 	/**
