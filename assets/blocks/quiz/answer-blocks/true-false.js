@@ -14,12 +14,12 @@ import { OptionToggle } from './option-toggle';
  *
  * @param {Object}   props
  * @param {Object}   props.attributes
- * @param {boolean}  props.attributes.rightAnswer The correct answer.
+ * @param {boolean}  props.attributes.correct The correct answer.
  * @param {Function} props.setAttributes
- * @param {boolean}  props.hasSelected            Is question block selected.
+ * @param {boolean}  props.hasSelected        Is question block selected.
  */
 const TrueFalseAnswer = ( {
-	attributes: { rightAnswer = true },
+	attributes: { correct = true },
 	setAttributes,
 	hasSelected,
 } ) => {
@@ -35,10 +35,8 @@ const TrueFalseAnswer = ( {
 					className="sensei-lms-question-block__answer--true-false__option"
 				>
 					<OptionToggle
-						onClick={ () =>
-							setAttributes( { rightAnswer: value } )
-						}
-						isChecked={ rightAnswer === value }
+						onClick={ () => setAttributes( { correct: value } ) }
+						isChecked={ correct === value }
 					>
 						<span>{ label }</span>
 					</OptionToggle>
@@ -49,14 +47,12 @@ const TrueFalseAnswer = ( {
 								className="sensei-lms-question-block__answer--true-false__toggle"
 								onClick={ () =>
 									setAttributes( {
-										rightAnswer:
-											value === rightAnswer
-												? ! value
-												: value,
+										correct:
+											value === correct ? ! value : value,
 									} )
 								}
 							>
-								{ rightAnswer === value
+								{ correct === value
 									? __( 'Right', 'sensei-lms' )
 									: __( 'Wrong', 'sensei-lms' ) }
 							</Button>

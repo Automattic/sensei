@@ -10,14 +10,14 @@ import { __ } from '@wordpress/i18n';
  *
  * @param {Object}   props
  * @param {Object}   props.attributes
- * @param {string}   props.attributes.textBefore   Text before the gap.
- * @param {string}   props.attributes.textAfter    Text after the gap.
- * @param {string[]} props.attributes.rightAnswers Right answers.
+ * @param {string}   props.attributes.before Text before the gap.
+ * @param {string}   props.attributes.after  Text after the gap.
+ * @param {string[]} props.attributes.gap    Right answers.
  * @param {Function} props.setAttributes
- * @param {boolean}  props.hasSelected             Is the question block selected.
+ * @param {boolean}  props.hasSelected       Is the question block selected.
  */
 const GapFillAnswer = ( {
-	attributes: { textBefore, textAfter, rightAnswers },
+	attributes: { before, after, gap },
 	setAttributes,
 	hasSelected,
 } ) => {
@@ -27,9 +27,9 @@ const GapFillAnswer = ( {
 				<RichText
 					className="sensei-lms-question-block__answer--gap-fill__text"
 					placeholder={ __( 'Text before the gap', 'sensei-lms' ) }
-					value={ textBefore }
+					value={ before }
 					onChange={ ( nextValue ) =>
-						setAttributes( { textBefore: nextValue } )
+						setAttributes( { before: nextValue } )
 					}
 				/>
 			</li>
@@ -38,10 +38,10 @@ const GapFillAnswer = ( {
 					className={
 						'sensei-lms-question-block__text-input-placeholder'
 					}
-					value={ rightAnswers || [] }
+					value={ gap || [] }
 					label={ false }
 					onChange={ ( nextValue ) =>
-						setAttributes( { rightAnswers: nextValue } )
+						setAttributes( { gap: nextValue } )
 					}
 				/>
 				{ hasSelected && (
@@ -57,9 +57,9 @@ const GapFillAnswer = ( {
 				<RichText
 					className="sensei-lms-question-block__answer--gap-fill__text"
 					placeholder={ __( 'Text after the gap', 'sensei-lms' ) }
-					value={ textAfter }
+					value={ after }
 					onChange={ ( nextValue ) =>
-						setAttributes( { textAfter: nextValue } )
+						setAttributes( { after: nextValue } )
 					}
 				/>
 			</li>
