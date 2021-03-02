@@ -57,7 +57,7 @@ const QuestionEdit = ( props ) => {
 	const AnswerBlock = type && types[ type ];
 
 	const hasSelected = useHasSelected( props );
-	const isSingle = ! ( 'sensei-lms/quizId' in context );
+	const isSingle = context && ! ( 'sensei-lms/quizId' in context );
 	const showContent = title || hasSelected || isSingle;
 
 	return (
