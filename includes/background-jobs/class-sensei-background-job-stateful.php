@@ -60,17 +60,21 @@ abstract class Sensei_Background_Job_Stateful implements Sensei_Background_Job_I
 	 * @param string $id    The unique ID.
 	 */
 	public function __construct( $args = [], $id = null ) {
+		$is_new = false;
 		if ( null === $id ) {
-			$id = md5( static::class );
+			$is_new = true;
+			$id     = md5( static::class );
 			if ( $this->allow_multiple_instances() ) {
-				$id = md5( uniqid() );
+				$id = uniqid();
 			}
 		}
 
 		$this->id   = $id;
 		$this->args = $args;
 
-		$this->restore_state();
+		if ( ! $is_new ) {
+			$this->restore_state();
+		}
 	}
 
 	/**
@@ -90,10 +94,19 @@ abstract class Sensei_Background_Job_Stateful implements Sensei_Background_Job_I
 	}
 
 	/**
+	 * Get the state transient name.
+	 *
+	 * @return string
+	 */
+	private function get_state_transient_name() : string {
+		return self::TRANSIENT_PREFIX . md5( wp_json_encode( $this->get_args() ) );
+	}
+
+	/**
 	 * Restore a job state.
 	 */
 	private function restore_state() {
-		$state_raw = get_transient( self::TRANSIENT_PREFIX . $this->get_id() );
+		$state_raw = get_transient( $this->get_state_transient_name() );
 
 		$state = $state_raw ? json_decode( $state_raw, true ) : [];
 		if ( ! is_array( $state ) ) {
@@ -107,7 +120,7 @@ abstract class Sensei_Background_Job_Stateful implements Sensei_Background_Job_I
 	 * Clean up.
 	 */
 	public function cleanup() {
-		delete_transient( self::TRANSIENT_PREFIX . $this->get_id() );
+		delete_transient( $this->get_state_transient_name() );
 		$this->deleted = true;
 	}
 
@@ -155,7 +168,7 @@ abstract class Sensei_Background_Job_Stateful implements Sensei_Background_Job_I
 			return;
 		}
 
-		set_transient( self::TRANSIENT_PREFIX . $this->get_id(), wp_json_encode( $this->state ), self::TRANSIENT_LIFE );
+		set_transient( $this->get_state_transient_name(), wp_json_encode( $this->state ), self::TRANSIENT_LIFE );
 	}
 
 	/**
