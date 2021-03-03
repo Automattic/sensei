@@ -52,23 +52,24 @@ class Sensei_Scheduler {
 		if (
 			! isset( $args['id'], $args['class'] )
 			|| ! class_exists( $args['class'] )
-			|| is_subclass_of( $args['class'], Sensei_Background_Job_Stateful::class )
+			|| ! is_subclass_of( $args['class'], Sensei_Background_Job_Stateful::class )
 		) {
 			return false;
 		}
 
-		$id        = $args['id'];
-		$className = $args['class'];
+		$id         = $args['id'];
+		$class_name = $args['class'];
 		unset( $args['id'], $args['class'] );
 
-		$job = new $className( $id, $args );
-		self::instance()->run( $job );
+		$job = new $class_name( $id, $args );
+		self::instance()->run(
+			$job,
+			function() use ( $job ) {
+				$job->cleanup();
+			}
+		);
 
-		if ( $job->is_complete() ) {
-			$job->cleanup();
-		} else {
-			$job->persist();
-		}
+		$job->persist();
 	}
 
 	/**
