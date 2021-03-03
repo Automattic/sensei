@@ -61,7 +61,7 @@ class Sensei_Scheduler {
 		$class_name = $args['class'];
 		unset( $args['id'], $args['class'] );
 
-		$job = new $class_name( $id, $args );
+		$job = new $class_name( $args, $id );
 		self::instance()->run(
 			$job,
 			function() use ( $job ) {
