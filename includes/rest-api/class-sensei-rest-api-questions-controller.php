@@ -63,11 +63,31 @@ class Sensei_REST_API_Questions_Controller extends WP_REST_Posts_Controller {
 			return $response;
 		}
 
-		$post        = $this->get_post( $request['id'] );
-		$attrs       = $this->get_question( $post );
-		$description = $attrs['description'];
-		unset( $attrs['description'] );
+		$post = $this->get_post( $request['id'] );
+		if ( is_wp_error( $post ) ) {
+			return $post;
+		}
 
+		$block = $this->serialize_question_as_block( $post );
+
+		$response->data['content']['raw'] = $block;
+		return $response;
+	}
+
+	/**
+	 * Render question as block.
+	 *
+	 * @param WP_Post $question
+	 *
+	 * @return string
+	 */
+	private function serialize_question_as_block( WP_Post $question ) {
+		$attributes = $this->get_question( $question );
+
+		$description = $attributes['description'];
+		unset( $attributes['description'] );
+
+		// Wrap legacy question description in a paragraph block.
 		if ( ! has_blocks( $description ) ) {
 			$description = serialize_block(
 				[
@@ -78,14 +98,12 @@ class Sensei_REST_API_Questions_Controller extends WP_REST_Posts_Controller {
 			);
 		}
 
-		$block = [
+		$question_block = [
 			'blockName'    => 'sensei-lms/quiz-question',
 			'innerContent' => [ $description ],
-			'attrs'        => $attrs,
+			'attrs'        => $attributes,
 		];
-
-		$response->data['content']['raw'] = serialize_block( $block );
-		return $response;
+		return serialize_block( $question_block );
 	}
 
 	/**
