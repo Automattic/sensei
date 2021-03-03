@@ -14,9 +14,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Base class for jobs that require state.
  */
 abstract class Sensei_Background_Job_Stateful implements Sensei_Background_Job_Interface {
-	const NAME             = 'sensei_background_job_stateful';
-	const TRANSIENT_PREFIX = 'sensei_background_job_';
-	const TRANSIENT_LIFE   = DAY_IN_SECONDS;
+	const NAME                         = 'sensei_background_job_stateful';
+	const TRANSIENT_PREFIX             = 'sensei_background_job_';
+	const TRANSIENT_EXPIRATION_SECONDS = DAY_IN_SECONDS;
 
 	/**
 	 * ID for the job.
@@ -168,7 +168,7 @@ abstract class Sensei_Background_Job_Stateful implements Sensei_Background_Job_I
 			return;
 		}
 
-		set_transient( $this->get_state_transient_name(), wp_json_encode( $this->state ), self::TRANSIENT_LIFE );
+		set_transient( $this->get_state_transient_name(), wp_json_encode( $this->state ), self::TRANSIENT_EXPIRATION_SECONDS );
 	}
 
 	/**

@@ -58,12 +58,12 @@ class Sensei_Update_Fix_Question_Author extends Sensei_Background_Job_Batch {
 	 *
 	 * @return WP_Query
 	 */
-	private function get_quiz_query( int $offset ) : WP_Query {
+	protected function get_quiz_query( int $offset ) : WP_Query {
 		return new WP_Query(
 			[
 				'post_type'      => 'quiz',
 				'post_status'    => 'any',
-				'orderby'        => 'id',
+				'orderby'        => 'ID',
 				'order'          => 'ASC',
 				'offset'         => (int) $offset,
 				'posts_per_page' => $this->get_batch_size(),
