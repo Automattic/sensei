@@ -127,6 +127,11 @@ $block: '.sensei-lms-question-block';
 			&__control {
 				margin-right: 12px;
 			}
+
+		}
+
+		#{$block}__answer--true-false__toggle {
+			opacity: 0.5;
 		}
 
 		.editor-styles-wrapper & li {
