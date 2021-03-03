@@ -94,7 +94,7 @@ if ( ! function_exists( 'Sensei' ) ) {
 	 */
 	function Sensei() {
 		// phpcs:enable
-		return Sensei_Main::instance( array( 'version' => '3.8.1' ) );
+		return Sensei_Main::instance( array( 'version' => '3.9.0-dev' ) );
 	}
 }
 
