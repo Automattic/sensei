@@ -85,9 +85,10 @@ class Sensei_Updates {
 	 */
 	private function v3_9_fix_question_author() {
 		// Only run this if we're upgrading and the current version (before upgrade) is less than 3.9.0.
-		if ( ! $this->is_upgrade || version_compare( $this->current_version, '3.9.0', '>' ) ) {
+		if ( ! $this->is_upgrade || version_compare( $this->current_version, '3.9.0', '>=' ) ) {
 			return;
 		}
+
 		Sensei_Scheduler::instance()->schedule_job( new Sensei_Update_Fix_Question_Author() );
 	}
 
