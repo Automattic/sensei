@@ -364,7 +364,7 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 	 * @param int $user_id   User ID.
 	 * @param int $course_id Course post ID.
 	 */
-	private function assertEnrolmentCheckDeferred( $user_id, $course_id, $message = null ) {
+	private function assertEnrolmentCheckDeferred( $user_id, $course_id, $message = '' ) {
 		$property = new ReflectionProperty( Sensei_Course_Enrolment_Manager::class, 'deferred_enrolment_checks' );
 		$property->setAccessible( true );
 		$deferred = $property->getValue( Sensei_Course_Enrolment_Manager::instance() );
@@ -378,7 +378,7 @@ class Sensei_Course_Enrolment_Manager_Test extends WP_UnitTestCase {
 	 * @param int $user_id   User ID.
 	 * @param int $course_id Course post ID.
 	 */
-	private function assertEnrolmentCheckNotDeferred( $user_id, $course_id, $message = null ) {
+	private function assertEnrolmentCheckNotDeferred( $user_id, $course_id, $message = '' ) {
 		$property = new ReflectionProperty( Sensei_Course_Enrolment_Manager::class, 'deferred_enrolment_checks' );
 		$property->setAccessible( true );
 		$deferred = $property->getValue( Sensei_Course_Enrolment_Manager::instance() );
