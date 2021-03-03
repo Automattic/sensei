@@ -17,8 +17,8 @@ import MultipleChoiceAnswerOption from './multiple-choice-answer-option';
  * Default answer options for new blocks.
  */
 const DEFAULT_ANSWERS = [
-	{ title: '', isRight: true },
-	{ title: '', isRight: false },
+	{ label: '', correct: true },
+	{ label: '', correct: false },
 ];
 
 /**
@@ -33,17 +33,17 @@ const MultipleChoiceAnswer = ( props ) => {
 		attributes: { answers = [] },
 	} = props;
 
-	if ( answers.length === 0 ) {
+	if ( 0 === answers.length ) {
 		answers = DEFAULT_ANSWERS;
 	}
 
-	const hasMultipleRight = answers.filter( ( a ) => a.isRight ).length > 1;
+	const hasMultipleRight = answers.filter( ( a ) => a.correct ).length > 1;
 
-	const hasDraft = ! answers[ answers.length - 1 ]?.title;
+	const hasDraft = ! answers[ answers.length - 1 ]?.label;
 
 	const answerItems = [ ...answers ];
 	if ( hasSelected && ! hasDraft ) {
-		answerItems.push( { title: '', isRight: false } );
+		answerItems.push( { label: '', correct: false } );
 	}
 
 	/**
@@ -53,11 +53,9 @@ const MultipleChoiceAnswer = ( props ) => {
 	 */
 	const insertAnswer = ( index ) => {
 		const nextAnswers = [ ...answers ];
-		const newAnswer = { title: '', isRight: false };
+		const newAnswer = { label: '', correct: false };
 		nextAnswers.splice( index + 1, 0, newAnswer );
-		setAttributes( {
-			answers: nextAnswers,
-		} );
+		setAttributes( { answers: nextAnswers } );
 		setFocus( index + 1 );
 	};
 
@@ -75,9 +73,7 @@ const MultipleChoiceAnswer = ( props ) => {
 		setFocus( index - 1 );
 		const nextAnswers = [ ...answers ];
 		nextAnswers.splice( index, 1 );
-		setAttributes( {
-			answers: nextAnswers,
-		} );
+		setAttributes( { answers: nextAnswers } );
 	};
 
 	/**
@@ -103,7 +99,7 @@ const MultipleChoiceAnswer = ( props ) => {
 					key={ index }
 					className={ classnames(
 						'sensei-lms-question-block__answer--multiple-choice__option',
-						{ 'is-draft': ! answer.title }
+						{ 'is-draft': ! answer.label }
 					) }
 				>
 					<MultipleChoiceAnswerOption

@@ -24,23 +24,41 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 *
 	 * @return array The question schema.
 	 */
-	private function get_question_schema( string $type ) : array {
+	private function get_question_schema( string $type ): array {
+		$schema = [];
 		switch ( $type ) {
 			case 'multiple-choice':
-				return $this->get_multiple_choice_schema();
+				$schema = $this->get_multiple_choice_schema();
+				break;
 			case 'boolean':
-				return $this->get_boolean_schema();
+				$schema = $this->get_boolean_schema();
+				break;
 			case 'gap-fill':
-				return $this->get_gap_fill_schema();
+				$schema = $this->get_gap_fill_schema();
+				break;
 			case 'single-line':
-				return $this->get_single_line_schema();
+				$schema = $this->get_single_line_schema();
+				break;
 			case 'multi-line':
-				return $this->get_multi_line_schema();
+				$schema = $this->get_multi_line_schema();
+				break;
 			case 'file-upload':
-				return $this->get_file_upload_schema();
+				$schema = $this->get_file_upload_schema();
+				break;
 		}
 
-		return [];
+		/**
+		 * Modify or add REST API schema for a question type.
+		 *
+		 * @since  3.9.0
+		 * @hook   sensei_rest_api_schema_question_type
+		 *
+		 * @param  {Array} $schema Schema for a single question.
+		 * @param  {string} $type Question type.
+		 *
+		 * @return {array}
+		 */
+		return apply_filters( 'sensei_rest_api_schema_question_type', $schema, $type );
 	}
 
 	/**
@@ -56,6 +74,9 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 				'sensei_lesson_quiz_question_missing_title',
 				__( 'Please ensure all questions have a title before saving.', 'sensei-lms' )
 			);
+		}
+		if ( ! isset( $question['options'] ) ) {
+			$question['options'] = [];
 		}
 
 		$post_args = [
@@ -79,7 +100,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		 * This action is triggered when a question is created or updated by the lesson quiz REST endpoint.
 		 *
 		 * @since 3.9.0
-		 * @hook sensei_rest_api_question_saved
+		 * @hook  sensei_rest_api_question_saved
 		 *
 		 * @param {int|WP_Error} $result        Result of wp_insert_post. Post ID on success or WP_Error on failure.
 		 * @param {string}       $question_type The question type.
@@ -97,11 +118,12 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 *
 	 * @return array The calculated meta array.
 	 */
-	private function get_question_meta( array $question ) : array {
-		$meta = [];
+	private function get_question_meta( array $question ): array {
+		$meta    = [];
+		$options = $question['options'] ?? [];
 
-		if ( isset( $question['grade'] ) ) {
-			$meta['_question_grade'] = $question['grade'];
+		if ( isset( $options['grade'] ) ) {
+			$meta['_question_grade'] = $options['grade'];
 		}
 
 		switch ( $question['type'] ) {
@@ -109,12 +131,12 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 				$meta = array_merge( $meta, $this->get_multiple_choice_meta( $question ) );
 				break;
 			case 'boolean':
-				if ( isset( $question['answer'] ) ) {
-					$meta['_question_right_answer'] = $question['answer'] ? 'true' : 'false';
+				if ( isset( $question['answer']['correct'] ) ) {
+					$meta['_question_right_answer'] = $question['answer']['correct'] ? 'true' : 'false';
 				}
 
-				if ( array_key_exists( 'answer_feedback', $question ) ) {
-					$meta['_answer_feedback'] = $question['answer_feedback'];
+				if ( array_key_exists( 'answerFeedback', $options ) ) {
+					$meta['_answer_feedback'] = $options['answerFeedback'];
 				}
 				break;
 			case 'gap-fill':
@@ -122,17 +144,16 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 				break;
 			case 'single-line':
 			case 'multi-line':
-				if ( array_key_exists( 'teacher_notes', $question ) ) {
-					$meta['_question_right_answer'] = $question['teacher_notes'];
+				if ( array_key_exists( 'teacherNotes', $options ) ) {
+					$meta['_question_right_answer'] = $options['teacherNotes'];
 				}
 				break;
 			case 'file-upload':
-				if ( array_key_exists( 'teacher_notes', $question ) ) {
-					$meta['_question_right_answer'] = $question['teacher_notes'];
+				if ( array_key_exists( 'teacherNotes', $options ) ) {
+					$meta['_question_right_answer'] = $options['teacherNotes'];
 				}
-
-				if ( array_key_exists( 'student_help', $question ) ) {
-					$meta['_question_wrong_answers'] = $question['student_help'];
+				if ( array_key_exists( 'studentHelp', $options ) ) {
+					$meta['_question_wrong_answers'] = $options['studentHelp'];
 				}
 				break;
 		}
@@ -147,23 +168,23 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 *
 	 * @return array The calculated meta.
 	 */
-	private function get_multiple_choice_meta( array $question ) : array {
+	private function get_multiple_choice_meta( array $question ): array {
 		$meta = [];
 
-		if ( isset( $question['random_order'] ) ) {
-			$meta['_random_order'] = $question['random_order'] ? 'yes' : 'no';
+		if ( isset( $question['options']['randomOrder'] ) ) {
+			$meta['_random_order'] = $question['options']['randomOrder'] ? 'yes' : 'no';
 		}
 
-		if ( array_key_exists( 'answer_feedback', $question ) ) {
-			$meta['_answer_feedback'] = $question['answer_feedback'];
+		if ( array_key_exists( 'answerFeedback', $question['options'] ) ) {
+			$meta['_answer_feedback'] = $question['options']['answerFeedback'];
 		}
 
-		if ( isset( $question['options'] ) ) {
+		if ( isset( $question['answer'] ) ) {
 			$meta['_question_right_answer']  = [];
 			$meta['_question_wrong_answers'] = [];
 			$meta['_answer_order']           = [];
 
-			foreach ( $question['options'] as $option ) {
+			foreach ( $question['answer']['answers'] ?? [] as $option ) {
 				if ( empty( $option['label'] ) ) {
 					continue;
 				}
@@ -192,8 +213,9 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 *
 	 * @return array The calculated meta.
 	 */
-	private function get_gap_fill_meta( $question ) : array {
-		if ( ! ( isset( $question['before'] ) || isset( $question['gap'] ) || isset( $question['after'] ) ) ) {
+	private function get_gap_fill_meta( $question ): array {
+		$answer = $question['answer'];
+		if ( ! ( isset( $answer['before'] ) || isset( $answer['gap'] ) || isset( $answer['after'] ) ) ) {
 			return [];
 		}
 
@@ -205,20 +227,20 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 
 		$text_values = [];
 
-		if ( array_key_exists( 'before', $question ) ) {
-			$text_values[0] = $question['before'];
+		if ( array_key_exists( 'before', $answer ) ) {
+			$text_values[0] = $answer['before'];
 		} else {
 			$text_values[0] = isset( $old_text_values[0] ) ? $old_text_values[0] : '';
 		}
 
-		if ( ! array_key_exists( 'gap', $question ) ) {
+		if ( ! array_key_exists( 'gap', $answer ) ) {
 			$text_values[1] = isset( $old_text_values[1] ) ? $old_text_values[1] : '';
 		} else {
-			$text_values[1] = implode( '|', $question['gap'] );
+			$text_values[1] = implode( '|', $answer['gap'] );
 		}
 
-		if ( array_key_exists( 'after', $question ) ) {
-			$text_values[2] = $question['after'];
+		if ( array_key_exists( 'after', $answer ) ) {
+			$text_values[2] = $answer['after'];
 		} else {
 			$text_values[2] = isset( $old_text_values[2] ) ? $old_text_values[2] : '';
 		}
@@ -234,7 +256,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 *
 	 * @return array
 	 */
-	private function get_questions_from_category( WP_Post $multiple_question, array $excluded_questions ) : array {
+	private function get_questions_from_category( WP_Post $multiple_question, array $excluded_questions ): array {
 		$category = (int) get_post_meta( $multiple_question->ID, 'category', true );
 		$number   = (int) get_post_meta( $multiple_question->ID, 'number', true );
 
@@ -266,11 +288,11 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 *
 	 * @return array The question array.
 	 */
-	private function get_question( WP_Post $question ) : array {
+	private function get_question( WP_Post $question ): array {
 		$common_properties        = $this->get_question_common_properties( $question );
 		$type_specific_properties = $this->get_question_type_specific_properties( $question, $common_properties['type'] );
 
-		return array_merge( $common_properties, $type_specific_properties );
+		return array_merge_recursive( $common_properties, $type_specific_properties );
 	}
 
 	/**
@@ -280,13 +302,15 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 *
 	 * @return array The question properties.
 	 */
-	private function get_question_common_properties( WP_Post $question ) : array {
+	private function get_question_common_properties( WP_Post $question ): array {
 		$question_meta = get_post_meta( $question->ID );
 		return [
 			'id'          => $question->ID,
 			'title'       => $question->post_title,
 			'description' => $question->post_content,
-			'grade'       => Sensei()->question->get_question_grade( $question->ID ),
+			'options'     => [
+				'grade' => Sensei()->question->get_question_grade( $question->ID ),
+			],
 			'type'        => Sensei()->question->get_question_type( $question->ID ),
 			'shared'      => ! empty( $question_meta['_quiz_id'] ) && count( $question_meta['_quiz_id'] ) > 1,
 			'categories'  => wp_get_post_terms( $question->ID, 'question-category', [ 'fields' => 'ids' ] ),
@@ -301,45 +325,48 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 *
 	 * @return array The question properties.
 	 */
-	private function get_question_type_specific_properties( WP_Post $question, string $question_type ) : array {
-		$type_specific_properties = [];
+	private function get_question_type_specific_properties( WP_Post $question, string $question_type ): array {
+		$type_specific_properties = [
+			'options' => [],
+			'answer'  => [],
+		];
 
 		switch ( $question_type ) {
 			case 'multiple-choice':
 				$type_specific_properties = $this->get_multiple_choice_properties( $question );
 				break;
 			case 'boolean':
-				$type_specific_properties['answer'] = 'true' === get_post_meta( $question->ID, '_question_right_answer', true );
+				$type_specific_properties['answer']['correct'] = 'true' === get_post_meta( $question->ID, '_question_right_answer', true );
 
-				$answer_feedback                             = get_post_meta( $question->ID, '_answer_feedback', true );
-				$type_specific_properties['answer_feedback'] = empty( $answer_feedback ) ? null : $answer_feedback;
+				$answer_feedback                                       = get_post_meta( $question->ID, '_answer_feedback', true );
+				$type_specific_properties['options']['answerFeedback'] = empty( $answer_feedback ) ? null : $answer_feedback;
 				break;
 			case 'gap-fill':
-				$type_specific_properties = $this->get_gap_fill_properties( $question );
+				$type_specific_properties['answer'] = $this->get_gap_fill_properties( $question );
 				break;
 			case 'single-line':
 			case 'multi-line':
-				$teacher_notes                             = get_post_meta( $question->ID, '_question_right_answer', true );
-				$type_specific_properties['teacher_notes'] = empty( $teacher_notes ) ? null : $teacher_notes;
+				$teacher_notes                                       = get_post_meta( $question->ID, '_question_right_answer', true );
+				$type_specific_properties['options']['teacherNotes'] = empty( $teacher_notes ) ? null : $teacher_notes;
 				break;
 			case 'file-upload':
-				$teacher_notes                             = get_post_meta( $question->ID, '_question_right_answer', true );
-				$type_specific_properties['teacher_notes'] = empty( $teacher_notes ) ? null : $teacher_notes;
+				$teacher_notes                                       = get_post_meta( $question->ID, '_question_right_answer', true );
+				$type_specific_properties['options']['teacherNotes'] = empty( $teacher_notes ) ? null : $teacher_notes;
 
-				$student_help                             = get_post_meta( $question->ID, '_question_wrong_answers', true );
-				$type_specific_properties['student_help'] = empty( $student_help[0] ) ? null : $student_help[0];
+				$student_help                                       = get_post_meta( $question->ID, '_question_wrong_answers', true );
+				$type_specific_properties['options']['studentHelp'] = empty( $student_help[0] ) ? null : $student_help[0];
 				break;
 		}
 
 		/**
 		 * Allows modification of type specific question properties.
 		 *
-		 * @since 3.9.0
-		 * @hook sensei_question_type_specific_properties
+		 * @since  3.9.0
+		 * @hook   sensei_question_type_specific_properties
 		 *
-		 * @param {array}   $type_specific_properties The properties of the question.
-		 * @param {string}  $question_type            The question type.
-		 * @param {WP_Post} $question                 The question post.
+		 * @param  {array}   $type_specific_properties The properties of the question.
+		 * @param  {string}  $question_type            The question type.
+		 * @param  {WP_Post} $question                 The question post.
 		 *
 		 * @return {array}
 		 */
@@ -353,7 +380,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 *
 	 * @return array The gap fill question properties.
 	 */
-	private function get_gap_fill_properties( WP_Post $question ) : array {
+	private function get_gap_fill_properties( WP_Post $question ): array {
 		$right_answer_meta = get_post_meta( $question->ID, '_question_right_answer', true );
 
 		if ( empty( $right_answer_meta ) ) {
@@ -381,13 +408,13 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 *
 	 * @return array The multiple choice question properties.
 	 */
-	private function get_multiple_choice_properties( WP_Post $question ) : array {
+	private function get_multiple_choice_properties( WP_Post $question ): array {
 		$type_specific_properties = [
-			'random_order' => 'yes' === get_post_meta( $question->ID, '_random_order', true ),
+			'options' => [ 'randomOrder' => 'yes' === get_post_meta( $question->ID, '_random_order', true ) ],
 		];
 
-		$answer_feedback                             = get_post_meta( $question->ID, '_answer_feedback', true );
-		$type_specific_properties['answer_feedback'] = empty( $answer_feedback ) ? null : $answer_feedback;
+		$answer_feedback                                       = get_post_meta( $question->ID, '_answer_feedback', true );
+		$type_specific_properties['options']['answerFeedback'] = empty( $answer_feedback ) ? null : $answer_feedback;
 
 		$correct_answers = $this->get_answers_array( $question, '_question_right_answer', true );
 		$wrong_answers   = $this->get_answers_array( $question, '_question_wrong_answers', false );
@@ -395,7 +422,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		$answer_order       = get_post_meta( $question->ID, '_answer_order', true );
 		$all_answers_sorted = Sensei()->question->get_answers_sorted( array_merge( $correct_answers, $wrong_answers ), $answer_order );
 
-		$type_specific_properties['options'] = array_values( $all_answers_sorted );
+		$type_specific_properties['answer'] = [ 'answers' => array_values( $all_answers_sorted ) ];
 
 		return $type_specific_properties;
 	}
@@ -412,7 +439,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 *
 	 * @return array The answers array.
 	 */
-	private function get_answers_array( WP_Post $question, string $meta_key, bool $is_correct ) : array {
+	private function get_answers_array( WP_Post $question, string $meta_key, bool $is_correct ): array {
 		$answers = get_post_meta( $question->ID, $meta_key, true );
 
 		if ( empty( $answers ) ) {
@@ -475,7 +502,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 *
 	 * @return array The properties
 	 */
-	public function get_common_question_properties_schema() : array {
+	public function get_common_question_properties_schema(): array {
 		return [
 			'id'          => [
 				'type'        => 'integer',
@@ -489,12 +516,20 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 				'type'        => 'string',
 				'description' => 'Question description',
 			],
-			'grade'       => [
-				'type'        => 'integer',
-				'description' => 'Points this question is worth',
-				'minimum'     => 0,
-				'maximum'     => 100,
-				'default'     => 1,
+			'answer'      => [
+				'type' => 'object',
+			],
+			'options'     => [
+				'type'       => 'object',
+				'properties' => [
+					'grade' => [
+						'type'        => 'integer',
+						'description' => 'Points this question is worth',
+						'minimum'     => 0,
+						'maximum'     => 100,
+						'default'     => 1,
+					],
+				],
 			],
 			'shared'      => [
 				'type'        => 'boolean',
@@ -518,45 +553,54 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 *
 	 * @return array The properties
 	 */
-	private function get_multiple_choice_schema() : array {
+	private function get_multiple_choice_schema(): array {
 		$multiple_choice_properties = [
-			'type'            => [
+			'type'    => [
 				'type'     => 'string',
 				'pattern'  => 'multiple-choice',
 				'required' => true,
 			],
-			'options'         => [
-				'type'        => 'array',
-				'description' => 'Options for the multiple choice',
-				'items'       => [
-					'type'       => 'object',
-					'properties' => [
-						'label'   => [
-							'type'        => 'string',
-							'description' => 'Label for answer option',
-						],
-						'correct' => [
-							'type'        => 'boolean',
-							'description' => 'Whether this answer is correct',
+			'answer'  => [
+				'properties' => [
+					'answers' => [
+						'type'        => 'array',
+						'description' => 'Options for the multiple choice',
+						'items'       => [
+							'type'       => 'object',
+							'properties' => [
+								'label'   => [
+									'type'        => 'string',
+									'description' => 'Label for answer option',
+								],
+								'correct' => [
+									'type'        => 'boolean',
+									'description' => 'Whether this answer is correct',
+								],
+							],
 						],
 					],
 				],
 			],
-			'random_order'    => [
-				'type'        => 'boolean',
-				'description' => 'Should options be randomized when displayed to quiz takers',
-				'default'     => false,
+			'options' => [
+				'properties' => [
+					'randomOrder'    => [
+						'type'        => 'boolean',
+						'description' => 'Should options be randomized when displayed to quiz takers',
+						'default'     => false,
+					],
+					'answerFeedback' => [
+						'type'        => [ 'string', 'null' ],
+						'description' => 'Feedback to show quiz takers once quiz is submitted',
+					],
+				],
 			],
-			'answer_feedback' => [
-				'type'        => [ 'string', 'null' ],
-				'description' => 'Feedback to show quiz takers once quiz is submitted',
-			],
+
 		];
 
 		return [
 			'title'      => 'Question',
 			'type'       => 'object',
-			'properties' => array_merge( $this->get_common_question_properties_schema(), $multiple_choice_properties ),
+			'properties' => array_merge_recursive( $this->get_common_question_properties_schema(), $multiple_choice_properties ),
 		];
 	}
 
@@ -565,27 +609,40 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 *
 	 * @return array The properties
 	 */
-	private function get_boolean_schema() : array {
+	private function get_boolean_schema(): array {
 		$boolean_properties = [
-			'type'            => [
+			'type'    => [
 				'type'     => 'string',
 				'pattern'  => 'boolean',
 				'required' => true,
 			],
-			'answer'          => [
-				'type'        => 'boolean',
-				'description' => 'Correct answer for question',
+			'answer'  => [
+				'properties' => [
+					'correct' => [
+						'type'        => 'boolean',
+						'description' => 'Correct answer for question',
+					],
+				],
 			],
-			'answer_feedback' => [
-				'type'        => [ 'string', 'null' ],
-				'description' => 'Feedback to show quiz takers once quiz is submitted',
+			'options' => [
+				'properties' => [
+					'randomOrder'    => [
+						'type'        => 'boolean',
+						'description' => 'Should options be randomized when displayed to quiz takers',
+						'default'     => false,
+					],
+					'answerFeedback' => [
+						'type'        => [ 'string', 'null' ],
+						'description' => 'Feedback to show quiz takers once quiz is submitted',
+					],
+				],
 			],
 		];
 
 		return [
 			'title'      => 'Question',
 			'type'       => 'object',
-			'properties' => array_merge( $this->get_common_question_properties_schema(), $boolean_properties ),
+			'properties' => array_merge_recursive( $this->get_common_question_properties_schema(), $boolean_properties ),
 		];
 	}
 
@@ -594,35 +651,40 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 *
 	 * @return array The properties
 	 */
-	private function get_gap_fill_schema() : array {
+	private function get_gap_fill_schema(): array {
 		$gap_fill_properties = [
 			'type'   => [
 				'type'     => 'string',
 				'pattern'  => 'gap-fill',
 				'required' => true,
 			],
-			'before' => [
-				'type'        => 'string',
-				'description' => 'Text before the gap',
-			],
-			'gap'    => [
-				'type'        => 'array',
-				'description' => 'Gap text answers',
-				'items'       => [
-					'type'        => 'string',
-					'description' => 'Gap answers',
+			'answer' => [
+				'description' => 'Answer before and after text, and correct answers.',
+				'properties'  => [
+					'before' => [
+						'type'        => 'string',
+						'description' => 'Text before the gap',
+					],
+					'gap'    => [
+						'type'        => 'array',
+						'description' => 'Gap text answers',
+						'items'       => [
+							'type'        => 'string',
+							'description' => 'Gap answers',
+						],
+					],
+					'after'  => [
+						'type'        => 'string',
+						'description' => 'Text after the gap',
+					],
 				],
-			],
-			'after'  => [
-				'type'        => 'string',
-				'description' => 'Text after the gap',
 			],
 		];
 
 		return [
 			'title'      => 'Question',
 			'type'       => 'object',
-			'properties' => array_merge( $this->get_common_question_properties_schema(), $gap_fill_properties ),
+			'properties' => array_merge_recursive( $this->get_common_question_properties_schema(), $gap_fill_properties ),
 		];
 	}
 
@@ -631,23 +693,28 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 *
 	 * @return array The properties
 	 */
-	private function get_single_line_schema() : array {
+	private function get_single_line_schema(): array {
 		$single_line_properties = [
-			'type'          => [
+			'type'    => [
 				'type'     => 'string',
 				'pattern'  => 'single-line',
 				'required' => true,
 			],
-			'teacher_notes' => [
-				'type'        => [ 'string', 'null' ],
-				'description' => 'Teacher notes for grading',
+			'options' => [
+				'properties' => [
+					'teacherNotes' => [
+						'type'        => [ 'string', 'null' ],
+						'description' => 'Teacher notes for grading',
+
+					],
+				],
 			],
 		];
 
 		return [
 			'title'      => 'Question',
 			'type'       => 'object',
-			'properties' => array_merge( $this->get_common_question_properties_schema(), $single_line_properties ),
+			'properties' => array_merge_recursive( $this->get_common_question_properties_schema(), $single_line_properties ),
 		];
 	}
 
@@ -656,23 +723,27 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 *
 	 * @return array The properties
 	 */
-	private function get_multi_line_schema() : array {
+	private function get_multi_line_schema(): array {
 		$multiline_properties = [
-			'type'          => [
+			'type'    => [
 				'type'     => 'string',
 				'pattern'  => 'multi-line',
 				'required' => true,
 			],
-			'teacher_notes' => [
-				'type'        => [ 'string', 'null' ],
-				'description' => 'Teacher notes for grading',
+			'options' => [
+				'properties' => [
+					'teacherNotes' => [
+						'type'        => [ 'string', 'null' ],
+						'description' => 'Teacher notes for grading',
+					],
+				],
 			],
 		];
 
 		return [
 			'title'      => 'Question',
 			'type'       => 'object',
-			'properties' => array_merge( $this->get_common_question_properties_schema(), $multiline_properties ),
+			'properties' => array_merge_recursive( $this->get_common_question_properties_schema(), $multiline_properties ),
 		];
 	}
 
@@ -681,27 +752,31 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 *
 	 * @return array The properties
 	 */
-	private function get_file_upload_schema() : array {
+	private function get_file_upload_schema(): array {
 		$file_upload_properties = [
-			'type'          => [
+			'type'    => [
 				'type'     => 'string',
 				'pattern'  => 'file-upload',
 				'required' => true,
 			],
-			'student_help'  => [
-				'type'        => [ 'string', 'null' ],
-				'description' => 'Description for student explaining what needs to be uploaded',
-			],
-			'teacher_notes' => [
-				'type'        => [ 'string', 'null' ],
-				'description' => 'Teacher notes for grading',
+			'options' => [
+				'properties' => [
+					'teacherNotes' => [
+						'type'        => [ 'string', 'null' ],
+						'description' => 'Teacher notes for grading',
+					],
+					'studentHelp'  => [
+						'type'        => [ 'string', 'null' ],
+						'description' => 'Description for student explaining what needs to be uploaded',
+					],
+				],
 			],
 		];
 
 		return [
 			'title'      => 'Question',
 			'type'       => 'object',
-			'properties' => array_merge( $this->get_common_question_properties_schema(), $file_upload_properties ),
+			'properties' => array_merge_recursive( $this->get_common_question_properties_schema(), $file_upload_properties ),
 		];
 	}
 }

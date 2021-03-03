@@ -6,11 +6,8 @@ import { createBlock, getBlockContent, rawHandler } from '@wordpress/blocks';
 /**
  * Internal dependencies
  */
-import {
-	createQuestionBlockAttributes,
-	getApiArgsFromAttributes,
-} from './question-block/question-block-attributes';
 import questionBlock from './question-block';
+
 /**
  * External dependencies
  */
@@ -51,15 +48,13 @@ export function syncQuestionBlocks( structure, blocks ) {
 	}
 
 	return ( structure || [] ).map( ( item ) => {
-		const { description, ...question } = item;
+		const { description, ...attributes } = item;
 
 		let block = blocks ? findQuestionBlock( blocks, item ) : null;
 
 		const innerBlocks =
 			( description && rawHandler( { HTML: description } ) ) ||
 			block?.innerBlocks;
-
-		const attributes = createQuestionBlockAttributes( question );
 
 		if ( ! block ) {
 			block = createBlock( questionBlock.name, attributes, innerBlocks );
@@ -85,7 +80,7 @@ export function syncQuestionBlocks( structure, blocks ) {
 export function parseQuestionBlocks( blocks ) {
 	const questions = blocks?.map( ( block ) => {
 		return {
-			...getApiArgsFromAttributes( block.attributes ),
+			...block.attributes,
 			description: getBlockContent( block ),
 		};
 	} );
@@ -107,12 +102,10 @@ export function parseQuestionBlocks( blocks ) {
  * @return {QuizQuestion} Block.
  */
 export function createQuestionBlock( item ) {
-	const { description, ...question } = item;
+	const { description, ...attributes } = item;
 
 	const innerBlocks =
 		( description && rawHandler( { HTML: description } ) ) || [];
-
-	const attributes = createQuestionBlockAttributes( question );
 
 	return createBlock( questionBlock.name, attributes, innerBlocks );
 }
