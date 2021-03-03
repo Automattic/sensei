@@ -121,13 +121,15 @@ class Sensei_REST_API_Questions_Controller extends WP_REST_Posts_Controller {
 		if ( $block ) {
 			$request->set_body( '' );
 		}
-		$response = parent::update_item( $request );
+		parent::update_item( $request );
 
 		if ( $block ) {
 			$this->update_question( $request['id'], $block );
 		}
 
-		return $response;
+		// Return the updated question.
+		$response = $this->prepare_item_for_response( get_post( $request['id'] ), $request );
+		return rest_ensure_response( $response );
 
 	}
 
