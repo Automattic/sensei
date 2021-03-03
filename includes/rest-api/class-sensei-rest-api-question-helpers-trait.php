@@ -130,6 +130,25 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			$meta['_question_grade'] = $options['grade'];
 		}
 
+		// Common meta.
+		switch ( $question['type'] ) {
+			case 'multiple-choice':
+			case 'boolean':
+			case 'gap-fill':
+				if ( isset( $options['answerFeedback'] ) ) {
+					$meta['_answer_feedback'] = $options['answerFeedback'];
+				}
+				break;
+			case 'single-line':
+			case 'multi-line':
+			case 'file-upload':
+				if ( array_key_exists( 'teacherNotes', $options ) ) {
+					$meta['_question_right_answer'] = $options['teacherNotes'];
+				}
+				break;
+		}
+
+		// Type-specific meta.
 		switch ( $question['type'] ) {
 			case 'multiple-choice':
 				$meta = array_merge( $meta, $this->get_multiple_choice_meta( $question ) );
@@ -138,24 +157,11 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 				if ( isset( $question['answer']['correct'] ) ) {
 					$meta['_question_right_answer'] = $question['answer']['correct'] ? 'true' : 'false';
 				}
-
-				if ( array_key_exists( 'answerFeedback', $options ) ) {
-					$meta['_answer_feedback'] = $options['answerFeedback'];
-				}
 				break;
 			case 'gap-fill':
 				$meta = array_merge( $meta, $this->get_gap_fill_meta( $question ) );
 				break;
-			case 'single-line':
-			case 'multi-line':
-				if ( array_key_exists( 'teacherNotes', $options ) ) {
-					$meta['_question_right_answer'] = $options['teacherNotes'];
-				}
-				break;
 			case 'file-upload':
-				if ( array_key_exists( 'teacherNotes', $options ) ) {
-					$meta['_question_right_answer'] = $options['teacherNotes'];
-				}
 				if ( array_key_exists( 'studentHelp', $options ) ) {
 					$meta['_question_wrong_answers'] = $options['studentHelp'];
 				}
@@ -175,9 +181,6 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	private function get_multiple_choice_meta( array $question ): array {
 		$meta = [];
 
-		if ( array_key_exists( 'answerFeedback', $question['options'] ) ) {
-			$meta['_answer_feedback'] = $question['options']['answerFeedback'];
-		}
 		$meta['_random_order'] = false !== $question['options']['randomOrder'] ? 'yes' : 'no';
 
 		if ( isset( $question['answer'] ) ) {
@@ -334,26 +337,30 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 
 		switch ( $question_type ) {
 			case 'multiple-choice':
-				$type_specific_properties = $this->get_multiple_choice_properties( $question );
+			case 'gap-fill':
+			case 'boolean':
+				$answer_feedback                                       = get_post_meta( $question->ID, '_answer_feedback', true );
+				$type_specific_properties['options']['answerFeedback'] = empty( $answer_feedback ) ? null : $answer_feedback;
+				break;
+			case 'single-line':
+			case 'multi-line':
+			case 'file-upload':
+				$teacher_notes                                       = get_post_meta( $question->ID, '_question_right_answer', true );
+				$type_specific_properties['options']['teacherNotes'] = empty( $teacher_notes ) ? null : $teacher_notes;
+				break;
+		}
+
+		switch ( $question_type ) {
+			case 'multiple-choice':
+				$type_specific_properties = array_merge_recursive( $type_specific_properties, $this->get_multiple_choice_properties( $question ) );
 				break;
 			case 'boolean':
 				$type_specific_properties['answer']['correct'] = 'true' === get_post_meta( $question->ID, '_question_right_answer', true );
-
-				$answer_feedback                                       = get_post_meta( $question->ID, '_answer_feedback', true );
-				$type_specific_properties['options']['answerFeedback'] = empty( $answer_feedback ) ? null : $answer_feedback;
 				break;
 			case 'gap-fill':
 				$type_specific_properties['answer'] = $this->get_gap_fill_properties( $question );
 				break;
-			case 'single-line':
-			case 'multi-line':
-				$teacher_notes                                       = get_post_meta( $question->ID, '_question_right_answer', true );
-				$type_specific_properties['options']['teacherNotes'] = empty( $teacher_notes ) ? null : $teacher_notes;
-				break;
 			case 'file-upload':
-				$teacher_notes                                       = get_post_meta( $question->ID, '_question_right_answer', true );
-				$type_specific_properties['options']['teacherNotes'] = empty( $teacher_notes ) ? null : $teacher_notes;
-
 				$student_help                                       = get_post_meta( $question->ID, '_question_wrong_answers', true );
 				$type_specific_properties['options']['studentHelp'] = empty( $student_help[0] ) ? null : $student_help[0];
 				break;
@@ -413,9 +420,6 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		$type_specific_properties = [
 			'options' => [ 'randomOrder' => 'no' !== get_post_meta( $question->ID, '_random_order', true ) ],
 		];
-
-		$answer_feedback                                       = get_post_meta( $question->ID, '_answer_feedback', true );
-		$type_specific_properties['options']['answerFeedback'] = empty( $answer_feedback ) ? null : $answer_feedback;
 
 		$correct_answers = $this->get_answers_array( $question, '_question_right_answer', true );
 		$wrong_answers   = $this->get_answers_array( $question, '_question_wrong_answers', false );
