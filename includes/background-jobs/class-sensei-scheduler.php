@@ -46,19 +46,22 @@ class Sensei_Scheduler {
 	/**
 	 * Run a stateful job.
 	 *
-	 * @param array $args The job arguments..
+	 * @param array $args The job arguments.
+	 *
+	 * @return bool
 	 */
-	public static function run_stateful_job( $args ) {
+	public static function run_stateful_job( $args ) : bool {
 		if (
-			! isset( $args['id'], $args['class'] )
-			|| ! class_exists( $args['class'] )
-			|| ! is_subclass_of( $args['class'], Sensei_Background_Job_Stateful::class )
+			empty( $args['id'] )
+			|| empty( $args['class'] )
+			|| ! class_exists( (string) $args['class'] )
+			|| ! is_subclass_of( (string) $args['class'], Sensei_Background_Job_Stateful::class )
 		) {
 			return false;
 		}
 
-		$id         = $args['id'];
-		$class_name = $args['class'];
+		$id         = (string) $args['id'];
+		$class_name = (string) $args['class'];
 		unset( $args['id'], $args['class'] );
 
 		$job = new $class_name( $args, $id );
@@ -70,6 +73,8 @@ class Sensei_Scheduler {
 		);
 
 		$job->persist();
+
+		return true;
 	}
 
 	/**
