@@ -113,6 +113,12 @@ $block: '.sensei-lms-question-block';
 				opacity: 0.5;
 			}
 		}
+
+		&__option.is-draft {
+			.sensei-lms-question-block__answer--multiple-choice__toggle__wrapper {
+				display: none;
+			}
+		}
 	}
 
 	&__answer--true-false {
