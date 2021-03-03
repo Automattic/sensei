@@ -32,7 +32,7 @@ class Sensei_Quiz_Blocks extends Sensei_Blocks_Initializer {
 		}
 
 		Sensei()->assets->enqueue( 'sensei-quiz-blocks', 'blocks/quiz/index.js', [], true );
-		Sensei()->assets->enqueue( 'sensei-quiz-blocks-editor', 'blocks/quiz/quiz.editor.css' );
+		Sensei()->assets->enqueue( 'sensei-quiz-blocks-editor', 'blocks/quiz/quiz.editor.css', [ 'sensei-shared-blocks-editor-style', 'sensei-editor-components-style' ] );
 	}
 
 	/**
@@ -53,6 +53,15 @@ class Sensei_Quiz_Blocks extends Sensei_Blocks_Initializer {
 
 		new Sensei_Block_Quiz();
 		new Sensei_Block_Quiz_Question();
+
+		$post_type_object = get_post_type_object( 'question' );
+
+		$post_type_object->template      = [
+			[ 'sensei-lms/quiz-question' ],
+		];
+		$post_type_object->template_lock = 'insert';
 	}
+
+
 
 }

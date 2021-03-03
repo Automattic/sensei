@@ -83,7 +83,7 @@ class Sensei_Blocks {
 	 * @return array Filtered categories.
 	 */
 	public function sensei_block_categories( $categories, $post ) {
-		if ( 'course' !== $post->post_type && 'lesson' !== $post->post_type ) {
+		if ( ! in_array( $post->post_type, [ 'course', 'lesson', 'question' ], true ) ) {
 			return $categories;
 		}
 

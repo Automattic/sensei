@@ -41,6 +41,7 @@ const QuestionEdit = ( props ) => {
 		attributes: { title, type, answer = {}, options, shared },
 		setAttributes,
 		clientId,
+		context,
 	} = props;
 
 	const { removeBlock, selectBlock } = useDispatch( 'core/block-editor' );
@@ -56,7 +57,8 @@ const QuestionEdit = ( props ) => {
 	const AnswerBlock = type && types[ type ];
 
 	const hasSelected = useHasSelected( props );
-	const showContent = title || hasSelected;
+	const isSingle = context && ! ( 'sensei-lms/quizId' in context );
+	const showContent = title || hasSelected || isSingle;
 
 	return (
 		<div
@@ -64,7 +66,11 @@ const QuestionEdit = ( props ) => {
 				! title ? 'is-draft' : ''
 			}` }
 		>
-			<h2 className="sensei-lms-question-block__index">{ index + 1 }.</h2>
+			{ ! isSingle && (
+				<h2 className="sensei-lms-question-block__index">
+					{ index + 1 }.
+				</h2>
+			) }
 			<h2 className="sensei-lms-question-block__title">
 				<SingleLineInput
 					placeholder={ __( 'Add Question', 'sensei-lms' ) }
@@ -95,6 +101,7 @@ const QuestionEdit = ( props ) => {
 							],
 						] }
 						templateInsertUpdatesSelection={ false }
+						templateLock={ false }
 					/>
 					{ AnswerBlock?.edit && (
 						<AnswerBlock.edit

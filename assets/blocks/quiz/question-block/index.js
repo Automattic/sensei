@@ -18,6 +18,7 @@ export default {
 	...metadata,
 	title: __( 'Question', 'sensei-lms' ),
 	icon,
+	usesContext: [ 'sensei-lms/quizId' ],
 	description: __( 'The building block of all quizzes.', 'sensei-lms' ),
 	example: {
 		attributes: { title: __( 'Example Quiz Question', 'sensei-lms' ) },

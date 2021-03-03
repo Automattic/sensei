@@ -413,7 +413,7 @@ class Sensei_PostTypes {
 			'has_archive'           => true,
 			'hierarchical'          => false,
 			'menu_position'         => 51,
-			'supports'              => array( 'title', 'revisions' ),
+			'supports'              => array( 'title', 'revisions', 'editor' ),
 			'show_in_rest'          => true,
 			'rest_base'             => 'questions',
 			'rest_controller_class' => 'Sensei_REST_API_Questions_Controller',
