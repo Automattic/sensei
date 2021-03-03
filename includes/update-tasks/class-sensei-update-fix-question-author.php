@@ -24,6 +24,15 @@ class Sensei_Update_Fix_Question_Author extends Sensei_Background_Job_Batch {
 	}
 
 	/**
+	 * Can multiple instances be enqueued at the same time?
+	 *
+	 * @return bool
+	 */
+	protected function allow_multiple_instances() : bool {
+		return false;
+	}
+
+	/**
 	 * Run batch.
 	 *
 	 * @param int $offset Current offset.

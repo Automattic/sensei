@@ -59,7 +59,7 @@ abstract class Sensei_Background_Job_Stateful implements Sensei_Background_Job_I
 	 * @param array $args The job arguments.
 	 */
 	public static function start( $args = [] ) {
-		$instance = new static( md5( uniqid() ), $args );
+		$instance = new static( null, $args );
 		Sensei_Scheduler::instance()->schedule_job( $instance );
 
 		return $instance;
@@ -72,11 +72,25 @@ abstract class Sensei_Background_Job_Stateful implements Sensei_Background_Job_I
 	 * @param array  $args  Arguments needed to run.
 	 */
 	public function __construct( $id, $args = [] ) {
+		if ( null === $id ) {
+			$id = md5( static::class );
+			if ( $this->allow_multiple_instances() ) {
+				$id = md5( uniqid() );
+			}
+		}
+
 		$this->id   = $id;
 		$this->args = $args;
 
 		$this->restore_state();
 	}
+
+	/**
+	 * Can multiple instances be enqueued at the same time?
+	 *
+	 * @return bool
+	 */
+	abstract protected function allow_multiple_instances() : bool;
 
 	/**
 	 * Get the action name for the scheduled job.
