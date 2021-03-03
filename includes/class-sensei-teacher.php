@@ -968,19 +968,43 @@ class Sensei_Teacher {
 				return $args;
 		}
 
+		$learner_ids_for_courses_with_edit_permission = $this->get_learner_ids_for_courses_with_edit_permission();
+
+		// if there are no students taking the courses by this teacher don't show them any of the other users
+		if ( empty( $learner_ids_for_courses_with_edit_permission ) ) {
+
+			$args['include'] = array( 0 );
+
+		} else {
+
+			$args['include'] = $learner_ids_for_courses_with_edit_permission;
+
+		}
+
+		// return the WP_Use_Query arguments
+		return $args;
+
+	}//end limit_analysis_learners()
+
+	/**
+	 * Get the learner IDs enrolled in courses where the current user has permission
+	 * to edit (author or admin).
+	 *
+	 * @since 3.9.0 Method extracted from `Sensei_Teacher::limit_analysis_learners`.
+	 *
+	 * @return int[] Learner IDs.
+	 */
+	public function get_learner_ids_for_courses_with_edit_permission() {
 		// for teachers all courses only return those which belong to the teacher
 		// as they don't have access to course belonging to other users
 		$teacher_courses = Sensei()->course->get_all_courses();
 
-		// if the user has no courses they should see no users
 		if ( empty( $teacher_courses ) || ! is_array( $teacher_courses ) ) {
-			// tell the query to return 0 students
-			$args['include'] = array( 0 );
-			return $args;
-
+			return [];
 		}
 
-		$learner_ids_for_teacher_courses = array();
+		$learner_ids_for_courses_with_edit_permission = [];
+
 		foreach ( $teacher_courses as $course ) {
 
 			$course_learner_ids = array();
@@ -1019,25 +1043,12 @@ class Sensei_Teacher {
 			}
 
 			// add learners on this course to the all courses learner list
-			$learner_ids_for_teacher_courses = array_merge( $learner_ids_for_teacher_courses, $course_learner_ids );
-
-		}// End foreach().
-
-		// if there are no students taking the courses by this teacher don't show them any of the other users
-		if ( empty( $learner_ids_for_teacher_courses ) ) {
-
-			$args['include'] = array( 0 );
-
-		} else {
-
-			$args['include'] = $learner_ids_for_teacher_courses;
+			$learner_ids_for_courses_with_edit_permission = array_merge( $learner_ids_for_courses_with_edit_permission, $course_learner_ids );
 
 		}
 
-		// return the WP_Use_Query arguments
-		return $args;
-
-	}//end limit_analysis_learners()
+		return $learner_ids_for_courses_with_edit_permission;
+	}
 
 	/**
 	 * Give teacher full admin access to the question post type
