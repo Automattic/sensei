@@ -73,6 +73,7 @@ class Sensei_REST_API_Questions_Controller extends WP_REST_Posts_Controller {
 				[
 					'blockName'    => 'core/paragraph',
 					'innerContent' => [ $description ],
+					'attrs'        => [],
 				]
 			);
 		}
