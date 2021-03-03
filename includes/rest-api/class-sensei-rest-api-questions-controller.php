@@ -3,7 +3,7 @@
  * Sensei REST API: Sensei_REST_API_Questions_Controller class.
  *
  * @package sensei-lms
- * @since 3.9.0
+ * @since   3.9.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 3.9.0
  *
- * @see WP_REST_Posts_Controller
+ * @see   WP_REST_Posts_Controller
  */
 class Sensei_REST_API_Questions_Controller extends WP_REST_Posts_Controller {
 
@@ -36,7 +36,7 @@ class Sensei_REST_API_Questions_Controller extends WP_REST_Posts_Controller {
 			'question',
 			'question-type-slug',
 			[
-				'get_callback' => function ( $object ) {
+				'get_callback' => function( $object ) {
 					return Sensei()->question->get_question_type( $object['id'] );
 				},
 				'context'      => [ 'view' ],
@@ -107,12 +107,79 @@ class Sensei_REST_API_Questions_Controller extends WP_REST_Posts_Controller {
 	}
 
 	/**
+	 * Update question block from post content.
+	 *
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_Post|WP_REST_Response
+	 */
+	public function update_item( $request ) {
+
+		$body  = $request->get_json_params();
+		$block = $this->get_question_block_from_content( $body['content'] );
+
+		if ( $block ) {
+			$request->set_body( '' );
+		}
+		$response = parent::update_item( $request );
+
+		if ( $block ) {
+			$this->update_question( $request['id'], $block );
+		}
+
+		return $response;
+
+	}
+
+	/**
+	 * Parse and return question block if it's the first block in the content.
+	 *
+	 * @param string $post_content
+	 *
+	 * @return array|null Question block.
+	 */
+	private function get_question_block_from_content( $post_content ) {
+		if ( ! has_block( 'sensei-lms/quiz-question', $post_content ) ) {
+			return null;
+		}
+		Sensei()->blocks->quiz->initialize_blocks();
+		$block = parse_blocks( trim( $post_content ) )[0] ?? null;
+
+		if ( ! $block || 'sensei-lms/quiz-question' !== $block['blockName'] ) {
+			return null;
+		}
+
+		return $block;
+	}
+
+	/**
+	 * Update question with attributes from the block.
+	 *
+	 * @param int   $id    Question ID.
+	 * @param array $block Question block.
+	 */
+	private function update_question( $id, $block ) {
+		$attrs       = $block['attrs'];
+		$description = serialize_blocks( $block['innerBlocks'] );
+		$question    = array_merge(
+			$attrs,
+			[
+				'description' => $description,
+				'id'          => $id,
+			]
+		);
+
+		$this->save_question( $question );
+	}
+
+	/**
 	 * Modifies the query for teachers so only their own questions are returned.
 	 *
 	 * @access private
 	 *
-	 * @param array           $args The query args.
+	 * @param array           $args    The query args.
 	 * @param WP_REST_Request $request The current REST request.
+	 *
 	 * @return array The modified query args.
 	 */
 	public function exclude_others_questions( $args, $request ) {
@@ -130,6 +197,7 @@ class Sensei_REST_API_Questions_Controller extends WP_REST_Posts_Controller {
 	 * Checks if a given request has access to read posts.
 	 *
 	 * @param WP_REST_Request $request Full details about the request.
+	 *
 	 * @return true|WP_Error True if the request has read access, WP_Error object otherwise.
 	 */
 	public function get_items_permissions_check( $request ) {
@@ -151,4 +219,5 @@ class Sensei_REST_API_Questions_Controller extends WP_REST_Posts_Controller {
 
 		return true;
 	}
+
 }
