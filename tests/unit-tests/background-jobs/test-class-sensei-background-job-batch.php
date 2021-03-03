@@ -10,7 +10,7 @@ class Sensei_Background_Job_Batch_Test extends WP_UnitTestCase {
 	 * Tests to make sure offset is incremented by batch size.
 	 */
 	public function testRun() {
-		$instance = $this->getMock( [ 'run_batch' ], 10 );
+		$instance = $this->getInstanceMock( [ 'run_batch' ], 10 );
 
 		$instance->expects( $this->exactly( 3 ) )
 			->method( 'run_batch' )
@@ -37,11 +37,11 @@ class Sensei_Background_Job_Batch_Test extends WP_UnitTestCase {
 	 *
 	 * @return \PHPUnit\Framework\MockObject\MockObject|Sensei_Background_Job_Batch
 	 */
-	private function getMock( $methods = [], $batch_size = 10 ) {
+	private function getInstanceMock( $methods = [], $batch_size = 10 ) {
 		$methods[] = 'get_batch_size';
-		$mock = $this->getMockBuilder( Sensei_Background_Job_Batch::class )
-			->setMethods( $methods )
-			->getMockForAbstractClass();
+		$mock      = $this->getMockBuilder( Sensei_Background_Job_Batch::class )
+						->setMethods( $methods )
+						->getMockForAbstractClass();
 
 		$mock->expects( $this->any() )->method( 'get_batch_size' )->willReturn( $batch_size );
 

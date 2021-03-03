@@ -14,7 +14,7 @@ class Sensei_Background_Job_Stateful_Test extends WP_UnitTestCase {
 	 * @covers \Sensei_Background_Job_Stateful::set_state
 	 */
 	public function testSetGetState() {
-		$instance = $this->getMock();
+		$instance = $this->getInstanceMock();
 		$instance->set_state( 'test', 'value' );
 		$this->assertEquals( 'value', $instance->get_state( 'test' ) );
 	}
@@ -28,12 +28,12 @@ class Sensei_Background_Job_Stateful_Test extends WP_UnitTestCase {
 	 * @covers \Sensei_Background_Job_Stateful::restore_state
 	 */
 	public function testStatePersists() {
-		$id = 'state-test';
-		$instance_a = $this->getMock( $id );
+		$id         = 'state-test';
+		$instance_a = $this->getInstanceMock( $id );
 		$instance_a->set_state( 'test', 'value' );
 		$instance_a->persist();
 
-		$instance_b = $this->getMock( $id );
+		$instance_b = $this->getInstanceMock( $id );
 		$this->assertEquals( 'value', $instance_b->get_state( 'test' ) );
 	}
 
@@ -47,13 +47,13 @@ class Sensei_Background_Job_Stateful_Test extends WP_UnitTestCase {
 	 * @covers \Sensei_Background_Job_Stateful::cleanup
 	 */
 	public function testStateDoesNotPersistAfterCleanup() {
-		$id = 'state-test';
-		$instance_a = $this->getMock( $id );
+		$id         = 'state-test';
+		$instance_a = $this->getInstanceMock( $id );
 		$instance_a->set_state( 'test', 'value' );
 		$instance_a->cleanup();
 		$instance_a->persist();
 
-		$instance_b = $this->getMock( $id );
+		$instance_b = $this->getInstanceMock( $id );
 		$this->assertEquals( null, $instance_b->get_state( 'test' ) );
 	}
 
@@ -64,16 +64,18 @@ class Sensei_Background_Job_Stateful_Test extends WP_UnitTestCase {
 	 * @covers \Sensei_Background_Job_Stateful::restore_state
 	 */
 	public function testStateNotSharedWithDifferentArguments() {
-		$id = 'state-test';
-		$instance_a = $this->getMock( $id, [ 'dinosaurs' => true ] );
+		$id         = 'state-test';
+		$instance_a = $this->getInstanceMock( $id, [ 'dinosaurs' => true ] );
 		$instance_a->set_state( 'test', 'value' );
 		$instance_a->persist();
 
-		$instance_b = $this->getMock( $id, [ 'dinosaurs' => false ] );
+		$instance_b = $this->getInstanceMock( $id, [ 'dinosaurs' => false ] );
 		$this->assertEquals( null, $instance_b->get_state( 'test' ) );
 	}
 
 	/**
+	 * Get the instance of the test object.
+	 *
 	 * @param string $id                       The job ID.
 	 * @param array  $args                     The job args.
 	 * @param array  $methods                  The methods to mock.
@@ -81,13 +83,13 @@ class Sensei_Background_Job_Stateful_Test extends WP_UnitTestCase {
 	 *
 	 * @return \PHPUnit\Framework\MockObject\MockObject|Sensei_Background_Job_Stateful
 	 */
-	private function getMock( $id = null, $args = [], $methods = [], $allow_multiple_instances = false ) {
+	private function getInstanceMock( $id = null, $args = [], $methods = [], $allow_multiple_instances = false ) {
 		$methods[] = 'allow_multiple_instances';
 
 		$mock = $this->getMockBuilder( Sensei_Background_Job_Stateful::class )
-					 ->setConstructorArgs( [ $args, $id ] )
-					 ->setMethods( $methods )
-					 ->getMockForAbstractClass();
+						->setConstructorArgs( [ $args, $id ] )
+						->setMethods( $methods )
+						->getMockForAbstractClass();
 
 		$mock->expects( $this->any() )->method( 'allow_multiple_instances' )->willReturn( $allow_multiple_instances );
 
