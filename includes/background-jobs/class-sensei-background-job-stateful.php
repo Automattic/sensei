@@ -71,7 +71,7 @@ abstract class Sensei_Background_Job_Stateful implements Sensei_Background_Job_I
 	 * @param string $id    The unique ID.
 	 * @param array  $args  Arguments needed to run.
 	 */
-	private function __construct( $id, $args = [] ) {
+	public function __construct( $id, $args = [] ) {
 		$this->id   = $id;
 		$this->args = $args;
 
@@ -93,7 +93,7 @@ abstract class Sensei_Background_Job_Stateful implements Sensei_Background_Job_I
 	private function restore_state() {
 		$state_raw = get_transient( self::TRANSIENT_PREFIX . $this->get_id() );
 
-		$state = $state_raw ? json_decode( $state_raw ) : [];
+		$state = $state_raw ? json_decode( $state_raw, true ) : [];
 		if ( ! is_array( $state ) ) {
 			$state = [];
 		}
@@ -121,11 +121,12 @@ abstract class Sensei_Background_Job_Stateful implements Sensei_Background_Job_I
 	/**
 	 * Get a state variable.
 	 *
-	 * @param mixed $default The default value.
+	 * @param string $key   State key to update.
+	 * @param mixed  $default The default value.
 	 *
 	 * @return mixed
 	 */
-	public function get_state( string $key, $default = null ) {
+	public function get_state( $key, $default = null ) {
 		return $this->state[ $key ] ?? $default;
 	}
 
@@ -135,7 +136,7 @@ abstract class Sensei_Background_Job_Stateful implements Sensei_Background_Job_I
 	 * @param string $key   State key to update.
 	 * @param mixed  $value Value to set.
 	 */
-	public function set_state( string $key, $value ) {
+	public function set_state( $key, $value ) {
 		$current_value = $this->state[ $key ] ?? null;
 		if ( $current_value !== $value ) {
 			$this->changed = true;
