@@ -88,8 +88,7 @@ class Sensei_Updates {
 		if ( ! $this->is_upgrade || version_compare( $this->current_version, '3.9.0', '>' ) ) {
 			return;
 		}
-
-		Sensei_Update_Fix_Question_Author::start();
+		Sensei_Scheduler::instance()->schedule_job( new Sensei_Update_Fix_Question_Author() );
 	}
 
 	/**

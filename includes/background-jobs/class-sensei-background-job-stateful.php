@@ -54,24 +54,12 @@ abstract class Sensei_Background_Job_Stateful implements Sensei_Background_Job_I
 	private $deleted = false;
 
 	/**
-	 * Set up and enqueue job.
-	 *
-	 * @param array $args The job arguments.
-	 */
-	public static function start( $args = [] ) {
-		$instance = new static( null, $args );
-		Sensei_Scheduler::instance()->schedule_job( $instance );
-
-		return $instance;
-	}
-
-	/**
 	 * Sensei_Background_Job_Stateful constructor.
 	 *
-	 * @param string $id    The unique ID.
 	 * @param array  $args  Arguments needed to run.
+	 * @param string $id    The unique ID.
 	 */
-	public function __construct( $id, $args = [] ) {
+	public function __construct( $args = [], $id = null ) {
 		if ( null === $id ) {
 			$id = md5( static::class );
 			if ( $this->allow_multiple_instances() ) {
