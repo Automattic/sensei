@@ -11,11 +11,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Fix question post authors for previous course teacher changes.
+ * Fix question post authors from previous course teacher changes.
  */
 class Sensei_Update_Fix_Question_Author extends Sensei_Background_Job_Batch {
 	/**
-	 * Get the total items in the job.
+	 * Get the job batch size.
 	 *
 	 * @return int
 	 */

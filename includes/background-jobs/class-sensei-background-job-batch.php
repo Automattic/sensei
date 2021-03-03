@@ -24,7 +24,7 @@ abstract class Sensei_Background_Job_Batch extends Sensei_Background_Job_Statefu
 	private $complete = false;
 
 	/**
-	 * Get the total items in the job.
+	 * Get the job batch size.
 	 *
 	 * @return int
 	 */
