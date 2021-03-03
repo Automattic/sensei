@@ -79,6 +79,10 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			$question['options'] = [];
 		}
 
+		if ( ! isset( $question['type'] ) ) {
+			$question['type'] = 'multiple-choice';
+		}
+
 		$post_args = [
 			'ID'          => isset( $question['id'] ) ? $question['id'] : null,
 			'post_title'  => $question['title'],
@@ -171,13 +175,10 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	private function get_multiple_choice_meta( array $question ): array {
 		$meta = [];
 
-		if ( isset( $question['options']['randomOrder'] ) ) {
-			$meta['_random_order'] = $question['options']['randomOrder'] ? 'yes' : 'no';
-		}
-
 		if ( array_key_exists( 'answerFeedback', $question['options'] ) ) {
 			$meta['_answer_feedback'] = $question['options']['answerFeedback'];
 		}
+		$meta['_random_order'] = false !== $question['options']['randomOrder'] ? 'yes' : 'no';
 
 		if ( isset( $question['answer'] ) ) {
 			$meta['_question_right_answer']  = [];
@@ -410,7 +411,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 */
 	private function get_multiple_choice_properties( WP_Post $question ): array {
 		$type_specific_properties = [
-			'options' => [ 'randomOrder' => 'yes' === get_post_meta( $question->ID, '_random_order', true ) ],
+			'options' => [ 'randomOrder' => 'no' !== get_post_meta( $question->ID, '_random_order', true ) ],
 		];
 
 		$answer_feedback                                       = get_post_meta( $question->ID, '_answer_feedback', true );
@@ -629,7 +630,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 					'randomOrder'    => [
 						'type'        => 'boolean',
 						'description' => 'Should options be randomized when displayed to quiz takers',
-						'default'     => false,
+						'default'     => true,
 					],
 					'answerFeedback' => [
 						'type'        => [ 'string', 'null' ],

@@ -13,7 +13,7 @@ import { __ } from '@wordpress/i18n';
  * @param {Function} props.setOptions          Sets the options.
  */
 const QuestionMultipleChoiceSettings = ( {
-	options: { randomOrder = true },
+	options: { randomOrder },
 	setOptions,
 } ) => (
 	<CheckboxControl
