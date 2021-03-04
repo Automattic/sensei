@@ -49,27 +49,19 @@ export function syncQuestionBlocks( structure, blocks ) {
 	}
 
 	return ( structure || [] ).map( ( item ) => {
-		const { description, media, ...attributes } = item;
+		const { description, ...attributes } = item;
 
 		let block = blocks ? findQuestionBlock( blocks, item ) : null;
 
-		const innerBlocks =
-			( description && rawHandler( { HTML: description } ) ) ||
-			block?.innerBlocks ||
-			[];
-
-		if ( media ) {
-			innerBlocks.push( getMediaBlock( media ) );
-		}
-
 		if ( ! block ) {
-			block = createBlock( questionBlock.name, attributes, innerBlocks );
+			block = createQuestionBlock( item );
 		} else {
 			block.attributes = {
 				...block.attributes,
 				...attributes,
 			};
-			block.innerBlocks = innerBlocks;
+			block.innerBlocks =
+				( description && rawHandler( { HTML: description } ) ) || [];
 		}
 
 		return block;
@@ -80,8 +72,9 @@ export function syncQuestionBlocks( structure, blocks ) {
  * Helper method to get a related block for each type of media.
  *
  * @param {Object}   media       Question media.
- * @param {Object}   media.id    Media attachment id.
- * @param {Object}   media.url   Media attachment url.
+ * @param {number}   media.id    Media attachment id.
+ * @param {string}   media.url   Media attachment url.
+ * @param {string}   media.type  Media attachment type.
  * @param {Function} media.title Media attachment title.
  */
 function getMediaBlock( media ) {
@@ -135,15 +128,27 @@ export function parseQuestionBlocks( blocks ) {
 /**
  * Create a new question block.
  *
- * @param {Object} item Question item.
+ * @param {Object} question Question item.
  *
  * @return {QuizQuestion} Block.
  */
-export function createQuestionBlock( item ) {
-	const { description, ...attributes } = item;
+export function createQuestionBlock( question ) {
+	const { description, media, ...attributes } = question;
 
 	const innerBlocks =
 		( description && rawHandler( { HTML: description } ) ) || [];
+
+	if ( media ) {
+		innerBlocks.push( getMediaBlock( media ) );
+	}
+
+	if ( question.type === 'file-upload' && question.options?.studentHelp ) {
+		innerBlocks.push(
+			createBlock( 'core/paragraph', {
+				content: question.options.studentHelp,
+			} )
+		);
+	}
 
 	return createBlock( questionBlock.name, attributes, innerBlocks );
 }
