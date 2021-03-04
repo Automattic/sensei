@@ -92,6 +92,8 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			$question['options'] = [];
 		}
 
+		$is_new = null === $question_id;
+
 		$post_args = [
 			'ID'          => $question_id,
 			'post_title'  => $question['title'],
@@ -109,6 +111,10 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 
 		$result = wp_insert_post( $post_args );
 
+		if ( ! $is_new && ! is_wp_error( $result ) ) {
+			$this->migrate_non_editor_question( $result, $question['type'] );
+		}
+
 		/**
 		 * This action is triggered when a question is created or updated by the lesson quiz REST endpoint.
 		 *
@@ -122,6 +128,20 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		do_action( 'sensei_rest_api_question_saved', $result, $question['type'], $question );
 
 		return $result;
+	}
+
+	/**
+	 * Helper method to delete question meta that were deprecated by the block editor.
+	 *
+	 * @param int    $question_id   Question post id.
+	 * @param string $question_type Question type.
+	 */
+	private function migrate_non_editor_question( int $question_id, string $question_type ) {
+		delete_post_meta( $question_id, '_question_media' );
+
+		if ( 'file-upload' === $question_type ) {
+			delete_post_meta( $question_id, '_question_wrong_answers' );
+		}
 	}
 
 	/**
@@ -603,6 +623,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			],
 			'media'       => [
 				'type'       => 'object',
+				'readonly'   => true,
 				'properties' => [
 					'id'    => [
 						'type'        => 'integer',
@@ -782,7 +803,6 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 					'teacherNotes' => [
 						'type'        => [ 'string', 'null' ],
 						'description' => 'Teacher notes for grading',
-
 					],
 				],
 			],
@@ -845,6 +865,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 					'studentHelp'  => [
 						'type'        => [ 'string', 'null' ],
 						'description' => 'Description for student explaining what needs to be uploaded',
+						'readonly'    => true,
 					],
 				],
 			],

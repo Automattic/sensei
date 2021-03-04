@@ -55,7 +55,8 @@ export function syncQuestionBlocks( structure, blocks ) {
 
 		const innerBlocks =
 			( description && rawHandler( { HTML: description } ) ) ||
-			block?.innerBlocks;
+			block?.innerBlocks ||
+			[];
 
 		if ( media ) {
 			innerBlocks.push( getMediaBlock( media ) );
