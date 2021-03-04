@@ -115,11 +115,10 @@ class Sensei_REST_API_Questions_Controller extends WP_REST_Posts_Controller {
 	 */
 	public function update_item( $request ) {
 
-		$body  = $request->get_json_params();
-		$block = $this->get_question_block_from_content( $body['content'] );
+		$block = $this->get_question_block_from_content( $request['content'] );
 
 		if ( $block ) {
-			$request->set_body( '' );
+			$request['content'] = '';
 		}
 		parent::update_item( $request );
 
