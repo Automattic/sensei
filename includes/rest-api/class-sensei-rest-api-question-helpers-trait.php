@@ -323,7 +323,8 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 */
 	private function get_question_common_properties( WP_Post $question ): array {
 		$question_meta = get_post_meta( $question->ID );
-		return [
+
+		$common_properties = [
 			'id'          => $question->ID,
 			'title'       => 'auto-draft' !== $question->post_status ? $question->post_title : '',
 			'description' => $question->post_content,
@@ -335,6 +336,42 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			'editable'    => current_user_can( get_post_type_object( 'question' )->cap->edit_post, $question->ID ),
 			'categories'  => wp_get_post_terms( $question->ID, 'question-category', [ 'fields' => 'ids' ] ),
 		];
+
+		if ( ! empty( $question_meta['_question_media'][0] ) ) {
+			$question_media = $this->get_question_media( (int) $question_meta['_question_media'][0] );
+
+			if ( ! empty( $question_media ) ) {
+				$common_properties['media'] = $question_media;
+			}
+		}
+
+		return $common_properties;
+	}
+
+	/**
+	 * Helper method to get question media.
+	 *
+	 * @param int $question_media_id The attachment id.
+	 *
+	 * @return array Media info. It includes the type, id, url and title.
+	 */
+	private function get_question_media( int $question_media_id ) : array {
+		$question_media = [];
+		$mimetype       = get_post_mime_type( $question_media_id );
+		$attachment     = get_post( $question_media_id );
+
+		if ( $mimetype || null !== $attachment ) {
+			$mimetype_array = explode( '/', $mimetype );
+
+			if ( ! empty( $mimetype_array[0] ) ) {
+				$question_media['type']  = $mimetype_array[0];
+				$question_media['url']   = wp_get_attachment_url( $question_media_id );
+				$question_media['id']    = $attachment->ID;
+				$question_media['title'] = $attachment->post_title;
+			}
+		}
+
+		return $question_media;
 	}
 
 	/**
@@ -569,6 +606,27 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 				'items'       => [
 					'type'        => 'integer',
 					'description' => 'Term IDs',
+				],
+			],
+			'media'       => [
+				'type'       => 'object',
+				'properties' => [
+					'id'    => [
+						'type'        => 'integer',
+						'description' => 'Linked media id',
+					],
+					'type'  => [
+						'type'        => 'string',
+						'description' => 'Media type',
+					],
+					'url'   => [
+						'type'        => 'string',
+						'description' => 'Media url',
+					],
+					'title' => [
+						'type'        => 'string',
+						'description' => 'Media title',
+					],
 				],
 			],
 		];

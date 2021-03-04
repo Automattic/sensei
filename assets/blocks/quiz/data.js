@@ -2,6 +2,7 @@
  * WordPress dependencies
  */
 import { createBlock, getBlockContent, rawHandler } from '@wordpress/blocks';
+import { renderToString } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -48,13 +49,17 @@ export function syncQuestionBlocks( structure, blocks ) {
 	}
 
 	return ( structure || [] ).map( ( item ) => {
-		const { description, ...attributes } = item;
+		const { description, media, ...attributes } = item;
 
 		let block = blocks ? findQuestionBlock( blocks, item ) : null;
 
 		const innerBlocks =
 			( description && rawHandler( { HTML: description } ) ) ||
 			block?.innerBlocks;
+
+		if ( media ) {
+			innerBlocks.push( getMediaBlock( media ) );
+		}
 
 		if ( ! block ) {
 			block = createBlock( questionBlock.name, attributes, innerBlocks );
@@ -70,6 +75,38 @@ export function syncQuestionBlocks( structure, blocks ) {
 	} );
 }
 
+/**
+ * Helper method to get a related block for each type of media.
+ *
+ * @param {Object}   media       Question media.
+ * @param {Object}   media.id    Media attachment id.
+ * @param {Object}   media.url   Media attachment url.
+ * @param {Function} media.title Media attachment title.
+ */
+function getMediaBlock( media ) {
+	switch ( media.type ) {
+		case 'image':
+			return createBlock( 'core/image', {
+				id: media.id,
+				url: media.url,
+			} );
+		case 'audio':
+			return createBlock( 'core/audio', {
+				id: media.id,
+				src: media.url,
+			} );
+		case 'video':
+			return createBlock( 'core/video', {
+				id: media.id,
+				src: media.url,
+			} );
+		default:
+			const link = <a href={ media.url }>{ media.title }</a>;
+			return createBlock( 'core/paragraph', {
+				content: renderToString( link ),
+			} );
+	}
+}
 /**
  * Convert blocks to question structure.
  *
