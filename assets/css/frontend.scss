@@ -374,6 +374,11 @@ a.sensei-certificate-link {
 }
 
 .quiz-blocks {
+  .wp-block-buttons {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
   .wp-block-button {
     display: flex;
     align-items: center;
