@@ -251,6 +251,8 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 
 		if ( isset( $quiz_options['show_questions'] ) ) {
 			$meta_input['_show_questions'] = $quiz_options['show_questions'];
+		} else {
+			$meta_input['_show_questions'] = '';
 		}
 
 		if ( isset( $quiz_options['random_question_order'] ) ) {
