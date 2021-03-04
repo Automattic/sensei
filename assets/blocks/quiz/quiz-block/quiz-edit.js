@@ -10,9 +10,8 @@ import { __ } from '@wordpress/i18n';
 import { useAutoInserter } from '../../../shared/blocks/use-auto-inserter';
 import questionBlock from '../question-block';
 import { useQuizStructure } from '../quiz-store';
+import QuizAppender from './quiz-appender';
 import QuizSettings from './quiz-settings';
-import QuestionsModal from './questions-modal';
-import { useAddExistingQuestions } from './use-add-existing-questions';
 
 /**
  * Quiz block editor.
@@ -27,8 +26,6 @@ const QuizEdit = ( props ) => {
 		props
 	);
 
-	const addExistingQuestions = useAddExistingQuestions( props.clientId );
-
 	const { isPostTemplate } = props.attributes;
 
 	return (
@@ -42,16 +39,9 @@ const QuizEdit = ( props ) => {
 					isPostTemplate ? [ [ 'sensei-lms/quiz-question', {} ] ] : []
 				}
 				templateInsertUpdatesSelection={ false }
-				renderAppender={ () => (
-					<QuestionsModal
-						addExistingQuestions={ addExistingQuestions }
-					>
-						{ __( 'Add Existing Questions', 'sensei-lms' ) }
-					</QuestionsModal>
-				) }
+				renderAppender={ () => <QuizAppender { ...props } /> }
 			/>
 			<div className="sensei-lms-quiz-block__separator" />
-
 			<QuizSettings { ...props } />
 		</>
 	);

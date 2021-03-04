@@ -1,4 +1,5 @@
 @import '~@wordpress/base-styles/variables';
+
 $gray-700: #757575;
 $gray-400: #ccc;
 
@@ -17,6 +18,7 @@ $gray-400: #ccc;
 		margin: auto;
 		position: relative;
 	}
+
 	& > .block-editor-inner-blocks > .block-editor-block-list__layout {
 		margin-left: 0px;
 	}
@@ -48,6 +50,21 @@ $gray-400: #ccc;
 			opacity: 0.7;
 			border-radius: 4px;
 			padding: 6px 24px;
+		}
+	}
+
+	&__appender {
+
+		text-align: center;
+
+		.editor-styles-wrapper &__placeholder {
+			opacity: 0.62;
+			margin: 0;
+			margin-top: -12px;
+
+			&::after {
+				content: attr(data-placeholder);
+			}
 		}
 	}
 }
