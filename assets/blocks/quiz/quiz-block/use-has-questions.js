@@ -16,9 +16,8 @@ export const useHasQuestions = ( clientId ) => {
 
 	// Monitor for valid questions.
 	useEffect( () => {
-		const quizHasQuestions = select( 'core/editor' ).getEditedPostAttribute(
-			'meta'
-		)?._quiz_has_questions; // eslint-disable-line camelcase
+		const { _quiz_has_questions: quizHasQuestions } =
+			select( 'core/editor' ).getEditedPostAttribute( 'meta' ) || {};
 
 		if ( questionBlocks.length ) {
 			dispatch( 'core/editor' ).editPost( {
