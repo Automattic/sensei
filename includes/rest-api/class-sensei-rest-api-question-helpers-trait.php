@@ -385,7 +385,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 
 			if ( ! empty( $mimetype_array[0] ) ) {
 				$question_media['type']  = $mimetype_array[0];
-				$question_media['url']   = wp_get_attachment_url( $question_media_id );
+				$question_media['url']   = esc_url( wp_get_attachment_url( $question_media_id ) );
 				$question_media['id']    = $attachment->ID;
 				$question_media['title'] = $attachment->post_title;
 			}
