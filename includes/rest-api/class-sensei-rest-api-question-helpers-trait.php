@@ -181,7 +181,9 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	private function get_multiple_choice_meta( array $question ): array {
 		$meta = [];
 
-		$meta['_random_order'] = false !== $question['options']['randomOrder'] ? 'yes' : 'no';
+		if ( isset( $question['options']['randomOrder'] ) ) {
+			$meta['_random_order'] = $question['options']['randomOrder'] ? 'yes' : 'no';
+		}
 
 		if ( isset( $question['answer'] ) ) {
 			$meta['_question_right_answer']  = [];
