@@ -34,10 +34,7 @@ const TrueFalseAnswer = ( {
 					key={ value }
 					className="sensei-lms-question-block__answer--true-false__option"
 				>
-					<OptionToggle
-						onClick={ () => setAttributes( { correct: value } ) }
-						isChecked={ correct === value }
-					>
+					<OptionToggle isChecked={ correct === value }>
 						<span>{ label }</span>
 					</OptionToggle>
 					{ hasSelected && (
