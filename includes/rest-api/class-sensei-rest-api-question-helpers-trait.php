@@ -313,6 +313,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			],
 			'type'        => Sensei()->question->get_question_type( $question->ID ),
 			'shared'      => ! empty( $question_meta['_quiz_id'] ) && count( $question_meta['_quiz_id'] ) > 1,
+			'editable'    => current_user_can( get_post_type_object( 'question' )->cap->edit_post, $question->ID ),
 			'categories'  => wp_get_post_terms( $question->ID, 'question-category', [ 'fields' => 'ids' ] ),
 		];
 	}
@@ -534,6 +535,11 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			'shared'      => [
 				'type'        => 'boolean',
 				'description' => 'Whether the question has been added on other quizzes',
+				'readonly'    => true,
+			],
+			'editable'    => [
+				'type'        => 'boolean',
+				'description' => 'Whether the question can be edited by the current user',
 				'readonly'    => true,
 			],
 			'categories'  => [
