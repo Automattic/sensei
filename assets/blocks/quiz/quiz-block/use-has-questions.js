@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { useEffect } from '@wordpress/element';
-import { select, dispatch } from '@wordpress/data';
+import { dispatch, useSelect, select as selectData } from '@wordpress/data';
 
 /**
  * Monitor for questions and disable the lesson quiz when none have been added.
@@ -10,14 +10,16 @@ import { select, dispatch } from '@wordpress/data';
  * @param {string} clientId The quiz block client id.
  */
 export const useHasQuestions = ( clientId ) => {
-	const questionBlocks = select( 'core/block-editor' )
-		.getBlocks( clientId )
-		.filter( ( block ) => !! block.attributes.title );
+	const questionBlocks = useSelect( ( select ) =>
+		select( 'core/block-editor' )
+			.getBlocks( clientId )
+			.filter( ( block ) => !! block.attributes.title )
+	);
 
 	// Monitor for valid questions.
 	useEffect( () => {
 		const { _quiz_has_questions: quizHasQuestions } =
-			select( 'core/editor' ).getEditedPostAttribute( 'meta' ) || {};
+			selectData( 'core/editor' ).getEditedPostAttribute( 'meta' ) || {};
 
 		if ( questionBlocks.length ) {
 			dispatch( 'core/editor' ).editPost( {
