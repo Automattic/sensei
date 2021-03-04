@@ -19,6 +19,36 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 	/**
+	 * Sensei_REST_API_Lessons_Controller constructor.
+	 *
+	 * @param string $post_type The post type.
+	 */
+	public function __construct( $post_type ) {
+		parent::__construct( $post_type );
+
+		register_post_meta(
+			'lesson',
+			'_quiz_has_questions',
+			[
+				'show_in_rest'      => true,
+				'single'            => true,
+				'type'              => 'boolean',
+				'sanitize_callback' => function( $value ) {
+					if ( null === $value ) {
+						return $value;
+					}
+
+					return $value ? 1 : null;
+				},
+				'auth_callback'     => function( $allowed, $meta_key, $post_id ) {
+					return current_user_can( 'edit_post', $post_id );
+				},
+			]
+		);
+
+	}
+
+	/**
 	 * Adds the quiz block if missing when a quiz is active on the lesson.
 	 *
 	 * @param array           $prepared Prepared response array.
