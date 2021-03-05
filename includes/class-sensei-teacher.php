@@ -984,7 +984,7 @@ class Sensei_Teacher {
 		// return the WP_Use_Query arguments
 		return $args;
 
-	}//end limit_analysis_learners()
+	}
 
 	/**
 	 * Get the learner IDs enrolled in courses where the current user has permission
