@@ -62,7 +62,7 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 
 		$post_type_object = get_post_type_object( 'lesson' );
 
-		$blocks = [
+		$block_template = [
 			[ 'sensei-lms/button-contact-teacher' ],
 			[
 				'core/paragraph',
@@ -72,7 +72,7 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 		];
 
 		if ( Sensei()->quiz->is_block_based_editor_enabled() ) {
-			$blocks[] = [ 'sensei-lms/quiz', [ 'isPostTemplate' => true ] ];
+			$block_template[] = [ 'sensei-lms/quiz', [ 'isPostTemplate' => true ] ];
 		}
 
 		/**
@@ -81,11 +81,12 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 		 * @hook  sensei_lesson_block_template
 		 * @since 3.9.0
 		 *
-		 * @param {string[][]} $blocks Blocks to add to the lesson block template.
+		 * @param {string[][]} $template          Array of blocks to use as the default initial state for a lesson.
+		 * @param {string[][]} $original_template Original block template.
 		 *
-		 * @return {string[][]} Blocks to add to the lesson block template.
+		 * @return {string[][]} Array of blocks to use as the default initial state for a lesson.
 		 */
-		$post_type_object->template = apply_filters( 'sensei_lesson_block_template', $blocks );
+		$post_type_object->template = apply_filters( 'sensei_lesson_block_template', $block_template, $post_type_object->template );
 
 		if ( ! Sensei()->lesson->has_sensei_blocks() ) {
 			return;

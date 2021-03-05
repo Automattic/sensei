@@ -62,7 +62,7 @@ class Sensei_Course_Blocks extends Sensei_Blocks_Initializer {
 
 		$post_type_object = get_post_type_object( 'course' );
 
-		$blocks = [
+		$block_template = [
 			[ 'sensei-lms/button-take-course' ],
 			[ 'sensei-lms/button-contact-teacher' ],
 			[ 'sensei-lms/course-progress' ],
@@ -75,11 +75,12 @@ class Sensei_Course_Blocks extends Sensei_Blocks_Initializer {
 		 * @hook  sensei_course_block_template
 		 * @since 3.9.0
 		 *
-		 * @param {string[][]} $blocks Blocks to add to the course block template.
+		 * @param {string[][]} $template          Array of blocks to use as the default initial state for a course.
+		 * @param {string[][]} $original_template Original block template.
 		 *
-		 * @return {string[][]} Blocks to add to the course block template.
+		 * @return {string[][]} Array of blocks to use as the default initial state for a course.
 		 */
-		$post_type_object->template = apply_filters( 'sensei_course_block_template', $blocks );
+		$post_type_object->template = apply_filters( 'sensei_course_block_template', $block_template, $post_type_object->template );
 	}
 
 	/**
