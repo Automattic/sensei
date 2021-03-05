@@ -177,6 +177,7 @@ class Sensei_REST_API_Questions_Controller_Tests extends WP_Test_REST_TestCase {
 				'type'       => 'multiple-choice',
 				'id'         => $question_id,
 				'shared'     => false,
+				'editable'   => true,
 				'categories' => [],
 				'options'    => [
 					'grade'          => 2,

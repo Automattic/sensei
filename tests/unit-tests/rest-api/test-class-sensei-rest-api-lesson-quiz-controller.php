@@ -69,6 +69,52 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 	}
 
 	/**
+	 * Tests getting a quiz that has a question owned by current user.
+	 */
+	public function testGetCurrentTeachersQuestion() {
+		$this->login_as_teacher();
+
+		list( $lesson_id, $quiz_id ) = $this->create_lesson_with_quiz();
+
+		$this->factory->question->create(
+			[
+				'quiz_id'                              => $quiz_id,
+				'question_type'                        => 'single-line',
+				'add_question_right_answer_singleline' => 'NOTES',
+			]
+		);
+
+		$response_data = $this->send_get_request( $lesson_id );
+
+		$this->assertEquals( 'single-line', $response_data['questions'][0]['type'] );
+		$this->assertEquals( true, $response_data['questions'][0]['editable'] );
+	}
+
+	/**
+	 * Tests getting a quiz that has a question owned by another user.
+	 */
+	public function testGetAnotherTeachersQuestion() {
+		$this->login_as_teacher();
+
+		list( $lesson_id, $quiz_id ) = $this->create_lesson_with_quiz();
+
+		$this->login_as_teacher_b();
+		$this->factory->question->create(
+			[
+				'quiz_id'                              => $quiz_id,
+				'question_type'                        => 'single-line',
+				'add_question_right_answer_singleline' => 'NOTES',
+			]
+		);
+
+		$this->login_as_teacher();
+		$response_data = $this->send_get_request( $lesson_id );
+
+		$this->assertEquals( 'single-line', $response_data['questions'][0]['type'] );
+		$this->assertEquals( false, $response_data['questions'][0]['editable'] );
+	}
+
+	/**
 	 * Tests that a quiz is only accessed by admins and the teacher that created it.
 	 */
 	public function testGetAnotherTeachersCourse() {
