@@ -14,6 +14,11 @@ import Questions from './questions';
 import Actions from './actions';
 
 /**
+ * External dependencies
+ */
+import { unescape } from 'lodash';
+
+/**
  * Questions modal content.
  *
  * @param {Object}   props
@@ -30,11 +35,24 @@ const QuestionsModalContent = ( { setOpen, addExistingQuestions } ) => {
 	const [ errorAddingSelected, setErrorAddingSelected ] = useState( false );
 	const [ selectedQuestionIds, setSelectedQuestionIds ] = useState( [] );
 
-	const questionCategories = useSelect( ( select ) =>
-		select( 'core' ).getEntityRecords( 'taxonomy', 'question-category', {
-			per_page: -1,
-		} )
-	);
+	const questionCategories = useSelect( ( select ) => {
+		const terms = select( 'core' ).getEntityRecords(
+			'taxonomy',
+			'question-category',
+			{
+				per_page: -1,
+			}
+		);
+
+		if ( terms && terms.length ) {
+			return terms.map( ( term ) => ( {
+				...term,
+				name: unescape( term.name ),
+			} ) );
+		}
+
+		return terms;
+	} );
 
 	return (
 		<Modal
