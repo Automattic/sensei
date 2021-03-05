@@ -981,7 +981,6 @@ class Sensei_Teacher {
 
 		}
 
-		// return the WP_Use_Query arguments
 		return $args;
 
 	}
