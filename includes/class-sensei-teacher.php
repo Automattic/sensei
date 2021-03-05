@@ -954,12 +954,13 @@ class Sensei_Teacher {
 	}//end notify_admin_teacher_course_creation()
 
 	/**
-	 * Limit the analysis view to only the users taking courses belong to this teacher
+	 * Limit the analysis view to only the users taking courses belong to this teacher.
 	 *
-	 * Hooked into sensei_analysis_get_learners
+	 * Hooked into `sensei_analysis_overview_filter_users`.
 	 *
-	 * @param array $args WP_User_Query arguments
-	 * @return array $learners_query_results
+	 * @param array $args WP_User_Query arguments.
+	 *
+	 * @return array Learners query args.
 	 */
 	public function limit_analysis_learners( $args ) {
 
