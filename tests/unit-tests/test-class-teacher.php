@@ -1,6 +1,14 @@
 <?php
 
 class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
+	use Sensei_Test_Login_Helpers;
+
+	/**
+	 * Factory object.
+	 *
+	 * @var Sensei_Factory
+	 */
+	private $factory;
 
 	/**
 	 * Constructor function
@@ -257,6 +265,86 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 
 			$lesson = get_post( $lesson_id, ARRAY_A );
 			$this->assertEquals( $test_teacher_id_two, intval( $lesson['post_author'] ) );
+		}
+	}
+
+	/**
+	 * Test to make sure questions change ownership when they can.
+	 */
+	public function testUpdateQuestionTeacher() {
+		$this->login_as_teacher_c();
+		$teacher_id_c            = get_current_user_id();
+		$quiz_id_c               = $this->factory->quiz->create();
+		$shared_questions_c      = $this->factory->question->create_many( 1, [ 'quiz_id' => $quiz_id_c ] );
+		$free_questions_c        = $this->factory->question->create_many( 1 );
+		$free_questions_c_remain = $this->factory->question->create_many( 1 );
+
+		$this->login_as_teacher_b();
+		$teacher_id_b       = get_current_user_id();
+		$quiz_id_b          = $this->factory->quiz->create();
+		$shared_questions_b = $this->factory->question->create_many( 1, [ 'quiz_id' => $quiz_id_b ] );
+		$free_questions_b   = $this->factory->question->create_many( 1 );
+
+		$this->login_as_teacher();
+		$teacher_id_a       = get_current_user_id();
+		$quiz_id_a          = $this->factory->quiz->create();
+		$shared_questions_a = $this->factory->question->create_many( 1, [ 'quiz_id' => $quiz_id_a ] );
+		$free_questions_a   = $this->factory->question->create_many( 1 );
+
+		$shared_questions_distribute = array_merge( $free_questions_c, $shared_questions_b, $free_questions_b, $shared_questions_c, $shared_questions_a, $free_questions_a );
+
+		$basic_course = $this->factory->get_course_with_lessons(
+			[
+				'reuse_questions'         => function () use ( &$shared_questions_distribute ) {
+					if ( empty( $shared_questions_distribute ) ) {
+						return [ 'post__in' => [ -1 ] ];
+					}
+
+					return [
+						'post__in' => array_filter(
+							[
+								array_pop( $shared_questions_distribute ),
+								array_pop( $shared_questions_distribute ),
+							]
+						),
+					];
+				},
+				'multiple_question_count' => 1,
+				'lesson_count'            => 3,
+			]
+		);
+
+		$multi_question_ids = get_posts(
+			[
+				'post_type' => 'multiple_question',
+				'fields'    => 'ids',
+			]
+		);
+
+		$this->login_as_admin();
+		Sensei()->teacher->update_course_lessons_author( $basic_course['course_id'], $teacher_id_b );
+
+		$this->assertPostAuthor( $teacher_id_c, $shared_questions_c, 'Shared questions from teacher C should still be authored by teacher C' );
+		$this->assertPostAuthor( $teacher_id_b, $shared_questions_b, 'Shared questions from teacher B should still be authored by teacher B' );
+		$this->assertPostAuthor( $teacher_id_a, $shared_questions_a, 'Shared questions from teacher A should still be authored by teacher A' );
+		$this->assertPostAuthor( $teacher_id_b, $free_questions_a, 'Free questions from teacher A should now be owned by teacher B' );
+		$this->assertPostAuthor( $teacher_id_b, $free_questions_b, 'Free questions from teacher B should still be owned by teacher B' );
+		$this->assertPostAuthor( $teacher_id_b, $free_questions_c, 'Free used questions from teacher C should now be owned by teacher B' );
+		$this->assertPostAuthor( $teacher_id_c, $free_questions_c_remain, 'Free unused questions from teacher C should still be owned by teacher C' );
+		$this->assertPostAuthor( $teacher_id_b, $multi_question_ids, 'All multi-questions should be transferred to teacher B' );
+	}
+
+	/**
+	 * Asset a list of posts have a certain post_author.
+	 *
+	 * @param int    $user_id  User ID to check.
+	 * @param array  $post_ids Post IDs to check.
+	 * @param string $message  Message to show..
+	 */
+	private function assertPostAuthor( int $user_id, array $post_ids, string $message = '' ) {
+		foreach ( $post_ids as $post_id ) {
+			$check_post = get_post( $post_id );
+			$this->assertEquals( $user_id, (int) $check_post->post_author, $message );
 		}
 	}
 

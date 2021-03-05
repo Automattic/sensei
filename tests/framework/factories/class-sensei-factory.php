@@ -193,9 +193,11 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 			'lesson_args'             => array(),
 			'question_args'           => array(),
 			'multiple_question_args'  => array(),
+			'reuse_questions'         => false,
 		);
-		$args         = wp_parse_args( $args, $default_args );
-		$module_ids   = [];
+
+		$args       = wp_parse_args( $args, $default_args );
+		$module_ids = [];
 		if ( $args['module_count'] ) {
 			$module_ids = $this->module->create_many( $args['module_count'] );
 		}
@@ -209,6 +211,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 		}
 		$args['lesson_args']['meta_input']['_lesson_course'] = $course_id;
 
+		$quiz_ids   = [];
 		$lesson_ids = $this->lesson->create_many( $args['lesson_count'], $args['lesson_args'] );
 		foreach ( $lesson_ids as $key => $lesson_id ) {
 			if ( ! empty( $module_ids ) ) {
@@ -226,7 +229,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 				}
 			}
 
-			$this->attach_lessons_questions( $question_count, $lesson_id, $args['question_args'], $args['quiz_args'], false );
+			$quiz_ids[] = $this->attach_lessons_questions( $question_count, $lesson_id, $args['question_args'], $args['quiz_args'], $args['reuse_questions'] );
 
 			$multiple_question_count = $args['multiple_question_count'];
 			if ( is_array( $multiple_question_count ) ) {
@@ -242,6 +245,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 		return array(
 			'course_id'  => $course_id,
 			'lesson_ids' => $lesson_ids,
+			'quiz_ids'   => $quiz_ids,
 			'modules'    => $module_ids,
 		);
 	}
@@ -488,11 +492,11 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 	 * So all lessons the makes use of this function will have the same set of questions in their
 	 * quiz.
 	 *
-	 * @param int   $number number of questions to generate. Default 10
-	 * @param int   $lesson_id
-	 * @param array $question_args
-	 * @param array $quiz_args
-	 * @param bool  $reuse_questions
+	 * @param int                 $number number of questions to generate. Default 10
+	 * @param int                 $lesson_id
+	 * @param array               $question_args
+	 * @param array               $quiz_args
+	 * @param bool|array|callable $reuse_questions
 	 *
 	 * @throws Exception 'Generate questions needs a valid lesson ID.' if the ID passed in is not a valid lesson
 	 */
@@ -513,7 +517,16 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 		// the existing questions to the passed in lesson id's lesson
 		$questions = array();
 		if ( $reuse_questions ) {
-			$question_post_query = new WP_Query( array( 'post_type' => 'question' ) );
+			$reuse_questions_args = [];
+			if ( is_array( $reuse_questions ) ) {
+				$reuse_questions_args = $reuse_questions;
+			} elseif ( is_callable( $reuse_questions ) ) {
+				$reuse_questions_args = call_user_func( $reuse_questions );
+			}
+
+			$reuse_questions_args['post_type'] = 'question';
+
+			$question_post_query = new WP_Query( $reuse_questions_args );
 			$questions           = $question_post_query->get_posts();
 		}
 
@@ -539,7 +552,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 			}
 		} // end if count
 
-		return;
+		return $quiz_id;
 	}
 
 	/**

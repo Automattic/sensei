@@ -523,23 +523,9 @@ class Sensei_Teacher {
 			);
 
 			// Update quiz author.
-			$lesson_quizzes = Sensei()->lesson->lesson_quizzes( $lesson->ID );
-			if ( is_array( $lesson_quizzes ) ) {
-				foreach ( $lesson_quizzes as $quiz_id ) {
-					wp_update_post(
-						array(
-							'ID'          => $quiz_id,
-							'post_author' => $new_author,
-						)
-					);
-				}
-			} elseif ( ! empty( $lesson_quizzes ) ) {
-				wp_update_post(
-					array(
-						'ID'          => $lesson_quizzes,
-						'post_author' => $new_author,
-					)
-				);
+			$lesson_quiz_id = Sensei()->lesson->lesson_quizzes( $lesson->ID );
+			if ( ! empty( $lesson_quiz_id ) ) {
+				Sensei()->quiz->update_quiz_author( (int) $lesson_quiz_id, (int) $new_author );
 			}
 		}
 

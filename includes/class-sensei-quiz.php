@@ -1471,7 +1471,7 @@ class Sensei_Quiz {
 	 * @param string $orderby     Question order by.
 	 * @param string $order       Question order.
 	 *
-	 * @return array
+	 * @return WP_Post[]
 	 */
 	public function get_questions( $quiz_id, $post_status = 'any', $orderby = 'meta_value_num title', $order = 'ASC' ) : array {
 
@@ -1561,6 +1561,35 @@ class Sensei_Quiz {
 		foreach ( $question_ids as $question_id ) {
 			delete_post_meta( $question_id, '_quiz_id', $quiz_id );
 			delete_post_meta( $question_id, '_quiz_question_order' . $quiz_id );
+		}
+	}
+
+	/**
+	 * Update the quiz author.
+	 *
+	 * @param int $quiz_id       Quiz post ID.
+	 * @param int $new_author_id New author.
+	 */
+	public function update_quiz_author( int $quiz_id, int $new_author_id ) {
+		if ( 'quiz' !== get_post_type( $quiz_id ) ) {
+			return;
+		}
+
+		wp_update_post(
+			[
+				'ID'          => $quiz_id,
+				'post_author' => $new_author_id,
+			]
+		);
+
+		// Update quiz question author if possible.
+		$questions = Sensei()->quiz->get_questions( $quiz_id );
+		foreach ( $questions as $question ) {
+			if ( $new_author_id === (int) $question->post_author ) {
+				continue;
+			}
+
+			Sensei()->question->maybe_update_question_author( $question->ID, $new_author_id );
 		}
 	}
 }
