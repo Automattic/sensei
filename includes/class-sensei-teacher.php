@@ -997,15 +997,15 @@ class Sensei_Teacher {
 	public function get_learner_ids_for_courses_with_edit_permission() {
 		// for teachers all courses only return those which belong to the teacher
 		// as they don't have access to course belonging to other users
-		$teacher_courses = Sensei()->course->get_all_courses();
+		$courses_with_edit_permission = Sensei()->course->get_all_courses();
 
-		if ( empty( $teacher_courses ) || ! is_array( $teacher_courses ) ) {
+		if ( empty( $courses_with_edit_permission ) || ! is_array( $courses_with_edit_permission ) ) {
 			return [];
 		}
 
 		$learner_ids_for_courses_with_edit_permission = [];
 
-		foreach ( $teacher_courses as $course ) {
+		foreach ( $courses_with_edit_permission as $course ) {
 
 			$course_learner_ids = array();
 			$activity_comments  = Sensei_Utils::sensei_check_for_activity(
