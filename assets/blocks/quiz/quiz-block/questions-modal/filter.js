@@ -1,7 +1,6 @@
 /**
  * WordPress dependencies
  */
-import { useSelect } from '@wordpress/data';
 import { SelectControl } from '@wordpress/components';
 import { search } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
@@ -12,6 +11,7 @@ import { useState } from '@wordpress/element';
  */
 import InputControl from '../../../editor-components/input-control';
 import questionTypesConfig from '../../answer-blocks';
+import { useQuestionTypes } from '../use-question-types';
 
 /**
  * External dependencies
@@ -29,11 +29,7 @@ import { debounce } from 'lodash';
 const Filter = ( { questionCategories, filters, setFilters } ) => {
 	const { searchValue } = useState( filters.search );
 
-	const questionTypes = useSelect( ( select ) =>
-		select( 'core' ).getEntityRecords( 'taxonomy', 'question-type', {
-			per_page: -1,
-		} )
-	);
+	const questionTypes = useQuestionTypes();
 
 	const createFilterChangeHandler = ( filterKey, wait ) =>
 		debounce( ( value ) => {
