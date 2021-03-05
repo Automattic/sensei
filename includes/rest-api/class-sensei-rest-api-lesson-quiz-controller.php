@@ -203,18 +203,29 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 			wp_set_post_terms( $quiz_id, [ 'multiple-choice' ], 'quiz-type' );
 		}
 
+		$existing_question_ids = array_map( 'intval', wp_list_pluck( Sensei()->quiz->get_questions( $quiz_id ), 'ID' ) );
+
 		$question_ids = [];
 		foreach ( $json_params['questions'] as $question ) {
 			$question_id = $this->save_question( $question );
 
 			if ( is_wp_error( $question_id ) ) {
-				return $question_id;
+				if ( 'sensei_lesson_quiz_question_not_available' === $question_id->get_error_code() ) {
+					// Gracefully ignore this error and include it (unchanged) in the quiz if it already exists.
+					$question_id = (int) $question_id->get_error_data();
+
+					if ( ! in_array( $question_id, $existing_question_ids, true ) ) {
+						$question_id = null;
+					}
+				} else {
+					return $question_id;
+				}
 			}
 
 			$question_ids[] = $question_id;
 		}
 
-		Sensei()->quiz->set_questions( $quiz_id, $question_ids );
+		Sensei()->quiz->set_questions( $quiz_id, array_filter( $question_ids ) );
 
 		$response = new WP_REST_Response();
 		$response->set_data( $this->get_quiz_data( get_post( $quiz_id ) ) );
