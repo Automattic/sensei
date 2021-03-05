@@ -69,18 +69,31 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 * @return int|WP_Error Question id on success.
 	 */
 	private function save_question( $question ) {
+		$question_id = $question['id'] ?? null;
+
+		if (
+			$question_id
+			&& (
+				'question' !== get_post_type( $question_id )
+				|| ! current_user_can( get_post_type_object( 'course' )->cap->edit_post, $question_id )
+			)
+		) {
+			return new WP_Error( 'sensei_lesson_quiz_question_not_available', '', $question_id );
+		}
+
 		if ( empty( $question['title'] ) ) {
 			return new WP_Error(
 				'sensei_lesson_quiz_question_missing_title',
 				__( 'Please ensure all questions have a title before saving.', 'sensei-lms' )
 			);
 		}
+
 		if ( ! isset( $question['options'] ) ) {
 			$question['options'] = [];
 		}
 
 		$post_args = [
-			'ID'          => isset( $question['id'] ) ? $question['id'] : null,
+			'ID'          => $question_id,
 			'post_title'  => $question['title'],
 			'post_status' => 'publish',
 			'post_type'   => 'question',
