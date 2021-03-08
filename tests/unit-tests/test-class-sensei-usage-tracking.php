@@ -22,6 +22,22 @@ class Sensei_Usage_Tracking_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests to ensure legacy flags are reported in usage tracking.
+	 */
+	public function testLegacyFlagsReported() {
+		$usage_tracking = Sensei_Usage_Tracking::get_instance();
+		$test_key       = 'legacy_flag_with_front';
+
+		$this->assertArrayNotHasKey( $test_key, $usage_tracking->get_system_data() );
+
+		Sensei()->set_legacy_flag( Sensei_Main::LEGACY_FLAG_WITH_FRONT, true );
+
+		$data = $usage_tracking->get_system_data();
+		$this->assertArrayHasKey( $test_key, $data );
+		$this->assertEquals( 1, $data[ $test_key ] );
+	}
+
+	/**
 	 * Tests that WCCOM extensions are logged as sensei_plugin_install when activated.
 	 *
 	 * @covers Sensei_Usage_Tracking::log_wccom_plugin_install
