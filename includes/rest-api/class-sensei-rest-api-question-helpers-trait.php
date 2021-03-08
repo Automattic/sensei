@@ -358,7 +358,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		];
 
 		if ( ! empty( $question_meta['_question_media'][0] ) ) {
-			$question_media = $this->get_question_media( (int) $question_meta['_question_media'][0] );
+			$question_media = $this->get_question_media( (int) $question_meta['_question_media'][0], $question->ID );
 
 			if ( ! empty( $question_media ) ) {
 				$common_properties['media'] = $question_media;
@@ -372,10 +372,11 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 * Helper method to get question media.
 	 *
 	 * @param int $question_media_id The attachment id.
+	 * @param int $question_id       The question id.
 	 *
 	 * @return array Media info. It includes the type, id, url and title.
 	 */
-	private function get_question_media( int $question_media_id ) : array {
+	private function get_question_media( int $question_media_id, int $question_id ) : array {
 		$question_media = [];
 		$mimetype       = get_post_mime_type( $question_media_id );
 		$attachment     = get_post( $question_media_id );
@@ -384,8 +385,11 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			$mimetype_array = explode( '/', $mimetype );
 
 			if ( ! empty( $mimetype_array[0] ) ) {
+				// This filter is documented in class-sensei-question.php.
+				$image_size              = apply_filters( 'sensei_question_image_size', 'medium', $question_id );
 				$question_media['type']  = $mimetype_array[0];
-				$question_media['url']   = esc_url( wp_get_attachment_url( $question_media_id ) );
+				$attachment_src          = wp_get_attachment_image_src( $question_media_id, $image_size );
+				$question_media['url']   = esc_url( $attachment_src[0] );
 				$question_media['id']    = $attachment->ID;
 				$question_media['title'] = $attachment->post_title;
 			}
