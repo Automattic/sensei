@@ -311,12 +311,15 @@ class Sensei_Updates {
 	 * Logs the system update.
 	 */
 	private function log_update() {
-		sensei_log_event(
-			'update',
+		wp_schedule_single_event(
+			time(),
+			'sensei_log_update',
 			[
-				'from_version'       => $this->current_version,
-				'to_version'         => Sensei()->version,
-				'days_since_release' => $this->get_days_since_release(),
+				[
+					'from_version'       => $this->current_version,
+					'to_version'         => Sensei()->version,
+					'days_since_release' => $this->get_days_since_release(),
+				],
 			]
 		);
 	}
