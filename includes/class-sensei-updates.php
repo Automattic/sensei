@@ -328,7 +328,6 @@ class Sensei_Updates {
 	 * Get the days since release.
 	 *
 	 * @return int|null
-	 * @throws Exception
 	 */
 	private function get_days_since_release() {
 		$releases = $this->get_changelog_release_dates();
@@ -358,7 +357,7 @@ class Sensei_Updates {
 		$releases = [];
 		preg_match_all( "/((?'year'\d{4})[\-\.](?'month'\d{1,2})[\-\.](?'day'\d{1,2}).*version\s+(?'version'[\d\.\-a-z]+))/", $changelog, $releases_raw, PREG_SET_ORDER );
 
-		foreach( $releases_raw as $release ) {
+		foreach ( $releases_raw as $release ) {
 			if ( empty( $release['version'] ) || empty( $release['year'] ) || empty( $release['month'] ) || empty( $release['day'] ) ) {
 				continue;
 			}
@@ -380,6 +379,7 @@ class Sensei_Updates {
 			return false;
 		}
 
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file usage.
 		return file_get_contents( $changelog_path );
 	}
 

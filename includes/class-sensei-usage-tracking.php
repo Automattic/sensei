@@ -138,6 +138,13 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 		);
 	}
 
+	/**
+	 * Add setting field.
+	 *
+	 * @param array $fields Setting fields.
+	 *
+	 * @return array
+	 */
 	public function add_setting_field( $fields ) {
 		$fields[ self::SENSEI_SETTING_NAME ] = array(
 			'name'        => __( 'Enable usage tracking', 'sensei-lms' ),
