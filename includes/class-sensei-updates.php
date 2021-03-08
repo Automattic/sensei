@@ -330,7 +330,7 @@ class Sensei_Updates {
 	 * @return int|null
 	 */
 	private function get_days_since_release() {
-		$releases = $this->get_changelog_release_dates();
+		$releases = $this->get_changelog_release_dates( Sensei()->version );
 
 		if ( ! isset( $releases[ Sensei()->version ] ) ) {
 			return null;
@@ -346,16 +346,23 @@ class Sensei_Updates {
 	/**
 	 * Get the release dates from the changelog.
 	 *
+	 * @param string $version Filter to just include a single version (Optional).
+	 *
 	 * @return DateTimeImmutable[]
 	 */
-	private function get_changelog_release_dates() {
+	private function get_changelog_release_dates( $version = null ) {
+		$releases  = [];
 		$changelog = $this->get_changelog();
 		if ( ! $changelog ) {
-			return [];
+			return $releases;
 		}
 
-		$releases = [];
-		preg_match_all( "/((?'year'\d{4})[\-\.](?'month'\d{1,2})[\-\.](?'day'\d{1,2}).*version\s+(?'version'[\d\.\-a-z]+))/", $changelog, $releases_raw, PREG_SET_ORDER );
+		$version_match = '[\d\.\-a-z]+';
+		if ( $version ) {
+			$version_match = preg_quote( $version, '/' );
+		}
+
+		preg_match_all( "/((?'year'\d{4})[\-\.](?'month'\d{1,2})[\-\.](?'day'\d{1,2}).*version\s+(?'version'{$version_match}))[^\S]/", $changelog, $releases_raw, PREG_SET_ORDER );
 
 		foreach ( $releases_raw as $release ) {
 			if ( empty( $release['version'] ) || empty( $release['year'] ) || empty( $release['month'] ) || empty( $release['day'] ) ) {
