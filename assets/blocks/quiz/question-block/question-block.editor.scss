@@ -102,17 +102,14 @@ $block: '.sensei-lms-question-block';
 				font-size: 12px;
 				height: auto;
 				text-transform: uppercase;
-				background: #111;
+				background: #fff;
+				border: 1px solid currentColor;
+				color: currentColor;
 			}
 		}
 	}
 
 	&__answer--multiple-choice {
-		&__option.is-draft .sensei-lms-question-block__option-toggle,
-		.sensei-lms-question-block__answer--multiple-choice__toggle {
-			opacity: 0.5;
-		}
-
 		&__option.is-draft {
 			.sensei-lms-question-block__answer--multiple-choice__toggle__wrapper {
 				display: none;
@@ -128,10 +125,6 @@ $block: '.sensei-lms-question-block';
 				margin-right: 12px;
 			}
 
-		}
-
-		#{$block}__answer--true-false__toggle {
-			opacity: 0.5;
 		}
 
 		.editor-styles-wrapper & li {
