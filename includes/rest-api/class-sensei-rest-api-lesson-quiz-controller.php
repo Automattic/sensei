@@ -203,7 +203,8 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 			wp_set_post_terms( $quiz_id, [ 'multiple-choice' ], 'quiz-type' );
 		}
 
-		$existing_question_ids = array_map( 'intval', wp_list_pluck( Sensei()->quiz->get_questions( $quiz_id ), 'ID' ) );
+		$existing_questions    = Sensei()->quiz->get_questions( $quiz_id );
+		$existing_question_ids = array_map( 'intval', wp_list_pluck( $existing_questions, 'ID' ) );
 
 		$question_ids = [];
 		foreach ( $json_params['questions'] as $question ) {
@@ -225,12 +226,29 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 			$question_ids[] = $question_id;
 		}
 
+		if ( ! $is_new ) {
+			$this->migrate_non_editor_quiz( $existing_questions );
+		}
+
 		Sensei()->quiz->set_questions( $quiz_id, array_filter( $question_ids ) );
 
 		$response = new WP_REST_Response();
 		$response->set_data( $this->get_quiz_data( get_post( $quiz_id ) ) );
 
 		return $response;
+	}
+
+	/**
+	 * Helper method to remove any unused category questions from the quiz.
+	 *
+	 * @param array $existing_questions The quiz questions.
+	 */
+	private function migrate_non_editor_quiz( array $existing_questions ) {
+		foreach ( $existing_questions as $existing_question ) {
+			if ( 'multiple_question' === $existing_question->post_type ) {
+				wp_delete_post( $existing_question->ID, true );
+			}
+		}
 	}
 
 	/**
