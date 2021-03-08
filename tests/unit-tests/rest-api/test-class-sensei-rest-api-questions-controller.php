@@ -232,6 +232,44 @@ class Sensei_REST_API_Questions_Controller_Tests extends WP_Test_REST_TestCase {
 
 	}
 
+	public function testUpdateQuestionWithBlock() {
+		$this->login_as_admin();
+		$question_id = $this->factory->question->create(
+			[
+				'question'             => 'Test Question',
+				'question_type'        => 'single-line',
+				'question_description' => 'Text description',
+			]
+		);
+
+		$this->save_question_post(
+			$question_id,
+			'
+		<!-- wp:sensei-lms/quiz-question {"title":"Test Question Modified","type":"boolean","answer":{"correct":false},"options":{"grade":2,"answerFeedback":"Feedback"}} -->
+<!-- wp:paragraph -->
+<p>Updated Question Description.</p>
+<!-- /wp:paragraph -->
+<!-- /wp:sensei-lms/quiz-question -->
+		'
+		);
+
+		$question      = get_post( $question_id );
+		$question_meta = get_post_meta( $question_id );
+
+		$this->assertEquals( 'Test Question Modified', $question->post_title );
+		$this->assertEquals(
+			'<!-- wp:paragraph -->
+<p>Updated Question Description.</p>
+<!-- /wp:paragraph -->',
+			$question->post_content
+		);
+
+		$this->assertEquals( 'boolean', Sensei()->question->get_question_type( $question_id ) );
+		$this->assertEquals( [ 2 ], $question_meta['_question_grade'] );
+		$this->assertEquals( [ 'Feedback' ], $question_meta['_answer_feedback'] );
+
+	}
+
 	/**
 	 * Request question for editing, and return blocks parsed from content.
 	 *
@@ -247,6 +285,22 @@ class Sensei_REST_API_Questions_Controller_Tests extends WP_Test_REST_TestCase {
 		$request->set_param( 'context', 'edit' );
 		$response = $this->server->dispatch( $request );
 		return parse_blocks( $response->get_data()['content']['raw'] );
+	}
+
+	private function save_question_post( int $question_id, $content ): WP_REST_Response {
+
+		$request = new WP_REST_Request( 'POST', '/wp/v2/questions/' . $question_id );
+		$request->set_header( 'content-type', 'application/json' );
+		$request->set_body(
+			wp_json_encode(
+				[
+					'id'      => $question_id,
+					'content' => $content,
+				]
+			)
+		);
+
+		return $this->server->dispatch( $request );
 	}
 
 }

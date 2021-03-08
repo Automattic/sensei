@@ -32,7 +32,7 @@ class Sensei_Blocks {
 	 *
 	 * @var Sensei_Quiz_Blocks
 	 */
-	private $quiz;
+	public $quiz;
 
 	/**
 	 * Sensei_Blocks constructor.
