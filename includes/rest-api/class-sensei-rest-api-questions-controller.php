@@ -120,14 +120,29 @@ class Sensei_REST_API_Questions_Controller extends WP_REST_Posts_Controller {
 		if ( $block ) {
 			$request['content'] = '';
 		}
-		parent::update_item( $request );
+		$response = parent::update_item( $request );
 
-		if ( $block ) {
-			$this->update_question( $request['id'], $block );
+		if ( ! $block ) {
+			return $response;
+		}
+
+		$question_id = $this->update_question( $request['id'], $block );
+
+		if ( is_wp_error( $question_id ) ) {
+			switch ( $question_id->get_error_code() ) {
+				case 'sensei_lesson_quiz_question_missing_title':
+					return new WP_Error(
+						'sensei_lesson_quiz_question_missing_title',
+						__( 'Please ensure the question have a title before saving.', 'sensei-lms' ),
+						[ 'status' => 400 ]
+					);
+			}
+
+			return $question_id;
 		}
 
 		// Return the updated question.
-		$response = $this->prepare_item_for_response( get_post( $request['id'] ), $request );
+		$response = $this->prepare_item_for_response( get_post( $question_id ), $request );
 		return rest_ensure_response( $response );
 
 	}
@@ -158,6 +173,8 @@ class Sensei_REST_API_Questions_Controller extends WP_REST_Posts_Controller {
 	 *
 	 * @param int   $id    Question ID.
 	 * @param array $block Question block.
+	 *
+	 * @return int|WP_Error Question id on success.
 	 */
 	private function update_question( $id, $block ) {
 		$attrs       = $block['attrs'];
@@ -170,7 +187,7 @@ class Sensei_REST_API_Questions_Controller extends WP_REST_Posts_Controller {
 			]
 		);
 
-		$this->save_question( $question );
+		return $this->save_question( $question );
 	}
 
 	/**
