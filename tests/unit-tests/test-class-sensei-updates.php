@@ -160,7 +160,7 @@ class Sensei_Updates_Test extends WP_UnitTestCase {
 		$updates->run_updates();
 		$this->runAllScheduledEvents( 'sensei_log_update' );
 
-		$events = Sensei_Test_Events::get_logged_events( 'sensei_update' );
+		$events = Sensei_Test_Events::get_logged_events( 'sensei_updated' );
 
 		$this->assertTrue( isset( $events[0]['url_args']['days_since_release'] ) );
 		$this->assertEquals( '0', $events[0]['url_args']['days_since_release'] );
@@ -179,7 +179,7 @@ class Sensei_Updates_Test extends WP_UnitTestCase {
 		$updates->run_updates();
 		$this->runAllScheduledEvents( 'sensei_log_update' );
 
-		$events = Sensei_Test_Events::get_logged_events( 'sensei_update' );
+		$events = Sensei_Test_Events::get_logged_events( 'sensei_updated' );
 
 		$this->assertTrue( isset( $events[0]['url_args']['days_since_release'] ) );
 		$this->assertEquals( '1', $events[0]['url_args']['days_since_release'] );
