@@ -12,6 +12,7 @@
  */
 class Sensei_Updates_Test extends WP_UnitTestCase {
 	use Sensei_Scheduler_Test_Helpers;
+	use Sensei_WP_Cron_Helpers;
 
 	/**
 	 * Sensei factory.
@@ -157,6 +158,7 @@ class Sensei_Updates_Test extends WP_UnitTestCase {
 		Sensei()->version = '3.9.0';
 		$updates          = $this->getUpdateMockWithChangelog( [ '3.7.0', false, true ], $this->getChangelog( '3.9.0', $today ) );
 		$updates->run_updates();
+		$this->runAllScheduledEvents( 'sensei_log_update' );
 
 		$events = Sensei_Test_Events::get_logged_events( 'sensei_update' );
 
@@ -175,6 +177,7 @@ class Sensei_Updates_Test extends WP_UnitTestCase {
 		Sensei()->version = '3.9.0';
 		$updates          = $this->getUpdateMockWithChangelog( [ '3.7.0', false, true ], $this->getChangelog( '3.9.0', $yesterday ) );
 		$updates->run_updates();
+		$this->runAllScheduledEvents( 'sensei_log_update' );
 
 		$events = Sensei_Test_Events::get_logged_events( 'sensei_update' );
 
