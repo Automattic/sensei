@@ -60,7 +60,7 @@ $gray-400: #ccc;
 		.editor-styles-wrapper &__placeholder {
 			opacity: 0.62;
 			margin: 0;
-			margin-top: -12px;
+			line-height: 1;
 
 			&::after {
 				content: attr(data-placeholder);
