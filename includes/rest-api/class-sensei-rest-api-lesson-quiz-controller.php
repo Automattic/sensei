@@ -249,7 +249,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 			$meta_input['_enable_quiz_reset'] = true === $quiz_options['allow_retakes'] ? 'on' : '';
 		}
 
-		if ( isset( $quiz_options['show_questions'] ) ) {
+		if ( array_key_exists( 'show_questions', $quiz_options ) ) {
 			$meta_input['_show_questions'] = $quiz_options['show_questions'];
 		} else {
 			$meta_input['_show_questions'] = '';
