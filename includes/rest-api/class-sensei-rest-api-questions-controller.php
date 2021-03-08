@@ -133,7 +133,7 @@ class Sensei_REST_API_Questions_Controller extends WP_REST_Posts_Controller {
 				case 'sensei_lesson_quiz_question_missing_title':
 					return new WP_Error(
 						'sensei_lesson_quiz_question_missing_title',
-						__( 'Please ensure the question have a title before saving.', 'sensei-lms' ),
+						__( 'Please ensure the question has a title before saving.', 'sensei-lms' ),
 						[ 'status' => 400 ]
 					);
 			}
