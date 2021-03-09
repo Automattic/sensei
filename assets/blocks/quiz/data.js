@@ -2,7 +2,6 @@
  * WordPress dependencies
  */
 import { createBlock, getBlockContent, rawHandler } from '@wordpress/blocks';
-import { renderToString } from '@wordpress/element';
 import { dispatch } from '@wordpress/data';
 
 /**
@@ -62,9 +61,17 @@ export function syncQuestionBlocks( structure, blocks ) {
 				...attributes,
 			};
 
+			let innerBlocks =
+				( description && rawHandler( { HTML: description } ) ) || [];
+
+			[ block.attributes, innerBlocks ] = prepareQuestionBlock(
+				block.attributes,
+				innerBlocks
+			);
+
 			dispatch( 'core/block-editor' ).replaceInnerBlocks(
 				block.clientId,
-				( description && rawHandler( { HTML: description } ) ) || []
+				innerBlocks
 			);
 		}
 
@@ -73,38 +80,29 @@ export function syncQuestionBlocks( structure, blocks ) {
 }
 
 /**
- * Helper method to get a related block for each type of media.
+ * Manually run our deprecated migrations for the question block.
  *
- * @param {Object}   media       Question media.
- * @param {number}   media.id    Media attachment id.
- * @param {string}   media.url   Media attachment url.
- * @param {string}   media.type  Media attachment type.
- * @param {Function} media.title Media attachment title.
+ * @param {Object} attributes  Block attributes.
+ * @param {Array}  innerBlocks Inner blocks.
+ * @return {Array} Tuple of attributes and innerBlocks
  */
-function getMediaBlock( media ) {
-	switch ( media.type ) {
-		case 'image':
-			return createBlock( 'core/image', {
-				id: media.id,
-				url: media.url,
-			} );
-		case 'audio':
-			return createBlock( 'core/audio', {
-				id: media.id,
-				src: media.url,
-			} );
-		case 'video':
-			return createBlock( 'core/video', {
-				id: media.id,
-				src: media.url,
-			} );
-		default:
-			const link = <a href={ media.url }>{ media.title }</a>;
-			return createBlock( 'core/paragraph', {
-				content: renderToString( link ),
-			} );
-	}
+function prepareQuestionBlock( attributes, innerBlocks ) {
+	questionBlock.deprecated.forEach( ( item ) => {
+		// Check our flag for deprecations that should run here.
+		if (
+			item.onProgrammaticCreation &&
+			item.isEligible( attributes, innerBlocks )
+		) {
+			[ attributes, innerBlocks ] = item.migrate(
+				attributes,
+				innerBlocks
+			);
+		}
+	} );
+
+	return [ attributes, innerBlocks ];
 }
+
 /**
  * Convert blocks to question structure.
  *
@@ -137,22 +135,12 @@ export function parseQuestionBlocks( blocks ) {
  * @return {QuizQuestion} Block.
  */
 export function createQuestionBlock( question ) {
-	const { description, media, ...attributes } = question;
-
-	const innerBlocks =
-		( description && rawHandler( { HTML: description } ) ) || [];
-
-	if ( media ) {
-		innerBlocks.push( getMediaBlock( media ) );
-	}
-
-	if ( question.type === 'file-upload' && question.options?.studentHelp ) {
-		innerBlocks.push(
-			createBlock( 'core/paragraph', {
-				content: question.options.studentHelp,
-			} )
-		);
-	}
+	const [ attributes, innerBlocks ] = prepareQuestionBlock(
+		question,
+		( question.description &&
+			rawHandler( { HTML: question.description } ) ) ||
+			[]
+	);
 
 	return createBlock( questionBlock.name, attributes, innerBlocks );
 }
