@@ -3,6 +3,7 @@
  */
 import { createBlock, getBlockContent, rawHandler } from '@wordpress/blocks';
 import { renderToString } from '@wordpress/element';
+import { dispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -60,8 +61,11 @@ export function syncQuestionBlocks( structure, blocks ) {
 				...block.attributes,
 				...attributes,
 			};
-			block.innerBlocks =
-				( description && rawHandler( { HTML: description } ) ) || [];
+
+			dispatch( 'core/block-editor' ).replaceInnerBlocks(
+				block.clientId,
+				( description && rawHandler( { HTML: description } ) ) || []
+			);
 		}
 
 		return block;
