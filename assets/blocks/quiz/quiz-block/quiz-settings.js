@@ -8,6 +8,7 @@ import {
 	RangeControl,
 	ToggleControl,
 } from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -22,8 +23,13 @@ import NumberControl from '../../editor-components/number-control';
  * @param {Object}   props.attributes         Block attributes
  * @param {Object}   props.attributes.options Current setting options.
  * @param {Function} props.setAttributes      Set attributes function.
+ * @param {string}   props.clientId           Block ID.
  */
-const QuizSettings = ( { attributes: { options = {} }, setAttributes } ) => {
+const QuizSettings = ( {
+	attributes: { options = {} },
+	setAttributes,
+	clientId,
+} ) => {
 	const {
 		passRequired = false,
 		quizPassmark = 100,
@@ -35,6 +41,17 @@ const QuizSettings = ( { attributes: { options = {} }, setAttributes } ) => {
 
 	const createChangeHandler = ( optionKey ) => ( value ) =>
 		setAttributes( { options: { ...options, [ optionKey ]: value } } );
+
+	const questionCount = useSelect(
+		( select ) =>
+			select( 'core/block-editor' )
+				.getBlock( clientId )
+				.innerBlocks.filter(
+					( questionBlock ) =>
+						undefined !== questionBlock?.attributes?.title
+				).length,
+		[ clientId ]
+	);
 
 	return (
 		<InspectorControls>
@@ -99,6 +116,7 @@ const QuizSettings = ( { attributes: { options = {} }, setAttributes } ) => {
 						allowReset
 						resetLabel={ __( 'All', 'sensei-lms' ) }
 						min={ 0 }
+						max={ questionCount }
 						step={ 1 }
 						value={ showQuestions }
 						placeholder={ __( 'All', 'sensei-lms' ) }
