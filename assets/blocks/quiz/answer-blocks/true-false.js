@@ -61,4 +61,32 @@ const TrueFalseAnswer = ( {
 	);
 };
 
+/**
+ * Read-only answer component true/false question block.
+ *
+ * @param {Object}  props
+ * @param {Object}  props.attributes
+ * @param {boolean} props.attributes.correct The correct answer.
+ */
+TrueFalseAnswer.view = ( { attributes: { correct = true } } ) => {
+	const options = [
+		{ label: __( 'True', 'sensei-lms' ), value: true },
+		{ label: __( 'False', 'sensei-lms' ), value: false },
+	];
+	return (
+		<ul className="sensei-lms-question-block__answer sensei-lms-question-block__answer--true-false">
+			{ options.map( ( { label, value } ) => (
+				<li
+					key={ value }
+					className="sensei-lms-question-block__answer--true-false__option"
+				>
+					<OptionToggle isChecked={ correct === value }>
+						<span>{ label }</span>
+					</OptionToggle>
+				</li>
+			) ) }
+		</ul>
+	);
+};
+
 export default TrueFalseAnswer;

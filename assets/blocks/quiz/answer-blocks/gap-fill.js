@@ -67,4 +67,32 @@ const GapFillAnswer = ( {
 	);
 };
 
+/**
+ * Read-only answer component gap fill question block.
+ *
+ * @param {Object}   props
+ * @param {Object}   props.attributes
+ * @param {string}   props.attributes.before Text before the gap.
+ * @param {string}   props.attributes.after  Text after the gap.
+ * @param {string[]} props.attributes.gap    Right answers.
+ */
+GapFillAnswer.view = ( { attributes: { before, after, gap } } ) => {
+	return (
+		<ul className="sensei-lms-question-block__answer sensei-lms-question-block__answer--gap-fill">
+			<li>{ before }</li>
+			<li className="sensei-lms-question-block__answer--gap-fill__right-answers sensei-lms-question-block__text-input-placeholder">
+				{ gap.map( ( answer ) => (
+					<span
+						key={ answer }
+						className="sensei-lms-question-block__answer--gap-fill__token"
+					>
+						{ answer }
+					</span>
+				) ) }
+			</li>
+			<li>{ after }</li>
+		</ul>
+	);
+};
+
 export default GapFillAnswer;
