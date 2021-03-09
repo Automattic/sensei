@@ -2325,6 +2325,7 @@ class Sensei_Lesson {
 		$new_columns['title']               = _x( 'Lesson Title', 'column name', 'sensei-lms' );
 		$new_columns['lesson-course']       = _x( 'Course', 'column name', 'sensei-lms' );
 		$new_columns['lesson-prerequisite'] = _x( 'Pre-requisite Lesson', 'column name', 'sensei-lms' );
+		$new_columns['lesson-quiz']         = _x( 'Quiz', 'column name', 'sensei-lms' );
 		if ( isset( $defaults['date'] ) ) {
 			$new_columns['date'] = $defaults['date'];
 		}
@@ -2378,6 +2379,17 @@ class Sensei_Lesson {
 					echo '<a href="' . esc_url( get_edit_post_link( absint( $lesson_prerequisite_id ) ) ) . '" title="' . esc_attr( sprintf( __( 'Edit %s', 'sensei-lms' ), get_the_title( absint( $lesson_prerequisite_id ) ) ) ) . '">' . esc_html( get_the_title( absint( $lesson_prerequisite_id ) ) ) . '</a>';
 					_post_states( $lesson_prerequisite_post );
 				} // End If Statement
+				break;
+			case 'lesson-quiz':
+				$quiz_id = get_post_meta( $id, '_lesson_quiz', true );
+
+				$questions      = $quiz_id ? get_post_meta( $quiz_id, '_question_order', true ) : null;
+				$question_count = is_array( $questions ) ? count( $questions ) : null;
+				if ( $question_count > 0 ) {
+					// translators: Placeholder is the number of questions.
+					echo esc_html( sprintf( _n( '%d question', '%d questions', $question_count, 'sensei-lms' ), $question_count ) );
+				}
+
 				break;
 			default:
 				break;
