@@ -162,6 +162,7 @@ class Sensei_Autoloader {
 			 * Update tasks.
 			 */
 			'Sensei_Update_Fix_Question_Author'          => 'update-tasks/class-sensei-update-fix-question-author.php',
+			'Sensei_Update_Remove_Abandoned_Multiple_Question' => 'update-tasks/class-sensei-update-remove-abandoned-multiple-question.php',
 
 			/**
 			 * Unsupported theme handlers.
