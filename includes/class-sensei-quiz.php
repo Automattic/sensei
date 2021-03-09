@@ -1342,7 +1342,7 @@ class Sensei_Quiz {
 				value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_save_quiz_nonce' ) ); ?>" />
 			<!-- End Action Nonce's -->
 			<div class="wp-block-buttons">
-				<?php if ( true || '' == $user_quiz_grade && ( ! $user_lesson_status || 'ungraded' !== $user_lesson_status->comment_approved ) ) { ?>
+				<?php if ( '' == $user_quiz_grade && ( ! $user_lesson_status || 'ungraded' !== $user_lesson_status->comment_approved ) ) { ?>
 
 					<div class="wp-block-button">
 						<button type="submit" name="quiz_complete"
@@ -1356,7 +1356,7 @@ class Sensei_Quiz {
 
 				<?php } // End If Statement ?>
 
-				<?php if ( true || isset( $reset_quiz_allowed ) && $reset_quiz_allowed ) { ?>
+				<?php if ( isset( $reset_quiz_allowed ) && $reset_quiz_allowed ) { ?>
 
 					<div class="wp-block-button is-style-outline">
 						<button type="submit" name="quiz_reset"
