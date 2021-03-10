@@ -61,13 +61,8 @@ export function syncQuestionBlocks( structure, blocks ) {
 				...attributes,
 			};
 
-			let innerBlocks =
+			const innerBlocks =
 				( description && rawHandler( { HTML: description } ) ) || [];
-
-			[ block.attributes, innerBlocks ] = prepareQuestionBlock(
-				block.attributes,
-				innerBlocks
-			);
 
 			dispatch( 'core/block-editor' ).replaceInnerBlocks(
 				block.clientId,
