@@ -53,15 +53,19 @@ If you used MySQL Server you need to supply the values for the new database only
 
 To run both PHPUnit and Jest tests you can use the following command in the plugin root directory:
 
-    $ gulp test
+    $ npm run test
 
 If you are interested in PHPUnit tests only, you can use the following:
     
-    $ ./vendor/bin/phpunit
+    $ npm run test-php
+
+If you are interested in Jest tests only, you can use the following:
+
+	$ npm run test-js
 
 You can run specific tests by providing the path and filename to the test class. For example:
 
-    $ ./vendor/bin/phpunit tests/unit-tests/test-class-admin
+    $ npm run test-php tests/unit-tests/test-class-admin
 
 ## Writing Tests
 
