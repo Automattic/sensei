@@ -107,4 +107,4 @@ const questionTypes = {
  *                                             returned from the 'sensei_quiz_mapped_api_attributes' filter, will be
  *                                             passed to all settings components.
  */
-export default applyFilters( 'sensei_quiz_question_types', questionTypes );
+export default applyFilters( 'sensei-lms.quiz.questionTypes', questionTypes );
