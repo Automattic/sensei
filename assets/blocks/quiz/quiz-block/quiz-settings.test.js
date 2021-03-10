@@ -13,6 +13,16 @@ jest.mock( '@wordpress/block-editor', () => ( {
 	InspectorControls: ( { children } ) => children,
 } ) );
 
+jest.mock( '@wordpress/data', () => {
+	const module = jest.requireActual( '@wordpress/data' );
+
+	return {
+		combineReducers: module.combineReducers,
+		registerStore: module.registerStore,
+		useSelect: () => 2,
+	};
+} );
+
 describe( '<QuizSettings />', () => {
 	it( 'Should render the settings with the defined values', () => {
 		const { queryByLabelText, queryAllByLabelText } = render(
