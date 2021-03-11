@@ -3,7 +3,7 @@
  */
 import { useState } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
-import { Notice, Button, Modal } from '@wordpress/components';
+import { Notice, Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -14,13 +14,18 @@ import Questions from './questions';
 import Actions from './actions';
 
 /**
+ * External dependencies
+ */
+import { unescape } from 'lodash';
+
+/**
  * Questions modal content.
  *
  * @param {Object}   props
- * @param {Function} props.setOpen              Modal open state setter.
- * @param {Function} props.addExistingQuestions Callback to add existing questions.
+ * @param {Function} props.onClose  Close callback
+ * @param {Function} props.onSelect Callback to add selected questions.
  */
-const QuestionsModalContent = ( { setOpen, addExistingQuestions } ) => {
+const QuestionsModal = ( { onClose, onSelect } ) => {
 	const [ filters, setFilters ] = useState( {
 		search: '',
 		'question-type': '',
@@ -30,19 +35,30 @@ const QuestionsModalContent = ( { setOpen, addExistingQuestions } ) => {
 	const [ errorAddingSelected, setErrorAddingSelected ] = useState( false );
 	const [ selectedQuestionIds, setSelectedQuestionIds ] = useState( [] );
 
-	const questionCategories = useSelect( ( select ) =>
-		select( 'core' ).getEntityRecords( 'taxonomy', 'question-category', {
-			per_page: -1,
-		} )
-	);
+	const questionCategories = useSelect( ( select ) => {
+		const terms = select( 'core' ).getEntityRecords(
+			'taxonomy',
+			'question-category',
+			{
+				per_page: -1,
+			}
+		);
+
+		if ( terms && terms.length ) {
+			return terms.map( ( term ) => ( {
+				...term,
+				name: unescape( term.name ),
+			} ) );
+		}
+
+		return terms;
+	} );
 
 	return (
 		<Modal
 			className="sensei-lms-quiz-block__questions-modal"
 			title={ __( 'Questions', 'sensei-lms' ) }
-			onRequestClose={ () => {
-				setOpen( false );
-			} }
+			onRequestClose={ onClose }
 		>
 			{ errorAddingSelected && (
 				<Notice
@@ -70,45 +86,11 @@ const QuestionsModalContent = ( { setOpen, addExistingQuestions } ) => {
 			<Actions
 				selectedQuestionIds={ selectedQuestionIds }
 				setSelectedQuestionIds={ setSelectedQuestionIds }
-				addExistingQuestions={ addExistingQuestions }
-				setOpen={ setOpen }
+				onAdd={ onSelect }
+				closeModal={ onClose }
 				setErrorAddingSelected={ setErrorAddingSelected }
 			/>
 		</Modal>
-	);
-};
-
-/**
- * Questions modal with opener.
- *
- * @param {Object}   props
- * @param {Object}   props.children             Modal opener label.
- * @param {Function} props.addExistingQuestions Callback to add existing questions.
- */
-const QuestionsModal = ( { children, addExistingQuestions } ) => {
-	const [ isOpen, setOpen ] = useState( false );
-
-	return (
-		<>
-			<div className="sensei-lms-quiz-block__questions-modal-opener">
-				<Button
-					isPrimary
-					isSmall
-					onClick={ () => {
-						setOpen( ( open ) => ! open );
-					} }
-				>
-					{ children }
-				</Button>
-			</div>
-
-			{ isOpen && (
-				<QuestionsModalContent
-					setOpen={ setOpen }
-					addExistingQuestions={ addExistingQuestions }
-				/>
-			) }
-		</>
 	);
 };
 

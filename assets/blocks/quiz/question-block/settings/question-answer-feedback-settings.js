@@ -21,7 +21,7 @@ const QuestionAnswerFeedbackSettings = ( {
 		onChange={ ( value ) => setOptions( { answerFeedback: value } ) }
 		value={ answerFeedback }
 		help={ __(
-			'Displayed to the user after the quiz has been graded.',
+			'Displayed to the learner after the quiz has been graded.',
 			'sensei-lms'
 		) }
 	/>

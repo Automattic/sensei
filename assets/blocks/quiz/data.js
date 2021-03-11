@@ -2,6 +2,7 @@
  * WordPress dependencies
  */
 import { createBlock, getBlockContent, rawHandler } from '@wordpress/blocks';
+import { dispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -52,22 +53,49 @@ export function syncQuestionBlocks( structure, blocks ) {
 
 		let block = blocks ? findQuestionBlock( blocks, item ) : null;
 
-		const innerBlocks =
-			( description && rawHandler( { HTML: description } ) ) ||
-			block?.innerBlocks;
-
 		if ( ! block ) {
-			block = createBlock( questionBlock.name, attributes, innerBlocks );
+			block = createQuestionBlock( item );
 		} else {
 			block.attributes = {
 				...block.attributes,
 				...attributes,
 			};
-			block.innerBlocks = innerBlocks;
+
+			const innerBlocks =
+				( description && rawHandler( { HTML: description } ) ) || [];
+
+			dispatch( 'core/block-editor' ).replaceInnerBlocks(
+				block.clientId,
+				innerBlocks
+			);
 		}
 
 		return block;
 	} );
+}
+
+/**
+ * Manually run our deprecated migrations for the question block.
+ *
+ * @param {Object} attributes  Block attributes.
+ * @param {Array}  innerBlocks Inner blocks.
+ * @return {Array} Tuple of attributes and innerBlocks
+ */
+function prepareQuestionBlock( attributes, innerBlocks ) {
+	questionBlock.deprecated.forEach( ( item ) => {
+		// Check our flag for deprecations that should run here.
+		if (
+			item.onProgrammaticCreation &&
+			item.isEligible( attributes, innerBlocks )
+		) {
+			[ attributes, innerBlocks ] = item.migrate(
+				attributes,
+				innerBlocks
+			);
+		}
+	} );
+
+	return [ attributes, innerBlocks ];
 }
 
 /**
@@ -97,15 +125,17 @@ export function parseQuestionBlocks( blocks ) {
 /**
  * Create a new question block.
  *
- * @param {Object} item Question item.
+ * @param {Object} question Question item.
  *
  * @return {QuizQuestion} Block.
  */
-export function createQuestionBlock( item ) {
-	const { description, ...attributes } = item;
-
-	const innerBlocks =
-		( description && rawHandler( { HTML: description } ) ) || [];
+export function createQuestionBlock( question ) {
+	const [ attributes, innerBlocks ] = prepareQuestionBlock(
+		question,
+		( question.description &&
+			rawHandler( { HTML: question.description } ) ) ||
+			[]
+	);
 
 	return createBlock( questionBlock.name, attributes, innerBlocks );
 }

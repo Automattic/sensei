@@ -73,7 +73,7 @@ const QuestionEdit = ( props ) => {
 			) }
 			<h2 className="sensei-lms-question-block__title">
 				<SingleLineInput
-					placeholder={ __( 'Add Question', 'sensei-lms' ) }
+					placeholder={ __( 'Question Title', 'sensei-lms' ) }
 					value={ title }
 					onChange={ ( nextValue ) =>
 						setAttributes( { title: nextValue } )
@@ -82,9 +82,11 @@ const QuestionEdit = ( props ) => {
 					onRemove={ () => removeBlock( clientId ) }
 				/>
 			</h2>
-			<div className="sensei-lms-question-block__grade">
-				{ formatGradeLabel( options.grade ) }
-			</div>
+			{ showContent && (
+				<div className="sensei-lms-question-block__grade">
+					{ formatGradeLabel( options.grade ) }
+				</div>
+			) }
 			{ hasSelected && shared && <SharedQuestionNotice /> }
 			{ showContent && (
 				<>

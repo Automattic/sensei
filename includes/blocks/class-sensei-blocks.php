@@ -32,7 +32,7 @@ class Sensei_Blocks {
 	 *
 	 * @var Sensei_Quiz_Blocks
 	 */
-	private $quiz;
+	public $quiz;
 
 	/**
 	 * Sensei_Blocks constructor.
@@ -136,6 +136,30 @@ class Sensei_Blocks {
 			register_block_type( $block_name, $block_args );
 		} else {
 			register_block_type_from_metadata( $file_or_folder, $block_args );
+		}
+	}
+
+	/**
+	 * Check if the current post has Sensei blocks.
+	 *
+	 * @return bool
+	 */
+	public function has_sensei_blocks() {
+		global $post;
+
+		if ( ! $post ) {
+			return false;
+		}
+
+		switch ( $post->post_type ) {
+			case 'course':
+				return Sensei()->course->has_sensei_blocks();
+			case 'lesson':
+				return Sensei()->lesson->has_sensei_blocks();
+			case 'quiz':
+				return Sensei()->quiz->has_sensei_blocks();
+			default:
+				return false;
 		}
 	}
 }

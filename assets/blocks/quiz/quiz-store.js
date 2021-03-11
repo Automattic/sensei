@@ -21,7 +21,12 @@ import { camelCase, snakeCase, omit } from 'lodash';
 
 export const QUIZ_STORE = 'sensei/quiz-structure';
 
-const READ_ONLY_ATTRIBUTES = [ 'categories', 'shared', 'options.studentHelp' ];
+const READ_ONLY_ATTRIBUTES = [
+	'categories',
+	'shared',
+	'options.studentHelp',
+	'media',
+];
 
 /**
  * Syncronize this block with quiz data.
