@@ -52,11 +52,11 @@ const getMediaBlock = ( media ) => {
 export default [
 	{
 		onProgrammaticCreation: true,
-		isEligible( props ) {
+		isEligible( attributes ) {
 			return (
-				!! props.media ||
-				( props.type === 'file-upload' &&
-					!! props.options?.studentHelp )
+				!! attributes.media ||
+				( attributes.type === 'file-upload' &&
+					!! attributes.options?.studentHelp )
 			);
 		},
 		attributes: {
