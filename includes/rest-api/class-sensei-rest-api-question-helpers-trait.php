@@ -96,6 +96,8 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			$question['type'] = 'multiple-choice';
 		}
 
+		$is_new = null === $question_id;
+
 		$post_args = [
 			'ID'          => $question_id,
 			'post_title'  => $question['title'],
@@ -113,6 +115,10 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 
 		$result = wp_insert_post( $post_args );
 
+		if ( ! $is_new && ! is_wp_error( $result ) ) {
+			$this->migrate_non_editor_question( $result, $question['type'] );
+		}
+
 		/**
 		 * This action is triggered when a question is created or updated by the lesson quiz REST endpoint.
 		 *
@@ -126,6 +132,20 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		do_action( 'sensei_rest_api_question_saved', $result, $question['type'], $question );
 
 		return $result;
+	}
+
+	/**
+	 * Helper method to delete question meta that were deprecated by the block editor.
+	 *
+	 * @param int    $question_id   Question post id.
+	 * @param string $question_type Question type.
+	 */
+	private function migrate_non_editor_question( int $question_id, string $question_type ) {
+		delete_post_meta( $question_id, '_question_media' );
+
+		if ( 'file-upload' === $question_type ) {
+			delete_post_meta( $question_id, '_question_wrong_answers' );
+		}
 	}
 
 	/**
@@ -323,7 +343,8 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 */
 	private function get_question_common_properties( WP_Post $question ): array {
 		$question_meta = get_post_meta( $question->ID );
-		return [
+
+		$common_properties = [
 			'id'          => $question->ID,
 			'title'       => 'auto-draft' !== $question->post_status ? $question->post_title : '',
 			'description' => $question->post_content,
@@ -335,6 +356,51 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			'editable'    => current_user_can( get_post_type_object( 'question' )->cap->edit_post, $question->ID ),
 			'categories'  => wp_get_post_terms( $question->ID, 'question-category', [ 'fields' => 'ids' ] ),
 		];
+
+		if ( ! empty( $question_meta['_question_media'][0] ) ) {
+			$question_media = $this->get_question_media( (int) $question_meta['_question_media'][0], $question->ID );
+
+			if ( ! empty( $question_media ) ) {
+				$common_properties['media'] = $question_media;
+			}
+		}
+
+		return $common_properties;
+	}
+
+	/**
+	 * Helper method to get question media.
+	 *
+	 * @param int $question_media_id The attachment id.
+	 * @param int $question_id       The question id.
+	 *
+	 * @return array Media info. It includes the type, id, url and title.
+	 */
+	private function get_question_media( int $question_media_id, int $question_id ) : array {
+		$question_media = [];
+		$mimetype       = get_post_mime_type( $question_media_id );
+		$attachment     = get_post( $question_media_id );
+
+		if ( $mimetype || null !== $attachment ) {
+			$mimetype_array = explode( '/', $mimetype );
+
+			if ( ! empty( $mimetype_array[0] ) ) {
+				if ( 'image' === $mimetype_array[0] ) {
+					// This filter is documented in class-sensei-question.php.
+					$image_size            = apply_filters( 'sensei_question_image_size', 'medium', $question_id );
+					$attachment_src        = wp_get_attachment_image_src( $question_media_id, $image_size );
+					$question_media['url'] = esc_url( $attachment_src[0] );
+				} else {
+					$question_media['url'] = esc_url( wp_get_attachment_url( $question_media_id ) );
+				}
+
+				$question_media['type']  = $mimetype_array[0];
+				$question_media['id']    = $attachment->ID;
+				$question_media['title'] = esc_html( $attachment->post_title );
+			}
+		}
+
+		return $question_media;
 	}
 
 	/**
@@ -378,7 +444,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 				break;
 			case 'file-upload':
 				$student_help                                       = get_post_meta( $question->ID, '_question_wrong_answers', true );
-				$type_specific_properties['options']['studentHelp'] = empty( $student_help[0] ) ? null : $student_help[0];
+				$type_specific_properties['options']['studentHelp'] = empty( $student_help[0] ) ? null : esc_html( $student_help[0] );
 				break;
 		}
 
@@ -571,6 +637,28 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 					'description' => 'Term IDs',
 				],
 			],
+			'media'       => [
+				'type'       => 'object',
+				'readonly'   => true,
+				'properties' => [
+					'id'    => [
+						'type'        => 'integer',
+						'description' => 'Linked media id',
+					],
+					'type'  => [
+						'type'        => 'string',
+						'description' => 'Media type',
+					],
+					'url'   => [
+						'type'        => 'string',
+						'description' => 'Media url',
+					],
+					'title' => [
+						'type'        => 'string',
+						'description' => 'Media title',
+					],
+				],
+			],
 		];
 	}
 
@@ -731,7 +819,6 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 					'teacherNotes' => [
 						'type'        => [ 'string', 'null' ],
 						'description' => 'Teacher notes for grading',
-
 					],
 				],
 			],
@@ -794,6 +881,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 					'studentHelp'  => [
 						'type'        => [ 'string', 'null' ],
 						'description' => 'Description for student explaining what needs to be uploaded',
+						'readonly'    => true,
 					],
 				],
 			],

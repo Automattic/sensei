@@ -8,6 +8,7 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import edit from './question-edit';
+import deprecated from './question-deprecated';
 import metadata from './block.json';
 import icon from '../../../icons/question-icon';
 
@@ -23,6 +24,7 @@ export default {
 	example: {
 		attributes: { title: __( 'Example Quiz Question', 'sensei-lms' ) },
 	},
+	deprecated,
 	edit,
 	save: () => <InnerBlocks.Content />,
 };
