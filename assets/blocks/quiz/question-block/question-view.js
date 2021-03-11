@@ -1,9 +1,9 @@
 /**
  * WordPress dependencies
  */
-import { BlockControls } from '@wordpress/block-editor';
+import { BlockControls, InspectorControls } from '@wordpress/block-editor';
 import { getBlockContent } from '@wordpress/blocks';
-import { Toolbar, ToolbarButton } from '@wordpress/components';
+import { PanelBody, Toolbar, ToolbarButton } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { RawHTML } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -40,17 +40,37 @@ const QuestionView = ( {
 			{ questionGrade }
 			<RawHTML>{ getBlockContent( block ) }</RawHTML>
 			{ AnswerBlock?.view && <AnswerBlock.view attributes={ answer } /> }
-			{ ! editable && (
-				<BlockControls>
-					<Toolbar>
-						<ToolbarButton disabled>
-							{ __( 'Locked', 'sensei-lms' ) }
-						</ToolbarButton>
-					</Toolbar>
-				</BlockControls>
-			) }
+			{ ! editable && <NotEditableNotice /> }
 		</div>
 	);
 };
+
+/**
+ * Display toolbar and sidebar notices that the question is not editable.
+ */
+const NotEditableNotice = () => (
+	<>
+		<BlockControls>
+			<Toolbar>
+				<ToolbarButton disabled>
+					{ __( 'Locked', 'sensei-lms' ) }
+				</ToolbarButton>
+			</Toolbar>
+		</BlockControls>
+		<InspectorControls>
+			<PanelBody
+				title={ __( 'Question Details', 'sensei-lms' ) }
+				initialOpen={ true }
+			>
+				<div>
+					{ __(
+						'You are not allowed to edit this question.',
+						'sensei-lms'
+					) }
+				</div>
+			</PanelBody>
+		</InspectorControls>
+	</>
+);
 
 export default QuestionView;
