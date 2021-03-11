@@ -15,6 +15,7 @@ import { useHasSelected } from '../../../shared/helpers/blocks';
 import types from '../answer-blocks';
 import { SharedQuestionNotice } from './question-block-helpers';
 import { QuestionGradeToolbar } from './question-grade-toolbar';
+import QuestionView from './question-view';
 import QuestionSettings from './question-settings';
 import { QuestionTypeToolbar } from './question-type-toolbar';
 
@@ -38,12 +39,18 @@ const formatGradeLabel = ( grade ) =>
  */
 const QuestionEdit = ( props ) => {
 	const {
-		attributes: { title, type, answer = {}, options, shared },
+		attributes: {
+			title,
+			type,
+			answer = {},
+			options,
+			shared,
+			editable = true,
+		},
 		setAttributes,
 		clientId,
 		context,
 	} = props;
-
 	const { removeBlock, selectBlock } = useDispatch( 'core/block-editor' );
 
 	const selectDescription = useCallback( () => {
@@ -60,17 +67,32 @@ const QuestionEdit = ( props ) => {
 	const isSingle = context && ! ( 'sensei-lms/quizId' in context );
 	const showContent = title || hasSelected || isSingle;
 
+	const questionIndex = ! isSingle && (
+		<h2 className="sensei-lms-question-block__index">{ index + 1 }.</h2>
+	);
+
+	const questionGrade = (
+		<div className="sensei-lms-question-block__grade">
+			{ formatGradeLabel( options.grade ) }
+		</div>
+	);
+
+	if ( ! editable ) {
+		return (
+			<QuestionView
+				{ ...props }
+				{ ...{ questionGrade, questionIndex, AnswerBlock } }
+			/>
+		);
+	}
+
 	return (
 		<div
 			className={ `sensei-lms-question-block ${
 				! title ? 'is-draft' : ''
 			}` }
 		>
-			{ ! isSingle && (
-				<h2 className="sensei-lms-question-block__index">
-					{ index + 1 }.
-				</h2>
-			) }
+			{ questionIndex }
 			<h2 className="sensei-lms-question-block__title">
 				<SingleLineInput
 					placeholder={ __( 'Question Title', 'sensei-lms' ) }
@@ -82,11 +104,7 @@ const QuestionEdit = ( props ) => {
 					onRemove={ () => removeBlock( clientId ) }
 				/>
 			</h2>
-			{ showContent && (
-				<div className="sensei-lms-question-block__grade">
-					{ formatGradeLabel( options.grade ) }
-				</div>
-			) }
+			{ showContent && questionGrade }
 			{ hasSelected && shared && <SharedQuestionNotice /> }
 			{ showContent && (
 				<>

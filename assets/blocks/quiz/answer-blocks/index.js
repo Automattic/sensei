@@ -38,6 +38,7 @@ const questionTypes = {
 		title: __( 'Multiple Choice', 'sensei-lms' ),
 		description: __( 'Select from a list of options.', 'sensei-lms' ),
 		edit: MultipleChoiceAnswer,
+		view: MultipleChoiceAnswer.view,
 		settings: [
 			QuestionGradeSettings,
 			QuestionMultipleChoiceSettings,
@@ -51,12 +52,14 @@ const questionTypes = {
 			'sensei-lms'
 		),
 		edit: TrueFalseAnswer,
+		view: TrueFalseAnswer.view,
 		settings: [ QuestionGradeSettings, QuestionAnswerFeedbackSettings ],
 	},
 	'gap-fill': {
 		title: __( 'Gap Fill', 'sensei-lms' ),
 		description: __( 'Fill in the blank.', 'sensei-lms' ),
 		edit: GapFillAnswer,
+		view: GapFillAnswer.view,
 		settings: [ QuestionGradeSettings, QuestionAnswerFeedbackSettings ],
 	},
 	'single-line': {
@@ -66,6 +69,7 @@ const questionTypes = {
 			'sensei-lms'
 		),
 		edit: SingleLineAnswer,
+		view: SingleLineAnswer,
 		settings: [ QuestionGradeSettings, QuestionGradingNotesSettings ],
 	},
 	'multi-line': {
@@ -75,12 +79,14 @@ const questionTypes = {
 			'sensei-lms'
 		),
 		edit: MultiLineAnswer,
+		view: MultiLineAnswer,
 		settings: [ QuestionGradeSettings, QuestionGradingNotesSettings ],
 	},
 	'file-upload': {
 		title: __( 'File Upload', 'sensei-lms' ),
 		description: __( 'Upload a file or document.', 'sensei-lms' ),
 		edit: FileUploadAnswer,
+		view: FileUploadAnswer,
 		settings: [ QuestionGradeSettings, QuestionGradingNotesSettings ],
 	},
 };

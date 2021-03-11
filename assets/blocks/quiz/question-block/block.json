@@ -24,6 +24,11 @@
       "default": {
         "grade": 1
       }
+    },
+    "editable": {
+      "type": "boolean",
+      "default": true,
+      "source": false
     }
   }
 }
