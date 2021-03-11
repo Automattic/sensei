@@ -133,7 +133,7 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 	 */
 	public function log_update( $args ) {
 		sensei_log_event(
-			'updated',
+			'plugin_update',
 			$args
 		);
 	}
