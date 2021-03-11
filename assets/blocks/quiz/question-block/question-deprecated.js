@@ -68,6 +68,11 @@ export default [
 		migrate( attributes, innerBlocks ) {
 			const migratedInnerBlocks = [ ...innerBlocks ];
 
+			// Add the media to the description (if it exists).
+			if ( !! attributes.media ) {
+				migratedInnerBlocks.push( getMediaBlock( attributes.media ) );
+			}
+
 			// Add the student help text to the description (if it exists).
 			if (
 				attributes.type === 'file-upload' &&
@@ -78,11 +83,6 @@ export default [
 						content: attributes.options.studentHelp,
 					} )
 				);
-			}
-
-			// Add the media to the description (if it exists).
-			if ( !! attributes.media ) {
-				migratedInnerBlocks.push( getMediaBlock( attributes.media ) );
 			}
 
 			return [
