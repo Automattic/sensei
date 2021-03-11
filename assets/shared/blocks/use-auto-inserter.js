@@ -4,6 +4,10 @@
 import { createBlock } from '@wordpress/blocks';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useState } from '@wordpress/element';
+/**
+ * External dependencies
+ */
+import { noop } from 'lodash';
 
 /**
  * Insert an empty inner block to the end of the block when it's selected.
@@ -20,7 +24,11 @@ export const useAutoInserter = (
 ) => {
 	const [ autoBlockClientId, setAutoBlockClientId ] = useState( null );
 	const { clientId, isSelected } = parentProps;
-	const { insertBlock, removeBlock } = useDispatch( 'core/block-editor' );
+	const {
+		__unstableMarkAutomaticChange: markNextChangeAsNotPersistent = noop,
+		insertBlock,
+		removeBlock,
+	} = useDispatch( 'core/block-editor' );
 
 	const blocks = useSelect( ( select ) =>
 		select( 'core/block-editor' ).getBlocks( clientId )
@@ -31,9 +39,11 @@ export const useAutoInserter = (
 	const createAndInsertBlock = useCallback( () => {
 		const block = createBlock( name, attributes );
 		const updateSelection = isFirstBlock && selectFirstBlock;
+		markNextChangeAsNotPersistent();
 		insertBlock( block, undefined, clientId, updateSelection );
 		setAutoBlockClientId( block.clientId );
 	}, [
+		markNextChangeAsNotPersistent,
 		insertBlock,
 		clientId,
 		name,
@@ -75,6 +85,7 @@ export const useAutoInserter = (
 				lastBlock.clientId === autoBlockClientId &&
 				1 !== blocks.length
 			) {
+				markNextChangeAsNotPersistent();
 				removeBlock( lastBlock.clientId, false );
 			}
 			setAutoBlockClientId( null );
