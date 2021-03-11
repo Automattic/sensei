@@ -54,7 +54,7 @@ export default [
 		onProgrammaticCreation: true,
 		isEligible( attributes ) {
 			return (
-				!! attributes.media ||
+				attributes.media ||
 				( attributes.type === 'file-upload' &&
 					!! attributes.options?.studentHelp )
 			);
@@ -69,7 +69,7 @@ export default [
 			const migratedInnerBlocks = [ ...innerBlocks ];
 
 			// Add the media to the description (if it exists).
-			if ( !! attributes.media ) {
+			if ( attributes.media ) {
 				migratedInnerBlocks.push( getMediaBlock( attributes.media ) );
 			}
 
