@@ -91,6 +91,13 @@ const questionTypes = {
 	},
 };
 
+const availableCoreSettings = {
+	QuestionAnswerFeedbackSettings,
+	QuestionGradeSettings,
+	QuestionGradingNotesSettings,
+	QuestionMultipleChoiceSettings,
+};
+
 /**
  * Filters the quiz editor question types in order to support custom ones.
  *
@@ -102,8 +109,10 @@ const questionTypes = {
  * @param {Array}    questionTypes.settings    An array of settings components to use in the sidebar.
  *                                             Attributes under 'options', will be passed to all settings
  *                                             components.
+ * @param {Object}   availableCoreSettings     Core settings that can be included in custom question types.
  */
 export default applyFilters(
 	'sensei-lms.Question.questionTypes',
-	questionTypes
+	questionTypes,
+	availableCoreSettings
 );
