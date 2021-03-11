@@ -53,7 +53,11 @@ export default [
 	{
 		onProgrammaticCreation: true,
 		isEligible( props ) {
-			return !! props.media;
+			return (
+				!! props.media ||
+				( props.type === 'file-upload' &&
+					!! props.options?.studentHelp )
+			);
 		},
 		attributes: {
 			...metadata.attributes,
@@ -62,35 +66,31 @@ export default [
 			},
 		},
 		migrate( attributes, innerBlocks ) {
-			return [
-				omit( attributes, 'media' ),
-				[ ...innerBlocks, getMediaBlock( attributes.media ) ],
-			];
-		},
-		save() {
-			return <InnerBlocks.Content />;
-		},
-	},
-	{
-		onProgrammaticCreation: true,
-		isEligible( props ) {
-			return (
-				props.type === 'file-upload' && !! props.options?.studentHelp
-			);
-		},
-		attributes: metadata.attributes,
-		migrate( attributes, innerBlocks ) {
-			return [
-				{
-					...attributes,
-					options: omit( attributes.options, 'studentHelp' ),
-				},
-				[
-					...innerBlocks,
+			const migratedInnerBlocks = [ ...innerBlocks ];
+
+			// Add the student help text to the description (if it exists).
+			if (
+				attributes.type === 'file-upload' &&
+				!! attributes.options?.studentHelp
+			) {
+				migratedInnerBlocks.push(
 					createBlock( 'core/paragraph', {
 						content: attributes.options.studentHelp,
-					} ),
-				],
+					} )
+				);
+			}
+
+			// Add the media to the description (if it exists).
+			if ( !! attributes.media ) {
+				migratedInnerBlocks.push( getMediaBlock( attributes.media ) );
+			}
+
+			return [
+				{
+					...omit( attributes, 'media' ),
+					options: omit( attributes.options, 'studentHelp' ),
+				},
+				migratedInnerBlocks,
 			];
 		},
 		save() {
