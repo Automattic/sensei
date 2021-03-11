@@ -142,6 +142,7 @@ class Sensei_Grading_User_Quiz {
 				$right_answer        = get_post_meta( $question_id, '_question_right_answer', true );
 				$user_answer_content = Sensei()->quiz->get_user_question_answer( $lesson_id, $question_id, $user_id );
 				$type_name           = __( 'Multiple Choice', 'sensei-lms' );
+				$grade_type          = 'manual-grade';
 
 				switch ( $type ) {
 					case 'boolean':
