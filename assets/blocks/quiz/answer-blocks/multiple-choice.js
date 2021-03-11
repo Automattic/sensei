@@ -12,6 +12,7 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import MultipleChoiceAnswerOption from './multiple-choice-answer-option';
+import { OptionToggle } from './option-toggle';
 
 /**
  * Default answer options for new blocks.
@@ -22,9 +23,20 @@ const DEFAULT_ANSWERS = [
 ];
 
 /**
+ * Check if there are more than one right answers.
+ *
+ * @param {Array} answers
+ */
+const hasMultipleRightAnswers = ( answers ) =>
+	answers.filter( ( a ) => a.correct ).length > 1;
+
+/**
  * Answer component for question blocks with multiple choice type.
  *
- * @param {Object} props
+ * @param {Object}   props
+ * @param {Object}   props.attributes
+ * @param {Function} props.setAttributes
+ * @param {Array}    props.attributes.answers Answers.
  */
 const MultipleChoiceAnswer = ( props ) => {
 	const { setAttributes, hasSelected } = props;
@@ -37,7 +49,7 @@ const MultipleChoiceAnswer = ( props ) => {
 		answers = DEFAULT_ANSWERS;
 	}
 
-	const hasMultipleRight = answers.filter( ( a ) => a.correct ).length > 1;
+	const hasMultipleRight = hasMultipleRightAnswers( answers );
 
 	const hasDraft = ! answers[ answers.length - 1 ]?.label;
 
@@ -93,31 +105,69 @@ const MultipleChoiceAnswer = ( props ) => {
 	const [ nextFocus, setFocus ] = useState( null );
 
 	return (
-		<ol className="sensei-lms-question-block__answer sensei-lms-question-block__answer--multiple-choice">
-			{ answerItems.map( ( answer, index ) => (
-				<li
-					key={ index }
-					className={ classnames(
-						'sensei-lms-question-block__answer--multiple-choice__option',
-						{ 'is-draft': ! answer.label }
-					) }
-				>
-					<MultipleChoiceAnswerOption
-						hasFocus={ index === nextFocus }
+		<MultipleChoiceAnswer.Options answers={ answerItems }>
+			{ ( answer, index ) => (
+				<MultipleChoiceAnswerOption
+					hasFocus={ index === nextFocus }
+					isCheckbox={ hasMultipleRight }
+					attributes={ answer }
+					setAttributes={ ( next ) => updateAnswer( index, next ) }
+					onEnter={ () => insertAnswer( index ) }
+					onRemove={ () => removeAnswer( index ) }
+					{ ...{
+						hasSelected,
+					} }
+				/>
+			) }
+		</MultipleChoiceAnswer.Options>
+	);
+};
+
+/**
+ * Render a list of answer options.
+ *
+ * @param {Object}   props
+ * @param {Array}    props.answers  Answer list.
+ * @param {Function} props.children Answer render function
+ */
+MultipleChoiceAnswer.Options = ( { answers, children } ) => (
+	<ol className="sensei-lms-question-block__answer sensei-lms-question-block__answer--multiple-choice">
+		{ answers.map( ( answer, index ) => (
+			<li
+				key={ index }
+				className={ classnames(
+					'sensei-lms-question-block__answer--multiple-choice__option',
+					{ 'is-draft': ! answer.label }
+				) }
+			>
+				{ children( answer, index ) }
+			</li>
+		) ) }
+	</ol>
+);
+
+/**
+ * Read-only multiple choice answer component.
+ *
+ * @param {Object} props
+ * @param {Object} props.attributes
+ * @param {Array}  props.attributes.answers Answers.
+ */
+MultipleChoiceAnswer.view = ( { attributes: { answers = [] } } ) => {
+	const hasMultipleRight = hasMultipleRightAnswers( answers );
+
+	return (
+		<MultipleChoiceAnswer.Options answers={ answers }>
+			{ ( answer ) => (
+				<>
+					<OptionToggle
+						isChecked={ answer.correct }
 						isCheckbox={ hasMultipleRight }
-						attributes={ answer }
-						setAttributes={ ( next ) =>
-							updateAnswer( index, next )
-						}
-						onEnter={ () => insertAnswer( index ) }
-						onRemove={ () => removeAnswer( index ) }
-						{ ...{
-							hasSelected,
-						} }
 					/>
-				</li>
-			) ) }
-		</ol>
+					{ answer.label }
+				</>
+			) }
+		</MultipleChoiceAnswer.Options>
 	);
 };
 

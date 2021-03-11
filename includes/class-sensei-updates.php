@@ -75,6 +75,7 @@ class Sensei_Updates {
 		$this->v3_7_check_rewrite_front();
 		$this->v3_7_add_comment_indexes();
 		$this->v3_9_fix_question_author();
+		$this->v3_9_add_multiple_questions_flag();
 		$this->v3_9_remove_abandoned_multiple_question();
 
 		// Flush rewrite cache.
@@ -91,6 +92,24 @@ class Sensei_Updates {
 		}
 
 		Sensei_Scheduler::instance()->schedule_job( new Sensei_Update_Remove_Abandoned_Multiple_Question() );
+	}
+
+	/**
+	 * Adds a flag to check if the `multiple_questions` CPT is on active quizzes upon upgrade.
+	 *
+	 * This will help with preventing the question block editor from being used until support for these are added.
+	 *
+	 * @since 3.9.0
+	 */
+	private function v3_9_add_multiple_questions_flag() {
+		// Only run this if we're upgrading and the current version (before upgrade) is less than 3.9.0.
+		if ( ! $this->is_upgrade || version_compare( $this->current_version, '3.9.0', '>=' ) ) {
+			return;
+		}
+
+		if ( $this->has_multiple_questions() ) {
+			Sensei()->set_legacy_flag( Sensei_Main::LEGACY_FLAG_MULTIPLE_QUESTIONS_EXIST, true );
+		}
 	}
 
 	/**
@@ -246,6 +265,55 @@ class Sensei_Updates {
 		$activity_sample = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
 
 		return ! empty( $activity_sample );
+	}
+
+	/**
+	 * Check if the `multiple_questions` CPT is in use on any quiz.
+	 *
+	 * Note: These are left behind unused when removed from a quiz or a quiz is deleted so we need to only include ones
+	 * on quizzes that are still around in some form.
+	 *
+	 * @return bool
+	 */
+	private function has_multiple_questions() {
+		$multiple_question_query = new WP_Query(
+			[
+				'post_type'        => 'multiple_question',
+				'fields'           => 'ids',
+				'no_found_rows'    => true,
+				'suppress_filters' => 1,
+				'posts_per_page'   => 1,
+				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Used once on update.
+				'meta_query'       => [
+					[
+						'key'   => '_quiz_id',
+						'value' => $this->get_quiz_ids(),
+					],
+				],
+			]
+		);
+
+		return count( $multiple_question_query->posts );
+	}
+
+	/**
+	 * Get an array of quiz post IDs.
+	 *
+	 * @return int[]
+	 */
+	private function get_quiz_ids() {
+		$query = new WP_Query(
+			[
+				'post_type'        => 'quiz',
+				'fields'           => 'ids',
+				'post_status'      => [ 'draft', 'publish' ],
+				'posts_per_page'   => -1,
+				'no_found_rows'    => true,
+				'suppress_filters' => 1,
+			]
+		);
+
+		return array_map( 'intval', $query->posts );
 	}
 
 	/**
