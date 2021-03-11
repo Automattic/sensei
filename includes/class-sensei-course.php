@@ -3634,7 +3634,7 @@ class Sensei_Course {
 		if (
 			$post
 			&& is_singular( 'course' )
-			&& ! $this->is_legacy_course( $post )
+			&& $this->has_sensei_blocks( $post )
 		) {
 			$this->remove_legacy_course_actions();
 		}
@@ -3700,7 +3700,18 @@ class Sensei_Course {
 	 *
 	 * @return bool
 	 */
-	public function is_legacy_course( $course ) {
+	public function is_legacy_course( $course = null ) {
+		return ! $this->has_sensei_blocks( $course );
+	}
+
+	/**
+	 * Check if a course contains Sensei blocks.
+	 *
+	 * @param int|WP_Post $course Course ID or course object.
+	 *
+	 * @return bool
+	 */
+	public function has_sensei_blocks( $course = null ) {
 		$course = get_post( $course );
 
 		$course_blocks = [
@@ -3712,13 +3723,13 @@ class Sensei_Course {
 
 		foreach ( $course_blocks as $block ) {
 			if ( has_block( $block, $course ) ) {
-				return false;
+				return true;
 			}
 		}
 
-		return true;
+		return false;
 	}
-}//end class
+}
 
 /**
  * Class WooThemes_Sensei_Course

@@ -69,18 +69,37 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 * @return int|WP_Error Question id on success.
 	 */
 	private function save_question( $question ) {
+		$question_id = $question['id'] ?? null;
+
+		if (
+			$question_id
+			&& (
+				'question' !== get_post_type( $question_id )
+				|| ! current_user_can( get_post_type_object( 'course' )->cap->edit_post, $question_id )
+			)
+		) {
+			return new WP_Error( 'sensei_lesson_quiz_question_not_available', '', $question_id );
+		}
+
 		if ( empty( $question['title'] ) ) {
 			return new WP_Error(
 				'sensei_lesson_quiz_question_missing_title',
 				__( 'Please ensure all questions have a title before saving.', 'sensei-lms' )
 			);
 		}
+
 		if ( ! isset( $question['options'] ) ) {
 			$question['options'] = [];
 		}
 
+		if ( ! isset( $question['type'] ) ) {
+			$question['type'] = 'multiple-choice';
+		}
+
+		$is_new = null === $question_id;
+
 		$post_args = [
-			'ID'          => isset( $question['id'] ) ? $question['id'] : null,
+			'ID'          => $question_id,
 			'post_title'  => $question['title'],
 			'post_status' => 'publish',
 			'post_type'   => 'question',
@@ -95,6 +114,10 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		}
 
 		$result = wp_insert_post( $post_args );
+
+		if ( ! $is_new && ! is_wp_error( $result ) ) {
+			$this->migrate_non_editor_question( $result, $question['type'] );
+		}
 
 		/**
 		 * This action is triggered when a question is created or updated by the lesson quiz REST endpoint.
@@ -112,6 +135,20 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	}
 
 	/**
+	 * Helper method to delete question meta that were deprecated by the block editor.
+	 *
+	 * @param int    $question_id   Question post id.
+	 * @param string $question_type Question type.
+	 */
+	private function migrate_non_editor_question( int $question_id, string $question_type ) {
+		delete_post_meta( $question_id, '_question_media' );
+
+		if ( 'file-upload' === $question_type ) {
+			delete_post_meta( $question_id, '_question_wrong_answers' );
+		}
+	}
+
+	/**
 	 * Calculates the meta values for a question according to the input array.
 	 *
 	 * @param array $question The input array.
@@ -126,6 +163,25 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			$meta['_question_grade'] = $options['grade'];
 		}
 
+		// Common meta.
+		switch ( $question['type'] ) {
+			case 'multiple-choice':
+			case 'boolean':
+			case 'gap-fill':
+				if ( isset( $options['answerFeedback'] ) ) {
+					$meta['_answer_feedback'] = $options['answerFeedback'];
+				}
+				break;
+			case 'single-line':
+			case 'multi-line':
+			case 'file-upload':
+				if ( array_key_exists( 'teacherNotes', $options ) ) {
+					$meta['_question_right_answer'] = $options['teacherNotes'];
+				}
+				break;
+		}
+
+		// Type-specific meta.
 		switch ( $question['type'] ) {
 			case 'multiple-choice':
 				$meta = array_merge( $meta, $this->get_multiple_choice_meta( $question ) );
@@ -134,24 +190,11 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 				if ( isset( $question['answer']['correct'] ) ) {
 					$meta['_question_right_answer'] = $question['answer']['correct'] ? 'true' : 'false';
 				}
-
-				if ( array_key_exists( 'answerFeedback', $options ) ) {
-					$meta['_answer_feedback'] = $options['answerFeedback'];
-				}
 				break;
 			case 'gap-fill':
 				$meta = array_merge( $meta, $this->get_gap_fill_meta( $question ) );
 				break;
-			case 'single-line':
-			case 'multi-line':
-				if ( array_key_exists( 'teacherNotes', $options ) ) {
-					$meta['_question_right_answer'] = $options['teacherNotes'];
-				}
-				break;
 			case 'file-upload':
-				if ( array_key_exists( 'teacherNotes', $options ) ) {
-					$meta['_question_right_answer'] = $options['teacherNotes'];
-				}
 				if ( array_key_exists( 'studentHelp', $options ) ) {
 					$meta['_question_wrong_answers'] = $options['studentHelp'];
 				}
@@ -173,10 +216,6 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 
 		if ( isset( $question['options']['randomOrder'] ) ) {
 			$meta['_random_order'] = $question['options']['randomOrder'] ? 'yes' : 'no';
-		}
-
-		if ( array_key_exists( 'answerFeedback', $question['options'] ) ) {
-			$meta['_answer_feedback'] = $question['options']['answerFeedback'];
 		}
 
 		if ( isset( $question['answer'] ) ) {
@@ -304,7 +343,8 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 */
 	private function get_question_common_properties( WP_Post $question ): array {
 		$question_meta = get_post_meta( $question->ID );
-		return [
+
+		$common_properties = [
 			'id'          => $question->ID,
 			'title'       => 'auto-draft' !== $question->post_status ? $question->post_title : '',
 			'description' => $question->post_content,
@@ -313,8 +353,54 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			],
 			'type'        => Sensei()->question->get_question_type( $question->ID ),
 			'shared'      => ! empty( $question_meta['_quiz_id'] ) && count( $question_meta['_quiz_id'] ) > 1,
+			'editable'    => current_user_can( get_post_type_object( 'question' )->cap->edit_post, $question->ID ),
 			'categories'  => wp_get_post_terms( $question->ID, 'question-category', [ 'fields' => 'ids' ] ),
 		];
+
+		if ( ! empty( $question_meta['_question_media'][0] ) ) {
+			$question_media = $this->get_question_media( (int) $question_meta['_question_media'][0], $question->ID );
+
+			if ( ! empty( $question_media ) ) {
+				$common_properties['media'] = $question_media;
+			}
+		}
+
+		return $common_properties;
+	}
+
+	/**
+	 * Helper method to get question media.
+	 *
+	 * @param int $question_media_id The attachment id.
+	 * @param int $question_id       The question id.
+	 *
+	 * @return array Media info. It includes the type, id, url and title.
+	 */
+	private function get_question_media( int $question_media_id, int $question_id ) : array {
+		$question_media = [];
+		$mimetype       = get_post_mime_type( $question_media_id );
+		$attachment     = get_post( $question_media_id );
+
+		if ( $mimetype || null !== $attachment ) {
+			$mimetype_array = explode( '/', $mimetype );
+
+			if ( ! empty( $mimetype_array[0] ) ) {
+				if ( 'image' === $mimetype_array[0] ) {
+					// This filter is documented in class-sensei-question.php.
+					$image_size            = apply_filters( 'sensei_question_image_size', 'medium', $question_id );
+					$attachment_src        = wp_get_attachment_image_src( $question_media_id, $image_size );
+					$question_media['url'] = esc_url( $attachment_src[0] );
+				} else {
+					$question_media['url'] = esc_url( wp_get_attachment_url( $question_media_id ) );
+				}
+
+				$question_media['type']  = $mimetype_array[0];
+				$question_media['id']    = $attachment->ID;
+				$question_media['title'] = esc_html( $attachment->post_title );
+			}
+		}
+
+		return $question_media;
 	}
 
 	/**
@@ -333,28 +419,32 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 
 		switch ( $question_type ) {
 			case 'multiple-choice':
-				$type_specific_properties = $this->get_multiple_choice_properties( $question );
+			case 'gap-fill':
+			case 'boolean':
+				$answer_feedback                                       = get_post_meta( $question->ID, '_answer_feedback', true );
+				$type_specific_properties['options']['answerFeedback'] = empty( $answer_feedback ) ? null : $answer_feedback;
+				break;
+			case 'single-line':
+			case 'multi-line':
+			case 'file-upload':
+				$teacher_notes                                       = get_post_meta( $question->ID, '_question_right_answer', true );
+				$type_specific_properties['options']['teacherNotes'] = empty( $teacher_notes ) ? null : $teacher_notes;
+				break;
+		}
+
+		switch ( $question_type ) {
+			case 'multiple-choice':
+				$type_specific_properties = array_merge_recursive( $type_specific_properties, $this->get_multiple_choice_properties( $question ) );
 				break;
 			case 'boolean':
 				$type_specific_properties['answer']['correct'] = 'true' === get_post_meta( $question->ID, '_question_right_answer', true );
-
-				$answer_feedback                                       = get_post_meta( $question->ID, '_answer_feedback', true );
-				$type_specific_properties['options']['answerFeedback'] = empty( $answer_feedback ) ? null : $answer_feedback;
 				break;
 			case 'gap-fill':
 				$type_specific_properties['answer'] = $this->get_gap_fill_properties( $question );
 				break;
-			case 'single-line':
-			case 'multi-line':
-				$teacher_notes                                       = get_post_meta( $question->ID, '_question_right_answer', true );
-				$type_specific_properties['options']['teacherNotes'] = empty( $teacher_notes ) ? null : $teacher_notes;
-				break;
 			case 'file-upload':
-				$teacher_notes                                       = get_post_meta( $question->ID, '_question_right_answer', true );
-				$type_specific_properties['options']['teacherNotes'] = empty( $teacher_notes ) ? null : $teacher_notes;
-
 				$student_help                                       = get_post_meta( $question->ID, '_question_wrong_answers', true );
-				$type_specific_properties['options']['studentHelp'] = empty( $student_help[0] ) ? null : $student_help[0];
+				$type_specific_properties['options']['studentHelp'] = empty( $student_help[0] ) ? null : esc_html( $student_help[0] );
 				break;
 		}
 
@@ -410,11 +500,8 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 */
 	private function get_multiple_choice_properties( WP_Post $question ): array {
 		$type_specific_properties = [
-			'options' => [ 'randomOrder' => 'yes' === get_post_meta( $question->ID, '_random_order', true ) ],
+			'options' => [ 'randomOrder' => 'no' !== get_post_meta( $question->ID, '_random_order', true ) ],
 		];
-
-		$answer_feedback                                       = get_post_meta( $question->ID, '_answer_feedback', true );
-		$type_specific_properties['options']['answerFeedback'] = empty( $answer_feedback ) ? null : $answer_feedback;
 
 		$correct_answers = $this->get_answers_array( $question, '_question_right_answer', true );
 		$wrong_answers   = $this->get_answers_array( $question, '_question_wrong_answers', false );
@@ -536,6 +623,11 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 				'description' => 'Whether the question has been added on other quizzes',
 				'readonly'    => true,
 			],
+			'editable'    => [
+				'type'        => 'boolean',
+				'description' => 'Whether the question can be edited by the current user',
+				'readonly'    => true,
+			],
 			'categories'  => [
 				'type'        => 'array',
 				'readonly'    => true,
@@ -543,6 +635,28 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 				'items'       => [
 					'type'        => 'integer',
 					'description' => 'Term IDs',
+				],
+			],
+			'media'       => [
+				'type'       => 'object',
+				'readonly'   => true,
+				'properties' => [
+					'id'    => [
+						'type'        => 'integer',
+						'description' => 'Linked media id',
+					],
+					'type'  => [
+						'type'        => 'string',
+						'description' => 'Media type',
+					],
+					'url'   => [
+						'type'        => 'string',
+						'description' => 'Media url',
+					],
+					'title' => [
+						'type'        => 'string',
+						'description' => 'Media title',
+					],
 				],
 			],
 		];
@@ -629,7 +743,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 					'randomOrder'    => [
 						'type'        => 'boolean',
 						'description' => 'Should options be randomized when displayed to quiz takers',
-						'default'     => false,
+						'default'     => true,
 					],
 					'answerFeedback' => [
 						'type'        => [ 'string', 'null' ],
@@ -705,7 +819,6 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 					'teacherNotes' => [
 						'type'        => [ 'string', 'null' ],
 						'description' => 'Teacher notes for grading',
-
 					],
 				],
 			],
@@ -768,6 +881,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 					'studentHelp'  => [
 						'type'        => [ 'string', 'null' ],
 						'description' => 'Description for student explaining what needs to be uploaded',
+						'readonly'    => true,
 					],
 				],
 			],

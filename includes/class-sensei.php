@@ -656,7 +656,7 @@ class Sensei_Main {
 	 * @param bool   $value Boolean value to set.
 	 */
 	public function set_legacy_flag( $flag, $value ) {
-		$legacy_flags          = json_decode( get_option( self::LEGACY_FLAG_OPTION, '{}' ), true );
+		$legacy_flags          = $this->get_legacy_flags();
 		$legacy_flags[ $flag ] = (bool) $value;
 
 		update_option( self::LEGACY_FLAG_OPTION, wp_json_encode( $legacy_flags ) );
@@ -671,13 +671,22 @@ class Sensei_Main {
 	 * @return bool
 	 */
 	public function get_legacy_flag( $flag, $default = false ) {
-		$legacy_flags = json_decode( get_option( self::LEGACY_FLAG_OPTION, '{}' ), true );
+		$legacy_flags = $this->get_legacy_flags();
 
 		if ( isset( $legacy_flags[ $flag ] ) ) {
 			return (bool) $legacy_flags[ $flag ];
 		}
 
 		return (bool) $default;
+	}
+
+	/**
+	 * Get the legacy flags that have been set.
+	 *
+	 * @return array
+	 */
+	public function get_legacy_flags() {
+		return json_decode( get_option( self::LEGACY_FLAG_OPTION, '{}' ), true );
 	}
 
 	/**
