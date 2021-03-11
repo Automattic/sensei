@@ -19,7 +19,7 @@ const QuestionGradingNotesSettings = ( {
 	<TextareaControl
 		label={ __( 'Grading Notes', 'sensei-lms' ) }
 		onChange={ ( value ) => setOptions( { teacherNotes: value } ) }
-		value={ teacherNotes }
+		value={ teacherNotes || '' }
 		help={ __(
 			'Displayed to the teacher when grading the question.',
 			'sensei-lms'
