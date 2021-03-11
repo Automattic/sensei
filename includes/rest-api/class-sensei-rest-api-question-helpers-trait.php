@@ -444,7 +444,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 				break;
 			case 'file-upload':
 				$student_help                                       = get_post_meta( $question->ID, '_question_wrong_answers', true );
-				$type_specific_properties['options']['studentHelp'] = empty( $student_help[0] ) ? null : $student_help[0];
+				$type_specific_properties['options']['studentHelp'] = empty( $student_help[0] ) ? null : esc_html( $student_help[0] );
 				break;
 		}
 
