@@ -53,12 +53,13 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		 * @since  3.9.0
 		 * @hook   sensei_rest_api_schema_question_type
 		 *
-		 * @param  {Array} $schema Schema for a single question.
-		 * @param  {string} $type Question type.
+		 * @param  {Array}  $schema        Schema for a single question.
+		 * @param  {string} $type          Question type.
+		 * @param  {Array}  $common_schema Schema that is common for all question types.
 		 *
 		 * @return {array}
 		 */
-		return apply_filters( 'sensei_rest_api_schema_question_type', $schema, $type );
+		return apply_filters( 'sensei_rest_api_schema_question_type', $schema, $type, $this->get_common_question_properties_schema() );
 	}
 
 	/**
