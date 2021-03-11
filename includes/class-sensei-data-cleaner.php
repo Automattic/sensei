@@ -221,6 +221,7 @@ class Sensei_Data_Cleaner {
 		'sensei_activation_redirect',
 		'sensei_woocommerce_plugin_information',
 		'sensei_extensions_.*',
+		'sensei_background_job_.*',
 	);
 
 	/**

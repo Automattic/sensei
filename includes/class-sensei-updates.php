@@ -74,9 +74,22 @@ class Sensei_Updates {
 		$this->v3_0_check_legacy_enrolment();
 		$this->v3_7_check_rewrite_front();
 		$this->v3_7_add_comment_indexes();
+		$this->v3_9_fix_question_author();
 
 		// Flush rewrite cache.
 		Sensei()->initiate_rewrite_rules_flush();
+	}
+
+	/**
+	 * Enqueue job to fix question post authors from previous course teacher changes.
+	 */
+	private function v3_9_fix_question_author() {
+		// Only run this if we're upgrading and the current version (before upgrade) is less than 3.9.0.
+		if ( ! $this->is_upgrade || version_compare( $this->current_version, '3.9.0', '>=' ) ) {
+			return;
+		}
+
+		Sensei_Scheduler::instance()->schedule_job( new Sensei_Update_Fix_Question_Author() );
 	}
 
 	/**

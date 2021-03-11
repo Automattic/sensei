@@ -37,6 +37,47 @@ class Sensei_Scheduler {
 	}
 
 	/**
+	 * Initialize actions.
+	 */
+	public static function init() {
+		add_action( Sensei_Background_Job_Stateful::NAME, [ __CLASS__, 'run_stateful_job' ] );
+	}
+
+	/**
+	 * Run a stateful job.
+	 *
+	 * @param array $args The job arguments.
+	 *
+	 * @return bool
+	 */
+	public static function run_stateful_job( $args ) : bool {
+		if (
+			empty( $args['id'] )
+			|| empty( $args['class'] )
+			|| ! class_exists( (string) $args['class'] )
+			|| ! is_subclass_of( (string) $args['class'], Sensei_Background_Job_Stateful::class )
+		) {
+			return false;
+		}
+
+		$id         = (string) $args['id'];
+		$class_name = (string) $args['class'];
+		unset( $args['id'], $args['class'] );
+
+		$job = new $class_name( $args, $id );
+		self::instance()->run(
+			$job,
+			function() use ( $job ) {
+				$job->cleanup();
+			}
+		);
+
+		$job->persist();
+
+		return true;
+	}
+
+	/**
 	 * Get the class for the scheduler.
 	 *
 	 * @return string

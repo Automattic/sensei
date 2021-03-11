@@ -159,6 +159,11 @@ class Sensei_Autoloader {
 			'Sensei_Renderer_Single_Post'                => 'renderers/class-sensei-renderer-single-post.php',
 
 			/**
+			 * Update tasks.
+			 */
+			'Sensei_Update_Fix_Question_Author'          => 'update-tasks/class-sensei-update-fix-question-author.php',
+
+			/**
 			 * Unsupported theme handlers.
 			 */
 			'Sensei_Unsupported_Theme_Handler_Interface' => 'unsupported-theme-handlers/interface-sensei-unsupported-theme-handler.php',
