@@ -19,7 +19,7 @@ const QuestionAnswerFeedbackSettings = ( {
 	<TextareaControl
 		label={ __( 'Answer Feedback', 'sensei-lms' ) }
 		onChange={ ( value ) => setOptions( { answerFeedback: value } ) }
-		value={ answerFeedback }
+		value={ answerFeedback || '' }
 		help={ __(
 			'Displayed to the learner after the quiz has been graded.',
 			'sensei-lms'
