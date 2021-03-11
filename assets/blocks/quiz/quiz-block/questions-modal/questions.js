@@ -16,6 +16,25 @@ import { __ } from '@wordpress/i18n';
 import questionTypesConfig from '../../answer-blocks';
 
 /**
+ * Remove properties with empty string as value from an object.
+ *
+ * @param {Object} object Object to be cleaned.
+ *
+ * @return {Object} Cleaned object.
+ */
+const cleanObject = ( object ) =>
+	Object.entries( object ).reduce( ( acc, [ key, value ] ) => {
+		if ( '' !== value ) {
+			return {
+				...acc,
+				[ key ]: value,
+			};
+		}
+
+		return acc;
+	}, {} );
+
+/**
  * Questions for selection.
  *
  * @param {Object}   props
@@ -34,7 +53,7 @@ const Questions = ( {
 		( select ) =>
 			select( 'core' ).getEntityRecords( 'postType', 'question', {
 				per_page: 100,
-				...filters,
+				...cleanObject( filters ),
 			} ),
 		[ filters ]
 	);
