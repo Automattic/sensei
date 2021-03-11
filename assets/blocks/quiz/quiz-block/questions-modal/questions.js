@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { keyBy, uniq } from 'lodash';
+import { keyBy, uniq, omitBy } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -14,25 +14,6 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import questionTypesConfig from '../../answer-blocks';
-
-/**
- * Remove properties with empty string as value from an object.
- *
- * @param {Object} object Object to be cleaned.
- *
- * @return {Object} Cleaned object.
- */
-const cleanObject = ( object ) =>
-	Object.entries( object ).reduce( ( acc, [ key, value ] ) => {
-		if ( '' !== value ) {
-			return {
-				...acc,
-				[ key ]: value,
-			};
-		}
-
-		return acc;
-	}, {} );
 
 /**
  * Questions for selection.
@@ -53,7 +34,7 @@ const Questions = ( {
 		( select ) =>
 			select( 'core' ).getEntityRecords( 'postType', 'question', {
 				per_page: 100,
-				...cleanObject( filters ),
+				...omitBy( filters, ( v ) => v === '' ),
 			} ),
 		[ filters ]
 	);
