@@ -396,7 +396,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 
 				$question_media['type']  = $mimetype_array[0];
 				$question_media['id']    = $attachment->ID;
-				$question_media['title'] = $attachment->post_title;
+				$question_media['title'] = esc_html( $attachment->post_title );
 			}
 		}
 
