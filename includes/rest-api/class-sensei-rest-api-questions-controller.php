@@ -59,7 +59,7 @@ class Sensei_REST_API_Questions_Controller extends WP_REST_Posts_Controller {
 	public function get_item( $request ) {
 		$response = parent::get_item( $request );
 
-		if ( 'edit' !== $request['context'] ) {
+		if ( 'edit' !== $request['context'] || ! Sensei()->quiz->is_block_based_editor_enabled() ) {
 			return $response;
 		}
 
