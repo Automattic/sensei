@@ -12,11 +12,27 @@ import { useSelect } from '@wordpress/data';
 export const useBlockIndex = ( clientId ) =>
 	useSelect(
 		( select ) => {
+			let number = 0;
 			const store = select( 'core/block-editor' );
-			return store.getBlockIndex(
-				clientId,
+			const blocks = store.getBlocks(
 				store.getBlockRootClientId( clientId )
 			);
+
+			blocks.every( ( block ) => {
+				number++;
+
+				if ( block.clientId === clientId ) {
+					return false;
+				}
+
+				if ( block.name === 'sensei-lms/quiz-category-question' ) {
+					number += block.attributes.options?.number - 1 ?? 0;
+				}
+
+				return true;
+			} );
+
+			return number;
 		},
 		[ clientId ]
 	);

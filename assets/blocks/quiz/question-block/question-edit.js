@@ -68,7 +68,7 @@ const QuestionEdit = ( props ) => {
 	const showContent = title || hasSelected || isSingle;
 
 	const questionIndex = ! isSingle && (
-		<h2 className="sensei-lms-question-block__index">{ index + 1 }.</h2>
+		<h2 className="sensei-lms-question-block__index">{ index }.</h2>
 	);
 
 	const questionGrade = (

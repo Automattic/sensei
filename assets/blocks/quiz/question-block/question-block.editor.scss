@@ -22,6 +22,7 @@ $block: '.sensei-lms-question-block';
 		text-align: right;
 		top: 0;
 		font-weight: bold;
+		white-space: nowrap;
 
 		#{$block}.is-draft & {
 			opacity: .62;
