@@ -26,6 +26,7 @@ import {
  * @property {string}   title       Question type name.
  * @property {string}   description Question type description.
  * @property {Function} edit        Editor component.
+ * @property {Function} validate    Validation callback.
  */
 
 /**
@@ -44,6 +45,13 @@ const questionTypes = {
 			QuestionMultipleChoiceSettings,
 			QuestionAnswerFeedbackSettings,
 		],
+		validate: ( { answers = [] } = {} ) => {
+			return {
+				noAnswers: answers.filter( ( a ) => a.label ).length < 2,
+				noRightAnswer: ! answers.some( ( a ) => a.correct ),
+				noWrongAnswer: ! answers.some( ( a ) => ! a.correct ),
+			};
+		},
 	},
 	boolean: {
 		title: __( 'True/False', 'sensei-lms' ),
@@ -61,6 +69,13 @@ const questionTypes = {
 		edit: GapFillAnswer,
 		view: GapFillAnswer.view,
 		settings: [ QuestionGradeSettings, QuestionAnswerFeedbackSettings ],
+		validate: ( { before, after, gap } = {} ) => {
+			return {
+				noBefore: ! before,
+				noAfter: ! after,
+				noGap: ! gap?.length,
+			};
+		},
 	},
 	'single-line': {
 		title: __( 'Single Line', 'sensei-lms' ),

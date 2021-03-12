@@ -15,6 +15,7 @@ import { useHasSelected } from '../../../shared/helpers/blocks';
 import types from '../answer-blocks';
 import { SharedQuestionNotice } from './question-block-helpers';
 import { QuestionGradeToolbar } from './question-grade-toolbar';
+import { useQuestionValidation } from './question-validation';
 import QuestionView from './question-view';
 import QuestionSettings from './question-settings';
 import { QuestionTypeToolbar } from './question-type-toolbar';
@@ -62,6 +63,8 @@ const QuestionEdit = ( props ) => {
 
 	const index = useBlockIndex( clientId );
 	const AnswerBlock = type && types[ type ];
+
+	useQuestionValidation( props );
 
 	const hasSelected = useHasSelected( props );
 	const isSingle = context && ! ( 'sensei-lms/quizId' in context );
