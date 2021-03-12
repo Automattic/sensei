@@ -53,6 +53,7 @@ class Sensei_Quiz_Blocks extends Sensei_Blocks_Initializer {
 
 		new Sensei_Block_Quiz();
 		new Sensei_Block_Quiz_Question();
+		new Sensei_Block_Quiz_Category_Question();
 
 		$post_type_object = get_post_type_object( 'question' );
 
