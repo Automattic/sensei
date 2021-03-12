@@ -66,7 +66,10 @@ class Sensei_Quiz {
 
 		// If quizzes were using the multiple_questions CPT on update, disable the block based
 		// editor until support is added.
-		if ( Sensei()->get_legacy_flag( Sensei_Main::LEGACY_FLAG_MULTIPLE_QUESTIONS_EXIST ) ) {
+		if (
+			! Sensei()->feature_flags->is_enabled( 'block_editor_enable_category_questions' )
+			&& Sensei()->get_legacy_flag( Sensei_Main::LEGACY_FLAG_MULTIPLE_QUESTIONS_EXIST )
+		) {
 			$is_block_based_editor_enabled = false;
 		}
 
