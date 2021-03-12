@@ -5,15 +5,18 @@ import { BlockControls, InnerBlocks } from '@wordpress/block-editor';
 import { select, useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
-
 /**
  * Internal dependencies
  */
 import { useBlockIndex } from '../../../shared/blocks/block-index';
 import SingleLineInput from '../../../shared/blocks/single-line-input';
+import { withBlockMeta } from '../../../shared/blocks/block-metadata';
 import { useHasSelected } from '../../../shared/helpers/blocks';
 import types from '../answer-blocks';
-import { SharedQuestionNotice } from './question-block-helpers';
+import {
+	QuestionValidationErrors,
+	SharedQuestionNotice,
+} from './question-block-helpers';
 import { QuestionGradeToolbar } from './question-grade-toolbar';
 import { useQuestionValidation } from './question-validation';
 import QuestionView from './question-view';
@@ -51,6 +54,7 @@ const QuestionEdit = ( props ) => {
 		setAttributes,
 		clientId,
 		context,
+		meta: { validationErrors, showValidationErrors },
 	} = props;
 	const { removeBlock, selectBlock } = useDispatch( 'core/block-editor' );
 
@@ -96,6 +100,12 @@ const QuestionEdit = ( props ) => {
 			}` }
 		>
 			{ questionIndex }
+			{ showValidationErrors && (
+				<QuestionValidationErrors
+					errors={ validationErrors }
+					type={ type }
+				/>
+			) }
 			<h2 className="sensei-lms-question-block__title">
 				<SingleLineInput
 					placeholder={ __( 'Question Title', 'sensei-lms' ) }
@@ -162,4 +172,4 @@ const QuestionEdit = ( props ) => {
 	);
 };
 
-export default QuestionEdit;
+export default withBlockMeta( QuestionEdit );

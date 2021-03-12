@@ -27,6 +27,7 @@ import {
  * @property {string}   description Question type description.
  * @property {Function} edit        Editor component.
  * @property {Function} validate    Validation callback.
+ * @property {Object}   messages    Message string.s
  */
 
 /**
@@ -52,6 +53,20 @@ const questionTypes = {
 				noWrongAnswer: ! answers.some( ( a ) => ! a.correct ),
 			};
 		},
+		messages: {
+			noAnswers: __(
+				'Add at least two answer choice to this question',
+				'sensei-lms'
+			),
+			noRightAnswer: __(
+				'Add a right answer to this question',
+				'sensei-lms'
+			),
+			noWrongAnswer: __(
+				'Add a wrong answer to this question',
+				'sensei-lms'
+			),
+		},
 	},
 	boolean: {
 		title: __( 'True/False', 'sensei-lms' ),
@@ -75,6 +90,11 @@ const questionTypes = {
 				noAfter: ! after,
 				noGap: ! gap?.length,
 			};
+		},
+		messages: {
+			noBefore: __( 'Add some text before the gap', 'sensei-lms' ),
+			noAfter: __( 'Add some text after the gap', 'sensei-lms' ),
+			noGap: __( 'Add a right answer to this question', 'sensei-lms' ),
 		},
 	},
 	'single-line': {

@@ -27,4 +27,7 @@ export default {
 	deprecated,
 	edit,
 	save: () => <InnerBlocks.Content />,
+	messages: {
+		noTitle: __( 'Add a title to this question', 'sensei-lms' ),
+	},
 };
