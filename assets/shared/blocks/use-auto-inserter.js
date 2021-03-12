@@ -3,7 +3,7 @@
  */
 import { createBlock } from '@wordpress/blocks';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useCallback, useEffect, useState } from '@wordpress/element';
+import { useCallback, useEffect } from '@wordpress/element';
 /**
  * External dependencies
  */
@@ -22,7 +22,6 @@ export const useAutoInserter = (
 	{ name, attributes = {}, selectFirstBlock = false },
 	parentProps
 ) => {
-	const [ autoBlockClientId, setAutoBlockClientId ] = useState( null );
 	const { clientId } = parentProps;
 	const {
 		__unstableMarkNextChangeAsNotPersistent: markNextChangeAsNotPersistent = noop,
@@ -40,7 +39,6 @@ export const useAutoInserter = (
 		const updateSelection = isFirstBlock && selectFirstBlock;
 		markNextChangeAsNotPersistent();
 		insertBlock( block, undefined, clientId, updateSelection );
-		setAutoBlockClientId( block.clientId );
 	}, [
 		markNextChangeAsNotPersistent,
 		insertBlock,
@@ -53,35 +51,10 @@ export const useAutoInserter = (
 
 	const lastBlock = blocks.length && blocks[ blocks.length - 1 ];
 	const hasEmptyLastBlock = lastBlock && ! lastBlock.attributes.title;
-	const hasAutoBlock =
-		null !==
-		useSelect(
-			( select ) =>
-				autoBlockClientId &&
-				select( 'core/block-editor' ).getBlock( autoBlockClientId ),
-			[ autoBlockClientId ]
-		);
 
 	useEffect( () => {
-		if (
-			! hasEmptyLastBlock &&
-			( ! hasAutoBlock || lastBlock.clientId === autoBlockClientId )
-		) {
+		if ( ! hasEmptyLastBlock ) {
 			createAndInsertBlock();
 		}
-		//eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ hasEmptyLastBlock, hasAutoBlock ] );
-
-	const isAutoBlockSelected = useSelect(
-		( select ) =>
-			autoBlockClientId &&
-			select( 'core/block-editor' ).isBlockSelected( autoBlockClientId ),
-		[ autoBlockClientId ]
-	);
-
-	useEffect( () => {
-		if ( isAutoBlockSelected ) {
-			setAutoBlockClientId( null );
-		}
-	}, [ isAutoBlockSelected ] );
+	}, [ hasEmptyLastBlock, createAndInsertBlock ] );
 };
