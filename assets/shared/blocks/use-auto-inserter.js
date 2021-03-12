@@ -25,7 +25,7 @@ export const useAutoInserter = (
 	const [ autoBlockClientId, setAutoBlockClientId ] = useState( null );
 	const { clientId, isSelected } = parentProps;
 	const {
-		__unstableMarkAutomaticChange: markNextChangeAsNotPersistent = noop,
+		__unstableMarkNextChangeAsNotPersistent: markNextChangeAsNotPersistent = noop,
 		insertBlock,
 		removeBlock,
 	} = useDispatch( 'core/block-editor' );
