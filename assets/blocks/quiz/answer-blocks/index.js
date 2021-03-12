@@ -15,7 +15,6 @@ import SingleLineAnswer from './single-line';
 import TrueFalseAnswer from './true-false';
 import {
 	QuestionAnswerFeedbackSettings,
-	QuestionGradeSettings,
 	QuestionGradingNotesSettings,
 	QuestionMultipleChoiceSettings,
 } from '../question-block/settings';
@@ -40,7 +39,6 @@ const questionTypes = {
 		edit: MultipleChoiceAnswer,
 		view: MultipleChoiceAnswer.view,
 		settings: [
-			QuestionGradeSettings,
 			QuestionMultipleChoiceSettings,
 			QuestionAnswerFeedbackSettings,
 		],
@@ -53,14 +51,14 @@ const questionTypes = {
 		),
 		edit: TrueFalseAnswer,
 		view: TrueFalseAnswer.view,
-		settings: [ QuestionGradeSettings, QuestionAnswerFeedbackSettings ],
+		settings: [ QuestionAnswerFeedbackSettings ],
 	},
 	'gap-fill': {
 		title: __( 'Gap Fill', 'sensei-lms' ),
 		description: __( 'Fill in the blank.', 'sensei-lms' ),
 		edit: GapFillAnswer,
 		view: GapFillAnswer.view,
-		settings: [ QuestionGradeSettings, QuestionAnswerFeedbackSettings ],
+		settings: [ QuestionAnswerFeedbackSettings ],
 	},
 	'single-line': {
 		title: __( 'Single Line', 'sensei-lms' ),
@@ -70,7 +68,7 @@ const questionTypes = {
 		),
 		edit: SingleLineAnswer,
 		view: SingleLineAnswer,
-		settings: [ QuestionGradeSettings, QuestionGradingNotesSettings ],
+		settings: [ QuestionGradingNotesSettings ],
 	},
 	'multi-line': {
 		title: __( 'Multi Line', 'sensei-lms' ),
@@ -80,22 +78,21 @@ const questionTypes = {
 		),
 		edit: MultiLineAnswer,
 		view: MultiLineAnswer,
-		settings: [ QuestionGradeSettings, QuestionGradingNotesSettings ],
+		settings: [ QuestionGradingNotesSettings ],
 	},
 	'file-upload': {
 		title: __( 'File Upload', 'sensei-lms' ),
 		description: __( 'Upload a file or document.', 'sensei-lms' ),
 		edit: FileUploadAnswer,
 		view: FileUploadAnswer,
-		settings: [ QuestionGradeSettings, QuestionGradingNotesSettings ],
+		settings: [ QuestionGradingNotesSettings ],
 	},
 };
 
+// Commonly used core settings for use in custom question types.
 const availableCoreSettings = {
 	QuestionAnswerFeedbackSettings,
-	QuestionGradeSettings,
 	QuestionGradingNotesSettings,
-	QuestionMultipleChoiceSettings,
 };
 
 /**
