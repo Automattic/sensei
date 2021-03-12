@@ -385,6 +385,27 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	}
 
 	/**
+	 * Get the multiple/category question as defined by the schema.
+	 *
+	 * @param WP_Post $question The question post.
+	 *
+	 * @return array
+	 */
+	private function get_category_question( WP_Post $question ) : array {
+		$category = (int) get_post_meta( $question->ID, 'category', true );
+		$number   = (int) get_post_meta( $question->ID, 'number', true );
+
+		return [
+			'type'    => 'category-question',
+			'id'      => $question->ID,
+			'options' => [
+				'term'   => $category,
+				'number' => $number,
+			],
+		];
+	}
+
+	/**
 	 * Generates the common question properties.
 	 *
 	 * @param WP_Post $question The question post.
@@ -606,6 +627,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	public function get_single_question_schema() {
 		$single_question_schema = [
 			'oneOf' => [
+				$this->get_category_question_schema(),
 				$this->get_multiple_choice_schema(),
 				$this->get_boolean_schema(),
 				$this->get_gap_fill_schema(),
@@ -632,6 +654,45 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		 * @return {array}
 		 */
 		return apply_filters( 'sensei_rest_api_schema_single_question', $single_question_schema );
+	}
+	/**
+	 * Helper method which returns the schema for category question properties.
+	 *
+	 * @return array The properties.
+	 */
+	private function get_category_question_schema(): array {
+		$question_category_properties = [
+			'type'    => [
+				'type'     => 'string',
+				'pattern'  => 'category-question',
+				'required' => true,
+			],
+			'id'      => [
+				'type'        => 'integer',
+				'description' => 'Multiple question post ID',
+			],
+			'options' => [
+				'type'       => 'object',
+				'properties' => [
+					'category' => [
+						'type'        => 'integer',
+						'description' => 'Term ID of the category where questions are picked',
+						'required'    => true,
+					],
+					'number'   => [
+						'type'        => 'integer',
+						'description' => 'Number of questions to select from the category',
+						'required'    => true,
+					],
+				],
+			],
+		];
+
+		return [
+			'title'      => 'Category Question',
+			'type'       => 'object',
+			'properties' => $question_category_properties,
+		];
 	}
 
 	/**
