@@ -68,4 +68,15 @@ $gray-400: #ccc;
 			}
 		}
 	}
+
+	&__pre-publish-validation {
+		&__notice {
+			margin: 0;
+			.components-notice__action.components-button.is-link {
+				display: block;
+				margin: 6px 0;
+			}
+		}
+	}
+
 }
