@@ -207,7 +207,11 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 
 		$question_ids = [];
 		foreach ( $json_params['questions'] as $question ) {
-			$question_id = $this->save_question( $question );
+			if ( isset( $question['type'] ) && 'category-question' === $question['type'] ) {
+				$question_id = $this->save_category_question( $question );
+			} else {
+				$question_id = $this->save_question( $question );
+			}
 
 			if ( is_wp_error( $question_id ) ) {
 				if ( 'sensei_lesson_quiz_question_not_available' === $question_id->get_error_code() ) {

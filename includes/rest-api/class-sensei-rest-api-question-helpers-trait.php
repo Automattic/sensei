@@ -62,6 +62,79 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	}
 
 	/**
+	 * Helper method to save or update a category question.
+	 *
+	 * @param array $question The question JSON array.
+	 *
+	 * @return int|WP_Error Multiple question id on success.
+	 */
+	private function save_category_question( $question ) {
+		$question_id = $question['id'] ?? null;
+
+		if (
+			$question_id
+			&& (
+				'multiple_question' !== get_post_type( $question_id )
+				|| ! current_user_can( get_post_type_object( 'course' )->cap->edit_post, $question_id )
+			)
+		) {
+			return new WP_Error( 'sensei_lesson_quiz_question_not_available', '', $question_id );
+		}
+
+		if ( ! isset( $question['options'] ) ) {
+			$question['options'] = [];
+		}
+
+		$category             = null;
+		$question_id          = (int) $question['id'] ?? null;
+		$question_number      = (int) $question['options']['number'];
+		$question_category_id = (int) $question['options']['category'];
+
+		if ( $question_category_id ) {
+			$question_category = get_term( $question_category_id, 'question-category' );
+		}
+
+		if ( ! $question_category || is_wp_error( $question_category ) ) {
+			return new WP_Error( 'sensei_lesson_quiz_question_invalid_category', esc_html__( 'Invalid question category selected', 'sensei-lms' ), $question_id );
+		}
+
+		if ( ! $question_number ) {
+			$question_number = 1;
+		}
+
+		$category = get_term( $question_category, 'question-category' );
+
+		// translators: Placeholders are the question number and the question category name.
+		$post_title = sprintf( esc_html__( '%1$s Question(s) from %2$s', 'sensei-lms' ), $question_number, $category->name );
+
+		$post_args = [
+			'ID'          => $question_id,
+			'post_title'  => $post_title,
+			'post_status' => 'publish',
+			'post_type'   => 'multiple_question',
+			'meta_input'  => [
+				'category' => $category->term_id,
+				'number'   => $question_number,
+			],
+		];
+
+		$result = wp_insert_post( $post_args );
+
+		/**
+		 * This action is triggered when a category question is created or updated by the lesson quiz REST endpoint.
+		 *
+		 * @since 3.9.0
+		 * @hook  sensei_rest_api_category_question_saved
+		 *
+		 * @param {int|WP_Error} $result   Result of wp_insert_post. Post ID on success or WP_Error on failure.
+		 * @param {array}        $question The question JSON arguments.
+		 */
+		do_action( 'sensei_rest_api_category_question_saved', $result, $question );
+
+		return $result;
+	}
+
+	/**
 	 * Helper method to save or update a question.
 	 *
 	 * @param array  $question The question JSON array.
@@ -399,8 +472,8 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			'type'    => 'category-question',
 			'id'      => $question->ID,
 			'options' => [
-				'term'   => $category,
-				'number' => $number,
+				'category' => $category,
+				'number'   => $number,
 			],
 		];
 	}
