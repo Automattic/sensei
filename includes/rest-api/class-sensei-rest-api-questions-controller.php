@@ -87,6 +87,11 @@ class Sensei_REST_API_Questions_Controller extends WP_REST_Posts_Controller {
 		$description = $attributes['description'];
 		unset( $attributes['description'] );
 
+		// For auto-draft questions, just pass back the `post_content` when it already has the quiz question block.
+		if ( has_block( 'sensei-lms/quiz-question', $question ) ) {
+			return $question->post_content;
+		}
+
 		// Wrap legacy question description in a paragraph block.
 		if ( ! has_blocks( $description ) ) {
 			$description = serialize_block(
