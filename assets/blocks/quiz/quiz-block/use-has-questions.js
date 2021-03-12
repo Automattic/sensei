@@ -1,8 +1,8 @@
 /**
  * WordPress dependencies
  */
-import { useEffect } from '@wordpress/element';
-import { dispatch, useSelect, select as selectData } from '@wordpress/data';
+import { useCallback, useEffect } from '@wordpress/element';
+import { useSelect, select as selectData, useDispatch } from '@wordpress/data';
 
 /**
  * Monitor for questions and disable the lesson quiz when none have been added.
@@ -16,28 +16,31 @@ export const useHasQuestions = ( clientId ) => {
 			.filter( ( block ) => !! block.attributes.title )
 	);
 
+	const { editPost } = useDispatch( 'core/editor' );
+	const setQuizHasQuestions = useCallback(
+		( on ) =>
+			editPost( {
+				meta: { _quiz_has_questions: on ? 1 : null },
+			} ),
+		[ editPost ]
+	);
+
 	// Monitor for valid questions.
 	useEffect( () => {
 		const { _quiz_has_questions: quizHasQuestions } =
 			selectData( 'core/editor' ).getEditedPostAttribute( 'meta' ) || {};
 
-		if ( questionBlocks.length ) {
-			dispatch( 'core/editor' ).editPost( {
-				meta: { _quiz_has_questions: 1 },
-			} );
-		} else if ( quizHasQuestions ) {
-			dispatch( 'core/editor' ).editPost( {
-				meta: { _quiz_has_questions: null },
-			} );
+		if ( ! quizHasQuestions && questionBlocks.length ) {
+			setQuizHasQuestions( true );
 		}
-	}, [ questionBlocks ] );
+		if ( quizHasQuestions && ! questionBlocks.length ) {
+			setQuizHasQuestions( false );
+		}
+	}, [ questionBlocks, setQuizHasQuestions ] );
 
 	// Monitor for quiz block removal.
 	useEffect( () => {
-		return () => {
-			dispatch( 'core/editor' ).editPost( {
-				meta: { _quiz_has_questions: null },
-			} );
-		};
+		setQuizHasQuestions( false );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 };
