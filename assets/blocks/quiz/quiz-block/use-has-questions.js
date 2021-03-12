@@ -18,10 +18,16 @@ export const useHasQuestions = ( clientId ) => {
 
 	const { editPost } = useDispatch( 'core/editor' );
 	const setQuizHasQuestions = useCallback(
-		( on ) =>
-			editPost( {
-				meta: { _quiz_has_questions: on ? 1 : null },
-			} ),
+		( on ) => {
+			const { _quiz_has_questions: savedValue } =
+				selectData( 'core/editor' ).getCurrentPostAttribute( 'meta' ) ||
+				{};
+			// Don't send an update to null if the meta is already unset.
+			const emptyValue = savedValue ? null : undefined;
+			return editPost( {
+				meta: { _quiz_has_questions: on ? 1 : emptyValue },
+			} );
+		},
 		[ editPost ]
 	);
 
