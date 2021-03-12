@@ -23,11 +23,10 @@ export const useAutoInserter = (
 	parentProps
 ) => {
 	const [ autoBlockClientId, setAutoBlockClientId ] = useState( null );
-	const { clientId, isSelected } = parentProps;
+	const { clientId } = parentProps;
 	const {
 		__unstableMarkNextChangeAsNotPersistent: markNextChangeAsNotPersistent = noop,
 		insertBlock,
-		removeBlock,
 	} = useDispatch( 'core/block-editor' );
 
 	const blocks = useSelect( ( select ) =>
@@ -52,14 +51,6 @@ export const useAutoInserter = (
 		selectFirstBlock,
 	] );
 
-	const hasSelected =
-		useSelect( ( select ) =>
-			select( 'core/block-editor' ).hasSelectedInnerBlock(
-				clientId,
-				true
-			)
-		) || isSelected;
-
 	const lastBlock = blocks.length && blocks[ blocks.length - 1 ];
 	const hasEmptyLastBlock = lastBlock && ! lastBlock.attributes.title;
 	const hasAutoBlock =
@@ -73,25 +64,13 @@ export const useAutoInserter = (
 
 	useEffect( () => {
 		if (
-			hasSelected &&
 			! hasEmptyLastBlock &&
 			( ! hasAutoBlock || lastBlock.clientId === autoBlockClientId )
 		) {
 			createAndInsertBlock();
 		}
-		if ( ! hasSelected ) {
-			if (
-				hasEmptyLastBlock &&
-				lastBlock.clientId === autoBlockClientId &&
-				1 !== blocks.length
-			) {
-				markNextChangeAsNotPersistent();
-				removeBlock( lastBlock.clientId, false );
-			}
-			setAutoBlockClientId( null );
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ hasSelected, hasEmptyLastBlock, hasAutoBlock ] );
+		//eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ hasEmptyLastBlock, hasAutoBlock ] );
 
 	const isAutoBlockSelected = useSelect(
 		( select ) =>
