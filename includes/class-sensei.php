@@ -11,9 +11,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.0.0
  */
 class Sensei_Main {
-	const COMMENT_COUNT_TRANSIENT_PREFIX = 'sensei_comment_counts_';
-	const LEGACY_FLAG_OPTION             = 'sensei-legacy-flags';
-	const LEGACY_FLAG_WITH_FRONT         = 'with_front';
+	const COMMENT_COUNT_TRANSIENT_PREFIX       = 'sensei_comment_counts_';
+	const LEGACY_FLAG_OPTION                   = 'sensei-legacy-flags';
+	const LEGACY_FLAG_WITH_FRONT               = 'with_front';
+	const LEGACY_FLAG_MULTIPLE_QUESTIONS_EXIST = 'multiple_questions';
 
 	/**
 	 * @var string
@@ -425,6 +426,8 @@ class Sensei_Main {
 		// Setup Wizard.
 		$this->setup_wizard = Sensei_Setup_Wizard::instance();
 
+		Sensei_Scheduler::init();
+
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
 			// Load Admin Class
@@ -654,7 +657,7 @@ class Sensei_Main {
 	 * @param bool   $value Boolean value to set.
 	 */
 	public function set_legacy_flag( $flag, $value ) {
-		$legacy_flags          = json_decode( get_option( self::LEGACY_FLAG_OPTION, '{}' ), true );
+		$legacy_flags          = $this->get_legacy_flags();
 		$legacy_flags[ $flag ] = (bool) $value;
 
 		update_option( self::LEGACY_FLAG_OPTION, wp_json_encode( $legacy_flags ) );
@@ -669,13 +672,22 @@ class Sensei_Main {
 	 * @return bool
 	 */
 	public function get_legacy_flag( $flag, $default = false ) {
-		$legacy_flags = json_decode( get_option( self::LEGACY_FLAG_OPTION, '{}' ), true );
+		$legacy_flags = $this->get_legacy_flags();
 
 		if ( isset( $legacy_flags[ $flag ] ) ) {
 			return (bool) $legacy_flags[ $flag ];
 		}
 
 		return (bool) $default;
+	}
+
+	/**
+	 * Get the legacy flags that have been set.
+	 *
+	 * @return array
+	 */
+	public function get_legacy_flags() {
+		return json_decode( get_option( self::LEGACY_FLAG_OPTION, '{}' ), true );
 	}
 
 	/**

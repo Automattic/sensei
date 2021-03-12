@@ -24,8 +24,8 @@ trait Sensei_Data_Port_Test_Helpers {
 	 * @param string               $log_entry Log message to look for.
 	 * @param null                 $message   Message to show in assertion.
 	 */
-	protected function assertJobHasLogEntry( Sensei_Data_Port_Job $job, $log_entry, $message = null ) {
-		$logs = $job->get_logs();
+	protected function assertJobHasLogEntry( Sensei_Data_Port_Job $job, $log_entry, $message = '' ) {
+		$logs      = $job->get_logs();
 		$has_entry = false;
 		foreach ( $logs as $log ) {
 			if ( $log_entry === $log['message'] ) {

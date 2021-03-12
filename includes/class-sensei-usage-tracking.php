@@ -29,6 +29,9 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 
 		// Filters for for events to watch and report.
 		add_action( 'activated_plugin', [ $this, 'log_wccom_plugin_install' ] );
+
+		// Log when Sensei is updated.
+		add_action( 'sensei_log_update', [ $this, 'log_update' ] );
 	}
 
 	/*
@@ -120,6 +123,28 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 	 * Hooks.
 	 */
 
+	/**
+	 * Log an update event.
+	 *
+	 * @since 3.9.0
+	 * @access internal
+	 *
+	 * @param array $args Deferred event parameters.
+	 */
+	public function log_update( $args ) {
+		sensei_log_event(
+			'plugin_update',
+			$args
+		);
+	}
+
+	/**
+	 * Add setting field.
+	 *
+	 * @param array $fields Setting fields.
+	 *
+	 * @return array
+	 */
 	public function add_setting_field( $fields ) {
 		$fields[ self::SENSEI_SETTING_NAME ] = array(
 			'name'        => __( 'Enable usage tracking', 'sensei-lms' ),
@@ -242,6 +267,11 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 		$system_data['version']               = Sensei()->version;
 		$system_data['wcpc_version']          = defined( 'SENSEI_WC_PAID_COURSES_VERSION' ) ? SENSEI_WC_PAID_COURSES_VERSION : null;
 		$system_data['is_legacy_quiz_editor'] = Sensei()->quiz->is_block_based_editor_enabled() ? 0 : 1;
+
+		$legacy_flags = Sensei()->get_legacy_flags();
+		foreach ( $legacy_flags as $flag => $value ) {
+			$system_data[ 'legacy_flag_' . sanitize_key( $flag ) ] = $value ? 1 : 0;
+		}
 
 		return array_merge( $system_data, parent::get_system_data() );
 	}
