@@ -8,6 +8,7 @@ import { dispatch } from '@wordpress/data';
  * Internal dependencies
  */
 import questionBlock from './question-block';
+import categoryQuestionBlock from './category-question-block';
 
 /**
  * External dependencies
@@ -107,6 +108,10 @@ function prepareQuestionBlock( attributes, innerBlocks ) {
  */
 export function parseQuestionBlocks( blocks ) {
 	const questions = blocks?.map( ( block ) => {
+		if ( block.attributes.type === 'category-question' ) {
+			return block.attributes;
+		}
+
 		return {
 			...block.attributes,
 			description: getBlockContent( block ),
@@ -130,6 +135,10 @@ export function parseQuestionBlocks( blocks ) {
  * @return {QuizQuestion} Block.
  */
 export function createQuestionBlock( question ) {
+	if ( question.type === 'category-question' ) {
+		return createBlock( categoryQuestionBlock.name, question, [] );
+	}
+
 	const [ attributes, innerBlocks ] = prepareQuestionBlock(
 		question,
 		( question.description &&
