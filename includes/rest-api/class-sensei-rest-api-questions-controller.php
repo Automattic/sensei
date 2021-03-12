@@ -131,7 +131,7 @@ class Sensei_REST_API_Questions_Controller extends WP_REST_Posts_Controller {
 			return $response;
 		}
 
-		$question_id = $this->update_question( $request['id'], $block );
+		$question_id = $this->update_question( $request['id'], $block, $request['status'] );
 
 		if ( is_wp_error( $question_id ) ) {
 			switch ( $question_id->get_error_code() ) {
@@ -176,12 +176,13 @@ class Sensei_REST_API_Questions_Controller extends WP_REST_Posts_Controller {
 	/**
 	 * Update question with attributes from the block.
 	 *
-	 * @param int   $id    Question ID.
-	 * @param array $block Question block.
+	 * @param int    $id     Question ID.
+	 * @param array  $block  Question block.
+	 * @param string $status Question status.
 	 *
 	 * @return int|WP_Error Question id on success.
 	 */
-	private function update_question( $id, $block ) {
+	private function update_question( $id, $block, $status ) {
 		$attrs       = $block['attrs'];
 		$description = serialize_blocks( $block['innerBlocks'] );
 		$question    = array_merge(
@@ -192,7 +193,7 @@ class Sensei_REST_API_Questions_Controller extends WP_REST_Posts_Controller {
 			]
 		);
 
-		return $this->save_question( $question );
+		return $this->save_question( $question, $status );
 	}
 
 	/**

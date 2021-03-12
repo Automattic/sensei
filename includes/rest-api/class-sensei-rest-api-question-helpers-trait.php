@@ -64,11 +64,12 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	/**
 	 * Helper method to save or update a question.
 	 *
-	 * @param array $question The question JSON array.
+	 * @param array  $question The question JSON array.
+	 * @param string $status Question status.
 	 *
 	 * @return int|WP_Error Question id on success.
 	 */
-	private function save_question( $question ) {
+	private function save_question( $question, $status = 'publish' ) {
 		$question_id = $question['id'] ?? null;
 
 		if (
@@ -101,13 +102,18 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		$post_args = [
 			'ID'          => $question_id,
 			'post_title'  => $question['title'],
-			'post_status' => 'publish',
+			'post_status' => $status,
 			'post_type'   => 'question',
 			'meta_input'  => $this->get_question_meta( $question ),
 			'tax_input'   => [
 				'question-type' => $question['type'],
 			],
 		];
+
+		// Force publish the question if it's part of a quiz.
+		if ( ! empty( get_post_meta( $question_id, '_quiz_id', false ) ) ) {
+			$post_args['post_status'] = 'publish';
+		}
 
 		if ( isset( $question['description'] ) ) {
 			$post_args['post_content'] = $question['description'];
