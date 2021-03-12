@@ -136,6 +136,10 @@ export function parseQuestionBlocks( blocks ) {
  */
 export function createQuestionBlock( question ) {
 	if ( question.type === 'category-question' ) {
+		if ( ! window.sensei_quiz_blocks.category_question_enabled ) {
+			return createBlock( questionBlock.name, {}, [] );
+		}
+
 		return createBlock( categoryQuestionBlock.name, question, [] );
 	}
 

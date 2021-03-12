@@ -33,6 +33,8 @@ class Sensei_Quiz_Blocks extends Sensei_Blocks_Initializer {
 
 		Sensei()->assets->enqueue( 'sensei-quiz-blocks', 'blocks/quiz/index.js', [], true );
 		Sensei()->assets->enqueue( 'sensei-quiz-blocks-editor', 'blocks/quiz/quiz.editor.css', [ 'sensei-shared-blocks-editor-style', 'sensei-editor-components-style' ] );
+
+		wp_localize_script( 'sensei-quiz-blocks', 'sensei_quiz_blocks', [ 'category_question_enabled' => Sensei()->feature_flags->is_enabled( 'block_editor_enable_category_questions' ) ] );
 	}
 
 	/**
@@ -53,7 +55,10 @@ class Sensei_Quiz_Blocks extends Sensei_Blocks_Initializer {
 
 		new Sensei_Block_Quiz();
 		new Sensei_Block_Quiz_Question();
-		new Sensei_Block_Quiz_Category_Question();
+
+		if ( Sensei()->feature_flags->is_enabled( 'block_editor_enable_category_questions' ) ) {
+			new Sensei_Block_Quiz_Category_Question();
+		}
 
 		$post_type_object = get_post_type_object( 'question' );
 
