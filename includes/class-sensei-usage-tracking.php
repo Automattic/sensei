@@ -29,6 +29,9 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 
 		// Filters for for events to watch and report.
 		add_action( 'activated_plugin', [ $this, 'log_wccom_plugin_install' ] );
+
+		// Log when Sensei is updated.
+		add_action( 'sensei_log_update', [ $this, 'log_update' ] );
 	}
 
 	/*
@@ -120,6 +123,28 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 	 * Hooks.
 	 */
 
+	/**
+	 * Log an update event.
+	 *
+	 * @since 3.9.0
+	 * @access internal
+	 *
+	 * @param array $args Deferred event parameters.
+	 */
+	public function log_update( $args ) {
+		sensei_log_event(
+			'plugin_update',
+			$args
+		);
+	}
+
+	/**
+	 * Add setting field.
+	 *
+	 * @param array $fields Setting fields.
+	 *
+	 * @return array
+	 */
 	public function add_setting_field( $fields ) {
 		$fields[ self::SENSEI_SETTING_NAME ] = array(
 			'name'        => __( 'Enable usage tracking', 'sensei-lms' ),

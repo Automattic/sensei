@@ -71,6 +71,10 @@ class Sensei_Updates {
 			return;
 		}
 
+		if ( $this->is_upgrade ) {
+			$this->log_update();
+		}
+
 		$this->v3_0_check_legacy_enrolment();
 		$this->v3_7_check_rewrite_front();
 		$this->v3_7_add_comment_indexes();
@@ -301,6 +305,89 @@ class Sensei_Updates {
 		);
 
 		return array_map( 'intval', $query->posts );
+	}
+
+	/**
+	 * Logs the system update.
+	 */
+	private function log_update() {
+		wp_schedule_single_event(
+			time(),
+			'sensei_log_update',
+			[
+				[
+					'from_version'       => $this->current_version,
+					'to_version'         => Sensei()->version,
+					'days_since_release' => $this->get_days_since_release(),
+				],
+			]
+		);
+	}
+
+	/**
+	 * Get the days since release.
+	 *
+	 * @return int|null
+	 */
+	private function get_days_since_release() {
+		$releases = $this->get_changelog_release_dates( Sensei()->version );
+
+		if ( ! isset( $releases[ Sensei()->version ] ) ) {
+			return null;
+		}
+
+		$today = ( new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) ) )->setTime( 0, 0, 0 );
+		$diff  = $releases[ Sensei()->version ]->diff( $today );
+		$days  = false !== $diff->d ? (int) $diff->d : null;
+
+		return $days;
+	}
+
+	/**
+	 * Get the release dates from the changelog.
+	 *
+	 * @param string $version Filter to just include a single version (Optional).
+	 *
+	 * @return DateTimeImmutable[]
+	 */
+	private function get_changelog_release_dates( $version = null ) {
+		$releases  = [];
+		$changelog = $this->get_changelog();
+		if ( ! $changelog ) {
+			return $releases;
+		}
+
+		$version_match = '[\d\.\-a-z]+';
+		if ( $version ) {
+			$version_match = preg_quote( $version, '/' );
+		}
+
+		preg_match_all( "/((?'year'\d{4})[\-\.](?'month'\d{1,2})[\-\.](?'day'\d{1,2}).*version\s+(?'version'{$version_match}))[^\S]/", $changelog, $releases_raw, PREG_SET_ORDER );
+
+		foreach ( $releases_raw as $release ) {
+			if ( empty( $release['version'] ) || empty( $release['year'] ) || empty( $release['month'] ) || empty( $release['day'] ) ) {
+				continue;
+			}
+
+			$releases[ $release['version'] ] = DateTimeImmutable::createFromFormat( 'Y-m-d H:i:s', sprintf( '%04d-%02d-%02d 00:00:00', $release['year'], $release['month'], $release['day'] ), new DateTimeZone( 'UTC' ) );
+		}
+
+		return $releases;
+	}
+
+	/**
+	 * Get the changelog contents.
+	 *
+	 * @return false|string
+	 */
+	protected function get_changelog() {
+		$changelog_path = dirname( __DIR__ ) . DIRECTORY_SEPARATOR . 'changelog.txt';
+		if ( ! is_readable( $changelog_path ) ) {
+			return false;
+		}
+
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file usage.
+		return file_get_contents( $changelog_path );
 	}
 
 	/**
