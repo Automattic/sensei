@@ -27,6 +27,9 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	private function get_question_schema( string $type ): array {
 		$schema = $this->get_common_question_properties_schema();
 		switch ( $type ) {
+			case 'category-question':
+				$schema = $this->get_category_question_schema();
+				break;
 			case 'multiple-choice':
 				$schema = $this->get_multiple_choice_schema();
 				break;
