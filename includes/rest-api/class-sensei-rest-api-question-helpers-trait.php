@@ -89,7 +89,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		}
 
 		$category             = null;
-		$question_id          = (int) $question['id'] ?? null;
+		$question_id          = isset( $question['id'] ) ? (int) $question['id'] : null;
 		$question_number      = (int) $question['options']['number'];
 		$question_category_id = (int) $question['options']['category'];
 
