@@ -25,7 +25,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 * @return array The question schema.
 	 */
 	private function get_question_schema( string $type ): array {
-		$schema = [];
+		$schema = $this->get_common_question_properties_schema();
 		switch ( $type ) {
 			case 'multiple-choice':
 				$schema = $this->get_multiple_choice_schema();
@@ -53,8 +53,8 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		 * @since  3.9.0
 		 * @hook   sensei_rest_api_schema_question_type
 		 *
-		 * @param  {Array} $schema Schema for a single question.
-		 * @param  {string} $type Question type.
+		 * @param  {Array}  $schema Schema for a single question.
+		 * @param  {string} $type   Question type.
 		 *
 		 * @return {array}
 		 */
