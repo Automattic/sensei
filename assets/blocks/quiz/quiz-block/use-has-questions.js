@@ -46,7 +46,9 @@ export const useHasQuestions = ( clientId ) => {
 
 	// Monitor for quiz block removal.
 	useEffect( () => {
-		setQuizHasQuestions( false );
+		return () => {
+			setQuizHasQuestions( false );
+		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 };
