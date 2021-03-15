@@ -100,15 +100,18 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		$is_new = null === $question_id;
 
 		$post_args = [
-			'ID'          => $question_id,
-			'post_title'  => $question['title'],
-			'post_status' => $status,
-			'post_type'   => 'question',
-			'meta_input'  => $this->get_question_meta( $question ),
-			'tax_input'   => [
+			'ID'         => $question_id,
+			'post_title' => $question['title'],
+			'post_type'  => 'question',
+			'meta_input' => $this->get_question_meta( $question ),
+			'tax_input'  => [
 				'question-type' => $question['type'],
 			],
 		];
+
+		if ( $status ) {
+			$post_args['post_status'] = $status;
+		}
 
 		// Force publish the question if it's part of a quiz.
 		if ( ! empty( get_post_meta( $question_id, '_quiz_id', false ) ) ) {
