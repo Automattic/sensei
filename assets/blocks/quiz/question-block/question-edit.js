@@ -9,7 +9,7 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { useBlockIndex } from '../../../shared/blocks/block-index';
+import { useQuestionIndex } from '../question-index';
 import SingleLineInput from '../../../shared/blocks/single-line-input';
 import { useHasSelected } from '../../../shared/helpers/blocks';
 import types from '../answer-blocks';
@@ -60,7 +60,7 @@ const QuestionEdit = ( props ) => {
 		}
 	}, [ clientId, selectBlock ] );
 
-	const index = useBlockIndex( clientId );
+	const index = useQuestionIndex( clientId );
 	const AnswerBlock = type && types[ type ];
 
 	const hasSelected = useHasSelected( props );

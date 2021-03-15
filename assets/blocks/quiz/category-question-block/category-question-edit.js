@@ -6,7 +6,7 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { useBlockIndex } from '../../../shared/blocks/block-index';
+import { useQuestionIndex } from '../question-index';
 import { useQuestionCategories } from '../question-categories';
 import CategoryQuestionSettings from './category-question-settings';
 
@@ -25,7 +25,7 @@ const CategoryQuestionEdit = ( props ) => {
 		},
 		clientId,
 	} = props;
-	const index = useBlockIndex( clientId );
+	const index = useQuestionIndex( clientId );
 	const [ , getCategoryTermById ] = useQuestionCategories();
 
 	const nextNumber = index;
