@@ -23,6 +23,8 @@ jest.mock( '@wordpress/data', () => {
 	};
 } );
 
+const setAttributesMock = jest.fn();
+
 describe( '<QuizSettings />', () => {
 	it( 'Should render the settings with the defined values', () => {
 		const { queryByLabelText, queryAllByLabelText } = render(
@@ -37,6 +39,7 @@ describe( '<QuizSettings />', () => {
 						showQuestions: 5,
 					},
 				} }
+				setAttributes={ setAttributesMock }
 			/>
 		);
 
@@ -77,7 +80,6 @@ describe( '<QuizSettings />', () => {
 			randomQuestionOrder: true,
 			showQuestions: 0,
 		};
-		const setAttributesMock = jest.fn();
 
 		const { queryByLabelText, queryAllByLabelText } = render(
 			<QuizSettings
