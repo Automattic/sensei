@@ -114,7 +114,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		}
 
 		// Force publish the question if it's part of a quiz.
-		if ( ! empty( get_post_meta( $question_id, '_quiz_id', false ) ) ) {
+		if ( $this->is_question_used_in_quiz( $question_id ) ) {
 			$post_args['post_status'] = 'publish';
 		}
 
@@ -141,6 +141,47 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		do_action( 'sensei_rest_api_question_saved', $result, $question['type'], $question );
 
 		return $result;
+	}
+
+	/**
+	 * Check if question is being used in a quiz.
+	 *
+	 * @param int $question_id Question ID.
+	 *
+	 * @return boolean
+	 */
+	private function is_question_used_in_quiz( $question_id ) {
+		if ( ! empty( get_post_meta( $question_id, '_quiz_id', false ) ) ) {
+			return true;
+		} else {
+			$question_categories = wp_get_post_terms( $question_id, 'question-category' );
+
+			foreach ( $question_categories as $question_category ) {
+				$multiple_questions = get_posts(
+					[
+						'post_type'      => 'multiple_question',
+						'posts_per_page' => 1,
+						// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Needed to identify if question is being used.
+						'meta_query'     => [
+							[
+								'key'   => 'category',
+								'value' => $question_category->term_id,
+							],
+							[
+								'key'     => '_quiz_id',
+								'compare' => 'EXISTS',
+							],
+						],
+					]
+				);
+
+				if ( ! empty( $multiple_questions ) ) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	/**
