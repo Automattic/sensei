@@ -12,6 +12,7 @@ import { plus } from '@wordpress/icons';
  */
 import quizIcon from '../../../icons/quiz-icon';
 import questionBlock from '../question-block';
+import categoryQuestionBlock from '../category-question-block';
 import QuestionsModal from './questions-modal';
 import { useAddExistingQuestions } from './use-add-existing-questions';
 
@@ -26,13 +27,8 @@ const QuizAppender = ( { clientId } ) => {
 	const { insertBlock } = useDispatch( 'core/block-editor' );
 	const [ isModalOpen, setModalOpen ] = useState( false );
 
-	const addNewQuestionBlock = () =>
-		insertBlock(
-			createBlock( questionBlock.name ),
-			undefined,
-			clientId,
-			true
-		);
+	const addNewQuestionBlock = ( block ) =>
+		insertBlock( createBlock( block.name ), undefined, clientId, true );
 
 	return (
 		<div className="sensei-lms-quiz-block__appender block-editor-default-block-appender">
@@ -46,7 +42,13 @@ const QuizAppender = ( { clientId } ) => {
 					{
 						title: __( 'New Question', 'sensei-lms' ),
 						icon: questionBlock.icon,
-						onClick: addNewQuestionBlock,
+						onClick: () => addNewQuestionBlock( questionBlock ),
+					},
+					{
+						title: __( 'New Category Question', 'sensei-lms' ),
+						icon: quizIcon,
+						onClick: () =>
+							addNewQuestionBlock( categoryQuestionBlock ),
 					},
 					{
 						title: __( 'Existing Question(s)', 'sensei-lms' ),

@@ -23,8 +23,11 @@ const CategoryQuestionSettings = ( {
 	attributes: { options = {} },
 	setAttributes,
 } ) => {
-	const setOptions = ( next ) =>
-		setAttributes( { options: { ...options, ...next } } );
+	const setOptions = ( next, otherAttributes = {} ) =>
+		setAttributes( {
+			...otherAttributes,
+			options: { ...options, ...next },
+		} );
 
 	const [
 		questionCategories,
@@ -79,11 +82,18 @@ const CategoryQuestionSettings = ( {
 									);
 								}
 
-								setOptions( {
-									number: numberQuestions,
-									category:
-										parseInt( nextCategory, 10 ) ?? null,
-								} );
+								setOptions(
+									{
+										number: numberQuestions,
+										category:
+											parseInt( nextCategory, 10 ) ??
+											null,
+									},
+									{
+										categoryName:
+											nextQuestionCategory?.name,
+									}
+								);
 							} }
 						/>
 						<NumberControl
