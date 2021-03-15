@@ -9,6 +9,7 @@ import {
 	ToggleControl,
 } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
+import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -43,15 +44,26 @@ const QuizSettings = ( {
 		setAttributes( { options: { ...options, [ optionKey ]: value } } );
 
 	const questionCount = useSelect(
-		( select ) =>
-			select( 'core/block-editor' )
+		( select ) => {
+			const count = select( 'core/block-editor' )
 				.getBlock( clientId )
 				.innerBlocks.filter(
 					( questionBlock ) =>
 						undefined !== questionBlock?.attributes?.title
-				).length,
+				).length;
+
+			return count;
+		},
 		[ clientId ]
 	);
+
+	useEffect( () => {
+		if ( showQuestions > questionCount ) {
+			setAttributes( {
+				options: { ...options, showQuestions: questionCount },
+			} );
+		}
+	}, [ options, questionCount, setAttributes, showQuestions ] );
 
 	return (
 		<InspectorControls>
