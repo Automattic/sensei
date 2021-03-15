@@ -26,6 +26,7 @@ const READ_ONLY_ATTRIBUTES = [
 	'shared',
 	'options.studentHelp',
 	'media',
+	'categoryName',
 ];
 
 /**

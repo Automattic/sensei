@@ -7,7 +7,11 @@ import apiFetch from '@wordpress/api-fetch';
 /**
  * Internal dependencies
  */
-import { createQuestionBlock, findQuestionBlock } from '../data';
+import {
+	createQuestionBlock,
+	findQuestionBlock,
+	isQuestionEmpty,
+} from '../data';
 
 const API_PATH = '/sensei-internal/v1/question-options';
 
@@ -37,7 +41,8 @@ export const useAddExistingQuestions = ( clientId ) => {
 		const lastBlock =
 			questionBlocks.length &&
 			questionBlocks[ questionBlocks.length - 1 ];
-		const hasEmptyLastBlock = lastBlock && ! lastBlock.attributes.title;
+		const hasEmptyLastBlock =
+			lastBlock && isQuestionEmpty( lastBlock.attributes );
 
 		let insertIndex = questionBlocks.length;
 

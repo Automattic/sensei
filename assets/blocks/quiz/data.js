@@ -32,7 +32,18 @@ import { mapKeys, mapValues, isObject } from 'lodash';
  * @property {string} title       Question title
  * @property {string} description Question description blocks
  * @property {Object} answers     Question answer settings
- * @property {Object} settings    Question settings
+ * @property {Object} options     Question options.
+ */
+
+/**
+ * Quiz category question data.
+ *
+ * @typedef {Object} QuizCategoryQuestion
+ * @property {number} id               Question ID.
+ * @property {string} type             Question type
+ * @property {Object} options          Question settings
+ * @property {number} options.category Category for question.
+ * @property {number} options.number   Number of questions to show from category.
  */
 
 /**
@@ -120,7 +131,7 @@ export function parseQuestionBlocks( blocks ) {
 
 	const lastQuestion = questions.pop();
 
-	if ( lastQuestion.title ) {
+	if ( ! isQuestionEmpty( lastQuestion ) ) {
 		questions.push( lastQuestion );
 	}
 
@@ -156,13 +167,19 @@ export function createQuestionBlock( question ) {
 /**
  * Find a question block based on question ID, or title if ID is missing.
  *
- * @param {Array}        blocks
- * @param {QuizQuestion} item
+ * @param {Array}                             blocks
+ * @param {QuizQuestion|QuizCategoryQuestion} item
  */
-export const findQuestionBlock = ( blocks, { id, title } ) => {
+export const findQuestionBlock = (
+	blocks,
+	{ id, title, options: { category } }
+) => {
 	const compare = ( { attributes } ) =>
 		id === attributes.id ||
-		( ! attributes.id && attributes.title && attributes.title === title );
+		( ! attributes.id && attributes.title && attributes.title === title ) ||
+		( ! attributes.id &&
+			attributes.options.category &&
+			attributes.options.category === category );
 	return blocks.find( compare );
 };
 
@@ -184,4 +201,19 @@ export const normalizeAttributes = ( options, mapFunction ) => {
 
 		return value;
 	} );
+};
+
+/**
+ * Checks whether a bock is empty.
+ *
+ * @param {Array} attributes Question attributes.
+ *
+ * @return {boolean} If the question is empty.
+ */
+export const isQuestionEmpty = ( attributes ) => {
+	if ( attributes.type === 'category-question' ) {
+		return ! attributes.options.category;
+	}
+
+	return ! attributes.title;
 };

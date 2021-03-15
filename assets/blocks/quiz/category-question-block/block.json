@@ -14,8 +14,7 @@
       "default": "category-question"
     },
 		"categoryName": {
-			"type": "string",
-			"source": false
+			"type": "string"
 		},
     "options": {
       "type": "object",
