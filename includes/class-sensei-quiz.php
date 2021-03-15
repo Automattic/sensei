@@ -1222,7 +1222,7 @@ class Sensei_Quiz {
 		$sensei_question_loop['total']     = 0;
 		$sensei_question_loop['questions'] = array();
 
-		$questions = Sensei()->lesson->lesson_quiz_questions( get_the_ID() );
+		$questions = Sensei()->lesson->lesson_quiz_questions( get_the_ID(), 'publish' );
 
 		if ( count( $questions ) > 0 ) {
 
