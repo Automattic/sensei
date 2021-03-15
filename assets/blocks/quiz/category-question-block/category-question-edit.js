@@ -1,12 +1,14 @@
 /**
  * WordPress dependencies
  */
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
 import { useBlockIndex } from '../../../shared/blocks/block-index';
+import { useQuestionCategories } from '../question-categories';
+import CategoryQuestionSettings from './category-question-settings';
 
 /**
  * Quiz category question block editor.
@@ -18,39 +20,57 @@ import { useBlockIndex } from '../../../shared/blocks/block-index';
  */
 const CategoryQuestionEdit = ( props ) => {
 	const {
-		attributes: { categoryName, options },
+		attributes: {
+			options: { number = 1, category },
+		},
 		clientId,
 	} = props;
-	const number = options.number ?? 1;
 	const index = useBlockIndex( clientId );
+	const [ , getCategoryTermById ] = useQuestionCategories();
 
 	const nextNumber = index;
 	let range = nextNumber;
 	if ( number !== 1 ) {
-		range += '-' + ( nextNumber + number - 1 );
+		range += ' - ' + ( nextNumber + number - 1 );
 	}
 
 	const questionIndex = (
 		<h2 className="sensei-lms-question-block__index">{ range }.</h2>
 	);
 
-	const categoryDescription = sprintf(
-		// translators: Temporary placeholder is either the category name or ID.
-		__( 'Term %s', 'sensei-lms' ),
-		categoryName ? categoryName : options.category
-	);
+	const categoryName =
+		getCategoryTermById( category )?.name ?? props.attributes.categoryName;
 
 	return (
-		<div
-			className={ `sensei-lms-question-block ${
-				! options.category ? 'is-draft' : ''
-			}` }
-		>
-			{ questionIndex }
-			<h2 className="sensei-lms-question-block__title">
-				{ categoryDescription }
-			</h2>
-		</div>
+		<>
+			<CategoryQuestionSettings { ...props } />
+			<div
+				className={ `sensei-lms-question-block ${
+					! category ? 'is-draft' : ''
+				}` }
+			>
+				{ questionIndex }
+				<h2 className="sensei-lms-question-block__title">
+					<strong>
+						{ categoryName ??
+							__( 'Category Question', 'sensei-lms' ) }
+					</strong>
+					{ number &&
+						' (' +
+							sprintf(
+								// translators: placeholder is number of questions to show from category.
+								_n(
+									'%d question',
+									'%d questions',
+									number,
+									'sensei-lms'
+								),
+								number
+							) +
+							')' }
+				</h2>
+			</div>
+		</>
 	);
 };
 
