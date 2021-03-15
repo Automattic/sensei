@@ -57,11 +57,8 @@ class Sensei_Question {
 		 *
 		 * @hook sensei_question_types
 		 *
-		 * @param {array} $types {
-		 *  @type {string} $id   Question type ID.
-		 *  @type {string} $text Question type text.
-		 * }
-		 * @return {array} Associative array of question types.
+		 * @param {string[]} $types Question types.
+		 * @return {string[]} Associative array of question types.
 		 */
 		return apply_filters( 'sensei_question_types', $types );
 	}
