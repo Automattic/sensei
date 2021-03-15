@@ -571,7 +571,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			];
 		}
 
-		/*
+		/**
 		 * Add additional question types to the REST API schema.
 		 *
 		 * @since 3.9.0
