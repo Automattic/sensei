@@ -110,6 +110,10 @@ class Sensei_Blocks {
 	 *                               `register_block_type_from_metadata` if it's defined.
 	 */
 	public static function register_sensei_block( $block_name, $block_args, $file_or_folder = null ) {
+		if ( WP_Block_Type_Registry::get_instance()->is_registered( $block_name ) ) {
+			return;
+		}
+
 		/**
 		 * Filter the args of the Sensei blocks.
 		 *
