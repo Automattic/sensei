@@ -12,7 +12,7 @@ import questionBlock from '../question-block';
 import { useQuizStructure } from '../quiz-store';
 import QuizAppender from './quiz-appender';
 import QuizSettings from './quiz-settings';
-import { useHasQuestions } from './use-has-questions';
+import { useUpdateQuizHasQuestionsMeta } from './use-update-quiz-has-questions-meta';
 
 /**
  * Quiz block editor.
@@ -27,7 +27,7 @@ const QuizEdit = ( props ) => {
 		props
 	);
 
-	useHasQuestions( props.clientId );
+	useUpdateQuizHasQuestionsMeta( props.clientId );
 
 	const { isPostTemplate } = props.attributes;
 
