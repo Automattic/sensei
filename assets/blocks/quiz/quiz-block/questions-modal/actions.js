@@ -34,8 +34,6 @@ const Actions = ( {
 			.then( closeModal )
 			.catch( () => {
 				setErrorAddingSelected( true );
-			} )
-			.finally( () => {
 				setIsAddingSelected( false );
 			} );
 	};
