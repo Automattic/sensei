@@ -1,9 +1,13 @@
 /**
  * WordPress dependencies
  */
-import { RichText } from '@wordpress/block-editor';
 import { FormTokenField } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+
+/**
+ * Internal dependencies
+ */
+import SingleLineInput from '../../../shared/blocks/single-line-input/single-line-input';
 
 /**
  * Question block gap fill answer component.
@@ -24,7 +28,7 @@ const GapFillAnswer = ( {
 	return (
 		<ul className="sensei-lms-question-block__answer sensei-lms-question-block__answer--gap-fill">
 			<li>
-				<RichText
+				<SingleLineInput
 					className="sensei-lms-question-block__answer--gap-fill__text"
 					placeholder={ __( 'Text before the gap', 'sensei-lms' ) }
 					value={ before }
@@ -54,7 +58,7 @@ const GapFillAnswer = ( {
 				) }
 			</li>
 			<li>
-				<RichText
+				<SingleLineInput
 					className="sensei-lms-question-block__answer--gap-fill__text"
 					placeholder={ __( 'Text after the gap', 'sensei-lms' ) }
 					value={ after }
