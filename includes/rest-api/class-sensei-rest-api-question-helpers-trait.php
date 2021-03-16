@@ -25,7 +25,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 * @return array The question schema.
 	 */
 	private function get_question_schema( string $type ): array {
-		$schema = [];
+		$schema = $this->get_common_question_properties_schema();
 		switch ( $type ) {
 			case 'multiple-choice':
 				$schema = $this->get_multiple_choice_schema();
@@ -53,8 +53,8 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		 * @since  3.9.0
 		 * @hook   sensei_rest_api_schema_question_type
 		 *
-		 * @param  {Array} $schema Schema for a single question.
-		 * @param  {string} $type Question type.
+		 * @param  {Array}  $schema Schema for a single question.
+		 * @param  {string} $type   Question type.
 		 *
 		 * @return {array}
 		 */
@@ -64,11 +64,12 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	/**
 	 * Helper method to save or update a question.
 	 *
-	 * @param array $question The question JSON array.
+	 * @param array  $question The question JSON array.
+	 * @param string $status Question status.
 	 *
 	 * @return int|WP_Error Question id on success.
 	 */
-	private function save_question( $question ) {
+	private function save_question( $question, $status = 'publish' ) {
 		$question_id = $question['id'] ?? null;
 
 		if (
@@ -99,15 +100,23 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		$is_new = null === $question_id;
 
 		$post_args = [
-			'ID'          => $question_id,
-			'post_title'  => $question['title'],
-			'post_status' => 'publish',
-			'post_type'   => 'question',
-			'meta_input'  => $this->get_question_meta( $question ),
-			'tax_input'   => [
+			'ID'         => $question_id,
+			'post_title' => $question['title'],
+			'post_type'  => 'question',
+			'meta_input' => $this->get_question_meta( $question ),
+			'tax_input'  => [
 				'question-type' => $question['type'],
 			],
 		];
+
+		if ( $status ) {
+			$post_args['post_status'] = $status;
+		}
+
+		// Force publish the question if it's part of a quiz.
+		if ( $this->is_question_used_in_quiz( $question_id ) ) {
+			$post_args['post_status'] = 'publish';
+		}
 
 		if ( isset( $question['description'] ) ) {
 			$post_args['post_content'] = $question['description'];
@@ -132,6 +141,47 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		do_action( 'sensei_rest_api_question_saved', $result, $question['type'], $question );
 
 		return $result;
+	}
+
+	/**
+	 * Check if question is being used in a quiz.
+	 *
+	 * @param int $question_id Question ID.
+	 *
+	 * @return boolean
+	 */
+	private function is_question_used_in_quiz( $question_id ) {
+		if ( ! empty( get_post_meta( $question_id, '_quiz_id', false ) ) ) {
+			return true;
+		} else {
+			$question_categories = wp_get_post_terms( $question_id, 'question-category' );
+
+			foreach ( $question_categories as $question_category ) {
+				$multiple_questions = get_posts(
+					[
+						'post_type'      => 'multiple_question',
+						'posts_per_page' => 1,
+						// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Needed to identify if question is being used.
+						'meta_query'     => [
+							[
+								'key'   => 'category',
+								'value' => $question_category->term_id,
+							],
+							[
+								'key'     => '_quiz_id',
+								'compare' => 'EXISTS',
+							],
+						],
+					]
+				);
+
+				if ( ! empty( $multiple_questions ) ) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -571,7 +621,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			];
 		}
 
-		/*
+		/**
 		 * Add additional question types to the REST API schema.
 		 *
 		 * @since 3.9.0

@@ -6,6 +6,11 @@ import { PanelBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 /**
+ * Internal dependencies
+ */
+import { QuestionGradeSettings } from '../question-block/settings';
+
+/**
  * Question block settings controls.
  *
  * @param {Object}     props                    Block props.
@@ -29,13 +34,15 @@ const QuestionSettings = ( {
 				title={ __( 'Question Settings', 'sensei-lms' ) }
 				initialOpen={ true }
 			>
-				{ controls.map( ( SettingControl ) => (
-					<SettingControl
-						key={ SettingControl }
-						{ ...props }
-						{ ...{ options, setOptions } }
-					/>
-				) ) }
+				{ [ QuestionGradeSettings, ...controls ].map(
+					( SettingControl ) => (
+						<SettingControl
+							key={ SettingControl }
+							{ ...props }
+							{ ...{ options, setOptions } }
+						/>
+					)
+				) }
 			</PanelBody>
 		</InspectorControls>
 	);

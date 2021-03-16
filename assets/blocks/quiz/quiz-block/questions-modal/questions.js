@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { keyBy, uniq } from 'lodash';
+import { keyBy, uniq, omitBy } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -34,7 +34,7 @@ const Questions = ( {
 		( select ) =>
 			select( 'core' ).getEntityRecords( 'postType', 'question', {
 				per_page: 100,
-				...filters,
+				...omitBy( filters, ( v ) => v === '' ),
 			} ),
 		[ filters ]
 	);

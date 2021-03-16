@@ -244,13 +244,15 @@ class Sensei_REST_API_Questions_Controller_Tests extends WP_Test_REST_TestCase {
 
 		$this->save_question_post(
 			$question_id,
-			'
+			[
+				'content' => '
 		<!-- wp:sensei-lms/quiz-question {"title":"Test Question Modified","type":"boolean","answer":{"correct":false},"options":{"grade":2,"answerFeedback":"Feedback"}} -->
 <!-- wp:paragraph -->
 <p>Updated Question Description.</p>
 <!-- /wp:paragraph -->
 <!-- /wp:sensei-lms/quiz-question -->
-		'
+		',
+			]
 		);
 
 		$question      = get_post( $question_id );
@@ -270,6 +272,84 @@ class Sensei_REST_API_Questions_Controller_Tests extends WP_Test_REST_TestCase {
 
 	}
 
+	public function testQuestionUpdateToDraft() {
+		$this->login_as_admin();
+
+		$quiz_id     = $this->factory->quiz->create();
+		$question_id = $this->factory->question->create( [ 'quiz_id' => $quiz_id ] );
+
+		$this->save_question_post(
+			$question_id,
+			[
+				'status'  => 'draft',
+				'content' => '<!-- wp:sensei-lms/quiz-question {"title":"Test"} --><!-- /wp:sensei-lms/quiz-question -->',
+			]
+		);
+
+		$this->assertEquals( 'publish', get_post_status( $question_id ) );
+
+		delete_post_meta( $question_id, '_quiz_id' );
+		$this->save_question_post(
+			$question_id,
+			[
+				'status'  => 'draft',
+				'content' => '<!-- wp:sensei-lms/quiz-question {"title":"Test"} --><!-- /wp:sensei-lms/quiz-question -->',
+			]
+		);
+
+		$this->assertEquals( 'draft', get_post_status( $question_id ) );
+	}
+
+	public function testQuestionWithCategoryUpdateToDraft() {
+		$this->login_as_admin();
+
+		$question_id = $this->prepare_question_with_category_in_quiz();
+
+		$this->save_question_post(
+			$question_id,
+			[
+				'status'  => 'draft',
+				'content' => '<!-- wp:sensei-lms/quiz-question {"title":"Test"} --><!-- /wp:sensei-lms/quiz-question -->',
+			]
+		);
+
+		$this->assertEquals( 'publish', get_post_status( $question_id ) );
+
+		// Unlink the question categories.
+		wp_delete_object_term_relationships( $question_id, 'question-category' );
+
+		$this->save_question_post(
+			$question_id,
+			[
+				'status'  => 'draft',
+				'content' => '<!-- wp:sensei-lms/quiz-question {"title":"Test"} --><!-- /wp:sensei-lms/quiz-question -->',
+			]
+		);
+
+		$this->assertEquals( 'draft', get_post_status( $question_id ) );
+	}
+
+	/**
+	 * Prepare a question with category in quiz.
+	 *
+	 * @return int Question ID.
+	 */
+	private function prepare_question_with_category_in_quiz() {
+		$quiz_id              = $this->factory->quiz->create();
+		$question_category_id = $this->factory->question_category->create_and_get()->term_id;
+		$multiple_question    = $this->factory->multiple_question->create(
+			[
+				'question_category_id' => $question_category_id,
+				'quiz_id'              => $quiz_id,
+			]
+		);
+		$question_id          = $this->factory->question->create( [ 'question_category' => $question_category_id ] );
+
+		delete_post_meta( $question_id, '_quiz_id' );
+
+		return $question_id;
+	}
+
 	/**
 	 * Request question for editing, and return blocks parsed from content.
 	 *
@@ -287,16 +367,16 @@ class Sensei_REST_API_Questions_Controller_Tests extends WP_Test_REST_TestCase {
 		return parse_blocks( $response->get_data()['content']['raw'] );
 	}
 
-	private function save_question_post( int $question_id, $content ): WP_REST_Response {
+	private function save_question_post( $question_id, $body = [] ): WP_REST_Response {
 
 		$request = new WP_REST_Request( 'POST', '/wp/v2/questions/' . $question_id );
 		$request->set_header( 'content-type', 'application/json' );
 		$request->set_body(
 			wp_json_encode(
-				[
-					'id'      => $question_id,
-					'content' => $content,
-				]
+				array_merge(
+					[ 'id' => $question_id ],
+					$body
+				)
 			)
 		);
 
