@@ -731,6 +731,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		 */
 		return apply_filters( 'sensei_rest_api_schema_single_question', $single_question_schema );
 	}
+
 	/**
 	 * Helper method which returns the schema for category question properties.
 	 *
