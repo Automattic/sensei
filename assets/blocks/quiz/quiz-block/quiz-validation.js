@@ -7,17 +7,22 @@ import {
 	PluginPostStatusInfo,
 	PluginPrePublishPanel,
 } from '@wordpress/edit-post';
-import { useEffect } from '@wordpress/element';
+import { useCallback, useEffect } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
-import {
-	BLOCK_META_STORE,
-	setBlockMeta,
-} from '../../../shared/blocks/block-metadata';
+import { BLOCK_META_STORE } from '../../../shared/blocks/block-metadata';
+import { Effect } from '../../../shared/helpers/blocks';
 
+/**
+ * Notice about incomplete questions in the quiz.
+ *
+ * @param {Object}   props
+ * @param {number}   props.count   Incomplete question count.
+ * @param {Function} props.onClick Callback for notice action.
+ */
 const IncompleteQuestionsNotice = ( { count, onClick } ) => (
 	<div>
 		<Notice
@@ -46,7 +51,16 @@ const IncompleteQuestionsNotice = ( { count, onClick } ) => (
 	</div>
 );
 
-const QuizValidationResult = ( { clientId } ) => {
+/**
+ * Collect and act on validation results for the questions in the quiz.
+ *
+ * Displays notices in the pre-publish and post status panels if there are incomplete questions.
+ *
+ * @param {Object}   props
+ * @param {string}   props.clientId
+ * @param {Function} props.setMeta
+ */
+const QuizValidationResult = ( { clientId, setMeta } ) => {
 	const incompleteQuestions = useSelect(
 		( select ) => {
 			const questionBlocks = select( 'core/block-editor' ).getBlocks(
@@ -72,37 +86,45 @@ const QuizValidationResult = ( { clientId } ) => {
 			! select( 'core/editor' ).isAutosavingPost()
 	);
 
-	useEffect( () => {
-		if ( isSavingPost ) showValidationErrors( incompleteQuestions, false );
-	}, [ isSavingPost, incompleteQuestions ] );
+	const toggleValidationErrors = useCallback(
+		( on = true ) => {
+			setMeta( { showValidationErrors: on } );
+		},
+		[ setMeta ]
+	);
 
 	const { selectBlock } = useDispatch( 'core/block-editor' );
 	const selectFirstIncompleteQuestionBlock = () => {
 		if ( ! incompleteQuestions.length ) return;
-		showValidationErrors( incompleteQuestions );
+		toggleValidationErrors( true );
 		selectBlock( incompleteQuestions[ 0 ].clientId );
 	};
+
+	useEffect( () => {
+		if ( isSavingPost ) {
+			toggleValidationErrors( false );
+		}
+	}, [ isSavingPost, incompleteQuestions, toggleValidationErrors ] );
+
+	const notice = (
+		<IncompleteQuestionsNotice
+			onClick={ selectFirstIncompleteQuestionBlock }
+			count={ incompleteQuestions.length }
+		/>
+	);
 
 	return (
 		<>
 			<PluginPostStatusInfo>
-				{ incompleteQuestions.length && (
-					<IncompleteQuestionsNotice
-						onClick={ selectFirstIncompleteQuestionBlock }
-						count={ incompleteQuestions.length }
-					/>
-				) }
+				{ incompleteQuestions.length && notice }
 			</PluginPostStatusInfo>
 			{ incompleteQuestions.length && (
 				<PluginPrePublishPanel
 					title={ __( 'Lesson Quiz', 'sensei-lms' ) }
 					initialOpen={ true }
 				>
-					<TriggerErrorDisplay errors={ incompleteQuestions } />
-					<IncompleteQuestionsNotice
-						onClick={ selectFirstIncompleteQuestionBlock }
-						count={ incompleteQuestions.length }
-					/>
+					<Effect onMount={ toggleValidationErrors } />
+					{ notice }
 					<p>
 						{ __(
 							"Incomplete questions won't be displayed to the learner when taking the quiz.",
@@ -113,21 +135,6 @@ const QuizValidationResult = ( { clientId } ) => {
 			) }
 		</>
 	);
-};
-
-const TriggerErrorDisplay = ( { errors } ) => {
-	useEffect( () => {
-		showValidationErrors( errors );
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [] );
-
-	return null;
-};
-
-const showValidationErrors = ( blocks, on = true ) => {
-	blocks.forEach( ( { clientId: id } ) => {
-		setBlockMeta( id, { showValidationErrors: on } );
-	} );
 };
 
 export default QuizValidationResult;

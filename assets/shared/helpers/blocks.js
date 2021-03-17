@@ -2,6 +2,7 @@
  * WordPress dependencies
  */
 import { useSelect } from '@wordpress/data';
+import { useEffect } from '@wordpress/element';
 
 /**
  * Are the block or any of it's descendants selected.
@@ -19,4 +20,17 @@ export const useHasSelected = ( { isSelected, clientId } ) => {
 			[ clientId ]
 		) || isSelected
 	);
+};
+/**
+ * Run callback when component is mounted.
+ *
+ * @param {Object}   props
+ * @param {Function} props.onMount
+ */
+export const Effect = ( { onMount } ) => {
+	useEffect( () => {
+		onMount();
+	}, [ onMount ] );
+
+	return null;
 };

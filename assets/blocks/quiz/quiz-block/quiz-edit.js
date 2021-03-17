@@ -3,10 +3,10 @@
  */
 import { InnerBlocks } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
-
 /**
  * Internal dependencies
  */
+import { withBlockMetaProvider } from '../../../shared/blocks/block-metadata';
 import { useAutoInserter } from '../../../shared/blocks/use-auto-inserter';
 import questionBlock from '../question-block';
 import { useQuizStructure } from '../quiz-store';
@@ -52,4 +52,4 @@ const QuizEdit = ( props ) => {
 	);
 };
 
-export default QuizEdit;
+export default withBlockMetaProvider( QuizEdit );
