@@ -41,7 +41,7 @@ export const QuestionValidationNotice = ( {
 	attributes: { type },
 	meta: { validationErrors, showValidationErrors },
 } ) => {
-	if ( ! showValidationErrors ) return null;
+	if ( ! showValidationErrors || ! validationErrors?.length ) return null;
 
 	const validationMessages = getQuestionBlockValidationErrorMessages(
 		validationErrors,
