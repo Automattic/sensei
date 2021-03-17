@@ -1236,7 +1236,7 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <!-- /wp:paragraph -->
 
 <!-- wp:paragraph -->
-<p>To add questions to a quiz, create a new lesson by going to <em>Lessons</em> &gt; <em>Add New</em>, or select an existing one from <em>Lessons</em> &gt; <em>All Lessons</em>. For a new lesson, you will see that the quiz block has already been added to the page for you. For an existing lesson, you can add the quiz block by searching for it in the <a href=""https://wordpress.org/support/article/adding-a-new-block/#what-is-the-inserter"">block inserter</a>. <em>(Note: For managing questions using the legacy meta box rather than blocks, please refer to <a href=""#legacy"">this documentation</a>.)</em></p>
+<p>To add questions to a quiz, create a new lesson by going to <em>Lessons</em> > <em>Add New</em>. You will see that the quiz block has already been added to the page for you. <em>(Note: For managing questions using the legacy meta box rather than blocks, please refer to <a href=""#legacy"">this documentation</a>.)</em></p>
 <!-- /wp:paragraph -->
 
 <!-- wp:heading -->
@@ -1364,7 +1364,7 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <!-- /wp:paragraph -->
 
 <!-- wp:list {""ordered"":true} -->
-<ol><li>Go to <em>Questions </em>> <em>Add New</em>.</li><li>Enter the question in the <em>Question</em> field.</li><li>Enter an optional<em> Description</em>.</li><li>Select a type from the <em>Question Type</em> dropdown.</li><li>Update the<em> Grade</em>. This should be a number greater than or equal to 0.</li><li>Enter the answer to the question. The exact format will depend on the type of question that was selected.</li></ol>
+<ol><li>Go to&nbsp;<em>Questions&nbsp;</em>&gt;&nbsp;<em>Add New</em>.</li><li>Enter the question in the <em>Question</em> field.</li><li>Enter an optional<em> Description</em>.</li><li>Select a type from the <em>Question Type</em> dropdown.</li><li>Update the<em> Grade</em>. This should be a number greater than or equal to 0.</li><li>Enter the answer to the question. The exact format will depend on the type of question that was selected.</li></ol>
 <!-- /wp:list -->
 
 <!-- wp:heading {""level"":3} -->
@@ -1567,7 +1567,7 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <!-- /wp:list -->
 
 <!-- wp:paragraph -->
-<p>Please note that removing a question from a quiz does <strong>not</strong> remove it from the question bank. To delete the question entirely, go to <em>Questions</em> &gt; <em>All Questions</em>, hover over the question, and click the <em>Trash</em> link.</p>
+<p>Please note that removing a question from a quiz does <strong>not</strong> remove it from the question bank. To delete the question entirely, go to <em>Questions</em> > <em>All Questions</em>, hover over the question, and click the <em>Trash</em> link.</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:heading -->
@@ -1582,6 +1582,7 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <ul><li>Select the quiz block.</li><li>In the toolbar, click the <em>More Options</em> icon (the one that looks like three vertical dots).</li><li>Select <em>Remove block</em>.</li></ul>
 <!-- /wp:list -->
 
+<!-- wp:paragraph -->
 <p>Please note that removing a quiz from a lesson does <strong>not</strong> remove the questions from the quiz. This means that if you change your mind and add the quiz back to the lesson, the questions will also be restored.</p>
 <!-- /wp:paragraph -->
 
