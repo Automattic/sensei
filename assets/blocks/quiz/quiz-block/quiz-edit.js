@@ -13,6 +13,7 @@ import { useQuizStructure } from '../quiz-store';
 import QuizAppender from './quiz-appender';
 import QuizSettings from './quiz-settings';
 import { useUpdateQuizHasQuestionsMeta } from './use-update-quiz-has-questions-meta';
+import { isQuestionEmpty } from '../data';
 
 /**
  * Quiz block editor.
@@ -23,7 +24,11 @@ const QuizEdit = ( props ) => {
 	useQuizStructure( props );
 
 	useAutoInserter(
-		{ name: questionBlock.name, selectFirstBlock: true },
+		{
+			name: questionBlock.name,
+			selectFirstBlock: true,
+			isEmptyBlock: isQuestionEmpty,
+		},
 		props
 	);
 
