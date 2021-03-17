@@ -19,13 +19,20 @@ import Actions from './actions';
 import { unescape } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import { useAddExistingQuestions } from '../use-add-existing-questions';
+
+/**
  * Questions modal content.
  *
  * @param {Object}   props
- * @param {Function} props.onClose  Close callback
- * @param {Function} props.onSelect Callback to add selected questions.
+ * @param {string}   props.clientId Quiz block ID.
+ * @param {Function} props.onClose  Close callback.
  */
-const QuestionsModal = ( { onClose, onSelect } ) => {
+const QuestionsModal = ( { clientId, onClose } ) => {
+	const addExistingQuestions = useAddExistingQuestions( clientId );
+
 	const [ filters, setFilters ] = useState( {
 		search: '',
 		'question-type': '',
@@ -86,7 +93,7 @@ const QuestionsModal = ( { onClose, onSelect } ) => {
 			<Actions
 				selectedQuestionIds={ selectedQuestionIds }
 				setSelectedQuestionIds={ setSelectedQuestionIds }
-				onAdd={ onSelect }
+				onAdd={ addExistingQuestions }
 				closeModal={ onClose }
 				setErrorAddingSelected={ setErrorAddingSelected }
 			/>
