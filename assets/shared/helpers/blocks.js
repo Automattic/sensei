@@ -34,3 +34,24 @@ export const Effect = ( { onMount } ) => {
 
 	return null;
 };
+
+/**
+ * Run callback when post is saving.
+ *
+ * @param {Function} callback Effect.
+ * @param {Array}    deps     Effect dependencies.
+ */
+export const usePostSavingEffect = ( callback, deps = [] ) => {
+	const isSavingPost = useSelect(
+		( select ) =>
+			select( 'core/editor' ).isSavingPost() &&
+			! select( 'core/editor' ).isAutosavingPost()
+	);
+
+	useEffect( () => {
+		if ( isSavingPost ) {
+			callback();
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ isSavingPost, ...deps ] );
+};

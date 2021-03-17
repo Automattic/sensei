@@ -7,14 +7,14 @@ import {
 	PluginPostStatusInfo,
 	PluginPrePublishPanel,
 } from '@wordpress/edit-post';
-import { useCallback, useEffect } from '@wordpress/element';
+import { useCallback } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
 import { BLOCK_META_STORE } from '../../../shared/blocks/block-metadata';
-import { Effect } from '../../../shared/helpers/blocks';
+import { Effect, usePostSavingEffect } from '../../../shared/helpers/blocks';
 
 /**
  * Notice about incomplete questions in the quiz.
@@ -80,12 +80,6 @@ const QuizValidationResult = ( { clientId, setMeta } ) => {
 		[ clientId ]
 	);
 
-	const isSavingPost = useSelect(
-		( select ) =>
-			select( 'core/editor' ).isSavingPost() &&
-			! select( 'core/editor' ).isAutosavingPost()
-	);
-
 	const toggleValidationErrors = useCallback(
 		( on = true ) => {
 			setMeta( { showValidationErrors: on } );
@@ -100,11 +94,11 @@ const QuizValidationResult = ( { clientId, setMeta } ) => {
 		selectBlock( incompleteQuestions[ 0 ].clientId );
 	};
 
-	useEffect( () => {
-		if ( isSavingPost ) {
-			toggleValidationErrors( false );
-		}
-	}, [ isSavingPost, incompleteQuestions, toggleValidationErrors ] );
+	usePostSavingEffect( () => toggleValidationErrors( false ), [
+		toggleValidationErrors,
+	] );
+
+	if ( ! incompleteQuestions.length ) return null;
 
 	const notice = (
 		<IncompleteQuestionsNotice
@@ -115,24 +109,20 @@ const QuizValidationResult = ( { clientId, setMeta } ) => {
 
 	return (
 		<>
-			<PluginPostStatusInfo>
-				{ incompleteQuestions.length && notice }
-			</PluginPostStatusInfo>
-			{ incompleteQuestions.length && (
-				<PluginPrePublishPanel
-					title={ __( 'Lesson Quiz', 'sensei-lms' ) }
-					initialOpen={ true }
-				>
-					<Effect onMount={ toggleValidationErrors } />
-					{ notice }
-					<p>
-						{ __(
-							"Incomplete questions won't be displayed to the learner when taking the quiz.",
-							'sensei-lms'
-						) }
-					</p>
-				</PluginPrePublishPanel>
-			) }
+			<PluginPostStatusInfo>{ notice }</PluginPostStatusInfo>
+			<PluginPrePublishPanel
+				title={ __( 'Lesson Quiz', 'sensei-lms' ) }
+				initialOpen={ true }
+			>
+				<Effect onMount={ toggleValidationErrors } />
+				{ notice }
+				<p>
+					{ __(
+						"Incomplete questions won't be displayed to the learner when taking the quiz.",
+						'sensei-lms'
+					) }
+				</p>
+			</PluginPrePublishPanel>
 		</>
 	);
 };
