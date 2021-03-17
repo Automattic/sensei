@@ -2,6 +2,12 @@
  * WordPress dependencies
  */
 import { useSelect } from '@wordpress/data';
+import { useMemo } from '@wordpress/element';
+
+/**
+ * External dependencies
+ */
+import { keyBy } from 'lodash';
 
 /**
  * Get the question categories.
@@ -18,23 +24,30 @@ export const useQuestionCategories = () => {
 			}
 		);
 
-		if ( terms && terms.length ) {
-			return terms.map( ( term ) => ( {
+		return terms ?? [];
+	}, [] );
+
+	const unescapedQuestionCategories = useMemo(
+		() =>
+			( questionCategories || [] ).map( ( term ) => ( {
 				...term,
 				name: unescape( term.name ),
-			} ) );
-		}
+			} ) ),
+		[ questionCategories ]
+	);
 
-		return terms;
-	} );
+	const questionCategoriesById = useMemo(
+		() => keyBy( unescapedQuestionCategories ?? [], 'id' ),
+		[ unescapedQuestionCategories ]
+	);
 
 	const getById = ( termId ) => {
-		if ( ! questionCategories || questionCategories.length === 0 ) {
+		if ( ! questionCategoriesById || questionCategoriesById.length === 0 ) {
 			return false;
 		}
 
-		return questionCategories.find( ( term ) => term.id === termId );
+		return questionCategoriesById[ termId ] ?? false;
 	};
 
-	return [ questionCategories, getById ];
+	return [ unescapedQuestionCategories, getById ];
 };
