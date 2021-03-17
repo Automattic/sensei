@@ -9,6 +9,7 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import { useQuestionIndex } from '../question-index';
 import { useQuestionCategories } from '../question-categories';
 import CategoryQuestionSettings from './category-question-settings';
+import { useEffect } from '@wordpress/element';
 
 /**
  * Quiz category question block editor.
@@ -24,6 +25,7 @@ const CategoryQuestionEdit = ( props ) => {
 			options: { number = 1, category },
 		},
 		clientId,
+		setAttributes,
 	} = props;
 	const index = useQuestionIndex( clientId );
 	const [ , getCategoryTermById ] = useQuestionCategories();
@@ -36,6 +38,14 @@ const CategoryQuestionEdit = ( props ) => {
 
 	const categoryName =
 		getCategoryTermById( category )?.name ?? props.attributes.categoryName;
+
+	useEffect( () => {
+		if ( categoryName && categoryName !== props.attributes.categoryName ) {
+			setAttributes( {
+				categoryName,
+			} );
+		}
+	}, [ categoryName ] );
 
 	return (
 		<>
