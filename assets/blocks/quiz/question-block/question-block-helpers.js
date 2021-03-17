@@ -27,6 +27,13 @@ export const SharedQuestionNotice = () => (
 	</div>
 );
 
+/**
+ * Display an icon and tooltip if the question has validation errors.
+ *
+ * @param {Object} props
+ * @param {Array}  props.errors Validation errors.
+ * @param {string} props.type   Question type.
+ */
 export const QuestionValidationErrors = ( { errors = [], type } ) => {
 	if ( ! errors || ! errors.length ) return null;
 	const errorItems = errors?.map?.( ( error ) => (

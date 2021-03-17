@@ -28,6 +28,6 @@ export default {
 	edit,
 	save: () => <InnerBlocks.Content />,
 	messages: {
-		noTitle: __( 'Add a title to this question', 'sensei-lms' ),
+		noTitle: __( 'Add a title to this question.', 'sensei-lms' ),
 	},
 };

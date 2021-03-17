@@ -53,15 +53,15 @@ const questionTypes = {
 		},
 		messages: {
 			noAnswers: __(
-				'Add at least two answer choice to this question',
+				'Add at least two answer choice to this question.',
 				'sensei-lms'
 			),
 			noRightAnswer: __(
-				'Add a right answer to this question',
+				'Add a right answer to this question.',
 				'sensei-lms'
 			),
 			noWrongAnswer: __(
-				'Add a wrong answer to this question',
+				'Add a wrong answer to this question.',
 				'sensei-lms'
 			),
 		},
@@ -90,9 +90,12 @@ const questionTypes = {
 			};
 		},
 		messages: {
-			noBefore: __( 'Add some text before the gap', 'sensei-lms' ),
-			noAfter: __( 'Add some text after the gap', 'sensei-lms' ),
-			noGap: __( 'Add a right answer to this question', 'sensei-lms' ),
+			noBefore: __( 'Add some text before the gap.', 'sensei-lms' ),
+			noAfter: __( 'Add some text after the gap.', 'sensei-lms' ),
+			noGap: __(
+				'Add a right answer for the gap to this question.',
+				'sensei-lms'
+			),
 		},
 	},
 	'single-line': {
