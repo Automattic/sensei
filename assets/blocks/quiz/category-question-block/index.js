@@ -22,7 +22,7 @@ export default {
 	description: __( 'Pull questions from a question category.', 'sensei-lms' ),
 	example: {
 		attributes: {
-			categoryName: __( 'Test Category', 'sensei-lms' ),
+			categoryName: __( 'Example Category', 'sensei-lms' ),
 		},
 	},
 	edit,
