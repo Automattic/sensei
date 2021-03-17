@@ -39,7 +39,6 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 	public function setUp() {
 		parent::setUp();
 
-		add_filter( 'sensei_feature_flag_block_editor_enable_category_questions', '__return_true' );
 		global $wp_rest_server;
 		$wp_rest_server = new WP_REST_Server();
 		$this->server   = $wp_rest_server;
@@ -47,15 +46,6 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 		do_action( 'rest_api_init' );
 
 		$this->factory = new Sensei_Factory();
-	}
-
-	/**
-	 * Clean up after the test.
-	 */
-	public function tearDown() {
-		parent::tearDown();
-
-		remove_filter( 'sensei_feature_flag_block_editor_enable_category_questions', '__return_true' );
 	}
 
 	/**
@@ -390,74 +380,6 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 		$this->assertEquals( 'file-upload', $response_data['questions'][0]['type'] );
 		$this->assertEquals( 'Teacher note', $response_data['questions'][0]['options']['teacherNotes'] );
 		$this->assertEquals( 'User note', $response_data['questions'][0]['options']['studentHelp'] );
-	}
-
-	/**
-	 * Tests question category expansion.
-	 *
-	 * This test is temporary until we add proper category question support.
-	 */
-	public function testQuestionCategory() {
-		// This test checks for the current behavior that is should be hidden because we don't allow the
-		// block based question editor when multiple questions exist on a site.
-		remove_filter( 'sensei_feature_flag_block_editor_enable_category_questions', '__return_true' );
-
-		$this->login_as_teacher();
-
-		list( $lesson_id, $quiz_id ) = $this->create_lesson_with_quiz();
-		$this->factory->question->create(
-			[
-				'quiz_id'                             => $quiz_id,
-				'question_type'                       => 'multi-line',
-				'add_question_right_answer_multiline' => 'NOTES',
-			]
-		);
-
-		$another_quiz      = $this->factory->quiz->create();
-		$first_category_id = $this->factory->question_category->create_and_get()->term_id;
-		$this->factory->question->create_many(
-			5,
-			[
-				'quiz_id'           => $another_quiz,
-				'question_category' => $first_category_id,
-			]
-		);
-
-		$second_category_id = $this->factory->question_category->create_and_get()->term_id;
-		$this->factory->question->create_many(
-			2,
-			[
-				'quiz_id'           => $another_quiz,
-				'question_category' => $second_category_id,
-			]
-		);
-
-		$this->factory->multiple_question->create(
-			[
-				'quiz_id'              => $quiz_id,
-				'question_number'      => 3,
-				'question_category_id' => $first_category_id,
-			]
-		);
-
-		$this->factory->multiple_question->create(
-			[
-				'quiz_id'              => $quiz_id,
-				'question_number'      => 6,
-				'question_category_id' => $second_category_id,
-			]
-		);
-		$response_data = $this->send_get_request( $lesson_id );
-
-		// Quiz should have one multiline question, 3 questions from the first category and 2 from the second.
-		$this->assertCount( 6, $response_data['questions'] );
-		$this->assertEquals( 'multi-line', $response_data['questions'][0]['type'] );
-		$this->assertEquals( 'NOTES', $response_data['questions'][0]['options']['teacherNotes'] );
-
-		for ( $i = 1; $i < 6; $i++ ) {
-			$expected_category = $i < 4 ? $first_category_id : $second_category_id;
-			$this->assertEquals( [ $expected_category ], $response_data['questions'][ $i ]['categories'] );
-		}
 	}
 
 	/**
