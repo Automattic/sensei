@@ -78,7 +78,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			$question_id
 			&& (
 				'multiple_question' !== get_post_type( $question_id )
-				|| ! current_user_can( get_post_type_object( 'course' )->cap->edit_post, $question_id )
+				|| ! current_user_can( get_post_type_object( 'multiple_question' )->cap->edit_post, $question_id )
 			)
 		) {
 			return new WP_Error( 'sensei_lesson_quiz_question_not_available', '', $question_id );
@@ -152,7 +152,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			$question_id
 			&& (
 				'question' !== get_post_type( $question_id )
-				|| ! current_user_can( get_post_type_object( 'course' )->cap->edit_post, $question_id )
+				|| ! current_user_can( get_post_type_object( 'question' )->cap->edit_post, $question_id )
 			)
 		) {
 			return new WP_Error( 'sensei_lesson_quiz_question_not_available', '', $question_id );
