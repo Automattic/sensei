@@ -7,11 +7,8 @@ import apiFetch from '@wordpress/api-fetch';
 /**
  * Internal dependencies
  */
-import {
-	createQuestionBlock,
-	findQuestionBlock,
-	isQuestionEmpty,
-} from '../data';
+import { createQuestionBlock, findQuestionBlock } from '../data';
+import { useNextQuestionIndex } from './next-question-index';
 
 const API_PATH = '/sensei-internal/v1/question-options';
 
@@ -24,6 +21,7 @@ const API_PATH = '/sensei-internal/v1/question-options';
 export const useAddExistingQuestions = ( clientId ) => {
 	const questionBlocks = select( 'core/block-editor' ).getBlocks( clientId );
 	const { insertBlock } = useDispatch( 'core/block-editor' );
+	const nextInsertIndex = useNextQuestionIndex( clientId );
 
 	return ( questionIds ) => {
 		const newQuestionIds = questionIds.filter( ( questionId ) => {
@@ -38,17 +36,7 @@ export const useAddExistingQuestions = ( clientId ) => {
 		}
 
 		// Put this before the auto-block.
-		const lastBlock =
-			questionBlocks.length &&
-			questionBlocks[ questionBlocks.length - 1 ];
-		const hasEmptyLastBlock =
-			lastBlock && isQuestionEmpty( lastBlock.attributes );
-
-		let insertIndex = questionBlocks.length;
-
-		if ( hasEmptyLastBlock ) {
-			insertIndex -= 1;
-		}
+		let insertIndex = nextInsertIndex;
 
 		return apiFetch( {
 			path: API_PATH + '?question_ids=' + newQuestionIds.join( ',' ),

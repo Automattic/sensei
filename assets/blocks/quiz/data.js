@@ -170,10 +170,9 @@ export function createQuestionBlock( question ) {
  * @param {Array}                             blocks
  * @param {QuizQuestion|QuizCategoryQuestion} item
  */
-export const findQuestionBlock = (
-	blocks,
-	{ id, title, options: { category } }
-) => {
+export const findQuestionBlock = ( blocks, { id, title, options } ) => {
+	const category = options?.category;
+
 	const compare = ( { attributes } ) =>
 		id === attributes.id ||
 		( ! attributes.id && attributes.title && attributes.title === title ) ||

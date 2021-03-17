@@ -15,6 +15,7 @@ import questionBlock from '../question-block';
 import categoryQuestionBlock from '../category-question-block';
 import QuestionsModal from './questions-modal';
 import { useAddExistingQuestions } from './use-add-existing-questions';
+import { useNextQuestionIndex } from './next-question-index';
 
 /**
  * Quiz block inserter for adding new or existing questions.
@@ -26,9 +27,16 @@ const QuizAppender = ( { clientId } ) => {
 	const addExistingQuestions = useAddExistingQuestions( clientId );
 	const { insertBlock } = useDispatch( 'core/block-editor' );
 	const [ isModalOpen, setModalOpen ] = useState( false );
+	const nextInsertIndex = useNextQuestionIndex( clientId );
 
-	const addNewQuestionBlock = ( block ) =>
-		insertBlock( createBlock( block.name ), undefined, clientId, true );
+	const addNewQuestionBlock = ( block ) => {
+		insertBlock(
+			createBlock( block.name ),
+			nextInsertIndex,
+			clientId,
+			true
+		);
+	};
 
 	const controls = [
 		{

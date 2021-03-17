@@ -23,7 +23,13 @@ jest.mock( '@wordpress/data', () => ( {
 
 describe( 'useAutoInserter', () => {
 	const ModuleBlock = ( props ) => {
-		useAutoInserter( { name: 'sensei-lms/course-outline-lesson' }, props );
+		useAutoInserter(
+			{
+				name: 'sensei-lms/course-outline-lesson',
+				isEmptyBlock: ( attributes ) => ! attributes.title,
+			},
+			props
+		);
 		return <div>Module</div>;
 	};
 
