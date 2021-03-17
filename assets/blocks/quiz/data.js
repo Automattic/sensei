@@ -204,7 +204,7 @@ export const normalizeAttributes = ( options, mapFunction ) => {
 };
 
 /**
- * Checks whether a bock is empty.
+ * Checks whether a block is empty.
  *
  * @param {Array} attributes Question attributes.
  *
