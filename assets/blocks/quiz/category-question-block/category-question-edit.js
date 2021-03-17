@@ -41,7 +41,7 @@ const CategoryQuestionEdit = ( props ) => {
 		<>
 			<CategoryQuestionSettings { ...props } />
 			<div
-				className={ `sensei-lms-question-block ${
+				className={ `sensei-lms-question-block sensei-lms-category-question-block ${
 					! category ? 'is-draft' : ''
 				}` }
 			>
