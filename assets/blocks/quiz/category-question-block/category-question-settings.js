@@ -2,8 +2,8 @@
  * WordPress dependencies
  */
 import { InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, SelectControl } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { Notice, PanelBody, SelectControl } from '@wordpress/components';
+import { __, _n, sprintf } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -46,10 +46,6 @@ const CategoryQuestionSettings = ( {
 	];
 
 	const questionCategory = getQuestionCategoryById( options.category );
-	let maxNumberQuestions;
-	if ( questionCategory ) {
-		maxNumberQuestions = questionCategory.count;
-	}
 
 	return (
 		<InspectorControls>
@@ -58,9 +54,9 @@ const CategoryQuestionSettings = ( {
 				initialOpen={ true }
 			>
 				{ ! categoryOptions.length && (
-					<div>
+					<Notice status="warning" isDismissible={ false }>
 						{ __( 'No question categories exist.', 'sensei-lms' ) }
-					</div>
+					</Notice>
 				) }
 				{ categoryOptions.length > 0 && (
 					<>
@@ -69,22 +65,13 @@ const CategoryQuestionSettings = ( {
 							options={ categoryOptions }
 							value={ options.category }
 							onChange={ ( nextCategory ) => {
-								let numberQuestions = options.number;
 								nextCategory = parseInt( nextCategory, 10 );
 								const nextQuestionCategory = getQuestionCategoryById(
 									nextCategory
 								);
 
-								if ( nextQuestionCategory ) {
-									numberQuestions = Math.min(
-										nextQuestionCategory.count,
-										numberQuestions
-									);
-								}
-
 								setOptions(
 									{
-										number: numberQuestions,
 										category:
 											parseInt( nextCategory, 10 ) ??
 											null,
@@ -99,21 +86,33 @@ const CategoryQuestionSettings = ( {
 						<NumberControl
 							label={ __( 'Number of Questions', 'sensei-lms' ) }
 							min={ 1 }
-							max={ maxNumberQuestions }
 							step={ 1 }
-							value={ Math.min(
-								maxNumberQuestions,
-								options.number
-							) }
+							value={ options.number }
 							onChange={ ( nextNumber ) =>
 								setOptions( {
-									number: Math.min(
-										maxNumberQuestions,
-										nextNumber
-									),
+									number: nextNumber,
 								} )
 							}
 						/>
+
+						{ questionCategory &&
+							options.number > questionCategory.count && (
+								<Notice
+									status="warning"
+									isDismissible={ false }
+								>
+									{ sprintf(
+										// translators: Placeholder is number of questions in category.
+										_n(
+											'The selected category has %d question.',
+											'The selected category has %d questions.',
+											questionCategory.count,
+											'sensei-lms'
+										),
+										questionCategory.count
+									) }
+								</Notice>
+							) }
 					</>
 				) }
 			</PanelBody>

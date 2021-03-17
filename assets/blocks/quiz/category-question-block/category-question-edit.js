@@ -56,7 +56,7 @@ const CategoryQuestionEdit = ( props ) => {
 							__( 'Category Question', 'sensei-lms' ) }
 					</strong>
 					{ categoryName &&
-						number &&
+						number > 0 &&
 						' (' +
 							sprintf(
 								// translators: placeholder is number of questions to show from category.
