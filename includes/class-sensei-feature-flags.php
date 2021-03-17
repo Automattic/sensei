@@ -17,9 +17,10 @@ class Sensei_Feature_Flags {
 		$this->default_feature_settings = (array) apply_filters(
 			'sensei_default_feature_flag_settings',
 			array(
-				'rest_api_v1'                  => false,
-				'rest_api_v1_skip_permissions' => false,
-				'enrolment_provider_tooltip'   => false,
+				'rest_api_v1'                            => false,
+				'rest_api_v1_skip_permissions'           => false,
+				'enrolment_provider_tooltip'             => false,
+				'block_editor_enable_category_questions' => false,
 			)
 		);
 	}
