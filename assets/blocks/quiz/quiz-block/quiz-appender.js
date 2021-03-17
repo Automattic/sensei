@@ -4,29 +4,26 @@
 import { createBlock } from '@wordpress/blocks';
 import { DropdownMenu } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { plus } from '@wordpress/icons';
+
 /**
  * Internal dependencies
  */
 import quizIcon from '../../../icons/quiz-icon';
 import questionBlock from '../question-block';
 import categoryQuestionBlock from '../category-question-block';
-import QuestionsModal from './questions-modal';
-import { useAddExistingQuestions } from './use-add-existing-questions';
 import { useNextQuestionIndex } from './next-question-index';
 
 /**
  * Quiz block inserter for adding new or existing questions.
  *
- * @param {Object} props
- * @param {string} props.clientId Quiz block ID.
+ * @param {Object}   props
+ * @param {string}   props.clientId  Quiz block ID.
+ * @param {Function} props.openModal Open modal callback.
  */
-const QuizAppender = ( { clientId } ) => {
-	const addExistingQuestions = useAddExistingQuestions( clientId );
+const QuizAppender = ( { clientId, openModal } ) => {
 	const { insertBlock } = useDispatch( 'core/block-editor' );
-	const [ isModalOpen, setModalOpen ] = useState( false );
 	const nextInsertIndex = useNextQuestionIndex( clientId );
 
 	const addNewQuestionBlock = ( block ) => {
@@ -57,7 +54,7 @@ const QuizAppender = ( { clientId } ) => {
 	controls.push( {
 		title: __( 'Existing Question(s)', 'sensei-lms' ),
 		icon: quizIcon,
-		onClick: () => setModalOpen( true ),
+		onClick: openModal,
 	} );
 
 	return (
@@ -77,13 +74,6 @@ const QuizAppender = ( { clientId } ) => {
 					'sensei-lms'
 				) }
 			/>
-
-			{ isModalOpen && (
-				<QuestionsModal
-					onClose={ () => setModalOpen( false ) }
-					onSelect={ addExistingQuestions }
-				/>
-			) }
 		</div>
 	);
 };
