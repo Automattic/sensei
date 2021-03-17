@@ -178,8 +178,8 @@ export const findQuestionBlock = (
 		id === attributes.id ||
 		( ! attributes.id && attributes.title && attributes.title === title ) ||
 		( ! attributes.id &&
-			attributes.options.category &&
-			attributes.options.category === category );
+			attributes.options?.category &&
+			attributes.options?.category === category );
 	return blocks.find( compare );
 };
 
