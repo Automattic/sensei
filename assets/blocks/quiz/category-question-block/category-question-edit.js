@@ -28,11 +28,7 @@ const CategoryQuestionEdit = ( props ) => {
 	const index = useQuestionIndex( clientId );
 	const [ , getCategoryTermById ] = useQuestionCategories();
 
-	const nextNumber = index;
-	let range = nextNumber;
-	if ( number !== 1 ) {
-		range += ' - ' + ( nextNumber + number - 1 );
-	}
+	const range = 1 === number ? index : `${ index } - ${ index + number - 1 }`;
 
 	const questionIndex = (
 		<h2 className="sensei-lms-question-block__index">{ range }.</h2>
