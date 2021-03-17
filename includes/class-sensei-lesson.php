@@ -1101,7 +1101,7 @@ class Sensei_Lesson {
 					if ( current_user_can( 'edit_post', $question_id ) ) {
 						$html .= '<td><a title="' . esc_attr__( 'Edit Question', 'sensei-lms' ) . '" href="#question_' . esc_attr( $question_counter ) . '" class="question_table_edit">' . esc_html__( 'Edit', 'sensei-lms' ) . '</a> <a title="' . esc_attr__( 'Remove Question', 'sensei-lms' ) . '" href="#add-question-metadata" class="question_table_delete">' . esc_html__( 'Remove', 'sensei-lms' ) . '</a></td>';
 					} else {
-						$html .= '<td><a title="' . esc_attr__( 'Remove Question', 'sensei-lms' ) . '" href="#add-question-metadata" class="question_table_delete question_table_delete--without-edit">' . esc_html__( 'Remove', 'sensei-lms' ) . '</a><br />' . esc_html__( 'You are not the question owner, so you cannot edit it.', 'sensei-lms' ) . '</td>';
+						$html .= '<td><a title="' . esc_attr__( 'Remove Question', 'sensei-lms' ) . '" href="#add-question-metadata" class="question_table_delete question_delete--without-edit">' . esc_html__( 'Remove', 'sensei-lms' ) . '</a><br />' . esc_html__( 'You are not the question owner, so you cannot edit it.', 'sensei-lms' ) . '</td>';
 					}
 				} else {
 
@@ -1118,7 +1118,7 @@ class Sensei_Lesson {
 					$html .= '<td>' . esc_html( $row_title ) . '</td>';
 					$html .= '<td class="question-grade-column"></td>';
 					$html .= '<td><input type="hidden" name="question_id" class="row_question_id" id="question_' . esc_attr( $question_counter ) . '_id" value="' . esc_attr( $question_id ) . '" /></td>';
-					$html .= '<td><a title="' . esc_attr__( 'Edit Question', 'sensei-lms' ) . '" href="#question_' . esc_attr( $question_counter ) . '" class="question_table_edit" style="visibility:hidden;">' . esc_html__( 'Edit', 'sensei-lms' ) . '</a> <a title="' . esc_attr__( 'Remove Question(s)', 'sensei-lms' ) . '" href="#add-question-metadata" class="question_multiple_delete" rel="' . esc_attr( $question_id ) . '">' . esc_html__( 'Remove', 'sensei-lms' ) . '</a></td>';
+					$html .= '<td><a title="' . esc_attr__( 'Remove Question(s)', 'sensei-lms' ) . '" href="#add-question-metadata" class="question_multiple_delete question_delete--without-edit" rel="' . esc_attr( $question_id ) . '">' . esc_html__( 'Remove', 'sensei-lms' ) . '</a></td>';
 
 				}
 					$html .= '</tr>';
