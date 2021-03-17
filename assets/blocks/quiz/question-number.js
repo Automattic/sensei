@@ -4,12 +4,12 @@
 import { useSelect } from '@wordpress/data';
 
 /**
- * Get the current index (order) of the question block in a quiz.
+ * Get the current number (order) of the question block in a quiz.
  *
  * @param {string} clientId Block Client Id.
  * @return {number} Block index
  */
-export const useQuestionIndex = ( clientId ) => {
+export const useQuestionNumber = ( clientId ) => {
 	const blocks = useSelect(
 		( select ) => {
 			const store = select( 'core/block-editor' );

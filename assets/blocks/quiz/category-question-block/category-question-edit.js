@@ -6,7 +6,7 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { useQuestionIndex } from '../question-index';
+import { useQuestionNumber } from '../question-number';
 import { useQuestionCategories } from '../question-categories';
 import CategoryQuestionSettings from './category-question-settings';
 import { useEffect } from '@wordpress/element';
@@ -27,10 +27,13 @@ const CategoryQuestionEdit = ( props ) => {
 		clientId,
 		setAttributes,
 	} = props;
-	const index = useQuestionIndex( clientId );
+	const questionNumber = useQuestionNumber( clientId );
 	const [ , getCategoryTermById ] = useQuestionCategories();
 
-	const range = 1 === number ? index : `${ index } - ${ index + number - 1 }`;
+	const range =
+		1 === number
+			? questionNumber
+			: `${ questionNumber } - ${ questionNumber + number - 1 }`;
 
 	const questionIndex = (
 		<h2 className="sensei-lms-question-block__index">{ range }.</h2>
