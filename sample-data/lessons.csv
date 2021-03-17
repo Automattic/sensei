@@ -1,6 +1,10 @@
 Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image,Length,Complexity,Video,"Pass Required",Passmark,"Number Of Questions","Random Question Order",Auto-grade,"Quiz Reset","Allow Comments",Questions
 3941,Courses,courses,"<!-- wp:paragraph -->
-<p>To add a course, go to <em>Courses&nbsp;</em>&gt;&nbsp;<em>Add New</em>. You will see that some blocks have already been added to the page for you. These blocks can be customized, reordered or removed:</p>
+<p>To add a course, go to <em>Courses&nbsp;</em>&gt;&nbsp;<em>Add New</em>. You will see that some blocks have already been added to the page for you. (<em>Note</em>: If you use Divi, you will need to go to <em>Divi</em> &gt; <em>Theme Options</em> &gt; <em>Builder</em> and disable <em>Courses</em> in order to see the blocks.)</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>These blocks can be customized, reordered or removed:</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:image {""id"":3954,""width"":735,""height"":510,""sizeSlug"":""large""} -->
@@ -24,7 +28,7 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <!-- /wp:image -->
 
 <!-- wp:heading -->
-<h2>Contact Teacher</h2>
+<h2 id=""contact-teacher"">Contact Teacher</h2>
 <!-- /wp:heading -->
 
 <!-- wp:paragraph -->
@@ -112,6 +116,22 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <!-- /wp:paragraph -->
 
 <!-- wp:heading -->
+<h2>Conditional Content</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Although not added to the course page by default, the <em>Conditional Content</em> block is an additional Sensei LMS block that is available to add to your courses. Any content added inside this block is only displayed if your site visitor is enrolled in the course, is <em>not</em> enrolled in the course, or has completed the course.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>The visibility condition can be set by clicking on the block and selecting a value from the toolbar dropdown. You can add as many blocks inside <em>Conditional Content</em> as you like:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":4399,""width"":735,""height"":357,""sizeSlug"":""large"",""linkDestination"":""none""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2021/02/Screen-Shot-2021-02-02-at-9.52.53-AM-1.jpg?w=980"" alt=""Conditional Content block"" class=""wp-image-4399"" width=""735"" height=""357""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading -->
 <h2>Document Settings</h2>
 <!-- /wp:heading -->
 
@@ -187,8 +207,8 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <p>To feature a course, select the <em>Feature this course</em>&nbsp;box. The course will then be displayed under <em>Featured Courses</em> on the course archive page and in the course component widget:</p>
 <!-- /wp:paragraph -->
 
-<!-- wp:image {""align"":""left"",""id"":1425,""width"":225,""height"":70} -->
-<div class=""wp-block-image""><figure class=""alignleft is-resized""><img src=""https://senseilms.com/wp-content/uploads/2017/11/featured-course.jpg?w=300"" alt=""Featured course"" class=""wp-image-1425"" width=""225"" height=""70""/><figcaption> </figcaption></figure></div>
+<!-- wp:image {""align"":""left"",""id"":1425,""width"":225,""height"":71} -->
+<div class=""wp-block-image""><figure class=""alignleft is-resized""><img src=""https://senseilms.com/wp-content/uploads/2017/11/featured-course.jpg?w=300"" alt=""Featured course"" class=""wp-image-1425"" width=""225"" height=""71""/><figcaption> </figcaption></figure></div>
 <!-- /wp:image -->
 
 <!-- wp:heading {""level"":3} -->
@@ -199,8 +219,8 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <p>A featured image can be added to a course by uploading an image from your computer or selecting an existing image from the&nbsp;Media Library. The image displays on the course archive&nbsp;and course pages, depending on the settings configured in <em>Sensei</em> <em>LMS</em> &gt; <em>Settings</em> &gt; <em>Courses</em>:</p>
 <!-- /wp:paragraph -->
 
-<!-- wp:image {""align"":""left"",""id"":1427,""width"":164,""height"":224} -->
-<div class=""wp-block-image""><figure class=""alignleft is-resized""><img src=""https://senseilms.com/wp-content/uploads/2017/11/featured-image.jpg?w=218"" alt=""Featured image"" class=""wp-image-1427"" width=""164"" height=""224""/><figcaption> </figcaption></figure></div>
+<!-- wp:image {""align"":""left"",""id"":4419,""width"":284,""height"":311,""sizeSlug"":""large"",""linkDestination"":""none""} -->
+<div class=""wp-block-image""><figure class=""alignleft size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/05/featured-image.jpg?w=568"" alt=""Featured image"" class=""wp-image-4419"" width=""284"" height=""311""/><figcaption> </figcaption></figure></div>
 <!-- /wp:image -->
 
 <!-- wp:heading {""level"":3} -->
@@ -1212,19 +1232,139 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <p>Drilling down into a particular lesson displays a page that lists all of the learners who are currently taking or have already completed the lesson. The view is the same as <a href=""#course-lesson-learners"">this one</a>.</p>
 <!-- /wp:paragraph -->","Learn how to track your learners' course progress in Sensei LMS.",publish,,,0,,,,,,0,0,,0,0,0,0,
 3175,Questions,questions,"<!-- wp:paragraph -->
-<p>Questions can be added independently of a quiz, making it possible to use them across multiple quizzes.</p>
+<p>Questions can be added in one of two ways - by going to <em>Questions</em> &gt; <em>Add New</em>, or by adding them directly to a quiz. Although this lesson covers the latter, configuring questions is the same regardless of which method is used.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>To add questions to a quiz, create a new lesson by going to <em>Lessons</em> > <em>Add New</em>. You will see that the quiz block has already been added to the page for you. <em>(Note: For managing questions using the legacy meta box rather than blocks, please refer to <a href=""#legacy"">this documentation</a>.)</em></p>
 <!-- /wp:paragraph -->
 
 <!-- wp:heading -->
-<h2>Add New Question</h2>
+<h2>Question Types</h2>
 <!-- /wp:heading -->
 
 <!-- wp:paragraph -->
-<p>To add a question:</p>
+<p>The default question type that is added to a quiz is multiple choice. You can change this by clicking inside the question and selecting an alternate type from the toolbar dropdown:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":4485,""width"":425,""height"":478,""sizeSlug"":""large"",""linkDestination"":""none""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2021/03/quiz-block-question-type-selector.jpg?w=850"" alt=""Quiz block - Question type selector"" class=""wp-image-4485"" width=""425"" height=""478""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>After selecting a question type, the editor will update to show the appropriate answer section for that type.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Multiple Choice</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Multiple choice questions list a set of possible answers that the learner can choose from. This question type supports multiple correct and incorrect answers. If a question has more than one correct answer, the learner must select all of them in order to pass (if a passmark is required).</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>You can add as many answers as you like to a multiple choice question. Click the <em>Right</em> / <em>Wrong</em> toggles beside each answer to indicate whether that answer is correct or incorrect. If there is more than one correct answer, the radio buttons will change to check boxes:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":4538,""width"":735,""height"":416,""sizeSlug"":""large"",""linkDestination"":""none""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2021/03/question-block-multiple-choice.jpg?w=980"" alt=""Question block - Multiple Choice"" class=""wp-image-4538"" width=""735"" height=""416""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>You can also show the answers in a different&nbsp;order every time the quiz is viewed by selecting the <em>Random Order</em> checkbox in the settings sidebar.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>True/False</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>True/False questions are the simplest question type and take either a true or false answer. The correct answer can be set by clicking the <em>Right</em> / <em>Wrong</em> toggles next to an answer:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":4546,""width"":735,""height"":347,""sizeSlug"":""large"",""linkDestination"":""none""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2021/03/question-block-true-false.jpg?w=980"" alt=""Question block - True/False"" class=""wp-image-4546"" width=""735"" height=""347""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Gap Fill</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Gap fill requires a learner to fill in the blank, where the ""gap"" represents the acceptable answers. Multiple correct answers can be specified by typing a comma or pressing the <em>Enter</em> key after entering an answer:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":4548,""width"":735,""height"":342,""sizeSlug"":""large"",""linkDestination"":""none""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2021/03/question-block-gap-fill.jpg?w=980"" alt=""Question block - Gap Fill"" class=""wp-image-4548"" width=""735"" height=""342""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Single Line</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Single line&nbsp;questions&nbsp;enable learners to enter their answer into a single line text field:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":4550,""width"":735,""height"":311,""sizeSlug"":""large"",""linkDestination"":""none""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2021/03/question-block-single-line.jpg?w=980"" alt=""Question block - Single Line"" class=""wp-image-4550"" width=""735"" height=""311""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Multi Line</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Multi line&nbsp;questions&nbsp;are open-ended questions that enable learners to enter their answer into a multi-line text field:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":4554,""width"":735,""height"":339,""sizeSlug"":""large"",""linkDestination"":""none""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2021/03/question-block-multi-line.jpg?w=980"" alt=""Question block - Multi Line"" class=""wp-image-4554"" width=""735"" height=""339""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>File Upload</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The file upload question type enables your learners to upload a file or document as their answer. <a href=""https://codex.wordpress.org/Uploading_Files"">Supported file types are controlled by WordPress</a>. Examples include images, documents, audio and video files:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":4555,""width"":735,""height"":345,""sizeSlug"":""large"",""linkDestination"":""none""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2021/03/question-block-file-upload.jpg?w=980"" alt=""Question block - File Upload"" class=""wp-image-4555"" width=""735"" height=""345""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading -->
+<h2>Settings</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Each question type has individual settings that can be configured. Some of these settings are common to several types:</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:list -->
-<ul><li>Go to&nbsp;<em>Questions&nbsp;</em>&gt;&nbsp;<em>Add New</em>.</li><li>Enter the question in the <em>Question</em> field.</li><li>Enter an optional <em>Question Description</em>.</li><li>Select a type from the <em>Question Type</em> dropdown.</li><li>Update the <em>Question Grade</em>. This should be a number greater than or equal to 0.</li><li>Enter the answer to the question. The exact format will depend on the type of question that was selected.</li></ul>
+<ul><li><em>Grade</em> - All question types have a grade setting that configures the number of points to assign to a question. For example, you could assign a higher point value to more difficult questions, while easier ones would have a lower value. The grade can be set from either the toolbar or the sidebar by typing a new value, or clicking the up and down arrows.</li><li><em>Answer Feedback</em> - Answer feedback is only applicable for multiple choice, true/false and gap fill questions. This feedback is shown to learners after they submit a quiz that is graded automatically. For manual grading, the answer feedback can be customized when the quiz is graded.</li><li><em>Grading Notes</em> - Grading notes are only applicable for single line, multi line and file upload questions. They are displayed to the teacher when grading the question to provide some guidance on the expected answer.</li></ul>
+<!-- /wp:list -->
+
+<!-- wp:separator -->
+<hr class=""wp-block-separator""/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 id=""legacy"">Question Management - Legacy*</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>*<em>This section is only applicable for those who are still using the legacy meta boxes, rather than blocks, to manage questions.</em></p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>Questions can be added independently of a quiz, making it possible to use them across multiple quizzes. To add a question:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {""ordered"":true} -->
+<ol><li>Go to&nbsp;<em>Questions&nbsp;</em>&gt;&nbsp;<em>Add New</em>.</li><li>Enter the question in the <em>Question</em> field.</li><li>Enter an optional<em> Description</em>.</li><li>Select a type from the <em>Question Type</em> dropdown.</li><li>Update the<em> Grade</em>. This should be a number greater than or equal to 0.</li><li>Enter the answer to the question. The exact format will depend on the type of question that was selected.</li></ol>
 <!-- /wp:list -->
 
 <!-- wp:heading {""level"":3} -->
@@ -1320,27 +1460,31 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <!-- /wp:image -->
 
 <!-- wp:heading {""level"":3} -->
-<h3>Question Grade</h3>
+<h3>Settings</h3>
+<!-- /wp:heading -->
+
+<!-- wp:heading {""level"":4} -->
+<h4>Grade</h4>
 <!-- /wp:heading -->
 
 <!-- wp:paragraph -->
-<p>Question grade is the value you would like to assign to the question. For example, you could give a higher grade to more difficult questions, while easier ones would have a lower score.</p>
+<p>Grade is the value you would like to assign to the question. For example, you could give a higher grade to more difficult questions, while easier ones would have a lower score.</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:paragraph -->
 <p>Questions can also be assigned a grade of 0. Questions with a zero grade are skipped during auto-grading.</p>
 <!-- /wp:paragraph -->
 
-<!-- wp:heading {""level"":3} -->
-<h3>Question Media</h3>
+<!-- wp:heading {""level"":4} -->
+<h4>Media</h4>
 <!-- /wp:heading -->
 
 <!-- wp:paragraph -->
 <p>A media file can be included as part of a question. Images, audio and video files are displayed inline within the question. All other types of media are displayed as links. Additionally, the title and description of the media item, if specified, are displayed below the media. By default, images use the <em>Medium size</em> width and height settings as defined in&nbsp;<em>Settings</em> &gt; <em>Media</em>.</p>
 <!-- /wp:paragraph -->
 
-<!-- wp:heading {""level"":3} -->
-<h3>Answer Feedback</h3>
+<!-- wp:heading {""level"":4} -->
+<h4>Answer Feedback</h4>
 <!-- /wp:heading -->
 
 <!-- wp:paragraph -->
@@ -1359,16 +1503,144 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <p>Question categories can be managed by going to <em>Questions</em> &gt; <em>Categories</em>.</p>
 <!-- /wp:paragraph -->","Learn how to create and manage questions in Sensei LMS.",publish,,,0,,,,,,0,0,,0,1,0,0,
 3106,Quizzes,quizzes,"<!-- wp:paragraph -->
-<p>No matter what questions you have about quizzes, we've got the answers!</p>
+<p>Quizzes are associated with an individual lesson. That means that in order to add a quiz, you will need to create a lesson first. To do that, go to <em>Lessons&nbsp;</em>&gt;&nbsp;<em>Add New</em>. You will see that the <em>Quiz</em> block has already been added at the bottom of the lesson. (<em>Note</em>: For managing quizzes using the legacy meta boxes, please refer to <a href=""#legacy"">this documentation</a>.)</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":4618,""width"":735,""height"":495,""sizeSlug"":""large"",""linkDestination"":""none""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2021/03/lesson-block-template.jpg?w=980"" alt=""Lesson block template"" class=""wp-image-4618"" width=""735"" height=""495""/><figcaption> </figcaption></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>From here, you can choose to either add a new question or an existing question.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading -->
+<h2>New Question</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Please see the&nbsp;<a href=""https://senseilms.com/documentation/question-bank/"">Questions</a>&nbsp;documentation for information on how to add new questions. It's worth noting that when a&nbsp;new question is added to a quiz, that question is also added to the question bank so that it can be used again in other quizzes.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading -->
+<h2>Existing Question(s)</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>You can also select one or more existing questions from the question bank to add to the quiz. With the quiz block selected, scroll to the bottom and click the <em>+</em> button that appears above <em>Add new or existing question</em>. Then choose<em> Existing Question(s)</em>:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":4620,""width"":735,""height"":290,""sizeSlug"":""large"",""linkDestination"":""none""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2021/03/quiz-block-inserter.jpg?w=980"" alt=""Quiz block - Inserter"" class=""wp-image-4620"" width=""735"" height=""290""/><figcaption> </figcaption></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>The <em>Questions</em> modal appears that enables you to select multiple questions to add to the quiz. You can filter by question type and category, or search for a question by name. To add a particular question, check the box that appears beside it and then click the <em>Add Selected</em> button. You can select as many questions as you like:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""align"":""center"",""id"":4517,""width"":735,""height"":582,""sizeSlug"":""large"",""linkDestination"":""none""} -->
+<div class=""wp-block-image""><figure class=""aligncenter size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2021/03/quiz-block-questions-modal.jpg?w=980"" alt=""Quiz block - Existing question"" class=""wp-image-4517"" width=""735"" height=""582""/></figure></div>
+<!-- /wp:image -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Shared Questions</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>It's important to note that if an existing question is used in another quiz, <strong>any changes you make to the question in this quiz are also applied to the other quiz</strong>. This is denoted by a <em>Shared Question</em> indicator that is displayed when a shared question is selected. Hovering over it shows a tooltip with more information:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":4523,""width"":735,""height"":116,""sizeSlug"":""large"",""linkDestination"":""none""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2021/03/question-block-shared-question.jpg?w=980"" alt=""Question block - Shared question"" class=""wp-image-4523"" width=""735"" height=""116""/><figcaption> </figcaption></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading -->
+<h2 id=""remove-question"">Removing Questions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>To remove a question from a quiz:</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:list -->
-<ul><li><a href=""#create-quiz"">How do I add a quiz?</a></li><li><a href=""#remove-question"">How do I remove a question from a quiz?</a></li><li><a href=""#quiz-settings"">How do I configure the quiz settings?</a></li></ul>
+<ul><li>Click the question to select it.</li><li>In the toolbar, click the <em>More Options</em> icon (the one that looks like three vertical dots).</li><li>Select <em>Remove block</em>.</li></ul>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>Please note that removing a question from a quiz does <strong>not</strong> remove it from the question bank. To delete the question entirely, go to <em>Questions</em> > <em>All Questions</em>, hover over the question, and click the <em>Trash</em> link.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading -->
+<h2>Removing a Quiz</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>To remove a quiz from a lesson:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul><li>Select the quiz block.</li><li>In the toolbar, click the <em>More Options</em> icon (the one that looks like three vertical dots).</li><li>Select <em>Remove block</em>.</li></ul>
+<!-- /wp:list -->
+
+<!-- wp:paragraph -->
+<p>Please note that removing a quiz from a lesson does <strong>not</strong> remove the questions from the quiz. This means that if you change your mind and add the quiz back to the lesson, the questions will also be restored.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading -->
+<h2>Reordering Questions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>To change the order that questions appear in the quiz:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul><li>Click the question to select it.</li><li>In the toolbar, click the arrows to move the question up or down in the list.</li></ul>
 <!-- /wp:list -->
 
 <!-- wp:heading -->
-<h2 id=""add-quiz"">Add a Quiz</h2>
+<h2 id=""quiz-settings"">Quiz Settings</h2>
 <!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Quiz settings are available in the sidebar after selecting the <em>Quiz</em> block:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":4499,""width"":735,""height"":446,""sizeSlug"":""large"",""linkDestination"":""none""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2021/03/quiz-block-settings.jpg?w=980"" alt=""Quiz block - Settings"" class=""wp-image-4499"" width=""735"" height=""446""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:list -->
+<ul><li><strong><em>Pass Required</em></strong> - Enabling <em>Pass Required</em> means that learners need to achieve a particular grade before the lesson can be marked as completed. If disabled, the passmark defaults to 0, and the learner can complete the lesson without passing the quiz.</li><li><strong><em>Passing Grade (%)</em></strong> - <em>Passing Grade</em> is the percent grade that must be obtained by the learner in order to pass the quiz. This setting is only visible if <em>Pass Required</em> is checked.</li><li><strong><em>Auto Grade</em></strong> - When <em>Auto Grade</em> is enabled, all multiple choice, true/false, and gap fill questions are automatically graded. Questions must have at least 1 point assigned in order to be eligible for auto-grading.</li><li><strong><em>Allow Retakes</em></strong> - If <em>Allow Retakes</em> is selected, the learner is able to reset the quiz and take it again.</li><li><strong><em>Random Question Order</em></strong> - Selecting <em>Random Question Order</em> displays the questions in a different&nbsp;order every time a quiz that has not been completed is viewed.</li><li><strong><em>Number of Questions</em></strong> - You can optionally choose to&nbsp;limit the number of questions to display to the learner by entering a value for <em>Number of Questions</em>. The questions are randomly selected.</li></ul>
+<!-- /wp:list -->
+
+<!-- wp:heading -->
+<h2>Lessons Without a Quiz</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>If there is no quiz associated with a lesson, the lesson will display a <em>Complete Lesson</em> button. This button enables learners to mark the lesson as complete and move to the next one.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:separator -->
+<hr class=""wp-block-separator""/>
+<!-- /wp:separator -->
+
+<!-- wp:heading -->
+<h2 id=""legacy"">Quiz Management - Legacy*</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>*<em>This section is only applicable for those who are still using the legacy meta boxes, rather than blocks, to manage quizzes.</em></p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>There are a few scenarios in which meta boxes are used for quiz management:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul><li>The block functionality has been intentionally disabled by hooking into <code><a href=""https://automattic.github.io/sensei/sensei_quiz_enable_block_based_editor.html"">sensei_quiz_enable_block_based_editor</a></code>.</li><li>New question types have been added by hooking into <code><a href=""https://automattic.github.io/sensei/sensei_question_types.html"">sensei_question_types</a></code>.</li><li>Category questions are being used in <em>any</em> quiz on your site.</li></ul>
+<!-- /wp:list -->
 
 <!-- wp:paragraph -->
 <p>When <a href=""https://senseilms.com/lesson/lessons/"">adding a new lesson</a>, you will find the <em>Quiz Settings</em> panel below the main content area, with a message indicating that there&nbsp;is no quiz for this lesson (yet!). You will need to save the lesson before you will be able to create the quiz:</p>
@@ -1379,11 +1651,11 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <!-- /wp:image -->
 
 <!-- wp:paragraph -->
-<p>There are three methods available for adding questions to a quiz on the <em>Edit Lesson</em> screen. You can add a new question, add an existing question, or add a category question(s). Please note that category questions will not appear unless you have created at least one category under <em>Questions</em><strong> &gt; </strong><em>Categories&nbsp;</em>in your dashboard.</p>
+<p>There are three methods available for adding questions to a quiz on the <em>Edit Lesson</em> screen. You can add a new question, add an existing question, or add a category question(s). Please note that category questions will not appear unless you have created at least one category under <em>Questions</em> &gt; <em>Categories&nbsp;</em>in your dashboard.</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:heading {""level"":3} -->
-<h3>Add a New Question</h3>
+<h3>New Question</h3>
 <!-- /wp:heading -->
 
 <!-- wp:paragraph -->
@@ -1395,7 +1667,7 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <!-- /wp:image -->
 
 <!-- wp:heading {""level"":3} -->
-<h3>Add Existing Questions</h3>
+<h3>Existing Questions</h3>
 <!-- /wp:heading -->
 
 <!-- wp:paragraph -->
@@ -1411,7 +1683,7 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <!-- /wp:paragraph -->
 
 <!-- wp:heading {""level"":3} -->
-<h3 id=""category-questions"">Add Category Questions</h3>
+<h3 id=""category-questions"">Category Questions</h3>
 <!-- /wp:heading -->
 
 <!-- wp:paragraph -->
@@ -1442,16 +1714,16 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <div class=""wp-block-image""><figure class=""aligncenter is-resized""><img src=""http://docs.woocommerce.com/wp-content/uploads/2014/06/mixture.png"" alt=""Existing and category questions"" class=""wp-image-153964"" width=""689"" height=""157""/></figure></div>
 <!-- /wp:image -->
 
-<!-- wp:heading -->
-<h2 id=""remove-question"">Remove a Question from a Quiz</h2>
+<!-- wp:heading {""level"":3} -->
+<h3 id=""remove-question"">Removing Questions</h3>
 <!-- /wp:heading -->
 
 <!-- wp:paragraph -->
 <p>To remove a question or group of questions from a quiz, click the <em>Remove</em> link in the <em>Quiz Questions</em> table. This will <strong>not</strong> remove the question from the question bank. To do that, go to <em>Questions</em> &gt; <em>All Questions</em>, hover over the question, and click the <em>Trash</em> link.</p>
 <!-- /wp:paragraph -->
 
-<!-- wp:heading -->
-<h2 id=""quiz-settings"">Quiz Settings</h2>
+<!-- wp:heading {""level"":3} -->
+<h3 id=""quiz-settings"">Quiz Settings</h3>
 <!-- /wp:heading -->
 
 <!-- wp:paragraph -->
@@ -1462,61 +1734,9 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <div class=""wp-block-image""><figure class=""aligncenter is-resized""><img src=""http://docs.woocommerce.com/wp-content/uploads/2014/06/quiz-settings.png"" alt=""Quiz settings"" class=""wp-image-153970"" width=""702"" height=""214""/></figure></div>
 <!-- /wp:image -->
 
-<!-- wp:heading {""level"":3} -->
-<h3>Pass required to complete lesson</h3>
-<!-- /wp:heading -->
-
-<!-- wp:paragraph -->
-<p>Checking <em>Pass required to complete lesson</em> forces learners to achieve a particular grade before the lesson can be marked as completed. If left unchecked, the passmark defaults to 0, and the learner can complete the lesson without passing the quiz.</p>
-<!-- /wp:paragraph -->
-
-<!-- wp:heading {""level"":3} -->
-<h3>Quiz passmark percentage</h3>
-<!-- /wp:heading -->
-
-<!-- wp:paragraph -->
-<p><em>Quiz passmark percentage</em> is the grade that must be obtained by the learner in order to pass the quiz. This setting is only visible if <em>Pass required to complete lesson</em> is checked.</p>
-<!-- /wp:paragraph -->
-
-<!-- wp:heading {""level"":3} -->
-<h3>Number of questions to show</h3>
-<!-- /wp:heading -->
-
-<!-- wp:paragraph -->
-<p>You can optionally choose to&nbsp;limit the number of questions that are displayed when the quiz is taken by entering a value for <em>Number of questions to show</em>.</p>
-<!-- /wp:paragraph -->
-
-<!-- wp:heading {""level"":3} -->
-<h3>Randomise question order</h3>
-<!-- /wp:heading -->
-
-<!-- wp:paragraph -->
-<p>Selecting <em>Randomise question order</em> will display the questions in a different&nbsp;order every time the quiz is viewed.</p>
-<!-- /wp:paragraph -->
-
-<!-- wp:heading {""level"":3} -->
-<h3>Grade quiz automatically</h3>
-<!-- /wp:heading -->
-
-<!-- wp:paragraph -->
-<p>All multiple choice, true/false, and gap fill questions will be auto-graded if <em>Grade quiz automatically</em> is checked.</p>
-<!-- /wp:paragraph -->
-
-<!-- wp:heading {""level"":3} -->
-<h3>Allow user to retake the quiz</h3>
-<!-- /wp:heading -->
-
-<!-- wp:paragraph -->
-<p>If <em>Allow user to retake the quiz</em> is selected, the learner is able to reset and take the quiz again if they like.</p>
-<!-- /wp:paragraph -->
-
-<!-- wp:heading -->
-<h2>Lesson with No Quiz</h2>
-<!-- /wp:heading -->
-
-<!-- wp:paragraph -->
-<p>If there is no quiz associated with a lesson, the lesson will display a <em>Complete Lesson</em> button. This button enables learners to mark the lesson as complete and move to the next one.</p>
-<!-- /wp:paragraph -->","Learn how to create and manage quizzes in Sensei LMS.",publish,,,0,,,,,,0,0,,0,0,0,0,
+<!-- wp:list -->
+<ul id=""block-e7a6b510-ef38-44aa-ae0e-ee440ff08597""><li><em><strong>Pass </strong>required to complete lesson</em> - Checking <em>Pass required to complete lesson</em> forces learners to achieve a particular grade before the lesson can be marked as completed. If left unchecked, the passmark defaults to 0, and the learner can complete the lesson without passing the quiz.</li><li><strong><em>Quiz passmark percentage</em></strong> - Quiz passmark percentage is the grade that must be obtained by the learner in order to pass the quiz. This setting is only visible if Pass required to complete lesson is checked.</li><li><strong><em>Number of questions to show</em></strong> - You can optionally choose to&nbsp;limit the number of questions that are displayed when the quiz is taken by entering a value for <em>Number of questions to show</em>.</li><li><strong><em>Randomise question order</em></strong> - Selecting <em>Randomise question order</em> will display the questions in a different&nbsp;order every time the quiz is viewed.</li><li><strong><em>Grade quiz automatically</em></strong> - All multiple choice, true/false, and gap fill questions will be auto-graded if <em>Grade quiz automatically</em> is checked.</li><li><strong><em>Allow user to retake the quiz</em></strong> - If <em>Allow user to retake the quiz</em> is selected, the learner is able to reset and take the quiz again if they like.</li></ul>
+<!-- /wp:list -->","Learn how to create and manage quizzes in Sensei LMS.",publish,,,0,,,,,,0,0,,0,0,0,0,
 3043,Modules,modules,"<!-- wp:paragraph -->
 <p>A module is a container for a group of lessons in a course. Conceptually, they exist as an additional level between courses and lessons in the <a href=""https://senseilms.com/documentation/content-hierarchy/"">course hierarchy</a>. A course can contain any number of modules, and every lesson in the course can be assigned to a single module.</p>
 <!-- /wp:paragraph -->
@@ -1580,36 +1800,104 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <!-- wp:paragraph -->
 <p>By default, any modules that are added to a course are displayed in alphabetical order. To use a custom order, go to <em>Courses</em>&nbsp;&gt; <em>Order Modules</em>. Select a course, drag and drop the modules into the desired order, and then click the <em>Save module order</em> button.</p>
 <!-- /wp:paragraph -->","Learn how to create and manage modules in Sensei LMS.",publish,,,0,,,,,,0,0,,0,0,0,0,
-3063,Lessons,lessons,"<!-- wp:heading -->
-<h2>Add a Lesson</h2>
+3063,Lessons,lessons,"<!-- wp:paragraph -->
+<p>To add a lesson, go to <em>Lessons </em>> <em>Add New</em>. You will see that some blocks have already been added to the page for you. (<em>Note</em>: If you use Divi, you will need to go to <em>Divi</em> > <em>Theme Options</em> > <em>Builder</em> and disable <em>Lessons</em> in order to see the blocks.)</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>These blocks can be customized, reordered or removed:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":4409,""width"":735,""height"":317,""sizeSlug"":""large"",""linkDestination"":""none""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2021/02/add-new-lesson.jpg?w=980"" alt=""Lesson block template"" class=""wp-image-4409"" width=""735"" height=""317""/></figure>
+<!-- /wp:image -->
+
+<!-- wp:heading -->
+<h2>Contact Teacher</h2>
 <!-- /wp:heading -->
 
 <!-- wp:paragraph -->
-<p>To add a lesson, go to <em>Lessons&nbsp;</em>&gt;&nbsp;<em>Add New</em>.</p>
+<p>The <a href=""https://senseilms.com/lesson/courses/#contact-teacher""><em>Contact Teacher</em> block</a> is the same as the one that appears on the course page. It enables registered users to contact the teacher.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading -->
+<h2>Lesson Actions</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>The <em>Lesson Actions</em> block is a group of buttons that enables a learner to perform specific actions for a lesson. These include marking the lesson as complete, viewing the quiz, resetting the lesson or moving to the next lesson. Each of these buttons can have their style, colours and border changed.</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:paragraph -->
-<p>Start by giving the lesson a title:</p>
+<p>The visibility of some of these buttons depends on certain conditions to be met. For example, the <em>View Quiz</em> button only appears in the editor and for learners if there is a quiz associated with the lesson.</p>
 <!-- /wp:paragraph -->
 
-<!-- wp:image {""id"":1354,""width"":735,""height"":92} -->
-<figure class=""wp-block-image is-resized""><img src=""https://senseilms.com/wp-content/uploads/2017/11/lesson-title.jpg?w=980"" alt=""Lesson title"" class=""wp-image-1354"" width=""735"" height=""92""/></figure>
+<!-- wp:paragraph -->
+<p>Additionally, some actions may appear disabled in the editor. This is because they depend on whether or not the learner has completed the lesson. For example, it does not make sense to show the <em>Complete Lesson</em> button if the learner has already completed it. Similarly, it does not make sense to show the <em>Reset Lesson</em> button if the learner hasn't finished it yet.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>You can toggle between these two states, in progress and completed, by selecting the <em>Lesson Actions</em> block and choosing a different option from the dropdown in the toolbar:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":4411,""width"":735,""height"":272,""sizeSlug"":""large"",""linkDestination"":""none""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2021/02/lesson-actions-toolbar.jpg?w=980"" alt=""Lesson Actions block toolbar dropdown"" class=""wp-image-4411"" width=""735"" height=""272""/></figure>
 <!-- /wp:image -->
 
 <!-- wp:paragraph -->
-<p>Next, enter the content for the lesson in the main content area. It can contain any type of content you like, including images, videos and HTML:</p>
+<p>Alternatively, you can click on any of the buttons in the block to toggle the state. This enables you to see what the learner will see depending on whether or not they have completed the lesson.</p>
 <!-- /wp:paragraph -->
 
-<!-- wp:image {""id"":1356,""width"":735,""height"":135} -->
-<figure class=""wp-block-image is-resized""><img src=""https://senseilms.com/wp-content/uploads/2017/11/lesson-content.jpg?w=980"" alt=""Lesson content"" class=""wp-image-1356"" width=""735"" height=""135""/></figure>
+<!-- wp:paragraph -->
+<p>You can add additional content and blocks such as images and videos to the editor, just as you would for any other type of post.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p><em>Note: If no Sensei blocks exist on the lesson page, the lesson will use a legacy PHP template to provide the same functionality to your site visitors. Since PHP templates can be difficult to customize, we recommend that you use blocks instead.</em></p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading -->
+<h2>Document Settings</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>There are some additional settings in the sidebar that can be configured for the lesson.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Lesson Tags</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>You can add tags to lessons in the same way as you can with regular posts. Lesson tags can be managed by going to <em>Lessons</em> &gt; <em>Lesson Tags</em>. If you would like lessons to be searchable by tag, you will need to use a search plugin such as&nbsp;<a href=""https://searchwp.com/"">Search WP</a>.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Featured Image</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>A featured image can be added to a lesson by uploading an image from your computer or selecting an existing one from the&nbsp;Media Library:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":4419,""width"":284,""height"":311,""sizeSlug"":""large"",""linkDestination"":""none""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/05/featured-image.jpg?w=568"" alt=""Lesson featured image"" class=""wp-image-4419"" width=""284"" height=""311""/></figure>
 <!-- /wp:image -->
 
 <!-- wp:paragraph -->
-<p>If you like, you can enter a brief description of the lesson in the <em>Excerpt</em> field.&nbsp;The excerpt is displayed below the lesson title on the course page. If the excerpt is empty, only the lesson title is shown:</p>
+<p>The image is displayed on the lesson page above the lesson name. Alternatively, you can embed an image anywhere in your content by adding an <em>Image</em> block right inside the editor.</p>
 <!-- /wp:paragraph -->
 
-<!-- wp:image {""id"":1432,""width"":225,""height"":180} -->
-<figure class=""wp-block-image is-resized""><img src=""https://senseilms.com/wp-content/uploads/2018/12/lesson-excerpt.jpg?w=300"" alt=""Lesson excerpt"" class=""wp-image-1432"" width=""225"" height=""180""/></figure>
+<!-- wp:heading {""level"":3} -->
+<h3>Excerpt</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>If you like, you can enter a brief description of the lesson in the <em>Excerpt</em> field.&nbsp;The excerpt is displayed to those who haven't enrolled in the course:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:image {""id"":4420,""width"":289,""height"":217,""sizeSlug"":""large"",""linkDestination"":""none""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/05/lesson-excerpt.jpg?w=578"" alt=""Lesson excerpt"" class=""wp-image-4420"" width=""289"" height=""217""/></figure>
 <!-- /wp:image -->
 
 <!-- wp:heading {""level"":3} -->
@@ -1617,15 +1905,23 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <!-- /wp:heading -->
 
 <!-- wp:paragraph -->
-<p>In the <em>Course</em> panel, select&nbsp;the course that the lesson should be associated with. A lesson can only be associated with one course:</p>
+<p>In the <em>Course</em> panel, select&nbsp;the course that the lesson should be associated with. A lesson can only be associated with a single course:</p>
 <!-- /wp:paragraph -->
 
-<!-- wp:image {""id"":3088,""width"":274,""height"":110,""sizeSlug"":""large""} -->
-<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/05/course-panel.jpg?w=548"" alt=""Lesson course"" class=""wp-image-3088"" width=""274"" height=""110""/></figure>
+<!-- wp:image {""id"":4413,""width"":285,""height"":117,""sizeSlug"":""large"",""linkDestination"":""none""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2021/02/course-panel.jpg"" alt=""Lesson course"" class=""wp-image-4413"" width=""285"" height=""117""/></figure>
 <!-- /wp:image -->
 
 <!-- wp:paragraph -->
 <p><em>Note: We don't recommend adding a lesson to a course that is already live and has active learners. <a href=""https://senseilms.com/lesson/courses#edit-course"">See this page&nbsp;for more information</a>.</em></p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {""level"":3} -->
+<h3>Module</h3>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>See <a href=""https://senseilms.com/lesson/modules"">Modules</a><a href=""https://senseilms.com/documentation/adding-modules/""> </a>to learn more about how to assign lessons to modules.</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:heading {""level"":3} -->
@@ -1636,8 +1932,8 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <p>If you would like learners to complete another lesson before taking this one, you can set a<em>&nbsp;Prerequisite</em>. Learners will not be able to start taking this lesson until they complete the prerequisite lesson first:</p>
 <!-- /wp:paragraph -->
 
-<!-- wp:image {""id"":1435,""width"":225,""height"":83} -->
-<figure class=""wp-block-image is-resized""><img src=""https://senseilms.com/wp-content/uploads/2017/11/lesson-prerequisite.jpg?w=300"" alt=""Lesson prerequisite"" class=""wp-image-1435"" width=""225"" height=""83""/></figure>
+<!-- wp:image {""id"":4414,""width"":285,""height"":118,""sizeSlug"":""large"",""linkDestination"":""none""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/05/lesson-prerequisite.jpg?w=570"" alt=""Lesson prerequisite"" class=""wp-image-4414"" width=""285"" height=""118""/></figure>
 <!-- /wp:image -->
 
 <!-- wp:paragraph -->
@@ -1656,48 +1952,8 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <p>To offer a free sample of your course content, you can select&nbsp;<em>Allow this lesson to be viewed without login</em>. This will enable the lesson content to be viewable by anyone, including anonymous visitors to your site:</p>
 <!-- /wp:paragraph -->
 
-<!-- wp:image {""id"":3104,""width"":276,""height"":105,""sizeSlug"":""large""} -->
-<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/05/lesson-preview.jpg"" alt=""Lesson preview"" class=""wp-image-3104"" width=""276"" height=""105""/></figure>
-<!-- /wp:image -->
-
-<!-- wp:paragraph -->
-<p>Here's how the course archive page might look for a course containing a preview lesson:</p>
-<!-- /wp:paragraph -->
-
-<!-- wp:image {""id"":1437,""width"":735,""height"":232} -->
-<figure class=""wp-block-image is-resized""><img src=""https://senseilms.com/wp-content/uploads/2017/11/course-archive-preview.jpg?w=980"" alt=""Preview lessons on course archive page"" class=""wp-image-1437"" width=""735"" height=""232""/></figure>
-<!-- /wp:image -->
-
-<!-- wp:paragraph -->
-<p>The course page itself also indicates which lessons can be previewed:</p>
-<!-- /wp:paragraph -->
-
-<!-- wp:image {""id"":1439,""width"":735,""height"":140} -->
-<figure class=""wp-block-image is-resized""><img src=""https://senseilms.com/wp-content/uploads/2017/11/single-course-preview.jpg?w=980"" alt=""Preview lessons on course page"" class=""wp-image-1439"" width=""735"" height=""140""/></figure>
-<!-- /wp:image -->
-
-<!-- wp:heading {""level"":3} -->
-<h3>Lesson Tags</h3>
-<!-- /wp:heading -->
-
-<!-- wp:paragraph -->
-<p>You can add tags to lessons in the same way as you can with regular posts. Lesson tags can be managed by going to <em>Lessons</em> &gt; <em>Lesson Tags</em>.</p>
-<!-- /wp:paragraph -->
-
-<!-- wp:paragraph -->
-<p>If you would like lessons to be searchable by tag, you will need to use a search plugin such as&nbsp;<a href=""https://searchwp.com/"">Search WP</a>.</p>
-<!-- /wp:paragraph -->
-
-<!-- wp:heading {""level"":3} -->
-<h3>Featured Image</h3>
-<!-- /wp:heading -->
-
-<!-- wp:paragraph -->
-<p>A featured image can be added to a lesson by uploading an image from your computer or selecting an existing image from the&nbsp;Media Library. The image displays on the course and lesson page, depending on the settings configured in <em>Sensei</em> <em>LMS</em> &gt; <em>Settings</em> &gt; <em>Lessons</em>:</p>
-<!-- /wp:paragraph -->
-
-<!-- wp:image {""id"":1427,""width"":164,""height"":224,""sizeSlug"":""large""} -->
-<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2017/11/featured-image.jpg?w=538"" alt=""Lesson featured image"" class=""wp-image-1427"" width=""164"" height=""224""/></figure>
+<!-- wp:image {""id"":4416,""width"":284,""height"":119,""sizeSlug"":""large"",""linkDestination"":""none""} -->
+<figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2021/02/lesson-preview.jpg?w=568"" alt=""Lesson preview"" class=""wp-image-4416"" width=""284"" height=""119""/></figure>
 <!-- /wp:image -->
 
 <!-- wp:heading {""level"":3} -->
@@ -1714,14 +1970,6 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 
 <!-- wp:paragraph -->
 <p><em>Note: Sensei LMS is unable to protect video content. If you need to ensure that only paying customers can watch videos, we recommend using a service such as <a href=""https://vimeo.com/professionals"">Vimeo PRO</a>.</em></p>
-<!-- /wp:paragraph -->
-
-<!-- wp:heading {""level"":3} -->
-<h3>Module</h3>
-<!-- /wp:heading -->
-
-<!-- wp:paragraph -->
-<p>See <a href=""https://senseilms.com/lesson/modules"">Modules</a><a href=""https://senseilms.com/documentation/adding-modules/""> </a>to learn more about how to assign lessons to modules.</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:heading -->
