@@ -64,21 +64,18 @@ const CategoryQuestionSettings = ( {
 							label={ __( 'Category', 'sensei-lms' ) }
 							options={ categoryOptions }
 							value={ options.category }
-							onChange={ ( nextCategory ) => {
-								nextCategory = parseInt( nextCategory, 10 );
-								const nextQuestionCategory = getQuestionCategoryById(
-									nextCategory
+							onChange={ ( nextCategoryTermId ) => {
+								const nextQuestionCategoryTermId = getQuestionCategoryById(
+									+nextCategoryTermId
 								);
 
 								setOptions(
 									{
-										category:
-											parseInt( nextCategory, 10 ) ??
-											null,
+										category: +nextCategoryTermId ?? null,
 									},
 									{
 										categoryName:
-											nextQuestionCategory?.name,
+											nextQuestionCategoryTermId?.name,
 									}
 								);
 							} }
