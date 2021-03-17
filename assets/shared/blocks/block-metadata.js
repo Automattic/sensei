@@ -24,9 +24,9 @@ import { createReducerFromActionMap, createStore } from '../data/store-helpers';
 const store = {
 	reducer: createReducerFromActionMap(
 		{
-			SET_BLOCK_META: ( { clientId, blockState }, state ) => ( {
+			SET_BLOCK_META: ( { clientId, metadata }, state ) => ( {
 				...state,
-				[ clientId ]: { ...( state[ clientId ] || {} ), ...blockState },
+				[ clientId ]: { ...( state[ clientId ] || {} ), ...metadata },
 			} ),
 			CLEAR: ( state, clientId ) => {
 				if ( clientId ) {
@@ -39,14 +39,43 @@ const store = {
 		{}
 	),
 	actions: {
-		setBlockMeta( clientId, blockState ) {
-			return { type: 'SET_BLOCK_META', clientId, blockState };
+		/**
+		 * Set metadata for a block.
+		 *
+		 * Input is merged with existing metadata.
+		 *
+		 * @param {string} clientId Block ID.
+		 * @param {string} metadata Changed block metadata.
+		 */
+		setBlockMeta( clientId, metadata ) {
+			return { type: 'SET_BLOCK_META', clientId, metadata };
 		},
+		/**
+		 * Clear metadata for the block or all blocks.
+		 *
+		 * @param {string} [clientId] Block ID, or null to clear all blocks.
+		 */
 		clear: ( clientId = null ) => ( { type: 'CLEAR', clientId } ),
 	},
 	selectors: {
+		/**
+		 * Get metadata for a block.
+		 *
+		 * @param {Object} state
+		 * @param {string} clientId Block ID.
+		 * @param {string} [key]    Only return metadata for the given key.
+		 * @return {*} Block metadata.
+		 */
 		getBlockMeta: ( state, clientId, key = null ) =>
 			key ? state[ clientId ]?.[ key ] : state[ clientId ],
+		/**
+		 * Get metadata for multiple blocks.
+		 *
+		 * @param {Object}   state
+		 * @param {string[]} clientIds Block ID.
+		 * @param {string}   [key]     Only return metadata for the given key.
+		 * @return {Object} Blocks metadata, indexed by block ID.
+		 */
 		getMultipleBlockMeta: ( state, clientIds = [], key = null ) => {
 			const blocks = clientIds?.length
 				? pick( state, clientIds )
