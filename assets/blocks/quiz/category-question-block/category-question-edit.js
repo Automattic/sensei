@@ -38,14 +38,15 @@ const CategoryQuestionEdit = ( props ) => {
 
 	const categoryName =
 		getCategoryTermById( category )?.name ?? props.attributes.categoryName;
+	const categoryNameMatch = categoryName === props.attributes.categoryName;
 
 	useEffect( () => {
-		if ( categoryName && categoryName !== props.attributes.categoryName ) {
+		if ( categoryName && ! categoryNameMatch ) {
 			setAttributes( {
 				categoryName,
 			} );
 		}
-	}, [ categoryName ] );
+	}, [ categoryName, categoryNameMatch, setAttributes ] );
 
 	return (
 		<>
