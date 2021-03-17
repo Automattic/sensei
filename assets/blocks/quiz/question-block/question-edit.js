@@ -29,6 +29,7 @@ import { validateQuestionBlock } from './question-validation';
 import QuestionView from './question-view';
 import QuestionSettings from './question-settings';
 import { QuestionTypeToolbar } from './question-type-toolbar';
+import SingleQuestion from './single-question';
 
 /**
  * Format the question grade as `X points`.
@@ -154,6 +155,7 @@ const QuestionEdit = ( props ) => {
 				</>
 			) }
 			<QuestionValidationNotice { ...props } />
+			{ isSingle && <SingleQuestion { ...props } /> }
 			<BlockControls>
 				<>
 					<QuestionTypeToolbar
