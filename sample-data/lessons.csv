@@ -1571,6 +1571,21 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <!-- /wp:paragraph -->
 
 <!-- wp:heading -->
+<h2>Removing a Quiz</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>To remove a quiz from a lesson:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul><li>Select the quiz block.</li><li>In the toolbar, click the <em>More Options</em> icon (the one that looks like three vertical dots).</li><li>Select <em>Remove block</em>.</li></ul>
+<!-- /wp:list -->
+
+<p>Please note that removing a quiz from a lesson does <strong>not</strong> remove the questions from the quiz. This means that if you change your mind and add the quiz back to the lesson, the questions will also be restored.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading -->
 <h2>Reordering Questions</h2>
 <!-- /wp:heading -->
 
@@ -1617,6 +1632,14 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <!-- wp:paragraph -->
 <p>*<em>This section is only applicable for those who are still using the legacy meta boxes, rather than blocks, to manage quizzes.</em></p>
 <!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>There are a few scenarios in which meta boxes are used for quiz management:</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list -->
+<ul><li>The block functionality has been intentionally disabled by hooking into <code><a href=""https://automattic.github.io/sensei/sensei_quiz_enable_block_based_editor.html"">sensei_quiz_enable_block_based_editor</a></code>.</li><li>New question types have been added by hooking into <code><a href=""https://automattic.github.io/sensei/sensei_question_types.html"">sensei_question_types</a></code>.</li><li>Category questions are being used in <em>any</em> quiz on your site.</li></ul>
+<!-- /wp:list -->
 
 <!-- wp:paragraph -->
 <p>When <a href=""https://senseilms.com/lesson/lessons/"">adding a new lesson</a>, you will find the <em>Quiz Settings</em> panel below the main content area, with a message indicating that there&nbsp;is no quiz for this lesson (yet!). You will need to save the lesson before you will be able to create the quiz:</p>
