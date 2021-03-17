@@ -242,16 +242,9 @@ $block: '.sensei-lms-question-block';
 		}
 	}
 
-	&__error {
+	.sensei-lms-block-validation__notice {
 		position: absolute;
 		left: -72px;
-		svg {
-			fill: $alert-red;
-		}
-
-		&__tooltip-content {
-			text-align: left;
-		}
 	}
 
 	.block-editor-inner-blocks {

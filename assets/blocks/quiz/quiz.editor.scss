@@ -78,5 +78,16 @@ $gray-400: #ccc;
 			}
 		}
 	}
+}
 
+.sensei-lms-block-validation__notice {
+	position: absolute;
+	left: -24px;
+	svg {
+		fill: $alert-red;
+	}
+
+	&__tooltip-content {
+		text-align: left;
+	}
 }

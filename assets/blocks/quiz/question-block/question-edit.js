@@ -4,21 +4,23 @@
 import { BlockControls, InnerBlocks } from '@wordpress/block-editor';
 import { select, useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
+import { compose } from '@wordpress/compose';
 import { __, _n, sprintf } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
 import { useBlockIndex } from '../../../shared/blocks/block-index';
+import { withBlockValidation } from '../../../shared/blocks/block-validation';
 import SingleLineInput from '../../../shared/blocks/single-line-input';
 import { withBlockMeta } from '../../../shared/blocks/block-metadata';
 import { useHasSelected } from '../../../shared/helpers/blocks';
 import types from '../answer-blocks';
 import {
-	QuestionValidationErrors,
+	QuestionValidationNotice,
 	SharedQuestionNotice,
 } from './question-block-helpers';
 import { QuestionGradeToolbar } from './question-grade-toolbar';
-import { useQuestionValidation } from './question-validation';
+import { validateQuestionBlock } from './question-validation';
 import QuestionView from './question-view';
 import QuestionSettings from './question-settings';
 import { QuestionTypeToolbar } from './question-type-toolbar';
@@ -54,7 +56,6 @@ const QuestionEdit = ( props ) => {
 		setAttributes,
 		clientId,
 		context,
-		meta: { validationErrors, showValidationErrors },
 	} = props;
 	const { removeBlock, selectBlock } = useDispatch( 'core/block-editor' );
 
@@ -67,8 +68,6 @@ const QuestionEdit = ( props ) => {
 
 	const index = useBlockIndex( clientId );
 	const AnswerBlock = type && types[ type ];
-
-	useQuestionValidation( props );
 
 	const hasSelected = useHasSelected( props );
 	const isSingle = context && ! ( 'sensei-lms/quizId' in context );
@@ -100,12 +99,7 @@ const QuestionEdit = ( props ) => {
 			}` }
 		>
 			{ questionIndex }
-			{ showValidationErrors && (
-				<QuestionValidationErrors
-					errors={ validationErrors }
-					type={ type }
-				/>
-			) }
+			<QuestionValidationNotice { ...props } />
 			<h2 className="sensei-lms-question-block__title">
 				<SingleLineInput
 					placeholder={ __( 'Question Title', 'sensei-lms' ) }
@@ -172,4 +166,7 @@ const QuestionEdit = ( props ) => {
 	);
 };
 
-export default withBlockMeta( QuestionEdit );
+export default compose(
+	withBlockMeta,
+	withBlockValidation( validateQuestionBlock )
+)( QuestionEdit );

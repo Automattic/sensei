@@ -8,7 +8,7 @@ import { Icon, info } from '@wordpress/icons';
  * Internal dependencies
  */
 import { alert } from '../../../icons/wordpress-icons';
-import { getValidationErrorMessage } from './question-validation';
+import { getQuestionBlockValidationErrorMessages } from './question-validation';
 
 /**
  * Display a notice about the question being shared across quizzes.
@@ -28,22 +28,44 @@ export const SharedQuestionNotice = () => (
 );
 
 /**
- * Display an icon and tooltip if the question has validation errors.
+ * Display validation notice for the question block if there are errors.
  *
- * @param {Object} props
- * @param {Array}  props.errors Validation errors.
- * @param {string} props.type   Question type.
+ * @param {Object}  props
+ * @param {Object}  props.meta
+ * @param {Object}  props.attributes
+ * @param {string}  props.attributes.type           Question type.
+ * @param {Array}   props.meta.validationErrors     Validation errors  codes
+ * @param {boolean} props.meta.showValidationErrors Display validation errors.
  */
-export const QuestionValidationErrors = ( { errors = [], type } ) => {
+export const QuestionValidationNotice = ( {
+	attributes: { type },
+	meta: { validationErrors, showValidationErrors },
+} ) => {
+	if ( ! showValidationErrors ) return null;
+
+	const validationMessages = getQuestionBlockValidationErrorMessages(
+		validationErrors,
+		type
+	);
+
+	return <BlockValidationNotice errors={ validationMessages } />;
+};
+
+/**
+ * Display an icon and tooltip if the block has validation errors.
+ *
+ * @param {string[]} errors Error messages.
+ */
+export const BlockValidationNotice = ( { errors = [] } ) => {
 	if ( ! errors || ! errors.length ) return null;
 	const errorItems = errors?.map?.( ( error ) => (
-		<li key={ error }>{ getValidationErrorMessage( error, type ) }</li>
+		<li key={ error }>{ error }</li>
 	) );
 	return (
-		<div className="sensei-lms-question-block__error">
+		<div className="sensei-lms-block-validation__notice">
 			<Tooltip
 				text={
-					<ul className="sensei-lms-question-block__error__tooltip-content">
+					<ul className="sensei-lms-block-validation__notice__tooltip-content">
 						{ errorItems }
 					</ul>
 				}

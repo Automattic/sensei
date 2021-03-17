@@ -1,17 +1,15 @@
 /**
  * WordPress dependencies
  */
-import { useSelect } from '@wordpress/data';
-import { useEffect } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import {
-	BLOCK_META_STORE,
-	setBlockMeta,
-} from '../../../shared/blocks/block-metadata';
-import types from '../answer-blocks';
 import blockSettings from '.';
+
+/**
+ * Internal dependencies
+ */
+import types from '../answer-blocks';
 
 /**
  * Validate question block
@@ -28,48 +26,25 @@ export const validateQuestionBlock = ( attributes ) => {
 
 	if ( isDraft ) return {};
 
-	return getQuestionValidationErrors( {
+	return {
 		noTitle: ! hasTitle,
 		...answerBlockValidation,
-	} );
+	};
 };
 
 /**
- * Validate question block attributes.
+ * Get messages for the validation errors.
  *
- * @param {Object} props
- * @param {string} props.clientId   Block ID.
- * @param {string} props.attributes Block attributes.
- * @return {Array} Validation errors.
+ * @param {string} errors       Error codes.
+ * @param {string} questionType Question type.
+ * @return {string} Error message.
  */
-export const useQuestionValidation = ( { clientId, attributes } ) => {
-	useEffect( () => {
-		setBlockMeta( clientId, {
-			validationErrors: validateQuestionBlock( attributes ),
-		} );
-	}, [ clientId, attributes ] );
-
-	return useSelect(
-		( select ) =>
-			select( BLOCK_META_STORE ).getBlockMeta(
-				clientId,
-				'validationErrors'
-			),
-		[ clientId, attributes ]
+export const getQuestionBlockValidationErrorMessages = (
+	errors,
+	questionType
+) =>
+	errors.map(
+		( error ) =>
+			types?.[ questionType ]?.messages?.[ error ] ||
+			blockSettings.messages[ error ]
 	);
-};
-
-/**
- * Get errors from validation result.
- *
- * @param {Object} result Validation result.
- * @return {Array} Items that have failed validation.
- */
-const getQuestionValidationErrors = ( result = {} ) =>
-	Object.entries( result )
-		.filter( ( [ , value ] ) => value )
-		.map( ( [ key ] ) => key );
-
-export const getValidationErrorMessage = ( error, questionType ) =>
-	types?.[ questionType ]?.messages?.[ error ] ||
-	blockSettings.messages[ error ];
