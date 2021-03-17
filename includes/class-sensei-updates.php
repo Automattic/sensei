@@ -79,28 +79,9 @@ class Sensei_Updates {
 		$this->v3_7_check_rewrite_front();
 		$this->v3_7_add_comment_indexes();
 		$this->v3_9_fix_question_author();
-		$this->v3_9_add_multiple_questions_flag();
 
 		// Flush rewrite cache.
 		Sensei()->initiate_rewrite_rules_flush();
-	}
-
-	/**
-	 * Adds a flag to check if the `multiple_questions` CPT is on active quizzes upon upgrade.
-	 *
-	 * This will help with preventing the question block editor from being used until support for these are added.
-	 *
-	 * @since 3.9.0
-	 */
-	private function v3_9_add_multiple_questions_flag() {
-		// Only run this if we're upgrading and the current version (before upgrade) is less than 3.9.0.
-		if ( ! $this->is_upgrade || version_compare( $this->current_version, '3.9.0', '>=' ) ) {
-			return;
-		}
-
-		if ( $this->has_multiple_questions() ) {
-			Sensei()->set_legacy_flag( Sensei_Main::LEGACY_FLAG_MULTIPLE_QUESTIONS_EXIST, true );
-		}
 	}
 
 	/**

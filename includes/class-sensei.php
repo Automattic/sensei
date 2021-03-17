@@ -11,10 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.0.0
  */
 class Sensei_Main {
-	const COMMENT_COUNT_TRANSIENT_PREFIX       = 'sensei_comment_counts_';
-	const LEGACY_FLAG_OPTION                   = 'sensei-legacy-flags';
-	const LEGACY_FLAG_WITH_FRONT               = 'with_front';
-	const LEGACY_FLAG_MULTIPLE_QUESTIONS_EXIST = 'multiple_questions';
+	const COMMENT_COUNT_TRANSIENT_PREFIX = 'sensei_comment_counts_';
+	const LEGACY_FLAG_OPTION             = 'sensei-legacy-flags';
+	const LEGACY_FLAG_WITH_FRONT         = 'with_front';
 
 	/**
 	 * @var string
