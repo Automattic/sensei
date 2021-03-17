@@ -30,6 +30,28 @@ const QuizAppender = ( { clientId } ) => {
 	const addNewQuestionBlock = ( block ) =>
 		insertBlock( createBlock( block.name ), undefined, clientId, true );
 
+	const controls = [
+		{
+			title: __( 'New Question', 'sensei-lms' ),
+			icon: questionBlock.icon,
+			onClick: () => addNewQuestionBlock( questionBlock ),
+		},
+	];
+
+	if ( window.sensei_quiz_blocks.category_question_enabled ) {
+		controls.push( {
+			title: __( 'Category Question(s)', 'sensei-lms' ),
+			icon: quizIcon,
+			onClick: () => addNewQuestionBlock( categoryQuestionBlock ),
+		} );
+	}
+
+	controls.push( {
+		title: __( 'Existing Question(s)', 'sensei-lms' ),
+		icon: quizIcon,
+		onClick: () => setModalOpen( true ),
+	} );
+
 	return (
 		<div className="sensei-lms-quiz-block__appender block-editor-default-block-appender">
 			<DropdownMenu
@@ -38,24 +60,7 @@ const QuizAppender = ( { clientId } ) => {
 					className: 'block-editor-inserter__toggle',
 				} }
 				label={ __( 'Add Block', 'sensei-lms' ) }
-				controls={ [
-					{
-						title: __( 'New Question', 'sensei-lms' ),
-						icon: questionBlock.icon,
-						onClick: () => addNewQuestionBlock( questionBlock ),
-					},
-					{
-						title: __( 'New Category Question', 'sensei-lms' ),
-						icon: quizIcon,
-						onClick: () =>
-							addNewQuestionBlock( categoryQuestionBlock ),
-					},
-					{
-						title: __( 'Existing Question(s)', 'sensei-lms' ),
-						icon: quizIcon,
-						onClick: () => setModalOpen( true ),
-					},
-				] }
+				controls={ controls }
 			/>
 			<p
 				className="sensei-lms-quiz-block__appender__placeholder"
