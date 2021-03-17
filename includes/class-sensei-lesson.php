@@ -1097,8 +1097,12 @@ class Sensei_Lesson {
 					$html                   .= '<td class="question-grade-column">' . esc_html( $question_grade ) . '</td>';
 					$question_types_filtered = ucwords( str_replace( array( 'boolean', 'multiple-choice', 'gap-fill', 'single-line', 'multi-line', 'file-upload' ), array( __( 'True/False', 'sensei-lms' ), __( 'Multiple Choice', 'sensei-lms' ), __( 'Gap Fill', 'sensei-lms' ), __( 'Single Line', 'sensei-lms' ), __( 'Multi Line', 'sensei-lms' ), __( 'File Upload', 'sensei-lms' ) ), $question_type ) );
 					$html                   .= '<td>' . esc_html( $question_types_filtered ) . '</td>';
-					$html                   .= '<td><a title="' . esc_attr__( 'Edit Question', 'sensei-lms' ) . '" href="#question_' . esc_attr( $question_counter ) . '" class="question_table_edit">' . esc_html__( 'Edit', 'sensei-lms' ) . '</a> <a title="' . esc_attr__( 'Remove Question', 'sensei-lms' ) . '" href="#add-question-metadata" class="question_table_delete">' . esc_html__( 'Remove', 'sensei-lms' ) . '</a></td>';
 
+					if ( current_user_can( 'edit_post', $question_id ) ) {
+						$html .= '<td><a title="' . esc_attr__( 'Edit Question', 'sensei-lms' ) . '" href="#question_' . esc_attr( $question_counter ) . '" class="question_table_edit">' . esc_html__( 'Edit', 'sensei-lms' ) . '</a> <a title="' . esc_attr__( 'Remove Question', 'sensei-lms' ) . '" href="#add-question-metadata" class="question_table_delete">' . esc_html__( 'Remove', 'sensei-lms' ) . '</a></td>';
+					} else {
+						$html .= '<td><a title="' . esc_attr__( 'Remove Question', 'sensei-lms' ) . '" href="#add-question-metadata" class="question_table_delete question_table_delete--without-edit">' . esc_html__( 'Remove', 'sensei-lms' ) . '</a><br />' . esc_html__( 'You are not the question owner, so you cannot edit it.', 'sensei-lms' ) . '</td>';
+					}
 				} else {
 
 					$end_number = intval( $question_counter ) + intval( $multiple_data[1] ) - 1;

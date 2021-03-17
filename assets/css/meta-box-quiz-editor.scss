@@ -192,6 +192,9 @@
 							color: red;
 						}
 					}
+					.question_table_delete.question_table_delete--without-edit {
+						margin-left: 0;
+					}
 				}
 				&#no-questions-message {
 					cursor: pointer;
