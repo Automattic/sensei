@@ -282,17 +282,22 @@ class Sensei_Lesson {
 	}
 
 	/**
-	 * lesson_prerequisite_meta_box_content function.
+	 * Handles the creation of the dropdown field for the Lesson Prerequisite meta box.
 	 *
 	 * @access public
 	 * @return void
 	 */
 	public function lesson_prerequisite_meta_box_content() {
 		global $post;
-		// Get existing post meta
+		// Get existing post meta.
 		$select_lesson_prerequisite = get_post_meta( $post->ID, '_lesson_prerequisite', true );
-		// Get the Lesson Posts
-		$post_args   = array(
+		// Get current Course.
+		$current_lesson_course = get_post_meta( $post->ID, '_lesson_course', true );
+		// Create empty $posts_array.
+		$posts_array = array();
+
+		// Get all the Lesson Posts.
+		$post_args = array(
 			'post_type'        => 'lesson',
 			'posts_per_page'   => -1,
 			'orderby'          => 'title',
@@ -301,8 +306,21 @@ class Sensei_Lesson {
 			'suppress_filters' => 0,
 			'post_status'      => [ 'publish', 'draft', 'future' ],
 		);
-		$posts_array = get_posts( $post_args );
-		// Build the HTML to Output
+
+		if ( $current_lesson_course ) {
+			// Add meta query to only get Lesson Posts from current Course.
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Slow query ok.
+			$post_args['meta_query'] = array(
+				array(
+					'key'     => '_lesson_course',
+					'value'   => $current_lesson_course,
+					'compare' => '=',
+				),
+			);
+			$posts_array             = get_posts( $post_args );
+		}
+
+		// Build the HTML to Output.
 		$html  = '';
 		$html .= wp_nonce_field( 'sensei-save-post-meta', 'woo_' . $this->token . '_nonce', true, false );
 		if ( count( $posts_array ) > 0 ) {
@@ -675,7 +693,7 @@ class Sensei_Lesson {
 		// Get the meta key.
 		$meta_key = '_' . $post_key;
 
-		// ignore fields are not posted
+		// Ignore fields are not posted.
 		// phpcs:ignore WordPress.Security.NonceVerification
 		if ( ! isset( $_POST[ $post_key ] ) ) {
 
@@ -701,12 +719,26 @@ class Sensei_Lesson {
 			$new_meta_value = ( isset( $_POST[ $post_key ] ) ? sanitize_html_class( $_POST[ $post_key ] ) : '' );
 		} // End If Statement
 
-		// quick edit work around
+		// Quick edit work around.
 		// phpcs:ignore WordPress.Security.NonceVerification
 		if ( 'lesson_preview' == $post_key && isset( $_POST['action'] ) && $_POST['action'] == 'inline-save' ) {
 			$new_meta_value = '-1';
 		}
-		// update field with the new value
+
+		// Get lesson course.
+		if ( '_lesson_prerequisite' === $meta_key ) {
+				$lesson_course_meta = get_post_meta( $post_id, '_lesson_course', true );
+
+		// phpcs:ignore WordPress.Security.NonceVerification
+			if ( ! empty( $lesson_course_meta ) && isset( $_POST['lesson_course'] ) && $lesson_course_meta !== $_POST['lesson_course'] ) {
+				// If course is being changed, set the prerequisite to empty.
+				$new_meta_value = '';
+				// If the course for the lesson changes, remove this lesson from being a prerequisite for any other lesson.
+				$this->remove_prerequisite_from_lessons( $post_id );
+			}
+		}
+
+		// Update field with the new value.
 		if ( -1 != $new_meta_value ) {
 			return update_post_meta( $post_id, $meta_key, $new_meta_value );
 		}
@@ -714,23 +746,58 @@ class Sensei_Lesson {
 	} // End save_post_meta()
 
 	/**
-	 * lesson_course_meta_box_content function.
+	 * Removes a specific lesson from being a prerequisite of any other lessons.
+	 * The expected result after executing this function is:
+	 * No lesson should have the $post_id (received parameter) lesson as a prerequisite.
+	 *
+	 * @since 3.0.0
+	 * @access private
+	 * @param int $post_id (default: 0).
+	 */
+	private function remove_prerequisite_from_lessons( $post_id = 0 ) {
+
+		// Get all the Lesson Posts with a specific lesson prerequisite.
+		$post_args = array(
+			'post_type'        => 'lesson',
+			'posts_per_page'   => -1,
+			'exclude'          => $post_id,
+			'suppress_filters' => 0,
+			'post_status'      => [ 'publish', 'draft' ],
+			'meta_query'       => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Slow query ok.
+				array(
+					'key'     => '_lesson_prerequisite',
+					'value'   => $post_id,
+					'compare' => '=',
+				),
+			),
+		);
+
+			$posts_array = get_posts( $post_args );
+
+		foreach ( $posts_array as $post_item ) {
+			update_post_meta( $post_item->ID, '_lesson_prerequisite', '' );
+		}
+
+	}
+
+	/**
+	 * Lesson_course_meta_box_content function.
 	 *
 	 * @access public
 	 * @return void
 	 */
 	public function lesson_course_meta_box_content() {
 		global $post;
-		// Setup Lesson Meta Data
+		// Setup Lesson Meta Data.
 		$selected_lesson_course = 0;
 		if ( 0 < $post->ID ) {
 			$selected_lesson_course = get_post_meta( $post->ID, '_lesson_course', true );
 		} // End If Statement
-		// Handle preselected course
+		// Handle preselected course.
 		if ( isset( $_GET['course_id'] ) && ( 0 < absint( $_GET['course_id'] ) ) ) {
 			$selected_lesson_course = absint( $_GET['course_id'] );
 		} // End If Statement
-		// Get the Lesson Posts
+		// Get the Lesson Posts.
 		$post_args   = array(
 			'post_type'        => 'course',
 			'posts_per_page'   => -1,
@@ -740,12 +807,12 @@ class Sensei_Lesson {
 			'suppress_filters' => 0,
 		);
 		$posts_array = get_posts( $post_args );
-		// Buid the HTML to Output
+		// Build the HTML to Output.
 		$html = '';
-		// Nonce
+		// Nonce.
 		$html .= wp_nonce_field( 'sensei-save-post-meta', 'woo_' . $this->token . '_nonce', true, false );
 
-		// Select the course for the lesson
+		// Select the course for the lesson.
 		$drop_down_args = array(
 			'name'  => 'lesson_course',
 			'id'    => 'lesson-course-options',
