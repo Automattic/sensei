@@ -63,7 +63,7 @@ const CategoryQuestionSettings = ( {
 						<SelectControl
 							label={ __( 'Category', 'sensei-lms' ) }
 							options={ categoryOptions }
-							value={ options.category }
+							value={ options.category ?? '' }
 							onChange={ ( nextCategoryTermId ) => {
 								const nextQuestionCategoryTermId = getQuestionCategoryById(
 									+nextCategoryTermId
@@ -84,7 +84,7 @@ const CategoryQuestionSettings = ( {
 							label={ __( 'Number of Questions', 'sensei-lms' ) }
 							min={ 1 }
 							step={ 1 }
-							value={ options.number }
+							value={ options.number ?? 1 }
 							onChange={ ( nextNumber ) =>
 								setOptions( {
 									number: nextNumber,
