@@ -53,6 +53,7 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 			'blocks/single-lesson-style-editor.css',
 			[ 'sensei-shared-blocks-editor-style', 'sensei-editor-components-style' ]
 		);
+
 	}
 
 	/**
