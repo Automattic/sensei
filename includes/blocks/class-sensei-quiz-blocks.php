@@ -35,6 +35,11 @@ class Sensei_Quiz_Blocks extends Sensei_Blocks_Initializer {
 		Sensei()->assets->enqueue( 'sensei-quiz-blocks-editor', 'blocks/quiz/quiz.editor.css', [ 'sensei-shared-blocks-editor-style', 'sensei-editor-components-style' ] );
 
 		wp_localize_script( 'sensei-quiz-blocks', 'sensei_quiz_blocks', [ 'category_question_enabled' => Sensei()->feature_flags->is_enabled( 'block_editor_enable_category_questions' ) ] );
+
+		global $post;
+		if ( null !== $post ) {
+			Sensei()->assets->preload_data( [ sprintf( '/sensei-internal/v1/lesson-quiz/%d?context=edit', $post->ID ) ] );
+		}
 	}
 
 	/**
