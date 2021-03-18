@@ -53,7 +53,7 @@ const questionTypes = {
 		},
 		messages: {
 			noAnswers: __(
-				'Add at least two answer choice to this question.',
+				'Add at least two answer choices to this question.',
 				'sensei-lms'
 			),
 			noRightAnswer: __(
