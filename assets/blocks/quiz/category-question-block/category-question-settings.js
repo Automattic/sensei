@@ -65,7 +65,7 @@ const CategoryQuestionSettings = ( {
 							options={ categoryOptions }
 							value={ options.category ?? '' }
 							onChange={ ( nextCategoryTermId ) => {
-								const nextQuestionCategoryTermId = getQuestionCategoryById(
+								const nextQuestionCategory = getQuestionCategoryById(
 									+nextCategoryTermId
 								);
 
@@ -75,7 +75,7 @@ const CategoryQuestionSettings = ( {
 									},
 									{
 										categoryName:
-											nextQuestionCategoryTermId?.name,
+											nextQuestionCategory?.name,
 									}
 								);
 							} }
