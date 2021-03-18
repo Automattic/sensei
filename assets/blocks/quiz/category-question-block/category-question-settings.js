@@ -2,6 +2,7 @@
  * WordPress dependencies
  */
 import { InspectorControls } from '@wordpress/block-editor';
+import { useSelect } from '@wordpress/data';
 import { Notice, PanelBody, SelectControl } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 
@@ -10,6 +11,7 @@ import { __, _n, sprintf } from '@wordpress/i18n';
  */
 import NumberControl from '../../editor-components/number-control';
 import { useQuestionCategories } from '../question-categories';
+import { QUIZ_STORE } from '../quiz-store';
 
 /**
  * Category question block settings controls.
@@ -34,15 +36,40 @@ const CategoryQuestionSettings = ( {
 		getQuestionCategoryById,
 	] = useQuestionCategories();
 
+	// Used categories.
+	const quizClientId = useSelect(
+		( select ) => select( QUIZ_STORE ).getBlock(),
+		[]
+	);
+	const usedCategories = useSelect(
+		( select ) =>
+			quizClientId
+				? select( 'core/block-editor' )
+						.getBlocks( quizClientId )
+						.map(
+							( question ) => question.attributes.options.category
+						)
+						.filter( ( question ) => question )
+				: [],
+		[ quizClientId ]
+	);
+
 	const categoryOptions = [
 		{
 			value: '',
 			label: __( 'Category', 'sensei-lms' ),
 		},
-		...( questionCategories || [] ).map( ( questionCategory ) => ( {
-			value: questionCategory.id,
-			label: questionCategory.name,
-		} ) ),
+		...( questionCategories || [] )
+			.map( ( questionCategory ) => ( {
+				value: questionCategory.id,
+				label: questionCategory.name,
+			} ) )
+			// Filter only not used categories.
+			.filter(
+				( option ) =>
+					option.value === options.category ||
+					! usedCategories.includes( option.value )
+			),
 	];
 
 	const questionCategory = getQuestionCategoryById( options.category );
