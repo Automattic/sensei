@@ -121,9 +121,9 @@ registerStructureStore( {
 			options,
 			questions: questionBlockAttributes.map( ( question ) =>
 				// Avoid overriding non-editable question.
-				question.editable
-					? omit( question, READ_ONLY_ATTRIBUTES )
-					: serverQuestionsById[ question.id ]
+				false === question.editable
+					? serverQuestionsById[ question.id ]
+					: omit( question, READ_ONLY_ATTRIBUTES )
 			),
 		};
 	},
