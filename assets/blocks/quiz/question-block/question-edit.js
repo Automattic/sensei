@@ -9,8 +9,9 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { useBlockIndex } from '../../../shared/blocks/block-index';
+
 import { withBlockValidation } from '../../../shared/blocks/block-validation';
+import { useQuestionNumber } from '../question-number';
 import SingleLineInput from '../../../shared/blocks/single-line-input';
 import { withBlockMeta } from '../../../shared/blocks/block-metadata';
 import { useHasSelected } from '../../../shared/helpers/blocks';
@@ -66,7 +67,7 @@ const QuestionEdit = ( props ) => {
 		}
 	}, [ clientId, selectBlock ] );
 
-	const index = useBlockIndex( clientId );
+	const questionNumber = useQuestionNumber( clientId );
 	const AnswerBlock = type && types[ type ];
 
 	const hasSelected = useHasSelected( props );
@@ -74,7 +75,9 @@ const QuestionEdit = ( props ) => {
 	const showContent = title || hasSelected || isSingle;
 
 	const questionIndex = ! isSingle && (
-		<h2 className="sensei-lms-question-block__index">{ index + 1 }.</h2>
+		<h2 className="sensei-lms-question-block__index">
+			{ questionNumber }.
+		</h2>
 	);
 
 	const questionGrade = (

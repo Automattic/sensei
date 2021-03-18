@@ -12,6 +12,8 @@ import { plus } from '@wordpress/icons';
  */
 import quizIcon from '../../../icons/quiz-icon';
 import questionBlock from '../question-block';
+import categoryQuestionBlock from '../category-question-block';
+import { useNextQuestionIndex } from './next-question-index';
 
 /**
  * Quiz block inserter for adding new or existing questions.
@@ -22,14 +24,38 @@ import questionBlock from '../question-block';
  */
 const QuizAppender = ( { clientId, openModal } ) => {
 	const { insertBlock } = useDispatch( 'core/block-editor' );
+	const nextInsertIndex = useNextQuestionIndex( clientId );
 
-	const addNewQuestionBlock = () =>
+	const addNewQuestionBlock = ( block ) => {
 		insertBlock(
-			createBlock( questionBlock.name ),
-			undefined,
+			createBlock( block.name ),
+			nextInsertIndex,
 			clientId,
 			true
 		);
+	};
+
+	const controls = [
+		{
+			title: __( 'New Question', 'sensei-lms' ),
+			icon: questionBlock.icon,
+			onClick: () => addNewQuestionBlock( questionBlock ),
+		},
+	];
+
+	if ( window.sensei_quiz_blocks.category_question_enabled ) {
+		controls.push( {
+			title: __( 'Category Question(s)', 'sensei-lms' ),
+			icon: quizIcon,
+			onClick: () => addNewQuestionBlock( categoryQuestionBlock ),
+		} );
+	}
+
+	controls.push( {
+		title: __( 'Existing Question(s)', 'sensei-lms' ),
+		icon: quizIcon,
+		onClick: openModal,
+	} );
 
 	return (
 		<div className="sensei-lms-quiz-block__appender block-editor-default-block-appender">
@@ -39,18 +65,7 @@ const QuizAppender = ( { clientId, openModal } ) => {
 					className: 'block-editor-inserter__toggle',
 				} }
 				label={ __( 'Add Block', 'sensei-lms' ) }
-				controls={ [
-					{
-						title: __( 'New Question', 'sensei-lms' ),
-						icon: questionBlock.icon,
-						onClick: addNewQuestionBlock,
-					},
-					{
-						title: __( 'Existing Question(s)', 'sensei-lms' ),
-						icon: quizIcon,
-						onClick: openModal,
-					},
-				] }
+				controls={ controls }
 			/>
 			<p
 				className="sensei-lms-quiz-block__appender__placeholder"

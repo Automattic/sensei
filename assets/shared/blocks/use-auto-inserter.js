@@ -12,14 +12,15 @@ import { noop } from 'lodash';
 /**
  * Insert an empty inner block to the end of the block when it's selected.
  *
- * @param {Object}  opts
- * @param {string}  opts.name             Block to be inserted.
- * @param {boolean} opts.selectFirstBlock Select inserted block if it's the first one.
- * @param {Object}  opts.attributes       Attributes of a new block.
- * @param {Object}  parentProps           Block properties.
+ * @param {Object}   opts
+ * @param {string}   opts.name             Block to be inserted.
+ * @param {boolean}  opts.selectFirstBlock Select inserted block if it's the first one.
+ * @param {Object}   opts.attributes       Attributes of a new block.
+ * @param {Function} opts.isEmptyBlock     Callback to check if block is empty.
+ * @param {Object}   parentProps           Block properties.
  */
 export const useAutoInserter = (
-	{ name, attributes = {}, selectFirstBlock = false },
+	{ name, attributes = {}, selectFirstBlock = false, isEmptyBlock },
 	parentProps
 ) => {
 	const { clientId } = parentProps;
@@ -50,7 +51,7 @@ export const useAutoInserter = (
 	] );
 
 	const lastBlock = blocks.length && blocks[ blocks.length - 1 ];
-	const hasEmptyLastBlock = lastBlock && ! lastBlock.attributes.title;
+	const hasEmptyLastBlock = lastBlock && isEmptyBlock( lastBlock.attributes );
 
 	useEffect( () => {
 		if ( ! hasEmptyLastBlock ) {
