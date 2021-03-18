@@ -58,7 +58,6 @@ const QuizEdit = ( props ) => {
 					'sensei-lms/quiz-question',
 					'sensei-lms/quiz-category-question',
 				] }
-				template={ [] }
 				templateInsertUpdatesSelection={ false }
 				renderAppender={ () => (
 					<QuizAppender
