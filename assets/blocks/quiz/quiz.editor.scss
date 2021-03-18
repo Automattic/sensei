@@ -25,7 +25,7 @@ $gray-400: #ccc;
 	}
 
 	&:not(.is-selected):not(.has-child-selected) {
-		.sensei-lms-question-block.is-draft {
+		.wp-block:not(:first-child):nth-last-child(2) .sensei-lms-question-block.is-draft {
 			display: none;
 		}
 	}
