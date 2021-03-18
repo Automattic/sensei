@@ -31,7 +31,7 @@ const QuizEdit = ( props ) => {
 	useAutoInserter(
 		{
 			name: questionBlock.name,
-			selectFirstBlock: true,
+			selectFirstBlock: ! props.attributes.isPostTemplate,
 			isEmptyBlock: isQuestionEmpty,
 		},
 		props
@@ -43,8 +43,6 @@ const QuizEdit = ( props ) => {
 		isExistingQuestionsModalOpen,
 		setExistingQuestionsModalOpen,
 	] = useState( false );
-
-	const { isPostTemplate } = props.attributes;
 
 	const openExistingQuestionsModal = () =>
 		setExistingQuestionsModalOpen( true );
@@ -63,9 +61,6 @@ const QuizEdit = ( props ) => {
 					'sensei-lms/quiz-question',
 					'sensei-lms/quiz-category-question',
 				] }
-				template={
-					isPostTemplate ? [ [ 'sensei-lms/quiz-question', {} ] ] : []
-				}
 				templateInsertUpdatesSelection={ false }
 				renderAppender={ () => (
 					<QuizAppender
