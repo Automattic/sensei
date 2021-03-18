@@ -12,6 +12,7 @@ import { dispatch, registerStore, select, subscribe } from '@wordpress/data';
  * Internal dependencies
  */
 import { createReducerFromActionMap } from '../data/store-helpers';
+import '../data/api-fetch-preloaded-once';
 
 /**
  * Register structure store and subscribe to block editor save.

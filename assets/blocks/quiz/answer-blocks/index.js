@@ -25,6 +25,8 @@ import {
  * @property {string}   title       Question type name.
  * @property {string}   description Question type description.
  * @property {Function} edit        Editor component.
+ * @property {Function} validate    Validation callback.
+ * @property {Object}   messages    Message string.s
  */
 
 /**
@@ -42,6 +44,27 @@ const questionTypes = {
 			QuestionMultipleChoiceSettings,
 			QuestionAnswerFeedbackSettings,
 		],
+		validate: ( { answers = [] } = {} ) => {
+			return {
+				noAnswers: answers.filter( ( a ) => a.label ).length < 2,
+				noRightAnswer: ! answers.some( ( a ) => a.correct ),
+				noWrongAnswer: ! answers.some( ( a ) => ! a.correct ),
+			};
+		},
+		messages: {
+			noAnswers: __(
+				'Add at least two answer choices to this question.',
+				'sensei-lms'
+			),
+			noRightAnswer: __(
+				'Add a right answer to this question.',
+				'sensei-lms'
+			),
+			noWrongAnswer: __(
+				'Add a wrong answer to this question.',
+				'sensei-lms'
+			),
+		},
 	},
 	boolean: {
 		title: __( 'True/False', 'sensei-lms' ),
@@ -59,6 +82,21 @@ const questionTypes = {
 		edit: GapFillAnswer,
 		view: GapFillAnswer.view,
 		settings: [ QuestionAnswerFeedbackSettings ],
+		validate: ( { before, after, gap } = {} ) => {
+			return {
+				noBefore: ! before,
+				noAfter: ! after,
+				noGap: ! gap?.length,
+			};
+		},
+		messages: {
+			noBefore: __( 'Add some text before the gap.', 'sensei-lms' ),
+			noAfter: __( 'Add some text after the gap.', 'sensei-lms' ),
+			noGap: __(
+				'Add a right answer for the gap to this question.',
+				'sensei-lms'
+			),
+		},
 	},
 	'single-line': {
 		title: __( 'Single Line', 'sensei-lms' ),

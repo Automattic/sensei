@@ -8,9 +8,11 @@ import { useState } from '@wordpress/element';
 /**
  * Internal dependencies
  */
+import { withBlockMetaProvider } from '../../../shared/blocks/block-metadata';
 import { useAutoInserter } from '../../../shared/blocks/use-auto-inserter';
 import questionBlock from '../question-block';
 import { useQuizStructure } from '../quiz-store';
+import QuizValidationResult from './quiz-validation';
 import QuizAppender from './quiz-appender';
 import QuestionsModal from './questions-modal';
 import QuizSettings from './quiz-settings';
@@ -52,6 +54,7 @@ const QuizEdit = ( props ) => {
 
 	return (
 		<>
+			<QuizValidationResult { ...props } />
 			<div className="sensei-lms-quiz-block__separator">
 				<span>{ __( 'Lesson Quiz', 'sensei-lms' ) }</span>
 			</div>
@@ -83,4 +86,4 @@ const QuizEdit = ( props ) => {
 	);
 };
 
-export default QuizEdit;
+export default withBlockMetaProvider( QuizEdit );
