@@ -2,7 +2,6 @@
  * WordPress dependencies
  */
 import { useState } from '@wordpress/element';
-import { useSelect } from '@wordpress/data';
 import { Notice, Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
@@ -12,11 +11,7 @@ import { __ } from '@wordpress/i18n';
 import Filter from './filter';
 import Questions from './questions';
 import Actions from './actions';
-
-/**
- * External dependencies
- */
-import { unescape } from 'lodash';
+import { useQuestionCategories } from '../../question-categories';
 
 /**
  * Internal dependencies
@@ -42,24 +37,7 @@ const QuestionsModal = ( { clientId, onClose } ) => {
 	const [ errorAddingSelected, setErrorAddingSelected ] = useState( false );
 	const [ selectedQuestionIds, setSelectedQuestionIds ] = useState( [] );
 
-	const questionCategories = useSelect( ( select ) => {
-		const terms = select( 'core' ).getEntityRecords(
-			'taxonomy',
-			'question-category',
-			{
-				per_page: -1,
-			}
-		);
-
-		if ( terms && terms.length ) {
-			return terms.map( ( term ) => ( {
-				...term,
-				name: unescape( term.name ),
-			} ) );
-		}
-
-		return terms;
-	} );
+	const [ questionCategories ] = useQuestionCategories();
 
 	return (
 		<Modal

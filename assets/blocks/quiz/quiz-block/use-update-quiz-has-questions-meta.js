@@ -5,6 +5,11 @@ import { useCallback, useEffect } from '@wordpress/element';
 import { useSelect, useDispatch } from '@wordpress/data';
 
 /**
+ * Internal dependencies
+ */
+import { isQuestionEmpty } from '../data';
+
+/**
  * Monitor for questions and disable the lesson quiz when none have been added.
  *
  * @param {string} clientId The quiz block client id.
@@ -14,7 +19,7 @@ export const useUpdateQuizHasQuestionsMeta = ( clientId ) => {
 	const questionBlocks = useSelect( ( select ) =>
 		select( 'core/block-editor' )
 			.getBlocks( clientId )
-			.filter( ( block ) => !! block.attributes.title )
+			.filter( ( block ) => ! isQuestionEmpty( block.attributes ) )
 	);
 
 	const { editedValue: quizHasQuestionsMeta, currentValue } = useSelect(
