@@ -72,6 +72,10 @@ registerStructureStore( {
 			options: normalizeAttributes( structure.options, camelCase ),
 		} );
 
+		if ( ! structure.questions?.length ) {
+			return;
+		}
+
 		const questionBlocks = yield select( 'core/block-editor' ).getBlocks(
 			clientId
 		);
