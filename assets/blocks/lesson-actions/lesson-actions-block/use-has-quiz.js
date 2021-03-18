@@ -1,6 +1,7 @@
 /**
  * WordPress dependencies
  */
+import { useSelect } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
 
 /**
@@ -12,7 +13,7 @@ const useHasQuiz = () => {
 	const [ hasQuiz, setHasQuiz ] = useState( () => {
 		const questionCount = document.getElementById( 'question_counter' );
 
-		return questionCount && parseInt( questionCount.value, 10 ) > 0;
+		return questionCount ? parseInt( questionCount.value, 10 ) > 0 : null;
 	} );
 
 	useEffect( () => {
@@ -33,7 +34,12 @@ const useHasQuiz = () => {
 		};
 	}, [] );
 
-	return hasQuiz;
+	const { _quiz_has_questions: quizHasQuestionsMeta } =
+		useSelect( ( select ) =>
+			select( 'core/editor' ).getEditedPostAttribute( 'meta' )
+		) || {};
+
+	return null !== hasQuiz ? hasQuiz : quizHasQuestionsMeta;
 };
 
 export default useHasQuiz;

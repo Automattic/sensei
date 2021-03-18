@@ -12,6 +12,7 @@
  */
 class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase {
 	use Sensei_Test_Login_Helpers;
+	use Sensei_REST_API_Test_Helpers;
 
 	/**
 	 * A server instance that we use in tests to dispatch requests.
@@ -38,6 +39,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 	public function setUp() {
 		parent::setUp();
 
+		add_filter( 'sensei_feature_flag_block_editor_enable_category_questions', '__return_true' );
 		global $wp_rest_server;
 		$wp_rest_server = new WP_REST_Server();
 		$this->server   = $wp_rest_server;
@@ -48,6 +50,15 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 	}
 
 	/**
+	 * Clean up after the test.
+	 */
+	public function tearDown() {
+		parent::tearDown();
+
+		remove_filter( 'sensei_feature_flag_block_editor_enable_category_questions', '__return_true' );
+	}
+
+	/**
 	 * Tests that a simple request response matches the schema.
 	 */
 	public function testGetSimple() {
@@ -55,9 +66,10 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 
 		$course_result = $this->factory->get_course_with_lessons(
 			[
-				'module_count'   => 1,
-				'lesson_count'   => 1,
-				'question_count' => 5,
+				'module_count'            => 1,
+				'lesson_count'            => 1,
+				'question_count'          => 4,
+				'multiple_question_count' => 1,
 			]
 		);
 
@@ -66,6 +78,10 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 
 		$this->assertEquals( $response->get_status(), 200 );
 		$this->assertCount( 5, $response->get_data()['questions'] );
+
+		$controller = new Sensei_REST_API_Lesson_Quiz_Controller( '' );
+		$this->assertMeetsSchema( $controller->get_item_schema(), $response->get_data() );
+
 	}
 
 	/**
@@ -208,6 +224,28 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 		$this->assertFalse( $response_data['options']['random_question_order'] );
 		$this->assertEquals( 0, $response_data['options']['quiz_passmark'] );
 		$this->assertEquals( 3, $response_data['options']['show_questions'] );
+	}
+
+	/**
+	 * Tests category question properties.
+	 */
+	public function testGetCategoryQuestion() {
+		$this->login_as_teacher();
+
+		list( $lesson_id, $quiz_id ) = $this->create_lesson_with_quiz();
+		$this->factory->multiple_question->create(
+			[
+				'quiz_id'         => $quiz_id,
+				'question_number' => 2,
+			]
+		);
+
+		$response_data = $this->send_get_request( $lesson_id );
+
+		$this->assertEquals( 'category-question', $response_data['questions'][0]['type'] );
+		$this->assertEquals( 2, $response_data['questions'][0]['options']['number'] );
+		$this->assertArrayHasKey( 'id', $response_data['questions'][0] );
+		$this->assertArrayHasKey( 'category', $response_data['questions'][0]['options'] );
 	}
 
 	/**
@@ -356,8 +394,14 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 
 	/**
 	 * Tests question category expansion.
+	 *
+	 * This test is temporary until we add proper category question support.
 	 */
 	public function testQuestionCategory() {
+		// This test checks for the current behavior that is should be hidden because we don't allow the
+		// block based question editor when multiple questions exist on a site.
+		remove_filter( 'sensei_feature_flag_block_editor_enable_category_questions', '__return_true' );
+
 		$this->login_as_teacher();
 
 		list( $lesson_id, $quiz_id ) = $this->create_lesson_with_quiz();
@@ -527,6 +571,66 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 		);
 
 		$this->assertEquals( 401, $response->get_status(), 'Logged out user can edit the quiz.' );
+	}
+
+	/**
+	 * Tests editing category question properties.
+	 */
+	public function testPostCategoryQuestion() {
+		$this->login_as_teacher();
+
+		list( $lesson_id, $quiz_id ) = $this->create_lesson_with_quiz();
+		$category_id                 = $this->factory->question_category->create();
+		$question_id                 = $this->factory->question->create(
+			[
+				'question_type'  => 'multiple-choice',
+				'taxonomy_input' => [
+					'question-category' => [ $category_id ],
+				],
+			]
+		);
+
+		$multiple_question_id = $this->factory->multiple_question->create();
+
+		$body = [
+			'options'   => [],
+			'questions' => [
+				[
+					'title'   => 'Will it blend?',
+					'type'    => 'single-line',
+					'options' => [
+						'teacherNotes' => 'Do well',
+					],
+				],
+				[
+					'type'    => 'category-question',
+					'options' => [
+						'category' => $category_id,
+						'number'   => 1,
+					],
+				],
+				[
+					'id'      => $multiple_question_id,
+					'type'    => 'category-question',
+					'options' => [
+						'category' => (int) get_post_meta( $multiple_question_id, 'category', true ),
+						'number'   => 2,
+					],
+				],
+			],
+		];
+
+		$this->send_post_request( $lesson_id, $body );
+
+		$questions = Sensei()->quiz->get_questions( Sensei()->lesson->lesson_quizzes( $lesson_id ) );
+
+		$this->assertCount( 3, $questions );
+
+		$this->assertEquals( 'question', $questions[0]->post_type );
+		$this->assertEquals( 'multiple_question', $questions[1]->post_type );
+		$this->assertEquals( 'multiple_question', $questions[2]->post_type );
+		$this->assertEquals( $multiple_question_id, $questions[2]->ID );
+		$this->assertEquals( 2, (int) get_post_meta( $multiple_question_id, 'number', true ) );
 	}
 
 	/**

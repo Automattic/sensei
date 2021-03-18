@@ -23,6 +23,12 @@ $gray-400: #ccc;
 	& > .block-editor-inner-blocks > .block-editor-block-list__layout {
 		margin-left: 0px;
 	}
+
+	&:not(.is-selected):not(.has-child-selected) {
+		.sensei-lms-question-block.is-draft {
+			display: none;
+		}
+	}
 }
 
 .sensei-lms-quiz-block {
