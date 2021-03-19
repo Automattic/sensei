@@ -113,3 +113,11 @@ $block: '.wp-block-sensei-lms-course-outline-module';
 		border: 1px solid currentColor;
 	}
 }
+
+.wp-block[data-type="sensei-lms/course-outline-module"] {
+	&:not(.is-selected):not(.has-child-selected) {
+		.wp-block-sensei-lms-course-outline-lesson.is-auto-draft {
+			display: none;
+		}
+	}
+}

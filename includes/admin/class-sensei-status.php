@@ -87,10 +87,6 @@ class Sensei_Status {
 			$legacy_flags_human[] = esc_html__( 'Permalink structure for CPTs will be prepended with site/post slug prefix', 'sensei-lms' );
 		}
 
-		if ( ! empty( $legacy_flags[ Sensei_Main::LEGACY_FLAG_MULTIPLE_QUESTIONS_EXIST ] ) ) {
-			$legacy_flags_human[] = esc_html__( 'Quizzes were detected using the `Multiple Questions` (Category) feature, which is currently not supported in the block based quiz editor', 'sensei-lms' );
-		}
-
 		if ( empty( $legacy_flags_human ) ) {
 			$value_legacy_flags = esc_html__( 'No legacy update flags have been set', 'sensei-lms' );
 		} else {

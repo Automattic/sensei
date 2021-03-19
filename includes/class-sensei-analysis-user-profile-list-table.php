@@ -271,6 +271,10 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 			'status'  => 'any',
 		);
 
+		if ( ! current_user_can( 'manage_sensei' ) ) {
+			$activity_args['post_author'] = get_current_user_id();
+		}
+
 		$activity_args = apply_filters( 'sensei_analysis_user_profile_filter_statuses', $activity_args );
 
 		// WP_Comment_Query doesn't support SQL_CALC_FOUND_ROWS, so instead do this twice

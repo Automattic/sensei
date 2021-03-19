@@ -25,8 +25,11 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 * @return array The question schema.
 	 */
 	private function get_question_schema( string $type ): array {
-		$schema = [];
+		$schema = $this->get_common_question_properties_schema();
 		switch ( $type ) {
+			case 'category-question':
+				$schema = $this->get_category_question_schema();
+				break;
 			case 'multiple-choice':
 				$schema = $this->get_multiple_choice_schema();
 				break;
@@ -53,8 +56,8 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		 * @since  3.9.0
 		 * @hook   sensei_rest_api_schema_question_type
 		 *
-		 * @param  {Array} $schema Schema for a single question.
-		 * @param  {string} $type Question type.
+		 * @param  {Array}  $schema Schema for a single question.
+		 * @param  {string} $type   Question type.
 		 *
 		 * @return {array}
 		 */
@@ -62,20 +65,94 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	}
 
 	/**
-	 * Helper method to save or update a question.
+	 * Helper method to save or update a category question.
 	 *
 	 * @param array $question The question JSON array.
 	 *
+	 * @return int|WP_Error Multiple question id on success.
+	 */
+	private function save_category_question( $question ) {
+		$question_id = $question['id'] ?? null;
+
+		if (
+			$question_id
+			&& (
+				'multiple_question' !== get_post_type( $question_id )
+				|| ! current_user_can( get_post_type_object( 'multiple_question' )->cap->edit_post, $question_id )
+			)
+		) {
+			return new WP_Error( 'sensei_lesson_quiz_question_not_available', '', $question_id );
+		}
+
+		if ( ! isset( $question['options'] ) ) {
+			$question['options'] = [];
+		}
+
+		$category             = null;
+		$question_id          = isset( $question['id'] ) ? (int) $question['id'] : null;
+		$question_number      = (int) $question['options']['number'];
+		$question_category_id = (int) $question['options']['category'];
+
+		if ( $question_category_id ) {
+			$question_category = get_term( $question_category_id, 'question-category' );
+		}
+
+		if ( ! $question_category || is_wp_error( $question_category ) ) {
+			return new WP_Error( 'sensei_lesson_quiz_question_invalid_category', esc_html__( 'Invalid question category selected', 'sensei-lms' ), $question_id );
+		}
+
+		if ( ! $question_number ) {
+			$question_number = 1;
+		}
+
+		$category = get_term( $question_category, 'question-category' );
+
+		// translators: Placeholders are the question number and the question category name.
+		$post_title = sprintf( esc_html__( '%1$s Question(s) from %2$s', 'sensei-lms' ), $question_number, $category->name );
+
+		$post_args = [
+			'ID'          => $question_id,
+			'post_title'  => $post_title,
+			'post_status' => 'publish',
+			'post_type'   => 'multiple_question',
+			'meta_input'  => [
+				'category' => $category->term_id,
+				'number'   => $question_number,
+			],
+		];
+
+		$result = wp_insert_post( $post_args );
+
+		/**
+		 * This action is triggered when a category question is created or updated by the lesson quiz REST endpoint.
+		 *
+		 * @since 3.9.0
+		 * @hook  sensei_rest_api_category_question_saved
+		 *
+		 * @param {int|WP_Error} $result   Result of wp_insert_post. Post ID on success or WP_Error on failure.
+		 * @param {array}        $question The question JSON arguments.
+		 */
+		do_action( 'sensei_rest_api_category_question_saved', $result, $question );
+
+		return $result;
+	}
+
+	/**
+	 * Helper method to save or update a question.
+	 *
+	 * @param array  $question The question JSON array.
+	 * @param string $status Question status.
+	 *
 	 * @return int|WP_Error Question id on success.
 	 */
-	private function save_question( $question ) {
+	private function save_question( $question, $status = 'publish' ) {
 		$question_id = $question['id'] ?? null;
 
 		if (
 			$question_id
 			&& (
 				'question' !== get_post_type( $question_id )
-				|| ! current_user_can( get_post_type_object( 'course' )->cap->edit_post, $question_id )
+				|| ! current_user_can( get_post_type_object( 'question' )->cap->edit_post, $question_id )
 			)
 		) {
 			return new WP_Error( 'sensei_lesson_quiz_question_not_available', '', $question_id );
@@ -99,15 +176,23 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		$is_new = null === $question_id;
 
 		$post_args = [
-			'ID'          => $question_id,
-			'post_title'  => $question['title'],
-			'post_status' => 'publish',
-			'post_type'   => 'question',
-			'meta_input'  => $this->get_question_meta( $question ),
-			'tax_input'   => [
+			'ID'         => $question_id,
+			'post_title' => $question['title'],
+			'post_type'  => 'question',
+			'meta_input' => $this->get_question_meta( $question ),
+			'tax_input'  => [
 				'question-type' => $question['type'],
 			],
 		];
+
+		if ( $status ) {
+			$post_args['post_status'] = $status;
+		}
+
+		// Force publish the question if it's part of a quiz.
+		if ( $this->is_question_used_in_quiz( $question_id ) ) {
+			$post_args['post_status'] = 'publish';
+		}
 
 		if ( isset( $question['description'] ) ) {
 			$post_args['post_content'] = $question['description'];
@@ -132,6 +217,47 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		do_action( 'sensei_rest_api_question_saved', $result, $question['type'], $question );
 
 		return $result;
+	}
+
+	/**
+	 * Check if question is being used in a quiz.
+	 *
+	 * @param int $question_id Question ID.
+	 *
+	 * @return boolean
+	 */
+	private function is_question_used_in_quiz( $question_id ) {
+		if ( ! empty( get_post_meta( $question_id, '_quiz_id', false ) ) ) {
+			return true;
+		} else {
+			$question_categories = wp_get_post_terms( $question_id, 'question-category' );
+
+			foreach ( $question_categories as $question_category ) {
+				$multiple_questions = get_posts(
+					[
+						'post_type'      => 'multiple_question',
+						'posts_per_page' => 1,
+						// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Needed to identify if question is being used.
+						'meta_query'     => [
+							[
+								'key'   => 'category',
+								'value' => $question_category->term_id,
+							],
+							[
+								'key'     => '_quiz_id',
+								'compare' => 'EXISTS',
+							],
+						],
+					]
+				);
+
+				if ( ! empty( $multiple_questions ) ) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -288,39 +414,6 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	}
 
 	/**
-	 * This method retrieves questions as they are defined by a 'multiple_question' post type.
-	 *
-	 * @param WP_Post $multiple_question  The multiple question.
-	 * @param array   $excluded_questions An array of question ids to exclude.
-	 *
-	 * @return array
-	 */
-	private function get_questions_from_category( WP_Post $multiple_question, array $excluded_questions ): array {
-		$category = (int) get_post_meta( $multiple_question->ID, 'category', true );
-		$number   = (int) get_post_meta( $multiple_question->ID, 'number', true );
-
-		$args = [
-			'post_type'        => 'question',
-			'posts_per_page'   => $number,
-			'orderby'          => 'title',
-			'tax_query'        => [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- Query limited by the number of questions.
-				[
-					'taxonomy' => 'question-category',
-					'field'    => 'term_id',
-					'terms'    => $category,
-				],
-			],
-			'post_status'      => 'any',
-			'suppress_filters' => 0,
-			'post__not_in'     => $excluded_questions,
-		];
-
-		$questions = get_posts( $args );
-
-		return array_map( [ $this, 'get_question' ], $questions );
-	}
-
-	/**
 	 * Returns a question as defined by the schema.
 	 *
 	 * @param WP_Post $question The question post.
@@ -332,6 +425,27 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		$type_specific_properties = $this->get_question_type_specific_properties( $question, $common_properties['type'] );
 
 		return array_merge_recursive( $common_properties, $type_specific_properties );
+	}
+
+	/**
+	 * Get the multiple/category question as defined by the schema.
+	 *
+	 * @param WP_Post $question The question post.
+	 *
+	 * @return array
+	 */
+	private function get_category_question( WP_Post $question ) : array {
+		$category = (int) get_post_meta( $question->ID, 'category', true );
+		$number   = (int) get_post_meta( $question->ID, 'number', true );
+
+		return [
+			'type'    => 'category-question',
+			'id'      => $question->ID,
+			'options' => [
+				'category' => $category,
+				'number'   => $number,
+			],
+		];
 	}
 
 	/**
@@ -556,6 +670,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	public function get_single_question_schema() {
 		$single_question_schema = [
 			'oneOf' => [
+				$this->get_category_question_schema(),
 				$this->get_multiple_choice_schema(),
 				$this->get_boolean_schema(),
 				$this->get_gap_fill_schema(),
@@ -571,7 +686,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			];
 		}
 
-		/*
+		/**
 		 * Add additional question types to the REST API schema.
 		 *
 		 * @since 3.9.0
@@ -582,6 +697,46 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		 * @return {array}
 		 */
 		return apply_filters( 'sensei_rest_api_schema_single_question', $single_question_schema );
+	}
+
+	/**
+	 * Helper method which returns the schema for category question properties.
+	 *
+	 * @return array The properties.
+	 */
+	private function get_category_question_schema(): array {
+		$question_category_properties = [
+			'type'    => [
+				'type'     => 'string',
+				'pattern'  => 'category-question',
+				'required' => true,
+			],
+			'id'      => [
+				'type'        => 'integer',
+				'description' => 'Multiple question post ID',
+			],
+			'options' => [
+				'type'       => 'object',
+				'properties' => [
+					'category' => [
+						'type'        => 'integer',
+						'description' => 'Term ID of the category where questions are picked',
+						'required'    => true,
+					],
+					'number'   => [
+						'type'        => 'integer',
+						'description' => 'Number of questions to select from the category',
+						'required'    => true,
+					],
+				],
+			],
+		];
+
+		return [
+			'title'      => 'Category Question',
+			'type'       => 'object',
+			'properties' => $question_category_properties,
+		];
 	}
 
 	/**

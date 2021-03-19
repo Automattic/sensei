@@ -193,11 +193,15 @@ class Sensei_Assets {
 	 * @param string[] $rest_routes REST routes to preload.
 	 */
 	public function preload_data( $rest_routes ) {
+		// Temporarily removes the user filter when loading from preload.
+		remove_action( 'pre_get_posts', array( Sensei()->teacher, 'filter_queries' ) );
 		$preload_data = array_reduce(
 			$rest_routes,
 			'rest_preload_api_request',
 			[]
 		);
+		add_action( 'pre_get_posts', array( Sensei()->teacher, 'filter_queries' ) );
+
 		wp_add_inline_script(
 			'wp-api-fetch',
 			sprintf( 'wp.apiFetch.use( wp.apiFetch.createPreloadingMiddleware( %s ) );', wp_json_encode( $preload_data ) ),

@@ -23,11 +23,16 @@ jest.mock( '@wordpress/data', () => ( {
 
 describe( 'useAutoInserter', () => {
 	const ModuleBlock = ( props ) => {
-		useAutoInserter( { name: 'sensei-lms/course-outline-lesson' }, props );
+		useAutoInserter(
+			{
+				name: 'sensei-lms/course-outline-lesson',
+				isEmptyBlock: ( attributes ) => ! attributes.title,
+			},
+			props
+		);
 		return <div>Module</div>;
 	};
 
-	const removeBlock = jest.fn();
 	const insertBlock = jest.fn();
 	const select = {
 		hasSelectedInnerBlock: () => false,
@@ -41,29 +46,21 @@ describe( 'useAutoInserter', () => {
 
 	useDispatch.mockImplementation( () => ( {
 		insertBlock,
-		removeBlock,
 	} ) );
 
 	beforeEach( () => {
-		removeBlock.mockClear();
 		insertBlock.mockClear();
 
 		mockSelect( select );
 	} );
 
-	it( 'does not insert block when not selected', () => {
-		render( <ModuleBlock isSelected={ false } /> );
-
-		expect( insertBlock ).not.toHaveBeenCalled();
-	} );
-
-	it( 'inserts a block when selected', () => {
-		render( <ModuleBlock isSelected={ true } /> );
+	it( 'inserts a block when parent is empty', () => {
+		render( <ModuleBlock /> );
 
 		expect( insertBlock ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'inserts a block when inner block selected', () => {
+	it( 'inserts a block when all inner blocks have a title', () => {
 		mockSelect( {
 			...select,
 			hasSelectedInnerBlock: () => true,
@@ -75,20 +72,15 @@ describe( 'useAutoInserter', () => {
 		expect( insertBlock ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'removes inserted block on focus loss', () => {
-		const blocks = [ { attributes: { title: 'Lesson 1' } } ];
-		insertBlock.mockImplementation( ( block ) => blocks.push( block ) );
+	it( 'does not insert a block when there is already an empty last block', () => {
 		mockSelect( {
 			...select,
-			hasSelectedInnerBlock: () => false,
-			getBlocks: () => blocks,
+			hasSelectedInnerBlock: () => true,
+			getBlocks: () => [ { attributes: { title: '' } } ],
 		} );
-		const { rerender } = render( <ModuleBlock isSelected={ true } /> );
 
-		expect( insertBlock ).toHaveBeenCalledTimes( 1 );
+		render( <ModuleBlock isSelected={ false } /> );
 
-		rerender( <ModuleBlock isSelected={ false } /> );
-
-		expect( removeBlock ).toHaveBeenCalledTimes( 1 );
+		expect( insertBlock ).not.toHaveBeenCalled();
 	} );
 } );

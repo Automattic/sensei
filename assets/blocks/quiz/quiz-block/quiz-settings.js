@@ -8,12 +8,15 @@ import {
 	RangeControl,
 	ToggleControl,
 } from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
+import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
 import NumberControl from '../../editor-components/number-control';
+import { isQuestionEmpty } from '../data';
 
 /**
  * Quiz settings.
@@ -22,8 +25,13 @@ import NumberControl from '../../editor-components/number-control';
  * @param {Object}   props.attributes         Block attributes
  * @param {Object}   props.attributes.options Current setting options.
  * @param {Function} props.setAttributes      Set attributes function.
+ * @param {string}   props.clientId           Block ID.
  */
-const QuizSettings = ( { attributes: { options = {} }, setAttributes } ) => {
+const QuizSettings = ( {
+	attributes: { options = {} },
+	setAttributes,
+	clientId,
+} ) => {
 	const {
 		passRequired = false,
 		quizPassmark = 100,
@@ -35,6 +43,34 @@ const QuizSettings = ( { attributes: { options = {} }, setAttributes } ) => {
 
 	const createChangeHandler = ( optionKey ) => ( value ) =>
 		setAttributes( { options: { ...options, [ optionKey ]: value } } );
+
+	const questions = useSelect(
+		( select ) =>
+			select( 'core/block-editor' )
+				.getBlock( clientId )
+				.innerBlocks.filter(
+					( questionBlock ) =>
+						! isQuestionEmpty( questionBlock.attributes )
+				),
+		[ clientId ]
+	);
+
+	const questionCount = questions.reduce(
+		( count, question ) =>
+			count +
+			( question.attributes.type === 'category-question'
+				? question.attributes.options.number
+				: 1 ),
+		0
+	);
+
+	useEffect( () => {
+		if ( showQuestions > questionCount ) {
+			setAttributes( {
+				options: { ...options, showQuestions: questionCount },
+			} );
+		}
+	}, [ options, questionCount, setAttributes, showQuestions ] );
 
 	return (
 		<InspectorControls>
@@ -99,6 +135,7 @@ const QuizSettings = ( { attributes: { options = {} }, setAttributes } ) => {
 						allowReset
 						resetLabel={ __( 'All', 'sensei-lms' ) }
 						min={ 0 }
+						max={ questionCount }
 						step={ 1 }
 						value={ showQuestions }
 						placeholder={ __( 'All', 'sensei-lms' ) }

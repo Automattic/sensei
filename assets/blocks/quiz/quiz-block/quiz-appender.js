@@ -4,35 +4,54 @@
 import { createBlock } from '@wordpress/blocks';
 import { DropdownMenu } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { plus } from '@wordpress/icons';
+
 /**
  * Internal dependencies
  */
 import quizIcon from '../../../icons/quiz-icon';
 import questionBlock from '../question-block';
-import QuestionsModal from './questions-modal';
-import { useAddExistingQuestions } from './use-add-existing-questions';
+import categoryQuestionBlock from '../category-question-block';
+import { useNextQuestionIndex } from './next-question-index';
 
 /**
  * Quiz block inserter for adding new or existing questions.
  *
- * @param {Object} props
- * @param {string} props.clientId Quiz block ID.
+ * @param {Object}   props
+ * @param {string}   props.clientId  Quiz block ID.
+ * @param {Function} props.openModal Open modal callback.
  */
-const QuizAppender = ( { clientId } ) => {
-	const addExistingQuestions = useAddExistingQuestions( clientId );
+const QuizAppender = ( { clientId, openModal } ) => {
 	const { insertBlock } = useDispatch( 'core/block-editor' );
-	const [ isModalOpen, setModalOpen ] = useState( false );
+	const nextInsertIndex = useNextQuestionIndex( clientId );
 
-	const addNewQuestionBlock = () =>
+	const addNewQuestionBlock = ( block ) => {
 		insertBlock(
-			createBlock( questionBlock.name ),
-			undefined,
+			createBlock( block.name ),
+			nextInsertIndex,
 			clientId,
 			true
 		);
+	};
+
+	const controls = [
+		{
+			title: __( 'New Question', 'sensei-lms' ),
+			icon: questionBlock.icon,
+			onClick: () => addNewQuestionBlock( questionBlock ),
+		},
+		{
+			title: __( 'Category Question(s)', 'sensei-lms' ),
+			icon: quizIcon,
+			onClick: () => addNewQuestionBlock( categoryQuestionBlock ),
+		},
+		{
+			title: __( 'Existing Question(s)', 'sensei-lms' ),
+			icon: quizIcon,
+			onClick: openModal,
+		},
+	];
 
 	return (
 		<div className="sensei-lms-quiz-block__appender block-editor-default-block-appender">
@@ -40,20 +59,10 @@ const QuizAppender = ( { clientId } ) => {
 				icon={ plus }
 				toggleProps={ {
 					className: 'block-editor-inserter__toggle',
+					onMouseDown: ( event ) => event.preventDefault(),
 				} }
 				label={ __( 'Add Block', 'sensei-lms' ) }
-				controls={ [
-					{
-						title: __( 'New Question', 'sensei-lms' ),
-						icon: questionBlock.icon,
-						onClick: addNewQuestionBlock,
-					},
-					{
-						title: __( 'Existing Question(s)', 'sensei-lms' ),
-						icon: quizIcon,
-						onClick: () => setModalOpen( true ),
-					},
-				] }
+				controls={ controls }
 			/>
 			<p
 				className="sensei-lms-quiz-block__appender__placeholder"
@@ -62,13 +71,6 @@ const QuizAppender = ( { clientId } ) => {
 					'sensei-lms'
 				) }
 			/>
-
-			{ isModalOpen && (
-				<QuestionsModal
-					onClose={ () => setModalOpen( false ) }
-					onSelect={ addExistingQuestions }
-				/>
-			) }
 		</div>
 	);
 };

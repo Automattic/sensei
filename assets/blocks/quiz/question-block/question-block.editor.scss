@@ -2,6 +2,7 @@ $block: '.sensei-lms-question-block';
 
 @import '../answer-blocks/option-toggle';
 @import './question-grade-toolbar';
+@import '../../../shared/styles/wp-colors';
 
 .sensei-lms-question-block {
 
@@ -22,6 +23,7 @@ $block: '.sensei-lms-question-block';
 		text-align: right;
 		top: 0;
 		font-weight: bold;
+		white-space: nowrap;
 
 		#{$block}.is-draft & {
 			opacity: .62;
@@ -239,6 +241,11 @@ $block: '.sensei-lms-question-block';
 			height: 18px;
 			fill: currentColor;
 		}
+	}
+
+	.sensei-lms-block-validation__notice {
+		position: absolute;
+		left: -72px;
 	}
 
 	.block-editor-inner-blocks {
