@@ -88,7 +88,7 @@ const CategoryQuestionSettings = ( {
 							onChange={ ( nextNumber ) =>
 								nextNumber &&
 								setOptions( {
-									number: nextNumber,
+									number: nextNumber || 1,
 								} )
 							}
 						/>
