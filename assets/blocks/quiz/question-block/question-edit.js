@@ -10,6 +10,7 @@ import { __, _n, sprintf } from '@wordpress/i18n';
  * External dependencies
  */
 import cn from 'classnames';
+
 /**
  * Internal dependencies
  */
@@ -25,7 +26,10 @@ import {
 	SharedQuestionNotice,
 } from './question-block-helpers';
 import { QuestionGradeToolbar } from './question-grade-toolbar';
-import { validateQuestionBlock } from './question-validation';
+import {
+	validateQuestionBlock,
+	getQuestionBlockValidationErrorMessages,
+} from './question-validation';
 import QuestionView from './question-view';
 import QuestionSettings from './question-settings';
 import { QuestionTypeToolbar } from './question-type-toolbar';
@@ -155,7 +159,10 @@ const QuestionEdit = ( props ) => {
 					) }
 				</>
 			) }
-			<QuestionValidationNotice { ...props } />
+			<QuestionValidationNotice
+				{ ...props }
+				getErrorMessages={ getQuestionBlockValidationErrorMessages }
+			/>
 			<BlockControls>
 				<>
 					<QuestionTypeToolbar
