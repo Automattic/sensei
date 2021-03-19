@@ -61,10 +61,11 @@ const CategoryQuestionEdit = ( props ) => {
 			>
 				{ questionIndex }
 				<h2 className="sensei-lms-question-block__title">
-					<strong>
-						{ categoryName ??
-							__( 'Category Question', 'sensei-lms' ) }
-					</strong>
+					{ categoryName ? (
+						<strong>{ categoryName }</strong>
+					) : (
+						__( 'Category Question', 'sensei-lms' )
+					) }
 					{ categoryName &&
 						number > 0 &&
 						' (' +
