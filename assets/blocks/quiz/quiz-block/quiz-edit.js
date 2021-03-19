@@ -48,7 +48,7 @@ const QuizEdit = ( props ) => {
 		setExistingQuestionsModalOpen( false );
 
 	/* Temporary solution. See https://github.com/WordPress/gutenberg/pull/29911 */
-	const renderAppenderComponent = useCallback(
+	const AppenderComponent = useCallback(
 		() => (
 			<QuizAppender
 				clientId={ clientId }
@@ -70,7 +70,7 @@ const QuizEdit = ( props ) => {
 					'sensei-lms/quiz-category-question',
 				] }
 				templateInsertUpdatesSelection={ false }
-				renderAppender={ renderAppenderComponent }
+				renderAppender={ AppenderComponent }
 			/>
 			{ isExistingQuestionsModalOpen && (
 				<QuestionsModal
