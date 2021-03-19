@@ -3,7 +3,7 @@
  */
 import { InnerBlocks } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
-import { useState } from '@wordpress/element';
+import { useState, useCallback } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -44,11 +44,19 @@ const QuizEdit = ( props ) => {
 		setExistingQuestionsModalOpen,
 	] = useState( false );
 
-	const openExistingQuestionsModal = () =>
-		setExistingQuestionsModalOpen( true );
-
 	const closeExistingQuestionsModal = () =>
 		setExistingQuestionsModalOpen( false );
+
+	/* Temporary solution. See https://github.com/WordPress/gutenberg/pull/29911 */
+	const renderAppenderComponent = useCallback(
+		() => (
+			<QuizAppender
+				clientId={ clientId }
+				openModal={ () => setExistingQuestionsModalOpen( true ) }
+			/>
+		),
+		[ clientId ]
+	);
 
 	return (
 		<>
@@ -62,12 +70,7 @@ const QuizEdit = ( props ) => {
 					'sensei-lms/quiz-category-question',
 				] }
 				templateInsertUpdatesSelection={ false }
-				renderAppender={ () => (
-					<QuizAppender
-						clientId={ clientId }
-						openModal={ openExistingQuestionsModal }
-					/>
-				) }
+				renderAppender={ renderAppenderComponent }
 			/>
 			{ isExistingQuestionsModalOpen && (
 				<QuestionsModal
