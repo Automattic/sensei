@@ -97,14 +97,28 @@ class Sensei_Tool_Module_Slugs_Mismatch implements Sensei_Tool_Interface {
 	/**
 	 * Get correct slug.
 	 *
-	 * @param \WP_Term $term Module term.
+	 * @param WP_Term $term Module term.
 	 *
 	 * @return string Correct slug.
 	 */
-	private function get_correct_slug( $term ) {
+	private function get_correct_slug( WP_Term $term ) : string {
 		$sanitized_title = sanitize_title( $term->name );
 
-		return preg_replace( '/(\d+-)?(.*)/', '$1' . $sanitized_title, $term->slug, 1 );
+		// As long as we store the teacher id of a module in the beginning of the module slug and users can modify the
+		// slug freely, there is no way to predict 100% accurately whether a number in the beginning of a slug is a
+		// teacher id or not. The code below works in a best effort way with the following convention:
+		// Any numbers in the beginning of the existing term slug will be retained unless the title begins with the same
+		// numbers.
+		preg_match( '/([\d-]+)?(.*)/', $sanitized_title, $title_matches );
+		preg_match( '/([\d-]+)?(.*)/', $term->slug, $slug_matches );
+
+		if ( $title_matches[1] === $slug_matches[1] ) {
+			return $sanitized_title;
+		}
+
+		preg_match( '/(\d+-)?(.*)/', $term->slug, $teacher_id_matches );
+
+		return $teacher_id_matches[1] . $sanitized_title;
 	}
 
 	/**
