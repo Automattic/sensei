@@ -356,17 +356,10 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 			return [];
 		}
 
-		$question_ids   = wp_list_pluck( $questions, 'ID' );
 		$quiz_questions = [];
 		foreach ( $questions as $question ) {
 			if ( 'multiple_question' === $question->post_type ) {
-				if ( Sensei()->feature_flags->is_enabled( 'block_editor_enable_category_questions' ) ) {
-					$quiz_questions[] = $this->get_category_question( $question );
-				} else {
-					foreach ( $this->get_questions_from_category( $question, $question_ids ) as $multiple_question ) {
-						$quiz_questions[] = $multiple_question;
-					}
-				}
+				$quiz_questions[] = $this->get_category_question( $question );
 			} else {
 				$quiz_questions[] = $this->get_question( $question );
 			}

@@ -41,21 +41,17 @@ const QuizAppender = ( { clientId, openModal } ) => {
 			icon: questionBlock.icon,
 			onClick: () => addNewQuestionBlock( questionBlock ),
 		},
-	];
-
-	if ( window.sensei_quiz_blocks.category_question_enabled ) {
-		controls.push( {
+		{
 			title: __( 'Category Question(s)', 'sensei-lms' ),
 			icon: quizIcon,
 			onClick: () => addNewQuestionBlock( categoryQuestionBlock ),
-		} );
-	}
-
-	controls.push( {
-		title: __( 'Existing Question(s)', 'sensei-lms' ),
-		icon: quizIcon,
-		onClick: openModal,
-	} );
+		},
+		{
+			title: __( 'Existing Question(s)', 'sensei-lms' ),
+			icon: quizIcon,
+			onClick: openModal,
+		},
+	];
 
 	return (
 		<div className="sensei-lms-quiz-block__appender block-editor-default-block-appender">

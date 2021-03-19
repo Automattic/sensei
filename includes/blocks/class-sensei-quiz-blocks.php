@@ -60,10 +60,7 @@ class Sensei_Quiz_Blocks extends Sensei_Blocks_Initializer {
 
 		new Sensei_Block_Quiz();
 		new Sensei_Block_Quiz_Question();
-
-		if ( Sensei()->feature_flags->is_enabled( 'block_editor_enable_category_questions' ) ) {
-			new Sensei_Block_Quiz_Category_Question();
-		}
+		new Sensei_Block_Quiz_Category_Question();
 
 		$post_type_object = get_post_type_object( 'question' );
 

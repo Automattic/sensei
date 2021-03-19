@@ -64,15 +64,6 @@ class Sensei_Quiz {
 		// If custom question types have been registered, disable the block based quiz editor for now.
 		$is_block_based_editor_enabled = ! has_filter( 'sensei_question_types' );
 
-		// If quizzes were using the multiple_questions CPT on update, disable the block based
-		// editor until support is added.
-		if (
-			! Sensei()->feature_flags->is_enabled( 'block_editor_enable_category_questions' )
-			&& Sensei()->get_legacy_flag( Sensei_Main::LEGACY_FLAG_MULTIPLE_QUESTIONS_EXIST )
-		) {
-			$is_block_based_editor_enabled = false;
-		}
-
 		/**
 		 * Filter to change whether the block based editor should be used instead of the legacy
 		 * metabox based editor. This is to allow sites to migrate over to the block based
