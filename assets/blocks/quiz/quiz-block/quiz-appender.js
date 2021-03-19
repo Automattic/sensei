@@ -59,6 +59,7 @@ const QuizAppender = ( { clientId, openModal } ) => {
 				icon={ plus }
 				toggleProps={ {
 					className: 'block-editor-inserter__toggle',
+					onMouseDown: ( event ) => event.preventDefault(),
 				} }
 				label={ __( 'Add Block', 'sensei-lms' ) }
 				controls={ controls }
