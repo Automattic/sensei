@@ -7,6 +7,10 @@ import { useCallback } from '@wordpress/element';
 import { compose } from '@wordpress/compose';
 import { __, _n, sprintf } from '@wordpress/i18n';
 /**
+ * External dependencies
+ */
+import cn from 'classnames';
+/**
  * Internal dependencies
  */
 
@@ -80,6 +84,9 @@ const QuestionEdit = ( props ) => {
 		</h2>
 	);
 
+	const isInvalid =
+		props.meta.showValidationErrors && props.meta.validationErrors?.length;
+
 	const questionGrade = (
 		<div className="sensei-lms-question-block__grade">
 			{ formatGradeLabel( options.grade ) }
@@ -97,9 +104,10 @@ const QuestionEdit = ( props ) => {
 
 	return (
 		<div
-			className={ `sensei-lms-question-block ${
-				! title ? 'is-draft' : ''
-			}` }
+			className={ cn( 'sensei-lms-question-block', {
+				'is-draft': ! title,
+				'is-invalid': isInvalid,
+			} ) }
 		>
 			{ questionIndex }
 			<h2 className="sensei-lms-question-block__title">
