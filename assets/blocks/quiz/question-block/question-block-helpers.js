@@ -59,21 +59,17 @@ export const QuestionValidationNotice = ( {
 export const BlockValidationNotice = ( { errors = [] } ) => {
 	if ( ! errors || ! errors.length ) return null;
 	const errorItems = errors?.map?.( ( error ) => (
-		<li key={ error }>{ error }</li>
+		<div key={ error }>{ error }</div>
 	) );
 	return (
-		<div className="sensei-lms-block-validation__notice">
-			<Tooltip
-				text={
-					<ul className="sensei-lms-block-validation__notice__tooltip-content">
-						{ errorItems }
-					</ul>
-				}
-			>
-				<span>
-					<Icon icon={ alert } size={ 32 } />
-				</span>
-			</Tooltip>
+		<div className="sensei-lms-block-validation-notice">
+			<Icon
+				icon={ alert }
+				className="sensei-lms-block-validation-notice__icon"
+			/>
+			<div className="sensei-lms-block-validation-notice__issues">
+				{ errorItems }
+			</div>
 		</div>
 	);
 };

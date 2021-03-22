@@ -102,7 +102,6 @@ const QuestionEdit = ( props ) => {
 			}` }
 		>
 			{ questionIndex }
-			<QuestionValidationNotice { ...props } />
 			<h2 className="sensei-lms-question-block__title">
 				<SingleLineInput
 					placeholder={ __( 'Question Title', 'sensei-lms' ) }
@@ -146,6 +145,7 @@ const QuestionEdit = ( props ) => {
 					) }
 				</>
 			) }
+			<QuestionValidationNotice { ...props } />
 			<BlockControls>
 				<>
 					<QuestionTypeToolbar

@@ -86,11 +86,21 @@ $gray-400: #ccc;
 	}
 }
 
-.sensei-lms-block-validation__notice {
-	position: absolute;
-	left: -24px;
-	svg {
+.sensei-lms-block-validation-notice {
+	background: #fff;
+	&__issues * {
+		color: $gray-900!important;
+	}
+	border-radius: 2px;
+	padding: 4px;
+	display: inline-flex;
+	font-size: 13px;
+	border: 1px solid $gray-900;
+	margin: 4px 0;
+
+	&__icon {
 		fill: $alert-red;
+		margin-right: 4px;
 	}
 
 	&__tooltip-content {
