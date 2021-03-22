@@ -15,6 +15,9 @@ $block: '.sensei-lms-question-block';
 
 	.editor-styles-wrapper .wp-block &__title {
 		margin-right: 56px;
+		textarea:focus {
+			color: inherit;
+		}
 	}
 
 	&__index {
