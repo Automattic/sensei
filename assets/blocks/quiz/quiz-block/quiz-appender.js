@@ -67,7 +67,7 @@ const QuizAppender = ( { clientId, openModal } ) => {
 			<p
 				className="sensei-lms-quiz-block__appender__placeholder"
 				data-placeholder={ __(
-					'Add new or existing question',
+					'Add new or existing question(s)',
 					'sensei-lms'
 				) }
 			/>
