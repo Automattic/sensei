@@ -63,6 +63,7 @@ const QuestionsModal = ( { clientId, onClose } ) => {
 				setFilters={ setFilters }
 			/>
 			<Questions
+				clientId={ clientId }
 				questionCategories={ questionCategories }
 				filters={ filters }
 				selectedQuestionIds={ selectedQuestionIds }
