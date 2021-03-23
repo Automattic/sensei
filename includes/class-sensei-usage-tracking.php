@@ -258,6 +258,40 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 	}
 
 	/**
+	 * Get the template override data.
+	 *
+	 * @return array
+	 */
+	public function get_template_data() {
+		$theme              = wp_get_theme();
+		$template_overrides = Sensei_Status::instance()->get_template_override_status();
+
+		$data = [
+			'version'       => Sensei()->version,
+			'theme'         => $theme['Name'],
+			'theme_version' => $theme['Version'],
+			'templates'     => count( $template_overrides ),
+			'mismatch'      => 0,
+		];
+
+		foreach ( $template_overrides as $template => $versions ) {
+			$property_key          = preg_replace( '/[^0-9_a-z]/', '_', strtr( strtolower( $template ), [ '.php' => '' ] ) );
+			$data[ $property_key ] = preg_replace( '/[^0-9.]/', '', $versions['theme_version'] );
+
+			if ( empty( $data[ $property_key ] ) ) {
+				$data[ $property_key ] = 'unknown';
+			}
+
+			if ( $versions['theme_version'] !== $versions['sensei_version'] ) {
+				$data['mismatch']++;
+				$data[ $property_key ] .= '*';
+			}
+		}
+
+		return $data;
+	}
+
+	/**
 	 * Collect system data to track.
 	 *
 	 * @return array
