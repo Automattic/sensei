@@ -30,8 +30,11 @@ export const useQuestionNumber = ( clientId ) => {
 			return false;
 		}
 
-		if ( block.name === 'sensei-lms/quiz-category-question' ) {
-			number += block.attributes.options?.number - 1 ?? 0;
+		if (
+			block.name === 'sensei-lms/quiz-category-question' &&
+			block.attributes.options?.number
+		) {
+			number += block.attributes.options.number - 1;
 		}
 
 		return true;

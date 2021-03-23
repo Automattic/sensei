@@ -31,7 +31,7 @@ const CategoryQuestionEdit = ( props ) => {
 	const [ , getCategoryTermById ] = useQuestionCategories();
 
 	const range =
-		1 === number
+		! number || 1 === number
 			? questionNumber
 			: `${ questionNumber } - ${ questionNumber + number - 1 }`;
 
