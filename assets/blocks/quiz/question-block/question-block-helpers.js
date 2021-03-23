@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { Tooltip } from '@wordpress/components';
+import { Notice, Tooltip } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
 /**
@@ -60,14 +60,16 @@ export const BlockValidationNotice = ( { errors = [] } ) => {
 	if ( ! errors || ! errors.length ) return null;
 	const error = errors[ 0 ];
 	return (
-		<div className="sensei-lms-block-validation-notice">
+		<Notice
+			isDismissible={ false }
+			status="warning"
+			className="sensei-lms-block-validation-notice"
+		>
 			<Icon
 				icon={ alert }
 				className="sensei-lms-block-validation-notice__icon"
 			/>
-			<div className="sensei-lms-block-validation-notice__issues">
-				<div key={ error }>{ error }</div>
-			</div>
-		</div>
+			{ error }
+		</Notice>
 	);
 };

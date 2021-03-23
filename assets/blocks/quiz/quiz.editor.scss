@@ -87,23 +87,19 @@ $gray-400: #ccc;
 }
 
 .sensei-lms-block-validation-notice {
-	background: #fff;
-	&__issues * {
-		color: $gray-900!important;
-	}
-	border-radius: 2px;
-	padding: 4px;
-	display: inline-flex;
-	font-size: 13px;
-	border: 1px solid $gray-900;
+
+	display: inline-block;
 	margin: 4px 0;
+
+	.components-notice__content {
+		display: flex;
+		&, * {
+			color: $gray-900!important;
+		}
+	}
 
 	&__icon {
 		fill: $gray-900;
 		margin-right: 4px;
-	}
-
-	&__tooltip-content {
-		text-align: left;
 	}
 }
