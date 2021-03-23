@@ -84,9 +84,9 @@ const questionTypes = {
 		settings: [ QuestionAnswerFeedbackSettings ],
 		validate: ( { before, after, gap } = {} ) => {
 			return {
+				noGap: ! gap?.length,
 				noBefore: ! before,
 				noAfter: ! after,
-				noGap: ! gap?.length,
 			};
 		},
 		messages: {
