@@ -88,13 +88,13 @@ class Sensei_Blocks {
 		}
 
 		return array_merge(
-			$categories,
 			[
 				[
 					'slug'  => 'sensei-lms',
 					'title' => __( 'Sensei LMS', 'sensei-lms' ),
 				],
-			]
+			],
+			$categories
 		);
 	}
 
