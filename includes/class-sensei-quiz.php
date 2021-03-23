@@ -1601,6 +1601,13 @@ class Sensei_Quiz {
 		foreach ( $question_ids as $question_id ) {
 			delete_post_meta( $question_id, '_quiz_id', $quiz_id );
 			delete_post_meta( $question_id, '_quiz_question_order' . $quiz_id );
+
+			if (
+				'multiple_question' === get_post_type( $question_id )
+				&& empty( array_filter( get_post_meta( $question_id, '_quiz_id', false ) ) )
+			) {
+				wp_delete_post( $question_id, true );
+			}
 		}
 	}
 
