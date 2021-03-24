@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { unregisterBlockType } from '@wordpress/blocks';
+import { unregisterBlockType, getBlockTypes } from '@wordpress/blocks';
 import { subscribe, select } from '@wordpress/data';
 
 /**
@@ -28,7 +28,11 @@ const unsubscribe = subscribe( () => {
 	// Unregister blocks that should not appear in certain post types.
 	Object.entries( BLOCKS_PER_POST_TYPE ).forEach(
 		( [ blockName, blockPostTypes ] ) => {
-			if ( ! blockPostTypes.includes( postType ) ) {
+			if (
+				null !== blockPostTypes &&
+				! blockPostTypes.includes( postType ) &&
+				getBlockTypes().find( ( b ) => b.name === blockName )
+			) {
 				unregisterBlockType( blockName );
 			}
 		}
