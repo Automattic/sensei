@@ -7,6 +7,7 @@ export const LearnerCoursesIcon = () => (
 	<SVG viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<Rect
 			stroke="currentColor"
+			fill="transparent"
 			x="-0.75"
 			y="-0.75"
 			width="10"
