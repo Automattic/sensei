@@ -471,5 +471,11 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		Sensei_Utils::user_start_lesson( $user_id, $course_with_lessons['lesson_ids'][1], true );
 		$first_lesson = Sensei()->lesson::find_first_prerequisite_lesson( $course_with_lessons['lesson_ids'][4], $user_id );
 		$this->assertEquals( $course_with_lessons['lesson_ids'][2], $first_lesson, 'Result not equal with the third lesson when user has completed the second.' );
+
+		// Ensure that there is no infinite loop when there is a cycle of prerequisites.
+		$user_id = $this->factory->user->create();
+		update_post_meta( $course_with_lessons['lesson_ids'][0], '_lesson_prerequisite', $course_with_lessons['lesson_ids'][4] );
+		$first_lesson = Sensei()->lesson::find_first_prerequisite_lesson( $course_with_lessons['lesson_ids'][3], $user_id );
+		$this->assertEquals( $course_with_lessons['lesson_ids'][1], $first_lesson );
 	}
 }
