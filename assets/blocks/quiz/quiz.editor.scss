@@ -86,14 +86,20 @@ $gray-400: #ccc;
 	}
 }
 
-.sensei-lms-block-validation__notice {
-	position: absolute;
-	left: -24px;
-	svg {
-		fill: $alert-red;
+.sensei-lms-block-validation-notice {
+
+	display: inline-block;
+	margin: 4px 0;
+
+	.components-notice__content {
+		display: flex;
+		&, * {
+			color: $gray-900!important;
+		}
 	}
 
-	&__tooltip-content {
-		text-align: left;
+	&__icon {
+		fill: $gray-900;
+		margin-right: 4px;
 	}
 }

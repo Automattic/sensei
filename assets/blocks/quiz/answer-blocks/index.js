@@ -53,7 +53,7 @@ const questionTypes = {
 		},
 		messages: {
 			noAnswers: __(
-				'Add at least two answer choices to this question.',
+				'Add at least one right and one wrong answer.',
 				'sensei-lms'
 			),
 			noRightAnswer: __(
@@ -84,18 +84,15 @@ const questionTypes = {
 		settings: [ QuestionAnswerFeedbackSettings ],
 		validate: ( { before, after, gap } = {} ) => {
 			return {
+				noGap: ! gap?.length,
 				noBefore: ! before,
 				noAfter: ! after,
-				noGap: ! gap?.length,
 			};
 		},
 		messages: {
-			noBefore: __( 'Add some text before the gap.', 'sensei-lms' ),
-			noAfter: __( 'Add some text after the gap.', 'sensei-lms' ),
-			noGap: __(
-				'Add a right answer for the gap to this question.',
-				'sensei-lms'
-			),
+			noGap: __( 'Add a right answer to this question.', 'sensei-lms' ),
+			noBefore: __( 'Add text before and after the gap.', 'sensei-lms' ),
+			noAfter: __( 'Add text before and after the gap.', 'sensei-lms' ),
 		},
 	},
 	'single-line': {
