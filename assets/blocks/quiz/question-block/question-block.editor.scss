@@ -15,6 +15,9 @@ $block: '.sensei-lms-question-block';
 
 	.editor-styles-wrapper .wp-block &__title {
 		margin-right: 56px;
+		textarea:focus {
+			color: inherit;
+		}
 	}
 
 	&__index {
@@ -109,8 +112,10 @@ $block: '.sensei-lms-question-block';
 				height: auto;
 				text-transform: uppercase;
 				background: #fff;
-				border: 1px solid #1e1e1e;
-				color: #1e1e1e;
+				border: 1px solid $gray-900;
+				&:not(:hover) {
+					color: $gray-900!important;
+				}
 			}
 		}
 	}

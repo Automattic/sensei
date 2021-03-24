@@ -86,6 +86,7 @@ const CategoryQuestionSettings = ( {
 							step={ 1 }
 							value={ options.number ?? 1 }
 							onChange={ ( nextNumber ) =>
+								nextNumber &&
 								setOptions( {
 									number: nextNumber,
 								} )
