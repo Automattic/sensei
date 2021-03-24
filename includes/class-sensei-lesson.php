@@ -4207,7 +4207,34 @@ class Sensei_Lesson {
 
 		return Sensei_Utils::user_completed_lesson( $pre_requisite_id, $user_id );
 
-	}//end is_prerequisite_complete()
+	}
+
+	/**
+	 * Returns the lesson that the user needs to begin with, in a chain of prerequisites.
+	 *
+	 * @param int $lesson_id The lesson id to begin searching.
+	 * @param int $user_id   The user id.
+	 *
+	 * @return int The first lesson id.
+	 */
+	public static function find_first_prerequisite_lesson( int $lesson_id, int $user_id ) : int {
+		$lesson_prerequisites = [ $lesson_id ];
+		$lesson_prerequisite  = (int) self::get_lesson_prerequisite_id( $lesson_id );
+
+		while ( $lesson_prerequisite > 0 && ! self::is_prerequisite_complete( $lesson_id, $user_id ) ) {
+			// We need to check each prerequisite against already found prerequisites to avoid an infinite loop in case of
+			// a cycle of prerequisites.
+			if ( in_array( $lesson_prerequisite, $lesson_prerequisites, true ) ) {
+				return $lesson_prerequisite;
+			}
+
+			$lesson_prerequisites[] = $lesson_prerequisite;
+			$lesson_id              = $lesson_prerequisite;
+			$lesson_prerequisite    = self::get_lesson_prerequisite_id( $lesson_id );
+		}
+
+		return count( $lesson_prerequisites ) === 1 ? 0 : $lesson_id;
+	}
 
 	/**
 	 * Show the user not taking course message if it is the case
@@ -4292,9 +4319,9 @@ class Sensei_Lesson {
 	 */
 	public static function prerequisite_complete_message() {
 
-		$lesson_prerequisite      = self::get_lesson_prerequisite_id( get_the_ID() );
-		$lesson_has_pre_requisite = $lesson_prerequisite > 0;
-		if ( ! self::is_prerequisite_complete( get_the_ID(), get_current_user_id() ) && $lesson_has_pre_requisite ) {
+		$lesson_prerequisite = self::find_first_prerequisite_lesson( get_the_ID(), get_current_user_id() );
+
+		if ( $lesson_prerequisite > 0 ) {
 
 			$prerequisite_lesson_link = '<a href="'
 				. esc_url( get_permalink( $lesson_prerequisite ) )

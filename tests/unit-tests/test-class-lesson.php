@@ -437,4 +437,39 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		return array_map( 'intval', $order_string_array );
 	}
 
-}//end class
+	/**
+	 * Tests that Sensei_Lesson::find_first_prerequisite_lesson returns the first lesson that needs to get completed in
+	 * a prerequisite chain.
+	 *
+	 * @covers Sensei_Lesson::find_first_prerequisite_lesson
+	 */
+	public function testFirstPrerequisiteIsCorrect() {
+		$user_id             = $this->factory->user->create();
+		$course_with_lessons = $this->factory->get_course_with_lessons(
+			[
+				'module_count'   => 2,
+				'lesson_count'   => 5,
+				'question_count' => 0,
+			]
+		);
+
+		$first_lesson = Sensei()->lesson::find_first_prerequisite_lesson( $course_with_lessons['lesson_ids'][4], $user_id );
+		$this->assertEquals( 0, $first_lesson, 'Result should be 0 when there are not prerequisites to the lesson.' );
+
+		update_post_meta( $course_with_lessons['lesson_ids'][4], '_lesson_prerequisite', $course_with_lessons['lesson_ids'][3] );
+		update_post_meta( $course_with_lessons['lesson_ids'][3], '_lesson_prerequisite', $course_with_lessons['lesson_ids'][2] );
+		update_post_meta( $course_with_lessons['lesson_ids'][2], '_lesson_prerequisite', $course_with_lessons['lesson_ids'][1] );
+		update_post_meta( $course_with_lessons['lesson_ids'][1], '_lesson_prerequisite', $course_with_lessons['lesson_ids'][0] );
+
+		$first_lesson = Sensei()->lesson::find_first_prerequisite_lesson( $course_with_lessons['lesson_ids'][4], $user_id );
+		$this->assertEquals( $course_with_lessons['lesson_ids'][0], $first_lesson, 'Result not equal with the first lesson in the prerequisite chain.' );
+
+		$first_lesson = Sensei()->lesson::find_first_prerequisite_lesson( $course_with_lessons['lesson_ids'][2], $user_id );
+		$this->assertEquals( $course_with_lessons['lesson_ids'][0], $first_lesson, 'Result not equal with the first lesson in the prerequisite chain.' );
+
+		// Complete a lesson in the prerequisite chain and observe that the next one is returned.
+		Sensei_Utils::user_start_lesson( $user_id, $course_with_lessons['lesson_ids'][1], true );
+		$first_lesson = Sensei()->lesson::find_first_prerequisite_lesson( $course_with_lessons['lesson_ids'][4], $user_id );
+		$this->assertEquals( $course_with_lessons['lesson_ids'][2], $first_lesson, 'Result not equal with the third lesson when user has completed the second.' );
+	}
+}
