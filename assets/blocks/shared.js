@@ -9,12 +9,15 @@ import { subscribe, select } from '@wordpress/data';
  */
 import registerSenseiBlocks from './register-sensei-blocks';
 import ContactTeacherBlock from './contact-teacher-block';
+import LearnerCoursesBlock from './learner-courses-block';
 
+// Post types where blocks should be loaded. Or null if it should be loaded for any post type.
 const BLOCKS_PER_POST_TYPE = {
 	'sensei-lms/button-contact-teacher': [ 'course', 'lesson' ],
+	'sensei-lms/learner-courses': null,
 };
 
-registerSenseiBlocks( [ ContactTeacherBlock ] );
+registerSenseiBlocks( [ ContactTeacherBlock, LearnerCoursesBlock ] );
 
 let postType = null;
 
