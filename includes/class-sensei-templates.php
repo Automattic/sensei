@@ -158,7 +158,7 @@ class Sensei_Templates {
 		 * @since  3.6.0
 		 * @access private
 		 */
-		if ( ! apply_filters( 'sensei_use_sensei_template', true ) ) {
+		if ( ! apply_filters( 'sensei_use_sensei_template', true ) && ! isset( $email_template ) ) {
 			return $template;
 		}
 
