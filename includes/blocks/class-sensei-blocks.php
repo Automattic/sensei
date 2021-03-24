@@ -54,7 +54,7 @@ class Sensei_Blocks {
 		$this->course = new Sensei_Course_Blocks();
 		$this->lesson = new Sensei_Lesson_Blocks();
 		$this->quiz   = new Sensei_Quiz_Blocks();
-
+		$this->global = new Sensei_Global_Blocks();
 	}
 
 	/**
