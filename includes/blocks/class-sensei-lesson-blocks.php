@@ -87,7 +87,7 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 		 *
 		 * @return {string[][]} Array of blocks to use as the default initial state for a lesson.
 		 */
-		$post_type_object->template = apply_filters( 'sensei_lesson_block_template', $block_template, $post_type_object->template ?? '' );
+		$post_type_object->template = apply_filters( 'sensei_lesson_block_template', $block_template, $post_type_object->template ?? [] );
 
 		if ( ! Sensei()->lesson->has_sensei_blocks() ) {
 			return;

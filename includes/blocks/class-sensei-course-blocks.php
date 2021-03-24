@@ -80,7 +80,7 @@ class Sensei_Course_Blocks extends Sensei_Blocks_Initializer {
 		 *
 		 * @return {string[][]} Array of blocks to use as the default initial state for a course.
 		 */
-		$post_type_object->template = apply_filters( 'sensei_course_block_template', $block_template, $post_type_object->template ?? '' );
+		$post_type_object->template = apply_filters( 'sensei_course_block_template', $block_template, $post_type_object->template ?? [] );
 	}
 
 	/**
