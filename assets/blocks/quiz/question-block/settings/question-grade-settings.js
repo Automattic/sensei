@@ -2,11 +2,17 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
+/**
+ * Internal dependencies
+ */
+import { QuestionGradeControl } from '../question-grade-control';
+/**
+ * Internal dependencies
+ */
 
 /**
  * Internal dependencies
  */
-import NumberControl from '../../../editor-components/number-control';
 
 /**
  * Question block grade settings.
@@ -15,20 +21,11 @@ import NumberControl from '../../../editor-components/number-control';
  * @param {Object}   props.options
  * @param {number}   props.options.grade Question grade.
  * @param {Function} props.setOptions
- * @param {string}   props.clientId
  */
-const QuestionGradeSettings = ( {
-	options: { grade = 1 },
-	setOptions,
-	clientId,
-} ) => {
-	const id = `sensei-lms-question-block__grade-control-${ clientId }`;
+const QuestionGradeSettings = ( { options: { grade = 1 }, setOptions } ) => {
 	return (
-		<NumberControl
-			id={ id }
+		<QuestionGradeControl
 			label={ __( 'Grade', 'sensei-lms' ) }
-			min={ 0 }
-			step={ 1 }
 			value={ grade }
 			onChange={ ( nextGrade ) =>
 				setOptions( { grade: nextGrade ?? 1 } )
