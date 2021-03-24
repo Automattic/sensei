@@ -25,6 +25,14 @@ const GapFillAnswer = ( {
 	setAttributes,
 	hasSelected,
 } ) => {
+	const addIncompleteToken = ( { target } ) => {
+		if ( ! target?.value ) {
+			return;
+		}
+		setAttributes( { gap: [ ...gap, target.value ] } );
+		setInputValue( target, '' );
+	};
+
 	return (
 		<ul className="sensei-lms-question-block__answer sensei-lms-question-block__answer--gap-fill">
 			<li>
@@ -37,7 +45,10 @@ const GapFillAnswer = ( {
 					}
 				/>
 			</li>
-			<li className="sensei-lms-question-block__answer--gap-fill__right-answers">
+			<li
+				className="sensei-lms-question-block__answer--gap-fill__right-answers"
+				onBlur={ addIncompleteToken }
+			>
 				<FormTokenField
 					className={
 						'sensei-lms-question-block__text-input-placeholder'
@@ -100,3 +111,15 @@ GapFillAnswer.view = ( { attributes: { before, after, gap } } ) => {
 };
 
 export default GapFillAnswer;
+
+/**
+ * Update input value, making sure React event handlers are triggered.
+ *
+ * @param {HTMLInputElement} node       Input element.
+ * @param {string}           inputValue New input value.
+ */
+const setInputValue = ( node, inputValue ) => {
+	delete node.value;
+	node.value = inputValue;
+	node.dispatchEvent( new window.Event( 'change', { bubbles: true } ) );
+};
