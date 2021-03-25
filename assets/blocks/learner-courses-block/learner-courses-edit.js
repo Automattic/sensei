@@ -7,11 +7,12 @@ import classnames from 'classnames';
  * WordPress dependencies
  */
 import { useState } from '@wordpress/element';
-import { __, sprintf, _n } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
+import CourseProgress from './course-progress';
 import LearnerCoursesSettings from './learner-courses-settings';
 
 /**
@@ -93,46 +94,7 @@ const LearnerCoursesEdit = ( {
 									'sensei-lms'
 								) }
 							</p>
-							<div className="wp-block-sensei-lms-learner-courses__course-progress">
-								<div
-									className="wp-block-sensei-lms-learner-courses__progress-bar"
-									role="progressbar"
-									aria-valuenow={ 33 }
-									aria-valuemin="0"
-									aria-valuemax="100"
-								>
-									<div
-										className="wp-block-sensei-lms-learner-courses__progress-bar__fill"
-										style={ { width: '33%' } }
-									></div>
-								</div>
-								<div className="wp-block-sensei-lms-learner-courses__course-progress__numbers">
-									<strong className="wp-block-sensei-lms-learner-courses__course-progress__number-lessons">
-										{ sprintf(
-											// translators: placeholder is number of lessons in the course.
-											_n(
-												'%d Lesson',
-												'%d Lessons',
-												3,
-												'sensei-lms'
-											),
-											3
-										) }
-									</strong>
-									<em className="wp-block-sensei-lms-learner-courses__course-progress__completed-lessons">
-										{ sprintf(
-											// translators: placeholder is number of completed lessons in the course.
-											_n(
-												'%d Completed',
-												'%d Completed',
-												1,
-												'sensei-lms'
-											),
-											1
-										) }
-									</em>
-								</div>
-							</div>
+							<CourseProgress lessons={ 3 } completed={ 1 } />
 						</li>
 					) ) }
 				</ul>
