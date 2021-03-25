@@ -9,12 +9,8 @@ import {
 	ToolbarGroup,
 	ToolbarButton,
 } from '@wordpress/components';
+import { grid, list } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
-
-/**
- * Internal dependencies
- */
-import { GridViewIcon, ListViewIcon } from '../../icons';
 
 /**
  * Learner Settings component.
@@ -47,12 +43,12 @@ const LearnerCoursesSettings = ( { options, setOptions } ) => {
 		{
 			view: 'list',
 			label: __( 'List view', 'sensei-lms' ),
-			icon: ListViewIcon,
+			icon: list,
 		},
 		{
 			view: 'grid',
 			label: __( 'Grid view', 'sensei-lms' ),
-			icon: GridViewIcon,
+			icon: grid,
 		},
 	];
 
