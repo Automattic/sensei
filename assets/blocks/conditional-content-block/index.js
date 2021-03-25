@@ -14,7 +14,10 @@ import icon from '../../icons/conditional-content-icon';
 
 export default {
 	title: __( 'Conditional Content', 'sensei-lms' ),
-	description: __( 'Display conditional content to users.', 'sensei-lms' ),
+	description: __(
+		'Content inside this block will be shown to the selected subgroup of users.',
+		'sensei-lms'
+	),
 	keywords: [
 		__( 'Enrolled', 'sensei-lms' ),
 		__( 'Content', 'sensei-lms' ),
