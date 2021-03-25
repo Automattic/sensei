@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { camelCase, snakeCase, omit, keyBy } from 'lodash';
+
+/**
  * WordPress dependencies
  */
 import { dispatch, select, useDispatch } from '@wordpress/data';
@@ -14,10 +19,6 @@ import {
 	syncQuestionBlocks,
 	normalizeAttributes,
 } from './data';
-/**
- * External dependencies
- */
-import { camelCase, snakeCase, omit } from 'lodash';
 
 export const QUIZ_STORE = 'sensei/quiz-structure';
 
@@ -26,6 +27,7 @@ const READ_ONLY_ATTRIBUTES = [
 	'shared',
 	'options.studentHelp',
 	'media',
+	'categoryName',
 ];
 
 /**
@@ -71,6 +73,10 @@ registerStructureStore( {
 			options: normalizeAttributes( structure.options, camelCase ),
 		} );
 
+		if ( ! structure.questions?.length ) {
+			return;
+		}
+
 		const questionBlocks = yield select( 'core/block-editor' ).getBlocks(
 			clientId
 		);
@@ -110,10 +116,18 @@ registerStructureStore( {
 
 		const questionBlockAttributes = parseQuestionBlocks( questionBlocks );
 
+		const serverQuestionsById = keyBy(
+			select( QUIZ_STORE ).getServerStructure().questions,
+			'id'
+		);
+
 		return {
 			options,
 			questions: questionBlockAttributes.map( ( question ) =>
-				omit( question, READ_ONLY_ATTRIBUTES )
+				// Avoid overriding non-editable question.
+				false === question.editable
+					? serverQuestionsById[ question.id ]
+					: omit( question, READ_ONLY_ATTRIBUTES )
 			),
 		};
 	},

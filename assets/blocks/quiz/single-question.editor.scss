@@ -1,5 +1,9 @@
 body.post-type-question {
-	.edit-post-visual-editor__post-title-wrapper {
+	.edit-post-visual-editor__post-title-wrapper, .editor-post-title {
+		display: none;
+	}
+
+	.sensei-lms-question-block__index {
 		display: none;
 	}
 

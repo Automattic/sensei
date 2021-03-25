@@ -16,6 +16,7 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import NumberControl from '../../editor-components/number-control';
+import { isQuestionEmpty } from '../data';
 
 /**
  * Quiz settings.
@@ -43,18 +44,24 @@ const QuizSettings = ( {
 	const createChangeHandler = ( optionKey ) => ( value ) =>
 		setAttributes( { options: { ...options, [ optionKey ]: value } } );
 
-	const questionCount = useSelect(
-		( select ) => {
-			const count = select( 'core/block-editor' )
+	const questions = useSelect(
+		( select ) =>
+			select( 'core/block-editor' )
 				.getBlock( clientId )
 				.innerBlocks.filter(
 					( questionBlock ) =>
-						undefined !== questionBlock?.attributes?.title
-				).length;
-
-			return count;
-		},
+						! isQuestionEmpty( questionBlock.attributes )
+				),
 		[ clientId ]
+	);
+
+	const questionCount = questions.reduce(
+		( count, question ) =>
+			count +
+			( question.attributes.type === 'category-question'
+				? question.attributes.options.number
+				: 1 ),
+		0
 	);
 
 	useEffect( () => {

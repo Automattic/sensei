@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { Tooltip } from '@wordpress/components';
+import { Notice, Tooltip } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
 /**
@@ -58,22 +58,18 @@ export const QuestionValidationNotice = ( {
  */
 export const BlockValidationNotice = ( { errors = [] } ) => {
 	if ( ! errors || ! errors.length ) return null;
-	const errorItems = errors?.map?.( ( error ) => (
-		<li key={ error }>{ error }</li>
-	) );
+	const error = errors[ 0 ];
 	return (
-		<div className="sensei-lms-block-validation__notice">
-			<Tooltip
-				text={
-					<ul className="sensei-lms-block-validation__notice__tooltip-content">
-						{ errorItems }
-					</ul>
-				}
-			>
-				<span>
-					<Icon icon={ alert } size={ 32 } />
-				</span>
-			</Tooltip>
-		</div>
+		<Notice
+			isDismissible={ false }
+			status="warning"
+			className="sensei-lms-block-validation-notice"
+		>
+			<Icon
+				icon={ alert }
+				className="sensei-lms-block-validation-notice__icon"
+			/>
+			{ error }
+		</Notice>
 	);
 };

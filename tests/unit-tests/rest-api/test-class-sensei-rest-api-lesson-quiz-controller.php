@@ -12,6 +12,7 @@
  */
 class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase {
 	use Sensei_Test_Login_Helpers;
+	use Sensei_REST_API_Test_Helpers;
 
 	/**
 	 * A server instance that we use in tests to dispatch requests.
@@ -55,9 +56,10 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 
 		$course_result = $this->factory->get_course_with_lessons(
 			[
-				'module_count'   => 1,
-				'lesson_count'   => 1,
-				'question_count' => 5,
+				'module_count'            => 1,
+				'lesson_count'            => 1,
+				'question_count'          => 4,
+				'multiple_question_count' => 1,
 			]
 		);
 
@@ -66,6 +68,10 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 
 		$this->assertEquals( $response->get_status(), 200 );
 		$this->assertCount( 5, $response->get_data()['questions'] );
+
+		$controller = new Sensei_REST_API_Lesson_Quiz_Controller( '' );
+		$this->assertMeetsSchema( $controller->get_item_schema(), $response->get_data() );
+
 	}
 
 	/**
@@ -208,6 +214,28 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 		$this->assertFalse( $response_data['options']['random_question_order'] );
 		$this->assertEquals( 0, $response_data['options']['quiz_passmark'] );
 		$this->assertEquals( 3, $response_data['options']['show_questions'] );
+	}
+
+	/**
+	 * Tests category question properties.
+	 */
+	public function testGetCategoryQuestion() {
+		$this->login_as_teacher();
+
+		list( $lesson_id, $quiz_id ) = $this->create_lesson_with_quiz();
+		$this->factory->multiple_question->create(
+			[
+				'quiz_id'         => $quiz_id,
+				'question_number' => 2,
+			]
+		);
+
+		$response_data = $this->send_get_request( $lesson_id );
+
+		$this->assertEquals( 'category-question', $response_data['questions'][0]['type'] );
+		$this->assertEquals( 2, $response_data['questions'][0]['options']['number'] );
+		$this->assertArrayHasKey( 'id', $response_data['questions'][0] );
+		$this->assertArrayHasKey( 'category', $response_data['questions'][0]['options'] );
 	}
 
 	/**
@@ -355,68 +383,6 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 	}
 
 	/**
-	 * Tests question category expansion.
-	 */
-	public function testQuestionCategory() {
-		$this->login_as_teacher();
-
-		list( $lesson_id, $quiz_id ) = $this->create_lesson_with_quiz();
-		$this->factory->question->create(
-			[
-				'quiz_id'                             => $quiz_id,
-				'question_type'                       => 'multi-line',
-				'add_question_right_answer_multiline' => 'NOTES',
-			]
-		);
-
-		$another_quiz      = $this->factory->quiz->create();
-		$first_category_id = $this->factory->question_category->create_and_get()->term_id;
-		$this->factory->question->create_many(
-			5,
-			[
-				'quiz_id'           => $another_quiz,
-				'question_category' => $first_category_id,
-			]
-		);
-
-		$second_category_id = $this->factory->question_category->create_and_get()->term_id;
-		$this->factory->question->create_many(
-			2,
-			[
-				'quiz_id'           => $another_quiz,
-				'question_category' => $second_category_id,
-			]
-		);
-
-		$this->factory->multiple_question->create(
-			[
-				'quiz_id'              => $quiz_id,
-				'question_number'      => 3,
-				'question_category_id' => $first_category_id,
-			]
-		);
-
-		$this->factory->multiple_question->create(
-			[
-				'quiz_id'              => $quiz_id,
-				'question_number'      => 6,
-				'question_category_id' => $second_category_id,
-			]
-		);
-		$response_data = $this->send_get_request( $lesson_id );
-
-		// Quiz should have one multiline question, 3 questions from the first category and 2 from the second.
-		$this->assertCount( 6, $response_data['questions'] );
-		$this->assertEquals( 'multi-line', $response_data['questions'][0]['type'] );
-		$this->assertEquals( 'NOTES', $response_data['questions'][0]['options']['teacherNotes'] );
-
-		for ( $i = 1; $i < 6; $i++ ) {
-			$expected_category = $i < 4 ? $first_category_id : $second_category_id;
-			$this->assertEquals( [ $expected_category ], $response_data['questions'][ $i ]['categories'] );
-		}
-	}
-
-	/**
 	 * Tests single line question properties.
 	 */
 	public function testGetQuestionCommonProperties() {
@@ -527,6 +493,66 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 		);
 
 		$this->assertEquals( 401, $response->get_status(), 'Logged out user can edit the quiz.' );
+	}
+
+	/**
+	 * Tests editing category question properties.
+	 */
+	public function testPostCategoryQuestion() {
+		$this->login_as_teacher();
+
+		list( $lesson_id, $quiz_id ) = $this->create_lesson_with_quiz();
+		$category_id                 = $this->factory->question_category->create();
+		$question_id                 = $this->factory->question->create(
+			[
+				'question_type'  => 'multiple-choice',
+				'taxonomy_input' => [
+					'question-category' => [ $category_id ],
+				],
+			]
+		);
+
+		$multiple_question_id = $this->factory->multiple_question->create();
+
+		$body = [
+			'options'   => [],
+			'questions' => [
+				[
+					'title'   => 'Will it blend?',
+					'type'    => 'single-line',
+					'options' => [
+						'teacherNotes' => 'Do well',
+					],
+				],
+				[
+					'type'    => 'category-question',
+					'options' => [
+						'category' => $category_id,
+						'number'   => 1,
+					],
+				],
+				[
+					'id'      => $multiple_question_id,
+					'type'    => 'category-question',
+					'options' => [
+						'category' => (int) get_post_meta( $multiple_question_id, 'category', true ),
+						'number'   => 2,
+					],
+				],
+			],
+		];
+
+		$this->send_post_request( $lesson_id, $body );
+
+		$questions = Sensei()->quiz->get_questions( Sensei()->lesson->lesson_quizzes( $lesson_id ) );
+
+		$this->assertCount( 3, $questions );
+
+		$this->assertEquals( 'question', $questions[0]->post_type );
+		$this->assertEquals( 'multiple_question', $questions[1]->post_type );
+		$this->assertEquals( 'multiple_question', $questions[2]->post_type );
+		$this->assertEquals( $multiple_question_id, $questions[2]->ID );
+		$this->assertEquals( 2, (int) get_post_meta( $multiple_question_id, 'number', true ) );
 	}
 
 	/**

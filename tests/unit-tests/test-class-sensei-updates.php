@@ -44,43 +44,6 @@ class Sensei_Updates_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test to make sure multiple question flag is calculated when updating from 3.8.0.
-	 */
-	public function testMultipleQuestionsCheckedWhenComingFrom38() {
-		$this->setupQuizWithMultipleQuestion();
-
-		$updates = new Sensei_Updates( '3.8.0', false, true );
-		$updates->run_updates();
-
-		$this->assertTrue( Sensei()->get_legacy_flag( Sensei_Main::LEGACY_FLAG_MULTIPLE_QUESTIONS_EXIST ) );
-	}
-
-	/**
-	 * Test to make sure multiple question flag is not recalculated when updating from 3.9.0.
-	 */
-	public function testMultipleQuestionsNotCheckedWhenComingFrom39() {
-		$this->setupQuizWithMultipleQuestion();
-
-		$updates = new Sensei_Updates( '3.9.0', false, true );
-		$updates->run_updates();
-
-		$this->assertFalse( Sensei()->get_legacy_flag( Sensei_Main::LEGACY_FLAG_MULTIPLE_QUESTIONS_EXIST ) );
-	}
-
-	/**
-	 * Test to make sure orphaned `multiple_questions` aren't used when calculating legacy flag.
-	 */
-	public function testOrphanedMultipleQuestionsIgnoredWhenSettingFlag() {
-		$this->factory->quiz->create();
-		$this->factory->multiple_question->create();
-
-		$updates = new Sensei_Updates( '3.8.0', false, true );
-		$updates->run_updates();
-
-		$this->assertFalse( Sensei()->get_legacy_flag( Sensei_Main::LEGACY_FLAG_MULTIPLE_QUESTIONS_EXIST ) );
-	}
-
-	/**
 	 * Test to make sure question update fix is enqueued when coming from 3.8.0.
 	 */
 	public function testFixQuestionsEnqueuedWhenComingFrom38() {

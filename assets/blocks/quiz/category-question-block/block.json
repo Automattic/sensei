@@ -1,0 +1,27 @@
+{
+  "name": "sensei-lms/quiz-category-question",
+  "parent": [ "sensei-lms/quiz" ],
+  "category": "sensei-lms",
+  "supports": {
+    "html": false
+  },
+  "attributes": {
+    "id": {
+      "type": "integer"
+    },
+    "type": {
+      "type": "string",
+      "default": "category-question"
+    },
+		"categoryName": {
+			"type": "string"
+		},
+    "options": {
+      "type": "object",
+      "default": {
+				"category": null,
+				"number": 1
+      }
+    }
+  }
+}

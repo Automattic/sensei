@@ -706,6 +706,12 @@ class Sensei_Lesson {
 		if ( 'lesson_preview' == $post_key && isset( $_POST['action'] ) && $_POST['action'] == 'inline-save' ) {
 			$new_meta_value = '-1';
 		}
+
+		// Check if the user has permission to edit the target course.
+		if ( 'lesson_course' === $post_key && ! current_user_can( get_post_type_object( 'course' )->cap->edit_post, $new_meta_value ) ) {
+			return;
+		}
+
 		// update field with the new value
 		if ( -1 != $new_meta_value ) {
 			return update_post_meta( $post_id, $meta_key, $new_meta_value );
@@ -1091,8 +1097,12 @@ class Sensei_Lesson {
 					$html                   .= '<td class="question-grade-column">' . esc_html( $question_grade ) . '</td>';
 					$question_types_filtered = ucwords( str_replace( array( 'boolean', 'multiple-choice', 'gap-fill', 'single-line', 'multi-line', 'file-upload' ), array( __( 'True/False', 'sensei-lms' ), __( 'Multiple Choice', 'sensei-lms' ), __( 'Gap Fill', 'sensei-lms' ), __( 'Single Line', 'sensei-lms' ), __( 'Multi Line', 'sensei-lms' ), __( 'File Upload', 'sensei-lms' ) ), $question_type ) );
 					$html                   .= '<td>' . esc_html( $question_types_filtered ) . '</td>';
-					$html                   .= '<td><a title="' . esc_attr__( 'Edit Question', 'sensei-lms' ) . '" href="#question_' . esc_attr( $question_counter ) . '" class="question_table_edit">' . esc_html__( 'Edit', 'sensei-lms' ) . '</a> <a title="' . esc_attr__( 'Remove Question', 'sensei-lms' ) . '" href="#add-question-metadata" class="question_table_delete">' . esc_html__( 'Remove', 'sensei-lms' ) . '</a></td>';
 
+					if ( current_user_can( get_post_type_object( 'question' )->cap->edit_post, $question_id ) ) {
+						$html .= '<td><a title="' . esc_attr__( 'Edit Question', 'sensei-lms' ) . '" href="#question_' . esc_attr( $question_counter ) . '" class="question_table_edit">' . esc_html__( 'Edit', 'sensei-lms' ) . '</a> <a title="' . esc_attr__( 'Remove Question', 'sensei-lms' ) . '" href="#add-question-metadata" class="question_table_delete">' . esc_html__( 'Remove', 'sensei-lms' ) . '</a></td>';
+					} else {
+						$html .= '<td><a title="' . esc_attr__( 'Remove Question', 'sensei-lms' ) . '" href="#add-question-metadata" class="question_table_delete question_delete--without-edit">' . esc_html__( 'Remove', 'sensei-lms' ) . '</a><br />' . esc_html__( 'You are not the question owner, so you cannot edit it.', 'sensei-lms' ) . '</td>';
+					}
 				} else {
 
 					$end_number = intval( $question_counter ) + intval( $multiple_data[1] ) - 1;
@@ -1108,7 +1118,7 @@ class Sensei_Lesson {
 					$html .= '<td>' . esc_html( $row_title ) . '</td>';
 					$html .= '<td class="question-grade-column"></td>';
 					$html .= '<td><input type="hidden" name="question_id" class="row_question_id" id="question_' . esc_attr( $question_counter ) . '_id" value="' . esc_attr( $question_id ) . '" /></td>';
-					$html .= '<td><a title="' . esc_attr__( 'Edit Question', 'sensei-lms' ) . '" href="#question_' . esc_attr( $question_counter ) . '" class="question_table_edit" style="visibility:hidden;">' . esc_html__( 'Edit', 'sensei-lms' ) . '</a> <a title="' . esc_attr__( 'Remove Question(s)', 'sensei-lms' ) . '" href="#add-question-metadata" class="question_multiple_delete" rel="' . esc_attr( $question_id ) . '">' . esc_html__( 'Remove', 'sensei-lms' ) . '</a></td>';
+					$html .= '<td><a title="' . esc_attr__( 'Remove Question(s)', 'sensei-lms' ) . '" href="#add-question-metadata" class="question_multiple_delete question_delete--without-edit" rel="' . esc_attr( $question_id ) . '">' . esc_html__( 'Remove', 'sensei-lms' ) . '</a></td>';
 
 				}
 					$html .= '</tr>';
@@ -1439,6 +1449,7 @@ class Sensei_Lesson {
 			'posts_per_page'   => 10,
 			'post_status'      => 'publish',
 			'suppress_filters' => 0,
+			'perm'             => 'editable',
 		);
 
 		switch ( $question_status ) {
@@ -2440,6 +2451,18 @@ class Sensei_Lesson {
 	} // End lesson_add_course()
 
 	/**
+	 * Whether user can edit quiz.
+	 *
+	 * @param int $quiz_id
+	 *
+	 * @return boolean
+	 */
+	private function user_can_edit_quiz( $quiz_id ) {
+		$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
+		return current_user_can( get_post_type_object( 'lesson' )->cap->edit_post, $lesson_id );
+	}
+
+	/**
 	 * Updates a question.
 	 *
 	 * @access public
@@ -2468,6 +2491,11 @@ class Sensei_Lesson {
 		parse_str( $data, $question_data );
 		// Finally re-slash all elements to ensure consistancy for lesson_save_question().
 		$question_data = wp_slash( $question_data );
+
+		if ( ! $this->user_can_edit_quiz( $question_data['quiz_id'] ) ) {
+			die( '' );
+		}
+
 		// Save the question
 		$return = false;
 		// Question Save and Delete logic
@@ -2475,6 +2503,10 @@ class Sensei_Lesson {
 			// Delete the Question
 			$return = $this->lesson_remove_question( $question_data );
 		} else {
+			if ( ! empty( $question_data['question_id'] ) && ! current_user_can( get_post_type_object( 'question' )->cap->edit_post, $question_data['question_id'] ) ) {
+				die( '' );
+			}
+
 			// Save the Question
 			if ( isset( $question_data['quiz_id'] ) && ( 0 < absint( $question_data['quiz_id'] ) ) ) {
 				$current_user                 = wp_get_current_user();
@@ -2577,16 +2609,27 @@ class Sensei_Lesson {
 		$question_id_to_remove      = $question_data['question_id'];
 		$quiz_id_to_be_removed_from = $question_data['quiz_id'];
 
-		// remove the question from the lesson quiz
-		$quizzes = get_post_meta( $question_id_to_remove, '_quiz_id', false );
-		foreach ( $quizzes as $quiz_id ) {
-			if ( $quiz_id == $quiz_id_to_be_removed_from ) {
+		if ( 'multiple_question' !== get_post_type( $question_id_to_remove ) ) {
+			die( '' );
+		}
+
+		$found_quiz = false;
+		$quizzes    = get_post_meta( $question_id_to_remove, '_quiz_id', false );
+		foreach ( $quizzes as $index => $quiz_id ) {
+			$same_quiz = (int) $quiz_id === (int) $quiz_id_to_be_removed_from;
+			if ( $same_quiz || empty( $quiz_id ) ) {
 				delete_post_meta( $question_id_to_remove, '_quiz_id', $quiz_id );
-				die( 'Deleted' );
+
+				$found_quiz = $found_quiz || $same_quiz;
+				unset( $quizzes[ $index ] );
 			}
 		}
 
-		die( '' );
+		if ( empty( $quizzes ) ) {
+			wp_delete_post( $question_id_to_remove, true );
+		}
+
+		die( $found_quiz ? 'Deleted' : '' );
 	}
 
 	public function get_question_category_limit() {
@@ -2663,13 +2706,24 @@ class Sensei_Lesson {
 		$question_data = array();
 		parse_str( $data, $question_data );
 
+		if ( ! $this->user_can_edit_quiz( $question_data['quiz_id'] ) ) {
+			die( '' );
+		}
+
 		$return = '';
 
 		if ( is_array( $question_data ) ) {
 
 			if ( isset( $question_data['questions'] ) && '' != $question_data['questions'] ) {
 
-				$questions      = explode( ',', trim( $question_data['questions'], ',' ) );
+				$questions = explode( ',', trim( $question_data['questions'], ',' ) );
+				$questions = array_filter(
+					$questions,
+					function( $question_id ) {
+						return current_user_can( get_post_type_object( 'question' )->cap->edit_post, $question_id );
+					}
+				);
+
 				$quiz_id        = $question_data['quiz_id'];
 				$question_count = intval( $question_data['question_count'] );
 
@@ -2738,6 +2792,11 @@ class Sensei_Lesson {
 		$data      = $_POST['data'];
 		$quiz_data = array();
 		parse_str( $data, $quiz_data );
+
+		if ( ! $this->user_can_edit_quiz( $quiz_data['quiz_id'] ) ) {
+			die( '' );
+		}
+
 		if ( strlen( $quiz_data['question_order'] ) > 0 ) {
 			$questions = explode( ',', $quiz_data['question_order'] );
 			$o         = 1;

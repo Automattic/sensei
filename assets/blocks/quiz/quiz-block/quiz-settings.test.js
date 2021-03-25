@@ -19,7 +19,36 @@ jest.mock( '@wordpress/data', () => {
 	return {
 		combineReducers: module.combineReducers,
 		registerStore: module.registerStore,
-		useSelect: () => 2,
+		useSelect: () => [
+			{
+				attributes: {
+					title: 'Question 1',
+					type: 'multiple-choice',
+				},
+			},
+			{
+				attributes: {
+					title: 'Question 2',
+					type: 'multiple-choice',
+				},
+			},
+			{
+				attributes: {
+					type: 'category-question',
+					options: {
+						number: 2,
+					},
+				},
+			},
+			{
+				attributes: {
+					type: 'category-question',
+					options: {
+						number: 3,
+					},
+				},
+			},
+		],
 	};
 } );
 
@@ -69,6 +98,18 @@ describe( '<QuizSettings />', () => {
 		);
 
 		expect( queryByLabelText( 'Passing Grade (%)' ) ).toBeFalsy();
+	} );
+
+	it( 'Should have the maximum number of questions defined by the the number of questions added to the quiz', () => {
+		const { queryByLabelText } = render(
+			<QuizSettings
+				attributes={ {
+					options: {},
+				} }
+			/>
+		);
+
+		expect( queryByLabelText( 'Number of Questions' ).max ).toEqual( '7' );
 	} );
 
 	it( 'Should call the setAttributes correctly when changing the fields', () => {

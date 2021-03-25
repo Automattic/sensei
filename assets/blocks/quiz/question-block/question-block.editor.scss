@@ -15,6 +15,9 @@ $block: '.sensei-lms-question-block';
 
 	.editor-styles-wrapper .wp-block &__title {
 		margin-right: 56px;
+		textarea:focus {
+			color: inherit;
+		}
 	}
 
 	&__index {
@@ -23,6 +26,7 @@ $block: '.sensei-lms-question-block';
 		text-align: right;
 		top: 0;
 		font-weight: bold;
+		white-space: nowrap;
 
 		#{$block}.is-draft & {
 			opacity: .62;
@@ -108,8 +112,10 @@ $block: '.sensei-lms-question-block';
 				height: auto;
 				text-transform: uppercase;
 				background: #fff;
-				border: 1px solid #1e1e1e;
-				color: #1e1e1e;
+				border: 1px solid $gray-900;
+				&:not(:hover) {
+					color: $gray-900!important;
+				}
 			}
 		}
 	}
@@ -240,11 +246,6 @@ $block: '.sensei-lms-question-block';
 			height: 18px;
 			fill: currentColor;
 		}
-	}
-
-	.sensei-lms-block-validation__notice {
-		position: absolute;
-		left: -72px;
 	}
 
 	.block-editor-inner-blocks {

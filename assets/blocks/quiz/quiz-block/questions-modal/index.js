@@ -2,7 +2,6 @@
  * WordPress dependencies
  */
 import { useState } from '@wordpress/element';
-import { useSelect } from '@wordpress/data';
 import { Notice, Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
@@ -12,20 +11,23 @@ import { __ } from '@wordpress/i18n';
 import Filter from './filter';
 import Questions from './questions';
 import Actions from './actions';
+import { useQuestionCategories } from '../../question-categories';
 
 /**
- * External dependencies
+ * Internal dependencies
  */
-import { unescape } from 'lodash';
+import { useAddExistingQuestions } from '../use-add-existing-questions';
 
 /**
  * Questions modal content.
  *
  * @param {Object}   props
- * @param {Function} props.onClose  Close callback
- * @param {Function} props.onSelect Callback to add selected questions.
+ * @param {string}   props.clientId Quiz block ID.
+ * @param {Function} props.onClose  Close callback.
  */
-const QuestionsModal = ( { onClose, onSelect } ) => {
+const QuestionsModal = ( { clientId, onClose } ) => {
+	const addExistingQuestions = useAddExistingQuestions( clientId );
+
 	const [ filters, setFilters ] = useState( {
 		search: '',
 		'question-type': '',
@@ -35,24 +37,7 @@ const QuestionsModal = ( { onClose, onSelect } ) => {
 	const [ errorAddingSelected, setErrorAddingSelected ] = useState( false );
 	const [ selectedQuestionIds, setSelectedQuestionIds ] = useState( [] );
 
-	const questionCategories = useSelect( ( select ) => {
-		const terms = select( 'core' ).getEntityRecords(
-			'taxonomy',
-			'question-category',
-			{
-				per_page: -1,
-			}
-		);
-
-		if ( terms && terms.length ) {
-			return terms.map( ( term ) => ( {
-				...term,
-				name: unescape( term.name ),
-			} ) );
-		}
-
-		return terms;
-	} );
+	const [ questionCategories ] = useQuestionCategories();
 
 	return (
 		<Modal
@@ -78,6 +63,7 @@ const QuestionsModal = ( { onClose, onSelect } ) => {
 				setFilters={ setFilters }
 			/>
 			<Questions
+				clientId={ clientId }
 				questionCategories={ questionCategories }
 				filters={ filters }
 				selectedQuestionIds={ selectedQuestionIds }
@@ -86,7 +72,7 @@ const QuestionsModal = ( { onClose, onSelect } ) => {
 			<Actions
 				selectedQuestionIds={ selectedQuestionIds }
 				setSelectedQuestionIds={ setSelectedQuestionIds }
-				onAdd={ onSelect }
+				onAdd={ addExistingQuestions }
 				closeModal={ onClose }
 				setErrorAddingSelected={ setErrorAddingSelected }
 			/>

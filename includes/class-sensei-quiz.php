@@ -64,12 +64,6 @@ class Sensei_Quiz {
 		// If custom question types have been registered, disable the block based quiz editor for now.
 		$is_block_based_editor_enabled = ! has_filter( 'sensei_question_types' );
 
-		// If quizzes were using the multiple_questions CPT on update, disable the block based
-		// editor until support is added.
-		if ( Sensei()->get_legacy_flag( Sensei_Main::LEGACY_FLAG_MULTIPLE_QUESTIONS_EXIST ) ) {
-			$is_block_based_editor_enabled = false;
-		}
-
 		/**
 		 * Filter to change whether the block based editor should be used instead of the legacy
 		 * metabox based editor. This is to allow sites to migrate over to the block based
@@ -166,7 +160,7 @@ class Sensei_Quiz {
 		if ( ! isset( $_POST['quiz_save'] )
 			|| ! isset( $_POST['sensei_question'] )
 			|| empty( $_POST['sensei_question'] )
-			|| ! wp_verify_nonce( $_POST['woothemes_sensei_save_quiz_nonce'], 'woothemes_sensei_save_quiz_nonce' ) > 1 ) {
+			|| ! wp_verify_nonce( $_POST['woothemes_sensei_save_quiz_nonce'], 'woothemes_sensei_save_quiz_nonce' ) ) {
 			return;
 		}
 
@@ -316,7 +310,7 @@ class Sensei_Quiz {
 	public function reset_button_click_listener() {
 
 		if ( ! isset( $_POST['quiz_reset'] )
-			|| ! wp_verify_nonce( $_POST['woothemes_sensei_reset_quiz_nonce'], 'woothemes_sensei_reset_quiz_nonce' ) > 1 ) {
+			|| ! wp_verify_nonce( $_POST['woothemes_sensei_reset_quiz_nonce'], 'woothemes_sensei_reset_quiz_nonce' ) ) {
 
 			return; // exit
 		}
@@ -351,7 +345,7 @@ class Sensei_Quiz {
 		if ( ! isset( $_POST['quiz_complete'] )
 			|| ! isset( $_POST['sensei_question'] )
 			|| empty( $_POST['sensei_question'] )
-			|| ! wp_verify_nonce( $_POST['woothemes_sensei_complete_quiz_nonce'], 'woothemes_sensei_complete_quiz_nonce' ) > 1 ) {
+			|| ! wp_verify_nonce( $_POST['woothemes_sensei_complete_quiz_nonce'], 'woothemes_sensei_complete_quiz_nonce' ) ) {
 			return;
 		}
 
@@ -1607,6 +1601,13 @@ class Sensei_Quiz {
 		foreach ( $question_ids as $question_id ) {
 			delete_post_meta( $question_id, '_quiz_id', $quiz_id );
 			delete_post_meta( $question_id, '_quiz_question_order' . $quiz_id );
+
+			if (
+				'multiple_question' === get_post_type( $question_id )
+				&& empty( array_filter( get_post_meta( $question_id, '_quiz_id', false ) ) )
+			) {
+				wp_delete_post( $question_id, true );
+			}
 		}
 	}
 

@@ -70,6 +70,7 @@ export const LessonEdit = ( props ) => {
 			textColor?.class,
 			{
 				completed: lessonStatus.previewStatus === Status.COMPLETED,
+				'is-auto-draft': ! id && ! title,
 			}
 		),
 		style: {
