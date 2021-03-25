@@ -35,6 +35,8 @@ const files = [
 	'data-port/export.js',
 	'data-port/style.scss',
 	'blocks/editor-components/editor-components-style.scss',
+	'blocks/single-page.js',
+	'blocks/single-page-style.scss',
 	'blocks/single-course.js',
 	'blocks/single-course-style.scss',
 	'blocks/single-course-style-editor.scss',

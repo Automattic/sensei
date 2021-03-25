@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the class Sensei_Global_Blocks.
+ * File containing the class Sensei_Page_Blocks.
  *
  * @package sensei
  */
@@ -10,18 +10,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Sensei_Global_Blocks
+ * Class Sensei_Page_Blocks
  */
-class Sensei_Global_Blocks extends Sensei_Blocks_Initializer {
+class Sensei_Page_Blocks extends Sensei_Blocks_Initializer {
 	/**
-	 * Sensei_Global_Blocks constructor.
+	 * Sensei_Page_Blocks constructor.
 	 */
 	public function __construct() {
-		parent::__construct( null );
+		parent::__construct( [ 'page' ] );
 	}
 
 	/**
-	 * Initialize blocks that are used in course pages.
+	 * Initialize blocks that are used in page post types.
 	 */
 	public function initialize_blocks() {
 		new Sensei_Learner_Courses_Block();
@@ -33,7 +33,7 @@ class Sensei_Global_Blocks extends Sensei_Blocks_Initializer {
 	 * @access private
 	 */
 	public function enqueue_block_assets() {
-		Sensei()->assets->enqueue_style( 'sensei-shared-blocks-style' );
+		Sensei()->assets->enqueue( 'sensei-single-page-blocks', 'blocks/single-page.js', [], true );
 	}
 
 	/**
@@ -42,6 +42,6 @@ class Sensei_Global_Blocks extends Sensei_Blocks_Initializer {
 	 * @access private
 	 */
 	public function enqueue_block_editor_assets() {
-		Sensei()->assets->enqueue_script( 'sensei-shared-blocks' );
+		Sensei()->assets->enqueue( 'sensei-single-page-blocks-style', 'blocks/single-page-style.css' );
 	}
 }
