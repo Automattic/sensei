@@ -13,7 +13,6 @@ import ToggleLegacyCourseMetaboxesWrapper from '../toggle-legacy-course-metaboxe
  * Take course button block.
  */
 export default createButtonBlockType( {
-	tagName: 'button',
 	EditWrapper: ToggleLegacyCourseMetaboxesWrapper,
 	settings: {
 		name: 'sensei-lms/button-take-course',
