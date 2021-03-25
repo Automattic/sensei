@@ -7,26 +7,29 @@ import { sprintf, _n } from '@wordpress/i18n';
  * Course progress component.
  *
  * @param {Object} props
- * @param {number} props.lessons   Number of lessons.
- * @param {number} props.completed Number of completed lessons.
+ * @param {number} props.lessons         Number of lessons.
+ * @param {number} props.completed       Number of completed lessons.
+ * @param {number} props.hideProgressBar Whether hide progress bar.
  */
-const CourseProgress = ( { lessons, completed } ) => {
+const CourseProgress = ( { lessons, completed, hideProgressBar } ) => {
 	const completePercentage = ( completed / lessons ) * 100;
 
 	return (
 		<div className="wp-block-sensei-lms-learner-courses__course-progress">
-			<div
-				className="wp-block-sensei-lms-learner-courses__progress-bar"
-				role="progressbar"
-				aria-valuenow={ completePercentage }
-				aria-valuemin="0"
-				aria-valuemax="100"
-			>
+			{ ! hideProgressBar && (
 				<div
-					className="wp-block-sensei-lms-learner-courses__progress-bar__fill"
-					style={ { width: `${ completePercentage }%` } }
-				></div>
-			</div>
+					className="wp-block-sensei-lms-learner-courses__progress-bar"
+					role="progressbar"
+					aria-valuenow={ completePercentage }
+					aria-valuemin="0"
+					aria-valuemax="100"
+				>
+					<div
+						className="wp-block-sensei-lms-learner-courses__progress-bar__fill"
+						style={ { width: `${ completePercentage }%` } }
+					></div>
+				</div>
+			) }
 			<div className="wp-block-sensei-lms-learner-courses__course-progress__numbers">
 				<strong className="wp-block-sensei-lms-learner-courses__course-progress__number-lessons">
 					{ sprintf(

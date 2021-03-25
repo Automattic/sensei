@@ -21,4 +21,12 @@ describe( '<CourseProgress />', () => {
 			queryByRole( 'progressbar' ).getAttribute( 'aria-valuenow' )
 		).toEqual( '50' );
 	} );
+
+	it( 'Should render course progress without progress bar', () => {
+		const { queryByRole } = render(
+			<CourseProgress lessons={ 10 } completed={ 5 } hideProgressBar />
+		);
+
+		expect( queryByRole( 'progressbar' ) ).toBeFalsy();
+	} );
 } );

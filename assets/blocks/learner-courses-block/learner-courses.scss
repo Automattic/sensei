@@ -31,8 +31,22 @@
 		margin: 0;
 
 		&__item {
+			display: flex;
 			padding: 0 0 40px;
 			margin: 0;
+		}
+
+		&__featured-image {
+			width: 149px;
+			height: 149px;
+			flex-shrink: 0;
+			background-color: #EEE;
+			margin-right: 24px
+		}
+
+		&__category {
+			font-size: 12px;
+			text-transform: uppercase;
 		}
 
 		&__title {
