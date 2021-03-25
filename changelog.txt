@@ -32,6 +32,9 @@
 	* Fix questions not loading for teachers [#4094](https://github.com/Automattic/sensei/pull/4094)
 	* Fix draft question block focus and visibility [#4091](https://github.com/Automattic/sensei/pull/4091)
 	* Fix error with quiz appender [#4096](https://github.com/Automattic/sensei/pull/4096), [#4098](https://github.com/Automattic/sensei/pull/4098)
+	* Fix page jump when clicking the quiz appender [#4100](https://github.com/Automattic/sensei/pull/4100)
+	* Fix minor quiz block issues [#4103](https://github.com/Automattic/sensei/pull/4103)
+	* Only include questions in the existing questions modal that haven't already been added to the quiz [#4109](https://github.com/Automattic/sensei/pull/4109)
 * New: Question Block
 	* Add question type selector [#3940](https://github.com/Automattic/sensei/pull/3940)
 	* Add question numbering [#3941](https://github.com/Automattic/sensei/pull/3941)
@@ -54,6 +57,7 @@
 	* Don't add question block when it already exists (auto-draft) [#4071](https://github.com/Automattic/sensei/pull/4071)
 	* Changes for question type extensibility [#4066](https://github.com/Automattic/sensei/pull/4066)
 	* Change gap fill before/after to plain text input [#4082](https://github.com/Automattic/sensei/pull/4082)
+	* Update question block validation visuals [#4104](https://github.com/Automattic/sensei/pull/4104)
 * New: Category Question block
 	* Add settings and basic UI to category question block [#4080](https://github.com/Automattic/sensei/pull/4080)
 	* Remove category question feature flag [#4088](https://github.com/Automattic/sensei/pull/4088)
@@ -84,6 +88,9 @@
 * Tweak: Allow draft questions if they are not in a quiz [#4076](https://github.com/Automattic/sensei/pull/4076)
 * Tweak: Update lessons in sample course [#4083](https://github.com/Automattic/sensei/pull/4083)
 * Tweak: Preload course and quiz structure [#3995](https://github.com/Automattic/sensei/pull/3995)
+* Tweak: Remove abandoned `multiple_question` posts [#4060](https://github.com/Automattic/sensei/pull/4060)
+* Tweak: Add Sensei blocks to the top of the block inserter [#4112](https://github.com/Automattic/sensei/pull/4112)
+* Tweak: Prevent enrolment calculations on each update [#4121](https://github.com/Automattic/sensei/pull/4121)
 * Fix: Infinite loop when saving course structure [#4027](https://github.com/Automattic/sensei/pull/4027)
 * Fix: Fatal error when `post_password_required` is called early [#4006](https://github.com/Automattic/sensei/pull/4006)
 * Fix: Prevent teachers from being able to add other teachers' questions [#4085](https://github.com/Automattic/sensei/pull/4085)
@@ -92,6 +99,7 @@
 * Fix: Validate question owner before adding a question [#4085](https://github.com/Automattic/sensei/pull/4085)
 * Fix: Only show courses belonging to the current teacher on the Analysis page [#4085](https://github.com/Automattic/sensei/pull/4085)
 * Fix: Quiz nonce checks [#4085](https://github.com/Automattic/sensei/pull/4085)
+* Fix: Email not sending when a learner starts a course [#4089](https://github.com/Automattic/sensei/pull/4089)
 
 2021.02.17 - version 3.8.1
 * Fix: Fix lesson module metabox saving with Yoast installed [#3982](https://github.com/Automattic/sensei/pull/3982)
