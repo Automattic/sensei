@@ -1,0 +1,77 @@
+.wp-block-sensei-lms-learner-courses {
+	&__filter,
+	.editor-styles-wrapper &__filter {
+		display: flex;
+		border-bottom: 1px solid #000;
+		padding: 0;
+		margin: 0;
+		list-style: none;
+		&__item {
+			margin: 0 (34px/2);
+			padding: 0;
+			&:first-child {
+				margin-left: 0;
+			}
+			&:last-child {
+				margin-right: 0;
+			}
+			&.--is-active {
+				border-bottom: solid 3px #000;
+			}
+		}
+		&__link {
+			text-decoration: none;
+		}
+	}
+
+	&__courses-list,
+	.editor-styles-wrapper &__courses-list {
+		list-style: none;
+		padding: 50px 0 0;
+		margin: 0;
+
+		&__item {
+			padding: 0 0 40px;
+			margin: 0;
+		}
+
+		&__title {
+			margin: 0 0 9px;
+			font-size: 24px;
+			font-weight: bold;
+		}
+
+		&__description {
+			margin: 9px 0 18px;
+			font-size: 12px;
+			opacity: 0.9;
+		}
+	}
+
+	&__course-progress {
+		&__numbers {
+			margin-top: 10px;
+			font-size: 14px;
+		}
+
+		&__number-lessons {
+			margin-right: 18px;
+		}
+
+		&__completed-lessons {
+			font-style: normal;
+		}
+	}
+
+	&__progress-bar {
+		height: 24px;
+		border: 1px solid #CCC;
+		border-radius: 20px;
+		overflow: hidden;
+
+		&__fill  {
+			height: 100%;
+			background-color: #888;
+		}
+	}
+}
