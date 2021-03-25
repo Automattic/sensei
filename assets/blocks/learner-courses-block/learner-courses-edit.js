@@ -79,8 +79,13 @@ const LearnerCoursesEdit = ( {
 						</li>
 					) ) }
 				</ul>
-				<ul className="wp-block-sensei-lms-learner-courses__courses-list">
-					{ Array.from( { length: 2 } ).map( ( i, index ) => (
+				<ul
+					className={ classnames(
+						'wp-block-sensei-lms-learner-courses__courses-list',
+						`--is-${ options.layoutView }-view`
+					) }
+				>
+					{ Array.from( { length: 3 } ).map( ( i, index ) => (
 						<li
 							className="wp-block-sensei-lms-learner-courses__courses-list__item"
 							key={ index }
