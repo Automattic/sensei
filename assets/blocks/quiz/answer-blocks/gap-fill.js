@@ -29,7 +29,7 @@ const GapFillAnswer = ( {
 		if ( ! target?.value ) {
 			return;
 		}
-		setAttributes( { gap: [ ...gap, target.value ] } );
+		setAttributes( { gap: [ ...( gap ?? [] ), target.value ] } );
 		setInputValue( target, '' );
 	};
 
