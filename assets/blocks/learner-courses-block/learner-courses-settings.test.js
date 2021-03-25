@@ -17,7 +17,7 @@ jest.mock( '@wordpress/block-editor', () => ( {
 
 describe( '<LearnerCoursesSettings />', () => {
 	it( 'Should render the settings with the defined values', () => {
-		const attributes = {
+		const options = {
 			courseDescriptionEnabled: true,
 			featuredImageEnabled: false,
 			courseCategoryEnabled: true,
@@ -26,25 +26,25 @@ describe( '<LearnerCoursesSettings />', () => {
 		};
 		const { queryByLabelText, container } = render(
 			<LearnerCoursesSettings
-				attributes={ attributes }
-				setAttributes={ () => {} }
+				options={ options }
+				setOptions={ () => {} }
 			/>
 		);
 
 		expect( queryByLabelText( 'Course description' ).checked ).toEqual(
-			attributes.courseDescriptionEnabled
+			options.courseDescriptionEnabled
 		);
 
 		expect( queryByLabelText( 'Featured image' ).checked ).toEqual(
-			attributes.featuredImageEnabled
+			options.featuredImageEnabled
 		);
 
 		expect( queryByLabelText( 'Course category' ).checked ).toEqual(
-			attributes.courseCategoryEnabled
+			options.courseCategoryEnabled
 		);
 
 		expect( queryByLabelText( 'Progress bar' ).checked ).toEqual(
-			attributes.progressBarEnabled
+			options.progressBarEnabled
 		);
 
 		const [ , listViewButton, gridViewButton ] = container.querySelectorAll(
@@ -55,10 +55,10 @@ describe( '<LearnerCoursesSettings />', () => {
 		expect( gridViewButton ).toHaveClass( 'is-pressed' );
 	} );
 
-	it( 'Should call the setAttributes correctly when changing the fields', () => {
-		const setAttributesMock = jest.fn();
+	it( 'Should call the setOptions correctly when changing the fields', () => {
+		const setOptionsMock = jest.fn();
 
-		const attributes = {
+		const options = {
 			courseDescriptionEnabled: false,
 			featuredImageEnabled: false,
 			courseCategoryEnabled: true,
@@ -68,28 +68,28 @@ describe( '<LearnerCoursesSettings />', () => {
 
 		const { queryByLabelText, container } = render(
 			<LearnerCoursesSettings
-				attributes={ attributes }
-				setAttributes={ setAttributesMock }
+				options={ options }
+				setOptions={ setOptionsMock }
 			/>
 		);
 
 		fireEvent.click( queryByLabelText( 'Course description' ) );
-		expect( setAttributesMock ).toBeCalledWith( {
+		expect( setOptionsMock ).toBeCalledWith( {
 			courseDescriptionEnabled: true,
 		} );
 
 		fireEvent.click( queryByLabelText( 'Featured image' ) );
-		expect( setAttributesMock ).toBeCalledWith( {
+		expect( setOptionsMock ).toBeCalledWith( {
 			featuredImageEnabled: true,
 		} );
 
 		fireEvent.click( queryByLabelText( 'Course category' ) );
-		expect( setAttributesMock ).toBeCalledWith( {
+		expect( setOptionsMock ).toBeCalledWith( {
 			courseCategoryEnabled: false,
 		} );
 
 		fireEvent.click( queryByLabelText( 'Progress bar' ) );
-		expect( setAttributesMock ).toBeCalledWith( {
+		expect( setOptionsMock ).toBeCalledWith( {
 			progressBarEnabled: false,
 		} );
 
@@ -98,12 +98,12 @@ describe( '<LearnerCoursesSettings />', () => {
 		);
 
 		fireEvent.click( listViewButton );
-		expect( setAttributesMock ).toBeCalledWith( {
+		expect( setOptionsMock ).toBeCalledWith( {
 			layoutView: 'list',
 		} );
 
 		fireEvent.click( gridViewButton );
-		expect( setAttributesMock ).toBeCalledWith( {
+		expect( setOptionsMock ).toBeCalledWith( {
 			layoutView: 'grid',
 		} );
 	} );

@@ -20,25 +20,25 @@ import { GridViewIcon, ListViewIcon } from '../../icons';
  * Learner Settings component.
  *
  * @param {Object}   props
- * @param {Object}   props.attributes    Block attributes.
- * @param {Function} props.setAttributes Block set attributes function.
+ * @param {Object}   props.options    Block options attribute.
+ * @param {Function} props.setOptions Set options function.
  */
-const LearnerCoursesSettings = ( { attributes, setAttributes } ) => {
+const LearnerCoursesSettings = ( { options, setOptions } ) => {
 	const courseSettingsTogglers = [
 		{
-			attributeKey: 'courseDescriptionEnabled',
+			optionKey: 'courseDescriptionEnabled',
 			label: __( 'Course description', 'sensei-lms' ),
 		},
 		{
-			attributeKey: 'featuredImageEnabled',
+			optionKey: 'featuredImageEnabled',
 			label: __( 'Featured image', 'sensei-lms' ),
 		},
 		{
-			attributeKey: 'courseCategoryEnabled',
+			optionKey: 'courseCategoryEnabled',
 			label: __( 'Course category', 'sensei-lms' ),
 		},
 		{
-			attributeKey: 'progressBarEnabled',
+			optionKey: 'progressBarEnabled',
 			label: __( 'Progress bar', 'sensei-lms' ),
 		},
 	];
@@ -63,21 +63,19 @@ const LearnerCoursesSettings = ( { attributes, setAttributes } ) => {
 					title={ __( 'Course settings', 'sensei-lms' ) }
 					initialOpen={ true }
 				>
-					{ courseSettingsTogglers.map(
-						( { attributeKey, label } ) => (
-							<PanelRow key={ attributeKey }>
-								<ToggleControl
-									checked={ attributes[ attributeKey ] }
-									onChange={ ( value ) => {
-										setAttributes( {
-											[ attributeKey ]: value,
-										} );
-									} }
-									label={ label }
-								/>
-							</PanelRow>
-						)
-					) }
+					{ courseSettingsTogglers.map( ( { optionKey, label } ) => (
+						<PanelRow key={ optionKey }>
+							<ToggleControl
+								checked={ options[ optionKey ] }
+								onChange={ ( value ) => {
+									setOptions( {
+										[ optionKey ]: value,
+									} );
+								} }
+								label={ label }
+							/>
+						</PanelRow>
+					) ) }
 				</PanelBody>
 			</InspectorControls>
 			<BlockControls>
@@ -86,11 +84,11 @@ const LearnerCoursesSettings = ( { attributes, setAttributes } ) => {
 						<ToolbarButton
 							key={ view }
 							data-testid={ view }
-							isActive={ view === attributes.layoutView }
+							isActive={ view === options.layoutView }
 							icon={ icon }
 							label={ label }
 							onClick={ () => {
-								setAttributes( { layoutView: view } );
+								setOptions( { layoutView: view } );
 							} }
 						/>
 					) ) }
