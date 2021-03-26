@@ -42,6 +42,7 @@ const ButtonEdit = ( props ) => {
 					{ ...buttonProps }
 					tagName={ buttonTagName }
 					identifier="text"
+					withoutInteractiveFormatting={ true }
 				/>
 			) }
 			<ButtonSettings { ...props } />
