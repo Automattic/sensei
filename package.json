@@ -70,7 +70,6 @@
     "react-test-renderer": "16.13.1",
     "tar-fs": "2.1.0",
     "unbzip2-stream": "1.4.3",
-    "webpack-bundle-analyzer": "4.4.0",
     "wp-hookdoc": "0.2.0"
   },
   "resolutions": {
