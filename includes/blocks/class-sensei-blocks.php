@@ -35,6 +35,13 @@ class Sensei_Blocks {
 	public $quiz;
 
 	/**
+	 * Page blocks.
+	 *
+	 * @var Sensei_Page_Blocks
+	 */
+	public $page;
+
+	/**
 	 * Sensei_Blocks constructor.
 	 *
 	 * @param Sensei_Main $sensei Sensei instance.
@@ -54,7 +61,7 @@ class Sensei_Blocks {
 		$this->course = new Sensei_Course_Blocks();
 		$this->lesson = new Sensei_Lesson_Blocks();
 		$this->quiz   = new Sensei_Quiz_Blocks();
-
+		$this->page   = new Sensei_Page_Blocks();
 	}
 
 	/**
