@@ -33,7 +33,6 @@ $courses-list: '#{$block}__courses-list';
 		}
 	}
 
-
 	#{$courses-list},
 	.editor-styles-wrapper #{$courses-list} {
 		list-style: none;
@@ -51,6 +50,8 @@ $courses-list: '#{$block}__courses-list';
 			height: 149px;
 			flex-shrink: 0;
 			background-color: #EEE;
+			background-size: cover;
+			background-position: 50% 50%;
 			margin-right: 24px
 		}
 
