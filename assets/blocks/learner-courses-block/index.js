@@ -13,7 +13,7 @@ import { LearnerCoursesIcon as icon } from '../../icons';
 export default {
 	title: __( 'Learner Courses', 'sensei-lms' ),
 	description: __(
-		'Manage what your learners will see on their dashboard once they enroll to your courses.',
+		'Manage what learners see on their dashboard. This block is only displayed to logged in learners.',
 		'sensei-lms'
 	),
 	keywords: [
