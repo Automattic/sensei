@@ -29,6 +29,7 @@ import { validateQuestionBlock } from './question-validation';
 import QuestionView from './question-view';
 import QuestionSettings from './question-settings';
 import { QuestionTypeToolbar } from './question-type-toolbar';
+import SingleQuestion from './single-question';
 
 /**
  * Format the question grade as `X points`.
@@ -110,6 +111,7 @@ const QuestionEdit = ( props ) => {
 			} ) }
 		>
 			{ questionIndex }
+			{ isSingle && <SingleQuestion { ...props } /> }
 			<h2 className="sensei-lms-question-block__title">
 				<SingleLineInput
 					placeholder={ __( 'Question Title', 'sensei-lms' ) }
