@@ -53,12 +53,9 @@ export const CourseProgressEdit = ( props ) => {
 
 	let progress = 0;
 	if ( 0 !== totalLessonsCount ) {
-		progress =
-			Math.round(
-				( ( 100 * completedLessonsCount ) / totalLessonsCount +
-					Number.EPSILON ) *
-					100
-			) / 100;
+		progress = Math.round(
+			( 100 * completedLessonsCount ) / totalLessonsCount
+		);
 	}
 
 	const wrapperAttributes = {
