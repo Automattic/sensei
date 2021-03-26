@@ -17,7 +17,7 @@ import ButtonSettings from './button-settings';
  * @param {Object} props
  */
 const ButtonEdit = ( props ) => {
-	const { placeholder, attributes, setAttributes, tagName } = props;
+	const { placeholder, attributes, setAttributes } = props;
 	const { text } = attributes;
 	const { colors } = useSelect( ( select ) => {
 		return select( 'core/block-editor' ).getSettings();
@@ -25,8 +25,6 @@ const ButtonEdit = ( props ) => {
 
 	const isReadonly = undefined !== props.text;
 	const buttonProps = getButtonProps( { ...props, colors } );
-
-	const buttonTagName = tagName || 'a';
 
 	return (
 		<div { ...getButtonWrapperProps( props ) }>
@@ -40,7 +38,7 @@ const ButtonEdit = ( props ) => {
 					value={ text }
 					onChange={ ( value ) => setAttributes( { text: value } ) }
 					{ ...buttonProps }
-					tagName={ buttonTagName }
+					tagName="a"
 					identifier="text"
 					withoutInteractiveFormatting={ true }
 				/>
