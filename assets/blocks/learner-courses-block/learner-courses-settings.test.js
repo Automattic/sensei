@@ -23,8 +23,9 @@ describe( '<LearnerCoursesSettings />', () => {
 			courseCategoryEnabled: true,
 			progressBarEnabled: false,
 			layoutView: 'grid',
+			columns: 2,
 		};
-		const { queryByLabelText, container } = render(
+		const { queryByLabelText, queryByTestId } = render(
 			<LearnerCoursesSettings
 				options={ options }
 				setOptions={ () => {} }
@@ -47,12 +48,10 @@ describe( '<LearnerCoursesSettings />', () => {
 			options.progressBarEnabled
 		);
 
-		const [ , listViewButton, gridViewButton ] = container.querySelectorAll(
-			'button'
-		);
+		expect( queryByTestId( 'list' ) ).not.toHaveClass( 'is-pressed' );
+		expect( queryByTestId( 'grid' ) ).toHaveClass( 'is-pressed' );
 
-		expect( listViewButton ).not.toHaveClass( 'is-pressed' );
-		expect( gridViewButton ).toHaveClass( 'is-pressed' );
+		expect( queryByLabelText( 'Layout' ).value ).toEqual( '2' );
 	} );
 
 	it( 'Should call the setOptions correctly when changing the fields', () => {
@@ -64,9 +63,10 @@ describe( '<LearnerCoursesSettings />', () => {
 			courseCategoryEnabled: true,
 			progressBarEnabled: true,
 			layoutView: 'grid',
+			columns: 2,
 		};
 
-		const { queryByLabelText, container } = render(
+		const { queryByLabelText, queryByTestId } = render(
 			<LearnerCoursesSettings
 				options={ options }
 				setOptions={ setOptionsMock }
@@ -93,18 +93,36 @@ describe( '<LearnerCoursesSettings />', () => {
 			progressBarEnabled: false,
 		} );
 
-		const [ , listViewButton, gridViewButton ] = container.querySelectorAll(
-			'button'
-		);
-
-		fireEvent.click( listViewButton );
+		fireEvent.click( queryByTestId( 'list' ) );
 		expect( setOptionsMock ).toBeCalledWith( {
 			layoutView: 'list',
 		} );
 
-		fireEvent.click( gridViewButton );
+		fireEvent.click( queryByTestId( 'grid' ) );
 		expect( setOptionsMock ).toBeCalledWith( {
 			layoutView: 'grid',
 		} );
+
+		fireEvent.change( queryByLabelText( 'Layout' ), {
+			target: { value: '3' },
+		} );
+		expect( setOptionsMock ).toBeCalledWith( {
+			columns: '3',
+		} );
+	} );
+
+	it( 'Should not show layout setting when layout view is "list"', () => {
+		const options = {
+			layoutView: 'list',
+		};
+
+		const { queryByLabelText } = render(
+			<LearnerCoursesSettings
+				options={ options }
+				setOptions={ () => {} }
+			/>
+		);
+
+		expect( queryByLabelText( 'Layout' ) ).toBeFalsy();
 	} );
 } );

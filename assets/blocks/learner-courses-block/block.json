@@ -9,6 +9,7 @@
       "type": "object",
       "default": {
         "layoutView": "list",
+        "columns": 2,
         "courseDescriptionEnabled": true,
         "featuredImageEnabled": false,
         "courseCategoryEnabled": false,

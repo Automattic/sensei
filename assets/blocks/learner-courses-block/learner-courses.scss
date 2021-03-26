@@ -80,11 +80,8 @@ $courses-list: '#{$block}__courses-list';
 			#{$courses-list} {
 				&__item {
 					display: block;
-					width: calc( 100% / 3 - 14px );
-					margin: 0 7px;
-					&:nth-child(3n) {
-						margin-right: 0;
-					}
+					width: calc( 50% - 22px );
+					margin: 0 11px;
 				}
 
 				&__featured-image {
@@ -94,9 +91,20 @@ $courses-list: '#{$block}__courses-list';
 				}
 			}
 
-			#{$block} {
-				&__progress-bar {
-					height: 16px;
+			&.--is-3-columns {
+				margin: 0 -11px;
+
+				#{$courses-list} {
+					&__item {
+						width: calc( 100% / 3 - 14px );
+						margin: 0 7px;
+					}
+				}
+
+				#{$block} {
+					&__progress-bar {
+						height: 16px;
+					}
 				}
 			}
 		}
