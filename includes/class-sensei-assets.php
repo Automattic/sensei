@@ -218,8 +218,12 @@ class Sensei_Assets {
 	 * @param array  $deps   Specify to change script dependencies.
 	 *
 	 * @since 3.3.1
+	 *
+	 * @deprecated 3.10.0
 	 */
 	public function override_script( $handle, $src, $deps = null ) {
+		_deprecated_function( __METHOD__, '3.10.0' );
+
 		$scripts = wp_scripts();
 		$script  = $scripts->query( $handle, 'registered' );
 
@@ -239,8 +243,11 @@ class Sensei_Assets {
 	 * Use bundled WordPress client libraries for older versions.
 	 *
 	 * @since 3.3.1
+	 *
+	 * @deprecated 3.10.0
 	 */
 	public function wp_compat() {
+		_deprecated_function( __METHOD__, '3.10.0' );
 
 		if ( version_compare( $GLOBALS['wp_version'], '5.4', '<' ) ) {
 
