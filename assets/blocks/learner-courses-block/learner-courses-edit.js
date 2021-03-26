@@ -52,8 +52,65 @@ const LearnerCoursesEdit = ( {
 		},
 	];
 
+	// Set options function used for block settings.
 	const setOptions = ( editedOptions ) =>
 		setAttributes( { options: { ...options, ...editedOptions } } );
+
+	// Courses placeholder map function.
+	const coursesPlaceholderMap = ( i, index, array ) => {
+		const completed =
+			// All items should be in progress if active filter is selected.
+			filter !== 'active' &&
+			//  Show last one as completed.
+			( index === array.length - 1 ||
+				//  Show all as completed if completed is filtered.
+				filter === 'completed' );
+
+		return (
+			<li
+				className="wp-block-sensei-lms-learner-courses__courses-list__item"
+				key={ index }
+			>
+				{ options.featuredImageEnabled && (
+					<div
+						className="wp-block-sensei-lms-learner-courses__courses-list__featured-image"
+						role="img"
+						aria-label="Featured image"
+					/>
+				) }
+				<div>
+					{ options.courseCategoryEnabled && (
+						<small className="wp-block-sensei-lms-learner-courses__courses-list__category">
+							{ __( 'Category name', 'sensei-lms' ) }
+						</small>
+					) }
+					<header className="wp-block-sensei-lms-learner-courses__courses-list__header">
+						<h3 className="wp-block-sensei-lms-learner-courses__courses-list__title">
+							{ __( 'Course title goes here', 'sensei-lms' ) }
+						</h3>
+						{ completed && (
+							<em className="wp-block-sensei-lms-learner-courses__courses-list__badge">
+								{ __( 'Completed', 'sensei-lms' ) }
+							</em>
+						) }
+					</header>
+					{ options.courseDescriptionEnabled && (
+						<p className="wp-block-sensei-lms-learner-courses__courses-list__description">
+							{ __(
+								'Here is a short course description. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas arcu turpis mauris…',
+								'sensei-lms'
+							) }
+						</p>
+					) }
+					<CourseProgress
+						lessons={ 3 }
+						completed={ completed ? 3 : 1 }
+						hideProgressBar={ ! options.progressBarEnabled }
+					/>
+				</div>
+			</li>
+		);
+	};
 
 	return (
 		<>
@@ -87,71 +144,7 @@ const LearnerCoursesEdit = ( {
 					) }
 				>
 					{ Array.from( { length: options.columns } ).map(
-						( i, index, array ) => {
-							const completed =
-								// All items should be in progress if active filter is selected.
-								filter !== 'active' &&
-								//  Show last one as completed.
-								( index === array.length - 1 ||
-									//  Show all as completed if completed is filtered.
-									filter === 'completed' );
-
-							return (
-								<li
-									className="wp-block-sensei-lms-learner-courses__courses-list__item"
-									key={ index }
-								>
-									{ options.featuredImageEnabled && (
-										<div
-											className="wp-block-sensei-lms-learner-courses__courses-list__featured-image"
-											role="img"
-											aria-label="Featured image"
-										/>
-									) }
-									<div>
-										{ options.courseCategoryEnabled && (
-											<small className="wp-block-sensei-lms-learner-courses__courses-list__category">
-												{ __(
-													'Category name',
-													'sensei-lms'
-												) }
-											</small>
-										) }
-										<header className="wp-block-sensei-lms-learner-courses__courses-list__header">
-											<h3 className="wp-block-sensei-lms-learner-courses__courses-list__title">
-												{ __(
-													'Course title goes here',
-													'sensei-lms'
-												) }
-											</h3>
-											{ completed && (
-												<em className="wp-block-sensei-lms-learner-courses__courses-list__badge">
-													{ __(
-														'Completed',
-														'sensei-lms'
-													) }
-												</em>
-											) }
-										</header>
-										{ options.courseDescriptionEnabled && (
-											<p className="wp-block-sensei-lms-learner-courses__courses-list__description">
-												{ __(
-													'Here is a short course description. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas arcu turpis mauris…',
-													'sensei-lms'
-												) }
-											</p>
-										) }
-										<CourseProgress
-											lessons={ 3 }
-											completed={ completed ? 3 : 1 }
-											hideProgressBar={
-												! options.progressBarEnabled
-											}
-										/>
-									</div>
-								</li>
-							);
-						}
+						coursesPlaceholderMap
 					) }
 				</ul>
 			</section>
