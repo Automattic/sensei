@@ -102,12 +102,19 @@ const LearnerCoursesEdit = ( {
 									key={ index }
 								>
 									{ options.featuredImageEnabled && (
-										<div className="wp-block-sensei-lms-learner-courses__courses-list__featured-image" />
+										<div
+											className="wp-block-sensei-lms-learner-courses__courses-list__featured-image"
+											role="img"
+											aria-label="Featured image"
+										/>
 									) }
 									<div>
 										{ options.courseCategoryEnabled && (
 											<small className="wp-block-sensei-lms-learner-courses__courses-list__category">
-												Category name
+												{ __(
+													'Category name',
+													'sensei-lms'
+												) }
 											</small>
 										) }
 										<header className="wp-block-sensei-lms-learner-courses__courses-list__header">
