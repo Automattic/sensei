@@ -129,7 +129,7 @@ const LearnerCoursesEdit = ( {
 										{ options.courseDescriptionEnabled && (
 											<p className="wp-block-sensei-lms-learner-courses__courses-list__description">
 												{ __(
-													'Here is a short two line course description. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas arcu turpis mauris…',
+													'Here is a short course description. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas arcu turpis mauris…',
 													'sensei-lms'
 												) }
 											</p>
