@@ -59,10 +59,29 @@ $courses-list: '#{$block}__courses-list';
 			text-transform: uppercase;
 		}
 
-		&__title {
+		&__header {
 			margin: 0 0 9px;
+			display: flex;
+			justify-content: flex-start;
+			align-items: center;
+		}
+
+		&__title {
+			margin: 0;
 			font-size: 24px;
 			font-weight: bold;
+		}
+
+		&__badge {
+			display: inline-block;
+			vertical-align: middle;
+			margin-left: 18px;
+			padding: 3px 11px;
+			border: 1px solid #000;
+			border-radius: 4px;
+			font-size: 8px;
+			text-transform: uppercase;
+			font-style: normal;
 		}
 
 		&__description {

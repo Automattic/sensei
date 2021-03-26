@@ -87,44 +87,64 @@ const LearnerCoursesEdit = ( {
 					) }
 				>
 					{ Array.from( { length: options.columns } ).map(
-						( i, index ) => (
-							<li
-								className="wp-block-sensei-lms-learner-courses__courses-list__item"
-								key={ index }
-							>
-								{ options.featuredImageEnabled && (
-									<div className="wp-block-sensei-lms-learner-courses__courses-list__featured-image" />
-								) }
-								<div>
-									{ options.courseCategoryEnabled && (
-										<small className="wp-block-sensei-lms-learner-courses__courses-list__category">
-											Category name
-										</small>
+						( i, index, array ) => {
+							const completed =
+								// All items should be in progress if active filter is selected.
+								filter !== 'active' &&
+								//  Show last one as completed.
+								( index === array.length - 1 ||
+									//  Show all as completed if completed is filtered.
+									filter === 'completed' );
+
+							return (
+								<li
+									className="wp-block-sensei-lms-learner-courses__courses-list__item"
+									key={ index }
+								>
+									{ options.featuredImageEnabled && (
+										<div className="wp-block-sensei-lms-learner-courses__courses-list__featured-image" />
 									) }
-									<h3 className="wp-block-sensei-lms-learner-courses__courses-list__title">
-										{ __(
-											'Course title goes here',
-											'sensei-lms'
+									<div>
+										{ options.courseCategoryEnabled && (
+											<small className="wp-block-sensei-lms-learner-courses__courses-list__category">
+												Category name
+											</small>
 										) }
-									</h3>
-									{ options.courseDescriptionEnabled && (
-										<p className="wp-block-sensei-lms-learner-courses__courses-list__description">
-											{ __(
-												'Here is a short two line course description. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas arcu turpis mauris…',
-												'sensei-lms'
+										<header className="wp-block-sensei-lms-learner-courses__courses-list__header">
+											<h3 className="wp-block-sensei-lms-learner-courses__courses-list__title">
+												{ __(
+													'Course title goes here',
+													'sensei-lms'
+												) }
+											</h3>
+											{ completed && (
+												<em className="wp-block-sensei-lms-learner-courses__courses-list__badge">
+													{ __(
+														'Completed',
+														'sensei-lms'
+													) }
+												</em>
 											) }
-										</p>
-									) }
-									<CourseProgress
-										lessons={ 3 }
-										completed={ 1 }
-										hideProgressBar={
-											! options.progressBarEnabled
-										}
-									/>
-								</div>
-							</li>
-						)
+										</header>
+										{ options.courseDescriptionEnabled && (
+											<p className="wp-block-sensei-lms-learner-courses__courses-list__description">
+												{ __(
+													'Here is a short two line course description. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas arcu turpis mauris…',
+													'sensei-lms'
+												) }
+											</p>
+										) }
+										<CourseProgress
+											lessons={ 3 }
+											completed={ completed ? 3 : 1 }
+											hideProgressBar={
+												! options.progressBarEnabled
+											}
+										/>
+									</div>
+								</li>
+							);
+						}
 					) }
 				</ul>
 			</section>
