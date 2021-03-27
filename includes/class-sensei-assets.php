@@ -218,8 +218,12 @@ class Sensei_Assets {
 	 * @param array  $deps   Specify to change script dependencies.
 	 *
 	 * @since 3.3.1
+	 *
+	 * @deprecated 3.10.0
 	 */
 	public function override_script( $handle, $src, $deps = null ) {
+		_deprecated_function( __METHOD__, '3.10.0' );
+
 		$scripts = wp_scripts();
 		$script  = $scripts->query( $handle, 'registered' );
 
@@ -239,34 +243,11 @@ class Sensei_Assets {
 	 * Use bundled WordPress client libraries for older versions.
 	 *
 	 * @since 3.3.1
+	 *
+	 * @deprecated 3.10.0
 	 */
 	public function wp_compat() {
-
-		if ( version_compare( $GLOBALS['wp_version'], '5.4', '<' ) ) {
-
-			$this->override_script( 'react', '../vendor/gutenberg/react.min.js' );
-			$this->override_script( 'react-dom', '../vendor/gutenberg/react-dom.min.js' );
-			$this->override_script( 'wp-redux-routine', '../vendor/gutenberg/redux-routine.min.js' );
-			$this->override_script( 'wp-priority-queue', '../vendor/gutenberg/priority-queue.min.js' );
-			$this->override_script( 'wp-primitives', '../vendor/gutenberg/primitives.min.js', [ 'wp-element' ] );
-			$this->override_script( 'wp-warning', '../vendor/gutenberg/warning.min.js', [] );
-			$this->override_script( 'wp-polyfill', '../vendor/gutenberg/wp-polyfill.min.js', [] );
-			$this->override_script( 'wp-compose', '../vendor/gutenberg/compose.min.js' );
-			$this->override_script( 'wp-element', '../vendor/gutenberg/element.min.js' );
-			$this->override_script( 'wp-api-fetch', '../vendor/gutenberg/api-fetch.min.js' );
-
-			$this->override_script(
-				'wp-components',
-				'../vendor/gutenberg/components.min.js',
-				[ 'lodash', 'moment', 'react', 'react-dom', 'wp-a11y', 'wp-compose', 'wp-deprecated', 'wp-dom', 'wp-element', 'wp-hooks', 'wp-i18n', 'wp-is-shallow-equal', 'wp-keycodes', 'wp-polyfill', 'wp-primitives', 'wp-rich-text', 'wp-warning' ]
-			);
-
-			$this->override_script(
-				'wp-data',
-				'../vendor/gutenberg/data.min.js',
-				[ 'lodash', 'react', 'wp-compose', 'wp-deprecated', 'wp-element', 'wp-is-shallow-equal', 'wp-polyfill', 'wp-priority-queue', 'wp-redux-routine' ]
-			);
-		}
+		_deprecated_function( __METHOD__, '3.10.0' );
 	}
 
 }
