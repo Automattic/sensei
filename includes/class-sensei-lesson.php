@@ -52,6 +52,8 @@ class Sensei_Lesson {
 
 		$this->allowed_html = Sensei_Wp_Kses::get_default_wp_kses_allowed_html();
 
+		// translators: %1$s is a link to the quiz documentation.
+		// %2$s is a link to a support article about the WordPress editor.
 		$this->legacy_quiz_message = '<em>' .
 			sprintf(
 				// translators: %1$s is a link to the quiz documentation, %2$s is a link to a support article about the WordPress editor.
