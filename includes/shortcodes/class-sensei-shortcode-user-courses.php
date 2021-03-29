@@ -167,7 +167,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	 *
 	 * @since 1.9.0
 	 */
-	protected function setup_course_query() {
+	public function setup_course_query() {
 		$learner_manager = Sensei_Learner::instance();
 		$user_id         = get_current_user_id();
 		$empty_callback  = [ $this, 'no_course_message_output' ];
@@ -194,6 +194,8 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		if ( empty( $this->query->found_posts ) ) {
 			add_action( 'sensei_loop_course_inside_before', $empty_callback );
 		}
+
+		return $this->query;
 
 	}
 
