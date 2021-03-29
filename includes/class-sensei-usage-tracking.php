@@ -274,8 +274,9 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 			'mismatch'      => 0,
 		];
 
-		foreach ( $template_overrides as $template => $versions ) {
-			$property_key          = preg_replace( '/[^0-9_a-z]/', '_', strtr( strtolower( $template ), [ '.php' => '' ] ) );
+		foreach ( $template_overrides as $template_path => $versions ) {
+			// Sanitize the template path as a tracks property and remove anything unexpected from the `@version` tag.
+			$property_key          = preg_replace( '/[^0-9_a-z]/', '_', strtr( strtolower( $template_path ), [ '.php' => '' ] ) );
 			$data[ $property_key ] = preg_replace( '/[^0-9.]/', '', $versions['theme_version'] );
 
 			if ( empty( $data[ $property_key ] ) ) {
