@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Learner_Messages_Button_Block {
 
 	/**
-	 * Sensei_Block_Take_Course constructor.
+	 * Sensei_Learner_Messages_Button_Block constructor.
 	 */
 	public function __construct() {
 		$this->register_block();
