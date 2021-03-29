@@ -42,6 +42,10 @@ class Sensei_Page_Blocks extends Sensei_Blocks_Initializer {
 	 * @access private
 	 */
 	public function enqueue_block_editor_assets() {
-		Sensei()->assets->enqueue( 'sensei-single-page-blocks-style', 'blocks/single-page-style.css' );
+		Sensei()->assets->enqueue(
+			'sensei-single-page-blocks-style',
+			'blocks/single-page-style.css',
+			[ 'sensei-editor-components-style' ]
+		);
 	}
 }

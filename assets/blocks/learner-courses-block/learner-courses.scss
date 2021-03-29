@@ -153,9 +153,11 @@ $courses-list: '#{$block}__courses-list';
 	}
 
 	&__progress-bar {
-		height: 24px;
+		height: 14px; /* IE11 fallback */
+		height: var( --progress-bar-height, 14px );
 		border: 1px solid #CCC;
-		border-radius: 20px;
+		border-radius: 10px; /* IE11 fallback */
+		border-radius: var( --progress-bar-border-radius, 10px );
 		overflow: hidden;
 
 		&__fill  {
