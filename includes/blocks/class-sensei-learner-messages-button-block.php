@@ -38,6 +38,8 @@ class Sensei_Learner_Messages_Button_Block {
 	/**
 	 * Render the learner messages button.
 	 *
+	 * @access private
+	 *
 	 * @param array  $attributes Block attributes.
 	 * @param string $content    Block HTML.
 	 *
