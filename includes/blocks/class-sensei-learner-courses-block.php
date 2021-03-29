@@ -74,6 +74,7 @@ class Sensei_Learner_Courses_Block {
 	 */
 	public function render_course( $course ) {
 		$class       = 'wp-block-sensei-lms-learner-courses__courses-list';
+		$progressbar = ( new Sensei_Course_Progress_Block() )->render_course_progress( [ 'postId' => $course->ID ] );
 		$title       = get_the_title( $course );
 		$description = get_the_excerpt( $course );
 		$thumbnail   = get_the_post_thumbnail( $course, 'thumbnail', [ 'class' => $class . '__featured-image alignleft' ] );
@@ -95,6 +96,7 @@ class Sensei_Learner_Courses_Block {
 						{$description}
 					</p>
 					<div style="clear: both"></div>
+					{$progressbar}
 					{$actions}
 				</div>
 		</div>
