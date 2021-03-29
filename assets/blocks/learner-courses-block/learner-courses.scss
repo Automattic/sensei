@@ -126,12 +126,6 @@ $courses-list: '#{$block}__courses-list';
 							margin: 0 7px;
 						}
 					}
-
-					#{$block} {
-						&__progress-bar {
-							height: 16px;
-						}
-					}
 				}
 			}
 		}
