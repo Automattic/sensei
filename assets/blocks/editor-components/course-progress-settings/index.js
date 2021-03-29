@@ -6,7 +6,7 @@ import { PanelBody, PanelRow, RangeControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 /**
- * The course progress block settings.
+ * The course progress settings.
  *
  * @param {Object}   props                 Component properties.
  * @param {number}   props.borderRadius    The value of the bar radius.
@@ -32,7 +32,7 @@ const CourseProgressSettings = ( {
 			<PanelBody
 				title={ __( 'Progress bar settings', 'sensei-lms' ) }
 				initialOpen={ false }
-				className="wp-block-sensei-lms-progress-styling-controls"
+				className="sensei-course-progress-settings"
 			>
 				<PanelRow>
 					<RangeControl

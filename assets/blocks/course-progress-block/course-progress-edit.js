@@ -18,7 +18,7 @@ import {
 	withDefaultColor,
 } from '../../shared/blocks/settings';
 import { COURSE_STATUS_STORE } from '../course-outline/status-preview/status-store';
-import CourseProgressSettings from './course-progress-settings';
+import CourseProgressSettings from '../editor-components/course-progress-settings';
 import ToggleLegacyCourseMetaboxesWrapper from '../toggle-legacy-course-metaboxes-wrapper';
 
 /**
