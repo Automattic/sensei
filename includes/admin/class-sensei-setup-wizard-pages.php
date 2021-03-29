@@ -64,11 +64,25 @@ class Sensei_Setup_Wizard_Pages {
 		Sensei()->settings->set( 'course_page', $new_course_page_id );
 
 		// My Courses page.
-		$new_my_course_page_id = $this->create_page( esc_sql( _x( 'my-courses', 'page_slug', 'sensei-lms' ) ), __( 'My Courses', 'sensei-lms' ), '[sensei_user_courses]' );
+		$new_my_course_page_id = $this->create_page( esc_sql( _x( 'my-courses', 'page_slug', 'sensei-lms' ) ), __( 'My Courses', 'sensei-lms' ), $this->get_learner_courses_block_content() );
 		Sensei()->settings->set( 'my_course_page', $new_my_course_page_id );
 
 		Sensei()->initiate_rewrite_rules_flush();
 	}
 
+	/**
+	 * Get the block content for learner courses.
+	 *
+	 * @return string
+	 */
+	private function get_learner_courses_block_content() {
+		return serialize_block(
+			[
+				'blockName'    => 'sensei-lms/learner-courses',
+				'innerContent' => [],
+				'attrs'        => [],
+			]
+		);
+	}
 
 }
