@@ -44,12 +44,13 @@ class Sensei_Course_Progress_Block {
 	 * @return string The HTML of the block.
 	 */
 	public function render_course_progress( $attributes ) : string {
-		if ( ! Sensei()->course::is_user_enrolled( get_the_ID() ) ) {
+		$course_id = $attributes['postId'] ?? get_the_ID();
+		if ( ! Sensei()->course::is_user_enrolled( $course_id ) ) {
 			return '';
 		}
 
-		$completed     = count( Sensei()->course->get_completed_lesson_ids( get_the_ID() ) );
-		$total_lessons = count( Sensei()->course->course_lessons( get_the_ID() ) );
+		$completed     = count( Sensei()->course->get_completed_lesson_ids( $course_id ) );
+		$total_lessons = count( Sensei()->course->course_lessons( $course_id ) );
 		$percentage    = Sensei_Utils::quotient_as_absolute_rounded_percentage( $completed, $total_lessons, 2 );
 
 		$text_css           = Sensei_Block_Helpers::build_styles( $attributes );
