@@ -10,35 +10,28 @@ import { useSelect } from '@wordpress/data';
  * @return {number} Block index
  */
 export const useQuestionNumber = ( clientId ) => {
-	const blocks = useSelect(
+	const blocksBefore = useSelect(
 		( select ) => {
 			const store = select( 'core/block-editor' );
-			return store.getBlocks( store.getBlockRootClientId( clientId ) );
+			const rootClientId = store.getBlockRootClientId( clientId );
+			const blocks = store.getBlocks( rootClientId );
+
+			return ( blocks || [] ).slice(
+				0,
+				store.getBlockIndex( clientId, rootClientId )
+			);
 		},
 		[ clientId ]
 	);
 
-	let number = 0;
-	if ( ! blocks || blocks.length === 0 ) {
-		return 1;
-	}
+	const questionCount = blocksBefore.reduce(
+		( count, question ) =>
+			count +
+			( question.attributes.type === 'category-question'
+				? question.attributes.options?.number || 1
+				: 1 ),
+		0
+	);
 
-	blocks.every( ( block ) => {
-		number++;
-
-		if ( block.clientId === clientId ) {
-			return false;
-		}
-
-		if (
-			block.name === 'sensei-lms/quiz-category-question' &&
-			block.attributes.options?.number
-		) {
-			number += block.attributes.options.number - 1;
-		}
-
-		return true;
-	} );
-
-	return number;
+	return questionCount + 1;
 };
