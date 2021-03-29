@@ -151,26 +151,20 @@ class Sensei_Blocks {
 	}
 
 	/**
-	 * Check if the current post has Sensei blocks.
+	 * Check if the current post has any Sensei blocks.
+	 *
+	 * @param int|WP_Post|null $post
 	 *
 	 * @return bool
 	 */
-	public function has_sensei_blocks() {
-		global $post;
-
-		if ( ! $post ) {
-			return false;
+	public function has_sensei_blocks( $post = null ) {
+		if ( ! is_string( $post ) ) {
+			$wp_post = get_post( $post );
+			if ( $wp_post instanceof WP_Post ) {
+				$post = $wp_post->post_content;
+			}
 		}
 
-		switch ( $post->post_type ) {
-			case 'course':
-				return Sensei()->course->has_sensei_blocks();
-			case 'lesson':
-				return Sensei()->lesson->has_sensei_blocks();
-			case 'quiz':
-				return Sensei()->quiz->has_sensei_blocks();
-			default:
-				return false;
-		}
+		return false !== strpos( (string) $post, '<!-- wp:sensei-lms/' );
 	}
 }
