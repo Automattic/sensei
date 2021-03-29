@@ -35,6 +35,7 @@ function is_sensei() {
 			|| Sensei_Utils::is_learner_profile_page()
 			|| Sensei_Utils::is_course_results_page()
 			|| Sensei_Utils::is_teacher_archive_page()
+			|| Sensei()->blocks->has_sensei_blocks()
 		) {
 			$is_sensei = true;
 		}
