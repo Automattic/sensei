@@ -120,8 +120,12 @@ const LearnerCoursesEdit = ( {
 			<section
 				className={ className }
 				style={ {
-					'--progress-bar-height': `${ options.progressBarHeight }px`,
-					'--progress-bar-border-radius': `${ options.progressBarBorderRadius }px`,
+					...( undefined !== options.progressBarHeight && {
+						'--progress-bar-height': `${ options.progressBarHeight }px`,
+					} ),
+					...( undefined !== options.progressBarBorderRadius && {
+						'--progress-bar-border-radius': `${ options.progressBarBorderRadius }px`,
+					} ),
 				} }
 			>
 				<ul className="wp-block-sensei-lms-learner-courses__filter">
