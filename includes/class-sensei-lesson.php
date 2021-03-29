@@ -52,14 +52,11 @@ class Sensei_Lesson {
 
 		$this->allowed_html = Sensei_Wp_Kses::get_default_wp_kses_allowed_html();
 
-		// translators: %1$s is a link to the quiz documentation.
-		// %2$s is a link to a support article about the WordPress editor.
 		$this->legacy_quiz_message = '<em>' .
 			sprintf(
+				// translators: %1$s is a link to the quiz documentation, %2$s is a link to a support article about the WordPress editor.
 				__(
-					'*Note that this functionality has been moved to the <a href="%1$s">quiz block</a> ' .
-					'and will not be supported going forward. Please consider switching to the ' .
-					'<a href="%2$s">block editor</a>.</em>',
+					'*Note that this functionality has been moved to the <a href="%1$s">quiz block</a> and will not be supported going forward. Please consider switching to the <a href="%2$s">block editor</a>.</em>',
 					'sensei-lms'
 				),
 				'https://senseilms.com/lesson/quizzes/',
