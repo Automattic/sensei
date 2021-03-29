@@ -20,8 +20,25 @@ class Sensei_Learner_Messages_Button_Block {
 	 */
 	public function __construct() {
 		$this->register_block();
+
+		add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue_scripts' ] );
 	}
 
+	/**
+	 * Enqueue admin scripts.
+	 *
+	 * @access private
+	 */
+	public function admin_enqueue_scripts() {
+		wp_localize_script(
+			'sensei-single-page-blocks',
+			'sensei_messages',
+			[
+				'disabled'     => Sensei()->settings->settings['messages_disable'],
+				'settings_url' => esc_url( admin_url( 'admin.php?page=sensei-settings' ) ),
+			]
+		);
+	}
 
 	/**
 	 * Register learner messages block.
