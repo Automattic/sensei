@@ -92,6 +92,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		$question_id          = isset( $question['id'] ) ? (int) $question['id'] : null;
 		$question_number      = (int) $question['options']['number'];
 		$question_category_id = (int) $question['options']['category'];
+		$question_category    = false;
 
 		if ( $question_category_id ) {
 			$question_category = get_term( $question_category_id, 'question-category' );
