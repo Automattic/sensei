@@ -98,7 +98,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		}
 
 		if ( ! $question_category || is_wp_error( $question_category ) ) {
-			return new WP_Error( 'sensei_lesson_quiz_question_invalid_category', esc_html__( 'Invalid question category selected', 'sensei-lms' ), $question_id );
+			return new WP_Error( 'sensei_lesson_quiz_question_invalid_category', esc_html__( 'Invalid question category selected.', 'sensei-lms' ), $question_id );
 		}
 
 		if ( ! $question_number ) {
