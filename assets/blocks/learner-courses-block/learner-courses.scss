@@ -5,7 +5,7 @@ $courses-list: '#{$block}__courses-list';
 	&__filter,
 	.editor-styles-wrapper &__filter {
 		display: flex;
-		border-bottom: 1px solid #000;
+		border-bottom: 1px solid currentColor;
 		padding: 0;
 		margin: 0;
 		list-style: none;
@@ -86,7 +86,8 @@ $courses-list: '#{$block}__courses-list';
 			vertical-align: middle;
 			margin-left: 18px;
 			padding: 3px 11px;
-			border: 1px solid #000;
+			color: var( --primary-color, inherit );
+			border: 1px solid currentColor;
 			border-radius: 4px;
 			font-size: 8px;
 			text-transform: uppercase;
@@ -152,15 +153,15 @@ $courses-list: '#{$block}__courses-list';
 	&__progress-bar {
 		height: 14px; /* IE11 fallback */
 		height: var( --progress-bar-height, 14px );
-		border: 1px solid #CCC;
+		border: 1px solid currentColor;
 		border-radius: 10px; /* IE11 fallback */
 		border-radius: var( --progress-bar-border-radius, 10px );
 		overflow: hidden;
 
 		&__fill  {
 			height: 100%;
-			background-color: #888;
-			background-color: var( --accent-color, #888 );
+			background-color: currentColor;
+			background-color: var( --accent-color, currentColor );
 		}
 	}
 }
