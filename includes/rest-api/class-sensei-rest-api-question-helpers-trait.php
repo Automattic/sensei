@@ -88,7 +88,6 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			$question['options'] = [];
 		}
 
-		$category             = null;
 		$question_id          = isset( $question['id'] ) ? (int) $question['id'] : null;
 		$question_number      = (int) $question['options']['number'];
 		$question_category_id = (int) $question['options']['category'];
@@ -106,10 +105,8 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			$question_number = 1;
 		}
 
-		$category = get_term( $question_category, 'question-category' );
-
 		// translators: Placeholders are the question number and the question category name.
-		$post_title = sprintf( esc_html__( '%1$s Question(s) from %2$s', 'sensei-lms' ), $question_number, $category->name );
+		$post_title = sprintf( esc_html__( '%1$s Question(s) from %2$s', 'sensei-lms' ), $question_number, $question_category->name );
 
 		$post_args = [
 			'ID'          => $question_id,
@@ -117,7 +114,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			'post_status' => 'publish',
 			'post_type'   => 'multiple_question',
 			'meta_input'  => [
-				'category' => $category->term_id,
+				'category' => $question_category ? $question_category->term_id : '',
 				'number'   => $question_number,
 			],
 		];
@@ -720,7 +717,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 				'type'       => 'object',
 				'properties' => [
 					'category' => [
-						'type'        => 'integer',
+						'type'        => [ 'integer', 'null' ],
 						'description' => 'Term ID of the category where questions are picked',
 						'required'    => true,
 					],
