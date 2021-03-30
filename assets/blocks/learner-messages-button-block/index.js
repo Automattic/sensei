@@ -7,6 +7,7 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import { BlockStyles, createButtonBlockType } from '../button';
+import MessagesDisabledNotice from './messages-disabled-notice';
 
 /**
  * Learner messages button block.
@@ -31,4 +32,5 @@ export default createButtonBlockType( {
 			BlockStyles.Link,
 		],
 	},
+	EditWrapper: MessagesDisabledNotice,
 } );
