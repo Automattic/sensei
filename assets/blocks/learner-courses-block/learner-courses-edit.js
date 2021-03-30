@@ -2,6 +2,7 @@
  * External dependencies
  */
 import classnames from 'classnames';
+import { omitBy } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -119,14 +120,20 @@ const LearnerCoursesEdit = ( {
 		<>
 			<section
 				className={ className }
-				style={ {
-					...( undefined !== options.progressBarHeight && {
+				style={ omitBy(
+					{
 						'--progress-bar-height': `${ options.progressBarHeight }px`,
-					} ),
-					...( undefined !== options.progressBarBorderRadius && {
 						'--progress-bar-border-radius': `${ options.progressBarBorderRadius }px`,
-					} ),
-				} }
+						'--primary-color': options.primaryColor,
+						'--accent-color': options.accentColor,
+					},
+					// Exclude not set values.
+					( value ) => {
+						return [ undefined, null, 'undefinedpx' ].includes(
+							value
+						);
+					}
+				) }
 			>
 				<ul className="wp-block-sensei-lms-learner-courses__filter">
 					{ filters.map( ( { label, value } ) => (
