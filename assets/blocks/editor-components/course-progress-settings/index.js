@@ -36,7 +36,7 @@ const CourseProgressSettings = ( {
 			>
 				<PanelRow>
 					<RangeControl
-						label={ 'Border radius' }
+						label={ __( 'Border radius', 'sensei-lms' ) }
 						value={ borderRadius }
 						onChange={ setBorderRadius }
 						min={ 0 }
