@@ -134,7 +134,8 @@ final class Sensei_Extensions {
 	 * @return array
 	 */
 	private function get_messages() {
-		$extension_messages = get_transient( 'sensei_extensions_messages' );
+		$transient_key = implode( '_', [ 'sensei_extensions_messages', Sensei()->version, get_locale() ] );
+		$extension_messages = get_transient( $transient_key );
 		if ( false === $extension_messages ) {
 			$raw_messages = wp_safe_remote_get(
 				add_query_arg(
@@ -145,10 +146,11 @@ final class Sensei_Extensions {
 					self::SENSEILMS_PRODUCTS_API_BASE_URL . '/messages'
 				)
 			);
+
 			if ( ! is_wp_error( $raw_messages ) ) {
 				$extension_messages = json_decode( wp_remote_retrieve_body( $raw_messages ) );
 				if ( $extension_messages ) {
-					set_transient( 'sensei_extensions_messages', $extension_messages, DAY_IN_SECONDS );
+					set_transient( $transient_key, $extension_messages, DAY_IN_SECONDS );
 				}
 			}
 		}
