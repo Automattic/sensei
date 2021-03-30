@@ -13,6 +13,7 @@ jest.mock( '@wordpress/block-editor', () => ( {
 	...jest.requireActual( '@wordpress/block-editor' ),
 	InspectorControls: ( { children } ) => children,
 	BlockControls: ( { children } ) => children,
+	PanelColorSettings: () => 'Color settings',
 } ) );
 
 describe( '<LearnerCoursesSettings />', () => {
