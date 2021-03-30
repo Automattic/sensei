@@ -56,7 +56,7 @@ registerStructureStore( {
 		yield dispatch( 'core/block-editor' ).replaceInnerBlocks(
 			clientId,
 			syncStructureToBlocks( structure, blocks ),
-			true
+			false
 		);
 	},
 	readBlock: getEditorOutlineStructure,
