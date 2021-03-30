@@ -17,6 +17,11 @@ import { useCourseLessonsStatusSync } from '../status-preview/use-course-lessons
 import { COURSE_STORE } from '../course-outline-store';
 import { useBlocksCreator } from '../use-block-creator';
 
+const ALLOWED_BLOCKS = [
+	'sensei-lms/course-outline-module',
+	'sensei-lms/course-outline-lesson',
+];
+
 /**
  * A React context which contains the attributes and the setAttributes callback of the Outline block.
  */
@@ -67,12 +72,7 @@ const OutlineEdit = ( props ) => {
 			<OutlineSettings { ...props } />
 
 			<section className={ className }>
-				<InnerBlocks
-					allowedBlocks={ [
-						'sensei-lms/course-outline-module',
-						'sensei-lms/course-outline-lesson',
-					] }
-				/>
+				<InnerBlocks allowedBlocks={ ALLOWED_BLOCKS } />
 			</section>
 		</OutlineAttributesContext.Provider>
 	);
