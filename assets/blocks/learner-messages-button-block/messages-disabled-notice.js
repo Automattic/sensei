@@ -39,7 +39,10 @@ const MessagesDisabledNotice = ( { children, attributes: { isPreview } } ) => {
 					actions: [
 						{
 							url: window.sensei_messages.settings_url,
-							label: 'Go to disabled messages setting',
+							label: __(
+								'Go to disabled messages setting',
+								'sensei-lms'
+							),
 						},
 					],
 				}
