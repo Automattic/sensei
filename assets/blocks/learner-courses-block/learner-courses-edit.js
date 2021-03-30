@@ -7,6 +7,7 @@ import classnames from 'classnames';
  * WordPress dependencies
  */
 import { useState } from '@wordpress/element';
+import { Icon, image } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -76,7 +77,9 @@ const LearnerCoursesEdit = ( {
 						className="wp-block-sensei-lms-learner-courses__courses-list__featured-image"
 						role="img"
 						aria-label="Featured image"
-					/>
+					>
+						<Icon icon={ image } size={ 48 } />
+					</div>
 				) }
 				<div>
 					{ options.courseCategoryEnabled && (

@@ -46,13 +46,17 @@ $courses-list: '#{$block}__courses-list';
 		}
 
 		&__featured-image {
+			display: flex;
+			align-items: center;
+			justify-content: center;
 			width: 149px;
 			height: 149px;
+			margin-right: 24px;
 			flex-shrink: 0;
-			background-color: #EEE;
+			background-color: #C3C4C7;
 			background-size: cover;
 			background-position: 50% 50%;
-			margin-right: 24px
+			fill: #FFF;
 		}
 
 		&__category {
