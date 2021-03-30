@@ -37,7 +37,7 @@ const CategoryQuestionSettings = ( {
 	const categoryOptions = [
 		{
 			value: '',
-			label: __( 'Category', 'sensei-lms' ),
+			label: '',
 		},
 		...( questionCategories || [] ).map( ( questionCategory ) => ( {
 			value: questionCategory.id,
