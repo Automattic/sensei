@@ -19,6 +19,11 @@ import QuizSettings from './quiz-settings';
 import { useUpdateQuizHasQuestionsMeta } from './use-update-quiz-has-questions-meta';
 import { isQuestionEmpty } from '../data';
 
+const ALLOWED_BLOCKS = [
+	'sensei-lms/quiz-question',
+	'sensei-lms/quiz-category-question',
+];
+
 /**
  * Quiz block editor.
  *
@@ -65,10 +70,7 @@ const QuizEdit = ( props ) => {
 				<span>{ __( 'Lesson Quiz', 'sensei-lms' ) }</span>
 			</div>
 			<InnerBlocks
-				allowedBlocks={ [
-					'sensei-lms/quiz-question',
-					'sensei-lms/quiz-category-question',
-				] }
+				allowedBlocks={ ALLOWED_BLOCKS }
 				templateInsertUpdatesSelection={ false }
 				renderAppender={ AppenderComponent }
 			/>
