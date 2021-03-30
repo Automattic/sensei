@@ -134,7 +134,7 @@ final class Sensei_Extensions {
 	 * @return array
 	 */
 	private function get_messages() {
-		$transient_key = implode( '_', [ 'sensei_extensions_messages', Sensei()->version, get_locale() ] );
+		$transient_key      = implode( '_', [ 'sensei_extensions_messages', Sensei()->version, get_locale() ] );
 		$extension_messages = get_transient( $transient_key );
 		if ( false === $extension_messages ) {
 			$raw_messages = wp_safe_remote_get(
