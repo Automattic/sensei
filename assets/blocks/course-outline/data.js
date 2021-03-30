@@ -12,7 +12,7 @@ import { invert } from 'lodash';
  * Course structure data.
  *
  * @global
- * @typedef {[CourseLessonData,CourseModuleData]} CourseStructure
+ * @typedef {Array.<(CourseLessonData|CourseModuleData)>} CourseStructure
  */
 /**
  * @typedef CourseModuleData
@@ -74,8 +74,8 @@ export const syncStructureToBlocks = ( structure, blocks ) => {
 /**
  * Find the block for a given lesson/module item.
  *
- * @param {Object[]}                            blocks Block.
- * @param {[CourseLessonData,CourseModuleData]} item   Structure item.
+ * @param {Object[]}                                    blocks Block.
+ * @param {Array.<(CourseLessonData|CourseModuleData)>} item   Structure item.
  * @return {Object} The block, if found.
  */
 const findBlock = ( blocks, { id, type, title } ) => {
