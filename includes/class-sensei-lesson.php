@@ -3304,6 +3304,7 @@ class Sensei_Lesson {
 
 		// If viewing quiz on frontend or in grading then only single questions must be shown.
 		$selected_questions = false;
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Input used for comparisons.
 		if ( ! is_admin() || ( is_admin() && isset( $_GET['page'] ) && 'sensei_grading' === $_GET['page'] && isset( $_GET['user'] ) && isset( $_GET['quiz_id'] ) ) ) {
 
 			// Fetch the questions that the user was asked in their quiz if they have already completed it.
@@ -3351,7 +3352,7 @@ class Sensei_Lesson {
 						$question_number = (int) get_post_meta( $question->ID, 'number', true );
 						$quiz_author     = get_post( $quiz_id )->post_author;
 
-						$qargs         = [
+						$qargs = [
 							'post_type'        => 'question',
 							'posts_per_page'   => $question_number,
 							'orderby'          => $orderby,
