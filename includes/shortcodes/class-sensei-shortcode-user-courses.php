@@ -61,6 +61,13 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	protected $status;
 
 	/**
+	 *  Rendering options.
+	 *
+	 * @var array
+	 */
+	protected $options;
+
+	/**
 	 * Are we in my-courses?
 	 *
 	 * @var bool
