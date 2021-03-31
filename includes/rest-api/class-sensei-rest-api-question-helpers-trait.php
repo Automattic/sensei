@@ -114,7 +114,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			'post_status' => 'publish',
 			'post_type'   => 'multiple_question',
 			'meta_input'  => [
-				'category' => $question_category ? $question_category->term_id : '',
+				'category' => $question_category->term_id,
 				'number'   => $question_number,
 			],
 		];
