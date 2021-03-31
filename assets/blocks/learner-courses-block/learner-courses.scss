@@ -9,11 +9,14 @@ $courses-list: '#{$block}__courses-list';
 		padding: 0;
 		margin: 0;
 		list-style: none;
+		font-size: 18px;
+		font-weight: bold;
 
 		&__item {
 			margin: 0 (34px/2);
 			padding: 5px 0;
 			line-height: 1.25;
+			opacity: 0.8;
 
 			&:first-child {
 				margin-left: 0;
@@ -26,6 +29,7 @@ $courses-list: '#{$block}__courses-list';
 			&.--is-active {
 				color: var( --accent-color, inherit );
 				border-bottom: solid 3px currentColor;
+				opacity: 1;
 			}
 		}
 
