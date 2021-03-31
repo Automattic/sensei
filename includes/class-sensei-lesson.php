@@ -52,7 +52,7 @@ class Sensei_Lesson {
 
 		$this->allowed_html = Sensei_Wp_Kses::get_default_wp_kses_allowed_html();
 
-		$this->legacy_quiz_message = '<em>' .
+		$this->legacy_quiz_message = '<p><em>' .
 			sprintf(
 				// translators: %1$s is a link to the quiz documentation, %2$s is a link to a support article about the WordPress editor.
 				__(
@@ -62,7 +62,7 @@ class Sensei_Lesson {
 				'https://senseilms.com/lesson/quizzes/',
 				'https://wordpress.org/support/article/wordpress-editor/'
 			) .
-		'</em>';
+		'</em></p>';
 
 		// Admin actions
 		if ( is_admin() ) {
