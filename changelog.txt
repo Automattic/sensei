@@ -1,5 +1,19 @@
 *** Changelog ***
 
+2021.03.31 - version 3.9.1
+* New: Show validation in single question editor [#4087](https://github.com/Automattic/sensei/pull/4087)
+* New: Log template overrides [#4113](https://github.com/Automattic/sensei/pull/4113)
+* Tweak: Add input as answer when unfocusing gap fill question [#4119](https://github.com/Automattic/sensei/pull/4119)
+* Tweak: Round course progress percentage to nearest integer [#4131](https://github.com/Automattic/sensei/pull/4131)
+* Tweak: Add points suffix to question grade controls [#4120](https://github.com/Automattic/sensei/pull/4120)
+* Tweak: Remove placeholder text from category question selector [#4144](https://github.com/Automattic/sensei/pull/4144)
+* Tweak: Make invalid category question save message more descriptive [#4145](https://github.com/Automattic/sensei/pull/4145)
+* Tweak: Add Sensei version to extension messages transient [#4143](https://github.com/Automattic/sensei/pull/4143)
+* Fix: Enable updateSelection to prevent block crashes [#4125](https://github.com/Automattic/sensei/pull/4125)
+* Fix: Create module taxonomy before cleaning data [#4128](https://github.com/Automattic/sensei/pull/4128)
+* Fix: Enable legacy quiz meta boxes if the Classic Editor plugin is activated [#4147](https://github.com/Automattic/sensei/pull/4147)
+* Fix: Error when manually adding course outline block [#4141](https://github.com/Automattic/sensei/pull/4141)
+
 2021.03.25 - version 3.9.0
 * New: Quiz Block
 	* Add Quiz and Question blocks [#3936](https://github.com/Automattic/sensei/pull/3936)
