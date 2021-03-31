@@ -293,6 +293,9 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		ob_start();
 		echo '<section id="sensei-user-courses">';
 
+		$use_blocks = ! empty( $this->options );
+
+		if ( ! $use_blocks ) {
 		Sensei_Messages::the_my_messages_link();
 		do_action( 'sensei_my_courses_content_inside_before' );
 		Sensei_Templates::get_template( 'loop-course.php' );
