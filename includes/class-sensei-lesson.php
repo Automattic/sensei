@@ -3355,7 +3355,6 @@ class Sensei_Lesson {
 							'post_type'        => 'question',
 							'posts_per_page'   => $question_number,
 							'orderby'          => $orderby,
-							'author'           => $quiz_author,
 							'tax_query'        => [
 								[
 									'taxonomy' => 'question-category',
@@ -3367,6 +3366,11 @@ class Sensei_Lesson {
 							'suppress_filters' => 0,
 							'post__not_in'     => $existing_questions,
 						];
+
+						if ( ! user_can( $quiz_author, 'manage_options' ) ) {
+							$qargs['author'] = $quiz_author;
+						}
+
 						$cat_questions = get_posts( $qargs );
 
 						// Merge results into return array.
