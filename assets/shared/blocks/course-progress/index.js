@@ -11,19 +11,21 @@ import { sprintf, _n } from '@wordpress/i18n';
 /**
  * Course progress component.
  *
- * @param {Object} props
- * @param {number} props.lessonsCount            Number of lessons.
- * @param {number} props.completedCount          Number of completed lessons.
- * @param {Object} props.wrapperAttributes       Wrapper HTML attributes.
- * @param {Object} props.barWrapperAttributes    Bar wrapper HTML attributes.
- * @param {Object} props.barAttributes           Bar HTML attributes.
- * @param {string} props.countersClassName       Counters class name.
- * @param {string} props.lessonsCountClassName   Lessons count class name.
- * @param {string} props.completedCountClassName Completed count class name.
+ * @param {Object}  props
+ * @param {number}  props.lessonsCount            Number of lessons.
+ * @param {number}  props.completedCount          Number of completed lessons.
+ * @param {boolean} props.hidePercentage          Hide completed percentage.
+ * @param {Object}  props.wrapperAttributes       Wrapper HTML attributes.
+ * @param {Object}  props.barWrapperAttributes    Bar wrapper HTML attributes.
+ * @param {Object}  props.barAttributes           Bar HTML attributes.
+ * @param {string}  props.countersClassName       Counters class name.
+ * @param {string}  props.lessonsCountClassName   Lessons count class name.
+ * @param {string}  props.completedCountClassName Completed count class name.
  */
 const CourseProgress = ( {
 	lessonsCount,
 	completedCount,
+	hidePercentage,
 	wrapperAttributes,
 	barWrapperAttributes,
 	barAttributes,
@@ -75,8 +77,8 @@ const CourseProgress = ( {
 							'sensei-lms'
 						),
 						completedCount
-					) }{ ' ' }
-					({ completePercentage }%)
+					) }
+					{ ! hidePercentage && ` (${ completePercentage }%)` }
 				</div>
 			</section>
 			<div

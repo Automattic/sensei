@@ -111,6 +111,7 @@ const LearnerCoursesEdit = ( {
 						<CourseProgress
 							lessonsCount={ 3 }
 							completedCount={ completed ? 3 : 1 }
+							hidePercentage
 						/>
 					) }
 				</div>

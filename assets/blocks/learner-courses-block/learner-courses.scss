@@ -137,14 +137,20 @@ $courses-list: '#{$block}__courses-list';
 		}
 	}
 
-	.sensei-course-progress__bar {
-		height: var( --progress-bar-height, 14px );
-		border-radius: var( --progress-bar-border-radius, 10px );
+	.sensei-course-progress {
+		&__heading {
+			font-size: 12px;
+		}
 
-		div  {
-			background-color: currentColor;
-			background-color: var( --accent-color, currentColor );
+		&__bar {
+			height: var( --progress-bar-height, 14px );
 			border-radius: var( --progress-bar-border-radius, 10px );
+
+			div  {
+				background-color: currentColor;
+				background-color: var( --accent-color, currentColor );
+				border-radius: var( --progress-bar-border-radius, 10px );
+			}
 		}
 	}
 }

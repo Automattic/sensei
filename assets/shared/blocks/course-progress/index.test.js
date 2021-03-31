@@ -27,4 +27,16 @@ describe( '<CourseProgress />', () => {
 			queryByRole( 'progressbar' ).getAttribute( 'aria-valuenow' )
 		).toEqual( '50' );
 	} );
+
+	it( 'Should render without the completed percentage', () => {
+		const { queryByText } = render(
+			<CourseProgress
+				lessonsCount={ 10 }
+				completedCount={ 5 }
+				hidePercentage
+			/>
+		);
+
+		expect( queryByText( '5 Completed' ) ).toBeTruthy();
+	} );
 } );
