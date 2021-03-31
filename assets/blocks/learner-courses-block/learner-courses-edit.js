@@ -14,7 +14,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import CourseProgress from './course-progress';
+import CourseProgress from '../../shared/blocks/course-progress';
 import LearnerCoursesSettings from './learner-courses-settings';
 
 /**
@@ -106,11 +106,13 @@ const LearnerCoursesEdit = ( {
 							) }
 						</p>
 					) }
-					<CourseProgress
-						lessons={ 3 }
-						completed={ completed ? 3 : 1 }
-						hideProgressBar={ ! options.progressBarEnabled }
-					/>
+
+					{ options.progressBarEnabled && (
+						<CourseProgress
+							lessonsCount={ 3 }
+							completedCount={ completed ? 3 : 1 }
+						/>
+					) }
 				</div>
 			</li>
 		);

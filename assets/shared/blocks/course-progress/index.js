@@ -88,7 +88,7 @@ const CourseProgress = ( {
 					...barWrapperAttributes,
 					className: classnames(
 						'sensei-course-progress__bar',
-						barWrapperAttributes.className
+						barWrapperAttributes?.className
 					),
 				} }
 			>
