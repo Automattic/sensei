@@ -3267,10 +3267,10 @@ class Sensei_Lesson {
 	 * - limit number of questions lesson setting
 	 *
 	 * @since 1.0
-	 * @param int    $quiz_id (default: 0)
-	 * @param string $post_status (default: 'publish')
-	 * @param string $orderby (default: 'meta_value_num title')
-	 * @param string $order (default: 'ASC')
+	 * @param int    $quiz_id     The quiz id (default: 0).
+	 * @param string $post_status Post status (default: 'publish').
+	 * @param string $orderby     Order by (default: 'meta_value_num title').
+	 * @param string $order       Order (default: 'ASC').
 	 *
 	 * @return array $questions { $question type WP_Post }
 	 */
@@ -3279,20 +3279,20 @@ class Sensei_Lesson {
 		$quiz_id        = (string) $quiz_id;
 		$quiz_lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
 
-		// setup the user id
+		// Setup the user id.
 		if ( is_admin() ) {
 			$user_id = isset( $_GET['user'] ) ? $_GET['user'] : '';
 		} else {
 			$user_id = get_current_user_id();
 		}
 
-		// get the users current status on the lesson
+		// Get the users current status on the lesson.
 		$user_lesson_status = Sensei_Utils::user_lesson_status( $quiz_lesson_id, $user_id );
 
-		// If viewing quiz on the frontend then show questions in random order if set
+		// If viewing quiz on the frontend then show questions in random order if set.
 		if ( ! is_admin() ) {
 			$random_order = get_post_meta( $quiz_id, '_random_question_order', true );
-			if ( $random_order && $random_order == 'yes' ) {
+			if ( $random_order && 'yes' === $random_order ) {
 				$orderby = 'rand';
 			}
 		}
@@ -3302,18 +3302,18 @@ class Sensei_Lesson {
 		// Set the questions array that will be manipulated within this function.
 		$questions_array = $questions;
 
-		// If viewing quiz on frontend or in grading then only single questions must be shown
+		// If viewing quiz on frontend or in grading then only single questions must be shown.
 		$selected_questions = false;
-		if ( ! is_admin() || ( is_admin() && isset( $_GET['page'] ) && 'sensei_grading' == $_GET['page'] && isset( $_GET['user'] ) && isset( $_GET['quiz_id'] ) ) ) {
+		if ( ! is_admin() || ( is_admin() && isset( $_GET['page'] ) && 'sensei_grading' === $_GET['page'] && isset( $_GET['user'] ) && isset( $_GET['quiz_id'] ) ) ) {
 
-			// Fetch the questions that the user was asked in their quiz if they have already completed it
+			// Fetch the questions that the user was asked in their quiz if they have already completed it.
 			$questions_asked_string = ! empty( $user_lesson_status->comment_ID ) ? get_comment_meta( $user_lesson_status->comment_ID, 'questions_asked', true ) : false;
 			if ( ! empty( $questions_asked_string ) ) {
 
 				$selected_questions = explode( ',', $questions_asked_string );
 
-				// Fetch each question in the order in which they were asked
-				$questions = array();
+				// Fetch each question in the order in which they were asked.
+				$questions = [];
 				foreach ( $selected_questions as $question_id ) {
 					if ( ! $question_id ) {
 						continue;
@@ -3325,52 +3325,53 @@ class Sensei_Lesson {
 					$questions[] = $question;
 				}
 			} else {
-				// Otherwise, make sure that we convert all multiple questions into single questions
-				$existing_questions = array();
+				// Otherwise, make sure that we convert all multiple questions into single questions.
+				$existing_questions = [];
 
-				// Set array of questions that already exist so we can prevent duplicates from appearing
+				// Set array of questions that already exist so we can prevent duplicates from appearing.
 				foreach ( $questions_array as $question ) {
-					if ( 'question' != $question->post_type ) {
+					if ( 'question' !== $question->post_type ) {
 						continue;
 					}
 					$existing_questions[] = $question->ID;
 				}
 
-				// Include only single questions in the return array
+				// Include only single questions in the return array.
 				$questions_loop  = $questions_array;
-				$questions_array = array();
+				$questions_array = [];
 				foreach ( $questions_loop as $k => $question ) {
 
-					// If this is a single question then include it
-					if ( 'question' == $question->post_type ) {
+					// If this is a single question then include it.
+					if ( 'question' === $question->post_type ) {
 						$questions_array[] = $question;
 					} else {
 
-						// If this is a multiple question then get the specified amount of questions from the specified category
-						$question_cat    = intval( get_post_meta( $question->ID, 'category', true ) );
-						$question_number = intval( get_post_meta( $question->ID, 'number', true ) );
+						// If this is a multiple question then get the specified amount of questions from the specified category.
+						$question_cat    = (int) get_post_meta( $question->ID, 'category', true );
+						$question_number = (int) get_post_meta( $question->ID, 'number', true );
 
-						$qargs         = array(
+						$qargs         = [
 							'post_type'        => 'question',
 							'posts_per_page'   => $question_number,
 							'orderby'          => $orderby,
-							'tax_query'        => array(
-								array(
+							'author'           => $quiz_author,
+							'tax_query'        => [
+								[
 									'taxonomy' => 'question-category',
 									'field'    => 'term_id',
 									'terms'    => $question_cat,
-								),
-							),
+								],
+							],
 							'post_status'      => $post_status,
 							'suppress_filters' => 0,
 							'post__not_in'     => $existing_questions,
-						);
+						];
 						$cat_questions = get_posts( $qargs );
 
-						// Merge results into return array
+						// Merge results into return array.
 						$questions_array = array_merge( $questions_array, $cat_questions );
 
-						// Add selected questions to existing questions array to prevent duplicates from being added
+						// Add selected questions to existing questions array to prevent duplicates from being added.
 						foreach ( $questions_array as $cat_question ) {
 							if ( in_array( $cat_question->ID, $existing_questions ) ) {
 								continue;
@@ -3380,19 +3381,19 @@ class Sensei_Lesson {
 					}
 				}
 
-				// Set return data
+				// Set return data.
 				$questions = $questions_array;
 			}
 		}
 
-		// If user has not already taken the quiz and a limited number of questions are to be shown, then show a random selection of the specified amount of questions
+		// If user has not already taken the quiz and a limited number of questions are to be shown, then show a random selection of the specified amount of questions.
 		if ( ! $selected_questions ) {
 
-			// Only limit questions like this on the frontend
+			// Only limit questions like this on the frontend.
 			if ( ! is_admin() ) {
 
-				// Get number of questions to show
-				$show_questions = intval( get_post_meta( $quiz_id, '_show_questions', true ) );
+				// Get number of questions to show.
+				$show_questions = (int) get_post_meta( $quiz_id, '_show_questions', true );
 
 				if ( $show_questions ) {
 					// Get random set of array keys from selected questions array.
@@ -3401,11 +3402,11 @@ class Sensei_Lesson {
 						$show_questions > count( $questions_array ) ? count( $questions_array ) : $show_questions
 					);
 
-					// Loop through all questions and pick the the ones to be shown based on the random key selection
-					$questions = array();
+					// Loop through all questions and pick the the ones to be shown based on the random key selection.
+					$questions = [];
 					foreach ( $questions_array as $k => $question ) {
 
-						// Random keys will always be an array, unless only one question is to be shown
+						// Random keys will always be an array, unless only one question is to be shown.
 						if ( is_array( $selected_questions ) ) {
 							if ( in_array( $k, $selected_questions ) ) {
 								$questions[] = $question;

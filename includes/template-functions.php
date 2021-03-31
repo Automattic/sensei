@@ -774,17 +774,8 @@ function sensei_quiz_has_questions() {
 		return false;
 	}
 
-	if ( $sensei_question_loop['current'] + 1 < $sensei_question_loop['total'] ) {
-
-		return true;
-
-	} else {
-
-		return false;
-
-	}
-
-}//end sensei_quiz_has_questions()
+	return $sensei_question_loop['current'] + 1 < $sensei_question_loop['total'];
+}
 
 /**
  * This funciton must only be run inside the quiz question loop.

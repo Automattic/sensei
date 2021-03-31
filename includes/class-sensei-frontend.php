@@ -852,12 +852,14 @@ class Sensei_Frontend {
 	/**
 	 * Gets the quiz answers for the current user.
 	 *
-	 * @deprecated use Sensei_Quiz::get_user_answers
+	 * @deprecated 3.10.0 use Sensei_Quiz::get_user_answers
 	 * @param int $lesson_id Lesson ID.
 	 * @return array Quiz answers for the current user.
 	 */
 	public function sensei_get_user_quiz_answers( $lesson_id = 0 ) {
 		global $current_user;
+
+		_deprecated_function( __METHOD__, '3.10.0', 'Sensei_Quiz::get_user_answers' );
 
 		$user_answers = array();
 
