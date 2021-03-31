@@ -36,6 +36,7 @@ export default {
 			label: __( 'Filled', 'sensei-lms' ),
 		},
 	],
+	example: {},
 	icon,
 	edit,
 	...metadata,
