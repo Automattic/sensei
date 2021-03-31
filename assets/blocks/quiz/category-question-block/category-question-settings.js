@@ -78,10 +78,10 @@ const CategoryQuestionSettings = ( {
 		getQuestionCategoryById,
 	] = useQuestionCategories();
 
-	const [ error, setError ] = useState( null );
+	const [ questionsFetchError, setQuestionsFetchError ] = useState( null );
 	const categoryQuestionsCount = useCategoryQuestionsCount(
 		options.category,
-		setError
+		setQuestionsFetchError
 	);
 
 	const categoryOptions = [
@@ -127,7 +127,7 @@ const CategoryQuestionSettings = ( {
 									}
 								);
 
-								setError( null );
+								setQuestionsFetchError( null );
 							} }
 						/>
 						<NumberControl
@@ -142,7 +142,7 @@ const CategoryQuestionSettings = ( {
 								} )
 							}
 						/>
-						{ error !== null && (
+						{ questionsFetchError !== null && (
 							<Notice status="error" isDismissible={ false }>
 								{ sprintf(
 									// translators: The underlying error message.
@@ -150,12 +150,12 @@ const CategoryQuestionSettings = ( {
 										'An error occurred while retrieving questions: %s',
 										'sensei-lms'
 									),
-									error
+									questionsFetchError
 								) }
 							</Notice>
 						) }
 						{ categoryQuestionsCount !== false &&
-							error === null &&
+							questionsFetchError === null &&
 							options.number > categoryQuestionsCount && (
 								<Notice
 									status="warning"
