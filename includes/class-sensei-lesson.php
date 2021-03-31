@@ -3349,6 +3349,7 @@ class Sensei_Lesson {
 						// If this is a multiple question then get the specified amount of questions from the specified category.
 						$question_cat    = (int) get_post_meta( $question->ID, 'category', true );
 						$question_number = (int) get_post_meta( $question->ID, 'number', true );
+						$quiz_author     = get_post( $quiz_id )->post_author;
 
 						$qargs         = [
 							'post_type'        => 'question',
