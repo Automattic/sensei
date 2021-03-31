@@ -89,11 +89,11 @@ class Sensei_Course_Progress_Block {
 
 		return '
 			<div ' . Sensei_Block_Helpers::render_style_attributes( $class_names, $text_css ) . '>
-				<section class="wp-block-sensei-lms-progress-heading">
-					<div class="wp-block-sensei-lms-progress-heading__lessons">' . $lessons_text . '</div>
-					<div class="wp-block-sensei-lms-progress-heading__completed">' . $completed_text . '</div>
+				<section class="wp-block-sensei-lms-progress-heading sensei-course-progress__heading">
+					<div class="wp-block-sensei-lms-progress-heading__lessons sensei-course-progress__lessons">' . $lessons_text . '</div>
+					<div class="wp-block-sensei-lms-progress-heading__completed sensei-course-progress__completed">' . $completed_text . '</div>
 				</section>
-				<div role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" ' . Sensei_Block_Helpers::render_style_attributes( [ 'wp-block-sensei-lms-progress-bar' ], $bar_background_css ) . '>
+				<div role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" ' . Sensei_Block_Helpers::render_style_attributes( [ 'wp-block-sensei-lms-progress-bar', 'sensei-course-progress__bar' ], $bar_background_css ) . '>
 					<div ' . Sensei_Block_Helpers::render_style_attributes( [], $bar_css ) . '></div>
 				</div>
 			</div>
