@@ -28,6 +28,6 @@ if ( ! empty( $messages ) ) {
 			$action_str = ' <a href="' . esc_url( $action_url ) . '" rel="noopener" target="' . esc_attr( $action_target ) . '" class="button">' . esc_html( $action_label ) . '</a>';
 		}
 
-		echo '<div class="notice notice-' . esc_attr( $message_type ) . ' below-h2"><p><strong>' . esc_html( $message->message ) . '</strong>' . wp_kses_post( $action_str ) . '</p></div>';
+		echo '<div class="notice notice-' . esc_attr( $message_type ) . ' below-h2"><p><strong>' . esc_html( $message->message ) . '</strong></p><p>' . wp_kses_post( $action_str ) . '</p></div>';
 	}
 }
