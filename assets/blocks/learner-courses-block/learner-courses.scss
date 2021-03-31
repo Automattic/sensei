@@ -1,0 +1,166 @@
+$block: '.wp-block-sensei-lms-learner-courses';
+$courses-list: '#{$block}__courses-list';
+
+#{$block} {
+	&__filter,
+	.editor-styles-wrapper &__filter {
+		display: flex;
+		border-bottom: 1px solid #000;
+		padding: 0;
+		margin: 0;
+		list-style: none;
+
+		&__item {
+			margin: 0 (34px/2);
+			padding: 5px 0;
+			line-height: 1.25;
+
+			&:first-child {
+				margin-left: 0;
+			}
+
+			&:last-child {
+				margin-right: 0;
+			}
+
+			&.--is-active {
+				border-bottom: solid 3px #000;
+			}
+		}
+
+		&__link {
+			text-decoration: none;
+		}
+	}
+
+	#{$courses-list},
+	.editor-styles-wrapper #{$courses-list} {
+		list-style: none;
+		padding: 50px 0 0;
+		margin: 0;
+
+		&__item {
+			display: flex;
+			padding: 0 0 40px;
+			margin: 0;
+		}
+
+		&__featured-image {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 149px;
+			height: 149px;
+			margin-right: 24px;
+			flex-shrink: 0;
+			background-color: #C3C4C7;
+			background-size: cover;
+			background-position: 50% 50%;
+			fill: #FFF;
+		}
+
+		&__category {
+			display: block;
+			font-size: 12px;
+			text-transform: uppercase;
+		}
+
+		&__header {
+			margin: 0 0 9px;
+			display: flex;
+			justify-content: flex-start;
+			align-items: center;
+		}
+
+		&__title {
+			margin: 0;
+			font-size: 24px;
+			font-weight: bold;
+		}
+
+		&__badge {
+			display: inline-block;
+			vertical-align: middle;
+			margin-left: 18px;
+			padding: 3px 11px;
+			border: 1px solid #000;
+			border-radius: 4px;
+			font-size: 8px;
+			text-transform: uppercase;
+			font-style: normal;
+		}
+
+		&__description {
+			margin: 9px 0 18px;
+			font-size: 12px;
+			line-height: 1.25;
+			opacity: 0.9;
+		}
+
+		@media (min-width: 920px) {
+			&.--is-grid-view {
+				display: flex;
+				flex-flow: row wrap;
+				margin: 0 -7px;
+
+				#{$courses-list} {
+					&__item {
+						display: block;
+						width: calc( 50% - 22px );
+						margin: 0 11px;
+					}
+
+					&__featured-image {
+						width: 100%;
+						height: 108px;
+						margin-bottom: 20px;
+					}
+				}
+
+				&.--is-3-columns {
+					margin: 0 -11px;
+
+					#{$courses-list} {
+						&__item {
+							width: calc( 100% / 3 - 14px );
+							margin: 0 7px;
+						}
+					}
+
+					#{$block} {
+						&__progress-bar {
+							height: 16px;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	&__course-progress {
+		&__numbers {
+			margin-top: 10px;
+			font-size: 14px;
+		}
+
+		&__number-lessons {
+			margin-right: 18px;
+		}
+
+		&__completed-lessons {
+			font-style: normal;
+		}
+	}
+
+	&__progress-bar {
+		height: 24px;
+		border: 1px solid #CCC;
+		border-radius: 20px;
+		overflow: hidden;
+
+		&__fill  {
+			height: 100%;
+			background-color: #888;
+		}
+	}
+}

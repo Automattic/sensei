@@ -8,9 +8,10 @@ import {
 	ToggleControl,
 	ToolbarGroup,
 	ToolbarButton,
+	SelectControl,
 } from '@wordpress/components';
 import { grid, list } from '@wordpress/icons';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf, _n } from '@wordpress/i18n';
 
 /**
  * Learner Settings component.
@@ -73,13 +74,44 @@ const LearnerCoursesSettings = ( { options, setOptions } ) => {
 						</PanelRow>
 					) ) }
 				</PanelBody>
+				{ 'grid' === options.layoutView && (
+					<PanelBody
+						title={ __( 'Styling', 'sensei-lms' ) }
+						initialOpen={ true }
+					>
+						<PanelRow>
+							<SelectControl
+								label={ __( 'Layout', 'sensei-lms' ) }
+								options={ [ 2, 3 ].map( ( columns ) => ( {
+									value: columns,
+									label: sprintf(
+										// translators: placeholder is number of columns.
+										_n(
+											'%d column',
+											'%d columns',
+											columns,
+											'sensei-lms'
+										),
+										columns
+									),
+								} ) ) }
+								value={ options.columns }
+								onChange={ ( value ) => {
+									setOptions( {
+										columns: value,
+									} );
+								} }
+							/>
+						</PanelRow>
+					</PanelBody>
+				) }
 			</InspectorControls>
 			<BlockControls>
 				<ToolbarGroup>
 					{ layoutViewTogglers.map( ( { view, label, icon } ) => (
 						<ToolbarButton
 							key={ view }
-							data-testid={ view }
+							extraProps={ { 'data-testid': view } }
 							isActive={ view === options.layoutView }
 							icon={ icon }
 							label={ label }
