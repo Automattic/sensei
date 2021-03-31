@@ -2,6 +2,7 @@
  * WordPress dependencies
  */
 import { __, _n, sprintf } from '@wordpress/i18n';
+import { compose } from '@wordpress/compose';
 
 /**
  * Internal dependencies
@@ -10,6 +11,13 @@ import { useQuestionNumber } from '../question-number';
 import { useQuestionCategories } from '../question-categories';
 import CategoryQuestionSettings from './category-question-settings';
 import { useEffect } from '@wordpress/element';
+import { withBlockMeta } from '../../../shared/blocks/block-metadata';
+import { withBlockValidation } from '../../../shared/blocks/block-validation';
+import {
+	validateCategoryQuestionBlock,
+	getCategoryQuestionBlockValidationErrorMessages,
+} from './category-question-validation';
+import { QuestionValidationNotice } from '../question-block/question-block-helpers';
 
 /**
  * Quiz category question block editor.
@@ -61,10 +69,11 @@ const CategoryQuestionEdit = ( props ) => {
 			>
 				{ questionIndex }
 				<h2 className="sensei-lms-question-block__title">
-					<strong>
-						{ categoryName ??
-							__( 'Category Question', 'sensei-lms' ) }
-					</strong>
+					{ categoryName ? (
+						<strong>{ categoryName }</strong>
+					) : (
+						__( 'Category Question', 'sensei-lms' )
+					) }
 					{ categoryName &&
 						number > 0 &&
 						' (' +
@@ -81,8 +90,17 @@ const CategoryQuestionEdit = ( props ) => {
 							')' }
 				</h2>
 			</div>
+			<QuestionValidationNotice
+				{ ...props }
+				getErrorMessages={
+					getCategoryQuestionBlockValidationErrorMessages
+				}
+			/>
 		</>
 	);
 };
 
-export default CategoryQuestionEdit;
+export default compose(
+	withBlockMeta,
+	withBlockValidation( validateCategoryQuestionBlock )
+)( CategoryQuestionEdit );
