@@ -7,7 +7,7 @@ import { render } from '@testing-library/react';
 /**
  * Internal dependencies
  */
-import CourseProgress from './course-progress';
+import CourseProgress from './index';
 
 describe( '<CourseProgress />', () => {
 	it( 'Should render the numbers and progress bar correctly', () => {
