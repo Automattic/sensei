@@ -145,6 +145,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 
 		$this->options = wp_parse_args( $attributes['options'], [
 				'featuredImageEnabled'     => true,
+				'courseCategoryEnabled'    => true,
 				'courseDescriptionEnabled' => true,
 				'progressBarEnabled'       => true,
 				'columns'                  => 2,
@@ -362,6 +363,10 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 			remove_action( 'sensei_course_content_inside_before', array( Sensei()->course, 'course_image' ), 30, 1 );
 		}
 
+		if ( false === $this->options['courseCategoryEnabled'] ) {
+			remove_action( 'sensei_course_content_inside_before', array( Sensei()->course, 'the_course_meta' ) );
+		}
+
 		if ( false === $this->options['courseDescriptionEnabled'] ) {
 			add_filter( 'get_the_excerpt', '__return_false' );
 		}
@@ -393,6 +398,10 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 
 		if ( false === $this->options['featuredImageEnabled'] ) {
 			add_action( 'sensei_course_content_inside_before', array( Sensei()->course, 'course_image' ), 30, 1 );
+		}
+
+		if ( false === $this->options['courseCategoryEnabled'] ) {
+			add_action( 'sensei_course_content_inside_before', array( Sensei()->course, 'the_course_meta' ) );
 		}
 	}
 
