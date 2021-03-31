@@ -25,6 +25,17 @@ export default {
 		__( 'Student', 'sensei-lms' ),
 		__( 'Learner', 'sensei-lms' ),
 	],
+	styles: [
+		{
+			name: 'minimal',
+			label: __( 'Minimal', 'sensei-lms' ),
+			isDefault: true,
+		},
+		{
+			name: 'filled',
+			label: __( 'Filled', 'sensei-lms' ),
+		},
+	],
 	icon,
 	edit,
 	...metadata,

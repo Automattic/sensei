@@ -35,6 +35,27 @@ $courses-list: '#{$block}__courses-list';
 		}
 	}
 
+	&.is-style-filled {
+		#{$block} {
+			&__filter,
+			.editor-styles-wrapper &__filter {
+				&__item {
+					padding: 7px (34px/2);
+					margin: 0;
+					&.--is-active {
+						border-bottom: 0;
+						background-color: currentColor;
+						background-color: var( --accent-color, currentColor );
+
+						#{$block}__filter__link {
+							color: #FFF;
+						}
+					}
+				}
+			}
+		}
+	}
+
 	#{$courses-list},
 	.editor-styles-wrapper #{$courses-list} {
 		list-style: none;
