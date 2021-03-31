@@ -101,7 +101,7 @@ const BlockMetaContext = createContext( {} );
  * Use metadata for the block.
  *
  * @param {string} clientId Block ID.
- * @return {[Object, Function]} Metadata and setter function.
+ * @return {Array.<(Object|Function)>} Metadata and setter function.
  */
 export const useBlockMeta = ( clientId ) => {
 	const blockMeta = useSelect(
