@@ -41,7 +41,7 @@ class Sensei_Learner_Courses_Block {
 	 */
 	public function render( $attributes, $content ): string {
 
-		$shortcode = new Sensei_Shortcode_User_Courses( [ 'options' => $attributes['options'] ], null, null );
+		$shortcode = new Sensei_Shortcode_User_Courses( [ 'options' => $attributes['options'] ?? [] ], null, null );
 
 		return $shortcode->render();
 	}
