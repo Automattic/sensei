@@ -25,7 +25,7 @@ class Sensei_Block_Learner_Courses_Test extends WP_UnitTestCase {
 		$this->factory = new Sensei_Factory();
 
 		$this->block     = new Sensei_Learner_Courses_Block();
-		$this->course    = $this->factory->course->create_and_get( [ 'post_name' => 'take-block-course' ] );
+		$this->course    = $this->factory->course->create_and_get( [ 'post_name' => 'learner-courses-block' ] );
 		$GLOBALS['post'] = $this->course;
 
 	}
