@@ -47,7 +47,7 @@
     "@testing-library/jest-dom": "5.11.10",
     "@testing-library/react": "11.2.6",
     "@testing-library/react-hooks": "5.1.1",
-    "@testing-library/user-event": "13.1.1",
+    "@testing-library/user-event": "12.8.3",
     "@woocommerce/e2e-environment": "0.1.5",
     "@wordpress/babel-plugin-makepot": "4.1.0",
     "@wordpress/babel-preset-default": "5.1.0",
