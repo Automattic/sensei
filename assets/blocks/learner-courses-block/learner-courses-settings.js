@@ -20,7 +20,7 @@ import { __, sprintf, _n } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import CourseProgressSettings from '../editor-components/course-progress-settings';
+import { CourseProgressSettings } from '../../shared/blocks/course-progress';
 
 /**
  * Learner Settings component.

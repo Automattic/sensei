@@ -18,9 +18,10 @@ import {
 	withDefaultColor,
 } from '../../shared/blocks/settings';
 import { COURSE_STATUS_STORE } from '../course-outline/status-preview/status-store';
-import CourseProgressSettings from '../editor-components/course-progress-settings';
+import CourseProgress, {
+	CourseProgressSettings,
+} from '../../shared/blocks/course-progress';
 import ToggleLegacyCourseMetaboxesWrapper from '../toggle-legacy-course-metaboxes-wrapper';
-import CourseProgress from '../../shared/blocks/course-progress';
 
 /**
  * Edit course progress bar component.
