@@ -3368,7 +3368,20 @@ class Sensei_Lesson {
 							'post__not_in'     => $existing_questions,
 						];
 
-						if ( ! user_can( $quiz_author, 'manage_options' ) ) {
+						/**
+						 * When a question category is expanded to its questions, if the quiz owner is not an admin,
+						 * only the questions owned by the teacher are included. This behaviour can be disabled with
+						 * this filter.
+						 *
+						 * @since 3.10.0
+						 *
+						 * @param {array}  $quiz_id The quiz id.
+						 *
+						 * @return {array} Whether questions should be filtered by author.
+						 */
+						$should_filter = apply_filters( 'sensei_filter_category_questions_by_author', true, $quiz_id );
+
+						if ( $should_filter && ! user_can( $quiz_author, 'manage_options' ) ) {
 							$qargs['author'] = $quiz_author;
 						}
 
