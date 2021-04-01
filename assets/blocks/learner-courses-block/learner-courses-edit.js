@@ -117,7 +117,17 @@ const LearnerCoursesEdit = ( {
 
 	return (
 		<>
-			<section className={ className }>
+			<section
+				className={ className }
+				style={ {
+					...( undefined !== options.progressBarHeight && {
+						'--progress-bar-height': `${ options.progressBarHeight }px`,
+					} ),
+					...( undefined !== options.progressBarBorderRadius && {
+						'--progress-bar-border-radius': `${ options.progressBarBorderRadius }px`,
+					} ),
+				} }
+			>
 				<ul className="wp-block-sensei-lms-learner-courses__filter">
 					{ filters.map( ( { label, value } ) => (
 						<li

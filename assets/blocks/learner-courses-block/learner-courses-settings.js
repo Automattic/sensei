@@ -14,6 +14,11 @@ import { grid, list } from '@wordpress/icons';
 import { __, sprintf, _n } from '@wordpress/i18n';
 
 /**
+ * Internal dependencies
+ */
+import CourseProgressSettings from '../editor-components/course-progress-settings';
+
+/**
  * Learner Settings component.
  *
  * @param {Object}   props
@@ -104,6 +109,22 @@ const LearnerCoursesSettings = ( { options, setOptions } ) => {
 							/>
 						</PanelRow>
 					</PanelBody>
+				) }
+				{ options.progressBarEnabled && (
+					<CourseProgressSettings
+						borderRadius={ options.progressBarBorderRadius }
+						setBorderRadius={ ( value ) => {
+							setOptions( {
+								progressBarBorderRadius: value,
+							} );
+						} }
+						height={ options.progressBarHeight }
+						setHeight={ ( value ) => {
+							setOptions( {
+								progressBarHeight: value,
+							} );
+						} }
+					/>
 				) }
 			</InspectorControls>
 			<BlockControls>

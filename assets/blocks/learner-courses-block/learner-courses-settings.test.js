@@ -21,11 +21,18 @@ describe( '<LearnerCoursesSettings />', () => {
 			courseDescriptionEnabled: true,
 			featuredImageEnabled: false,
 			courseCategoryEnabled: true,
-			progressBarEnabled: false,
+			progressBarEnabled: true,
 			layoutView: 'grid',
 			columns: 2,
+			progressBarHeight: 20,
+			progressBarBorderRadius: 10,
 		};
-		const { queryByLabelText, queryByTestId } = render(
+		const {
+			queryByLabelText,
+			queryAllByLabelText,
+			queryByText,
+			queryByTestId,
+		} = render(
 			<LearnerCoursesSettings
 				options={ options }
 				setOptions={ () => {} }
@@ -52,6 +59,15 @@ describe( '<LearnerCoursesSettings />', () => {
 		expect( queryByTestId( 'grid' ) ).toHaveClass( 'is-pressed' );
 
 		expect( queryByLabelText( 'Layout' ).value ).toEqual( '2' );
+
+		// Open progress bar settings.
+		fireEvent.click( queryByText( 'Progress bar settings' ) );
+
+		expect( queryAllByLabelText( 'Height' )[ 0 ].value ).toEqual( '20' );
+
+		expect( queryAllByLabelText( 'Border radius' )[ 0 ].value ).toEqual(
+			'10'
+		);
 	} );
 
 	it( 'Should call the setOptions correctly when changing the fields', () => {
@@ -64,9 +80,16 @@ describe( '<LearnerCoursesSettings />', () => {
 			progressBarEnabled: true,
 			layoutView: 'grid',
 			columns: 2,
+			progressBarHeight: 20,
+			progressBarBorderRadius: 10,
 		};
 
-		const { queryByLabelText, queryByTestId } = render(
+		const {
+			queryByLabelText,
+			queryAllByLabelText,
+			queryByText,
+			queryByTestId,
+		} = render(
 			<LearnerCoursesSettings
 				options={ options }
 				setOptions={ setOptionsMock }
@@ -109,6 +132,23 @@ describe( '<LearnerCoursesSettings />', () => {
 		expect( setOptionsMock ).toBeCalledWith( {
 			columns: '3',
 		} );
+
+		// Open progress bar settings.
+		fireEvent.click( queryByText( 'Progress bar settings' ) );
+
+		fireEvent.change( queryAllByLabelText( 'Height' )[ 0 ], {
+			target: { value: '10', checkValidity: false },
+		} );
+		expect( setOptionsMock ).toBeCalledWith( {
+			progressBarHeight: 10,
+		} );
+
+		fireEvent.change( queryAllByLabelText( 'Border radius' )[ 0 ], {
+			target: { value: '5', checkValidity: false },
+		} );
+		expect( setOptionsMock ).toBeCalledWith( {
+			progressBarBorderRadius: 5,
+		} );
 	} );
 
 	it( 'Should not show layout setting when layout view is "list"', () => {
@@ -124,5 +164,20 @@ describe( '<LearnerCoursesSettings />', () => {
 		);
 
 		expect( queryByLabelText( 'Layout' ) ).toBeFalsy();
+	} );
+
+	it( 'Should not show progress bar settings when progress bar is disabled', () => {
+		const options = {
+			progressBarEnabled: false,
+		};
+
+		const { queryByText } = render(
+			<LearnerCoursesSettings
+				options={ options }
+				setOptions={ () => {} }
+			/>
+		);
+
+		expect( queryByText( 'Progress bar settings' ) ).toBeFalsy();
 	} );
 } );

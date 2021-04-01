@@ -13,7 +13,9 @@
         "courseDescriptionEnabled": true,
         "featuredImageEnabled": false,
         "courseCategoryEnabled": false,
-        "progressBarEnabled": true
+        "progressBarEnabled": true,
+        "progressBarBorderRadius": 10,
+        "progressBarHeight": 14
       }
     }
   }
