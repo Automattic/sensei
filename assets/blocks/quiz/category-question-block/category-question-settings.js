@@ -37,7 +37,7 @@ const CategoryQuestionSettings = ( {
 	const categoryOptions = [
 		{
 			value: '',
-			label: __( 'Category', 'sensei-lms' ),
+			label: '',
 		},
 		...( questionCategories || [] ).map( ( questionCategory ) => ( {
 			value: questionCategory.id,
@@ -88,7 +88,7 @@ const CategoryQuestionSettings = ( {
 							onChange={ ( nextNumber ) =>
 								nextNumber &&
 								setOptions( {
-									number: nextNumber,
+									number: nextNumber || 1,
 								} )
 							}
 						/>

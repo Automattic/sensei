@@ -27,4 +27,7 @@ export default {
 	},
 	edit,
 	save: () => <InnerBlocks.Content />,
+	messages: {
+		noCategory: __( 'Assign a category to this question.', 'sensei-lms' ),
+	},
 };

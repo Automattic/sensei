@@ -12,9 +12,6 @@ import { __ } from '@wordpress/i18n';
 /**
  * Number control component.
  *
- * It can use or be replaced by the
- * WordPress [NumberControl]{@link https://github.com/WordPress/gutenberg/tree/master/packages/components/src/number-control} when it's stable.
- *
  * @param {Object}   props                    Component props.
  * @param {string}   [props.className]        Additional classnames for the input.
  * @param {string}   [props.id]               Component id used to connect label and input - required if label is set.
@@ -24,6 +21,7 @@ import { __ } from '@wordpress/i18n';
  * @param {boolean}  [props.allowReset=false] Whether reset is allowed.
  * @param {string}   [props.resetLabel]       Reset button custom label.
  * @param {Function} props.onChange           Change function, which receives number as argument.
+ * @param {string}   props.suffix             Input suffix.
  */
 const NumberControl = ( {
 	className,
@@ -34,21 +32,31 @@ const NumberControl = ( {
 	allowReset = false,
 	resetLabel,
 	onChange,
+	suffix,
 	...props
 } ) => (
 	<BaseControl id={ id } label={ label } help={ help }>
 		<div className="sensei-number-control">
-			<input
-				className={ classnames(
-					'sensei-number-control__input',
-					className
+			<div className="sensei-number-control__input-container">
+				<input
+					className={ classnames(
+						'sensei-number-control__input',
+						className
+					) }
+					type="number"
+					id={ id }
+					onChange={ ( e ) =>
+						onChange( parseInt( e.target.value, 10 ) )
+					}
+					value={ null === value ? '' : value }
+					{ ...props }
+				/>
+				{ suffix && (
+					<span className="sensei-number-control__input-suffix">
+						{ suffix }
+					</span>
 				) }
-				type="number"
-				id={ id }
-				onChange={ ( e ) => onChange( parseInt( e.target.value, 10 ) ) }
-				value={ null === value ? '' : value }
-				{ ...props }
-			/>
+			</div>
 			{ allowReset && (
 				<Button
 					className="sensei-number-control__button"

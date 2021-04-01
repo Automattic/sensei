@@ -322,6 +322,7 @@ abstract class Sensei_Usage_Tracking_Base {
 
 		$this->send_event( 'send_usage_data' );
 		$this->send_event( 'system_log', $this->get_system_data() );
+		$this->send_event( 'template_log', $this->get_template_data() );
 
 		$usage_data = call_user_func( $this->callback );
 		if ( ! is_array( $usage_data ) ) {

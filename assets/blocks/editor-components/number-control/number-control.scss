@@ -1,3 +1,5 @@
+@import '../../../shared/styles/wp-colors';
+
 .sensei-number-control {
 	display: flex;
 	justify-content: space-between;
@@ -5,6 +7,23 @@
 	&__input {
 		flex: 1;
 		min-width: 0;
+	}
+
+	&__input-container {
+		position: relative;
+	}
+
+	&__input-suffix {
+		position: absolute;
+		right: 26px;
+		top: 0;
+		bottom: 0;
+		font-size: 10px;
+		text-transform: uppercase;
+		display: flex;
+		align-items: center;
+		color: $gray-700;
+		pointer-events: none;
 	}
 
 	&__button.components-button.is-small {

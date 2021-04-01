@@ -50,7 +50,7 @@ class Sensei_Course_Progress_Block {
 
 		$completed     = count( Sensei()->course->get_completed_lesson_ids( get_the_ID() ) );
 		$total_lessons = count( Sensei()->course->course_lessons( get_the_ID() ) );
-		$percentage    = Sensei_Utils::quotient_as_absolute_rounded_percentage( $completed, $total_lessons, 2 );
+		$percentage    = Sensei_Utils::quotient_as_absolute_rounded_percentage( $completed, $total_lessons );
 
 		$text_css           = Sensei_Block_Helpers::build_styles( $attributes );
 		$bar_background_css = Sensei_Block_Helpers::build_styles(

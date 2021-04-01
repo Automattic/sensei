@@ -8,7 +8,6 @@ import { Icon, info } from '@wordpress/icons';
  * Internal dependencies
  */
 import { alert } from '../../../icons/wordpress-icons';
-import { getQuestionBlockValidationErrorMessages } from './question-validation';
 
 /**
  * Display a notice about the question being shared across quizzes.
@@ -30,23 +29,22 @@ export const SharedQuestionNotice = () => (
 /**
  * Display validation notice for the question block if there are errors.
  *
- * @param {Object}  props
- * @param {Object}  props.meta
- * @param {Object}  props.attributes
- * @param {string}  props.attributes.type           Question type.
- * @param {Array}   props.meta.validationErrors     Validation errors  codes
- * @param {boolean} props.meta.showValidationErrors Display validation errors.
+ * @param {Object}   props
+ * @param {Object}   props.meta
+ * @param {Object}   props.attributes
+ * @param {string}   props.attributes.type           Question type.
+ * @param {Array}    props.meta.validationErrors     Validation errors  codes
+ * @param {boolean}  props.meta.showValidationErrors Display validation errors.
+ * @param {Function} props.getErrorMessages          Get validation error messages.
  */
 export const QuestionValidationNotice = ( {
 	attributes: { type },
 	meta: { validationErrors, showValidationErrors },
+	getErrorMessages,
 } ) => {
-	if ( ! showValidationErrors || ! validationErrors ) return null;
+	if ( ! showValidationErrors || ! validationErrors?.length ) return null;
 
-	const validationMessages = getQuestionBlockValidationErrorMessages(
-		validationErrors,
-		type
-	);
+	const validationMessages = getErrorMessages( validationErrors, type );
 
 	return <BlockValidationNotice errors={ validationMessages } />;
 };

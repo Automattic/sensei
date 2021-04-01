@@ -255,6 +255,9 @@ class Sensei_Data_Cleaner {
 	 * @access public
 	 */
 	public static function cleanup_all() {
+		// Ensure module taxonomy is created before calling functions that rely on its existence.
+		Sensei()->modules->setup_modules_taxonomy();
+
 		self::cleanup_custom_post_types();
 		self::cleanup_post_meta();
 		self::cleanup_pages();
