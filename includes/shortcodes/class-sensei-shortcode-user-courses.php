@@ -155,7 +155,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 			]
 		);
 
-		$this->options['columns'] = 'grid' == $this->options['layoutView'] ? $this->options['columns'] : 1;
+		$this->options['columns'] = 'grid' === $this->options['layoutView'] ? $this->options['columns'] : 1;
 
 	}
 
