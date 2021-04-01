@@ -9,7 +9,7 @@ class Sensei_Block_Learner_Courses_Test extends WP_UnitTestCase {
 	use Sensei_Test_Login_Helpers;
 
 	/**
-	 * Take course block.
+	 * Learner Courses block.
 	 *
 	 * @var Sensei_Learner_Courses_Block
 	 */
