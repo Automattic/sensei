@@ -7,7 +7,7 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import edit from './learner-courses-edit';
-import metadata from './block';
+import metadata from './block.json';
 import { LearnerCoursesIcon as icon } from '../../icons';
 
 export default {

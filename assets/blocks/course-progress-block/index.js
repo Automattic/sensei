@@ -8,7 +8,7 @@ import { __ } from '@wordpress/i18n';
  */
 import { ProgressIcon as icon } from '../../icons';
 import edit from './course-progress-edit';
-import metadata from './block';
+import metadata from './block.json';
 
 export default {
 	title: __( 'Course Progress', 'sensei-lms' ),

@@ -9,7 +9,7 @@ import { createBlock } from '@wordpress/blocks';
  */
 import edit from './conditional-content-edit';
 import save from './conditional-content-save';
-import metadata from './block';
+import metadata from './block.json';
 import icon from '../../icons/conditional-content-icon';
 
 export default {
