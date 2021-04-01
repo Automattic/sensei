@@ -1,7 +1,11 @@
 /**
  * WordPress dependencies
  */
-import { BlockControls, InspectorControls } from '@wordpress/block-editor';
+import {
+	BlockControls,
+	InspectorControls,
+	PanelColorSettings,
+} from '@wordpress/block-editor';
 import {
 	PanelBody,
 	PanelRow,
@@ -55,6 +59,19 @@ const LearnerCoursesSettings = ( { options, setOptions } ) => {
 			view: 'grid',
 			label: __( 'Grid view', 'sensei-lms' ),
 			icon: grid,
+		},
+	];
+
+	const colorSettings = [
+		{
+			optionKey: 'primaryColor',
+			label: __( 'Primary color', 'sensei-lms' ),
+			value: options.primaryColor,
+		},
+		{
+			optionKey: 'accentColor',
+			label: __( 'Accent color', 'sensei-lms' ),
+			value: options.accentColor,
 		},
 	];
 
@@ -126,6 +143,18 @@ const LearnerCoursesSettings = ( { options, setOptions } ) => {
 						} }
 					/>
 				) }
+				<PanelColorSettings
+					title={ __( 'Color settings', 'sensei-lms' ) }
+					initialOpen={ false }
+					colorSettings={ colorSettings.map(
+						( { optionKey, ...settings } ) => ( {
+							...settings,
+							onChange: ( value ) => {
+								setOptions( { [ optionKey ]: value } );
+							},
+						} )
+					) }
+				/>
 			</InspectorControls>
 			<BlockControls>
 				<ToolbarGroup>

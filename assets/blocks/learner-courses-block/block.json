@@ -15,7 +15,9 @@
         "courseCategoryEnabled": false,
         "progressBarEnabled": true,
         "progressBarBorderRadius": 10,
-        "progressBarHeight": 14
+        "progressBarHeight": 14,
+        "primaryColor": null,
+        "accentColor": null
       }
     }
   }
