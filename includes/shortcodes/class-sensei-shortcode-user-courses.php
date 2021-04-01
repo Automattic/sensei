@@ -143,7 +143,9 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 
 		}
 
-		$this->options = wp_parse_args( $attributes['options'], [
+		$this->options = wp_parse_args(
+			$attributes['options'],
+			[
 				'featuredImageEnabled'     => true,
 				'courseCategoryEnabled'    => true,
 				'courseDescriptionEnabled' => true,
