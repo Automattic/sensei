@@ -61,6 +61,13 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	protected $status;
 
 	/**
+	 *  Rendering options.
+	 *
+	 * @var array
+	 */
+	protected $options;
+
+	/**
 	 * Are we in my-courses?
 	 *
 	 * @var bool
@@ -92,6 +99,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 				'status'  => 'all',
 				'orderby' => 'title',
 				'order'   => 'ASC',
+				'options' => [],
 			),
 			$attributes,
 			$shortcode
@@ -134,6 +142,20 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 			$this->order = isset( $attributes['order'] ) ? $attributes['order'] : 'ASC';
 
 		}
+
+		$this->options = wp_parse_args(
+			$attributes['options'],
+			[
+				'featuredImageEnabled'     => true,
+				'courseCategoryEnabled'    => true,
+				'courseDescriptionEnabled' => true,
+				'progressBarEnabled'       => true,
+				'columns'                  => 2,
+				'layoutView'               => 'list',
+			]
+		);
+
+		$this->options['columns'] = 'grid' === $this->options['layoutView'] ? $this->options['columns'] : 1;
 
 	}
 
@@ -293,7 +315,12 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		ob_start();
 		echo '<section id="sensei-user-courses">';
 
-		Sensei_Messages::the_my_messages_link();
+		$use_blocks = ! empty( $this->options );
+
+		if ( ! $use_blocks ) {
+			Sensei_Messages::the_my_messages_link();
+		}
+
 		do_action( 'sensei_my_courses_content_inside_before' );
 		Sensei_Templates::get_template( 'loop-course.php' );
 		do_action( 'sensei_my_courses_content_inside_after' );
@@ -334,8 +361,24 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		// add extra classes to distinguish the course based on user completed or active
 		add_filter( 'sensei_course_loop_content_class', array( $this, 'course_status_class_tagging' ), 20, 2 );
 
+		if ( false === $this->options['featuredImageEnabled'] ) {
+			remove_action( 'sensei_course_content_inside_before', array( Sensei()->course, 'course_image' ), 30, 1 );
+		}
+
+		if ( false === $this->options['courseCategoryEnabled'] ) {
+			remove_action( 'sensei_course_content_inside_before', array( Sensei()->course, 'the_course_meta' ) );
+		}
+
+		if ( false === $this->options['courseDescriptionEnabled'] ) {
+			add_filter( 'get_the_excerpt', '__return_false' );
+		}
+
+		add_filter( 'sensei_course_loop_number_of_columns', [ $this, 'course_column_count' ] );
+
 		// attach progress meter below course
-		add_action( 'sensei_course_content_inside_after', array( $this, 'attach_course_progress' ) );
+		if ( false !== $this->options['progressBarEnabled'] ) {
+			add_action( 'sensei_course_content_inside_after', array( $this, 'attach_course_progress' ) );
+		}
 		add_action( 'sensei_course_content_inside_after', array( $this, 'attach_course_buttons' ) );
 
 	}
@@ -352,6 +395,16 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		remove_action( 'sensei_course_content_inside_after', array( $this, 'attach_course_buttons' ) );
 		remove_filter( 'sensei_course_loop_content_class', array( $this, 'course_status_class_tagging' ), 20, 2 );
 		remove_action( 'sensei_loop_course_before', array( $this, 'course_toggle_actions' ) );
+		remove_filter( 'get_the_excerpt', '__return_false' );
+		remove_filter( 'sensei_course_loop_number_of_columns', [ $this, 'course_column_count' ] );
+
+		if ( false === $this->options['featuredImageEnabled'] ) {
+			add_action( 'sensei_course_content_inside_before', array( Sensei()->course, 'course_image' ), 30, 1 );
+		}
+
+		if ( false === $this->options['courseCategoryEnabled'] ) {
+			add_action( 'sensei_course_content_inside_before', array( Sensei()->course, 'the_course_meta' ) );
+		}
 	}
 
 	/**
@@ -443,6 +496,17 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		</section>
 
 		<?php
+	}
+
+	/**
+	 * Set grid/list layout and number of columns.
+	 *
+	 * @access private
+	 *
+	 * @return integer
+	 */
+	public function course_column_count() {
+		return $this->options['columns'];
 	}
 
 	/**
