@@ -18,7 +18,7 @@ export default createButtonBlockType( {
 	settings: {
 		name: 'sensei-lms/button-view-results',
 		description: __(
-			'Allow an enrolled user to view the course results. The block is only displayed if the user is enrolled to the course.',
+			'Allow an enrolled user to navigate to the course results page. The block is only displayed if the user is enrolled to the course.',
 			'sensei-lms'
 		),
 		title: __( 'View Results', 'sensei-lms' ),
