@@ -3374,6 +3374,7 @@ class Sensei_Lesson {
 						 * this filter.
 						 *
 						 * @since 3.10.0
+						 * @hook sensei_filter_category_questions_by_author
 						 *
 						 * @param {array}  $quiz_id The quiz id.
 						 *
