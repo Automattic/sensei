@@ -159,13 +159,92 @@ final class Sensei_Extensions {
 	}
 
 	/**
+	 * Get all installed plugins by slug.
+	 *
+	 * @return array Installed plugins.
+	 */
+	private function get_installed_plugins_by_slug() {
+		require_once ABSPATH . 'wp-admin/includes/plugin.php';
+
+		$installed_plugins_by_slug = [];
+
+		foreach ( get_plugins() as $key => $plugin ) {
+			$slug                               = pathinfo( $key, PATHINFO_FILENAME );
+			$installed_plugins_by_slug[ $slug ] = $plugin;
+		}
+
+		return $installed_plugins_by_slug;
+	}
+
+	/**
+	 * Get installed Sensei Extensions.
+	 *
+	 * @return array Installed extensions.
+	 */
+	private function get_installed_extensions() {
+		$installed_plugins_by_slug = $this->get_installed_plugins_by_slug();
+
+		$installed_extensions = array_filter(
+			$this->get_extensions( 'plugin' ),
+			function( $extension ) use ( $installed_plugins_by_slug ) {
+				return isset( $installed_plugins_by_slug[ $extension->product_slug ] );
+			}
+		);
+
+		// Includes installed version, and whether it has update.
+		$installed_extensions = array_map(
+			function( $extension ) use ( $installed_plugins_by_slug ) {
+				$extension->installed_version = $installed_plugins_by_slug[ $extension->product_slug ]['Version'];
+				$extension->has_update        = isset( $extension->version ) && version_compare( $extension->version, $extension->installed_version, '>' );
+
+				return $extension;
+			},
+			$installed_extensions
+		);
+
+		return $installed_extensions;
+	}
+
+	/**
+	 * Get updates count.
+	 *
+	 * @return int Updates count.
+	 */
+	private function get_has_update_count() {
+		$installed_extensions = $this->get_installed_extensions();
+
+		return count(
+			array_filter(
+				array_column( $installed_extensions, 'has_update' )
+			)
+		);
+	}
+
+	/**
 	 * Adds the menu item for the Extensions page.
 	 *
 	 * @since  2.0.0
 	 * @access private
 	 */
 	public function add_admin_menu_item() {
-		add_submenu_page( 'sensei', __( 'Sensei LMS Extensions', 'sensei-lms' ), __( 'Extensions', 'sensei-lms' ), 'install_plugins', 'sensei-extensions', array( $this, 'render' ) );
+		$updates_html = '';
+
+		if ( Sensei()->feature_flags->is_enabled( 'extensions_management_enhancement' ) ) {
+			$updates = $this->get_has_update_count();
+
+			if ( $updates > 0 ) {
+				$updates_html = ' <span class="awaiting-mod">' . esc_html( $updates ) . '</span>';
+			}
+		}
+
+		add_submenu_page(
+			'sensei',
+			__( 'Sensei LMS Extensions', 'sensei-lms' ),
+			__( 'Extensions', 'sensei-lms' ) . $updates_html,
+			'install_plugins',
+			'sensei-extensions',
+			[ $this, 'render' ]
+		);
 	}
 
 	/**
