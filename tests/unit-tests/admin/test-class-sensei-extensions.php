@@ -40,6 +40,10 @@ class Sensei_Extensions_Test extends WP_UnitTestCase {
 	 * Tests that extensions with update are counted correctly.
 	 */
 	public function testCountExtensionsWithUpdate() {
+		if ( is_multisite() ) {
+			$this->markTestSkipped( 'Skip test for multisite because admin does not have the install_plugins capability used to add the submenu.' );
+		}
+
 		$this->login_as_admin();
 
 		$extensions = [
@@ -95,6 +99,10 @@ class Sensei_Extensions_Test extends WP_UnitTestCase {
 	 * Tests that extensions without update don't show counter.
 	 */
 	public function testCountExtensionsWithoutUpdate() {
+		if ( is_multisite() ) {
+			$this->markTestSkipped( 'Skip test for multisite because admin does not have the install_plugins capability used to add the submenu.' );
+		}
+
 		$this->login_as_admin();
 
 		$extensions = [
