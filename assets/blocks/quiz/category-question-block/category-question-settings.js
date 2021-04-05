@@ -4,12 +4,56 @@
 import { InspectorControls } from '@wordpress/block-editor';
 import { Notice, PanelBody, SelectControl } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import apiFetch from '@wordpress/api-fetch';
+import { useState, useEffect } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
 import NumberControl from '../../editor-components/number-control';
 import { useQuestionCategories } from '../question-categories';
+
+/**
+ * Calculate the number of questions that are available in a category.
+ *
+ * @param {number}   categoryId The category id.
+ * @param {Function} onError    Called when an error happens.
+ *
+ * @return {number|boolean} The number of questions in a category or false if unknown.
+ */
+const useCategoryQuestionsCount = ( categoryId, onError ) => {
+	const [ categoriesQuestionCount, setCategoriesQuestionCount ] = useState(
+		{}
+	);
+
+	useEffect( () => {
+		if (
+			categoryId &&
+			! categoriesQuestionCount.hasOwnProperty( categoryId )
+		) {
+			apiFetch( {
+				path: `/wp/v2/questions?question-category=${ categoryId }`,
+				method: 'GET',
+				parse: false,
+			} )
+				.then( ( res ) => {
+					categoriesQuestionCount[ categoryId ] = +res.headers.get(
+						'X-WP-Total'
+					);
+					setCategoriesQuestionCount( {
+						...categoriesQuestionCount,
+					} );
+				} )
+				.catch( ( res ) => {
+					res.json().then( ( error ) => onError( error.message ) );
+				} );
+		}
+	}, [ categoryId, categoriesQuestionCount, onError ] );
+
+	return categoriesQuestionCount.hasOwnProperty( categoryId )
+		? categoriesQuestionCount[ categoryId ]
+		: false;
+};
 
 /**
  * Category question block settings controls.
@@ -34,6 +78,12 @@ const CategoryQuestionSettings = ( {
 		getQuestionCategoryById,
 	] = useQuestionCategories();
 
+	const [ questionsFetchError, setQuestionsFetchError ] = useState( null );
+	const categoryQuestionsCount = useCategoryQuestionsCount(
+		options.category,
+		setQuestionsFetchError
+	);
+
 	const categoryOptions = [
 		{
 			value: '',
@@ -44,8 +94,6 @@ const CategoryQuestionSettings = ( {
 			label: questionCategory.name,
 		} ) ),
 	];
-
-	const questionCategory = getQuestionCategoryById( options.category );
 
 	return (
 		<InspectorControls>
@@ -78,6 +126,8 @@ const CategoryQuestionSettings = ( {
 											nextQuestionCategory?.name,
 									}
 								);
+
+								setQuestionsFetchError( null );
 							} }
 						/>
 						<NumberControl
@@ -92,9 +142,21 @@ const CategoryQuestionSettings = ( {
 								} )
 							}
 						/>
-
-						{ questionCategory &&
-							options.number > questionCategory.count && (
+						{ questionsFetchError !== null && (
+							<Notice status="error" isDismissible={ false }>
+								{ sprintf(
+									// translators: The underlying error message.
+									__(
+										'An error occurred while retrieving questions: %s',
+										'sensei-lms'
+									),
+									questionsFetchError
+								) }
+							</Notice>
+						) }
+						{ categoryQuestionsCount !== false &&
+							questionsFetchError === null &&
+							options.number > categoryQuestionsCount && (
 								<Notice
 									status="warning"
 									isDismissible={ false }
@@ -104,10 +166,10 @@ const CategoryQuestionSettings = ( {
 										_n(
 											'The selected category has %d question.',
 											'The selected category has %d questions.',
-											questionCategory.count,
+											categoryQuestionsCount,
 											'sensei-lms'
 										),
-										questionCategory.count
+										categoryQuestionsCount
 									) }
 								</Notice>
 							) }

@@ -1216,7 +1216,7 @@ class Sensei_Quiz {
 
 		global $sensei_question_loop;
 
-		// intialize the questions loop object
+		// Initialise the questions loop object.
 		$sensei_question_loop['current']   = -1;
 		$sensei_question_loop['total']     = 0;
 		$sensei_question_loop['questions'] = array();
@@ -1224,23 +1224,24 @@ class Sensei_Quiz {
 		$questions = Sensei()->lesson->lesson_quiz_questions( get_the_ID(), 'publish' );
 
 		if ( count( $questions ) > 0 ) {
-
 			$sensei_question_loop['total']     = count( $questions );
 			$sensei_question_loop['questions'] = $questions;
 			$sensei_question_loop['quiz_id']   = get_the_ID();
-
 		}
-
-	}//end start_quiz_questions_loop()
+	}
 
 	/**
 	 * Initialize the quiz question loop on the single quiz template
 	 *
 	 * The function will create a global quiz loop varialbe.
 	 *
+	 * @deprecated 3.10.0
+	 *
 	 * @since 1.9.0
 	 */
 	public static function stop_quiz_questions_loop() {
+
+		_deprecated_function( __METHOD__, '3.10.0' );
 
 		$sensei_question_loop              = [];
 		$sensei_question_loop['total']     = 0;
