@@ -93,6 +93,54 @@ final class Sensei_Extensions {
 			}
 		}
 
+		if ( 'plugin' === $type ) {
+			return $this->add_installed_extensions_properties( $extensions );
+		}
+
+		return $extensions;
+	}
+
+	/**
+	 * Get all installed plugins by slug.
+	 *
+	 * @return array Installed plugins.
+	 */
+	private function get_installed_plugins_by_slug() {
+		require_once ABSPATH . 'wp-admin/includes/plugin.php';
+
+		$installed_plugins_by_slug = [];
+
+		foreach ( get_plugins() as $key => $plugin ) {
+			$slug                               = pathinfo( $key, PATHINFO_FILENAME );
+			$installed_plugins_by_slug[ $slug ] = $plugin;
+		}
+
+		return $installed_plugins_by_slug;
+	}
+
+	/**
+	 * Map the extensions array, adding the installed properties.
+	 *
+	 * @param array $extensions Extensions.
+	 *
+	 * @return array Extensions with installed properties.
+	 */
+	private function add_installed_extensions_properties( $extensions ) {
+		$installed_plugins_by_slug = $this->get_installed_plugins_by_slug();
+
+		// Includes installed version, and whether it has update.
+		$extensions = array_map(
+			function( $extension ) use ( $installed_plugins_by_slug ) {
+				if ( isset( $installed_plugins_by_slug[ $extension->product_slug ] ) ) {
+					$extension->installed_version = $installed_plugins_by_slug[ $extension->product_slug ]['Version'];
+					$extension->has_update        = isset( $extension->version ) && version_compare( $extension->version, $extension->installed_version, '>' );
+				}
+
+				return $extension;
+			},
+			$extensions
+		);
+
 		return $extensions;
 	}
 
@@ -159,63 +207,16 @@ final class Sensei_Extensions {
 	}
 
 	/**
-	 * Get all installed plugins by slug.
-	 *
-	 * @return array Installed plugins.
-	 */
-	private function get_installed_plugins_by_slug() {
-		require_once ABSPATH . 'wp-admin/includes/plugin.php';
-
-		$installed_plugins_by_slug = [];
-
-		foreach ( get_plugins() as $key => $plugin ) {
-			$slug                               = pathinfo( $key, PATHINFO_FILENAME );
-			$installed_plugins_by_slug[ $slug ] = $plugin;
-		}
-
-		return $installed_plugins_by_slug;
-	}
-
-	/**
-	 * Get installed Sensei Extensions.
-	 *
-	 * @return array Installed extensions.
-	 */
-	private function get_installed_extensions() {
-		$installed_plugins_by_slug = $this->get_installed_plugins_by_slug();
-
-		$installed_extensions = array_filter(
-			$this->get_extensions( 'plugin' ),
-			function( $extension ) use ( $installed_plugins_by_slug ) {
-				return isset( $installed_plugins_by_slug[ $extension->product_slug ] );
-			}
-		);
-
-		// Includes installed version, and whether it has update.
-		$installed_extensions = array_map(
-			function( $extension ) use ( $installed_plugins_by_slug ) {
-				$extension->installed_version = $installed_plugins_by_slug[ $extension->product_slug ]['Version'];
-				$extension->has_update        = isset( $extension->version ) && version_compare( $extension->version, $extension->installed_version, '>' );
-
-				return $extension;
-			},
-			$installed_extensions
-		);
-
-		return $installed_extensions;
-	}
-
-	/**
 	 * Get updates count.
 	 *
 	 * @return int Updates count.
 	 */
 	private function get_has_update_count() {
-		$installed_extensions = $this->get_installed_extensions();
+		$extensions = $this->get_extensions( 'plugin' );
 
 		return count(
 			array_filter(
-				array_column( $installed_extensions, 'has_update' )
+				array_column( $extensions, 'has_update' )
 			)
 		);
 	}
