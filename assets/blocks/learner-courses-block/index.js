@@ -25,6 +25,7 @@ export default {
 		__( 'Student', 'sensei-lms' ),
 		__( 'Learner', 'sensei-lms' ),
 	],
+	example: {},
 	icon,
 	edit,
 	...metadata,
