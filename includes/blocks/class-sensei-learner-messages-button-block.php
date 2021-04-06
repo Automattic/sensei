@@ -69,6 +69,14 @@ class Sensei_Learner_Messages_Button_Block {
 
 		$message_url = esc_url( get_post_type_archive_link( 'sensei_message' ) );
 
+		// Render the default content if this page hasn't been edited since it was auto-generated.
+		if ( empty( $attributes ) && empty( $content ) ) {
+			return '
+			<div class="wp-block-sensei-lms-button-learner-messages is-style-outline wp-block-sensei-button wp-block-button has-text-align-left">
+				<a href="' . $message_url . '" class="wp-block-button__link">' . esc_html__( 'My Messages', 'sensei-lms' ) . '</a>
+			</div>';
+		}
+
 		return preg_replace(
 			'/<a /',
 			'<a href="' . $message_url . '" ',
