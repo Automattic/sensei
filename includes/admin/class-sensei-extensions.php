@@ -101,24 +101,6 @@ final class Sensei_Extensions {
 	}
 
 	/**
-	 * Get all installed plugins by slug.
-	 *
-	 * @return array Installed plugins.
-	 */
-	private function get_installed_plugins_by_slug() {
-		require_once ABSPATH . 'wp-admin/includes/plugin.php';
-
-		$installed_plugins_by_slug = [];
-
-		foreach ( get_plugins() as $key => $plugin ) {
-			$slug                               = pathinfo( $key, PATHINFO_FILENAME );
-			$installed_plugins_by_slug[ $slug ] = $plugin;
-		}
-
-		return $installed_plugins_by_slug;
-	}
-
-	/**
 	 * Map the extensions array, adding the installed properties.
 	 *
 	 * @param array $extensions Extensions.
@@ -126,13 +108,15 @@ final class Sensei_Extensions {
 	 * @return array Extensions with installed properties.
 	 */
 	private function add_installed_extensions_properties( $extensions ) {
-		$installed_plugins_by_slug = $this->get_installed_plugins_by_slug();
+		require_once ABSPATH . 'wp-admin/includes/plugin.php';
+
+		$installed_plugins = get_plugins();
 
 		// Includes installed version, and whether it has update.
 		$extensions = array_map(
-			function( $extension ) use ( $installed_plugins_by_slug ) {
-				if ( isset( $installed_plugins_by_slug[ $extension->product_slug ] ) ) {
-					$extension->installed_version = $installed_plugins_by_slug[ $extension->product_slug ]['Version'];
+			function( $extension ) use ( $installed_plugins ) {
+				if ( isset( $installed_plugins[ $extension->plugin_file ] ) ) {
+					$extension->installed_version = $installed_plugins[ $extension->plugin_file ]['Version'];
 					$extension->has_update        = isset( $extension->version ) && version_compare( $extension->version, $extension->installed_version, '>' );
 				}
 

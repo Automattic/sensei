@@ -48,20 +48,24 @@ class Sensei_Extensions_Test extends WP_UnitTestCase {
 
 		$extensions = [
 			(object) [
-				'product_slug' => 'sensei-extension-A',
+				'product_slug' => 'any-A',
 				'version'      => '1.0.1',
+				'plugin_file'  => 'any-folder-a/sensei-extension-A.php',
 			],
 			(object) [
-				'product_slug' => 'sensei-extension-B',
+				'product_slug' => 'any-B',
 				'version'      => '1.0.1',
+				'plugin_file'  => 'any-folder-b/sensei-extension-B.php',
 			],
 			(object) [
-				'product_slug' => 'sensei-extension-C',
+				'product_slug' => 'any-C',
 				'version'      => '1.0.1',
+				'plugin_file'  => 'any-folder-c/sensei-extension-C.php',
 			],
 			(object) [
-				'product_slug' => 'sensei-extension-E',
+				'product_slug' => 'any-E',
 				'version'      => '1.0.1',
+				'plugin_file'  => 'any-folder-e/sensei-extension-E.php',
 			],
 		];
 
@@ -70,13 +74,13 @@ class Sensei_Extensions_Test extends WP_UnitTestCase {
 				'any-folder-a/sensei-extension-A.php' => [
 					'Version' => '1.0.0',
 				],
-				'any-folder-a/sensei-extension-C.php' => [
+				'any-folder-c/sensei-extension-C.php' => [
 					'Version' => '1.0.0',
 				],
-				'any-folder-a/sensei-extension-D.php' => [
+				'any-folder-d/sensei-extension-D.php' => [
 					'Version' => '1.0.0',
 				],
-				'any-folder-a/sensei-extension-E.php' => [
+				'any-folder-e/sensei-extension-E.php' => [
 					'Version' => '1.0.1',
 				],
 			],
@@ -107,8 +111,9 @@ class Sensei_Extensions_Test extends WP_UnitTestCase {
 
 		$extensions = [
 			(object) [
-				'product_slug' => 'sensei-extension-A',
+				'product_slug' => 'any-A',
 				'version'      => '1.0.1',
+				'plugin_file'  => 'any-folder-a/sensei-extension-A.php',
 			],
 		];
 
