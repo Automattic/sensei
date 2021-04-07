@@ -1,12 +1,80 @@
 @import '../shared/styles/variables';
 @import '../shared/styles/wp-admin';
 
+@mixin white-box {
+	border-radius: 2px;
+	background-color: $white;
+	box-shadow: 0 0 0 1px #DCDCDE;
+}
+
+@mixin col-width($w) {
+	width: calc(#{$w} / 12 * 100%);
+}
+
 .sensei-extensions {
 	margin-right: 20px;
 
+	&__sections {
+		display: flex;
+		flex-wrap: wrap;
+	}
+
+	&__section {
+		box-sizing: border-box;
+		margin-bottom: 38px;
+		padding: 0 9px;
+
+		&.--col-12 {
+			@include col-width( 12 );
+		}
+
+		&.--col-11 {
+			@include col-width( 11 );
+		}
+
+		&.--col-10 {
+			@include col-width( 10 );
+		}
+
+		&.--col-9 {
+			@include col-width( 9 );
+		}
+
+		&.--col-8 {
+			@include col-width( 8 );
+		}
+
+		&.--col-7 {
+			@include col-width( 7 );
+		}
+
+		&.--col-6 {
+			@include col-width( 6 );
+		}
+
+		&.--col-5 {
+			@include col-width( 5 );
+		}
+
+		&.--col-4 {
+			@include col-width( 4 );
+		}
+
+		&.--col-3 {
+			@include col-width( 3 );
+		}
+
+		&.--col-2 {
+			@include col-width( 2 );
+		}
+
+		&.--col-1 {
+			@include col-width( 1 );
+		}
+	}
+
 	&__tabs {
 		float: none;
-		margin-bottom: 40px;
 	}
 
 	&__update-badge {
@@ -20,12 +88,9 @@
 	}
 
 	&__update-notification {
+		@include white-box;
 		padding: 17px 50px;
-		margin-bottom: 38px;
 		border-left: solid 5px $primary;
-		border-radius: 2px;
-		background-color: $white;
-		box-shadow: 0 0 0 1px #DCDCDE;
 
 		.sensei-extensions__update-badge {
 			margin-left: -29px
@@ -39,6 +104,47 @@
 		&__description {
 			margin: 0 0 30px;
 			font-size: 14px;
+		}
+	}
+
+	&__featured-list {
+		@include white-box;
+		display: flex;
+		margin: 0;
+		padding: 65px 45px;
+
+		&__item {
+			margin: 0 15px;
+			box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.16);
+			border-radius: 8px;
+		}
+	}
+
+	&__small-list,
+	&__large-list {
+		@include white-box;
+
+		&__item {
+			margin: 0;
+
+			&:not(:last-child) {
+				border-bottom: solid 1px #DCDCDE;
+			}
+		}
+	}
+
+	&__large-list {
+		.sensei-extensions__card {
+			display: flex;
+		}
+		.sensei-extensions__extension-actions {
+			flex-shrink: 0;
+			flex-direction: row-reverse;
+		}
+
+		.sensei-extensions__extension-actions__details-link {
+			margin-left: 0;
+			margin-right: 10px;
 		}
 	}
 
