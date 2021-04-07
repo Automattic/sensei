@@ -22,7 +22,7 @@
 .button.button-primary {
 	background-color: $primary;
 	border-color: $primary;
-	color: #fff;
+	color: #000;
 
 	&:hover,
 	&:active {
@@ -33,7 +33,7 @@
 	&:focus {
 		background-color: darken($primary, 5%);
 		border-color: darken($primary, 5%);
-		box-shadow: 0 0 0 1px #fff, 0 0 0 3px $primary;
+		box-shadow: 0 0 0 1px $white, 0 0 0 3px $primary;
 	}
 }
 
