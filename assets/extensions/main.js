@@ -3,14 +3,14 @@
  */
 import Header from './header';
 import Tabs from './tabs';
-import Banner from './banner';
+import UpdateNotification from './update-notification';
 import Extensions from './extensions';
 
 const Main = () => (
-	<main>
+	<main className="sensei-extensions">
 		<Header />
 		<Tabs />
-		<Banner />
+		<UpdateNotification />
 		<Extensions />
 	</main>
 );

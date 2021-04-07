@@ -2,8 +2,44 @@
 @import '../shared/styles/wp-admin';
 
 .sensei-extensions {
+	margin-right: 20px;
+
 	&__tabs {
 		float: none;
+		margin-bottom: 40px;
+	}
+
+	&__update-badge {
+		display: flex;
+		align-items: center;
+		font-size: 14px;
+
+		svg {
+			margin-right: 5px;
+		}
+	}
+
+	&__update-notification {
+		padding: 17px 50px;
+		margin-bottom: 38px;
+		border-left: solid 5px $primary;
+		border-radius: 2px;
+		background-color: $white;
+		box-shadow: 0 0 0 1px #DCDCDE;
+
+		.sensei-extensions__update-badge {
+			margin-left: -29px
+		}
+
+		&__title {
+			margin: 10px 0;
+			font-size: 18px;
+		}
+
+		&__description {
+			margin: 0 0 30px;
+			font-size: 14px;
+		}
 	}
 
 	&__card {
