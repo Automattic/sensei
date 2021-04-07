@@ -1,4 +1,9 @@
 /**
+ * WordPress dependencies
+ */
+import { __ } from '@wordpress/i18n';
+
+/**
  * Internal dependencies
  */
 import ExtensionActions from './extension-actions';
@@ -18,7 +23,7 @@ const Card = ( { hasUpdate } ) => (
 				</h3>
 				{ hasUpdate && (
 					<small className="sensei-extensions__card__new-badge">
-						New version
+						{ __( 'New version', 'sensei-lms' ) }
 					</small>
 				) }
 			</header>
