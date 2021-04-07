@@ -18,7 +18,9 @@ import {
 	withDefaultColor,
 } from '../../shared/blocks/settings';
 import { COURSE_STATUS_STORE } from '../course-outline/status-preview/status-store';
-import CourseProgressSettings from '../editor-components/course-progress-settings';
+import CourseProgress, {
+	CourseProgressSettings,
+} from '../../shared/blocks/course-progress';
 import ToggleLegacyCourseMetaboxesWrapper from '../toggle-legacy-course-metaboxes-wrapper';
 
 /**
@@ -51,13 +53,6 @@ export const CourseProgressEdit = ( props ) => {
 		[]
 	);
 
-	let progress = 0;
-	if ( 0 !== totalLessonsCount ) {
-		progress = Math.round(
-			( 100 * completedLessonsCount ) / totalLessonsCount
-		);
-	}
-
 	const wrapperAttributes = {
 		className: classnames( className, textColor?.class ),
 		style: {
@@ -68,11 +63,10 @@ export const CourseProgressEdit = ( props ) => {
 		className: barColor?.class || defaultBarColor?.className,
 		style: {
 			backgroundColor: barColor?.color || defaultBarColor?.color,
-			width: Math.max( 3, progress ) + '%',
 			borderRadius,
 		},
 	};
-	const barBackgroundAttributes = {
+	const barWrapperAttributes = {
 		className: classnames(
 			'wp-block-sensei-lms-progress-bar',
 			barBackgroundColor?.class
@@ -86,25 +80,16 @@ export const CourseProgressEdit = ( props ) => {
 
 	return (
 		<ToggleLegacyCourseMetaboxesWrapper { ...props }>
-			<div { ...wrapperAttributes }>
-				<section className="wp-block-sensei-lms-progress-heading">
-					<div className="wp-block-sensei-lms-progress-heading__lessons">
-						{ totalLessonsCount } Lessons
-					</div>
-					<div className="wp-block-sensei-lms-progress-heading__completed">
-						{ completedLessonsCount } completed ({ progress }%)
-					</div>
-				</section>
-				<div
-					role="progressbar"
-					aria-valuenow={ progress }
-					aria-valuemin="0"
-					aria-valuemax="100"
-					{ ...barBackgroundAttributes }
-				>
-					<div { ...barAttributes } />
-				</div>
-			</div>
+			<CourseProgress
+				lessonsCount={ totalLessonsCount }
+				completedCount={ completedLessonsCount }
+				wrapperAttributes={ wrapperAttributes }
+				barWrapperAttributes={ barWrapperAttributes }
+				barAttributes={ barAttributes }
+				countersClassName="wp-block-sensei-lms-progress-heading"
+				lessonsCountClassName="wp-block-sensei-lms-progress-heading__lessons"
+				completedCountClassName="wp-block-sensei-lms-progress-heading__completed"
+			/>
 			<CourseProgressSettings
 				borderRadius={ borderRadius }
 				setBorderRadius={ ( newRadius ) =>

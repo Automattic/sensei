@@ -35,6 +35,10 @@ class Sensei_Page_Blocks extends Sensei_Blocks_Initializer {
 	 */
 	public function enqueue_block_assets() {
 		Sensei()->assets->enqueue( 'sensei-single-page-blocks', 'blocks/single-page.js', [], true );
+		Sensei()->assets->enqueue(
+			'sensei-single-page-blocks-style',
+			'blocks/single-page-style.css'
+		);
 	}
 
 	/**
@@ -44,9 +48,8 @@ class Sensei_Page_Blocks extends Sensei_Blocks_Initializer {
 	 */
 	public function enqueue_block_editor_assets() {
 		Sensei()->assets->enqueue(
-			'sensei-single-page-blocks-style',
-			'blocks/single-page-style.css',
-			[ 'sensei-editor-components-style' ]
+			'sensei-single-page-blocks-editor-style',
+			'blocks/single-page-style-editor.css'
 		);
 	}
 }

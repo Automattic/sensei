@@ -1,3 +1,5 @@
+@import '../../shared/blocks/course-progress/course-progress';
+
 $block: '.wp-block-sensei-lms-learner-courses';
 $courses-list: '#{$block}__courses-list';
 
@@ -135,33 +137,20 @@ $courses-list: '#{$block}__courses-list';
 		}
 	}
 
-	&__course-progress {
-		&__numbers {
-			margin-top: 10px;
-			font-size: 14px;
+	.sensei-course-progress {
+		&__heading {
+			font-size: 12px;
 		}
 
-		&__number-lessons {
-			margin-right: 18px;
-		}
+		&__bar {
+			height: var( --progress-bar-height, 14px );
+			border-radius: var( --progress-bar-border-radius, 10px );
 
-		&__completed-lessons {
-			font-style: normal;
-		}
-	}
-
-	&__progress-bar {
-		height: 14px; /* IE11 fallback */
-		height: var( --progress-bar-height, 14px );
-		border: 1px solid currentColor;
-		border-radius: 10px; /* IE11 fallback */
-		border-radius: var( --progress-bar-border-radius, 10px );
-		overflow: hidden;
-
-		&__fill  {
-			height: 100%;
-			background-color: currentColor;
-			background-color: var( --accent-color, currentColor );
+			div  {
+				background-color: currentColor;
+				background-color: var( --accent-color, currentColor );
+				border-radius: var( --progress-bar-border-radius, 10px );
+			}
 		}
 	}
 }
