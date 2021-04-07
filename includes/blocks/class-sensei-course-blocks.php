@@ -59,6 +59,7 @@ class Sensei_Course_Blocks extends Sensei_Blocks_Initializer {
 		$this->contact_teacher = new Sensei_Block_Contact_Teacher();
 		$this->take_course     = new Sensei_Block_Take_Course();
 		new Sensei_Conditional_Content_Block();
+		new Sensei_Block_View_Results();
 
 		$post_type_object = get_post_type_object( 'course' );
 
