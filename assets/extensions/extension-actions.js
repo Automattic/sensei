@@ -4,12 +4,19 @@
 import { __ } from '@wordpress/i18n';
 
 const ExtensionActions = () => (
-	<ul>
+	<ul className="sensei-extensions__extension-actions">
 		<li>
-			<a href="#learn-more">{ __( 'Learn more', 'sensei-lms' ) }</a>
+			<button className="button button-primary">
+				{ __( 'Install', 'sensei-lms' ) }
+			</button>
 		</li>
 		<li>
-			<button>{ __( 'Update', 'sensei-lms' ) }</button>
+			<a
+				href="#more-details"
+				className="sensei-extensions__extension-actions__details-link"
+			>
+				{ __( 'More details', 'sensei-lms' ) }
+			</a>
 		</li>
 	</ul>
 );

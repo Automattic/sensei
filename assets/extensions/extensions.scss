@@ -1,5 +1,67 @@
+@import '../shared/styles/variables';
+@import '../shared/styles/wp-admin';
+
 .sensei-extensions {
 	&__tabs {
 		float: none;
+	}
+
+	&__card {
+		padding: 25px;
+		background-color: $white;
+
+		&__header {
+			display: flex;
+			justify-content: space-between;
+			margin-bottom: 10px;
+		}
+
+		&__title,
+		&__price {
+			font-size: 16px;
+			font-weight: bold;
+		}
+
+		&__title {
+			margin: 0;
+		}
+
+		&__price {
+			display: block;
+			margin-bottom: 10px;
+		}
+
+		&__new-badge {
+			font-size: 12px;
+			&::before {
+				content: "";
+				display: inline-block;
+				width: 8px;
+				height: 8px;
+				margin-right: 7px;
+				background-color: $primary;
+				border-radius: 50%;
+			}
+		}
+
+		&__description {
+			margin: 0 0 10px;
+			font-size: 14px;
+		}
+	}
+
+	&__extension-actions {
+		display: flex;
+		align-items: center;
+		margin: 0;
+		padding: 0;
+
+		&__details-link {
+			display: inline-block;
+			padding: 0 10px;
+			margin-left: 10px;
+			font-size: 13px;
+			color: #000;
+		}
 	}
 }

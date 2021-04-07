@@ -14,7 +14,7 @@ const Extensions = () => (
 			<h2>{ __( 'Featured', 'sensei-lms' ) }</h2>
 			<ul>
 				<li>
-					<Card />
+					<Card hasUpdate />
 				</li>
 				<li>
 					<Card />
