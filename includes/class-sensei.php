@@ -439,6 +439,7 @@ class Sensei_Main {
 			new Sensei_Export();
 			new Sensei_Exit_Survey();
 			new Sensei_WCPC_Prompt();
+			new Sensei_WCCOM_Connect_Notice();
 		} else {
 
 			// Load Frontend Class
