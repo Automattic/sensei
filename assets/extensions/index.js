@@ -3,7 +3,9 @@
  */
 import { render } from '@wordpress/element';
 
-render(
-	<div>TODO: Extensions page</div>,
-	document.getElementById( 'sensei-extensions-page' )
-);
+/**
+ * Internal dependencies
+ */
+import Main from './main';
+
+render( <Main />, document.getElementById( 'sensei-extensions-page' ) );
