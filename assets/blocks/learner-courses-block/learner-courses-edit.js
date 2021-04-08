@@ -90,7 +90,7 @@ const LearnerCoursesEdit = ( {
 					) }
 					<header className="wp-block-sensei-lms-learner-courses__courses-list__header">
 						<h3 className="wp-block-sensei-lms-learner-courses__courses-list__title">
-							{ __( 'Course title', 'sensei-lms' ) }
+							{ __( 'Course Title', 'sensei-lms' ) }
 						</h3>
 						{ completed && (
 							<em className="wp-block-sensei-lms-learner-courses__courses-list__badge">
