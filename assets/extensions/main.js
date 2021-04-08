@@ -22,6 +22,7 @@ const Main = () => {
 	const [ extensions, setExtensions ] = useState( false );
 
 	useEffect( () => {
+		// TODO: Update to real endpoint.
 		apiFetch( { path: '/sensei-internal/v1/setup-wizard/features' } ).then(
 			() => {
 				setExtensions( extensionsMock );
