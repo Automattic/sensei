@@ -90,20 +90,18 @@ class Sensei_WCCOM_Connect_Notice {
 
 		$wccom_connect_url = $this->get_wccom_connect_url();
 		?>
-		<div id="sensei-lms-wccom-connect-notice" class="notice notice-info is-dismissible"
+		<div id="sensei-lms-wccom-connect-notice" class="notice sensei-notice is-dismissible"
 				data-nonce="<?php echo esc_attr( wp_create_nonce( self::DISMISS_NOTICE_NONCE_ACTION ) ); ?>">
 			<p>
+				<a href="<?php echo esc_url( $wccom_connect_url ); ?>" class="button button-primary">
+					<?php esc_html_e( 'Connect account', 'sensei-lms' ); ?>
+				</a>
 				<?php
 				esc_html_e(
 					'Get notified about new features and updates by connecting your WooCommerce account.',
 					'sensei-lms'
 				);
 				?>
-			</p>
-			<p>
-				<a href="<?php echo esc_url( $wccom_connect_url ); ?>" class="button button-primary">
-					<?php esc_html_e( 'Connect account', 'sensei-lms' ); ?>
-				</a>
 			</p>
 		</div>
 		<?php

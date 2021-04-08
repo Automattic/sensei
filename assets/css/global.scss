@@ -2,6 +2,24 @@
 /* Backend Global Stylesheet */
 /*-----------------------------------------------------------------------------------*/
 
+@import '../shared/styles/variables';
+@import '../shared/styles/wp-admin';
+
+/* Sensei Notice */
+.sensei-notice {
+	border-left-color: $primary;
+	padding: 10px 12px;
+.
+	.button {
+		float: right;
+		margin-top: -5px;
+	}
+
+	.notice-dismiss {
+		top: 10px;
+	}
+}
+
 /*  Sensei icon */
 body #toplevel_page_sensei div.wp-menu-image:before {
   	content: "\f118" !important;

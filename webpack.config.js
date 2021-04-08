@@ -1,7 +1,13 @@
+/**
+ * External dependencies
+ */
 const path = require( 'path' );
 const process = require( 'process' );
 const { fromPairs } = require( 'lodash' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
+/**
+ * Internal dependencies
+ */
 const GenerateChunksMapPlugin = require( './scripts/webpack/generate-chunks-map-plugin' );
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
@@ -56,7 +62,7 @@ const files = [
 	'css/frontend.scss',
 	'css/admin-custom.css',
 	'css/extensions.scss',
-	'css/global.css',
+	'css/global.scss',
 	'css/jquery-ui.css',
 	'css/modules-admin.css',
 	'css/modules-frontend.scss',
