@@ -18,7 +18,7 @@ import { useSenseiColorTheme } from '../react-hooks/use-sensei-color-theme';
 import '../shared/data/api-fetch-preloaded-once';
 import registerSetupWizardStore from './data';
 import { useWpAdminFullscreen } from '../react-hooks';
-import QueryStringRouter, { Route } from './query-string-router';
+import QueryStringRouter, { Route } from '../shared/query-string-router';
 import Navigation from './navigation';
 
 /**
