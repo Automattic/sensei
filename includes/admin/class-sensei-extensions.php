@@ -50,7 +50,14 @@ final class Sensei_Extensions {
 	 */
 	public function enqueue_admin_assets() {
 		$screen = get_current_screen();
-		if ( in_array( $screen->id, array( 'sensei-lms_page_sensei-extensions' ), true ) ) {
+		if ( in_array( $screen->id, [ 'sensei-lms_page_sensei-extensions' ], true ) ) {
+			if ( Sensei()->feature_flags->is_enabled( 'extensions_management_enhancement' ) ) {
+				Sensei()->assets->enqueue( 'sensei-extensions', 'extensions/index.js', [], true );
+				Sensei()->assets->enqueue( 'sensei-extensions-style', 'extensions/extensions.css' );
+
+				return;
+			}
+
 			Sensei()->assets->enqueue( 'sensei-admin-extensions', 'css/extensions.css', [], 'screen' );
 		}
 	}
@@ -239,6 +246,11 @@ final class Sensei_Extensions {
 	 * @access private
 	 */
 	public function render() {
+		if ( Sensei()->feature_flags->is_enabled( 'extensions_management_enhancement' ) ) {
+			echo '<div id="sensei-extensions-page" class="sensei-extensions-page"></div>';
+			return;
+		}
+
 		// phpcs:ignore WordPress.Security.NonceVerification
 		$category = isset( $_GET['category'] ) ? sanitize_text_field( $_GET['category'] ) : null;
 
