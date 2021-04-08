@@ -33,7 +33,7 @@ const Card = ( { hasUpdate } ) => (
 				cras odio netus mi. Maecenas
 			</p>
 		</div>
-		<ExtensionActions />
+		<ExtensionActions detailsLink="#" />
 	</article>
 );
 

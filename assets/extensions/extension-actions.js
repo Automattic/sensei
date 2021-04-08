@@ -3,21 +3,32 @@
  */
 import { __ } from '@wordpress/i18n';
 
-const ExtensionActions = () => (
+/**
+ * Extension actions component.
+ *
+ * @param {Object} props             Component props.
+ * @param {string} props.buttonLabel Button label.
+ * @param {string} props.detailsLink Details link.
+ */
+const ExtensionActions = ( { buttonLabel, detailsLink } ) => (
 	<ul className="sensei-extensions__extension-actions">
-		<li>
+		<li className="sensei-extensions__extension-actions__item">
 			<button className="button button-primary">
-				{ __( 'Install', 'sensei-lms' ) }
+				{ buttonLabel || __( 'Install', 'sensei-lms' ) }
 			</button>
 		</li>
-		<li>
-			<a
-				href="#more-details"
-				className="sensei-extensions__extension-actions__details-link"
-			>
-				{ __( 'More details', 'sensei-lms' ) }
-			</a>
-		</li>
+		{ detailsLink && (
+			<li className="sensei-extensions__extension-actions__item">
+				<a
+					href={ detailsLink }
+					className="sensei-extensions__extension-actions__details-link"
+					target="_blank"
+					rel="noreferrer external"
+				>
+					{ __( 'More details', 'sensei-lms' ) }
+				</a>
+			</li>
+		) }
 	</ul>
 );
 
