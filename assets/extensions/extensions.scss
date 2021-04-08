@@ -16,6 +16,13 @@
 .sensei-extensions {
 	margin-right: 20px;
 
+	&__loader {
+		height: 80vh;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
 	&__section {
 		margin-bottom: 38px;
 	}

@@ -3,6 +3,7 @@
  */
 import apiFetch from '@wordpress/api-fetch';
 import { useState, useEffect } from '@wordpress/element';
+import { Spinner } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -27,6 +28,14 @@ const Main = () => {
 			}
 		);
 	}, [] );
+
+	if ( false === extensions ) {
+		return (
+			<div className="sensei-extensions__loader">
+				<Spinner />
+			</div>
+		);
+	}
 
 	return (
 		<main className="sensei-extensions">
