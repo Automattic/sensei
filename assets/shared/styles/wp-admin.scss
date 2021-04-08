@@ -35,6 +35,12 @@
 		border-color: darken($primary, 5%);
 		box-shadow: 0 0 0 1px $white, 0 0 0 3px $primary;
 	}
+
+	&:hover,
+	&:active,
+	&:focus {
+		color: #000;
+	}
 }
 
 .button.button-secondary {
