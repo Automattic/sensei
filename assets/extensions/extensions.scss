@@ -88,6 +88,12 @@
 
 	&__tabs {
 		float: none;
+
+		&__tab {
+			&:not(:last-child)::after {
+				content: '|';
+			}
+		}
 	}
 
 	&__update-badge {
