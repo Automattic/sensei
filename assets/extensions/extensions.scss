@@ -138,6 +138,22 @@
 			margin: 0 0 30px;
 			font-size: 14px;
 		}
+
+		&__list {
+			margin: 10px 0 30px;
+
+			&__item {
+				margin: 0;
+
+				&::before {
+					content: "- "
+				}
+			}
+		}
+
+		&__version-link {
+			color: inherit;
+		}
 	}
 
 	&__featured-list {
@@ -264,6 +280,10 @@
 		align-items: center;
 		margin: 0;
 		padding: 0;
+
+		&__item {
+			margin: 0;
+		}
 
 		&__details-link {
 			display: inline-block;
