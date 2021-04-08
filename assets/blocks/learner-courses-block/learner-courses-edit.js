@@ -41,15 +41,15 @@ const LearnerCoursesEdit = ( {
 
 	const filters = [
 		{
-			label: __( 'All courses', 'sensei-lms' ),
+			label: __( 'All Courses', 'sensei-lms' ),
 			value: 'all',
 		},
 		{
-			label: __( 'Active courses', 'sensei-lms' ),
+			label: __( 'Active Courses', 'sensei-lms' ),
 			value: 'active',
 		},
 		{
-			label: __( 'Completed courses', 'sensei-lms' ),
+			label: __( 'Completed Courses', 'sensei-lms' ),
 			value: 'completed',
 		},
 	];
@@ -90,7 +90,7 @@ const LearnerCoursesEdit = ( {
 					) }
 					<header className="wp-block-sensei-lms-learner-courses__courses-list__header">
 						<h3 className="wp-block-sensei-lms-learner-courses__courses-list__title">
-							{ __( 'Course title goes here', 'sensei-lms' ) }
+							{ __( 'Course title', 'sensei-lms' ) }
 						</h3>
 						{ completed && (
 							<em className="wp-block-sensei-lms-learner-courses__courses-list__badge">
@@ -101,7 +101,7 @@ const LearnerCoursesEdit = ( {
 					{ options.courseDescriptionEnabled && (
 						<p className="wp-block-sensei-lms-learner-courses__courses-list__description">
 							{ __(
-								'Here is a short course description. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas arcu turpis mauris…',
+								'This is a preview of the course description…',
 								'sensei-lms'
 							) }
 						</p>
