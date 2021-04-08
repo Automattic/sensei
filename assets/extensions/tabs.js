@@ -36,7 +36,7 @@ const Tabs = () => {
 				{ tabs.map( ( { id, label } ) => (
 					<li key={ id } className="sensei-extensions__tabs__tab">
 						<a
-							href={ `#${ id }` }
+							href={ `#${ id }-extensions` }
 							onClick={ ( e ) => {
 								e.preventDefault();
 								goTo( id );

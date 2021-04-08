@@ -16,65 +16,71 @@
 .sensei-extensions {
 	margin-right: 20px;
 
-	&__sections {
-		display: flex;
-		flex-wrap: wrap;
+	&__section {
+		margin-bottom: 38px;
 	}
 
 	&__section {
 		display: flex;
 		flex-direction: column;
-		width: 100%;
-		box-sizing: border-box;
 		margin-bottom: 38px;
-		padding: 0 9px;
+	}
 
-		&.--col-12 {
-			@include col-width( 12 );
-		}
+	&__grid {
+		display: flex;
+		flex-wrap: wrap;
 
-		&.--col-11 {
-			@include col-width( 11 );
-		}
+		&__col {
+			box-sizing: border-box;
+			padding: 0 9px;
 
-		&.--col-10 {
-			@include col-width( 10 );
-		}
+			&.--col-12 {
+				@include col-width( 12 );
+			}
 
-		&.--col-9 {
-			@include col-width( 9 );
-		}
+			&.--col-11 {
+				@include col-width( 11 );
+			}
 
-		&.--col-8 {
-			@include col-width( 8 );
-		}
+			&.--col-10 {
+				@include col-width( 10 );
+			}
 
-		&.--col-7 {
-			@include col-width( 7 );
-		}
+			&.--col-9 {
+				@include col-width( 9 );
+			}
 
-		&.--col-6 {
-			@include col-width( 6 );
-		}
+			&.--col-8 {
+				@include col-width( 8 );
+			}
 
-		&.--col-5 {
-			@include col-width( 5 );
-		}
+			&.--col-7 {
+				@include col-width( 7 );
+			}
 
-		&.--col-4 {
-			@include col-width( 4 );
-		}
+			&.--col-6 {
+				@include col-width( 6 );
+			}
 
-		&.--col-3 {
-			@include col-width( 3 );
-		}
+			&.--col-5 {
+				@include col-width( 5 );
+			}
 
-		&.--col-2 {
-			@include col-width( 2 );
-		}
+			&.--col-4 {
+				@include col-width( 4 );
+			}
 
-		&.--col-1 {
-			@include col-width( 1 );
+			&.--col-3 {
+				@include col-width( 3 );
+			}
+
+			&.--col-2 {
+				@include col-width( 2 );
+			}
+
+			&.--col-1 {
+				@include col-width( 1 );
+			}
 		}
 
 		&__title {
@@ -182,6 +188,19 @@
 			.sensei-extensions__extension-actions__details-link {
 				margin-right: 10px;
 			}
+		}
+	}
+
+	&__grid-list {
+		margin: 0;
+		padding: 0;
+
+		&__item {
+			margin: 0 0 15px;
+		}
+
+		&__item-wrapper {
+			@include white-box;
 		}
 	}
 
