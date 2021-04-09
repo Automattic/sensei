@@ -2,13 +2,13 @@
  * WordPress dependencies
  */
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { Icon, update } from '@wordpress/icons';
 
 /**
  * Internal dependencies
  */
 import Single from './single';
 import Multiple from './multiple';
+import { UpdateIcon } from '../../icons';
 
 /**
  * Update notification component.
@@ -48,7 +48,7 @@ const UpdateNotification = ( { extensions } ) => {
 				className="sensei-extensions__update-notification"
 			>
 				<small className="sensei-extensions__update-badge">
-					<Icon icon={ update } />
+					<UpdateIcon />
 					{ updateAvailableLabel }
 				</small>
 				{ 1 === updatesCount ? (
