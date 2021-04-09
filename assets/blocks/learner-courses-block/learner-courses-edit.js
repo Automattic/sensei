@@ -82,7 +82,7 @@ const LearnerCoursesEdit = ( {
 						<Icon icon={ image } size={ 48 } />
 					</div>
 				) }
-				<div>
+				<div className="wp-block-sensei-lms-learner-courses__courses-list__course-info">
 					{ options.courseCategoryEnabled && (
 						<small className="wp-block-sensei-lms-learner-courses__courses-list__category">
 							{ __( 'Category name', 'sensei-lms' ) }

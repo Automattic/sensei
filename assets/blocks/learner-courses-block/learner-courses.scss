@@ -63,6 +63,10 @@ $courses-list: '#{$block}__courses-list';
 			fill: #FFF;
 		}
 
+		&__course-info {
+			flex: 1;
+		}
+
 		&__category {
 			display: block;
 			font-size: 12px;
