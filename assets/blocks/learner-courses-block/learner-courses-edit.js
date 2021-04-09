@@ -157,11 +157,13 @@ const LearnerCoursesEdit = ( {
 					/>
 				) }
 				{ completed && (
-					<div className="wp-block-button">
-						{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
-						<a className="wp-block-button__link" href="#">
-							{ __( 'View Results', 'sensei-lms' ) }
-						</a>
+					<div className="sensei-results-links wp-block-buttons is-content-justification-right">
+						<div className="wp-block-button">
+							{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
+							<a className="wp-block-button__link" href="#">
+								{ __( 'View Results', 'sensei-lms' ) }
+							</a>
+						</div>
 					</div>
 				) }
 			</li>

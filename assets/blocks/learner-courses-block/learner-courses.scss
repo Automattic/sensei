@@ -4,169 +4,160 @@ $block: '.wp-block-sensei-lms-learner-courses';
 $courses-list: '#{$block}__courses-list';
 
 
-	.editor-styles-wrapper #{$block}__filter,
-	#user-course-status-toggle {
-		display: flex;
-		border-bottom: 1px solid currentColor;
-		padding: 0;
-		margin: 0 0 24px;
-		list-style: none;
+.editor-styles-wrapper #{$block}__filter,
+#user-course-status-toggle {
+	display: flex;
+	border-bottom: 1px solid currentColor;
+	padding: 0;
+	margin: 0 0 24px;
+	list-style: none;
 
-		&__item, a {
-			margin: 0 (34px/2);
-			padding: 5px 0;
-			line-height: 1.25;
+	&__item, a {
+		margin: 0 (34px/2);
+		padding: 5px 0;
+		line-height: 1.25;
 
-			&:not(.active) {
-				color: var(--sensei-primary-color, inherit);
-			}
-			text-decoration: none;
-
-			&:hover {
-				text-decoration: underline;
-			}
-
-			&:first-child {
-				margin-left: 0;
-			}
-
-			&:last-child {
-				margin-right: 0;
-			}
-
-			&.active {
-				color: inherit;
-				border-bottom: solid 3px currentColor;
-			}
-		}
-
-		& &__link {
-			color: inherit;
-			text-decoration: none;
-		}
-	}
-
-#{$block} {
-	#{$courses-list},
-	.editor-styles-wrapper #{$courses-list} {
-		list-style: none;
-		padding: 0;
-		margin: 0;
-
-		&__item {
-			padding: 0 0 40px;
-			margin: 0;
-		}
-
-		&__featured-image {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			width: 100px;
-			height: 100px;
-			margin: 0 24px 12px 0;
-			flex-shrink: 0;
-			background-color: #C3C4C7;
-			background-size: cover;
-			background-position: 50% 50%;
-			fill: #FFF;
-			float: left;
-		}
-
-		&__category {
-			font-size: 70%;
-			text-transform: uppercase;
-		}
-
-		&__title {
-			&, .wp-block & {
-				margin: 1rem 0;
-				clear: none;
-			}
-			.has-primary-color & a {
-				color: var( --sensei-primary-color, inherit );
-			}
-		}
-
-		&__badge {
-			display: inline-block;
-			padding: 2px 8px;
-			margin-top: 12px;
-			color: var( --sensei-accent-color, inherit );
-			border: 1px solid currentColor;
-			border-radius: 4px;
-			font-size: 70%;
-			text-transform: uppercase;
-			font-style: normal;
-		}
-
-		&__description {
-			margin: 9px 0 18px;
-		}
-
-		@media (min-width: 920px) {
-			&.--is-grid-view {
-				display: flex;
-				flex-flow: row wrap;
-				margin: 0 -7px;
-
-				#{$courses-list} {
-					&__item {
-						display: block;
-						width: calc( 50% - 22px );
-						margin: 0 11px;
-					}
-
-					&__featured-image {
-						width: 100%;
-						height: 108px;
-						margin: 0;
-						margin-bottom: 20px;
-					}
-				}
-
-				&.--is-3-columns {
-					margin: 0 -11px;
-
-					#{$courses-list} {
-						&__item {
-							width: calc( 100% / 3 - 14px );
-							margin: 0 7px;
-						}
-					}
-				}
-			}
-		}
-	}
-
-	.sensei-course-progress {
-
-		&__heading {
-			clear: both;
-		}
-
-		&__bar {
-			height: var( --sensei-progress-bar-height, 14px );
-			border-radius: var( --sensei-progress-bar-border-radius, 10px );
-
-			div  {
-				background-color: currentColor;
-				background-color: var( --sensei-accent-color, currentColor );
-				border-radius: var( --sensei-progress-bar-border-radius, 10px );
-			}
-		}
-	}
-
-	&.has-sensei-primary-color {
-
-		.course-title a, #{$courses-list}__title a {
+		&:not(.active) {
 			color: var(--sensei-primary-color, inherit);
 		}
 
-		.wp-block-button__link, .button {
-			background-color: var(--sensei-primary-color, inherit);
-			color: #fff;
+		text-decoration: none;
+
+		&:hover {
+			text-decoration: underline;
 		}
+
+		&:first-child {
+			margin-left: 0;
+		}
+
+		&:last-child {
+			margin-right: 0;
+		}
+
+		&.active {
+			color: inherit;
+			border-bottom: solid 3px currentColor;
+		}
+	}
+
+	& &__link {
+		color: inherit;
+		text-decoration: none;
+	}
+}
+
+#{$courses-list},
+.editor-styles-wrapper #{$courses-list} {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+
+	&__item {
+		padding: 0 0 40px;
+		margin: 0;
+	}
+
+	&__featured-image {
+		float: left;
+		margin: 0 24px 12px 0;
+	}
+
+	&__category {
+		font-size: 70%;
+		text-transform: uppercase;
+	}
+
+	&__title {
+		&, .wp-block & {
+			margin: 1rem 0;
+			clear: none;
+		}
+
+		.has-primary-color & a {
+			color: var(--sensei-primary-color, inherit);
+		}
+	}
+
+	&__badge {
+		display: inline-block;
+		padding: 2px 8px;
+		margin-top: 12px;
+		color: var(--sensei-accent-color, inherit);
+		border: 1px solid currentColor;
+		border-radius: 4px;
+		font-size: 70%;
+		text-transform: uppercase;
+		font-style: normal;
+	}
+
+	&__description {
+		margin: 9px 0 18px;
+	}
+}
+
+
+#{$courses-list}.--is-grid-view, #{$block}--is-grid-view .course-container {
+	@media (min-width: 920px) {
+		display: flex;
+		flex-flow: row wrap;
+		margin: 0 -7px;
+
+		#{$courses-list}__item, .course {
+			display: block;
+			flex: 1 0 calc(50% - 22px);
+			margin: 0 11px;
+		}
+
+		//&__featured-image {
+		//	width: 100%;
+		//	height: 108px;
+		//	margin: 0;
+		//	margin-bottom: 20px;
+		//}
+
+
+		&.--is-3-columns {
+			margin: 0 -11px;
+
+			#{$courses-list} {
+				&__item {
+					width: calc(100% / 3 - 14px);
+					margin: 0 7px;
+				}
+			}
+		}
+	}
+}
+
+
+.sensei-course-progress {
+
+	&__heading {
+		clear: both;
+	}
+
+	&__bar {
+		height: var(--sensei-progress-bar-height, 14px);
+		border-radius: var(--sensei-progress-bar-border-radius, 10px);
+
+		div {
+			background-color: currentColor;
+			background-color: var(--sensei-accent-color, currentColor);
+			border-radius: var(--sensei-progress-bar-border-radius, 10px);
+		}
+	}
+}
+
+#{$block}.has-sensei-primary-color {
+
+	.course-title a, #{$courses-list}__title a {
+		color: var(--sensei-primary-color, inherit);
+	}
+
+	.wp-block-button__link, .button {
+		background-color: var(--sensei-primary-color, inherit);
+		color: #fff;
 	}
 }
 
@@ -179,6 +170,10 @@ $courses-list: '#{$block}__courses-list';
 	}
 }
 
+.sensei-block-wrapper {
+	margin-top: 28px;
+	margin-bottom: 28px;
+}
 
 /* Courses */
 .course,
@@ -187,16 +182,22 @@ $courses-list: '#{$block}__courses-list';
 	padding: 0 0 1em;
 	list-style: none;
 }
+
 .course {
 	.course-title {
 		margin: 16px 0;
 	}
-	.sensei-results-links {
-		display: flex;
-		align-items: center;
-		justify-content: flex-end;
-		&, .entry-content & > * {
-			margin: 0 0 0 12px;
+}
+
+.sensei-results-links {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	margin-right: -12px;
+
+	&, .entry-content & {
+		* {
+			margin: 6px 12px;
 		}
 	}
 }

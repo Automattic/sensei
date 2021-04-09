@@ -1,1 +1,21 @@
 @import '../../shared/blocks/course-progress/course-progress-settings';
+
+$block: '.wp-block-sensei-lms-learner-courses';
+$courses-list: '#{$block}__courses-list';
+
+
+.editor-styles-wrapper #{$courses-list} {
+
+	&__featured-image {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 100px;
+		height: 100px;
+		flex-shrink: 0;
+		background-color: #C3C4C7;
+		background-size: cover;
+		background-position: 50% 50%;
+		fill: #FFF;
+	}
+}
