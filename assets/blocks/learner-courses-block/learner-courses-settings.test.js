@@ -40,7 +40,7 @@ describe( '<LearnerCoursesSettings />', () => {
 			/>
 		);
 
-		expect( queryByLabelText( 'Course description' ).checked ).toEqual(
+		expect( queryByLabelText( 'Description' ).checked ).toEqual(
 			options.courseDescriptionEnabled
 		);
 
@@ -48,7 +48,7 @@ describe( '<LearnerCoursesSettings />', () => {
 			options.featuredImageEnabled
 		);
 
-		expect( queryByLabelText( 'Course category' ).checked ).toEqual(
+		expect( queryByLabelText( 'Category' ).checked ).toEqual(
 			options.courseCategoryEnabled
 		);
 
@@ -97,7 +97,7 @@ describe( '<LearnerCoursesSettings />', () => {
 			/>
 		);
 
-		fireEvent.click( queryByLabelText( 'Course description' ) );
+		fireEvent.click( queryByLabelText( 'Description' ) );
 		expect( setOptionsMock ).toBeCalledWith( {
 			courseDescriptionEnabled: true,
 		} );
@@ -107,7 +107,7 @@ describe( '<LearnerCoursesSettings />', () => {
 			featuredImageEnabled: true,
 		} );
 
-		fireEvent.click( queryByLabelText( 'Course category' ) );
+		fireEvent.click( queryByLabelText( 'Category' ) );
 		expect( setOptionsMock ).toBeCalledWith( {
 			courseCategoryEnabled: false,
 		} );

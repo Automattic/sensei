@@ -27,6 +27,8 @@ const files = [
 	'js/stop-double-submission.js',
 	'setup-wizard/index.js',
 	'setup-wizard/style.scss',
+	'extensions/index.js',
+	'extensions/extensions.scss',
 	'shared/styles/wp-components.scss',
 	'shared/styles/wc-components.scss',
 	'data-port/import.js',

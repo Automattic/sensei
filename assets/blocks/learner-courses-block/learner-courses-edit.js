@@ -90,15 +90,15 @@ const LearnerCoursesEdit = ( {
 
 	const filters = [
 		{
-			label: __( 'All courses', 'sensei-lms' ),
+			label: __( 'All Courses', 'sensei-lms' ),
 			value: 'all',
 		},
 		{
-			label: __( 'Active courses', 'sensei-lms' ),
+			label: __( 'Active Courses', 'sensei-lms' ),
 			value: 'active',
 		},
 		{
-			label: __( 'Completed courses', 'sensei-lms' ),
+			label: __( 'Completed Courses', 'sensei-lms' ),
 			value: 'completed',
 		},
 	];
