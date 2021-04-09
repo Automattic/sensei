@@ -33,7 +33,7 @@ const LearnerCoursesSettings = ( { options, setOptions } ) => {
 	const courseSettingsTogglers = [
 		{
 			optionKey: 'courseDescriptionEnabled',
-			label: __( 'Course description', 'sensei-lms' ),
+			label: __( 'Description', 'sensei-lms' ),
 		},
 		{
 			optionKey: 'featuredImageEnabled',
@@ -41,7 +41,7 @@ const LearnerCoursesSettings = ( { options, setOptions } ) => {
 		},
 		{
 			optionKey: 'courseCategoryEnabled',
-			label: __( 'Course category', 'sensei-lms' ),
+			label: __( 'Category', 'sensei-lms' ),
 		},
 		{
 			optionKey: 'progressBarEnabled',
