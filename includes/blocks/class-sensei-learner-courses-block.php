@@ -50,7 +50,7 @@ class Sensei_Learner_Courses_Block {
 			]
 		);
 
-		if ( 'grid' === $attributes['options']['layoutView'] ) {
+		if ( isset( $attributes['options']['layoutView'] ) && 'grid' === $attributes['options']['layoutView'] ) {
 			$class .= ' wp-block-sensei-lms-learner-courses--is-grid-view';
 		}
 
