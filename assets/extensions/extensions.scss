@@ -23,7 +23,16 @@
 	&__section {
 		display: flex;
 		flex-direction: column;
+		width: 100%;
 		margin-bottom: 38px;
+
+		&__title {
+			margin: 0 0 17px;
+		}
+
+		&__content {
+			flex: 1;
+		}
 	}
 
 	&__grid {
@@ -81,14 +90,6 @@
 			&.--col-1 {
 				@include col-width( 1 );
 			}
-		}
-
-		&__title {
-			margin: 0 0 17px;
-		}
-
-		&__content {
-			flex: 1;
 		}
 	}
 
