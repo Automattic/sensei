@@ -18,6 +18,55 @@ import CourseProgress from '../../shared/blocks/course-progress';
 import LearnerCoursesSettings from './learner-courses-settings';
 
 /**
+ * Featured image placeholder element.
+ */
+const FeaturedImagePlaceholder = () => (
+	<div
+		className="wp-block-sensei-lms-learner-courses__courses-list__featured-image"
+		role="img"
+		aria-label="Featured image"
+	>
+		<Icon icon={ image } size={ 48 } />
+	</div>
+);
+
+/**
+ * Wrapper for CSS variables & related classes.
+ *
+ * @param {Object} props
+ * @param {string} props.tag       HTML tag.
+ * @param {Array}  props.variables CSS variables.
+ * @param {Array}  props.children  Children elements.
+ * @param {*}      props.className Classes.
+ */
+const StylesWrapper = ( { tag, variables, children, className } ) => {
+	const isEmpty = ( value ) => {
+		return [ undefined, null, 'undefinedpx' ].includes( value );
+	};
+	const Tag = tag || 'div';
+	return (
+		<Tag
+			className={ classnames( className, {
+				'has-sensei-primary-color': !! variables.primaryColor,
+				'has-sensei-accent-color': !! variables.accentColor,
+			} ) }
+			style={ omitBy(
+				{
+					'--sensei-progress-bar-height': variables.progressBarHeight,
+					'--sensei-progress-bar-border-radius':
+						variables.progressBarBorderRadius,
+					'--sensei-primary-color': variables.primaryColor,
+					'--sensei-accent-color': variables.accentColor,
+				},
+				isEmpty
+			) }
+		>
+			{ children }
+		</Tag>
+	);
+};
+
+/**
  * Learner Settings component.
  *
  * @param {Object}   props
@@ -73,92 +122,80 @@ const LearnerCoursesEdit = ( {
 				className="wp-block-sensei-lms-learner-courses__courses-list__item"
 				key={ index }
 			>
-				{ options.featuredImageEnabled && (
-					<div
-						className="wp-block-sensei-lms-learner-courses__courses-list__featured-image"
-						role="img"
-						aria-label="Featured image"
-					>
-						<Icon icon={ image } size={ 48 } />
+				{ options.courseCategoryEnabled && (
+					<small className="wp-block-sensei-lms-learner-courses__courses-list__category">
+						{ __( 'Category name', 'sensei-lms' ) }
+					</small>
+				) }
+				<h3 className="wp-block-sensei-lms-learner-courses__courses-list__title">
+					{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
+					<a href="#">{ __( 'Course Title', 'sensei-lms' ) }</a>
+				</h3>
+				{ options.featuredImageEnabled && <FeaturedImagePlaceholder /> }
+
+				{ completed && (
+					<div>
+						<em className="wp-block-sensei-lms-learner-courses__courses-list__badge">
+							{ __( 'Completed', 'sensei-lms' ) }
+						</em>
 					</div>
 				) }
-				<div>
-					{ options.courseCategoryEnabled && (
-						<small className="wp-block-sensei-lms-learner-courses__courses-list__category">
-							{ __( 'Category name', 'sensei-lms' ) }
-						</small>
-					) }
-					<header className="wp-block-sensei-lms-learner-courses__courses-list__header">
-						<h3 className="wp-block-sensei-lms-learner-courses__courses-list__title">
-							{ __( 'Course title goes here', 'sensei-lms' ) }
-						</h3>
-						{ completed && (
-							<em className="wp-block-sensei-lms-learner-courses__courses-list__badge">
-								{ __( 'Completed', 'sensei-lms' ) }
-							</em>
-						) }
-					</header>
-					{ options.courseDescriptionEnabled && (
-						<p className="wp-block-sensei-lms-learner-courses__courses-list__description">
-							{ __(
-								'Here is a short course description. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas arcu turpis mauris…',
-								'sensei-lms'
-							) }
-						</p>
-					) }
 
-					{ options.progressBarEnabled && (
-						<CourseProgress
-							lessonsCount={ 3 }
-							completedCount={ completed ? 3 : 1 }
-							hidePercentage
-						/>
-					) }
-				</div>
+				{ options.courseDescriptionEnabled && (
+					<p className="wp-block-sensei-lms-learner-courses__courses-list__description">
+						{ __(
+							'This is a preview of the course description…',
+							'sensei-lms'
+						) }
+					</p>
+				) }
+				{ options.progressBarEnabled && (
+					<CourseProgress
+						lessonsCount={ 3 }
+						completedCount={ completed ? 3 : 1 }
+						hidePercentage
+					/>
+				) }
+				{ completed && (
+					<div className="wp-block-button">
+						{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
+						<a className="wp-block-button__link" href="#">
+							{ __( 'View Results', 'sensei-lms' ) }
+						</a>
+					</div>
+				) }
 			</li>
 		);
 	};
 
 	return (
 		<>
-			<section
+			<StylesWrapper
 				className={ className }
-				style={ omitBy(
-					{
-						'--progress-bar-height': `${ options.progressBarHeight }px`,
-						'--progress-bar-border-radius': `${ options.progressBarBorderRadius }px`,
-						'--primary-color': options.primaryColor,
-						'--accent-color': options.accentColor,
-					},
-					// Exclude not set values.
-					( value ) => {
-						return [ undefined, null, 'undefinedpx' ].includes(
-							value
-						);
-					}
-				) }
+				variables={ {
+					primaryColor: options.primaryColor,
+					accentColor: options.accentColor,
+					progressBarHeight: `${ options.progressBarHeight }px`,
+					progressBarBorderRadius: `${ options.progressBarBorderRadius }px`,
+				} }
 			>
-				<ul className="wp-block-sensei-lms-learner-courses__filter">
+				<p className="wp-block-sensei-lms-learner-courses__filter">
 					{ filters.map( ( { label, value } ) => (
-						<li
+						<a
 							key={ value }
+							href={ `#${ value }` }
+							onClick={ filterHandler( value ) }
 							className={ classnames(
 								'wp-block-sensei-lms-learner-courses__filter__item',
 								{
-									'--is-active': value === filter,
+									active: value === filter,
 								}
 							) }
 						>
-							<a
-								className="wp-block-sensei-lms-learner-courses__filter__link"
-								href={ `#${ value }` }
-								onClick={ filterHandler( value ) }
-							>
-								{ label }
-							</a>
-						</li>
+							{ label }
+						</a>
 					) ) }
-				</ul>
+				</p>
 				<ul
 					className={ classnames(
 						'wp-block-sensei-lms-learner-courses__courses-list',
@@ -170,7 +207,7 @@ const LearnerCoursesEdit = ( {
 						coursesPlaceholderMap
 					) }
 				</ul>
-			</section>
+			</StylesWrapper>
 			<LearnerCoursesSettings
 				options={ options }
 				setOptions={ setOptions }
