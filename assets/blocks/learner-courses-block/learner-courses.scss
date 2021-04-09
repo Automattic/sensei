@@ -65,6 +65,10 @@ $courses-list: '#{$block}__courses-list';
 
 		&__course-info {
 			flex: 1;
+
+			@media (min-width: 920px) {
+				padding-right: 20%;
+			}
 		}
 
 		&__category {
