@@ -15,7 +15,7 @@ import {
 	SelectControl,
 } from '@wordpress/components';
 import { grid, list } from '@wordpress/icons';
-import { __, sprintf, _n } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -103,10 +103,12 @@ const LearnerCoursesSettings = ( { options, setOptions } ) => {
 					<PanelRow>
 						<SelectControl
 							label={ __( 'Layout', 'sensei-lms' ) }
-							options={ layoutViewTogglers.map( ( { view, label } ) => ( {
-								value: view,
-								label,
-							} ) ) }
+							options={ layoutViewTogglers.map(
+								( { view, label } ) => ( {
+									value: view,
+									label,
+								} )
+							) }
 							value={ options.layoutView }
 							onChange={ ( value ) => {
 								setOptions( { layoutView: value } );

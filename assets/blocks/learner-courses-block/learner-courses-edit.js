@@ -165,9 +165,7 @@ const LearnerCoursesEdit = ( {
 						`--is-${ options.layoutView }-view`
 					) }
 				>
-					{ Array.from( { length: 2 } ).map(
-						coursesPlaceholderMap
-					) }
+					{ Array.from( { length: 2 } ).map( coursesPlaceholderMap ) }
 				</ul>
 			</section>
 			<LearnerCoursesSettings
