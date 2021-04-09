@@ -250,4 +250,12 @@ class Sensei_Assets {
 		_deprecated_function( __METHOD__, '3.10.0' );
 	}
 
+
+	/**
+	 * Disable loading frontend.css for the current page.
+	 */
+	public function disable_frontend_styles() {
+		add_filter( 'sensei_disable_styles', '__return_true' );
+	}
+
 }
