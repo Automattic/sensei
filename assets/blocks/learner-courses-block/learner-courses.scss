@@ -91,14 +91,14 @@ $courses-list: '#{$block}__courses-list';
 			color: var( --primary-color, inherit );
 			border: 1px solid currentColor;
 			border-radius: 4px;
-			font-size: 8px;
+			font-size: 10px;
 			text-transform: uppercase;
 			font-style: normal;
 		}
 
 		&__description {
 			margin: 9px 0 18px;
-			font-size: 12px;
+			font-size: 16px;
 			line-height: 1.25;
 			opacity: 0.9;
 		}
@@ -139,7 +139,7 @@ $courses-list: '#{$block}__courses-list';
 
 	.sensei-course-progress {
 		&__heading {
-			font-size: 12px;
+			font-size: 14px;
 		}
 
 		&__bar {
