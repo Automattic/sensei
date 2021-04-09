@@ -373,7 +373,6 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 			if ( false === $this->options['featuredImageEnabled'] ) {
 				add_action( 'sensei_course_content_inside_before', array( $this, 'course_category' ), 3 );
 			}
-
 		}
 
 		if ( false === $this->options['courseDescriptionEnabled'] ) {
