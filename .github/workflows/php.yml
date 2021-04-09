@@ -2,6 +2,7 @@ name: PHP Linting and Tests
 
 on:
   pull_request:
+    types: [synchronize, opened, reopened, edited]
     branches:
       - master
       - 'feature/**'
@@ -9,6 +10,7 @@ on:
 
 jobs:
   lint:
+    if: ${{ github.event.action != 'edited' || github.event.changes.base }}
     name:    PHP Linting
     runs-on: ubuntu-16.04
     steps:
@@ -41,6 +43,7 @@ jobs:
       - name: Check WPCOM rules
         run: ./vendor/bin/phpcs -sn --standard=./wpcom-phpcs.xml .
   test:
+    if: ${{ github.event.action != 'edited' || github.event.changes.base }}
     name: PHP Unit Tests
     runs-on: ubuntu-16.04
     strategy:

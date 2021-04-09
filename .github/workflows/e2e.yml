@@ -2,6 +2,7 @@ name: E2E
 
 on:
   pull_request:
+    types: [synchronize, opened, reopened, edited]
     branches:
       - master
       - 'feature/**'
@@ -9,6 +10,7 @@ on:
 
 jobs:
   test:
+    if: ${{ github.event.action != 'edited' || github.event.changes.base }}
     name: E2E Tests
     runs-on: ubuntu-16.04
     strategy:
