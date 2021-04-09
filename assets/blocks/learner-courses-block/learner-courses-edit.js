@@ -124,7 +124,7 @@ const LearnerCoursesEdit = ( {
 			>
 				{ options.courseCategoryEnabled && (
 					<small className="wp-block-sensei-lms-learner-courses__courses-list__category">
-						{ __( 'Category name', 'sensei-lms' ) }
+						{ __( 'Category Name', 'sensei-lms' ) }
 					</small>
 				) }
 				<h3 className="wp-block-sensei-lms-learner-courses__courses-list__title">
