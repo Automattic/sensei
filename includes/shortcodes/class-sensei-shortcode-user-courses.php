@@ -368,7 +368,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 			}
 
 			remove_action( 'sensei_course_content_inside_before', array( Sensei()->course, 'the_course_meta' ) );
-			add_action( 'sensei_course_content_inside_before', array( $this, 'course_completed_badge' ) );
+			add_action( 'sensei_course_content_inside_before', array( $this, 'course_completed_badge' ), 40 );
 
 			if ( false === $this->options['featuredImageEnabled'] ) {
 				add_action( 'sensei_course_content_inside_before', array( $this, 'course_category' ), 3 );
