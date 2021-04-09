@@ -76,10 +76,10 @@ function getName( filename ) {
 }
 
 const FileLoader = {
-	test: /\.(?:gif|jpg|jpeg|png|svg|woff|woff2|eot|ttf|otf)$/i,
+	test: /\.(?:gif|jpg|jpeg|png|woff|woff2|eot|ttf|otf)$/i,
 	loader: 'file-loader',
 	options: {
-		name: '[path]/[name]-[contenthash].[ext]',
+		name: '[path][name]-[contenthash].[ext]',
 		context: 'assets',
 		publicPath: '..',
 	},
@@ -98,6 +98,8 @@ const baseDist = 'assets/dist/';
 
 function getWebpackConfig( env, argv ) {
 	const webpackConfig = getBaseWebpackConfig( { ...env, WP: true }, argv );
+	webpackConfig.module.rules[ 3 ].use[ 0 ].options.publicPath = '../images';
+
 	return {
 		...webpackConfig,
 		entry: mapFilesToEntries( files ),

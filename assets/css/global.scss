@@ -8,15 +8,23 @@
 /* Sensei Notice */
 .sensei-notice {
 	border-left-color: $primary;
-	padding: 10px 12px;
-.
+	padding: 10px 12px 10px 60px;
+	background: url('../icons/sensei-lms-icon.svg') #fff no-repeat -46px 0;
+	background-size: 35px;
+	background-origin: content-box;
+
+	p {
+		padding: 0;
+		font-size: 14px;
+	}
+
 	.button {
 		float: right;
 		margin-top: -5px;
 	}
 
 	.notice-dismiss {
-		top: 10px;
+		margin: .7em 0;
 	}
 }
 
