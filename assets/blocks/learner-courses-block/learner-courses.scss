@@ -194,6 +194,7 @@ $courses-list: '#{$block}__courses-list';
 	align-items: center;
 	justify-content: flex-end;
 	margin-right: -12px;
+	flex-wrap: wrap;
 
 	&, .entry-content & {
 		* {
