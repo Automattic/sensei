@@ -368,6 +368,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 			}
 
 			remove_action( 'sensei_course_content_inside_before', array( Sensei()->course, 'the_course_meta' ) );
+			add_action( 'sensei_course_content_inside_before', array( $this, 'course_completed_badge' ) );
 		}
 
 		if ( false === $this->options['courseDescriptionEnabled'] ) {
@@ -434,6 +435,21 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 
 		Sensei()->course->the_course_action_buttons( get_post( $course_id ) );
 
+	}
+
+	/**
+	 * Add Completed badge to completed courses.
+	 *
+	 * @param int|WP_Post $course
+	 */
+	public function course_completed_badge( $course ) {
+		if ( Sensei_Utils::user_completed_course( $course, get_current_user_id() ) ) {
+			echo '<div>
+						<em class="wp-block-sensei-lms-learner-courses__courses-list__badge">
+							' . esc_html__( 'Completed', 'sensei-lms' ) . '
+						</em>
+					</div>';
+		}
 	}
 
 	/**
