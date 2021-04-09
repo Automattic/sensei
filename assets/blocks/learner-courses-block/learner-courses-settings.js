@@ -96,37 +96,24 @@ const LearnerCoursesSettings = ( { options, setOptions } ) => {
 						</PanelRow>
 					) ) }
 				</PanelBody>
-				{ 'grid' === options.layoutView && (
-					<PanelBody
-						title={ __( 'Styling', 'sensei-lms' ) }
-						initialOpen={ true }
-					>
-						<PanelRow>
-							<SelectControl
-								label={ __( 'Layout', 'sensei-lms' ) }
-								options={ [ 2, 3 ].map( ( columns ) => ( {
-									value: columns,
-									label: sprintf(
-										// translators: placeholder is number of columns.
-										_n(
-											'%d column',
-											'%d columns',
-											columns,
-											'sensei-lms'
-										),
-										columns
-									),
-								} ) ) }
-								value={ options.columns }
-								onChange={ ( value ) => {
-									setOptions( {
-										columns: value,
-									} );
-								} }
-							/>
-						</PanelRow>
-					</PanelBody>
-				) }
+				<PanelBody
+					title={ __( 'Styling', 'sensei-lms' ) }
+					initialOpen={ true }
+				>
+					<PanelRow>
+						<SelectControl
+							label={ __( 'Layout', 'sensei-lms' ) }
+							options={ layoutViewTogglers.map( ( { view, label } ) => ( {
+								value: view,
+								label,
+							} ) ) }
+							value={ options.layoutView }
+							onChange={ ( value ) => {
+								setOptions( { layoutView: value } );
+							} }
+						/>
+					</PanelRow>
+				</PanelBody>
 				{ options.progressBarEnabled && (
 					<CourseProgressSettings
 						borderRadius={ options.progressBarBorderRadius }

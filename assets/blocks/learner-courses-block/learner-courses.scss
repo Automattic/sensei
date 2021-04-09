@@ -122,17 +122,6 @@ $courses-list: '#{$block}__courses-list';
 						margin-bottom: 20px;
 					}
 				}
-
-				&.--is-3-columns {
-					margin: 0 -11px;
-
-					#{$courses-list} {
-						&__item {
-							width: calc( 100% / 3 - 14px );
-							margin: 0 7px;
-						}
-					}
-				}
 			}
 		}
 	}

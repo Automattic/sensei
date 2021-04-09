@@ -162,11 +162,10 @@ const LearnerCoursesEdit = ( {
 				<ul
 					className={ classnames(
 						'wp-block-sensei-lms-learner-courses__courses-list',
-						`--is-${ options.layoutView }-view`,
-						`--is-${ options.columns }-columns`
+						`--is-${ options.layoutView }-view`
 					) }
 				>
-					{ Array.from( { length: options.columns } ).map(
+					{ Array.from( { length: 2 } ).map(
 						coursesPlaceholderMap
 					) }
 				</ul>
