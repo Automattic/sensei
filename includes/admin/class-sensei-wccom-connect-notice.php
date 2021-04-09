@@ -20,12 +20,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_WCCOM_Connect_Notice {
 	const DISMISS_NOTICE_NONCE_ACTION   = 'sensei-lms-cancelled-wccom-connect-dismiss';
 	const DISMISSED_NOTIFICATION_OPTION = 'sensei-cancelled-wccom-connect-dismissed';
-	const SENSEI_WCCOM_EXTENSIONS       = [
-		'152116:bad2a02a063555b7e2bee59924690763', // WC Paid Courses.
-		'543363:8ee2cdf89f55727f57733133ccbbfbb0', // Content Drip.
-		'435830:700f6f6786c764debcd5dfb789f5f506', // Share your Grade.
-		'435834:f6479a8a3a01ac11794f32be22b0682f', // Course Participants.
-	];
 
 	/**
 	 * Class constructor.
@@ -148,7 +142,7 @@ class Sensei_WCCOM_Connect_Notice {
 	private function can_see_notice_on_screen() {
 		$screen        = \get_current_screen();
 		$valid_screens = [
-			'course',
+			'edit-course',
 			'plugins',
 			'plugins-network',
 			'sensei-lms_page_sensei_learners',
@@ -187,20 +181,7 @@ class Sensei_WCCOM_Connect_Notice {
 	 * Check if a Sensei WooCommerce.com extension is installed.
 	 */
 	private function has_wccom_sensei_extension() {
-		if ( ! function_exists( 'get_plugins' ) ) {
-			include_once ABSPATH . 'wp-admin/includes/plugin.php';
-		}
-
-		$has_sensei_wccom_extension = false;
-		$plugins                    = get_plugins();
-		foreach ( $plugins as $plugin ) {
-			if ( isset( $plugin['Woo'] ) && in_array( $plugin['Woo'], self::SENSEI_WCCOM_EXTENSIONS, true ) ) {
-				$has_sensei_wccom_extension = true;
-				break;
-			}
-		}
-
-		return $has_sensei_wccom_extension;
+		return count( Sensei_Extensions::instance()->get_installed_plugins( true ) ) > 0;
 	}
 
 	/**
