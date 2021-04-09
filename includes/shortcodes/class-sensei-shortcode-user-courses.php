@@ -164,8 +164,6 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 			]
 		);
 
-		$this->options['columns'] = 'grid' === $this->options['layoutView'] ? $this->options['columns'] : 1;
-
 	}
 
 	private function is_my_courses() {
@@ -376,8 +374,6 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 			add_filter( 'get_the_excerpt', '__return_false' );
 		}
 
-		add_filter( 'sensei_course_loop_number_of_columns', [ $this, 'course_column_count' ] );
-
 		if ( false !== $this->options['progressBarEnabled'] ) {
 			add_action( 'sensei_course_content_inside_after', array( $this, 'attach_course_progress' ) );
 		}
@@ -399,7 +395,6 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		remove_filter( 'sensei_course_loop_content_class', array( $this, 'course_status_class_tagging' ), 20 );
 		remove_action( 'sensei_loop_course_before', array( $this, 'course_toggle_actions' ) );
 		remove_filter( 'get_the_excerpt', '__return_false' );
-		remove_filter( 'sensei_course_loop_number_of_columns', [ $this, 'course_column_count' ] );
 
 		if ( false === $this->options['featuredImageEnabled'] ) {
 			add_action( 'sensei_course_content_inside_before', array( Sensei()->course, 'course_image' ), 30, 1 );
@@ -506,16 +501,6 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		<?php
 	}
 
-	/**
-	 * Set grid/list layout and number of columns.
-	 *
-	 * @access private
-	 *
-	 * @return integer
-	 */
-	public function course_column_count() {
-		return $this->options['columns'];
-	}
 
 	/**
 	 * Load the javascript for the toggle functionality
