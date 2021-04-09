@@ -215,7 +215,8 @@ final class Sensei_Extensions {
 	/**
 	 * Get installed Sensei plugins.
 	 *
-	 * @param
+	 * @param bool $only_woo Only include WooCommerce.com extensions.
+	 *
 	 * @return array
 	 */
 	public function get_installed_plugins( $only_woo = false ) {

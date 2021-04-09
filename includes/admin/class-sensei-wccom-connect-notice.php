@@ -3,7 +3,7 @@
  * File containing the class Sensei_WCCOM_Connect_Notice
  *
  * @package sensei-lms
- * @since   3.10.0
+ * @since   3.11.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
