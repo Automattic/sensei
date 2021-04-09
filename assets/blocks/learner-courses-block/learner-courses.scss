@@ -131,7 +131,7 @@ $courses-list: '#{$block}__courses-list';
 
 #{$block}.has-sensei-primary-color {
 
-	.course-title a, #{$courses-list}__title a {
+	.course-title a, #{$courses-list}__title a, a {
 		color: var(--sensei-primary-color, inherit);
 	}
 

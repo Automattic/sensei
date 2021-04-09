@@ -369,6 +369,11 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 
 			remove_action( 'sensei_course_content_inside_before', array( Sensei()->course, 'the_course_meta' ) );
 			add_action( 'sensei_course_content_inside_before', array( $this, 'course_completed_badge' ) );
+
+			if ( false === $this->options['featuredImageEnabled'] ) {
+				add_action( 'sensei_course_content_inside_before', array( $this, 'course_category' ), 3 );
+			}
+
 		}
 
 		if ( false === $this->options['courseDescriptionEnabled'] ) {
@@ -450,6 +455,19 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 						</em>
 					</div>';
 		}
+	}
+
+	/**
+	 * Display course categories.
+	 *
+	 * @param int|WP_Post $course
+	 */
+	public function course_category( $course ) {
+		$category_output = get_the_term_list( $course, 'course-category', '', ', ', '' );
+		echo '<div class="wp-block-sensei-lms-learner-courses__courses-list__category">
+						' . wp_kses_post( $category_output ) . '
+					</div>';
+
 	}
 
 	/**
