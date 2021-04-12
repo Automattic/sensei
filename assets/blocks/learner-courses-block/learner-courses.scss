@@ -116,50 +116,6 @@ $courses-list: '#{$block}__courses-list';
 }
 
 
-#{$courses-list}.--is-grid-view, #{$block}--is-grid-view .course-container {
-	@media (min-width: 920px) {
-		display: flex;
-		flex-flow: row wrap;
-		margin: 0 -7px;
-
-		#{$courses-list}__item, .course {
-			display: block;
-			flex: 1 0 calc(50% - 22px);
-			margin: 0 11px;
-		}
-	}
-}
-
-.sensei-course-progress {
-
-	&__heading {
-		clear: both;
-	}
-
-	&__bar {
-		height: var(--sensei-progress-bar-height, 14px);
-		border-radius: var(--sensei-progress-bar-border-radius, 10px);
-
-		div {
-			background-color: currentColor;
-			background-color: var(--sensei-accent-color, currentColor);
-			border-radius: var(--sensei-progress-bar-border-radius, 10px);
-		}
-	}
-}
-
-#{$block}.has-sensei-primary-color {
-
-	.course-title a, #{$courses-list}__title a, a {
-		color: var(--sensei-primary-color, inherit);
-	}
-
-	.wp-block-button__link, .button {
-		background-color: var(--sensei-primary-color, inherit);
-		color: #fff;
-	}
-}
-
 #{$block} {
 
 	.course,
@@ -214,4 +170,48 @@ $courses-list: '#{$block}__courses-list';
 		}
 	}
 
+}
+
+#{$courses-list}.--is-grid-view, #{$block}--is-grid-view .course-container {
+	@media (min-width: 920px) {
+		display: flex;
+		flex-flow: row wrap;
+		margin: 0 -7px;
+
+		#{$courses-list}__item, .course {
+			display: block;
+			flex: 1 0 calc(50% - 22px);
+			margin: 0 11px;
+		}
+	}
+}
+
+.sensei-course-progress {
+
+	&__heading {
+		clear: both;
+	}
+
+	&__bar {
+		height: var(--sensei-progress-bar-height, 14px);
+		border-radius: var(--sensei-progress-bar-border-radius, 10px);
+
+		div {
+			background-color: currentColor;
+			background-color: var(--sensei-accent-color, currentColor);
+			border-radius: var(--sensei-progress-bar-border-radius, 10px);
+		}
+	}
+}
+
+#{$block}.has-sensei-primary-color {
+
+	.course-title a, #{$courses-list}__title a, a {
+		color: var(--sensei-primary-color, inherit);
+	}
+
+	.wp-block-button__link, .button {
+		background-color: var(--sensei-primary-color, inherit);
+		color: #fff;
+	}
 }
