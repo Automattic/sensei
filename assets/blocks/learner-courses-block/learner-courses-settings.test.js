@@ -24,7 +24,6 @@ describe( '<LearnerCoursesSettings />', () => {
 			courseCategoryEnabled: true,
 			progressBarEnabled: true,
 			layoutView: 'grid',
-			columns: 2,
 			progressBarHeight: 20,
 			progressBarBorderRadius: 10,
 		};
@@ -59,7 +58,7 @@ describe( '<LearnerCoursesSettings />', () => {
 		expect( queryByTestId( 'list' ) ).not.toHaveClass( 'is-pressed' );
 		expect( queryByTestId( 'grid' ) ).toHaveClass( 'is-pressed' );
 
-		expect( queryByLabelText( 'Layout' ).value ).toEqual( '2' );
+		expect( queryByLabelText( 'Layout' ).value ).toEqual( 'grid' );
 
 		// Open progress bar settings.
 		fireEvent.click( queryByText( 'Progress bar settings' ) );
@@ -80,7 +79,6 @@ describe( '<LearnerCoursesSettings />', () => {
 			courseCategoryEnabled: true,
 			progressBarEnabled: true,
 			layoutView: 'grid',
-			columns: 2,
 			progressBarHeight: 20,
 			progressBarBorderRadius: 10,
 		};
@@ -127,13 +125,6 @@ describe( '<LearnerCoursesSettings />', () => {
 			layoutView: 'grid',
 		} );
 
-		fireEvent.change( queryByLabelText( 'Layout' ), {
-			target: { value: '3' },
-		} );
-		expect( setOptionsMock ).toBeCalledWith( {
-			columns: '3',
-		} );
-
 		// Open progress bar settings.
 		fireEvent.click( queryByText( 'Progress bar settings' ) );
 
@@ -150,21 +141,6 @@ describe( '<LearnerCoursesSettings />', () => {
 		expect( setOptionsMock ).toBeCalledWith( {
 			progressBarBorderRadius: 5,
 		} );
-	} );
-
-	it( 'Should not show layout setting when layout view is "list"', () => {
-		const options = {
-			layoutView: 'list',
-		};
-
-		const { queryByLabelText } = render(
-			<LearnerCoursesSettings
-				options={ options }
-				setOptions={ () => {} }
-			/>
-		);
-
-		expect( queryByLabelText( 'Layout' ) ).toBeFalsy();
 	} );
 
 	it( 'Should not show progress bar settings when progress bar is disabled', () => {

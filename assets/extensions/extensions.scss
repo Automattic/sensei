@@ -8,7 +8,9 @@
 }
 
 @mixin col-width($w) {
-	width: calc(#{$w} / 12 * 100%);
+	@media (min-width: 919px) {
+		width: calc(#{$w} / 12 * 100%);
+	}
 }
 
 .sensei-extensions {
@@ -20,6 +22,9 @@
 	}
 
 	&__section {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
 		box-sizing: border-box;
 		margin-bottom: 38px;
 		padding: 0 9px;
@@ -71,6 +76,14 @@
 		&.--col-1 {
 			@include col-width( 1 );
 		}
+
+		&__title {
+			margin: 0 0 17px;
+		}
+
+		&__content {
+			flex: 1;
+		}
 	}
 
 	&__tabs {
@@ -109,20 +122,37 @@
 
 	&__featured-list {
 		@include white-box;
-		display: flex;
+		padding: 17px 10px;
 		margin: 0;
-		padding: 65px 45px;
+
+		@media (min-width: 990px) {
+			display: flex;
+			padding: 65px 10px;
+		}
+
+		@media (min-width: 1150px) {
+			padding: 65px 45px;
+		}
 
 		&__item {
-			margin: 0 15px;
+			margin: 0 10px 15px;
 			box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.16);
 			border-radius: 8px;
+
+			@media (min-width: 990px) {
+				margin-bottom: 0;
+			}
+
+			@media (min-width: 1150px) {
+				margin: 0 15px;
+			}
 		}
 	}
 
 	&__small-list,
 	&__large-list {
 		@include white-box;
+		margin: 0;
 
 		&__item {
 			margin: 0;
@@ -133,18 +163,19 @@
 		}
 	}
 
-	&__large-list {
-		.sensei-extensions__card {
-			display: flex;
-		}
-		.sensei-extensions__extension-actions {
-			flex-shrink: 0;
-			flex-direction: row-reverse;
-		}
-
-		.sensei-extensions__extension-actions__details-link {
-			margin-left: 0;
-			margin-right: 10px;
+	@media (min-width: 919px) {
+		&__large-list {
+			.sensei-extensions__card {
+				display: flex;
+			}
+			.sensei-extensions__extension-actions {
+				padding-left: 20px;
+				flex-shrink: 0;
+				flex-direction: row-reverse;
+			}
+			.sensei-extensions__extension-actions__details-link {
+				margin-right: 10px;
+			}
 		}
 	}
 
@@ -174,7 +205,10 @@
 		}
 
 		&__new-badge {
+			padding-left: 10px;
 			font-size: 12px;
+			white-space: nowrap;
+
 			&::before {
 				content: "";
 				display: inline-block;

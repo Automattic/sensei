@@ -1,11 +1,7 @@
 name: E2E
 
 on:
-  pull_request:
-    branches:
-      - master
-      - 'feature/**'
-      - 'release/**'
+  pull_request
 
 jobs:
   test:
