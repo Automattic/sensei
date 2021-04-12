@@ -18,6 +18,61 @@ import CourseProgress from '../../shared/blocks/course-progress';
 import LearnerCoursesSettings from './learner-courses-settings';
 
 /**
+ * Featured image placeholder element.
+ */
+const FeaturedImagePlaceholder = () => (
+	<div
+		className="wp-block-sensei-lms-learner-courses__courses-list__featured-image"
+		role="img"
+		aria-label="Featured image"
+	>
+		<Icon icon={ image } size={ 48 } />
+	</div>
+);
+
+/**
+ * Wrapper for CSS variables & related classes.
+ *
+ * @param {Object} props
+ * @param {string} props.tagName   HTML tag.
+ * @param {Array}  props.variables CSS variables.
+ * @param {Object} props.children  Children elements.
+ * @param {string} props.className Classes.
+ */
+const StylesWrapper = ( {
+	tagName: TagName = 'div',
+	variables,
+	children,
+	className,
+	...props
+} ) => {
+	const isEmpty = ( value ) => {
+		return [ undefined, null, 'undefinedpx' ].includes( value );
+	};
+	return (
+		<TagName
+			className={ classnames( className, {
+				'has-sensei-primary-color': !! variables.primaryColor,
+				'has-sensei-accent-color': !! variables.accentColor,
+			} ) }
+			style={ omitBy(
+				{
+					'--sensei-progress-bar-height': variables.progressBarHeight,
+					'--sensei-progress-bar-border-radius':
+						variables.progressBarBorderRadius,
+					'--sensei-primary-color': variables.primaryColor,
+					'--sensei-accent-color': variables.accentColor,
+				},
+				isEmpty
+			) }
+			{ ...props }
+		>
+			{ children }
+		</TagName>
+	);
+};
+
+/**
  * Learner Settings component.
  *
  * @param {Object}   props
@@ -70,34 +125,31 @@ const LearnerCoursesEdit = ( {
 
 		return (
 			<li
-				className="wp-block-sensei-lms-learner-courses__courses-list__item"
+				className="wp-block-sensei-lms-learner-courses__courses-list__item course"
 				key={ index }
 			>
-				{ options.featuredImageEnabled && (
-					<div
-						className="wp-block-sensei-lms-learner-courses__courses-list__featured-image"
-						role="img"
-						aria-label="Featured image"
-					>
-						<Icon icon={ image } size={ 48 } />
-					</div>
-				) }
-				<div>
+				<section className="entry">
 					{ options.courseCategoryEnabled && (
 						<small className="wp-block-sensei-lms-learner-courses__courses-list__category">
-							{ __( 'Category name', 'sensei-lms' ) }
+							{ __( 'Category Name', 'sensei-lms' ) }
 						</small>
 					) }
-					<header className="wp-block-sensei-lms-learner-courses__courses-list__header">
-						<h3 className="wp-block-sensei-lms-learner-courses__courses-list__title">
-							{ __( 'Course Title', 'sensei-lms' ) }
-						</h3>
-						{ completed && (
+					<h3 className="wp-block-sensei-lms-learner-courses__courses-list__title">
+						{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
+						<a href="#">{ __( 'Course Title', 'sensei-lms' ) }</a>
+					</h3>
+					{ options.featuredImageEnabled && (
+						<FeaturedImagePlaceholder />
+					) }
+
+					{ completed && (
+						<div className="wp-block-sensei-lms-learner-courses__courses-list__badge__wrapper">
 							<em className="wp-block-sensei-lms-learner-courses__courses-list__badge">
 								{ __( 'Completed', 'sensei-lms' ) }
 							</em>
-						) }
-					</header>
+						</div>
+					) }
+
 					{ options.courseDescriptionEnabled && (
 						<p className="wp-block-sensei-lms-learner-courses__courses-list__description">
 							{ __(
@@ -106,7 +158,6 @@ const LearnerCoursesEdit = ( {
 							) }
 						</p>
 					) }
-
 					{ options.progressBarEnabled && (
 						<CourseProgress
 							lessonsCount={ 3 }
@@ -114,51 +165,51 @@ const LearnerCoursesEdit = ( {
 							hidePercentage
 						/>
 					) }
-				</div>
+					{ completed && (
+						<div className="sensei-results-links wp-block-buttons is-content-justification-right">
+							<div className="wp-block-button">
+								{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
+								<a className="wp-block-button__link" href="#">
+									{ __( 'View Results', 'sensei-lms' ) }
+								</a>
+							</div>
+						</div>
+					) }
+					<div className="clearfix" />
+				</section>
 			</li>
 		);
 	};
 
 	return (
 		<>
-			<section
+			<StylesWrapper
+				tagName="section"
 				className={ className }
-				style={ omitBy(
-					{
-						'--progress-bar-height': `${ options.progressBarHeight }px`,
-						'--progress-bar-border-radius': `${ options.progressBarBorderRadius }px`,
-						'--primary-color': options.primaryColor,
-						'--accent-color': options.accentColor,
-					},
-					// Exclude not set values.
-					( value ) => {
-						return [ undefined, null, 'undefinedpx' ].includes(
-							value
-						);
-					}
-				) }
+				variables={ {
+					primaryColor: options.primaryColor,
+					accentColor: options.accentColor,
+					progressBarHeight: `${ options.progressBarHeight }px`,
+					progressBarBorderRadius: `${ options.progressBarBorderRadius }px`,
+				} }
 			>
-				<ul className="wp-block-sensei-lms-learner-courses__filter">
+				<p className="wp-block-sensei-lms-learner-courses__filter">
 					{ filters.map( ( { label, value } ) => (
-						<li
+						<a
 							key={ value }
+							href={ `#${ value }` }
+							onClick={ filterHandler( value ) }
 							className={ classnames(
 								'wp-block-sensei-lms-learner-courses__filter__item',
 								{
-									'--is-active': value === filter,
+									active: value === filter,
 								}
 							) }
 						>
-							<a
-								className="wp-block-sensei-lms-learner-courses__filter__link"
-								href={ `#${ value }` }
-								onClick={ filterHandler( value ) }
-							>
-								{ label }
-							</a>
-						</li>
+							{ label }
+						</a>
 					) ) }
-				</ul>
+				</p>
 				<ul
 					className={ classnames(
 						'wp-block-sensei-lms-learner-courses__courses-list',
@@ -167,7 +218,7 @@ const LearnerCoursesEdit = ( {
 				>
 					{ Array.from( { length: 2 } ).map( coursesPlaceholderMap ) }
 				</ul>
-			</section>
+			</StylesWrapper>
 			<LearnerCoursesSettings
 				options={ options }
 				setOptions={ setOptions }

@@ -27,8 +27,6 @@ class Sensei_Learner_Courses_Block {
 			],
 			Sensei()->assets->src_path( 'blocks/learner-courses-block' )
 		);
-
-		add_filter( 'body_class', array( $this, 'add_sensei_body_class' ), 10, 1 );
 	}
 
 	/**
@@ -43,22 +41,19 @@ class Sensei_Learner_Courses_Block {
 
 		$shortcode = new Sensei_Shortcode_User_Courses( [ 'options' => $attributes['options'] ?? [] ], null, null );
 
-		return $shortcode->render();
-	}
+		list( $style, $class ) = Sensei_Block_Helpers::css_variables(
+			[
+				'accent-color'               => $attributes['options']['accentColor'] ?? null,
+				'primary-color'              => $attributes['options']['primaryColor'] ?? null,
+				'progress-bar-height'        => Sensei_Block_Helpers::css_unit( $attributes['options']['progressBarHeight'] ?? null, 'px' ),
+				'progress-bar-border-radius' => Sensei_Block_Helpers::css_unit( $attributes['options']['progressBarBorderRadius'] ?? null, 'px' ),
+			]
+		);
 
-	/**
-	 * Add sensei to body classes if block is used.
-	 *
-	 * @param array $classes
-	 *
-	 * @access private
-	 * @return array
-	 */
-	public function add_sensei_body_class( $classes ) {
-
-		if ( has_block( self::NAME ) ) {
-			$classes[] = 'sensei';
+		if ( isset( $attributes['options']['layoutView'] ) && 'grid' === $attributes['options']['layoutView'] ) {
+			$class .= ' wp-block-sensei-lms-learner-courses--is-grid-view';
 		}
-		return $classes;
+
+		return '<div class="wp-block-sensei-lms-learner-courses ' . $class . ' " style="' . esc_attr( $style ) . '">' . $shortcode->render() . '</div>';
 	}
 }

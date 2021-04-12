@@ -3,143 +3,229 @@
 $block: '.wp-block-sensei-lms-learner-courses';
 $courses-list: '#{$block}__courses-list';
 
-#{$block} {
-	&__filter,
-	.editor-styles-wrapper &__filter {
-		display: flex;
-		border-bottom: 1px solid currentColor;
+/* Spacing defaults */
+
+.sensei .entry-content {
+	section {
 		padding: 0;
-		margin: 0;
+	}
+}
+
+.sensei-block-wrapper {
+	margin-top: 28px;
+	margin-bottom: 28px;
+}
+
+.clearfix {
+	clear: both;
+}
+
+.sensei-pagination {
+	.page-numbers li {
+		display: inline-block;
 		list-style: none;
+		padding: 0;
+		margin: 12px;
+	}
+}
 
-		&__item {
-			margin: 0 (34px/2);
-			padding: 5px 0;
-			line-height: 1.25;
+/* Learner courses styles */
 
-			&:first-child {
-				margin-left: 0;
-			}
+.editor-styles-wrapper #{$block}__filter,
+#user-course-status-toggle {
+	display: flex;
+	border-bottom: 1px solid currentColor;
+	padding: 0;
+	margin: 0;
+	list-style: none;
 
-			&:last-child {
-				margin-right: 0;
-			}
+	&__item, a {
+		margin: 0 (34px/2);
+		padding: 5px 0;
+		line-height: 1.25;
 
-			&.--is-active {
-				color: var( --accent-color, inherit );
-				border-bottom: solid 3px currentColor;
-			}
+		&:not(.active) {
+			color: var(--sensei-primary-color, inherit);
 		}
 
-		& &__link {
+		text-decoration: none;
+
+		&:hover {
+			text-decoration: underline;
+		}
+
+		&:first-child {
+			margin-left: 0;
+		}
+
+		&:last-child {
+			margin-right: 0;
+		}
+
+		&.active {
 			color: inherit;
-			text-decoration: none;
+			border-bottom: solid 3px currentColor;
 		}
 	}
 
-	#{$courses-list},
-	.editor-styles-wrapper #{$courses-list} {
-		list-style: none;
-		padding: 50px 0 0;
+	& &__link {
+		color: inherit;
+		text-decoration: none;
+	}
+}
+
+#{$courses-list},
+.editor-styles-wrapper #{$courses-list} {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+
+	&__item {
 		margin: 0;
+		padding: 0;
 
-		&__item {
-			display: flex;
-			padding: 0 0 40px;
-			margin: 0;
+		.sensei-block-wrapper {
+			display: none;
+		}
+	}
+
+	&__featured-image {
+		float: left;
+		margin: 0 24px 12px 0;
+	}
+
+	&__category {
+		font-size: 70%;
+		text-transform: uppercase;
+	}
+
+	&__title {
+		&, .editor-styles-wrapper .wp-block & {
+			margin: 0 0 16px;
 		}
 
-		&__featured-image {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			width: 149px;
-			height: 149px;
-			margin-right: 24px;
-			flex-shrink: 0;
-			background-color: #C3C4C7;
-			background-size: cover;
-			background-position: 50% 50%;
-			fill: #FFF;
+		.has-primary-color & a {
+			color: var(--sensei-primary-color, inherit);
+		}
+	}
+
+	&__badge {
+		&__wrapper {
+			margin: 16px 0;
+		}
+		display: inline-block;
+		padding: 2px 8px;
+		color: var(--sensei-accent-color, inherit);
+		border: 1px solid currentColor;
+		border-radius: 4px;
+		font-size: 70%;
+		text-transform: uppercase;
+		font-style: normal;
+	}
+
+	&__description {
+		margin: 9px 0 18px;
+	}
+}
+
+
+#{$block} {
+
+	.course,
+	.course-container {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+
+		.entry {
+			margin: 24px 0;
+		}
+		.thumbnail {
+			margin-bottom: 6px;
 		}
 
-		&__category {
-			display: block;
-			font-size: 12px;
-			text-transform: uppercase;
+		.sensei-block-wrapper {
+			clear: both;
+			margin: 16px 0;
 		}
 
-		&__header {
-			margin: 0 0 9px;
-			display: flex;
-			justify-content: flex-start;
-			align-items: center;
+		.course-excerpt:empty {
+			padding-top: 28px;
+		}
+	}
+
+	.course {
+		border-bottom: 1px solid #e2e2e2;
+		clear: both;
+
+		.course-title {
+			margin: 0 0 16px;
+		}
+	}
+
+	.sensei-results-links {
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		margin-right: -12px;
+		clear: both;
+
+		.entry-content & {
+			margin-bottom: 0;
+
 		}
 
-		&__title {
-			margin: 0;
-			font-size: 24px;
-			font-weight: bold;
-			color: var( --primary-color, inherit );
-		}
+		flex-wrap: wrap;
 
-		&__badge {
-			display: inline-block;
-			vertical-align: middle;
-			margin-left: 18px;
-			padding: 3px 11px;
-			color: var( --primary-color, inherit );
-			border: 1px solid currentColor;
-			border-radius: 4px;
-			font-size: 8px;
-			text-transform: uppercase;
-			font-style: normal;
-		}
-
-		&__description {
-			margin: 9px 0 18px;
-			font-size: 12px;
-			line-height: 1.25;
-			opacity: 0.9;
-		}
-
-		@media (min-width: 920px) {
-			&.--is-grid-view {
-				display: flex;
-				flex-flow: row wrap;
-				margin: 0 -7px;
-
-				#{$courses-list} {
-					&__item {
-						display: block;
-						width: calc( 50% - 22px );
-						margin: 0 11px;
-					}
-
-					&__featured-image {
-						width: 100%;
-						height: 108px;
-						margin-bottom: 20px;
-					}
-				}
+		&, .entry-content & {
+			* {
+				margin: 6px 12px;
 			}
 		}
 	}
 
-	.sensei-course-progress {
-		&__heading {
-			font-size: 12px;
-		}
+}
 
-		&__bar {
-			height: var( --progress-bar-height, 14px );
-			border-radius: var( --progress-bar-border-radius, 10px );
+#{$courses-list}.--is-grid-view, #{$block}--is-grid-view .course-container {
+	@media (min-width: 920px) {
+		display: flex;
+		flex-flow: row wrap;
+		margin: 0 -7px;
 
-			div  {
-				background-color: currentColor;
-				background-color: var( --accent-color, currentColor );
-				border-radius: var( --progress-bar-border-radius, 10px );
-			}
+		#{$courses-list}__item, .course {
+			display: block;
+			flex: 1 0 calc(50% - 22px);
+			margin: 0 11px;
 		}
+	}
+}
+
+.sensei-course-progress {
+
+	&__heading {
+		clear: both;
+	}
+
+	&__bar {
+		height: var(--sensei-progress-bar-height, 14px);
+		border-radius: var(--sensei-progress-bar-border-radius, 10px);
+
+		div {
+			background-color: currentColor;
+			background-color: var(--sensei-accent-color, currentColor);
+			border-radius: var(--sensei-progress-bar-border-radius, 10px);
+		}
+	}
+}
+
+#{$block}.has-sensei-primary-color {
+
+	.course-title a, #{$courses-list}__title a, a {
+		color: var(--sensei-primary-color, inherit);
+	}
+
+	.wp-block-button__link, .button {
+		background-color: var(--sensei-primary-color, inherit);
+		color: #fff;
 	}
 }
