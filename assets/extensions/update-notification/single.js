@@ -1,9 +1,4 @@
 /**
- * WordPress dependencies
- */
-import { __ } from '@wordpress/i18n';
-
-/**
  * Internal dependencies
  */
 import ExtensionActions from '../extension-actions';
@@ -22,10 +17,7 @@ const Single = ( { extension } ) => (
 		<p className="sensei-extensions__update-notification__description">
 			{ extension.excerpt }
 		</p>
-		<ExtensionActions
-			detailsLink={ extension.link }
-			buttonLabel={ __( 'Update', 'sensei-lms' ) }
-		/>
+		<ExtensionActions extension={ extension } />
 	</>
 );
 
