@@ -23,22 +23,22 @@ const extensionMock = {"version":"5.0.0.0.0.0","has_update":true,"hash":"d1a6964
  */
 const Card = ( { extension = extensionMock } ) => (
 	<article className="sensei-extensions__card">
-		<div>
-			<header className="sensei-extensions__card__header">
-				<h3 className="sensei-extensions__card__title">
-					{ extension.title }
-				</h3>
-				{ extension.has_update && (
-					<small className="sensei-extensions__card__new-badge">
-						{ __( 'New version', 'sensei-lms' ) }
-					</small>
-				) }
-			</header>
+		<header className="sensei-extensions__card__header">
+			<h3 className="sensei-extensions__card__title">
+				{ extension.title }
+			</h3>
+			{ extension.has_update && (
+				<small className="sensei-extensions__card__new-badge">
+					{ __( 'New version', 'sensei-lms' ) }
+				</small>
+			) }
+		</header>
+		<div className="sensei-extensions__card__content">
 			<p className="sensei-extensions__card__description">
 				{ extension.excerpt }
 			</p>
+			<ExtensionActions extension={ extension } />
 		</div>
-		<ExtensionActions extension={ extension } />
 	</article>
 );
 
