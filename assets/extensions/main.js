@@ -47,9 +47,7 @@ const Main = () => {
 						<Tabs />
 					</div>
 
-					<section className="sensei-extensions__section sensei-extensions__grid__col --col-12">
-						<UpdateNotification extensions={ extensions } />
-					</section>
+					<UpdateNotification extensions={ extensions } />
 
 					<Route route="all">
 						<AllExtensions />

@@ -42,7 +42,7 @@ const UpdateNotification = ( { extensions } ) => {
 			  );
 
 	return (
-		<section className="sensei-extensions__section --col-12">
+		<section className="sensei-extensions__section sensei-extensions__grid__col --col-12">
 			<div
 				role="alert"
 				className="sensei-extensions__update-notification"
