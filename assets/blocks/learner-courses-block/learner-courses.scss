@@ -20,6 +20,15 @@ $courses-list: '#{$block}__courses-list';
 	clear: both;
 }
 
+.sensei-pagination {
+	.page-numbers li {
+		display: inline-block;
+		list-style: none;
+		padding: 0;
+		margin: 12px;
+	}
+}
+
 /* Learner courses styles */
 
 .editor-styles-wrapper #{$block}__filter,
