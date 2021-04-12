@@ -14,7 +14,7 @@ const ExtensionActions = ( { buttonLabel, detailsLink } ) => (
 	<ul className="sensei-extensions__extension-actions">
 		<li className="sensei-extensions__extension-actions__item">
 			<button className="button button-primary">
-				{ buttonLabel || __( 'Install', 'sensei-lms' ) }
+				{ buttonLabel || __( 'Install - $29.99', 'sensei-lms' ) }
 			</button>
 		</li>
 		{ detailsLink && (
