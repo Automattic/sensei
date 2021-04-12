@@ -37,7 +37,7 @@ const FeaturedImagePlaceholder = () => (
  * @param {string} props.tagName   HTML tag.
  * @param {Array}  props.variables CSS variables.
  * @param {Object} props.children  Children elements.
- * @param {*}      props.className Classes.
+ * @param {string} props.className Classes.
  */
 const StylesWrapper = ( {
 	tagName: TagName = 'div',
