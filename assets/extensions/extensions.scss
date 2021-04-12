@@ -16,6 +16,13 @@
 .sensei-extensions {
 	margin-right: 20px;
 
+	&__loader {
+		height: 80vh;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
 	&__section {
 		margin-bottom: 38px;
 	}
@@ -107,8 +114,12 @@
 		display: flex;
 		align-items: center;
 		font-size: 14px;
+		font-weight: 500;
+		color: #000;
 
 		svg {
+			width: 24px;
+			height: 24px;
 			margin-right: 5px;
 		}
 	}
@@ -130,6 +141,22 @@
 		&__description {
 			margin: 0 0 30px;
 			font-size: 14px;
+		}
+
+		&__list {
+			margin: 10px 0 30px;
+
+			&__item {
+				margin: 0;
+
+				&::before {
+					content: "- "
+				}
+			}
+		}
+
+		&__version-link {
+			color: inherit;
 		}
 	}
 
@@ -257,6 +284,10 @@
 		align-items: center;
 		margin: 0;
 		padding: 0;
+
+		&__item {
+			margin: 0;
+		}
 
 		&__details-link {
 			display: inline-block;
