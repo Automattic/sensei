@@ -16,6 +16,10 @@ $courses-list: '#{$block}__courses-list';
 	margin-bottom: 28px;
 }
 
+.clearfix {
+	clear: both;
+}
+
 /* Learner courses styles */
 
 .editor-styles-wrapper #{$block}__filter,

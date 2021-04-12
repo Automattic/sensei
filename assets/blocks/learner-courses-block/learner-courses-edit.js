@@ -175,6 +175,7 @@ const LearnerCoursesEdit = ( {
 							</div>
 						</div>
 					) }
+					<div className="clearfix" />
 				</section>
 			</li>
 		);
