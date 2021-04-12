@@ -47,6 +47,10 @@ class Sensei_Course_Progress_Block {
 
 		$course_id = $attributes['postId'] ?? get_the_ID();
 
+		if ( ! Sensei()->course::is_user_enrolled( $course_id ) ) {
+			return '';
+		}
+
 		$completed     = count( Sensei()->course->get_completed_lesson_ids( $course_id ) );
 		$total_lessons = count( Sensei()->course->course_lessons( $course_id ) );
 		$percentage    = Sensei_Utils::quotient_as_absolute_rounded_percentage( $completed, $total_lessons );
