@@ -155,6 +155,7 @@ $courses-list: '#{$block}__courses-list';
 		align-items: center;
 		justify-content: flex-end;
 		margin-right: -12px;
+		clear: both;
 
 		.entry-content & {
 			margin-bottom: 0;
