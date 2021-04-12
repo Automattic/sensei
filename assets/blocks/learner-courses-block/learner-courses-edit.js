@@ -143,7 +143,7 @@ const LearnerCoursesEdit = ( {
 					) }
 
 					{ completed && (
-						<div>
+						<div className="wp-block-sensei-lms-learner-courses__courses-list__badge__wrapper">
 							<em className="wp-block-sensei-lms-learner-courses__courses-list__badge">
 								{ __( 'Completed', 'sensei-lms' ) }
 							</em>

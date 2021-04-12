@@ -450,7 +450,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	 */
 	public function course_completed_badge( $course ) {
 		if ( Sensei_Utils::user_completed_course( $course, get_current_user_id() ) ) {
-			echo '<div>
+			echo '<div class="wp-block-sensei-lms-learner-courses__courses-list__badge__wrapper">
 						<em class="wp-block-sensei-lms-learner-courses__courses-list__badge">
 							' . esc_html__( 'Completed', 'sensei-lms' ) . '
 						</em>
