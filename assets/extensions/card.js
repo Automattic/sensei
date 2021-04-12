@@ -19,27 +19,26 @@ const extensionMock = {"version":"5.0.0.0.0.0","has_update":true,"hash":"d1a6964
  * Extensions card component.
  *
  * @param {Object}  props           Component props.
- * @param {boolean} props.hasUpdate Whether extensions has update.
+ * @param {boolean} props.extension Extension object.
  */
-const Card = ( { hasUpdate } ) => (
+const Card = ( { extension = extensionMock } ) => (
 	<article className="sensei-extensions__card">
 		<div>
 			<header className="sensei-extensions__card__header">
 				<h3 className="sensei-extensions__card__title">
-					Advanced quizzes
+					{ extension.title }
 				</h3>
-				{ hasUpdate && (
+				{ extension.has_update && (
 					<small className="sensei-extensions__card__new-badge">
 						{ __( 'New version', 'sensei-lms' ) }
 					</small>
 				) }
 			</header>
 			<p className="sensei-extensions__card__description">
-				Lorem ipsum dolor sit amet, consectertur adipiscing elit. Enin
-				cras odio netus mi. Maecenas
+				{ extension.excerpt }
 			</p>
 		</div>
-		<ExtensionActions detailsLink="#" />
+		<ExtensionActions extension={ extension } />
 	</article>
 );
 

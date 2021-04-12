@@ -16,7 +16,7 @@ const AllExtensions = () => (
 			</h2>
 			<ul className="sensei-extensions__section__content sensei-extensions__featured-list">
 				<li className="sensei-extensions__featured-list__item">
-					<Card hasUpdate />
+					<Card />
 				</li>
 				<li className="sensei-extensions__featured-list__item">
 					<Card />
