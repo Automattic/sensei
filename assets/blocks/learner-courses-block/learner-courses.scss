@@ -54,8 +54,8 @@ $courses-list: '#{$block}__courses-list';
 	margin: 0;
 
 	&__item {
-		padding: 0 0 40px;
 		margin: 0;
+		padding: 0;
 	}
 
 	&__featured-image {
@@ -69,9 +69,8 @@ $courses-list: '#{$block}__courses-list';
 	}
 
 	&__title {
-		&, .wp-block & {
-			margin: 1rem 0;
-			clear: none;
+		&, .editor-styles-wrapper .wp-block & {
+			margin: 16px 0;
 		}
 
 		.has-primary-color & a {
@@ -82,7 +81,7 @@ $courses-list: '#{$block}__courses-list';
 	&__badge {
 		display: inline-block;
 		padding: 2px 8px;
-		margin-top: 12px;
+		margin: 12px 0;
 		color: var(--sensei-accent-color, inherit);
 		border: 1px solid currentColor;
 		border-radius: 4px;
@@ -158,12 +157,17 @@ $courses-list: '#{$block}__courses-list';
 /* Courses */
 .course,
 .course-container {
-	margin: 0 0 1.618em;
-	padding: 0 0 1em;
+	margin: 0;
+	padding: 0;
 	list-style: none;
+
+	.entry {
+		margin: 24px 0;
+	}
 }
 
 .course {
+	border-bottom: 1px solid #e2e2e2;
 	.course-title {
 		margin: 16px 0;
 	}
@@ -174,6 +178,11 @@ $courses-list: '#{$block}__courses-list';
 	align-items: center;
 	justify-content: flex-end;
 	margin-right: -12px;
+	.entry-content & {
+		margin-bottom: 0;
+
+	}
+
 	flex-wrap: wrap;
 
 	&, .entry-content & {
