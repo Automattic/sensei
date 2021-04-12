@@ -108,13 +108,8 @@
     "e2e-docker:up": "npm explore @woocommerce/e2e-environment -- npm run docker:up",
     "e2e-docker:down": "npm explore @woocommerce/e2e-environment -- npm run docker:down",
     "test:e2e": "npm explore @woocommerce/e2e-environment -- npm run test:e2e",
-    "test:e2e-dev": "npm explore @woocommerce/e2e-environment -- npm run test:e2e-dev"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged",
-      "post-commit": "git update-index --again"
-    }
+    "test:e2e-dev": "npm explore @woocommerce/e2e-environment -- npm run test:e2e-dev",
+    "prepare": "husky install"
   },
   "lint-staged": {
     "package.json": [
