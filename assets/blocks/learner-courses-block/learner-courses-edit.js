@@ -34,18 +34,23 @@ const FeaturedImagePlaceholder = () => (
  * Wrapper for CSS variables & related classes.
  *
  * @param {Object} props
- * @param {string} props.tag       HTML tag.
+ * @param {string} props.tagName   HTML tag.
  * @param {Array}  props.variables CSS variables.
  * @param {Array}  props.children  Children elements.
  * @param {*}      props.className Classes.
  */
-const StylesWrapper = ( { tag, variables, children, className } ) => {
+const StylesWrapper = ( {
+	tagName: TagName = 'div',
+	variables,
+	children,
+	className,
+	...props
+} ) => {
 	const isEmpty = ( value ) => {
 		return [ undefined, null, 'undefinedpx' ].includes( value );
 	};
-	const Tag = tag || 'div';
 	return (
-		<Tag
+		<TagName
 			className={ classnames( className, {
 				'has-sensei-primary-color': !! variables.primaryColor,
 				'has-sensei-accent-color': !! variables.accentColor,
@@ -60,9 +65,10 @@ const StylesWrapper = ( { tag, variables, children, className } ) => {
 				},
 				isEmpty
 			) }
+			{ ...props }
 		>
 			{ children }
-		</Tag>
+		</TagName>
 	);
 };
 
@@ -173,6 +179,7 @@ const LearnerCoursesEdit = ( {
 	return (
 		<>
 			<StylesWrapper
+				tagName="section"
 				className={ className }
 				variables={ {
 					primaryColor: options.primaryColor,
