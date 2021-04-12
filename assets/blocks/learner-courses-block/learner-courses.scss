@@ -92,7 +92,7 @@ $courses-list: '#{$block}__courses-list';
 
 	&__title {
 		&, .editor-styles-wrapper .wp-block & {
-			margin: 16px 0;
+			margin: 0 0 16px;
 		}
 
 		.has-primary-color & a {
