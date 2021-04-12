@@ -27,7 +27,6 @@ const Card = ( { hasUpdate } ) => (
 					</small>
 				) }
 			</header>
-			<strong className="sensei-extensions__card__price">$ 29</strong>
 			<p className="sensei-extensions__card__description">
 				Lorem ipsum dolor sit amet, consectertur adipiscing elit. Enin
 				cras odio netus mi. Maecenas
