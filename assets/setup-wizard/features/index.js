@@ -15,7 +15,7 @@ import { __ } from '@wordpress/i18n';
  */
 import { INSTALLED_STATUS } from './feature-status';
 import { logEvent } from '../log-event';
-import { useQueryStringRouter } from '../query-string-router';
+import { useQueryStringRouter } from '../../shared/query-string-router';
 import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 import {
 	getWccomProductId,

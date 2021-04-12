@@ -14,7 +14,7 @@ import { useState } from '@wordpress/element';
  * Internal dependencies
  */
 import { UsageModal } from './usage-modal';
-import { useQueryStringRouter } from '../query-string-router';
+import { useQueryStringRouter } from '../../shared/query-string-router';
 import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 
 /**

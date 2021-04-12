@@ -8,9 +8,9 @@ import { __ } from '@wordpress/i18n';
  */
 import Card from './card';
 
-const Extensions = () => (
+const AllExtensions = () => (
 	<>
-		<section className="sensei-extensions__section --col-12">
+		<section className="sensei-extensions__section sensei-extensions__grid__col --col-12">
 			<h2 className="sensei-extensions__section__title">
 				{ __( 'Featured', 'sensei-lms' ) }
 			</h2>
@@ -27,7 +27,7 @@ const Extensions = () => (
 			</ul>
 		</section>
 
-		<section className="sensei-extensions__section --col-8">
+		<section className="sensei-extensions__section sensei-extensions__grid__col --col-8">
 			<h2 className="sensei-extensions__section__title">
 				{ __( 'Course creation', 'sensei-lms' ) }
 			</h2>
@@ -47,7 +47,7 @@ const Extensions = () => (
 			</ul>
 		</section>
 
-		<section className="sensei-extensions__section --col-4">
+		<section className="sensei-extensions__section sensei-extensions__grid__col --col-4">
 			<h2 className="sensei-extensions__section__title">
 				{ __( 'Learner engagement', 'sensei-lms' ) }
 			</h2>
@@ -66,4 +66,4 @@ const Extensions = () => (
 	</>
 );
 
-export default Extensions;
+export default AllExtensions;
