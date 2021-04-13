@@ -16,13 +16,19 @@ const AllExtensions = () => (
 			</h2>
 			<ul className="sensei-extensions__section__content sensei-extensions__featured-list">
 				<li className="sensei-extensions__featured-list__item">
-					<Card />
+					<div className="sensei-extensions__featured-list__card-wrapper">
+						<Card />
+					</div>
 				</li>
 				<li className="sensei-extensions__featured-list__item">
-					<Card />
+					<div className="sensei-extensions__featured-list__card-wrapper">
+						<Card />
+					</div>
 				</li>
 				<li className="sensei-extensions__featured-list__item">
-					<Card />
+					<div className="sensei-extensions__featured-list__card-wrapper">
+						<Card />
+					</div>
 				</li>
 			</ul>
 		</section>
