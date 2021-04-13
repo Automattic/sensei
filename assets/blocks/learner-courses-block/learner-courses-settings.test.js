@@ -31,7 +31,7 @@ describe( '<LearnerCoursesSettings />', () => {
 			queryByLabelText,
 			queryAllByLabelText,
 			queryByText,
-			queryByTestId,
+			// queryByTestId,
 		} = render(
 			<LearnerCoursesSettings
 				options={ options }
@@ -55,10 +55,10 @@ describe( '<LearnerCoursesSettings />', () => {
 			options.progressBarEnabled
 		);
 
-		expect( queryByTestId( 'list' ) ).not.toHaveClass( 'is-pressed' );
-		expect( queryByTestId( 'grid' ) ).toHaveClass( 'is-pressed' );
+		// expect( queryByTestId( 'list' ) ).not.toHaveClass( 'is-pressed' );
+		// expect( queryByTestId( 'grid' ) ).toHaveClass( 'is-pressed' );
 
-		expect( queryByLabelText( 'Layout' ).value ).toEqual( 'grid' );
+		// expect( queryByLabelText( 'Layout' ).value ).toEqual( 'grid' );
 
 		// Open progress bar settings.
 		fireEvent.click( queryByText( 'Progress bar settings' ) );
@@ -87,7 +87,7 @@ describe( '<LearnerCoursesSettings />', () => {
 			queryByLabelText,
 			queryAllByLabelText,
 			queryByText,
-			queryByTestId,
+			// queryByTestId,
 		} = render(
 			<LearnerCoursesSettings
 				options={ options }
@@ -115,15 +115,15 @@ describe( '<LearnerCoursesSettings />', () => {
 			progressBarEnabled: false,
 		} );
 
-		fireEvent.click( queryByTestId( 'list' ) );
-		expect( setOptionsMock ).toBeCalledWith( {
-			layoutView: 'list',
-		} );
+		// fireEvent.click( queryByTestId( 'list' ) );
+		// expect( setOptionsMock ).toBeCalledWith( {
+		// 	layoutView: 'list',
+		// } );
 
-		fireEvent.click( queryByTestId( 'grid' ) );
-		expect( setOptionsMock ).toBeCalledWith( {
-			layoutView: 'grid',
-		} );
+		// fireEvent.click( queryByTestId( 'grid' ) );
+		// expect( setOptionsMock ).toBeCalledWith( {
+		// 	layoutView: 'grid',
+		// } );
 
 		// Open progress bar settings.
 		fireEvent.click( queryByText( 'Progress bar settings' ) );
