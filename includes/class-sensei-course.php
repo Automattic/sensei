@@ -980,6 +980,7 @@ class Sensei_Course {
 	 * @return string | void
 	 */
 	public function course_image( $course_id = 0, $width = '100', $height = '100', $return = false ) {
+		global $sensei_is_block;
 
 		if ( is_a( $course_id, 'WP_Post' ) ) {
 
@@ -1010,7 +1011,7 @@ class Sensei_Course {
 
 			} else {
 
-				if ( ! Sensei()->settings->settings['course_archive_image_enable'] ) {
+				if ( ! Sensei()->settings->settings['course_archive_image_enable'] && ! $sensei_is_block ) {
 					return '';
 				} // End If Statement
 
