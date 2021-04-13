@@ -9,23 +9,29 @@ import { __ } from '@wordpress/i18n';
 import Card from './card';
 
 const AllExtensions = ( { extensions } ) => {
+	const featuredExtensions = extensions.filter(
+		( extension ) => extension.is_featured
+	);
+
 	return (
 		<>
-			<section className="sensei-extensions__section sensei-extensions__grid__col --col-12">
-				<h2 className="sensei-extensions__section__title">
-					{ __( 'Featured', 'sensei-lms' ) }
-				</h2>
-				<ul className="sensei-extensions__section__content sensei-extensions__featured-list">
-					{ extensions.map( ( extension ) => (
-						<li
-							key={ extension.product_slug }
-							className="sensei-extensions__featured-list__item"
-						>
-							<Card extension={ extension } />
-						</li>
-					) ) }
-				</ul>
-			</section>
+			{ featuredExtensions.length > 0 && (
+				<section className="sensei-extensions__section sensei-extensions__grid__col --col-12">
+					<h2 className="sensei-extensions__section__title">
+						{ __( 'Featured', 'sensei-lms' ) }
+					</h2>
+					<ul className="sensei-extensions__section__content sensei-extensions__featured-list">
+						{ featuredExtensions.map( ( extension ) => (
+							<li
+								key={ extension.product_slug }
+								className="sensei-extensions__featured-list__item"
+							>
+								<Card extension={ extension } />
+							</li>
+						) ) }
+					</ul>
+				</section>
+			) }
 
 			<section className="sensei-extensions__section sensei-extensions__grid__col --col-8">
 				<h2 className="sensei-extensions__section__title">
