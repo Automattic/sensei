@@ -122,7 +122,9 @@ final class Sensei_Extensions {
 		// Includes installed version, and whether it has update.
 		$extensions = array_map(
 			function( $extension ) use ( $installed_plugins ) {
-				if ( isset( $installed_plugins[ $extension->plugin_file ] ) ) {
+				$extension->is_installed = isset( $installed_plugins[ $extension->plugin_file ] );
+
+				if ( $extension->is_installed ) {
 					$extension->installed_version = $installed_plugins[ $extension->plugin_file ]['Version'];
 					$extension->has_update        = isset( $extension->version ) && version_compare( $extension->version, $extension->installed_version, '>' );
 				}
