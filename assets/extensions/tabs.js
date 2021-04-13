@@ -1,39 +1,15 @@
 /**
- * WordPress dependencies
- */
-import { __ } from '@wordpress/i18n';
-
-/**
  * Internal dependencies
  */
 import { useQueryStringRouter } from '../shared/query-string-router';
 
-const tabs = [
-	{
-		id: 'all',
-		label: __( 'All', 'sensei-lms' ),
-	},
-	{
-		id: 'free',
-		label: __( 'Free', 'sensei-lms' ),
-	},
-	{
-		id: 'third-party',
-		label: __( 'Third party', 'sensei-lms' ),
-	},
-	{
-		id: 'installed',
-		label: __( 'Installed', 'sensei-lms' ),
-	},
-];
-
-const Tabs = () => {
+const Tabs = ( { tabs } ) => {
 	const { currentRoute, goTo } = useQueryStringRouter();
 
 	return (
 		<nav>
 			<ul className="subsubsub sensei-extensions__tabs">
-				{ tabs.map( ( { id, label } ) => (
+				{ tabs.map( ( { id, label, count } ) => (
 					<li key={ id } className="sensei-extensions__tabs__tab">
 						<a
 							href={ `#${ id }-extensions` }
@@ -46,7 +22,8 @@ const Tabs = () => {
 								'aria-current': 'page',
 							} ) }
 						>
-							{ label } <span className="count">(3)</span>
+							{ label }
+							<span className="count">({ count })</span>
 						</a>
 					</li>
 				) ) }

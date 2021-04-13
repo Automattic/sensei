@@ -8,68 +8,58 @@ import { __ } from '@wordpress/i18n';
  */
 import Card from './card';
 
-const AllExtensions = () => (
-	<>
-		<section className="sensei-extensions__section sensei-extensions__grid__col --col-12">
-			<h2 className="sensei-extensions__section__title">
-				{ __( 'Featured', 'sensei-lms' ) }
-			</h2>
-			<ul className="sensei-extensions__section__content sensei-extensions__featured-list">
-				<li className="sensei-extensions__featured-list__item">
-					<div className="sensei-extensions__featured-list__card-wrapper">
-						<Card />
-					</div>
-				</li>
-				<li className="sensei-extensions__featured-list__item">
-					<div className="sensei-extensions__featured-list__card-wrapper">
-						<Card />
-					</div>
-				</li>
-				<li className="sensei-extensions__featured-list__item">
-					<div className="sensei-extensions__featured-list__card-wrapper">
-						<Card />
-					</div>
-				</li>
-			</ul>
-		</section>
+const AllExtensions = ( { extensions } ) => {
+	return (
+		<>
+			<section className="sensei-extensions__section sensei-extensions__grid__col --col-12">
+				<h2 className="sensei-extensions__section__title">
+					{ __( 'Featured', 'sensei-lms' ) }
+				</h2>
+				<ul className="sensei-extensions__section__content sensei-extensions__featured-list">
+					{ extensions.map( ( extension ) => (
+						<li
+							key={ extension.product_slug }
+							className="sensei-extensions__featured-list__item"
+						>
+							<Card extension={ extension } />
+						</li>
+					) ) }
+				</ul>
+			</section>
 
-		<section className="sensei-extensions__section sensei-extensions__grid__col --col-8">
-			<h2 className="sensei-extensions__section__title">
-				{ __( 'Course creation', 'sensei-lms' ) }
-			</h2>
-			<ul className="sensei-extensions__section__content sensei-extensions__large-list">
-				<li className="sensei-extensions__large-list__item">
-					<Card />
-				</li>
-				<li className="sensei-extensions__large-list__item">
-					<Card />
-				</li>
-				<li className="sensei-extensions__large-list__item">
-					<Card />
-				</li>
-				<li className="sensei-extensions__large-list__item">
-					<Card />
-				</li>
-			</ul>
-		</section>
+			<section className="sensei-extensions__section sensei-extensions__grid__col --col-8">
+				<h2 className="sensei-extensions__section__title">
+					{ __( 'Course creation', 'sensei-lms' ) }
+				</h2>
+				<ul className="sensei-extensions__section__content sensei-extensions__large-list">
+					{ extensions.map( ( extension ) => (
+						<li
+							key={ extension.product_slug }
+							className="sensei-extensions__large-list__item"
+						>
+							<Card extension={ extension } />
+						</li>
+					) ) }
+				</ul>
+			</section>
 
-		<section className="sensei-extensions__section sensei-extensions__grid__col --col-4">
-			<h2 className="sensei-extensions__section__title">
-				{ __( 'Learner engagement', 'sensei-lms' ) }
-			</h2>
-			<ul className="sensei-extensions__section__content sensei-extensions__small-list">
-				<li className="sensei-extensions__small-list__item">
-					<Card />
-				</li>
-				<li className="sensei-extensions__small-list__item">
-					<Card />
-				</li>
-				<li className="sensei-extensions__small-list__item">
-					<Card />
-				</li>
-			</ul>
-		</section>
-	</>
-);
+			<section className="sensei-extensions__section sensei-extensions__grid__col --col-4">
+				<h2 className="sensei-extensions__section__title">
+					{ __( 'Learner engagement', 'sensei-lms' ) }
+				</h2>
+				<ul className="sensei-extensions__section__content sensei-extensions__small-list">
+					{ extensions.map( ( extension ) => (
+						<li
+							key={ extension.product_slug }
+							className="sensei-extensions__small-list__item"
+						>
+							<Card extension={ extension } />
+						</li>
+					) ) }
+				</ul>
+			</section>
+		</>
+	);
+};
 
 export default AllExtensions;
