@@ -170,30 +170,36 @@ $wordpress-break: 961px;
 
 	&__featured-list {
 		@include white-box;
-		padding: 17px 10px;
+		padding: 15px;
 		margin: 0;
 
-		@media (min-width: 990px) {
+		@media (min-width: $wordpress-break) {
 			display: flex;
-			padding: 65px 10px;
+			flex-wrap: wrap;
 		}
 
-		@media (min-width: 1150px) {
-			padding: 65px 45px;
+		@media (min-width: 1200px) {
+			padding: 50px 45px;
 		}
 
 		&__item {
-			margin: 0 10px 15px;
+			box-sizing: border-box;
+			padding: 10px;
+			margin: 0;
+
+			@media (min-width: $wordpress-break) {
+				@include col-width(6);
+				padding: 15px;
+			}
+
+			@media (min-width: 1200px) {
+				@include col-width(4);
+			}
+		}
+
+		&__card-wrapper {
 			box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.16);
 			border-radius: 8px;
-
-			@media (min-width: 990px) {
-				margin-bottom: 0;
-			}
-
-			@media (min-width: 1150px) {
-				margin: 0 15px;
-			}
 		}
 	}
 
@@ -207,6 +213,19 @@ $wordpress-break: 961px;
 
 			&:not(:last-child) {
 				border-bottom: solid 1px #DCDCDE;
+			}
+		}
+	}
+
+	@media (min-width: $wordpress-break) and (max-width: 1100px) {
+		&__small-list {
+			.sensei-extensions__card__header {
+				display: block;
+			}
+			.sensei-extensions__card__new-badge {
+				display: block;
+				text-align: right;
+				padding-left: 0;
 			}
 		}
 	}
