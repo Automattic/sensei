@@ -1,6 +1,8 @@
 @import '../shared/styles/variables';
 @import '../shared/styles/wp-admin';
 
+$wordpress-break: 961px;
+
 @mixin white-box {
 	border-radius: 2px;
 	background-color: $white;
@@ -8,7 +10,7 @@
 }
 
 @mixin col-width($w) {
-	@media (min-width: 919px) {
+	@media (min-width: $wordpress-break) {
 		width: calc(#{$w} / 12 * 100%);
 	}
 }
@@ -209,7 +211,7 @@
 		}
 	}
 
-	@media (min-width: 919px) {
+	@media (min-width: $wordpress-break) {
 		&__large-list {
 			.sensei-extensions__card__content {
 				display: flex;
