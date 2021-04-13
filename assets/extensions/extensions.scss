@@ -16,6 +16,11 @@
 .sensei-extensions {
 	margin-right: 20px;
 
+	.button-primary {
+		min-width: 112px;
+		min-height: 36px;
+	}
+
 	&__loader {
 		height: 80vh;
 		display: flex;
