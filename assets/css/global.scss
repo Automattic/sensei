@@ -2,14 +2,14 @@
 /* Backend Global Stylesheet */
 /*-----------------------------------------------------------------------------------*/
 
-@import '../shared/styles/variables';
-@import '../shared/styles/wp-admin';
 
 /* Sensei Notice */
 .sensei-notice {
+	@import '../shared/styles/wp-admin';
+
 	border-left-color: $primary;
 	padding: 10px 12px 10px 60px;
-	background: url('../icons/sensei-lms-icon.svg') #fff no-repeat -46px 0;
+	background: url('../css/images/sensei-lms-icon.svg') #fff no-repeat -46px 0;
 	background-size: 35px;
 	background-origin: content-box;
 
@@ -20,7 +20,7 @@
 
 	.button {
 		float: right;
-		margin-top: -5px;
+		margin-top: -10px;
 	}
 
 	.notice-dismiss {
