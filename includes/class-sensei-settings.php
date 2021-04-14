@@ -322,7 +322,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		$fields['course_archive_image_enable'] = array(
 			'name'        => __( 'Course Archive Image', 'sensei-lms' ),
-			'description' => __( 'Output the Course Image on the Course Archive Page.', 'sensei-lms' ),
+			'description' => __( 'Output the Course Image on the Course Archive Page (does not apply when using blocks).', 'sensei-lms' ),
 			'type'        => 'checkbox',
 			'default'     => true,
 			'section'     => 'course-settings',
