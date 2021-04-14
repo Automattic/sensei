@@ -429,7 +429,7 @@ class Sensei_Emails {
 		}
 	}
 
-}//end class
+}
 
 /**
  * Class WooThemes_Sensei_Emails

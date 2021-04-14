@@ -285,7 +285,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		$offset = 0;
 		if ( ! empty( $paged ) ) {
 			$offset = $per_page * ( $paged - 1 );
-		} // End If Statement
+		}
 
 		switch ( $this->view ) {
 			case 'learners':
@@ -323,7 +323,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 			)
 		);
 
-	} // End prepare_items()
+	}
 
 	/**
 	 * Generates content for a single row of the table in the user management
@@ -800,7 +800,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 		$this->total_items = $courses_query->found_posts;
 		return $courses_query->posts;
-	} // End get_courses()
+	}
 
 	/**
 	 * Return array of lessons.
@@ -836,7 +836,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 		$this->total_items = $lessons_query->found_posts;
 		return $lessons_query->posts;
-	} // End get_lessons()
+	}
 
 	/**
 	 * Return array of learners
@@ -910,7 +910,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		}
 		$this->total_items = $total_learners;
 		return $learners;
-	} // End get_learners()
+	}
 
 	/**
 	 * Returns a list of user ids to filter sensei activities. If no filtering is required, false is returned.
@@ -1000,7 +1000,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				break;
 		}
 		echo wp_kses_post( apply_filters( 'sensei_learners_no_items_text', $text ) );
-	} // End no_items()
+	}
 
 	/**
 	 * Output for table heading

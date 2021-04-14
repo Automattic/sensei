@@ -33,7 +33,7 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 		add_action( 'sensei_after_list_table', array( $this, 'data_table_footer' ) );
 
 		add_filter( 'sensei_list_table_search_button_text', array( $this, 'search_button' ) );
-	} // End __construct()
+	}
 
 	/**
 	 * Define the columns that are going to be used in the table
@@ -83,7 +83,7 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 		if ( ! empty( $_GET['orderby'] ) ) {
 			if ( array_key_exists( esc_html( $_GET['orderby'] ), $this->get_sortable_columns() ) ) {
 				$orderby = esc_html( $_GET['orderby'] );
-			} // End If Statement
+			}
 		}
 
 		// Handle order
@@ -96,7 +96,7 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 		$search = false;
 		if ( ! empty( $_GET['s'] ) ) {
 			$search = esc_html( $_GET['s'] );
-		} // End If Statement
+		}
 		$this->search = $search;
 
 		$per_page = $this->get_items_per_page( 'sensei_comments_per_page' );
@@ -106,7 +106,7 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 		$offset = 0;
 		if ( ! empty( $paged ) ) {
 			$offset = $per_page * ( $paged - 1 );
-		} // End If Statement
+		}
 
 		$args = array(
 			'number'  => $per_page,
@@ -116,7 +116,7 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 		);
 		if ( $this->search ) {
 			$args['search'] = $this->search;
-		} // End If Statement
+		}
 
 		$this->items = $this->get_lesson_statuses( $args );
 
@@ -148,7 +148,7 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 		if ( ! empty( $_GET['orderby'] ) ) {
 			if ( array_key_exists( esc_html( $_GET['orderby'] ), $this->get_sortable_columns() ) ) {
 				$orderby = esc_html( $_GET['orderby'] );
-			} // End If Statement
+			}
 		}
 
 		// Handle order
@@ -161,7 +161,7 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 		$search = false;
 		if ( ! empty( $_GET['s'] ) ) {
 			$search = esc_html( $_GET['s'] );
-		} // End If Statement
+		}
 		$this->search = $search;
 
 		$args = array(
@@ -170,7 +170,7 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 		);
 		if ( $this->search ) {
 			$args['search'] = $this->search;
-		} // End If Statement
+		}
 
 		// Start the csv with the column headings
 		$column_headers = array();
@@ -237,7 +237,7 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 			if ( is_numeric( $grade ) ) {
 				$grade .= '%';
 			}
-		} // End If Statement
+		}
 
 		$column_data = apply_filters(
 			'sensei_analysis_lesson_column_data',
@@ -292,7 +292,7 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 				// Store for reuse on counts
 				$activity_args['user_id'] = (array) $learners_search->get_results();
 			}
-		} // End If Statement
+		}
 
 		$activity_args = apply_filters( 'sensei_analysis_lesson_filter_statuses', $activity_args );
 
@@ -319,7 +319,7 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 			$statuses = array( $statuses );
 		}
 		return $statuses;
-	} // End get_lesson_statuses()
+	}
 
 	/**
 	 * no_items sets output when no items are found
@@ -330,7 +330,7 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 	 */
 	public function no_items() {
 		esc_html_e( 'No learners found.', 'sensei-lms' );
-	} // End no_items()
+	}
 
 	/**
 	 * data_table_header output for table heading
@@ -340,7 +340,7 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 	 */
 	public function data_table_header() {
 		echo '<strong>' . esc_html__( 'Learners taking this Lesson', 'sensei-lms' ) . '</strong>';
-	} // End data_table_header()
+	}
 
 	/**
 	 * data_table_footer output for table footer
@@ -360,7 +360,7 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 			admin_url( 'admin.php' )
 		);
 		echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( $url, 'sensei_csv_download', '_sdl_nonce' ) ) . '">' . esc_html__( 'Export all rows (CSV)', 'sensei-lms' ) . '</a>';
-	} // End data_table_footer()
+	}
 
 	/**
 	 * the text for the search button
@@ -375,7 +375,7 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 		return $text;
 
 	}
-} // End Class
+}
 
 
 /**

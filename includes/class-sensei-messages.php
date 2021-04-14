@@ -64,7 +64,7 @@ class Sensei_Messages {
 		add_filter( 'comment_feed_where', array( $this, 'exclude_message_comments_from_feed_where' ) );
 		add_filter( 'user_has_cap', [ $this, 'user_messages_cap_check' ], 10, 3 );
 		add_action( 'load-edit-comments.php', [ $this, 'check_permissions_edit_comments' ] );
-	} // End __construct()
+	}
 
 	public function only_show_messages_to_owner( $query ) {
 		if ( is_admin() ) {
@@ -407,7 +407,7 @@ class Sensei_Messages {
 		}
 		return $emails;
 
-	}//end stop_wp_comment_emails()
+	}
 
 	/**
 	 * Save new message post
@@ -819,7 +819,7 @@ class Sensei_Messages {
 
 		<?php
 
-	} // End sensei_single_title()
+	}
 
 	/**
 	 * Generates the my messages
@@ -861,7 +861,7 @@ class Sensei_Messages {
 		</h2>
 
 		<?php
-	} //end the_message_header
+	}
 
 	/**
 	 * Get the message title that is going to be displayed.
@@ -909,9 +909,9 @@ class Sensei_Messages {
 			</p>
 
 			<?php
-		} // end if
+		}
 
-	} // end the_message_archive_sender
+	}
 
 	/**
 	 * Link to the users my messages page
@@ -931,7 +931,7 @@ class Sensei_Messages {
 		}
 	}
 
-} // End Class
+}
 
 /**
  * Class WooThemes_Sensei_Messages
