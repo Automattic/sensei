@@ -80,12 +80,12 @@ class Sensei_WCCOM_Connect_Notice {
 			return;
 		}
 
-		add_action( 'admin_footer', [ $this, 'output_dismiss_js' ] );
+		wp_enqueue_script( 'sensei-dismiss-notices' );
 
 		$wccom_connect_url = $this->get_wccom_connect_url();
 		?>
-		<div id="sensei-lms-wccom-connect-notice" class="notice sensei-notice is-dismissible"
-				data-nonce="<?php echo esc_attr( wp_create_nonce( self::DISMISS_NOTICE_NONCE_ACTION ) ); ?>">
+		<div id="sensei-lms-wccom-connect-notice" class="notice sensei-notice is-dismissible" data-dismiss-action="sensei_dismiss_wccom_connect_notice"
+				data-dismiss-nonce="<?php echo esc_attr( wp_create_nonce( self::DISMISS_NOTICE_NONCE_ACTION ) ); ?>">
 			<p>
 				<a href="<?php echo esc_url( $wccom_connect_url ); ?>" class="button button-primary">
 					<?php esc_html_e( 'Connect account', 'sensei-lms' ); ?>
@@ -98,39 +98,6 @@ class Sensei_WCCOM_Connect_Notice {
 				?>
 			</p>
 		</div>
-		<?php
-	}
-
-	/**
-	 * Output the JS for dismissing the notice.
-	 *
-	 * @access private
-	 **/
-	public function output_dismiss_js() {
-		?>
-		<script type="text/javascript">
-			( function() {
-				var noticeSelector = '#sensei-lms-wccom-connect-notice';
-				var $notice = jQuery( noticeSelector );
-				if ( $notice.length === 0 ) {
-					return;
-				}
-
-				var nonce = $notice.data( 'nonce' );
-
-				// Handle button clicks
-				jQuery( noticeSelector ).on( 'click', 'button.notice-dismiss', function() {
-					jQuery.ajax( {
-						type: 'POST',
-						url: ajaxurl,
-						data: {
-							action: 'sensei_dismiss_wccom_connect_notice',
-							nonce: nonce,
-						}
-					} );
-				} );
-			} )();
-		</script>
 		<?php
 	}
 

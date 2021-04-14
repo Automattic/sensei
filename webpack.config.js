@@ -21,6 +21,7 @@ const files = [
 	'js/admin/meta-box-quiz-editor.js',
 	'js/admin/lesson-edit.js',
 	'js/admin/ordering.js',
+	'js/admin/sensei-notice-dismiss.js',
 	'js/frontend/course-archive.js',
 	'js/grading-general.js',
 	'js/image-selectors.js',
