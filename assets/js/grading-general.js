@@ -264,6 +264,10 @@ jQuery( document ).ready( function ( $ ) {
 		var courseId = jQuery( '#grading-course-options' ).val();
 		var gradingView = jQuery.fn.getQueryVariable( 'view' );
 
+		if( ! gradingView ) {
+			gradingView = 'all';
+		}
+
 		// Perform the AJAX call to get the select box.
 		jQuery.get(
 			ajaxurl,
