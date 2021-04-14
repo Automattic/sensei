@@ -1833,7 +1833,7 @@ class Sensei_Course {
 
 					</div>
 
-				<?php }?>
+				<?php } ?>
 
 			</div>
 
@@ -1866,7 +1866,7 @@ class Sensei_Course {
 
 					</div>
 
-				<?php }?>
+				<?php } ?>
 
 			</div>
 

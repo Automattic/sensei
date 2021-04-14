@@ -2954,8 +2954,7 @@ class Sensei_Lesson {
 		// Handle Default Fields (multiple choice)
 		if ( 'multiple-choice' == $question_type && isset( $data['question_right_answers'] ) && ( '' != $data['question_right_answers'] ) ) {
 			$question_right_answers = $data['question_right_answers'];
-		}
-		elseif ( 'multiple-choice' == $question_type && isset( $data['question_right_answer'] ) && ( '' != $data['question_right_answer'] ) ) {
+		} elseif ( 'multiple-choice' == $question_type && isset( $data['question_right_answer'] ) && ( '' != $data['question_right_answer'] ) ) {
 			$question_right_answer = $data['question_right_answer'];
 		}
 		if ( 'multiple-choice' == $question_type && isset( $data['question_wrong_answers'] ) && ( '' != $data['question_wrong_answers'] ) ) {

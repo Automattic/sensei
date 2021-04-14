@@ -1360,7 +1360,7 @@ class Sensei_Quiz {
 							class="wp-block-button__link button quiz-submit save sensei-stop-double-submission"><?php esc_attr_e( 'Save Quiz', 'sensei-lms' ); ?></button>
 					</div>
 
-				<?php }?>
+				<?php } ?>
 
 				<?php if ( isset( $reset_quiz_allowed ) && $reset_quiz_allowed ) { ?>
 

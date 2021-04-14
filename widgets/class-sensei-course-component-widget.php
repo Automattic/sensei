@@ -309,7 +309,7 @@ class Sensei_Course_Component_Widget extends WP_Widget {
 							</a>
 						</span>
 						<br />
-					<?php }?>
+					<?php } ?>
 
 					<span class="course-lesson-count">
 						<?php

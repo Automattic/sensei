@@ -414,7 +414,7 @@ class Sensei_Legacy_Shortcodes {
 									<?php echo esc_html( $author_display_name ); ?>
 								</a>
 							</span>
-						<?php }?>
+						<?php } ?>
 
 						<span class="course-lesson-count">
 							<?php
@@ -430,7 +430,7 @@ class Sensei_Legacy_Shortcodes {
 								echo wp_kses_post( sprintf( __( 'in %s', 'sensei-lms' ), $category_output ) );
 								?>
 							</span>
-						<?php }?>
+						<?php } ?>
 
 						<?php
 						/** This action is documented in includes/class-sensei-frontend.php */

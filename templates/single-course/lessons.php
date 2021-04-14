@@ -83,7 +83,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 			</article>
 
-		<?php endwhile;?>
+		<?php endwhile; ?>
 
 	<?php endif; ?>
 

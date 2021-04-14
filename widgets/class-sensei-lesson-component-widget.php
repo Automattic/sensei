@@ -212,7 +212,7 @@ class Sensei_Lesson_Component_Widget extends WP_Widget {
 							</a>
 						</span>
 						<br />
-					<?php }?>
+					<?php } ?>
 					<?php if ( 0 < $lesson_course_id ) { ?>
 						<span class="lesson-course">
 							<?php
@@ -228,7 +228,7 @@ class Sensei_Lesson_Component_Widget extends WP_Widget {
 					<?php } ?>
 					<br />
 				</li>
-			<?php }?>
+			<?php } ?>
 			<?php echo '<li class="my-account fix"><a class="button" href="' . esc_url( get_post_type_archive_link( 'lesson' ) ) . '">' . esc_html__( 'More Lessons', 'sensei-lms' ) . '</a></li>'; ?>
 		</ul>
 			<?php

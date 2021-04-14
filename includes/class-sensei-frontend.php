@@ -1088,7 +1088,7 @@ class Sensei_Frontend {
 
 					</article>
 
-				<?php }?>
+				<?php } ?>
 
 			</section>
 

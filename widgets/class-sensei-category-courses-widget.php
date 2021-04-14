@@ -224,7 +224,7 @@ class Sensei_Category_Courses_Widget extends WP_Widget {
 							</a>
 						</span>
 						<br />
-					<?php }?>
+					<?php } ?>
 					<span class="course-lesson-count">
 						<?php
 						// translators: Placeholder %d is the lesson count.
@@ -237,7 +237,7 @@ class Sensei_Category_Courses_Widget extends WP_Widget {
 					do_action( 'sensei_course_meta_inside_after', $post_id );
 					?>
 				</li>
-			<?php }?>
+			<?php } ?>
 			</ul>
 			<?php
 		}
