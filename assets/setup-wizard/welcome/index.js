@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { Link } from '@woocommerce/components';
-
-/**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
@@ -74,13 +69,13 @@ export const Welcome = () => {
 				</CardBody>
 			</Card>
 			<div className="sensei-setup-wizard__bottom-actions">
-				<Link
+				<a
 					href="edit.php?post_type=course"
 					type="wp-admin"
 					className="link__color-secondary"
 				>
 					{ __( 'Not right now', 'sensei-lms' ) }
-				</Link>
+				</a>
 			</div>
 			{ usageModalActive && (
 				<UsageModal
