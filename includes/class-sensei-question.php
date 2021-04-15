@@ -37,10 +37,10 @@ class Sensei_Question {
 			add_filter( 'request', array( $this, 'filter_actions' ) );
 
 			add_action( 'save_post_question', array( $this, 'save_question' ), 10, 1 );
-		} // End If Statement
+		}
 
 		add_action( 'sensei_question_initial_publish', [ $this, 'log_initial_publish_event' ] );
-	} // End __construct()
+	}
 
 	public function question_types() {
 		$types = array(
@@ -135,7 +135,7 @@ class Sensei_Question {
 
 		}
 
-	} // End add_column_data()
+	}
 
 	public function question_edit_panel_metabox( $post_type, $post ) {
 		if ( in_array( $post_type, array( 'question', 'multiple_question' ) ) ) {
@@ -465,7 +465,7 @@ class Sensei_Question {
 
 		return $question_type;
 
-	}//end get_question_type()
+	}
 
 	/**
 	 * Given a question ID, return the grade that can be achieved.
@@ -680,7 +680,7 @@ class Sensei_Question {
 
 		return $output;
 
-	} // end get_the_question_media
+	}
 
 	/**
 	 * Output the question media
@@ -803,9 +803,9 @@ class Sensei_Question {
 
 				<?php
 			}
-		}// end if we can show answer feedback
+		}
 
-	}//end answer_feedback_notes()
+	}
 
 	/**
 	 * This function has to be run inside the quiz question loop on the single quiz page.
@@ -1136,7 +1136,7 @@ class Sensei_Question {
 						$checked = checked( $answer, $question_data['user_answer_entry'], false );
 
 					}
-				} // End If Statement
+				}
 
 				// Load the answer option data
 				$question_option['ID']           = Sensei()->lesson->get_answer_id( $answer );
@@ -1149,7 +1149,7 @@ class Sensei_Question {
 				// add the speci  fic option to the list of options for this question
 				$question_answers_options[ $question_option['ID'] ] = $question_option;
 
-			} // end for each option
+			}
 
 			// Shuffle the array depending on the settings
 			$answer_options_sorted = array();
@@ -1194,8 +1194,8 @@ class Sensei_Question {
 
 					$answer_options_sorted = $question_answers_options;
 
-				} // end if $answer_order_string
-			} // end if random order
+				}
+			}
 
 			// assemble and setup the data for the templates data array
 			$question_data['answer_options'] = $answer_options_sorted;
@@ -1204,7 +1204,7 @@ class Sensei_Question {
 
 		return $question_data;
 
-	}//end multiple_choice_load_question_data()
+	}
 
 	/**
 	 * Load the gap fill question data on the sensei_get_question_template_data
@@ -1231,7 +1231,7 @@ class Sensei_Question {
 
 		return $question_data;
 
-	}//end gap_fill_load_question_data()
+	}
 
 
 	/**
@@ -1431,7 +1431,7 @@ class Sensei_Question {
 		return true;
 	}
 
-} // End Class
+}
 
 /**
  * Class WooThemes_Sensei_Question

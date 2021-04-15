@@ -1,7 +1,7 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
-} // End if().
+}
 
 /**
  * Responsible for loading Sensei and setting up the Main WordPress hooks.
@@ -267,7 +267,7 @@ class Sensei_Main {
 		 * @param {Sensei_Main} $sensei Sensei object.
 		 */
 		do_action( 'sensei_loaded', $this );
-	} // End __construct()
+	}
 
 	/**
 	 * Load the foundations of Sensei.
@@ -316,7 +316,7 @@ class Sensei_Main {
 
 		return self::$_instance;
 
-	} // end instance()
+	}
 
 	/**
 	 * This function is linked into the activation
@@ -522,8 +522,8 @@ class Sensei_Main {
 
 			$this->updates->update();
 
-		} // End if().
-	} // End run_updates()
+		}
+	}
 
 	/**
 	 * Register the widgets.
@@ -548,11 +548,11 @@ class Sensei_Main {
 				require_once $this->plugin_path . 'widgets/class-sensei-' . $key . '-widget.php';
 				register_widget( 'Sensei_' . $value . '_Widget' );
 			}
-		} // End foreach().
+		}
 
 		do_action( 'sensei_register_widgets' );
 
-	} // End register_widgets()
+	}
 
 	/**
 	 * Load the plugin's localisation file.
@@ -565,7 +565,7 @@ class Sensei_Main {
 
 		load_plugin_textdomain( 'sensei-lms', false, dirname( plugin_basename( $this->main_plugin_file_name ) ) . '/lang/' );
 
-	} // End load_localisation()
+	}
 
 	/**
 	 * Load the plugin textdomain from the main WordPress "languages" folder.
@@ -589,7 +589,7 @@ class Sensei_Main {
 		load_textdomain( $domain, WP_LANG_DIR . '/' . $domain . '/' . $domain . '-' . $locale . '.mo' );
 		load_plugin_textdomain( $domain, false, dirname( plugin_basename( $this->main_plugin_file_name ) ) . '/lang/' );
 
-	} // End load_plugin_textdomain()
+	}
 
 	/**
 	 * Run on activation.
@@ -626,7 +626,7 @@ class Sensei_Main {
 		register_activation_hook( $this->main_plugin_file_name, array( $this, 'activate_sensei' ) );
 		register_activation_hook( $this->main_plugin_file_name, array( $this, 'initiate_rewrite_rules_flush' ) );
 
-	} // End install()
+	}
 
 	/**
 	 * Checks for plugin update tasks and ensures the current version is set.
@@ -720,7 +720,7 @@ class Sensei_Main {
 
 		update_option( 'sensei_installed', 1 );
 
-	} // End activate_sensei()
+	}
 
 	/**
 	 * Register the plugin's version.
@@ -735,7 +735,7 @@ class Sensei_Main {
 			update_option( 'sensei-version', $this->version );
 
 		}
-	} // End register_plugin_version()
+	}
 
 	/**
 	 * Ensure that "post-thumbnails" support is available for those themes that don't register it.
@@ -749,7 +749,7 @@ class Sensei_Main {
 		if ( ! current_theme_supports( 'post-thumbnails' ) ) {
 			add_theme_support( 'post-thumbnails' ); }
 
-	} // End ensure_post_thumbnails_support()
+	}
 
 	/**
 	 * Determine the relative path to the plugin's directory.
@@ -772,7 +772,7 @@ class Sensei_Main {
 
 		return $sensei_plugin_path;
 
-	} // End plugin_path()
+	}
 
 	/**
 	 * Retrieve the ID of a specified page setting.
@@ -785,7 +785,7 @@ class Sensei_Main {
 	public function get_page_id( $page ) {
 		$page = apply_filters( 'sensei_get_' . esc_attr( $page ) . '_page_id', get_option( 'sensei_' . esc_attr( $page ) . '_page_id' ) );
 		return ( $page ) ? $page : -1;
-	} // End get_page_id()
+	}
 
 	/**
 	 * check_user_permissions function.
@@ -819,7 +819,7 @@ class Sensei_Main {
 
 				} else {
 					$prerequisite_complete = true;
-				} // End if().
+				}
 
 				// Handles restrictions on the course
 				if ( ( ! $prerequisite_complete && 0 < absint( $course_prerequisite_id ) ) ) {
@@ -845,7 +845,7 @@ class Sensei_Main {
 
 					$user_allowed = true;
 
-				} // End if().
+				}
 				break;
 			case 'lesson-single':
 				// Check for WC purchase
@@ -882,8 +882,8 @@ class Sensei_Main {
 							// translators: The placeholder %1$s is a link to the Course.
 							$this->permissions_message['message'] = sprintf( __( 'Please sign up for the %1$s before starting the lesson.', 'sensei-lms' ), $course_link );
 						}
-					} // End if().
-				} // End if().
+					}
+				}
 				break;
 			case 'quiz-single':
 				$lesson_id        = get_post_meta( $post->ID, '_quiz_lesson', true );
@@ -916,8 +916,8 @@ class Sensei_Main {
 
 							$user_allowed = true;
 
-						} // End if().
-					} // End if().
+						}
+					}
 				} elseif ( $this->access_settings() ) {
 					// Check if the user has started the course
 					if ( is_user_logged_in() && ! Sensei_Utils::user_started_course( $lesson_course_id, $current_user->ID ) && ( isset( $this->settings->settings['access_permission'] ) && ( true == $this->settings->settings['access_permission'] ) ) ) {
@@ -932,22 +932,22 @@ class Sensei_Main {
 						} else {
 							// translators: The placeholder %1$s is a link to the Course.
 							$this->permissions_message['message'] = sprintf( __( 'Please sign up for the %1$s before starting this Quiz.', 'sensei-lms' ), $course_link );
-						} // End if().
+						}
 					} else {
 						$user_allowed = true;
-					} // End if().
+					}
 				} else {
 					$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __( 'Restricted Access', 'sensei-lms' );
 					$course_link                        = '<a href="' . esc_url( get_permalink( get_post_meta( get_post_meta( $post->ID, '_quiz_lesson', true ), '_lesson_course', true ) ) ) . '">' . __( 'course', 'sensei-lms' ) . '</a>';
 					// translators: The placeholder %1$s is a link to the Course.
 					$this->permissions_message['message'] = sprintf( __( 'Please sign up for the %1$s before taking this Quiz.', 'sensei-lms' ), $course_link );
-				} // End if().
+				}
 				break;
 			default:
 				$user_allowed = true;
 				break;
 
-		} // End switch().
+		}
 
 		/**
 		 * filter the permissions message shown on sensei post types.
@@ -980,7 +980,7 @@ class Sensei_Main {
 		 */
 		return apply_filters( 'sensei_access_permissions', $user_allowed, $current_user->ID );
 
-	} // End get_placeholder_image()
+	}
 
 
 	/**
@@ -1001,11 +1001,11 @@ class Sensei_Main {
 				return true;
 			} else {
 				return false;
-			} // End if().
+			}
 		} else {
 			return true;
-		} // End if().
-	} // End access_settings()
+		}
+	}
 
 	/**
 	 * load_class loads in class files
@@ -1017,8 +1017,8 @@ class Sensei_Main {
 	public function load_class( $class_name = '' ) {
 		if ( '' != $class_name && '' != $this->token ) {
 			require_once dirname( __FILE__ ) . '/class-' . esc_attr( $this->token ) . '-' . esc_attr( $class_name ) . '.php';
-		} // End if().
-	} // End load_class()
+		}
+	}
 
 	/**
 	 * Filtering wp_count_comments to ensure that Sensei comments are ignored.
@@ -1352,7 +1352,7 @@ class Sensei_Main {
 		</div>
 
 		<?php
-	}//end disable_sensei_modules_extension()
+	}
 
 	/**
 	 * Sensei wide rewrite flush call.
@@ -1381,7 +1381,7 @@ class Sensei_Main {
 
 		}
 
-	} // end flush_rewrite_rules
+	}
 
 	/**
 	 * Calling this function will tell Sensei to flush rewrite
@@ -1588,7 +1588,7 @@ class Sensei_Main {
 		return trailingslashit( $this->plugin_path ) . $path;
 	}
 
-} // End Class
+}
 
 /**
  * Class Woothemes_Sensei

@@ -21,7 +21,7 @@ class Sensei_Class_Question_Test extends WP_UnitTestCase {
 
 		$this->factory = new Sensei_Factory();
 		Sensei_Test_Events::reset();
-	}//end setup()
+	}
 
 	public function tearDown() {
 		parent::tearDown();
@@ -36,7 +36,7 @@ class Sensei_Class_Question_Test extends WP_UnitTestCase {
 		// test if the global sensei quiz class is loaded
 		$this->assertTrue( isset( Sensei()->question ), 'Sensei Question class is not loaded' );
 
-	} // end testClassInstance
+	}
 
 	/**
 	 * This tests Woothemes_Sensei()->quiz->get_question_type
@@ -78,7 +78,7 @@ class Sensei_Class_Question_Test extends WP_UnitTestCase {
 			'The method get_question_type should return false for an empty string parameter'
 		);
 
-	}//end testGetQuestionType()
+	}
 
 	/**
 	 * Test initial publish logging default property values.

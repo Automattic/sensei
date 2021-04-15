@@ -123,6 +123,6 @@ class Sensei_Shortcode_Featured_Courses implements Sensei_Shortcode_Interface {
 
 		return $shortcode_output;
 
-	}//end render()
+	}
 
 }

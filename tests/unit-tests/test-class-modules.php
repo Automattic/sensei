@@ -37,7 +37,7 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 		// test if the global sensei quiz class is loaded
 		$this->assertTrue( isset( Sensei()->modules ), 'Sensei Modules class is not loaded' );
 
-	} // end testClassInstance
+	}
 
 	/**
 	 * @covers Sensei_Core_Modules::do_link_to_module
@@ -143,4 +143,4 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 
 	}
 
-} // end class
+}

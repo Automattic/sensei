@@ -52,7 +52,7 @@ class Sensei_Settings_API {
 		$this->tabs              = array();
 		$this->settings_version  = '';
 
-	} // End __construct()
+	}
 
 	/**
 	 * Setup the settings screen and necessary functions.
@@ -67,7 +67,7 @@ class Sensei_Settings_API {
 		add_action( 'admin_init', array( $this, 'settings_fields' ) );
 		add_action( 'init', array( $this, 'general_init' ), 5 );
 
-	} // End setup_settings()
+	}
 
 	/**
 	 * Initialise settings sections, settings fields and create tabs, if applicable.
@@ -82,8 +82,8 @@ class Sensei_Settings_API {
 		$this->get_settings();
 		if ( $this->has_tabs == true ) {
 			$this->create_tabs();
-		} // End If Statement
-	} // End general_init()
+		}
+	}
 
 	/**
 	 * Register the settings sections.
@@ -95,7 +95,7 @@ class Sensei_Settings_API {
 	public function init_sections() {
 		// Override this function in your class and assign the array of sections to $this->sections.
 		esc_html_e( 'Override init_sections() in your class.', 'sensei-lms' );
-	} // End init_sections()
+	}
 
 	/**
 	 * Register the settings fields.
@@ -107,7 +107,7 @@ class Sensei_Settings_API {
 	public function init_fields() {
 		// Override this function in your class and assign the array of sections to $this->fields.
 		esc_html_e( 'Override init_fields() in your class.', 'sensei-lms' );
-	} // End init_fields()
+	}
 
 	/**
 	 * Construct and output HTML markup for the settings tabs.
@@ -158,7 +158,7 @@ class Sensei_Settings_API {
 
 			echo wp_kses_post( $html );
 		}
-	} // End settings_tabs()
+	}
 
 	/**
 	 * Create settings tabs based on the settings sections.
@@ -176,7 +176,7 @@ class Sensei_Settings_API {
 
 			$this->tabs = $tabs;
 		}
-	} // End create_tabs()
+	}
 
 	/**
 	 * Create settings sections.
@@ -191,7 +191,7 @@ class Sensei_Settings_API {
 				add_settings_section( $k, $v['name'], array( $this, 'section_description' ), $this->token );
 			}
 		}
-	} // End create_sections()
+	}
 
 	/**
 	 * Create settings fields.
@@ -225,7 +225,7 @@ class Sensei_Settings_API {
 					$this->has_range = true; }
 			}
 		}
-	} // End create_fields()
+	}
 
 	/**
 	 * Determine the method to use for outputting a field, validating a field or checking a field.
@@ -277,7 +277,7 @@ class Sensei_Settings_API {
 		}
 
 		return $method;
-	} // End determine_method()
+	}
 
 	/**
 	 * Parse the fields into an array index on the sections property.
@@ -299,7 +299,7 @@ class Sensei_Settings_API {
 				$this->remaining_fields[ $k ] = $v;
 			}
 		}
-	} // End parse_fields()
+	}
 
 	/**
 	 * Register the settings screen within the WordPress admin.
@@ -323,7 +323,7 @@ class Sensei_Settings_API {
 			add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
 
 		}
-	} // End register_settings_screen()
+	}
 
 	/**
 	 * The markup for the settings screen.
@@ -374,7 +374,7 @@ class Sensei_Settings_API {
 		<?php do_action( 'settings_after_form' ); ?>
 </div><!--/#woothemes-sensei-->
 		<?php
-	} // End settings_screen()
+	}
 
 	/**
 	 * Retrieve the settings from the database.
@@ -404,7 +404,7 @@ class Sensei_Settings_API {
 		}
 
 		return $this->settings;
-	} // End get_settings()
+	}
 
 	/**
 	 * Get the raw settings option.
@@ -437,7 +437,7 @@ class Sensei_Settings_API {
 		register_setting( $this->token, $this->token, array( $this, 'validate_fields' ) );
 		$this->create_sections();
 		$this->create_fields();
-	} // End settings_fields()
+	}
 
 	/**
 	 * Display settings errors.
@@ -448,7 +448,7 @@ class Sensei_Settings_API {
 	 */
 	public function settings_errors() {
 		settings_errors( $this->token . '-errors' );
-	} // End settings_errors()
+	}
 
 	/**
 	 * Display the description for a settings section.
@@ -461,7 +461,7 @@ class Sensei_Settings_API {
 		if ( isset( $this->sections[ $section['id'] ]['description'] ) ) {
 			echo wp_kses_post( wpautop( $this->sections[ $section['id'] ]['description'] ) );
 		}
-	} // End section_description_main()
+	}
 
 	/**
 	 * Generate text input field.
@@ -478,7 +478,7 @@ class Sensei_Settings_API {
 		if ( isset( $args['data']['description'] ) ) {
 			echo '<span class="description">' . wp_kses_post( $args['data']['description'] ) . '</span>' . "\n";
 		}
-	} // End form_field_text()
+	}
 
 	/**
 	 * Generate color picker field.
@@ -496,7 +496,7 @@ class Sensei_Settings_API {
 		if ( isset( $args['data']['description'] ) ) {
 			echo '<span class="description">' . wp_kses_post( $args['data']['description'] ) . '</span>' . "\n";
 		}
-	} // End form_field_text()
+	}
 
 	/**
 	 * Generate checkbox field.
@@ -527,7 +527,7 @@ class Sensei_Settings_API {
 				)
 			) . '</label>' . "\n";
 		}
-	} // End form_field_checkbox()
+	}
 
 	/**
 	 * Generate textarea field.
@@ -544,7 +544,7 @@ class Sensei_Settings_API {
 		if ( isset( $args['data']['description'] ) ) {
 			echo '<p><span class="description">' . esc_html( $args['data']['description'] ) . '</span></p>' . "\n";
 		}
-	} // End form_field_textarea()
+	}
 
 	/**
 	 * Generate select box field.
@@ -583,7 +583,7 @@ class Sensei_Settings_API {
 				echo '<p><span class="description">' . esc_html( $args['data']['description'] ) . '</span></p>' . "\n";
 			}
 		}
-	} // End form_field_select()
+	}
 
 	/**
 	 * Generate radio button field.
@@ -619,7 +619,7 @@ class Sensei_Settings_API {
 				echo '<span class="description">' . esc_html( $args['data']['description'] ) . '</span>' . "\n";
 			}
 		}
-	} // End form_field_radio()
+	}
 
 	/**
 	 * Generate multicheck field.
@@ -677,7 +677,7 @@ class Sensei_Settings_API {
 				echo '<span class="description">' . esc_html( $args['data']['description'] ) . '</span>' . "\n";
 			}
 		}
-	} // End form_field_multicheck()
+	}
 
 	/**
 	 * Generate range field.
@@ -717,7 +717,7 @@ class Sensei_Settings_API {
 				echo '<p><span class="description">' . esc_html( $args['data']['description'] ) . '</span></p>' . "\n";
 			}
 		}
-	} // End form_field_range()
+	}
 
 	/**
 	 * Generate image-based selector form field.
@@ -755,7 +755,7 @@ class Sensei_Settings_API {
 				echo '<span class="description">' . esc_html( $args['data']['description'] ) . '</span>' . "\n";
 			}
 		}
-	} // End form_field_images()
+	}
 
 	/**
 	 * Generate information box field.
@@ -780,7 +780,7 @@ class Sensei_Settings_API {
 		$html .= '</div>' . "\n";
 
 		echo wp_kses_post( $html );
-	} // End form_field_info()
+	}
 
 
 	/**
@@ -798,7 +798,7 @@ class Sensei_Settings_API {
 				echo '<span class="description">' . esc_html( $args['data']['description'] ) . '</span>' . "\n";
 			}
 		}
-	} // End form_field_button()
+	}
 
 
 	/**
@@ -867,7 +867,7 @@ class Sensei_Settings_API {
 		// Parse error messages into the Settings API.
 		$this->parse_errors();
 		return $options;
-	} // End validate_fields()
+	}
 
 	/**
 	 * Validate text fields.
@@ -879,7 +879,7 @@ class Sensei_Settings_API {
 	 */
 	public function validate_field_text( $input ) {
 		return trim( esc_attr( $input ) );
-	} // End validate_field_text()
+	}
 
 	/**
 	 * Validate checkbox fields.
@@ -895,7 +895,7 @@ class Sensei_Settings_API {
 		} else {
 			return (bool) $input;
 		}
-	} // End validate_field_checkbox()
+	}
 
 	/**
 	 * Validate multicheck fields.
@@ -911,7 +911,7 @@ class Sensei_Settings_API {
 		$input = array_map( 'esc_attr', $input );
 
 		return $input;
-	} // End validate_field_multicheck()
+	}
 
 	/**
 	 * Validate range fields.
@@ -925,7 +925,7 @@ class Sensei_Settings_API {
 		$input = number_format( floatval( $input ), 0 );
 
 		return $input;
-	} // End validate_field_range()
+	}
 
 	/**
 	 * Validate URL fields.
@@ -937,7 +937,7 @@ class Sensei_Settings_API {
 	 */
 	public function validate_field_url( $input ) {
 		return trim( esc_url( $input ) );
-	} // End validate_field_url()
+	}
 
 	/**
 	 * Check and validate the input from text fields.
@@ -950,7 +950,7 @@ class Sensei_Settings_API {
 		$is_valid = true;
 
 		return $is_valid;
-	} // End check_field_text()
+	}
 
 	/**
 	 * Log an error internally, for processing later using $this->parse_errors().
@@ -969,7 +969,7 @@ class Sensei_Settings_API {
 			$message = sprintf( __( '%s is a required field', 'sensei-lms' ), $data['name'] );
 		}
 		$this->errors[ $key ] = $message;
-	} // End add_error()
+	}
 
 	/**
 	 * Parse logged errors.
@@ -988,7 +988,7 @@ class Sensei_Settings_API {
 			$message = sprintf( __( '%s updated', 'sensei-lms' ), $this->name );
 			add_settings_error( $this->token . '-errors', $this->token, $message, 'updated' );
 		}
-	} // End parse_errors()
+	}
 
 	/**
 	 * Return an array of field types expecting an array value returned.
@@ -999,7 +999,7 @@ class Sensei_Settings_API {
 	 */
 	protected function get_array_field_types() {
 		return array( 'multicheck' );
-	} // End get_array_field_types()
+	}
 
 	/**
 	 * Load in JavaScripts where necessary.
@@ -1022,7 +1022,7 @@ class Sensei_Settings_API {
 			wp_enqueue_script( 'sensei-settings-imageselectors' );
 		}
 
-	} // End enqueue_scripts()
+	}
 
 	/**
 	 * Load in CSS styles where necessary.
@@ -1039,7 +1039,7 @@ class Sensei_Settings_API {
 		Sensei()->assets->enqueue( 'sensei-settings-api', 'css/settings.css', [ 'farbtastic' ] );
 
 		$this->enqueue_field_styles();
-	} // End enqueue_styles()
+	}
 
 	/**
 	 * Load in CSS styles for field types where necessary.
@@ -1059,8 +1059,8 @@ class Sensei_Settings_API {
 		if ( $this->has_imageselector ) {
 			wp_enqueue_style( 'sensei-settings-imageselectors' );
 		}
-	} // End enqueue_field_styles()
-} // End Class
+	}
+}
 
 /**
  * Class WooThemes_Sensei_Settings_API

@@ -104,9 +104,9 @@ global $course;
 
 					<?php
 
-				}// end for each
-			}// end if count lesson
-		} // end for each module
+				}
+			}
+		}
 		?>
 
 		<?php

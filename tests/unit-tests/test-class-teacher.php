@@ -27,7 +27,7 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
-	}//end setup()
+	}
 
 	/**
 	 *
@@ -40,21 +40,21 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 		$lessons = get_posts( 'post_type=course' );
 		foreach ( $lessons as $index => $lesson ) {
 			wp_delete_post( $lesson->ID, true );
-		}// end for each
+		}
 
 		// remove all lessons
 		$lessons = get_posts( 'post_type=lesson' );
 		foreach ( $lessons as $index => $lesson ) {
 			wp_delete_post( $lesson->ID, true );
-		}// end for each
+		}
 
 		// remove all quizzes
 		$quizzes = get_posts( 'post_type=quiz' );
 		foreach ( $quizzes as $index => $quiz ) {
 			wp_delete_post( $quiz->ID, true );
-		}// end for each
+		}
 
-	}//end tearDown()
+	}
 
 	/**
 	 * Testing the quiz class to make sure it is loaded
@@ -64,7 +64,7 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 		// test if the global sensei quiz class is loaded
 		$this->assertTrue( isset( Sensei()->teacher ), 'Sensei Modules class is not loaded' );
 
-	} // end testClassInstance
+	}
 
 	/**
 	 * Testing Sensei_Teacher::update_course_modules_author
@@ -149,7 +149,7 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 		$message                           = 'A new admin term with slug {adminID}-slug should not have been created. The admin term should not be duplicated when passed back to admin';
 		$this->assertFalse( strpos( $admin_term_after_multiple_updates[0]->slug, (string) $administrator->ID ), $message );
 
-	} // end test author change
+	}
 
 	/**
 	 * Testing Sensei_Teacher::update_course_modules_author
@@ -221,7 +221,7 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 			$this->assertEquals( $expected_module_2_slug, $term_after_update[0]->slug, 'Lesson module was not updated, ID: ' . $lesson_id );
 		}
 
-	}//end testUpdateCourseModulesAuthorChangeLessons()
+	}
 
 	public function testUpdateLessonTeacher() {
 		// setup assertions
@@ -385,4 +385,4 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 
 	}
 
-} // end class
+}

@@ -116,7 +116,7 @@ class Sensei_Legacy_Shortcodes {
 
 		return self::generate_shortcode_courses( __( 'Paid Courses', 'sensei-lms' ), 'paidcourses' );
 
-	} // End paid_courses()
+	}
 
 
 	/**
@@ -131,7 +131,7 @@ class Sensei_Legacy_Shortcodes {
 
 		return self::generate_shortcode_courses( __( 'Featured Courses', 'sensei-lms' ), 'featuredcourses' );
 
-	} // End featured_courses()
+	}
 
 	/**
 	 * shortcode_free_courses function.
@@ -145,7 +145,7 @@ class Sensei_Legacy_Shortcodes {
 
 		return self::generate_shortcode_courses( __( 'Free Courses', 'sensei-lms' ), 'freecourses' );
 
-	} // End free_courses()
+	}
 
 	/**
 	 * shortcode_new_courses function.
@@ -159,7 +159,7 @@ class Sensei_Legacy_Shortcodes {
 
 		return self::generate_shortcode_courses( __( 'New Courses', 'sensei-lms' ), 'newcourses' );
 
-	} // End new_courses()
+	}
 
 	/**
 	 * Generate courses adding a title.
@@ -210,7 +210,7 @@ class Sensei_Legacy_Shortcodes {
 
 		return $content;
 
-	}//end generate_shortcode_courses()
+	}
 
 
 	/**
@@ -249,7 +249,7 @@ class Sensei_Legacy_Shortcodes {
 		$content = ob_get_clean();
 		return $content;
 
-	} // End user_courses()
+	}
 
 	/**
 	 * This function is simply to honor the legacy
@@ -277,7 +277,7 @@ class Sensei_Legacy_Shortcodes {
 
 			$amount = $wp_query->get( 'posts_per_page' );
 
-		} // End If Statement
+		}
 
 		// This is not a paginated page (or it's simply the first page of a paginated page/post)
 		global $posts_array;
@@ -319,7 +319,7 @@ class Sensei_Legacy_Shortcodes {
 				// output the course markup
 				self::the_course( $course->ID );
 
-			} // End For Loop
+			}
 
 			// More and Prev links
 			$posts_array_query = new WP_Query( Sensei()->course->course_query( $shortcode_override, $amount, $course_includes, $course_excludes ) );
@@ -360,8 +360,8 @@ class Sensei_Legacy_Shortcodes {
 
 				echo wp_kses_post( apply_filters( 'course_archive_next_link', $html ) );
 
-			} // End If Statement
-		} // End If Statement
+			}
+		}
 	}
 
 	/**
@@ -414,7 +414,7 @@ class Sensei_Legacy_Shortcodes {
 									<?php echo esc_html( $author_display_name ); ?>
 								</a>
 							</span>
-						<?php } // End If Statement ?>
+						<?php } ?>
 
 						<span class="course-lesson-count">
 							<?php
@@ -430,7 +430,7 @@ class Sensei_Legacy_Shortcodes {
 								echo wp_kses_post( sprintf( __( 'in %s', 'sensei-lms' ), $category_output ) );
 								?>
 							</span>
-						<?php } // End If Statement ?>
+						<?php } ?>
 
 						<?php
 						/** This action is documented in includes/class-sensei-frontend.php */
@@ -466,6 +466,6 @@ class Sensei_Legacy_Shortcodes {
 
 		<?php
 
-	} // end the_course
+	}
 
-}//end class
+}
