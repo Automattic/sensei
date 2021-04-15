@@ -1,5 +1,5 @@
 /**
- * External dependencies
+ * WordPress dependencies
  */
 import { ENTER } from '@wordpress/keycodes';
 
