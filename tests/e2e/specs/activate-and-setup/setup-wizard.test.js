@@ -164,7 +164,7 @@ describe( 'Setup Wizard', () => {
 			);
 
 			await expect( page ).toMatchElement(
-				'.sensei-setup-wizard__features-confirmation-modal .woocommerce-list__item-title',
+				'.sensei-setup-wizard__features-confirmation-modal .sensei-list__item-title',
 				{
 					text: 'Sensei LMS Certificates',
 				}
@@ -174,12 +174,9 @@ describe( 'Setup Wizard', () => {
 		it( 'installs selected plugins', async () => {
 			await expect( page ).toClick( 'button', { text: 'Install now' } );
 
-			await expect( page ).toMatchElement(
-				'.woocommerce-list__item-title',
-				{
-					text: 'Sensei LMS Certificates — Installed',
-				}
-			);
+			await expect( page ).toMatchElement( '.sensei-list__item-title', {
+				text: 'Sensei LMS Certificates — Installed',
+			} );
 			await expect( page ).toClick( 'button', { text: 'Continue' } );
 
 			await AdminFlow.goToPlugins();

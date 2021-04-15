@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { List } from '@woocommerce/components';
-
-/**
  * WordPress dependencies
  */
 import { Button, Modal } from '@wordpress/components';
@@ -15,6 +10,7 @@ import { __ } from '@wordpress/i18n';
 import { getWccomProductId } from '../helpers/woocommerce-com';
 import { getFeatureObservation } from './feature-description-utils';
 import FeatureDescription from './feature-description';
+import List from '../../shared/components/list';
 
 /**
  * @typedef  {Object} Feature

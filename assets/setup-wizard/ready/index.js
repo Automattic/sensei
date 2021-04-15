@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { List } from '@woocommerce/components';
-
-/**
  * WordPress dependencies
  */
 import { useEffect } from '@wordpress/element';
@@ -19,6 +14,7 @@ import { logLink } from '../log-event';
 import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 import useSampleCourseInstaller from './use-sample-course-installer';
 import { H, Section } from '../../shared/components/section';
+import List from '../../shared/components/list';
 
 /**
  * Ready step for Setup Wizard.
