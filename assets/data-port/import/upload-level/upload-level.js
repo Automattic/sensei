@@ -1,14 +1,9 @@
 /* global FormData */
 
 /**
- * External dependencies
- */
-import { Spinner } from '@woocommerce/components';
-
-/**
  * WordPress dependencies
  */
-import { Button, FormFileUpload } from '@wordpress/components';
+import { Button, FormFileUpload, Spinner } from '@wordpress/components';
 import { closeSmall } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
 
