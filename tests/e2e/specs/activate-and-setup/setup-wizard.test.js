@@ -18,21 +18,15 @@ async function openSetupWizard() {
 }
 
 async function stepIsComplete( label ) {
-	return expect( page ).toMatchElement(
-		'.woocommerce-stepper__step.is-complete',
-		{
-			text: label,
-		}
-	);
+	return expect( page ).toMatchElement( '.sensei-stepper__step.is-complete', {
+		text: label,
+	} );
 }
 
 async function stepIsActive( label ) {
-	return expect( page ).toMatchElement(
-		'.woocommerce-stepper__step.is-active',
-		{
-			text: label,
-		}
-	);
+	return expect( page ).toMatchElement( '.sensei-stepper__step.is-active', {
+		text: label,
+	} );
 }
 
 /**
@@ -188,7 +182,7 @@ describe( 'Setup Wizard', () => {
 		it( 'marks installed plugins as unavailable', async () => {
 			await openSetupWizard();
 
-			expect( page ).toClick( '.woocommerce-stepper__step', {
+			expect( page ).toClick( '.sensei-stepper__step', {
 				text: 'Features',
 			} );
 
@@ -201,7 +195,7 @@ describe( 'Setup Wizard', () => {
 	describe( 'Ready step', () => {
 		beforeEach( async () => {
 			await openSetupWizard();
-			await toClick( page, '.woocommerce-stepper__step', {
+			await toClick( page, '.sensei-stepper__step', {
 				text: 'Ready',
 			} );
 		} );

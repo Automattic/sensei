@@ -1,7 +1,13 @@
+/**
+ * External dependencies
+ */
 const path = require( 'path' );
 const process = require( 'process' );
 const { fromPairs } = require( 'lodash' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
+/**
+ * Internal dependencies
+ */
 const GenerateChunksMapPlugin = require( './scripts/webpack/generate-chunks-map-plugin' );
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
@@ -30,7 +36,6 @@ const files = [
 	'extensions/index.js',
 	'extensions/extensions.scss',
 	'shared/styles/wp-components.scss',
-	'shared/styles/wc-components.scss',
 	'data-port/import.js',
 	'data-port/export.js',
 	'data-port/style.scss',

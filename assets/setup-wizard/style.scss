@@ -1,6 +1,7 @@
 @import '../shared/styles/variables';
 @import 'fullscreen';
-@import '../shared/components/list/list';
+@import '../shared/components/list/style';
+@import '../shared/components/stepper/style';
 
 .sensei-setup-wizard {
 	&__main-loader {
@@ -36,7 +37,7 @@
 		background: #fff;
 		padding: 8px;
 
-		.woocommerce-stepper {
+		.sensei-stepper {
 			width: 100%;
 
 			&__steps {
