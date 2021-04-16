@@ -7,6 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Sensei_REST_API_V1
  *
+ * @deprecated 3.11.0
  * @package rest-api
  */
 class Sensei_REST_API_V1 {
@@ -19,16 +20,24 @@ class Sensei_REST_API_V1 {
 
 	/**
 	 * Sensei_REST_API constructor.
+	 *
+	 * @deprecated 3.11.0
 	 */
 	public function __construct() {
+		_deprecated_function( __METHOD__, '3.11.0' );
+
 		add_action( 'rest_api_init', array( $this, 'register' ) );
 	}
 
 	/**
 	 * bootstrap registry
 	 * register all endpoints
+	 *
+	 * @deprecated 3.11.0
 	 */
 	public function register() {
+		_deprecated_function( __METHOD__, '3.11.0' );
+
 		if ( ! $this->can_use_rest_api() ) {
 			return;
 		}
@@ -44,13 +53,25 @@ class Sensei_REST_API_V1 {
 	}
 
 	/**
+	 * @deprecated 3.11.0
+	 *
 	 * @return Sensei_REST_API_Helper
 	 */
 	public function get_helper() {
+		_deprecated_function( __METHOD__, '3.11.0' );
+
 		return $this->helper;
 	}
 
+	/**
+	 * @deprecated 3.11.0
+	 *
+	 * @return mixed
+	 * @throws Sensei_Domain_Models_Exception
+	 */
 	public function get_endpoints() {
+		_deprecated_function( __METHOD__, '3.11.0' );
+
 		return apply_filters(
 			'sensei_rest_api_v1_get_endpoints',
 			array(
@@ -61,12 +82,22 @@ class Sensei_REST_API_V1 {
 		);
 	}
 
+	/**
+	 * @deprecated 3.11.0
+	 */
 	public function can_use_rest_api() {
+		_deprecated_function( __METHOD__, '3.11.0' );
+
 		$rest_api_enabled = Sensei()->feature_flags->is_enabled( 'rest_api_v1' );
 		return $rest_api_enabled && function_exists( 'register_rest_route' );
 	}
 
+	/**
+	 * @deprecated 3.11.0
+	 */
 	public function get_api_prefix() {
+		_deprecated_function( __METHOD__, '3.11.0' );
+
 		return apply_filters( 'sensei_rest_api_v1_get_api_prefix', $this->api_prefix );
 	}
 }
