@@ -207,7 +207,7 @@ const Features = () => {
 					) }
 				</H>
 			</div>
-			<Card className="sensei-setup-wizard__card" isElevted={ true }>
+			<Card className="sensei-setup-wizard__card" isElevated={ true }>
 				<CardBody>
 					{ feedbackActive ? (
 						<InstallationFeedback
