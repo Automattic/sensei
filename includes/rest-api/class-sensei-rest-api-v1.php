@@ -24,8 +24,6 @@ class Sensei_REST_API_V1 {
 	 * @deprecated 3.11.0
 	 */
 	public function __construct() {
-		_deprecated_function( __METHOD__, '3.11.0' );
-
 		add_action( 'rest_api_init', array( $this, 'register' ) );
 	}
 
@@ -36,11 +34,11 @@ class Sensei_REST_API_V1 {
 	 * @deprecated 3.11.0
 	 */
 	public function register() {
-		_deprecated_function( __METHOD__, '3.11.0' );
-
 		if ( ! $this->can_use_rest_api() ) {
 			return;
 		}
+		_deprecated_function( __METHOD__, '3.11.0' );
+
 		Sensei_Domain_Models_Registry::get_instance()
 			->set_data_store( 'users', new Sensei_Domain_Models_User_Data_Store() )
 			->set_data_store_for_domain_model( 'Sensei_Domain_Models_Course', new Sensei_Domain_Models_Course_Data_Store_Cpt() )
@@ -86,8 +84,6 @@ class Sensei_REST_API_V1 {
 	 * @deprecated 3.11.0
 	 */
 	public function can_use_rest_api() {
-		_deprecated_function( __METHOD__, '3.11.0' );
-
 		$rest_api_enabled = Sensei()->feature_flags->is_enabled( 'rest_api_v1' );
 		return $rest_api_enabled && function_exists( 'register_rest_route' );
 	}
