@@ -13,15 +13,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Course domain model class.
  *
+ * @deprecated 3.11.0
+ *
  * @since 1.9.13
  */
 class Sensei_Domain_Models_Course extends Sensei_Domain_Models_Model_Abstract {
 	/**
 	 * Declares course fields.
 	 *
+	 * @deprecated 3.11.0
+	 *
 	 * @return array Fields
 	 */
 	public static function declare_fields() {
+		_deprecated_function( __METHOD__, '3.11.0' );
+
 		return array(
 			self::field()
 				->with_name( 'id' )
@@ -111,18 +117,26 @@ class Sensei_Domain_Models_Course extends Sensei_Domain_Models_Model_Abstract {
 	/**
 	 * Gets the course ID.
 	 *
+	 * @deprecated 3.11.0
+	 *
 	 * @return int Course ID
 	 */
 	public function get_id() {
+		_deprecated_function( __METHOD__, '3.11.0' );
+
 		return $this->id;
 	}
 
 	/**
 	 * Gets the module IDs.
 	 *
+	 * @deprecated 3.11.0
+	 *
 	 * @return array Module IDs
 	 */
 	protected function course_module_ids() {
+		_deprecated_function( __METHOD__, '3.11.0' );
+
 		$modules = Sensei()->modules->get_course_modules( absint( $this->id ) );
 		return array_map( 'absint', wp_list_pluck( $modules, 'term_id' ) );
 	}
@@ -130,9 +144,13 @@ class Sensei_Domain_Models_Course extends Sensei_Domain_Models_Model_Abstract {
 	/**
 	 * Gets module order for a course.
 	 *
+	 * @deprecated 3.11.0
+	 *
 	 * @return array Module order or empty array if not set.
 	 */
 	protected function module_order() {
+		_deprecated_function( __METHOD__, '3.11.0' );
+
 		$modules = Sensei()->modules->get_course_module_order( absint( $this->id ) );
 		return ( empty( $modules ) ) ? array() : array_map( 'absint', $modules );
 	}
@@ -140,10 +158,14 @@ class Sensei_Domain_Models_Course extends Sensei_Domain_Models_Model_Abstract {
 	/**
 	 * Validates the course author.
 	 *
+	 * @deprecated 3.11.0
+	 *
 	 * @param int $author_id Author ID.
 	 * @return bool|WP_Error true if the author is valid, WP_Error on failure.
 	 */
 	protected function validate_author( $author_id ) {
+		_deprecated_function( __METHOD__, '3.11.0' );
+
 		$author = $this->get_author( $author_id );
 		if ( null === $author ) {
 			return new WP_Error( 'invalid-author-id', __( 'Invalid author id', 'sensei-lms' ) );
@@ -158,10 +180,14 @@ class Sensei_Domain_Models_Course extends Sensei_Domain_Models_Model_Abstract {
 	/**
 	 * Validates the course status.
 	 *
+	 * @deprecated 3.11.0
+	 *
 	 * @param string $status Course status.
 	 * @return bool|WP_Error true if the status is valid, WP_Error on failure.
 	 */
 	protected function validate_status( $status ) {
+		_deprecated_function( __METHOD__, '3.11.0' );
+
 		if ( 'publish' === $status ) {
 			$author_id = $this->author;
 			if ( empty( $author_id ) ) {
@@ -180,10 +206,14 @@ class Sensei_Domain_Models_Course extends Sensei_Domain_Models_Model_Abstract {
 	/**
 	 * Gets the author.
 	 *
+	 * @deprecated 3.11.0
+	 *
 	 * @param int $author_id Author ID.
 	 * @return WP_User|false User object on success, false on failure.
 	 */
 	protected function get_author( $author_id ) {
+		_deprecated_function( __METHOD__, '3.11.0' );
+
 		return Sensei_Domain_Models_Registry::get_instance()
 			->get_data_store( 'users' )
 			->get_entity( $author_id );
@@ -192,10 +222,14 @@ class Sensei_Domain_Models_Course extends Sensei_Domain_Models_Model_Abstract {
 	/**
 	 * Generates a validation error.
 	 *
+	 * @deprecated 3.11.0
+	 *
 	 * @param array $error_data List of data for error codes.
 	 * @return WP_Error Validation error.
 	 */
 	protected function validation_error( $error_data ) {
+		_deprecated_function( __METHOD__, '3.11.0' );
+
 		return new WP_Error( 'validation-error', __( 'Validation Error', 'sensei-lms' ), $error_data );
 	}
 }

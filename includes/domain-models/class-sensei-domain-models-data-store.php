@@ -10,6 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 } // Exit if accessed directly
 
+/**
+ * @deprecated 3.11.0
+ */
 interface Sensei_Domain_Models_Data_Store {
 
 	/**
@@ -23,6 +26,8 @@ interface Sensei_Domain_Models_Data_Store {
 	/**
 	 * Gets an entity.
 	 *
+	 * @deprecated 3.11.0
+	 *
 	 * @param int|string $id Entity ID.
 	 * @return Sensei_Domain_Models_Model_Abstract
 	 */
@@ -31,6 +36,8 @@ interface Sensei_Domain_Models_Data_Store {
 
 	/**
 	 * Gets a meta data field for an entity.
+	 *
+	 * @deprecated 3.11.0
 	 *
 	 * @param Sensei_Domain_Models_Model_Abstract    $model Entity.
 	 * @param Sensei_Domain_Models_Field_Declaration $field_declaration Entity fields.
@@ -41,6 +48,8 @@ interface Sensei_Domain_Models_Data_Store {
 	/**
 	 * Deletes an entity.
 	 *
+	 * @deprecated 3.11.0
+	 *
 	 * @param Sensei_Domain_Models_Model_Abstract $model Entity.
 	 * @param array                               $args Entity deletion arguments.
 	 * @return mixed
@@ -49,6 +58,8 @@ interface Sensei_Domain_Models_Data_Store {
 
 	/**
 	 * Inserts or updates an entity.
+	 *
+	 * @deprecated 3.11.0
 	 *
 	 * @param Sensei_Domain_Models_Model_Abstract $entity Entity.
 	 * @param array                               $fields Elements to update or insert.
