@@ -304,10 +304,6 @@ class Sensei_REST_API_Endpoint_Courses extends Sensei_REST_API_Controller {
 	public function get_item_schema() {
 		_deprecated_function( __METHOD__, '3.11.0' );
 
-		if ( ! headers_sent() ) {
-			header( 'Warning: 299 - Deprecated API' );
-		}
-
 		$fields     = $this->factory->get_field_declarations();
 		$properties = array();
 		foreach ( $fields as $field_declaration ) {
