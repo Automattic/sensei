@@ -1,4 +1,5 @@
 <?php
+// phpcs:ignoreFile
 /**
  * Defines an interface that domain model data stores should implement
  *

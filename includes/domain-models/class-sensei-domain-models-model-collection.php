@@ -1,4 +1,5 @@
 <?php
+// phpcs:ignoreFile
 /**
  * Domain Models Collection
  *
@@ -28,7 +29,7 @@ class Sensei_Domain_Models_Model_Collection {
 	 */
 	public function __construct( $models = array() ) {
 		_deprecated_function( __METHOD__, '3.11.0' );
-		
+
 		$this->models = $models;
 	}
 

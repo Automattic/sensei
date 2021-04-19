@@ -1,4 +1,5 @@
 <?php
+// phpcs:ignoreFile
 /**
  * Domain Models Field Declaration Builder
  *
