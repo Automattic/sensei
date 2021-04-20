@@ -85,6 +85,7 @@ module.exports = {
 	entry: files,
 	output: {
 		path: path.resolve( '.', baseDist ),
+		publicPath: '../',
 	},
 	plugins: [
 		...defaultConfig.plugins,
