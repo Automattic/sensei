@@ -297,18 +297,11 @@ class Sensei_Grading {
 	 * @return void
 	 */
 	public function grading_default_nav() {
-
-		global  $wp_version;
-
 		$title = esc_html( $this->name );
 
 		if ( isset( $_GET['course_id'] ) ) {
 			$course_id = intval( $_GET['course_id'] );
-			if ( version_compare( $wp_version, '4.1', '>=' ) ) {
-				$title .= '<span class="course-title">&gt;&nbsp;&nbsp;' . esc_html( get_the_title( $course_id ) ) . '</span>';
-			} else {
-				$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;%s</span>', esc_html( get_the_title( $course_id ) ) );
-			}
+			$title    .= '<span class="course-title">&gt;&nbsp;&nbsp;' . esc_html( get_the_title( $course_id ) ) . '</span>';
 		}
 		if ( isset( $_GET['lesson_id'] ) ) {
 			$lesson_id = intval( $_GET['lesson_id'] );
@@ -332,26 +325,21 @@ class Sensei_Grading {
 	 * @return void
 	 */
 	public function grading_user_quiz_nav() {
-		global  $wp_version;
-
 		$title = esc_html( $this->name );
 
 		if ( isset( $_GET['quiz_id'] ) ) {
 			$quiz_id   = intval( $_GET['quiz_id'] );
 			$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
 			$course_id = get_post_meta( $lesson_id, '_lesson_course', true );
-			if ( version_compare( $wp_version, '4.1', '>=' ) ) {
-				$url    = add_query_arg(
-					array(
-						'page'      => $this->page_slug,
-						'course_id' => $course_id,
-					),
-					admin_url( 'admin.php' )
-				);
-				$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), esc_html( get_the_title( $course_id ) ) );
-			} else {
-				$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;%s</span>', esc_html( get_the_title( $course_id ) ) );
-			}
+			$url       = add_query_arg(
+				array(
+					'page'      => $this->page_slug,
+					'course_id' => $course_id,
+				),
+				admin_url( 'admin.php' )
+			);
+			$title    .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), esc_html( get_the_title( $course_id ) ) );
+
 			$url    = add_query_arg(
 				array(
 					'page'      => $this->page_slug,
