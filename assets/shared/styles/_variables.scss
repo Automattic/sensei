@@ -1,4 +1,12 @@
-$primary: #43af99;
+@import 'mixins';
+
+:root {
+	@include admin-scheme( #007cba );
+}
+
+@include wordpress-admin-schemes;
+
+$primary: #43AF99;
 $secondary: #674399;
 $link: #50575e;
 $link-primary: $primary;

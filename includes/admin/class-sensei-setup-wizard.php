@@ -146,7 +146,7 @@ class Sensei_Setup_Wizard {
 	 * @access private
 	 */
 	public function enqueue_styles() {
-		Sensei()->assets->enqueue( 'sensei-setup-wizard', 'setup-wizard/style.css', [ 'sensei-wp-components' ] );
+		Sensei()->assets->enqueue( 'sensei-setup-wizard', 'setup-wizard/setup-wizard.css', [ 'sensei-wp-components' ] );
 	}
 
 	/**

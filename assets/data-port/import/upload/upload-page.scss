@@ -26,6 +26,11 @@
 			.components-button:disabled:hover {
 				color: $gray-30;
 				width: 24px;
+				box-shadow: none;
+			}
+
+			.components-button:hover {
+				box-shadow: none;
 			}
 
 			.components-spinner {

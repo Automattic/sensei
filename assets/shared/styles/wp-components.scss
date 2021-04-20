@@ -9,9 +9,26 @@
 @import '~@wordpress/components/src/style';
 
 body.sensei-color {
+	.components-button.is-primary {
+		color: $white;
+	}
+	.components-button.is-primary {
+		:focus:not(:disabled) {
+			color: $white;
+		}
 
-	.components-button.is-primary.is-busy {
-		background-size: 100px 100%;
+		&.is-busy {
+			background-size: 100px 100%;
+			background-image: linear-gradient(
+					-45deg,
+					$primary 28%,
+					color($primary shade(20%)) 28%,
+					color($primary shade(20%)) 72%,
+					$primary 72%
+			);
+			/* stylelint-enable */
+			border-color: var(--wp-admin-theme-color);
+		}
 	}
 
 	a, .button-link, .components-button.is-link {

@@ -44,7 +44,7 @@ class Sensei_Export {
 			add_action(
 				'admin_print_styles',
 				function() {
-					Sensei()->assets->enqueue( 'sensei-export', 'data-port/style.css', [ 'sensei-wp-components' ] );
+					Sensei()->assets->enqueue( 'sensei-export', 'data-port/data-port.css', [ 'sensei-wp-components' ] );
 				}
 			);
 		}
