@@ -110,20 +110,15 @@ class Sensei_Utils {
 	 * @return mixed | int
 	 */
 	public static function sensei_check_for_activity( $args = array(), $return_comments = false ) {
-
-		global  $wp_version;
 		if ( ! $return_comments ) {
 			$args['count'] = true;
 		}
 
 		// Are we only retrieving a single entry, or not care about the order...
 		if ( isset( $args['count'] ) || isset( $args['post_id'] ) ) {
-
 			// ...then we don't need to ask the db to order the results, this overrides WP default behaviour
-			if ( version_compare( $wp_version, '4.1', '>=' ) ) {
-				$args['order']   = false;
-				$args['orderby'] = false;
-			}
+			$args['order']   = false;
+			$args['orderby'] = false;
 		}
 
 		// A user ID of 0 is in valid, so shortcut this
@@ -131,22 +126,9 @@ class Sensei_Utils {
 			_deprecated_argument( __FUNCTION__, '1.0', esc_html__( 'At no point should user_id be equal to 0.', 'sensei-lms' ) );
 			return false;
 		}
-		// Are we checking for specific comment_approved statuses?
-		if ( isset( $args['status'] ) ) {
-			// Temporarily store as a custom status if requesting an array...
-			if ( is_array( $args['status'] ) && version_compare( $wp_version, '4.1', '<' ) ) {
-				// Encode now, decode later
-				$args['status'] = implode( ',', $args['status'] );
-				// ...use a filter to switch the encoding back
-				add_filter( 'comments_clauses', array( __CLASS__, 'comment_multiple_status_filter' ) );
-			}
-		} else {
-			$args['status'] = 'any';
-		}
 
-		// Take into account WP < 4.1 will automatically add ' comment_approved = 1 OR comment_approved = 0 '
-		if ( ( is_array( $args['status'] ) || 'any' == $args['status'] ) && version_compare( $wp_version, '4.1', '<' ) ) {
-			add_filter( 'comments_clauses', array( __CLASS__, 'comment_any_status_filter' ) );
+		if ( ! isset( $args['status'] ) ) {
+			$args['status'] = 'any';
 		}
 
 		// Get the comments
@@ -159,8 +141,6 @@ class Sensei_Utils {
 		 */
 		$comments = apply_filters( 'sensei_check_for_activity', get_comments( $args ) );
 
-		remove_filter( 'comments_clauses', array( __CLASS__, 'comment_multiple_status_filter' ) );
-		remove_filter( 'comments_clauses', array( __CLASS__, 'comment_any_status_filter' ) );
 		// Return comments
 		if ( $return_comments ) {
 			// Could check for array of 1 and just return the 1 item?
@@ -2013,11 +1993,15 @@ class Sensei_Utils {
 	 * Allow retrieving comments with any comment_approved status, little bypass to WP_Comment. Required only for WP < 4.1
 	 *
 	 * @access public
+	 *
+	 * @deprecated 3.11.0
+	 *
 	 * @since  1.7.0
 	 * @param  array $pieces (default: array())
 	 * @return array
 	 */
 	public static function comment_any_status_filter( $pieces ) {
+		_deprecated_function( __FUNCTION__, '3.11.0' );
 
 		$pieces['where'] = str_replace( array( "( comment_approved = '0' OR comment_approved = '1' ) AND", "comment_approved = 'any' AND" ), '', $pieces['where'] );
 
@@ -2028,11 +2012,15 @@ class Sensei_Utils {
 	 * Allow retrieving comments within multiple statuses, little bypass to WP_Comment. Required only for WP < 4.1
 	 *
 	 * @access public
+	 *
+	 * @deprecated 3.11.0
+	 *
 	 * @since  1.7.0
 	 * @param  array $pieces (default: array())
 	 * @return array
 	 */
 	public static function comment_multiple_status_filter( $pieces ) {
+		_deprecated_function( __FUNCTION__, '3.11.0' );
 
 		preg_match( "/^comment_approved = '([a-z\-\,]+)'/", $pieces['where'], $placeholder );
 		if ( ! empty( $placeholder[1] ) ) {
