@@ -202,7 +202,10 @@ class Sensei_Grading {
 		// Wrappers
 		do_action( 'grading_before_container' );
 		do_action( 'grading_wrapper_container', 'top' );
-		$this->grading_headers();
+
+		$this->grading_default_nav();
+		do_action( 'sensei_grading_after_headers' );
+
 		?>
 		<div id="poststuff" class="sensei-grading-wrap">
 			<div class="sensei-grading-main">
@@ -245,7 +248,10 @@ class Sensei_Grading {
 		// Wrappers
 		do_action( 'grading_before_container' );
 		do_action( 'grading_wrapper_container', 'top' );
-		$this->grading_headers( array( 'nav' => 'user_quiz' ) );
+
+		$this->grading_user_quiz_nav();
+		do_action( 'sensei_grading_after_headers' );
+
 		?>
 		<div id="poststuff" class="sensei-grading-wrap user-profile">
 			<div class="sensei-grading-main">
@@ -258,13 +264,16 @@ class Sensei_Grading {
 	}
 
 	/**
-	 * Outputs Grading general headers
+	 * Outputs Grading general headers.
 	 *
 	 * @since  1.3.0
+	 * @deprecated 3.11.0
+	 *
 	 * @param array $args
 	 * @return void
 	 */
 	public function grading_headers( $args = array( 'nav' => 'default' ) ) {
+		_deprecated_function( __METHOD__, '3.11.0' );
 
 		$function = 'grading_' . $args['nav'] . '_nav';
 		$this->$function();
