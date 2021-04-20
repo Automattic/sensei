@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { H, Section } from '@woocommerce/components';
-
-/**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
@@ -15,6 +10,7 @@ import { Button } from '@wordpress/components';
 import UploadLevels from '../upload-level';
 import { Notice } from '../../notice';
 import { formatString } from '../../../shared/helpers/format-string.js';
+import { H, Section } from '../../../shared/components/section';
 
 /**
  * This component displays the upload page of the importer.

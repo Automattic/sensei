@@ -1,13 +1,8 @@
 /**
- * External dependencies
- */
-import { Card, H, Link } from '@woocommerce/components';
-
-/**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { Button } from '@wordpress/components';
+import { Button, Card, CardBody } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 
 /**
@@ -16,6 +11,7 @@ import { useState } from '@wordpress/element';
 import { UsageModal } from './usage-modal';
 import { useQueryStringRouter } from '../../shared/query-string-router';
 import { useSetupWizardStep } from '../data/use-setup-wizard-step';
+import { H } from '../../shared/components/section';
 
 /**
  * Welcome step for Setup Wizard.
@@ -49,32 +45,37 @@ export const Welcome = () => {
 			<div className="sensei-setup-wizard__title">
 				<H> { __( 'Welcome to Sensei LMS!', 'sensei-lms' ) } </H>
 			</div>
-			<Card className="sensei-setup-wizard__card">
-				<p>
-					{ __( 'Thank you for choosing Sensei LMS!', 'sensei-lms' ) }
-				</p>
-				<p>
-					{ __(
-						'This setup wizard will help you get started creating online courses more quickly. It is optional and should take only a few minutes.',
-						'sensei-lms'
-					) }
-				</p>
-				<Button
-					isPrimary
-					className="sensei-setup-wizard__button sensei-setup-wizard__button-card"
-					onClick={ () => toggleUsageModal( true ) }
-				>
-					{ __( 'Continue', 'sensei-lms' ) }
-				</Button>
+			<Card className="sensei-setup-wizard__card" isElevated={ true }>
+				<CardBody>
+					<p>
+						{ __(
+							'Thank you for choosing Sensei LMS!',
+							'sensei-lms'
+						) }
+					</p>
+					<p>
+						{ __(
+							'This setup wizard will help you get started creating online courses more quickly. It is optional and should take only a few minutes.',
+							'sensei-lms'
+						) }
+					</p>
+					<Button
+						isPrimary
+						className="sensei-setup-wizard__button sensei-setup-wizard__button-card"
+						onClick={ () => toggleUsageModal( true ) }
+					>
+						{ __( 'Continue', 'sensei-lms' ) }
+					</Button>
+				</CardBody>
 			</Card>
 			<div className="sensei-setup-wizard__bottom-actions">
-				<Link
+				<a
 					href="edit.php?post_type=course"
 					type="wp-admin"
 					className="link__color-secondary"
 				>
 					{ __( 'Not right now', 'sensei-lms' ) }
-				</Link>
+				</a>
 			</div>
 			{ usageModalActive && (
 				<UsageModal

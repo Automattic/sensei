@@ -18,21 +18,15 @@ async function openSetupWizard() {
 }
 
 async function stepIsComplete( label ) {
-	return expect( page ).toMatchElement(
-		'.woocommerce-stepper__step.is-complete',
-		{
-			text: label,
-		}
-	);
+	return expect( page ).toMatchElement( '.sensei-stepper__step.is-complete', {
+		text: label,
+	} );
 }
 
 async function stepIsActive( label ) {
-	return expect( page ).toMatchElement(
-		'.woocommerce-stepper__step.is-active',
-		{
-			text: label,
-		}
-	);
+	return expect( page ).toMatchElement( '.sensei-stepper__step.is-active', {
+		text: label,
+	} );
 }
 
 /**
@@ -164,7 +158,7 @@ describe( 'Setup Wizard', () => {
 			);
 
 			await expect( page ).toMatchElement(
-				'.sensei-setup-wizard__features-confirmation-modal .woocommerce-list__item-title',
+				'.sensei-setup-wizard__features-confirmation-modal .sensei-list__item-title',
 				{
 					text: 'Sensei LMS Certificates',
 				}
@@ -174,12 +168,9 @@ describe( 'Setup Wizard', () => {
 		it( 'installs selected plugins', async () => {
 			await expect( page ).toClick( 'button', { text: 'Install now' } );
 
-			await expect( page ).toMatchElement(
-				'.woocommerce-list__item-title',
-				{
-					text: 'Sensei LMS Certificates — Installed',
-				}
-			);
+			await expect( page ).toMatchElement( '.sensei-list__item-title', {
+				text: 'Sensei LMS Certificates — Installed',
+			} );
 			await expect( page ).toClick( 'button', { text: 'Continue' } );
 
 			await AdminFlow.goToPlugins();
@@ -191,7 +182,7 @@ describe( 'Setup Wizard', () => {
 		it( 'marks installed plugins as unavailable', async () => {
 			await openSetupWizard();
 
-			expect( page ).toClick( '.woocommerce-stepper__step', {
+			expect( page ).toClick( '.sensei-stepper__step', {
 				text: 'Features',
 			} );
 
@@ -204,7 +195,7 @@ describe( 'Setup Wizard', () => {
 	describe( 'Ready step', () => {
 		beforeEach( async () => {
 			await openSetupWizard();
-			await toClick( page, '.woocommerce-stepper__step', {
+			await toClick( page, '.sensei-stepper__step', {
 				text: 'Ready',
 			} );
 		} );

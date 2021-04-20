@@ -1,13 +1,14 @@
 /**
- * External dependencies
- */
-import { Card, H } from '@woocommerce/components';
-
-/**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { Button, CheckboxControl, TextControl } from '@wordpress/components';
+import {
+	Card,
+	CardBody,
+	Button,
+	CheckboxControl,
+	TextControl,
+} from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
 
 /**
@@ -15,6 +16,7 @@ import { useState, useEffect } from '@wordpress/element';
  */
 import { useQueryStringRouter } from '../../shared/query-string-router';
 import { useSetupWizardStep } from '../data/use-setup-wizard-step';
+import { H } from '../../shared/components/section';
 
 const purposes = [
 	{
@@ -121,42 +123,47 @@ export const Purpose = () => {
 				</H>
 				<p> { __( 'Choose any that apply', 'sensei-lms' ) } </p>
 			</div>
-			<Card className="sensei-setup-wizard__card">
-				<div className="sensei-setup-wizard__checkbox-list">
-					{ purposes.map( ( { id, title, description } ) => (
-						<CheckboxControl
-							key={ id }
-							label={ title }
-							help={ description }
-							onChange={ () => toggleItem( id ) }
-							checked={ selected.includes( id ) }
-							className="sensei-setup-wizard__checkbox"
-						/>
-					) ) }
-					{ selected.includes( 'other' ) && (
-						<TextControl
-							className="sensei-setup-wizard__textcontrol-other"
-							value={ other }
-							placeholder={ __( 'Description', 'sensei-lms' ) }
-							onChange={ ( value ) =>
-								setFormState( ( formState ) => ( {
-									...formState,
-									other: value,
-								} ) )
-							}
-						/>
-					) }
-				</div>
-				{ errorNotice }
-				<Button
-					isPrimary
-					isBusy={ isSubmitting }
-					disabled={ isSubmitting || isEmpty }
-					className="sensei-setup-wizard__button sensei-setup-wizard__button-card"
-					onClick={ submitPage }
-				>
-					{ __( 'Continue', 'sensei-lms' ) }
-				</Button>
+			<Card className="sensei-setup-wizard__card" isElevated={ true }>
+				<CardBody>
+					<div className="sensei-setup-wizard__checkbox-list">
+						{ purposes.map( ( { id, title, description } ) => (
+							<CheckboxControl
+								key={ id }
+								label={ title }
+								help={ description }
+								onChange={ () => toggleItem( id ) }
+								checked={ selected.includes( id ) }
+								className="sensei-setup-wizard__checkbox"
+							/>
+						) ) }
+						{ selected.includes( 'other' ) && (
+							<TextControl
+								className="sensei-setup-wizard__textcontrol-other"
+								value={ other }
+								placeholder={ __(
+									'Description',
+									'sensei-lms'
+								) }
+								onChange={ ( value ) =>
+									setFormState( ( formState ) => ( {
+										...formState,
+										other: value,
+									} ) )
+								}
+							/>
+						) }
+					</div>
+					{ errorNotice }
+					<Button
+						isPrimary
+						isBusy={ isSubmitting }
+						disabled={ isSubmitting || isEmpty }
+						className="sensei-setup-wizard__button sensei-setup-wizard__button-card"
+						onClick={ submitPage }
+					>
+						{ __( 'Continue', 'sensei-lms' ) }
+					</Button>
+				</CardBody>
 			</Card>
 		</>
 	);
