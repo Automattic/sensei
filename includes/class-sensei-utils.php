@@ -2023,15 +2023,10 @@ class Sensei_Utils {
 	 * @return array $pieces
 	 */
 	public static function comment_total_sum_meta_value_filter( $pieces ) {
-		global $wpdb, $wp_version;
+		global $wpdb;
 
 		$pieces['fields'] = " COUNT(*) AS total, SUM($wpdb->commentmeta.meta_value) AS meta_sum ";
 		unset( $pieces['groupby'] );
-		if ( version_compare( $wp_version, '4.1', '>=' ) ) {
-			$args            = [];
-			$args['order']   = false;
-			$args['orderby'] = false;
-		}
 
 		return $pieces;
 	}
@@ -2045,15 +2040,9 @@ class Sensei_Utils {
 	 * @return array
 	 */
 	public static function get_posts_count_only_filter( $pieces ) {
-		global $wp_version;
-
 		$pieces['fields'] = ' COUNT(*) AS total ';
 		unset( $pieces['groupby'] );
-		if ( version_compare( $wp_version, '4.1', '>=' ) ) {
-			$args            = [];
-			$args['order']   = false;
-			$args['orderby'] = false;
-		}
+
 		return $pieces;
 	}
 
