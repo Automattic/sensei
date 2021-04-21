@@ -2330,16 +2330,7 @@ class Sensei_Utils {
 		 */
 		$mode = apply_filters( 'sensei_round_mode', $mode, $val, $context, $precision );
 
-		if ( version_compare( PHP_VERSION, '5.3.0' ) >= 0 ) {
-
-			return round( $val, $precision, $mode );
-
-		} else {
-
-			return round( $val, $precision );
-
-		}
-
+		return round( $val, $precision, $mode );
 	}
 
 	/**
