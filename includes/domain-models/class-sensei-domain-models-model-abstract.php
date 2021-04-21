@@ -434,6 +434,8 @@ abstract class Sensei_Domain_Models_Model_Abstract {
 	/**
 	 * Sets the type of a derived field.
 	 *
+	 * @deprecated 3.11.0
+	 *
 	 * @return Sensei_Domain_Models_Field_Declaration_Builder Field declaration builder instance.
 	 */
 	protected static function derived_field() {
@@ -444,6 +446,8 @@ abstract class Sensei_Domain_Models_Model_Abstract {
 
 	/**
 	 * Converts a value to a boolean.
+	 *
+	 * @deprecated 3.11.0
 	 *
 	 * @param mixed $value Value to convert.
 	 * @return bool Value converted to a boolean.
@@ -457,6 +461,8 @@ abstract class Sensei_Domain_Models_Model_Abstract {
 	/**
 	 * Converts a value to a non-negative integer.
 	 *
+	 * @deprecated 3.11.0
+	 *
 	 * @param mixed $value Value to convert.
 	 * @return int Value converted to an integer.
 	 */
@@ -468,6 +474,8 @@ abstract class Sensei_Domain_Models_Model_Abstract {
 
 	/**
 	 * Converts a value to a non-negative integer, if possible.
+	 *
+	 * @deprecated 3.11.0
 	 *
 	 * @param mixed $value Value to convert.
 	 * @return int|null Value converted to an integer, or null if $value is empty or not a number.
@@ -496,6 +504,8 @@ abstract class Sensei_Domain_Models_Model_Abstract {
 
 	/**
 	 * Gets an instance of the data store.
+	 *
+	 * @deprecated 3.11.0
 	 *
 	 * @return Sensei_Domain_Models_Data_Store Data Store.
 	 * @throws Sensei_Domain_Models_Exception If no data store exists.
