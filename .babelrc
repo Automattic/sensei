@@ -12,13 +12,22 @@
 					"last 2 Safari versions",
 					"last 2 iOS versions",
 					"last 2 Edge versions",
-					"last 2 Opera versions",
+					"last 2 Opera versions"
 				]
 			}
 		} ],
 		"@wordpress/default"
 	],
 	"plugins": [
-		[ "@babel/plugin-proposal-class-properties" ]
+		[ "@babel/plugin-proposal-class-properties" ],
+		[
+			"@babel/transform-runtime",
+			{
+				"corejs": false,
+				"helpers": true,
+				"regenerator": true,
+				"useESModules": false
+			}
+		]
 	]
 }
