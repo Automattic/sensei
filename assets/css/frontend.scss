@@ -233,7 +233,15 @@ a.sensei-certificate-link {
   }
 }
 
-.lesson  {
+.lesson {
+  .lesson-metadata {
+    font-size: .9em;
+    font-style: italic;
+
+    .lesson-length {
+      margin-right: 0.5em;
+    }
+  }
   .lesson-meta  {
     margin: 0 0 1.618em;
   }
