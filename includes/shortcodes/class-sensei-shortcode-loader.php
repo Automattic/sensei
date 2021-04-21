@@ -209,5 +209,5 @@ class Sensei_Shortcode_Loader {
 
 	}
 
-} // end class Sensei_Shortcodes
+}
 new Sensei_Shortcode_Loader();

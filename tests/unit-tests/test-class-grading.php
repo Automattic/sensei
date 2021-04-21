@@ -12,7 +12,7 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 
 		Sensei()->grading = new WooThemes_Sensei_Grading( '' );
 		$this->factory    = new Sensei_Factory();
-	}//end setUp()
+	}
 
 	public function tearDown() {
 		parent::tearDown();
@@ -27,7 +27,7 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		// test if the global sensei quiz class is loaded
 		$this->assertTrue( isset( Sensei()->grading ), 'Sensei Grading class is not loaded' );
 
-	} // end testClassInstance
+	}
 
 	/**
 	 * Data source for ::testGradeGapFillQuestionRegEx
@@ -92,7 +92,7 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 				false,
 			),
 		);
-	} // end gradeGapFillQuestions
+	}
 
 	/**
 	 * @dataProvider gradeGapFillQuestions
@@ -119,7 +119,7 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 			$response = Sensei_Grading::grade_gap_fill_question( $question_id, $not_found_item );
 			$this->assertFalse( $response, "Expecting {$not_found_item} to not match {$answer}" );
 		}
-	} // end testGradeGapFillQuestionRegEx
+	}
 
 	/**
 	 * Get a test question.
@@ -135,5 +135,5 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		$question['quiz_id']     = $quiz_id;
 		$question['post_author'] = get_post( $quiz_id )->post_author;
 		return Sensei()->lesson->lesson_save_question( $question );
-	} // end getTestQuestion
-}//end class
+	}
+}

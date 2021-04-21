@@ -115,7 +115,7 @@ do_action( 'sensei_single_quiz_content_inside_before', get_the_ID() );
 		<div
 			class="sensei-message alert"> <?php esc_html_e( 'There are no questions for this Quiz yet. Check back soon.', 'sensei-lms' ); ?></div>
 
-	<?php endif; // End If have questions. ?>
+	<?php endif; ?>
 
 	<?php
 	do_action( 'sensei_quiz_back_link', Sensei()->quiz->data->quiz_lesson );

@@ -482,7 +482,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		$offset = 0;
 		if ( ! empty( $paged ) ) {
 			$offset = $per_page * ( $paged - 1 );
-		} // End If Statement
+		}
 		if ( empty( $orderby ) ) {
 			$orderby = '';
 		}

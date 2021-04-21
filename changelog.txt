@@ -1,5 +1,15 @@
 *** Changelog ***
 
+2021.04.14. - version 3.10.0
+* New: Learner Courses block (My Courses) [#4126](https://github.com/Automattic/sensei/pull/4126)
+* New: Add View Results block [#4155](https://github.com/Automattic/sensei/pull/4155)
+* New: Add blocks to My Courses page on setup [#4137](https://github.com/Automattic/sensei/pull/4137)
+* New: Add learner messages button block [#4134](https://github.com/Automattic/sensei/pull/4134)
+* Tweak: Improve conditional content description [#4115](https://github.com/Automattic/sensei/pull/4115)
+* Tweak: Print the first lesson in a prerequisite chain [#4114](https://github.com/Automattic/sensei/pull/4114)
+* Tweak: Remove Gutenberg compatibility assets [#4132](https://github.com/Automattic/sensei/pull/4132)
+* Tweak: Show teacher's questions only when using category questions [#4148](https://github.com/Automattic/sensei/pull/4148)
+
 2021.03.31 - version 3.9.1
 * New: Show validation in single question editor [#4087](https://github.com/Automattic/sensei/pull/4087)
 * New: Log template overrides [#4113](https://github.com/Automattic/sensei/pull/4113)

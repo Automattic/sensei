@@ -302,6 +302,9 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	public function render() {
 		// phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
 		global $wp_query;
+		global $sensei_is_block;
+
+		$sensei_is_block = $this->is_block;
 
 		if ( false === is_user_logged_in() ) {
 			// show the login form
@@ -322,7 +325,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		ob_start();
 		echo '<section id="sensei-user-courses">';
 
-		if ( ! $this->is_block ) {
+		if ( ! $sensei_is_block ) {
 			Sensei_Messages::the_my_messages_link();
 		}
 
@@ -342,10 +345,11 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		wp_reset_query();
 
 		$this->detach_shortcode_hooks();
+		$sensei_is_block = false;
 
 		return $shortcode_output;
 
-	}//end render()
+	}
 
 	/**
 	 * Add hooks for the shortcode
@@ -494,7 +498,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 
 		return $classes;
 
-	}//end course_status_class_tagging()
+	}
 
 	/**
 	 * Output the course toggle functionality

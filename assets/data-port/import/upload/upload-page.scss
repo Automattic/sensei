@@ -18,7 +18,6 @@
 
 		&__delete-button-wrapper {
 			flex-shrink: 0;
-			display: inline-flex;
 			align-items: center;
 			overflow: hidden;
 			width: 30px;
@@ -29,9 +28,9 @@
 				width: 24px;
 			}
 
-			.woocommerce-spinner {
-				width: 20px;
-				height: 20px;
+			.components-spinner {
+				width: 18px;
+				height: 18px;
 				overflow: hidden;
 			}
 		}

@@ -1,14 +1,9 @@
 /**
- * External dependencies
- */
-import { Spinner } from '@woocommerce/components';
-
-/**
  * WordPress dependencies
  */
 import { useSelect, useDispatch } from '@wordpress/data';
 import { render, useLayoutEffect } from '@wordpress/element';
-import { Notice } from '@wordpress/components';
+import { Notice, Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 /**

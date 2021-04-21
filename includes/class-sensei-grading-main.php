@@ -50,7 +50,7 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		// Actions
 		add_action( 'sensei_before_list_table', array( $this, 'data_table_header' ) );
 		add_action( 'sensei_after_list_table', array( $this, 'data_table_footer' ) );
-	} // End __construct()
+	}
 
 	/**
 	 * Define the columns that are going to be used in the table
@@ -106,7 +106,7 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		if ( ! empty( $_GET['orderby'] ) ) {
 			if ( array_key_exists( esc_html( $_GET['orderby'] ), $this->get_sortable_columns() ) ) {
 				$orderby = esc_html( $_GET['orderby'] );
-			} // End If Statement
+			}
 		}
 
 		// Handle order
@@ -119,7 +119,7 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		$search = false;
 		if ( ! empty( $_GET['s'] ) ) {
 			$search = esc_html( $_GET['s'] );
-		} // End If Statement
+		}
 		$this->search = $search;
 
 		// Searching users on statuses requires sub-selecting the statuses by user_ids
@@ -135,7 +135,7 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 				// Store for reuse on counts
 				$this->user_ids = $learners_search->get_results();
 			}
-		} // End If Statement
+		}
 
 		$per_page = $this->get_items_per_page( 'sensei_comments_per_page' );
 		$per_page = apply_filters( 'sensei_comments_per_page', $per_page, 'sensei_comments' );
@@ -144,7 +144,7 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		$offset = 0;
 		if ( ! empty( $paged ) ) {
 			$offset = $per_page * ( $paged - 1 );
-		} // End If Statement
+		}
 
 		$activity_args = array(
 			'type'    => 'sensei_lesson_status',
@@ -190,7 +190,7 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 			default:
 				$activity_args['status'] = 'any';
 				break;
-		} // End switch
+		}
 
 		$activity_args = apply_filters( 'sensei_grading_filter_statuses', $activity_args );
 
@@ -354,7 +354,7 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 
 		esc_html_e( 'No submissions found.', 'sensei-lms' );
 
-	} // End no_items()
+	}
 
 	/**
 	 * Output for table heading
@@ -500,7 +500,7 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 			echo '</ul>' . "\n";
 		}
 
-	} // End data_table_header()
+	}
 
 	/**
 	 * Output for table footer
@@ -510,9 +510,9 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 	 */
 	public function data_table_footer() {
 		// Nothing right now
-	} // End data_table_footer()
+	}
 
-} // End Class
+}
 
 /**
  * Class WooThems_Sensei_Grading_Main

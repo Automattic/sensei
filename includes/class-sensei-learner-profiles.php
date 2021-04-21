@@ -39,7 +39,7 @@ class Sensei_Learner_Profiles {
 
 		// Add class to body tag
 		add_filter( 'body_class', array( $this, 'learner_profile_body_class' ), 10, 1 );
-	} // End __construct().
+	}
 
 	/**
 	 * Enqueue frontend JavaScripts.
@@ -254,7 +254,7 @@ class Sensei_Learner_Profiles {
 		return $classes;
 	}
 
-} // End Class
+}
 
 /**
  * Class WooThemes_Sensei_Learner_Profiles

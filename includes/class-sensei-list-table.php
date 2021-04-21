@@ -71,7 +71,7 @@ class Sensei_List_Table extends WP_List_Table {
 		// Actions
 		add_action( 'sensei_before_list_table', array( $this, 'table_search_form' ), 5 );
 
-	} // End __construct()
+	}
 
 	/**
 	 * remove_sortable_columns removes all sortable columns by returning an empty array
@@ -104,12 +104,12 @@ class Sensei_List_Table extends WP_List_Table {
 		if ( $which == 'top' ) {
 			// The code that goes before the table is here
 			do_action( 'sensei_before_list_table' );
-		} // End If Statement
+		}
 		if ( $which == 'bottom' ) {
 			// The code that goes after the table is there
 			do_action( 'sensei_after_list_table' );
-		} // End If Statement
-	} // End extra_tablenav()
+		}
+	}
 
 	/**
 	 * table_search_form outputs search form for table
@@ -138,7 +138,7 @@ class Sensei_List_Table extends WP_List_Table {
 			<?php $this->search_box( apply_filters( 'sensei_list_table_search_button_text', __( 'Search Users', 'sensei-lms' ) ), 'search_id' ); ?>
 		</form>
 		<?php
-	} // End table_search_form()
+	}
 
 	/**
 	 * get_columns Define the columns that are going to be used in the table
@@ -148,7 +148,7 @@ class Sensei_List_Table extends WP_List_Table {
 	 */
 	public function get_columns() {
 		return $this->columns;
-	} // End get_columns()
+	}
 
 	/**
 	 * get_sortable_columns Decide which columns to activate the sorting functionality on
@@ -158,7 +158,7 @@ class Sensei_List_Table extends WP_List_Table {
 	 */
 	public function get_sortable_columns() {
 		return $this->sortable_columns;
-	} // End get_sortable_columns()
+	}
 
 	/**
 	 * Overriding parent WP-List-Table get_column_info()
@@ -272,7 +272,7 @@ class Sensei_List_Table extends WP_List_Table {
 
 		esc_html_e( 'No items found.', 'sensei-lms' );
 
-	} // End no_items()
+	}
 
 	/**
 	 * get_bulk_actions sets the bulk actions list
@@ -282,7 +282,7 @@ class Sensei_List_Table extends WP_List_Table {
 	 */
 	public function get_bulk_actions() {
 		return array();
-	} // End overview_actions_filters()
+	}
 
 	/**
 	 * bulk_actions output for the bulk actions area
@@ -293,9 +293,9 @@ class Sensei_List_Table extends WP_List_Table {
 	public function bulk_actions( $which = '' ) {
 		// This will be output Above the table headers on the left
 		echo wp_kses_post( apply_filters( 'sensei_list_bulk_actions', '' ) );
-	} // End bulk_actions()
+	}
 
-} // End Class
+}
 
 /**
  * Class WooThemes_Sensei_List_Table

@@ -56,7 +56,7 @@ class Sensei_Templates {
 
 		}
 
-	} // end get part
+	}
 
 	/**
 	 * Get the template.
@@ -86,7 +86,7 @@ class Sensei_Templates {
 
 		}
 
-	} // end get template
+	}
 
 	/**
 	 * Check if the template file exists. A wrapper for WP locate_template.
@@ -130,7 +130,7 @@ class Sensei_Templates {
 		// Return what we found
 		return apply_filters( 'sensei_locate_template', $template, $template_name, $template_path );
 
-	} // end locate
+	}
 
 	/**
 	 * Determine which Sensei template to load based on the
@@ -279,11 +279,11 @@ class Sensei_Templates {
 			if ( ! $template ) {
 				$template = Sensei()->plugin_path() . '/templates/' . $file;
 			}
-		} // End If Statement
+		}
 
 		return $template;
 
-	} // End template_loader()
+	}
 
 	/**
 	 * This function loads the no-permissions template for users with no access
@@ -402,7 +402,7 @@ class Sensei_Templates {
 		$html        .= '</' . $title_html_tag . '>';
 		echo wp_kses_post( $html );
 
-	}//end the_title()
+	}
 
 	/**
 	 * Fire the sensei_complete_course action.
@@ -428,7 +428,7 @@ class Sensei_Templates {
 
 		do_action( 'sensei_frontend_messages' );
 
-	}//end fire_frontend_messages_hook()
+	}
 
 	public static function the_register_button( $post_id = '' ) {
 		global $current_user;
@@ -463,4 +463,4 @@ class Sensei_Templates {
 		}
 
 	}
-}//end class
+}

@@ -83,7 +83,7 @@ class Sensei_Admin {
 		Sensei_Tools::instance()->init();
 		Sensei_Status::instance()->init();
 
-	} // End __construct()
+	}
 
 	/**
 	 * Add items to admin menu
@@ -267,9 +267,6 @@ class Sensei_Admin {
 		// WordPress component styles with Sensei theming.
 		Sensei()->assets->register( 'sensei-wp-components', 'shared/styles/wp-components.css', [], 'screen' );
 
-		// WooCommerce component styles with Sensei theming.
-		Sensei()->assets->register( 'sensei-wc-components', 'shared/styles/wc-components.css', [], 'screen' );
-
 		// Select 2 styles
 		Sensei()->assets->enqueue( 'sensei-core-select2', '../vendor/select2/select2.min.css', [], 'screen' );
 
@@ -282,7 +279,7 @@ class Sensei_Admin {
 
 		}
 
-	} // End admin_styles_global()
+	}
 
 
 	/**
@@ -1813,7 +1810,7 @@ class Sensei_Admin {
 		// phpcs:enable WordPress.Security.NonceVerification
 	}
 
-} // End Class
+}
 
 /**
  * Legacy Class WooThemes_Sensei_Admin

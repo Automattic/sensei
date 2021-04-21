@@ -45,7 +45,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 
 		add_filter( 'sensei_list_table_search_button_text', array( $this, 'search_button' ) );
 
-	} // End __construct()
+	}
 
 	/**
 	 * Define the columns that are going to be used in the table
@@ -159,7 +159,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		if ( ! empty( $_GET['orderby'] ) ) {
 			if ( array_key_exists( esc_html( $_GET['orderby'] ), $this->get_sortable_columns() ) ) {
 				$orderby = esc_html( $_GET['orderby'] );
-			} // End If Statement
+			}
 		}
 
 		// Handle order
@@ -172,7 +172,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		$search = false;
 		if ( ! empty( $_GET['s'] ) ) {
 			$search = esc_html( $_GET['s'] );
-		} // End If Statement
+		}
 		$this->search = $search;
 
 		$per_page = $this->get_items_per_page( 'sensei_comments_per_page' );
@@ -182,7 +182,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		$offset = 0;
 		if ( ! empty( $paged ) ) {
 			$offset = $per_page * ( $paged - 1 );
-		} // End If Statement
+		}
 
 		$args = array(
 			'number'  => $per_page,
@@ -192,7 +192,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		);
 		if ( $this->search ) {
 			$args['search'] = $this->search;
-		} // End If Statement
+		}
 
 		switch ( $this->view ) {
 			case 'user':
@@ -233,7 +233,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		if ( ! empty( $_GET['orderby'] ) ) {
 			if ( array_key_exists( esc_html( $_GET['orderby'] ), $this->get_sortable_columns() ) ) {
 				$orderby = esc_html( $_GET['orderby'] );
-			} // End If Statement
+			}
 		}
 
 		// Handle order
@@ -246,7 +246,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		$search = false;
 		if ( ! empty( $_GET['s'] ) ) {
 			$search = esc_html( $_GET['s'] );
-		} // End If Statement
+		}
 		$this->search = $search;
 
 		$args = array(
@@ -255,7 +255,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		);
 		if ( $this->search ) {
 			$args['search'] = $this->search;
-		} // End If Statement
+		}
 
 		// Start the csv with the column headings
 		$column_headers = array();
@@ -332,7 +332,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 						$course_percent .= '%';
 
 					}
-				} // End If Statement
+				}
 
 				$column_data = apply_filters(
 					'sensei_analysis_course_column_data',
@@ -413,7 +413,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 						if ( is_numeric( $grade ) ) {
 							$grade .= '%';
 						}
-					} // End If Statement
+					}
 
 					$column_data = apply_filters(
 						'sensei_analysis_course_column_data',
@@ -481,7 +481,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 						if ( is_numeric( $lesson_average_grade ) ) {
 							$lesson_average_grade .= '%';
 						}
-					} // End If Statement
+					}
 
 					$column_data = apply_filters(
 						'sensei_analysis_course_column_data',
@@ -532,7 +532,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 				// Store for reuse on counts
 				$activity_args['user_id'] = (array) $learners_search->get_results();
 			}
-		} // End If Statement
+		}
 
 		$activity_args = apply_filters( 'sensei_analysis_course_filter_statuses', $activity_args );
 
@@ -559,7 +559,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 			$statuses = array( $statuses );
 		}
 		return $statuses;
-	} // End get_course_statuses()
+	}
 
 	/**
 	 * Return array of Courses' lessons
@@ -594,7 +594,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		$lessons_query     = new WP_Query( apply_filters( 'sensei_analysis_course_filter_lessons', $lessons_args ) );
 		$this->total_items = $lessons_query->found_posts;
 		return $lessons_query->posts;
-	} // End get_lessons()
+	}
 
 	/**
 	 * Sets output when no items are found
@@ -615,7 +615,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 				break;
 		}
 		echo wp_kses_post( apply_filters( 'sensei_analysis_course_no_items_text', $text ) );
-	} // End no_items()
+	}
 
 	/**
 	 * Output for table heading
@@ -664,7 +664,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 			echo wp_kses_post( implode( " |</li>\n", $menu ) ) . "</li>\n";
 			echo '</ul>' . "\n";
 		}
-	} // End data_table_header()
+	}
 
 	/**
 	 * Output for table footer
@@ -692,7 +692,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		}
 		$url = add_query_arg( $url_args, admin_url( 'admin.php' ) );
 		echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( $url, 'sensei_csv_download', '_sdl_nonce' ) ) . '">' . esc_html__( 'Export all rows (CSV)', 'sensei-lms' ) . '</a>';
-	} // End data_table_footer()
+	}
 
 	/**
 	 * The text for the search button
@@ -710,12 +710,12 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 			default:
 				$text = __( 'Search Lessons', 'sensei-lms' );
 				break;
-		} // End Switch Statement
+		}
 
 		return $text;
 	}
 
-} // End Class
+}
 
 /**
  * Class WooThemes_Sensei_Analysis_Course_List_Table
