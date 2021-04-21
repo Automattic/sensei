@@ -1505,8 +1505,6 @@ class Sensei_Utils {
 	 * @return mixed boolean or comment_ID
 	 */
 	public static function user_complete_course( $course_id = 0, $user_id = 0, $trigger_completion_action = true ) {
-		global  $wp_version;
-
 		if ( $course_id ) {
 			if ( ! $user_id ) {
 				$user_id = get_current_user_id();
@@ -1534,27 +1532,13 @@ class Sensei_Utils {
 				// .........then the lesson is 'passed'
 				// ...if all lessons 'passed' then update the course status to complete
 			// The below checks if a lesson is fully completed, though maybe should be Utils::user_completed_lesson()
-			$all_lesson_statuses = array();
-			// In WordPress 4.1 get_comments() allows a single query to cover multiple comment_post_IDs
-			if ( version_compare( $wp_version, '4.1', '>=' ) ) {
-				$lesson_status_args['post__in'] = $lesson_ids;
-				$all_lesson_statuses            = self::sensei_check_for_activity( $lesson_status_args, true );
-				// Need to always return an array, even with only 1 item
-				if ( ! is_array( $all_lesson_statuses ) ) {
-					$all_lesson_statuses = array( $all_lesson_statuses );
-				}
+			$lesson_status_args['post__in'] = $lesson_ids;
+			$all_lesson_statuses            = self::sensei_check_for_activity( $lesson_status_args, true );
+			// Need to always return an array, even with only 1 item
+			if ( ! is_array( $all_lesson_statuses ) ) {
+				$all_lesson_statuses = array( $all_lesson_statuses );
 			}
-			// ...otherwise check each one
-			else {
-				foreach ( $lesson_ids as $lesson_id ) {
-					$lesson_status_args['post_id'] = $lesson_id;
-					$each_lesson_status            = self::sensei_check_for_activity( $lesson_status_args, true );
-					// Check for valid return before using
-					if ( ! empty( $each_lesson_status->comment_approved ) ) {
-						$all_lesson_statuses[] = $each_lesson_status;
-					}
-				}
-			}
+
 			foreach ( $all_lesson_statuses as $lesson_status ) {
 				// If lessons are complete without needing quizzes to be passed
 				if ( 'passed' != $course_completion ) {
