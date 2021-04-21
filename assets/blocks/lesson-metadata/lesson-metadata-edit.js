@@ -17,6 +17,7 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import NumberControl from '../editor-components/number-control';
+import ToggleLegacyLessonMetaboxesWrapper from '../toggle-legacy-lesson-metaboxes-wrapper';
 import { COMPLEXITIES } from './constants';
 
 const LessonMetadataEdit = ( props ) => {
@@ -29,7 +30,7 @@ const LessonMetadataEdit = ( props ) => {
 		setAttributes,
 	} = props;
 	return (
-		<>
+		<ToggleLegacyLessonMetaboxesWrapper { ...props }>
 			<InspectorControls>
 				<PanelBody title={ __( 'Metadata', 'sensei-lms' ) }>
 					<NumberControl
@@ -69,7 +70,7 @@ const LessonMetadataEdit = ( props ) => {
 					</span>
 				) }
 			</div>
-		</>
+		</ToggleLegacyLessonMetaboxesWrapper>
 	);
 };
 
