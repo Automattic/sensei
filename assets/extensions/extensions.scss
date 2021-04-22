@@ -52,6 +52,7 @@ $wordpress-break: 961px;
 	&__grid {
 		display: flex;
 		flex-wrap: wrap;
+		margin: 0 -9px;
 
 		&__col {
 			box-sizing: border-box;
@@ -182,7 +183,7 @@ $wordpress-break: 961px;
 			padding: 50px 45px;
 		}
 
-		&__item {
+		.sensei-extensions__list-item {
 			box-sizing: border-box;
 			padding: 10px;
 			margin: 0;
@@ -197,7 +198,7 @@ $wordpress-break: 961px;
 			}
 		}
 
-		&__card-wrapper {
+		.sensei-extensions__card-wrapper {
 			box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.16);
 			border-radius: 8px;
 		}
@@ -208,7 +209,7 @@ $wordpress-break: 961px;
 		@include white-box;
 		margin: 0;
 
-		&__item {
+		.sensei-extensions__list-item {
 			margin: 0;
 
 			&:not(:last-child) {
@@ -250,14 +251,18 @@ $wordpress-break: 961px;
 	}
 
 	&__grid-list {
-		margin: 0;
 		padding: 0;
 
-		&__item {
+		@extend .sensei-extensions__grid;
+
+		.sensei-extensions__list-item {
 			margin: 0 0 15px;
+
+			@extend .sensei-extensions__grid__col;
+			@include col-width( 4 );
 		}
 
-		&__item-wrapper {
+		.sensei-extensions__card-wrapper {
 			@include white-box;
 			height: 100%
 		}
