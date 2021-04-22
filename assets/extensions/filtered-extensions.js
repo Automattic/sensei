@@ -2,9 +2,10 @@
  * Internal dependencies
  */
 import Card from './card';
+import { Col } from './grid';
 
 const FilteredExtensions = ( { extensions } ) => (
-	<section className="sensei-extensions__section sensei-extensions__grid__col --col-12">
+	<Col as="section" className="sensei-extensions__section" cols={ 12 }>
 		<ul className="sensei-extensions__grid-list">
 			{ extensions.map( ( extension ) => (
 				<li
@@ -17,7 +18,7 @@ const FilteredExtensions = ( { extensions } ) => (
 				</li>
 			) ) }
 		</ul>
-	</section>
+	</Col>
 );
 
 export default FilteredExtensions;

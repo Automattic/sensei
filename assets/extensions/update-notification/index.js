@@ -8,6 +8,7 @@ import { __, _n, sprintf } from '@wordpress/i18n';
  */
 import Single from './single';
 import Multiple from './multiple';
+import { Col } from '../grid';
 import { UpdateIcon } from '../../icons';
 
 /**
@@ -42,7 +43,7 @@ const UpdateNotification = ( { extensions } ) => {
 			  );
 
 	return (
-		<section className="sensei-extensions__section sensei-extensions__grid__col --col-12">
+		<Col as="section" className="sensei-extensions__section" cols={ 12 }>
 			<div
 				role="alert"
 				className="sensei-extensions__update-notification"
@@ -57,7 +58,7 @@ const UpdateNotification = ( { extensions } ) => {
 					<Multiple extensions={ extensionsWithUpdate } />
 				) }
 			</div>
-		</section>
+		</Col>
 	);
 };
 

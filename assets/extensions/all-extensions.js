@@ -7,6 +7,7 @@ import { keyBy } from 'lodash';
  * Internal dependencies
  */
 import Card from './card';
+import { Col } from './grid';
 
 // TODO: Get from API.
 const extensionsSkeleton = [
@@ -58,9 +59,11 @@ const AllExtensions = ( { extensions } ) => {
 	const extensionsBySlug = keyBy( extensions, 'product_slug' );
 
 	return extensionsSkeleton.map( ( section ) => (
-		<section
+		<Col
 			key={ section.id }
-			className={ `sensei-extensions__section sensei-extensions__grid__col --col-${ section.columns }` }
+			as="section"
+			className="sensei-extensions__section"
+			cols={ section.columns }
 		>
 			<h2 className="sensei-extensions__section__title">
 				{ section.title }
@@ -80,7 +83,7 @@ const AllExtensions = ( { extensions } ) => {
 					</li>
 				) ) }
 			</ul>
-		</section>
+		</Col>
 	) );
 };
 

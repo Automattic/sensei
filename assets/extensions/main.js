@@ -4,6 +4,7 @@
 import apiFetch from '@wordpress/api-fetch';
 import { useState, useEffect } from '@wordpress/element';
 import { Spinner } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -14,7 +15,7 @@ import UpdateNotification from './update-notification';
 import QueryStringRouter, { Route } from '../shared/query-string-router';
 import AllExtensions from './all-extensions';
 import FilteredExtensions from './filtered-extensions';
-import { __ } from '@wordpress/i18n';
+import { Grid, Col } from './grid';
 
 const Main = () => {
 	const [ extensions, setExtensions ] = useState( false );
@@ -76,23 +77,21 @@ const Main = () => {
 	];
 
 	return (
-		<main className="sensei-extensions">
-			<div className="sensei-extensions__grid">
-				<QueryStringRouter paramName="tab" defaultRoute="all">
-					<div className="sensei-extensions__section sensei-extensions__grid__col --col-12">
-						<Header />
-						<Tabs tabs={ tabs } />
-					</div>
+		<Grid as="main" className="sensei-extensions">
+			<QueryStringRouter paramName="tab" defaultRoute="all">
+				<Col className="sensei-extensions__section" cols={ 12 }>
+					<Header />
+					<Tabs tabs={ tabs } />
+				</Col>
 
-					<UpdateNotification extensions={ extensions } />
-					{ tabs.map( ( tab ) => (
-						<Route key={ tab.id } route={ tab.id }>
-							{ tab.content }
-						</Route>
-					) ) }
-				</QueryStringRouter>
-			</div>
-		</main>
+				<UpdateNotification extensions={ extensions } />
+				{ tabs.map( ( tab ) => (
+					<Route key={ tab.id } route={ tab.id }>
+						{ tab.content }
+					</Route>
+				) ) }
+			</QueryStringRouter>
+		</Grid>
 	);
 };
 
