@@ -26,7 +26,9 @@ const AllExtensions = ( { extensions } ) => {
 								key={ extension.product_slug }
 								className="sensei-extensions__featured-list__item"
 							>
-								<Card extension={ extension } />
+								<div className="sensei-extensions__featured-list__card-wrapper">
+									<Card extension={ extension } />
+								</div>
 							</li>
 						) ) }
 					</ul>
