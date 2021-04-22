@@ -51,21 +51,25 @@ const Main = () => {
 			id: 'all',
 			label: __( 'All', 'sensei-lms' ),
 			count: extensions.length,
+			content: <AllExtensions extensions={ extensions } />,
 		},
 		{
 			id: 'free',
 			label: __( 'Free', 'sensei-lms' ),
 			count: freeExtensions.length,
+			content: <FilteredExtensions extensions={ freeExtensions } />,
 		},
 		{
 			id: 'third-party',
 			label: __( 'Third party', 'sensei-lms' ),
 			count: thirdPartyExtensions.length,
+			content: <FilteredExtensions extensions={ thirdPartyExtensions } />,
 		},
 		{
 			id: 'installed',
 			label: __( 'Installed', 'sensei-lms' ),
 			count: installedExtensions.length,
+			content: <FilteredExtensions extensions={ installedExtensions } />,
 		},
 	];
 
@@ -79,23 +83,11 @@ const Main = () => {
 					</div>
 
 					<UpdateNotification extensions={ extensions } />
-
-					<Route route="all">
-						<AllExtensions extensions={ extensions } />
-					</Route>
-					<Route route="free">
-						<FilteredExtensions extensions={ freeExtensions } />
-					</Route>
-					<Route route="third-party">
-						<FilteredExtensions
-							extensions={ thirdPartyExtensions }
-						/>
-					</Route>
-					<Route route="installed">
-						<FilteredExtensions
-							extensions={ installedExtensions }
-						/>
-					</Route>
+					{ tabs.map( ( tab ) => (
+						<Route key={ tab.id } route={ tab.id }>
+							{ tab.content }
+						</Route>
+					) ) }
 				</QueryStringRouter>
 			</div>
 		</main>
