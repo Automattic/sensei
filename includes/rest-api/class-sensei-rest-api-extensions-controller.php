@@ -68,6 +68,17 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 								return (bool) $param;
 							},
 						],
+						'type'       => [
+							'type'              => 'string',
+							'required'          => false,
+							'sanitize_callback' => function( $param ) {
+								if ( 'plugin' === $param || 'theme' === $param ) {
+									return $param;
+								}
+
+								return null;
+							},
+						],
 					],
 				],
 				'schema' => [ $this, 'get_item_schema' ],
@@ -102,9 +113,9 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 	 * @return WP_REST_Response The response which contains the extensions.
 	 */
 	public function get_extensions( WP_REST_Request $request ) : WP_REST_Response {
-		$plugins = Sensei_Extensions::instance()->get_extensions( 'plugin' );
+		$params  = $request->get_params();
+		$plugins = Sensei_Extensions::instance()->get_extensions( $params['type'] );
 
-		$params           = $request->get_params();
 		$filtered_plugins = array_filter(
 			$plugins,
 			function( $plugin ) use ( $params ) {

@@ -20,7 +20,9 @@ const Main = () => {
 	const [ extensions, setExtensions ] = useState( false );
 
 	useEffect( () => {
-		apiFetch( { path: '/sensei-internal/v1/sensei-extensions' } )
+		apiFetch( {
+			path: '/sensei-internal/v1/sensei-extensions?type=plugin',
+		} )
 			.then( ( result ) => {
 				setExtensions( result );
 			} )
