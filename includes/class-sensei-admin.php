@@ -726,6 +726,20 @@ class Sensei_Admin {
 		// As per wp_update_post() we need to escape the data from the db.
 		$new_post = wp_slash( $new_post );
 
+		/**
+		 * Filter arguments for `wp_insert_post` when duplicating a Sensei
+		 * post. This may be a Course, Lesson, or Quiz.
+		 *
+		 * @hook  sensei_duplicate_post_args
+		 * @since 3.10.1
+		 *
+		 * @param {array}   $new_post The arguments for duplicating the post.
+		 * @param {WP_Post} $post     The original post being duplicated.
+		 *
+		 * @return {array}  The new arguments to be handed to `wp_insert_post`.
+		 */
+		$new_post = apply_filters( 'sensei_duplicate_post_args', $new_post, $post );
+
 		$new_post_id = wp_insert_post( $new_post );
 
 		if ( ! is_wp_error( $new_post_id ) ) {
