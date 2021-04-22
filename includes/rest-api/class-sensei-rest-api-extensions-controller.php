@@ -1,6 +1,6 @@
 <?php
 /**
- * Sensei REST API: Sensei_REST_API_Plugins_Controller class.
+ * Sensei REST API: Sensei_REST_API_Extensions_Controller class.
  *
  * @package sensei-lms
  * @since   3.11.0
@@ -11,13 +11,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 } // Exit if accessed directly.
 
 /**
- * A REST controller for Sensei related plugins.
+ * A REST controller for Sensei related extensions.
  *
  * @since 3.11.0
  *
  * @see   WP_REST_Controller
  */
-class Sensei_REST_API_Plugins_Controller extends WP_REST_Controller {
+class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 	/**
 	 * Routes namespace.
 	 *
@@ -30,10 +30,10 @@ class Sensei_REST_API_Plugins_Controller extends WP_REST_Controller {
 	 *
 	 * @var string
 	 */
-	protected $rest_base = 'sensei-plugins';
+	protected $rest_base = 'sensei-extensions';
 
 	/**
-	 * Sensei_REST_API_Plugins_Controller constructor.
+	 * Sensei_REST_API_Extensions_Controller constructor.
 	 *
 	 * @param string $namespace Routes namespace.
 	 */
@@ -42,7 +42,7 @@ class Sensei_REST_API_Plugins_Controller extends WP_REST_Controller {
 	}
 
 	/**
-	 * Register the REST API endpoints for plugins.
+	 * Register the REST API endpoints for extensions.
 	 */
 	public function register_routes() {
 		register_rest_route(
@@ -51,7 +51,7 @@ class Sensei_REST_API_Plugins_Controller extends WP_REST_Controller {
 			[
 				[
 					'methods'             => WP_REST_Server::READABLE,
-					'callback'            => [ $this, 'get_plugins' ],
+					'callback'            => [ $this, 'get_extensions' ],
 					'permission_callback' => [ $this, 'can_user_manage_plugins' ],
 					'args'                => [
 						'installed'  => [
@@ -80,7 +80,7 @@ class Sensei_REST_API_Plugins_Controller extends WP_REST_Controller {
 	 *
 	 * @param WP_REST_Request $request WordPress request object.
 	 *
-	 * @return bool|WP_Error Whether the user can manage plugins.
+	 * @return bool|WP_Error Whether the user can manage extensions.
 	 */
 	public function can_user_manage_plugins( WP_REST_Request $request ) {
 		if ( ! current_user_can( 'activate_plugins' ) ) {
@@ -95,13 +95,13 @@ class Sensei_REST_API_Plugins_Controller extends WP_REST_Controller {
 	}
 
 	/**
-	 * Returns the requested plugins.
+	 * Returns the requested extensions.
 	 *
 	 * @param WP_REST_Request $request The request.
 	 *
-	 * @return WP_REST_Response The response which contains the plugins.
+	 * @return WP_REST_Response The response which contains the extensions.
 	 */
-	public function get_plugins( WP_REST_Request $request ) : WP_REST_Response {
+	public function get_extensions( WP_REST_Request $request ) : WP_REST_Response {
 		$plugins = Sensei_Extensions::instance()->get_extensions( 'plugin' );
 
 		$params           = $request->get_params();
@@ -154,35 +154,35 @@ class Sensei_REST_API_Plugins_Controller extends WP_REST_Controller {
 					],
 					'title'            => [
 						'type'        => 'string',
-						'description' => 'Plugin title.',
+						'description' => 'Extension title.',
 					],
 					'image'            => [
 						'type'        => 'string',
-						'description' => 'Plugin image.',
+						'description' => 'Extension image.',
 					],
 					'excerpt'          => [
 						'type'        => 'string',
-						'description' => 'Plugin excerpt',
+						'description' => 'Extension excerpt',
 					],
 					'link'             => [
 						'type'        => 'string',
-						'description' => 'Plugin link.',
+						'description' => 'Extension link.',
 					],
 					'price'            => [
 						'type'        => 'string',
-						'description' => 'Plugin price.',
+						'description' => 'Extension price.',
 					],
 					'is_featured'      => [
 						'type'        => 'boolean',
-						'description' => 'Whether its a featured plugin.',
+						'description' => 'Whether its a featured extension.',
 					],
 					'product_slug'     => [
 						'type'        => 'string',
-						'description' => 'Plugin product slug.',
+						'description' => 'Extension product slug.',
 					],
 					'hosted_location'  => [
 						'type'        => 'string',
-						'description' => 'Where the plugin is hosted (dotorg or external)',
+						'description' => 'Where the extension is hosted (dotorg or external)',
 					],
 					'type'             => [
 						'type'        => 'string',
@@ -194,7 +194,7 @@ class Sensei_REST_API_Plugins_Controller extends WP_REST_Controller {
 					],
 					'version'          => [
 						'type'        => 'string',
-						'description' => 'Plugin version.',
+						'description' => 'Extension version.',
 					],
 					'wccom_product_id' => [
 						'type'        => 'string',
@@ -202,11 +202,11 @@ class Sensei_REST_API_Plugins_Controller extends WP_REST_Controller {
 					],
 					'is_installed'     => [
 						'type'        => 'boolean',
-						'description' => 'Whether the plugin is installed.',
+						'description' => 'Whether the extension is installed.',
 					],
 					'has_update'       => [
 						'type'        => 'boolean',
-						'description' => 'Whether the plugin has available updates.',
+						'description' => 'Whether the extension has available updates.',
 					],
 				],
 			],
