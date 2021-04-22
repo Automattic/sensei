@@ -3,7 +3,6 @@
  */
 import { __ } from '@wordpress/i18n';
 import { Icon } from '@wordpress/icons';
-import { RawHTML } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -36,12 +35,11 @@ const ExtensionActions = ( { extension = {}, buttonLabel } ) => {
 			);
 			disabledButton = true;
 		} else {
-			const buttonText = `${ __( 'Install', 'sensei-lms' ) } - ${
-				extension.price !== 0
+			buttonLabel = `${ __( 'Install', 'sensei-lms' ) } - ${
+				extension.price !== '0'
 					? extension.price
 					: __( 'Free', 'sensei-lms' )
 			}`;
-			buttonLabel = <RawHTML>{ buttonText }</RawHTML>;
 		}
 	}
 

@@ -122,8 +122,17 @@ class Sensei_REST_API_Plugins_Controller extends WP_REST_Controller {
 			}
 		);
 
+		$mapped_plugins = array_map(
+			function( $plugin ) {
+				$plugin->price = html_entity_decode( $plugin->price );
+
+				return $plugin;
+			},
+			$filtered_plugins
+		);
+
 		$response = new WP_REST_Response();
-		$response->set_data( array_values( $filtered_plugins ) );
+		$response->set_data( array_values( $mapped_plugins ) );
 
 		return $response;
 	}
