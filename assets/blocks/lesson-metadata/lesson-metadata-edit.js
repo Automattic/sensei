@@ -2,10 +2,7 @@
  * WordPress dependencies
  */
 import { InspectorControls } from '@wordpress/block-editor';
-import {
-	PanelBody,
-	SelectControl,
-} from '@wordpress/components';
+import { PanelBody, SelectControl } from '@wordpress/components';
 import { __, _n } from '@wordpress/i18n';
 
 /**
@@ -23,10 +20,7 @@ import { COMPLEXITIES } from './constants';
 const LessonMetadataEdit = ( props ) => {
 	const {
 		className,
-		attributes: {
-			complexity,
-			length,
-		},
+		attributes: { complexity, length },
 		setAttributes,
 	} = props;
 	return (
@@ -39,17 +33,27 @@ const LessonMetadataEdit = ( props ) => {
 						min={ 0 }
 						step={ 1 }
 						value={ length }
-						onChange={ length => setAttributes( { length } ) }
-						suffix={ _n( 'minute', 'minutes', length, 'sensei-lms' ) }
+						onChange={ ( newLength ) =>
+							setAttributes( { newLength } )
+						}
+						suffix={ _n(
+							'minute',
+							'minutes',
+							length,
+							'sensei-lms'
+						) }
 					/>
 
 					<SelectControl
 						label={ __( 'Complexity', 'sensei-lms' ) }
-						options={ COMPLEXITIES.map(
-							( { label, value } ) => ( { label, value } )
-						) }
+						options={ COMPLEXITIES.map( ( { label, value } ) => ( {
+							label,
+							value,
+						} ) ) }
 						value={ complexity }
-						onChange={ complexity => setAttributes( { complexity } ) }
+						onChange={ ( newComplexity ) =>
+							setAttributes( { newComplexity } )
+						}
 					/>
 				</PanelBody>
 			</InspectorControls>
@@ -57,16 +61,22 @@ const LessonMetadataEdit = ( props ) => {
 			<div className={ classnames( 'lesson-metadata', className ) }>
 				{ !! length && (
 					<span className="lesson-length">
-						{ __( 'Length', 'sensei-lms' ) + ': ' + length + ' ' + _n( 'minute', 'minutes', length, 'sensei-lms' ) }
+						{ __( 'Length', 'sensei-lms' ) +
+							': ' +
+							length +
+							' ' +
+							_n( 'minute', 'minutes', length, 'sensei-lms' ) }
 					</span>
 				) }
 
 				{ complexity && (
 					<span className="lesson-complexity">
-						{
-							__( 'Complexity', 'sensei-lms' ) + ': ' +
-							COMPLEXITIES.find( lessonComplexity => complexity === lessonComplexity.value )?.label
-						}
+						{ __( 'Complexity', 'sensei-lms' ) +
+							': ' +
+							COMPLEXITIES.find(
+								( lessonComplexity ) =>
+									complexity === lessonComplexity.value
+							)?.label }
 					</span>
 				) }
 			</div>

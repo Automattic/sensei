@@ -102,7 +102,7 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 	 *
 	 * @param bool   $allowed True if allowed to view the meta field by default, false otherwise.
 	 * @param string $meta_key Meta key.
-	 * @param int    $id       Lesson ID.
+	 * @param int    $post_id  Lesson ID.
 	 * @return bool Whether the user can edit the post meta.
 	 */
 	public function auth_callback( $allowed, $meta_key, $post_id ) {

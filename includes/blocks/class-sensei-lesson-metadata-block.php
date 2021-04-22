@@ -49,12 +49,13 @@ class Sensei_Lesson_Metadata_Block {
 			$content .=
 				'<span class="lesson-length">' .
 					__( 'Length', 'sensei-lms' ) . ': ' .
+					// translators: placeholder is lesson length in minutes.
 					sprintf( _n( '%d minute', '%d minutes', $length, 'sensei-lms' ), $length ) .
 				'</span>';
 		}
 
 		if ( $complexity ) {
-			$complexities = Sensei()->lesson->lesson_complexities();
+			$complexities      = Sensei()->lesson->lesson_complexities();
 			$lesson_complexity = $complexities[ $complexity ];
 
 			if ( $lesson_complexity ) {

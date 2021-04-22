@@ -22,16 +22,12 @@ export const useUpdateQuizHasQuestionsMeta = ( clientId ) => {
 			.filter( ( block ) => ! isQuestionEmpty( block.attributes ) )
 	);
 
-	const { editedValue: quizHasQuestionsMeta } = useSelect(
-		( select ) => {
-			const editor = select( 'core/editor' );
-			return {
-				editedValue: editor.getEditedPostAttribute( 'meta' )[
-					META_KEY
-				],
-			};
-		}
-	);
+	const { editedValue: quizHasQuestionsMeta } = useSelect( ( select ) => {
+		const editor = select( 'core/editor' );
+		return {
+			editedValue: editor.getEditedPostAttribute( 'meta' )[ META_KEY ],
+		};
+	} );
 
 	const { editPost } = useDispatch( 'core/editor' );
 	const setQuizHasQuestionsMeta = useCallback(
