@@ -16,7 +16,11 @@ $wordpress-break: 961px;
 }
 
 .sensei-extensions-page {
-	margin-right: 20px;
+	margin-right: 10px;
+
+	@media (min-width: 783px) {
+		margin-right: 20px;
+	}
 }
 
 .sensei-extensions {
