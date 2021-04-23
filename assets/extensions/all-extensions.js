@@ -37,7 +37,7 @@ const AllExtensions = ( { extensions } ) => {
 
 			<section className="sensei-extensions__section sensei-extensions__grid__col --col-8">
 				<h2 className="sensei-extensions__section__title">
-					{ __( 'Course creation', 'sensei-lms' ) }
+					{ __( 'Course Creation', 'sensei-lms' ) }
 				</h2>
 				<ul className="sensei-extensions__section__content sensei-extensions__large-list">
 					{ extensions.map( ( extension ) => (
@@ -53,7 +53,7 @@ const AllExtensions = ( { extensions } ) => {
 
 			<section className="sensei-extensions__section sensei-extensions__grid__col --col-4">
 				<h2 className="sensei-extensions__section__title">
-					{ __( 'Learner engagement', 'sensei-lms' ) }
+					{ __( 'Learner Engagement', 'sensei-lms' ) }
 				</h2>
 				<ul className="sensei-extensions__section__content sensei-extensions__small-list">
 					{ extensions.map( ( extension ) => (
