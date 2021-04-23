@@ -266,7 +266,14 @@ $wordpress-break: 961px;
 			margin: 0 0 15px;
 
 			@extend .sensei-extensions__grid__col;
-			@include col-width( 4 );
+
+			@media (min-width: $wordpress-break) {
+				@include col-width(6);
+			}
+
+			@media (min-width: 1200px) {
+				@include col-width(4);
+			}
 		}
 
 		.sensei-extensions__card-wrapper {
