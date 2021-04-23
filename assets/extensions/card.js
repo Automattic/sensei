@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import classnames from 'classnames';
+
+/**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
@@ -11,11 +16,18 @@ import ExtensionActions from './extension-actions';
 /**
  * Extensions card component.
  *
- * @param {Object}  props           Component props.
- * @param {boolean} props.extension Extension object.
+ * @param {Object}  props            Component props.
+ * @param {boolean} props.extension  Extension object.
+ * @param {boolean} props.extraProps Wrapper extra props.
  */
-const Card = ( { extension } ) => (
-	<article className="sensei-extensions__card">
+const Card = ( { extension, extraProps } ) => (
+	<article
+		{ ...extraProps }
+		className={ classnames(
+			'sensei-extensions__card',
+			extraProps?.className
+		) }
+	>
 		<header className="sensei-extensions__card__header">
 			<h3 className="sensei-extensions__card__title">
 				{ extension.title }
