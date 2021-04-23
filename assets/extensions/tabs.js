@@ -23,7 +23,9 @@ const Tabs = ( { tabs } ) => {
 							} ) }
 						>
 							{ label }
-							<span className="count">({ count })</span>
+							<span className="sensei-extensions__tabs__count count">
+								({ count })
+							</span>
 						</a>
 					</li>
 				) ) }

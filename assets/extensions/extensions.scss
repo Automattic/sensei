@@ -115,6 +115,10 @@ $wordpress-break: 961px;
 				content: '|';
 			}
 		}
+
+		&__count::before {
+			content: ' ';
+		}
 	}
 
 	&__update-badge {
