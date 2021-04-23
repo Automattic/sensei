@@ -71,7 +71,7 @@ const extensionsSkeleton = [
 		key: 'course-creation',
 		columns: 8,
 		type: 'large-list',
-		title: 'Course creation',
+		title: 'Course Creation',
 		items: [
 			{
 				key: 'sensei-course-participants',
@@ -91,7 +91,7 @@ const extensionsSkeleton = [
 		key: 'learner-engagement',
 		columns: 4,
 		type: 'small-list',
-		title: 'Learner engagement',
+		title: 'Learner Engagement',
 		items: [
 			{
 				key: 'sensei-certificates',
@@ -137,13 +137,13 @@ const extensionsSkeleton = [
 	{
 		key: 'inner-sections-example',
 		columns: 6,
-		title: 'Inner sections example',
+		title: 'Inner Sections Example',
 		innerSections: [
 			{
 				key: 'sub-section',
 				columns: 12,
 				type: 'small-list',
-				title: 'Sub section',
+				title: 'Sub Section',
 				items: [
 					{
 						key: 'sensei-share-your-grade',
@@ -159,7 +159,7 @@ const extensionsSkeleton = [
 				key: 'sub-section-2',
 				columns: 12,
 				type: 'small-list',
-				title: 'Sub section 2',
+				title: 'Sub Section 2',
 				items: [
 					{
 						key: 'sensei-post-to-course',
@@ -188,7 +188,7 @@ const extensionsSkeleton = [
 				key: 'sub-section-4',
 				columns: 12,
 				type: 'small-list',
-				title: 'Sub section 4',
+				title: 'Sub Section 4',
 				items: [
 					{
 						key: 'sensei-share-your-grade',
