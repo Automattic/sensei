@@ -4,6 +4,12 @@
 import Card from './card';
 import { Col } from './grid';
 
+/**
+ * Filtered extensions component.
+ *
+ * @param {Object} props            Component props.
+ * @param {Array}  props.extensions Filtered extensions.
+ */
 const FilteredExtensions = ( { extensions } ) => (
 	<Col as="section" className="sensei-extensions__section" cols={ 12 }>
 		<ul className="sensei-extensions__grid-list">
