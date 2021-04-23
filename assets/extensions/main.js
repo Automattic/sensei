@@ -63,7 +63,7 @@ const Main = () => {
 		},
 		{
 			id: 'third-party',
-			label: __( 'Third party', 'sensei-lms' ),
+			label: __( 'Third Party', 'sensei-lms' ),
 			count: thirdPartyExtensions.length,
 			content: <FilteredExtensions extensions={ thirdPartyExtensions } />,
 		},
