@@ -2,7 +2,19 @@
 
 /**
  * Class Sensei_Feature_Flags
- * Check for enabled experimental features by running a filter for each feature, overriden by defines
+ *
+ * Check for enabled experimental features by running a filter for each
+ * feature, overriden by defines. A feature flag can be enabled either by
+ * defining a constant, or adding a filter.
+ *
+ * Example - the feature flag `my_experimental_feature` may be enabled in the
+ * following ways:
+ *
+ * // Defining a constant:
+ * `define( 'SENSEI_FEATURE_FLAG_MY_EXPERIMENTAL_FEATURE', true );`
+ *
+ * // Adding a filter:
+ * `add_filter( 'sensei_feature_flag_my_experimental_feature', '__return_true' );`
  *
  * @package Core
  */
