@@ -52,7 +52,6 @@ $wordpress-break: 961px;
 	&__grid {
 		display: flex;
 		flex-wrap: wrap;
-		align-items: flex-start;
 
 		&__col {
 			box-sizing: border-box;
@@ -243,7 +242,6 @@ $wordpress-break: 961px;
 				padding-left: 20px;
 				flex-shrink: 0;
 				flex-direction: row-reverse;
-				margin-left: auto;
 			}
 			.sensei-extensions__extension-actions__details-link {
 				margin-right: 10px;
@@ -254,7 +252,6 @@ $wordpress-break: 961px;
 	&__grid-list {
 		margin: 0;
 		padding: 0;
-		align-items: stretch;
 
 		&__item {
 			margin: 0 0 15px;
