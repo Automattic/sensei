@@ -22,7 +22,7 @@ const ExtensionActions = ( { extension = {}, buttonLabel } ) => {
 	if ( ! buttonLabel ) {
 		if ( extension.has_update ) {
 			buttonLabel = __( 'Update', 'sensei-lms' );
-		} else if ( extension.version ) {
+		} else if ( extension.is_installed ) {
 			buttonLabel = (
 				<>
 					<Icon
@@ -36,7 +36,9 @@ const ExtensionActions = ( { extension = {}, buttonLabel } ) => {
 			disabledButton = true;
 		} else {
 			buttonLabel = `${ __( 'Install', 'sensei-lms' ) } - ${
-				extension.price
+				extension.price !== '0'
+					? extension.price
+					: __( 'Free', 'sensei-lms' )
 			}`;
 		}
 	}
@@ -48,7 +50,7 @@ const ExtensionActions = ( { extension = {}, buttonLabel } ) => {
 					className="button button-primary"
 					disabled={ disabledButton }
 				>
-					{ buttonLabel || __( 'Install - $29.99', 'sensei-lms' ) }
+					{ buttonLabel }
 				</button>
 			</li>
 			{ extension.link && (

@@ -390,6 +390,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 			'product_slug' => 'slug-1',
 			'plugin_file'  => 'test/test.php',
 			'status'       => 'installing',
+			'is_installed' => false,
 		];
 		$sensei_extensions  = Sensei()->setup_wizard->get_sensei_extensions();
 

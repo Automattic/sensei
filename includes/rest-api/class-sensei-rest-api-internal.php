@@ -50,6 +50,7 @@ class Sensei_REST_API_Internal {
 			new Sensei_REST_API_Course_Structure_Controller( $this->namespace ),
 			new Sensei_REST_API_Lesson_Quiz_Controller( $this->namespace ),
 			new Sensei_REST_API_Question_Options_Controller( $this->namespace ),
+			new Sensei_REST_API_Extensions_Controller( $this->namespace ),
 		];
 
 		foreach ( $this->controllers as $controller ) {

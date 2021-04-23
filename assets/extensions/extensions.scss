@@ -259,6 +259,7 @@ $wordpress-break: 961px;
 
 		&__item-wrapper {
 			@include white-box;
+			height: 100%
 		}
 	}
 

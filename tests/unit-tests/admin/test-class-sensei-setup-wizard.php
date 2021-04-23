@@ -510,21 +510,25 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 				'product_slug' => 'slug-1',
 				'status'       => 'installing',
 				'plugin_file'  => 'test/test.php',
+				'is_installed' => false,
 			],
 			(object) [
 				'product_slug' => 'slug-2',
 				'status'       => 'error',
 				'error'        => 'Error message',
 				'plugin_file'  => 'test/test.php',
+				'is_installed' => false,
 			],
 			(object) [
 				'product_slug' => 'slug-3',
 				'status'       => 'installed',
 				'plugin_file'  => 'test/test-installed.php',
+				'is_installed' => false,
 			],
 			(object) [
 				'product_slug' => 'slug-4',
 				'plugin_file'  => 'test/test.php',
+				'is_installed' => false,
 			],
 			get_transient( Sensei_Utils::WC_INFORMATION_TRANSIENT ),
 		];
@@ -560,6 +564,7 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 			(object) [
 				'product_slug' => 'allowed',
 				'plugin_file'  => 'test/test.php',
+				'is_installed' => false,
 			],
 		];
 
