@@ -16,33 +16,58 @@ import ExtensionActions from './extension-actions';
 /**
  * Extensions card component.
  *
- * @param {Object}  props            Component props.
- * @param {boolean} props.extension  Extension object.
- * @param {boolean} props.extraProps Wrapper extra props.
+ * @param {Object}   props             Component props.
+ * @param {string}   props.title       Card title (extension title will be used as fallback).
+ * @param {string}   props.excerpt     Card excerpt (extension excerpt will be used as fallback).
+ * @param {string}   props.badgeLabel  Badge label (will check extension update if it's not defined).
+ * @param {Object[]} props.customLinks Array with custom links containing the link props.
+ * @param {Object}   props.extension   Extension object.
+ * @param {Object}   props.htmlProps   Wrapper extra props.
  */
-const Card = ( { extension, extraProps } ) => (
+const Card = ( {
+	title,
+	excerpt,
+	badgeLabel,
+	customLinks,
+	extension,
+	htmlProps,
+} ) => (
 	<article
-		{ ...extraProps }
+		{ ...htmlProps }
 		className={ classnames(
 			'sensei-extensions__card',
-			extraProps?.className
+			htmlProps?.className
 		) }
 	>
 		<header className="sensei-extensions__card__header">
 			<h3 className="sensei-extensions__card__title">
-				{ extension.title }
+				{ title || extension.title }
 			</h3>
-			{ extension.has_update && (
+			{ ( badgeLabel || extension?.[ 'has_update' ] ) && (
 				<small className="sensei-extensions__card__new-badge">
-					{ __( 'New version', 'sensei-lms' ) }
+					{ badgeLabel || __( 'New version', 'sensei-lms' ) }
 				</small>
 			) }
 		</header>
 		<div className="sensei-extensions__card__content">
 			<p className="sensei-extensions__card__description">
-				{ extension.excerpt }
+				{ excerpt || extension.excerpt }
 			</p>
-			<ExtensionActions extension={ extension } />
+
+			{ customLinks ? (
+				<ul className="sensei-extensions__extension-actions">
+					{ customLinks.map( ( { key, children, ...linkProps } ) => (
+						<li
+							key={ key }
+							className="sensei-extensions__extension-actions__item"
+						>
+							<a { ...linkProps }>{ children }</a>
+						</li>
+					) ) }
+				</ul>
+			) : (
+				extension && <ExtensionActions extension={ extension } />
+			) }
 		</div>
 	</article>
 );

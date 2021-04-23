@@ -13,13 +13,14 @@ import { Grid, Col } from './grid';
 // TODO: Get from API.
 const extensionsSkeleton = [
 	{
-		id: 'featured',
+		key: 'featured',
 		columns: 12,
 		type: 'featured-list',
 		title: 'Featured',
 		items: [
 			{
-				slug: 'sensei-wc-paid-courses',
+				key: 'sensei-wc-paid-courses',
+				extensionSlug: 'sensei-wc-paid-courses',
 				itemProps: {
 					className: 'special-class',
 					style: { background: 'red' },
@@ -29,88 +30,174 @@ const extensionsSkeleton = [
 					style: { color: 'white' },
 				},
 				cardProps: {
-					style: { background: 'blue' },
+					htmlProps: { style: { background: 'blue' } },
 				},
 			},
-			{ slug: 'sensei-content-drip' },
-			{ slug: 'sensei-certificates' },
+			{
+				key: 'sensei-content-drip',
+				extensionSlug: 'sensei-content-drip',
+			},
+			{
+				key: 'sensei-advanced-quizzes',
+				cardProps: {
+					title: 'Advanced Quizzes',
+					excerpt:
+						'Take your lesson quizzes to the next level with additional question types, quiz timer, answer feedback, and more.',
+					badgeLabel: 'Coming soon',
+					customLinks: [
+						{
+							key: 'learn-more',
+							className: 'button button-primary',
+							target: '_blank',
+							rel: 'noreferrer external',
+							href: '#',
+							children: 'Learn more',
+						},
+						{
+							key: 'other-link',
+							className:
+								'sensei-extensions__extension-actions__details-link',
+							target: '_blank',
+							rel: 'noreferrer external',
+							href: '#',
+							children: 'Other link',
+						},
+					],
+				},
+			},
 		],
 	},
 	{
-		id: 'course-creation',
+		key: 'course-creation',
 		columns: 8,
 		type: 'large-list',
 		title: 'Course creation',
 		items: [
-			{ slug: 'sensei-course-participants' },
-			{ slug: 'sensei-course-progress' },
-			{ slug: 'sensei-media-attachments' },
+			{
+				key: 'sensei-course-participants',
+				extensionSlug: 'sensei-course-participants',
+			},
+			{
+				key: 'sensei-course-progress',
+				extensionSlug: 'sensei-course-progress',
+			},
+			{
+				key: 'sensei-media-attachments',
+				extensionSlug: 'sensei-media-attachments',
+			},
 		],
 	},
 	{
-		id: 'learner-engagement',
+		key: 'learner-engagement',
 		columns: 4,
 		type: 'small-list',
 		title: 'Learner engagement',
 		items: [
-			{ slug: 'sensei-share-your-grade' },
-			{ slug: 'sensei-post-to-course' },
+			{
+				key: 'sensei-certificates',
+				extensionSlug: 'sensei-certificates',
+			},
+			{
+				key: 'sensei-share-your-grade',
+				extensionSlug: 'sensei-share-your-grade',
+			},
+			{
+				key: 'sensei-post-to-course',
+				extensionSlug: 'sensei-post-to-course',
+			},
 		],
 	},
 	{
-		id: 'grid-example',
+		key: 'grid-example',
 		columns: 12,
 		type: 'grid-list',
 		items: [
-			{ slug: 'sensei-share-your-grade' },
-			{ slug: 'sensei-post-to-course' },
-			{ slug: 'sensei-media-attachments' },
-			{ slug: 'sensei-course-participants' },
-			{ slug: 'sensei-course-progress' },
+			{
+				key: 'sensei-share-your-grade',
+				extensionSlug: 'sensei-share-your-grade',
+			},
+			{
+				key: 'sensei-post-to-course',
+				extensionSlug: 'sensei-post-to-course',
+			},
+			{
+				key: 'sensei-media-attachments',
+				extensionSlug: 'sensei-media-attachments',
+			},
+			{
+				key: 'sensei-course-participants',
+				extensionSlug: 'sensei-course-participants',
+			},
+			{
+				key: 'sensei-course-progress',
+				extensionSlug: 'sensei-course-progress',
+			},
 		],
 	},
 	{
-		id: 'inner-sections-example',
+		key: 'inner-sections-example',
 		columns: 6,
 		title: 'Inner sections example',
 		innerSections: [
 			{
-				id: 'sub-section',
+				key: 'sub-section',
 				columns: 12,
 				type: 'small-list',
 				title: 'Sub section',
 				items: [
-					{ slug: 'sensei-share-your-grade' },
-					{ slug: 'sensei-post-to-course' },
+					{
+						key: 'sensei-share-your-grade',
+						extensionSlug: 'sensei-share-your-grade',
+					},
+					{
+						key: 'sensei-post-to-course',
+						extensionSlug: 'sensei-post-to-course',
+					},
 				],
 			},
 			{
-				id: 'sub-section-2',
+				key: 'sub-section-2',
 				columns: 12,
 				type: 'small-list',
 				title: 'Sub section 2',
-				items: [ { slug: 'sensei-post-to-course' } ],
+				items: [
+					{
+						key: 'sensei-post-to-course',
+						extensionSlug: 'sensei-post-to-course',
+					},
+				],
 			},
 		],
 	},
 	{
-		id: 'inner-sections-example2',
+		key: 'inner-sections-example2',
 		columns: 6,
 		innerSections: [
 			{
-				id: 'sub-section-3',
+				key: 'sub-section-3',
 				columns: 12,
 				type: 'small-list',
-				items: [ { slug: 'sensei-post-to-course' } ],
+				items: [
+					{
+						key: 'sensei-post-to-course',
+						extensionSlug: 'sensei-post-to-course',
+					},
+				],
 			},
 			{
-				id: 'sub-section-4',
+				key: 'sub-section-4',
 				columns: 12,
 				type: 'small-list',
 				title: 'Sub section 4',
 				items: [
-					{ slug: 'sensei-share-your-grade' },
-					{ slug: 'sensei-post-to-course' },
+					{
+						key: 'sensei-share-your-grade',
+						extensionSlug: 'sensei-share-your-grade',
+					},
+					{
+						key: 'sensei-post-to-course',
+						extensionSlug: 'sensei-post-to-course',
+					},
 				],
 			},
 		],
@@ -126,7 +213,7 @@ const extensionsSkeleton = [
 const renderSections = ( skeleton, extensionsBySlug ) =>
 	skeleton.map( ( section ) => (
 		<Col
-			key={ section.id }
+			key={ section.key }
 			as="section"
 			className="sensei-extensions__section"
 			cols={ section.columns }
@@ -153,14 +240,15 @@ const renderSections = ( skeleton, extensionsBySlug ) =>
 				>
 					{ section.items.map(
 						( {
-							slug,
+							key,
+							extensionSlug,
 							itemProps = {},
 							wrapperProps = {},
 							cardProps = {},
 						} ) => (
 							<li
 								{ ...itemProps }
-								key={ slug }
+								key={ key }
 								className={ classnames(
 									'sensei-extensions__list-item',
 									itemProps?.className
@@ -174,8 +262,11 @@ const renderSections = ( skeleton, extensionsBySlug ) =>
 									) }
 								>
 									<Card
-										extension={ extensionsBySlug[ slug ] }
-										extraProps={ cardProps }
+										extension={
+											extensionSlug &&
+											extensionsBySlug[ extensionSlug ]
+										}
+										{ ...cardProps }
 									/>
 								</div>
 							</li>
