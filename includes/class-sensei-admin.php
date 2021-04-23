@@ -702,7 +702,7 @@ class Sensei_Admin {
 			}
 		}
 
-		$new_post['post_title']       .= empty( $suffix ) ? __( '(Duplicate)', 'sensei-lms' ) : $suffix;
+		$new_post['post_title']       .= $suffix;
 		$new_post['post_date']         = current_time( 'mysql' );
 		$new_post['post_date_gmt']     = get_gmt_from_date( $new_post['post_date'] );
 		$new_post['post_modified']     = $new_post['post_date'];
