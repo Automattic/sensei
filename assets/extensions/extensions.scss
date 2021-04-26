@@ -3,8 +3,8 @@
 
 $wordpress-break: 961px;
 
-@mixin white-box {
-	border-radius: 2px;
+@mixin white-box( $r: 2px ) {
+	border-radius: $r;
 	background-color: $white;
 	box-shadow: 0 0 0 1px #DCDCDE;
 }
@@ -46,7 +46,7 @@ $wordpress-break: 961px;
 			margin: 0 0 17px;
 		}
 
-		&__content {
+		&__body {
 			flex: 1;
 		}
 	}
@@ -204,11 +204,24 @@ $wordpress-break: 961px;
 			}
 		}
 
+		.sensei-extensions__card {
+			flex-direction: column;
+			border-radius: 8px;
+			&__image {
+				border-radius: 8px 8px 0 0;
+			}
+		}
+
 		.sensei-extensions__card-wrapper {
 			height: 100%;
 			box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.16);
 			border-radius: 8px;
 		}
+
+		&__card-wrapper, .sensei-extensions__card {
+			height: 100%;
+		}
+
 	}
 
 	&__small-list,
@@ -222,6 +235,21 @@ $wordpress-break: 961px;
 			&:not(:last-child) {
 				border-bottom: solid 1px #DCDCDE;
 			}
+		}
+	}
+
+	&__small-list {
+		.sensei-extensions__card__image {
+			display: none;
+		}
+	}
+
+	&__large-list {
+		&__item:first-child .sensei-extensions__card__image {
+			border-radius: 2px 0 0 0;
+		}
+		&__item:last-child .sensei-extensions__card__image {
+			border-radius: 0 0 0 2px;
 		}
 	}
 
@@ -240,19 +268,21 @@ $wordpress-break: 961px;
 
 	@media (min-width: $wordpress-break) {
 		&__large-list {
-			.sensei-extensions__card__content {
-				display: flex;
+			.sensei-extensions__card {
+			}
+			.sensei-extensions__card__body {
+
+			}
+			.sensei-extensions__card__image {
 			}
 			.sensei-extensions__card__description {
-				flex: 1;
+
 			}
 			.sensei-extensions__extension-actions {
-				padding-left: 20px;
-				flex-shrink: 0;
-				flex-direction: row-reverse;
+
 			}
 			.sensei-extensions__extension-actions__details-link {
-				margin-right: 10px;
+
 			}
 		}
 	}
@@ -277,14 +307,22 @@ $wordpress-break: 961px;
 		}
 
 		.sensei-extensions__card-wrapper {
-			@include white-box;
+			@include white-box(2px);
 			height: 100%
+		}
+
+		.sensei-extensions__card {
+			flex-direction: column;
+			&__image {
+				border-radius: 2px 2px 0 0;
+			}
 		}
 	}
 
 	&__card {
-		padding: 25px;
-		background-color: $white;
+		display: flex;
+		align-items: stretch;
+		height: 100%;
 
 		&__header {
 			display: flex;
@@ -292,10 +330,37 @@ $wordpress-break: 961px;
 			margin-bottom: 10px;
 		}
 
+		&__content {
+			padding: 25px;
+			display: flex;
+			flex-direction: column;
+			min-height: 170px;
+			flex: 1;
+		}
+
+		&__body {
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+		}
+
 		&__title {
 			margin: 0;
 			font-size: 16px;
 			font-weight: bold;
+			color: inherit;
+		}
+
+		&__price {
+			margin-bottom: 10px;
+			font-size: 16px;
+		}
+
+		&__image {
+			background-color: $gray-0;
+			background-size: cover;
+			background-position: center center;
+			flex: 0 0 220px;
 		}
 
 		&__new-badge {
@@ -317,6 +382,7 @@ $wordpress-break: 961px;
 		&__description {
 			margin: 0 0 10px;
 			font-size: 14px;
+			flex: 1;
 		}
 	}
 
