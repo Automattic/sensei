@@ -21,17 +21,6 @@ const extensionsSkeleton = [
 			{
 				key: 'sensei-wc-paid-courses',
 				extensionSlug: 'sensei-wc-paid-courses',
-				itemProps: {
-					className: 'special-class',
-					style: { background: 'red' },
-				},
-				wrapperProps: {
-					className: 'special',
-					style: { color: 'white' },
-				},
-				cardProps: {
-					htmlProps: { style: { background: 'blue' } },
-				},
 			},
 			{
 				key: 'sensei-content-drip',
@@ -41,6 +30,8 @@ const extensionsSkeleton = [
 				key: 'sensei-advanced-quizzes',
 				cardProps: {
 					title: 'Advanced Quizzes',
+					image:
+						'https://senseilms.com/wp-content/uploads/2019/05/Quizzes.png',
 					excerpt:
 						'Take your lesson quizzes to the next level with additional question types, quiz timer, answer feedback, and more.',
 					badgeLabel: 'Coming soon',
@@ -74,12 +65,8 @@ const extensionsSkeleton = [
 		title: 'Course Creation',
 		items: [
 			{
-				key: 'sensei-course-participants',
-				extensionSlug: 'sensei-course-participants',
-			},
-			{
-				key: 'sensei-course-progress',
-				extensionSlug: 'sensei-course-progress',
+				key: 'sensei-post-to-course',
+				extensionSlug: 'sensei-post-to-course',
 			},
 			{
 				key: 'sensei-media-attachments',
@@ -98,12 +85,8 @@ const extensionsSkeleton = [
 				extensionSlug: 'sensei-certificates',
 			},
 			{
-				key: 'sensei-share-your-grade',
-				extensionSlug: 'sensei-share-your-grade',
-			},
-			{
-				key: 'sensei-post-to-course',
-				extensionSlug: 'sensei-post-to-course',
+				key: 'sensei-course-progress',
+				extensionSlug: 'sensei-course-progress',
 			},
 		],
 	},
