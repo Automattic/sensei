@@ -14,6 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Sensei_Domain_Models_Exception
  *
+ * @deprecated 3.11.0
+ *
  * @package Sensei\Domain Models\Exception
  * @since 1.9.13
  */

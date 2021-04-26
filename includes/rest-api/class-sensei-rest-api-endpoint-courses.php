@@ -1,24 +1,38 @@
 <?php
-
+// phpcs:ignoreFile
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 } // Exit if accessed directly
 
+/**
+ * @deprecated 3.11.0
+ */
 class Sensei_REST_API_Endpoint_Courses extends Sensei_REST_API_Controller {
 
 	protected $base               = '/courses';
 	protected $domain_model_class = 'Sensei_Domain_Models_Course';
 	protected $post_type          = 'course';
 
+	/**
+	 * @deprecated 3.11.0
+	 */
 	public function __construct( Sensei_REST_API_V1 $api ) {
 		parent::__construct( $api );
+
+		_deprecated_function( __METHOD__, '3.11.0' );
+
 		$obj             = get_post_type_object( $this->post_type );
 		$this->rest_base = ! empty( $obj->rest_base ) ? $obj->rest_base : $obj->name;
 
 		$this->meta = new WP_REST_Post_Meta_Fields( $this->post_type );
 	}
 
+	/**
+	 * @deprecated 3.11.0
+	 */
 	public function register() {
+		_deprecated_function( __METHOD__, '3.11.0' );
+
 		$prefix = $this->api->get_api_prefix();
 		register_rest_route(
 			$prefix,
@@ -62,7 +76,16 @@ class Sensei_REST_API_Endpoint_Courses extends Sensei_REST_API_Controller {
 		);
 	}
 
+	/**
+	 * @deprecated 3.11.0
+	 */
 	public function get_items( $request ) {
+		_deprecated_function( __METHOD__, '3.11.0' );
+
+		if ( ! headers_sent() ) {
+			header( 'Warning: 299 - Deprecated API' );
+		}
+
 		$item_id = isset( $request['id'] ) ? absint( $request['id'] ) : null;
 
 		if ( null === $item_id ) {
@@ -80,29 +103,49 @@ class Sensei_REST_API_Endpoint_Courses extends Sensei_REST_API_Controller {
 	}
 
 	/**
+	 * @deprecated 3.11.0
+	 *
 	 * @param WP_REST_Request $request
 	 * @return WP_REST_Response
 	 */
 	public function create_item( $request ) {
+		_deprecated_function( __METHOD__, '3.11.0' );
+
+		if ( ! headers_sent() ) {
+			header( 'Warning: 299 - Deprecated API' );
+		}
+
 		$is_update = false;
 		return $this->create_or_update( $request, $is_update );
 	}
 
 	/**
+	 * @deprecated 3.11.0
+	 *
 	 * @param WP_REST_Request $request
 	 * @return WP_REST_Response
 	 */
 	public function update_item( $request ) {
+		_deprecated_function( __METHOD__, '3.11.0' );
+
+		if ( ! headers_sent() ) {
+			header( 'Warning: 299 - Deprecated API' );
+		}
+
 		$is_update = true;
 		return $this->create_or_update( $request, $is_update );
 	}
 
 	/**
+	 * @deprecated 3.11.0
+	 *
 	 * @param WP_REST_Request $request
 	 * @param bool            $is_update
 	 * @return WP_REST_Response
 	 */
 	protected function create_or_update( $request, $is_update = false ) {
+		_deprecated_function( __METHOD__, '3.11.0' );
+
 		$model_to_update = null;
 		if ( $is_update ) {
 			$id = isset( $request['id'] ) ? absint( $request['id'] ) : null;
@@ -139,7 +182,16 @@ class Sensei_REST_API_Endpoint_Courses extends Sensei_REST_API_Controller {
 		return $this->created( $this->prepare_data_transfer_object( array( 'id' => absint( $id_or_error ) ) ) );
 	}
 
+	/**
+	 * @deprecated 3.11.0
+	 */
 	public function delete_item( $request ) {
+		_deprecated_function( __METHOD__, '3.11.0' );
+
+		if ( ! headers_sent() ) {
+			header( 'Warning: 299 - Deprecated API' );
+		}
+
 		$id = isset( $request['id'] ) ? absint( $request['id'] ) : null;
 		if ( empty( $id ) ) {
 			return $this->fail_with( __( 'No Course ID provided', 'sensei-lms' ) );
@@ -155,34 +207,50 @@ class Sensei_REST_API_Endpoint_Courses extends Sensei_REST_API_Controller {
 	/**
 	 * Prepare the item for create or update operation.
 	 *
+	 * @deprecated 3.11.0
+	 *
 	 * @param WP_REST_Request $request Request object.
 	 * @return WP_Error|object $prepared_item
 	 */
 	protected function prepare_item_for_database( $request ) {
+		_deprecated_function( __METHOD__, '3.11.0' );
+
 		return $this->factory->new_from_request( $request );
 	}
 
 	/**
+	 * @deprecated 3.11.0
+	 *
 	 * @param WP_REST_Request $request
 	 * @return bool
 	 */
 	public function get_items_permissions_check( $request ) {
+		_deprecated_function( __METHOD__, '3.11.0' );
+
 		return $this->admin_permissions_check( $request );
 	}
 
 	/**
+	 * @deprecated 3.11.0
+	 *
 	 * @param WP_REST_Request $request
 	 * @return bool
 	 */
 	public function create_item_permissions_check( $request ) {
+		_deprecated_function( __METHOD__, '3.11.0' );
+
 		return $this->admin_permissions_check( $request );
 	}
 
 	/**
+	 * @deprecated 3.11.0
+	 *
 	 * @param WP_REST_Request $request
 	 * @return bool
 	 */
 	public function delete_item_permissions_check( $request ) {
+		_deprecated_function( __METHOD__, '3.11.0' );
+
 		return $this->admin_permissions_check( $request );
 	}
 
@@ -196,10 +264,14 @@ class Sensei_REST_API_Endpoint_Courses extends Sensei_REST_API_Controller {
 	}
 
 	/**
+	 * @deprecated 3.11.0
+	 *
 	 * @param $model Sensei_Domain_Models_Course
 	 * @return array
 	 */
 	protected function add_links( $model ) {
+		_deprecated_function( __METHOD__, '3.11.0' );
+
 		$helper = $this->api->get_helper();
 		return array(
 			'self'       => array(
@@ -225,9 +297,13 @@ class Sensei_REST_API_Endpoint_Courses extends Sensei_REST_API_Controller {
 	 *
 	 * @access public
 	 *
+	 * @deprecated 3.11.0
+	 *
 	 * @return array Item schema data.
 	 */
 	public function get_item_schema() {
+		_deprecated_function( __METHOD__, '3.11.0' );
+
 		$fields     = $this->factory->get_field_declarations();
 		$properties = array();
 		foreach ( $fields as $field_declaration ) {
