@@ -146,7 +146,7 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 	 */
 	public function get_extensions( WP_REST_Request $request ) : WP_REST_Response {
 		$params  = $request->get_params();
-		$plugins = Sensei_Extensions::instance()->get_extensions( $params['type'] );
+		$plugins = Sensei_Extensions::instance()->get_extensions( $params['type'] ?? null );
 
 		$filtered_plugins = array_filter(
 			$plugins,
