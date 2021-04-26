@@ -6,7 +6,7 @@ $wordpress-break: 961px;
 @mixin white-box( $r: 2px ) {
 	border-radius: $r;
 	background-color: $white;
-	box-shadow: 0 0 0 1px #DCDCDE;
+	box-shadow: 0 0 0 1px $gray-5;
 }
 
 @mixin col-width($w) {
@@ -21,6 +21,8 @@ $wordpress-break: 961px;
 	@media (min-width: 783px) {
 		margin-right: 20px;
 	}
+
+	color: $gray-100;
 }
 
 .sensei-extensions {
@@ -130,7 +132,7 @@ $wordpress-break: 961px;
 		align-items: center;
 		font-size: 14px;
 		font-weight: 500;
-		color: #000;
+		color: inherit;
 
 		svg {
 			width: 24px;
@@ -233,7 +235,7 @@ $wordpress-break: 961px;
 			margin: 0;
 
 			&:not(:last-child) {
-				border-bottom: solid 1px #DCDCDE;
+				border-bottom: solid 1px $gray-5;
 			}
 		}
 	}
@@ -407,7 +409,7 @@ $wordpress-break: 961px;
 			padding: 0 10px;
 			margin-left: 10px;
 			font-size: 13px;
-			color: #000;
+			color: inherit;
 		}
 
 		&__button-icon {
