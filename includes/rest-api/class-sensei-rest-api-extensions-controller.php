@@ -370,6 +370,14 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 						'type'        => 'boolean',
 						'description' => 'Whether the extension has available updates.',
 					],
+					'wccom_connected'  => [
+						'type'        => 'boolean',
+						'description' => 'Whether the site is connected to WC.com.',
+					],
+					'wccom_expired'    => [
+						'type'        => 'boolean',
+						'description' => 'Whether the WC.com subscription is expired.',
+					],
 				],
 			],
 		];
