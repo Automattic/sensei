@@ -84,6 +84,36 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 				'schema' => [ $this, 'get_item_schema' ],
 			]
 		);
+
+		register_rest_route(
+			$this->namespace,
+			$this->rest_base . '/update',
+			[
+				[
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => [ $this, 'update_extensions' ],
+					'permission_callback' => [ $this, 'can_user_manage_plugins' ],
+					'args'                => [
+						'plugins' => [
+							'type'              => 'array',
+							'required'          => true,
+							'sanitize_callback' => function( $param ) {
+								if ( ! is_array( $param ) ) {
+									$param = [ $param ];
+								}
+
+								return array_map(
+									function ( $plugin ) {
+										return sanitize_title( $plugin );
+									},
+									$param
+								);
+							},
+						],
+					],
+				],
+			]
+		);
 	}
 
 	/**
@@ -94,7 +124,7 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 	 * @return bool|WP_Error Whether the user can manage extensions.
 	 */
 	public function can_user_manage_plugins( WP_REST_Request $request ) {
-		if ( ! current_user_can( 'activate_plugins' ) ) {
+		if ( ! current_user_can( 'activate_plugins' ) || ! current_user_can( 'update_plugins' ) ) {
 			return new WP_Error(
 				'rest_cannot_view_plugins',
 				__( 'Sorry, you are not allowed to manage plugins for this site.', 'sensei-lms' ),
@@ -107,6 +137,8 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 
 	/**
 	 * Returns the requested extensions.
+	 *
+	 * @access private
 	 *
 	 * @param WP_REST_Request $request The request.
 	 *
@@ -133,13 +165,132 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 			}
 		);
 
+		return $this->create_plugins_response( $filtered_plugins );
+	}
+
+	/**
+	 * Update a single plugin.
+	 *
+	 * @access private
+	 *
+	 * @param WP_REST_Request $request The request.
+	 *
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function update_extensions( WP_REST_Request $request ) {
+		$json_params    = $request->get_json_params();
+		$plugins_arg    = $json_params['plugins'];
+		$sensei_plugins = Sensei_Extensions::instance()->get_extensions( 'plugin' );
+
+		$plugins_to_update = array_filter(
+			$sensei_plugins,
+			function( $plugin ) use ( $plugins_arg ) {
+				return $plugin->is_installed && $plugin->has_update && in_array( $plugin->product_slug, $plugins_arg, true );
+			}
+		);
+
+		if ( empty( $plugins_to_update ) ) {
+			$response = new WP_REST_Response();
+			$response->set_data(
+				new WP_Error(
+					'sensei_extensions_no_plugins_to_update',
+					__( 'No plugins to update found.', 'sensei-lms' )
+				)
+			);
+			$response->set_status( 404 );
+
+			return $response;
+		}
+
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
+
+		WP_Filesystem();
+
+		$skin     = new WP_Ajax_Upgrader_Skin();
+		$upgrader = new Plugin_Upgrader( $skin );
+		$result   = $upgrader->bulk_upgrade( wp_list_pluck( $plugins_to_update, 'plugin_file' ) );
+
+		$error = $this->check_for_upgrade_error( $plugins_to_update, $result, $skin, $upgrader );
+
+		if ( is_wp_error( $error ) ) {
+			return $error;
+		}
+
+		$updated_plugins = array_filter(
+			Sensei_Extensions::instance()->get_extensions( 'plugin' ),
+			function( $plugin ) use ( $plugins_arg ) {
+				return in_array( $plugin->product_slug, $plugins_arg, true );
+			}
+		);
+
+		return $this->create_plugins_response( $updated_plugins );
+	}
+
+	/**
+	 * Check if the result of the upgrade has an error. Error handling has been copied from wp_ajax_update_plugin.
+	 *
+	 * @param array                 $plugins  Plugins which where upgraded.
+	 * @param array|WP_Error|false  $result   Result of the upgrade.
+	 * @param WP_Ajax_Upgrader_Skin $skin     Upgrader sking.
+	 * @param Plugin_Upgrader       $upgrader The upgrader.
+	 *
+	 * @return bool|WP_Error
+	 */
+	private function check_for_upgrade_error( array $plugins, $result, WP_Ajax_Upgrader_Skin $skin, Plugin_Upgrader $upgrader ) {
+		if ( is_wp_error( $skin->result ) ) {
+			return $skin->result;
+		}
+
+		if ( $skin->get_errors()->has_errors() ) {
+			return new WP_Error(
+				'sensei_extensions_plugin_update_failed',
+				$skin->get_error_messages()
+			);
+		}
+
+		if ( is_array( $result ) ) {
+			foreach ( $plugins as $plugin ) {
+				if ( empty( $result[ $plugin->plugin_file ] ) ) {
+					return new WP_Error(
+						'sensei_extensions_plugin_update_failed',
+						// translators: Placeholder is the name of the plugin that failed.
+						sprintf( __( 'Failed to update plugin %s', 'sensei-lms' ), $plugin->title )
+					);
+				}
+
+				if ( true === $result[ $plugin->plugin_file ] ) {
+					return new WP_Error(
+						'sensei_extensions_plugin_update_failed',
+						$upgrader->strings['up_to_date']
+					);
+				}
+			}
+		} else {
+			return new WP_Error(
+				'sensei_extensions_plugin_update_failed',
+				__( 'Plugin update failed.', 'sensei-lms' )
+			);
+		}
+
+		return false;
+	}
+
+	/**
+	 * Generate a REST response from an array of plugins.
+	 *
+	 * @param array $plugins The plugins.
+	 *
+	 * @return WP_REST_Response
+	 */
+	private function create_plugins_response( array $plugins ): WP_REST_Response {
 		$mapped_plugins = array_map(
-			function( $plugin ) {
+			function ( $plugin ) {
 				$plugin->price = html_entity_decode( $plugin->price );
 
 				return $plugin;
 			},
-			$filtered_plugins
+			$plugins
 		);
 
 		$response = new WP_REST_Response();
@@ -223,5 +374,4 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 			],
 		];
 	}
-
 }
