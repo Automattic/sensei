@@ -38,7 +38,7 @@
 							"title":"Advanced Quizzes",
 							"excerpt":"Take your lesson quizzes to the next level with additional question types, quiz timer, answer feedback, and more.",
 							"badgeLabel":"Coming soon",
-							"customLinks":[
+							"customActions":[
 								 {
 										"key":"learn-more",
 										"className":"button button-primary",

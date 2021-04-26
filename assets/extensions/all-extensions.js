@@ -69,10 +69,9 @@ const renderSections = ( layout, extensionsBySlug ) =>
 									) }
 								>
 									<Card
-										extension={
-											extensionSlug &&
-											extensionsBySlug[ extensionSlug ]
-										}
+										{ ...( extensionSlug
+											? extensionsBySlug[ extensionSlug ]
+											: {} ) }
 										{ ...cardProps }
 									/>
 								</div>

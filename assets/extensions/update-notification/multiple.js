@@ -38,7 +38,19 @@ const Multiple = ( { extensions } ) => (
 				</li>
 			) ) }
 		</ul>
-		<ExtensionActions buttonLabel={ __( 'Update all', 'sensei-lms' ) } />
+
+		<ExtensionActions
+			actions={ [
+				{
+					key: 'update-button',
+					children: __( 'Update all', 'sensei-lms' ),
+					onClick: () => {
+						// eslint-disable-next-line no-console
+						console.log( 'TODO: Update all' );
+					},
+				},
+			] }
+		/>
 	</>
 );
 
