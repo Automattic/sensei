@@ -13,10 +13,26 @@ import { checked } from '../icons/wordpress-icons';
  * Extension actions component.
  *
  * @param {Object} props             Component props.
- * @param {string} props.extension   Extension object.
- * @param {string} props.buttonLabel Button label.
+ * @param {string} props.customLinks Custom links.
+ * @param {string} props.extension   Extension object (used if custom links is not defined).
+ * @param {string} props.buttonLabel Main extension button label.
  */
-const ExtensionActions = ( { extension = {}, buttonLabel } ) => {
+const ExtensionActions = ( { extension = {}, buttonLabel, customLinks } ) => {
+	if ( customLinks ) {
+		return (
+			<ul className="sensei-extensions__extension-actions">
+				{ customLinks.map( ( { key, children, ...linkProps } ) => (
+					<li
+						key={ key }
+						className="sensei-extensions__extension-actions__item"
+					>
+						<a { ...linkProps }>{ children }</a>
+					</li>
+				) ) }
+			</ul>
+		);
+	}
+
 	let disabledButton = false;
 
 	if ( ! buttonLabel ) {

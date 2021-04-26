@@ -54,19 +54,11 @@ const Card = ( {
 				{ excerpt || extension.excerpt }
 			</p>
 
-			{ customLinks ? (
-				<ul className="sensei-extensions__extension-actions">
-					{ customLinks.map( ( { key, children, ...linkProps } ) => (
-						<li
-							key={ key }
-							className="sensei-extensions__extension-actions__item"
-						>
-							<a { ...linkProps }>{ children }</a>
-						</li>
-					) ) }
-				</ul>
-			) : (
-				extension && <ExtensionActions extension={ extension } />
+			{ ( extension || customLinks ) && (
+				<ExtensionActions
+					extension={ extension }
+					customLinks={ customLinks }
+				/>
 			) }
 		</div>
 	</article>
