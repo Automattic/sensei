@@ -154,6 +154,30 @@ final class Sensei_Extensions {
 	}
 
 	/**
+	 * Get extensions page layout.
+	 *
+	 * @since 3.11.0
+	 *
+	 * @return array
+	 */
+	public function get_layout() {
+		$transient_key    = 'sensei_extensions_layout';
+		$extension_layout = get_transient( $transient_key );
+		if ( false === $extension_layout ) {
+			$raw_layout = wp_safe_remote_get( self::SENSEILMS_PRODUCTS_API_BASE_URL . '/layout' );
+
+			if ( ! is_wp_error( $raw_layout ) ) {
+				$extension_layout = json_decode( wp_remote_retrieve_body( $raw_layout ) );
+				if ( $extension_layout ) {
+					set_transient( $transient_key, $extension_layout, DAY_IN_SECONDS );
+				}
+			}
+		}
+
+		return $extension_layout;
+	}
+
+	/**
 	 * Get resources (such as categories and product types) for the extensions screen.
 	 *
 	 * @since  2.0.0
