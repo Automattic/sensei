@@ -267,6 +267,7 @@ $wordpress-break: 961px;
 
 	&__grid-list {
 		padding: 0;
+		margin-bottom: -15px;
 
 		@extend .sensei-extensions__grid;
 
