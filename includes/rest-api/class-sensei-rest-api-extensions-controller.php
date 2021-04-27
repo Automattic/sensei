@@ -217,14 +217,7 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 			return $error;
 		}
 
-		$updated_plugins = array_filter(
-			Sensei_Extensions::instance()->get_extensions( 'plugin' ),
-			function( $plugin ) use ( $plugins_arg ) {
-				return in_array( $plugin->product_slug, $plugins_arg, true );
-			}
-		);
-
-		return $this->create_plugins_response( $updated_plugins );
+		return $this->create_plugins_response( Sensei_Extensions::instance()->get_extensions( 'plugin' ) );
 	}
 
 	/**
