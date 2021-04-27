@@ -38,7 +38,7 @@ const Multiple = ( { extensions } ) => (
 				</li>
 			) ) }
 		</ul>
-		<ExtensionActions buttonLabel={ __( 'Update all', 'sensei-lms' ) } />
+		<ExtensionActions extensions={ extensions } />
 	</>
 );
 

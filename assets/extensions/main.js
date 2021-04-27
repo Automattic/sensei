@@ -24,7 +24,20 @@ const Main = () => {
 			path: '/sensei-internal/v1/sensei-extensions?type=plugin',
 		} )
 			.then( ( result ) => {
-				setExtensions( result );
+				const enrichedExtensions = result.map( ( extension ) => {
+					let canInstall = false;
+					// If the extension is hosted in WC.com, check that the site is connected and the subscription is not expired.
+					if ( extension.has_update ) {
+						canInstall =
+							! extension.wccom_product_id ||
+							( extension.wccom_connected &&
+								! extension.wccom_expired );
+					}
+
+					return { ...extension, canInstall };
+				} );
+
+				setExtensions( enrichedExtensions );
 			} )
 			.catch( () => setExtensions( [] ) );
 	}, [] );

@@ -30,7 +30,7 @@ const Card = ( { extension } ) => (
 			<p className="sensei-extensions__card__description">
 				{ extension.excerpt }
 			</p>
-			<ExtensionActions extension={ extension } />
+			<ExtensionActions extension={ [ extension ] } />
 		</div>
 	</article>
 );
