@@ -2,19 +2,25 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
+import { useDispatch, useSelect } from '@wordpress/data';
+
+/**
+ * Internal dependencies
+ */
+import { EXTENSIONS_STORE } from './store';
 
 /**
  * Extension actions component.
  *
- * @param {Object}   props            Component props.
- * @param {string}   props.extensions Extensions related to the component.
- * @param {Function} props.onClick    Action button callback.
+ * @param {Object} props            Component props.
+ * @param {string} props.extensions Extensions related to the component.
  */
-const MultipleExtensionsActions = ( {
-	extensions = [],
-	onClick = () => {},
-} ) => {
-	const disabledButton = false;
+const MultipleExtensionsActions = ( { extensions } ) => {
+	const disabledButton = useSelect(
+		( select ) => select( EXTENSIONS_STORE ).getButtonsDisabled(),
+		[]
+	);
+	const { updateExtensions } = useDispatch( EXTENSIONS_STORE );
 
 	return (
 		<ul className="sensei-extensions__extension-actions">
@@ -22,7 +28,7 @@ const MultipleExtensionsActions = ( {
 				<button
 					className="button button-primary"
 					disabled={ disabledButton }
-					onClick={ onClick }
+					onClick={ () => updateExtensions( extensions ) }
 				>
 					{ __( 'Update all', 'sensei-lms' ) }
 				</button>

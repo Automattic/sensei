@@ -8,12 +8,30 @@ import { Icon } from '@wordpress/icons';
  * Internal dependencies
  */
 import { checked } from '../icons/wordpress-icons';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { EXTENSIONS_STORE } from './store';
 
-const getButtonLabel = ( extension ) => {
-	if ( extension.canInstall ) {
-		return __( 'Update', 'sensei-lms' );
+/**
+ * Extension actions component.
+ *
+ * @param {Object} props           Component props.
+ * @param {string} props.extension Extensions related to the component.
+ */
+const SingleExtensionActions = ( { extension } ) => {
+	let disabledButton = useSelect(
+		( select ) => select( EXTENSIONS_STORE ).getButtonsDisabled(),
+		[]
+	);
+	const { updateExtensions } = useDispatch( EXTENSIONS_STORE );
+
+	let buttonLabel = '';
+	let buttonAction = () => {};
+
+	if ( extension.canUpdate ) {
+		buttonLabel = __( 'Update', 'sensei-lms' );
+		buttonAction = () => updateExtensions( [ extension ] );
 	} else if ( extension.is_installed ) {
-		return (
+		buttonLabel = (
 			<>
 				<Icon
 					className="sensei-extensions__extension-actions__button-icon"
@@ -23,24 +41,15 @@ const getButtonLabel = ( extension ) => {
 				{ __( 'Installed', 'sensei-lms' ) }
 			</>
 		);
+
+		disabledButton = true;
+	} else {
+		buttonLabel = `${ __( 'Install', 'sensei-lms' ) } - ${
+			extension.price !== '0'
+				? extension.price
+				: __( 'Free', 'sensei-lms' )
+		}`;
 	}
-
-	return `${ __( 'Install', 'sensei-lms' ) } - ${
-		extension.price !== '0' ? extension.price : __( 'Free', 'sensei-lms' )
-	}`;
-};
-
-/**
- * Extension actions component.
- *
- * @param {Object}   props           Component props.
- * @param {string}   props.extension Extensions related to the component.
- * @param {Function} props.onClick   Action button callback.
- */
-const SingleExtensionActions = ( { extension, onClick = () => {} } ) => {
-	const disabledButton = false;
-
-	const buttonLabel = getButtonLabel( extension );
 
 	return (
 		<ul className="sensei-extensions__extension-actions">
@@ -48,7 +57,7 @@ const SingleExtensionActions = ( { extension, onClick = () => {} } ) => {
 				<button
 					className="button button-primary"
 					disabled={ disabledButton }
-					onClick={ onClick }
+					onClick={ buttonAction }
 				>
 					{ buttonLabel }
 				</button>

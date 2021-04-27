@@ -18,7 +18,7 @@ import { UpdateIcon } from '../../icons';
  */
 const UpdateNotification = ( { extensions } ) => {
 	const extensionsWithUpdate = extensions.filter(
-		( extension ) => extension.canInstall
+		( extension ) => extension.canUpdate
 	);
 
 	const updatesCount = extensionsWithUpdate.length;

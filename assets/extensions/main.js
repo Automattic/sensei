@@ -1,9 +1,9 @@
 /**
  * WordPress dependencies
  */
-import apiFetch from '@wordpress/api-fetch';
-import { useState, useEffect } from '@wordpress/element';
 import { Spinner } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
+import { useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -14,35 +14,14 @@ import UpdateNotification from './update-notification';
 import QueryStringRouter, { Route } from '../shared/query-string-router';
 import AllExtensions from './all-extensions';
 import FilteredExtensions from './filtered-extensions';
-import { __ } from '@wordpress/i18n';
+import { EXTENSIONS_STORE } from './store';
 
 const Main = () => {
-	const [ extensions, setExtensions ] = useState( false );
+	const extensions = useSelect( ( select ) =>
+		select( EXTENSIONS_STORE ).getExtensions()
+	);
 
-	useEffect( () => {
-		apiFetch( {
-			path: '/sensei-internal/v1/sensei-extensions?type=plugin',
-		} )
-			.then( ( result ) => {
-				const enrichedExtensions = result.map( ( extension ) => {
-					let canInstall = false;
-					// If the extension is hosted in WC.com, check that the site is connected and the subscription is not expired.
-					if ( extension.has_update ) {
-						canInstall =
-							! extension.wccom_product_id ||
-							( extension.wccom_connected &&
-								! extension.wccom_expired );
-					}
-
-					return { ...extension, canInstall };
-				} );
-
-				setExtensions( enrichedExtensions );
-			} )
-			.catch( () => setExtensions( [] ) );
-	}, [] );
-
-	if ( false === extensions ) {
+	if ( extensions.length === 0 ) {
 		return (
 			<div className="sensei-extensions__loader">
 				<Spinner />
