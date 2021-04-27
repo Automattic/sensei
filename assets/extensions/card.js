@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import ExtensionActions from './extension-actions';
+import SingleExtensionActions from './single-extension-actions';
 
 /**
  * Extensions card component.
@@ -30,7 +30,7 @@ const Card = ( { extension } ) => (
 			<p className="sensei-extensions__card__description">
 				{ extension.excerpt }
 			</p>
-			<ExtensionActions extension={ [ extension ] } />
+			<SingleExtensionActions extension={ extension } />
 		</div>
 	</article>
 );

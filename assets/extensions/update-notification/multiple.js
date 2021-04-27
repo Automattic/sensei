@@ -6,7 +6,7 @@ import { __, sprintf } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import ExtensionActions from '../extension-actions';
+import MultipleExtensionsActions from '../multiple-extensions-actions';
 
 /**
  * Multiple update notification.
@@ -38,7 +38,7 @@ const Multiple = ( { extensions } ) => (
 				</li>
 			) ) }
 		</ul>
-		<ExtensionActions extensions={ extensions } />
+		<MultipleExtensionsActions extensions={ extensions } />
 	</>
 );
 

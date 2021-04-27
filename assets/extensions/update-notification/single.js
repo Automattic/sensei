@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import ExtensionActions from '../extension-actions';
+import SingleExtensionActions from '../single-extension-actions';
 
 /**
  * Single update notification.
@@ -17,7 +17,7 @@ const Single = ( { extension } ) => (
 		<p className="sensei-extensions__update-notification__description">
 			{ extension.excerpt }
 		</p>
-		<ExtensionActions extensions={ [ extension ] } />
+		<SingleExtensionActions extension={ extension } />
 	</>
 );
 
