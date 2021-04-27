@@ -42,6 +42,10 @@ $wordpress-break: 961px;
 		width: 100%;
 		margin-bottom: 38px;
 
+		&--with-inner-sections {
+			margin-bottom: 0;
+		}
+
 		&__title {
 			margin: 0 0 17px;
 		}

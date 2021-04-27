@@ -22,7 +22,10 @@ const renderSections = ( layout, extensionsBySlug ) =>
 		<Col
 			key={ section.key }
 			as="section"
-			className="sensei-extensions__section"
+			className={ classnames( 'sensei-extensions__section', {
+				'sensei-extensions__section--with-inner-sections':
+					section.innerSections,
+			} ) }
 			cols={ section.columns }
 		>
 			{ section.title && (
