@@ -309,6 +309,11 @@ $wordpress-break: 961px;
 
 		&__item {
 			margin: 0;
+
+			button {
+				display: flex;
+				align-items: center;
+			}
 		}
 
 		&__details-link {
@@ -322,5 +327,10 @@ $wordpress-break: 961px;
 		&__button-icon {
 			vertical-align: middle;
 		}
+	}
+
+	&__rotating-icon {
+		animation: rotation 2s infinite linear;
+		margin-right: 6px;
 	}
 }

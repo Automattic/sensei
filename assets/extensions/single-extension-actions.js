@@ -19,7 +19,7 @@ import { EXTENSIONS_STORE } from './store';
  */
 const SingleExtensionActions = ( { extension } ) => {
 	let disabledButton = useSelect(
-		( select ) => select( EXTENSIONS_STORE ).getButtonsDisabled(),
+		( select ) => select( EXTENSIONS_STORE ).getOperationInProgress(),
 		[]
 	);
 	const { updateExtensions } = useDispatch( EXTENSIONS_STORE );

@@ -2,6 +2,7 @@
  * WordPress dependencies
  */
 import { __, _n, sprintf } from '@wordpress/i18n';
+import { useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -17,13 +18,14 @@ import { UpdateIcon } from '../../icons';
  * @param {Array}  props.extensions Extensions list.
  */
 const UpdateNotification = ( { extensions } ) => {
+	const [ updateStarted, setUpdateStarted ] = useState( false );
 	const extensionsWithUpdate = extensions.filter(
 		( extension ) => extension.canUpdate
 	);
 
 	const updatesCount = extensionsWithUpdate.length;
 
-	if ( 0 === updatesCount ) {
+	if ( 0 === updatesCount && ! updateStarted ) {
 		return null;
 	}
 
@@ -54,7 +56,10 @@ const UpdateNotification = ( { extensions } ) => {
 				{ 1 === updatesCount ? (
 					<Single extension={ extensionsWithUpdate[ 0 ] } />
 				) : (
-					<Multiple extensions={ extensionsWithUpdate } />
+					<Multiple
+						extensions={ extensionsWithUpdate }
+						onClick={ () => setUpdateStarted( true ) }
+					/>
 				) }
 			</div>
 		</section>

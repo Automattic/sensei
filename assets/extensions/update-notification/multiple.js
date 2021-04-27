@@ -11,10 +11,11 @@ import MultipleExtensionsActions from '../multiple-extensions-actions';
 /**
  * Multiple update notification.
  *
- * @param {Object} props            Component props.
- * @param {Array}  props.extensions Extensions with update.
+ * @param {Object}   props            Component props.
+ * @param {Array}    props.extensions Extensions with update.
+ * @param {Function} props.onClick    Callback which is called when the button is clicked.
  */
-const Multiple = ( { extensions } ) => (
+const Multiple = ( { extensions, onClick } ) => (
 	<>
 		<ul className="sensei-extensions__update-notification__list">
 			{ extensions.map( ( extension ) => (
@@ -38,7 +39,10 @@ const Multiple = ( { extensions } ) => (
 				</li>
 			) ) }
 		</ul>
-		<MultipleExtensionsActions extensions={ extensions } />
+		<MultipleExtensionsActions
+			extensions={ extensions }
+			onClick={ onClick }
+		/>
 	</>
 );
 

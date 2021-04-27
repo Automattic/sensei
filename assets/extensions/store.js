@@ -43,7 +43,7 @@ const actions = {
 		);
 
 		try {
-			yield actions.setButtonsDisabled( true );
+			yield actions.setOperationInProgress( true );
 			const newExtensions = yield apiFetch( {
 				path: '/sensei-internal/v1/sensei-extensions/update',
 				method: 'POST',
@@ -51,21 +51,33 @@ const actions = {
 			} );
 
 			yield actions.setExtensions( newExtensions );
-			return actions.setButtonsDisabled( false );
+			return actions.setOperationInProgress( false );
 		} catch ( error ) {
 			// TODO: Handle error
 		}
 	},
 
 	/**
-	 * Enable or disable the buttons globally.
+	 * Mark that an operation is being done.
 	 *
-	 * @param {boolean} disabled Whether to disable or enable.
+	 * @param {boolean} operationInProgress True if an operation is in progress.
 	 */
-	setButtonsDisabled( disabled ) {
+	setOperationInProgress( operationInProgress ) {
 		return {
-			type: 'SET_BUTTONS_DISABLED',
-			disabled,
+			type: 'SET_OPERATION_IN_PROGRESS',
+			operationInProgress,
+		};
+	},
+
+	/**
+	 * Mark that notification update button has been clicked.
+	 *
+	 * @param {boolean} notificationUpdated True if the button was clicked.
+	 */
+	setNotificationUpdated( notificationUpdated ) {
+		return {
+			type: 'SET_NOTIFICATION_UPDATED',
+			notificationUpdated,
 		};
 	},
 };
@@ -75,7 +87,8 @@ const actions = {
  */
 const selectors = {
 	getExtensions: ( { extensions } ) => extensions,
-	getButtonsDisabled: ( { buttonsDisabled } ) => buttonsDisabled,
+	getOperationInProgress: ( { operationInProgress } ) => operationInProgress,
+	getNotificationUpdated: ( { notificationUpdated } ) => notificationUpdated,
 };
 
 /**
@@ -109,7 +122,8 @@ const resolvers = {
 const reducer = (
 	state = {
 		extensions: [],
-		buttonsDisabled: false,
+		operationInProgress: false,
+		notificationUpdated: false,
 	},
 	action
 ) => {
@@ -119,10 +133,15 @@ const reducer = (
 				...state,
 				extensions: [ ...action.extensions ],
 			};
-		case 'SET_BUTTONS_DISABLED':
+		case 'SET_OPERATION_IN_PROGRESS':
 			return {
 				...state,
-				buttonsDisabled: action.disabled,
+				operationInProgress: action.operationInProgress,
+			};
+		case 'SET_NOTIFICATION_UPDATED':
+			return {
+				...state,
+				notificationUpdated: action.notificationUpdated,
 			};
 		default:
 			return state;
