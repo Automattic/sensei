@@ -81,7 +81,7 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 						],
 					],
 				],
-				'schema' => [ $this, 'get_item_schema' ],
+				'schema' => [ $this, 'get_extensions_schema' ],
 			]
 		);
 
@@ -305,11 +305,11 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 	}
 
 	/**
-	 * Schema for the endpoint.
+	 * Schema for the extensions endpoint.
 	 *
 	 * @return array Schema object.
 	 */
-	public function get_item_schema() : array {
+	public function get_extensions_schema() : array {
 		return [
 			'wccom_connected' => [
 				'type'        => 'boolean',
