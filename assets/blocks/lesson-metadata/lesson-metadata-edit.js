@@ -23,6 +23,7 @@ const LessonMetadataEdit = ( props ) => {
 		attributes: { complexity, length },
 		setAttributes,
 	} = props;
+
 	return (
 		<ToggleLegacyLessonMetaboxesWrapper { ...props }>
 			<InspectorControls>
@@ -34,7 +35,7 @@ const LessonMetadataEdit = ( props ) => {
 						step={ 1 }
 						value={ length }
 						onChange={ ( newLength ) =>
-							setAttributes( { newLength } )
+							setAttributes( { length: newLength } )
 						}
 						suffix={ _n(
 							'minute',
@@ -52,7 +53,7 @@ const LessonMetadataEdit = ( props ) => {
 						} ) ) }
 						value={ complexity }
 						onChange={ ( newComplexity ) =>
-							setAttributes( { newComplexity } )
+							setAttributes( { complexity: newComplexity } )
 						}
 					/>
 				</PanelBody>
