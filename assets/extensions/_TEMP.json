@@ -4,6 +4,7 @@
 		 "columns":12,
 		 "type":"featured-list",
 		 "title":"Featured",
+		 "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque vehicula ex eget augue semper, gravida pretium sapien mattis. Aliquam erat volutpat. In imperdiet blandit vulputate.",
 		 "items":[
 				{
 					 "key":"sensei-wc-paid-courses",

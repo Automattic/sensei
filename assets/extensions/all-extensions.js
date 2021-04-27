@@ -31,6 +31,12 @@ const renderSections = ( layout, extensionsBySlug ) =>
 				</h2>
 			) }
 
+			{ section.description && (
+				<p className="sensei-extensions__section__description">
+					{ section.description }
+				</p>
+			) }
+
 			{ section.innerSections ? (
 				<Grid>
 					{ renderSections(
