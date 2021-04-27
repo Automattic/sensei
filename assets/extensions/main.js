@@ -1,10 +1,11 @@
 /**
  * WordPress dependencies
  */
-import apiFetch from '@wordpress/api-fetch';
-import { useState, useEffect } from '@wordpress/element';
 import { Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { useSelect } from '@wordpress/data';
+import apiFetch from '@wordpress/api-fetch';
+import { useState, useEffect } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -15,20 +16,13 @@ import UpdateNotification from './update-notification';
 import QueryStringRouter, { Route } from '../shared/query-string-router';
 import AllExtensions from './all-extensions';
 import FilteredExtensions from './filtered-extensions';
+import { EXTENSIONS_STORE } from './store';
 import { Grid, Col } from './grid';
 
 const Main = () => {
-	const [ extensions, setExtensions ] = useState( false );
-
-	useEffect( () => {
-		apiFetch( {
-			path: '/sensei-internal/v1/sensei-extensions?type=plugin',
-		} )
-			.then( ( result ) => {
-				setExtensions( result.extensions || [] );
-			} )
-			.catch( () => setExtensions( [] ) );
-	}, [] );
+	const extensions = useSelect( ( select ) =>
+		select( EXTENSIONS_STORE ).getExtensions()
+	);
 
 	const [ layout, setLayout ] = useState( false );
 
@@ -42,7 +36,7 @@ const Main = () => {
 			.catch( () => setLayout( [] ) );
 	}, [] );
 
-	if ( false === extensions || false === layout ) {
+	if ( extensions.length === 0 || false === layout ) {
 		return (
 			<div className="sensei-extensions__loader">
 				<Spinner />
