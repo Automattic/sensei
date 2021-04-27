@@ -23,14 +23,9 @@ import ExtensionActions, { getExtensionActions } from './extension-actions';
  * @param {Object}   props.htmlProps     Wrapper extra props.
  * @param {Object[]} props.customActions Array with custom actions containing the link props.
  */
-const Card = ( {
-	title,
-	excerpt,
-	badgeLabel,
-	htmlProps,
-	customActions,
-	...props
-} ) => {
+const Card = ( props ) => {
+	const { title, excerpt, badgeLabel, htmlProps, customActions } = props;
+
 	const actions = customActions || getExtensionActions( props );
 
 	return (
