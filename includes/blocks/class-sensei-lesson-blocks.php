@@ -64,6 +64,7 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 		$post_type_object = get_post_type_object( 'lesson' );
 
 		$block_template = [
+			[ 'sensei-lms/lesson-metadata' ],
 			[ 'sensei-lms/button-contact-teacher' ],
 			[
 				'core/paragraph',
