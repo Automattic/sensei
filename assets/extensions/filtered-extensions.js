@@ -19,7 +19,7 @@ const FilteredExtensions = ( { extensions } ) => (
 					className="sensei-extensions__list-item"
 				>
 					<div className="sensei-extensions__card-wrapper">
-						<Card extension={ extension } />
+						<Card { ...extension } />
 					</div>
 				</li>
 			) ) }

@@ -11,32 +11,32 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import ExtensionActions from './extension-actions';
+import ExtensionActions, { getExtensionActions } from './extension-actions';
 
 /**
  * Extensions card component.
  *
- * @param {Object}   props             Component props.
- * @param {string}   props.title       Card title (extension title will be used as fallback).
- * @param {string}   props.excerpt     Card excerpt (extension excerpt will be used as fallback).
- * @param {string}   props.badgeLabel  Badge label (will check extension update if it's not defined).
- * @param {Object[]} props.customLinks Array with custom links containing the link props.
- * @param {string}   props.image       Card image.
- * @param {Object}   props.extension   Extension object.
- * @param {Object}   props.htmlProps   Wrapper extra props.
+ * @param {Object}   props               Component props.
+ * @param {string}   props.title         Card title (extension title will be used as fallback).
+ * @param {string}   props.excerpt       Card excerpt (extension excerpt will be used as fallback).
+ * @param {string}   props.badgeLabel    Badge label (will check extension update if it's not defined).
+ * @param {string}   props.image         Card image.
+ * @param {Object}   props.htmlProps     Wrapper extra props.
+ * @param {Object[]} props.customActions Array with custom actions containing the link props.
  */
-const Card = ( {
-	title,
-	excerpt,
-	badgeLabel,
-	customLinks,
-	image,
-	extension,
-	htmlProps,
-} ) => {
-	const backgroundImage =
-		( image && `url(${ image })` ) ||
-		( extension?.image && `url(${ extension.image })` );
+const Card = ( props ) => {
+	const {
+		title,
+		excerpt,
+		badgeLabel,
+		htmlProps,
+		customActions,
+		image,
+	} = props;
+
+	const actions = customActions || getExtensionActions( props );
+
+	const backgroundImage = image && `url(${ image })`;
 	return (
 		<article
 			{ ...htmlProps }
@@ -54,9 +54,9 @@ const Card = ( {
 			<div className="sensei-extensions__card__content">
 				<header className="sensei-extensions__card__header">
 					<h3 className="sensei-extensions__card__title">
-						{ title || extension.title }
+						{ title }
 					</h3>
-					{ ( badgeLabel || extension?.[ 'has_update' ] ) && (
+					{ ( badgeLabel || props?.[ 'has_update' ] ) && (
 						<small className="sensei-extensions__card__new-badge">
 							{ badgeLabel || __( 'New version', 'sensei-lms' ) }
 						</small>
@@ -64,14 +64,9 @@ const Card = ( {
 				</header>
 				<div className="sensei-extensions__card__body">
 					<p className="sensei-extensions__card__description">
-						{ excerpt || extension.excerpt }
+						{ excerpt }
 					</p>
-					{ ( extension || customLinks ) && (
-						<ExtensionActions
-							extension={ extension }
-							customLinks={ customLinks }
-						/>
-					) }
+					{ actions && <ExtensionActions actions={ actions } /> }
 				</div>
 			</div>
 		</article>

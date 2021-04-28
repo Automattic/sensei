@@ -12,15 +12,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Sensei_Domain_Models_Module
  *
+ * @deprecated 3.11.0
+ *
  * @package Sensei\Domain Models\Model\Module
  */
 class Sensei_Domain_Models_Module extends Sensei_Domain_Models_Model_Abstract {
 	/**
 	 * Declares module fields.
 	 *
+	 * @deprecated 3.11.0
+	 *
 	 * @return array Fields
 	 */
 	public static function declare_fields() {
+		_deprecated_function( __METHOD__, '3.11.0' );
+
 		return array(
 			self::field()
 				->with_name( 'id' )
@@ -45,9 +51,13 @@ class Sensei_Domain_Models_Module extends Sensei_Domain_Models_Model_Abstract {
 	/**
 	 * Gets the module ID.
 	 *
+	 * @deprecated 3.11.0
+	 *
 	 * @return int Module ID
 	 */
 	public function get_id() {
+		_deprecated_function( __METHOD__, '3.11.0' );
+
 		return $this->id;
 	}
 }

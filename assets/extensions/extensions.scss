@@ -44,7 +44,15 @@ $wordpress-break: 961px;
 		width: 100%;
 		margin-bottom: 38px;
 
+		&--with-inner-sections {
+			margin-bottom: 0;
+		}
+
 		&__title {
+			margin: 0 0 17px;
+		}
+
+		&__description {
 			margin: 0 0 17px;
 		}
 
@@ -291,6 +299,7 @@ $wordpress-break: 961px;
 
 	&__grid-list {
 		padding: 0;
+		margin-bottom: -15px;
 
 		@extend .sensei-extensions__grid;
 
