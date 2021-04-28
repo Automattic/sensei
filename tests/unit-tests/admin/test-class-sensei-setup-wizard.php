@@ -410,6 +410,7 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Setup_Wizard::get_sensei_extensions
 	 */
 	public function testGetSenseiExtensionsAllExtensions() {
+		tests_add_filter( 'locale', [ $this, 'return_en_US' ] );
 
 		// Mock fetch from senseilms.com.
 		$request_url = null;
@@ -422,10 +423,9 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 			10,
 			3
 		);
-
 		$extensions = Sensei()->setup_wizard->get_sensei_extensions();
 
-		$this->assertEquals( 'https://senseilms.com/wp-json/senseilms-products/1.0/search?category=setup-wizard-extensions&type=plugin', $request_url );
+		$this->assertEquals( 'https://senseilms.com/wp-json/senseilms-products/1.0/search?category=setup-wizard-extensions&type=plugin&lang=en_US', $request_url );
 	}
 
 	/**
@@ -585,5 +585,14 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 
 		// Revert mocked instance.
 		$property->setValue( $real_instance );
+	}
+
+	/**
+	 * Return 'en_US' to be used in filters.
+	 *
+	 * @return string
+	 */
+	public function return_en_US() {
+		return 'en_US';
 	}
 }
