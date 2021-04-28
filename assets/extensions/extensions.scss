@@ -15,9 +15,15 @@ $wordpress-break: 961px;
 	}
 }
 
-.sensei-extensions {
-	margin-right: 20px;
+.sensei-extensions-page {
+	margin-right: 10px;
 
+	@media (min-width: 783px) {
+		margin-right: 20px;
+	}
+}
+
+.sensei-extensions {
 	.button-primary {
 		min-width: 112px;
 		min-height: 36px;
@@ -31,16 +37,20 @@ $wordpress-break: 961px;
 	}
 
 	&__section {
-		margin-bottom: 38px;
-	}
-
-	&__section {
 		display: flex;
 		flex-direction: column;
 		width: 100%;
 		margin-bottom: 38px;
 
+		&--with-inner-sections {
+			margin-bottom: 0;
+		}
+
 		&__title {
+			margin: 0 0 17px;
+		}
+
+		&__description {
 			margin: 0 0 17px;
 		}
 
@@ -52,6 +62,7 @@ $wordpress-break: 961px;
 	&__grid {
 		display: flex;
 		flex-wrap: wrap;
+		margin: 0 -9px;
 
 		&__col {
 			box-sizing: border-box;
@@ -115,6 +126,10 @@ $wordpress-break: 961px;
 			&:not(:last-child)::after {
 				content: '|';
 			}
+		}
+
+		&__count::before {
+			content: ' ';
 		}
 	}
 
@@ -182,7 +197,7 @@ $wordpress-break: 961px;
 			padding: 50px 45px;
 		}
 
-		&__item {
+		.sensei-extensions__list-item {
 			box-sizing: border-box;
 			padding: 10px;
 			margin: 0;
@@ -197,7 +212,8 @@ $wordpress-break: 961px;
 			}
 		}
 
-		&__card-wrapper {
+		.sensei-extensions__card-wrapper {
+			height: 100%;
 			box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.16);
 			border-radius: 8px;
 		}
@@ -208,7 +224,7 @@ $wordpress-break: 961px;
 		@include white-box;
 		margin: 0;
 
-		&__item {
+		.sensei-extensions__list-item {
 			margin: 0;
 
 			&:not(:last-child) {
@@ -250,14 +266,26 @@ $wordpress-break: 961px;
 	}
 
 	&__grid-list {
-		margin: 0;
 		padding: 0;
+		margin-bottom: -15px;
 
-		&__item {
+		@extend .sensei-extensions__grid;
+
+		.sensei-extensions__list-item {
 			margin: 0 0 15px;
+
+			@extend .sensei-extensions__grid__col;
+
+			@media (min-width: $wordpress-break) {
+				@include col-width(6);
+			}
+
+			@media (min-width: 1200px) {
+				@include col-width(4);
+			}
 		}
 
-		&__item-wrapper {
+		.sensei-extensions__card-wrapper {
 			@include white-box;
 			height: 100%
 		}
@@ -309,6 +337,12 @@ $wordpress-break: 961px;
 
 		&__item {
 			margin: 0;
+
+			a.button {
+				display: inline-flex;
+				justify-content: center;
+				align-items: center;
+			}
 		}
 
 		&__details-link {

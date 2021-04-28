@@ -2,22 +2,29 @@
  * Internal dependencies
  */
 import Card from './card';
+import { Col } from './grid';
 
+/**
+ * Filtered extensions component.
+ *
+ * @param {Object} props            Component props.
+ * @param {Array}  props.extensions Filtered extensions.
+ */
 const FilteredExtensions = ( { extensions } ) => (
-	<section className="sensei-extensions__section">
-		<ul className="sensei-extensions__grid sensei-extensions__grid-list">
+	<Col as="section" className="sensei-extensions__section" cols={ 12 }>
+		<ul className="sensei-extensions__grid-list">
 			{ extensions.map( ( extension ) => (
 				<li
 					key={ extension.product_slug }
-					className="sensei-extensions__grid-list__item sensei-extensions__grid__col --col-4"
+					className="sensei-extensions__list-item"
 				>
-					<div className="sensei-extensions__grid-list__item-wrapper">
-						<Card extension={ extension } />
+					<div className="sensei-extensions__card-wrapper">
+						<Card { ...extension } />
 					</div>
 				</li>
 			) ) }
 		</ul>
-	</section>
+	</Col>
 );
 
 export default FilteredExtensions;
