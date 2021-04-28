@@ -70,6 +70,10 @@ const LessonMetadataEdit = ( props ) => {
 					</span>
 				) }
 
+				{ !! length && complexity && (
+					<span className="separator">|</span>
+				) }
+
 				{ complexity && (
 					<span className="lesson-complexity">
 						{ __( 'Complexity', 'sensei-lms' ) +

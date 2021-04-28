@@ -54,6 +54,10 @@ class Sensei_Lesson_Metadata_Block {
 				'</span>';
 		}
 
+		if ( $length && $complexity ) {
+			$content .= '<span class="separator">|</span>';
+		}
+
 		if ( $complexity ) {
 			$complexities      = Sensei()->lesson->lesson_complexities();
 			$lesson_complexity = $complexities[ $complexity ];
