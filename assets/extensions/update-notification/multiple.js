@@ -14,10 +14,11 @@ import { UpdateIcon } from '../../icons';
 /**
  * Multiple update notification.
  *
- * @param {Object} props            Component props.
- * @param {Array}  props.extensions Extensions with update.
+ * @param {Object}   props            Component props.
+ * @param {Array}    props.extensions Extensions with update.
+ * @param {Function} props.onUpdate   Callback to call when update is clicked.
  */
-const Multiple = ( { extensions } ) => {
+const Multiple = ( { extensions, onUpdate } ) => {
 	const componentInProgress = useSelect( ( select ) =>
 		select( EXTENSIONS_STORE ).getComponentInProgress()
 	);
@@ -28,6 +29,7 @@ const Multiple = ( { extensions } ) => {
 		children: __( 'Update all', 'sensei-lms' ),
 		disabled: componentInProgress !== '',
 		onClick: () => {
+			onUpdate();
 			updateExtensions( extensions, 'multiple-extension-notification' );
 		},
 	};
