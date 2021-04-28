@@ -3,11 +3,14 @@
  */
 import { __ } from '@wordpress/i18n';
 import { Icon } from '@wordpress/icons';
+import { dispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import { checked } from '../icons/wordpress-icons';
+import { EXTENSIONS_STORE } from './store';
+import { UpdateIcon } from '../icons';
 
 /**
  * Extension actions component.
@@ -44,19 +47,41 @@ export default ExtensionActions;
 /**
  * Get extension actions array.
  *
- * @param {Object} extension Extension object.
+ * @param {Object} extension           Extension object.
+ * @param {string} componentInProgress Which component has caused an update.
  *
  * @return {Array|null} Array of actions, or null if it's not a valid extension.
  */
-export const getExtensionActions = ( extension ) => {
+export const getExtensionActions = ( extension, componentInProgress ) => {
 	if ( ! extension.product_slug ) {
 		return null;
 	}
 
 	let buttonLabel = '';
+	let buttonAction = () => {};
+	let buttonDisabled =
+		componentInProgress !== '' ||
+		( extension.is_installed && ! extension.canUpdate );
 
-	if ( extension.has_update ) {
+	if ( componentInProgress === extension.product_slug ) {
+		buttonLabel = (
+			<>
+				<UpdateIcon
+					width="20"
+					height="20"
+					className="sensei-extensions__rotating-icon sensei-extensions__extension-actions__button-icon"
+				/>
+				{ __( 'Updating…', 'sensei-lms' ) }
+			</>
+		);
+		buttonDisabled = true;
+	} else if ( extension.canUpdate ) {
 		buttonLabel = __( 'Update', 'sensei-lms' );
+		buttonAction = () =>
+			dispatch( EXTENSIONS_STORE ).updateExtensions(
+				[ extension ],
+				extension.product_slug
+			);
 	} else if ( extension.is_installed ) {
 		buttonLabel = (
 			<>
@@ -79,8 +104,9 @@ export const getExtensionActions = ( extension ) => {
 	let buttons = [
 		{
 			key: 'main-button',
-			disabled: extension.is_installed && ! extension.has_update,
+			disabled: buttonDisabled,
 			children: buttonLabel,
+			onClick: buttonAction,
 		},
 	];
 

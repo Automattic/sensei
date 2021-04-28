@@ -7,11 +7,13 @@ import classnames from 'classnames';
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
+import { useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import ExtensionActions, { getExtensionActions } from './extension-actions';
+import { EXTENSIONS_STORE } from './store';
 
 /**
  * Extensions card component.
@@ -34,7 +36,12 @@ const Card = ( props ) => {
 		image,
 	} = props;
 
-	const actions = customActions || getExtensionActions( props );
+	const componentInProgress = useSelect( ( select ) =>
+		select( EXTENSIONS_STORE ).getComponentInProgress()
+	);
+
+	const actions =
+		customActions || getExtensionActions( props, componentInProgress );
 
 	const backgroundImage = image && `url(${ image })`;
 	return (

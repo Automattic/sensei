@@ -35,15 +35,16 @@ const actions = {
 	/**
 	 * Updates the provided extensions.
 	 *
-	 * @param {Array} extensions The extensions to update.
+	 * @param {Array}  extensions The extensions to update.
+	 * @param {string} component  The component which started the update.
 	 */
-	*updateExtensions( extensions ) {
+	*updateExtensions( extensions, component ) {
 		const plugins = extensions.map(
 			( extension ) => extension.product_slug
 		);
 
 		try {
-			yield actions.setButtonsDisabled( true );
+			yield actions.setComponentInProgress( component );
 			const newExtensions = yield apiFetch( {
 				path: '/sensei-internal/v1/sensei-extensions/update',
 				method: 'POST',
@@ -51,21 +52,21 @@ const actions = {
 			} );
 
 			yield actions.setExtensions( newExtensions );
-			return actions.setButtonsDisabled( false );
+			return actions.setComponentInProgress( '' );
 		} catch ( error ) {
 			// TODO: Handle error
 		}
 	},
 
 	/**
-	 * Enable or disable the buttons globally.
+	 * Update the component that caused an update.
 	 *
-	 * @param {boolean} disabled Whether to disable or enable.
+	 * @param {string} componentInProgress The component.
 	 */
-	setButtonsDisabled( disabled ) {
+	setComponentInProgress( componentInProgress ) {
 		return {
-			type: 'SET_BUTTONS_DISABLED',
-			disabled,
+			type: 'SET_COMPONENT_IN_PROGRESS',
+			componentInProgress,
 		};
 	},
 };
@@ -75,7 +76,7 @@ const actions = {
  */
 const selectors = {
 	getExtensions: ( { extensions } ) => extensions,
-	getButtonsDisabled: ( { buttonsDisabled } ) => buttonsDisabled,
+	getComponentInProgress: ( { componentInProgress } ) => componentInProgress,
 };
 
 /**
@@ -109,7 +110,7 @@ const resolvers = {
 const reducer = (
 	state = {
 		extensions: [],
-		buttonsDisabled: false,
+		componentInProgress: '',
 	},
 	action
 ) => {
@@ -119,10 +120,10 @@ const reducer = (
 				...state,
 				extensions: [ ...action.extensions ],
 			};
-		case 'SET_BUTTONS_DISABLED':
+		case 'SET_COMPONENT_IN_PROGRESS':
 			return {
 				...state,
-				buttonsDisabled: action.disabled,
+				componentInProgress: action.componentInProgress,
 			};
 		default:
 			return state;
