@@ -702,7 +702,7 @@ class Sensei_Admin {
 			}
 		}
 
-		$new_post['post_title']       .= empty( $suffix ) ? __( '(Duplicate)', 'sensei-lms' ) : $suffix;
+		$new_post['post_title']       .= $suffix;
 		$new_post['post_date']         = current_time( 'mysql' );
 		$new_post['post_date_gmt']     = get_gmt_from_date( $new_post['post_date'] );
 		$new_post['post_modified']     = $new_post['post_date'];
@@ -725,6 +725,20 @@ class Sensei_Admin {
 
 		// As per wp_update_post() we need to escape the data from the db.
 		$new_post = wp_slash( $new_post );
+
+		/**
+		 * Filter arguments for `wp_insert_post` when duplicating a Sensei
+		 * post. This may be a Course, Lesson, or Quiz.
+		 *
+		 * @hook  sensei_duplicate_post_args
+		 * @since 3.11.0
+		 *
+		 * @param {array}   $new_post The arguments for duplicating the post.
+		 * @param {WP_Post} $post     The original post being duplicated.
+		 *
+		 * @return {array}  The new arguments to be handed to `wp_insert_post`.
+		 */
+		$new_post = apply_filters( 'sensei_duplicate_post_args', $new_post, $post );
 
 		$new_post_id = wp_insert_post( $new_post );
 
