@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { Spinner } from '@wordpress/components';
+import { Notice, Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import apiFetch from '@wordpress/api-fetch';
@@ -22,6 +22,9 @@ import { Grid, Col } from './grid';
 const Main = () => {
 	const extensions = useSelect( ( select ) =>
 		select( EXTENSIONS_STORE ).getExtensions()
+	);
+	const error = useSelect( ( select ) =>
+		select( EXTENSIONS_STORE ).getError()
 	);
 
 	const [ layout, setLayout ] = useState( false );
@@ -90,6 +93,11 @@ const Main = () => {
 				<Col className="sensei-extensions__section" cols={ 12 }>
 					<Header />
 					<Tabs tabs={ tabs } />
+					{ error !== null && (
+						<Notice status="error" isDismissible={ false }>
+							{ error }
+						</Notice>
+					) }
 				</Col>
 
 				<UpdateNotification extensions={ extensions } />

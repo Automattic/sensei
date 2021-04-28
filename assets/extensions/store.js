@@ -3,6 +3,7 @@
  */
 import { registerStore } from '@wordpress/data';
 import { controls, apiFetch } from '@wordpress/data-controls';
+import { __, sprintf } from '@wordpress/i18n';
 
 /**
  * Extension store actions.
@@ -51,10 +52,21 @@ const actions = {
 				data: { plugins },
 			} );
 
+			yield actions.setError( null );
 			yield actions.setExtensions( newExtensions );
-			return actions.setComponentInProgress( '' );
 		} catch ( error ) {
-			// TODO: Handle error
+			yield actions.setError(
+				sprintf(
+					// translators: Placeholder is underlying error message.
+					__(
+						'There was an error while updating the plugin: %1$s.',
+						'sensei-lms'
+					),
+					error.message
+				)
+			);
+		} finally {
+			yield actions.setComponentInProgress( '' );
 		}
 	},
 
@@ -69,6 +81,18 @@ const actions = {
 			componentInProgress,
 		};
 	},
+
+	/**
+	 * Set the error message.
+	 *
+	 * @param {string} error The error.
+	 */
+	setError( error ) {
+		return {
+			type: 'SET_ERROR',
+			error,
+		};
+	},
 };
 
 /**
@@ -77,6 +101,7 @@ const actions = {
 const selectors = {
 	getExtensions: ( { extensions } ) => extensions,
 	getComponentInProgress: ( { componentInProgress } ) => componentInProgress,
+	getError: ( { error } ) => error,
 };
 
 /**
@@ -89,13 +114,9 @@ const resolvers = {
 	*getExtensions() {
 		let extensions = [];
 
-		try {
-			extensions = yield apiFetch( {
-				path: '/sensei-internal/v1/sensei-extensions?type=plugin',
-			} );
-		} catch ( error ) {
-			//TODO: Handle error
-		}
+		extensions = yield apiFetch( {
+			path: '/sensei-internal/v1/sensei-extensions?type=plugin',
+		} );
 
 		return actions.setExtensions( extensions );
 	},
@@ -111,6 +132,7 @@ const reducer = (
 	state = {
 		extensions: [],
 		componentInProgress: '',
+		error: null,
 	},
 	action
 ) => {
@@ -124,6 +146,11 @@ const reducer = (
 			return {
 				...state,
 				componentInProgress: action.componentInProgress,
+			};
+		case 'SET_ERROR':
+			return {
+				...state,
+				error: action.error,
 			};
 		default:
 			return state;

@@ -59,9 +59,6 @@ export const getExtensionActions = ( extension, componentInProgress ) => {
 
 	let buttonLabel = '';
 	let buttonAction = () => {};
-	let buttonDisabled =
-		componentInProgress !== '' ||
-		( extension.is_installed && ! extension.canUpdate );
 
 	if ( componentInProgress === extension.product_slug ) {
 		buttonLabel = (
@@ -74,7 +71,6 @@ export const getExtensionActions = ( extension, componentInProgress ) => {
 				{ __( 'Updating…', 'sensei-lms' ) }
 			</>
 		);
-		buttonDisabled = true;
 	} else if ( extension.canUpdate ) {
 		buttonLabel = __( 'Update', 'sensei-lms' );
 		buttonAction = () =>
@@ -104,7 +100,9 @@ export const getExtensionActions = ( extension, componentInProgress ) => {
 	let buttons = [
 		{
 			key: 'main-button',
-			disabled: buttonDisabled,
+			disabled:
+				componentInProgress !== '' ||
+				( extension.is_installed && ! extension.canUpdate ),
 			children: buttonLabel,
 			onClick: buttonAction,
 		},
