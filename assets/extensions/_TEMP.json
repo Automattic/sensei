@@ -1,85 +1,85 @@
 [
-  {
-    "key": "featured",
-    "columns": 12,
-    "type": "featured-list",
-    "title": "Featured",
-    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque vehicula ex eget augue semper, gravida pretium sapien mattis. Aliquam erat volutpat. In imperdiet blandit vulputate.",
-    "items": [
-      {
-        "key": "sensei-wc-paid-courses",
-        "extensionSlug": "sensei-wc-paid-courses",
-        "cardProps": {
-          "htmlProps": {
-            "style": {
-              "outline": "3px solid #674399"
-            }
-          }
-        }
-      },
-      {
-        "key": "sensei-content-drip",
-        "extensionSlug": "sensei-content-drip"
-      },
-      {
-        "key": "sensei-advanced-quizzes",
-        "cardProps": {
-          "title": "Advanced Quizzes",
-          "image": "https://senseilms.com/wp-content/uploads/2019/05/Quizzes.png",
-          "excerpt": "Take your lesson quizzes to the next level with additional question types, quiz timer, answer feedback, and more.",
-          "badgeLabel": "Coming soon",
-          "customActions": [
-            {
-              "key": "learn-more",
-              "className": "button button-primary",
-              "target": "_blank",
-              "rel": "noreferrer external",
-              "href": "#",
-              "children": "Learn more"
-            },
-            {
-              "key": "other-link",
-              "className": "sensei-extensions__extension-actions__details-link",
-              "target": "_blank",
-              "rel": "noreferrer external",
-              "href": "#",
-              "children": "Other link"
-            }
-          ]
-        }
-      }
-    ]
-  },
-  {
-    "key": "course-creation",
-    "columns": 8,
-    "type": "large-list",
-    "title": "Course Creation",
-    "items": [
-      {
-        "key": "sensei-post-to-course",
-        "extensionSlug": "sensei-post-to-course"
-      },
-      {
-        "key": "sensei-media-attachments",
-        "extensionSlug": "sensei-media-attachments"
-      }
-    ]
-  },
-  {
-    "key": "learner-engagement",
-    "columns": 4,
-    "type": "small-list",
-    "title": "Learner Engagement",
-    "items": [
-      {
-        "key": "sensei-course-progress",
-        "extensionSlug": "sensei-course-progress"
-      },
-      {
-        "key": "sensei-certificates",
-        "extensionSlug": "sensei-certificates"
-      }
-    ]
-  }
+	{
+		"key": "featured",
+		"columns": 12,
+		"type": "featured-list",
+		"title": "Featured",
+		"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque vehicula ex eget augue semper, gravida pretium sapien mattis. Aliquam erat volutpat. In imperdiet blandit vulputate.",
+		"items": [
+			{
+				"key": "sensei-wc-paid-courses",
+				"extensionSlug": "sensei-wc-paid-courses",
+				"cardProps": {
+					"htmlProps": {
+						"style": {
+							"outline": "3px solid #674399"
+						}
+					}
+				}
+			},
+			{
+				"key": "sensei-content-drip",
+				"extensionSlug": "sensei-content-drip"
+			},
+			{
+				"key": "sensei-advanced-quizzes",
+				"cardProps": {
+					"title": "Advanced Quizzes",
+					"image": "https://senseilms.com/wp-content/uploads/2019/05/Quizzes.png",
+					"excerpt": "Take your lesson quizzes to the next level with additional question types, quiz timer, answer feedback, and more.",
+					"badgeLabel": "Coming soon",
+					"customActions": [
+						{
+							"key": "learn-more",
+							"className": "button button-primary",
+							"target": "_blank",
+							"rel": "noreferrer external",
+							"href": "#",
+							"children": "Learn more"
+						},
+						{
+							"key": "other-link",
+							"className": "sensei-extensions__extension-actions__details-link",
+							"target": "_blank",
+							"rel": "noreferrer external",
+							"href": "#",
+							"children": "Other link"
+						}
+					]
+				}
+			}
+		]
+	},
+	{
+		"key": "course-creation",
+		"columns": 8,
+		"type": "large-list",
+		"title": "Course Creation",
+		"items": [
+			{
+				"key": "sensei-post-to-course",
+				"extensionSlug": "sensei-post-to-course"
+			},
+			{
+				"key": "sensei-media-attachments",
+				"extensionSlug": "sensei-media-attachments"
+			}
+		]
+	},
+	{
+		"key": "learner-engagement",
+		"columns": 4,
+		"type": "small-list",
+		"title": "Learner Engagement",
+		"items": [
+			{
+				"key": "sensei-course-progress",
+				"extensionSlug": "sensei-course-progress"
+			},
+			{
+				"key": "sensei-certificates",
+				"extensionSlug": "sensei-certificates"
+			}
+		]
+	}
 ]
