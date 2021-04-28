@@ -731,7 +731,7 @@ class Sensei_Admin {
 		 * post. This may be a Course, Lesson, or Quiz.
 		 *
 		 * @hook  sensei_duplicate_post_args
-		 * @since 3.10.1
+		 * @since 3.11.0
 		 *
 		 * @param {array}   $new_post The arguments for duplicating the post.
 		 * @param {WP_Post} $post     The original post being duplicated.
