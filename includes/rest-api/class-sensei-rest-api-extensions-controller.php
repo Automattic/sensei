@@ -165,11 +165,11 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 			}
 		);
 
-		return $this->create_plugins_response( $filtered_plugins );
+		return $this->create_extensions_response( $filtered_plugins );
 	}
 
 	/**
-	 * Update a single plugin.
+	 * Update an array of plugins.
 	 *
 	 * @access private
 	 *
@@ -217,7 +217,7 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 			return $error;
 		}
 
-		return $this->create_plugins_response( Sensei_Extensions::instance()->get_extensions( 'plugin' ) );
+		return $this->create_extensions_response( Sensei_Extensions::instance()->get_extensions( 'plugin' ) );
 	}
 
 	/**
@@ -276,7 +276,7 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 	 *
 	 * @return WP_REST_Response
 	 */
-	private function create_plugins_response( array $plugins ): WP_REST_Response {
+	private function create_extensions_response( array $plugins ): WP_REST_Response {
 		$mapped_plugins = array_map(
 			function ( $plugin ) {
 				$plugin->price = html_entity_decode( $plugin->price );
