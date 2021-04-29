@@ -60,30 +60,22 @@ const LessonMetadataEdit = ( props ) => {
 			</InspectorControls>
 
 			<div className={ classnames( 'lesson-metadata', className ) }>
-				{ !! length && (
-					<span className="lesson-length">
-						{ __( 'Length', 'sensei-lms' ) +
-							': ' +
-							length +
-							' ' +
-							_n( 'minute', 'minutes', length, 'sensei-lms' ) }
-					</span>
-				) }
-
-				{ !! length && difficulty && (
-					<span className="separator">|</span>
-				) }
-
-				{ difficulty && (
-					<span className="lesson-difficulty">
-						{ __( 'Difficulty', 'sensei-lms' ) +
-							': ' +
-							DIFFICULTIES.find(
-								( lessonDifficulty ) =>
-									difficulty === lessonDifficulty.value
-							)?.label }
-					</span>
-				) }
+				<span className="lesson-length">
+					{ __( 'Length', 'sensei-lms' ) +
+						': ' +
+						length +
+						' ' +
+						_n( 'minute', 'minutes', length, 'sensei-lms' ) }
+				</span>
+				<span className="separator">|</span>
+				<span className="lesson-difficulty">
+					{ __( 'Difficulty', 'sensei-lms' ) +
+						': ' +
+						DIFFICULTIES.find(
+							( lessonDifficulty ) =>
+								difficulty === lessonDifficulty.value
+						)?.label }
+				</span>
 			</div>
 		</ToggleLegacyLessonMetaboxesWrapper>
 	);
