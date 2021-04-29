@@ -25,7 +25,7 @@ const Main = () => {
 			path: '/sensei-internal/v1/sensei-extensions?type=plugin',
 		} )
 			.then( ( result ) => {
-				setExtensions( result );
+				setExtensions( result.extensions || [] );
 			} )
 			.catch( () => setExtensions( [] ) );
 	}, [] );
