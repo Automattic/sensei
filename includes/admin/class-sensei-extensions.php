@@ -119,19 +119,15 @@ final class Sensei_Extensions {
 
 		$installed_plugins = get_plugins();
 
-		$wccom_connected     = false;
 		$wccom_subscriptions = [];
 
 		if ( class_exists( 'WC_Helper_Options' ) ) {
-			$auth            = WC_Helper_Options::get( 'auth' );
-			$wccom_connected = ! empty( $auth['access_token'] );
-
 			$wccom_subscriptions = WC_Helper::get_subscriptions();
 		}
 
 		// Includes installed version, whether it has update and WC.com metadata.
 		$extensions = array_map(
-			function( $extension ) use ( $installed_plugins, $wccom_connected, $wccom_subscriptions ) {
+			function( $extension ) use ( $installed_plugins, $wccom_subscriptions ) {
 				$extension->is_installed = isset( $installed_plugins[ $extension->plugin_file ] );
 
 				if ( $extension->is_installed ) {
@@ -140,8 +136,6 @@ final class Sensei_Extensions {
 				}
 
 				if ( isset( $extension->wccom_product_id ) ) {
-					$extension->wccom_connected = $wccom_connected;
-
 					foreach ( $wccom_subscriptions as $wccom_subscription ) {
 						if ( (int) $extension->wccom_product_id === $wccom_subscription['product_id'] ) {
 							$extension->wccom_expired = $wccom_subscription['expired'];

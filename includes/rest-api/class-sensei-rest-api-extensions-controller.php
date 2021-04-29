@@ -286,8 +286,20 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 			$plugins
 		);
 
+		$wccom_connected = false;
+
+		if ( class_exists( 'WC_Helper_Options' ) ) {
+			$auth            = WC_Helper_Options::get( 'auth' );
+			$wccom_connected = ! empty( $auth['access_token'] );
+		}
+
 		$response = new WP_REST_Response();
-		$response->set_data( array_values( $mapped_plugins ) );
+		$response->set_data(
+			[
+				'extensions'      => array_values( $mapped_plugins ),
+				'wccom_connected' => $wccom_connected,
+			]
+		);
 
 		return $response;
 	}
@@ -299,77 +311,79 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 	 */
 	public function get_item_schema() : array {
 		return [
-			'type'  => 'array',
-			'items' => [
-				'type'       => 'object',
-				'properties' => [
-					'hash'             => [
-						'type'        => 'string',
-						'description' => 'Product ID.',
-					],
-					'title'            => [
-						'type'        => 'string',
-						'description' => 'Extension title.',
-					],
-					'image'            => [
-						'type'        => 'string',
-						'description' => 'Extension image.',
-					],
-					'excerpt'          => [
-						'type'        => 'string',
-						'description' => 'Extension excerpt',
-					],
-					'link'             => [
-						'type'        => 'string',
-						'description' => 'Extension link.',
-					],
-					'price'            => [
-						'type'        => 'string',
-						'description' => 'Extension price.',
-					],
-					'is_featured'      => [
-						'type'        => 'boolean',
-						'description' => 'Whether its a featured extension.',
-					],
-					'product_slug'     => [
-						'type'        => 'string',
-						'description' => 'Extension product slug.',
-					],
-					'hosted_location'  => [
-						'type'        => 'string',
-						'description' => 'Where the extension is hosted (dotorg or external)',
-					],
-					'type'             => [
-						'type'        => 'string',
-						'description' => 'Whether this is a plugin or a theme',
-					],
-					'plugin_file'      => [
-						'type'        => 'string',
-						'description' => 'Main plugin file.',
-					],
-					'version'          => [
-						'type'        => 'string',
-						'description' => 'Extension version.',
-					],
-					'wccom_product_id' => [
-						'type'        => 'string',
-						'description' => 'WooCommerce.com product ID.',
-					],
-					'is_installed'     => [
-						'type'        => 'boolean',
-						'description' => 'Whether the extension is installed.',
-					],
-					'has_update'       => [
-						'type'        => 'boolean',
-						'description' => 'Whether the extension has available updates.',
-					],
-					'wccom_connected'  => [
-						'type'        => 'boolean',
-						'description' => 'Whether the site is connected to WC.com.',
-					],
-					'wccom_expired'    => [
-						'type'        => 'boolean',
-						'description' => 'Whether the WC.com subscription is expired.',
+			'wccom_connected' => [
+				'type'        => 'boolean',
+				'description' => 'Whether the site is connected to WC.com.',
+			],
+			'extensions'      => [
+				'type'  => 'array',
+				'items' => [
+					'type'       => 'object',
+					'properties' => [
+						'hash'             => [
+							'type'        => 'string',
+							'description' => 'Product ID.',
+						],
+						'title'            => [
+							'type'        => 'string',
+							'description' => 'Extension title.',
+						],
+						'image'            => [
+							'type'        => 'string',
+							'description' => 'Extension image.',
+						],
+						'excerpt'          => [
+							'type'        => 'string',
+							'description' => 'Extension excerpt',
+						],
+						'link'             => [
+							'type'        => 'string',
+							'description' => 'Extension link.',
+						],
+						'price'            => [
+							'type'        => 'string',
+							'description' => 'Extension price.',
+						],
+						'is_featured'      => [
+							'type'        => 'boolean',
+							'description' => 'Whether its a featured extension.',
+						],
+						'product_slug'     => [
+							'type'        => 'string',
+							'description' => 'Extension product slug.',
+						],
+						'hosted_location'  => [
+							'type'        => 'string',
+							'description' => 'Where the extension is hosted (dotorg or external)',
+						],
+						'type'             => [
+							'type'        => 'string',
+							'description' => 'Whether this is a plugin or a theme',
+						],
+						'plugin_file'      => [
+							'type'        => 'string',
+							'description' => 'Main plugin file.',
+						],
+						'version'          => [
+							'type'        => 'string',
+							'description' => 'Extension version.',
+						],
+						'wccom_product_id' => [
+							'type'        => 'string',
+							'description' => 'WooCommerce.com product ID.',
+						],
+						'is_installed'     => [
+							'type'        => 'boolean',
+							'description' => 'Whether the extension is installed.',
+						],
+						'has_update'       => [
+							'type'        => 'boolean',
+							'description' => 'Whether the extension has available updates.',
+						],
+						'wccom_expired'    => [
+							'type'        => 'boolean',
+							'description' => 'Whether the WC.com subscription is expired.',
+						],
 					],
 				],
 			],
