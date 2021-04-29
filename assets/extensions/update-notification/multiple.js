@@ -57,18 +57,20 @@ const Multiple = ( { extensions } ) => {
 						className="sensei-extensions__update-notification__list__item"
 					>
 						{ extension.title }{ ' ' }
-						<a
-							href={ extension.link }
-							className="sensei-extensions__update-notification__version-link"
-							target="_blank"
-							rel="noreferrer external"
-						>
-							{ sprintf(
-								// translators: placeholder is the version number.
-								__( 'version %s', 'sensei-lms' ),
-								extension.version
-							) }
-						</a>
+						{ extension.changelog_url && (
+							<a
+								href={ extension.changelog_url }
+								className="sensei-extensions__update-notification__version-link"
+								target="_blank"
+								rel="noreferrer external"
+							>
+								{ sprintf(
+									// translators: placeholder is the version number.
+									__( 'version %s', 'sensei-lms' ),
+									extension.version
+								) }
+							</a>
+						) }
 					</li>
 				) ) }
 			</ul>
