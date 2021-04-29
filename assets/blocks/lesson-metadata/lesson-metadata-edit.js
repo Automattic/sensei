@@ -15,12 +15,12 @@ import classnames from 'classnames';
  */
 import NumberControl from '../editor-components/number-control';
 import ToggleLegacyLessonMetaboxesWrapper from '../toggle-legacy-lesson-metaboxes-wrapper';
-import { COMPLEXITIES } from './constants';
+import { DIFFICULTIES } from './constants';
 
 const LessonMetadataEdit = ( props ) => {
 	const {
 		className,
-		attributes: { complexity, length },
+		attributes: { difficulty, length },
 		setAttributes,
 	} = props;
 
@@ -46,14 +46,14 @@ const LessonMetadataEdit = ( props ) => {
 					/>
 
 					<SelectControl
-						label={ __( 'Complexity', 'sensei-lms' ) }
-						options={ COMPLEXITIES.map( ( { label, value } ) => ( {
+						label={ __( 'Difficulty', 'sensei-lms' ) }
+						options={ DIFFICULTIES.map( ( { label, value } ) => ( {
 							label,
 							value,
 						} ) ) }
-						value={ complexity }
-						onChange={ ( newComplexity ) =>
-							setAttributes( { complexity: newComplexity } )
+						value={ difficulty }
+						onChange={ ( newDifficulty ) =>
+							setAttributes( { difficulty: newDifficulty } )
 						}
 					/>
 				</PanelBody>
@@ -70,17 +70,17 @@ const LessonMetadataEdit = ( props ) => {
 					</span>
 				) }
 
-				{ !! length && complexity && (
+				{ !! length && difficulty && (
 					<span className="separator">|</span>
 				) }
 
-				{ complexity && (
-					<span className="lesson-complexity">
-						{ __( 'Complexity', 'sensei-lms' ) +
+				{ difficulty && (
+					<span className="lesson-difficulty">
+						{ __( 'Difficulty', 'sensei-lms' ) +
 							': ' +
-							COMPLEXITIES.find(
-								( lessonComplexity ) =>
-									complexity === lessonComplexity.value
+							DIFFICULTIES.find(
+								( lessonDifficulty ) =>
+									difficulty === lessonDifficulty.value
 							)?.label }
 					</span>
 				) }

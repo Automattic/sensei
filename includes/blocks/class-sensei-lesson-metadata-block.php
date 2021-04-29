@@ -37,9 +37,9 @@ class Sensei_Lesson_Metadata_Block {
 	 */
 	public function render( array $attributes, string $content ) : string {
 		$length     = get_post_meta( get_the_ID(), '_lesson_length', true );
-		$complexity = get_post_meta( get_the_ID(), '_lesson_complexity', true );
+		$difficulty = get_post_meta( get_the_ID(), '_lesson_complexity', true );
 
-		if ( ! $length && ! $complexity ) {
+		if ( ! $length && ! $difficulty ) {
 			return $content;
 		}
 
@@ -54,18 +54,18 @@ class Sensei_Lesson_Metadata_Block {
 				'</span>';
 		}
 
-		if ( $length && $complexity ) {
+		if ( $length && $difficulty ) {
 			$content .= '<span class="separator">|</span>';
 		}
 
-		if ( $complexity ) {
-			$complexities      = Sensei()->lesson->lesson_complexities();
-			$lesson_complexity = $complexities[ $complexity ];
+		if ( $difficulty ) {
+			$difficulties      = Sensei()->lesson->lesson_complexities();
+			$lesson_difficulty = $difficulties[ $difficulty ];
 
-			if ( $lesson_complexity ) {
+			if ( $lesson_difficulty ) {
 				$content .=
-					'<span class="lesson-complexity">' .
-						__( 'Complexity', 'sensei-lms' ) . ': ' . $lesson_complexity .
+					'<span class="lesson-difficulty">' .
+						__( 'Difficulty', 'sensei-lms' ) . ': ' . $lesson_difficulty .
 					'</span>';
 			}
 		}

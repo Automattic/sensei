@@ -3,7 +3,7 @@
 	"category": "sensei-lms",
 	"textdomain": "sensei-lms",
 	"attributes": {
-		"complexity": {
+		"difficulty": {
 			"type": "string",
 			"source": "meta",
 			"meta": "_lesson_complexity"

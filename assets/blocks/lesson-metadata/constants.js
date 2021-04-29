@@ -3,7 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 
-export const COMPLEXITIES = [
+export const DIFFICULTIES = [
 	{
 		label: __( 'None', 'sensei-lms' ),
 		value: '',
