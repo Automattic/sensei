@@ -6,11 +6,6 @@ import { PanelBody, SelectControl } from '@wordpress/components';
 import { __, _n } from '@wordpress/i18n';
 
 /**
- * External dependencies
- */
-import classnames from 'classnames';
-
-/**
  * Internal dependencies
  */
 import NumberControl from '../editor-components/number-control';
@@ -59,16 +54,18 @@ const LessonMetadataEdit = ( props ) => {
 				</PanelBody>
 			</InspectorControls>
 
-			<div className={ classnames( 'lesson-metadata', className ) }>
-				<span className="lesson-length">
+			<div className={ className }>
+				<span className="wp-block-sensei-lms-lesson-metadata__length">
 					{ __( 'Length', 'sensei-lms' ) +
 						': ' +
 						length +
 						' ' +
 						_n( 'minute', 'minutes', length, 'sensei-lms' ) }
 				</span>
-				<span className="separator">|</span>
-				<span className="lesson-difficulty">
+				<span className="wp-block-sensei-lms-lesson-metadata__separator">
+					|
+				</span>
+				<span className="wp-block-sensei-lms-lesson-metadata__difficulty">
 					{ __( 'Difficulty', 'sensei-lms' ) +
 						': ' +
 						DIFFICULTIES.find(

@@ -234,11 +234,11 @@ a.sensei-certificate-link {
 }
 
 .lesson {
-  .lesson-metadata {
+  .wp-block-sensei-lms-lesson-metadata {
     font-size: .9em;
     font-style: italic;
 
-    .separator {
+    &__separator {
       margin: 0 0.5em 0;
     }
   }

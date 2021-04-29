@@ -43,11 +43,11 @@ class Sensei_Lesson_Metadata_Block {
 			return $content;
 		}
 
-		$content = '<div class="lesson-metadata">';
+		$content = '<div class="wp-block-sensei-lms-lesson-metadata">';
 
 		if ( $length ) {
 			$content .=
-				'<span class="lesson-length">' .
+				'<span class="wp-block-sensei-lms-lesson-metadata__length">' .
 					__( 'Length', 'sensei-lms' ) . ': ' .
 					// translators: placeholder is lesson length in minutes.
 					sprintf( _n( '%d minute', '%d minutes', $length, 'sensei-lms' ), $length ) .
@@ -55,7 +55,7 @@ class Sensei_Lesson_Metadata_Block {
 		}
 
 		if ( $length && $difficulty ) {
-			$content .= '<span class="separator">|</span>';
+			$content .= '<span class="wp-block-sensei-lms-lesson-metadata__separator">|</span>';
 		}
 
 		if ( $difficulty ) {
@@ -64,7 +64,7 @@ class Sensei_Lesson_Metadata_Block {
 
 			if ( $lesson_difficulty ) {
 				$content .=
-					'<span class="lesson-difficulty">' .
+					'<span class="wp-block-sensei-lms-lesson-metadata__difficulty">' .
 						__( 'Difficulty', 'sensei-lms' ) . ': ' . $lesson_difficulty .
 					'</span>';
 			}
