@@ -409,10 +409,10 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 	 * @return WP_REST_Response The response which contains the extensions layout.
 	 */
 	public function get_layout() : WP_REST_Response {
-		$layout = Sensei_Extensions::instance()->get_layout();
+		$layout_json = [ 'layout' => Sensei_Extensions::instance()->get_layout() ];
 
 		$response = new WP_REST_Response();
-		$response->set_data( $layout );
+		$response->set_data( $layout_json );
 
 		return $response;
 	}

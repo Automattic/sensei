@@ -173,10 +173,9 @@ final class Sensei_Extensions {
 			);
 
 			if ( ! is_wp_error( $raw_layout ) ) {
-				$extension_layout = json_decode( wp_remote_retrieve_body( $raw_layout ) );
-				if ( $extension_layout ) {
-					set_transient( $transient_key, $extension_layout, DAY_IN_SECONDS );
-				}
+				$json             = json_decode( wp_remote_retrieve_body( $raw_layout ) );
+				$extension_layout = isset( $json->layout ) ? $json->layout : [];
+				set_transient( $transient_key, $extension_layout, DAY_IN_SECONDS );
 			}
 		}
 

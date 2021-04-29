@@ -37,7 +37,7 @@ const Main = () => {
 			path: '/sensei-internal/v1/sensei-extensions/layout',
 		} )
 			.then( ( result ) => {
-				setLayout( result );
+				setLayout( result.layout || [] );
 			} )
 			.catch( () => setLayout( [] ) );
 	}, [] );
