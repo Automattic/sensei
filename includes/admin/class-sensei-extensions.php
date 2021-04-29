@@ -51,14 +51,8 @@ final class Sensei_Extensions {
 	public function enqueue_admin_assets() {
 		$screen = get_current_screen();
 		if ( in_array( $screen->id, [ 'sensei-lms_page_sensei-extensions' ], true ) ) {
-			if ( Sensei()->feature_flags->is_enabled( 'extensions_management_enhancement' ) ) {
-				Sensei()->assets->enqueue( 'sensei-extensions', 'extensions/index.js', [], true );
-				Sensei()->assets->enqueue( 'sensei-extensions-style', 'extensions/extensions.css' );
-
-				return;
-			}
-
-			Sensei()->assets->enqueue( 'sensei-admin-extensions', 'css/extensions.css', [], 'screen' );
+			Sensei()->assets->enqueue( 'sensei-extensions', 'extensions/index.js', [], true );
+			Sensei()->assets->enqueue( 'sensei-extensions-style', 'extensions/extensions.css' );
 		}
 	}
 
@@ -222,13 +216,10 @@ final class Sensei_Extensions {
 	 */
 	public function add_admin_menu_item() {
 		$updates_html = '';
+		$updates      = $this->get_has_update_count();
 
-		if ( Sensei()->feature_flags->is_enabled( 'extensions_management_enhancement' ) ) {
-			$updates = $this->get_has_update_count();
-
-			if ( $updates > 0 ) {
-				$updates_html = ' <span class="awaiting-mod">' . esc_html( $updates ) . '</span>';
-			}
+		if ( $updates > 0 ) {
+			$updates_html = ' <span class="awaiting-mod">' . esc_html( $updates ) . '</span>';
 		}
 
 		add_submenu_page(
@@ -248,31 +239,7 @@ final class Sensei_Extensions {
 	 * @access private
 	 */
 	public function render() {
-		if ( Sensei()->feature_flags->is_enabled( 'extensions_management_enhancement' ) ) {
-			echo '<div id="sensei-extensions-page" class="sensei-extensions-page"></div>';
-			return;
-		}
-
-		// phpcs:ignore WordPress.Security.NonceVerification
-		$category = isset( $_GET['category'] ) ? sanitize_text_field( $_GET['category'] ) : null;
-
-		// phpcs:ignore WordPress.Security.NonceVerification
-		$type = isset( $_GET['type'] ) ? sanitize_text_field( $_GET['type'] ) : null;
-
-		// phpcs:disable VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable -- used in view
-		$messages   = $this->get_messages();
-		$resources  = $this->get_resources();
-		$extensions = $this->get_extensions( $type, $category );
-		// phpcs:enable
-
-		sensei_log_event(
-			'extensions_view',
-			[
-				'view' => $category ? $category : '_all',
-			]
-		);
-
-		include_once dirname( __FILE__ ) . '/views/html-admin-page-extensions.php';
+		echo '<div id="sensei-extensions-page" class="sensei-extensions-page"></div>';
 	}
 
 	/**

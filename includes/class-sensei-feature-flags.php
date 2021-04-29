@@ -29,10 +29,9 @@ class Sensei_Feature_Flags {
 		$this->default_feature_settings = (array) apply_filters(
 			'sensei_default_feature_flag_settings',
 			[
-				'rest_api_v1'                       => false,
-				'rest_api_v1_skip_permissions'      => false,
-				'enrolment_provider_tooltip'        => false,
-				'extensions_management_enhancement' => false,
+				'rest_api_v1'                  => false,
+				'rest_api_v1_skip_permissions' => false,
+				'enrolment_provider_tooltip'   => false,
 			]
 		);
 	}
