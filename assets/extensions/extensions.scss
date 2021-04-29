@@ -215,8 +215,9 @@ $wordpress-break: 961px;
 		}
 
 		.sensei-extensions__card {
-			flex-direction: column;
 			border-radius: 8px;
+			flex-direction: column;
+
 			&__image {
 				border-radius: 8px 8px 0 0;
 			}
@@ -256,10 +257,20 @@ $wordpress-break: 961px;
 
 	&__large-list {
 		&__item:first-child .sensei-extensions__card__image {
-			border-radius: 2px 0 0 0;
+			border-radius: 2px 2px 0 0;
+			@media (min-width: $wordpress-break) {
+				border-radius: 2px 0 0 0;
+			}
 		}
 		&__item:last-child .sensei-extensions__card__image {
-			border-radius: 0 0 0 2px;
+			@media (min-width: $wordpress-break) {
+				border-radius: 0 0 0 2px;
+			}
+		}
+		@media (max-width: $wordpress-break) {
+			.sensei-extensions__card {
+				flex-direction: column;
+			}
 		}
 	}
 
@@ -345,8 +356,11 @@ $wordpress-break: 961px;
 			padding: 25px;
 			display: flex;
 			flex-direction: column;
-			min-height: 170px;
 			flex: 1;
+
+			@media (min-width: $wordpress-break) {
+				min-height: 170px;
+			}
 		}
 
 		&__body {
