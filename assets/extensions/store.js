@@ -12,16 +12,18 @@ const actions = {
 	/**
 	 * Sets the extensions.
 	 *
-	 * @param {Array} extensions The new extensions.
+	 * @param {Array} response                 The response returned from the extensions endpoint.
+	 * @param {Array} response.extensions      The extensions array.
+	 * @param {Array} response.wccom_connected True if the site is connected to WC.com.
 	 */
-	setExtensions( extensions ) {
+	setExtensions( { extensions, wccom_connected: wcccomConnected } ) {
 		const enrichedExtensions = extensions.map( ( extension ) => {
 			let canUpdate = false;
 			// If the extension is hosted in WC.com, check that the site is connected and the subscription is not expired.
 			if ( extension.has_update ) {
 				canUpdate =
 					! extension.wccom_product_id ||
-					( extension.wccom_connected && ! extension.wccom_expired );
+					( wcccomConnected && ! extension.wccom_expired );
 			}
 
 			return { ...extension, canUpdate };
@@ -46,14 +48,14 @@ const actions = {
 
 		try {
 			yield actions.setComponentInProgress( component );
-			const newExtensions = yield apiFetch( {
+			const response = yield apiFetch( {
 				path: '/sensei-internal/v1/sensei-extensions/update',
 				method: 'POST',
 				data: { plugins },
 			} );
 
 			yield actions.setError( null );
-			yield actions.setExtensions( newExtensions );
+			yield actions.setExtensions( response );
 		} catch ( error ) {
 			yield actions.setError(
 				sprintf(
@@ -112,13 +114,11 @@ const resolvers = {
 	 * Loads the extensions during initialization.
 	 */
 	*getExtensions() {
-		let extensions = [];
-
-		extensions = yield apiFetch( {
+		const response = yield apiFetch( {
 			path: '/sensei-internal/v1/sensei-extensions?type=plugin',
 		} );
 
-		return actions.setExtensions( extensions );
+		return actions.setExtensions( response );
 	},
 };
 
