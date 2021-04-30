@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import apiFetch from '@wordpress/api-fetch';
 import { useState, useEffect } from '@wordpress/element';
+import { EditorNotices } from '@wordpress/editor';
 
 /**
  * Internal dependencies
@@ -78,26 +79,29 @@ const Main = () => {
 	];
 
 	return (
-		<Grid as="main" className="sensei-extensions">
-			<QueryStringRouter paramName="tab" defaultRoute="all">
-				<Col className="sensei-extensions__section" cols={ 12 }>
-					<Header />
-					<Tabs tabs={ tabs } />
-					{ error !== null && (
-						<Notice status="error" isDismissible={ false }>
-							{ error }
-						</Notice>
-					) }
-				</Col>
+		<>
+			<Grid as="main" className="sensei-extensions">
+				<QueryStringRouter paramName="tab" defaultRoute="all">
+					<Col className="sensei-extensions__section" cols={ 12 }>
+						<Header />
+						<Tabs tabs={ tabs } />
+						{ error !== null && (
+							<Notice status="error" isDismissible={ false }>
+								{ error }
+							</Notice>
+						) }
+					</Col>
 
-				<UpdateNotification extensions={ extensions } />
-				{ tabs.map( ( tab ) => (
-					<Route key={ tab.id } route={ tab.id }>
-						{ tab.content }
-					</Route>
-				) ) }
-			</QueryStringRouter>
-		</Grid>
+					<UpdateNotification extensions={ extensions } />
+					{ tabs.map( ( tab ) => (
+						<Route key={ tab.id } route={ tab.id }>
+							{ tab.content }
+						</Route>
+					) ) }
+				</QueryStringRouter>
+			</Grid>
+			<EditorNotices />
+		</>
 	);
 };
 

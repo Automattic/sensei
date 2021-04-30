@@ -23,6 +23,24 @@ $wordpress-break: 961px;
 	}
 
 	color: $gray-100;
+
+	// Adjust the position of the notices
+	.components-editor-notices__snackbar {
+		position: fixed;
+		left: 0;
+		right: 0;
+		bottom: 40px;
+		padding-left: 16px;
+		padding-right: 16px;
+
+		@media (min-width: 783px) {
+			left: 50px;
+		}
+
+		@media (min-width: $wordpress-break) {
+			left: 175px;
+		}
+	}
 }
 
 .sensei-extensions {

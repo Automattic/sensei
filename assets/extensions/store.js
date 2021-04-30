@@ -6,7 +6,7 @@ import { keyBy } from 'lodash';
 /**
  * WordPress dependencies
  */
-import { registerStore } from '@wordpress/data';
+import { registerStore, dispatch } from '@wordpress/data';
 import { controls, apiFetch } from '@wordpress/data-controls';
 import { __, sprintf } from '@wordpress/i18n';
 
@@ -68,6 +68,14 @@ const actions = {
 					wccom_connected: response.wccom_connected,
 				},
 				true
+			);
+
+			dispatch( 'core/notices' ).createNotice(
+				'success',
+				__( 'Update completed succesfully!', 'sensei-lms' ),
+				{
+					type: 'snackbar',
+				}
 			);
 		} catch ( error ) {
 			yield actions.setError(
