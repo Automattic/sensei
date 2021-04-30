@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import classnames from 'classnames';
+
+/**
  * WordPress dependencies
  */
 import { InspectorControls } from '@wordpress/block-editor';
@@ -55,17 +60,34 @@ const LessonMetadataEdit = ( props ) => {
 			</InspectorControls>
 
 			<div className={ className }>
-				<span className="wp-block-sensei-lms-lesson-metadata__length">
+				<span
+					className={ classnames(
+						'wp-block-sensei-lms-lesson-metadata__length',
+						{ disabled: ! length }
+					) }
+				>
 					{ __( 'Length', 'sensei-lms' ) +
 						': ' +
 						length +
 						' ' +
 						_n( 'minute', 'minutes', length, 'sensei-lms' ) }
 				</span>
-				<span className="wp-block-sensei-lms-lesson-metadata__separator">
+
+				<span
+					className={ classnames(
+						'wp-block-sensei-lms-lesson-metadata__separator',
+						{ disabled: ! length || ! difficulty }
+					) }
+				>
 					|
 				</span>
-				<span className="wp-block-sensei-lms-lesson-metadata__difficulty">
+
+				<span
+					className={ classnames(
+						'wp-block-sensei-lms-lesson-metadata__difficulty',
+						{ disabled: ! difficulty }
+					) }
+				>
 					{ __( 'Difficulty', 'sensei-lms' ) +
 						': ' +
 						DIFFICULTIES.find(

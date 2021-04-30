@@ -1,9 +1,12 @@
 .wp-block-sensei-lms-lesson-metadata {
 	font-size: .9em;
 	font-style: italic;
-	opacity: 0.62;
 
 	&__separator {
 		margin: 0 0.5em 0;
+	}
+
+	.disabled {
+		opacity: 0.62;
 	}
 }
