@@ -239,6 +239,14 @@ final class Sensei_Extensions {
 	 * @access private
 	 */
 	public function render() {
+		// phpcs:ignore WordPress.Security.NonceVerification
+		$tab = isset( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : null;
+
+		sensei_log_event(
+			'extensions_view',
+			[ 'view' => $tab ? $tab : '_all' ]
+		);
+
 		echo '<div id="sensei-extensions-page" class="sensei-extensions-page"></div>';
 	}
 
