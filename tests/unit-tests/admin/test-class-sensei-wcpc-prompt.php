@@ -27,7 +27,7 @@ class Sensei_WCPC_Prompt_Test extends WP_UnitTestCase {
 
 		// Mock extensions.
 		set_transient(
-			'sensei_extensions_' . md5( 'plugin||' . get_locale() . '|[]' ),
+			'sensei_extensions_' . md5( 'plugin||' . determine_locale() . '|[]' ),
 			[
 				(object) [
 					'product_slug'     => 'sensei-wc-paid-courses',
