@@ -3,10 +3,10 @@
 
 $wordpress-break: 961px;
 
-@mixin white-box {
-	border-radius: 2px;
+@mixin white-box( $r: 2px ) {
+	border-radius: $r;
 	background-color: $white;
-	box-shadow: 0 0 0 1px #DCDCDE;
+	box-shadow: 0 0 0 1px $gray-5;
 }
 
 @mixin col-width($w) {
@@ -21,6 +21,8 @@ $wordpress-break: 961px;
 	@media (min-width: 783px) {
 		margin-right: 20px;
 	}
+
+	color: $gray-100;
 }
 
 .sensei-extensions {
@@ -54,7 +56,7 @@ $wordpress-break: 961px;
 			margin: 0 0 17px;
 		}
 
-		&__content {
+		&__body {
 			flex: 1;
 		}
 	}
@@ -138,7 +140,7 @@ $wordpress-break: 961px;
 		align-items: center;
 		font-size: 14px;
 		font-weight: 500;
-		color: #000;
+		color: inherit;
 
 		svg {
 			width: 24px;
@@ -212,11 +214,25 @@ $wordpress-break: 961px;
 			}
 		}
 
+		.sensei-extensions__card {
+			border-radius: 8px;
+			flex-direction: column;
+
+			&__image {
+				border-radius: 8px 8px 0 0;
+			}
+		}
+
 		.sensei-extensions__card-wrapper {
 			height: 100%;
 			box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.16);
 			border-radius: 8px;
 		}
+
+		&__card-wrapper, .sensei-extensions__card {
+			height: 100%;
+		}
+
 	}
 
 	&__small-list,
@@ -228,7 +244,32 @@ $wordpress-break: 961px;
 			margin: 0;
 
 			&:not(:last-child) {
-				border-bottom: solid 1px #DCDCDE;
+				border-bottom: solid 1px $gray-5;
+			}
+		}
+	}
+
+	&__small-list {
+		.sensei-extensions__card__image {
+			display: none;
+		}
+	}
+
+	&__large-list {
+		&__item:first-child .sensei-extensions__card__image {
+			border-radius: 2px 2px 0 0;
+			@media (min-width: $wordpress-break) {
+				border-radius: 2px 0 0 0;
+			}
+		}
+		&__item:last-child .sensei-extensions__card__image {
+			@media (min-width: $wordpress-break) {
+				border-radius: 0 0 0 2px;
+			}
+		}
+		@media (max-width: $wordpress-break) {
+			.sensei-extensions__card {
+				flex-direction: column;
 			}
 		}
 	}
@@ -248,19 +289,21 @@ $wordpress-break: 961px;
 
 	@media (min-width: $wordpress-break) {
 		&__large-list {
-			.sensei-extensions__card__content {
-				display: flex;
+			.sensei-extensions__card {
+			}
+			.sensei-extensions__card__body {
+
+			}
+			.sensei-extensions__card__image {
 			}
 			.sensei-extensions__card__description {
-				flex: 1;
+
 			}
 			.sensei-extensions__extension-actions {
-				padding-left: 20px;
-				flex-shrink: 0;
-				flex-direction: row-reverse;
+
 			}
 			.sensei-extensions__extension-actions__details-link {
-				margin-right: 10px;
+
 			}
 		}
 	}
@@ -286,14 +329,22 @@ $wordpress-break: 961px;
 		}
 
 		.sensei-extensions__card-wrapper {
-			@include white-box;
+			@include white-box(2px);
 			height: 100%
+		}
+
+		.sensei-extensions__card {
+			flex-direction: column;
+			&__image {
+				border-radius: 2px 2px 0 0;
+			}
 		}
 	}
 
 	&__card {
-		padding: 25px;
-		background-color: $white;
+		display: flex;
+		align-items: stretch;
+		height: 100%;
 
 		&__header {
 			display: flex;
@@ -301,10 +352,40 @@ $wordpress-break: 961px;
 			margin-bottom: 10px;
 		}
 
+		&__content {
+			padding: 25px;
+			display: flex;
+			flex-direction: column;
+			flex: 1;
+
+			@media (min-width: $wordpress-break) {
+				min-height: 170px;
+			}
+		}
+
+		&__body {
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+		}
+
 		&__title {
 			margin: 0;
 			font-size: 16px;
 			font-weight: bold;
+			color: inherit;
+		}
+
+		&__price {
+			margin-bottom: 10px;
+			font-size: 16px;
+		}
+
+		&__image {
+			background-color: $gray-0;
+			background-size: cover;
+			background-position: center center;
+			flex: 0 0 220px;
 		}
 
 		&__new-badge {
@@ -326,6 +407,7 @@ $wordpress-break: 961px;
 		&__description {
 			margin: 0 0 10px;
 			font-size: 14px;
+			flex: 1;
 		}
 	}
 
@@ -350,7 +432,7 @@ $wordpress-break: 961px;
 			padding: 0 10px;
 			margin-left: 10px;
 			font-size: 13px;
-			color: #000;
+			color: inherit;
 		}
 
 		&__button-icon {
