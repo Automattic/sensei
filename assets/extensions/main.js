@@ -20,9 +20,9 @@ import { EXTENSIONS_STORE } from './store';
 import { Grid, Col } from './grid';
 
 const Main = () => {
-	const extensions = useSelect( ( select ) =>
-		select( EXTENSIONS_STORE ).getExtensions()
-	);
+	const { extensions } = useSelect( ( select ) => ( {
+		extensions: select( EXTENSIONS_STORE ).getExtensions(),
+	} ) );
 	const error = useSelect( ( select ) =>
 		select( EXTENSIONS_STORE ).getError()
 	);

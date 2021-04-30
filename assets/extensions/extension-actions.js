@@ -47,12 +47,11 @@ export default ExtensionActions;
 /**
  * Get extension actions array.
  *
- * @param {Object} extension           Extension object.
- * @param {string} componentInProgress Which component has caused an update.
+ * @param {Object} extension Extension object.
  *
  * @return {Array|null} Array of actions, or null if it's not a valid extension.
  */
-export const getExtensionActions = ( extension, componentInProgress ) => {
+export const getExtensionActions = ( extension ) => {
 	if ( ! extension.product_slug ) {
 		return null;
 	}
@@ -60,7 +59,7 @@ export const getExtensionActions = ( extension, componentInProgress ) => {
 	let buttonLabel = '';
 	let buttonAction = () => {};
 
-	if ( componentInProgress === extension.product_slug ) {
+	if ( 'in-progress' === extension.status ) {
 		buttonLabel = (
 			<>
 				<UpdateIcon
@@ -101,7 +100,7 @@ export const getExtensionActions = ( extension, componentInProgress ) => {
 		{
 			key: 'main-button',
 			disabled:
-				componentInProgress !== '' ||
+				'in-progress' === extension.status ||
 				( extension.is_installed && ! extension.canUpdate ),
 			children: buttonLabel,
 			onClick: buttonAction,

@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { keyBy } from 'lodash';
+
+/**
  * WordPress dependencies
  */
 import { registerStore } from '@wordpress/data';
@@ -12,11 +17,15 @@ const actions = {
 	/**
 	 * Sets the extensions.
 	 *
-	 * @param {Array} response                 The response returned from the extensions endpoint.
-	 * @param {Array} response.extensions      The extensions array.
-	 * @param {Array} response.wccom_connected True if the site is connected to WC.com.
+	 * @param {Object}  response                 The response returned from the extensions endpoint.
+	 * @param {Array}   response.extensions      The extensions array.
+	 * @param {boolean} response.wccom_connected True if the site is connected to WC.com.
+	 * @param {boolean} onlyEntities             Whether should update only the extension entities.
 	 */
-	setExtensions( { extensions, wccom_connected: wcccomConnected } ) {
+	setExtensions(
+		{ extensions, wccom_connected: wcccomConnected },
+		onlyEntities
+	) {
 		const enrichedExtensions = extensions.map( ( extension ) => {
 			let canUpdate = false;
 			// If the extension is hosted in WC.com, check that the site is connected and the subscription is not expired.
@@ -32,30 +41,34 @@ const actions = {
 		return {
 			type: 'SET_EXTENSIONS',
 			extensions: enrichedExtensions,
+			onlyEntities,
 		};
 	},
 
 	/**
 	 * Updates the provided extensions.
 	 *
-	 * @param {Array}  extensions The extensions to update.
-	 * @param {string} component  The component which started the update.
+	 * @param {Array} extensions The extensions to update.
 	 */
-	*updateExtensions( extensions, component ) {
-		const plugins = extensions.map(
-			( extension ) => extension.product_slug
-		);
+	*updateExtensions( extensions ) {
+		const slugs = extensions.map( ( extension ) => extension.product_slug );
 
 		try {
-			yield actions.setComponentInProgress( component );
+			yield actions.setExtensionsStatus( slugs, 'in-progress' );
 			const response = yield apiFetch( {
 				path: '/sensei-internal/v1/sensei-extensions/update',
 				method: 'POST',
-				data: { plugins },
+				data: { plugins: slugs },
 			} );
 
 			yield actions.setError( null );
-			yield actions.setExtensions( response );
+			yield actions.setExtensions(
+				{
+					extensions: response.completed,
+					wccom_connected: response.wccom_connected,
+				},
+				true
+			);
 		} catch ( error ) {
 			yield actions.setError(
 				sprintf(
@@ -67,20 +80,20 @@ const actions = {
 					error.message
 				)
 			);
-		} finally {
-			yield actions.setComponentInProgress( '' );
 		}
 	},
 
 	/**
-	 * Update the component that caused an update.
+	 * Set extensions in progress.
 	 *
-	 * @param {string} componentInProgress The component.
+	 * @param {string} slugs  Extensions in progress.
+	 * @param {string} status Status.
 	 */
-	setComponentInProgress( componentInProgress ) {
+	setExtensionsStatus( slugs, status ) {
 		return {
-			type: 'SET_COMPONENT_IN_PROGRESS',
-			componentInProgress,
+			type: 'SET_EXTENSIONS_STATUS',
+			slugs,
+			status,
 		};
 	},
 
@@ -101,8 +114,8 @@ const actions = {
  * Extension store selectors.
  */
 const selectors = {
-	getExtensions: ( { extensions } ) => extensions,
-	getComponentInProgress: ( { componentInProgress } ) => componentInProgress,
+	getExtensions: ( { extensions, entities } ) =>
+		extensions.map( ( slug ) => entities.extensions[ slug ] ),
 	getError: ( { error } ) => error,
 };
 
@@ -123,7 +136,7 @@ const resolvers = {
 };
 
 /**
- * Product store reducer.
+ * Extensions store reducer.
  *
  * @param {Object} state  The store state.
  * @param {Object} action The action to handle.
@@ -131,21 +144,51 @@ const resolvers = {
 const reducer = (
 	state = {
 		extensions: [],
-		componentInProgress: '',
+		entities: { extensions: {} },
 		error: null,
 	},
 	action
 ) => {
 	switch ( action.type ) {
 		case 'SET_EXTENSIONS':
+			let newState = { ...state };
+
+			if ( ! action.onlyEntities ) {
+				// Update extension array (slugs).
+				newState = {
+					...newState,
+					extensions: [
+						...action.extensions.map(
+							( extension ) => extension.product_slug
+						),
+					],
+				};
+			}
+
+			// Update extension entities.
 			return {
-				...state,
-				extensions: [ ...action.extensions ],
+				...newState,
+				entities: {
+					...newState.entities,
+					extensions: {
+						...newState.entities.extensions,
+						...keyBy( action.extensions, 'product_slug' ),
+					},
+				},
 			};
-		case 'SET_COMPONENT_IN_PROGRESS':
+		case 'SET_EXTENSIONS_STATUS':
+			const extensionsWithStatus = { ...state.entities.extensions };
+
+			action.slugs.forEach( ( slug ) => {
+				extensionsWithStatus[ slug ].status = action.status;
+			} );
+
 			return {
 				...state,
-				componentInProgress: action.componentInProgress,
+				entities: {
+					...state.entities,
+					extensions: extensionsWithStatus,
+				},
 			};
 		case 'SET_ERROR':
 			return {

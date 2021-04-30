@@ -7,45 +7,44 @@ import { __, sprintf } from '@wordpress/i18n';
  * Internal dependencies
  */
 import ExtensionActions from '../extension-actions';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import { EXTENSIONS_STORE } from '../store';
 import { UpdateIcon } from '../../icons';
 
 /**
  * Multiple update notification.
  *
- * @param {Object}   props            Component props.
- * @param {Array}    props.extensions Extensions with update.
- * @param {Function} props.onUpdate   Callback to call when update is clicked.
+ * @param {Object} props            Component props.
+ * @param {Array}  props.extensions Extensions with update.
  */
-const Multiple = ( { extensions, onUpdate } ) => {
-	const componentInProgress = useSelect( ( select ) =>
-		select( EXTENSIONS_STORE ).getComponentInProgress()
-	);
+const Multiple = ( { extensions } ) => {
 	const { updateExtensions } = useDispatch( EXTENSIONS_STORE );
+
+	const inProgress = extensions.some(
+		( extension ) => 'in-progress' === extension.status
+	);
+
+	const children = inProgress ? (
+		<>
+			<UpdateIcon
+				width="20"
+				height="20"
+				className="sensei-extensions__rotating-icon sensei-extensions__extension-actions__button-icon"
+			/>
+			{ __( 'Updating…', 'sensei-lms' ) }
+		</>
+	) : (
+		__( 'Update all', 'sensei-lms' )
+	);
 
 	const action = {
 		key: 'update-button',
-		children: __( 'Update all', 'sensei-lms' ),
-		disabled: componentInProgress !== '',
+		children,
+		disabled: inProgress,
 		onClick: () => {
-			onUpdate();
-			updateExtensions( extensions, 'multiple-extension-notification' );
+			updateExtensions( extensions );
 		},
 	};
-
-	if ( componentInProgress === 'multiple-extension-notification' ) {
-		action.children = (
-			<>
-				<UpdateIcon
-					width="20"
-					height="20"
-					className="sensei-extensions__rotating-icon sensei-extensions__extension-actions__button-icon"
-				/>
-				{ __( 'Updating…', 'sensei-lms' ) }
-			</>
-		);
-	}
 
 	return (
 		<>

@@ -2,7 +2,6 @@
  * WordPress dependencies
  */
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -19,7 +18,6 @@ import { UpdateIcon } from '../../icons';
  * @param {Array}  props.extensions Extensions list.
  */
 const UpdateNotification = ( { extensions } ) => {
-	const [ updateClicked, setUpdateClicked ] = useState( false );
 	const extensionsWithUpdate = extensions.filter(
 		( extension ) => extension.canUpdate
 	);
@@ -27,28 +25,6 @@ const UpdateNotification = ( { extensions } ) => {
 	const updatesCount = extensionsWithUpdate.length;
 
 	if ( 0 === updatesCount ) {
-		if ( updateClicked ) {
-			return (
-				<Col
-					as="section"
-					className="sensei-extensions__section"
-					cols={ 12 }
-				>
-					<div
-						role="alert"
-						className="sensei-extensions__update-notification"
-					>
-						<p className="sensei-extensions__update-message">
-							{ __(
-								'Update completed succesfully!',
-								'sensei-lms'
-							) }
-						</p>
-					</div>
-				</Col>
-			);
-		}
-
 		return null;
 	}
 
@@ -77,15 +53,9 @@ const UpdateNotification = ( { extensions } ) => {
 					{ updateAvailableLabel }
 				</small>
 				{ 1 === updatesCount ? (
-					<Single
-						extension={ extensionsWithUpdate[ 0 ] }
-						onUpdate={ () => setUpdateClicked( true ) }
-					/>
+					<Single extension={ extensionsWithUpdate[ 0 ] } />
 				) : (
-					<Multiple
-						extensions={ extensionsWithUpdate }
-						onUpdate={ () => setUpdateClicked( true ) }
-					/>
+					<Multiple extensions={ extensionsWithUpdate } />
 				) }
 			</div>
 		</Col>
