@@ -50,10 +50,6 @@ const Main = () => {
 	const freeExtensions = extensions.filter(
 		( extension ) => extension.price === '0'
 	);
-	// TODO: Specify which plugins are third party
-	const thirdPartyExtensions = extensions.filter(
-		( extension ) => extension.price === '0'
-	);
 	const installedExtensions = extensions.filter(
 		( extension ) => extension.is_installed
 	);
@@ -72,12 +68,6 @@ const Main = () => {
 			label: __( 'Free', 'sensei-lms' ),
 			count: freeExtensions.length,
 			content: <FilteredExtensions extensions={ freeExtensions } />,
-		},
-		{
-			id: 'third-party',
-			label: __( 'Third Party', 'sensei-lms' ),
-			count: thirdPartyExtensions.length,
-			content: <FilteredExtensions extensions={ thirdPartyExtensions } />,
 		},
 		{
 			id: 'installed',
