@@ -14,11 +14,11 @@ import {
 	ResetLessonBlock,
 	ViewQuizBlock,
 } from './lesson-actions';
-import LessonMetadataBlock from './lesson-metadata';
+import LessonPropertiesBlock from './lesson-properties';
 
 registerSenseiBlocks( [
 	LessonActionsBlock,
-	LessonMetadataBlock,
+	LessonPropertiesBlock,
 	CompleteLessonBlock,
 	NextLessonBlock,
 	ResetLessonBlock,

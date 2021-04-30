@@ -9,7 +9,7 @@ import { select, dispatch } from '@wordpress/data';
 	const editPostDispatcher = dispatch( 'core/edit-post' );
 
 	/**
-	 * Toggle Lesson Information metabox depending on whether the Lesson Metadata block has been
+	 * Toggle Lesson Information metabox depending on whether the Lesson Properties block has been
 	 * added to the lesson.
 	 */
 	window.sensei_toggle_legacy_lesson_metaboxes = () => {
@@ -18,10 +18,10 @@ import { select, dispatch } from '@wordpress/data';
 		}
 
 		const metaboxName = 'meta-box-lesson-info';
-		const lessonMetadataBlockCount = blockEditorSelector.getGlobalBlockCount(
-			'sensei-lms/lesson-metadata'
+		const lessonPropertiesBlockCount = blockEditorSelector.getGlobalBlockCount(
+			'sensei-lms/lesson-properties'
 		);
-		const enable = lessonMetadataBlockCount === 0;
+		const enable = lessonPropertiesBlockCount === 0;
 
 		if ( enable !== editPostSelector.isEditorPanelEnabled( metaboxName ) ) {
 			editPostDispatcher.toggleEditorPanelEnabled( metaboxName );
@@ -31,7 +31,7 @@ import { select, dispatch } from '@wordpress/data';
 		document
 			.querySelectorAll( '#lesson-info input, #lesson-info select' )
 			.forEach( ( input ) => {
-				input.disabled = lessonMetadataBlockCount > 0;
+				input.disabled = lessonPropertiesBlockCount > 0;
 			} );
 	};
 } )();

@@ -4840,7 +4840,7 @@ class Sensei_Lesson {
 
 		$lesson_blocks = [
 			'sensei-lms/lesson-actions',
-			'sensei-lms/lesson-metadata',
+			'sensei-lms/lesson-properties',
 			'sensei-lms/button-contact-teacher',
 		];
 

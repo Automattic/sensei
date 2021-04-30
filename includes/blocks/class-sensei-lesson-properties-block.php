@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Sensei_Lesson_Metadata_Block class.
+ * File containing the Sensei_Lesson_Properties_Block class.
  *
  * @package sensei
  */
@@ -10,25 +10,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Sensei_Lesson_Metadata_Block
+ * Class Sensei_Lesson_Properties_Block
  */
-class Sensei_Lesson_Metadata_Block {
+class Sensei_Lesson_Properties_Block {
 
 	/**
-	 * Sensei_Lesson_Metadata_Block constructor.
+	 * Sensei_Lesson_Properties_Block constructor.
 	 */
 	public function __construct() {
 		Sensei_Blocks::register_sensei_block(
-			'sensei-lms/lesson-metadata',
+			'sensei-lms/lesson-properties',
 			[
 				'render_callback' => [ $this, 'render' ],
 			],
-			Sensei()->assets->src_path( 'blocks/lesson-metadata' )
+			Sensei()->assets->src_path( 'blocks/lesson-properties' )
 		);
 	}
 
 	/**
-	 * Renders lesson metadata block on the frontend.
+	 * Renders lesson properties block on the frontend.
 	 *
 	 * @param array  $attributes Block attributes.
 	 * @param string $content    Inner block content.
@@ -43,11 +43,11 @@ class Sensei_Lesson_Metadata_Block {
 			return $content;
 		}
 
-		$content = '<div class="wp-block-sensei-lms-lesson-metadata">';
+		$content = '<div class="wp-block-sensei-lms-lesson-properties">';
 
 		if ( $length ) {
 			$content .=
-				'<span class="wp-block-sensei-lms-lesson-metadata__length">' .
+				'<span class="wp-block-sensei-lms-lesson-properties__length">' .
 					__( 'Length', 'sensei-lms' ) . ': ' .
 					// translators: placeholder is lesson length in minutes.
 					sprintf( _n( '%d minute', '%d minutes', $length, 'sensei-lms' ), $length ) .
@@ -55,7 +55,7 @@ class Sensei_Lesson_Metadata_Block {
 		}
 
 		if ( $length && $difficulty ) {
-			$content .= '<span class="wp-block-sensei-lms-lesson-metadata__separator">|</span>';
+			$content .= '<span class="wp-block-sensei-lms-lesson-properties__separator">|</span>';
 		}
 
 		if ( $difficulty ) {
@@ -64,7 +64,7 @@ class Sensei_Lesson_Metadata_Block {
 
 			if ( $lesson_difficulty ) {
 				$content .=
-					'<span class="wp-block-sensei-lms-lesson-metadata__difficulty">' .
+					'<span class="wp-block-sensei-lms-lesson-properties__difficulty">' .
 						__( 'Difficulty', 'sensei-lms' ) . ': ' . $lesson_difficulty .
 					'</span>';
 			}

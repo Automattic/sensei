@@ -17,7 +17,7 @@ import NumberControl from '../editor-components/number-control';
 import ToggleLegacyLessonMetaboxesWrapper from '../toggle-legacy-lesson-metaboxes-wrapper';
 import { DIFFICULTIES } from './constants';
 
-const LessonMetadataEdit = ( props ) => {
+const LessonPropertiesEdit = ( props ) => {
 	const {
 		className,
 		attributes: { difficulty, length },
@@ -27,7 +27,7 @@ const LessonMetadataEdit = ( props ) => {
 	return (
 		<ToggleLegacyLessonMetaboxesWrapper { ...props }>
 			<InspectorControls>
-				<PanelBody title={ __( 'Metadata', 'sensei-lms' ) }>
+				<PanelBody title={ __( 'Properties', 'sensei-lms' ) }>
 					<NumberControl
 						id="sensei-lesson-length"
 						label={ __( 'Length', 'sensei-lms' ) }
@@ -62,7 +62,7 @@ const LessonMetadataEdit = ( props ) => {
 			<div className={ className }>
 				<span
 					className={ classnames(
-						'wp-block-sensei-lms-lesson-metadata__length',
+						'wp-block-sensei-lms-lesson-properties__length',
 						{ disabled: ! length }
 					) }
 				>
@@ -75,7 +75,7 @@ const LessonMetadataEdit = ( props ) => {
 
 				<span
 					className={ classnames(
-						'wp-block-sensei-lms-lesson-metadata__separator',
+						'wp-block-sensei-lms-lesson-properties__separator',
 						{ disabled: ! length || ! difficulty }
 					) }
 				>
@@ -84,7 +84,7 @@ const LessonMetadataEdit = ( props ) => {
 
 				<span
 					className={ classnames(
-						'wp-block-sensei-lms-lesson-metadata__difficulty',
+						'wp-block-sensei-lms-lesson-properties__difficulty',
 						{ disabled: ! difficulty }
 					) }
 				>
@@ -100,4 +100,4 @@ const LessonMetadataEdit = ( props ) => {
 	);
 };
 
-export default LessonMetadataEdit;
+export default LessonPropertiesEdit;

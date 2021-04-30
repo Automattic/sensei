@@ -7,12 +7,12 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import metadata from './block.json';
-import edit from './lesson-metadata-edit';
+import edit from './lesson-properties-edit';
 
 export default {
-	title: __( 'Lesson Metadata', 'sensei-lms' ),
+	title: __( 'Lesson Properties', 'sensei-lms' ),
 	description: __(
-		'Add lesson details such as length and difficulty.',
+		'Add lesson properties such as length and difficulty.',
 		'sensei-lms'
 	),
 	...metadata,
