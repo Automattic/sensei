@@ -49,7 +49,7 @@ const NumberControl = ( {
 				<div className="sensei-number-control__input-container">
 					<input
 						className={ classnames(
-							'sensei-number-control__input',
+							'sensei-number-control__input components-text-control__input',
 							className
 						) }
 						type="number"
