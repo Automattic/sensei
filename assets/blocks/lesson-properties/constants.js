@@ -1,9 +1,10 @@
 /**
  * WordPress dependencies
  */
+import { applyFilters } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 
-export const DIFFICULTIES = [
+export const DIFFICULTIES = applyFilters( 'sensei-lms.Lesson.difficulties', [
 	{
 		label: __( 'None', 'sensei-lms' ),
 		value: '',
@@ -20,4 +21,4 @@ export const DIFFICULTIES = [
 		label: __( 'Hard', 'sensei-lms' ),
 		value: 'hard',
 	},
-];
+] );
