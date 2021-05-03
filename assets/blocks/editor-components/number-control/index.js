@@ -36,7 +36,7 @@ const NumberControl = ( {
 	...props
 } ) => {
 	const setValue = ( e ) => {
-		onChange( e.target.value || props.min || 0 );
+		onChange( parseInt( e.target.value, 10 ) || props.min || 0 );
 	};
 
 	return (
