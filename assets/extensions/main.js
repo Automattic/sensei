@@ -4,8 +4,6 @@
 import { Notice, Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
-import apiFetch from '@wordpress/api-fetch';
-import { useState, useEffect } from '@wordpress/element';
 import { EditorNotices } from '@wordpress/editor';
 
 /**
@@ -24,23 +22,14 @@ const Main = () => {
 	const { extensions } = useSelect( ( select ) => ( {
 		extensions: select( EXTENSIONS_STORE ).getExtensions(),
 	} ) );
+	const { layout } = useSelect( ( select ) => ( {
+		layout: select( EXTENSIONS_STORE ).getLayout(),
+	} ) );
 	const error = useSelect( ( select ) =>
 		select( EXTENSIONS_STORE ).getError()
 	);
 
-	const [ layout, setLayout ] = useState( false );
-
-	useEffect( () => {
-		apiFetch( {
-			path: '/sensei-internal/v1/sensei-extensions/layout',
-		} )
-			.then( ( result ) => {
-				setLayout( result.layout || [] );
-			} )
-			.catch( () => setLayout( [] ) );
-	}, [] );
-
-	if ( extensions.length === 0 || false === layout ) {
+	if ( extensions.length === 0 || layout.length === 0 ) {
 		return (
 			<div className="sensei-extensions__loader">
 				<Spinner />

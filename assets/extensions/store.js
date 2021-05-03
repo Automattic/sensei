@@ -144,6 +144,19 @@ const actions = {
 	},
 
 	/**
+	 * Set the extensions layout.
+	 *
+	 * @param {Object} obj        Layout object.
+	 * @param {Array}  obj.layout Extensions layout.
+	 */
+	setLayout( { layout = [] } ) {
+		return {
+			type: 'SET_LAYOUT',
+			layout,
+		};
+	},
+
+	/**
 	 * Set the error message.
 	 *
 	 * @param {string} error The error.
@@ -166,6 +179,7 @@ const selectors = {
 		selectors
 			.getExtensions( args )
 			.filter( ( extension ) => status === extension.status ),
+	getLayout: ( { layout } ) => layout,
 	getError: ( { error } ) => error,
 };
 
@@ -183,6 +197,17 @@ const resolvers = {
 
 		return actions.setExtensions( response );
 	},
+
+	/**
+	 * Loads the extensions layout.
+	 */
+	*getLayout() {
+		const response = yield apiFetch( {
+			path: '/sensei-internal/v1/sensei-extensions/layout',
+		} );
+
+		return actions.setLayout( response );
+	},
 };
 
 /**
@@ -195,6 +220,7 @@ const reducer = (
 	state = {
 		extensions: [],
 		entities: { extensions: {} },
+		layout: [],
 		error: null,
 	},
 	action
@@ -239,6 +265,11 @@ const reducer = (
 					...state.entities,
 					extensions: extensionsWithStatus,
 				},
+			};
+		case 'SET_LAYOUT':
+			return {
+				...state,
+				layout: action.layout,
 			};
 		case 'SET_ERROR':
 			return {
