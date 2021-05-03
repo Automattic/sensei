@@ -319,14 +319,6 @@ class Sensei_Plugins_Installation {
 	 */
 	private function background_installer( $plugin_to_install ) {
 		if ( ! empty( $plugin_to_install->product_slug ) ) {
-			require_once ABSPATH . 'wp-admin/includes/file.php';
-			require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
-			require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
-
-			WP_Filesystem();
-
-			$skin              = new Automatic_Upgrader_Skin();
-			$upgrader          = new WP_Upgrader( $skin );
 			$installed_plugins = $this->get_installed_plugins();
 			if ( empty( $installed_plugins ) ) {
 				$installed_plugins = [];
@@ -349,69 +341,9 @@ class Sensei_Plugins_Installation {
 
 			// Install this thing!
 			if ( ! $installed ) {
-				// Suppress feedback.
-				ob_start();
-
 				try {
-					$plugin_information = plugins_api(
-						'plugin_information',
-						[
-							'slug'   => $plugin_slug,
-							'fields' => [
-								'short_description' => false,
-								'sections'          => false,
-								'requires'          => false,
-								'rating'            => false,
-								'ratings'           => false,
-								'downloaded'        => false,
-								'last_updated'      => false,
-								'added'             => false,
-								'tags'              => false,
-								'homepage'          => false,
-								'donate_link'       => false,
-								'author_profile'    => false,
-								'author'            => false,
-							],
-						]
-					);
-
-					if ( is_wp_error( $plugin_information ) ) {
-						throw new Exception( $this->get_error_message( $plugin_information ) );
-					}
-
-					$package  = $plugin_information->download_link;
-					$download = $upgrader->download_package( $package );
-
-					if ( is_wp_error( $download ) ) {
-						throw new Exception( $this->get_error_message( $download ) );
-					}
-
-					$working_dir = $upgrader->unpack_package( $download, true );
-
-					if ( is_wp_error( $working_dir ) ) {
-						throw new Exception( $this->get_error_message( $working_dir ) );
-					}
-
-					$result = $upgrader->install_package(
-						[
-							'source'                      => $working_dir,
-							'destination'                 => WP_PLUGIN_DIR,
-							'clear_destination'           => false,
-							'abort_if_destination_exists' => false,
-							'clear_working'               => true,
-							'hook_extra'                  => [
-								'type'   => 'plugin',
-								'action' => 'install',
-							],
-						]
-					);
-
-					if ( is_wp_error( $result ) ) {
-						throw new Exception( $this->get_error_message( $result ) );
-					}
-
+					$this->install_plugin( $plugin_slug );
 					$activate = true;
-
 				} catch ( Exception $e ) {
 					$error   = true;
 					$message = sprintf(
@@ -423,9 +355,6 @@ class Sensei_Plugins_Installation {
 
 					$this->save_error( $plugin_slug, $message );
 				}
-
-				// Discard feedback.
-				ob_end_clean();
 			}
 
 			wp_clean_plugins_cache();
@@ -433,15 +362,7 @@ class Sensei_Plugins_Installation {
 			// Activate this thing.
 			if ( $activate ) {
 				try {
-					// Prevent WC wizard open after programmatically installation.
-					if ( 'woocommerce' === $plugin_slug ) {
-						add_filter( 'pre_set_transient__wc_activation_redirect', '__return_false' );
-					}
-					$result = activate_plugin( $installed ? $installed_plugins[ $plugin_file ] : $plugin_slug . '/' . $plugin_file );
-
-					if ( is_wp_error( $result ) ) {
-						throw new Exception( $this->get_error_message( $result ) );
-					}
+					$this->activate_plugin( $plugin_slug, $installed ? $installed_plugins[ $plugin_file ] : $plugin_slug . '/' . $plugin_file );
 				} catch ( Exception $e ) {
 					$error   = true;
 					$message = sprintf(
@@ -460,6 +381,107 @@ class Sensei_Plugins_Installation {
 			}
 
 			$this->complete_installation( $plugin_slug );
+		}
+	}
+
+	/**
+	 * Install plugin.
+	 *
+	 * @param string $plugin_slug Plugin slug.
+	 *
+	 * @throws Exception When there is an installation error.
+	 */
+	public function install_plugin( $plugin_slug ) {
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
+		require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
+
+		WP_Filesystem();
+
+		$skin     = new Automatic_Upgrader_Skin();
+		$upgrader = new WP_Upgrader( $skin );
+
+		$plugin_information = plugins_api(
+			'plugin_information',
+			[
+				'slug'   => $plugin_slug,
+				'fields' => [
+					'short_description' => false,
+					'sections'          => false,
+					'requires'          => false,
+					'rating'            => false,
+					'ratings'           => false,
+					'downloaded'        => false,
+					'last_updated'      => false,
+					'added'             => false,
+					'tags'              => false,
+					'homepage'          => false,
+					'donate_link'       => false,
+					'author_profile'    => false,
+					'author'            => false,
+				],
+			]
+		);
+
+		if ( is_wp_error( $plugin_information ) ) {
+			throw new Exception( $this->get_error_message( $plugin_information ) );
+		}
+
+		// Suppress feedback.
+		ob_start();
+
+		$package  = $plugin_information->download_link;
+		$download = $upgrader->download_package( $package );
+
+		if ( is_wp_error( $download ) ) {
+			throw new Exception( $this->get_error_message( $download ) );
+		}
+
+		$working_dir = $upgrader->unpack_package( $download, true );
+
+		if ( is_wp_error( $working_dir ) ) {
+			throw new Exception( $this->get_error_message( $working_dir ) );
+		}
+
+		$result = $upgrader->install_package(
+			[
+				'source'                      => $working_dir,
+				'destination'                 => WP_PLUGIN_DIR,
+				'clear_destination'           => false,
+				'abort_if_destination_exists' => false,
+				'clear_working'               => true,
+				'hook_extra'                  => [
+					'type'   => 'plugin',
+					'action' => 'install',
+				],
+			]
+		);
+
+		// Discard feedback.
+		ob_end_clean();
+
+		if ( is_wp_error( $result ) ) {
+			throw new Exception( $this->get_error_message( $result ) );
+		}
+	}
+
+	/**
+	 * Activate plugin.
+	 *
+	 * @param string $plugin_slug Plugin slug.
+	 * @param string $plugin_file Path to the plugin file relative to the plugins directory.
+	 *
+	 * @throws Exception When there is an activation error.
+	 */
+	public function activate_plugin( $plugin_slug, $plugin_file ) {
+		// Prevent WC wizard open after installation.
+		if ( 'woocommerce' === $plugin_slug ) {
+			add_filter( 'pre_set_transient__wc_activation_redirect', '__return_false' );
+		}
+		$result = activate_plugin( $plugin_file );
+
+		if ( is_wp_error( $result ) ) {
+			throw new Exception( $this->get_error_message( $result ) );
 		}
 	}
 }
