@@ -15,6 +15,14 @@ export default {
 		'Add lesson properties such as length and difficulty.',
 		'sensei-lms'
 	),
+	keywords: [
+		__( 'Metadata', 'sensei-lms' ),
+		__( 'Length', 'sensei-lms' ),
+		__( 'Complexity', 'sensei-lms' ),
+		__( 'Difficulty', 'sensei-lms' ),
+		__( 'Lesson Information', 'sensei-lms' ),
+		__( 'Lesson Properties', 'sensei-lms' ),
+	],
 	...metadata,
 	edit,
 	save: () => {
