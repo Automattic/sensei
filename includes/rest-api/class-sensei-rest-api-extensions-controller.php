@@ -100,6 +100,25 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 
 		register_rest_route(
 			$this->namespace,
+			$this->rest_base . '/install',
+			[
+				[
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => [ $this, 'install_extension' ],
+					'permission_callback' => [ $this, 'can_user_manage_plugins' ],
+					'args'                => [
+						'plugin' => [
+							'type'              => 'string',
+							'required'          => true,
+							'sanitize_callback' => 'sanitize_title',
+						],
+					],
+				],
+			]
+		);
+
+		register_rest_route(
+			$this->namespace,
 			$this->rest_base . '/update',
 			[
 				[
@@ -179,6 +198,55 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 		);
 
 		return $this->create_extensions_response( $filtered_plugins );
+	}
+
+	/**
+	 * Install extension.
+	 *
+	 * @access private
+	 *
+	 * @param WP_REST_Request $request The request.
+	 *
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function install_extension( WP_REST_Request $request ) {
+		$json_params    = $request->get_json_params();
+		$plugin_slug    = $json_params['plugin'];
+		$sensei_plugins = Sensei_Extensions::instance()->get_extensions( 'plugin' );
+
+		$plugin_to_install = array_values(
+			array_filter(
+				$sensei_plugins,
+				function( $plugin ) use ( $plugin_slug ) {
+					return $plugin->product_slug === $plugin_slug;
+				}
+			)
+		)[0];
+
+		try {
+			Sensei_Plugins_Installation::instance()->install_plugin( $plugin_slug );
+			wp_clean_plugins_cache();
+			Sensei_Plugins_Installation::instance()->activate_plugin( $plugin_slug, $plugin_to_install->plugin_file );
+		} catch ( Exception $e ) {
+			$response = new WP_REST_Response();
+			$response->set_data(
+				new WP_Error(
+					'sensei_extensions_install_error',
+					$e->getMessage()
+				)
+			);
+
+			return $response;
+		}
+
+		$installed_plugins = array_filter(
+			Sensei_Extensions::instance()->get_extensions( 'plugin' ),
+			function( $plugin ) use ( $plugin_slug ) {
+				return $plugin->product_slug === $plugin_slug;
+			}
+		);
+
+		return $this->create_extensions_response( $installed_plugins, 'completed' );
 	}
 
 	/**
