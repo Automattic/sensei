@@ -8,7 +8,7 @@ import { __, sprintf } from '@wordpress/i18n';
  */
 import ExtensionActions from '../extension-actions';
 import { useDispatch } from '@wordpress/data';
-import { EXTENSIONS_STORE } from '../store';
+import { EXTENSIONS_STORE, isLoadingStatus } from '../store';
 import { UpdateIcon } from '../../icons';
 
 /**
@@ -20,8 +20,8 @@ import { UpdateIcon } from '../../icons';
 const Multiple = ( { extensions } ) => {
 	const { updateExtensions } = useDispatch( EXTENSIONS_STORE );
 
-	const inProgress = extensions.some(
-		( extension ) => 'in-progress' === extension.status
+	const inProgress = extensions.some( ( extension ) =>
+		isLoadingStatus( extension.status )
 	);
 
 	const children = inProgress ? (

@@ -6,9 +6,24 @@ import { keyBy } from 'lodash';
 /**
  * WordPress dependencies
  */
-import { registerStore, dispatch } from '@wordpress/data';
+import { registerStore, select, dispatch } from '@wordpress/data';
 import { controls, apiFetch } from '@wordpress/data-controls';
 import { __, sprintf } from '@wordpress/i18n';
+
+const STATUS = {
+	IN_PROGRESS: 'in-progress',
+	IN_QUEUE: 'in-queue',
+};
+
+/**
+ * Checks whether status is a loading status.
+ *
+ * @param {string} status Status to check.
+ *
+ * @return {string} Whether is a loading status.
+ */
+export const isLoadingStatus = ( status ) =>
+	Object.values( STATUS ).includes( status );
 
 /**
  * Extension store actions.
@@ -53,8 +68,19 @@ const actions = {
 	*updateExtensions( extensions ) {
 		const slugs = extensions.map( ( extension ) => extension.product_slug );
 
+		const inProgressExtensions = yield select(
+			EXTENSIONS_STORE
+		).getExtensionsByStatus( STATUS.IN_PROGRESS );
+
+		// Add extensions to queue and skip if extensions are already updating.
+		if ( inProgressExtensions.length > 0 ) {
+			yield actions.setExtensionsStatus( slugs, STATUS.IN_QUEUE );
+			return;
+		}
+
+		yield actions.setExtensionsStatus( slugs, STATUS.IN_PROGRESS );
+
 		try {
-			yield actions.setExtensionsStatus( slugs, 'in-progress' );
 			const response = yield apiFetch( {
 				path: '/sensei-internal/v1/sensei-extensions/update',
 				method: 'POST',
@@ -70,7 +96,7 @@ const actions = {
 				true
 			);
 
-			dispatch( 'core/notices' ).createNotice(
+			yield dispatch( 'core/notices' ).createNotice(
 				'success',
 				__( 'Update completed succesfully!', 'sensei-lms' ),
 				{
@@ -78,6 +104,7 @@ const actions = {
 				}
 			);
 		} catch ( error ) {
+			yield actions.setExtensionsStatus( slugs, '' );
 			yield actions.setError(
 				sprintf(
 					// translators: Placeholder is underlying error message.
@@ -88,6 +115,17 @@ const actions = {
 					error.message
 				)
 			);
+		} finally {
+			// Update queue extensions, if exists.
+			const queuedExtensions = yield select(
+				EXTENSIONS_STORE
+			).getExtensionsByStatus( STATUS.IN_QUEUE );
+
+			if ( 0 === queuedExtensions.length ) {
+				return;
+			}
+
+			yield actions.updateExtensions( queuedExtensions );
 		}
 	},
 
@@ -124,6 +162,10 @@ const actions = {
 const selectors = {
 	getExtensions: ( { extensions, entities } ) =>
 		extensions.map( ( slug ) => entities.extensions[ slug ] ),
+	getExtensionsByStatus: ( args, status ) =>
+		selectors
+			.getExtensions( args )
+			.filter( ( extension ) => status === extension.status ),
 	getError: ( { error } ) => error,
 };
 

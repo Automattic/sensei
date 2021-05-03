@@ -9,7 +9,7 @@ import { useDispatch } from '@wordpress/data';
  * Internal dependencies
  */
 import { checked } from '../icons/wordpress-icons';
-import { EXTENSIONS_STORE } from './store';
+import { EXTENSIONS_STORE, isLoadingStatus } from './store';
 import { UpdateIcon } from '../icons';
 
 /**
@@ -61,7 +61,7 @@ export const useExtensionActions = ( extension ) => {
 	let buttonLabel = '';
 	let buttonAction = () => {};
 
-	if ( 'in-progress' === extension.status ) {
+	if ( isLoadingStatus( extension.status ) ) {
 		buttonLabel = (
 			<>
 				<UpdateIcon
@@ -99,7 +99,7 @@ export const useExtensionActions = ( extension ) => {
 		{
 			key: 'main-button',
 			disabled:
-				'in-progress' === extension.status ||
+				isLoadingStatus( extension.status ) ||
 				( extension.is_installed && ! extension.canUpdate ),
 			children: buttonLabel,
 			onClick: buttonAction,
