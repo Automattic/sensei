@@ -12,24 +12,6 @@ class Sensei_Extensions_Test extends WP_UnitTestCase {
 	use Sensei_Test_Login_Helpers;
 
 	/**
-	 * Test specific setup.
-	 */
-	public function setUp() {
-		parent::setUp();
-
-		add_filter( 'sensei_feature_flag_extensions_management_enhancement', '__return_true' );
-	}
-
-	/**
-	 * Clean up after the test.
-	 */
-	public function tearDown() {
-		parent::tearDown();
-
-		remove_filter( 'sensei_feature_flag_extensions_management_enhancement', '__return_true' );
-	}
-
-	/**
 	 * Testing the Sensei Extensions class to make sure it is loaded.
 	 */
 	public function testClassInstance() {
