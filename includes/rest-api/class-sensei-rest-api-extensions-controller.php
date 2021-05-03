@@ -220,6 +220,8 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 
 		WP_Filesystem();
 
+		wp_update_plugins();
+
 		$skin     = new WP_Ajax_Upgrader_Skin();
 		$upgrader = new Plugin_Upgrader( $skin );
 		$result   = $upgrader->bulk_upgrade( wp_list_pluck( $plugins_to_update, 'plugin_file' ) );
