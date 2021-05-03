@@ -20,7 +20,7 @@ import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 import {
 	getWccomProductId,
 	getWoocommerceComPurchaseUrl,
-} from '../helpers/woocommerce-com';
+} from '../../shared/helpers/woocommerce-com';
 import ConfirmationModal from './confirmation-modal';
 import InstallationFeedback from './installation-feedback';
 import FeaturesSelection from './features-selection';

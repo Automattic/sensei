@@ -11,7 +11,7 @@ import { Button } from '@wordpress/components';
 import { checked } from '../icons/wordpress-icons';
 import { EXTENSIONS_STORE, isLoadingStatus } from './store';
 import updateIcon from '../icons/update-icon';
-import { getWoocommerceComPurchaseUrl } from '../setup-wizard/helpers/woocommerce-com';
+import { getWoocommerceComPurchaseUrl } from '../shared/helpers/woocommerce-com';
 
 /**
  * Extension actions component.
