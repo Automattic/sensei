@@ -81,7 +81,20 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 						],
 					],
 				],
-				'schema' => [ $this, 'get_item_schema' ],
+				'schema' => [ $this, 'get_extensions_schema' ],
+			]
+		);
+
+		register_rest_route(
+			$this->namespace,
+			$this->rest_base . '/layout',
+			[
+				[
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => [ $this, 'get_layout' ],
+					'permission_callback' => [ $this, 'can_user_manage_plugins' ],
+				],
+				'schema' => [ $this, 'get_layout_schema' ],
 			]
 		);
 
@@ -305,11 +318,11 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 	}
 
 	/**
-	 * Schema for the endpoint.
+	 * Schema for the extensions endpoint.
 	 *
 	 * @return array Schema object.
 	 */
-	public function get_item_schema() : array {
+	public function get_extensions_schema() : array {
 		return [
 			'wccom_connected' => [
 				'type'        => 'boolean',
@@ -383,6 +396,85 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 						'wccom_expired'    => [
 							'type'        => 'boolean',
 							'description' => 'Whether the WC.com subscription is expired.',
+						],
+					],
+				],
+			],
+		];
+	}
+
+	/**
+	 * Returns the extensions layout.
+	 *
+	 * @return WP_REST_Response The response which contains the extensions layout.
+	 */
+	public function get_layout() : WP_REST_Response {
+		$layout_json = [ 'layout' => Sensei_Extensions::instance()->get_layout() ];
+
+		$response = new WP_REST_Response();
+		$response->set_data( $layout_json );
+
+		return $response;
+	}
+
+	/**
+	 * Schema for the layout endpoint.
+	 *
+	 * @return array Schema object.
+	 */
+	public function get_layout_schema() : array {
+		return [
+			'type'  => 'array',
+			'items' => [
+				'type'       => 'object',
+				'properties' => [
+					'key'         => [
+						'type'        => 'string',
+						'description' => 'Section key.',
+					],
+					'columns'     => [
+						'type'        => 'integer',
+						'description' => 'Number of columns to use.',
+					],
+					'type'        => [
+						'type'        => 'string',
+						'description' => 'Type of content.',
+					],
+					'title'       => [
+						'type'        => 'string',
+						'description' => 'Section title.',
+					],
+					'description' => [
+						'type'        => 'string',
+						'description' => 'Description title.',
+					],
+					'items'       => [
+						'type'        => 'array',
+						'description' => 'Items to list.',
+						'items'       => [
+							'type'       => 'object',
+							'properties' => [
+								'key'           => [
+									'type'        => 'string',
+									'description' => 'Item key.',
+								],
+								'extensionSlug' => [
+									'type'        => 'string',
+									'description' => 'Extension slug.',
+								],
+								'itemProps'     => [
+									'type'        => 'object',
+									'description' => 'Props to add to the list item component.',
+								],
+								'wrapperProps'  => [
+									'type'        => 'object',
+									'description' => 'Props to add to the wrapper component.',
+								],
+								'cardProps'     => [
+									'type'        => 'object',
+									'description' => 'Props to add to the card component.',
+								],
+							],
 						],
 					],
 				],

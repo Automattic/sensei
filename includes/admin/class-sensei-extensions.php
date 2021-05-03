@@ -68,7 +68,7 @@ final class Sensei_Extensions {
 	 * @return array
 	 */
 	public function get_extensions( $type = null, $category = null, $additional_query_args = [] ) {
-		$extension_request_key = md5( $type . '|' . $category . '|' . wp_json_encode( $additional_query_args ) );
+		$extension_request_key = md5( $type . '|' . $category . '|' . determine_locale() . '|' . wp_json_encode( $additional_query_args ) );
 		$extensions            = get_transient( 'sensei_extensions_' . $extension_request_key );
 
 		if ( false === $extensions ) {
@@ -78,6 +78,7 @@ final class Sensei_Extensions {
 						[
 							'category' => $category,
 							'type'     => $type,
+							'lang'     => determine_locale(),
 						],
 						$additional_query_args
 					),
@@ -148,6 +149,34 @@ final class Sensei_Extensions {
 	}
 
 	/**
+	 * Get extensions page layout.
+	 *
+	 * @since 3.11.0
+	 *
+	 * @return array
+	 */
+	public function get_layout() {
+		$transient_key    = implode( '_', [ 'sensei_extensions_layout', determine_locale() ] );
+		$extension_layout = get_transient( $transient_key );
+		if ( false === $extension_layout ) {
+			$raw_layout = wp_safe_remote_get(
+				add_query_arg(
+					[ 'lang' => determine_locale() ],
+					self::SENSEILMS_PRODUCTS_API_BASE_URL . '/layout'
+				)
+			);
+
+			if ( ! is_wp_error( $raw_layout ) ) {
+				$json             = json_decode( wp_remote_retrieve_body( $raw_layout ) );
+				$extension_layout = isset( $json->layout ) ? $json->layout : [];
+				set_transient( $transient_key, $extension_layout, DAY_IN_SECONDS );
+			}
+		}
+
+		return $extension_layout;
+	}
+
+	/**
 	 * Get resources (such as categories and product types) for the extensions screen.
 	 *
 	 * @since  2.0.0
@@ -161,7 +190,7 @@ final class Sensei_Extensions {
 				add_query_arg(
 					array(
 						'version' => Sensei()->version,
-						'lang'    => get_locale(),
+						'lang'    => determine_locale(),
 					),
 					self::SENSEILMS_PRODUCTS_API_BASE_URL . '/resources'
 				)
@@ -185,14 +214,14 @@ final class Sensei_Extensions {
 	 * @return array
 	 */
 	private function get_messages() {
-		$transient_key      = implode( '_', [ 'sensei_extensions_messages', Sensei()->version, get_locale() ] );
+		$transient_key      = implode( '_', [ 'sensei_extensions_messages', Sensei()->version, determine_locale() ] );
 		$extension_messages = get_transient( $transient_key );
 		if ( false === $extension_messages ) {
 			$raw_messages = wp_safe_remote_get(
 				add_query_arg(
 					array(
 						'version' => Sensei()->version,
-						'lang'    => get_locale(),
+						'lang'    => determine_locale(),
 					),
 					self::SENSEILMS_PRODUCTS_API_BASE_URL . '/messages'
 				)

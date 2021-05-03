@@ -9,7 +9,6 @@ import { keyBy } from 'lodash';
  */
 import Card from './card';
 import { Grid, Col } from './grid';
-import extensionsLayout from './_TEMP.json';
 
 /**
  * Renders the sections based on the skeleton structure. It can also render subsections recursively.
@@ -97,11 +96,12 @@ const renderSections = ( layout, extensionsBySlug ) =>
  *
  * @param {Object} props            Component props.
  * @param {Array}  props.extensions All extensions.
+ * @param {Array}  props.layout     Layout to render the extensions page.
  */
-const AllExtensions = ( { extensions } ) => {
+const AllExtensions = ( { extensions, layout } ) => {
 	const extensionsBySlug = keyBy( extensions, 'product_slug' );
 
-	return renderSections( extensionsLayout, extensionsBySlug );
+	return renderSections( layout, extensionsBySlug );
 };
 
 export default AllExtensions;

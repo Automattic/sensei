@@ -30,7 +30,19 @@ const Main = () => {
 			.catch( () => setExtensions( [] ) );
 	}, [] );
 
-	if ( false === extensions ) {
+	const [ layout, setLayout ] = useState( false );
+
+	useEffect( () => {
+		apiFetch( {
+			path: '/sensei-internal/v1/sensei-extensions/layout',
+		} )
+			.then( ( result ) => {
+				setLayout( result.layout || [] );
+			} )
+			.catch( () => setLayout( [] ) );
+	}, [] );
+
+	if ( false === extensions || false === layout ) {
 		return (
 			<div className="sensei-extensions__loader">
 				<Spinner />
@@ -54,7 +66,9 @@ const Main = () => {
 			id: 'all',
 			label: __( 'All', 'sensei-lms' ),
 			count: extensions.length,
-			content: <AllExtensions extensions={ extensions } />,
+			content: (
+				<AllExtensions extensions={ extensions } layout={ layout } />
+			),
 		},
 		{
 			id: 'free',

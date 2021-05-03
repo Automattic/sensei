@@ -68,7 +68,7 @@ class Sensei_Extensions_Test extends WP_UnitTestCase {
 			],
 		];
 
-		set_transient( 'sensei_extensions_' . md5( 'plugin||[]' ), $extensions );
+		set_transient( 'sensei_extensions_' . md5( 'plugin||' . determine_locale() . '|[]' ), $extensions );
 		wp_cache_set( 'plugins', $cache_plugins, 'plugins' );
 
 		Sensei_Extensions::instance()->add_admin_menu_item();
@@ -107,7 +107,7 @@ class Sensei_Extensions_Test extends WP_UnitTestCase {
 			],
 		];
 
-		set_transient( 'sensei_extensions_' . md5( 'plugin||[]' ), $extensions );
+		set_transient( 'sensei_extensions_' . md5( 'plugin||' . determine_locale() . '|[]' ), $extensions );
 		wp_cache_set( 'plugins', $cache_plugins, 'plugins' );
 
 		Sensei_Extensions::instance()->add_admin_menu_item();
