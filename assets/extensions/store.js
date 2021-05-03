@@ -79,6 +79,41 @@ const actions = {
 	},
 
 	/**
+	 * Install extension.
+	 *
+	 * @param {string} slug Extension slug.
+	 */
+	*installExtension( slug ) {
+		yield actions.setExtensionsStatus( [ slug ], STATUS.IN_PROGRESS );
+
+		try {
+			const response = yield apiFetch( {
+				path: '/sensei-internal/v1/sensei-extensions/install',
+				method: 'POST',
+				data: { plugin: slug },
+			} );
+
+			yield actions.setError( null );
+			yield actions.setExtensions(
+				{ extensions: response.completed },
+				true
+			);
+		} catch ( error ) {
+			yield actions.setExtensionsStatus( [ slug ], '' );
+			yield actions.setError(
+				sprintf(
+					// translators: Placeholder is underlying error message.
+					__(
+						'There was an error while installing the plugin: %1$s.',
+						'sensei-lms'
+					),
+					error.message
+				)
+			);
+		}
+	},
+
+	/**
 	 * Updates the provided extensions.
 	 *
 	 * @param {Array} extensions The extensions to update.

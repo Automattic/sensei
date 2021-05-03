@@ -51,7 +51,9 @@ export const useExtensionActions = ( extension ) => {
 	const { wccom } = useSelect( ( select ) => ( {
 		wccom: select( EXTENSIONS_STORE ).getWccomData(),
 	} ) );
-	const { updateExtensions } = useDispatch( EXTENSIONS_STORE );
+	const { installExtension, updateExtensions } = useDispatch(
+		EXTENSIONS_STORE
+	);
 
 	if ( ! extension.product_slug ) {
 		return null;
@@ -61,7 +63,7 @@ export const useExtensionActions = ( extension ) => {
 
 	if ( isLoadingStatus( extension.status ) ) {
 		actionProps = {
-			children: __( 'Updating…', 'sensei-lms' ),
+			children: __( 'In progress…', 'sensei-lms' ),
 			className: 'sensei-extensions__rotating-icon',
 			icon: updateIcon,
 			disabled: true,
@@ -97,7 +99,11 @@ export const useExtensionActions = ( extension ) => {
 						wccom
 					);
 					window.open( wcPurchaseUrl );
+
+					return;
 				}
+
+				installExtension( extension.product_slug );
 			},
 			...actionProps,
 		};
