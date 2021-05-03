@@ -9,8 +9,12 @@ import { Icon } from '@wordpress/components';
  */
 import Single from './single';
 import Multiple from './multiple';
+import UpdateAvailableLabel from './update-available-label';
 import { Col } from '../grid';
 import updateIcon from '../../icons/update-icon';
+import ExtensionActions from '../extension-actions';
+import { useDispatch } from '@wordpress/data';
+import { EXTENSIONS_STORE, isLoadingStatus } from '../store';
 
 /**
  * Update notification component.
@@ -29,19 +33,35 @@ const UpdateNotification = ( { extensions } ) => {
 		return null;
 	}
 
-	const updateAvailableLabel =
-		1 === updatesCount
-			? __( 'Update available', 'sensei-lms' )
-			: sprintf(
-					// translators: placeholder is number of updates available.
-					_n(
-						'%d update available',
-						'%d updates available',
-						updatesCount,
-						'sensei-lms'
-					),
-					updatesCount
-			  );
+	const { updateExtensions } = useDispatch( EXTENSIONS_STORE );
+
+	const inProgress = extensionsWithUpdate.some( ( extension ) =>
+		isLoadingStatus( extension.status )
+	);
+
+	let actionProps = {
+		key: 'update-button',
+		onClick: () => {
+			updateExtensions( extensions );
+		},
+	};
+
+	if ( inProgress ) {
+		actionProps = {
+			children: __( 'Updating…', 'sensei-lms' ),
+			className: 'sensei-extensions__rotating-icon',
+			icon: updateIcon,
+			disabled: true,
+			...actionProps,
+		};
+	} else {
+		actionProps = {
+			children: __( 'Update all', 'sensei-lms' ),
+			...actionProps,
+		};
+	}
+
+	const actions = [ actionProps ];
 
 	return (
 		<Col as="section" className="sensei-extensions__section" cols={ 12 }>
@@ -51,12 +71,15 @@ const UpdateNotification = ( { extensions } ) => {
 			>
 				<small className="sensei-extensions__update-badge">
 					<Icon icon={ updateIcon } />
-					{ updateAvailableLabel }
+					<UpdateAvailableLabel updatesCount={ updatesCount } />
 				</small>
 				{ 1 === updatesCount ? (
 					<Single extension={ extensionsWithUpdate[ 0 ] } />
 				) : (
-					<Multiple extensions={ extensionsWithUpdate } />
+					<Multiple
+						extensions={ extensionsWithUpdate }
+						actions={ actions }
+					/>
 				) }
 			</div>
 		</Col>
