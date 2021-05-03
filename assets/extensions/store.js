@@ -36,6 +36,7 @@ const DEFAULT_STATE = {
 	extensionSlugs: [],
 	entities: { extensions: {} },
 	layout: [],
+	wccom: {},
 	error: null,
 };
 
@@ -175,6 +176,18 @@ const actions = {
 	},
 
 	/**
+	 * Set WooCommerce.com data.
+	 *
+	 * @param {Object} wccom WooCommerce.com data.
+	 */
+	setWccom( wccom ) {
+		return {
+			type: 'SET_WCCOM',
+			wccom,
+		};
+	},
+
+	/**
 	 * Set the error message.
 	 *
 	 * @param {string} error The error.
@@ -199,6 +212,7 @@ const selectors = {
 			.filter( ( extension ) => status === extension.status ),
 	getEntities: ( { entities }, entity ) => entities[ entity ],
 	getLayout: ( { layout } ) => layout,
+	getWccomData: ( { wccom } ) => wccom,
 	getError: ( { error } ) => error,
 };
 
@@ -267,6 +281,10 @@ const reducer = {
 	SET_ENTITIES: ( { entities }, state ) => ( {
 		...state,
 		entities: merge( {}, state.entities, entities ),
+	} ),
+	SET_WCCOM: ( { wccom }, state ) => ( {
+		...state,
+		wccom,
 	} ),
 	SET_ERROR: ( { error }, state ) => ( {
 		...state,

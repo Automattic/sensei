@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { useDispatch } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { Button } from '@wordpress/components';
 
 /**
@@ -11,6 +11,7 @@ import { Button } from '@wordpress/components';
 import { checked } from '../icons/wordpress-icons';
 import { EXTENSIONS_STORE, isLoadingStatus } from './store';
 import updateIcon from '../icons/update-icon';
+import { getWoocommerceComPurchaseUrl } from '../setup-wizard/helpers/woocommerce-com';
 
 /**
  * Extension actions component.
@@ -47,6 +48,9 @@ export default ExtensionActions;
  * @return {Array|null} Array of actions, or null if it's not a valid extension.
  */
 export const useExtensionActions = ( extension ) => {
+	const { wccom } = useSelect( ( select ) => ( {
+		wccom: select( EXTENSIONS_STORE ).getWccomData(),
+	} ) );
 	const { updateExtensions } = useDispatch( EXTENSIONS_STORE );
 
 	if ( ! extension.product_slug ) {
@@ -86,6 +90,15 @@ export const useExtensionActions = ( extension ) => {
 
 		actionProps = {
 			children: `${ __( 'Install', 'sensei-lms' ) } - ${ price }`,
+			onClick: () => {
+				if ( extension.wccom_product_id ) {
+					const wcPurchaseUrl = getWoocommerceComPurchaseUrl(
+						[ extension ],
+						wccom
+					);
+					window.open( wcPurchaseUrl );
+				}
+			},
 			...actionProps,
 		};
 	}

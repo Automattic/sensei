@@ -317,7 +317,10 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 			$plugins
 		);
 
-		$response_json                  = [ 'wccom_connected' => $wccom_connected ];
+		$response_json                  = [
+			'wccom'           => Sensei_Utils::get_woocommerce_connect_data(),
+			'wccom_connected' => $wccom_connected,
+		];
 		$response_json[ $response_key ] = array_values( $mapped_plugins );
 
 		$response = new WP_REST_Response();
