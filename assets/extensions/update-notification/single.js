@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import ExtensionActions, { getExtensionActions } from '../extension-actions';
+import ExtensionActions, { useExtensionActions } from '../extension-actions';
 
 /**
  * Single update notification.
@@ -10,6 +10,8 @@ import ExtensionActions, { getExtensionActions } from '../extension-actions';
  * @param {Object} props.extension Extension with update.
  */
 const Single = ( { extension } ) => {
+	const actions = useExtensionActions( extension );
+
 	return (
 		<>
 			<h3 className="sensei-extensions__update-notification__title">
@@ -18,7 +20,7 @@ const Single = ( { extension } ) => {
 			<p className="sensei-extensions__update-notification__description">
 				{ extension.excerpt }
 			</p>
-			<ExtensionActions actions={ getExtensionActions( extension ) } />
+			<ExtensionActions actions={ actions } />
 		</>
 	);
 };

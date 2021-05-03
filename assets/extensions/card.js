@@ -11,7 +11,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import ExtensionActions, { getExtensionActions } from './extension-actions';
+import ExtensionActions, { useExtensionActions } from './extension-actions';
 
 /**
  * Extensions card component.
@@ -34,9 +34,10 @@ const Card = ( props ) => {
 		image,
 	} = props;
 
-	const actions = customActions || getExtensionActions( props );
-
+	const extensionActions = useExtensionActions( props );
+	const actions = customActions || extensionActions;
 	const backgroundImage = image && `url(${ image })`;
+
 	return (
 		<article
 			{ ...htmlProps }

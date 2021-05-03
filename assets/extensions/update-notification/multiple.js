@@ -37,14 +37,16 @@ const Multiple = ( { extensions } ) => {
 		__( 'Update all', 'sensei-lms' )
 	);
 
-	const action = {
-		key: 'update-button',
-		children,
-		disabled: inProgress,
-		onClick: () => {
-			updateExtensions( extensions );
+	const actions = [
+		{
+			key: 'update-button',
+			children,
+			disabled: inProgress,
+			onClick: () => {
+				updateExtensions( extensions );
+			},
 		},
-	};
+	];
 
 	return (
 		<>
@@ -71,7 +73,7 @@ const Multiple = ( { extensions } ) => {
 				) ) }
 			</ul>
 
-			<ExtensionActions actions={ [ action ] } />
+			<ExtensionActions actions={ actions } />
 		</>
 	);
 };
