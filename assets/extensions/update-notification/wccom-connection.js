@@ -32,7 +32,7 @@ const WCCOMConnection = ( { extensions } ) => {
 	const actions = [
 		{
 			key: 'connect',
-			children: __( 'Connect', 'sensei-lms' ),
+			children: __( 'Connect account', 'sensei-lms' ),
 			href: window.sensei_extensions?.connectUrl,
 		},
 	];
@@ -50,7 +50,7 @@ const WCCOMConnection = ( { extensions } ) => {
 
 				<h3 className="sensei-extensions__update-notification__title">
 					{ __(
-						'Connect your site to WooCommerce.com to update.',
+						'Connect your site to your WooCommerce.com account to update.',
 						'sensei-lms'
 					) }
 				</h3>
