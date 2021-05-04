@@ -92,7 +92,7 @@ class Sensei_WCCOM_Connect_Notice {
 				</a>
 				<?php
 				esc_html_e(
-					'Get notified about new features and updates by connecting your WooCommerce account.',
+					'Get notified about new features and updates by connecting your WooCommerce.com account.',
 					'sensei-lms'
 				);
 				?>
