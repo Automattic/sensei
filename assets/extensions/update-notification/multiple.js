@@ -24,7 +24,7 @@ const Multiple = ( { extensions } ) => {
 		isLoadingStatus( extension.status )
 	);
 
-	const actionProps = {
+	let actionProps = {
 		key: 'update-button',
 		disabled: inProgress,
 		onClick: () => {
@@ -33,11 +33,17 @@ const Multiple = ( { extensions } ) => {
 	};
 
 	if ( inProgress ) {
-		actionProps.children = __( 'Updating…', 'sensei-lms' );
-		actionProps.className = 'sensei-extensions__rotating-icon';
-		actionProps.icon = updateIcon;
+		actionProps = {
+			children: __( 'Updating…', 'sensei-lms' ),
+			className: 'sensei-extensions__rotating-icon',
+			icon: updateIcon,
+			...actionProps,
+		};
 	} else {
-		actionProps.children = __( 'Update all', 'sensei-lms' );
+		actionProps = {
+			children: __( 'Update all', 'sensei-lms' ),
+			...actionProps,
+		};
 	}
 
 	const actions = [ actionProps ];

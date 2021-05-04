@@ -53,36 +53,46 @@ export const useExtensionActions = ( extension ) => {
 		return null;
 	}
 
-	const mainButtonProps = {};
+	let actionProps = {
+		key: 'main-button',
+		disabled:
+			isLoadingStatus( extension.status ) ||
+			( extension.is_installed && ! extension.canUpdate ),
+	};
 
 	if ( isLoadingStatus( extension.status ) ) {
-		mainButtonProps.children = __( 'Updating…', 'sensei-lms' );
-		mainButtonProps.className = 'sensei-extensions__rotating-icon';
-		mainButtonProps.icon = updateIcon;
+		actionProps = {
+			children: __( 'Updating…', 'sensei-lms' ),
+			className: 'sensei-extensions__rotating-icon',
+			icon: updateIcon,
+			...actionProps,
+		};
 	} else if ( extension.canUpdate ) {
-		mainButtonProps.children = __( 'Update', 'sensei-lms' );
-		mainButtonProps.onClick = () =>
-			updateExtensions( [ extension ], extension.product_slug );
+		actionProps = {
+			children: __( 'Update', 'sensei-lms' ),
+			onClick: () =>
+				updateExtensions( [ extension ], extension.product_slug ),
+			...actionProps,
+		};
 	} else if ( extension.is_installed ) {
-		mainButtonProps.icon = checked;
-		mainButtonProps.children = __( 'Installed', 'sensei-lms' );
+		actionProps = {
+			children: __( 'Installed', 'sensei-lms' ),
+			icon: checked,
+			...actionProps,
+		};
 	} else {
-		mainButtonProps.children = `${ __( 'Install', 'sensei-lms' ) } - ${
+		const price =
 			extension.price !== '0'
 				? extension.price
-				: __( 'Free', 'sensei-lms' )
-		}`;
+				: __( 'Free', 'sensei-lms' );
+
+		actionProps = {
+			children: `${ __( 'Install', 'sensei-lms' ) } - ${ price }`,
+			...actionProps,
+		};
 	}
 
-	let buttons = [
-		{
-			key: 'main-button',
-			disabled:
-				isLoadingStatus( extension.status ) ||
-				( extension.is_installed && ! extension.canUpdate ),
-			...mainButtonProps,
-		},
-	];
+	let buttons = [ actionProps ];
 
 	if ( extension.link ) {
 		buttons = [
