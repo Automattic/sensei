@@ -56,22 +56,49 @@ final class Sensei_Extensions {
 			Sensei()->assets->enqueue( 'sensei-extensions-style', 'extensions/extensions.css', [ 'sensei-wp-components' ] );
 			Sensei()->assets->preload_data( [ '/sensei-internal/v1/sensei-extensions?type=plugin' ] );
 
-			wp_localize_script(
-				'sensei-extensions',
-				'sensei_extensions',
-				[
-					'connectUrl' => add_query_arg(
-						array(
-							'page'              => 'wc-addons',
-							'section'           => 'helper',
-							'wc-helper-connect' => 1,
-							'wc-helper-nonce'   => wp_create_nonce( 'connect' ),
-						),
-						admin_url( 'admin.php' )
+			$this->localize_script();
+		}
+	}
+
+	/**
+	 * Localize extensions script.
+	 *
+	 * @since 3.11.0
+	 */
+	private function localize_script() {
+		$data = array(
+			'connectUrl' => add_query_arg(
+				array(
+					'page'              => 'wc-addons',
+					'section'           => 'helper',
+					'wc-helper-connect' => 1,
+					'wc-helper-nonce'   => wp_create_nonce( 'connect' ),
+				),
+				admin_url( 'admin.php' )
+			),
+		);
+
+		if ( ! Sensei_Utils::is_woocommerce_installed() ) {
+			$data['installUrl'] = self_admin_url( 'plugin-install.php?s=woocommerce&tab=search&type=term&plugin_details=woocommerce' );
+		} else if ( ! Sensei_Utils::is_woocommerce_active() ) {
+			$plugin_file         = 'woocommerce/woocommerce.php';
+			$data['activateUrl'] = wp_nonce_url(
+				add_query_arg(
+					array(
+						'action' => 'activate',
+						'plugin' => $plugin_file,
 					),
-				]
+					self_admin_url( 'plugins.php' )
+				),
+				'activate-plugin_' . $plugin_file
 			);
 		}
+
+		wp_localize_script(
+			'sensei-extensions',
+			'sensei_extensions',
+			$data
+		);
 	}
 
 	/**
