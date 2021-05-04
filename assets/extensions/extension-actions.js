@@ -10,7 +10,7 @@ import { Button } from '@wordpress/components';
  */
 import { checked } from '../icons/wordpress-icons';
 import { EXTENSIONS_STORE, isLoadingStatus } from './store';
-import { UpdateIcon } from '../icons';
+import updateIcon from '../icons/update-icon';
 
 /**
  * Extension actions component.
@@ -56,16 +56,9 @@ export const useExtensionActions = ( extension ) => {
 	const mainButtonProps = {};
 
 	if ( isLoadingStatus( extension.status ) ) {
-		mainButtonProps.children = (
-			<>
-				<UpdateIcon
-					width="20"
-					height="20"
-					className="sensei-extensions__rotating-icon sensei-extensions__extension-actions__button-icon"
-				/>
-				{ __( 'Updating…', 'sensei-lms' ) }
-			</>
-		);
+		mainButtonProps.children = __( 'Updating…', 'sensei-lms' );
+		mainButtonProps.className = 'sensei-extensions__rotating-icon';
+		mainButtonProps.icon = updateIcon;
 	} else if ( extension.canUpdate ) {
 		mainButtonProps.children = __( 'Update', 'sensei-lms' );
 		mainButtonProps.onClick = () =>

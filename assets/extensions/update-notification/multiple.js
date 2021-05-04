@@ -9,7 +9,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import ExtensionActions from '../extension-actions';
 import { useDispatch } from '@wordpress/data';
 import { EXTENSIONS_STORE, isLoadingStatus } from '../store';
-import { UpdateIcon } from '../../icons';
+import updateIcon from '../../icons/update-icon';
 
 /**
  * Multiple update notification.
@@ -24,29 +24,23 @@ const Multiple = ( { extensions } ) => {
 		isLoadingStatus( extension.status )
 	);
 
-	const children = inProgress ? (
-		<>
-			<UpdateIcon
-				width="20"
-				height="20"
-				className="sensei-extensions__rotating-icon sensei-extensions__extension-actions__button-icon"
-			/>
-			{ __( 'Updating…', 'sensei-lms' ) }
-		</>
-	) : (
-		__( 'Update all', 'sensei-lms' )
-	);
-
-	const actions = [
-		{
-			key: 'update-button',
-			children,
-			disabled: inProgress,
-			onClick: () => {
-				updateExtensions( extensions );
-			},
+	const actionProps = {
+		key: 'update-button',
+		disabled: inProgress,
+		onClick: () => {
+			updateExtensions( extensions );
 		},
-	];
+	};
+
+	if ( inProgress ) {
+		actionProps.children = __( 'Updating…', 'sensei-lms' );
+		actionProps.className = 'sensei-extensions__rotating-icon';
+		actionProps.icon = updateIcon;
+	} else {
+		actionProps.children = __( 'Update all', 'sensei-lms' );
+	}
+
+	const actions = [ actionProps ];
 
 	return (
 		<>
