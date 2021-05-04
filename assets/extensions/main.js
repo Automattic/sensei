@@ -31,7 +31,7 @@ const Main = () => {
 		};
 	} );
 
-	if ( extensions.length === 0 || layout.length === 0 ) {
+	if ( 0 === extensions.length || 0 === layout.length ) {
 		return (
 			<div className="sensei-extensions__loader">
 				<Spinner />
