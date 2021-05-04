@@ -9,6 +9,7 @@ import { EditorNotices } from '@wordpress/editor';
 /**
  * Internal dependencies
  */
+import { useSenseiColorTheme } from '../react-hooks/use-sensei-color-theme';
 import Header from './header';
 import Tabs from './tabs';
 import UpdateNotification from './update-notification';
@@ -19,6 +20,8 @@ import { EXTENSIONS_STORE } from './store';
 import { Grid, Col } from './grid';
 
 const Main = () => {
+	useSenseiColorTheme();
+
 	const { extensions } = useSelect( ( select ) => ( {
 		extensions: select( EXTENSIONS_STORE ).getExtensions(),
 	} ) );
