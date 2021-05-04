@@ -72,8 +72,7 @@ export const useExtensionActions = ( extension ) => {
 	} else if ( extension.has_update ) {
 		actionProps = {
 			children: __( 'Update', 'sensei-lms' ),
-			onClick: () =>
-				updateExtensions( [ extension ], extension.product_slug ),
+			onClick: () => updateExtensions( [ extension.product_slug ] ),
 			disabled: ! extension.can_update,
 			...actionProps,
 		};

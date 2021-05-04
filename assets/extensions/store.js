@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { keyBy, merge } from 'lodash';
+import { keyBy, merge, isEqual } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -36,6 +36,7 @@ const DEFAULT_STATE = {
 	extensionSlugs: [],
 	entities: { extensions: {} },
 	layout: [],
+	queue: [],
 	wccom: {},
 	error: null,
 };
@@ -79,65 +80,78 @@ const actions = {
 	},
 
 	/**
-	 * Install extension.
+	 * Install extensions.
 	 *
-	 * @param {string} slug Extension slug.
+	 * @param {string} slug The extension slug to install.
 	 */
 	*installExtension( slug ) {
-		yield actions.setExtensionsStatus( [ slug ], STATUS.IN_PROGRESS );
-
-		try {
-			const response = yield apiFetch( {
-				path: '/sensei-internal/v1/sensei-extensions/install',
-				method: 'POST',
-				data: { plugin: slug },
-			} );
-
-			yield actions.setError( null );
-			yield actions.setExtensions(
-				{ extensions: response.completed },
-				true
-			);
-		} catch ( error ) {
-			yield actions.setExtensionsStatus( [ slug ], '' );
-			yield actions.setError(
-				sprintf(
-					// translators: Placeholder is underlying error message.
-					__(
-						'There was an error while installing the plugin: %1$s.',
-						'sensei-lms'
-					),
-					error.message
-				)
-			);
-		}
+		yield actions.runProcess( { slugs: [ slug ], actionType: 'install' } );
 	},
 
 	/**
 	 * Updates the provided extensions.
 	 *
-	 * @param {Array} extensions The extensions to update.
+	 * @param {string[]} slugs The extension slugs to update.
 	 */
-	*updateExtensions( extensions ) {
-		const slugs = extensions.map( ( extension ) => extension.product_slug );
+	*updateExtensions( slugs ) {
+		yield actions.runProcess( { slugs, actionType: 'update' } );
+	},
+
+	/**
+	 * Run extension process (install or update).
+	 *
+	 * @param {Object}   process            The process.
+	 * @param {string[]} process.slugs      Extension slugs.
+	 * @param {string}   process.actionType Action type (`install` or `update`).
+	 */
+	*runProcess( process ) {
+		const { slugs, actionType } = process;
 
 		const inProgressExtensions = yield select(
 			EXTENSIONS_STORE
 		).getExtensionsByStatus( STATUS.IN_PROGRESS );
 
-		// Add extensions to queue and skip if extensions are already updating.
+		// Add to process to queue and skip if a process is already running.
 		if ( inProgressExtensions.length > 0 ) {
-			yield actions.setExtensionsStatus( slugs, STATUS.IN_QUEUE );
+			yield actions.addToQueue( process );
 			return;
 		}
 
 		yield actions.setExtensionsStatus( slugs, STATUS.IN_PROGRESS );
 
+		let data;
+		let successMessage;
+		let errorMessage;
+
+		if ( actionType === 'update' ) {
+			data = { plugins: slugs };
+			successMessage = __(
+				'Update completed succesfully!',
+				'sensei-lms'
+			);
+			// translators: Placeholder is the underlying error message.
+			errorMessage = __(
+				'There was an error while updating the plugin: %1$s.',
+				'sensei-lms'
+			);
+		} else {
+			data = { plugin: slugs[ 0 ] };
+			successMessage = __(
+				'Installation completed succesfully!',
+				'sensei-lms'
+			);
+			// translators: Placeholder is the underlying error message.
+			errorMessage = __(
+				'There was an error while installing the plugin: %1$s.',
+				'sensei-lms'
+			);
+		}
+
 		try {
 			const response = yield apiFetch( {
-				path: '/sensei-internal/v1/sensei-extensions/update',
+				path: `/sensei-internal/v1/sensei-extensions/${ actionType }`,
 				method: 'POST',
-				data: { plugins: slugs },
+				data,
 			} );
 
 			yield actions.setError( null );
@@ -147,39 +161,28 @@ const actions = {
 
 			yield dispatch( 'core/notices' ).createNotice(
 				'success',
-				__( 'Update completed succesfully!', 'sensei-lms' ),
+				successMessage,
 				{
 					type: 'snackbar',
 				}
 			);
 		} catch ( error ) {
-			const errorMessage = Object.keys( error.errors )
+			const serverError = Object.keys( error.errors )
 				.map( ( key ) => error.errors[ key ].join( ' ' ) )
 				.join( ' ' );
 
-			yield actions.setError(
-				sprintf(
-					// translators: Placeholder is underlying error message.
-					__(
-						'There was an error while updating the plugin: %1$s',
-						'sensei-lms'
-					),
-					errorMessage
-				)
-			);
+			yield actions.setError( sprintf( errorMessage, serverError ) );
 		} finally {
 			yield actions.setExtensionsStatus( slugs, '' );
+			yield actions.removeFromQueue( process );
 
-			// Update queue extensions, if exists.
-			const queuedExtensions = yield select(
+			const nextProcess = yield select(
 				EXTENSIONS_STORE
-			).getExtensionsByStatus( STATUS.IN_QUEUE );
+			).getNextProcess();
 
-			if ( 0 === queuedExtensions.length ) {
-				return;
+			if ( nextProcess ) {
+				yield actions.runProcess( nextProcess );
 			}
-
-			yield actions.updateExtensions( queuedExtensions );
 		}
 	},
 
@@ -223,6 +226,36 @@ const actions = {
 	},
 
 	/**
+	 * Add process (update/install) to queue.
+	 *
+	 * @param {Object}   process            The process.
+	 * @param {string}   process.actionType Action type.
+	 * @param {string[]} process.slugs      Extension slugs.
+	 */
+	*addToQueue( process ) {
+		yield actions.setExtensionsStatus( process.slugs, STATUS.IN_QUEUE );
+
+		return {
+			type: 'ADD_TO_QUEUE',
+			process,
+		};
+	},
+
+	/**
+	 * Add process (update/install) to queue.
+	 *
+	 * @param {Object}   process       The process.
+	 * @param {string}   process.type  Process type.
+	 * @param {string[]} process.slugs Extension slugs.
+	 */
+	removeFromQueue( process ) {
+		return {
+			type: 'REMOVE_FROM_QUEUE',
+			process,
+		};
+	},
+
+	/**
 	 * Set the error message.
 	 *
 	 * @param {string} error The error.
@@ -247,6 +280,7 @@ const selectors = {
 			.filter( ( extension ) => status === extension.status ),
 	getEntities: ( { entities }, entity ) => entities[ entity ],
 	getLayout: ( { layout } ) => layout,
+	getNextProcess: ( { queue } ) => queue[ 0 ] || null,
 	getWccomData: ( { wccom } ) => wccom,
 	getError: ( { error } ) => error,
 };
@@ -320,6 +354,14 @@ const reducer = {
 	SET_WCCOM: ( { wccom }, state ) => ( {
 		...state,
 		wccom,
+	} ),
+	ADD_TO_QUEUE: ( { process }, state ) => ( {
+		...state,
+		queue: [ ...state.queue, process ],
+	} ),
+	REMOVE_FROM_QUEUE: ( { process }, state ) => ( {
+		...state,
+		queue: state.queue.filter( ( item ) => ! isEqual( item, process ) ),
 	} ),
 	SET_ERROR: ( { error }, state ) => ( {
 		...state,
