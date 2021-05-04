@@ -22,15 +22,14 @@ import { Grid, Col } from './grid';
 const Main = () => {
 	useSenseiColorTheme();
 
-	const { extensions } = useSelect( ( select ) => ( {
-		extensions: select( EXTENSIONS_STORE ).getExtensions(),
-	} ) );
-	const { layout } = useSelect( ( select ) => ( {
-		layout: select( EXTENSIONS_STORE ).getLayout(),
-	} ) );
-	const error = useSelect( ( select ) =>
-		select( EXTENSIONS_STORE ).getError()
-	);
+	const { extensions, layout, error } = useSelect( ( select ) => {
+		const store = select( EXTENSIONS_STORE );
+		return {
+			extensions: store.getExtensions(),
+			layout: store.getLayout(),
+			error: store.getError(),
+		};
+	} );
 
 	if ( extensions.length === 0 || layout.length === 0 ) {
 		return (
