@@ -256,7 +256,10 @@ const reducer = (
 			const extensionsWithStatus = { ...state.entities.extensions };
 
 			action.slugs.forEach( ( slug ) => {
-				extensionsWithStatus[ slug ].status = action.status;
+				extensionsWithStatus[ slug ] = {
+					...extensionsWithStatus[ slug ],
+					status: action.status,
+				};
 			} );
 
 			return {
